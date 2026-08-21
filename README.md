@@ -8,7 +8,7 @@
 
 ### 1. 決定網域，改掉三個地方
 
-目前預設是 `https://www.bhcs.com.tw`。如果要用別的網址，這三處都要改：
+目前預設是 `https://bhcs.com.tw`。如果要用別的網址，這三處都要改：
 
 | 檔案 | 位置 | 說明 |
 |---|---|---|
@@ -63,20 +63,25 @@ git push -u origin main
 ```
 
 2. repo → Settings → Pages → Source 選 `main` / `root`
-3. Custom domain 填 `www.bhcs.com.tw`
-4. 勾選 **Enforce HTTPS**（憑證約 10 分鐘內簽好）
-5. 到網域商後台加一筆 DNS 記錄：
+3. 到網域商後台加這五筆 DNS 記錄：
 
 ```
+A        @      185.199.108.153
+A        @      185.199.109.153
+A        @      185.199.110.153
+A        @      185.199.111.153
 CNAME    www    yenyu-bot.github.io
 ```
+
+4. 回到 Settings → Pages，Custom domain 填 `bhcs.com.tw`
+5. 等綠色勾勾出現後，勾選 **Enforce HTTPS**
 
 ---
 
 ## 三、上線後三件事
 
 1. **Search Console 送出 sitemap**
-   `bhcs.com.tw` 的網域資源 → 站點地圖 → 貼上 `https://www.bhcs.com.tw/sitemap.xml`
+   `bhcs.com.tw` 的網域資源 → 站點地圖 → 貼上 `https://bhcs.com.tw/sitemap.xml`
 
 2. **Google 商家的「網站」欄位改成新網址**
    目前填的是 `http://bhcs.com.tw/`，換成 https 的新站。
