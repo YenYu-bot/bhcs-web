@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>五年級 因數練習卷產生器</title>
+<style>
+  :root{
+    --ink:#16202B; --paper:#fff;
+    --panel:#1A2A24; --panel-2:#24382F; --line:#38564A;
+    --green:#1F6F4A; --green-lt:#3FA377;
+    --red:#C0392B; --grid:#DFE9E4; --muted:#8FA89C;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      linear-gradient(0deg,transparent 23px,var(--grid) 24px),
+      linear-gradient(90deg,transparent 23px,var(--grid) 24px);
+    background-size:24px 24px; background-color:#F3F7F5;
+    color:var(--ink); font-family:"標楷體","DFKai-SB","Times New Roman",serif;
+  }
+  .wrap{display:flex;align-items:flex-start;gap:24px;padding:24px;max-width:1400px;margin:0 auto}
+
+  /* 控制面板 */
+  .panel{position:sticky;top:24px;flex:0 0 320px;background:var(--panel);color:#E7F0EB;
+    border-radius:14px;padding:20px;box-shadow:0 10px 30px rgba(20,45,35,.25);
+    font-family:"微軟正黑體","Microsoft JhengHei",sans-serif}
+  .panel h1{margin:0 0 4px;font-size:20px;letter-spacing:.05em}
+  .panel .sub{margin:0 0 16px;color:var(--muted);font-size:13px}
+  .grp{border-top:1px solid var(--line);padding:13px 0 3px}
+  .grp:first-of-type{border-top:none}
+  .grp>.t{font-size:13px;letter-spacing:.1em;color:var(--green-lt);margin-bottom:9px;font-weight:700}
+  .row{display:flex;align-items:center;justify-content:space-between;margin:7px 0;font-size:14px}
+  .row label{color:#CCDCD4}
+  input[type=text],select{background:var(--panel-2);border:1px solid var(--line);color:#EAF4EF;
+    border-radius:7px;padding:6px 8px;font-size:14px;width:130px}
+  input[type=number]{background:var(--panel-2);border:1px solid var(--line);color:#EAF4EF;
+    border-radius:7px;padding:6px 4px;font-size:14px;width:62px;text-align:center}
+  input:focus,select:focus{outline:2px solid var(--green-lt);outline-offset:1px}
+  .sw{position:relative;width:42px;height:23px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:99px;cursor:pointer;flex:0 0 auto}
+  .sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+  .sw i{position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;
+    background:#7E9A8C;transition:.15s}
+  .sw:has(input:checked){background:var(--green);border-color:var(--green-lt)}
+  .sw:has(input:checked) i{left:21px;background:#fff}
+  .sec{display:flex;align-items:center;gap:9px;margin:9px 0}
+  .sec .nm{flex:1;font-size:14px;color:#CCDCD4}
+  .btns{display:flex;gap:10px;margin-top:16px}
+  button{flex:1;border:none;border-radius:9px;padding:11px 0;cursor:pointer;font-size:15px;
+    font-weight:700;letter-spacing:.04em;font-family:inherit}
+  #gen{background:var(--green);color:#fff}#gen:hover{background:var(--green-lt)}
+  #prt{background:#E8F1EC;color:var(--ink)}#prt:hover{background:#fff}
+  .note{margin-top:13px;color:var(--muted);font-size:12px;line-height:1.7}
+
+  /* 試卷 */
+  .sheets{flex:1;min-width:0}
+  .sheet{background:var(--paper);width:21cm;min-height:29.7cm;margin:0 auto 26px;
+    padding:1.2cm;box-shadow:0 8px 26px rgba(20,45,35,.18)}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;
+    border-bottom:2.5px solid var(--ink);padding-bottom:6px}
+  .head .title{font-size:24pt;font-weight:700;letter-spacing:.08em}
+  .head .org{font-size:11pt;letter-spacing:.12em;color:#44555F}
+  .tag{display:inline-block;background:var(--red);color:#fff;font-size:12pt;padding:1px 8px;
+    border-radius:3px;margin-left:8px;vertical-align:5px;letter-spacing:.08em}
+  .meta{display:flex;gap:16px;margin:9px 0 2px;font-size:12pt}
+  .meta span{flex:1;border-bottom:1px solid #7C8B96;padding-bottom:2px}
+  .meta .sn{flex:0 0 auto;border:none;color:#7C8B96;font-size:10pt;letter-spacing:.06em}
+
+  .sect{margin-top:14px}
+  .sect>h2{font-size:13pt;margin:0 0 7px;padding:3px 8px;background:#E4EAE7;
+    border-left:5px solid var(--green);letter-spacing:.05em;font-weight:700}
+  .sect>h2 em{font-style:normal;font-size:10.5pt;color:#4A5A52;font-weight:400;margin-left:6px}
+
+  .grid{display:grid;gap:7px 14px}
+  .it{display:flex;align-items:baseline;gap:5px;font-size:12.5pt;line-height:1.95;
+    padding:2px 0;border-bottom:1px dotted #C6D2CB}
+  .it .no{flex:0 0 auto;color:#65796E;font-size:10pt;width:2em;text-align:right}
+  .num{font-weight:700;font-size:14pt}
+  .ln{flex:1;border-bottom:1px solid #8B9A92;min-height:1.4em;margin-left:4px}
+  .ln.ans{border-bottom-color:var(--red);color:var(--red);font-weight:700;font-size:11.5pt}
+  .bx{display:inline-block;border:1.4px solid var(--ink);border-radius:3px;width:2.6em;height:1.5em;
+    line-height:1.45em;text-align:center;vertical-align:middle;background:#fff}
+  .bx.ans{color:var(--red);border-color:var(--red);font-weight:700}
+  .jd{display:inline-block;border:1.4px solid var(--ink);border-radius:3px;width:2.2em;height:1.5em;
+    line-height:1.42em;text-align:center;vertical-align:middle;margin-right:6px}
+  .jd.ans{color:var(--red);border-color:var(--red);font-weight:700}
+  .wp{font-size:12.5pt;line-height:1.9;border-bottom:1px dotted #C6D2CB;padding:4px 0 6px}
+
+  /* 因數配對階梯：多欄流式排版，內容有多高就佔多高 */
+  .pgrid{margin-top:2px;column-gap:20px;column-fill:balance}
+  .pgrid[data-size="l"]{font-size:12.5pt}
+  .pgrid[data-size="m"]{font-size:11pt}
+  .pgrid[data-size="s"]{font-size:9.5pt}
+
+  .pair{display:flex;gap:4px;padding:3px 0 5px;margin-bottom:5px;
+    border-bottom:1px dotted #C6D2CB;
+    break-inside:avoid;page-break-inside:avoid;-webkit-column-break-inside:avoid}
+  .pair .pno{flex:0 0 auto;color:#65796E;font-size:.78em;width:1.7em;text-align:right;padding-top:.3em}
+  .pair .pbody{flex:1;min-width:0}
+  .prow{display:flex;align-items:center;line-height:1.7;white-space:nowrap}
+  .prow .pl{flex:0 0 auto;width:2.9em;text-align:right;font-weight:700;font-size:1.1em}
+  .prow .peq{margin:0 3px}
+  .prow .pp{font-size:1.05em}
+  .prow .px{margin:0 2px}
+  .pb{display:inline-block;min-width:2.3em;text-align:center;
+    border-bottom:1px solid #7E8E85;line-height:1.32em}
+  .pb.ans{color:var(--red);font-weight:700;border-bottom-color:var(--red)}
+  .pb.eg{color:#3A6B55;font-weight:700;border-bottom-color:#9DB3A8}
+  .psum{margin-top:3px;padding-left:.3em;font-size:.9em;color:#33443C}
+  .psum .bx{height:1.4em;line-height:1.35em;width:2.7em}
+  .wp .work{height:1.6cm;border-bottom:1px solid #B9C6BE;margin-top:4px}
+  .wp .work.ans{height:auto;border:none;color:var(--red);font-size:11.5pt;font-weight:700;margin-top:3px}
+  .foot{margin-top:18px;display:flex;justify-content:space-between;font-size:9.5pt;color:#7C8B96;
+    border-top:1px solid #C6D2CB;padding-top:5px}
+
+  @media print{
+    @page{size:A4;margin:1.2cm}
+    body{background:#fff}
+    .panel{display:none}
+    .wrap{display:block;padding:0;max-width:none}
+    .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;page-break-after:always}
+    .sheet:last-child{page-break-after:auto}
+    .it,.wp,.sect>h2{break-inside:avoid}
+    .sect>h2{break-after:avoid;page-break-after:avoid}
+    .sect{break-inside:auto}
+    .pgrid{orphans:2;widows:2}
+  }
+  @media (max-width:1100px){
+    .wrap{flex-direction:column}
+    .panel{position:static;width:100%;flex:1 1 auto}
+    .sheet{width:100%;min-height:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<aside class="panel">
+  <h1>因數練習卷產生器</h1>
+  <p class="sub">國小五年級．因數與公因數</p>
+
+  <div class="grp">
+    <div class="t">卷首</div>
+    <div class="row"><label>標題</label><input type="text" id="title" value="因數練習卷"></div>
+    <div class="row"><label>機構</label><input type="text" id="org" value="百宏文教機構"></div>
+    <div class="row"><label>份數</label><input type="number" id="copies" value="1" min="1" max="20"></div>
+    <div class="row"><label>數字範圍</label>
+      <select id="lv">
+        <option value="20">20 以內（入門）</option>
+        <option value="60">60 以內（基礎）</option>
+        <option value="100">100 以內（普通）</option>
+        <option value="150">150 以內（進階）</option>
+        <option value="200" selected>200 以內（挑戰）</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grp">
+    <div class="t">題型與題數</div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="H" checked><i></i></span>
+      <span class="nm">一、因數配對階梯</span><input type="number" data-n="H" value="4" min="1" max="12"></div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="A" checked><i></i></span>
+      <span class="nm">二、寫出所有因數</span><input type="number" data-n="A" value="8" min="1" max="20"></div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="B" checked><i></i></span>
+      <span class="nm">三、乘法算式填空</span><input type="number" data-n="B" value="8" min="1" max="20"></div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="C" checked><i></i></span>
+      <span class="nm">四、判斷是不是因數</span><input type="number" data-n="C" value="8" min="1" max="20"></div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="D" checked><i></i></span>
+      <span class="nm">五、因數的個數</span><input type="number" data-n="D" value="6" min="1" max="20"></div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="E" checked><i></i></span>
+      <span class="nm">六、公因數與最大公因數</span><input type="number" data-n="E" value="6" min="1" max="20"></div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="F"><i></i></span>
+      <span class="nm">七、質數或合數</span><input type="number" data-n="F" value="8" min="1" max="20"></div>
+    <div class="sec"><span class="sw"><input type="checkbox" data-s="G"><i></i></span>
+      <span class="nm">八、應用問題</span><input type="number" data-n="G" value="3" min="1" max="6"></div>
+  </div>
+
+  <div class="grp">
+    <div class="t">其他</div>
+    <div class="row"><label>階梯欄數</label>
+      <select id="hCols"><option value="2">2 欄</option><option value="3" selected>3 欄</option><option value="4">4 欄</option></select>
+    </div>
+    <div class="row"><label>階梯字級</label>
+      <select id="hSize"><option value="l">大</option><option value="m" selected>中</option><option value="s">小</option></select>
+    </div>
+    <div class="row"><label>配對階梯給第一組</label><span class="sw"><input type="checkbox" id="hint" checked><i></i></span></div>
+    <div class="row"><label>附答案卷</label><span class="sw"><input type="checkbox" id="withAns" checked><i></i></span></div>
+    <div class="row"><label>顯示配分</label><span class="sw"><input type="checkbox" id="showPts" checked><i></i></span></div>
+  </div>
+
+  <div class="btns">
+    <button id="gen">重新產生</button>
+    <button id="prt">列印</button>
+  </div>
+  <p class="note">每份卷有獨立卷號，答案卷印在所有題目卷之後、卷號對應。列印時左側面板不會出現。</p>
+</aside>
+
+<main class="sheets" id="sheets"></main>
+</div>
+
+<script>
+/* ---------- 工具 ---------- */
+const rnd = n => Math.floor(Math.random()*n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const serial = () => 'No.'+Math.random().toString(36).slice(2,6).toUpperCase();
+
+const factors = n => { const r=[]; for(let i=1;i*i<=n;i++) if(n%i===0){ r.push(i); if(i!==n/i) r.push(n/i);} return r.sort((a,b)=>a-b); };
+const isPrime = n => n>1 && factors(n).length===2;
+const gcd = (a,b) => b? gcd(b,a%b) : a;
+
+/* 依範圍取數字池；max 直接是選單值 */
+function pools(max){
+  const all=[], comp=[], prime=[];
+  for(let n=2;n<=max;n++){ all.push(n); (isPrime(n)?prime:comp).push(n); }
+  // 「寫出所有因數」用合數（不限制因數個數，180 這類多因數的數字很好用）
+  let good = comp.slice();
+  // 大範圍時偏重較大的數，避免整卷都是小數字
+  if(max>100){
+    const big = good.filter(n=>n>max/2);
+    good = good.concat(big, big);   // 大數字加權
+  }
+  // 因數配對階梯：挑因數多的數字才有配對的價值
+  const minK = max<=20 ? 4 : max<=60 ? 6 : 8;
+  let rich = comp.filter(n=>factors(n).length>=minK);
+  if(!rich.length) rich = comp.slice();
+  return {max, all, comp, prime, good, rich};
+}
+
+/* ---------- 各題型出題 ---------- */
+// H 因數配對階梯：N =（1）×（N）=（2）×（…）…
+function genH(n, P){
+  const out=[], used=new Set(); let g=0;
+  while(out.length<n && g++<900){
+    const x = pick(P.rich);
+    if(used.has(x)) continue; used.add(x);
+    const fs = factors(x);
+    const pairs = [];
+    for(const f of fs){ if(f*f<=x) pairs.push([f, x/f]); }
+    out.push({x, pairs, count: fs.length});
+  }
+  return out;
+}
+
+// A 寫出所有因數
+function genA(n, P){
+  const out=[], used=new Set(); let g=0;
+  while(out.length<n && g++<800){
+    const x = pick(P.good);
+    if(used.has(x)) continue; used.add(x);
+    out.push({x, ans: factors(x).join('、')});
+  }
+  return out;
+}
+// B 乘法算式填空：x = a × □
+function genB(n, P){
+  const out=[], used=new Set(); let g=0;
+  while(out.length<n && g++<900){
+    const x = pick(P.good);
+    let fs = factors(x).filter(f=>f!==1 && f!==x);
+    if(!fs.length) continue;
+    const mid = fs.filter(f=>f>=3 && x/f>=3);      // 兩個因數都 ≥3 較有練習價值
+    if(mid.length) fs = mid;
+    const a = pick(fs), b = x/a;
+    const key = x+'_'+a;
+    if(used.has(key)) continue; used.add(key);
+    out.push({x, a, b});
+  }
+  return out;
+}
+// C 判斷 a 是不是 x 的因數
+function genC(n, P){
+  const out=[], used=new Set(); let g=0;
+  while(out.length<n && g++<900){
+    const x = pick(P.comp);
+    const yes = Math.random()<0.5;
+    let a;
+    if(yes){ const fs=factors(x).filter(f=>f!==1 && f!==x); if(!fs.length) continue; a=pick(fs); }
+    else { a = 2 + rnd(Math.min(x, P.max>100?30:20)-1); if(x%a===0) continue; }
+    const key = a+'|'+x;
+    if(used.has(key)) continue; used.add(key);
+    out.push({a, x, ans: x%a===0});
+  }
+  return out;
+}
+// D 因數的個數
+function genD(n, P){
+  const out=[], used=new Set(); let g=0;
+  while(out.length<n && g++<800){
+    const x = pick(P.good);
+    if(used.has(x)) continue; used.add(x);
+    out.push({x, ans: factors(x).length});
+  }
+  return out;
+}
+// E 公因數與最大公因數
+function genE(n, P){
+  const out=[], used=new Set(); let g=0;
+  const cap = P.max;
+  const dMax = cap<=20 ? 5 : cap<=60 ? 9 : cap<=100 ? 12 : 20;   // 共同因數的上限
+  while(out.length<n && g++<3000){
+    const d = 2 + rnd(dMax-1);                  // 保證有共同因數
+    const m = 2 + rnd(Math.max(1,Math.floor(cap/d)-1));
+    const k = 2 + rnd(Math.max(1,Math.floor(cap/d)-1));
+    if(m===k) continue;
+    const a = d*m, b = d*k;
+    if(a<6||b<6||a>cap||b>cap) continue;
+    const G = gcd(a,b);
+    if(G===1) continue;
+    if(factors(G).length>6) continue;           // 公因數太多不好寫
+    const key = Math.min(a,b)+'_'+Math.max(a,b);
+    if(used.has(key)) continue; used.add(key);
+    const com = factors(G);
+    out.push({a:Math.min(a,b), b:Math.max(a,b), com:com.join('、'), g:G});
+  }
+  return out;
+}
+// F 質數或合數
+function genF(n, P){
+  const out=[], used=new Set(); let g=0;
+  while(out.length<n && g++<800){
+    const x = Math.random()<0.5 ? pick(P.prime) : pick(P.comp);
+    if(x<2 || used.has(x)) continue; used.add(x);
+    out.push({x, ans: isPrime(x) ? '質數' : '合數'});
+  }
+  return out;
+}
+// G 應用問題
+const WORD = [
+  (P)=>{ const s=P.max>100?2:1;
+    const d=2+rnd(6*s), m=2+rnd(6), k=2+rnd(6);
+    const a=d*m, b=d*k; const G=gcd(a,b);
+    return {q:`老師有 ${a} 顆糖果和 ${b} 塊餅乾，要平分裝成幾個一樣的袋子，每袋的糖果數相同、餅乾數也相同，而且不能有剩下。最多可以裝成幾袋？`,
+            a:`${a} 和 ${b} 的最大公因數是 ${G}，最多可以裝成 ${G} 袋。`}; },
+  (P)=>{ const s=P.max>100?2:1;
+    const d=2+rnd(6*s), m=2+rnd(5), k=2+rnd(5);
+    const a=d*m, b=d*k; const G=gcd(a,b);
+    return {q:`一張長 ${a} 公分、寬 ${b} 公分的長方形色紙，要剪成一樣大的正方形且不浪費，正方形的邊長最長是幾公分？`,
+            a:`${a} 和 ${b} 的最大公因數是 ${G}，邊長最長是 ${G} 公分。`}; },
+  (P)=>{ const x = pick(P.good); const fs=factors(x);
+    const ok = fs.filter(f=>f>=2 && x/f>=2);
+    return {q:`小明有 ${x} 顆彈珠，要排成一個長方形陣列（每排數量相同，至少 2 排、每排至少 2 顆）。請寫出所有可能的排法（幾排 × 每排幾顆）。`,
+            a: ok.map(f=>`${f}×${x/f}`).join('、') + `，共 ${ok.length} 種。`}; },
+  (P)=>{ const x = pick(P.good); const fs=factors(x).filter(f=>f>1&&f<x);
+    return {q:`${x} 除了 1 和它本身以外，還有哪些因數？請全部寫出來。`,
+            a: fs.length? fs.join('、') : '沒有（它是質數）'}; },
+  (P)=>{ const d=3+rnd(5), m=2+rnd(5), k=2+rnd(5);
+    const a=d*m, b=d*k; const G=gcd(a,b);
+    return {q:`班上有 ${a} 位男生和 ${b} 位女生，要分成人數相同的幾組，每組的男生人數相同、女生人數也相同。最多可以分成幾組？每組有幾位男生、幾位女生？`,
+            a:`最大公因數是 ${G}，最多 ${G} 組，每組 ${a/G} 位男生、${b/G} 位女生。`}; },
+];
+function genG(n, P){
+  const idx = shuffle([...WORD.keys()]);
+  const out=[];
+  for(let i=0;i<n;i++) out.push(WORD[idx[i%idx.length]](P));
+  return out;
+}
+
+/* ---------- 版面 ---------- */
+const SEC = {
+  H:{h:'兩兩配對，把因數一組一組找出來。', cols:2, pts:6},
+  A:{h:'寫出下面各數的所有因數。', cols:1, pts:2},
+  B:{h:'把算式補完整。', cols:3, pts:2},
+  C:{h:'下面的敘述對的畫「○」，錯的畫「×」。', cols:2, pts:2},
+  D:{h:'下面各數共有幾個因數？', cols:3, pts:2},
+  E:{h:'寫出下面兩個數的所有公因數，並圈出最大公因數。', cols:1, pts:4},
+  F:{h:'判斷下面各數是質數還是合數。', cols:3, pts:2},
+  G:{h:'應用問題：請寫出算式和答案。', cols:1, pts:6},
+};
+const CN = ['一','二','三','四','五','六','七'];
+
+function renderSection(key, items, idx, showAns, showPts, hint, hSize, hCols){
+  if(!items.length) return '';
+  const meta = SEC[key];
+  const total = items.length * meta.pts;
+  let body = '';
+
+  const A = (v, w) => showAns
+    ? `<span class="ln ans" style="${w||''}">${v}</span>`
+    : `<span class="ln" style="${w||''}">&nbsp;</span>`;
+  const BX = v => `<span class="bx${showAns?' ans':''}">${showAns?v:'&nbsp;'}</span>`;
+
+  if(key==='H'){
+    const cells = items.map((q,i)=>{
+      const rows = q.pairs.map((pr,k)=>{
+        const lead = k===0 ? `<span class="pl">${q.x}</span>` : `<span class="pl"></span>`;
+        const show = showAns || (k===0 && hint);
+        const cls  = show ? (showAns && !(k===0&&hint) ? ' ans' : ' eg') : '';
+        return `<div class="prow">${lead}<span class="peq">＝</span>` +
+               `<span class="pp">（<span class="pb${cls}">${show?pr[0]:'&nbsp;'}</span>）</span>` +
+               `<span class="px">×</span>` +
+               `<span class="pp">（<span class="pb${cls}">${show?pr[1]:'&nbsp;'}</span>）</span></div>`;
+      }).join('');
+      const cnt = `<div class="psum">所以 ${q.x} 共有<span class="bx${showAns?' ans':''}" style="width:2.9em">${showAns?q.count:'&nbsp;'}</span>個因數。</div>`;
+      return `<div class="pair"><div class="pno">${i+1}.</div><div class="pbody">${rows}${cnt}</div></div>`;
+    });
+    return `<section class="sect">
+      <h2>${CN[idx]}、${meta.h}${showPts?`<em>（每題 ${meta.pts} 分，共 ${items.length*meta.pts} 分）</em>`:''}</h2>
+      <div class="pgrid" data-size="${hSize||'m'}" style="column-count:${hCols||meta.cols}">${cells.join('')}</div>
+    </section>`;
+  }
+  if(key==='A'){
+    body = items.map((q,i)=>`<div class="it"><span class="no">${i+1}.</span>
+      <span class="num">${q.x}</span><span>：</span>${A(q.ans)}</div>`).join('');
+  }
+  if(key==='B'){
+    body = items.map((q,i)=>`<div class="it"><span class="no">${i+1}.</span>
+      <span class="num">${q.x}</span><span>＝ ${q.a} ×</span>${BX(q.b)}</div>`).join('');
+  }
+  if(key==='C'){
+    body = items.map((q,i)=>`<div class="it"><span class="no">${i+1}.</span>
+      <span class="jd${showAns?' ans':''}">${showAns?(q.ans?'○':'×'):'&nbsp;'}</span>
+      <span>${q.a} 是 ${q.x} 的因數。</span></div>`).join('');
+  }
+  if(key==='D'){
+    body = items.map((q,i)=>`<div class="it"><span class="no">${i+1}.</span>
+      <span class="num">${q.x}</span><span>有</span>${BX(q.ans)}<span>個因數</span></div>`).join('');
+  }
+  if(key==='E'){
+    body = items.map((q,i)=>`<div class="it" style="flex-wrap:wrap">
+      <span class="no">${i+1}.</span>
+      <span class="num">${q.a}</span><span>和</span><span class="num">${q.b}</span>
+      <span>的公因數：</span>${A(showAns?`${q.com}　（最大公因數 ${q.g}）`:'')}</div>`).join('');
+  }
+  if(key==='F'){
+    body = items.map((q,i)=>`<div class="it"><span class="no">${i+1}.</span>
+      <span class="num">${q.x}</span><span>是</span>${A(q.ans,'max-width:4.5em')}</div>`).join('');
+  }
+  if(key==='G'){
+    body = items.map((q,i)=>`<div class="wp"><span class="no" style="margin-right:4px">${i+1}.</span>${q.q}
+      <div class="work${showAns?' ans':''}">${showAns?('答：'+q.a):''}</div></div>`).join('');
+  }
+
+  const gridStyle = key==='G' ? '' : `style="grid-template-columns:repeat(${meta.cols},1fr)${key==='H'?';gap:10px 22px':''}"`;
+  return `<section class="sect">
+    <h2>${CN[idx]}、${meta.h}${showPts?`<em>（每題 ${meta.pts} 分，共 ${total} 分）</em>`:''}</h2>
+    <div class="grid" ${gridStyle}>${body}</div>
+  </section>`;
+}
+
+function buildSheet(data, cfg, sn, showAns){
+  let idx = 0;
+  const secs = data.map(d => renderSection(d.key, d.items, idx++, showAns, cfg.showPts, cfg.hint, cfg.hSize, cfg.hCols)).join('');
+  const total = data.reduce((s,d)=> s + d.items.length*SEC[d.key].pts, 0);
+  return `<section class="sheet">
+    <div class="head">
+      <div class="title">${cfg.title}${showAns?'<span class="tag">答案卷</span>':''}</div>
+      <div class="org">${cfg.org}</div>
+    </div>
+    <div class="meta"><span>班級：</span><span>座號：</span><span>姓名：</span>
+      <span>得分：</span><span class="sn">${sn}</span></div>
+    ${secs}
+    <div class="foot"><span>本卷共 ${data.reduce((s,d)=>s+d.items.length,0)} 題${cfg.showPts?`，滿分 ${total} 分`:''}</span><span>${cfg.org}</span></div>
+  </section>`;
+}
+
+/* ---------- 主流程 ---------- */
+const GEN = {H:genH, A:genA, B:genB, C:genC, D:genD, E:genE, F:genF, G:genG};
+
+function readCfg(){
+  const secs = [...document.querySelectorAll('[data-s]')]
+    .filter(x=>x.checked)
+    .map(x=>({key:x.dataset.s, n:+document.querySelector(`[data-n="${x.dataset.s}"]`).value}));
+  return {
+    title: document.getElementById('title').value.trim() || '因數練習卷',
+    org: document.getElementById('org').value.trim(),
+    copies: +document.getElementById('copies').value,
+    lv: +document.getElementById('lv').value,
+    withAns: document.getElementById('withAns').checked,
+    showPts: document.getElementById('showPts').checked,
+    hint: document.getElementById('hint').checked,
+    hSize: document.getElementById('hSize').value,
+    hCols: +document.getElementById('hCols').value,
+    secs
+  };
+}
+
+function generate(){
+  const cfg = readCfg();
+  if(!cfg.secs.length){ alert('請至少開啟一個題型。'); return; }
+  const P = pools(cfg.lv);
+  const papers=[], keys=[];
+  for(let i=0;i<cfg.copies;i++){
+    const data = cfg.secs.map(s=>({key:s.key, items:GEN[s.key](s.n, P)})).filter(d=>d.items.length);
+    const sn = serial();
+    papers.push(buildSheet(data, cfg, sn, false));
+    if(cfg.withAns) keys.push(buildSheet(data, cfg, sn, true));
+  }
+  document.getElementById('sheets').innerHTML = papers.concat(keys).join('');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('gen').addEventListener('click', generate);
+document.getElementById('prt').addEventListener('click', ()=>window.print());
+generate();
+</script>
+</body>
+</html>
