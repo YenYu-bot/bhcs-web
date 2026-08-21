@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分數四大題型出題器｜擴分・約分・最簡分數・通分</title>
+<style>
+  :root{
+    --ink:#111;
+    --line:#2f6fb0;
+    --ans:#e00000;
+    --panel:#f2f4f6;
+    --panel-line:#d3d9df;
+    --rowh:22mm;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:#e9ecef;color:var(--ink);
+    font-family:"王漢宗中仿宋繁","Times New Roman","Microsoft JhengHei","PMingLiU",serif;
+  }
+
+  /* ===== 控制面板 ===== */
+  .panel{
+    position:sticky;top:0;z-index:20;background:var(--panel);
+    border-bottom:1px solid var(--panel-line);padding:10px 14px;
+    display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;
+    font-family:"Microsoft JhengHei","Noto Sans TC",sans-serif;font-size:14px;
+  }
+  .panel h1{font-size:16px;margin:0 8px 0 0;font-weight:700;letter-spacing:1px;align-self:center;white-space:nowrap}
+  .grp{display:flex;flex-direction:column;gap:4px}
+  .grp>label{font-size:12px;color:#555}
+  .grp .line{display:flex;align-items:center;gap:6px}
+  input[type=number]{width:56px;padding:4px 6px;border:1px solid #b7bfc7;border-radius:4px;font:inherit}
+  select{padding:4px 6px;border:1px solid #b7bfc7;border-radius:4px;font:inherit;background:#fff}
+  .chk{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  button{font:inherit;font-weight:600;padding:8px 16px;border-radius:5px;border:1px solid #2f6fb0;background:#2f6fb0;color:#fff;cursor:pointer}
+  button.ghost{background:#fff;color:#2f6fb0}
+  button:hover{filter:brightness(1.08)}
+  .hint{font-size:12px;color:#666;width:100%;margin-top:-2px}
+
+  /* ===== 紙張（A4，四邊 10mm） ===== */
+  .sheet{
+    width:210mm;height:297mm;overflow:hidden;
+    margin:16px auto;padding:10mm;background:#fff;
+    box-shadow:0 2px 10px rgba(0,0,0,.15);
+    display:flex;flex-direction:column;
+  }
+  .head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    border-bottom:2px solid var(--line);padding-bottom:5px;margin-bottom:6px;flex:none;
+  }
+  .head .title{font-size:23px;font-weight:700;letter-spacing:6px}
+  .head .meta{font-size:11px;line-height:1.6;text-align:right;white-space:nowrap}
+  .stem{font-size:14px;margin:0 0 6px;flex:none}
+  .foot{margin-top:auto;font-size:11px;color:#888;display:flex;justify-content:space-between;padding-top:4px;flex:none}
+
+  /* ===== 分數排版 ===== */
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px}
+  .frac .num{border-bottom:1.6px solid var(--ink);padding:0 4px;line-height:1.2}
+  .frac .den{padding:0 4px;line-height:1.2}
+  .whole{margin-right:1px}
+  .term{white-space:nowrap;display:inline-flex;align-items:center}
+  .eq{margin:0 3px}
+  .box{display:inline-block;min-width:34px;height:19px;line-height:17px;border:1px solid #444;text-align:center;margin:1px}
+  body.student .ans{visibility:hidden}
+  body.teacher .ans{color:var(--ans);font-weight:700}
+
+  /* ===== 題目格線（固定列高，不隨題數伸縮） ===== */
+  .grid{
+    border-top:1.4px solid var(--line);border-left:1.4px solid var(--line);
+    display:grid;flex:none;
+  }
+  .grid .cell{
+    border-right:1.4px solid var(--line);border-bottom:1.4px solid var(--line);
+    padding:4px 6px;display:flex;align-items:center;gap:4px;
+    font-size:19px;overflow:hidden;
+  }
+  .no{font-size:12px;color:#333;min-width:24px;flex:none;align-self:center}
+  .cell.tall{flex-direction:column;align-items:stretch;justify-content:center;gap:2px;font-size:17px}
+  .cell.tall .qline,.cell.tall .aline{display:flex;justify-content:space-around;align-items:center;width:100%}
+  .cell.tall .aline{min-height:30px}
+  .cell.tall .arrow{display:flex;justify-content:space-around;width:100%;font-size:14px;color:#555}
+  .cell.tall .topbar{display:flex;align-items:center;gap:2px}
+  .sep{margin:0 1px}
+
+  @media print{
+    @page{size:A4;margin:10mm}
+    body{background:#fff}
+    .panel{display:none}
+    .sheet{
+      width:190mm;height:277mm;margin:0;padding:0;box-shadow:none;
+      page-break-after:always;break-after:page;
+    }
+    .sheet:last-of-type{page-break-after:auto;break-after:auto}
+  }
+</style>
+</head>
+<body class="student">
+
+<div class="panel">
+  <h1>分數出題器</h1>
+
+  <div class="grp"><label>版本</label><div class="line">
+    <select id="version">
+      <option value="student">學用版（空白作答）</option>
+      <option value="teacher">教用版（紅字答案）</option>
+    </select></div></div>
+
+  <div class="grp"><label>難度</label><div class="line">
+    <select id="diff">
+      <option value="0">簡單</option>
+      <option value="1" selected>普通</option>
+      <option value="2">挑戰</option>
+    </select></div></div>
+
+  <div class="grp"><label>帶分數比例</label><div class="line">
+    <select id="mixed">
+      <option value="0">不出帶分數</option>
+      <option value="0.2" selected>約 2 成</option>
+      <option value="0.4">約 4 成</option>
+    </select></div></div>
+
+  <div class="grp"><label>題型與題數（超過一頁會自動續頁）</label><div class="line">
+    <span class="chk"><input type="checkbox" id="c_expand" checked><label for="c_expand">擴分</label><input type="number" id="n_expand" value="11" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_reduce" checked><label for="c_reduce">約分</label><input type="number" id="n_reduce" value="20" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_simple" checked><label for="c_simple">最簡分數</label><input type="number" id="n_simple" value="40" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_common" checked><label for="c_common">通分</label><input type="number" id="n_common" value="15" min="1" max="99"></span>
+  </div></div>
+
+  <div class="grp"><label>&nbsp;</label><div class="line">
+    <button id="gen">重新出題</button>
+    <button id="print" class="ghost">列印</button>
+  </div></div>
+
+  <div class="hint">滿頁題數：擴分 11／約分 20／最簡分數 40／通分 15。填超過就自動接續頁，不會擠壓版面。版本切換不換題。</div>
+</div>
+
+<div id="out"></div>
+
+<script>
+/* ---------- 工具 ---------- */
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const range=(a,b)=>{const r=[];for(let i=a;i<=b;i++)r.push(i);return r;};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function divisorsOver1(n){const r=[];for(let i=2;i<=n;i++)if(n%i===0)r.push(i);return r;}
+
+/* ---------- 顯示元件 ---------- */
+const ansSpan=v=>`<span class="ans">${v}</span>`;
+const box=v=>`<span class="box">${ansSpan(v)}</span>`;
+const frac=(n,d)=>`<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`;
+function term(t){
+  const w=t.whole?`<span class="whole">${t.whole}</span>`:'';
+  const n=t.hide==='n'?box(t.num):t.num;
+  const d=t.hide==='d'?box(t.den):t.den;
+  return `<span class="term">${w}${frac(n,d)}</span>`;
+}
+function ansTerm(t){
+  const w=t.whole?`<span class="whole">${ansSpan(t.whole)}</span>`:'';
+  return `<span class="term">${w}${frac(box(t.num),box(t.den))}</span>`;
+}
+
+/* ---------- 出題邏輯 ---------- */
+function genExpand(diff,mx){
+  const maxDen=[9,13,20][diff],maxK=[6,9,12][diff];
+  let d,n;
+  do{d=rnd(2,maxDen);n=rnd(1,d-1);}while(gcd(n,d)!==1);
+  const ks=shuffle(range(2,maxK)).slice(0,4).sort((a,b)=>a-b);
+  const whole=Math.random()<mx?rnd(1,9):0;
+  const hides=shuffle(['n','d','n','d']);
+  return {base:{whole,num:n,den:d,hide:null},
+    terms:ks.map((k,i)=>({whole,num:n*k,den:d*k,hide:hides[i]}))};
+}
+function genReduce(diff,mx){
+  const Mpool=[[4,6,8,9],[4,6,8,9,10,12],[6,8,9,10,12,15,16,18]][diff];
+  const maxQ=[7,9,12][diff];
+  let p,q,M,divs;
+  do{M=pick(Mpool);divs=divisorsOver1(M);q=rnd(2,maxQ);p=rnd(1,q-1);}
+  while(gcd(p,q)!==1||divs.length<2);
+  const [d1,d2]=shuffle(divs).slice(0,2).sort((a,b)=>a-b);
+  const whole=Math.random()<mx?rnd(1,9):0;
+  const hides=shuffle(['n','d']);
+  return {base:{whole,num:p*M,den:q*M,hide:null},
+    terms:[{whole,num:p*M/d1,den:q*M/d1,hide:hides[0]},
+           {whole,num:p*M/d2,den:q*M/d2,hide:hides[1]}]};
+}
+function genSimple(diff,mx){
+  const maxQ=[9,13,18][diff],maxK=[5,7,9][diff];
+  let p,q;
+  do{q=rnd(2,maxQ);p=rnd(1,q-1);}while(gcd(p,q)!==1);
+  const k=rnd(2,maxK);
+  const whole=Math.random()<mx?rnd(1,15):0;
+  return {q:{whole,num:p*k,den:q*k,hide:null},a:{whole,num:p,den:q}};
+}
+function genCommon(diff,mx){
+  const Lpool=[[12,18,20,24],[24,30,36,40,60],[36,60,72,84,90,120]][diff];
+  let L,ds=null;
+  for(let t=0;t<200;t++){
+    L=pick(Lpool);
+    const cand=divisorsOver1(L).filter(x=>x<L);
+    if(cand.length<3)continue;
+    const s=shuffle(cand).slice(0,3);
+    if(lcm(lcm(s[0],s[1]),s[2])===L){ds=s;break;}
+  }
+  if(!ds){L=60;ds=[3,4,5];}
+  ds.sort((a,b)=>a-b);
+  const useMixed=Math.random()<mx;
+  const qs=ds.map(d=>{
+    let n;do{n=rnd(1,d-1);}while(d>2&&gcd(n,d)!==1);
+    return {whole:useMixed?rnd(1,9):0,num:n,den:d,hide:null};
+  });
+  return {qs,as:qs.map(f=>({whole:f.whole,num:f.num*(L/f.den),den:L}))};
+}
+
+/* ---------- 分頁版面 ---------- */
+function sheetHead(title,stem){
+  return `<div class="head">
+    <div class="title">${title}</div>
+    <div class="meta">（　）年（　）班　姓名：＿＿＿＿＿＿<br>（　）月（　）日　作答時間（　）分（　）秒</div>
+  </div><p class="stem">${stem}</p>`;
+}
+function paginate(title,stem,items,cfg,renderCell){
+  const per=cfg.rows*cfg.cols,pages=[];
+  for(let i=0;i<items.length;i+=per)pages.push(items.slice(i,i+per));
+  const total=pages.length;
+  return pages.map((pg,pi)=>{
+    const cells=pg.map((it,j)=>renderCell(it,pi*per+j+1)).join('');
+    return `<section class="sheet">
+      ${sheetHead(title+(pi?'（續）':''),stem)}
+      <div class="grid" style="grid-template-columns:repeat(${cfg.cols},1fr);grid-auto-rows:${cfg.rowh}">${cells}</div>
+      <div class="foot"><span>百宏文教機構</span><span>${title.replace(/\s/g,'')}　${pi+1} / ${total}</span></div>
+    </section>`;
+  }).join('');
+}
+
+const CFG={
+  expand:{cols:1,rows:11,rowh:'21.2mm'},
+  reduce:{cols:2,rows:10,rowh:'23.3mm'},
+  simple:{cols:4,rows:10,rowh:'23.3mm'},
+  common:{cols:3,rows:5,rowh:'46.5mm'}
+};
+
+function cellChain(it,no){
+  const chain=[term(it.base),...it.terms.map(term)].join('<span class="eq">＝</span>');
+  return `<div class="cell"><span class="no">(${no})</span><span>${chain}</span></div>`;
+}
+function cellSimple(it,no){
+  return `<div class="cell"><span class="no">(${no})</span>${term(it.q)}<span class="eq">＝</span>${ansTerm(it.a)}</div>`;
+}
+function cellCommon(it,no){
+  return `<div class="cell tall">
+    <div class="topbar"><span class="no">(${no})</span><div class="qline" style="flex:1">${it.qs.map(term).join('<span class="sep">，</span>')}</div></div>
+    <div class="arrow"><span>↓</span><span>↓</span><span>↓</span></div>
+    <div class="aline">${it.as.map(ansTerm).join('')}</div>
+  </div>`;
+}
+
+/* ---------- 主流程 ---------- */
+function generate(){
+  const diff=+document.getElementById('diff').value;
+  const mx=parseFloat(document.getElementById('mixed').value);
+  const on=id=>document.getElementById(id).checked;
+  const num=id=>Math.max(1,Math.min(99,+document.getElementById(id).value||1));
+  const make=(n,fn)=>Array.from({length:n},()=>fn(diff,mx));
+  const html=[];
+  if(on('c_expand')) html.push(paginate('擴　分','用擴分的方法把適當的數填入□內：',make(num('n_expand'),genExpand),CFG.expand,cellChain));
+  if(on('c_reduce')) html.push(paginate('約　分','用約分的方法把適當的數填入□內：',make(num('n_reduce'),genReduce),CFG.reduce,cellChain));
+  if(on('c_simple')) html.push(paginate('最簡分數','將各分數約成最簡分數：',make(num('n_simple'),genSimple),CFG.simple,cellSimple));
+  if(on('c_common')) html.push(paginate('通　分','將各題分數的分母通分：（用最小公倍數當公分母）',make(num('n_common'),genCommon),CFG.common,cellCommon));
+  document.getElementById('out').innerHTML=html.join('')||'<section class="sheet"><p class="stem">請至少勾選一種題型。</p></section>';
+}
+
+document.getElementById('gen').addEventListener('click',generate);
+document.getElementById('print').addEventListener('click',()=>window.print());
+document.getElementById('version').addEventListener('change',e=>{document.body.className=e.target.value;});
+['diff','mixed'].forEach(id=>document.getElementById(id).addEventListener('change',generate));
+generate();
+</script>
+</body>
+</html>
