@@ -111,7 +111,8 @@ section{padding-block:clamp(3.2rem,7vw,5.4rem)}
   backdrop-filter:blur(10px);border-bottom:1px solid var(--grid);
 }
 .masthead .bar{display:flex;align-items:center;gap:1rem;height:66px}
-.brand{display:flex;align-items:baseline;gap:.55rem;text-decoration:none;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;flex:0 0 auto}
+.brand img{display:block;width:38px;height:38px;object-fit:contain}
 .brand b{font-family:var(--serif);font-weight:900;font-size:1.28rem;letter-spacing:.02em}
 .brand span{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;color:var(--ink-faint)}
 .nav{margin-left:auto;display:flex;gap:.15rem;align-items:center}
@@ -292,7 +293,23 @@ td .num{font-weight:600}
 .foot li{margin-bottom:.55rem}
 .foot .legal{border-top:1px solid #2C3A54;padding-top:1.5rem;font-size:.82rem;
   display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;color:#7F8DA3}
-.foot .brandline{font-family:var(--serif);font-weight:900;color:#fff;font-size:1.2rem;margin-bottom:.6rem}
+.foot .brandline{font-family:var(--serif);font-weight:900;color:#fff;font-size:1.2rem;margin-bottom:.6rem;
+  display:flex;align-items:center;gap:.5rem}
+.foot .brandline img{width:30px;height:30px;object-fit:contain;filter:brightness(0) invert(1)}
+
+/* 師資卡 */
+.staff{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.staff-card{background:var(--paper);border:1px solid var(--grid-strong);border-radius:var(--radius);
+  padding:1.4rem;display:flex;gap:1.15rem;align-items:flex-start}
+.staff-card img{width:92px;height:92px;flex:0 0 92px;border-radius:50%;object-fit:cover;
+  background:var(--surface);border:1px solid var(--grid-strong)}
+.staff-card .role{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--red);
+  display:block;margin-bottom:.4rem}
+.staff-card h3{font-size:1.12rem;margin-bottom:.15em}
+.staff-card .yrs{font-family:var(--mono);font-size:.82rem;color:var(--ink-faint);margin-bottom:.6rem;display:block}
+.staff-card .motto{font-weight:700;font-size:.95rem;margin:0 0 .45em;color:var(--ink)}
+.staff-card p{font-size:.9rem;line-height:1.7;color:var(--ink-soft);margin:0}
+@media(max-width:420px){.staff-card{flex-direction:column}.staff-card img{width:80px;height:80px;flex:none}}
 
 /* ---------- 手機底部固定操作列 ---------- */
 .dock{
