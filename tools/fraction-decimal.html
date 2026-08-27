@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分數小數互換 練習卷產生器</title>
+<style>
+:root{
+  --ink:#141414; --rule:#c9c4bb; --red:#EE0000;
+  --panel:#1d2a32; --panel-2:#26363f; --accent:#f2b632;
+  --cols:2;
+  --pageW:210mm; --pageH:297mm; --padV:12mm; --padH:10mm;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#e9e6df;color:var(--ink);
+     font-family:"王漢宗中仿宋繁","Times New Roman","Noto Serif TC",serif;}
+
+/* ---------- 控制面板（不列印） ---------- */
+.panel{background:var(--panel);color:#e8eef1;padding:18px 22px 22px;
+       font-family:"Noto Sans TC","Helvetica Neue",Arial,sans-serif;}
+.panel h1{margin:0 0 2px;font-size:17px;font-weight:700;letter-spacing:.04em}
+.panel .sub{font-size:12px;color:#9fb3bd;margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+fieldset{border:1px solid #3b505c;border-radius:6px;padding:10px 14px 12px;margin:0;background:var(--panel-2)}
+legend{font-size:11px;letter-spacing:.12em;color:var(--accent);padding:0 6px}
+label{font-size:13px;display:inline-flex;align-items:center;gap:5px;margin:3px 12px 3px 0;cursor:pointer}
+input[type=text],input[type=number]{background:#0f181d;border:1px solid #3b505c;color:#e8eef1;
+       border-radius:4px;padding:5px 8px;font:inherit;font-size:13px}
+input[type=text]{width:180px} input[type=number]{width:74px}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent);margin:0}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+button{font:inherit;font-size:13px;font-weight:600;border:0;border-radius:5px;
+       padding:9px 18px;cursor:pointer;background:var(--accent);color:#1d2a32}
+button.ghost{background:transparent;color:#e8eef1;border:1px solid #3b505c}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#status{font-size:12px;color:#9fb3bd}
+#status b{color:var(--accent)}
+.hint{font-size:12px;color:#9fb3bd;margin-top:10px;line-height:1.6}
+
+/* ---------- 頁面 ---------- */
+#book{padding:24px 0 40px}
+.page{
+  width:var(--pageW); height:var(--pageH);
+  padding:var(--padV) var(--padH);
+  margin:0 auto 20px; background:#fff; box-shadow:0 2px 14px rgba(0,0,0,.18);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.pbody{flex:1 1 auto;min-height:0}
+.pfoot{flex:0 0 auto;border-top:1px solid var(--rule);padding-top:4px;margin-top:6px;
+       font-size:9pt;color:#777;display:flex;justify-content:space-between}
+
+/* 量測用容器（永不顯示） */
+#measure{position:absolute;left:-10000px;top:0;visibility:hidden;
+         width:calc(var(--pageW) - var(--padH)*2)}
+
+/* ---------- 考卷內容 ---------- */
+.head{border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:4px}
+.headtop{display:flex;justify-content:space-between;align-items:center}
+.school{font-size:12pt;letter-spacing:.3em}
+.title{font-size:20pt;font-weight:700;text-align:center;margin:2px 0 6px}
+.meta{display:flex;gap:18px;font-size:11pt;padding:6px 0 4px}
+.meta span{flex:1;border-bottom:1px solid var(--ink);padding-bottom:2px}
+.badge{font-size:10pt;border:1px solid var(--ink);padding:1px 8px;border-radius:3px;white-space:nowrap}
+.legend{font-size:10.5pt;margin:8px 0 4px;padding:5px 9px;background:#f1efe9;border-left:3px solid #8a8378;line-height:1.5}
+.secttl{font-size:13pt;font-weight:700;margin:10px 0 4px;padding:3px 8px;background:#D9D9D9}
+.qrow{display:flex;width:100%}
+.q{width:calc(100% / var(--cols));padding:0 10px 0 0;min-height:14mm;
+   display:flex;align-items:center;gap:6px;font-size:13pt}
+.qn{min-width:2.1em;text-align:right;color:#555;font-size:11pt}
+.eq{margin:0 .35em}
+.blank{display:inline-block;min-width:6.2em;height:1.5em;border-bottom:1px solid #444;vertical-align:-.35em}
+.ans{color:var(--red);font-weight:700}
+.fr{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;line-height:1.12;font-size:.95em}
+.fr .nu{border-bottom:1.4px solid currentColor;padding:0 .3em}
+.fr .de{padding:0 .3em}
+.mx{display:inline-flex;align-items:center;gap:.15em;vertical-align:middle}
+.rep{text-decoration:overline;text-decoration-thickness:1.4px}
+.krow{display:flex;width:100%}
+.k{width:25%;padding:3px 8px 3px 0;display:flex;align-items:center;gap:5px;font-size:12pt}
+
+@media print{
+  @page{size:A4;margin:var(--padV) var(--padH)}
+  body{background:#fff}
+  .panel,#measure{display:none !important}
+  #book{padding:0}
+  .page{width:auto;height:calc(var(--pageH) - var(--padV)*2);
+        padding:0;margin:0;box-shadow:none;break-after:page;page-break-after:always}
+  .page:last-child{break-after:auto;page-break-after:auto}
+  .ans,.secttl,.legend{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <h1>分數小數互換 · 練習卷產生器</h1>
+  <div class="sub">預覽已實際分頁，畫面上看到幾頁、列印就是幾頁（Ctrl/⌘ + P）。</div>
+
+  <div class="row">
+    <fieldset>
+      <legend>卷頭</legend>
+      <label>校名 <input type="text" id="school" value="百宏文教機構"></label><br>
+      <label>標題 <input type="text" id="title" value="分數與小數互換 練習卷"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>基礎題型　分母 2 / 4 / 5 / 8 / 10 / 20</legend>
+      <label><input type="checkbox" class="ty" value="A" checked> 分數 → 小數</label>
+      <label><input type="checkbox" class="ty" value="B" checked> 小數 → 分數</label><br>
+      <label><input type="checkbox" class="ty" value="C" checked> 帶分數 → 帶小數</label>
+      <label><input type="checkbox" class="ty" value="D" checked> 帶小數 → 帶分數</label>
+      <div style="margin-top:6px"><span style="font-size:12px;color:#9fb3bd">使用分母：</span>
+        <label><input type="checkbox" class="bd" value="2" checked>2</label>
+        <label><input type="checkbox" class="bd" value="4" checked>4</label>
+        <label><input type="checkbox" class="bd" value="5" checked>5</label>
+        <label><input type="checkbox" class="bd" value="8" checked>8</label>
+        <label><input type="checkbox" class="bd" value="10" checked>10</label>
+        <label><input type="checkbox" class="bd" value="20" checked>20</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>進階題型　分母 3 / 6 / 7 / 9（循環小數）</legend>
+      <label><input type="checkbox" class="ty" value="E" checked> 循環小數 → 分數</label>
+      <label><input type="checkbox" class="ty" value="F" checked> 帶循環小數 → 帶分數</label><br>
+      <label><input type="checkbox" class="ty" value="G"> 分數 → 循環小數（選用）</label>
+      <div style="margin-top:6px"><span style="font-size:12px;color:#9fb3bd">使用分母：</span>
+        <label><input type="checkbox" class="ad" value="3" checked>3</label>
+        <label><input type="checkbox" class="ad" value="6" checked>6</label>
+        <label><input type="checkbox" class="ad" value="7" checked>7</label>
+        <label><input type="checkbox" class="ad" value="9" checked>9</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>版面</legend>
+      <label>題數 <input type="number" id="count" value="32" min="4" max="200" step="1"></label>
+      <label>欄數 <input type="number" id="cols" value="2" min="1" max="4" step="1"></label><br>
+      <label><input type="radio" name="ver" value="student" checked> 學用版</label>
+      <label><input type="radio" name="ver" value="teacher"> 教用版（紅色答案）</label><br>
+      <label><input type="checkbox" id="grouped" checked> 依題型分節</label>
+      <label><input type="checkbox" id="keypage"> 附解答頁</label><br>
+      <label><input type="checkbox" id="fitone"> 自動縮題數以塞滿整數頁</label><br>
+      <label>亂數種子 <input type="number" id="seed" value="1" min="1" step="1"></label>
+    </fieldset>
+  </div>
+
+  <div class="actions">
+    <button id="gen">出題</button>
+    <button id="reroll" class="ghost">換一份（種子 +1）</button>
+    <button id="print" class="ghost">列印</button>
+    <span id="status"></span>
+  </div>
+  <div class="hint">
+    分數一律為最簡分數。循環節以上方橫線標示，例如 0.<span class="rep">3</span> = 0.333…。
+    學用版與教用版的答案欄寬度固定，兩版分頁位置完全一致。
+  </div>
+</div>
+
+<div id="measure"></div>
+<div id="book"></div>
+
+<script>
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ---------- 數學 ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gcd(a,b){while(b){[a,b]=[b,a%b];}return a;}
+function shuffle(a,rng){for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function expand(n,d){
+  const dg=[],seen=new Map(); let r=n%d;
+  while(r!==0 && !seen.has(r)){seen.set(r,dg.length);r*=10;dg.push(Math.floor(r/d));r%=d;}
+  if(r===0) return {nonRepeat:dg.join(''),repeat:''};
+  const i=seen.get(r);
+  return {nonRepeat:dg.slice(0,i).join(''),repeat:dg.slice(i).join('')};
+}
+
+/* ---------- 排版元件 ---------- */
+const frac=(n,d)=>`<span class="fr"><span class="nu">${n}</span><span class="de">${d}</span></span>`;
+const mixed=(w,n,d)=>`<span class="mx"><span>${w}</span>${frac(n,d)}</span>`;
+function decStr(w,n,d){const e=expand(n,d);
+  const b=e.repeat?`${e.nonRepeat}<span class="rep">${e.repeat}</span>`:e.nonRepeat;
+  return `${w}.${b}`;}
+const blank=()=>`<span class="blank"></span>`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild;}
+
+/* ---------- 題型 ---------- */
+const TYPES={
+  A:{sect:'將分數化成小數',       q:i=>frac(i.n,i.d),        a:i=>decStr(0,i.n,i.d)},
+  B:{sect:'將小數化成最簡分數',    q:i=>decStr(0,i.n,i.d),    a:i=>frac(i.n,i.d)},
+  C:{sect:'將帶分數化成小數',      q:i=>mixed(i.w,i.n,i.d),   a:i=>decStr(i.w,i.n,i.d)},
+  D:{sect:'將小數化成帶分數',      q:i=>decStr(i.w,i.n,i.d),  a:i=>mixed(i.w,i.n,i.d)},
+  E:{sect:'將循環小數化成最簡分數', q:i=>decStr(0,i.n,i.d),    a:i=>frac(i.n,i.d)},
+  F:{sect:'將循環小數化成帶分數',   q:i=>decStr(i.w,i.n,i.d),  a:i=>mixed(i.w,i.n,i.d)},
+  G:{sect:'將分數化成循環小數',     q:i=>frac(i.n,i.d),        a:i=>decStr(0,i.n,i.d)}
+};
+const MIXED_T=new Set(['C','D','F']);
+const ADV_T=new Set(['E','F','G']);
+const CN=['一','二','三','四','五','六','七'];
+function properFractions(dens){const o=[];for(const d of dens)for(let n=1;n<d;n++)if(gcd(n,d)===1)o.push({n,d});return o;}
+
+/* ---------- 量測 ---------- */
+const M=$('#measure');
+function measure(node){
+  M.appendChild(node);
+  const cs=getComputedStyle(node);
+  const h=node.getBoundingClientRect().height
+        +parseFloat(cs.marginTop)+parseFloat(cs.marginBottom);
+  M.removeChild(node);
+  return h;
+}
+function mm(v){const p=document.createElement('div');p.style.cssText='height:'+v+'mm;position:absolute;visibility:hidden';
+  document.body.appendChild(p);const h=p.getBoundingClientRect().height;p.remove();return h;}
+
+/* ---------- 出題 ---------- */
+function makeItems(rng,total){
+  const types=$$('.ty:checked').map(e=>e.value);
+  const bd=$$('.bd:checked').map(e=>+e.value);
+  const ad=$$('.ad:checked').map(e=>+e.value);
+  const usable=types.filter(t=>(ADV_T.has(t)?ad:bd).length>0);
+  if(!usable.length) return null;
+
+  const order=shuffle([...usable],rng);
+  const base=Math.floor(total/usable.length);
+  const need={}; order.forEach((t,i)=>need[t]=base+(i<total%usable.length?1:0));
+
+  const bucket={};
+  for(const t of usable){
+    const dens=ADV_T.has(t)?ad:bd;
+    let pool=properFractions(dens).map(f=>({...f,w:0}));
+    if(MIXED_T.has(t)){const ex=[];for(const f of pool)for(let w=1;w<=9;w++)ex.push({...f,w});pool=ex;}
+    shuffle(pool,rng);
+    const picked=[];
+    while(picked.length<need[t]) picked.push(...pool.slice(0,Math.max(1,need[t]-picked.length)));
+    bucket[t]=picked.slice(0,need[t]).map(f=>({...f,type:t}));
+  }
+  return {usable,bucket};
+}
+
+/* ---------- 建立區塊（含高度） ---------- */
+function buildBlocks(countOverride){
+  const cols=Math.min(4,Math.max(1,+$('#cols').value||2));
+  document.documentElement.style.setProperty('--cols',cols);
+  M.style.setProperty('--cols',cols);
+
+  const seed=+$('#seed').value||1;
+  const rng=mulberry32((seed*2654435761)%4294967296);
+  const teacher=$('input[name=ver]:checked').value==='teacher';
+  const grouped=$('#grouped').checked;
+  const keypage=$('#keypage').checked;
+
+  const total=Math.max(1,countOverride||+$('#count').value||24);
+  const made=makeItems(rng,total);
+  if(!made) return null;
+  const {usable,bucket}=made;
+
+  const blocks=[];
+  blocks.push({el:el(`
+    <div class="head">
+      <div class="headtop"><div class="school">${esc($('#school').value)}</div>
+      <div class="badge">${teacher?'教用版（含解答）':'學用版'}</div></div>
+      <div class="title">${esc($('#title').value)}</div>
+      <div class="meta"><span>班級：</span><span>姓名：</span><span>日期：</span><span>分數：</span></div>
+    </div>`)});
+
+  if(usable.some(t=>ADV_T.has(t))){
+    blocks.push({el:el(`<div class="legend">說明：小數上方的橫線表示循環節，例如
+      0.<span class="rep">3</span> = 0.333…、0.1<span class="rep">6</span> = 0.1666…、
+      0.<span class="rep">142857</span> = 0.142857142857…。分數請化為最簡分數。</div>`)});
+  }
+
+  let sections;
+  if(grouped){
+    sections=usable.filter(t=>bucket[t].length)
+      .map((t,i)=>({title:`${CN[i]}、${TYPES[t].sect}`,items:bucket[t]}));
+  }else{
+    sections=[{title:'',items:shuffle(usable.flatMap(t=>bucket[t]),rng)}];
+  }
+
+  let no=0; const keys=[];
+  for(const s of sections){
+    if(s.title) blocks.push({el:el(`<div class="secttl">${s.title}</div>`),keepNext:true});
+    for(let i=0;i<s.items.length;i+=cols){
+      const row=el('<div class="qrow"></div>');
+      for(const it of s.items.slice(i,i+cols)){
+        no++;
+        const T=TYPES[it.type];
+        keys.push({no,html:T.a(it)});
+        row.appendChild(el(`<div class="q"><span class="qn">${no}.</span>${T.q(it)}
+          <span class="eq">=</span>${teacher?`<span class="ans">${T.a(it)}</span>`:blank()}</div>`));
+      }
+      blocks.push({el:row});
+    }
+  }
+
+  if(keypage){
+    blocks.push({el:el('<div class="secttl">解答</div>'),newPage:true,keepNext:true});
+    for(let i=0;i<keys.length;i+=4){
+      const row=el('<div class="krow"></div>');
+      for(const k of keys.slice(i,i+4))
+        row.appendChild(el(`<div class="k"><span class="qn">${k.no}.</span><span class="ans">${k.html}</span></div>`));
+      blocks.push({el:row});
+    }
+  }
+
+  for(const b of blocks) b.h=measure(b.el);
+  return {blocks,count:no,seed,teacher};
+}
+
+/* ---------- 分頁 ---------- */
+function paginate(blocks,budget){
+  const pages=[[]]; let used=0;
+  for(let i=0;i<blocks.length;i++){
+    const b=blocks[i];
+    if(b.newPage && used>0){pages.push([]);used=0;}
+    let need=b.h;
+    if(b.keepNext&&blocks[i+1]) need+=blocks[i+1].h;
+    if(used>0 && used+need>budget){pages.push([]);used=0;}
+    pages[pages.length-1].push(b.el);
+    used+=b.h;
+  }
+  return {pages,lastUsed:used};
+}
+
+/* ---------- 輸出 ---------- */
+function render(){
+  const book=$('#book'); book.innerHTML='';
+  let data=buildBlocks();
+  if(!data){book.innerHTML='<div class="page"><div class="legend">還沒有可出的題型。請至少勾選一種題型，並保留至少一個分母。</div></div>';
+    $('#status').textContent=''; return;}
+
+  const footH=mm(8);
+  const budget=mm(297-24)-footH-2;   // 版心高度 − 頁尾 − 保險 2px
+  const cols=Math.min(4,Math.max(1,+$('#cols').value||2));
+
+  let res=paginate(data.blocks,budget);
+
+  // 自動調整題數：把最後一頁補滿，或砍掉零星的尾頁
+  if($('#fitone').checked){
+    let target=res.pages.length;
+    if(target>1 && res.lastUsed<budget*0.55) target--;
+    let c=+$('#count').value||24, guard=0, bestC=null;
+    if(res.pages.length>target){                       // 太多頁 → 往下砍
+      while(c>cols && guard++<300){
+        c-=1;
+        const d=buildBlocks(c), r=paginate(d.blocks,budget);
+        if(r.pages.length<=target){bestC=c;data=d;res=r;break;}
+      }
+    }else{                                             // 還有空間 → 往上補
+      bestC=c;
+      while(guard++<300){
+        const d=buildBlocks(c+1), r=paginate(d.blocks,budget);
+        if(r.pages.length>target) break;
+        c+=1; bestC=c; data=d; res=r;
+      }
+    }
+    if(bestC!==null) $('#count').value=bestC;
+  }
+
+  const pages=res.pages;
+  pages.forEach((blks,i)=>{
+    const p=el('<div class="page"><div class="pbody"></div></div>');
+    const body=p.querySelector('.pbody');
+    blks.forEach(b=>body.appendChild(b));
+    p.appendChild(el(`<div class="pfoot"><span>${esc($('#title').value)}　卷號 ${data.seed}　共 ${data.count} 題</span>
+      <span>第 ${i+1} 頁 / 共 ${pages.length} 頁</span></div>`));
+    book.appendChild(p);
+  });
+
+  $('#status').innerHTML=`共 <b>${pages.length}</b> 頁　·　<b>${data.count}</b> 題`;
+}
+
+$('#gen').addEventListener('click',render);
+$('#print').addEventListener('click',()=>window.print());
+$('#reroll').addEventListener('click',()=>{$('#seed').value=(+$('#seed').value||1)+1;render();});
+$$('.panel input').forEach(e=>e.addEventListener('change',render));
+window.addEventListener('load',render);
+render();
+</script>
+</body>
+</html>
