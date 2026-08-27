@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>分數練習單產生器｜擴分約分通分｜百宏文教機構</title>
-<meta name="description" content="免費的分數練習單產生器，涵蓋擴分、約分、最簡分數與通分，固定A4版面，附學生版與教師版。台中北屯百宏文教機構製作。">
-<link rel="canonical" href="https://yenyu-bot.github.io/bhcs-web/tools/fraction.html">
+<title>分數四大題型出題器｜擴分・約分・最簡分數・通分</title>
 <style>
   :root{
     --ink:#111;
@@ -65,6 +63,8 @@
   .term{white-space:nowrap;display:inline-flex;align-items:center}
   .eq{margin:0 3px}
   .box{display:inline-block;min-width:34px;height:19px;line-height:17px;border:1px solid #444;text-align:center;margin:1px}
+  .whole .box{min-width:26px}
+  .cell.tall .whole .box{min-width:22px}
   body.student .ans{visibility:hidden}
   body.teacher .ans{color:var(--ans);font-weight:700}
 
@@ -161,7 +161,7 @@ function term(t){
   return `<span class="term">${w}${frac(n,d)}</span>`;
 }
 function ansTerm(t){
-  const w=t.whole?`<span class="whole">${ansSpan(t.whole)}</span>`:'';
+  const w=t.whole?`<span class="whole">${box(t.whole)}</span>`:'';
   return `<span class="term">${w}${frac(box(t.num),box(t.den))}</span>`;
 }
 
@@ -281,17 +281,5 @@ document.getElementById('version').addEventListener('change',e=>{document.body.c
 ['diff','mixed'].forEach(id=>document.getElementById(id).addEventListener('change',generate));
 generate();
 </script>
-  <a href="../index.html" id="bhcs-home">← 百宏文教機構</a>
-<style>
-#bhcs-home{
-  position:fixed;right:16px;bottom:16px;z-index:9999;
-  background:#16233A;color:#fff;text-decoration:none;
-  font:500 13px/1 "Noto Sans TC","Microsoft JhengHei",sans-serif;
-  padding:10px 16px;border-radius:999px;
-  box-shadow:0 2px 10px rgba(0,0,0,.25);
-}
-#bhcs-home:hover{background:#C8352B}
-@media print{#bhcs-home{display:none}}
-</style>
 </body>
 </html>
