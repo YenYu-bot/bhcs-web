@@ -35,6 +35,13 @@
   const DURATIVE = new Set(["live","work","study","teach","stay","wait","sleep","know",
     "own","keep","learn","play","use","sit","lie","love","like","want","need","have",
     "run","read","watch","collect","practice","travel","exercise","carry","hold","wear"]);
+  // 可以接在 "in the ___" 之後的封閉空間（避免 in the door / in the wall）
+  const IN_OK = new Set(["room","classroom","kitchen","bedroom","bathroom","library","office",
+    "restaurant","store","shop","supermarket","market","bakery","bookstore","school","gym",
+    "museum","hotel","house","apartment","garden","yard","park","playground","pool","church",
+    "temple","theater","hospital","airport","station","factory","zoo","city","town","country",
+    "farm","home","lake","river","sea","pond"]);
+
   const ADJS = ["happy","tall","busy","tired","hungry","ready","kind","lazy"];
 
   function art(n) {
@@ -43,9 +50,18 @@
   }
 
   // ---- 主詞 ----
-  function makeSubject(rng, num, sems, allowPron) {
+  function makeSubject(rng, num, sems, allowPron, whitelist) {
     if (allowPron === undefined) allowPron = true;
     sems = sems || ["person"];
+    if (whitelist && whitelist.length) {
+      const wl = whitelist.map(w => NOUN_BY_SG[w]).filter(Boolean);
+      if (wl.length) {
+        const n = rng.pick(wl);
+        if (num === "pl" && n.pl && n.countable)
+          return { text: "The " + n.pl, num: "pl", person: 3, is3sg: false, pron: null };
+        return { text: "The " + n.sg, num: "sg", person: 3, is3sg: true, pron: null };
+      }
+    }
     const kind = rng.next();
     if (allowPron && kind < 0.45) {
       const c = PRON.filter(p => !num || p.num === num);
@@ -56,7 +72,7 @@
     if (kind < 0.65 && (!num || num === "sg") && sems.indexOf("person") >= 0) {
       return { text: rng.pick(NAMES), num: "sg", person: 3, is3sg: true, pron: null };
     }
-    let pool = NOUNS.filter(n => n.canBeSubject && sems.indexOf(n.sem) >= 0 && n.countable);
+    let pool = NOUNS.filter(n => n.canBeSubject && sems.indexOf(n.sem) >= 0 && n.countable && !n.blocked);
     if (!pool.length) pool = NOUNS.filter(n => sems.indexOf(n.sem) >= 0 && n.countable);
     if (!pool.length) pool = NOUNS.filter(n => n.canBeSubject && n.countable);
     const n = rng.pick(pool);
@@ -70,12 +86,12 @@
     const sems = (v.subjSem && v.subjSem.length) ? v.subjSem : ["person"];
     const allowIt = ["thing","natural","weather","abstract"].some(x => sems.indexOf(x) >= 0);
     for (let i = 0; i < 30; i++) {
-      const s = makeSubject(rng, num, sems, true);
+      const s = makeSubject(rng, num, sems, true, v.subjWords);
       if (s.pron && s.text === "It" && !allowIt) continue;
       if (s.pron && s.text !== "It" && sems.indexOf("person") < 0) continue;
       return s;
     }
-    return makeSubject(rng, num, sems, false);
+    return makeSubject(rng, num, sems, false, v.subjWords);
   }
 
   const beOf   = s => s.pron ? s.pron.be : (s.is3sg ? "is" : "are");
@@ -127,6 +143,7 @@
   function pickVerb(rng, o) {
     o = o || {};
     const pool = VERBS.filter(v => {
+      if (v.blocked) return false;
       if (o.needProg && !v.progressive) return false;
       if (o.needDurative && (v.punctual || !DURATIVE.has(v.lemma))) return false;
       if (v.emotion) return false;
@@ -155,9 +172,9 @@
     const ans = beOf(s);
     const persons = NOUNS.filter(n => n.sem === "person" && n.countable);
     let comp = rng.pick([
-      "a " + rng.pick(persons).sg,
+      (function(){ const q = rng.pick(persons); return art(q) + " " + q.sg; })(),
       rng.pick(ADJS),
-      "in the " + rng.pick(NOUNS.filter(n => n.sem === "place")).sg
+      "in the " + rng.pick(NOUNS.filter(n => n.sem === "place" && IN_OK.has(n.sg))).sg
     ]);
     if (s.num === "pl" && comp.indexOf("a ") === 0) comp = comp.slice(2) + "s";
     const all = { am: "be-am-misuse", is: "be-is-misuse", are: "be-are-misuse", be: "be-base-form" };
