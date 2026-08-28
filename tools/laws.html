@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交換律分配律出題器｜好朋友湊整與乘法分配律練習｜百宏文教機構</title>
+<meta name="description" content="免費的交換律、結合律與分配律練習卷產生器，涵蓋加法與乘法好朋友湊整、乘法對加減法的分配律、除法後分配律與前分配律判斷。可自訂題數列印A4。台中北屯百宏文教機構製作。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/laws.html">
+<meta property="og:title" content="交換律分配律出題器｜百宏文教機構">
+<meta property="og:description" content="免費的交換律、結合律與分配律練習卷產生器，含好朋友湊整與除法後分配律，可列印 A4。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/laws.html">
+<style>
+  :root{
+    --ink:#111;
+    --line:#2f6fb0;
+    --line2:#c2571f;
+    --ans:#e00000;
+    --panel:#f2f4f6;
+    --panel-line:#d3d9df;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:#e9ecef;color:var(--ink);
+    font-family:"王漢宗中仿宋繁","Times New Roman","Microsoft JhengHei","PMingLiU",serif;
+  }
+
+  /* ===== 控制面板 ===== */
+  .panel{
+    position:sticky;top:0;z-index:20;background:var(--panel);
+    border-bottom:1px solid var(--panel-line);padding:10px 14px;
+    display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;
+    font-family:"Microsoft JhengHei","Noto Sans TC",sans-serif;font-size:14px;
+  }
+  .panel h1{font-size:16px;margin:0 8px 0 0;font-weight:700;letter-spacing:1px;align-self:center;white-space:nowrap}
+  .grp{display:flex;flex-direction:column;gap:4px}
+  .grp>label{font-size:12px;color:#555}
+  .grp .line{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  input[type=number]{width:52px;padding:4px 6px;border:1px solid #b7bfc7;border-radius:4px;font:inherit}
+  select{padding:4px 6px;border:1px solid #b7bfc7;border-radius:4px;font:inherit;background:#fff}
+  .chk{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  button{font:inherit;font-weight:600;padding:8px 16px;border-radius:5px;border:1px solid #2f6fb0;background:#2f6fb0;color:#fff;cursor:pointer}
+  button.ghost{background:#fff;color:#2f6fb0}
+  button:hover{filter:brightness(1.08)}
+  .hint{font-size:12px;color:#666;width:100%;margin-top:-2px;line-height:1.6}
+
+  /* ===== 紙張（A4，四邊 10mm） ===== */
+  .sheet{
+    width:210mm;height:297mm;overflow:hidden;
+    margin:16px auto;padding:10mm;background:#fff;
+    box-shadow:0 2px 10px rgba(0,0,0,.15);
+    display:flex;flex-direction:column;
+  }
+  .sheet.dist{--line:var(--line2)}
+  .head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    border-bottom:2px solid var(--line);padding-bottom:5px;margin-bottom:6px;flex:none;
+  }
+  .head .title{font-size:23px;font-weight:700;letter-spacing:4px}
+  .head .meta{font-size:11px;line-height:1.6;text-align:right;white-space:nowrap}
+  .stem{font-size:14px;margin:0 0 5px;flex:none;line-height:1.5}
+  .law{font-size:12.5px;background:#f4f6f8;border-left:3px solid var(--line);
+       padding:4px 8px;margin:0 0 6px;flex:none;line-height:1.55}
+  .foot{margin-top:auto;font-size:11px;color:#888;display:flex;justify-content:space-between;padding-top:4px;flex:none}
+
+  /* ===== 題目格線 ===== */
+  .grid{
+    border-top:1.4px solid var(--line);border-left:1.4px solid var(--line);
+    display:grid;flex:none;
+  }
+  .grid .cell{
+    border-right:1.4px solid var(--line);border-bottom:1.4px solid var(--line);
+    padding:4px 7px;display:flex;align-items:center;gap:5px;
+    font-size:18px;overflow:hidden;
+  }
+  .no{font-size:12px;color:#333;min-width:26px;flex:none;align-self:flex-start;padding-top:3px}
+  .cell.tall{flex-direction:row;align-items:stretch}
+  .cell.tall .stack{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:1;font-size:16px}
+  .cell.tall .ln{white-space:nowrap;display:flex;align-items:center}
+  .indent{padding-left:1.2em}
+  .op{margin:0 4px}
+  .tag{font-size:11px;color:#777;margin-left:8px}
+
+  /* ===== 作答格 ===== */
+  .box{display:inline-block;min-width:42px;height:21px;line-height:19px;padding:0 3px;
+       border:1px solid #444;text-align:center;margin:0 2px;vertical-align:middle}
+  .box.sm{min-width:26px}
+  body.student .ans{visibility:hidden}
+  body.teacher .ans{color:var(--ans);font-weight:700}
+
+  @media print{
+    @page{size:A4;margin:10mm}
+    body{background:#fff}
+    .panel{display:none}
+    .sheet{
+      width:190mm;height:277mm;margin:0;padding:0;box-shadow:none;
+      page-break-after:always;break-after:page;
+    }
+    .sheet:last-of-type{page-break-after:auto;break-after:auto}
+    .ans,.law{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body class="student">
+
+<div class="panel">
+  <h1>交換律・分配律出題器</h1>
+
+  <div class="grp"><label>版本</label><div class="line">
+    <select id="version">
+      <option value="student">學用版（空白作答）</option>
+      <option value="teacher">教用版（紅字答案）</option>
+    </select></div></div>
+
+  <div class="grp"><label>難度</label><div class="line">
+    <select id="diff">
+      <option value="0">簡單</option>
+      <option value="1" selected>普通</option>
+      <option value="2">挑戰</option>
+    </select></div></div>
+
+  <div class="grp"><label>交換律</label><div class="line">
+    <span class="chk"><input type="checkbox" id="c_fadd" checked><label for="c_fadd">加法好朋友</label><input type="number" id="n_fadd" value="24" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_fmul" checked><label for="c_fmul">乘法好朋友</label><input type="number" id="n_fmul" value="24" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_swap" checked><label for="c_swap">交換律填空</label><input type="number" id="n_swap" value="16" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_sadd" checked><label for="c_sadd">加法湊整</label><input type="number" id="n_sadd" value="12" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_smul" checked><label for="c_smul">乘法湊整</label><input type="number" id="n_smul" value="12" min="1" max="99"></span>
+  </div></div>
+
+  <div class="grp"><label>分配律</label><div class="line">
+    <span class="chk"><input type="checkbox" id="c_dexp" checked><label for="c_dexp">乘法對加法</label><input type="number" id="n_dexp" value="16" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_dsub" checked><label for="c_dsub">乘法對減法</label><input type="number" id="n_dsub" value="16" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_dnear" checked><label for="c_dnear">拆數簡算</label><input type="number" id="n_dnear" value="10" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_dfac" checked><label for="c_dfac">提出公因數</label><input type="number" id="n_dfac" value="12" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_ddiv" checked><label for="c_ddiv">除法後分配律</label><input type="number" id="n_ddiv" value="12" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_ddfac" checked><label for="c_ddfac">除法反用</label><input type="number" id="n_ddfac" value="12" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_djudge" checked><label for="c_djudge">前分配律判斷</label><input type="number" id="n_djudge" value="8" min="1" max="99"></span>
+  </div></div>
+
+  <div class="grp"><label>&nbsp;</label><div class="line">
+    <button id="gen">重新出題</button>
+    <button id="print" class="ghost">列印</button>
+  </div></div>
+
+  <div class="hint">
+    每種題型獨立成張，超過滿頁自動續頁。版本切換不換題。
+    「加法湊整／乘法湊整」重排順序時同時用到交換律與結合律，卷面已標示。
+    乘法對加法、對減法各獨立成張。除法後分配律加、減兩種都會出，判斷題則驗證 a ÷ (b＋c) ≠ a÷b ＋ a÷c。
+  </div>
+</div>
+
+<div id="out"></div>
+
+<script>
+/* ---------- 工具 ---------- */
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const coin=()=>Math.random()<0.5;
+
+/* ---------- 顯示元件 ---------- */
+const bx =v=>`<span class="box"><span class="ans">${v}</span></span>`;
+const bxs=v=>`<span class="box sm"><span class="ans">${v}</span></span>`;
+const OP={add:'＋',sub:'－',mul:'×',div:'÷'};
+
+/* ================= 交換律 ================= */
+/* 加法好朋友：湊 10 / 100 / 1000 */
+function genFriendAdd(diff){
+  const targets=[[10,100],[10,100,100],[100,100,1000]][diff];
+  const R=pick(targets);
+  let a;
+  if(R===10) a=rnd(1,9);
+  else if(R===100) a=coin()?rnd(1,9)*10:rnd(11,89);
+  else a=coin()?rnd(1,9)*100:rnd(105,895);
+  return {a,b:R-a,R,front:coin()};
+}
+/* 乘法好朋友：2×5 / 4×25 / 8×125 … */
+const MUL_PAIRS=[
+  [[2,5,10],[5,2,10],[4,25,100],[25,4,100],[5,20,100],[20,5,100]],
+  [[2,5,10],[4,25,100],[25,4,100],[5,20,100],[2,50,100],[50,2,100],[8,125,1000],[125,8,1000]],
+  [[4,25,100],[25,4,100],[8,125,1000],[125,8,1000],[2,500,1000],[500,2,1000],[4,250,1000],[250,4,1000],[2,50,100]]
+];
+const BAGS={};
+function bagPick(key,arr){
+  if(!BAGS[key]||!BAGS[key].length) BAGS[key]=shuffle(arr);
+  return BAGS[key].pop();
+}
+function genFriendMul(diff){
+  const [a,b,R]=bagPick('fm'+diff,MUL_PAIRS[diff]);
+  return {a,b,R,front:coin()};
+}
+/* 交換律填空 */
+function genSwap(diff){
+  const isMul=coin();
+  const cap=[20,99,999][diff];
+  const a=rnd(2,cap),b=rnd(2,cap);
+  return {isMul,a,b,form:coin()?1:2};
+}
+/* 加法湊整：三數，其中兩數互為好朋友，且不相鄰 */
+function genSumTidy(diff){
+  const R=[100,100,1000][diff];
+  const a=R===100?rnd(11,89):rnd(105,895);
+  const b=R-a;
+  let c,g=0;
+  do{ c=[rnd(11,89),rnd(11,99),rnd(101,899)][diff]; }
+  while(((a+c)%R===0||(b+c)%R===0)&&++g<50);
+  return {a,b,c,R,sum:R+c};
+}
+/* 乘法湊整：三數，其中兩數相乘成整十百千 */
+function genMulTidy(diff){
+  const [a,b,R]=bagPick('mt'+diff,MUL_PAIRS[diff]);
+  const pow10=n=>n===10||n===100||n===1000||n===10000;
+  let c,g=0;
+  do{ c=[rnd(2,9),rnd(11,49),rnd(11,99)][diff]; }
+  while((pow10(a*c)||pow10(b*c))&&++g<50);
+  return {a,b,c,R,prod:R*c};
+}
+
+/* ================= 分配律 ================= */
+/* 乘法分配律・展開 */
+function distExpandCore(diff,sub){
+  const a=[rnd(2,9),rnd(3,25),rnd(11,25)][diff];
+  const b=[rnd(1,9)*10,rnd(1,9)*10,rnd(1,9)*100][diff];
+  let c=[rnd(1,9),rnd(1,9),rnd(2,9)*10+rnd(1,9)][diff],g=0;
+  while(sub&&c>=b&&++g<50) c=[rnd(1,9),rnd(1,9),rnd(2,9)*10+rnd(1,9)][diff];
+  const left=coin();                       // 公因數在左或在右
+  const inner=sub?b-c:b+c;
+  return {a,b,c,sub,left,val:a*inner};
+}
+const genDistExpand=diff=>distExpandCore(diff,false);   // 乘法對加法
+const genDistSub   =diff=>distExpandCore(diff,true);    // 乘法對減法
+/* 拆數簡算：接近整十／整百的數 */
+function genDistNear(diff){
+  const bases=[[9,11],[99,101,98,102],[99,101,998,1002,997]][diff];
+  const m=pick(bases);
+  const round=m<20?10:(m<200?100:1000);
+  const d=Math.abs(m-round), sub=m<round;
+  const a=[rnd(2,9),rnd(12,49),rnd(12,49)][diff];
+  return {a,m,round,d,sub,p1:a*round,p2:a*d,val:a*m};
+}
+/* 提出公因數（反用乘法分配律） */
+function genDistFactor(diff){
+  const k=[rnd(2,9),rnd(12,49),rnd(23,89)][diff];
+  const R=[10,100,100][diff];
+  const sub=coin();
+  const c=R===10?rnd(1,9):rnd(11,89);
+  const b=sub?R+c:R-c;                     // 減法：b－c＝R；加法：b＋c＝R
+  return {k,b,c,R,sub,left:coin(),val:k*R};
+}
+/* 除法後分配律：(a ± b) ÷ d */
+function genDivDist(diff){
+  const d=[rnd(2,9),rnd(2,9),pick([4,6,7,8,9,12])][diff];
+  let q1=[rnd(2,9),rnd(11,49),rnd(21,99)][diff];
+  let q2=[rnd(2,9),rnd(11,49),rnd(21,99)][diff];
+  const sub=coin();
+  if(sub){ let g=0;
+           while(q1===q2&&++g<50) q2=[rnd(2,9),rnd(11,49),rnd(21,99)][diff];
+           if(q1<q2)[q1,q2]=[q2,q1];
+           if(q1===q2) q1=q2+1; }
+  return {d,q1,q2,a:d*q1,b:d*q2,sub,val:sub?q1-q2:q1+q2};
+}
+/* 除法後分配律・反用 */
+function genDivFactor(diff){
+  const o=genDivDist(diff);
+  return o;
+}
+/* 前分配律判斷：一半成立、一半不成立 */
+function genJudge(diff){
+  if(coin()){                                     // 後分配律 → 成立（加、減各半）
+    const d=rnd(2,9);
+    let q1=[rnd(2,9),rnd(3,19),rnd(11,39)][diff],q2=[rnd(2,9),rnd(3,19),rnd(11,39)][diff];
+    const sub=coin();
+    if(sub){ let g=0;
+             while(q1===q2&&++g<50) q2=[rnd(2,9),rnd(3,19),rnd(11,39)][diff];
+             if(q1<q2)[q1,q2]=[q2,q1];
+             if(q1===q2) q1=q2+1; }
+    const v=sub?q1-q2:q1+q2;
+    return {ok:true,sub,d,a:d*q1,b:d*q2,L:v,R:v};
+  }
+  // 前分配律 → 不成立：a ÷ (b＋c) vs a÷b ＋ a÷c，取 a 為 b、c、b+c 的公倍數
+  const pairs=[[2,4],[2,6],[3,6],[2,2],[4,4],[3,3],[4,12],[6,3],[2,10]];
+  let b,c,a;
+  do{ [b,c]=pick(pairs); a=lcm(lcm(b,c),b+c)*rnd(1,[1,2,3][diff]); }while(a>2000);
+  return {ok:false,a,b,c,L:a/(b+c),R:a/b+a/c};
+}
+
+/* ---------- 儲存格 ---------- */
+function cellFriendAdd(it,no){
+  const body=it.front?`${bx(it.b)}<span class="op">＋</span>${it.a}`
+                     :`${it.a}<span class="op">＋</span>${bx(it.b)}`;
+  return `<div class="cell"><span class="no">(${no})</span><span>${body}<span class="op">＝</span>${it.R}</span></div>`;
+}
+function cellFriendMul(it,no){
+  const body=it.front?`${bx(it.b)}<span class="op">×</span>${it.a}`
+                     :`${it.a}<span class="op">×</span>${bx(it.b)}`;
+  return `<div class="cell"><span class="no">(${no})</span><span>${body}<span class="op">＝</span>${it.R}</span></div>`;
+}
+function cellSwap(it,no){
+  const o=it.isMul?'×':'＋';
+  const body=it.form===1
+    ? `${it.a}<span class="op">${o}</span>${it.b}<span class="op">＝</span>${it.b}<span class="op">${o}</span>${bx(it.a)}`
+    : `${it.a}<span class="op">${o}</span>${it.b}<span class="op">＝</span>${bx(it.b)}<span class="op">${o}</span>${it.a}`;
+  return `<div class="cell"><span class="no">(${no})</span><span>${body}</span></div>`;
+}
+function cellSumTidy(it,no){
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">${it.a}<span class="op">＋</span>${it.c}<span class="op">＋</span>${it.b}</div>
+    <div class="ln indent"><span class="op">＝</span>(${bx(it.a)}<span class="op">＋</span>${bx(it.b)})<span class="op">＋</span>${bx(it.c)}<span class="tag">交換律・結合律</span></div>
+    <div class="ln indent"><span class="op">＝</span>${bx(it.R)}<span class="op">＋</span>${bx(it.c)}<span class="op">＝</span>${bx(it.sum)}</div>
+  </div></div>`;
+}
+function cellMulTidy(it,no){
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">${it.a}<span class="op">×</span>${it.c}<span class="op">×</span>${it.b}</div>
+    <div class="ln indent"><span class="op">＝</span>(${bx(it.a)}<span class="op">×</span>${bx(it.b)})<span class="op">×</span>${bx(it.c)}<span class="tag">交換律・結合律</span></div>
+    <div class="ln indent"><span class="op">＝</span>${bx(it.R)}<span class="op">×</span>${bx(it.c)}<span class="op">＝</span>${bx(it.prod)}</div>
+  </div></div>`;
+}
+function cellDistExpand(it,no){
+  const s=it.sub?'－':'＋';
+  const q=it.left?`${it.a}<span class="op">×</span>(${it.b}<span class="op">${s}</span>${it.c})`
+                 :`(${it.b}<span class="op">${s}</span>${it.c})<span class="op">×</span>${it.a}`;
+  const e=it.left?`${it.a}<span class="op">×</span>${bx(it.b)}<span class="op">${s}</span>${it.a}<span class="op">×</span>${bx(it.c)}`
+                 :`${bx(it.b)}<span class="op">×</span>${it.a}<span class="op">${s}</span>${bx(it.c)}<span class="op">×</span>${it.a}`;
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">${q}</div>
+    <div class="ln indent"><span class="op">＝</span>${e}<span class="op">＝</span>${bx(it.val)}</div>
+  </div></div>`;
+}
+function cellDistNear(it,no){
+  const s=it.sub?'－':'＋';
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">${it.a}<span class="op">×</span>${it.m}</div>
+    <div class="ln indent"><span class="op">＝</span>${it.a}<span class="op">×</span>(${it.round}<span class="op">${s}</span>${bxs(it.d)})</div>
+    <div class="ln indent"><span class="op">＝</span>${it.a}<span class="op">×</span>${it.round}<span class="op">${s}</span>${it.a}<span class="op">×</span>${bxs(it.d)}</div>
+    <div class="ln indent"><span class="op">＝</span>${bx(it.p1)}<span class="op">${s}</span>${bx(it.p2)}<span class="op">＝</span>${bx(it.val)}</div>
+  </div></div>`;
+}
+function cellDistFactor(it,no){
+  const s=it.sub?'－':'＋';
+  const q=it.left?`${it.k}<span class="op">×</span>${it.b}<span class="op">${s}</span>${it.k}<span class="op">×</span>${it.c}`
+                 :`${it.b}<span class="op">×</span>${it.k}<span class="op">${s}</span>${it.c}<span class="op">×</span>${it.k}`;
+  const e=it.left?`${it.k}<span class="op">×</span>(${bx(it.b)}<span class="op">${s}</span>${bx(it.c)})`
+                 :`(${bx(it.b)}<span class="op">${s}</span>${bx(it.c)})<span class="op">×</span>${it.k}`;
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">${q}</div>
+    <div class="ln indent"><span class="op">＝</span>${e}<span class="op">＝</span>${it.k}<span class="op">×</span>${bx(it.R)}<span class="op">＝</span>${bx(it.val)}</div>
+  </div></div>`;
+}
+function cellDivDist(it,no){
+  const s=it.sub?'－':'＋';
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">(${it.a}<span class="op">${s}</span>${it.b})<span class="op">÷</span>${it.d}</div>
+    <div class="ln indent"><span class="op">＝</span>${bx(it.a)}<span class="op">÷</span>${it.d}<span class="op">${s}</span>${bx(it.b)}<span class="op">÷</span>${it.d}</div>
+    <div class="ln indent"><span class="op">＝</span>${bx(it.q1)}<span class="op">${s}</span>${bx(it.q2)}<span class="op">＝</span>${bx(it.val)}</div>
+  </div></div>`;
+}
+function cellDivFactor(it,no){
+  const s=it.sub?'－':'＋';
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">${it.a}<span class="op">÷</span>${it.d}<span class="op">${s}</span>${it.b}<span class="op">÷</span>${it.d}</div>
+    <div class="ln indent"><span class="op">＝</span>(${bx(it.a)}<span class="op">${s}</span>${bx(it.b)})<span class="op">÷</span>${it.d}</div>
+    <div class="ln indent"><span class="op">＝</span>${bx(it.sub?it.a-it.b:it.a+it.b)}<span class="op">÷</span>${it.d}<span class="op">＝</span>${bx(it.val)}</div>
+  </div></div>`;
+}
+function cellJudge(it,no){
+  const s=it.sub?'－':'＋';
+  const q=it.ok
+    ? `(${it.a}<span class="op">${s}</span>${it.b})<span class="op">÷</span>${it.d}<span class="op">＝</span>${it.a}<span class="op">÷</span>${it.d}<span class="op">${s}</span>${it.b}<span class="op">÷</span>${it.d}`
+    : `${it.a}<span class="op">÷</span>(${it.b}<span class="op">＋</span>${it.c})<span class="op">＝</span>${it.a}<span class="op">÷</span>${it.b}<span class="op">＋</span>${it.a}<span class="op">÷</span>${it.c}`;
+  return `<div class="cell tall"><span class="no">(${no})</span><div class="stack">
+    <div class="ln">${q}　……（${bxs(it.ok?'○':'×')}）</div>
+    <div class="ln indent">左式<span class="op">＝</span>${bx(it.L)}　　右式<span class="op">＝</span>${bx(it.R)}</div>
+  </div></div>`;
+}
+
+/* ---------- 分頁版面 ---------- */
+function sheetHead(title){
+  return `<div class="head">
+    <div class="title">${title}</div>
+    <div class="meta">（　）年（　）班　姓名：＿＿＿＿＿＿<br>（　）月（　）日　作答時間（　）分（　）秒</div>
+  </div>`;
+}
+function paginate(kind,title,stem,law,items,cfg,renderCell){
+  const per=cfg.rows*cfg.cols,pages=[];
+  for(let i=0;i<items.length;i+=per)pages.push(items.slice(i,i+per));
+  const total=pages.length;
+  return pages.map((pg,pi)=>{
+    const cells=pg.map((it,j)=>renderCell(it,pi*per+j+1)).join('');
+    return `<section class="sheet ${kind}">
+      ${sheetHead(title+(pi?'（續）':''))}
+      <p class="stem">${stem}</p>
+      ${law?`<p class="law">${law}</p>`:''}
+      <div class="grid" style="grid-template-columns:repeat(${cfg.cols},1fr);grid-auto-rows:${cfg.rowh}">${cells}</div>
+      <div class="foot"><span>百宏文教機構</span><span>${title.replace(/\s/g,'')}　${pi+1} / ${total}</span></div>
+    </section>`;
+  }).join('');
+}
+
+/* ---------- 版面參數（列高 × 列數 ≦ 版心可用高度） ---------- */
+const CFG={
+  fadd :{cols:3,rows:14,rowh:'16mm'},
+  fmul :{cols:3,rows:14,rowh:'16mm'},
+  swap :{cols:2,rows:14,rowh:'16mm'},
+  sadd :{cols:2,rows:7 ,rowh:'31.5mm'},
+  smul :{cols:2,rows:7 ,rowh:'31.5mm'},
+  dexp :{cols:2,rows:9 ,rowh:'24.5mm'},
+  dsub :{cols:2,rows:9 ,rowh:'24.5mm'},
+  dnear:{cols:2,rows:6 ,rowh:'36.5mm'},
+  dfac :{cols:1,rows:9 ,rowh:'24.5mm'},
+  ddiv :{cols:2,rows:7 ,rowh:'31.5mm'},
+  ddfac:{cols:2,rows:7 ,rowh:'31.5mm'},
+  djudge:{cols:1,rows:8 ,rowh:'27mm'}
+};
+
+/* ---------- 主流程 ---------- */
+function generate(){
+  const diff=+document.getElementById('diff').value;
+  const on=id=>document.getElementById('c_'+id).checked;
+  const num=id=>Math.max(1,Math.min(99,+document.getElementById('n_'+id).value||1));
+  const make=(id,fn)=>Array.from({length:num(id)},()=>fn(diff));
+  const H=[];
+  const add=(id,kind,title,stem,law,gen,cell)=>{
+    if(on(id)) H.push(paginate(kind,title,stem,law,make(id,gen),CFG[id],cell));
+  };
+
+  add('fadd','comm','加法好朋友','填入適當的數，把算式湊成整十、整百、整千。',
+      '好朋友＝和為 10、100、1000 的兩個數。先湊好朋友，計算最快。',genFriendAdd,cellFriendAdd);
+  add('fmul','comm','乘法好朋友','填入適當的數，把算式湊成整十、整百、整千。',
+      '乘法好朋友：2×5＝10、4×25＝100、8×125＝1000、5×20＝100、2×50＝100、4×250＝1000、2×500＝1000。',genFriendMul,cellFriendMul);
+  add('swap','comm','交換律填空','利用加法交換律、乘法交換律，把適當的數填入□內。',
+      '加法交換律 a＋b＝b＋a　　乘法交換律 a×b＝b×a　　（減法、除法不適用）',genSwap,cellSwap);
+  add('sadd','comm','加法湊整簡算','先把好朋友換到一起，再算出答案。',
+      '調換位置用交換律，重新分組用結合律：a＋b＋c＝(a＋c)＋b。',genSumTidy,cellSumTidy);
+  add('smul','comm','乘法湊整簡算','先把好朋友換到一起，再算出答案。',
+      '調換位置用交換律，重新分組用結合律：a×b×c＝(a×c)×b。',genMulTidy,cellMulTidy);
+
+  add('dexp','dist','乘法對加法的分配律','把括號展開，再算出答案。',
+      'a×(b＋c)＝a×b＋a×c　　(b＋c)×a＝b×a＋c×a',genDistExpand,cellDistExpand);
+  add('dsub','dist','乘法對減法的分配律','把括號展開，再算出答案。',
+      'a×(b－c)＝a×b－a×c　　(b－c)×a＝b×a－c×a　　括號內先算出來也可以，答案要一樣。',genDistSub,cellDistExpand);
+  add('dnear','dist','拆數簡算','把接近整十、整百的數先拆開，再用乘法分配律計算。',
+      '例：38×99＝38×(100－1)＝38×100－38×1。',genDistNear,cellDistNear);
+  add('dfac','dist','提出公因數','反用乘法分配律，把相同的因數提出來，再算出答案。',
+      'a×b＋a×c＝a×(b＋c)　　a×b－a×c＝a×(b－c)。把括號內湊成整十、整百，計算最快。',genDistFactor,cellDistFactor);
+  add('ddiv','dist','除法後分配律','把被除數拆開，再分別除以同一個除數。',
+      '除法只有「後分配律」成立：(a＋b)÷c＝a÷c＋b÷c　　(a－b)÷c＝a÷c－b÷c。除數必須相同。',genDivDist,cellDivDist);
+  add('ddfac','dist','除法後分配律・反用','除數相同時，把被除數合併起來再除。',
+      'a÷c＋b÷c＝(a＋b)÷c　　a÷c－b÷c＝(a－b)÷c。先合併被除數，往往更好算。',genDivFactor,cellDivFactor);
+  add('djudge','dist','前分配律判斷','判斷等號兩邊是否相等：相等打○、不相等打×，並算出左右兩式的值。',
+      '除法對「除數」沒有分配律：a÷(b＋c) 不等於 a÷b＋a÷c。請用計算驗證。',genJudge,cellJudge);
+
+  document.getElementById('out').innerHTML=H.join('')||
+    '<section class="sheet"><p class="stem">請至少勾選一種題型。</p></section>';
+}
+
+document.getElementById('gen').addEventListener('click',generate);
+document.getElementById('print').addEventListener('click',()=>window.print());
+document.getElementById('version').addEventListener('change',e=>{document.body.className=e.target.value;});
+document.getElementById('diff').addEventListener('change',generate);
+generate();
+</script>
+<a href="../index.html" id="bhcs-home">← 百宏文教機構</a>
+<style>
+#bhcs-home{position:fixed;right:16px;bottom:16px;z-index:9999;
+  background:#16233A;color:#fff;text-decoration:none;
+  font:500 13px/1 "Noto Sans TC","Microsoft JhengHei",sans-serif;
+  padding:10px 16px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+#bhcs-home:hover{background:#C8352B}
+@media print{#bhcs-home{display:none}}
+</style>
+</body>
+</html>
