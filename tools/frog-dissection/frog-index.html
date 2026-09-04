@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>青蛙虛擬解剖實驗室</title>
+<style>
+  :root{
+    --bg:#EEF1EC; --tray:#D7DDD3; --panel:#FFFFFF; --ink:#22302A; --muted:#66736C; --line:#CBD3CC;
+    --green:#2F7D4F; --red:#C0392B; --blue:#2C63B8; --amber:#D9A400; --cut:#E63946;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.55}
+  button{font:inherit;cursor:pointer}
+  .screen{display:none;max-width:1240px;margin:0 auto;padding:16px 20px 32px}
+  .screen.active{display:block}
+  h1{font-size:26px;margin:0 0 4px}
+  h2{font-size:20px;margin:0 0 10px}
+  .muted{color:var(--muted)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 16px}
+  .btn.primary{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}
+  .btn.primary:disabled{opacity:.45;cursor:default}
+  .btn.ghost{background:none;border:0;color:var(--blue);text-decoration:underline;padding:4px}
+
+  /* ---------- 主選單 ---------- */
+  .lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0;overflow:hidden;text-align:left;display:flex;flex-direction:column}
+  .card:hover{border-color:var(--green)}
+  .card .thumb{aspect-ratio:4/3;background:var(--tray);display:block;object-fit:cover;width:100%}
+  .card .body{padding:10px 12px 12px}
+  .card b{font-size:17px}
+  .card small{display:block;color:var(--muted);margin-top:2px}
+  .card .done{color:var(--green);font-size:13px;margin-top:6px}
+
+  /* ---------- 目標頁 ---------- */
+  .obj{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 22px;max-width:760px}
+  .obj ul{margin:8px 0 18px}
+
+  /* ---------- 課程頁 ---------- */
+  .lab{user-select:none;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+  @media(max-width:900px){.lab{grid-template-columns:1fr}}
+  .stage-wrap{background:var(--tray);border-radius:12px;padding:10px;position:relative}
+  .stage{position:relative;aspect-ratio:3/4;max-height:78vh;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;touch-action:none;user-select:none}
+  .stage img.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .stage svg.overlay{position:absolute;inset:0;width:100%;height:100%}
+  .hot{fill:rgba(46,125,79,0);stroke:rgba(46,125,79,0);stroke-width:3;cursor:pointer;transition:fill .15s}
+  .hot:hover{fill:rgba(46,125,79,.18);stroke:rgba(46,125,79,.8)}
+  .hot.hint{fill:rgba(217,164,0,.15);stroke:rgba(217,164,0,.9);stroke-dasharray:6 6;animation:pulse 1.2s infinite}
+  .hot.found{fill:rgba(46,125,79,.15);stroke:var(--green)}
+  .debug .hot{fill:rgba(44,99,184,.15);stroke:var(--blue)}
+  @keyframes pulse{50%{stroke-opacity:.3}}
+  .hotpad{fill:rgba(0,0,0,0);stroke:none;cursor:pointer}
+  .cutline.hint{stroke:var(--amber);stroke-width:7;animation:pulse 1s infinite}
+  .pintarget.hint{stroke-width:4;stroke:var(--amber);animation:pulse 1s infinite}
+  @media(pointer:coarse){
+    .tool{min-width:86px;padding:12px 10px;font-size:14px}
+    .btn{padding:12px 22px;font-size:16px}
+    .nav{gap:10px}
+  }
+  .cutline{fill:none;stroke:var(--cut);stroke-width:4;stroke-dasharray:10 8;stroke-linecap:round}
+  .cutdone{fill:none;stroke:#7a1f1f;stroke-width:5;stroke-linecap:round}
+  .pintarget{fill:rgba(255,255,255,.5);stroke:var(--red);stroke-width:2;stroke-dasharray:4 4}
+  .pin{cursor:grab}
+  .label{font-size:18px;font-weight:700;fill:#fff;paint-order:stroke;stroke:#000;stroke-width:4px;pointer-events:none}
+  .toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .tool{border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:66px;font-size:12px;color:var(--muted)}
+  .tool svg{width:30px;height:30px}
+  .tool[aria-pressed="true"]{border-color:var(--green);background:#EAF5EE;color:var(--ink)}
+  .tool.need{border-color:var(--amber);box-shadow:0 0 0 3px rgba(217,164,0,.3)}
+  .tool:disabled{opacity:.35;cursor:default}
+  .side{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h3{font-size:14px;color:var(--muted);margin:0 0 6px;font-weight:600}
+  .caption{font-size:16px;min-height:96px}
+  .caption .ok{color:var(--green);font-weight:600}
+  .caption .no{color:var(--red)}
+  .stepbar{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .stepbar progress{flex:1;height:8px;accent-color:var(--green)}
+  .nav{display:flex;gap:8px;flex-wrap:wrap}
+  .pintray{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+  #toast{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:rgba(34,48,42,.9);color:#fff;padding:6px 14px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  #toast.show{opacity:1}
+
+  /* 詳細觀察 modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+  .modal.open{display:flex}
+  .modal .box{background:#fff;border-radius:14px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:16px}
+  .modal img{width:100%;max-height:60vh;object-fit:contain;background:var(--tray);border-radius:8px}
+  .filmstrip{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
+  .filmstrip img{width:120px;height:90px;object-fit:cover;border:2px solid transparent;border-radius:6px;cursor:pointer}
+  .filmstrip img.cur{border-color:var(--green)}
+
+  /* ---------- 測驗 ---------- */
+  .quiz{max-width:820px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .opts{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+  .opts label{border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;display:flex;gap:10px;align-items:center}
+  .opts label:has(input:checked){border-color:var(--green);background:#EAF5EE}
+  .feedback{min-height:28px;font-weight:600}
+  .feedback.ok{color:var(--green)} .feedback.no{color:var(--red)}
+  .qimg{position:relative;max-width:480px;margin:10px 0}
+  .qimg img{width:100%;display:block;border-radius:8px;background:var(--tray)}
+  .qimg svg{position:absolute;inset:0;width:100%;height:100%}
+  input[type=text]{font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:6px;width:240px}
+  .cert{background:#fff;border:6px double var(--green);border-radius:8px;padding:30px;text-align:center;max-width:640px;margin:16px auto}
+  .cert h2{font-size:28px;margin:0 0 8px}
+  details{font-size:14px;color:var(--muted);margin-top:16px}
+  code{background:#e8ece7;padding:1px 5px;border-radius:4px;font-size:13px}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<!-- ================= 主選單 ================= -->
+<section id="menu" class="screen active">
+  <h1>青蛙虛擬解剖實驗室</h1>
+  <p class="muted">依序完成七個課程與各課小測，最後挑戰總測驗。圖片尚未放入時會顯示佔位圖並標示檔名。</p>
+  <div class="lessons" id="lessonCards"></div>
+  <details><summary>教師工具：熱區校正模式</summary>
+    進入課程後按鍵盤 <code>D</code> 可開關校正模式：所有熱區與切割線會顯示出來，點擊舞台會在畫面上方顯示該點的座標（0–1000 × 0–1333），把數字填回 <code>LESSONS</code> 的 <code>hotspots</code> 或 <code>cutPath</code> 即可對齊你自己的照片。
+  </details>
+</section>
+
+<!-- ================= 目標頁 ================= -->
+<section id="objectives" class="screen">
+  <button class="btn ghost" onclick="show('menu')">← 回主選單</button>
+  <div class="obj">
+    <h2 id="objTitle"></h2>
+    <p class="muted">在這一課你將會：</p>
+    <ul id="objList"></ul>
+    <div class="nav">
+      <button class="btn primary" onclick="startLesson()">開始實驗</button>
+      <button class="btn" onclick="startQuiz(currentLesson)">直接做小測</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 課程頁 ================= -->
+<section id="lesson" class="screen">
+  <div class="nav" style="margin-bottom:10px">
+    <button class="btn ghost" onclick="confirmLeave()">← 回主選單</button>
+    <span id="lessonTitle" style="font-weight:700;font-size:18px"></span>
+  </div>
+  <div class="lab">
+    <div>
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <img class="layer" id="layerImg" alt="">
+          <svg class="overlay" id="overlay" viewBox="0 0 1000 1333" preserveAspectRatio="none"></svg>
+          <div id="toast"></div>
+        </div>
+      </div>
+      <div class="toolbar" id="toolbar"></div>
+    </div>
+    <aside class="side">
+      <div class="panel">
+        <h3>指導</h3>
+        <div class="caption" id="caption"></div>
+        <div class="stepbar"><progress id="prog" value="0" max="1"></progress><span id="stepNo" class="muted" style="font-size:13px"></span></div>
+        <div class="nav" style="margin-top:8px">
+          <button class="btn" id="btnPrev">上一步</button>
+          <button class="btn" id="btnHint" style="border-color:var(--amber);color:#8a6a00">提示 💡</button>
+          <button class="btn primary" id="btnNext">下一步</button>
+        </div>
+      </div>
+      <div class="panel" id="pinPanel" style="display:none"><h3>大頭針</h3><div class="pintray" id="pintray"></div></div>
+      <div class="panel"><h3>已辨認的構造</h3><div id="foundList" class="muted" style="font-size:14px">（尚無）</div></div>
+      <div class="panel"><h3>完成後</h3><button class="btn" onclick="startQuiz(currentLesson)">前往本課小測 →</button></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= 測驗頁 ================= -->
+<section id="quiz" class="screen">
+  <button class="btn ghost" onclick="show('menu')">← 回主選單</button>
+  <div class="quiz">
+    <h2 id="quizTitle"></h2>
+    <div class="q" id="qBox"></div>
+    <div class="nav" style="margin-top:12px">
+      <button class="btn primary" id="btnCheck">檢查答案</button>
+      <button class="btn" id="btnNextQ" disabled>下一題 →</button>
+      <span class="muted" id="qNo" style="align-self:center"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 結果 / 證書 ================= -->
+<section id="result" class="screen">
+  <button class="btn ghost" onclick="show('menu')">← 回主選單</button>
+  <div class="cert">
+    <p class="muted" style="margin:0">青蛙虛擬解剖實驗室</p>
+    <h2 id="certTitle">完成證書</h2>
+    <p id="certBody"></p>
+    <p><input type="text" id="certName" placeholder="輸入你的名字"> <button class="btn" onclick="window.print()">列印</button></p>
+  </div>
+</section>
+
+<!-- 詳細觀察 -->
+<div class="modal" id="modal"><div class="box">
+  <h2 id="mTitle"></h2>
+  <img id="mImg" alt="">
+  <div class="filmstrip" id="mStrip"></div>
+  <p id="mText"></p>
+  <div class="nav"><button class="btn primary" onclick="closeModal()">完成觀察</button></div>
+</div></div>
+
+<script>
+/* =====================================================================
+   1. 圖片資源表：每一張需要的圖片、尺寸與用途（對照「圖片製作清單」）
+   ===================================================================== */
+const IMG = {
+  // 主層（3:4，建議 1200×1600，同一角度、同一姿勢，之後才能對齊熱區）
+  dorsal:        {src:'img/frog-dorsal.jpg',              w:1792,h:2400, note:'背面全身'},
+  ventral:       {src:'img/frog-ventral.jpg',             w:1792,h:2400, note:'腹面全身（釘在解剖盤上）'},
+  ventralPinned: {src:'img/frog-ventral-pinned.jpg',      w:1792,h:2400, note:'腹面、四肢已釘上大頭針'},
+  skinOpen:      {src:'img/frog-skin-open.jpg',           w:1792,h:2400, note:'皮膚翻開、露出腹肌'},
+  muscleOpen:    {src:'img/frog-muscle-open.jpg',         w:1792,h:2400, note:'腹肌與胸骨剪開、內臟外露'},
+  organsDeep:    {src:'img/frog-organs-deep.jpg',         w:1792,h:2400, note:'肝與消化道移除後：腎、生殖腺、脊柱'},
+  injected:      {src:'img/frog-injected.jpg',            w:1792,h:2400, note:'血管注射紅（動脈）藍（靜脈）'},
+  brainOpen:     {src:'img/frog-brain-open.jpg',          w:1792,h:2400, note:'頭骨背側打開露出腦'},
+  xray:          {src:'img/frog-xray.jpg',                w:1792,h:2400, note:'X 光骨骼底圖'},
+  // 縮圖（4:3）
+  thumb1:{src:'img/thumb-observe.jpg',w:800,h:600}, thumb2:{src:'img/thumb-circ.jpg',w:800,h:600}, thumb3:{src:'img/thumb-resp.jpg',w:800,h:600},
+  thumb4:{src:'img/thumb-digest.jpg',w:800,h:600}, thumb5:{src:'img/thumb-urogen.jpg',w:800,h:600}, thumb6:{src:'img/thumb-nerve.jpg',w:800,h:600},
+  thumb7:{src:'img/thumb-skeleton.jpg',w:800,h:600}, thumb8:{src:'img/thumb-final.jpg',w:800,h:600},
+  // 詳細觀察圖（4:3，建議 1600×1200）
+  eyeDetail:     {src:'img/detail-eye.jpg',        w:1600,h:1200, note:'眼與瞬膜特寫'},
+  tympanum:      {src:'img/detail-tympanum.jpg',   w:1600,h:1200, note:'鼓膜特寫'},
+  heartExt:      {src:'img/detail-heart.jpg',      w:1600,h:1200, note:'心臟外觀'},
+  heartCut:      {src:'img/detail-heart-cut.jpg',  w:1600,h:1200, note:'心臟剖開、螺旋瓣'},
+  lungInflated:  {src:'img/detail-lung.jpg',       w:1600,h:1200, note:'取出並充氣的肺'},
+  mouthOpen:     {src:'img/detail-mouth.jpg',      w:1600,h:1200, note:'口腔張開：舌、犁骨齒、聲門'},
+  stomachCut:    {src:'img/detail-stomach.jpg',    w:1600,h:1200, note:'胃剪開、皺襞'},
+  villi:         {src:'img/micro-villi.jpg',       w:1600,h:1200, note:'小腸絨毛顯微照'},
+  kidneyTestis:  {src:'img/detail-kidney.jpg',     w:1600,h:1200, note:'腎與睪丸'},
+  ovary:         {src:'img/detail-ovary.jpg',      w:1600,h:1200, note:'卵巢與卵'},
+  brainDetail:   {src:'img/detail-brain.jpg',      w:1600,h:1200, note:'腦分區俯視'},
+  tadpole1:{src:'img/tadpole-1.jpg',w:1600,h:1200}, tadpole2:{src:'img/tadpole-2.jpg',w:1600,h:1200}, tadpole3:{src:'img/tadpole-3.jpg',w:1600,h:1200},
+  tadpole4:{src:'img/tadpole-4.jpg',w:1600,h:1200}, tadpole5:{src:'img/tadpole-5.jpg',w:1600,h:1200}, tadpole6:{src:'img/tadpole-6.jpg',w:1600,h:1200},
+  // 骨頭切片（透明背景 PNG，用於骨骼拼圖）
+  boneSkull:{src:'img/bone-skull.png',w:400,h:400}, boneSpine:{src:'img/bone-spine.png',w:300,h:700}, bonePectoral:{src:'img/bone-pectoral.png',w:500,h:300},
+  boneHumerus:{src:'img/bone-humerus.png',w:200,h:400}, boneRadioulna:{src:'img/bone-radioulna.png',w:200,h:400}, bonePelvis:{src:'img/bone-pelvis.png',w:400,h:400},
+  boneFemur:{src:'img/bone-femur.png',w:200,h:500}, boneTibiofibula:{src:'img/bone-tibiofibula.png',w:200,h:500}, boneFoot:{src:'img/bone-foot.png',w:300,h:500},
+};
+
+/* =====================================================================
+   2. 課程腳本：每一課 = 目標 + 一連串步驟
+   步驟類型：
+     say      只有旁白，按「下一步」
+     click    點擊指定熱區（target）
+     tool     選擇指定工具（tool）
+     cut      選好工具後沿 cutPath 拖曳劃開，完成後切換到 nextLayer
+     pin      把大頭針拖到 targets 上
+     flip     按下一步翻面到 layer
+     detail   彈出詳細觀察圖（img 或 imgs）
+     drag     把 items 拖到 targets（骨骼拼圖）
+     layer    直接切換底圖
+   座標系：舞台 0–1000（x）× 0–1333（y），與 1200×1600 的圖等比。
+   ===================================================================== */
+const HOT = {  // 共用熱區（已依 Gemini 生成圖校正；按 D 可再微調）
+  eye:      {layer:'dorsal', shape:'circle', cx:435, cy:205, r:40, label:'眼'},
+  nares:    {layer:'dorsal', shape:'circle', cx:500, cy:140, r:36, label:'外鼻孔'},
+  tympanum: {layer:'dorsal', shape:'circle', cx:385, cy:275, r:38, label:'鼓膜'},
+  cloaca:   {layer:'dorsal', shape:'circle', cx:500, cy:750, r:40, label:'泄殖腔'},
+  hindleg:  {layer:'dorsal', shape:'rect',   x:600, y:640, w:320, h:520, label:'後肢'},
+  mouth:    {layer:'dorsal', shape:'rect',   x:420, y:100, w:160, h:80,  label:'口'},
+  skull:    {layer:'dorsal', shape:'rect',   x:430, y:180, w:140, h:130, label:'頭骨'},
+  abdomen:  {layer:'ventralPinned',shape:'rect', x:350, y:420, w:300, h:280, label:'腹部'},
+  thorax:   {layer:'skinOpen',shape:'rect',  x:400, y:360, w:200, h:120, label:'胸部'},
+  lungs:    {layer:'muscleOpen',shape:'rect', x:410,y:380,w:90,h:110,  label:'肺'},
+  heart:    {layer:'muscleOpen',shape:'circle',cx:500,cy:440,r:40, label:'心臟'},
+  conus:    {layer:'muscleOpen',shape:'circle',cx:500,cy:395,r:26, label:'動脈圓錐'},
+  liver:    {layer:'muscleOpen',shape:'rect', x:410,y:490,w:130,h:90,  label:'肝'},
+  stomach:  {layer:'muscleOpen',shape:'rect', x:545,y:490,w:75,h:100,  label:'胃'},
+  smallInt: {layer:'muscleOpen',shape:'rect', x:430,y:585,w:150,h:60,  label:'小腸'},
+  largeInt: {layer:'muscleOpen',shape:'rect', x:520,y:640,w:60,h:50,   label:'大腸'},
+  bladder:  {layer:'muscleOpen',shape:'circle',cx:500,cy:685,r:35, label:'膀胱'},
+  vein:     {layer:'muscleOpen',shape:'circle',cx:500,cy:520,r:22, label:'後大靜脈'},
+  kidneys:  {layer:'organsDeep',shape:'rect', x:410,y:510,w:60,h:130,  label:'腎'},
+  testes:   {layer:'organsDeep',shape:'circle',cx:460,cy:590,r:22, label:'睪丸'},
+  spine:    {layer:'organsDeep',shape:'rect', x:480,y:490,w:40,h:200,  label:'脊柱'},
+};
+const CUTS = {
+  skinMid:   [[500,350],[500,700]],                 // 腹中線
+  skinTop:   [[390,350],[610,350]],                 // 上橫切（胸前）
+  skinBottom:[[380,690],[620,690]],                 // 下橫切（後肢之間上方）
+  sternum:   [[500,330],[500,420]],
+  clavicle:  [[400,330],[600,330]],
+  skullCut:  [[455,270],[545,270],[545,430],[455,430]],
+};
+const SHOW_PINS_AFTER = false;   // 若你的照片本身沒有畫大頭針，改成 true，程式會把針畫上去
+const PIN_TARGETS = [[240,310],[760,310],[250,1070],[750,1070]];   // 左前、右前、左後、右後
+const LESSONS = [
+  { id:1, title:'初步觀察', thumb:'thumb1',
+    objectives:['辨認青蛙背面與腹面的外部構造','將青蛙釘在解剖盤上並劃開腹壁','辨認腹腔內的主要器官'],
+    steps:[
+      {type:'say', layer:'dorsal', text:'歡迎來到青蛙解剖實驗。青蛙屬於脊索動物門、兩生綱。牠的皮膚濕潤，能直接吸收氧氣，是重要的呼吸表面。先來看頭部的三個構造。'},
+      {type:'click', target:'eye', text:'請點擊青蛙的眼睛。', ok:'眼睛外有一層可以橫向拉過眼球的瞬膜，能在水中保護眼睛、在陸上保持濕潤。'},
+      {type:'detail', img:'eyeDetail', title:'眼與瞬膜', text:'瞬膜是半透明的第三眼瞼。'},
+      {type:'click', target:'nares', text:'找到並點擊外鼻孔。', ok:'外鼻孔直接通到口腔頂部，青蛙用它呼吸與嗅聞。'},
+      {type:'click', target:'tympanum', text:'最後，點擊鼓膜。', ok:'鼓膜是外露的耳膜，把聲音傳到內耳；牛蛙雄性的鼓膜比眼睛還大。'},
+      {type:'detail', img:'tympanum', title:'鼓膜', text:'雄蛙鼓膜直徑大於眼徑，雌蛙約等於眼徑，是判斷性別的線索之一。'},
+      {type:'click', target:'hindleg', text:'點擊後肢。', ok:'強壯的後肢讓牛蛙能跳出體長 20 倍的距離，趾間的蹼則有利游泳。'},
+      {type:'click', target:'cloaca', text:'後肢交會處有一個開口，點擊它。', ok:'這是泄殖腔：尿液、糞便，以及卵或精子都由這裡排出。'},
+      {type:'flip', layer:'ventral', text:'按「下一步」把青蛙翻到腹面。'},
+      {type:'tool', tool:'pin', layer:'ventral', text:'選擇工具列上的「大頭針」，準備固定青蛙。'},
+      {type:'pin', layer:'ventral', targets:PIN_TARGETS, nextLayer:'ventralPinned', text:'把四根大頭針拖到四肢的標記處。', ok:'青蛙已固定。'},
+      {type:'click', target:'abdomen', layer:'ventralPinned', text:'點擊腹部。', ok:'我們要在這裡劃開皮膚。'},
+      {type:'tool', tool:'scalpel', text:'選擇解剖刀。'},
+      {type:'cut', tool:'scalpel', paths:['skinMid','skinTop','skinBottom'], nextLayer:'skinOpen', text:'沿三條紅色虛線劃開皮膚：先中線，再上下兩道橫切。', ok:'皮膚已劃開並翻到兩側，露出腹肌。'},
+      {type:'click', target:'thorax', text:'點擊胸部。', ok:'胸骨在這裡，需要用剪刀。'},
+      {type:'tool', tool:'scissors', text:'選擇剪刀。'},
+      {type:'cut', tool:'scissors', paths:['sternum','clavicle'], nextLayer:'muscleOpen', text:'沿虛線剪開胸骨，再橫剪鎖骨區。', ok:'胸腔與腹腔都打開了，內臟外露。'},
+      {type:'click', target:'heart', text:'我們來辨認器官。先找心臟。', ok:'很好！循環系統那一課會詳細看心臟。'},
+      {type:'click', target:'liver', text:'現在點擊肝。', ok:'肝有三葉，是體腔中最大的器官。'},
+      {type:'click', target:'stomach', text:'找到胃。', ok:'食物從食道進入胃。'},
+      {type:'click', target:'smallInt', text:'再找小腸。', ok:'小腸是吸收養分的主要場所。'},
+      {type:'click', target:'largeInt', text:'現在是大腸。', ok:'大腸通往泄殖腔。'},
+      {type:'click', target:'lungs', text:'找到肺。', ok:'青蛙的肺很小，因為皮膚也負責呼吸。'},
+      {type:'click', target:'bladder', text:'最後找膀胱。', ok:'太棒了！你完成了初步觀察，可以前往小測。'},
+    ]},
+  { id:2, title:'循環系統', thumb:'thumb2',
+    objectives:['辨認心臟的三個腔室與動脈圓錐','用注射器標示動脈（紅）與靜脈（藍）','剖開心臟觀察螺旋瓣'],
+    steps:[
+      {type:'say', layer:'muscleOpen', text:'循環系統由一顆肌肉質的心臟與動脈、微血管、靜脈組成。青蛙的心臟有兩個心房、一個心室。'},
+      {type:'click', target:'conus', text:'點擊心臟上方的動脈圓錐。', ok:'血液離開心室後先進入動脈圓錐，再分往肺、身體與頭部。'},
+      {type:'tool', tool:'syringeRed', text:'選擇紅色注射器，準備注射動脈。'},
+      {type:'click', target:'conus', requireTool:'syringeRed', text:'把紅色乳膠注入動脈圓錐。', ok:'動脈被染成紅色，方便追蹤含氧血的去向。'},
+      {type:'tool', tool:'syringeBlue', text:'選擇藍色注射器。'},
+      {type:'click', target:'vein', requireTool:'syringeBlue', nextLayer:'injected', text:'把藍色乳膠注入後大靜脈。', ok:'靜脈被染成藍色。觀察兩種血管的分布。'},
+      {type:'detail', img:'heartExt', title:'心臟外觀', text:'注意心房、心室與動脈圓錐的位置。'},
+      {type:'detail', img:'heartCut', title:'剖開的心臟', text:'動脈圓錐內的螺旋瓣把缺氧血導向肺動脈、含氧血導向頸動脈。'},
+      {type:'say', text:'你完成了循環系統這一課。'},
+    ]},
+  { id:3, title:'呼吸系統', thumb:'thumb3',
+    objectives:['說明皮膚、口咽、肺三種呼吸方式','理解口腔幫浦與正壓呼吸','取出並充氣一側的肺'],
+    steps:[
+      {type:'say', layer:'muscleOpen', text:'青蛙有三處可以進行氣體交換：皮膚、口咽腔內壁，以及肺。'},
+      {type:'detail', img:'mouthOpen', title:'口腔與聲門', text:'青蛙沒有橫膈膜。牠先把空氣吸進口腔，關閉鼻孔，再把口腔底部抬起，把空氣「壓」進肺，這叫正壓呼吸。'},
+      {type:'click', target:'lungs', text:'點擊肺。', ok:'肺壁很薄，內面有蜂窩狀隔膜以增加表面積。'},
+      {type:'tool', tool:'forceps', text:'選擇鑷子，取出一側的肺。'},
+      {type:'detail', img:'lungInflated', title:'充氣的肺', text:'用吸管從聲門吹氣，肺會像小氣球一樣鼓起。'},
+      {type:'say', text:'你完成了呼吸系統這一課。'},
+    ]},
+  { id:4, title:'消化系統', thumb:'thumb4',
+    objectives:['追蹤食物經過消化道的路徑','辨認消化器官並說明功能','剪開胃並製作絨毛玻片'],
+    steps:[
+      {type:'say', layer:'dorsal', text:'消化從口開始。'},
+      {type:'detail', img:'mouthOpen', title:'口腔', text:'舌頭固定在下顎前端、能向前翻出捕捉昆蟲；上顎邊緣有頜齒、口腔頂部有兩簇犁骨齒，用來固定獵物而不是咀嚼。'},
+      {type:'layer', layer:'muscleOpen', text:'回到腹腔。'},
+      {type:'click', target:'stomach', text:'點擊胃。', ok:'胃以肌肉收縮與胃液分解食物。'},
+      {type:'click', target:'smallInt', text:'點擊小腸。', ok:'小腸前段稱十二指腸，接收肝與胰的分泌物。'},
+      {type:'click', target:'largeInt', text:'點擊大腸。', ok:'大腸回收水分，末端接泄殖腔。'},
+      {type:'tool', tool:'scissors', text:'選擇剪刀，剪開胃。'},
+      {type:'detail', img:'stomachCut', title:'剪開的胃', text:'胃壁內側有皺襞；有時可以看到未消化的昆蟲。'},
+      {type:'tool', tool:'microscope', text:'選擇顯微鏡，觀察小腸絨毛。'},
+      {type:'detail', img:'villi', title:'小腸絨毛', text:'指狀的絨毛大幅增加吸收面積。'},
+      {type:'say', text:'你完成了消化系統這一課。'},
+    ]},
+  { id:5, title:'泌尿生殖系統', thumb:'thumb5',
+    objectives:['辨認腎臟與雄蛙的生殖器官','辨認雌蛙的卵巢與輸卵管','觀察體外受精與蝌蚪發育'],
+    steps:[
+      {type:'say', layer:'muscleOpen', text:'泌尿生殖系統是腎臟與生殖器官的組合。先用鑷子移開肝與消化道。'},
+      {type:'tool', tool:'forceps', nextLayer:'organsDeep', text:'選擇鑷子。'},
+      {type:'click', target:'kidneys', text:'點擊腎臟。', ok:'腎臟由許多細管組成，過濾血液中的含氮廢物。'},
+      {type:'click', target:'testes', text:'點擊睪丸。', ok:'雄蛙的睪丸位在腎臟腹側，精子經腎臟由輸尿管排出。'},
+      {type:'detail', img:'kidneyTestis', title:'腎與睪丸', text:'注意腎上方黃色的脂肪體，是冬眠時的能量儲存。'},
+      {type:'detail', img:'ovary', title:'雌蛙卵巢', text:'繁殖季的雌蛙體腔幾乎被黑白相間的卵佔滿。'},
+      {type:'detail', imgs:['tadpole1','tadpole2','tadpole3','tadpole4','tadpole5','tadpole6'], title:'受精卵到蝌蚪', text:'雄蛙抱住雌蛙，卵排出時立刻受精。以下是六天的發育過程，點縮圖切換。'},
+      {type:'say', text:'你完成了泌尿生殖系統這一課。'},
+    ]},
+  { id:6, title:'神經系統', thumb:'thumb6',
+    objectives:['找到脊柱與腹腔內的脊神經','剪開頭骨露出腦','辨認腦的各個部位'],
+    steps:[
+      {type:'say', layer:'organsDeep', text:'神經系統讓青蛙感覺並回應環境，也控制呼吸、消化與心跳。'},
+      {type:'click', target:'spine', text:'點擊腹腔後壁的脊柱。', ok:'脊椎裡的脊髓是連接腦與身體的主要通道，兩側分出 10 對脊神經。'},
+      {type:'layer', layer:'dorsal', text:'把青蛙翻回背面，準備打開頭骨。'},
+      {type:'tool', tool:'scalpel', text:'選擇解剖刀。'},
+      {type:'cut', tool:'scalpel', paths:['skullCut'], nextLayer:'brainOpen', text:'沿虛線切開頭皮與薄薄的頭骨。', ok:'腦露出來了，只有一顆瓜子那麼大。'},
+      {type:'detail', img:'brainDetail', title:'腦的分區', text:'由前到後：嗅葉、大腦半球、間腦、視葉、小腦、延腦。延腦控制呼吸與心跳等自主功能。'},
+      {type:'say', text:'你完成了神經系統這一課。'},
+    ]},
+  { id:7, title:'骨骼系統', thumb:'thumb7',
+    objectives:['拍攝模擬 X 光','把骨頭拖回正確位置','認識青蛙與人類相似的骨骼名稱'],
+    steps:[
+      {type:'say', layer:'xray', text:'青蛙的骨骼有許多和人類同名的骨頭。請把散落的骨頭拖到 X 光片上正確的位置，放對會亮綠光。'},
+      {type:'drag', layer:'xray', text:'拖曳骨頭到正確位置。', ok:'太棒了，骨骼全部歸位！',
+        items:[
+          {img:'boneSkull', name:'頭骨', x:500, y:195, w:230, h:224},
+          {img:'boneSpine', name:'脊柱與尾桿骨', x:500, y:520, w:60, h:470},
+          {img:'bonePectoral', name:'肩帶（胸骨、鎖骨、肩胛）', x:500, y:345, w:250, h:166},
+          {img:'boneHumerus', name:'肱骨', x:330, y:370, w:50, h:200},
+          {img:'boneRadioulna', name:'橈尺骨', x:255, y:290, w:45, h:210},
+          {img:'bonePelvis', name:'骨盆（腸骨）', x:500, y:640, w:200, h:222},
+          {img:'boneFemur', name:'股骨', x:660, y:720, w:60, h:236},
+          {img:'boneTibiofibula', name:'脛腓骨', x:720, y:900, w:60, h:254},
+          {img:'boneFoot', name:'跗骨與趾骨', x:830, y:1090, w:130, h:247},
+        ]},
+      {type:'say', text:'橈尺骨是橈骨與尺骨癒合而成，不能像人類前臂一樣旋轉；脛腓骨也是。你完成了骨骼系統這一課。'},
+    ]},
+];
+
+/* =====================================================================
+   3. 題庫：type = tf（是非）| mc（單選）| multi（複選）| fill（填空）| hotspot（圖上點選）
+   ===================================================================== */
+const QUIZ = {
+  1:[
+    {type:'tf', q:'兩生類幼體以鰓呼吸。', a:true},
+    {type:'mc', q:'哪一個構造能在水中保護眼睛並保持濕潤？', opts:['鼓膜','瞬膜','外鼻孔','泄殖腔'], a:1},
+    {type:'multi', q:'青蛙皮膚的功能包括哪些？（複選）', opts:['吸收氧氣','吸收水分','分泌黏液','咀嚼食物'], a:[0,1,2]},
+    {type:'fill', q:'蝌蚪變成成蛙的過程稱為________。', a:['變態']},
+    {type:'hotspot', q:'請在圖上點出鼓膜。', img:'dorsal', target:'tympanum'},
+  ],
+  2:[
+    {type:'mc', q:'青蛙的心臟有幾個腔室？', opts:['二','三','四','一'], a:1},
+    {type:'tf', q:'動脈把血液帶離心臟。', a:true},
+    {type:'fill', q:'動脈圓錐內把血液分流的構造是________瓣。', a:['螺旋']},
+    {type:'hotspot', q:'請在圖上點出心臟。', img:'muscleOpen', target:'heart'},
+  ],
+  3:[
+    {type:'multi', q:'青蛙可以在哪些地方進行氣體交換？（複選）', opts:['皮膚','口咽腔','肺','膀胱'], a:[0,1,2]},
+    {type:'tf', q:'青蛙用橫膈膜把空氣吸進肺裡。', a:false},
+    {type:'mc', q:'青蛙把空氣壓進肺的方式叫做？', opts:['負壓呼吸','正壓呼吸','擴散呼吸','鰓呼吸'], a:1},
+  ],
+  4:[
+    {type:'tf', q:'青蛙的舌頭固定在口腔後方，和人類一樣。', a:false},
+    {type:'mc', q:'犁骨齒的功能是？', opts:['咀嚼','固定獵物','磨碎食物','切割食物'], a:1},
+    {type:'fill', q:'小腸內壁增加吸收面積的指狀突起稱為________。', a:['絨毛']},
+    {type:'hotspot', q:'請在圖上點出胃。', img:'muscleOpen', target:'stomach'},
+  ],
+  5:[
+    {type:'mc', q:'雄蛙的睪丸位於？', opts:['膀胱旁','腎臟腹側','肝下方','心臟後方'], a:1},
+    {type:'tf', q:'青蛙的受精在體外進行。', a:true},
+    {type:'fill', q:'腎臟過濾血液中的________廢物。', a:['含氮','氮']},
+  ],
+  6:[
+    {type:'mc', q:'控制呼吸與心跳的腦區是？', opts:['嗅葉','視葉','延腦','大腦'], a:2},
+    {type:'tf', q:'青蛙有 10 對脊神經。', a:true},
+    {type:'hotspot', q:'請在圖上點出脊柱。', img:'organsDeep', target:'spine'},
+  ],
+  7:[
+    {type:'mc', q:'橈尺骨是哪兩塊骨頭癒合而成？', opts:['脛骨與腓骨','橈骨與尺骨','肱骨與肩胛','股骨與腸骨'], a:1},
+    {type:'tf', q:'青蛙的腦殼和核桃差不多大。', a:false},
+    {type:'fill', q:'青蛙後肢中最長的骨頭是________骨。', a:['股']},
+  ],
+};
+const FINAL_COUNT = 15;   // 總測驗抽題數
+
+/* =====================================================================
+   4. 工具列
+   ===================================================================== */
+const TOOLS = {
+  pin:        {name:'大頭針',  icon:'<circle cx="15" cy="7" r="5" fill="#C0392B"/><line x1="15" y1="12" x2="15" y2="29" stroke="#555" stroke-width="2"/>'},
+  scalpel:    {name:'解剖刀',  icon:'<path d="M4 26 L18 12 L26 6 L24 12 L12 24 Z" fill="#9aa" stroke="#456"/><path d="M4 26 L9 21" stroke="#333" stroke-width="3"/>'},
+  scissors:   {name:'剪刀',    icon:'<circle cx="8" cy="22" r="4" fill="none" stroke="#333" stroke-width="2"/><circle cx="8" cy="8" r="4" fill="none" stroke="#333" stroke-width="2"/><path d="M11 11 L27 21 M11 19 L27 9" stroke="#789" stroke-width="2.5"/>'},
+  forceps:    {name:'鑷子',    icon:'<path d="M9 3 L15 27 L21 3" fill="none" stroke="#567" stroke-width="3"/>'},
+  probe:      {name:'探針',    icon:'<line x1="6" y1="24" x2="24" y2="6" stroke="#567" stroke-width="3"/><circle cx="6" cy="24" r="3" fill="#333"/>'},
+  magnifier:  {name:'放大鏡',  icon:'<circle cx="12" cy="12" r="8" fill="none" stroke="#333" stroke-width="2.5"/><line x1="18" y1="18" x2="27" y2="27" stroke="#333" stroke-width="3"/>'},
+  syringeRed: {name:'紅注射器',icon:'<rect x="6" y="11" width="16" height="8" fill="#e74c3c"/><rect x="22" y="13" width="6" height="4" fill="#999"/><rect x="2" y="9" width="4" height="12" fill="#555"/>'},
+  syringeBlue:{name:'藍注射器',icon:'<rect x="6" y="11" width="16" height="8" fill="#2c63b8"/><rect x="22" y="13" width="6" height="4" fill="#999"/><rect x="2" y="9" width="4" height="12" fill="#555"/>'},
+  microscope: {name:'顯微鏡',  icon:'<path d="M14 4 L20 4 L18 16 L16 16 Z" fill="#456"/><circle cx="17" cy="20" r="5" fill="none" stroke="#333" stroke-width="2"/><rect x="6" y="25" width="20" height="3" fill="#333"/>'},
+};
+
+/* =====================================================================
+   5. 引擎
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const SVGNS = 'http://www.w3.org/2000/svg';
+let currentLesson = null, stepIdx = 0, state = {}, progress = JSON.parse(localStorage.getItem('frogProgress')||'{}');
+let debug = false;
+
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===id)); window.scrollTo(0,0); }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800); }
+
+// 佔位圖：圖片載入失敗時顯示檔名與尺寸
+function placeholder(key){
+  const m=IMG[key]||{src:key,w:1792,h:2400}; const name=m.src.split('/').pop();
+  const svg=`<svg xmlns='http://www.w3.org/2000/svg' width='${m.w}' height='${m.h}' viewBox='0 0 ${m.w} ${m.h}'>
+    <defs><pattern id='g' width='100' height='100' patternUnits='userSpaceOnUse'><path d='M100 0H0V100' fill='none' stroke='#c9d1c9' stroke-width='2'/></pattern></defs>
+    <rect width='100%' height='100%' fill='#e4e9e2'/><rect width='100%' height='100%' fill='url(#g)'/>
+    <text x='50%' y='45%' text-anchor='middle' font-family='sans-serif' font-size='${m.w/16}' fill='#4a5a4f'>缺圖：${name}</text>
+    <text x='50%' y='45%' dy='${m.w/12}' text-anchor='middle' font-family='sans-serif' font-size='${m.w/24}' fill='#6b7a70'>${m.w}×${m.h}${m.note?'　'+m.note:''}</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function setImg(el,key){ const m=IMG[key]; el.dataset.key=key; el.src=m?m.src:key; el.onerror=()=>{ el.onerror=null; el.src=placeholder(key); }; }
+
+/* ---------- 主選單 ---------- */
+function renderMenu(){
+  const box=$('lessonCards'); box.innerHTML='';
+  LESSONS.forEach(L=>{
+    const b=document.createElement('button'); b.className='card';
+    b.innerHTML=`<img class="thumb" alt=""><div class="body"><b>${L.id}. ${L.title}</b><small>${L.objectives[0]}</small>${progress[L.id]?`<div class="done">✔ 小測 ${progress[L.id]}%</div>`:''}</div>`;
+    setImg(b.querySelector('img'),L.thumb); b.onclick=()=>openObjectives(L.id); box.appendChild(b);
+  });
+  const f=document.createElement('button'); f.className='card';
+  f.innerHTML=`<img class="thumb" alt=""><div class="body"><b>8. 總測驗</b><small>從各課隨機抽 ${FINAL_COUNT} 題</small>${progress.final?`<div class="done">✔ ${progress.final}%</div>`:''}</div>`;
+  setImg(f.querySelector('img'),'thumb8'); f.onclick=()=>startQuiz('final'); box.appendChild(f);
+}
+function openObjectives(id){
+  currentLesson=id; const L=LESSONS.find(l=>l.id===id);
+  $('objTitle').textContent=`第 ${L.id} 課　${L.title}`;
+  $('objList').innerHTML=L.objectives.map(o=>`<li>${o}</li>`).join('');
+  show('objectives');
+}
+
+/* ---------- 課程 ---------- */
+function startLesson(){
+  const L=LESSONS.find(l=>l.id===currentLesson);
+  stepIdx=0; state={tool:null, layer:null, found:[], cutsDone:{}, pins:0, dragDone:{}};
+  $('lessonTitle').textContent=`第 ${L.id} 課　${L.title}`;
+  $('foundList').textContent='（尚無）';
+  show('lesson'); renderStep();
+}
+function confirmLeave(){ if(confirm('要離開這一課嗎？進度不會保留。')) show('menu'); }
+function currentStep(){ return LESSONS.find(l=>l.id===currentLesson).steps[stepIdx]; }
+
+function renderToolbar(step){
+  const tb=$('toolbar'); tb.innerHTML='';
+  Object.entries(TOOLS).forEach(([k,t])=>{
+    const b=document.createElement('button'); b.className='tool'; b.setAttribute('aria-pressed', state.tool===k);
+    b.innerHTML=`<svg viewBox="0 0 30 30">${t.icon}</svg>${t.name}`;
+    if((step.type==='tool'&&step.tool===k)||(step.requireTool===k&&state.tool!==k)||(step.type==='cut'&&step.tool===k&&state.tool!==k)) b.classList.add('need');
+    b.onclick=()=>{ state.tool=k; renderToolbar(step); if(step.type==='tool'&&step.tool===k){ if(step.nextLayer) setLayer(step.nextLayer); advance(); } else if(step.type==='cut') drawCuts(step); };
+    tb.appendChild(b);
+  });
+}
+function setLayer(key){ state.layer=key; setImg($('layerImg'),key); }
+function addFound(label){ if(!state.found.includes(label)) state.found.push(label); $('foundList').textContent=state.found.join('、'); }
+
+function renderStep(){
+  const L=LESSONS.find(l=>l.id===currentLesson), step=L.steps[stepIdx];
+  if(step.layer) setLayer(step.layer); else if(!state.layer) setLayer('dorsal');
+  $('caption').innerHTML=step.text;
+  $('prog').value=stepIdx; $('prog').max=L.steps.length-1; $('stepNo').textContent=`${stepIdx+1} / ${L.steps.length}`;
+  $('btnPrev').disabled=stepIdx===0;
+  $('btnNext').disabled=!(step.type==='say'||step.type==='flip'||step.type==='layer'||step.type==='detail'||stepIdx===L.steps.length-1);
+  $('btnNext').textContent = stepIdx===L.steps.length-1 ? '完成 → 小測' : '下一步';
+  $('pinPanel').style.display = step.type==='pin' ? '' : 'none';
+  renderToolbar(step);
+  drawOverlay(step);
+  resetHint();
+  if(step.type==='detail') openDetail(step);
+}
+function advance(){
+  const L=LESSONS.find(l=>l.id===currentLesson);
+  if(stepIdx>=L.steps.length-1){ startQuiz(currentLesson); return; }
+  stepIdx++; renderStep();
+}
+$('btnNext').onclick=()=>{ const s=currentStep(); if(s.type==='flip'||s.type==='layer'){ setLayer(s.layer); } advance(); };
+$('btnPrev').onclick=()=>{ if(stepIdx>0){ stepIdx--; renderStep(); } };
+
+/* ---------- 舞台繪製 ---------- */
+function shapeEl(h){
+  let el;
+  if(h.shape==='circle'){ el=document.createElementNS(SVGNS,'circle'); el.setAttribute('cx',h.cx); el.setAttribute('cy',h.cy); el.setAttribute('r',h.r); }
+  else { el=document.createElementNS(SVGNS,'rect'); el.setAttribute('x',h.x); el.setAttribute('y',h.y); el.setAttribute('width',h.w); el.setAttribute('height',h.h); el.setAttribute('rx',12); }
+  return el;
+}
+function labelEl(x,y,text){ const t=document.createElementNS(SVGNS,'text'); t.setAttribute('x',x); t.setAttribute('y',y); t.setAttribute('class','label'); t.setAttribute('text-anchor','middle'); t.textContent=text; return t; }
+function hotCenter(h){ return h.shape==='circle'?{x:h.cx,y:h.cy}:{x:h.x+h.w/2,y:h.y+h.h/2}; }
+
+function drawOverlay(step){
+  const ov=$('overlay'); ov.innerHTML='';
+  // 已找到的構造標籤
+  state.found.forEach(lbl=>{ const h=Object.values(HOT).find(x=>x.label===lbl); if(h&&h.layer===state.layer){ const c=hotCenter(h); ov.appendChild(labelEl(c.x,c.y-10,lbl)); } });
+  // 熱區：目前底圖上所有熱區都可點（點錯會提示）
+  const area=h=>h.shape==='circle'?Math.PI*h.r*h.r:h.w*h.h;
+  // 大的熱區先畫、小的後畫（在上層），目標熱區永遠最上層，避免重疊時點不到
+  Object.entries(HOT).sort((a,b)=>area(b[1])-area(a[1])).sort((a,b)=>(step.target===a[0])-(step.target===b[0])).forEach(([key,h])=>{
+    if(h.layer!==state.layer && !(step.type==='click'&&step.target===key)) return;
+    // 隱形加大點擊墊：圓形半徑至少 70、外擴 30；矩形四邊外擴 28（座標系 0–1000）
+    let pad;
+    if(h.shape==='circle'){ pad=document.createElementNS(SVGNS,'circle'); pad.setAttribute('cx',h.cx); pad.setAttribute('cy',h.cy); pad.setAttribute('r',Math.max(h.r+30,70)); }
+    else { pad=document.createElementNS(SVGNS,'rect'); pad.setAttribute('x',h.x-28); pad.setAttribute('y',h.y-28); pad.setAttribute('width',h.w+56); pad.setAttribute('height',h.h+56); pad.setAttribute('rx',18); }
+    pad.classList.add('hotpad'); pad.onclick=()=>onHotspot(key,step); ov.appendChild(pad);
+    const el=shapeEl(h); el.classList.add('hot'); if(state.found.includes(h.label)) el.classList.add('found');
+    if(step.type==='click'&&step.target===key){ hintTargetEl=el; if(debug||hintOn) el.classList.add('hint'); }
+    el.onclick=()=>onHotspot(key,step);
+    ov.appendChild(el);
+    if(debug) ov.appendChild(labelEl(hotCenter(h).x,hotCenter(h).y+6,key));
+  });
+  // 釘好的大頭針在之後的腹面各層都持續顯示（所以 frog-ventral-pinned.png 可以直接用腹面圖）
+  if(SHOW_PINS_AFTER && step.type!=='pin' && state.pins>0 && ['ventral','ventralPinned','skinOpen','muscleOpen','organsDeep','injected'].includes(state.layer)) PIN_TARGETS.slice(0,state.pins).forEach(t=>ov.appendChild(pinGlyph(t[0],t[1])));
+  if(step.type==='cut') drawCuts(step);
+  if(step.type==='pin') drawPins(step);
+  if(step.type==='drag') drawDrag(step);
+}
+function onHotspot(key,step){
+  const h=HOT[key];
+  if(step.type==='click'&&step.target===key){
+    if(step.requireTool&&state.tool!==step.requireTool){ toast(`請先選擇「${TOOLS[step.requireTool].name}」`); renderToolbar(step); return; }
+    addFound(h.label); $('caption').innerHTML=`<span class="ok">✔ ${h.label}</span>　${step.ok||''}`;
+    if(step.nextLayer) setLayer(step.nextLayer);
+    drawOverlay(step); setTimeout(advance, 1600);
+  } else if(step.type==='click'){ $('caption').innerHTML=`${step.text}<br><span class="no">那是${h.label}，再找找看。</span>`; registerMiss(step); }
+  else toast(h.label);
+}
+
+/* ---------- 提示系統 ---------- */
+let hintTargetEl=null, hintOn=false, missCount=0, idleTimer=null;
+function showHint(){
+  const step=currentStep(); hintOn=true;
+  if(step.type==='click'){
+    if(step.requireTool&&state.tool!==step.requireTool){ toast(`先在下方選「${TOOLS[step.requireTool].name}」`); renderToolbar(step); return; }
+    if(hintTargetEl) hintTargetEl.classList.add('hint');
+    toast('目標在閃爍的虛線區域裡');
+  } else if(step.type==='tool'){ toast(`點下方發亮的「${TOOLS[step.tool].name}」`); renderToolbar(step); }
+  else if(step.type==='cut'){
+    if(state.tool!==step.tool){ toast(`先在下方選「${TOOLS[step.tool].name}」`); renderToolbar(step); }
+    else { document.querySelectorAll('.cutline').forEach(e=>e.classList.add('hint')); toast('沿著閃爍的虛線「按住拖曳」劃過去'); }
+  }
+  else if(step.type==='pin'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); toast('把下方托盤的大頭針，拖進閃爍的紅圈'); }
+  else if(step.type==='drag'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); toast('把左邊的骨頭拖到對應的虛線框'); }
+  else toast('讀完說明後按「下一步」');
+}
+function registerMiss(step){ missCount++; if(missCount>=2&&!hintOn) showHint(); }
+function resetHint(){ hintOn=false; missCount=0; clearTimeout(idleTimer);
+  const s=currentStep(); if(s&&['click','cut','pin','drag','tool'].includes(s.type)) idleTimer=setTimeout(()=>{ if(!hintOn) toast('卡住了嗎？可以按「提示 💡」'); },15000);
+}
+$('btnHint').onclick=showHint;
+
+/* 切割 */
+function drawCuts(step){
+  const ov=$('overlay'); ov.querySelectorAll('.cutline,.cutdone').forEach(e=>e.remove());
+  step.paths.forEach(p=>{
+    const pts=CUTS[p]; const el=document.createElementNS(SVGNS,'polyline');
+    el.setAttribute('points',pts.map(q=>q.join(',')).join(' ')); el.setAttribute('class',state.cutsDone[p]?'cutdone':'cutline'); ov.appendChild(el);
+  });
+}
+function nearestCut(step,pt){
+  for(const p of step.paths){ if(state.cutsDone[p]) continue;
+    const pts=CUTS[p]; for(let i=0;i<pts.length-1;i++){ if(distSeg(pt,pts[i],pts[i+1])<65) return p; } }
+  return null;
+}
+function distSeg(p,a,b){ const dx=b[0]-a[0],dy=b[1]-a[1]; const t=Math.max(0,Math.min(1,((p.x-a[0])*dx+(p.y-a[1])*dy)/(dx*dx+dy*dy||1))); return Math.hypot(p.x-(a[0]+t*dx),p.y-(a[1]+t*dy)); }
+function pathLen(pts){ let s=0; for(let i=0;i<pts.length-1;i++) s+=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]); return s; }
+function projT(pts,pt){ // 沿路徑的累積比例
+  let best=1e9,bt=0,acc=0,total=pathLen(pts);
+  for(let i=0;i<pts.length-1;i++){ const a=pts[i],b=pts[i+1]; const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+    const t=Math.max(0,Math.min(1,((pt.x-a[0])*dx+(pt.y-a[1])*dy)/(len*len||1))); const d=Math.hypot(pt.x-(a[0]+t*dx),pt.y-(a[1]+t*dy));
+    if(d<best){best=d;bt=(acc+t*len)/total;} acc+=len; }
+  return bt;
+}
+let cutting=null;
+function stagePt(e){ const r=$('stage').getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*1333}; }
+$('stage').addEventListener('pointerdown',e=>{
+  const step=currentStep(); const pt=stagePt(e);
+  if(debug){ toast(`x:${pt.x.toFixed(0)}  y:${pt.y.toFixed(0)}`); console.log('stage click',pt); }
+  if(step.type==='click' && !e.target.classList.contains('hot') && !e.target.classList.contains('hotpad')){ toast('這裡沒有目標，找找看其他位置'); registerMiss(step); }
+  if(step.type!=='cut') return;
+  if(state.tool!==step.tool){ toast(`請先選擇「${TOOLS[step.tool].name}」`); renderToolbar(step); return; }
+  const p=nearestCut(step,pt); if(!p){ registerMiss(step); return; }
+  cutting={p, covered:new Set(), n:20, last:pt}; $('stage').setPointerCapture(e.pointerId);
+});
+$('stage').addEventListener('pointermove',e=>{
+  if(!cutting) return; const pt=stagePt(e); const pts=CUTS[cutting.p];
+  // 在上一個點與這個點之間補插值，快速拖曳也能算完整劃過
+  const from=cutting.last||pt; const steps=Math.max(1,Math.ceil(Math.hypot(pt.x-from.x,pt.y-from.y)/8));
+  for(let k=0;k<=steps;k++){
+    const q={x:from.x+(pt.x-from.x)*k/steps, y:from.y+(pt.y-from.y)*k/steps};
+    let near=false; for(let i=0;i<pts.length-1;i++) if(distSeg(q,pts[i],pts[i+1])<65) near=true;
+    if(near) cutting.covered.add(Math.min(cutting.n-1,Math.floor(projT(pts,q)*cutting.n)));
+  }
+  cutting.last=pt;
+  if(cutting.covered.size>=cutting.n*0.6){ finishCut(cutting.p); cutting=null; }
+});
+$('stage').addEventListener('pointerup',()=>{ if(cutting){ toast('沿著虛線完整劃過'); cutting=null; } });
+function finishCut(p){
+  const step=currentStep(); state.cutsDone[p]=true; drawCuts(step); toast('切開了');
+  if(step.paths.every(q=>state.cutsDone[q])){ if(step.nextLayer) setLayer(step.nextLayer); $('caption').innerHTML=`<span class="ok">✔</span> ${step.ok||''}`; setTimeout(advance,1500); }
+}
+
+/* 大頭針 */
+function drawPins(step){
+  const ov=$('overlay');
+  step.targets.forEach((t,i)=>{ if(state.pins>i) return; const c=document.createElementNS(SVGNS,'circle'); c.setAttribute('cx',t[0]); c.setAttribute('cy',t[1]); c.setAttribute('r',34); c.setAttribute('class','pintarget'); ov.appendChild(c); });
+  for(let i=0;i<state.pins;i++){ ov.appendChild(pinGlyph(step.targets[i][0],step.targets[i][1])); }
+  const tray=$('pintray'); tray.innerHTML='';
+  for(let i=state.pins;i<step.targets.length;i++){ const s=document.createElementNS(SVGNS,'svg'); s.setAttribute('viewBox','0 0 30 40'); s.setAttribute('width',24); s.setAttribute('height',32); s.classList.add('pin'); s.innerHTML='<circle cx="15" cy="8" r="7" fill="#C0392B"/><line x1="15" y1="14" x2="15" y2="38" stroke="#555" stroke-width="3"/>'; s.draggable=true;
+    s.addEventListener('dragstart',ev=>{ ev.dataTransfer.setData('text','pin'); }); s.addEventListener('pointerdown',()=>{ state.dragPin=true; }); tray.appendChild(s); }
+  tray.insertAdjacentHTML('beforeend',`<span>剩 ${step.targets.length-state.pins} 根 — 拖到紅圈</span>`);
+}
+function pinGlyph(x,y){ const g=document.createElementNS(SVGNS,'g'); g.setAttribute('transform',`translate(${x-15} ${y-30})`); g.innerHTML='<line x1="15" y1="14" x2="15" y2="38" stroke="#555" stroke-width="4"/><circle cx="15" cy="8" r="9" fill="#C0392B" stroke="#7a1f1f"/>'; return g; }
+$('stage').addEventListener('dragover',e=>{ if(currentStep().type==='pin') e.preventDefault(); });
+$('stage').addEventListener('drop',e=>{ e.preventDefault(); dropPin(stagePt(e)); });
+$('stage').addEventListener('pointerup',e=>{ if(state.dragPin){ state.dragPin=false; dropPin(stagePt(e)); } });
+function dropPin(pt){
+  const step=currentStep(); if(step.type!=='pin') return;
+  const t=step.targets[state.pins]; if(!t) return;
+  if(Math.hypot(pt.x-t[0],pt.y-t[1])<90){ state.pins++; toast('釘好了'); if(state.pins>=step.targets.length){ if(step.nextLayer) setLayer(step.nextLayer); $('caption').innerHTML=`<span class="ok">✔</span> ${step.ok||''}`; drawOverlay(step); setTimeout(advance,1200); } else drawOverlay(step); }
+  else toast('請放到下一個紅圈');
+}
+
+/* 拖曳（骨骼拼圖） */
+function drawDrag(step){
+  const ov=$('overlay');
+  // 未放置的骨頭縮小 55% 排在左側「托盤」兩欄，避免長骨頭超出畫面
+  const TRAY_SCALE=0.55, cols=[70,190]; const colY=[60,60]; const tray={};
+  step.items.forEach((it,i)=>{ if(state.dragDone[i]||state.dragPos?.[i]) return; const c=colY[0]<=colY[1]?0:1; const h=it.h*TRAY_SCALE; tray[i]={x:cols[c],y:colY[c]+h/2}; colY[c]+=h+18; });
+  step.items.forEach((it,i)=>{
+    const done=state.dragDone[i];
+    if(!done){ const t=document.createElementNS(SVGNS,'rect'); t.setAttribute('x',it.x-it.w/2); t.setAttribute('y',it.y-it.h/2); t.setAttribute('width',it.w); t.setAttribute('height',it.h); t.setAttribute('rx',10); t.setAttribute('class','pintarget'); ov.appendChild(t); }
+    const img=document.createElementNS(SVGNS,'image'); const m=IMG[it.img];
+    const inTray = !done && !state.dragPos?.[i];
+    const sc = inTray ? TRAY_SCALE : 1, w=it.w*sc, h=it.h*sc;
+    const start = done ? {x:it.x,y:it.y} : (state.dragPos?.[i] || tray[i]);
+    img.setAttribute('x',start.x-w/2); img.setAttribute('y',start.y-h/2); img.setAttribute('width',w); img.setAttribute('height',h);
+    img.setAttribute('href',m.src); img.addEventListener('error',()=>img.setAttribute('href',placeholder(it.img)),{once:true});
+    img.style.cursor=done?'default':'grab'; if(done) img.style.filter='drop-shadow(0 0 6px #2ecc71)';
+    if(!done){ img.addEventListener('pointerdown',e=>{ const p=stagePt(e); state.dragging={i,dx:p.x-start.x,dy:p.y-start.y,img}; img.setPointerCapture(e.pointerId); }); }
+    ov.appendChild(img);
+    if(done) ov.appendChild(labelEl(it.x,it.y+it.h/2+22,it.name));
+  });
+}
+$('stage').addEventListener('pointermove',e=>{
+  if(!state.dragging) return; const d=state.dragging, it=currentStep().items[d.i]; const p=stagePt(e);
+  const x=p.x-d.dx, y=p.y-d.dy; d.img.setAttribute('width',it.w); d.img.setAttribute('height',it.h); d.img.setAttribute('x',x-it.w/2); d.img.setAttribute('y',y-it.h/2); d.cur={x,y};
+});
+$('stage').addEventListener('pointerup',e=>{
+  if(!state.dragging) return; const d=state.dragging, step=currentStep(), it=step.items[d.i]; state.dragging=null;
+  if(d.cur && Math.hypot(d.cur.x-it.x,d.cur.y-it.y)<95){ state.dragDone[d.i]=true; toast(`✔ ${it.name}`); }
+  else { state.dragPos=state.dragPos||{}; if(d.cur) state.dragPos[d.i]=d.cur; }
+  drawOverlay(step);
+  if(step.items.every((_,i)=>state.dragDone[i])){ $('caption').innerHTML=`<span class="ok">✔</span> ${step.ok}`; setTimeout(advance,1500); }
+});
+
+/* 詳細觀察 */
+function openDetail(step){
+  const imgs=step.imgs||[step.img]; let cur=0;
+  $('mTitle').textContent=step.title; $('mText').textContent=step.text;
+  const strip=$('mStrip'); strip.innerHTML='';
+  const showI=i=>{ cur=i; setImg($('mImg'),imgs[i]); strip.querySelectorAll('img').forEach((im,j)=>im.classList.toggle('cur',j===i)); };
+  if(imgs.length>1) imgs.forEach((k,i)=>{ const im=document.createElement('img'); setImg(im,k); im.onclick=()=>showI(i); strip.appendChild(im); });
+  showI(0); $('modal').classList.add('open');
+}
+function closeModal(){ $('modal').classList.remove('open'); }
+
+document.addEventListener('keydown',e=>{ if(e.key==='d'||e.key==='D'){ if(!$('lesson').classList.contains('active')) return; debug=!debug; $('stage').classList.toggle('debug',debug); toast(debug?'校正模式：開':'校正模式：關'); drawOverlay(currentStep()); } });
+
+/* =====================================================================
+   6. 測驗
+   ===================================================================== */
+let quiz={list:[],i:0,score:0,id:null};
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function startQuiz(id){
+  quiz.id=id; quiz.i=0; quiz.score=0;
+  if(id==='final'){ quiz.list=shuffle(Object.values(QUIZ).flat().slice()).slice(0,FINAL_COUNT); $('quizTitle').textContent='總測驗'; }
+  else { quiz.list=shuffle(QUIZ[id].slice()); $('quizTitle').textContent=`第 ${id} 課小測　${LESSONS.find(l=>l.id===id).title}`; }
+  show('quiz'); renderQ();
+}
+function renderQ(){
+  const q=quiz.list[quiz.i], box=$('qBox'); $('qNo').textContent=`第 ${quiz.i+1} / ${quiz.list.length} 題`;
+  $('btnCheck').disabled=false; $('btnNextQ').disabled=true; quiz.hotAns=null;
+  let html=`<p><b>${q.q}</b></p>`;
+  if(q.type==='tf') html+=`<div class="opts"><label><input type="radio" name="o" value="true">是</label><label><input type="radio" name="o" value="false">否</label></div>`;
+  if(q.type==='mc') html+=`<div class="opts">${q.opts.map((o,i)=>`<label><input type="radio" name="o" value="${i}">${o}</label>`).join('')}</div>`;
+  if(q.type==='multi') html+=`<div class="opts">${q.opts.map((o,i)=>`<label><input type="checkbox" name="o" value="${i}">${o}</label>`).join('')}</div>`;
+  if(q.type==='fill') html+=`<p><input type="text" id="fillAns" placeholder="填入答案"></p>`;
+  if(q.type==='hotspot') html+=`<div class="qimg"><img id="qImg" alt=""><svg viewBox="0 0 1000 1333" preserveAspectRatio="none" id="qSvg"></svg></div><p class="muted" style="font-size:13px">點一下圖片作答</p>`;
+  html+=`<div class="feedback" id="fb"></div>`;
+  box.innerHTML=html;
+  if(q.type==='hotspot'){ setImg($('qImg'),q.img); const s=$('qSvg'); s.onclick=e=>{ const r=s.getBoundingClientRect(); quiz.hotAns={x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*1333}; s.innerHTML=`<circle cx="${quiz.hotAns.x}" cy="${quiz.hotAns.y}" r="22" fill="none" stroke="#2C63B8" stroke-width="5"/>`; }; }
+}
+function inHot(h,p){ return h.shape==='circle' ? Math.hypot(p.x-h.cx,p.y-h.cy)<=h.r+15 : (p.x>=h.x-15&&p.x<=h.x+h.w+15&&p.y>=h.y-15&&p.y<=h.y+h.h+15); }
+$('btnCheck').onclick=()=>{
+  const q=quiz.list[quiz.i]; let ok=false, given=true;
+  if(q.type==='tf'||q.type==='mc'){ const v=document.querySelector('input[name=o]:checked'); if(!v){given=false;} else ok = q.type==='tf' ? (v.value==='true')===q.a : +v.value===q.a; }
+  if(q.type==='multi'){ const vs=[...document.querySelectorAll('input[name=o]:checked')].map(x=>+x.value); if(!vs.length) given=false; else ok = vs.length===q.a.length && q.a.every(x=>vs.includes(x)); }
+  if(q.type==='fill'){ const v=$('fillAns').value.trim(); if(!v) given=false; else ok=q.a.some(a=>v.includes(a)); }
+  if(q.type==='hotspot'){ if(!quiz.hotAns) given=false; else { ok=inHot(HOT[q.target],quiz.hotAns); const h=HOT[q.target]; const el=shapeEl(h); el.setAttribute('fill','rgba(46,204,113,.35)'); el.setAttribute('stroke','#2F7D4F'); el.setAttribute('stroke-width','4'); $('qSvg').appendChild(el); } }
+  const fb=$('fb'); if(!given){ fb.textContent='請先作答。'; fb.className='feedback'; return; }
+  if(ok){ quiz.score++; fb.textContent='答對了！'; fb.className='feedback ok'; } else { fb.textContent='答錯了。'+(q.type==='fill'?`正確答案：${q.a[0]}`:''); fb.className='feedback no'; }
+  $('btnCheck').disabled=true; $('btnNextQ').disabled=false;
+  document.querySelectorAll('#qBox input').forEach(i=>i.disabled=true);
+};
+$('btnNextQ').onclick=()=>{ quiz.i++; if(quiz.i<quiz.list.length) renderQ(); else finishQuiz(); };
+function finishQuiz(){
+  const pct=Math.round(quiz.score/quiz.list.length*100);
+  progress[quiz.id]=pct; localStorage.setItem('frogProgress',JSON.stringify(progress)); renderMenu();
+  $('certTitle').textContent = quiz.id==='final' ? (pct>=70?'完成證書':'再接再厲') : `第 ${quiz.id} 課小測結果`;
+  $('certBody').innerHTML = `答對 ${quiz.score} / ${quiz.list.length} 題（${pct}%）。` + (quiz.id==='final'&&pct>=70?'<br>恭喜你完成青蛙虛擬解剖的所有課程！':'');
+  show('result');
+}
+
+renderMenu();
+</script>
+</body>
+</html>
