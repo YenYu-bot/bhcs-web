@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>凹透鏡與凸透鏡 —— 分類、折射與成像</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3 Q28 16 16 29 Q4 16 16 3Z' fill='%237FB8FF' stroke='%232A5B8C' stroke-width='2'/%3E%3C/svg%3E">
+<style>
+  :root{ --bg:#F4F6F8; --panel:#fff; --line:#D5DBE3; --ink:#1F2933; --muted:#65717F; --lens:#BFE0FF; --lensEdge:#2A5B8C; --ray:#E8A400; --ray2:#D9534F; --ray3:#2E8B57; --axis:#9AA5B1; --img:#8E44AD; --ok:#2E8B57; --no:#C0392B; --accent:#2E6FD8; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
+  button{font:inherit;cursor:pointer}
+  .wrap{max-width:1200px;margin:0 auto;padding:14px 18px 30px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  h1{margin:0;font-size:24px}
+  header small{color:var(--muted)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 14px}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+  .stage svg{display:block;width:100%;height:auto;touch-action:none;user-select:none}
+  .hint{position:absolute;left:12px;top:10px;background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:8px;padding:3px 10px;font-size:13px;color:var(--muted);pointer-events:none}
+  .side{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h2{font-size:14px;color:var(--muted);margin:0 0 8px;font-weight:600}
+  .text p{margin:0 0 10px;font-size:15px}
+  .text .q{background:#FFF6D6;border-left:4px solid var(--ray);padding:8px 10px;border-radius:0 8px 8px 0}
+  .pager{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);margin-top:6px}
+  .pager button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 12px}
+  .pager button:disabled{opacity:.35;cursor:default}
+  .ctrl{display:flex;flex-wrap:wrap;gap:6px}
+  .ctrl button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:14px}
+  .ctrl button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin:8px 0 2px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .readout{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+  .readout b{text-align:right}
+  .seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg button{flex:1;border:0;background:#fff;padding:7px;color:var(--muted)}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  td,th{border:1px solid var(--line);padding:4px 6px;text-align:center}
+  th{background:#F0F3F7;font-weight:600}
+  tr.cur td{background:#EAF2FF;font-weight:600}
+  .fb{font-weight:600;min-height:24px}
+  details{color:var(--muted);font-size:14px;margin-top:12px}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>凹透鏡與凸透鏡</h1><small>從外形分類、兩次折射、焦點，到用三條特殊光線畫出成像</small></header>
+<div class="tabs" role="tablist">
+  <button class="tab" data-page="types">1 透鏡分類</button>
+  <button class="tab" data-page="refract">2 兩次折射</button>
+  <button class="tab" data-page="focus">3 焦點</button>
+  <button class="tab" data-page="rays">4 三條特殊光線</button>
+  <button class="tab" data-page="points">5 由點到像</button>
+  <button class="tab" data-page="image">6 成像操作</button>
+</div>
+
+<div class="grid">
+  <div class="stage">
+    <span class="hint" id="hint"></span>
+    <svg id="svg" viewBox="0 0 860 460" aria-label="光學示意圖">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="context-stroke"/></marker>
+        <marker id="arO" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1F2933"/></marker>
+        <marker id="arI" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#8E44AD"/></marker>
+        <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#DDF0FF"/><stop offset=".5" stop-color="#A9D3FF"/><stop offset="1" stop-color="#DDF0FF"/></linearGradient>
+      </defs>
+      <g id="scene"></g>
+    </svg>
+  </div>
+
+  <aside class="side">
+    <div class="panel" id="ctrlPanel"><h2>控制</h2><div id="ctrls"></div></div>
+    <div class="panel" id="readPanel" style="display:none"><h2>數值</h2><div class="readout" id="readout"></div></div>
+    <div class="panel" id="tablePanel" style="display:none"><h2>凸透鏡成像整理</h2>
+      <table id="caseTable"><tr><th>物距</th><th>像距</th><th>像的性質</th></tr>
+        <tr data-k="0"><td>∞（極遠）</td><td>= f</td><td>一點（實）</td></tr>
+        <tr data-k="1"><td>&gt; 2f</td><td>f～2f</td><td>倒立縮小實像</td></tr>
+        <tr data-k="2"><td>= 2f</td><td>= 2f</td><td>倒立等大實像</td></tr>
+        <tr data-k="3"><td>f～2f</td><td>&gt; 2f</td><td>倒立放大實像</td></tr>
+        <tr data-k="4"><td>= f</td><td>∞</td><td>不成像</td></tr>
+        <tr data-k="5"><td>&lt; f</td><td>同側</td><td>正立放大虛像</td></tr>
+      </table>
+    </div>
+    <div class="panel text" id="textPanel"><h2 id="textTitle"></h2><div id="textBody"></div>
+      <div class="pager"><button id="prev">上一頁</button><span id="pageNo"></span><button id="next">下一頁</button></div></div>
+  </aside>
+</div>
+<details><summary>教師備註</summary>第 2、3 頁是「厚透鏡」的真實光線追跡：兩個球面、用司乃耳定律逐面折射，可以看到球面像差（離軸光線會聚在稍近處）。第 4、5、6 頁改用「薄透鏡」模型：光線在透鏡中央平面一次轉折，並使用透鏡公式 1/f = 1/p + 1/q。長度單位為畫面像素。</details>
+</div>
+
+<script>
+const $=id=>document.getElementById(id); const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
+const txt=(x,y,s,a={},p)=>{ const t=el('text',{x,y,'font-size':14,fill:'var(--ink)',...a},p); t.textContent=s; return t; };
+const scene=$('scene'), svg=$('svg'); const W=860,H=460,CY=240,CX=430;
+const S={ page:'types', textIdx:0 };
+function pt(e){ const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); }
+
+/* ============ 透鏡外形 ============ */
+// 六種透鏡的輪廓：h 半高，t 中心半厚，用二次曲線近似球面
+function lensPath(kind,h=70,t=16){
+  const bulge=(sign)=>sign*t*2;   // 控制點偏移
+  const L={ // 左面、右面：'convex' 凸出、'concave' 凹入、'flat'
+    biconvex:['convex','convex'], planoconvex:['flat','convex'], meniscusconvex:['concaveS','convex'],
+    biconcave:['concave','concave'], planoconcave:['flat','concave'], meniscusconcave:['concave','convexS'],
+  }[kind];
+  const side=(type,dir)=>{ // dir=+1 右面（從上到下）、-1 左面（從下到上）
+    const x0=dir*(type.includes('concave')?t+10:6), y1=dir>0?-h:h, y2=-y1;
+    if(type==='flat') return `L${x0} ${y2}`;
+    const strength = type.endsWith('S') ? 0.5 : 1;
+    const cx = type.startsWith('convex') ? x0+dir*t*3*strength : x0-dir*t*3*strength;
+    return `L${x0} ${y1} Q${cx} 0 ${x0} ${y2}`;
+  };
+  const xl=(L[0].includes('concave')?-(t+10):-6), xr=(L[1].includes('concave')?(t+10):6);
+  return `M${xl} ${-h} ${side(L[1],1)} L${xl} ${h} ${side(L[0],-1)} Z`;
+}
+const KINDS=[['biconvex','雙凸透鏡'],['planoconvex','平凸透鏡'],['meniscusconvex','凹凸透鏡（新月凸）'],['biconcave','雙凹透鏡'],['planoconcave','平凹透鏡'],['meniscusconcave','凸凹透鏡（新月凹）']];
+function drawLens(g,kind,h,t,attrs={}){ return el('path',{d:lensPath(kind,h,t),fill:'url(#glass)',stroke:'var(--lensEdge)','stroke-width':2,...attrs},g); }
+function thinLens(g,convex,h=110){ // 薄透鏡符號
+  if(convex) el('path',{d:`M0 ${-h} Q22 0 0 ${h} Q-22 0 0 ${-h}Z`,fill:'url(#glass)',stroke:'var(--lensEdge)','stroke-width':2},g);
+  else el('path',{d:`M-14 ${-h} L14 ${-h} Q0 0 14 ${h} L-14 ${h} Q0 0 -14 ${-h}Z`,fill:'url(#glass)',stroke:'var(--lensEdge)','stroke-width':2},g);
+}
+
+/* ============ 頁面 1：分類與配對遊戲 ============ */
+const G={ order:[], placed:{}, drag:null };
+function pageTypes(){
+  scene.innerHTML='';
+  // 上排：六個透鏡（隨機順序），下排：六個名稱框
+  if(!G.order.length){ G.order=[0,1,2,3,4,5].sort(()=>Math.random()-.5); G.placed={}; }
+  const slots=KINDS.map((k,i)=>({x:80+i*140,y:360}));
+  slots.forEach((s,i)=>{ const g=el('g',{transform:`translate(${s.x} ${s.y})`},scene);
+    el('rect',{x:-62,y:-60,width:124,height:120,rx:10,fill:G.placed[i]!==undefined?'#EAF7EE':'#F7F8FA',stroke:G.placed[i]!==undefined?'var(--ok)':'var(--line)','stroke-dasharray':G.placed[i]!==undefined?'':'5 4'},g);
+    txt(0,52,KINDS[i][1].split('（')[0],{'text-anchor':'middle','font-size':14,'font-weight':600},g);
+  });
+  G.order.forEach((k,slotIdx)=>{
+    const placedAt=Object.entries(G.placed).find(([t,kk])=>kk===k);
+    const x = placedAt ? slots[+placedAt[0]].x : 80+slotIdx*140, y = placedAt ? slots[+placedAt[0]].y-8 : 120;
+    const g=el('g',{transform:`translate(${x} ${y})`,style:placedAt?'':'cursor:grab'},scene);
+    el('rect',{x:-55,y:-70,width:110,height:140,fill:'transparent'},g);
+    drawLens(g,KINDS[k][0],52,12);
+    if(!placedAt) g.addEventListener('pointerdown',e=>{ G.drag={k,g,off:pt(e),start:{x,y}}; svg.setPointerCapture(e.pointerId); });
+  });
+  txt(430,30,'把上排的六個透鏡拖到下排正確的名稱上',{'text-anchor':'middle','font-size':16,'font-weight':600},scene);
+  txt(430,210,'左邊三個是凸透鏡（中央厚），右邊三個是凹透鏡（中央薄）',{'text-anchor':'middle',fill:'var(--muted)','font-size':13},scene);
+  const done=Object.keys(G.placed).length===6;
+  if(done) txt(430,250,'全部正確！',{'text-anchor':'middle',fill:'var(--ok)','font-size':20,'font-weight':700},scene);
+  $('ctrls').innerHTML=`<div class="ctrl"><button id="reset">重新洗牌</button></div><div class="fb" id="fb" style="margin-top:8px"></div>`;
+  $('reset').onclick=()=>{ G.order=[]; G.placed={}; pageTypes(); };
+}
+svg.addEventListener('pointermove',e=>{ if(!G.drag) return; const p=pt(e); G.drag.g.setAttribute('transform',`translate(${G.drag.start.x+p.x-G.drag.off.x} ${G.drag.start.y+p.y-G.drag.off.y})`); });
+svg.addEventListener('pointerup',e=>{
+  if(!G.drag) return; const p=pt(e); const d=G.drag; G.drag=null;
+  const i=Math.round((p.x-80)/140);
+  if(p.y>290 && i>=0 && i<6 && G.placed[i]===undefined){
+    if(i===d.k){ G.placed[i]=d.k; $('fb').textContent='正確！'; $('fb').style.color='var(--ok)'; }
+    else { $('fb').textContent=`不對，那是${KINDS[i][1].split('（')[0]}的位置。`; $('fb').style.color='var(--no)'; }
+  }
+  pageTypes();
+});
+
+/* ============ 厚透鏡真實光線追跡（頁 2、3） ============ */
+const T={ n:1.5, R:150, half:80, rayY:50, showNormals:true, nRays:7, kind:'biconvex' };
+function refract(d,nrm,n1,n2){ // d 入射方向(單位)，nrm 法線(單位，指向入射側)；回傳折射方向或 null(全反射)
+  const cosI=-(d.x*nrm.x+d.y*nrm.y); const eta=n1/n2; const k=1-eta*eta*(1-cosI*cosI); if(k<0) return null;
+  const s=eta*cosI-Math.sqrt(k); return {x:eta*d.x+s*nrm.x, y:eta*d.y+s*nrm.y};
+}
+function hitCircle(o,d,c,R,pickFar){ // 射線與圓交點
+  const fx=o.x-c.x, fy=o.y-c.y; const b=2*(fx*d.x+fy*d.y), cc=fx*fx+fy*fy-R*R; const disc=b*b-4*cc; if(disc<0) return null;
+  const s=Math.sqrt(disc); const t1=(-b-s)/2, t2=(-b+s)/2; const t=pickFar?t2:t1; if(t<0) return null; return {x:o.x+t*d.x,y:o.y+t*d.y,t};
+}
+function traceThick(y0,g,color='var(--ray)',showN=false){
+  // 雙凸：左面圓心在 (+c,0)，右面圓心在 (-c,0)，c = R - t/2；令邊緣厚度接近 0：c = sqrt(R^2 - half^2)
+  const R=T.R, c=Math.sqrt(R*R-T.half*T.half);
+  const o={x:60,y:CY+y0}, d={x:1,y:0};
+  const cl={x:CX+c,y:CY}, cr={x:CX-c,y:CY};
+  const p1=hitCircle(o,d,cl,R,false); if(!p1||Math.abs(p1.y-CY)>T.half){ el('line',{x1:o.x,y1:o.y,x2:W,y2:o.y,stroke:color,'stroke-width':2},g); return null; }
+  let n1={x:(p1.x-cl.x)/R,y:(p1.y-cl.y)/R}; // 指向入射側（外側）
+  const d2=refract(d,n1,1,T.n);
+  const p2=hitCircle(p1,d2,cr,R,true);
+  let n2={x:(p2.x-cr.x)/R,y:(p2.y-cr.y)/R}; n2={x:-n2.x,y:-n2.y}; // 指向玻璃內（入射側）
+  const d3=refract(d2,n2,T.n,1) || d2;
+  const far=900; const p3={x:p2.x+d3.x*far,y:p2.y+d3.y*far};
+  el('polyline',{points:`${o.x},${o.y} ${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`,fill:'none',stroke:color,'stroke-width':2,'stroke-linejoin':'round'},g);
+  if(showN){ [[p1,n1],[p2,{x:-n2.x,y:-n2.y}]].forEach(([p,n])=>el('line',{x1:p.x-n.x*40,y1:p.y-n.y*40,x2:p.x+n.x*40,y2:p.y+n.y*40,stroke:'#999','stroke-dasharray':'4 4'},g)); }
+  // 與主軸交點
+  if(Math.abs(d3.y)>1e-6){ const t=(CY-p2.y)/d3.y; if(t>0) return {x:p2.x+d3.x*t,y:CY}; }
+  return null;
+}
+function drawThickLens(g){
+  const R=T.R, c=Math.sqrt(R*R-T.half*T.half);
+  const xl=CX+c-R, xr=CX-c+R; // 頂點
+  el('path',{d:`M${xl+ (R-Math.sqrt(R*R-T.half*T.half))} ${CY-T.half} A${R} ${R} 0 0 1 ${xl+(R-Math.sqrt(R*R-T.half*T.half))} ${CY+T.half} A${R} ${R} 0 0 1 ${xl+(R-Math.sqrt(R*R-T.half*T.half))} ${CY-T.half}Z`,fill:'url(#glass)',stroke:'var(--lensEdge)','stroke-width':2},g);
+}
+function axis(g,x1=20,x2=W-20){ el('line',{x1,y1:CY,x2,y2:CY,stroke:'var(--axis)','stroke-dasharray':'6 6'},g); txt(x2-4,CY-8,'主軸',{'text-anchor':'end',fill:'var(--muted)','font-size':12},g); }
+
+function pageRefract(){
+  scene.innerHTML=''; axis(scene);
+  // 兩個圓的交集示意
+  const R=T.R, c=Math.sqrt(R*R-T.half*T.half);
+  el('circle',{cx:CX+c,cy:CY,r:R,fill:'none',stroke:'#c9d6e6','stroke-dasharray':'4 6'},scene);
+  el('circle',{cx:CX-c,cy:CY,r:R,fill:'none',stroke:'#c9d6e6','stroke-dasharray':'4 6'},scene);
+  txt(CX+c,CY+R+18,'球面 1 的球心',{'text-anchor':'middle',fill:'var(--muted)','font-size':12},scene); el('circle',{cx:CX+c,cy:CY,r:3,fill:'#c9d6e6'},scene);
+  txt(CX-c,CY-R-8,'球面 2 的球心',{'text-anchor':'middle',fill:'var(--muted)','font-size':12},scene); el('circle',{cx:CX-c,cy:CY,r:3,fill:'#c9d6e6'},scene);
+  drawThickLens(scene);
+  const hit=traceThick(-T.rayY,scene,'var(--ray)',T.showNormals);
+  txt(70,CY-T.rayY-10,'入射光',{fill:'var(--ray)','font-size':13},scene);
+  txt(CX,CY-T.half-16,'兩個球體的交集就是雙凸透鏡',{'text-anchor':'middle',fill:'var(--lensEdge)','font-size':13},scene);
+  if(T.showNormals) txt(CX,CY+T.half+22,'灰色虛線是折射點的法線；光線進入玻璃時偏向法線，離開時偏離法線',{'text-anchor':'middle',fill:'var(--muted)','font-size':12},scene);
+  $('ctrls').innerHTML=`<div class="row"><span>入射光高度</span><span id="v1">${T.rayY}</span></div><input type="range" id="rayY" min="-70" max="70" value="${T.rayY}">
+    <div class="row"><span>玻璃折射率 n</span><span id="v2">${T.n.toFixed(2)}</span></div><input type="range" id="nIdx" min="1.2" max="1.9" step="0.01" value="${T.n}">
+    <div class="ctrl" style="margin-top:8px"><button id="tgN" aria-pressed="${T.showNormals}">顯示法線</button></div>`;
+  $('rayY').oninput=e=>{T.rayY=+e.target.value;pageRefract();}; $('nIdx').oninput=e=>{T.n=+e.target.value;pageRefract();}; $('tgN').onclick=()=>{T.showNormals=!T.showNormals;pageRefract();};
+}
+function pageFocus(){
+  scene.innerHTML=''; axis(scene); drawThickLens(scene);
+  const hits=[];
+  for(let i=0;i<T.nRays;i++){ const y=-T.half*0.85+i*(T.half*1.7/(T.nRays-1)); const h=traceThick(y,scene,'var(--ray)'); if(h) hits.push(h); }
+  if(hits.length){ const fx=hits.reduce((a,h)=>a+h.x,0)/hits.length; el('circle',{cx:fx,cy:CY,r:5,fill:'var(--ray2)'},scene); txt(fx,CY+22,'F（焦點）',{'text-anchor':'middle',fill:'var(--ray2)','font-size':13,'font-weight':600},scene);
+    el('line',{x1:CX,y1:CY+T.half+40,x2:fx,y2:CY+T.half+40,stroke:'var(--muted)','marker-end':'url(#ar)'},scene); txt((CX+fx)/2,CY+T.half+58,`焦距 f ≈ ${Math.round(fx-CX)}`,{'text-anchor':'middle',fill:'var(--muted)','font-size':12},scene); }
+  txt(70,60,'一束平行主軸的光',{fill:'var(--ray)','font-size':13},scene);
+  $('ctrls').innerHTML=`<div class="row"><span>玻璃折射率 n</span><span id="v2">${T.n.toFixed(2)}</span></div><input type="range" id="nIdx" min="1.2" max="1.9" step="0.01" value="${T.n}">
+    <div class="row"><span>球面半徑 R（愈小愈彎）</span><span id="v3">${T.R}</span></div><input type="range" id="Rr" min="95" max="300" value="${T.R}">
+    <div class="row"><span>光線數</span><span id="v4">${T.nRays}</span></div><input type="range" id="nR" min="2" max="15" value="${T.nRays}">`;
+  $('nIdx').oninput=e=>{T.n=+e.target.value;pageFocus();}; $('Rr').oninput=e=>{T.R=+e.target.value;pageFocus();}; $('nR').oninput=e=>{T.nRays=+e.target.value;pageFocus();};
+}
+
+/* ============ 薄透鏡（頁 4、5、6） ============ */
+const L={ f:110, convex:true, p:260, h:70, rays:{par:true,cen:true,foc:true}, drag:null, showImage:true, points:1 };
+function thin(){ const f=L.convex?L.f:-L.f; const p=L.p; const inv=1/f-1/p; const q=Math.abs(inv)<1e-9?Infinity:1/inv; const m=isFinite(q)?-q/p:Infinity; return {f,p,q,m,hi:isFinite(q)?L.h*m:NaN}; }
+function drawAxisLens(g){
+  axis(g); const lg=el('g',{transform:`translate(${CX} ${CY})`},g); thinLens(lg,L.convex);
+  const f=L.f; [[-f,'F'],[f,"F'"],[-2*f,'2F'],[2*f,"2F'"]].forEach(([x,n])=>{ el('circle',{cx:CX+x,cy:CY,r:3.5,fill:'var(--ink)'},g); txt(CX+x,CY+20,n,{'text-anchor':'middle','font-size':13},g); });
+  txt(CX,CY-125,'鏡心 O',{'text-anchor':'middle','font-size':12,fill:'var(--muted)'},g); el('circle',{cx:CX,cy:CY,r:3,fill:'var(--ink)'},g);
+}
+function lineTo(g,x1,y1,x2,y2,color,dash){ return el('line',{x1,y1,x2,y2,stroke:color,'stroke-width':2,'stroke-dasharray':dash||''},g); }
+// 三條特殊光線：由物頂 (ox, oy) 出發；回傳像點（若可）
+function principalRays(g,ox,oy,which={par:true,cen:true,foc:true}){
+  const f=L.convex?L.f:-L.f; const t=thin(); const R=W+200;
+  const lensX=CX; const yTop=oy-CY; // 物高（負值表示在軸上方）
+  const q=t.q; const iy=isFinite(q)?CY+yTop*(-q/L.p):NaN; const ix=isFinite(q)?CX+q:NaN;
+  const ext=(x0,y0,dx,dy,color,dash)=>{ const k=(R-x0)/dx; lineTo(g,x0,y0,x0+dx*k,y0+dy*k,color,dash); };
+  // 1 平行光
+  if(which.par){ lineTo(g,ox,oy,lensX,oy,'var(--ray)');
+    if(L.convex){ ext(lensX,oy,f,-yTop,'var(--ray)'); if(!isFinite(q)||q<0){ /* 虛像：反向延長 */ if(isFinite(q)) lineTo(g,lensX,oy,ix,iy,'var(--ray)','6 5'); } }
+    else { // 發散：出射方向像從 F（左側 -|f|）射出
+      ext(lensX,oy,L.f,yTop,'var(--ray)'); lineTo(g,lensX,oy,CX-L.f,CY,'var(--ray)','6 5'); }
+  }
+  // 2 通過鏡心
+  if(which.cen){ const dx=lensX-ox, dy=CY-oy; const k=(R-ox)/dx; lineTo(g,ox,oy,ox+dx*k,oy+dy*k,'var(--ray2)');
+    if(isFinite(q)&&q<0){ lineTo(g,lensX,CY,ix,iy,'var(--ray2)','6 5'); } }
+  // 3 經焦點
+  if(which.foc){
+    if(L.convex){ // 射向己方焦點 F(左)：從物頂通過 (CX-f,CY) 到透鏡，再平行射出
+      const fx=CX-f; const dx=fx-ox, dy=CY-oy; if(Math.abs(dx)>1e-6){ const k=(lensX-ox)/dx; const yl=oy+dy*k; lineTo(g,ox,oy,lensX,yl,'var(--ray3)'); lineTo(g,lensX,yl,R,yl,'var(--ray3)');
+        if(isFinite(q)&&q<0) lineTo(g,lensX,yl,ix,iy,'var(--ray3)','6 5'); } }
+    else { // 射向對方焦點 F'(右 +|f|)：到透鏡後平行射出
+      const fx=CX+L.f; const dx=fx-ox, dy=CY-oy; const k=(lensX-ox)/dx; const yl=oy+dy*k; lineTo(g,ox,oy,lensX,yl,'var(--ray3)'); lineTo(g,lensX,yl,R,yl,'var(--ray3)'); lineTo(g,lensX,yl,fx,CY,'var(--ray3)','6 5'); lineTo(g,lensX,yl,ix,iy,'var(--ray3)','6 5'); }
+  }
+  return isFinite(q)?{x:ix,y:iy,virtual:q<0}:null;
+}
+function objectArrow(g,x,y0,h,color='var(--ink)',marker='url(#arO)',label='物'){ lineTo(g,x,CY,x,CY-h,color).setAttribute('marker-end',marker); if(label) txt(x,CY-h-10,label,{'text-anchor':'middle',fill:color,'font-weight':600},g); }
+function imageArrow(g,x,hi,virtual){ const c='var(--img)'; const ln=lineTo(g,x,CY,x,CY-hi,c,virtual?'6 4':''); ln.setAttribute('marker-end','url(#arI)'); txt(x,Math.max(14,hi>0?CY-hi-10:CY-hi+18),virtual?'虛像':'實像',{'text-anchor':'middle',fill:c,'font-weight':600},g); }
+
+function pageRays(){
+  scene.innerHTML=''; L.convex=true; L.p=Math.max(L.p,150); drawAxisLens(scene);
+  objectArrow(scene,CX-L.p,CY,L.h);
+  const img=principalRays(scene,CX-L.p,CY-L.h,L.rays);
+  const n=Object.values(L.rays).filter(Boolean).length; const t=thin();
+  if(img&&n>=2&&L.showImage) imageArrow(scene,img.x,L.h*t.m,img.virtual);
+  txt(60,40,'黃：平行主軸 → 折射後通過對方焦點 F\'',{fill:'var(--ray)','font-size':13},scene);
+  txt(60,60,'紅：通過鏡心 → 方向不變',{fill:'var(--ray2)','font-size':13},scene);
+  txt(60,80,'綠：通過己方焦點 F → 折射後平行主軸',{fill:'var(--ray3)','font-size':13},scene);
+  $('ctrls').innerHTML=`<div class="ctrl"><button data-r="par" aria-pressed="${L.rays.par}">平行光</button><button data-r="cen" aria-pressed="${L.rays.cen}">鏡心光</button><button data-r="foc" aria-pressed="${L.rays.foc}">焦點光</button></div>
+    <div class="row"><span>物距 p</span><span>${L.p}</span></div><input type="range" id="pR" min="150" max="400" value="${L.p}">
+    <div class="fb" style="margin-top:6px;color:var(--muted);font-size:13px">${n<2?'至少要兩條光線才能決定像的位置':'三條光線交於同一點：那就是像'}</div>`;
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{L.rays[b.dataset.r]=!L.rays[b.dataset.r];pageRays();});
+  $('pR').oninput=e=>{L.p=+e.target.value;pageRays();};
+}
+function pagePoints(){
+  scene.innerHTML=''; L.convex=true; L.p=Math.max(L.p,150); drawAxisLens(scene);
+  const ox=CX-L.p; const t=thin();
+  // 物：一個方形的三個頂點＋更多點
+  const pts=[[0,L.h],[0,L.h*0.5],[0,0],[ 0,L.h*0.75],[0,L.h*0.25]];
+  const show=Math.min(L.points,pts.length);
+  objectArrow(scene,ox,CY,L.h,'var(--ink)','url(#arO)','物');
+  for(let i=0;i<show;i++){ const [dx,hy]=pts[i]; const py=CY-hy; el('circle',{cx:ox+dx,cy:py,r:5,fill:'var(--ink)'},scene);
+    if(hy===0){ el('circle',{cx:CX+t.q,cy:CY,r:5,fill:'var(--img)'},scene); continue; }
+    const g=el('g',{opacity:i===show-1?1:.25},scene); const img=principalRays(g,ox+dx,py,{par:true,cen:true,foc:false}); if(img) el('circle',{cx:img.x,cy:img.y,r:5,fill:'var(--img)'},scene); }
+  if(show>=pts.length) imageArrow(scene,CX+t.q,L.h*t.m,t.q<0);
+  $('ctrls').innerHTML=`<div class="row"><span>已作圖的點數</span><span>${show} / ${pts.length}</span></div><input type="range" id="np" min="1" max="${pts.length}" value="${show}">
+    <div class="fb" style="margin-top:6px;color:var(--muted);font-size:13px">${show<pts.length?'每個點各自用兩條特殊光線找到像點':'所有像點連成一線，就是整個物體的像'}</div>`;
+  $('np').oninput=e=>{L.points=+e.target.value;pagePoints();};
+}
+function pageImage(){
+  scene.innerHTML=''; drawAxisLens(scene);
+  const ox=CX-L.p; const t=thin();
+  const og=el('g',{style:'cursor:grab'},scene); el('rect',{x:ox-14,y:CY-L.h-16,width:28,height:L.h+20,fill:'transparent'},og); objectArrow(og,ox,CY,L.h);
+  og.addEventListener('pointerdown',e=>{ L.drag=true; svg.setPointerCapture(e.pointerId); });
+  const img=principalRays(scene,ox,CY-L.h,L.rays);
+  if(img) imageArrow(scene,img.x,L.h*t.m,img.virtual);
+  // 讀數
+  let kind; const f=L.f;
+  if(!isFinite(t.q)) kind='物在焦點上：光線平行射出，不成像';
+  else if(t.q<0) kind=`正立、放大 ${Math.abs(t.m).toFixed(2)} 倍的虛像（與物同側）`;
+  else kind=`倒立、${Math.abs(t.m)>1.01?'放大':Math.abs(t.m)<0.99?'縮小':'等大'} ${Math.abs(t.m).toFixed(2)} 倍的實像`;
+  if(!L.convex&&isFinite(t.q)) kind=`正立、縮小 ${Math.abs(t.m).toFixed(2)} 倍的虛像（與物同側）`;
+  $('readPanel').style.display=''; $('readout').innerHTML=`<span>焦距 f</span><b>${L.convex?'':'−'}${f}</b><span>物距 p</span><b>${L.p}</b><span>像距 q</span><b>${isFinite(t.q)?(t.q>0?'+':'')+Math.round(t.q):'∞'}</b><span>放大率 m</span><b>${isFinite(t.m)?t.m.toFixed(2):'—'}</b><span style="grid-column:1/3;margin-top:4px;color:var(--img);font-weight:600">${kind}</span>`;
+  $('tablePanel').style.display=L.convex?'':'none';
+  if(L.convex){ const k = L.p>2*f+3?1 : Math.abs(L.p-2*f)<=3?2 : L.p>f+3?3 : Math.abs(L.p-f)<=3?4 : 5; document.querySelectorAll('#caseTable tr[data-k]').forEach(r=>r.classList.toggle('cur',+r.dataset.k===k)); }
+  $('ctrls').innerHTML=`<div class="seg"><button id="cv" aria-pressed="${L.convex}">凸透鏡</button><button id="cc" aria-pressed="${!L.convex}">凹透鏡</button></div>
+    <div class="row"><span>物距 p（也可直接拖曳物體）</span><span>${L.p}</span></div><input type="range" id="pR" min="30" max="400" value="${L.p}">
+    <div class="row"><span>物高</span><span>${L.h}</span></div><input type="range" id="hR" min="20" max="110" value="${L.h}">
+    <div class="row"><span>焦距 f</span><span>${L.f}</span></div><input type="range" id="fR" min="60" max="180" value="${L.f}">
+    <div class="ctrl" style="margin-top:8px"><button data-r="par" aria-pressed="${L.rays.par}">平行光</button><button data-r="cen" aria-pressed="${L.rays.cen}">鏡心光</button><button data-r="foc" aria-pressed="${L.rays.foc}">焦點光</button></div>`;
+  $('cv').onclick=()=>{L.convex=true;pageImage();}; $('cc').onclick=()=>{L.convex=false;pageImage();};
+  $('pR').oninput=e=>{L.p=+e.target.value;pageImage();}; $('hR').oninput=e=>{L.h=+e.target.value;pageImage();}; $('fR').oninput=e=>{L.f=+e.target.value;pageImage();};
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{L.rays[b.dataset.r]=!L.rays[b.dataset.r];pageImage();});
+}
+svg.addEventListener('pointermove',e=>{ if(!L.drag) return; const p=pt(e); L.p=Math.max(30,Math.min(400,Math.round(CX-p.x))); L.h=Math.max(20,Math.min(110,Math.round(CY-p.y))); pageImage(); });
+svg.addEventListener('pointerup',()=>L.drag=null);
+
+/* ============ 說明文字 ============ */
+const PAGES={
+  types:{title:'透鏡分類',hint:'拖曳透鏡到正確的名稱',fn:pageTypes,text:[
+    `<p>透鏡依<b>外形</b>分兩大類：中央比邊緣<b>厚</b>的是<b>凸透鏡</b>，中央比邊緣<b>薄</b>的是<b>凹透鏡</b>。每一類再依兩個面的形狀分成三種：兩面都彎（雙凸／雙凹）、一面平（平凸／平凹）、一面凸一面凹（新月形）。</p>`,
+    `<p>依<b>性質</b>：凸透鏡把光線<b>會聚</b>起來，叫會聚透鏡；凹透鏡把光線<b>發散</b>開，叫發散透鏡。</p><p>依<b>用途</b>：凸透鏡用在放大鏡、相機、遠視與老花眼鏡；凹透鏡用在近視眼鏡、貓眼門鏡。</p><p class="q">新月形的透鏡怎麼判斷是凸還是凹？（提示：比較中央和邊緣的厚度。）</p>`,
+  ]},
+  refract:{title:'兩次折射',hint:'拖動滑桿改變入射光高度與折射率',fn:pageRefract,text:[
+    `<p>把兩個玻璃球重疊，交集的部分就是一片<b>雙凸透鏡</b>，所以透鏡的兩個面都是球面。</p><p>光線進入玻璃時，因為介質不同而<b>折射</b>（偏向法線）；在玻璃裡走一小段，從另一面射出時<b>再折射一次</b>（偏離法線）。兩次折射合起來，光線就往主軸彎。</p>`,
+    `<p class="q">把入射光移到愈靠近邊緣，折射得愈厲害還是愈輕微？把折射率調大，光線彎得更多還是更少？</p>`,
+  ]},
+  focus:{title:'焦點',hint:'調整折射率與球面半徑，看焦點怎麼移動',fn:pageFocus,text:[
+    `<p>一束<b>平行主軸</b>的光射入凸透鏡，經過兩次折射後會<b>交於主軸上的一點</b>，這一點叫<b>焦點 F</b>；焦點到鏡心的距離叫<b>焦距 f</b>。</p><p>玻璃折射率愈大、球面愈彎（半徑愈小），光線彎得愈多，焦距就愈短。</p>`,
+    `<p class="q">光線數調到最多，仔細看：靠近邊緣的光線和靠近中央的光線，交在完全相同的一點嗎？（這個小小的差異叫「球面像差」，是真實透鏡都有的現象；後面幾頁改用理想化的「薄透鏡」，就不考慮它。）</p>`,
+  ]},
+  rays:{title:'三條特殊光線',hint:'開關三條光線，任兩條就能找到像',fn:pageRays,text:[
+    `<p>物體上一點發出的光有無數條，但對薄透鏡來說，有<b>三條</b>的走法特別容易畫：</p><p>① <b>平行主軸</b>的光，折射後通過另一側的焦點 F'。<br>② <b>通過鏡心</b>的光，方向不變。<br>③ <b>通過同側焦點 F</b> 的光，折射後平行主軸。</p>`,
+    `<p>三條光線折射後交於同一點，這一點就是物體頂端的<b>像</b>。作圖時只要任選<b>兩條</b>就夠了。</p><p class="q">關掉其中一條，像的位置有沒有改變？為什麼？</p>`,
+  ]},
+  points:{title:'由點到像',hint:'拖動滑桿增加作圖的點數',fn:pagePoints,text:[
+    `<p>物體是由無數個點組成的。對物體上的<b>每一個點</b>都用特殊光線作圖，可以找到它對應的像點。</p><p>把這些像點連起來，就得到整個物體的像：<b>點成線、線成面</b>。</p>`,
+    `<p class="q">主軸上那個點的像落在哪裡？為什麼它不需要畫特殊光線也能知道？</p>`,
+  ]},
+  image:{title:'成像操作',hint:'拖曳物體（或用滑桿），觀察像的變化',fn:pageImage,text:[
+    `<p>透鏡公式：<b>1/f = 1/p + 1/q</b>（p 物距、q 像距）。q 為正代表像在透鏡另一側，是光線真正會聚成的<b>實像</b>，可以用光屏接到；q 為負代表像在物體同側，是光線反向延長線的交點，叫<b>虛像</b>，只能用眼睛看。</p>`,
+    `<p><b>凸透鏡</b>：物體從遠處往透鏡靠近，像從焦點附近往外移、愈來愈大；物體越過焦點以後變成正立放大虛像——這就是放大鏡的用法。</p><p><b>凹透鏡</b>：不管物體在哪裡，永遠是正立、縮小、同側的虛像。</p><p class="q">把物體拖到剛好 2f 的位置，像多大？拖到剛好 f 呢？</p>`,
+  ]},
+};
+function renderText(){ const P=PAGES[S.page]; $('textTitle').textContent=P.title; S.textIdx=Math.min(S.textIdx,P.text.length-1); $('textBody').innerHTML=P.text[S.textIdx]; $('pageNo').textContent=`${S.textIdx+1} / ${P.text.length}`; $('prev').disabled=S.textIdx===0; $('next').disabled=S.textIdx===P.text.length-1; }
+$('prev').onclick=()=>{S.textIdx--;renderText();}; $('next').onclick=()=>{S.textIdx++;renderText();};
+function setPage(p){ S.page=p; S.textIdx=0; document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.page===p)); $('hint').textContent=PAGES[p].hint; $('readPanel').style.display='none'; $('tablePanel').style.display='none'; PAGES[p].fn(); renderText(); }
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setPage(t.dataset.page));
+setPage('types');
+</script>
+</body>
+</html>
