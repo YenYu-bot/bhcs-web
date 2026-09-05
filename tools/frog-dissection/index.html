@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>青蛙虛擬解剖實驗室</title>
+<meta name="description" content="互動式青蛙虛擬解剖教學：七個課程、小測與總測驗。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%232F7D4F'/%3E%3Ccircle cx='11' cy='12' r='4' fill='%23fff'/%3E%3Ccircle cx='21' cy='12' r='4' fill='%23fff'/%3E%3Ccircle cx='11' cy='12' r='2' fill='%23222'/%3E%3Ccircle cx='21' cy='12' r='2' fill='%23222'/%3E%3C/svg%3E">
 <style>
   :root{
     --bg:#EEF1EC; --tray:#D7DDD3; --panel:#FFFFFF; --ink:#22302A; --muted:#66736C; --line:#CBD3CC;
@@ -26,7 +28,7 @@
   .lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:16px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0;overflow:hidden;text-align:left;display:flex;flex-direction:column}
   .card:hover{border-color:var(--green)}
-  .card .thumb{aspect-ratio:4/3;background:var(--tray);display:block;object-fit:cover;width:100%}
+  .card .thumb{aspect-ratio:4/3;background:var(--tray) center/cover no-repeat;display:block;width:100%}
   .card .body{padding:10px 12px 12px}
   .card b{font-size:17px}
   .card small{display:block;color:var(--muted);margin-top:2px}
@@ -41,7 +43,7 @@
   @media(max-width:900px){.lab{grid-template-columns:1fr}}
   .stage-wrap{background:var(--tray);border-radius:12px;padding:10px;position:relative}
   .stage{position:relative;aspect-ratio:3/4;max-height:78vh;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;touch-action:none;user-select:none}
-  .stage img.layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .stage .layer{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;pointer-events:none}
   .stage svg.overlay{position:absolute;inset:0;width:100%;height:100%}
   .hot{fill:rgba(46,125,79,0);stroke:rgba(46,125,79,0);stroke-width:3;cursor:pointer;transition:fill .15s}
   .hot:hover{fill:rgba(46,125,79,.18);stroke:rgba(46,125,79,.8)}
@@ -49,6 +51,14 @@
   .hot.found{fill:rgba(46,125,79,.15);stroke:var(--green)}
   .debug .hot{fill:rgba(44,99,184,.15);stroke:var(--blue)}
   @keyframes pulse{50%{stroke-opacity:.3}}
+  .hotpad{fill:rgba(0,0,0,0);stroke:none;cursor:pointer}
+  .cutline.hint{stroke:var(--amber);stroke-width:7;animation:pulse 1s infinite}
+  .pintarget.hint{stroke-width:4;stroke:var(--amber);animation:pulse 1s infinite}
+  @media(pointer:coarse){
+    .tool{min-width:86px;padding:12px 10px;font-size:14px}
+    .btn{padding:12px 22px;font-size:16px}
+    .nav{gap:10px}
+  }
   .cutline{fill:none;stroke:var(--cut);stroke-width:4;stroke-dasharray:10 8;stroke-linecap:round}
   .cutdone{fill:none;stroke:#7a1f1f;stroke-width:5;stroke-linecap:round}
   .pintarget{fill:rgba(255,255,255,.5);stroke:var(--red);stroke-width:2;stroke-dasharray:4 4}
@@ -77,10 +87,10 @@
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
   .modal.open{display:flex}
   .modal .box{background:#fff;border-radius:14px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:16px}
-  .modal img{width:100%;max-height:60vh;object-fit:contain;background:var(--tray);border-radius:8px}
+  .modal .bigimg{width:100%;aspect-ratio:4/3;max-height:60vh;background:var(--tray) center/contain no-repeat;border-radius:8px}
   .filmstrip{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
-  .filmstrip img{width:120px;height:90px;object-fit:cover;border:2px solid transparent;border-radius:6px;cursor:pointer}
-  .filmstrip img.cur{border-color:var(--green)}
+  .filmstrip .strip{flex:none;width:120px;height:90px;background:var(--tray) center/cover no-repeat;border:2px solid transparent;border-radius:6px;cursor:pointer}
+  .filmstrip .strip.cur{border-color:var(--green)}
 
   /* ---------- 測驗 ---------- */
   .quiz{max-width:820px}
@@ -91,7 +101,7 @@
   .feedback{min-height:28px;font-weight:600}
   .feedback.ok{color:var(--green)} .feedback.no{color:var(--red)}
   .qimg{position:relative;max-width:480px;margin:10px 0}
-  .qimg img{width:100%;display:block;border-radius:8px;background:var(--tray)}
+  .qimg .qbg{width:100%;aspect-ratio:3/4;display:block;border-radius:8px;background:var(--tray) center/cover no-repeat}
   .qimg svg{position:absolute;inset:0;width:100%;height:100%}
   input[type=text]{font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:6px;width:240px}
   .cert{background:#fff;border:6px double var(--green);border-radius:8px;padding:30px;text-align:center;max-width:640px;margin:16px auto}
@@ -137,7 +147,7 @@
     <div>
       <div class="stage-wrap">
         <div class="stage" id="stage">
-          <img class="layer" id="layerImg" alt="">
+          <div class="layer" id="layerImg" role="img" aria-label="解剖圖"></div>
           <svg class="overlay" id="overlay" viewBox="0 0 1000 1333" preserveAspectRatio="none"></svg>
           <div id="toast"></div>
         </div>
@@ -151,6 +161,7 @@
         <div class="stepbar"><progress id="prog" value="0" max="1"></progress><span id="stepNo" class="muted" style="font-size:13px"></span></div>
         <div class="nav" style="margin-top:8px">
           <button class="btn" id="btnPrev">上一步</button>
+          <button class="btn" id="btnHint" style="border-color:var(--amber);color:#8a6a00">提示 💡</button>
           <button class="btn primary" id="btnNext">下一步</button>
         </div>
       </div>
@@ -189,7 +200,7 @@
 <!-- 詳細觀察 -->
 <div class="modal" id="modal"><div class="box">
   <h2 id="mTitle"></h2>
-  <img id="mImg" alt="">
+  <div id="mImg" class="bigimg" role="img"></div>
   <div class="filmstrip" id="mStrip"></div>
   <p id="mText"></p>
   <div class="nav"><button class="btn primary" onclick="closeModal()">完成觀察</button></div>
@@ -473,19 +484,24 @@ function placeholder(key){
     <text x='50%' y='45%' dy='${m.w/12}' text-anchor='middle' font-family='sans-serif' font-size='${m.w/24}' fill='#6b7a70'>${m.w}×${m.h}${m.note?'　'+m.note:''}</text></svg>`;
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
-function setImg(el,key){ const m=IMG[key]; el.dataset.key=key; el.src=m?m.src:key; el.onerror=()=>{ el.onerror=null; el.src=placeholder(key); }; }
+// 用 CSS background 顯示圖片（而不是 <img>），避免被會攔截圖片的瀏覽器擴充功能藏起來
+function setImg(el,key){
+  const m=IMG[key]; const src=m?m.src:key; el.dataset.key=key;
+  el.style.backgroundImage=`url("${src}")`;
+  const probe=new Image(); probe.onerror=()=>{ if(el.dataset.key===key) el.style.backgroundImage=`url("${placeholder(key)}")`; }; probe.src=src;
+}
 
 /* ---------- 主選單 ---------- */
 function renderMenu(){
   const box=$('lessonCards'); box.innerHTML='';
   LESSONS.forEach(L=>{
     const b=document.createElement('button'); b.className='card';
-    b.innerHTML=`<img class="thumb" alt=""><div class="body"><b>${L.id}. ${L.title}</b><small>${L.objectives[0]}</small>${progress[L.id]?`<div class="done">✔ 小測 ${progress[L.id]}%</div>`:''}</div>`;
-    setImg(b.querySelector('img'),L.thumb); b.onclick=()=>openObjectives(L.id); box.appendChild(b);
+    b.innerHTML=`<div class="thumb"></div><div class="body"><b>${L.id}. ${L.title}</b><small>${L.objectives[0]}</small>${progress[L.id]?`<div class="done">✔ 小測 ${progress[L.id]}%</div>`:''}</div>`;
+    setImg(b.querySelector('.thumb'),L.thumb); b.onclick=()=>openObjectives(L.id); box.appendChild(b);
   });
   const f=document.createElement('button'); f.className='card';
-  f.innerHTML=`<img class="thumb" alt=""><div class="body"><b>8. 總測驗</b><small>從各課隨機抽 ${FINAL_COUNT} 題</small>${progress.final?`<div class="done">✔ ${progress.final}%</div>`:''}</div>`;
-  setImg(f.querySelector('img'),'thumb8'); f.onclick=()=>startQuiz('final'); box.appendChild(f);
+  f.innerHTML=`<div class="thumb"></div><div class="body"><b>8. 總測驗</b><small>從各課隨機抽 ${FINAL_COUNT} 題</small>${progress.final?`<div class="done">✔ ${progress.final}%</div>`:''}</div>`;
+  setImg(f.querySelector('.thumb'),'thumb8'); f.onclick=()=>startQuiz('final'); box.appendChild(f);
 }
 function openObjectives(id){
   currentLesson=id; const L=LESSONS.find(l=>l.id===id);
@@ -529,6 +545,7 @@ function renderStep(){
   $('pinPanel').style.display = step.type==='pin' ? '' : 'none';
   renderToolbar(step);
   drawOverlay(step);
+  resetHint();
   if(step.type==='detail') openDetail(step);
 }
 function advance(){
@@ -558,8 +575,12 @@ function drawOverlay(step){
   // 大的熱區先畫、小的後畫（在上層），目標熱區永遠最上層，避免重疊時點不到
   Object.entries(HOT).sort((a,b)=>area(b[1])-area(a[1])).sort((a,b)=>(step.target===a[0])-(step.target===b[0])).forEach(([key,h])=>{
     if(h.layer!==state.layer && !(step.type==='click'&&step.target===key)) return;
+    let pad;
+    if(h.shape==='circle'){ pad=document.createElementNS(SVGNS,'circle'); pad.setAttribute('cx',h.cx); pad.setAttribute('cy',h.cy); pad.setAttribute('r',Math.max(h.r+30,70)); }
+    else { pad=document.createElementNS(SVGNS,'rect'); pad.setAttribute('x',h.x-28); pad.setAttribute('y',h.y-28); pad.setAttribute('width',h.w+56); pad.setAttribute('height',h.h+56); pad.setAttribute('rx',18); }
+    pad.classList.add('hotpad'); pad.onclick=()=>onHotspot(key,step); ov.appendChild(pad);
     const el=shapeEl(h); el.classList.add('hot'); if(state.found.includes(h.label)) el.classList.add('found');
-    if(step.type==='click'&&step.target===key&&debug) el.classList.add('hint');
+    if(step.type==='click'&&step.target===key){ hintTargetEl=el; if(debug||hintOn) el.classList.add('hint'); }
     el.onclick=()=>onHotspot(key,step);
     ov.appendChild(el);
     if(debug) ov.appendChild(labelEl(hotCenter(h).x,hotCenter(h).y+6,key));
@@ -577,9 +598,32 @@ function onHotspot(key,step){
     addFound(h.label); $('caption').innerHTML=`<span class="ok">✔ ${h.label}</span>　${step.ok||''}`;
     if(step.nextLayer) setLayer(step.nextLayer);
     drawOverlay(step); setTimeout(advance, 1600);
-  } else if(step.type==='click'){ $('caption').innerHTML=`${step.text}<br><span class="no">那是${h.label}，再找找看。</span>`; }
+  } else if(step.type==='click'){ $('caption').innerHTML=`${step.text}<br><span class="no">那是${h.label}，再找找看。</span>`; registerMiss(step); }
   else toast(h.label);
 }
+
+/* ---------- 提示系統 ---------- */
+let hintTargetEl=null, hintOn=false, missCount=0, idleTimer=null;
+function showHint(){
+  const step=currentStep(); hintOn=true;
+  if(step.type==='click'){
+    if(step.requireTool&&state.tool!==step.requireTool){ toast(`先在下方選「${TOOLS[step.requireTool].name}」`); renderToolbar(step); return; }
+    if(hintTargetEl) hintTargetEl.classList.add('hint');
+    toast('目標在閃爍的虛線區域裡');
+  } else if(step.type==='tool'){ toast(`點下方發亮的「${TOOLS[step.tool].name}」`); renderToolbar(step); }
+  else if(step.type==='cut'){
+    if(state.tool!==step.tool){ toast(`先在下方選「${TOOLS[step.tool].name}」`); renderToolbar(step); }
+    else { document.querySelectorAll('.cutline').forEach(e=>e.classList.add('hint')); toast('沿著閃爍的虛線「按住拖曳」劃過去'); }
+  }
+  else if(step.type==='pin'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); toast('把下方托盤的大頭針，拖進閃爍的紅圈'); }
+  else if(step.type==='drag'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); toast('把左邊的骨頭拖到對應的虛線框'); }
+  else toast('讀完說明後按「下一步」');
+}
+function registerMiss(step){ missCount++; if(missCount>=2&&!hintOn) showHint(); }
+function resetHint(){ hintOn=false; missCount=0; clearTimeout(idleTimer);
+  const s=currentStep(); if(s&&['click','cut','pin','drag','tool'].includes(s.type)) idleTimer=setTimeout(()=>{ if(!hintOn) toast('卡住了嗎？可以按「提示 💡」'); },15000);
+}
+$('btnHint').onclick=showHint;
 
 /* 切割 */
 function drawCuts(step){
@@ -591,7 +635,7 @@ function drawCuts(step){
 }
 function nearestCut(step,pt){
   for(const p of step.paths){ if(state.cutsDone[p]) continue;
-    const pts=CUTS[p]; for(let i=0;i<pts.length-1;i++){ if(distSeg(pt,pts[i],pts[i+1])<40) return p; } }
+    const pts=CUTS[p]; for(let i=0;i<pts.length-1;i++){ if(distSeg(pt,pts[i],pts[i+1])<65) return p; } }
   return null;
 }
 function distSeg(p,a,b){ const dx=b[0]-a[0],dy=b[1]-a[1]; const t=Math.max(0,Math.min(1,((p.x-a[0])*dx+(p.y-a[1])*dy)/(dx*dx+dy*dy||1))); return Math.hypot(p.x-(a[0]+t*dx),p.y-(a[1]+t*dy)); }
@@ -608,9 +652,10 @@ function stagePt(e){ const r=$('stage').getBoundingClientRect(); return {x:(e.cl
 $('stage').addEventListener('pointerdown',e=>{
   const step=currentStep(); const pt=stagePt(e);
   if(debug){ toast(`x:${pt.x.toFixed(0)}  y:${pt.y.toFixed(0)}`); console.log('stage click',pt); }
+  if(step.type==='click' && !e.target.classList.contains('hot') && !e.target.classList.contains('hotpad')){ toast('這裡沒有目標，找找看其他位置'); registerMiss(step); }
   if(step.type!=='cut') return;
-  if(state.tool!==step.tool){ toast(`請先選擇「${TOOLS[step.tool].name}」`); return; }
-  const p=nearestCut(step,pt); if(!p) return;
+  if(state.tool!==step.tool){ toast(`請先選擇「${TOOLS[step.tool].name}」`); renderToolbar(step); return; }
+  const p=nearestCut(step,pt); if(!p){ registerMiss(step); return; }
   cutting={p, covered:new Set(), n:20, last:pt}; $('stage').setPointerCapture(e.pointerId);
 });
 $('stage').addEventListener('pointermove',e=>{
@@ -619,7 +664,7 @@ $('stage').addEventListener('pointermove',e=>{
   const from=cutting.last||pt; const steps=Math.max(1,Math.ceil(Math.hypot(pt.x-from.x,pt.y-from.y)/8));
   for(let k=0;k<=steps;k++){
     const q={x:from.x+(pt.x-from.x)*k/steps, y:from.y+(pt.y-from.y)*k/steps};
-    let near=false; for(let i=0;i<pts.length-1;i++) if(distSeg(q,pts[i],pts[i+1])<45) near=true;
+    let near=false; for(let i=0;i<pts.length-1;i++) if(distSeg(q,pts[i],pts[i+1])<65) near=true;
     if(near) cutting.covered.add(Math.min(cutting.n-1,Math.floor(projT(pts,q)*cutting.n)));
   }
   cutting.last=pt;
@@ -648,7 +693,7 @@ $('stage').addEventListener('pointerup',e=>{ if(state.dragPin){ state.dragPin=fa
 function dropPin(pt){
   const step=currentStep(); if(step.type!=='pin') return;
   const t=step.targets[state.pins]; if(!t) return;
-  if(Math.hypot(pt.x-t[0],pt.y-t[1])<60){ state.pins++; toast('釘好了'); if(state.pins>=step.targets.length){ if(step.nextLayer) setLayer(step.nextLayer); $('caption').innerHTML=`<span class="ok">✔</span> ${step.ok||''}`; drawOverlay(step); setTimeout(advance,1200); } else drawOverlay(step); }
+  if(Math.hypot(pt.x-t[0],pt.y-t[1])<90){ state.pins++; toast('釘好了'); if(state.pins>=step.targets.length){ if(step.nextLayer) setLayer(step.nextLayer); $('caption').innerHTML=`<span class="ok">✔</span> ${step.ok||''}`; drawOverlay(step); setTimeout(advance,1200); } else drawOverlay(step); }
   else toast('請放到下一個紅圈');
 }
 
@@ -679,7 +724,7 @@ $('stage').addEventListener('pointermove',e=>{
 });
 $('stage').addEventListener('pointerup',e=>{
   if(!state.dragging) return; const d=state.dragging, step=currentStep(), it=step.items[d.i]; state.dragging=null;
-  if(d.cur && Math.hypot(d.cur.x-it.x,d.cur.y-it.y)<70){ state.dragDone[d.i]=true; toast(`✔ ${it.name}`); }
+  if(d.cur && Math.hypot(d.cur.x-it.x,d.cur.y-it.y)<95){ state.dragDone[d.i]=true; toast(`✔ ${it.name}`); }
   else { state.dragPos=state.dragPos||{}; if(d.cur) state.dragPos[d.i]=d.cur; }
   drawOverlay(step);
   if(step.items.every((_,i)=>state.dragDone[i])){ $('caption').innerHTML=`<span class="ok">✔</span> ${step.ok}`; setTimeout(advance,1500); }
@@ -690,8 +735,8 @@ function openDetail(step){
   const imgs=step.imgs||[step.img]; let cur=0;
   $('mTitle').textContent=step.title; $('mText').textContent=step.text;
   const strip=$('mStrip'); strip.innerHTML='';
-  const showI=i=>{ cur=i; setImg($('mImg'),imgs[i]); strip.querySelectorAll('img').forEach((im,j)=>im.classList.toggle('cur',j===i)); };
-  if(imgs.length>1) imgs.forEach((k,i)=>{ const im=document.createElement('img'); setImg(im,k); im.onclick=()=>showI(i); strip.appendChild(im); });
+  const showI=i=>{ cur=i; setImg($('mImg'),imgs[i]); strip.querySelectorAll('.strip').forEach((im,j)=>im.classList.toggle('cur',j===i)); };
+  if(imgs.length>1) imgs.forEach((k,i)=>{ const im=document.createElement('div'); im.className='strip'; setImg(im,k); im.onclick=()=>showI(i); strip.appendChild(im); });
   showI(0); $('modal').classList.add('open');
 }
 function closeModal(){ $('modal').classList.remove('open'); }
@@ -717,7 +762,7 @@ function renderQ(){
   if(q.type==='mc') html+=`<div class="opts">${q.opts.map((o,i)=>`<label><input type="radio" name="o" value="${i}">${o}</label>`).join('')}</div>`;
   if(q.type==='multi') html+=`<div class="opts">${q.opts.map((o,i)=>`<label><input type="checkbox" name="o" value="${i}">${o}</label>`).join('')}</div>`;
   if(q.type==='fill') html+=`<p><input type="text" id="fillAns" placeholder="填入答案"></p>`;
-  if(q.type==='hotspot') html+=`<div class="qimg"><img id="qImg" alt=""><svg viewBox="0 0 1000 1333" preserveAspectRatio="none" id="qSvg"></svg></div><p class="muted" style="font-size:13px">點一下圖片作答</p>`;
+  if(q.type==='hotspot') html+=`<div class="qimg"><div id="qImg" class="qbg"></div><svg viewBox="0 0 1000 1333" preserveAspectRatio="none" id="qSvg"></svg></div><p class="muted" style="font-size:13px">點一下圖片作答</p>`;
   html+=`<div class="feedback" id="fb"></div>`;
   box.innerHTML=html;
   if(q.type==='hotspot'){ setImg($('qImg'),q.img); const s=$('qSvg'); s.onclick=e=>{ const r=s.getBoundingClientRect(); quiz.hotAns={x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*1333}; s.innerHTML=`<circle cx="${quiz.hotAns.x}" cy="${quiz.hotAns.y}" r="22" fill="none" stroke="#2C63B8" stroke-width="5"/>`; }; }
