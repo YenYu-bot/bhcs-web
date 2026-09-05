@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>光的三原色與顏料三原色</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='12' cy='12' r='9' fill='%23f00' opacity='.8'/%3E%3Ccircle cx='20' cy='12' r='9' fill='%230f0' opacity='.8'/%3E%3Ccircle cx='16' cy='20' r='9' fill='%2300f' opacity='.8'/%3E%3C/svg%3E">
+<style>
+  :root{ --bg:#F4F6F8; --panel:#fff; --line:#D5DBE3; --ink:#1F2933; --muted:#65717F; --accent:#2E6FD8; --ok:#2E8B57; --no:#C0392B; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
+  button{font:inherit;cursor:pointer}
+  .wrap{max-width:1200px;margin:0 auto;padding:14px 18px 30px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+  h1{margin:0;font-size:24px}
+  header small{color:var(--muted)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:12px}
+  .seg button{border:0;background:#fff;padding:7px 18px;color:var(--muted)}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#fff;font-weight:700}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .stage{border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;background:#000;transition:background .3s}
+  .stage.paint{background:#fff}
+  .stage svg{display:block;width:100%;height:auto;touch-action:none;user-select:none}
+  .stage .cap{position:absolute;left:12px;top:8px;font-size:13px;color:#fff;background:rgba(0,0,0,.45);border-radius:8px;padding:2px 10px;pointer-events:none}
+  .stage.paint .cap{color:var(--ink);background:rgba(255,255,255,.8);border:1px solid var(--line)}
+  .side{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h2{font-size:14px;color:var(--muted);margin:0 0 8px;font-weight:600}
+  .text p{margin:0 0 10px;font-size:15px}
+  .text .q{background:#FFF6D6;border-left:4px solid #E8A400;padding:8px 10px;border-radius:0 8px 8px 0}
+  .row{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin:6px 0 0}
+  .row .sw{width:18px;height:18px;border-radius:4px;border:1px solid var(--line);display:inline-block;vertical-align:middle;margin-right:6px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .result{display:flex;align-items:center;gap:12px;margin-top:10px}
+  .result .big{width:64px;height:64px;border-radius:12px;border:1px solid var(--line)}
+  .result code{font-size:15px}
+  .ctrl{display:flex;flex-wrap:wrap;gap:6px}
+  .ctrl button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:14px}
+  .ctrl button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .quiz .opts{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+  .quiz .opts button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px}
+  .quiz .opts button.ok{background:#E3F4EA;border-color:var(--ok)} .quiz .opts button.no{background:#FBE5E2;border-color:var(--no)}
+  .fb{min-height:22px;font-weight:600;font-size:14px}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin-top:6px}
+  td,th{border:1px solid var(--line);padding:4px 6px;text-align:center}
+  th{background:#F0F3F7}
+  details{color:var(--muted);font-size:14px;margin-top:12px}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>光的三原色與顏料三原色</h1><small>色光相加愈混愈亮，顏料相減愈混愈暗</small></header>
+<div class="seg" role="group"><button id="mLight" aria-pressed="true">光的三原色（RGB）</button><button id="mPaint" aria-pressed="false">顏料三原色（CMY）</button></div>
+
+<div class="grid">
+  <div class="stage" id="stage"><span class="cap" id="cap"></span>
+    <svg id="svg" viewBox="0 0 860 520" aria-label="三原色混色"><g id="scene"></g><g id="labels"></g></svg>
+  </div>
+  <aside class="side">
+    <div class="panel"><h2>三個光源／顏料的強度</h2>
+      <div id="sliders"></div>
+      <div class="result"><div class="big" id="mixSw"></div><div><div style="font-size:13px;color:var(--muted)">三者重疊處的顏色</div><code id="mixHex"></code><div id="mixName" style="font-weight:600"></div></div></div>
+      <div class="ctrl" style="margin-top:10px"><button id="btnOverlap">圓圈全部疊在一起</button><button id="btnSpread">分開排成三角</button><button id="btnFull">強度全開</button></div>
+    </div>
+    <div class="panel text"><h2 id="tTitle"></h2><div id="tBody"></div></div>
+    <div class="panel quiz"><h2>小測驗</h2><div id="qText" style="font-size:15px"></div><div class="opts" id="qOpts"></div><div class="fb" id="qfb"></div><div class="ctrl"><button id="qNext">下一題</button><span id="qScore" style="align-self:center;font-size:13px;color:var(--muted)"></span></div></div>
+  </aside>
+</div>
+<details><summary>教師備註</summary>色光相加以 RGB 分量相加（超過 255 取 255）計算；顏料相減以反射率相乘計算（每種顏料吸收一種原色光，顏料濃度愈高吸收愈多）。畫面用瀏覽器的混合模式（screen／multiply）即時渲染，重疊區的顏色與右側計算結果一致。實際顏料不是理想濾色片，所以真實的 C+M+Y 通常是深褐而不是純黑，印刷才會另外加黑色墨（K）。</details>
+</div>
+
+<script>
+const $=id=>document.getElementById(id); const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
+const MODES={
+  light:{ names:['紅光 R','綠光 G','藍光 B'], base:[[255,0,0],[0,255,0],[0,0,255]], blend:'screen', bg:'#000',
+    cap:'黑暗的房間裡三盞彩色燈：拖曳圓圈讓光重疊', title:'光的三原色',
+    text:`<p>紅、綠、藍是<b>光的三原色</b>。把不同顏色的光照在同一處，眼睛收到的光<b>相加</b>，所以愈混愈亮：紅＋綠＝黃、綠＋藍＝青、紅＋藍＝洋紅，三色全開就是<b>白光</b>。</p><p>螢幕、投影機、舞台燈都用這個原理：每個像素其實是三個很小的紅綠藍光點。</p><p class="q">把三個圓分開再慢慢移到一起，觀察兩兩重疊的顏色；然後只把紅光調到一半，重疊處會變成什麼顏色？</p>` },
+  paint:{ names:['青 C','洋紅 M','黃 Y'], base:[[0,255,255],[255,0,255],[255,255,0]], blend:'multiply', bg:'#fff',
+    cap:'白紙上三種透明顏料：拖曳圓圈讓顏料重疊', title:'顏料三原色',
+    text:`<p>青、洋紅、黃是<b>顏料三原色</b>。顏料本身不發光，它<b>吸收</b>一部分白光、反射剩下的：青吸收紅光、洋紅吸收綠光、黃吸收藍光。兩種顏料疊在一起，被吸收的光更多，所以愈混愈暗：青＋洋紅＝藍、洋紅＋黃＝紅、黃＋青＝綠，三色全疊接近<b>黑色</b>。</p><p>彩色印表機、印刷就用 C、M、Y 三種墨，再加黑墨 K 補足深色。</p><p class="q">為什麼顏料三原色剛好是光的三原色兩兩相加的結果？（提示：每種顏料只吸收一種原色光。）</p>` },
+};
+const S={ mode:'light', v:[1,1,1], c:[{x:340,y:220},{x:520,y:220},{x:430,y:370}], drag:null };
+const R=150;
+const hex=c=>'#'+c.map(x=>Math.round(Math.max(0,Math.min(255,x))).toString(16).padStart(2,'0')).join('').toUpperCase();
+// 單一光源／顏料在強度 t 下的顏色
+function primary(i,t){ const b=MODES[S.mode].base[i]; return S.mode==='light' ? b.map(x=>x*t) : b.map(x=>255-(255-x)*t); }
+// 混合
+function mix(idx){ if(!idx.length) return S.mode==='light'?[0,0,0]:[255,255,255];
+  if(S.mode==='light') return [0,1,2].map(k=>Math.min(255,idx.reduce((a,i)=>a+primary(i,S.v[i])[k],0)));
+  return [0,1,2].map(k=>idx.reduce((a,i)=>a*primary(i,S.v[i])[k]/255,255)); }
+function colorName(c){
+  const [r,g,b]=c.map(x=>Math.round(x)); const hi=x=>x>200, lo=x=>x<60, mid=x=>x>=60&&x<=200;
+  if(hi(r)&&hi(g)&&hi(b)) return '白'; if(lo(r)&&lo(g)&&lo(b)) return '黑';
+  if(hi(r)&&hi(g)&&lo(b)) return '黃'; if(lo(r)&&hi(g)&&hi(b)) return '青'; if(hi(r)&&lo(g)&&hi(b)) return '洋紅';
+  if(hi(r)&&lo(g)&&lo(b)) return '紅'; if(lo(r)&&hi(g)&&lo(b)) return '綠'; if(lo(r)&&lo(g)&&hi(b)) return '藍';
+  if(hi(r)&&mid(g)&&lo(b)) return '橙'; if(mid(r)&&mid(g)&&mid(b)) return '灰'; if(hi(r)&&mid(g)&&mid(b)) return '粉紅'; if(mid(r)&&lo(g)&&hi(b)) return '紫';
+  return '混合色';
+}
+function draw(){
+  const M=MODES[S.mode]; const sc=$('scene'), lb=$('labels'); sc.innerHTML=''; lb.innerHTML='';
+  $('stage').classList.toggle('paint',S.mode==='paint'); $('cap').textContent=M.cap;
+  S.c.forEach((p,i)=>{ const col=primary(i,S.v[i]); const g=el('g',{style:`mix-blend-mode:${M.blend};cursor:grab`},sc);
+    el('circle',{cx:p.x,cy:p.y,r:R,fill:hex(col),opacity:S.mode==='light'?1:1},g);
+    g.addEventListener('pointerdown',e=>{ const q=pt(e); S.drag={i,dx:p.x-q.x,dy:p.y-q.y}; $('svg').setPointerCapture(e.pointerId); });
+  });
+  // 標籤：單獨區、兩兩重疊區、三重疊區
+  const tc=S.mode==='light'?'#fff':'#222';
+  const label=(x,y,idx)=>{ const c=mix(idx); const t=el('text',{x,y,'text-anchor':'middle','font-size':15,'font-weight':700,fill:tc,'paint-order':'stroke',stroke:S.mode==='light'?'rgba(0,0,0,.6)':'rgba(255,255,255,.8)','stroke-width':4},lb); t.textContent=`${colorName(c)} ${hex(c)}`; };
+  const d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  S.c.forEach((p,i)=>{ const others=S.c.filter((_,j)=>j!==i); const away={x:p.x-(others[0].x+others[1].x)/2,y:p.y-(others[0].y+others[1].y)/2}; const L=Math.hypot(away.x,away.y)||1; label(p.x+away.x/L*R*0.55,p.y+away.y/L*R*0.55+5,[i]); });
+  [[0,1],[1,2],[0,2]].forEach(([i,j])=>{ if(d(S.c[i],S.c[j])<2*R-20){ const k=3-i-j; const mx=(S.c[i].x+S.c[j].x)/2,my=(S.c[i].y+S.c[j].y)/2; const ax=mx-S.c[k].x,ay=my-S.c[k].y; const L=Math.hypot(ax,ay)||1; const near=d(S.c[k],{x:mx,y:my})<R+40; const push=near?R*0.5:0; label(mx+ax/L*push,my+ay/L*push+5,[i,j]); } });
+  const cx=(S.c[0].x+S.c[1].x+S.c[2].x)/3, cy=(S.c[0].y+S.c[1].y+S.c[2].y)/3;
+  if(S.c.every(p=>d(p,{x:cx,y:cy})<R-10)) label(cx,cy+5,[0,1,2]);
+  // 右側
+  const all=mix([0,1,2]); $('mixSw').style.background=hex(all); $('mixHex').textContent=hex(all); $('mixName').textContent=colorName(all);
+  $('sliders').innerHTML=M.names.map((n,i)=>`<div class="row"><span><span class="sw" style="background:${hex(primary(i,1))}"></span>${n}</span><span>${Math.round(S.v[i]*100)} %</span></div><input type="range" data-i="${i}" min="0" max="1" step="0.01" value="${S.v[i]}">`).join('');
+  document.querySelectorAll('#sliders input').forEach(inp=>inp.oninput=e=>{ S.v[+e.target.dataset.i]=+e.target.value; draw(); });
+  $('tTitle').textContent=M.title; $('tBody').innerHTML=M.text;
+}
+function pt(e){ const p=$('svg').createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform($('svg').getScreenCTM().inverse()); }
+$('svg').addEventListener('pointermove',e=>{ if(!S.drag) return; const q=pt(e); S.c[S.drag.i]={x:Math.max(R,Math.min(860-R,q.x+S.drag.dx)),y:Math.max(R,Math.min(520-R,q.y+S.drag.dy))}; draw(); });
+$('svg').addEventListener('pointerup',()=>S.drag=null);
+function setMode(m){ S.mode=m; $('mLight').setAttribute('aria-pressed',m==='light'); $('mPaint').setAttribute('aria-pressed',m==='paint'); draw(); newQ(); }
+$('mLight').onclick=()=>setMode('light'); $('mPaint').onclick=()=>setMode('paint');
+$('btnOverlap').onclick=()=>{ S.c=[{x:400,y:230},{x:460,y:230},{x:430,y:290}]; draw(); };
+$('btnSpread').onclick=()=>{ S.c=[{x:270,y:210},{x:590,y:210},{x:430,y:400}]; draw(); };
+$('btnFull').onclick=()=>{ S.v=[1,1,1]; draw(); };
+
+/* 小測驗 */
+const QS={
+  light:[['紅光＋綠光＝？','黃'],['綠光＋藍光＝？','青'],['紅光＋藍光＝？','洋紅'],['紅＋綠＋藍三色光全開＝？','白'],['螢幕上的黃色，其實是哪兩種光點同時亮？','紅＋綠']],
+  paint:[['青＋洋紅顏料＝？','藍'],['洋紅＋黃顏料＝？','紅'],['黃＋青顏料＝？','綠'],['青、洋紅、黃三種顏料全疊＝？','黑（深褐）'],['黃色顏料吸收的是哪一種色光？','藍光']],
+};
+const OPTS={light:['黃','青','洋紅','白','紅＋綠','綠＋藍','黑'],paint:['藍','紅','綠','黑（深褐）','藍光','紅光','白']};
+let Q={i:0,score:0,total:0,order:[]};
+function newQ(){ const list=QS[S.mode]; if(!Q.order.length||Q.mode!==S.mode){ Q.order=list.map((_,i)=>i).sort(()=>Math.random()-.5); Q.mode=S.mode; Q.i=0; }
+  const [q,a]=list[Q.order[Q.i%Q.order.length]]; Q.i++; $('qText').textContent=q; $('qfb').textContent='';
+  const opts=[a,...OPTS[S.mode].filter(o=>o!==a).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
+  $('qOpts').innerHTML=opts.map(o=>`<button>${o}</button>`).join('');
+  $('qOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{ if(Q.answered) return; Q.answered=true; Q.total++; const ok=b.textContent===a; if(ok) Q.score++; b.classList.add(ok?'ok':'no'); [...$('qOpts').children].find(x=>x.textContent===a).classList.add('ok'); $('qfb').textContent=ok?'答對了！':'再想想，正確答案是「'+a+'」。'; $('qfb').style.color=ok?'var(--ok)':'var(--no)'; $('qScore').textContent=`答對 ${Q.score} / ${Q.total}`; });
+  Q.answered=false;
+}
+$('qNext').onclick=newQ;
+draw(); newQ();
+</script>
+</body>
+</html>
