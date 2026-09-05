@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>直流馬達的原理</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='8' width='8' height='16' fill='%23E74C3C'/%3E%3Crect x='22' y='8' width='8' height='16' fill='%233B6FB6'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23B87333'/%3E%3C/svg%3E">
+<style>
+  :root{ --bg:#F4F6F8; --panel:#fff; --line:#D5DBE3; --ink:#1F2933; --muted:#65717F; --accent:#2E6FD8; --ok:#2E8B57; --no:#C0392B; --N:#E74C3C; --S:#3B6FB6; --cu:#B87333; --fe:#8A93A2; --pos:#E74C3C; --neg:#2E6FD8; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
+  button{font:inherit;cursor:pointer}
+  .wrap{max-width:1200px;margin:0 auto;padding:14px 18px 30px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+  h1{margin:0;font-size:24px}
+  header small{color:var(--muted)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 14px}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+  .stage svg{display:block;width:100%;height:auto;touch-action:none;user-select:none}
+  .hint{position:absolute;left:12px;top:8px;background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:8px;padding:2px 10px;font-size:13px;color:var(--muted);pointer-events:none}
+  .status{position:absolute;left:12px;bottom:10px;right:12px;font-size:15px;font-weight:600;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.9);border:1px solid var(--line)}
+  .status.ok{color:var(--ok)} .status.no{color:var(--no)}
+  .side{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h2{font-size:14px;color:var(--muted);margin:0 0 8px;font-weight:600}
+  .ctrl{display:flex;flex-wrap:wrap;gap:6px}
+  .ctrl button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:14px}
+  .ctrl button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .text p{margin:0 0 10px;font-size:15px}
+  .text .q{background:#FFF6D6;border-left:4px solid #E8A400;padding:8px 10px;border-radius:0 8px 8px 0}
+  .pager{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);margin-top:6px}
+  .pager button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 12px}
+  .pager button:disabled{opacity:.35;cursor:default}
+  .readout{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+  .readout b{text-align:right}
+  details{color:var(--muted);font-size:14px;margin-top:12px}
+  .hot{cursor:pointer}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>直流馬達的原理</h1><small>電磁鐵、場磁鐵、集電環與電刷，怎麼讓線圈一直轉下去</small></header>
+<div class="tabs" role="tablist">
+  <button class="tab" data-page="em">1 電磁鐵與右手定則</button>
+  <button class="tab" data-page="stuck">2 為什麼轉半圈就停</button>
+  <button class="tab" data-page="comm">3 集電環與電刷</button>
+  <button class="tab" data-page="model">4 馬達模型操作</button>
+  <button class="tab" data-page="fan">5 應用：風扇</button>
+</div>
+<div class="grid">
+  <div class="stage"><span class="hint" id="hint"></span>
+    <svg id="svg" viewBox="0 0 860 520" aria-label="直流馬達"><defs>
+      <marker id="arR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#E74C3C"/></marker>
+      <marker id="arB" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#2E6FD8"/></marker>
+      <marker id="arK" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1F2933"/></marker>
+      <marker id="arG" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#2E8B57"/></marker>
+    </defs><g id="scene"></g></svg>
+    <div class="status" id="status"></div>
+  </div>
+  <aside class="side">
+    <div class="panel" id="ctrlPanel"><h2>操作</h2><div class="ctrl" id="ctrls"></div>
+      <div class="readout" id="readout" style="margin-top:10px"></div></div>
+    <div class="panel text"><h2 id="tTitle"></h2><div id="tBody"></div><div class="pager"><button id="prev">上一頁</button><span id="pageNo"></span><button id="next">下一頁</button></div></div>
+  </aside>
+</div>
+<details><summary>教師備註</summary>模擬以「電樞 = 一根電磁鐵」的簡化模型計算：電磁鐵的磁矩方向沿鐵芯，磁矩大小與電流成正比，方向由電流方向決定；場磁鐵提供水平磁場。力矩 = 磁矩 × 磁場（τ = −mB sinθ），加上轉動慣量與摩擦。集電環在電樞與磁場對齊的瞬間切換電流方向，電樞靠慣性衝過去，力矩就一直是同一個方向。把集電環轉 90° 時換向時機錯誤，電樞會在垂直位置來回擺動後停住——這和實際馬達一致。</details>
+</div>
+
+<script>
+const $=id=>document.getElementById(id); const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
+const txt=(x,y,s,a={},p)=>{ const t=el('text',{x,y,'font-size':14,fill:'var(--ink)',...a},p); t.textContent=s; return t; };
+const rad=d=>d*Math.PI/180; const CX=430, CY=250;
+/* ---------- 狀態 ---------- */
+const S={ page:'em', textIdx:0,
+  theta:20, omega:0,              // 電樞角度（度，0 = 與磁場平行）、角速度（度/秒）
+  battery:true, brush:true, cells:1, batteryFlip:false, fieldFlip:false, fieldOn:true,
+  commOffset:0, commutator:true,  // 集電環角度偏移（0 正常，90 卡住）、是否有集電環
+  showCurrent:true, drag:null, fan:false };
+function supplyI(){ return (S.battery&&S.brush)? S.cells*(S.batteryFlip?-1:1) : 0; }
+function armI(){ // 電樞線圈裡的電流（含換向）
+  const I=supplyI(); if(!I) return 0; if(!S.commutator) return I;
+  const s=Math.sin(rad(S.theta-S.commOffset)); return Math.abs(s)<0.02?0:I*Math.sign(s);   // 缺口處瞬間斷電
+}
+function fieldB(){ return S.fieldOn?(S.fieldFlip?-1:1):0; }
+function torque(){ return -armI()*fieldB()*Math.sin(rad(S.theta))*2600; }   // 度/秒²
+/* ---------- 物理更新 ---------- */
+let last=null;
+function step(now){
+  const dt=Math.min(0.04,last?(now-last)/1000:0); last=now;
+  if(!S.drag){ const tau=torque(); S.omega+=tau*dt; S.omega*=Math.exp(-dt*1.4); if(Math.abs(S.omega)<2&&Math.abs(tau)<50) S.omega*=0.8; S.theta=((S.theta+S.omega*dt)%360+360)%360; }
+  draw(); requestAnimationFrame(step);
+}
+/* ---------- 繪圖 ---------- */
+function draw(){
+  const g=$('scene'); g.innerHTML='';
+  const I=supplyI(), Ia=armI(), B=fieldB();
+  // 場磁鐵
+  if(S.fieldOn){ const N=!S.fieldFlip; [[-1,N],[1,!N]].forEach(([side,isN])=>{ const x=CX+side*230; const gg=el('g',{class:'hot'},g);
+    el('rect',{x:x-45,y:CY-110,width:90,height:220,rx:8,fill:isN?'var(--N)':'var(--S)'},gg); txt(x,CY+10,isN?'N':'S',{'text-anchor':'middle','font-size':40,'font-weight':700,fill:'#fff'},gg);
+    txt(x,CY+135,'場磁鐵（按一下換邊）',{'text-anchor':'middle','font-size':12,fill:'var(--muted)'},gg);
+    gg.onclick=()=>{ S.fieldFlip=!S.fieldFlip; }; });
+    // 磁場方向箭頭
+    for(let y=-80;y<=80;y+=40){ const dir=B; el('line',{x1:CX-180,y1:CY+y,x2:CX+180,y2:CY+y,stroke:'#cfd6e0','stroke-width':1.5,'marker-end':'url(#arK)',transform:dir<0?`rotate(180 ${CX} ${CY+y})`:''},g); }
+    txt(CX,CY-125,'磁場方向 B（由 N 指向 S）',{'text-anchor':'middle','font-size':12,fill:'var(--muted)'},g);
+  } else txt(CX,CY-125,'場磁鐵已移開：沒有磁場，電樞不受力',{'text-anchor':'middle','font-size':13,fill:'var(--no)'},g);
+  // 電樞（旋轉群組）
+  const ag=el('g',{transform:`translate(${CX} ${CY}) rotate(${S.theta})`},g);
+  el('rect',{x:-150,y:-22,width:300,height:44,rx:6,fill:'var(--fe)'},ag);
+  for(let x=-120;x<=120;x+=12) el('line',{x1:x,y1:-28,x2:x+6,y2:28,stroke:'var(--cu)','stroke-width':3},ag);
+  // 電磁鐵極性
+  if(Ia!==0){ const nRight=Ia>0; txt(135,8,nRight?'N':'S',{'text-anchor':'middle','font-size':26,'font-weight':700,fill:nRight?'var(--N)':'var(--S)'},ag); txt(-135,8,nRight?'S':'N',{'text-anchor':'middle','font-size':26,'font-weight':700,fill:nRight?'var(--S)':'var(--N)'},ag); }
+  // 線圈電流箭頭
+  if(S.showCurrent&&Ia!==0){ const dir=Ia>0?1:-1; [[-60,-40],[0,-40],[60,-40]].forEach(([x,y])=>el('line',{x1:x-8*dir,y1:y,x2:x+8*dir,y2:y,stroke:'#E74C3C','stroke-width':3,'marker-end':'url(#arR)'},ag)); [[-60,40],[0,40],[60,40]].forEach(([x,y])=>el('line',{x1:x+8*dir,y1:y,x2:x-8*dir,y2:y,stroke:'#2E6FD8','stroke-width':3,'marker-end':'url(#arB)'},ag)); }
+  // 集電環（隨電樞轉，缺口方向 = 電樞方向 + 偏移）
+  if(S.commutator){ const cg=el('g',{transform:`rotate(${-S.commOffset})`},ag);
+    el('path',{d:'M0 -30 A30 30 0 0 1 0 30 L0 22 A22 22 0 0 0 0 -22 Z',fill:'var(--cu)',stroke:'#7a4a1e'},cg); el('path',{d:'M0 -30 A30 30 0 0 0 0 30 L0 22 A22 22 0 0 1 0 -22 Z',fill:'var(--cu)',stroke:'#7a4a1e'},cg);
+    el('line',{x1:0,y1:-32,x2:0,y2:32,stroke:'#fff','stroke-width':4},cg); }
+  el('circle',{r:9,fill:'#333'},ag);
+  // 力（受力方向）
+  if(Ia!==0&&B!==0){ const tau=torque(); const f=Math.sign(tau); if(f){ [[130,1],[-130,-1]].forEach(([x,sgn])=>{ const fy=f*sgn*40; el('line',{x1:x,y1:0,x2:x,y2:fy,stroke:'var(--ok)','stroke-width':3,'marker-end':'url(#arG)'},ag); }); } }
+  // 電樞拖曳熱區
+  const hz=el('circle',{r:160,fill:'transparent',style:'cursor:grab'},ag);
+  hz.addEventListener('pointerdown',e=>{ S.drag={lastA:angleAt(e),lastT:performance.now()}; S.omega=0; $('svg').setPointerCapture(e.pointerId); });
+  // 電刷（固定在上下）
+  const brushY=S.brush?38:60;
+  [[-1,'#E74C3C'],[1,'#2E6FD8']].forEach(([s,c])=>{ const bg=el('g',{class:'hot',transform:`translate(${CX} ${CY+s*brushY})`},g); el('rect',{x:-7,y:s>0?0:-20,width:14,height:20,fill:'#222'},bg); bg.onclick=()=>{S.brush=!S.brush;}; });
+  txt(CX+50,CY-52,'電刷（按一下：接觸／離開）',{'font-size':12,fill:'var(--muted)'},g);
+  if(!S.brush) txt(CX,CY-72,'電刷離開集電環，電路中斷',{'text-anchor':'middle','font-size':13,fill:'var(--no)'},g);
+  // 導線與電池（畫面下方）
+  const by=CY+180; const wire=(pts,color)=>el('polyline',{points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:color,'stroke-width':3},g);
+  const pos=S.batteryFlip?-1:1;  // 正極在左(+1)或右(-1)
+  wire([[CX,CY+brushY+20],[CX,CY+120],[CX-70,CY+120],[CX-70,by]],S.showCurrent&&I?(pos>0?'#E74C3C':'#2E6FD8'):'#555');
+  wire([[CX,CY-brushY-20],[CX,CY-105],[CX+110,CY-105],[CX+110,by],[CX+70,by]],S.showCurrent&&I?(pos>0?'#2E6FD8':'#E74C3C'):'#555');
+  wire([[CX+110,by]],'#555');
+  // 電池
+  const bat=el('g',{class:'hot',transform:`translate(${CX} ${by})`},g);
+  if(S.battery){ for(let i=0;i<S.cells;i++){ const x=-60+i*(S.cells===1?0:0)+ (S.cells===2?(i?4:-64):-30); const w=60;
+      el('rect',{x:x,y:-16,width:w,height:32,rx:4,fill:'#f2c94c',stroke:'#8a6d1f'},bat); el('rect',{x:pos>0?x-6:x+w,y:-6,width:6,height:12,fill:'#8a6d1f'},bat); txt(pos>0?x+8:x+w-8,5,'+',{'font-size':16,'font-weight':700,'text-anchor':'middle'},bat); txt(pos>0?x+w-8:x+8,5,'−',{'font-size':16,'font-weight':700,'text-anchor':'middle'},bat); } }
+  else { el('rect',{x:-66,y:-16,width:132,height:32,rx:4,fill:'none',stroke:'#aaa','stroke-dasharray':'5 4'},bat); txt(0,5,'電池未裝上',{'text-anchor':'middle','font-size':12,fill:'var(--muted)'},bat); }
+  bat.onclick=()=>{ S.battery=!S.battery; };
+  txt(CX,by+32,'乾電池（按一下：裝上／取下）　紅線＝流出正極　藍線＝流回負極',{'text-anchor':'middle','font-size':12,fill:'var(--muted)'},g);
+  // 風扇
+  if(S.fan){ const fg=el('g',{transform:`translate(${CX} ${CY}) rotate(${S.theta})`},g); for(let k=0;k<3;k++) el('path',{d:'M0 0 Q40 -70 90 -40 Q60 0 0 0Z',fill:'rgba(46,111,216,.35)',stroke:'var(--accent)',transform:`rotate(${k*120})`},fg);
+    const dir=Math.sign(S.omega); if(Math.abs(S.omega)>30){ for(let y=-60;y<=60;y+=40){ el('line',{x1:CX+(dir>0?100:-100),y1:CY+y,x2:CX+(dir>0?170:-170),y2:CY+y,stroke:'#7fb3ff','stroke-width':2,'marker-end':'url(#arB)'},g); } txt(CX+(dir>0?135:-135),CY-80,dir>0?'空氣往右送':'空氣往左送',{'text-anchor':'middle','font-size':13,fill:'var(--accent)'},g); } }
+  // 狀態
+  const st=$('status'); let msg,cls='ok';
+  if(!S.battery) { msg='電池未裝上，沒有電流。'; cls='no'; }
+  else if(!S.brush) { msg='電刷離開集電環，電路中斷，無法轉動。'; cls='no'; }
+  else if(!S.fieldOn) { msg='場磁鐵已移開，電樞不受磁力。'; cls='no'; }
+  else if(!S.commutator) { msg='沒有集電環：電流不會換向，電樞轉到與磁場對齊就被吸住。'; cls='no'; }
+  else if(Math.abs(((S.commOffset%180)+180)%180-90)<1) { msg='集電環缺口與電樞垂直：換向時機錯誤，電樞卡在垂直位置擺動。'; cls='no'; }
+  else if(Math.abs(S.omega)<5&&Math.abs(Math.sin(rad(S.theta)))<0.05) { msg='電樞剛好停在換向的死點（缺口正對電刷），用滑鼠撥一下就會轉起來。'; cls='no'; }
+  else msg=`正常運轉：每轉半圈電流換向一次，電磁鐵極性跟著反轉，一直被場磁鐵推著轉。轉速 ${Math.abs(S.omega/6).toFixed(0)} rpm`;
+  st.textContent=msg; st.className='status '+cls;
+  $('readout').innerHTML=`<span>電樞角度</span><b>${S.theta.toFixed(0)}°</b><span>轉速</span><b>${(S.omega/6).toFixed(0)} rpm</b><span>電樞電流</span><b>${Ia>0?'+':''}${Ia}</b><span>力矩方向</span><b>${torque()>0?'逆時針':torque()<0?'順時針':'無'}</b>`;
+}
+function angleAt(e){ const p=$('svg').createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform($('svg').getScreenCTM().inverse()); return Math.atan2(q.y-CY,q.x-CX)*180/Math.PI; }
+$('svg').addEventListener('pointermove',e=>{ if(!S.drag) return; const a=angleAt(e); const now=performance.now(); let da=a-S.drag.lastA; da=((da+540)%360)-180; const dt=(now-S.drag.lastT)/1000||0.016; S.theta=((S.theta+da)%360+360)%360; S.omega=da/dt*0.6; S.drag={lastA:a,lastT:now}; });
+$('svg').addEventListener('pointerup',()=>S.drag=null); $('svg').addEventListener('pointercancel',()=>S.drag=null);
+
+/* ---------- 頁面與控制 ---------- */
+const PAGES={
+  em:{ title:'電磁鐵與右手定則', hint:'看電樞兩端的 N、S 怎麼跟著電流變', preset:()=>{ Object.assign(S,{battery:true,brush:true,fieldOn:false,commutator:false,fan:false,theta:0,omega:0}); }, ctrls:['flipBat','cells','current'],
+    text:[`<p>在軟鐵棒上繞線圈，通電後鐵棒就變成<b>電磁鐵</b>。電流方向決定哪一端是 N 極。</p><p><b>安培右手定則</b>：右手握住線圈，四指彎曲的方向對齊線圈裡的電流方向，大拇指指的那一端就是 N 極。</p>`,`<p class="q">按「倒轉電池」，看電樞兩端的 N、S 是否對調？再用右手比比看，四指順著紅色箭頭（電流）彎，拇指指向哪一端？</p>`] },
+  stuck:{ title:'為什麼轉半圈就停', hint:'把電樞拖到任何角度再放開', preset:()=>{ Object.assign(S,{battery:true,brush:true,fieldOn:true,commutator:false,fan:false,theta:150,omega:0}); }, ctrls:['flipBat','flipField','current'],
+    text:[`<p>把電磁鐵放在兩塊<b>場磁鐵</b>之間，並讓它能繞中心轉動。電磁鐵的 N 極被場磁鐵的 S 極吸引、被 N 極排斥，所以會受力轉動——這時的電磁鐵叫<b>電樞</b>。</p><p>但轉到 N 對 S、S 對 N 的位置以後，異名極相吸，電樞就<b>停在那裡</b>，不會再轉。</p>`,`<p class="q">把電樞拖到不同角度放開，它最後都停在哪個方向？如果在它快要對齊的瞬間電流反向，會發生什麼事？</p>`] },
+  comm:{ title:'集電環與電刷', hint:'注意集電環缺口轉到上下（與磁場對齊）時，線圈電流反向', preset:()=>{ Object.assign(S,{battery:true,brush:true,fieldOn:true,commutator:true,commOffset:0,fan:false,theta:60,omega:0}); }, ctrls:['flipBat','flipField','current','comm'],
+    text:[`<p>解決辦法：在轉軸上裝一個切成兩半的銅環——<b>集電環</b>（換向器），兩片固定的<b>電刷</b>輕輕靠著它，電流從電刷經集電環進入線圈。</p><p>每當電樞轉半圈，集電環的缺口剛好經過電刷，兩片銅環和電刷的接法互換，線圈裡的<b>電流就反向</b>，電磁鐵的 N、S 也對調。原本快要被吸住的一端變成被排斥，電樞靠慣性衝過對齊點，繼續往同一個方向轉。</p>`,`<p class="q">按「轉動集電環 90°」，缺口的位置變了，換向時機也錯了。電樞會怎樣？為什麼？</p>`] },
+  model:{ title:'馬達模型操作', hint:'電池、電刷、場磁鐵都可以按；電樞可以拖', preset:()=>{ Object.assign(S,{fan:false,commutator:true}); }, ctrls:['flipBat','cells','flipField','field','brush','battery','comm','current','stop'],
+    text:[`<p>所有零件都能動手：</p><p>・電池 1 顆／2 顆：電流加倍，力矩加倍，轉得更快。<br>・倒轉電池：電流反向 → 電磁鐵極性反轉 → 轉向相反。<br>・場磁鐵換邊：磁場反向 → 轉向也相反。<br>・電刷離開或取下電池：斷電，靠摩擦慢慢停下。<br>・移開場磁鐵：沒有磁場就沒有力。</p>`,`<p class="q">「倒轉電池」和「場磁鐵換邊」都能讓馬達反轉。如果兩個同時做呢？先預測再試。</p>`] },
+  fan:{ title:'應用：風扇', hint:'轉向決定空氣往哪邊送', preset:()=>{ Object.assign(S,{battery:true,brush:true,fieldOn:true,commutator:true,commOffset:0,fan:true}); }, ctrls:['flipBat','cells','flipField','current'],
+    text:[`<p>在轉軸上裝扇葉就是電風扇。扇葉轉動時把一側的空氣推向另一側：往一個方向轉是<b>送風</b>，反轉就變成<b>抽風</b>（排氣扇）。</p><p>電風扇、吹風機、電動車、洗衣機的馬達原理都一樣，只是為了效率把電樞做成多組線圈，集電環也切成很多片。</p>`,`<p class="q">要讓風改吹另一邊，除了把電池倒轉，還有什麼方法？</p>`] },
+};
+const CTRL={
+  flipBat:['倒轉電池',()=>S.batteryFlip=!S.batteryFlip,()=>S.batteryFlip],
+  cells:['電池 ×2',()=>S.cells=S.cells===1?2:1,()=>S.cells===2],
+  flipField:['場磁鐵換邊',()=>S.fieldFlip=!S.fieldFlip,()=>S.fieldFlip],
+  field:['移開場磁鐵',()=>S.fieldOn=!S.fieldOn,()=>!S.fieldOn],
+  brush:['電刷離開',()=>S.brush=!S.brush,()=>!S.brush],
+  battery:['取下電池',()=>S.battery=!S.battery,()=>!S.battery],
+  comm:['轉動集電環 90°',()=>S.commOffset=S.commOffset?0:90,()=>S.commOffset!==0],
+  current:['顯示電流',()=>S.showCurrent=!S.showCurrent,()=>S.showCurrent],
+  stop:['停止轉動',()=>{S.omega=0;},()=>false],
+};
+function renderCtrls(){ const c=$('ctrls'); c.innerHTML=''; PAGES[S.page].ctrls.forEach(k=>{ const [n,fn,on]=CTRL[k]; const b=document.createElement('button'); b.textContent=n; b.setAttribute('aria-pressed',on()); b.onclick=()=>{ fn(); renderCtrls(); }; c.appendChild(b); }); }
+function renderText(){ const P=PAGES[S.page]; $('tTitle').textContent=P.title; S.textIdx=Math.min(S.textIdx,P.text.length-1); $('tBody').innerHTML=P.text[S.textIdx]; $('pageNo').textContent=`${S.textIdx+1} / ${P.text.length}`; $('prev').disabled=S.textIdx===0; $('next').disabled=S.textIdx===P.text.length-1; }
+$('prev').onclick=()=>{S.textIdx--;renderText();}; $('next').onclick=()=>{S.textIdx++;renderText();};
+function setPage(p){ S.page=p; S.textIdx=0; document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.page===p)); $('hint').textContent=PAGES[p].hint; PAGES[p].preset(); renderCtrls(); renderText(); }
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setPage(t.dataset.page));
+setPage('em'); requestAnimationFrame(step);
+</script>
+</body>
+</html>
