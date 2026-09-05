@@ -604,20 +604,21 @@ function onHotspot(key,step){
 
 /* ---------- 提示系統 ---------- */
 let hintTargetEl=null, hintOn=false, missCount=0, idleTimer=null;
+function hintMsg(t){ toast(t); const c=$('caption'); if(!c.innerHTML.includes('hinttext')) c.innerHTML+=`<br><span class="hinttext" style="color:#8a6a00">💡 ${t}</span>`; $('stage').scrollIntoView({behavior:'smooth',block:'center'}); }
 function showHint(){
   const step=currentStep(); hintOn=true;
   if(step.type==='click'){
-    if(step.requireTool&&state.tool!==step.requireTool){ toast(`先在下方選「${TOOLS[step.requireTool].name}」`); renderToolbar(step); return; }
+    if(step.requireTool&&state.tool!==step.requireTool){ hintMsg(`先在下方選「${TOOLS[step.requireTool].name}」`); renderToolbar(step); return; }
     if(hintTargetEl) hintTargetEl.classList.add('hint');
-    toast('目標在閃爍的虛線區域裡');
-  } else if(step.type==='tool'){ toast(`點下方發亮的「${TOOLS[step.tool].name}」`); renderToolbar(step); }
+    hintMsg('目標在閃爍的虛線區域裡');
+  } else if(step.type==='tool'){ hintMsg(`點下方發亮的「${TOOLS[step.tool].name}」`); renderToolbar(step); }
   else if(step.type==='cut'){
-    if(state.tool!==step.tool){ toast(`先在下方選「${TOOLS[step.tool].name}」`); renderToolbar(step); }
-    else { document.querySelectorAll('.cutline').forEach(e=>e.classList.add('hint')); toast('沿著閃爍的虛線「按住拖曳」劃過去'); }
+    if(state.tool!==step.tool){ hintMsg(`先在下方選「${TOOLS[step.tool].name}」`); renderToolbar(step); }
+    else { document.querySelectorAll('.cutline').forEach(e=>e.classList.add('hint')); hintMsg('沿著閃爍的虛線「按住拖曳」劃過去'); }
   }
-  else if(step.type==='pin'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); toast('把下方托盤的大頭針，拖進閃爍的紅圈'); }
-  else if(step.type==='drag'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); toast('把左邊的骨頭拖到對應的虛線框'); }
-  else toast('讀完說明後按「下一步」');
+  else if(step.type==='pin'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); hintMsg('把下方托盤的大頭針，拖進閃爍的紅圈'); }
+  else if(step.type==='drag'){ document.querySelectorAll('.pintarget').forEach(e=>e.classList.add('hint')); hintMsg('把左邊的骨頭拖到對應的虛線框'); }
+  else hintMsg('讀完說明後按「下一步」');
 }
 function registerMiss(step){ missCount++; if(missCount>=2&&!hintOn) showHint(); }
 function resetHint(){ hintOn=false; missCount=0; clearTimeout(idleTimer);
