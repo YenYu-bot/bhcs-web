@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>眼睛如何看見蝴蝶？—— 正常眼、近視眼、遠視眼與老花眼</title>
+<style>
+  :root{
+    --sky:#CFEFFA; --sky2:#8ED9F2; --paper:#FFFDF7; --ink:#2B2A33; --muted:#6B6F7A;
+    --eye:#F06CC5; --eyeDark:#B33A8F; --retina:#7A2E22; --ray:#F2B705; --line:#D9D6CC;
+    --ok:#2E8B57; --bad:#C8392B; --btn:#2E6FD8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
+  button{font:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:16px 20px 40px}
+  header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+  h1{margin:0;font-size:26px;font-weight:700;letter-spacing:.03em}
+  header small{color:var(--muted)}
+
+  /* ---------- 首頁 ---------- */
+  #intro{background:linear-gradient(var(--sky),#fff 85%);border-radius:14px;padding:26px 28px 30px;position:relative;overflow:hidden;min-height:420px}
+  #intro p.lead{font-size:20px;max-width:520px;margin:0 0 18px;position:relative;z-index:1}
+  #intro .sky{position:absolute;inset:0;pointer-events:none}
+  .fly{position:absolute;top:60px;left:-120px;width:120px;animation:fly 14s linear infinite}
+  @keyframes fly{0%{left:-120px;top:70px}25%{top:40px}50%{top:110px}75%{top:50px}100%{left:110%;top:90px}}
+  .chars{display:grid;grid-template-columns:repeat(4,minmax(150px,200px));gap:16px;margin-top:150px;position:relative;z-index:1}
+  @media(max-width:900px){.chars{grid-template-columns:repeat(2,1fr)}}
+  .char{background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 10px 14px;cursor:pointer;text-align:center;transition:transform .15s,border-color .15s}
+  .char:hover,.char:focus-visible{transform:translateY(-3px);border-color:var(--btn);outline:none}
+  .char svg{width:110px;height:110px}
+  .char b{display:block;font-size:19px;margin-top:6px}
+  .char span{color:var(--muted);font-size:14px}
+
+  /* ---------- 教學頁 ---------- */
+  #lesson{display:none}
+  .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 16px;cursor:pointer;color:var(--muted)}
+  .tab[aria-selected="true"]{border-color:var(--btn);color:var(--btn);font-weight:700}
+  .home{margin-left:auto;border:0;background:none;color:var(--btn);cursor:pointer;text-decoration:underline}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .scene{background:linear-gradient(var(--sky) 55%,#e9f7d9);border-radius:14px;overflow:hidden;position:relative;align-self:start}
+  .scene svg{display:block;width:100%;height:auto;touch-action:none}
+  .scene .tip{position:absolute;left:12px;top:10px;font-size:13px;color:var(--muted);background:rgba(255,255,255,.75);padding:3px 8px;border-radius:6px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h2{font-size:15px;margin:0 0 8px;color:var(--muted);font-weight:600}
+  .side{display:flex;flex-direction:column;gap:12px}
+  #seen{height:150px;background:linear-gradient(var(--sky),#fff);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
+  #seen svg{width:100%;height:100%}
+  .verdict{position:absolute;right:8px;bottom:6px;font-weight:700;font-size:15px;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.85)}
+  .verdict.ok{color:var(--ok)} .verdict.bad{color:var(--bad)}
+  .readout{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+  .readout b{font-weight:600;text-align:right}
+  .lensbtns{display:flex;gap:8px}
+  .lensbtns button{flex:1;border:2px solid var(--line);background:#fff;border-radius:10px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .lensbtns button[aria-pressed="true"]{border-color:var(--btn);background:#EEF4FF}
+  .lensbtns svg{width:28px;height:44px}
+  label.row{display:flex;justify-content:space-between;font-size:14px;margin-top:10px}
+  input[type=range]{width:100%;accent-color:var(--btn)}
+  .pages p{margin:0 0 8px;font-size:15px}
+  .pages .q{background:#FFF6D6;border-left:4px solid var(--ray);padding:8px 10px;border-radius:0 8px 8px 0}
+  .pager{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:14px;color:var(--muted)}
+  .pager button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 12px;cursor:pointer}
+  .pager button:disabled{opacity:.4;cursor:default}
+  details{font-size:14px;color:var(--muted);margin-top:14px}
+  summary{cursor:pointer}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
+  @media(prefers-reduced-motion:reduce){.fly{animation:none;left:60%}.wing{animation:none!important}}
+  .wing{transform-origin:0 0;animation:flap .5s ease-in-out infinite alternate}
+  .wing.r{transform-origin:0 0}
+  @keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.35)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>眼睛如何看見蝴蝶？</h1>
+  <small>正常眼、近視眼、遠視眼與老花眼的成像</small>
+</header>
+
+<!-- ================= 首頁 ================= -->
+<section id="intro">
+  <div class="sky">
+    <svg class="fly" viewBox="-55 -48 110 88"><use href="#butterfly"/></svg>
+  </div>
+  <p class="lead">草地上有一隻蝴蝶飛過。它反射的光線進入眼睛之後，發生了什麼事，我們才「看見」它？</p>
+  <p style="position:relative;z-index:1;color:var(--muted);margin:0">請選一個角色，看看他們的眼睛是怎麼看世界的。</p>
+  <div class="chars">
+    <button class="char" data-mode="normal">
+      <svg viewBox="0 0 100 100"><use href="#face-kid"/></svg>
+      <b>我是正常眼</b><span>遠近都能自動對焦</span>
+    </button>
+    <button class="char" data-mode="near">
+      <svg viewBox="0 0 100 100"><use href="#face-teen"/></svg>
+      <b>我是近視眼</b><span>看遠的一片模糊</span>
+    </button>
+    <button class="char" data-mode="far">
+      <svg viewBox="0 0 100 100"><use href="#face-man"/></svg>
+      <b>我是遠視眼</b><span>看近的很吃力</span>
+    </button>
+    <button class="char" data-mode="presby">
+      <svg viewBox="0 0 100 100"><use href="#face-grandma"/></svg>
+      <b>我是老花眼</b><span>報紙要拿遠才看得到</span>
+    </button>
+  </div>
+</section>
+
+<!-- ================= 教學頁 ================= -->
+<section id="lesson">
+  <div class="topbar" role="tablist">
+    <button class="tab" role="tab" data-mode="normal">正常眼</button>
+    <button class="tab" role="tab" data-mode="near">近視眼</button>
+    <button class="tab" role="tab" data-mode="far">遠視眼</button>
+    <button class="tab" role="tab" data-mode="presby">老花眼</button>
+    <button class="home" id="home">回到首頁</button>
+  </div>
+
+  <div class="grid">
+    <div class="scene">
+      <span class="tip">拖曳蝴蝶改變遠近</span>
+      <svg id="scene" viewBox="0 0 900 420" aria-label="眼睛成像示意圖">
+        <defs>
+          <filter id="blur"><feGaussianBlur id="blurF" stdDeviation="0"/></filter>
+          <clipPath id="eyeClip"><ellipse id="eyeClipShape" cx="0" cy="0" rx="0" ry="0"/></clipPath>
+        </defs>
+        <!-- 眼球 -->
+        <g id="eyeball">
+          <ellipse id="eyeBody" fill="#F9C4E6" stroke="var(--eyeDark)" stroke-width="4"/>
+          <path id="retina" fill="none" stroke="var(--retina)" stroke-width="7" stroke-linecap="round"/>
+          <path id="cornea" fill="rgba(255,255,255,.7)" stroke="var(--eyeDark)" stroke-width="3"/>
+          <ellipse id="eyeLens" fill="rgba(255,255,255,.85)" stroke="var(--eyeDark)" stroke-width="2.5"/>
+          <text id="retinaLabel" font-size="13" fill="var(--retina)" text-anchor="middle">視網膜</text>
+          <text id="lensLabel" font-size="13" fill="var(--eyeDark)" text-anchor="middle">水晶體</text>
+        </g>
+        <!-- 矯正鏡片 -->
+        <g id="glass" style="display:none">
+          <path id="glassShape" fill="rgba(180,220,255,.55)" stroke="#2A5B8C" stroke-width="2.5"/>
+          <text id="glassLabel" font-size="13" fill="#2A5B8C" text-anchor="middle"></text>
+        </g>
+        <!-- 光線 -->
+        <g id="rays" fill="none" stroke="var(--ray)" stroke-width="2" stroke-linecap="round" opacity=".9"></g>
+        <g id="virtualRays" fill="none" stroke="var(--ray)" stroke-width="1.5" stroke-dasharray="5 5" opacity=".7"></g>
+        <line id="axis" stroke="#999" stroke-dasharray="3 6" stroke-width="1"/>
+        <circle id="focusPt" r="5" fill="var(--bad)" stroke="#fff" stroke-width="1.5"/>
+        <!-- 視網膜上的像 -->
+        <g id="retinalImage" filter="url(#blur)"><use href="#butterfly" id="retinaUse"/></g>
+        <!-- 蝴蝶（可拖曳） -->
+        <g id="bug" style="cursor:grab"><use href="#butterfly"/></g>
+        <text id="objLabel" font-size="13" fill="var(--muted)" text-anchor="middle">物體</text>
+      </svg>
+    </div>
+
+    <aside class="side">
+      <div class="panel">
+        <h2>所見景像</h2>
+        <div id="seen">
+          <svg viewBox="-60 -50 120 100"><g id="seenBug" filter="url(#blur2)"><use href="#butterfly"/></g>
+            <defs><filter id="blur2"><feGaussianBlur id="blurF2" stdDeviation="0"/></filter></defs></svg>
+          <span class="verdict" id="verdict"></span>
+        </div>
+      </div>
+
+      <div class="panel" id="lensPanel" style="display:none">
+        <h2>該用哪一種鏡片矯正？</h2>
+        <div class="lensbtns">
+          <button data-lens="none" aria-pressed="true"><svg viewBox="0 0 28 44"><line x1="14" y1="4" x2="14" y2="40" stroke="#999" stroke-dasharray="3 3"/></svg><span>不戴</span></button>
+          <button data-lens="concave" aria-pressed="false"><svg viewBox="0 0 28 44"><path d="M4 3 Q14 22 4 41 L24 41 Q14 22 24 3 Z" fill="#cfe4ff" stroke="#2A5B8C"/></svg><span>凹透鏡</span></button>
+          <button data-lens="convex" aria-pressed="false"><svg viewBox="0 0 28 44"><path d="M14 2 Q26 22 14 42 Q2 22 14 2 Z" fill="#cfe4ff" stroke="#2A5B8C"/></svg><span>凸透鏡</span></button>
+        </div>
+        <label class="row"><span>鏡片度數</span><span id="powVal">0</span></label>
+        <input type="range" id="pow" min="0" max="100" value="60">
+      </div>
+
+      <div class="panel">
+        <h2>數值</h2>
+        <div class="readout">
+          <span>物距</span><b id="doOut"></b>
+          <span>像距（實際會聚處）</span><b id="diOut"></b>
+          <span>視網膜距離</span><b id="drOut"></b>
+          <span>水晶體屈光力</span><b id="pOut"></b>
+          <span>模糊程度</span><b id="blurOut"></b>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>說明</h2>
+        <div class="pages" id="pages"></div>
+        <div class="pager"><button id="prev">上一頁</button><span id="pageNo"></span><button id="next">下一頁</button></div>
+      </div>
+    </aside>
+  </div>
+
+  <details>
+    <summary>教師備註：模型怎麼算的</summary>
+    使用薄透鏡公式 1/f = 1/物距 + 1/像距。眼睛的屈光力 P = 1/f 可在一個範圍內調節（睫狀肌調節水晶體）；正常眼的範圍足以讓遠近物體都成像在視網膜上。近視眼在模型中設定為眼球較長（視網膜較遠）、且水晶體無法放得夠薄；遠視眼設定為眼球較短、且調節能力（最大屈光力）較低。矯正鏡片以「加在水晶體上的額外屈光力」處理（凹透鏡為負、凸透鏡為正），忽略鏡片與眼睛之間的距離。模糊程度以「會聚點與視網膜距離」換算成模糊圈大小。所有長度為畫面像素，不是真實公分數。
+  </details>
+</section>
+</div>
+
+<!-- ================= 共用圖形 ================= -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="butterfly">
+      <g class="wing l"><path d="M0 0 C-18 -40 -48 -38 -46 -14 C-45 -2 -30 0 -18 2 C-36 8 -44 26 -30 30 C-16 34 -6 16 0 4 Z" fill="#F46A4E" stroke="#B23B2A" stroke-width="1.2"/>
+        <circle cx="-30" cy="-16" r="6" fill="#FFD84A"/><circle cx="-26" cy="18" r="4" fill="#FFF2A8"/></g>
+      <g class="wing r" style="animation-direction:alternate-reverse"><path d="M0 0 C18 -40 48 -38 46 -14 C45 -2 30 0 18 2 C36 8 44 26 30 30 C16 34 6 16 0 4 Z" fill="#F46A4E" stroke="#B23B2A" stroke-width="1.2"/>
+        <circle cx="30" cy="-16" r="6" fill="#FFD84A"/><circle cx="26" cy="18" r="4" fill="#FFF2A8"/></g>
+      <ellipse cx="0" cy="4" rx="4" ry="22" fill="#3B2A2A"/>
+      <path d="M-2 -16 Q-10 -34 -16 -36 M2 -16 Q10 -34 16 -36" stroke="#3B2A2A" stroke-width="1.5" fill="none"/>
+    </g>
+    <g id="face-kid">
+      <circle cx="50" cy="55" r="34" fill="#FFE1C4" stroke="#8a5a3a" stroke-width="2"/>
+      <path d="M18 48 Q30 12 62 18 Q84 24 82 50 Q60 34 40 42 Q28 46 18 48Z" fill="#7B4A2A"/>
+      <circle cx="40" cy="58" r="4" fill="#222"/><circle cx="62" cy="58" r="4" fill="#222"/>
+      <path d="M40 74 Q50 82 60 74" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="face-teen">
+      <path d="M20 40 L28 14 L38 34 L50 6 L60 32 L72 12 L80 40Z" fill="#222"/>
+      <path d="M22 44 Q50 20 80 44 L74 82 Q50 96 26 82Z" fill="#FFE1C4" stroke="#8a5a3a" stroke-width="2"/>
+      <path d="M34 58 h12 M56 58 h12" stroke="#222" stroke-width="3"/>
+      <path d="M42 76 Q50 72 58 76" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="face-man">
+      <circle cx="50" cy="56" r="33" fill="#F5D3B3" stroke="#8a5a3a" stroke-width="2"/>
+      <path d="M18 46 Q28 18 56 20 Q82 22 82 46 Q70 36 50 38 Q30 40 18 46Z" fill="#3B2A22"/>
+      <circle cx="40" cy="58" r="3.5" fill="#222"/><circle cx="62" cy="58" r="3.5" fill="#222"/>
+      <path d="M30 58 a9 9 0 1 0 18 0 a9 9 0 1 0 -18 0 M54 58 a9 9 0 1 0 18 0 a9 9 0 1 0 -18 0 M48 58 h6" stroke="#555" stroke-width="1.5" fill="none"/>
+      <path d="M42 76 Q50 72 58 76" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="face-grandma">
+      <circle cx="50" cy="56" r="33" fill="#FFE8D6" stroke="#8a5a3a" stroke-width="2"/>
+      <path d="M16 40 Q30 10 66 16 Q88 24 84 46 Q80 30 60 30 Q32 32 16 40Z" fill="#E6E6E6" stroke="#bbb" stroke-width="1.5"/>
+      <circle cx="78" cy="34" r="9" fill="#E6E6E6" stroke="#bbb" stroke-width="1.5"/>
+      <path d="M34 56 q6 -4 12 0 M54 56 q6 -4 12 0" stroke="#222" stroke-width="2.5" fill="none"/>
+      <path d="M40 50 h14 M46 52 v6" stroke="#666" stroke-width="1" fill="none"/>
+      <path d="M42 76 Q50 70 58 76" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+  </defs>
+</svg>
+
+<script>
+/* ===================== 可調整的參數 ===================== */
+const CFG = {
+  lensX: 640, axisY: 235,          // 水晶體位置與光軸
+  objMinX: 70, objMaxX: 560,       // 蝴蝶可拖曳的範圍
+  objH: 42,                        // 蝴蝶高度（光線從蝴蝶頂端出發）
+  aperture: 70,                    // 水晶體通光孔徑（影響模糊圈大小）
+  eyes: {
+    normal: { dR: 170, pMin: 0.0075, pMax: 0.0200 },   // dR：水晶體到視網膜距離；p：可調節的屈光力範圍
+    near:   { dR: 205, pMin: 0.0080, pMax: 0.0200 },   // 眼球太長（或水晶體太厚放不薄）
+    far:    { dR: 138, pMin: 0.0060, pMax: 0.0120 },   // 眼球太短，水晶體調到最厚仍不夠
+    presby: { dR: 170, pMin: 0.0075, pMax: 0.0105 },   // 老花：眼球長度正常，但水晶體變硬、調節範圍縮小
+  },
+  glassMaxPower: 0.0045,           // 鏡片度數滑桿 100% 對應的屈光力
+  clearThreshold: 5,               // 模糊圈直徑小於此值視為「看清楚」
+};
+
+const TEXT = {
+  normal: [
+    `<p>眼睛就像一台會自動對焦的相機：光線穿過角膜與<b>水晶體</b>後會聚，落在眼球後方的<b>視網膜</b>上形成影像，再由視神經送到大腦。只有當影像剛好落在視網膜上，我們才看得清楚。</p><p><b>睫狀肌</b>會依物體的遠近改變水晶體的厚薄：看近物時水晶體變厚、屈光力變大；看遠物時變薄、屈光力變小。這個過程稱為「調節」。</p>`,
+    `<p class="q">觀察畫面：水晶體的形狀比較像凸透鏡還是凹透鏡？視網膜上的影像和蝴蝶本身相比，是正立還是倒立？是放大還是縮小？</p>`,
+    `<p class="q">把蝴蝶拖近、再拖遠，注意水晶體的厚度與「水晶體屈光力」的數字怎麼變。為什麼蝴蝶靠近時水晶體要變厚？如果水晶體不能變厚，影像會落在哪裡？</p>`,
+  ],
+  near: [
+    `<p>近視的人看近處清楚、看遠處模糊。常見的原因是<b>眼球前後徑太長</b>，或水晶體已經放到最薄，屈光力仍然太強。結果是遠方物體的光線在<b>視網膜前方</b>就會聚了，到達視網膜時又散開，形成模糊的影像。</p><p>長時間近距離用眼，睫狀肌持續緊繃、不易放鬆，是青少年近視加深的重要因素之一。</p>`,
+    `<p class="q">把蝴蝶拖到遠處，觀察紅色會聚點落在視網膜的前面還是後面。要讓會聚點往後移到視網膜上，應該用會讓光線<b>發散</b>的鏡片，還是會讓光線<b>更會聚</b>的鏡片？試試右邊的凹透鏡與凸透鏡，再調整度數。</p>`,
+  ],
+  presby: [
+    `<p>老花眼看起來和遠視很像——看遠清楚、看近吃力——但原因不同。老花眼的<b>眼球長度正常</b>，問題出在<b>水晶體隨年齡變硬</b>、睫狀肌調節能力下降，看近物時水晶體無法再變厚。</p><p>年輕時水晶體可以從薄調到很厚，調節範圍很大；四十歲以後範圍逐漸縮小，所以報紙要愈拿愈遠才看得清楚。注意「數值」面板裡的水晶體屈光力：拖近蝴蝶時它會卡在一個上限，動不了。</p>`,
+    `<p class="q">先把蝴蝶拖到遠處，再慢慢拖近，找出開始模糊的距離。和遠視眼比較：兩者都用凸透鏡矯正，但老花眼看遠時不需要戴眼鏡，為什麼？（提示：比較兩種眼的「視網膜距離」與屈光力上限。）</p>`,
+  ],
+  far: [
+    `<p>遠視的人看遠處清楚、看近處模糊。常見的原因是<b>眼球前後徑太短</b>，即使水晶體已經調到最厚，屈光力仍然不夠。近處物體的光線還來不及會聚就碰到視網膜，會聚點落在<b>視網膜後方</b>。</p><p>遠視和年齡無關，小朋友也可能有遠視；輕度遠視的人靠睫狀肌用力調節還能看清近物，但眼睛容易疲勞。</p>`,
+    `<p class="q">把蝴蝶拖到近處，觀察會聚點落在視網膜的哪一側。這次需要讓光線<b>提早會聚</b>，該選哪一種鏡片？選對之後，再試著找出剛好看清楚的最小度數。</p>`,
+  ],
+};
+
+/* ===================== 狀態 ===================== */
+const S = { mode:'normal', objX:220, lens:'none', pow:0.6, page:0 };
+const $ = id => document.getElementById(id);
+
+/* ===================== 光學模型 ===================== */
+function solve(mode, objX, lens, pow){
+  const eye = CFG.eyes[mode];
+  const dO = CFG.lensX - objX, dR = eye.dR;
+  const pNeeded = 1/dO + 1/dR;
+  const pGlass = lens==='none' ? 0 : (lens==='concave' ? -1 : 1) * pow * CFG.glassMaxPower;
+  const pEye = Math.max(eye.pMin, Math.min(eye.pMax, pNeeded - pGlass));   // 睫狀肌盡力調節
+  const pTot = pEye + pGlass;
+  const inv = pTot - 1/dO;
+  const dI = inv > 1e-6 ? 1/inv : Infinity;                                 // 像距
+  const blur = isFinite(dI) ? CFG.aperture*Math.abs(dR - dI)/dI : CFG.aperture; // 視網膜上的模糊圈直徑
+  const magRetina = dR/dO;                                                  // 視網膜上像的大小比例
+  return { dO, dR, dI, pEye, pGlass, pTot, blur, magRetina, virtual: !isFinite(dI) };
+}
+
+/* ===================== 繪圖 ===================== */
+function render(){
+  const r = solve(S.mode, S.objX, S.lens, S.pow);
+  const eye = CFG.eyes[S.mode];
+  const L = CFG.lensX, Y = CFG.axisY, dR = r.dR;
+
+  // 眼球：中心在水晶體與視網膜之間
+  const cx = L + dR/2 - 6, rx = dR/2 + 28, ry = 108;
+  const eb = $('eyeBody'); eb.setAttribute('cx',cx); eb.setAttribute('cy',Y); eb.setAttribute('rx',rx); eb.setAttribute('ry',ry);
+  // 視網膜：後半段弧線
+  const retX = L + dR;
+  const a = Math.acos(Math.min(1,(retX - cx)/rx));
+  let d='';
+  for(let t=-1;t<=1.001;t+=0.05){ const th=t*Math.PI*0.42; const px=cx+rx*Math.cos(th), py=Y+ry*Math.sin(th); d+=(t===-1?'M':'L')+px.toFixed(1)+' '+py.toFixed(1)+' '; }
+  $('retina').setAttribute('d',d);
+  $('retinaLabel').setAttribute('x',retX+8); $('retinaLabel').setAttribute('y',Y-ry-8);
+  // 角膜
+  $('cornea').setAttribute('d',`M${L-14} ${Y-72} Q${L-58} ${Y} ${L-14} ${Y+72} Q${L-32} ${Y} ${L-14} ${Y-72}Z`);
+  // 水晶體厚度 ∝ 屈光力
+  const lrx = 6 + r.pEye*1500;
+  const el=$('eyeLens'); el.setAttribute('cx',L); el.setAttribute('cy',Y); el.setAttribute('rx',lrx.toFixed(1)); el.setAttribute('ry',52);
+  $('lensLabel').setAttribute('x',L); $('lensLabel').setAttribute('y',Y-ry-8);
+
+  // 矯正鏡片
+  const g=$('glass'); const gx = L-95;
+  if(S.lens==='none'){ g.style.display='none'; }
+  else{
+    g.style.display='';
+    const k = 6 + S.pow*14;
+    g.querySelector('#glassShape').setAttribute('d', S.lens==='concave'
+      ? `M${gx-k} ${Y-80} Q${gx} ${Y} ${gx-k} ${Y+80} L${gx+k} ${Y+80} Q${gx} ${Y} ${gx+k} ${Y-80}Z`
+      : `M${gx} ${Y-82} Q${gx+k+6} ${Y} ${gx} ${Y+82} Q${gx-k-6} ${Y} ${gx} ${Y-82}Z`);
+    $('glassLabel').setAttribute('x',gx); $('glassLabel').setAttribute('y',Y+100);
+    $('glassLabel').textContent = S.lens==='concave'?'凹透鏡':'凸透鏡';
+  }
+
+  // 蝴蝶
+  const topY = Y - CFG.objH;
+  $('bug').setAttribute('transform',`translate(${S.objX} ${Y-8}) scale(0.9)`);
+  $('objLabel').setAttribute('x',S.objX); $('objLabel').setAttribute('y',Y+52);
+  $('axis').setAttribute('x1',30); $('axis').setAttribute('x2',retX+10); $('axis').setAttribute('y1',Y); $('axis').setAttribute('y2',Y);
+
+  // 光線：從蝴蝶頂端出發，經水晶體各點會聚到像點
+  const rays=$('rays'), vr=$('virtualRays'); rays.innerHTML=''; vr.innerHTML='';
+  const n=5, half=CFG.aperture/2;
+  const imgX = isFinite(r.dI) ? L + r.dI : Infinity;
+  const imgY = isFinite(r.dI) ? Y + CFG.objH*(r.dI/r.dO) : NaN;   // 倒立：在光軸下方
+  const retinaHitY = y0 => { // 光線在 x=retX 的高度（依直線延伸）
+    return y0; };
+  for(let i=0;i<n;i++){
+    const ly = Y - half + i*(CFG.aperture/(n-1));
+    let p = `M${S.objX} ${topY} L${L} ${ly} `;
+    if(isFinite(r.dI)){
+      // 從 (L,ly) 朝 (imgX,imgY) 的直線，畫到視網膜為止
+      const slope=(imgY-ly)/(imgX-L);
+      const yAtRet = ly + slope*(retX-L);
+      p += `L${retX} ${yAtRet.toFixed(1)}`;
+      if(imgX > retX){ const v=document.createElementNS('http://www.w3.org/2000/svg','path'); v.setAttribute('d',`M${retX} ${yAtRet.toFixed(1)} L${Math.min(imgX,880)} ${(ly+slope*(Math.min(imgX,880)-L)).toFixed(1)}`); vr.appendChild(v); }
+    } else {
+      const slope=(ly-topY)/(L-S.objX)*0.6; p += `L${retX} ${(ly+slope*(retX-L)).toFixed(1)}`;
+    }
+    const e=document.createElementNS('http://www.w3.org/2000/svg','path'); e.setAttribute('d',p); rays.appendChild(e);
+  }
+  const fp=$('focusPt');
+  if(isFinite(r.dI) && imgX<880){ fp.style.display=''; fp.setAttribute('cx',imgX); fp.setAttribute('cy',imgY); } else fp.style.display='none';
+
+  // 視網膜上的像：倒立、縮小，依模糊圈加模糊
+  const s = r.magRetina*0.9;
+  $('retinalImage').setAttribute('transform',`translate(${retX-4} ${Y + CFG.objH*r.magRetina*0.8}) rotate(180) scale(${s.toFixed(3)})`);
+  $('blurF').setAttribute('stdDeviation',(Math.min(r.blur,40)/2/Math.max(s,0.2)).toFixed(2));
+
+  // 所見景像（大腦已將倒立的像轉正）
+  const seenScale = Math.max(0.35, Math.min(1.4, 0.35 + r.magRetina*1.6));
+  $('seenBug').setAttribute('transform',`scale(${seenScale.toFixed(2)})`);
+  $('blurF2').setAttribute('stdDeviation',(Math.min(r.blur,40)*0.35/seenScale).toFixed(2));
+
+  // 判定
+  const v=$('verdict'); const clear = r.blur < CFG.clearThreshold;
+  if(S.mode==='normal'){ v.textContent = clear?'看得清楚':'（調節不及）'; v.className='verdict '+(clear?'ok':'bad'); }
+  else if(S.lens==='none'){ v.textContent = clear?'這個距離看得清楚':'看不清楚…'; v.className='verdict '+(clear?'ok':'bad'); }
+  else {
+    const base = solve(S.mode,S.objX,'none',0).blur;
+    if(clear){ v.textContent='YA！看清楚了！'; v.className='verdict ok'; }
+    else if(r.blur > base+0.5){ v.textContent='糟糕！看起來更模糊了！'; v.className='verdict bad'; }
+    else { v.textContent='好一點了，再調整度數'; v.className='verdict'; }
+  }
+
+  // 數值
+  $('doOut').textContent = r.dO.toFixed(0)+' px';
+  $('diOut').textContent = isFinite(r.dI)? r.dI.toFixed(0)+' px' : '無（光線發散）';
+  $('drOut').textContent = dR+' px';
+  $('pOut').textContent = (r.pEye*1000).toFixed(2) + (r.pGlass? ` ＋ 鏡片 ${(r.pGlass*1000).toFixed(2)}`:'');
+  $('blurOut').textContent = r.blur.toFixed(1) + (clear?'（清楚）':'（模糊）');
+}
+
+/* ===================== 說明分頁 ===================== */
+function renderPages(){
+  const pages = TEXT[S.mode]; S.page = Math.min(S.page, pages.length-1);
+  $('pages').innerHTML = pages[S.page];
+  $('pageNo').textContent = `${S.page+1} / ${pages.length}`;
+  $('prev').disabled = S.page===0; $('next').disabled = S.page===pages.length-1;
+}
+$('prev').onclick=()=>{S.page--; renderPages();};
+$('next').onclick=()=>{S.page++; renderPages();};
+
+/* ===================== 互動 ===================== */
+function setMode(mode){
+  S.mode=mode; S.page=0; S.lens='none';
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===mode));
+  $('lensPanel').style.display = mode==='normal' ? 'none' : '';
+  document.querySelectorAll('.lensbtns button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.lens==='none'));
+  S.objX = mode==='near' ? 120 : (mode==='far'||mode==='presby') ? 480 : 220;   // 先把蝴蝶放在會出問題的距離
+  renderPages(); render();
+}
+document.querySelectorAll('.char').forEach(b=>b.onclick=()=>{ $('intro').style.display='none'; $('lesson').style.display='block'; setMode(b.dataset.mode); });
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+$('home').onclick=()=>{ $('lesson').style.display='none'; $('intro').style.display='block'; };
+document.querySelectorAll('.lensbtns button').forEach(b=>b.onclick=()=>{
+  S.lens=b.dataset.lens; document.querySelectorAll('.lensbtns button').forEach(x=>x.setAttribute('aria-pressed', x===b)); render();
+});
+$('pow').oninput=e=>{ S.pow=e.target.value/100; $('powVal').textContent=e.target.value+' %'; render(); };
+$('powVal').textContent='60 %';
+
+// 拖曳蝴蝶
+const svg=$('scene'); let drag=false;
+const toSvg=e=>{ const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+$('bug').addEventListener('pointerdown',e=>{ drag=true; $('bug').setPointerCapture(e.pointerId); $('bug').style.cursor='grabbing'; });
+svg.addEventListener('pointermove',e=>{ if(!drag) return; const p=toSvg(e); S.objX=Math.max(CFG.objMinX,Math.min(CFG.objMaxX,p.x)); render(); });
+const stop=()=>{ drag=false; $('bug').style.cursor='grab'; };
+svg.addEventListener('pointerup',stop); svg.addEventListener('pointercancel',stop);
+// 鍵盤也能移動
+svg.setAttribute('tabindex','0');
+svg.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft'){S.objX=Math.max(CFG.objMinX,S.objX-15);render();} if(e.key==='ArrowRight'){S.objX=Math.min(CFG.objMaxX,S.objX+15);render();} });
+
+render(); renderPages();
+</script>
+</body>
+</html>
