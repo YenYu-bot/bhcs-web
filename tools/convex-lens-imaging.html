@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>凸透鏡成像 —— 側面光路與正面所見</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3 Q28 16 16 29 Q4 16 16 3Z' fill='%237FB8FF' stroke='%232A5B8C' stroke-width='2'/%3E%3C/svg%3E">
+<style>
+  :root{ --bg:#F4F6F8; --panel:#fff; --line:#D5DBE3; --ink:#1F2933; --muted:#65717F; --lensEdge:#2A5B8C; --ray:#E8A400; --ray2:#D9534F; --ray3:#2E8B57; --axis:#9AA5B1; --img:#8E44AD; --accent:#2E6FD8; --flame:#F39C12; --candle:#E9D8B4; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
+  button{font:inherit;cursor:pointer}
+  .wrap{max-width:1200px;margin:0 auto;padding:14px 18px 30px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+  h1{margin:0;font-size:24px}
+  header small{color:var(--muted)}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+  .stage svg{display:block;width:100%;height:auto;touch-action:none;user-select:none}
+  .stage .cap{position:absolute;left:12px;top:8px;font-size:13px;color:var(--muted);background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:8px;padding:2px 10px;pointer-events:none}
+  .side{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h2{font-size:14px;color:var(--muted);margin:0 0 8px;font-weight:600}
+  .readout{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:15px;font-variant-numeric:tabular-nums}
+  .readout b{text-align:right}
+  .kind{font-size:22px;font-weight:700;color:var(--img);margin:6px 0 2px}
+  .desc{font-size:15px}
+  .desc b{color:var(--img)}
+  .cases{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .cases button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;font-size:14px;text-align:left}
+  .cases button[aria-pressed="true"]{border-color:var(--accent);background:#EAF2FF;font-weight:600}
+  .row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin:8px 0 2px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .ctrl{display:flex;flex-wrap:wrap;gap:6px}
+  .ctrl button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:14px}
+  .ctrl button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  details{color:var(--muted);font-size:14px;margin-top:12px}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>凸透鏡成像</h1><small>上：從側面看光線怎麼走　下：從右邊透過透鏡看，眼睛實際看到什麼</small></header>
+<div class="grid">
+  <div>
+    <div class="stage" style="margin-bottom:12px"><span class="cap">側面光路圖 — 拖曳蠟燭改變物距</span>
+      <svg id="side" viewBox="0 0 860 300" aria-label="側面光路圖"><defs>
+        <marker id="arI" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#8E44AD"/></marker>
+        <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#DDF0FF"/><stop offset=".5" stop-color="#A9D3FF"/><stop offset="1" stop-color="#DDF0FF"/></linearGradient>
+        <radialGradient id="flameG" cx="50%" cy="70%"><stop offset="0" stop-color="#FFF3B0"/><stop offset=".6" stop-color="#F39C12"/><stop offset="1" stop-color="#E74C3C" stop-opacity=".7"/></radialGradient>
+        <g id="candle"><rect x="-7" y="-40" width="14" height="40" rx="2" fill="var(--candle)" stroke="#B9A57E"/><line x1="0" y1="-40" x2="0" y2="-48" stroke="#333" stroke-width="1.5"/><path d="M0 -70 C8 -58 8 -50 0 -46 C-8 -50 -8 -58 0 -70Z" fill="url(#flameG)"/></g>
+      </defs><g id="sideScene"></g></svg></div>
+    <div class="stage"><span class="cap">正面所見 — 眼睛在右側，透過透鏡看蠟燭</span>
+      <svg id="front" viewBox="0 0 860 280" aria-label="正面所見"><g id="frontScene"></g></svg></div>
+  </div>
+  <aside class="side">
+    <div class="panel"><h2>目前情況</h2><div class="kind" id="kind"></div><div class="desc" id="desc"></div></div>
+    <div class="panel"><h2>數值（f = <span id="fv"></span> cm）</h2>
+      <div class="readout"><span>物距 p</span><b id="rp"></b><span>像距 q</span><b id="rq"></b><span>放大率 m</span><b id="rm"></b><span>像高</span><b id="rh"></b></div>
+      <div class="row"><span>物距</span><span id="pv"></span></div><input type="range" id="pR" min="0.4" max="3.6" step="0.01">
+      <div class="ctrl" style="margin-top:8px"><button id="play" aria-pressed="false">▶ 從遠到近播放</button><button id="tgRays" aria-pressed="true">顯示光線</button><button id="tgEye" aria-pressed="true">顯示眼睛</button></div>
+    </div>
+    <div class="panel"><h2>五種情況（點一下跳過去）</h2><div class="cases" id="cases"></div></div>
+  </aside>
+</div>
+<details><summary>教師備註</summary>薄透鏡模型：1/f = 1/p + 1/q，m = −q/p。「正面所見」假設眼睛位在透鏡右側、比實像更遠的位置往透鏡看：實像的情況眼睛接收的是穿過像點後繼續前進的光，所以看到倒立的像；虛像的情況看到的是反向延長線交點處的正立放大像。物體在焦點上時，光線平行射出，眼睛無法對焦，只看到一片模糊的亮光。所有長度以 f = 10 cm 為基準換算。</details>
+</div>
+
+<script>
+const $=id=>document.getElementById(id); const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
+const txt=(x,y,s,a={},p)=>{ const t=el('text',{x,y,'font-size':13,fill:'var(--ink)',...a},p); t.textContent=s; return t; };
+const F=10, PX=12;                 // f = 10 cm，1 cm = 12 px
+const CX=470, CY=200, H=60;        // 透鏡位置、主軸高度、蠟燭高（px）
+const S={ p:2.6, rays:true, eye:true, playing:false, drag:false };   // p 以 f 為單位
+
+function calc(){ const p=S.p*F; const inv=1/F-1/p; const q=Math.abs(inv)<1e-9?Infinity:1/inv; const m=isFinite(q)?-q/p:Infinity; return {p,q,m}; }
+const CASES=[
+  {id:0,name:'倒立縮小實像',short:'倒小實像',test:p=>p>2.02,jump:3.0,
+   desc:'物體在<b>兩倍焦點以外</b>。光線穿過透鏡後在右側真的會聚成一點，形成<b>實像</b>，可以用光屏接到。像比物小、上下顛倒，落在 F 與 2F 之間。相機、眼睛就是這種情況。'},
+  {id:1,name:'倒立等大實像',short:'倒等實像',test:p=>Math.abs(p-2)<=0.02,jump:2.0,
+   desc:'物體剛好在<b>兩倍焦點上</b>。實像也落在另一側的兩倍焦點上，大小和物體<b>一樣</b>，上下顛倒。'},
+  {id:2,name:'倒立放大實像',short:'倒大實像',test:p=>p>1.02&&p<2,jump:1.5,
+   desc:'物體在<b>焦點與兩倍焦點之間</b>。實像落在兩倍焦點以外，比物體<b>大</b>、上下顛倒。投影機、電影放映機就是這種情況。'},
+  {id:3,name:'不成像',short:'無像',test:p=>Math.abs(p-1)<=0.02,jump:1.0,
+   desc:'物體剛好在<b>焦點上</b>。折射後的光線互相平行，永遠不會相交，所以<b>沒有像</b>；從右邊看只看到一片模糊的亮光。'},
+  {id:4,name:'正立放大虛像',short:'正大虛像',test:p=>p<1,jump:0.6,
+   desc:'物體在<b>焦點以內</b>。折射後的光線是發散的，不會真的會聚；但把它們反向延長，會交在物體同側的一點，眼睛就覺得光是從那裡來的——這是<b>虛像</b>，正立、放大，不能用光屏接到。放大鏡就是這種情況。'},
+];
+function currentCase(){ return CASES.find(c=>c.test(S.p)); }
+
+/* ---------- 側面圖 ---------- */
+function drawSide(){
+  const g=$('sideScene'); g.innerHTML='';
+  const {p,q,m}=calc(); const fpx=F*PX; const ox=CX-p*PX;
+  el('line',{x1:20,y1:CY,x2:840,y2:CY,stroke:'var(--axis)','stroke-dasharray':'6 6'},g); txt(836,CY-8,'主軸',{'text-anchor':'end',fill:'var(--muted)'},g);
+  [[-fpx,'F'],[fpx,"F"],[-2*fpx,'2F'],[2*fpx,"2F"]].forEach(([x,n])=>{ el('line',{x1:CX+x,y1:CY-6,x2:CX+x,y2:CY+6,stroke:'var(--ink)','stroke-width':2},g); txt(CX+x,CY+22,n,{'text-anchor':'middle','font-weight':600},g); });
+  el('path',{d:`M${CX} ${CY-110} Q${CX+22} ${CY} ${CX} ${CY+110} Q${CX-22} ${CY} ${CX} ${CY-110}Z`,fill:'url(#glass)',stroke:'var(--lensEdge)','stroke-width':2},g);
+  txt(CX,CY-118,'凸透鏡',{'text-anchor':'middle',fill:'var(--lensEdge)'},g);
+  // 光線（物頂 = 火焰頂）
+  const oy=CY-H; const ix=isFinite(q)?CX+q*PX:NaN, iy=isFinite(q)?CY-H*m:NaN; const R=860;
+  if(S.rays){
+    const ln=(x1,y1,x2,y2,c,d)=>el('line',{x1,y1,x2,y2,stroke:c,'stroke-width':2,'stroke-dasharray':d||''},g);
+    // 平行光 → F'
+    ln(ox,oy,CX,oy,'var(--ray)'); { const dx=fpx, dy=CY-oy; const k=(R-CX)/dx; ln(CX,oy,CX+dx*k,oy+dy*k,'var(--ray)'); }
+    // 鏡心光
+    { const dx=CX-ox, dy=CY-oy; const k=(R-ox)/dx; ln(ox,oy,ox+dx*k,oy+dy*k,'var(--ray2)'); }
+    // 焦點光（經左側 F）→ 平行
+    { const fx=CX-fpx; const dx=fx-ox, dy=CY-oy; if(Math.abs(dx)>0.5){ const k=(CX-ox)/dx; const yl=oy+dy*k; if(Math.abs(yl-CY)<115){ ln(ox,oy,CX,yl,'var(--ray3)'); ln(CX,yl,R,yl,'var(--ray3)'); if(isFinite(q)&&q<0) ln(CX,yl,ix,iy,'var(--ray3)','6 5'); } } }
+    if(isFinite(q)&&q<0){ ln(CX,oy,ix,iy,'var(--ray)','6 5'); ln(CX,CY,ix,iy,'var(--ray2)','6 5'); }
+  }
+  // 像
+  if(isFinite(q)){ const s=Math.abs(m); const gi=el('g',{transform:`translate(${ix} ${CY}) scale(${s} ${m<0?-s:s})`,opacity:.85},g); el('use',{href:'#candle',style:'filter:hue-rotate(250deg) saturate(.7)'},gi);
+    txt(ix,m<0?CY+H*s+18:CY-H*s-10,q>0?'實像':'虛像',{'text-anchor':'middle',fill:'var(--img)','font-weight':700},g); }
+  else txt(CX+200,CY-70,'光線平行，不成像',{fill:'var(--img)','font-weight':700},g);
+  // 物（蠟燭，可拖曳）
+  const og=el('g',{transform:`translate(${ox} ${CY})`,style:'cursor:grab'},g); el('rect',{x:-22,y:-80,width:44,height:90,fill:'transparent'},og); el('use',{href:'#candle'},og); txt(0,20,'物',{'text-anchor':'middle','font-weight':600},og);
+  og.addEventListener('pointerdown',e=>{ S.drag=true; S.playing=false; $('play').setAttribute('aria-pressed',false); $('side').setPointerCapture(e.pointerId); });
+  // 眼睛
+  if(S.eye){ const ex=820; const eg=el('g',{transform:`translate(${ex} ${CY})`},g); el('path',{d:'M-22 0 Q0 -14 22 0 Q0 14 -22 0Z',fill:'#fff',stroke:'var(--ink)','stroke-width':1.5},eg); el('circle',{r:6,fill:'#3B6FB6'},eg); el('circle',{r:2.5,fill:'#111'},eg); txt(0,26,'眼睛從這裡看',{'text-anchor':'middle',fill:'var(--muted)','font-size':12},eg); }
+}
+$('side').addEventListener('pointermove',e=>{ if(!S.drag) return; const pt=$('side').createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; const q=pt.matrixTransform($('side').getScreenCTM().inverse()); S.p=Math.max(0.4,Math.min(3.6,(CX-q.x)/PX/F)); update(); });
+$('side').addEventListener('pointerup',()=>S.drag=false);
+
+/* ---------- 正面所見 ---------- */
+function drawFront(){
+  const g=$('frontScene'); g.innerHTML=''; const {q,m}=calc(); const cx=430, cy=130, R=110;
+  el('rect',{x:0,y:0,width:860,height:280,fill:'#EEF2F6'},g);
+  // 透鏡外框（圓形視野）
+  el('circle',{cx,cy,r:R,fill:'#F7FBFF',stroke:'var(--lensEdge)','stroke-width':3},g);
+  // 透鏡外面直接看到的蠟燭（比例參考）
+  const sx=140; const gs=el('g',{transform:`translate(${sx} ${cy+40})`,opacity:.9},g); el('use',{href:'#candle'},gs); txt(0,20,'不透過透鏡看',{'text-anchor':'middle',fill:'var(--muted)','font-size':12},gs);
+  const clip=el('clipPath',{id:'lensClip'},g); el('circle',{cx,cy,r:R-2},clip);
+  const inner=el('g',{'clip-path':'url(#lensClip)'},g);
+  if(!isFinite(q)){ el('circle',{cx,cy,r:R,fill:'url(#flameG)',opacity:.55},inner); txt(cx,cy+4,'一片模糊亮光',{'text-anchor':'middle',fill:'#7a3e00','font-weight':600},inner); }
+  else { const s=Math.min(3.2,Math.abs(m)); const gi=el('g',{transform:`translate(${cx} ${cy+(m<0?-40*s:40*s)}) scale(${s} ${m<0?-s:s})`},inner); el('use',{href:'#candle'},gi); }
+  txt(cx,cy+R+22,isFinite(q)?(m<0?`倒立，${Math.abs(m).toFixed(2)} 倍`:`正立，${Math.abs(m).toFixed(2)} 倍`):'無法成像',{'text-anchor':'middle',fill:'var(--img)','font-weight':700,'font-size':15},g);
+  txt(700,cy-20,'透過透鏡看到的',{'text-anchor':'middle',fill:'var(--muted)','font-size':12},g); el('path',{d:`M${cx+R+10} ${cy} L690 ${cy-8}`,stroke:'var(--muted)',fill:'none'},g);
+}
+
+/* ---------- 讀數與說明 ---------- */
+function update(){
+  drawSide(); drawFront();
+  const {p,q,m}=calc(); const c=currentCase();
+  $('kind').textContent=c.name; $('desc').innerHTML=c.desc;
+  document.querySelectorAll('.cases button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.id===c.id));
+  $('rp').textContent=p.toFixed(1)+' cm'; $('rq').textContent=isFinite(q)?(q<0?'−':'')+Math.abs(q).toFixed(1)+' cm'+(q<0?'（同側）':''):'∞';
+  $('rm').textContent=isFinite(m)?m.toFixed(2):'—'; $('rh').textContent=isFinite(m)?(Math.abs(m)*5).toFixed(1)+' cm':'—';
+  $('pv').textContent=`${p.toFixed(1)} cm（${S.p.toFixed(2)} f）`; $('pR').value=S.p; $('fv').textContent=F;
+}
+$('pR').oninput=e=>{ S.p=+e.target.value; S.playing=false; $('play').setAttribute('aria-pressed',false); update(); };
+$('cases').innerHTML=CASES.map(c=>`<button data-id="${c.id}">${c.short}<br><span style="font-size:12px;color:var(--muted)">${['p > 2f','p = 2f','f < p < 2f','p = f','p < f'][c.id]}</span></button>`).join('');
+document.querySelectorAll('.cases button').forEach(b=>b.onclick=()=>{ S.p=CASES[+b.dataset.id].jump; S.playing=false; $('play').setAttribute('aria-pressed',false); update(); });
+$('tgRays').onclick=()=>{ S.rays=!S.rays; $('tgRays').setAttribute('aria-pressed',S.rays); update(); };
+$('tgEye').onclick=()=>{ S.eye=!S.eye; $('tgEye').setAttribute('aria-pressed',S.eye); update(); };
+let last=null;
+function tick(now){ if(!S.playing){last=null;return;} const dt=last?(now-last)/1000:0; last=now; S.p-=dt*0.35; if(S.p<=0.4){ S.p=0.4; S.playing=false; $('play').setAttribute('aria-pressed',false); } update(); requestAnimationFrame(tick); }
+$('play').onclick=()=>{ if(S.playing){ S.playing=false; } else { if(S.p<=0.41) S.p=3.6; S.playing=true; requestAnimationFrame(tick); } $('play').setAttribute('aria-pressed',S.playing); };
+update();
+</script>
+</body>
+</html>
