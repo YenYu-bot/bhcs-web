@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>波動實驗室 —— 橫波、縱波、反射、透射、疊加與駐波</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 16 Q9 2 16 16 T30 16' fill='none' stroke='%23F2D16B' stroke-width='4'/%3E%3C/svg%3E">
+<style>
+  :root{ --bg:#0F1528; --panel:#182038; --panel2:#1F2A48; --line:#2E3A5E; --ink:#EEF1F8; --muted:#9AA6C6; --accent:#5EC8B7; --warn:#F28C6B; --y:#F2D16B; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
+  button{font:inherit;cursor:pointer}
+  .wrap{max-width:1240px;margin:0 auto;padding:14px 18px 30px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  h1{margin:0;font-size:24px}
+  header small{color:var(--muted)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:15px}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#0B1F1B;font-weight:700}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .stage{background:#0b1020;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+  canvas{display:block;width:100%;height:auto;touch-action:none}
+  .hint{position:absolute;left:12px;top:8px;background:rgba(15,21,40,.75);border:1px solid var(--line);border-radius:8px;padding:2px 10px;font-size:13px;color:var(--muted);pointer-events:none}
+  .side{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h2{font-size:14px;color:var(--muted);margin:0 0 8px;font-weight:600}
+  .ctrl{display:flex;flex-wrap:wrap;gap:6px}
+  .ctrl button{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:8px;padding:6px 10px;font-size:14px}
+  .ctrl button[aria-pressed="true"]{background:var(--accent);color:#0B1F1B;border-color:var(--accent);font-weight:600}
+  .ctrl button.big{background:var(--y);color:#222;border-color:var(--y);font-weight:700}
+  .row{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin:8px 0 2px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .readout{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+  .readout b{text-align:right}
+  .text p{margin:0 0 10px;font-size:15px}
+  .text .q{background:#2A2C1F;border-left:4px solid var(--y);padding:8px 10px;border-radius:0 8px 8px 0}
+  details{color:var(--muted);font-size:14px;margin-top:12px}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>波動實驗室</h1><small>波傳出去，介質留在原地：從粒子的運動看橫波、縱波、水波，再用繩波看反射、透射、疊加與駐波</small></header>
+<div class="tabs" id="tabs"></div>
+<div class="grid">
+  <div class="stage"><span class="hint" id="hint"></span><canvas id="cv" width="900" height="420"></canvas></div>
+  <aside class="side">
+    <div class="panel"><h2>控制</h2><div id="ctrls"></div><div class="readout" id="readout" style="margin-top:8px"></div></div>
+    <div class="panel text"><h2 id="tTitle"></h2><div id="tBody"></div></div>
+  </aside>
+</div>
+<details><summary>教師備註</summary>「波浪舞、橫波、縱波、水波」四頁用解析式 y = A sin(kx − ωt) 直接算每個粒子的位置，可以看到粒子只在原地振動（或繞小圓）、波形卻往前跑。「反射、透射、疊加、駐波」用一維波動方程式的有限差分法即時計算，兩端條件（固定／自由／驅動）與介質分界的波速差都是真的算出來的：固定端反射相位反轉、自由端不反轉、由輕繩進重繩透射波變短變慢、駐波在共振頻率才會形成。</details>
+</div>
+
+<script>
+const $=id=>document.getElementById(id); const cv=$('cv'), ctx=cv.getContext('2d'); const W=cv.width, H=cv.height, MID=H/2;
+/* ---------------- 頁面定義 ---------------- */
+const PAGES=[
+ {id:'dance',name:'波浪舞',kind:'kin',hint:'每個人只是站著蹲下、站起來，「波」卻沿著隊伍跑',text:`<p>看台上的<b>波浪舞</b>：每個人只做同一件事——蹲下、站起——而且沒有人離開座位。可是因為每個人開始的時間<b>依序晚一點</b>，遠看就有一個「波」沿著人群移動。</p><p>這就是波動的本質：<b>介質（人）在原地振動，傳出去的是振動的形態與能量</b>，不是物質本身。</p><p class="q">把「速度」調慢，盯著紅色那個人：他有沒有往旁邊移動？</p>`},
+ {id:'trans',name:'橫波',kind:'kin',hint:'粒子上下振動，波往前傳：振動方向 ⊥ 傳播方向',text:`<p><b>橫波</b>：粒子振動的方向和波傳播的方向<b>垂直</b>。繩波、光波都是橫波。</p><p>相鄰兩個波峰的距離是<b>波長 λ</b>；一個粒子完成一次上下振動的時間是<b>週期 T</b>，每秒振動次數是<b>頻率 f</b>；波形前進的速率 <b>v = λ / T = λ f</b>。</p><p class="q">打開「軌跡」看紅色粒子的路徑；再改頻率，波長怎麼變？波速有沒有變？（波速由繩子決定，不由你甩的快慢決定。）</p>`},
+ {id:'long',name:'縱波',kind:'kin',hint:'粒子左右振動，波往前傳：振動方向 ∥ 傳播方向',text:`<p><b>縱波</b>：粒子振動的方向和傳播方向<b>平行</b>，所以介質裡出現一段一段的<b>密部</b>（粒子擠在一起）和<b>疏部</b>（粒子拉開）。聲波就是縱波。</p><p>密部到下一個密部的距離就是波長。下方灰色曲線把每個粒子的位移畫成高度，方便和橫波對照。</p><p class="q">紅色粒子有沒有跟著密部一路往右跑？它移動的範圍有多大？</p>`},
+ {id:'water',name:'水波',kind:'kin',hint:'水面的每一點繞著小圓運動',text:`<p>水波不是單純的橫波：水面上的每一小塊水都在<b>繞小圓</b>運動——在波峰時往前、在波谷時往後、其間上下移動。所以漂在水面的葉子只是原地打轉，並不會跟著波跑。</p><p>圓的半徑就是振幅，水愈深圓愈小，到水底幾乎不動。</p><p class="q">看紅色粒子的軌跡，它畫出的是什麼形狀？</p>`},
+ {id:'fixed',name:'固定端反射',kind:'sim',right:'fixed',hint:'按「甩一個脈衝」，看它到右端牆壁後怎麼回來',text:`<p>繩子右端<b>固定</b>在牆上。脈衝到達時，繩子拉牆，牆用反作用力把繩子往<b>相反方向</b>拉，所以反射回來的脈衝<b>上下顛倒</b>（相位改變 180°）。</p><p class="q">甩一個向上的脈衝，回來的是向上還是向下？連甩兩個看看。</p>`},
+ {id:'free',name:'自由端反射',kind:'sim',right:'free',hint:'右端套在光滑桿子上可以自由滑動',text:`<p>繩子右端綁在一個可以<b>自由上下滑動</b>的環上。脈衝到達時，末端沒有東西拉住它，會衝到兩倍高度再彈回來，反射回來的脈衝<b>方向不變</b>（相位不變）。</p><p class="q">比較固定端與自由端：反射脈衝的方向有什麼不同？末端最高點各是多少？</p>`},
+ {id:'transA',name:'透射 A：輕繩→重繩',kind:'sim',right:'fixed',media:'lightHeavy',hint:'左邊細繩、右邊粗繩；波在粗繩裡走得慢',text:`<p>兩條不同的繩子接在一起。波從<b>輕繩進入重繩</b>時，一部分能量<b>透射</b>過去繼續前進，一部分<b>反射</b>回來。</p><p>重繩裡波速較慢，所以透射波<b>變窄、走得慢</b>；反射波則像碰到固定端一樣<b>反相</b>（重繩比較「不好推動」）。</p><p class="q">數數看：透射波和反射波哪一個比較高？哪一個上下顛倒了？</p>`},
+ {id:'transB',name:'透射 B：重繩→輕繩',kind:'sim',right:'fixed',media:'heavyLight',hint:'左邊粗繩、右邊細繩；波在細繩裡跑得快',text:`<p>反過來，波從<b>重繩進入輕繩</b>：透射波<b>變寬、跑得快</b>，而且比原來還高；反射波<b>同相</b>（輕繩容易被推動，像自由端）。</p><p class="q">和「透射 A」對照，反射波的方向為什麼不一樣？</p>`},
+ {id:'super',name:'波的疊加',kind:'sim',right:'hand',hint:'左右各甩一個脈衝，讓它們在中間相遇',text:`<p>兩個波相遇時<b>不會互相撞開</b>，而是<b>疊加</b>：相遇處的位移等於兩個波各自位移的<b>總和</b>；穿過之後各自保持原來的形狀繼續前進。</p><p class="q">先按「同向兩個脈衝」看相遇的瞬間變成多高；再按「反向兩個脈衝」，相遇的瞬間繩子變成什麼樣？</p>`},
+ {id:'cons',name:'建設性干涉',kind:'sim',right:'hand',preset:'cons',hint:'兩個同向脈衝相遇：位移相加、變成兩倍高',text:`<p>兩個<b>同方向</b>的脈衝相遇，位移相加，瞬間出現一個<b>兩倍高</b>的脈衝——這叫<b>建設性干涉</b>。之後兩個脈衝各走各的，形狀沒變。</p><p class="q">按「暫停」抓住相遇的那一瞬間，量量看高度。</p>`},
+ {id:'dest',name:'破壞性干涉',kind:'sim',right:'hand',preset:'dest',hint:'一上一下兩個脈衝相遇：位移抵消、繩子瞬間平直',text:`<p>一個向上、一個向下的脈衝相遇，位移互相抵消，那一瞬間繩子幾乎<b>完全平直</b>——<b>破壞性干涉</b>。但能量並沒有消失：粒子在那一刻的<b>速度</b>最大，下一瞬間兩個脈衝又各自現身。</p><p class="q">繩子平直的那一刻，波「不見了」嗎？暫停後按「單步」往前看。</p>`},
+ {id:'standA',name:'駐波 A',kind:'sim',right:'fixed',preset:'stand',hint:'左端持續甩、右端固定：入射波和反射波疊加成駐波',text:`<p>左端<b>持續</b>以固定頻率振動，右端固定。入射波和反射波不斷疊加；當頻率剛好時，兩者疊加成一個<b>不前進、只在原地起伏</b>的波形——<b>駐波</b>。</p><p>永遠不動的點叫<b>節點</b>，振幅最大的點叫<b>腹點</b>。相鄰兩節點的距離是<b>半個波長</b>。</p><p class="q">切換 1、2、3、4 個「段」，數數看節點有幾個？頻率之間是什麼倍數關係？</p>`},
+ {id:'standB',name:'駐波 B：頻率不對呢？',kind:'sim',right:'fixed',preset:'standOff',hint:'頻率稍微偏離共振值，駐波就形不成',text:`<p>只有當繩長剛好是<b>半波長的整數倍</b>時，反射波和入射波才會一直在同樣的位置加強、同樣的位置抵消，形成穩定的駐波。</p><p>把頻率調到共振值的中間，波形會混亂、沒有固定的節點——這就是為什麼吉他弦只發出特定的音高。</p><p class="q">慢慢把頻率滑桿從 1 段調到 2 段之間，觀察哪些頻率會突然「站」出清楚的駐波。</p>`},
+];
+/* ---------------- 狀態 ---------------- */
+const S={ page:null, t:0, playing:true, speed:1, A:40, f:1.0, trace:true, lam:220, step:false, dir:1,
+  // 數值繩波
+  N:240, u:null, up:null, c:null, drive:{type:'none',t0:0,sign:1,side:'L'}, driveR:{type:'none',t0:0,sign:1}, harm:1, standF:0, freq:1, trail:[] };
+/* ---------------- 解析式模式 ---------------- */
+function drawKin(P){
+  ctx.clearRect(0,0,W,H); const n=P.id==='dance'?20:36; const x0=60, x1=W-60, dx=(x1-x0)/(n-1);
+  const k=2*Math.PI/S.lam*S.dir, w=2*Math.PI*S.f; const t=S.t;
+  ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.setLineDash([4,6]); ctx.beginPath(); ctx.moveTo(0,MID); ctx.lineTo(W,MID); ctx.stroke(); ctx.setLineDash([]);
+  const pts=[];
+  for(let i=0;i<n;i++){ const x=x0+i*dx; const ph=k*x-w*t; let px=x, py=MID;
+    if(P.id==='dance'){ py=MID-Math.max(0,S.A*Math.sin(ph)); }
+    else if(P.id==='trans'){ py=MID-S.A*Math.sin(ph); }
+    else if(P.id==='long'){ px=x+S.A*0.6*Math.sin(ph); }
+    else if(P.id==='water'){ px=x+S.A*0.7*Math.cos(ph); py=MID-S.A*0.7*Math.sin(ph); }
+    pts.push({x:px,y:py,i}); }
+  // 連線（橫波、水波）
+  if(P.id==='trans'||P.id==='water'){ ctx.strokeStyle='rgba(242,209,107,.5)'; ctx.lineWidth=2; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke(); }
+  // 縱波：位移曲線
+  if(P.id==='long'){
+    // 密度曲線：粒子擠在一起的地方高、拉開的地方低（密度 ∝ −∂u/∂x ∝ −cos(kx−ωt)·k）
+    const base=MID+125; ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1.5; ctx.beginPath();
+    for(let x=x0;x<=x1;x+=4){ const y=base-S.A*0.6*(-Math.cos(k*x-w*t))*Math.sign(S.dir); x===x0?ctx.moveTo(x,y):ctx.lineTo(x,y);} ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.setLineDash([3,5]); ctx.beginPath(); ctx.moveTo(x0,base); ctx.lineTo(x1,base); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='12px sans-serif'; ctx.fillText('下方曲線：粒子的疏密程度（高＝密部、低＝疏部）',x0,base+42);
+    // 在粒子列上標出密部／疏部：掃描疏密函數的極大／極小值
+    ctx.font='13px sans-serif'; const f=x=>-Math.sign(k)*Math.cos(k*x-w*t); let prev=f(x0-2), cur=f(x0);
+    for(let x=x0+2;x<=x1;x+=2){ const nxt=f(x); if(cur>prev&&cur>=nxt&&cur>0.9){ ctx.fillStyle='#F2D16B'; ctx.fillText('密部',x-15,MID-30); } if(cur<prev&&cur<=nxt&&cur<-0.9){ ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fillText('疏部',x-15,MID-30); } prev=cur; cur=nxt; }
+  }
+  // 軌跡
+  const R=pts[Math.floor(n/2)];
+  if(S.trace){ S.trail.push({x:R.x,y:R.y}); if(S.trail.length>120) S.trail.shift(); ctx.strokeStyle='rgba(242,140,107,.6)'; ctx.lineWidth=2; ctx.beginPath(); S.trail.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke(); }
+  // 粒子
+  pts.forEach(p=>{ const red=p.i===Math.floor(n/2);
+    if(P.id==='dance'){ // 小人
+      ctx.fillStyle=red?'#F28C6B':'#8fd3ff'; ctx.beginPath(); ctx.arc(p.x,p.y-14,8,0,7); ctx.fill(); ctx.fillRect(p.x-6,p.y-6,12,18); }
+    else { ctx.fillStyle=red?'#F28C6B':'#F2D16B'; ctx.beginPath(); ctx.arc(p.x,p.y,red?9:7,0,7); ctx.fill(); }
+    if(red&&P.id!=='dance'){ ctx.strokeStyle='#F28C6B'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(x0+p.i*dx,MID-S.A-30); ctx.lineTo(x0+p.i*dx,MID+S.A+30); ctx.stroke(); ctx.setLineDash([]); }
+  });
+  // 波前記號（橫波）：追蹤一個波峰
+  if(P.id==='trans'||P.id==='dance'){ let xp=(Math.PI/2+w*t)/k;   // 峰位置：kx−ωt = π/2
+    while(xp>x1) xp-=S.lam; while(xp<x0) xp+=S.lam;
+    ctx.fillStyle='#5EC8B7'; ctx.beginPath(); ctx.moveTo(xp,MID-S.A-22); ctx.lineTo(xp-7,MID-S.A-36); ctx.lineTo(xp+7,MID-S.A-36); ctx.fill(); ctx.font='12px sans-serif'; ctx.fillText(S.dir>0?'波峰往右移 →':'← 波峰往左移',xp+10,MID-S.A-26); }
+  // 箭頭：振動方向與傳播方向
+  ctx.fillStyle='rgba(255,255,255,.7)'; ctx.font='13px sans-serif';
+  ctx.fillText(S.dir>0?'傳播方向 →':'← 傳播方向',W-140,H-16); ctx.fillText(P.id==='long'?'粒子振動方向 ↔':P.id==='water'?'粒子繞小圓 ↻':'粒子振動方向 ↕',20,H-16);
+  const v=S.lam*S.f; $('readout').innerHTML=`<span>振幅 A</span><b>${S.A}</b><span>波長 λ</span><b>${S.lam}</b><span>頻率 f</span><b>${S.f.toFixed(2)} Hz</b><span>波速 v = λf</span><b>${v.toFixed(0)} px/s</b>`;
+}
+/* ---------------- 數值繩波 ---------------- */
+function initSim(P){
+  S.u=new Float64Array(S.N); S.up=new Float64Array(S.N); S.c=new Float64Array(S.N).fill(1);
+  if(P.media==='lightHeavy') for(let i=S.N/2;i<S.N;i++) S.c[i]=0.5;
+  if(P.media==='heavyLight') for(let i=S.N/2;i<S.N;i++) S.c[i]=2.0;
+  S.drive={type:'none'}; S.driveR={type:'none'}; S.t=0;
+  if(P.preset==='cons'){ pulse('L',1); pulse('R',1); }
+  if(P.preset==='dest'){ pulse('L',1); pulse('R',-1); }
+  if(P.preset==='stand'){ S.harm=1; S.drive={type:'sine'}; S.freq=harmFreq(1); }
+  if(P.preset==='standOff'){ S.harm=1; S.drive={type:'sine'}; S.freq=harmFreq(1)*1.45; }
+}
+const CFL=0.5; // c*dt/dx（最大波速 2 時 = 1）
+const SPS=240;   // 每秒計算步數；波速 = CFL×SPS 格/秒
+function harmFreq(n){ const L=S.N-1; return n*CFL*SPS/(2*L); }   // 固定端共振：f_n = n v / 2L
+function pulse(side,sign){ if(side==='L') S.drive={type:'pulse',t0:S.t,sign}; else S.driveR={type:'pulse',t0:S.t,sign}; }
+function driveVal(d,t){ if(!d||d.type==='none') return 0; if(d.type==='pulse'){ const tau=(t-d.t0)*6; return tau<Math.PI? d.sign*S.A*Math.sin(tau)*Math.sin(tau):0; } if(d.type==='sine') return S.A*0.5*Math.sin(2*Math.PI*S.freq*t); return 0; }
+function stepSim(P,dt){
+  const steps=Math.max(1,Math.round(dt*SPS*S.speed)); const h=1/SPS;   // 固定步長，速度用步數控制
+  for(let s=0;s<steps;s++){
+    S.t+=h; const u=S.u, up=S.up, N=S.N; const un=new Float64Array(N);
+    for(let i=1;i<N-1;i++){ const r=(S.c[i]*CFL)**2; un[i]=2*u[i]-up[i]+r*(u[i+1]-2*u[i]+u[i-1]) - 0.0015*(u[i]-up[i]); }
+    un[0]=driveVal(S.drive,S.t);
+    if(P.right==='fixed') un[N-1]=0; else if(P.right==='free') un[N-1]=un[N-2]; else un[N-1]=driveVal(S.driveR,S.t);
+    S.up=u; S.u=un;
+  }
+}
+function drawSim(P){
+  ctx.clearRect(0,0,W,H); const x0=40,x1=W-40; const dx=(x1-x0)/(S.N-1);
+  ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.setLineDash([4,6]); ctx.beginPath(); ctx.moveTo(0,MID); ctx.lineTo(W,MID); ctx.stroke(); ctx.setLineDash([]);
+  // 介質分界
+  if(P.media){ const xm=x0+(S.N/2)*dx; ctx.fillStyle='rgba(94,200,183,.08)'; ctx.fillRect(P.media==='lightHeavy'?xm:x0,0,P.media==='lightHeavy'?x1-xm:xm-x0,H); ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='13px sans-serif'; ctx.fillText(P.media==='lightHeavy'?'細繩（波速快）':'粗繩（波速慢）',x0+10,30); ctx.fillText(P.media==='lightHeavy'?'粗繩（波速慢）':'細繩（波速快）',xm+10,30); }
+  // 繩
+  ctx.lineWidth=P.media?0:3; ctx.strokeStyle='#F2D16B'; ctx.beginPath();
+  for(let i=0;i<S.N;i++){ const x=x0+i*dx, y=MID-S.u[i]; if(P.media){ ctx.lineWidth=(S.c[i]<1||(P.media==='heavyLight'&&i<S.N/2))?5:2.5; } i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+  ctx.stroke();
+  // 粒子點
+  ctx.fillStyle='#F2D16B'; for(let i=0;i<S.N;i+=8){ ctx.beginPath(); ctx.arc(x0+i*dx,MID-S.u[i],3.5,0,7); ctx.fill(); }
+  // 右端
+  if(P.right==='fixed'){ ctx.fillStyle='#8a93a2'; ctx.fillRect(x1,MID-120,12,240); ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='13px sans-serif'; ctx.fillText('固定端',x1-50,MID+140); }
+  else if(P.right==='free'){ ctx.strokeStyle='#8a93a2'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x1+6,MID-130); ctx.lineTo(x1+6,MID+130); ctx.stroke(); ctx.fillStyle='#5EC8B7'; ctx.beginPath(); ctx.arc(x1+6,MID-S.u[S.N-1],8,0,7); ctx.fill(); ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='13px sans-serif'; ctx.fillText('自由端（可滑動）',x1-100,MID+150); }
+  // 手
+  hand(x0,MID-S.u[0]); if(P.right==='hand') hand(x1,MID-S.u[S.N-1],true);
+  // 駐波：節點標記
+  if(P.preset&&P.preset.startsWith('stand')){ const n=S.harm; ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='12px sans-serif';
+    if(Math.abs(S.freq/harmFreq(n)-1)<0.02){ for(let k=0;k<=n;k++){ const x=x0+(x1-x0)*k/n; ctx.fillStyle='#F28C6B'; ctx.beginPath(); ctx.arc(x,MID,5,0,7); ctx.fill(); ctx.fillStyle='rgba(255,255,255,.7)'; ctx.fillText('節點',x-12,MID+22); } for(let k=0;k<n;k++){ const x=x0+(x1-x0)*(k+0.5)/n; ctx.fillStyle='rgba(255,255,255,.7)'; ctx.fillText('腹點',x-12,MID-S.A*0.9-10); } } }
+  const info=P.preset&&P.preset.startsWith('stand')?`<span>驅動頻率</span><b>${S.freq.toFixed(3)} Hz</b><span>共振頻率 f₁</span><b>${harmFreq(1).toFixed(3)} Hz</b><span>目前 ≈</span><b>${(S.freq/harmFreq(1)).toFixed(2)} f₁</b>`:`<span>時間</span><b>${S.t.toFixed(1)} s</b>`;
+  $('readout').innerHTML=info;
+}
+function hand(x,y,right){ ctx.fillStyle='#e8c39e'; ctx.beginPath(); ctx.ellipse(x+(right?12:-12),y,12,9,0,0,7); ctx.fill(); ctx.strokeStyle='#e8c39e'; ctx.lineWidth=6; ctx.beginPath(); ctx.moveTo(x+(right?20:-20),y); ctx.lineTo(x+(right?40:-40),y+30); ctx.stroke(); }
+/* ---------------- 控制面板 ---------------- */
+function renderCtrls(P){
+  const c=$('ctrls'); let h=`<div class="ctrl"><button id="play" aria-pressed="${S.playing}">${S.playing?'⏸ 暫停':'▶ 播放'}</button><button id="stepB">單步</button><button id="reset">重來</button>`;
+  if(P.kind==='kin') h+=`<button id="trace" aria-pressed="${S.trace}">軌跡</button><button id="dirB">${S.dir>0?'波向右 →':'← 波向左'}</button></div>
+    <div class="row"><span>速度</span><span>${S.speed.toFixed(2)}×</span></div><input type="range" id="speed" min="0.1" max="2" step="0.05" value="${S.speed}">
+    <div class="row"><span>振幅</span><span>${S.A}</span></div><input type="range" id="amp" min="10" max="70" value="${S.A}">
+    <div class="row"><span>頻率 f</span><span>${S.f.toFixed(2)}</span></div><input type="range" id="freq" min="0.3" max="2" step="0.05" value="${S.f}">
+    <div class="row"><span>波長 λ（由繩子決定波速 → 這裡讓你直接調）</span><span>${S.lam}</span></div><input type="range" id="lam" min="120" max="400" step="10" value="${S.lam}">`;
+  else { h+=`</div><div class="ctrl" style="margin-top:8px">`;
+    if(P.right!=='hand'&&!(P.preset||'').startsWith('stand')) h+=`<button class="big" id="pulseUp">甩一個向上的脈衝</button><button id="pulseDn">向下的脈衝</button>`;
+    if(P.right==='hand') h+=`<button class="big" id="both">同向兩個脈衝</button><button id="opp">反向兩個脈衝</button><button id="pulseUp">只從左邊甩</button>`;
+    if((P.preset||'').startsWith('stand')) h+=[1,2,3,4].map(n=>`<button data-h="${n}" aria-pressed="${S.harm===n&&Math.abs(S.freq/harmFreq(n)-1)<0.02}">${n} 段</button>`).join('');
+    h+=`</div><div class="row"><span>速度</span><span>${S.speed.toFixed(2)}×</span></div><input type="range" id="speed" min="0.1" max="2" step="0.05" value="${S.speed}">`;
+    if((P.preset||'').startsWith('stand')) h+=`<div class="row"><span>驅動頻率（以 f₁ 為單位）</span><span>${(S.freq/harmFreq(1)).toFixed(2)}</span></div><input type="range" id="fmul" min="0.5" max="4.5" step="0.01" value="${(S.freq/harmFreq(1)).toFixed(2)}">`;
+    else h+=`<div class="row"><span>脈衝高度</span><span>${S.A}</span></div><input type="range" id="amp" min="10" max="70" value="${S.A}">`; }
+  c.innerHTML=h;
+  $('play').onclick=()=>{ S.playing=!S.playing; renderCtrls(P); };
+  $('stepB').onclick=()=>{ S.playing=false; S.step=true; renderCtrls(P); };
+  $('reset').onclick=()=>{ setPage(P.id); };
+  const bind=(id,fn)=>{ const e=$(id); if(e) e.oninput=ev=>{ fn(+ev.target.value); renderCtrls(P); }; };
+  bind('speed',v=>S.speed=v); bind('amp',v=>S.A=v); bind('freq',v=>{S.f=v;S.trail=[];}); bind('lam',v=>{S.lam=v;S.trail=[];}); bind('fmul',v=>{ S.freq=harmFreq(1)*v; S.harm=Math.round(v); });
+  if($('trace')) $('trace').onclick=()=>{ S.trace=!S.trace; S.trail=[]; renderCtrls(P); };
+  if($('dirB')) $('dirB').onclick=()=>{ S.dir=-S.dir; S.trail=[]; renderCtrls(P); };
+  if($('pulseUp')) $('pulseUp').onclick=()=>{ pulse('L',1); S.playing=true; renderCtrls(P); };
+  if($('pulseDn')) $('pulseDn').onclick=()=>{ pulse('L',-1); S.playing=true; renderCtrls(P); };
+  if($('both')) $('both').onclick=()=>{ pulse('L',1); pulse('R',1); S.playing=true; renderCtrls(P); };
+  if($('opp')) $('opp').onclick=()=>{ pulse('L',1); pulse('R',-1); S.playing=true; renderCtrls(P); };
+  document.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{ S.harm=+b.dataset.h; S.freq=harmFreq(S.harm); S.u.fill(0); S.up.fill(0); S.t=0; S.playing=true; renderCtrls(P); });
+}
+/* ---------------- 主迴圈 ---------------- */
+let last=null;
+function loop(now){
+  const P=S.page; const dt=Math.min(0.05,last?(now-last)/1000:0); last=now;
+  if(P.kind==='kin'){ if(S.playing) S.t+=dt*S.speed; else if(S.step){ S.t+=0.05; S.step=false; } drawKin(P); }
+  else { if(S.playing) stepSim(P,dt); else if(S.step){ stepSim(P,1/30); S.step=false; } drawSim(P); }
+  requestAnimationFrame(loop);
+}
+function setPage(id){
+  const P=PAGES.find(p=>p.id===id); S.page=P; S.t=0; S.trail=[]; S.playing=true;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.page===id));
+  $('hint').textContent=P.hint; $('tTitle').textContent=P.name; $('tBody').innerHTML=P.text;
+  if(P.kind==='sim') initSim(P); renderCtrls(P);
+}
+$('tabs').innerHTML=PAGES.map(p=>`<button class="tab" data-page="${p.id}">${p.name}</button>`).join('');
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setPage(t.dataset.page));
+setPage('dance'); requestAnimationFrame(loop);
+</script>
+</body>
+</html>
