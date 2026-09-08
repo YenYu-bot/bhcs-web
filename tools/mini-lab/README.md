@@ -1,0 +1,7 @@
+# 小小研究員虛擬實驗室
+
+純靜態網頁：`index.html` + `img/`。整個資料夾原封不動上傳即可。
+
+- `img/lab-room.jpg`：實驗室背景；`img/doc-*.png`：奇奇博士五個姿勢（wave 打招呼、point 指引、wow 驚訝、thumb 比讚、safety 安全）。
+- 圖片缺檔時程式自動退回向量繪圖。
+- 進度存在瀏覽器 localStorage；新增關卡在 `EXPERIMENTS` 陣列加物件即可。
