@@ -58,25 +58,13 @@
   .badges{display:flex;gap:12px;flex-wrap:wrap}
   .badge{width:110px;text-align:center;font-size:13px;color:var(--muted)}
   .badge svg{width:80px;height:80px}
+  .badge .bimg{width:96px;height:96px;margin:0 auto;background:center/contain no-repeat}
   .badge.locked{opacity:.3;filter:grayscale(1)}
   .notes p{margin:0 0 8px;font-size:15px;border-left:4px solid var(--gold);padding-left:8px}
   .toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:999px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
   .toast.show{opacity:1}
   details{color:var(--muted);font-size:14px;margin-top:14px}
 </style>
-<!-- Google Analytics 4 -->
-<script>
-// 自己人排除：任何頁面網址加 ?noga=1 開啟一次，這台瀏覽器從此不計入統計
-if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
-if(localStorage.getItem('bhcs_noga')!=='1'){
-  var s=document.createElement('script'); s.async=true;
-  s.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
-  document.head.appendChild(s);
-  window.dataLayer=window.dataLayer||[];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
-}
-</script>
 </head>
 <body>
 <div class="wrap">
@@ -160,7 +148,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
 
 <script>
 const $=id=>document.getElementById(id); const NS='http://www.w3.org/2000/svg';
-const IMG={room:'img/lab-room.jpg',icon_tools:'img/icon-tools.png',icon_rules:'img/icon-rules.png',icon_water:'img/icon-water.png',icon_cabbage:'img/icon-cabbage.png',icon_density:'img/icon-density.png',icon_photo:'img/icon-photo.png',icon_fizz:'img/icon-fizz.png',icon_soap:'img/icon-soap.png',icon_solar:'img/icon-solar.png',tool_beaker:'img/tool-beaker.png',tool_tube:'img/tool-tube.png',tool_flask:'img/tool-flask.png',tool_cylinder:'img/tool-cylinder.png',tool_dropper:'img/tool-dropper.png',tool_lamp:'img/tool-lamp.png',tool_funnel:'img/tool-funnel.png',tool_tongs:'img/tool-tongs.png',tool_thermo:'img/tool-thermo.png',tool_balance:'img/tool-balance.png',wave:'img/doc-wave.png',point:'img/doc-point.png',wow:'img/doc-wow.png',thumb:'img/doc-thumb.png',safety:'img/doc-safety.png'};
+const IMG={room:'img/lab-room.jpg',icon_tools:'img/icon-tools.png',icon_rules:'img/icon-rules.png',icon_water:'img/icon-water.png',icon_cabbage:'img/icon-cabbage.png',icon_density:'img/icon-density.png',icon_photo:'img/icon-photo.png',icon_fizz:'img/icon-fizz.png',icon_soap:'img/icon-soap.png',icon_solar:'img/icon-solar.png',tool_beaker:'img/tool-beaker.png',tool_tube:'img/tool-tube.png',tool_flask:'img/tool-flask.png',tool_cylinder:'img/tool-cylinder.png',tool_dropper:'img/tool-dropper.png',tool_lamp:'img/tool-lamp.png',tool_funnel:'img/tool-funnel.png',tool_tongs:'img/tool-tongs.png',tool_thermo:'img/tool-thermo.png',tool_balance:'img/tool-balance.png',safetyRoom:'img/safety-room.jpg',bench:'img/scene-bench.jpg',prop_aquarium:'img/prop-aquarium.png',prop_lamp:'img/prop-lamp.png',item_lampcard:'img/prop-lamp.png',prop_bottle:'img/prop-bottle.png',item_balloon:'img/item-balloon.png',prop_balloon_full:'img/prop-balloon-full.png',prop_panel:'img/prop-panel.png',prop_sun:'img/prop-sun.png',prop_cloud:'img/prop-cloud.png',prop_meter:'img/prop-meter.png',item_salt:'img/item-salt.png',item_dish:'img/item-dish.png',item_alcohol:'img/item-alcohol.png',item_detergent:'img/item-detergent.png',item_bluewater:'img/item-bluewater.png',badge_safety:'img/badge-safety.png',badge_tools:'img/badge-tools.png',badge_rules:'img/badge-rules.png',badge_water:'img/badge-water.png',badge_cabbage:'img/badge-cabbage.png',badge_density:'img/badge-density.png',badge_photo:'img/badge-photo.png',badge_fizz:'img/badge-fizz.png',badge_soap:'img/badge-soap.png',badge_solar:'img/badge-solar.png',badge_master:'img/badge-master.png',prop_filter:'img/prop-filter-bottle.png',prop_cup:'img/prop-cup.png',prop_glass:'img/prop-glass.png',prop_cylinder:'img/prop-cylinder.png',tex_cotton:'img/tex-cotton.jpg',tex_charcoal:'img/tex-charcoal.jpg',tex_sand:'img/tex-sand.jpg',tex_gravel:'img/tex-gravel.jpg',item_cotton:'img/item-cotton.png',item_charcoal:'img/item-charcoal.png',item_sand:'img/item-sand.png',item_gravel:'img/item-gravel.png',item_dirty:'img/item-dirtywater.png',item_clean:'img/item-cleanwater.png',item_lemon:'img/item-lemon.png',item_vinegar:'img/item-vinegar.png',item_water:'img/item-water.png',item_soda:'img/item-soda.png',item_soap:'img/item-soap.png',item_soapy:'img/item-sodaash.png',item_honey:'img/item-honey.png',item_oil:'img/item-oil.png',haz_eat:'img/haz-eat.png',haz_hair:'img/haz-hair.png',haz_smell:'img/haz-smell.png',haz_run:'img/haz-run.png',haz_goggles:'img/haz-goggles.png',haz_taste:'img/haz-taste.png',safe_goggles:'img/safe-goggles.png',safe_kit:'img/safe-kit.png',wave:'img/doc-wave.png',point:'img/doc-point.png',wow:'img/doc-wow.png',thumb:'img/doc-thumb.png',safety:'img/doc-safety.png'};
 const HAS={}; Object.entries(IMG).forEach(([k,src])=>{ const i=new Image(); i.onload=()=>{HAS[k]=true; setDoc(curPose); if($('lab').classList.contains('active')) drawRoom();}; i.onerror=()=>HAS[k]=false; i.src=src; });
 let curPose='wave';
 function docInto(svg,pose){ svg.innerHTML=''; if(HAS[pose]){ const im=document.createElementNS(NS,'image'); im.setAttribute('href',IMG[pose]); im.setAttribute('x',0); im.setAttribute('y',0); im.setAttribute('width',200); im.setAttribute('height',220); im.setAttribute('preserveAspectRatio','xMidYMid meet'); svg.appendChild(im); } else { const u=document.createElementNS(NS,'use'); u.setAttribute('href','#doc'); svg.appendChild(u); } }
@@ -228,7 +216,10 @@ scene.addEventListener('pointerup',e=>{ if(!drag) return; const s=step(); const 
   else draw(); });
 
 /* ---------- 共用零件 ---------- */
-function shelf(g,items,y=380){ items.forEach((it,i)=>{ const x=70+i*115; const gg=el('g',{class:'drag','data-item':it.id,transform:`translate(${x} ${y})`},g); el('rect',{x:-48,y:-48,width:96,height:80,rx:10,fill:'#fff',stroke:'#E7DFC9'},gg); it.draw(gg); txt(0,26,it.name,{'text-anchor':'middle','font-size':13},gg); }); }
+function shelf(g,items,y=380){ items.forEach((it,i)=>{ const x=70+i*115; const gg=el('g',{class:'drag','data-item':it.id,transform:`translate(${x} ${y})`},g); el('rect',{x:-50,y:-56,width:100,height:92,rx:12,fill:'rgba(255,255,255,.92)',stroke:'#E7DFC9'},gg);
+  const key='item_'+(it.img||it.id); if(HAS[key]) el('image',{href:IMG[key],x:-40,y:-52,width:80,height:66,preserveAspectRatio:'xMidYMid meet'},gg); else it.draw(gg); txt(0,30,it.name,{'text-anchor':'middle','font-size':13,'font-weight':600},gg); }); }
+function sceneBg(g,fallback){ if(HAS.bench) el('image',{href:IMG.bench,x:0,y:0,width:800,height:460,preserveAspectRatio:'xMidYMid slice'},g); else fallback(); }
+function propImg(g,key,x,y,w,h){ if(!HAS[key]) return false; el('image',{href:IMG[key],x,y,width:w,height:h,preserveAspectRatio:'xMidYMax meet'},g); return true; }
 function zoneRect(g,z){ el('rect',{class:'zone',x:z.x,y:z.y,width:z.w,height:z.h,rx:10},g); }
 const jar=(g,x,y,w,h,fill,label)=>{ el('rect',{x:x-w/2,y,width:w,height:h,rx:8,fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':2},g); if(label) txt(x,y+h+18,label,{'text-anchor':'middle','font-size':13},g); };
 
@@ -248,19 +239,33 @@ const EXP_WATER={ id:'water', title:'髒水變清水', note:'過濾：大顆粒�
     {type:'say',text:'實驗完成！你已經是<b>過濾專家</b>了。'},
   ],
   draw:(g,st,s)=>{
-    el('rect',{x:0,y:0,width:800,height:460,fill:'#F7FBFF'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g);
-    // 瓶子（倒放）
-    el('path',{d:'M300 60 h200 v190 l-60 60 h-80 l-60 -60z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g);
+    sceneBg(g,()=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#F7FBFF'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g); });
     const colors={cotton:'#fff',charcoal:'#333',sand:'#E9D8A6',gravel:'#9aa5b1'};
-    st.layers.forEach((L,i)=>{ const y=250-(i+1)*44; el('rect',{x:302,y,width:196,height:42,fill:colors[L],stroke:'#8a93a2'},g); txt(400,y+27,FNAME[L],{'text-anchor':'middle','font-size':13,fill:L==='charcoal'?'#fff':'#333'},g); });
+    if(HAS.prop_filter){
+      // 瓶子圖：寬 176、高 320，放在 (312,40)；瓶身內部約 x 330–470、y 70–250
+      const defs=el('defs',{},g);
+      ['cotton','charcoal','sand','gravel'].forEach(k=>{ const p=el('pattern',{id:'tex_'+k,patternUnits:'userSpaceOnUse',width:140,height:32},defs); if(HAS['tex_'+k]) el('image',{href:IMG['tex_'+k],x:0,y:0,width:140,height:32,preserveAspectRatio:'none'},p); else el('rect',{width:140,height:32,fill:colors[k]},p); });
+      const cp=el('clipPath',{id:'bottleClip'},defs); el('path',{d:'M332 62 h136 v150 q0 20 -14 30 l-30 20 h-48 l-30 -20 q-14 -10 -14 -30z'},cp);
+      el('image',{href:IMG.prop_filter,x:312,y:40,width:176,height:320,preserveAspectRatio:'xMidYMid meet'},g);
+      const inner=el('g',{'clip-path':'url(#bottleClip)',opacity:.95},g);
+      st.layers.forEach((L,i)=>{ const y=262-(i+1)*44; el('rect',{x:328,y,width:144,height:44,fill:`url(#tex_${L})`},inner); });
+      if(st.water===1) el('rect',{x:328,y:62,width:144,height:36,fill:'#8B6B3E',opacity:.75},inner);
+      el('image',{href:IMG.prop_filter,x:312,y:40,width:176,height:320,preserveAspectRatio:'xMidYMid meet',opacity:.35,style:'pointer-events:none'},g);
+      st.layers.forEach((L,i)=>{ const y=262-(i+1)*44; txt(400,y+27,FNAME[L],{'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#fff','paint-order':'stroke',stroke:'rgba(0,0,0,.5)','stroke-width':3},g); });
+      // 杯子
+      el('image',{href:IMG.prop_cup,x:360,y:300,width:80,height:70,preserveAspectRatio:'xMidYMax meet'},g);
+      if(st.water===2) el('rect',{x:372,y:335,width:56,height:30,rx:4,fill:'#BEE7FF',opacity:.85},g); if(st.water===1) el('rect',{x:372,y:350,width:56,height:15,rx:4,fill:'#8B6B3E',opacity:.75},g);
+      if(st.water===2) txt(400,392,'清水！',{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#2E6FD8','paint-order':'stroke',stroke:'#fff','stroke-width':4},g);
+    } else {
+      el('path',{d:'M300 60 h200 v190 l-60 60 h-80 l-60 -60z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g);
+      st.layers.forEach((L,i)=>{ const y=250-(i+1)*44; el('rect',{x:302,y,width:196,height:42,fill:colors[L],stroke:'#8a93a2'},g); txt(400,y+27,FNAME[L],{'text-anchor':'middle','font-size':13,fill:L==='charcoal'?'#fff':'#333'},g); });
+      el('rect',{x:360,y:315,width:80,height:60,rx:6,fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':2},g);
+      if(st.water===1){ el('rect',{x:302,y:62,width:196,height:40,fill:'#8B6B3E',opacity:.8},g); el('rect',{x:363,y:355,width:74,height:18,fill:'#8B6B3E',opacity:.8},g); }
+      if(st.water===2){ el('rect',{x:363,y:335,width:74,height:38,fill:'#BEE7FF'},g); txt(400,400,'清水！',{'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#2E6FD8'},g); }
+    }
     if(s.type==='drag') zoneRect(g,s.zone);
-    // 杯子
-    el('rect',{x:360,y:315,width:80,height:60,rx:6,fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':2},g);
-    if(st.water===1){ el('rect',{x:302,y:62,width:196,height:40,fill:'#8B6B3E',opacity:.8},g); el('rect',{x:363,y:355,width:74,height:18,fill:'#8B6B3E',opacity:.8},g); }
-    if(st.water===2){ el('rect',{x:363,y:335,width:74,height:38,fill:'#BEE7FF'},g); txt(400,400,'清水！',{'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#2E6FD8'},g); }
-    // 材料架
-    if(si===2) shelf(g,[{id:'gravel',name:'碎石',draw:gg=>{[[-20,-20],[0,-30],[18,-18],[-8,-8],[12,-4]].forEach(([x,y])=>el('circle',{cx:x,cy:y,r:7,fill:'#9aa5b1'},gg));}},{id:'cotton',name:'棉花',draw:gg=>el('ellipse',{cx:0,cy:-16,rx:26,ry:16,fill:'#fff',stroke:'#ccc'},gg)},{id:'sand',name:'細沙',draw:gg=>el('path',{d:'M-28 -2 Q0 -40 28 -2Z',fill:'#E9D8A6'},gg)},{id:'charcoal',name:'活性碳',draw:gg=>{[[-16,-18],[6,-26],[16,-10],[-4,-6]].forEach(([x,y])=>el('rect',{x,y,width:14,height:12,rx:3,fill:'#333'},gg));}}].sort(()=>Math.random()-.5));
-    if(si===3&&st.water===0) shelf(g,[{id:'dirty',name:'髒水',draw:gg=>{ el('rect',{x:-18,y:-40,width:36,height:44,rx:4,fill:'#8B6B3E',stroke:'#8a93a2'},gg); }},{id:'clean',name:'清水',draw:gg=>el('rect',{x:-18,y:-40,width:36,height:44,rx:4,fill:'#BEE7FF',stroke:'#8a93a2'},gg)}]);
+    if(si===2) shelf(g,[{id:'gravel',name:'碎石',draw:gg=>{[[-20,-20],[0,-30],[18,-18],[-8,-8],[12,-4]].forEach(([x,y])=>el('circle',{cx:x,cy:y,r:7,fill:'#9aa5b1'},gg));}},{id:'cotton',name:'棉花',draw:gg=>el('ellipse',{cx:0,cy:-16,rx:26,ry:16,fill:'#fff',stroke:'#ccc'},gg)},{id:'sand',name:'細沙',draw:gg=>el('path',{d:'M-28 -2 Q0 -40 28 -2Z',fill:'#E9D8A6'},gg)},{id:'charcoal',name:'活性碳',draw:gg=>{[[-16,-18],[6,-26],[16,-10],[-4,-6]].forEach(([x,y])=>el('rect',{x,y,width:14,height:12,rx:3,fill:'#333'},gg));}}].sort(()=>Math.random()-.5),400);
+    if(si===3&&st.water===0) shelf(g,[{id:'dirty',name:'髒水',draw:gg=>{ el('rect',{x:-18,y:-40,width:36,height:44,rx:4,fill:'#8B6B3E',stroke:'#8a93a2'},gg); }},{id:'clean',name:'清水',draw:gg=>el('rect',{x:-18,y:-40,width:36,height:44,rx:4,fill:'#BEE7FF',stroke:'#8a93a2'},gg)}],400);
   } };
 
 /* ---------- 實驗 2：紫甘藍變色 ---------- */
@@ -270,7 +275,7 @@ const EXP_CABBAGE={ id:'cabbage', title:'紫甘藍魔法水', note:'紫甘藍汁
   init:()=>({cups:{},tested:[]}),
   steps:[
     {type:'say',text:'把紫甘藍切碎泡熱水，會得到一杯<b>紫色的汁</b>。它有一個魔法：碰到不同的液體會變出不同顏色！'},
-    {type:'drag',text:'把桌上的液體一個一個拖到裝著紫甘藍汁的杯子上，看看變什麼顏色。（六種都要試）',zone:{x:60,y:60,w:680,h:210},
+    {type:'drag',text:'把桌上的液體一個一個拖到裝著紫甘藍汁的杯子上，看看變什麼顏色。（六種都要試）',zone:{x:50,y:90,w:700,h:200},
       onDrop:(st,item)=>{ if(st.tested.includes(item)) return {ok:false,msg:'這個已經試過了。'}; st.tested.push(item); const t=TESTS.find(x=>x.id===item); return {ok:true,msg:`${t.name}讓它變成${t.ph<6?'紅色系':t.ph>8?'藍綠色系':'紫色'}！`+(st.tested.length<6?'再試下一個。':'六種都試完了！'),done:st.tested.length===6}; }},
     {type:'say',text:'發現規律了嗎？<b>酸</b>的東西（檸檬汁、醋）讓它變<b>紅</b>；<b>鹼</b>的東西（小蘇打、肥皂）讓它變<b>藍或綠</b>；中性的清水還是紫色。紫甘藍汁是天然的<b>酸鹼指示劑</b>。'},
     {type:'choose',text:'如果把汽水滴進紫甘藍汁，你猜會變什麼顏色？',options:['紅色系，因為汽水是酸的','綠色系，因為汽水是鹼的','不會變，汽水是中性的'],answer:0,why:'汽水裡溶了二氧化碳，變成碳酸，所以是酸性的。'},
@@ -278,11 +283,14 @@ const EXP_CABBAGE={ id:'cabbage', title:'紫甘藍魔法水', note:'紫甘藍汁
     {type:'say',text:'實驗完成！你學會用顏色分辨酸和鹼了。'},
   ],
   draw:(g,st,s)=>{
-    el('rect',{x:0,y:0,width:800,height:460,fill:'#FFF9F2'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g);
-    TESTS.forEach((t,i)=>{ const x=110+i*115; const done=st.tested.includes(t.id); jar(g,x,90,70,150,done?t.name:'紫甘藍汁'); el('rect',{x:x-33,y:140,width:66,height:98,rx:6,fill:done?t.color:'#7B4FA3',opacity:.85},g); if(done) txt(x,120,t.ph<6?'酸':t.ph>8?'鹼':'中性',{'text-anchor':'middle','font-size':18,'font-weight':700,fill:t.color},g); });
-    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,TESTS.filter(t=>!st.tested.includes(t.id)).map(t=>({id:t.id,name:t.name,draw:gg=>{ el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#DFF5FF',stroke:'#8a93a2'},gg); el('rect',{x:-20,y:-46,width:40,height:8,rx:2,fill:'#8a93a2'},gg); }}))); }
-    // 幾滴
-    if(s.type==='drag'&&!st.tested.length) txt(400,300,'把液體拖到任何一杯紫甘藍汁上',{'text-anchor':'middle','font-size':14,fill:'#6B6F80'},g);
+    sceneBg(g,()=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#FFF9F2'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g); });
+    TESTS.forEach((t,i)=>{ const x=110+i*115; const done=st.tested.includes(t.id);
+      if(HAS.prop_glass){ el('image',{href:IMG.prop_glass,x:x-45,y:110,width:90,height:135,preserveAspectRatio:'xMidYMax meet'},g); el('path',{d:`M${x-31} 160 h62 l-5 72 q0 6 -6 6 h-40 q-6 0 -6 -6z`,fill:done?t.color:'#7B4FA3',opacity:.92},g); el('image',{href:IMG.prop_glass,x:x-45,y:110,width:90,height:135,preserveAspectRatio:'xMidYMax meet',opacity:.2,style:'pointer-events:none'},g); }
+      else { jar(g,x,90,70,150); el('rect',{x:x-33,y:140,width:66,height:98,rx:6,fill:done?t.color:'#7B4FA3',opacity:.85},g); }
+      txt(x,268,done?t.name:'紫甘藍汁',{'text-anchor':'middle','font-size':13,'font-weight':600,'paint-order':'stroke',stroke:'#fff','stroke-width':3},g);
+      if(done) txt(x,100,t.ph<6?'酸':t.ph>8?'鹼':'中性',{'text-anchor':'middle','font-size':20,'font-weight':700,fill:t.color,'paint-order':'stroke',stroke:'#fff','stroke-width':4},g); });
+    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,TESTS.filter(t=>!st.tested.includes(t.id)).map(t=>({id:t.id,name:t.name,draw:gg=>{ el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#DFF5FF',stroke:'#8a93a2'},gg); el('rect',{x:-20,y:-46,width:40,height:8,rx:2,fill:'#8a93a2'},gg); }})),400); }
+    if(s.type==='drag'&&!st.tested.length) txt(400,300,'把液體拖到任何一杯紫甘藍汁上',{'text-anchor':'middle','font-size':14,fill:'#6B6F80','paint-order':'stroke',stroke:'#fff','stroke-width':3},g);
   } };
 
 /* ---------- 實驗 3：密度彩虹塔 ---------- */
@@ -293,19 +301,26 @@ const EXP_DENSITY={ id:'density', title:'密度彩虹塔', note:'密度大的液
   steps:[
     {type:'say',text:'五種液體倒進同一個量筒，會混在一起還是分層？關鍵在<b>密度</b>：同樣一杯，誰比較重？'},
     {type:'choose',text:'猜猜看：蜂蜜、水、食用油三種，倒在一起後<b>誰在最下面</b>？',options:['蜂蜜','水','食用油'],answer:0,why:'蜂蜜密度最大（1.42），沉在最下面；油最輕，浮在最上面。'},
-    {type:'drag',text:'把液體一種一種拖進量筒（順序隨你），看它們自己排好隊。',zone:{x:330,y:40,w:140,h:290},
+    {type:'drag',text:'把液體一種一種拖進量筒（順序隨你），看它們自己排好隊。',zone:{x:325,y:25,w:150,h:320},
       onDrop:(st,item)=>{ if(st.poured.includes(item)) return {ok:false,msg:'這個已經倒過了。'}; st.poured.push(item); const L=LIQ.find(x=>x.id===item); return {ok:true,msg:`${L.name}（密度 ${L.d}）${st.poured.length>1?'慢慢找到自己的位置了。':'倒進去了。'}`+(st.poured.length<5?'':' 五層彩虹完成！'),done:st.poured.length===5}; }},
     {type:'say',text:'不管你先倒哪一種，最後都是<b>密度大的在下、密度小的在上</b>。這些液體彼此不太會混合，所以能一直分層。'},
     {type:'choose',text:'把一顆葡萄放進去，它會停在哪裡？（葡萄的密度大約 1.05）',options:['浮在最上面的酒精上','停在洗碗精和水之間','沉到蜂蜜底下'],answer:1,why:'物體會停在「上面比它輕、下面比它重」的地方：水 1.00 < 葡萄 1.05 < 洗碗精 1.06。'},
     {type:'say',text:'實驗完成！密度小的浮、密度大的沉——船能浮在水上也是同樣的道理。'},
   ],
   draw:(g,st,s)=>{
-    el('rect',{x:0,y:0,width:800,height:460,fill:'#F4FBF7'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g);
-    el('rect',{x:340,y:40,width:120,height:290,rx:6,fill:'rgba(230,240,250,.5)',stroke:'#8a93a2','stroke-width':3},g);
-    const sorted=st.poured.map(id=>LIQ.find(x=>x.id===id)).sort((a,b)=>b.d-a.d); // 密度大在下
-    sorted.forEach((L,i)=>{ const y=328-(i+1)*54; el('rect',{x:343,y,width:114,height:54,fill:L.color,opacity:.9},g); txt(400,y+32,`${L.name.split('（')[0]} ${L.d}`,{'text-anchor':'middle','font-size':13,fill:'#fff','font-weight':700},g); });
-    txt(400,25,'量筒',{'text-anchor':'middle','font-size':14,fill:'#6B6F80'},g);
-    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,LIQ.filter(L=>!st.poured.includes(L.id)).map(L=>({id:L.id,name:L.name.split('（')[0],draw:gg=>{ el('rect',{x:-18,y:-42,width:36,height:46,rx:5,fill:L.color,stroke:'#8a93a2'},gg); txt(0,-46,`密度 ${L.d}`,{'text-anchor':'middle','font-size':11,fill:'#6B6F80'},gg); }}))); }
+    sceneBg(g,()=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#F4FBF7'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g); });
+    const sorted=st.poured.map(id=>LIQ.find(x=>x.id===id)).sort((a,b)=>b.d-a.d);
+    if(HAS.prop_cylinder){ // 量筒圖 130×310 放在 (335,30)，內部 x 355–445、底 y 300
+      el('image',{href:IMG.prop_cylinder,x:335,y:30,width:130,height:310,preserveAspectRatio:'xMidYMax meet'},g);
+      sorted.forEach((L,i)=>{ const y=300-(i+1)*44; el('rect',{x:358,y,width:84,height:44,fill:L.color,opacity:.85},g); });
+      el('image',{href:IMG.prop_cylinder,x:335,y:30,width:130,height:310,preserveAspectRatio:'xMidYMax meet',opacity:.3,style:'pointer-events:none'},g);
+      sorted.forEach((L,i)=>{ const y=300-(i+1)*44; txt(400,y+28,`${L.name.split('（')[0]} ${L.d}`,{'text-anchor':'middle','font-size':13,fill:'#fff','font-weight':700,'paint-order':'stroke',stroke:'rgba(0,0,0,.45)','stroke-width':3},g); });
+    } else {
+      el('rect',{x:340,y:40,width:120,height:290,rx:6,fill:'rgba(230,240,250,.5)',stroke:'#8a93a2','stroke-width':3},g);
+      sorted.forEach((L,i)=>{ const y=328-(i+1)*54; el('rect',{x:343,y,width:114,height:54,fill:L.color,opacity:.9},g); txt(400,y+32,`${L.name.split('（')[0]} ${L.d}`,{'text-anchor':'middle','font-size':13,fill:'#fff','font-weight':700},g); });
+    }
+    txt(400,22,'量筒',{'text-anchor':'middle','font-size':14,fill:'#6B6F80','paint-order':'stroke',stroke:'#fff','stroke-width':3},g);
+    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,LIQ.filter(L=>!st.poured.includes(L.id)).map(L=>({id:L.id,name:L.name.split('（')[0],img:({syrup:'dish',water:'bluewater'})[L.id]||L.id,draw:gg=>{ el('rect',{x:-18,y:-42,width:36,height:46,rx:5,fill:L.color,stroke:'#8a93a2'},gg); txt(0,-46,`密度 ${L.d}`,{'text-anchor':'middle','font-size':11,fill:'#6B6F80'},gg); }})),400); }
   } };
 
 
@@ -344,6 +359,8 @@ const EXP_TOOLS={ id:'tools', title:'認識實驗器材', note:'量體積用量�
     else { st.showNames=true; toolGrid(g,st,si===0); } } };
 
 /* ---------- 關卡 B：實驗室安全守則 ---------- */
+const HAZPOS={eat:{x:120,y:372,w:200,h:175},run:{x:305,y:372,w:170,h:175},goggles:{x:470,y:372,w:150,h:175},taste:{x:610,y:372,w:100,h:175},hair:{x:250,y:150,w:150,h:170,clip:true},smell:{x:520,y:150,w:110,h:170,clip:true}};
+const SAFEPOS={goggles:{x:740,y:372,w:110,h:175},kit:{x:700,y:95,w:80,h:80}};
 const HAZ=[
  {id:'eat',name:'在實驗桌上吃東西',x:120,y:250,r:40,fix:'實驗室的桌面可能沾到藥品，絕對不在裡面吃喝。',draw:g=>{ el('circle',{cx:0,cy:-6,r:14,fill:'#F5C542'},g); el('path',{d:'M-14 -6 a14 14 0 0 1 28 0z',fill:'#FF8C42'},g); el('rect',{x:-20,y:12,width:40,height:6,fill:'#8a93a2'},g); }},
  {id:'hair',name:'長頭髮沒綁起來',x:300,y:150,r:44,fix:'長髮要綁好，靠近火焰或轉動的東西才不會被捲進去。',draw:g=>{ el('circle',{cx:0,cy:-20,r:18,fill:'#FBD9B8'},g); el('path',{d:'M-18 -26 q18 -30 36 0 v40 q-18 10 -36 0z',fill:'#5A3A1E'},g); el('path',{d:'M-8 -10 v40 M8 -10 v40',stroke:'#5A3A1E','stroke-width':5},g); }},
@@ -364,18 +381,37 @@ const EXP_SAFETY={ id:'rules', title:'實驗室安全守則', note:'安全五守
     {type:'choose',text:'實驗結束後要做什麼？',options:['器材洗乾淨放回原位，再洗手','直接離開，下一組會收','把剩下的藥品倒進水槽'],answer:0,why:'廢液要照老師的指示處理，器材歸位，最後一定要洗手。'},
     {type:'say',text:'通過安全訓練！現在你可以放心去做真正的實驗了。'},
   ],
-  draw:(g,st,s)=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#E8F4FB'},g); el('rect',{x:0,y:340,width:800,height:120,fill:'#D9C7A3'},g);
-    el('rect',{x:40,y:200,width:720,height:30,rx:6,fill:'#5C7A8C'},g); el('rect',{x:60,y:230,width:680,height:110,fill:'#48627A'},g);
-    SAFE.forEach(sf=>{ const gg=el('g',{transform:`translate(${sf.x} ${sf.y})`},g); sf.draw(gg); });
+  draw:(g,st,s)=>{
     const hunting=s.type==='observe';
-    HAZ.forEach(h=>{ const found=st.found.includes(h.id); const gg=el('g',{transform:`translate(${h.x} ${h.y})`,style:hunting&&!found?'cursor:pointer':''},g);
-      if(found) el('circle',{cx:0,cy:0,r:h.r+4,fill:'rgba(229,83,61,.15)',stroke:'#E5533D','stroke-width':3},g).setAttribute('transform',`translate(${h.x} ${h.y})`);
-      h.draw(gg); el('circle',{cx:0,cy:0,r:h.r,fill:'transparent'},gg);
-      if(found) txt(0,h.r+16,'✗ '+h.name,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#E5533D'},gg);
-      if(hunting&&!found) gg.onclick=()=>{ st.found.push(h.id); addPts(10); $('say').innerHTML=`<span class="no">✗ ${h.name}</span><br>${h.fix}`+(st.found.length<HAZ.length?`<br><span style="color:#6B6F80;font-size:14px">還有 ${HAZ.length-st.found.length} 個</span>`:'<br><span class="ok">全部找到了！按「下一步」。</span>'); if(st.found.length===HAZ.length) $('nextStep').style.display=''; draw(); }; });
-    if(hunting){ txt(400,30,`找到 ${st.found.length} / ${HAZ.length}`,{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#E5533D'},g); }
-    // 安全的兩位（提示）
-    txt(120,110,'✔ 有戴護目鏡',{'text-anchor':'middle','font-size':11,fill:'#2E8B57'},g); } };
+    if(HAS.safetyRoom){
+      el('image',{href:IMG.safetyRoom,x:0,y:0,width:800,height:460,preserveAspectRatio:'none'},g);
+      const defs=el('defs',{},g); const cp=el('clipPath',{id:'benchClip'},defs); el('rect',{x:0,y:0,width:800,height:196},cp);
+      el('image',{href:IMG.safe_kit,x:SAFEPOS.kit.x-40,y:SAFEPOS.kit.y-40,width:80,height:80,preserveAspectRatio:'xMidYMid meet'},g);
+      txt(SAFEPOS.kit.x,SAFEPOS.kit.y+52,'急救箱',{'text-anchor':'middle','font-size':11,fill:'#2B2B3A','paint-order':'stroke',stroke:'#fff','stroke-width':3},g);
+      const sg=SAFEPOS.goggles; el('image',{href:IMG.safe_goggles,x:sg.x-sg.w/2,y:sg.y-sg.h/2,width:sg.w,height:sg.h,preserveAspectRatio:'xMidYMax meet'},g);
+      txt(sg.x,sg.y-sg.h/2-6,'✔ 有戴護目鏡',{'text-anchor':'middle','font-size':11,fill:'#2E8B57','font-weight':700,'paint-order':'stroke',stroke:'#fff','stroke-width':3},g);
+      HAZ.forEach(h=>{ const p=HAZPOS[h.id]; const found=st.found.includes(h.id);
+        const wrap=el('g',p.clip?{'clip-path':'url(#benchClip)'}:{},g);
+        const gg=el('g',{style:hunting&&!found?'cursor:pointer':''},wrap);
+        el('image',{href:IMG['haz_'+h.id],x:p.x-p.w/2,y:p.y-p.h/2,width:p.w,height:p.h,preserveAspectRatio:'xMidYMax meet'},gg);
+        el('rect',{x:p.x-p.w/2,y:p.y-p.h/2,width:p.w,height:p.h,fill:'transparent'},gg);
+        if(found){ el('rect',{x:p.x-p.w/2-4,y:p.y-p.h/2-4,width:p.w+8,height:(p.clip?196-(p.y-p.h/2):p.h)+8,rx:12,fill:'rgba(229,83,61,.12)',stroke:'#E5533D','stroke-width':3},g);
+          txt(p.x,p.y-p.h/2-8,'✗ '+h.name,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#E5533D','paint-order':'stroke',stroke:'#fff','stroke-width':4},g); }
+        if(hunting&&!found) gg.onclick=()=>hazClick(st,h); });
+    } else {
+      el('rect',{x:0,y:0,width:800,height:460,fill:'#E8F4FB'},g); el('rect',{x:0,y:340,width:800,height:120,fill:'#D9C7A3'},g);
+      el('rect',{x:40,y:200,width:720,height:30,rx:6,fill:'#5C7A8C'},g); el('rect',{x:60,y:230,width:680,height:110,fill:'#48627A'},g);
+      SAFE.forEach(sf=>{ const gg=el('g',{transform:`translate(${sf.x} ${sf.y})`},g); sf.draw(gg); });
+      HAZ.forEach(h=>{ const found=st.found.includes(h.id); const gg=el('g',{transform:`translate(${h.x} ${h.y})`,style:hunting&&!found?'cursor:pointer':''},g);
+        if(found) el('circle',{cx:0,cy:0,r:h.r+4,fill:'rgba(229,83,61,.15)',stroke:'#E5533D','stroke-width':3},gg);
+        h.draw(gg); el('circle',{cx:0,cy:0,r:h.r,fill:'transparent'},gg);
+        if(found) txt(0,h.r+16,'✗ '+h.name,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#E5533D'},gg);
+        if(hunting&&!found) gg.onclick=()=>hazClick(st,h); });
+      txt(120,110,'✔ 有戴護目鏡',{'text-anchor':'middle','font-size':11,fill:'#2E8B57'},g);
+    }
+    if(hunting){ txt(400,30,`找到 ${st.found.length} / ${HAZ.length}`,{'text-anchor':'middle','font-size':18,'font-weight':700,fill:'#E5533D','paint-order':'stroke',stroke:'#fff','stroke-width':5},g); } } };
+function hazClick(st,h){ st.found.push(h.id); addPts(10); $('say').innerHTML=`<span class="no">✗ ${h.name}</span><br>${h.fix}`+(st.found.length<HAZ.length?`<br><span style="color:#6B6F80;font-size:14px">還有 ${HAZ.length-st.found.length} 個</span>`:'<br><span class="ok">全部找到了！按「下一步」。</span>'); if(st.found.length===HAZ.length) $('nextStep').style.display=''; draw(); }
+
 
 
 /* ---------- 場景內按鈕 ---------- */
@@ -393,15 +429,21 @@ const EXP_PHOTO={ id:'photo', title:'水草的泡泡', note:'光合作用：植�
     {type:'choose',text:'如果把水草放在完全黑暗的櫃子裡一整天，會怎樣？',options:['泡泡更多，因為晚上植物比較活躍','幾乎沒有泡泡，因為沒有光就不能光合作用','一樣多，光沒有影響'],answer:1,why:'光是光合作用的能量來源，沒有光就做不出養分和氧氣。'},
     {type:'say',text:'實驗完成！地球上的氧氣，大部分就是植物和海裡的藻類這樣做出來的。'},
   ],
-  draw:(g,st,s)=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#F4FBF7'},g); el('rect',{x:0,y:340,width:800,height:120,fill:'#D9C7A3'},g);
+  draw:(g,st,s)=>{ sceneBg(g,()=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#F4FBF7'},g); el('rect',{x:0,y:340,width:800,height:120,fill:'#D9C7A3'},g); });
     const rate={near:24,mid:10,far:3}[st.dist]||0;
-    // 燒杯與水草
-    el('path',{d:'M160 80 h150 v240 q0 10 -10 10 h-130 q-10 0 -10 -10z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g); el('rect',{x:162,y:110,width:146,height:218,fill:'#BEE7FF',opacity:.6},g);
-    el('path',{d:'M235 328 q-30 -60 -10 -130 q20 60 0 130 M235 328 q30 -50 50 -110 q-10 60 -40 110 M235 328 q-40 -30 -60 -90 q30 40 50 90',stroke:'#2E9B8F','stroke-width':7,fill:'none','stroke-linecap':'round'},g);
-    for(let i=0;i<rate;i++){ const x=200+((i*37)%90), y=120+((i*53)%180); el('circle',{cx:x,cy:y,r:3+((i*7)%3),fill:'#fff',stroke:'#4FA3E3'},g); }
-    if(st.lamp){ const lx={near:360,mid:440,far:560}[st.dist]; const lg=el('g',{transform:`translate(${lx} 120)`},g); el('rect',{x:-6,y:0,width:12,height:200,fill:'#8a93a2'},lg); el('path',{d:'M-40 -10 h80 l-20 -50 h-40z',fill:'#F5C542',stroke:'#8a93a2'},lg); el('path',{d:`M-50 0 L${-lx+330} 120 L${-lx+330} 300 L-30 0z`,fill:'rgba(245,197,66,.25)'},lg);
-      txt(lx,350,`每分鐘約 ${rate} 個泡泡`,{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#2E6FD8'},g); }
-    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,[{id:'lamp',name:'檯燈',draw:gg=>{ el('rect',{x:-3,y:-20,width:6,height:40,fill:'#8a93a2'},gg); el('path',{d:'M-24 -22 h48 l-12 -24 h-24z',fill:'#F5C542',stroke:'#8a93a2'},gg); }},{id:'stone',name:'石頭',draw:gg=>el('ellipse',{cx:0,cy:-14,rx:22,ry:14,fill:'#9aa5b1'},gg)}],400); }
+    if(HAS.prop_aquarium){
+      el('image',{href:IMG.prop_aquarium,x:150,y:70,width:200,height:280,preserveAspectRatio:'xMidYMax meet'},g);
+      for(let i=0;i<rate;i++){ const h=Math.abs(Math.sin(i*12.9898)*43758.5453)%1, v=Math.abs(Math.sin(i*78.233)*12345.678)%1; el('circle',{cx:190+h*120,cy:140+v*170,r:3+((i*7)%3),fill:'#fff',stroke:'#4FA3E3'},g); }
+    } else {
+      el('path',{d:'M160 80 h150 v240 q0 10 -10 10 h-130 q-10 0 -10 -10z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g); el('rect',{x:162,y:110,width:146,height:218,fill:'#BEE7FF',opacity:.6},g);
+      el('path',{d:'M235 328 q-30 -60 -10 -130 q20 60 0 130 M235 328 q30 -50 50 -110 q-10 60 -40 110 M235 328 q-40 -30 -60 -90 q30 40 50 90',stroke:'#2E9B8F','stroke-width':7,fill:'none','stroke-linecap':'round'},g);
+      for(let i=0;i<rate;i++){ const x=200+((i*37)%90), y=120+((i*53)%180); el('circle',{cx:x,cy:y,r:3+((i*7)%3),fill:'#fff',stroke:'#4FA3E3'},g); }
+    }
+    if(st.lamp){ const lx=HAS.prop_lamp?{near:470,mid:560,far:670}[st.dist]:{near:360,mid:440,far:560}[st.dist];
+      if(HAS.prop_lamp){ el('path',{d:`M${lx-95} 135 L340 100 L340 330 L${lx-80} 180z`,fill:'rgba(245,197,66,.28)'},g); el('image',{href:IMG.prop_lamp,x:lx-60,y:70,width:180,height:270,preserveAspectRatio:'xMidYMax meet',transform:`scale(-1 1) translate(${-2*lx} 0)`},g); }
+      else { const lg=el('g',{transform:`translate(${lx} 120)`},g); el('rect',{x:-6,y:0,width:12,height:200,fill:'#8a93a2'},lg); el('path',{d:'M-40 -10 h80 l-20 -50 h-40z',fill:'#F5C542',stroke:'#8a93a2'},lg); el('path',{d:`M-50 0 L${-lx+330} 120 L${-lx+330} 300 L-30 0z`,fill:'rgba(245,197,66,.25)'},lg); }
+      txt(250,372,`每分鐘約 ${rate} 個泡泡`,{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#2E6FD8','paint-order':'stroke',stroke:'#fff','stroke-width':4},g); }
+    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,[{id:'lamp',name:'檯燈',img:'lampcard',draw:gg=>{ el('rect',{x:-3,y:-20,width:6,height:40,fill:'#8a93a2'},gg); el('path',{d:'M-24 -22 h48 l-12 -24 h-24z',fill:'#F5C542',stroke:'#8a93a2'},gg); }},{id:'stone',name:'石頭',draw:gg=>el('ellipse',{cx:0,cy:-14,rx:22,ry:14,fill:'#9aa5b1'},gg)}],400); }
     if(s.type==='observe'){ [['near','拉近'],['mid','中等'],['far','拉遠']].forEach(([k,n],i)=>sbtn(g,520+i*100,400,n,()=>{ st.dist=k; draw(); },st.dist===k)); } } };
 
 /* ---------- 實驗 5：汽水為什麼冒泡 ---------- */
@@ -417,12 +459,22 @@ const EXP_FIZZ={ id:'fizz', title:'汽水為什麼冒泡', note:'小蘇打（鹼
     {type:'choose',text:'為什麼搖過的汽水打開會噴？',options:['搖晃讓水變多了','搖晃把溶在水裡的二氧化碳搖出來，氣體擠著要出去','搖晃讓瓶子變熱'],answer:1,why:'二氧化碳本來被壓力溶在水裡，搖晃產生很多小氣泡，一開瓶就一起衝出來。'},
     {type:'say',text:'實驗完成！下次喝汽水先別搖，或是搖過之後等一下再開。'},
   ],
-  draw:(g,st,s)=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#FFF9F2'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g);
-    el('path',{d:'M380 90 h40 v30 q30 15 30 60 v140 h-100 v-140 q0 -45 30 -60z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g);
-    if(st.vinegar) el('rect',{x:352,y:240,width:96,height:78,fill:'#F5F0C8',opacity:.9},g);
-    if(st.soda) for(let i=0;i<30;i++){ const h=Math.abs(Math.sin(i*12.9898)*43758.5453)%1, v=Math.abs(Math.sin(i*78.233)*12345.678)%1; el('circle',{cx:355+h*90,cy:150+v*160,r:2+(i%3),fill:'#fff',stroke:'#8a93a2'},g); }
-    if(st.balloon){ const r=st.soda?60:18; el('ellipse',{cx:400,cy:90-r,rx:r,ry:r*1.15,fill:'#F06292',opacity:.9,stroke:'#c0392b'},g); if(st.soda) txt(400,20,'鼓起來了！裡面是二氧化碳',{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#c0392b'},g); }
-    if(s.type==='drag'){ zoneRect(g,s.zone); const items=[]; if(!st.vinegar) items.push({id:'vinegar',name:'白醋',draw:gg=>el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#F5F0C8',stroke:'#8a93a2'},gg)}); if(!st.balloon) items.push({id:'balloon',name:'氣球（裝小蘇打）',draw:gg=>el('ellipse',{cx:0,cy:-18,rx:18,ry:22,fill:'#F06292'},gg)}); items.push({id:'water',name:'清水',draw:gg=>el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#BEE7FF',stroke:'#8a93a2'},gg)}); shelf(g,items,400); } } };
+  draw:(g,st,s)=>{ sceneBg(g,()=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#FFF9F2'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g); });
+    if(HAS.prop_bottle){
+      el('image',{href:IMG.prop_bottle,x:345,y:100,width:110,height:230,preserveAspectRatio:'xMidYMax meet'},g);
+      if(st.vinegar) el('rect',{x:362,y:250,width:76,height:66,rx:8,fill:'#F5F0C8',opacity:.85},g);
+      if(st.soda) for(let i=0;i<30;i++){ const h=Math.abs(Math.sin(i*12.9898)*43758.5453)%1, v=Math.abs(Math.sin(i*78.233)*12345.678)%1; el('circle',{cx:366+h*68,cy:150+v*160,r:2+(i%3),fill:'#fff',stroke:'#8a93a2'},g); }
+      el('image',{href:IMG.prop_bottle,x:345,y:100,width:110,height:230,preserveAspectRatio:'xMidYMax meet',opacity:.3,style:'pointer-events:none'},g);
+      if(st.balloon){ if(st.soda&&HAS.prop_balloon_full){ el('image',{href:IMG.prop_balloon_full,x:340,y:0,width:120,height:125,preserveAspectRatio:'xMidYMax meet'},g); txt(600,60,'鼓起來了！裡面是二氧化碳',{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#c0392b','paint-order':'stroke',stroke:'#fff','stroke-width':4},g); }
+        else if(HAS.item_balloon) el('image',{href:IMG.item_balloon,x:380,y:20,width:40,height:90,preserveAspectRatio:'xMidYMax meet'},g);
+        else el('ellipse',{cx:400,cy:72,rx:18,ry:20,fill:'#F06292',opacity:.9,stroke:'#c0392b'},g); }
+    } else {
+      el('path',{d:'M380 90 h40 v30 q30 15 30 60 v140 h-100 v-140 q0 -45 30 -60z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g);
+      if(st.vinegar) el('rect',{x:352,y:240,width:96,height:78,fill:'#F5F0C8',opacity:.9},g);
+      if(st.soda) for(let i=0;i<30;i++){ const h=Math.abs(Math.sin(i*12.9898)*43758.5453)%1, v=Math.abs(Math.sin(i*78.233)*12345.678)%1; el('circle',{cx:355+h*90,cy:150+v*160,r:2+(i%3),fill:'#fff',stroke:'#8a93a2'},g); }
+      if(st.balloon){ const r=st.soda?60:18; el('ellipse',{cx:400,cy:90-r,rx:r,ry:r*1.15,fill:'#F06292',opacity:.9,stroke:'#c0392b'},g); if(st.soda) txt(400,20,'鼓起來了！裡面是二氧化碳',{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#c0392b'},g); }
+    }
+    if(s.type==='drag'){ zoneRect(g,s.zone); const items=[]; if(!st.vinegar) items.push({id:'vinegar',name:'白醋',draw:gg=>el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#F5F0C8',stroke:'#8a93a2'},gg)}); if(!st.balloon) items.push({id:'balloon',name:'氣球（裝小蘇打）',img:'balloon',draw:gg=>el('ellipse',{cx:0,cy:-18,rx:18,ry:22,fill:'#F06292'},gg)}); items.push({id:'water',name:'清水',draw:gg=>el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#BEE7FF',stroke:'#8a93a2'},gg)}); shelf(g,items,400); } } };
 
 /* ---------- 實驗 6：肥皂怎麼去油 ---------- */
 const EXP_SOAP={ id:'soap', title:'肥皂怎麼去油', note:'油和水不互溶；肥皂分子一端親水、一端親油，能把油包成小滴混進水裡沖走，這叫乳化。',
@@ -437,14 +489,14 @@ const EXP_SOAP={ id:'soap', title:'肥皂怎麼去油', note:'油和水不互溶
     {type:'choose',text:'肥皂為什麼做得到？',options:['肥皂把油溶解掉了','肥皂分子一頭愛水、一頭愛油，把油滴包起來帶進水裡','肥皂讓水變重'],answer:1,why:'親油端插進油滴、親水端朝外，油滴外面就像穿了一件「水衣」，可以被水沖走。'},
     {type:'say',text:'實驗完成！洗手要用肥皂搓 20 秒，就是在讓肥皂有時間把油和髒東西包起來。'},
   ],
-  draw:(g,st,s)=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#F7FBFF'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g);
-    el('path',{d:'M300 60 h200 v250 q0 10 -10 10 h-180 q-10 0 -10 -10z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g);
-    el('rect',{x:302,y:130,width:196,height:188,fill:'#BEE7FF',opacity:.7},g);
+  draw:(g,st,s)=>{ sceneBg(g,()=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#F7FBFF'},g); el('rect',{x:0,y:330,width:800,height:130,fill:'#D9C7A3'},g); });
+    if(HAS.prop_glass){ el('image',{href:IMG.prop_glass,x:290,y:50,width:220,height:280,preserveAspectRatio:'xMidYMax meet'},g); el('path',{d:'M312 120 h176 l-14 190 q-1 8 -9 8 h-130 q-8 0 -9 -8z',fill:'#BEE7FF',opacity:.7},g); }
+    else { el('path',{d:'M300 60 h200 v250 q0 10 -10 10 h-180 q-10 0 -10 -10z',fill:'rgba(230,240,250,.6)',stroke:'#8a93a2','stroke-width':3},g); el('rect',{x:302,y:130,width:196,height:188,fill:'#BEE7FF',opacity:.7},g); }
     if(st.soap&&st.stirred>0){ for(let i=0;i<60;i++){ const h=Math.abs(Math.sin(i*12.9898)*43758.5453)%1, v=Math.abs(Math.sin(i*78.233)*12345.678)%1; el('circle',{cx:310+h*180,cy:135+v*180,r:3+(i%4),fill:'#F5C542',stroke:'#d9a400'},g); } txt(400,345,'油變成小油滴分散在水裡（乳化）',{'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#2E6FD8'},g); }
     else if(st.stirred>0){ for(let i=0;i<14;i++) el('circle',{cx:320+((i*61)%160),cy:140+((i*47)%150),r:10+(i%3)*4,fill:'#F5C542',opacity:.9},g); txt(400,345,'攪拌中……油被打散成大油滴',{'text-anchor':'middle','font-size':15,fill:'#6B6F80'},g); }
-    else { el('rect',{x:302,y:100,width:196,height:30,fill:'#F5C542'},g); txt(400,345,st.soap?'加了清潔劑，油還是浮在上面':'油浮在水的上面',{'text-anchor':'middle','font-size':15,fill:'#6B6F80'},g); }
+    else { el('rect',{x:HAS.prop_glass?316:302,y:HAS.prop_glass?124:100,width:HAS.prop_glass?168:196,height:HAS.prop_glass?20:30,rx:HAS.prop_glass?8:0,fill:'#F5C542',opacity:.9},g); txt(400,345,st.soap?'加了清潔劑，油還是浮在上面':'油浮在水的上面',{'text-anchor':'middle','font-size':15,fill:'#6B6F80'},g); }
     if(s.type==='observe'){ sbtn(g,400,400,'攪拌',()=>{ st.stirred=1; draw(); if(!st.soap) setTimeout(()=>{ st.stirred=0; draw(); },2200); },false); }
-    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,[{id:'soap',name:'清潔劑',draw:gg=>{ el('rect',{x:-14,y:-40,width:28,height:46,rx:6,fill:'#60C3A4',stroke:'#8a93a2'},gg); el('rect',{x:-6,y:-48,width:12,height:8,fill:'#8a93a2'},gg); }},{id:'salt',name:'鹽',draw:gg=>el('path',{d:'M-20 0 q0 -34 20 -34 q20 0 20 34z',fill:'#fff',stroke:'#8a93a2'},gg)},{id:'water',name:'清水',draw:gg=>el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#BEE7FF',stroke:'#8a93a2'},gg)}],400); } } };
+    if(s.type==='drag'){ zoneRect(g,s.zone); shelf(g,[{id:'soap',name:'清潔劑',img:'detergent',draw:gg=>{ el('rect',{x:-14,y:-40,width:28,height:46,rx:6,fill:'#60C3A4',stroke:'#8a93a2'},gg); el('rect',{x:-6,y:-48,width:12,height:8,fill:'#8a93a2'},gg); }},{id:'salt',name:'鹽',draw:gg=>el('path',{d:'M-20 0 q0 -34 20 -34 q20 0 20 34z',fill:'#fff',stroke:'#8a93a2'},gg)},{id:'water',name:'清水',draw:gg=>el('rect',{x:-16,y:-40,width:32,height:44,rx:4,fill:'#BEE7FF',stroke:'#8a93a2'},gg)}],400); } } };
 
 /* ---------- 實驗 7：太陽能板 ---------- */
 const EXP_SOLAR={ id:'solar', title:'太陽能發電', note:'太陽能板把光變成電；光愈強、光線愈正對板子，電流愈大。烏雲、灰塵、角度歪都會讓發電量下降。',
@@ -459,19 +511,21 @@ const EXP_SOLAR={ id:'solar', title:'太陽能發電', note:'太陽能板把光�
     {type:'say',text:'實驗完成！太陽能發電不會排放廢氣，是很乾淨的能源，但要有光才行——所以還需要電池把白天的電存起來。'},
   ],
   draw:(g,st,s)=>{ el('rect',{x:0,y:0,width:800,height:460,fill:st.cloud?'#C9D6E2':'#DFF3FF'},g); el('rect',{x:0,y:340,width:800,height:120,fill:'#9BCB7A'},g);
-    el('circle',{cx:660,cy:80,r:36,fill:'#F5C542'},g); if(st.cloud){ el('ellipse',{cx:660,cy:95,rx:80,ry:32,fill:'#fff'},g); el('ellipse',{cx:620,cy:80,rx:45,ry:30,fill:'#fff'},g); }
+    if(HAS.prop_sun) el('image',{href:IMG.prop_sun,x:600,y:20,width:120,height:120,preserveAspectRatio:'xMidYMid meet'},g); else el('circle',{cx:660,cy:80,r:36,fill:'#F5C542'},g);
+    if(st.cloud){ if(HAS.prop_cloud) el('image',{href:IMG.prop_cloud,x:560,y:55,width:200,height:120,preserveAspectRatio:'xMidYMid meet'},g); else { el('ellipse',{cx:660,cy:95,rx:80,ry:32,fill:'#fff'},g); el('ellipse',{cx:620,cy:80,rx:45,ry:30,fill:'#fff'},g); } }
     // 光線（永遠從右上方 45° 來）
     const lightDir=45; for(let i=0;i<7;i++){ const x0=520+i*40,y0=40+i*0; el('line',{x1:x0,y1:y0,x2:x0-260,y2:y0+260,stroke:st.cloud?'rgba(245,197,66,.25)':'rgba(245,197,66,.7)','stroke-width':2,'marker-end':'url(#arS)'},g); }
     el('defs',{},g).innerHTML='<marker id="arS" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#F5C542"/></marker>';
     // 板子：角度 = 板面法線與水平的夾角；光從 45° 來 → 板子傾斜 45° 時垂直
-    const pg=el('g',{transform:`translate(300 300) rotate(${-st.angle})`},g); el('rect',{x:-90,y:-10,width:180,height:20,fill:'#2E4A8C',stroke:'#8a93a2','stroke-width':2},pg); for(let i=1;i<6;i++) el('line',{x1:-90+i*30,y1:-10,x2:-90+i*30,y2:10,stroke:'#8fa3ff'},pg);
-    if(st.dust) el('rect',{x:-90,y:-10,width:180,height:20,fill:'rgba(150,120,80,.55)'},pg);
-    el('rect',{x:290,y:300,width:20,height:40,fill:'#8a93a2'},g);
+    const pg=el('g',{transform:`translate(300 300) rotate(${-st.angle})`},g);
+    if(HAS.prop_panel){ el('image',{href:IMG.prop_panel,x:-100,y:-70,width:200,height:130,preserveAspectRatio:'xMidYMid meet',transform:'rotate(-20)'},pg); if(st.dust) el('rect',{x:-90,y:-60,width:180,height:110,rx:10,fill:'rgba(150,120,80,.45)',transform:'rotate(-20)'},pg); }
+    else { el('rect',{x:-90,y:-10,width:180,height:20,fill:'#2E4A8C',stroke:'#8a93a2','stroke-width':2},pg); for(let i=1;i<6;i++) el('line',{x1:-90+i*30,y1:-10,x2:-90+i*30,y2:10,stroke:'#8fa3ff'},pg); if(st.dust) el('rect',{x:-90,y:-10,width:180,height:20,fill:'rgba(150,120,80,.55)'},pg); el('rect',{x:290,y:300,width:20,height:40,fill:'#8a93a2'},g); }
     const eff=Math.max(0,Math.cos((st.angle-45)*Math.PI/180))*(st.cloud?0.3:1)*(st.dust?0.5:1); const I=(eff*2.0).toFixed(2);
     // 電表
-    el('rect',{x:480,y:220,width:200,height:100,rx:12,fill:'#fff',stroke:'#8a93a2','stroke-width':2},g); txt(580,250,'電流表',{'text-anchor':'middle','font-size':13,fill:'#6B6F80'},g); txt(580,295,`${I} A`,{'text-anchor':'middle','font-size':30,'font-weight':700,fill:'#2E6FD8'},g);
-    el('rect',{x:500,y:300,width:160*eff,height:10,rx:5,fill:'#60C3A4'},g); el('rect',{x:500,y:300,width:160,height:10,rx:5,fill:'none',stroke:'#E7DFC9'},g);
-    el('path',{d:'M310 300 h60 v-40 h110',stroke:'#c0392b','stroke-width':3,fill:'none'},g);
+    if(HAS.prop_meter){ el('image',{href:IMG.prop_meter,x:490,y:180,width:190,height:150,preserveAspectRatio:'xMidYMid meet'},g); el('rect',{x:527,y:214,width:116,height:52,fill:'#FBF3E6'},g); for(let k=0;k<=4;k++){ const a=Math.PI*(1-k/4); el('line',{x1:585+50*Math.cos(a),y1:262-50*Math.sin(a),x2:585+42*Math.cos(a),y2:262-42*Math.sin(a),stroke:'#333','stroke-width':2},g); } const na=Math.PI*(1-eff*0.95); el('line',{x1:585,y1:262,x2:585+48*Math.cos(na),y2:262-48*Math.sin(na),stroke:'#E5533D','stroke-width':4,'stroke-linecap':'round'},g); el('circle',{cx:585,cy:262,r:5,fill:'#555'},g); txt(585,350,`${I} A`,{'text-anchor':'middle','font-size':26,'font-weight':700,fill:'#2E6FD8','paint-order':'stroke',stroke:'#fff','stroke-width':4},g); }
+    else { el('rect',{x:480,y:220,width:200,height:100,rx:12,fill:'#fff',stroke:'#8a93a2','stroke-width':2},g); txt(580,250,'電流表',{'text-anchor':'middle','font-size':13,fill:'#6B6F80'},g); txt(580,295,`${I} A`,{'text-anchor':'middle','font-size':30,'font-weight':700,fill:'#2E6FD8'},g); }
+    el('rect',{x:500,y:365,width:160*eff,height:10,rx:5,fill:'#60C3A4'},g); el('rect',{x:500,y:365,width:160,height:10,rx:5,fill:'none',stroke:'#E7DFC9'},g);
+    el('path',{d:'M330 330 h60 v-10 h100',stroke:'#c0392b','stroke-width':3,fill:'none'},g);
     txt(300,380,`板子角度 ${st.angle}°`,{'text-anchor':'middle','font-size':14},g);
     if(s.type==='observe'){ if(si===1){ [0,20,45,70,90].forEach((a,i)=>sbtn(g,140+i*90,420,a+'°',()=>{ st.angle=a; draw(); },st.angle===a)); }
       else { sbtn(g,560,420,st.cloud?'烏雲：開':'烏雲',()=>{ st.cloud=!st.cloud; draw(); },st.cloud); sbtn(g,660,420,st.dust?'灰塵：有':'灰塵',()=>{ st.dust=!st.dust; draw(); },st.dust); } } } };
@@ -482,7 +536,7 @@ const EXPERIMENTS=[EXP_TOOLS,EXP_SAFETY,EXP_WATER,EXP_CABBAGE,EXP_DENSITY,EXP_PH
 function renderNotebook(){
   $('nbName').textContent=P.name||'研究員';
   const list=[['safety','安全準備'],['tools','器材達人'],['rules','安全守則'],['water','過濾專家'],['cabbage','酸鹼偵探'],['density','密度大師'],['photo','綠色能量'],['fizz','氣泡高手'],['soap','清潔專家'],['solar','太陽能工程師'],['master','小小研究員']];
-  $('badges').innerHTML=list.map(([k,n])=>`<div class="badge ${P.badges[k]?'':'locked'}"><svg viewBox="0 0 80 90"><use href="#medal"/></svg><div>${n}</div></div>`).join('');
+  $('badges').innerHTML=list.map(([k,n])=>`<div class="badge ${P.badges[k]?'':'locked'}">${HAS['badge_'+k]?`<div class="bimg" style="background-image:url('${IMG['badge_'+k]}')"></div>`:`<svg viewBox="0 0 80 90"><use href="#medal"/></svg>`}<div>${n}</div></div>`).join('');
   $('notes').innerHTML=P.notes.length?P.notes.map(n=>`<p>${n}</p>`).join(''):'<p style="border:0;color:#999">還沒有筆記，去做實驗吧！</p>';
 }
 save(); setDoc('wave'); if(P.name){ drawRoom(); show('lab'); }
