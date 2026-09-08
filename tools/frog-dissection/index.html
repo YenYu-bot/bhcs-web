@@ -113,6 +113,19 @@
   code{background:#e8ece7;padding:1px 5px;border-radius:4px;font-size:13px}
   button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 </style>
+<!-- Google Analytics 4 -->
+<script>
+// 自己人排除：任何頁面網址加 ?noga=1 開啟一次，這台瀏覽器從此不計入統計
+if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var s=document.createElement('script'); s.async=true;
+  s.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
+  document.head.appendChild(s);
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
+}
+</script>
 </head>
 <body>
 

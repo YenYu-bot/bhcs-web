@@ -53,6 +53,19 @@
   .hint{position:absolute;left:12px;top:10px;background:rgba(15,21,40,.75);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:13px;color:var(--muted);pointer-events:none}
   button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
+<!-- Google Analytics 4 -->
+<script>
+// 自己人排除：任何頁面網址加 ?noga=1 開啟一次，這台瀏覽器從此不計入統計
+if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var s=document.createElement('script'); s.async=true;
+  s.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
+  document.head.appendChild(s);
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
+}
+</script>
 </head>
 <body>
 <div class="wrap">

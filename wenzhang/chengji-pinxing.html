@@ -190,6 +190,19 @@ footer a:hover{color:var(--ink)}
   article{font-size:1rem}
 }
 </style>
+<!-- Google Analytics 4 -->
+<script>
+// 自己人排除：任何頁面網址加 ?noga=1 開啟一次，這台瀏覽器從此不計入統計
+if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var s=document.createElement('script'); s.async=true;
+  s.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
+  document.head.appendChild(s);
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
+}
+</script>
 </head>
 <body>
 
