@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>進入實驗室 —— 安全守則與實驗器材</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11 3h10v8l8 15a2 2 0 0 1-2 3H5a2 2 0 0 1-2-3l8-15z' fill='%23BFE0FF' stroke='%232A5B8C' stroke-width='2'/%3E%3C/svg%3E">
+<style>
+  :root{ --bg:#F4F6F8; --panel:#fff; --line:#D5DBE3; --ink:#1F2933; --muted:#65717F; --accent:#2E6FD8; --ok:#2E8B57; --no:#C0392B; --warn:#E8A400; --glass:rgba(205,228,246,.8); --glassEdge:#5b6b7a; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
+  button{font:inherit;cursor:pointer}
+  .wrap{max-width:1200px;margin:0 auto;padding:14px 18px 30px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  h1{margin:0;font-size:24px}
+  header small{color:var(--muted)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 14px}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+  .view{display:none}.view.on{display:block}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+  .stage svg{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none}
+  .hint{position:absolute;left:12px;top:10px;background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:8px;padding:3px 10px;font-size:13px;color:var(--muted);pointer-events:none}
+  .side{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .panel h2{font-size:14px;color:var(--muted);margin:0 0 8px;font-weight:600}
+  .ctrl{display:flex;flex-wrap:wrap;gap:6px}
+  .ctrl button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:14px}
+  .ctrl button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .ctrl button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+  .ctrl button:disabled{opacity:.4;cursor:default}
+  .score{font-size:15px;color:var(--muted)}
+  .score b{color:var(--ink);font-size:20px}
+  /* 找碴 */
+  .hot{cursor:pointer}
+  .hot:hover .hb{stroke:rgba(46,111,216,.5)}
+  .hb{fill:transparent;stroke:transparent;stroke-width:2;stroke-dasharray:6 4;transition:stroke .2s}
+  .hot.found{cursor:default}
+  .hot.found .hb{stroke:transparent}
+  @keyframes pulse{0%,100%{stroke-opacity:.2;stroke-width:3}50%{stroke-opacity:1;stroke-width:6}}
+  .pulse{stroke:var(--warn);animation:pulse 1s 3}
+  @keyframes ringIn{0%{transform:scale(1.8);opacity:0}100%{transform:scale(1);opacity:1}}
+  .ring{transform-box:fill-box;transform-origin:center;animation:ringIn .35s cubic-bezier(.2,1.2,.4,1)}
+  .found-list{list-style:none;margin:0;padding:0;font-size:14px;max-height:520px;overflow:auto}
+  .found-list li{display:flex;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line);color:var(--muted)}
+  .found-list li b{flex:none;width:22px;height:22px;border-radius:50%;background:#e9edf2;color:var(--muted);font-size:12px;display:flex;align-items:center;justify-content:center}
+  .found-list li.on{color:var(--ink)}
+  .found-list li.on b{background:var(--no);color:#fff}
+  .found-list li.new{background:#FFF6D6}
+  /* 圖鑑 */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:14px;color:var(--muted)}
+  .chips button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+  .tcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 4px 6px;text-align:center;cursor:pointer;font-size:13px;transition:border-color .15s,transform .15s}
+  .tcard:hover{border-color:var(--accent)}
+  .tcard[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px rgba(46,111,216,.25)}
+  .tcard svg{width:80px;height:80px;display:block;margin:0 auto 2px}
+  .tcard .cat{display:block;font-size:11px;color:var(--muted)}
+  .detail svg{width:180px;height:180px;display:block;margin:0 auto}
+  .detail h3{margin:6px 0 2px;font-size:20px;text-align:center}
+  .detail .cat{text-align:center;color:var(--muted);font-size:13px;margin-bottom:8px}
+  .detail p{margin:0 0 8px;font-size:15px}
+  .detail .warn{background:#FFF6D6;border-left:4px solid var(--warn);padding:8px 10px;border-radius:0 8px 8px 0}
+  .detail .empty{color:var(--muted);text-align:center;padding:30px 10px;font-size:14px}
+  /* 配對 */
+  .match{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+  @media(max-width:600px){.match{grid-template-columns:repeat(2,1fr)}}
+  .mcard{background:#fff;border:2px solid var(--line);border-radius:12px;padding:6px;text-align:center;cursor:pointer;min-height:130px;font-size:14px;font-weight:700}
+  .mcard svg{width:88px;height:88px;display:block;margin:0 auto}
+  .mcard[aria-pressed="true"]{border-color:var(--accent);background:#EEF4FF}
+  .mcard.ok{border-color:var(--ok);background:#EAF6EE;cursor:default}
+  .mcard.no{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .names{display:flex;flex-wrap:wrap;gap:8px}
+  .names button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:15px}
+  .names button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .names button.used{opacity:.3;pointer-events:none}
+  /* 守則 */
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+  .rgroup{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .rgroup h3{margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:8px}
+  .rgroup h3 span{font-size:22px}
+  .rgroup label{display:flex;gap:10px;padding:6px 0;border-top:1px dashed var(--line);font-size:15px;cursor:pointer;align-items:flex-start}
+  .rgroup label input{margin-top:6px;accent-color:var(--ok);flex:none}
+  .rgroup label.on{color:var(--muted)}
+  .rgroup label.on span{text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+  .rbar{height:10px;background:#e9edf2;border-radius:5px;overflow:hidden;margin:4px 0 12px}
+  .rbar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+  /* 測驗 */
+  .quiz{max-width:760px;margin:0 auto}
+  .qcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .qno{color:var(--muted);font-size:14px;margin-bottom:4px}
+  .qtext{font-size:17px;font-weight:700;margin-bottom:12px;line-height:1.7}
+  .qtext .sub{display:block;font-weight:400;font-size:15px;color:var(--ink);margin-top:4px}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opts button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;text-align:left;font-size:15px;line-height:1.5}
+  .opts button:hover:not(:disabled){border-color:var(--accent)}
+  .opts button:disabled{cursor:default}
+  .opts button.ok{border-color:var(--ok);background:#EAF6EE}
+  .opts button.no{border-color:var(--no);background:#FDECEA}
+  .why{margin-top:12px;padding:10px 12px;border-radius:8px;background:#F4F6F8;font-size:15px;display:none}
+  .why.on{display:block}
+  .why.ok{background:#EAF6EE}.why.no{background:#FDECEA}
+  .qnav{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+  .qprog{display:flex;gap:3px;margin-bottom:10px}
+  .qprog i{flex:1;height:6px;border-radius:3px;background:#e2e6ea}.qprog i.ok{background:var(--ok)}.qprog i.no{background:var(--no)}.qprog i.cur{outline:2px solid var(--accent);outline-offset:1px}
+  .mq{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  @media(max-width:600px){.mq{grid-template-columns:repeat(2,1fr)}}
+  .mq div{background:#F4F6F8;border-radius:10px;padding:6px;text-align:center}
+  .mq svg{width:90px;height:90px;display:block;margin:0 auto}
+  .mq select{font:inherit;font-size:14px;width:100%;padding:4px;border:1px solid var(--line);border-radius:6px}
+  .mq div.ok{background:#EAF6EE}.mq div.no{background:#FDECEA}
+  .result{text-align:center;padding:20px}
+  .result b{font-size:44px;color:var(--accent)}
+  .review{list-style:none;padding:0;margin:14px 0 0;text-align:left;font-size:14px}
+  .review li{padding:6px 8px;border-radius:6px;margin-bottom:4px}
+  .review li.no{background:#FDECEA}.review li.ok{background:#EAF6EE}
+  .foot{color:var(--muted);font-size:13px;margin-top:18px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+
+  /* ===== 2026 精緻版視覺系統 ===== */
+  :root{
+    --bg:#eef7f8;
+    --panel:#ffffff;
+    --line:#dce9eb;
+    --ink:#17313a;
+    --muted:#6f8188;
+    --accent:#2c83a2;
+    --accent-2:#59c6b6;
+    --accent-soft:#eaf7f7;
+    --ok:#36a06c;
+    --no:#e15d59;
+    --warn:#f1a83b;
+    --shadow:0 18px 50px rgba(45,86,96,.11);
+    --shadow-soft:0 8px 24px rgba(45,86,96,.08);
+  }
+  html{scroll-behavior:smooth}
+  body{
+    min-height:100vh;
+    background:#eef7f8;
+    letter-spacing:.015em;
+  }
+  button{-webkit-tap-highlight-color:transparent}
+  button:focus-visible,.tcard:focus-visible,.mcard:focus-visible{outline:3px solid rgba(44,131,162,.25);outline-offset:3px}
+  .wrap{max-width:1380px;padding:28px 24px 42px}
+
+  .hero{
+    position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:space-between;gap:28px;
+    min-height:230px;margin:0 0 18px;padding:34px 42px;
+    border:1px solid rgba(255,255,255,.78);border-radius:32px;
+    color:#fff;
+    background:linear-gradient(120deg,#1f7894 0%,#348eaa 42%,#56b8b0 100%);
+    box-shadow:0 22px 60px rgba(39,106,124,.22);
+  }
+  .hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,57,75,.12),transparent 58%);pointer-events:none}
+  .hero-copy{position:relative;z-index:2;max-width:760px}
+  .hero h1{font-size:clamp(30px,4vw,50px);line-height:1.08;letter-spacing:-.045em;margin:0 0 12px;font-weight:900}
+  .hero h1 span{display:inline-block;margin-left:8px;font-size:.42em;letter-spacing:.06em;font-weight:700;color:rgba(255,255,255,.67);vertical-align:middle}
+  .hero p{max-width:650px;margin:0;color:rgba(255,255,255,.9);font-size:16px;line-height:1.85}
+  .hero-art{position:relative;z-index:1;width:250px;min-width:250px;align-self:stretch;display:grid;place-items:center}
+  .hero-art svg{position:relative;z-index:2;width:220px;filter:drop-shadow(0 16px 18px rgba(7,63,85,.2));}
+  .orb{position:absolute;border-radius:50%;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18)}
+  .orb-a{width:190px;height:190px;right:5px;top:1px}.orb-b{width:92px;height:92px;left:12px;bottom:6px}
+
+  .tabs-shell{position:sticky;top:10px;z-index:20;margin-bottom:22px;padding:7px;border:1px solid rgba(220,233,235,.9);border-radius:22px;background:rgba(255,255,255,.8);backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(46,92,102,.08)}
+  .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:0}
+  .tab{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:9px 12px;border:0;border-radius:16px;background:transparent;color:#70858c;font-size:14px;font-weight:700;transition:.2s ease}
+  .tab:hover{background:#f3fafa;color:var(--ink)}
+  .tab .tab-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#edf5f6;font-size:15px;transition:.2s ease}
+  .tab[aria-selected="true"]{background:linear-gradient(135deg,#247d9c,#47adab);color:#fff;box-shadow:0 9px 20px rgba(42,130,157,.2)}
+  .tab[aria-selected="true"] .tab-icon{background:rgba(255,255,255,.16)}
+
+  .view.on{animation:viewIn .32s ease both}
+  @keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes viewFade{from{opacity:0}to{opacity:1}}
+  .grid{grid-template-columns:minmax(0,1fr) 370px;gap:20px;align-items:start}
+  .stage-block{min-width:0}
+  .stage{border:1px solid rgba(220,233,235,.88);border-radius:26px;background:#fff;box-shadow:var(--shadow);isolation:isolate}
+  .stage:after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);pointer-events:none}
+  .hint{position:static;width:100%;margin-top:8px;padding:10px 15px;border:1px solid rgba(213,232,235,.95);border-radius:14px;background:#f8fbfb;box-shadow:none;backdrop-filter:none;font-size:13px;font-weight:700;color:#536d75;pointer-events:none}
+  .hint:before{content:"💡";margin-right:6px}
+  .side{gap:16px}
+  .panel{border:1px solid rgba(220,233,235,.9);border-radius:22px;padding:18px;background:rgba(255,255,255,.96);box-shadow:var(--shadow-soft)}
+  .panel h2{display:flex;align-items:center;gap:7px;margin:0 0 11px;font-size:13px;font-weight:800;letter-spacing:.03em;color:#567079}
+  .panel h2:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent-2)}
+  .progress-panel{background:linear-gradient(145deg,#ffffff,#f4fbfb)}
+  .score{font-size:14px;color:#74878d}.score b{font-size:34px;line-height:1;color:#1f7e99;font-weight:900;letter-spacing:-.04em}
+  .ctrl{gap:8px}
+  .ctrl button{min-height:38px;padding:7px 12px;border:1px solid #d8e6e8;border-radius:11px;background:#fff;color:#557078;font-size:13px;font-weight:750;box-shadow:0 3px 9px rgba(40,80,90,.04);transition:.18s ease}
+  .ctrl button:hover:not(:disabled){border-color:#9dcdd3;color:#1e6e87;box-shadow:0 7px 15px rgba(40,80,90,.08)}
+  .ctrl button.primary{border:0;background:linear-gradient(135deg,#267e9d,#49aea9);color:#fff;box-shadow:0 8px 18px rgba(42,132,157,.2)}
+  .ctrl button.primary:hover:not(:disabled){color:#fff;box-shadow:0 11px 22px rgba(42,132,157,.28)}
+
+  .found-list{display:flex;flex-direction:column;gap:7px;max-height:485px;padding-right:3px;scrollbar-width:thin;scrollbar-color:#cddfe2 transparent}
+  .found-list li{align-items:flex-start;gap:10px;padding:9px 10px;border:1px solid transparent;border-radius:12px;color:#8a9a9f;line-height:1.45;transition:.2s ease}
+  .found-list li b{width:25px;height:25px;border-radius:8px;background:#eef4f5;color:#90a0a5;font-weight:800}
+  .found-list li.on{border-color:#e5efef;background:#f8fbfb;color:#415b63}
+  .found-list li.on b{background:linear-gradient(135deg,#e7635f,#d9474c);box-shadow:0 4px 10px rgba(218,72,76,.17)}
+  .found-list li.new{border-color:#f7d68a;background:#fff9e9;animation:foundPop .38s ease}
+  @keyframes foundPop{50%{transform:scale(1.015)}}
+  .hb{transition:stroke .2s,filter .2s}.hot:hover .hb{stroke:rgba(35,132,157,.65);filter:drop-shadow(0 0 6px rgba(61,170,188,.28))}
+
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:2px 0 14px;padding:6px 2px}
+  .section-head.compact{margin-bottom:16px}.section-head h2{margin:0;color:#19343d;font-size:25px;line-height:1.25;letter-spacing:-.03em}.section-head p{margin:5px 0 0;color:#71858c;font-size:14px}.section-badge{white-space:nowrap;padding:7px 11px;border:1px solid #d8e9e9;border-radius:999px;background:#fff;color:#4d7f88;font-size:12px;font-weight:800;box-shadow:0 4px 12px rgba(53,93,101,.05)}
+
+  .chips{position:sticky;top:78px;z-index:15;gap:8px;margin-bottom:16px;padding:8px;border:1px solid #e0ebed;border-radius:18px;background:rgba(255,255,255,.76);box-shadow:0 7px 20px rgba(45,88,97,.05)}
+  .chips button{min-height:36px;padding:6px 14px;border-color:transparent;border-radius:11px;background:transparent;color:#6f848a;font-size:13px;font-weight:750;transition:.18s ease}
+  .chips button:hover{background:#f1f8f8;color:#426b74}
+  .chips button[aria-pressed="true"]{background:#173f4c;color:#fff;border-color:#173f4c;box-shadow:0 6px 14px rgba(31,74,88,.14)}
+  .tools{grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:13px}
+  .tcard{position:relative;min-height:160px;padding:15px 8px 11px;border:1px solid #e1ecee;border-radius:20px;background:linear-gradient(180deg,#fff,#fbfdfd);box-shadow:0 6px 18px rgba(49,87,96,.055);font-size:14px;font-weight:800;color:#29454e;transition:.2s ease}
+  .tcard:before{content:"";position:absolute;left:50%;top:12px;width:88px;height:88px;transform:translateX(-50%);border-radius:26px;background:linear-gradient(145deg,#f0f9fa,#edf5fb);z-index:0}
+  .tcard svg{position:relative;z-index:1;width:92px;height:92px;margin:0 auto 5px}
+  .tcard:hover{border-color:#b7dadd;transform:translateY(-4px);box-shadow:0 12px 24px rgba(42,95,106,.1)}
+  .tcard[aria-pressed="true"]{border-color:#5cb1ba;background:#f2fbfb;box-shadow:0 0 0 3px rgba(82,178,184,.12),0 12px 25px rgba(42,95,106,.1)}
+  .tcard .cat{margin-top:2px;color:#94a5aa;font-size:10px;font-weight:700;letter-spacing:.04em}
+  .detail{position:sticky;top:98px;padding:22px}
+  .detail-close{display:none}
+  .detail svg{width:190px;height:190px;padding:18px;border-radius:36px;background:linear-gradient(145deg,#f2fafb,#edf6fb)}
+  .detail h3{margin:14px 0 2px;font-size:24px;letter-spacing:-.02em}.detail .cat{margin-bottom:14px;color:#6d9aa2;font-size:12px;font-weight:800;letter-spacing:.08em}.detail p{color:#4a6269;line-height:1.78}.detail .warn{margin-top:12px;padding:11px 12px;border:1px solid #f6e3af;border-left:4px solid var(--warn);border-radius:12px;background:#fff9e9;color:#6e592b}.detail .warn:before{content:"⚠️ 注意　";font-weight:900}.detail .empty{padding:56px 14px;color:#8ba0a6}.detail .empty:before{content:"🧪";display:block;margin-bottom:10px;font-size:34px}
+
+  .match{gap:13px;margin-bottom:18px}.mcard{min-height:156px;padding:13px 8px;border:1px solid #dce9eb;border-radius:20px;background:linear-gradient(180deg,#fff,#fbfdfd);box-shadow:0 6px 18px rgba(49,87,96,.055);color:#2b4650;transition:.2s ease}.mcard:hover{border-color:#b5d7dc;box-shadow:0 12px 23px rgba(42,95,106,.09)}.mcard svg{width:100px;height:100px;padding:7px;border-radius:25px;background:#f3f9fa}.mcard[aria-pressed="true"]{border-color:#52aabd;background:#effafa;box-shadow:0 0 0 3px rgba(64,159,178,.1)}.mcard.ok{border-color:#83cda6;background:#effaf4;box-shadow:0 8px 20px rgba(54,160,108,.09)}.names{gap:9px}.names button{padding:8px 15px;border-color:#dbe8ea;border-radius:12px;color:#536e76;font-size:14px;font-weight:750;transition:.18s ease}.names button:hover{transform:translateY(-1px);border-color:#a9cfd4}.names button[aria-pressed="true"]{background:#247f9d;border-color:#247f9d;color:#fff;box-shadow:0 7px 16px rgba(40,128,157,.18)}
+
+  .rbar{height:12px;margin:3px 0 18px;border:1px solid #dce9eb;border-radius:999px;background:#e8f1f2;box-shadow:inset 0 1px 3px rgba(32,72,82,.06)}.rbar i{border-radius:999px;background:linear-gradient(90deg,#56c3b2,#4ca6c0);box-shadow:0 0 18px rgba(76,174,180,.25)}
+  .rules{grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}.rgroup{overflow:hidden;padding:18px;border:1px solid #deeaec;border-radius:22px;background:#fff;box-shadow:var(--shadow-soft)}.rgroup h3{margin:0 0 10px;padding-bottom:11px;border-bottom:1px solid #edf2f3;font-size:17px;color:#29464f}.rgroup h3 span{display:grid;place-items:center;width:38px;height:38px;border-radius:13px;background:#eff8f8;font-size:20px}.rgroup label{position:relative;gap:11px;padding:10px 4px;border-top:0;color:#4f666d;line-height:1.65;transition:.18s ease}.rgroup label+label{border-top:1px dashed #e9eff0}.rgroup label:hover{color:#294b54}.rgroup label input{width:18px;height:18px;margin-top:4px;accent-color:#4eaf8b}.rgroup label.on{color:#91a0a4}.rgroup label.on span{text-decoration-color:rgba(74,110,117,.23)}
+
+  .quiz{max-width:900px}.quiz-head{max-width:860px;margin-left:auto;margin-right:auto}.qprog{gap:5px;margin-bottom:14px}.qprog i{height:8px;border-radius:999px;background:#dfe9eb;transition:.22s ease}.qprog i.ok{background:#50b17e}.qprog i.no{background:#e66b67}.qprog i.cur{outline:0;background:#3c9bb0;box-shadow:0 0 0 3px rgba(60,155,176,.13)}.qcard{padding:26px 28px;border:1px solid #dfeaec;border-radius:24px;background:#fff;box-shadow:var(--shadow)}.qno{display:inline-flex;padding:5px 9px;border-radius:8px;background:#edf7f8;color:#4e858f;font-size:11px;font-weight:900;letter-spacing:.05em}.qtext{margin:12px 0 18px;font-size:20px;line-height:1.7;color:#213c45;letter-spacing:-.01em}.qtext .sub{margin-top:8px;padding:11px 12px;border-radius:12px;background:#f6f9fa;color:#536b73;font-size:14px}.opts{gap:10px}.opts button{position:relative;padding:13px 15px;border:1px solid #dce7e9;border-radius:14px;background:#fff;color:#405a62;font-size:15px;transition:.18s ease}.opts button:hover:not(:disabled){border-color:#8fc4cb;background:#f4fbfb;transform:translateX(3px)}.opts button.ok{border-color:#8acfac;background:#eff9f3;color:#236746}.opts button.no{border-color:#ecaaa7;background:#fff2f1;color:#a33d3a}.why{margin-top:14px;padding:13px 15px;border-radius:14px;line-height:1.7}.why.ok{border:1px solid #cbe8d7;background:#eff9f3;color:#315e45}.why.no{border:1px solid #f0cac8;background:#fff2f1;color:#744542}.qnav{margin-top:16px}.mq{gap:10px}.mq div{padding:10px;border:1px solid #e2ebed;border-radius:16px;background:#f7fafa}.mq svg{width:100px;height:100px}.mq select{margin-top:6px;padding:8px 9px;border-color:#d4e3e6;border-radius:10px;background:#fff;color:#48626a}.result{padding:14px 4px}.result b{font-size:54px;color:#247f9d;letter-spacing:-.05em}.review{display:grid;gap:7px;margin-top:18px}.review li{padding:10px 12px;border-radius:11px;line-height:1.55}.review li.no{border:1px solid #f0cdcb;background:#fff4f3}.review li.ok{border:1px solid #d2eadc;background:#f1faf5}
+
+  .foot{display:flex;align-items:center;justify-content:center;gap:6px;margin:26px 0 0;color:#82959a;font-size:12px;text-align:center}
+
+  @media(max-width:1020px){
+    .grid{grid-template-columns:1fr}.detail{position:static}.hero{padding:30px}.hero-art{width:220px;min-width:220px}.tabs{grid-template-columns:repeat(5,minmax(132px,1fr));overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs-shell{overflow:hidden}.tab{white-space:nowrap}
+  }
+  @media(max-width:960px){
+    .view.on{animation:viewFade .32s ease both}
+    #detail{display:none;position:fixed;z-index:70;left:0;right:0;bottom:0;top:auto;width:100%;max-height:55vh;overflow:auto;margin:0;padding:18px 22px 24px;border-radius:24px 24px 0 0;box-shadow:0 -16px 48px rgba(30,70,80,.2);overscroll-behavior:contain}
+    #detail.open{display:block}
+    #detail .detail-close{display:grid;position:sticky;top:0;z-index:3;place-items:center;width:38px;height:38px;margin:0 0 -38px auto;padding:0;border:1px solid #d7e5e7;border-radius:50%;background:#fff;color:#49636b;font-size:22px;line-height:1;box-shadow:0 5px 14px rgba(40,80,90,.1)}
+  }
+  @media(max-width:720px){
+    .wrap{padding:14px 12px 28px}.hero{min-height:auto;padding:25px 22px;border-radius:25px}.hero p{font-size:14px}.hero-art{display:none}.tabs-shell{top:6px;border-radius:18px;padding:6px}.tabs{display:flex}.tab{min-width:max-content;min-height:46px;border-radius:13px;padding:8px 12px}.tab .tab-icon{width:25px;height:25px}.stage,.panel,.qcard,.rgroup{border-radius:19px}.hint{padding:9px 12px;font-size:11px}.section-head{align-items:flex-start}.section-head h2{font-size:22px}.section-head p{font-size:13px}.section-badge{display:none}.tools{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.tcard{min-height:150px;border-radius:17px}.match{grid-template-columns:repeat(2,1fr)}.rules{grid-template-columns:1fr}.qcard{padding:20px 16px}.qtext{font-size:18px}.opts button{padding:12px}.mq{grid-template-columns:repeat(2,1fr)}.chips{top:70px}
+  }
+  @media(max-width:640px){
+    .hero{min-height:0;padding:20px 22px}.hero-art{display:none}.tabs-shell{position:static;top:auto;overflow:hidden}.tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}.tabs::-webkit-scrollbar{display:none}.tab{flex:none;height:44px;min-height:44px}.stage{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}#scene{min-width:720px}.hint{font-size:12px}
+  }
+  @media(max-width:430px){
+    .hero h1{font-size:31px}.tools{grid-template-columns:repeat(2,1fr)}.tcard svg{width:84px;height:84px}.match{gap:8px}.mcard{min-height:145px}.mcard svg{width:90px;height:90px}.names button{flex:1 1 calc(50% - 9px);text-align:center}.panel{padding:15px}.score b{font-size:30px}
+  }
+
+  .backlink{position:absolute;right:22px;top:16px;z-index:3;color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:7px 14px;border:1px solid rgba(255,255,255,.4);border-radius:999px;background:rgba(255,255,255,.14)}
+  .backlink:hover{background:rgba(255,255,255,.28)}
+  @media(max-width:720px){.backlink{position:static;display:inline-block;margin-bottom:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <a class="backlink" href="index.html">← 回小小研究員實驗室</a>
+  <div class="hero-copy">
+    <h1>進入實驗室</h1>
+    <p>從觀察、辨識到實際判斷，一步步建立正確的實驗室安全觀念。</p>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="orb orb-a"></div><div class="orb orb-b"></div>
+    <svg viewBox="0 0 220 180" role="img">
+      <defs>
+        <linearGradient id="heroGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".96"/><stop offset="1" stop-color="#dff4ff" stop-opacity=".8"/></linearGradient>
+        <linearGradient id="heroLiquid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5dd7c6"/><stop offset="1" stop-color="#3da8e8"/></linearGradient>
+      </defs>
+      <g transform="translate(18 15)">
+        <path d="M70 8h48v16l38 79c8 17-4 31-22 31H54c-18 0-30-14-22-31l38-79z" fill="url(#heroGlass)" stroke="#246f95" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M44 96q51-17 100 0l14 29q5 12-13 12H43q-18 0-13-12z" fill="url(#heroLiquid)" opacity=".92"/>
+        <circle cx="69" cy="108" r="6" fill="#fff" opacity=".85"/><circle cx="111" cy="116" r="4" fill="#fff" opacity=".75"/><circle cx="92" cy="92" r="3" fill="#fff" opacity=".7"/>
+        <path d="M62 44h64" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".45"/>
+      </g>
+      <g fill="#fff" opacity=".85"><circle cx="32" cy="37" r="4"/><circle cx="188" cy="39" r="6"/><circle cx="199" cy="78" r="3"/><circle cx="31" cy="143" r="6"/></g>
+    </svg>
+  </div>
+</header>
+<div class="tabs-shell">
+  <div class="tabs" role="tablist" aria-label="學習模組">
+    <button class="tab" role="tab" aria-selected="true" data-v="hunt"><span class="tab-icon">🔎</span><span>實驗室大搜查</span></button>
+    <button class="tab" role="tab" aria-selected="false" data-v="tools"><span class="tab-icon">🧪</span><span>器材圖鑑</span></button>
+    <button class="tab" role="tab" aria-selected="false" data-v="match"><span class="tab-icon">🧩</span><span>看圖猜名字</span></button>
+    <button class="tab" role="tab" aria-selected="false" data-v="rules"><span class="tab-icon">🛡️</span><span>安全守則</span></button>
+    <button class="tab" role="tab" aria-selected="false" data-v="quiz"><span class="tab-icon">🏆</span><span>隨堂測驗</span></button>
+  </div>
+</div>
+
+<!-- ===== 大搜查 ===== -->
+<section class="view on" id="v-hunt">
+  <div class="grid">
+    <div class="stage-block"><div class="stage"><svg id="scene" viewBox="0 0 1000 600"></svg></div><div class="hint" id="huntHint">這間實驗室裡有 16 個不安全的地方，點出來！</div></div>
+    <aside class="side">
+      <div class="panel progress-panel"><div class="score">找到 <b id="hcount">0</b> / 16</div>
+        <div class="ctrl" style="margin-top:8px"><button id="hintBtn">提示一個</button><button id="revealBtn">全部顯示</button><button id="hresetBtn">重來</button></div></div>
+      <div class="panel"><h2>找到的問題與正確做法</h2><ul class="found-list" id="flist"></ul></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===== 圖鑑 ===== -->
+<section class="view" id="v-tools">
+  <div class="section-head"><div><h2>實驗器材圖鑑</h2><p>點選器材，快速認識用途、操作方式與安全提醒。</p></div><div class="section-badge">互動圖鑑</div></div>
+  <div class="chips" id="chips"></div>
+  <div class="grid">
+    <div class="tools" id="tools"></div>
+    <aside class="side"><div class="panel detail" id="detail"><div class="empty">點一個器材，看它的用途和注意事項。</div></div></aside>
+  </div>
+</section>
+
+<!-- ===== 配對 ===== -->
+<section class="view" id="v-match">
+  <div class="quiz">
+    <div class="section-head compact"><div><h2>看圖猜名字</h2><p>先點一張圖，再點它的名字；八個都配對就完成挑戰。</p></div><div class="section-badge">8 題挑戰</div></div>
+    <div class="match" id="mgrid"></div>
+    <div class="names" id="mnames"></div>
+    <div class="qnav"><span class="score" id="mscore"></span><div class="ctrl"><button id="mnew">換一組</button></div></div>
+  </div>
+</section>
+
+<!-- ===== 守則 ===== -->
+<section class="view" id="v-rules">
+  <div class="section-head"><div><h2>實驗室安全守則</h2><p>逐條閱讀並打勾，完成自己的進入實驗室準備清單。</p></div><div class="section-badge">閱讀進度</div></div>
+  <div class="rbar"><i id="rbar"></i></div>
+  <div class="rules" id="rules"></div>
+</section>
+
+<!-- ===== 測驗 ===== -->
+<section class="view" id="v-quiz">
+  <div class="quiz">
+    <div class="section-head compact quiz-head"><div><h2>隨堂測驗</h2><p>完成題目，檢查你是否已經掌握器材與安全觀念。</p></div><div class="section-badge">知識挑戰</div></div>
+    <div class="qprog" id="qprog"></div>
+    <div class="qcard" id="qcard"></div>
+  </div>
+</section>
+
+<p class="foot"><span>🔒</span> 學習進度只儲存在這台裝置的瀏覽器中，不會上傳。　<a href="index.html">回小小研究員實驗室</a></p>
+</div>
+<script>
+const $=id=>document.getElementById(id); const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
+const txt=(x,y,s,a={},p)=>{ const t=el('text',{x,y,'font-size':14,fill:'#1F2933','font-family':'inherit',...a},p); t.textContent=s; return t; };
+const S=JSON.parse(localStorage.getItem('labsafety')||'{}'); S.found=S.found||[]; S.rules=S.rules||[]; S.best=S.best??null;
+const save=()=>localStorage.setItem('labsafety',JSON.stringify(S));
+/* 分頁 */
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===b)); document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v)); });
+
+/* ================= 器材圖鑑（向量圖，每個畫在 -45..45） ================= */
+const GLASS_FILL='rgba(210,233,246,.72)', GLASS_STROKE='#657a87', METAL_FILL='#a7b4bd', METAL_DARK='#6e7b86', CERAMIC_FILL='#f7f2e8', CERAMIC_EDGE='#beb39d', WOOD_FILL='#c69a67', LIQ='#4FA3E3';
+const OUT=2.5, IN=1.5;
+const CATS={glass:'玻璃器皿',heat:'加熱器材',hold:'支撐夾持',measure:'秤量測量',clean:'清潔與安全'};
+const stroke=(p,d,sw=IN,extra={})=>el('path',{d,fill:'none',stroke:METAL_DARK,'stroke-width':sw,'stroke-linecap':'round','stroke-linejoin':'round',...extra},p);
+const line=(p,x1,y1,x2,y2,sw=IN,color=METAL_DARK,extra={})=>el('line',{x1,y1,x2,y2,stroke:color,'stroke-width':sw,'stroke-linecap':'round',...extra},p);
+const shadowEllipse=(p,cx,cy,rx,ry,o=.12)=>el('ellipse',{cx,cy,rx,ry,fill:'#7e8f98',opacity:o},p);
+function ticks(g,x,y0,y1,dx=7,step=6){ for(let y=y0;y<=y1;y+=step) line(g,x,y,x+(((y-y0)/step)%5===0?dx*1.55:dx),y,1.1,GLASS_STROKE); }
+function gloss(p, d, extra={}){ el('path',{d,fill:'none',stroke:'#fff','stroke-width':2.3,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.75,...extra},p); }
+function glass(p,d,opt={}){ const {liquid=null, liquidPath=null, ticksOpt=null, stopper=false, shadow=true}=opt; if(shadow) shadowEllipse(p,0,35,24,5,.12); const base=el('path',{d,fill:GLASS_FILL,stroke:GLASS_STROKE,'stroke-width':OUT,'stroke-linejoin':'round','stroke-linecap':'round'},p); if(liquidPath) el('path',{d:liquidPath,fill:liquid,opacity:.62,stroke:'none'},p); else if(liquid&&opt.liquidRect) { const r=opt.liquidRect; el('rect',{x:r[0],y:r[1],width:r[2],height:r[3],fill:liquid,opacity:.58},p); if(opt.surface) el('ellipse',{cx:opt.surface[0],cy:opt.surface[1],rx:opt.surface[2],ry:opt.surface[3],fill:liquid,opacity:.78},p); }
+ if(ticksOpt) ticks(p,...ticksOpt);
+ gloss(p, opt.gloss || 'M-14 -30 v56');
+ if(stopper) el('rect',{x:-9,y:-48,width:18,height:8,rx:3,fill:'#edf2f6',stroke:GLASS_STROKE,'stroke-width':OUT},p);
+ return base; }
+function bubbles(p, pts, c='#fff'){ pts.forEach(([x,y,r=2])=>el('circle',{cx:x,cy:y,r,fill:c,opacity:.85},p)); }
+function metalRect(p,x,y,w,h,rx=3){ shadowEllipse(p,x+w/2,y+h/2+15,w*.32,4,.1); el('rect',{x,y,width:w,height:h,rx,fill:METAL_FILL,stroke:METAL_DARK,'stroke-width':OUT},p); el('path',{d:`M${x+3} ${y+3} h${w-12}`,stroke:'#e7eef1','stroke-width':2,'stroke-linecap':'round',opacity:.9},p); }
+function ceramicRect(p,x,y,w,h,rx=4){ shadowEllipse(p,x+w/2,y+h/2+16,w*.35,4,.09); el('rect',{x,y,width:w,height:h,rx,fill:CERAMIC_FILL,stroke:CERAMIC_EDGE,'stroke-width':OUT},p); el('path',{d:`M${x+5} ${y+4} h${w-16}`,stroke:'#fff','stroke-width':2,'stroke-linecap':'round',opacity:.82},p); }
+function woodRect(p,x,y,w,h,rx=3){ el('rect',{x,y,width:w,height:h,rx,fill:WOOD_FILL,stroke:'#8f6744','stroke-width':OUT},p); line(p,x+7,y+h*.33,x+w-7,y+h*.33,1.2,'#d7b287',{opacity:.7}); line(p,x+7,y+h*.66,x+w-12,y+h*.66,1.1,'#b88658',{opacity:.55}); }
+function liquidFillRect(p,x,y,w,h,c=LIQ){ el('rect',{x,y,width:w,height:h,fill:c,opacity:.55},p); el('ellipse',{cx:x+w/2,cy:y,rx:w/2,ry:3.2,fill:c,opacity:.8},p); bubbles(p,[[x+w*.28,y+h*.35,1.5],[x+w*.65,y+h*.6,1.2]]); }
+function liquidFillPath(p,d,c=LIQ,surf=null){ el('path',{d,fill:c,opacity:.58},p); if(surf) el('ellipse',{cx:surf[0],cy:surf[1],rx:surf[2],ry:surf[3],fill:c,opacity:.82},p); bubbles(p,[[surf?surf[0]-surf[2]*.3:0,surf?surf[1]+8:0,1.3],[surf?surf[0]+surf[2]*.2:0,surf?surf[1]+13:0,1.1]]); }
+function flame(p,x,y,s=1){ el('ellipse',{cx:x,cy:y+10*s,rx:18*s,ry:10*s,fill:'#f8ce7c',opacity:.18},p); el('path',{d:`M${x} ${y-24*s} q${10*s} ${10*s} ${7*s} ${23*s} q${-3*s} ${16*s} ${-7*s} ${22*s} q${-5*s} ${-8*s} ${-11*s} ${-1*s} q${-2*s} ${-11*s} 0 ${-21*s} q${2*s} ${-11*s} ${11*s} ${-23*s}z`,fill:'#F7A339'},p); el('path',{d:`M${x} ${y-16*s} q${6*s} ${7*s} ${4*s} ${17*s} q${-2*s} ${11*s} ${-4*s} ${16*s} q${-4*s} ${-6*s} ${-8*s} ${-1*s} q${-1*s} ${-7*s} 0 ${-14*s} q${1*s} ${-9*s} ${8*s} ${-18*s}z`,fill:'#FFD465'},p); el('path',{d:`M${x} ${y-8*s} q${3*s} ${4*s} ${2*s} ${10*s} q${-1*s} ${6*s} ${-2*s} ${9*s} q${-3*s} ${-4*s} ${-5*s} 0 q0 ${-5*s} ${1*s} ${-9*s} q${1*s} ${-6*s} ${4*s} ${-10*s}z`,fill:'#FFF6D6',opacity:.95},p); }
+function testTubeShape(x=-8,y=-38,w=16,h=58){ return `M${x} ${y} v${h} a${w/2} ${w/2} 0 0 0 ${w} 0 v-${h}z`; }
+function beakerShape(x=-24,y=-34,w=48,h=68){ return `M${x} ${y} h${w} v${h-6} q0 6 -6 6 h${-w+12} q-6 0 -6 -6z`; }
+function simpleStand(g){ metalRect(g,-3,-44,6,76,2); metalRect(g,-30,30,60,10,3); }
+
+const TOOLS=[
+ {id:'beaker',cat:'glass',name:'燒杯',use:'最常用的玻璃容器。上下口徑一樣，好倒也好取，用來裝試劑做反應、攪拌、粗略量體積；有 50、100、250、500、1000 mL 等規格。',warn:'杯壁刻度只能粗估，需要準確體積要改用量筒或定量瓶。加熱時要隔著陶瓷纖維網。',draw:g=>{ glass(g,beakerShape(),{gloss:'M-14 -28 v56',ticksOpt:[-22,-18,26,6,8]}); liquidFillRect(g,-20,7,40,25,'#4FA3E3'); line(g,-24,-34,-30,-39,OUT,GLASS_STROKE); }},
+ {id:'flask',cat:'glass',name:'錐形瓶',use:'瓶口窄、瓶身寬。搖晃時液體不容易灑出來，適合滴定和混合；也可以用軟木塞配其他器材組裝裝置。有 125、250 mL 等規格。',warn:'刻度只能粗估；需要準確體積用量筒或定量瓶。',draw:g=>{ glass(g,'M-8 -42 h16 v18 l24 52 q2 8 -6 8 h-52 q-8 0 -6 -8 l24 -52z',{gloss:'M-7 -34 v54',ticksOpt:[-5,-6,10,6,6]}); liquidFillPath(g,'M-24 14 q24 -8 48 0 l8 18 q2 6 -4 6 h-56 q-6 0 -4 -6z','#59c6b6',[0,14,24,4]); }},
+ {id:'tube',cat:'glass',name:'試管',use:'裝少量藥品做化學反應，有各種口徑和長度。是少數可以直接放在火上加熱的玻璃器材。',warn:'裝的液體不要超過 1/3。加熱時要用試管夾，管口不可對著自己或別人。',draw:g=>{ glass(g,testTubeShape(),{gloss:'M-4 -32 v52'}); el('rect',{x:-12,y:-43,width:24,height:5,rx:2.5,fill:'#dbe6eb',stroke:GLASS_STROKE,'stroke-width':OUT},g); liquidFillPath(g,'M-7 4 v20 a7 7 0 0 0 14 0 v-20z','#f06c9d',[0,4,7,3]); }},
+ {id:'rack',cat:'glass',name:'試管架',use:'放試管用，有木製和不鏽鋼製。洗好的試管倒插在架子上晾乾。',warn:'',draw:g=>{ shadowEllipse(g,0,34,28,5,.1); [-24,-8,8,24].forEach((x,i)=>{ glass(g,`M${x-5} -40 v34 a5 5 0 0 0 10 0 v-34z`,{gloss:`M${x-2} -34 v24`}); liquidFillPath(g,`M${x-4} -4 v14 a4 4 0 0 0 8 0 v-14`,['#6cb5ea','#7fd2c0','#f5c542','#d88bd1'][i],[x,-4,4,2]); }); woodRect(g,-38,-10,76,10,3); woodRect(g,-38,18,76,12,3); woodRect(g,-38,-10,7,40,2); woodRect(g,31,-10,7,40,2); [-24,-8,8,24].forEach(x=>el('ellipse',{cx:x,cy:-5,rx:6,ry:3.2,fill:'#8f6744',opacity:.45},g)); }},
+ {id:'widejar',cat:'glass',name:'廣口瓶',use:'瓶口很大的玻璃瓶。做製備氣體的實驗時當集氣瓶，口大方便後續放燃燒匙、加試劑。',warn:'',draw:g=>{ glass(g,'M-24 -20 h48 v50 q0 8 -8 8 h-32 q-8 0 -8 -8z',{gloss:'M-14 -14 v42'}); el('rect',{x:-18,y:-34,width:36,height:14,rx:3,fill:'#dfe7eb',stroke:GLASS_STROKE,'stroke-width':OUT},g); el('rect',{x:-14,y:-40,width:28,height:6,rx:3,fill:'#eef2f5',stroke:GLASS_STROKE,'stroke-width':OUT},g); }},
+ {id:'funnel',cat:'glass',name:'漏斗',use:'把液體倒進窄口的容器，或鋪上濾紙做重力過濾。',warn:'倒液體時用玻棒導引，漏斗柄要靠著容器內壁，液體才不會濺出來。',draw:g=>{ shadowEllipse(g,0,34,18,4,.08); glass(g,'M-34 -34 h68 l-28 34 v38 h-12 v-38z',{gloss:'M-10 -26 l-8 56'}); }},
+ {id:'sepfunnel',cat:'glass',name:'分液漏斗',use:'萃取時把兩種不互溶的液體分開。一手壓住上面的玻璃塞、一手握住活栓，倒過來搖晃讓液體充分混合。',warn:'用易揮發的溶劑時要隨時打開活栓放氣，免得壓力太大炸開。分好層後，下層從活栓放出，上層從上口倒出。',draw:g=>{ el('rect',{x:-8,y:-46,width:16,height:8,rx:3,fill:'#eef2f5',stroke:GLASS_STROKE,'stroke-width':OUT},g); glass(g,'M-6 -38 h12 v6 q26 8 26 26 l-32 32 l-32 -32 q0 -18 26 -26z',{gloss:'M-4 -32 v48'}); liquidFillPath(g,'M-28 -7 q28 10 56 0 l-28 28z','#82bdd8',[0,-6,22,4]); el('rect',{x:-3,y:24,width:6,height:20,fill:GLASS_FILL,stroke:GLASS_STROKE,'stroke-width':OUT},g); el('rect',{x:-16,y:28,width:32,height:6,rx:3,fill:'#e6674c',stroke:METAL_DARK,'stroke-width':1.2},g); }},
+ {id:'thistle',cat:'glass',name:'薊頭漏斗',use:'一根很長的漏斗，管子可以直接插到液面下面，用來在產生氣體的實驗裝置裡加液體。',warn:'上面球狀的「薊頭」是緩衝空間：氣體壓力上升時，被擠上來的液體有地方待，不會從漏斗噴出來。管口是平切的，比較容易整個沒入液面。',draw:g=>{ glass(g,'M-14 -44 h28 l-6 14 q-8 6 -8 6 h-4 q-8 -6 -8 -6z',{gloss:'M-4 -38 v20'}); glass(g,'M-3 -24 h6 v68 h-6z',{gloss:'M0 -20 v58',shadow:false}); shadowEllipse(g,0,36,6,3,.08); }},
+ {id:'watchglass',cat:'glass',name:'表玻璃',use:'一片淺淺的圓形玻璃。蓋在燒杯上防止液體蒸發；也可以放少量固體秤重、或觀察結晶的形狀。',warn:'烘乾晶體時可以放進烘箱，但不能直接用火加熱。',draw:g=>{ shadowEllipse(g,0,15,30,7,.1); el('path',{d:'M-38 -2 q38 18 76 0 q-38 -12 -76 0z',fill:GLASS_FILL,stroke:GLASS_STROKE,'stroke-width':OUT},g); gloss(g,'M-22 -1 q12 5 24 0',{opacity:.9}); }},
+ {id:'volflask',cat:'glass',name:'定量瓶',use:'配製「準確體積」溶液的細頸瓶，頸上的刻度線經過校正，量得很準。通常做定量分析才用，一般實驗用量筒就好。',warn:'不可以放進烘箱烘乾：熱脹冷縮會讓容積跑掉。',draw:g=>{ glass(g,'M-6 -46 h12 v40 q28 6 28 28 q0 18 -34 18 q-34 0 -34 -18 q0 -22 28 -28z',{gloss:'M-4 -40 v58'}); liquidFillPath(g,'M-18 15 a18 18 0 0 0 36 0','#6bc6c8',[0,14,17,3.5]); line(g,-10,-24,10,-24,1.8,GLASS_STROKE); el('rect',{x:-8,y:-50,width:16,height:6,rx:3,fill:'#eef2f5',stroke:GLASS_STROKE,'stroke-width':OUT},g); }},
+ {id:'cylinder',cat:'glass',name:'量筒',use:'量液體體積的工具，一般實驗的精確度靠它就夠；有 10、25、50 mL 等規格。',warn:'讀刻度時眼睛要和液面凹面一樣高。不可以在量筒裡做化學反應，也不可以加熱。',draw:g=>{ glass(g,'M-10 -44 h20 v78 h-20z',{gloss:'M-4 -38 v68',ticksOpt:[-8,-35,25,5,6]}); metalRect(g,-20,31,40,9,3); liquidFillRect(g,-8,-2,16,32,'#59a6e6'); line(g,-10,-44,-15,-49,OUT,GLASS_STROKE); }},
+ {id:'rbflask',cat:'glass',name:'圓底燒瓶',use:'瓶底是圓的，受熱均勻，特別適合加熱煮沸液體，蒸餾裝置常用。',warn:'圓底放不穩，要用自由夾夾在鐵架上，或放在軟木環上。',draw:g=>{ glass(g,'M-7 -46 h14 v30 q26 6 26 30 a26 26 0 0 1 -52 0 q0 -24 26 -30z',{gloss:'M-10 -2 q-3 15 0 26'}); liquidFillPath(g,'M-22 12 a22 16 0 0 0 44 0','#5ec5b2',[0,12,20,4]); }},
+ {id:'dropper',cat:'glass',name:'滴管',use:'吸取少量、不需要準確量的液體，一滴一滴加。',warn:'用的時候稍微傾斜、不可以倒過來，否則液體流進橡皮帽會汙染藥品。一支滴管只吸一種藥品。',draw:g=>{ shadowEllipse(g,0,28,12,3,.08); el('ellipse',{cx:0,cy:-30,rx:11,ry:14,fill:'#df6956',stroke:'#8c463b','stroke-width':OUT},g); gloss(g,'M-6 -35 q6 3 12 0',{opacity:.45}); glass(g,'M-4 -18 h8 v52 l-4 10 l-4 -10z',{gloss:'M0 -12 v44',shadow:false}); el('circle',{cx:0,cy:45,r:3.2,fill:'#4fa3e3'},g); }},
+ {id:'glassrod',cat:'glass',name:'玻棒',use:'攪拌溶液讓成分均勻；倒液體時讓液體沿著玻棒流下去，不會飛濺。',warn:'',draw:g=>{ shadowEllipse(g,0,24,24,4,.07); el('path',{d:'M-30 34 l60 -68 q4 -3 6 0 q1 3 -2 6 l-60 68 q-4 3 -6 0 q-1 -3 2 -6z',fill:GLASS_FILL,stroke:GLASS_STROKE,'stroke-width':OUT},g); gloss(g,'M-20 24 l36 -41'); }},
+ /* 加熱 */
+ {id:'lamp',cat:'heat',name:'酒精燈',use:'實驗室最常用的熱源。用火柴或打火機點燃燈芯。',warn:'酒精裝 1/3 到 2/3 就好。熄火要用燈罩蓋熄，不可以用嘴吹；不可以用點著的燈去點另一盞，也不可以在燃燒中加酒精。',draw:g=>{ shadowEllipse(g,0,31,22,6,.12); glass(g,'M-24 2 q24 -12 48 0 v28 q-24 10 -48 0z',{gloss:'M-11 6 q-1 12 0 20'}); liquidFillPath(g,'M-18 14 q18 -5 36 0 v12 q-18 8 -36 0z','#69b4e6',[0,14,17,3]); el('rect',{x:-16,y:-8,width:32,height:12,rx:4,fill:'#e8ecef',stroke:GLASS_STROKE,'stroke-width':OUT},g); el('rect',{x:-3.5,y:-22,width:7,height:14,rx:2,fill:METAL_DARK},g); flame(g,0,-26,.95); }},
+ {id:'evapdish',cat:'heat',name:'蒸發皿',use:'陶瓷做的淺碟，用來加熱讓溶液的水分蒸發，留下固體。',warn:'可以直接放在火上加熱，但要用坩堝鉗拿，很燙。',draw:g=>{ shadowEllipse(g,0,18,28,6,.1); el('path',{d:'M-40 -4 q40 24 80 0 q-5 24 -40 24 q-35 0 -40 -24z',fill:CERAMIC_FILL,stroke:CERAMIC_EDGE,'stroke-width':OUT},g); el('ellipse',{cx:0,cy:-4,rx:40,ry:9,fill:'#fffefb',stroke:CERAMIC_EDGE,'stroke-width':OUT},g); gloss(g,'M-21 -5 q10 4 22 0',{opacity:.7}); line(g,-44,-4,-50,-8,2,CERAMIC_EDGE); }},
+ {id:'crucible',cat:'heat',name:'坩堝附蓋',use:'耐高溫的小杯子，用來把固體或液體強熱、灼燒；有陶瓷的，也有石墨或金屬做的。',warn:'放在泥三角上加熱，蓋子稍微留縫。拿的時候一定用坩堝鉗。',draw:g=>{ shadowEllipse(g,0,30,22,5,.1); el('path',{d:'M-28 -12 h56 l-7 42 q-2 6 -8 6 h-26 q-6 0 -8 -6z',fill:CERAMIC_FILL,stroke:CERAMIC_EDGE,'stroke-width':OUT},g); el('ellipse',{cx:0,cy:-12,rx:28,ry:6.5,fill:'#fff',stroke:CERAMIC_EDGE,'stroke-width':OUT},g); el('path',{d:'M-22 -34 q22 -9 44 0 l4 6 h-52z',fill:CERAMIC_FILL,stroke:CERAMIC_EDGE,'stroke-width':OUT},g); el('rect',{x:-4,y:-40,width:8,height:4.5,rx:2,fill:'#d1c3ab'},g); }},
+ {id:'gauze',cat:'heat',name:'陶瓷纖維網',use:'鋪在三腳架上的鐵絲網，中間有一塊陶瓷纖維。燒杯、燒瓶放在上面加熱，受熱才均勻、也不會直接被火燒。',warn:'除了試管，其他玻璃容器加熱都要隔著這片網。',draw:g=>{ shadowEllipse(g,0,18,28,5,.08); el('path',{d:'M-38 -18 h76 l-9 36 h-58z',fill:'none',stroke:METAL_DARK,'stroke-width':OUT},g); for(let i=-30;i<=30;i+=8) line(g,i,-18,i-3,18,1.1, METAL_DARK,{opacity:.7}); for(let y=-12;y<=12;y+=7) line(g,-36,y,36,y,1.1, METAL_DARK,{opacity:.7}); el('ellipse',{cx:0,cy:0,rx:21,ry:11,fill:'#fbfaf7',stroke:'#cdc6b7','stroke-width':1.6},g); gloss(g,'M-10 -2 q10 3 20 0',{opacity:.65}); }},
+ {id:'tripod',cat:'heat',name:'三腳架',use:'三隻腳的鐵架，上面放陶瓷纖維網或泥三角，酒精燈放在中間加熱。三角形的結構很穩。',warn:'',draw:g=>{ shadowEllipse(g,0,34,24,5,.08); el('ellipse',{cx:0,cy:-24,rx:26,ry:8,fill:'#d9e0e4',stroke:METAL_DARK,'stroke-width':OUT},g); el('ellipse',{cx:0,cy:-24,rx:18,ry:5,fill:'#eef2f5',stroke:'#c3d0d6','stroke-width':1.2},g); line(g,-20,-20,-30,34,3.2,METAL_DARK); line(g,20,-20,30,34,3.2,METAL_DARK); line(g,0,-18,0,34,3.2,METAL_DARK); line(g,-18,-20,18,-20,1.8,'#dfe8ec'); }},
+ {id:'claytri',cat:'heat',name:'泥三角',use:'鐵絲穿過三根耐熱陶瓷管做成的三角形，架在三腳架上撐坩堝，讓火直接燒到坩堝。',warn:'',draw:g=>{ line(g,0,-32,34,24,2.1,METAL_DARK); line(g,34,24,-34,24,2.1,METAL_DARK); line(g,-34,24,0,-32,2.1,METAL_DARK); [[0,-32,34,24],[34,24,-34,24],[-34,24,0,-32]].forEach(([x1,y1,x2,y2])=>{ const mx=(x1+x2)/2,my=(y1+y2)/2,a=Math.atan2(y2-y1,x2-x1)*180/Math.PI; el('rect',{x:-15,y:-4,width:30,height:8,rx:3,fill:CERAMIC_FILL,stroke:CERAMIC_EDGE,'stroke-width':1.5,transform:`translate(${mx} ${my}) rotate(${a})`},g); }); }},
+ {id:'hotplate',cat:'heat',name:'電磁加熱攪拌器',use:'用電的加熱板，同時能讓丟進燒杯的「磁攪拌子」轉動，一邊加熱一邊攪拌。',warn:'板面很燙，關機後別馬上碰。',draw:g=>{ shadowEllipse(g,0,31,28,5,.1); metalRect(g,-40,0,80,36,8); el('rect',{x:-32,y:-10,width:64,height:13,rx:4,fill:'#d8e0e4',stroke:METAL_DARK,'stroke-width':OUT},g); gloss(g,'M-24 -6 h40',{opacity:.5}); [ [-18,20], [18,20] ].forEach(([x,y])=>{ el('circle',{cx:x,cy:y,r:8,fill:'#fff',stroke:METAL_DARK,'stroke-width':OUT},g); el('circle',{cx:x,cy:y,r:2,fill:'#7d8f98'},g); for(let a=-70;a<=70;a+=35){ const rad=a*Math.PI/180; line(g,x+Math.cos(rad)*5.5,y+Math.sin(rad)*5.5,x+Math.cos(rad)*7.5,y+Math.sin(rad)*7.5,1,'#96aab2'); } }); glass(g,'M-16 -40 h32 v28 h-32z',{gloss:'M-10 -34 v20'}); liquidFillRect(g,-13,-21,26,10,'#5bb7df'); el('rect',{x:-9,y:-26,width:18,height:4,rx:2,fill:'#e7eef0',stroke:METAL_DARK,'stroke-width':1.2},g); }},
+ {id:'deflag',cat:'heat',name:'燃燒匙',use:'長長的金屬柄，末端接一個小碗。把要燒的東西放碗裡點燃，伸進集氣瓶觀察燃燒。',warn:'不是攪拌棒。',draw:g=>{ shadowEllipse(g,6,26,18,4,.08); line(g,-36,-34,12,18,3.8,METAL_DARK); el('path',{d:'M10 16 q15 -7 24 8 q-1 14 -14 14 q-13 -4 -10 -22z',fill:METAL_FILL,stroke:METAL_DARK,'stroke-width':OUT},g); gloss(g,'M14 21 q9 -4 15 2',{opacity:.85}); }},
+ /* 支撐夾持 */
+ {id:'stand',cat:'hold',name:'鐵架',use:'一根直立的鐵桿加底座，是組裝實驗裝置的骨架，鐵夾、自由夾、鐵環都鎖在它上面。',warn:'',draw:g=>{ simpleStand(g); metalRect(g,-11,-18,22,10,3); line(g,10,-13,34,-13,4.2,METAL_FILL); line(g,33,-19,43,-13,2.6,METAL_DARK); line(g,33,-7,43,-13,2.6,METAL_DARK); }},
+ {id:'clampholder',cat:'hold',name:'鐵夾（雙頂夾）',use:'兩個互相垂直的夾口。一邊鎖在鐵架的桿子上，另一邊鎖自由夾或鐵環的柄。',warn:'',draw:g=>{ metalRect(g,-16,-10,32,20,4); metalRect(g,-40,-6,24,12,3); metalRect(g,-6,-40,12,24,3); el('circle',{cx:-28,cy:0,r:5.4,fill:METAL_DARK},g); el('circle',{cx:0,cy:-28,r:5.4,fill:METAL_DARK},g); line(g,-40,0,-18,0,1.2,'#e7eef1'); line(g,0,-40,0,-18,1.2,'#e7eef1'); }},
+ {id:'clamp',cat:'hold',name:'自由夾',use:'夾住燒瓶、試管、冷凝管的夾子，柄插進鐵夾固定在鐵架上；旋鈕可以調整開口大小。',warn:'夾玻璃器材時不要鎖太緊。',draw:g=>{ metalRect(g,-43,-4,42,8,3); line(g,-12,0,-2,0,2,'#eff4f5'); line(g,0,0,18,-22,5.5,METAL_DARK); line(g,18,-22,37,-28,5.5,METAL_DARK); line(g,0,0,18,22,5.5,METAL_DARK); line(g,18,22,37,28,5.5,METAL_DARK); line(g,18,-22,36,-27,2.3,'#dbe4e8'); line(g,18,22,36,27,2.3,'#dbe4e8'); el('circle',{cx:-15,cy:0,r:6,fill:METAL_DARK},g); line(g,-15,-13,-15,-6,2.4,METAL_DARK); }},
+ {id:'ring',cat:'hold',name:'鐵環',use:'一個鐵圈加一根柄，鎖在鐵架上，用來放陶瓷纖維網、漏斗或撐住燒瓶。',warn:'',draw:g=>{ metalRect(g,-44,-4,26,8,3); el('circle',{cx:10,cy:0,r:24,fill:'none',stroke:METAL_DARK,'stroke-width':6},g); el('circle',{cx:10,cy:0,r:20,fill:'none',stroke:'#dfe7eb','stroke-width':2},g); el('circle',{cx:-34,cy:0,r:5.2,fill:METAL_DARK},g); }},
+ {id:'crucibletongs',cat:'hold',name:'坩堝鉗',use:'夾高溫的坩堝、蒸發皿或坩堝蓋。金屬耐高溫，長柄讓手離火遠。',warn:'',draw:g=>{ line(g,-38,-28,14,16,4.6,METAL_DARK); line(g,-38,28,14,-16,4.6,METAL_DARK); line(g,14,16,34,8,4.4,METAL_DARK); line(g,14,-16,34,-8,4.4,METAL_DARK); el('circle',{cx:-2,cy:0,r:5.5,fill:'#dce3e7',stroke:METAL_DARK,'stroke-width':OUT},g); line(g,-35,-24,-8,-2,1.2,'#dfe7ea'); line(g,-35,24,-8,2,1.2,'#dfe7ea'); }},
+ {id:'tweezers',cat:'hold',name:'鑷子',use:'夾小塊固體藥品、砝碼或濾紙。',warn:'用之前確認是乾淨的，才不會汙染藥品。夾砝碼一定用鑷子，手汗會讓砝碼變重。',draw:g=>{ line(g,-34,-30,32,28,5,METAL_DARK); line(g,-34,-20,32,18,5,METAL_DARK); line(g,-34,-30,-6,-8,6,METAL_DARK); line(g,-34,-27,-4,-5,1.6,'#dbe4e8'); line(g,14,12,28,24,2,'#dbe4e8'); line(g,14,6,28,14,2,'#dbe4e8'); }},
+ {id:'tongs',cat:'hold',name:'試管夾',use:'木製或鋼製的長夾子。加熱試管時夾住試管上端，手就不會燙到。',warn:'從試管底部套進去，夾在靠管口的位置。手握長柄的末端，別壓彈簧那一端。',draw:g=>{ line(g,-38,28,18,-20,5.5,'#9c734d'); line(g,-38,36,4,-2,5.5,'#9c734d'); line(g,18,-20,31,-31,5.5,'#9c734d'); line(g,6,-4,23,-18,5.5,'#9c734d'); line(g,-30,31,-8,11,1.4,'#ddb891'); line(g,-30,35,-11,18,1.4,'#ddb891'); el('circle',{cx:0,cy:-2,r:5.2,fill:METAL_DARK},g); el('rect',{x:-33,y:23,width:15,height:16,rx:3,fill:'#d7dee2',stroke:METAL_DARK,'stroke-width':OUT,transform:'rotate(-39 -25 31)'},g); }},
+ /* 秤量測量 */
+ {id:'balance',cat:'measure',name:'電子天平',use:'按一下就顯示重量，精確秤取物質的質量。精密的「微量天平」外面還有擋風的玻璃罩。',warn:'先歸零；東西放秤盤正中央；藥品要墊稱量紙或放稱量瓶，不可以直接放盤子上。',draw:g=>{ shadowEllipse(g,0,34,28,5,.1); metalRect(g,-40,10,80,30,7); el('rect',{x:-34,y:20,width:31,height:12,rx:2,fill:'#183037'},g); txt(-18,29,'12.50',{'font-size':9,fill:'#7cff9b','text-anchor':'middle','font-family':'monospace'},g); el('circle',{cx:20,cy:26,r:5,fill:'#fff',stroke:METAL_DARK,'stroke-width':1.8},g); el('rect',{x:-24,y:0,width:48,height:6,rx:3,fill:'#d3dde2',stroke:METAL_DARK,'stroke-width':OUT},g); el('path',{d:'M-28 0 v-34 h56 v34',fill:'rgba(210,233,246,.22)',stroke:GLASS_STROKE,'stroke-width':IN},g); gloss(g,'M-23 -30 v26',{opacity:.7}); }},
+ {id:'triplebeam',cat:'measure',name:'三樑天平',use:'靠移動三根橫樑上的騎碼來平衡，三根騎碼的讀數加起來就是質量。',warn:'先歸零；東西放秤盤中央；藥品要墊稱量紙或放稱量瓶。',draw:g=>{ shadowEllipse(g,0,33,30,5,.08); metalRect(g,-40,30,80,8,3); metalRect(g,-36,-6,6,36,2); el('ellipse',{cx:-23,cy:-10,rx:14,ry:4.5,fill:'#d4dde1',stroke:METAL_DARK,'stroke-width':OUT},g); el('rect',{x:-28,y:-8,width:8,height:38,fill:METAL_DARK},g); [-2,4,10].forEach((y,i)=>{ line(g,-10,y,39,y,2.4,METAL_DARK); el('rect',{x:-2+i*12,y:y-3,width:6,height:8,rx:1.5,fill:'#21333a'},g); }); el('rect',{x:38,y:-4,width:6,height:22,fill:METAL_DARK},g); line(g,-9,-13,37,-13,1.3,'#e5edf0'); }},
+ {id:'panbalance',cat:'measure',name:'上皿天平與砝碼',use:'兩個盤子的天平。待測物放左盤中央，用鑷子把砝碼一顆一顆加到右盤，平衡後砝碼加總就是質量。',warn:'先歸零。指針會偏向比較重的那一邊。砝碼一定用鑷子夾，用完放回盒子。',draw:g=>{ shadowEllipse(g,0,32,28,5,.08); metalRect(g,-44,28,88,10,3); metalRect(g,-3,-30,6,58,2); line(g,-38,-26,38,-26,4,METAL_DARK); line(g,0,-30,0,0,1.7,'#de6d61'); el('path',{d:'M-6 0 h12 l-6 -8z',fill:'#de6d61'},g); line(g,-30,-26,-30,-4,1.7,METAL_DARK); line(g,30,-26,30,-4,1.7,METAL_DARK); el('path',{d:'M-42 -4 q12 11 24 0z M18 -4 q12 11 24 0z',fill:'#cfd8dd',stroke:METAL_DARK,'stroke-width':OUT},g); el('rect',{x:24,y:-16,width:8,height:10,rx:1,fill:'#cba54b',stroke:'#8a7030','stroke-width':1},g); el('rect',{x:34,y:-12,width:5,height:6,rx:1,fill:'#cba54b',stroke:'#8a7030','stroke-width':1},g); }},
+ {id:'equalarm',cat:'measure',name:'等臂天平',use:'跟上皿天平很像，多了一根有騎碼的橫樑，可以量 0～10 g、每格 0.1 g，比只放砝碼更精細。',warn:'最後的讀數要加上騎碼的數值。這種天平的指針會偏向比較輕的那一邊。',draw:g=>{ shadowEllipse(g,0,32,28,5,.08); metalRect(g,-44,28,88,10,3); metalRect(g,-3,-40,6,68,2); line(g,-40,-36,40,-36,4,METAL_DARK); line(g,-30,-28,30,-28,2.3,METAL_DARK); for(let x=-28;x<=28;x+=8) line(g,x,-30,x,-26,1.1,METAL_DARK); el('rect',{x:6,y:-33,width:5,height:9,rx:1,fill:'#1f3138'},g); line(g,-32,-36,-32,-6,1.5,METAL_DARK); line(g,32,-36,32,-6,1.5,METAL_DARK); el('path',{d:'M-44 -6 q12 11 24 0z M20 -6 q12 11 24 0z',fill:'#cfd8dd',stroke:METAL_DARK,'stroke-width':OUT},g); line(g,0,-14,0,0,1.7,'#de6d61'); }},
+ {id:'weighpaper',cat:'measure',name:'稱量紙',use:'秤固體藥品時墊在秤盤上的紙，藥品倒在紙上，不會弄髒秤盤。',warn:'一張只用一次就丟掉，換藥品就換紙，避免互相汙染。',draw:g=>{ shadowEllipse(g,0,22,24,5,.08); el('path',{d:'M-32 -20 h54 l10 10 v40 h-64z',fill:'#fff',stroke:'#96a4ac','stroke-width':OUT},g); el('path',{d:'M22 -20 v10 h10',fill:'none',stroke:'#96a4ac','stroke-width':OUT},g); gloss(g,'M-22 -14 h30',{opacity:.7}); el('path',{d:'M-14 12 q14 -14 28 0 q-14 8 -28 0z',fill:'#f5c542'},g); bubbles(g,[[-8,9,1.4],[-2,6,1.2],[5,8,1.4],[10,11,1.2]],'#e0a800'); }},
+ {id:'spatula',cat:'measure',name:'藥勺（刮勺）',use:'從瓶子裡取固體藥品用的小匙，一端大、一端小：取多用大匙，取少用小匙。',warn:'取完藥品把勺子擦乾淨；剩下的藥品不可以倒回原瓶。',draw:g=>{ line(g,-36,30,24,-28,4.3,METAL_DARK); el('path',{d:'M-42 36 q-6 -10 6 -12 q8 2 4 8 q-4 4 -10 4z',fill:METAL_FILL,stroke:METAL_DARK,'stroke-width':OUT},g); el('path',{d:'M24 -28 q6 -14 16 -14 q8 4 2 12 q-6 6 -18 2z',fill:METAL_FILL,stroke:METAL_DARK,'stroke-width':OUT},g); line(g,-22,17,6,-10,1.2,'#dbe4e8'); }},
+ {id:'thermo',cat:'measure',name:'溫度計',use:'量溫度。紅色液柱的是酒精溫度計，適合較低溫；銀白色液柱的是水銀溫度計，量測範圍比較高。',warn:'要在它的量測範圍內使用。絕對不可以拿溫度計當攪拌棒，很容易斷。',draw:g=>{ shadowEllipse(g,0,35,10,4,.08); el('rect',{x:-6,y:-44,width:12,height:72,rx:6,fill:'#fff',stroke:GLASS_STROKE,'stroke-width':OUT},g); gloss(g,'M-3 -36 v58',{opacity:.75}); el('circle',{cx:0,cy:35,r:9,fill:'#de675d',stroke:'#a44840','stroke-width':1.2},g); el('rect',{x:-2.4,y:-10,width:4.8,height:42,fill:'#de675d'},g); for(let y=-38;y<24;y+=7) line(g,6,y,(y%14===(-38)%14?12:10),y,1.1,GLASS_STROKE); }},
+ /* 清潔安全 */
+ {id:'mortar',cat:'clean',name:'磨缽及杵',use:'把固體藥品磨成粉末，讓它更容易溶解或反應。',warn:'用之前確認乾淨。要秤重的藥品先磨再秤。',draw:g=>{ shadowEllipse(g,0,18,26,6,.1); el('path',{d:'M-36 -4 q36 18 72 0 q-4 28 -36 28 q-32 0 -36 -28z',fill:CERAMIC_FILL,stroke:CERAMIC_EDGE,'stroke-width':OUT},g); el('ellipse',{cx:0,cy:-4,rx:36,ry:8,fill:'#fff',stroke:CERAMIC_EDGE,'stroke-width':OUT},g); line(g,7,-2,28,-38,8,CERAMIC_EDGE); line(g,7,-2,28,-38,5,CERAMIC_FILL); }},
+ {id:'brush',cat:'clean',name:'試管刷',use:'鐵絲扭成的長柄，前端是一圈刷毛，用來刷試管內壁。有各種長度和粗細，依試管大小挑。',warn:'',draw:g=>{ line(g,-40,40,-10,10,3,METAL_DARK); line(g,-40,40,-40,34,3,METAL_DARK); for(let i=0;i<14;i++){ const t=i/13, x=-10+t*44, y=10-t*44; line(g,x-7,y-7,x+7,y+7,3.6,'#efe4cc'); } line(g,-10,10,24,-24,2,METAL_DARK); }},
+ {id:'ultrasonic',cat:'clean',name:'超音波清洗機',use:'一個裝水的槽，用每秒幾萬次的高頻振動在水裡產生無數微小氣泡，氣泡破裂時把器材細縫裡的髒東西震下來。',warn:'',draw:g=>{ shadowEllipse(g,0,32,26,5,.1); metalRect(g,-36,-24,72,60,6); el('rect',{x:-30,y:-18,width:60,height:26,rx:4,fill:'rgba(210,233,246,.85)',stroke:METAL_DARK,'stroke-width':IN},g); gloss(g,'M-24 -14 h34',{opacity:.55}); el('rect',{x:-32,y:-32,width:64,height:8,rx:2,fill:'#d0d9de',stroke:METAL_DARK,'stroke-width':OUT},g); [[-20,-4],[-6,-10],[10,-2],[22,-12]].forEach(([x,y])=>el('circle',{cx:x,cy:y,r:2.6,fill:'#fff',stroke:METAL_DARK,'stroke-width':.6},g)); el('rect',{x:-26,y:16,width:20,height:10,rx:2,fill:'#203239'},g); el('circle',{cx:20,cy:21,r:5,fill:'#fff',stroke:METAL_DARK,'stroke-width':1.5},g); }},
+ {id:'goggles',cat:'clean',name:'護目鏡',use:'保護眼睛，不讓藥品濺進去。',warn:'一進實驗室就戴上，做完才拿下。',draw:g=>{ shadowEllipse(g,0,17,26,5,.08); el('path',{d:'M-42 -6 q42 -16 84 0 v16 q-42 16 -84 0z',fill:'#6ec6b2',stroke:'#3f9c80','stroke-width':OUT},g); el('ellipse',{cx:-20,cy:2,rx:14,ry:10,fill:'#dff5ff',stroke:'#3f9c80','stroke-width':OUT},g); el('ellipse',{cx:20,cy:2,rx:14,ry:10,fill:'#dff5ff',stroke:'#3f9c80','stroke-width':OUT},g); gloss(g,'M-28 -1 q8 -4 16 0',{opacity:.65}); gloss(g,'M12 -1 q8 -4 16 0',{opacity:.65}); line(g,-42,-2,-46,-14,3,'#3f9c80'); line(g,42,-2,46,-14,3,'#3f9c80'); }},
+ {id:'shower',cat:'clean',name:'沖身洗眼器',use:'緊急用的淋浴和洗眼設備。身體沾到藥品就拉下上面的環，水從頂端灑下；眼睛沾到就踩踏板，中段的噴口會噴水洗眼睛。',warn:'進實驗室先確認它在哪裡、怎麼啟動。',draw:g=>{ line(g,0,-46,0,40,6,METAL_DARK); line(g,0,-46,-24,-46,5,METAL_DARK); line(g,-24,-46,-24,-40,5,METAL_DARK); el('ellipse',{cx:-24,cy:-38,rx:14,ry:4.5,fill:'#cfd7dc',stroke:METAL_DARK,'stroke-width':OUT},g); el('path',{d:'M-24 -34 v10 l4 4',stroke:'#e45b53','stroke-width':2,fill:'none'},g); el('circle',{cx:-24,cy:-23,r:4.2,fill:'none',stroke:'#e45b53','stroke-width':2},g); [-34,-28,-22,-16].forEach(x=>line(g,x,-33,x-2,-18,2,'#6bb3e7')); el('ellipse',{cx:0,cy:8,rx:18,ry:7,fill:'#d4dde2',stroke:METAL_DARK,'stroke-width':OUT},g); el('circle',{cx:-6,cy:6,r:2.6,fill:'#fff',stroke:METAL_DARK,'stroke-width':.8},g); el('circle',{cx:6,cy:6,r:2.6,fill:'#fff',stroke:METAL_DARK,'stroke-width':.8},g); line(g,-6,4,-10,-9,2,'#6bb3e7'); line(g,6,4,10,-9,2,'#6bb3e7'); metalRect(g,-31,35,62,6,2); metalRect(g,-24,28,18,8,2); }},
+ ];
+const TOOL=Object.fromEntries(TOOLS.map(t=>[t.id,t]));
+/* 若日後有 AI 圖：放在 img/tool-<id>.png（正方形、透明背景），並把下面的 USE_TOOL_IMG 改成 true，有圖的會自動取代向量圖 */
+const USE_TOOL_IMG=true; const TIMG={}; if(USE_TOOL_IMG) TOOLS.forEach(t=>{ const i=new Image(); i.onload=()=>{ TIMG[t.id]=true; clearTimeout(TIMG._h); TIMG._h=setTimeout(()=>{ renderTools(); if(curTool) renderDetail(); if(typeof mDone!=='undefined'&&mDone===0) newMatch(); },120); }; i.src='img/tool-'+t.id+'.png'; });
+function toolSvg(id,size){ const sv=el('svg',{viewBox:'-50 -50 100 100'}); if(size){ sv.style.width=size+'px'; sv.style.height=size+'px'; } if(TIMG[id]) el('image',{href:'img/tool-'+id+'.png',x:-48,y:-48,width:96,height:96,preserveAspectRatio:'xMidYMid meet'},sv); else TOOL[id].draw(sv); return sv; }
+let catFilter='all', curTool=null;
+function renderChips(){ const c=$('chips'); c.innerHTML=''; [['all','全部'],...Object.entries(CATS)].forEach(([k,n])=>{ const b=document.createElement('button'); b.textContent=n+(k==='all'?` ${TOOLS.length}`:` ${TOOLS.filter(t=>t.cat===k).length}`); b.setAttribute('aria-pressed',catFilter===k); b.onclick=()=>{ catFilter=k; renderChips(); renderTools(); }; c.appendChild(b); }); }
+function renderTools(){ const w=$('tools'); w.innerHTML=''; TOOLS.filter(t=>catFilter==='all'||t.cat===catFilter).forEach(t=>{ const d=document.createElement('div'); d.className='tcard'; d.setAttribute('aria-pressed',curTool===t.id); d.appendChild(toolSvg(t.id)); d.insertAdjacentHTML('beforeend',`${t.name}<span class="cat">${CATS[t.cat]}</span>`); d.onclick=()=>{ curTool=t.id; renderTools(); renderDetail(); }; w.appendChild(d); }); }
+function renderDetail(){ const d=$('detail'); const t=TOOL[curTool]; if(!t){ d.classList.remove('open'); d.innerHTML='<div class="empty">點一個器材，看它的用途和注意事項。</div>'; return; } d.innerHTML=''; const close=document.createElement('button'); close.className='detail-close'; close.type='button'; close.setAttribute('aria-label','關閉器材說明'); close.textContent='×'; close.onclick=()=>d.classList.remove('open'); d.appendChild(close); d.appendChild(toolSvg(t.id,180)); d.insertAdjacentHTML('beforeend',`<h3>${t.name}</h3><div class="cat">${CATS[t.cat]}</div><p>${t.use}</p>${t.warn?`<p class="warn">${t.warn}</p>`:''}`); d.classList.add('open'); }
+renderChips(); renderTools();
+
+/* ================= 看圖猜名字 ================= */
+let M8=[], mPick={card:null,name:null}, mDone=0;
+function newMatch(){ const pool=[...TOOLS].sort(()=>Math.random()-.5); M8=pool.slice(0,8); mPick={card:null,name:null}; mDone=0; const g=$('mgrid'), n=$('mnames'); g.innerHTML=''; n.innerHTML='';
+  M8.forEach(t=>{ const d=document.createElement('div'); d.className='mcard'; d.dataset.id=t.id; d.appendChild(toolSvg(t.id)); d.insertAdjacentHTML('beforeend','<span>？</span>'); d.onclick=()=>{ if(d.classList.contains('ok')) return; mPick.card=d; g.querySelectorAll('.mcard').forEach(x=>x.setAttribute('aria-pressed',x===d)); tryMatch(); }; g.appendChild(d); });
+  [...M8].sort(()=>Math.random()-.5).forEach(t=>{ const b=document.createElement('button'); b.textContent=t.name; b.dataset.id=t.id; b.onclick=()=>{ mPick.name=b; n.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); tryMatch(); }; n.appendChild(b); });
+  $('mscore').textContent='0 / 8'; }
+function tryMatch(){ const {card,name}=mPick; if(!card||!name) return; const ok=card.dataset.id===name.dataset.id;
+  if(ok){ card.classList.add('ok'); card.querySelector('span').textContent=name.textContent; name.classList.add('used'); mDone++; $('mscore').textContent=`${mDone} / 8`+(mDone===8?'　全部答對！':''); }
+  else { card.classList.add('no'); setTimeout(()=>card.classList.remove('no'),450); }
+  card.setAttribute('aria-pressed',false); name.setAttribute('aria-pressed',false); mPick={card:null,name:null}; }
+$('mnew').onclick=newMatch; newMatch();
+
+/* ================= 實驗室大搜查 ================= */
+const scene=$('scene');
+/* 小人：x 為中心，y 為腳底（或桌面線）。half=true 只畫上半身（站在桌後）。 */
+function kid(g,o){ const {x,y,hair='#3b2a1a',shirt='#4FA3E3',long=false,half=false,dir=1,mouth='smile',eyes='front',arms=[[24,22],[-24,22]],skirt=false,goggles='none',sc=1.2}=o;
+  const k=el('g',{transform:`translate(${x} ${y}) scale(${sc})`},g); const hy=half?-58:-84, by=half?-42:-66; // hy 頭中心, by 身體頂
+  if(!half){ el('rect',{x:-12,y:-28,width:9,height:28,rx:3,fill:'#3f4a5a'},k); el('rect',{x:3,y:-28,width:9,height:28,rx:3,fill:'#3f4a5a'},k); if(skirt) el('path',{d:'M-16 -30 h32 l6 16 h-44z',fill:shirt,opacity:.85},k); }
+  el('rect',{x:-17,y:by,width:34,height:half?44:40,rx:8,fill:shirt},k);
+  arms.forEach(([ax,ay])=>{ el('line',{x1:dir*12*Math.sign(ax||1),y1:by+8,x2:dir*ax,y2:by+8+ay,stroke:shirt,'stroke-width':9,'stroke-linecap':'round'},k); el('circle',{cx:dir*ax,cy:by+8+ay,r:5,fill:'#F3C9A3'},k); });
+  if(long) el('path',{d:`M-18 ${hy-4} q-6 34 -2 52 h40 q4 -18 -2 -52z`,fill:hair},k);
+  el('circle',{cx:0,cy:hy,r:16,fill:'#F3C9A3'},k); el('path',{d:`M-16 ${hy-2} q0 -18 16 -18 q16 0 16 18 q-8 -6 -16 -6 q-8 0 -16 6z`,fill:hair},k);
+  const ex=eyes==='side'?dir*4:0; el('circle',{cx:-6+ex,cy:hy,r:2,fill:'#1F2933'},k); el('circle',{cx:6+ex,cy:hy,r:2,fill:'#1F2933'},k);
+  if(goggles==='on'){ el('path',{d:`M-14 ${hy-4} h28 v8 h-28z`,fill:'rgba(96,195,164,.55)',stroke:'#3f9c80','stroke-width':1.5,rx:3},k); }
+  if(goggles==='head'){ el('path',{d:`M-13 ${hy-16} q13 -8 26 0 v6 q-13 -6 -26 0z`,fill:'rgba(96,195,164,.8)',stroke:'#3f9c80','stroke-width':1.5},k); }
+  if(mouth==='smile') el('path',{d:`M-5 ${hy+7} q5 4 10 0`,stroke:'#b5543a','stroke-width':1.5,fill:'none'},k);
+  if(mouth==='o') el('ellipse',{cx:0,cy:hy+8,rx:3,ry:4,fill:'#b5543a'},k);
+  if(mouth==='tongue'){ el('ellipse',{cx:0,cy:hy+8,rx:4,ry:3,fill:'#b5543a'},k); el('ellipse',{cx:dir*4,cy:hy+12,rx:3,ry:4,fill:'#E5533D'},k); }
+  if(mouth==='eat') el('path',{d:`M-5 ${hy+8} q5 -3 10 0`,stroke:'#b5543a','stroke-width':1.5,fill:'none'},k);
+  return k; }
+const bottle=(g,x,y,c='#8E44AD',open=false,h=30)=>{ const w=18, top=y-h; el('rect',{x:x-w/2,y:top,width:w,height:h,rx:4,fill:'rgba(215,234,245,.84)',stroke:GLASS_STROKE,'stroke-width':1.8},g); liquidFillRect(g,x-w/2+2,top+h*.32,w-4,h*.5,c); el('path',{d:`M${x-3} ${top+5} v${h-10}`,stroke:'#fff','stroke-width':2,'stroke-linecap':'round',opacity:.78},g); el('rect',{x:x-5,y:top-8,width:10,height:8,rx:2,fill:'#dce6ea',stroke:GLASS_STROKE,'stroke-width':1.5},g); if(!open) el('rect',{x:x-6,y:top-12,width:12,height:5,rx:2.5,fill:'#23323a'},g); };
+const beakerAt=(g,x,y,w=22,h=26,c=LIQ)=>{ el('path',{d:`M${x-w/2} ${y-h} h${w} v${h-4} q0 4 -4 4 h${-w+8} q-4 0 -4 -4z`,fill:'rgba(215,234,245,.8)',stroke:GLASS_STROKE,'stroke-width':1.7},g); liquidFillRect(g,x-w/2+2,y-h*.48,w-4,h*.48,c); el('path',{d:`M${x-w/2+5} ${y-h+5} v${h-12}`,stroke:'#fff','stroke-width':1.8,'stroke-linecap':'round',opacity:.75},g); }
+const lampAt=(g,x,y,lit=true)=>{ el('path',{d:`M${x-13} ${y-16} q13 -6 26 0 v16 h-26z`,fill:'rgba(215,234,245,.82)',stroke:GLASS_STROKE,'stroke-width':1.7},g); liquidFillPath(g,`M${x-9} ${y-7} q9 -3 18 0 v8 q-9 4 -18 0z`,'#6fb0e5',[x,y-7,9,2.2]); el('rect',{x:x-6,y:y-22,width:12,height:7,rx:2,fill:'#e2e8ec',stroke:GLASS_STROKE,'stroke-width':1.4},g); el('rect',{x:x-1.5,y:y-30,width:3,height:8,fill:METAL_DARK},g); el('path',{d:`M${x-5} ${y-13} v10`,stroke:'#fff','stroke-width':1.6,'stroke-linecap':'round',opacity:.68},g); if(lit) flame(g,x,y-28,.62); }
+const HAZ=[
+ {id:'run',name:'追逐嬉戲',rule:'實驗室裡不奔跑、不推擠、不嬉鬧。跌倒撞到藥品或火源，後果很嚴重。',box:{x:120,y:440,w:180,h:150}},
+ {id:'sniff',name:'鼻子貼著瓶口聞',rule:'要聞氣味時，把瓶子拿遠一點，用手在瓶口上方輕輕搧，聞飄過來的一點點就好。',box:{x:90,y:150,w:100,h:112}},
+ {id:'lick',name:'用舌頭嚐藥品',rule:'任何藥品都不可以放進嘴巴嚐。辨認藥品看標籤、問老師。',box:{x:80,y:340,w:90,h:90}},
+ {id:'floor',name:'書包雜物放走道',rule:'書包、外套放到指定的櫃子或走道外；地板堆東西會絆倒人，緊急時也擋住逃生路線。',box:{x:530,y:520,w:130,h:72}},
+ {id:'socket',name:'插座旁邊有水',rule:'插座和電器附近要保持乾燥，打翻的水要先擦乾再繼續用電。',box:{x:645,y:240,w:80,h:70}},
+ {id:'hair',name:'長頭髮沒綁起來',rule:'長頭髮要綁好、盤起來或戴髮套，垂下來的頭髮很容易掃到火焰或藥品。',box:{x:220,y:150,w:110,h:112}},
+ {id:'gauze',name:'燒杯直接放火上燒',rule:'除了試管，玻璃容器加熱都要放在陶瓷纖維網上，受熱才均勻、不會炸裂。',box:{x:365,y:170,w:110,h:92}},
+ {id:'aim',name:'試管口對著同學',rule:'加熱試管時管口要朝向沒有人的地方，液體突然沸騰噴出來會燙傷人。',box:{x:470,y:150,w:130,h:112}},
+ {id:'lampon',name:'沒人用的酒精燈還燒著',rule:'酒精燈不用時立刻用燈罩蓋熄，不可以放著燒。',box:{x:450,y:390,w:60,h:42}},
+ {id:'pour',name:'倒藥品沒用玻棒導引',rule:'倒液體藥品時要用玻棒引流，讓液體沿著玻棒慢慢流進容器，才不會濺出來。',box:{x:210,y:350,w:130,h:82}},
+ {id:'distract',name:'做實驗時東張西望',rule:'做實驗要專心看著自己手上的東西，一邊聊天一邊操作最容易打翻或加錯藥品。',box:{x:340,y:340,w:100,h:92}},
+ {id:'dirty',name:'用過的器皿沒清洗',rule:'實驗做完，器皿要立刻清洗乾淨、晾乾、放回原位，殘留的藥品會腐蝕器材、汙染下一次實驗。',box:{x:790,y:230,w:150,h:100}},
+ {id:'mess',name:'藥品沒蓋、沒歸位',rule:'開過的試藥瓶要馬上蓋回去；不用的藥品和器材要放回原位，桌面只留正在用的東西。',box:{x:620,y:380,w:120,h:56}},
+ {id:'teacher',name:'沒有老師在場',rule:'做實驗一定要有老師或專業人員在場指導，也絕對不要一個人在實驗室工作。',box:{x:800,y:350,w:190,h:160}},
+ {id:'eat',name:'在實驗室吃東西',rule:'實驗室裡不吃東西、不喝飲料，藥品可能沾到食物被吃下去。',box:{x:340,y:490,w:110,h:105}},
+ {id:'goggles',name:'護目鏡沒戴好',rule:'護目鏡一進實驗室就戴在眼睛上，推到頭頂等於沒戴；操作腐蝕性藥品時更要戴。',box:{x:520,y:330,w:100,h:100}},
+];
+function drawScene(){ const g=scene; g.innerHTML='';
+  const floorColors=['#ddd4c0','#d5cbb5'];
+  const bg=el('defs',{},g);
+  let lg=el('linearGradient',{id:'wallGrad',x1:'0',y1:'0',x2:'0',y2:'1'},bg); el('stop',{offset:'0%','stop-color':'#edf4f7'},lg); el('stop',{offset:'100%','stop-color':'#dde8ee'},lg);
+  lg=el('linearGradient',{id:'deskGrad',x1:'0',y1:'0',x2:'0',y2:'1'},bg); el('stop',{offset:'0%','stop-color':'#53687b'},lg); el('stop',{offset:'100%','stop-color':'#3b4c5b'},lg);
+  el('rect',{x:0,y:0,width:1000,height:330,fill:'url(#wallGrad)'},g); el('rect',{x:0,y:316,width:1000,height:12,fill:'#c1cbd2'},g);
+  for(let r=0;r<3;r++) for(let c=0;c<11;c++) el('rect',{x:c*92,y:330+r*90,width:92,height:90,fill:floorColors[(r+c)%2]},g);
+  for(let x=0;x<=1000;x+=92) line(g,x,330,x,600,1,'rgba(125,111,87,.18)');
+  for(let y=330;y<=600;y+=90) line(g,0,y,1000,y,1,'rgba(125,111,87,.18)');
+
+  [40,190].forEach(x=>{ el('rect',{x,y:40,width:120,height:130,rx:6,fill:'#d6edf8',stroke:'#8fa3b3','stroke-width':4},g); el('rect',{x:x+8,y:48,width:104,height:114,fill:'#bee4f6'},g); el('path',{d:`M${x+20} 82 q18 -18 34 0 q10 -10 22 -2 q6 1 12 8 q18 -12 30 6`,fill:'#f6fbff',opacity:.92},g); line(g,x+60,40,x+60,170,3,'#8fa3b3'); line(g,x,105,x+120,105,3,'#8fa3b3'); });
+  el('rect',{x:360,y:40,width:200,height:112,rx:4,fill:'#fff',stroke:'#94a6b4','stroke-width':3},g); txt(460,71,'實驗室安全守則',{'text-anchor':'middle','font-size':16,'font-weight':700},g); for(let i=0;i<4;i++) el('rect',{x:382,y:84+i*14,width:156-i*12,height:6,rx:3,fill:'#cfd8de'},g);
+  el('rect',{x:600,y:50,width:92,height:114,rx:4,fill:'#fff',stroke:'#94a6b4','stroke-width':3},g); el('rect',{x:612,y:62,width:68,height:72,rx:2,fill:'#ffe9e0'},g); txt(646,150,'急救',{'text-anchor':'middle','font-size':12,fill:METAL_DARK},g); line(g,646,80,646,120,8,'#E5533D'); line(g,626,100,666,100,8,'#E5533D');
+
+  el('rect',{x:903,y:38,width:84,height:292,rx:2,fill:'#bca17c',stroke:'#8B6B43','stroke-width':4},g); el('path',{d:'M903 38 h84 v292 h-84',fill:'none',stroke:'#d9c3a6','stroke-width':6,opacity:.4},g); el('rect',{x:920,y:58,width:50,height:62,fill:'#cde6f3',stroke:'#8B6B43','stroke-width':2},g); el('circle',{cx:970,cy:200,r:5,fill:'#5f6873'},g);
+  el('rect',{x:800,y:418,width:180,height:18,rx:3,fill:'#7f6243'},g); el('rect',{x:804,y:436,width:172,height:78,rx:2,fill:'#9e7b54'},g); el('rect',{x:822,y:446,width:48,height:50,rx:3,fill:'#876648'},g); el('rect',{x:830,y:454,width:8,height:4,rx:2,fill:'#dbc39e'},g); el('rect',{x:854,y:454,width:8,height:4,rx:2,fill:'#dbc39e'},g); el('path',{d:'M812 423 q70 8 156 0',stroke:'#fff','stroke-width':2,opacity:.25,fill:'none'},g);
+  el('rect',{x:860,y:360,width:60,height:50,rx:8,fill:'#4a5864'},g); el('rect',{x:850,y:406,width:80,height:14,rx:5,fill:'#333d46'},g);
+  el('rect',{x:890,y:378,width:78,height:44,rx:5,fill:'#fff',stroke:'#E5533D','stroke-width':2,transform:'rotate(-6 928 400)'},g); txt(928,397,'老師外出',{'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#E5533D',transform:'rotate(-6 928 400)'},g); txt(928,412,'請自行練習',{'text-anchor':'middle','font-size':10,fill:METAL_DARK,transform:'rotate(-6 928 400)'},g);
+
+  el('rect',{x:790,y:250,width:150,height:82,rx:8,fill:'#c7d1d9',stroke:'#8a93a2','stroke-width':3},g); el('rect',{x:800,y:260,width:130,height:52,rx:4,fill:'#aeb8c2'},g); el('rect',{x:804,y:264,width:122,height:44,rx:4,fill:'#97a4b0'},g); el('path',{d:'M860 262 v-34 q0 -10 -12 -10 h-18 q-12 0 -12 10',stroke:'#8a93a2','stroke-width':8,fill:'none','stroke-linecap':'round'},g); line(g,830,218,850,218,3,'#cfd8de'); line(g,850,218,850,230,3,'#cfd8de');
+  [[812,300,'#8E44AD'],[840,300,'#E5533D'],[870,302,'#F5C542'],[900,300,'#2E9B8F'],[826,282,'#4FA3E3'],[885,284,'#8E44AD']].forEach(([x,y,c])=>{ beakerAt(g,x,y,22,24,c); el('path',{d:`M${x-9} ${y-14} q4 7 8 0 q4 7 8 0`,stroke:c,'stroke-width':2.2,fill:'none',opacity:.6},g); }); txt(865,325,'～',{'text-anchor':'middle','font-size':10,fill:'#5f6873'},g);
+  el('rect',{x:690,y:250,width:26,height:30,rx:3,fill:'#fff',stroke:'#8a93a2','stroke-width':2},g); line(g,699,258,699,268,3,'#5f6873'); line(g,707,258,707,268,3,'#5f6873'); line(g,703,270,703,276,3,'#5f6873'); el('path',{d:'M689 296 q20 -15 42 0 q10 10 -8 13 q-30 4 -34 -13z',fill:'#6bb4e6',opacity:.74},g); beakerAt(g,660,300,22,26,'#6bb4e6'); el('path',{d:'M672 282 l8 8 l6 -4',stroke:'#6bb4e6','stroke-width':3,fill:'none'},g); el('rect',{x:650,y:300,width:110,height:8,rx:2,fill:'#b8ab8e'},g);
+
+  // back desk
+  el('rect',{x:80,y:255,width:580,height:16,rx:4,fill:'#506476'},g); el('rect',{x:90,y:271,width:560,height:60,rx:2,fill:'url(#deskGrad)'},g); line(g,92,274,646,274,2,'rgba(255,255,255,.2)');
+  kid(g,{x:135,y:270,half:true,hair:'#1a1a1a',shirt:'#F06292',mouth:'o',arms:[[18,26],[-22,20]],goggles:'on'});
+  kid(g,{x:265,y:270,half:true,hair:'#4b2c0f',shirt:'#F5C542',long:true,arms:[[26,26],[-24,24]],goggles:'on'});
+  kid(g,{x:430,y:270,half:true,hair:'#3b2a1a',shirt:'#60C3A4',arms:[[-28,20],[24,26]],goggles:'on'});
+  kid(g,{x:500,y:270,half:true,hair:'#1a1a1a',shirt:'#E5533D',arms:[[30,14],[-22,26]],goggles:'on'});
+  kid(g,{x:590,y:270,half:true,hair:'#4b2c0f',shirt:'#8E44AD',mouth:'o',arms:[[-26,18],[24,26]],goggles:'on',dir:-1,eyes:'side'});
+  bottle(g,160,258,'#2E9B8F',true,30); line(g,150,201,160,227,2,'#8a93a2',{'stroke-dasharray':'4 4'}); line(g,162,198,166,227,2,'#8a93a2',{'stroke-dasharray':'4 4'});
+  lampAt(g,305,258,true); line(g,294,209,304,243,6,'#6d4a2b');
+  lampAt(g,395,258,true); beakerAt(g,395,226,30,34,'#F5C542'); [380,395,410].forEach(x=>line(g,x,194,x,176,2,'#adb3b8',{'stroke-dasharray':'4 5'})); line(g,381,180,387,172,2,'#adb3b8'); line(g,396,180,402,172,2,'#adb3b8'); line(g,411,180,417,172,2,'#adb3b8');
+  lampAt(g,520,258,true); line(g,528,228,556,214,6,'#b98650'); line(g,550,212,572,234,8,GLASS_STROKE); line(g,550,212,572,234,4,'#f092a7',{opacity:.8}); el('path',{d:'M573 235 q11 -4 17 -14 q-2 8 4 10 q-5 10 -15 14 q-10 -1 -6 -10z',fill:'#f6d16b',opacity:.95},g);
+
+  // front desk
+  el('rect',{x:60,y:425,width:680,height:16,rx:4,fill:'#506476'},g); el('rect',{x:70,y:441,width:660,height:72,rx:2,fill:'url(#deskGrad)'},g); line(g,72,444,726,444,2,'rgba(255,255,255,.2)');
+  kid(g,{x:120,y:440,half:true,hair:'#1a1a1a',shirt:'#4FA3E3',mouth:'tongue',arms:[[12,10],[-26,22]],goggles:'on'});
+  kid(g,{x:265,y:440,half:true,hair:'#3b2a1a',shirt:'#F5C542',arms:[[-26,6],[26,20]],goggles:'on'});
+  kid(g,{x:385,y:440,half:true,hair:'#4b2c0f',shirt:'#60C3A4',long:true,arms:[[30,-6],[-22,24]],goggles:'on',dir:-1,eyes:'side'});
+  kid(g,{x:565,y:440,half:true,hair:'#1a1a1a',shirt:'#F06292',arms:[[26,20],[-24,26]],goggles:'head'});
+  line(g,132,400,138,370,3, METAL_DARK); el('ellipse',{cx:139,cy:368,rx:8,ry:5,fill:'#F5C542',stroke:'#c7992f','stroke-width':1.2},g); bottle(g,110,428,'#F5C542',true,26);
+  beakerAt(g,300,428,32,34,'#2E9B8F'); const bt=el('g',{transform:'translate(240 372) rotate(-50)'},g); bottle(bt,0,0,'#2E9B8F',true,28); line(g,252,384,294,396,4,'#2E9B8F'); [[286,412],[318,404],[326,416],[272,418]].forEach(([x,y])=>el('circle',{cx:x,cy:y,r:3,fill:'#2E9B8F',opacity:.8},g));
+  beakerAt(g,415,428,26,30,'#8E44AD'); line(g,352,368,350,354,2.5,METAL_DARK); line(g,346,376,338,366,2.5,METAL_DARK); line(g,346,358,334,354,2.5,METAL_DARK);
+  lampAt(g,480,428,true); [465,480,495].forEach(x=>el('path',{d:`M${x} 398 q7 -11 0 -20 q7 -10 0 -18`,stroke:'#f7a339','stroke-width':2.2,fill:'none',opacity:.85},g));
+  bottle(g,596,428,'#E5533D',false,32); txt(596,410,'酸',{'text-anchor':'middle','font-size':10,'font-weight':700,fill:'#fff'},g);
+  bottle(g,640,428,'#F5C542',true,28); const tb=el('g',{transform:'translate(672 422) rotate(75)'},g); bottle(tb,0,0,'#8E44AD',true,26); bottle(g,708,428,'#2E9B8F',true,22); el('rect',{x:690,y:415,width:44,height:5,rx:2,fill:GLASS_STROKE,transform:'rotate(-25 712 418)'},g); el('circle',{cx:660,cy:424,r:4,fill:'#1F2933'},g); el('circle',{cx:720,cy:402,r:4,fill:'#1F2933'},g);
+
+  // floor students and clutter
+  kid(g,{x:170,y:588,hair:'#1a1a1a',shirt:'#E5533D',mouth:'o',arms:[[32,4],[-28,30]],goggles:'on'}); kid(g,{x:255,y:588,hair:'#4b2c0f',shirt:'#4FA3E3',arms:[[-32,0],[30,24]],skirt:true,goggles:'on'});
+  [520,538,556].forEach((yy,i)=>line(g,100-i*5,yy,130+i*5,yy,3,'#8a93a2'));
+  kid(g,{x:390,y:588,hair:'#3b2a1a',shirt:'#8E44AD',mouth:'eat',arms:[[10,2],[-26,20]],goggles:'on'}); el('path',{d:'M396 512 q12 -8 22 0 q-2 8 -22 0z',fill:'#e6b96f',stroke:'#c19246','stroke-width':1.2},g); el('rect',{x:350,y:522,width:16,height:30,rx:3,fill:'#F5C542',stroke:'#cc9d2d','stroke-width':1.2},g); el('rect',{x:353,y:517,width:10,height:6,rx:2,fill:'#8a93a2'},g);
+  el('path',{d:'M540 585 v-40 q0 -12 12 -12 h40 q12 0 12 12 v40z',fill:'#2E6FD8'},g); el('path',{d:'M556 533 q20 -22 40 0',stroke:'#1F2933','stroke-width':6,fill:'none'} ,g); el('rect',{x:610,y:565,width:36,height:8,fill:'#E5533D',transform:'rotate(-8 628 569)'},g); el('rect',{x:606,y:575,width:36,height:8,fill:'#60C3A4'},g); el('rect',{x:590,y:583,width:56,height:4,fill:'#fff',stroke:'#8a93a2'},g);
+
+  HAZ.forEach(h=>{ const hg=el('g',{class:'hot'+(S.found.includes(h.id)?' found':''),'data-id':h.id},g); el('rect',{class:'hb',x:h.box.x,y:h.box.y,width:h.box.w,height:h.box.h,rx:10},hg); hg.onclick=()=>hit(h,hg); if(S.found.includes(h.id)) mark(h,hg,false); });
+  updateHunt(); }
+function mark(h,hg,animate){ const cx=h.box.x+h.box.w/2, cy=h.box.y+h.box.h/2, r=Math.max(h.box.w,h.box.h)/2+6; const mg=el('g',{class:animate?'ring':''},hg); el('ellipse',{cx,cy,rx:h.box.w/2+8,ry:h.box.h/2+8,fill:'none',stroke:'#E5533D','stroke-width':4},mg); const n=HAZ.indexOf(h)+1; el('circle',{cx:h.box.x+h.box.w-4,cy:h.box.y+4,r:13,fill:'#E5533D'},mg); txt(h.box.x+h.box.w-4,h.box.y+9,n,{'text-anchor':'middle','font-size':14,'font-weight':700,fill:'#fff'},mg); }
+function hit(h,hg){ if(S.found.includes(h.id)) return; S.found.push(h.id); save(); hg.classList.add('found'); mark(h,hg,true); updateHunt(h.id); }
+function baseHuntHint(){ return window.innerWidth<=640?'這間實驗室裡有 16 個不安全的地方，左右滑動找出來！':'這間實驗室裡有 16 個不安全的地方，點出來！'; }
+function updateHunt(newId){ $('hcount').textContent=S.found.length; const ul=$('flist'); ul.innerHTML=''; HAZ.forEach((h,i)=>{ const li=document.createElement('li'); const on=S.found.includes(h.id); li.className=(on?'on':'')+(h.id===newId?' new':''); li.innerHTML=`<b>${i+1}</b><span>${on?`<strong>${h.name}</strong><br>${h.rule}`:'？'}</span>`; ul.appendChild(li); }); const li=ul.querySelector('.new'); if(li) li.scrollIntoView({block:'nearest'});
+  $('huntHint').textContent=S.found.length===HAZ.length?'全部找到了！這些就是最常見的 16 種不安全行為。':S.found.length?`還有 ${HAZ.length-S.found.length} 個藏在畫面裡。`:baseHuntHint(); }
+window.addEventListener('resize',()=>{ updateHunt(); });
+$('hintBtn').onclick=()=>{ const left=HAZ.filter(h=>!S.found.includes(h.id)); if(!left.length) return; const h=left[Math.floor(Math.random()*left.length)]; const r=scene.querySelector(`[data-id="${h.id}"] .hb`); r.classList.remove('pulse'); void r.getBBox(); r.classList.add('pulse'); setTimeout(()=>r.classList.remove('pulse'),3100); };
+$('revealBtn').onclick=()=>{ HAZ.forEach(h=>{ if(!S.found.includes(h.id)) S.found.push(h.id); }); save(); drawScene(); };
+$('hresetBtn').onclick=()=>{ S.found=[]; save(); drawScene(); };
+drawScene();
+
+/* ================= 安全守則 ================= */
+const RULES=[
+ {t:'進實驗室之前',icon:'🚪',items:['先把窗戶全部打開通風；等老師講解完再開抽風機。','換上實驗衣保護衣服和皮膚；不穿涼鞋、不戴隱形眼鏡，長頭髮綁好。','先弄清楚滅火器、急救箱、沖身洗眼器、電箱、瓦斯總開關在哪裡。','絕對不要一個人在實驗室工作，要確定有人聽得到你。']},
+ {t:'實驗室裡的規矩',icon:'🤫',items:['保持安靜、守秩序；不大聲喧嘩、不奔跑、不吃東西。','老師沒有規定的實驗不可以自己做。','實驗室裡陳列的儀器和藥品不可以任意動用。','每一種藥品都要附有安全資料表（SDS），發生意外時才知道怎麼處理。']},
+ {t:'使用藥品',icon:'🧪',items:['取用的量以課本規定為準，絕不超量。','剩下的藥品不可以倒回原瓶；一支滴管只吸一種藥品，避免汙染。','打開試藥瓶後，瓶蓋不可以隨便放，用完馬上蓋回去。','吸取液體一定用吸球，絕對不可以用嘴吸。','會揮發或有毒的藥品要在抽氣櫃或手套箱裡操作。','藥品和溶劑要遠離火源，尤其是乙醚、酒精、苯、丙酮這類容易揮發、燃燒的液體。','實驗廢棄物集中處理，不可以隨便倒掉或丟掉。']},
+ {t:'加熱與裝置',icon:'🔥',items:['加熱試管時，管口不可以朝向自己或別人。','蒸餾或會產生易燃物的實驗，做完要先熄火，再拆裝置。','所有電器設備都要接地；潮濕環境的插座要加裝漏電斷路器。','玻璃管要接橡皮管時，先用水或凡士林潤滑接口，抓握處用布包住，慢慢旋轉推入，免得玻璃管斷掉刺傷手。']},
+ {t:'離開之前',icon:'🧹',items:['儀器洗乾淨放回原位；熄滅火源；關掉水、瓦斯和電源；整理實驗桌、水槽和地面；向老師報告，經允許才能離開。']},
+];
+function renderRules(){ const w=$('rules'); w.innerHTML=''; let n=0, total=0; RULES.forEach(gp=>{ const d=document.createElement('div'); d.className='rgroup'; d.innerHTML=`<h3><span>${gp.icon}</span>${gp.t}</h3>`; gp.items.forEach(it=>{ const k=n++; total++; const on=S.rules.includes(k); const l=document.createElement('label'); l.className=on?'on':''; l.innerHTML=`<input type="checkbox" ${on?'checked':''}><span>${it}</span>`; l.querySelector('input').onchange=e=>{ if(e.target.checked){ if(!S.rules.includes(k)) S.rules.push(k); } else S.rules=S.rules.filter(x=>x!==k); save(); l.classList.toggle('on',e.target.checked); $('rbar').style.width=(S.rules.length/total*100)+'%'; }; d.appendChild(l); }); w.appendChild(d); }); $('rbar').style.width=(S.rules.length/total*100)+'%'; }
+renderRules();
+
+/* ================= 隨堂測驗 ================= */
+const Q=[
+ {q:'關於試管的使用，下列哪一項是錯的？',o:['加熱液體時，試管要稍微傾斜。','要混合試管裡的兩種液體，手握試管上端，把底部左右輕輕甩動。','加熱時，試管口不可以對著人。','試管用完先平放桌上，下次要用比較方便。'],a:3,why:'用完的試管要洗乾淨、倒插在試管架上晾乾。平放桌上容易滾落打破，殘留的藥品也會汙染下一次實驗。'},
+ {q:'要熄滅酒精燈，正確的方法是？',o:['用嘴巴吹熄。','倒水澆熄。','用燈罩蓋熄。','用濕布蓋熄。'],a:2,why:'燈罩蓋上去，隔絕空氣火就熄了。用嘴吹可能把火焰吹進燈裡引燃酒精；濕布是酒精燈打翻起火時的滅火方法，不是平常熄燈的方式。'},
+ {q:'小安的酒精燈裡酒精剩不到四分之一，想請隔壁的小霖把點著的燈裡的酒精倒一些過來。小霖說：「不行，太危險了，要先熄火、等燈冷了再用漏斗加酒精。」誰說得對？',o:['小安','小霖','兩人都對','兩人都錯'],a:1,why:'燃燒中的酒精燈絕不可以加酒精或倒酒精給別人，火焰會沿著酒精燒起來。要先熄火、冷卻，再用漏斗加到 1/3～2/3。'},
+ {q:'在實驗室裡，下列哪些是危險的行為？<span class="sub">（甲）在實驗室裡吃東西喝飲料　（乙）追逐、嬉鬧　（丙）點燃酒精燈後，用課本擋風　（丁）直接把鼻子湊到瓶口聞藥品</span>',o:['甲乙','乙丁','乙丙丁','甲乙丙丁'],a:3,why:'四項都危險。課本是紙，靠近火焰會燒起來；聞藥品要用手搧。'},
+ {q:'下列哪一項操作是正確的？',o:['要辨認藥品，可以取一點點摸摸看或用舌尖嚐。','想聞氣體的味道，用手在容器口上方搧動，聞飄過來的一點點。','用量筒量完體積，直接加熱比較方便。','用試管裝液體加熱時，管口朝正上方最安全。'],a:1,why:'嚐、摸藥品都不行；量筒不能加熱；試管加熱要傾斜約 45°、管口朝向沒有人的地方，正上方噴出來會燙到自己。'},
+ {q:'關於實驗安全，下列敘述哪一項不正確？',o:['取化學藥品時，可以直接從瓶子倒進燒杯，小心別濺出來就好。','不小心打翻燃燒中的酒精燈，要立刻用濕抹布蓋上滅火。','實驗中覺得改一下步驟比較好，要先徵求老師同意。','熄滅酒精燈要用燈罩蓋，不可以用嘴吹。'],a:0,why:'倒液體藥品要用玻棒引流，而且取用量要依規定、不可以超量。'},
+ {type:'match',q:'看圖寫出器材名稱。',ids:['triplebeam','gauze','crucibletongs','flask'],extra:['panbalance','beaker','tweezers','tongs'],why:'三樑天平靠移動騎碼平衡；陶瓷纖維網讓容器受熱均勻；坩堝鉗夾高溫的坩堝；錐形瓶瓶口窄、搖晃不易灑出。'},
+ {q:'下列實驗操作，哪些是正確的？<span class="sub">（甲）酒精燈不用時，立刻用嘴吹熄　（乙）除了試管可以直接加熱，其他容器要放在陶瓷纖維網上加熱　（丙）稀釋濃硫酸時，把水沿玻棒慢慢滴進濃硫酸裡並攪拌　（丁）想辨認藥品氣味，用手搧聞</span>',o:['甲乙丁','乙丙丁','丙丁','乙丁'],a:3,why:'酒精燈要用燈罩蓋熄。稀釋濃硫酸要「把酸慢慢加進水裡」，反過來會因為放熱太快把酸噴出來。'},
+ {q:'下列哪一項符合安全原則？',o:['用手拿起藥品直接聞。','眼睛或皮膚沾到酸或鹼，先用大量清水沖洗，並立刻報告老師。','熄滅酒精燈要用燈罩，但緊急時可以用嘴快速吹熄。','加熱時試管口朝向自己，方便觀察。'],a:1,why:'沾到藥品第一件事是大量清水沖，再報告老師。其他三項都是危險行為。'},
+ {q:'下列實驗步驟哪一項正確？',o:['讀量筒的刻度時，視線要和液面凹面等高。','用試管加熱時，管口要對準自己才看得清楚反應。','不明藥品噴到身體，最好先報告老師再處理。','可以用量筒當容器做化學反應。'],a:0,why:'視線高於或低於液面都會讀錯。藥品噴到身體要先沖水再報告；量筒只能量體積。'},
+ {q:'今天要做實驗。小美第一個衝進實驗室占了好位置；小強不慌不忙吃起早餐；阿茂在稀釋濃硫酸，把蒸餾水沿著玻棒慢慢加進濃硫酸；冠強的手碰到不明液體，立刻打開水龍頭沖洗。四個人裡，遵守安全規則的是？',o:['小美、小強','阿茂、冠強','只有冠強','都沒有'],a:2,why:'實驗室不能吃東西；老師講解前不該搶著動手；稀釋濃硫酸要把酸加進水裡，阿茂做反了；只有冠強正確。'},
+ {q:'使用酒精燈時，酒精的量裝多少比較好？',o:['裝滿','1/3 到 2/3','剛好一半','有就可以'],a:1,why:'太滿容易溢出起火；太少燈裡的酒精蒸氣多，也可能爆燃。1/3～2/3 最安全。'},
+ {q:'從瓶子裡取出固體藥品，要用什麼？',o:['玻棒','坩堝鉗','刮勺','試管夾'],a:2,why:'刮勺（藥勺）是專門取固體藥品的匙；玻棒用來攪拌和引流。'},
+ {q:'遵守安全守則才能安心學習。下列敘述哪一項錯誤？',o:['老師講解完之前，不可以擅自動用藥品和器材。','手不小心沾到藥品，要盡快用大量清水沖洗。','酒精燈可以用燈罩蓋熄，也可以用嘴吹熄。','每次實驗後的廢棄物要分類集中處理。'],a:2,why:'酒精燈只能用燈罩蓋熄。'},
+ {q:'關於酒精燈，下列哪一項正確？',o:['實驗前一定要把酒精加滿。','可以用燈罩蓋熄，也可以用嘴吹熄。','酒精燈打翻起火時，要盡快用濕抹布蓋熄。','可以用點著的酒精燈去點另一盞。'],a:2,why:'濕抹布隔絕空氣就能滅火。加滿、用嘴吹、用燈點燈都是常見的錯誤。'},
+ {q:'下列哪一種器材不可以加熱？',o:['燒杯','量筒','錐形瓶','試管'],a:1,why:'量筒只能量體積：一加熱刻度就不準，而且很容易裂。燒杯和錐形瓶要隔陶瓷纖維網加熱，試管可以直接加熱。'},
+ {q:'下列哪一項是正確的操作？',o:['用蒸發皿量取固定體積的液體。','用燃燒匙攪拌溶液，讓它混合均勻。','裝了溶液的量筒直接放在酒精燈上加熱。','倒液體藥品時，用玻棒讓藥品沿著玻棒流進容器。'],a:3,why:'蒸發皿沒有刻度；燃燒匙是燒東西用的；量筒不能加熱。'},
+ {q:'加熱藥品時，容器底下墊陶瓷纖維網的目的是？',o:['讓容器受熱均勻。','讓容器站得穩不翻倒。','讓整個裝置看起來整齊。','讓容器裡的藥品混合均勻。'],a:0,why:'火焰直接燒玻璃會局部過熱而裂開，纖維網把熱分散開來。'},
+ {q:'關於量筒的用途：<span class="sub">（甲）量液體體積　（乙）在裡面配製溶液　（丙）可以直接加熱　（丁）在裡面做化學反應</span>有幾項正確？',o:['1 項','2 項','3 項','4 項'],a:0,why:'只有（甲）。量筒只拿來量體積，配溶液、做反應、加熱都不可以。'},
+ {q:'常見器材的安全操作，下列哪一項錯誤？',o:['不同的溶液可以用同一支滴管連續取用。','量筒只能量液體體積，不可以當反應容器。','點燃酒精燈前，先檢查酒精量，不可太多或太少。','試管可以直接加熱，加熱時稍微傾斜，讓管底受熱面積變大。'],a:0,why:'一支滴管只吸一種溶液，換溶液就換滴管（或洗乾淨），否則會互相汙染。'},
+];
+let qi=0, ans=[]; // ans[i] = true/false
+function renderQProg(){ $('qprog').innerHTML=Q.map((_,i)=>`<i class="${ans[i]===true?'ok':ans[i]===false?'no':''}${i===qi?' cur':''}"></i>`).join(''); }
+function renderQ(){ renderQProg(); const c=$('qcard'); if(qi>=Q.length){ const n=ans.filter(Boolean).length; if(S.best===null||n>S.best){ S.best=n; save(); }
+    c.innerHTML=`<div class="result">${n===Q.length?'🏆':n>=Q.length*.7?'👍':'💪'}<br><b>${n} / ${Q.length}</b><div style="color:var(--muted)">${n===Q.length?'全對！你可以放心進實驗室了。':n>=Q.length*.7?'不錯，看看錯的題目再複習一下。':'再讀一次安全守則和器材圖鑑，然後再挑戰一次。'}</div><div style="color:var(--muted);font-size:13px;margin-top:4px">歷來最高：${S.best} / ${Q.length}</div>
+      <ul class="review">${Q.map((q,i)=>`<li class="${ans[i]?'ok':'no'}">${i+1}. ${q.q.replace(/<span class="sub">.*?<\/span>/,'')}${ans[i]?'':'<br><span style="color:var(--muted)">'+q.why+'</span>'}</li>`).join('')}</ul>
+      <div class="ctrl" style="justify-content:center;margin-top:14px"><button class="primary" id="qagain">再測一次</button></div></div>`; $('qagain').onclick=()=>{ qi=0; ans=[]; renderQ(); }; return; }
+  const q=Q[qi]; c.innerHTML=`<div class="qno">第 ${qi+1} 題 / ${Q.length}</div><div class="qtext">${q.q}</div>`;
+  if(q.type==='match'){ const mq=document.createElement('div'); mq.className='mq'; const names=[...q.ids,...q.extra].map(id=>TOOL[id].name).sort(()=>Math.random()-.5);
+    q.ids.forEach(id=>{ const d=document.createElement('div'); d.appendChild(toolSvg(id)); const sel=document.createElement('select'); sel.innerHTML='<option value="">選一個</option>'+names.map(n=>`<option>${n}</option>`).join(''); sel.dataset.ans=TOOL[id].name; d.appendChild(sel); mq.appendChild(d); }); c.appendChild(mq);
+    const why=document.createElement('div'); why.className='why'; why.textContent=q.why; c.appendChild(why);
+    const nav=document.createElement('div'); nav.className='qnav'; nav.innerHTML='<span></span><div class="ctrl"><button class="primary" id="qcheck">確認</button></div>'; c.appendChild(nav);
+    $('qcheck').onclick=()=>{ const sels=[...mq.querySelectorAll('select')]; if(sels.some(s=>!s.value)) { sels.find(s=>!s.value).focus(); return; } let all=true; sels.forEach(s=>{ const ok=s.value===s.dataset.ans; s.parentNode.classList.add(ok?'ok':'no'); s.disabled=true; if(!ok){ all=false; s.parentNode.insertAdjacentHTML('beforeend',`<div style="font-size:12px;color:var(--ok);margin-top:2px">${s.dataset.ans}</div>`); } }); ans[qi]=all; why.classList.add('on',all?'ok':'no'); why.textContent=(all?'全對！':'有些不對。')+q.why; nav.innerHTML='<span></span><div class="ctrl"><button class="primary" id="qnext">下一題</button></div>'; $('qnext').onclick=()=>{ qi++; renderQ(); }; renderQProg(); };
+    return; }
+  const opts=document.createElement('div'); opts.className='opts'; q.o.forEach((o,i)=>{ const b=document.createElement('button'); b.textContent=['(A) ','(B) ','(C) ','(D) '][i]+o; b.onclick=()=>{ const ok=i===q.a; ans[qi]=ok; [...opts.children].forEach((x,j)=>{ x.disabled=true; if(j===q.a) x.classList.add('ok'); else if(j===i) x.classList.add('no'); }); why.classList.add('on',ok?'ok':'no'); why.innerHTML=`<b>${ok?'答對了！':'不對喔。'}</b> ${q.why}`; nav.innerHTML='<span></span><div class="ctrl"><button class="primary" id="qnext">'+(qi===Q.length-1?'看成績':'下一題')+'</button></div>'; $('qnext').onclick=()=>{ qi++; renderQ(); }; renderQProg(); }; opts.appendChild(b); }); c.appendChild(opts);
+  const why=document.createElement('div'); why.className='why'; c.appendChild(why);
+  const nav=document.createElement('div'); nav.className='qnav'; nav.innerHTML=`<span class="score" style="font-size:13px">${S.best!==null?`最高 ${S.best} / ${Q.length}`:''}</span><span></span>`; c.appendChild(nav); }
+renderQ();
+</script>
+</body>
+</html>
