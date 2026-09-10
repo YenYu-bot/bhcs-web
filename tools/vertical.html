@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>乘除法直式計算出題器</title>
+<style>
+  :root{ --c:8.2mm; --ink:#222; --ans:#d62828; --grid:#8fc4e8; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px}
+  .panel{background:#fff;padding:14px 18px;border-bottom:1px solid #cfd6dd;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:flex-start;position:sticky;top:0;z-index:5}
+  .panel h1{font-size:18px;margin:0 0 4px;width:100%}
+  .grp{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid #d9e0e6;border-radius:8px;background:#f8fafb}
+  .grp>label:first-child{font-weight:700;font-size:14px;color:#345}
+  .line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px}
+  .line label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  select,input[type=number]{font:inherit;padding:4px 6px;border:1px solid #b7bfc7;border-radius:4px;background:#fff}
+  input[type=number]{width:56px}
+  button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid #2a6fb0;background:#2a6fb0;color:#fff;cursor:pointer;font-weight:700}
+  button.ghost{background:#fff;color:#2a6fb0}
+  .actions{display:flex;gap:8px;align-items:flex-end;align-self:stretch}
+  .sheet{background:#fff;width:210mm;min-height:297mm;margin:14px auto;padding:14mm 12mm;box-shadow:0 2px 12px rgba(0,0,0,.12);position:relative}
+  .head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #333;padding-bottom:4px;margin-bottom:8px}
+  .head h2{margin:0;font-size:20px}
+  .head span{font-size:14px}
+  .sec{margin:10px 0 6px;font-size:16px;font-weight:700;background:#eef4f9;padding:4px 10px;border-left:5px solid #2a6fb0}
+  .tip{font-size:12.5px;color:#456;margin:0 0 8px 2px}
+  .row{display:grid;gap:6mm 5mm;margin-bottom:8mm}
+  .row.c3{grid-template-columns:repeat(3,1fr)}
+  .row.c2{grid-template-columns:repeat(2,1fr)}
+  .prob{break-inside:avoid;page-break-inside:avoid}
+  .q{font-size:15px;margin-bottom:3mm;white-space:nowrap}
+  .q .no{display:inline-block;width:2.2em;color:#555}
+  .q .blank{display:inline-block;min-width:3.2em;border-bottom:1px solid #333;text-align:center;color:var(--ans);font-weight:700;padding:0 4px}
+  .g{display:grid;grid-template-columns:repeat(var(--n),var(--c));grid-auto-rows:var(--c);font-size:calc(var(--c) * .62);line-height:1}
+  .g .cell{border:1px dashed var(--grid);display:flex;align-items:center;justify-content:center;position:relative}
+  .g .cell.sm{font-size:.6em;color:var(--ans);align-items:flex-end;justify-content:flex-end;padding:0 1px 1px 0;font-weight:700}
+  .g .cell.op{color:#333;border-color:transparent}
+  .g .cell.ans{color:var(--ans);font-weight:700}
+  .g .cell.blank{border-color:transparent}
+  .g .cell.ul{border-bottom:2px solid #333}
+  .g .cell.bl{border-left:2px solid #333}
+  .g .cell.bt{border-top:2px solid #333}
+  .g .cell.dim{color:#999}
+  .g .cell.br{border-color:transparent;padding:0}
+  .g .cell.br.bt{border-top-color:#333}
+  .g .cell.br svg{width:100%;height:100%;display:block;overflow:visible}
+  .g .cell.br svg path{fill:none;stroke:#333;stroke-width:2px;vector-effect:non-scaling-stroke}
+  .g .cell.pt::after{content:'';position:absolute;right:-2px;bottom:calc(var(--c) * .14);width:calc(var(--c) * .13);height:calc(var(--c) * .13);border-radius:50%;background:currentColor;z-index:1}
+  .g .cell.pt.op{color:#333}
+  .g.carry{grid-auto-rows:var(--c)}
+  .g .cell.crow{height:calc(var(--c) * .55);border-color:transparent;align-self:end}
+  body.student .ans, body.student .cell.sm, body.student .q .blank{color:transparent}
+  body.student .q .blank{color:transparent}
+  .empty{color:#888;padding:40px;text-align:center}
+  @media print{
+    body{background:#fff}
+    .panel{display:none}
+    .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}
+    .sheet+.sheet{page-break-before:always}
+    .ans,.cell.sm,.q .blank{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    @page{size:A4;margin:12mm}
+  }
+</style>
+<!-- Google Analytics 4 -->
+<script>
+if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var s=document.createElement('script'); s.async=true;
+  s.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
+  document.head.appendChild(s);
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
+}
+</script>
+</head>
+<body class="student">
+<div class="panel">
+  <h1>乘除法直式計算出題器</h1>
+  <div class="grp"><label>版本與版面</label><div class="line">
+    <label>版本 <select id="version"><option value="student">學用版（空白作答）</option><option value="teacher">教用版（紅字答案）</option></select></label>
+    <label>每列 <select id="perRow"><option value="3">3 題</option><option value="2">2 題</option></select></label>
+    <label>格子 <select id="cellSize"><option value="8.2">標準</option><option value="9.5">大（低年級）</option><option value="7">小</option></select></label>
+    <label><input type="checkbox" id="carryRow" checked> 乘法留進位小格</label>
+  </div></div>
+  <div class="grp"><label><input type="checkbox" id="onMul" checked> 乘法</label><div class="line">
+    <label>被乘數 <select id="mulA"><option value="1">1 位</option><option value="2" selected>2 位</option><option value="3">3 位</option><option value="4">4 位</option></select><select id="mulAd"><option value="0">整數</option><option value="1">小數 1 位</option><option value="2">小數 2 位</option><option value="3">小數 3 位</option></select></label>
+    <label>乘數 <select id="mulB"><option value="1" selected>1 位</option><option value="2">2 位</option><option value="3">3 位</option><option value="10">整十</option><option value="100">整百</option></select><select id="mulBd"><option value="0">整數</option><option value="1">小數 1 位</option><option value="2">小數 2 位</option><option value="3">小數 3 位</option></select></label>
+    <label>題數 <input type="number" id="nMul" value="12" min="1" max="60"></label>
+    <label><input type="checkbox" id="mulZero"> 允許中間有 0</label>
+  </div></div>
+  <div class="grp"><label><input type="checkbox" id="onDiv" checked> 除法</label><div class="line">
+    <label>被除數 <select id="divA"><option value="1">1 位</option><option value="2" selected>2 位</option><option value="3">3 位</option><option value="4">4 位</option></select><select id="divAd"><option value="0">整數</option><option value="1">小數 1 位</option><option value="2">小數 2 位</option><option value="3">小數 3 位</option></select></label>
+    <label>除數 <select id="divB"><option value="1" selected>1 位</option><option value="2">2 位</option><option value="3">3 位</option></select><select id="divBd"><option value="0">整數</option><option value="1">小數 1 位</option><option value="2">小數 2 位</option><option value="3">小數 3 位</option></select></label>
+    <label>餘數 <select id="divR"><option value="mix">混合</option><option value="yes">一定有餘數</option><option value="no">整除</option></select></label>
+    <label id="divQdWrap">商 <select id="divQd"><option value="auto">自動</option><option value="0">整數</option><option value="1">小數 1 位</option><option value="2">小數 2 位</option><option value="3">小數 3 位</option></select></label>
+    <label>題數 <input type="number" id="nDiv" value="9" min="1" max="60"></label>
+  </div></div>
+  <div class="actions"><button id="gen">重新出題</button><button class="ghost" id="print">列印 / 存 PDF</button></div>
+</div>
+<div id="out"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const coin=()=>Math.random()<.5;
+function numWithDigits(d,allowZero){ // d 位數，預設避免中間的 0 與結尾的 0
+  if(d===1) return rnd(2,9);
+  for(let t=0;t<50;t++){ const n=rnd(Math.pow(10,d-1),Math.pow(10,d)-1); const s=String(n); if(allowZero) { if(s[s.length-1]!=='0') return n; } else if(!s.includes('0')) return n; }
+  return rnd(Math.pow(10,d-1),Math.pow(10,d)-1);
+}
+const digits=n=>String(n).split('').map(Number);
+
+/* ---------- 小數工具：數字以 {v: 去掉小數點後的整數, d: 小數位數} 表示 ---------- */
+const fmt=(v,d)=>{ if(d===0) return String(v); let s=String(v).padStart(d+1,'0'); return s.slice(0,-d)+'.'+s.slice(-d); };
+const trim=(v,d)=>{ while(d>0&&v%10===0){ v/=10; d--; } return {v,d}; };
+function decNum(intDigits,d,allowZero){ // 整數部分 intDigits 位（可為 0 表示 0.xxx），小數 d 位且最後一位不為 0
+  for(let t=0;t<80;t++){
+    const ip=intDigits===0?0:numWithDigits(intDigits,true);
+    let fp=0; if(d>0){ fp=rnd(1,Math.pow(10,d)-1); if(fp%10===0) continue; }
+    const v=ip*Math.pow(10,d)+fp; const str=String(v);
+    if(!allowZero&&d>0&&/0/.test(str.slice(0,-1))&&intDigits>0) continue;
+    return v;
+  }
+  return numWithDigits(intDigits||1,true)*Math.pow(10,d)+(d>0?1:0);
+}
+const digitsStr=(v,d)=>String(v).padStart(d+1,'0'); // 保證小數點前至少有一個 0
+
+/* ---------- 乘法 ---------- */
+function genMul(){
+  const da=+$('mulA').value, ad=+$('mulAd').value, sb=$('mulB').value, bd=+$('mulBd').value, allowZ=$('mulZero').checked;
+  const a=ad?decNum(da,ad,allowZ):numWithDigits(da,allowZ);
+  let b; if(sb==='10') b=rnd(1,9)*10; else if(sb==='100') b=rnd(1,9)*100; else b=bd?decNum(+sb,bd,allowZ):numWithDigits(+sb,allowZ);
+  return {a,ad,b,bd:(sb==='10'||sb==='100')?0:bd};
+}
+function cellsMul(p,no){
+  const {a,ad,b,bd}=p, prod=a*b, pd=ad+bd;
+  const As=digitsStr(a,ad), Bs=digitsStr(b,bd), Ps=digitsStr(prod,pd);
+  const B=Bs.split('').map(Number);
+  const N=Math.max(Ps.length+1,As.length+1,Bs.length+1);
+  const rows=[]; const line=()=>Array.from({length:N},()=>({t:'',cls:''}));
+  const putRight=(row,str,cls,d)=>{ const ds=str.split(''); ds.forEach((ch,i)=>{ const col=N-ds.length+i; row[col]={t:ch,cls:cls+(d>0&&i===ds.length-d-1?' pt':'')}; }); };
+  const useCarry=$('carryRow').checked; let carry=null;
+  if(useCarry){ carry=line(); carry.forEach(c=>c.cls='crow'); const digs=As.split('').map(Number).reverse(); let cr=0; const lastB=B[B.length-1];
+    digs.forEach((dg,i)=>{ const v=dg*lastB+cr; cr=Math.floor(v/10); if(cr>0){ const col=N-1-(i+1); if(col>=0) carry[col]={t:String(cr),cls:'crow sm'}; } }); }
+  const r1=line(); putRight(r1,As,'',ad);
+  const r2=line(); putRight(r2,Bs,'',bd); r2[0]={t:'×',cls:'op'}; r2.forEach(c=>c.cls+=' ul');
+  rows.push(...(carry?[carry]:[]),r1,r2);
+  const partials=B.slice().reverse().map((d,i)=>({v:a*d,shift:i}));
+  if(B.length===1){ const r=line(); putRight(r,Ps,'ans',pd); rows.push(r); }
+  else{
+    partials.forEach((pp,i)=>{ const r=line(); const s=String(pp.v); s.split('').forEach((ch,j)=>{ const col=N-pp.shift-s.length+j; if(col>=0) r[col]={t:ch,cls:'ans'}; }); if(i===partials.length-1){ r[0]={t:'＋',cls:'op ans'}; r.forEach(c=>c.cls+=' ul'); } rows.push(r); });
+    const r=line(); putRight(r,Ps,'ans',pd); rows.push(r);
+  }
+  const grid=rows.map(r=>r.map(c=>`<div class="cell ${c.cls}">${c.t}</div>`).join('')).join('');
+  const t=trim(prod,pd);
+  return `<div class="prob"><div class="q"><span class="no">(${no})</span>${fmt(a,ad)}×${fmt(b,bd)}＝<span class="blank">${fmt(t.v,t.d)}</span></div><div class="g" style="--n:${N}">${grid}</div></div>`;
+}
+
+/* ---------- 除法 ---------- */
+function genDiv(){
+  const da=+$('divA').value, ad=+$('divAd').value, db=+$('divB').value, bd=+$('divBd').value, mode=$('divR').value, qsel=$('divQd').value;
+  if(ad===0&&bd===0){ // 整數除法（原本的邏輯）
+    for(let t=0;t<200;t++){
+      const b=numWithDigits(db,true); if(db===1&&b<2) continue;
+      let a;
+      if(mode==='no'||(mode==='mix'&&coin())){ const qmin=Math.ceil(Math.pow(10,da-1)/b), qmax=Math.floor((Math.pow(10,da)-1)/b); if(qmin>qmax||qmin<1) continue; a=rnd(qmin,qmax)*b; if(mode==='no') return {a,ad:0,b,bd:0}; }
+      else a=rnd(Math.pow(10,da-1),Math.pow(10,da)-1);
+      if(a<b) continue; const r=a%b; if(mode==='yes'&&r===0) continue; if(String(a).length!==da) continue;
+      return {a,ad:0,b,bd:0};
+    }
+    return {a:Math.pow(10,da-1)+7,ad:0,b:numWithDigits(db,true),bd:0};
+  }
+  // 小數除法：一律整除。先抽除數與商，被除數＝商×除數；用整除條件直接抽合法的商，避免亂槍打鳥
+  const gcd=(x,y)=>y?gcd(y,x%y):x;
+  const tryOnce=(strict)=>{
+    const b=bd?decNum(db,bd,true):numWithDigits(db,true); if(b<2) return null;
+    const bval=b/Math.pow(10,bd);
+    const qds=qsel==='auto'?[0,1,2,3].sort(()=>Math.random()-.5):[+qsel];
+    for(const qd of qds){
+      const zeros=bd+qd-ad; if(zeros<0) continue;                  // 積的小數位不夠，換一個 qd
+      const need=Math.pow(10,zeros)/gcd(Math.pow(10,zeros),b);      // qv 必須是 need 的倍數
+      const daMax=strict?da:4; const lo=Math.ceil(Math.pow(10,da-1)/bval*Math.pow(10,qd)/need), hi=Math.floor((Math.pow(10,daMax)-1)/bval*Math.pow(10,qd)/need);
+      if(lo>hi||hi<1) continue;
+      for(let t=0;t<12;t++){
+        const qv=rnd(Math.max(1,lo),hi)*need; if(qd>0&&qv%10===0) continue;
+        const prod=trim(qv*b,qd+bd); const ai=Math.max(1,String(prod.v).length-prod.d);
+        if(strict&&(prod.d!==ad||ai!==da)) continue;
+        if(!strict&&(prod.d>3||ai>4)) continue;
+        return {a:prod.v,ad:prod.d,b,bd,q:qv,qd};
+      }
+    }
+    return null;
+  };
+  for(let t=0;t<300;t++){ const r=tryOnce(true); if(r) return r; }
+  for(let t=0;t<300;t++){ const r=tryOnce(false); if(r) return r; }
+  return {a:15,ad:1,b:5,bd:0,q:3,qd:0};
+}
+function cellsDiv(p,no){
+  let {a,ad,b,bd}=p;
+  // 除數有小數：小數點一起右移，讓除數變整數
+  const shift=bd; if(shift){ b=b; bd=0; if(ad>=shift) ad-=shift; else { a=a*Math.pow(10,shift-ad); ad=0; } }
+  const isDec=ad>0||p.bd>0||p.qd>0;
+  let q,rem,qd,k=0;
+  if(!isDec){ q=Math.floor(a/b); rem=a%b; qd=0; }
+  else { // 整除：被除數末尾補 0 直到除得盡（最多補 3 個）
+    qd=ad; let av=a; while(av%b!==0&&k<3){ av*=10; k++; qd++; } a=av; ad+=k; q=av/b; rem=0; }
+  const As=digitsStr(a,ad), L=String(b).length, A=As.split('').map(Number);
+  const N=L+1+A.length, off=L+1;
+  const rows=[]; const line=()=>Array.from({length:N},(_,i)=>({t:'',cls:i===L?'blank':''}));
+  // 商：對齊被除數，整數部分為 0 時要寫出 0
+  const rq=line(); const qs=digitsStr(q,qd).padStart(A.length,' ');
+  qs.split('').forEach((ch,i)=>{ if(ch!==' ') rq[off+i]={t:ch,cls:'ans'+(qd>0&&i===qs.length-qd-1?' pt':'')}; }); rows.push(rq);
+  const rd=line(); String(b).split('').forEach((ch,i)=>rd[i]={t:ch,cls:''}); rd[L]={t:'<svg viewBox="0 0 10 20" preserveAspectRatio="none"><path d="M1 0 C9 5 9 15 1 20"/></svg>',cls:'br bt'};
+  const origLen=A.length-k; // 補 0 的部分變淡
+  A.forEach((d,i)=>rd[off+i]={t:String(d),cls:'bt'+(ad>0&&i===A.length-ad-1?' pt':'')+(i>=origLen?' dim':'')}); rows.push(rd);
+  let cur=0, started=false;
+  for(let i=0;i<A.length;i++){
+    cur=cur*10+A[i]; const qdgt=Math.floor(cur/b);
+    if(!started){ if(qdgt===0) continue; started=true; }
+    const sub=qdgt*b, after=cur-sub;
+    const rs=line(); const ss=String(sub); ss.split('').forEach((ch,j)=>{ rs[off+i-ss.length+1+j]={t:ch,cls:'ans'}; });
+    for(let c=off+i-Math.max(ss.length,String(cur).length)+1;c<=off+i;c++) rs[c].cls+=' ul';
+    rows.push(rs);
+    const rr=line();
+    if(i<A.length-1){ const show=after===0?String(A[i+1]):String(after)+String(A[i+1]); show.split('').forEach((ch,j)=>{ rr[off+i+1-show.length+1+j]={t:ch,cls:'ans'}; }); }
+    else { const s2=String(after); s2.split('').forEach((ch,j)=>{ rr[off+i-s2.length+1+j]={t:ch,cls:'ans'}; }); }
+    rows.push(rr); cur=after;
+  }
+  const grid=rows.map(r=>r.map(c=>`<div class="cell ${c.cls}">${c.t}</div>`).join('')).join('');
+  const qt=trim(q,qd);
+  const remPart=isDec?'':(rem||$('divR').value!=='no'?`…<span class="blank">${rem}</span>`:'');
+  const note='';
+  const cols=`repeat(${L},var(--c)) calc(var(--c) * .55) repeat(${A.length},var(--c))`;
+  return `<div class="prob"><div class="q"><span class="no">(${no})</span>${fmt(p.a,p.ad)}÷${fmt(p.b,p.bd)}＝<span class="blank">${fmt(qt.v,qt.d)}</span>${remPart}${note}</div><div class="g" style="--n:${N};grid-template-columns:${cols}">${grid}</div></div>`;
+}
+
+/* ---------- 組頁 ---------- */
+function section(title,tip,items,cellFn){
+  const per=+$('perRow').value; let h=`<div class="sec">${title}</div><p class="tip">${tip}</p>`;
+  for(let i=0;i<items.length;i+=per){ h+=`<div class="row c${per}">`+items.slice(i,i+per).map((it,j)=>cellFn(it,i+j+1)).join('')+`</div>`; }
+  return h;
+}
+function fitCells(){ // 依最寬的直式自動縮小格子，避免超出 A4
+  const per=+$('perRow').value, want=+$('cellSize').value;
+  let maxN=0;
+  if($('onMul').checked){ const sb=$('mulB').value; const nb=sb==='10'?2:sb==='100'?3:+sb+(+$('mulBd').value); maxN=Math.max(maxN,+$('mulA').value+(+$('mulAd').value)+nb+1); }
+  if($('onDiv').checked) maxN=Math.max(maxN,+$('divA').value+(+$('divAd').value)+3+(+$('divB').value)+(+$('divBd').value)+1);
+  const avail=(186-(per-1)*5)/per;           // mm，每題可用寬度
+  const c=Math.min(want,Math.floor(avail/maxN*10)/10);
+  document.documentElement.style.setProperty('--c',Math.max(6,c)+'mm');
+}
+function generate(){
+  fitCells();
+  const parts=[];
+  if($('onMul').checked){ const n=Math.min(60,Math.max(1,+$('nMul').value||1)); const items=Array.from({length:n},genMul);
+    const sb=$('mulB').value; const tip=sb==='10'||sb==='100'?'乘數是整十、整百：先算前面的數字，再在後面補 0。':(+sb>2?'依序用乘數的個位、十位、百位去乘，每往上一位就往左移一格，最後把三列加起來。':+sb>1?'先用乘數的個位去乘，再用十位去乘（往左移一格），最後把兩列加起來。':'從個位開始乘，有進位寫在上面的小格子。');
+    const md=+$('mulAd').value||+$('mulBd').value; const mtip=md?'先當成整數乘，最後看兩個數共有幾位小數，積就點在倒數第幾位。':'數字要對齊位值。';
+    const lab=(d,dd)=>dd?`${d} 位整數 ${dd} 位小數`:`${d} 位數`;
+    parts.push(section(`乘法直式（${lab($('mulA').value,+$('mulAd').value)} × ${sb==='10'?'整十':sb==='100'?'整百':lab(sb,+$('mulBd').value)}）`,tip+'　'+mtip,items,cellsMul)); }
+  if($('onDiv').checked){ const n=Math.min(60,Math.max(1,+$('nDiv').value||1)); const items=Array.from({length:n},genDiv);
+    const dd=+$('divAd').value||+$('divBd').value; const lab2=(d,x)=>x?`${d} 位整數 ${x} 位小數`:`${d} 位數`;
+    const dtip=dd?'除數有小數時，先把除數和被除數的小數點一起右移，讓除數變成整數；商的小數點對齊被除數的小數點，除不盡就在被除數後面補 0 繼續除。':'從最高位開始分，每一步：商×除數寫下面、相減、把下一位拉下來。餘數一定要比除數小。';
+    parts.push(section(`除法直式（${lab2($('divA').value,+$('divAd').value)} ÷ ${lab2($('divB').value,+$('divBd').value)}）`,dtip,items,cellsDiv)); }
+  $('out').innerHTML=parts.length?`<div class="sheet"><div class="head"><h2>乘除法直式計算練習</h2><span>班級：______　姓名：__________　日期：____/____</span></div>${parts.join('')}</div>`:'<div class="empty">請至少勾選一種題型。</div>';
+}
+$('gen').onclick=generate; $('print').onclick=()=>window.print();
+$('version').onchange=e=>document.body.className=e.target.value;
+['perRow','cellSize','carryRow','mulA','mulAd','mulB','mulBd','mulZero','divA','divAd','divB','divBd','divR','divQd'].forEach(id=>$(id).onchange=generate);
+function syncDivUI(){ const dec=+$('divAd').value||+$('divBd').value; $('divR').disabled=!!dec; $('divR').title=dec?'小數除法一律出整除的題目':''; $('divQdWrap').style.display=dec?'':'none'; }
+['divAd','divBd'].forEach(id=>$(id).addEventListener('change',syncDivUI)); syncDivUI();
+generate();
+</script>
+</body>
+</html>
