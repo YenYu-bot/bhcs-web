@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全民英檢初級口說練習｜百宏文教機構</title>
+<meta name="robots" content="noindex">
+<!-- Google Analytics 4 -->
+<script>
+if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var s=document.createElement('script'); s.async=true;
+  s.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
+  document.head.appendChild(s);
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
+}
+</script>
+<style>
+:root{--ink:#1d2939;--muted:#667085;--line:#e4e7ec;--bg:#f5f7fb;--card:#fff;--brand:#2251cc;--brand2:#edf2ff;--ok:#067647;--bad:#b42318;--radius:18px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans TC",Arial,sans-serif;line-height:1.65}
+button{font:inherit;cursor:pointer}.hidden{display:none!important}
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line)}
+.head{max-width:980px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2047a9,#3e76ef);display:grid;place-items:center;color:#fff;font-weight:900}
+.head h1{font-size:17px;margin:0}.head small{display:block;color:var(--muted)}
+main{max-width:980px;margin:20px auto;padding:0 20px 50px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 14px;color:var(--ink)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
+.btn.soft{background:var(--brand2);border-color:#c7d7fe;color:#183b8c}
+.q{padding:14px 0;border-bottom:1px dashed var(--line)}.q:last-child{border-bottom:0}
+.mask{display:inline-block;background:#eef2ff;color:#3538cd;font-weight:700;border-radius:8px;padding:4px 12px;margin-bottom:8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.state{color:var(--muted);font-size:14px}
+.tr{background:#f8fafc;border:1px dashed var(--line);border-radius:10px;padding:8px 12px;font-size:14px;color:var(--muted);margin-top:6px}
+.big{font-size:46px;font-weight:900;color:var(--brand);letter-spacing:-1px}
+.center{text-align:center}
+.notice{background:#fffaeb;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:10px 14px;font-size:14px}
+.field{margin:8px 0}.field label{display:block;font-weight:700;margin-bottom:4px;font-size:14px}
+.field input,.field select{padding:10px 12px;border:1px solid #cfd6e2;border-radius:10px;background:#fff;font:inherit;width:100%;max-width:320px}
+footer{max-width:980px;margin:10px auto 30px;padding:0 20px;color:var(--muted);font-size:13px;text-align:center}
+audio{max-width:230px;vertical-align:middle}
+.pill{display:inline-block;background:#ecfdf3;color:#027a48;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="logo">BH</div><div><h1>百宏文教｜全民英檢初級 口說練習</h1><small>錄音在本頁完成，交卷後送老師後台</small></div></div></header>
+<main id="app"><div class="card center">載入中…</div></main>
+<footer>本頁為百宏文教機構自製練習教材，與 LTTC 財團法人語言訓練測驗中心無關，非 GEPT 官方測驗，自動分數亦非官方評分。</footer>
+
+<script>
+const EXEC='https://script.google.com/macros/s/AKfycbzFOHfIic9mrBdJEw69B5IINKacgAlr7Ivxk9p1qIHfAR-RDeQUXN8508vn85RxmoD9zw/exec';
+const $=s=>document.querySelector(s);
+const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const qs=new URLSearchParams(location.search);
+const student={name:qs.get('name')||'',className:qs.get('class')||''};
+let setNo=Number(qs.get('set'))||0, META=null;
+let recordings={}, activeRec=null, recognition=null;
+let transcripts={repeat:[],reading:'',qa:[]};
+
+async function apiGet(params){const u=EXEC+'?'+new URLSearchParams(params);const r=await fetch(u);const j=await r.json();if(j.error)throw new Error(j.error);return j}
+async function apiPost(payload){const r=await fetch(EXEC,{method:'POST',body:JSON.stringify({api:'submitSpeaking',payload})});const j=await r.json();if(j.error)throw new Error(j.error);return j}
+
+function speakText(text,times=1){if(!('speechSynthesis'in window))return alert('此瀏覽器不支援英文語音播放。');speechSynthesis.cancel();let c=0;const go=()=>{const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.88;u.onend=()=>{c++;if(c<times)setTimeout(go,450)};speechSynthesis.speak(u)};go()}
+async function playPrompt(part,n){try{const r=await apiGet({api:'prompt',setNo,part,n});speakText(r.text,2)}catch(e){alert('題目載入失敗：'+e.message)}}
+function miniTimer(btn,sec){let n=sec;btn.disabled=true;const orig=btn.textContent;btn.textContent=`⏱ ${n}`;const t=setInterval(()=>{n--;btn.textContent=n>0?`⏱ ${n}`:'時間到';if(n<=0){clearInterval(t);setTimeout(()=>{btn.disabled=false;btn.textContent=orig},900)}},1000)}
+
+async function toggleRecord(part,n,maxSec){const key=`${part}_${n}`,btn=$('#rec_'+key);
+  if(activeRec&&activeRec.key===key){stopRecording();return}
+  if(activeRec){alert('請先停止目前的錄音。');return}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const chunks=[];const mr=new MediaRecorder(stream);
+    activeRec={key,part,n,mr,stream,chunks,stopTimer:null};
+    mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    mr.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'});recordings[key]=blob;const url=URL.createObjectURL(blob);const a=$('#audio_'+key);a.src=url;a.classList.remove('hidden');$('#state_'+key).textContent=`已錄音 ${Math.round(blob.size/1024)} KB`;btn.textContent='🎙️ 重新錄音';activeRec=null;stopRecognition()};
+    mr.start();btn.textContent='⏹ 停止錄音';$('#state_'+key).textContent='錄音中…';
+    startRecognition(part,n);
+    activeRec.stopTimer=setTimeout(stopRecording,maxSec*1000);
+  }catch(e){alert('無法使用麥克風。請點網址列右側的麥克風圖示允許本網站使用麥克風。')}
+}
+function stopRecording(){if(!activeRec)return;if(activeRec.stopTimer)clearTimeout(activeRec.stopTimer);if(activeRec.mr.state==='recording')activeRec.mr.stop()}
+function startRecognition(part,n){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;try{recognition=new SR();recognition.lang='en-US';recognition.continuous=true;recognition.interimResults=true;let final='';recognition.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t+' ';else interim+=t}setTranscript(part,n,(final+interim).trim())};recognition.onerror=()=>{};recognition.start()}catch(e){recognition=null}}
+function stopRecognition(){if(recognition){try{recognition.stop()}catch(e){}recognition=null}}
+function setTranscript(part,n,text){if(part==='repeat')transcripts.repeat[n-1]=text;else if(part==='qa')transcripts.qa[n-1]=text;else transcripts.reading=text;const el=$('#tr_'+part+'_'+n);if(el)el.textContent=text||'尚未辨識到文字'}
+function blobToB64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=rej;r.readAsDataURL(blob)})}
+async function blobPayload(){const entries=Object.entries(recordings);const total=entries.reduce((a,[k,b])=>a+b.size,0);if(total>10*1024*1024)throw new Error('本次錄音總容量過大，請縮短錄音後再交卷。');const out=[];for(const[key,b]of entries){out.push({label:key,mime:b.type||'audio/webm',data:await blobToB64(b)})}return out}
+
+function speakItem(part,n,maxSec,qa=false){return `<div class="q"><div class="mask">第 ${n} 題｜英文題目不顯示</div><div class="row"><button class="btn soft" onclick="playPrompt('${part}',${n})">🔊 播放兩次</button>${qa?`<button class="btn" onclick="miniTimer(this,15)">⏱ 15 秒</button>`:''}<button class="btn" id="rec_${part}_${n}" onclick="toggleRecord('${part}',${n},${maxSec})">🎙️ 開始錄音</button><span class="state" id="state_${part}_${n}">尚未錄音</span><audio id="audio_${part}_${n}" class="hidden" controls></audio></div><div class="tr" id="tr_${part}_${n}">語音辨識文字會顯示在這裡（若瀏覽器支援）</div></div>`}
+
+function renderExam(){
+  $('#app').innerHTML=`
+  <div class="card"><span class="pill">${esc(META.title)}　${esc(META.level)}</span>　<b>${esc(student.name)}</b>${student.className?`（${esc(student.className)}）`:''}
+    <div class="notice" style="margin-top:10px">請在安靜的環境練習。第一次按錄音時，瀏覽器會詢問麥克風權限，請選「允許」。</div></div>
+  <div class="card"><h3>Part 1｜複誦 Repetition</h3><p class="state">題目不顯示。每題先播放兩次，再錄下你的複誦。</p>
+    ${Array.from({length:META.repeatCount},(_,i)=>speakItem('repeat',i+1,20)).join('')}</div>
+  <div class="card"><h3>Part 2｜朗讀 Reading Aloud</h3>
+    ${META.read_sent.map((q,i)=>`<div class="q"><b>${i+1}.</b> ${esc(q)}</div>`).join('')}
+    <div class="q"><b>Passage</b><p>${esc(META.passage)}</p>
+      <div class="row"><button class="btn" id="rec_reading_1" onclick="toggleRecord('reading',1,75)">🎙️ 開始錄音</button><span class="state" id="state_reading_1">尚未錄音</span><audio id="audio_reading_1" class="hidden" controls></audio></div>
+      <div class="tr" id="tr_reading_1">語音辨識文字會顯示在這裡（若瀏覽器支援）</div></div></div>
+  <div class="card"><h3>Part 3｜回答問題 Answering Questions</h3><p class="state">每題播放兩次。聽完後立即回答，建議 15 秒內完成。</p>
+    ${Array.from({length:META.qaCount},(_,i)=>speakItem('qa',i+1,22,true)).join('')}</div>
+  <div class="card center"><button class="btn primary" onclick="submitAll()">交卷並上傳錄音</button></div>`;
+}
+
+async function submitAll(){
+  if(activeRec)stopRecording();
+  if(!Object.keys(recordings).length){alert('還沒有任何錄音喔。');return}
+  if(!confirm('確定交卷並上傳本次錄音？'))return;
+  $('#app').innerHTML='<div class="card center">正在整理並上傳口說錄音…請不要關閉頁面。</div>';
+  try{
+    const recs=await blobPayload();
+    const r=await apiPost({studentName:student.name,className:student.className,setNo,transcripts,recordings:recs});
+    $('#app').innerHTML=`<div class="card center"><span class="pill">已成功交卷</span><h2>${esc(r.title)}</h2>
+      ${r.autoScore!==''?`<div class="big">${esc(r.autoScore)}</div><p>口說系統初評 / 100</p>`:`<h3>已送交老師評分</h3>`}
+      <p class="state">已上傳 ${r.audioUploaded} 個錄音檔。${r.autoScore!==''?'此分數只依語音辨識與完成度估算，不代表 GEPT 正式評分。':'此瀏覽器沒有足夠的語音辨識結果，因此不顯示自動分數。'}</p>
+      <a class="btn primary" href="${EXEC}" target="_blank" rel="noopener">回到練習平台</a></div>`;
+  }catch(e){alert('交卷失敗：'+e.message+'\n錄音還在本頁，請再按一次交卷。');renderResubmit()}
+}
+function renderResubmit(){const app=$('#app');const div=document.createElement('div');div.className='card center';div.innerHTML='<button class="btn primary" onclick="submitAll()">重新交卷</button>';app.prepend(div)}
+
+function renderSetup(){
+  $('#app').innerHTML=`<div class="card"><h3>開始前，確認資料</h3>
+    <div class="field"><label>學生姓名 *</label><input id="inName" maxlength="40" value="${esc(student.name)}" placeholder="例如：王小明"></div>
+    <div class="field"><label>班級（選填）</label><input id="inClass" maxlength="40" value="${esc(student.className)}"></div>
+    <div class="field"><label>回數</label><select id="inSet">${Array.from({length:10},(_,i)=>`<option value="${i+1}" ${setNo===i+1?'selected':''}>第 ${i+1} 回</option>`).join('')}</select></div>
+    <button class="btn primary" onclick="beginExam()">開始口說練習</button></div>`;
+}
+async function beginExam(){
+  const n=$('#inName').value.trim(); if(!n){alert('請輸入學生姓名');return}
+  student.name=n; student.className=$('#inClass').value.trim(); setNo=Number($('#inSet').value);
+  $('#app').innerHTML='<div class="card center">載入題目中…</div>';
+  try{ META=await apiGet({api:'speakingMeta',setNo}); transcripts={repeat:[],reading:'',qa:[]}; recordings={}; renderExam(); }
+  catch(e){ $('#app').innerHTML=`<div class="card center">題目載入失敗：${esc(e.message)}<br><button class="btn" onclick="renderSetup()">回上一步</button></div>` }
+}
+renderSetup();
+</script>
+</body>
+</html>
