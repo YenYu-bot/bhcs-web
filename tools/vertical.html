@@ -103,6 +103,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
 
 <script>
 const $=id=>document.getElementById(id);
+const TEA=()=>$('version').value==='teacher';
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const coin=()=>Math.random()<.5;
 function numWithDigits(d,allowZero){ // d 位數，預設避免中間的 0 與結尾的 0
@@ -153,9 +154,9 @@ function cellsMul(p,no){
     partials.forEach((pp,i)=>{ const r=line(); const s=String(pp.v); s.split('').forEach((ch,j)=>{ const col=N-pp.shift-s.length+j; if(col>=0) r[col]={t:ch,cls:'ans'}; }); if(i===partials.length-1){ r[0]={t:'＋',cls:'op ans'}; r.forEach(c=>c.cls+=' ul'); } rows.push(r); });
     const r=line(); putRight(r,Ps,'ans',pd); rows.push(r);
   }
-  const grid=rows.map(r=>r.map(c=>`<div class="cell ${c.cls}">${c.t}</div>`).join('')).join('');
+  const grid=rows.map(r=>r.map(c=>`<div class="cell ${c.cls}">${(TEA()||!/(^| )(ans|sm)( |$)/.test(c.cls))?c.t:''}</div>`).join('')).join('');
   const t=trim(prod,pd);
-  return `<div class="prob"><div class="q"><span class="no">(${no})</span>${fmt(a,ad)}×${fmt(b,bd)}＝<span class="blank">${fmt(t.v,t.d)}</span></div><div class="g" style="--n:${N}">${grid}</div></div>`;
+  return `<div class="prob"><div class="q"><span class="no">(${no})</span>${fmt(a,ad)}×${fmt(b,bd)}＝<span class="blank">${TEA()?fmt(t.v,t.d):''}</span></div><div class="g" style="--n:${N}">${grid}</div></div>`;
 }
 
 /* ---------- 除法 ---------- */
@@ -228,12 +229,12 @@ function cellsDiv(p,no){
     else { const s2=String(after); s2.split('').forEach((ch,j)=>{ rr[off+i-s2.length+1+j]={t:ch,cls:'ans'}; }); }
     rows.push(rr); cur=after;
   }
-  const grid=rows.map(r=>r.map(c=>`<div class="cell ${c.cls}">${c.t}</div>`).join('')).join('');
+  const grid=rows.map(r=>r.map(c=>`<div class="cell ${c.cls}">${(TEA()||!/(^| )(ans|sm)( |$)/.test(c.cls))?c.t:''}</div>`).join('')).join('');
   const qt=trim(q,qd);
-  const remPart=isDec?'':(rem||$('divR').value!=='no'?`…<span class="blank">${rem}</span>`:'');
+  const remPart=isDec?'':(rem||$('divR').value!=='no'?`…<span class="blank">${TEA()?rem:''}</span>`:'');
   const note='';
   const cols=`repeat(${L},var(--c)) calc(var(--c) * .55) repeat(${A.length},var(--c))`;
-  return `<div class="prob"><div class="q"><span class="no">(${no})</span>${fmt(p.a,p.ad)}÷${fmt(p.b,p.bd)}＝<span class="blank">${fmt(qt.v,qt.d)}</span>${remPart}${note}</div><div class="g" style="--n:${N};grid-template-columns:${cols}">${grid}</div></div>`;
+  return `<div class="prob"><div class="q"><span class="no">(${no})</span>${fmt(p.a,p.ad)}÷${fmt(p.b,p.bd)}＝<span class="blank">${TEA()?fmt(qt.v,qt.d):''}</span>${remPart}${note}</div><div class="g" style="--n:${N};grid-template-columns:${cols}">${grid}</div></div>`;
 }
 
 /* ---------- 組頁 ---------- */
@@ -266,7 +267,8 @@ function generate(){
   $('out').innerHTML=parts.length?`<div class="sheet"><div class="head"><h2>乘除法直式計算練習</h2><span>班級：______　姓名：__________　日期：____/____</span></div>${parts.join('')}</div>`:'<div class="empty">請至少勾選一種題型。</div>';
 }
 $('gen').onclick=generate; $('print').onclick=()=>window.print();
-$('version').onchange=e=>document.body.className=e.target.value;
+$('version').onchange=e=>{document.body.className=e.target.value;$('gen').click();};
+document.body.className=$('version').value;
 ['perRow','cellSize','carryRow','mulA','mulAd','mulB','mulBd','mulZero','divA','divAd','divB','divBd','divR','divQd'].forEach(id=>$(id).onchange=generate);
 function syncDivUI(){ const dec=+$('divAd').value||+$('divBd').value; $('divR').disabled=!!dec; $('divR').title=dec?'小數除法一律出整除的題目':''; $('divQdWrap').style.display=dec?'':'none'; }
 ['divAd','divBd'].forEach(id=>$(id).addEventListener('change',syncDivUI)); syncDivUI();
