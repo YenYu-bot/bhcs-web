@@ -121,7 +121,7 @@
     </select></div></div>
 
   <div class="grp"><label>交換律</label><div class="line">
-    <span class="chk"><input type="checkbox" id="c_fadd" checked><label for="c_fadd">加法好朋友</label><input type="number" id="n_fadd" value="24" min="1" max="99"></span>
+    <span class="chk"><input type="checkbox" id="c_fadd" checked><label for="c_fadd">加法好朋友</label><select id="t_fadd" title="湊到多少"><option value="10">湊10</option><option value="100">湊100</option><option value="1000">湊1000</option><option value="mix" selected>混合（依難度）</option></select><input type="number" id="n_fadd" value="24" min="1" max="99"></span>
     <span class="chk"><input type="checkbox" id="c_fmul" checked><label for="c_fmul">乘法好朋友</label><input type="number" id="n_fmul" value="24" min="1" max="99"></span>
     <span class="chk"><input type="checkbox" id="c_swap" checked><label for="c_swap">交換律填空</label><input type="number" id="n_swap" value="16" min="1" max="99"></span>
     <span class="chk"><input type="checkbox" id="c_sadd" checked><label for="c_sadd">加法湊整</label><input type="number" id="n_sadd" value="12" min="1" max="99"></span>
@@ -169,14 +169,20 @@ const OP={add:'＋',sub:'－',mul:'×',div:'÷'};
 /* ================= 交換律 ================= */
 /* 加法好朋友：湊 10 / 100 / 1000 */
 function genFriendAdd(diff){
-  const targets=[[10,100],[10,100,100],[100,100,1000]][diff];
+  const mode=document.getElementById('t_fadd').value;
+  const targets=mode==='mix'?[[10,100],[10,100,100],[100,100,1000]][diff]:[+mode];
   const R=pick(targets);
   let a;
-  if(R===10) a=rnd(1,9);
-  else if(R===100) a=coin()?rnd(1,9)*10:rnd(11,89);
-  else a=coin()?rnd(1,9)*100:rnd(105,895);
+  const nine=k=>bagPick('fa'+k,[1,2,3,4,5,6,7,8,9])*k;   // 小集合用抽籤袋，抽完一輪才重複
+  if(R===10) a=nine(1);
+  else if(R===100) a=[()=>nine(10),()=>coin()?nine(10):rnd(11,89),()=>rnd(11,89)][diff]();
+  else a=[()=>nine(100),()=>coin()?nine(100):rnd(1,99)*10,()=>coin()?rnd(1,99)*10:rnd(105,895)][diff]();
   return {a,b:R-a,R,front:coin()};
 }
+const FADD_TEXT={10:['填入適當的數，把算式湊成 10。','好朋友＝和為 10 的兩個數：1和9、2和8、3和7、4和6、5和5。'],
+  100:['填入適當的數，把算式湊成 100。','好朋友＝和為 100 的兩個數。先看個位湊 10，再看十位湊 9（例如 37＋63）；整十數就直接湊 10（例如 30＋70）。'],
+  1000:['填入適當的數，把算式湊成 1000。','好朋友＝和為 1000 的兩個數。先看個位湊 10，再看十位、百位各湊 9（例如 375＋625）。'],
+  mix:['填入適當的數，把算式湊成整十、整百、整千。','好朋友＝和為 10、100、1000 的兩個數。先湊好朋友，計算最快。']};
 /* 乘法好朋友：2×5 / 4×25 / 8×125 … */
 const MUL_PAIRS=[
   [[2,5,10],[5,2,10],[4,25,100],[25,4,100],[5,20,100],[20,5,100]],
@@ -427,8 +433,7 @@ function generate(){
     if(on(id)) H.push(paginate(kind,title,stem,law,make(id,gen),CFG[id],cell));
   };
 
-  add('fadd','comm','加法好朋友','填入適當的數，把算式湊成整十、整百、整千。',
-      '好朋友＝和為 10、100、1000 的兩個數。先湊好朋友，計算最快。',genFriendAdd,cellFriendAdd);
+  { const t=FADD_TEXT[document.getElementById('t_fadd').value]; add('fadd','comm','加法好朋友',t[0],t[1],genFriendAdd,cellFriendAdd); }
   add('fmul','comm','乘法好朋友','填入適當的數，把算式湊成整十、整百、整千。',
       '乘法好朋友：2×5＝10、4×25＝100、8×125＝1000、5×20＝100、2×50＝100、4×250＝1000、2×500＝1000。',genFriendMul,cellFriendMul);
   add('swap','comm','交換律填空','利用加法交換律、乘法交換律，把適當的數填入□內。',
@@ -461,6 +466,7 @@ document.getElementById('gen').addEventListener('click',generate);
 document.getElementById('print').addEventListener('click',()=>window.print());
 document.getElementById('version').addEventListener('change',e=>{document.body.className=e.target.value;});
 document.getElementById('diff').addEventListener('change',generate);
+document.getElementById('t_fadd').addEventListener('change',generate);
 generate();
 </script>
 <a href="../index.html" id="bhcs-home">← 百宏文教機構</a>
