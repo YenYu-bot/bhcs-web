@@ -563,6 +563,10 @@ img,video{max-width:100%;height:auto}
   </style>
 
 <style id="bhcs-compact">
+.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:#62736f;line-height:1.3;margin:0 0 3px}
+.bhcs-brand b{color:#176b55;font-weight:800;font-size:12px;letter-spacing:.5px}
+.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}
+@media print{.bhcs-brand{font-size:8pt;margin-bottom:2px}.bhcs-brand b{font-size:9pt;color:#000}.bhcs-brand i{font-size:7.5pt}}
 /* 百宏統一：精簡卷頭與題卡（僅版面，不動出題邏輯） */
 .bhcs-paper-head{border-bottom:2px solid #0f172a;padding:0 0 6px;margin:0 0 4px}
 .bhcs-paper-head h2{font-size:20px;line-height:1.3;margin:0;font-weight:800;color:#0f172a}
@@ -794,6 +798,7 @@ header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!im
   <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
     <div class="bhcs-paper-box bg-white rounded-xl shadow-sm">
       <div class="bhcs-paper-head">
+        <div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div>
         <h2 id="paper-title-display">2-2 圓心角、圓周角與弧的關係：圓周角與弧 計算力特訓卷</h2>
         <div class="scope">範圍：圓周角定理、同弧所對圓周角相等、半圓所對圓周角為90°、平行弦截等弧、圓內接四邊形對角互補與外角性質</div>
         <div class="fill"><span>班級：<span class="ln"></span></span><span>座號：<span class="ln"></span></span><span>姓名：<span class="ln w"></span></span><span>日期：<span class="ln"></span></span><span>得分：<span id="online-score-display"></span></span></div>

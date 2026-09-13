@@ -83,7 +83,13 @@ button.ghost{background:#fff!important;color:var(--bhcs-green)!important}
 .hd,.head{border-bottom-color:var(--bhcs-green)!important}
 .sec{border-left-color:var(--bhcs-green)!important;background:var(--bhcs-soft)!important;padding:4px 10px!important}
 select,input[type=number]{border-color:#aabcb7!important}
-</style></head>
+</style><style id="bhcs-brand-style">
+.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:#62736f;line-height:1.3;margin:0 0 3px}
+.bhcs-brand b{color:#176b55;font-weight:800;font-size:12px;letter-spacing:.5px}
+.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}
+@media print{.bhcs-brand{font-size:8pt;margin-bottom:2px}.bhcs-brand b{font-size:9pt;color:#000}.bhcs-brand i{font-size:7.5pt}}
+</style>
+</head>
 <body class="student">
 <div class="panel">
   <h1>一元一次不等式 出題器（國一）</h1>
@@ -649,7 +655,7 @@ if(typeof document!=='undefined'){
     const parts=build(counts,opt);
     const diffName={1:'基礎',2:'進階',3:'挑戰'}[opt.lvl];
     const tn=types.map(t=>({int:'整數',frac:'分數',dec:'小數'})[t]).join('、')||'整數';
-    $('sheet').innerHTML=parts.length?`<div class="hd"><div><h2>一元一次不等式 計算力練習</h2><div class="sub">國一・難度：${diffName}　數的類型：${tn}　姓名：＿＿＿＿＿＿＿</div></div><div class="box">日 期：　　月　　日<br>作答時間：　　分　　秒</div></div>`+parts.join(''):'<div class="empty">請至少設定一個單元的題數</div>';
+    $('sheet').innerHTML=parts.length?`<div class="hd"><div><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>一元一次不等式 計算力練習</h2><div class="sub">國一・難度：${diffName}　數的類型：${tn}　姓名：＿＿＿＿＿＿＿</div></div><div class="box">日 期：　　月　　日<br>作答時間：　　分　　秒</div></div>`+parts.join(''):'<div class="empty">請至少設定一個單元的題數</div>';
     applyVersion();
   }
   function applyVersion(){

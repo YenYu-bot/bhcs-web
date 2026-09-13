@@ -607,7 +607,11 @@ header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!im
 .border-teal-200,.border-indigo-200,.border-teal-300,.border-indigo-300,.border-indigo-100,.border-teal-100{border-color:#b7d8cc!important}
 .text-indigo-900,.text-teal-900{color:var(--bhcs-green2)!important}
 .ring-teal-500,.focus\:ring-teal-500:focus,.focus\:ring-indigo-500:focus,.focus\:border-indigo-500:focus,.focus\:border-teal-500:focus{--tw-ring-color:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important}
-</style></head>
+</style><style id="bhcs-brand-style">
+.paper-header .text-xs.tracking-widest::before{content:"百宏文教機構 · ";color:#176b55;font-weight:800}
+@media print{.paper-header .text-xs.tracking-widest::before{color:#000}}
+</style>
+</head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-teal-600 selection:text-white">
 
   <!-- 頂部導航與狀態列 -->

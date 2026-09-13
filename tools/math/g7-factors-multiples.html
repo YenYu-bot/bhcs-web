@@ -77,7 +77,13 @@ button.ghost{background:#fff!important;color:var(--bhcs-green)!important}
 .hd,.head{border-bottom-color:var(--bhcs-green)!important}
 .sec{border-left-color:var(--bhcs-green)!important;background:var(--bhcs-soft)!important;padding:4px 10px!important}
 select,input[type=number]{border-color:#aabcb7!important}
-</style></head>
+</style><style id="bhcs-brand-style">
+.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:#62736f;line-height:1.3;margin:0 0 3px}
+.bhcs-brand b{color:#176b55;font-weight:800;font-size:12px;letter-spacing:.5px}
+.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}
+@media print{.bhcs-brand{font-size:8pt;margin-bottom:2px}.bhcs-brand b{font-size:9pt;color:#000}.bhcs-brand i{font-size:7.5pt}}
+</style>
+</head>
 <body class="student">
 <div class="panel">
   <h1>因數與倍數 出題器（國一）</h1>
@@ -210,7 +216,7 @@ function generate(){
     let h=`<div class="sec">${GEN[k].name}</div><p class="tip">${GEN[k].tip}</p><div class="grid c${cols}">`;
     items.forEach((it,i)=>{ h+=`<div class="prob"><div class="q"><span class="no">(${i+1})</span><span>${it.q}</span></div><div class="work"><div class="ans">${it.a}</div></div></div>`; });
     h+='</div>'; parts.push(h); });
-  $('out').innerHTML=parts.length?`<div class="sheet"><div class="head"><h2>因數與倍數 練習（${['','基礎','進階','挑戰'][D]}）</h2><span>班級：______　姓名：__________　日期：____/____　作答時間：____分____秒</span></div><p class="tip" style="margin:4px 0 0 2px">( ) 表示最大公因數，〔 〕表示最小公倍數。求下列各題：</p>${parts.join('')}</div>`:'<div class="empty">請至少勾選一個單元。</div>';
+  $('out').innerHTML=parts.length?`<div class="sheet"><div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>因數與倍數 練習（${['','基礎','進階','挑戰'][D]}）</h2><span>班級：______　姓名：__________　日期：____/____　作答時間：____分____秒</span></div><p class="tip" style="margin:4px 0 0 2px">( ) 表示最大公因數，〔 〕表示最小公倍數。求下列各題：</p>${parts.join('')}</div>`:'<div class="empty">請至少勾選一個單元。</div>';
 }
 $('gen').onclick=generate; $('print').onclick=()=>window.print();
 $('version').onchange=e=>document.body.className=e.target.value;
