@@ -546,6 +546,26 @@ img,video{max-width:100%;height:auto}
     }
   </style>
 
+<style id="bhcs-compact">
+/* 百宏統一：精簡卷頭與題卡（僅版面，不動出題邏輯） */
+.bhcs-paper-head{border-bottom:2px solid #0f172a;padding:0 0 6px;margin:0 0 4px}
+.bhcs-paper-head h2{font-size:20px;line-height:1.3;margin:0;font-weight:800;color:#0f172a}
+.bhcs-paper-head .scope{font-size:12px;color:#64748b;margin:2px 0 0;line-height:1.5}
+.bhcs-paper-head .fill{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px;margin-top:6px;color:#0f172a}
+.bhcs-paper-head .fill .ln{display:inline-block;border-bottom:1px solid #334155;min-width:64px;height:1em;vertical-align:-2px}
+.bhcs-paper-head .fill .ln.w{min-width:96px}
+.bhcs-paper-head .fill #online-score-display{display:inline-block;min-width:48px;border-bottom:1px solid #334155;text-align:center;font-weight:800;color:#b91c1c}
+.bhcs-paper-head .fill #online-score-display:empty::after,.bhcs-paper-head .fill #online-score-display[data-empty]::after{content:""}
+main.max-w-7xl{padding-top:14px!important}
+.bhcs-paper-box{padding:14px 18px 10px!important;margin-bottom:14px!important;border:1px solid #e2e8f0!important;border-radius:10px!important}
+#questions-container{gap:12px!important}
+.print-card{padding:10px 12px!important;border-radius:8px!important}
+.print-card .scratch-pad{height:64px!important;margin-bottom:8px!important}
+.print-card>div>div.bg-slate-50{padding:4px!important;margin-bottom:8px!important}
+.print-card>div>div.leading-relaxed{margin-bottom:8px!important;line-height:1.6!important}
+.print-card .pb-2.mb-2\.5{padding-bottom:4px!important;margin-bottom:6px!important}
+@media print{.bhcs-paper-box{padding:0 0 4px!important;border:0!important;margin-bottom:8px!important}.print-card{padding:6px 8px!important}#questions-container{gap:8px!important}}
+</style>
 <!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
 <style id="bhcs-theme">
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
@@ -725,29 +745,11 @@ header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!im
 
   <!-- 試卷主體容器 -->
   <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-    <div class="bg-white border-2 border-slate-800 rounded-xl p-6 mb-6 shadow-sm">
-      <div class="flex flex-col sm:flex-row justify-between items-center border-b-2 border-slate-800 pb-4 gap-4">
-        <div class="text-center sm:text-left">
-          <div class="text-xs font-bold uppercase tracking-widest text-teal-700">國中數學第五冊・單元 3-2 幾何證明與三心檢定</div>
-          <h2 id="paper-title-display" class="text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-            3-2 三角形的外心 計算力特訓卷
-          </h2>
-          <div class="text-xs text-slate-500 mt-1">
-            範圍：外心之幾何意義、銳角三角形外心角關係、鈍角三角形外心角與雙解、直角三角形外心於斜邊中點、等腰三角形外接圓半徑運算
-          </div>
-        </div>
-
-        <!-- 學生資訊填寫欄 -->
-        <div class="grid grid-cols-4 border border-slate-800 text-xs divide-x divide-slate-800 text-center w-full sm:w-auto">
-          <div class="p-2 bg-slate-100 font-bold">班級</div>
-          <div class="p-2 min-w-[70px]"> 年 班</div>
-          <div class="p-2 bg-slate-100 font-bold">姓名</div>
-          <div class="p-2 min-w-[90px]"></div>
-          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800">座號</div>
-          <div class="p-2 min-w-[70px] border-t border-slate-800"> 號</div>
-          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800 text-rose-700">得分</div>
-          <div class="p-2 min-w-[90px] border-t border-slate-800 font-black text-lg text-rose-600" id="online-score-display">-</div>
-        </div>
+    <div class="bhcs-paper-box bg-white rounded-xl shadow-sm">
+      <div class="bhcs-paper-head">
+        <h2 id="paper-title-display">3-2 三角形的外心 計算力特訓卷</h2>
+        <div class="scope">範圍：外心之幾何意義、銳角三角形外心角關係、鈍角三角形外心角與雙解、直角三角形外心於斜邊中點、等腰三角形外接圓半徑運算</div>
+        <div class="fill"><span>班級：<span class="ln"></span></span><span>座號：<span class="ln"></span></span><span>姓名：<span class="ln w"></span></span><span>日期：<span class="ln"></span></span><span>得分：<span id="online-score-display"></span></span></div>
       </div>
 
       <!-- 線上作答計時列 -->
