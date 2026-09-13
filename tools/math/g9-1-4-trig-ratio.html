@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>百宏文教｜相似直角三角形與三角比 出題器</title>
+<meta name="description" content="國中數學國三上「相似直角三角形與三角比」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g9-1-4-trig-ratio.html">
+<meta property="og:title" content="百宏文教｜相似直角三角形與三角比 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g9-1-4-trig-ratio.html">
+<meta property="og:type" content="website">
+
+<style id="bhcs-tailwind">/* 百宏文教：離線版 Tailwind 工具類別子集（取代 cdn.tailwindcss.com） */
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+html{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4;font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+body{margin:0;line-height:inherit}
+hr{height:0;color:inherit;border-top-width:1px}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+a{color:inherit;text-decoration:inherit}
+b,strong{font-weight:bolder}
+code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1em}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sub{bottom:-.25em}sup{top:-.5em}
+table{text-indent:0;border-color:inherit;border-collapse:collapse}
+button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}
+button,select{text-transform:none}
+button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}
+:-moz-focusring{outline:auto}
+progress{vertical-align:baseline}
+::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}
+[type=search]{-webkit-appearance:textfield;outline-offset:-2px}
+summary{display:list-item}
+blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}
+fieldset{margin:0;padding:0}legend{padding:0}
+ol,ul,menu{list-style:none;margin:0;padding:0}
+textarea{resize:vertical}
+input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}
+button,[role=button]{cursor:pointer}
+:disabled{cursor:default}
+img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+img,video{max-width:100%;height:auto}
+[hidden]{display:none}
+.-mb-3\.5{margin-bottom:-0.875rem}
+.-mb-4{margin-bottom:-1rem}
+.-mx-3\.5{margin-left:-0.875rem;margin-right:-0.875rem}
+.-mx-4{margin-left:-1rem;margin-right:-1rem}
+.absolute{position:absolute}
+.active\:scale-95:active{--tw-s:0.95;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.bg-amber-50{background-color:#fffbeb}
+.bg-amber-50\/80{background-color:rgb(255 251 235 / 0.8)}
+.bg-amber-500{background-color:#f59e0b}
+.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}
+.bg-amber-600{background-color:#d97706}
+.bg-blue-50{background-color:#eff6ff}
+.bg-blue-600{background-color:#2563eb}
+.bg-blue-700{background-color:#1d4ed8}
+.bg-cyan-50{background-color:#ecfeff}
+.bg-cyan-50\/70{background-color:rgb(236 254 255 / 0.7)}
+.bg-cyan-500{background-color:#06b6d4}
+.bg-cyan-500\/20{background-color:rgb(6 182 212 / 0.2)}
+.bg-cyan-600{background-color:#0891b2}
+.bg-cyan-700{background-color:#0e7490}
+.bg-emerald-100{background-color:#d1fae5}
+.bg-emerald-50{background-color:#ecfdf5}
+.bg-emerald-600{background-color:#059669}
+.bg-emerald-700{background-color:#047857}
+.bg-gradient-to-tr{background-image:linear-gradient(to top right,var(--tw-from,transparent),var(--tw-to,transparent))}
+.bg-indigo-50{background-color:#eef2ff}
+.bg-indigo-50\/70{background-color:rgb(238 242 255 / 0.7)}
+.bg-indigo-600{background-color:#4f46e5}
+.bg-orange-600{background-color:#ea580c}
+.bg-purple-50{background-color:#faf5ff}
+.bg-purple-600{background-color:#9333ea}
+.bg-rose-100{background-color:#ffe4e6}
+.bg-rose-50{background-color:#fff1f2}
+.bg-rose-600{background-color:#e11d48}
+.bg-sky-500\/20{background-color:rgb(14 165 233 / 0.2)}
+.bg-sky-600{background-color:#0284c7}
+.bg-slate-100{background-color:#f1f5f9}
+.bg-slate-200{background-color:#e2e8f0}
+.bg-slate-200\/70{background-color:rgb(226 232 240 / 0.7)}
+.bg-slate-50{background-color:#f8fafc}
+.bg-slate-50\/50{background-color:rgb(248 250 252 / 0.5)}
+.bg-slate-50\/60{background-color:rgb(248 250 252 / 0.6)}
+.bg-slate-50\/80{background-color:rgb(248 250 252 / 0.8)}
+.bg-slate-700{background-color:#334155}
+.bg-slate-800{background-color:#1e293b}
+.bg-slate-900{background-color:#0f172a}
+.bg-teal-50{background-color:#f0fdfa}
+.bg-teal-500{background-color:#14b8a6}
+.bg-teal-500\/20{background-color:rgb(20 184 166 / 0.2)}
+.bg-teal-600{background-color:#0d9488}
+.bg-transparent{background-color:transparent}
+.bg-violet-50{background-color:#f5f3ff}
+.bg-violet-600{background-color:#7c3aed}
+.bg-violet-700{background-color:#6d28d9}
+.bg-white{background-color:#ffffff}
+.block{display:block}
+.border{border-width:1px}
+.border-2{border-width:2px}
+.border-amber-200{border-color:#fde68a}
+.border-amber-400{border-color:#fbbf24}
+.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}
+.border-amber-600{border-color:#d97706}
+.border-b{border-bottom-width:1px}
+.border-b-2{border-bottom-width:2px}
+.border-blue-200{border-color:#bfdbfe}
+.border-blue-600{border-color:#2563eb}
+.border-collapse{border-collapse:collapse}
+.border-cyan-100{border-color:#cffafe}
+.border-cyan-200{border-color:#a5f3fc}
+.border-cyan-400{border-color:#22d3ee}
+.border-cyan-500\/40{border-color:rgb(6 182 212 / 0.4)}
+.border-cyan-600{border-color:#0891b2}
+.border-cyan-700{border-color:#0e7490}
+.border-dashed{border-style:dashed}
+.border-emerald-200{border-color:#a7f3d0}
+.border-emerald-400{border-color:#34d399}
+.border-emerald-500{border-color:#10b981}
+.border-emerald-600{border-color:#059669}
+.border-indigo-100{border-color:#e0e7ff}
+.border-indigo-200{border-color:#c7d2fe}
+.border-indigo-300{border-color:#a5b4fc}
+.border-indigo-500{border-color:#6366f1}
+.border-indigo-600{border-color:#4f46e5}
+.border-l-2{border-left-width:2px}
+.border-orange-600{border-color:#ea580c}
+.border-purple-200{border-color:#e9d5ff}
+.border-purple-500{border-color:#a855f7}
+.border-purple-600{border-color:#9333ea}
+.border-rose-300{border-color:#fda4af}
+.border-rose-500{border-color:#f43f5e}
+.border-rose-600{border-color:#e11d48}
+.border-sky-500{border-color:#0ea5e9}
+.border-sky-500\/40{border-color:rgb(14 165 233 / 0.4)}
+.border-slate-100{border-color:#f1f5f9}
+.border-slate-100\/80{border-color:rgb(241 245 249 / 0.8)}
+.border-slate-200{border-color:#e2e8f0}
+.border-slate-200\/70{border-color:rgb(226 232 240 / 0.7)}
+.border-slate-200\/80{border-color:rgb(226 232 240 / 0.8)}
+.border-slate-300{border-color:#cbd5e1}
+.border-slate-400{border-color:#94a3b8}
+.border-slate-600{border-color:#475569}
+.border-slate-700{border-color:#334155}
+.border-slate-800{border-color:#1e293b}
+.border-slate-900{border-color:#0f172a}
+.border-t{border-top-width:1px}
+.border-teal-200{border-color:#99f6e4}
+.border-teal-400{border-color:#2dd4bf}
+.border-teal-500{border-color:#14b8a6}
+.border-teal-500\/40{border-color:rgb(20 184 166 / 0.4)}
+.border-teal-600{border-color:#0d9488}
+.border-violet-200{border-color:#ddd6fe}
+.border-violet-500{border-color:#8b5cf6}
+.border-violet-600{border-color:#7c3aed}
+.bottom-5{bottom:1.25rem}
+.col-span-full{grid-column:1 / -1}
+.cursor-pointer{cursor:pointer}
+.divide-slate-800>:not([hidden])~:not([hidden]){border-color:#1e293b}
+.divide-x>:not([hidden])~:not([hidden]){border-left-width:1px}
+.duration-300{transition-duration:300ms}
+.fixed{position:fixed}
+.flex{display:flex}
+.flex-1{flex:1 1 0%}
+.flex-col{flex-direction:column}
+.flex-grow{flex-grow:1}
+.flex-wrap{flex-wrap:wrap}
+.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+.focus\:ring-1:focus{--tw-ring-shadow:0 0 0 1px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-2:focus{--tw-ring-shadow:0 0 0 2px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-cyan-500:focus{--tw-ring-color:#06b6d4}
+.focus\:ring-indigo-500:focus{--tw-ring-color:#6366f1}
+.focus\:ring-teal-500:focus{--tw-ring-color:#14b8a6}
+.font-black{font-weight:900}
+.font-bold{font-weight:700}
+.font-extrabold{font-weight:800}
+.font-medium{font-weight:500}
+.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.font-sans{font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+.font-semibold{font-weight:600}
+.font-serif{font-family:ui-serif,Georgia,"Times New Roman",serif}
+.from-amber-500{--tw-from:#f59e0b}
+.from-cyan-500{--tw-from:#06b6d4}
+.from-sky-500{--tw-from:#0ea5e9}
+.from-teal-500{--tw-from:#14b8a6}
+.gap-1{gap:0.25rem}
+.gap-1\.5{gap:0.375rem}
+.gap-2{gap:0.5rem}
+.gap-2\.5{gap:0.625rem}
+.gap-3{gap:0.75rem}
+.gap-3\.5{gap:0.875rem}
+.gap-4{gap:1rem}
+.gap-5{gap:1.25rem}
+.gap-6{gap:1.5rem}
+.grid{display:grid}
+.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.group:hover .group-hover\:block{display:block}
+.h-10{height:2.5rem}
+.h-12{height:3rem}
+.h-14{height:3.5rem}
+.h-16{height:4rem}
+.h-2\.5{height:0.625rem}
+.h-20{height:5rem}
+.h-24{height:6rem}
+.h-3\.5{height:0.875rem}
+.h-4{height:1rem}
+.h-5{height:1.25rem}
+.h-6{height:1.5rem}
+.h-8{height:2rem}
+.hidden{display:none}
+.hover\:bg-amber-500:hover{background-color:#f59e0b}
+.hover\:bg-amber-600:hover{background-color:#d97706}
+.hover\:bg-amber-700:hover{background-color:#b45309}
+.hover\:bg-blue-700:hover{background-color:#1d4ed8}
+.hover\:bg-blue-800:hover{background-color:#1e40af}
+.hover\:bg-cyan-100:hover{background-color:#cffafe}
+.hover\:bg-cyan-500:hover{background-color:#06b6d4}
+.hover\:bg-cyan-800:hover{background-color:#155e75}
+.hover\:bg-emerald-500:hover{background-color:#10b981}
+.hover\:bg-emerald-700:hover{background-color:#047857}
+.hover\:bg-emerald-800:hover{background-color:#065f46}
+.hover\:bg-indigo-100:hover{background-color:#e0e7ff}
+.hover\:bg-indigo-500:hover{background-color:#6366f1}
+.hover\:bg-indigo-600:hover{background-color:#4f46e5}
+.hover\:bg-indigo-700:hover{background-color:#4338ca}
+.hover\:bg-orange-700:hover{background-color:#c2410c}
+.hover\:bg-purple-700:hover{background-color:#7e22ce}
+.hover\:bg-rose-100:hover{background-color:#ffe4e6}
+.hover\:bg-rose-200:hover{background-color:#fecdd3}
+.hover\:bg-rose-700:hover{background-color:#be123c}
+.hover\:bg-sky-600:hover{background-color:#0284c7}
+.hover\:bg-sky-700:hover{background-color:#0369a1}
+.hover\:bg-slate-100:hover{background-color:#f1f5f9}
+.hover\:bg-slate-200:hover{background-color:#e2e8f0}
+.hover\:bg-slate-300:hover{background-color:#cbd5e1}
+.hover\:bg-slate-50:hover{background-color:#f8fafc}
+.hover\:bg-slate-600:hover{background-color:#475569}
+.hover\:bg-slate-700:hover{background-color:#334155}
+.hover\:bg-slate-900:hover{background-color:#0f172a}
+.hover\:bg-teal-100:hover{background-color:#ccfbf1}
+.hover\:bg-teal-500:hover{background-color:#14b8a6}
+.hover\:bg-teal-700:hover{background-color:#0f766e}
+.hover\:bg-violet-100:hover{background-color:#ede9fe}
+.hover\:bg-violet-700:hover{background-color:#6d28d9}
+.hover\:bg-violet-800:hover{background-color:#5b21b6}
+.hover\:border-cyan-300:hover{border-color:#67e8f9}
+.hover\:border-indigo-300:hover{border-color:#a5b4fc}
+.hover\:border-teal-300:hover{border-color:#5eead4}
+.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.hover\:text-slate-900:hover{color:#0f172a}
+.hover\:text-white:hover{color:#ffffff}
+.inline-block{display:inline-block}
+.inline-flex{display:inline-flex}
+.italic{font-style:italic}
+.items-center{align-items:center}
+.items-end{align-items:flex-end}
+.items-start{align-items:flex-start}
+.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}
+.justify-end{justify-content:flex-end}
+.leading-relaxed{line-height:1.625}
+.leading-tight{line-height:1.25}
+@media (min-width:1024px){.lg\:flex-row{flex-direction:row}}
+@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:items-center{align-items:center}}
+@media (min-width:1024px){.lg\:p-8{padding:2rem}}
+.max-h-28{max-height:7rem}
+.max-h-36{max-height:9rem}
+.max-w-7xl{max-width:80rem}
+.max-w-\[150px\]{max-width:150px}
+.max-w-\[170px\]{max-width:170px}
+.max-w-\[180px\]{max-width:180px}
+.max-w-\[210px\]{max-width:210px}
+.max-w-\[220px\]{max-width:220px}
+.max-w-\[240px\]{max-width:240px}
+.max-w-\[310px\]{max-width:310px}
+.mb-0\.5{margin-bottom:0.125rem}
+.mb-2{margin-bottom:0.5rem}
+.mb-2\.5{margin-bottom:0.625rem}
+.mb-3{margin-bottom:0.75rem}
+.mb-4{margin-bottom:1rem}
+.mb-5{margin-bottom:1.25rem}
+.mb-6{margin-bottom:1.5rem}
+@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.min-h-screen{min-height:100vh}
+.min-w-\[70px\]{min-width:70px}
+.min-w-\[90px\]{min-width:90px}
+.mr-1{margin-right:0.25rem}
+.mt-0\.5{margin-top:0.125rem}
+.mt-1{margin-top:0.25rem}
+.mt-2{margin-top:0.5rem}
+.mt-2\.5{margin-top:0.625rem}
+.mt-3{margin-top:0.75rem}
+.mt-4{margin-top:1rem}
+.mt-8{margin-top:2rem}
+.mx-auto{margin-left:auto;margin-right:auto}
+.my-1{margin-top:0.25rem;margin-bottom:0.25rem}
+.my-1\.5{margin-top:0.375rem;margin-bottom:0.375rem}
+.my-2{margin-top:0.5rem;margin-bottom:0.5rem}
+.opacity-0{opacity:0.0}
+.outline-none{outline:2px solid transparent;outline-offset:2px}
+.overflow-hidden{overflow:hidden}
+.overflow-visible{overflow:visible}
+.p-1{padding:0.25rem}
+.p-1\.5{padding:0.375rem}
+.p-2{padding:0.5rem}
+.p-2\.5{padding:0.625rem}
+.p-3{padding:0.75rem}
+.p-3\.5{padding:0.875rem}
+.p-4{padding:1rem}
+.p-5{padding:1.25rem}
+.p-6{padding:1.5rem}
+.pb-1\.5{padding-bottom:0.375rem}
+.pb-2{padding-bottom:0.5rem}
+.pb-3{padding-bottom:0.75rem}
+.pb-4{padding-bottom:1rem}
+.pl-1{padding-left:0.25rem}
+.pl-3{padding-left:0.75rem}
+.pl-4{padding-left:1rem}
+.pointer-events-none{pointer-events:none}
+.pr-2{padding-right:0.5rem}
+.pt-2{padding-top:0.5rem}
+.pt-2\.5{padding-top:0.625rem}
+.pt-3{padding-top:0.75rem}
+.pt-4{padding-top:1rem}
+.px-1{padding-left:0.25rem;padding-right:0.25rem}
+.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}
+.px-2{padding-left:0.5rem;padding-right:0.5rem}
+.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}
+.px-3{padding-left:0.75rem;padding-right:0.75rem}
+.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}
+.px-4{padding-left:1rem;padding-right:1rem}
+.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}
+.py-1{padding-top:0.25rem;padding-bottom:0.25rem}
+.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}
+.py-16{padding-top:4rem;padding-bottom:4rem}
+.py-2{padding-top:0.5rem;padding-bottom:0.5rem}
+.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}
+.py-3{padding-top:0.75rem;padding-bottom:0.75rem}
+.py-5{padding-top:1.25rem;padding-bottom:1.25rem}
+.relative{position:relative}
+.right-0{right:0rem}
+.right-5{right:1.25rem}
+.rounded{border-radius:0.25rem}
+.rounded-2xl{border-radius:1rem}
+.rounded-b-xl{border-bottom-left-radius:0.75rem;border-bottom-right-radius:0.75rem}
+.rounded-full{border-radius:9999px}
+.rounded-lg{border-radius:0.5rem}
+.rounded-md{border-radius:0.375rem}
+.rounded-xl{border-radius:0.75rem}
+.select-none{user-select:none}
+.selection\:bg-cyan-600::selection{background-color:#0891b2}
+.selection\:bg-indigo-600::selection{background-color:#4f46e5}
+.selection\:bg-teal-600::selection{background-color:#0d9488}
+.selection\:text-white::selection{color:#ffffff}
+.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0/.25);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-amber-100{--tw-shadow-color:#fef3c7}
+.shadow-blue-100{--tw-shadow-color:#dbeafe}
+.shadow-cyan-100{--tw-shadow-color:#cffafe}
+.shadow-emerald-100{--tw-shadow-color:#d1fae5}
+.shadow-indigo-100{--tw-shadow-color:#e0e7ff}
+.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-orange-100{--tw-shadow-color:#ffedd5}
+.shadow-purple-100{--tw-shadow-color:#f3e8ff}
+.shadow-rose-100{--tw-shadow-color:#ffe4e6}
+.shadow-sky-100{--tw-shadow-color:#e0f2fe}
+.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-teal-100{--tw-shadow-color:#ccfbf1}
+.shadow-violet-100{--tw-shadow-color:#ede9fe}
+.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0/.1),0 8px 10px -6px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-xs{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shrink-0{flex-shrink:0}
+@media (min-width:640px){.sm\:flex-row{flex-direction:row}}
+@media (min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:items-end{align-items:flex-end}}
+@media (min-width:640px){.sm\:max-w-\[220px\]{max-width:220px}}
+@media (min-width:640px){.sm\:p-10{padding:2.5rem}}
+@media (min-width:640px){.sm\:p-6{padding:1.5rem}}
+@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}
+@media (min-width:640px){.sm\:text-2xl{font-size:1.5rem;line-height:2rem}}
+@media (min-width:640px){.sm\:text-base{font-size:1rem;line-height:1.5rem}}
+@media (min-width:640px){.sm\:text-left{text-align:left}}
+@media (min-width:640px){.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}
+@media (min-width:640px){.sm\:w-auto{width:auto}}
+.space-x-3>:not([hidden])~:not([hidden]){margin-left:0.75rem}
+.space-y-0\.5>:not([hidden])~:not([hidden]){margin-top:0.125rem}
+.space-y-1>:not([hidden])~:not([hidden]){margin-top:0.25rem}
+.space-y-1\.5>:not([hidden])~:not([hidden]){margin-top:0.375rem}
+.space-y-5>:not([hidden])~:not([hidden]){margin-top:1.25rem}
+.sticky{position:sticky}
+.text-2xl{font-size:1.5rem;line-height:2rem}
+.text-\[10\.5px\]{font-size:10.5px}
+.text-\[10px\]{font-size:10px}
+.text-\[11px\]{font-size:11px}
+.text-amber-300{color:#fcd34d}
+.text-amber-700{color:#b45309}
+.text-amber-900{color:#78350f}
+.text-base{font-size:1rem;line-height:1.5rem}
+.text-blue-700{color:#1d4ed8}
+.text-blue-800{color:#1e40af}
+.text-center{text-align:center}
+.text-cyan-300{color:#67e8f9}
+.text-cyan-600{color:#0891b2}
+.text-cyan-700{color:#0e7490}
+.text-cyan-800{color:#155e75}
+.text-cyan-900{color:#164e63}
+.text-cyan-950{color:#083344}
+.text-emerald-600{color:#059669}
+.text-emerald-700{color:#047857}
+.text-emerald-800{color:#065f46}
+.text-indigo-600{color:#4f46e5}
+.text-indigo-700{color:#4338ca}
+.text-indigo-800{color:#3730a3}
+.text-indigo-900{color:#312e81}
+.text-indigo-950{color:#1e1b4b}
+.text-left{text-align:left}
+.text-lg{font-size:1.125rem;line-height:1.75rem}
+.text-orange-700{color:#c2410c}
+.text-purple-700{color:#7e22ce}
+.text-purple-800{color:#6b21a8}
+.text-right{text-align:right}
+.text-rose-600{color:#e11d48}
+.text-rose-700{color:#be123c}
+.text-rose-800{color:#9f1239}
+.text-sky-300{color:#7dd3fc}
+.text-sky-600{color:#0284c7}
+.text-sky-700{color:#0369a1}
+.text-slate-200{color:#e2e8f0}
+.text-slate-300{color:#cbd5e1}
+.text-slate-400{color:#94a3b8}
+.text-slate-500{color:#64748b}
+.text-slate-600{color:#475569}
+.text-slate-700{color:#334155}
+.text-slate-800{color:#1e293b}
+.text-slate-900{color:#0f172a}
+.text-sm{font-size:0.875rem;line-height:1.25rem}
+.text-teal-300{color:#5eead4}
+.text-teal-600{color:#0d9488}
+.text-teal-700{color:#0f766e}
+.text-teal-800{color:#115e59}
+.text-teal-900{color:#134e4a}
+.text-teal-950{color:#042f2e}
+.text-violet-600{color:#7c3aed}
+.text-violet-700{color:#6d28d9}
+.text-white{color:#ffffff}
+.text-xl{font-size:1.25rem;line-height:1.75rem}
+.text-xs{font-size:0.75rem;line-height:1rem}
+.to-blue-600{--tw-to:#2563eb}
+.to-emerald-600{--tw-to:#059669}
+.to-indigo-600{--tw-to:#4f46e5}
+.to-rose-600{--tw-to:#e11d48}
+.top-0{top:0rem}
+.tracking-tight{letter-spacing:-.025em}
+.tracking-wider{letter-spacing:.05em}
+.tracking-widest{letter-spacing:.1em}
+.transform{transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.translate-y-20{--tw-ty:5rem;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uppercase{text-transform:uppercase}
+.w-10{width:2.5rem}
+.w-12{width:3rem}
+.w-2\.5{width:0.625rem}
+.w-3\.5{width:0.875rem}
+.w-5{width:1.25rem}
+.w-6{width:1.5rem}
+.w-64{width:16rem}
+.w-8{width:2rem}
+.w-80{width:20rem}
+.w-9{width:2.25rem}
+.w-full{width:100%}
+@media (min-width:1280px){.xl\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.z-50{z-index:50}
+</style>
+  <style>
+    /* 線段頂部橫線標記 (標準幾何印刷樣式) */
+    .overline {
+      text-decoration: overline;
+      text-decoration-thickness: 1.5px;
+      letter-spacing: 1px;
+      padding: 0 1px;
+    }
+
+    /* 純 CSS 垂直分數排版 */
+    .math-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 0.25rem;
+      font-size: 0.95em;
+      line-height: 1.1;
+    }
+    .math-num {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 2px;
+    }
+    .math-den {
+      padding-top: 2px;
+    }
+
+    /* 手寫演算草稿底紋 */
+    .scratch-pad {
+      background-color: #fafbfc;
+      background-image: radial-gradient(#d1d5db 0.75px, transparent 0.75px);
+      background-size: 10px 10px;
+    }
+
+    /* 列印專屬設定 */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .print-card {
+        border: 1px solid #cbd5e1 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-shadow: none !important;
+      }
+      .print-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+      .print-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .print-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+      .print-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+    }
+  </style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif!important;background:var(--bhcs-bg)!important}
+header.no-print{background:var(--bhcs-green2)!important;border-bottom:4px solid var(--bhcs-mint)!important;box-shadow:0 5px 16px #173e3412!important}
+header.no-print>div:first-child h1{color:#fff!important}
+header.no-print>div:first-child h1::before{content:"百宏文教｜";color:var(--bhcs-mint)}
+header.no-print>div:first-child p{color:#c8e8df!important}
+header.no-print>div:first-child>div:first-child>div:first-child{background:var(--bhcs-mint)!important;color:var(--bhcs-green2)!important;box-shadow:none!important}
+header.no-print>div:first-child button{background:#fff!important;color:var(--bhcs-green2)!important;border:1px solid #9ad9c6!important;box-shadow:none!important;font-weight:800!important}
+header.no-print>div:first-child button:hover{background:var(--bhcs-soft)!important}
+header.no-print>div:first-child button:first-child{background:var(--bhcs-mint)!important}
+header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!important;border-top:none!important}
+.bg-teal-600,.bg-indigo-600,.bg-blue-600,.bg-emerald-600,.bg-cyan-700,.bg-violet-600,.bg-sky-600,.bg-teal-500,.bg-sky-500{background-color:var(--bhcs-green)!important}
+.hover\:bg-teal-700:hover,.hover\:bg-indigo-700:hover,.hover\:bg-blue-700:hover,.hover\:bg-emerald-700:hover,.hover\:bg-violet-700:hover,.hover\:bg-cyan-800:hover,.bg-teal-700,.bg-indigo-700,.bg-blue-700,.bg-emerald-700{background-color:var(--bhcs-green2)!important}
+.bg-amber-600{background-color:var(--bhcs-muted)!important}.hover\:bg-amber-700:hover{background-color:#4a5a56!important}
+.text-teal-600,.text-teal-700,.text-teal-800,.text-indigo-600,.text-indigo-700,.text-blue-600,.text-blue-700,.text-violet-700,.text-cyan-700{color:var(--bhcs-green)!important}
+.border-teal-500,.border-teal-600,.border-indigo-500,.border-indigo-600,.border-blue-500,.border-blue-600{border-color:var(--bhcs-green)!important}
+.bg-teal-50,.bg-indigo-50,.bg-blue-50,.bg-violet-50,.bg-cyan-50{background-color:var(--bhcs-soft)!important}
+.border-teal-200,.border-indigo-200,.border-teal-300,.border-indigo-300,.border-indigo-100,.border-teal-100{border-color:#b7d8cc!important}
+.text-indigo-900,.text-teal-900{color:var(--bhcs-green2)!important}
+.ring-teal-500,.focus\:ring-teal-500:focus,.focus\:ring-indigo-500:focus,.focus\:border-indigo-500:focus,.focus\:border-teal-500:focus{--tw-ring-color:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important}
+</style></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans">
+
+  <!-- 頂部控制面板 (列印時隱藏) -->
+  <header class="no-print bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-sky-100">
+          📐
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">國中數學計算力特訓：相似直角三角形與三角比</h1>
+          <p class="text-xs text-slate-500">1-4 相似三角形的應用・三角比定義 (sin, cos, tan)／生活坡度測量／特殊角 30°-45°-60° 計算與應用</p>
+        </div>
+      </div>
+
+      <!-- 操作按鈕群 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="generateExam()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🔄</span> 重新出題
+        </button>
+        <button onclick="toggleAnswerMode()" id="btn-toggle-ans" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+          <span>👁️</span> <span id="ans-btn-text">顯示解答步驟</span>
+        </button>
+        <button onclick="toggleOnlineTest()" id="btn-online-test" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-sm font-semibold rounded-lg transition flex items-center gap-1.5">
+          <span>✍️</span> <span>線上測驗模式</span>
+        </button>
+        <button onclick="printWorksheet(false)" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🖨️</span> 列印學用版
+        </button>
+        <button onclick="printWorksheet(true)" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>📄</span> 列印教用版
+        </button>
+        <button onclick="exportSingleHTML()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>💾</span> 匯出獨立 HTML
+        </button>
+      </div>
+    </div>
+
+    <!-- 參數設定抽屜 -->
+    <div class="bg-slate-50 border-t border-slate-200 px-4 py-3 text-xs text-slate-700">
+      <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
+        
+        <!-- 全局數值與版面設定 -->
+        <div class="flex flex-wrap items-center gap-4">
+          <!-- 難易度 -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-slate-600">難易度：</span>
+            <select id="cfg-diff" onchange="generateExam()" class="bg-transparent font-medium text-slate-800 outline-none cursor-pointer">
+              <option value="easy">基礎（經典畢氏數・基本三角比）</option>
+              <option value="medium" selected>進階（旋轉方位・生活坡度運算）</option>
+              <option value="hard">挑戰（根式有理化・斜邊逆推）</option>
+            </select>
+          </div>
+
+          <!-- 數值型態 -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-slate-600">數值型態：</span>
+            <select id="cfg-num-type" onchange="generateExam()" class="bg-transparent font-medium text-slate-800 outline-none cursor-pointer">
+              <option value="fraction" selected>最簡分數與根式</option>
+              <option value="decimal">小數四捨五入</option>
+              <option value="mixed">綜合混搭</option>
+            </select>
+          </div>
+
+          <!-- 每列題數 (1~4題) -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-sky-700">每列題數：</span>
+            <div class="flex items-center gap-1">
+              <button type="button" onclick="setColumns(1)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="1">1題</button>
+              <button type="button" onclick="setColumns(2)" class="col-btn px-2 py-0.5 rounded bg-sky-600 text-white font-bold" data-col="2">2題</button>
+              <button type="button" onclick="setColumns(3)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="3">3題</button>
+              <button type="button" onclick="setColumns(4)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="4">4題</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 試卷資訊 -->
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="cfg-title" value="國中數學 1-4 相似三角形的應用：相似直角三角形 計算力特訓卷" class="px-2.5 py-1 bg-white border border-slate-200 rounded text-slate-800 font-semibold w-80 text-xs" placeholder="試卷標題" oninput="updateHeaderTitle()">
+          <span class="text-slate-400">|</span>
+          <span class="font-bold text-slate-600">總題數：<span id="total-questions-badge" class="text-sky-600 font-extrabold text-sm">10</span> 題</span>
+        </div>
+      </div>
+
+      <!-- 4 大知識點獨立題數控制 (教材四大單元) -->
+      <div class="max-w-7xl mx-auto mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-3">
+        
+        <!-- 知識點 1 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">① 直角三角形的邊長比值</div>
+            <div class="text-[10px] text-slate-500">sin、cos、tan 定義與比值</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(0, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-0" value="3" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(0, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 2 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">② 邊長比值的生活問題</div>
+            <div class="text-[10px] text-slate-500">殘障坡道／溜滑梯／自行車道斜坡</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(1, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-1" value="3" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(1, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 3 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">③ 特殊直角三角形邊長比</div>
+            <div class="text-[10px] text-slate-500">30°-60°-90° 與 45°-45°-90°</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(2, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-2" value="2" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(2, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 4 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">④ 特殊角的生活情境問題</div>
+            <div class="text-[10px] text-slate-500">校慶三角旗／商場電扶梯／聖誕裝飾燈</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(3, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-3" value="2" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(3, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速題數設定預設按鈕 -->
+      <div class="max-w-7xl mx-auto mt-2 flex items-center justify-end gap-1.5 text-[11px] text-slate-500">
+        <span>快速預設：</span>
+        <button onclick="setAllTopicCounts(1)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 1 題</button>
+        <button onclick="setAllTopicCounts(2)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 2 題</button>
+        <button onclick="setAllTopicCounts(3)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 3 題</button>
+        <button onclick="setAllTopicCounts(5)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 5 題</button>
+        <button onclick="setAllTopicCounts(0)" class="px-2 py-0.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded">全歸零</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 試卷主體 -->
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="bg-white border-2 border-slate-800 rounded-xl p-6 mb-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row justify-between items-center border-b-2 border-slate-800 pb-4 gap-4">
+        <div class="text-center sm:text-left">
+          <div class="text-xs font-bold uppercase tracking-widest text-sky-700">國中數學第三冊・單元 1-4 計算能力檢定</div>
+          <h2 id="paper-title-display" class="text-2xl font-black text-slate-900 tracking-tight mt-0.5">
+            1-4 相似直角三角形與三角比 計算力特訓卷
+          </h2>
+          <div class="text-xs text-slate-500 mt-1">
+            範圍：直角三角形邊長比值定義 (sin、cos、tan)、斜坡生活測量、30°-60°-90° 與 45°-45°-90° 邊長推導與應用
+          </div>
+        </div>
+
+        <div class="grid grid-cols-4 border border-slate-800 text-xs divide-x divide-slate-800 text-center w-full sm:w-auto">
+          <div class="p-2 bg-slate-100 font-bold">班級</div>
+          <div class="p-2 min-w-[70px]"> 年 班</div>
+          <div class="p-2 bg-slate-100 font-bold">姓名</div>
+          <div class="p-2 min-w-[90px]"></div>
+          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800">座號</div>
+          <div class="p-2 min-w-[70px] border-t border-slate-800"> 號</div>
+          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800 text-rose-700">得分</div>
+          <div class="p-2 min-w-[90px] border-t border-slate-800 font-black text-lg text-rose-600" id="online-score-display">-</div>
+        </div>
+      </div>
+
+      <div id="online-meta-bar" class="hidden no-print mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-semibold">
+        <div class="flex items-center gap-2 text-indigo-700">
+          <span>⏱️ 作答計時器：<span id="timer-display" class="font-mono text-sm font-black">00:00</span></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="gradeOnlineTest()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-xs transition">
+            送出批改
+          </button>
+          <button onclick="resetOnlineTest()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md transition">
+            清空重作
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 題目列表容器 -->
+    <div id="questions-container" class="grid grid-cols-1 md:grid-cols-2 gap-5 print-cols-2"></div>
+
+    <!-- 頁尾核心公式速查 (絕無任何 $ 符號) -->
+    <footer class="mt-8 border-t border-slate-300 pt-4 text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div>
+        <span class="font-bold text-slate-700">📐 直角三角形邊長比值定義：</span>
+        <span>sin A ＝ (∠A 的對邊長) ÷ (斜邊長)</span>｜
+        <span>cos A ＝ (∠A 的鄰邊長) ÷ (斜邊長)</span>｜
+        <span>tan A ＝ (∠A 的對邊長) ÷ (∠A 的鄰邊長)</span>
+      </div>
+      <div class="text-[11px] font-mono">
+        特殊角邊長比：30°-60°-90° ＝ 1 ： √3 ： 2 ； 45°-45°-90° ＝ 1 ： 1 ： √2
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // ==========================================
+    // 數學輔助工具庫
+    // ==========================================
+    function gcd(a, b) {
+      a = Math.abs(Math.round(a));
+      b = Math.abs(Math.round(b));
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a || 1;
+    }
+
+    function formatFraction(num, den) {
+      if (den === 1) return `${num}`;
+      if (num === 0) return `0`;
+      const g = gcd(num, den);
+      num /= g;
+      den /= g;
+      if (den < 0) { num = -num; den = -den; }
+      if (den === 1) return `${num}`;
+      return `<span class="math-frac"><span class="math-num">${num}</span><span class="math-den">${den}</span></span>`;
+    }
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randPick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    let currentQuestions = [];
+    let showAnswers = false;
+    let isOnlineMode = false;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let currentCols = 2;
+
+    // ==========================================
+    // 精準幾何向量 SVG 繪製引擎 (依教材版型真實比例繪製)
+    // ==========================================
+
+    // 1. 直角三角形標準圖 (直角在左，或依教材旋轉斜擺)
+    // 支援水平直角與斜向直角擺法
+    function renderSvgRightTriangle(vRight, vOpp, vAdj, lenOpp, lenAdj, lenHyp, style = "standard") {
+      if (style === "tilted") {
+        // 教材 P.1 第 3, 4 題傾斜放置之直角三角形
+        return `
+          <svg viewBox="0 0 240 140" class="w-full max-h-36 mx-auto select-none overflow-visible">
+            <!-- A在左側直角:(45, 80), B在下方:(90, 125), C在右上:(210, 20) -->
+            <polygon points="45,80 90,125 210,20" fill="#f8fafc" stroke="#334155" stroke-width="2" />
+            <!-- 直角方塊在 A:(45,80) 沿 AB 向量(45,45) 與 AC 向量(165,-60) 正交方向 -->
+            <path d="M 52,73 L 61,82 L 54,89" fill="none" stroke="#dc2626" stroke-width="1.5" />
+            
+            <!-- 頂點標籤 -->
+            <text x="28" y="84" font-size="12" font-weight="bold" fill="#0f172a">${vRight}</text>
+            <text x="90" y="138" font-size="12" font-weight="bold" fill="#0f172a">${vAdj}</text>
+            <text x="218" y="24" font-size="12" font-weight="bold" fill="#0f172a">${vOpp}</text>
+
+            <!-- 邊長數字標註 (真實位置垂直對齊) -->
+            <text x="56" y="112" font-size="10" font-weight="bold" fill="#475569">${lenOpp}</text>
+            <text x="122" y="48" font-size="10" font-weight="bold" fill="#475569">${lenAdj}</text>
+            <text x="160" y="92" font-size="10" font-weight="bold" fill="#0284c7">${lenHyp}</text>
+          </svg>
+        `;
+      }
+
+      // 標準水平垂直擺法 (教材 P.1 第 1, 2, 5, 6, 7, 8 題)
+      // 直角在左下 (40, 115)
+      return `
+        <svg viewBox="0 0 240 140" class="w-full max-h-36 mx-auto select-none overflow-visible">
+          <!-- 直角點:(40, 115), 水平底邊端點:(190, 115), 垂直頂點:(40, 20) -->
+          <polygon points="40,115 190,115 40,20" fill="#f8fafc" stroke="#334155" stroke-width="2" />
+          <!-- 直角方塊在 (40, 115) -->
+          <rect x="40" y="103" width="12" height="12" fill="none" stroke="#dc2626" stroke-width="1.5" />
+          
+          <!-- 頂點標籤 -->
+          <text x="24" y="125" font-size="12" font-weight="bold" fill="#0f172a">${vRight}</text>
+          <text x="198" y="122" font-size="12" font-weight="bold" fill="#0f172a">${vAdj}</text>
+          <text x="35" y="13" font-size="12" font-weight="bold" fill="#0f172a">${vOpp}</text>
+
+          <!-- 邊長標註 -->
+          <text x="115" y="130" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">${lenAdj}</text>
+          <text x="22" y="70" font-size="10" font-weight="bold" fill="#475569">${lenOpp}</text>
+          <text x="125" y="62" font-size="10" font-weight="bold" fill="#0284c7">${lenHyp}</text>
+        </svg>
+      `;
+    }
+
+    // 2. 生活坡度示意圖 (殘障坡道／溜滑梯／自行車道)
+    function renderSvgRamp(angleDeg, heightStr, lenLabel, scene = "ramp") {
+      return `
+        <svg viewBox="0 0 260 140" class="w-full max-h-36 mx-auto select-none overflow-visible">
+          <!-- 地面水平線 -->
+          <line x1="20" y1="120" x2="245" y2="120" stroke="#475569" stroke-width="2" />
+          
+          <!-- 垂直牆面/大樓臺階 (200, 120) 至 (200, 35) -->
+          <line x1="200" y1="120" x2="200" y2="35" stroke="#334155" stroke-width="2" />
+          <rect x="188" y="108" width="12" height="12" fill="none" stroke="#334155" stroke-width="1.2" />
+
+          <!-- 斜坡 hypotenuse 從 (40, 120) 至 (200, 35) -->
+          <line x1="40" y1="120" x2="200" y2="35" stroke="#0284c7" stroke-width="2.5" />
+          
+          <!-- 夾角弧線標記 -->
+          <path d="M 70,120 A 30 30 0 0 0 65,107" fill="none" stroke="#e11d48" stroke-width="1.5" />
+          <text x="75" y="114" font-size="10" font-weight="bold" fill="#e11d48">${angleDeg}°</text>
+
+          <!-- 頂點與長度文字 -->
+          <text x="30" y="132" font-size="11" font-weight="bold" fill="#0f172a">A</text>
+          <text x="206" y="32" font-size="11" font-weight="bold" fill="#0f172a">B</text>
+          <text x="206" y="132" font-size="11" font-weight="bold" fill="#0f172a">C</text>
+
+          <!-- 高度標註 -->
+          <text x="206" y="80" font-size="10" font-weight="bold" fill="#475569">${heightStr}</text>
+          
+          <!-- 斜坡長度標註 -->
+          <text x="110" y="68" font-size="10" font-weight="bold" fill="#0284c7">${lenLabel}</text>
+        </svg>
+      `;
+    }
+
+    // 3. 特殊直角三角形圖 (30-60-90 或 45-45-90，真實比例幾何)
+    function renderSvgSpecialTriangle(angleType, knownPos, knownVal, askLabels) {
+      if (angleType === "45-45-90") {
+        // 等腰直角三角形 1 : 1 : √2 (底寬 100, 高 100)
+        return `
+          <svg viewBox="0 0 240 140" class="w-full max-h-36 mx-auto select-none overflow-visible">
+            <!-- 坐標 B:(40, 115), C:(140, 115), A:(140, 15) -->
+            <polygon points="40,115 140,115 140,15" fill="#f8fafc" stroke="#334155" stroke-width="2" />
+            <rect x="128" y="103" width="12" height="12" fill="none" stroke="#dc2626" stroke-width="1.5" />
+
+            <!-- 45度角弧標記於 B -->
+            <path d="M 65,115 A 25 25 0 0 0 58,97" fill="none" stroke="#7c3aed" stroke-width="1.4" />
+            <text x="68" y="110" font-size="10" font-weight="bold" fill="#7c3aed">45°</text>
+
+            <!-- 頂點標籤 -->
+            <text x="24" y="122" font-size="11" font-weight="bold" fill="#0f172a">B</text>
+            <text x="146" y="122" font-size="11" font-weight="bold" fill="#0f172a">C</text>
+            <text x="140" y="10" font-size="11" font-weight="bold" fill="#0f172a">A</text>
+
+            <!-- 標籤與數值 -->
+            <text x="90" y="130" font-size="9" font-weight="bold" fill="#475569" text-anchor="middle">${knownPos === "BC" ? knownVal : (askLabels.BC || "BC")}</text>
+            <text x="148" y="70" font-size="9" font-weight="bold" fill="#475569">${knownPos === "AC" ? knownVal : (askLabels.AC || "AC")}</text>
+            <text x="75" y="60" font-size="9" font-weight="bold" fill="#0284c7">${knownPos === "AB" ? knownVal : (askLabels.AB || "AB")}</text>
+          </svg>
+        `;
+      } else {
+        // 30-60-90 三角形 (底寬 120, 高 = 120 / √3 ≈ 69.3)
+        return `
+          <svg viewBox="0 0 240 140" class="w-full max-h-36 mx-auto select-none overflow-visible">
+            <!-- 坐標 A:(40, 115), C:(180, 115), B:(180, 34) 角 A 為 30 度 -->
+            <polygon points="40,115 180,115 180,34" fill="#f8fafc" stroke="#334155" stroke-width="2" />
+            <rect x="168" y="103" width="12" height="12" fill="none" stroke="#dc2626" stroke-width="1.5" />
+
+            <!-- 30度弧標記於 A -->
+            <path d="M 70,115 A 30 30 0 0 0 66,100" fill="none" stroke="#7c3aed" stroke-width="1.4" />
+            <text x="75" y="112" font-size="10" font-weight="bold" fill="#7c3aed">30°</text>
+
+            <!-- 頂點標籤 -->
+            <text x="24" y="122" font-size="11" font-weight="bold" fill="#0f172a">A</text>
+            <text x="188" y="122" font-size="11" font-weight="bold" fill="#0f172a">C</text>
+            <text x="180" y="24" font-size="11" font-weight="bold" fill="#0f172a">B</text>
+
+            <!-- 標籤與數值 -->
+            <text x="110" y="130" font-size="9" font-weight="bold" fill="#475569" text-anchor="middle">${knownPos === "AC" ? knownVal : (askLabels.AC || "AC")}</text>
+            <text x="188" y="75" font-size="9" font-weight="bold" fill="#475569">${knownPos === "BC" ? knownVal : (askLabels.BC || "BC")}</text>
+            <text x="95" y="65" font-size="9" font-weight="bold" fill="#0284c7">${knownPos === "AB" ? knownVal : (askLabels.AB || "AB")}</text>
+          </svg>
+        `;
+      }
+    }
+
+    // 4. 特殊角生活情境圖 (校舍旗幟、商場電扶梯)
+    function renderSvgSpecialApp(angleDeg, heightVal, itemLabel) {
+      return `
+        <svg viewBox="0 0 260 140" class="w-full max-h-36 mx-auto select-none overflow-visible">
+          <!-- 建築物本體 (右側大樓/樓梯臺階) -->
+          <rect x="175" y="20" width="60" height="100" fill="#f1f5f9" stroke="#334155" stroke-width="1.8" />
+          <!-- 窗戶裝飾 -->
+          <rect x="185" y="30" width="12" height="16" fill="#cbd5e1" />
+          <rect x="210" y="30" width="12" height="16" fill="#cbd5e1" />
+          <rect x="185" y="55" width="12" height="16" fill="#cbd5e1" />
+          <rect x="210" y="55" width="12" height="16" fill="#cbd5e1" />
+          <rect x="185" y="80" width="12" height="16" fill="#cbd5e1" />
+          <rect x="210" y="80" width="12" height="16" fill="#cbd5e1" />
+
+          <!-- 地面線 -->
+          <line x1="20" y1="120" x2="245" y2="120" stroke="#475569" stroke-width="2" />
+          
+          <!-- 直角記號於 C:(175, 120) -->
+          <rect x="163" y="108" width="12" height="12" fill="none" stroke="#334155" stroke-width="1.2" />
+
+          <!-- 斜向拉線/電扶梯 (35, 120) 至 (175, 20) -->
+          <line x1="35" y1="120" x2="175" y2="20" stroke="#e11d48" stroke-width="2.5" />
+          
+          <!-- 角度標籤 -->
+          <path d="M 65,120 A 30 30 0 0 0 58,104" fill="none" stroke="#e11d48" stroke-width="1.4" />
+          <text x="68" y="114" font-size="10" font-weight="bold" fill="#e11d48">${angleDeg}°</text>
+
+          <!-- 頂點標籤 -->
+          <text x="24" y="125" font-size="11" font-weight="bold" fill="#0f172a">A</text>
+          <text x="175" y="14" font-size="11" font-weight="bold" fill="#0f172a">B</text>
+          <text x="175" y="132" font-size="11" font-weight="bold" fill="#0f172a">C</text>
+
+          <!-- 高度標註 -->
+          <text x="145" y="70" font-size="9" font-weight="bold" fill="#334155">${heightVal} 公尺</text>
+          <!-- 斜長標籤 -->
+          <text x="90" y="60" font-size="9" font-weight="bold" fill="#e11d48">${itemLabel}</text>
+        </svg>
+      `;
+    }
+
+    // ==========================================
+    // 命題生成引擎 (依教材四大知識點結構化輸出)
+    // ==========================================
+
+    // 知識點 1：直角三角形的邊長比值 (教材 P.1-2 第 1~8 題)
+    function genTopic1Question(diff, numType) {
+      // 畢氏三元數庫 (a, b, c) 代表兩股與斜邊
+      const triples = [
+        { a: 7,  b: 24, c: 25 },
+        { a: 8,  b: 15, c: 17 },
+        { a: 5,  b: 12, c: 13 },
+        { a: 9,  b: 40, c: 41 },
+        { a: 3,  b: 4,  c: 5  },
+        { a: 12, b: 35, c: 37 }
+      ];
+      const t = randPick(triples);
+
+      // 決定直角頂點：80% 機率為 C，20% 機率為 A（如教材第 3, 4 題）
+      const isRightC = Math.random() > 0.25;
+      let vRight, v1, v2, targetAngle, oppSide, adjSide, hypSide;
+
+      if (isRightC) {
+        vRight = "C";
+        v1 = "A";
+        v2 = "B";
+        targetAngle = randPick(["A", "B"]);
+        hypSide = t.c; // 斜邊為 AB
+        if (targetAngle === "A") {
+          oppSide = t.a; // BC 為對邊
+          adjSide = t.b; // AC 為鄰邊
+        } else {
+          oppSide = t.b; // AC 為對邊
+          adjSide = t.a; // BC 為鄰邊
+        }
+      } else {
+        vRight = "A";
+        v1 = "B";
+        v2 = "C";
+        targetAngle = randPick(["B", "C"]);
+        hypSide = t.c; // 斜邊為 BC
+        if (targetAngle === "B") {
+          oppSide = t.b; // AC 為對邊
+          adjSide = t.a; // AB 為鄰邊
+        } else {
+          oppSide = t.a; // AB 為對邊
+          adjSide = t.b; // AC 為鄰邊
+        }
+      }
+
+      const sinVal = `${oppSide}/${hypSide}`;
+      const cosVal = `${adjSide}/${hypSide}`;
+      const tanVal = `${oppSide}/${adjSide}`;
+
+      const qText = `如下圖，在直角 △ABC 中，已知 ∠${vRight} ＝ 90°，<span class="overline">AB</span> ＝ ${isRightC ? hypSide : adjSide}，<span class="overline">BC</span> ＝ ${isRightC ? (targetAngle === "A" ? oppSide : adjSide) : hypSide}，<span class="overline">AC</span> ＝ ${isRightC ? (targetAngle === "A" ? adjSide : oppSide) : oppSide}。試求下列各比值，並以 sin ${targetAngle}、cos ${targetAngle}、tan ${targetAngle} 表示：<br>
+      (1) (∠${targetAngle} 的對邊長) ÷ (斜邊長) ＝ ？<br>
+      (2) (∠${targetAngle} 的鄰邊長) ÷ (斜邊長) ＝ ？<br>
+      (3) (∠${targetAngle} 的對邊長) ÷ (∠${targetAngle} 的鄰邊長) ＝ ？`;
+
+      const svg = renderSvgRightTriangle(
+        vRight, 
+        isRightC ? "A" : "C", 
+        isRightC ? "B" : "B", 
+        oppSide, 
+        adjSide, 
+        hypSide, 
+        isRightC ? "standard" : "tilted"
+      );
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（確立各邊與角 ${targetAngle} 的位置關係）：</strong></div>
+          <div class="pl-3 border-l-2 border-sky-500 space-y-0.5">
+            <div>斜邊長 ＝ ${hypSide}</div>
+            <div>∠${targetAngle} 的對邊長 ＝ ${oppSide}</div>
+            <div>∠${targetAngle} 的鄰邊長 ＝ ${adjSide}</div>
+          </div>
+          <div><strong>步驟二（代入三角比定義求值）：</strong></div>
+          <div class="pl-3 space-y-1">
+            <div>(1) 對邊 ÷ 斜邊 ＝ <b>${formatFraction(oppSide, hypSide)}</b>，即 <b>sin ${targetAngle}</b></div>
+            <div>(2) 鄰邊 ÷ 斜邊 ＝ <b>${formatFraction(adjSide, hypSide)}</b>，即 <b>cos ${targetAngle}</b></div>
+            <div>(3) 對邊 ÷ 鄰邊 ＝ <b>${formatFraction(oppSide, adjSide)}</b>，即 <b>tan ${targetAngle}</b></div>
+          </div>
+          <div class="text-emerald-700 font-bold">答：(1) ${sinVal} (sin ${targetAngle})；(2) ${cosVal} (cos ${targetAngle})；(3) ${tanVal} (tan ${targetAngle})</div>
+        </div>
+      `;
+
+      return {
+        topicId: 0,
+        topicName: "直角三角形邊長比值",
+        qText,
+        svg,
+        ansRaw: `${sinVal}, ${cosVal}, ${tanVal}`,
+        ansDisplay: `(1) ${sinVal}, sin ${targetAngle}; (2) ${cosVal}, cos ${targetAngle}; (3) ${tanVal}, tan ${targetAngle}`,
+        steps
+      };
+    }
+
+    // 知識點 2：邊長比值的生活問題 (坡度、溜滑梯、自行車道) (教材 P.2-4 第 1~10 題)
+    function genTopic2Question(diff, numType) {
+      // 教材典型數據庫 (角度 deg, 高度 h, 答案長度 ans, 場景)
+      const templates = [
+        { deg: 7,  h: 11,  unit: "公分", type: "公車臨時殘障坡道", name: "坡道", ans: 90  }, // Q1
+        { deg: 12, h: 42,  unit: "公分", type: "大樓門口殘障坡道", name: "坡道", ans: 202 }, // Q2
+        { deg: 25, h: 180, unit: "公分", type: "公園溜滑梯",       name: "溜滑梯", ans: 426 }, // Q3
+        { deg: 7,  h: 120, unit: "公尺", type: "好漢亭自行車道",   name: "車道", ans: 985 }, // Q4
+        { deg: 9,  h: 30,  unit: "公分", type: "大樓門口殘障坡道", name: "坡道", ans: 192 }, // Q5
+        { deg: 35, h: 200, unit: "公分", type: "公園溜滑梯",       name: "溜滑梯", ans: 349 }, // Q6
+        { deg: 20, h: 150, unit: "公分", type: "公園溜滑梯",       name: "溜滑梯", ans: 439 }, // Q7
+        { deg: 15, h: 48,  unit: "公分", type: "大樓門口殘障坡道", name: "坡道", ans: 185 }, // Q8
+        { deg: 9,  h: 160, unit: "公尺", type: "好漢亭自行車道",   name: "車道", ans: 1023}, // Q9
+        { deg: 8,  h: 10,  unit: "公分", type: "公車臨時殘障坡道", name: "坡道", ans: 72  }  // Q10
+      ];
+
+      const t = randPick(templates);
+      const rad = (t.deg * Math.PI) / 180;
+      const sinApprox = Math.round(Math.sin(rad) * 10000) / 10000;
+
+      const qText = `如下圖，某處設置了一座${t.type}。已知${t.name}與水平面的夾角為 ${t.deg}°，且其垂直高度為 ${t.h} ${t.unit}。試求此${t.name}的斜面長度 <span class="overline">AB</span> 為多少${t.unit}？（利用計算機計算並以四捨五入法取至整數位；參考值：sin ${t.deg}° ≈ ${sinApprox}）`;
+
+      const svg = renderSvgRamp(t.deg, `${t.h} ${t.unit}`, "AB ＝ ?");
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（由圖形辨析對邊與斜邊）：</strong></div>
+          <div class="pl-3 border-l-2 border-sky-500">
+            垂直高度為 ∠A 的對邊 ＝ ${t.h} ${t.unit}；<br>
+            所求之斜面長度為直角三角形的斜邊 <span class="overline">AB</span>。
+          </div>
+          <div><strong>步驟二（列出正弦 sin 定義式求斜邊）：</strong></div>
+          <div class="pl-3 space-y-0.5">
+            <div>sin ${t.deg}° ＝ (垂直高度) ÷ (斜邊 <span class="overline">AB</span>)</div>
+            <div>⇒ <span class="overline">AB</span> ＝ ${t.h} ÷ sin ${t.deg}°</div>
+            <div>代入參考值計算：<span class="overline">AB</span> ≈ ${t.h} ÷ ${sinApprox} ≈ <b>${t.ans}</b> (${t.unit})</div>
+          </div>
+          <div class="text-emerald-700 font-bold">答：${t.ans} ${t.unit}</div>
+        </div>
+      `;
+
+      return {
+        topicId: 1,
+        topicName: "邊長比值的生活問題",
+        qText,
+        svg,
+        ansRaw: `${t.ans}`,
+        ansDisplay: `${t.ans} ${t.unit}`,
+        steps
+      };
+    }
+
+    // 知識點 3：特殊直角三角形邊長比 (30°-60°-90° 與 45°-45°-90°) (教材 P.4-5 第 1~12 題)
+    function genTopic3Question(diff, numType) {
+      // 隨機選擇 30-60-90 或是 45-45-90
+      const is45 = Math.random() > 0.5;
+
+      if (is45) {
+        // 45-45-90 特殊直角三角形 (邊長比 1 : 1 : √2)
+        // 典型教材題型：已知斜邊 c√2 求股 c；或已知股 a 求斜邊 a√2
+        const templates = [
+          { given: "AB", val: "8√2",  ask: "BC", ans: "8" },    // Q2
+          { given: "BC", val: "15",   ask: "AB", ans: "15√2" }, // Q4
+          { given: "BC", val: "2",    ask: "AB", ans: "2√2" },  // Q6
+          { given: "AC", val: "12√2", ask: "AB", ans: "12" },   // Q8
+          { given: "AC", val: "10√2", ask: "AB", ans: "10" },   // Q9
+          { given: "AC", val: "9√2",  ask: "BC", ans: "9" }     // Q11
+        ];
+        const t = randPick(templates);
+
+        const qText = `如圖，直角 △ABC 中，已知 ∠C ＝ 90°，∠B ＝ 45°。若 <span class="overline">${t.given}</span> ＝ ${t.val}，則 <span class="overline">${t.ask}</span> 之長度為何？`;
+
+        const svg = renderSvgSpecialTriangle("45-45-90", t.given, t.val, { [t.ask]: "?" });
+
+        const steps = `
+          <div class="space-y-1.5 text-slate-700">
+            <div><strong>步驟一（辨認特殊角邊長比例）：</strong></div>
+            <div class="pl-3 border-l-2 border-purple-500">
+              在 45°-45°-90° 等腰直角三角形中，三邊長比例為：<br>
+              <span class="overline">BC</span> ： <span class="overline">AC</span> ： <span class="overline">AB</span> ＝ 1 ： 1 ： √2
+            </div>
+            <div><strong>步驟二（比例推導所求長度）：</strong></div>
+            <div class="pl-3">
+              ${t.given === "AB" || t.given === "AC" && t.val.includes("√2")
+                ? `斜邊為股長的 √2 倍，故 <span class="overline">${t.ask}</span> ＝ ${t.val} ÷ √2 ＝ <b>${t.ans}</b>`
+                : `斜邊為股長的 √2 倍，故 <span class="overline">${t.ask}</span> ＝ ${t.val} × √2 ＝ <b>${t.ans}</b>`
+              }
+            </div>
+            <div class="text-emerald-700 font-bold">答：${t.ans}</div>
+          </div>
+        `;
+
+        return {
+          topicId: 2,
+          topicName: "特殊直角三角形邊長比",
+          qText,
+          svg,
+          ansRaw: t.ans,
+          ansDisplay: t.ans,
+          steps
+        };
+      } else {
+        // 30-60-90 特殊直角三角形 (邊長比 1 : √3 : 2)
+        // 典型教材題型：
+        // Q1: ∠B=90°, ∠A=30°, AC=12 => BC=6, AB=6√3
+        // Q3: ∠C=90°, ∠A=60°, AC=5 => BC=5√3, AB=10
+        // Q5: ∠B=90°, ∠C=60°, BC=8 => AB=8√3, AC=16
+        // Q7: ∠C=90°, ∠A=30°, AC=3 => AB=2√3, BC=√3
+        // Q10: ∠C=90°, ∠A=30°, AC=9 => AB=6√3, BC=3√3
+        // Q12: ∠B=90°, ∠C=60°, BC=11 => AB=11√3, AC=22
+        const templates = [
+          { a: 6,  h: 12, ask1: "BC", ans1: "6",  ask2: "AB", ans2: "6√3",  given: "AC=12 (斜邊)" },
+          { a: 5,  h: 10, ask1: "BC", ans1: "5√3", ask2: "AB", ans2: "10", given: "AC=5 (鄰邊)" },
+          { a: 8,  h: 16, ask1: "AB", ans1: "8√3", ask2: "AC", ans2: "16", given: "BC=8 (對邊)" },
+          { a: 3,  h: 6,  ask1: "AB", ans1: "2√3", ask2: "BC", ans2: "√3",  given: "AC=3 (較長股)" },
+          { a: 9,  h: 18, ask1: "AB", ans1: "6√3", ask2: "BC", ans2: "3√3", given: "AC=9 (較長股)" },
+          { a: 11, h: 22, ask1: "AB", ans1: "11√3", ask2: "AC", ans2: "22", given: "BC=11 (對邊)" }
+        ];
+        const t = randPick(templates);
+
+        const qText = `如圖，直角 △ABC 中，已知 ∠C ＝ 90°，∠A ＝ 30°。若已知條件為 ${t.given}，試求：<br>
+        (1) <span class="overline">${t.ask1}</span> 之長度為何？<br>
+        (2) <span class="overline">${t.ask2}</span> 之長度為何？`;
+
+        const svg = renderSvgSpecialTriangle("30-60-90", "AC", t.a, { [t.ask1]: "?", [t.ask2]: "?" });
+
+        const steps = `
+          <div class="space-y-1.5 text-slate-700">
+            <div><strong>步驟一（辨認 30°-60°-90° 三邊比例）：</strong></div>
+            <div class="pl-3 border-l-2 border-purple-500">
+              30° 角對邊 ： 60° 角對邊 ： 90° 角斜邊 ＝ 1 ： √3 ： 2。
+            </div>
+            <div><strong>步驟二（代入比例求解）：</strong></div>
+            <div class="pl-3 space-y-0.5">
+              <div>(1) <span class="overline">${t.ask1}</span> ＝ <b>${t.ans1}</b></div>
+              <div>(2) <span class="overline">${t.ask2}</span> ＝ <b>${t.ans2}</b></div>
+            </div>
+            <div class="text-emerald-700 font-bold">答：(1) ${t.ans1}；(2) ${t.ans2}</div>
+          </div>
+        `;
+
+        return {
+          topicId: 2,
+          topicName: "特殊直角三角形邊長比",
+          qText,
+          svg,
+          ansRaw: `${t.ans1}, ${t.ans2}`,
+          ansDisplay: `(1) ${t.ans1}; (2) ${t.ans2}`,
+          steps
+        };
+      }
+    }
+
+    // 知識點 4：特殊角的生活情境問題 (三角旗、電扶梯、聖誕燈、遮布) (教材 P.5-7 第 1~10 題)
+    function genTopic4Question(diff, numType) {
+      // 教材真實題材庫 (角度 deg, 高度 h, 答案 ans, 說明)
+      const templates = [
+        { deg: 60, h: 12,  name: "校慶三角旗",   item: "三角旗長度 AB", ans: 13.86, unit: "公尺" }, // Q1: 12 / sin60° = 13.86
+        { deg: 30, h: 4.2, name: "商場電扶梯",   item: "電扶梯長度 AB", ans: 8.4,   unit: "公尺" }, // Q2: 4.2 / sin30° = 8.4
+        { deg: 30, h: 3.5, name: "樓梯邊聖誕燈", item: "聖誕燈長度 AB", ans: 7,     unit: "公尺" }, // Q3: 3.5 / sin30° = 7
+        { deg: 60, h: 2.8, name: "樓梯邊聖誕燈", item: "聖誕燈長度 AB", ans: 3.23,  unit: "公尺" }, // Q4: 2.8 / sin60° = 3.23
+        { deg: 30, h: 3.6, name: "雜物遮布",     item: "遮布斜邊 AB",   ans: 7.2,   unit: "公尺" }, // Q5: 3.6 / sin30° = 7.2
+        { deg: 45, h: 3.2, name: "商場電扶梯",   item: "電扶梯長度 AB", ans: 4.53,  unit: "公尺" }, // Q6: 3.2 / sin45° = 4.53
+        { deg: 45, h: 8,   name: "校慶三角旗",   item: "三角旗長度 AB", ans: 11.31, unit: "公尺" }, // Q7: 8 / sin45° = 11.31
+        { deg: 30, h: 10,  name: "校慶三角旗",   item: "三角旗長度 AB", ans: 20,    unit: "公尺" }, // Q8: 10 / sin30° = 20
+        { deg: 45, h: 2.7, name: "雜物遮布",     item: "遮布斜邊 AB",   ans: 3.82,  unit: "公尺" }, // Q9: 2.7 / sin45° = 3.82
+        { deg: 45, h: 3,   name: "樓梯邊聖誕燈", item: "聖誕燈長度 AB", ans: 4.24,  unit: "公尺" }  // Q10: 3 / sin45° = 4.24
+      ];
+
+      const t = randPick(templates);
+
+      const qText = `如下圖，學校或生活中為了佈置與動線規劃設置了${t.name}。已知該設施與地面的夾角 ∠A 為 ${t.deg}°，且其垂直高度 <span class="overline">BC</span> 為 ${t.h} 公尺。試求此條${t.item}約為多少公尺？（以四捨五入法取到小數點後第 2 位；若為整數則以整數表示）`;
+
+      const svg = renderSvgSpecialApp(t.deg, t.h, "長度 AB ＝ ?");
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（列出正弦比關係）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-500">
+            由圖可知，垂直高度 <span class="overline">BC</span> 是 ∠A 的對邊，斜面 <span class="overline">AB</span> 是斜邊：<br>
+            sin ${t.deg}° ＝ <span class="overline">BC</span> ÷ <span class="overline">AB</span> ＝ ${t.h} ÷ <span class="overline">AB</span>
+          </div>
+          <div><strong>步驟二（代入特殊角數值求解）：</strong></div>
+          <div class="pl-3 space-y-0.5">
+            ${t.deg === 30 ? `
+              <div>因為 sin 30° ＝ 1 / 2，故：<br>
+              <span class="overline">AB</span> ＝ ${t.h} × 2 ＝ <b>${t.ans}</b> (公尺)</div>
+            ` : t.deg === 45 ? `
+              <div>因為 sin 45° ＝ √2 / 2 ≈ 0.7071，故：<br>
+              <span class="overline">AB</span> ＝ ${t.h} ÷ (√2 / 2) ＝ ${t.h} × √2 ≈ <b>${t.ans}</b> (公尺)</div>
+            ` : `
+              <div>因為 sin 60° ＝ √3 / 2 ≈ 0.8660，故：<br>
+              <span class="overline">AB</span> ＝ ${t.h} ÷ (√3 / 2) ＝ (${t.h} × 2) ÷ √3 ≈ <b>${t.ans}</b> (公尺)</div>
+            `}
+          </div>
+          <div class="text-emerald-700 font-bold">答：${t.ans} 公尺</div>
+        </div>
+      `;
+
+      return {
+        topicId: 3,
+        topicName: "特殊角的生活情境問題",
+        qText,
+        svg,
+        ansRaw: `${t.ans}`,
+        ansDisplay: `${t.ans} 公尺`,
+        steps
+      };
+    }
+
+    // ==========================================
+    // 試卷生成與渲染管理
+    // ==========================================
+    function generateExam() {
+      const diff = document.getElementById("cfg-diff").value;
+      const numType = document.getElementById("cfg-num-type").value;
+      
+      const counts = [
+        parseInt(document.getElementById("topic-cnt-0").value) || 0,
+        parseInt(document.getElementById("topic-cnt-1").value) || 0,
+        parseInt(document.getElementById("topic-cnt-2").value) || 0,
+        parseInt(document.getElementById("topic-cnt-3").value) || 0
+      ];
+
+      currentQuestions = [];
+
+      for (let i = 0; i < counts[0]; i++) currentQuestions.push(genTopic1Question(diff, numType));
+      for (let i = 0; i < counts[1]; i++) currentQuestions.push(genTopic2Question(diff, numType));
+      for (let i = 0; i < counts[2]; i++) currentQuestions.push(genTopic3Question(diff, numType));
+      for (let i = 0; i < counts[3]; i++) currentQuestions.push(genTopic4Question(diff, numType));
+
+      document.getElementById("total-questions-badge").innerText = currentQuestions.length;
+      renderQuestions();
+      
+      if (isOnlineMode) resetOnlineTest();
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById("questions-container");
+      container.innerHTML = "";
+
+      if (currentQuestions.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-16 text-slate-400 font-bold">
+            目前無任何選題，請在上方面板調整各知識點題數後重新出題！
+          </div>
+        `;
+        return;
+      }
+
+      currentQuestions.forEach((q, idx) => {
+        const qNum = idx + 1;
+        const card = document.createElement("div");
+        card.className = "print-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between relative transition hover:shadow-md";
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-white font-black flex items-center justify-center text-xs">
+                  ${qNum}
+                </span>
+                <span class="font-bold text-slate-700">${q.topicName}</span>
+              </div>
+              <span class="text-[11px] text-slate-400 font-mono">題號 #${qNum}</span>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 mb-3">
+              ${q.svg}
+            </div>
+
+            <div class="text-xs sm:text-sm text-slate-800 font-medium leading-relaxed mb-3">
+              ${q.qText}
+            </div>
+          </div>
+
+          <div>
+            <div class="scratch-pad border border-slate-200 rounded-lg h-20 mb-3 relative overflow-hidden flex items-start p-1.5">
+              <span class="text-[10px] text-slate-400 select-none font-sans font-semibold">【計算演算空間】</span>
+            </div>
+
+            <div class="online-input-row hidden no-print flex items-center gap-2 mb-2 p-2 bg-indigo-50/70 border border-indigo-100 rounded-lg">
+              <span class="text-xs font-bold text-indigo-900">你的答案：</span>
+              <input type="text" id="user-ans-${idx}" class="flex-1 px-2.5 py-1 bg-white border border-indigo-200 rounded text-xs text-slate-800 font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="例如：202 或 7/25 或 15√2">
+              <span id="feedback-${idx}" class="text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+
+            <div id="solution-${idx}" class="${showAnswers ? '' : 'hidden'} mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 bg-slate-50/80 rounded p-2.5">
+              ${q.steps}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // 介面欄位、顯示與題數調整
+    // ==========================================
+    function setColumns(cols) {
+      currentCols = cols;
+      const container = document.getElementById("questions-container");
+      container.className = "grid gap-5";
+      
+      if (cols === 1) container.classList.add("grid-cols-1");
+      else if (cols === 2) container.classList.add("grid-cols-1", "md:grid-cols-2");
+      else if (cols === 3) container.classList.add("grid-cols-1", "md:grid-cols-3");
+      else if (cols === 4) container.classList.add("grid-cols-2", "md:grid-cols-4");
+
+      container.classList.add(`print-cols-${cols}`);
+
+      document.querySelectorAll(".col-btn").forEach(btn => {
+        const c = parseInt(btn.getAttribute("data-col"));
+        if (c === cols) {
+          btn.className = "col-btn px-2 py-0.5 rounded bg-sky-600 text-white font-bold";
+        } else {
+          btn.className = "col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100";
+        }
+      });
+    }
+
+    function toggleAnswerMode() {
+      showAnswers = !showAnswers;
+      document.getElementById("ans-btn-text").innerText = showAnswers ? "隱藏解答步驟" : "顯示解答步驟";
+      renderQuestions();
+    }
+
+    function adjustTopicCount(topicIdx, delta) {
+      const input = document.getElementById(`topic-cnt-${topicIdx}`);
+      let val = (parseInt(input.value) || 0) + delta;
+      if (val < 0) val = 0;
+      if (val > 20) val = 20;
+      input.value = val;
+      generateExam();
+    }
+
+    function setAllTopicCounts(cnt) {
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`topic-cnt-${i}`).value = cnt;
+      }
+      generateExam();
+    }
+
+    function validateCounts() {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`topic-cnt-${i}`);
+        let val = parseInt(el.value);
+        if (isNaN(val) || val < 0) el.value = 0;
+        if (val > 20) el.value = 20;
+      }
+      generateExam();
+    }
+
+    function updateHeaderTitle() {
+      const val = document.getElementById("cfg-title").value.trim();
+      document.getElementById("paper-title-display").innerText = val || "1-4 相似直角三角形與三角比 計算力特訓卷";
+    }
+
+    // ==========================================
+    // 線上測驗與自動寬容批改
+    // ==========================================
+    function toggleOnlineTest() {
+      isOnlineMode = !isOnlineMode;
+      const metaBar = document.getElementById("online-meta-bar");
+      const btn = document.getElementById("btn-online-test");
+
+      if (isOnlineMode) {
+        metaBar.classList.remove("hidden");
+        btn.classList.add("bg-indigo-600", "text-white");
+        btn.classList.remove("bg-indigo-50", "text-indigo-700");
+        startTimer();
+      } else {
+        metaBar.classList.add("hidden");
+        btn.classList.remove("bg-indigo-600", "text-white");
+        btn.classList.add("bg-indigo-50", "text-indigo-700");
+        stopTimer();
+      }
+
+      document.querySelectorAll(".online-input-row").forEach(el => {
+        if (isOnlineMode) el.classList.remove("hidden");
+        else el.classList.add("hidden");
+      });
+    }
+
+    function startTimer() {
+      stopTimer();
+      secondsElapsed = 0;
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+        const secs = String(secondsElapsed % 60).padStart(2, "0");
+        document.getElementById("timer-display").innerText = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function resetOnlineTest() {
+      startTimer();
+      document.getElementById("online-score-display").innerText = "-";
+      currentQuestions.forEach((_, idx) => {
+        const input = document.getElementById(`user-ans-${idx}`);
+        const fb = document.getElementById(`feedback-${idx}`);
+        if (input) input.value = "";
+        if (fb) {
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded hidden";
+          fb.innerText = "";
+        }
+      });
+    }
+
+    function isAnswerCorrect(userStr, rawAns) {
+      if (!userStr) return false;
+      userStr = userStr.trim().replace(/公尺|公分|m|cm/g, "").trim();
+      const rawStr = String(rawAns).trim();
+
+      if (userStr === rawStr) return true;
+
+      // 支援多問號答案寬容比對 (以逗號分隔)
+      if (rawStr.includes(",")) {
+        const uParts = userStr.replace(/，/g, ",").split(",").map(s => s.trim());
+        const rParts = rawStr.split(",").map(s => s.trim());
+        if (uParts.length === rParts.length) {
+          return uParts.every((p, i) => p === rParts[i]);
+        }
+      }
+
+      function parseNum(s) {
+        if (s.includes("/")) {
+          const parts = s.split("/");
+          return parseFloat(parts[0]) / parseFloat(parts[1]);
+        }
+        return parseFloat(s);
+      }
+
+      const uVal = parseNum(userStr);
+      const rVal = parseNum(rawStr);
+
+      if (!isNaN(uVal) && !isNaN(rVal)) {
+        return Math.abs(uVal - rVal) < 0.05;
+      }
+
+      return false;
+    }
+
+    function gradeOnlineTest() {
+      if (currentQuestions.length === 0) return;
+      stopTimer();
+      let correctCount = 0;
+
+      currentQuestions.forEach((q, idx) => {
+        const input = document.getElementById(`user-ans-${idx}`);
+        const fb = document.getElementById(`feedback-${idx}`);
+        if (!input || !fb) return;
+
+        const isCorrect = isAnswerCorrect(input.value, q.ansRaw);
+        fb.classList.remove("hidden");
+        if (isCorrect) {
+          correctCount++;
+          fb.innerText = "✓ 正確";
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800";
+        } else {
+          fb.innerText = `✗ 正解：${q.ansDisplay}`;
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800";
+        }
+      });
+
+      const score = Math.round((correctCount / currentQuestions.length) * 100);
+      document.getElementById("online-score-display").innerText = score;
+      alert(`測驗完成！\n總題數：${currentQuestions.length} 題\n答對：${correctCount} 題\n得分：${score} 分\n花費時間：${document.getElementById("timer-display").innerText}`);
+    }
+
+    // ==========================================
+    // 列印與獨立 HTML 匯出
+    // ==========================================
+    function printWorksheet(withAnswers) {
+      const prevAns = showAnswers;
+      showAnswers = withAnswers;
+      renderQuestions();
+
+      setTimeout(() => {
+        window.print();
+        showAnswers = prevAns;
+        renderQuestions();
+      }, 250);
+    }
+
+    function exportSingleHTML() {
+      const docHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const blob = new Blob([docHtml], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `國中數學_相似直角三角形與三角比特訓卷_${new Date().toISOString().slice(0, 10)}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      generateExam();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>百宏文教｜因數與倍數 出題器</title>
+<meta name="description" content="國中數學國一「因數與倍數」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g7-factors-multiples.html">
+<meta property="og:title" content="百宏文教｜因數與倍數 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g7-factors-multiples.html">
+<meta property="og:type" content="website">
+
+<style>
+  :root{ --ink:#222; --ans:#d62828; --accent:#2a8f6a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px}
+  .panel{background:#fff;padding:12px 18px;border-bottom:1px solid #cfd6dd;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;position:sticky;top:0;z-index:5}
+  .panel h1{font-size:18px;margin:0 0 2px;width:100%}
+  .grp{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid #d9e0e6;border-radius:8px;background:#f8fafb}
+  .grp>b{font-size:14px;color:#345}
+  .line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px}
+  .line label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  select,input[type=number]{font:inherit;padding:3px 6px;border:1px solid #b7bfc7;border-radius:4px;background:#fff}
+  input[type=number]{width:52px}
+  button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
+  button.ghost{background:#fff;color:var(--accent)}
+  .actions{display:flex;gap:8px;align-items:flex-end;align-self:stretch}
+  .mods{display:grid;grid-template-columns:repeat(3,auto);gap:4px 14px}
+  .mods label{display:flex;align-items:center;gap:4px;font-size:14px;white-space:nowrap}
+  .mods input[type=number]{width:46px}
+  .sheet{background:#fff;width:210mm;min-height:297mm;margin:14px auto;padding:12mm 12mm;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+  .head{border-bottom:2px solid var(--accent);padding-bottom:4px;margin-bottom:8px}
+  .head h2{margin:0;font-size:20px}
+  .head span{display:block;font-size:14px;margin-top:2px}
+  .sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:#eaf5f0;padding:4px 10px;border-left:5px solid var(--accent);break-after:avoid}
+  .tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}
+  .grid{display:grid;gap:0 5mm}
+  .grid.c3{grid-template-columns:repeat(3,1fr)} .grid.c2{grid-template-columns:repeat(2,1fr)} .grid.c1{grid-template-columns:1fr}
+  .prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}
+  .q{font-size:15.5px;line-height:1.9;display:flex;gap:4px;align-items:baseline}
+  .q .no{flex:none;color:#555;width:2em}
+  .q>span:last-child{white-space:nowrap}
+  .work{min-height:var(--work,18mm);margin-top:1mm;font-size:13.5px}
+  .ans{color:var(--ans)}
+  .ans b{font-size:15px}
+  body.student .ans{display:none}
+  sup{font-size:.7em;vertical-align:.55em;line-height:0}
+  .br{margin:0 1px}
+  .sd{display:inline-block;border-collapse:collapse;margin:2px 10px 2px 0;vertical-align:top;font-size:13px;line-height:1.3;color:var(--ans)}
+  .sd td{padding:0 5px;text-align:right}
+  .sd td.p{border-right:1.2px solid var(--ans);border-bottom:1.2px solid var(--ans);padding-right:4px}
+  .sd tr.last td.p{border:0}
+  .sd tr td.n{border-bottom:0}
+  .sd tr:not(.last) td.n{border-bottom:1.2px solid var(--ans)}
+  .steps{display:inline-block;vertical-align:top;font-size:13px;line-height:1.5}
+  .empty{color:#888;padding:40px;text-align:center}
+  @media print{ body{background:#fff} .panel{display:none} .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none} .ans,.sd{-webkit-print-color-adjust:exact;print-color-adjust:exact} @page{size:A4;margin:12mm} }
+</style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+:root{--accent:var(--bhcs-green)!important}
+body{background:var(--bhcs-bg);font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+.panel{padding-top:0!important;border-bottom:1px solid var(--bhcs-line);box-shadow:0 5px 16px #173e3412}
+.panel>h1{width:100%;margin:0 -18px 6px!important;padding:11px 18px!important;background:var(--bhcs-green2);color:#fff;border-bottom:4px solid var(--bhcs-mint);font-size:17px!important;display:flex;align-items:center;gap:12px}
+.panel>h1::before{content:"百";width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--bhcs-mint);color:var(--bhcs-green2);border-radius:9px;font:900 17px Georgia,serif}
+.panel>h1::after{content:"百宏文教・數學計算力練習";margin-left:auto;font-size:12px;font-weight:400;color:#c8e8df}
+.grp{background:#fff!important;border-color:var(--bhcs-line)!important}
+.grp>b,.grp>label:first-child{color:var(--bhcs-green2)!important}
+button{background:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important;color:#fff!important;font-weight:800!important}
+button.ghost{background:#fff!important;color:var(--bhcs-green)!important}
+.sheet{box-shadow:0 15px 40px #1d342f22!important}
+.hd,.head{border-bottom-color:var(--bhcs-green)!important}
+.sec{border-left-color:var(--bhcs-green)!important;background:var(--bhcs-soft)!important;padding:4px 10px!important}
+select,input[type=number]{border-color:#aabcb7!important}
+</style></head>
+<body class="student">
+<div class="panel">
+  <h1>因數與倍數 出題器（國一）</h1>
+  <div class="grp"><b>版面</b><div class="line">
+    <label>版本 <select id="version"><option value="student">學用版</option><option value="teacher">教用版（紅字解答）</option></select></label>
+    <label>每列 <select id="perRow"><option value="auto">自動</option><option value="3">3 題</option><option value="2">2 題</option><option value="1">1 題</option></select></label>
+    <label>作答空間 <select id="work"><option value="14">小</option><option value="22" selected>中</option><option value="34">大</option></select></label>
+    <label><input type="checkbox" id="showTable" checked> 教用版附短除法直式</label>
+  </div></div>
+  <div class="grp"><b>難度</b><div class="line">
+    <label>難度 <select id="diff"><option value="1">基礎</option><option value="2" selected>進階</option><option value="3">挑戰</option></select></label>
+    <span style="color:#678;font-size:13px">基礎：兩數、100 以內｜進階：二～三數、300 以內｜挑戰：三～四數、1000 以內，質因數含 11、13</span>
+  </div></div>
+  <div class="grp"><b>單元與題數</b><div class="mods" id="mods"></div></div>
+  <div class="actions"><button id="gen">重新出題</button><button class="ghost" id="print">列印 / 存 PDF</button></div>
+</div>
+<div id="out"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const coin=(p=.5)=>Math.random()<p;
+const gcd2=(a,b)=>{ while(b){ [a,b]=[b,a%b]; } return a; };
+const gcdN=arr=>arr.reduce(gcd2);
+const lcm2=(a,b)=>a/gcd2(a,b)*b;
+const lcmN=arr=>arr.reduce(lcm2);
+const PR=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+function factor(n){ const m={}; for(const p of PR){ while(n%p===0){ m[p]=(m[p]||0)+1; n/=p; } } if(n>1) m[n]=(m[n]||0)+1; return m; }
+const fromMap=m=>Object.entries(m).reduce((s,[p,e])=>s*Math.pow(+p,e),1);
+function fmtFac(m){ const ks=Object.keys(m).map(Number).sort((a,b)=>a-b); if(!ks.length) return '1'; return ks.map(p=>m[p]>1?`${p}<sup>${m[p]}</sup>`:`${p}`).join('×'); }
+const fac=n=>fmtFac(factor(n));
+let D=2;
+const PRIMES=()=>D===3?[2,3,5,7,11,13]:[2,3,5,7];
+
+/* ---------- 造數：g 是公因數骨架，各數 = g × 互質的餘因子 ---------- */
+function makeSet(k,maxN){
+  const ps=PRIMES();
+  for(let t=0;t<300;t++){
+    let g=1; const gc=D===1?rnd(1,2):rnd(1,3); for(let i=0;i<gc;i++) g*=pick(ps.slice(0,D===1?3:4));
+    if(g*2>maxN) continue;
+    // 可用的餘因子：g×c ≤ maxN
+    const cands=[]; for(let c=1;c*g<=maxN;c++){ let x=c, ok=true; for(const q of ps) while(x%q===0) x/=q; if(x===1) cands.push(c); }
+    if(cands.length<k+1) continue;
+    const cs=[]; const pool=cands.slice(); for(let i=0;i<k;i++){ const j=rnd(0,pool.length-1); cs.push(pool[j]); pool.splice(j,1); }
+    const nums=cs.map(c=>g*c); if(nums.some(n=>n<4)) continue;
+    if(gcdN(nums)<2) continue; if(lcmN(nums)>maxN*40) continue;
+    return nums;
+  }
+  return D===1?[12,18]:[60,72,84];
+}
+const MAXN=()=>D===1?100:D===2?300:1000;
+
+/* ---------- 短除法 ---------- */
+function shortDiv(nums,mode){ // mode 'gcd' | 'lcm'
+  const rows=[]; let cur=nums.slice(); const divs=[];
+  while(true){ let p=null;
+    for(const q of PR){ const cnt=cur.filter(x=>x%q===0).length; if(mode==='gcd'?cnt===cur.length:cnt>=2){ p=q; break; } }
+    if(!p) break; divs.push(p); rows.push({p,nums:cur.slice()}); cur=cur.map(x=>x%p===0?x/p:x); if(divs.length>12) break; }
+  return {rows,divs,rest:cur};
+}
+function sdTable(nums,mode){ const {rows,divs,rest}=shortDiv(nums,mode); let h='<table class="sd">'; rows.forEach(r=>{ h+=`<tr><td class="p">${r.p}</td>${r.nums.map(n=>`<td class="n">${n}</td>`).join('')}</tr>`; }); h+=`<tr class="last"><td class="p"></td>${rest.map(n=>`<td class="n">${n}</td>`).join('')}</tr></table>`;
+  const val=mode==='gcd'?gcdN(nums):lcmN(nums); const prod=mode==='gcd'?divs.join('×'):[...divs,...rest].join('×');
+  return {html:h,val,prod:prod||String(val)}; }
+const GCD=(...a)=>gcdN(a), LCM=(...a)=>lcmN(a);
+const wrapG=inner=>`<span class="br">(</span>${inner}<span class="br">)</span>`;
+const wrapL=inner=>`<span class="br">〔</span>${inner}<span class="br">〕</span>`;
+const list=arr=>arr.join('<span class="br">，</span>');
+
+/* ---------- 各單元 ---------- */
+/* 每題回傳 {q:html, a:html(教用解答), len:估計長度} */
+const GEN={
+  sd:{name:'短除法',tip:'( A，B，C ) 表示最大公因數，〔A，B，C〕表示最小公倍數。求最大公因數：用所有數共同的質因數去除，除到沒有共同質因數為止，除數相乘。求最小公倍數：只要有兩個以上的數有共同質因數就繼續除，除到每兩個數都互質，再把所有除數和最後一列全部相乘。',
+    make(){ const k=D===1?2:D===2?pick([2,3,3]):pick([3,3,4]); const nums=makeSet(k,MAXN()); const mode=coin()?'gcd':'lcm'; const t=sdTable(nums,mode);
+      const q=(mode==='gcd'?wrapG(list(nums)):wrapL(list(nums)))+'＝？';
+      const a=($('showTable').checked?t.html:'')+`<span class="steps">${mode==='gcd'?wrapG(list(nums)):wrapL(list(nums))}＝${t.prod}＝<b>${t.val}</b></span>`;
+      return {q,a,len:nums.length*4}; }},
+  sdapp:{name:'短除法應用',tip:'先求括號內的值，再用求得的結果和其他數繼續求。例如〔(42，84)，315〕：先求 (42，84)＝42，再求〔42，315〕＝630。',
+    make(){ const nums=makeSet(3,MAXN()); const [a,b,c]=nums; const form=pick(['lg','gl','ll','gg']);
+      let inner,innerV,q,val,steps;
+      if(form[0]==='g'){ inner=wrapG(list([a,b])); innerV=GCD(a,b); } else { inner=wrapL(list([a,b])); innerV=LCM(a,b); }
+      if(form[1]==='g'){ q=wrapG(inner+'<span class="br">，</span>'+c); val=GCD(innerV,c); } else { q=wrapL(inner+'<span class="br">，</span>'+c); val=LCM(innerV,c); }
+      steps=`先求 ${inner}＝${innerV}；再求 ${form[1]==='g'?wrapG(list([innerV,c])):wrapL(list([innerV,c]))}＝<b>${val}</b>`;
+      return {q:q+'＝？',a:`<span class="steps">${steps}</span>`,len:14}; }},
+  euclid:{name:'輾轉相除法',tip:'兩數很大、不易質因數分解時用。大數÷小數得餘數，再用小數÷餘數，反覆做到餘數為 0，最後一次的除數就是最大公因數。',
+    make(){ for(let t=0;t<200;t++){ const g=D===1?pick([12,13,14,15,17,18,19,21,23,24]):D===2?rnd(13,60):rnd(17,99);
+        const lim=D===1?999:D===2?9999:29999; const p=rnd(D===1?5:17,Math.floor(lim/g)), q=rnd(D===1?5:17,Math.floor(lim/g)); if(p===q||gcd2(p,q)!==1) continue;
+        let a=g*p, b=g*q; if(a<b) [a,b]=[b,a]; // 步驟數
+        const st=[]; let x=a,y=b; while(y){ st.push(`${x}÷${y}＝${Math.floor(x/y)}…${x%y}`); [x,y]=[y,x%y]; } if(st.length<(D===1?2:3)||st.length>6) continue;
+        return {q:wrapG(list([a,b]))+'＝？',a:`<span class="steps">${st.join('，')}<br>餘數為 0 時的除數＝<b>${g}</b></span>`,len:12}; }
+      return {q:wrapG(list([3927,663]))+'＝？',a:'<b>51</b>',len:12}; }},
+  std:{name:'標準分解式',tip:'把每個數寫成質因數由小到大的連乘積（標準分解式）。最大公因數：取共同質因數，次方取較小的；最小公倍數：取所有質因數，次方取較大的。答案用標準分解式表示。',
+    make(){ const ps=PRIMES(); const mk=()=>{ const m={}; const cnt=rnd(2,D===1?2:3); for(let i=0;i<cnt;i++){ const p=pick(ps); m[p]=(m[p]||0)+rnd(1,D===1?2:D===3?4:3); } return m; };
+      const lo=D===1?20:D===2?100:300, hi=D===1?500:D===2?3000:8000;
+      for(let t=0;t<300;t++){ const A=mk(), B=mk(); const a=fromMap(A), b=fromMap(B); if(a<lo||a>hi||b<lo||b>hi||a===b) continue; if(gcd2(a,b)<2) continue; if(Object.keys(A).length<2||Object.keys(B).length<2) continue;
+        const mode=coin()?'gcd':'lcm'; const showA=D===1?false:coin(.5), showB=true; // 至少一個用分解式
+        const sa=showA?fmtFac(A):String(a), sb=showB?fmtFac(B):String(b);
+        const val=mode==='gcd'?gcd2(a,b):lcm2(a,b);
+        const q=(mode==='gcd'?wrapG:wrapL)(sa+'<span class="br">，</span>'+sb)+'＝？';
+        const stepA=showA?'':`${a}＝${fmtFac(A)}；`; const a_=`<span class="steps">${stepA}${(mode==='gcd'?wrapG:wrapL)(fmtFac(A)+'，'+fmtFac(B))}＝<b>${fac(val)}</b>（＝${val}）</span>`;
+        return {q,a:a_,len:16}; }
+      return {q:wrapG('280，2<sup>4</sup>×7×11')+'＝？',a:'<b>2<sup>3</sup>×7</b>',len:16}; }},
+  stdapp:{name:'標準分解式應用',tip:'各數以連乘積給出時，不要真的乘開，先把每個數化成標準分解式再求，答案也用標準分解式表示。',
+    make(){ const small=[4,6,8,9,10,12,14,15,16,18,20,21,24,25,27,28,32,35,36,40,45,48,49,50,54,56,63,64,72,75,80,81,98,100,125];
+      const mkProd=()=>{ const k=D===1?2:rnd(2,D===3?4:3); const fs=[]; for(let i=0;i<k;i++) fs.push(pick(D===1?small.slice(0,14):small)); return fs; };
+      for(let t=0;t<100;t++){ const A=mkProd(), B=mkProd(); const a=A.reduce((x,y)=>x*y,1), b=B.reduce((x,y)=>x*y,1); if(gcd2(a,b)<2||a===b) continue;
+        const useStd=D>=2&&coin(.4); const sb=useStd?fac(b):B.join('×'); const mode=coin()?'gcd':'lcm'; const val=mode==='gcd'?gcd2(a,b):lcm2(a,b);
+        const q=(mode==='gcd'?wrapG:wrapL)(A.join('×')+'<span class="br">，</span>'+sb)+'＝？';
+        const a_=`<span class="steps">${A.join('×')}＝${fac(a)}；${useStd?'':B.join('×')+'＝'+fac(b)+'；'}所求＝<b>${fac(val)}</b>${val<1e7?`（＝${val}）`:''}</span>`;
+        return {q,a:a_,len:20}; }
+      return {q:wrapG('7×50，4×6×5')+'＝？',a:'<b>2×5</b>',len:20}; }},
+  mix:{name:'綜合練習',tip:'混合各種題型：巢狀括號、最大公因數與最小公倍數的和、商，以及需要輾轉相除的大數。',
+    make(){ const kind=pick(['sd','sd','sdapp','euclid','std','sum','quot','nested2']);
+      if(GEN[kind]) return GEN[kind].make();
+      const nums=makeSet(kind==='nested2'?4:pick([2,3]),MAXN());
+      if(kind==='sum'){ const g=gcdN(nums), l=lcmN(nums); return {q:wrapG(list(nums))+'＋'+wrapL(list(nums))+'＝？',a:`<span class="steps">${wrapG(list(nums))}＝${g}，${wrapL(list(nums))}＝${l}，${g}＋${l}＝<b>${g+l}</b></span>`,len:nums.length*8}; }
+      if(kind==='quot'){ const g=gcdN(nums), l=lcmN(nums); return {q:wrapL(list(nums))+'÷'+wrapG(list(nums))+'＝？',a:`<span class="steps">${wrapL(list(nums))}＝${l}，${wrapG(list(nums))}＝${g}，${l}÷${g}＝<b>${l/g}</b></span>`,len:nums.length*8}; }
+      // nested2: 〔(a,b),〔c,d〕〕 或 ((a,b),〔c,d〕)
+      const [a,b,c,d]=nums; const g=gcd2(a,b), l=lcm2(c,d); const outer=coin()?'g':'l'; const val=outer==='g'?gcd2(g,l):lcm2(g,l);
+      return {q:(outer==='g'?wrapG:wrapL)(wrapG(list([a,b]))+'<span class="br">，</span>'+wrapL(list([c,d])))+'＝？',a:`<span class="steps">${wrapG(list([a,b]))}＝${g}，${wrapL(list([c,d]))}＝${l}，${(outer==='g'?wrapG:wrapL)(list([g,l]))}＝<b>${val}</b></span>`,len:22}; }},
+};
+const MODS=['sd','sdapp','euclid','std','stdapp','mix'];
+const DEF={sd:9,sdapp:4,euclid:4,std:4,stdapp:4,mix:6};
+$('mods').innerHTML=MODS.map(k=>`<label><input type="checkbox" id="on_${k}" ${['sd','sdapp','euclid'].includes(k)?'checked':''}> ${GEN[k].name} <input type="number" id="n_${k}" value="${DEF[k]}" min="1" max="40"></label>`).join('');
+function generate(){
+  D=+$('diff').value; document.documentElement.style.setProperty('--work',$('work').value+'mm'); const per=$('perRow').value, parts=[];
+  MODS.forEach(k=>{ if(!$('on_'+k).checked) return; const n=Math.min(40,Math.max(1,+$('n_'+k).value||1)); const items=[]; let guard=0;
+    while(items.length<n&&guard++<n*20){ const it=GEN[k].make(); if(items.some(x=>x.q===it.q)) continue; items.push(it); }
+    const longest=Math.max(...items.map(x=>x.len)); const cols=per==='auto'?(longest<=12?3:longest<=22?2:1):+per;
+    let h=`<div class="sec">${GEN[k].name}</div><p class="tip">${GEN[k].tip}</p><div class="grid c${cols}">`;
+    items.forEach((it,i)=>{ h+=`<div class="prob"><div class="q"><span class="no">(${i+1})</span><span>${it.q}</span></div><div class="work"><div class="ans">${it.a}</div></div></div>`; });
+    h+='</div>'; parts.push(h); });
+  $('out').innerHTML=parts.length?`<div class="sheet"><div class="head"><h2>因數與倍數 練習（${['','基礎','進階','挑戰'][D]}）</h2><span>班級：______　姓名：__________　日期：____/____　作答時間：____分____秒</span></div><p class="tip" style="margin:4px 0 0 2px">( ) 表示最大公因數，〔 〕表示最小公倍數。求下列各題：</p>${parts.join('')}</div>`:'<div class="empty">請至少勾選一個單元。</div>';
+}
+$('gen').onclick=generate; $('print').onclick=()=>window.print();
+$('version').onchange=e=>document.body.className=e.target.value;
+['perRow','work','diff','showTable'].forEach(id=>$(id).onchange=generate);
+$('mods').addEventListener('change',generate);
+generate();
+</script>
+</body>
+</html>

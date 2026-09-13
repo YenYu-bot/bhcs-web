@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>百宏文教｜比例 出題器</title>
+<meta name="description" content="國中數學國一「比例」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g7-ratio.html">
+<meta property="og:title" content="百宏文教｜比例 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g7-ratio.html">
+<meta property="og:type" content="website">
+
+<style>
+  :root{ --ink:#222; --ans:#d62828; --accent:#2a8f6a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px}
+  .panel{background:#fff;padding:12px 18px;border-bottom:1px solid #cfd6dd;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;position:sticky;top:0;z-index:5}
+  .panel h1{font-size:18px;margin:0 0 2px;width:100%}
+  .grp{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid #d9e0e6;border-radius:8px;background:#f8fafb}
+  .grp>b{font-size:14px;color:#345}
+  .line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px}
+  .line label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  select,input[type=number]{font:inherit;padding:3px 6px;border:1px solid #b7bfc7;border-radius:4px;background:#fff}
+  input[type=number]{width:52px}
+  button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
+  button.ghost{background:#fff;color:var(--accent)}
+  .actions{display:flex;gap:8px;align-items:flex-end;align-self:stretch}
+  .note{font-size:12px;color:#667;width:100%}
+
+  .sheet{background:#fff;width:210mm;min-height:297mm;margin:14px auto;padding:12mm 12mm 14mm;box-shadow:0 2px 10px rgba(0,0,0,.15);font-size:15px;line-height:1.5}
+  .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5px solid var(--accent);padding-bottom:6px;margin-bottom:8px}
+  .hd h2{margin:0;font-size:21px;letter-spacing:1px}
+  .hd .sub{font-size:12px;color:#556;margin-top:2px}
+  .hd .box{border:1.5px solid #444;border-radius:8px;padding:4px 10px;font-size:13px;line-height:1.7;white-space:nowrap}
+  .sec{margin:8px 0 2px;font-weight:700;border-left:4px solid var(--accent);padding-left:8px;font-size:15px}
+  .grid{display:grid;gap:6px 14px;margin-bottom:8px}
+  .q{padding:4px 2px;break-inside:avoid;page-break-inside:avoid;border-bottom:1px dotted #cfd4d8}
+  .q .qt{display:flex;gap:6px;align-items:flex-start;line-height:1.9}
+  .q .no{flex:none;font-size:14px;padding-top:1px;color:#333}
+  .q .ex{}
+  .q .ex .sub{display:block;padding-left:1.2em}
+  .work{height:18mm}
+  body.teacher .work{height:2mm}
+  .ans{display:none;color:var(--ans);font-size:12.5px;line-height:1.85;margin:2px 0 2px 24px;word-break:break-all}
+  body.teacher .ans{display:block}
+  .ans b{font-weight:700}
+  .ans .al{display:inline-block;vertical-align:middle;border-collapse:collapse;margin:0 6px;font-size:12px;line-height:1.3}
+  .ans .al td{padding:0 5px;text-align:center}
+  .ans .al tr.tot td{border-top:1px solid var(--ans)}
+
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 2px;font-size:.9em;position:relative;top:-.08em}
+  .fr .n,.fr .d{display:block;padding:0 3px}
+  .fr .n{border-bottom:1.3px solid currentColor}
+  .fr .fr{font-size:1em}
+  .fr.big{font-size:1em}
+  .fr.big>.n{padding:2px 4px 3px}
+  .fr.big>.d{padding:3px 4px 0}
+  .mx{display:inline-flex;align-items:center}
+  .mx .fr{margin-left:1px}
+  .op{margin:0 3px}
+  .cl{margin:0 4px;font-weight:600}
+  .eq{margin:0 4px}
+  var{font-style:italic;font-family:"Times New Roman",Georgia,serif;font-size:1.08em;padding:0 1px}
+  sup{font-size:.7em}
+  .empty{color:#888;padding:40px;text-align:center}
+  @media print{ body{background:#fff} .panel{display:none} .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none} .ans{-webkit-print-color-adjust:exact;print-color-adjust:exact} @page{size:A4;margin:12mm} }
+</style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+:root{--accent:var(--bhcs-green)!important}
+body{background:var(--bhcs-bg);font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+.panel{padding-top:0!important;border-bottom:1px solid var(--bhcs-line);box-shadow:0 5px 16px #173e3412}
+.panel>h1{width:100%;margin:0 -18px 6px!important;padding:11px 18px!important;background:var(--bhcs-green2);color:#fff;border-bottom:4px solid var(--bhcs-mint);font-size:17px!important;display:flex;align-items:center;gap:12px}
+.panel>h1::before{content:"百";width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--bhcs-mint);color:var(--bhcs-green2);border-radius:9px;font:900 17px Georgia,serif}
+.panel>h1::after{content:"百宏文教・數學計算力練習";margin-left:auto;font-size:12px;font-weight:400;color:#c8e8df}
+.grp{background:#fff!important;border-color:var(--bhcs-line)!important}
+.grp>b,.grp>label:first-child{color:var(--bhcs-green2)!important}
+button{background:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important;color:#fff!important;font-weight:800!important}
+button.ghost{background:#fff!important;color:var(--bhcs-green)!important}
+.sheet{box-shadow:0 15px 40px #1d342f22!important}
+.hd,.head{border-bottom-color:var(--bhcs-green)!important}
+.sec{border-left-color:var(--bhcs-green)!important;background:var(--bhcs-soft)!important;padding:4px 10px!important}
+select,input[type=number]{border-color:#aabcb7!important}
+</style></head>
+<body class="student">
+<div class="panel">
+  <h1>比例 出題器（國一）</h1>
+  <div class="grp"><b>版面</b><div class="line">
+    <label>版本 <select id="version"><option value="student">學用版</option><option value="teacher">教用版（紅字解答）</option></select></label>
+    <label>每列 <select id="perRow"><option value="auto">自動</option><option value="3">3 題</option><option value="2">2 題</option><option value="1">1 題</option></select></label>
+    <label>作答空間 <select id="work"><option value="10">小</option><option value="18" selected>中</option><option value="28">大</option></select></label>
+  </div></div>
+  <div class="grp"><b>難度與數的類型</b><div class="line">
+    <label>難度 <select id="diff"><option value="1">基礎</option><option value="2" selected>進階</option><option value="3">挑戰</option></select></label>
+    <label><input type="checkbox" id="tInt" checked> 整數</label>
+    <label><input type="checkbox" id="tFrac" checked> 分數</label>
+    <label><input type="checkbox" id="tDec" checked> 小數</label>
+  </div>
+  <div class="note">整數／分數／小數決定比的各項與係數的形式（繁分數單元本身即以分數、小數出題）。</div></div>
+  <div class="grp"><b>單元與題數</b><div class="line" id="units"></div></div>
+  <div class="actions"><button id="gen">重新出題</button><button class="ghost" id="print">列印 / 存 PDF</button></div>
+</div>
+<div class="sheet" id="sheet"><div class="empty">按「重新出題」產生練習卷</div></div>
+
+<script>
+// ================= 有理數 =================
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a}
+function lcm(a,b){return a/gcd(a,b)*b}
+class F{
+  constructor(n,d=1){ if(d<0){n=-n;d=-d} const g=gcd(n,d)||1; this.n=n/g; this.d=d/g }
+  static of(x){return x instanceof F?x:new F(x)}
+  add(o){o=F.of(o);return new F(this.n*o.d+o.n*this.d,this.d*o.d)}
+  sub(o){o=F.of(o);return new F(this.n*o.d-o.n*this.d,this.d*o.d)}
+  mul(o){o=F.of(o);return new F(this.n*o.n,this.d*o.d)}
+  div(o){o=F.of(o);return new F(this.n*o.d,this.d*o.n)}
+  neg(){return new F(-this.n,this.d)}
+  abs(){return new F(Math.abs(this.n),this.d)}
+  cmp(o){o=F.of(o);return Math.sign(this.n*o.d-o.n*this.d)}
+  eq(o){return this.cmp(o)===0}
+  get sign(){return Math.sign(this.n)}
+  isInt(){return this.d===1}
+  isZero(){return this.n===0}
+}
+const ONE=new F(1);
+class L{
+  constructor(p,q){this.p=F.of(p);this.q=F.of(q)}
+  add(o){return new L(this.p.add(o.p),this.q.add(o.q))}
+  sub(o){return new L(this.p.sub(o.p),this.q.sub(o.q))}
+  scale(k){return new L(this.p.mul(k),this.q.mul(k))}
+  at(x){return this.p.mul(x).add(this.q)}
+}
+// ================= 亂數 =================
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const chance=p=>Math.random()<p;
+const nz=(a,b)=>{let v;do{v=ri(a,b)}while(v===0);return v};
+const sgn=()=>chance(.5)?1:-1;
+function coprime(a,b){return gcd(a,b)===1}
+function retry(fn){for(let i=0;i<80;i++){const r=fn();if(r)return r}return fn(true)}
+
+// ================= 顯示 =================
+const MINUS='−';
+function isDecDen(d){return 1000%d===0}
+function decStr(f){let k=0;while(Math.pow(10,k)%f.d!==0)k++;const n=Math.abs(f.n)*Math.pow(10,k)/f.d;let s=String(n);while(s.length<=k)s='0'+s;s=k?s.slice(0,s.length-k)+'.'+s.slice(s.length-k):s;return (f.n<0?MINUS:'')+s}
+function frHTML(n,d,big){return `<span class="fr${big?' big':''}"><span class="n">${n}</span><span class="d">${d}</span></span>`}
+// o.dec 允許小數；o.mixed 帶分數；o.paren 負數加括號；o.abs 不顯示負號
+function num(f,o={}){
+  f=F.of(f);
+  const neg=f.n<0&&!o.abs, a=Math.abs(f.n);
+  let s;
+  if(f.d===1) s=String(a);
+  else if(o.dec&&isDecDen(f.d)) s=decStr(f.abs());
+  else if(o.mixed&&a>f.d){const w=Math.floor(a/f.d);s=`<span class="mx">${w}${frHTML(a-w*f.d,f.d)}</span>`}
+  else s=frHTML(a,f.d);
+  s=(neg?MINUS:'')+s;
+  return (neg&&o.paren)?'('+s+')':s;
+}
+const V=n=>`<var>${n}</var>`;
+const X=V('x'),Y=V('y'),Zv=V('z');
+const CL='<span class="cl">:</span>', EQ='<span class="eq">=</span>';
+const ratio=(...p)=>p.join(CL);
+const join=s=>s.join('，');
+const SUP2='<sup>2</sup>';
+
+// 式子（一次式）顯示：{c:F,dec,body:null|'x'|{br:Expr}|{fr:Expr,den}}
+const T=(c,body=null,dec=false)=>({c:F.of(c),body,dec});
+const brT=(c,inner,dec=false)=>T(c,{br:inner},dec);
+const lin=(a,b,dec=false)=>{const t=[];if(!F.of(a).isZero())t.push(T(a,'x',dec));if(!F.of(b).isZero())t.push(T(b,null,dec));return t.length?t:[T(0)]};
+function val(e){let r=new L(0,0);for(const t of e){let v;if(t.body===null)v=new L(0,1);else if(t.body==='x')v=new L(1,0);else if(t.body.br)v=val(t.body.br);else v=val(t.body.fr).scale(ONE.div(t.body.den));r=r.add(v.scale(t.c))}return r}
+function renderTerm(t,first){
+  const neg=t.c.sign<0,m=t.c.abs(),one=m.eq(1),coef=num(m,{dec:t.dec});
+  const sign=first?(neg?MINUS:''):(`<span class="op">${neg?MINUS:'+'}</span>`);
+  let body;
+  if(t.body===null)body=coef;
+  else if(t.body==='x')body=(one?'':coef)+X;
+  else if(t.body.br)body=(one?'':coef)+'('+render(t.body.br)+')';
+  else{const fr=frHTML(render(t.body.fr),num(t.body.den));body=one?fr:coef+'('+fr+')'}
+  return sign+body;
+}
+function render(e){const ts=e.filter(t=>!t.c.isZero());if(!ts.length)return'0';return ts.map((t,i)=>renderTerm(t,i===0)).join('')}
+function renderL(l,dec=false){return render(lin(l.p,l.q,dec))}
+// 兩變數一次式 p x + q y
+function renderXY(p,q,vx=X,vy=Y){const t=[];if(!F.of(p).isZero())t.push(T(p,'x'));if(!F.of(q).isZero())t.push(T(q,'y'));const h=t.map((tt,i)=>{const neg=tt.c.sign<0,m=tt.c.abs(),one=m.eq(1);return (i?`<span class="op">${neg?MINUS:'+'}</span>`:(neg?MINUS:''))+(one?'':num(m))+(tt.body==='x'?vx:vy)}).join('');return h||'0'}
+function denLcm(...fs){return fs.reduce((m,f)=>lcm(m,F.of(f).d),1)}
+
+// ================= 係數形式 =================
+let CFG={lvl:2,types:['int','frac','dec']};
+function style(pOther=.5){const t=CFG.types;if(t.length===1)return t[0];if(t.includes('int')&&!chance(pOther))return'int';const o=t.filter(x=>x!=='int');return pick(o.length?o:t)}
+// 產生一個正的數值（依形式）
+function posNum(st,{max=9,mixed=true,dec2=false}={}){
+  if(st==='frac'){const d=pick([2,3,4,5,6,7,8]);let n;do{n=ri(1,mixed&&CFG.lvl>=2?d*3:d-1)}while(!coprime(n,d)||n===d);return new F(n,d)}
+  if(st==='dec'){const k=dec2?100:10;let n;do{n=ri(1,Math.min(max*k,k*4))}while(n%k===0);return new F(n,k)}
+  return new F(ri(1,max));
+}
+const pickRatioInt=(max=9)=>{let a,b;do{a=ri(1,max);b=ri(1,max)}while(a===b||!coprime(a,b));return[a,b]};
+
+// 化為最簡整數比：輸入 F 陣列 → 整數陣列（保留符號）
+function simpRatio(fs){
+  const M=denLcm(...fs);let ns=fs.map(f=>f.n*M/f.d);
+  const g=ns.reduce((a,b)=>gcd(a,b),0)||1;
+  ns=ns.map(n=>n/g);
+  return ns;
+}
+// 比值步驟：a÷b
+function ratioValueSteps(a,b,o={}){ // 回傳 {steps:[], v:F}
+  const s=[];
+  const v=a.div(b);
+  const isI=a.isInt()&&b.isInt();
+  if(isI){ s.push(`${num(a,{paren:true})}÷${num(b,{paren:true})}${EQ}${frHTML(num(a,{abs:true}),num(b,{abs:true}))}`.replace(EQ+frHTML(num(a,{abs:true}),num(b,{abs:true})),(a.n<0)!==(b.n<0)?EQ+MINUS+frHTML(num(a,{abs:true}),num(b,{abs:true})):EQ+frHTML(num(a,{abs:true}),num(b,{abs:true})))); }
+  else{
+    s.push(`${num(a,{dec:true,mixed:true,paren:true})}÷${num(b,{dec:true,mixed:true,paren:true})}`);
+    s.push(`${num(a,{paren:true})}÷${num(b,{paren:true})}`);
+    const negv=v.sign<0;
+    const inner=`${num(a.abs())}×${num(b.abs().d===1?new F(1,b.abs().n):new F(b.abs().d,b.abs().n))}`;
+    s.push(negv?`${MINUS}(${inner})`:inner);
+  }
+  s.push('<b>'+num(v)+'</b>');
+  return{steps:s,v,html:s.join(EQ)};
+}
+
+// ================= 單元 1：比與比值 =================
+const UNITS_T=[{big:'kg',small:'g',k:1000},{big:'m',small:'cm',k:100},{big:'km',small:'m',k:1000},{big:'分',small:'秒',k:60},{big:'時',small:'分',k:60},{big:'L',small:'mL',k:1000}];
+function genRatioValue(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const withUnit=chance(lvl===1?.4:.5);
+    let a,b,html,pre='';
+    if(withUnit){
+      const u=pick(UNITS_T);
+      const st=style(.6);
+      // 大單位量：小數或分數；小單位量：整數
+      let bigV, bigHTML;
+      if(st==='frac'&&u.k!==60&&lvl>=2){bigV=new F(ri(1,3)*4+pick([1,2,3]),4);bigHTML=num(bigV,{mixed:true})+u.big}
+      else if(st==='frac'&&u.k===60){const d=pick([2,3,4,5,6]);bigV=new F(ri(1,5)*d+ri(1,d-1),d);bigHTML=num(bigV,{mixed:true})+u.big}
+      else if(lvl===3&&chance(.5)&&['m','分','時'].includes(u.big)){const w=ri(1,5),r=ri(1,u.k===60?59:99);bigV=new F(w*u.k+r,u.k);bigHTML=`${w}${u.big}${r}${u.small}`}
+      else if(u.k===60){bigV=new F(ri(2,12));bigHTML=num(bigV)+u.big}
+      else{const k=lvl===1?10:100;let n;do{n=ri(1,k*5)}while(n%k===0&&chance(.7));bigV=new F(n,k);bigHTML=num(bigV,{dec:true})+u.big}
+      let smallV=ri(1,u.k===60?59:99)*(lvl===1?10:1); if(u.k===60)smallV=ri(5,59); if(u.k===100&&lvl===1)smallV=ri(1,9)*10; if(u.k===1000)smallV=ri(1,9)*(lvl===1?100:50);
+      const bigInSmall=bigV.mul(u.k);
+      if(!bigInSmall.isInt())return null;
+      const big={v:bigInSmall,h:bigHTML}, small={v:new F(smallV),h:smallV+u.small};
+      const first=chance(.5)?big:small, second=first===big?small:big;
+      a=first.v;b=second.v;
+      html=ratio(first.h,second.h)+EQ+'？';
+      pre=`${bigHTML}${EQ}${num(bigInSmall)}${u.small}，`;
+    }else{
+      const st1=style(.7),st2=style(.7);
+      const mk=st=>{let v=posNum(st,{max:lvl===1?12:30,dec2:lvl===3});if(lvl>=2&&chance(.4))v=v.neg();return v};
+      a=mk(st1);b=mk(st2);
+      if(a.isInt()&&b.isInt()&&lvl>=2&&chance(.5)){ // 整數對整數太簡單：改一邊為分數或小數
+        const st=style(1);if(st!=='int')b=posNum(st,{max:20}).mul(chance(.4)?-1:1);
+      }
+      if(a.eq(b))return null;
+      html=ratio(num(a,{dec:true,mixed:true,paren:true}),num(b,{dec:true,mixed:true,paren:true}))+EQ+'？';
+    }
+    const r=ratioValueSteps(a,b);
+    return{html,ans:pre+r.html,v:r.v,_a:a,_b:b};
+  });
+}
+
+// ================= 單元 2：繁分數 =================
+function genComplex(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const forms=lvl===1?['frac','frac','dec']:lvl===2?['frac','mixed','dec','int']:['mixed','dec2','frac','int'];
+    const mk=f=>{
+      if(f==='int')return{v:new F(ri(2,12)),h:null};
+      if(f==='frac'){const d=pick([2,3,4,5,6,7,8,9]);let n;do{n=ri(1,d-1)}while(!coprime(n,d));return{v:new F(n,d),h:null}}
+      if(f==='mixed'){const d=pick([2,3,4,5,6,7,9]);let n;do{n=ri(1,d-1)}while(!coprime(n,d));return{v:new F(ri(1,7)*d+n,d),h:'mixed'}}
+      if(f==='dec'){let n;do{n=ri(11,99)}while(n%10===0);return{v:new F(n,10),h:'dec'}}
+      let n;do{n=ri(101,999)}while(n%10===0);return{v:new F(n,100),h:'dec'};
+    };
+    let top=mk(pick(forms)),bot=mk(pick(forms));
+    if(top.v.isInt()&&bot.v.isInt())return null;
+    if(top.v.eq(bot.v))return null;
+    const show=t=>t.h==='dec'?num(t.v,{dec:true}):t.h==='mixed'?num(t.v,{mixed:true}):num(t.v);
+    const html=frHTML(show(top),show(bot),true)+EQ+'？';
+    const s=[];
+    const needConv=top.h||bot.h;
+    if(needConv)s.push(frHTML(num(top.v),num(bot.v),true));
+    const a=top.v,b=bot.v; // (a.n/a.d)/(b.n/b.d) = a.n*b.d / (a.d*b.n)
+    const numE=a.d===1?`${a.n}`:(b.d===1?`${a.n}`:`${a.n}×${b.d}`);
+    const denE=b.d===1?`${a.d===1?'':a.d+'×'}${b.n}`:(a.d===1?`${b.n}`:`${a.d}×${b.n}`);
+    const nn=a.n*b.d, dd=a.d*b.n;
+    const v=a.div(b);
+    if(!(a.d===1&&b.d===1))s.push(frHTML(numE,denE,true));
+    if(gcd(nn,dd)>1||numE.includes('×')||denE.includes('×'))s.push(frHTML(nn,dd,true));
+    const fin=num(v,{mixed:false}); if(s.length&&s[s.length-1].replace(' big','')===frHTML(v.n,v.d))s.pop(); s.push('<b>'+fin+'</b>');
+    const uniq=s.filter((x,i)=>i===0||x!==s[i-1]);
+    return{html,ans:uniq.join(EQ),v};
+  });
+}
+
+// ================= 單元 3：比例式求 x =================
+function genPropX(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    let A,B,C,D; // A:B = C:D，各為 Expr
+    const st=style(.4);
+    if(lvl===1){
+      if(chance(.5)){ // x:25=7:35 型
+        const [p,q]=pickRatioInt(9), k=ri(2,9), m=ri(2,9);
+        const parts=[[T(p*k)],[T(q*k)],[T(p*m)],[T(q*m)]];
+        const xi=ri(0,3); parts[xi]=[T(1,'x')];
+        [A,B,C,D]=parts;
+        if(st==='frac'&&chance(.6)){ // 4/3 : 3x/2 = 2:3
+          const f1=posNum('frac',{mixed:false}),f2=posNum('frac',{mixed:false});
+          A=[T(f1)];B=[T(f2.mul(ri(1,3)),'x')];C=[T(p)];D=[T(q)];
+          if(chance(.5)){[A,B]=[B,A]}
+        }else if(st==='dec'&&chance(.6)){
+          A=[T(posNum('dec'),null,true)];B=[T(posNum('dec'),'x',true)];C=[T(p)];D=[T(q)];if(chance(.5))[A,B]=[B,A];
+        }
+      }else{ // (2x−5):(x+2)=1:2 或 (x+3):4=(2x−5):6
+        const x0=ri(-6,9);
+        const [p,q]=pickRatioInt(9);
+        const e1=lin(nz(-3,3),nz(-9,9)), e2=chance(.5)?lin(nz(-3,3),nz(-9,9)):[T(ri(2,9))];
+        // 調整 e2 常數使 x0 為解：val(e1)(x0)*q = val(e2)(x0)*p
+        const v1=val(e1).at(x0); const need=v1.mul(q).div(p); const cur=val(e2).at(x0);
+        e2[e2.length-1]=T(e2[e2.length-1].c.add(need.sub(cur)));
+        if(!e2[e2.length-1].c.isInt())return null;
+        A=[brT(1,e1)];B=e2.length===1&&e2[0].body===null?e2:[brT(1,e2)];C=[T(p)];D=[T(q)];
+        if(chance(.4)){[A,C]=[C,A];[B,D]=[D,B]}
+      }
+    }else if(lvl===2){
+      const x0=chance(.6)?ri(-8,9):new F(nz(-9,9),pick([2,3,4]));
+      const mk=()=>chance(.75)?lin(nz(-4,4),nz(-9,9)):[T(nz(-9,9))];
+      const e1=mk(),e2=mk(),e3=mk();
+      const [p,q]=pickRatioInt(9);
+      const forms=pick([1,2,3]);
+      const wrap=e=>e.length===1&&e[0].body===null?e:[brT(1,e)];
+      if(forms===1){ // (2x−5):(x+2)=p:q
+        A=e1;B=e2;C=[T(p*(chance(.3)?-1:1))];D=[T(q)];
+      }else if(forms===2){ // (x+3):p=(2x−5):q
+        A=e1;B=[T(p)];C=e2;D=[T(q)];
+      }else{ // p:(x−9)=q:2x
+        A=[T(p)];B=e1;C=[T(q)];D=e3.length===1?lin(nz(-3,3),0):e3;
+      }
+      // 調整常數使 x0 為解：A·D = B·C（皆為一次式）→ 這裡直接以 x0 修正 D 的常數（若 D 有常數）或 B
+      const fixTarget=D.some(t=>t.body===null)?D:B.some(t=>t.body===null)?B:null;
+      if(fixTarget&&chance(.8)){
+        const other=fixTarget===D?[A,B,C]:[A,C,D];
+        // A*D = B*C；解 fixTarget 的常數 k：若 fixTarget=D → k = (B·C − A·D_noconst)/A (在 x0)
+        const at=e=>val(e).at(x0);
+        const noC=fixTarget.filter(t=>t.body!==null);
+        let k;
+        if(fixTarget===D){ if(at(A).isZero())return null; k=at(B).mul(at(C)).sub(at(A).mul(at(noC))).div(at(A)); }
+        else{ if(at(C).isZero())return null; k=at(A).mul(at(D)).sub(at(C).mul(at(noC))).div(at(C)); }
+        if(!k.isInt()||Math.abs(k.n)>60)return null;
+        const idx=fixTarget.findIndex(t=>t.body===null); fixTarget[idx]=T(k);
+      }
+      A=wrap(A);B=wrap(B);C=wrap(C);D=wrap(D);
+    }else{
+      const mk=()=>{const s=style(.5);if(s==='frac')return[T(posNum('frac',{mixed:false}).mul(chance(.3)?-1:1),'x'),T(posNum('frac',{mixed:false}).mul(sgn()))];if(s==='dec')return[T(posNum('dec').mul(sgn()),'x',true),T(posNum('dec').mul(sgn()),null,true)];return lin(nz(-9,9),nz(-9,9))};
+      A=[brT(1,mk())];B=[brT(1,mk())];
+      const [cp,cq]=pickRatioInt(9); if(chance(.5)){C=[T(cp*(chance(.4)?-1:1))];D=[T(cq)]}else{C=[brT(1,mk())];D=[T(cq*(chance(.4)?-1:1))]}
+      if(chance(.3))[A,C]=[C,A];
+    }
+    // 求解：A·D = B·C
+    const la=val(A),lb=val(B),lc=val(C),ld=val(D);
+    // 兩邊皆一次（乘積可能為二次）：需 la.p*ld.p == lb.p*lc.p 才是一次方程
+    const q2=la.p.mul(ld.p).sub(lb.p.mul(lc.p));
+    if(!q2.isZero())return null;
+    const P=la.p.mul(ld.q).add(la.q.mul(ld.p)).sub(lb.p.mul(lc.q).add(lb.q.mul(lc.p)));
+    const Q=lb.q.mul(lc.q).sub(la.q.mul(ld.q));
+    if(P.isZero())return null;
+    const x0=Q.div(P);
+    if(lb.at(x0).isZero()||ld.at(x0).isZero())return null;
+    if(Math.abs(x0.n)>200||x0.d>30)return null;
+    const html=ratio(render(A),render(B))+EQ+ratio(render(C),render(D));
+    const s=[];
+    const side=(e1,e2)=>{ // 顯示 e1·e2
+      const isC=e=>e.length===1&&e[0].body===null;
+      const one=e=>e.length===1&&e[0].body===null&&e[0].c.eq(1);
+      if(one(e1))return render(e2); if(one(e2))return render(e1);
+      const isBr=e=>e.length===1&&e[0].body&&e[0].body.br&&e[0].c.eq(1);
+      const w=e=>isC(e)?num(e[0].c,{paren:true,dec:e[0].dec}):(e.length===1&&e[0].body==='x'&&e[0].c.eq(1)?X:isBr(e)?render(e):'('+render(e)+')');
+      if(isC(e1)&&isC(e2))return w(e1)+'×'+w(e2);
+      if(isC(e2)&&!isC(e1))return w(e2)+w(e1);
+      return w(e1)+w(e2);
+    };
+    const dec=[A,B,C,D].some(e=>e.some(t=>t.dec));
+    s.push('外項乘積＝內項乘積：'+side(A,D)+EQ+side(B,C));
+    const lhs=new L(la.p.mul(ld.q).add(la.q.mul(ld.p)),la.q.mul(ld.q)), rhs=new L(lb.p.mul(lc.q).add(lb.q.mul(lc.p)),lb.q.mul(lc.q));
+    s.push(renderL(lhs,dec)+EQ+renderL(rhs,dec));
+    const M=denLcm(lhs.p,lhs.q,rhs.p,rhs.q);
+    let l2=lhs,r2=rhs; if(M>1){l2=lhs.scale(M);r2=rhs.scale(M);s.push('同乘以 '+M+'：'+renderL(l2)+EQ+renderL(r2))}
+    const PP=l2.p.sub(r2.p),QQ=r2.q.sub(l2.q);
+    const st2=renderL(new L(PP,0))+EQ+num(QQ); if(s[s.length-1]!==st2)s.push(st2);
+    s.push('<b>'+X+EQ+num(x0)+'</b>');
+    return{html,ans:join(s),v:x0,_chk:x=>la.at(x).mul(ld.at(x)).eq(lb.at(x).mul(lc.at(x)))};
+  });
+}
+
+// ================= 單元 4：比例式求比值 =================
+function exprXY(p,q){ // 顯示 (px+qy)，係數為整數
+  if(p===0||q===0)return renderXY(p,q);
+  return '('+renderXY(p,q)+')';
+}
+function ratioOfLinear(a,b,p,q,r,s){ // x=ar,y=br；(px+qy):(rx+sy) → 值
+  const m=p*a+q*b,n=r*a+s*b; return{m,n};
+}
+function genPropValue(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const [a,b]=pickRatioInt(lvl===1?7:13);
+    const sub=[];
+    const nSub=lvl===1?1:lvl===2?(chance(.5)?2:1):2;
+    const rc=k=>(k===1?'':k===-1?MINUS:num(k))+V('r');
+    const steps=[`設 ${X}${EQ}${rc(a)}、${Y}${EQ}${rc(b)}（${V('r')}≠0）`];
+    for(let i=0;i<nSub;i++){
+      const quad=lvl===3&&i===nSub-1&&chance(.6);
+      if(!quad){
+        let p,q,r,s,m,n;
+        do{p=nz(-5,lvl===1?5:9);q=nz(-5,9);r=nz(-5,9);s=nz(-5,9);if(lvl===1){p=ri(1,5);q=ri(1,5);r=ri(1,5);s=nz(-5,5)} if(chance(.2)){r=0;s=1} if(chance(.15)){q=0} ({m,n}=ratioOfLinear(a,b,p,q,r,s))}while(n===0||m===0||p===r&&q===s);
+        const g=gcd(m,n);
+        const q1=ratio(exprXY(p,q),r===0?Y:exprXY(r,s));
+        sub.push(q1);
+        const mm=(p*a)+'r'.replace('r',V('r'))+(q*b>=0?'+':MINUS)+Math.abs(q*b)+V('r');
+        const sa=`${q1}${EQ}${ratio(exprXY(p,q).replace(X,'·').replace(Y,'·'),'')}`; // unused
+        const two=(c1,c2)=>c2===0?rc(c1):`(${rc(c1)}<span class="op">${c2<0?MINUS:'+'}</span>${rc(Math.abs(c2))})`;
+        const lhs=two(p*a,q*b);
+        const rhs=r===0?rc(b):two(r*a,s*b);
+        let st=`${q1}${EQ}${ratio(lhs,rhs)}`+(ratio(lhs,rhs)===ratio(rc(m),rc(n))?'':EQ+ratio(rc(m),rc(n)))+`${EQ}${ratio(num(m),num(n))}`;
+        if(g>1)st+=EQ+ratio(num(m/g),num(n/g));
+        st+=`，比值為 <b>${num(new F(m,n))}</b>`;
+        steps.push(st);
+      }else{ // (x²+y²):(x²−y²)
+        const p=pick([1,1,2]),q=nz(-3,3),r=pick([1,2]),s=nz(-3,3);
+        const m=p*a*a+q*b*b, n=r*a*a+s*b*b; if(n===0||m===0||(p===r&&q===s))return null;
+        const sq=(c,v)=>(c===1?'':c)+v+SUP2;
+        const e=(c1,c2)=>'('+sq(c1,X)+`<span class="op">${c2<0?MINUS:'+'}</span>`+sq(Math.abs(c2),Y)+')';
+        const q1=ratio(e(p,q),e(r,s));
+        sub.push(q1);
+        const st=`${q1}${EQ}${ratio(`(${p*a*a}${V('r')}${SUP2}${q<0?'<span class="op">'+MINUS+'</span>':'<span class="op">+</span>'}${Math.abs(q)*b*b}${V('r')}${SUP2})`,`(${r*a*a}${V('r')}${SUP2}${s<0?'<span class="op">'+MINUS+'</span>':'<span class="op">+</span>'}${Math.abs(s)*b*b}${V('r')}${SUP2})`)}${EQ}${ratio(num(m),num(n))}，比值為 <b>${num(new F(m,n))}</b>`;
+        steps.push(st);
+      }
+    }
+    const html=`已知 ${ratio(X,Y)}${EQ}${ratio(a,b)}，求${nSub>1?'下列各比的比值：':'：'}`+sub.map((s,i)=>`<span class="sub">${nSub>1?'①②③'[i]+' ':''}${s}${nSub>1?'':' 的比值是多少？'}</span>`).join('');
+    return{html,ans:join(steps)};
+  });
+}
+
+// ================= 單元 5：方程式求比值 =================
+function genEqValue(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    // ax+by=cx+dy → (a−c)x=(d−b)y → x:y=(d−b):(a−c)
+    let a,b,c,d,ux,uy;
+    do{a=nz(-9,12);b=nz(-9,12);c=nz(-9,12);d=nz(-9,12);ux=a-c;uy=d-b;}while(ux===0||uy===0||(lvl===1&&(ux*uy<0)));
+    let [rx,ry]=[uy,ux]; const g=gcd(rx,ry); rx/=g;ry/=g; if(ry<0){rx=-rx;ry=-ry}
+    const eq=renderXY(a,b)+EQ+renderXY(c,d);
+    const s=[];
+    s.push(eq);
+    s.push(renderXY(ux,0)+EQ+renderXY(0,uy));
+    let st=`${ratio(X,Y)}${EQ}${ratio(num(uy),num(ux))}`; if(g>1||ux<0)st+=EQ+ratio(num(rx),num(ry)); s.push(st);
+    const rc=k=>(k===1?'':k===-1?MINUS:num(k))+V('r');
+    s.push(`令 ${X}${EQ}${rc(rx)}、${Y}${EQ}${rc(ry)}`);
+    const sub=[];
+    const sub1=`${ratio(X,Y)}${EQ}？`;
+    sub.push(sub1);
+    s.push(`① ${ratio(X,Y)} 的比值為 <b>${num(new F(rx,ry))}</b>`);
+    if(lvl>=2){
+      let p,q,r,t,m,n;do{p=nz(-5,9);q=nz(-5,9);r=nz(-5,9);t=nz(-5,9);m=p*rx+q*ry;n=r*rx+t*ry}while(m===0||n===0);
+      sub.push(ratio(exprXY(p,q),exprXY(r,t))+' 的比值？');
+      s.push(`② ${ratio(exprXY(p,q),exprXY(r,t))}${EQ}${ratio(`(${rc(p*rx)}<span class="op">${q*ry<0?MINUS:'+'}</span>${rc(Math.abs(q*ry))})`,`(${rc(r*rx)}<span class="op">${t*ry<0?MINUS:'+'}</span>${rc(Math.abs(t*ry))})`)}${EQ}${ratio(rc(m),rc(n))}${EQ}${ratio(num(m),num(n))}，比值為 <b>${num(new F(m,n))}</b>`);
+    }
+    const html=`已知 ${X}、${Y} 均不為 0，且 ${eq}，求：`+sub.map((x,i)=>`<span class="sub">${sub.length>1?'①②'[i]+' ':''}${x}</span>`).join('');
+    return{html,ans:join(s)};
+  });
+}
+
+// ================= 單元 6：比例式與方程式求值 =================
+function genRatioEq(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const [a,b]=pickRatioInt(lvl===1?7:12);
+    const r=ri(2,lvl===1?9:15);
+    const x=a*r,y=b*r;
+    const s=[];
+    let cond;
+    if(lvl===1){cond=`${ratio(X,Y)}${EQ}${ratio(a,b)}`}
+    else if(lvl===2){const k1=ri(1,3),k2=ri(1,3);if(k1===1&&k2===1||chance(.3))cond=`${ratio(X,Y)}${EQ}${ratio(a,b)}`;else{const [ra,rb]=[k1*a,k2*b];const g=gcd(ra,rb);cond=`${ratio(renderXY(k1,0),renderXY(0,k2))}${EQ}${ratio(ra/g,rb/g)}`;s.push(`${ratio(k1===1?X:k1+X,k2===1?Y:k2+Y)}${EQ}${ratio(ra/g,rb/g)}，${X}${EQ}${ra/g}${V('r')}÷${k1}、${Y}${EQ}${rb/g}${V('r')}÷${k2}，即 ${ratio(X,Y)}${EQ}${ratio(a,b)}`)}}
+    else{ // (x+y):(x−y)=p:q → x:y=(p+q):(p−q)
+      if(a<b)return null;
+      const p=a+b,q=a-b,g=gcd(p,q);
+      if(q===0)return null;
+      cond=`${ratio('('+renderXY(1,1)+')','('+renderXY(1,-1)+')')}${EQ}${ratio(num(p/g),num(q/g))}`;
+      s.push(`${num(p/g)}(${renderXY(1,-1)})${EQ}${num(q/g)}(${renderXY(1,1)})，${renderXY(p/g,-p/g)}${EQ}${renderXY(q/g,q/g)}，${renderXY(p/g-q/g,0)}${EQ}${renderXY(0,p/g+q/g)}，${ratio(X,Y)}${EQ}${ratio(a,b)}`);
+    }
+    // 方程式 cx+dy=e
+    let c,d;do{c=nz(-6,9);d=nz(-6,9)}while(c*a+d*b===0);
+    const e=(c*a+d*b)*r;
+    const eq=renderXY(c,d)+EQ+num(e);
+    s.push(`令 ${X}${EQ}${a===1?'':a}${V('r')}、${Y}${EQ}${b===1?'':b}${V('r')}，代入 ${eq}：${num(c*a)}${V('r')}<span class="op">${d*b<0?MINUS:'+'}</span>${Math.abs(d*b)}${V('r')}${EQ}${num(e)}，${num(c*a+d*b)}${V('r')}${EQ}${num(e)}，${V('r')}${EQ}${r}`);
+    const askAll=lvl===1||chance(.3);
+    if(!askAll)s.push(`${X}${EQ}${x}，${Y}${EQ}${y}`);
+    let ask;
+    if(askAll){ask=`求 ${X}${EQ}？，${Y}${EQ}？`;s.push(`<b>${X}${EQ}${x}，${Y}${EQ}${y}</b>`)}
+    else{
+      const p=nz(-9,9),q=nz(-9,9); const m=x+p,n=y+q; if(n===0)return null;
+      const e1=`(${X}<span class="op">${p<0?MINUS:'+'}</span>${Math.abs(p)})`,e2=`(${Y}<span class="op">${q<0?MINUS:'+'}</span>${Math.abs(q)})`;
+      ask=`則 ${ratio(e1,e2)} 的比值是多少？`;
+      s.push(`${ratio(e1,e2)}${EQ}${ratio(num(m,{paren:true}),num(n,{paren:true}))}，比值為 <b>${num(new F(m,n))}</b>`);
+    }
+    const html=`設 ${cond}，且 ${eq}，${ask}`;
+    return{html,ans:join(s)};
+  });
+}
+
+// ================= 連比工具 =================
+function ratioNum(f,o={}){return num(f,{dec:true,mixed:true,...o})}
+function ratioTerms(st,n=2,{max=9}={}){ // 產生 n 個正數，且最簡整數比不全相同
+  const fs=[];for(let i=0;i<n;i++)fs.push(posNum(st,{max,mixed:CFG.lvl>=2}));return fs;
+}
+function alignTable(v1,v2,v3,A,B,C,D,L1,mid){ // 對齊表：mid 為共用文字
+  const [m1,m2]=mid;
+  return `<table class="al"><tr><td>${v1}</td><td>:</td><td>${v2}</td><td>:</td><td>${v3}</td></tr><tr><td>${A}</td><td></td><td>${B}</td><td></td><td></td></tr><tr><td></td><td></td><td>${C}</td><td></td><td>${D}</td></tr><tr class="tot"><td>${L1[0]}</td><td>:</td><td>${L1[1]}</td><td>:</td><td>${L1[2]}</td></tr></table>`;
+}
+// 兩個比合併：x:y=a:b, y:z=c:d（整數） → x:y:z
+function mergeShared(a,b,c,d){const Lm=lcm(b,c);let r=[a*Lm/b,Lm,d*Lm/c];const g=r.reduce((p,q)=>gcd(p,q),0);return r.map(v=>v/g)}
+
+// ================= 單元 7：連比 =================
+function genChain(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const vars=chance(.5)?[X,Y,Zv]:[V('a'),V('b'),V('c')];
+    const [v1,v2,v3]=vars;
+    const st=style(lvl===1?.3:.6);
+    if(lvl===3&&chance(.5)||lvl===2&&chance(.3)){ // ax:by:cz=p:q:r
+      const [ka,kb,kc]=[ri(2,5),ri(2,5),ri(2,5)];
+      let p,q,rr;do{p=ri(2,20);q=ri(2,20);rr=ri(2,20)}while(gcd(gcd(p,q),rr)>1);
+      const fx=new F(p,ka),fy=new F(q,kb),fz=new F(rr,kc);
+      const res=simpRatio([fx,fy,fz]);
+      const html=`已知 ${ratio(ka+v1,kb+v2,kc+v3)}${EQ}${ratio(p,q,rr)}，求 ${ratio(v1,v2,v3)}${EQ}？`;
+      const s=[`${ka}${v1}${EQ}${p}${V('r')}，${v1}${EQ}${num(fx)}${V('r')}；${kb}${v2}${EQ}${q}${V('r')}，${v2}${EQ}${num(fy)}${V('r')}；${kc}${v3}${EQ}${rr}${V('r')}，${v3}${EQ}${num(fz)}${V('r')}`,
+        `${ratio(v1,v2,v3)}${EQ}${ratio(num(fx),num(fy),num(fz))}${EQ}<b>${ratio(...res)}</b>`];
+      return{html,ans:join(s)};
+    }
+    // 兩個比合併
+    const pairKind=pick(['12-23','12-13','13-23']); // 哪兩個比已知
+    const mk=()=>{let f;do{f=ratioTerms(st,2,{max:lvl===1?9:12})}while(f[0].eq(f[1]));return f};
+    const r1=mk(),r2=mk();
+    const s1=simpRatio(r1),s2=simpRatio(r2);
+    if(s1[0]>30||s1[1]>30||s2[0]>30||s2[1]>30)return null;
+    let names,res,tbl;
+    const nums=(f)=>ratioNum(f[0])+CL+ratioNum(f[1]);
+    if(pairKind==='12-23'){names=[[v1,v2],[v2,v3]];res=mergeShared(s1[0],s1[1],s2[0],s2[1]);const Lm=lcm(s1[1],s2[0]);tbl=alignTable(v1,v2,v3,s1[0],s1[1],s2[0],s2[1],[s1[0]*Lm/s1[1],Lm,s2[1]*Lm/s2[0]],[v2])}
+    else if(pairKind==='12-13'){names=[[v1,v2],[v1,v3]];const Lm=lcm(s1[0],s2[0]);let r=[Lm,s1[1]*Lm/s1[0],s2[1]*Lm/s2[0]];const g=r.reduce((p,q)=>gcd(p,q),0);res=r.map(v=>v/g);tbl=`<table class="al"><tr><td>${v1}</td><td>:</td><td>${v2}</td><td>:</td><td>${v3}</td></tr><tr><td>${s1[0]}</td><td></td><td>${s1[1]}</td><td></td><td></td></tr><tr><td>${s2[0]}</td><td></td><td></td><td></td><td>${s2[1]}</td></tr><tr class="tot"><td>${r[0]}</td><td>:</td><td>${r[1]}</td><td>:</td><td>${r[2]}</td></tr></table>`}
+    else{names=[[v1,v3],[v2,v3]];const Lm=lcm(s1[1],s2[1]);let r=[s1[0]*Lm/s1[1],s2[0]*Lm/s2[1],Lm];const g=r.reduce((p,q)=>gcd(p,q),0);res=r.map(v=>v/g);tbl=`<table class="al"><tr><td>${v1}</td><td>:</td><td>${v2}</td><td>:</td><td>${v3}</td></tr><tr><td>${s1[0]}</td><td></td><td></td><td></td><td>${s1[1]}</td></tr><tr><td></td><td></td><td>${s2[0]}</td><td></td><td>${s2[1]}</td></tr><tr class="tot"><td>${r[0]}</td><td>:</td><td>${r[1]}</td><td>:</td><td>${r[2]}</td></tr></table>`}
+    const html=`${ratio(...names[0])}${EQ}${nums(r1)}，${ratio(...names[1])}${EQ}${nums(r2)}，則 ${ratio(v1,v2,v3)}${EQ}？`;
+    const s=[];
+    const conv=(nm,f,sr)=>{const same=f[0].isInt()&&f[1].isInt()&&f[0].n===sr[0]&&f[1].n===sr[1];return `${ratio(...nm)}${EQ}${nums(f)}`+(same?'':EQ+ratio(...sr))};
+    s.push(conv(names[0],r1,s1));s.push(conv(names[1],r2,s2));
+    s.push(tbl+`∴ ${ratio(v1,v2,v3)}${EQ}<b>${ratio(...res)}</b>`);
+    return{html,ans:join(s)};
+  });
+}
+
+// ================= 單元 8：連比例式 =================
+function genChainProp(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const st=style(lvl===1?.2:.6);
+    // 已知比 a:b:c，另一邊 p:x:y（p 對應 a）
+    let base=ratioTerms(st,3,{max:lvl===1?9:15});
+    if(base[0].eq(base[1])||base[1].eq(base[2]))return null;
+    const k=chance(.5)?new F(ri(2,6)):new F(ri(1,9),pick([2,3,4,5]));
+    const other=base.map(f=>f.mul(k));
+    const idxKnown=ri(0,2); // other 中哪一個已知
+    const unk=[0,1,2].filter(i=>i!==idxKnown);
+    const shown=other.map((f,i)=>i===idxKnown?ratioNum(f):(i===unk[0]?X:Y));
+    if(!other[idxKnown].isInt()&&lvl===1)return null;
+    const flipSide=chance(.4);
+    const L1=ratio(...base.map(f=>ratioNum(f))),L2=ratio(...shown);
+    const html=`若 ${flipSide?L2+EQ+L1:L1+EQ+L2}，求 ${X}${EQ}？，${Y}${EQ}？`;
+    const s=[];
+    const sb=simpRatio(base);
+    if(!base.every((f,i)=>f.isInt()&&f.n===sb[i]))s.push(`${L1}${EQ}${ratio(...sb)}`);
+    const kn=other[idxKnown];
+    for(const [j,name] of [[unk[0],X],[unk[1],Y]]){
+      // sb[idxKnown]:sb[j] = kn:name → sb[idxKnown]·name = sb[j]·kn
+      const val_=other[j];
+      s.push(`${ratio(sb[idxKnown],sb[j])}${EQ}${ratio(ratioNum(kn),name)}，${sb[idxKnown]}${name}${EQ}${sb[j]}×${ratioNum(kn,{paren:true})}${EQ}${num(new F(sb[j]).mul(kn))}，${name}${EQ}<b>${num(val_)}</b>`);
+    }
+    return{html,ans:join(s)};
+  });
+}
+
+// ================= 單元 9：連比活用 =================
+function genChainApp(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const useXYZ=chance(.5);const [v1,v2,v3]=useXYZ?[X,Y,Zv]:[V('a'),V('b'),V('c')];
+    const kind=lvl===1?pick(['frac','eq3']):lvl===2?pick(['eq3','coefPair','twoEq']):pick(['prod','pairProd','twoEq','coefPair']);
+    const abc=()=>{let a,b,c;do{a=ri(2,9);b=ri(2,9);c=ri(2,9)}while(a===b||b===c||a===c);return[a,b,c]};
+    if(kind==='frac'){ // x/a=y/b=z/c
+      const [a,b,c]=abc();
+      const html=`已知 ${v1}、${v2}、${v3} 均不為 0，若 ${frHTML(v1,a)}${EQ}${frHTML(v2,b)}${EQ}${frHTML(v3,c)}，求 ${ratio(v1,v2,v3)}${EQ}？`;
+      const g=gcd(gcd(a,b),c);
+      const s=[`令 ${frHTML(v1,a)}${EQ}${frHTML(v2,b)}${EQ}${frHTML(v3,c)}${EQ}${V('r')}，則 ${v1}${EQ}${a}${V('r')}、${v2}${EQ}${b}${V('r')}、${v3}${EQ}${c}${V('r')}`,`${ratio(v1,v2,v3)}${EQ}<b>${ratio(a/g,b/g,c/g)}</b>`];
+      return{html,ans:join(s)};
+    }
+    if(kind==='eq3'){ // ax=by=cz → x:y:z = bc:ac:ab
+      const [a,b,c]=abc();
+      const html=`設 ${v1}、${v2}、${v3} 均不為 0，且 ${a}${v1}${EQ}${b}${v2}${EQ}${c}${v3}，求 ${ratio(v1,v2,v3)}${EQ}？`;
+      const r=simpRatio([new F(1,a),new F(1,b),new F(1,c)]);
+      const s=[`令 ${a}${v1}${EQ}${b}${v2}${EQ}${c}${v3}${EQ}${V('r')}，則 ${v1}${EQ}${frHTML(V('r'),a)}、${v2}${EQ}${frHTML(V('r'),b)}、${v3}${EQ}${frHTML(V('r'),c)}`,`${ratio(v1,v2,v3)}${EQ}${ratio(frHTML(1,a),frHTML(1,b),frHTML(1,c))}${EQ}${ratio(b*c,a*c,a*b)}${EQ}<b>${ratio(...r)}</b>`];
+      return{html,ans:join(s)};
+    }
+    if(kind==='twoEq'){ // 5x=4z, 3y=2z → x:y:z
+      const [a,b,c,d]=[ri(2,9),ri(2,9),ri(2,9),ri(2,9)];
+      if(a===b||c===d)return null;
+      // ax=bz → x:z=b:a ; cy=dz → y:z=d:c
+      const Lm=lcm(a,c);let r=[b*Lm/a,d*Lm/c,Lm];const g=r.reduce((p,q)=>gcd(p,q),0);r=r.map(v=>v/g);
+      const html=`設 ${v1}${v2}${v3}≠0，且 ${a}${v1}${EQ}${b}${v3}，${c}${v2}${EQ}${d}${v3}，求 ${ratio(v1,v2,v3)}${EQ}？`;
+      const s=[`由 ${a}${v1}${EQ}${b}${v3} 得 ${ratio(v1,v3)}${EQ}${ratio(b,a)}；由 ${c}${v2}${EQ}${d}${v3} 得 ${ratio(v2,v3)}${EQ}${ratio(d,c)}`,`${v3} 對應的數取 ${a}、${c} 的最小公倍數 ${Lm}：${ratio(v1,v2,v3)}${EQ}${ratio(b*Lm/a,d*Lm/c,Lm)}`+(g>1?EQ+'<b>'+ratio(...r)+'</b>':'')];
+      if(g===1)s[1]=s[1].replace(ratio(b*Lm/a,d*Lm/c,Lm),'<b>'+ratio(...r)+'</b>');
+      return{html,ans:join(s)};
+    }
+    if(kind==='coefPair'){ // 2a:3b=4:9, 5b:c=3:1
+      const [k1,k2,k3,k4]=[ri(1,5),ri(1,5),ri(1,5),ri(1,5)];
+      let [p,q]=pickRatioInt(12),[u,w]=pickRatioInt(12);
+      const fa=new F(p,k1),fb=new F(q,k2),fb2=new F(u,k3),fc=new F(w,k4);
+      const s1=simpRatio([fa,fb]),s2=simpRatio([fb2,fc]);
+      if(s1.some(v=>v>40)||s2.some(v=>v>40))return null;
+      const res=mergeShared(s1[0],s1[1],s2[0],s2[1]);
+      const Lm=lcm(s1[1],s2[0]);
+      const html=`設 ${ratio((k1===1?'':k1)+v1,(k2===1?'':k2)+v2)}${EQ}${ratio(p,q)}，${ratio((k3===1?'':k3)+v2,(k4===1?'':k4)+v3)}${EQ}${ratio(u,w)}，求 ${ratio(v1,v2,v3)}${EQ}？`;
+      const s=[`${ratio(v1,v2)}${EQ}${ratio(num(fa),num(fb))}${EQ}${ratio(...s1)}`,`${ratio(v2,v3)}${EQ}${ratio(num(fb2),num(fc))}${EQ}${ratio(...s2)}`,alignTable(v1,v2,v3,s1[0],s1[1],s2[0],s2[1],[s1[0]*Lm/s1[1],Lm,s2[1]*Lm/s2[0]],[v2])+`∴ ${ratio(v1,v2,v3)}${EQ}<b>${ratio(...res)}</b>`];
+      return{html,ans:join(s)};
+    }
+    if(kind==='prod'){ // 5ab=3bc=8ac → a:b:c=3:8:5（x:y:z = 係數 yz:zx:xy）
+      const [a,b,c]=abc(); // a·v1v2 = b·v2v3 = c·v1v3
+      const r=simpRatio([new F(b),new F(c),new F(a)]);
+      const html=`設 ${v1}${v2}${v3}≠0，且 ${a}${v1}${v2}${EQ}${b}${v2}${v3}${EQ}${c}${v1}${v3}，求 ${ratio(v1,v2,v3)}${EQ}？`;
+      const g1=gcd(a,b),g2=gcd(b,c);
+      const s=[`由 ${a}${v1}${v2}${EQ}${b}${v2}${v3} 得 ${a}${v1}${EQ}${b}${v3}，${ratio(v1,v3)}${EQ}${ratio(b/g1,a/g1)}`,`由 ${b}${v2}${v3}${EQ}${c}${v1}${v3} 得 ${b}${v2}${EQ}${c}${v1}，${ratio(v1,v2)}${EQ}${ratio(b/g2,c/g2)}`,`∴ ${ratio(v1,v2,v3)}${EQ}<b>${ratio(...r)}</b>`];
+      return{html,ans:join(s)};
+    }
+    // pairProd: xy:yz:zx=p:q:r → x:y:z = 1/q : 1/r : 1/p
+    let p,q,rr;do{p=ri(2,12);q=ri(2,12);rr=ri(2,12)}while(p===q||q===rr||p===rr);
+    const r=simpRatio([new F(1,q),new F(1,rr),new F(1,p)]);
+    const html=`設 ${v1}${v2}${v3}≠0，且 ${ratio(v1+v2,v2+v3,v3+v1)}${EQ}${ratio(p,q,rr)}，求 ${ratio(v1,v2,v3)}${EQ}？`;
+    const g1=gcd(p,q),g2=gcd(q,rr);
+    const s=[`由 ${ratio(v1+v2,v2+v3)}${EQ}${ratio(p,q)} 得 ${ratio(v1,v3)}${EQ}${ratio(p/g1,q/g1)}；由 ${ratio(v2+v3,v3+v1)}${EQ}${ratio(q,rr)} 得 ${ratio(v2,v1)}${EQ}${ratio(q/g2,rr/g2)}`,`∴ ${ratio(v1,v2,v3)}${EQ}<b>${ratio(...r)}</b>`];
+    return{html,ans:join(s)};
+  });
+}
+
+// ================= 單元 10：連比與求值 =================
+function genChainValue(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const useXYZ=chance(.5);const [v1,v2,v3]=useXYZ?[X,Y,Zv]:[V('a'),V('b'),V('c')];
+    let a,b,c;do{a=ri(1,9);b=ri(1,9);c=ri(1,9)}while(gcd(gcd(a,b),c)>1||(a===b&&b===c));
+    const r=ri(2,lvl===1?9:20);
+    const s=[];
+    let cond;
+    if(lvl===1){cond=`${ratio(v1,v2,v3)}${EQ}${ratio(a,b,c)}`}
+    else{
+      const st=style(.6);
+      const k=chance(.5)?new F(ri(2,5)):posNum(st,{mixed:false});
+      const f1=new F(a).mul(k),f2=new F(b).mul(k),f3=new F(c).mul(k);
+      if(chance(.5)){ // 兩個比
+        const kk=posNum(st,{mixed:false});
+        const g1=[f1,f2], g2=[new F(b).mul(kk),new F(c).mul(kk)];
+        cond=`${ratio(v1,v2)}${EQ}${ratio(ratioNum(g1[0]),ratioNum(g1[1]))}，${ratio(v2,v3)}${EQ}${ratio(ratioNum(g2[0]),ratioNum(g2[1]))}`;
+        const s1=simpRatio(g1),s2=simpRatio(g2);const Lm=lcm(s1[1],s2[0]);
+        s.push(`${ratio(v1,v2)}${EQ}${ratio(...s1)}，${ratio(v2,v3)}${EQ}${ratio(...s2)}`+alignTable(v1,v2,v3,s1[0],s1[1],s2[0],s2[1],[s1[0]*Lm/s1[1],Lm,s2[1]*Lm/s2[0]],[v2])+`${ratio(v1,v2,v3)}${EQ}${ratio(a,b,c)}`);
+      }else{ // 3a=2b，b:c=...
+        const g=gcd(a,b);
+        if(a===b)return null;
+        const m=b/g,n=a/g; // m·v1 = n·v2 ⇔ v1:v2 = n:m = a:b
+        const g2=[new F(b).mul(k),new F(c).mul(k)];const s2=simpRatio(g2);
+        cond=`${m===1?'':m}${v1}${EQ}${n===1?'':n}${v2}，${ratio(v2,v3)}${EQ}${ratio(ratioNum(g2[0]),ratioNum(g2[1]))}`;
+        const Lm=lcm(m,s2[0]);
+        s.push(`${ratio(v1,v2)}${EQ}${ratio(n,m)}，${ratio(v2,v3)}${EQ}${ratio(...s2)}`+alignTable(v1,v2,v3,n,m,s2[0],s2[1],[n*Lm/m,Lm,s2[1]*Lm/s2[0]],[v2])+`${ratio(v1,v2,v3)}${EQ}${ratio(a,b,c)}`);
+      }
+    }
+    // 條件式 p v1 + q v2 + t v3 = K
+    let p,q,t,K;do{p=nz(-3,4);q=nz(-3,4);t=nz(-3,4);if(lvl===1){p=pick([1,1,2]);q=pick([1,1,2,3]);t=pick([1,1,2])}K=(p*a+q*b+t*c)*r}while(p*a+q*b+t*c<=0);
+    const lhs3=[[p,v1],[q,v2],[t,v3]].map(([co,v],i)=>(i?`<span class="op">${co<0?MINUS:'+'}</span>`:(co<0?MINUS:''))+(Math.abs(co)===1?'':Math.abs(co))+v).join('');
+    const eq=`${lhs3}${EQ}${K}`;
+    s.push(`令 ${v1}${EQ}${a===1?'':a}${V('r')}、${v2}${EQ}${b===1?'':b}${V('r')}、${v3}${EQ}${c===1?'':c}${V('r')}，代入 ${eq}：${num(p*a)}${V('r')}<span class="op">${q*b<0?MINUS:'+'}</span>${Math.abs(q*b)}${V('r')}<span class="op">${t*c<0?MINUS:'+'}</span>${Math.abs(t*c)}${V('r')}${EQ}${K}，${p*a+q*b+t*c}${V('r')}${EQ}${K}，${V('r')}${EQ}${r}`);
+    const vals=[a*r,b*r,c*r];
+    let ask;
+    const askKind=lvl===1?pick(['all','one']):lvl===2?pick(['all','one','sum']):pick(['sum','exprRatio','one']);
+    if(askKind==='all'){ask=`則 ${v1}${EQ}？，${v2}${EQ}？，${v3}${EQ}？`;s.push(`<b>${v1}${EQ}${vals[0]}，${v2}${EQ}${vals[1]}，${v3}${EQ}${vals[2]}</b>`)}
+    else if(askKind==='one'){const i=ri(0,2);ask=`則 ${[v1,v2,v3][i]}${EQ}？`;s.push(`<b>${[v1,v2,v3][i]}${EQ}${[a,b,c][i]}${V('r')}${EQ}${vals[i]}</b>`)}
+    else if(askKind==='sum'){const [u,w,z]=[pick([1,1,2]),pick([1,2,3]),pick([1,1,2])];const e=[[u,v1],[w,v2],[z,v3]].map(([co,v],i)=>(i?'<span class="op">+</span>':'')+(co===1?'':co)+v).join('');ask=`則 ${e}${EQ}？`;s.push(`${e}${EQ}${u*vals[0]}+${w*vals[1]}+${z*vals[2]}${EQ}<b>${u*vals[0]+w*vals[1]+z*vals[2]}</b>`)}
+    else{ // (a+2):(b−2):(c+3)
+      const [d1,d2,d3]=[nz(-9,9),nz(-9,9),nz(-9,9)];const m=[vals[0]+d1,vals[1]+d2,vals[2]+d3];if(m.some(v=>v<=0))return null;
+      const e=(v,d)=>`(${v}<span class="op">${d<0?MINUS:'+'}</span>${Math.abs(d)})`;
+      const g=m.reduce((x,y)=>gcd(x,y),0);
+      ask=`則 ${ratio(e(v1,d1),e(v2,d2),e(v3,d3))}${EQ}？`;
+      s.push(`${ratio(e(v1,d1),e(v2,d2),e(v3,d3))}${EQ}${ratio(...m)}`+(g>1?EQ+'<b>'+ratio(...m.map(v=>v/g))+'</b>':'').replace(ratio(...m),g>1?ratio(...m):'<b>'+ratio(...m)+'</b>'));
+    }
+    const html=`設 ${cond}，且 ${eq}，${ask}`;
+    return{html,ans:join(s)};
+  });
+}
+
+// ================= 單元 11：綜合（含教材綜合區題型） =================
+function genExprValue(){ // a=2b，b=3c，求 3b²/(2a²+bc)
+  return retry(()=>{
+    const [v1,v2,v3]=chance(.5)?[X,Y,Zv]:[V('a'),V('b'),V('c')];
+    const m=ri(2,4),n=ri(2,4); // v1=m v2, v2=n v3 → v3=r, v2=nr, v1=mnr
+    const a=m*n,b=n,c=1;
+    const k1=ri(1,5),k2=ri(1,5),k3=ri(1,5);
+    const numV=k1*b*b, denV=k2*a*a+k3*b*c;
+    const sq=(k,v)=>(k===1?'':k)+v+SUP2;
+    const html=`設 ${v1}、${v2}、${v3} 均不為 0，且 ${v1}${EQ}${m}${v2}，${v2}${EQ}${n}${v3}，求 ${frHTML(sq(k1,v2),sq(k2,v1)+'<span class="op">+</span>'+(k3===1?'':k3)+v2+v3,true)}${EQ}？`;
+    const s=[`令 ${v3}${EQ}${V('r')}，則 ${v2}${EQ}${b}${V('r')}、${v1}${EQ}${a}${V('r')}`,`原式${EQ}${frHTML(`${k1}×(${b}${V('r')})${SUP2}`,`${k2}×(${a}${V('r')})${SUP2}+${k3}×${b}${V('r')}×${V('r')}`,true)}${EQ}${frHTML(numV+V('r')+SUP2,(k2*a*a)+V('r')+SUP2+'+'+(k3*b)+V('r')+SUP2,true)}${EQ}${frHTML(numV+V('r')+SUP2,denV+V('r')+SUP2,true)}${EQ}<b>${num(new F(numV,denV))}</b>`];
+    return{html,ans:join(s)};
+  });
+}
+function genChainRatioValue(){ // x:y:z=2:5:7 → (x+3y−z):(3x−y+z) 比值
+  return retry(()=>{
+    let a,b,c;do{a=ri(1,9);b=ri(1,9);c=ri(1,9)}while(gcd(gcd(a,b),c)>1||a===b||b===c);
+    let p,q,t,u,w,z,m,n;do{p=nz(-3,3);q=nz(-3,3);t=nz(-3,3);u=nz(-3,3);w=nz(-3,3);z=nz(-3,3);m=p*a+q*b+t*c;n=u*a+w*b+z*c}while(m===0||n===0);
+    const e=(cs)=>'('+cs.map(([co,v],i)=>(i?`<span class="op">${co<0?MINUS:'+'}</span>`:(co<0?MINUS:''))+(Math.abs(co)===1?'':Math.abs(co))+v).join('')+')';
+    const E1=e([[p,X],[q,Y],[t,Zv]]),E2=e([[u,X],[w,Y],[z,Zv]]);
+    const html=`若 ${ratio(X,Y,Zv)}${EQ}${ratio(a,b,c)}，則 ${ratio(E1,E2)} 的比值${EQ}？`;
+    const s=[`令 ${X}${EQ}${a}${V('r')}、${Y}${EQ}${b}${V('r')}、${Zv}${EQ}${c}${V('r')}`,`${ratio(E1,E2)}${EQ}${ratio(num(m)+V('r'),num(n)+V('r'))}${EQ}${ratio(num(m),num(n))}，比值為 <b>${num(new F(m,n))}</b>`];
+    return{html,ans:join(s)};
+  });
+}
+function genMixed(){
+  const g=pick([genRatioValue,genComplex,genPropX,genPropValue,genEqValue,genRatioEq,genChain,genChainProp,genChainApp,genChainValue,genExprValue,genChainRatioValue]);
+  return g();
+}
+
+const UNITS=[
+  {id:'rv',name:'比與比值（含單位換算）',n:6,cols:3,inst:'求下列各比的比值：',gen:genRatioValue},
+  {id:'cx',name:'繁分數化簡',n:6,cols:3,inst:'化簡下列繁分數：',gen:genComplex},
+  {id:'px',name:'比例式求 x',n:6,cols:3,inst:'求下列各比例式中 x 的值：',gen:genPropX},
+  {id:'pv',name:'比例式求比值',n:4,cols:2,inst:'求下列各比的比值：',gen:genPropValue},
+  {id:'ev',name:'方程式求比值',n:2,cols:1,inst:'求下列各比的比值：',gen:genEqValue},
+  {id:'re',name:'比例式與方程式求值',n:4,cols:2,inst:'依題意求值：',gen:genRatioEq},
+  {id:'ch',name:'連比',n:4,cols:2,inst:'求下列各連比：',gen:genChain},
+  {id:'cp',name:'連比例式求 x、y',n:4,cols:2,inst:'求下列各連比例式中 x、y 的值：',gen:genChainProp},
+  {id:'ca',name:'連比活用',n:4,cols:2,inst:'求下列各連比：',gen:genChainApp},
+  {id:'cv',name:'連比與求值',n:4,cols:2,inst:'依題意求值：',gen:genChainValue},
+  {id:'mx',name:'綜合練習',n:0,cols:2,inst:'綜合練習：',gen:genMixed},
+];
+
+function build(counts,opt){
+  CFG={lvl:opt.lvl,types:opt.types.length?opt.types:['int']};
+  const parts=[];let no=0;const zh='一二三四五六七八九十十一';let si=0;
+  for(const u of UNITS){
+    const n=counts[u.id]||0;if(!n)continue;
+    const cols=opt.perRow==='auto'?u.cols:+opt.perRow;
+    const qs=[];for(let i=0;i<n;i++){const q=u.gen();q.no=++no;qs.push(q);if(typeof globalThis!=='undefined'&&globalThis.__qs)globalThis.__qs.push(q)}
+    parts.push(`<div class="sec">${zh[si++]}、${u.inst}</div><div class="grid" style="grid-template-columns:repeat(${cols},1fr)">`+
+      qs.map(q=>`<div class="q"><div class="qt"><span class="no">(${q.no})</span><span class="ex">${q.html}</span></div><div class="work" style="height:${opt.work}mm"></div><div class="ans">${q.ans}</div></div>`).join('')+'</div>');
+  }
+  return parts;
+}
+
+if(typeof document!=='undefined'){
+  const $=id=>document.getElementById(id);
+  const uw=$('units');
+  uw.innerHTML=UNITS.map(u=>`<label>${u.name} <input type="number" min="0" max="30" value="${u.n}" data-u="${u.id}"></label>`).join('');
+  function generate(){
+    const counts={};uw.querySelectorAll('input').forEach(i=>counts[i.dataset.u]=+i.value||0);
+    const types=[['tInt','int'],['tFrac','frac'],['tDec','dec']].filter(([id])=>$(id).checked).map(x=>x[1]);
+    const opt={lvl:+$('diff').value,types,perRow:$('perRow').value,work:$('work').value};
+    const parts=build(counts,opt);
+    const diffName={1:'基礎',2:'進階',3:'挑戰'}[opt.lvl];
+    const tn=types.map(t=>({int:'整數',frac:'分數',dec:'小數'})[t]).join('、')||'整數';
+    $('sheet').innerHTML=parts.length?`<div class="hd"><div><h2>比例 計算力練習</h2><div class="sub">國一・難度：${diffName}　數的類型：${tn}　姓名：＿＿＿＿＿＿＿</div></div><div class="box">日 期：　　月　　日<br>作答時間：　　分　　秒</div></div>`+parts.join(''):'<div class="empty">請至少設定一個單元的題數</div>';
+    applyVersion();
+  }
+  function applyVersion(){const t=$('version').value==='teacher';document.body.classList.toggle('teacher',t);document.body.classList.toggle('student',!t)}
+  $('gen').onclick=generate;$('print').onclick=()=>window.print();$('version').onchange=applyVersion;
+  ['perRow','work','diff'].forEach(id=>$(id).onchange=generate);
+  generate();
+}
+if(typeof module!=='undefined'){module.exports={build,UNITS,F};}
+</script>
+</body>
+</html>

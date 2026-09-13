@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>百宏文教｜機率：樹狀圖 出題器</title>
+<meta name="description" content="國中數學國三下「機率：樹狀圖」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g9b-2-2-tree-diagram.html">
+<meta property="og:title" content="百宏文教｜機率：樹狀圖 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g9b-2-2-tree-diagram.html">
+<meta property="og:type" content="website">
+
+<style id="bhcs-tailwind">/* 百宏文教：離線版 Tailwind 工具類別子集（取代 cdn.tailwindcss.com） */
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+html{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4;font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+body{margin:0;line-height:inherit}
+hr{height:0;color:inherit;border-top-width:1px}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+a{color:inherit;text-decoration:inherit}
+b,strong{font-weight:bolder}
+code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1em}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sub{bottom:-.25em}sup{top:-.5em}
+table{text-indent:0;border-color:inherit;border-collapse:collapse}
+button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}
+button,select{text-transform:none}
+button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}
+:-moz-focusring{outline:auto}
+progress{vertical-align:baseline}
+::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}
+[type=search]{-webkit-appearance:textfield;outline-offset:-2px}
+summary{display:list-item}
+blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}
+fieldset{margin:0;padding:0}legend{padding:0}
+ol,ul,menu{list-style:none;margin:0;padding:0}
+textarea{resize:vertical}
+input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}
+button,[role=button]{cursor:pointer}
+:disabled{cursor:default}
+img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+img,video{max-width:100%;height:auto}
+[hidden]{display:none}
+.-mb-3\.5{margin-bottom:-0.875rem}
+.-mb-4{margin-bottom:-1rem}
+.-mx-3\.5{margin-left:-0.875rem;margin-right:-0.875rem}
+.-mx-4{margin-left:-1rem;margin-right:-1rem}
+.absolute{position:absolute}
+.active\:scale-95:active{--tw-s:0.95;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.bg-amber-50{background-color:#fffbeb}
+.bg-amber-50\/80{background-color:rgb(255 251 235 / 0.8)}
+.bg-amber-500{background-color:#f59e0b}
+.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}
+.bg-amber-600{background-color:#d97706}
+.bg-blue-50{background-color:#eff6ff}
+.bg-blue-600{background-color:#2563eb}
+.bg-blue-700{background-color:#1d4ed8}
+.bg-cyan-50{background-color:#ecfeff}
+.bg-cyan-50\/70{background-color:rgb(236 254 255 / 0.7)}
+.bg-cyan-500{background-color:#06b6d4}
+.bg-cyan-500\/20{background-color:rgb(6 182 212 / 0.2)}
+.bg-cyan-600{background-color:#0891b2}
+.bg-cyan-700{background-color:#0e7490}
+.bg-emerald-100{background-color:#d1fae5}
+.bg-emerald-50{background-color:#ecfdf5}
+.bg-emerald-600{background-color:#059669}
+.bg-emerald-700{background-color:#047857}
+.bg-gradient-to-tr{background-image:linear-gradient(to top right,var(--tw-from,transparent),var(--tw-to,transparent))}
+.bg-indigo-50{background-color:#eef2ff}
+.bg-indigo-50\/70{background-color:rgb(238 242 255 / 0.7)}
+.bg-indigo-600{background-color:#4f46e5}
+.bg-orange-600{background-color:#ea580c}
+.bg-purple-50{background-color:#faf5ff}
+.bg-purple-600{background-color:#9333ea}
+.bg-rose-100{background-color:#ffe4e6}
+.bg-rose-50{background-color:#fff1f2}
+.bg-rose-600{background-color:#e11d48}
+.bg-sky-500\/20{background-color:rgb(14 165 233 / 0.2)}
+.bg-sky-600{background-color:#0284c7}
+.bg-slate-100{background-color:#f1f5f9}
+.bg-slate-200{background-color:#e2e8f0}
+.bg-slate-200\/70{background-color:rgb(226 232 240 / 0.7)}
+.bg-slate-50{background-color:#f8fafc}
+.bg-slate-50\/50{background-color:rgb(248 250 252 / 0.5)}
+.bg-slate-50\/60{background-color:rgb(248 250 252 / 0.6)}
+.bg-slate-50\/80{background-color:rgb(248 250 252 / 0.8)}
+.bg-slate-700{background-color:#334155}
+.bg-slate-800{background-color:#1e293b}
+.bg-slate-900{background-color:#0f172a}
+.bg-teal-50{background-color:#f0fdfa}
+.bg-teal-500{background-color:#14b8a6}
+.bg-teal-500\/20{background-color:rgb(20 184 166 / 0.2)}
+.bg-teal-600{background-color:#0d9488}
+.bg-transparent{background-color:transparent}
+.bg-violet-50{background-color:#f5f3ff}
+.bg-violet-600{background-color:#7c3aed}
+.bg-violet-700{background-color:#6d28d9}
+.bg-white{background-color:#ffffff}
+.block{display:block}
+.border{border-width:1px}
+.border-2{border-width:2px}
+.border-amber-200{border-color:#fde68a}
+.border-amber-400{border-color:#fbbf24}
+.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}
+.border-amber-600{border-color:#d97706}
+.border-b{border-bottom-width:1px}
+.border-b-2{border-bottom-width:2px}
+.border-blue-200{border-color:#bfdbfe}
+.border-blue-600{border-color:#2563eb}
+.border-collapse{border-collapse:collapse}
+.border-cyan-100{border-color:#cffafe}
+.border-cyan-200{border-color:#a5f3fc}
+.border-cyan-400{border-color:#22d3ee}
+.border-cyan-500\/40{border-color:rgb(6 182 212 / 0.4)}
+.border-cyan-600{border-color:#0891b2}
+.border-cyan-700{border-color:#0e7490}
+.border-dashed{border-style:dashed}
+.border-emerald-200{border-color:#a7f3d0}
+.border-emerald-400{border-color:#34d399}
+.border-emerald-500{border-color:#10b981}
+.border-emerald-600{border-color:#059669}
+.border-indigo-100{border-color:#e0e7ff}
+.border-indigo-200{border-color:#c7d2fe}
+.border-indigo-300{border-color:#a5b4fc}
+.border-indigo-500{border-color:#6366f1}
+.border-indigo-600{border-color:#4f46e5}
+.border-l-2{border-left-width:2px}
+.border-orange-600{border-color:#ea580c}
+.border-purple-200{border-color:#e9d5ff}
+.border-purple-500{border-color:#a855f7}
+.border-purple-600{border-color:#9333ea}
+.border-rose-300{border-color:#fda4af}
+.border-rose-500{border-color:#f43f5e}
+.border-rose-600{border-color:#e11d48}
+.border-sky-500{border-color:#0ea5e9}
+.border-sky-500\/40{border-color:rgb(14 165 233 / 0.4)}
+.border-slate-100{border-color:#f1f5f9}
+.border-slate-100\/80{border-color:rgb(241 245 249 / 0.8)}
+.border-slate-200{border-color:#e2e8f0}
+.border-slate-200\/70{border-color:rgb(226 232 240 / 0.7)}
+.border-slate-200\/80{border-color:rgb(226 232 240 / 0.8)}
+.border-slate-300{border-color:#cbd5e1}
+.border-slate-400{border-color:#94a3b8}
+.border-slate-600{border-color:#475569}
+.border-slate-700{border-color:#334155}
+.border-slate-800{border-color:#1e293b}
+.border-slate-900{border-color:#0f172a}
+.border-t{border-top-width:1px}
+.border-teal-200{border-color:#99f6e4}
+.border-teal-400{border-color:#2dd4bf}
+.border-teal-500{border-color:#14b8a6}
+.border-teal-500\/40{border-color:rgb(20 184 166 / 0.4)}
+.border-teal-600{border-color:#0d9488}
+.border-violet-200{border-color:#ddd6fe}
+.border-violet-500{border-color:#8b5cf6}
+.border-violet-600{border-color:#7c3aed}
+.bottom-5{bottom:1.25rem}
+.col-span-full{grid-column:1 / -1}
+.cursor-pointer{cursor:pointer}
+.divide-slate-800>:not([hidden])~:not([hidden]){border-color:#1e293b}
+.divide-x>:not([hidden])~:not([hidden]){border-left-width:1px}
+.duration-300{transition-duration:300ms}
+.fixed{position:fixed}
+.flex{display:flex}
+.flex-1{flex:1 1 0%}
+.flex-col{flex-direction:column}
+.flex-grow{flex-grow:1}
+.flex-wrap{flex-wrap:wrap}
+.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+.focus\:ring-1:focus{--tw-ring-shadow:0 0 0 1px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-2:focus{--tw-ring-shadow:0 0 0 2px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-cyan-500:focus{--tw-ring-color:#06b6d4}
+.focus\:ring-indigo-500:focus{--tw-ring-color:#6366f1}
+.focus\:ring-teal-500:focus{--tw-ring-color:#14b8a6}
+.font-black{font-weight:900}
+.font-bold{font-weight:700}
+.font-extrabold{font-weight:800}
+.font-medium{font-weight:500}
+.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.font-sans{font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+.font-semibold{font-weight:600}
+.font-serif{font-family:ui-serif,Georgia,"Times New Roman",serif}
+.from-amber-500{--tw-from:#f59e0b}
+.from-cyan-500{--tw-from:#06b6d4}
+.from-sky-500{--tw-from:#0ea5e9}
+.from-teal-500{--tw-from:#14b8a6}
+.gap-1{gap:0.25rem}
+.gap-1\.5{gap:0.375rem}
+.gap-2{gap:0.5rem}
+.gap-2\.5{gap:0.625rem}
+.gap-3{gap:0.75rem}
+.gap-3\.5{gap:0.875rem}
+.gap-4{gap:1rem}
+.gap-5{gap:1.25rem}
+.gap-6{gap:1.5rem}
+.grid{display:grid}
+.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.group:hover .group-hover\:block{display:block}
+.h-10{height:2.5rem}
+.h-12{height:3rem}
+.h-14{height:3.5rem}
+.h-16{height:4rem}
+.h-2\.5{height:0.625rem}
+.h-20{height:5rem}
+.h-24{height:6rem}
+.h-3\.5{height:0.875rem}
+.h-4{height:1rem}
+.h-5{height:1.25rem}
+.h-6{height:1.5rem}
+.h-8{height:2rem}
+.hidden{display:none}
+.hover\:bg-amber-500:hover{background-color:#f59e0b}
+.hover\:bg-amber-600:hover{background-color:#d97706}
+.hover\:bg-amber-700:hover{background-color:#b45309}
+.hover\:bg-blue-700:hover{background-color:#1d4ed8}
+.hover\:bg-blue-800:hover{background-color:#1e40af}
+.hover\:bg-cyan-100:hover{background-color:#cffafe}
+.hover\:bg-cyan-500:hover{background-color:#06b6d4}
+.hover\:bg-cyan-800:hover{background-color:#155e75}
+.hover\:bg-emerald-500:hover{background-color:#10b981}
+.hover\:bg-emerald-700:hover{background-color:#047857}
+.hover\:bg-emerald-800:hover{background-color:#065f46}
+.hover\:bg-indigo-100:hover{background-color:#e0e7ff}
+.hover\:bg-indigo-500:hover{background-color:#6366f1}
+.hover\:bg-indigo-600:hover{background-color:#4f46e5}
+.hover\:bg-indigo-700:hover{background-color:#4338ca}
+.hover\:bg-orange-700:hover{background-color:#c2410c}
+.hover\:bg-purple-700:hover{background-color:#7e22ce}
+.hover\:bg-rose-100:hover{background-color:#ffe4e6}
+.hover\:bg-rose-200:hover{background-color:#fecdd3}
+.hover\:bg-rose-700:hover{background-color:#be123c}
+.hover\:bg-sky-600:hover{background-color:#0284c7}
+.hover\:bg-sky-700:hover{background-color:#0369a1}
+.hover\:bg-slate-100:hover{background-color:#f1f5f9}
+.hover\:bg-slate-200:hover{background-color:#e2e8f0}
+.hover\:bg-slate-300:hover{background-color:#cbd5e1}
+.hover\:bg-slate-50:hover{background-color:#f8fafc}
+.hover\:bg-slate-600:hover{background-color:#475569}
+.hover\:bg-slate-700:hover{background-color:#334155}
+.hover\:bg-slate-900:hover{background-color:#0f172a}
+.hover\:bg-teal-100:hover{background-color:#ccfbf1}
+.hover\:bg-teal-500:hover{background-color:#14b8a6}
+.hover\:bg-teal-700:hover{background-color:#0f766e}
+.hover\:bg-violet-100:hover{background-color:#ede9fe}
+.hover\:bg-violet-700:hover{background-color:#6d28d9}
+.hover\:bg-violet-800:hover{background-color:#5b21b6}
+.hover\:border-cyan-300:hover{border-color:#67e8f9}
+.hover\:border-indigo-300:hover{border-color:#a5b4fc}
+.hover\:border-teal-300:hover{border-color:#5eead4}
+.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.hover\:text-slate-900:hover{color:#0f172a}
+.hover\:text-white:hover{color:#ffffff}
+.inline-block{display:inline-block}
+.inline-flex{display:inline-flex}
+.italic{font-style:italic}
+.items-center{align-items:center}
+.items-end{align-items:flex-end}
+.items-start{align-items:flex-start}
+.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}
+.justify-end{justify-content:flex-end}
+.leading-relaxed{line-height:1.625}
+.leading-tight{line-height:1.25}
+@media (min-width:1024px){.lg\:flex-row{flex-direction:row}}
+@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:items-center{align-items:center}}
+@media (min-width:1024px){.lg\:p-8{padding:2rem}}
+.max-h-28{max-height:7rem}
+.max-h-36{max-height:9rem}
+.max-w-7xl{max-width:80rem}
+.max-w-\[150px\]{max-width:150px}
+.max-w-\[170px\]{max-width:170px}
+.max-w-\[180px\]{max-width:180px}
+.max-w-\[210px\]{max-width:210px}
+.max-w-\[220px\]{max-width:220px}
+.max-w-\[240px\]{max-width:240px}
+.max-w-\[310px\]{max-width:310px}
+.mb-0\.5{margin-bottom:0.125rem}
+.mb-2{margin-bottom:0.5rem}
+.mb-2\.5{margin-bottom:0.625rem}
+.mb-3{margin-bottom:0.75rem}
+.mb-4{margin-bottom:1rem}
+.mb-5{margin-bottom:1.25rem}
+.mb-6{margin-bottom:1.5rem}
+@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.min-h-screen{min-height:100vh}
+.min-w-\[70px\]{min-width:70px}
+.min-w-\[90px\]{min-width:90px}
+.mr-1{margin-right:0.25rem}
+.mt-0\.5{margin-top:0.125rem}
+.mt-1{margin-top:0.25rem}
+.mt-2{margin-top:0.5rem}
+.mt-2\.5{margin-top:0.625rem}
+.mt-3{margin-top:0.75rem}
+.mt-4{margin-top:1rem}
+.mt-8{margin-top:2rem}
+.mx-auto{margin-left:auto;margin-right:auto}
+.my-1{margin-top:0.25rem;margin-bottom:0.25rem}
+.my-1\.5{margin-top:0.375rem;margin-bottom:0.375rem}
+.my-2{margin-top:0.5rem;margin-bottom:0.5rem}
+.opacity-0{opacity:0.0}
+.outline-none{outline:2px solid transparent;outline-offset:2px}
+.overflow-hidden{overflow:hidden}
+.overflow-visible{overflow:visible}
+.p-1{padding:0.25rem}
+.p-1\.5{padding:0.375rem}
+.p-2{padding:0.5rem}
+.p-2\.5{padding:0.625rem}
+.p-3{padding:0.75rem}
+.p-3\.5{padding:0.875rem}
+.p-4{padding:1rem}
+.p-5{padding:1.25rem}
+.p-6{padding:1.5rem}
+.pb-1\.5{padding-bottom:0.375rem}
+.pb-2{padding-bottom:0.5rem}
+.pb-3{padding-bottom:0.75rem}
+.pb-4{padding-bottom:1rem}
+.pl-1{padding-left:0.25rem}
+.pl-3{padding-left:0.75rem}
+.pl-4{padding-left:1rem}
+.pointer-events-none{pointer-events:none}
+.pr-2{padding-right:0.5rem}
+.pt-2{padding-top:0.5rem}
+.pt-2\.5{padding-top:0.625rem}
+.pt-3{padding-top:0.75rem}
+.pt-4{padding-top:1rem}
+.px-1{padding-left:0.25rem;padding-right:0.25rem}
+.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}
+.px-2{padding-left:0.5rem;padding-right:0.5rem}
+.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}
+.px-3{padding-left:0.75rem;padding-right:0.75rem}
+.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}
+.px-4{padding-left:1rem;padding-right:1rem}
+.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}
+.py-1{padding-top:0.25rem;padding-bottom:0.25rem}
+.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}
+.py-16{padding-top:4rem;padding-bottom:4rem}
+.py-2{padding-top:0.5rem;padding-bottom:0.5rem}
+.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}
+.py-3{padding-top:0.75rem;padding-bottom:0.75rem}
+.py-5{padding-top:1.25rem;padding-bottom:1.25rem}
+.relative{position:relative}
+.right-0{right:0rem}
+.right-5{right:1.25rem}
+.rounded{border-radius:0.25rem}
+.rounded-2xl{border-radius:1rem}
+.rounded-b-xl{border-bottom-left-radius:0.75rem;border-bottom-right-radius:0.75rem}
+.rounded-full{border-radius:9999px}
+.rounded-lg{border-radius:0.5rem}
+.rounded-md{border-radius:0.375rem}
+.rounded-xl{border-radius:0.75rem}
+.select-none{user-select:none}
+.selection\:bg-cyan-600::selection{background-color:#0891b2}
+.selection\:bg-indigo-600::selection{background-color:#4f46e5}
+.selection\:bg-teal-600::selection{background-color:#0d9488}
+.selection\:text-white::selection{color:#ffffff}
+.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0/.25);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-amber-100{--tw-shadow-color:#fef3c7}
+.shadow-blue-100{--tw-shadow-color:#dbeafe}
+.shadow-cyan-100{--tw-shadow-color:#cffafe}
+.shadow-emerald-100{--tw-shadow-color:#d1fae5}
+.shadow-indigo-100{--tw-shadow-color:#e0e7ff}
+.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-orange-100{--tw-shadow-color:#ffedd5}
+.shadow-purple-100{--tw-shadow-color:#f3e8ff}
+.shadow-rose-100{--tw-shadow-color:#ffe4e6}
+.shadow-sky-100{--tw-shadow-color:#e0f2fe}
+.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-teal-100{--tw-shadow-color:#ccfbf1}
+.shadow-violet-100{--tw-shadow-color:#ede9fe}
+.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0/.1),0 8px 10px -6px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-xs{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shrink-0{flex-shrink:0}
+@media (min-width:640px){.sm\:flex-row{flex-direction:row}}
+@media (min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:items-end{align-items:flex-end}}
+@media (min-width:640px){.sm\:max-w-\[220px\]{max-width:220px}}
+@media (min-width:640px){.sm\:p-10{padding:2.5rem}}
+@media (min-width:640px){.sm\:p-6{padding:1.5rem}}
+@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}
+@media (min-width:640px){.sm\:text-2xl{font-size:1.5rem;line-height:2rem}}
+@media (min-width:640px){.sm\:text-base{font-size:1rem;line-height:1.5rem}}
+@media (min-width:640px){.sm\:text-left{text-align:left}}
+@media (min-width:640px){.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}
+@media (min-width:640px){.sm\:w-auto{width:auto}}
+.space-x-3>:not([hidden])~:not([hidden]){margin-left:0.75rem}
+.space-y-0\.5>:not([hidden])~:not([hidden]){margin-top:0.125rem}
+.space-y-1>:not([hidden])~:not([hidden]){margin-top:0.25rem}
+.space-y-1\.5>:not([hidden])~:not([hidden]){margin-top:0.375rem}
+.space-y-5>:not([hidden])~:not([hidden]){margin-top:1.25rem}
+.sticky{position:sticky}
+.text-2xl{font-size:1.5rem;line-height:2rem}
+.text-\[10\.5px\]{font-size:10.5px}
+.text-\[10px\]{font-size:10px}
+.text-\[11px\]{font-size:11px}
+.text-amber-300{color:#fcd34d}
+.text-amber-700{color:#b45309}
+.text-amber-900{color:#78350f}
+.text-base{font-size:1rem;line-height:1.5rem}
+.text-blue-700{color:#1d4ed8}
+.text-blue-800{color:#1e40af}
+.text-center{text-align:center}
+.text-cyan-300{color:#67e8f9}
+.text-cyan-600{color:#0891b2}
+.text-cyan-700{color:#0e7490}
+.text-cyan-800{color:#155e75}
+.text-cyan-900{color:#164e63}
+.text-cyan-950{color:#083344}
+.text-emerald-600{color:#059669}
+.text-emerald-700{color:#047857}
+.text-emerald-800{color:#065f46}
+.text-indigo-600{color:#4f46e5}
+.text-indigo-700{color:#4338ca}
+.text-indigo-800{color:#3730a3}
+.text-indigo-900{color:#312e81}
+.text-indigo-950{color:#1e1b4b}
+.text-left{text-align:left}
+.text-lg{font-size:1.125rem;line-height:1.75rem}
+.text-orange-700{color:#c2410c}
+.text-purple-700{color:#7e22ce}
+.text-purple-800{color:#6b21a8}
+.text-right{text-align:right}
+.text-rose-600{color:#e11d48}
+.text-rose-700{color:#be123c}
+.text-rose-800{color:#9f1239}
+.text-sky-300{color:#7dd3fc}
+.text-sky-600{color:#0284c7}
+.text-sky-700{color:#0369a1}
+.text-slate-200{color:#e2e8f0}
+.text-slate-300{color:#cbd5e1}
+.text-slate-400{color:#94a3b8}
+.text-slate-500{color:#64748b}
+.text-slate-600{color:#475569}
+.text-slate-700{color:#334155}
+.text-slate-800{color:#1e293b}
+.text-slate-900{color:#0f172a}
+.text-sm{font-size:0.875rem;line-height:1.25rem}
+.text-teal-300{color:#5eead4}
+.text-teal-600{color:#0d9488}
+.text-teal-700{color:#0f766e}
+.text-teal-800{color:#115e59}
+.text-teal-900{color:#134e4a}
+.text-teal-950{color:#042f2e}
+.text-violet-600{color:#7c3aed}
+.text-violet-700{color:#6d28d9}
+.text-white{color:#ffffff}
+.text-xl{font-size:1.25rem;line-height:1.75rem}
+.text-xs{font-size:0.75rem;line-height:1rem}
+.to-blue-600{--tw-to:#2563eb}
+.to-emerald-600{--tw-to:#059669}
+.to-indigo-600{--tw-to:#4f46e5}
+.to-rose-600{--tw-to:#e11d48}
+.top-0{top:0rem}
+.tracking-tight{letter-spacing:-.025em}
+.tracking-wider{letter-spacing:.05em}
+.tracking-widest{letter-spacing:.1em}
+.transform{transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.translate-y-20{--tw-ty:5rem;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uppercase{text-transform:uppercase}
+.w-10{width:2.5rem}
+.w-12{width:3rem}
+.w-2\.5{width:0.625rem}
+.w-3\.5{width:0.875rem}
+.w-5{width:1.25rem}
+.w-6{width:1.5rem}
+.w-64{width:16rem}
+.w-8{width:2rem}
+.w-80{width:20rem}
+.w-9{width:2.25rem}
+.w-full{width:100%}
+@media (min-width:1280px){.xl\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.z-50{z-index:50}
+</style>
+  <style>
+    /* 純 CSS 垂直分數排版 (嚴格禁止生硬斜線與未處理符號) */
+    .math-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 0.25rem;
+      font-size: 0.95em;
+      line-height: 1.1;
+    }
+    .math-num {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 2px;
+    }
+    .math-den {
+      padding-top: 2px;
+    }
+
+    /* 手寫演算草稿底紋 */
+    .scratch-pad {
+      background-color: #fafbfc;
+      background-image: radial-gradient(#cbd5e1 0.8px, transparent 0.8px);
+      background-size: 10px 10px;
+    }
+
+    /* 列印專屬版面設定 */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .print-card {
+        border: 1px solid #94a3b8 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-shadow: none !important;
+      }
+      .print-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+      .print-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .print-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+      .print-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+    }
+  </style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif!important;background:var(--bhcs-bg)!important}
+header.no-print{background:var(--bhcs-green2)!important;border-bottom:4px solid var(--bhcs-mint)!important;box-shadow:0 5px 16px #173e3412!important}
+header.no-print>div:first-child h1{color:#fff!important}
+header.no-print>div:first-child h1::before{content:"百宏文教｜";color:var(--bhcs-mint)}
+header.no-print>div:first-child p{color:#c8e8df!important}
+header.no-print>div:first-child>div:first-child>div:first-child{background:var(--bhcs-mint)!important;color:var(--bhcs-green2)!important;box-shadow:none!important}
+header.no-print>div:first-child button{background:#fff!important;color:var(--bhcs-green2)!important;border:1px solid #9ad9c6!important;box-shadow:none!important;font-weight:800!important}
+header.no-print>div:first-child button:hover{background:var(--bhcs-soft)!important}
+header.no-print>div:first-child button:first-child{background:var(--bhcs-mint)!important}
+header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!important;border-top:none!important}
+.bg-teal-600,.bg-indigo-600,.bg-blue-600,.bg-emerald-600,.bg-cyan-700,.bg-violet-600,.bg-sky-600,.bg-teal-500,.bg-sky-500{background-color:var(--bhcs-green)!important}
+.hover\:bg-teal-700:hover,.hover\:bg-indigo-700:hover,.hover\:bg-blue-700:hover,.hover\:bg-emerald-700:hover,.hover\:bg-violet-700:hover,.hover\:bg-cyan-800:hover,.bg-teal-700,.bg-indigo-700,.bg-blue-700,.bg-emerald-700{background-color:var(--bhcs-green2)!important}
+.bg-amber-600{background-color:var(--bhcs-muted)!important}.hover\:bg-amber-700:hover{background-color:#4a5a56!important}
+.text-teal-600,.text-teal-700,.text-teal-800,.text-indigo-600,.text-indigo-700,.text-blue-600,.text-blue-700,.text-violet-700,.text-cyan-700{color:var(--bhcs-green)!important}
+.border-teal-500,.border-teal-600,.border-indigo-500,.border-indigo-600,.border-blue-500,.border-blue-600{border-color:var(--bhcs-green)!important}
+.bg-teal-50,.bg-indigo-50,.bg-blue-50,.bg-violet-50,.bg-cyan-50{background-color:var(--bhcs-soft)!important}
+.border-teal-200,.border-indigo-200,.border-teal-300,.border-indigo-300,.border-indigo-100,.border-teal-100{border-color:#b7d8cc!important}
+.text-indigo-900,.text-teal-900{color:var(--bhcs-green2)!important}
+.ring-teal-500,.focus\:ring-teal-500:focus,.focus\:ring-indigo-500:focus,.focus\:border-indigo-500:focus,.focus\:border-teal-500:focus{--tw-ring-color:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important}
+</style></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans">
+
+  <!-- 頂部功能與設定面板 (列印時自動隱藏) -->
+  <header class="no-print bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-700 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-emerald-100">
+          🌲
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">國中數學計算力特訓：樹狀圖與機率</h1>
+          <p class="text-xs text-slate-500">2-2 機率・樹狀圖分支分析／排二位數／雙袋取球／比大小與猜拳／連續投擲兩次骰子</p>
+        </div>
+      </div>
+
+      <!-- 操作按鈕列 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="generateExam()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🔄</span> 重新出題
+        </button>
+        <button onclick="toggleAnswerMode()" id="btn-toggle-ans" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+          <span>👁️</span> <span id="ans-btn-text">顯示解答步驟</span>
+        </button>
+        <button onclick="toggleOnlineTest()" id="btn-online-test" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-sm font-semibold rounded-lg transition flex items-center gap-1.5">
+          <span>✍️</span> <span>線上測驗模式</span>
+        </button>
+        <button onclick="printWorksheet(false)" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🖨️</span> 列印學用版
+        </button>
+        <button onclick="printWorksheet(true)" class="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>📄</span> 列印教用版
+        </button>
+        <button onclick="exportSingleHTML()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>💾</span> 匯出獨立 HTML
+        </button>
+      </div>
+    </div>
+
+    <!-- 參數微調設定抽屜 -->
+    <div class="bg-slate-50 border-t border-slate-200 px-4 py-3 text-xs text-slate-700">
+      <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
+        
+        <!-- 全局數值與版面設定 -->
+        <div class="flex flex-wrap items-center gap-4">
+          <!-- 難易度 -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-slate-600">難易度：</span>
+            <select id="cfg-diff" onchange="generateExam()" class="bg-transparent font-medium text-slate-800 outline-none cursor-pointer">
+              <option value="easy">基礎（2階二分枝・標準骰子和）</option>
+              <option value="medium" selected>進階（3階樹狀・條件不等式）</option>
+              <option value="hard">挑戰（不放回比大小・複合機率）</option>
+            </select>
+          </div>
+
+          <!-- 數值型態 -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-slate-600">機率呈現：</span>
+            <select id="cfg-num-type" onchange="generateExam()" class="bg-transparent font-medium text-slate-800 outline-none cursor-pointer">
+              <option value="fraction" selected>最簡分數</option>
+              <option value="decimal">小數形式</option>
+              <option value="mixed">分數與小數並列</option>
+            </select>
+          </div>
+
+          <!-- 每列題數 (1~4題) -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-emerald-700">每列題數：</span>
+            <div class="flex items-center gap-1">
+              <button type="button" onclick="setColumns(1)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="1">1題</button>
+              <button type="button" onclick="setColumns(2)" class="col-btn px-2 py-0.5 rounded bg-emerald-700 text-white font-bold" data-col="2">2題</button>
+              <button type="button" onclick="setColumns(3)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="3">3題</button>
+              <button type="button" onclick="setColumns(4)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="4">4題</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 試卷標題 -->
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="cfg-title" value="國中數學 2-2 機率：樹狀圖 計算力特訓卷" class="px-2.5 py-1 bg-white border border-slate-200 rounded text-slate-800 font-semibold w-80 text-xs" placeholder="試卷標題" oninput="updateHeaderTitle()">
+          <span class="text-slate-400">|</span>
+          <span class="font-bold text-slate-600">總題數：<span id="total-questions-badge" class="text-emerald-700 font-extrabold text-sm">10</span> 題</span>
+        </div>
+      </div>
+
+      <!-- 4 大知識點獨立題數控制 (嚴格對應教材《樹狀圖.pdf》兩大部分與各經典題型) -->
+      <div class="max-w-7xl mx-auto mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-3">
+        
+        <!-- 知識點 1 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">① 硬幣、性別與雙袋抽球</div>
+            <div class="text-[10px] text-slate-500">2次投幣／2位小孩性別／雙袋取球</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(0, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-0" value="3" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(0, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 2 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">② 排二位數、猜拳與卡牌比大小</div>
+            <div class="text-[10px] text-slate-500">數字卡排2位數／剪刀石頭布／出牌比大小</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(1, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-1" value="3" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(1, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 3 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">③ 兩次骰子（點數和與差）</div>
+            <div class="text-[10px] text-slate-500">x＋y＝k、x＋y＜k、x－y＝0、奇偶和</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(2, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-2" value="2" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(2, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 4 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">④ 兩次骰子（大小關係與奇偶）</div>
+            <div class="text-[10px] text-slate-500">x＞y、兩次均大於/小於k、均為奇/偶數</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(3, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-3" value="2" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(3, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速預設按鈕 -->
+      <div class="max-w-7xl mx-auto mt-2 flex items-center justify-end gap-1.5 text-[11px] text-slate-500">
+        <span>快速預設：</span>
+        <button onclick="setAllTopicCounts(1)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 1 題</button>
+        <button onclick="setAllTopicCounts(2)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 2 題</button>
+        <button onclick="setAllTopicCounts(3)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 3 題</button>
+        <button onclick="setAllTopicCounts(0)" class="px-2 py-0.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded">全歸零</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 試卷主體容器 -->
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="bg-white border-2 border-slate-800 rounded-xl p-6 mb-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row justify-between items-center border-b-2 border-slate-800 pb-4 gap-4">
+        <div class="text-center sm:text-left">
+          <div class="text-xs font-bold uppercase tracking-widest text-emerald-700">國中數學第六冊・單元 2-2 統計與機率能力檢定</div>
+          <h2 id="paper-title-display" class="text-2xl font-black text-slate-900 tracking-tight mt-0.5">
+            2-2 機率：樹狀圖 計算力特訓卷
+          </h2>
+          <div class="text-xs text-slate-500 mt-1">
+            範圍：樹狀圖繪製與樣本空間個數、硬幣與性別二階分枝、數字卡排列與猜拳比大小、連續投擲兩次骰子點數坐標分析
+          </div>
+        </div>
+
+        <!-- 學生資訊填寫欄 -->
+        <div class="grid grid-cols-4 border border-slate-800 text-xs divide-x divide-slate-800 text-center w-full sm:w-auto">
+          <div class="p-2 bg-slate-100 font-bold">班級</div>
+          <div class="p-2 min-w-[70px]"> 年 班</div>
+          <div class="p-2 bg-slate-100 font-bold">姓名</div>
+          <div class="p-2 min-w-[90px]"></div>
+          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800">座號</div>
+          <div class="p-2 min-w-[70px] border-t border-slate-800"> 號</div>
+          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800 text-rose-700">得分</div>
+          <div class="p-2 min-w-[90px] border-t border-slate-800 font-black text-lg text-rose-600" id="online-score-display">-</div>
+        </div>
+      </div>
+
+      <!-- 線上作答計時列 -->
+      <div id="online-meta-bar" class="hidden no-print mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-semibold">
+        <div class="flex items-center gap-2 text-indigo-700">
+          <span>⏱️ 作答計時器：<span id="timer-display" class="font-mono text-sm font-black">00:00</span></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="gradeOnlineTest()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-xs transition">
+            送出批改
+          </button>
+          <button onclick="resetOnlineTest()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md transition">
+            清空重作
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 題目網格容器 -->
+    <div id="questions-container" class="grid grid-cols-1 md:grid-cols-2 gap-5 print-cols-2"></div>
+
+    <!-- 頁尾核心公式速查 -->
+    <footer class="mt-8 border-t border-slate-300 pt-4 text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div>
+        <span class="font-bold text-slate-700">📐 樹狀圖核心解題要訣：</span>
+        <span>① 樹狀圖每一分枝代表一種可能發生的結果，最末端分枝總數即為樣本空間的總結果數 n</span>｜
+        <span>② 投擲兩顆均勻骰子（或一顆擲兩次），結果以數對 (x, y) 表示，總結果數固定為 6 × 6 ＝ 36 種</span>｜
+        <span>③ 機率 ＝ (符合條件的結果數) ÷ (所有可能發生的總結果數)</span>
+      </div>
+      <div class="text-[11px] font-mono">
+        提示：計算機率結果請以最簡分數表示；畫樹狀圖時分枝請對齊並標明層級名稱
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // ==========================================
+    // 數學輔助工具庫
+    // ==========================================
+    function gcd(a, b) {
+      a = Math.abs(Math.round(a));
+      b = Math.abs(Math.round(b));
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a || 1;
+    }
+
+    function formatFrac(num, den) {
+      if (num === 0) return "0";
+      if (den === 1) return `${num}`;
+      const g = gcd(num, den);
+      num /= g;
+      den /= g;
+      if (den === 1) return `${num}`;
+      return `<span class="math-frac"><span class="math-num">${num}</span><span class="math-den">${den}</span></span>`;
+    }
+
+    function randPick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    let currentQuestions = [];
+    let showAnswers = false;
+    let isOnlineMode = false;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let currentCols = 2;
+
+    // ==========================================
+    // 精準 SVG 向量樹狀圖與坐標方陣繪圖引擎 (100% 幾何比例)
+    // ==========================================
+
+    // 1. 二階樹狀圖繪製 (例如：硬幣 2 次、生 2 個小孩、雙袋抽球 2x2)
+    function renderSvgTree2x2(col1Name, col2Name, branch1, branch2) {
+      // 4 個末端結果
+      const outcomes = [
+        `${branch1[0]}${branch2[0]}`,
+        `${branch1[0]}${branch2[1]}`,
+        `${branch1[1]}${branch2[0]}`,
+        `${branch1[1]}${branch2[1]}`
+      ];
+
+      return `
+        <svg viewBox="0 0 250 135" class="w-full max-h-36 mx-auto select-none overflow-visible font-sans">
+          <!-- 標題欄 -->
+          <text x="55" y="16" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">${col1Name}</text>
+          <text x="145" y="16" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">${col2Name}</text>
+          <text x="215" y="16" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">結果</text>
+
+          <!-- 樹狀圖起點到第一階分枝 -->
+          <line x1="15" y1="70" x2="45" y2="45" stroke="#334155" stroke-width="1.6" />
+          <line x1="15" y1="70" x2="45" y2="95" stroke="#334155" stroke-width="1.6" />
+
+          <!-- 第一階節點 -->
+          <text x="55" y="49" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">${branch1[0]}</text>
+          <text x="55" y="99" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">${branch1[1]}</text>
+
+          <!-- 第一階到第二階分枝 (上方兩個) -->
+          <line x1="68" y1="45" x2="132" y2="32" stroke="#334155" stroke-width="1.4" />
+          <line x1="68" y1="45" x2="132" y2="58" stroke="#334155" stroke-width="1.4" />
+          <!-- 第一階到第二階分枝 (下方兩個) -->
+          <line x1="68" y1="95" x2="132" y2="82" stroke="#334155" stroke-width="1.4" />
+          <line x1="68" y1="95" x2="132" y2="108" stroke="#334155" stroke-width="1.4" />
+
+          <!-- 第二階節點 -->
+          <text x="145" y="36" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${branch2[0]}</text>
+          <text x="145" y="62" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${branch2[1]}</text>
+          <text x="145" y="86" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${branch2[0]}</text>
+          <text x="145" y="112" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${branch2[1]}</text>
+
+          <!-- 對應結果箭頭與文字 -->
+          <text x="215" y="36" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">${outcomes[0]}</text>
+          <text x="215" y="62" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">${outcomes[1]}</text>
+          <text x="215" y="86" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">${outcomes[2]}</text>
+          <text x="215" y="112" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">${outcomes[3]}</text>
+        </svg>
+      `;
+    }
+
+    // 2. 三根二分枝樹狀圖 (數字卡排二位數 3x2=6 種，教材 P.1 Q3 & Q9)
+    function renderSvgTreeDigits(d1, d2, d3) {
+      const digits = [d1, d2, d3];
+      // 每個數為十位時，個位為其餘二數
+      return `
+        <svg viewBox="0 0 250 145" class="w-full max-h-36 mx-auto select-none overflow-visible font-sans">
+          <!-- 標題欄 -->
+          <text x="50" y="14" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">十位</text>
+          <text x="135" y="14" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">個位</text>
+          <text x="205" y="14" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">二位數</text>
+
+          <!-- 樹狀圖組別 1 (十位為 d1) -->
+          <text x="50" y="42" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">${d1}</text>
+          <line x1="62" y1="38" x2="120" y2="28" stroke="#334155" stroke-width="1.3" />
+          <line x1="62" y1="38" x2="120" y2="48" stroke="#334155" stroke-width="1.3" />
+          <text x="135" y="32" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${d2}</text>
+          <text x="135" y="52" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${d3}</text>
+          <text x="205" y="32" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">${d1}${d2}</text>
+          <text x="205" y="52" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">${d1}${d3}</text>
+
+          <!-- 樹狀圖組別 2 (十位為 d2) -->
+          <text x="50" y="82" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">${d2}</text>
+          <line x1="62" y1="78" x2="120" y2="68" stroke="#334155" stroke-width="1.3" />
+          <line x1="62" y1="78" x2="120" y2="88" stroke="#334155" stroke-width="1.3" />
+          <text x="135" y="72" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${d1}</text>
+          <text x="135" y="92" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${d3}</text>
+          <text x="205" y="72" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">${d2}${d1}</text>
+          <text x="205" y="92" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">${d2}${d3}</text>
+
+          <!-- 樹狀圖組別 3 (十位為 d3) -->
+          <text x="50" y="122" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">${d3}</text>
+          <line x1="62" y1="118" x2="120" y2="108" stroke="#334155" stroke-width="1.3" />
+          <line x1="62" y1="118" x2="120" y2="128" stroke="#334155" stroke-width="1.3" />
+          <text x="135" y="112" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${d1}</text>
+          <text x="135" y="132" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">${d2}</text>
+          <text x="205" y="112" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">${d3}${d1}</text>
+          <text x="205" y="132" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">${d3}${d2}</text>
+        </svg>
+      `;
+    }
+
+    // 3. 猜拳或 3x3 樹狀圖 (教材 P.1 Q4 & Q6)
+    function renderSvgTreeRps() {
+      return `
+        <svg viewBox="0 0 250 145" class="w-full max-h-36 mx-auto select-none overflow-visible font-sans">
+          <text x="45" y="14" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">甲</text>
+          <text x="125" y="14" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">乙</text>
+          <text x="205" y="14" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">勝負判定</text>
+
+          <!-- 剪刀 -->
+          <text x="45" y="42" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">剪刀</text>
+          <line x1="62" y1="38" x2="108" y2="28" stroke="#334155" stroke-width="1.2" />
+          <line x1="62" y1="38" x2="108" y2="38" stroke="#334155" stroke-width="1.2" />
+          <line x1="62" y1="38" x2="108" y2="48" stroke="#334155" stroke-width="1.2" />
+          <text x="125" y="32" font-size="9" fill="#0f172a" text-anchor="middle">剪刀</text>
+          <text x="125" y="42" font-size="9" fill="#0f172a" text-anchor="middle">石頭</text>
+          <text x="125" y="52" font-size="9" fill="#0f172a" text-anchor="middle">布</text>
+          <text x="205" y="32" font-size="9" fill="#64748b" text-anchor="middle">平手</text>
+          <text x="205" y="42" font-size="9" fill="#dc2626" text-anchor="middle">乙贏</text>
+          <text x="205" y="52" font-size="9" fill="#16a34a" text-anchor="middle">甲贏</text>
+
+          <!-- 石頭 -->
+          <text x="45" y="82" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">石頭</text>
+          <line x1="62" y1="78" x2="108" y2="68" stroke="#334155" stroke-width="1.2" />
+          <line x1="62" y1="78" x2="108" y2="78" stroke="#334155" stroke-width="1.2" />
+          <line x1="62" y1="78" x2="108" y2="88" stroke="#334155" stroke-width="1.2" />
+          <text x="125" y="72" font-size="9" fill="#0f172a" text-anchor="middle">剪刀</text>
+          <text x="125" y="82" font-size="9" fill="#0f172a" text-anchor="middle">石頭</text>
+          <text x="125" y="92" font-size="9" fill="#0f172a" text-anchor="middle">布</text>
+          <text x="205" y="72" font-size="9" fill="#16a34a" text-anchor="middle">甲贏</text>
+          <text x="205" y="82" font-size="9" fill="#64748b" text-anchor="middle">平手</text>
+          <text x="205" y="92" font-size="9" fill="#dc2626" text-anchor="middle">乙贏</text>
+
+          <!-- 布 -->
+          <text x="45" y="122" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">布</text>
+          <line x1="62" y1="118" x2="108" y2="108" stroke="#334155" stroke-width="1.2" />
+          <line x1="62" y1="118" x2="108" y2="118" stroke="#334155" stroke-width="1.2" />
+          <line x1="62" y1="118" x2="108" y2="128" stroke="#334155" stroke-width="1.2" />
+          <text x="125" y="112" font-size="9" fill="#0f172a" text-anchor="middle">剪刀</text>
+          <text x="125" y="122" font-size="9" fill="#0f172a" text-anchor="middle">石頭</text>
+          <text x="125" y="132" font-size="9" fill="#0f172a" text-anchor="middle">布</text>
+          <text x="205" y="112" font-size="9" fill="#dc2626" text-anchor="middle">乙贏</text>
+          <text x="205" y="122" font-size="9" fill="#16a34a" text-anchor="middle">甲贏</text>
+          <text x="205" y="132" font-size="9" fill="#64748b" text-anchor="middle">平手</text>
+        </svg>
+      `;
+    }
+
+    // 4. 兩次投擲骰子 6x6 坐標點陣圖 (教材 P.2-3 數對 (x, y) 樣本空間分析)
+    function renderSvgDiceGrid(matchFilterFn = null) {
+      const padX = 35, padY = 25;
+      const cellW = 32, cellH = 17;
+
+      let cellsHtml = "";
+      for (let r = 1; r <= 6; r++) { // y: 第二次 (row)
+        for (let c = 1; c <= 6; c++) { // x: 第一次 (col)
+          const x = padX + (c - 1) * cellW;
+          const y = padY + (r - 1) * cellH;
+          const isMatch = matchFilterFn ? matchFilterFn(c, r) : false;
+          
+          cellsHtml += `
+            <rect x="${x}" y="${y - 12}" width="${cellW - 2}" height="${cellH - 1}" rx="2" fill="${isMatch ? '#fed7aa' : '#f8fafc'}" stroke="${isMatch ? '#ea580c' : '#cbd5e1'}" stroke-width="${isMatch ? '1.4' : '0.8'}" />
+            <text x="${x + (cellW - 2)/2}" y="${y - 2}" font-size="8.5" font-weight="${isMatch ? 'bold' : 'normal'}" fill="${isMatch ? '#c2410c' : '#475569'}" text-anchor="middle">(${c},${r})</text>
+          `;
+        }
+      }
+
+      return `
+        <svg viewBox="0 0 240 135" class="w-full max-h-36 mx-auto select-none overflow-visible font-sans">
+          <!-- 坐標軸說明 -->
+          <text x="125" y="10" font-size="9" font-weight="bold" fill="#0f172a" text-anchor="middle">第一次點數 x (欄 1～6) ； 第二次點數 y (列 1～6)</text>
+          <!-- 36 個數對小格子 -->
+          ${cellsHtml}
+        </svg>
+      `;
+    }
+
+    // ==========================================
+    // 命題核心生成引擎 (依四大知識點嚴密構建)
+    // ==========================================
+
+    // 知識點 1：硬幣、性別與雙袋抽球 (教材 P.1 第 1, 2, 8, 10 題)
+    function genTopic1Question(diff, numType) {
+      const templates = [
+        {
+          type: "coin",
+          qText: `投擲一枚均勻的五十元硬幣 2 次，試回答下列問題：<br>
+          (1) 將硬幣出現正、反面的情形，畫出對應的樹狀圖。<br>
+          (2) 所有可能出現的結果共有幾種？<br>
+          (3) 硬幣出現「二反面」的機率是多少？`,
+          svg: renderSvgTree2x2("第一次", "第二次", ["正", "反"], ["正", "反"]),
+          ansCount: 4,
+          ansFrac: "1/4",
+          ansDetail: "(1) 詳見樹狀圖；(2) 4 種；(3) 1/4",
+          desc: "樣本空間 S ＝ { (正,正), (正,反), (反,正), (反,反) } 共 4 種；出現二反面為 (反,反) 1 種，機率為 1/4。"
+        },
+        {
+          type: "gender",
+          qText: `生男生女的機會皆相同，若一個家庭計劃生育兩個小孩，試回答下列問題：<br>
+          (1) 將兩個小孩性別的所有結果，畫出對應的樹狀圖。<br>
+          (2) 所有可能出現的結果共有幾種？<br>
+          (3) 恰為「一男一女」的機率是多少？`,
+          svg: renderSvgTree2x2("第一胎", "第二胎", ["男", "女"], ["男", "女"]),
+          ansCount: 4,
+          ansFrac: "1/2",
+          ansDetail: "(1) 詳見樹狀圖；(2) 4 種；(3) 1/2",
+          desc: "所有結果共 4 種：(男,男), (男,女), (女,男), (女,女)；一男一女有 (男,女) 與 (女,男) 共 2 種，機率 ＝ 2/4 ＝ 1/2。"
+        },
+        {
+          type: "bags_color",
+          qText: `有甲、乙兩袋，甲袋中有黑色和黃色兩顆球；乙袋中也有黑色和黃色兩顆球。今從甲、乙兩袋中各取一球，若每顆球被取出的機會都相等，試回答下列問題：<br>
+          (1) 可能出現的結果共有幾種？<br>
+          (2) 兩袋所取出的球「顏色相同」的機率是多少？`,
+          svg: renderSvgTree2x2("甲袋", "乙袋", ["黑", "黃"], ["黑", "黃"]),
+          ansCount: 4,
+          ansFrac: "1/2",
+          ansDetail: "(1) 4 種；(2) 1/2",
+          desc: "結果有 (黑,黑), (黑,黃), (黃,黑), (黃,黃) 共 4 種；顏色相同的有 (黑,黑) 與 (黃,黃) 共 2 種，機率 ＝ 2/4 ＝ 1/2。"
+        },
+        {
+          type: "bags_numbered",
+          qText: `有甲、乙兩袋，甲袋中有三顆紅球（編號 1、2、3 號）；乙袋中有三顆藍球（編號 1、2、3 號）。從甲、乙兩袋中各取一球，每球被取出的機會均等，試回答下列問題：<br>
+          (1) 將所有出現的情形，畫出對應的樹狀圖。<br>
+          (2) 所有可能出現的結果共有幾種？<br>
+          (3) 兩袋中所取出的球「編號相同」的機率是多少？`,
+          svg: renderSvgTreeDigits("紅1", "紅2", "紅3"),
+          ansCount: 9,
+          ansFrac: "1/3",
+          ansDetail: "(1) 詳見樹狀圖；(2) 9 種；(3) 1/3",
+          desc: "甲袋有 3 種選擇，乙袋有 3 種選擇，共有 3 × 3 ＝ 9 種可能；編號相同的為 (1,1)、(2,2)、(3,3) 共 3 種，機率 ＝ 3/9 ＝ 1/3。"
+        }
+      ];
+
+      const t = randPick(templates);
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（繪製樹狀圖展開樣本空間）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600">
+            ${t.desc}
+          </div>
+          <div><strong>步驟二（計算機率並約為最簡分數）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600">
+            所求機率 ＝ (符合條件之結果數) ÷ (所有可能結果數) ＝ <b>${t.ansFrac}</b>。
+          </div>
+          <div class="text-emerald-700 font-bold">答：${t.ansDetail}</div>
+        </div>
+      `;
+
+      return {
+        topicId: 0,
+        topicName: "硬幣、性別與雙袋抽球",
+        qText: t.qText,
+        svg: t.svg,
+        ansRaw: `${t.ansCount}, ${t.ansFrac}`,
+        ansDisplay: t.ansDetail,
+        steps
+      };
+    }
+
+    // 知識點 2：排二位數、猜拳與卡牌比大小 (教材 P.1-2 第 3, 4, 5, 6, 7, 9 題)
+    function genTopic2Question(diff, numType) {
+      const templates = [
+        {
+          type: "digits_multi3",
+          d: [1, 5, 9],
+          cond: "此數為 3 的倍數",
+          qText: `有 3 張數字牌分別標記為 1、5、9，從中任取兩張牌排出一個二位數，試回答下列問題：<br>
+          (1) 將所有可能出現的情形，畫出對應的樹狀圖。<br>
+          (2) 所有可能排出的二位數共有幾種？<br>
+          (3) 排出的二位數為「3 的倍數」的機率是多少？`,
+          svgFn: () => renderSvgTreeDigits(1, 5, 9),
+          ansCount: 6,
+          ansFrac: "1/3",
+          ansDetail: "(1) 詳見樹狀圖；(2) 6 種；(3) 1/3",
+          desc: "十位有 3 種選擇，個位有 2 種選擇，共 3 × 2 ＝ 6 個二位數：15, 19, 51, 59, 91, 95。其中各數位和為 3 的倍數有 15 與 51 共 2 個，機率 ＝ 2/6 ＝ 1/3。"
+        },
+        {
+          type: "digits_multi5",
+          d: [3, 5, 6],
+          cond: "此數為 5 的倍數",
+          qText: `有 3 張數字牌分別標記為 3、5、6，從中任取兩張牌排出一個二位數，試回答下列問題：<br>
+          (1) 將所有可能出現的情形，畫出對應的樹狀圖。<br>
+          (2) 所有可能排出的二位數共有幾種？<br>
+          (3) 排出的二位數為「5 的倍數」的機率是多少？`,
+          svgFn: () => renderSvgTreeDigits(3, 5, 6),
+          ansCount: 6,
+          ansFrac: "1/3",
+          ansDetail: "(1) 詳見樹狀圖；(2) 6 種；(3) 1/3",
+          desc: "排出的二位數有 35, 36, 53, 56, 63, 65 共 6 種。5 的倍數個位數必為 5，符合的有 35 與 65 共 2 個，機率 ＝ 2/6 ＝ 1/3。"
+        },
+        {
+          type: "rps",
+          qText: `甲、乙兩人玩「剪刀、石頭、布」猜拳遊戲，猜一次決定輸贏，試回答下列問題：<br>
+          (1) 將甲與乙猜拳遊戲出現的所有情形，畫出對應的樹狀圖。<br>
+          (2) 所有可能出現的結果共有幾種？<br>
+          (3) 甲、乙兩人「平手」的機率是多少？`,
+          svgFn: () => renderSvgTreeRps(),
+          ansCount: 9,
+          ansFrac: "1/3",
+          ansDetail: "(1) 詳見樹狀圖；(2) 9 種；(3) 1/3",
+          desc: "甲有 3 種出法，乙有 3 種出法，共有 3 × 3 ＝ 9 種結果。平手情況為 (剪刀,剪刀)、(石頭,石頭)、(布,布) 共 3 種，機率 ＝ 3/9 ＝ 1/3。"
+        },
+        {
+          type: "cards_compare",
+          qText: `甲手上有三張數字卡：2、5、7；乙手上有三張數字卡：3、5、9。兩人各出一張卡片比大小，數字較大者獲勝，若數字相同則平手，試回答下列問題：<br>
+          (1) 所有可能出現的出牌結果共有幾種？<br>
+          (2) 乙獲勝的機率是多少？`,
+          svgFn: () => renderSvgTreeDigits(2, 5, 7),
+          ansCount: 9,
+          ansFrac: "5/9",
+          ansDetail: "(1) 9 種；(2) 5/9",
+          desc: "出牌配對共 3 × 3 ＝ 9 種。乙獲勝的情形有：(2,3)、(2,5)、(2,9)、(5,9)、(7,9) 共 5 種，故乙獲勝機率 ＝ 5/9。"
+        }
+      ];
+
+      const t = randPick(templates);
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（列出樹狀圖所有分枝）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600">
+            ${t.desc}
+          </div>
+          <div><strong>步驟二（計算機率）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600">
+            機率 ＝ 符合結果數 ÷ 總結果數 ＝ <b>${t.ansFrac}</b>。
+          </div>
+          <div class="text-emerald-700 font-bold">答：${t.ansDetail}</div>
+        </div>
+      `;
+
+      return {
+        topicId: 1,
+        topicName: "排二位數、猜拳與比大小",
+        qText: t.qText,
+        svg: t.svgFn(),
+        ansRaw: `${t.ansCount}, ${t.ansFrac}`,
+        ansDisplay: t.ansDetail,
+        steps
+      };
+    }
+
+    // 知識點 3：兩次投擲骰子（點數和與差） (教材 P.2-3 第 1, 3, 4, 5, 6, 9 題)
+    function genTopic3Question(diff, numType) {
+      // 題型模版庫 (以數對 (x, y) 記錄兩次點數，總數 36 種)
+      const templates = [
+        {
+          q1Str: "x ＋ y ＝ 6",
+          filter1: (x, y) => x + y === 6,
+          q2Str: "兩次骰子的點數和是奇數",
+          filter2: (x, y) => (x + y) % 2 !== 0,
+          desc1: "和為 6 的數對：(1,5), (2,4), (3,3), (4,2), (5,1) 共 5 種",
+          desc2: "和為奇數（一奇一偶）：3 × 3 ＋ 3 × 3 ＝ 18 種"
+        }, // Q1, Q2 組合
+        {
+          q1Str: "x ＋ y ＜ 6",
+          filter1: (x, y) => x + y < 6,
+          q2Str: "兩次骰子的點數和是偶數",
+          filter2: (x, y) => (x + y) % 2 === 0,
+          desc1: "和為 2, 3, 4, 5 的數對共 1 ＋ 2 ＋ 3 ＋ 4 ＝ 10 種",
+          desc2: "和為偶數（兩奇或兩偶）：3 × 3 ＋ 3 × 3 ＝ 18 種"
+        }, // Q3, Q4 組合
+        {
+          q1Str: "x ＋ y ＞ 9",
+          filter1: (x, y) => x + y > 9,
+          q2Str: "x － y ＝ 0（兩次點數相同）",
+          filter2: (x, y) => x === y,
+          desc1: "和為 10, 11, 12 的數對：(4,6), (5,5), (6,4), (5,6), (6,5), (6,6) 共 6 種",
+          desc2: "差為 0 即點數相同：(1,1), (2,2), (3,3), (4,4), (5,5), (6,6) 共 6 種"
+        }, // Q4, Q5 組合
+        {
+          q1Str: "x ＋ y ＝ 7",
+          filter1: (x, y) => x + y === 7,
+          q2Str: "兩次骰子的點數和小於 5",
+          filter2: (x, y) => x + y < 5,
+          desc1: "和為 7 的數對：(1,6), (2,5), (3,4), (4,3), (5,2), (6,1) 共 6 種",
+          desc2: "和小於 5（和為 2, 3, 4）：(1,1), (1,2), (2,1), (1,3), (2,2), (3,1) 共 6 種"
+        }, // Q5, Q9 組合
+        {
+          q1Str: "x ＋ y ＝ 9",
+          filter1: (x, y) => x + y === 9,
+          q2Str: "x ＋ y ＝ 8",
+          filter2: (x, y) => x + y === 8,
+          desc1: "和為 9 的數對：(3,6), (4,5), (5,4), (6,3) 共 4 種",
+          desc2: "和為 8 的數對：(2,6), (3,5), (4,4), (5,3), (6,2) 共 5 種"
+        }
+      ];
+
+      const t = randPick(templates);
+
+      // 計算 36 種中符合條件的個數
+      let count1 = 0, count2 = 0;
+      for (let x = 1; x <= 6; x++) {
+        for (let y = 1; y <= 6; y++) {
+          if (t.filter1(x, y)) count1++;
+          if (t.filter2(x, y)) count2++;
+        }
+      }
+
+      const frac1 = formatFrac(count1, 36);
+      const frac2 = formatFrac(count2, 36);
+
+      const qText = `將一顆均勻的骰子連續投擲兩次，第一次出現的點數以 x 表示，第二次出現的點數以 y 表示，結果以數對 (x, y) 表示，試求：<br>
+      (1) 出現 ${t.q1Str} 的機率是多少？<br>
+      (2) 出現 ${t.q2Str} 的機率是多少？`;
+
+      const svg = renderSvgDiceGrid(t.filter1);
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（總結果數 36 種）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600">
+            連續投擲兩次骰子，第一次有 6 種可能，第二次有 6 種可能，共有 6 × 6 ＝ 36 種可能結果。
+          </div>
+          <div><strong>步驟二（列舉滿足條件之數對）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600 space-y-0.5">
+            <div>(1) ${t.desc1}，機率 ＝ <span class="math-frac"><span class="math-num">${count1}</span><span class="math-den">36</span></span> ＝ <b>${frac1}</b>。</div>
+            <div>(2) ${t.desc2}，機率 ＝ <span class="math-frac"><span class="math-num">${count2}</span><span class="math-den">36</span></span> ＝ <b>${frac2}</b>。</div>
+          </div>
+          <div class="text-emerald-700 font-bold">答：(1) ${count1 / gcd(count1, 36)}/${36 / gcd(count1, 36)}；(2) ${count2 / gcd(count2, 36)}/${36 / gcd(count2, 36)}</div>
+        </div>
+      `;
+
+      return {
+        topicId: 2,
+        topicName: "兩次骰子（點數和與差）",
+        qText,
+        svg,
+        ansRaw: `${count1 / gcd(count1, 36)}/${36 / gcd(count1, 36)}, ${count2 / gcd(count2, 36)}/${36 / gcd(count2, 36)}`,
+        ansDisplay: `(1) ${count1 / gcd(count1, 36)}/${36 / gcd(count1, 36)}; (2) ${count2 / gcd(count2, 36)}/${36 / gcd(count2, 36)}`,
+        steps
+      };
+    }
+
+    // 知識點 4：兩次投擲骰子（大小關係與奇偶判定） (教材 P.2-3 第 1, 3, 6, 7, 8, 9, 10 題)
+    function genTopic4Question(diff, numType) {
+      const templates = [
+        {
+          q1Str: "x ＞ y",
+          filter1: (x, y) => x > y,
+          q2Str: "兩次骰子的點數是一樣的（x ＝ y）",
+          filter2: (x, y) => x === y,
+          desc1: "x ＞ y：共 (36 － 6) ÷ 2 ＝ 15 種",
+          desc2: "點數相同：(1,1)～(6,6) 共 6 種"
+        }, // Q10, Q3 組合
+        {
+          q1Str: "兩次骰子的點數均大於 4",
+          filter1: (x, y) => x > 4 && y > 4,
+          q2Str: "兩次骰子的點數均小於 4",
+          filter2: (x, y) => x < 4 && y < 4,
+          desc1: "均大於 4：x, y ∈ {5, 6}，共 2 × 2 ＝ 4 種",
+          desc2: "均小於 4：x, y ∈ {1, 2, 3}，共 3 × 3 ＝ 9 種"
+        }, // Q1, Q9 組合
+        {
+          q1Str: "兩次骰子的點數均為偶數",
+          filter1: (x, y) => x % 2 === 0 && y % 2 === 0,
+          q2Str: "兩次骰子的點數均為奇數",
+          filter2: (x, y) => x % 2 !== 0 && y % 2 !== 0,
+          desc1: "均為偶數：x, y ∈ {2, 4, 6}，共 3 × 3 ＝ 9 種",
+          desc2: "均為奇數：x, y ∈ {1, 3, 5}，共 3 × 3 ＝ 9 種"
+        }, // Q7, Q8 組合
+        {
+          q1Str: "兩次骰子的點數均小於 3",
+          filter1: (x, y) => x < 3 && y < 3,
+          q2Str: "第一次點數小於第二次（x ＜ y）",
+          filter2: (x, y) => x < y,
+          desc1: "均小於 3：x, y ∈ {1, 2}，共 2 × 2 ＝ 4 種",
+          desc2: "x ＜ y：共 (36 － 6) ÷ 2 ＝ 15 種"
+        } // Q6 組合
+      ];
+
+      const t = randPick(templates);
+
+      let count1 = 0, count2 = 0;
+      for (let x = 1; x <= 6; x++) {
+        for (let y = 1; y <= 6; y++) {
+          if (t.filter1(x, y)) count1++;
+          if (t.filter2(x, y)) count2++;
+        }
+      }
+
+      const frac1 = formatFrac(count1, 36);
+      const frac2 = formatFrac(count2, 36);
+
+      const qText = `將一顆均勻的骰子連續投擲兩次，第一次出現的點數以 x 表示，第二次出現的點數以 y 表示，結果以數對 (x, y) 表示，試求：<br>
+      (1) ${t.q1Str} 的機率是多少？<br>
+      (2) ${t.q2Str} 的機率是多少？`;
+
+      const svg = renderSvgDiceGrid(t.filter1);
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（樣本空間分析）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600">
+            投擲骰子兩次的總結果數共有 36 種。
+          </div>
+          <div><strong>步驟二（滿足條件之個數與機率計算）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-600 space-y-0.5">
+            <div>(1) 符合 ${t.q1Str}：${t.desc1}，機率 ＝ <span class="math-frac"><span class="math-num">${count1}</span><span class="math-den">36</span></span> ＝ <b>${frac1}</b>。</div>
+            <div>(2) 符合 ${t.q2Str}：${t.desc2}，機率 ＝ <span class="math-frac"><span class="math-num">${count2}</span><span class="math-den">36</span></span> ＝ <b>${frac2}</b>。</div>
+          </div>
+          <div class="text-emerald-700 font-bold">答：(1) ${count1 / gcd(count1, 36)}/${36 / gcd(count1, 36)}；(2) ${count2 / gcd(count2, 36)}/${36 / gcd(count2, 36)}</div>
+        </div>
+      `;
+
+      return {
+        topicId: 3,
+        topicName: "兩次骰子（大小與奇偶）",
+        qText,
+        svg,
+        ansRaw: `${count1 / gcd(count1, 36)}/${36 / gcd(count1, 36)}, ${count2 / gcd(count2, 36)}/${36 / gcd(count2, 36)}`,
+        ansDisplay: `(1) ${count1 / gcd(count1, 36)}/${36 / gcd(count1, 36)}; (2) ${count2 / gcd(count2, 36)}/${36 / gcd(count2, 36)}`,
+        steps
+      };
+    }
+
+    // ==========================================
+    // 試卷生成與渲染管理
+    // ==========================================
+    function generateExam() {
+      const diff = document.getElementById("cfg-diff").value;
+      const numType = document.getElementById("cfg-num-type").value;
+      
+      const counts = [
+        parseInt(document.getElementById("topic-cnt-0").value) || 0,
+        parseInt(document.getElementById("topic-cnt-1").value) || 0,
+        parseInt(document.getElementById("topic-cnt-2").value) || 0,
+        parseInt(document.getElementById("topic-cnt-3").value) || 0
+      ];
+
+      currentQuestions = [];
+
+      for (let i = 0; i < counts[0]; i++) currentQuestions.push(genTopic1Question(diff, numType));
+      for (let i = 0; i < counts[1]; i++) currentQuestions.push(genTopic2Question(diff, numType));
+      for (let i = 0; i < counts[2]; i++) currentQuestions.push(genTopic3Question(diff, numType));
+      for (let i = 0; i < counts[3]; i++) currentQuestions.push(genTopic4Question(diff, numType));
+
+      document.getElementById("total-questions-badge").innerText = currentQuestions.length;
+      renderQuestions();
+      
+      if (isOnlineMode) resetOnlineTest();
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById("questions-container");
+      container.innerHTML = "";
+
+      if (currentQuestions.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-16 text-slate-400 font-bold">
+            目前未選取任何題目，請在上方面板調整各知識點題數後重新出題！
+          </div>
+        `;
+        return;
+      }
+
+      currentQuestions.forEach((q, idx) => {
+        const qNum = idx + 1;
+        const card = document.createElement("div");
+        card.className = "print-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between relative transition hover:shadow-md";
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-white font-black flex items-center justify-center text-xs">
+                  ${qNum}
+                </span>
+                <span class="font-bold text-slate-700">${q.topicName}</span>
+              </div>
+              <span class="text-[11px] text-slate-400 font-mono">題號 #${qNum}</span>
+            </div>
+
+            <!-- 精確比例樹狀圖/方陣圖 -->
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 mb-3">
+              ${q.svg}
+            </div>
+
+            <!-- 題目敘述文字 -->
+            <div class="text-xs sm:text-sm text-slate-800 font-medium leading-relaxed mb-3">
+              ${q.qText}
+            </div>
+          </div>
+
+          <div>
+            <!-- 手寫演算空間 -->
+            <div class="scratch-pad border border-slate-200 rounded-lg h-20 mb-3 relative overflow-hidden flex items-start p-1.5">
+              <span class="text-[10px] text-slate-400 select-none font-sans font-semibold">【計算演算空間】</span>
+            </div>
+
+            <!-- 線上作答輸入列 -->
+            <div class="online-input-row hidden no-print flex items-center gap-2 mb-2 p-2 bg-indigo-50/70 border border-indigo-100 rounded-lg">
+              <span class="text-xs font-bold text-indigo-900">你的答案：</span>
+              <input type="text" id="user-ans-${idx}" class="flex-1 px-2.5 py-1 bg-white border border-indigo-200 rounded text-xs text-slate-800 font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="例如：4, 1/4 或 1/6, 1/2">
+              <span id="feedback-${idx}" class="text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+
+            <!-- 詳解步驟抽屜 -->
+            <div id="solution-${idx}" class="${showAnswers ? '' : 'hidden'} mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 bg-slate-50/80 rounded p-2.5">
+              ${q.steps}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // 介面欄位與互動控制
+    // ==========================================
+    function setColumns(cols) {
+      currentCols = cols;
+      const container = document.getElementById("questions-container");
+      container.className = "grid gap-5";
+      
+      if (cols === 1) container.classList.add("grid-cols-1");
+      else if (cols === 2) container.classList.add("grid-cols-1", "md:grid-cols-2");
+      else if (cols === 3) container.classList.add("grid-cols-1", "md:grid-cols-3");
+      else if (cols === 4) container.classList.add("grid-cols-2", "md:grid-cols-4");
+
+      container.classList.add(`print-cols-${cols}`);
+
+      document.querySelectorAll(".col-btn").forEach(btn => {
+        const c = parseInt(btn.getAttribute("data-col"));
+        if (c === cols) {
+          btn.className = "col-btn px-2 py-0.5 rounded bg-emerald-700 text-white font-bold";
+        } else {
+          btn.className = "col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100";
+        }
+      });
+    }
+
+    function toggleAnswerMode() {
+      showAnswers = !showAnswers;
+      document.getElementById("ans-btn-text").innerText = showAnswers ? "隱藏解答步驟" : "顯示解答步驟";
+      renderQuestions();
+    }
+
+    function adjustTopicCount(topicIdx, delta) {
+      const input = document.getElementById(`topic-cnt-${topicIdx}`);
+      let val = (parseInt(input.value) || 0) + delta;
+      if (val < 0) val = 0;
+      if (val > 20) val = 20;
+      input.value = val;
+      generateExam();
+    }
+
+    function setAllTopicCounts(cnt) {
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`topic-cnt-${i}`).value = cnt;
+      }
+      generateExam();
+    }
+
+    function validateCounts() {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`topic-cnt-${i}`);
+        let val = parseInt(el.value);
+        if (isNaN(val) || val < 0) el.value = 0;
+        if (val > 20) el.value = 20;
+      }
+      generateExam();
+    }
+
+    function updateHeaderTitle() {
+      const val = document.getElementById("cfg-title").value.trim();
+      document.getElementById("paper-title-display").innerText = val || "2-2 機率：樹狀圖 計算力特訓卷";
+    }
+
+    // ==========================================
+    // 線上測驗與自動寬容批改
+    // ==========================================
+    function toggleOnlineTest() {
+      isOnlineMode = !isOnlineMode;
+      const metaBar = document.getElementById("online-meta-bar");
+      const btn = document.getElementById("btn-online-test");
+
+      if (isOnlineMode) {
+        metaBar.classList.remove("hidden");
+        btn.classList.add("bg-indigo-600", "text-white");
+        btn.classList.remove("bg-indigo-50", "text-indigo-700");
+        startTimer();
+      } else {
+        metaBar.classList.add("hidden");
+        btn.classList.remove("bg-indigo-600", "text-white");
+        btn.classList.add("bg-indigo-50", "text-indigo-700");
+        stopTimer();
+      }
+
+      document.querySelectorAll(".online-input-row").forEach(el => {
+        if (isOnlineMode) el.classList.remove("hidden");
+        else el.classList.add("hidden");
+      });
+    }
+
+    function startTimer() {
+      stopTimer();
+      secondsElapsed = 0;
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+        const secs = String(secondsElapsed % 60).padStart(2, "0");
+        document.getElementById("timer-display").innerText = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function resetOnlineTest() {
+      startTimer();
+      document.getElementById("online-score-display").innerText = "-";
+      currentQuestions.forEach((_, idx) => {
+        const input = document.getElementById(`user-ans-${idx}`);
+        const fb = document.getElementById(`feedback-${idx}`);
+        if (input) input.value = "";
+        if (fb) {
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded hidden";
+          fb.innerText = "";
+        }
+      });
+    }
+
+    function cleanString(str) {
+      return str.replace(/[－—–]/g, "-")
+                .replace(/[（]/g, "(")
+                .replace(/[）]/g, ")")
+                .replace(/[，、]/g, ",")
+                .replace(/種|個/g, "")
+                .replace(/\s+/g, "")
+                .trim();
+    }
+
+    function isAnswerCorrect(userStr, rawAns) {
+      if (!userStr) return false;
+      const uClean = cleanString(userStr);
+      const rClean = cleanString(String(rawAns));
+
+      if (uClean === rClean) return true;
+
+      // 支援多小題逗號比對
+      if (rClean.includes(",")) {
+        const uParts = uClean.split(",");
+        const rParts = rClean.split(",");
+        if (uParts.length === rParts.length) {
+          return uParts.every((p, i) => isAnswerCorrect(p, rParts[i]));
+        }
+      }
+
+      // 支援分數相等性比對
+      function parseNum(s) {
+        if (s.includes("/")) {
+          const parts = s.split("/");
+          return parseFloat(parts[0]) / parseFloat(parts[1]);
+        }
+        return parseFloat(s);
+      }
+
+      const uVal = parseNum(uClean);
+      const rVal = parseNum(rClean);
+      if (!isNaN(uVal) && !isNaN(rVal)) {
+        return Math.abs(uVal - rVal) < 0.01;
+      }
+
+      return false;
+    }
+
+    function gradeOnlineTest() {
+      if (currentQuestions.length === 0) return;
+      stopTimer();
+      let correctCount = 0;
+
+      currentQuestions.forEach((q, idx) => {
+        const input = document.getElementById(`user-ans-${idx}`);
+        const fb = document.getElementById(`feedback-${idx}`);
+        if (!input || !fb) return;
+
+        const isCorrect = isAnswerCorrect(input.value, q.ansRaw);
+        fb.classList.remove("hidden");
+        if (isCorrect) {
+          correctCount++;
+          fb.innerText = "✓ 正確";
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800";
+        } else {
+          fb.innerText = `✗ 正解：${q.ansDisplay}`;
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800";
+        }
+      });
+
+      const score = Math.round((correctCount / currentQuestions.length) * 100);
+      document.getElementById("online-score-display").innerText = score;
+      alert(`測驗完成！\n總題數：${currentQuestions.length} 題\n答對：${correctCount} 題\n得分：${score} 分\n花費時間：${document.getElementById("timer-display").innerText}`);
+    }
+
+    // ==========================================
+    // 列印與獨立 HTML 檔案匯出
+    // ==========================================
+    function printWorksheet(withAnswers) {
+      const prevAns = showAnswers;
+      showAnswers = withAnswers;
+      renderQuestions();
+
+      setTimeout(() => {
+        window.print();
+        showAnswers = prevAns;
+        renderQuestions();
+      }, 250);
+    }
+
+    function exportSingleHTML() {
+      const docHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const blob = new Blob([docHtml], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `國中數學_樹狀圖計算力特訓卷_${new Date().toISOString().slice(0, 10)}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      generateExam();
+    });
+  </script>
+</body>
+</html>

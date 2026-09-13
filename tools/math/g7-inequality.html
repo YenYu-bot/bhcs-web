@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>百宏文教｜一元一次不等式 出題器</title>
+<meta name="description" content="國中數學國一「一元一次不等式」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g7-inequality.html">
+<meta property="og:title" content="百宏文教｜一元一次不等式 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g7-inequality.html">
+<meta property="og:type" content="website">
+
+<style>
+  :root{ --ink:#222; --ans:#d62828; --accent:#2a8f6a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px}
+  .panel{background:#fff;padding:12px 18px;border-bottom:1px solid #cfd6dd;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;position:sticky;top:0;z-index:5}
+  .panel h1{font-size:18px;margin:0 0 2px;width:100%}
+  .grp{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid #d9e0e6;border-radius:8px;background:#f8fafb}
+  .grp>b{font-size:14px;color:#345}
+  .line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px}
+  .line label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  select,input[type=number]{font:inherit;padding:3px 6px;border:1px solid #b7bfc7;border-radius:4px;background:#fff}
+  input[type=number]{width:52px}
+  button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
+  button.ghost{background:#fff;color:var(--accent)}
+  .actions{display:flex;gap:8px;align-items:flex-end;align-self:stretch}
+  .note{font-size:12px;color:#667;width:100%}
+
+  .sheet{background:#fff;width:210mm;min-height:297mm;margin:14px auto;padding:12mm 12mm 14mm;box-shadow:0 2px 10px rgba(0,0,0,.15);font-size:15px;line-height:1.5}
+  .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5px solid var(--accent);padding-bottom:6px;margin-bottom:8px}
+  .hd h2{margin:0;font-size:21px;letter-spacing:1px}
+  .hd .sub{font-size:12px;color:#556;margin-top:2px}
+  .hd .box{border:1.5px solid #444;border-radius:8px;padding:4px 10px;font-size:13px;line-height:1.7;white-space:nowrap}
+  .sec{margin:8px 0 2px;font-weight:700;border-left:4px solid var(--accent);padding-left:8px;font-size:15px}
+  .grid{display:grid;gap:6px 14px;margin-bottom:8px}
+  .q{padding:4px 2px;break-inside:avoid;page-break-inside:avoid;border-bottom:1px dotted #cfd4d8}
+  .q .qt{display:flex;gap:6px;align-items:flex-start;line-height:1.8}
+  .q .no{flex:none;font-size:14px;padding-top:1px;color:#333}
+  .q .ex{white-space:nowrap}
+  .work{height:18mm}
+  body.teacher .work{height:2mm}
+  .ans{display:none;color:var(--ans);font-size:12.5px;line-height:1.75;margin:2px 0 2px 24px;word-break:break-all}
+  body.teacher .ans{display:block}
+  .ans b{font-weight:700}
+  .nl{display:block;margin:4px 0 0 24px}
+  .nl.blank{color:#333}
+  .ans .nl{color:var(--ans);margin-left:0}
+  .arrow{margin-right:4px}
+
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 2px;font-size:.9em;position:relative;top:-.08em}
+  .fr .n,.fr .d{display:block;padding:0 3px}
+  .fr .n{border-bottom:1.3px solid currentColor}
+  .fr .fr{font-size:1em}
+  .op{margin:0 3px}
+  .rel{margin:0 5px;font-weight:600}
+  var{font-style:italic;font-family:"Times New Roman",Georgia,serif;font-size:1.08em;padding:0 1px}
+  .absb{margin:0 1px;font-size:1.15em;position:relative;top:-.03em}
+  .sys{display:inline-flex;align-items:center;gap:4px}
+  .sys .brace{font-size:2.6em;font-weight:200;line-height:1;position:relative;top:-.04em}
+  .sys .rows{display:flex;flex-direction:column;gap:2px}
+  .empty{color:#888;padding:40px;text-align:center}
+  @media print{ body{background:#fff} .panel{display:none} .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none} .ans,.nl{-webkit-print-color-adjust:exact;print-color-adjust:exact} @page{size:A4;margin:12mm} }
+</style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+:root{--accent:var(--bhcs-green)!important}
+body{background:var(--bhcs-bg);font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+.panel{padding-top:0!important;border-bottom:1px solid var(--bhcs-line);box-shadow:0 5px 16px #173e3412}
+.panel>h1{width:100%;margin:0 -18px 6px!important;padding:11px 18px!important;background:var(--bhcs-green2);color:#fff;border-bottom:4px solid var(--bhcs-mint);font-size:17px!important;display:flex;align-items:center;gap:12px}
+.panel>h1::before{content:"百";width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--bhcs-mint);color:var(--bhcs-green2);border-radius:9px;font:900 17px Georgia,serif}
+.panel>h1::after{content:"百宏文教・數學計算力練習";margin-left:auto;font-size:12px;font-weight:400;color:#c8e8df}
+.grp{background:#fff!important;border-color:var(--bhcs-line)!important}
+.grp>b,.grp>label:first-child{color:var(--bhcs-green2)!important}
+button{background:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important;color:#fff!important;font-weight:800!important}
+button.ghost{background:#fff!important;color:var(--bhcs-green)!important}
+.sheet{box-shadow:0 15px 40px #1d342f22!important}
+.hd,.head{border-bottom-color:var(--bhcs-green)!important}
+.sec{border-left-color:var(--bhcs-green)!important;background:var(--bhcs-soft)!important;padding:4px 10px!important}
+select,input[type=number]{border-color:#aabcb7!important}
+</style></head>
+<body class="student">
+<div class="panel">
+  <h1>一元一次不等式 出題器（國一）</h1>
+  <div class="grp"><b>版面</b><div class="line">
+    <label>版本 <select id="version"><option value="student">學用版</option><option value="teacher">教用版（紅字解答）</option></select></label>
+    <label>每列 <select id="perRow"><option value="auto">自動</option><option value="3">3 題</option><option value="2">2 題</option><option value="1">1 題</option></select></label>
+    <label>作答空間 <select id="work"><option value="10">小</option><option value="18" selected>中</option><option value="28">大</option></select></label>
+  </div></div>
+  <div class="grp"><b>難度與數的類型</b><div class="line">
+    <label>難度 <select id="diff"><option value="1">基礎</option><option value="2" selected>進階</option><option value="3">挑戰</option></select></label>
+    <label><input type="checkbox" id="tInt" checked> 整數</label>
+    <label><input type="checkbox" id="tFrac" checked> 分數</label>
+    <label><input type="checkbox" id="tDec"> 小數</label>
+  </div>
+  <div class="note">整數／分數／小數決定係數與常數的形式（分數型、小數型單元本身即以分數、小數出題）。</div></div>
+  <div class="grp"><b>單元與題數</b><div class="line" id="units"></div></div>
+  <div class="actions"><button id="gen">重新出題</button><button class="ghost" id="print">列印 / 存 PDF</button></div>
+</div>
+<div class="sheet" id="sheet"><div class="empty">按「重新出題」產生練習卷</div></div>
+
+<script>
+// ================= 有理數 =================
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a}
+function lcm(a,b){return a/gcd(a,b)*b}
+class F{
+  constructor(n,d=1){ if(d<0){n=-n;d=-d} const g=gcd(n,d)||1; this.n=n/g; this.d=d/g }
+  static of(x){return x instanceof F?x:new F(x)}
+  add(o){o=F.of(o);return new F(this.n*o.d+o.n*this.d,this.d*o.d)}
+  sub(o){o=F.of(o);return new F(this.n*o.d-o.n*this.d,this.d*o.d)}
+  mul(o){o=F.of(o);return new F(this.n*o.n,this.d*o.d)}
+  div(o){o=F.of(o);return new F(this.n*o.d,this.d*o.n)}
+  neg(){return new F(-this.n,this.d)}
+  abs(){return new F(Math.abs(this.n),this.d)}
+  cmp(o){o=F.of(o);return Math.sign(this.n*o.d-o.n*this.d)}
+  eq(o){return this.cmp(o)===0}
+  get sign(){return Math.sign(this.n)}
+  isInt(){return this.d===1}
+  isZero(){return this.n===0}
+  toNum(){return this.n/this.d}
+}
+const Z=new F(0), ONE=new F(1);
+// 一次式 p x + q
+class L{
+  constructor(p,q){this.p=F.of(p);this.q=F.of(q)}
+  add(o){return new L(this.p.add(o.p),this.q.add(o.q))}
+  sub(o){return new L(this.p.sub(o.p),this.q.sub(o.q))}
+  scale(k){return new L(this.p.mul(k),this.q.mul(k))}
+  at(x){return this.p.mul(x).add(this.q)}
+}
+
+// ================= 亂數 =================
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const chance=p=>Math.random()<p;
+const nz=(a,b)=>{let v;do{v=ri(a,b)}while(v===0);return v};
+const sgn=()=>chance(.5)?1:-1;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// ================= 顯示 =================
+const MINUS='−';
+function decStr(f){ // 假設分母整除 1000
+  let k=0; while((Math.pow(10,k))%f.d!==0)k++;
+  const n=Math.abs(f.n)*Math.pow(10,k)/f.d;
+  let s=String(n); while(s.length<=k)s='0'+s;
+  s=k?s.slice(0,s.length-k)+'.'+s.slice(s.length-k):s;
+  return (f.n<0?MINUS:'')+s;
+}
+function isDecDen(d){return 1000%d===0}
+function frHTML(n,d){return `<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`}
+// dec: 允許以小數顯示；abs: 不顯示負號；mixed: 帶分數
+function num(f,o={}){
+  f=F.of(f);
+  const neg=f.n<0&&!o.abs, a=Math.abs(f.n);
+  if(f.d===1) return (neg?MINUS:'')+a;
+  if(o.dec&&isDecDen(f.d)) return (neg?MINUS:'')+decStr(f.abs());
+  if(o.mixed&&a>f.d){const w=Math.floor(a/f.d);return (neg?MINUS:'')+w+frHTML(a-w*f.d,f.d)}
+  return (neg?MINUS:'')+frHTML(a,f.d);
+}
+const RELS={'<':'&lt;','>':'&gt;','le':'≦','ge':'≧'};
+const rel=r=>`<span class="rel">${RELS[r]}</span>`;
+const flip=r=>({'<':'>','>':'<','le':'ge','ge':'le'})[r];
+const X='<var>x</var>';
+
+// 式子 = 項目陣列；項目 {c:F, dec?, body:null|'x'|{br:Expr}|{fr:Expr,den:F}}
+const T=(c,body=null,dec=false)=>({c:F.of(c),body,dec});
+const brT=(c,inner,dec=false)=>T(c,{br:inner},dec);
+const frT=(c,inner,den,dec=false)=>T(c,{fr:inner,den:F.of(den)},dec);
+const lin=(a,b,dec=false)=>{const t=[];if(!F.of(a).isZero())t.push(T(a,'x',dec));if(!F.of(b).isZero())t.push(T(b,null,dec));return t.length?t:[T(0)]};
+
+function val(e){ // Expr -> L
+  let r=new L(0,0);
+  for(const t of e){
+    let v;
+    if(t.body===null) v=new L(0,1);
+    else if(t.body==='x') v=new L(1,0);
+    else if(t.body.br) v=val(t.body.br);
+    else v=val(t.body.fr).scale(ONE.div(t.body.den));
+    r=r.add(v.scale(t.c));
+  }
+  return r;
+}
+function renderTerm(t,first){
+  const neg=t.c.sign<0, m=t.c.abs(), one=m.eq(1), coef=num(m,{dec:t.dec});
+  const sign=first?(neg?MINUS:''):(`<span class="op">${neg?MINUS:'+'}</span>`);
+  let body;
+  if(t.body===null) body=coef;
+  else if(t.body==='x') body=(one?'':coef)+X;
+  else if(t.body.br) body=(one?'':coef)+'('+render(t.body.br)+')';
+  else{
+    const fr=frHTML(render(t.body.fr),num(t.body.den));
+    body=one?fr:coef+'('+fr+')';
+  }
+  return sign+body;
+}
+function render(e){
+  const ts=e.filter(t=>!t.c.isZero());
+  if(!ts.length)return '0';
+  return ts.map((t,i)=>renderTerm(t,i===0)).join('');
+}
+function renderL(l,dec=false){return render(lin(l.p,l.q,dec))}
+function hasStruct(e){return e.some(t=>t.body&&t.body!=='x')}
+function denLcm(...fs){return fs.reduce((m,f)=>lcm(m,f.d),1)}
+
+// ================= 解集合 =================
+// {lo,loOpen,hi,hiOpen} | null(無解) | {union:[setA,setB]}
+function fromRel(r,v){
+  if(r==='<')return{hi:v,hiOpen:true,lo:null};
+  if(r==='le')return{hi:v,hiOpen:false,lo:null};
+  if(r==='>')return{lo:v,loOpen:true,hi:null};
+  return{lo:v,loOpen:false,hi:null};
+}
+function inter(a,b){
+  if(!a||!b)return null;
+  let lo=a.lo,loOpen=a.loOpen,hi=a.hi,hiOpen=a.hiOpen;
+  if(b.lo!==null&&b.lo!==undefined){ if(lo===null||lo===undefined||b.lo.cmp(lo)>0||(b.lo.eq(lo)&&b.loOpen)){lo=b.lo;loOpen=b.loOpen} }
+  if(b.hi!==null&&b.hi!==undefined){ if(hi===null||hi===undefined||b.hi.cmp(hi)<0||(b.hi.eq(hi)&&b.hiOpen)){hi=b.hi;hiOpen=b.hiOpen} }
+  const s={lo:lo??null,loOpen:!!loOpen,hi:hi??null,hiOpen:!!hiOpen};
+  if(s.lo&&s.hi){const c=s.lo.cmp(s.hi); if(c>0||(c===0&&(s.loOpen||s.hiOpen)))return null;}
+  return s;
+}
+function setHTML(s,o={}){ // o.rev 反向寫法, o.mixed, o.dec
+  if(!s)return '無解';
+  if(s.union)return setHTML(s.union[0],o)+' 或 '+setHTML(s.union[1],o);
+  const n=v=>num(v,o);
+  const lr=s.loOpen?'<':'le', hr=s.hiOpen?'<':'le';
+  if(s.lo&&s.hi){
+    if(s.lo.eq(s.hi))return X+' = '+n(s.lo);
+    return o.rev? n(s.hi)+rel(flip(hr))+X+rel(flip(lr))+n(s.lo) : n(s.lo)+rel(lr)+X+rel(hr)+n(s.hi);
+  }
+  if(s.lo) return o.rev? n(s.lo)+rel(flip(lr))+X : X+rel(flip(lr))+n(s.lo);
+  return o.rev? n(s.hi)+rel(flip(hr))+X : X+rel(hr)+n(s.hi);
+}
+
+// ================= 解題步驟 =================
+// 解 Lexpr rel Rexpr；回傳 {steps:[html], set, ok}
+function solve(Le,Re,r,dec=false){
+  const s=[];
+  let a=val(Le), b=val(Re);
+  if(a.p.eq(b.p))return{ok:false};
+  if(hasStruct(Le)||hasStruct(Re)) s.push(renderL(a,dec)+rel(r)+renderL(b,dec));
+  const M=denLcm(a.p,a.q,b.p,b.q);
+  if(M>1){a=a.scale(M);b=b.scale(M);s.push('同乘以 '+M+'：'+renderL(a)+rel(r)+renderL(b))}
+  const A=a.p.sub(b.p), B=b.q.sub(a.q);
+  const st=renderL(new L(A,0))+rel(r)+num(B);
+  if(s[s.length-1]!==st&&!(a.q.isZero()&&b.p.isZero()&&s.length===0&&false)) s.push(st);
+  const r2=A.sign>0?r:flip(r), v=B.div(A);
+  const fin=X+rel(r2)+num(v);
+  if(s[s.length-1]!==fin)s.push(fin);
+  return{ok:true,steps:s,set:fromRel(r2,v)};
+}
+const join=st=>st.join('，');
+const CMP={'<':(a,b)=>a.cmp(b)<0,'>':(a,b)=>a.cmp(b)>0,'le':(a,b)=>a.cmp(b)<=0,'ge':(a,b)=>a.cmp(b)>=0};
+const chk=(Le,Re,r)=>{const a=val(Le),b=val(Re);return x=>CMP[r](a.at(x),b.at(x))};
+
+// ================= 數線 SVG =================
+function svgNum(f,x,y,o){ // 數線標籤
+  f=F.of(f);
+  if(f.d===1||(o.dec&&isDecDen(f.d))) return `<text x="${x}" y="${y}" text-anchor="middle" font-size="11">${num(f,o).replace('&','&amp;')}</text>`;
+  const neg=f.n<0,a=Math.abs(f.n);let w=0,n=a;
+  if(o.mixed!==false&&a>f.d){w=Math.floor(a/f.d);n=a-w*f.d}
+  const pre=(neg?MINUS:'')+(w||'');
+  const pw=pre.length*5.5, tot=pw+11, sx=x-tot/2;
+  let out='';
+  if(pre)out+=`<text x="${sx+pw}" y="${y+2}" text-anchor="end" font-size="11">${pre}</text>`;
+  const fx=sx+pw+5.5;
+  out+=`<text x="${fx}" y="${y-2}" text-anchor="middle" font-size="8.5">${n}</text><line x1="${fx-5}" x2="${fx+5}" y1="${y}" y2="${y}" stroke="currentColor" stroke-width="1"/><text x="${fx}" y="${y+8}" text-anchor="middle" font-size="8.5">${f.d}</text>`;
+  return out;
+}
+function nlSVG(set,o={}){
+  const W=240,H=50,ax=8,bx=222,y=20;
+  let g=`<line x1="${ax}" x2="${bx}" y1="${y}" y2="${y}" stroke="currentColor" stroke-width="1.2"/><polygon points="${bx},${y-4} ${bx+9},${y} ${bx},${y+4}" fill="currentColor"/>`;
+  const cls='nl'+(o.blank?' blank':'');
+  if(!o.blank){
+    if(!set) g+=`<text x="${W/2}" y="${y+18}" text-anchor="middle" font-size="12">無解</text>`;
+    else{
+      const parts=set.union?set.union:[set];
+      const pts=[];parts.forEach(s=>{if(s.lo)pts.push(s.lo);if(s.hi&&!(s.lo&&s.hi.eq(s.lo)))pts.push(s.hi)});
+      pts.sort((a,b)=>a.cmp(b));
+      const pos={};const span=bx-ax-20;
+      if(pts.length===1)pos[0]=ax+10+span*.45; else pts.forEach((p,i)=>pos[i]=ax+10+span*(0.22+0.56*i/(pts.length-1)));
+      const px=v=>pos[pts.findIndex(p=>p.eq(v))];
+      const thick=(x1,x2,arrow)=>{let h=`<line x1="${x1}" x2="${x2}" y1="${y}" y2="${y}" stroke="currentColor" stroke-width="4.5" stroke-linecap="butt"/>`;if(arrow)h+=`<polygon points="${x2-2},${y-6} ${x2+10},${y} ${x2-2},${y+6}" fill="currentColor"/>`;return h};
+      for(const s of parts){
+        const x1=s.lo?px(s.lo):ax, x2=s.hi?px(s.hi):bx-8;
+        g+=thick(x1,x2,!s.hi);
+      }
+      for(const s of parts){
+        if(s.lo)g+=`<circle cx="${px(s.lo)}" cy="${y}" r="3.8" stroke="currentColor" stroke-width="1.6" fill="${s.loOpen?'#fff':'currentColor'}"/>`;
+        if(s.hi)g+=`<circle cx="${px(s.hi)}" cy="${y}" r="3.8" stroke="currentColor" stroke-width="1.6" fill="${s.hiOpen?'#fff':'currentColor'}"/>`;
+      }
+      pts.forEach((p,i)=>g+=svgNum(p,pos[i],y+19,o));
+    }
+  }
+  return `<svg class="${cls}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
+}
+
+// ================= 係數形式 =================
+let CFG={lvl:2,types:['int']};
+function style(pOther){ // 依勾選決定係數形式
+  const t=CFG.types; if(t.length===1)return t[0];
+  if(t.includes('int')&&!chance(pOther))return 'int';
+  return pick(t.filter(x=>x!=='int').length?t.filter(x=>x!=='int'):t);
+}
+function coef(st,lo,hi,{allowNeg=true,nonzero=true}={}){ // 依形式產生係數
+  const s=allowNeg?sgn():1;
+  if(st==='frac'){const d=pick([2,3,4,5,6]);let n;do{n=ri(1,Math.max(2,Math.min(hi,9)))}while(gcd(n,d)!==1);return{v:new F(s*n,d),dec:false}}
+  if(st==='dec'){let n;do{n=ri(1,Math.min(hi*10,29))}while(n%10===0&&chance(.8));return{v:new F(s*n,10),dec:true}}
+  const n=nonzero?nz(lo,hi):ri(lo,hi);return{v:new F(s*Math.abs(n)),dec:false};
+}
+const pickRel=()=>pick(['<','>','le','ge']);
+
+// ================= 單元產生器 =================
+// 每題回傳 {html, ans(html), set, line:bool(學用版留數線)}
+function retry(fn){for(let i=0;i<60;i++){const r=fn();if(r)return r}return fn(true)}
+
+function genBasic(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    const st=style(lvl===1?.3:.5);
+    const a=coef(st,2,lvl===3?15:9,{allowNeg:true}).v, adec=st==='dec';
+    let Le,Re;
+    if(lvl===1){
+      const x0=ri(-9,9)*(a.isInt()||adec?1:a.d), b=ri(-20,20);
+      const c=a.mul(x0).add(b);
+      Le=[T(a,'x',adec),T(b)]; if(b===0)Le=[T(a,'x',adec)];
+      Re=[T(c,null,adec)];
+      if(chance(.25)){[Le,Re]=[Re,Le]}
+    }else{
+      const st2=style(.4);
+      let c=coef(st2,1,lvl===3?15:9).v; if(c.eq(a))c=c.add(1);
+      const rng=lvl===3?60:30;
+      const b=ri(-rng,rng);
+      let d;
+      if(lvl===2&&chance(.6)){const x0=ri(-9,9)*((adec||st2==='dec')?1:denLcm(a,c));d=a.sub(c).mul(x0).add(b)} else d=new F(ri(-rng,rng));
+      const mk=(p,q,dec)=>{const t=lin(p,q,dec);return chance(.3)?t.slice().reverse():t};
+      Le=mk(a,b,adec); Re=mk(c,d,st2==='dec');
+    }
+    const so=solve(Le,Re,r);
+    if(!so.ok)return null;
+    if(lvl===1&&!so.set&&false)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+function innerLin(lvl){ // 括號內 ax+b
+  const a=nz(-(lvl>=2?5:3),lvl>=2?5:3), b=nz(-9,9);
+  return lin(a,b);
+}
+function genBracket(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    let Le,Re;
+    if(lvl===1){
+      const k=nz(-7,9), inner=lvl===1?lin(pick([1,1,2,3]),nz(-9,9)):innerLin(1);
+      const x0=ri(-8,8);
+      const m=chance(.6)?nz(-20,20):0;
+      Le=[brT(k,inner)]; if(m)Le.push(T(m));
+      Re=[T(val(Le).at(x0))];
+      if(chance(.3)){[Le,Re]=[Re,Le]}
+    }else if(lvl===2){
+      const k=nz(-6,7), n=nz(-6,7), i1=innerLin(2), i2=innerLin(2);
+      const m=chance(.6)?nz(-20,20):0;
+      Le=[brT(k,i1)]; if(m)Le.push(T(m));
+      Re=[brT(n,i2)];
+      if(chance(.6)){const x0=ri(-8,8);const e=val(Le).at(x0).sub(val(Re).at(x0));if(!e.isZero())Re.push(T(e))}
+      else if(chance(.5))Re.push(T(nz(-20,20)));
+      if(chance(.3))Re=Re.reverse();
+    }else{
+      const st=style(.5);
+      const c1=coef(st,2,7),c2=coef(style(.5),2,7),c3=coef(style(.3),2,7);
+      const i1=innerLin(3),i2=innerLin(3),i3=innerLin(3);
+      if(st==='frac'&&chance(.5)){ // 括號內含分數常數，如 6(2x − 3/2)
+        i3[1]=T(new F(nz(-9,9),pick([2,3,4])));
+      }
+      Le=[brT(c1.v,i1,c1.dec),brT(c2.v,i2,c2.dec)];
+      Re=[brT(c3.v,i3,c3.dec)];
+      if(chance(.3))Re.push(T(nz(-20,20)));
+      if(chance(.25))[Le,Re]=[Re,Le];
+    }
+    const so=solve(Le,Re,r);
+    if(!so.ok)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+function fracC(maxD=6){const d=pick([2,3,4,5,6].filter(x=>x<=maxD));let n;do{n=nz(-9,9)}while(gcd(n,d)!==1);return new F(n,d)}
+function genFrac(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    let Le,Re;
+    const il=()=>lin(nz(-5,5),nz(-7,7));
+    const dens=()=>{let a=pick([2,3,4,5,6]),b;do{b=pick([2,3,4,5,6])}while(b===a);return[a,b]};
+    const form=lvl===1?pick([1,2]):lvl===2?pick([3,4,7,2]):pick([5,6,7,8]);
+    if(form===1){const[d,f]=dens();Le=[frT(1,il(),d)];Re=[frT(1,il(),f)];if(chance(.4))Re.push(T(nz(-6,6)))}
+    else if(form===2){ // 1/3 x + 5/6 ≧ 10 − 1/2 x
+      Le=[T(fracC(),'x'),T(fracC())]; Re=[T(nz(-12,12)),T(fracC(),'x')]; if(chance(.4))Re.reverse();
+    }else if(form===3){const[d,f]=dens();Le=[frT(1,il(),d),frT(pick([1,-1]),il(),f)];Re=[T(nz(-9,9))];}
+    else if(form===4){const[d,f]=dens();Le=[frT(1,il(),d)];Re=[frT(1,il(),f),T(fracC(lcm(d,f)))];}
+    else if(form===5){ // 3/2 x − (2x−1)/6 < (3x+1)/2 − 5/2 ；x/2 − (3x−4)/3 ≧ (2x−1)/9
+      const[d,f]=dens();
+      Le=[chance(.5)?T(fracC(),'x'):frT(1,[T(1,'x')],pick([2,3,4])),frT(-1,il(),d)];
+      Re=[frT(1,il(),f)];if(chance(.6))Re.push(T(fracC()));
+    }else if(form===6){ // 3/2(4x−6) > −5/3(3x−9) ；3/2(x−8) < −1/3 x + 1/2
+      Le=[brT(fracC(),il())];
+      Re=chance(.5)?[brT(fracC(),il())]:[T(fracC(),'x'),T(fracC())];
+    }else if(form===7){const[d,f]=dens();Le=[frT(1,il(),d),frT(1,il(),f)];Re=[T(fracC(lcm(d,f)))];if(chance(.3))Re=[T(nz(-9,9))]}
+    else{ // 8: 3/8 x − (2x+1)/12 > (3x+1)/6 − 9/8
+      Le=[T(fracC(8),'x'),frT(-1,il(),pick([4,6,8,12]))];Re=[frT(1,il(),pick([3,6,8])),T(new F(nz(-9,9),8))];
+    }
+    const so=solve(Le,Re,r);
+    if(!so.ok)return null;
+    const M=denLcm(val(Le).p,val(Le).q,val(Re).p,val(Re).q); if(M>72)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+const dc=(lo,hi)=>{let n;do{n=nz(lo,hi)}while(n%10===0);return new F(n,10)};
+const dcT=(lo,hi,body)=>T(dc(lo,hi),body,true);
+function genDec(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    let Le,Re;
+    const form=lvl===1?pick([1,1,5]):lvl===2?pick([2,5,6]):pick([3,4,6]);
+    const dlin=()=>[dcT(-19,19,'x'),dcT(-99,99,null)]; // 0.7x + 2.3
+    if(form===1){ // 0.7x+23.5<1.1x−21.3
+      Le=[dcT(-19,19,'x'),T(chance(.5)?dc(-399,399):new F(ri(-30,30)),null,true)];
+      Re=[dcT(-19,19,'x'),T(chance(.5)?dc(-399,399):new F(ri(-30,30)),null,true)];
+      if(chance(.3))Re.reverse();
+    }else if(form===2){ // 0.2x − 3(0.5x−1) > 0.5x+5 ；0.3(0.2x−0.4) ≧ 0.9
+      if(chance(.5)){let kb;do{kb=nz(-5,5)}while(kb===1);Le=[dcT(-9,9,'x'),brT(kb,[dcT(-9,9,'x'),T(nz(-5,5))])];Re=[dcT(-9,9,'x'),T(nz(-9,9))]}
+      else{Le=[brT(dc(-9,9),[dcT(-9,9,'x'),dcT(-9,9,null)],true)];Re=[dcT(-29,29,null)]}
+    }else if(form===3){ // 1.4((x−4)/2) − 0.6(2x−3) < 0.5((2x+5)/5)
+      Le=[frT(dc(1,19),lin(pick([1,1,2,3]),nz(-9,9)),pick([2,5]),true),brT(dc(-9,9),lin(nz(-3,3),nz(-9,9)),true)];
+      Re=[frT(dc(1,9),lin(nz(-3,3),nz(-9,9)),pick([2,5]),true)];
+    }else if(form===4){ // 0.6(3x−7) − 5/2(2x−1) ≦ 12
+      const useF=CFG.types.includes('frac');
+      Le=[brT(dc(-9,9),lin(nz(-4,4),nz(-9,9)),true),useF?brT(fracC(4),lin(nz(-3,3),nz(-9,9))):brT(dc(-9,9),lin(nz(-3,3),nz(-9,9)),true)];
+      Re=[T(ri(-20,20))];
+    }else if(form===5){ // 1.2x+3.6 < 2.4(x−1)+0.9
+      Le=[dcT(-29,29,'x'),dcT(-59,59,null)];Re=[brT(dc(-29,29),lin(1,nz(-5,5)),true),dcT(-19,19,null)];
+      if(chance(.4))[Le,Re]=[Re,Le];
+    }else{ // 6: 1.3(x+3)+2.8 ≧ 3.1(2x−1)
+      Le=[brT(dc(-29,29),lin(pick([1,1,2]),nz(-5,5)),true),dcT(-39,39,null)];Re=[brT(dc(-29,29),lin(pick([1,2,3]),nz(-5,5)),true)];
+    }
+    const so=solve(Le,Re,r,true);
+    if(!so.ok)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+// 合併形式：a<b<c 與聯立
+function genCombined(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const isSys=chance(.5);
+    const r1=pick(['<','le']), r2=pick(['<','le']);
+    let E1,E2,E3, rels;
+    if(!isSys){
+      if(lvl===1){
+        if(chance(.5)){E1=[T(ri(-9,9))];E2=lin(nz(-7,9),nz(-9,9));E3=[T(ri(1,25))];if(val(E2).p.sign<0&&chance(.5)){} }
+        else{E1=lin(nz(-5,7),nz(-12,12));E2=[T(ri(-9,9))];E3=lin(nz(-5,7),nz(-12,12));}
+        rels=[r1,r2];
+        if(chance(.4))rels=[flip(r1),flip(r2)]; // 2x−4>2>3x−13
+      }else if(lvl===2){
+        const mk=()=>chance(.5)?lin(nz(-5,5),nz(-15,15)):[brT(nz(-4,4),lin(pick([1,2,3]),nz(-9,9))),T(nz(-15,15))];
+        E1=mk();E2=mk();E3=mk(); rels=chance(.7)?[r1,r2]:[flip(r1),flip(r2)];
+      }else{ // 3/2 < 1/2(3x−8)+11 < 10 ；−20x<2x+8<20 ；(x+2)/5 < (x−1)/2 ≦ (x+3)/4
+        const f=chance(.5);
+        if(f){E1=[T(chance(.5)?fracC():ri(-9,9))];E2=[brT(fracC(3),lin(nz(-4,4),nz(-9,9))),T(nz(-12,12))];E3=[T(ri(-9,20))];rels=[r1,r2]}
+        else{const d=()=>pick([2,3,4,5]);E1=[frT(1,lin(1,nz(-5,5)),d())];E2=[frT(1,lin(pick([1,2]),nz(-5,5)),d())];E3=[frT(1,lin(1,nz(-5,5)),d())];rels=[r1,r2]}
+      }
+      const s1=solve(E1,E2,rels[0]), s2=solve(E2,E3,rels[1]);
+      if(!s1.ok||!s2.ok)return null;
+      const set=inter(s1.set,s2.set);
+      if(!set&&!(lvl>=2&&chance(.25)))return null;
+      if(set&&set.lo&&set.hi&&set.lo.eq(set.hi))return null;
+      const html=render(E1)+rel(rels[0])+render(E2)+rel(rels[1])+render(E3);
+      const ans='由①：'+join(s1.steps)+'；由②：'+join(s2.steps)+'；故 <b>'+setHTML(set)+'</b>';
+      return{html,ans,set,_f:x=>chk(E1,E2,rels[0])(x)&&chk(E2,E3,rels[1])(x)};
+    }else{
+      const rA=pickRel(), rB=pickRel();
+      let LA,RA,LB,RB;
+      if(lvl===1){LA=lin(nz(-7,9),nz(-20,20));RA=lin(nz(-7,9),nz(-20,20));LB=lin(nz(-7,9),nz(-20,20));RB=lin(nz(-7,9),nz(-20,20));if(chance(.4))RB=[T(ri(-20,30))]}
+      else if(lvl===2){const mk=()=>chance(.5)?lin(nz(-5,5),nz(-15,15)):[brT(nz(-4,4),lin(pick([1,2,3]),nz(-9,9)))];LA=mk();RA=mk();LB=mk();RB=mk();if(chance(.5))RB.push(T(nz(-9,9)))}
+      else{
+        const st=style(.6);
+        const mk=()=>{const c=coef(st,1,5);return chance(.5)?[T(c.v,'x',c.dec),T(coef(st,1,9).v,null,c.dec)]:[brT(c.v,lin(pick([1,2,3]),nz(-9,9)),c.dec)]};
+        LA=mk();RA=mk();LB=mk();RB=mk();if(chance(.5))RB.push(T(nz(-9,9)));
+      }
+      const dec=lvl===3;
+      const s1=solve(LA,RA,rA,dec), s2=solve(LB,RB,rB,dec);
+      if(!s1.ok||!s2.ok)return null;
+      const set=inter(s1.set,s2.set);
+      if(!set&&!(lvl>=2&&chance(.25)))return null;
+      if(set&&set.lo&&set.hi&&set.lo.eq(set.hi))return null;
+      const html=`<span class="sys"><span class="brace">{</span><span class="rows"><span>${render(LA)+rel(rA)+render(RA)}</span><span>${render(LB)+rel(rB)+render(RB)}</span></span></span>`;
+      const ans='由①：'+join(s1.steps)+'；由②：'+join(s2.steps)+'；故 <b>'+setHTML(set)+'</b>';
+      return{html,ans,set,tall:true,_f:x=>chk(LA,RA,rA)(x)&&chk(LB,RB,rB)(x)};
+    }
+  });
+}
+
+// 圖示法端點
+function endpoint(lvl){
+  const st=lvl===1?'int':style(.5);
+  if(st==='dec')return{v:dc(-99,99),dec:true};
+  if(st==='frac'){const d=pick([2,3,4]);let n;do{n=nz(-20,20)}while(gcd(n,d)!==1);return{v:new F(n,d),dec:false}}
+  return{v:new F(ri(-9,9)),dec:false};
+}
+function randSet(lvl){
+  const two=chance(lvl===1?.75:.65);
+  const a=endpoint(lvl); let dec=a.dec;
+  if(!two)return{set:fromRel(pickRel(),a.v),dec};
+  let b;do{b=endpoint(lvl)}while(b.v.eq(a.v)); dec=dec||b.dec;
+  const[lo,hi]=a.v.cmp(b.v)<0?[a.v,b.v]:[b.v,a.v];
+  return{set:{lo,loOpen:chance(.5),hi,hiOpen:chance(.5)},dec};
+}
+function genGraphDraw(){
+  const {set,dec}=randSet(CFG.lvl);
+  const rev=CFG.lvl>=2&&chance(.4);
+  const o={mixed:true,dec,rev};
+  return{html:setHTML(set,o),ans:nlSVG(set,{mixed:true,dec}),set,line:true,nlOnly:true};
+}
+function genGraphRead(){
+  const {set,dec}=randSet(CFG.lvl);
+  const o={mixed:true,dec};
+  return{html:nlSVG(set,o)+'<div style="margin-top:6px"><span class="arrow">⇒</span><span style="display:inline-block;width:150px;border-bottom:1px solid #333">&nbsp;</span></div>',ans:'<b>'+setHTML(set,o)+'</b>',set,noWork:true};
+}
+function genSolveGraph(){
+  const lvl=CFG.lvl;
+  const g=lvl===1?pick([genBasic,genBracket]):lvl===2?pick([genBracket,genFrac,genBasic]):pick([genFrac,genDec,genBracket,genCombined]);
+  const q=g(); q.line=true; q.ans+=nlSVG(q.set,{mixed:false,dec:g===genDec}); return q;
+}
+
+function genAbs(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    let a,b,k,r,extra=0,den=1,dec=false;
+    if(lvl===1){
+      r=pick(['le','<']);
+      a=ri(1,4); let e1=ri(-8,6),e2; do{e2=ri(e1+1,e1+9)}while((a*(e2-e1))%2);
+      if(chance(.3))a=1;
+      k=new F(a*(e2-e1)/2); b=new F(-a*e1).sub(k); a=new F(a);
+    }else if(lvl===2){
+      r=pickRel(); a=new F(nz(-6,6)); b=new F(nz(-12,12)); k=new F(ri(1,15));
+    }else{
+      r=pickRel();
+      const st=style(.6);
+      if(st==='frac'){a=fracC();b=fracC();k=fracC();if(chance(.5))[a,b]=[b,a]} // |1/2 − x/3| ≧ 1/5
+      else if(st==='dec'){a=dc(-19,19);b=dc(-49,49);k=dc(1,49);dec=true}
+      else{a=new F(nz(-6,6));b=new F(nz(-12,12));k=new F(ri(1,15));if(chance(.5))extra=nz(-6,6);else den=pick([2,3,4])}
+    }
+    // 內部式
+    let inner;
+    if(a.d>1&&b.d>1&&lvl===3&&!dec){ // 分數形：a x 用 x/d 顯示
+      inner=[T(b),T(a,'x')]; if(chance(.5))inner=[T(a,'x'),T(b)];
+    }else inner=lin(a,b,dec);
+    if(den>1)inner=[frT(1,inner,den)];
+    const innerHTML=`<span class="absb">|</span>${render(inner)}<span class="absb">|</span>`;
+    let html=innerHTML;
+    if(extra){html+=`<span class="op">${extra<0?MINUS:'+'}</span>${Math.abs(extra)}`}
+    html+=rel(r)+num(k,{dec});
+    if(extra){k=k.sub(extra); if(k.sign<=0)return null; }
+    const kk=k;
+    const st=[];
+    if(extra)st.push(innerHTML+rel(r)+num(kk,{dec}));
+    const li=val(inner); // p x + q
+    let set;
+    if(r==='le'||r==='<'){
+      const R=rel(r);
+      let P=li.p,Q=li.q,lo=kk.neg(),hi=kk;
+      st.push(num(lo,{dec})+R+render(inner)+R+num(hi,{dec}));
+      const M=denLcm(P,Q,lo,hi);
+      if(M>1){P=P.mul(M);Q=Q.mul(M);lo=lo.mul(M);hi=hi.mul(M);st.push('同乘以 '+M+'：'+num(lo)+R+renderL(new L(P,Q))+R+num(hi))}
+      if(!Q.isZero()){lo=lo.sub(Q);hi=hi.sub(Q);st.push(num(lo)+R+renderL(new L(P,0))+R+num(hi))}
+      let x1=lo.div(P),x2=hi.div(P); if(P.sign<0)[x1,x2]=[x2,x1];
+      const fin=num(x1)+R+X+R+num(x2); if(st[st.length-1]!==fin)st.push(fin);
+      set={lo:x1,loOpen:r==='<',hi:x2,hiOpen:r==='<'};
+    }else{
+      const s1=solve(inner,[T(kk,null,dec)],r,dec), s2=solve(inner,[T(kk.neg(),null,dec)],flip(r),dec);
+      if(!s1.ok||!s2.ok)return null;
+      st.push(render(inner)+rel(r)+num(kk,{dec})+' 或 '+render(inner)+rel(flip(r))+num(kk.neg(),{dec}));
+      const n=Math.min(s1.steps.length,s2.steps.length);
+      for(let i=0;i<n;i++){ if(s1.steps[i]!==st[st.length-1]) st.push(s1.steps[i]+' 或 '+s2.steps[i].replace(/^同乘以 \d+：/,'')); }
+      const A=s1.set, B=s2.set;
+      set={union: A.hi?[A,B]:[B,A]};
+    }
+    if(!dec&&kk.d>1&&lvl===3&&li.p.d>1&&denLcm(li.p,li.q,kk)>36)return null;
+    return{html,ans:join(st)+nlSVG(set,{mixed:false,dec}),set,line:true,_f:x=>CMP[r](li.at(x).abs().add(extra),kk.add(extra))};
+  });
+}
+function genMixed(){
+  const g=pick([genBasic,genBracket,genFrac,genDec,genCombined,genAbs]);
+  const q=g(); if(g===genAbs){q.line=false} return q;
+}
+
+const UNITS=[
+  {id:'basic',name:'基本型（不等式性質）',n:6,cols:3,inst:'解下列各一元一次不等式：',gen:genBasic},
+  {id:'bracket',name:'括號型',n:4,cols:2,inst:'解下列各一元一次不等式：',gen:genBracket},
+  {id:'frac',name:'分數型',n:4,cols:2,inst:'解下列各一元一次不等式：',gen:genFrac},
+  {id:'dec',name:'小數型（分數、小數混合）',n:4,cols:2,inst:'解下列各一元一次不等式：',gen:genDec},
+  {id:'comb',name:'合併形式（a<b<c、聯立）',n:4,cols:2,inst:'解下列各一元一次不等式：',gen:genCombined},
+  {id:'gdraw',name:'圖示法：畫數線',n:4,cols:2,inst:'請在數線上圖示下列不等式的範圍：',gen:genGraphDraw},
+  {id:'gread',name:'圖示法：讀數線',n:4,cols:2,inst:'請依數線上的圖示寫出 x 的範圍：',gen:genGraphRead},
+  {id:'sgraph',name:'解不等式並圖示',n:4,cols:2,inst:'試解下列不等式，並在數線上標示解的範圍：',gen:genSolveGraph},
+  {id:'abs',name:'絕對值不等式',n:4,cols:2,inst:'解下列絕對值不等式，並在數線上表示出來：',gen:genAbs},
+  {id:'mixed',name:'綜合練習',n:0,cols:2,inst:'解下列各不等式：',gen:genMixed},
+];
+
+function build(counts,opt){
+  CFG={lvl:opt.lvl,types:opt.types.length?opt.types:['int']};
+  const parts=[];let no=0;
+  const zh='一二三四五六七八九十';let si=0;
+  for(const u of UNITS){
+    const n=counts[u.id]||0; if(!n)continue;
+    const cols=opt.perRow==='auto'?u.cols:+opt.perRow;
+    const qs=[];
+    for(let i=0;i<n;i++){const q=u.gen();q.no=++no;qs.push(q)}
+    parts.push(`<div class="sec">${zh[si++]}、${u.inst}</div><div class="grid" style="grid-template-columns:repeat(${cols},1fr)">`+
+      qs.map(q=>{
+        let h=`<div class="q"><div class="qt"><span class="no">(${q.no})</span><span class="ex">${q.html}</span></div>`;
+        if(!q.noWork)h+=`<div class="work" style="height:${q.nlOnly?4:opt.work}mm"></div>`;
+        if(q.line)h+=`<div class="stu-line">${nlSVG(null,{blank:true})}</div>`;
+        h+=`<div class="ans">${q.ans}</div></div>`;
+        return h;
+      }).join('')+'</div>');
+  }
+  return parts;
+}
+
+if(typeof document!=='undefined'){
+  const $=id=>document.getElementById(id);
+  const uw=$('units');
+  uw.innerHTML=UNITS.map(u=>`<label>${u.name} <input type="number" min="0" max="30" value="${u.n}" data-u="${u.id}"></label>`).join('');
+  function generate(){
+    const counts={};uw.querySelectorAll('input').forEach(i=>counts[i.dataset.u]=+i.value||0);
+    const types=[['tInt','int'],['tFrac','frac'],['tDec','dec']].filter(([id])=>$(id).checked).map(x=>x[1]);
+    const opt={lvl:+$('diff').value,types,perRow:$('perRow').value,work:$('work').value};
+    const parts=build(counts,opt);
+    const diffName={1:'基礎',2:'進階',3:'挑戰'}[opt.lvl];
+    const tn=types.map(t=>({int:'整數',frac:'分數',dec:'小數'})[t]).join('、')||'整數';
+    $('sheet').innerHTML=parts.length?`<div class="hd"><div><h2>一元一次不等式 計算力練習</h2><div class="sub">國一・難度：${diffName}　數的類型：${tn}　姓名：＿＿＿＿＿＿＿</div></div><div class="box">日 期：　　月　　日<br>作答時間：　　分　　秒</div></div>`+parts.join(''):'<div class="empty">請至少設定一個單元的題數</div>';
+    applyVersion();
+  }
+  function applyVersion(){
+    const t=$('version').value==='teacher';
+    document.body.classList.toggle('teacher',t);document.body.classList.toggle('student',!t);
+    document.querySelectorAll('.stu-line').forEach(e=>e.style.display=t?'none':'');
+  }
+  $('gen').onclick=generate;
+  $('print').onclick=()=>window.print();
+  $('version').onchange=applyVersion;
+  ['perRow','work','diff'].forEach(id=>$(id).onchange=generate);
+  generate();
+}
+if(typeof module!=='undefined'){module.exports={build,UNITS,F,L,val,solve,inter,CFG:()=>CFG};}
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>學習資源｜免費練習單與學習工具｜百宏文教機構</title>
-<meta name="description" content="百宏文教機構自編的免費學習資源，包含國小與國中數學練習單產生器、國中英文單字工具、青蛙虛擬解剖實驗室，以及國中會考與高中學測歷屆試題線上練習。開放家長與學生自由使用，不需註冊。">
+<meta name="description" content="百宏文教機構自編的免費學習資源，包含國小數學練習單產生器、國中數學 35 個計算力練習出題器、國中英文單字工具、青蛙虛擬解剖實驗室，以及國中會考與高中學測歷屆試題線上練習。開放家長與學生自由使用，不需註冊。">
 <link rel="canonical" href="https://www.bhcs.com.tw/ziyuan.html">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="theme-color" content="#16233A">
@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="百宏文教機構">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="學習資源｜免費練習單與學習工具｜百宏文教機構">
-<meta property="og:description" content="百宏文教機構自編的免費學習資源，包含國小與國中數學練習單產生器、國中英文單字工具、青蛙虛擬解剖實驗室，以及國中會考與高中學測歷屆試題線上練習。開放家長與學生自由使用，不需註冊。">
+<meta property="og:description" content="百宏文教機構自編的免費學習資源，包含國小數學練習單產生器、國中數學 35 個計算力練習出題器、國中英文單字工具、青蛙虛擬解剖實驗室，以及國中會考與高中學測歷屆試題線上練習。開放家長與學生自由使用，不需註冊。">
 <meta property="og:url" content="https://www.bhcs.com.tw/ziyuan.html">
 <meta property="og:image" content="https://www.bhcs.com.tw/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -25,9 +25,19 @@
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="assets/favicon.png">
 <style>
-/* 學習資源卡片：緊湊版（僅此頁） */
+/* ===== 學習資源頁（僅此頁） ===== */
 .res-wrap.prose{max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box}
-.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin:0 0 30px}
+.res-wrap .lead{color:#5A6474;max-width:72ch}
+.res-nav{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+.res-nav a{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #DDE3EC;border-radius:999px;background:#fff;color:#16233A;font-size:14px;text-decoration:none;line-height:1.2}
+.res-nav a span{font-size:12px;color:#6B7688;background:#F1F4F9;border-radius:999px;padding:1px 7px}
+.res-nav a:hover{border-color:#16233A;background:#F7F9FC}
+.res-sec{padding:34px 0 6px;border-top:1px solid #E8ECF2;margin-top:18px;scroll-margin-top:96px}
+.res-sec:first-of-type{border-top:0;margin-top:6px}
+.res-sec h3{display:flex;align-items:baseline;gap:10px;margin:0 0 6px;font-size:20px}
+.res-sec h3 .count{font-size:13px;font-weight:400;color:#6B7688}
+.res-sec .lead{margin:0 0 16px}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin:0 0 8px}
 .res-grid .card{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;margin:0;border:1px solid #DDE3EC;border-radius:10px;background:#fff;color:inherit;text-decoration:none;box-shadow:none;min-height:0;transform:none;transition:border-color .15s,background .15s}
 .res-grid .card:hover,.res-grid .card:focus-visible{border-color:#16233A;background:#F7F9FC;outline:none;transform:none;box-shadow:none}
 .res-grid .card:focus-visible{box-shadow:0 0 0 3px rgba(22,35,58,.25)}
@@ -37,8 +47,19 @@
 .res-grid b{display:block;font-size:15.5px;line-height:1.35;font-weight:600;color:#16233A;margin:0}
 .res-grid .desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:5px 0 0;font-size:13px;line-height:1.55;color:#5A6474}
 .res-grid .card:hover .desc,.res-grid .card:focus-visible .desc{-webkit-line-clamp:unset}
-@media (max-width:640px){.res-grid{grid-template-columns:1fr;gap:8px}.res-grid .card{padding:12px 14px}}
-@media (prefers-reduced-motion:reduce){.res-grid .card{transition:none}}
+/* 數學出題器：密集版 */
+.res-sec h4.grade{display:flex;align-items:center;gap:10px;margin:22px 0 10px;font-size:14px;font-weight:400;color:#6B7688}
+.res-sec h4.grade:first-of-type{margin-top:8px}
+.gbadge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:600;color:#16233A;background:#EEF2F8}
+.gbadge.g8{background:#EAF3EE;color:#1F5C46}.gbadge.g9a{background:#FBF1E4;color:#7A4B12}.gbadge.g9b{background:#F3ECF8;color:#5B3A7E}
+.res-grid.dense{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.res-grid.dense .card{padding:11px 14px;gap:8px;align-items:center;justify-content:space-between}
+.res-grid.dense b{font-size:14.5px;font-weight:500}
+.res-grid.dense .code{flex:0 0 auto;font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:12px;color:#6B7688;background:#F1F4F9;border-radius:5px;padding:2px 6px}
+.res-sec .more{margin:14px 0 0;font-size:14px}
+@media (max-width:640px){.res-grid{grid-template-columns:1fr;gap:8px}.res-grid .card{padding:12px 14px}.res-grid.dense{grid-template-columns:1fr 1fr;gap:6px}.res-grid.dense .card{padding:10px 12px}.res-grid.dense b{font-size:13.5px}.res-sec{padding-top:26px}.res-sec h3{font-size:18px}}
+@media (max-width:400px){.res-grid.dense{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.res-grid .card,.res-nav a{transition:none}}
 </style>
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"@id":"https://www.bhcs.com.tw/#org","name":"百宏文教機構","alternateName":["台中市私立百宏文理短期補習班","BHCS","百宏補習班"],"url":"https://www.bhcs.com.tw/","telephone":"+886-4-2232-0448","foundingDate":"2010","description":"百宏文教機構是台中市北屯區的國小、國中、高中補習班，自2010年在興安路一段深耕，提供國小安親課輔、國中會考主科與高中升學課程。","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","postalCode":"406","addressCountry":"TW"},"geo":{"@type":"GeoCoordinates","latitude":24.1685666,"longitude":120.6937145},"areaServed":[{"@type":"AdministrativeArea","name":"台中市北屯區"},{"@type":"AdministrativeArea","name":"台中市大坑"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Tuesday","opens":"13:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Wednesday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Thursday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"21:30"}],"sameAs":["https://www.facebook.com/bhteams"]}</script>
@@ -73,7 +94,6 @@
   <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></symbol>
   <symbol id="i-fraction" viewBox="0 0 24 24"><path d="M12 3.5v5M9.5 6h5M5 12h14M9.5 18h5"/></symbol>
   <symbol id="i-decimal" viewBox="0 0 24 24"><path d="M4 9v6M4 9h4v6H4M14 9v6M14 9h4M14 15h4M18 9v6"/><circle cx="11" cy="15" r="0.9" fill="currentColor"/></symbol>
-  <symbol id="i-signed" viewBox="0 0 24 24"><path d="M5 8h6M8 5v6M13 16h6M16.5 3.5l-9 17"/></symbol>
   <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h13M13 4l4 4-4 4M20 16H7M11 12l-4 4 4 4"/></symbol>
   <symbol id="i-columns" viewBox="0 0 24 24"><path d="M6 4v16M12 4v16M18 4v16M4 9h16M4 15h16"/></symbol>
   <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9.5 3h5M10 3v6L4.5 18.5A1.5 1.5 0 0 0 5.8 21h12.4a1.5 1.5 0 0 0 1.3-2.5L14 9V3"/><path d="M7.5 15h9"/></symbol>
@@ -109,11 +129,21 @@
     </div>
     <div class="res-wrap prose">
       <h2>可用的資源</h2>
-      <p>目前共 19 項，依科目分類：<a href="#res-math">國小數學</a>　·　<a href="#res-elem-science">國小自然</a>　·　<a href="#res-jh-math">國中數學</a>　·　<a href="#res-science">國中自然</a>　·　<a href="#res-english">國中英文</a>　·　<a href="#res-cap">國中會考</a>　·　<a href="#res-gsat">高中學測</a></p>
+      <p class="lead">目前共 53 項，全部免費、不需註冊。依科目分類：</p>
+      <nav class="res-nav" aria-label="資源分類">
+        <a href="#res-math">國小數學<span>5</span></a>
+        <a href="#res-elem-science">國小自然<span>1</span></a>
+        <a href="#res-jh-math">國中數學<span>35</span></a>
+        <a href="#res-science">國中自然<span>8</span></a>
+        <a href="#res-english">國中英文<span>2</span></a>
+        <a href="#res-cap">國中會考<span>1</span></a>
+        <a href="#res-gsat">高中學測<span>1</span></a>
+      </nav>
 
-      <h3 id="res-math">國小數學 · 練習單產生器</h3>
-      <p>每按一次產生一份新題目，可直接列印 A4，附教師版答案。</p>
-      <div class="cards res-grid">
+      <section class="res-sec" id="res-math">
+        <h3>國小數學 · 練習單產生器<span class="count">5 項</span></h3>
+        <p class="lead">每按一次產生一份新題目，可直接列印 A4，附教師版答案。</p>
+        <div class="cards res-grid">
         <a class="card" href="tools/factors.html">
           <svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>
           <span class="body"><span class="tag">國小五年級 · 數學</span><b>因數練習卷產生器</b><span class="desc">七種題型可自由開關與調整題數：因數配對階梯、寫出所有因數、乘法算式填空、判斷是不是因數、因數的個數、公因數與最大公因數。每按一次就換一份新題目，可直接列印成 A4。</span></span>
@@ -130,33 +160,80 @@
           <svg class="ico" aria-hidden="true"><use href="#i-swap"/></svg>
           <span class="body"><span class="tag">國小中高年級 · 數學</span><b>交換律分配律出題器</b><span class="desc">加法與乘法的好朋友湊整、交換律填空、湊整簡算，以及乘法對加減法的分配律、拆數簡算、提出公因數、除法後分配律。另有前分配律判斷題，讓學生驗證除法為什麼不能前分配。</span></span>
         </a>
-
         <a class="card" href="tools/vertical.html">
           <svg class="ico" aria-hidden="true"><use href="#i-columns"/></svg>
           <span class="body"><span class="tag">國小中高年級 · 數學</span><b>乘除法直式計算出題器</b><span class="desc">乘法與除法的直式練習：位數、小數位數、餘數有無、允不允許中間有 0 都可以調，乘法附進位小格，格子有低年級加大版。學用版空白作答、教用版紅字答案，直接列印 A4 或存 PDF。</span></span>
         </a>
-      </div>
+        </div>
+      </section>
 
-      <h3 id="res-elem-science">國小自然 · 虛擬實驗室</h3>
-      <div class="cards res-grid">
+      <section class="res-sec" id="res-elem-science">
+        <h3>國小自然 · 虛擬實驗室<span class="count">1 項</span></h3>
+        <div class="cards res-grid">
         <a class="card" href="tools/mini-lab/">
           <svg class="ico" aria-hidden="true"><use href="#i-flask"/></svg>
           <span class="body"><span class="tag">國小 · 自然</span><b>小小研究員虛擬實驗室</b><span class="desc">跟著奇奇博士，戴上護目鏡和實驗衣才能進門！七個動手實驗：做過濾器把髒水變清水、用紫甘藍汁測酸鹼、疊密度彩虹塔、看水草行光合作用冒泡泡、小蘇打加醋、肥皂乳化去油、太陽能發電。每關有小問題，全破拿「小小研究員」徽章，進度自動存在自己的瀏覽器裡。</span></span>
         </a>
-      </div>
+        </div>
+      </section>
 
-      <h3 id="res-jh-math">國中數學 · 練習單產生器</h3>
-      <p>每按一次產生一份新題目，可直接列印 A4，附教用版紅字答案。</p>
-      <div class="cards res-grid">
-        <a class="card" href="tools/signed-numbers.html">
-          <svg class="ico" aria-hidden="true"><use href="#i-signed"/></svg>
-          <span class="body"><span class="tag">國中一年級 · 數學</span><b>正負數四則運算出題器</b><span class="desc">九個單元可自由開關與調整題數：加法、減法、加減混合、乘法、除法、乘除混合、四則混合、去多重括號、計算定律。整數、分數、小數可勾選，難度分基礎、進階、挑戰三級，每個單元附符號法則提示。學用版與教用版版面一致，教用版直接顯示紅字答案。</span></span>
-        </a>
-      </div>
+      <section class="res-sec" id="res-jh-math">
+        <h3>國中數學 · 計算力練習出題器<span class="count">35 項</span></h3>
+        <p class="lead">「徹底反覆計算」系列。每個出題器都可設定難度（基礎／進階／挑戰）、數的類型（整數／分數／小數）與各單元題數，切換學用版／教用版後直接列印或存成 PDF。每按一次「重新出題」就是一份全新的練習卷。</p>
+        <h4 class="grade"><span class="gbadge g7">國一</span>9 個出題器</h4>
+        <div class="cards res-grid dense">
+          <a class="card" href="tools/math/g7-signed-numbers.html"><b>正負數四則運算</b></a>
+          <a class="card" href="tools/math/g7-exponent-laws.html"><b>指數律</b></a>
+          <a class="card" href="tools/math/g7-scientific-notation.html"><b>科學記號</b></a>
+          <a class="card" href="tools/math/g7-factors-multiples.html"><b>因數與倍數</b></a>
+          <a class="card" href="tools/math/g7-linear-equation.html"><b>一元一次式與方程式</b></a>
+          <a class="card" href="tools/math/g7-simultaneous-equations.html"><b>二元一次聯立方程式</b></a>
+          <a class="card" href="tools/math/g7-inequality.html"><b>一元一次不等式</b></a>
+          <a class="card" href="tools/math/g7-ratio.html"><b>比例</b></a>
+          <a class="card" href="tools/math/g7-function.html"><b>函數</b></a>
+        </div>
+        <h4 class="grade"><span class="gbadge g8">國二</span>6 個出題器</h4>
+        <div class="cards res-grid dense">
+          <a class="card" href="tools/math/g8-square-roots.html"><b>平方根</b></a>
+          <a class="card" href="tools/math/g8-pythagorean.html"><b>畢氏定理與兩點距離</b></a>
+          <a class="card" href="tools/math/g8-multiplication-formulas.html"><b>乘法公式</b></a>
+          <a class="card" href="tools/math/g8-polynomial-operations.html"><b>多項式四則</b></a>
+          <a class="card" href="tools/math/g8-factorization.html"><b>因式分解</b></a>
+          <a class="card" href="tools/math/g8-quadratic-arithmetic-sequence.html"><b>一元二次方程式／等差數列與級數</b></a>
+        </div>
+        <h4 class="grade"><span class="gbadge g9a">國三上</span>14 個出題器</h4>
+        <div class="cards res-grid dense">
+          <a class="card" href="tools/math/g9-1-2-parallel-proportional.html"><b>平行線截比例線段性質</b><span class="code">1-2</span></a>
+          <a class="card" href="tools/math/g9-1-2-parallel-proportional-application.html"><b>平行線截比例線段性質的應用</b><span class="code">1-2</span></a>
+          <a class="card" href="tools/math/g9-1-3-similar-triangles.html"><b>相似三角形判別性質</b><span class="code">1-3</span></a>
+          <a class="card" href="tools/math/g9-1-4-measurement.html"><b>相似三角形的應用：簡易測量</b><span class="code">1-4</span></a>
+          <a class="card" href="tools/math/g9-1-4-similar-area.html"><b>相似三角形面積與邊長關係</b><span class="code">1-4</span></a>
+          <a class="card" href="tools/math/g9-1-4-trig-ratio.html"><b>相似直角三角形與三角比</b><span class="code">1-4</span></a>
+          <a class="card" href="tools/math/g9-2-1-sector-segment.html"><b>扇形與弓形的周長與面積</b><span class="code">2-1</span></a>
+          <a class="card" href="tools/math/g9-2-1-tangent.html"><b>圓的切線段性質</b><span class="code">2-1</span></a>
+          <a class="card" href="tools/math/g9-2-1-chord.html"><b>弦與弦心距</b><span class="code">2-1</span></a>
+          <a class="card" href="tools/math/g9-2-2-central-angle-arc.html"><b>圓心角與弧</b><span class="code">2-2</span></a>
+          <a class="card" href="tools/math/g9-2-2-inscribed-angle-arc.html"><b>圓周角與弧</b><span class="code">2-2</span></a>
+          <a class="card" href="tools/math/g9-3-2-circumcenter.html"><b>三角形的外心</b><span class="code">3-2</span></a>
+          <a class="card" href="tools/math/g9-3-2-incenter.html"><b>三角形的內心</b><span class="code">3-2</span></a>
+          <a class="card" href="tools/math/g9-3-2-centroid.html"><b>三角形的重心</b><span class="code">3-2</span></a>
+        </div>
+        <h4 class="grade"><span class="gbadge g9b">國三下</span>6 個出題器</h4>
+        <div class="cards res-grid dense">
+          <a class="card" href="tools/math/g9b-1-1-quadratic-function.html"><b>二次函數的圖形與最大值、最小值</b><span class="code">1-1</span></a>
+          <a class="card" href="tools/math/g9b-2-1-quartiles.html"><b>資料的分析：四分位數</b><span class="code">2-1</span></a>
+          <a class="card" href="tools/math/g9b-2-1-boxplot.html"><b>盒狀圖、全距與四分位距</b><span class="code">2-1</span></a>
+          <a class="card" href="tools/math/g9b-2-2-probability.html"><b>認識機率</b><span class="code">2-2</span></a>
+          <a class="card" href="tools/math/g9b-2-2-tree-diagram.html"><b>機率：樹狀圖</b><span class="code">2-2</span></a>
+          <a class="card" href="tools/math/g9b-3-1-solids.html"><b>空間中的立體圖形</b><span class="code">3-1</span></a>
+        </div>
+        <p class="more"><a href="tools/math/index.html">開啟數學出題器總覽頁 →</a></p>
+      </section>
 
-      <h3 id="res-science">國中自然 · 互動教材</h3>
-      <p>不用安裝、不用註冊，手機和電腦都能開。適合課前預習建立畫面感，或段考前把觀念重新走一遍。</p>
-      <div class="cards res-grid">
+      <section class="res-sec" id="res-science">
+        <h3>國中自然 · 互動教材<span class="count">8 項</span></h3>
+        <p class="lead">不用安裝、不用註冊，手機和電腦都能開。適合課前預習建立畫面感，或段考前把觀念重新走一遍。</p>
+        <div class="cards res-grid">
         <a class="card" href="tools/frog-dissection/">
           <svg class="ico" aria-hidden="true"><use href="#i-frog"/></svg>
           <span class="body"><span class="tag">國中 · 自然（生物）</span><b>青蛙虛擬解剖實驗室</b><span class="desc">七個互動課程：外部觀察、循環、呼吸、消化、泌尿生殖、神經與骨骼拼圖。跟著旁白引導選工具、劃開腹壁、辨認器官，每課附小測驗，最後有總測驗。卡住時可按「提示」。內含擬真解剖圖片，建議國中以上使用。</span></span>
@@ -189,35 +266,42 @@
           <svg class="ico" aria-hidden="true"><use href="#i-moon"/></svg>
           <span class="body"><span class="tag">國中 · 自然（地科）</span><b>月相盈虧互動教室</b><span class="desc">從北極上空看太陽、地球與月球。拖曳月球看月相怎麼變，外圈是太空中「永遠半邊亮」的月球、內圈是地球上看到的樣子，一眼看懂月相不是地球的影子。六個引導分頁涵蓋方向與時間、農曆日期，最後可以看月相猜日期。</span></span>
         </a>
-      </div>
+        </div>
+      </section>
 
-      <h3 id="res-english">國中英文</h3>
-      <div class="cards res-grid">
-        <a class="card" href="https://script.google.com/macros/s/AKfycbzFOHfIic9mrBdJEw69B5IINKacgAlr7Ivxk9p1qIHfAR-RDeQUXN8508vn85RxmoD9zw/exec" target="_blank" rel="noopener">
+      <section class="res-sec" id="res-english">
+        <h3>國中英文<span class="count">2 項</span></h3>
+        <div class="cards res-grid">
+        <a class="card" href="https://script.google.com/macros/s/AKfycbzFOHfIic9mrBdJEw69B5IINKacgAlr7Ivxk9p1qIHfAR-RDeQUXN8508vn85RxmoD9zw/exec">
           <svg class="ico" aria-hidden="true"><use href="#i-headset"/></svg>
           <span class="body"><span class="tag">國中 · 英文</span><b>全民英檢初級練習（聽說讀寫完整模擬）</b><span class="desc">四科各 10 回，比照初級題型：聽力 30 題含看圖辨義與短文聽解、閱讀 30 題、寫作 15 題單句加約 50 字看圖寫作、口說複誦朗讀與回答問題。線上作答自動初評，成績送老師後台覆核，交卷後可憑查詢碼查看老師批改結果；口說需允許麥克風，建議用 Chrome 或 Edge。本平台為自編練習教材，非 GEPT 官方測驗。</span></span>
         </a>
-        <a class="card" href="https://yenyu-bot.github.io/vocabmaster/" rel="noopener">
+        <a class="card" href="https://yenyu-bot.github.io/vocabmaster/">
           <svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>
           <span class="body"><span class="tag">國中 · 英文</span><b>VocabMaster 單字練習</b><span class="desc">依間隔重複原則安排複習時程的單字工具，讓同一個字在不同時間點反覆出現，而不是考前一次背完。可依課程分類練習。</span></span>
         </a>
-      </div>
+        </div>
+      </section>
 
-      <h3 id="res-cap">國中會考</h3>
-      <div class="cards res-grid">
-        <a class="card" href="https://script.google.com/macros/s/AKfycby3GGiT4EzfyhmUBirNQSTrM3Cgnj24pSm21iqfDgD4AbuJ4J0ZhE2M0miKjVPl7ugBwg/exec" target="_blank" rel="noopener">
+      <section class="res-sec" id="res-cap">
+        <h3>國中會考<span class="count">1 項</span></h3>
+        <div class="cards res-grid">
+        <a class="card" href="https://script.google.com/macros/s/AKfycby3GGiT4EzfyhmUBirNQSTrM3Cgnj24pSm21iqfDgD4AbuJ4J0ZhE2M0miKjVPl7ugBwg/exec">
           <svg class="ico" aria-hidden="true"><use href="#i-clipboard"/></svg>
           <span class="body"><span class="tag">國中 · 會考</span><b>國中教育會考歷屆試題練習（110–115 年）</b><span class="desc">近六年會考歷屆試題線上作答練習，答完即時看結果。適合九年級總複習，也適合八年級提前熟悉會考題型與難度。建議搭配紙本錯題本使用：線上找出弱點，紙本反覆訂正。</span></span>
         </a>
-      </div>
+        </div>
+      </section>
 
-      <h3 id="res-gsat">高中學測</h3>
-      <div class="cards res-grid">
-        <a class="card" href="https://script.google.com/macros/s/AKfycbxi11grwSKRsF7KwjoCRkE6b6t05K1n1gWcU2Pvyt3-AquVmLezYRqY31MEI_3V3wzx/exec" target="_blank" rel="noopener">
+      <section class="res-sec" id="res-gsat">
+        <h3>高中學測<span class="count">1 項</span></h3>
+        <div class="cards res-grid">
+        <a class="card" href="https://script.google.com/macros/s/AKfycbxi11grwSKRsF7KwjoCRkE6b6t05K1n1gWcU2Pvyt3-AquVmLezYRqY31MEI_3V3wzx/exec">
           <svg class="ico" aria-hidden="true"><use href="#i-cap"/></svg>
           <span class="body"><span class="tag">高中 · 學測</span><b>高中學測歷屆試題練習（111–115 年）</b><span class="desc">近五年學測國文、英文、數學、自然、社會歷屆試題線上作答練習，答完即時看結果。適合高三總複習，也適合高一高二提前熟悉學測題型與難度。建議搭配紙本錯題本使用：線上找出弱點，紙本反覆訂正。</span></span>
         </a>
-      </div>
+        </div>
+      </section>
 
     </div>
     <div class="wrap-narrow prose">

@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>百宏文教｜扇形與弓形的周長與面積 出題器</title>
+<meta name="description" content="國中數學國三上「扇形與弓形的周長與面積」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g9-2-1-sector-segment.html">
+<meta property="og:title" content="百宏文教｜扇形與弓形的周長與面積 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g9-2-1-sector-segment.html">
+<meta property="og:type" content="website">
+
+<style id="bhcs-tailwind">/* 百宏文教：離線版 Tailwind 工具類別子集（取代 cdn.tailwindcss.com） */
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+html{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4;font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+body{margin:0;line-height:inherit}
+hr{height:0;color:inherit;border-top-width:1px}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+a{color:inherit;text-decoration:inherit}
+b,strong{font-weight:bolder}
+code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1em}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sub{bottom:-.25em}sup{top:-.5em}
+table{text-indent:0;border-color:inherit;border-collapse:collapse}
+button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}
+button,select{text-transform:none}
+button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}
+:-moz-focusring{outline:auto}
+progress{vertical-align:baseline}
+::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}
+[type=search]{-webkit-appearance:textfield;outline-offset:-2px}
+summary{display:list-item}
+blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}
+fieldset{margin:0;padding:0}legend{padding:0}
+ol,ul,menu{list-style:none;margin:0;padding:0}
+textarea{resize:vertical}
+input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}
+button,[role=button]{cursor:pointer}
+:disabled{cursor:default}
+img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+img,video{max-width:100%;height:auto}
+[hidden]{display:none}
+.-mb-3\.5{margin-bottom:-0.875rem}
+.-mb-4{margin-bottom:-1rem}
+.-mx-3\.5{margin-left:-0.875rem;margin-right:-0.875rem}
+.-mx-4{margin-left:-1rem;margin-right:-1rem}
+.absolute{position:absolute}
+.active\:scale-95:active{--tw-s:0.95;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.bg-amber-50{background-color:#fffbeb}
+.bg-amber-50\/80{background-color:rgb(255 251 235 / 0.8)}
+.bg-amber-500{background-color:#f59e0b}
+.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}
+.bg-amber-600{background-color:#d97706}
+.bg-blue-50{background-color:#eff6ff}
+.bg-blue-600{background-color:#2563eb}
+.bg-blue-700{background-color:#1d4ed8}
+.bg-cyan-50{background-color:#ecfeff}
+.bg-cyan-50\/70{background-color:rgb(236 254 255 / 0.7)}
+.bg-cyan-500{background-color:#06b6d4}
+.bg-cyan-500\/20{background-color:rgb(6 182 212 / 0.2)}
+.bg-cyan-600{background-color:#0891b2}
+.bg-cyan-700{background-color:#0e7490}
+.bg-emerald-100{background-color:#d1fae5}
+.bg-emerald-50{background-color:#ecfdf5}
+.bg-emerald-600{background-color:#059669}
+.bg-emerald-700{background-color:#047857}
+.bg-gradient-to-tr{background-image:linear-gradient(to top right,var(--tw-from,transparent),var(--tw-to,transparent))}
+.bg-indigo-50{background-color:#eef2ff}
+.bg-indigo-50\/70{background-color:rgb(238 242 255 / 0.7)}
+.bg-indigo-600{background-color:#4f46e5}
+.bg-orange-600{background-color:#ea580c}
+.bg-purple-50{background-color:#faf5ff}
+.bg-purple-600{background-color:#9333ea}
+.bg-rose-100{background-color:#ffe4e6}
+.bg-rose-50{background-color:#fff1f2}
+.bg-rose-600{background-color:#e11d48}
+.bg-sky-500\/20{background-color:rgb(14 165 233 / 0.2)}
+.bg-sky-600{background-color:#0284c7}
+.bg-slate-100{background-color:#f1f5f9}
+.bg-slate-200{background-color:#e2e8f0}
+.bg-slate-200\/70{background-color:rgb(226 232 240 / 0.7)}
+.bg-slate-50{background-color:#f8fafc}
+.bg-slate-50\/50{background-color:rgb(248 250 252 / 0.5)}
+.bg-slate-50\/60{background-color:rgb(248 250 252 / 0.6)}
+.bg-slate-50\/80{background-color:rgb(248 250 252 / 0.8)}
+.bg-slate-700{background-color:#334155}
+.bg-slate-800{background-color:#1e293b}
+.bg-slate-900{background-color:#0f172a}
+.bg-teal-50{background-color:#f0fdfa}
+.bg-teal-500{background-color:#14b8a6}
+.bg-teal-500\/20{background-color:rgb(20 184 166 / 0.2)}
+.bg-teal-600{background-color:#0d9488}
+.bg-transparent{background-color:transparent}
+.bg-violet-50{background-color:#f5f3ff}
+.bg-violet-600{background-color:#7c3aed}
+.bg-violet-700{background-color:#6d28d9}
+.bg-white{background-color:#ffffff}
+.block{display:block}
+.border{border-width:1px}
+.border-2{border-width:2px}
+.border-amber-200{border-color:#fde68a}
+.border-amber-400{border-color:#fbbf24}
+.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}
+.border-amber-600{border-color:#d97706}
+.border-b{border-bottom-width:1px}
+.border-b-2{border-bottom-width:2px}
+.border-blue-200{border-color:#bfdbfe}
+.border-blue-600{border-color:#2563eb}
+.border-collapse{border-collapse:collapse}
+.border-cyan-100{border-color:#cffafe}
+.border-cyan-200{border-color:#a5f3fc}
+.border-cyan-400{border-color:#22d3ee}
+.border-cyan-500\/40{border-color:rgb(6 182 212 / 0.4)}
+.border-cyan-600{border-color:#0891b2}
+.border-cyan-700{border-color:#0e7490}
+.border-dashed{border-style:dashed}
+.border-emerald-200{border-color:#a7f3d0}
+.border-emerald-400{border-color:#34d399}
+.border-emerald-500{border-color:#10b981}
+.border-emerald-600{border-color:#059669}
+.border-indigo-100{border-color:#e0e7ff}
+.border-indigo-200{border-color:#c7d2fe}
+.border-indigo-300{border-color:#a5b4fc}
+.border-indigo-500{border-color:#6366f1}
+.border-indigo-600{border-color:#4f46e5}
+.border-l-2{border-left-width:2px}
+.border-orange-600{border-color:#ea580c}
+.border-purple-200{border-color:#e9d5ff}
+.border-purple-500{border-color:#a855f7}
+.border-purple-600{border-color:#9333ea}
+.border-rose-300{border-color:#fda4af}
+.border-rose-500{border-color:#f43f5e}
+.border-rose-600{border-color:#e11d48}
+.border-sky-500{border-color:#0ea5e9}
+.border-sky-500\/40{border-color:rgb(14 165 233 / 0.4)}
+.border-slate-100{border-color:#f1f5f9}
+.border-slate-100\/80{border-color:rgb(241 245 249 / 0.8)}
+.border-slate-200{border-color:#e2e8f0}
+.border-slate-200\/70{border-color:rgb(226 232 240 / 0.7)}
+.border-slate-200\/80{border-color:rgb(226 232 240 / 0.8)}
+.border-slate-300{border-color:#cbd5e1}
+.border-slate-400{border-color:#94a3b8}
+.border-slate-600{border-color:#475569}
+.border-slate-700{border-color:#334155}
+.border-slate-800{border-color:#1e293b}
+.border-slate-900{border-color:#0f172a}
+.border-t{border-top-width:1px}
+.border-teal-200{border-color:#99f6e4}
+.border-teal-400{border-color:#2dd4bf}
+.border-teal-500{border-color:#14b8a6}
+.border-teal-500\/40{border-color:rgb(20 184 166 / 0.4)}
+.border-teal-600{border-color:#0d9488}
+.border-violet-200{border-color:#ddd6fe}
+.border-violet-500{border-color:#8b5cf6}
+.border-violet-600{border-color:#7c3aed}
+.bottom-5{bottom:1.25rem}
+.col-span-full{grid-column:1 / -1}
+.cursor-pointer{cursor:pointer}
+.divide-slate-800>:not([hidden])~:not([hidden]){border-color:#1e293b}
+.divide-x>:not([hidden])~:not([hidden]){border-left-width:1px}
+.duration-300{transition-duration:300ms}
+.fixed{position:fixed}
+.flex{display:flex}
+.flex-1{flex:1 1 0%}
+.flex-col{flex-direction:column}
+.flex-grow{flex-grow:1}
+.flex-wrap{flex-wrap:wrap}
+.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+.focus\:ring-1:focus{--tw-ring-shadow:0 0 0 1px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-2:focus{--tw-ring-shadow:0 0 0 2px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-cyan-500:focus{--tw-ring-color:#06b6d4}
+.focus\:ring-indigo-500:focus{--tw-ring-color:#6366f1}
+.focus\:ring-teal-500:focus{--tw-ring-color:#14b8a6}
+.font-black{font-weight:900}
+.font-bold{font-weight:700}
+.font-extrabold{font-weight:800}
+.font-medium{font-weight:500}
+.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.font-sans{font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+.font-semibold{font-weight:600}
+.font-serif{font-family:ui-serif,Georgia,"Times New Roman",serif}
+.from-amber-500{--tw-from:#f59e0b}
+.from-cyan-500{--tw-from:#06b6d4}
+.from-sky-500{--tw-from:#0ea5e9}
+.from-teal-500{--tw-from:#14b8a6}
+.gap-1{gap:0.25rem}
+.gap-1\.5{gap:0.375rem}
+.gap-2{gap:0.5rem}
+.gap-2\.5{gap:0.625rem}
+.gap-3{gap:0.75rem}
+.gap-3\.5{gap:0.875rem}
+.gap-4{gap:1rem}
+.gap-5{gap:1.25rem}
+.gap-6{gap:1.5rem}
+.grid{display:grid}
+.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.group:hover .group-hover\:block{display:block}
+.h-10{height:2.5rem}
+.h-12{height:3rem}
+.h-14{height:3.5rem}
+.h-16{height:4rem}
+.h-2\.5{height:0.625rem}
+.h-20{height:5rem}
+.h-24{height:6rem}
+.h-3\.5{height:0.875rem}
+.h-4{height:1rem}
+.h-5{height:1.25rem}
+.h-6{height:1.5rem}
+.h-8{height:2rem}
+.hidden{display:none}
+.hover\:bg-amber-500:hover{background-color:#f59e0b}
+.hover\:bg-amber-600:hover{background-color:#d97706}
+.hover\:bg-amber-700:hover{background-color:#b45309}
+.hover\:bg-blue-700:hover{background-color:#1d4ed8}
+.hover\:bg-blue-800:hover{background-color:#1e40af}
+.hover\:bg-cyan-100:hover{background-color:#cffafe}
+.hover\:bg-cyan-500:hover{background-color:#06b6d4}
+.hover\:bg-cyan-800:hover{background-color:#155e75}
+.hover\:bg-emerald-500:hover{background-color:#10b981}
+.hover\:bg-emerald-700:hover{background-color:#047857}
+.hover\:bg-emerald-800:hover{background-color:#065f46}
+.hover\:bg-indigo-100:hover{background-color:#e0e7ff}
+.hover\:bg-indigo-500:hover{background-color:#6366f1}
+.hover\:bg-indigo-600:hover{background-color:#4f46e5}
+.hover\:bg-indigo-700:hover{background-color:#4338ca}
+.hover\:bg-orange-700:hover{background-color:#c2410c}
+.hover\:bg-purple-700:hover{background-color:#7e22ce}
+.hover\:bg-rose-100:hover{background-color:#ffe4e6}
+.hover\:bg-rose-200:hover{background-color:#fecdd3}
+.hover\:bg-rose-700:hover{background-color:#be123c}
+.hover\:bg-sky-600:hover{background-color:#0284c7}
+.hover\:bg-sky-700:hover{background-color:#0369a1}
+.hover\:bg-slate-100:hover{background-color:#f1f5f9}
+.hover\:bg-slate-200:hover{background-color:#e2e8f0}
+.hover\:bg-slate-300:hover{background-color:#cbd5e1}
+.hover\:bg-slate-50:hover{background-color:#f8fafc}
+.hover\:bg-slate-600:hover{background-color:#475569}
+.hover\:bg-slate-700:hover{background-color:#334155}
+.hover\:bg-slate-900:hover{background-color:#0f172a}
+.hover\:bg-teal-100:hover{background-color:#ccfbf1}
+.hover\:bg-teal-500:hover{background-color:#14b8a6}
+.hover\:bg-teal-700:hover{background-color:#0f766e}
+.hover\:bg-violet-100:hover{background-color:#ede9fe}
+.hover\:bg-violet-700:hover{background-color:#6d28d9}
+.hover\:bg-violet-800:hover{background-color:#5b21b6}
+.hover\:border-cyan-300:hover{border-color:#67e8f9}
+.hover\:border-indigo-300:hover{border-color:#a5b4fc}
+.hover\:border-teal-300:hover{border-color:#5eead4}
+.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.hover\:text-slate-900:hover{color:#0f172a}
+.hover\:text-white:hover{color:#ffffff}
+.inline-block{display:inline-block}
+.inline-flex{display:inline-flex}
+.italic{font-style:italic}
+.items-center{align-items:center}
+.items-end{align-items:flex-end}
+.items-start{align-items:flex-start}
+.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}
+.justify-end{justify-content:flex-end}
+.leading-relaxed{line-height:1.625}
+.leading-tight{line-height:1.25}
+@media (min-width:1024px){.lg\:flex-row{flex-direction:row}}
+@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:items-center{align-items:center}}
+@media (min-width:1024px){.lg\:p-8{padding:2rem}}
+.max-h-28{max-height:7rem}
+.max-h-36{max-height:9rem}
+.max-w-7xl{max-width:80rem}
+.max-w-\[150px\]{max-width:150px}
+.max-w-\[170px\]{max-width:170px}
+.max-w-\[180px\]{max-width:180px}
+.max-w-\[210px\]{max-width:210px}
+.max-w-\[220px\]{max-width:220px}
+.max-w-\[240px\]{max-width:240px}
+.max-w-\[310px\]{max-width:310px}
+.mb-0\.5{margin-bottom:0.125rem}
+.mb-2{margin-bottom:0.5rem}
+.mb-2\.5{margin-bottom:0.625rem}
+.mb-3{margin-bottom:0.75rem}
+.mb-4{margin-bottom:1rem}
+.mb-5{margin-bottom:1.25rem}
+.mb-6{margin-bottom:1.5rem}
+@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.min-h-screen{min-height:100vh}
+.min-w-\[70px\]{min-width:70px}
+.min-w-\[90px\]{min-width:90px}
+.mr-1{margin-right:0.25rem}
+.mt-0\.5{margin-top:0.125rem}
+.mt-1{margin-top:0.25rem}
+.mt-2{margin-top:0.5rem}
+.mt-2\.5{margin-top:0.625rem}
+.mt-3{margin-top:0.75rem}
+.mt-4{margin-top:1rem}
+.mt-8{margin-top:2rem}
+.mx-auto{margin-left:auto;margin-right:auto}
+.my-1{margin-top:0.25rem;margin-bottom:0.25rem}
+.my-1\.5{margin-top:0.375rem;margin-bottom:0.375rem}
+.my-2{margin-top:0.5rem;margin-bottom:0.5rem}
+.opacity-0{opacity:0.0}
+.outline-none{outline:2px solid transparent;outline-offset:2px}
+.overflow-hidden{overflow:hidden}
+.overflow-visible{overflow:visible}
+.p-1{padding:0.25rem}
+.p-1\.5{padding:0.375rem}
+.p-2{padding:0.5rem}
+.p-2\.5{padding:0.625rem}
+.p-3{padding:0.75rem}
+.p-3\.5{padding:0.875rem}
+.p-4{padding:1rem}
+.p-5{padding:1.25rem}
+.p-6{padding:1.5rem}
+.pb-1\.5{padding-bottom:0.375rem}
+.pb-2{padding-bottom:0.5rem}
+.pb-3{padding-bottom:0.75rem}
+.pb-4{padding-bottom:1rem}
+.pl-1{padding-left:0.25rem}
+.pl-3{padding-left:0.75rem}
+.pl-4{padding-left:1rem}
+.pointer-events-none{pointer-events:none}
+.pr-2{padding-right:0.5rem}
+.pt-2{padding-top:0.5rem}
+.pt-2\.5{padding-top:0.625rem}
+.pt-3{padding-top:0.75rem}
+.pt-4{padding-top:1rem}
+.px-1{padding-left:0.25rem;padding-right:0.25rem}
+.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}
+.px-2{padding-left:0.5rem;padding-right:0.5rem}
+.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}
+.px-3{padding-left:0.75rem;padding-right:0.75rem}
+.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}
+.px-4{padding-left:1rem;padding-right:1rem}
+.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}
+.py-1{padding-top:0.25rem;padding-bottom:0.25rem}
+.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}
+.py-16{padding-top:4rem;padding-bottom:4rem}
+.py-2{padding-top:0.5rem;padding-bottom:0.5rem}
+.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}
+.py-3{padding-top:0.75rem;padding-bottom:0.75rem}
+.py-5{padding-top:1.25rem;padding-bottom:1.25rem}
+.relative{position:relative}
+.right-0{right:0rem}
+.right-5{right:1.25rem}
+.rounded{border-radius:0.25rem}
+.rounded-2xl{border-radius:1rem}
+.rounded-b-xl{border-bottom-left-radius:0.75rem;border-bottom-right-radius:0.75rem}
+.rounded-full{border-radius:9999px}
+.rounded-lg{border-radius:0.5rem}
+.rounded-md{border-radius:0.375rem}
+.rounded-xl{border-radius:0.75rem}
+.select-none{user-select:none}
+.selection\:bg-cyan-600::selection{background-color:#0891b2}
+.selection\:bg-indigo-600::selection{background-color:#4f46e5}
+.selection\:bg-teal-600::selection{background-color:#0d9488}
+.selection\:text-white::selection{color:#ffffff}
+.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0/.25);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-amber-100{--tw-shadow-color:#fef3c7}
+.shadow-blue-100{--tw-shadow-color:#dbeafe}
+.shadow-cyan-100{--tw-shadow-color:#cffafe}
+.shadow-emerald-100{--tw-shadow-color:#d1fae5}
+.shadow-indigo-100{--tw-shadow-color:#e0e7ff}
+.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-orange-100{--tw-shadow-color:#ffedd5}
+.shadow-purple-100{--tw-shadow-color:#f3e8ff}
+.shadow-rose-100{--tw-shadow-color:#ffe4e6}
+.shadow-sky-100{--tw-shadow-color:#e0f2fe}
+.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-teal-100{--tw-shadow-color:#ccfbf1}
+.shadow-violet-100{--tw-shadow-color:#ede9fe}
+.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0/.1),0 8px 10px -6px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-xs{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shrink-0{flex-shrink:0}
+@media (min-width:640px){.sm\:flex-row{flex-direction:row}}
+@media (min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:items-end{align-items:flex-end}}
+@media (min-width:640px){.sm\:max-w-\[220px\]{max-width:220px}}
+@media (min-width:640px){.sm\:p-10{padding:2.5rem}}
+@media (min-width:640px){.sm\:p-6{padding:1.5rem}}
+@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}
+@media (min-width:640px){.sm\:text-2xl{font-size:1.5rem;line-height:2rem}}
+@media (min-width:640px){.sm\:text-base{font-size:1rem;line-height:1.5rem}}
+@media (min-width:640px){.sm\:text-left{text-align:left}}
+@media (min-width:640px){.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}
+@media (min-width:640px){.sm\:w-auto{width:auto}}
+.space-x-3>:not([hidden])~:not([hidden]){margin-left:0.75rem}
+.space-y-0\.5>:not([hidden])~:not([hidden]){margin-top:0.125rem}
+.space-y-1>:not([hidden])~:not([hidden]){margin-top:0.25rem}
+.space-y-1\.5>:not([hidden])~:not([hidden]){margin-top:0.375rem}
+.space-y-5>:not([hidden])~:not([hidden]){margin-top:1.25rem}
+.sticky{position:sticky}
+.text-2xl{font-size:1.5rem;line-height:2rem}
+.text-\[10\.5px\]{font-size:10.5px}
+.text-\[10px\]{font-size:10px}
+.text-\[11px\]{font-size:11px}
+.text-amber-300{color:#fcd34d}
+.text-amber-700{color:#b45309}
+.text-amber-900{color:#78350f}
+.text-base{font-size:1rem;line-height:1.5rem}
+.text-blue-700{color:#1d4ed8}
+.text-blue-800{color:#1e40af}
+.text-center{text-align:center}
+.text-cyan-300{color:#67e8f9}
+.text-cyan-600{color:#0891b2}
+.text-cyan-700{color:#0e7490}
+.text-cyan-800{color:#155e75}
+.text-cyan-900{color:#164e63}
+.text-cyan-950{color:#083344}
+.text-emerald-600{color:#059669}
+.text-emerald-700{color:#047857}
+.text-emerald-800{color:#065f46}
+.text-indigo-600{color:#4f46e5}
+.text-indigo-700{color:#4338ca}
+.text-indigo-800{color:#3730a3}
+.text-indigo-900{color:#312e81}
+.text-indigo-950{color:#1e1b4b}
+.text-left{text-align:left}
+.text-lg{font-size:1.125rem;line-height:1.75rem}
+.text-orange-700{color:#c2410c}
+.text-purple-700{color:#7e22ce}
+.text-purple-800{color:#6b21a8}
+.text-right{text-align:right}
+.text-rose-600{color:#e11d48}
+.text-rose-700{color:#be123c}
+.text-rose-800{color:#9f1239}
+.text-sky-300{color:#7dd3fc}
+.text-sky-600{color:#0284c7}
+.text-sky-700{color:#0369a1}
+.text-slate-200{color:#e2e8f0}
+.text-slate-300{color:#cbd5e1}
+.text-slate-400{color:#94a3b8}
+.text-slate-500{color:#64748b}
+.text-slate-600{color:#475569}
+.text-slate-700{color:#334155}
+.text-slate-800{color:#1e293b}
+.text-slate-900{color:#0f172a}
+.text-sm{font-size:0.875rem;line-height:1.25rem}
+.text-teal-300{color:#5eead4}
+.text-teal-600{color:#0d9488}
+.text-teal-700{color:#0f766e}
+.text-teal-800{color:#115e59}
+.text-teal-900{color:#134e4a}
+.text-teal-950{color:#042f2e}
+.text-violet-600{color:#7c3aed}
+.text-violet-700{color:#6d28d9}
+.text-white{color:#ffffff}
+.text-xl{font-size:1.25rem;line-height:1.75rem}
+.text-xs{font-size:0.75rem;line-height:1rem}
+.to-blue-600{--tw-to:#2563eb}
+.to-emerald-600{--tw-to:#059669}
+.to-indigo-600{--tw-to:#4f46e5}
+.to-rose-600{--tw-to:#e11d48}
+.top-0{top:0rem}
+.tracking-tight{letter-spacing:-.025em}
+.tracking-wider{letter-spacing:.05em}
+.tracking-widest{letter-spacing:.1em}
+.transform{transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.translate-y-20{--tw-ty:5rem;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uppercase{text-transform:uppercase}
+.w-10{width:2.5rem}
+.w-12{width:3rem}
+.w-2\.5{width:0.625rem}
+.w-3\.5{width:0.875rem}
+.w-5{width:1.25rem}
+.w-6{width:1.5rem}
+.w-64{width:16rem}
+.w-8{width:2rem}
+.w-80{width:20rem}
+.w-9{width:2.25rem}
+.w-full{width:100%}
+@media (min-width:1280px){.xl\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.z-50{z-index:50}
+</style>
+  <style>
+    /* 線段頂部橫線標記 */
+    .overline {
+      text-decoration: overline;
+      text-decoration-thickness: 1.5px;
+      letter-spacing: 1px;
+      padding: 0 1px;
+    }
+
+    /* 圓弧頂部圓弧標記 */
+    .arc-text {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      line-height: 1;
+      padding: 0 2px;
+    }
+    .arc-symbol {
+      font-size: 13px;
+      line-height: 8px;
+      margin-bottom: 1px;
+      font-family: serif;
+    }
+
+    /* 純 CSS 垂直分數排版 (絕無跑版與不當符號) */
+    .math-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 0.25rem;
+      font-size: 0.95em;
+      line-height: 1.1;
+    }
+    .math-num {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 2px;
+    }
+    .math-den {
+      padding-top: 2px;
+    }
+
+    /* 手寫演算草稿底紋 */
+    .scratch-pad {
+      background-color: #fafbfc;
+      background-image: radial-gradient(#d1d5db 0.75px, transparent 0.75px);
+      background-size: 10px 10px;
+    }
+
+    /* 列印專屬版面設定 */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .print-card {
+        border: 1px solid #cbd5e1 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-shadow: none !important;
+      }
+      .print-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+      .print-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .print-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+      .print-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+    }
+  </style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif!important;background:var(--bhcs-bg)!important}
+header.no-print{background:var(--bhcs-green2)!important;border-bottom:4px solid var(--bhcs-mint)!important;box-shadow:0 5px 16px #173e3412!important}
+header.no-print>div:first-child h1{color:#fff!important}
+header.no-print>div:first-child h1::before{content:"百宏文教｜";color:var(--bhcs-mint)}
+header.no-print>div:first-child p{color:#c8e8df!important}
+header.no-print>div:first-child>div:first-child>div:first-child{background:var(--bhcs-mint)!important;color:var(--bhcs-green2)!important;box-shadow:none!important}
+header.no-print>div:first-child button{background:#fff!important;color:var(--bhcs-green2)!important;border:1px solid #9ad9c6!important;box-shadow:none!important;font-weight:800!important}
+header.no-print>div:first-child button:hover{background:var(--bhcs-soft)!important}
+header.no-print>div:first-child button:first-child{background:var(--bhcs-mint)!important}
+header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!important;border-top:none!important}
+.bg-teal-600,.bg-indigo-600,.bg-blue-600,.bg-emerald-600,.bg-cyan-700,.bg-violet-600,.bg-sky-600,.bg-teal-500,.bg-sky-500{background-color:var(--bhcs-green)!important}
+.hover\:bg-teal-700:hover,.hover\:bg-indigo-700:hover,.hover\:bg-blue-700:hover,.hover\:bg-emerald-700:hover,.hover\:bg-violet-700:hover,.hover\:bg-cyan-800:hover,.bg-teal-700,.bg-indigo-700,.bg-blue-700,.bg-emerald-700{background-color:var(--bhcs-green2)!important}
+.bg-amber-600{background-color:var(--bhcs-muted)!important}.hover\:bg-amber-700:hover{background-color:#4a5a56!important}
+.text-teal-600,.text-teal-700,.text-teal-800,.text-indigo-600,.text-indigo-700,.text-blue-600,.text-blue-700,.text-violet-700,.text-cyan-700{color:var(--bhcs-green)!important}
+.border-teal-500,.border-teal-600,.border-indigo-500,.border-indigo-600,.border-blue-500,.border-blue-600{border-color:var(--bhcs-green)!important}
+.bg-teal-50,.bg-indigo-50,.bg-blue-50,.bg-violet-50,.bg-cyan-50{background-color:var(--bhcs-soft)!important}
+.border-teal-200,.border-indigo-200,.border-teal-300,.border-indigo-300,.border-indigo-100,.border-teal-100{border-color:#b7d8cc!important}
+.text-indigo-900,.text-teal-900{color:var(--bhcs-green2)!important}
+.ring-teal-500,.focus\:ring-teal-500:focus,.focus\:ring-indigo-500:focus,.focus\:border-indigo-500:focus,.focus\:border-teal-500:focus{--tw-ring-color:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important}
+</style></head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans">
+
+  <!-- 頂部功能與設定面板 (列印時自動隱藏) -->
+  <header class="no-print bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-emerald-100">
+          ⭕
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">國中數學計算力特訓：扇形與弓形的周長與面積</h1>
+          <p class="text-xs text-slate-500">2-1 圓・弧長計算／扇形周長面積／圓心角逆推／60°正三角形弓形／90°等腰直角弓形</p>
+        </div>
+      </div>
+
+      <!-- 操作按鈕列 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="generateExam()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🔄</span> 重新出題
+        </button>
+        <button onclick="toggleAnswerMode()" id="btn-toggle-ans" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+          <span>👁️</span> <span id="ans-btn-text">顯示解答步驟</span>
+        </button>
+        <button onclick="toggleOnlineTest()" id="btn-online-test" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-sm font-semibold rounded-lg transition flex items-center gap-1.5">
+          <span>✍️</span> <span>線上測驗模式</span>
+        </button>
+        <button onclick="printWorksheet(false)" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🖨️</span> 列印學用版
+        </button>
+        <button onclick="printWorksheet(true)" class="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>📄</span> 列印教用版
+        </button>
+        <button onclick="exportSingleHTML()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+          <span>💾</span> 匯出獨立 HTML
+        </button>
+      </div>
+    </div>
+
+    <!-- 參數微調設定抽屜 -->
+    <div class="bg-slate-50 border-t border-slate-200 px-4 py-3 text-xs text-slate-700">
+      <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
+        
+        <!-- 全局數值與版面設定 -->
+        <div class="flex flex-wrap items-center gap-4">
+          <!-- 難易度 -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-slate-600">難易度：</span>
+            <select id="cfg-diff" onchange="generateExam()" class="bg-transparent font-medium text-slate-800 outline-none cursor-pointer">
+              <option value="easy">基礎（倍數整除・特殊角）</option>
+              <option value="medium" selected>進階（分數約分・正三角弓形）</option>
+              <option value="hard">挑戰（圓心角逆推・等腰直角弓形）</option>
+            </select>
+          </div>
+
+          <!-- 數值型態 -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-slate-600">數值表示：</span>
+            <select id="cfg-num-type" onchange="generateExam()" class="bg-transparent font-medium text-slate-800 outline-none cursor-pointer">
+              <option value="fraction" selected>最簡分數含 π 與根號</option>
+              <option value="mixed">綜合標準形式</option>
+            </select>
+          </div>
+
+          <!-- 每列題數 (1~4題) -->
+          <div class="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-md border border-slate-200 shadow-sm">
+            <span class="font-bold text-emerald-700">每列題數：</span>
+            <div class="flex items-center gap-1">
+              <button type="button" onclick="setColumns(1)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="1">1題</button>
+              <button type="button" onclick="setColumns(2)" class="col-btn px-2 py-0.5 rounded bg-emerald-600 text-white font-bold" data-col="2">2題</button>
+              <button type="button" onclick="setColumns(3)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="3">3題</button>
+              <button type="button" onclick="setColumns(4)" class="col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100" data-col="4">4題</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 試卷資訊 -->
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="cfg-title" value="國中數學 2-1 圓：扇形與弓形的周長與面積 計算力特訓卷" class="px-2.5 py-1 bg-white border border-slate-200 rounded text-slate-800 font-semibold w-80 text-xs" placeholder="試卷標題" oninput="updateHeaderTitle()">
+          <span class="text-slate-400">|</span>
+          <span class="font-bold text-slate-600">總題數：<span id="total-questions-badge" class="text-emerald-600 font-extrabold text-sm">10</span> 題</span>
+        </div>
+      </div>
+
+      <!-- 4 大知識點獨立題數控制 (依據教材《扇形弓形的周長與面積.pdf》) -->
+      <div class="max-w-7xl mx-auto mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-3">
+        
+        <!-- 知識點 1 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">① 扇形弧長、周長與面積</div>
+            <div class="text-[10px] text-slate-500">已知半徑與圓心角求弧長/周長/面積</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(0, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-0" value="3" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(0, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 2 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">② 扇形圓心角逆推運算</div>
+            <div class="text-[10px] text-slate-500">已知弧長或面積反求圓心角</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(1, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-1" value="2" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(1, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 3 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">③ 60° 弓形周長與面積</div>
+            <div class="text-[10px] text-slate-500">正三角形型・扇形扣除正三角形面積</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(2, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-2" value="3" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(2, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 知識點 4 -->
+        <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-800 text-xs">④ 90° 弓形周長與面積</div>
+            <div class="text-[10px] text-slate-500">等腰直角型・弦長 r√2 與扇形扣三角形</div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustTopicCount(3, -1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">-</button>
+            <input type="number" id="topic-cnt-3" value="2" min="0" max="20" class="w-9 text-center bg-slate-50 border border-slate-200 rounded text-xs font-bold py-0.5" onchange="validateCounts()">
+            <button onclick="adjustTopicCount(3, 1)" class="w-5 h-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center justify-center font-bold">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速題數設定按鈕 -->
+      <div class="max-w-7xl mx-auto mt-2 flex items-center justify-end gap-1.5 text-[11px] text-slate-500">
+        <span>快速預設：</span>
+        <button onclick="setAllTopicCounts(1)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 1 題</button>
+        <button onclick="setAllTopicCounts(2)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 2 題</button>
+        <button onclick="setAllTopicCounts(3)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 3 題</button>
+        <button onclick="setAllTopicCounts(5)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded text-slate-700">各 5 題</button>
+        <button onclick="setAllTopicCounts(0)" class="px-2 py-0.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded">全歸零</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 試卷主體容器 -->
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="bg-white border-2 border-slate-800 rounded-xl p-6 mb-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row justify-between items-center border-b-2 border-slate-800 pb-4 gap-4">
+        <div class="text-center sm:text-left">
+          <div class="text-xs font-bold uppercase tracking-widest text-emerald-700">國中數學第四冊・單元 2-1 幾何計算能力檢定</div>
+          <h2 id="paper-title-display" class="text-2xl font-black text-slate-900 tracking-tight mt-0.5">
+            2-1 圓：扇形與弓形的周長與面積 計算力特訓卷
+          </h2>
+          <div class="text-xs text-slate-500 mt-1">
+            範圍：扇形弧長、周長與面積公式計算、圓心角逆推、60°正三角形弓形、90°等腰直角三角形弓形
+          </div>
+        </div>
+
+        <!-- 學生資訊填寫欄 -->
+        <div class="grid grid-cols-4 border border-slate-800 text-xs divide-x divide-slate-800 text-center w-full sm:w-auto">
+          <div class="p-2 bg-slate-100 font-bold">班級</div>
+          <div class="p-2 min-w-[70px]"> 年 班</div>
+          <div class="p-2 bg-slate-100 font-bold">姓名</div>
+          <div class="p-2 min-w-[90px]"></div>
+          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800">座號</div>
+          <div class="p-2 min-w-[70px] border-t border-slate-800"> 號</div>
+          <div class="p-2 bg-slate-100 font-bold border-t border-slate-800 text-rose-700">得分</div>
+          <div class="p-2 min-w-[90px] border-t border-slate-800 font-black text-lg text-rose-600" id="online-score-display">-</div>
+        </div>
+      </div>
+
+      <!-- 線上作答計時列 -->
+      <div id="online-meta-bar" class="hidden no-print mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-semibold">
+        <div class="flex items-center gap-2 text-indigo-700">
+          <span>⏱️ 作答計時器：<span id="timer-display" class="font-mono text-sm font-black">00:00</span></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="gradeOnlineTest()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-xs transition">
+            送出批改
+          </button>
+          <button onclick="resetOnlineTest()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md transition">
+            清空重作
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 題目網格容器 -->
+    <div id="questions-container" class="grid grid-cols-1 md:grid-cols-2 gap-5 print-cols-2"></div>
+
+    <!-- 頁尾核心公式速查 (絕無任何無意義符號) -->
+    <footer class="mt-8 border-t border-slate-300 pt-4 text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div>
+        <span class="font-bold text-slate-700">📐 核心運算要訣：</span>
+        <span>① 弧長 ＝ 2πr × (θ ÷ 360)</span>｜
+        <span>② 扇形周長 ＝ 弧長 ＋ 2r</span>｜
+        <span>③ 扇形面積 ＝ πr² × (θ ÷ 360)</span>｜
+        <span>④ 弓形面積 ＝ 扇形面積 － 三角形面積</span>｜
+        <span>⑤ 弓形周長 ＝ 弧長 ＋ 弦長</span>
+      </div>
+      <div class="text-[11px] font-mono">
+        提示：計算結果請以最簡分數及含有 π、根號之最簡形式表示
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // ==========================================
+    // 數學輔助工具庫 (最大公因數、最簡分數化簡)
+    // ==========================================
+    function gcd(a, b) {
+      a = Math.abs(Math.round(a));
+      b = Math.abs(Math.round(b));
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a || 1;
+    }
+
+    // 格式化純數字分數
+    function formatFrac(num, den) {
+      if (den === 1) return `${num}`;
+      if (num === 0) return `0`;
+      const g = gcd(num, den);
+      num /= g;
+      den /= g;
+      if (den < 0) { num = -num; den = -den; }
+      if (den === 1) return `${num}`;
+      return `<span class="math-frac"><span class="math-num">${num}</span><span class="math-den">${den}</span></span>`;
+    }
+
+    // 格式化含 π 的分數：例如 (5/2)π 或 8π
+    function formatPiFrac(num, den) {
+      if (num === 0) return `0`;
+      const g = gcd(num, den);
+      num /= g;
+      den /= g;
+      if (den < 0) { num = -num; den = -den; }
+      if (den === 1) {
+        return num === 1 ? `π` : `${num}π`;
+      }
+      const topStr = num === 1 ? `π` : `${num}π`;
+      return `<span class="math-frac"><span class="math-num">${topStr}</span><span class="math-den">${den}</span></span>`;
+    }
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randPick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    let currentQuestions = [];
+    let showAnswers = false;
+    let isOnlineMode = false;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let currentCols = 2;
+
+    // ==========================================
+    // 精準 SVG 向量圖形繪製引擎 (嚴格依角度與半徑真實比例)
+    // ==========================================
+
+    // 1. 扇形真實比例繪製 (支援 20° 至 180° 之任意圓心角，半徑標記貼合線段)
+    function renderSvgSector(r, angleDeg, p1Name = "C", p2Name = "D") {
+      const cx = 130;
+      const cy = 115;
+      const R = 75; // 繪圖縮放基準半徑
+
+      // 依角度計算左右兩半射線坐標，以頂部垂直為對稱軸
+      const halfRad = (angleDeg / 2) * (Math.PI / 180);
+      const x1 = cx - R * Math.sin(halfRad);
+      const y1 = cy - R * Math.cos(halfRad);
+      const x2 = cx + R * Math.sin(halfRad);
+      const y2 = cy - R * Math.cos(halfRad);
+
+      const largeArc = angleDeg > 180 ? 1 : 0;
+      const pathD = `M ${cx} ${cy} L ${x1.toFixed(1)} ${y1.toFixed(1)} A ${R} ${R} 0 ${largeArc} 1 ${x2.toFixed(1)} ${y2.toFixed(1)} Z`;
+
+      // 角度弧線指示
+      const arcR = 24;
+      const ax1 = cx - arcR * Math.sin(halfRad);
+      const ay1 = cy - arcR * Math.cos(halfRad);
+      const ax2 = cx + arcR * Math.sin(halfRad);
+      const ay2 = cy - arcR * Math.cos(halfRad);
+      const arcPath = `M ${ax1.toFixed(1)} ${ay1.toFixed(1)} A ${arcR} ${arcR} 0 0 1 ${ax2.toFixed(1)} ${ay2.toFixed(1)}`;
+
+      // 半徑數字標籤坐標 (置於右半徑外側)
+      const midRx = cx + (R * 0.55) * Math.sin(halfRad) + 8;
+      const midRy = cy - (R * 0.55) * Math.cos(halfRad);
+
+      return `
+        <svg viewBox="0 0 260 145" class="w-full max-h-36 mx-auto select-none overflow-visible">
+          <!-- 扇形填充與邊界 -->
+          <path d="${pathD}" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+          
+          <!-- 圓心角弧度與文字 -->
+          <path d="${arcPath}" fill="none" stroke="#e11d48" stroke-width="1.4" />
+          <text x="${cx}" y="${cy - 30}" font-size="10" font-weight="bold" fill="#e11d48" text-anchor="middle">${angleDeg}°</text>
+
+          <!-- 頂點圓點與標籤 -->
+          <circle cx="${cx}" cy="${cy}" r="2.5" fill="#0f172a" />
+          <text x="${cx}" y="${cy + 15}" font-size="11" font-weight="bold" fill="#0f172a" text-anchor="middle">O</text>
+          
+          <circle cx="${x1.toFixed(1)}" cy="${y1.toFixed(1)}" r="2.5" fill="#059669" />
+          <text x="${(x1 - 10).toFixed(1)}" y="${(y1 - 2).toFixed(1)}" font-size="11" font-weight="bold" fill="#0f172a">${p1Name}</text>
+          
+          <circle cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="2.5" fill="#059669" />
+          <text x="${(x2 + 8).toFixed(1)}" y="${(y2 - 2).toFixed(1)}" font-size="11" font-weight="bold" fill="#0f172a">${p2Name}</text>
+
+          <!-- 半徑長度標註 -->
+          <text x="${midRx.toFixed(1)}" y="${midRy.toFixed(1)}" font-size="10" font-weight="bold" fill="#047857">${r}</text>
+        </svg>
+      `;
+    }
+
+    // 2. 圓心角逆推幾何示意圖
+    function renderSvgInverseSector(r, infoStr) {
+      return `
+        <svg viewBox="0 0 260 145" class="w-full max-h-36 mx-auto select-none overflow-visible">
+          <!-- 參考外圓虛線 -->
+          <circle cx="130" cy="75" r="55" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,3" />
+          
+          <!-- 扇形本體 (示意 90° 區間) -->
+          <path d="M 130 75 L 185 75 A 55 55 0 0 0 130 20 Z" fill="#eff6ff" stroke="#2563eb" stroke-width="2" />
+          
+          <!-- 未知角問號標記 -->
+          <path d="M 148 75 A 18 18 0 0 0 130 57" fill="none" stroke="#e11d48" stroke-width="1.5" />
+          <text x="144" y="62" font-size="11" font-weight="bold" fill="#e11d48">θ＝?</text>
+
+          <!-- 圓心 O -->
+          <circle cx="130" cy="75" r="2.5" fill="#0f172a" />
+          <text x="120" y="86" font-size="11" font-weight="bold" fill="#0f172a">O</text>
+
+          <!-- 半徑長度 -->
+          <text x="160" y="92" font-size="10" font-weight="bold" fill="#1d4ed8">r ＝ ${r}</text>
+
+          <!-- 條件文字提示卡 -->
+          <rect x="15" y="20" width="85" height="32" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+          <text x="57" y="38" font-size="9" font-weight="bold" fill="#475569" text-anchor="middle">${infoStr}</text>
+        </svg>
+      `;
+    }
+
+    // 3. 60° 弓形幾何圖 (正三角形型，完整呈現圓周、正三角形弦與灰色鋪色弓形)
+    function renderSvgSegment60(r, triAreaStr, p1Name = "A", p2Name = "B") {
+      const cx = 130;
+      const cy = 70;
+      const R = 54;
+
+      // 正三角形 AOB：圓心 O(130, 70)，底端點 A:(130, 70+R)=(130, 124)，B 位於順時針 60 度位置
+      // 依教材附圖：OA 垂直到正下方，OB 朝向右下方 30 度
+      const ax = cx;
+      const ay = cy + R; // 正下方 (130, 124)
+      const rad60 = 60 * (Math.PI / 180);
+      // 向量由正下方(0, 1)逆時針轉 60 度：(sin 60, cos 60)
+      const bx = cx + R * Math.sin(rad60); // 130 + 54 * 0.866 = 176.8
+      const by = cy + R * Math.cos(rad60); // 70 + 54 * 0.5 = 97
+
+      // 弓形封閉路徑：從 A 經圓弧到 B，再拉直線弦回 A
+      const arcSegmentD = `M ${ax} ${ay} A ${R} ${R} 0 0 0 ${bx.toFixed(1)} ${by.toFixed(1)} L ${ax} ${ay} Z`;
+
+      return `
+        <svg viewBox="0 0 260 145" class="w-full max-h-36 mx-auto select-none overflow-visible">
+          <!-- 完整圓形邊界 -->
+          <circle cx="${cx}" cy="${cy}" r="${R}" fill="#ffffff" stroke="#334155" stroke-width="1.8" />
+          
+          <!-- 鋪色弓形部分 (弦與圓弧圍成) -->
+          <path d="${arcSegmentD}" fill="#94a3b8" opacity="0.85" stroke="#0f172a" stroke-width="1.8" />
+
+          <!-- 三角形 OAB 邊界線 -->
+          <line x1="${cx}" y1="${cy}" x2="${ax}" y2="${ay}" stroke="#334155" stroke-width="1.5" />
+          <line x1="${cx}" y1="${cy}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#334155" stroke-width="1.5" />
+          <line x1="${ax}" y1="${ay}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#0f172a" stroke-width="2" />
+
+          <!-- 圓心與頂點 -->
+          <circle cx="${cx}" cy="${cy}" r="2.5" fill="#0f172a" />
+          <text x="${cx - 10}" y="${cy + 4}" font-size="11" font-weight="bold" fill="#0f172a">O</text>
+
+          <circle cx="${ax}" cy="${ay}" r="2.5" fill="#0f172a" />
+          <text x="${ax - 4}" y="${ay + 15}" font-size="11" font-weight="bold" fill="#0f172a">${p1Name}</text>
+
+          <circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="2.5" fill="#0f172a" />
+          <text x="${(bx + 6).toFixed(1)}" y="${(by + 8).toFixed(1)}" font-size="11" font-weight="bold" fill="#0f172a">${p2Name}</text>
+
+          <!-- 半徑長度標記 -->
+          <text x="${cx + 25}" y="${cy + 22}" font-size="10" font-weight="bold" fill="#475569">${r}</text>
+          <path d="M ${cx + 12} ${cy + 16} L ${cx + 19} ${cy + 22}" stroke="#475569" stroke-width="1" />
+        </svg>
+      `;
+    }
+
+    // 4. 90° 弓形幾何圖 (等腰直角三角形型，嚴格標示直角方塊與鋪色弓形)
+    function renderSvgSegment90(r, p1Name = "C", p2Name = "D") {
+      const cx = 130;
+      const cy = 70;
+      const R = 54;
+
+      // 坐標：O(130, 70)，P1 在正下方(130, 124)，P2 在正右方(184, 70) 形成標準 90 度
+      const x1 = cx;
+      const y1 = cy + R;
+      const x2 = cx + R;
+      const y2 = cy;
+
+      // 弓形路徑：從 (130, 124) 順時針弧至 (184, 70)，再拉直線弦回 (130, 124)
+      const arcSegmentD = `M ${x1} ${y1} A ${R} ${R} 0 0 0 ${x2} ${y2} L ${x1} ${y1} Z`;
+
+      return `
+        <svg viewBox="0 0 260 145" class="w-full max-h-36 mx-auto select-none overflow-visible">
+          <!-- 完整圓形邊界 -->
+          <circle cx="${cx}" cy="${cy}" r="${R}" fill="#ffffff" stroke="#334155" stroke-width="1.8" />
+          
+          <!-- 鋪色弓形部分 -->
+          <path d="${arcSegmentD}" fill="#94a3b8" opacity="0.85" stroke="#0f172a" stroke-width="1.8" />
+
+          <!-- 半徑射線 -->
+          <line x1="${cx}" y1="${cy}" x2="${x1}" y2="${y1}" stroke="#334155" stroke-width="1.5" />
+          <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#334155" stroke-width="1.5" />
+          <!-- 直線弦 -->
+          <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#0f172a" stroke-width="2" />
+
+          <!-- 90 度直角標記 (位於第四象限) -->
+          <rect x="${cx}" y="${cy}" width="10" height="10" fill="none" stroke="#dc2626" stroke-width="1.3" />
+
+          <!-- 圓心與頂點 -->
+          <circle cx="${cx}" cy="${cy}" r="2.5" fill="#0f172a" />
+          <text x="${cx - 12}" y="${cy - 2}" font-size="11" font-weight="bold" fill="#0f172a">O</text>
+
+          <circle cx="${x1}" cy="${y1}" r="2.5" fill="#0f172a" />
+          <text x="${x1 - 4}" y="${y1 + 15}" font-size="11" font-weight="bold" fill="#0f172a">${p1Name}</text>
+
+          <circle cx="${x2}" cy="${y2}" r="2.5" fill="#0f172a" />
+          <text x="${x2 + 8}" y="${y2 + 4}" font-size="11" font-weight="bold" fill="#0f172a">${p2Name}</text>
+
+          <!-- 半徑標註 -->
+          <text x="${cx + 20}" y="${cy - 6}" font-size="10" font-weight="bold" fill="#475569">${r}</text>
+        </svg>
+      `;
+    }
+
+    // ==========================================
+    // 命題生成核心 (依據教材結構化建立)
+    // ==========================================
+
+    // 知識點 1：扇形弧長、周長與面積 (教材 P.1-2 第 1, 3, 4, 5, 10, 14 題)
+    function genTopic1Question(diff, numType) {
+      // 經典題型參數集
+      const templates = [
+        { r: 15, deg: 30,  arcN: 5,   arcD: 2, pN: 5,   pD: 2, pConst: 30, areaN: 75,  areaD: 4 }, // Q1
+        { r: 30, deg: 45,  arcN: 15,  arcD: 2, pN: 15,  pD: 2, pConst: 60, areaN: 225, areaD: 2 }, // Q3
+        { r: 12, deg: 40,  arcN: 8,   arcD: 3, pN: 8,   pD: 3, pConst: 24, areaN: 16,  areaD: 1 }, // Q4
+        { r: 12, deg: 120, arcN: 8,   arcD: 1, pN: 8,   pD: 1, pConst: 24, areaN: 48,  areaD: 1 }, // Q5
+        { r: 8,  deg: 180, arcN: 8,   arcD: 1, pN: 8,   pD: 1, pConst: 16, areaN: 32,  areaD: 1 }, // Q10
+        { r: 9,  deg: 20,  arcN: 1,   arcD: 1, pN: 1,   pD: 1, pConst: 18, areaN: 9,   areaD: 2 }, // Q14
+        { r: 18, deg: 60,  arcN: 6,   arcD: 1, pN: 6,   pD: 1, pConst: 36, areaN: 54,  areaD: 1 },
+        { r: 10, deg: 72,  arcN: 4,   arcD: 1, pN: 4,   pD: 1, pConst: 20, areaN: 20,  areaD: 1 },
+        { r: 24, deg: 45,  arcN: 6,   arcD: 1, pN: 6,   pD: 1, pConst: 48, areaN: 72,  areaD: 1 }
+      ];
+
+      const t = randPick(templates);
+      const r = t.r;
+      const deg = t.deg;
+
+      const p1 = randPick(["C", "A"]);
+      const p2 = p1 === "C" ? "D" : "B";
+      const arcLabel = `<span class="arc-text"><span class="arc-symbol">⌒</span><span>${p1}${p2}</span></span>`;
+
+      const arcStr = formatPiFrac(t.arcN, t.arcD);
+      const perimStr = `${arcStr} ＋ ${t.pConst}`;
+      const areaStr = formatPiFrac(t.areaN, t.areaD);
+
+      const qText = `如圖，圓的半徑為 ${r} 公分，圓心角 ∠${p1}O${p2} ＝ ${deg}°，試計算下列各小題：<br>
+      (1) ${arcLabel} 的長度為多少公分？<br>
+      (2) 扇形 O${p1}${p2} 的周長為多少公分？<br>
+      (3) 扇形 O${p1}${p2} 的面積為多少平方公分？`;
+
+      const svg = renderSvgSector(r, deg, p1, p2);
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（弧長公式計算）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-500">
+            弧長 ＝ 2πr × (θ ÷ 360) ＝ 2 × π × ${r} × (${deg} ÷ 360) ＝ <b>${arcStr}</b> (公分)
+          </div>
+          <div><strong>步驟二（扇形周長計算）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-500">
+            周長 ＝ 弧長 ＋ 兩倍半徑 ＝ ${arcStr} ＋ 2 × ${r} ＝ <b>${perimStr}</b> (公分)
+          </div>
+          <div><strong>步驟三（扇形面積公式計算）：</strong></div>
+          <div class="pl-3 border-l-2 border-emerald-500">
+            面積 ＝ πr² × (θ ÷ 360) ＝ π × ${r}² × (${deg} ÷ 360) ＝ <b>${areaStr}</b> (平方公分)
+          </div>
+          <div class="text-emerald-700 font-bold">
+            答：(1) ${t.arcD === 1 ? (t.arcN === 1 ? 'π' : t.arcN + 'π') : (t.arcN + '/' + t.arcD + 'π')} 公分；
+            (2) ${t.arcD === 1 ? (t.arcN === 1 ? 'π' : t.arcN + 'π') : (t.arcN + '/' + t.arcD + 'π')} ＋ ${t.pConst} 公分；
+            (3) ${t.areaD === 1 ? t.areaN + 'π' : (t.areaN + '/' + t.areaD + 'π')} 平方公分
+          </div>
+        </div>
+      `;
+
+      return {
+        topicId: 0,
+        topicName: "扇形弧長周長與面積",
+        qText,
+        svg,
+        ansRaw: `${t.arcD === 1 ? (t.arcN === 1 ? 'π' : t.arcN + 'π') : (t.arcN + '/' + t.arcD + 'π')}`,
+        ansDisplay: `(1) ${t.arcD === 1 ? (t.arcN === 1 ? 'π' : t.arcN + 'π') : (t.arcN + '/' + t.arcD + 'π')} 公分; (2) 周長 ${t.pConst}＋弧長; (3) ${t.areaD === 1 ? t.areaN + 'π' : (t.areaN + '/' + t.areaD + 'π')} 平方公分`,
+        steps
+      };
+    }
+
+    // 知識點 2：扇形圓心角的逆推運算 (教材 P.1-2 第 2, 6, 7, 8, 9, 11, 12, 13, 15 題)
+    function genTopic2Question(diff, numType) {
+      // 隨機選擇由「弧長逆推」或由「面積逆推」
+      const isFromArc = Math.random() > 0.5;
+
+      if (isFromArc) {
+        // 由弧長逆推圓心角 θ = (L * 180) / (π * r)
+        const templates = [
+          { r: 22, arcPi: 11, ansDeg: 90  }, // Q2
+          { r: 15, arcPi: 6,  ansDeg: 72  }, // Q7
+          { r: 20, arcPi: 8,  ansDeg: 72  }, // Q12
+          { r: 12, arcPi: 4,  ansDeg: 60  },
+          { r: 18, arcPi: 12, ansDeg: 120 },
+          { r: 10, arcPi: 5,  ansDeg: 90  }
+        ];
+        const t = randPick(templates);
+
+        const qText = `已知半徑為 ${t.r} 公分的圓中，有一弧長為 ${t.arcPi}π 公分，試求此弧所對應的圓心角為幾度？`;
+        const svg = renderSvgInverseSector(t.r, `弧長 ＝ ${t.arcPi}π`);
+
+        const steps = `
+          <div class="space-y-1.5 text-slate-700">
+            <div><strong>步驟一（列出弧長比例式）：</strong></div>
+            <div class="pl-3 border-l-2 border-sky-500">
+              設圓心角為 θ 度，根據弧長公式：<br>
+              弧長 ＝ 2πr × (θ ÷ 360) ＝ 2 × π × ${t.r} × (θ ÷ 360) ＝ ${t.arcPi}π
+            </div>
+            <div><strong>步驟二（移項反求圓心角 θ）：</strong></div>
+            <div class="pl-3 border-l-2 border-sky-500">
+              θ ＝ (${t.arcPi}π × 360) ÷ (2 × π × ${t.r}) ＝ (${t.arcPi} × 180) ÷ ${t.r} ＝ <b>${t.ansDeg}°</b>
+            </div>
+            <div class="text-emerald-700 font-bold">答：${t.ansDeg}°</div>
+          </div>
+        `;
+
+        return {
+          topicId: 1,
+          topicName: "扇形圓心角逆推運算",
+          qText,
+          svg,
+          ansRaw: `${t.ansDeg}`,
+          ansDisplay: `${t.ansDeg}°`,
+          steps
+        };
+      } else {
+        // 由面積逆推圓心角 θ = (A * 360) / (π * r²)
+        const templates = [
+          { r: 9,  areaPi: 36,  ansDeg: 160 }, // Q6
+          { r: 4,  areaPi: 8,   ansDeg: 180 }, // Q8
+          { r: 9,  areaPi: 54,  ansDeg: 240 }, // Q9
+          { r: 12, areaPi: 24,  ansDeg: 60  }, // Q11
+          { r: 30, areaPi: 120, ansDeg: 48  }, // Q13
+          { r: 10, areaPi: 25,  ansDeg: 90  }, // Q15
+          { r: 6,  areaPi: 15,  ansDeg: 150 }
+        ];
+        const t = randPick(templates);
+
+        const qText = `已知一扇形的面積為 ${t.areaPi}π 平方公分，半徑為 ${t.r} 公分，則該扇形所對應的圓心角為幾度？`;
+        const svg = renderSvgInverseSector(t.r, `面積 ＝ ${t.areaPi}π`);
+
+        const steps = `
+          <div class="space-y-1.5 text-slate-700">
+            <div><strong>步驟一（列出面積比例式）：</strong></div>
+            <div class="pl-3 border-l-2 border-sky-500">
+              設圓心角為 θ 度，根據扇形面積公式：<br>
+              面積 ＝ πr² × (θ ÷ 360) ＝ π × ${t.r}² × (θ ÷ 360) ＝ ${t.areaPi}π
+            </div>
+            <div><strong>步驟二（移項反求圓心角 θ）：</strong></div>
+            <div class="pl-3 border-l-2 border-sky-500">
+              θ ＝ (${t.areaPi}π × 360) ÷ (π × ${t.r * t.r}) ＝ (${t.areaPi} × 360) ÷ ${t.r * t.r} ＝ <b>${t.ansDeg}°</b>
+            </div>
+            <div class="text-emerald-700 font-bold">答：${t.ansDeg}°</div>
+          </div>
+        `;
+
+        return {
+          topicId: 1,
+          topicName: "扇形圓心角逆推運算",
+          qText,
+          svg,
+          ansRaw: `${t.ansDeg}`,
+          ansDisplay: `${t.ansDeg}°`,
+          steps
+        };
+      }
+    }
+
+    // 知識點 3：60° 弓形周長與面積 (正三角形型) (教材 P.2-4 第 1, 2, 4, 5, 6, 7, 14 題)
+    function genTopic3Question(diff, numType) {
+      // 典型教材參數組 (半徑 r，正三角形面積 (r²/4)√3，扇形面積 (r²/6)π，弧長 (r/3)π，弦長 r)
+      const templates = [
+        { r: 4,  triN: 4,   areaPiN: 8,   areaPiD: 3, arcN: 4,  arcD: 3 }, // Q1: 8/3 π - 4√3, 4/3 π + 4
+        { r: 20, triN: 100, areaPiN: 200, areaPiD: 3, arcN: 20, arcD: 3 }, // Q2: 200/3 π - 100√3, 20/3 π + 20
+        { r: 10, triN: 25,  areaPiN: 50,  areaPiD: 3, arcN: 10, arcD: 3 }, // Q4: 50/3 π - 25√3, 10/3 π + 10
+        { r: 18, triN: 81,  areaPiN: 54,  areaPiD: 1, arcN: 6,  arcD: 1 }, // Q5: 54π - 81√3, 6π + 18
+        { r: 12, triN: 36,  areaPiN: 24,  areaPiD: 1, arcN: 4,  arcD: 1 }, // Q6: 24π - 36√3, 4π + 12
+        { r: 8,  triN: 16,  areaPiN: 32,  areaPiD: 3, arcN: 8,  arcD: 3 }, // Q7: 32/3 π - 16√3, 8/3 π + 8
+        { r: 14, triN: 49,  areaPiN: 98,  areaPiD: 3, arcN: 14, arcD: 3 }  // Q14: 98/3 π - 49√3, 14/3 π + 14
+      ];
+
+      const t = randPick(templates);
+      const r = t.r;
+      const triAreaStr = `${t.triN}√3`;
+
+      const p1 = randPick(["A", "C"]);
+      const p2 = p1 === "A" ? "B" : "D";
+
+      // 扇形面積與弧長格式化字串
+      const sectorAreaStr = formatPiFrac(t.areaPiN, t.areaPiD);
+      const arcStr = formatPiFrac(t.arcN, t.arcD);
+
+      const segmentAreaStr = `${sectorAreaStr} － ${triAreaStr}`;
+      const segmentPerimStr = `${arcStr} ＋ ${r}`;
+
+      const qText = `如圖，圓的半徑為 ${r} 公分，且正 △${p1}O${p2} 的面積為 ${triAreaStr} 平方公分（圓心角為 60°，弦長等於半徑 ${r} 公分），試求：<br>
+      (1) 鋪色弓形的面積為多少平方公分？<br>
+      (2) 鋪色弓形的周長為多少公分？`;
+
+      const svg = renderSvgSegment60(r, triAreaStr, p1, p2);
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（弓形面積 ＝ 扇形面積 － 正三角形面積）：</strong></div>
+          <div class="pl-3 border-l-2 border-indigo-500 space-y-0.5">
+            <div>① 圓心角 θ ＝ 60°，扇形 O${p1}${p2} 面積 ＝ π × ${r}² × (60 ÷ 360) ＝ ${sectorAreaStr} 平方公分</div>
+            <div>② 鋪色弓形面積 ＝ 扇形面積 － 正 △${p1}O${p2} 面積 ＝ <b>${segmentAreaStr}</b> (平方公分)</div>
+          </div>
+          <div><strong>步驟二（弓形周長 ＝ 弧長 ＋ 弦長）：</strong></div>
+          <div class="pl-3 border-l-2 border-indigo-500 space-y-0.5">
+            <div>① 弧長 ＝ 2π × ${r} × (60 ÷ 360) ＝ ${arcStr} 公分</div>
+            <div>② 正三角形三邊等長，弦長 <span class="overline">${p1}${p2}</span> ＝ 半徑 ＝ ${r} 公分</div>
+            <div>③ 鋪色弓形周長 ＝ 弧長 ＋ 弦長 ＝ <b>${segmentPerimStr}</b> (公分)</div>
+          </div>
+          <div class="text-emerald-700 font-bold">
+            答：(1) ${t.areaPiD === 1 ? t.areaPiN + 'π' : (t.areaPiN + '/' + t.areaPiD + 'π')} － ${triAreaStr} 平方公分；
+            (2) ${t.arcD === 1 ? t.arcN + 'π' : (t.arcN + '/' + t.arcD + 'π')} ＋ ${r} 公分
+          </div>
+        </div>
+      `;
+
+      return {
+        topicId: 2,
+        topicName: "60° 弓形周長與面積",
+        qText,
+        svg,
+        ansRaw: `${t.areaPiD === 1 ? t.areaPiN + 'π' : (t.areaPiN + '/' + t.areaPiD + 'π')}-${triAreaStr}`,
+        ansDisplay: `(1) ${t.areaPiD === 1 ? t.areaPiN + 'π' : (t.areaPiN + '/' + t.areaPiD + 'π')} － ${triAreaStr}; (2) ${t.arcD === 1 ? t.arcN + 'π' : (t.arcN + '/' + t.arcD + 'π')} ＋ ${r}`,
+        steps
+      };
+    }
+
+    // 知識點 4：90° 弓形周長與面積 (等腰直角三角形型) (教材 P.2-4 第 3, 8, 9, 10, 11, 12, 13, 15 題)
+    function genTopic4Question(diff, numType) {
+      // 典型教材參數組 (半徑 r，扇形面積 (r²/4)π，直角三角形面積 r²/2，弧長 (r/2)π，弦長 r√2)
+      const templates = [
+        { r: 8,  secN: 16,  secD: 1, tri: 32,  arcN: 4,  arcD: 1, chord: "8√2"  }, // Q3: 16π - 32, 4π + 8√2
+        { r: 10, secN: 25,  secD: 1, tri: 50,  arcN: 5,  arcD: 1, chord: "10√2" }, // Q8: 25π - 50, 5π + 10√2
+        { r: 7,  secN: 49,  secD: 4, triN: 49, triD: 2, arcN: 7, arcD: 2, chord: "7√2"  }, // Q9: 49/4 π - 49/2, 7/2 π + 7√2
+        { r: 6,  secN: 9,   secD: 1, tri: 18,  arcN: 3,  arcD: 1, chord: "6√2"  }, // Q10: 9π - 18, 3π + 6√2
+        { r: 12, secN: 36,  secD: 1, tri: 72,  arcN: 6,  arcD: 1, chord: "12√2" }, // Q11: 36π - 72, 6π + 12√2
+        { r: 2,  secN: 1,   secD: 1, tri: 2,   arcN: 1,  arcD: 1, chord: "2√2"  }, // Q12: π - 2, π + 2√2
+        { r: 11, secN: 121, secD: 4, triN: 121, triD: 2, arcN: 11, arcD: 2, chord: "11√2" }, // Q13: 121/4 π - 121/2, 11/2 π + 11√2
+        { r: 9,  secN: 81,  secD: 4, triN: 81, triD: 2, arcN: 9, arcD: 2, chord: "9√2"  }  // Q15: 81/4 π - 81/2, 9/2 π + 9√2
+      ];
+
+      const t = randPick(templates);
+      const r = t.r;
+
+      const p1 = randPick(["C", "A"]);
+      const p2 = p1 === "C" ? "D" : "B";
+
+      const sectorAreaStr = formatPiFrac(t.secN, t.secD);
+      const triAreaStr = t.tri !== undefined ? `${t.tri}` : formatFrac(t.triN, t.triD);
+      const arcStr = formatPiFrac(t.arcN, t.arcD);
+
+      const segmentAreaStr = `${sectorAreaStr} － ${triAreaStr}`;
+      const segmentPerimStr = `${arcStr} ＋ ${t.chord}`;
+
+      const qText = `如圖，圓的半徑為 ${r} 公分，圓心角 ∠${p1}O${p2} ＝ 90°（△${p1}O${p2} 為等腰直角三角形，弦長為 ${t.chord} 公分），試求：<br>
+      (1) 鋪色弓形的面積為多少平方公分？<br>
+      (2) 鋪色弓形的周長為多少公分？`;
+
+      const svg = renderSvgSegment90(r, p1, p2);
+
+      const steps = `
+        <div class="space-y-1.5 text-slate-700">
+          <div><strong>步驟一（弓形面積 ＝ 扇形面積 － 等腰直角三角形面積）：</strong></div>
+          <div class="pl-3 border-l-2 border-rose-500 space-y-0.5">
+            <div>① 扇形面積 ＝ π × ${r}² × (90 ÷ 360) ＝ ${sectorAreaStr} 平方公分</div>
+            <div>② 等腰直角 △${p1}O${p2} 面積 ＝ (1 ÷ 2) × ${r} × ${r} ＝ ${triAreaStr} 平方公分</div>
+            <div>③ 鋪色弓形面積 ＝ 扇形面積 － 三角形面積 ＝ <b>${segmentAreaStr}</b> (平方公分)</div>
+          </div>
+          <div><strong>步驟二（弓形周長 ＝ 弧長 ＋ 弦長）：</strong></div>
+          <div class="pl-3 border-l-2 border-rose-500 space-y-0.5">
+            <div>① 弧長 ＝ 2π × ${r} × (90 ÷ 360) ＝ ${arcStr} 公分</div>
+            <div>② 弦長 <span class="overline">${p1}${p2}</span> ＝ √(${r}² ＋ ${r}²) ＝ ${t.chord} 公分</div>
+            <div>③ 鋪色弓形周長 ＝ 弧長 ＋ 弦長 ＝ <b>${segmentPerimStr}</b> (公分)</div>
+          </div>
+          <div class="text-emerald-700 font-bold">
+            答：(1) ${t.secD === 1 ? (t.secN === 1 ? 'π' : t.secN + 'π') : (t.secN + '/' + t.secD + 'π')} － ${t.tri !== undefined ? t.tri : (t.triN + '/' + t.triD)} 平方公分；
+            (2) ${t.arcD === 1 ? (t.arcN === 1 ? 'π' : t.arcN + 'π') : (t.arcN + '/' + t.arcD + 'π')} ＋ ${t.chord} 公分
+          </div>
+        </div>
+      `;
+
+      return {
+        topicId: 3,
+        topicName: "90° 弓形周長與面積",
+        qText,
+        svg,
+        ansRaw: `${t.secD === 1 ? (t.secN === 1 ? 'π' : t.secN + 'π') : (t.secN + '/' + t.secD + 'π')}-${t.tri !== undefined ? t.tri : (t.triN + '/' + t.triD)}`,
+        ansDisplay: `(1) ${t.secD === 1 ? (t.secN === 1 ? 'π' : t.secN + 'π') : (t.secN + '/' + t.secD + 'π')} － ${t.tri !== undefined ? t.tri : (t.triN + '/' + t.triD)}; (2) ${t.arcD === 1 ? (t.arcN === 1 ? 'π' : t.arcN + 'π') : (t.arcN + '/' + t.arcD + 'π')} ＋ ${t.chord}`,
+        steps
+      };
+    }
+
+    // ==========================================
+    // 試卷生成與渲染管理
+    // ==========================================
+    function generateExam() {
+      const diff = document.getElementById("cfg-diff").value;
+      const numType = document.getElementById("cfg-num-type").value;
+      
+      const counts = [
+        parseInt(document.getElementById("topic-cnt-0").value) || 0,
+        parseInt(document.getElementById("topic-cnt-1").value) || 0,
+        parseInt(document.getElementById("topic-cnt-2").value) || 0,
+        parseInt(document.getElementById("topic-cnt-3").value) || 0
+      ];
+
+      currentQuestions = [];
+
+      for (let i = 0; i < counts[0]; i++) currentQuestions.push(genTopic1Question(diff, numType));
+      for (let i = 0; i < counts[1]; i++) currentQuestions.push(genTopic2Question(diff, numType));
+      for (let i = 0; i < counts[2]; i++) currentQuestions.push(genTopic3Question(diff, numType));
+      for (let i = 0; i < counts[3]; i++) currentQuestions.push(genTopic4Question(diff, numType));
+
+      document.getElementById("total-questions-badge").innerText = currentQuestions.length;
+      renderQuestions();
+      
+      if (isOnlineMode) resetOnlineTest();
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById("questions-container");
+      container.innerHTML = "";
+
+      if (currentQuestions.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-16 text-slate-400 font-bold">
+            目前無任何選題，請在上方面板調整各知識點題數後重新出題！
+          </div>
+        `;
+        return;
+      }
+
+      currentQuestions.forEach((q, idx) => {
+        const qNum = idx + 1;
+        const card = document.createElement("div");
+        card.className = "print-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between relative transition hover:shadow-md";
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-white font-black flex items-center justify-center text-xs">
+                  ${qNum}
+                </span>
+                <span class="font-bold text-slate-700">${q.topicName}</span>
+              </div>
+              <span class="text-[11px] text-slate-400 font-mono">題號 #${qNum}</span>
+            </div>
+
+            <!-- 幾何真實比例圖形 -->
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 mb-3">
+              ${q.svg}
+            </div>
+
+            <!-- 題目文字敘述 -->
+            <div class="text-xs sm:text-sm text-slate-800 font-medium leading-relaxed mb-3">
+              ${q.qText}
+            </div>
+          </div>
+
+          <div>
+            <!-- 手寫演算草稿區 -->
+            <div class="scratch-pad border border-slate-200 rounded-lg h-20 mb-3 relative overflow-hidden flex items-start p-1.5">
+              <span class="text-[10px] text-slate-400 select-none font-sans font-semibold">【計算演算空間】</span>
+            </div>
+
+            <!-- 線上作答輸入列 -->
+            <div class="online-input-row hidden no-print flex items-center gap-2 mb-2 p-2 bg-indigo-50/70 border border-indigo-100 rounded-lg">
+              <span class="text-xs font-bold text-indigo-900">你的答案：</span>
+              <input type="text" id="user-ans-${idx}" class="flex-1 px-2.5 py-1 bg-white border border-indigo-200 rounded text-xs text-slate-800 font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="例如：90 或 8π 或 8/3π">
+              <span id="feedback-${idx}" class="text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+
+            <!-- 詳解步驟抽屜 -->
+            <div id="solution-${idx}" class="${showAnswers ? '' : 'hidden'} mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 bg-slate-50/80 rounded p-2.5">
+              ${q.steps}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // 介面欄位與互動控制
+    // ==========================================
+    function setColumns(cols) {
+      currentCols = cols;
+      const container = document.getElementById("questions-container");
+      container.className = "grid gap-5";
+      
+      if (cols === 1) container.classList.add("grid-cols-1");
+      else if (cols === 2) container.classList.add("grid-cols-1", "md:grid-cols-2");
+      else if (cols === 3) container.classList.add("grid-cols-1", "md:grid-cols-3");
+      else if (cols === 4) container.classList.add("grid-cols-2", "md:grid-cols-4");
+
+      container.classList.add(`print-cols-${cols}`);
+
+      document.querySelectorAll(".col-btn").forEach(btn => {
+        const c = parseInt(btn.getAttribute("data-col"));
+        if (c === cols) {
+          btn.className = "col-btn px-2 py-0.5 rounded bg-emerald-600 text-white font-bold";
+        } else {
+          btn.className = "col-btn px-2 py-0.5 rounded text-slate-600 hover:bg-slate-100";
+        }
+      });
+    }
+
+    function toggleAnswerMode() {
+      showAnswers = !showAnswers;
+      document.getElementById("ans-btn-text").innerText = showAnswers ? "隱藏解答步驟" : "顯示解答步驟";
+      renderQuestions();
+    }
+
+    function adjustTopicCount(topicIdx, delta) {
+      const input = document.getElementById(`topic-cnt-${topicIdx}`);
+      let val = (parseInt(input.value) || 0) + delta;
+      if (val < 0) val = 0;
+      if (val > 20) val = 20;
+      input.value = val;
+      generateExam();
+    }
+
+    function setAllTopicCounts(cnt) {
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`topic-cnt-${i}`).value = cnt;
+      }
+      generateExam();
+    }
+
+    function validateCounts() {
+      for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`topic-cnt-${i}`);
+        let val = parseInt(el.value);
+        if (isNaN(val) || val < 0) el.value = 0;
+        if (val > 20) el.value = 20;
+      }
+      generateExam();
+    }
+
+    function updateHeaderTitle() {
+      const val = document.getElementById("cfg-title").value.trim();
+      document.getElementById("paper-title-display").innerText = val || "2-1 圓：扇形與弓形的周長與面積 計算力特訓卷";
+    }
+
+    // ==========================================
+    // 線上測驗與自動寬容批改
+    // ==========================================
+    function toggleOnlineTest() {
+      isOnlineMode = !isOnlineMode;
+      const metaBar = document.getElementById("online-meta-bar");
+      const btn = document.getElementById("btn-online-test");
+
+      if (isOnlineMode) {
+        metaBar.classList.remove("hidden");
+        btn.classList.add("bg-indigo-600", "text-white");
+        btn.classList.remove("bg-indigo-50", "text-indigo-700");
+        startTimer();
+      } else {
+        metaBar.classList.add("hidden");
+        btn.classList.remove("bg-indigo-600", "text-white");
+        btn.classList.add("bg-indigo-50", "text-indigo-700");
+        stopTimer();
+      }
+
+      document.querySelectorAll(".online-input-row").forEach(el => {
+        if (isOnlineMode) el.classList.remove("hidden");
+        else el.classList.add("hidden");
+      });
+    }
+
+    function startTimer() {
+      stopTimer();
+      secondsElapsed = 0;
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+        const secs = String(secondsElapsed % 60).padStart(2, "0");
+        document.getElementById("timer-display").innerText = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function resetOnlineTest() {
+      startTimer();
+      document.getElementById("online-score-display").innerText = "-";
+      currentQuestions.forEach((_, idx) => {
+        const input = document.getElementById(`user-ans-${idx}`);
+        const fb = document.getElementById(`feedback-${idx}`);
+        if (input) input.value = "";
+        if (fb) {
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded hidden";
+          fb.innerText = "";
+        }
+      });
+    }
+
+    function isAnswerCorrect(userStr, rawAns) {
+      if (!userStr) return false;
+      userStr = userStr.trim().replace(/度|°|公分|平方公分|cm/g, "").replace(/\s+/g, "");
+      const rawStr = String(rawAns).trim().replace(/度|°/g, "").replace(/\s+/g, "");
+
+      if (userStr === rawStr) return true;
+
+      // 支援純度數比較
+      if (!isNaN(parseFloat(userStr)) && !isNaN(parseFloat(rawStr))) {
+        return Math.abs(parseFloat(userStr) - parseFloat(rawStr)) < 0.1;
+      }
+
+      return false;
+    }
+
+    function gradeOnlineTest() {
+      if (currentQuestions.length === 0) return;
+      stopTimer();
+      let correctCount = 0;
+
+      currentQuestions.forEach((q, idx) => {
+        const input = document.getElementById(`user-ans-${idx}`);
+        const fb = document.getElementById(`feedback-${idx}`);
+        if (!input || !fb) return;
+
+        const isCorrect = isAnswerCorrect(input.value, q.ansRaw);
+        fb.classList.remove("hidden");
+        if (isCorrect) {
+          correctCount++;
+          fb.innerText = "✓ 正確";
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800";
+        } else {
+          fb.innerText = `✗ 正解：${q.ansDisplay}`;
+          fb.className = "text-xs font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800";
+        }
+      });
+
+      const score = Math.round((correctCount / currentQuestions.length) * 100);
+      document.getElementById("online-score-display").innerText = score;
+      alert(`測驗完成！\n總題數：${currentQuestions.length} 題\n答對：${correctCount} 題\n得分：${score} 分\n花費時間：${document.getElementById("timer-display").innerText}`);
+    }
+
+    // ==========================================
+    // 列印與獨立 HTML 檔案匯出
+    // ==========================================
+    function printWorksheet(withAnswers) {
+      const prevAns = showAnswers;
+      showAnswers = withAnswers;
+      renderQuestions();
+
+      setTimeout(() => {
+        window.print();
+        showAnswers = prevAns;
+        renderQuestions();
+      }, 250);
+    }
+
+    function exportSingleHTML() {
+      const docHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const blob = new Blob([docHtml], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `國中數學_扇形與弓形周長面積特訓卷_${new Date().toISOString().slice(0, 10)}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      generateExam();
+    });
+  </script>
+</body>
+</html>

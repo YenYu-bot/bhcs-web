@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>百宏文教｜科學記號 出題器</title>
+<meta name="description" content="國中數學國一「科學記號」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g7-scientific-notation.html">
+<meta property="og:title" content="百宏文教｜科學記號 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g7-scientific-notation.html">
+<meta property="og:type" content="website">
+
+<style>
+  :root{ --ink:#222; --ans:#d62828; --accent:#2a8f6a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px}
+  .panel{background:#fff;padding:12px 18px;border-bottom:1px solid #cfd6dd;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;position:sticky;top:0;z-index:5}
+  .panel h1{font-size:18px;margin:0 0 2px;width:100%}
+  .grp{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid #d9e0e6;border-radius:8px;background:#f8fafb}
+  .grp>b{font-size:14px;color:#345}
+  .line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px}
+  .line label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  select,input[type=number]{font:inherit;padding:3px 6px;border:1px solid #b7bfc7;border-radius:4px;background:#fff}
+  input[type=number]{width:52px}
+  button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
+  button.ghost{background:#fff;color:var(--accent)}
+  .actions{display:flex;gap:8px;align-items:flex-end;align-self:stretch}
+  .mods{display:grid;grid-template-columns:repeat(3,auto);gap:4px 14px}
+  .mods label{display:flex;align-items:center;gap:4px;font-size:14px;white-space:nowrap}
+  .mods input[type=number]{width:46px}
+  .sheet{background:#fff;width:210mm;min-height:297mm;margin:14px auto;padding:12mm 12mm;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+  .head{border-bottom:2px solid var(--accent);padding-bottom:4px;margin-bottom:8px}
+  .head h2{margin:0;font-size:20px}
+  .head span{display:block;font-size:14px;margin-top:2px}
+  .sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:#eaf5f0;padding:4px 10px;border-left:5px solid var(--accent);break-after:avoid}
+  .tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}
+  .grid{display:grid;gap:0 5mm}
+  .grid.c3{grid-template-columns:repeat(3,1fr)} .grid.c2{grid-template-columns:repeat(2,1fr)} .grid.c1{grid-template-columns:1fr}
+  .prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}
+  .q{font-size:15.5px;line-height:1.9;display:flex;gap:4px;align-items:baseline}
+  .q .no{flex:none;color:#555;width:2em}
+  .q .expr{white-space:nowrap}
+  .work{min-height:var(--work,14mm);margin-top:1mm;font-size:13.5px;color:#333}
+  .ans{color:var(--ans)}
+  .ans b{font-size:15px}
+  body.student .ans{display:none}
+  sup{font-size:.68em;vertical-align:.6em;line-height:0;letter-spacing:.02em}
+  .fr{display:inline-block;vertical-align:middle;text-align:center;line-height:1.05;margin:0 2px;font-size:.9em;position:relative;top:-.08em}
+  .fr .n,.fr .d{display:block;padding:0 3px}
+  .fr .n{border-bottom:1.3px solid currentColor}
+  .op{margin:0 3px}
+  .unit{margin-left:2px;font-family:Arial,sans-serif;font-size:.95em}
+  .empty{color:#888;padding:40px;text-align:center}
+  @media print{ body{background:#fff} .panel{display:none} .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none} .ans{-webkit-print-color-adjust:exact;print-color-adjust:exact} @page{size:A4;margin:12mm} }
+</style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+:root{--accent:var(--bhcs-green)!important}
+body{background:var(--bhcs-bg);font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+.panel{padding-top:0!important;border-bottom:1px solid var(--bhcs-line);box-shadow:0 5px 16px #173e3412}
+.panel>h1{width:100%;margin:0 -18px 6px!important;padding:11px 18px!important;background:var(--bhcs-green2);color:#fff;border-bottom:4px solid var(--bhcs-mint);font-size:17px!important;display:flex;align-items:center;gap:12px}
+.panel>h1::before{content:"百";width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--bhcs-mint);color:var(--bhcs-green2);border-radius:9px;font:900 17px Georgia,serif}
+.panel>h1::after{content:"百宏文教・數學計算力練習";margin-left:auto;font-size:12px;font-weight:400;color:#c8e8df}
+.grp{background:#fff!important;border-color:var(--bhcs-line)!important}
+.grp>b,.grp>label:first-child{color:var(--bhcs-green2)!important}
+button{background:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important;color:#fff!important;font-weight:800!important}
+button.ghost{background:#fff!important;color:var(--bhcs-green)!important}
+.sheet{box-shadow:0 15px 40px #1d342f22!important}
+.hd,.head{border-bottom-color:var(--bhcs-green)!important}
+.sec{border-left-color:var(--bhcs-green)!important;background:var(--bhcs-soft)!important;padding:4px 10px!important}
+select,input[type=number]{border-color:#aabcb7!important}
+</style></head>
+<body class="student">
+<div class="panel">
+  <h1>科學記號 出題器（國一）</h1>
+  <div class="grp"><b>版面</b><div class="line">
+    <label>版本 <select id="version"><option value="student">學用版</option><option value="teacher">教用版（紅字解答）</option></select></label>
+    <label>每列 <select id="perRow"><option value="auto">自動</option><option value="3">3 題</option><option value="2">2 題</option><option value="1">1 題</option></select></label>
+    <label>作答空間 <select id="work"><option value="8">小</option><option value="14" selected>中</option><option value="22">大</option></select></label>
+  </div></div>
+  <div class="grp"><b>難度</b><div class="line">
+    <label>難度 <select id="diff"><option value="1">基礎</option><option value="2" selected>進階</option><option value="3">挑戰</option></select></label>
+    <span style="color:#678;font-size:13px">基礎：2～3 位有效數字、指數 ±6 內、加減同次方｜進階：4 位有效數字、指數 ±12、加減需對齊次方｜挑戰：5 位、指數 ±25、三項運算、未整理的形式與分數</span>
+  </div></div>
+  <div class="grp"><b>單元與題數</b><div class="mods" id="mods"></div></div>
+  <div class="actions"><button id="gen">重新出題</button><button class="ghost" id="print">列印 / 存 PDF</button></div>
+</div>
+<div id="out"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const coin=(p=.5)=>Math.random()<p;
+let D=2;
+
+/* ---------- 數：value = m × 10^e，m 為整數（去掉尾端 0） ---------- */
+function S(m,e){ if(m===0) return {m:0,e:0}; while(m%10===0){ m/=10; e++; } return {m,e}; }
+const digits=m=>String(Math.abs(m)).length;
+const mul=(a,b)=>S(a.m*b.m,a.e+b.e);
+const add=(a,b)=>{ const e=Math.min(a.e,b.e); return S(a.m*Math.pow(10,a.e-e)+b.m*Math.pow(10,b.e-e),e); };
+const sub=(a,b)=>add(a,{m:-b.m,e:b.e});
+/* 除法：只在 b.m 能整除 a.m×10^k 時使用 */
+function div(a,b){ let m=a.m, e=a.e-b.e; let k=0; while(m%b.m!==0&&k<8){ m*=10; e--; k++; } if(m%b.m!==0) return null; return S(m/b.m,e); }
+const norm=x=>{ const d=digits(x.m); return {a:x.m,ad:d-1,n:x.e+d-1}; };   // a×10^n，a 的小數位 ad
+const decStr=(m,ad)=>{ const neg=m<0; let s=String(Math.abs(m)).padStart(ad+1,'0'); if(ad>0) s=s.slice(0,-ad)+'.'+s.slice(-ad); return (neg?'−':'')+s; };
+const p10=n=>`10<sup>${n<0?'−'+(-n):n}</sup>`;
+function sci(x){ if(x.m===0) return '0'; const {a,ad,n}=norm(x); return `${decStr(a,ad)}×${p10(n)}`; }
+/* 用「未整理」的形式呈現：a 有指定的小數位 */
+function asForm(x,ad){ const d=digits(x.m); const a=x.m, n=x.e+ad; return `${decStr(a,ad)}×${p10(n)}`; }
+function plain(x){ // 展開成一般數字
+  if(x.e>=0) return String(x.m)+'0'.repeat(x.e); return decStr(x.m,-x.e); }
+const sciWrap=x=>`(${sci(x)})`;
+/* 把 x 寫成 c×10^p 時的係數 c（字串） */
+function coef(x,p){ const e=x.e-p; if(e>=0) return String(x.m)+'0'.repeat(e); return decStr(x.m,-e); }
+const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`;
+
+/* ---------- 抽數 ---------- */
+const SIG=()=>D===1?rnd(2,3):D===2?rnd(2,4):rnd(3,5);
+const EXP=()=>{ const n=D===1?rnd(-6,6):D===2?rnd(-12,12):rnd(-25,25); return n===0?pick([-1,1,2]):n; };
+function rSci(sig=SIG(),n=EXP()){ let m=rnd(Math.pow(10,sig-1),Math.pow(10,sig)-1); if(m%10===0) m+=1; return S(m,n-(sig-1)); }
+function rMant(sig){ let m=rnd(Math.pow(10,sig-1),Math.pow(10,sig)-1); if(m%10===0) m+=1; return m; }
+
+/* ---------- 中文數字 ---------- */
+const CN='零一二三四五六七八九';
+function cnUnit(m,e){ // m×10^e，e≥4，用 萬/億/兆 表示，如 103億7千5百萬、7.5億、五千萬
+  const v=m*Math.pow(10,e); const yi=Math.floor(v/1e8), wan=Math.floor((v%1e8)/1e4), rest=v%1e4;
+  let s=''; if(yi) s+=yi+'億'; if(wan){ if(wan%1000===0) s+=(wan/1000)+'千萬'; else if(wan%100===0) s+=Math.floor(wan/1000)+'千'+((wan%1000)/100)+'百萬'; else s+=wan+'萬'; } if(rest) s+=rest; return s; }
+function cnBig(d,k){ // d(1~9 或 兩位) × 10^k 的口語：五千萬、四百億、百萬、一千萬分之
+  const units=['','十','百','千','萬','十萬','百萬','千萬','億','十億','百億','千億','兆']; const u=units[k]; const ds=d===1&&k>=4?'':CN[d]; return ds+u; }
+
+/* ---------- 各單元 ---------- */
+const NOTE='（結果須整理成 a×10<sup>n</sup>，1≦|a|＜10）';
+const GEN={
+  rep:{name:'表示法',tip:'把數寫成 a×10ⁿ，1≦|a|＜10、n 為整數。比 1 大的數：小數點向左移幾位，n 就是幾；比 1 小的數：小數點向右移幾位，n 就是負幾。若 a 不在範圍內，把 a 的小數點左移 k 位，指數就加 k；右移 k 位，指數就減 k。',
+    make(){ const x=rSci(); const kind=pick(D===1?['big','small','dec']:D===2?['big','small','dec','form','frac']:['big','small','form','form','frac','mulform']);
+      let q,a=`<b>${sci(x)}</b>`; const {ad,n}=norm(x);
+      if(kind==='big'){ const y=S(x.m,Math.max(0,x.e)); const yy=S(y.m,Math.abs(y.e)>=0?Math.max(0,rnd(3,D===1?6:D===2?9:12)-digits(y.m)+1):0); return {q:plain(yy)+'＝？',a:`<b>${sci(yy)}</b>`,len:12}; }
+      if(kind==='small'){ const y=S(x.m,-rnd(digits(x.m)+1,D===1?7:D===2?9:11)); return {q:plain(y)+'＝？',a:`<b>${sci(y)}</b>`,len:12}; }
+      if(kind==='dec'){ if(digits(x.m)<3) return this.make(); const y=S(x.m,-rnd(1,digits(x.m)-2)); return {q:plain(y)+'＝？',a:`<b>${sci(y)}</b>`,len:12}; }
+      if(kind==='frac'){ const den=Math.pow(10,rnd(digits(x.m)+1,D===2?9:11)); const num=Math.abs(x.m); const y=S(num,-Math.log10(den)); return {q:fr(num,den)+'＝？',a:`<b>${sci(y)}</b>`,len:10}; }
+      if(kind==='form'){ const shift=pick([-3,-2,-1,1,2,3,4]); const adN=Math.max(0,ad-shift); const y=x; // 顯示成 a' × 10^n'，a' 不在 1~10
+        const aShown=decStr(y.m,adN), nShown=y.e+adN; return {q:`${aShown}×${p10(nShown)}＝？`,a:`<b>${sci(y)}</b>`,len:14}; }
+      // mulform: 0.00000007×10^12×10^-10
+      const y=x; const adN=ad+rnd(3,7); const n1=rnd(-15,15), n2=y.e+adN-n1; return {q:`${decStr(y.m,adN)}×${p10(n1)}×${p10(n2)}＝？`,a:`<b>${sci(y)}</b>`,len:22}; }},
+  unit:{name:'單位換算',tip:'1 km＝10³ m＝10⁵ cm；1 cm＝10⁻² m；1 mm＝10⁻³ m；1 μm＝10⁻⁶ m；1 nm＝10⁻⁹ m；1 kg＝10³ g；1 mL＝10⁻³ L。1 萬＝10⁴，1 億＝10⁸。換算後結果要整理成科學記號。',
+    make(){ const kind=pick(D===1?['cn','unit','unit']:['cn','cnfrac','unit','unit','unitsci']);
+      if(kind==='cn'){ // 中文數字：7.5億、103億7千5百萬
+        const yi=rnd(1,D===1?9:D===3?999:120); const wan=pick([0,0,rnd(1,9)*1000,rnd(1,9)*100+rnd(1,9)*1000,rnd(1,9999)]); const v=yi*1e8+(D===1?0:wan*1e4); const x=S(v,0);
+        let q; if(D===1&&coin(.5)){ const m=rMant(2); q=decStr(m,1)+'億'; const y=S(m,7); return {q:q+'＝？',a:`<b>${sci(y)}</b>`,len:8}; }
+        q=cnUnit(v,0); return {q:q+'＝？',a:`${v}＝<b>${sci(x)}</b>`,len:10}; }
+      if(kind==='cnfrac'){ const d=rnd(1,9), k=rnd(5,D===3?11:9); const num=rnd(1,9); const q=`${cnBig(d,k)}分之${CN[num]}`; // num/(d×10^k)
+        const r=div(S(num,0),S(d,k)); if(!r) return this.make(); return {q:q+'＝？',a:`${fr(num,d+'×'+p10(k))}＝<b>${sci(r)}</b>`,len:10}; }
+      const U=[['km',3,'m',0],['m',0,'km',3],['cm',-2,'m',0],['m',0,'cm',-2],['km',3,'cm',-2],['mm',-3,'m',0],['m',0,'mm',-3],['kg',3,'g',0],['g',0,'kg',3],['L',0,'mL',-3],['mL',-3,'L',0]];
+      const U3=[['μm',-6,'m',0],['nm',-9,'m',0],['m',0,'nm',-9],['km',3,'mm',-3],['nm',-9,'μm',-6]];
+      const [fu,fe,tu,te]=pick(D===3?[...U,...U3]:U); const x=rSci(SIG(),D===1?rnd(-4,6):EXP());
+      const y=S(x.m,x.e+fe-te);
+      if(kind==='unitsci'||D>=2&&coin(.6)) return {q:`${sci(x)}<span class="unit">${fu}</span>＝？<span class="unit">${tu}</span>`,a:`${sci(x)}×${p10(fe-te)}＝<b>${sci(y)}</b><span class="unit">${tu}</span>`,len:16};
+      const shown=Math.abs(x.e)<=6?plain(x):sci(x); return {q:`${shown}<span class="unit">${fu}</span>＝？<span class="unit">${tu}</span>`,a:`${shown}×${p10(fe-te)}＝<b>${sci(y)}</b><span class="unit">${tu}</span>`,len:16}; }},
+  expand:{name:'乘開',tip:'a×10ⁿ：n 為正，小數點向右移 n 位（不夠補 0）；n 為負，小數點向左移 n 位。',
+    make(){ const x=rSci(SIG(),D===1?rnd(-4,6):D===2?rnd(-6,8):rnd(-9,10)); return {q:sci(x)+'＝？',a:`<b>${plain(x)}</b>`,len:10}; }},
+  addsub:{name:'加減運算',tip:'先化成相同的 10 的次方，再用分配律：a×10ᵐ ± b×10ⁿ ＝ (c±d)×10ᵖ，最後整理成 1≦|c±d|＜10。',
+    make(){ const sig=SIG(); const n=EXP(); const k=D===3&&coin(.4)?3:2;
+      const xs=[]; for(let i=0;i<k;i++){ const gap=D===1?0:(i===0?0:pick([0,1,1,2,-1])); xs.push(rSci(sig,n-gap)); }
+      const ops=[]; for(let i=1;i<k;i++) ops.push(coin()?'+':'-');
+      let v=xs[0]; ops.forEach((op,i)=>{ v=op==='+'?add(v,xs[i+1]):sub(v,xs[i+1]); }); if(v.m===0) return this.make();
+      const show=xs.map((x,i)=>{ if(D===3&&coin(.35)){ const {ad}=norm(x); return asForm(x,Math.max(0,ad+pick([-2,-1,1,2]))); } return sci(x); });
+      let q=show[0]; ops.forEach((op,i)=>q+=`<span class="op">${op==='+'?'＋':'−'}</span>${show[i+1]}`);
+      // 解答：對齊到最小次方
+      const p=Math.max(...xs.map(x=>norm(x).n)); const cs=xs.map(x=>coef(x,p));
+      let st='('+cs[0]; ops.forEach((op,i)=>st+=(op==='+'?'＋':'−')+cs[i+1]); st+=')×'+p10(p);
+      const mid=`${coef(v,p)}×${p10(p)}`; const fin=sci(v);
+      return {q:q+'＝？',a:`${st}＝${mid===fin?'<b>'+fin+'</b>':mid+'＝<b>'+fin+'</b>'}`,len:16+(k-2)*8}; }},
+  muldiv:{name:'乘除運算',tip:'用指數律：(a×10ᵐ)×(b×10ⁿ)＝ab×10ᵐ⁺ⁿ；(a×10ᵐ)÷(b×10ⁿ)＝(a÷b)×10ᵐ⁻ⁿ，算完再整理成 c×10ᵖ，1≦|c|＜10。',
+    make(){ const op=coin()?'*':'/'; const sigA=D===1?rnd(1,2):rnd(2,3), sigB=D===1?1:rnd(1,2);
+      if(op==='*'){ const a=rSci(sigA), b=rSci(sigB); if(D===3&&coin(.3)){ // 三個因數或含普通數
+          const c=coin()?S(rnd(2,9)*10,0):rSci(1); const v=mul(mul(a,b),c); return {q:`${sciWrap(a)}×${sciWrap(b)}×${c.e===1?plain(c):sciWrap(c)}＝？`,a:`${a.m*b.m*c.m}×${p10(a.e+b.e+c.e)}＝<b>${sci(v)}</b>`,len:28}; }
+        const v=mul(a,b); const {a:aa,ad:ada,n:na}=norm(a), {a:ab,ad:adb,n:nb}=norm(b); const prod=S(aa*ab,-(ada+adb));
+        return {q:`${sciWrap(a)}×${sciWrap(b)}＝？`,a:`${decStr(prod.m*Math.pow(10,Math.max(0,prod.e+ada+adb)),Math.max(0,ada+adb))}×${p10(na+nb)}＝<b>${sci(v)}</b>`,len:20}; }
+      // 除法：先決定商與除數，被除數 = 商×除數
+      for(let t=0;t<50;t++){ const b=rSci(sigB), qv=rSci(D===1?1:rnd(1,2)); if(Math.abs(b.m)===1||Math.abs(qv.m)===1) continue; const a=mul(qv,b); if(digits(a.m)>5) continue; const {a:aa,ad:ada,n:na}=norm(a), {a:ab,ad:adb,n:nb}=norm(b);
+        const qm=div({m:aa,e:-ada},{m:ab,e:-adb}); const v=div(a,b); return {q:`${sciWrap(a)}÷${sciWrap(b)}＝？`,a:`${fr(decStr(aa,ada),decStr(ab,adb))}×${p10(na-nb)}＝${decStr(qm.m,Math.max(0,-qm.e))+(qm.e>0?'0'.repeat(qm.e):'')}×${p10(na-nb)}＝<b>${sci(v)}</b>`,len:20}; }
+      return this.make(); }},
+  mix:{name:'綜合練習',tip:'混合各種形式：普通數與科學記號相乘、分數形式、未整理的 a×10ⁿ，先各自化成科學記號再運算。',
+    make(){ const kind=pick(['plainmul','fracmul','formmul','addsub','muldiv','rep']);
+      if(GEN[kind]) return GEN[kind].make();
+      if(kind==='plainmul'){ const a=rSci(rnd(2,3),rnd(-8,8)), b=S(rnd(2,9)*pick([1,10,100]),0); const v=mul(a,b); const [x,y]=coin()?[sci(a),plain(b)]:[plain(b),sci(a)]; return {q:`${x}×${y}＝？`,a:`<b>${sci(v)}</b>`,len:16}; }
+      if(kind==='formmul'){ const a=rSci(rnd(1,3),rnd(-10,10)); const {ad}=norm(a); const shown=asForm(a,ad+rnd(3,6)); const b=rSci(1,rnd(-12,12)); const v=mul(a,b); return {q:`${shown}×${sci(b)}＝？`,a:`${sci(a)}×${sci(b)}＝<b>${sci(v)}</b>`,len:22}; }
+      // fracmul: 1/(2×10^8) × 3×10^-2
+      for(let t=0;t<30;t++){ const bm=pick([2,4,5,8]), be=rnd(2,10), c=rSci(1,rnd(-6,6)); const num=pick([1,3,5,7]); const r=div(S(num,0),S(bm,be)); if(!r) continue; const v=mul(r,c);
+        return {q:`${fr(num,bm+'×'+p10(be))}×${sci(c)}＝？`,a:`${sci(r)}×${sci(c)}＝<b>${sci(v)}</b>`,len:18}; }
+      return GEN.muldiv.make(); }},
+};
+const MODS=['rep','unit','expand','addsub','muldiv','mix'];
+const DEF={rep:9,unit:6,expand:6,addsub:6,muldiv:6,mix:6};
+$('mods').innerHTML=MODS.map(k=>`<label><input type="checkbox" id="on_${k}" ${['rep','addsub','muldiv'].includes(k)?'checked':''}> ${GEN[k].name} <input type="number" id="n_${k}" value="${DEF[k]}" min="1" max="40"></label>`).join('');
+function generate(){
+  D=+$('diff').value; document.documentElement.style.setProperty('--work',$('work').value+'mm'); const per=$('perRow').value, parts=[];
+  MODS.forEach(k=>{ if(!$('on_'+k).checked) return; const n=Math.min(40,Math.max(1,+$('n_'+k).value||1)); const items=[]; let guard=0;
+    while(items.length<n&&guard++<n*20){ const it=GEN[k].make(); if(!it||items.some(x=>x.q===it.q)) continue; items.push(it); }
+    const longest=Math.max(...items.map(x=>x.len)); const cols=per==='auto'?(longest<=12?3:longest<=22?2:1):+per;
+    let h=`<div class="sec">${GEN[k].name}</div><p class="tip">${GEN[k].tip}</p><div class="grid c${cols}">`;
+    items.forEach((it,i)=>{ h+=`<div class="prob"><div class="q"><span class="no">(${i+1})</span><span class="expr">${it.q}</span></div><div class="work">${k==='rep'||k==='expand'||k==='unit'?'':'原式＝'}<span class="ans">${it.a}</span></div></div>`; });
+    h+='</div>'; parts.push(h); });
+  $('out').innerHTML=parts.length?`<div class="sheet"><div class="head"><h2>科學記號 練習（${['','基礎','進階','挑戰'][D]}）</h2><span>班級：______　姓名：__________　日期：____/____　作答時間：____分____秒</span></div><p class="tip" style="margin:4px 0 0 2px">以科學記號 a×10<sup>n</sup>（1≦|a|＜10，n 為整數）表示下列各題的結果。</p>${parts.join('')}</div>`:'<div class="empty">請至少勾選一個單元。</div>';
+}
+$('gen').onclick=generate; $('print').onclick=()=>window.print();
+$('version').onchange=e=>document.body.className=e.target.value;
+['perRow','work','diff'].forEach(id=>$(id).onchange=generate);
+$('mods').addEventListener('change',generate);
+generate();
+</script>
+</body>
+</html>

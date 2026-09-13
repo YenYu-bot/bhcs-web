@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>百宏文教｜一元一次式與方程式 出題器</title>
+<meta name="description" content="國中數學國一「一元一次式與方程式」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g7-linear-equation.html">
+<meta property="og:title" content="百宏文教｜一元一次式與方程式 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g7-linear-equation.html">
+<meta property="og:type" content="website">
+
+<style>
+  :root{ --ink:#222; --ans:#d62828; --accent:#2a8f6a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf1;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px}
+  .panel{background:#fff;padding:12px 18px;border-bottom:1px solid #cfd6dd;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;position:sticky;top:0;z-index:5}
+  .panel h1{font-size:18px;margin:0 0 2px;width:100%}
+  .grp{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid #d9e0e6;border-radius:8px;background:#f8fafb}
+  .grp>b{font-size:14px;color:#345}
+  .line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px}
+  .line label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+  select,input[type=number]{font:inherit;padding:3px 6px;border:1px solid #b7bfc7;border-radius:4px;background:#fff}
+  input[type=number]{width:52px}
+  button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
+  button.ghost{background:#fff;color:var(--accent)}
+  .actions{display:flex;gap:8px;align-items:flex-end;align-self:stretch}
+  .mods{display:grid;grid-template-columns:repeat(4,auto);gap:4px 14px}
+  .mods label{display:flex;align-items:center;gap:4px;font-size:14px;white-space:nowrap}
+  .mods input[type=number]{width:46px}
+  .mods .h{grid-column:1/-1;font-size:13px;color:#678;margin-top:4px}
+  .sheet{background:#fff;width:210mm;min-height:297mm;margin:14px auto;padding:12mm 12mm;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+  .head{border-bottom:2px solid var(--accent);padding-bottom:4px;margin-bottom:8px}
+  .head h2{margin:0;font-size:20px}
+  .head span{display:block;font-size:14px;margin-top:2px}
+  .sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:#eaf5f0;padding:4px 10px;border-left:5px solid var(--accent);break-after:avoid}
+  .tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}
+  .grid{display:grid;gap:0 5mm}
+  .grid.c3{grid-template-columns:repeat(3,1fr)} .grid.c2{grid-template-columns:repeat(2,1fr)} .grid.c1{grid-template-columns:1fr}
+  .prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}
+  .given{font-size:14.5px;margin:1mm 0 1mm 2em;color:#333}
+  .q{font-size:15.5px;line-height:2;display:flex;gap:4px;align-items:baseline}
+  .q .no{flex:none;color:#555;width:2em}
+  .q .expr{white-space:nowrap}
+  .work{min-height:var(--work,14mm);margin-top:1mm;font-size:13.5px;color:#333}
+  .ans{color:var(--ans)}
+  .ans b{font-size:15px}
+  body.student .ans{display:none}
+  .fr{display:inline-block;vertical-align:middle;text-align:center;line-height:1.05;margin:0 2px;font-size:.9em;position:relative;top:-.08em}
+  .fr .n,.fr .d{display:block;padding:0 3px}
+  .fr .n{border-bottom:1.3px solid currentColor}
+  .fr .fr{font-size:1em}
+  .op{margin:0 3px}
+  .br{margin:0 1px}
+  var{font-style:italic;font-family:"Times New Roman",Georgia,serif;font-size:1.08em;padding:0 1px}
+  .empty{color:#888;padding:40px;text-align:center}
+  @media print{ body{background:#fff} .panel{display:none} .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none} .ans{-webkit-print-color-adjust:exact;print-color-adjust:exact} @page{size:A4;margin:12mm} }
+</style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+:root{--accent:var(--bhcs-green)!important}
+body{background:var(--bhcs-bg);font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+.panel{padding-top:0!important;border-bottom:1px solid var(--bhcs-line);box-shadow:0 5px 16px #173e3412}
+.panel>h1{width:100%;margin:0 -18px 6px!important;padding:11px 18px!important;background:var(--bhcs-green2);color:#fff;border-bottom:4px solid var(--bhcs-mint);font-size:17px!important;display:flex;align-items:center;gap:12px}
+.panel>h1::before{content:"百";width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--bhcs-mint);color:var(--bhcs-green2);border-radius:9px;font:900 17px Georgia,serif}
+.panel>h1::after{content:"百宏文教・數學計算力練習";margin-left:auto;font-size:12px;font-weight:400;color:#c8e8df}
+.grp{background:#fff!important;border-color:var(--bhcs-line)!important}
+.grp>b,.grp>label:first-child{color:var(--bhcs-green2)!important}
+button{background:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important;color:#fff!important;font-weight:800!important}
+button.ghost{background:#fff!important;color:var(--bhcs-green)!important}
+.sheet{box-shadow:0 15px 40px #1d342f22!important}
+.hd,.head{border-bottom-color:var(--bhcs-green)!important}
+.sec{border-left-color:var(--bhcs-green)!important;background:var(--bhcs-soft)!important;padding:4px 10px!important}
+select,input[type=number]{border-color:#aabcb7!important}
+</style></head>
+<body class="student">
+<div class="panel">
+  <h1>一元一次式與一元一次方程式 出題器（國一）</h1>
+  <div class="grp"><b>版面</b><div class="line">
+    <label>版本 <select id="version"><option value="student">學用版</option><option value="teacher">教用版（紅字解答）</option></select></label>
+    <label>每列 <select id="perRow"><option value="auto">自動</option><option value="3">3 題</option><option value="2">2 題</option><option value="1">1 題</option></select></label>
+    <label>作答空間 <select id="work"><option value="10">小</option><option value="18" selected>中</option><option value="28">大</option></select></label>
+  </div></div>
+  <div class="grp"><b>難度與數的類型</b><div class="line">
+    <label>難度 <select id="diff"><option value="1">基礎</option><option value="2" selected>進階</option><option value="3">挑戰</option></select></label>
+    <label><input type="checkbox" id="tInt" checked> 整數係數</label>
+    <label><input type="checkbox" id="tFrac" checked> 分數係數</label>
+    <label><input type="checkbox" id="tDec"> 小數係數</label>
+    <label><input type="checkbox" id="xy"> 去括號可含兩個文字符號（x、y）</label>
+  </div></div>
+  <div class="grp"><b>單元與題數</b><div class="mods" id="mods"></div></div>
+  <div class="actions"><button id="gen">重新出題</button><button class="ghost" id="print">列印 / 存 PDF</button></div>
+</div>
+<div id="out"></div>
+
+<script>
+/* ================= 工具 ================= */
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rnz=(a,b)=>{ let v; do v=rnd(a,b); while(v===0); return v; };
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const coin=(p=.5)=>Math.random()<p;
+const gcd=(a,b)=>{ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
+const sgn=()=>coin()?1:-1;
+class F{ constructor(n,d=1){ if(d<0){n=-n;d=-d;} const g=gcd(n,d)||1; this.n=n/g; this.d=d/g; }
+  static of(x){ return x instanceof F?x:new F(x,1); }
+  add(o){ o=F.of(o); return new F(this.n*o.d+o.n*this.d,this.d*o.d); } sub(o){ o=F.of(o); return new F(this.n*o.d-o.n*this.d,this.d*o.d); }
+  mul(o){ o=F.of(o); return new F(this.n*o.n,this.d*o.d); } div(o){ o=F.of(o); return new F(this.n*o.d,this.d*o.n); }
+  neg(){ return new F(-this.n,this.d); } abs(){ return new F(Math.abs(this.n),this.d); } isInt(){ return this.d===1; } isZero(){ return this.n===0; } eq(k){ const o=F.of(k); return this.n===o.n&&this.d===o.d; }
+  isDec(){ let d=this.d; while(d%2===0) d/=2; while(d%5===0) d/=5; return d===1; } val(){ return this.n/this.d; } }
+const Z=new F(0), ONE=new F(1);
+let D=2, TYPES=['int'];
+const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`;
+function decStr(f){ let d=f.d,n=Math.abs(f.n),k=0; while(d>1){ if(d%10===0){d/=10;k++;} else if(d%2===0){d/=2;n*=5;k++;} else {d/=5;n*=2;k++;} } let s=String(n).padStart(k+1,'0'); return (k?s.slice(0,-k)+'.'+s.slice(-k):s); }
+/* 數字顯示：|f|，dec=true 用小數 */
+function absNum(f,dec){ const a=f.abs(); if(a.isInt()) return String(a.n); if(dec&&a.isDec()) return decStr(a); return fr(a.n,a.d); }
+function numStr(f,dec){ return (f.n<0?'−':'')+absNum(f,dec); }
+const V=(name='x')=>`<var>${name}</var>`;
+
+/* ================= 線性式 {a:x係數, c:y係數, b:常數} ================= */
+const lin=(a,b,c=Z)=>({a:F.of(a),b:F.of(b),c:F.of(c)});
+const ladd=(p,q)=>lin(p.a.add(q.a),p.b.add(q.b),p.c.add(q.c));
+const lscale=(p,k)=>lin(p.a.mul(k),p.b.mul(k),p.c.mul(k));
+/* 呈現 ax + cy + b（照給定順序 order:['x','y','k']） */
+function linStr(L,dec,order=['x','y','k']){ const parts=[]; const push=(coef,v)=>{ if(coef.isZero()) return; const first=parts.length===0; const s=coef.n<0?'−':(first?'':'＋'); const a=coef.abs(); const body=v?((a.eq(1)?'':absNum(a,dec))+V(v)):absNum(a,dec); parts.push((first?s:`<span class="op">${s}</span>`)+body); };
+  order.forEach(o=>{ if(o==='x') push(L.a,'x'); else if(o==='y') push(L.c,'y'); else push(L.b,null); }); return parts.length?parts.join(''):'0'; }
+const nterms=L=>[L.a,L.b,L.c].filter(v=>!v.isZero()).length;
+
+/* ================= 運算式樹 =================
+   {t:'L',L,order}      線性式
+   {t:'N',v}            常數
+   {t:'K',k,n}          k×(n)   k 可為 ±1
+   {t:'D',n,d}          n ÷ d 的分數（分子是式子）
+   {t:'S',terms:[{s,n}]}
+   {t:'M',l,k,op,kfirst} 簡記用：(l)·(k) 或 k·(l) 或 l÷(k)
+   {t:'V',name}         代號 A、B、C
+   {t:'Q',n,k}          n÷k（等量公理用）  {t:'R',a,n}  a÷(n)
+*/
+const N=v=>({t:'N',v:F.of(v)});
+const Ln=(L,order)=>({t:'L',L,order});
+const K=(k,n)=>({t:'K',k:F.of(k),n});
+const Dv=(n,d)=>({t:'D',n,d:F.of(d)});
+const S=(...terms)=>({t:'S',terms});
+const T=(s,n)=>({s,n});
+function ev(n,env={}){ switch(n.t){
+  case 'L': return n.L; case 'N': return lin(0,n.v); case 'K': return lscale(ev(n.n,env),n.k); case 'D': return lscale(ev(n.n,env),ONE.div(n.d));
+  case 'S': return n.terms.reduce((acc,t)=>ladd(acc,lscale(ev(t.n,env),t.s)),lin(0,0));
+  case 'M': { const L=ev(n.l,env); return n.op==='*'?lscale(L,n.k):lscale(L,ONE.div(n.k)); }
+  case 'V': return env[n.name]; case 'Q': return lscale(ev(n.n,env),ONE.div(n.k)); case 'R': return null; } }
+const BR=[['(',')'],['〔','〕'],['{','}']];
+const wrapB=(h,l)=>`<span class="br">${BR[Math.min(l,2)][0]}</span>${h}<span class="br">${BR[Math.min(l,2)][1]}</span>`;
+function depth(n){ switch(n.t){ case 'K': return n.n.t==='V'?-1:depth(n.n)+1; case 'S': return Math.max(-1,...n.terms.map((t,i)=>{ const c=t.n; if(c.t==='S') return depth(c)+1; if(c.t==='L'){ const L=c.L; return (i>0||t.s<0)&&(nterms(L)>1||L.a.n<0)?0:-1; } return depth(c); })); case 'D': return -1; case 'M': return 0; default: return -1; } }
+/* dec: 係數用小數呈現 */
+function render(n,dec,first=true){ switch(n.t){
+  case 'L': return linStr(n.L,dec,n.order);
+  case 'N': return numStr(n.v,dec);
+  case 'V': return n.name;
+  case 'K': { const inner=n.n.t==='L'||n.n.t==='V'||n.n.t==='N'?render(n.n,dec):render(n.n,dec); const lv=n.n.t==='L'?0:depth(n.n)+1; const body=n.n.t==='V'?inner:wrapB(inner,lv); const k=n.k.abs(); return (n.k.n<0?'−':'')+(k.eq(1)?'':absNum(k,dec))+body; }
+  case 'D': return fr(render(n.n,dec),absNum(n.d,dec));
+  case 'M': { const l=render(n.l,dec); const lw=n.l.t==='L'&&(n.l.L.a.n<0||nterms(n.l.L)>1)?wrapB(l,0):l; const kk=n.k.n<0?wrapB(numStr(n.k,dec),0):numStr(n.k,dec); if(n.op==='/') return `${lw}<span class="op">÷</span>${kk}`; return n.kfirst?`${kk}<span class="op">·</span>${lw}`:`${lw}<span class="op">·</span>${kk}`; }
+  case 'Q': return `${render(n.n,dec)}<span class="op">÷</span>${numStr(n.k,dec)}`;
+  case 'R': return `${numStr(n.a,dec)}<span class="op">÷</span>${n.n.t==='L'&&n.n.L.a.eq(1)&&n.n.L.b.isZero()?V():wrapB(render(n.n,dec),0)}`;
+  case 'S': { let h=''; n.terms.forEach((t,i)=>{ const c=t.n; let sign=t.s, body;
+      if(c.t==='K'){ sign*=Math.sign(c.k.n||1); body=render({...c,k:c.k.abs()},dec); }
+      else if(c.t==='N'){ sign*=Math.sign(c.v.n||1); body=absNum(c.v,dec); }
+      else if(c.t==='L'){ const L=c.L; const many=nterms(L)>1||L.a.n<0||(L.a.isZero()&&L.c.n<0); if(nterms(L)===1&&!many){ body=linStr(L,dec,c.order); } else if(i===0&&t.s===1&&!c.wrap){ body=linStr(L,dec,c.order); } else body=wrapB(linStr(L,dec,c.order),0); }
+      else if(c.t==='V') body=c.name;
+      else if(c.t==='S') body=wrapB(render(c,dec),depth(c)+1);
+      else body=render(c,dec);
+      if(i===0) h+=(sign<0?'−':'')+body; else h+=`<span class="op">${sign<0?'−':'＋'}</span>${body}`; }); return h; } } }
+
+/* ================= 抽係數 ================= */
+const T_=()=>pick(TYPES);
+function coef(type,opt={}){ // 非零係數
+  const m=opt.max||(D===1?6:D===2?9:12);
+  if(type==='int') return new F(sgn()*rnd(1,m));
+  if(type==='dec'){ if(D>=2&&coin(.3)) return new F(sgn()*pick([5,25,75,15,35,45,125]),100); let v=rnd(1,D===1?19:D===2?39:59); if(v%10===0) v+=1; return new F(sgn()*v,10); }
+  const den=pick(D===1?[2,3,4,5]:[2,3,4,5,6,8,9,10]); let num=rnd(1,opt.proper?den-1:den*2); if(num%den===0) num=1; return new F(sgn()*num,den); }
+const smallInt=(m=9)=>new F(sgn()*rnd(1,m));
+function rLin(type,opt={}){ // ax+b（b 可 0）
+  const a=opt.aInt?smallInt(opt.max||9):coef(type,{max:opt.max}); let b=opt.b0?Z:(opt.bInt?smallInt(opt.bmax||12):coef(type,{max:opt.bmax||12}));
+  if(opt.noZeroB&&b.isZero()) b=smallInt(9); const c=opt.y?smallInt(9):Z; return lin(a,b,c); }
+const xy=()=>$('xy').checked&&D>=2&&coin(.35);
+
+/* ================= 答案格式 ================= */
+function ansLin(L,dec){ return `<b>${linStr(L,dec)}</b>`; }
+function solveStr(L,dec){ // L = 0
+  if(L.a.isZero()) return L.b.isZero()?'<b>x 為任意數（無限多解）</b>':'<b>無解</b>';
+  const x=L.b.neg().div(L.a); let h=`<b>${V()}＝${numStr(x)}</b>`; if(!x.isInt()&&dec&&x.isDec()) h+=`（＝${numStr(x,true)}）`; return h; }
+/* 設定解 x0 後，調整右式常數使等式成立；回傳 {q, L} */
+function eqWith(lhs,rhs,x0,dec){ const L=ev(lhs), R=ev(rhs);
+  // 在候選解中挑一個，讓補上去的常數最「乾淨」（整數優先、其次分母小、絕對值小）
+  const cands=[]; const t=x0.isInt()?'int':(dec?'dec':'frac');
+  if(t==='int'){ for(let v=-12;v<=12;v++) if(v) cands.push(new F(v)); } else if(t==='dec'){ for(const d of [2,4,5,10]) for(let v=-20;v<=20;v++) if(v%d) cands.push(new F(v,d)); } else { for(const d of [2,3,4,5,6]) for(let v=-12;v<=12;v++) if(v%d) cands.push(new F(v,d)); }
+  cands.push(x0); const scored=cands.map(x=>{ const c=L.a.mul(x).add(L.b).sub(R.a.mul(x).add(R.b)); let sc=(c.isInt()?0:(dec&&c.isDec()?1:2+c.d))+Math.abs(c.val())/40; return {x,c,sc}; }).sort((p,q)=>p.sc-q.sc);
+  const best=scored.slice(0,Math.min(6,scored.length)); const pickd=pick(best); x0=pickd.x; const c=pickd.c; let rhs2=rhs;
+  if(!c.isZero()){ if(rhs.t==='N') rhs2=N(rhs.v.add(c)); else if(rhs.t==='L') rhs2=Ln(lin(rhs.L.a,rhs.L.b.add(c),rhs.L.c),rhs.order);
+    else if(rhs.t==='S'){ const last=rhs.terms[rhs.terms.length-1]; if(last.n.t==='N'){ rhs2=S(...rhs.terms.slice(0,-1),T(1,N(last.n.v.mul(last.s).add(c)))); } else if(last.n.t==='L'){ rhs2=S(...rhs.terms.slice(0,-1),T(last.s,Ln(lin(last.n.L.a,last.n.L.b.add(c.mul(last.s)),last.n.L.c),last.n.order))); } else rhs2=S(...rhs.terms,T(1,N(c))); }
+    else rhs2=S(T(1,rhs),T(1,N(c))); }
+  const R2=ev(rhs2); const E=ladd(L,lscale(R2,-1)); return {q:`${render(lhs,dec)}<span class="op">＝</span>${render(rhs2,dec)}`,E}; }
+function x0For(type){ if(type==='int') return new F(rnz(-9,12)); if(type==='dec') return new F(rnz(-30,30),pick([2,4,5,10])); return new F(rnz(-9,9),pick([2,3,4,5,6])); }
+
+/* ================= 各單元 ================= */
+const GEN={
+ /* --- 一元一次式 --- */
+ s1:{name:'式子的簡記',cat:'一元一次式',tip:'只含文字符號的項相加減：係數相加減後乘上文字符號，ax±bx＝(a±b)x。式子與數字相乘：先把係數與數字相乘，ax×b＝(ab)x；除法改成乘以倒數。',
+  make(){ const type=T_(); const dec=type==='dec'; const kind=pick(['add','add','mul','div']);
+   if(kind==='add'){ const k=D===1?2:pick([2,3]); const cs=[]; for(let i=0;i<k;i++) cs.push(coef(type)); let e=S(...cs.map((c,i)=>T(i===0?1:Math.sign(c.n),Ln(lin(c.abs(),0))))); if(cs[0].n<0) e.terms[0].s=-1; const L=ev(e); if(L.a.isZero()) return this.make(); return {q:render(e,dec)+'<span class="op">＝</span>？',a:ansLin(L,dec),len:6*k}; }
+   const a=coef(type), k=coef(type); const l=Ln(lin(a,0)); const e={t:'M',l,k,op:kind==='mul'?'*':'/',kfirst:coin(.4)}; return {q:render(e,dec)+'<span class="op">＝</span>？',a:ansLin(ev(e),dec),len:12}; }},
+ s2:{name:'去括號',cat:'一元一次式',tip:'括號前是「＋」，去括號後各項符號不變；括號前是「−」，各項都要變號。數字乘括號用分配律：a(bx＋c)＝abx＋ac。最後把同類項合併。',
+  make(){ const type=T_(); const dec=type==='dec'; const y=xy(); const k=D===1?2:D===2?pick([2,2,3]):3; const terms=[];
+   for(let i=0;i<k;i++){ const L=rLin('int',{aInt:true,bInt:true,y}); const kk=coin(D===1?.5:.65)?(coin(.3)?ONE:(type==='int'?smallInt(D===1?5:7):coef(type,{max:6}))):ONE; const node=kk.eq(1)?Ln(L):K(kk,Ln(L)); terms.push(T(i===0?(coin(.8)?1:-1):sgn(),node)); }
+   if(k>=2&&coin(.4)) terms[rnd(0,k-1)]=T(sgn(),Ln(lin(smallInt(9),0,y&&coin()?smallInt(9):Z)));
+   const e=S(...terms); return {q:render(e,dec)+'<span class="op">＝</span>？',a:ansLin(ev(e),dec),len:7*k+(y?4:0)}; }},
+ s3:{name:'去多重括號',cat:'一元一次式',tip:'先算乘除、後加減；有括號先算小括號、再中括號、最後大括號，也可以由外而內逐層去括號。每去一層括號都要注意變號，最後合併同類項。',
+  make(){ const type=T_(); const dec=type==='dec'; const depthN=D===1?2:D===2?pick([2,3]):3;
+   const single=()=>Ln(lin(smallInt(9),0)); const both=()=>Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true}));
+   let inner=S(T(1,single()),T(sgn(),coin(.5)?K(smallInt(4),both()):both()));
+   for(let d=1;d<depthN;d++){ const kk=coin(.4)?smallInt(D===3?4:3):ONE; inner=S(T(1,single()),T(sgn(),kk.eq(1)?inner:K(kk,inner))); }
+   const e=D===3&&coin(.3)?S(T(1,single()),T(sgn(),Dv(inner,rnd(2,6)))):inner;
+   return {q:render(e,dec)+'<span class="op">＝</span>？',a:ansLin(ev(e),dec),len:30}; }},
+ s4:{name:'分數型',cat:'一元一次式',tip:'分子是式子時，先通分使分母相同，再把分子相加減（分母不可省略）；分數乘括號用分配律，例如 ½(x−3)＝½x−3/2。',
+  make(){ const dec=false; const k=D===1?2:pick([2,3]); const kind=pick(['frac','frac','kmul']); const terms=[];
+   const dens=pick(D===1?[[2,4],[2,3,6],[3,9],[2,5,10],[2,3]]:[[2,4],[2,3,6],[3,4,12],[2,5,10],[4,6,12],[3,9],[2,6,9],[4,8]]);
+   for(let i=0;i<k;i++){ const L=rLin('int',{aInt:true,bInt:true,noZeroB:true,max:8}); const d=pick(dens); terms.push(T(i===0?1:sgn(),kind==='frac'?Dv(Ln(L),d):K(new F(rnz(1,d-1),d),Ln(L)))); }
+   if(D>=2&&coin(.4)) terms.push(T(sgn(),coin()?N(rnd(1,9)):Ln(lin(smallInt(6),0))));
+   const e=S(...terms); return {q:render(e,dec)+'<span class="op">＝</span>？',a:ansLin(ev(e),dec),len:14*k}; }},
+ s5:{name:'算式應用（代號）',cat:'一元一次式',tip:'把 A、B、C 代表的式子分別代入，去括號後合併同類項；也可以先把求值式化簡，再代入。',
+  make(){ const env={A:rLin('int',{aInt:true,bInt:true,noZeroB:true,max:5,bmax:9}),B:rLin('int',{aInt:true,bInt:true,noZeroB:true,max:5,bmax:9}),C:rLin('int',{aInt:true,bInt:true,noZeroB:true,max:5,bmax:9})};
+   const given=`設 A＝${linStr(env.A)}，B＝${linStr(env.B)}，C＝${linStr(env.C)}，將下式化為 x 的一次式：`;
+   const type=TYPES.includes('frac')&&coin(.5)?'frac':'int'; const kf=()=>type==='frac'?new F(rnz(1,5),pick([2,3,4,6])):smallInt(5);
+   let e; if(D>=2&&coin(.4)){ const inner=S(T(1,K(smallInt(4),{t:'V',name:'A'})),T(sgn(),K(smallInt(4),{t:'V',name:'B'})),T(sgn(),K(smallInt(4),{t:'V',name:'C'}))); e=S(T(1,K(smallInt(3),S(T(1,{t:'V',name:'A'}),T(sgn(),{t:'V',name:'B'})))),T(sgn(),K(type==='frac'?new F(1,2):smallInt(3),inner))); }
+   else e=S(T(1,K(kf(),{t:'V',name:'A'})),T(sgn(),K(kf(),{t:'V',name:'B'})),T(sgn(),K(kf(),{t:'V',name:'C'})));
+   return {given,q:render(e,false)+'<span class="op">＝</span>？',a:ansLin(ev(e,env),false),len:20}; }},
+ /* --- 一元一次方程式 --- */
+ e1:{name:'等量公理與移項',cat:'一元一次方程式',tip:'等式兩邊同加、同減、同乘、同除（不為 0）一個數，等式仍成立。移項法則：加號移過去變減號、減號變加號、乘號變除號、除號變乘號。',
+  make(){ const x0=new F(rnz(-12,12)); const a=new F(rnz(-9,9)), b=new F(rnz(-15,15)), k=new F(rnd(2,6)); const kind=pick(D===1?['xa','ax','xdk','axb']:['xa','ax','xdk','kdx','axb','a-bx','kdax','revx']);
+   let lhs,rhs;
+   switch(kind){
+    case 'xa': lhs=Ln(lin(1,b)); rhs=N(x0.add(b)); if(coin(.4)) [lhs,rhs]=[rhs,lhs]; break;
+    case 'ax': lhs=Ln(lin(a,0)); rhs=N(a.mul(x0)); if(coin(.3)) [lhs,rhs]=[rhs,lhs]; break;
+    case 'xdk': lhs={t:'Q',n:Ln(lin(1,0)),k}; rhs=N(x0.div(k)); break;                              // x÷k=?
+    case 'kdx': { const xx=new F(rnd(2,9)*sgn()); const kk=xx.mul(new F(rnd(2,9))); lhs={t:'R',a:kk,n:Ln(lin(1,0))}; rhs=N(kk.div(xx)); return {q:`${render(lhs)}<span class="op">＝</span>${render(rhs)}`,a:`<b>${V()}＝${numStr(xx)}</b>`,len:8}; }
+    case 'axb': lhs=Ln(lin(a,b)); rhs=N(a.mul(x0).add(b)); break;
+    case 'a-bx': lhs=S(T(1,N(b)),T(-1,Ln(lin(a.abs(),0)))); rhs=N(b.sub(a.abs().mul(x0))); break;
+    case 'kdax': { const xx=new F(rnd(2,9)*sgn()); const aa=new F(rnz(2,9)); const q=new F(rnd(2,9)); const kk=aa.mul(xx).mul(q); lhs={t:'R',a:kk,n:Ln(lin(aa,0))}; rhs=N(q); return {q:`${render(lhs)}<span class="op">＝</span>${render(rhs)}`,a:`<b>${V()}＝${numStr(xx)}</b>`,len:9}; }
+    case 'revx': lhs=N(b); rhs=S(T(-1,Ln(lin(1,0))),T(1,N(b.add(x0)))); break; }
+   const E=ladd(ev(lhs),lscale(ev(rhs),-1)); return {q:`${render(lhs)}<span class="op">＝</span>${render(rhs)}`,a:solveStr(E),len:9}; }},
+ e2:{name:'解方程式',cat:'一元一次方程式',tip:'移項：把含 x 的項移到一邊、常數移到另一邊；化簡兩邊；再用等量公理求 x。解出後代回原式驗算。',
+  make(){ const type=T_(); const dec=type==='dec'; const x0=D===3&&coin(.3)?new F(rnz(-9,9),pick([2,3,5,7])):x0For(type==='frac'?'int':type);
+   const lhs=Ln(rLin(type,{aInt:type!=='frac',bInt:true,noZeroB:coin(.7)})); const rhs=Ln(rLin(type,{aInt:type!=='frac',bInt:true}));
+   if(ev(lhs).a.eq(ev(rhs).a)) return this.make(); const r=eqWith(lhs,rhs,x0,dec); return {q:r.q,a:solveStr(r.E,dec),len:14}; }},
+ e3:{name:'去括號',cat:'一元一次方程式',tip:'先去括號（注意括號前的負號要變號），再移項、化簡、求解。',
+  make(){ const type=T_(); const dec=type==='dec'; const x0=x0For(type==='frac'?'int':type);
+   const term=()=>{ const L=rLin('int',{aInt:true,bInt:true,noZeroB:true,max:7}); const kk=type==='int'?smallInt(D===1?5:7):coef(type,{max:5}); return T(coin(.8)?1:-1,K(kk,Ln(L))); };
+   const kind=pick(D===1?['kL=c','kL-L=c']:['kL=c','kL-L=c','kL-kL=L','L-kL=kL','a-kL=c']); let lhs,rhs;
+   switch(kind){ case 'kL=c': lhs=S(term()); rhs=N(0); break; case 'kL-L=c': lhs=S(term(),T(sgn(),Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:6})))); rhs=N(0); break;
+     case 'kL-kL=L': lhs=S(term(),term()); rhs=Ln(rLin('int',{aInt:true,bInt:true,max:5})); break; case 'L-kL=kL': lhs=S(T(1,Ln(rLin('int',{aInt:true,bInt:true,max:6}))),term()); rhs=S(term()); break;
+     case 'a-kL=c': lhs=S(T(1,N(rnd(2,20))),term()); rhs=N(0); break; }
+   const E0=ladd(ev(lhs),lscale(ev(rhs),-1)); if(E0.a.isZero()) return this.make(); const r=eqWith(lhs,rhs,x0,dec); return {q:r.q,a:solveStr(r.E,dec),len:18}; }},
+ e4:{name:'分數型',cat:'一元一次方程式',tip:'先把兩邊同乘以各分母的最小公倍數去掉分母，再去括號、移項、化簡求解。',
+  make(){ const x0=new F(rnz(-9,12)); const dens=pick(D===1?[[2,4],[2,3,6],[3,9],[2,5,10],[2,3]]:[[2,4],[2,3,6],[3,4,12],[2,5,10],[4,6,12],[3,9],[2,6,9],[4,8],[3,5,15]]); const kind=pick(D===1?['D+L=c','D=D']:['D+L=c','D=D','D-D=c','D-D=D','geo']);
+   let lhs,rhs; const dl=()=>Dv(Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:7})),pick(dens));
+   switch(kind){
+    case 'D+L=c': lhs=S(T(1,Ln(lin(smallInt(4),0))),T(sgn(),dl())); rhs=N(0); break;
+    case 'D=D': lhs=dl(); rhs=dl(); break;
+    case 'D-D=c': lhs=S(T(1,dl()),T(sgn(),dl())); rhs=N(0); break;
+    case 'D-D=D': lhs=S(T(1,dl()),T(sgn(),dl())); rhs=dl(); break;
+    case 'geo': { const r=pick([2,3]); const k=rnd(3,5); const terms=[T(1,N(1))]; let d=1; for(let i=1;i<=k;i++){ d*=r; terms.push(T(coin(.85)?1:-1,Dv(Ln(lin(1,0)),d))); } lhs=Ln(lin(1,0)); rhs=S(...terms); const E=ladd(ev(lhs),lscale(ev(rhs),-1)); return {q:`${render(lhs)}<span class="op">＝</span>${render(rhs)}`,a:solveStr(E),len:26}; } }
+   const E0=ladd(ev(lhs),lscale(ev(rhs),-1)); if(E0.a.isZero()) return this.make(); const r=eqWith(lhs,rhs,x0,false); return {q:r.q,a:solveStr(r.E),len:22}; }},
+ e5:{name:'去多重括號',cat:'一元一次方程式',tip:'可以由內而外逐層去括號後移項；也可以由外而內：先把最外層括號外的項移走、除掉係數，再處理下一層。分數型的多重括號用「由外而內」通常較簡便。',
+  make(){ const fracType=TYPES.includes('frac')&&coin(D===1?.2:.5); const x0=new F(rnz(-9,12)); const depthN=D===1?2:D===2?pick([2,3]):pick([3,4]);
+   let inner=Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:6}));
+   for(let d=0;d<depthN;d++){ const kk=fracType?new F(1,rnd(2,6)):(coin(.6)?smallInt(4):ONE); const outer=kk.eq(1)?inner:K(kk,inner); inner=coin(.5)?S(T(1,Ln(lin(smallInt(6),0))),T(sgn(),outer)):S(T(1,outer),T(sgn(),N(rnd(1,9)))); }
+   const lhs=inner; const rhs=D===3&&coin(.3)?Ln(lin(smallInt(3),rnd(1,5))):N(0); const E0=ladd(ev(lhs),lscale(ev(rhs),-1)); if(E0.a.isZero()) return this.make(); const r=eqWith(lhs,rhs,x0,false); return {q:r.q,a:solveStr(r.E),len:34}; }},
+ e6:{name:'小數分數混合',cat:'一元一次方程式',tip:'分子、分母含小數時，同乘以 10 或 100 化成整數；也可以先把 A/B 化成整數或小數，再依分數型方式解。',
+  make(){ const x0=pick([new F(rnz(-9,9)),new F(rnz(-9,9),2),new F(rnz(-9,9),4),new F(rnz(-19,19),5)]); const kind=pick(D===1?['dec=','kdec']:['dec=','kdec','decD','decD2']);
+   const dl=()=>{ const den=new F(rnd(1,9),10); const a=new F(rnd(1,9)*den.n,100), b=new F(rnz(-9,9)*den.n,100); return Dv(Ln(lin(a,b)),den); }; // 分子分母都是小數，且可整除
+   let lhs,rhs;
+   switch(kind){
+    case 'dec=': lhs=Ln(lin(coef('dec'),coef('dec'))); rhs=Ln(lin(coef('dec'),0)); break;
+    case 'kdec': lhs=S(T(1,K(coef('dec',{max:5}),Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:5})))),T(sgn(),Dv(Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:5})),rnd(2,5)))); rhs=Dv(Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:7})),rnd(2,5)); break;
+    case 'decD': lhs=N(new F(rnd(1,19),10)); rhs=S(T(1,dl()),T(sgn(),dl())); break;
+    case 'decD2': lhs=S(T(1,Ln(lin(new F(rnd(11,19),10),0))),T(-1,dl())); rhs=Ln(lin(new F(rnd(1,9),10),new F(rnd(1,99),10))); break; }
+   const E0=ladd(ev(lhs),lscale(ev(rhs),-1)); if(E0.a.isZero()) return this.make(); const r=eqWith(lhs,rhs,x0,true); return {q:r.q,a:solveStr(r.E,true),len:26}; }},
+ e7:{name:'方程式解的類型',cat:'一元一次方程式',tip:'化簡成 ax＝b：a≠0 時恰有一解 x＝b/a；a＝0 且 b＝0 時 x 為任意數（無限多解）；a＝0 且 b≠0 時無解。',
+  make(){ const kind=pick(['one','inf','none','inf','none']); const x0=new F(rnz(-9,9));
+   const L1=rLin('int',{aInt:true,bInt:true,noZeroB:true,max:6}), L2=rLin('int',{aInt:true,bInt:true,noZeroB:true,max:6}); const k1=smallInt(4), k2=smallInt(4);
+   const lhs=S(T(1,K(k1,Ln(L1))),T(sgn(),Ln(L2))); const LV=ev(lhs);
+   let rhs; if(kind==='one'){ rhs=S(T(1,K(k2,Ln(rLin('int',{aInt:true,bInt:true,max:5}))))); if(ev(rhs).a.eq(LV.a)) return this.make(); const r=eqWith(lhs,rhs,x0,false); return {q:r.q,a:solveStr(r.E),len:22}; }
+   // 右邊造成 x 係數相同：k2(L3)+m，其中 k2·a3 = LV.a
+   if(LV.a.isZero()||!LV.a.isInt()) return this.make(); const divs=[]; for(let d=1;d<=Math.abs(LV.a.n);d++) if(LV.a.n%d===0&&d<=9&&Math.abs(LV.a.n/d)<=9) divs.push(d*sgn()); if(!divs.length) return this.make(); const a3=new F(pick(divs)); const kk=LV.a.div(a3); const L3=lin(a3,rnz(-9,9)); rhs=S(T(1,K(kk,Ln(L3))));
+   const R=ev(rhs); const c=LV.b.sub(R.b).add(kind==='inf'?Z:new F(rnz(-6,6))); if(!c.isZero()) rhs=S(...rhs.terms,T(1,N(c)));
+   const E=ladd(LV,lscale(ev(rhs),-1)); return {q:`${render(lhs)}<span class="op">＝</span>${render(rhs)}`,a:solveStr(E),len:28}; }},
+ mix:{name:'綜合練習',cat:'一元一次方程式',tip:'混合各種題型：去括號、分數型、多重括號、小數，以及解的類型判斷。',
+  make(){ return GEN[pick(['e2','e3','e3','e4','e4','e5','e6','e7'])].make(); }},
+};
+const MODS=['s1','s2','s3','s4','s5','e1','e2','e3','e4','e5','e6','e7','mix'];
+const DEF={s1:9,s2:9,s3:6,s4:6,s5:4,e1:12,e2:9,e3:9,e4:6,e5:4,e6:4,e7:6,mix:8};
+$('mods').innerHTML='<span class="h">一元一次式（化簡）</span>'+MODS.slice(0,5).map(k=>`<label><input type="checkbox" id="on_${k}"> ${GEN[k].name} <input type="number" id="n_${k}" value="${DEF[k]}" min="1" max="40"></label>`).join('')+'<span class="h">一元一次方程式（解方程式）</span>'+MODS.slice(5).map(k=>`<label><input type="checkbox" id="on_${k}" ${['e2','e3','e4'].includes(k)?'checked':''}> ${GEN[k].name} <input type="number" id="n_${k}" value="${DEF[k]}" min="1" max="40"></label>`).join('');
+function generate(){
+  D=+$('diff').value; TYPES=[['int','tInt'],['frac','tFrac'],['dec','tDec']].filter(x=>$(x[1]).checked).map(x=>x[0]); if(!TYPES.length){ TYPES=['int']; $('tInt').checked=true; }
+  document.documentElement.style.setProperty('--work',$('work').value+'mm'); const per=$('perRow').value, parts=[];
+  MODS.forEach(k=>{ if(!$('on_'+k).checked) return; const n=Math.min(40,Math.max(1,+$('n_'+k).value||1)); const items=[]; let guard=0;
+    while(items.length<n&&guard++<n*30){ let it; try{ it=GEN[k].make(); }catch(e){ continue; } if(!it||items.some(x=>x.q===it.q)) continue; items.push(it); }
+    const longest=Math.max(...items.map(x=>x.len)); const cols=per==='auto'?(longest<=10?3:longest<=22?2:1):+per;
+    const verb=GEN[k].cat==='一元一次式'?'化簡下列各式：':'解下列各方程式：';
+    let h=`<div class="sec">${GEN[k].name}</div><p class="tip">${GEN[k].tip}</p><p class="tip" style="color:#222">${verb}</p><div class="grid c${cols}">`;
+    items.forEach((it,i)=>{ h+=`<div class="prob">${it.given?`<div class="given">${it.given}</div>`:''}<div class="q"><span class="no">(${i+1})</span><span class="expr">${it.q}</span></div><div class="work">${GEN[k].cat==='一元一次式'?'原式＝':''}<span class="ans">${it.a}</span></div></div>`; });
+    h+='</div>'; parts.push(h); });
+  $('out').innerHTML=parts.length?`<div class="sheet"><div class="head"><h2>一元一次式與方程式 練習（${['','基礎','進階','挑戰'][D]}）</h2><span>班級：______　姓名：__________　日期：____/____　作答時間：____分____秒</span></div>${parts.join('')}</div>`:'<div class="empty">請至少勾選一個單元。</div>';
+}
+$('gen').onclick=generate; $('print').onclick=()=>window.print();
+$('version').onchange=e=>document.body.className=e.target.value;
+['perRow','work','diff','tInt','tFrac','tDec','xy'].forEach(id=>$(id).onchange=generate);
+$('mods').addEventListener('change',generate);
+generate();
+</script>
+</body>
+</html>

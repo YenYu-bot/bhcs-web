@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b55">
+  <title>百宏文教｜指數律 出題器</title>
+<meta name="description" content="國中數學國一「指數律」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g7-exponent-laws.html">
+<meta property="og:title" content="百宏文教｜指數律 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g7-exponent-laws.html">
+<meta property="og:type" content="website">
+
+  <style>
+    :root{--green:#176b55;--green2:#0f4f40;--soft:#e8f5f0;--line:#d1dfdb;--ink:#182d28;--muted:#62736f;--bg:#e8edef;--red:#ae3f3f}
+    *{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:"Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;background:var(--bg)}
+    button,input,select{font:inherit}button,select,input[type=checkbox]{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f2ad47;outline-offset:2px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px clamp(14px,3vw,32px);color:#fff;background:var(--green2);border-bottom:4px solid #55cfad}
+    .brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;display:grid;place-items:center;color:var(--green2);background:#55cfad;border-radius:11px;font:900 20px Georgia;box-shadow:4px 4px 0 #073c30}
+    .brand h1{margin:0;font-size:clamp(1.05rem,2vw,1.35rem)}.brand p{margin:2px 0 0;color:#c8e8df;font-size:.78rem}.total{padding:7px 12px;color:var(--green2);background:#dff6ef;border-radius:999px;font-weight:900;white-space:nowrap}
+    .control-area{padding:16px clamp(10px,3vw,30px);background:#f7faf9;border-bottom:1px solid #c8d4d1;box-shadow:0 5px 16px #173e3412}.controls{width:min(1420px,100%);margin:auto}
+    .upper{display:grid;grid-template-columns:minmax(440px,.9fr) minmax(500px,1.1fr);gap:11px}.panel{padding:13px 14px;background:#fff;border:1px solid var(--line);border-radius:12px}.panel h2{margin:0 0 10px;font-size:.92rem;color:#27443c}
+    .fields{display:flex;align-items:center;gap:11px;flex-wrap:wrap}.field{display:flex;align-items:center;gap:6px;min-height:38px}.field label{font-size:.86rem;font-weight:800;white-space:nowrap}
+    select,.title-input{height:38px;padding:5px 9px;border:1px solid #aabcb7;border-radius:7px;background:#fff;color:var(--ink);font-weight:700}.title-input{flex:1 1 190px;min-width:160px}
+    .levels{display:flex;gap:7px;flex-wrap:wrap}.level{height:38px;padding:6px 15px;color:#2a443d;background:#fff;border:1px solid #adbfba;border-radius:8px;font-weight:900}.level[aria-pressed=true]{color:#fff;background:var(--green);border-color:var(--green);box-shadow:inset 0 -3px 0 #0e4c3d}.note{margin:9px 0 0;color:var(--muted);font-size:.78rem;line-height:1.5}
+    .types{margin-top:11px}.types-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}.types-head h2{margin:0}.types-head span{color:var(--muted);font-size:.76rem}
+    .type-grid{display:grid;grid-template-columns:repeat(6,minmax(140px,1fr));gap:7px}.type{display:grid;grid-template-columns:auto minmax(0,1fr) 47px;align-items:center;gap:7px;min-height:42px;padding:5px 7px;background:#f8fbfa;border:1px solid #dce7e4;border-radius:8px}.type:has(.type-check:checked){background:var(--soft);border-color:#8dc9b8}.type-check{width:17px;height:17px;accent-color:var(--green)}.type-name{font-size:.8rem;font-weight:800;line-height:1.25}.count{width:47px;height:30px;padding:2px;text-align:center;border:1px solid #b5c6c1;border-radius:6px;font-weight:800}.count:disabled{color:#9aa8a4;background:#edf1f0;cursor:not-allowed}
+    .actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-top:12px;flex-wrap:wrap}.status{margin-right:auto;color:var(--muted);font-size:.8rem}.action{min-height:44px;padding:8px 18px;border-radius:9px;border:1px solid var(--green);font-weight:900}.generate{color:#fff;background:var(--green);box-shadow:0 3px 0 var(--green2)}.print{color:var(--green);background:#fff}
+    .preview{min-height:620px;padding:25px 16px 50px;overflow:auto}.stack{display:grid;justify-content:center;gap:23px}
+    .paper{width:210mm;height:297mm;position:relative;overflow:hidden;padding:12mm 15mm 12mm;color:#111;background:#fff;box-shadow:0 15px 40px #1d342f22;--qh:36mm;--cols:2}.paper.compact{--qh:25mm}.paper.wide{--qh:54mm}
+    .paper-header{padding-bottom:3.5mm;border-bottom:.6mm solid var(--green)}.kicker{color:var(--green);font-size:8.5pt;font-weight:900;letter-spacing:.15em}.title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8mm;margin-top:1mm}.paper-title{margin:0;font-size:18pt;line-height:1.3;letter-spacing:.05em}.badge{padding:1.2mm 2.6mm;color:var(--green2);background:var(--soft);border-radius:2mm;font-size:8.5pt;font-weight:900;white-space:nowrap}
+    .student{display:grid;grid-template-columns:.8fr 1fr .9fr .9fr;gap:5mm;margin-top:3mm;font-size:8.5pt}.blank{display:flex;gap:1mm;white-space:nowrap}.blank i{flex:1;min-width:12mm;border-bottom:.25mm solid #333}.instruction{display:flex;justify-content:space-between;gap:5mm;margin:3.2mm 0 1mm;color:#3d4c48;font-size:8pt}.instruction b{color:#111}
+    .questions{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));column-gap:9mm;align-content:start}.question{height:var(--qh);position:relative;min-width:0;padding:4.5mm 1mm 2mm 0;border-bottom:.25mm solid #b8c9c5;break-inside:avoid}.qtop{display:flex;align-items:baseline;gap:1.8mm}.qno{flex:0 0 auto;color:var(--green2);font-size:10.5pt;font-weight:900}.math{min-width:0;font:13pt/1.55 Georgia,"Times New Roman",serif;overflow-wrap:anywhere}.question.long .math{font-size:11pt}.work{margin-top:3.5mm;color:#7b8784;font-size:8pt}.work:after{content:"";display:inline-block;width:calc(100% - 16mm);margin-left:1.5mm;border-bottom:.2mm solid #9ba7a4;vertical-align:middle}.answer{position:absolute;left:6mm;right:2mm;bottom:1.5mm;color:var(--red);font-size:7.5pt;font-weight:800}.footer{position:absolute;left:15mm;right:15mm;bottom:5mm;display:flex;justify-content:space-between;color:#62736f;font-size:7pt}
+    sup{line-height:0;font-size:.66em;vertical-align:.58em}.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .08em;font-size:.82em;line-height:1}.frac .n{min-width:1em;padding:0 .13em .07em;text-align:center;border-bottom:.055em solid currentColor}.frac .d{padding:.07em .13em 0}
+    .empty{width:min(650px,calc(100vw - 28px));padding:42px 20px;text-align:center;color:var(--muted);background:#fff;border:2px dashed #b7c8c3;border-radius:14px}.empty b{display:block;margin-bottom:6px;color:var(--green2)}
+    @media(max-width:1100px){.upper{grid-template-columns:1fr}.type-grid{grid-template-columns:repeat(4,minmax(140px,1fr))}}@media(max-width:720px){.brand p{display:none}.type-grid{grid-template-columns:repeat(2,minmax(140px,1fr))}.status{width:100%}.action{flex:1}.preview{padding-inline:8px}}@media(max-width:450px){.total{display:none}.field{width:100%;justify-content:space-between}.field select{flex:1}.levels{display:grid;grid-template-columns:repeat(2,1fr)}.type-grid{grid-template-columns:1fr}.types-head{align-items:flex-start;flex-direction:column}}
+    @page{size:A4 portrait;margin:0}@media print{html,body{width:210mm;margin:0;background:#fff}.top,.control-area{display:none!important}.preview{padding:0;overflow:visible}.stack{display:block}.paper{width:210mm;height:297mm;margin:0;zoom:1!important;box-shadow:none;break-after:page;page-break-after:always;-webkit-print-color-adjust:exact;print-color-adjust:exact}.paper:last-child{break-after:auto;page-break-after:auto}.empty{display:none}}
+  </style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style></head>
+<body>
+  <header class="top"><div class="brand"><div class="logo">a<sup>n</sup></div><div><h1>指數律考卷產生器</h1><p>百宏文教・數學計算力練習</p></div></div><div class="total" id="total">共 20 題</div></header>
+  <section class="control-area"><div class="controls">
+    <div class="upper">
+      <section class="panel"><h2>版面設定</h2><div class="fields">
+        <div class="field" style="flex:1 1 250px"><label for="title">考卷標題</label><input class="title-input" id="title" value="指數律 計算力練習" maxlength="30"></div>
+        <div class="field"><label for="version">版本</label><select id="version"><option value="student">學用版</option><option value="teacher">教用版（含解答）</option></select></div>
+        <div class="field"><label for="columns">每列</label><select id="columns"><option value="2">2 題</option><option value="1">1 題</option></select></div>
+        <div class="field"><label for="space">作答空間</label><select id="space"><option value="compact">精簡</option><option value="standard" selected>標準</option><option value="wide">寬裕</option></select></div>
+      </div></section>
+      <section class="panel"><h2>難度設定</h2><div class="levels" role="group" aria-label="難度">
+        <button class="level" data-level="foundation" aria-pressed="false">基礎</button><button class="level" data-level="standard" aria-pressed="true">進階</button><button class="level" data-level="challenge" aria-pressed="false">挑戰</button><button class="level" data-level="mixed" aria-pressed="false">綜合</button>
+      </div><p class="note" id="levelNote"></p></section>
+    </div>
+    <section class="panel types"><div class="types-head"><h2>題型與題數</h2><span>勾選題型，右側設定各類題數</span></div><div class="type-grid" id="typeGrid"></div>
+      <div class="actions"><span class="status" id="status">設定完成後按「重新出題」。</span><button class="action generate" id="generate">重新出題</button><button class="action print" id="print">列印／存 PDF</button></div>
+    </section>
+  </div></section>
+  <main class="preview"><div class="stack" id="stack"></div></main>
+  <script>
+  (()=>{"use strict";
+    const $=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+    const pow=(b,e)=>`${b}<sup>${e}</sup>`,ppow=(b,e)=>`(${b})<sup>${e}</sup>`,frac=(n,d)=>`<span class="frac"><span class="n">${n}</span><span class="d">${d}</span></span>`,bp=(b,e)=>BigInt(b)**BigInt(e),fmt=v=>BigInt(v).toLocaleString("en-US");
+    const defs=[
+      ["power","指數記法與求值",3],["sameBase","同底數乘除",4],["sameExp","同指數乘除",3],["powerPower","乘方的乘方",2],["zero","零次方",2],["mixedOps","混合運算",3],
+      ["convert","底數轉換",3],["unknown","未知指數",2],["compare","指數大小比較",2],["negative","負數與分數比較",2],["smart","巧算與綜合應用",2],["sum","乘方的加減",2]
+    ];
+    const presets={
+      foundation:{power:4,sameBase:4,sameExp:3,powerPower:2,zero:3},
+      standard:{power:2,sameBase:3,sameExp:2,powerPower:2,zero:1,mixedOps:3,convert:3,unknown:2,sum:2},
+      challenge:{mixedOps:4,convert:3,unknown:3,compare:3,negative:3,smart:3,sum:1},
+      mixed:{power:2,sameBase:2,sameExp:2,powerPower:2,zero:1,mixedOps:3,convert:2,unknown:2,compare:2,negative:2,smart:2,sum:2}
+    };
+    const levelName={foundation:"基礎",standard:"進階",challenge:"挑戰",mixed:"綜合"};
+    const notes={foundation:"基礎：指數記法、五條基本規則與零次方；數字較小、步驟單純。",standard:"進階：加入底數轉換、兩步驟運算與簡單未知指數。",challenge:"挑戰：提高指數，加入三步驟運算、大小比較、負分數與巧算。",mixed:"綜合：基本規則到應用題平均取題，適合單元複習或測驗。"};
+    const state={level:"standard",questions:[]};
+    function q(type,html,answer,long=false){return{type,html,answer:String(answer),long}}
+    const gen={
+      power(l){const hard=l==="challenge"||l==="mixed";if(Math.random()<.28){let b=rand(2,hard?6:4),e=rand(2,hard?6:4),v=(e%2?-1n:1n)*bp(b,e);return q("指數求值",ppow(`−${b}`,e),v)}let b=rand(2,hard?12:8),e=rand(2,hard?5:4);return q("指數求值",pow(b,e),bp(b,e))},
+      sameBase(l){let b=rand(2,l==="foundation"?5:8),m=rand(3,l==="challenge"?12:7),n=rand(2,Math.min(m-1,l==="challenge"?8:5));return Math.random()<.5?q("同底數相乘",`${pow(b,m)} × ${pow(b,n)}`,bp(b,m+n)):q("同底數相除",`${pow(b,m)} ÷ ${pow(b,n)}`,bp(b,m-n))},
+      sameExp(l){let e=rand(2,l==="challenge"?6:4);if(Math.random()<.52){let[a,b]=pick([[2,5],[2,3],[3,4],[4,5]]);return q("同指數相乘",`${pow(a,e)} × ${pow(b,e)}`,bp(a*b,e))}let[a,b]=pick([[12,4],[18,6],[15,5],[21,7]]);return q("同指數相除",`${pow(a,e)} ÷ ${pow(b,e)}`,bp(a/b,e))},
+      powerPower(l){let b=rand(2,5),m=rand(2,l==="challenge"?5:3),n=rand(2,4);return q("乘方的乘方",`(${pow(b,m)})<sup>${n}</sup>`,bp(b,m*n))},
+      zero(){if(Math.random()<.5){let a=rand(2,9),b=rand(10,20),c=rand(21,40);return q("零次方",`${pow(a,0)} + ${pow(b,0)} + ${pow(c,0)}`,3)}let b=rand(2,30);return q("零次方",pow(b,0),1)},
+      mixedOps(l){if(l==="challenge"||(l==="mixed"&&Math.random()<.5)){let a=rand(5,8),b=rand(2,4),c=rand(1,2),e=a+2*b-3*c;return q("混合運算",`${pow(3,a)} × ${pow(9,b)} ÷ ${pow(27,c)}`,bp(3,e))}let n=rand(3,5),k=rand(1,2);return q("混合運算",`${pow(2,n)} × ${pow(5,n)} ÷ ${pow(10,k)}`,bp(10,n-k))},
+      convert(l){let m=rand(2,l==="challenge"?6:4),n=rand(2,4);return q("底數轉換",`${pow(4,m)} × ${pow(8,n)} = ${pow(2,"□")}，求 □`,2*m+3*n,true)},
+      unknown(l){if(l==="challenge"||l==="mixed"){let a=pick([2,4]),b=rand(2,4),c=rand(2,4),sq=a+2*b+3*c;if(sq%2===0)return q("未知指數",`${pow(10,a)} × ${pow(100,b)} × ${pow(1000,c)} = ${pow(10,"□")} = ${pow(100,"△")}，求 □＋△`,sq+sq/2,true)}return q("未知指數",`${pow(3,27)} ÷ ${pow(3,15)} = ${pow(9,"□")} = ${pow(27,"△")}，求 □＋△`,10,true)},
+      compare(l){if(l==="challenge"||l==="mixed"){let set=pick([0,1]);if(set===0)return q("大小比較",`由大到小排列：${pow(3,50)}、${pow(9,24)}、${pow(27,16)}`,`${pow(3,50)} ＞ ${pow(9,24)} = ${pow(27,16)}`,true);return q("大小比較",`由大到小排列：${pow(2,22)}、${pow(4,10)}、${pow(8,7)}`,`${pow(2,22)} ＞ ${pow(8,7)} ＞ ${pow(4,10)}`,true)}return q("大小比較",`由大到小排列：${pow(10,8)}、${pow(4,8)}、${pow(2,24)}`,`${pow(10,8)} ＞ ${pow(2,24)} ＞ ${pow(4,8)}`,true)},
+      negative(l){let n=rand(3,7),d=n+rand(1,3);while(((a,b)=>{while(b){[a,b]=[b,a%b]}return a})(n,d)>1){n=rand(3,7);d=n+rand(1,3)}let es=l==="challenge"?[2,3,4,5]:[2,3,4],items=es.map(e=>({h:ppow(`−${frac(n,d)}`,e),e})),ev=items.filter(x=>x.e%2===0).sort((a,b)=>a.e-b.e),od=items.filter(x=>x.e%2).sort((a,b)=>b.e-a.e);return q("負分數比較",`由大到小排列：${items.map(x=>x.h).join("、")}`,[...ev,...od].map(x=>x.h).join(" ＞ "),true)},
+      smart(l){if(l==="challenge"&&Math.random()<.5)return q("提公因數巧算","12345<sup>2</sup> − 12345 × 2345",fmt(12345n*10000n));let x=pick([101,123,205,314]),y=x-100;return q("提公因數巧算",`${x}<sup>2</sup> − ${x} × ${y}`,fmt(BigInt(x)*100n))},
+      sum(l){if(l==="challenge"||l==="mixed"){let s=rand(3,5),v=bp(2,s)+bp(2,s+1)+bp(2,s+2)+bp(2,s+3);return q("乘方的加法",[0,1,2,3].map(i=>pow(2,s+i)).join(" + "),v,true)}let b=rand(2,4),e=rand(2,4),c=rand(2,4);return q("乘方的加法",Array(c).fill(pow(b,e)).join(" + "),BigInt(c)*bp(b,e))}
+    };
+    function buildControls(){const g=$("typeGrid");defs.forEach(([id,label,count])=>{let el=document.createElement("label");el.className="type";el.innerHTML=`<input class="type-check" type="checkbox" data-check="${id}"><span class="type-name">${label}</span><input class="count" type="number" min="1" max="20" value="${count}" data-count="${id}" aria-label="${label}題數">`;g.appendChild(el)});g.querySelectorAll("[data-check]").forEach(c=>c.addEventListener("change",()=>{g.querySelector(`[data-count='${c.dataset.check}']`).disabled=!c.checked;updateTotal()}));g.querySelectorAll("[data-count]").forEach(i=>i.addEventListener("input",updateTotal))}
+    function selected(){return defs.flatMap(([id,label])=>{let c=document.querySelector(`[data-check='${id}']`),n=document.querySelector(`[data-count='${id}']`);if(!c.checked)return[];let count=Math.max(1,Math.min(20,Number(n.value)||1));n.value=count;return[{id,label,count}]})}
+    function updateTotal(){let n=selected().reduce((s,x)=>s+x.count,0);$("total").textContent=`共 ${n} 題`}
+    function preset(l){state.level=l;let p=presets[l];defs.forEach(([id,,d])=>{let c=document.querySelector(`[data-check='${id}']`),n=document.querySelector(`[data-count='${id}']`),v=p[id];c.checked=!!v;n.disabled=!v;n.value=v||d});document.querySelectorAll(".level").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.level===l)));$("levelNote").textContent=notes[l];updateTotal();generate()}
+    function generate(){let s=selected();if(!s.length){state.questions=[];render();$("status").textContent="請至少勾選一種題型。";return}state.questions=[];s.forEach(t=>{for(let i=0;i<t.count;i++)state.questions.push(gen[t.id](state.level))});render();$("status").textContent=`已產生 ${state.questions.length} 題，共 ${document.querySelectorAll(".paper").length} 頁 A4。`}
+    function perPage(){let cols=Number($("columns").value),space=$("space").value;return{1:{compact:9,standard:6,wide:4},2:{compact:18,standard:12,wide:8}}[cols][space]}
+    function esc(v){return v.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+    function render(){let stack=$("stack");stack.innerHTML="";if(!state.questions.length){stack.innerHTML='<div class="empty"><b>尚未選擇題型</b>勾選至少一種題型後，再按「重新出題」。</div>';return}let size=perPage(),pages=[];for(let i=0;i<state.questions.length;i+=size)pages.push(state.questions.slice(i,i+size));pages.forEach((qs,pi)=>{let paper=document.createElement("section"),space=$("space").value,cols=$("columns").value,teacher=$("version").value==="teacher",start=pi*size;paper.className=`paper ${space}`;paper.style.setProperty("--cols",cols);paper.innerHTML=`<header class="paper-header"><div class="kicker">百宏文教・數學計算力</div><div class="title-row"><h2 class="paper-title">${esc($("title").value.trim()||"指數律 計算力練習")}</h2><span class="badge">${levelName[state.level]}・${teacher?"含答案版":"學生版"}</span></div><div class="student"><div class="blank">班級：<i></i></div><div class="blank">姓名：<i></i></div><div class="blank">日期：<i></i></div><div class="blank">作答時間：<i></i></div></div></header><div class="instruction"><span><b>計算下列各題：</b>請寫出必要的運算過程。</span><span>本頁 ${qs.length} 題</span></div><div class="questions"></div><footer class="footer"><span>指數律・${levelName[state.level]}練習</span><span>第 ${pi+1}／${pages.length} 頁</span></footer>`;let grid=paper.querySelector(".questions");qs.forEach((x,i)=>{let item=document.createElement("article");item.className=`question${x.long?" long":""}`;item.innerHTML=`<div class="qtop"><span class="qno">(${start+i+1})</span><span class="math">${x.html}</span></div><div class="work">原式＝</div>${teacher?`<div class="answer">答案：${x.answer}</div>`:""}`;grid.appendChild(item)});stack.appendChild(paper)});fit()}
+    function fit(){if(matchMedia("print").matches)return;let scale=Math.min(1,Math.max(.4,(innerWidth-24)/794));document.querySelectorAll(".paper").forEach(p=>p.style.zoom=scale)}
+    function rerender(){render();$("status").textContent="版面已更新，題目內容未重新抽換。"}
+    buildControls();document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>preset(b.dataset.level)));$("generate").addEventListener("click",generate);$("print").addEventListener("click",()=>state.questions.length&&print());["version","columns","space"].forEach(id=>$(id).addEventListener("change",rerender));$("title").addEventListener("input",rerender);addEventListener("resize",fit);addEventListener("beforeprint",()=>document.querySelectorAll(".paper").forEach(p=>p.style.zoom=1));addEventListener("afterprint",fit);preset("standard");
+  })();
+  </script>
+</body>
+</html>

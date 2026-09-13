@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>百宏文教｜一元二次方程式／等差數列與級數（雙工作台） 出題器</title>
+<meta name="description" content="國中數學國二「一元二次方程式／等差數列與級數」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g8-quadratic-arithmetic-sequence.html">
+<meta property="og:title" content="百宏文教｜一元二次方程式／等差數列與級數（雙工作台） 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g8-quadratic-arithmetic-sequence.html">
+<meta property="og:type" content="website">
+
+<style id="bhcs-tailwind">/* 百宏文教：離線版 Tailwind 工具類別子集（取代 cdn.tailwindcss.com） */
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+html{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4;font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+body{margin:0;line-height:inherit}
+hr{height:0;color:inherit;border-top-width:1px}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+a{color:inherit;text-decoration:inherit}
+b,strong{font-weight:bolder}
+code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1em}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sub{bottom:-.25em}sup{top:-.5em}
+table{text-indent:0;border-color:inherit;border-collapse:collapse}
+button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}
+button,select{text-transform:none}
+button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}
+:-moz-focusring{outline:auto}
+progress{vertical-align:baseline}
+::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}
+[type=search]{-webkit-appearance:textfield;outline-offset:-2px}
+summary{display:list-item}
+blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}
+fieldset{margin:0;padding:0}legend{padding:0}
+ol,ul,menu{list-style:none;margin:0;padding:0}
+textarea{resize:vertical}
+input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}
+button,[role=button]{cursor:pointer}
+:disabled{cursor:default}
+img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+img,video{max-width:100%;height:auto}
+[hidden]{display:none}
+.-mb-3\.5{margin-bottom:-0.875rem}
+.-mb-4{margin-bottom:-1rem}
+.-mx-3\.5{margin-left:-0.875rem;margin-right:-0.875rem}
+.-mx-4{margin-left:-1rem;margin-right:-1rem}
+.absolute{position:absolute}
+.active\:scale-95:active{--tw-s:0.95;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.bg-amber-50{background-color:#fffbeb}
+.bg-amber-50\/80{background-color:rgb(255 251 235 / 0.8)}
+.bg-amber-500{background-color:#f59e0b}
+.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}
+.bg-amber-600{background-color:#d97706}
+.bg-blue-50{background-color:#eff6ff}
+.bg-blue-600{background-color:#2563eb}
+.bg-blue-700{background-color:#1d4ed8}
+.bg-cyan-50{background-color:#ecfeff}
+.bg-cyan-50\/70{background-color:rgb(236 254 255 / 0.7)}
+.bg-cyan-500{background-color:#06b6d4}
+.bg-cyan-500\/20{background-color:rgb(6 182 212 / 0.2)}
+.bg-cyan-600{background-color:#0891b2}
+.bg-cyan-700{background-color:#0e7490}
+.bg-emerald-100{background-color:#d1fae5}
+.bg-emerald-50{background-color:#ecfdf5}
+.bg-emerald-600{background-color:#059669}
+.bg-emerald-700{background-color:#047857}
+.bg-gradient-to-tr{background-image:linear-gradient(to top right,var(--tw-from,transparent),var(--tw-to,transparent))}
+.bg-indigo-50{background-color:#eef2ff}
+.bg-indigo-50\/70{background-color:rgb(238 242 255 / 0.7)}
+.bg-indigo-600{background-color:#4f46e5}
+.bg-orange-600{background-color:#ea580c}
+.bg-purple-50{background-color:#faf5ff}
+.bg-purple-600{background-color:#9333ea}
+.bg-rose-100{background-color:#ffe4e6}
+.bg-rose-50{background-color:#fff1f2}
+.bg-rose-600{background-color:#e11d48}
+.bg-sky-500\/20{background-color:rgb(14 165 233 / 0.2)}
+.bg-sky-600{background-color:#0284c7}
+.bg-slate-100{background-color:#f1f5f9}
+.bg-slate-200{background-color:#e2e8f0}
+.bg-slate-200\/70{background-color:rgb(226 232 240 / 0.7)}
+.bg-slate-50{background-color:#f8fafc}
+.bg-slate-50\/50{background-color:rgb(248 250 252 / 0.5)}
+.bg-slate-50\/60{background-color:rgb(248 250 252 / 0.6)}
+.bg-slate-50\/80{background-color:rgb(248 250 252 / 0.8)}
+.bg-slate-700{background-color:#334155}
+.bg-slate-800{background-color:#1e293b}
+.bg-slate-900{background-color:#0f172a}
+.bg-teal-50{background-color:#f0fdfa}
+.bg-teal-500{background-color:#14b8a6}
+.bg-teal-500\/20{background-color:rgb(20 184 166 / 0.2)}
+.bg-teal-600{background-color:#0d9488}
+.bg-transparent{background-color:transparent}
+.bg-violet-50{background-color:#f5f3ff}
+.bg-violet-600{background-color:#7c3aed}
+.bg-violet-700{background-color:#6d28d9}
+.bg-white{background-color:#ffffff}
+.block{display:block}
+.border{border-width:1px}
+.border-2{border-width:2px}
+.border-amber-200{border-color:#fde68a}
+.border-amber-400{border-color:#fbbf24}
+.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}
+.border-amber-600{border-color:#d97706}
+.border-b{border-bottom-width:1px}
+.border-b-2{border-bottom-width:2px}
+.border-blue-200{border-color:#bfdbfe}
+.border-blue-600{border-color:#2563eb}
+.border-collapse{border-collapse:collapse}
+.border-cyan-100{border-color:#cffafe}
+.border-cyan-200{border-color:#a5f3fc}
+.border-cyan-400{border-color:#22d3ee}
+.border-cyan-500\/40{border-color:rgb(6 182 212 / 0.4)}
+.border-cyan-600{border-color:#0891b2}
+.border-cyan-700{border-color:#0e7490}
+.border-dashed{border-style:dashed}
+.border-emerald-200{border-color:#a7f3d0}
+.border-emerald-400{border-color:#34d399}
+.border-emerald-500{border-color:#10b981}
+.border-emerald-600{border-color:#059669}
+.border-indigo-100{border-color:#e0e7ff}
+.border-indigo-200{border-color:#c7d2fe}
+.border-indigo-300{border-color:#a5b4fc}
+.border-indigo-500{border-color:#6366f1}
+.border-indigo-600{border-color:#4f46e5}
+.border-l-2{border-left-width:2px}
+.border-orange-600{border-color:#ea580c}
+.border-purple-200{border-color:#e9d5ff}
+.border-purple-500{border-color:#a855f7}
+.border-purple-600{border-color:#9333ea}
+.border-rose-300{border-color:#fda4af}
+.border-rose-500{border-color:#f43f5e}
+.border-rose-600{border-color:#e11d48}
+.border-sky-500{border-color:#0ea5e9}
+.border-sky-500\/40{border-color:rgb(14 165 233 / 0.4)}
+.border-slate-100{border-color:#f1f5f9}
+.border-slate-100\/80{border-color:rgb(241 245 249 / 0.8)}
+.border-slate-200{border-color:#e2e8f0}
+.border-slate-200\/70{border-color:rgb(226 232 240 / 0.7)}
+.border-slate-200\/80{border-color:rgb(226 232 240 / 0.8)}
+.border-slate-300{border-color:#cbd5e1}
+.border-slate-400{border-color:#94a3b8}
+.border-slate-600{border-color:#475569}
+.border-slate-700{border-color:#334155}
+.border-slate-800{border-color:#1e293b}
+.border-slate-900{border-color:#0f172a}
+.border-t{border-top-width:1px}
+.border-teal-200{border-color:#99f6e4}
+.border-teal-400{border-color:#2dd4bf}
+.border-teal-500{border-color:#14b8a6}
+.border-teal-500\/40{border-color:rgb(20 184 166 / 0.4)}
+.border-teal-600{border-color:#0d9488}
+.border-violet-200{border-color:#ddd6fe}
+.border-violet-500{border-color:#8b5cf6}
+.border-violet-600{border-color:#7c3aed}
+.bottom-5{bottom:1.25rem}
+.col-span-full{grid-column:1 / -1}
+.cursor-pointer{cursor:pointer}
+.divide-slate-800>:not([hidden])~:not([hidden]){border-color:#1e293b}
+.divide-x>:not([hidden])~:not([hidden]){border-left-width:1px}
+.duration-300{transition-duration:300ms}
+.fixed{position:fixed}
+.flex{display:flex}
+.flex-1{flex:1 1 0%}
+.flex-col{flex-direction:column}
+.flex-grow{flex-grow:1}
+.flex-wrap{flex-wrap:wrap}
+.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+.focus\:ring-1:focus{--tw-ring-shadow:0 0 0 1px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-2:focus{--tw-ring-shadow:0 0 0 2px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-cyan-500:focus{--tw-ring-color:#06b6d4}
+.focus\:ring-indigo-500:focus{--tw-ring-color:#6366f1}
+.focus\:ring-teal-500:focus{--tw-ring-color:#14b8a6}
+.font-black{font-weight:900}
+.font-bold{font-weight:700}
+.font-extrabold{font-weight:800}
+.font-medium{font-weight:500}
+.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.font-sans{font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+.font-semibold{font-weight:600}
+.font-serif{font-family:ui-serif,Georgia,"Times New Roman",serif}
+.from-amber-500{--tw-from:#f59e0b}
+.from-cyan-500{--tw-from:#06b6d4}
+.from-sky-500{--tw-from:#0ea5e9}
+.from-teal-500{--tw-from:#14b8a6}
+.gap-1{gap:0.25rem}
+.gap-1\.5{gap:0.375rem}
+.gap-2{gap:0.5rem}
+.gap-2\.5{gap:0.625rem}
+.gap-3{gap:0.75rem}
+.gap-3\.5{gap:0.875rem}
+.gap-4{gap:1rem}
+.gap-5{gap:1.25rem}
+.gap-6{gap:1.5rem}
+.grid{display:grid}
+.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.group:hover .group-hover\:block{display:block}
+.h-10{height:2.5rem}
+.h-12{height:3rem}
+.h-14{height:3.5rem}
+.h-16{height:4rem}
+.h-2\.5{height:0.625rem}
+.h-20{height:5rem}
+.h-24{height:6rem}
+.h-3\.5{height:0.875rem}
+.h-4{height:1rem}
+.h-5{height:1.25rem}
+.h-6{height:1.5rem}
+.h-8{height:2rem}
+.hidden{display:none}
+.hover\:bg-amber-500:hover{background-color:#f59e0b}
+.hover\:bg-amber-600:hover{background-color:#d97706}
+.hover\:bg-amber-700:hover{background-color:#b45309}
+.hover\:bg-blue-700:hover{background-color:#1d4ed8}
+.hover\:bg-blue-800:hover{background-color:#1e40af}
+.hover\:bg-cyan-100:hover{background-color:#cffafe}
+.hover\:bg-cyan-500:hover{background-color:#06b6d4}
+.hover\:bg-cyan-800:hover{background-color:#155e75}
+.hover\:bg-emerald-500:hover{background-color:#10b981}
+.hover\:bg-emerald-700:hover{background-color:#047857}
+.hover\:bg-emerald-800:hover{background-color:#065f46}
+.hover\:bg-indigo-100:hover{background-color:#e0e7ff}
+.hover\:bg-indigo-500:hover{background-color:#6366f1}
+.hover\:bg-indigo-600:hover{background-color:#4f46e5}
+.hover\:bg-indigo-700:hover{background-color:#4338ca}
+.hover\:bg-orange-700:hover{background-color:#c2410c}
+.hover\:bg-purple-700:hover{background-color:#7e22ce}
+.hover\:bg-rose-100:hover{background-color:#ffe4e6}
+.hover\:bg-rose-200:hover{background-color:#fecdd3}
+.hover\:bg-rose-700:hover{background-color:#be123c}
+.hover\:bg-sky-600:hover{background-color:#0284c7}
+.hover\:bg-sky-700:hover{background-color:#0369a1}
+.hover\:bg-slate-100:hover{background-color:#f1f5f9}
+.hover\:bg-slate-200:hover{background-color:#e2e8f0}
+.hover\:bg-slate-300:hover{background-color:#cbd5e1}
+.hover\:bg-slate-50:hover{background-color:#f8fafc}
+.hover\:bg-slate-600:hover{background-color:#475569}
+.hover\:bg-slate-700:hover{background-color:#334155}
+.hover\:bg-slate-900:hover{background-color:#0f172a}
+.hover\:bg-teal-100:hover{background-color:#ccfbf1}
+.hover\:bg-teal-500:hover{background-color:#14b8a6}
+.hover\:bg-teal-700:hover{background-color:#0f766e}
+.hover\:bg-violet-100:hover{background-color:#ede9fe}
+.hover\:bg-violet-700:hover{background-color:#6d28d9}
+.hover\:bg-violet-800:hover{background-color:#5b21b6}
+.hover\:border-cyan-300:hover{border-color:#67e8f9}
+.hover\:border-indigo-300:hover{border-color:#a5b4fc}
+.hover\:border-teal-300:hover{border-color:#5eead4}
+.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.hover\:text-slate-900:hover{color:#0f172a}
+.hover\:text-white:hover{color:#ffffff}
+.inline-block{display:inline-block}
+.inline-flex{display:inline-flex}
+.italic{font-style:italic}
+.items-center{align-items:center}
+.items-end{align-items:flex-end}
+.items-start{align-items:flex-start}
+.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}
+.justify-end{justify-content:flex-end}
+.leading-relaxed{line-height:1.625}
+.leading-tight{line-height:1.25}
+@media (min-width:1024px){.lg\:flex-row{flex-direction:row}}
+@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:items-center{align-items:center}}
+@media (min-width:1024px){.lg\:p-8{padding:2rem}}
+.max-h-28{max-height:7rem}
+.max-h-36{max-height:9rem}
+.max-w-7xl{max-width:80rem}
+.max-w-\[150px\]{max-width:150px}
+.max-w-\[170px\]{max-width:170px}
+.max-w-\[180px\]{max-width:180px}
+.max-w-\[210px\]{max-width:210px}
+.max-w-\[220px\]{max-width:220px}
+.max-w-\[240px\]{max-width:240px}
+.max-w-\[310px\]{max-width:310px}
+.mb-0\.5{margin-bottom:0.125rem}
+.mb-2{margin-bottom:0.5rem}
+.mb-2\.5{margin-bottom:0.625rem}
+.mb-3{margin-bottom:0.75rem}
+.mb-4{margin-bottom:1rem}
+.mb-5{margin-bottom:1.25rem}
+.mb-6{margin-bottom:1.5rem}
+@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.min-h-screen{min-height:100vh}
+.min-w-\[70px\]{min-width:70px}
+.min-w-\[90px\]{min-width:90px}
+.mr-1{margin-right:0.25rem}
+.mt-0\.5{margin-top:0.125rem}
+.mt-1{margin-top:0.25rem}
+.mt-2{margin-top:0.5rem}
+.mt-2\.5{margin-top:0.625rem}
+.mt-3{margin-top:0.75rem}
+.mt-4{margin-top:1rem}
+.mt-8{margin-top:2rem}
+.mx-auto{margin-left:auto;margin-right:auto}
+.my-1{margin-top:0.25rem;margin-bottom:0.25rem}
+.my-1\.5{margin-top:0.375rem;margin-bottom:0.375rem}
+.my-2{margin-top:0.5rem;margin-bottom:0.5rem}
+.opacity-0{opacity:0.0}
+.outline-none{outline:2px solid transparent;outline-offset:2px}
+.overflow-hidden{overflow:hidden}
+.overflow-visible{overflow:visible}
+.p-1{padding:0.25rem}
+.p-1\.5{padding:0.375rem}
+.p-2{padding:0.5rem}
+.p-2\.5{padding:0.625rem}
+.p-3{padding:0.75rem}
+.p-3\.5{padding:0.875rem}
+.p-4{padding:1rem}
+.p-5{padding:1.25rem}
+.p-6{padding:1.5rem}
+.pb-1\.5{padding-bottom:0.375rem}
+.pb-2{padding-bottom:0.5rem}
+.pb-3{padding-bottom:0.75rem}
+.pb-4{padding-bottom:1rem}
+.pl-1{padding-left:0.25rem}
+.pl-3{padding-left:0.75rem}
+.pl-4{padding-left:1rem}
+.pointer-events-none{pointer-events:none}
+.pr-2{padding-right:0.5rem}
+.pt-2{padding-top:0.5rem}
+.pt-2\.5{padding-top:0.625rem}
+.pt-3{padding-top:0.75rem}
+.pt-4{padding-top:1rem}
+.px-1{padding-left:0.25rem;padding-right:0.25rem}
+.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}
+.px-2{padding-left:0.5rem;padding-right:0.5rem}
+.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}
+.px-3{padding-left:0.75rem;padding-right:0.75rem}
+.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}
+.px-4{padding-left:1rem;padding-right:1rem}
+.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}
+.py-1{padding-top:0.25rem;padding-bottom:0.25rem}
+.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}
+.py-16{padding-top:4rem;padding-bottom:4rem}
+.py-2{padding-top:0.5rem;padding-bottom:0.5rem}
+.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}
+.py-3{padding-top:0.75rem;padding-bottom:0.75rem}
+.py-5{padding-top:1.25rem;padding-bottom:1.25rem}
+.relative{position:relative}
+.right-0{right:0rem}
+.right-5{right:1.25rem}
+.rounded{border-radius:0.25rem}
+.rounded-2xl{border-radius:1rem}
+.rounded-b-xl{border-bottom-left-radius:0.75rem;border-bottom-right-radius:0.75rem}
+.rounded-full{border-radius:9999px}
+.rounded-lg{border-radius:0.5rem}
+.rounded-md{border-radius:0.375rem}
+.rounded-xl{border-radius:0.75rem}
+.select-none{user-select:none}
+.selection\:bg-cyan-600::selection{background-color:#0891b2}
+.selection\:bg-indigo-600::selection{background-color:#4f46e5}
+.selection\:bg-teal-600::selection{background-color:#0d9488}
+.selection\:text-white::selection{color:#ffffff}
+.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0/.25);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-amber-100{--tw-shadow-color:#fef3c7}
+.shadow-blue-100{--tw-shadow-color:#dbeafe}
+.shadow-cyan-100{--tw-shadow-color:#cffafe}
+.shadow-emerald-100{--tw-shadow-color:#d1fae5}
+.shadow-indigo-100{--tw-shadow-color:#e0e7ff}
+.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-orange-100{--tw-shadow-color:#ffedd5}
+.shadow-purple-100{--tw-shadow-color:#f3e8ff}
+.shadow-rose-100{--tw-shadow-color:#ffe4e6}
+.shadow-sky-100{--tw-shadow-color:#e0f2fe}
+.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-teal-100{--tw-shadow-color:#ccfbf1}
+.shadow-violet-100{--tw-shadow-color:#ede9fe}
+.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0/.1),0 8px 10px -6px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-xs{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shrink-0{flex-shrink:0}
+@media (min-width:640px){.sm\:flex-row{flex-direction:row}}
+@media (min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:items-end{align-items:flex-end}}
+@media (min-width:640px){.sm\:max-w-\[220px\]{max-width:220px}}
+@media (min-width:640px){.sm\:p-10{padding:2.5rem}}
+@media (min-width:640px){.sm\:p-6{padding:1.5rem}}
+@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}
+@media (min-width:640px){.sm\:text-2xl{font-size:1.5rem;line-height:2rem}}
+@media (min-width:640px){.sm\:text-base{font-size:1rem;line-height:1.5rem}}
+@media (min-width:640px){.sm\:text-left{text-align:left}}
+@media (min-width:640px){.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}
+@media (min-width:640px){.sm\:w-auto{width:auto}}
+.space-x-3>:not([hidden])~:not([hidden]){margin-left:0.75rem}
+.space-y-0\.5>:not([hidden])~:not([hidden]){margin-top:0.125rem}
+.space-y-1>:not([hidden])~:not([hidden]){margin-top:0.25rem}
+.space-y-1\.5>:not([hidden])~:not([hidden]){margin-top:0.375rem}
+.space-y-5>:not([hidden])~:not([hidden]){margin-top:1.25rem}
+.sticky{position:sticky}
+.text-2xl{font-size:1.5rem;line-height:2rem}
+.text-\[10\.5px\]{font-size:10.5px}
+.text-\[10px\]{font-size:10px}
+.text-\[11px\]{font-size:11px}
+.text-amber-300{color:#fcd34d}
+.text-amber-700{color:#b45309}
+.text-amber-900{color:#78350f}
+.text-base{font-size:1rem;line-height:1.5rem}
+.text-blue-700{color:#1d4ed8}
+.text-blue-800{color:#1e40af}
+.text-center{text-align:center}
+.text-cyan-300{color:#67e8f9}
+.text-cyan-600{color:#0891b2}
+.text-cyan-700{color:#0e7490}
+.text-cyan-800{color:#155e75}
+.text-cyan-900{color:#164e63}
+.text-cyan-950{color:#083344}
+.text-emerald-600{color:#059669}
+.text-emerald-700{color:#047857}
+.text-emerald-800{color:#065f46}
+.text-indigo-600{color:#4f46e5}
+.text-indigo-700{color:#4338ca}
+.text-indigo-800{color:#3730a3}
+.text-indigo-900{color:#312e81}
+.text-indigo-950{color:#1e1b4b}
+.text-left{text-align:left}
+.text-lg{font-size:1.125rem;line-height:1.75rem}
+.text-orange-700{color:#c2410c}
+.text-purple-700{color:#7e22ce}
+.text-purple-800{color:#6b21a8}
+.text-right{text-align:right}
+.text-rose-600{color:#e11d48}
+.text-rose-700{color:#be123c}
+.text-rose-800{color:#9f1239}
+.text-sky-300{color:#7dd3fc}
+.text-sky-600{color:#0284c7}
+.text-sky-700{color:#0369a1}
+.text-slate-200{color:#e2e8f0}
+.text-slate-300{color:#cbd5e1}
+.text-slate-400{color:#94a3b8}
+.text-slate-500{color:#64748b}
+.text-slate-600{color:#475569}
+.text-slate-700{color:#334155}
+.text-slate-800{color:#1e293b}
+.text-slate-900{color:#0f172a}
+.text-sm{font-size:0.875rem;line-height:1.25rem}
+.text-teal-300{color:#5eead4}
+.text-teal-600{color:#0d9488}
+.text-teal-700{color:#0f766e}
+.text-teal-800{color:#115e59}
+.text-teal-900{color:#134e4a}
+.text-teal-950{color:#042f2e}
+.text-violet-600{color:#7c3aed}
+.text-violet-700{color:#6d28d9}
+.text-white{color:#ffffff}
+.text-xl{font-size:1.25rem;line-height:1.75rem}
+.text-xs{font-size:0.75rem;line-height:1rem}
+.to-blue-600{--tw-to:#2563eb}
+.to-emerald-600{--tw-to:#059669}
+.to-indigo-600{--tw-to:#4f46e5}
+.to-rose-600{--tw-to:#e11d48}
+.top-0{top:0rem}
+.tracking-tight{letter-spacing:-.025em}
+.tracking-wider{letter-spacing:.05em}
+.tracking-widest{letter-spacing:.1em}
+.transform{transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.translate-y-20{--tw-ty:5rem;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uppercase{text-transform:uppercase}
+.w-10{width:2.5rem}
+.w-12{width:3rem}
+.w-2\.5{width:0.625rem}
+.w-3\.5{width:0.875rem}
+.w-5{width:1.25rem}
+.w-6{width:1.5rem}
+.w-64{width:16rem}
+.w-8{width:2rem}
+.w-80{width:20rem}
+.w-9{width:2.25rem}
+.w-full{width:100%}
+@media (min-width:1280px){.xl\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.z-50{z-index:50}
+</style>
+  <!-- Google Fonts: Noto Sans TC & JetBrains Mono -->
+
+  <style>
+    /* 全域字體與基底設定 */
+    body {
+      font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* 純 CSS 垂直分數排版（免 KaTeX/MathJax，離線/列印 100% 不跑版） */
+    .math-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 2px;
+      line-height: 1.05;
+      font-size: 0.95em;
+      margin: 0 1.5px;
+    }
+    .math-frac .num {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 1px;
+      display: block;
+    }
+    .math-frac .den {
+      padding-top: 1px;
+      display: block;
+    }
+
+    /* 純 CSS 延伸頂線根號排版 */
+    .math-rad {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 1px;
+    }
+    .rad-symbol {
+      font-size: 1.22em;
+      line-height: 1;
+      margin-right: 0.5px;
+      font-family: serif, 'JetBrains Mono', monospace;
+    }
+    .rad-body {
+      border-top: 1.5px solid currentColor;
+      padding: 0 2px;
+      line-height: 1.1;
+      display: inline-block;
+    }
+
+    /* 補習班專業點陣手寫草稿區 */
+    .scratch-grid {
+      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+      background-size: 13px 13px;
+    }
+
+    /* 隱藏原生數字微調鈕的冗餘樣式 */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      opacity: 0.8;
+    }
+
+    /* 列印標準 A4 考卷版面最佳化 */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 10mm 12mm 10mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 9.5pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .page-sheet {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .problem-card {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        border: 1px solid #475569 !important;
+        box-shadow: none !important;
+      }
+      .paper-header {
+        border-bottom: 2px solid #000 !important;
+      }
+      .print-col-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+      .print-col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .print-col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+      .print-col-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+    }
+  </style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif!important;background:var(--bhcs-bg)!important}
+header.no-print{background:var(--bhcs-green2)!important;border-bottom:4px solid var(--bhcs-mint)!important;box-shadow:0 5px 16px #173e3412!important}
+header.no-print>div:first-child h1{color:#fff!important}
+header.no-print h1::before{content:"百宏文教｜";color:var(--bhcs-mint)}
+header.no-print>div:first-child p{color:#c8e8df!important}
+header.no-print>div:first-child>div:first-child>div:first-child{background:var(--bhcs-mint)!important;color:var(--bhcs-green2)!important;box-shadow:none!important}
+header.no-print>div:first-child button{background:#fff!important;color:var(--bhcs-green2)!important;border:1px solid #9ad9c6!important;box-shadow:none!important;font-weight:800!important}
+header.no-print>div:first-child button:hover{background:var(--bhcs-soft)!important}
+header.no-print>div:first-child button:first-child{background:var(--bhcs-mint)!important}
+header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!important;border-top:none!important}
+.bg-teal-600,.bg-indigo-600,.bg-blue-600,.bg-emerald-600,.bg-cyan-700,.bg-violet-600,.bg-sky-600,.bg-teal-500,.bg-sky-500{background-color:var(--bhcs-green)!important}
+.hover\:bg-teal-700:hover,.hover\:bg-indigo-700:hover,.hover\:bg-blue-700:hover,.hover\:bg-emerald-700:hover,.hover\:bg-violet-700:hover,.hover\:bg-cyan-800:hover,.bg-teal-700,.bg-indigo-700,.bg-blue-700,.bg-emerald-700{background-color:var(--bhcs-green2)!important}
+.bg-amber-600{background-color:var(--bhcs-muted)!important}.hover\:bg-amber-700:hover{background-color:#4a5a56!important}
+.text-teal-600,.text-teal-700,.text-teal-800,.text-indigo-600,.text-indigo-700,.text-blue-600,.text-blue-700,.text-violet-700,.text-cyan-700{color:var(--bhcs-green)!important}
+.border-teal-500,.border-teal-600,.border-indigo-500,.border-indigo-600,.border-blue-500,.border-blue-600{border-color:var(--bhcs-green)!important}
+.bg-teal-50,.bg-indigo-50,.bg-blue-50,.bg-violet-50,.bg-cyan-50{background-color:var(--bhcs-soft)!important}
+.border-teal-200,.border-indigo-200,.border-teal-300,.border-indigo-300,.border-indigo-100,.border-teal-100{border-color:#b7d8cc!important}
+.text-indigo-900,.text-teal-900{color:var(--bhcs-green2)!important}
+.ring-teal-500,.focus\:ring-teal-500:focus,.focus\:ring-indigo-500:focus,.focus\:border-indigo-500:focus,.focus\:border-teal-500:focus{--tw-ring-color:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important}
+</style></head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
+
+  <!-- 頂部導航與獨立單元工作台切換列 -->
+  <header class="no-print bg-slate-900 text-white shadow-xl sticky top-0 z-50 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap justify-between items-center gap-3">
+      
+      <!-- 標題與當前獨立單元指示 -->
+      <div class="flex items-center space-x-3">
+        <div id="unit-icon-badge" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center font-extrabold text-white text-base shadow-md font-mono">x²</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-bold tracking-tight">國中數學計算力訓練產生器</h1>
+            <span id="current-unit-pill" class="bg-amber-500/20 text-amber-300 text-[11px] px-2 py-0.5 rounded-full font-bold border border-amber-500/40">單元二：一元二次方程式</span>
+          </div>
+          <p class="text-[11px] text-slate-400">雙單元獨立工作台 · 依據歷年教材精確演算法演算</p>
+        </div>
+      </div>
+
+      <!-- 核心切換：完全分開的獨立單元標籤 (嚴格分開，絕不混合) -->
+      <div class="inline-flex bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs shadow-inner">
+        <button id="tab-ap" class="unit-toggle-btn px-4 py-1.5 rounded-lg font-bold transition bg-sky-600 text-white shadow" data-target="ap">
+          📘 單元一：等差數列與級數 (國二下)
+        </button>
+        <button id="tab-quad" class="unit-toggle-btn px-4 py-1.5 rounded-lg font-medium transition text-slate-300 hover:text-white" data-target="quad">
+          📙 單元二：一元二次方程式 (國二上)
+        </button>
+      </div>
+
+      <!-- 快速執行動作組 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btn-regenerate" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🎲</span> 重新命題
+        </button>
+        <button id="btn-toggle-solutions" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+          <span id="sol-icon">👁️</span> <span id="sol-text">顯示解析</span>
+        </button>
+        <button id="btn-print-questions" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🖨️</span> 列印學用版
+        </button>
+        <button id="btn-print-answers" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+          <span>📝</span> 列印教用版
+        </button>
+
+        <!-- 獨立單元 HTML 下載下拉選單 -->
+        <div class="relative group">
+          <button class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-slate-600 transition flex items-center gap-1.5">
+            <span>💾</span> 匯出獨立檔案 ▾
+          </button>
+          <div class="absolute right-0 mt-1 w-64 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl py-1 hidden group-hover:block z-50 text-xs">
+            <button id="btn-export-current" class="w-full text-left px-3 py-2 text-slate-200 hover:bg-indigo-600 hover:text-white transition flex items-center gap-2">
+              <span>📄</span> 下載目前試卷 (獨立 HTML)
+            </button>
+            <button id="btn-export-ap-only" class="w-full text-left px-3 py-2 text-sky-300 hover:bg-sky-600 hover:text-white transition flex items-center gap-2">
+              <span>📘</span> 下載【等差數列】獨立版 HTML
+            </button>
+            <button id="btn-export-quad-only" class="w-full text-left px-3 py-2 text-amber-300 hover:bg-amber-600 hover:text-white transition flex items-center gap-2">
+              <span>📙</span> 下載【一元二次】獨立版 HTML
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto w-full px-3 sm:px-6 py-5 space-y-5">
+    
+    <!-- 參數與出題控制中心 -->
+    <section id="control-panel" class="no-print bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 transition-all">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold">⚙️</div>
+          <h2 id="panel-title" class="text-sm font-bold text-slate-800">一元二次方程式 · 參數與知識點自訂</h2>
+          <span class="text-xs text-slate-400">| 支援各知識點個別設定題數 (0~20題) 與 2~4 欄自適應排版</span>
+        </div>
+
+        <!-- 總題數狀態指示燈 -->
+        <div class="flex items-center gap-2 bg-indigo-50 px-3 py-1 rounded-xl border border-indigo-200">
+          <span class="text-xs font-medium text-indigo-700">當前試卷總題數：</span>
+          <span id="display-total-count" class="font-mono font-black text-sm text-indigo-900">12</span>
+          <span class="text-xs text-indigo-600">題</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        
+        <!-- 難易度等級 -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+          <label class="block text-xs font-bold text-slate-700 mb-2">難易度等級</label>
+          <div class="grid grid-cols-3 gap-1 bg-slate-200/70 p-1 rounded-lg">
+            <button type="button" data-diff="basic" class="diff-btn py-1 px-1.5 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-indigo-700">基礎</button>
+            <button type="button" data-diff="advanced" class="diff-btn py-1 px-1.5 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">進階</button>
+            <button type="button" data-diff="challenge" class="diff-btn py-1 px-1.5 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">挑戰</button>
+          </div>
+          <p id="diff-description" class="text-[11px] text-slate-500 mt-2 leading-tight">基本整數運算、直接公式代入、核心概念快速確認。</p>
+        </div>
+
+        <!-- 數值型態配置 -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+          <label class="block text-xs font-bold text-slate-700 mb-2">數值型態配置 (多選)</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="inline-flex items-center gap-1.5 text-xs bg-white border border-slate-200 px-2 py-1 rounded-lg cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" id="cfg-type-int" checked="" class="rounded text-indigo-600 h-3.5 w-3.5">
+              <span>整數</span>
+            </label>
+            <label class="inline-flex items-center gap-1.5 text-xs bg-white border border-slate-200 px-2 py-1 rounded-lg cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" id="cfg-type-frac" checked="" class="rounded text-indigo-600 h-3.5 w-3.5">
+              <span>分數</span>
+            </label>
+            <label class="inline-flex items-center gap-1.5 text-xs bg-white border border-slate-200 px-2 py-1 rounded-lg cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" id="cfg-type-dec" checked="" class="rounded text-indigo-600 h-3.5 w-3.5">
+              <span>小數</span>
+            </label>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2 leading-tight">完全涵蓋教材中的分數通分運算與小數級數。</p>
+        </div>
+
+        <!-- 每列題數設定 (支援 2~4 題排版切換，亦可切換 1 題) -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-bold text-slate-700">每列排版題數 (欄數)</label>
+            <span class="text-[10px] text-indigo-600 font-bold">支援 2～4 題</span>
+          </div>
+          <div class="grid grid-cols-4 gap-1 bg-slate-200/70 p-1 rounded-lg">
+            <button type="button" data-cols="1" class="col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">
+              1 欄
+            </button>
+            <button type="button" data-cols="2" class="col-btn py-1 px-1 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-indigo-700">
+              2 欄
+            </button>
+            <button type="button" data-cols="3" class="col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">
+              3 欄
+            </button>
+            <button type="button" data-cols="4" class="col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">
+              4 欄
+            </button>
+          </div>
+          <p id="col-description" class="text-[11px] text-slate-500 mt-2 leading-tight">每列 2 題：標準補習班考卷雙欄，適中手寫演算空間。</p>
+        </div>
+
+        <!-- 線上互動與批改模式 -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70 flex flex-col justify-between">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-2">測驗與即時批改</label>
+            <label class="inline-flex items-center gap-2 text-xs text-slate-800 cursor-pointer">
+              <input type="checkbox" id="cfg-online-mode" class="rounded text-indigo-600 h-3.5 w-3.5">
+              <span class="font-semibold">啟用線上作答與自動批改</span>
+            </label>
+          </div>
+          <div class="mt-2 flex items-center justify-between">
+            <span id="exam-timer-badge" class="hidden text-xs font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              ⏱️ 00:00
+            </span>
+            <span class="text-[10px] text-slate-400">交卷後自動計算得分</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 知識點細部題數自訂面板 (各知識點 0~20 題) -->
+      <div class="mt-4 pt-4 border-t border-slate-100">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-800">各知識點命題題數配置</span>
+            <span class="text-[11px] text-slate-400">（設為 0 代表該知識點不出題，單一知識點最高 20 題）</span>
+          </div>
+
+          <!-- 快速批次設定按鈕群 -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-[11px] text-slate-500 mr-1">快捷設定：</span>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px] text-slate-700 transition" data-val="1">各 1 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px] text-slate-700 transition" data-val="2">各 2 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px] text-slate-700 transition" data-val="3">各 3 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 text-[11px] text-indigo-700 font-semibold transition" data-val="5">各 5 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-100 text-[11px] text-rose-700 transition" data-val="0">全部清零</button>
+          </div>
+        </div>
+
+        <!-- 動態知識點卡片清單 (由 JavaScript 依據當前單元渲染) -->
+        <div id="knowledge-points-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"><div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 transition">
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-xs font-bold text-slate-800">1. 方程式解的檢驗與意義</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[210px]">教材 P.1~P.2：代入檢驗根的成立</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_check">-</button>
+            <input type="number" min="0" max="20" value="2" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 text-slate-900" data-id="quad_check">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_check">+</button>
+          </div>
+        </div><div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 transition">
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-xs font-bold text-slate-800">2. 提公因式與分組分解法</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[210px]">教材 P.3~P.6：x(ax+b)=0、括號分組</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_factor">-</button>
+            <input type="number" min="0" max="20" value="2" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 text-slate-900" data-id="quad_factor">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_factor">+</button>
+          </div>
+        </div><div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 transition">
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-xs font-bold text-slate-800">3. 乘法公式法(平方差/重根)</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[210px]">教材 P.7~P.8：a²-b²=0、完全平方</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_formula">-</button>
+            <input type="number" min="0" max="20" value="2" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 text-slate-900" data-id="quad_formula">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_formula">+</button>
+          </div>
+        </div><div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 transition">
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-xs font-bold text-slate-800">4. 十字交乘法(含分數/小數)</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[210px]">教材 P.9~P.10：十字交叉係數拆解</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_cross">-</button>
+            <input type="number" min="0" max="20" value="2" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 text-slate-900" data-id="quad_cross">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_cross">+</button>
+          </div>
+        </div><div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 transition">
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-xs font-bold text-slate-800">5. 開平方法與標準式(x+p)²=q</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[210px]">教材 P.13~P.18：五大配方步驟求解</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_square">-</button>
+            <input type="number" min="0" max="20" value="2" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 text-slate-900" data-id="quad_square">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_square">+</button>
+          </div>
+        </div><div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 transition">
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-xs font-bold text-slate-800">6. 判別式、公式解與韋達定理</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[210px]">教材 P.19~P.24：D=b²-4ac、兩根和積</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_sol">-</button>
+            <input type="number" min="0" max="20" value="2" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 text-slate-900" data-id="quad_sol">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="quad_sol">+</button>
+          </div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- 考卷畫布展示區塊 (紙張擬真視圖) -->
+    <div id="worksheet-paper" class="page-sheet bg-white rounded-2xl shadow-md border border-slate-200/80 p-6 sm:p-10 transition-all">
+      
+      <!-- 補習班標準試卷頁首 -->
+      <div class="paper-header border-b-2 border-slate-900 pb-4 mb-5">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-3">
+          <div>
+            <div id="paper-sub-banner" class="text-xs tracking-widest text-slate-500 font-semibold mb-0.5">國中二年級上學期數學領域 · 徹底反覆計算訓練講義</div>
+            <h2 id="paper-headline" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">第六單元：一元二次方程式 計算力精熟練習卷</h2>
+          </div>
+          <div class="text-right flex flex-col items-end gap-1">
+            <span id="paper-diff-tag" class="inline-block text-xs font-bold px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg">難度：基礎</span>
+            <span id="paper-layout-tag" class="text-[11px] text-slate-400 no-print">排版：每列 2 題</span>
+          </div>
+        </div>
+
+        <!-- 學生考試作答抬頭資訊欄 -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-medium text-slate-700 pt-2 border-t border-dashed border-slate-200">
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">班級：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">座號：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">姓名：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">測驗日期：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1 bg-amber-50/80 px-2 py-0.5 rounded border border-amber-200">
+            <span class="text-amber-900 font-bold">得分：</span>
+            <span id="exam-score-box" class="border-b border-amber-400 flex-grow inline-block h-4 font-mono font-black text-amber-900 text-center"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 線上作答提交列 (僅線上模式顯示) -->
+      <div id="online-grading-panel" class="hidden no-print mb-5 p-3.5 bg-indigo-50 border border-indigo-200 rounded-xl flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm shadow">
+            ✍️
+          </div>
+          <div>
+            <div class="text-xs font-bold text-indigo-950">線上作答模式中</div>
+            <div class="text-[11px] text-indigo-800">支援最簡分數（如 3/4）、小數、逗號分隔多解（如 2, -3）。</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btn-submit-answers" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition">
+            ✔️ 繳卷並自動批改
+          </button>
+          <button id="btn-clear-answers" class="bg-white hover:bg-slate-100 text-slate-700 text-xs px-3 py-2 rounded-lg border border-slate-300 transition">
+            清空答案
+          </button>
+        </div>
+      </div>
+
+      <!-- 題目自適應排版網格容器 (支援 1~4 欄) -->
+      <div id="problems-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 print-col-2"></div>
+
+      <!-- 頁尾速查公式與版權 -->
+      <div class="mt-8 pt-4 border-t border-slate-200 flex flex-wrap justify-between items-center text-[11px] text-slate-400 gap-2">
+        <div id="footer-unit-title">國中數學計算力檢定教材 · 徹底反覆計算系列</div>
+        <div id="footer-cheat-sheet" class="font-mono text-[10.5px]">[公式速查] x = (-b ± √D)/2a | D = b² - 4ac | α+β = -b/a, αβ = c/a</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 浮動提示 Toast -->
+  <div id="toast-notify" class="no-print fixed bottom-5 right-5 z-50 transform transition-all duration-300 bg-slate-900 text-white text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700">
+    <span id="toast-icon">✨</span>
+    <span id="toast-text">已成功產生 12 題練習卷！</span>
+  </div>
+
+  <script>
+    /* 數學基礎工具：最大公因數 */
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a || 1;
+    }
+
+    /* 嚴謹分數物件類別 */
+    class Frac {
+      constructor(n, d = 1) {
+        if (d === 0) throw new Error("分母不可為 0");
+        let g = gcd(n, d);
+        let sign = (d < 0) ? -1 : 1;
+        this.n = (n / g) * sign;
+        this.d = Math.abs(d / g);
+      }
+
+      add(f) {
+        return new Frac(this.n * f.d + f.n * this.d, this.d * f.d);
+      }
+
+      sub(f) {
+        return new Frac(this.n * f.d - f.n * this.d, this.d * f.d);
+      }
+
+      mul(f) {
+        return new Frac(this.n * f.n, this.d * f.d);
+      }
+
+      div(f) {
+        if (f.n === 0) throw new Error("除數不可為 0");
+        return new Frac(this.n * f.d, this.d * f.n);
+      }
+
+      neg() {
+        return new Frac(-this.n, this.d);
+      }
+
+      isInteger() {
+        return this.d === 1;
+      }
+
+      toFloat() {
+        return this.n / this.d;
+      }
+
+      toHTML() {
+        if (this.isInteger()) return `${this.n}`;
+        const isNeg = this.n < 0;
+        const absN = Math.abs(this.n);
+        const signStr = isNeg ? "- " : "";
+        return `${signStr}<span class="math-frac"><span class="num">${absN}</span><span class="den">${this.d}</span></span>`;
+      }
+
+      toString() {
+        if (this.isInteger()) return `${this.n}`;
+        return `${this.n}/${this.d}`;
+      }
+    }
+
+    /* 最簡根式化簡工具：√72 => 6√2 */
+    function simplifySqrt(n) {
+      if (n < 0) return { coef: 0, rad: n, isReal: false };
+      if (n === 0) return { coef: 0, rad: 0, isReal: true };
+      let coef = 1;
+      let rad = n;
+      for (let i = 2; i * i <= rad; i++) {
+        while (rad % (i * i) === 0) {
+          coef *= i;
+          rad /= (i * i);
+        }
+      }
+      return { coef, rad, isReal: true };
+    }
+
+    /* 純 CSS 根式 HTML */
+    function formatRadicalHTML(coef, rad) {
+      if (rad === 0) return "0";
+      if (rad === 1) return `${coef}`;
+      const radHTML = `<span class="math-rad"><span class="rad-symbol">√</span><span class="rad-body">${rad}</span></span>`;
+      if (coef === 1) return radHTML;
+      if (coef === -1) return `-${radHTML}`;
+      return `${coef}${radHTML}`;
+    }
+
+    /* 隨機輔助函式 */
+    function randInt(min, max, excludeZero = false) {
+      let val = Math.floor(Math.random() * (max - min + 1)) + min;
+      if (excludeZero && val === 0) return randInt(min, max, excludeZero);
+      return val;
+    }
+
+    function randChoice(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    /* 多項式格式化工具：ax² + bx + c = 0 */
+    function formatQuadraticHTML(a, b, c) {
+      let parts = [];
+      if (a === 1) parts.push(`x<sup>2</sup>`);
+      else if (a === -1) parts.push(`-x<sup>2</sup>`);
+      else if (typeof a === 'number') parts.push(`${a}x<sup>2</sup>`);
+      else if (a instanceof Frac) parts.push(`${a.toHTML()}x<sup>2</sup>`);
+
+      if (typeof b === 'number') {
+        if (b > 0) parts.push(b === 1 ? `+ x` : `+ ${b}x`);
+        else if (b < 0) parts.push(b === -1 ? `- x` : `- ${Math.abs(b)}x`);
+      } else if (b instanceof Frac) {
+        if (b.n > 0) parts.push(`+ ${b.toHTML()}x`);
+        else if (b.n < 0) parts.push(`- ${b.neg().toHTML()}x`);
+      }
+
+      if (typeof c === 'number') {
+        if (c > 0) parts.push(`+ ${c}`);
+        else if (c < 0) parts.push(`- ${Math.abs(c)}`);
+      } else if (c instanceof Frac) {
+        if (c.n > 0) parts.push(`+ ${c.toHTML()}`);
+        else if (c.n < 0) parts.push(`- ${c.neg().toHTML()}`);
+      }
+
+      return parts.join(' ') + ' = 0';
+    }
+
+    /* 全域出題與單元獨立狀態管理 */
+    const state = {
+      // 當前活動單元：'ap' (等差數列與級數) 或 'quad' (一元二次方程式) - 嚴格完全分開
+      currentUnit: 'ap',
+      
+      difficulty: 'basic',
+      types: { int: true, frac: true, dec: true },
+      colsPerRow: 2, // 1, 2, 3, 4
+      showSolutions: false,
+      onlineMode: false,
+      timerInterval: null,
+      startTime: null,
+      questions: [],
+
+      // 單元一：等差數列與級數 6 大教材知識點
+      apKPs: {
+        ap_fill:  { id: 'ap_fill',  title: '1. 數列規律尋找與填空', count: 2, desc: '教材 P.1~P.3：等差/倍數/分數規律' },
+        ap_judge: { id: 'ap_judge', title: '2. 公差判斷與性質驗證', count: 2, desc: '教材 P.4：相鄰項後減前固定差 d' },
+        ap_term:  { id: 'ap_term',  title: '3. 首項公差求指定項/一般項', count: 2, desc: '教材 P.5~P.7：an = a1 + (n-1)d' },
+        ap_mid:   { id: 'ap_mid',   title: '4. 等差中項(數值與代數式)', count: 2, desc: '教材 P.8~P.10：b = (a+c)/2' },
+        ap_sum:   { id: 'ap_sum',   title: '5. 等差級數求和 Sn', count: 2, desc: '教材 P.11, P.13, P.15：公式代入與帶分數' },
+        ap_trick: { id: 'ap_trick', title: '6. 級數巧算與中間項定理', count: 2, desc: '教材 P.12, P.14, P.16：提公因數與中間項' }
+      },
+
+      // 單元二：一元二次方程式 6 大教材知識點
+      quadKPs: {
+        quad_check:  { id: 'quad_check',  title: '1. 方程式解的檢驗與意義', count: 2, desc: '教材 P.1~P.2：代入檢驗根的成立' },
+        quad_factor: { id: 'quad_factor', title: '2. 提公因式與分組分解法', count: 2, desc: '教材 P.3~P.6：x(ax+b)=0、括號分組' },
+        quad_formula:{ id: 'quad_formula',title: '3. 乘法公式法(平方差/重根)', count: 2, desc: '教材 P.7~P.8：a²-b²=0、完全平方' },
+        quad_cross:  { id: 'quad_cross',  title: '4. 十字交乘法(含分數/小數)', count: 2, desc: '教材 P.9~P.10：十字交叉係數拆解' },
+        quad_square: { id: 'quad_square', title: '5. 開平方法與標準式(x+p)²=q', count: 2, desc: '教材 P.13~P.18：五大配方步驟求解' },
+        quad_sol:    { id: 'quad_sol',    title: '6. 判別式、公式解與韋達定理', count: 2, desc: '教材 P.19~P.24：D=b²-4ac、兩根和積' }
+      }
+    };
+
+    function showToast(msg, icon = 'ℹ️') {
+      const toast = document.getElementById('toast-notify');
+      document.getElementById('toast-icon').innerText = icon;
+      document.getElementById('toast-text').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       單元一：等差數列與級數 題型生成器 (嚴格依據《等差數列.pdf》)
+    ════════════════════════════════════════════════════════════════════ */
+
+    // AP-1: 數列規律填空 (教材 P.1~P.3)
+    function gen_ap_fill(diff, types) {
+      const mode = (diff === 'challenge') ? 'algebra' : randChoice(['ap_int', 'ap_frac', 'geom_div']);
+      
+      if (mode === 'algebra') {
+        // 代數式數列規律填空 (教材 P.3: a, 2a+b, 3a+2b, ...)
+        let varA = randChoice(['a', 'x', 'm']);
+        let varB = randChoice(['b', 'y', 'n']);
+        let full = [
+          varA,
+          `2${varA} + ${varB}`,
+          `3${varA} + 2${varB}`,
+          `4${varA} + 3${varB}`,
+          `5${varA} + 4${varB}`,
+          `6${varA} + 5${varB}`
+        ];
+        let disp = [full[0], full[1], full[2], `( &nbsp;&nbsp;&nbsp;&nbsp; )`, full[4], `( &nbsp;&nbsp;&nbsp;&nbsp; )`];
+        return {
+          kpTitle: '數列規律尋找與填空 (代數式)',
+          questionHTML: `觀察數列規律並在空格中填入適當的式子：<br><span class="mono font-bold mt-1 inline-block">${disp.join('、')}</span>`,
+          answerText: `依序填入：${full[3]}、${full[5]}`,
+          expectedShort: `${full[3].replace(/\s+/g,'')}, ${full[5].replace(/\s+/g,'')}`,
+          explanationHTML: `規律分析：首項為 ${varA}，每一項皆比前一項增加 (${varA} + ${varB})。<br>
+            第四項 = (${full[2]}) + (${varA}+${varB}) = <b>${full[3]}</b><br>
+            第六項 = (${full[4]}) + (${varA}+${varB}) = <b>${full[5]}</b>`
+        };
+      } else if (mode === 'ap_frac') {
+        // 分數數列規律 (教材 P.1 (4): 分子與分母各自成等差數列)
+        let n1 = randInt(1, 4), dn = 1;
+        let d1 = randChoice([12, 15, 20]), dd = randChoice([10, 11, 12]);
+        let items = [];
+        for (let i = 0; i < 6; i++) {
+          items.push(new Frac(n1 + i * dn, d1 + i * dd).toHTML());
+        }
+        let disp = [items[0], items[1], items[2], items[3], `( &nbsp;&nbsp; )`, items[5]];
+        return {
+          kpTitle: '分數數列規律觀察填空',
+          questionHTML: `找出數列規律，並在空格中填入適當的分數：<br><span class="mono font-bold mt-1 inline-block">${disp.join('、')}</span>`,
+          answerText: `${items[4]}`,
+          expectedShort: `${n1+4*dn}/${d1+4*dd}`,
+          explanationHTML: `【分子分母分開觀察】<br>
+            分子數列：後項比前項多 ${dn} ⇨ 第五項分子 = ${n1 + 4 * dn}<br>
+            分母數列：後項比前項多 ${dd} ⇨ 第五項分母 = ${d1 + 4 * dd}<br>
+            故空格應填入 <b>${items[4]}</b>`
+        };
+      } else {
+        // 整數數列填空 (教材 P.1: 30, 45, 60, (), 90, (), 120 或 -22, -16, -10...)
+        let a1 = randInt(-20, 30);
+        let d = randChoice([-6, -5, -4, 4, 5, 7, 15]);
+        let full = [a1, a1+d, a1+2*d, a1+3*d, a1+4*d, a1+5*d];
+        let disp = [full[0], full[1], full[2], `( &nbsp;&nbsp; )`, full[4], `( &nbsp;&nbsp; )`];
+        return {
+          kpTitle: '尋找數列規律填空',
+          questionHTML: `找出數列規律，並在空格中填入適當的數：<br><span class="mono font-bold mt-1 inline-block">${disp.join('、')}</span>`,
+          answerText: `依序填入：${full[3]}、${full[5]}`,
+          expectedShort: `${full[3]}, ${full[5]}`,
+          explanationHTML: `相鄰兩項之差 d = (${full[1]}) - (${full[0]}) = <b>${d}</b>。<br>
+            第一個空格 = ${full[2]} + (${d}) = <b>${full[3]}</b><br>
+            第二個空格 = ${full[4]} + (${d}) = <b>${full[5]}</b>`
+        };
+      }
+    }
+
+    // AP-2: 公差判斷與性質驗證 (教材 P.4)
+    function gen_ap_judge(diff, types) {
+      const isAP = Math.random() > 0.4;
+      const pickType = randChoice(types);
+      let seq = [];
+      let d = 0;
+
+      if (pickType === 'dec' && diff !== 'basic') {
+        let a1 = randInt(-10, 20) * 0.5;
+        d = randChoice([-1.5, -0.8, 0.4, 1.2, 2.5]);
+        for (let i = 0; i < 5; i++) {
+          let val = isAP ? (a1 + i * d) : (a1 + i * d + (i === 3 ? 0.4 : 0));
+          seq.push(val.toFixed(1));
+        }
+      } else if (pickType === 'frac' && diff !== 'basic') {
+        let den = randChoice([2, 3, 4, 5]);
+        let num1 = randInt(-5, 9);
+        d = randChoice([-2, -1, 1, 2, 3]);
+        for (let i = 0; i < 5; i++) {
+          let f = new Frac(isAP ? (num1 + i * d) : (num1 + i * d + (i === 2 ? 1 : 0)), den);
+          seq.push(f.toHTML());
+        }
+      } else {
+        let a1 = randInt(-30, 40);
+        d = randChoice([-8, -5, -3, 3, 4, 6, 7]);
+        for (let i = 0; i < 5; i++) {
+          seq.push(isAP ? (a1 + i * d) : (a1 + i * d + (i === 3 ? 2 : 0)));
+        }
+      }
+
+      return {
+        kpTitle: '公差判斷與性質驗證',
+        questionHTML: `判斷數列 <span class="mono font-bold">${seq.join('，')}</span> 是否為等差數列？若是請寫出公差 <span class="mono">d</span>；若否請寫「否」：`,
+        answerText: isAP ? `是等差數列，公差 d = ${d}` : `不是等差數列`,
+        expectedShort: isAP ? `${d}` : `否`,
+        explanationHTML: isAP 
+          ? `後項減前項之差皆為固定常數 <b>${d}</b>，故為等差數列且公差 d = ${d}。`
+          : `相鄰兩項之差並非常數，故<b>不是等差數列</b>。`
+      };
+    }
+
+    // AP-3: 首項公差求指定項與一般項 (教材 P.5~P.7)
+    function gen_ap_term(diff, types) {
+      if (diff === 'challenge') {
+        // 求第 n 項 (一般項) (教材 P.6)
+        let a1 = randInt(-40, 50);
+        let d = randChoice([-7, -5, -4, 3, 4, 6, 8]);
+        let constTerm = a1 - d;
+        let sign = constTerm >= 0 ? `+ ${constTerm}` : `- ${Math.abs(constTerm)}`;
+        let ansForm = `${d}n ${sign}`;
+        return {
+          kpTitle: '求等差數列第 n 項 (一般項)',
+          questionHTML: `等差數列首項 <span class="mono font-semibold">a<sub>1</sub> = ${a1}</span>，公差 <span class="mono font-semibold">d = ${d}</span>，求此數列的第 <span class="mono">n</span> 項 <span class="mono font-bold">a<sub>n</sub></span>（以 <span class="mono">n</span> 表示）：`,
+          answerText: `a<sub>n</sub> = ${ansForm}`,
+          expectedShort: `${d}n${sign.replace(/\s+/g, '')}`,
+          explanationHTML: `【公式】a<sub>n</sub> = a<sub>1</sub> + (n - 1)d<br>
+            a<sub>n</sub> = ${a1} + (n - 1) × (${d}) = ${a1} + ${d}n - (${d}) = <b>${ansForm}</b>`
+        };
+      } else {
+        // 求指定第 k 項 (教材 P.5 & P.6)
+        let a1 = randInt(-30, 45);
+        let d = randChoice([-6, -4, -3, 3, 5, 7]);
+        let n = randInt(12, 35);
+        let an = a1 + (n - 1) * d;
+        return {
+          kpTitle: '首項與公差求指定項',
+          questionHTML: `等差數列首項 <span class="mono font-semibold">a<sub>1</sub> = ${a1}</span>，公差 <span class="mono font-semibold">d = ${d}</span>，求第 <span class="mono font-bold">${n}</span> 項的值：`,
+          answerText: `a<sub>${n}</sub> = ${an}`,
+          expectedShort: `${an}`,
+          explanationHTML: `【公式代入】a<sub>n</sub> = a<sub>1</sub> + (n - 1)d<br>
+            a<sub>${n}</sub> = ${a1} + (${n} - 1) × (${d}) = ${a1} + (${(n - 1) * d}) = <b>${an}</b>`
+        };
+      }
+    }
+
+    // AP-4: 等差中項計算 (教材 P.8~P.10)
+    function gen_ap_mid(diff, types) {
+      if (diff === 'challenge') {
+        // 代數式等差中項 (教材 P.8: 3x+2y 與 -x+8y, 2a+b 與 -4a+3b)
+        let cx1 = randChoice([-3, -1, 1, 3, 5]);
+        let cy1 = randChoice([-4, -2, 2, 4, 6]);
+        let cx2 = randChoice([-1, 1, 3, 7]);
+        let cy2 = randChoice([-6, -2, 2, 8]);
+        if ((cx1 + cx2) % 2 !== 0) cx2 += 1;
+        if ((cy1 + cy2) % 2 !== 0) cy2 += 1;
+
+        let mx = (cx1 + cx2) / 2;
+        let my = (cy1 + cy2) / 2;
+        let expr1 = `${cx1 === 1 ? '' : (cx1 === -1 ? '-' : cx1)}x ${cy1 >= 0 ? '+' : '-'} ${Math.abs(cy1)}y`;
+        let expr2 = `${cx2 === 1 ? '' : (cx2 === -1 ? '-' : cx2)}x ${cy2 >= 0 ? '+' : '-'} ${Math.abs(cy2)}y`;
+        let ansStr = `${mx === 1 ? '' : (mx === -1 ? '-' : mx)}x ${my >= 0 ? '+' : '-'} ${Math.abs(my)}y`;
+
+        return {
+          kpTitle: '代數式的等差中項計算',
+          questionHTML: `求 <span class="mono font-semibold">${expr1}</span> 和 <span class="mono font-semibold">${expr2}</span> 的等差中項：`,
+          answerText: ansStr,
+          expectedShort: ansStr.replace(/\s+/g, ''),
+          explanationHTML: `等差中項 b = (A + B) ÷ 2<br>
+            中項 = [(${expr1}) + (${expr2})] ÷ 2 = (${cx1 + cx2}x ${cy1 + cy2 >= 0 ? '+' : '-'} ${Math.abs(cy1 + cy2)}y) ÷ 2 = <b>${ansStr}</b>`
+        };
+      } else {
+        // 數值中項 (含小數/負數) (教材 P.8 & P.9)
+        let a = randInt(-50, 70);
+        let c = randInt(-50, 70);
+        if ((a + c) % 2 !== 0) c += 1;
+        let b = (a + c) / 2;
+        return {
+          kpTitle: '數值的等差中項計算',
+          questionHTML: `求 <span class="mono font-semibold">${a}</span> 和 <span class="mono font-semibold">${c}</span> 的等差中項：`,
+          answerText: `${b}`,
+          expectedShort: `${b}`,
+          explanationHTML: `等差中項公式：b = (a + c) ÷ 2 = [(${a}) + (${c})] ÷ 2 = <b>${b}</b>`
+        };
+      }
+    }
+
+    // AP-5: 等差級數求和 Sn (教材 P.11, P.13, P.15)
+    function gen_ap_sum(diff, types) {
+      let a1 = randInt(-25, 30);
+      let d = randChoice([-6, -4, -3, 2, 3, 5, 7]);
+      let n = randInt(7, 18);
+      let an = a1 + (n - 1) * d;
+      let Sn = (n * (a1 + an)) / 2;
+      let seriesStr = `${a1} + ${a1+d} + ${a1+2*d} + ······ + ${an}`;
+
+      return {
+        kpTitle: '等差級數求和 Sn',
+        questionHTML: `求等差級數的和：<br><span class="mono font-bold mt-1 inline-block">${seriesStr}</span>`,
+        answerText: `S<sub>${n}</sub> = ${Sn}`,
+        expectedShort: `${Sn}`,
+        explanationHTML: `1. 先求項數 n：n = (a<sub>n</sub> - a<sub>1</sub>) ÷ d + 1 = [(${an}) - (${a1})] ÷ (${d}) + 1 = <b>${n}</b><br>
+          2. 代入公式：S<sub>n</sub> = n(a<sub>1</sub> + a<sub>n</sub>) ÷ 2 = ${n} × [(${a1}) + (${an})] ÷ 2 = <b>${Sn}</b>`
+      };
+    }
+
+    // AP-6: 級數巧算與中間項定理 (教材 P.12, P.14, P.16)
+    function gen_ap_trick(diff, types) {
+      const mode = randChoice(['mid_term', 'common_mult', 'shift_const']);
+
+      if (mode === 'mid_term') {
+        // 中間項求和：Sn = n × a_mid (教材 P.16)
+        let n = randChoice([7, 9, 11, 15, 25]);
+        let midIdx = Math.floor(n / 2) + 1;
+        let midVal = randInt(-18, 25, true);
+        let Sn = n * midVal;
+        return {
+          kpTitle: '等差中間項定理求總和',
+          questionHTML: `已知一等差數列共有 <span class="mono font-bold">${n}</span> 項，其第 <span class="mono font-bold">${midIdx}</span> 項 <span class="mono font-semibold">a<sub>${midIdx}</sub> = ${midVal}</span>，求此等差級數前 ${n} 項的總和：`,
+          answerText: `S<sub>${n}</sub> = ${Sn}`,
+          expectedShort: `${Sn}`,
+          explanationHTML: `【中間項定理】因為兩兩對稱項之和 a<sub>1</sub>+a<sub>${n}</sub> = 2a<sub>${midIdx}</sub>，<br>
+            故等差級數總和 S<sub>${n}</sub> = n × a<sub>${midIdx}</sub> = ${n} × (${midVal}) = <b>${Sn}</b>`
+        };
+      } else if (mode === 'common_mult') {
+        // 提出公因數乘積巧算 (教材 P.12: 6×3 + 16×3 + ... + 66×3)
+        let k = randChoice([-5, -4, -3, 3, 4, 5, 8]);
+        let a1 = randInt(3, 12);
+        let d = randChoice([3, 4, 5, 10]);
+        let n = randChoice([5, 6, 7]);
+        let an = a1 + (n - 1) * d;
+        let sumBase = (n * (a1 + an)) / 2;
+        let total = sumBase * k;
+        let parts = [];
+        for (let i = 0; i < n; i++) parts.push(`${a1 + i * d}×(${k})`);
+
+        return {
+          kpTitle: '提出公因數分配律巧算',
+          questionHTML: `利用分配律與等差級數公式巧算式子的值：<br><span class="mono font-bold mt-1 inline-block">${parts.join(' + ')}</span>`,
+          answerText: `${total}`,
+          expectedShort: `${total}`,
+          explanationHTML: `提出公因數 (${k})：原式 = [${a1} + ${a1+d} + ··· + ${an}] × (${k})<br>
+            括號內級數和 = ${n} × (${a1} + ${an}) ÷ 2 = ${sumBase}<br>
+            最終總和 = ${sumBase} × (${k}) = <b>${total}</b>`
+        };
+      } else {
+        // 分離常數巧算 (教材 P.14: (27+8)+(25+8)+...+(13+8))
+        let c = randInt(2, 9);
+        let a1 = randInt(18, 32);
+        let d = -randChoice([2, 3, 4]);
+        let n = randChoice([6, 8]);
+        let an = a1 + (n - 1) * d;
+        let sumBase = (n * (a1 + an)) / 2;
+        let total = sumBase + n * c;
+        let parts = [];
+        for (let i = 0; i < n; i++) parts.push(`(${a1 + i * d}+${c})`);
+
+        return {
+          kpTitle: '分離常數與加項分組巧算',
+          questionHTML: `利用分組求下列各式的值：<br><span class="mono font-bold mt-1 inline-block">${parts.slice(0, 3).join(' + ')} + ······ + ${parts[parts.length - 1]}</span> (共 ${n} 項)`,
+          answerText: `${total}`,
+          expectedShort: `${total}`,
+          explanationHTML: `分離常數求和：原式 = (${a1} + ··· + ${an}) + (${c} × ${n})<br>
+            前項等差級數和 = ${n} × (${a1} + ${an}) ÷ 2 = ${sumBase}<br>
+            總和 = ${sumBase} + ${n * c} = <b>${total}</b>`
+        };
+      }
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       單元二：一元二次方程式 題型生成器 (嚴格依據《一元二次.pdf》)
+    ════════════════════════════════════════════════════════════════════ */
+
+    // QUAD-1: 方程式解的檢驗與意義 (教材 P.1~P.2)
+    function gen_quad_check(diff, types) {
+      let r1 = randInt(-5, 5);
+      let r2 = randInt(-5, 5);
+      while (r2 === r1) r2 = randInt(-5, 5);
+      let a = 1;
+      let b = -(r1 + r2);
+      let c = r1 * r2;
+
+      let testCandidates = [r1, r2, r1 + randChoice([-1, 1]), r2 + randChoice([-2, 2])];
+      testCandidates = Array.from(new Set(testCandidates)).sort(() => Math.random() - 0.5);
+
+      return {
+        kpTitle: '方程式解的檢驗與意義',
+        questionHTML: `下列各數中，哪些是一元二次方程式 <span class="mono font-bold">${formatQuadraticHTML(a, b, c)}</span> 的解？<br>
+          <span class="mono font-semibold mt-1 inline-block">${testCandidates.map(x => `x = ${x}`).join('、')}</span>`,
+        answerText: `x = ${r1}、x = ${r2}`,
+        expectedShort: `${r1}, ${r2}`,
+        explanationHTML: `將各選項代入方程式左式檢驗是否滿足等式等於 0：<br>
+          代入 x = ${r1} 得 (${r1})² ${b>=0?'+':''}${b}(${r1}) ${c>=0?'+':''}${c} = 0 (成立)<br>
+          代入 x = ${r2} 得 (${r2})² ${b>=0?'+':''}${b}(${r2}) ${c>=0?'+':''}${c} = 0 (成立)<br>
+          <b>解為 x = ${r1} 與 x = ${r2}</b>`
+      };
+    }
+
+    // QUAD-2: 提公因式與分組分解法求解 (教材 P.3~P.6)
+    function gen_quad_factor(diff, types) {
+      const mode = randChoice(['common_x', 'bracket_common', 'group_4']);
+
+      if (mode === 'common_x') {
+        // ax² + bx = 0 (教材 P.3)
+        let a = randChoice([1, 2, 3, 5]);
+        let b = randInt(-14, 14, true);
+        let r2 = new Frac(-b, a);
+        let eqStr = `${a === 1 ? '' : a}x<sup>2</sup> ${b >= 0 ? '+' : '-'} ${Math.abs(b)}x = 0`;
+
+        return {
+          kpTitle: '提公因式法解一元二次方程式',
+          questionHTML: `解方程式：<span class="mono font-bold text-slate-900">${eqStr}</span>`,
+          answerText: `x = 0 或 ${r2.toHTML()}`,
+          expectedShort: `0, ${r2.toString()}`,
+          explanationHTML: `提出共同因式 x：x(${a === 1 ? '' : a}x ${b >= 0 ? '+' : ''}${b}) = 0<br>
+            令因式為 0：x = 0 或 ${a === 1 ? '' : a}x + ${b} = 0<br>
+            <b>解得 x = 0 或 x = ${r2.toHTML()}</b>`
+        };
+      } else if (mode === 'bracket_common') {
+        // 括號公因式 (教材 P.3 (3): (x+1)(2x+3) = (x+4)(x+1))
+        let a = 1;
+        let b = randInt(-3, 3);
+        let c = randInt(2, 3);
+        let d = randInt(1, 4);
+        let e = 1;
+        let f = randInt(-3, 3);
+
+        let expr1 = `(x ${b >= 0 ? '+' : ''}${b})`;
+        let expr2 = `(${c}x ${d >= 0 ? '+' : ''}${d})`;
+        let expr3 = `(x ${f >= 0 ? '+' : ''}${f})`;
+
+        let r1 = -b;
+        let r2 = new Frac(f - d, c - e);
+
+        return {
+          kpTitle: '提出公因式 (括號代換) 求解',
+          questionHTML: `解方程式：<span class="mono font-bold text-slate-900">${expr1}${expr2} = ${expr1}${expr3}</span>`,
+          answerText: `x = ${r1} 或 ${r2.toHTML()}`,
+          expectedShort: `${r1}, ${r2.toString()}`,
+          explanationHTML: `切記不可兩邊隨意消去未知式！移項提公因式：<br>
+            ${expr1}[ ${expr2} - ${expr3} ] = 0<br>
+            ${expr1}[ (${c - e})x + (${d - f}) ] = 0<br>
+            <b>解得 x = ${r1} 或 x = ${r2.toHTML()}</b>`
+        };
+      } else {
+        // 四項分組分解法 (教材 P.5: x² - 3x - 4x + 12 = 0)
+        let m = randInt(2, 6);
+        let n = randInt(2, 6);
+        return {
+          kpTitle: '四項分組提公因式求解',
+          questionHTML: `解方程式：<span class="mono font-bold text-slate-900">x<sup>2</sup> - ${m}x - ${n}x + ${m * n} = 0</span>`,
+          answerText: `x = ${m} 或 ${n}`,
+          expectedShort: `${m}, ${n}`,
+          explanationHTML: `兩兩分組提出公因式：<br>
+            x(x - ${m}) - ${n}(x - ${m}) = 0 ⇨ (x - ${m})(x - ${n}) = 0<br>
+            <b>解得 x = ${m} 或 x = ${n}</b>`
+        };
+      }
+    }
+
+    // QUAD-3: 乘法公式法求解 (教材 P.7~P.8)
+    function gen_quad_formula(diff, types) {
+      const isDiffOfSq = Math.random() > 0.5;
+
+      if (isDiffOfSq) {
+        // 平方差：a²x² - b² = 0 (教材 P.7: 9x² - 4 = 0)
+        let a = randChoice([1, 2, 3, 4, 5]);
+        let b = randChoice([2, 3, 5, 7]);
+        let r = new Frac(b, a);
+
+        return {
+          kpTitle: '平方差公式法解方程式',
+          questionHTML: `利用乘法公式解方程式：<span class="mono font-bold text-slate-900">${a * a}x<sup>2</sup> - ${b * b} = 0</span>`,
+          answerText: `x = ±${r.toHTML()} (即 ${r.toHTML()} 或 ${r.neg().toHTML()})`,
+          expectedShort: `${r.toString()}, -${r.toString()}`,
+          explanationHTML: `利用公式 a² - b² = (a + b)(a - b)：<br>
+            (${a}x + ${b})(${a}x - ${b}) = 0<br>
+            <b>解得 x = ±${r.toHTML()}</b>`
+        };
+      } else {
+        // 完全平方重根：(ax ± b)² = 0 (教材 P.7: 9x² - 6x + 1 = 0)
+        let a = randChoice([1, 2, 3, 4]);
+        let b = randInt(1, 5) * randChoice([1, -1]);
+        let r = new Frac(-b, a);
+        let A = a * a;
+        let B = 2 * a * b;
+        let C = b * b;
+
+        return {
+          kpTitle: '完全平方公式解方程式 (重根)',
+          questionHTML: `利用乘法公式解方程式：<span class="mono font-bold text-slate-900">${formatQuadraticHTML(A, B, C)}</span>`,
+          answerText: `x = ${r.toHTML()} (重根)`,
+          expectedShort: `${r.toString()}`,
+          explanationHTML: `分解為完全平方式：<br>
+            (${a}x ${b >= 0 ? '+' : ''}${b})<sup>2</sup> = 0<br>
+            兩根相等，<b>解得 x = ${r.toHTML()}（重根）</b>`
+        };
+      }
+    }
+
+    // QUAD-4: 十字交乘法 (教材 P.9~P.10)
+    function gen_quad_cross(diff, types) {
+      let a1 = (diff === 'basic') ? 1 : randChoice([1, 2, 3]);
+      let a2 = (diff === 'basic') ? 1 : randChoice([1, 2]);
+      let r1_num = randInt(-6, 6, true);
+      let r2_num = randInt(-6, 6, true);
+
+      let a = a1 * a2;
+      let b = -(a1 * r2_num + a2 * r1_num);
+      let c = r1_num * r2_num;
+
+      let root1 = new Frac(r1_num, a1);
+      let root2 = new Frac(r2_num, a2);
+
+      let eqDisplay = "";
+      const pickType = randChoice(types);
+
+      if (pickType === 'dec' && diff !== 'basic') {
+        // 小數十字交乘 (教材 P.10: 0.5x² - 3x + 2.5 = 0)
+        eqDisplay = `${(a * 0.5).toFixed(1)}x<sup>2</sup> ${b >= 0 ? '+' : '-'} ${(Math.abs(b) * 0.5).toFixed(1)}x ${c >= 0 ? '+' : '-'} ${(Math.abs(c) * 0.5).toFixed(1)} = 0`;
+      } else {
+        eqDisplay = formatQuadraticHTML(a, b, c);
+      }
+
+      return {
+        kpTitle: '十字交乘法因式分解求解',
+        questionHTML: `利用十字交乘法求解下列方程式：<br><span class="mono font-bold text-slate-900 mt-1 inline-block">${eqDisplay}</span>`,
+        answerText: `x = ${root1.toHTML()} 或 ${root2.toHTML()}`,
+        expectedShort: `${root1.toString()}, ${root2.toString()}`,
+        explanationHTML: `十字交叉因式拆解：<br>
+          (${a1}x ${-r1_num >= 0 ? '+' : ''}${-r1_num})(${a2}x ${-r2_num >= 0 ? '+' : ''}${-r2_num}) = 0<br>
+          交叉核算係數：(${a1})×(${-r2_num}) + (${a2})×(${-r1_num}) = ${b}<br>
+          <b>解得 x = ${root1.toHTML()} 或 x = ${root2.toHTML()}</b>`
+      };
+    }
+
+    // QUAD-5: 配方法與化為 (x+p)²=q 標準式 (教材 P.13~P.18)
+    function gen_quad_square(diff, types) {
+      if (diff === 'challenge') {
+        // 化為 (x+p)² = q 求 (p, q) 數對 (教材 P.26 第 2 題)
+        let a = randChoice([2, 4]);
+        let b = randInt(-6, 6, true) * 2;
+        let c = randInt(-10, 10, true);
+
+        let pFrac = new Frac(b, 2 * a);
+        let constRight = new Frac(-c, a);
+        let qFrac = constRight.add(pFrac.mul(pFrac));
+
+        return {
+          kpTitle: '化簡為 (x+p)² = q 標準形式',
+          questionHTML: `將方程式 <span class="mono font-semibold">${formatQuadraticHTML(a, b, c)}</span> 配方化簡為 <span class="mono font-bold">(x + p)<sup>2</sup> = q</span>，求數對 <span class="mono font-bold">(p, q)</span>：`,
+          answerText: `(p, q) = (${pFrac.toHTML()}, ${qFrac.toHTML()})`,
+          expectedShort: `${pFrac.toString()}, ${qFrac.toString()}`,
+          explanationHTML: `【配方法五大步驟】<br>
+            1. 同除以 ${a}：x² ${b>=0?'+':''}${new Frac(b, a).toHTML()}x = ${constRight.toHTML()}<br>
+            2. 兩邊同加 (b/2a)² = (${pFrac.toHTML()})²：<br>
+               (x + ${pFrac.toHTML()})<sup>2</sup> = ${qFrac.toHTML()}<br>
+            <b>求得數對 (p, q) = (${pFrac.toHTML()}, ${qFrac.toHTML()})</b>`
+        };
+      } else {
+        // 開平方法求解 (教材 P.13 & P.14: (x-h)² = k)
+        let h = randInt(-5, 5);
+        let k = (diff === 'basic') ? randChoice([4, 9, 16, 25]) : randChoice([5, 8, 12, 18, 20]);
+        let simp = simplifySqrt(k);
+        let hDisplay = h === 0 ? "x" : (h > 0 ? `(x - ${h})` : `(x + ${Math.abs(h)})`);
+        let radHTML = formatRadicalHTML(simp.coef, simp.rad);
+
+        let ansText = "";
+        let expected = "";
+        if (simp.rad === 1) {
+          let r1 = h + simp.coef;
+          let r2 = h - simp.coef;
+          ansText = `x = ${r1} 或 ${r2}`;
+          expected = `${r1}, ${r2}`;
+        } else {
+          ansText = h === 0 ? `x = ±${radHTML}` : `x = ${h} ± ${radHTML}`;
+          expected = `${h}+v${simp.rad}, ${h}-v${simp.rad}`;
+        }
+
+        return {
+          kpTitle: '利用開平方法求解',
+          questionHTML: `利用開平方法求解方程式：<span class="mono font-bold text-slate-900">${hDisplay}<sup>2</sup> = ${k}</span>`,
+          answerText: ansText,
+          expectedShort: expected,
+          explanationHTML: `兩邊同時開平方根：<br>
+            ${h === 0 ? 'x' : (h > 0 ? `x - ${h}` : `x + ${Math.abs(h)}`)} = ±${radHTML}<br>
+            <b>移項解得：${ansText}</b>`
+        };
+      }
+    }
+
+    // QUAD-6: 判別式、公式解與韋達定理 (教材 P.19~P.24)
+    function gen_quad_sol(diff, types) {
+      const mode = randChoice(['vieta', 'formula_solve', 'discriminant']);
+
+      if (mode === 'vieta') {
+        // 韋達定理 (教材 P.23~P.24)
+        let a = randChoice([1, 2, 3]);
+        let b = randInt(-6, 6, true);
+        let c = randInt(-8, 8, true);
+        let sumFrac = new Frac(-b, a);
+        let prodFrac = new Frac(c, a);
+
+        return {
+          kpTitle: '根與係數關係 (韋達定理)',
+          questionHTML: `設 α、β 為方程式 <span class="mono font-semibold">${formatQuadraticHTML(a, b, c)}</span> 之兩根，求 (1) <span class="mono font-bold">α + β</span>；(2) <span class="mono font-bold">αβ</span> 的值：`,
+          answerText: `α + β = ${sumFrac.toHTML()}，αβ = ${prodFrac.toHTML()}`,
+          expectedShort: `${sumFrac.toString()}, ${prodFrac.toString()}`,
+          explanationHTML: `由韋達定理：<br>
+            (1) 兩根和 α + β = -b/a = -(${b}) / ${a} = <b>${sumFrac.toHTML()}</b><br>
+            (2) 兩根積 αβ = c/a = (${c}) / ${a} = <b>${prodFrac.toHTML()}</b>`
+        };
+      } else if (mode === 'discriminant') {
+        // 判別式性質判別 (教材 P.19 & P.20)
+        let a = randChoice([1, 2]);
+        let b = randInt(2, 6) * randChoice([1, -1]);
+        let c = randInt(-5, 8);
+        let delta = b * b - 4 * a * c;
+        let nature = delta > 0 ? "兩相異實根" : (delta === 0 ? "重根 (兩相等實根)" : "無實數解");
+
+        return {
+          kpTitle: '判別式性質判別',
+          questionHTML: `計算判別式 <span class="mono font-semibold">b<sup>2</sup> - 4ac</span> 並判別解的性質：<br><span class="mono font-bold text-slate-900 mt-1 inline-block">${formatQuadraticHTML(a, b, c)}</span>`,
+          answerText: `D = ${delta}，解為：${nature}`,
+          expectedShort: nature.includes("重根") ? "重根" : (nature.includes("相異") ? "兩相異實根" : "無實數解"),
+          explanationHTML: `D = b² - 4ac = (${b})² - 4(${a})(${c}) = <b>${delta}</b><br>
+            ${delta > 0 ? 'D > 0 ⇨ <b>兩相異實根</b>' : (delta === 0 ? 'D = 0 ⇨ <b>重根</b>' : 'D < 0 ⇨ <b>無實數解</b>')}`
+        };
+      } else {
+        // 公式解求解 (教材 P.21)
+        let a = randChoice([1, 2]);
+        let b = randInt(-5, 5, true);
+        let c = -randInt(1, 5); // 確保 D > 0
+        let delta = b * b - 4 * a * c;
+        let simp = simplifySqrt(delta);
+        let numB = -b;
+        let den = 2 * a;
+        let g = gcd(Math.abs(numB), gcd(simp.coef, den));
+        let finB = numB / g;
+        let finC = simp.coef / g;
+        let finD = den / g;
+        let radStr = formatRadicalHTML(finC, simp.rad);
+
+        let ansHTML = (finD === 1) 
+          ? `x = ${finB} ± ${radStr}`
+          : `x = <span class="math-frac"><span class="num">${finB} ± ${radStr}</span><span class="den">${finD}</span></span>`;
+
+        return {
+          kpTitle: '利用公式解求方程式的根',
+          questionHTML: `利用公式解解方程式：<br><span class="mono font-bold text-slate-900 mt-1 inline-block">${formatQuadraticHTML(a, b, c)}</span>`,
+          answerText: ansHTML,
+          expectedShort: `${finB}+-v${simp.rad}/${finD}`,
+          explanationHTML: `公式解：x = [ -b ± √(b² - 4ac) ] ÷ 2a<br>
+            判別式 D = (${b})² - 4(${a})(${c}) = ${delta}，化簡根式 √${delta} = ${formatRadicalHTML(simp.coef, simp.rad)}<br>
+            代入約分得：<b>${ansHTML}</b>`
+        };
+      }
+    }
+
+    /* 計算當前單元的總題數 */
+    function calculateTotalCount() {
+      let total = 0;
+      const kps = (state.currentUnit === 'ap') ? state.apKPs : state.quadKPs;
+      Object.values(kps).forEach(kp => {
+        total += parseInt(kp.count || 0, 10);
+      });
+      document.getElementById('display-total-count').innerText = total;
+      return total;
+    }
+
+    /* 渲染當前單元的 6 大知識點微調清單 */
+    function renderKnowledgePointsGrid() {
+      const container = document.getElementById('knowledge-points-container');
+      container.innerHTML = '';
+      const kps = (state.currentUnit === 'ap') ? state.apKPs : state.quadKPs;
+      const isAP = (state.currentUnit === 'ap');
+
+      Object.values(kps).forEach(kp => {
+        const card = document.createElement('div');
+        card.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 transition";
+        card.innerHTML = `
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full ${isAP ? 'bg-sky-500' : 'bg-amber-500'}"></span>
+              <span class="text-xs font-bold text-slate-800">${kp.title}</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[210px]">${kp.desc}</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="${kp.id}">-</button>
+            <input type="number" min="0" max="20" value="${kp.count}" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 text-slate-900" data-id="${kp.id}">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="${kp.id}">+</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // 綁定輸入與加減事件
+      container.querySelectorAll('.input-kp-val').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const id = e.target.dataset.id;
+          let val = Math.max(0, Math.min(20, parseInt(e.target.value, 10) || 0));
+          e.target.value = val;
+          kps[id].count = val;
+          calculateTotalCount();
+        });
+      });
+
+      container.querySelectorAll('.btn-step-minus').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const input = container.querySelector(`.input-kp-val[data-id="${id}"]`);
+          let val = Math.max(0, parseInt(input.value, 10) - 1);
+          input.value = val;
+          kps[id].count = val;
+          calculateTotalCount();
+        });
+      });
+
+      container.querySelectorAll('.btn-step-plus').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const input = container.querySelector(`.input-kp-val[data-id="${id}"]`);
+          let val = Math.min(20, parseInt(input.value, 10) + 1);
+          input.value = val;
+          kps[id].count = val;
+          calculateTotalCount();
+        });
+      });
+
+      calculateTotalCount();
+    }
+
+    /* 批次設定所有當前知識點題數 */
+    function batchSetKPCount(count) {
+      const kps = (state.currentUnit === 'ap') ? state.apKPs : state.quadKPs;
+      Object.values(kps).forEach(kp => {
+        kp.count = count;
+      });
+      renderKnowledgePointsGrid();
+      showToast(`已批次將當前單元知識點設為各 ${count} 題`, '⚡');
+    }
+
+    /* 核心考卷產生邏輯 */
+    function generateWorksheet() {
+      const activeTypes = [];
+      if (state.types.int) activeTypes.push('int');
+      if (state.types.frac) activeTypes.push('frac');
+      if (state.types.dec) activeTypes.push('dec');
+
+      if (activeTypes.length === 0) {
+        showToast("請至少勾選一種數值型態！", "⚠️");
+        document.getElementById('cfg-type-int').checked = true;
+        state.types.int = true;
+        activeTypes.push('int');
+      }
+
+      const totalCount = calculateTotalCount();
+      if (totalCount === 0) {
+        showToast("目前設定題數為 0，請至少增加任一知識點題數！", "⚠️");
+        return;
+      }
+
+      state.questions = [];
+      const isAP = (state.currentUnit === 'ap');
+      const kps = isAP ? state.apKPs : state.quadKPs;
+
+      Object.values(kps).forEach(kp => {
+        const count = parseInt(kp.count || 0, 10);
+        for (let i = 0; i < count; i++) {
+          let qObj;
+          try {
+            if (isAP) {
+              switch(kp.id) {
+                case 'ap_fill':  qObj = gen_ap_fill(state.difficulty, activeTypes); break;
+                case 'ap_judge': qObj = gen_ap_judge(state.difficulty, activeTypes); break;
+                case 'ap_term':  qObj = gen_ap_term(state.difficulty, activeTypes); break;
+                case 'ap_mid':   qObj = gen_ap_mid(state.difficulty, activeTypes); break;
+                case 'ap_sum':   qObj = gen_ap_sum(state.difficulty, activeTypes); break;
+                case 'ap_trick': qObj = gen_ap_trick(state.difficulty, activeTypes); break;
+                default: qObj = gen_ap_fill(state.difficulty, activeTypes);
+              }
+            } else {
+              switch(kp.id) {
+                case 'quad_check':   qObj = gen_quad_check(state.difficulty, activeTypes); break;
+                case 'quad_factor':  qObj = gen_quad_factor(state.difficulty, activeTypes); break;
+                case 'quad_formula': qObj = gen_quad_formula(state.difficulty, activeTypes); break;
+                case 'quad_cross':   qObj = gen_quad_cross(state.difficulty, activeTypes); break;
+                case 'quad_square':  qObj = gen_quad_square(state.difficulty, activeTypes); break;
+                case 'quad_sol':     qObj = gen_quad_sol(state.difficulty, activeTypes); break;
+                default: qObj = gen_quad_check(state.difficulty, activeTypes);
+              }
+            }
+          } catch(e) {
+            qObj = isAP ? gen_ap_fill('basic', ['int']) : gen_quad_check('basic', ['int']);
+          }
+          state.questions.push(qObj);
+        }
+      });
+
+      // 打亂題目順序
+      state.questions.sort(() => Math.random() - 0.5);
+      state.questions.forEach((q, idx) => (q.index = idx + 1));
+
+      renderQuestionsToDOM();
+      updateHeaderBadges();
+      showToast(`已成功產生 ${state.questions.length} 題練習卷！`, "✨");
+
+      if (state.onlineMode) {
+        startTimer();
+      }
+    }
+
+    /* 渲染題目卡片與自適應每列欄數 (1~4 欄) */
+    function renderQuestionsToDOM() {
+      const container = document.getElementById('problems-grid');
+      container.innerHTML = '';
+
+      const cols = state.colsPerRow;
+      if (cols === 1) {
+        container.className = "grid grid-cols-1 gap-6 print-col-1";
+      } else if (cols === 2) {
+        container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 print-col-2";
+      } else if (cols === 3) {
+        container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 print-col-3";
+      } else {
+        container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 print-col-4";
+      }
+
+      const scratchHeight = (cols === 1) ? 'h-24' : (cols === 2 ? 'h-16' : (cols === 3 ? 'h-14' : 'h-12'));
+      const isOnline = state.onlineMode;
+      const showSol = state.showSolutions;
+
+      state.questions.forEach(q => {
+        const card = document.createElement('div');
+        card.className = "problem-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-white relative transition-all hover:border-indigo-300";
+        card.id = `problem-card-${q.index}`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-1.5 mb-2 pb-1.5 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-slate-900 text-white text-[11px] font-bold flex items-center justify-center font-mono shrink-0">
+                  ${q.index}
+                </span>
+                <span class="text-[11px] font-bold text-slate-500 truncate max-w-[150px] sm:max-w-[220px]" title="${q.kpTitle}">
+                  ${q.kpTitle}
+                </span>
+              </div>
+              <span id="eval-badge-${q.index}" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+            </div>
+
+            <!-- 題目內文 -->
+            <div class="text-xs sm:text-sm font-medium text-slate-800 leading-relaxed mb-2.5">
+              ${q.questionHTML}
+            </div>
+          </div>
+
+          <!-- 線上互動輸入框 -->
+          <div class="online-box ${isOnline ? 'block' : 'hidden'} no-print mt-2 pt-2 border-t border-dashed border-slate-200">
+            <div class="flex items-center gap-1.5">
+              <label class="text-xs text-indigo-900 font-semibold shrink-0">作答：</label>
+              <input type="text" id="ans-input-${q.index}" placeholder="輸入解答 (如 2 或 1/2 或 兩相異實根)"
+                class="student-input text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 flex-grow focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-slate-900">
+            </div>
+          </div>
+
+          <!-- 紙本手寫點陣演算區 (支援每列欄數的高度自適應) -->
+          <div class="scratch-grid mt-2 ${scratchHeight} rounded-lg border border-slate-200 p-2 text-[10px] text-slate-400 flex flex-col justify-between ${isOnline ? 'hidden' : 'block'}">
+            <div class="tracking-wider">演算草稿欄：</div>
+            <div class="text-right text-[11px] font-mono text-slate-400">答：________________</div>
+          </div>
+
+          <!-- 詳細解析步驟折疊區 -->
+          <div id="solution-box-${q.index}" class="sol-container ${showSol ? 'block' : 'hidden'} mt-2.5 pt-2.5 border-t border-indigo-100 bg-indigo-50/70 -mx-4 -mb-4 p-3 rounded-b-xl text-xs text-slate-700 space-y-1">
+            <div class="flex items-center gap-1 text-indigo-900 font-bold">
+              <span>💡 正確解答：</span>
+              <span class="font-mono text-xs bg-white px-1.5 py-0.5 rounded border border-indigo-200">${q.answerText}</span>
+            </div>
+            <div class="text-slate-600 leading-relaxed pl-1 border-l-2 border-indigo-300 text-[11px]">
+              ${q.explanationHTML}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    /* 更新版面標頭與單元狀態標籤 */
+    function updateHeaderBadges() {
+      const isAP = (state.currentUnit === 'ap');
+      const badgePill = document.getElementById('current-unit-pill');
+      const iconBadge = document.getElementById('unit-icon-badge');
+      const panelTitle = document.getElementById('panel-title');
+      const headline = document.getElementById('paper-headline');
+      const subBanner = document.getElementById('paper-sub-banner');
+      const diffTag = document.getElementById('paper-diff-tag');
+      const layoutTag = document.getElementById('paper-layout-tag');
+      const diffDesc = document.getElementById('diff-description');
+      const cheatSheet = document.getElementById('footer-cheat-sheet');
+
+      layoutTag.innerText = `排版：每列 ${state.colsPerRow} 題`;
+
+      if (isAP) {
+        badgePill.innerText = "單元一：等差數列與級數";
+        badgePill.className = "bg-sky-500/20 text-sky-300 text-[11px] px-2 py-0.5 rounded-full font-bold border border-sky-500/40";
+        iconBadge.className = "w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center font-extrabold text-white text-base shadow-md font-mono";
+        iconBadge.innerText = "∑n";
+        panelTitle.innerText = "等差數列與等差級數 · 參數與知識點自訂";
+        subBanner.innerText = "國中二年級下學期數學領域 · 徹底反覆計算訓練講義";
+        headline.innerText = "第七單元：等差數列與等差級數 計算力精熟練習卷";
+        cheatSheet.innerText = "[公式速查] an = a1 + (n-1)d | Sn = n(a1 + an)/2 | d = (aq - ap)/(q - p)";
+      } else {
+        badgePill.innerText = "單元二：一元二次方程式";
+        badgePill.className = "bg-amber-500/20 text-amber-300 text-[11px] px-2 py-0.5 rounded-full font-bold border border-amber-500/40";
+        iconBadge.className = "w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center font-extrabold text-white text-base shadow-md font-mono";
+        iconBadge.innerText = "x²";
+        panelTitle.innerText = "一元二次方程式 · 參數與知識點自訂";
+        subBanner.innerText = "國中二年級上學期數學領域 · 徹底反覆計算訓練講義";
+        headline.innerText = "第六單元：一元二次方程式 計算力精熟練習卷";
+        cheatSheet.innerText = "[公式速查] x = (-b ± √D)/2a | D = b² - 4ac | α+β = -b/a, αβ = c/a";
+      }
+
+      if (state.difficulty === 'basic') {
+        diffTag.innerText = "難度：基礎";
+        diffTag.className = "inline-block text-xs font-bold px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg";
+        diffDesc.innerText = "基本整數運算、直接公式代入、核心概念快速確認。";
+      } else if (state.difficulty === 'advanced') {
+        diffTag.innerText = "難度：進階";
+        diffTag.className = "inline-block text-xs font-bold px-2.5 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-lg";
+        diffDesc.innerText = "含分數/小數、雙項反推公差、根式最簡化公式解。";
+      } else {
+        diffTag.innerText = "難度：挑戰";
+        diffTag.className = "inline-block text-xs font-bold px-2.5 py-1 bg-purple-50 text-purple-800 border border-purple-200 rounded-lg";
+        diffDesc.innerText = "代數中項、巧算平移分配律、大數配方、韋達定理對稱式。";
+      }
+    }
+
+    /* 線上自動寬容批改系統 */
+    function evaluateExam() {
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      let correct = 0;
+      let total = state.questions.length;
+
+      state.questions.forEach(q => {
+        const input = document.getElementById(`ans-input-${q.index}`);
+        const card = document.getElementById(`problem-card-${q.index}`);
+        const badge = document.getElementById(`eval-badge-${q.index}`);
+        const solBox = document.getElementById(`solution-box-${q.index}`);
+
+        if (!input) return;
+
+        let userAns = input.value.trim().replace(/\s+/g, '').toLowerCase();
+        let expected = q.expectedShort.trim().replace(/\s+/g, '').toLowerCase();
+        let isCorrect = (userAns === expected);
+
+        // 逗號多解順序不同寬容判別 (如 "2, -3" 與 "-3, 2")
+        if (!isCorrect && (userAns.includes(',') || expected.includes(','))) {
+          let uList = userAns.split(',').map(s => s.trim()).sort();
+          let eList = expected.split(',').map(s => s.trim()).sort();
+          if (uList.length === eList.length && uList.every((v, i) => v === eList[i])) {
+            isCorrect = true;
+          }
+        }
+
+        // 中文名詞寬容判別
+        if (!isCorrect && expected.includes("相異") && userAns.includes("相異")) isCorrect = true;
+        if (!isCorrect && expected.includes("重根") && (userAns.includes("重根") || userAns.includes("相等"))) isCorrect = true;
+        if (!isCorrect && expected.includes("無實數解") && (userAns.includes("無解") || userAns.includes("無實數解"))) isCorrect = true;
+
+        badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+        if (isCorrect) {
+          correct++;
+          badge.classList.add('bg-emerald-100', 'text-emerald-800');
+          badge.innerText = "✓ 正確";
+          card.classList.remove('border-rose-300');
+          card.classList.add('border-emerald-400');
+        } else {
+          badge.classList.add('bg-rose-100', 'text-rose-800');
+          badge.innerText = "✗ 訂正";
+          card.classList.remove('border-emerald-400');
+          card.classList.add('border-rose-300');
+        }
+
+        solBox.classList.remove('hidden');
+      });
+
+      const finalScore = Math.round((correct / total) * 100);
+      document.getElementById('exam-score-box').innerText = `${finalScore} 分`;
+      showToast(`批改完畢！得分：${finalScore} 分（答對 ${correct}/${total} 題）`, finalScore >= 80 ? "🎉" : "💪");
+    }
+
+    /* 計時器處理 */
+    function startTimer() {
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      state.startTime = Date.now();
+      const badge = document.getElementById('exam-timer-badge');
+      badge.classList.remove('hidden');
+
+      state.timerInterval = setInterval(() => {
+        const diffSec = Math.floor((Date.now() - state.startTime) / 1000);
+        const m = String(Math.floor(diffSec / 60)).padStart(2, '0');
+        const s = String(diffSec % 60).padStart(2, '0');
+        badge.innerText = `⏱️ ${m}:${s}`;
+      }, 1000);
+    }
+
+    /* 下載檔案函式 */
+    function downloadBlob(content, filename) {
+      const blob = new Blob([content], { type: 'text/html;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* 匯出目前試卷為獨立單一 HTML 檔案 */
+    function exportCurrentHTML() {
+      const docClone = document.documentElement.cloneNode(true);
+      const htmlContent = "<!DOCTYPE html>\n" + docClone.outerHTML;
+      downloadBlob(htmlContent, `國中數學計算練習卷_${state.currentUnit}_${Date.now()}.html`);
+      showToast("目前試卷已成功匯出為獨立 HTML！", "💾");
+    }
+
+    /* 匯出單元一【等差數列】純獨立版 HTML */
+    function exportDedicatedUnitHTML(targetUnit) {
+      const originalUnit = state.currentUnit;
+      state.currentUnit = targetUnit;
+      renderKnowledgePointsGrid();
+      generateWorksheet();
+
+      const docClone = document.documentElement.cloneNode(true);
+      // 移除另一個單元的切換按鈕，鎖定為完全獨立專案
+      const unitLabel = targetUnit === 'ap' ? '等差數列與等差級數' : '一元二次方程式';
+      const htmlContent = "<!DOCTYPE html>\n" + docClone.outerHTML;
+      downloadBlob(htmlContent, `數學獨立練習卷_${unitLabel}_${Date.now()}.html`);
+
+      // 還原原先單元
+      state.currentUnit = originalUnit;
+      renderKnowledgePointsGrid();
+      generateWorksheet();
+      showToast(`已成功下載【${unitLabel}】完全獨立 HTML！`, "📦");
+    }
+
+    /* DOM 初始化與事件綁定 */
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      // 1. 單元完全分開切換鈕 (AP vs QUAD)
+      document.querySelectorAll('.unit-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.target;
+          state.currentUnit = target;
+
+          document.querySelectorAll('.unit-toggle-btn').forEach(b => {
+            b.className = "unit-toggle-btn px-4 py-1.5 rounded-lg font-medium transition text-slate-300 hover:text-white";
+          });
+
+          if (target === 'ap') {
+            btn.className = "unit-toggle-btn px-4 py-1.5 rounded-lg font-bold transition bg-sky-600 text-white shadow";
+          } else {
+            btn.className = "unit-toggle-btn px-4 py-1.5 rounded-lg font-bold transition bg-amber-600 text-white shadow";
+          }
+
+          renderKnowledgePointsGrid();
+          generateWorksheet();
+        });
+      });
+
+      // 2. 難易度切換
+      document.querySelectorAll('.diff-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.diff-btn').forEach(b => {
+            b.className = "diff-btn py-1 px-1.5 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900";
+          });
+          btn.className = "diff-btn py-1 px-1.5 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-indigo-700";
+          state.difficulty = btn.dataset.diff;
+          updateHeaderBadges();
+          generateWorksheet();
+        });
+      });
+
+      // 3. 每列題數 (1~4 欄) 切換
+      document.querySelectorAll('.col-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.col-btn').forEach(b => {
+            b.className = "col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900";
+          });
+          btn.className = "col-btn py-1 px-1 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-indigo-700";
+          state.colsPerRow = parseInt(btn.dataset.cols, 10);
+
+          const desc = document.getElementById('col-description');
+          if (state.colsPerRow === 1) desc.innerText = "每列 1 題：寬敞單欄，適合步驟繁複之大草稿演算。";
+          else if (state.colsPerRow === 2) desc.innerText = "每列 2 題：標準補習班考卷雙欄，適中手寫演算空間。";
+          else if (state.colsPerRow === 3) desc.innerText = "每列 3 題：精緻三欄，省紙且適合隨堂密集抽測。";
+          else desc.innerText = "每列 4 題：高密度四欄，大量題數算力熟練度衝刺。";
+
+          renderQuestionsToDOM();
+          updateHeaderBadges();
+          showToast(`已切換為每列 ${state.colsPerRow} 題排版！`, "📐");
+        });
+      });
+
+      // 4. 數值型態切換 (整數、分數、小數)
+      ['int', 'frac', 'dec'].forEach(type => {
+        const el = document.getElementById(`cfg-type-${type}`);
+        el.addEventListener('change', () => {
+          state.types[type] = el.checked;
+          generateWorksheet();
+        });
+      });
+
+      // 5. 快速批次設定題數按鈕
+      document.querySelectorAll('.btn-batch-count').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = parseInt(btn.dataset.val, 10);
+          batchSetKPCount(val);
+          generateWorksheet();
+        });
+      });
+
+      // 6. 線上作答模式切換
+      const onlineToggle = document.getElementById('cfg-online-mode');
+      const graderPanel = document.getElementById('online-grading-panel');
+      onlineToggle.addEventListener('change', () => {
+        state.onlineMode = onlineToggle.checked;
+        graderPanel.classList.toggle('hidden', !state.onlineMode);
+        document.querySelectorAll('.online-box').forEach(b => b.classList.toggle('hidden', !state.onlineMode));
+        document.querySelectorAll('.scratch-grid').forEach(s => s.classList.toggle('hidden', state.onlineMode));
+
+        if (state.onlineMode) {
+          startTimer();
+          showToast("已啟動線上作答與計時批改！", "⏱️");
+        } else {
+          if (state.timerInterval) clearInterval(state.timerInterval);
+          document.getElementById('exam-timer-badge').classList.add('hidden');
+        }
+      });
+
+      // 7. 線上提交與清空按鈕
+      document.getElementById('btn-submit-answers').addEventListener('click', evaluateExam);
+      document.getElementById('btn-clear-answers').addEventListener('click', () => {
+        document.querySelectorAll('.student-input').forEach(i => i.value = '');
+        document.querySelectorAll('[id^="eval-badge-"]').forEach(b => b.classList.add('hidden'));
+        document.getElementById('exam-score-box').innerText = '';
+        showToast("已清空所有作答欄位", "🔄");
+      });
+
+      // 8. 重新命題
+      document.getElementById('btn-regenerate').addEventListener('click', generateWorksheet);
+
+      // 9. 解答切換開關
+      document.getElementById('btn-toggle-solutions').addEventListener('click', () => {
+        state.showSolutions = !state.showSolutions;
+        const icon = document.getElementById('sol-icon');
+        const txt = document.getElementById('sol-text');
+        if (state.showSolutions) {
+          icon.innerText = "🙈";
+          txt.innerText = "隱藏解析";
+        } else {
+          icon.innerText = "👁️";
+          txt.innerText = "顯示解析";
+        }
+        document.querySelectorAll('.sol-container').forEach(c => c.classList.toggle('hidden', !state.showSolutions));
+      });
+
+      // 10. 列印學用版（隱藏解答與作答框）
+      document.getElementById('btn-print-questions').addEventListener('click', () => {
+        document.querySelectorAll('.sol-container').forEach(b => b.classList.add('hidden'));
+        document.querySelectorAll('.online-box').forEach(b => b.classList.add('hidden'));
+        document.querySelectorAll('.scratch-grid').forEach(s => s.classList.remove('hidden'));
+        window.print();
+        if (state.showSolutions) {
+          document.querySelectorAll('.sol-container').forEach(b => b.classList.remove('hidden'));
+        }
+      });
+
+      // 11. 列印教用版（展開完整解答）
+      document.getElementById('btn-print-answers').addEventListener('click', () => {
+        document.querySelectorAll('.sol-container').forEach(b => b.classList.remove('hidden'));
+        window.print();
+      });
+
+      // 12. 獨立檔案匯出監聽
+      document.getElementById('btn-export-current').addEventListener('click', exportCurrentHTML);
+      document.getElementById('btn-export-ap-only').addEventListener('click', () => exportDedicatedUnitHTML('ap'));
+      document.getElementById('btn-export-quad-only').addEventListener('click', () => exportDedicatedUnitHTML('quad'));
+
+      // 初始渲染
+      renderKnowledgePointsGrid();
+      generateWorksheet();
+    });
+  </script>
+
+</body></html>

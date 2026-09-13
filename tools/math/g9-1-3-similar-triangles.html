@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>百宏文教｜相似三角形判別性質 出題器</title>
+<meta name="description" content="國中數學國三上「相似三角形判別性質」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g9-1-3-similar-triangles.html">
+<meta property="og:title" content="百宏文教｜相似三角形判別性質 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g9-1-3-similar-triangles.html">
+<meta property="og:type" content="website">
+
+<style id="bhcs-tailwind">/* 百宏文教：離線版 Tailwind 工具類別子集（取代 cdn.tailwindcss.com） */
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+html{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4;font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+body{margin:0;line-height:inherit}
+hr{height:0;color:inherit;border-top-width:1px}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+a{color:inherit;text-decoration:inherit}
+b,strong{font-weight:bolder}
+code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1em}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sub{bottom:-.25em}sup{top:-.5em}
+table{text-indent:0;border-color:inherit;border-collapse:collapse}
+button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}
+button,select{text-transform:none}
+button,[type=button],[type=reset],[type=submit]{-webkit-appearance:button;background-color:transparent;background-image:none}
+:-moz-focusring{outline:auto}
+progress{vertical-align:baseline}
+::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}
+[type=search]{-webkit-appearance:textfield;outline-offset:-2px}
+summary{display:list-item}
+blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}
+fieldset{margin:0;padding:0}legend{padding:0}
+ol,ul,menu{list-style:none;margin:0;padding:0}
+textarea{resize:vertical}
+input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}
+button,[role=button]{cursor:pointer}
+:disabled{cursor:default}
+img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+img,video{max-width:100%;height:auto}
+[hidden]{display:none}
+.-mb-3\.5{margin-bottom:-0.875rem}
+.-mb-4{margin-bottom:-1rem}
+.-mx-3\.5{margin-left:-0.875rem;margin-right:-0.875rem}
+.-mx-4{margin-left:-1rem;margin-right:-1rem}
+.absolute{position:absolute}
+.active\:scale-95:active{--tw-s:0.95;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.bg-amber-50{background-color:#fffbeb}
+.bg-amber-50\/80{background-color:rgb(255 251 235 / 0.8)}
+.bg-amber-500{background-color:#f59e0b}
+.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}
+.bg-amber-600{background-color:#d97706}
+.bg-blue-50{background-color:#eff6ff}
+.bg-blue-600{background-color:#2563eb}
+.bg-blue-700{background-color:#1d4ed8}
+.bg-cyan-50{background-color:#ecfeff}
+.bg-cyan-50\/70{background-color:rgb(236 254 255 / 0.7)}
+.bg-cyan-500{background-color:#06b6d4}
+.bg-cyan-500\/20{background-color:rgb(6 182 212 / 0.2)}
+.bg-cyan-600{background-color:#0891b2}
+.bg-cyan-700{background-color:#0e7490}
+.bg-emerald-100{background-color:#d1fae5}
+.bg-emerald-50{background-color:#ecfdf5}
+.bg-emerald-600{background-color:#059669}
+.bg-emerald-700{background-color:#047857}
+.bg-gradient-to-tr{background-image:linear-gradient(to top right,var(--tw-from,transparent),var(--tw-to,transparent))}
+.bg-indigo-50{background-color:#eef2ff}
+.bg-indigo-50\/70{background-color:rgb(238 242 255 / 0.7)}
+.bg-indigo-600{background-color:#4f46e5}
+.bg-orange-600{background-color:#ea580c}
+.bg-purple-50{background-color:#faf5ff}
+.bg-purple-600{background-color:#9333ea}
+.bg-rose-100{background-color:#ffe4e6}
+.bg-rose-50{background-color:#fff1f2}
+.bg-rose-600{background-color:#e11d48}
+.bg-sky-500\/20{background-color:rgb(14 165 233 / 0.2)}
+.bg-sky-600{background-color:#0284c7}
+.bg-slate-100{background-color:#f1f5f9}
+.bg-slate-200{background-color:#e2e8f0}
+.bg-slate-200\/70{background-color:rgb(226 232 240 / 0.7)}
+.bg-slate-50{background-color:#f8fafc}
+.bg-slate-50\/50{background-color:rgb(248 250 252 / 0.5)}
+.bg-slate-50\/60{background-color:rgb(248 250 252 / 0.6)}
+.bg-slate-50\/80{background-color:rgb(248 250 252 / 0.8)}
+.bg-slate-700{background-color:#334155}
+.bg-slate-800{background-color:#1e293b}
+.bg-slate-900{background-color:#0f172a}
+.bg-teal-50{background-color:#f0fdfa}
+.bg-teal-500{background-color:#14b8a6}
+.bg-teal-500\/20{background-color:rgb(20 184 166 / 0.2)}
+.bg-teal-600{background-color:#0d9488}
+.bg-transparent{background-color:transparent}
+.bg-violet-50{background-color:#f5f3ff}
+.bg-violet-600{background-color:#7c3aed}
+.bg-violet-700{background-color:#6d28d9}
+.bg-white{background-color:#ffffff}
+.block{display:block}
+.border{border-width:1px}
+.border-2{border-width:2px}
+.border-amber-200{border-color:#fde68a}
+.border-amber-400{border-color:#fbbf24}
+.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}
+.border-amber-600{border-color:#d97706}
+.border-b{border-bottom-width:1px}
+.border-b-2{border-bottom-width:2px}
+.border-blue-200{border-color:#bfdbfe}
+.border-blue-600{border-color:#2563eb}
+.border-collapse{border-collapse:collapse}
+.border-cyan-100{border-color:#cffafe}
+.border-cyan-200{border-color:#a5f3fc}
+.border-cyan-400{border-color:#22d3ee}
+.border-cyan-500\/40{border-color:rgb(6 182 212 / 0.4)}
+.border-cyan-600{border-color:#0891b2}
+.border-cyan-700{border-color:#0e7490}
+.border-dashed{border-style:dashed}
+.border-emerald-200{border-color:#a7f3d0}
+.border-emerald-400{border-color:#34d399}
+.border-emerald-500{border-color:#10b981}
+.border-emerald-600{border-color:#059669}
+.border-indigo-100{border-color:#e0e7ff}
+.border-indigo-200{border-color:#c7d2fe}
+.border-indigo-300{border-color:#a5b4fc}
+.border-indigo-500{border-color:#6366f1}
+.border-indigo-600{border-color:#4f46e5}
+.border-l-2{border-left-width:2px}
+.border-orange-600{border-color:#ea580c}
+.border-purple-200{border-color:#e9d5ff}
+.border-purple-500{border-color:#a855f7}
+.border-purple-600{border-color:#9333ea}
+.border-rose-300{border-color:#fda4af}
+.border-rose-500{border-color:#f43f5e}
+.border-rose-600{border-color:#e11d48}
+.border-sky-500{border-color:#0ea5e9}
+.border-sky-500\/40{border-color:rgb(14 165 233 / 0.4)}
+.border-slate-100{border-color:#f1f5f9}
+.border-slate-100\/80{border-color:rgb(241 245 249 / 0.8)}
+.border-slate-200{border-color:#e2e8f0}
+.border-slate-200\/70{border-color:rgb(226 232 240 / 0.7)}
+.border-slate-200\/80{border-color:rgb(226 232 240 / 0.8)}
+.border-slate-300{border-color:#cbd5e1}
+.border-slate-400{border-color:#94a3b8}
+.border-slate-600{border-color:#475569}
+.border-slate-700{border-color:#334155}
+.border-slate-800{border-color:#1e293b}
+.border-slate-900{border-color:#0f172a}
+.border-t{border-top-width:1px}
+.border-teal-200{border-color:#99f6e4}
+.border-teal-400{border-color:#2dd4bf}
+.border-teal-500{border-color:#14b8a6}
+.border-teal-500\/40{border-color:rgb(20 184 166 / 0.4)}
+.border-teal-600{border-color:#0d9488}
+.border-violet-200{border-color:#ddd6fe}
+.border-violet-500{border-color:#8b5cf6}
+.border-violet-600{border-color:#7c3aed}
+.bottom-5{bottom:1.25rem}
+.col-span-full{grid-column:1 / -1}
+.cursor-pointer{cursor:pointer}
+.divide-slate-800>:not([hidden])~:not([hidden]){border-color:#1e293b}
+.divide-x>:not([hidden])~:not([hidden]){border-left-width:1px}
+.duration-300{transition-duration:300ms}
+.fixed{position:fixed}
+.flex{display:flex}
+.flex-1{flex:1 1 0%}
+.flex-col{flex-direction:column}
+.flex-grow{flex-grow:1}
+.flex-wrap{flex-wrap:wrap}
+.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+.focus\:ring-1:focus{--tw-ring-shadow:0 0 0 1px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-2:focus{--tw-ring-shadow:0 0 0 2px var(--tw-ring-color,rgb(59 130 246/.5));box-shadow:var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}
+.focus\:ring-cyan-500:focus{--tw-ring-color:#06b6d4}
+.focus\:ring-indigo-500:focus{--tw-ring-color:#6366f1}
+.focus\:ring-teal-500:focus{--tw-ring-color:#14b8a6}
+.font-black{font-weight:900}
+.font-bold{font-weight:700}
+.font-extrabold{font-weight:800}
+.font-medium{font-weight:500}
+.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.font-sans{font-family:ui-sans-serif,system-ui,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+.font-semibold{font-weight:600}
+.font-serif{font-family:ui-serif,Georgia,"Times New Roman",serif}
+.from-amber-500{--tw-from:#f59e0b}
+.from-cyan-500{--tw-from:#06b6d4}
+.from-sky-500{--tw-from:#0ea5e9}
+.from-teal-500{--tw-from:#14b8a6}
+.gap-1{gap:0.25rem}
+.gap-1\.5{gap:0.375rem}
+.gap-2{gap:0.5rem}
+.gap-2\.5{gap:0.625rem}
+.gap-3{gap:0.75rem}
+.gap-3\.5{gap:0.875rem}
+.gap-4{gap:1rem}
+.gap-5{gap:1.25rem}
+.gap-6{gap:1.5rem}
+.grid{display:grid}
+.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.group:hover .group-hover\:block{display:block}
+.h-10{height:2.5rem}
+.h-12{height:3rem}
+.h-14{height:3.5rem}
+.h-16{height:4rem}
+.h-2\.5{height:0.625rem}
+.h-20{height:5rem}
+.h-24{height:6rem}
+.h-3\.5{height:0.875rem}
+.h-4{height:1rem}
+.h-5{height:1.25rem}
+.h-6{height:1.5rem}
+.h-8{height:2rem}
+.hidden{display:none}
+.hover\:bg-amber-500:hover{background-color:#f59e0b}
+.hover\:bg-amber-600:hover{background-color:#d97706}
+.hover\:bg-amber-700:hover{background-color:#b45309}
+.hover\:bg-blue-700:hover{background-color:#1d4ed8}
+.hover\:bg-blue-800:hover{background-color:#1e40af}
+.hover\:bg-cyan-100:hover{background-color:#cffafe}
+.hover\:bg-cyan-500:hover{background-color:#06b6d4}
+.hover\:bg-cyan-800:hover{background-color:#155e75}
+.hover\:bg-emerald-500:hover{background-color:#10b981}
+.hover\:bg-emerald-700:hover{background-color:#047857}
+.hover\:bg-emerald-800:hover{background-color:#065f46}
+.hover\:bg-indigo-100:hover{background-color:#e0e7ff}
+.hover\:bg-indigo-500:hover{background-color:#6366f1}
+.hover\:bg-indigo-600:hover{background-color:#4f46e5}
+.hover\:bg-indigo-700:hover{background-color:#4338ca}
+.hover\:bg-orange-700:hover{background-color:#c2410c}
+.hover\:bg-purple-700:hover{background-color:#7e22ce}
+.hover\:bg-rose-100:hover{background-color:#ffe4e6}
+.hover\:bg-rose-200:hover{background-color:#fecdd3}
+.hover\:bg-rose-700:hover{background-color:#be123c}
+.hover\:bg-sky-600:hover{background-color:#0284c7}
+.hover\:bg-sky-700:hover{background-color:#0369a1}
+.hover\:bg-slate-100:hover{background-color:#f1f5f9}
+.hover\:bg-slate-200:hover{background-color:#e2e8f0}
+.hover\:bg-slate-300:hover{background-color:#cbd5e1}
+.hover\:bg-slate-50:hover{background-color:#f8fafc}
+.hover\:bg-slate-600:hover{background-color:#475569}
+.hover\:bg-slate-700:hover{background-color:#334155}
+.hover\:bg-slate-900:hover{background-color:#0f172a}
+.hover\:bg-teal-100:hover{background-color:#ccfbf1}
+.hover\:bg-teal-500:hover{background-color:#14b8a6}
+.hover\:bg-teal-700:hover{background-color:#0f766e}
+.hover\:bg-violet-100:hover{background-color:#ede9fe}
+.hover\:bg-violet-700:hover{background-color:#6d28d9}
+.hover\:bg-violet-800:hover{background-color:#5b21b6}
+.hover\:border-cyan-300:hover{border-color:#67e8f9}
+.hover\:border-indigo-300:hover{border-color:#a5b4fc}
+.hover\:border-teal-300:hover{border-color:#5eead4}
+.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.hover\:text-slate-900:hover{color:#0f172a}
+.hover\:text-white:hover{color:#ffffff}
+.inline-block{display:inline-block}
+.inline-flex{display:inline-flex}
+.italic{font-style:italic}
+.items-center{align-items:center}
+.items-end{align-items:flex-end}
+.items-start{align-items:flex-start}
+.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}
+.justify-end{justify-content:flex-end}
+.leading-relaxed{line-height:1.625}
+.leading-tight{line-height:1.25}
+@media (min-width:1024px){.lg\:flex-row{flex-direction:row}}
+@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (min-width:1024px){.lg\:items-center{align-items:center}}
+@media (min-width:1024px){.lg\:p-8{padding:2rem}}
+.max-h-28{max-height:7rem}
+.max-h-36{max-height:9rem}
+.max-w-7xl{max-width:80rem}
+.max-w-\[150px\]{max-width:150px}
+.max-w-\[170px\]{max-width:170px}
+.max-w-\[180px\]{max-width:180px}
+.max-w-\[210px\]{max-width:210px}
+.max-w-\[220px\]{max-width:220px}
+.max-w-\[240px\]{max-width:240px}
+.max-w-\[310px\]{max-width:310px}
+.mb-0\.5{margin-bottom:0.125rem}
+.mb-2{margin-bottom:0.5rem}
+.mb-2\.5{margin-bottom:0.625rem}
+.mb-3{margin-bottom:0.75rem}
+.mb-4{margin-bottom:1rem}
+.mb-5{margin-bottom:1.25rem}
+.mb-6{margin-bottom:1.5rem}
+@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:768px){.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.min-h-screen{min-height:100vh}
+.min-w-\[70px\]{min-width:70px}
+.min-w-\[90px\]{min-width:90px}
+.mr-1{margin-right:0.25rem}
+.mt-0\.5{margin-top:0.125rem}
+.mt-1{margin-top:0.25rem}
+.mt-2{margin-top:0.5rem}
+.mt-2\.5{margin-top:0.625rem}
+.mt-3{margin-top:0.75rem}
+.mt-4{margin-top:1rem}
+.mt-8{margin-top:2rem}
+.mx-auto{margin-left:auto;margin-right:auto}
+.my-1{margin-top:0.25rem;margin-bottom:0.25rem}
+.my-1\.5{margin-top:0.375rem;margin-bottom:0.375rem}
+.my-2{margin-top:0.5rem;margin-bottom:0.5rem}
+.opacity-0{opacity:0.0}
+.outline-none{outline:2px solid transparent;outline-offset:2px}
+.overflow-hidden{overflow:hidden}
+.overflow-visible{overflow:visible}
+.p-1{padding:0.25rem}
+.p-1\.5{padding:0.375rem}
+.p-2{padding:0.5rem}
+.p-2\.5{padding:0.625rem}
+.p-3{padding:0.75rem}
+.p-3\.5{padding:0.875rem}
+.p-4{padding:1rem}
+.p-5{padding:1.25rem}
+.p-6{padding:1.5rem}
+.pb-1\.5{padding-bottom:0.375rem}
+.pb-2{padding-bottom:0.5rem}
+.pb-3{padding-bottom:0.75rem}
+.pb-4{padding-bottom:1rem}
+.pl-1{padding-left:0.25rem}
+.pl-3{padding-left:0.75rem}
+.pl-4{padding-left:1rem}
+.pointer-events-none{pointer-events:none}
+.pr-2{padding-right:0.5rem}
+.pt-2{padding-top:0.5rem}
+.pt-2\.5{padding-top:0.625rem}
+.pt-3{padding-top:0.75rem}
+.pt-4{padding-top:1rem}
+.px-1{padding-left:0.25rem;padding-right:0.25rem}
+.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}
+.px-2{padding-left:0.5rem;padding-right:0.5rem}
+.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}
+.px-3{padding-left:0.75rem;padding-right:0.75rem}
+.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}
+.px-4{padding-left:1rem;padding-right:1rem}
+.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}
+.py-1{padding-top:0.25rem;padding-bottom:0.25rem}
+.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}
+.py-16{padding-top:4rem;padding-bottom:4rem}
+.py-2{padding-top:0.5rem;padding-bottom:0.5rem}
+.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}
+.py-3{padding-top:0.75rem;padding-bottom:0.75rem}
+.py-5{padding-top:1.25rem;padding-bottom:1.25rem}
+.relative{position:relative}
+.right-0{right:0rem}
+.right-5{right:1.25rem}
+.rounded{border-radius:0.25rem}
+.rounded-2xl{border-radius:1rem}
+.rounded-b-xl{border-bottom-left-radius:0.75rem;border-bottom-right-radius:0.75rem}
+.rounded-full{border-radius:9999px}
+.rounded-lg{border-radius:0.5rem}
+.rounded-md{border-radius:0.375rem}
+.rounded-xl{border-radius:0.75rem}
+.select-none{user-select:none}
+.selection\:bg-cyan-600::selection{background-color:#0891b2}
+.selection\:bg-indigo-600::selection{background-color:#4f46e5}
+.selection\:bg-teal-600::selection{background-color:#0d9488}
+.selection\:text-white::selection{color:#ffffff}
+.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0/.25);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-amber-100{--tw-shadow-color:#fef3c7}
+.shadow-blue-100{--tw-shadow-color:#dbeafe}
+.shadow-cyan-100{--tw-shadow-color:#cffafe}
+.shadow-emerald-100{--tw-shadow-color:#d1fae5}
+.shadow-indigo-100{--tw-shadow-color:#e0e7ff}
+.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0/.1),0 2px 4px -2px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-orange-100{--tw-shadow-color:#ffedd5}
+.shadow-purple-100{--tw-shadow-color:#f3e8ff}
+.shadow-rose-100{--tw-shadow-color:#ffe4e6}
+.shadow-sky-100{--tw-shadow-color:#e0f2fe}
+.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-teal-100{--tw-shadow-color:#ccfbf1}
+.shadow-violet-100{--tw-shadow-color:#ede9fe}
+.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0/.1),0 8px 10px -6px rgb(0 0 0/.1);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shadow-xs{--tw-shadow:0 1px 2px 0 rgb(0 0 0/.05);box-shadow:var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}
+.shrink-0{flex-shrink:0}
+@media (min-width:640px){.sm\:flex-row{flex-direction:row}}
+@media (min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:640px){.sm\:items-end{align-items:flex-end}}
+@media (min-width:640px){.sm\:max-w-\[220px\]{max-width:220px}}
+@media (min-width:640px){.sm\:p-10{padding:2.5rem}}
+@media (min-width:640px){.sm\:p-6{padding:1.5rem}}
+@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}
+@media (min-width:640px){.sm\:text-2xl{font-size:1.5rem;line-height:2rem}}
+@media (min-width:640px){.sm\:text-base{font-size:1rem;line-height:1.5rem}}
+@media (min-width:640px){.sm\:text-left{text-align:left}}
+@media (min-width:640px){.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}
+@media (min-width:640px){.sm\:w-auto{width:auto}}
+.space-x-3>:not([hidden])~:not([hidden]){margin-left:0.75rem}
+.space-y-0\.5>:not([hidden])~:not([hidden]){margin-top:0.125rem}
+.space-y-1>:not([hidden])~:not([hidden]){margin-top:0.25rem}
+.space-y-1\.5>:not([hidden])~:not([hidden]){margin-top:0.375rem}
+.space-y-5>:not([hidden])~:not([hidden]){margin-top:1.25rem}
+.sticky{position:sticky}
+.text-2xl{font-size:1.5rem;line-height:2rem}
+.text-\[10\.5px\]{font-size:10.5px}
+.text-\[10px\]{font-size:10px}
+.text-\[11px\]{font-size:11px}
+.text-amber-300{color:#fcd34d}
+.text-amber-700{color:#b45309}
+.text-amber-900{color:#78350f}
+.text-base{font-size:1rem;line-height:1.5rem}
+.text-blue-700{color:#1d4ed8}
+.text-blue-800{color:#1e40af}
+.text-center{text-align:center}
+.text-cyan-300{color:#67e8f9}
+.text-cyan-600{color:#0891b2}
+.text-cyan-700{color:#0e7490}
+.text-cyan-800{color:#155e75}
+.text-cyan-900{color:#164e63}
+.text-cyan-950{color:#083344}
+.text-emerald-600{color:#059669}
+.text-emerald-700{color:#047857}
+.text-emerald-800{color:#065f46}
+.text-indigo-600{color:#4f46e5}
+.text-indigo-700{color:#4338ca}
+.text-indigo-800{color:#3730a3}
+.text-indigo-900{color:#312e81}
+.text-indigo-950{color:#1e1b4b}
+.text-left{text-align:left}
+.text-lg{font-size:1.125rem;line-height:1.75rem}
+.text-orange-700{color:#c2410c}
+.text-purple-700{color:#7e22ce}
+.text-purple-800{color:#6b21a8}
+.text-right{text-align:right}
+.text-rose-600{color:#e11d48}
+.text-rose-700{color:#be123c}
+.text-rose-800{color:#9f1239}
+.text-sky-300{color:#7dd3fc}
+.text-sky-600{color:#0284c7}
+.text-sky-700{color:#0369a1}
+.text-slate-200{color:#e2e8f0}
+.text-slate-300{color:#cbd5e1}
+.text-slate-400{color:#94a3b8}
+.text-slate-500{color:#64748b}
+.text-slate-600{color:#475569}
+.text-slate-700{color:#334155}
+.text-slate-800{color:#1e293b}
+.text-slate-900{color:#0f172a}
+.text-sm{font-size:0.875rem;line-height:1.25rem}
+.text-teal-300{color:#5eead4}
+.text-teal-600{color:#0d9488}
+.text-teal-700{color:#0f766e}
+.text-teal-800{color:#115e59}
+.text-teal-900{color:#134e4a}
+.text-teal-950{color:#042f2e}
+.text-violet-600{color:#7c3aed}
+.text-violet-700{color:#6d28d9}
+.text-white{color:#ffffff}
+.text-xl{font-size:1.25rem;line-height:1.75rem}
+.text-xs{font-size:0.75rem;line-height:1rem}
+.to-blue-600{--tw-to:#2563eb}
+.to-emerald-600{--tw-to:#059669}
+.to-indigo-600{--tw-to:#4f46e5}
+.to-rose-600{--tw-to:#e11d48}
+.top-0{top:0rem}
+.tracking-tight{letter-spacing:-.025em}
+.tracking-wider{letter-spacing:.05em}
+.tracking-widest{letter-spacing:.1em}
+.transform{transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:150ms}
+.translate-y-20{--tw-ty:5rem;transform:translate(var(--tw-tx,0),var(--tw-ty,0)) scale(var(--tw-s,1))}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uppercase{text-transform:uppercase}
+.w-10{width:2.5rem}
+.w-12{width:3rem}
+.w-2\.5{width:0.625rem}
+.w-3\.5{width:0.875rem}
+.w-5{width:1.25rem}
+.w-6{width:1.5rem}
+.w-64{width:16rem}
+.w-8{width:2rem}
+.w-80{width:20rem}
+.w-9{width:2.25rem}
+.w-full{width:100%}
+@media (min-width:1280px){.xl\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.z-50{z-index:50}
+</style>
+  <!-- Google Fonts: Noto Sans TC & JetBrains Mono -->
+
+  <style>
+    /* 全域字體與基礎排版設定 */
+    body {
+      font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* 幾何線段頂線符號 (例如 AB 線段) */
+    .geom-seg {
+      text-decoration: overline;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 0 1px;
+    }
+
+    /* 幾何符號美化 */
+    .geom-sym {
+      font-weight: 700;
+      padding: 0 2px;
+    }
+
+    /* 純 CSS 垂直分數排版 (零外部依賴，離線列印與手機端絕不跑版) */
+    .math-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 2px;
+      line-height: 1.05;
+      font-size: 0.95em;
+      margin: 0 1.5px;
+    }
+    .math-frac .num {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 1px;
+      display: block;
+    }
+    .math-frac .den {
+      padding-top: 1px;
+      display: block;
+    }
+
+    /* 補習班專業點陣手寫草稿區 */
+    .scratch-grid {
+      background-image: radial-gradient(#cbd5e1 1.1px, transparent 1.1px);
+      background-size: 13px 13px;
+    }
+
+    /* 隱藏原生數字微調鈕的冗餘外觀 */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      opacity: 0.8;
+    }
+
+    /* 列印標準 A4 考卷版面最佳化 */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 8mm 8mm 10mm 8mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 9pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .page-sheet {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .problem-card {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        border: 1px solid #475569 !important;
+        box-shadow: none !important;
+        background-color: #ffffff !important;
+      }
+      .paper-header {
+        border-bottom: 2px solid #000000 !important;
+      }
+      .print-col-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+      .print-col-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .print-col-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+      .print-col-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+    }
+  </style>
+
+<!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="bhcs-theme">
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
+html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
+</style>
+<style id="bhcs-theme-family">
+body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif!important;background:var(--bhcs-bg)!important}
+header.no-print{background:var(--bhcs-green2)!important;border-bottom:4px solid var(--bhcs-mint)!important;box-shadow:0 5px 16px #173e3412!important}
+header.no-print>div:first-child h1{color:#fff!important}
+header.no-print h1::before{content:"百宏文教｜";color:var(--bhcs-mint)}
+header.no-print>div:first-child p{color:#c8e8df!important}
+header.no-print>div:first-child>div:first-child>div:first-child{background:var(--bhcs-mint)!important;color:var(--bhcs-green2)!important;box-shadow:none!important}
+header.no-print>div:first-child button{background:#fff!important;color:var(--bhcs-green2)!important;border:1px solid #9ad9c6!important;box-shadow:none!important;font-weight:800!important}
+header.no-print>div:first-child button:hover{background:var(--bhcs-soft)!important}
+header.no-print>div:first-child button:first-child{background:var(--bhcs-mint)!important}
+header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!important;border-top:none!important}
+.bg-teal-600,.bg-indigo-600,.bg-blue-600,.bg-emerald-600,.bg-cyan-700,.bg-violet-600,.bg-sky-600,.bg-teal-500,.bg-sky-500{background-color:var(--bhcs-green)!important}
+.hover\:bg-teal-700:hover,.hover\:bg-indigo-700:hover,.hover\:bg-blue-700:hover,.hover\:bg-emerald-700:hover,.hover\:bg-violet-700:hover,.hover\:bg-cyan-800:hover,.bg-teal-700,.bg-indigo-700,.bg-blue-700,.bg-emerald-700{background-color:var(--bhcs-green2)!important}
+.bg-amber-600{background-color:var(--bhcs-muted)!important}.hover\:bg-amber-700:hover{background-color:#4a5a56!important}
+.text-teal-600,.text-teal-700,.text-teal-800,.text-indigo-600,.text-indigo-700,.text-blue-600,.text-blue-700,.text-violet-700,.text-cyan-700{color:var(--bhcs-green)!important}
+.border-teal-500,.border-teal-600,.border-indigo-500,.border-indigo-600,.border-blue-500,.border-blue-600{border-color:var(--bhcs-green)!important}
+.bg-teal-50,.bg-indigo-50,.bg-blue-50,.bg-violet-50,.bg-cyan-50{background-color:var(--bhcs-soft)!important}
+.border-teal-200,.border-indigo-200,.border-teal-300,.border-indigo-300,.border-indigo-100,.border-teal-100{border-color:#b7d8cc!important}
+.text-indigo-900,.text-teal-900{color:var(--bhcs-green2)!important}
+.ring-teal-500,.focus\:ring-teal-500:focus,.focus\:ring-indigo-500:focus,.focus\:border-indigo-500:focus,.focus\:border-teal-500:focus{--tw-ring-color:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important}
+</style></head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-cyan-600 selection:text-white">
+
+  <!-- 頂部導航與狀態列 -->
+  <header class="no-print bg-slate-900 text-white shadow-xl sticky top-0 z-50 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap justify-between items-center gap-3">
+      
+      <!-- 標題與教材單元徽章 -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-extrabold text-white text-base shadow-md font-mono">
+          △~
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-bold tracking-tight">國中幾何計算力特訓產生器</h1>
+            <span class="bg-cyan-500/20 text-cyan-300 text-[11px] px-2.5 py-0.5 rounded-full font-bold border border-cyan-500/40">
+              第1-3單元：相似三角形判別性質
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400">SSS成比例 · SAS對頂蝴蝶型與母子型 · AA已知等角 · 六圖相似配對</p>
+        </div>
+      </div>
+
+      <!-- 快速執行動作按鈕組 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btn-regenerate" class="bg-cyan-600 hover:bg-cyan-500 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🎲</span> 重新命題
+        </button>
+        <button id="btn-toggle-solutions" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+          <span id="sol-icon">👁️</span> <span id="sol-text">顯示解析</span>
+        </button>
+        <button id="btn-print-questions" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+          <span>🖨️</span> 列印學用版
+        </button>
+        <button id="btn-print-answers" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+          <span>📝</span> 列印教用版
+        </button>
+        <button id="btn-export-html" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-slate-600 transition flex items-center gap-1.5">
+          <span>💾</span> 匯出獨立 HTML
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto w-full px-3 sm:px-6 py-5 space-y-5">
+    
+    <!-- 參數設定與命題配置控制中心 -->
+    <section id="control-panel" class="no-print bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 transition-all">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center text-xs font-bold">⚙️</div>
+          <h2 class="text-sm font-bold text-slate-800">相似三角形判別定理 · 命題參數設定</h2>
+          <span class="text-xs text-slate-400">| 支援 5 大核心知識點獨立配置 (0～20題) 與 1～4 欄排版</span>
+        </div>
+
+        <!-- 總題數狀態指示燈 -->
+        <div class="flex items-center gap-2 bg-cyan-50 px-3 py-1 rounded-xl border border-cyan-200">
+          <span class="text-xs font-medium text-cyan-800">當前試卷總題數：</span>
+          <span id="display-total-count" class="font-mono font-black text-sm text-cyan-900">10</span>
+          <span class="text-xs text-cyan-700">題</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        
+        <!-- 難易度等級 -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+          <label class="block text-xs font-bold text-slate-700 mb-2">難易度等級</label>
+          <div class="grid grid-cols-3 gap-1 bg-slate-200/70 p-1 rounded-lg">
+            <button type="button" data-diff="basic" class="diff-btn py-1 px-1.5 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-cyan-700">基礎</button>
+            <button type="button" data-diff="standard" class="diff-btn py-1 px-1.5 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">標準精熟</button>
+            <button type="button" data-diff="advanced" class="diff-btn py-1 px-1.5 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">挑戰</button>
+          </div>
+          <p id="diff-description" class="text-[11px] text-slate-500 mt-2 leading-tight">基本整數對應邊成比例判斷、單純對頂角與母子相似判定。</p>
+        </div>
+
+        <!-- 數值型態配置 (整數、分數、小數) -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+          <label class="block text-xs font-bold text-slate-700 mb-2">數值型態配置 (多選)</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="inline-flex items-center gap-1.5 text-xs bg-white border border-slate-200 px-2 py-1 rounded-lg cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" id="cfg-type-int" checked class="rounded text-cyan-600 h-3.5 w-3.5">
+              <span>整數</span>
+            </label>
+            <label class="inline-flex items-center gap-1.5 text-xs bg-white border border-slate-200 px-2 py-1 rounded-lg cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" id="cfg-type-frac" checked class="rounded text-cyan-600 h-3.5 w-3.5">
+              <span>分數</span>
+            </label>
+            <label class="inline-flex items-center gap-1.5 text-xs bg-white border border-slate-200 px-2 py-1 rounded-lg cursor-pointer hover:bg-slate-50">
+              <input type="checkbox" id="cfg-type-dec" checked class="rounded text-cyan-600 h-3.5 w-3.5">
+              <span>小數</span>
+            </label>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2 leading-tight">涵蓋倍數分數（如 5/2 倍、7/4 倍）與小數邊長。</p>
+        </div>
+
+        <!-- 每列題數設定 (支援 1~4 欄切換) -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-bold text-slate-700">每列排版題數 (欄數)</label>
+            <span class="text-[10px] text-cyan-600 font-bold">支援 1～4 題</span>
+          </div>
+          <div class="grid grid-cols-4 gap-1 bg-slate-200/70 p-1 rounded-lg">
+            <button type="button" data-cols="1" class="col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">
+              1 欄
+            </button>
+            <button type="button" data-cols="2" class="col-btn py-1 px-1 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-cyan-700">
+              2 欄
+            </button>
+            <button type="button" data-cols="3" class="col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">
+              3 欄
+            </button>
+            <button type="button" data-cols="4" class="col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900">
+              4 欄
+            </button>
+          </div>
+          <p id="col-description" class="text-[11px] text-slate-500 mt-2 leading-tight">每列 2 題：標準補習班幾何雙欄，幾何圖形與作答草稿空間最適中。</p>
+        </div>
+
+        <!-- 線上互動與即時批改模式 -->
+        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/70 flex flex-col justify-between">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-2">線上互動測驗模式</label>
+            <label class="inline-flex items-center gap-2 text-xs text-slate-800 cursor-pointer">
+              <input type="checkbox" id="cfg-online-mode" class="rounded text-cyan-600 h-3.5 w-3.5">
+              <span class="font-semibold">啟用線上作答與自動批改</span>
+            </label>
+          </div>
+          <div class="mt-2 flex items-center justify-between">
+            <span id="exam-timer-badge" class="hidden text-xs font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              ⏱️ 00:00
+            </span>
+            <span class="text-[10px] text-slate-400">交卷後自動計算得分與詳細步驟訂正</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 知識點細部題數自訂面板 (各知識點 0~20 題) -->
+      <div class="mt-4 pt-4 border-t border-slate-100">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-800">各知識點命題題數配置</span>
+            <span class="text-[11px] text-slate-400">（設為 0 代表該知識點不出題，各知識點最高 20 題）</span>
+          </div>
+
+          <!-- 快速批次設定按鈕群 -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-[11px] text-slate-500 mr-1">快捷設定：</span>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px] text-slate-700 transition" data-val="1">各 1 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px] text-slate-700 transition" data-val="2">各 2 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[11px] text-slate-700 transition" data-val="3">各 3 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-cyan-50 hover:bg-cyan-100 text-[11px] text-cyan-800 font-semibold transition" data-val="5">各 5 題</button>
+            <button type="button" class="btn-batch-count px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-100 text-[11px] text-rose-700 transition" data-val="0">全部清零</button>
+          </div>
+        </div>
+
+        <!-- 5 大核心教材知識點清單 -->
+        <div id="knowledge-points-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5">
+          <!-- 動態由 JavaScript 注入 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 考卷畫布展示區塊 (紙張擬真視圖) -->
+    <div id="worksheet-paper" class="page-sheet bg-white rounded-2xl shadow-md border border-slate-200/80 p-6 sm:p-10 transition-all">
+      
+      <!-- 補習班標準試卷頁首 -->
+      <div class="paper-header border-b-2 border-slate-900 pb-4 mb-5">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-3">
+          <div>
+            <div class="text-xs tracking-widest text-slate-500 font-semibold mb-0.5">
+              國中幾何精熟講義 · 縮放與相似形系列
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              第一單元：1-3 相似三角形判別性質 計算力特訓評量卷
+            </h2>
+          </div>
+          <div class="text-right flex flex-col items-end gap-1">
+            <span id="paper-diff-tag" class="inline-block text-xs font-bold px-2.5 py-1 bg-cyan-50 text-cyan-800 border border-cyan-200 rounded-lg">
+              難度：基礎
+            </span>
+            <span id="paper-layout-tag" class="text-[11px] text-slate-400 no-print">排版：每列 2 題</span>
+          </div>
+        </div>
+
+        <!-- 學生考試作答抬頭資訊欄 -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-medium text-slate-700 pt-2 border-t border-dashed border-slate-200">
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">班級：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">座號：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">姓名：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-slate-500 font-bold">測驗日期：</span>
+            <span class="border-b border-slate-400 flex-grow inline-block h-4"></span>
+          </div>
+          <div class="flex items-center gap-1 bg-amber-50/80 px-2 py-0.5 rounded border border-amber-200">
+            <span class="text-amber-900 font-bold">得分：</span>
+            <span id="exam-score-box" class="border-b border-amber-400 flex-grow inline-block h-4 font-mono font-black text-amber-900 text-center"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 線上作答提交列 (僅線上模式顯示) -->
+      <div id="online-grading-panel" class="hidden no-print mb-5 p-3.5 bg-cyan-50 border border-cyan-200 rounded-xl flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-cyan-600 text-white flex items-center justify-center text-sm shadow">
+            ✍️
+          </div>
+          <div>
+            <div class="text-xs font-bold text-cyan-950">線上相似三角形作答模式中</div>
+            <div class="text-[11px] text-cyan-800">支援性質名稱（如 SSS、SAS、AA）、邊長數值（如 24、28）、配對（如 己, AA）。</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btn-submit-answers" class="bg-cyan-600 hover:bg-cyan-500 active:scale-95 text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition">
+            ✔️ 繳卷並自動批改
+          </button>
+          <button id="btn-clear-answers" class="bg-white hover:bg-slate-100 text-slate-700 text-xs px-3 py-2 rounded-lg border border-slate-300 transition">
+            清空答案
+          </button>
+        </div>
+      </div>
+
+      <!-- 幾何題目自適應排版網格容器 (支援 1~4 欄) -->
+      <div id="problems-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 題目由 JavaScript 動態生成 -->
+      </div>
+
+      <!-- 頁尾速查公式與幾何性質 -->
+      <div class="mt-8 pt-4 border-t border-slate-200 flex flex-wrap justify-between items-center text-[11px] text-slate-400 gap-2">
+        <div>國中幾何計算力特訓教材 · 縮放與相似：相似三角形判別性質</div>
+        <div class="font-mono text-[10.5px]">
+          [定理速查] SSS: 三邊對應成比例 | SAS: 兩邊成比例且夾角相等 | AA: 兩組對應角相等
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 浮動提示 Toast -->
+  <div id="toast-notify" class="no-print fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none bg-slate-900 text-white text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700">
+    <span id="toast-icon">ℹ️</span>
+    <span id="toast-text">通知訊息</span>
+  </div>
+
+  <script>
+    /* 數學基礎工具：最大公因數 */
+    function gcd(a, b) {
+      a = Math.abs(Math.round(a));
+      b = Math.abs(Math.round(b));
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a || 1;
+    }
+
+    /* 嚴謹分數物件類別 (免外部套件，無跑版風險) */
+    class Frac {
+      constructor(n, d = 1) {
+        if (d === 0) throw new Error("分母不可為 0");
+        let g = gcd(n, d);
+        let sign = (d < 0) ? -1 : 1;
+        this.n = Math.round((n / g) * sign);
+        this.d = Math.round(Math.abs(d / g));
+      }
+
+      add(f) {
+        return new Frac(this.n * f.d + f.n * this.d, this.d * f.d);
+      }
+
+      sub(f) {
+        return new Frac(this.n * f.d - f.n * this.d, this.d * f.d);
+      }
+
+      mul(f) {
+        return new Frac(this.n * f.n, this.d * f.d);
+      }
+
+      div(f) {
+        if (f.n === 0) throw new Error("除數不可為 0");
+        return new Frac(this.n * f.d, this.d * f.n);
+      }
+
+      isInteger() {
+        return this.d === 1;
+      }
+
+      toFloat() {
+        return this.n / this.d;
+      }
+
+      toHTML() {
+        if (this.isInteger()) return `${this.n}`;
+        const isNeg = this.n < 0;
+        const absN = Math.abs(this.n);
+        const signStr = isNeg ? "- " : "";
+        return `${signStr}<span class="math-frac"><span class="num">${absN}</span><span class="den">${this.d}</span></span>`;
+      }
+
+      toString() {
+        if (this.isInteger()) return `${this.n}`;
+        return `${this.n}/${this.d}`;
+      }
+    }
+
+    /* 隨機輔助函式 */
+    function randInt(min, max, excludeZero = false) {
+      let val = Math.floor(Math.random() * (max - min + 1)) + min;
+      if (excludeZero && val === 0) return randInt(min, max, excludeZero);
+      return val;
+    }
+
+    function randChoice(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    /* 最簡比 (例如 10:4 => 5:2) */
+    function simplifyRatio(a, b) {
+      let g = gcd(a, b);
+      return `${Math.round(a / g)} : ${Math.round(b / g)}`;
+    }
+
+    /* 全域應用狀態管理 */
+    const state = {
+      difficulty: 'basic', // basic, standard, advanced
+      types: { int: true, frac: true, dec: true },
+      colsPerRow: 2, // 1, 2, 3, 4
+      showSolutions: false,
+      onlineMode: false,
+      timerInterval: null,
+      startTime: null,
+      questions: [],
+
+      // 5 大核心教材知識點 (完全依據《相似三角形判別性質.pdf》架構)
+      kps: {
+        kp_sss: {
+          id: 'kp_sss',
+          title: '1. SSS 相似判定與邊長計算',
+          count: 2,
+          desc: '教材 P.1 Q1, Q2, Q4, Q5, P.2 Q10：三對應邊成比例判定與未知邊長求解'
+        },
+        kp_sas_bowtie: {
+          id: 'kp_sas_bowtie',
+          title: '2. SAS 相似 (對頂角／蝴蝶交叉型)',
+          count: 2,
+          desc: '教材 P.1 Q6, P.2 Q7：AE與BD交於C，對頂角夾兩成比例邊求DE'
+        },
+        kp_sas_flipped: {
+          id: 'kp_sas_flipped',
+          title: '3. SAS 相似 (共用頂角／母子翻轉型)',
+          count: 2,
+          desc: '教材 P.2 Q8：D, E在AB, AC上，共用角A交叉成比例，求BC長度'
+        },
+        kp_aa: {
+          id: 'kp_aa',
+          title: '4. AA / AAA 相似性質與角度推導',
+          count: 2,
+          desc: '教材 P.1 Q3：共用底角結合已知等角 (如∠A=∠DCB) 判定相似'
+        },
+        kp_matching: {
+          id: 'kp_matching',
+          title: '5. 幾何圖形相似綜合配對題',
+          count: 2,
+          desc: '教材 P.2 Q9：甲至己六圖多圖型判斷配對 (AA, SAS, SSS)'
+        }
+      }
+    };
+
+    function showToast(msg, icon = 'ℹ️') {
+      const toast = document.getElementById('toast-notify');
+      document.getElementById('toast-icon').innerText = icon;
+      document.getElementById('toast-text').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       幾何向量 SVG 圖形產生引擎 (精準呈現教材幾何頂點、邊長標註與等角弧度)
+    ════════════════════════════════════════════════════════════════════ */
+
+    // 1. 兩獨立三角形對比圖形 (教材 P.1 Q1, Q2, Q4, Q5)
+    function createTwoTrianglesSVG(t1, t2) {
+      // t1: { A: [x,y], B: [x,y], C: [x,y], labels: {AB, BC, AC} }
+      // t2: { D: [x,y], E: [x,y], F: [x,y], labels: {DE, EF, DF} }
+      return `
+        <svg viewBox="0 0 250 115" class="w-full max-w-[240px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 左側三角形 ABC -->
+          <polygon points="${t1.A[0]},${t1.A[1]} ${t1.B[0]},${t1.B[1]} ${t1.C[0]},${t1.C[1]}" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
+          <!-- 右側三角形 DEF -->
+          <polygon points="${t2.D[0]},${t2.D[1]} ${t2.E[0]},${t2.E[1]} ${t2.F[0]},${t2.F[1]}" fill="#ecfeff" stroke="#0891b2" stroke-width="1.8"/>
+
+          <!-- 頂點圓點 -->
+          <circle cx="${t1.A[0]}" cy="${t1.A[1]}" r="2.2" fill="#0f172a"/>
+          <circle cx="${t1.B[0]}" cy="${t1.B[1]}" r="2.2" fill="#0f172a"/>
+          <circle cx="${t1.C[0]}" cy="${t1.C[1]}" r="2.2" fill="#0f172a"/>
+
+          <circle cx="${t2.D[0]}" cy="${t2.D[1]}" r="2.2" fill="#0f172a"/>
+          <circle cx="${t2.E[0]}" cy="${t2.E[1]}" r="2.2" fill="#0f172a"/>
+          <circle cx="${t2.F[0]}" cy="${t2.F[1]}" r="2.2" fill="#0f172a"/>
+
+          <!-- 頂點標籤 -->
+          <text x="${t1.A[0] - 8}" y="${t1.A[1] - 4}" font-size="10" font-weight="bold" fill="#0f172a">A</text>
+          <text x="${t1.B[0] - 10}" y="${t1.B[1] + 8}" font-size="10" font-weight="bold" fill="#0f172a">B</text>
+          <text x="${t1.C[0] + 4}" y="${t1.C[1] + 8}" font-size="10" font-weight="bold" fill="#0f172a">C</text>
+
+          <text x="${t2.D[0] - 2}" y="${t2.D[1] - 4}" font-size="10" font-weight="bold" fill="#0f172a">D</text>
+          <text x="${t2.E[0] - 10}" y="${t2.E[1] + 8}" font-size="10" font-weight="bold" fill="#0f172a">E</text>
+          <text x="${t2.F[0] + 4}" y="${t2.F[1] + 8}" font-size="10" font-weight="bold" fill="#0f172a">F</text>
+
+          <!-- 邊長標籤 -->
+          <text x="${(t1.A[0]+t1.B[0])/2 - 10}" y="${(t1.A[1]+t1.B[1])/2}" font-size="9.5" font-weight="bold" fill="#166534">${t1.labels.AB}</text>
+          <text x="${(t1.B[0]+t1.C[0])/2}" y="${(t1.B[1]+t1.C[1])/2 + 10}" font-size="9.5" font-weight="bold" fill="#166534" text-anchor="middle">${t1.labels.BC}</text>
+          <text x="${(t1.A[0]+t1.C[0])/2 + 8}" y="${(t1.A[1]+t1.C[1])/2}" font-size="9.5" font-weight="bold" fill="#166534">${t1.labels.AC}</text>
+
+          <text x="${(t2.D[0]+t2.E[0])/2 - 12}" y="${(t2.D[1]+t2.E[1])/2}" font-size="9.5" font-weight="bold" fill="#0e7490">${t2.labels.DE}</text>
+          <text x="${(t2.E[0]+t2.F[0])/2}" y="${(t2.E[1]+t2.F[1])/2 + 10}" font-size="9.5" font-weight="bold" fill="#0e7490" text-anchor="middle">${t2.labels.EF}</text>
+          <text x="${(t2.D[0]+t2.F[0])/2 + 8}" y="${(t2.D[1]+t2.F[1])/2}" font-size="9.5" font-weight="bold" fill="#0e7490">${t2.labels.DF}</text>
+        </svg>
+      `;
+    }
+
+    // 2. 對頂角蝴蝶交叉型圖形 (教材 P.1 Q6, P.2 Q7)
+    function createBowtieSVG(lens) {
+      // AE and BD intersect at C
+      const A = [190, 22];
+      const B = [60, 20];
+      const C = [120, 58];
+      const D = [215, 102];
+      const E = [25, 96];
+
+      return `
+        <svg viewBox="0 0 240 120" class="w-full max-w-[220px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 三角形 ABC 與 DEC 填充 -->
+          <polygon points="${A[0]},${A[1]} ${B[0]},${B[1]} ${C[0]},${C[1]}" fill="#f8fafc" stroke="none"/>
+          <polygon points="${D[0]},${D[1]} ${E[0]},${E[1]} ${C[0]},${C[1]}" fill="#f8fafc" stroke="none"/>
+
+          <!-- 交叉直線 AE 與 BD -->
+          <line x1="${A[0]}" y1="${A[1]}" x2="${E[0]}" y2="${E[1]}" stroke="#0284c7" stroke-width="1.8"/>
+          <line x1="${B[0]}" y1="${B[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#0284c7" stroke-width="1.8"/>
+
+          <!-- 兩底邊 AB 與 DE -->
+          <line x1="${B[0]}" y1="${B[1]}" x2="${A[0]}" y2="${A[1]}" stroke="#0f172a" stroke-width="2"/>
+          <line x1="${E[0]}" y1="${E[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#0f172a" stroke-width="2"/>
+
+          <!-- 對頂角弧度記號 -->
+          <path d="M 112 52 A 10 10 0 0 1 128 53" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+          <path d="M 128 64 A 10 10 0 0 1 112 65" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+
+          <!-- 頂點圓點 -->
+          <circle cx="${A[0]}" cy="${A[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${B[0]}" cy="${B[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${C[0]}" cy="${C[1]}" r="2.8" fill="#0284c7"/>
+          <circle cx="${D[0]}" cy="${D[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${E[0]}" cy="${E[1]}" r="2.5" fill="#0f172a"/>
+
+          <!-- 頂點文字 -->
+          <text x="${A[0] + 5}" y="${A[1] + 2}" font-size="11" font-weight="bold" fill="#0f172a">A</text>
+          <text x="${B[0] - 12}" y="${B[1] + 2}" font-size="11" font-weight="bold" fill="#0f172a">B</text>
+          <text x="${C[0] + 7}" y="${C[1] - 3}" font-size="11" font-weight="bold" fill="#0284c7">C</text>
+          <text x="${D[0] + 5}" y="${D[1] + 4}" font-size="11" font-weight="bold" fill="#0f172a">D</text>
+          <text x="${E[0] - 12}" y="${E[1] + 4}" font-size="11" font-weight="bold" fill="#0f172a">E</text>
+
+          <!-- 邊長數據提示 -->
+          <text x="${(A[0]+B[0])/2}" y="${(A[1]+B[1])/2 - 4}" font-size="9.5" font-weight="bold" fill="#0f172a" text-anchor="middle">${lens.AB}</text>
+          <text x="${(B[0]+C[0])/2 - 6}" y="${(B[1]+C[1])/2 - 3}" font-size="9" font-weight="bold" fill="#0369a1">${lens.BC}</text>
+          <text x="${(A[0]+C[0])/2 + 6}" y="${(A[1]+C[1])/2 - 3}" font-size="9" font-weight="bold" fill="#0369a1">${lens.AC}</text>
+          <text x="${(C[0]+E[0])/2 - 6}" y="${(C[1]+E[1])/2 + 9}" font-size="9" font-weight="bold" fill="#0369a1">${lens.CE}</text>
+          <text x="${(C[0]+D[0])/2 + 6}" y="${(C[1]+D[1])/2 + 9}" font-size="9" font-weight="bold" fill="#0369a1">${lens.CD}</text>
+          <text x="${(E[0]+D[0])/2}" y="${(E[1]+D[1])/2 + 12}" font-size="9.5" font-weight="bold" fill="#0f172a" text-anchor="middle">${lens.DE}</text>
+        </svg>
+      `;
+    }
+
+    // 3. 共用頂角母子翻轉型圖形 (教材 P.2 Q8)
+    function createFlippedTriangleSVG(lens) {
+      const A = [45, 20];
+      const B = [70, 115];
+      const C = [215, 12];
+      const D = [58, 70];
+      const E = [115, 17];
+
+      return `
+        <svg viewBox="0 0 240 130" class="w-full max-w-[210px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 大三角形 ABC -->
+          <polygon points="${A[0]},${A[1]} ${B[0]},${B[1]} ${C[0]},${C[1]}" fill="#f8fafc" stroke="#1e293b" stroke-width="1.8"/>
+          <!-- 截線 DE -->
+          <line x1="${D[0]}" y1="${D[1]}" x2="${E[0]}" y2="${E[1]}" stroke="#0284c7" stroke-width="2"/>
+
+          <!-- 頂點圓點 -->
+          <circle cx="${A[0]}" cy="${A[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${B[0]}" cy="${B[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${C[0]}" cy="${C[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${D[0]}" cy="${D[1]}" r="2.5" fill="#0284c7"/>
+          <circle cx="${E[0]}" cy="${E[1]}" r="2.5" fill="#0284c7"/>
+
+          <!-- 頂點標籤 -->
+          <text x="${A[0] - 12}" y="${A[1] - 3}" font-size="11" font-weight="bold" fill="#0f172a">A</text>
+          <text x="${B[0] - 12}" y="${B[1] + 5}" font-size="11" font-weight="bold" fill="#0f172a">B</text>
+          <text x="${C[0] + 5}" y="${C[1] + 4}" font-size="11" font-weight="bold" fill="#0f172a">C</text>
+          <text x="${D[0] - 12}" y="${D[1] + 4}" font-size="11" font-weight="bold" fill="#0284c7">D</text>
+          <text x="${E[0] - 4}" y="${E[1] - 4}" font-size="11" font-weight="bold" fill="#0284c7">E</text>
+
+          <!-- 邊長線段標籤 -->
+          <text x="${(A[0]+D[0])/2 - 12}" y="${(A[1]+D[1])/2 + 2}" font-size="9" font-weight="bold" fill="#0369a1">${lens.AD}</text>
+          <text x="${(D[0]+B[0])/2 - 12}" y="${(D[1]+B[1])/2 + 4}" font-size="9" font-weight="bold" fill="#0369a1">${lens.BD}</text>
+          <text x="${(A[0]+E[0])/2}" y="${(A[1]+E[1])/2 - 4}" font-size="9" font-weight="bold" fill="#0369a1">${lens.AE}</text>
+          <text x="${(D[0]+E[0])/2 + 4}" y="${(D[1]+E[1])/2 + 8}" font-size="9" font-weight="bold" fill="#0284c7">${lens.DE}</text>
+          <text x="${(B[0]+C[0])/2}" y="${(B[1]+C[1])/2 + 10}" font-size="9.5" font-weight="bold" fill="#0f172a">${lens.BC}</text>
+        </svg>
+      `;
+    }
+
+    // 4. AA 相似共用底角與已知等角圖形 (教材 P.1 Q3)
+    function createCevianAngleSVG(angleVal = 20) {
+      const A = [55, 18];
+      const B = [30, 95];
+      const C = [195, 95];
+      const D = [42, 60];
+
+      return `
+        <svg viewBox="0 0 230 115" class="w-full max-w-[210px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 三角形 ABC -->
+          <polygon points="${A[0]},${A[1]} ${B[0]},${B[1]} ${C[0]},${C[1]}" fill="#f8fafc" stroke="#1e293b" stroke-width="1.8"/>
+          <!-- 分割線 CD -->
+          <line x1="${C[0]}" y1="${C[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#0284c7" stroke-width="1.8"/>
+
+          <!-- 頂點圓點 -->
+          <circle cx="${A[0]}" cy="${A[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${B[0]}" cy="${B[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${C[0]}" cy="${C[1]}" r="2.5" fill="#0f172a"/>
+          <circle cx="${D[0]}" cy="${D[1]}" r="2.5" fill="#0284c7"/>
+
+          <!-- 等角弧度標記 -->
+          <!-- 角 A 弧 -->
+          <path d="M 52 28 A 12 12 0 0 1 65 24" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+          <!-- 角 DCB 弧 -->
+          <path d="M 175 95 A 16 16 0 0 1 178 84" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+
+          <!-- 角度文字標記 -->
+          <text x="${A[0] + 8}" y="${A[1] + 16}" font-size="8.5" font-weight="bold" fill="#b45309">${angleVal}°</text>
+          <text x="${C[0] - 32}" y="${C[1] - 4}" font-size="8.5" font-weight="bold" fill="#b45309">${angleVal}°</text>
+
+          <!-- 頂點標籤 -->
+          <text x="${A[0] - 2}" y="${A[1] - 4}" font-size="11" font-weight="bold" fill="#0f172a">A</text>
+          <text x="${B[0] - 12}" y="${B[1] + 4}" font-size="11" font-weight="bold" fill="#0f172a">B</text>
+          <text x="${C[0] + 4}" y="${C[1] + 4}" font-size="11" font-weight="bold" fill="#0f172a">C</text>
+          <text x="${D[0] - 12}" y="${D[1] + 2}" font-size="11" font-weight="bold" fill="#0284c7">D</text>
+        </svg>
+      `;
+    }
+
+    // 5. 綜合相似配對圖形組 (教材 P.2 Q9 六圖配對型)
+    function createMatchingSetSVG() {
+      return `
+        <svg viewBox="0 0 320 120" class="w-full max-w-[310px] mx-auto select-none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 甲: 角 65°, 40° -->
+          <g transform="translate(10, 10)">
+            <polygon points="20,5 5,45 45,45" fill="#f1f5f9" stroke="#334155" stroke-width="1.4"/>
+            <text x="25" y="55" font-size="9" font-weight="bold" text-anchor="middle" fill="#0f172a">甲</text>
+            <text x="14" y="24" font-size="6.5" fill="#d97706">65°</text>
+            <text x="10" y="42" font-size="6.5" fill="#d97706">40°</text>
+          </g>
+
+          <!-- 乙: 邊 6, 8, 夾角 65° -->
+          <g transform="translate(65, 10)">
+            <polygon points="15,8 5,45 42,45" fill="#f1f5f9" stroke="#334155" stroke-width="1.4"/>
+            <text x="23" y="55" font-size="9" font-weight="bold" text-anchor="middle" fill="#0f172a">乙</text>
+            <text x="5" y="28" font-size="7" font-weight="bold" fill="#0369a1">6</text>
+            <text x="23" y="43" font-size="7" font-weight="bold" fill="#0369a1">8</text>
+            <text x="10" y="40" font-size="6.5" fill="#d97706">65°</text>
+          </g>
+
+          <!-- 丙: 邊 5, 6, 10 -->
+          <g transform="translate(120, 10)">
+            <polygon points="10,12 5,45 48,45" fill="#f1f5f9" stroke="#334155" stroke-width="1.4"/>
+            <text x="26" y="55" font-size="9" font-weight="bold" text-anchor="middle" fill="#0f172a">丙</text>
+            <text x="3" y="30" font-size="7" font-weight="bold" fill="#0369a1">5</text>
+            <text x="24" y="43" font-size="7" font-weight="bold" fill="#0369a1">10</text>
+            <text x="30" y="27" font-size="7" font-weight="bold" fill="#0369a1">6</text>
+          </g>
+
+          <!-- 丁: 邊 9, 12, 夾角 65° -->
+          <g transform="translate(175, 10)">
+            <polygon points="18,5 5,45 46,45" fill="#f1f5f9" stroke="#334155" stroke-width="1.4"/>
+            <text x="25" y="55" font-size="9" font-weight="bold" text-anchor="middle" fill="#0f172a">丁</text>
+            <text x="5" y="25" font-size="7" font-weight="bold" fill="#0369a1">9</text>
+            <text x="23" y="43" font-size="7" font-weight="bold" fill="#0369a1">12</text>
+            <text x="10" y="40" font-size="6.5" fill="#d97706">65°</text>
+          </g>
+
+          <!-- 戊: 邊 2.5, 3, 5 -->
+          <g transform="translate(230, 10)">
+            <polygon points="10,18 5,45 42,45" fill="#f1f5f9" stroke="#334155" stroke-width="1.4"/>
+            <text x="23" y="55" font-size="9" font-weight="bold" text-anchor="middle" fill="#0f172a">戊</text>
+            <text x="1" y="32" font-size="6.5" font-weight="bold" fill="#0369a1">2.5</text>
+            <text x="22" y="43" font-size="6.5" font-weight="bold" fill="#0369a1">5</text>
+            <text x="27" y="30" font-size="6.5" font-weight="bold" fill="#0369a1">3</text>
+          </g>
+
+          <!-- 己: 角 65°, 75° -->
+          <g transform="translate(275, 10)">
+            <polygon points="18,5 5,45 40,45" fill="#f1f5f9" stroke="#334155" stroke-width="1.4"/>
+            <text x="22" y="55" font-size="9" font-weight="bold" text-anchor="middle" fill="#0f172a">己</text>
+            <text x="13" y="24" font-size="6.5" fill="#d97706">65°</text>
+            <text x="12" y="42" font-size="6.5" fill="#d97706">75°</text>
+          </g>
+        </svg>
+      `;
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       知識點一：SSS 相似性質判定與邊長計算 (教材 P.1 Q1, Q2, Q4, Q5, P.2 Q10)
+    ════════════════════════════════════════════════════════════════════ */
+    function gen_kp_sss(diff, types) {
+      // 隨機產生第一三角形三邊 a, b, c (滿足三角不等式)
+      let a = randChoice([5, 6, 7, 8, 9, 10]);
+      let b = randChoice([6, 7, 8, 9, 12, 14]);
+      let c = randChoice([7, 8, 10, 12, 16, 18]);
+      // 排序以方便對應
+      let s1 = [a, b, c].sort((x, y) => x - y);
+      a = s1[0]; b = s1[1]; c = s1[2];
+      if (a + b <= c) c = a + b - 2;
+
+      // 相似比 k
+      let kFrac;
+      if (diff === 'basic') {
+        let kInt = randChoice([2, 3, 4]);
+        kFrac = new Frac(kInt, 1);
+      } else if (diff === 'standard') {
+        kFrac = randChoice([new Frac(3, 2), new Frac(5, 2), new Frac(4, 3), new Frac(2, 1)]);
+      } else {
+        kFrac = randChoice([new Frac(7, 4), new Frac(5, 3), new Frac(6, 5), new Frac(9, 4)]);
+      }
+
+      let d = kFrac.mul(new Frac(a));
+      let e = kFrac.mul(new Frac(b));
+      let f = kFrac.mul(new Frac(c));
+
+      const pickType = randChoice(types);
+      const isRatioQuestion = (diff === 'basic' && Math.random() < 0.5);
+
+      if (isRatioQuestion) {
+        // 模式 A：類似教材 P.1 Q1, P.2 Q10，以代數倍數給定關係
+        let kStr = kFrac.toHTML();
+        return {
+          kpTitle: 'SSS 相似性質判定 (對應邊比例)',
+          svgHTML: createTwoTrianglesSVG(
+            { A: [25, 20], B: [10, 85], C: [65, 85], labels: { AB: a, BC: b, AC: c } },
+            { D: [150, 15], E: [120, 95], F: [220, 95], labels: { DE: d.toHTML(), EF: e.toHTML(), DF: f.toHTML() } }
+          ),
+          questionHTML: `在 <span class="geom-sym">△ABC</span> 與 <span class="geom-sym">△DEF</span> 中，已知 <span class="geom-seg">AB</span> = ${kStr}<span class="geom-seg">DE</span>、<span class="geom-seg">BC</span> = ${kStr}<span class="geom-seg">EF</span>、<span class="geom-seg">AC</span> = ${kStr}<span class="geom-seg">DF</span>，試問這兩個三角形是否相似？是根據什麼相似性質？`,
+          answerText: `△ABC ~ △DEF (SSS 相似性質)`,
+          expectedShort: `SSS`,
+          explanationHTML: `【SSS 相似性質判定】<br>
+            ∵ <span class="geom-seg">AB</span> / <span class="geom-seg">DE</span> = <span class="geom-seg">BC</span> / <span class="geom-seg">EF</span> = <span class="geom-seg">AC</span> / <span class="geom-seg">DF</span> = ${kStr}<br>
+            三組對應邊長成固定比例，<br>
+            ∴ <b><span class="geom-sym">△ABC ~ △DEF</span> (根據 SSS 相似性質)</b>`
+        };
+      } else {
+        // 模式 B：類似教材 P.1 Q2, Q4, Q5，給出邊長數據，求驗證或求未知數 x
+        let dStr = d.isInteger() ? `${d.n}` : (pickType === 'dec' ? d.toFloat().toFixed(1) : d.toHTML());
+        let eStr = e.isInteger() ? `${e.n}` : (pickType === 'dec' ? e.toFloat().toFixed(1) : e.toHTML());
+        let fStr = f.isInteger() ? `${f.n}` : (pickType === 'dec' ? f.toFloat().toFixed(1) : f.toHTML());
+
+        return {
+          kpTitle: 'SSS 相似性質判定與對應邊計算',
+          svgHTML: createTwoTrianglesSVG(
+            { A: [25, 20], B: [10, 85], C: [65, 85], labels: { AB: a, BC: b, AC: c } },
+            { D: [150, 15], E: [120, 95], F: [220, 95], labels: { DE: dStr, EF: eStr, DF: fStr } }
+          ),
+          questionHTML: `若 <span class="geom-sym">△ABC</span> 與 <span class="geom-sym">△DEF</span> 之邊長如圖所示，分別為：<br>
+            <span class="geom-seg">AB</span> = ${a}，<span class="geom-seg">BC</span> = ${b}，<span class="geom-seg">AC</span> = ${c}；<br>
+            <span class="geom-seg">DE</span> = ${dStr}，<span class="geom-seg">EF</span> = ${eStr}，<span class="geom-seg">DF</span> = ${fStr}。<br>
+            試問這兩個三角形是否相似？是根據何種相似性質？`,
+          answerText: `△ABC ~ △DEF (SSS 相似性質)`,
+          expectedShort: `SSS`,
+          explanationHTML: `1. 計算各對應邊長的比值：<br>
+            <span class="geom-seg">DE</span> / <span class="geom-seg">AB</span> = ${dStr} / ${a} = ${kFrac.toHTML()}<br>
+            <span class="geom-seg">EF</span> / <span class="geom-seg">BC</span> = ${eStr} / ${b} = ${kFrac.toHTML()}<br>
+            <span class="geom-seg">DF</span> / <span class="geom-seg">AC</span> = ${fStr} / ${c} = ${kFrac.toHTML()}<br>
+            2. 三組對應邊皆成固定比例，故 <b><span class="geom-sym">△ABC ~ △DEF</span> (根據 SSS 相似性質)</b>。`
+        };
+      }
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       知識點二：SAS 相似性質 (對頂角／蝴蝶交叉型，教材 P.1 Q6, P.2 Q7)
+       AE 與 BD 相交於 C 點，已知 BC, AC, CD, CE 與 AB，求 DE
+    ════════════════════════════════════════════════════════════════════ */
+    function gen_kp_sas_bowtie(diff, types) {
+      let kFrac;
+      if (diff === 'basic') {
+        kFrac = randChoice([new Frac(3, 2), new Frac(2, 1), new Frac(4, 3)]);
+      } else if (diff === 'standard') {
+        kFrac = randChoice([new Frac(5, 3), new Frac(7, 4), new Frac(5, 2)]);
+      } else {
+        kFrac = randChoice([new Frac(7, 5), new Frac(9, 5), new Frac(8, 3)]);
+      }
+
+      // 選擇基礎邊長
+      let bcBase = randChoice([4, 5, 6, 8, 9]);
+      let acBase = randChoice([5, 7, 8, 10, 12]);
+      let abBase = randChoice([8, 9, 12, 15, 16, 18]);
+
+      // 放大得另一側三角形邊長 CE 與 CD
+      // CE / BC = kFrac, CD / AC = kFrac
+      let ceFrac = kFrac.mul(new Frac(bcBase));
+      let cdFrac = kFrac.mul(new Frac(acBase));
+      let deFrac = kFrac.mul(new Frac(abBase));
+
+      let ceStr = ceFrac.isInteger() ? `${ceFrac.n}` : ceFrac.toHTML();
+      let cdStr = cdFrac.isInteger() ? `${cdFrac.n}` : cdFrac.toHTML();
+      let deStr = deFrac.isInteger() ? `${deFrac.n}` : deFrac.toHTML();
+
+      return {
+        kpTitle: 'SAS 相似 (對頂角蝴蝶型求線段)',
+        svgHTML: createBowtieSVG({
+          AB: abBase, BC: bcBase, AC: acBase,
+          CD: cdStr, CE: ceStr, DE: '?'
+        }),
+        questionHTML: `如圖，線段 <span class="geom-seg">AE</span> 與 <span class="geom-seg">BD</span> 相交於 <span class="mono font-bold">C</span> 點。<br>
+          若 <span class="geom-seg">AB</span> = ${abBase}、<span class="geom-seg">BC</span> = ${bcBase}、<span class="geom-seg">AC</span> = ${acBase}、<span class="geom-seg">CD</span> = ${cdStr}、<span class="geom-seg">CE</span> = ${ceStr}，則：<br>
+          (1) <span class="geom-sym">△ABC</span> 與 <span class="geom-sym">△DEC</span> 是否相似？是根據什麼相似性質？<br>
+          (2) <span class="geom-seg">DE</span> 的長度為何？`,
+        answerText: `(1) △ABC ~ △DEC (SAS 相似) ； (2) DE = ${deStr}`,
+        expectedShort: `${deFrac.toString()}`,
+        explanationHTML: `1. 觀察交叉線段的對頂角與夾邊比例：<br>
+            ∵ <span class="geom-sym">∠BCA = ∠DCE</span> (對頂角相等)<br>
+            且 <span class="geom-seg">CE</span> / <span class="geom-seg">BC</span> = ${ceStr} / ${bcBase} = ${kFrac.toHTML()}<br>
+            　 <span class="geom-seg">CD</span> / <span class="geom-seg">AC</span> = ${cdStr} / ${acBase} = ${kFrac.toHTML()}<br>
+            兩組對應邊成比例且夾角相等，<br>
+            ∴ <b><span class="geom-sym">△ABC ~ △DEC</span> (SAS 相似性質)</b>。<br>
+          2. 由對應邊成比例求 <span class="geom-seg">DE</span>：<br>
+            <span class="geom-seg">DE</span> / <span class="geom-seg">AB</span> = ${kFrac.toHTML()} <br>
+            <span class="geom-seg">DE</span> = ${abBase} × ${kFrac.toHTML()} = <b>${deStr}</b>`
+      };
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       知識點三：SAS 相似性質 (共用頂角／母子翻轉型，教材 P.2 Q8)
+       D, E 分別在 AB, AC 上，共用角 A，交叉比相同 => △ABC ~ △AED
+    ════════════════════════════════════════════════════════════════════ */
+    function gen_kp_sas_flipped(diff, types) {
+      // 相似比 k = AB / AE = AC / AD
+      let kFrac;
+      if (diff === 'basic') {
+        kFrac = randChoice([new Frac(2, 1), new Frac(3, 2)]);
+      } else if (diff === 'standard') {
+        kFrac = randChoice([new Frac(7, 4), new Frac(5, 3), new Frac(5, 2)]);
+      } else {
+        kFrac = randChoice([new Frac(8, 3), new Frac(9, 4), new Frac(7, 3)]);
+      }
+
+      let aeBase = randChoice([4, 6, 8, 9, 12]);
+      let adBase = randChoice([6, 8, 10, 12, 15]);
+      let deBase = randChoice([6, 8, 12, 16, 18]);
+
+      // AB = AE * k, AC = AD * k
+      let abFrac = kFrac.mul(new Frac(aeBase));
+      let acFrac = kFrac.mul(new Frac(adBase));
+      let bcFrac = kFrac.mul(new Frac(deBase));
+
+      let bdFrac = abFrac.sub(new Frac(adBase));
+
+      let abStr = abFrac.isInteger() ? `${abFrac.n}` : abFrac.toHTML();
+      let acStr = acFrac.isInteger() ? `${acFrac.n}` : acFrac.toHTML();
+      let bcStr = bcFrac.isInteger() ? `${bcFrac.n}` : bcFrac.toHTML();
+      let bdStr = bdFrac.isInteger() ? `${bdFrac.n}` : bdFrac.toHTML();
+
+      return {
+        kpTitle: 'SAS 相似 (共用頂角母子翻轉型)',
+        svgHTML: createFlippedTriangleSVG({
+          AD: adBase, BD: bdStr, AE: aeBase, DE: deBase, BC: '?'
+        }),
+        questionHTML: `如圖，<span class="mono font-bold">D、E</span> 兩點分別在 <span class="geom-seg">AB</span>、<span class="geom-seg">AC</span> 上。<br>
+          已知 <span class="geom-seg">AD</span> = ${adBase}、<span class="geom-seg">BD</span> = ${bdStr}、<span class="geom-seg">AC</span> = ${acStr}、<span class="geom-seg">AE</span> = ${aeBase}、<span class="geom-seg">DE</span> = ${deBase}，則：<br>
+          (1) <span class="geom-sym">△ABC</span> 與 <span class="geom-sym">△AED</span> 是否相似？是根據什麼相似性質？<br>
+          (2) <span class="geom-seg">BC</span> 的長度為何？`,
+        answerText: `(1) △ABC ~ △AED (SAS 相似) ； (2) BC = ${bcStr}`,
+        expectedShort: `${bcFrac.toString()}`,
+        explanationHTML: `1. 先求出線段 <span class="geom-seg">AB</span> 全長：<br>
+            <span class="geom-seg">AB</span> = <span class="geom-seg">AD</span> + <span class="geom-seg">BD</span> = ${adBase} + ${bdStr} = ${abStr}<br>
+          2. 檢驗共用角 <span class="geom-sym">∠A</span> 及其兩夾邊比：<br>
+            <span class="geom-seg">AB</span> / <span class="geom-seg">AE</span> = ${abStr} / ${aeBase} = ${kFrac.toHTML()}<br>
+            <span class="geom-seg">AC</span> / <span class="geom-seg">AD</span> = ${acStr} / ${adBase} = ${kFrac.toHTML()}<br>
+            ∵ <span class="geom-sym">∠A = ∠A</span> (共用頂角)，且兩夾邊成固定比例，<br>
+            ∴ <b><span class="geom-sym">△ABC ~ △AED</span> (SAS 相似性質)</b>。<br>
+          3. 計算底邊 <span class="geom-seg">BC</span> 的長度：<br>
+            <span class="geom-seg">BC</span> / <span class="geom-seg">DE</span> = ${kFrac.toHTML()} <br>
+            <span class="geom-seg">BC</span> = ${deBase} × ${kFrac.toHTML()} = <b>${bcStr}</b>`
+      };
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       知識點四：AA / AAA 相似性質與幾何推導 (教材 P.1 Q3)
+       △ABC 中，D 在 AB 上，∠A = ∠DCB，共用 ∠B => △ABC ~ △CBD
+    ════════════════════════════════════════════════════════════════════ */
+    function gen_kp_aa(diff, types) {
+      const angleVal = randChoice([18, 20, 24, 25, 30, 32, 35]);
+      // 延伸計算邊長：BC^2 = AB * BD (射影母子相似)
+      let bdVal = randChoice([2, 3, 4, 5, 8]);
+      let mult = randChoice([2, 3, 4]);
+      let bcVal = bdVal * mult;
+      let abVal = mult * bcVal;
+
+      return {
+        kpTitle: 'AA 相似性質 (共用角加已知等角)',
+        svgHTML: createCevianAngleSVG(angleVal),
+        questionHTML: `如圖，<span class="geom-sym">△ABC</span> 中，<span class="mono font-bold">D</span> 點在 <span class="geom-seg">AB</span> 上，且 <span class="geom-sym">∠A = ∠DCB = ${angleVal}°</span>。<br>
+          (1) 試問 <span class="geom-sym">△ABC</span> 與 <span class="geom-sym">△CBD</span> 是否相似？是根據什麼相似性質？<br>
+          (2) 若已知 <span class="geom-seg">BD</span> = ${bdVal}，<span class="geom-seg">BC</span> = ${bcVal}，則 <span class="geom-seg">AB</span> 的長度為何？`,
+        answerText: `(1) △ABC ~ △CBD (AA 相似) ； (2) AB = ${abVal}`,
+        expectedShort: `${abVal}`,
+        explanationHTML: `1. 證明三角形相似：<br>
+            在 <span class="geom-sym">△ABC</span> 與 <span class="geom-sym">△CBD</span> 中：<br>
+            ∵ <span class="geom-sym">∠B = ∠B</span> (共用角)<br>
+            且題給已知 <span class="geom-sym">∠A = ∠DCB = ${angleVal}°</span><br>
+            由兩組對應角相等，<br>
+            ∴ <b><span class="geom-sym">△ABC ~ △CBD</span> (AA 相似性質)</b>。<br>
+          2. 計算邊長 <span class="geom-seg">AB</span>：<br>
+            由對應邊成比例：<span class="geom-seg">AB</span> / <span class="geom-seg">BC</span> = <span class="geom-seg">BC</span> / <span class="geom-seg">BD</span><br>
+            代入長度：<span class="geom-seg">AB</span> / ${bcVal} = ${bcVal} / ${bdVal}<br>
+            <span class="geom-seg">AB</span> = (${bcVal} × ${bcVal}) / ${bdVal} = <b>${abVal}</b>`
+      };
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       知識點五：幾何圖形相似綜合配對題 (教材 P.2 Q9 六圖形判斷)
+    ════════════════════════════════════════════════════════════════════ */
+    function gen_kp_matching(diff, types) {
+      return {
+        kpTitle: '幾何圖形相似綜合配對 (六圖判斷)',
+        svgHTML: createMatchingSetSVG(),
+        questionHTML: `觀察圖中標示之三角形甲、乙、丙、丁、戊、己的邊長與角度數據：<br>
+          (1) <span class="font-bold text-cyan-800">甲</span> 與何者相似？根據什麼相似性質？<br>
+          (2) <span class="font-bold text-cyan-800">乙</span> 與何者相似？根據什麼相似性質？<br>
+          (3) <span class="font-bold text-cyan-800">丙</span> 與何者相似？根據什麼相似性質？`,
+        answerText: `(1) 己 (AA 相似) ； (2) 丁 (SAS 相似) ； (3) 戊 (SSS 相似)`,
+        expectedShort: `己, 丁, 戊`,
+        explanationHTML: `【教材 P.2 經典多圖配對解題精析】<br>
+          1. <b>甲與己相似 (AA 相似性質)</b>：<br>
+             甲的內角為 65° 與 40°，第三角 = 180° - 65° - 40° = 75°；<br>
+             己的內角為 65° 與 75°，第三角 = 40°。兩者對應角皆相等，為 AA (或 AAA) 相似。<br>
+          2. <b>乙與丁相似 (SAS 相似性質)</b>：<br>
+             兩者皆有一夾角 65°，且對應邊長比為 6 : 9 = 2 : 3，8 : 12 = 2 : 3。<br>
+             兩邊成比例且夾角相等，為 SAS 相似。<br>
+          3. <b>丙與戊相似 (SSS 相似性質)</b>：<br>
+             三邊對應比為 5 : 2.5 = 2，6 : 3 = 2，10 : 5 = 2。<br>
+             三對應邊成固定比例，為 SSS 相似。`
+      };
+    }
+
+    /* 計算當前設定的總題數 */
+    function calculateTotalCount() {
+      let total = 0;
+      Object.values(state.kps).forEach(kp => {
+        total += parseInt(kp.count || 0, 10);
+      });
+      document.getElementById('display-total-count').innerText = total;
+      return total;
+    }
+
+    /* 渲染 5 大知識點題數自訂面板 */
+    function renderKnowledgePointsGrid() {
+      const container = document.getElementById('knowledge-points-container');
+      container.innerHTML = '';
+
+      Object.values(state.kps).forEach(kp => {
+        const card = document.createElement('div');
+        card.className = "flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-cyan-300 transition";
+        card.innerHTML = `
+          <div class="pr-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+              <span class="text-xs font-bold text-slate-800">${kp.title}</span>
+            </div>
+            <span class="text-[10.5px] text-slate-400 pl-4 block truncate max-w-[170px]">${kp.desc}</span>
+          </div>
+
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" class="btn-step-minus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="${kp.id}">-</button>
+            <input type="number" min="0" max="20" value="${kp.count}" class="input-kp-val w-12 text-center text-xs font-bold font-mono py-1 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-cyan-500 text-slate-900" data-id="${kp.id}">
+            <button type="button" class="btn-step-plus w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition" data-id="${kp.id}">+</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // 綁定輸入與加減微調按鈕
+      container.querySelectorAll('.input-kp-val').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const id = e.target.dataset.id;
+          let val = Math.max(0, Math.min(20, parseInt(e.target.value, 10) || 0));
+          e.target.value = val;
+          state.kps[id].count = val;
+          calculateTotalCount();
+        });
+      });
+
+      container.querySelectorAll('.btn-step-minus').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const input = container.querySelector(`.input-kp-val[data-id="${id}"]`);
+          let val = Math.max(0, parseInt(input.value, 10) - 1);
+          input.value = val;
+          state.kps[id].count = val;
+          calculateTotalCount();
+        });
+      });
+
+      container.querySelectorAll('.btn-step-plus').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const input = container.querySelector(`.input-kp-val[data-id="${id}"]`);
+          let val = Math.min(20, parseInt(input.value, 10) + 1);
+          input.value = val;
+          state.kps[id].count = val;
+          calculateTotalCount();
+        });
+      });
+
+      calculateTotalCount();
+    }
+
+    /* 快捷批次設定所有知識點題數 */
+    function batchSetKPCount(count) {
+      Object.values(state.kps).forEach(kp => {
+        kp.count = count;
+      });
+      renderKnowledgePointsGrid();
+      showToast(`已批次將知識點設為各 ${count} 題`, '⚡');
+    }
+
+    /* 核心考卷產生邏輯 */
+    function generateWorksheet() {
+      const activeTypes = [];
+      if (state.types.int) activeTypes.push('int');
+      if (state.types.frac) activeTypes.push('frac');
+      if (state.types.dec) activeTypes.push('dec');
+
+      if (activeTypes.length === 0) {
+        showToast("請至少勾選一種數值型態！", "⚠️");
+        document.getElementById('cfg-type-int').checked = true;
+        state.types.int = true;
+        activeTypes.push('int');
+      }
+
+      const totalCount = calculateTotalCount();
+      if (totalCount === 0) {
+        showToast("目前設定題數為 0，請增加任一知識點題數！", "⚠️");
+        return;
+      }
+
+      state.questions = [];
+
+      Object.values(state.kps).forEach(kp => {
+        const count = parseInt(kp.count || 0, 10);
+        for (let i = 0; i < count; i++) {
+          let qObj;
+          try {
+            switch(kp.id) {
+              case 'kp_sss':         qObj = gen_kp_sss(state.difficulty, activeTypes); break;
+              case 'kp_sas_bowtie':  qObj = gen_kp_sas_bowtie(state.difficulty, activeTypes); break;
+              case 'kp_sas_flipped': qObj = gen_kp_sas_flipped(state.difficulty, activeTypes); break;
+              case 'kp_aa':          qObj = gen_kp_aa(state.difficulty, activeTypes); break;
+              case 'kp_matching':    qObj = gen_kp_matching(state.difficulty, activeTypes); break;
+              default:               qObj = gen_kp_sss(state.difficulty, activeTypes);
+            }
+          } catch(e) {
+            qObj = gen_kp_sss('basic', ['int']);
+          }
+          state.questions.push(qObj);
+        }
+      });
+
+      // 隨機打亂以模擬真實測驗
+      state.questions.sort(() => Math.random() - 0.5);
+      state.questions.forEach((q, idx) => (q.index = idx + 1));
+
+      renderQuestionsToDOM();
+      updateHeaderBadges();
+      showToast(`已成功產生 ${state.questions.length} 題相似三角形練習卷！`, "✨");
+
+      if (state.onlineMode) {
+        startTimer();
+      }
+    }
+
+    /* 渲染題目卡片與自適應每列欄數 (支援 1~4 欄) */
+    function renderQuestionsToDOM() {
+      const container = document.getElementById('problems-grid');
+      container.innerHTML = '';
+
+      const cols = state.colsPerRow;
+      if (cols === 1) {
+        container.className = "grid grid-cols-1 gap-6 print-col-1";
+      } else if (cols === 2) {
+        container.className = "grid grid-cols-1 md:grid-cols-2 gap-4 print-col-2";
+      } else if (cols === 3) {
+        container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 print-col-3";
+      } else {
+        container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 print-col-4";
+      }
+
+      const scratchHeight = (cols === 1) ? 'h-24' : (cols === 2 ? 'h-16' : (cols === 3 ? 'h-14' : 'h-12'));
+      const isOnline = state.onlineMode;
+      const showSol = state.showSolutions;
+
+      state.questions.forEach(q => {
+        const card = document.createElement('div');
+        card.className = "problem-card border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between bg-white relative transition-all hover:border-cyan-300";
+        card.id = `problem-card-${q.index}`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-1.5 mb-2 pb-1.5 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-slate-900 text-white text-[11px] font-bold flex items-center justify-center font-mono shrink-0">
+                  ${q.index}
+                </span>
+                <span class="text-[11px] font-bold text-slate-500 truncate max-w-[150px] sm:max-w-[220px]" title="${q.kpTitle}">
+                  ${q.kpTitle}
+                </span>
+              </div>
+              <span id="eval-badge-${q.index}" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+            </div>
+
+            <!-- 幾何向量圖形 (SVG) -->
+            <div class="my-1.5 py-1 bg-slate-50/60 rounded-lg flex items-center justify-center border border-slate-100/80">
+              ${q.svgHTML}
+            </div>
+
+            <!-- 題目內文 -->
+            <div class="text-xs sm:text-sm font-medium text-slate-800 leading-relaxed mb-2.5">
+              ${q.questionHTML}
+            </div>
+          </div>
+
+          <!-- 線上互動輸入框 -->
+          <div class="online-box ${isOnline ? 'block' : 'hidden'} no-print mt-2 pt-2 border-t border-dashed border-slate-200">
+            <div class="flex items-center gap-1.5">
+              <label class="text-xs text-cyan-900 font-semibold shrink-0">作答：</label>
+              <input type="text" id="ans-input-${q.index}" placeholder="輸入解答 (如 SSS 或 24 或 己)"
+                class="student-input text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 flex-grow focus:outline-none focus:ring-2 focus:ring-cyan-500 font-mono text-slate-900">
+            </div>
+          </div>
+
+          <!-- 紙本手寫點陣演算區 (依據每列欄數自適應高度) -->
+          <div class="scratch-grid mt-2 ${scratchHeight} rounded-lg border border-slate-200 p-2 text-[10px] text-slate-400 flex flex-col justify-between ${isOnline ? 'hidden' : 'block'}">
+            <div class="tracking-wider">幾何推理演算欄：</div>
+            <div class="text-right text-[11px] font-mono text-slate-400">答：________________</div>
+          </div>
+
+          <!-- 詳細解析步驟區塊 -->
+          <div id="solution-box-${q.index}" class="sol-container ${showSol ? 'block' : 'hidden'} mt-2.5 pt-2.5 border-t border-cyan-100 bg-cyan-50/70 -mx-3.5 -mb-3.5 p-3 rounded-b-xl text-xs text-slate-700 space-y-1">
+            <div class="flex items-center gap-1 text-cyan-950 font-bold">
+              <span>💡 正確解答：</span>
+              <span class="font-mono text-xs bg-white px-1.5 py-0.5 rounded border border-cyan-200">${q.answerText}</span>
+            </div>
+            <div class="text-slate-600 leading-relaxed pl-1 border-l-2 border-cyan-400 text-[11px]">
+              ${q.explanationHTML}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    /* 更新版面標頭與徽章資訊 */
+    function updateHeaderBadges() {
+      const diffTag = document.getElementById('paper-diff-tag');
+      const layoutTag = document.getElementById('paper-layout-tag');
+      const diffDesc = document.getElementById('diff-description');
+
+      layoutTag.innerText = `排版：每列 ${state.colsPerRow} 題`;
+
+      if (state.difficulty === 'basic') {
+        diffTag.innerText = "難度：基礎";
+        diffTag.className = "inline-block text-xs font-bold px-2.5 py-1 bg-cyan-50 text-cyan-800 border border-cyan-200 rounded-lg";
+        diffDesc.innerText = "基本整數對應邊成比例判斷、單純對頂角與母子相似判定。";
+      } else if (state.difficulty === 'standard') {
+        diffTag.innerText = "難度：標準精熟";
+        diffTag.className = "inline-block text-xs font-bold px-2.5 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-lg";
+        diffDesc.innerText = "分數倍率對應邊計算、翻轉型母子相似線段推導、六圖綜合配對。";
+      } else {
+        diffTag.innerText = "難度：挑戰";
+        diffTag.className = "inline-block text-xs font-bold px-2.5 py-1 bg-purple-50 text-purple-800 border border-purple-200 rounded-lg";
+        diffDesc.innerText = "多步驟比例幾何方程式、射影母子性質長度、複合幾何逆算。";
+      }
+    }
+
+    /* 線上自動寬容批改系統 (支援 SSS、SAS、AA、整數、分數、多項答案) */
+    function evaluateExam() {
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      let correct = 0;
+      let total = state.questions.length;
+
+      state.questions.forEach(q => {
+        const input = document.getElementById(`ans-input-${q.index}`);
+        const card = document.getElementById(`problem-card-${q.index}`);
+        const badge = document.getElementById(`eval-badge-${q.index}`);
+        const solBox = document.getElementById(`solution-box-${q.index}`);
+
+        if (!input) return;
+
+        let userAns = input.value.trim().replace(/\s+/g, '').toUpperCase();
+        let expected = q.expectedShort.trim().replace(/\s+/g, '').toUpperCase();
+        let isCorrect = (userAns === expected);
+
+        // 寬容包含比對 (例如解答是 "SSS"，學生輸入 "SSS相似" 或 "SSS性質")
+        if (!isCorrect && expected.length <= 4 && userAns.includes(expected)) {
+          isCorrect = true;
+        }
+
+        // 逗號多解順序寬容判別 (例如 "己, 丁, 戊")
+        if (!isCorrect && (userAns.includes(',') || expected.includes(','))) {
+          let uList = userAns.split(',').map(s => s.trim()).sort();
+          let eList = expected.split(',').map(s => s.trim()).sort();
+          if (uList.length === eList.length && uList.every((v, i) => v === eList[i])) {
+            isCorrect = true;
+          }
+        }
+
+        badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+        if (isCorrect) {
+          correct++;
+          badge.classList.add('bg-emerald-100', 'text-emerald-800');
+          badge.innerText = "✓ 正確";
+          card.classList.remove('border-rose-300');
+          card.classList.add('border-emerald-400');
+        } else {
+          badge.classList.add('bg-rose-100', 'text-rose-800');
+          badge.innerText = "✗ 訂正";
+          card.classList.remove('border-emerald-400');
+          card.classList.add('border-rose-300');
+        }
+
+        solBox.classList.remove('hidden');
+      });
+
+      const finalScore = Math.round((correct / total) * 100);
+      document.getElementById('exam-score-box').innerText = `${finalScore} 分`;
+      showToast(`批改完畢！得分：${finalScore} 分（答對 ${correct}/${total} 題）`, finalScore >= 80 ? "🎉" : "💪");
+    }
+
+    /* 計時器處理 */
+    function startTimer() {
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      state.startTime = Date.now();
+      const badge = document.getElementById('exam-timer-badge');
+      badge.classList.remove('hidden');
+
+      state.timerInterval = setInterval(() => {
+        const diffSec = Math.floor((Date.now() - state.startTime) / 1000);
+        const m = String(Math.floor(diffSec / 60)).padStart(2, '0');
+        const s = String(diffSec % 60).padStart(2, '0');
+        badge.innerText = `⏱️ ${m}:${s}`;
+      }, 1000);
+    }
+
+    /* 匯出 HTML 檔案輔助函式 */
+    function downloadBlob(content, filename) {
+      const blob = new Blob([content], { type: 'text/html;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* 匯出目前試卷為獨立單一 HTML 檔案 */
+    function exportCurrentHTML() {
+      const docClone = document.documentElement.cloneNode(true);
+      const htmlContent = "<!DOCTYPE html>\n" + docClone.outerHTML;
+      downloadBlob(htmlContent, `幾何練習卷_相似三角形判別性質_${Date.now()}.html`);
+      showToast("試卷已成功匯出為獨立 HTML 檔案！", "💾");
+    }
+
+    /* DOM 初始化與事件監聽 */
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      // 1. 難易度按鈕切換
+      document.querySelectorAll('.diff-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.diff-btn').forEach(b => {
+            b.className = "diff-btn py-1 px-1.5 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900";
+          });
+          btn.className = "diff-btn py-1 px-1.5 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-cyan-700";
+          state.difficulty = btn.dataset.diff;
+          updateHeaderBadges();
+          generateWorksheet();
+        });
+      });
+
+      // 2. 每列題數 (1~4 欄) 切換
+      document.querySelectorAll('.col-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.col-btn').forEach(b => {
+            b.className = "col-btn py-1 px-1 rounded-md text-xs font-medium transition text-center text-slate-600 hover:text-slate-900";
+          });
+          btn.className = "col-btn py-1 px-1 rounded-md text-xs font-bold transition text-center bg-white shadow-sm text-cyan-700";
+          state.colsPerRow = parseInt(btn.dataset.cols, 10);
+
+          const desc = document.getElementById('col-description');
+          if (state.colsPerRow === 1) desc.innerText = "每列 1 題：寬敞單欄，適合步驟繁複之幾何推導演算。";
+          else if (state.colsPerRow === 2) desc.innerText = "每列 2 題：標準補習班幾何雙欄，幾何圖形與作答草稿空間最適中。";
+          else if (state.colsPerRow === 3) desc.innerText = "每列 3 題：精緻三欄，省紙且適合隨堂密集抽測。";
+          else desc.innerText = "每列 4 題：高密度四欄，適合大量相似形辨識熟練度衝刺。";
+
+          renderQuestionsToDOM();
+          updateHeaderBadges();
+          showToast(`已切換為每列 ${state.colsPerRow} 題排版！`, "📐");
+        });
+      });
+
+      // 3. 數值型態 (整數、分數、小數)
+      ['int', 'frac', 'dec'].forEach(type => {
+        const el = document.getElementById(`cfg-type-${type}`);
+        el.addEventListener('change', () => {
+          state.types[type] = el.checked;
+          generateWorksheet();
+        });
+      });
+
+      // 4. 快捷批次設定按鈕
+      document.querySelectorAll('.btn-batch-count').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = parseInt(btn.dataset.val, 10);
+          batchSetKPCount(val);
+          generateWorksheet();
+        });
+      });
+
+      // 5. 線上作答模式切換
+      const onlineToggle = document.getElementById('cfg-online-mode');
+      const graderPanel = document.getElementById('online-grading-panel');
+      onlineToggle.addEventListener('change', () => {
+        state.onlineMode = onlineToggle.checked;
+        graderPanel.classList.toggle('hidden', !state.onlineMode);
+        document.querySelectorAll('.online-box').forEach(b => b.classList.toggle('hidden', !state.onlineMode));
+        document.querySelectorAll('.scratch-grid').forEach(s => s.classList.toggle('hidden', state.onlineMode));
+
+        if (state.onlineMode) {
+          startTimer();
+          showToast("已啟動線上作答與計時批改！", "⏱️");
+        } else {
+          if (state.timerInterval) clearInterval(state.timerInterval);
+          document.getElementById('exam-timer-badge').classList.add('hidden');
+        }
+      });
+
+      // 6. 線上提交與清空按鈕
+      document.getElementById('btn-submit-answers').addEventListener('click', evaluateExam);
+      document.getElementById('btn-clear-answers').addEventListener('click', () => {
+        document.querySelectorAll('.student-input').forEach(i => i.value = '');
+        document.querySelectorAll('[id^="eval-badge-"]').forEach(b => b.classList.add('hidden'));
+        document.getElementById('exam-score-box').innerText = '';
+        showToast("已清空所有作答欄位", "🔄");
+      });
+
+      // 7. 重新命題按鈕
+      document.getElementById('btn-regenerate').addEventListener('click', generateWorksheet);
+
+      // 8. 解答切換按鈕
+      document.getElementById('btn-toggle-solutions').addEventListener('click', () => {
+        state.showSolutions = !state.showSolutions;
+        const icon = document.getElementById('sol-icon');
+        const txt = document.getElementById('sol-text');
+        if (state.showSolutions) {
+          icon.innerText = "🙈";
+          txt.innerText = "隱藏解析";
+        } else {
+          icon.innerText = "👁️";
+          txt.innerText = "顯示解析";
+        }
+        document.querySelectorAll('.sol-container').forEach(c => c.classList.toggle('hidden', !state.showSolutions));
+      });
+
+      // 9. 列印學用版（隱藏解答與線上輸入框）
+      document.getElementById('btn-print-questions').addEventListener('click', () => {
+        document.querySelectorAll('.sol-container').forEach(b => b.classList.add('hidden'));
+        document.querySelectorAll('.online-box').forEach(b => b.classList.add('hidden'));
+        document.querySelectorAll('.scratch-grid').forEach(s => s.classList.remove('hidden'));
+        window.print();
+        if (state.showSolutions) {
+          document.querySelectorAll('.sol-container').forEach(b => b.classList.remove('hidden'));
+        }
+      });
+
+      // 10. 列印教用版（展開詳細解析步驟）
+      document.getElementById('btn-print-answers').addEventListener('click', () => {
+        document.querySelectorAll('.sol-container').forEach(b => b.classList.remove('hidden'));
+        window.print();
+      });
+
+      // 11. 匯出獨立 HTML
+      document.getElementById('btn-export-html').addEventListener('click', exportCurrentHTML);
+
+      // 初始渲染
+      renderKnowledgePointsGrid();
+      generateWorksheet();
+    });
+  </script>
+</body>
+</html>
