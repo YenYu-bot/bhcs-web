@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#176b55">
+<title>百宏文教｜概算與估算 出題器</title>
+<meta name="description" content="國小數學「概算與估算」計算力練習出題器：無條件進入法、無條件捨去法、四捨五入法取概數，整數與小數的加減概算、乘除估算，可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/estimation.html">
+<meta property="og:title" content="百宏文教｜概算與估算 出題器">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/estimation.html">
+<meta property="og:type" content="website">
+<style>
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg);font-size:15px}
+button,input,select{font:inherit}button,select,input[type=checkbox]{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f2ad47;outline-offset:2px}
+
+/* 品牌列 */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px clamp(14px,3vw,32px);color:#fff;background:var(--bhcs-green2);border-bottom:4px solid var(--bhcs-mint)}
+.top .brand{display:flex;align-items:center;gap:12px}
+.top .logo{flex:0 0 44px;width:44px;height:44px;border-radius:11px;background:var(--bhcs-mint);color:var(--bhcs-green2);display:grid;place-items:center;font:900 24px Georgia,serif}
+.top h1{margin:0;font-size:18px;font-weight:800}.top h1 b{color:var(--bhcs-mint);font-weight:800}
+.top p{margin:2px 0 0;font-size:12.5px;color:#c8e8df}
+.top a.back{color:#c8e8df;font-size:13px;text-decoration:none;white-space:nowrap}.top a.back:hover{color:#fff}
+
+/* 控制面板 */
+.panel{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--bhcs-line);padding:10px clamp(12px,3vw,28px);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-start}
+.grp{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border:1px solid #d9e0e6;border-radius:8px;background:#f8fafb}
+.grp>b{font-size:13.5px;color:var(--bhcs-green2)}
+.line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px}
+.line label{display:flex;align-items:center;gap:4px;white-space:nowrap}
+select,input[type=number]{padding:3px 6px;border:1px solid #b7bfc7;border-radius:5px;background:#fff}
+input[type=number]{width:52px}
+.mods{display:grid;grid-template-columns:repeat(3,auto);gap:5px 14px}
+.mods label{display:flex;align-items:center;gap:4px;font-size:14px;white-space:nowrap}
+.mods input[type=number]{width:48px}
+.presets{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--bhcs-muted);flex-wrap:wrap}
+.presets button{padding:2px 9px;font-size:12.5px;border-radius:999px;border:1px solid var(--bhcs-line);background:#fff;color:var(--bhcs-ink)}
+.presets button.zero{color:var(--bhcs-red)}
+.actions{display:flex;gap:8px;align-items:flex-end;align-self:stretch}
+.btn{padding:9px 18px;border-radius:7px;border:1px solid var(--bhcs-green);background:var(--bhcs-green);color:#fff;font-weight:700}
+.btn.ghost{background:#fff;color:var(--bhcs-green)}
+.btn:hover{filter:brightness(1.06)}
+.note{width:100%;font-size:12.5px;color:var(--bhcs-muted);margin:-2px 0 0}
+
+/* 卷面 */
+.sheet{background:#fff;width:210mm;min-height:297mm;margin:14px auto;padding:12mm 12mm;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.head{border-bottom:2px solid var(--bhcs-green);padding-bottom:4px;margin-bottom:8px}
+.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:var(--bhcs-muted);line-height:1.3;margin:0 0 3px}
+.bhcs-brand b{color:var(--bhcs-green);font-weight:800;font-size:12px;letter-spacing:.5px}
+.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}
+.head h2{margin:0;font-size:20px}
+.head span{display:block;margin-top:2px;font-size:14px}
+.sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:var(--bhcs-soft);padding:4px 10px;border-left:5px solid var(--bhcs-green);break-after:avoid}
+.tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}
+.grid{display:grid;gap:0 5mm}.grid.c2{grid-template-columns:repeat(2,1fr)}.grid.c3{grid-template-columns:repeat(3,1fr)}.grid.c4{grid-template-columns:repeat(4,1fr)}
+.prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}
+.prob.wide{grid-column:1/-1}
+.q{font-size:15.5px;line-height:1.9;display:flex;gap:4px;align-items:baseline;flex-wrap:wrap}
+.q .no{flex:none;color:#555;width:2em}
+.q .cond{font-size:12.5px;color:#456;background:#f1f5f3;border-radius:4px;padding:0 6px;line-height:1.7}
+.expr{white-space:nowrap;letter-spacing:.3px}
+.work{font-size:14px;color:#333;margin-top:2mm;min-height:var(--work,16mm);display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap}
+.work .ans{color:var(--bhcs-red);font-weight:700;font-size:15px}
+.work .steps{color:#7a4b12;font-size:13px;width:100%;line-height:1.5}
+.student .ans,.student .steps,.student .hit{display:none!important}
+/* 表格題 */
+table.rt{border-collapse:collapse;width:100%;margin:4px 0 2px;font-size:14px;table-layout:fixed}
+table.rt th,table.rt td{border:1px solid #333;padding:4px 6px;text-align:center;height:8.5mm}
+table.rt th{background:#f3f6f5;font-weight:600}
+table.rt td.ans{font-weight:700;color:var(--bhcs-red)}
+table.rt .corner{font-size:12px;line-height:1.3;text-align:left}
+/* 圈選題 */
+.pick{display:flex;flex-wrap:wrap;gap:4px 14px;padding:6px 8px;border:1.5px solid #4c7fb6;border-radius:5px;margin:4px 0 2px;font-size:15px;line-height:1.6}
+.pick span{padding:0 3px}
+.pick span.hit{border:2px solid var(--bhcs-red);border-radius:999px;color:var(--bhcs-red);font-weight:700}
+.blank{display:inline-block;min-width:80px;border-bottom:1px solid #333}
+.box{display:inline-block;width:1.1em;height:1.1em;border:1.5px solid #333;vertical-align:-2px;margin:0 1px}
+.empty{padding:20px;text-align:center;color:var(--bhcs-muted)}
+
+@media (max-width:720px){.sheet{width:auto;padding:14px;margin:10px}.grid.c3,.grid.c4{grid-template-columns:repeat(2,1fr)}.mods{grid-template-columns:repeat(2,auto)}}
+@media (max-width:460px){.grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr}.mods{grid-template-columns:1fr}}
+
+@page{size:A4 portrait;margin:8mm 8mm 9mm}
+@media print{
+  body{background:#fff}
+  .panel,.top,.no-print{display:none!important}
+  .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}
+  html,body{font-size:10pt}
+  .head h2{font-size:15pt}.head span{font-size:10pt}
+  .bhcs-brand{font-size:8pt;margin-bottom:2px}.bhcs-brand b{font-size:9pt;color:#000}.bhcs-brand i{font-size:7.5pt}
+  .q{font-size:11pt}.work{font-size:10pt}.tip{font-size:8.5pt}.sec{font-size:11pt;padding:2px 8px;margin:8px 0 3px}
+  .grid.c2,.grid.c3,.grid.c4{}
+  .q .cond{background:none;border:1px solid #999}
+}
+</style>
+</head>
+<body class="student">
+<header class="top no-print">
+  <div class="brand"><div class="logo">≒</div><div><h1><b>百宏文教｜</b>概算與估算 出題器</h1><p>取概數（進入／捨去／四捨五入）・概數表格・圈選範圍・加減概算・整數與小數的乘除估算・求商到指定位</p></div></div>
+  <a class="back" href="../ziyuan.html">← 回百宏學習資源</a>
+</header>
+
+<div class="panel no-print">
+  <div class="grp"><b>版面</b><div class="line">
+    <label>版本 <select id="version"><option value="student">學用版</option><option value="teacher">教用版（紅字答案）</option></select></label>
+    <label>每列 <select id="perRow"><option value="2">2 題</option><option value="3" selected>3 題</option><option value="4">4 題</option></select></label>
+    <label>作答空間 <select id="work"><option value="10">小</option><option value="16" selected>中</option><option value="26">大</option></select></label>
+  </div></div>
+  <div class="grp"><b>難度與數的類型</b><div class="line">
+    <label>難度 <select id="diff"><option value="1">基礎</option><option value="2" selected>進階</option><option value="3">挑戰</option></select></label>
+    <label><input type="checkbox" id="tInt" checked> 整數</label>
+    <label><input type="checkbox" id="tDec" checked> 小數</label>
+    <label title="本單元教材不含分數取概數，故不提供"><input type="checkbox" disabled> 分數（本單元不適用）</label>
+  </div></div>
+  <div class="grp"><b>單元與題數</b><div class="mods" id="mods"></div>
+    <div class="presets">快速預設：<button type="button" data-n="1">各 1 題</button><button type="button" data-n="2">各 2 題</button><button type="button" data-n="3">各 3 題</button><button type="button" class="zero" data-n="0">全歸零</button></div>
+  </div>
+  <div class="actions"><button class="btn" id="gen">重新出題</button><button class="btn ghost" id="print">列印 / 存 PDF</button></div>
+  <p class="note">基礎：整數 3～4 位、小數 1～2 位，只用四捨五入法；進階：整數 4～6 位、小數 3 位，三種取概數法混用；挑戰：整數 6～7 位、小數 4 位，含進位造成 9→10 的陷阱題與求商到小數第一位。</p>
+</div>
+
+<div id="out"></div>
+
+<script id="core">
+/* =========================================================
+   概算與估算 出題核心（純邏輯，不碰 DOM；可在 Node 直接測試）
+   數的表示：{v: 整數, s: 小數位數}，值 = v / 10^s，全程整數運算避免浮點誤差
+   ========================================================= */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const coin=(p=.5)=>Math.random()<p;
+const P10=n=>{let r=1;for(let i=0;i<n;i++)r*=10;return r;};
+
+const METHODS={up:'無條件進入法',down:'無條件捨去法',half:'四捨五入法'};
+/* 位名：t = 取到 10^-t 位。t<0 為整數位，t>=0 為小數位 */
+const POS={'-5':'十萬位','-4':'萬位','-3':'千位','-2':'百位','-1':'十位','0':'個位','1':'十分位','2':'百分位','3':'千分位'};
+const POS2={'0':'個位','1':'小數第一位','2':'小數第二位','3':'小數第三位'};
+
+/* 數字物件 */
+const D=(v,s=0)=>({v,s});
+function fmt(x){ /* 保留尾端 0（12.550） */
+  const neg=x.v<0, a=Math.abs(x.v);
+  if(x.s===0) return (neg?'−':'')+String(a);
+  const str=String(a).padStart(x.s+1,'0');
+  return (neg?'−':'')+str.slice(0,-x.s)+'.'+str.slice(-x.s);
+}
+function toScale(x,s){ /* 換算到指定小數位數（只能放大） */
+  if(s<x.s) throw new Error('toScale shrink');
+  return D(x.v*P10(s-x.s),s);
+}
+/* 取概數：x 取到 10^-t 位；回傳的 s = max(t,0)，t<0 時 v 已是整數且末尾補 0 */
+function roundTo(x,t,method){
+  const p=x.s-t;                       /* 要去掉的位數 */
+  if(p<=0){ return toScale(x,Math.max(t,0)); }
+  const unit=P10(p), q=Math.floor(x.v/unit), r=x.v-q*unit;
+  let k=q;
+  if(method==='half'){ if(r>=unit/2) k++; }
+  else if(method==='up'){ if(r>0) k++; }
+  /* down: 不動 */
+  if(t<0) return D(k*P10(-t),0);
+  return D(k,t);
+}
+const val=x=>x.v/P10(x.s);
+function digitsOf(n){return String(Math.abs(n)).length;}
+/* 從高位取 k 位（四捨五入）：等於取到 10^(digits-k) 位 */
+function roundSig(x,k,method='half'){
+  const dInt=digitsOf(Math.floor(val(x)));
+  return roundTo(x,-(dInt-k),method);
+}
+/* 產生 n 位整數（首位非 0）；可指定必須含「非平凡」低位 */
+function intN(n){return rnd(P10(n-1),P10(n)-1);}
+/* 產生 s 位小數，整數部分 i 位 */
+function decN(i,s){return D(intN(i+s),s);}
+/* 去掉一個數字後某位以下全是 0 的情形（讓取概數有意義） */
+function lowerNonZero(x,t){const p=x.s-t;if(p<=0)return true;return (x.v%P10(p))!==0;}
+/* 「反取概數」：給定概數 r（取到 t 位），造一個原始數 x（有 extra 位額外小數/低位），使 roundTo(x,t,method)=r */
+function unround(r,t,extra,method){
+  /* t<0：x 是整數，概數單位 = 10^(-t)，低位隨機；t>=0：x 比概數多 extra 位小數 */
+  const unit = t<0 ? P10(-t) : P10(extra);
+  const base = t<0 ? r.v/P10(-t) : r.v;       /* 概數在「單位」下的計數 */
+  let lo,hi;                                   /* 允許的偏移範圍（相對 base*unit） */
+  if(method==='half'){lo=-Math.floor(unit/2)+1;hi=Math.floor(unit/2)-1;}
+  else if(method==='up'){lo=-(unit-1);hi=-1;}
+  else {lo=1;hi=unit-1;}
+  const off=rnd(lo,hi);
+  return t<0 ? D(base*unit+off,0) : D(base*unit+off,t+extra);
+}
+
+/* ---------- 各單元 ---------- */
+const GEN={};
+/* 難度參數 */
+function methodsFor(d){return d===1?['half']:['half','up','down'];}
+
+/* 1. 取概數（整數） */
+GEN.rint={name:'取概數（整數）',tip:'先找到指定位數，看「下一位」的數字：無條件進入法只要後面不全是 0 就進 1；無條件捨去法一律捨去；四捨五入法看下一位，5 以上進 1、4 以下捨去。',
+  gen(d,types){
+    if(!types.int) return null;
+    const n=d===1?rnd(3,4):d===2?rnd(4,6):rnd(6,7);
+    const method=pick(methodsFor(d));
+    const tOpts=d===1?[-1,-2]:d===2?[-2,-3,-4]:[-3,-4,-5];
+    const t=pick(tOpts.filter(t=>-t<n));
+    let x=D(intN(n));
+    if(d===3&&coin(.3)){ /* 陷阱：進位使 9 變 10，例如 99999 → 100000 */
+      const low=-t; const hiPart=P10(n)-P10(low);   /* 高位全 9，例如 99999 */
+      x= method==='half' ? D(hiPart+rnd(5*P10(low-1),P10(low)-1))
+       : D(hiPart+rnd(1,P10(low)-1));
+    }
+    if(!lowerNonZero(x,t)) return null;
+    const r=roundTo(x,t,method);
+    return {q:`${fmt(x)}`,cond:`${METHODS[method]}，取到${POS[t]}`,ans:fmt(r),key:'rint'+fmt(x)+method+t};
+  }};
+/* 2. 取概數（小數） */
+GEN.rdec={name:'取概數（小數）',tip:'小數取概數的方法和整數相同。取概數後指定位數若是 0，要寫出來（12.550 不可寫成 12.55）。',
+  gen(d,types){
+    if(!types.dec) return null;
+    const s=d===1?rnd(2,3):d===2?3:4, i=rnd(1,3);
+    const method=pick(methodsFor(d));
+    const t=pick(d===1?[0,1]:d===2?[0,1,2]:[1,2,3].filter(t=>t<s));
+    let x=decN(i,s);
+    if(d===3&&coin(.3)){ /* 陷阱：9.9992 四捨五入到千分位 → 10.000 */
+      const digits=i+s; const hiPart=P10(digits)-P10(s-t);
+      x=D(hiPart+(method==='down'?rnd(1,P10(s-t)-1):rnd(Math.ceil(P10(s-t)/2),P10(s-t)-1)),s);
+    }
+    if(!lowerNonZero(x,t)) return null;
+    const r=roundTo(x,t,method);
+    return {q:fmt(x),cond:`${METHODS[method]}，取到${POS2[t]}`,ans:fmt(r),key:'rdec'+fmt(x)+method+t};
+  }};
+/* 3. 概數表格 */
+GEN.table={name:'概數表格',tip:'同一個數取到不同位數，答案會不一樣；每一格都要重新看「下一位」再決定進或捨。',wide:true,
+  gen(d,types){
+    if(!types.dec) return null;
+    const s=d===1?2:d===2?3:4;
+    const cols=[]; for(let c=0;c<4;c++) cols.push(decN(rnd(1,3),s));
+    const rows=[0,1,2,3].filter(t=>t<s);
+    const method=d===3?pick(['half','up','down']):'half';
+    const cells=rows.map(t=>cols.map(x=>fmt(roundTo(x,t,method))));
+    return {table:{method,cols:cols.map(fmt),rows:rows.map(t=>'取到'+POS2[t]),cells},
+      cond:`用${METHODS[method]}取概數到指定位數`,ans:cells.map(r=>r.join('｜')).join(' ／ '),key:'tbl'+cols.map(fmt).join(',')};
+  }};
+/* 4. 圈選範圍 / 填填看 */
+GEN.range={name:'圈選範圍與填填看',tip:'四捨五入到某一位得到 A，原數一定落在「A 減半個單位（含）」到「A 加半個單位（不含）」之間，例如取到十分位是 4.0 的數在 3.95～4.049…。',wide:true,
+  gen(d,types){
+    if(!types.dec) return null;               /* 圈選與填填看都以小數為主 */
+    if(coin(.5)||d===1){ /* 圈選 */
+      const t=d===1?1:d===2?pick([1,2]):pick([0,1,2]);
+      const target=t===0?D(rnd(3,20)):t===1?D(rnd(20,150),1):D(rnd(200,999),2);
+      const method= d===3?pick(['half','half','down','up']):'half';
+      /* 候選：target 前後各 9 個（步長 = 下一位單位） */
+      const s=t+1; const center=target.v*10; const list=[];
+      for(let k=-9;k<=9;k++){ if(k===0&&method==='half')continue; list.push(D(center+k,s)); }
+      const hits=list.map(x=>fmt(roundTo(x,t,method))===fmt(target));
+      if(!hits.some(Boolean)) return null;
+      return {pick:{items:list.map(fmt),hits},cond:`哪些數用${METHODS[method]}取概數到${POS[t]}的結果是 ${fmt(target)}？把它們圈起來`,
+        ans:list.filter((x,i)=>hits[i]).map(fmt).join('、'),key:'pick'+fmt(target)+method+t};
+    }else{ /* 填填看：有一個三位小數「8.25□」，四捨五入到小數第二位是 8.25，□可填哪些數字 */
+      const s=d===2?pick([1,2]):pick([1,2,3]);
+      const base=decN(rnd(1,2),s);            /* 顯示的前面部分 */
+      const hidden=rnd(0,9);
+      const x=D(base.v*10+hidden,s+1);
+      const r=roundTo(x,s,'half');
+      const digits=[];for(let k=0;k<=9;k++){ if(fmt(roundTo(D(base.v*10+k,s+1),s,'half'))===fmt(r)) digits.push(k); }
+      return {fill:{shown:fmt(base),s},cond:`有一個 ${s+1} 位小數「${fmt(base)}□」，用四捨五入法取概數到小數第${['一','二','三'][s-1]}位是 ${fmt(r)}，□中可填入 0～9 哪些數字？`,
+        ans:digits.join('、'),key:'fill'+fmt(base)+fmt(r)};
+    }
+  }};
+/* 5. 加減概算 */
+GEN.addsub={name:'加減概算',tip:'先把每個數分別取概數，再依原來的加減順序計算；沒有指定方法時，一般用四捨五入法。答案要寫「≒」。',
+  gen(d,types){
+    const useDec=types.dec&&(!types.int||coin(.4));
+    if(!types.int&&!types.dec) return null;
+    const method=pick(methodsFor(d));
+    const n=d===1?2:d===2?pick([2,3]):3;
+    let t,nums;
+    if(useDec){ const s=d===1?2:d===2?3:pick([3,4]); t=pick([0,1,2].filter(k=>k<s)); nums=Array.from({length:n},()=>decN(rnd(1,2),s)); }
+    else{ const dg=d===1?rnd(3,4):d===2?rnd(4,5):rnd(5,6); t=pick(d===1?[-1,-2]:d===2?[-2,-3]:[-3,-4]); nums=Array.from({length:n},()=>D(intN(dg))); }
+    if(!nums.every(x=>lowerNonZero(x,t))) return null;
+    const ops=[];for(let i=1;i<n;i++)ops.push(d===1&&i===1?pick(['+','−']):pick(['+','−']));
+    const rs=nums.map(x=>roundTo(x,t,method));
+    if(rs.some(r=>r.v===0)) return null;
+    /* 逐項計算（同 s） */
+    const S=rs[0].s; let acc=rs[0].v;
+    for(let i=1;i<n;i++){ acc = ops[i-1]==='+'? acc+rs[i].v : acc-rs[i].v; if(acc<=0) return null; }
+    const expr=nums.map((x,i)=>(i?` ${ops[i-1]} `:'')+fmt(x)).join('');
+    const steps=rs.map((r,i)=>(i?` ${ops[i-1]} `:'')+fmt(r)).join('')+' ＝ '+fmt(D(acc,S));
+    return {q:expr,cond:`${METHODS[method]}取概數到${POS[t]}，再計算`,ans:'≒ '+fmt(D(acc,S)),steps,key:'as'+expr+method+t};
+  }};
+/* 6. 整數乘法估算 */
+GEN.mul={name:'整數乘法估算',tip:'用四捨五入法從高位各取一位或二位，把位值上的 0 歸一邊、非 0 的數字相乘，最後再把所有的 0 補寫在積的右邊。',
+  gen(d,types){
+    if(!types.int) return null;
+    const k=d===1?1:d===2?pick([1,2]):2;
+    const da=d===1?rnd(3,4):d===2?rnd(4,5):rnd(4,6), db=d===1?rnd(2,3):d===2?rnd(3,4):rnd(3,5);
+    const a=D(intN(da)), b=D(intN(db));
+    if(!lowerNonZero(a,-(da-k))||!lowerNonZero(b,-(db-k))) return null;
+    const ra=roundSig(a,k), rb=roundSig(b,k);
+    const prod=ra.v*rb.v;
+    return {q:`${fmt(a)} × ${fmt(b)}`,cond:`四捨五入法從高位各取${k===1?'一':'二'}位再計算`,ans:'≒ '+prod,steps:`${fmt(ra)} × ${fmt(rb)} ＝ ${prod}`,key:'mul'+fmt(a)+fmt(b)+k};
+  }};
+/* 7. 整數除法估算（商計算到個位） */
+GEN.div={name:'整數除法估算',tip:'用四捨五入法從高位各取一位或二位後，被除數和除數同時去掉相同個數的 0 再除；商計算到個位，有餘數也只寫商。',
+  gen(d,types){
+    if(!types.int) return null;
+    const k=d===1?1:d===2?pick([1,2]):2;
+    /* 先造概數：除數概數 rb（k 位有效 × 10^m），商 q，被除數概數 = rb×q（基礎：整除；進階以上：可加餘數） */
+    const m=d===1?rnd(1,2):d===2?rnd(1,3):rnd(2,3);
+    const sigB=k===1?rnd(2,9):rnd(11,99);
+    const rbv=sigB*P10(m);
+    const q=d===1?rnd(2,9):d===2?rnd(2,19):rnd(3,29);
+    const rem=d===1?0:(coin(.6)?rnd(1,sigB-1)*P10(m):0);   /* 餘數必須小於除數概數 */
+    const rav=rbv*q+rem;
+    /* 反取概數（各取 k 位）：低位隨機但四捨五入後回到概數 */
+    const db=digitsOf(rbv), da=digitsOf(rav);
+    const b=unround(D(rbv),-(db-k),db-k,'half');
+    const a=unround(D(rav),-(da-k),da-k,'half');
+    if(digitsOf(b.v)!==db||digitsOf(a.v)!==da) return null;
+    /* 驗證：取概數後真的回到 rav/rbv */
+    if(roundSig(a,k).v!==rav||roundSig(b,k).v!==rbv) return null;
+    if(a.v<=b.v) return null;
+    const ansQ=Math.floor(rav/rbv);
+    return {q:`${fmt(a)} ÷ ${fmt(b)}`,cond:`四捨五入法從高位各取${k===1?'一':'二'}位，商計算到個位`,ans:'≒ '+ansQ,
+      steps:`${rav} ÷ ${rbv} ＝ ${ansQ}${rem?`…${rem}`:''}`,key:'div'+fmt(a)+fmt(b)+k};
+  }};
+/* 8. 小數乘除估算 */
+GEN.decmuldiv={name:'小數乘除估算',tip:'先把被乘數與乘數（或被除數與除數）都用四捨五入法取概數到指定位數，再求積或商。',
+  gen(d,types){
+    if(!types.dec) return null;
+    const t=d===1?1:d===2?pick([1,2]):2;          /* 取到小數第 t 位 */
+    const extra=d===3?2:1;                          /* 原數比概數多的位數 */
+    if(coin(.5)){ /* 乘法 */
+      const ra=D(rnd(P10(t)+1,d===1?9*P10(t):99*P10(t)),t), rb=D(rnd(P10(t)+1,d===1?9*P10(t):(d===2?30:99)*P10(t)),t);
+      const a=unround(ra,t,extra,'half'), b=unround(rb,t,extra,'half');
+      if(fmt(roundTo(a,t,'half'))!==fmt(ra)||fmt(roundTo(b,t,'half'))!==fmt(rb)) return null;
+      const prod=D(ra.v*rb.v,2*t);
+      return {q:`${fmt(a)} × ${fmt(b)}`,cond:`四捨五入法取概數到小數第${['一','二'][t-1]}位再計算`,ans:'≒ '+fmt(prod),steps:`${fmt(ra)} × ${fmt(rb)} ＝ ${fmt(prod)}`,key:'dm'+fmt(a)+fmt(b)+t};
+    }else{ /* 除法：先造除數概數 rb 與整數商 q，被除數概數 = rb×q，再反取概數 → 概數相除必整除 */
+      const rb=D(rnd(P10(t)+1,d===1?9*P10(t):(d===2?30:99)*P10(t)),t);
+      const q=d===1?rnd(2,9):rnd(2,19);
+      const ra=D(rb.v*q,t);
+      const a=unround(ra,t,extra,'half'), b=unround(rb,t,extra,'half');
+      if(fmt(roundTo(a,t,'half'))!==fmt(ra)||fmt(roundTo(b,t,'half'))!==fmt(rb)) return null;
+      return {q:`${fmt(a)} ÷ ${fmt(b)}`,cond:`四捨五入法取概數到小數第${['一','二'][t-1]}位再計算`,ans:'≒ '+q,steps:`${fmt(ra)} ÷ ${fmt(rb)} ＝ ${q}`,key:'dd'+fmt(a)+fmt(b)+t};
+    }
+  }};
+/* 9. 求商到指定位（直接除，商四捨五入） */
+GEN.quot={name:'四捨五入法求商到指定位',tip:'先把商算到「指定位的下一位」，再用四捨五入法取到指定位。求商到個位要算到十分位，求商到小數第一位要算到小數第二位。',
+  gen(d,types){
+    if(!types.int) return null;
+    const toDec=d===3?coin(.5):(d===2&&coin(.3));
+    const t=toDec?1:0;
+    const b=intN(d===1?2:d===2?rnd(2,3):rnd(3,4));
+    const a=intN(d===1?3:d===2?rnd(3,4):rnd(4,5));
+    if(a<=b) return null;
+    /* 商到 t+1 位（截尾），再四捨五入到 t 位 */
+    const scaled=Math.floor(a*P10(t+1)/b);         /* 商 × 10^(t+1)，截尾 */
+    const qx=D(scaled,t+1);
+    if(!lowerNonZero(qx,t)) return null;             /* 避免恰好整除，題目沒意義 */
+    const r=roundTo(qx,t,'half');
+    return {q:`${a} ÷ ${b}`,cond:`四捨五入法求商到${t===0?'個位':'小數第一位'}`,ans:'≒ '+fmt(r),steps:`商算到${t===0?'十分位':'小數第二位'}：${fmt(qx)}…，四捨五入得 ${fmt(r)}`,key:'qt'+a+'/'+b+t};
+  }};
+
+const ORDER=['rint','rdec','table','range','addsub','mul','div','decmuldiv','quot'];
+const DEF={rint:6,rdec:6,table:1,range:2,addsub:4,mul:3,div:3,decmuldiv:4,quot:3};
+
+/* 產生一份卷：counts = {key:n}；回傳 [{key,name,tip,items:[...]}] */
+function buildPaper(diff,types,counts){
+  const parts=[], seen=new Set();
+  ORDER.forEach(k=>{
+    const n=counts[k]|0; if(!n) return;
+    const items=[]; let guard=0;
+    while(items.length<n&&guard<400){ guard++;
+      const it=GEN[k].gen(diff,types);
+      if(!it) continue;
+      if(seen.has(it.key)) continue;
+      seen.add(it.key); items.push(it);
+    }
+    if(items.length) parts.push({key:k,name:GEN[k].name,tip:GEN[k].tip,wide:!!GEN[k].wide,items});
+  });
+  return parts;
+}
+if(typeof module!=='undefined') module.exports={roundTo,roundSig,fmt,D,GEN,buildPaper,ORDER,DEF,unround,P10};
+</script>
+
+<script id="ui">
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+let paper=[];
+
+$('mods').innerHTML=ORDER.map(k=>`<label><input type="checkbox" id="on_${k}" checked> ${GEN[k].name} <input type="number" id="n_${k}" value="${DEF[k]}" min="0" max="40"></label>`).join('');
+document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>{const n=+b.dataset.n;ORDER.forEach(k=>{$('n_'+k).value=n;$('on_'+k).checked=n>0;});generate();}));
+
+function readCounts(){const c={};ORDER.forEach(k=>{c[k]=$('on_'+k).checked?Math.min(40,Math.max(0,+$('n_'+k).value||0)):0;});return c;}
+function generate(){
+  const diff=+$('diff').value, types={int:$('tInt').checked,dec:$('tDec').checked};
+  if(!types.int&&!types.dec){alert('整數與小數至少要勾選一種。');return;}
+  paper=buildPaper(diff,types,readCounts());
+  render();
+}
+function itemHtml(it,no){
+  let body='';
+  if(it.table){
+    const tb=it.table;
+    body=`<div class="q"><span class="no">(${no})</span><span class="cond">${esc(it.cond)}</span></div>
+      <table class="rt"><tr><th class="corner">原來的小數 ↘<br>指定位數 ↓</th>${tb.cols.map(c=>`<th>${c}</th>`).join('')}</tr>
+      ${tb.rows.map((r,i)=>`<tr><th>${r}</th>${tb.cells[i].map(v=>`<td class="ans">${v}</td>`).join('')}</tr>`).join('')}</table>`;
+    return `<div class="prob wide">${body}</div>`;
+  }
+  if(it.pick){
+    body=`<div class="q"><span class="no">(${no})</span><span>${esc(it.cond)}：</span></div>
+      <div class="pick">${it.pick.items.map((v,i)=>`<span class="${it.pick.hits[i]?'hit':''}">${v}</span>`).join('')}</div>`;
+    return `<div class="prob wide">${body}</div>`;
+  }
+  if(it.fill){
+    body=`<div class="q"><span class="no">(${no})</span><span>${esc(it.cond).replace('□','<span class="box"></span>')}（<span class="blank"><span class="ans">${esc(it.ans)}</span></span>）</span></div>`;
+    return `<div class="prob wide">${body}</div>`;
+  }
+  return `<div class="prob"><div class="q"><span class="no">(${no})</span><span class="expr">${it.q}</span><span class="cond">${esc(it.cond)}</span></div>
+    <div class="work">答：<span class="ans">${esc(it.ans)}</span>${it.steps?`<span class="steps">${esc(it.steps)}</span>`:''}</div></div>`;
+}
+function render(){
+  const teacher=$('version').value==='teacher';
+  document.body.className=teacher?'teacher':'student';
+  const cols=$('perRow').value, work=$('work').value;
+  const diffName=['','基礎','進階','挑戰'][+$('diff').value];
+  const total=paper.reduce((a,p)=>a+p.items.length,0);
+  if(!total){$('out').innerHTML='<div class="sheet"><div class="empty">請至少勾選一個單元並設定題數，再按「重新出題」。</div></div>';return;}
+  let no=0;
+  const secs=paper.map(p=>`<div class="sec">${esc(p.name)}</div><p class="tip">${esc(p.tip)}</p>
+    <div class="grid ${p.wide?'c2':'c'+cols}" style="--work:${work}mm">${p.items.map(it=>itemHtml(it,++no)).join('')}</div>`).join('');
+  $('out').innerHTML=`<div class="sheet">
+    <div class="head">
+      <div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div>
+      <h2>概算與估算 計算力練習（${diffName}）${teacher?'　教用版':''}</h2>
+      <span>班級：______　姓名：__________　日期：___／___　作答時間：___分___秒　　共 ${total} 題</span>
+    </div>
+    <p class="tip">取概數的題目請寫出概數；估算的題目請先寫出取概數後的算式，再寫答案並加上「≒」。</p>
+    ${secs}</div>`;
+}
+$('gen').addEventListener('click',generate);
+$('print').addEventListener('click',()=>window.print());
+['version','perRow','work'].forEach(id=>$(id).addEventListener('change',render));
+generate();
+</script>
+</body>
+</html>
