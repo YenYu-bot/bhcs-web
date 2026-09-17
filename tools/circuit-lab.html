@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>電路虛擬實驗室｜串聯、並聯與歐姆定律｜百宏文教</title>
+<meta name="description" content="免費電路虛擬實驗室。先預測再通電，比較開路、單一負載、串聯與並聯電路的電流、電壓、電阻和功率，並完成實驗紀錄與學習檢核。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/circuit-lab.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="電路虛擬實驗室｜百宏文教">
+<meta property="og:description" content="動手改變電池、電阻與接法，從讀值理解串聯、並聯、開路與短路。">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/circuit-lab.html">
+<meta property="og:image" content="https://www.bhcs.com.tw/assets/og.jpg">
+<style>
+:root{--navy:#102a43;--blue:#1769aa;--blue2:#eaf5ff;--teal:#14847b;--green:#18794e;--amber:#d97706;--red:#c2413b;--ink:#243447;--muted:#637489;--line:#d8e2ec;--paper:#fff;--bg:#f4f8fb;--shadow:0 12px 32px rgba(16,42,67,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei","PingFang TC",system-ui,sans-serif;line-height:1.65}button,select,input{font:inherit}button,select{min-height:44px}button{cursor:pointer}.shell{width:min(1180px,calc(100% - 32px));margin:auto}
+.topbar{background:var(--navy);color:#fff}.topbar .shell{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{color:#fff;text-decoration:none;font-weight:800;font-size:1.12rem}.brand small{font-weight:500;opacity:.72;margin-left:8px}.back{color:#fff;text-underline-offset:4px}
+.hero{background:linear-gradient(135deg,#eaf6ff 0%,#fff8e7 100%);border-bottom:1px solid var(--line);padding:34px 0 28px}.eyebrow{color:var(--blue);font-weight:800;letter-spacing:.08em}.hero h1{color:var(--navy);font-size:clamp(2rem,5vw,3.1rem);line-height:1.15;margin:.25rem 0 .7rem}.hero p{font-size:1.08rem;max-width:760px;margin:0;color:#40566f}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{background:#fff;border:1px solid #c9d9e8;border-radius:999px;padding:5px 12px;font-size:.9rem;color:#34516c}
+.stepnav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);box-shadow:0 3px 12px rgba(16,42,67,.05)}.stepnav .shell{display:flex;gap:8px;overflow-x:auto;padding:10px 0}.stepnav a{white-space:nowrap;color:#39536c;text-decoration:none;padding:8px 13px;border-radius:9px;font-weight:700}.stepnav a:hover,.stepnav a:focus-visible{background:var(--blue2);color:var(--blue)}
+main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr);gap:20px;align-items:start}.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.cardhead{padding:18px 20px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.cardhead h2,.section h2{margin:0;color:var(--navy);font-size:1.3rem}.mode{display:flex;align-items:center;gap:8px}.mode label{font-size:.9rem;font-weight:700}.mode select{border:1px solid #b8c8d8;border-radius:9px;padding:6px 34px 6px 10px;background:#fff}.stage{padding:12px;min-height:430px;display:flex;align-items:center;justify-content:center;background:linear-gradient(#f9fcff,#eef6fb);border-radius:0 0 18px 18px;overflow:hidden}.stage svg{display:block;width:100%;height:auto;max-height:470px}.wire{fill:none;stroke:#51677c;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}.wire.live{stroke:var(--red);stroke-dasharray:14 12;animation:flow 1.2s linear infinite}.wire.reverse{animation-direction:reverse}.wire.open{stroke:#91a2b3}.node{fill:#fff;stroke:#314c65;stroke-width:4}.bulbGlow{filter:drop-shadow(0 0 14px rgba(245,158,11,.82))}.diagramLabel{font-size:16px;fill:#263f58;font-weight:700}.diagramValue{font-size:14px;fill:#557087}.warnText{fill:var(--red);font-weight:800;font-size:18px}@keyframes flow{to{stroke-dashoffset:-52}}
+.panel{padding:18px}.panel h2{font-size:1.2rem;color:var(--navy);margin:0 0 14px}.control{margin-bottom:14px}.control label,.control legend{display:block;font-weight:800;color:#314b63;margin-bottom:6px}.control select,.control input[type=range]{width:100%}.control select{border:1px solid #b9c9d8;border-radius:10px;background:#fff;padding:8px 10px}.inlineChoices{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choice{position:relative}.choice input{position:absolute;opacity:0}.choice label{display:flex;align-items:center;justify-content:center;min-height:44px;border:1px solid #bdcddd;border-radius:10px;background:#fff;padding:7px;text-align:center;cursor:pointer}.choice input:checked+label{border-color:var(--blue);background:var(--blue2);color:#075a99;box-shadow:0 0 0 2px rgba(23,105,170,.12)}
+.prediction{background:#fff8e6;border:1px solid #ecd49e;border-radius:12px;padding:12px;margin:12px 0}.prediction label{font-weight:800}.prediction select{width:100%;margin-top:6px;border:1px solid #c9b273;border-radius:8px;padding:6px;background:#fff}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800}.primary{background:var(--blue);color:#fff}.secondary{background:#edf3f7;color:#26445e;border:1px solid #cad7e2}.dangerCtl{display:flex;align-items:flex-start;gap:9px;padding:10px;border-radius:10px;background:#fff3f1;border:1px solid #f2c5bf}.dangerCtl input{margin-top:6px}.dangerCtl label{margin:0;font-weight:700;color:#843b35}
+.status{margin-top:14px;border-radius:12px;padding:12px 14px;background:#eef5fa;border-left:5px solid var(--blue)}.status.good{background:#eaf8f1;border-color:var(--green)}.status.warn{background:#fff2ef;border-color:var(--red)}.status strong{display:block;color:var(--navy)}
+.readouts{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.meter{background:#102a43;color:#fff;border-radius:14px;padding:15px 17px;box-shadow:var(--shadow)}.meter .name{color:#bcd2e5;font-size:.9rem}.meter .value{display:block;font:800 clamp(1.35rem,3vw,2rem)/1.25 ui-monospace,SFMono-Regular,Consolas,monospace;margin-top:3px}.meter .note{color:#bcd2e5;font-size:.78rem}.meter.alert{background:#8c302c}
+.section{margin-top:26px;padding:22px}.section h2{margin-bottom:5px}.lead{margin-top:0;color:var(--muted)}.workflow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}.workflow div{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f9fbfd}.workflow b{display:block;color:var(--blue);font-size:.85rem}.workflow span{font-weight:800;color:var(--navy)}
+.explainGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fact{border:1px solid var(--line);border-radius:12px;padding:15px}.fact h3{font-size:1rem;color:var(--navy);margin:0 0 5px}.fact p{margin:0;color:#52677c}.advancedOnly[hidden],.teacher[hidden]{display:none}.teacher{margin-top:16px;background:#f2efff;border:1px solid #d8cff5;border-radius:12px;padding:14px}.teacher h3{margin:0 0 5px;color:#4d3a85}
+.recordTools{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}.tableWrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:.9rem}th{background:#eef5fa;color:var(--navy)}td.num{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.empty{text-align:center;color:var(--muted)}
+.quizItem{border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:12px}.quizItem fieldset{border:0;padding:0;margin:0}.quizItem legend{font-weight:800;color:var(--navy);margin-bottom:8px}.quizItem label{display:block;padding:6px 0}.feedback{margin-top:7px;font-weight:700}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}
+.safety{background:#fff5f2;border-color:#efc5bd}.safety h2{color:#842f29}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#edf4f8;border-radius:6px;padding:2px 6px;white-space:nowrap}.footer{background:var(--navy);color:#d5e1ea;padding:28px 0}.footer a{color:#fff}
+:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}@media(max-width:840px){.labgrid{grid-template-columns:1fr}.readouts{grid-template-columns:1fr 1fr}.workflow{grid-template-columns:1fr 1fr}.explainGrid{grid-template-columns:1fr}.stage{min-height:330px}}@media(max-width:520px){.shell{width:min(100% - 20px,1180px)}.topbar .shell{padding:9px 0;align-items:flex-start}.brand small{display:none}.hero{padding:24px 0}.cardhead{align-items:flex-start;flex-direction:column}.stage{min-height:260px;padding:4px}.panel{padding:14px}.readouts{grid-template-columns:1fr 1fr;gap:8px}.meter{padding:12px}.workflow{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.section{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.wire.live{animation:none}}
+@media print{.topbar,.stepnav,.hero,.panel,.stage,.recordTools,.quizItem,.footer{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
+<section class="hero"><div class="shell"><div class="eyebrow">國中自然・互動教材</div><h1>電路虛擬實驗室</h1><p>不要先背串聯、並聯的結論。先做預測，再改變電池、電阻和接法，用讀值找出電流真正遵守的規則。</p><div class="chips"><span class="chip">適合：國二電與生活</span><span class="chip">免登入</span><span class="chip">手機可操作</span><span class="chip">附實驗紀錄與檢核</span></div></div></section>
+<nav class="stepnav" aria-label="頁面段落"><div class="shell"><a href="#experiment">① 預測與操作</a><a href="#observe">② 觀察與解釋</a><a href="#record">③ 實驗紀錄</a><a href="#quiz">④ 學習檢核</a><a href="#teacher">教師提示</a></div></nav>
+
+<main class="shell">
+<section id="experiment" class="labgrid" aria-labelledby="lab-title">
+  <div class="card">
+    <div class="cardhead"><h2 id="lab-title">電路工作台</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div>
+    <div class="stage"><svg id="circuit" viewBox="0 0 760 390" role="img" aria-labelledby="diagramTitle diagramDesc"><title id="diagramTitle">目前設定的電路圖</title><desc id="diagramDesc">尚未通電的單一燈泡電路。</desc><g id="scene"></g></svg></div>
+  </div>
+
+  <aside class="card panel" aria-label="實驗控制區">
+    <h2>改變實驗條件</h2>
+    <div class="control"><label for="topology">電路接法</label><select id="topology"><option value="single">單一燈泡</option><option value="series">兩燈串聯</option><option value="parallel">兩燈並聯</option></select></div>
+    <div class="control"><label for="voltage">電池電壓</label><select id="voltage"><option value="1.5">1.5 V</option><option value="3">3 V</option><option value="4.5">4.5 V</option><option value="6" selected>6 V</option><option value="9">9 V</option></select></div>
+    <div class="control"><label for="r1">燈泡一（固定電阻模型）</label><select id="r1"><option value="3">3 Ω</option><option value="6" selected>6 Ω</option><option value="12">12 Ω</option><option value="24">24 Ω</option></select></div>
+    <div class="control" id="r2Control"><label for="r2">燈泡二（固定電阻模型）</label><select id="r2"><option value="3">3 Ω</option><option value="6" selected>6 Ω</option><option value="12">12 Ω</option><option value="24">24 Ω</option></select></div>
+    <div class="control"><span id="switchLabel" style="display:block;font-weight:800;margin-bottom:6px">開關狀態</span><div class="inlineChoices" role="radiogroup" aria-labelledby="switchLabel"><div class="choice"><input type="radio" name="switch" id="swClosed" value="closed" checked><label for="swClosed">閉合</label></div><div class="choice"><input type="radio" name="switch" id="swOpen" value="open"><label for="swOpen">斷開</label></div></div></div>
+    <div class="advancedOnly" hidden><div class="dangerCtl"><input type="checkbox" id="short"><label for="short">用導線跨過負載（短路示範）</label></div><div class="control" style="margin-top:12px"><label for="direction">移動方向</label><select id="direction"><option value="current">傳統電流方向</option><option value="electron">電子移動方向</option></select></div></div>
+    <div class="prediction"><label for="prediction">先預測：閉合開關後，總電流會是？</label><select id="prediction"><option value="">請先選一個預測</option><option value="zero">沒有電流</option><option value="small">小於 1 A</option><option value="one">剛好 1 A</option><option value="large">大於 1 A</option></select></div>
+    <div class="actions"><button class="btn primary" id="verify">通電驗證</button><button class="btn secondary" id="reset">重設</button></div>
+    <div id="status" class="status" role="status" aria-live="polite"><strong>先選擇預測</strong>改變條件不會立刻揭曉答案；按「通電驗證」後再比較。</div>
+  </aside>
+
+  <div class="readouts" aria-label="量測結果">
+    <div class="meter" id="meterReq"><span class="name">等效電阻 R<sub>eq</sub></span><span class="value" id="reqValue">— Ω</span><span class="note">電路整體對電流的阻礙</span></div>
+    <div class="meter" id="meterI"><span class="name">總電流 I</span><span class="value" id="iValue">— A</span><span class="note">流出電池的電流</span></div>
+    <div class="meter"><span class="name">燈泡一</span><span class="value" id="b1Value">—</span><span class="note" id="b1Note">電流／電壓／功率</span></div>
+    <div class="meter" id="meterB2"><span class="name">燈泡二</span><span class="value" id="b2Value">—</span><span class="note" id="b2Note">電流／電壓／功率</span></div>
+  </div>
+</section>
+
+<section id="observe" class="card section">
+  <h2>從讀值找規則</h2><p class="lead" id="explanation">完成一次通電驗證後，這裡會依你的電路說明「為什麼」。</p>
+  <div class="workflow" aria-label="科學探究流程"><div><b>01</b><span>預測</span></div><div><b>02</b><span>改變變因</span></div><div><b>03</b><span>通電觀察</span></div><div><b>04</b><span>加入紀錄</span></div><div><b>05</b><span>解釋規則</span></div></div>
+  <div class="explainGrid">
+    <article class="fact"><h3>串聯看什麼？</h3><p>同一條路徑上的電流相同；電阻越大，分得的電壓越多。總電阻是各電阻相加。</p></article>
+    <article class="fact"><h3>並聯看什麼？</h3><p>各支路兩端電壓相同；電阻較小的支路電流較大。總電流是各支路電流相加。</p></article>
+    <article class="fact"><h3>亮度怎麼判斷？</h3><p>本教材以功率比較亮度。功率較大通常較亮，但真實燈絲的電阻會隨溫度改變。</p></article>
+  </div>
+  <div class="advancedOnly" hidden><p><strong>本次計算：</strong> <span id="formulaLine" class="formula">等待驗證</span></p></div>
+  <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>教材使用理想電池、理想導線與固定電阻燈泡。真實燈泡不是固定電阻，電池也有內電阻；因此動畫亮度適合做相對比較，不應當作實驗室照度。短路時不顯示精確電流，因為真實值取決於電池與導線的內電阻。</div></div>
+  <button class="btn secondary" id="teacherToggle" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
+</section>
+
+<section id="record" class="card section">
+  <h2>實驗紀錄</h2><p class="lead">每改變一個條件就記錄一次，才能比較是哪個變因造成差異。紀錄只存在這台裝置的瀏覽器。</p>
+  <div class="recordTools"><button class="btn primary" id="addRecord" disabled>加入目前結果</button><button class="btn secondary" id="printRecord">列印紀錄</button><button class="btn secondary" id="clearRecord">清除紀錄</button></div>
+  <div class="tableWrap"><table><thead><tr><th>#</th><th>接法</th><th>電池</th><th>R₁／R₂</th><th>開關</th><th>預測</th><th>等效電阻</th><th>總電流</th></tr></thead><tbody id="records"><tr><td colspan="8" class="empty">尚無紀錄。先完成一次通電驗證。</td></tr></tbody></table></div>
+</section>
+
+<section id="quiz" class="card section">
+  <h2>學習檢核</h2><p class="lead">三題都能說明理由，才算真的看懂電路。</p>
+  <div class="quizItem"><fieldset data-answer="b" data-tip="串聯只有一條路徑，任一處斷開後整個電路都沒有電流。"><legend>1. 兩燈串聯時，拆掉其中一顆燈泡會怎樣？</legend><label><input type="radio" name="q1" value="a"> 另一顆變得更亮</label><label><input type="radio" name="q1" value="b"> 兩顆都不亮</label><label><input type="radio" name="q1" value="c"> 另一顆亮度不變</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="quizItem"><fieldset data-answer="c" data-tip="並聯各支路跨在相同兩端，所以每一支路的電壓都等於電池電壓。"><legend>2. 兩個電阻並聯在 6 V 電池上，各支路兩端電壓是多少？</legend><label><input type="radio" name="q2" value="a"> 3 V</label><label><input type="radio" name="q2" value="b"> 依電阻大小分配</label><label><input type="radio" name="q2" value="c"> 都是 6 V</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="quizItem"><fieldset data-answer="a" data-tip="電阻為零的理想模型會得到無限大電流；真實電流由電池與導線內電阻限制，仍可能造成高溫與損壞。"><legend>3. 為什麼本教材不替理想短路顯示一個精確電流？</legend><label><input type="radio" name="q3" value="a"> 真實值取決於電池與導線內電阻</label><label><input type="radio" name="q3" value="b"> 短路完全沒有電流</label><label><input type="radio" name="q3" value="c"> 電流一定剛好 1 A</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="recordTools"><button class="btn primary" id="checkQuiz">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
+</section>
+
+<section class="card section safety">
+  <h2>真實實驗安全提醒</h2><p>本頁是模擬教材。不要用導線直接連接真實電池兩端，也不要使用家用插座或市電做實驗。真實電路操作應使用教師指定的低電壓器材，並由教師或成人指導。</p>
+</section>
+
+<section id="teacher" class="card section">
+  <h2>教學使用建議</h2><p>先遮住讀值，請學生說出預測與理由；每次只改一個變因，完成三到五筆紀錄後再歸納規則。建議順序是「開路／閉路 → 單一負載 → 等電阻串聯 → 不等電阻串聯 → 並聯 → 短路辨識」。</p>
+</section>
+</main>
+
+<footer class="footer"><div class="shell">百宏文教機構｜<a href="../ziyuan.html">更多免費學習資源</a>｜本教材中的燈泡採固定電阻近似模型</div></footer>
+
+<script>
+(()=>{
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const els={topology:$('topology'),voltage:$('voltage'),r1:$('r1'),r2:$('r2'),level:$('level'),short:$('short'),direction:$('direction'),prediction:$('prediction')};
+  let verified=false,lastResult=null;
+  const names={single:'單一燈泡',series:'兩燈串聯',parallel:'兩燈並聯'};
+  const predictions={zero:'沒有電流',small:'小於 1 A',one:'剛好 1 A',large:'大於 1 A'};
+  const fmt=n=>Number.isFinite(n)?(Math.round(n*100)/100).toFixed(n<10?2:1).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1'):'—';
+  function state(){return{type:els.topology.value,V:+els.voltage.value,R1:+els.r1.value,R2:+els.r2.value,closed:$('swClosed').checked,short:els.short.checked&&els.level.value==='advanced',prediction:els.prediction.value};}
+  function solve(s){
+    if(!s.closed)return{kind:'open',Req:s.type==='single'?s.R1:s.type==='series'?s.R1+s.R2:1/(1/s.R1+1/s.R2),I:0,I1:0,I2:0,V1:0,V2:0,P1:0,P2:0};
+    if(s.short)return{kind:'short',Req:0,I:Infinity,I1:Infinity,I2:0,V1:0,V2:0,P1:0,P2:0};
+    if(s.type==='single'){const I=s.V/s.R1;return{kind:'normal',Req:s.R1,I,I1:I,I2:0,V1:s.V,V2:0,P1:s.V*I,P2:0};}
+    if(s.type==='series'){const Req=s.R1+s.R2,I=s.V/Req;return{kind:'normal',Req,I,I1:I,I2:I,V1:I*s.R1,V2:I*s.R2,P1:I*I*s.R1,P2:I*I*s.R2};}
+    const Req=1/(1/s.R1+1/s.R2),I1=s.V/s.R1,I2=s.V/s.R2;return{kind:'normal',Req,I:I1+I2,I1,I2,V1:s.V,V2:s.V,P1:s.V*I1,P2:s.V*I2};
+  }
+  function bulb(x,y,label,R,power,on){const intensity=on?Math.min(.95,.18+power/7):.04;return`<g transform="translate(${x} ${y})"><circle r="38" fill="rgba(245,158,11,${intensity})" stroke="#9a6a12" stroke-width="5" class="${on&&power>.3?'bulbGlow':''}"/><path d="M-14 8 Q0-26 14 8 M-14 8 L-8 24 H8 L14 8" fill="none" stroke="#704b0d" stroke-width="4"/><text class="diagramLabel" y="62" text-anchor="middle">${label}・${R} Ω</text></g>`;}
+  function battery(){return`<g transform="translate(92 195)"><line x1="0" y1="-43" x2="0" y2="-10" stroke="#263f58" stroke-width="5"/><line x1="-22" y1="-10" x2="22" y2="-10" stroke="#c2413b" stroke-width="6"/><line x1="-12" y1="12" x2="12" y2="12" stroke="#263f58" stroke-width="6"/><line x1="0" y1="12" x2="0" y2="46" stroke="#263f58" stroke-width="5"/><text class="diagramLabel" x="36" y="-3">${els.voltage.value} V</text><text class="diagramValue" x="-7" y="-25">＋</text><text class="diagramValue" x="-6" y="34">−</text></g>`;}
+  function sw(closed){return`<g transform="translate(205 78)"><circle class="node" cx="-35" cy="0" r="7"/><circle class="node" cx="35" cy="0" r="7"/><line x1="-29" y1="-4" x2="${closed?29:22}" y2="${closed?-4:-35}" stroke="#263f58" stroke-width="7" stroke-linecap="round"/><text class="diagramLabel" x="0" y="-42" text-anchor="middle">開關${closed?'閉合':'斷開'}</text></g>`;}
+  function renderDiagram(s,r){
+    const live=verified&&r.kind==='normal'&&r.I>0, cls=`wire ${live?'live':''} ${els.direction.value==='electron'?'reverse':''} ${!s.closed?'open':''}`;
+    let wires='',loads='';
+    if(s.type==='single'){
+      wires=`<path class="${cls}" d="M92 152 V78 H170 M240 78 H380 M456 78 H668 V242 H92 V241"/>`;
+      loads=bulb(418,78,'燈泡一',s.R1,r.P1,live);
+    }else if(s.type==='series'){
+      wires=`<path class="${cls}" d="M92 152 V78 H170 M240 78 H315 M391 78 H483 M559 78 H668 V242 H92 V241"/>`;
+      loads=bulb(353,78,'燈泡一',s.R1,r.P1,live)+bulb(521,78,'燈泡二',s.R2,r.P2,live);
+    }else{
+      wires=`<path class="${cls}" d="M92 152 V78 H170 M240 78 H668 V310 H92 V241"/><path class="${cls}" d="M302 78 V135 H368 M444 135 H564 V78"/><path class="${cls}" d="M302 310 V250 H368 M444 250 H564 V310"/>`;
+      loads=bulb(406,135,'燈泡一',s.R1,r.P1,live)+bulb(406,250,'燈泡二',s.R2,r.P2,live);
+    }
+    if(s.short&&s.closed){const bottom=s.type==='parallel'?310:242;wires+=`<path class="wire live" d="M250 78 C320 340 520 340 620 ${bottom}" stroke="#c2413b"/><text class="warnText" x="430" y="354" text-anchor="middle">危險：導線跨接造成短路</text>`;}
+    $('scene').innerHTML=battery()+sw(s.closed)+wires+loads+`<text class="diagramValue" x="380" y="375" text-anchor="middle">${verified?(r.kind==='short'?'電流過大：立即斷開':r.kind==='open'?'開路：電流為 0':(els.direction.value==='electron'?'藍圖動畫方向代表電子移動':'紅色流動方向代表傳統電流')):'尚未通電驗證'}</text>`;
+    $('diagramDesc').textContent=`${names[s.type]}，電池 ${s.V} 伏特，開關${s.closed?'閉合':'斷開'}。${verified?(r.kind==='short'?'目前為短路危險狀態。':`總電流 ${fmt(r.I)} 安培。`):'尚未通電驗證。'}`;
+  }
+  function hideReadouts(){['reqValue','iValue','b1Value','b2Value'].forEach(id=>$(id).textContent=id.includes('Value')&&id.startsWith('b')?'—':'— '+(id==='reqValue'?'Ω':'A'));$('addRecord').disabled=true;document.querySelectorAll('.meter').forEach(x=>x.classList.remove('alert'));}
+  function classify(I){if(I===0)return'zero';if(Math.abs(I-1)<.005)return'one';return I<1?'small':'large';}
+  function explain(s,r){
+    if(r.kind==='short')return'導線繞過燈泡，讓電池兩端近似直接相連。理想模型會得到無限大的電流，但真實值取決於內電阻；無論如何都可能快速發熱並損壞器材。';
+    if(r.kind==='open')return'開關斷開後，電路沒有完整路徑，所以即使有電壓，電流仍為 0 A，燈泡功率也是 0 W。';
+    if(s.type==='single')return`電路只有一個 ${s.R1} Ω 負載。依 I = V ÷ R，總電流是 ${fmt(s.V)} ÷ ${fmt(s.R1)} = ${fmt(r.I)} A。`;
+    if(s.type==='series')return`串聯只有一條路徑，所以兩燈電流都是 ${fmt(r.I)} A。總電阻為 ${fmt(s.R1)} + ${fmt(s.R2)} = ${fmt(r.Req)} Ω；電壓依電阻大小分配。`;
+    return`並聯兩支路的電壓都是 ${fmt(s.V)} V。支路電流分別為 ${fmt(r.I1)} A 與 ${fmt(r.I2)} A，相加得到總電流 ${fmt(r.I)} A。`;
+  }
+  function formula(s,r){if(r.kind==='short')return'理想短路：R → 0，I = V / R 無法得到可用的有限值';if(r.kind==='open')return'I = 0 A（路徑未閉合）';if(s.type==='single')return`I = ${fmt(s.V)} V ÷ ${fmt(s.R1)} Ω = ${fmt(r.I)} A`;if(s.type==='series')return`Req = ${fmt(s.R1)} + ${fmt(s.R2)} = ${fmt(r.Req)} Ω；I = ${fmt(s.V)} ÷ ${fmt(r.Req)} = ${fmt(r.I)} A`;return`Req = 1 ÷ (1/${fmt(s.R1)} + 1/${fmt(s.R2)}) = ${fmt(r.Req)} Ω；I總 = ${fmt(r.I1)} + ${fmt(r.I2)} = ${fmt(r.I)} A`;}
+  function showResult(s,r){
+    $('reqValue').textContent=r.kind==='short'?'≈ 0 Ω':fmt(r.Req)+' Ω';$('iValue').textContent=r.kind==='short'?'過大':fmt(r.I)+' A';
+    $('b1Value').textContent=r.kind==='short'?'被跨接':`${fmt(r.I1)} A`;$('b1Note').textContent=r.kind==='short'?'電流繞過負載':`${fmt(r.V1)} V／${fmt(r.P1)} W`;
+    $('meterB2').style.display=s.type==='single'?'none':'';$('b2Value').textContent=`${fmt(r.I2)} A`;$('b2Note').textContent=`${fmt(r.V2)} V／${fmt(r.P2)} W`;
+    $('explanation').textContent=explain(s,r);$('formulaLine').textContent=formula(s,r);$('addRecord').disabled=false;
+    const status=$('status');status.className='status '+(r.kind==='short'?'warn':'good');
+    if(r.kind==='short'){status.innerHTML='<strong>短路警示</strong>電流繞過負載，可能造成電池與導線快速發熱。請勿在真實電池上嘗試。';document.querySelectorAll('.meter').forEach(x=>x.classList.add('alert'));return;}
+    const actual=classify(r.I),match=s.prediction&&s.prediction===actual;status.innerHTML=`<strong>${s.prediction?(match?'預測符合讀值':'預測和讀值不同，再觀察一次'):'這次沒有先選預測'}</strong>總電流為 ${fmt(r.I)} A。${s.prediction?`你原本選的是「${predictions[s.prediction]}」。`:''}`;
+  }
+  function changed(){verified=false;lastResult=null;const s=state(),r=solve(s);$('r2Control').hidden=s.type==='single';$('meterB2').style.display=s.type==='single'?'none':'';$('short').checked=false;hideReadouts();$('status').className='status';$('status').innerHTML='<strong>條件已改變</strong>先做預測，再按「通電驗證」觀察結果。';renderDiagram(state(),solve(state()));}
+  function verify(){const s=state();if(!s.prediction&&!s.short){$('status').className='status';$('status').innerHTML='<strong>還差一步</strong>請先選擇總電流的預測，再通電驗證。';els.prediction.focus();return;}const r=solve(s);verified=true;lastResult={s,r};showResult(s,r);renderDiagram(s,r);}
+  function saveRecords(records){try{localStorage.setItem('bhcsCircuitRecords',JSON.stringify(records.slice(-12)));}catch(e){}}
+  function loadRecords(){try{return JSON.parse(localStorage.getItem('bhcsCircuitRecords'))||[];}catch(e){return[];}}
+  function renderRecords(){const rows=loadRecords(),body=$('records');body.textContent='';if(!rows.length){body.innerHTML='<tr><td colspan="8" class="empty">尚無紀錄。先完成一次通電驗證。</td></tr>';return;}rows.forEach((x,i)=>{const tr=document.createElement('tr');[i+1,x.type,x.V+' V',x.R,x.closed,x.prediction,x.Req,x.I].forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j>5)td.className='num';tr.appendChild(td)});body.appendChild(tr)});}
+  function addRecord(){if(!lastResult)return;const {s,r}=lastResult,rows=loadRecords();rows.push({type:names[s.type],V:fmt(s.V),R:s.type==='single'?`${s.R1} Ω`:`${s.R1}／${s.R2} Ω`,closed:s.closed?'閉合':'斷開',prediction:s.prediction?predictions[s.prediction]:'未作答',Req:r.kind==='short'?'≈ 0 Ω':fmt(r.Req)+' Ω',I:r.kind==='short'?'過大':fmt(r.I)+' A'});saveRecords(rows);renderRecords();$('status').className='status good';$('status').innerHTML='<strong>已加入實驗紀錄</strong>下一次只改一個條件，再比較兩列資料。';}
+  function reset(){els.topology.value='single';els.voltage.value='6';els.r1.value='6';els.r2.value='6';els.level.value='basic';els.prediction.value='';$('swClosed').checked=true;els.short.checked=false;els.direction.value='current';document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=true);changed();}
+  function runTests(){const cases=[[{type:'single',V:6,R1:6,R2:6,closed:true,short:false},{Req:6,I:1}],[{type:'series',V:6,R1:6,R2:6,closed:true,short:false},{Req:12,I:.5,V1:3}],[{type:'parallel',V:6,R1:6,R2:6,closed:true,short:false},{Req:3,I:2,I1:1}],[{type:'single',V:6,R1:6,R2:6,closed:false,short:false},{I:0}]];const ok=cases.every(([s,w])=>{const r=solve(s);return Object.keys(w).every(k=>Math.abs(r[k]-w[k])<1e-9)});if(!ok)console.error('Circuit model self-test failed');return ok;}
+  ['topology','voltage','r1','r2','direction'].forEach(id=>$(id).addEventListener('change',changed));document.querySelectorAll('input[name=switch]').forEach(x=>x.addEventListener('change',changed));els.short.addEventListener('change',()=>{verified=false;lastResult=null;hideReadouts();renderDiagram(state(),solve(state()));$('status').className='status';$('status').innerHTML='<strong>短路條件已改變</strong>按「通電驗證」查看安全說明。';});els.prediction.addEventListener('change',()=>{if(!verified){$('status').innerHTML='<strong>預測已記下</strong>現在按「通電驗證」，再用讀值檢查想法。';}});
+  els.level.addEventListener('change',()=>{document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=els.level.value!=='advanced');if(els.level.value!=='advanced'){els.short.checked=false;els.direction.value='current';}changed();});
+  $('verify').addEventListener('click',verify);$('reset').addEventListener('click',reset);$('addRecord').addEventListener('click',addRecord);$('printRecord').addEventListener('click',()=>window.print());$('clearRecord').addEventListener('click',()=>{if(confirm('確定清除這台裝置上的電路實驗紀錄？')){saveRecords([]);renderRecords();}});
+  $('teacherToggle').addEventListener('click',()=>{const box=$('teacherBox'),show=box.hidden;box.hidden=!show;$('teacherToggle').setAttribute('aria-expanded',String(show));$('teacherToggle').textContent=show?'隱藏教師提示':'顯示教師提示';});
+  $('checkQuiz').addEventListener('click',()=>{let score=0;document.querySelectorAll('.quizItem fieldset').forEach(fs=>{const picked=fs.querySelector('input:checked'),out=fs.parentElement.querySelector('.feedback'),ok=picked&&picked.value===fs.dataset.answer;if(ok)score++;out.className='feedback '+(ok?'ok':'no');out.textContent=ok?'答對了。':`再想一想：${fs.dataset.tip}`;});$('quizScore').textContent=`答對 ${score}／3 題${score===3?'，完成檢核！':''}`;try{localStorage.setItem('bhcsCircuitQuiz',String(score));}catch(e){}});
+  runTests();renderRecords();reset();
+})();
+</script>
+</body>
+</html>
