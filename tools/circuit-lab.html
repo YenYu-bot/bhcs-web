@@ -31,6 +31,19 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.wire.live{animation:none}}
 @media print{.topbar,.stepnav,.hero,.panel,.stage,.recordTools,.quizItem,.footer{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
 </style>
+<!-- Google Analytics 4 -->
+<script>
+// 網址加 ?noga=1 開啟一次，可讓這台瀏覽器不計入站方統計。
+if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var gaScript=document.createElement('script');gaScript.async=true;
+  gaScript.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
+  document.head.appendChild(gaScript);
+  window.dataLayer=window.dataLayer||[];
+  window.gtag=function(){dataLayer.push(arguments);};
+  gtag('js',new Date());gtag('config','G-GHN2GDS2RQ');
+}
+</script>
 </head>
 <body>
 <header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
@@ -160,7 +173,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
     const actual=classify(r.I),match=s.prediction&&s.prediction===actual;status.innerHTML=`<strong>${s.prediction?(match?'預測符合讀值':'預測和讀值不同，再觀察一次'):'這次沒有先選預測'}</strong>總電流為 ${fmt(r.I)} A。${s.prediction?`你原本選的是「${predictions[s.prediction]}」。`:''}`;
   }
   function changed(){verified=false;lastResult=null;const s=state(),r=solve(s);$('r2Control').hidden=s.type==='single';$('meterB2').style.display=s.type==='single'?'none':'';$('short').checked=false;hideReadouts();$('status').className='status';$('status').innerHTML='<strong>條件已改變</strong>先做預測，再按「通電驗證」觀察結果。';renderDiagram(state(),solve(state()));}
-  function verify(){const s=state();if(!s.prediction&&!s.short){$('status').className='status';$('status').innerHTML='<strong>還差一步</strong>請先選擇總電流的預測，再通電驗證。';els.prediction.focus();return;}const r=solve(s);verified=true;lastResult={s,r};showResult(s,r);renderDiagram(s,r);}
+  function verify(){const s=state();if(!s.prediction&&!s.short){$('status').className='status';$('status').innerHTML='<strong>還差一步</strong>請先選擇總電流的預測，再通電驗證。';els.prediction.focus();return;}const r=solve(s);verified=true;lastResult={s,r};showResult(s,r);renderDiagram(s,r);if(typeof window.gtag==='function')window.gtag('event','circuit_verify',{circuit_type:s.type,circuit_state:r.kind});}
   function saveRecords(records){try{localStorage.setItem('bhcsCircuitRecords',JSON.stringify(records.slice(-12)));}catch(e){}}
   function loadRecords(){try{return JSON.parse(localStorage.getItem('bhcsCircuitRecords'))||[];}catch(e){return[];}}
   function renderRecords(){const rows=loadRecords(),body=$('records');body.textContent='';if(!rows.length){body.innerHTML='<tr><td colspan="8" class="empty">尚無紀錄。先完成一次通電驗證。</td></tr>';return;}rows.forEach((x,i)=>{const tr=document.createElement('tr');[i+1,x.type,x.V+' V',x.R,x.closed,x.prediction,x.Req,x.I].forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j>5)td.className='num';tr.appendChild(td)});body.appendChild(tr)});}
