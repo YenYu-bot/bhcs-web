@@ -28,7 +28,7 @@
       "description": "家長請老師再多盯孩子一點，出於愛也合理；但盯得住的是行為，盯不出的是責任感。談老師與家長如何一起設計退場。",
       "image": "https://www.bhcs.com.tw/wenzhang/duoding-og.jpg",
       "datePublished": "2026-09-12",
-      "dateModified": "2026-09-12",
+      "dateModified": "2026-09-17",
       "inLanguage": "zh-Hant-TW",
       "mainEntityOfPage": "https://www.bhcs.com.tw/wenzhang/duoding.html",
       "author": { "@type": "Organization", "name": "百宏文教機構", "url": "https://www.bhcs.com.tw/" },
@@ -102,6 +102,8 @@ a{color:inherit}
   font-size:.9rem;color:var(--ink-soft);text-decoration:none;
   margin-left:1.1rem;
 }
+.topbar nav{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.35rem 1rem}
+.topbar nav a{margin-left:0}
 .topbar nav a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
 .hero{
   padding:clamp(2.4rem,6vw,4rem) clamp(1rem,4vw,2rem) clamp(1.6rem,3vw,2.4rem);
@@ -193,8 +195,12 @@ footer{
 }
 footer a{color:var(--ink-faint)}
 footer a:hover{color:var(--ink)}
+.related{margin:2.4rem 0;padding-top:1.5rem;border-top:1px solid var(--line)}
+.related h2{border:0;padding:0;margin:0 0 .8rem;font-size:1.12rem}
+.related a{display:block;padding:.75rem 0;color:var(--ink);font-weight:700;text-underline-offset:4px}
 @media (max-width:520px){
-  .topbar nav a{margin-left:.8rem}
+  .topbar .wrap{align-items:flex-start;flex-direction:column}
+  .topbar nav{justify-content:flex-start}
   article{font-size:1rem}
 }
 
@@ -228,8 +234,11 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   <div class="wrap">
     <a class="brand" href="../index.html">百宏文教機構</a>
     <nav>
-      <a href="../index.html">回首頁</a>
-      <a href="../lianluo.html">聯絡我們</a>
+      <a href="../guoxiao.html">國小</a>
+      <a href="../guozhong.html">國中</a>
+      <a href="../gaozhong.html">高中</a>
+      <a href="../ziyuan.html">學習資源</a>
+      <a href="index.html">教育觀點</a>
     </nav>
   </div>
 </header>
@@ -238,7 +247,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   <div class="hero-inner">
     <p class="crumb"><a href="../index.html">首頁</a> / <a href="index.html">教育觀點</a></p>
     <h1>「老師能不能再多盯他一點？」——盯得住的是今天，<span class="circled">盯不住的是他的十年<svg viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="22" rx="47" ry="18" fill="none" stroke="#c43d2e" stroke-width="2.6" transform="rotate(-2 50 22)" stroke-linecap="round" stroke-dasharray="280" stroke-dashoffset="6"/></svg></span></h1>
-    <p class="meta">百宏文教機構 ・ 2026-09-12</p>
+    <p class="meta">百宏文教教學團隊 ・ 發布 2026-09-12 ・ 更新 2026-09-17</p>
   </div>
 </div>
 
@@ -350,6 +359,13 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
 </div>
 
 <p class="ref">參考資料：Van de Pol, J., Volman, M., &amp; Beishuizen, M. (2010). <em>Scaffolding in Teacher–Student Interaction: A Decade of Research</em>. Educational Psychology Review, 22, 271–296. <a href="https://link.springer.com/article/10.1007/s10648-010-9127-6" target="_blank" rel="noopener">link.springer.com</a></p>
+
+<div class="related">
+  <h2>延伸閱讀與資源</h2>
+  <a href="chengji-pinxing.html">成績不決定孩子的價值，但學習也需要負責</a>
+  <a href="../ziyuan.html">免費學習資源：讓孩子有一個可以自己完成的練習入口</a>
+  <a href="../guozhong.html">國中課程：怎麼追進度，也怎麼逐步放手</a>
+</div>
 
 <div class="closing">
   <p>想聊聊孩子的學習狀況，或看看我們怎麼一步一步把責任交回給孩子，歡迎來班上走走。</p>

@@ -181,6 +181,8 @@ section{padding-block:clamp(3.2rem,7vw,5.4rem)}
 .report dt{font-size:.78rem;color:var(--ink-faint);letter-spacing:.06em;margin-bottom:.3rem}
 .report dd{margin:0;font-family:var(--mono);font-size:1.7rem;font-weight:600;line-height:1.1}
 .report dd small{font-size:.8rem;font-weight:400;color:var(--ink-faint);margin-left:.25rem}
+.report dd.review-link{font-family:var(--sans);font-size:1rem;line-height:1.4}
+.report dd.review-link a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:4px}
 @media(max-width:620px){
   .report{grid-template-columns:1fr 1fr}
   .report div{border-bottom:1px solid var(--grid)}
@@ -261,6 +263,25 @@ td .num{font-weight:600}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:560px){.field-row{grid-template-columns:1fr}}
 .formnote{font-size:.84rem;color:var(--ink-faint);margin-top:1rem}
+
+/* ---------- 首頁信任標籤 ---------- */
+.trust-strip{
+  display:flex;flex-wrap:wrap;gap:.55rem 1.1rem;list-style:none;padding:0;margin:1.4rem 0 0;
+  color:var(--ink-soft);font-size:.86rem;font-weight:600;
+}
+.trust-strip li{margin:0;display:flex;align-items:center;gap:.45rem}
+.trust-strip li::before{content:"✓";color:var(--red);font-family:var(--mono);font-weight:700}
+
+/* ---------- 成果案例 ---------- */
+.case-card{
+  margin:1.6rem 0;padding:1.35rem 1.5rem;background:var(--paper);
+  border:1px solid var(--grid-strong);border-left:4px solid var(--red);border-radius:var(--radius);
+}
+.case-card .case-title{font-family:var(--serif);font-size:1.18rem;font-weight:800;margin-bottom:.7rem}
+.case-card dl{display:grid;grid-template-columns:90px 1fr;gap:.45rem .8rem;margin:0}
+.case-card dt{font-size:.82rem;color:var(--ink-faint);font-weight:700}
+.case-card dd{margin:0;color:var(--ink-soft)}
+@media(max-width:520px){.case-card dl{grid-template-columns:1fr;gap:.15rem}.case-card dd{margin-bottom:.55rem}}
 
 /* ---------- 聯絡資訊 ---------- */
 .contact-grid{display:grid;gap:2.4rem;grid-template-columns:1fr 1fr;align-items:start}

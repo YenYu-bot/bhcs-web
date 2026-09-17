@@ -15,16 +15,26 @@
     });
   }
 
-  // 試聽預約表單：送出後在原地顯示結果，不跳頁
+  // 試聽預約表單：將欄位整理成訊息後開啟官方 LINE
   var form = document.getElementById('trial-form');
   if (!form) return;
   var status = document.getElementById('form-status');
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var action = form.getAttribute('action') || '';
-    if (action.indexOf('YOUR_FORM_ID') > -1) {
-      status.textContent = '表單尚未接上收件信箱。請改用下方的 LINE 或電話與我們聯絡。';
-      status.style.color = '#C8352B';
+    if (form.getAttribute('data-submit-mode') === 'line') {
+      if (!form.reportValidity()) return;
+      var data = new FormData(form);
+      var lines = ['您好，我想預約免費試聽／程度確認：'];
+      ['家長姓名', '聯絡電話', '孩子年級', '就讀學校', '想了解的科目', '目前遇到的狀況'].forEach(function (key) {
+        var value = String(data.get(key) || '').trim();
+        if (value) lines.push(key + '：' + value);
+      });
+      lines.push('方便聯絡時段：＿＿＿＿');
+      status.textContent = '正在開啟百宏官方 LINE，請在 LINE 中確認並送出訊息。';
+      status.style.color = '#16233A';
+      var lineUrl = action.replace(/\/$/, '') + '/?' + encodeURIComponent(lines.join('\n'));
+      window.location.href = lineUrl;
       return;
     }
     var btn = form.querySelector('button[type=submit]');
