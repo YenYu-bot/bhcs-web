@@ -45,7 +45,18 @@
 .tpills a{display:inline-block;padding:6px 12px;border:1px solid #DDE3EC;border-radius:8px;background:#fff;color:#16233A;font-size:14px;line-height:1.35;text-decoration:none;transition:border-color .15s,background .15s}
 .tpills a:hover,.tpills a:focus-visible{border-color:#16233A;background:#F7F9FC;outline:none}
 .tpills a:focus-visible{box-shadow:0 0 0 3px rgba(22,35,58,.25)}
+#res-hs-math .trow{display:block;margin:14px 0;padding:18px;border:1px solid #E1E7F0;border-radius:14px;background:#F8FAFD;box-shadow:0 1px 2px rgba(22,35,58,.03)}
+#res-hs-math .trow:first-of-type,#res-hs-math .lead+.trow{border-top:1px solid #E1E7F0}
+#res-hs-math .tlabel{display:flex;align-items:center;gap:9px;padding:0;margin:0 0 12px;font-size:16px}
+#res-hs-math .tlabel small{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:#E9EEF6;color:#526079;font-size:12px;line-height:1.45}
+#res-hs-math .tpills{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#res-hs-math .tpills a{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:9px 11px;border-radius:10px;background:#fff}
+#res-hs-math .tpills a::after{content:'\203A';flex:0 0 auto;color:#A2ABBA;font-size:19px;line-height:1;transition:color .15s,transform .15s}
+#res-hs-math .tpills a:hover::after,#res-hs-math .tpills a:focus-visible::after{color:#C94343;transform:translateX(2px)}
+@media (max-width:960px){#res-hs-math .tpills{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){#res-hs-math .tpills{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.trow{grid-template-columns:1fr;gap:4px}.tlabel{padding-top:0}.tlabel small{display:inline;margin-left:6px}.tpills a{font-size:13.5px;padding:5px 10px}.res-sec{padding-top:22px}.res-sec h3{font-size:18px}}
+@media (max-width:640px){#res-hs-math .trow{padding:14px;margin:10px 0}#res-hs-math .tlabel{margin-bottom:10px}#res-hs-math .tlabel small{display:inline-flex;margin-left:0}#res-hs-math .tpills{grid-template-columns:1fr}#res-hs-math .tpills a{min-height:42px;padding:8px 11px}}
 @media (prefers-reduced-motion:reduce){.tpills a,.res-nav a{transition:none}}
 </style>
 
