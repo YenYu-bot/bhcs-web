@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>力與運動實驗室｜合力、加速度與摩擦力｜百宏文教</title>
+<meta name="description" content="免費力與運動互動實驗室。改變小車質量、施力、摩擦與初速度，同步觀察受力箭頭、位置時間圖和速度時間圖，驗證牛頓第二運動定律。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/force-motion-lab.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="力與運動實驗室｜百宏文教">
+<meta property="og:description" content="從小車、受力圖與運動圖表理解 F=ma、等速運動及摩擦力。">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/force-motion-lab.html">
+<meta property="og:image" content="https://www.bhcs.com.tw/assets/og.jpg">
+<style>
+:root{--navy:#102a43;--blue:#1769aa;--blue2:#eaf5ff;--teal:#14847b;--green:#18794e;--amber:#d97706;--red:#c2413b;--ink:#243447;--muted:#637489;--line:#d8e2ec;--paper:#fff;--bg:#f4f8fb;--shadow:0 12px 32px rgba(16,42,67,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei","PingFang TC",system-ui,sans-serif;line-height:1.65}button,select,input{font:inherit}button,select{min-height:44px}button{cursor:pointer}.shell{width:min(1180px,calc(100% - 32px));margin:auto}
+.topbar{background:var(--navy);color:#fff}.topbar .shell{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{color:#fff;text-decoration:none;font-weight:800;font-size:1.12rem}.brand small{font-weight:500;opacity:.72;margin-left:8px}.back{color:#fff;text-underline-offset:4px}
+.hero{background:linear-gradient(135deg,#eaf6ff 0%,#eefbf4 55%,#fff8e7 100%);border-bottom:1px solid var(--line);padding:34px 0 28px}.eyebrow{color:var(--blue);font-weight:800;letter-spacing:.08em}.hero h1{color:var(--navy);font-size:clamp(2rem,5vw,3.1rem);line-height:1.15;margin:.25rem 0 .7rem}.hero p{font-size:1.08rem;max-width:800px;margin:0;color:#40566f}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{background:#fff;border:1px solid #c9d9e8;border-radius:999px;padding:5px 12px;font-size:.9rem;color:#34516c}
+.stepnav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);box-shadow:0 3px 12px rgba(16,42,67,.05)}.stepnav .shell{display:flex;gap:8px;overflow-x:auto;padding:10px 0}.stepnav a{white-space:nowrap;color:#39536c;text-decoration:none;padding:8px 13px;border-radius:9px;font-weight:700}.stepnav a:hover,.stepnav a:focus-visible{background:var(--blue2);color:var(--blue)}
+main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.75fr);gap:20px;align-items:start}.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.cardhead{padding:18px 20px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.cardhead h2,.section h2{margin:0;color:var(--navy);font-size:1.3rem}.mode{display:flex;align-items:center;gap:8px}.mode label{font-size:.9rem;font-weight:700}.mode select{border:1px solid #b8c8d8;border-radius:9px;padding:6px 34px 6px 10px;background:#fff}
+.stage{padding:10px;min-height:430px;display:flex;align-items:center;justify-content:center;background:linear-gradient(#eaf7ff 0 63%,#f2eadc 63% 100%);border-radius:0 0 18px 18px;overflow:hidden}.stage svg{display:block;width:100%;height:auto;max-height:470px}.track{stroke:#596e7f;stroke-width:7;stroke-linecap:round}.tick{stroke:#8495a3;stroke-width:2}.cartBody{fill:#f1a33c;stroke:#6e4715;stroke-width:4}.wheel{fill:#263f58;stroke:#fff;stroke-width:3}.forceArrow{stroke-width:8;stroke-linecap:round}.forceLabel{font-size:16px;font-weight:800}.sceneText{font-size:15px;fill:#334e68}.sceneStrong{font-size:18px;fill:#102a43;font-weight:800}
+.panel{padding:18px}.panel h2{font-size:1.2rem;color:var(--navy);margin:0 0 14px}.control{margin-bottom:14px}.control label,.control legend{display:block;font-weight:800;color:#314b63;margin-bottom:6px}.control select,.control input[type=range]{width:100%}.control select{border:1px solid #b9c9d8;border-radius:10px;background:#fff;padding:8px 10px}.control output{float:right;color:var(--blue);font-weight:800}.inlineChoices{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choice{position:relative}.choice input{position:absolute;opacity:0}.choice label{display:flex;align-items:center;justify-content:center;min-height:44px;border:1px solid #bdcddd;border-radius:10px;background:#fff;padding:7px;text-align:center;cursor:pointer}.choice input:checked+label{border-color:var(--blue);background:var(--blue2);color:#075a99;box-shadow:0 0 0 2px rgba(23,105,170,.12)}
+.prediction{background:#fff8e6;border:1px solid #ecd49e;border-radius:12px;padding:12px;margin:12px 0}.prediction label{font-weight:800}.prediction select{width:100%;margin-top:6px;border:1px solid #c9b273;border-radius:8px;padding:6px;background:#fff}.actions{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:8px;margin-top:14px}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800}.primary{background:var(--blue);color:#fff}.secondary{background:#edf3f7;color:#26445e;border:1px solid #cad7e2}.btn:disabled{opacity:.45;cursor:not-allowed}.status{margin-top:14px;border-radius:12px;padding:12px 14px;background:#eef5fa;border-left:5px solid var(--blue)}.status.good{background:#eaf8f1;border-color:var(--green)}.status.warn{background:#fff2ef;border-color:var(--red)}.status strong{display:block;color:var(--navy)}
+.readouts{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.meter{background:#102a43;color:#fff;border-radius:14px;padding:14px 15px;box-shadow:var(--shadow)}.meter .name{color:#bcd2e5;font-size:.86rem}.meter .value{display:block;font:800 clamp(1.25rem,2.7vw,1.75rem)/1.25 ui-monospace,SFMono-Regular,Consolas,monospace;margin-top:3px}.meter .note{color:#bcd2e5;font-size:.75rem}.meter.alert{background:#8c302c}
+.section{margin-top:26px;padding:22px}.section h2{margin-bottom:5px}.lead{margin-top:0;color:var(--muted)}.graphGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.graphCard{border:1px solid var(--line);border-radius:14px;padding:10px;background:#fbfdff}.graphCard h3{margin:0 0 6px;color:var(--navy);font-size:1rem}.graphCard svg{display:block;width:100%;height:auto}.axis{stroke:#60788e;stroke-width:1.5}.gridline{stroke:#dce6ee;stroke-width:1}.curveX{fill:none;stroke:var(--blue);stroke-width:4}.curveV{fill:none;stroke:var(--green);stroke-width:4}.graphLabel{font-size:12px;fill:#526b80}.graphZero{stroke:#96a8b7;stroke-width:1.5;stroke-dasharray:5 4}
+.workflow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}.workflow div{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f9fbfd}.workflow b{display:block;color:var(--blue);font-size:.85rem}.workflow span{font-weight:800;color:var(--navy)}.explainGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fact{border:1px solid var(--line);border-radius:12px;padding:15px}.fact h3{font-size:1rem;color:var(--navy);margin:0 0 5px}.fact p{margin:0;color:#52677c}.advancedOnly[hidden],.teacher[hidden]{display:none}.teacher{margin-top:16px;background:#f2efff;border:1px solid #d8cff5;border-radius:12px;padding:14px}.teacher h3{margin:0 0 5px;color:#4d3a85}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#edf4f8;border-radius:6px;padding:2px 6px}
+.missions{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}.mission{border:1px solid #b9ccdc;background:#fff;border-radius:10px;padding:9px 12px;color:#26445e;font-weight:800}.mission:hover{background:var(--blue2)}.recordTools{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}.tableWrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:800px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:.9rem}th{background:#eef5fa;color:var(--navy)}td.num{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.empty{text-align:center;color:var(--muted)}
+.quizItem{border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:12px}.quizItem fieldset{border:0;padding:0;margin:0}.quizItem legend{font-weight:800;color:var(--navy);margin-bottom:8px}.quizItem label{display:block;padding:6px 0}.feedback{margin-top:7px;font-weight:700}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}.footer{background:var(--navy);color:#d5e1ea;padding:28px 0}.footer a{color:#fff}
+:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}@media(max-width:900px){.labgrid{grid-template-columns:1fr}.readouts{grid-template-columns:repeat(3,1fr)}.graphGrid{grid-template-columns:1fr}.workflow{grid-template-columns:1fr 1fr}.explainGrid{grid-template-columns:1fr}.stage{min-height:330px}}@media(max-width:560px){.shell{width:min(100% - 20px,1180px)}.topbar .shell{padding:9px 0;align-items:flex-start}.brand small{display:none}.hero{padding:24px 0}.cardhead{align-items:flex-start;flex-direction:column}.stage{min-height:260px;padding:3px}.panel{padding:14px}.readouts{grid-template-columns:1fr 1fr;gap:8px}.meter{padding:12px}.workflow{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.section{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media print{.topbar,.stepnav,.hero,.panel,.stage,.recordTools,.missions,.quizItem,.footer{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
+</style>
+<!-- Google Analytics 4 -->
+<script>
+if(location.search.indexOf('noga=1')>-1)localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var gaScript=document.createElement('script');gaScript.async=true;
+  gaScript.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';document.head.appendChild(gaScript);
+  window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};
+  gtag('js',new Date());gtag('config','G-GHN2GDS2RQ');
+}
+</script>
+</head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
+<section class="hero"><div class="shell"><div class="eyebrow">國中自然・互動教材</div><h1>力與運動實驗室</h1><p>小車正在向前，不代表它一定受到向前的合力。先判斷受力，再讓小車跑起來，用運動圖表檢查你的推理。</p><div class="chips"><span class="chip">牛頓第二運動定律</span><span class="chip">受力圖</span><span class="chip">位置—時間圖</span><span class="chip">速度—時間圖</span><span class="chip">摩擦力</span></div></div></section>
+<nav class="stepnav" aria-label="頁面段落"><div class="shell"><a href="#experiment">① 預測與操作</a><a href="#graphs">② 運動圖表</a><a href="#observe">③ 解釋規則</a><a href="#record">④ 實驗紀錄</a><a href="#quiz">⑤ 學習檢核</a></div></nav>
+
+<main class="shell">
+<section id="experiment" class="labgrid" aria-labelledby="lab-title">
+  <div class="card">
+    <div class="cardhead"><h2 id="lab-title">水平小車工作台</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div>
+    <div class="stage"><svg id="motionScene" viewBox="0 0 800 390" role="img" aria-labelledby="sceneTitle sceneDesc"><title id="sceneTitle">水平軌道上的小車與受力箭頭</title><desc id="sceneDesc">尚未開始實驗。</desc><defs><marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1769aa"/></marker><marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#c2413b"/></marker><marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#18794e"/></marker><marker id="arrowGray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#526b80"/></marker></defs><g id="scene"></g></svg></div>
+  </div>
+
+  <aside class="card panel" aria-label="實驗控制區">
+    <h2>改變實驗條件</h2>
+    <div class="control"><label for="mass">小車總質量 <output id="massOut">2 kg</output></label><input id="mass" type="range" min="1" max="5" step="0.5" value="2"></div>
+    <div class="control"><label for="force">施力大小</label><select id="force"><option value="0">0 N</option><option value="2">2 N</option><option value="4">4 N</option><option value="5">5 N</option><option value="6" selected>6 N</option><option value="8">8 N</option><option value="10">10 N</option><option value="12">12 N</option></select></div>
+    <div class="advancedOnly" hidden>
+      <div class="control"><span id="directionLabel" style="display:block;font-weight:800;margin-bottom:6px">施力方向</span><div class="inlineChoices" role="radiogroup" aria-labelledby="directionLabel"><div class="choice"><input type="radio" name="direction" id="dirRight" value="1" checked><label for="dirRight">向右</label></div><div class="choice"><input type="radio" name="direction" id="dirLeft" value="-1"><label for="dirLeft">向左</label></div></div></div>
+      <div class="control"><label for="surface">接觸面</label><select id="surface"><option value="none">無摩擦</option><option value="smooth">光滑（μs 0.15／μk 0.10）</option><option value="rough">粗糙（μs 0.35／μk 0.25）</option></select></div>
+      <div class="control"><label for="initialV">初速度</label><select id="initialV"><option value="-2">向左 2 m/s</option><option value="-1">向左 1 m/s</option><option value="0" selected>靜止</option><option value="1">向右 1 m/s</option><option value="2">向右 2 m/s</option></select></div>
+    </div>
+    <div class="prediction"><label for="prediction">先預測：剛開始時的加速度方向？</label><select id="prediction"><option value="">請先選一個預測</option><option value="right">向右</option><option value="zero">加速度為 0</option><option value="left">向左</option></select></div>
+    <div class="actions"><button class="btn primary" id="start">開始實驗</button><button class="btn secondary" id="pause" disabled>暫停</button><button class="btn secondary" id="step">前進 0.5 秒</button></div>
+    <button class="btn secondary" id="reset" style="width:100%;margin-top:8px">回到起點</button>
+    <div id="status" class="status" role="status" aria-live="polite"><strong>先選擇預測</strong>開始前先判斷合力，接著用小車與圖表驗證。</div>
+  </aside>
+
+  <div class="readouts" aria-label="模擬讀值">
+    <div class="meter"><span class="name">時間 t</span><span class="value" id="timeValue">— s</span><span class="note">模擬經過時間</span></div>
+    <div class="meter"><span class="name">位置 x</span><span class="value" id="positionValue">— m</span><span class="note">起點右方為正</span></div>
+    <div class="meter"><span class="name">速度 v</span><span class="value" id="velocityValue">— m/s</span><span class="note">方向包含在正負號</span></div>
+    <div class="meter"><span class="name">合力 F<sub>net</sub></span><span class="value" id="netValue">— N</span><span class="note">水平力的向量和</span></div>
+    <div class="meter"><span class="name">加速度 a</span><span class="value" id="accelValue">— m/s²</span><span class="note">a = Fnet ÷ m</span></div>
+  </div>
+</section>
+
+<section id="graphs" class="card section">
+  <h2>讓兩張圖跟著小車一起走</h2><p class="lead">斜率是關鍵：位置—時間圖的斜率代表速度；速度—時間圖的斜率代表加速度。</p>
+  <div class="graphGrid">
+    <div class="graphCard"><h3>位置—時間圖（x–t）</h3><svg id="xGraph" viewBox="0 0 600 230" role="img" aria-label="位置對時間圖"></svg></div>
+    <div class="graphCard"><h3>速度—時間圖（v–t）</h3><svg id="vGraph" viewBox="0 0 600 230" role="img" aria-label="速度對時間圖"></svg></div>
+  </div>
+</section>
+
+<section id="observe" class="card section">
+  <h2>從受力到運動</h2><p class="lead" id="explanation">完成一次預測與操作後，這裡會依目前條件解釋結果。</p>
+  <div class="workflow"><div><b>01</b><span>畫受力圖</span></div><div><b>02</b><span>求水平合力</span></div><div><b>03</b><span>用 F=ma</span></div><div><b>04</b><span>讀運動圖</span></div><div><b>05</b><span>比較紀錄</span></div></div>
+  <div class="explainGrid">
+    <article class="fact"><h3>有速度 ≠ 有合力</h3><p>物體可以在合力為零時保持等速度。合力決定的是速度如何改變，不是物體有沒有速度。</p></article>
+    <article class="fact"><h3>同樣的力推誰較快？</h3><p>合力相同時，質量較小的物體加速度較大。把質量加倍，加速度會變成原來的一半。</p></article>
+    <article class="fact"><h3>有施力為何不動？</h3><p>靜摩擦力會依需要調整，直到最大值。施力超過門檻後，物體才開始滑動。</p></article>
+  </div>
+  <div class="advancedOnly" hidden><p><strong>目前計算：</strong> <span id="formulaLine" class="formula">等待開始</span></p></div>
+  <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本教材是一維質點模型，不計空氣阻力、車輪轉動慣量與施力起伏。動摩擦係數固定，真實材料通常會受表面狀態、速度與溫度影響。軌道端點只是觀察範圍，不模擬碰撞。</div></div>
+  <button class="btn secondary" id="teacherToggle" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
+</section>
+
+<section class="card section">
+  <h2>引導任務</h2><p class="lead">按一下套用條件；每次先預測，再把結果加入紀錄比較。</p>
+  <div class="missions"><button class="mission" data-mission="force">任務一：2 kg 受 6 N</button><button class="mission" data-mission="mass">任務二：質量加倍</button><button class="mission" data-mission="friction">任務三：5 N 推粗糙面</button><button class="mission" data-mission="constant">任務四：沒有合力但有初速</button></div>
+  <div id="missionText" class="status"><strong>比較方法</strong>任務一與任務二的施力相同，只改變質量；比較兩次加速度。</div>
+</section>
+
+<section id="record" class="card section">
+  <h2>實驗紀錄</h2><p class="lead">建議在相同時間點加入紀錄，才適合直接比較位置和速度。</p>
+  <div class="recordTools"><button class="btn primary" id="addRecord" disabled>加入目前讀值</button><button class="btn secondary" id="printRecord">列印紀錄</button><button class="btn secondary" id="clearRecord">清除紀錄</button></div>
+  <div class="tableWrap"><table><thead><tr><th>#</th><th>質量</th><th>施力</th><th>表面</th><th>時間</th><th>位置</th><th>速度</th><th>合力</th><th>加速度</th></tr></thead><tbody id="records"><tr><td colspan="9" class="empty">尚無紀錄。先完成一次操作。</td></tr></tbody></table></div>
+</section>
+
+<section id="quiz" class="card section">
+  <h2>學習檢核</h2><p class="lead">重點不是背公式，而是分清楚力、速度和加速度。</p>
+  <div class="quizItem"><fieldset data-answer="c" data-tip="合力為零表示加速度為零；物體可能靜止，也可能保持等速度。"><legend>1. 小車向右等速度前進時，水平合力是多少？</legend><label><input type="radio" name="q1" value="a"> 一定向右</label><label><input type="radio" name="q1" value="b"> 一定向左</label><label><input type="radio" name="q1" value="c"> 0 N</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="quizItem"><fieldset data-answer="b" data-tip="a = F ÷ m。合力不變、質量加倍時，加速度變為一半。"><legend>2. 合力保持 6 N，質量由 2 kg 變成 4 kg，加速度如何改變？</legend><label><input type="radio" name="q2" value="a"> 變成兩倍</label><label><input type="radio" name="q2" value="b"> 變成一半</label><label><input type="radio" name="q2" value="c"> 完全不變</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="quizItem"><fieldset data-answer="a" data-tip="靜摩擦力會先配合施力增大；只有超過最大靜摩擦力，物體才開始滑動。"><legend>3. 對靜止小車施力後仍不動，最合理的解釋是？</legend><label><input type="radio" name="q3" value="a"> 靜摩擦力抵銷了施力</label><label><input type="radio" name="q3" value="b"> 小車沒有重量</label><label><input type="radio" name="q3" value="c"> 有施力就一定有速度</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="recordTools"><button class="btn primary" id="checkQuiz">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
+</section>
+</main>
+
+<footer class="footer"><div class="shell">百宏文教機構｜<a href="../ziyuan.html">更多免費學習資源</a>｜一維水平運動教學模型</div></footer>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),G=9.8,MAX_T=3,EPS=1e-6;
+const surfaceData={none:{name:'無摩擦',us:0,uk:0},smooth:{name:'光滑',us:.15,uk:.10},rough:{name:'粗糙',us:.35,uk:.25}};
+const predNames={right:'向右',zero:'加速度為 0',left:'向左'};
+const els={level:$('level'),mass:$('mass'),force:$('force'),surface:$('surface'),initialV:$('initialV'),prediction:$('prediction')};
+let sim=null,running=false,verified=false,lastFrame=0,raf=0,samples=[];
+const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=(n,d=2)=>Math.abs(n)<.0005?'0':n.toFixed(d).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+function config(){const advanced=els.level.value==='advanced',direction=advanced?+document.querySelector('input[name=direction]:checked').value:1;return{m:+els.mass.value,F:+els.force.value*direction,surface:advanced?els.surface.value:'none',v0:advanced?+els.initialV.value:0};}
+function forces(c,v){
+  const sd=surfaceData[c.surface],N=c.m*G,maxStatic=sd.us*N,kinetic=sd.uk*N;
+  let friction=0,stuck=false;
+  if(Math.abs(v)<EPS){if(Math.abs(c.F)<=maxStatic+EPS){friction=-c.F;stuck=true;}else friction=-Math.sign(c.F||1)*kinetic;}
+  else friction=-Math.sign(v)*kinetic;
+  const net=c.F+friction,a=net/c.m;
+  return{N,maxStatic,kinetic,friction,net,a,stuck};
+}
+function initialSim(){const c=config(),f=forces(c,c.v0);return{t:0,x:0,v:c.v0,...f,c};}
+function directionOf(a){return a>.0005?'right':a<-.0005?'left':'zero';}
+function reveal(){verified=true;const correct=directionOf(sim.a),match=els.prediction.value===correct;$('status').className='status '+(match?'good':'warn');$('status').innerHTML=`<strong>${match?'預測符合受力計算':'預測與計算不同'}</strong>剛開始的合力為 ${fmt(sim.net)} N，所以加速度是 ${fmt(sim.a)} m/s²，方向為「${predNames[correct]}」。`;updateReadouts();$('addRecord').disabled=false;$('explanation').textContent=explain(sim);$('formulaLine').textContent=formula(sim);if(typeof window.gtag==='function')window.gtag('event','force_motion_start',{surface:sim.c.surface,prediction_match:match});}
+function explain(s){if(s.stuck&&Math.abs(s.c.F)>0)return`施力 ${fmt(Math.abs(s.c.F))} N 尚未超過最大靜摩擦力 ${fmt(s.maxStatic)} N。靜摩擦力會調整成 ${fmt(Math.abs(s.friction))} N 抵銷施力，因此合力與加速度都是 0。`;if(Math.abs(s.net)<EPS&&Math.abs(s.v)>EPS)return`小車速度為 ${fmt(s.v)} m/s，但水平合力為 0，所以速度保持不變。這正好說明「物體在運動」不等於「一定有向前的合力」。`;return`水平合力為施力與摩擦力的向量和：${fmt(s.c.F)} + (${fmt(s.friction)}) = ${fmt(s.net)} N。再除以 ${fmt(s.c.m)} kg，得到加速度 ${fmt(s.a)} m/s²。`;}
+function formula(s){return`Fnet = ${fmt(s.c.F)} + (${fmt(s.friction)}) = ${fmt(s.net)} N；a = ${fmt(s.net)} ÷ ${fmt(s.c.m)} = ${fmt(s.a)} m/s²`;}
+function updateReadouts(){if(!verified)return;$('timeValue').textContent=fmt(sim.t)+' s';$('positionValue').textContent=fmt(sim.x)+' m';$('velocityValue').textContent=fmt(sim.v)+' m/s';$('netValue').textContent=fmt(sim.net)+' N';$('accelValue').textContent=fmt(sim.a)+' m/s²';}
+function hideReadouts(){['timeValue','positionValue','velocityValue','netValue','accelValue'].forEach((id,i)=>$(id).textContent='— '+(['s','m','m/s','N','m/s²'][i]));$('addRecord').disabled=true;}
+function arrow(x,y,value,color,label,vertical=false){if(Math.abs(value)<.03)return'';const len=Math.min(110,28+Math.abs(value)*7),sign=Math.sign(value),x2=vertical?x:x+sign*len,y2=vertical?y-sign*len:y,marker=color==='blue'?'arrowBlue':color==='red'?'arrowRed':color==='green'?'arrowGreen':'arrowGray';return`<line class="forceArrow" x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="var(--${color})" marker-end="url(#${marker})"/><text class="forceLabel" x="${vertical?x+10:(x+x2)/2}" y="${vertical?(sign>0?y2-8:y2+22):y-12}" text-anchor="middle" fill="var(--${color})">${label} ${fmt(Math.abs(value))} N</text>`;}
+function renderScene(){
+  const s=sim||initialSim(),cx=Math.max(98,Math.min(702,400+s.x*20)),floorY=255;
+  let ticks='';for(let m=-15;m<=15;m+=3){const x=400+m*20;ticks+=`<line class="tick" x1="${x}" y1="${floorY}" x2="${x}" y2="${floorY+13}"/>${m%6===0?`<text class="sceneText" x="${x}" y="${floorY+34}" text-anchor="middle">${m} m</text>`:''}`;}
+  const horizontal=verified?arrow(cx,floorY-110,s.c.F,'blue','施力')+arrow(cx,floorY-76,s.friction,'red','摩擦')+arrow(cx,floorY-144,s.net,'green','合力'):'';
+  const vertical=verified?arrow(cx-36,floorY-45,s.N,'muted','N',true)+arrow(cx+36,floorY-45,-s.c.m*G,'muted','mg',true):'';
+  $('scene').innerHTML=`<text class="sceneStrong" x="28" y="38">${surfaceData[s.c.surface].name}水平面</text><text class="sceneText" x="28" y="64">向右為正方向</text><line class="track" x1="80" y1="${floorY}" x2="720" y2="${floorY}"/>${ticks}${horizontal}${vertical}<g transform="translate(${cx} ${floorY-39})"><rect class="cartBody" x="-55" y="-38" width="110" height="48" rx="12"/><rect x="-17" y="-28" width="34" height="23" rx="4" fill="#fff4d8" stroke="#6e4715" stroke-width="3"/><text x="0" y="-11" text-anchor="middle" font-size="14" font-weight="800" fill="#6e4715">${fmt(s.c.m,1)} kg</text><circle class="wheel" cx="-34" cy="14" r="15"/><circle class="wheel" cx="34" cy="14" r="15"/></g><text class="sceneStrong" x="400" y="365" text-anchor="middle">${verified?`t = ${fmt(s.t)} s　x = ${fmt(s.x)} m　v = ${fmt(s.v)} m/s`:'等待預測與開始'}</text>`;
+  $('sceneDesc').textContent=verified?`質量 ${fmt(s.c.m)} 公斤的小車位於 ${fmt(s.x)} 公尺，速度 ${fmt(s.v)} 公尺每秒，水平合力 ${fmt(s.net)} 牛頓。`:'尚未開始實驗。';
+}
+function graph(svgId,key,label,colorClass){
+  const svg=$(svgId),W=600,H=230,L=52,R=18,T=16,B=38,vals=samples.map(p=>p[key]);let maxAbs=Math.max(key==='x'?2:1,...vals.map(Math.abs));maxAbs=Math.ceil(maxAbs*1.18*2)/2;const xp=t=>L+t/MAX_T*(W-L-R),yp=v=>T+(maxAbs-v)/(2*maxAbs)*(H-T-B),zero=yp(0);let grid='';for(let i=0;i<=MAX_T;i++){const x=xp(i);grid+=`<line class="gridline" x1="${x}" y1="${T}" x2="${x}" y2="${H-B}"/><text class="graphLabel" x="${x}" y="${H-14}" text-anchor="middle">${i}</text>`;}[-1,0,1].forEach(k=>{const val=k*maxAbs,y=yp(val);grid+=`<line class="${k===0?'graphZero':'gridline'}" x1="${L}" y1="${y}" x2="${W-R}" y2="${y}"/><text class="graphLabel" x="${L-7}" y="${y+4}" text-anchor="end">${fmt(val,1)}</text>`;});const points=samples.map(p=>`${xp(p.t)},${yp(p[key])}`).join(' ');svg.innerHTML=`${grid}<line class="axis" x1="${L}" y1="${T}" x2="${L}" y2="${H-B}"/><line class="axis" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/><polyline class="${colorClass}" points="${points}"/><text class="graphLabel" x="${W-R}" y="${H-14}" text-anchor="end">t（s）</text><text class="graphLabel" x="8" y="13">${label}</text>`;
+}
+function updateGraphs(){graph('xGraph','x','x（m）','curveX');graph('vGraph','v','v（m/s）','curveV');}
+function capture(){samples.push({t:sim.t,x:sim.x,v:sim.v});if(samples.length>700)samples.shift();}
+function advance(total){if(!verified)return;let remain=total;while(remain>EPS&&sim.t<MAX_T&&Math.abs(sim.x)<15){const dt=Math.min(.01,remain,MAX_T-sim.t),f=forces(sim.c,sim.v);sim={...sim,...f};let nextV=sim.v+sim.a*dt,nextX=sim.x+sim.v*dt+.5*sim.a*dt*dt;if(Math.abs(sim.v)>EPS&&Math.sign(nextV)!==Math.sign(sim.v)&&sim.c.surface!=='none'){nextV=0;const rest=forces(sim.c,0);sim={...sim,...rest};}sim.v=Math.abs(nextV)<EPS?0:nextV;sim.x=nextX;sim.t+=dt;remain-=dt;if(Math.abs(sim.x)>=15){sim.x=Math.sign(sim.x)*15;running=false;break;}}capture();updateReadouts();renderScene();updateGraphs();$('explanation').textContent=explain(sim);$('formulaLine').textContent=formula(sim);if(sim.t>=MAX_T||Math.abs(sim.x)>=15){running=false;$('pause').disabled=true;$('start').textContent='繼續';$('status').className='status good';$('status').innerHTML=`<strong>本次觀察結束</strong>${sim.t>=MAX_T?'已完成 3 秒模擬。':'小車已離開觀察軌道。'}請加入紀錄或改變條件再比較。`;}}
+function frame(ts){if(!running)return;if(!lastFrame)lastFrame=ts;const dt=Math.min(.04,(ts-lastFrame)/1000);lastFrame=ts;advance(dt);if(running)raf=requestAnimationFrame(frame);}
+function start(){if(!els.prediction.value){$('status').className='status warn';$('status').innerHTML='<strong>還差一步</strong>請先預測剛開始時的加速度方向。';els.prediction.focus();return;}if(!verified){sim=initialSim();samples=[{t:0,x:0,v:sim.v}];reveal();renderScene();updateGraphs();}if(sim.t>=MAX_T||Math.abs(sim.x)>=15)return;if(reduced){$('status').className='status';$('status').innerHTML='<strong>已尊重系統的減少動態效果設定</strong>請使用「前進 0.5 秒」逐格觀察。';return;}running=true;lastFrame=0;$('pause').disabled=false;$('start').textContent='進行中';raf=requestAnimationFrame(frame);}
+function pause(){running=false;cancelAnimationFrame(raf);$('pause').disabled=true;$('start').textContent='繼續';}
+function step(){if(!els.prediction.value){start();if(!verified)return;}pause();advance(.5);}
+function reset(){pause();verified=false;sim=initialSim();samples=[{t:0,x:0,v:sim.v}];hideReadouts();renderScene();updateGraphs();$('start').textContent='開始實驗';$('status').className='status';$('status').innerHTML='<strong>回到起點</strong>先選擇預測，再開始或逐格前進。';$('explanation').textContent='完成一次預測與操作後，這裡會依目前條件解釋結果。';$('formulaLine').textContent='等待開始';}
+function changed(){if(els.level.value==='basic'){els.surface.value='none';els.initialV.value='0';$('dirRight').checked=true;}$('massOut').textContent=fmt(+els.mass.value,1)+' kg';reset();}
+function applyMission(name){els.prediction.value='';if(name==='force'){els.level.value='basic';els.mass.value='2';els.force.value='6';$('missionText').innerHTML='<strong>任務一</strong>先算 6 N ÷ 2 kg，再用讀值驗證。';}if(name==='mass'){els.level.value='basic';els.mass.value='4';els.force.value='6';$('missionText').innerHTML='<strong>任務二</strong>施力仍是 6 N，只把質量加倍。和任務一的加速度比較。';}if(name==='friction'){els.level.value='advanced';els.mass.value='2';els.force.value='5';els.surface.value='rough';els.initialV.value='0';$('dirRight').checked=true;$('missionText').innerHTML='<strong>任務三</strong>比較 5 N 施力與最大靜摩擦力，判斷小車是否開始移動。';}if(name==='constant'){els.level.value='advanced';els.mass.value='2';els.force.value='0';els.surface.value='none';els.initialV.value='2';$('dirRight').checked=true;$('missionText').innerHTML='<strong>任務四</strong>小車已有向右初速，但沒有水平合力。觀察速度—時間圖。';}document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=els.level.value!=='advanced');changed();}
+function saveRecords(rows){try{localStorage.setItem('bhcsForceMotionRecords',JSON.stringify(rows.slice(-12)));}catch(e){}}
+function loadRecords(){try{return JSON.parse(localStorage.getItem('bhcsForceMotionRecords'))||[];}catch(e){return[];}}
+function renderRecords(){const rows=loadRecords(),body=$('records');body.textContent='';if(!rows.length){body.innerHTML='<tr><td colspan="9" class="empty">尚無紀錄。先完成一次操作。</td></tr>';return;}rows.forEach((x,i)=>{const tr=document.createElement('tr');[i+1,x.m,x.F,x.surface,x.t,x.x,x.v,x.net,x.a].forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j>=4)td.className='num';tr.appendChild(td);});body.appendChild(tr);});}
+function addRecord(){if(!verified)return;const rows=loadRecords();rows.push({m:fmt(sim.c.m)+' kg',F:(sim.c.F>=0?'+':'')+fmt(sim.c.F)+' N',surface:surfaceData[sim.c.surface].name,t:fmt(sim.t)+' s',x:fmt(sim.x)+' m',v:fmt(sim.v)+' m/s',net:fmt(sim.net)+' N',a:fmt(sim.a)+' m/s²'});saveRecords(rows);renderRecords();$('status').className='status good';$('status').innerHTML='<strong>已加入紀錄</strong>改變一個條件後再做一次，才能看出因果關係。';}
+function runTests(){const near=(a,b)=>Math.abs(a-b)<1e-9;let f=forces({m:2,F:6,surface:'none'},0);const t1=near(f.a,3);f=forces({m:4,F:6,surface:'none'},0);const t2=near(f.a,1.5);f=forces({m:2,F:5,surface:'rough'},0);const t3=f.stuck&&near(f.a,0)&&near(f.maxStatic,6.86);f=forces({m:2,F:8,surface:'rough'},0);const t4=near(f.friction,-4.9)&&near(f.a,1.55);const ok=t1&&t2&&t3&&t4;if(!ok)console.error('Force-motion model self-test failed');return ok;}
+els.mass.addEventListener('input',changed);['force','surface','initialV'].forEach(id=>$(id).addEventListener('change',changed));document.querySelectorAll('input[name=direction]').forEach(x=>x.addEventListener('change',changed));els.level.addEventListener('change',()=>{document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=els.level.value!=='advanced');changed();});els.prediction.addEventListener('change',()=>{if(!verified){$('status').innerHTML='<strong>預測已記下</strong>現在開始實驗，或用 0.5 秒逐格觀察。';}});
+$('start').addEventListener('click',start);$('pause').addEventListener('click',pause);$('step').addEventListener('click',step);$('reset').addEventListener('click',reset);document.querySelectorAll('.mission').forEach(x=>x.addEventListener('click',()=>applyMission(x.dataset.mission)));$('addRecord').addEventListener('click',addRecord);$('printRecord').addEventListener('click',()=>window.print());$('clearRecord').addEventListener('click',()=>{if(confirm('確定清除這台裝置上的力與運動實驗紀錄？')){saveRecords([]);renderRecords();}});
+$('teacherToggle').addEventListener('click',()=>{const box=$('teacherBox'),show=box.hidden;box.hidden=!show;$('teacherToggle').setAttribute('aria-expanded',String(show));$('teacherToggle').textContent=show?'隱藏教師提示':'顯示教師提示';});
+$('checkQuiz').addEventListener('click',()=>{let score=0;document.querySelectorAll('.quizItem fieldset').forEach(fs=>{const picked=fs.querySelector('input:checked'),out=fs.parentElement.querySelector('.feedback'),ok=picked&&picked.value===fs.dataset.answer;if(ok)score++;out.className='feedback '+(ok?'ok':'no');out.textContent=ok?'答對了。':`再想一想：${fs.dataset.tip}`;});$('quizScore').textContent=`答對 ${score}／3 題${score===3?'，完成檢核！':''}`;try{localStorage.setItem('bhcsForceMotionQuiz',String(score));}catch(e){}});
+runTests();renderRecords();changed();
+})();
+</script>
+</body>
+</html>
