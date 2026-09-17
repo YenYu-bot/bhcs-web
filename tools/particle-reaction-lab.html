@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>粒子與化學反應實驗室｜質量守恆與限量反應物｜百宏文教</title>
+<meta name="description" content="免費粒子與化學反應互動實驗室。調整反應物分子數，觀察粒子重新組合、判斷限量反應物，並用原子計數驗證化學反應中的質量守恆。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/particle-reaction-lab.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="粒子與化學反應實驗室｜百宏文教">
+<meta property="og:description" content="從粒子重新組合看懂配平、限量反應物與質量守恆。">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/particle-reaction-lab.html">
+<meta property="og:image" content="https://www.bhcs.com.tw/assets/og.jpg">
+<style>
+:root{--navy:#102a43;--blue:#1769aa;--blue2:#eaf5ff;--teal:#14847b;--green:#18794e;--amber:#d97706;--red:#c2413b;--purple:#6d4bb3;--ink:#243447;--muted:#637489;--line:#d8e2ec;--paper:#fff;--bg:#f4f8fb;--shadow:0 12px 32px rgba(16,42,67,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei","PingFang TC",system-ui,sans-serif;line-height:1.65}button,select,input{font:inherit}button,select{min-height:44px}button{cursor:pointer}.shell{width:min(1180px,calc(100% - 32px));margin:auto}
+.topbar{background:var(--navy);color:#fff}.topbar .shell{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{color:#fff;text-decoration:none;font-weight:800;font-size:1.12rem}.brand small{font-weight:500;opacity:.72;margin-left:8px}.back{color:#fff;text-underline-offset:4px}.hero{background:linear-gradient(135deg,#edf7ff,#f3f0ff 55%,#fff7e4);border-bottom:1px solid var(--line);padding:34px 0 28px}.eyebrow{color:var(--purple);font-weight:800;letter-spacing:.08em}.hero h1{color:var(--navy);font-size:clamp(2rem,5vw,3.1rem);line-height:1.15;margin:.25rem 0 .7rem}.hero p{font-size:1.08rem;max-width:820px;margin:0;color:#40566f}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{background:#fff;border:1px solid #c9d9e8;border-radius:999px;padding:5px 12px;font-size:.9rem;color:#34516c}
+.stepnav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);box-shadow:0 3px 12px rgba(16,42,67,.05)}.stepnav .shell{display:flex;gap:8px;overflow-x:auto;padding:10px 0}.stepnav a{white-space:nowrap;color:#39536c;text-decoration:none;padding:8px 13px;border-radius:9px;font-weight:700}.stepnav a:hover,.stepnav a:focus-visible{background:var(--blue2);color:var(--blue)}
+main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.75fr);gap:20px;align-items:start}.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.cardhead{padding:18px 20px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.cardhead h2,.section h2{margin:0;color:var(--navy);font-size:1.3rem}.mode{display:flex;align-items:center;gap:8px}.mode label{font-size:.9rem;font-weight:700}.mode select{border:1px solid #b8c8d8;border-radius:9px;padding:6px 34px 6px 10px;background:#fff}
+.equation{padding:15px 18px;text-align:center;background:#102a43;color:#fff;font:800 clamp(1.25rem,3vw,1.8rem)/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.02em}.particleStage{display:grid;grid-template-columns:1fr 48px 1fr;gap:8px;align-items:center;padding:14px;background:linear-gradient(180deg,#f7fbff,#eef5fa);border-radius:0 0 18px 18px}.particleBox{background:#fff;border:1px solid #cad8e3;border-radius:14px;overflow:hidden}.particleBox h3{font-size:1rem;margin:0;padding:9px 12px;color:var(--navy);background:#edf5fa}.particleBox svg{display:block;width:100%;height:auto}.particleLegend{min-height:52px;padding:8px 12px;color:#4c6378;font-size:.86rem;border-top:1px solid #e3ebf1}.reactionArrow{text-align:center;color:var(--purple);font-size:2rem;font-weight:900}.particleBox.reacting{animation:reactPulse .55s ease both}@keyframes reactPulse{0%{opacity:.15;transform:scale(.96)}100%{opacity:1;transform:scale(1)}}.atomText{font-size:9px;font-weight:900;text-anchor:middle;dominant-baseline:central;pointer-events:none}.emptyStage{fill:#6c8092;font-size:18px;font-weight:700}
+.panel{padding:18px}.panel h2{font-size:1.2rem;color:var(--navy);margin:0 0 14px}.control{margin-bottom:14px}.control label{display:block;font-weight:800;color:#314b63;margin-bottom:6px}.control select,.control input[type=range]{width:100%}.control select{border:1px solid #b9c9d8;border-radius:10px;background:#fff;padding:8px 10px}.control output{float:right;color:var(--purple);font-weight:800}.prediction{background:#fff8e6;border:1px solid #ecd49e;border-radius:12px;padding:12px;margin:12px 0}.prediction label{font-weight:800}.prediction select{width:100%;margin-top:6px;border:1px solid #c9b273;border-radius:8px;padding:6px;background:#fff}.actions{display:grid;grid-template-columns:1.2fr 1fr;gap:9px;margin-top:14px}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800}.primary{background:var(--purple);color:#fff}.secondary{background:#edf3f7;color:#26445e;border:1px solid #cad7e2}.btn:disabled{opacity:.45;cursor:not-allowed}.status{margin-top:14px;border-radius:12px;padding:12px 14px;background:#eef5fa;border-left:5px solid var(--blue)}.status.good{background:#eaf8f1;border-color:var(--green)}.status.warn{background:#fff2ef;border-color:var(--red)}.status strong{display:block;color:var(--navy)}
+.readouts{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.meter{background:#102a43;color:#fff;border-radius:14px;padding:14px 15px;box-shadow:var(--shadow)}.meter .name{color:#bcd2e5;font-size:.86rem}.meter .value{display:block;font:800 clamp(1.08rem,2.3vw,1.55rem)/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;margin-top:4px}.meter .note{color:#bcd2e5;font-size:.75rem}.meter.good{background:#17613f}.meter.alert{background:#8c302c}
+.section{margin-top:26px;padding:22px}.section h2{margin-bottom:5px}.lead{margin-top:0;color:var(--muted)}.workflow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}.workflow div{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f9fbfd}.workflow b{display:block;color:var(--purple);font-size:.85rem}.workflow span{font-weight:800;color:var(--navy)}.explainGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fact{border:1px solid var(--line);border-radius:12px;padding:15px}.fact h3{font-size:1rem;color:var(--navy);margin:0 0 5px}.fact p{margin:0;color:#52677c}.advancedOnly[hidden],.teacher[hidden]{display:none}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#edf4f8;border-radius:6px;padding:2px 6px}.teacher{margin-top:16px;background:#f2efff;border:1px solid #d8cff5;border-radius:12px;padding:14px}.teacher h3{margin:0 0 5px;color:#4d3a85}
+.atomTable{width:100%;border-collapse:collapse;margin-top:15px}.atomTable th,.atomTable td{padding:10px;border-bottom:1px solid var(--line);text-align:center}.atomTable th{background:#eef5fa;color:var(--navy)}.atomTable td:first-child{font-weight:900}.balanced{color:var(--green);font-weight:900}.missions{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}.mission{border:1px solid #c4b8df;background:#fff;border-radius:10px;padding:9px 12px;color:#513a85;font-weight:800}.mission:hover{background:#f3efff}.recordTools{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}.tableWrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:780px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:.9rem}th{background:#eef5fa;color:var(--navy)}td.num{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.empty{text-align:center;color:var(--muted)}
+.quizItem{border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:12px}.quizItem fieldset{border:0;padding:0;margin:0}.quizItem legend{font-weight:800;color:var(--navy);margin-bottom:8px}.quizItem label{display:block;padding:6px 0}.feedback{margin-top:7px;font-weight:700}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}.safety{background:#fff5f2;border-color:#efc5bd}.safety h2{color:#842f29}.footer{background:var(--navy);color:#d5e1ea;padding:28px 0}.footer a{color:#fff}
+:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}@media(max-width:900px){.labgrid{grid-template-columns:1fr}.readouts{grid-template-columns:repeat(3,1fr)}.workflow{grid-template-columns:1fr 1fr}.explainGrid{grid-template-columns:1fr}}@media(max-width:620px){.shell{width:min(100% - 20px,1180px)}.topbar .shell{padding:9px 0;align-items:flex-start}.brand small{display:none}.hero{padding:24px 0}.cardhead{align-items:flex-start;flex-direction:column}.particleStage{grid-template-columns:1fr}.reactionArrow{transform:rotate(90deg);line-height:1}.panel{padding:14px}.readouts{grid-template-columns:1fr 1fr;gap:8px}.meter{padding:12px}.workflow{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.section{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.particleBox.reacting{animation:none}}
+@media print{.topbar,.stepnav,.hero,.panel,.particleStage,.recordTools,.missions,.quizItem,.footer{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
+</style>
+<!-- Google Analytics 4 -->
+<script>
+if(location.search.indexOf('noga=1')>-1)localStorage.setItem('bhcs_noga','1');
+if(localStorage.getItem('bhcs_noga')!=='1'){
+  var gaScript=document.createElement('script');gaScript.async=true;
+  gaScript.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';document.head.appendChild(gaScript);
+  window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};
+  gtag('js',new Date());gtag('config','G-GHN2GDS2RQ');
+}
+</script>
+</head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
+<section class="hero"><div class="shell"><div class="eyebrow">國中自然・互動教材</div><h1>粒子與化學反應實驗室</h1><p>化學反應不是把原子變不見，而是把原本的連結拆開，再重新組合。調整分子數，親手找出誰先用完、能生成多少產物。</p><div class="chips"><span class="chip">配平方程式</span><span class="chip">限量反應物</span><span class="chip">原子守恆</span><span class="chip">粒子模型</span><span class="chip">相對質量</span></div></div></section>
+<nav class="stepnav" aria-label="頁面段落"><div class="shell"><a href="#experiment">① 預測與反應</a><a href="#atoms">② 原子盤點</a><a href="#observe">③ 解釋規則</a><a href="#record">④ 實驗紀錄</a><a href="#quiz">⑤ 學習檢核</a></div></nav>
+
+<main class="shell">
+<section id="experiment" class="labgrid" aria-labelledby="lab-title">
+  <div class="card">
+    <div class="cardhead"><h2 id="lab-title">粒子反應槽</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div>
+    <div class="equation" id="equation">2H₂ + O₂ → 2H₂O</div>
+    <div class="particleStage">
+      <div class="particleBox"><h3>反應前</h3><svg id="beforeSvg" viewBox="0 0 540 290" role="img" aria-label="反應前粒子圖"></svg><div class="particleLegend" id="beforeLegend"></div></div>
+      <div class="reactionArrow" aria-hidden="true">→</div>
+      <div class="particleBox" id="afterBox"><h3>反應後</h3><svg id="afterSvg" viewBox="0 0 540 290" role="img" aria-label="反應後粒子圖"></svg><div class="particleLegend" id="afterLegend">先作預測，再開始反應。</div></div>
+    </div>
+  </div>
+
+  <aside class="card panel" aria-label="反應控制區">
+    <h2>準備反應物</h2>
+    <div class="control advancedOnly" hidden><label for="reaction">選擇反應</label><select id="reaction"><option value="water">生成水</option><option value="ammonia">生成氨</option><option value="methane">甲烷完全燃燒</option></select></div>
+    <div class="control"><label for="amountA"><span id="labelA">氫氣 H₂</span> <output id="amountAOut">4 個</output></label><input id="amountA" type="range" min="0" max="12" step="1" value="4"></div>
+    <div class="control"><label for="amountB"><span id="labelB">氧氣 O₂</span> <output id="amountBOut">2 個</output></label><input id="amountB" type="range" min="0" max="12" step="1" value="2"></div>
+    <div class="prediction"><label for="prediction">先預測：反應後哪一種反應物會先用完？</label><select id="prediction"><option value="">請先選一個預測</option><option value="A" id="predA">氫氣先用完</option><option value="B" id="predB">氧氣先用完</option><option value="exact">恰好完全反應</option><option value="none">沒有加入反應物</option></select></div>
+    <div class="actions"><button class="btn primary" id="react">開始反應</button><button class="btn secondary" id="reset">重新準備</button></div>
+    <div id="status" class="status" role="status" aria-live="polite"><strong>先做預測</strong>配平方程式告訴你一次完整反應需要幾個分子。</div>
+  </aside>
+
+  <div class="readouts" aria-label="反應結果">
+    <div class="meter"><span class="name">完整反應組數</span><span class="value" id="extentValue">—</span><span class="note">只能以整組進行</span></div>
+    <div class="meter"><span class="name">限量反應物</span><span class="value" id="limitValue">—</span><span class="note">決定產物上限</span></div>
+    <div class="meter"><span class="name">生成物</span><span class="value" id="productValue">—</span><span class="note">依係數比例生成</span></div>
+    <div class="meter"><span class="name">剩餘反應物</span><span class="value" id="leftValue">—</span><span class="note">未參與反應的粒子</span></div>
+    <div class="meter" id="conserveMeter"><span class="name">原子盤點</span><span class="value" id="conserveValue">—</span><span class="note">逐元素比較前後</span></div>
+  </div>
+</section>
+
+<section id="atoms" class="card section">
+  <h2>原子盤點表</h2><p class="lead">分子種類改變了，但每一種元素的原子總數必須一樣。</p>
+  <div class="tableWrap"><table class="atomTable"><thead><tr><th>元素</th><th>反應前原子數</th><th>反應後原子數</th><th>檢查</th></tr></thead><tbody id="atomRows"><tr><td colspan="4" class="empty">開始反應後顯示。</td></tr></tbody></table></div>
+  <div class="advancedOnly" hidden><p><strong>畫面粒子的相對總質量：</strong>反應前 <span id="massBefore" class="formula">—</span> u；反應後 <span id="massAfter" class="formula">—</span> u。</p></div>
+</section>
+
+<section id="observe" class="card section">
+  <h2>怎麼從係數算到粒子？</h2><p class="lead" id="explanation">完成一次反應後，這裡會說明反應組數與剩餘量。</p>
+  <div class="workflow"><div><b>01</b><span>讀係數比例</span></div><div><b>02</b><span>預測誰先用完</span></div><div><b>03</b><span>組成完整反應組</span></div><div><b>04</b><span>盤點剩餘與產物</span></div><div><b>05</b><span>檢查原子守恆</span></div></div>
+  <div class="explainGrid">
+    <article class="fact"><h3>係數不是右下角</h3><p>係數表示分子個數比例，可以配平調整；右下角數字表示一個分子的組成，不能為了配平任意改動。</p></article>
+    <article class="fact"><h3>誰決定產物數量？</h3><p>先用係數分別計算兩種反應物可以組成幾組反應；可用組數較少的一方限制了產物數量。</p></article>
+    <article class="fact"><h3>質量為什麼守恆？</h3><p>化學反應只重新排列原子。若逐元素的原子數前後相同，相對總質量也會相同。</p></article>
+  </div>
+  <div class="advancedOnly" hidden><p><strong>目前計算：</strong> <span id="formulaLine" class="formula">等待反應</span></p></div>
+  <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本教材用離散分子圖示表達化學計量，假設反應完全且無副反應。它不呈現碰撞方向、活化能、反應速率、化學平衡與實際相態；粒子距離也不是分子大小或真實濃度比例。</div></div>
+  <button class="btn secondary" id="teacherToggle" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
+</section>
+
+<section class="card section">
+  <h2>引導任務</h2><p class="lead">每個任務都先算係數比例，再看粒子圖驗證。</p>
+  <div class="missions"><button class="mission" data-mission="exactWater">任務一：4H₂＋2O₂</button><button class="mission" data-mission="oxygenLimit">任務二：7H₂＋2O₂</button><button class="mission" data-mission="hydrogenLimit">任務三：2H₂＋3O₂</button><button class="mission" data-mission="combustion">任務四：2CH₄＋5O₂</button></div>
+  <div id="missionText" class="status"><strong>任務一</strong>這是係數 2：1 的整數倍，預測是否會有反應物剩下。</div>
+</section>
+
+<section id="record" class="card section">
+  <h2>實驗紀錄</h2><p class="lead">比較不同起始粒子數，找出產物數量何時不再增加。</p>
+  <div class="recordTools"><button class="btn primary" id="addRecord" disabled>加入目前結果</button><button class="btn secondary" id="printRecord">列印紀錄</button><button class="btn secondary" id="clearRecord">清除紀錄</button></div>
+  <div class="tableWrap"><table><thead><tr><th>#</th><th>反應</th><th>起始反應物</th><th>反應組數</th><th>限量反應物</th><th>生成物</th><th>剩餘</th><th>守恆</th></tr></thead><tbody id="records"><tr><td colspan="8" class="empty">尚無紀錄。先完成一次反應。</td></tr></tbody></table></div>
+</section>
+
+<section id="quiz" class="card section">
+  <h2>學習檢核</h2><p class="lead">分清楚係數、右下角數字與限量反應物。</p>
+  <div class="quizItem"><fieldset data-answer="b" data-tip="2H₂ + O₂ → 2H₂O 表示每兩個氫分子需要一個氧分子，生成兩個水分子。"><legend>1. 依 2H₂ + O₂ → 2H₂O，3 個 O₂ 最多需要幾個 H₂ 完全反應？</legend><label><input type="radio" name="q1" value="a"> 3 個</label><label><input type="radio" name="q1" value="b"> 6 個</label><label><input type="radio" name="q1" value="c"> 9 個</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="quizItem"><fieldset data-answer="c" data-tip="配平只能調整分子前的係數。改右下角數字會把物質本身改成另一種分子。"><legend>2. 配平化學方程式時，可以改動哪一項？</legend><label><input type="radio" name="q2" value="a"> 元素符號</label><label><input type="radio" name="q2" value="b"> 分子式右下角數字</label><label><input type="radio" name="q2" value="c"> 分子前的係數</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="quizItem"><fieldset data-answer="a" data-tip="氧氣只能支持兩組反應，會生成 4 個水分子並剩下 3 個氫分子。"><legend>3. 7H₂ 和 2O₂ 反應時，哪一種是限量反應物？</legend><label><input type="radio" name="q3" value="a"> O₂</label><label><input type="radio" name="q3" value="b"> H₂</label><label><input type="radio" name="q3" value="c"> 兩者恰好用完</label></fieldset><div class="feedback" aria-live="polite"></div></div>
+  <div class="recordTools"><button class="btn primary" id="checkQuiz">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
+</section>
+
+<section class="card section safety"><h2>真實實驗安全提醒</h2><p>本頁是粒子模型，不是實驗操作指南。氫氣、氨氣與甲烷相關反應具有燃燒、爆炸、毒性或高溫高壓風險；請勿依本頁內容自行混合或點燃氣體。</p></section>
+</main>
+
+<footer class="footer"><div class="shell">百宏文教機構｜<a href="../ziyuan.html">更多免費學習資源</a>｜化學計量的理想粒子模型</div></footer>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),atomicMass={H:1.008,C:12.01,N:14.01,O:16};
+const reactions={
+ water:{name:'水的生成',equation:'2H₂ + O₂ → 2H₂O',A:{id:'H2',name:'氫氣 H₂',co:2,atoms:{H:2}},B:{id:'O2',name:'氧氣 O₂',co:1,atoms:{O:2}},products:[{id:'H2O',name:'水 H₂O',co:2,atoms:{H:2,O:1}}]},
+ ammonia:{name:'氨的生成',equation:'N₂ + 3H₂ → 2NH₃',A:{id:'N2',name:'氮氣 N₂',co:1,atoms:{N:2}},B:{id:'H2',name:'氫氣 H₂',co:3,atoms:{H:2}},products:[{id:'NH3',name:'氨 NH₃',co:2,atoms:{N:1,H:3}}]},
+ methane:{name:'甲烷完全燃燒',equation:'CH₄ + 2O₂ → CO₂ + 2H₂O',A:{id:'CH4',name:'甲烷 CH₄',co:1,atoms:{C:1,H:4}},B:{id:'O2',name:'氧氣 O₂',co:2,atoms:{O:2}},products:[{id:'CO2',name:'二氧化碳 CO₂',co:1,atoms:{C:1,O:2}},{id:'H2O',name:'水 H₂O',co:2,atoms:{H:2,O:1}}]}
+};
+const els={level:$('level'),reaction:$('reaction'),amountA:$('amountA'),amountB:$('amountB'),prediction:$('prediction')};
+let verified=false,lastResult=null;
+const fmt=n=>Math.abs(n-Math.round(n))<1e-9?String(Math.round(n)):n.toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
+function currentReaction(){return reactions[els.level.value==='basic'?'water':els.reaction.value];}
+function countAtoms(items){const out={};items.forEach(item=>Object.entries(item.atoms).forEach(([el,n])=>out[el]=(out[el]||0)+n*item.count));return out;}
+function moleculeMass(item){return Object.entries(item.atoms).reduce((s,[el,n])=>s+atomicMass[el]*n,0);}
+function solve(){
+ const r=currentReaction(),nA=+els.amountA.value,nB=+els.amountB.value,ratioA=nA/r.A.co,ratioB=nB/r.B.co,extent=Math.floor(Math.min(ratioA,ratioB)+1e-10);
+ const limiting=nA===0&&nB===0?'none':Math.abs(ratioA-ratioB)<1e-10?'exact':ratioA<ratioB?'A':'B',leftA=nA-extent*r.A.co,leftB=nB-extent*r.B.co;
+ const products=r.products.map(p=>({...p,count:extent*p.co})),before=[{...r.A,count:nA},{...r.B,count:nB}],after=[...products,{...r.A,count:leftA},{...r.B,count:leftB}],atomsBefore=countAtoms(before),atomsAfter=countAtoms(after),elements=[...new Set([...Object.keys(atomsBefore),...Object.keys(atomsAfter)])],conserved=elements.every(el=>atomsBefore[el]===atomsAfter[el]);
+ const massBefore=before.reduce((s,x)=>s+x.count*moleculeMass(x),0),massAfter=after.reduce((s,x)=>s+x.count*moleculeMass(x),0);
+ return{r,nA,nB,ratioA,ratioB,extent,limiting,leftA,leftB,products,before,after,atomsBefore,atomsAfter,elements,conserved,massBefore,massAfter};
+}
+function atom(x,y,el,r=10){const colors={H:'#f8fafc',O:'#ef5b5b',N:'#4c86d9',C:'#4b5563'},text=el==='H'?'#17324a':'#fff';return`<circle cx="${x}" cy="${y}" r="${r}" fill="${colors[el]}" stroke="#334e68" stroke-width="2"/><text class="atomText" x="${x}" y="${y+1}" fill="${text}">${el}</text>`;}
+function molecule(id,x,y){let s='';if(id==='H2')s=atom(-9,0,'H')+atom(9,0,'H');if(id==='O2')s=atom(-10,0,'O',11)+atom(10,0,'O',11);if(id==='N2')s=atom(-10,0,'N',11)+atom(10,0,'N',11);if(id==='H2O')s=atom(0,3,'O',12)+atom(-14,-9,'H',8)+atom(14,-9,'H',8);if(id==='NH3')s=atom(0,0,'N',12)+atom(-15,-9,'H',8)+atom(15,-9,'H',8)+atom(0,17,'H',8);if(id==='CH4')s=atom(0,0,'C',12)+atom(-17,0,'H',8)+atom(17,0,'H',8)+atom(0,-17,'H',8)+atom(0,17,'H',8);if(id==='CO2')s=atom(-19,0,'O',11)+atom(0,0,'C',11)+atom(19,0,'O',11);return`<g transform="translate(${x} ${y})">${s}</g>`;}
+function renderParticles(svgId,items,emptyText){const svg=$(svgId),expanded=[];items.filter(x=>x.count>0).forEach(x=>{for(let i=0;i<x.count;i++)expanded.push(x.id);});if(!expanded.length){svg.innerHTML=`<text class="emptyStage" x="270" y="145" text-anchor="middle">${emptyText}</text>`;return;}const cols=6,dx=82,dy=58,startX=65,startY=48;svg.innerHTML=expanded.map((id,i)=>molecule(id,startX+(i%cols)*dx,startY+Math.floor(i/cols)*dy)).join('');}
+function itemText(items){const active=items.filter(x=>x.count>0);return active.length?active.map(x=>`${x.name} × ${x.count}`).join('；'):'沒有粒子';}
+function updateSetup(){const r=currentReaction();$('equation').textContent=r.equation;$('labelA').textContent=r.A.name;$('labelB').textContent=r.B.name;$('predA').textContent=r.A.name+'先用完';$('predB').textContent=r.B.name+'先用完';$('amountAOut').textContent=els.amountA.value+' 個';$('amountBOut').textContent=els.amountB.value+' 個';const before=[{...r.A,count:+els.amountA.value},{...r.B,count:+els.amountB.value}];renderParticles('beforeSvg',before,'沒有加入反應物');$('beforeLegend').textContent=itemText(before);}
+function resultName(x){return x.limiting==='none'?'沒有反應物':x.limiting==='exact'?'恰好完全反應':x.limiting==='A'?x.r.A.name:x.r.B.name;}
+function productText(x){const active=x.products.filter(p=>p.count>0);return active.length?active.map(p=>`${p.name} × ${p.count}`).join('＋'):'沒有產物';}
+function leftoverText(x){const parts=[];if(x.leftA)parts.push(`${x.r.A.name} × ${x.leftA}`);if(x.leftB)parts.push(`${x.r.B.name} × ${x.leftB}`);return parts.length?parts.join('＋'):'無剩餘';}
+function renderResult(x){
+ renderParticles('afterSvg',x.after,'沒有粒子');$('afterLegend').textContent=`生成：${productText(x)}；剩餘：${leftoverText(x)}`;
+ const box=$('afterBox');box.classList.remove('reacting');void box.offsetWidth;box.classList.add('reacting');
+ $('extentValue').textContent=x.extent+' 組';$('limitValue').textContent=resultName(x);$('productValue').textContent=productText(x);$('leftValue').textContent=leftoverText(x);$('conserveValue').textContent=x.conserved?'前後相同':'需要檢查';$('conserveMeter').className='meter '+(x.conserved?'good':'alert');$('addRecord').disabled=false;
+ const match=els.prediction.value===x.limiting;$('status').className='status '+(match?'good':'warn');$('status').innerHTML=`<strong>${match?'預測正確':'預測與結果不同'}</strong>${x.extent?`可以完成 ${x.extent} 組反應；${resultName(x)}${x.limiting==='exact'?'。':'限制了產物數量。'}`:'目前無法湊出一組完整反應。'}`;
+ $('explanation').textContent=x.extent?`${x.r.A.name} 每組需要 ${x.r.A.co} 個，${x.nA} 個可供應 ${fmt(x.ratioA)} 組；${x.r.B.name} 每組需要 ${x.r.B.co} 個，${x.nB} 個可供應 ${fmt(x.ratioB)} 組。只能完成兩者較小值中的完整整數組，也就是 ${x.extent} 組。`:'至少一種反應物不足以湊出一個完整反應組，所以這個模型不產生半個分子。';
+ $('formulaLine').textContent=`floor(min(${x.nA}/${x.r.A.co}, ${x.nB}/${x.r.B.co})) = ${x.extent} 組`;$('massBefore').textContent=fmt(x.massBefore);$('massAfter').textContent=fmt(x.massAfter);renderAtomTable(x);
+ if(typeof window.gtag==='function')window.gtag('event','particle_reaction',{reaction:els.level.value==='basic'?'water':els.reaction.value,limiting:x.limiting,prediction_match:match});
+}
+function renderAtomTable(x){const body=$('atomRows');body.textContent='';if(!x.elements.length){body.innerHTML='<tr><td colspan="4" class="empty">沒有粒子可供盤點。</td></tr>';return;}x.elements.forEach(el=>{const tr=document.createElement('tr');[el,x.atomsBefore[el]||0,x.atomsAfter[el]||0,(x.atomsBefore[el]||0)===(x.atomsAfter[el]||0)?'守恆':'不相同'].forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===3&&v==='守恆')td.className='balanced';tr.appendChild(td);});body.appendChild(tr);});}
+function hideResult(){verified=false;lastResult=null;['extentValue','limitValue','productValue','leftValue','conserveValue'].forEach(id=>$(id).textContent='—');$('conserveMeter').className='meter';$('addRecord').disabled=true;renderParticles('afterSvg',[],'按「開始反應」查看結果');$('afterLegend').textContent='先作預測，再開始反應。';$('atomRows').innerHTML='<tr><td colspan="4" class="empty">開始反應後顯示。</td></tr>';$('massBefore').textContent='—';$('massAfter').textContent='—';$('formulaLine').textContent='等待反應';$('explanation').textContent='完成一次反應後，這裡會說明反應組數與剩餘量。';}
+function changed(){els.prediction.value='';updateSetup();hideResult();$('status').className='status';$('status').innerHTML='<strong>條件已改變</strong>重新預測哪一種反應物會先用完。';}
+function react(){if(!els.prediction.value){$('status').className='status warn';$('status').innerHTML='<strong>還差一步</strong>請先預測哪一種反應物會先用完。';els.prediction.focus();return;}lastResult=solve();verified=true;renderResult(lastResult);}
+function reactionChanged(){const r=currentReaction();els.amountA.value=Math.min(12,r.A.co*2);els.amountB.value=Math.min(12,r.B.co*2);els.prediction.value='';changed();}
+function applyMission(name){els.prediction.value='';if(name==='exactWater'){els.level.value='basic';els.amountA.value=4;els.amountB.value=2;$('missionText').innerHTML='<strong>任務一</strong>係數是 2：1，觀察兩種反應物是否恰好用完。';}if(name==='oxygenLimit'){els.level.value='basic';els.amountA.value=7;els.amountB.value=2;$('missionText').innerHTML='<strong>任務二</strong>氧氣只能供應幾組反應？算出剩下多少氫氣。';}if(name==='hydrogenLimit'){els.level.value='basic';els.amountA.value=2;els.amountB.value=3;$('missionText').innerHTML='<strong>任務三</strong>氫氣只能供應一組反應，預測氧氣剩餘量。';}if(name==='combustion'){els.level.value='advanced';els.reaction.value='methane';els.amountA.value=2;els.amountB.value=5;$('missionText').innerHTML='<strong>任務四</strong>依 1：2 比例判斷甲烷與氧氣誰先用完，再算兩種產物。';}document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=els.level.value!=='advanced');updateSetup();hideResult();}
+function saveRecords(rows){try{localStorage.setItem('bhcsParticleReactionRecords',JSON.stringify(rows.slice(-12)));}catch(e){}}
+function loadRecords(){try{return JSON.parse(localStorage.getItem('bhcsParticleReactionRecords'))||[];}catch(e){return[];}}
+function renderRecords(){const rows=loadRecords(),body=$('records');body.textContent='';if(!rows.length){body.innerHTML='<tr><td colspan="8" class="empty">尚無紀錄。先完成一次反應。</td></tr>';return;}rows.forEach((x,i)=>{const tr=document.createElement('tr');[i+1,x.reaction,x.start,x.extent,x.limit,x.product,x.left,x.conserved].forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j===3)td.className='num';tr.appendChild(td);});body.appendChild(tr);});}
+function addRecord(){if(!verified||!lastResult)return;const x=lastResult,rows=loadRecords();rows.push({reaction:x.r.name,start:`${x.r.A.name} × ${x.nA}；${x.r.B.name} × ${x.nB}`,extent:x.extent+' 組',limit:resultName(x),product:productText(x),left:leftoverText(x),conserved:x.conserved?'是':'否'});saveRecords(rows);renderRecords();$('status').className='status good';$('status').innerHTML='<strong>已加入紀錄</strong>改變一種反應物數量，再觀察產物是否增加。';}
+function runTests(){const oldLevel=els.level.value,oldReaction=els.reaction.value,oldA=els.amountA.value,oldB=els.amountB.value;const cases=[['water',4,2,2,'exact',0,0,[4]],['water',7,2,2,'B',3,0,[4]],['water',2,3,1,'A',0,2,[2]],['ammonia',2,6,2,'exact',0,0,[4]],['methane',2,5,2,'A',0,1,[2,4]]];els.level.value='advanced';const ok=cases.every(([key,a,b,e,l,la,lb,p])=>{els.reaction.value=key;els.amountA.value=a;els.amountB.value=b;const x=solve();return x.extent===e&&x.limiting===l&&x.leftA===la&&x.leftB===lb&&x.products.every((q,i)=>q.count===p[i])&&x.conserved&&Math.abs(x.massBefore-x.massAfter)<1e-8;});els.level.value=oldLevel;els.reaction.value=oldReaction;els.amountA.value=oldA;els.amountB.value=oldB;if(!ok)console.error('Particle reaction model self-test failed');return ok;}
+els.level.addEventListener('change',()=>{document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=els.level.value!=='advanced');if(els.level.value==='basic')els.reaction.value='water';reactionChanged();});els.reaction.addEventListener('change',reactionChanged);els.amountA.addEventListener('input',changed);els.amountB.addEventListener('input',changed);els.prediction.addEventListener('change',()=>{if(!verified)$('status').innerHTML='<strong>預測已記下</strong>現在開始反應，用粒子圖檢查。';});$('react').addEventListener('click',react);$('reset').addEventListener('click',reactionChanged);document.querySelectorAll('.mission').forEach(x=>x.addEventListener('click',()=>applyMission(x.dataset.mission)));$('addRecord').addEventListener('click',addRecord);$('printRecord').addEventListener('click',()=>window.print());$('clearRecord').addEventListener('click',()=>{if(confirm('確定清除這台裝置上的粒子反應紀錄？')){saveRecords([]);renderRecords();}});$('teacherToggle').addEventListener('click',()=>{const box=$('teacherBox'),show=box.hidden;box.hidden=!show;$('teacherToggle').setAttribute('aria-expanded',String(show));$('teacherToggle').textContent=show?'隱藏教師提示':'顯示教師提示';});$('checkQuiz').addEventListener('click',()=>{let score=0;document.querySelectorAll('.quizItem fieldset').forEach(fs=>{const picked=fs.querySelector('input:checked'),out=fs.parentElement.querySelector('.feedback'),ok=picked&&picked.value===fs.dataset.answer;if(ok)score++;out.className='feedback '+(ok?'ok':'no');out.textContent=ok?'答對了。':`再想一想：${fs.dataset.tip}`;});$('quizScore').textContent=`答對 ${score}／3 題${score===3?'，完成檢核！':''}`;try{localStorage.setItem('bhcsParticleReactionQuiz',String(score));}catch(e){}});
+runTests();renderRecords();updateSetup();hideResult();
+})();
+</script>
+</body>
+</html>
