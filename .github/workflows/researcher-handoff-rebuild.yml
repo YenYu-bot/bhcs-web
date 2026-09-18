@@ -24,8 +24,14 @@ jobs:
       - name: Restore first-batch core changes
         run: |
           base64 --decode scripts/.firstbatch-core.patch.b64 | gunzip > /tmp/firstbatch-core.patch
-          git apply --check /tmp/firstbatch-core.patch
-          git apply /tmp/firstbatch-core.patch
+          if git apply --check /tmp/firstbatch-core.patch; then
+            git apply /tmp/firstbatch-core.patch
+          elif git apply --reverse --check /tmp/firstbatch-core.patch; then
+            echo "First-batch core patch is already applied."
+          else
+            echo "First-batch core patch neither applies nor reverses cleanly."
+            exit 1
+          fi
       - name: Rebuild generated science pages
         run: |
           node scripts/build_microscope.mjs
