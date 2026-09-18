@@ -7,7 +7,7 @@
 ## 學習目標
 
 - 用地軸傾斜解釋季節
-- 比较不同緯度的正午太陽高度
+- 比較不同緯度的正午太陽高度
 - 辨識極晝極夜與邊界
 
 ## 模型
@@ -20,12 +20,12 @@
 
 ## 引導任務
 
-- ① 臺中夏冬比較：记录北半球夏至，再把位置改到270°，比較正午高度與日長。
+- ① 臺中夏冬比較：記錄北半球夏至，再把位置改到270°，比較正午高度與日長。
 - ② 南北半球：同一公轉位置，緯度正負交換；季節相同嗎？
 - ③ 極圈與地軸：觀察70°N的日長，再把傾角調到0°。
 
 ## 驗收
 
-典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。實體装置及教師試用另見 science-acceptance.md，不宣稱自動完成。
+典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。實體裝置及教師試用另見 science-acceptance.md，不宣稱自動完成。
 
 來源：[NASA：四季成因](https://spaceplace.nasa.gov/seasons/en/)

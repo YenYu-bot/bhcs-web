@@ -42,7 +42,8 @@ export function diagram(id,s,r){
    out+=Math.abs(r.output)>1e-9?(r.output>0?arrow(100,170,545,170):arrow(545,170,100,170)):text(255,175,'電流0：無場',16);
    out+=text(50,295,`N=${s.turns} 匝；I=${s.current} A；B=${num(r.field*1000,4)} mT`,18);
   }else{
-   for(let y=85;y<=245;y+=80)out+=s.field>=0?arrow(90,y,550,y,'#8eabc1'):arrow(550,y,90,y,'#8eabc1');
+   if(s.field!==0){for(let y=85;y<=245;y+=80)out+=s.field>0?arrow(90,y,550,y,'#8eabc1'):arrow(550,y,90,y,'#8eabc1')}else out+=text(90,80,'B=0：沒有外加磁場',18);
+   out+=line(330,165,430,165,'#9aaeb9',true)+text(445,195,'向右基準軸',14);
    const th=s.angle*Math.PI/180,nx=Math.cos(th),ny=-Math.sin(th);
    out+=line(330-70*ny,165+70*nx,330+70*ny,165-70*nx,'#bf731a')+arrow(330,165,330+85*nx,165+85*ny,'#b54a5b')+text(420,290,`θ=${s.angle}°`,18)+text(50,290,'橘：線圈剖面　紅：法線',17);
    out+=text(50,325,s.mode==='motor'?`τ=${num(r.torque,4)} N·m（當下值）`:`ε=${num(r.emf,4)} V；轉速=${s.rpm} rpm`,18);

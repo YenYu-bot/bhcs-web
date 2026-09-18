@@ -36,6 +36,16 @@ test('Pressure: water zero / PV / continuity / Bernoulli',()=>{
  const flow=calc('pressure-fluid',{mode:'flow',ratio:.5});close(flow.v2,4);close(flow.absolute,95300);
  close(calc('pressure-fluid',{mode:'flow',speed:0,ratio:.4}).absolute,101300);
 });
+test('Electromagnetism diagram: zero field and signed reference axis',()=>{
+ const base=defaults('electromagnetism');
+ for(const mode of ['motor','generator']){
+  const s={...base,mode,field:0},r=calculate('electromagnetism',s),svg=diagram('electromagnetism',s,r);
+  assert.ok(svg.includes('B=0：沒有外加磁場'));assert.ok(!svg.includes('#8eabc1'));
+  assert.ok(describe('electromagnetism',s,r).explanation.includes('外加磁場為零'));
+  const positive=calculate('electromagnetism',{...base,mode,field:.2}),negative=calculate('electromagnetism',{...base,mode,field:-.2});
+  close(positive.output,-negative.output);assert.ok(svg.includes('向右基準軸'));
+ }
+});
 test('Solubility: mass accounting / concentration / exact saturation',()=>{
  const r=calc('solubility');close(r.capacity,30);close(r.dissolved,30);close(r.solid,20);close(r.percent,30/130*100);
  assert.equal(calc('solubility',{soluteMass:30}).kind,'edge');

@@ -26,6 +26,6 @@ A、B是虛構的線性教學溶質，絕非硝酸鉀或食鹽的實測曲線。
 
 ## 驗收
 
-典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。實體装置及教師試用另見 science-acceptance.md，不宣稱自動完成。
+典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。實體裝置及教師試用另見 science-acceptance.md，不宣稱自動完成。
 
 來源：[NIST：實測溶解度資料庫](https://srdata.nist.gov/solubility/)

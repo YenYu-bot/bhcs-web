@@ -26,6 +26,6 @@
 
 ## 驗收
 
-典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。實體装置及教師試用另見 science-acceptance.md，不宣稱自動完成。
+典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。實體裝置及教師試用另見 science-acceptance.md，不宣稱自動完成。
 
 來源：[OpenStax：空氣柱共振](https://openstax.org/books/college-physics-2e/pages/17-5-sound-interference-and-resonance-standing-waves-in-air-columns)
