@@ -3,7 +3,11 @@ const microLayer=document.createElement('canvas');microLayer.width=600;microLaye
 const microLayerContext=microLayer.getContext('2d');
 function microPath(points,ctx){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();}
 function drawMicroCells(kind,ctx=microLayerContext){
- const z=objective()/4,b=visibleBounds(z),{w,h}=MICRO_SIZES[kind],u=MICRO_UM_TO_WORLD;
+ const z=objective()/4,b=visibleBounds(z),u=MICRO_UM_TO_WORLD;
+ if(kind==='letter'){
+  ctx.save();ctx.scale(u,u);ctx.fillStyle='rgba(36,61,66,.92)';ctx.font='700 1200px Georgia,serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('e',420,-160);ctx.strokeStyle='rgba(190,72,55,.78)';ctx.lineWidth=24;ctx.beginPath();ctx.moveTo(-350,0);ctx.lineTo(350,0);ctx.moveTo(0,-350);ctx.lineTo(0,350);ctx.stroke();ctx.restore();return;
+ }
+ const {w,h}=MICRO_SIZES[kind];
  const col0=Math.floor(b.minX/u/w)-2,col1=Math.ceil(b.maxX/u/w)+2,row0=Math.floor(b.minY/u/h)-2,row1=Math.ceil(b.maxY/u/h)+2;
  ctx.save();ctx.scale(u,u);ctx.lineJoin='round';
  for(let row=row0;row<=row1;row++)for(let col=col0;col<=col1;col++){
