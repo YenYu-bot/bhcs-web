@@ -1,3 +1,4 @@
+// Batch 1 delivery gate: directory + microscope + shared researcher shell.
 const fs=require('fs');
 const must=(v,m)=>{if(!v)throw new Error(m)};
 const micro=fs.readFileSync('tools/microscope-lab.html','utf8');
