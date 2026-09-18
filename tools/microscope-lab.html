@@ -74,16 +74,16 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 <!-- science-self-study:end -->
 <section id="experiment" class="labgrid" aria-labelledby="lab-title">
  <div class="card">
-  <div class="cardhead"><h2 id="lab-title">顯微鏡視野</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div>
-  <div class="scopeStage"><div class="scopeFrame"><canvas id="scope" width="600" height="600" role="img" aria-label="虛擬顯微鏡視野"></canvas><div class="scopeCover" id="scopeCover">選好標本後，按「開始觀察」</div></div><p class="scopeModelNote" style="margin:22px auto 12px;max-width:580px;color:#263f58"><strong>程式繪製的觀察示意，非顯微照片。</strong><br>形狀與尺寸有變異；低倍先找輪廓，高倍再辨認細節。比例尺與細胞使用同一套尺寸換算。</p><div class="featureLine" id="featureLine"><span class="featureTag">尚未開始觀察</span></div></div>
- <div class="slide-workbench"><h3>試片操作台</h3><p id="slide-help">開始觀察後，用滑鼠或手指拖移玻璃試片，留意上方影像的相反移動。也可點方向鍵；鍵盤聚焦操作台後按方向鍵，Home 回中央。</p><div id="slide-pad" class="slide-pad" tabindex="0" role="group" aria-label="可拖曳的玻璃試片操作台" aria-describedby="slide-help" aria-disabled="true"><span class="slide-crosshair" aria-hidden="true">＋</span><span id="slide-glass" class="slide-glass" aria-hidden="true"></span></div><div class="slide-buttons"><button type="button" data-slide-dx="-5" data-slide-dy="0" aria-label="試片向左">←</button><button type="button" data-slide-dx="5" data-slide-dy="0" aria-label="試片向右">→</button><button type="button" data-slide-dx="0" data-slide-dy="5" aria-label="試片向上">↑</button><button type="button" data-slide-dx="0" data-slide-dy="-5" aria-label="試片向下">↓</button><button type="button" id="slide-center">試片回中央</button></div><p id="slide-position" class="slide-position" aria-live="polite">尚未開始</p></div>
+  <div class="cardhead"><h2 id="lab-title">觀察窗｜顯微鏡視野</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div>
+  <div class="scopeStage"><div class="scopeFrame"><canvas id="scope" width="600" height="600" role="img" aria-label="虛擬顯微鏡視野"></canvas><div class="scopeCover" id="scopeCover">選好標本後，按「開始研究」</div></div><p class="scopeModelNote" style="margin:22px auto 12px;max-width:580px;color:#263f58"><strong>程式繪製的觀察示意，非顯微照片。</strong><br>形狀與尺寸有變異；低倍先找輪廓，高倍再辨認細節。比例尺與細胞使用同一套尺寸換算。</p><div class="featureLine" id="featureLine"><span class="featureTag">尚未開始觀察</span></div></div>
+ <div class="slide-workbench"><h3>玻片移動台</h3><p id="slide-help">開始觀察後，用滑鼠或手指拖移玻璃試片，留意上方影像的相反移動。也可點方向鍵；鍵盤聚焦操作台後按方向鍵，Home 回中央。</p><div id="slide-pad" class="slide-pad" tabindex="0" role="group" aria-label="可拖曳的玻璃試片操作台" aria-describedby="slide-help" aria-disabled="true"><span class="slide-crosshair" aria-hidden="true">＋</span><span id="slide-glass" class="slide-glass" aria-hidden="true"></span></div><div class="slide-buttons"><button type="button" data-slide-dx="-5" data-slide-dy="0" aria-label="試片向左">←</button><button type="button" data-slide-dx="5" data-slide-dy="0" aria-label="試片向右">→</button><button type="button" data-slide-dx="0" data-slide-dy="5" aria-label="試片向上">↑</button><button type="button" data-slide-dx="0" data-slide-dy="-5" aria-label="試片向下">↓</button><button type="button" id="slide-center">試片回中央</button></div><p id="slide-position" class="slide-position" aria-live="polite">尚未開始</p></div>
  </div>
- <aside class="card panel" aria-label="顯微鏡控制區">
-  <h2>準備標本</h2>
+ <aside class="card panel" aria-label="顯微鏡研究工具箱">
+  <h2>研究工具箱</h2>
   <div class="coach" id="microCoach" role="status" aria-live="polite"><strong>第 1 步｜選標本開始觀察</strong><p>先從低倍開始，找到清楚影像，再動手移動試片。</p></div>
   <div class="control"><label for="specimen">標本種類</label><select id="specimen"><option value="letter">字母 e 定位玻片</option><option value="onion">洋蔥鱗葉表皮</option><option value="cheek">口腔上皮</option><option value="elodea">水蘊草葉片</option></select></div>
   
-  <div class="actions"><button class="btn primary" id="begin" type="button">開始觀察</button><button class="btn secondary" id="reset" type="button">回到低倍</button></div>
+  <div class="actions"><button class="btn primary" id="begin" type="button">開始研究</button><button class="btn secondary" id="reset" type="button">回到低倍</button></div>
   <fieldset class="labControls" id="labControls" disabled>
    <div class="control"><span id="objectiveLabel" style="display:block;font-weight:800;margin-bottom:6px">物鏡倍率</span><div class="objectiveChoices" role="radiogroup" aria-labelledby="objectiveLabel"><div class="choice"><input type="radio" name="objective" id="obj4" value="4" checked><label for="obj4">4×</label></div><div class="choice"><input type="radio" name="objective" id="obj10" value="10"><label for="obj10">10×</label></div><div class="choice"><input type="radio" name="objective" id="obj40" value="40"><label for="obj40">40×</label></div></div></div>
    <div class="control"><label for="coarse">粗動調節 <output id="coarseOut">−2</output></label><input id="coarse" type="range" min="-5" max="5" step="1" value="-2"><div class="focusWarn" id="coarseWarn" hidden>高倍物鏡請使用微動調節。</div></div>
@@ -116,7 +116,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 </section>
 
 <section id="observe" class="card section">
- <h2>正確的觀察順序</h2><p class="lead" id="explanation">開始觀察後，這裡會依目前設定提供操作判讀。</p>
+ <h2>奇奇博士的觀察提示</h2><p class="lead" id="explanation">開始觀察後，這裡會依目前設定提供操作判讀。</p>
  <div class="workflow"><div><b>01</b><span>低倍找標本</span></div><div><b>02</b><span>粗調後微調</span></div><div><b>03</b><span>移到視野中央</span></div><div><b>04</b><span>換高倍物鏡</span></div><div><b>05</b><span>只用微調</span></div></div>
  <p class="advancedOnly" hidden><strong>目前關係：</strong> <span id="formulaLine" class="formula">總倍率 = 10 × 4；視野直徑 = 18 ÷ 4</span></p>
  <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本工具以目鏡視野數 18 mm 示範視野直徑，實際數值會依目鏡規格改變。圖像是單層、固定的概念標本，非照片；切換倍率只縮放同一套座標。模型採用洋蔥細胞約260×85 µm、沉水植物細胞約90×45 µm、口腔細胞長徑約46–70 µm與葉綠體長徑約5–7 µm的繪圖設定，均有變異，不可當成所有實物的測量標準。中央淡色區不畫成可見的液泡膜，也不模擬葉綠體流動。清晰度、照明與圖像是教學化模型，不模擬數值孔徑、景深、色差、染色濃度及切片厚度。程序重點是先低倍定位，再換高倍微調。</div><p>核對來源：<a href="https://www.microscopyu.com/microscopy-basics/field-of-view" target="_blank" rel="noopener">Nikon：視野與倍率</a> · <a href="https://www.ncbi.nlm.nih.gov/books/NBK9905/" target="_blank" rel="noopener">細胞學教材：葉綠體</a>。染色與可見構造仍應搭配教師實際玻片觀察。</p></div>
@@ -130,13 +130,13 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 </section>
 
 <section id="record" class="card section">
- <h2>觀察紀錄</h2><p class="lead">同一個標本用不同倍率各記一筆，直接比較視野直徑和可見範圍。</p>
+ <h2>研究手冊｜觀察紀錄</h2><p class="lead">同一個標本用不同倍率各記一筆，直接比較視野直徑和可見範圍。</p>
  <div class="recordTools"><button class="btn primary" id="addRecord" type="button" disabled>加入目前觀察</button><button class="btn secondary" id="printRecord" type="button">列印紀錄</button><button class="btn secondary" id="clearRecord" type="button">清除紀錄</button></div>
  <div class="tableWrap"><table><thead><tr><th>#</th><th>標本</th><th>物鏡</th><th>總倍率</th><th>視野直徑</th><th>清晰度</th><th>載玻片位置</th><th>可見構造</th></tr></thead><tbody id="records"><tr><td colspan="8" class="empty">尚無紀錄。先完成一次觀察。</td></tr></tbody></table></div>
 </section>
 
 <section id="quiz" class="card section">
- <h2>學習檢核</h2><p class="lead">確認你分得清倍率、方向與細胞構造。</p>
+ <h2>研究挑戰｜你發現規律了嗎？</h2><p class="lead">用剛才的操作經驗，確認你分得清倍率、方向與細胞構造。</p>
  <div class="quizItem"><fieldset data-answer="b" data-tip="總倍率增加時，標本被放得更大，但能看見的實際範圍會縮小。"><legend>1. 由 4× 物鏡換成 40× 物鏡後，通常會看到什麼變化？</legend><label><input type="radio" name="q1" value="a"> 視野更廣、細胞更多</label><label><input type="radio" name="q1" value="b"> 視野更窄、細胞更少</label><label><input type="radio" name="q1" value="c"> 視野大小不變</label></fieldset><div class="feedback" aria-live="polite"></div></div>
  <div class="quizItem"><fieldset data-answer="a" data-tip="影像與玻片移動方向相反：影像偏左，就把玻片也往左移，影像才會往右回到中央（偏哪移哪）。"><legend>2. 要讓視野中偏左的影像回到中央，載玻片應往哪裡移？</legend><label><input type="radio" name="q2" value="a"> 向左</label><label><input type="radio" name="q2" value="b"> 不需移動</label><label><input type="radio" name="q2" value="c"> 向右</label></fieldset><div class="feedback" aria-live="polite"></div></div>
  <div class="quizItem"><fieldset data-answer="a" data-tip="洋蔥地下鱗葉表皮是植物細胞，但通常沒有葉綠體。"><legend>3. 下列哪一項對洋蔥鱗葉表皮的描述較正確？</legend><label><input type="radio" name="q3" value="a"> 有細胞壁，但通常看不到葉綠體</label><label><input type="radio" name="q3" value="b"> 沒有細胞壁</label><label><input type="radio" name="q3" value="c"> 一定有大量葉綠體</label></fieldset><div class="feedback" aria-live="polite"></div></div>
@@ -158,7 +158,7 @@ const els={level:$('level'),specimen:$('specimen'),coarse:$('coarse'),fine:$('fi
 let started=false,slideMoved=false,slideDrag=null,slideFrame=0;
 function updateSlideBoard(){
  const x=+els.stageX.value,y=+els.stageY.value;$('slide-glass').style.transform=`translate(${x*.45}px,${-y*.3}px)`;$('slide-pad').setAttribute('aria-disabled',String(!started));document.querySelectorAll('.slide-buttons button').forEach(b=>b.disabled=!started);
- $('slide-position').textContent=started?`試片位置 X ${x}／Y ${y}（操作座標）；${movementText()}`:'選好標本後，按「開始觀察」。';
+ $('slide-position').textContent=started?`試片位置 X ${x}／Y ${y}（操作座標）；${movementText()}`:'選好標本後，按「開始研究」。';
  const step=!started?['第 1 步｜選標本開始觀察','先選標本，按「開始觀察」，再從低倍把影像調清楚。']:clarity()<80?['第 2 步｜先把影像調清楚','低倍先調粗動，再用微動；需要提示可按「自動對焦示範」。']:!slideMoved?['第 3 步｜移動試片找方向','在試片操作台往右拖一小段，觀察影像是否往左移。']:objective()<40?['第 4 步｜換高倍比較','已觀察移動方向。換 40× 物鏡，比較視野直徑與細胞大小。']:['第 5 步｜留下證據','先加入目前觀察，再回低倍記一筆。用兩筆視野直徑解釋差異。'];
  $('microCoach').replaceChildren();const title=document.createElement('strong'),hint=document.createElement('p');title.textContent=step[0];hint.textContent=step[1];$('microCoach').append(title,hint);
 }
@@ -263,7 +263,7 @@ function reset(){document.querySelector('input[name=objective][value="4"]').chec
 function autofocus(){els.coarse.value='0';els.fine.value='0';updateOutputs();drawScope();$('status').className='status good';$('status').innerHTML='<strong>已清楚對焦</strong>請記住：高倍觀察時只使用微動調節。';}
 function changed(){updateOutputs();if(started)drawScope();}
 function specimenChanged(){document.querySelector('input[name=objective][value="4"]').checked=true;els.coarse.value='-2';els.fine.value='0';els.stageX.value='0';els.stageY.value='0';els.coarse.disabled=false;$('coarseWarn').hidden=true;updateOutputs();updateFeatures();if(started){drawScope();$('status').className='status';$('status').innerHTML=`<strong>已換成${specimens[els.specimen.value].name}</strong>已回到低倍，請重新確認位置與焦距。`;}}
-function applyMission(name){if(name==='onion'){els.specimen.value='onion';els.level.value='basic';$('missionText').innerHTML='<strong>任務一</strong>用低倍找到洋蔥表皮並調清楚，留下第一筆紀錄，再換 40× 物鏡比較視野。';}if(name==='compare'){els.specimen.value='cheek';els.level.value='basic';$('missionText').innerHTML='<strong>任務二</strong>觀察口腔上皮的細胞輪廓與染色後細胞核，再和洋蔥表皮比較。';}if(name==='chloroplast'){els.specimen.value='elodea';els.level.value='basic';$('missionText').innerHTML='<strong>任務三</strong>從低倍定位水蘊草葉片，再換高倍尋找沿細胞周邊排列的綠色葉綠體。';}if(name==='direction'){els.specimen.value='letter';els.level.value='advanced';$('missionText').innerHTML='<strong>任務四</strong>用字母 e 定位玻片：先看倒像，再把載玻片向右、向上移，追蹤字母與十字標記往哪裡跑。';}started=false;$('scopeCover').hidden=false;$('labControls').disabled=true;$('addRecord').disabled=true;document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=els.level.value!=='advanced');specimenChanged();reset();$('status').className='status';$('status').innerHTML='<strong>任務條件已設定</strong>按「開始觀察」，先從低倍把影像調清楚。';}
+function applyMission(name){if(name==='onion'){els.specimen.value='onion';els.level.value='basic';$('missionText').innerHTML='<strong>任務一</strong>用低倍找到洋蔥表皮並調清楚，留下第一筆紀錄，再換 40× 物鏡比較視野。';}if(name==='compare'){els.specimen.value='cheek';els.level.value='basic';$('missionText').innerHTML='<strong>任務二</strong>觀察口腔上皮的細胞輪廓與染色後細胞核，再和洋蔥表皮比較。';}if(name==='chloroplast'){els.specimen.value='elodea';els.level.value='basic';$('missionText').innerHTML='<strong>任務三</strong>從低倍定位水蘊草葉片，再換高倍尋找沿細胞周邊排列的綠色葉綠體。';}if(name==='direction'){els.specimen.value='letter';els.level.value='advanced';$('missionText').innerHTML='<strong>任務四</strong>用字母 e 定位玻片：先看倒像，再把載玻片向右、向上移，追蹤字母與十字標記往哪裡跑。';}started=false;$('scopeCover').hidden=false;$('labControls').disabled=true;$('addRecord').disabled=true;document.querySelectorAll('.advancedOnly').forEach(x=>x.hidden=els.level.value!=='advanced');specimenChanged();reset();$('status').className='status';$('status').innerHTML='<strong>任務條件已設定</strong>按「開始研究」，先從低倍把影像調清楚。';}
 function saveRecords(rows){try{localStorage.setItem('bhcsMicroscopeRecords',JSON.stringify(rows.slice(-12)));}catch(e){}}
 function loadRecords(){try{const v=JSON.parse(localStorage.getItem('bhcsMicroscopeRecords'))||[];return Array.isArray(v)?v:[];}catch(e){return[];}}
 function visibleStructures(){if(clarity()<60)return '影像離焦，無法判讀';if(els.specimen.value==='letter')return '字母 e、十字定位標記';const obj=objective();if(obj===4)return els.specimen.value==='cheek'?'細胞輪廓':els.specimen.value==='elodea'?'細胞壁與細胞排列':'細胞壁與細胞排列';return specimens[els.specimen.value].features.join('、');}
