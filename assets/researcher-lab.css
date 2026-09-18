@@ -56,3 +56,40 @@ body.researcher-ui{background:var(--lab-bg);color:var(--lab-ink)}
 .station-label{background:#eaf8f3;color:#357e69;border:1px solid #bfe3d5}
 .researcher-directory .resource .open{background:#ff8c42!important;color:#fff!important;border-radius:999px;box-shadow:0 3px 0 #d96f2a}
 @media(max-width:700px){.researcher-ui .labgrid>.card:first-child{border-color:#60c3a4;background:#fffdf8}.researcher-nav button{font-size:14px}.researcher-header{border-radius:16px}}
+
+/* Mini-lab visual language: cream paper, sticker cards, playful research bench */
+.researcher-ui,.researcher-directory{background:
+radial-gradient(circle at 14% 8%,rgba(255,208,102,.18),transparent 22rem),
+radial-gradient(circle at 86% 12%,rgba(96,195,164,.15),transparent 24rem),
+var(--lab-bg)!important}
+.researcher-header{background:#fffaf0;border:2px solid #efe1bd;border-radius:20px;padding:10px 14px;box-shadow:0 5px 0 #eadab5}
+.researcher-brand span:first-child{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:#fff0c8;border:2px solid #f5c542;font-size:24px;transform:rotate(-4deg)}
+.researcher-home{background:#eaf7f0;border:2px solid #9bd7c3;box-shadow:0 3px 0 #b6dccf}
+.researcher-nav{background:#fffaf0;border:2px solid #eadab5;box-shadow:0 5px 0 #e8d6aa}
+.researcher-nav button{position:relative}.researcher-nav button[aria-current=step]{background:#60c3a4;box-shadow:0 4px 0 #3f9c80;color:#173f32}
+.researcher-welcome{border:3px solid #eadab5;box-shadow:0 8px 0 #eadab5;background:#fffdf8}
+.researcher-welcome-copy{position:relative}.researcher-welcome-copy:after{content:"";position:absolute;right:22px;top:22px;width:74px;height:74px;background:url("../tools/mini-lab/img/badge-tools.png") center/contain no-repeat;transform:rotate(8deg);opacity:.95;pointer-events:none}
+.researcher-promise{display:grid;gap:7px;background:#fff4c9;border:2px solid #f2d77e;border-left-width:6px;box-shadow:0 3px 0 #f2ddb0}
+.researcher-promise b{color:#7a5914}.researcher-promise span{display:block}
+.researcher-kit{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}.researcher-kit span{background:#fff;border:2px solid #e7dec8;border-radius:999px;padding:7px 11px;font-weight:800;font-size:13px;box-shadow:0 2px 0 #eee3ca}
+.researcher-scene{background:#e9f6ef;border-left:3px solid #eadab5}.researcher-bubble{border-color:#60c3a4;box-shadow:0 4px 0 #b9dfd2}
+.researcher-primary{background:#ff8c42;box-shadow:0 4px 0 #d96f2a;border:2px solid #d96f2a}
+.researcher-coach{background:#f5fff9;border:3px solid #60c3a4;box-shadow:0 5px 0 #b7ddcf}
+.researcher-coach img{filter:drop-shadow(0 3px 0 rgba(0,0,0,.08))}
+.researcher-ui .card,.researcher-ui .panel,.researcher-ui .section{border:2px solid #e8dec7;box-shadow:0 6px 0 #eadfca;background:#fffefb}
+.researcher-ui .panel{background:#fffaf0}.researcher-ui .panel>h2:before{content:"🧰 ";font-size:1.05em}
+.researcher-ui .scopeStage{background:linear-gradient(#dceee4,#c8dfd3);border-top:2px solid #c6ddcf}
+.researcher-ui .scopeFrame canvas{box-shadow:0 0 0 12px #304a42,0 12px 30px rgba(38,63,53,.25)}
+.researcher-ui .slide-workbench{background:#fff6da;border-top:2px dashed #e8c96f}
+.researcher-ui .slide-pad{background:#f8fbff;border:2px solid #9bbbc9;box-shadow:inset 0 0 0 4px #edf5f7}
+.researcher-ui .objectiveChoices label{border:2px solid #d8cfbb;background:#fffdf7}.researcher-ui .objectiveChoices input:checked+label{background:#ddf5e9;border-color:#60c3a4;box-shadow:0 3px 0 #afd8c8;color:#245c49}
+.researcher-ui input[type=range]{accent-color:#60c3a4}
+.researcher-ui .status{border:2px solid #b9d6e4;border-left:6px solid #4fa3e3;background:#eef8ff}.researcher-ui .status.good{background:#effbf4;border-color:#7fceb2}.researcher-ui .status.warn{background:#fff1eb;border-color:#ef9a78}
+.researcher-ui .readouts{gap:8px}.researcher-ui .meter{border:2px solid #d5e5dd;border-radius:16px;background:#294c3e;box-shadow:0 3px 0 #c9d9d1}
+.researcher-taskbar button{background:#fffdf7;border:2px solid #dfd5bd;box-shadow:0 3px 0 #ebdfc3}.researcher-taskbar button.is-current{background:#dff5ea;border-color:#60c3a4;box-shadow:0 3px 0 #acd8c8}
+.researcher-notebook-intro{display:flex;gap:12px;align-items:center;background:#fff3c7;border:2px solid #e8c96f;border-left:7px solid #ff8c42;box-shadow:0 4px 0 #ead9a8}.notebook-sticker{font-size:36px}
+.researcher-ui .inquiry-guide{background:#f5fff9;border:2px solid #a7d7c5;border-radius:16px;padding:12px}
+.researcher-ui .quizItem{background:#fffaf0;border:2px solid #e7ddc4;border-radius:16px;padding:12px;margin:12px 0}
+.researcher-directory .resource{background:#fffef9!important}.researcher-directory .resource:before{content:"";position:absolute;inset:8px;border:1px dashed #eadfca;border-radius:16px;pointer-events:none}
+.researcher-directory .resource h2,.researcher-directory .resource h3{position:relative}.station-label{background:#ddf5e9;border:1px solid #91cfb7}
+@media(max-width:700px){.researcher-welcome-copy:after{width:54px;height:54px;right:12px;top:12px}.researcher-header{border-radius:15px;padding:8px 10px}.researcher-brand span:first-child{width:38px;height:38px}.researcher-brand b{font-size:17px}.researcher-brand small{font-size:9px}.researcher-home{padding:7px 10px;font-size:13px}}
