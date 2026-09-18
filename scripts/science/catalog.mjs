@@ -35,4 +35,3 @@ export const firstMisconceptions={
  'photosynthesis-factor-lab.html':'增加光照不一定持續提高速率，另一個條件可能成為限制因子。',
  'genetics-simulation-lab.html':'25% 是每個子代的機率，不代表每四個子代一定有一個符合。'
 };
-
