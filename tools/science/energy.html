@@ -2,6 +2,7 @@
 @media(max-width:900px){.catalog{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}}@media(max-width:560px){.shell{width:calc(100% - 24px)}.hero{padding:26px 0}.panel{padding:16px}.catalog,.filters{grid-template-columns:1fr}.lesson-meta dl{grid-template-columns:1fr;gap:2px}.lesson-meta dd{margin-bottom:10px}.readouts{gap:8px}.meter{padding:10px}.meter strong{font-size:1.06rem}.actions button{flex:1 1 130px}.resource{padding:18px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 .layout{grid-template-areas:"observation controls"}.controls{grid-area:controls}.observation{grid-area:observation}.print-only{display:none}.controls label{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 10px}.controls output{float:none}.actions a{display:inline-flex;align-items:center;min-height:44px}.panel,.resource{overflow-wrap:anywhere}.stage{overflow:auto}.stage svg{min-width:0}.observation .subtle{margin-top:14px}.controls textarea{resize:vertical}.controls select{min-width:0}#observation-title,#explanation-input{scroll-margin-top:24px}
 @media(max-width:900px){.layout{grid-template-areas:"controls" "observation"}}@media(max-width:560px){.stage svg{min-width:580px}.stage::after{content:"圖解可左右滑動；完整數值請看下方讀值。";display:block;padding:8px 12px;font-size:.85rem;color:var(--muted);position:sticky;left:0}.readouts{grid-template-columns:1fr}}
+table{table-layout:fixed}th:nth-child(1){width:5%}th:nth-child(2){width:30%}th:nth-child(3){width:12%}th:nth-child(4){width:25%}th:nth-child(5){width:28%}td,th{overflow-wrap:anywhere}
 @page{size:A4 portrait;margin:12mm}
 @media print{
  body{background:white;font-size:11pt;line-height:1.5}.shell{width:100%}.topbar,.skip,.toc,.controls,.missions,.quiz,.foot,.actions,.filters,.status,.display-mode,.step,#storage-status{display:none!important}
@@ -83,7 +84,7 @@ function calculate(id,s){
 }
 
 function describe(id,s,r){
- const f=(x,d=2)=>x==null?'無有限值':Number(x.toFixed(d)).toLocaleString('zh-TW');
+ const f=(x,d=2)=>{if(x==null)return '無有限值';const rounded=Number(x.toFixed(d));return (Object.is(rounded,-0)?0:rounded).toLocaleString('zh-TW')};
  switch(id){
  case 'optics':return {metrics:[['像距',r.v==null?'無有限像距':f(r.v)+' cm'],['放大率',r.m==null?'不定義':f(r.m)+' 倍'],['像的性質',r.kind==='real'?'倒立實像':r.kind==='virtual'?'正立虛像':'出射光線平行'],['焦距（含正負）',f(r.f)+' cm']],explanation:r.kind==='focus'?'物體位於焦點，理想近軸光線出射後平行。請勿把像距記為0。':`像距${r.v>0?'為正，實際光線在透鏡另一側會聚':'為負，光線反向延長線在物體同側交會'}；|m|=${f(Math.abs(r.m))}。`};
  case 'wave-sound':return {metrics:[['波長',f(r.wavelength,3)+' m'],['最近模態頻率',s.mode==='travel'?'不適用':f(r.nearest)+' Hz'],['與模態差距',s.mode==='travel'?'不適用':f(r.detuning*100)+' %'],['觀察狀態',r.kind==='travel'?'行進聲波':r.kind==='resonant'?'接近共振':'偏離共振']],explanation:s.mode==='travel'?'固定聲速，增加頻率會縮短波長。曲線只是一個時間截面，空氣質點沿傳播方向往復。':`理想基頻為${f(r.base)}Hz，最近符合端點條件的頻率為${f(r.nearest)}Hz。${r.kind==='resonant'?'圖中顯示該理想模態的位移形狀。':'圖中仍只顯示驅動波的比較截面，不假裝已形成駐波。'}`};
@@ -236,8 +237,9 @@ function diagram(id,s,r){
  $('add-record').addEventListener('click',()=>{if(!current)return;const explanation=$('explanation-input').value.trim();if(explanation.length<2){status('請先寫下你觀察到的數據或關係，再加入紀錄。',true);$('explanation-input').focus();return}
   records.push({conditions:conditions(current.s),prediction:conf.choices.find(c=>c[0]===current.prediction)[1],result:current.view.metrics.map(m=>m.join('：')).join('；'),explanation:explanation.slice(0,1000)});records=records.slice(-50);save();renderRecords();$('add-record').disabled=true;send('record');if(current.mission!==null)send('task_complete');status('已加入第'+records.length+'筆紀錄。請只改一個條件，再做一次比較。')});
  $('clear-records').addEventListener('click',()=>{if(!confirm('清除本頁在此瀏覽器的全部觀察紀錄？'))return;records=[];save();renderRecords();status('紀錄已清除。')});
- $('print').addEventListener('click',()=>{send('print');window.print()});
- window.addEventListener('beforeprint',()=>{$('print-current').textContent=current?'本輪預測：'+conf.choices.find(c=>c[0]===current.prediction)[1]+'；本輪解釋（含尚未存入紀錄的文字）：'+($('explanation-input').value.trim()||'尚未填寫。'):'本輪尚未操作；請參閱下方已儲存紀錄。'});
+ function preparePrint(){$('print-current').textContent=current?'本輪預測：'+conf.choices.find(c=>c[0]===current.prediction)[1]+'；本輪解釋（含尚未存入紀錄的文字）：'+($('explanation-input').value.trim()||'尚未填寫。'):'本輪尚未操作；請參閱下方已儲存紀錄。'}
+ $('print').addEventListener('click',()=>{preparePrint();send('print');window.print()});
+ window.addEventListener('beforeprint',preparePrint);
  $('level').addEventListener('change',()=>{$('formula').hidden=$('level').value!=='advanced'});
  let quizSent=false;
  $('check-quiz').addEventListener('click',()=>{let score=0,answered=0;conf.quiz.forEach((q,i)=>{const selected=document.querySelector(`input[name="quiz-${i}"]:checked`),out=$('feedback-'+i);if(selected)answered++;const correct=selected&&Number(selected.value)===q.answer;if(correct)score++;out.textContent=correct?'答對了。'+q.tip:selected?'再觀察一次：'+q.tip:'尚未作答，請先選擇答案。'});$('quiz-score').textContent=`已答${answered}/3，答對${score}/3。${answered<3?'請補完未答題。':''}`;if(answered===3&&!quizSent){send('quiz_complete');quizSent=true}});

@@ -69,7 +69,7 @@ export function calculate(id,s){
 }
 
 export function describe(id,s,r){
- const f=(x,d=2)=>x==null?'無有限值':Number(x.toFixed(d)).toLocaleString('zh-TW');
+ const f=(x,d=2)=>{if(x==null)return '無有限值';const rounded=Number(x.toFixed(d));return (Object.is(rounded,-0)?0:rounded).toLocaleString('zh-TW')};
  switch(id){
  case 'optics':return {metrics:[['像距',r.v==null?'無有限像距':f(r.v)+' cm'],['放大率',r.m==null?'不定義':f(r.m)+' 倍'],['像的性質',r.kind==='real'?'倒立實像':r.kind==='virtual'?'正立虛像':'出射光線平行'],['焦距（含正負）',f(r.f)+' cm']],explanation:r.kind==='focus'?'物體位於焦點，理想近軸光線出射後平行。請勿把像距記為0。':`像距${r.v>0?'為正，實際光線在透鏡另一側會聚':'為負，光線反向延長線在物體同側交會'}；|m|=${f(Math.abs(r.m))}。`};
  case 'wave-sound':return {metrics:[['波長',f(r.wavelength,3)+' m'],['最近模態頻率',s.mode==='travel'?'不適用':f(r.nearest)+' Hz'],['與模態差距',s.mode==='travel'?'不適用':f(r.detuning*100)+' %'],['觀察狀態',r.kind==='travel'?'行進聲波':r.kind==='resonant'?'接近共振':'偏離共振']],explanation:s.mode==='travel'?'固定聲速，增加頻率會縮短波長。曲線只是一個時間截面，空氣質點沿傳播方向往復。':`理想基頻為${f(r.base)}Hz，最近符合端點條件的頻率為${f(r.nearest)}Hz。${r.kind==='resonant'?'圖中顯示該理想模態的位移形狀。':'圖中仍只顯示驅動波的比較截面，不假裝已形成駐波。'}`};

@@ -44,6 +44,7 @@ test('Electromagnetism diagram: zero field and signed reference axis',()=>{
   assert.ok(describe('electromagnetism',s,r).explanation.includes('外加磁場為零'));
   const positive=calculate('electromagnetism',{...base,mode,field:.2}),negative=calculate('electromagnetism',{...base,mode,field:-.2});
   close(positive.output,-negative.output);assert.ok(svg.includes('向右基準軸'));
+  const fullTurn={...base,mode,angle:360};assert.ok(!describe('electromagnetism',fullTurn,calculate('electromagnetism',fullTurn)).metrics.some(([,value])=>/^-0(?:\s|$)/.test(value)),'Floating-point residue must not print negative zero');
  }
 });
 test('Solubility: mass accounting / concentration / exact saturation',()=>{

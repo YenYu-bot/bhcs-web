@@ -34,6 +34,7 @@ function structural(d,file){
   assert.ok($('print-records').textContent.includes('測試觀察：只改一個變因'));
   $('explanation-input').value='尚未儲存的列印觀察';w.dispatchEvent(new w.Event('beforeprint'));
   assert.ok($('print-current').textContent.includes('尚未儲存的列印觀察'));
+  $('explanation-input').value='列印按鈕的備用快照';$('print').click();assert.ok($('print-current').textContent.includes('列印按鈕的備用快照'));
   if(conf.id==='electromagnetism'){assert.ok(!$('records').textContent.includes('外加磁場'));assert.ok(!$('current-conditions').textContent.includes('轉速'));}
   if(conf.id==='pressure-fluid'){assert.ok(!$('records').textContent.includes('氣體體積'));assert.ok(!$('current-conditions').textContent.includes('入口流速'));}
   const saved=w.localStorage.getItem('bhcs-science-v2-'+conf.id);assert.equal(JSON.parse(saved).length,1);

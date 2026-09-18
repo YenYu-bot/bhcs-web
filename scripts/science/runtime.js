@@ -33,8 +33,9 @@
  $('add-record').addEventListener('click',()=>{if(!current)return;const explanation=$('explanation-input').value.trim();if(explanation.length<2){status('請先寫下你觀察到的數據或關係，再加入紀錄。',true);$('explanation-input').focus();return}
   records.push({conditions:conditions(current.s),prediction:conf.choices.find(c=>c[0]===current.prediction)[1],result:current.view.metrics.map(m=>m.join('：')).join('；'),explanation:explanation.slice(0,1000)});records=records.slice(-50);save();renderRecords();$('add-record').disabled=true;send('record');if(current.mission!==null)send('task_complete');status('已加入第'+records.length+'筆紀錄。請只改一個條件，再做一次比較。')});
  $('clear-records').addEventListener('click',()=>{if(!confirm('清除本頁在此瀏覽器的全部觀察紀錄？'))return;records=[];save();renderRecords();status('紀錄已清除。')});
- $('print').addEventListener('click',()=>{send('print');window.print()});
- window.addEventListener('beforeprint',()=>{$('print-current').textContent=current?'本輪預測：'+conf.choices.find(c=>c[0]===current.prediction)[1]+'；本輪解釋（含尚未存入紀錄的文字）：'+($('explanation-input').value.trim()||'尚未填寫。'):'本輪尚未操作；請參閱下方已儲存紀錄。'});
+ function preparePrint(){$('print-current').textContent=current?'本輪預測：'+conf.choices.find(c=>c[0]===current.prediction)[1]+'；本輪解釋（含尚未存入紀錄的文字）：'+($('explanation-input').value.trim()||'尚未填寫。'):'本輪尚未操作；請參閱下方已儲存紀錄。'}
+ $('print').addEventListener('click',()=>{preparePrint();send('print');window.print()});
+ window.addEventListener('beforeprint',preparePrint);
  $('level').addEventListener('change',()=>{$('formula').hidden=$('level').value!=='advanced'});
  let quizSent=false;
  $('check-quiz').addEventListener('click',()=>{let score=0,answered=0;conf.quiz.forEach((q,i)=>{const selected=document.querySelector(`input[name="quiz-${i}"]:checked`),out=$('feedback-'+i);if(selected)answered++;const correct=selected&&Number(selected.value)===q.answer;if(correct)score++;out.textContent=correct?'答對了。'+q.tip:selected?'再觀察一次：'+q.tip:'尚未作答，請先選擇答案。'});$('quiz-score').textContent=`已答${answered}/3，答對${score}/3。${answered<3?'請補完未答題。':''}`;if(answered===3&&!quizSent){send('quiz_complete');quizSent=true}});
