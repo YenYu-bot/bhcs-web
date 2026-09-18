@@ -27,6 +27,11 @@ jobs:
       - name: Install test dependencies
         working-directory: scripts
         run: npm install --no-audit --no-fund
+      - name: Restore first-batch generated-page base
+        run: |
+          base64 --decode scripts/.firstbatch-core.patch.b64 | gunzip > /tmp/firstbatch-core.patch
+          git apply --check --include='tools/**' /tmp/firstbatch-core.patch
+          git apply --include='tools/**' /tmp/firstbatch-core.patch
       - name: Rebuild generated science pages
         run: |
           node scripts/build_microscope.mjs
