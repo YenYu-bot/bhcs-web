@@ -96,3 +96,30 @@ var(--lab-bg)!important}
 
 .researcher-ui>.topbar,.researcher-directory>.topbar{display:none!important}
 .researcher-directory .researcher-header{margin-top:14px}
+
+/* Shared station layout for prediction-free batch-two labs */
+.researcher-station .layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.78fr);gap:16px;align-items:start}
+.researcher-station .layout>.observation{order:1}
+.researcher-station .layout>.controls{order:2;background:#fffaf0;max-height:78vh;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.researcher-station .observation .stage{background:#f1f7f4;border:2px solid #c9ddd2;border-radius:18px;min-height:300px;padding:12px;overflow:auto}
+.researcher-station .observation .stage svg{display:block;max-width:100%;height:auto;margin:auto}
+.researcher-station .controls fieldset{border:0;padding:0;margin:0}
+.researcher-station .controls label{font-weight:800;color:#365c4d}
+.researcher-station .controls select,.researcher-station .controls input[type=range]{width:100%;margin-bottom:10px}
+.researcher-station .controls .actions{display:grid;grid-template-columns:1.1fr 1fr;gap:8px;align-items:center}
+.researcher-station .controls #run{background:#ff8c42;color:#fff;border:2px solid #d96f2a;box-shadow:0 3px 0 #d96f2a}
+.researcher-station .controls #add-record{width:100%;margin-top:10px;background:#60c3a4;color:#173f32;border:2px solid #3f9c80;box-shadow:0 3px 0 #3f9c80;font-weight:900}
+.researcher-station .missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.researcher-station .missions button{min-height:54px;border:2px solid #dfd5bd;border-radius:15px;background:#fffdf7;box-shadow:0 3px 0 #ebdfc3;color:#315f4e;font-weight:900}
+.researcher-station .missions button[aria-current=true]{background:#dff5ea;border-color:#60c3a4;box-shadow:0 3px 0 #acd8c8}
+.researcher-station #mission-prompt{background:#eef9f3;border-left:5px solid #60c3a4;border-radius:12px;padding:10px 12px}
+.researcher-station .readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.researcher-station .readouts .meter{background:#294c3e;color:#fff;border:2px solid #46695b;border-radius:15px;padding:10px;box-shadow:0 3px 0 #c9d9d1}
+.researcher-station .readouts .meter strong{display:block;font-size:1.15rem;color:#fff}
+.researcher-station #records-section table{background:#fff}
+.researcher-station #records-section th{background:#e6f5ed;color:#294c3e}
+.researcher-station .lesson-meta{margin-top:14px}
+.researcher-station .teach-text,.researcher-station .safety{margin-top:14px}
+.researcher-station .step{display:inline-block;border-radius:999px;background:#fff0c8;color:#7a5914;border:1px solid #ead081;padding:3px 9px;font-size:11px;font-weight:900;letter-spacing:.08em}
+@media(max-width:820px){.researcher-station .layout{grid-template-columns:1fr}.researcher-station .layout>.observation{order:1}.researcher-station .layout>.controls{order:2;max-height:none;overflow:visible}.researcher-station .missions{grid-template-columns:1fr}}
+@media(max-width:700px){.researcher-station .layout>.observation{position:sticky;top:6px;z-index:10;max-height:46svh;overflow:auto;border:2px solid #60c3a4;box-shadow:0 8px 18px #294c3e28}.researcher-station .observation .stage{min-height:180px;padding:6px}.researcher-station .readouts{grid-template-columns:1fr 1fr}.researcher-station .controls .actions{grid-template-columns:1fr}}
