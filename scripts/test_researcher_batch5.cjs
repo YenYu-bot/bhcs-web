@@ -33,3 +33,33 @@ const shell=fs.readFileSync(path.join(root,'assets/researcher-lab.js'),'utf8');
 for(const key of ['plate-earthquake-lab.html','buoyancy-density-lab.html','acid-base-indicator-lab.html','photosynthesis-factor-lab.html'])assert.ok(shell.includes(key),'researcher shell missing '+key);
 assert.ok(shell.includes('余老師'),'researcher shell missing 余老師');
 console.log('PASS researcher batch 5: final four legacy stations are prediction-free and directly operable');
+
+
+const legacyAll=['circuit-lab.html','force-motion-lab.html','particle-reaction-lab.html','microscope-lab.html','plate-earthquake-lab.html','heat-phase-lab.html','buoyancy-density-lab.html','acid-base-indicator-lab.html','photosynthesis-factor-lab.html','genetics-simulation-lab.html'];
+const sharedAll=['optics','wave-sound','electromagnetism','pressure-fluid','solubility','energy','moon-eclipse','seasons','plant-exchange','ecosystem'];
+for(const file of legacyAll){
+ const html=fs.readFileSync(path.join(root,'tools',file),'utf8'),d=new JSDOM(html).window.document;
+ assert.equal(d.getElementById('prediction'),null,file+' final audit: prediction control exists');
+ assert.ok(d.querySelector('link[href="../assets/researcher-lab.css"]'),file+' final audit: researcher css missing');
+ assert.ok(d.querySelector('script[src="../assets/researcher-lab.js"]'),file+' final audit: researcher js missing');
+ const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
+ assert.ok(!visible.textContent.includes('預測'),file+' final audit: visible prediction wording remains');
+}
+for(const id of sharedAll){
+ const file='tools/science/'+id+'.html',html=fs.readFileSync(path.join(root,file),'utf8'),d=new JSDOM(html).window.document,conf=JSON.parse(d.getElementById('lab-config').textContent);
+ assert.equal(conf.noPrediction,true,id+' final audit: noPrediction flag missing');
+ assert.equal(d.getElementById('prediction'),null,id+' final audit: prediction control exists');
+ assert.ok(d.querySelector('link[href="../../assets/researcher-lab.css"]'),id+' final audit: researcher css missing');
+ assert.ok(d.querySelector('script[src="../../assets/researcher-lab.js"]'),id+' final audit: researcher js missing');
+ const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
+ assert.ok(!visible.textContent.includes('預測'),id+' final audit: visible prediction wording remains');
+}
+const directory=fs.readFileSync(path.join(root,'tools/science/index.html'),'utf8'),dirDom=new JSDOM(directory).window.document;
+assert.ok(dirDom.querySelector('link[href="../../assets/researcher-lab.css"]'),'directory final audit: researcher css missing');
+assert.ok(dirDom.querySelector('script[src="../../assets/researcher-lab.js"]'),'directory final audit: researcher js missing');
+const dirVisible=dirDom.body.cloneNode(true);dirVisible.querySelectorAll('script,style').forEach(n=>n.remove());
+assert.ok(!dirVisible.textContent.includes('預測'),'directory final audit: visible prediction wording remains');
+const mini=fs.readFileSync(path.join(root,'tools/mini-lab/index.html'),'utf8');
+assert.ok(mini.includes('余老師'),'mini-lab final audit: 余老師 missing');
+assert.ok(!mini.includes('奇奇博士'),'mini-lab final audit: old guide name remains');
+console.log('PASS full researcher audit: 20 stations + directory + 余老師 naming');
