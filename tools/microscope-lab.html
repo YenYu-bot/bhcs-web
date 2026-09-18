@@ -69,7 +69,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 <section id="experiment" class="labgrid" aria-labelledby="lab-title">
  <div class="card">
   <div class="cardhead"><h2 id="lab-title">顯微鏡視野</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div>
-  <div class="scopeStage"><div class="scopeFrame"><canvas id="scope" width="600" height="600" role="img" aria-label="虛擬顯微鏡視野"></canvas><div class="scopeCover" id="scopeCover">先完成右側預測，再開始觀察</div></div><p class="scopeModelNote" style="margin:22px auto 12px;max-width:580px;color:#263f58"><strong>程式繪製的觀察示意，非顯微照片。</strong><br>形狀與尺寸有變異；低倍先找輪廓，高倍再辨認細節。比例尺與細胞使用同一套尺寸換算。</p><div class="featureLine" id="featureLine"><span class="featureTag">尚未開始觀察</span></div></div>
+  <div class="scopeStage"><div class="scopeFrame"><canvas id="scope" width="600" height="600" role="img" aria-label="虛擬顯微鏡視野"></canvas><div class="scopeCover" id="scopeCover">先完成預測，再開始觀察</div></div><p class="scopeModelNote" style="margin:22px auto 12px;max-width:580px;color:#263f58"><strong>程式繪製的觀察示意，非顯微照片。</strong><br>形狀與尺寸有變異；低倍先找輪廓，高倍再辨認細節。比例尺與細胞使用同一套尺寸換算。</p><div class="featureLine" id="featureLine"><span class="featureTag">尚未開始觀察</span></div></div>
  <div class="slide-workbench"><h3>試片操作台</h3><p id="slide-help">開始觀察後，用滑鼠或手指拖移玻璃試片，留意上方影像的相反移動。也可點方向鍵；鍵盤聚焦操作台後按方向鍵，Home 回中央。</p><div id="slide-pad" class="slide-pad" tabindex="0" role="group" aria-label="可拖曳的玻璃試片操作台" aria-describedby="slide-help" aria-disabled="true"><span class="slide-crosshair" aria-hidden="true">＋</span><span id="slide-glass" class="slide-glass" aria-hidden="true"></span></div><div class="slide-buttons"><button type="button" data-slide-dx="-5" data-slide-dy="0" aria-label="試片向左">←</button><button type="button" data-slide-dx="5" data-slide-dy="0" aria-label="試片向右">→</button><button type="button" data-slide-dx="0" data-slide-dy="5" aria-label="試片向上">↑</button><button type="button" data-slide-dx="0" data-slide-dy="-5" aria-label="試片向下">↓</button><button type="button" id="slide-center">試片回中央</button></div><p id="slide-position" class="slide-position" aria-live="polite">尚未開始</p></div>
  </div>
  <aside class="card panel" aria-label="顯微鏡控制區">
@@ -85,8 +85,8 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
    <button class="btn secondary" type="button" id="autofocus" style="width:100%;margin-bottom:14px">自動對焦示範</button>
    <div class="control"><label for="light">照明亮度 <output id="lightOut">70%</output></label><input id="light" type="range" min="25" max="100" step="5" value="70"></div>
    <details><summary>精細移動：也可以使用滑桿</summary>
-    <div class="control"><label for="stageX">載玻片左右 <output id="stageXOut">中央</output></label><input id="stageX" type="range" min="-80" max="80" step="10" value="0"></div>
-    <div class="control"><label for="stageY">載玻片上下 <output id="stageYOut">中央</output></label><input id="stageY" type="range" min="-80" max="80" step="10" value="0"></div>
+    <div class="control"><label for="stageX">載玻片左右 <output id="stageXOut">中央</output></label><input id="stageX" type="range" min="-80" max="80" step="1" value="0"></div>
+    <div class="control"><label for="stageY">載玻片上下 <output id="stageYOut">中央</output></label><input id="stageY" type="range" min="-80" max="80" step="1" value="0"></div>
    </details>
   </fieldset>
   <div id="status" class="status" role="status" aria-live="polite"><strong>先做預測</strong>高倍率會放大影像，但同時會改變視野範圍。</div>
