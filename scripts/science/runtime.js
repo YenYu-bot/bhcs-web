@@ -1,7 +1,7 @@
 (() => {
  'use strict';
  const $=id=>document.getElementById(id), conf=JSON.parse($('lab-config').textContent), storageKey='bhcs-science-v2-'+conf.id;
- let current=null,mission=null,records=[],saveNotice='';
+ let current=null,mission=null,records=[],saveNotice='',moonExplore=false;
  const send=action=>{if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack(action,conf.id)};
  const node=(tag,txt)=>{const n=document.createElement(tag);n.textContent=txt;return n};
  const validRecord=r=>r&&typeof r==='object'&&typeof r.conditions==='string'&&typeof r.result==='string'&&typeof r.prediction==='string'&&typeof r.explanation==='string'&&[r.conditions,r.result,r.prediction,r.explanation].every(x=>x.length<6000);
@@ -14,9 +14,11 @@
  function labels(){
   const active=activeKeys($('ctl-mode')?.value);
   conf.controls.forEach(c=>{const el=$('ctl-'+c.key);el.disabled=!!(active&&!active.includes(c.key));if(!c.options)$('out-'+c.key).textContent=el.disabled?'本模式不使用':el.value+' '+c.unit})
+  document.querySelectorAll('[data-moon-phase]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.moonPhase===+$('ctl-phase').value)));
  }
  function status(message,warn=false){$('status').textContent=message;$('status').className='status'+(warn?' warn':'')}
  function invalidate(message='條件已更新，請重新預測後查看結果。'){
+  if(conf.id==='moon-eclipse'){moonExplore=false;if($('moon-explore')){$('moon-explore').checked=false;$('moon-explore').disabled=true}}
   current=null;$('prediction').value='';$('add-record').disabled=true;$('explanation-input').value='';$('diagram').innerHTML='<p class="empty">先選擇預測，再按「操作並觀察」。結果尚未揭露。</p>';$('readouts').replaceChildren();$('current-conditions').textContent='';$('print-current').textContent='本輪尚未操作；請參閱下方已儲存紀錄。';$('result-explanation').textContent='操作後，這裡會說明模型結果。';status(message);labels();
  }
  function run(){if(!$('prediction').value){status('請先選擇一個預測；猜錯也能幫助學習。',true);$('prediction').focus();return}let s;try{s=state()}catch(_){status('控制值無效，請重新設定。',true);return}
@@ -24,8 +26,16 @@
   $('diagram').innerHTML=diagram(conf.id,s,r);$('readouts').replaceChildren();view.metrics.forEach(([name,value])=>{const box=node('div',name);box.className='meter';box.append(node('strong',value));$('readouts').append(box)});
   $('result-explanation').textContent=view.explanation;$('current-conditions').textContent='本次有效條件：'+conditions(s);$('add-record').disabled=false;
   const correct=conf.choices.find(c=>c[0]===r.kind)?.[1]||r.kind;status(($('prediction').value===r.kind?'預測符合本模型。':'預測和本模型不同，可以回頭比較。')+' 觀察：'+correct+'。請寫下依據並加入紀錄。');send('start');
+  if($('moon-explore'))$('moon-explore').disabled=false;
  }
- conf.controls.forEach(c=>$('ctl-'+c.key).addEventListener('input',()=>invalidate()));
+ function previewMoon(){const s=state(),r=calculate(conf.id,s),view=describe(conf.id,s,r);current=null;$('prediction').value='';$('explanation-input').value='';$('add-record').disabled=true;$('diagram').innerHTML=diagram(conf.id,s,r);$('readouts').replaceChildren();view.metrics.forEach(([name,value])=>{const box=node('div',name);box.className='meter';box.append(node('strong',value));$('readouts').append(box)});$('current-conditions').textContent='自由觀察條件：'+conditions(s);$('result-explanation').textContent=view.explanation;labels();status('自由觀察中：拖動滑桿，兩個視角會同步變化。要保留紀錄，先關閉自由觀察，再預測與操作。');}
+ conf.controls.forEach(c=>$('ctl-'+c.key).addEventListener('input',()=>{if(conf.id==='moon-eclipse'&&moonExplore)previewMoon();else invalidate()}));
+ if(conf.id==='moon-eclipse'){
+  const presets=node('div','');presets.className='moon-presets';presets.setAttribute('aria-label','月相角度捷徑');for(const [angle,label] of [[0,'朔 0°'],[90,'上弦 90°'],[180,'望 180°'],[270,'下弦 270°']]){const b=node('button',label);b.type='button';b.dataset.moonPhase=angle;b.addEventListener('click',()=>{$('ctl-phase').value=angle;$('ctl-phase').dispatchEvent(new Event('input',{bubbles:true}))});presets.append(b)}$('control-fields').prepend(presets);
+  const details=node('details','');details.className='moon-extra';details.append(node('summary','進階：軌道與交點'));for(const key of ['node','inclination']){details.append(document.querySelector(`label[for="ctl-${key}"]`),$('ctl-'+key));}details.append(node('p','交點是月球軌道與地球公轉平面的交會方向。黃緯表示月球偏離該平面的角度；朔望還要接近交點，才可能發生食。'));$('control-fields').append(details);
+  const help=node('p','先用四個角度捷徑，比較左邊月相和右邊位置；再展開進階設定研究日月食。');help.className='subtle';presets.before(help);
+  const label=node('label',''),check=node('input','');check.type='checkbox';check.id='moon-explore';check.disabled=true;label.append(check,document.createTextNode('自由觀察：拖曳滑桿即時預覽（先完成一次預測）'));label.className='coach';$('diagram').before(label);check.addEventListener('change',()=>{moonExplore=check.checked;if(moonExplore)previewMoon();else invalidate('已離開自由觀察。請選預測，再操作並保留紀錄。')});
+ }
  $('prediction').addEventListener('change',()=>{if(current){const selected=$('prediction').value;invalidate('預測已變更，請重新操作。');$('prediction').value=selected}});
  $('run').addEventListener('click',run);
  $('reset').addEventListener('click',()=>{conf.controls.forEach(c=>$('ctl-'+c.key).value=c.value);mission=null;document.querySelectorAll('[data-mission]').forEach(b=>b.removeAttribute('aria-current'));$('mission-prompt').textContent='自由探索：先固定其他條件，只改一個變因。';invalidate('本輪已重新開始，既有紀錄保留。')});

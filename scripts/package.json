@@ -2,7 +2,7 @@
   "name": "bhcs-site-checks",
   "private": true,
   "scripts": {
-    "test": "node test_science_models.mjs && node test_science_ui.cjs && node test_science_illustrations.cjs",
+    "test": "node test_science_models.mjs && node test_science_ui.cjs && node test_science_illustrations.cjs && node test_science_experience.cjs",
     "build:science": "node build_science.mjs"
   },
   "devDependencies": {"jsdom": "26.1.0", "axe-core": "4.10.3"}

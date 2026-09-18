@@ -1,5 +1,7 @@
 # 教材產生與檢查
 
+20 頁共用版面與自學指引來源為 `science/experience.css`、`science/experience.mjs`。`test_science_experience.cjs` 驗證拖曳試片、可點選遺傳方格及月相自由觀察。三張插畫放在 `assets/science/`；離線保留插畫需一起下載此資料夾。提示詞見 `docs/science-art-prompts.md`。
+
 需要 Node.js 20+。只在開發環境安裝測試套件；網頁運作無需 npm 或框架。
 
 ```sh

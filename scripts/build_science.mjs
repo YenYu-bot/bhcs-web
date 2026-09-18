@@ -3,6 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {legacy,firstBatch} from './science/catalog.mjs';
 import {batch2} from './science/batch2.mjs';
+import {enhanceLessons} from './science/experience.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const write=(p,s)=>{fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),s)};
@@ -62,3 +63,4 @@ replaceBlock('ziyuan.html','science-card-style','<style>.science-categories{disp
 // Counts are derived from the catalog; all unrelated math generators stay untouched.
 let resource=read('ziyuan.html');resource=resource.replace(/目前共 \d+ 項/,'目前共 '+(98+all.length-1)+' 項').replace(/國中自然<span>\d+<\/span>/,'國中自然<span>'+(all.length-1)+'</span>').replace(/國中自然 · 互動教材<span class="count">\d+ 項<\/span>/,'國中自然 · 互動教材<span class="count">'+(all.length-1)+' 項</span>');write('ziyuan.html',resource);
 console.log('Built science directory:',all.length,'resources');
+enhanceLessons(root,firstBatch,batch2);

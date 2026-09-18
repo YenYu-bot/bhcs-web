@@ -1,4 +1,4 @@
-// All diagrams are code-native SVG; numbers come from the same tested model as the meters.
+// Geometry and measurements use the tested models; selected illustrative textures are external assets.
 export function diagram(id,s,r){
  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const num=(n,d=1)=>Number(n.toFixed(d));
@@ -65,17 +65,7 @@ export function diagram(id,s,r){
   out+=text(390,45,`總能量 ${num(r.total,2)} J`,18);break;
  }
  case 'moon-eclipse':{
-  const a=r.phase*Math.PI/180,x=320+140*Math.cos(a),y=180-120*Math.sin(a);
-  out=`<ellipse cx="320" cy="180" rx="140" ry="120" fill="none" stroke="#b8cbd5" stroke-dasharray="5 5"/>`+circle(320,180,25,'#397ca8')+circle(605,180,32,'#f2bb4a')+circle(x,y,13,'#b8bdc6');
-  out+=`<path d="M${x},${y-13} A13,13 0 0 1 ${x},${y+13} Z" fill="#fff1bf"/>`;
-  out+=arrow(555,110,380,110,'#ca9d38')+text(535,75,'太陽光',17)+text(287,225,'地球',17)+text(x-20,y-25,'月球',17);
-  out+=circle(85,180,36,'#263b50')+text(35,245,'北向朝上示意',15);
-  // Orthographic illuminated disk, north-up convention; waxing is bright on the right.
-  for(let yy=-35;yy<=35;yy++)for(let xx=-35;xx<=35;xx++){
-   const z2=35*35-xx*xx-yy*yy;if(z2>=0&&xx*Math.sin(a)-Math.sqrt(z2)*Math.cos(a)>0)out+=`<rect x="${85+xx}" y="${180+yy}" width="1.1" height="1.1" fill="#fff1bf"/>`;
-  }
-  const na=s.node*Math.PI/180;out+=line(320-160*Math.cos(na),180+138*Math.sin(na),320+160*Math.cos(na),180-138*Math.sin(na),'#aaa',true);
-  out+=text(40,35,'軌道俯視示意；虛線為交點方向',18)+text(40,340,`亮面 ${num(r.lit*100)}%　黃緯 ${num(r.latitude,2)}°`,20)+text(40,375,'天體與距離未依真實比例；不做食分預報。',15);break;
+  return moonScene(s,r);
  }
  case 'seasons':{
   const alt=r.altitude*Math.PI/180,sunX=310+145*Math.cos(alt),sunY=210-145*Math.sin(alt);
@@ -99,4 +89,17 @@ export function diagram(id,s,r){
   extra=`<svg viewBox="0 0 660 360" role="img" aria-label="教學溶解度曲線，橫軸溫度0到80°C，縱軸每100g水可溶的克數0到65g">${plot(fn,80,65,'溫度（°C）；縱軸：g／100g水')}${circle(60+s.temperature/80*540,270-r.solubility/65*190,6,'#b54a5b')}${text(100,35,'模型'+s.solute.toUpperCase()+' 溶解度曲線（非實測）',18)}</svg>`;
  }
  return `<svg viewBox="0 0 660 400" role="img" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">本次${esc(id)}模型圖解</title><desc id="diagram-desc">與下方數值同步，完整數據見觀察結果。圖形為教學示意，請閱讀模型限制。</desc><defs><clipPath id="scene-clip"><rect width="660" height="400"/></clipPath></defs><g clip-path="url(#scene-clip)">${out}</g></svg>`+extra;
+}
+
+// Orthographic phase boundary. Its lit area is pi*R²*(1-cos(phase))/2.
+export function moonLitPath(phase,R=100,cx=200,cy=160){
+ const a=phase*Math.PI/180,waxing=Math.sin(a)>=0,left=[],right=[];
+ for(let y=-R;y<=R;y++){const edge=Math.sqrt(Math.max(0,R*R-y*y)),bound=Math.cos(a)*edge;left.push([cx+(waxing?bound:-edge),cy+y]);right.push([cx+(waxing?edge:-bound),cy+y]);}
+ return 'M'+left.concat(right.reverse()).map(p=>p.map(n=>Number(n.toFixed(3))).join(',')).join(' L')+' Z';
+}
+function moonScene(s,r){
+ const a=r.phase*Math.PI/180,x=175+105*Math.cos(a),y=165-95*Math.sin(a),n=s.node*Math.PI/180;
+ const phaseName=r.phase===0?'朔（新月）':r.phase===90?'上弦月':r.phase===180?'望（滿月）':r.phase===270?'下弦月':r.phase<90?'眉月':r.phase<180?'盈凸月':r.phase<270?'虧凸月':'殘月';
+ const img='<image href="../../assets/science/moon-texture.webp" x="89" y="49" width="222" height="222"/>';
+ return `<div class="moon-panels"><section class="moon-panel"><h3>① 從地球看月亮</h3><svg viewBox="0 0 400 330" role="img" aria-label="${phaseName}，可見亮面 ${(r.lit*100).toFixed(1)}%，北向朝上示意"><defs><clipPath id="moonDisk"><circle cx="200" cy="160" r="100"/></clipPath><clipPath id="moonLit"><path d="${moonLitPath(r.phase)}"/></clipPath></defs><circle cx="200" cy="160" r="101" fill="#233750"/><g clip-path="url(#moonDisk)">${img}<circle cx="200" cy="160" r="100" fill="#081629" opacity=".95"/><g clip-path="url(#moonLit)"><circle cx="200" cy="160" r="100" fill="#d6d9db"/>${img}</g></g><text x="200" y="295" text-anchor="middle" font-size="23">${phaseName} · 亮面 ${(r.lit*100).toFixed(0)}%</text></svg><p>北向朝上示意。月面紋理為插畫；亮暗邊界依角度計算。</p></section><section class="moon-panel"><h3>② 從太空看相對位置</h3><svg viewBox="0 0 400 330" role="img" aria-label="軌道俯視圖，太陽在右側；月球相位角 ${r.phase} 度，黃緯 ${r.latitude.toFixed(2)} 度"><defs><radialGradient id="earthShade" cx="80%" cy="40%"><stop stop-color="#79d4e8"/><stop offset=".55" stop-color="#227db0"/><stop offset="1" stop-color="#16334c"/></radialGradient><radialGradient id="sunShade"><stop stop-color="#fff0bb"/><stop offset="1" stop-color="#efad30"/></radialGradient><clipPath id="earthDisk"><circle cx="175" cy="165" r="24"/></clipPath></defs><ellipse cx="175" cy="165" rx="105" ry="95" fill="none" stroke="#55718e" stroke-width="1.5"/><line x1="${175-120*Math.cos(n)}" y1="${165+108*Math.sin(n)}" x2="${175+120*Math.cos(n)}" y2="${165-108*Math.sin(n)}" stroke="#9fb4c9" stroke-dasharray="5 5"/><circle cx="175" cy="165" r="24" fill="url(#earthShade)"/><g clip-path="url(#earthDisk)" fill="#67af9b"><path d="M171 146 l13 2 -6 9 8 7 -8 10 -8 -7 -5 -12 Z"/><path d="M184 178 l9 -3 2 10 -8 3 Z"/></g><text x="150" y="209" font-size="18">地球</text><circle cx="350" cy="165" r="25" fill="url(#sunShade)"/><text x="327" y="209" font-size="18">太陽</text><line x1="350" y1="60" x2="245" y2="60" stroke="#f3ca71" stroke-width="2"/><path d="M255 53 L245 60 L255 67" fill="none" stroke="#f3ca71" stroke-width="2"/><text x="260" y="42" font-size="16">太陽光</text><circle cx="${x}" cy="${y}" r="12" fill="#415168"/><path d="M${x} ${y-12} A12 12 0 0 1 ${x} ${y+12} Z" fill="#f5e4b6"/><text x="${x}" y="${y-21}" text-anchor="middle" font-size="17">月球</text><text x="200" y="301" text-anchor="middle" font-size="18">軌道黃緯 ${r.latitude.toFixed(2)}°</text></svg><p>虛線是交點方向；圖中尺寸與距離經縮放，垂直偏離請讀黃緯。</p></section></div><div class="moon-explanation"><p><strong>先比較兩個視角：</strong>太陽一直照亮月球約一半；從地球能看見多少亮面，取決於相對位置。</p><p>月相不是地球影子。要研究日月食，再打開「進階：軌道與交點」，比較黃緯與對齊條件。</p></div>`;
 }
