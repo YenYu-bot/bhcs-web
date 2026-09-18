@@ -36,15 +36,3 @@ export const firstMisconceptions={
  'genetics-simulation-lab.html':'25% 是每個子代的機率，不代表每四個子代一定有一個符合。'
 };
 
-export const firstMisconceptions={
- 'circuit-lab.html':'電流不是流過第一顆燈泡後被用掉；串聯各處電流相同，並聯的支路才會分流。',
- 'force-motion-lab.html':'向右移動不代表合力向右；合力決定加速度，與當下速度要分開判讀。',
- 'particle-reaction-lab.html':'反應後分子種類或數量可以改變，各元素的原子總數仍要守恆。',
- 'microscope-lab.html':'高倍讓影像變大，能看見的範圍反而變小；影像偏左時玻片也向左移。',
- 'plate-earthquake-lab.html':'震源在地下，震央是其上方地表位置；單一測站只能給出距離範圍。',
- 'heat-phase-lab.html':'吸收熱量不一定升溫；相變期間能量用在改變物態。',
- 'buoyancy-density-lab.html':'重的物體不一定下沉；先比較物體與液體密度，沉底還要考慮支持力。',
- 'acid-base-indicator-lab.html':'酸鹼體積相等不保證中和；要連同濃度比較可反應的量。',
- 'photosynthesis-factor-lab.html':'增加光照不一定持續提高速率，另一個條件可能成為限制因子。',
- 'genetics-simulation-lab.html':'25% 是每個子代的機率，不代表每四個子代一定有一個符合。'
-};
