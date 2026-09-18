@@ -15,6 +15,15 @@ for(const id of ids){
  assert.match(clone.textContent,/開始觀察/,id+' direct observe action');
  dom.window.close();
 }
+const runtime=fs.readFileSync(path.join(root,'scripts/science/runtime.js'),'utf8');
+const diagrams=fs.readFileSync(path.join(root,'scripts/science/diagrams.mjs'),'utf8');
+assert.ok(runtime.includes("settings:{...current.s}"),'structured record settings missing');
+assert.ok(runtime.includes("draftKey=storageKey+'-draft'"),'explanation draft persistence missing');
+assert.ok(runtime.includes("data-lab-drag"),'drag exploration runtime missing');
+assert.ok(diagrams.includes('data-lab-drag="u"'),'optics drag handle missing');
+assert.ok(diagrams.includes('data-lab-drag="progress"'),'energy drag handle missing');
+assert.ok(diagrams.includes('前側導線電流方向'),'electromagnetism direction cue missing');
+assert.ok(diagrams.includes('各處地軸保持平行'),'seasons parallel-axis diagram missing');
 const guide=fs.readFileSync(path.join(root,'assets/researcher-lab.js'),'utf8');
 const mini=fs.readFileSync(path.join(root,'tools/mini-lab/index.html'),'utf8');
 const micro=fs.readFileSync(path.join(root,'tools/microscope-lab.html'),'utf8');
