@@ -25,9 +25,8 @@ function structural(d,file){
  for(const conf of batch2){
   const file='tools/science/'+conf.id+'.html',{dom,errors}=load(file),w=dom.window,d=w.document,$=id=>d.getElementById(id);
   structural(d,file);assert.equal($('control-fields').disabled,false);
-  assert.ok(d.querySelector('#experiment').firstElementChild.classList.contains('controls'),'Prediction must precede results in reading/tab order');
-  $('run').click();assert.equal($('add-record').disabled,true);assert.ok(!$('diagram').querySelector('svg'));
-  $('prediction').value=conf.choices[0][0];$('run').click();assert.ok($('diagram').querySelector('svg'));assert.equal($('readouts').children.length,4);assert.equal($('add-record').disabled,false);
+  assert.ok(d.querySelector('#experiment').firstElementChild.classList.contains('controls'),'Controls must precede results in reading/tab order');
+  if(conf.noPrediction){assert.equal($('prediction'),null);$('run').click();assert.ok($('diagram').querySelector('svg'));assert.equal($('readouts').children.length,4);assert.equal($('add-record').disabled,false)}else{$('run').click();assert.equal($('add-record').disabled,true);assert.ok(!$('diagram').querySelector('svg'));$('prediction').value=conf.choices[0][0];$('run').click();assert.ok($('diagram').querySelector('svg'));assert.equal($('readouts').children.length,4);assert.equal($('add-record').disabled,false)};
   $('add-record').click();assert.equal($('records').textContent.includes('尚未'),true);
   $('explanation-input').value='測試觀察：只改一個變因，比較兩筆數值。';$('add-record').click();assert.equal($('records').rows.length,1);assert.ok(!$('records').textContent.includes('尚未'));assert.equal($('add-record').disabled,true);
   assert.equal($('print-records').querySelectorAll('article').length,1);
@@ -38,9 +37,9 @@ function structural(d,file){
   if(conf.id==='electromagnetism'){assert.ok(!$('records').textContent.includes('外加磁場'));assert.ok(!$('current-conditions').textContent.includes('轉速'));}
   if(conf.id==='pressure-fluid'){assert.ok(!$('records').textContent.includes('氣體體積'));assert.ok(!$('current-conditions').textContent.includes('入口流速'));}
   const saved=w.localStorage.getItem('bhcs-science-v2-'+conf.id);assert.equal(JSON.parse(saved).length,1);
-  const c=conf.controls[0],el=$('ctl-'+c.key);el.value=c.options?c.options[1][0]:c.max;el.dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal($('prediction').value,'');assert.equal($('add-record').disabled,true);assert.equal($('readouts').children.length,0);
-  for(let i=0;i<conf.tasks.length;i++){d.querySelector(`[data-mission="${i}"]`).click();assert.equal($('prediction').value,'');assert.equal($('add-record').disabled,true);$('prediction').value=$('prediction').options[$('prediction').options.length-1].value;$('run').click();assert.ok($('diagram').querySelector('svg'));$('explanation-input').value='測試任務觀察比較';$('add-record').click()}
-  assert.equal($('records').rows.length,4);assert.equal($('record-comparison').querySelectorAll('article').length,2);assert.match($('record-comparison').textContent,/紀錄 3/);assert.match($('record-comparison').textContent,/紀錄 4/);$('reset').click();assert.equal($('readouts').children.length,0);assert.equal($('prediction').value,'');assert.equal($('add-record').disabled,true);assert.equal($('records').rows.length,4);
+  const c=conf.controls[0],el=$('ctl-'+c.key);el.value=c.options?c.options[1][0]:c.max;el.dispatchEvent(new w.Event('input',{bubbles:true}));if(conf.noPrediction)assert.equal($('prediction'),null);else assert.equal($('prediction').value,'');assert.equal($('add-record').disabled,true);assert.equal($('readouts').children.length,0);
+  for(let i=0;i<conf.tasks.length;i++){d.querySelector(`[data-mission="${i}"]`).click();if(conf.noPrediction)assert.equal($('prediction'),null);else{assert.equal($('prediction').value,'');$('prediction').value=conf.choices.at(-1)[0]}assert.equal($('add-record').disabled,true);$('run').click();assert.ok($('diagram').querySelector('svg'));$('explanation-input').value='測試任務觀察比較';$('add-record').click()}
+  assert.equal($('records').rows.length,4);assert.equal($('record-comparison').querySelectorAll('article').length,2);assert.match($('record-comparison').textContent,/紀錄 3/);assert.match($('record-comparison').textContent,/紀錄 4/);$('reset').click();assert.equal($('readouts').children.length,0);if(conf.noPrediction)assert.equal($('prediction'),null);else assert.equal($('prediction').value,'');assert.equal($('add-record').disabled,true);assert.equal($('records').rows.length,4);
   w.dispatchEvent(new w.Event('beforeprint'));assert.ok(!$('print-current').textContent.includes('尚未儲存的列印觀察'));assert.equal($('current-conditions').textContent,'');assert.equal($('print-records').querySelectorAll('article').length,4);
   $('check-quiz').click();assert.match($('quiz-score').textContent,/已答0\/3/);
   conf.quiz.forEach((q,i)=>assert.ok(!$('feedback-'+i).textContent.includes(q.tip),'Unanswered quiz must not disclose explanation'));
@@ -50,7 +49,7 @@ function structural(d,file){
   w.eval(axe.source);const accessibility=await w.axe.run(d,{runOnly:{type:'tag',values:['wcag2a','wcag2aa']},rules:{'color-contrast':{enabled:false}}});assert.deepEqual(Array.from(accessibility.violations,v=>v.id),[],file+' accessibility');
   assert.deepEqual(errors,[],file+' JS errors');dom.window.close();
   for(const option of [{saved:{['bhcs-science-v2-'+conf.id]:saved}},{saved:{['bhcs-science-v2-'+conf.id]:'{broken'}},{saved:{['bhcs-science-v2-'+conf.id]:JSON.stringify([{conditions:'<img src=x onerror=alert(1)>',result:'safe',prediction:'safe',explanation:'safe'}])}},{blocked:true}]){
-   const {dom:other,errors:otherErrors}=load(file,option),od=other.window.document;od.getElementById('prediction').value=conf.choices[0][0];od.getElementById('run').click();assert.equal(od.getElementById('add-record').disabled,false);assert.equal(od.getElementById('records').querySelectorAll('img').length,0);assert.deepEqual(otherErrors,[]);other.window.close();
+   const {dom:other,errors:otherErrors}=load(file,option),od=other.window.document;if(!conf.noPrediction)od.getElementById('prediction').value=conf.choices[0][0];od.getElementById('run').click();assert.equal(od.getElementById('add-record').disabled,false);assert.equal(od.getElementById('records').querySelectorAll('img').length,0);assert.deepEqual(otherErrors,[]);other.window.close();
   }
   console.log('PASS',conf.id,'core flow, tasks, quiz, storage, a11y');
  }

@@ -15,13 +15,14 @@ export const legacy = [
  ['acid-base-indicator-lab.html','酸鹼與指示劑實驗室','理化','國中','物質與化學','比較指示劑與強酸強鹼中和的理想模型。','酸鹼、體積與濃度','指示劑、莫耳數、中和','15–20'],
  ['heat-phase-lab.html','熱與物態實驗室','理化','國中','熱學','沿純水加熱曲線比較溫度、能量與物態。','溫度、質量','比熱、潛熱、熱傳','15–20'],
  ['waves.html','波動實驗室','理化','國中','波與聲','觀察質點、反射、干涉與駐波。','振動、週期','波速、波長、疊加','15–20'],
- ['circuit-lab.html','電路虛擬實驗室','理化','國中','電與磁','先預測串並聯電路，再通電比較電流和電壓。','電流、電壓','歐姆定律、等效電阻、功率','15–20'],
+ ['circuit-lab.html','電路虛擬實驗室','理化','國中','電與磁','直接通電比較串並聯電路的電流和電壓。','電流、電壓','歐姆定律、等效電阻、功率','15–20'],
  ['dc-motor.html','直流馬達的原理','理化','國中','電與磁','比較磁場、電流與換向器如何讓線圈連續轉動。','電磁鐵','磁力、換向器、能量轉換','15–20'],
  ['plate-earthquake-lab.html','板塊與地震實驗室','地科','國中','板塊與地震','觀察板塊剖面，再由測站資料定位震央。','地球構造、距離','板塊邊界、震源、三圓定位','15–20'],
  ['moon-phases/','月相盈虧互動教室','地科','國中','天文','從太空與地球視角比較月相，不把月相誤認為地影。','太陽、地球、月球','光照、相對位置、盈虧','10–15'],
 ].map(([file,title,subject,grade,unit,description,prior,goals,minutes])=>({file,title,subject,grade,unit,description,prior,goals,minutes,kind:'互動模擬',batch:1}));
 
 export const firstBatch = ['circuit-lab.html','force-motion-lab.html','particle-reaction-lab.html','microscope-lab.html','plate-earthquake-lab.html','heat-phase-lab.html','buoyancy-density-lab.html','acid-base-indicator-lab.html','photosynthesis-factor-lab.html','genetics-simulation-lab.html'];
+
 
 export const firstMisconceptions={
  'circuit-lab.html':'電流不是流過第一顆燈泡後被用掉；串聯各處電流相同，並聯的支路才會分流。',

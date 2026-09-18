@@ -52,7 +52,7 @@ const root=path.resolve(__dirname,'..');
   const dom=new JSDOM(fs.readFileSync(path.join(root,'tools/microscope-lab.html'),'utf8'),{url:'https://www.bhcs.com.tw/tools/microscope-lab.html?noga=1',runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.HTMLCanvasElement.prototype.getContext=function(){if(!backings.has(this)){const canvas=createCanvas(this.width,this.height);backings.set(this,canvas);const ctx=canvas.getContext('2d'),draw=ctx.drawImage.bind(ctx);ctx.drawImage=(source,...args)=>draw(backings.get(source)||source,...args);}return backings.get(this).getContext('2d')};w.print=()=>{};w.confirm=()=>true}});
   const d=dom.window.document,$=id=>d.getElementById(id),collage=createCanvas(1350,1440),cc=collage.getContext('2d');cc.fillStyle='white';cc.fillRect(0,0,1350,1440);cc.font='22px sans-serif';let index=0;
   for(const kind of ['onion','cheek','elodea']){
-   $('specimen').value=kind;$('specimen').dispatchEvent(new dom.window.Event('change'));$('prediction').value='narrower';$('begin').click();$('autofocus').click();
+   $('specimen').value=kind;$('specimen').dispatchEvent(new dom.window.Event('change'));$('begin').click();$('autofocus').click();
    for(const obj of [4,10,40]){
     const radio=d.querySelector(`input[name=objective][value="${obj}"]`);radio.checked=true;radio.dispatchEvent(new dom.window.Event('change'));
     const canvas=backings.get($('scope')),scale=microScale(obj),pixel=canvas.getContext('2d').getImageData(Math.round(scale.x+scale.pixels/2),scale.y,1,1).data;assert.ok(pixel[0]>240&&pixel[1]>240&&pixel[2]>240,'Unclipped visible scale');
