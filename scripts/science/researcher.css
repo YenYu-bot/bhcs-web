@@ -17,7 +17,7 @@
 .lab-drag-tip{font-size:14px;background:#fff5dd;padding:8px 12px;border-radius:10px}.lab-drag-tip strong{color:#93400d}
 @media screen and (max-width:700px){
  .researcher-app .labgrid,.researcher-app .layout{display:block;position:relative}
- .researcher-app .labgrid>.card:first-child,.researcher-app .layout>.observation{position:sticky;top:6px;z-index:5;max-height:44svh;overflow:auto;overscroll-behavior:contain;border:2px solid #60c3a4;box-shadow:0 5px 12px #244a3c22}
+ .researcher-app .labgrid>.card:first-child,.researcher-app .layout>.observation{position:sticky;top:6px;z-index:5;max-height:62svh;overflow:auto;overscroll-behavior:contain;border:2px solid #60c3a4;box-shadow:0 5px 12px #244a3c22;background:#fff}
  .researcher-app .layout{display:flex;flex-direction:column}.researcher-app .layout>.observation{width:100%;order:-1}.researcher-app .layout>.controls{width:100%}
  .researcher-app .scopeFrame{max-width:min(56vw,240px)}.researcher-app .scopeModelNote{display:none}.researcher-app .labgrid .cardhead{padding-bottom:6px}.researcher-app .labgrid .cardhead h2{font-size:16px}.researcher-app .mode{font-size:13px}
 }
