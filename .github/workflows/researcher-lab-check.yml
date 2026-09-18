@@ -25,12 +25,17 @@ jobs:
       - name: Commit generated researcher pages
         if: github.actor != 'github-actions[bot]'
         run: |
+          REMOTE_SHA="$(git ls-remote origin refs/heads/codex/researcher-lab-redesign | cut -f1)"
+          if [ "$REMOTE_SHA" != "$GITHUB_SHA" ]; then
+            echo "A newer source commit exists; skip generated-page push from this older run."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add tools/science/index.html tools/science/optics.html tools/science/wave-sound.html tools/science/energy.html tools/science/pressure-fluid.html tools/science/solubility.html tools/science/electromagnetism.html tools/science/moon-eclipse.html tools/science/seasons.html tools/science/plant-exchange.html tools/science/ecosystem.html
           if git diff --cached --quiet; then
             echo "Generated pages already up to date."
           else
-            git commit -m "build: regenerate researcher batch two pages"
+            git commit -m "build: regenerate researcher pages"
             git push
           fi
