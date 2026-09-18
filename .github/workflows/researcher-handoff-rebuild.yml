@@ -6,6 +6,12 @@ on:
     paths:
       - ".github/workflows/researcher-handoff-rebuild.yml"
       - "scripts/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/researcher-handoff-rebuild.yml"
+      - "scripts/**"
 permissions:
   contents: write
 jobs:
