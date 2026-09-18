@@ -22,6 +22,7 @@ jobs:
       - run: node scripts/test_researcher_batch1.cjs
       - run: node scripts/test_researcher_batch2.cjs
       - run: node scripts/test_researcher_batch3.cjs
+      - run: node scripts/test_researcher_batch4.cjs
       - name: Commit generated researcher pages
         if: github.actor != 'github-actions[bot]'
         run: |
@@ -32,7 +33,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/science/index.html tools/science/optics.html tools/science/wave-sound.html tools/science/energy.html tools/science/pressure-fluid.html tools/science/solubility.html tools/science/electromagnetism.html tools/science/moon-eclipse.html tools/science/seasons.html tools/science/plant-exchange.html tools/science/ecosystem.html
+          git add tools/science/index.html tools/science/optics.html tools/science/wave-sound.html tools/science/energy.html tools/science/pressure-fluid.html tools/science/solubility.html tools/science/electromagnetism.html tools/science/moon-eclipse.html tools/science/seasons.html tools/science/plant-exchange.html tools/science/ecosystem.html tools/genetics-simulation-lab.html tools/force-motion-lab.html tools/circuit-lab.html tools/particle-reaction-lab.html tools/heat-phase-lab.html
           if git diff --cached --quiet; then
             echo "Generated pages already up to date."
           else
