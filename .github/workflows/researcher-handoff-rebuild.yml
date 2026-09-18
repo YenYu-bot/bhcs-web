@@ -27,15 +27,27 @@ jobs:
       - name: Install test dependencies
         working-directory: scripts
         run: npm install --no-audit --no-fund
-      - name: Restore first-batch generated-page base
-        run: |
-          base64 --decode scripts/.firstbatch-core.patch.b64 | gunzip > /tmp/firstbatch-core.patch
-          grep '^diff --git ' /tmp/firstbatch-core.patch || true
-          git apply --3way --verbose --include='tools/*' /tmp/firstbatch-core.patch
       - name: Rebuild generated science pages
         run: |
           node scripts/build_microscope.mjs
           node scripts/build_science.mjs
+      - name: Restore first-batch page base adjustments
+        run: |
+          cat scripts/.firstbatch-base.patch.b64.part00 \
+              scripts/.firstbatch-base.patch.b64.part01 \
+              scripts/.firstbatch-base.patch.b64.part02 \
+              scripts/.firstbatch-base.patch.b64.part03 \
+              scripts/.firstbatch-base.patch.b64.part04 > /tmp/firstbatch-base.patch.b64
+          base64 --decode /tmp/firstbatch-base.patch.b64 | gunzip > /tmp/firstbatch-base.patch
+          if git apply --check /tmp/firstbatch-base.patch; then
+            git apply /tmp/firstbatch-base.patch
+          elif git apply --reverse --check /tmp/firstbatch-base.patch; then
+            echo "First-batch page base adjustments are already present."
+          else
+            echo "First-batch page base adjustments cannot be applied cleanly."
+            git apply --check --verbose /tmp/firstbatch-base.patch || true
+            exit 1
+          fi
       - name: Run science tests
         run: npm test --prefix scripts
       - name: Run integration checks
