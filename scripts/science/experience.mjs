@@ -21,7 +21,7 @@ export function enhanceLessons(root,firstBatch,batch2){
  const studyJS=fs.readFileSync(path.join(root,'scripts/science/study.js'),'utf8');
  for(const item of [...firstBatch.map(file=>({file,id:file.replace('.html','')})),...batch2.map(t=>({...t,file:'science/'+t.id+'.html'}))]){
   const file=path.join(root,'tools',item.file);let html=fs.readFileSync(file,'utf8');
-  const predictionFree=item.id==='microscope-lab'||item.noPrediction===true;
+  const predictionFree=["microscope-lab","genetics-simulation-lab","force-motion-lab","circuit-lab","particle-reaction-lab","heat-phase-lab"].includes(item.id)||item.noPrediction===true;
   const known=firstGuides[item.id];if(known){const actual=html.match(/<section id="([^"]+)" class="labgrid"/);if(actual)known[4]=actual[1];}
   let guide=known?route(known[0],known.slice(1,4),['#'+known[4],'#'+known[4],'#quiz'],predictionFree):route(item.goals[0]+'，從哪裡開始？',[
    `先選引導任務「${item.tasks[0].title}」，它會準備好第一組條件。${item.tasks[0].prompt}`,
