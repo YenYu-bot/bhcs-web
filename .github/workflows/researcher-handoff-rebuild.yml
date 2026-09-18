@@ -30,7 +30,8 @@ jobs:
       - name: Restore first-batch generated-page base
         run: |
           base64 --decode scripts/.firstbatch-core.patch.b64 | gunzip > /tmp/firstbatch-core.patch
-          git apply --3way --include='tools/**' /tmp/firstbatch-core.patch
+          grep '^diff --git ' /tmp/firstbatch-core.patch || true
+          git apply --3way --verbose --include='tools/*' /tmp/firstbatch-core.patch
       - name: Rebuild generated science pages
         run: |
           node scripts/build_microscope.mjs
