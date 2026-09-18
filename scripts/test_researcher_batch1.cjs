@@ -1,0 +1,17 @@
+const fs=require('fs');
+const must=(v,m)=>{if(!v)throw new Error(m)};
+const micro=fs.readFileSync('tools/microscope-lab.html','utf8');
+const dir=fs.readFileSync('tools/science/index.html','utf8');
+const css=fs.readFileSync('assets/researcher-lab.css','utf8');
+const js=fs.readFileSync('assets/researcher-lab.js','utf8');
+must(micro.includes('researcher-lab.css')&&micro.includes('researcher-lab.js'),'microscope researcher assets missing');
+must(dir.includes('researcher-lab.css')&&dir.includes('researcher-lab.js'),'directory researcher assets missing');
+must(micro.includes('字母 e 定位玻片'),'letter slide missing');
+must(micro.includes('data-answer="a" data-tip="影像與玻片移動方向相反'),'Q2 answer mismatch');
+must(micro.includes("Math.max(-270")&&micro.includes("*540/slideDrag.width"),'slide movement range not expanded');
+must(micro.includes('預測已記下')&&micro.includes('觀察支持你的預測'),'prediction reveal flow missing');
+must(micro.includes("Array.isArray(v)?v:[]"),'record storage guard missing');
+must(css.includes('@media(max-width:700px)')&&css.includes('position:sticky'),'mobile sticky observation missing');
+must(css.includes('@media print'),'print rules missing');
+must(js.includes("data-screen='prepare'")||js.includes("dataset.screen='prepare'"),'four-screen flow missing');
+console.log('PASS researcher batch 1 static assertions');
