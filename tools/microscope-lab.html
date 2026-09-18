@@ -107,7 +107,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
   <h2>研究工具箱</h2>
   <div class="coach" id="microCoach" role="status" aria-live="polite"><strong>第 1 步｜選標本開始觀察</strong><p>先從低倍開始，找到清楚影像，再動手移動試片。</p></div>
   <div class="control"><label for="specimen">標本種類</label><select id="specimen"><option value="letter">字母 e 玻片（先練方向）</option><option value="onion">洋蔥鱗葉表皮</option><option value="cheek">口腔上皮</option><option value="elodea">水蘊草葉片</option></select></div>
-  <div class="prediction"><label for="prediction">先預測：物鏡由 4× 換成 40×，視野會怎樣？</label><select id="prediction"><option value="">請先選一個預測</option><option value="wider">可見範圍更大</option><option value="narrower">可見範圍更小</option><option value="same">範圍完全不變</option></select></div>
+  
   <div class="actions"><button class="btn primary" id="begin" type="button">開始研究</button><button class="btn secondary" id="reset" type="button">回到低倍</button></div>
   <fieldset class="labControls" id="labControls" disabled>
    <div class="control"><span id="objectiveLabel" style="display:block;font-weight:800;margin-bottom:6px">物鏡倍率</span><div class="objectiveChoices" role="radiogroup" aria-labelledby="objectiveLabel"><div class="choice"><input type="radio" name="objective" id="obj4" value="4" checked><label for="obj4">4×</label></div><div class="choice"><input type="radio" name="objective" id="obj10" value="10"><label for="obj10">10×</label></div><div class="choice"><input type="radio" name="objective" id="obj40" value="40"><label for="obj40">40×</label></div></div></div>
@@ -271,7 +271,7 @@ function drawScope(){
  ctx.save();ctx.beginPath();ctx.arc(300,300,MICRO_FIELD_PX/2,0,Math.PI*2);ctx.strokeStyle='#f7fafc';ctx.lineWidth=3;ctx.stroke();ctx.clip();
  const bar=microScale(obj);ctx.fillStyle='rgba(20,38,40,.78)';ctx.fillRect(bar.x-12,bar.y-15,bar.pixels+24,57);ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(bar.x,bar.y);ctx.lineTo(bar.x+bar.pixels,bar.y);ctx.stroke();ctx.fillStyle='#fff';ctx.font='700 18px system-ui, Microsoft JhengHei';ctx.fillText(bar.label,bar.x,bar.labelY);
  if(c<28){ctx.fillStyle='rgba(16,42,67,.7)';ctx.fillRect(185,270,230,58);ctx.fillStyle='#fff';ctx.font='800 22px Microsoft JhengHei';ctx.textAlign='center';ctx.fillText('影像離焦，請調整焦距',300,307);ctx.textAlign='start';}ctx.restore();
- ctx.save();ctx.strokeStyle='rgba(80,70,50,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(287,300);ctx.lineTo(313,300);ctx.moveTo(300,287);ctx.lineTo(300,313);ctx.stroke();ctx.restore();if(typeof revealPrediction==='function')revealPrediction();
+ ctx.save();ctx.strokeStyle='rgba(80,70,50,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(287,300);ctx.lineTo(313,300);ctx.moveTo(300,287);ctx.lineTo(300,313);ctx.stroke();ctx.restore();
  canvas.setAttribute('aria-label',`程式繪製示意，非顯微照片。${specimens[els.specimen.value].name}，總倍率 ${10*obj} 倍，視野直徑 ${fmt(fov(obj))} 毫米，比例尺 ${bar.label}，清晰度 ${c}%`);updateReadouts();updateSlideBoard();
 }
 
@@ -340,7 +340,7 @@ installSlideControls();runTests();renderRecords();updateOutputs();drawScope();
  for(const id of Object.keys(labels)){const section=make('section','','lab-screen');section.id='lab-'+id;section.setAttribute('aria-label',labels[id]);screens[id]=section;main.append(section)}
  const nav=make('nav','','lab-nav');nav.setAttribute('aria-label','實驗步驟');const navButtons={};for(const id of ['prepare','bench','notebook','check']){const b=button(labels[id],()=>show(id),'');b.setAttribute('aria-controls',screens[id].id);navButtons[id]=b;nav.append(b)}main.prepend(nav);
  const welcome=make('div','','lab-welcome'),picture=make('div','','lab-welcome-picture');picture.style.backgroundImage=`url("${conf.img}lab-room.jpg")`;picture.append(img('doc-wave.png','奇奇博士歡迎你'));const copy=make('div','','lab-welcome-copy');copy.append(make('span','今天的研究問題','lab-kicker'),make('h2',question),make('p','嗨，我是奇奇博士。先猜一猜，再動手找證據；猜錯也能有新發現。'),make('p',steps[0]),make('p','本次挑戰：'+conf.inquiry[3],'lab-task-rule'),button('接受任務，進入操作台 →',()=>show('bench'),'lab-primary'),make('p','免登入 · 不用填姓名 · 可隨時回到前一步','lab-promise'));welcome.append(picture,copy);screens.prepare.append(welcome);
- const coach=make('aside','','lab-coach'),doc=img('doc-point.png','奇奇博士'),speech=make('div'),coachTitle=make('strong','奇奇博士 · 現在這樣做'),coachText=make('p',steps[0]),hint=make('p','先做預測；不確定時也可以先猜一個。','lab-hint');speech.append(coachTitle,coachText,hint);coach.append(doc,speech);screens.bench.append(coach);
+ const coach=make('aside','','lab-coach'),doc=img('doc-point.png','奇奇博士'),speech=make('div'),coachTitle=make('strong','奇奇博士 · 現在這樣做'),coachText=make('p',steps[0]),hint=make('p','先從目前條件開始操作；看完結果，再決定下一次要改哪一個條件。','lab-hint');speech.append(coachTitle,coachText,hint);coach.append(doc,speech);screens.bench.append(coach);
  const more=make('details','','lab-more');more.append(make('summary','打開延伸實驗與圖解'));screens.bench.append(more);
  for(const e of originals){
   if(e===route){screens.notebook.append(e);continue}
@@ -362,7 +362,7 @@ installSlideControls();runTests();renderRecords();updateOutputs();drawScope();
  const order=['prepare','bench','notebook','check'];let current='prepare',entered=false;
  function countRecords(){return new Set([...document.querySelectorAll('#records tr')].filter(tr=>tr.children.length>1).map(tr=>[...tr.cells].slice(1).map(c=>c.textContent).join('|'))).size}
  function refresh(){if(!document||!main.isConnected)return;const n=countRecords(),score=$('quiz-score')||$('quizScore'),passed=!!score&&/答對\s*3\s*[／/]\s*3/.test(score.textContent);badgeStatus.textContent=n>=2&&passed?'研究活動完成！':'研究徽章等待解鎖';badgeDetails.textContent=`觀察紀錄 ${Math.min(2,n)}／2 · 三題檢核${passed?'已通過':'尚未通過'}。${n>=2&&passed?'再用自己的話說明兩筆證據的差異。':'完成兩筆觀察並檢查三題答案，再回來看看。'}`;const source=$('addRecord'),quick=$('lab-save-observation');if(quick)quick.disabled=source.disabled;
-  if(n>=2){coachText.textContent=steps[2];doc.src=conf.img+'doc-thumb.png'}else if(n===1){coachText.textContent='第一筆已收好。'+conf.inquiry[1]+' 再做一次預測與觀察。';doc.src=conf.img+'doc-point.png'}
+  if(n>=2){coachText.textContent=steps[2];doc.src=conf.img+'doc-thumb.png'}else if(n===1){coachText.textContent='第一筆已收好。'+conf.inquiry[1]+' 再做一次操作與觀察。';doc.src=conf.img+'doc-point.png'}
  }
  function show(id,focus=true){if(!screens[id])return;current=id;if(id==='bench'&&!entered){entered=true;if(conf.second&&!document.querySelector('[data-mission][aria-current]'))document.querySelector('[data-mission]')?.click();}Object.entries(screens).forEach(([key,e])=>e.hidden=key!==id);Object.entries(navButtons).forEach(([key,b])=>{if(key===id)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current')});back.hidden=id==='prepare'||id==='reference';next.hidden=id==='check'||id==='reference';refresh();if(focus){const target=screens[id].querySelector('h2,h3')||screens[id];target.setAttribute('tabindex','-1');target.focus({preventScroll:true});main.scrollIntoView?.({block:'start',behavior:'instant'});}window.dispatchEvent(new Event('resize'));}
  const feedback=$('control-feedback')||$('status');if(feedback)new MutationObserver(()=>{hint.textContent=feedback.textContent;refresh()}).observe(feedback,{childList:true,subtree:true,characterData:true});
