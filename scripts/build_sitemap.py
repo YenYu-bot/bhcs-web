@@ -94,6 +94,8 @@ def sort_key(record: tuple[str, str]) -> tuple[int, str]:
 
 records: dict[str, str] = {}
 for html_path in ROOT.rglob("*.html"):
+    if any(part in {".git", "node_modules", "scripts"} for part in html_path.relative_to(ROOT).parts):
+        continue
     record = page_record(html_path)
     if record:
         url, modified = record

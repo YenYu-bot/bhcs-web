@@ -28,15 +28,10 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 @media print{.topbar,.stepnav,.hero,.panel,.particleStage,.recordTools,.missions,.quizItem,.footer{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
 </style>
 <!-- Google Analytics 4 -->
-<script>
-if(location.search.indexOf('noga=1')>-1)localStorage.setItem('bhcs_noga','1');
-if(localStorage.getItem('bhcs_noga')!=='1'){
-  var gaScript=document.createElement('script');gaScript.async=true;
-  gaScript.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';document.head.appendChild(gaScript);
-  window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};
-  gtag('js',new Date());gtag('config','G-GHN2GDS2RQ');
-}
-</script>
+<!-- Analytics is loaded by science-events.js after the page is ready. -->
+<!-- science-schema:start -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"粒子與化學反應實驗室","url":"https://www.bhcs.com.tw/tools/particle-reaction-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
+<!-- science-schema:end -->
 </head>
 <body>
 <header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
@@ -114,6 +109,9 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
 </section>
 
 <section class="card section safety"><h2>真實實驗安全提醒</h2><p>本頁是粒子模型，不是實驗操作指南。氫氣、氨氣與甲烷相關反應具有燃燒、爆炸、毒性或高溫高壓風險；請勿依本頁內容自行混合或點燃氣體。</p></section>
+<!-- science-teaching:start -->
+<section class="card section lesson-meta" aria-label="教材使用指南"><h2>怎麼用這份教材</h2><p><strong>適用：</strong>國中 · 物質與化學（各校版本進度可能不同）　<strong>建議：</strong>15–20 分鐘</p><p><strong>先備：</strong>原子、分子。<strong>學習目標：</strong>能透過操作說明係數、限量反應物、質量守恆。</p><p><strong>教師引導：</strong>先保留預測，不提示答案。第一筆完成後只改一個條件、加入第二筆紀錄，再請學生引用數據解釋差異。</p><p><strong>常見迷思：</strong>模擬中的比例、時間與理想條件不一定等同真實實驗，請對照本頁教師提示及模型限制。</p><p><a href="science/">自然實驗總覽</a> · <a href="../guozhong-lihua.html" data-science-event="course">相關課程</a> · <a href="../lianluo.html" data-science-event="consult">程度確認</a></p></section>
+<!-- science-teaching:end -->
 </main>
 
 <footer class="footer"><div class="shell">百宏文教機構｜<a href="../ziyuan.html">更多免費學習資源</a>｜化學計量的理想粒子模型</div></footer>
@@ -155,7 +153,7 @@ function renderResult(x){
  const match=els.prediction.value===x.limiting;$('status').className='status '+(match?'good':'warn');$('status').innerHTML=`<strong>${match?'預測正確':'預測與結果不同'}</strong>${x.extent?`可以完成 ${x.extent} 組反應；${resultName(x)}${x.limiting==='exact'?'。':'限制了產物數量。'}`:'目前無法湊出一組完整反應。'}`;
  $('explanation').textContent=x.extent?`${x.r.A.name} 每組需要 ${x.r.A.co} 個，${x.nA} 個可供應 ${fmt(x.ratioA)} 組；${x.r.B.name} 每組需要 ${x.r.B.co} 個，${x.nB} 個可供應 ${fmt(x.ratioB)} 組。只能完成兩者較小值中的完整整數組，也就是 ${x.extent} 組。`:'至少一種反應物不足以湊出一個完整反應組，所以這個模型不產生半個分子。';
  $('formulaLine').textContent=`floor(min(${x.nA}/${x.r.A.co}, ${x.nB}/${x.r.B.co})) = ${x.extent} 組`;$('massBefore').textContent=fmt(x.massBefore);$('massAfter').textContent=fmt(x.massAfter);renderAtomTable(x);
- if(typeof window.gtag==='function')window.gtag('event','particle_reaction',{reaction:els.level.value==='basic'?'water':els.reaction.value,limiting:x.limiting,prediction_match:match});
+ if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack('start','particle-reaction-lab');
 }
 function renderAtomTable(x){const body=$('atomRows');body.textContent='';if(!x.elements.length){body.innerHTML='<tr><td colspan="4" class="empty">沒有粒子可供盤點。</td></tr>';return;}x.elements.forEach(el=>{const tr=document.createElement('tr');[el,x.atomsBefore[el]||0,x.atomsAfter[el]||0,(x.atomsBefore[el]||0)===(x.atomsAfter[el]||0)?'守恆':'不相同'].forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===3&&v==='守恆')td.className='balanced';tr.appendChild(td);});body.appendChild(tr);});}
 function hideResult(){verified=false;lastResult=null;['extentValue','limitValue','productValue','leftValue','conserveValue'].forEach(id=>$(id).textContent='—');$('conserveMeter').className='meter';$('addRecord').disabled=true;renderParticles('afterSvg',[],'按「開始反應」查看結果');$('afterLegend').textContent='先作預測，再開始反應。';$('atomRows').innerHTML='<tr><td colspan="4" class="empty">開始反應後顯示。</td></tr>';$('massBefore').textContent='—';$('massAfter').textContent='—';$('formulaLine').textContent='等待反應';$('explanation').textContent='完成一次反應後，這裡會說明反應組數與剩餘量。';}
@@ -172,5 +170,8 @@ els.level.addEventListener('change',()=>{document.querySelectorAll('.advancedOnl
 runTests();renderRecords();updateSetup();hideResult();
 })();
 </script>
+<!-- science-events:start -->
+<script src="../assets/science-events.js" defer></script>
+<!-- science-events:end -->
 </body>
 </html>

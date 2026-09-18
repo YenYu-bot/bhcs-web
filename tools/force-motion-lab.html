@@ -31,15 +31,10 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 @media print{.topbar,.stepnav,.hero,.panel,.stage,.recordTools,.missions,.quizItem,.footer{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
 </style>
 <!-- Google Analytics 4 -->
-<script>
-if(location.search.indexOf('noga=1')>-1)localStorage.setItem('bhcs_noga','1');
-if(localStorage.getItem('bhcs_noga')!=='1'){
-  var gaScript=document.createElement('script');gaScript.async=true;
-  gaScript.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';document.head.appendChild(gaScript);
-  window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};
-  gtag('js',new Date());gtag('config','G-GHN2GDS2RQ');
-}
-</script>
+<!-- Analytics is loaded by science-events.js after the page is ready. -->
+<!-- science-schema:start -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"力與運動實驗室","url":"https://www.bhcs.com.tw/tools/force-motion-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
+<!-- science-schema:end -->
 </head>
 <body>
 <header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
@@ -117,6 +112,9 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   <div class="quizItem"><fieldset data-answer="a" data-tip="靜摩擦力會先配合施力增大；只有超過最大靜摩擦力，物體才開始滑動。"><legend>3. 對靜止小車施力後仍不動，最合理的解釋是？</legend><label><input type="radio" name="q3" value="a"> 靜摩擦力抵銷了施力</label><label><input type="radio" name="q3" value="b"> 小車沒有重量</label><label><input type="radio" name="q3" value="c"> 有施力就一定有速度</label></fieldset><div class="feedback" aria-live="polite"></div></div>
   <div class="recordTools"><button class="btn primary" id="checkQuiz" type="button">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
 </section>
+<!-- science-teaching:start -->
+<section class="card section lesson-meta" aria-label="教材使用指南"><h2>怎麼用這份教材</h2><p><strong>適用：</strong>國中 · 力學（各校版本進度可能不同）　<strong>建議：</strong>15–20 分鐘</p><p><strong>先備：</strong>速度、方向。<strong>學習目標：</strong>能透過操作說明控制變因、牛頓第二定律。</p><p><strong>教師引導：</strong>先保留預測，不提示答案。第一筆完成後只改一個條件、加入第二筆紀錄，再請學生引用數據解釋差異。</p><p><strong>常見迷思：</strong>模擬中的比例、時間與理想條件不一定等同真實實驗，請對照本頁教師提示及模型限制。</p><p><a href="science/">自然實驗總覽</a> · <a href="../guozhong-lihua.html" data-science-event="course">相關課程</a> · <a href="../lianluo.html" data-science-event="consult">程度確認</a></p></section>
+<!-- science-teaching:end -->
 </main>
 
 <footer class="footer"><div class="shell">百宏文教機構｜<a href="../ziyuan.html">更多免費學習資源</a>｜一維水平運動教學模型</div></footer>
@@ -142,7 +140,7 @@ function forces(c,v){
 }
 function initialSim(){const c=config(),f=forces(c,c.v0);return{t:0,x:0,v:c.v0,...f,c};}
 function directionOf(a){return a>.0005?'right':a<-.0005?'left':'zero';}
-function reveal(){verified=true;const correct=directionOf(sim.a),match=els.prediction.value===correct;$('status').className='status '+(match?'good':'warn');$('status').innerHTML=`<strong>${match?'預測符合受力計算':'預測與計算不同'}</strong>剛開始的合力為 ${fmt(sim.net)} N，所以加速度是 ${fmt(sim.a)} m/s²，方向為「${predNames[correct]}」。`;updateReadouts();$('addRecord').disabled=false;$('explanation').textContent=explain(sim);$('formulaLine').textContent=formula(sim);if(typeof window.gtag==='function')window.gtag('event','force_motion_start',{surface:sim.c.surface,prediction_match:match});}
+function reveal(){verified=true;const correct=directionOf(sim.a),match=els.prediction.value===correct;$('status').className='status '+(match?'good':'warn');$('status').innerHTML=`<strong>${match?'預測符合受力計算':'預測與計算不同'}</strong>剛開始的合力為 ${fmt(sim.net)} N，所以加速度是 ${fmt(sim.a)} m/s²，方向為「${predNames[correct]}」。`;updateReadouts();$('addRecord').disabled=false;$('explanation').textContent=explain(sim);$('formulaLine').textContent=formula(sim);if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack('start','force-motion-lab');}
 function explain(s){if(s.stuck&&Math.abs(s.c.F)>0)return`施力 ${fmt(Math.abs(s.c.F))} N 尚未超過最大靜摩擦力 ${fmt(s.maxStatic)} N。靜摩擦力會調整成 ${fmt(Math.abs(s.friction))} N 抵銷施力，因此合力與加速度都是 0。`;if(Math.abs(s.net)<EPS&&Math.abs(s.v)>EPS)return`小車速度為 ${fmt(s.v)} m/s，但水平合力為 0，所以速度保持不變。這正好說明「物體在運動」不等於「一定有向前的合力」。`;return`水平合力為施力與摩擦力的向量和：${fmt(s.c.F)} + (${fmt(s.friction)}) = ${fmt(s.net)} N。再除以 ${fmt(s.c.m)} kg，得到加速度 ${fmt(s.a)} m/s²。`;}
 function formula(s){return`Fnet = ${fmt(s.c.F)} + (${fmt(s.friction)}) = ${fmt(s.net)} N；a = ${fmt(s.net)} ÷ ${fmt(s.c.m)} = ${fmt(s.a)} m/s²`;}
 function updateReadouts(){if(!verified)return;$('timeValue').textContent=fmt(sim.t)+' s';$('positionValue').textContent=fmt(sim.x)+' m';$('velocityValue').textContent=fmt(sim.v)+' m/s';$('netValue').textContent=fmt(sim.net)+' N';$('accelValue').textContent=fmt(sim.a)+' m/s²';}
@@ -181,5 +179,8 @@ $('checkQuiz').addEventListener('click',()=>{let score=0;document.querySelectorA
 runTests();renderRecords();changed();
 })();
 </script>
+<!-- science-events:start -->
+<script src="../assets/science-events.js" defer></script>
+<!-- science-events:end -->
 </body>
 </html>

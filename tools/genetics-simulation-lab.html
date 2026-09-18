@@ -27,10 +27,10 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}@media print{.topbar,.stepnav,.hero,.panel,.recordTools,.missions,.quizItem,.footer,.sampleActions{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
 </style>
 <!-- Google Analytics 4 -->
-<script>
-if(location.search.indexOf('noga=1')>-1)localStorage.setItem('bhcs_noga','1');
-if(localStorage.getItem('bhcs_noga')!=='1'){var gaScript=document.createElement('script');gaScript.async=true;gaScript.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';document.head.appendChild(gaScript);window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag('js',new Date());gtag('config','G-GHN2GDS2RQ');}
-</script>
+<!-- Analytics is loaded by science-events.js after the page is ready. -->
+<!-- science-schema:start -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"遺傳模擬實驗室","url":"https://www.bhcs.com.tw/tools/genetics-simulation-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
+<!-- science-schema:end -->
 </head>
 <body>
 <header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
@@ -83,6 +83,9 @@ if(localStorage.getItem('bhcs_noga')!=='1'){var gaScript=document.createElement(
  <div class="quizItem"><fieldset data-answer="a" data-tip="25% 是每個子代的機率；四個子代只是四次隨機事件，不保證剛好出現一次。"><legend>3. 某雜交的隱性表現型理論機率是 25%，生四個子代時一定有一個隱性嗎？</legend><label><input type="radio" name="q3" value="a"> 不一定</label><label><input type="radio" name="q3" value="b"> 一定</label><label><input type="radio" name="q3" value="c"> 一定沒有</label></fieldset><div class="feedback" aria-live="polite"></div></div>
  <div class="recordTools"><button class="btn primary" id="checkQuiz" type="button">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
 </section>
+<!-- science-teaching:start -->
+<section class="card section lesson-meta" aria-label="教材使用指南"><h2>怎麼用這份教材</h2><p><strong>適用：</strong>國中 · 遺傳（各校版本進度可能不同）　<strong>建議：</strong>15–20 分鐘</p><p><strong>先備：</strong>配子、比例。<strong>學習目標：</strong>能透過操作說明基因型、表現型、隨機抽樣。</p><p><strong>教師引導：</strong>先保留預測，不提示答案。第一筆完成後只改一個條件、加入第二筆紀錄，再請學生引用數據解釋差異。</p><p><strong>常見迷思：</strong>模擬中的比例、時間與理想條件不一定等同真實實驗，請對照本頁教師提示及模型限制。</p><p><a href="science/">自然實驗總覽</a> · <a href="../guozhong-lihua.html" data-science-event="course">相關課程</a> · <a href="../lianluo.html" data-science-event="consult">程度確認</a></p></section>
+<!-- science-teaching:end -->
 </main>
 
 <footer class="footer"><div class="shell">百宏文教機構｜<a href="../ziyuan.html">更多免費學習資源</a>｜孟德爾單性狀完全顯性模型</div></footer>
@@ -106,7 +109,7 @@ function phenotypeText(r){return`${r.t.dom} ${pct(r.dom)}、${r.t.rec} ${pct(r.r
 function setParentLabels(){const t=trait();[els.p1,els.p2].forEach(sel=>{[...sel.options].forEach(o=>{const code=+o.value;o.textContent=`${genotypeName(code)}（${genotype(code,t)}）`;});});$('homoDomNote').textContent=`基因型 ${genotype(2,t)}`;$('heteroNote').textContent=`基因型 ${genotype(1,t)}`;$('homoRecNote').textContent=`基因型 ${genotype(0,t)}`;$('dominantNote').textContent=`${t.dom}：至少一個 ${t.upper}`;$('recessiveNote').textContent=`${t.rec}：必須是 ${genotype(0,t)}`;}
 function renderGametes(target,arr){target.innerHTML=arr.map(x=>`<span class="gamete" aria-label="配子 ${x}">${x}</span>`).join('');}
 function renderPunnett(r){const [a,b]=r.g1,[c,d]=r.g2,cell=(x,y)=>combine(x,y,r.t).genotype;$('punnettBody').innerHTML=`<tr><th class="corner">親代二 ↓<br>親代一 →</th><th>${a}</th><th>${b}</th></tr><tr><th>${c}</th><td>${cell(a,c)}</td><td>${cell(b,c)}</td></tr><tr><th>${d}</th><td>${cell(a,d)}</td><td>${cell(b,d)}</td></tr>`;}
-function reveal(){const r=crossResult(),guess=+els.prediction.value,ok=Math.abs(guess-r.rec)<1e-9;crossed=true;lastSample=null;$('stageCover').hidden=true;$('crossContent').hidden=false;$('parentOneDisplay').textContent=genotype(r.p1,r.t);$('parentTwoDisplay').textContent=genotype(r.p2,r.t);renderGametes($('gametesOne'),r.g1);renderGametes($('gametesTwo'),r.g2);renderPunnett(r);$('gameteValue').textContent=`${[...new Set(r.g1)].join('、')} ／ ${[...new Set(r.g2)].join('、')}`;$('homoDomValue').textContent=pct(r.probs[2]);$('heteroValue').textContent=pct(r.probs[1]);$('homoRecValue').textContent=pct(r.probs[0]);$('dominantValue').textContent=pct(r.dom);$('recessiveValue').textContent=pct(r.rec);$('status').className='status '+(ok?'good':'warn');$('status').innerHTML=`<strong>${ok?'預測正確：':'修正預測：'}${r.t.rec}為 ${pct(r.rec)}</strong>四個等可能組合中，有 ${r.counts[0]} 格是 ${genotype(0,r.t)}。`;$('explanation').textContent=`親代一產生 ${gameteDescription(r.p1,r.t)}；親代二產生 ${gameteDescription(r.p2,r.t)}。四格子代為 ${r.cells.map(x=>x.genotype).join('、')}，所以基因型為 ${theoreticalText(r)}，表現型為 ${phenotypeText(r)}。`;$('formulaText').textContent=`P(${r.t.rec}) = P(${r.t.lower} from P1) × P(${r.t.lower} from P2) = ${pct(r.rec)}`;$('sample').disabled=false;$('resample').disabled=true;$('addRecord').disabled=true;clearSample();drawChart();if(typeof window.gtag==='function')window.gtag('event','genetics_cross',{trait:els.trait.value,parent_one:r.p1,parent_two:r.p2,prediction_match:ok});}
+function reveal(){const r=crossResult(),guess=+els.prediction.value,ok=Math.abs(guess-r.rec)<1e-9;crossed=true;lastSample=null;$('stageCover').hidden=true;$('crossContent').hidden=false;$('parentOneDisplay').textContent=genotype(r.p1,r.t);$('parentTwoDisplay').textContent=genotype(r.p2,r.t);renderGametes($('gametesOne'),r.g1);renderGametes($('gametesTwo'),r.g2);renderPunnett(r);$('gameteValue').textContent=`${[...new Set(r.g1)].join('、')} ／ ${[...new Set(r.g2)].join('、')}`;$('homoDomValue').textContent=pct(r.probs[2]);$('heteroValue').textContent=pct(r.probs[1]);$('homoRecValue').textContent=pct(r.probs[0]);$('dominantValue').textContent=pct(r.dom);$('recessiveValue').textContent=pct(r.rec);$('status').className='status '+(ok?'good':'warn');$('status').innerHTML=`<strong>${ok?'預測正確：':'修正預測：'}${r.t.rec}為 ${pct(r.rec)}</strong>四個等可能組合中，有 ${r.counts[0]} 格是 ${genotype(0,r.t)}。`;$('explanation').textContent=`親代一產生 ${gameteDescription(r.p1,r.t)}；親代二產生 ${gameteDescription(r.p2,r.t)}。四格子代為 ${r.cells.map(x=>x.genotype).join('、')}，所以基因型為 ${theoreticalText(r)}，表現型為 ${phenotypeText(r)}。`;$('formulaText').textContent=`P(${r.t.rec}) = P(${r.t.lower} from P1) × P(${r.t.lower} from P2) = ${pct(r.rec)}`;$('sample').disabled=false;$('resample').disabled=true;$('addRecord').disabled=true;clearSample();drawChart();if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack('start','genetics-simulation-lab');}
 function gameteDescription(code,t){return code===2?`${t.upper} 配子（100%）`:code===1?`${t.upper} 與 ${t.lower} 配子（各 50%）`:`${t.lower} 配子（100%）`;}
 function doCross(){if(els.prediction.value===''){$('status').className='status warn';$('status').innerHTML='<strong>還差一步</strong>請先預測子代出現隱性表現型的理論比例。';els.prediction.focus();return;}reveal();$('reset').disabled=false;}
 function clearSample(){lastSample=null;$('sample').disabled=!crossed;$('resample').disabled=true;$('addRecord').disabled=true;$('observedDominant').textContent='—';$('observedRecessive').textContent='—';$('sampleDifference').textContent='—';$('sampleStatus').className='status';$('sampleStatus').innerHTML=crossed?'<strong>已建立理論比例</strong>選擇子代數量後開始抽樣。':'<strong>先完成親代雜交</strong>龐氏方格建立後才能依理論機率抽樣。';}
@@ -130,5 +133,8 @@ $('checkQuiz').addEventListener('click',()=>{let score=0;document.querySelectorA
 runTests();setParentLabels();drawChart();renderRecords();
 })();
 </script>
+<!-- science-events:start -->
+<script src="../assets/science-events.js" defer></script>
+<!-- science-events:end -->
 </body>
 </html>

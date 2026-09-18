@@ -28,10 +28,10 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}@media print{.topbar,.stepnav,.hero,.panel,.viz,.recordTools,.missions,.quizItem,.footer{display:none!important}body{background:#fff}.card,.section{box-shadow:none;border:0}.tableWrap{overflow:visible}table{min-width:0}}
 </style>
 <!-- Google Analytics 4 -->
-<script>
-if(location.search.indexOf('noga=1')>-1)localStorage.setItem('bhcs_noga','1');
-if(localStorage.getItem('bhcs_noga')!=='1'){var gaScript=document.createElement('script');gaScript.async=true;gaScript.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';document.head.appendChild(gaScript);window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag('js',new Date());gtag('config','G-GHN2GDS2RQ');}
-</script>
+<!-- Analytics is loaded by science-events.js after the page is ready. -->
+<!-- science-schema:start -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"熱與物態實驗室","url":"https://www.bhcs.com.tw/tools/heat-phase-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
+<!-- science-schema:end -->
 </head>
 <body>
 <header class="topbar"><div class="shell"><a class="brand" href="../index.html">百宏文教 <small>BHCS</small></a><a class="back" href="../ziyuan.html">回學習資源</a></div></header>
@@ -90,6 +90,9 @@ if(localStorage.getItem('bhcs_noga')!=='1'){var gaScript=document.createElement(
  <div class="quizItem"><fieldset data-answer="a" data-tip="太陽和地球之間大部分是真空，傳導與對流都需要物質。"><legend>3. 太陽把能量傳到地球，主要是哪一種熱傳方式？</legend><label><input type="radio" name="q3" value="a"> 輻射</label><label><input type="radio" name="q3" value="b"> 對流</label><label><input type="radio" name="q3" value="c"> 傳導</label></fieldset><div class="feedback" aria-live="polite"></div></div>
  <div class="recordTools"><button class="btn primary" id="checkQuiz" type="button">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
 </section>
+<!-- science-teaching:start -->
+<section class="card section lesson-meta" aria-label="教材使用指南"><h2>怎麼用這份教材</h2><p><strong>適用：</strong>國中 · 熱學（各校版本進度可能不同）　<strong>建議：</strong>15–20 分鐘</p><p><strong>先備：</strong>溫度、質量。<strong>學習目標：</strong>能透過操作說明比熱、潛熱、熱傳。</p><p><strong>教師引導：</strong>先保留預測，不提示答案。第一筆完成後只改一個條件、加入第二筆紀錄，再請學生引用數據解釋差異。</p><p><strong>常見迷思：</strong>模擬中的比例、時間與理想條件不一定等同真實實驗，請對照本頁教師提示及模型限制。</p><p><a href="science/">自然實驗總覽</a> · <a href="../guozhong-lihua.html" data-science-event="course">相關課程</a> · <a href="../lianluo.html" data-science-event="consult">程度確認</a></p></section>
+<!-- science-teaching:end -->
 </main>
 
 <footer class="footer"><div class="shell">百宏文教機構｜<a href="../ziyuan.html">更多免費學習資源</a>｜純水 1 atm 理想熱量模型</div></footer>
@@ -124,7 +127,7 @@ function drawParticles(){pctx.clearRect(0,0,590,200);const g=pctx.createLinearGr
 function updateReadouts(){if(!started)return;const s=current(),name=phaseName(s),energy=progress*TOTAL*+els.mass.value/1000;$('tempValue').textContent=`${s.temp.toFixed(1)} °C`;$('phaseValue').textContent=name;$('energyLabel').textContent=els.direction.value==='heating'?'已吸收熱量':'已放出熱量';$('energyValue').textContent=`${energy.toFixed(1)} kJ`;$('timeValue').textContent=formatTime(elapsedSeconds());$('effectValue').textContent=phaseEffect(s);$('totalTimeValue').textContent=formatTime(totalSeconds());$('progressOut').textContent=`${Math.round(progress*100)}%`;$('formulaText').textContent=`Q歷程 = ${(progress*TOTAL*+els.mass.value/1000).toFixed(1)} kJ；t = Q/P = ${elapsedSeconds().toFixed(1)} s`;$('explanation').textContent=s.key==='melting'||s.key==='boiling'?`目前位於${name}平台：能量仍持續${els.direction.value==='heating'?'進入':'離開'}系統，主要用來改變物態比例，所以溫度暫時維持 ${s.temp.toFixed(0)}°C。`:`目前為${name}，能量改變粒子的平均動能，因此溫度隨熱量${els.direction.value==='heating'?'增加而上升':'移出而下降'}。`;}
 function render(){drawCurve();drawParticles();updateReadouts();}
 function resetState(requirePrediction=false){pause();started=false;progress=0;els.timeline.value='0';$('canvasCover').hidden=false;$('simControls').disabled=true;$('addRecord').disabled=true;els.prediction.value=requirePrediction?'':els.prediction.value;['tempValue','phaseValue','energyValue','timeValue','effectValue'].forEach(id=>$(id).textContent='—');$('totalTimeValue').textContent=formatTime(totalSeconds());$('progressOut').textContent='0%';$('status').className='status';$('status').innerHTML='<strong>條件已更新</strong>先做預測，再開始新的模擬。';drawCurve();drawParticles();}
-function begin(){if(!els.prediction.value){$('status').className='status warn';$('status').innerHTML='<strong>還差一步</strong>請先預測相變時溫度如何變化。';els.prediction.focus();return;}const target=missionProgress;missionProgress=null;started=true;progress=0;els.timeline.value='0';$('canvasCover').hidden=true;$('simControls').disabled=false;$('addRecord').disabled=false;const ok=els.prediction.value==='constant';$('status').className='status '+(ok?'good':'warn');$('status').innerHTML=`<strong>${ok?'預測正確':'用曲線檢查預測'}</strong>相變時仍持續交換熱量，但理想模型中的溫度暫時維持不變。`;render();if(target!==null)setProgress(target);else if(!reduced)play();if(typeof window.gtag==='function')window.gtag('event','heat_phase_begin',{direction:els.direction.value,mass:+els.mass.value,power:+els.power.value,prediction_match:ok});}
+function begin(){if(!els.prediction.value){$('status').className='status warn';$('status').innerHTML='<strong>還差一步</strong>請先預測相變時溫度如何變化。';els.prediction.focus();return;}const target=missionProgress;missionProgress=null;started=true;progress=0;els.timeline.value='0';$('canvasCover').hidden=true;$('simControls').disabled=false;$('addRecord').disabled=false;const ok=els.prediction.value==='constant';$('status').className='status '+(ok?'good':'warn');$('status').innerHTML=`<strong>${ok?'預測正確':'用曲線檢查預測'}</strong>相變時仍持續交換熱量，但理想模型中的溫度暫時維持不變。`;render();if(target!==null)setProgress(target);else if(!reduced)play();if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack('start','heat-phase-lab');}
 function play(){if(!started||progress>=1)return;running=true;lastFrame=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(animate);}
 function pause(){running=false;cancelAnimationFrame(raf);render();if(transferRunning){lastFrame=0;raf=requestAnimationFrame(animate);}}
 function animate(ts){if(!lastFrame)lastFrame=ts;const dt=Math.min(.05,(ts-lastFrame)/1000);lastFrame=ts;phase+=dt;transferPhase+=dt;if(running){progress=clamp(progress+dt*+els.power.value/(+els.mass.value*TOTAL)*SIM_SPEED,0,1);els.timeline.value=String(Math.round(progress*1000));if(progress>=1){running=false;$('status').className='status good';$('status').innerHTML=`<strong>${directionName()}歷程完成</strong>完整交換 ${(TOTAL*+els.mass.value/1000).toFixed(1)} kJ，理想時間 ${formatTime(totalSeconds())}。`;}}render();drawTransfer();if(running||transferRunning)raf=requestAnimationFrame(animate);}
@@ -151,5 +154,8 @@ $('checkQuiz').addEventListener('click',()=>{let score=0;document.querySelectorA
 runTests();syncControls();drawCurve();drawParticles();updateTransfer();renderRecords();ensureAnimation();
 })();
 </script>
+<!-- science-events:start -->
+<script src="../assets/science-events.js" defer></script>
+<!-- science-events:end -->
 </body>
 </html>

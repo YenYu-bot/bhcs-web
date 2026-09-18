@@ -21,6 +21,27 @@
 
 目前進度：第 1 至第 10 階段全部完成並接入官網；本輪路線圖已完成。下一輪教材主題需依課程缺口與使用回饋另行排序。
 
+## 第二批（2026-09-18）
+
+使用者已同意依序完成以下10項；全部新增為獨立的單檔頁面，舊工具URL保留。共用來源及測試位於 `scripts/science/`，生成頁面位於 `tools/science/`。
+
+| 順序 | 主題 | 新頁面 | 舊教材銜接 |
+|---|---|---|---|
+| 1 | 光學與透鏡成像 | optics.html | lenses、convex-lens-imaging |
+| 2 | 波動、聲音與共振 | wave-sound.html | waves |
+| 3 | 電磁鐵、馬達與發電機 | electromagnetism.html | dc-motor、circuit-lab |
+| 4 | 氣壓、水壓與流體 | pressure-fluid.html | buoyancy-density-lab |
+| 5 | 溶解度與濃度 | solubility.html | particle-reaction-lab |
+| 6 | 能量轉換與守恆 | energy.html | force-motion、heat-phase |
+| 7 | 月相、日食與月食 | moon-eclipse.html | moon-phases |
+| 8 | 四季與太陽高度角 | seasons.html | moon-eclipse |
+| 9 | 呼吸、蒸散與氣孔 | plant-exchange.html | photosynthesis-factor |
+| 10 | 生態系、食物網與族群 | ecosystem.html | photosynthesis、plant-exchange |
+
+每項有模型規格、3個任務、預測、控制、SVG圖解、數值、可保存及列印的紀錄、3題診斷回饋、基礎／進階模式、模型限制、教師提示與概念來源。
+
+第7項實體裝置及第8項教師試用無法由遠端自動完成；已建立 `science-acceptance.md`，維持待現場驗收。第二批開發繼續進行，但不得把這兩項算作已通過。分享圖目前沿用官網既有品牌圖，不宣稱已製作10張專屬縮圖。
+
 ## 共用製作 Prompt
 
 以下規格不是請模型自由發想，而是每次實作時的固定工作單；使用時把中括號內容換成該單元的資料。
