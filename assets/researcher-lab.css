@@ -93,3 +93,6 @@ var(--lab-bg)!important}
 .researcher-directory .resource{background:#fffef9!important}.researcher-directory .resource:before{content:"";position:absolute;inset:8px;border:1px dashed #eadfca;border-radius:16px;pointer-events:none}
 .researcher-directory .resource h2,.researcher-directory .resource h3{position:relative}.station-label{background:#ddf5e9;border:1px solid #91cfb7}
 @media(max-width:700px){.researcher-welcome-copy:after{width:54px;height:54px;right:12px;top:12px}.researcher-header{border-radius:15px;padding:8px 10px}.researcher-brand span:first-child{width:38px;height:38px}.researcher-brand b{font-size:17px}.researcher-brand small{font-size:9px}.researcher-home{padding:7px 10px;font-size:13px}}
+
+.researcher-ui>.topbar,.researcher-directory>.topbar{display:none!important}
+.researcher-directory .researcher-header{margin-top:14px}
