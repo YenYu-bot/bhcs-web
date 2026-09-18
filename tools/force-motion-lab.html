@@ -93,7 +93,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
     </div>
         <div class="actions"><button class="btn primary" id="start" type="button">開始實驗</button><button class="btn secondary" id="pause" type="button" disabled>暫停</button><button class="btn secondary" id="step" type="button">前進 0.5 秒</button></div>
     <button class="btn secondary" id="reset" type="button" style="width:100%;margin-top:8px">回到起點</button>
-    <div id="status" class="status" role="status" aria-live="polite"><strong>先選擇預測</strong>開始前先判斷合力，接著用小車與圖表驗證。</div>
+    <div id="status" class="status" role="status" aria-live="polite"><strong>準備開始</strong>按開始或逐格前進，從小車、受力圖與讀值找出規律。</div>
   </aside>
 
   <div class="readouts" aria-label="模擬讀值">
@@ -114,7 +114,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 </section>
 
 <section id="observe" class="card section">
-  <h2>從受力到運動</h2><p class="lead" id="explanation">完成一次預測與操作後，這裡會依目前條件解釋結果。</p>
+  <h2>從受力到運動</h2><p class="lead" id="explanation">完成一次操作後，這裡會依目前條件解釋結果。</p>
   <div class="workflow"><div><b>01</b><span>畫受力圖</span></div><div><b>02</b><span>求水平合力</span></div><div><b>03</b><span>用 F=ma</span></div><div><b>04</b><span>讀運動圖</span></div><div><b>05</b><span>比較紀錄</span></div></div>
   <div class="explainGrid">
     <article class="fact"><h3>有速度 ≠ 有合力</h3><p>物體可以在合力為零時保持等速度。合力決定的是速度如何改變，不是物體有沒有速度。</p></article>
@@ -127,7 +127,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 </section>
 
 <section class="card section">
-  <h2>引導任務</h2><p class="lead">按一下套用條件；每次先預測，再把結果加入紀錄比較。</p>
+  <h2>引導任務</h2><p class="lead">按一下套用條件；每次操作後把結果加入紀錄比較。</p>
   <div class="missions"><button class="mission" type="button" data-mission="force">任務一：2 kg 受 6 N</button><button class="mission" type="button" data-mission="mass">任務二：質量加倍</button><button class="mission" type="button" data-mission="friction">任務三：5 N 推粗糙面</button><button class="mission" type="button" data-mission="constant">任務四：沒有合力但有初速</button></div>
   <div id="missionText" class="status"><strong>比較方法</strong>任務一與任務二的施力相同，只改變質量；比較兩次加速度。</div>
 </section>
@@ -185,8 +185,8 @@ function renderScene(){
   document.querySelectorAll('#motionScene marker').forEach(m=>{m.setAttribute('markerUnits','userSpaceOnUse');m.setAttribute('markerWidth','14');m.setAttribute('markerHeight','12');m.setAttribute('viewBox','0 0 10 6')});
   let ticks='';for(let m=-15;m<=15;m+=3){const x=400+m*20;ticks+=`<line class="tick" x1="${x}" y1="${floorY}" x2="${x}" y2="${floorY+10}"/>${m%6===0?`<text class="sceneText" x="${x}" y="${floorY+30}" text-anchor="middle">${m} m</text>`:''}`;}
   const row=(y,value,label,color,marker)=>{const len=Math.min(96,Math.abs(value)*7),end=270+Math.sign(value)*len;return `<text x="44" y="${y+6}" font-size="20" fill="${color}">${label}</text>${Math.abs(value)>.0005?`<line x1="270" y1="${y}" x2="${end}" y2="${y}" stroke="${color}" stroke-width="4" marker-end="url(#${marker})"/>`:`<circle cx="270" cy="${y}" r="4" fill="${color}"/>`}<text x="390" y="${y+6}" font-size="20" fill="${color}">${fmt(value)} N</text>`};
-  const forcesSVG=verified?row(335,s.c.F,'施力','#1769aa','arrowBlue')+row(395,s.friction,'摩擦力','#c2413b','arrowRed')+row(455,s.net,'合力','#18794e','arrowGreen')+`<line x1="612" y1="389" x2="612" y2="330" stroke="#526b80" stroke-width="4" marker-end="url(#arrowGray)"/><line x1="612" y1="397" x2="612" y2="456" stroke="#526b80" stroke-width="4" marker-end="url(#arrowGray)"/><circle cx="612" cy="393" r="7" fill="#526b80"/><text x="635" y="342" font-size="18">支持力 N</text><text x="635" y="367" font-size="18">${fmt(s.N)} N</text><text x="635" y="435" font-size="18">重力 mg</text><text x="635" y="460" font-size="18">${fmt(s.c.m*G)} N</text>`:`<text x="400" y="390" text-anchor="middle" font-size="20">先做預測，再看受力比較</text>`;
-  $('scene').innerHTML=`<defs><linearGradient id="motionSky" x2="0" y2="1"><stop stop-color="#eff9fd"/><stop offset="1" stop-color="#dcecf2"/></linearGradient></defs><rect width="800" height="255" fill="url(#motionSky)"/><text class="sceneStrong" x="28" y="36">① 運動觀察｜${surfaceData[s.c.surface].name}水平面</text><text class="sceneText" x="28" y="65">向右為正；小車質量 ${fmt(s.c.m,1)} kg</text><line class="track" x1="80" y1="${floorY}" x2="720" y2="${floorY}"/>${ticks}<image href="../assets/science/dynamics-cart.webp" x="${cx-85}" y="108" width="170" height="113"/><text class="sceneStrong" x="400" y="252" text-anchor="middle">${verified?`t ${fmt(s.t)} s　位置 ${fmt(s.x)} m　速度 ${fmt(s.v)} m/s`:'等待預測與開始'}</text><rect x="18" y="272" width="764" height="234" rx="16" fill="#fff" stroke="#c9dbe3"/><text x="40" y="302" font-size="19" font-weight="700">② 水平受力：分列比較</text><text x="575" y="302" font-size="19" font-weight="700">垂直方向平衡</text><line x1="545" y1="312" x2="545" y2="478" stroke="#d6e3e9"/>${forcesSVG}<text x="40" y="492" font-size="15">合力＝施力＋摩擦力；箭長縮放，大小看 N 讀值。</text>`;
+  const forcesSVG=verified?row(335,s.c.F,'施力','#1769aa','arrowBlue')+row(395,s.friction,'摩擦力','#c2413b','arrowRed')+row(455,s.net,'合力','#18794e','arrowGreen')+`<line x1="612" y1="389" x2="612" y2="330" stroke="#526b80" stroke-width="4" marker-end="url(#arrowGray)"/><line x1="612" y1="397" x2="612" y2="456" stroke="#526b80" stroke-width="4" marker-end="url(#arrowGray)"/><circle cx="612" cy="393" r="7" fill="#526b80"/><text x="635" y="342" font-size="18">支持力 N</text><text x="635" y="367" font-size="18">${fmt(s.N)} N</text><text x="635" y="435" font-size="18">重力 mg</text><text x="635" y="460" font-size="18">${fmt(s.c.m*G)} N</text>`:`<text x="400" y="390" text-anchor="middle" font-size="20">開始操作後查看受力比較</text>`;
+  $('scene').innerHTML=`<defs><linearGradient id="motionSky" x2="0" y2="1"><stop stop-color="#eff9fd"/><stop offset="1" stop-color="#dcecf2"/></linearGradient></defs><rect width="800" height="255" fill="url(#motionSky)"/><text class="sceneStrong" x="28" y="36">① 運動觀察｜${surfaceData[s.c.surface].name}水平面</text><text class="sceneText" x="28" y="65">向右為正；小車質量 ${fmt(s.c.m,1)} kg</text><line class="track" x1="80" y1="${floorY}" x2="720" y2="${floorY}"/>${ticks}<image href="../assets/science/dynamics-cart.webp" x="${cx-85}" y="108" width="170" height="113"/><text class="sceneStrong" x="400" y="252" text-anchor="middle">${verified?`t ${fmt(s.t)} s　位置 ${fmt(s.x)} m　速度 ${fmt(s.v)} m/s`:'等待開始'}</text><rect x="18" y="272" width="764" height="234" rx="16" fill="#fff" stroke="#c9dbe3"/><text x="40" y="302" font-size="19" font-weight="700">② 水平受力：分列比較</text><text x="575" y="302" font-size="19" font-weight="700">垂直方向平衡</text><line x1="545" y1="312" x2="545" y2="478" stroke="#d6e3e9"/>${forcesSVG}<text x="40" y="492" font-size="15">合力＝施力＋摩擦力；箭長縮放，大小看 N 讀值。</text>`;
   $('sceneDesc').textContent=verified?`質量 ${fmt(s.c.m)} 公斤的小車位於 ${fmt(s.x)} 公尺，速度 ${fmt(s.v)} 公尺每秒，水平合力 ${fmt(s.net)} 牛頓。`:'尚未開始實驗。';
 }
 function graph(svgId,key,label,colorClass){
