@@ -11,7 +11,7 @@ must(micro.includes('字母 e 定位玻片'),'letter slide missing');
 must(micro.includes('data-answer="a" data-tip="影像與玻片移動方向相反'),'Q2 answer mismatch');
 must(micro.includes("Math.max(-270")&&micro.includes("*540/slideDrag.width"),'slide movement range not expanded');
 must(!micro.includes('預測')&&!micro.includes('id="prediction"')&&!micro.includes('els.prediction'),'prediction flow still present');
-must(micro.includes('<strong>開始觀察</strong>')&&micro.includes('先在低倍把影像調清楚'),'hands-on start flow missing');
+must(micro.includes('function begin(){started=true')&&micro.includes('<strong>研究開始</strong>')&&micro.includes('先在低倍把影像調清楚'),'hands-on start flow missing');
 must(micro.includes("Array.isArray(v)?v:[]"),'record storage guard missing');
 must(css.includes('@media(max-width:700px)')&&css.includes('position:sticky'),'mobile sticky observation missing');
 must(css.includes('@media print'),'print rules missing');
