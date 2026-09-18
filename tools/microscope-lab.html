@@ -41,7 +41,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 <section id="experiment" class="labgrid" aria-labelledby="lab-title">
  <div class="card">
   <div class="cardhead"><h2 id="lab-title">顯微鏡視野</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div>
-  <div class="scopeStage"><div class="scopeFrame"><canvas id="scope" width="600" height="600" role="img" aria-label="虛擬顯微鏡視野"></canvas><div class="scopeCover" id="scopeCover">先完成右側預測，再開始觀察</div></div><div class="featureLine" id="featureLine"><span class="featureTag">尚未開始觀察</span></div></div>
+  <div class="scopeStage"><div class="scopeFrame"><canvas id="scope" width="600" height="600" role="img" aria-label="虛擬顯微鏡視野"></canvas><div class="scopeCover" id="scopeCover">先完成右側預測，再開始觀察</div></div><p class="scopeModelNote" style="margin:22px auto 12px;max-width:580px;color:#263f58"><strong>程式繪製的觀察示意，非顯微照片。</strong><br>形狀與尺寸有變異；低倍先找輪廓，高倍再辨認細節。比例尺與細胞使用同一套尺寸換算。</p><div class="featureLine" id="featureLine"><span class="featureTag">尚未開始觀察</span></div></div>
  </div>
  <aside class="card panel" aria-label="顯微鏡控制區">
   <h2>準備標本</h2>
@@ -65,7 +65,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
   <div class="meter"><span class="name">總放大倍率</span><span class="value" id="totalValue">—</span><span class="note">10×目鏡 × 物鏡</span></div>
   <div class="meter"><span class="name">視野直徑</span><span class="value" id="fovValue">—</span><span class="note">視野數 18 mm</span></div>
   <div class="meter" id="clarityMeter"><span class="name">清晰度</span><span class="value" id="clarityValue">—</span><span class="note">離焦越遠越模糊</span></div>
-  <div class="meter"><span class="name">比例尺</span><span class="value" id="scaleValue">—</span><span class="note">視野左下白線</span></div>
+  <div class="meter"><span class="name">比例尺</span><span class="value" id="scaleValue">—</span><span class="note">視野下方白線（已校準）</span></div>
   <div class="meter"><span class="name">影像移動</span><span class="value" id="movementValue">—</span><span class="note">與載玻片方向相反</span></div>
  </div>
 </section>
@@ -73,9 +73,9 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 <section id="specimens" class="card section">
  <h2>三種標本有什麼不同？</h2><p class="lead">只記「植物有葉綠體」會答錯；洋蔥地下鱗葉表皮通常看不到葉綠體。</p>
  <div class="specimenGrid">
-  <article class="fact"><h3>洋蔥鱗葉表皮</h3><p><span class="present">可見：</span>細胞壁、細胞核、大型液泡區域。<br><span class="absent">通常不見：</span>葉綠體。</p></article>
-  <article class="fact"><h3>口腔上皮</h3><p><span class="present">可見：</span>細胞膜、細胞核。<br><span class="absent">沒有：</span>細胞壁、葉綠體。</p></article>
-  <article class="fact"><h3>水蘊草葉片</h3><p><span class="present">可見：</span>細胞壁、葉綠體；葉綠體多沿細胞周邊分布。</p></article>
+  <article class="fact"><h3>洋蔥鱗葉表皮</h3><p><span class="present">可見：</span>細胞壁；染色並對焦後較容易辨認細胞核。中央淡色區可對照大型液泡的位置，不代表看清液泡膜。<br><span class="absent">通常不見：</span>葉綠體。</p></article>
+  <article class="fact"><h3>口腔上皮</h3><p><span class="present">可見：</span>細胞輪廓；染色後較容易辨認細胞核。光學顯微鏡不能分辨細胞膜的雙層結構。<br><span class="absent">沒有：</span>細胞壁、葉綠體。</p></article>
+  <article class="fact"><h3>水蘊草葉片</h3><p><span class="present">可見：</span>細胞壁、葉綠體；葉綠體常位於周邊細胞質，也可能投影在細胞中央，數量與位置不固定。</p></article>
  </div>
 </section>
 
@@ -83,7 +83,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
  <h2>正確的觀察順序</h2><p class="lead" id="explanation">完成預測並開始觀察後，這裡會依目前設定提供操作判讀。</p>
  <div class="workflow"><div><b>01</b><span>低倍找標本</span></div><div><b>02</b><span>粗調後微調</span></div><div><b>03</b><span>移到視野中央</span></div><div><b>04</b><span>換高倍物鏡</span></div><div><b>05</b><span>只用微調</span></div></div>
  <p class="advancedOnly" hidden><strong>目前關係：</strong> <span id="formulaLine" class="formula">總倍率 = 10 × 4；視野直徑 = 18 ÷ 4</span></p>
- <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本工具以目鏡視野數 18 mm 示範視野直徑，實際數值會依目鏡規格改變。清晰度、照明與圖像是教學化模型，不模擬數值孔徑、景深、色差、染色濃度及切片厚度。程序重點是先低倍定位，再換高倍微調。</div></div>
+ <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本工具以目鏡視野數 18 mm 示範視野直徑，實際數值會依目鏡規格改變。圖像是單層、固定的概念標本，非照片；切換倍率只縮放同一套座標。模型採用洋蔥細胞約260×85 µm、沉水植物細胞約90×45 µm、口腔細胞長徑約46–70 µm與葉綠體長徑約5–7 µm的繪圖設定，均有變異，不可當成所有實物的測量標準。中央淡色區不畫成可見的液泡膜，也不模擬葉綠體流動。清晰度、照明與圖像是教學化模型，不模擬數值孔徑、景深、色差、染色濃度及切片厚度。程序重點是先低倍定位，再換高倍微調。</div><p>核對來源：<a href="https://www.microscopyu.com/microscopy-basics/field-of-view" target="_blank" rel="noopener">Nikon：視野與倍率</a> · <a href="https://www.ncbi.nlm.nih.gov/books/NBK9905/" target="_blank" rel="noopener">細胞學教材：葉綠體</a>。染色與可見構造仍應搭配教師實際玻片觀察。</p></div>
  <button class="btn secondary" id="teacherToggle" type="button" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
 </section>
 
@@ -117,25 +117,85 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id),ctx=$('scope').getContext('2d');
-const specimens={onion:{name:'洋蔥鱗葉表皮',features:['細胞壁','細胞核','大型液泡區域'],summary:'長方形細胞排列整齊，可見細胞壁；地下鱗葉表皮通常沒有葉綠體。'},cheek:{name:'口腔上皮',features:['細胞膜','細胞核','不規則扁平細胞'],summary:'細胞形狀較不規則，有細胞膜與細胞核，沒有細胞壁及葉綠體。'},elodea:{name:'水蘊草葉片',features:['細胞壁','葉綠體','大型液泡區域'],summary:'長方形植物細胞內可見多個葉綠體，常沿著細胞周邊分布。'}};
+const specimens={onion:{name:'洋蔥鱗葉表皮',features:['細胞壁','染色後的細胞核'],summary:'長形細胞相鄰排列但大小不同；此圖採碘液染色的淡黃褐色示意，細胞核需在適當染色與焦平面下辨認；地下鱗葉表皮通常沒有葉綠體。'},cheek:{name:'口腔上皮',features:['細胞輪廓','染色後的細胞核','不規則扁平細胞'],summary:'採亞甲藍染色的藍色示意；塗片細胞疏密與方向不同，輪廓不代表膜的厚度。沒有細胞壁及葉綠體。'},elodea:{name:'水蘊草葉片',features:['細胞壁','葉綠體'],summary:'採未染色沉水植物葉片的概念示意，非特定品種實測。葉綠體大小遠小於細胞，常分布在周邊細胞質；形狀、數量、焦平面因標本而異。'}};
 const els={level:$('level'),specimen:$('specimen'),prediction:$('prediction'),coarse:$('coarse'),fine:$('fine'),light:$('light'),stageX:$('stageX'),stageY:$('stageY')};
 let started=false;
 function objective(){return +document.querySelector('input[name=objective]:checked').value;}
 function fov(obj=objective()){return 18/obj;}
 function clarity(){const obj=objective(),offset=Math.abs(+els.coarse.value+(+els.fine.value)*.1),sensitivity=obj===4?18:obj===10?28:45;return Math.max(0,Math.round(100-offset*sensitivity));}
-function scaleInfo(obj=objective()){return obj===4?{value:1,label:'1 mm'}:obj===10?{value:.5,label:'0.5 mm'}:{value:.1,label:'0.1 mm'};}
+function scaleInfo(obj=objective()){return microScale(obj);}
 function featureScreen(worldX,worldY,stageX,stageY,obj){const z=obj/4;return{x:300-z*(worldX+stageX),y:300-z*(worldY-stageY)};}
-function baseBackground(bright){const v=Math.round(222*bright),g=Math.round(238*bright),b=Math.round(230*bright);return`rgb(${v},${g},${b})`;}
+function baseBackground(bright){const v=Math.round(245*(.62+.38*bright)),g=Math.round(246*(.62+.38*bright)),b=Math.round(232*(.62+.38*bright));return`rgb(${v},${g},${b})`;}
 function lineStyle(width,color){ctx.lineWidth=width;ctx.strokeStyle=color;}
 function visibleBounds(z){const sx=+els.stageX.value,sy=+els.stageY.value,r=310/z;return{minX:-sx-r,maxX:-sx+r,minY:sy-r,maxY:sy+r};}
-function drawOnion(){const z=objective()/4,w=28,h=54,b=visibleBounds(z),x0=Math.floor(b.minX/w)*w-w,y0=Math.floor(b.minY/h)*h-h;lineStyle(2/z,'rgba(112,55,104,.78)');for(let x=x0;x<=b.maxX+w;x+=w){for(let y=y0;y<=b.maxY+h;y+=h){const ix=Math.round(x/w),iy=Math.round(y/h);ctx.fillStyle='rgba(225,184,218,.18)';ctx.fillRect(x+1,y+1,w-2,h-2);ctx.strokeRect(x,y,w,h);ctx.beginPath();ctx.ellipse(x+9+(Math.abs(iy)%3)*3,y+25,3.8,5.5,.25,0,Math.PI*2);ctx.fillStyle='rgba(111,54,112,.72)';ctx.fill();ctx.beginPath();ctx.ellipse(x+w/2,y+h/2,9,18,0,0,Math.PI*2);ctx.strokeStyle='rgba(166,113,158,.3)';ctx.lineWidth=1/z;ctx.stroke();}}}
-function drawCheek(){const z=objective()/4,b=visibleBounds(z),sx=30,sy=25,gx0=Math.floor(b.minX/sx)-2,gx1=Math.ceil(b.maxX/sx)+2,gy0=Math.floor(b.minY/sy)-2,gy1=Math.ceil(b.maxY/sy)+2;for(let gx=gx0;gx<=gx1;gx++){for(let gy=gy0;gy<=gy1;gy++){const x=gx*sx+(gy%2)*9,y=gy*sy+(gx%3)*2,r=8+(Math.abs(gx+gy)%3);ctx.beginPath();for(let k=0;k<12;k++){const a=k/12*Math.PI*2,rr=r*(1+.13*Math.sin(k*2.7+gx));const px=x+Math.cos(a)*rr,py=y+Math.sin(a)*rr*.76;k?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.closePath();ctx.fillStyle='rgba(136,190,219,.22)';ctx.fill();ctx.strokeStyle='rgba(55,118,151,.75)';ctx.lineWidth=1.5/z;ctx.stroke();ctx.beginPath();ctx.ellipse(x+1.8,y-.8,2.2,1.8,.2,0,Math.PI*2);ctx.fillStyle='rgba(65,77,145,.72)';ctx.fill();}}}
-function drawElodea(){const z=objective()/4,w=24,h=16,b=visibleBounds(z),x0=Math.floor(b.minX/w)*w-w,y0=Math.floor(b.minY/h)*h-h;for(let x=x0;x<=b.maxX+w;x+=w){for(let y=y0;y<=b.maxY+h;y+=h){ctx.fillStyle='rgba(147,205,116,.18)';ctx.fillRect(x+1,y+1,w-2,h-2);ctx.strokeStyle='rgba(43,119,61,.82)';ctx.lineWidth=1.5/z;ctx.strokeRect(x,y,w,h);ctx.fillStyle='rgba(33,132,61,.86)';for(let k=0;k<8;k++){const side=k%4,along=(Math.floor(k/4)+1)/3;let cx=x+3,cy=y+3;if(side===0){cx=x+along*w;cy=y+2;}if(side===1){cx=x+w-2;cy=y+along*h;}if(side===2){cx=x+along*w;cy=y+h-2;}if(side===3){cx=x+2;cy=y+along*h;}ctx.beginPath();ctx.ellipse(cx,cy,1.3,2.1,(k%3)*.4,0,Math.PI*2);ctx.fill();}}}}
+// microscope-drawing:start
+// Sizes below are explicit teaching-model settings, not measurements of a slide.
+const MICRO_FIELD_PX=540;
+const MICRO_UM_TO_WORLD=MICRO_FIELD_PX/4500;
+const MICRO_SIZES={onion:{w:260,h:85},elodea:{w:90,h:45},cheek:{w:125,h:110}};
+function microHash(row,col,salt=0){let v=Math.imul(row+17011,374761393)^Math.imul(col+8107,668265263)^Math.imul(salt+1,1274126177);v=Math.imul(v^(v>>>13),1274126177);return ((v^(v>>>16))>>>0)/4294967296;}
+function microCell(kind,row,col){
+ const rnd=s=>microHash(row,col,s),{w,h}=MICRO_SIZES[kind];
+ if(kind==='cheek'){
+  if(rnd(0)<.28)return null;
+  const x=col*w+(rnd(1)-.5)*w*.85,y=row*h+(rnd(2)-.5)*h*.85,rx=23+rnd(3)*12,ry=18+rnd(4)*10,angle=rnd(5)*Math.PI;
+  const points=Array.from({length:16},(_,i)=>{const a=i*Math.PI/8,rad=1+.07*Math.sin(3*a+rnd(6)*6)+.05*Math.cos(5*a);return{x:x+rad*(rx*Math.cos(a)*Math.cos(angle)-ry*Math.sin(a)*Math.sin(angle)),y:y+rad*(rx*Math.cos(a)*Math.sin(angle)+ry*Math.sin(a)*Math.cos(angle))}});
+  return {kind,row,col,points,nucleus:{x:x+(rnd(7)-.5)*8,y:y+(rnd(8)-.5)*7,rx:4+rnd(9),ry:3.4+rnd(10),angle},organelles:[],tone:rnd(11)};
+ }
+ const rowY=r=>r*h+(microHash(r,0,40)-.5)*h*.22;
+ const edge=c=>c*w+(microHash(row,c,41)-.5)*w*.30+(microHash(row,0,42)-.5)*w*.75;
+ const bend=c=>(microHash(row,c,43)-.5)*w*.07;
+ const y0=rowY(row),y1=rowY(row+1),left=edge(col),right=edge(col+1);
+ const points=[{x:left,y:y0},{x:right,y:y0},{x:right+bend(col+1),y:y1},{x:left+bend(col),y:y1}];
+ const at=(u,v)=>({x:(1-v)*(left+(right-left)*u)+v*(left+bend(col)+(right+bend(col+1)-left-bend(col))*u),y:y0+(y1-y0)*v});
+ const organelles=[];
+ if(kind==='elodea'){
+  const count=18+Math.floor(rnd(50)*15);
+  for(let k=0;k<count;k++){
+   // Most lie in peripheral cytoplasm; some project over the cell face.
+   let u=.1+.8*rnd(70+k*5),v=.14+.72*rnd(71+k*5);
+   if(k%5!==0){const side=Math.floor(rnd(72+k*5)*4);if(side===0)u=.065+.04*rnd(73+k*5);if(side===1)u=.895+.04*rnd(73+k*5);if(side===2)v=.12+.05*rnd(73+k*5);if(side===3)v=.83+.05*rnd(73+k*5);}
+   const p=at(u,v);organelles.push({...p,rx:2.5+rnd(74+k*5),ry:1.5+rnd(75+k*5)*.6,angle:rnd(76+k*5)*Math.PI,tone:rnd(77+k*5)});
+  }
+ }
+ const n=at(.13+.12*rnd(9),.25+.5*rnd(10));
+ return {kind,row,col,points,nucleus:kind==='onion'?{...n,rx:6,ry:4.5,angle:rnd(11)}:null,organelles,tone:rnd(12)};
+}
+function microScale(obj){const value=obj===4?1:obj===10?.5:.1;return{value,label:obj===4?'1 mm':obj===10?'500 µm':'100 µm',pixels:value/(18/obj)*MICRO_FIELD_PX,x:220,y:500,labelY:527};}
+
+const microCache=new Map();
+function microPath(points){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();}
+function drawMicroCells(kind){
+ const z=objective()/4,b=visibleBounds(z),{w,h}=MICRO_SIZES[kind],u=MICRO_UM_TO_WORLD;
+ const col0=Math.floor(b.minX/u/w)-2,col1=Math.ceil(b.maxX/u/w)+2,row0=Math.floor(b.minY/u/h)-2,row1=Math.ceil(b.maxY/u/h)+2;
+ ctx.save();ctx.scale(u,u);ctx.lineJoin='round';
+ for(let row=row0;row<=row1;row++)for(let col=col0;col<=col1;col++){
+  const key=kind+':'+row+':'+col;if(!microCache.has(key))microCache.set(key,microCell(kind,row,col));const cell=microCache.get(key);if(!cell)continue;
+  microPath(cell.points);ctx.fillStyle=kind==='onion'?`rgba(217,171,70,${.09+cell.tone*.07})`:kind==='cheek'?`rgba(109,153,207,${.08+cell.tone*.10})`:`rgba(126,169,72,${.07+cell.tone*.08})`;ctx.fill();
+  ctx.strokeStyle=kind==='onion'?'rgba(141,116,56,.56)':kind==='cheek'?'rgba(64,107,158,.50)':'rgba(77,113,63,.53)';ctx.lineWidth=(kind==='cheek'?.65:.85)/(u*z);ctx.stroke();
+  // Do not enlarge organelles at low power just to make them visible.
+  if(cell.nucleus&&z>=2.5){const n=cell.nucleus;ctx.beginPath();ctx.ellipse(n.x,n.y,n.rx,n.ry,n.angle,0,Math.PI*2);ctx.fillStyle=kind==='onion'?'rgba(130,97,44,.58)':'rgba(50,71,144,.65)';ctx.fill();}
+  if(kind==='elodea'&&z>=2.5){ctx.save();microPath(cell.points);ctx.clip();for(const p of cell.organelles){ctx.beginPath();ctx.ellipse(p.x,p.y,p.rx,p.ry,p.angle,0,Math.PI*2);ctx.fillStyle=`rgba(${55+Math.round(p.tone*22)},${110+Math.round(p.tone*32)},47,${.55+p.tone*.30})`;ctx.fill();}ctx.restore();}
+ }
+ ctx.restore();if(microCache.size>16000)microCache.clear();
+}
+function drawOnion(){drawMicroCells('onion')}
+function drawCheek(){drawMicroCells('cheek')}
+function drawElodea(){drawMicroCells('elodea')}
 function drawScope(){
- const canvas=$('scope'),obj=objective(),z=obj/4,light=+els.light.value/100,magDim=obj===4?1:obj===10?.9:.76,bright=Math.max(.2,light*magDim),c=clarity();ctx.clearRect(0,0,600,600);ctx.fillStyle='#1b2c38';ctx.fillRect(0,0,600,600);ctx.save();ctx.beginPath();ctx.arc(300,300,270,0,Math.PI*2);ctx.clip();ctx.fillStyle=baseBackground(bright);ctx.fillRect(0,0,600,600);ctx.filter=`blur(${((100-c)/18).toFixed(2)}px)`;ctx.translate(300,300);ctx.scale(-z,-z);ctx.translate(+els.stageX.value,-(+els.stageY.value));if(els.specimen.value==='onion')drawOnion();if(els.specimen.value==='cheek')drawCheek();if(els.specimen.value==='elodea')drawElodea();ctx.restore();ctx.filter='none';ctx.save();ctx.beginPath();ctx.arc(300,300,270,0,Math.PI*2);ctx.strokeStyle='#f7fafc';ctx.lineWidth=4;ctx.stroke();ctx.clip();const bar=scaleInfo(obj),barPx=bar.value/fov(obj)*520;ctx.strokeStyle='#fff';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(75,520);ctx.lineTo(75+barPx,520);ctx.stroke();ctx.fillStyle='#fff';ctx.font='700 18px Microsoft JhengHei';ctx.fillText(bar.label,75,550);if(c<28){ctx.fillStyle='rgba(16,42,67,.7)';ctx.fillRect(185,270,230,58);ctx.fillStyle='#fff';ctx.font='800 22px Microsoft JhengHei';ctx.textAlign='center';ctx.fillText('影像離焦，請調整焦距',300,307);ctx.textAlign='start';}ctx.restore();canvas.setAttribute('aria-label',`${specimens[els.specimen.value].name}，總倍率 ${10*obj} 倍，視野直徑 ${fmt(fov(obj))} 毫米，清晰度 ${c}%`);updateReadouts();}
+ const canvas=$('scope'),obj=objective(),z=obj/4,light=+els.light.value/100,magDim=obj===4?1:obj===10?.94:.84,bright=Math.max(.24,light*magDim),c=clarity();
+ ctx.clearRect(0,0,600,600);ctx.fillStyle='#1b2c38';ctx.fillRect(0,0,600,600);ctx.save();ctx.beginPath();ctx.arc(300,300,MICRO_FIELD_PX/2,0,Math.PI*2);ctx.clip();
+ ctx.fillStyle=baseBackground(bright);ctx.fillRect(0,0,600,600);ctx.filter=`blur(${((100-c)/18).toFixed(2)}px)`;ctx.translate(300,300);ctx.scale(-z,-z);ctx.translate(+els.stageX.value,-(+els.stageY.value));drawMicroCells(els.specimen.value);ctx.restore();ctx.filter='none';
+ ctx.save();ctx.beginPath();ctx.arc(300,300,MICRO_FIELD_PX/2,0,Math.PI*2);ctx.strokeStyle='#f7fafc';ctx.lineWidth=3;ctx.stroke();ctx.clip();
+ const bar=microScale(obj);ctx.fillStyle='rgba(20,38,40,.78)';ctx.fillRect(bar.x-12,bar.y-15,bar.pixels+24,57);ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(bar.x,bar.y);ctx.lineTo(bar.x+bar.pixels,bar.y);ctx.stroke();ctx.fillStyle='#fff';ctx.font='700 18px system-ui, Microsoft JhengHei';ctx.fillText(bar.label,bar.x,bar.labelY);
+ if(c<28){ctx.fillStyle='rgba(16,42,67,.7)';ctx.fillRect(185,270,230,58);ctx.fillStyle='#fff';ctx.font='800 22px Microsoft JhengHei';ctx.textAlign='center';ctx.fillText('影像離焦，請調整焦距',300,307);ctx.textAlign='start';}ctx.restore();
+ canvas.setAttribute('aria-label',`程式繪製示意，非顯微照片。${specimens[els.specimen.value].name}，總倍率 ${10*obj} 倍，視野直徑 ${fmt(fov(obj))} 毫米，比例尺 ${bar.label}，清晰度 ${c}%`);updateReadouts();
+}
+
+// microscope-drawing:end
 function movementText(){const x=+els.stageX.value,y=+els.stageY.value,parts=[];if(x>0)parts.push('片右→像左');if(x<0)parts.push('片左→像右');if(y>0)parts.push('片上→像下');if(y<0)parts.push('片下→像上');return parts.length?parts.join('、'):'位於中央';}
 function updateOutputs(){$('coarseOut').textContent=(+els.coarse.value>0?'+':'')+els.coarse.value;$('fineOut').textContent=(+els.fine.value>0?'+':'')+els.fine.value;$('lightOut').textContent=els.light.value+'%';const x=+els.stageX.value,y=+els.stageY.value;$('stageXOut').textContent=x===0?'中央':x>0?'向右':'向左';$('stageYOut').textContent=y===0?'中央':y>0?'向上':'向下';}
-function updateReadouts(){if(!started)return;const obj=objective(),c=clarity(),bar=scaleInfo(obj);$('totalValue').textContent=(10*obj)+'×';$('fovValue').textContent=fmt(fov(obj))+' mm';$('clarityValue').textContent=c+'%';$('scaleValue').textContent=bar.label;$('movementValue').textContent=movementText();$('clarityMeter').className='meter '+(c>=80?'good':c<35?'warn':'');$('formulaLine').textContent=`總倍率 = 10 × ${obj} = ${10*obj}×；視野直徑 = 18 ÷ ${obj} = ${fmt(fov(obj))} mm`;$('explanation').textContent=`目前使用 ${obj}× 物鏡，總倍率 ${10*obj}×，視野直徑約 ${fmt(fov(obj))} mm。${specimens[els.specimen.value].summary}${c<60?' 影像目前離焦，應調整焦距後再判讀構造。':''}`;}
+function updateReadouts(){if(!started)return;const obj=objective(),c=clarity(),bar=scaleInfo(obj);$('totalValue').textContent=(10*obj)+'×';$('fovValue').textContent=fmt(fov(obj))+' mm';$('clarityValue').textContent=c+'%';$('scaleValue').textContent=bar.label;$('movementValue').textContent=movementText();$('clarityMeter').className='meter '+(c>=80?'good':c<35?'warn':'');$('formulaLine').textContent=`總倍率 = 10 × ${obj} = ${10*obj}×；視野直徑 = 18 ÷ ${obj} = ${fmt(fov(obj))} mm`;$('explanation').textContent=`目前使用 ${obj}× 物鏡，總倍率 ${10*obj}×，視野直徑約 ${fmt(fov(obj))} mm。${specimens[els.specimen.value].summary}${obj===4?' 低倍只作定位，圖中不刻意放大胞器；辨認細節請換高倍。':''}${c<60?' 影像目前離焦，應調整焦距後再判讀構造。':''}`;}
 function fmt(n){return n<1?n.toFixed(2).replace(/0$/,''):n.toFixed(1).replace(/\.0$/,'');}
 function updateFeatures(){const s=specimens[els.specimen.value];$('featureLine').innerHTML=s.features.map(x=>`<span class="featureTag">${x}</span>`).join('');}
 function objectiveChanged(){const high=objective()===40,offset=Math.abs(+els.coarse.value+(+els.fine.value)*.1),lowClarity=Math.max(0,Math.round(100-offset*18));if(high&&lowClarity<80){document.querySelector('input[name=objective][value="4"]').checked=true;els.coarse.disabled=false;$('coarseWarn').hidden=true;$('status').className='status warn';$('status').innerHTML='<strong>尚未切換高倍物鏡</strong>請先在低倍把影像調到至少 80% 清晰，再換高倍並只用微動調節。';updateOutputs();drawScope();return;}els.coarse.disabled=high;$('coarseWarn').hidden=!high;if(high){$('status').className='status';$('status').innerHTML='<strong>已切換高倍物鏡</strong>粗動位置保持不變並已停用；接下來只使用微動調節。';}updateOutputs();drawScope();}

@@ -49,6 +49,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
   </div>
 
   <aside class="card panel" aria-label="實驗控制區">
+    <p>箭頭表示方向，長度經過縮放；大小請以 N 讀值比較。綠色合力是施力與摩擦力的向量和，不是另一個額外作用力。</p>
     <h2>改變實驗條件</h2>
     <div class="control"><label for="mass">小車總質量 <output id="massOut">2 kg</output></label><input id="mass" type="range" min="1" max="5" step="0.5" value="2"></div>
     <div class="control"><label for="force">施力大小</label><select id="force"><option value="0">0 N</option><option value="2">2 N</option><option value="4">4 N</option><option value="5">5 N</option><option value="6" selected>6 N</option><option value="8">8 N</option><option value="10">10 N</option><option value="12">12 N</option></select></div>
@@ -145,7 +146,7 @@ function explain(s){if(s.stuck&&Math.abs(s.c.F)>0)return`施力 ${fmt(Math.abs(s
 function formula(s){return`Fnet = ${fmt(s.c.F)} + (${fmt(s.friction)}) = ${fmt(s.net)} N；a = ${fmt(s.net)} ÷ ${fmt(s.c.m)} = ${fmt(s.a)} m/s²`;}
 function updateReadouts(){if(!verified)return;$('timeValue').textContent=fmt(sim.t)+' s';$('positionValue').textContent=fmt(sim.x)+' m';$('velocityValue').textContent=fmt(sim.v)+' m/s';$('netValue').textContent=fmt(sim.net)+' N';$('accelValue').textContent=fmt(sim.a)+' m/s²';}
 function hideReadouts(){['timeValue','positionValue','velocityValue','netValue','accelValue'].forEach((id,i)=>$(id).textContent='— '+(['s','m','m/s','N','m/s²'][i]));$('addRecord').disabled=true;}
-function arrow(x,y,value,color,label,vertical=false){if(Math.abs(value)<.03)return'';const len=Math.min(110,28+Math.abs(value)*7),sign=Math.sign(value),x2=vertical?x:x+sign*len,y2=vertical?y-sign*len:y,marker=color==='blue'?'arrowBlue':color==='red'?'arrowRed':color==='green'?'arrowGreen':'arrowGray';return`<line class="forceArrow" x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="var(--${color})" marker-end="url(#${marker})"/><text class="forceLabel" x="${vertical?x+10:(x+x2)/2}" y="${vertical?(sign>0?y2-8:y2+22):y-12}" text-anchor="middle" fill="var(--${color})">${label} ${fmt(Math.abs(value))} N</text>`;}
+function arrow(x,y,value,color,label,vertical=false){if(Math.abs(value)<.03)return'';const sign=Math.sign(value),len=Math.min(110,28+Math.abs(value)*7,vertical?110:sign>0?778-x:x-22),x2=vertical?x:x+sign*len,y2=vertical?y-sign*len:y,marker=color==='blue'?'arrowBlue':color==='red'?'arrowRed':color==='green'?'arrowGreen':'arrowGray';return`<line class="forceArrow" x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="var(--${color})" marker-end="url(#${marker})"/><text class="forceLabel" x="${Math.max(62,Math.min(738,vertical?x+10:(x+x2)/2))}" y="${vertical?(sign>0?y2-8:y2+22):y-12}" text-anchor="middle" fill="var(--${color})">${label} ${fmt(Math.abs(value))} N</text>`;}
 function renderScene(){
   const s=sim||initialSim(),cx=Math.max(98,Math.min(702,400+s.x*20)),floorY=255;
   let ticks='';for(let m=-15;m<=15;m+=3){const x=400+m*20;ticks+=`<line class="tick" x1="${x}" y1="${floorY}" x2="${x}" y2="${floorY+13}"/>${m%6===0?`<text class="sceneText" x="${x}" y="${floorY+34}" text-anchor="middle">${m} m</text>`:''}`;}

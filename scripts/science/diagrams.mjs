@@ -56,7 +56,7 @@ export function diagram(id,s,r){
   else {const hh=50*Math.sqrt(s.ratio);out=path(`M50,110 H260 L370,${160-hh} H610 M50,210 H260 L370,${160+hh} H610`)+arrow(95,160,230,160)+arrow(415,160,560,160)+text(60,70,`入口 ${s.speed} m/s`,18)+text(360,70,`出口 ${num(r.v2)} m/s`,18)+text(50,285,`A₂/A₁=${s.ratio}；出口壓力 ${num(r.absolute/1000)} kPa`,20)+text(50,330,'同高、穩定流、不可壓縮、無黏性。',17)}break;
  }
  case 'solubility':{
-  out=rect(85,75,220,205,'#d6eff5')+rect(85,265-r.solid/150*85,220,r.solid/150*85,'#b9b9bc')+path('M80,55 V285 H310 V55','#435f6e')+text(90,35,'溶液與剩餘固體（示意）',18)+text(350,95,`容量 ${num(r.capacity)} g`,20)+text(350,145,`已溶 ${num(r.dissolved)} g`,20)+text(350,195,`固體 ${num(r.solid)} g`,20)+text(90,330,`濃度 ${num(r.percent,2)}%（只計入溶液）`,20)+text(90,365,'A、B均為虛構教學溶質，不是實測曲線。',16);break;
+  out=rect(85,75,220,205,'#d6eff5')+rect(85,280-r.solid/150*85,220,r.solid/150*85,'#b9b9bc')+path('M80,55 V285 H310 V55','#435f6e')+text(90,35,'溶液與剩餘固體（示意）',18)+text(350,95,`容量 ${num(r.capacity)} g`,20)+text(350,145,`已溶 ${num(r.dissolved)} g`,20)+text(350,195,`固體 ${num(r.solid)} g`,20)+text(90,330,`濃度 ${num(r.percent,2)}%（只計入溶液）`,20)+text(90,365,'A、B均為虛構教學溶質，不是實測曲線。',16);break;
  }
  case 'energy':{
   const p=s.progress/100;
@@ -69,7 +69,7 @@ export function diagram(id,s,r){
   out=`<ellipse cx="320" cy="180" rx="140" ry="120" fill="none" stroke="#b8cbd5" stroke-dasharray="5 5"/>`+circle(320,180,25,'#397ca8')+circle(605,180,32,'#f2bb4a')+circle(x,y,13,'#b8bdc6');
   out+=`<path d="M${x},${y-13} A13,13 0 0 1 ${x},${y+13} Z" fill="#fff1bf"/>`;
   out+=arrow(555,110,380,110,'#ca9d38')+text(535,75,'太陽光',17)+text(287,225,'地球',17)+text(x-20,y-25,'月球',17);
-  out+=circle(85,180,36,'#263b50')+text(35,245,'地球上所見',15);
+  out+=circle(85,180,36,'#263b50')+text(35,245,'北向朝上示意',15);
   // Orthographic illuminated disk, north-up convention; waxing is bright on the right.
   for(let yy=-35;yy<=35;yy++)for(let xx=-35;xx<=35;xx++){
    const z2=35*35-xx*xx-yy*yy;if(z2>=0&&xx*Math.sin(a)-Math.sqrt(z2)*Math.cos(a)>0)out+=`<rect x="${85+xx}" y="${180+yy}" width="1.1" height="1.1" fill="#fff1bf"/>`;

@@ -128,7 +128,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
     if(s.type==='series'){const Req=s.R1+s.R2,I=s.V/Req;return{kind:'normal',Req,I,I1:I,I2:I,V1:I*s.R1,V2:I*s.R2,P1:I*I*s.R1,P2:I*I*s.R2};}
     const Req=1/(1/s.R1+1/s.R2),I1=s.V/s.R1,I2=s.V/s.R2;return{kind:'normal',Req,I:I1+I2,I1,I2,V1:s.V,V2:s.V,P1:s.V*I1,P2:s.V*I2};
   }
-  function bulb(x,y,label,R,power,on){const intensity=on?Math.min(.95,.18+power/7):.04;return`<g transform="translate(${x} ${y})"><circle r="38" fill="rgba(245,158,11,${intensity})" stroke="#9a6a12" stroke-width="5" class="${on&&power>.3?'bulbGlow':''}"/><path d="M-14 8 Q0-26 14 8 M-14 8 L-8 24 H8 L14 8" fill="none" stroke="#704b0d" stroke-width="4"/><text class="diagramLabel" y="62" text-anchor="middle">${label}・${R} Ω</text></g>`;}
+  function bulb(x,y,label,R,power,on){const intensity=on?Math.min(.95,.18+power/7):.04;return`<g transform="translate(${x} ${y})"><circle r="38" fill="rgba(245,158,11,${intensity})" stroke="#9a6a12" stroke-width="5" class="${on&&power>.3?'bulbGlow':''}"/><path d="M-18 -18 L18 18 M-18 18 L18 -18" fill="none" stroke="#704b0d" stroke-width="4"/><text class="diagramLabel" y="62" text-anchor="middle">${label}・${R} Ω</text></g>`;}
   function battery(){return`<g transform="translate(92 195)"><line x1="0" y1="-43" x2="0" y2="-10" stroke="#263f58" stroke-width="5"/><line x1="-22" y1="-10" x2="22" y2="-10" stroke="#c2413b" stroke-width="6"/><line x1="-12" y1="12" x2="12" y2="12" stroke="#263f58" stroke-width="6"/><line x1="0" y1="12" x2="0" y2="46" stroke="#263f58" stroke-width="5"/><text class="diagramLabel" x="36" y="-3">${els.voltage.value} V</text><text class="diagramValue" x="-7" y="-25">＋</text><text class="diagramValue" x="-6" y="34">−</text></g>`;}
   function sw(closed){return`<g transform="translate(205 78)"><circle class="node" cx="-35" cy="0" r="7"/><circle class="node" cx="35" cy="0" r="7"/><line x1="-29" y1="-4" x2="${closed?29:22}" y2="${closed?-4:-35}" stroke="#263f58" stroke-width="7" stroke-linecap="round"/><text class="diagramLabel" x="0" y="-42" text-anchor="middle">開關${closed?'閉合':'斷開'}</text></g>`;}
   function renderDiagram(s,r){
@@ -141,10 +141,11 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
       wires=`<path class="${cls}" d="M92 152 V78 H170 M240 78 H315 M391 78 H483 M559 78 H668 V242 H92 V241"/>`;
       loads=bulb(353,78,'燈泡一',s.R1,r.P1,live)+bulb(521,78,'燈泡二',s.R2,r.P2,live);
     }else{
-      wires=`<path class="${cls}" d="M92 152 V78 H170 M240 78 H668 V310 H92 V241"/><path class="${cls}" d="M302 78 V135 H368 M444 135 H564 V78"/><path class="${cls}" d="M302 310 V250 H368 M444 250 H564 V310"/>`;
+      // Separate supply rails. Each bulb bridges positive (left) to negative (right).
+      wires=`<path class="${cls}" d="M92 152 V78 H170 M240 78 H302 V250"/><path class="${cls}" d="M564 135 V310 H92 V241"/><path class="${cls}" d="M302 135 H368 M444 135 H564 M302 250 H368 M444 250 H564"/><circle class="node" cx="302" cy="135" r="5"/><circle class="node" cx="564" cy="250" r="5"/>`;
       loads=bulb(406,135,'燈泡一',s.R1,r.P1,live)+bulb(406,250,'燈泡二',s.R2,r.P2,live);
     }
-    if(s.short&&s.closed){const bottom=s.type==='parallel'?310:242;wires+=`<path class="wire live" d="M250 78 C320 340 520 340 620 ${bottom}" stroke="#c2413b"/><text class="warnText" x="430" y="354" text-anchor="middle">危險：導線跨接造成短路</text>`;}
+    if(s.short&&s.closed){const bottom=s.type==='parallel'?310:242,endX=s.type==='parallel'?564:620;wires+=`<path class="wire live" d="M250 78 C320 340 520 340 ${endX} ${bottom}" stroke="#c2413b"/><text class="warnText" x="430" y="354" text-anchor="middle">危險：導線跨接造成短路</text>`;}
     $('scene').innerHTML=battery()+sw(s.closed)+wires+loads+`<text class="diagramValue" x="380" y="375" text-anchor="middle">${verified?(r.kind==='short'?'電流過大：立即斷開':r.kind==='open'?'開路：電流為 0':(els.direction.value==='electron'?'流動動畫方向代表電子移動':'紅色流動方向代表傳統電流')):'尚未通電驗證'}</text>`;
     $('diagramDesc').textContent=`${names[s.type]}，電池 ${s.V} 伏特，開關${s.closed?'閉合':'斷開'}。${verified?(r.kind==='short'?'目前為短路危險狀態。':`總電流 ${fmt(r.I)} 安培。`):'尚未通電驗證。'}`;
   }
