@@ -13,13 +13,10 @@ for(const id of ids){
  assert.ok(!clone.textContent.includes('預測'),id+' visible UI still contains prediction wording');
  assert.match(clone.textContent,/研究工具箱/,id+' researcher toolbox');
  assert.match(clone.textContent,/開始觀察/,id+' direct observe action');
- if(id==='moon-eclipse'){
-   assert.ok(d.getElementById('moon-explore'),'moon free-explore control missing');
-   assert.ok(!d.querySelector('label[for="moon-explore"]')?.textContent.includes('預測'),'moon free-explore label still prediction-based');
- }
  dom.window.close();
 }
 const runtime=fs.readFileSync(path.join(root,'scripts/science/runtime.js'),'utf8');
 assert.ok(runtime.includes("if($('prediction'))$('prediction').value=''"),'moon preview prediction guard missing');
-assert.ok(runtime.includes("noPrediction?'自由觀察"),'moon prediction-free free-explore status missing');
+assert.ok(runtime.includes("noPrediction?'自由觀察：拖曳滑桿即時預覽（先完成一次正式觀察）'"),'moon prediction-free free-explore label missing');
+assert.ok(runtime.includes("noPrediction?'自由觀察中：拖動滑桿"),'moon prediction-free free-explore status missing');
 console.log('PASS researcher batch 3: electromagnetism, moon/eclipses, seasons, plant exchange and ecosystem');
