@@ -25,6 +25,7 @@ export function diagram(id,s,r){
   const centralY=axis+h*(end-cx)/(s.u*scale);
   out+=line(ox,oy,end,centralY,'#466fa3');
   if(r.v!==null){const ix=cx+r.v*scale,iy=axis-r.m*h;out+=line(ix,axis,ix,iy,'#b54a5b')+circle(ix,iy,4,'#b54a5b')+text(ix-10,axis+70,'像',16);if(r.v<0)out+=line(cx,oy,ix,iy,'#d97b11',true)+line(cx,axis,ix,iy,'#466fa3',true)}
+  out+=`<circle data-lab-drag="u" data-units-per-px="${-1/scale}" cx="${ox}" cy="${oy}" r="19" fill="#d97b11" fill-opacity=".12" stroke="#d97b11" stroke-width="2" stroke-dasharray="4 3" tabindex="0" role="button" aria-label="拖移物體改變物距，或按左右方向鍵"/>`;
   out+=text(30,360,'橘：平行入射光　藍：通過光心　虛線：反向延長',14);break;
  }
  case 'electromagnetism':{
@@ -32,6 +33,7 @@ export function diagram(id,s,r){
   if(s.mode==='magnet'){
    for(let i=0;i<12;i++)out+=`<ellipse cx="${165+i*26}" cy="170" rx="13" ry="65" fill="none" stroke="#bf731a" stroke-width="3"/>`;
    out+=Math.abs(r.output)>1e-9?(r.output>0?arrow(100,170,545,170):arrow(545,170,100,170)):text(255,175,'電流0：無場',16);
+   if(s.current!==0){out+=text(105,92,s.current>0?'S 極':'N 極',18)+text(505,92,s.current>0?'N 極':'S 極',18);out+=s.current>0?arrow(320,225,320,115,'#ad452f'):arrow(320,115,320,225,'#ad452f');out+=text(350,255,'前側導線電流方向',15)}
    out+=text(50,295,`N=${s.turns} 匝；I=${s.current} A；B=${num(r.field*1000,4)} mT`,18);
   }else{
    if(s.field!==0){for(let y=85;y<=245;y+=80)out+=s.field>0?arrow(90,y,550,y,'#8eabc1'):arrow(550,y,90,y,'#8eabc1')}else out+=text(90,80,'B=0：沒有外加磁場',18);
@@ -54,6 +56,7 @@ export function diagram(id,s,r){
   const p=s.progress/100;
   out=line(60,90,345,260,'#607e8d')+circle(60+285*p,75+170*p,14,'#d97b11')+text(45,320,`下降 ${s.progress}%`,18)+text(35,350,`速度 ${num(r.speed,2)} m/s`,18);
   const vals=[r.potential,r.kinetic,r.thermal],labels=['位能','動能','內能'];vals.forEach((v,i)=>{out+=rect(395+i*76,280-v/r.total*210,45,v/r.total*210,['#087b78','#d97b11','#9364a1'][i])+text(390+i*76,305,labels[i],15)+text(390+i*76,333,num(v,1)+' J',13)});
+  out+=`<circle data-lab-drag="progress" data-units-per-px="${100/285}" cx="${60+285*p}" cy="${75+170*p}" r="22" fill="transparent" stroke="#d97b11" stroke-width="2" stroke-dasharray="4 3" tabindex="0" role="button" aria-label="拖移小球比較坡道位置，或按左右方向鍵"/>`;
   out+=text(390,45,`總能量 ${num(r.total,2)} J`,18);break;
  }
  case 'moon-eclipse':{
@@ -66,6 +69,11 @@ export function diagram(id,s,r){
 
  }
  let extra='';
+ if(id==='seasons'){
+  const a=s.season*Math.PI/180,tilt=s.tilt*Math.PI/180,axisX=20*Math.sin(tilt),axisY=-20*Math.cos(tilt);
+  const earth=(x,y,active=false)=>`<circle cx="${x}" cy="${y}" r="16" fill="${active?'#248273':'#77a8bc'}"/><line x1="${x-axisX}" y1="${y-axisY}" x2="${x+axisX}" y2="${y+axisY}" stroke="#30374a" stroke-width="3"/><text x="${x+axisX+4}" y="${y+axisY-4}" font-size="12">北</text>`;
+  extra=`<svg viewBox="0 0 660 310" role="img" aria-label="地球公轉位置與平行地軸示意；北端固定朝畫面右上方。公轉角 ${s.season} 度，地軸傾角 ${s.tilt} 度。"><text x="25" y="30" font-size="20">為什麼有四季？比較地軸朝向</text><ellipse cx="330" cy="155" rx="150" ry="85" fill="none" stroke="#acbcbc" stroke-dasharray="5 5"/><circle cx="330" cy="155" r="28" fill="#f0b946"/><text x="310" y="204" font-size="16">太陽</text>${[[330,70],[180,155],[330,240],[480,155]].map(([x,y])=>earth(x,y)).join('')}${earth(330-150*Math.sin(a),155-85*Math.cos(a),true)}<circle cx="${330-150*Math.sin(a)}" cy="${155-85*Math.cos(a)}" r="25" fill="none" stroke="#b95215" stroke-width="3"/><text x="25" y="288" font-size="16">橘圈：目前位置；各處地軸保持平行。尺寸與距離未按比例。</text></svg>`;
+ }
  if(id==='solubility'){
   const fn=temp=>s.solute==='a'?20+.5*temp:35+.025*temp;
   extra=`<svg viewBox="0 0 660 360" role="img" aria-label="教學溶解度曲線，橫軸溫度0到80°C，縱軸每100g水可溶的克數0到65g">${plot(fn,80,65,'溫度（°C）；縱軸：g／100g水')}${circle(60+s.temperature/80*540,270-r.solubility/65*190,6,'#b54a5b')}${text(100,35,'模型'+s.solute.toUpperCase()+' 溶解度曲線（非實測）',18)}</svg>`;
@@ -103,8 +111,8 @@ function educationalScene(id,s,r){
   const max=Math.max(8,r.photo,r.respiration),gap=s.stomata/100*38;
   const bars=[['總光合 P',r.photo,'#237957'],['呼吸 R',r.respiration,'#ae6b22']].map(([label,v,color],i)=>`<text x="30" y="${55+i*65}" font-size="20">${label}</text><rect x="180" y="${33+i*65}" width="${v/max*300}" height="28" rx="6" fill="${color}"/><text x="505" y="${55+i*65}" font-size="20">${n(v)}</text>`).join('');
   const gas=svg('總光合 '+n(r.photo)+'、呼吸 '+n(r.respiration)+'、淨氧 '+n(r.net)+'，均為相對指標',bars+`<rect x="25" y="165" width="610" height="70" rx="12" fill="#e7f3ee"/><text x="45" y="195" font-size="20">淨氧 P − R = ${n(r.net)}</text><text x="45" y="223" font-size="17">${r.kind==='release'?'淨釋出氧氣':r.kind==='consume'?'淨消耗氧氣':'淨交換接近零'}</text>`,255);
-  const kidney=`M0,-65 C-100,-90 -100,90 0,65 C${-gap},40 ${-gap},-40 0,-65 Z`;
-  const pore=svg('氣孔開度 '+s.stomata+'%；蒸散指標 '+n(r.transpiration),`<rect x="20" y="15" width="620" height="195" rx="16" fill="#eff7eb"/><g transform="translate(320 110)" fill="#8cc190" stroke="#37794c" stroke-width="3"><path d="${kidney}"/><path d="${kidney}" transform="scale(-1 1)"/></g><text x="45" y="47" font-size="18">保衛細胞外形示意</text><text x="320" y="245" text-anchor="middle" font-size="20">開度 ${s.stomata}%｜蒸散 ${n(r.transpiration)}</text>`,270);
+  const kidney=`M0,-65 C-100,-90 -100,90 0,65 C${-gap},40 ${-gap},-40 0,-65 Z`; // Left cell stays at x<=0; mirrored right cell stays x>=0.
+  const pore=svg('氣孔開度 '+s.stomata+'%；蒸散指標 '+n(r.transpiration),`<rect x="20" y="15" width="620" height="195" rx="16" fill="#eff7eb"/><g transform="translate(320 110)" fill="#8cc190" stroke="#37794c" stroke-width="3"><path d="${kidney}"/><path d="${kidney}" transform="scale(-1 1)"/>${[-1,1].map(sign=>[-36,-12,12,36].map(y=>`<ellipse cx="${sign*52}" cy="${y}" rx="5" ry="3" fill="#397a42" stroke="none"/>`).join('')).join('')}</g><text x="45" y="47" font-size="18">保衛細胞外形示意</text><text x="320" y="245" text-anchor="middle" font-size="20">開度 ${s.stomata}%｜蒸散 ${n(r.transpiration)}</text>`,270);
   return learningCard('① 氣體交換：先比較 P 與 R',gas,'數值為無單位教學指標。P 是總光合作用；扣除呼吸 R 後才是淨交換。')+learningCard('② 水分散失：另外觀察氣孔',pore,'開度是學生設定，圖形不按真實尺寸；濕度、氣孔開度與溫度共同影響本模型蒸散指標。');
  }
  if(id==='ecosystem'){
