@@ -16,4 +16,6 @@ must(micro.includes("Array.isArray(v)?v:[]"),'record storage guard missing');
 must(css.includes('@media(max-width:700px)')&&css.includes('position:sticky'),'mobile sticky observation missing');
 must(css.includes('@media print'),'print rules missing');
 must(js.includes("data-screen='prepare'")||js.includes("dataset.screen='prepare'"),'four-screen flow missing');
+must(js.includes('領取任務卡')&&js.includes('研究手冊'),'mini-lab mission language missing');
+must(css.includes('Mini-lab visual language'),'mini-lab visual layer missing');
 console.log('PASS researcher batch 1 static assertions');
