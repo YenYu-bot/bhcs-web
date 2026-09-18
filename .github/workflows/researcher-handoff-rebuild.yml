@@ -1,0 +1,63 @@
+name: Researcher handoff rebuild
+on:
+  push:
+    branches:
+      - codex/researcher-lab-redesign
+    paths:
+      - ".github/workflows/researcher-handoff-rebuild.yml"
+      - "scripts/**"
+permissions:
+  contents: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/researcher-lab-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install test dependencies
+        working-directory: scripts
+        run: npm install --no-audit --no-fund
+      - name: Rebuild generated science pages
+        run: |
+          node scripts/build_microscope.mjs
+          node scripts/build_science.mjs
+      - name: Run science tests
+        run: npm test --prefix scripts
+      - name: Run integration checks
+        run: node scripts/check_science_integration.cjs
+      - name: Commit generated HTML only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            tools/acid-base-indicator-lab.html \
+            tools/buoyancy-density-lab.html \
+            tools/circuit-lab.html \
+            tools/force-motion-lab.html \
+            tools/genetics-simulation-lab.html \
+            tools/heat-phase-lab.html \
+            tools/microscope-lab.html \
+            tools/particle-reaction-lab.html \
+            tools/photosynthesis-factor-lab.html \
+            tools/plate-earthquake-lab.html \
+            tools/science/ecosystem.html \
+            tools/science/electromagnetism.html \
+            tools/science/energy.html \
+            tools/science/index.html \
+            tools/science/moon-eclipse.html \
+            tools/science/optics.html \
+            tools/science/plant-exchange.html \
+            tools/science/pressure-fluid.html \
+            tools/science/seasons.html \
+            tools/science/solubility.html \
+            tools/science/wave-sound.html
+          if git diff --cached --quiet; then
+            echo "No generated HTML changes."
+          else
+            git commit -m "build: regenerate researcher science pages"
+            git push origin HEAD:codex/researcher-lab-redesign
+          fi
