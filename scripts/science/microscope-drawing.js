@@ -29,6 +29,6 @@ function drawScope(){
  ctx.save();ctx.beginPath();ctx.arc(300,300,MICRO_FIELD_PX/2,0,Math.PI*2);ctx.strokeStyle='#f7fafc';ctx.lineWidth=3;ctx.stroke();ctx.clip();
  const bar=microScale(obj);ctx.fillStyle='rgba(20,38,40,.78)';ctx.fillRect(bar.x-12,bar.y-15,bar.pixels+24,57);ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(bar.x,bar.y);ctx.lineTo(bar.x+bar.pixels,bar.y);ctx.stroke();ctx.fillStyle='#fff';ctx.font='700 18px system-ui, Microsoft JhengHei';ctx.fillText(bar.label,bar.x,bar.labelY);
  if(c<28){ctx.fillStyle='rgba(16,42,67,.7)';ctx.fillRect(185,270,230,58);ctx.fillStyle='#fff';ctx.font='800 22px Microsoft JhengHei';ctx.textAlign='center';ctx.fillText('影像離焦，請調整焦距',300,307);ctx.textAlign='start';}ctx.restore();
- ctx.save();ctx.strokeStyle='rgba(80,70,50,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(287,300);ctx.lineTo(313,300);ctx.moveTo(300,287);ctx.lineTo(300,313);ctx.stroke();ctx.restore();if(typeof revealPrediction==='function')revealPrediction();
+ ctx.save();ctx.strokeStyle='rgba(80,70,50,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(287,300);ctx.lineTo(313,300);ctx.moveTo(300,287);ctx.lineTo(300,313);ctx.stroke();ctx.restore();
  canvas.setAttribute('aria-label',`程式繪製示意，非顯微照片。${specimens[els.specimen.value].name}，總倍率 ${10*obj} 倍，視野直徑 ${fmt(fov(obj))} 毫米，比例尺 ${bar.label}，清晰度 ${c}%`);updateReadouts();updateSlideBoard();
 }
