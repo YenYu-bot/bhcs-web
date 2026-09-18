@@ -4,7 +4,7 @@ const quiz=(question,options,answer,tip)=>({question,options,answer,tip});
 const task=(title,values,prompt)=>({title,values,prompt});
 export const batch2 = [
  {
- id:'optics',title:'光學與透鏡成像實驗室',subject:'理化',grade:'國中',unit:'光學',minutes:'15–20',prior:'直線傳播、焦點、比例',
+ id:'optics',noPrediction:true,title:'光學與透鏡成像實驗室',subject:'理化',grade:'國中',unit:'光學',minutes:'15–20',prior:'直線傳播、焦點、比例',
  description:'調整凸凹透鏡與物距，從兩條光線和像距讀值判斷實像、虛像與焦點奇異情況。',
  goals:['辨認實像與虛像的不同','比較物距、像距與放大率','說明物體在焦點時為何無法在有限距離成像'],
  controls:[select('kind','透鏡種類',[['convex','凸透鏡'],['concave','凹透鏡']],'convex'),range('f','焦距大小',5,30,1,10,'cm'),range('u','物距',2,100,1,30,'cm')],
@@ -18,7 +18,7 @@ export const batch2 = [
  quiz:[quiz('凸透鏡的物體位於焦點內時，形成？',['倒立實像','正立虛像','必定沒有像'],1,'將物距設為焦距的一半，觀察虛線交點。'),quiz('物體恰在凸透鏡焦點上，出射近軸光線？',['平行，無有限像距','在兩倍焦距相交','全部反射'],0,'平行光線不在有限距離交會。'),quiz('凹透鏡對實物形成的像通常？',['倒立放大','正立縮小','倒立等大'],1,'比較凹透鏡下的 v 正負與 |m|。')]
  },
  {
- id:'wave-sound',title:'波動、聲音與共振實驗室',subject:'理化',grade:'國中',unit:'波與聲',minutes:'15–20',prior:'頻率、週期與長度',
+ id:'wave-sound',noPrediction:true,title:'波動、聲音與共振實驗室',subject:'理化',grade:'國中',unit:'波與聲',minutes:'15–20',prior:'頻率、週期與長度',
  description:'從波速、頻率與波長出發，比較開管與閉管的共振條件；不把音高和音量混為一談。',
  goals:['使用 v=fλ 解釋波長','比較開管與閉管的共振頻率','辨識位移的波節與波腹'],
  controls:[select('mode','觀察模型',[['travel','行進聲波'],['open','兩端開管'],['closed','一端閉管']],'travel'),range('f','驅動頻率',20,1000,1,340,'Hz'),range('v','聲速',300,360,1,340,'m/s'),range('length','管長／顯示長度',0.2,2,0.05,1,'m')],
@@ -44,7 +44,7 @@ export const batch2 = [
  quiz:[quiz('空心線圈電流反向，磁場？',['消失','方向反向','大小必定加倍'],1,'比較+I和−I。'),quiz('線圈法線平行磁場時轉矩？',['最大','無限大','零'],2,'此時 θ=0，sinθ=0。'),quiz('磁場固定，線圈完全停止且無其他變化時？',['沒有感應電壓','仍持續最大電壓','電壓隨時間增加'],0,'發電需要磁通量隨時間改變。')]
  },
  {
- id:'pressure-fluid',title:'氣壓、水壓與流體實驗室',subject:'理化',grade:'國中',unit:'壓力與流體',minutes:'15–20',prior:'力、面積、體積、密度',
+ id:'pressure-fluid',noPrediction:true,title:'氣壓、水壓與流體實驗室',subject:'理化',grade:'國中',unit:'壓力與流體',minutes:'15–20',prior:'力、面積、體積、密度',
  description:'分開觀察水深與液壓、密閉氣體的壓縮，以及水平管中截面、流速和壓力的關係。',
  goals:['分辨表壓和絕對壓力','在定溫條件下比較氣體壓縮','知道伯努力定律的使用限制'],
  controls:[select('mode','實驗',[['water','靜水壓'],['gas','定溫密閉氣體'],['flow','水平管內理想流動']],'water'),range('depth','深度（靜水）',0,10,0.5,2,'m'),range('density','液體密度（水壓／流動）',800,1200,50,1000,'kg/m³'),range('volume','氣體體積（氣體）',0.25,2,0.05,1,'L'),range('ratio','出口／入口面積比（流動）',0.4,2,0.1,1,''),range('speed','入口流速（流動）',0,4,0.5,2,'m/s')],
@@ -57,7 +57,7 @@ export const batch2 = [
  quiz:[quiz('水面表壓0kPa代表？',['沒有大氣壓','與參考大氣壓相同','絕對壓力為零'],1,'表壓是扣除外界參考壓力後的差值。'),quiz('定溫定量氣體體積減半，絕對壓力？',['減半','不變','加倍'],2,'由 PV=常數判斷。'),quiz('本水平理想流動模型中出口面積減半，出口流速？',['加倍','減半','變零'],0,'體積流率 A×v 保持一致。')]
  },
  {
- id:'solubility',title:'溶解度與濃度實驗室',subject:'理化',grade:'國中',unit:'物質與溶液',minutes:'15–20',prior:'溶質、溶劑、質量百分率',
+ id:'solubility',noPrediction:true,title:'溶解度與濃度實驗室',subject:'理化',grade:'國中',unit:'物質與溶液',minutes:'15–20',prior:'溶質、溶劑、質量百分率',
  description:'用明確標示的教學溶解度曲線，分辨已溶解質量、未溶固體與溶液濃度。',
  goals:['正確使用每100g水的溶解度','分辨飽和、未飽和與剩餘固體','計算質量百分濃度並比較冷卻析出'],
  controls:[select('solute','教學溶質模型',[['a','模型A：溫度敏感'],['b','模型B：變化較小']],'a'),range('temperature','溫度',0,80,5,20,'°C'),range('water','水的質量',50,200,10,100,'g'),range('soluteMass','加入溶質質量',0,150,5,50,'g')],
@@ -70,7 +70,7 @@ export const batch2 = [
  quiz:[quiz('溶解度40g/100g水，50g水最多溶解？',['80g','40g','20g'],2,'水量減半，容量也減半。'),quiz('20g溶質完全溶於80g水，質量百分濃度？',['25%','20%','80%'],1,'分母為溶液總質量100g。'),quiz('本頁模型A能直接當作硝酸鉀實測資料嗎？',['可以','不可以，這是教學模型','只要改標題就可以'],1,'模型限制明確寫出A、B皆為虛構線性曲線。')]
  }
  ,{
- id:'energy',title:'能量轉換與守恆實驗室',subject:'理化',grade:'國中',unit:'力學與能量',minutes:'15–20',prior:'高度、速度、功與焦耳',
+ id:'energy',noPrediction:true,title:'能量轉換與守恆實驗室',subject:'理化',grade:'國中',unit:'力學與能量',minutes:'15–20',prior:'高度、速度、功與焦耳',
  description:'沿斜坡改變位置，追蹤重力位能、動能與摩擦產生的內能，檢查總能量帳。',
  goals:['比較位能下降與動能上升','把摩擦轉出的內能納入守恆','區分機械能守恆與總能量守恆'],
  controls:[range('mass','質量',0.5,5,0.5,1,'kg'),range('height','起始垂直高度',0.5,5,0.5,2,'m'),range('progress','沿斜坡下降比例',0,100,5,50,'%'),range('loss','位能減少量轉成內能的比例',0,100,5,0,'%')],
