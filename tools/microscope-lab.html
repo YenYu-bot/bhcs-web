@@ -50,7 +50,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   <h2>準備標本</h2>
   <div class="control"><label for="specimen">標本種類</label><select id="specimen"><option value="onion">洋蔥鱗葉表皮</option><option value="cheek">口腔上皮</option><option value="elodea">水蘊草葉片</option></select></div>
   <div class="prediction"><label for="prediction">先預測：物鏡由 4× 換成 40×，視野會怎樣？</label><select id="prediction"><option value="">請先選一個預測</option><option value="wider">範圍更大、細胞更多</option><option value="narrower">範圍更小、細胞更少</option><option value="same">範圍完全不變</option></select></div>
-  <div class="actions"><button class="btn primary" id="begin">開始觀察</button><button class="btn secondary" id="reset">回到低倍</button></div>
+  <div class="actions"><button class="btn primary" id="begin" type="button">開始觀察</button><button class="btn secondary" id="reset" type="button">回到低倍</button></div>
   <fieldset class="labControls" id="labControls" disabled>
    <div class="control"><span id="objectiveLabel" style="display:block;font-weight:800;margin-bottom:6px">物鏡倍率</span><div class="objectiveChoices" role="radiogroup" aria-labelledby="objectiveLabel"><div class="choice"><input type="radio" name="objective" id="obj4" value="4" checked><label for="obj4">4×</label></div><div class="choice"><input type="radio" name="objective" id="obj10" value="10"><label for="obj10">10×</label></div><div class="choice"><input type="radio" name="objective" id="obj40" value="40"><label for="obj40">40×</label></div></div></div>
    <div class="control"><label for="coarse">粗動調節 <output id="coarseOut">−2</output></label><input id="coarse" type="range" min="-5" max="5" step="1" value="-2"><div class="focusWarn" id="coarseWarn" hidden>高倍物鏡請使用微動調節。</div></div>
@@ -87,18 +87,18 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
  <div class="workflow"><div><b>01</b><span>低倍找標本</span></div><div><b>02</b><span>粗調後微調</span></div><div><b>03</b><span>移到視野中央</span></div><div><b>04</b><span>換高倍物鏡</span></div><div><b>05</b><span>只用微調</span></div></div>
  <p class="advancedOnly" hidden><strong>目前關係：</strong> <span id="formulaLine" class="formula">總倍率 = 10 × 4；視野直徑 = 18 ÷ 4</span></p>
  <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本工具以目鏡視野數 18 mm 示範視野直徑，實際數值會依目鏡規格改變。清晰度、照明與圖像是教學化模型，不模擬數值孔徑、景深、色差、染色濃度及切片厚度。程序重點是先低倍定位，再換高倍微調。</div></div>
- <button class="btn secondary" id="teacherToggle" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
+ <button class="btn secondary" id="teacherToggle" type="button" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
 </section>
 
 <section class="card section">
  <h2>引導任務</h2><p class="lead">任務會自動帶入標本與模式，仍需要自己調焦與移動載玻片。</p>
- <div class="missions"><button class="mission" data-mission="onion">任務一：洋蔥表皮高倍觀察</button><button class="mission" data-mission="compare">任務二：比較口腔上皮</button><button class="mission" data-mission="chloroplast">任務三：尋找葉綠體</button><button class="mission" data-mission="direction">任務四：驗證移動方向</button></div>
+ <div class="missions"><button class="mission" type="button" data-mission="onion">任務一：洋蔥表皮高倍觀察</button><button class="mission" type="button" data-mission="compare">任務二：比較口腔上皮</button><button class="mission" type="button" data-mission="chloroplast">任務三：尋找葉綠體</button><button class="mission" type="button" data-mission="direction">任務四：驗證移動方向</button></div>
  <div id="missionText" class="status"><strong>任務一</strong>先在低倍找到長方形細胞，再換高倍，只用微調恢復清晰。</div>
 </section>
 
 <section id="record" class="card section">
  <h2>觀察紀錄</h2><p class="lead">同一個標本用不同倍率各記一筆，直接比較視野直徑和可見範圍。</p>
- <div class="recordTools"><button class="btn primary" id="addRecord" disabled>加入目前觀察</button><button class="btn secondary" id="printRecord">列印紀錄</button><button class="btn secondary" id="clearRecord">清除紀錄</button></div>
+ <div class="recordTools"><button class="btn primary" id="addRecord" type="button" disabled>加入目前觀察</button><button class="btn secondary" id="printRecord" type="button">列印紀錄</button><button class="btn secondary" id="clearRecord" type="button">清除紀錄</button></div>
  <div class="tableWrap"><table><thead><tr><th>#</th><th>標本</th><th>物鏡</th><th>總倍率</th><th>視野直徑</th><th>清晰度</th><th>載玻片位置</th><th>可見構造</th></tr></thead><tbody id="records"><tr><td colspan="8" class="empty">尚無紀錄。先完成一次觀察。</td></tr></tbody></table></div>
 </section>
 
@@ -107,7 +107,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
  <div class="quizItem"><fieldset data-answer="b" data-tip="總倍率增加時，標本被放得更大，但能看見的實際範圍會縮小。"><legend>1. 由 4× 物鏡換成 40× 物鏡後，通常會看到什麼變化？</legend><label><input type="radio" name="q1" value="a"> 視野更廣、細胞更多</label><label><input type="radio" name="q1" value="b"> 視野更窄、細胞更少</label><label><input type="radio" name="q1" value="c"> 視野大小不變</label></fieldset><div class="feedback" aria-live="polite"></div></div>
  <div class="quizItem"><fieldset data-answer="c" data-tip="複式顯微鏡影像方向與標本相反；載玻片向右，視野影像向左。"><legend>2. 要讓視野中偏左的影像回到中央，載玻片應往哪裡移？</legend><label><input type="radio" name="q2" value="a"> 向左</label><label><input type="radio" name="q2" value="b"> 不需移動</label><label><input type="radio" name="q2" value="c"> 向右</label></fieldset><div class="feedback" aria-live="polite"></div></div>
  <div class="quizItem"><fieldset data-answer="a" data-tip="洋蔥地下鱗葉表皮是植物細胞，但通常沒有葉綠體。"><legend>3. 下列哪一項對洋蔥鱗葉表皮的描述較正確？</legend><label><input type="radio" name="q3" value="a"> 有細胞壁，但通常看不到葉綠體</label><label><input type="radio" name="q3" value="b"> 沒有細胞壁</label><label><input type="radio" name="q3" value="c"> 一定有大量葉綠體</label></fieldset><div class="feedback" aria-live="polite"></div></div>
- <div class="recordTools"><button class="btn primary" id="checkQuiz">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
+ <div class="recordTools"><button class="btn primary" id="checkQuiz" type="button">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
 </section>
 </main>
 

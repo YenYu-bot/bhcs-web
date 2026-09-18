@@ -63,8 +63,8 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
       <div class="control"><label for="initialV">初速度</label><select id="initialV"><option value="-2">向左 2 m/s</option><option value="-1">向左 1 m/s</option><option value="0" selected>靜止</option><option value="1">向右 1 m/s</option><option value="2">向右 2 m/s</option></select></div>
     </div>
     <div class="prediction"><label for="prediction">先預測：剛開始時的加速度方向？</label><select id="prediction"><option value="">請先選一個預測</option><option value="right">向右</option><option value="zero">加速度為 0</option><option value="left">向左</option></select></div>
-    <div class="actions"><button class="btn primary" id="start">開始實驗</button><button class="btn secondary" id="pause" disabled>暫停</button><button class="btn secondary" id="step">前進 0.5 秒</button></div>
-    <button class="btn secondary" id="reset" style="width:100%;margin-top:8px">回到起點</button>
+    <div class="actions"><button class="btn primary" id="start" type="button">開始實驗</button><button class="btn secondary" id="pause" type="button" disabled>暫停</button><button class="btn secondary" id="step" type="button">前進 0.5 秒</button></div>
+    <button class="btn secondary" id="reset" type="button" style="width:100%;margin-top:8px">回到起點</button>
     <div id="status" class="status" role="status" aria-live="polite"><strong>先選擇預測</strong>開始前先判斷合力，接著用小車與圖表驗證。</div>
   </aside>
 
@@ -95,18 +95,18 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   </div>
   <div class="advancedOnly" hidden><p><strong>目前計算：</strong> <span id="formulaLine" class="formula">等待開始</span></p></div>
   <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本教材是一維質點模型，不計空氣阻力、車輪轉動慣量與施力起伏。動摩擦係數固定，真實材料通常會受表面狀態、速度與溫度影響。軌道端點只是觀察範圍，不模擬碰撞。</div></div>
-  <button class="btn secondary" id="teacherToggle" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
+  <button class="btn secondary" id="teacherToggle" type="button" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
 </section>
 
 <section class="card section">
   <h2>引導任務</h2><p class="lead">按一下套用條件；每次先預測，再把結果加入紀錄比較。</p>
-  <div class="missions"><button class="mission" data-mission="force">任務一：2 kg 受 6 N</button><button class="mission" data-mission="mass">任務二：質量加倍</button><button class="mission" data-mission="friction">任務三：5 N 推粗糙面</button><button class="mission" data-mission="constant">任務四：沒有合力但有初速</button></div>
+  <div class="missions"><button class="mission" type="button" data-mission="force">任務一：2 kg 受 6 N</button><button class="mission" type="button" data-mission="mass">任務二：質量加倍</button><button class="mission" type="button" data-mission="friction">任務三：5 N 推粗糙面</button><button class="mission" type="button" data-mission="constant">任務四：沒有合力但有初速</button></div>
   <div id="missionText" class="status"><strong>比較方法</strong>任務一與任務二的施力相同，只改變質量；比較兩次加速度。</div>
 </section>
 
 <section id="record" class="card section">
   <h2>實驗紀錄</h2><p class="lead">建議在相同時間點加入紀錄，才適合直接比較位置和速度。</p>
-  <div class="recordTools"><button class="btn primary" id="addRecord" disabled>加入目前讀值</button><button class="btn secondary" id="printRecord">列印紀錄</button><button class="btn secondary" id="clearRecord">清除紀錄</button></div>
+  <div class="recordTools"><button class="btn primary" id="addRecord" type="button" disabled>加入目前讀值</button><button class="btn secondary" id="printRecord" type="button">列印紀錄</button><button class="btn secondary" id="clearRecord" type="button">清除紀錄</button></div>
   <div class="tableWrap"><table><thead><tr><th>#</th><th>質量</th><th>施力</th><th>表面</th><th>時間</th><th>位置</th><th>速度</th><th>合力</th><th>加速度</th></tr></thead><tbody id="records"><tr><td colspan="9" class="empty">尚無紀錄。先完成一次操作。</td></tr></tbody></table></div>
 </section>
 
@@ -115,7 +115,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   <div class="quizItem"><fieldset data-answer="c" data-tip="合力為零表示加速度為零；物體可能靜止，也可能保持等速度。"><legend>1. 小車向右等速度前進時，水平合力是多少？</legend><label><input type="radio" name="q1" value="a"> 一定向右</label><label><input type="radio" name="q1" value="b"> 一定向左</label><label><input type="radio" name="q1" value="c"> 0 N</label></fieldset><div class="feedback" aria-live="polite"></div></div>
   <div class="quizItem"><fieldset data-answer="b" data-tip="a = F ÷ m。合力不變、質量加倍時，加速度變為一半。"><legend>2. 合力保持 6 N，質量由 2 kg 變成 4 kg，加速度如何改變？</legend><label><input type="radio" name="q2" value="a"> 變成兩倍</label><label><input type="radio" name="q2" value="b"> 變成一半</label><label><input type="radio" name="q2" value="c"> 完全不變</label></fieldset><div class="feedback" aria-live="polite"></div></div>
   <div class="quizItem"><fieldset data-answer="a" data-tip="靜摩擦力會先配合施力增大；只有超過最大靜摩擦力，物體才開始滑動。"><legend>3. 對靜止小車施力後仍不動，最合理的解釋是？</legend><label><input type="radio" name="q3" value="a"> 靜摩擦力抵銷了施力</label><label><input type="radio" name="q3" value="b"> 小車沒有重量</label><label><input type="radio" name="q3" value="c"> 有施力就一定有速度</label></fieldset><div class="feedback" aria-live="polite"></div></div>
-  <div class="recordTools"><button class="btn primary" id="checkQuiz">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
+  <div class="recordTools"><button class="btn primary" id="checkQuiz" type="button">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
 </section>
 </main>
 

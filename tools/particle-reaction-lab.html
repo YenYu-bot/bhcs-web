@@ -61,7 +61,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
     <div class="control"><label for="amountA"><span id="labelA">氫氣 H₂</span> <output id="amountAOut">4 個</output></label><input id="amountA" type="range" min="0" max="12" step="1" value="4"></div>
     <div class="control"><label for="amountB"><span id="labelB">氧氣 O₂</span> <output id="amountBOut">2 個</output></label><input id="amountB" type="range" min="0" max="12" step="1" value="2"></div>
     <div class="prediction"><label for="prediction">先預測：反應後哪一種反應物會先用完？</label><select id="prediction"><option value="">請先選一個預測</option><option value="A" id="predA">氫氣先用完</option><option value="B" id="predB">氧氣先用完</option><option value="exact">恰好完全反應</option><option value="none">沒有加入反應物</option></select></div>
-    <div class="actions"><button class="btn primary" id="react">開始反應</button><button class="btn secondary" id="reset">重新準備</button></div>
+    <div class="actions"><button class="btn primary" id="react" type="button">開始反應</button><button class="btn secondary" id="reset" type="button">重新準備</button></div>
     <div id="status" class="status" role="status" aria-live="polite"><strong>先做預測</strong>配平方程式告訴你一次完整反應需要幾個分子。</div>
   </aside>
 
@@ -90,18 +90,18 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   </div>
   <div class="advancedOnly" hidden><p><strong>目前計算：</strong> <span id="formulaLine" class="formula">等待反應</span></p></div>
   <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>本教材用離散分子圖示表達化學計量，假設反應完全且無副反應。它不呈現碰撞方向、活化能、反應速率、化學平衡與實際相態；粒子距離也不是分子大小或真實濃度比例。</div></div>
-  <button class="btn secondary" id="teacherToggle" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
+  <button class="btn secondary" id="teacherToggle" type="button" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
 </section>
 
 <section class="card section">
   <h2>引導任務</h2><p class="lead">每個任務都先算係數比例，再看粒子圖驗證。</p>
-  <div class="missions"><button class="mission" data-mission="exactWater">任務一：4H₂＋2O₂</button><button class="mission" data-mission="oxygenLimit">任務二：7H₂＋2O₂</button><button class="mission" data-mission="hydrogenLimit">任務三：2H₂＋3O₂</button><button class="mission" data-mission="combustion">任務四：2CH₄＋5O₂</button></div>
+  <div class="missions"><button class="mission" type="button" data-mission="exactWater">任務一：4H₂＋2O₂</button><button class="mission" type="button" data-mission="oxygenLimit">任務二：7H₂＋2O₂</button><button class="mission" type="button" data-mission="hydrogenLimit">任務三：2H₂＋3O₂</button><button class="mission" type="button" data-mission="combustion">任務四：2CH₄＋5O₂</button></div>
   <div id="missionText" class="status"><strong>任務一</strong>這是係數 2：1 的整數倍，預測是否會有反應物剩下。</div>
 </section>
 
 <section id="record" class="card section">
   <h2>實驗紀錄</h2><p class="lead">比較不同起始粒子數，找出產物數量何時不再增加。</p>
-  <div class="recordTools"><button class="btn primary" id="addRecord" disabled>加入目前結果</button><button class="btn secondary" id="printRecord">列印紀錄</button><button class="btn secondary" id="clearRecord">清除紀錄</button></div>
+  <div class="recordTools"><button class="btn primary" id="addRecord" type="button" disabled>加入目前結果</button><button class="btn secondary" id="printRecord" type="button">列印紀錄</button><button class="btn secondary" id="clearRecord" type="button">清除紀錄</button></div>
   <div class="tableWrap"><table><thead><tr><th>#</th><th>反應</th><th>起始反應物</th><th>反應組數</th><th>限量反應物</th><th>生成物</th><th>剩餘</th><th>守恆</th></tr></thead><tbody id="records"><tr><td colspan="8" class="empty">尚無紀錄。先完成一次反應。</td></tr></tbody></table></div>
 </section>
 
@@ -110,7 +110,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   <div class="quizItem"><fieldset data-answer="b" data-tip="2H₂ + O₂ → 2H₂O 表示每兩個氫分子需要一個氧分子，生成兩個水分子。"><legend>1. 依 2H₂ + O₂ → 2H₂O，3 個 O₂ 最多需要幾個 H₂ 完全反應？</legend><label><input type="radio" name="q1" value="a"> 3 個</label><label><input type="radio" name="q1" value="b"> 6 個</label><label><input type="radio" name="q1" value="c"> 9 個</label></fieldset><div class="feedback" aria-live="polite"></div></div>
   <div class="quizItem"><fieldset data-answer="c" data-tip="配平只能調整分子前的係數。改右下角數字會把物質本身改成另一種分子。"><legend>2. 配平化學方程式時，可以改動哪一項？</legend><label><input type="radio" name="q2" value="a"> 元素符號</label><label><input type="radio" name="q2" value="b"> 分子式右下角數字</label><label><input type="radio" name="q2" value="c"> 分子前的係數</label></fieldset><div class="feedback" aria-live="polite"></div></div>
   <div class="quizItem"><fieldset data-answer="a" data-tip="氧氣只能支持兩組反應，會生成 4 個水分子並剩下 3 個氫分子。"><legend>3. 7H₂ 和 2O₂ 反應時，哪一種是限量反應物？</legend><label><input type="radio" name="q3" value="a"> O₂</label><label><input type="radio" name="q3" value="b"> H₂</label><label><input type="radio" name="q3" value="c"> 兩者恰好用完</label></fieldset><div class="feedback" aria-live="polite"></div></div>
-  <div class="recordTools"><button class="btn primary" id="checkQuiz">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
+  <div class="recordTools"><button class="btn primary" id="checkQuiz" type="button">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
 </section>
 
 <section class="card section safety"><h2>真實實驗安全提醒</h2><p>本頁是粒子模型，不是實驗操作指南。氫氣、氨氣與甲烷相關反應具有燃燒、爆炸、毒性或高溫高壓風險；請勿依本頁內容自行混合或點燃氣體。</p></section>

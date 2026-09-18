@@ -66,7 +66,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
     <div class="control"><span id="switchLabel" style="display:block;font-weight:800;margin-bottom:6px">開關狀態</span><div class="inlineChoices" role="radiogroup" aria-labelledby="switchLabel"><div class="choice"><input type="radio" name="switch" id="swClosed" value="closed" checked><label for="swClosed">閉合</label></div><div class="choice"><input type="radio" name="switch" id="swOpen" value="open"><label for="swOpen">斷開</label></div></div></div>
     <div class="advancedOnly" hidden><div class="dangerCtl"><input type="checkbox" id="short"><label for="short">用導線跨過負載（短路示範）</label></div><div class="control" style="margin-top:12px"><label for="direction">移動方向</label><select id="direction"><option value="current">傳統電流方向</option><option value="electron">電子移動方向</option></select></div></div>
     <div class="prediction"><label for="prediction">先預測：閉合開關後，總電流會是？</label><select id="prediction"><option value="">請先選一個預測</option><option value="zero">沒有電流</option><option value="small">小於 1 A</option><option value="one">剛好 1 A</option><option value="large">大於 1 A</option></select></div>
-    <div class="actions"><button class="btn primary" id="verify">通電驗證</button><button class="btn secondary" id="reset">重設</button></div>
+    <div class="actions"><button class="btn primary" id="verify" type="button">通電驗證</button><button class="btn secondary" id="reset" type="button">重設</button></div>
     <div id="status" class="status" role="status" aria-live="polite"><strong>先選擇預測</strong>改變條件不會立刻揭曉答案；按「通電驗證」後再比較。</div>
   </aside>
 
@@ -88,12 +88,12 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   </div>
   <div class="advancedOnly" hidden><p><strong>本次計算：</strong> <span id="formulaLine" class="formula">等待驗證</span></p></div>
   <div class="teacher" id="teacherBox" hidden><h3>教師模式：模型邊界</h3><div>教材使用理想電池、理想導線與固定電阻燈泡。真實燈泡不是固定電阻，電池也有內電阻；因此動畫亮度適合做相對比較，不應當作實驗室照度。短路時不顯示精確電流，因為真實值取決於電池與導線的內電阻。</div></div>
-  <button class="btn secondary" id="teacherToggle" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
+  <button class="btn secondary" id="teacherToggle" type="button" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
 </section>
 
 <section id="record" class="card section">
   <h2>實驗紀錄</h2><p class="lead">每改變一個條件就記錄一次，才能比較是哪個變因造成差異。紀錄只存在這台裝置的瀏覽器。</p>
-  <div class="recordTools"><button class="btn primary" id="addRecord" disabled>加入目前結果</button><button class="btn secondary" id="printRecord">列印紀錄</button><button class="btn secondary" id="clearRecord">清除紀錄</button></div>
+  <div class="recordTools"><button class="btn primary" id="addRecord" type="button" disabled>加入目前結果</button><button class="btn secondary" id="printRecord" type="button">列印紀錄</button><button class="btn secondary" id="clearRecord" type="button">清除紀錄</button></div>
   <div class="tableWrap"><table><thead><tr><th>#</th><th>接法</th><th>電池</th><th>R₁／R₂</th><th>開關</th><th>預測</th><th>等效電阻</th><th>總電流</th></tr></thead><tbody id="records"><tr><td colspan="8" class="empty">尚無紀錄。先完成一次通電驗證。</td></tr></tbody></table></div>
 </section>
 
@@ -102,7 +102,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   <div class="quizItem"><fieldset data-answer="b" data-tip="串聯只有一條路徑，任一處斷開後整個電路都沒有電流。"><legend>1. 兩燈串聯時，拆掉其中一顆燈泡會怎樣？</legend><label><input type="radio" name="q1" value="a"> 另一顆變得更亮</label><label><input type="radio" name="q1" value="b"> 兩顆都不亮</label><label><input type="radio" name="q1" value="c"> 另一顆亮度不變</label></fieldset><div class="feedback" aria-live="polite"></div></div>
   <div class="quizItem"><fieldset data-answer="c" data-tip="並聯各支路跨在相同兩端，所以每一支路的電壓都等於電池電壓。"><legend>2. 兩個電阻並聯在 6 V 電池上，各支路兩端電壓是多少？</legend><label><input type="radio" name="q2" value="a"> 3 V</label><label><input type="radio" name="q2" value="b"> 依電阻大小分配</label><label><input type="radio" name="q2" value="c"> 都是 6 V</label></fieldset><div class="feedback" aria-live="polite"></div></div>
   <div class="quizItem"><fieldset data-answer="a" data-tip="電阻為零的理想模型會得到無限大電流；真實電流由電池與導線內電阻限制，仍可能造成高溫與損壞。"><legend>3. 為什麼本教材不替理想短路顯示一個精確電流？</legend><label><input type="radio" name="q3" value="a"> 真實值取決於電池與導線內電阻</label><label><input type="radio" name="q3" value="b"> 短路完全沒有電流</label><label><input type="radio" name="q3" value="c"> 電流一定剛好 1 A</label></fieldset><div class="feedback" aria-live="polite"></div></div>
-  <div class="recordTools"><button class="btn primary" id="checkQuiz">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
+  <div class="recordTools"><button class="btn primary" id="checkQuiz" type="button">檢查答案</button><strong id="quizScore" role="status" aria-live="polite"></strong></div>
 </section>
 
 <section class="card section safety">
@@ -172,7 +172,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
     if(r.kind==='short'){status.innerHTML='<strong>短路警示</strong>電流繞過負載，可能造成電池與導線快速發熱。請勿在真實電池上嘗試。';document.querySelectorAll('.meter').forEach(x=>x.classList.add('alert'));return;}
     const actual=classify(r.I),match=s.prediction&&s.prediction===actual;status.innerHTML=`<strong>${s.prediction?(match?'預測符合讀值':'預測和讀值不同，再觀察一次'):'這次沒有先選預測'}</strong>總電流為 ${fmt(r.I)} A。${s.prediction?`你原本選的是「${predictions[s.prediction]}」。`:''}`;
   }
-  function changed(clearPrediction=true){verified=false;lastResult=null;if(clearPrediction)els.prediction.value='';const s=state(),r=solve(s);$('r2Control').hidden=s.type==='single';$('meterB2').style.display=s.type==='single'?'none':'';$('short').checked=false;hideReadouts();$('status').className='status';$('status').innerHTML='<strong>條件已改變</strong>先做預測，再按「通電驗證」觀察結果。';renderDiagram(state(),solve(state()));}
+  function changed(clearPrediction=true){verified=false;lastResult=null;if(clearPrediction)els.prediction.value='';const s=state(),r=solve(s);$('r2Control').hidden=s.type==='single';$('meterB2').style.display=s.type==='single'?'none':'';hideReadouts();$('status').className='status';$('status').innerHTML='<strong>條件已改變</strong>先做預測，再按「通電驗證」觀察結果。';renderDiagram(s,r);}
   function verify(){const s=state();if(!s.prediction&&!s.short){$('status').className='status';$('status').innerHTML='<strong>還差一步</strong>請先選擇總電流的預測，再通電驗證。';els.prediction.focus();return;}const r=solve(s);verified=true;lastResult={s,r};showResult(s,r);renderDiagram(s,r);if(typeof window.gtag==='function')window.gtag('event','circuit_verify',{circuit_type:s.type,circuit_state:r.kind});}
   function saveRecords(records){try{localStorage.setItem('bhcsCircuitRecords',JSON.stringify(records.slice(-12)));}catch(e){}}
   function loadRecords(){try{return JSON.parse(localStorage.getItem('bhcsCircuitRecords'))||[];}catch(e){return[];}}
