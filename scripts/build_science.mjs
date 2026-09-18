@@ -1,17 +1,20 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {legacy,firstBatch} from './science/catalog.mjs';
+import {legacy,firstBatch,firstMisconceptions} from './science/catalog.mjs';
 import {batch2} from './science/batch2.mjs';
+import {applyTaskPredictions} from './science/task-predictions.mjs';
+applyTaskPredictions(batch2);
 import {enhanceLessons} from './science/experience.mjs';
+import {buildResearcher} from './science/researcher.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const write=(p,s)=>{fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),s)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const style=read('scripts/science/style.css');
 const all=[...legacy,...batch2.map(t=>({...t,file:'science/'+t.id+'.html',kind:'探究實驗',batch:2}))];
-const inlineJS=p=>read(p).replace(/^export /gm,'');
-const scienceCode=()=>[inlineJS('scripts/science/models.mjs'),inlineJS('scripts/science/diagrams.mjs'),read('scripts/science/runtime.js')].join('\n');
+const inlineJS=p=>read(p).replace(/^import .*;$/gm,'').replace(/^export /gm,'');
+const scienceCode=()=>[inlineJS('scripts/science/models.mjs'),inlineJS('scripts/science/diagrams.mjs'),inlineJS('scripts/science/task-predictions.mjs'),read('scripts/science/runtime.js')].join('\n');
 const meta=(title,description,url)=>`<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}｜百宏文教</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${url}"><meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}｜百宏文教"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://www.bhcs.com.tw/assets/og.jpg"><meta property="og:image:alt" content="百宏文教免費學習資源"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="../../assets/favicon.png"><style>${style}</style>`;
 const header=`<a href="#main" class="skip">跳到主要內容</a><header class="topbar"><div class="shell"><a href="../../index.html">百宏文教 BHCS</a><nav aria-label="主選單"><a href="./">自然實驗總覽</a> · <a href="../../ziyuan.html">全部學習資源</a></nav></div></header>`;
 const footer=`<footer class="foot"><div class="shell"><p>百宏文教｜免費使用・不需登入</p><a href="../../guozhong-lihua.html" data-science-event="course">國中自然課程</a> · <a href="../../lianluo.html" data-science-event="consult">免費程度確認</a><p>操作紀錄只在本機儲存；匿名使用事件不含預測文字、作答內容或學生姓名。</p></div></footer><script src="../../assets/science-events.js" defer></script>`;
@@ -23,7 +26,7 @@ write('tools/science/index.html',`<!doctype html><html lang="zh-Hant"><head>${me
 // Resource page: preserve every existing pill URL and all non-science sections.
 replaceBlock('ziyuan.html','science-entry',`<div style="padding:20px;border:1px solid #cbdde4;border-radius:16px;background:#eef7f5;margin:20px 0"><h3>自然實驗，依科目找</h3><p>不確定先做哪個？到總覽依年段、科目或單元篩選，每張卡片都有操作重點與建議時間。</p><div class="tpills"><a href="tools/science/">全部 ${all.length} 項自然教材</a><a href="tools/science/?subject=國小自然">國小自然</a><a href="tools/science/?subject=生物">國中生物</a><a href="tools/science/?subject=理化">國中理化</a><a href="tools/science/?subject=地科">國中地科</a></div></div>`,`      <section class="res-sec" id="res-math">`);
 for(const p of ['guoxiao.html','guozhong.html','guozhong-lihua.html']) replaceBlock(p,'science-course',`<section><div class="wrap-narrow prose"><h2>先用一個實驗，找出卡住的觀念</h2><p>選擇一個單元，先預測、再操作、最後用觀察紀錄說明結果。${p==='guoxiao.html'?'<a href="tools/mini-lab/">國小生活科學</a>適合由家長或老師陪同。':'可從<a href="tools/circuit-lab.html">電路</a>、<a href="tools/microscope-lab.html">顯微鏡</a>或<a href="tools/plate-earthquake-lab.html">板塊地震</a>開始。'}</p><p><a href="tools/science/">依科目挑選自然互動教材 →</a>　<a href="lianluo.html">需要老師協助？預約程度確認</a></p></div></section>`,`</main>`);
-for (const file of firstBatch){const t=legacy.find(t=>t.file===file);replaceBlock('tools/'+file,'science-teaching',`<section class="card section lesson-meta" aria-label="教材使用指南"><h2>怎麼用這份教材</h2><p><strong>適用：</strong>${t.grade} · ${t.unit}（各校版本進度可能不同）　<strong>建議：</strong>${t.minutes} 分鐘</p><p><strong>先備：</strong>${t.prior}。<strong>學習目標：</strong>能透過操作說明${t.goals}。</p><p><strong>教師引導：</strong>先保留預測，不提示答案。第一筆完成後只改一個條件、加入第二筆紀錄，再請學生引用數據解釋差異。</p><p><strong>常見迷思：</strong>模擬中的比例、時間與理想條件不一定等同真實實驗，請對照本頁教師提示及模型限制。</p><p><a href="science/">自然實驗總覽</a> · <a href="../guozhong-lihua.html" data-science-event="course">相關課程</a> · <a href="../lianluo.html" data-science-event="consult">程度確認</a></p></section>`,`</main>`);replaceBlock('tools/'+file,'science-events',`<script src="../assets/science-events.js" defer></script>`,`</body>`)}
+for (const file of firstBatch){const t=legacy.find(t=>t.file===file);replaceBlock('tools/'+file,'science-teaching',`<section class="card section lesson-meta" aria-label="教材使用指南"><h2>怎麼用這份教材</h2><p><strong>適用：</strong>${t.grade} · ${t.unit}（各校版本進度可能不同）　<strong>建議：</strong>${t.minutes} 分鐘</p><p><strong>先備：</strong>${t.prior}。<strong>學習目標：</strong>能透過操作說明${t.goals}。</p><p><strong>教師引導：</strong>先保留預測，不提示答案。第一筆完成後只改一個條件、加入第二筆紀錄，再請學生引用數據解釋差異。</p><p><strong>常見迷思：</strong>${esc(firstMisconceptions[file])} 模型的理想條件請對照本頁教師提示。</p><p><a href="science/">自然實驗總覽</a> · <a href="../guozhong-lihua.html" data-science-event="course">相關課程</a> · <a href="../lianluo.html" data-science-event="consult">程度確認</a></p></section>`,`</main>`);replaceBlock('tools/'+file,'science-events',`<script src="../assets/science-events.js" defer></script>`,`</body>`)}
 export {root,read,write,esc,meta,header,footer,all,replaceBlock};
 // Migrate only first-batch analytics to the allowlisted adapter; keep model code intact.
 for(const file of firstBatch){
@@ -64,3 +67,5 @@ replaceBlock('ziyuan.html','science-card-style','<style>.science-categories{disp
 let resource=read('ziyuan.html');resource=resource.replace(/目前共 \d+ 項/,'目前共 '+(98+all.length-1)+' 項').replace(/國中自然<span>\d+<\/span>/,'國中自然<span>'+(all.length-1)+'</span>').replace(/國中自然 · 互動教材<span class="count">\d+ 項<\/span>/,'國中自然 · 互動教材<span class="count">'+(all.length-1)+' 項</span>');write('ziyuan.html',resource);
 console.log('Built science directory:',all.length,'resources');
 enhanceLessons(root,firstBatch,batch2);
+
+buildResearcher(root,firstBatch,batch2);
