@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>光合作用因素實驗室｜光照、二氧化碳與溫度｜百宏文教</title>
-<meta name="description" content="免費光合作用因素互動實驗室。調整光照強度、二氧化碳濃度與溫度，預測限制因子，觀察相對光合作用速率、氧氣泡與速率曲線，練習控制變因。">
+<meta name="description" content="免費光合作用因素互動實驗室。調整光照強度、二氧化碳濃度與溫度，觀察限制因子、相對光合作用速率、氧氣泡與速率曲線，練習控制變因。">
 <link rel="canonical" href="https://www.bhcs.com.tw/tools/photosynthesis-factor-lab.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="光合作用因素實驗室｜百宏文教">
@@ -72,7 +72,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 <aside class="lesson-route" aria-labelledby="self-study-title"><h2 id="self-study-title">自學起點：燈越亮，植物的光合作用就一定越快嗎？</h2><p>第一次使用，照這三步做；預測猜錯沒關係，重點是能用觀察修正想法。</p><ol class="route-steps"><li><b>01　先準備與預測</b><p>保留二氧化碳與溫度，只改光照，先預測速率變化。</p><a href="#mainLab">前往操作 →</a></li><li><b>02　操作與觀察</b><p>開始觀察，記下速率，再只增加光照；注意是否已接近平台。</p><a href="#mainLab">看觀察區 →</a></li><li><b>03　比較與解釋</b><p>改變二氧化碳再比較，說明哪個因素限制了目前的速率。</p><a href="#quiz">前往檢核 →</a></li></ol><details class="inquiry-guide" id="inquiry-guide"><summary>本課比較任務：固定什麼、只改什麼？</summary><dl><div><dt>保持不變</dt><dd>CO₂ 250 ppm、溫度 25°C。</dd></div><div><dt>只改一個條件</dt><dd>光照 60% → 100%。</dd></div><div><dt>記錄證據</dt><dd>光合速率及判定的限制因子。</dd></div><div><dt>完成標準</dt><dd>說明光更強時速率為何可能沒有明顯提高。</dd></div></dl><label for="study-note">用自己的話解釋（可選填，勿填姓名）</label><textarea id="study-note" rows="3" maxlength="1000" placeholder="我固定了＿＿，只改＿＿；觀察到＿＿，我的解釋是＿＿。"></textarea><details class="teacher-plan"><summary>教師帶領：15 分鐘比較活動</summary><ol><li>3 分鐘：讀「保持不變」與「只改一個條件」，讓學生先說預測理由。</li><li>7 分鐘：完成兩筆觀察。若要驗證 CO₂ 是否限制速率，下一次應固定什麼、改什麼？</li><li>5 分鐘：同學交換證據，以「完成標準」檢查解釋，再做頁面檢核。</li></ol><p>若學生仍卡住：先請他指著畫面讀出一個數值，再說另一組如何不同，不必一次背出全部術語。</p></details></details><fieldset class="study-checks"><legend>我的自學進度（自己確認，不代表測驗成績）</legend><label><input type="checkbox" data-study-step="0">已寫下預測或說出理由</label><label><input type="checkbox" data-study-step="1">已完成兩組比較</label><label><input type="checkbox" data-study-step="2">能引用證據解釋差異</label><p id="study-progress" role="status" aria-live="polite">已確認 0／3 項</p></fieldset><div class="study-storage"><span id="study-save-status">進度與筆記只儲存在這台瀏覽器。</span><button type="button" id="study-clear">清除自學進度與筆記</button></div><details class="context-art"><summary>從生活情境開始觀察</summary><figure class="science-art"><img src="../assets/science/plant-context.webp" width="1536" height="1024" loading="lazy" alt="窗邊綠色植株與盆栽的情境插畫"><figcaption>先想一想：白天的植物也會呼吸嗎？插畫用來連結生活情境，實驗數值以模型讀值為準。</figcaption></figure></details></aside>
 <!-- science-self-study:end -->
 <section id="mainLab" class="labgrid" aria-labelledby="labTitle">
- <div class="card"><div class="cardhead"><h2 id="labTitle">水草光合作用模擬器</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div><div class="canvasStage"><canvas id="labCanvas" width="800" height="470" role="img" aria-label="水草光合作用實驗，尚未開始"></canvas><div class="canvasCover" id="canvasCover">先設定三個條件，預測目前的限制因子</div></div></div>
+ <div class="card"><div class="cardhead"><h2 id="labTitle">水草光合作用模擬器</h2><div class="mode"><label for="level">顯示模式</label><select id="level"><option value="basic">基礎</option><option value="advanced">進階</option></select></div></div><div class="canvasStage"><canvas id="labCanvas" width="800" height="470" role="img" aria-label="水草光合作用實驗，尚未開始"></canvas><div class="canvasCover" id="canvasCover">先設定三個條件，再開始觀察限制因子</div></div></div>
  <aside class="card panel" aria-label="光合作用控制區">
   <h2>設定實驗條件</h2>
   <div class="control"><label for="light">光照強度 <output id="lightOut">50%</output></label><input id="light" type="range" min="0" max="100" step="5" value="50"></div>
@@ -80,7 +80,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
   <div class="control"><label for="temperature">溫度 <output id="temperatureOut">25°C</output></label><input id="temperature" type="range" min="5" max="45" step="1" value="25"></div>
     <button class="btn primary" id="start" type="button" style="width:100%">開始觀察</button>
   <div class="actions"><button class="btn secondary" id="replay" type="button" disabled>重播</button><button class="btn secondary" id="pause" type="button" disabled>暫停</button><button class="btn secondary" id="reset" type="button" disabled>重新設定</button></div>
-  <div id="status" class="status" role="status" aria-live="polite"><strong>先做預測</strong>比較三個條件：哪一項最不足，就最可能限制光合作用速率。</div>
+  <div id="status" class="status" role="status" aria-live="polite"><strong>準備開始</strong>比較三個條件：哪一項最不足，就最可能限制光合作用速率。</div>
  </aside>
  <div class="readouts" aria-label="光合作用即時讀值">
   <div class="meter"><span class="name">相對光合作用速率</span><span class="value" id="rateValue">—</span><span class="note">模型上限 20.0 單位／分</span></div>
@@ -95,7 +95,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 <section id="explain" class="card section">
  <h2>限制因子：不是每個條件都同時主導</h2><p class="lead" id="explanation">完成一次觀察後，這裡會說明是哪個條件把速率卡住，以及優先改變哪一項才有效。</p>
  <div class="equation">二氧化碳 ＋ 水　<span aria-hidden="true">→</span>　葡萄糖 ＋ 氧氣　（需要光能與葉綠體）</div>
- <div class="workflow"><div><b>01</b><span>先做預測</span></div><div><b>02</b><span>固定兩項</span></div><div><b>03</b><span>只改一項</span></div><div><b>04</b><span>記錄速率</span></div><div><b>05</b><span>找出限制</span></div></div>
+ <div class="workflow"><div><b>01</b><span>開始觀察</span></div><div><b>02</b><span>固定兩項</span></div><div><b>03</b><span>只改一項</span></div><div><b>04</b><span>記錄速率</span></div><div><b>05</b><span>找出限制</span></div></div>
  <div class="conceptGrid"><article class="fact"><h3>光照會逐漸飽和</h3><p>低光時增加光照通常有效；當其他條件先成為限制，繼續增加光照就只會進入平臺。</p></article><article class="fact"><h3>二氧化碳是原料</h3><p>光很充足但 CO₂ 不足時，速率仍然受限。只提高亮度，無法補上缺少的原料。</p></article><article class="fact"><h3>溫度有適合範圍</h3><p>酵素作用受溫度影響。本模型在 25°C 最適；過低反應慢，過高也會讓速率下降。</p></article></div>
  <p class="advancedOnly" hidden><strong>目前模型：</strong> <span id="formulaText" class="formula">等待開始</span></p>
  <div class="teacher" id="teacherBox" hidden><h3>教師模式：用「單一變因」破解直覺</h3><div>先讓學生固定 25°C 與 1000 ppm CO₂，只改光照並記錄；再把 CO₂ 降到 200 ppm 重做。兩條曲線會在不同高度形成平臺。追問：「光仍增加，為什麼速率不再上升？」即可帶入限制因子。避免把本頁相對單位說成真實水草每分鐘固定氣泡數。</div></div><button class="btn secondary" id="teacherToggle" type="button" aria-expanded="false" aria-controls="teacherBox" style="margin-top:14px">顯示教師提示</button>
@@ -105,7 +105,7 @@ section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
 <section id="graph" class="card section">
  <h2>如果只改一個變因，曲線會怎麼走？</h2><p class="lead">圖中其他兩項維持目前設定。曲線出現平臺時，代表另一個條件已經接手成為限制因子。</p>
  <div class="graphGrid"><div class="chartBox"><canvas id="graphCanvas" width="800" height="430" role="img" aria-label="相對光合作用速率曲線"></canvas></div><div class="graphPanel"><div class="control"><label for="graphVariable">橫軸變因</label><select id="graphVariable"><option value="light">光照強度</option><option value="co2">二氧化碳濃度</option><option value="temperature">溫度</option></select></div><div class="key"><div><b>目前讀值</b><span id="graphPoint">—</span></div><div><b>平臺原因</b><span id="plateauText">—</span></div><div><b>控制變因</b><span id="controlText">—</span></div></div></div></div>
- <h3 style="color:var(--navy);margin-bottom:4px">引導任務</h3><div class="missions"><button class="mission" type="button" data-mission="light">任務一：低光條件</button><button class="mission" type="button" data-mission="co2">任務二：低 CO₂ 條件</button><button class="mission" type="button" data-mission="cold">任務三：低溫條件</button><button class="mission" type="button" data-mission="plateau">任務四：提高光照會怎樣？</button></div><div id="missionText" class="status"><strong>建議做法</strong>每次套用任務後先預測主要限制因子，再開始觀察；比較時一次只改一個條件。</div>
+ <h3 style="color:var(--navy);margin-bottom:4px">引導任務</h3><div class="missions"><button class="mission" type="button" data-mission="light">任務一：低光條件</button><button class="mission" type="button" data-mission="co2">任務二：低 CO₂ 條件</button><button class="mission" type="button" data-mission="cold">任務三：低溫條件</button><button class="mission" type="button" data-mission="plateau">任務四：提高光照會怎樣？</button></div><div id="missionText" class="status"><strong>建議做法</strong>每次套用任務後直接開始觀察主要限制因子；比較時一次只改一個條件。</div>
 </section>
 
 <section id="record" class="card section"><h2>實驗紀錄</h2><p class="lead">把不同條件加入表格，尋找「改了自變因，但速率沒有再增加」的證據。資料只存在這台裝置。</p><div class="recordTools"><button class="btn primary" id="addRecord" type="button" disabled>加入目前紀錄</button><button class="btn secondary" id="printRecord" type="button">列印紀錄</button><button class="btn secondary" id="clearRecord" type="button">清除紀錄</button></div><div class="tableWrap"><table><thead><tr><th>#</th><th>光照</th><th>CO₂</th><th>溫度</th><th>光因子</th><th>CO₂ 因子</th><th>溫度因子</th><th>限制因子</th><th>相對速率</th><th>30 秒產氧</th></tr></thead><tbody id="records"><tr><td colspan="10" class="empty">尚無紀錄。先完成一次光合作用觀察。</td></tr></tbody></table></div></section>
