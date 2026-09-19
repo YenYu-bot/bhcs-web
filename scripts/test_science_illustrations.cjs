@@ -2,7 +2,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.resolve(__dirname,'..');
 (async()=>{
- const {microCell,microScale,MICRO_FIELD_PX,MICRO_UM_TO_WORLD}=await import('./science/microscope-geometry.mjs');
+ const {microCell,microScale,microSpecimenInView,MICRO_FIELD_PX,MICRO_UM_TO_WORLD,MICRO_STAGE_GAIN}=await import('./science/microscope-geometry.mjs');
  for(const obj of [4,10,40]){
   const s=microScale(obj);assert.ok(Math.abs(s.pixels/MICRO_FIELD_PX-s.value/(18/obj))<1e-12);
   for(const x of [s.x-12,s.x+s.pixels+12])for(const y of [s.y-15,s.y+42])assert.ok(Math.hypot(x-300,y-300)<270,'Scale box must remain inside circular field');
@@ -14,6 +14,13 @@ const root=path.resolve(__dirname,'..');
   if(kind==='elodea')assert.ok(new Set(cells.map(c=>c.organelles.length)).size>8,'Chloroplast counts should vary');
  }
  assert.equal(MICRO_UM_TO_WORLD,540/4500);
+ assert.equal(MICRO_STAGE_GAIN,1.6);
+ for(const kind of ['letter','onion','cheek','elodea']){
+  assert.equal(microSpecimenInView(kind,4,0,0),true,kind+' must be visible when centered at low power');
+  assert.equal(microSpecimenInView(kind,4,270,0),false,kind+' must leave the field at the horizontal stage limit');
+  assert.equal(microSpecimenInView(kind,4,0,270),false,kind+' must leave the field at the vertical stage limit');
+  assert.equal(microSpecimenInView(kind,40,54,0),true,kind+' must remain findable after a moderate stage move at high power');
+ }
  console.log('PASS microscope: calibrated scale, clipping bounds, stable varied cells and organelle sizes');
  const heat=fs.readFileSync(path.join(root,'tools/heat-phase-lab.html'),'utf8');
  const fn=heat.slice(heat.indexOf('function drawParticles()'),heat.indexOf('function updateReadouts()'));
