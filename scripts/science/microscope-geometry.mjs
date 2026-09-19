@@ -1,7 +1,15 @@
 // Sizes below are explicit teaching-model settings, not measurements of a slide.
 export const MICRO_FIELD_PX=540;
 export const MICRO_UM_TO_WORLD=MICRO_FIELD_PX/4500;
+export const MICRO_STAGE_GAIN=1.6;
 export const MICRO_SIZES={onion:{w:260,h:85},elodea:{w:90,h:45},cheek:{w:125,h:110}};
+export const MICRO_SPECIMEN_BOUNDS={letter:{halfX:90,halfY:90},onion:{halfX:145,halfY:115},cheek:{halfX:135,halfY:115},elodea:{halfX:150,halfY:120}};
+export function microSpecimenInView(kind,obj,stageX=0,stageY=0){
+ const bounds=MICRO_SPECIMEN_BOUNDS[kind],z=obj/4,r=MICRO_FIELD_PX/2/z,cx=-stageX*MICRO_STAGE_GAIN,cy=stageY*MICRO_STAGE_GAIN;
+ if(!bounds)return false;
+ const dx=Math.max(Math.abs(cx)-bounds.halfX,0),dy=Math.max(Math.abs(cy)-bounds.halfY,0);
+ return Math.hypot(dx,dy)<=r;
+}
 export function microHash(row,col,salt=0){let v=Math.imul(row+17011,374761393)^Math.imul(col+8107,668265263)^Math.imul(salt+1,1274126177);v=Math.imul(v^(v>>>13),1274126177);return ((v^(v>>>16))>>>0)/4294967296;}
 export function microCell(kind,row,col){
  const rnd=s=>microHash(row,col,s),{w,h}=MICRO_SIZES[kind];
