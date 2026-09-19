@@ -38,10 +38,10 @@ assert.match(shellCss,/\.researcher-bubble\{left:auto;right:6%;top:9%;[^}]*width
 assert.match(shellCss,/@media\(max-width:850px\)[\s\S]*?\.researcher-scene \.doc\{left:3%;right:auto;[^}]*\}[\s\S]*?\.researcher-bubble\{left:auto;right:16%;/, 'tablet welcome layout must preserve the left-to-right composition');
 assert.match(shellCss,/\.researcher-scene \.doc\{left:4px;right:auto;width:155px/, 'mobile welcome character must stay on the left');
 assert.match(shellCss,/\.researcher-bubble\{left:auto;right:14px;top:16px;width:auto;max-width:calc\(100% - 172px\)/, 'mobile welcome bubble must stay on the right');
-assert.match(shellCss,/\.researcher-bubble:before,\.researcher-bubble:after\{[^}]*clip-path:polygon\(0 100%,100% 12%,100% 82%\)/, 'bubble tail must angle down-left toward the character');
-assert.match(shellCss,/\.researcher-bubble:before\{left:-30px;bottom:-44px;width:34px;height:54px;[^}]*background:#58b99a\}/, 'bubble tail outer border must extend down-left toward the character');
-assert.match(shellCss,/\.researcher-bubble:after\{left:-24px;bottom:-36px;width:28px;height:44px;[^}]*background:rgba\(255,255,255,\.96\)\}/, 'bubble tail inner fill must preserve the down-left direction');
-assert.match(shellCss,/@media\(max-width:700px\)[\s\S]*?\.researcher-bubble:before\{left:-20px;bottom:-27px;width:24px;height:34px\}[\s\S]*?\.researcher-bubble:after\{left:-14px;bottom:-20px;width:18px;height:25px\}/, 'mobile bubble tail must use a compact down-left angle');
+assert.match(shellCss,/\.researcher-bubble:before,\.researcher-bubble:after\{[^}]*clip-path:polygon\(0 100%,28% 0,100% 0\)/, 'bubble tail must use a compact down-left shape');
+assert.match(shellCss,/\.researcher-bubble:before\{left:22px;bottom:-16px;width:22px;height:18px;[^}]*background:#58b99a\}/, 'desktop bubble tail must stay compact and attached to the bubble');
+assert.match(shellCss,/\.researcher-bubble:after\{left:26px;bottom:-11px;width:16px;height:13px;[^}]*background:rgba\(255,255,255,\.96\)\}/, 'desktop bubble tail inner fill missing');
+assert.match(shellCss,/@media\(max-width:700px\)[\s\S]*?\.researcher-bubble:before\{left:18px;bottom:-14px;width:18px;height:16px\}[\s\S]*?\.researcher-bubble:after\{left:21px;bottom:-9px;width:13px;height:11px\}/, 'mobile bubble tail must use the smaller compact shape');
 console.log('PASS researcher batch 5: final four legacy stations are prediction-free and directly operable');
 
 
