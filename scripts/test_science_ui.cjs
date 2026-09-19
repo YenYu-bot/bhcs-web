@@ -26,6 +26,16 @@ function structural(d,file){
   const file='tools/science/'+conf.id+'.html',{dom,errors}=load(file),w=dom.window,d=w.document,$=id=>d.getElementById(id);
   structural(d,file);assert.equal($('control-fields').disabled,false);
   assert.ok(d.querySelector('#experiment').firstElementChild.classList.contains('controls'),'Controls must precede results in reading/tab order');
+  if(conf.id==='electromagnetism'){
+   assert.equal($('ctl-field').hidden,true);assert.equal(d.querySelector('label[for="ctl-field"]').hidden,true);assert.equal($('ctl-current').hidden,false);
+   $('ctl-mode').value='motor';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal($('ctl-field').hidden,false);assert.equal($('ctl-angle').hidden,false);assert.equal($('ctl-rpm').hidden,true);
+   $('ctl-mode').value='magnet';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));
+  }
+  if(conf.id==='pressure-fluid'){
+   assert.equal($('ctl-volume').hidden,true);assert.equal(d.querySelector('label[for="ctl-volume"]').hidden,true);assert.equal($('ctl-depth').hidden,false);
+   $('ctl-mode').value='gas';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal($('ctl-volume').hidden,false);assert.equal($('ctl-depth').hidden,true);assert.equal($('ctl-speed').hidden,true);
+   $('ctl-mode').value='water';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));
+  }
   if(conf.noPrediction){assert.equal($('prediction'),null);$('run').click();assert.ok($('diagram').querySelector('svg'));assert.equal($('readouts').children.length,4);assert.equal($('add-record').disabled,false)}else{$('run').click();assert.equal($('add-record').disabled,true);assert.ok(!$('diagram').querySelector('svg'));$('prediction').value=conf.choices[0][0];$('run').click();assert.ok($('diagram').querySelector('svg'));assert.equal($('readouts').children.length,4);assert.equal($('add-record').disabled,false)};
   $('add-record').click();assert.equal($('records').textContent.includes('尚未'),true);
   $('explanation-input').value='測試觀察：只改一個變因，比較兩筆數值。';$('add-record').click();assert.equal($('records').rows.length,1);assert.ok(!$('records').textContent.includes('尚未'));assert.equal($('add-record').disabled,true);
