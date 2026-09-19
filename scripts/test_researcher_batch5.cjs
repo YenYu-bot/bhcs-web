@@ -18,7 +18,7 @@ function open(file){
 for(const [file,action,resultId] of pages){
  const html=fs.readFileSync(path.join(root,'tools',file),'utf8'),staticDom=new JSDOM(html),sd=staticDom.window.document;
  assert.equal(sd.getElementById('prediction'),null,file+' prediction control must be removed');
- assert.ok(sd.querySelector('link[href="../assets/researcher-lab.css"]'),file+' researcher css missing');
+ assert.ok(sd.querySelector('link[href^="../assets/researcher-lab.css?v="]'),file+' versioned researcher css missing');
  assert.ok(sd.querySelector('script[src="../assets/researcher-lab.js"]'),file+' researcher js missing');
  const visible=sd.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),file+' visible UI still contains prediction wording');
@@ -50,7 +50,7 @@ const sharedAll=['optics','wave-sound','electromagnetism','pressure-fluid','solu
 for(const file of legacyAll){
  const html=fs.readFileSync(path.join(root,'tools',file),'utf8'),d=new JSDOM(html).window.document;
  assert.equal(d.getElementById('prediction'),null,file+' final audit: prediction control exists');
- assert.ok(d.querySelector('link[href="../assets/researcher-lab.css"]'),file+' final audit: researcher css missing');
+ assert.ok(d.querySelector('link[href^="../assets/researcher-lab.css?v="]'),file+' final audit: versioned researcher css missing');
  assert.ok(d.querySelector('script[src="../assets/researcher-lab.js"]'),file+' final audit: researcher js missing');
  const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),file+' final audit: visible prediction wording remains');
@@ -59,14 +59,14 @@ for(const id of sharedAll){
  const file='tools/science/'+id+'.html',html=fs.readFileSync(path.join(root,file),'utf8'),d=new JSDOM(html).window.document,conf=JSON.parse(d.getElementById('lab-config').textContent);
  assert.equal(conf.noPrediction,true,id+' final audit: noPrediction flag missing');
  assert.equal(d.getElementById('prediction'),null,id+' final audit: prediction control exists');
- assert.ok(d.querySelector('link[href="../../assets/researcher-lab.css"]'),id+' final audit: researcher css missing');
+ assert.ok(d.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),id+' final audit: versioned researcher css missing');
  assert.ok(d.querySelector('script[src="../../assets/researcher-lab.js"]'),id+' final audit: researcher js missing');
  const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),id+' final audit: visible prediction wording remains');
  assert.ok(!html.includes('預測'),id+' final audit: inactive prediction program strings remain');
 }
 const directory=fs.readFileSync(path.join(root,'tools/science/index.html'),'utf8'),dirDom=new JSDOM(directory).window.document;
-assert.ok(dirDom.querySelector('link[href="../../assets/researcher-lab.css"]'),'directory final audit: researcher css missing');
+assert.ok(dirDom.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),'directory final audit: versioned researcher css missing');
 assert.ok(dirDom.querySelector('script[src="../../assets/researcher-lab.js"]'),'directory final audit: researcher js missing');
 const dirVisible=dirDom.body.cloneNode(true);dirVisible.querySelectorAll('script,style').forEach(n=>n.remove());
 assert.ok(!dirVisible.textContent.includes('預測'),'directory final audit: visible prediction wording remains');

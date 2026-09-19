@@ -7,7 +7,7 @@ for(const id of ids){
  const dom=new JSDOM(html),d=dom.window.document,conf=JSON.parse(d.getElementById('lab-config').textContent);
  assert.equal(conf.noPrediction,true,id+' must enable prediction-free mode');
  assert.equal(d.getElementById('prediction'),null,id+' must not render prediction control');
- assert.ok(d.querySelector('link[href="../../assets/researcher-lab.css"]'),id+' researcher css');
+ assert.ok(d.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),id+' versioned researcher css');
  assert.ok(d.querySelector('script[src="../../assets/researcher-lab.js"]'),id+' researcher js');
  const clone=d.body.cloneNode(true);clone.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!clone.textContent.includes('預測'),id+' visible UI still contains prediction wording');
