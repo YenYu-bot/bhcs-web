@@ -103,11 +103,11 @@ var(--lab-bg)!important}
 .researcher-station .layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.78fr);gap:16px;align-items:start}
 .researcher-station .layout>.observation{order:1}
 .researcher-station .layout>.controls{order:2;background:#fffaf0;max-height:none;overflow:visible}
-.researcher-station .observation .stage{background:#f1f7f4;border:2px solid #c9ddd2;border-radius:18px;min-height:300px;padding:12px;overflow:auto;touch-action:pan-y;scroll-margin-top:86px}
+.researcher-station .observation .stage{background:#f1f7f4;border:2px solid #c9ddd2;border-radius:18px;min-height:300px;max-height:48vh;padding:12px;overflow:auto;touch-action:pan-y;scroll-margin-top:86px}
 .researcher-station .observation .stage [data-lab-drag]{touch-action:none;cursor:grab}
 .researcher-station .observation .stage [data-lab-drag]:active{cursor:grabbing}
 .researcher-station #readouts{scroll-margin-top:86px}
-.researcher-station .observation .stage svg{display:block;max-width:100%;height:auto;margin:auto}
+.researcher-station .observation .stage svg{display:block;width:auto;max-width:100%;max-height:calc(48vh - 28px);height:auto;margin:auto}
 .researcher-station .controls fieldset{border:0;padding:0;margin:0}
 .researcher-station .controls label{font-weight:800;color:#365c4d}
 .researcher-station .controls select,.researcher-station .controls input[type=range]{width:100%;margin-bottom:10px}
@@ -128,4 +128,4 @@ var(--lab-bg)!important}
 .researcher-station .step{display:inline-block;border-radius:999px;background:#fff0c8;color:#7a5914;border:1px solid #ead081;padding:3px 9px;font-size:11px;font-weight:900;letter-spacing:.08em}
 @media(max-width:820px){.researcher-station .layout{grid-template-columns:1fr}.researcher-station .layout>.observation{order:1}.researcher-station .layout>.controls{order:2;max-height:none;overflow:visible}.researcher-station .missions{grid-template-columns:1fr}}
 @media(max-width:700px){.researcher-station .layout>.observation{display:contents}.researcher-station .observation .stage{position:sticky;top:6px;z-index:10;min-height:180px;max-height:40svh;padding:6px;border-color:#60c3a4;box-shadow:0 8px 18px #294c3e28}.researcher-station .readouts{grid-template-columns:1fr 1fr}.researcher-station .controls .actions{grid-template-columns:1fr}}
-@media print{.researcher-station .observation .stage{position:static!important;max-height:none!important;overflow:visible!important;touch-action:auto}.researcher-return,.researcher-bench-record{display:none!important}}
+@media print{.researcher-station .observation .stage{position:static!important;max-height:none!important;overflow:visible!important;touch-action:auto}.researcher-station .observation .stage svg{max-height:none!important}.researcher-return,.researcher-bench-record{display:none!important}}
