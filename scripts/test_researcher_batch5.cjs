@@ -53,6 +53,7 @@ for(const id of sharedAll){
  assert.ok(d.querySelector('script[src="../../assets/researcher-lab.js"]'),id+' final audit: researcher js missing');
  const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),id+' final audit: visible prediction wording remains');
+ assert.ok(!html.includes('預測'),id+' final audit: inactive prediction program strings remain');
 }
 const directory=fs.readFileSync(path.join(root,'tools/science/index.html'),'utf8'),dirDom=new JSDOM(directory).window.document;
 assert.ok(dirDom.querySelector('link[href="../../assets/researcher-lab.css"]'),'directory final audit: researcher css missing');
@@ -62,4 +63,9 @@ assert.ok(!dirVisible.textContent.includes('預測'),'directory final audit: vis
 const mini=fs.readFileSync(path.join(root,'tools/mini-lab/index.html'),'utf8');
 assert.ok(mini.includes('余老師'),'mini-lab final audit: 余老師 missing');
 assert.ok(!mini.includes('奇奇博士'),'mini-lab final audit: old guide name remains');
+for(const file of legacyAll.filter(file=>file!=='microscope-lab.html')){const html=fs.readFileSync(path.join(root,'tools',file),'utf8');assert.match(html,/function loadRecords\(\)\{try\{const saved=JSON\.parse[\s\S]*?Array\.isArray\(saved\)\?saved:\[\]/,file+' loadRecords must reject non-array storage')}
+const resourceHtml=fs.readFileSync(path.join(root,'ziyuan.html'),'utf8'),resourceDom=new JSDOM(resourceHtml,{runScripts:'dangerously'}),resourceDoc=resourceDom.window.document,resourceInput=resourceDoc.getElementById('resource-search');
+assert.ok(resourceInput,'resource search missing');assert.equal(resourceDoc.querySelectorAll('.res-sec .tpills>a,.science-category li>a').length,126,'resource total changed');assert.equal(resourceDoc.querySelectorAll('#res-hs-math .trow').length,4,'high-school four-book grouping changed');
+resourceInput.value='分數';resourceInput.dispatchEvent(new resourceDom.window.Event('input',{bubbles:true}));assert.ok(![...resourceDoc.querySelectorAll('.res-sec .tpills>a,.science-category li>a')].find(a=>a.textContent.includes('分數練習單')).classList.contains('resource-hidden'),'fraction search failed');
+resourceInput.value='透鏡';resourceInput.dispatchEvent(new resourceDom.window.Event('input',{bubbles:true}));assert.ok([...resourceDoc.querySelectorAll('.science-category li>a')].some(a=>a.textContent.includes('透鏡')&&!a.closest('li').classList.contains('resource-hidden')),'lens search failed');resourceDom.window.close();
 console.log('PASS full researcher audit: 20 stations + directory + 余老師 naming');

@@ -10,6 +10,9 @@ must(dir.includes('researcher-lab.css')&&dir.includes('researcher-lab.js'),'dire
 must(micro.includes('字母 e 定位玻片'),'letter slide missing');
 must(micro.includes('data-answer="a" data-tip="影像與玻片移動方向相反'),'Q2 answer mismatch');
 must(micro.includes("Math.max(-270")&&micro.includes("*540/slideDrag.width"),'slide movement range not expanded');
+must(micro.includes('function slideStep()')&&micro.includes('MICRO_FIELD_PX/(objective()/4)/10'),'slide key step must follow one tenth of the current field');
+must(micro.includes("ctx.lineWidth=4/(u*z)"),'letter-slide crosshair must keep a fixed screen-pixel width');
+must(micro.includes("featureVisible(420*MICRO_UM_TO_WORLD,-160*MICRO_UM_TO_WORLD)"),'letter visibility must be derived from the current field');
 must(!micro.includes('預測')&&!micro.includes('id="prediction"')&&!micro.includes('els.prediction'),'prediction flow still present');
 must(micro.includes('function begin(){started=true')&&micro.includes('<strong>研究開始</strong>')&&micro.includes('先在低倍把影像調清楚'),'hands-on start flow missing');
 must(micro.includes("Array.isArray(v)?v:[]"),'record storage guard missing');

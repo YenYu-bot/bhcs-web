@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {calculate,describe} from './science/models.mjs';
 import {diagram} from './science/diagrams.mjs';
 import {batch2} from './science/batch2.mjs';
+import {JSDOM} from 'jsdom';
 const defaults=id=>Object.fromEntries(batch2.find(t=>t.id===id).controls.map(c=>[c.key,c.value]));
 const calc=(id,values={})=>calculate(id,{...defaults(id),...values});
 const close=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-7,`${actual} != ${expected}`);
@@ -47,6 +48,22 @@ test('Electromagnetism diagram: zero field and signed reference axis',()=>{
   const fullTurn={...base,mode,angle:360};assert.ok(!describe('electromagnetism',fullTurn,calculate('electromagnetism',fullTurn)).metrics.some(([,value])=>/^-0(?:\s|$)/.test(value)),'Floating-point residue must not print negative zero');
  }
 });
+test('Electromagnetism diagram: front current and field obey the right-hand rule',()=>{
+ const base=defaults('electromagnetism');
+ for(const current of [-1,1]){
+  const s={...base,mode:'magnet',current},r=calculate('electromagnetism',s),svg=diagram('electromagnetism',s,r);
+  const front=svg.match(/data-front-current data-y1="([\d.]+)" data-y2="([\d.]+)"/);
+  const field=svg.match(/data-field-arrow data-x1="([\d.]+)" data-x2="([\d.]+)"/);
+  assert.ok(front&&field,'direction metadata must be present');
+  const frontUp=Math.sign(+front[1]-+front[2]);
+  const fieldRight=Math.sign(+field[2]-+field[1]);
+  assert.equal(fieldRight,-frontUp,'front-side current and axial field must satisfy the right-hand rule');
+  assert.match(svg,new RegExp(`aria-label="前側電流向${frontUp>0?'上':'下'}，N 極在${fieldRight>0?'右':'左'}"`));
+  assert.match(svg,/粗實線：前半圈/);assert.match(svg,/淡線：後半圈/);
+ }
+ const zero={...base,mode:'magnet',current:0},svg=diagram('electromagnetism',zero,calculate('electromagnetism',zero));
+ assert.ok(!svg.includes('data-front-current'));assert.ok(!svg.includes('data-field-arrow'));
+});
 test('Solubility: mass accounting / concentration / exact saturation',()=>{
  const r=calc('solubility');close(r.capacity,30);close(r.dissolved,30);close(r.solid,20);close(r.percent,30/130*100);
  assert.equal(calc('solubility',{soluteMass:30}).kind,'edge');
@@ -80,6 +97,18 @@ test('Plant exchange: dark respiration / humidity / closed stomata',()=>{
  close(calc('plant-exchange',{light:0}).net,-2);
  close(calc('plant-exchange',{humidity:100}).transpiration,0);
  close(calc('plant-exchange',{stomata:0}).net,-2);
+});
+test('Plant exchange diagram: guard cells do not overlap and pore widens monotonically',()=>{
+ const base=defaults('plant-exchange'),widths=[];
+ for(const stomata of [0,50,100]){
+  const s={...base,stomata},svg=diagram('plant-exchange',s,calculate('plant-exchange',s));
+  const dom=new JSDOM(svg),paths=[...dom.window.document.querySelectorAll('.guard-cell')];
+  assert.equal(paths.length,2);
+  const xRange=d=>{const nums=[...d.matchAll(/[MC]([^MCZ]+)/g)].flatMap(m=>(m[1].match(/-?[\d.]+/g)||[]).map(Number));const xs=[];for(let i=0;i<nums.length;i+=2)xs.push(nums[i]);return [Math.min(...xs),Math.max(...xs)]};
+  const left=xRange(paths[0].getAttribute('d')),right=xRange(paths[1].getAttribute('d'));
+  assert.ok(left[1]<=right[0],`guard cells overlap at ${stomata}%`);widths.push(right[0]-left[1]);dom.window.close();
+ }
+ assert.deepEqual(widths,[0,28,56]);
 });
 test('Ecosystem: transfer / initial value / K / decline above K',()=>{
  assert.deepEqual(calc('ecosystem').energy.map(Math.round),[10000,1000,100]);
