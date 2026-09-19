@@ -33,9 +33,14 @@ const shell=fs.readFileSync(path.join(root,'assets/researcher-lab.js'),'utf8');
 for(const key of ['plate-earthquake-lab.html','buoyancy-density-lab.html','acid-base-indicator-lab.html','photosynthesis-factor-lab.html'])assert.ok(shell.includes(key),'researcher shell missing '+key);
 assert.ok(shell.includes('余老師'),'researcher shell missing 余老師');
 const shellCss=fs.readFileSync(path.join(root,'assets/researcher-lab.css'),'utf8');
+assert.match(shellCss,/\.researcher-scene \.doc\{left:3\.5%;right:auto;bottom:-2px/, 'desktop welcome character must stay on the left');
+assert.match(shellCss,/\.researcher-bubble\{left:auto;right:6%;top:9%;[^}]*width:min\(260px,42%\)/, 'desktop welcome bubble must stay on the right');
+assert.match(shellCss,/@media\(max-width:850px\)[\s\S]*?\.researcher-scene \.doc\{left:3%;right:auto;[^}]*\}[\s\S]*?\.researcher-bubble\{left:auto;right:16%;/, 'tablet welcome layout must preserve the left-to-right composition');
 assert.match(shellCss,/\.researcher-scene \.doc\{left:4px;right:auto;width:155px/, 'mobile welcome character must stay on the left');
-assert.match(shellCss,/\.researcher-bubble\{left:auto;right:14px;top:16px;max-width:calc\(100% - 172px\)/, 'mobile welcome bubble must stay on the right');
-assert.match(shellCss,/\.researcher-bubble:after\{left:18px;right:auto;bottom:-12px/, 'mobile bubble tail must point toward the left-side character');
+assert.match(shellCss,/\.researcher-bubble\{left:auto;right:14px;top:16px;width:auto;max-width:calc\(100% - 172px\)/, 'mobile welcome bubble must stay on the right');
+assert.match(shellCss,/\.researcher-bubble:before,\.researcher-bubble:after\{[^}]*clip-path:polygon\(0 100%,100% 12%,100% 82%\)/, 'bubble tail must angle down-left toward the character');
+assert.match(shellCss,/\.researcher-bubble:before\{left:-28px;bottom:12px;[^}]*background:#58b99a\}/, 'bubble tail outer border missing');
+assert.match(shellCss,/\.researcher-bubble:after\{left:-21px;bottom:15px;[^}]*background:rgba\(255,255,255,\.96\)\}/, 'bubble tail inner fill missing');
 console.log('PASS researcher batch 5: final four legacy stations are prediction-free and directly operable');
 
 
