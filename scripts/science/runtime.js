@@ -21,7 +21,7 @@
  function conditions(s){const active=activeKeys(s.mode);return conf.controls.filter(c=>!active||active.includes(c.key)).map(c=>`${c.label}：${c.options?c.options.find(o=>o[0]===s[c.key])[1]:s[c.key]+' '+c.unit}`).join('；')}
  function labels(){
   const active=activeKeys($('ctl-mode')?.value);
-  conf.controls.forEach(c=>{const el=$('ctl-'+c.key);el.disabled=!!(active&&!active.includes(c.key));if(!c.options)$('out-'+c.key).textContent=el.disabled?'本模式不使用':el.value+' '+c.unit})
+  conf.controls.forEach(c=>{const el=$('ctl-'+c.key),inactive=!!(active&&!active.includes(c.key)),label=document.querySelector(`label[for="ctl-${c.key}"]`);el.disabled=inactive;el.hidden=inactive;if(label)label.hidden=inactive;if(!c.options)$('out-'+c.key).textContent=inactive?'本模式不使用':el.value+' '+c.unit})
   document.querySelectorAll('[data-moon-phase]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.moonPhase===+$('ctl-phase').value)));
  }
  function status(message,warn=false){$('control-feedback').textContent=message;$('status').textContent=message;$('status').className='status'+(warn?' warn':'')}
