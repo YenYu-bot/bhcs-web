@@ -52,6 +52,7 @@ const css=fs.readFileSync(path.join(root,'assets/researcher-lab.css'),'utf8');
 assert.match(css,/\[data-lab-drag\]\{touch-action:none/,'drag handles must reserve touch gestures');
 assert.match(guide,/history\.pushState\(stateFor\(id\)/,'screen changes must enter browser history');
 assert.ok(guide.includes('data-return-second'),'notebook must offer a route back for the second record');
+assert.ok(!guide.includes("if(recordCount())show('notebook')"),'saving a record must keep the learner on the experiment screen');
 assert.ok(!guide.includes('document.title='),'researcher shell must preserve each lesson title');
 for(const id of ['optics','energy']){const html=fs.readFileSync(path.join(root,'tools/science',id+'.html'),'utf8');assert.match(html,/data-lab-drag="[^"]+"[^>]+r="25"/s,id+' drag target must be at least 48 px wide')}
 console.log('PASS researcher batch 2: five prediction-free stations, unified 余老師 naming and mini-lab shell');

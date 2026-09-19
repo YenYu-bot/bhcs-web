@@ -71,6 +71,38 @@
 <!-- science-card-style:start -->
 <style>.science-categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.science-category{border:1px solid #cbdde4;border-radius:14px;background:#fff;padding:20px;min-width:0}.science-category h4{margin:0;font-size:1.25rem}.science-category small{font-size:.85rem;color:#496379}.science-category ul{padding-left:1.2em}.science-category li{margin:.55em 0;overflow-wrap:anywhere}.science-new{font-size:.7rem;color:#075f65;border:1px solid #b8d1d6;border-radius:6px;padding:2px 5px;white-space:nowrap}@media(max-width:800px){.science-categories{grid-template-columns:1fr}}</style>
 <!-- science-card-style:end -->
+<style id="res-organizer-style">
+.res-js .resource-finder{padding:14px 0 6px;border-bottom:0}
+.res-js .resource-finder .lead{margin-bottom:0}
+.res-js .res-nav{display:none}
+.res-picks .prose h2{margin-top:0}
+.res-bar{position:sticky;top:0;z-index:30;background:#F7F9FC;border-bottom:1px solid #E1E7F0;padding:10px 0 8px}
+.res-bar .resource-search{max-width:none}
+.res-stages,.res-types{display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.res-stages::-webkit-scrollbar,.res-types::-webkit-scrollbar{display:none}
+.res-stages button,.res-types button{flex:0 0 auto;min-height:44px;padding:0 16px;border:1.5px solid #DDE3EC;border-radius:999px;background:#fff;color:#16233A;font:inherit;font-size:15px;cursor:pointer}
+.res-types button{min-height:36px;font-size:13px;padding:0 12px}
+.res-stages button[aria-pressed=true]{background:#16233A;border-color:#16233A;color:#fff}
+.res-types button[aria-pressed=true]{background:#0F7A5A;border-color:#0F7A5A;color:#fff}
+.res-stages small{opacity:.7;margin-left:2px}
+.res-bar .resource-filter-status{margin:8px 0 0;font-size:13px}
+.res-picks{padding:18px 0 4px}.res-picks h2{font-size:18px;margin:0 0 10px}
+.res-pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.res-pick{display:block;padding:12px 14px;border:1px solid #DDE3EC;border-radius:14px;background:#fff;color:#16233A;text-decoration:none}
+.res-pick b{display:block}.res-pick span{font-size:13px;color:#6B7688}
+.res-pick:hover,.res-pick:focus-visible{border-color:#16233A}
+.res-js .res-sec{padding:0;margin-top:10px;border:1px solid #E1E7F0;border-radius:16px;background:#fff;overflow:hidden;scroll-margin-top:190px}
+.res-js .res-sec:first-of-type{border-top:1px solid #E1E7F0;margin-top:10px}
+.res-js .res-sec h3{margin:0;display:block}
+.res-toggle{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:12px 16px;border:0;background:none;font:inherit;font-weight:700;color:inherit;text-align:left;cursor:pointer}
+.res-toggle::after{content:"＋";margin-left:auto;color:#6B7688;font-weight:400}
+.res-toggle[aria-expanded=true]::after{content:"－"}
+.res-toggle:focus-visible{outline:2px solid #16233A;outline-offset:-2px}
+.res-type{font-size:12px;font-weight:500;color:#0F7A5A;border:1px solid #CFE5DC;border-radius:999px;padding:1px 8px;white-space:nowrap}
+.res-body{padding:0 16px 14px}
+@media(max-width:640px){.res-bar.is-stuck .res-types,.res-bar.is-stuck .resource-filter-status,.res-bar.is-stuck .resource-search label{display:none}.res-bar.is-stuck{padding:6px 0}.res-bar.is-stuck .res-stages button{min-height:40px}.res-pick-grid{grid-template-columns:1fr 1fr}.res-js .hero,.res-js section:first-of-type{--res-tight:1}.res-toggle{font-size:17px}}
+@media print{.res-bar,.res-picks{display:none}.res-body[hidden]{display:block!important}}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">跳到主要內容</a>
@@ -241,17 +273,54 @@
 </div>
 <script>
 (()=>{'use strict';
- const input=document.getElementById('resource-search'),status=document.getElementById('resource-filter-status');
- const links=[...document.querySelectorAll('.res-sec .tpills>a,.science-category li>a')];
- const norm=value=>value.normalize('NFKC').toLocaleLowerCase('zh-Hant-TW').replace(/\s+/g,'');
- const haystack=link=>norm([link.textContent,link.title,link.closest('.trow')?.querySelector('.tlabel')?.textContent,link.closest('.res-sec')?.querySelector('h3')?.textContent].filter(Boolean).join(' '));
- function filter(){const term=norm(input.value);let shown=0;links.forEach(link=>{const match=!term||haystack(link).includes(term);shown+=match?1:0;(link.closest('.science-category li')||link).classList.toggle('resource-hidden',!match)});
-  document.querySelectorAll('.res-sec .trow').forEach(row=>row.classList.toggle('resource-hidden',![...row.querySelectorAll('.tpills>a')].some(link=>!link.classList.contains('resource-hidden'))));
-  document.querySelectorAll('.science-category').forEach(card=>card.classList.toggle('resource-hidden',![...card.querySelectorAll('li')].some(item=>!item.classList.contains('resource-hidden'))));
-  document.querySelectorAll('.res-sec').forEach(section=>section.classList.toggle('resource-hidden',![...section.querySelectorAll('.tpills>a,.science-category li>a')].some(link=>!link.classList.contains('resource-hidden'))));
-  status.textContent=term?'找到 '+shown+' 項符合「'+input.value.trim()+'」的資源':'顯示全部 '+links.length+' 項資源';
- }
- input.addEventListener('input',filter);filter();
+ const META={'res-math':['國小','print'],'res-elem-science':['國小','lab'],'res-jh-math':['國中','print'],'res-science':['國中','lab'],'res-english':['國中','quiz'],'res-hs-math':['高中','print'],'res-exam':['升學','quiz']};
+ const TYPES={print:'列印練習卷',lab:'互動教材',quiz:'線上練習'};
+ const PICKS=['tools/fraction.html','tools/math/g7-signed-numbers.html','tools/microscope-lab.html','tools/circuit-lab.html','tools/math/g10-drills.html?topic=multiplication','https://script.google.com/macros/s/AKfycby3GGiT4EzfyhmUBirNQSTrM3Cgnj24pSm21iqfDgD4AbuJ4J0ZhE2M0miKjVPl7ugBwg/exec'];
+ const $=id=>document.getElementById(id);
+ const input=$('resource-search'),status=$('resource-filter-status'),finder=document.querySelector('.resource-finder');
+ if(!input||!status||!finder)return;
+ const LINKS='.tpills>a,.science-category li>a';
+ const sections=[...document.querySelectorAll('.res-sec')].filter(sec=>META[sec.id]);
+ const links=sections.flatMap(sec=>[...sec.querySelectorAll(LINKS)]);
+ const norm=v=>v.normalize('NFKC').toLocaleLowerCase('zh-Hant-TW').replace(/\s+/g,'');
+ const hay=new Map(links.map(a=>[a,norm([a.textContent,a.title,a.closest('.trow')?.querySelector('.tlabel')?.textContent,a.closest('.science-category')?.querySelector('h4')?.textContent,a.closest('.res-sec')?.querySelector('h3')?.textContent].filter(Boolean).join(' '))]));
+ let stage='全部',type='all',term='';const manual=new Map();
+ document.documentElement.classList.add('res-js');
+
+ // 1. 每個分類變成可收合區塊（沒有 JavaScript 時維持全部展開）
+ sections.forEach(sec=>{const h3=sec.querySelector('h3');if(!h3)return;const body=document.createElement('div');body.className='res-body';body.id=sec.id+'-body';while(h3.nextSibling)body.appendChild(h3.nextSibling);sec.appendChild(body);
+  const btn=document.createElement('button');btn.type='button';btn.className='res-toggle';btn.setAttribute('aria-controls',body.id);while(h3.firstChild)btn.appendChild(h3.firstChild);
+  const tag=document.createElement('span');tag.className='res-type';tag.textContent=TYPES[META[sec.id][1]];btn.appendChild(tag);h3.appendChild(btn);
+  btn.addEventListener('click',()=>{manual.set(sec.id,btn.getAttribute('aria-expanded')!=='true');apply()});});
+
+ // 2. 固定在上方的搜尋＋學段＋類型列
+ const bar=document.createElement('div');bar.className='res-bar';const inner=document.createElement('div');inner.className='res-wrap prose';bar.appendChild(inner);
+ const count=f=>sections.filter(f).reduce((n,sec)=>n+sec.querySelectorAll(LINKS).length,0);
+ const group=(label,cls,items,get,set)=>{const g=document.createElement('div');g.className=cls;g.setAttribute('role','group');g.setAttribute('aria-label',label);items.forEach(([val,text,n])=>{const b=document.createElement('button');b.type='button';b.dataset.val=val;b.innerHTML=text+(n!=null?' <small>'+n+'</small>':'');b.addEventListener('click',()=>{set(val);manual.clear();apply()});g.appendChild(b)});g.sync=()=>[...g.children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.val===get())));return g};
+ const stages=group('學段','res-stages',[['全部','全部',links.length],...['國小','國中','高中','升學'].map(st=>[st,st,count(sec=>META[sec.id][0]===st)])],()=>stage,v=>stage=v);
+ const types=group('類型','res-types',[['all','全部類型'],...Object.entries(TYPES)],()=>type,v=>type=v);
+ inner.append(finder.querySelector('.resource-search'),stages,types,status);
+ finder.after(bar);const oldNav=finder.querySelector('.res-nav');if(oldNav)oldNav.hidden=true;
+ const head=document.querySelector('.masthead');const setTop=()=>{const sticky=head&&/sticky|fixed/.test(getComputedStyle(head).position);bar.style.top=(sticky?head.getBoundingClientRect().height:0)+'px'};setTop();addEventListener('resize',setTop);
+ const sentinel=document.createElement('div');sentinel.setAttribute('aria-hidden','true');bar.before(sentinel);if('IntersectionObserver'in window)new IntersectionObserver(([e])=>bar.classList.toggle('is-stuck',!e.isIntersecting&&e.boundingClientRect.top<120),{rootMargin:'-70px 0px 0px 0px'}).observe(sentinel);
+
+ // 3. 第一次來的精選入口（只取頁面上已存在的連結）
+ const picks=document.createElement('section');picks.className='res-picks';picks.innerHTML='<div class="res-wrap prose"><h2>第一次來？從這裡開始</h2><div class="res-pick-grid"></div></div>';
+ PICKS.forEach(href=>{const a=links.find(l=>l.getAttribute('href')===href);if(!a)return;const sec=a.closest('.res-sec');const c=document.createElement('a');c.className='res-pick';c.href=a.href;const b=document.createElement('b');b.textContent=a.textContent.trim();const sp=document.createElement('span');sp.textContent=META[sec.id][0]+'・'+TYPES[META[sec.id][1]];c.append(b,sp);picks.querySelector('.res-pick-grid').appendChild(c)});
+ if(picks.querySelector('.res-pick'))bar.after(picks);
+ const entry=document.querySelector('.res-sec')?.parentElement.querySelector('.tpills')?.closest('div[style]');
+
+ function apply(){term=norm(input.value);let shown=0;const filtering=!!term||stage!=='全部'||type!=='all';
+  sections.forEach(sec=>{const [st,ty]=META[sec.id];const inScope=(stage==='全部'||st===stage)&&(type==='all'||ty===type);let n=0;
+   sec.querySelectorAll(LINKS).forEach(a=>{const ok=inScope&&(!term||hay.get(a).includes(term));n+=ok?1:0;(a.closest('.science-category li')||a).classList.toggle('resource-hidden',!ok)});
+   sec.querySelectorAll('.trow').forEach(r=>r.classList.toggle('resource-hidden',![...r.querySelectorAll('.tpills>a')].some(a=>!a.classList.contains('resource-hidden'))));
+   sec.querySelectorAll('.science-category').forEach(c=>c.classList.toggle('resource-hidden',![...c.querySelectorAll('li')].some(li=>!li.classList.contains('resource-hidden'))));
+   sec.classList.toggle('resource-hidden',n===0);shown+=n;
+   const open=manual.has(sec.id)?manual.get(sec.id):filtering;const btn=sec.querySelector('.res-toggle'),body=sec.querySelector('.res-body');if(btn&&body){btn.setAttribute('aria-expanded',String(open));body.hidden=!open}});
+  stages.sync();types.sync();picks.hidden=filtering;if(entry)entry.classList.toggle('resource-hidden',!!term||type==='print'||type==='quiz'||stage==='高中'||stage==='升學');
+  status.textContent=!filtering?'共 '+links.length+' 項。選學段、點分類展開，或直接搜尋。':shown?'符合 '+shown+' 項':'找不到符合的教材，試試較短的關鍵字或改選「全部」。';}
+ function fromHash(){const sec=sections.find(x=>'#'+x.id===location.hash);if(!sec)return;stage='全部';type='all';input.value='';manual.set(sec.id,true);apply();requestAnimationFrame(()=>sec.scrollIntoView())}
+ input.addEventListener('input',()=>{manual.clear();apply()});addEventListener('hashchange',fromHash);apply();fromHash();
 })();
 </script>
 <script src="assets/site.js" defer></script>
