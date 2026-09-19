@@ -32,6 +32,11 @@
 .res-nav a{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid #DDE3EC;border-radius:999px;background:#fff;color:#16233A;font-size:14px;text-decoration:none;line-height:1.2}
 .res-nav a span{font-size:12px;color:#6B7688;background:#F1F4F9;border-radius:999px;padding:1px 7px}
 .res-nav a:hover{border-color:#16233A;background:#F7F9FC}
+.resource-finder{padding:16px 0 10px;background:#F7F9FC;border-bottom:1px solid #E1E7F0}
+.resource-finder h2{margin:0 0 4px;font-size:20px}.resource-finder .lead{margin:0 0 10px}
+.resource-search{display:flex;align-items:center;gap:10px;max-width:620px}.resource-search label{font-weight:700;white-space:nowrap}.resource-search input{width:100%;min-height:44px;padding:9px 12px;border:1px solid #B9C4D3;border-radius:10px;background:#fff;font:inherit;color:#16233A}.resource-search input:focus{outline:3px solid rgba(22,35,58,.2);border-color:#16233A}
+.resource-filter-status{margin:7px 0 0;color:#5A6474;font-size:13px}
+.resource-hidden{display:none!important}.why-free{margin:30px 0}.why-free summary{cursor:pointer;font-weight:700;font-size:18px;color:#16233A}
 .res-sec{padding:30px 0 8px;border-top:1px solid #E8ECF2;margin-top:14px;scroll-margin-top:96px}
 .res-sec:first-of-type{border-top:0;margin-top:6px}
 .res-sec h3{display:flex;align-items:baseline;gap:10px;margin:0 0 4px;font-size:20px}
@@ -55,7 +60,7 @@
 #res-hs-math .tpills a:hover::after,#res-hs-math .tpills a:focus-visible::after{color:#C94343;transform:translateX(2px)}
 @media (max-width:960px){#res-hs-math .tpills{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){#res-hs-math .tpills{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:640px){.trow{grid-template-columns:1fr;gap:4px}.tlabel{padding-top:0}.tlabel small{display:inline;margin-left:6px}.tpills a{font-size:13.5px;padding:5px 10px}.res-sec{padding-top:22px}.res-sec h3{font-size:18px}}
+@media (max-width:640px){.resource-finder{position:sticky;top:0;z-index:35;padding:9px 0 5px}.resource-finder h2{font-size:17px}.resource-finder .lead{display:none}.resource-search{gap:7px}.resource-search label{font-size:13px}.resource-search input{min-height:40px}.resource-finder .res-nav{flex-wrap:nowrap;overflow-x:auto;margin:7px 0 3px;padding-bottom:4px;scrollbar-width:thin}.resource-finder .res-nav a{flex:0 0 auto;padding:6px 10px}.resource-filter-status{margin-top:3px}.trow{grid-template-columns:1fr;gap:4px}.tlabel{padding-top:0}.tlabel small{display:inline;margin-left:6px}.tpills a{font-size:13.5px;padding:5px 10px}.res-sec{padding-top:22px}.res-sec h3{font-size:18px}}
 @media (max-width:640px){#res-hs-math .trow{padding:14px;margin:10px 0}#res-hs-math .tlabel{margin-bottom:10px}#res-hs-math .tlabel small{display:inline-flex;margin-left:0}#res-hs-math .tpills{grid-template-columns:1fr}#res-hs-math .tpills a{min-height:42px;padding:8px 11px}}
 @media (prefers-reduced-motion:reduce){.tpills a,.res-nav a{transition:none}}
 </style>
@@ -101,16 +106,11 @@
     </div>
   </section>
 
-  <section>
-    <div class="wrap-narrow prose">
-      <h2>為什麼免費放出來</h2>
-      <p>一份好的練習單不是題目多，而是題目的順序對——從最單純的形式開始，一步一步加入變化，讓孩子在每一次跨越時只需要處理一個新的變化。我們自己編教材時最花時間的就是這個順序。</p>
-      <p>既然已經做好了，放上來讓更多孩子用得到，比鎖在補習班內部有意義。也歡迎其他老師取用。</p>
-
-    </div>
+  <section class="resource-finder" aria-labelledby="resource-finder-title">
     <div class="res-wrap prose">
-      <h2>可用的資源</h2>
-      <p class="lead">目前共 126 項，全部免費、不需註冊。依科目分類：</p>
+      <h2 id="resource-finder-title">快速找教材</h2>
+      <p class="lead">目前共 126 項，全部免費、不需註冊。</p>
+      <div class="resource-search"><label for="resource-search">搜尋</label><input id="resource-search" type="search" placeholder="例如：分數、透鏡、機率" autocomplete="off"></div>
       <nav class="res-nav" aria-label="資源分類">
         <a href="#res-math">國小數學<span>12</span></a>
         <a href="#res-elem-science">國小自然<span>1</span></a>
@@ -120,6 +120,14 @@
         <a href="#res-hs-math">高中數學<span>46</span></a>
         <a href="#res-exam">升學考試<span>2</span></a>
       </nav>
+      <p id="resource-filter-status" class="resource-filter-status" role="status" aria-live="polite">顯示全部 126 項資源</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="res-wrap prose">
+      <h2>可用的資源</h2>
+      <p class="lead">依科目分類；也可以用上方搜尋即時篩選。</p>
 
 <!-- science-entry:start -->
 <div style="padding:20px;border:1px solid #cbdde4;border-radius:16px;background:#eef7f5;margin:20px 0"><h3>自然實驗，依科目找</h3><p>不確定先做哪個？到總覽依年段、科目或單元篩選，每張卡片都有操作重點與建議時間。</p><div class="tpills"><a href="tools/science/">全部 29 項自然教材</a><a href="tools/science/?subject=國小自然">國小自然</a><a href="tools/science/?subject=生物">國中生物</a><a href="tools/science/?subject=理化">國中理化</a><a href="tools/science/?subject=地科">國中地科</a></div></div>
@@ -146,7 +154,7 @@
         <div class="trow"><div class="tlabel">國三<small>20 個</small></div><div class="tpills"><a href="tools/math/g9-1-2-parallel-proportional.html">平行線截比例線段性質</a><a href="tools/math/g9-1-2-parallel-proportional-application.html">平行線截比例線段性質的應用</a><a href="tools/math/g9-1-3-similar-triangles.html">相似三角形判別性質</a><a href="tools/math/g9-1-4-measurement.html">相似三角形的應用：簡易測量</a><a href="tools/math/g9-1-4-similar-area.html">相似三角形面積與邊長關係</a><a href="tools/math/g9-1-4-trig-ratio.html">相似直角三角形與三角比</a><a href="tools/math/g9-2-1-sector-segment.html">扇形與弓形的周長與面積</a><a href="tools/math/g9-2-1-tangent.html">圓的切線段性質</a><a href="tools/math/g9-2-1-chord.html">弦與弦心距</a><a href="tools/math/g9-2-2-central-angle-arc.html">圓心角與弧</a><a href="tools/math/g9-2-2-inscribed-angle-arc.html">圓周角與弧</a><a href="tools/math/g9-3-2-circumcenter.html">三角形的外心</a><a href="tools/math/g9-3-2-incenter.html">三角形的內心</a><a href="tools/math/g9-3-2-centroid.html">三角形的重心</a><a href="tools/math/g9b-1-1-quadratic-function.html">二次函數的圖形與最大值、最小值</a><a href="tools/math/g9b-2-1-quartiles.html">資料的分析：四分位數</a><a href="tools/math/g9b-2-1-boxplot.html">盒狀圖、全距與四分位距</a><a href="tools/math/g9b-2-2-probability.html">認識機率</a><a href="tools/math/g9b-2-2-tree-diagram.html">機率：樹狀圖</a><a href="tools/math/g9b-3-1-solids.html">空間中的立體圖形</a></div></div>
       </section>
 
-      <section class="res-sec" id="res-science"><h3>國中自然 · 互動教材<span class="count">28 項</span></h3><p class="lead">依生物、理化與地科分類。新一批探究教材加入預測、紀錄與檢核；原有演示工具持續保留。</p><div class="science-categories"><article class="science-category"><h4>生物 <small>6 項</small></h4><p><a href="tools/science/?subject=生物">依單元查看生物教材 →</a></p><ul><li><a href="tools/microscope-lab.html">虛擬顯微鏡</a></li><li><a href="tools/photosynthesis-factor-lab.html">光合作用因素實驗室</a></li><li><a href="tools/genetics-simulation-lab.html">遺傳模擬實驗室</a></li><li><a href="tools/frog-dissection/">青蛙虛擬解剖實驗室</a></li><li><a href="tools/science/plant-exchange.html">呼吸作用、蒸散與氣孔實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/ecosystem.html">生態系、食物網與族群實驗室</a> <span class="science-new">新探究</span></li></ul></article><article class="science-category"><h4>理化 <small>18 項</small></h4><p><a href="tools/science/?subject=理化">依單元查看理化教材 →</a></p><ul><li><a href="tools/lenses.html">凹透鏡與凸透鏡</a></li><li><a href="tools/convex-lens-imaging.html">凸透鏡成像</a></li><li><a href="tools/eye-lesson.html">眼睛如何看見蝴蝶</a></li><li><a href="tools/color-primaries.html">光與顏料三原色</a></li><li><a href="tools/force-motion-lab.html">力與運動實驗室</a></li><li><a href="tools/buoyancy-density-lab.html">浮力與密度實驗室</a></li><li><a href="tools/particle-reaction-lab.html">粒子與化學反應實驗室</a></li><li><a href="tools/acid-base-indicator-lab.html">酸鹼與指示劑實驗室</a></li><li><a href="tools/heat-phase-lab.html">熱與物態實驗室</a></li><li><a href="tools/waves.html">波動實驗室</a></li><li><a href="tools/circuit-lab.html">電路虛擬實驗室</a></li><li><a href="tools/dc-motor.html">直流馬達的原理</a></li><li><a href="tools/science/optics.html">光學與透鏡成像實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/wave-sound.html">波動、聲音與共振實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/electromagnetism.html">電磁鐵、馬達與發電機實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/pressure-fluid.html">氣壓、水壓與流體實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/solubility.html">溶解度與濃度實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/energy.html">能量轉換與守恆實驗室</a> <span class="science-new">新探究</span></li></ul></article><article class="science-category"><h4>地科 <small>4 項</small></h4><p><a href="tools/science/?subject=地科">依單元查看地科教材 →</a></p><ul><li><a href="tools/plate-earthquake-lab.html">板塊與地震實驗室</a></li><li><a href="tools/moon-phases/">月相盈虧互動教室</a></li><li><a href="tools/science/moon-eclipse.html">月相、日食與月食實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/seasons.html">四季與太陽高度角實驗室</a> <span class="science-new">新探究</span></li></ul></article></div></section>
+      <section class="res-sec" id="res-science"><h3>國中自然 · 互動教材<span class="count">28 項</span></h3><p class="lead">依生物、理化與地科分類。新一批探究教材採任務、操作、紀錄與檢核流程；原有演示工具持續保留。</p><div class="science-categories"><article class="science-category"><h4>生物 <small>6 項</small></h4><p><a href="tools/science/?subject=生物">依單元查看生物教材 →</a></p><ul><li><a href="tools/microscope-lab.html">虛擬顯微鏡</a></li><li><a href="tools/photosynthesis-factor-lab.html">光合作用因素實驗室</a></li><li><a href="tools/genetics-simulation-lab.html">遺傳模擬實驗室</a></li><li><a href="tools/frog-dissection/">青蛙虛擬解剖實驗室</a></li><li><a href="tools/science/plant-exchange.html">呼吸作用、蒸散與氣孔實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/ecosystem.html">生態系、食物網與族群實驗室</a> <span class="science-new">新探究</span></li></ul></article><article class="science-category"><h4>理化 <small>18 項</small></h4><p><a href="tools/science/?subject=理化">依單元查看理化教材 →</a></p><ul><li><a href="tools/lenses.html">凹透鏡與凸透鏡</a></li><li><a href="tools/convex-lens-imaging.html">凸透鏡成像</a></li><li><a href="tools/eye-lesson.html">眼睛如何看見蝴蝶</a></li><li><a href="tools/color-primaries.html">光與顏料三原色</a></li><li><a href="tools/force-motion-lab.html">力與運動實驗室</a></li><li><a href="tools/buoyancy-density-lab.html">浮力與密度實驗室</a></li><li><a href="tools/particle-reaction-lab.html">粒子與化學反應實驗室</a></li><li><a href="tools/acid-base-indicator-lab.html">酸鹼與指示劑實驗室</a></li><li><a href="tools/heat-phase-lab.html">熱與物態實驗室</a></li><li><a href="tools/waves.html">波動實驗室</a></li><li><a href="tools/circuit-lab.html">電路虛擬實驗室</a></li><li><a href="tools/dc-motor.html">直流馬達的原理</a></li><li><a href="tools/science/optics.html">光學與透鏡成像實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/wave-sound.html">波動、聲音與共振實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/electromagnetism.html">電磁鐵、馬達與發電機實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/pressure-fluid.html">氣壓、水壓與流體實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/solubility.html">溶解度與濃度實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/energy.html">能量轉換與守恆實驗室</a> <span class="science-new">新探究</span></li></ul></article><article class="science-category"><h4>地科 <small>4 項</small></h4><p><a href="tools/science/?subject=地科">依單元查看地科教材 →</a></p><ul><li><a href="tools/plate-earthquake-lab.html">板塊與地震實驗室</a></li><li><a href="tools/moon-phases/">月相盈虧互動教室</a></li><li><a href="tools/science/moon-eclipse.html">月相、日食與月食實驗室</a> <span class="science-new">新探究</span></li><li><a href="tools/science/seasons.html">四季與太陽高度角實驗室</a> <span class="science-new">新探究</span></li></ul></article></div></section>
 
       <section class="res-sec" id="res-english">
         <h3>國中英文<span class="count">2 項</span></h3>
@@ -171,6 +179,7 @@
 
     </div>
     <div class="wrap-narrow prose">
+      <details class="why-free"><summary>為什麼免費放出來</summary><p>一份好的練習單不是題目多，而是題目的順序對——從最單純的形式開始，一步一步加入變化，讓孩子在每一次跨越時只需要處理一個新的變化。我們自己編教材時最花時間的就是這個順序。</p><p>既然已經做好了，放上來讓更多孩子用得到，比鎖在補習班內部有意義。也歡迎其他老師取用。</p></details>
       <h2>怎麼用這些練習單</h2>
       <p>建議的用法是：先讓孩子在沒有壓力的情況下寫一份，看看錯在哪裡。重點不是分數，是找出錯誤的類型——是觀念不懂、還是計算粗心、還是題意看錯。這三種的處理方式完全不同。</p>
       <p>找出類型之後，針對那一種再練。同一類型連續三次都對，才算真的過了。</p>
@@ -230,6 +239,21 @@
   <a class="btn-primary" href="tel:+886422320448" style="background:var(--orange);color:#fff">撥打電話</a>
   <a class="btn-line" href="https://line.me/R/ti/p/%40bhcs" style="background:var(--line-green);color:#fff">加 LINE 詢問</a>
 </div>
+<script>
+(()=>{'use strict';
+ const input=document.getElementById('resource-search'),status=document.getElementById('resource-filter-status');
+ const links=[...document.querySelectorAll('.res-sec .tpills>a,.science-category li>a')];
+ const norm=value=>value.normalize('NFKC').toLocaleLowerCase('zh-Hant-TW').replace(/\s+/g,'');
+ const haystack=link=>norm([link.textContent,link.title,link.closest('.trow')?.querySelector('.tlabel')?.textContent,link.closest('.res-sec')?.querySelector('h3')?.textContent].filter(Boolean).join(' '));
+ function filter(){const term=norm(input.value);let shown=0;links.forEach(link=>{const match=!term||haystack(link).includes(term);shown+=match?1:0;(link.closest('.science-category li')||link).classList.toggle('resource-hidden',!match)});
+  document.querySelectorAll('.res-sec .trow').forEach(row=>row.classList.toggle('resource-hidden',![...row.querySelectorAll('.tpills>a')].some(link=>!link.classList.contains('resource-hidden'))));
+  document.querySelectorAll('.science-category').forEach(card=>card.classList.toggle('resource-hidden',![...card.querySelectorAll('li')].some(item=>!item.classList.contains('resource-hidden'))));
+  document.querySelectorAll('.res-sec').forEach(section=>section.classList.toggle('resource-hidden',![...section.querySelectorAll('.tpills>a,.science-category li>a')].some(link=>!link.classList.contains('resource-hidden'))));
+  status.textContent=term?'找到 '+shown+' 項符合「'+input.value.trim()+'」的資源':'顯示全部 '+links.length+' 項資源';
+ }
+ input.addEventListener('input',filter);filter();
+})();
+</script>
 <script src="assets/site.js" defer></script>
 </body>
 </html>

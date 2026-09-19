@@ -26,7 +26,7 @@
  }
  function status(message,warn=false){$('control-feedback').textContent=message;$('status').textContent=message;$('status').className='status'+(warn?' warn':'')}
  function invalidate(message=noPrediction?'條件已更新，請重新操作後查看結果。':'條件已更新，請重新預測後查看結果。'){
-  moonExplore=false;const explore=$('moon-explore')||$('lab-explore');if(explore){explore.checked=false;explore.disabled=!hasObserved;}
+  moonExplore=false;$('diagram').classList.remove('is-exploring');const explore=$('moon-explore')||$('lab-explore');if(explore){explore.checked=false;explore.disabled=!hasObserved;}
   current=null;if($('prediction'))$('prediction').value='';$('add-record').disabled=true;$('diagram').innerHTML=noPrediction?'<p class="empty">選好任務或設定條件後，按「開始觀察」。</p>':'<p class="empty">先選擇預測，再按「操作並觀察」。結果尚未揭露。</p>';$('readouts').replaceChildren();$('current-conditions').textContent='';$('print-current').textContent='本輪尚未操作；請參閱下方已儲存紀錄。';$('result-explanation').textContent='操作後，這裡會說明模型結果。';status(message+($('explanation-input').value?' 你的解釋草稿已保留，重新觀察後再確認內容。':''));labels();
  }
  function run(){if(!noPrediction&&!$('prediction').value){status('請先選擇一個預測；猜錯也能幫助學習。',true);$('prediction').focus();return}let s;try{s=state()}catch(_){status('控制值無效，請重新設定。',true);return}
@@ -35,6 +35,7 @@
   $('result-explanation').textContent=view.explanation;$('current-conditions').textContent='本次有效條件：'+conditions(s);$('add-record').disabled=false;
   const correct=conf.choices.find(c=>c[0]===r.kind)?.[1]||r.kind;status(noPrediction?'觀察完成：'+correct+'。請讀取圖像與數值，寫下依據並加入研究手冊。':(($('prediction').value===r.kind?'預測符合本模型。':'預測和本模型不同，可以回頭比較。')+' 觀察：'+correct+'。請寫下依據並加入紀錄。'));send('start');
   hasObserved=true;const explore=$('moon-explore')||$('lab-explore');if(explore)explore.disabled=false;
+  requestAnimationFrame(()=>$('diagram').scrollIntoView?.({block:'start',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
  }
  function previewMoon(){const s=state(),r=calculate(conf.id,s),view=describe(conf.id,s,r);current=null;if($('prediction'))$('prediction').value='';$('explanation-input').value='';$('add-record').disabled=true;$('diagram').innerHTML=diagram(conf.id,s,r);$('readouts').replaceChildren();view.metrics.forEach(([name,value])=>{const box=node('div',name);box.className='meter';box.append(node('strong',value));$('readouts').append(box)});$('current-conditions').textContent='自由觀察條件：'+conditions(s);$('result-explanation').textContent=view.explanation;labels();status(noPrediction?'自由觀察中：拖動滑桿，兩個視角會同步變化。要保留紀錄，先關閉自由觀察，再按「開始觀察」。':'自由觀察中：拖動滑桿，兩個視角會同步變化。要保留紀錄，先關閉自由觀察，再預測與操作。');}
  conf.controls.forEach(c=>$('ctl-'+c.key).addEventListener('input',()=>{if(moonExplore)previewMoon();else invalidate()}));
@@ -45,7 +46,7 @@
   const label=node('label',''),check=node('input','');check.type='checkbox';check.id='moon-explore';check.disabled=true;label.append(check,document.createTextNode(noPrediction?'自由觀察：拖曳滑桿即時預覽（先完成一次正式觀察）':'自由觀察：拖曳滑桿即時預覽（先完成一次預測）'));label.className='coach';$('diagram').before(label);check.addEventListener('change',()=>{moonExplore=check.checked;if(moonExplore)previewMoon();else invalidate(noPrediction?'已離開自由觀察。按「開始觀察」即可保留新的紀錄。':'已離開自由觀察。請選預測，再操作並保留紀錄。')});
  }
  if(conf.id!=='moon-eclipse'){
-  const label=node('label',''),check=node('input','');check.type='checkbox';check.id='lab-explore';check.disabled=true;label.append(check,document.createTextNode('自由觀察：拖曳或調整控制即時更新（先完成一次正式觀察）'));label.className='coach';$('diagram').before(label);check.addEventListener('change',()=>{moonExplore=check.checked;if(moonExplore)previewMoon();else invalidate('已離開自由觀察。按「開始觀察」即可保留新的紀錄。')});
+  const label=node('label',''),check=node('input','');check.type='checkbox';check.id='lab-explore';check.disabled=true;label.append(check,document.createTextNode('自由觀察：拖曳或調整控制即時更新（先完成一次正式觀察）'));label.className='coach';$('diagram').before(label);check.addEventListener('change',()=>{moonExplore=check.checked;$('diagram').classList.toggle('is-exploring',moonExplore);if(moonExplore)previewMoon();else invalidate('已離開自由觀察。按「開始觀察」即可保留新的紀錄。')});
  }
  if(['optics','energy'].includes(conf.id)){
   const tip=node('p','完成一次正式觀察後，可開啟自由觀察並拖曳圖中的橘色物體；鍵盤選中物體後按左右鍵也可以。');tip.className='lab-drag-tip';$('diagram').before(tip);
