@@ -64,4 +64,34 @@ function directory(){document.body.classList.add('researcher-directory');const m
  qa('.resource').forEach(c=>{const subject=c.dataset.subject||'國小自然';const href=(q('a.open,.open a,a[href]',c)||{}).getAttribute?.('href')||'';const key=href.replace(/\/$/,'').split('/').pop().replace(/\.html$/,'');const st=STATION[key]||[];const img=document.createElement('img');img.className='station-icon';img.alt='';img.loading='lazy';img.width=70;img.height=70;const fb='../mini-lab/img/'+(subjectIcons[subject]||'icon-tools.png');if(st[0]){img.src='../../assets/science/icons/icon-'+st[0]+'.webp';img.dataset.fallback=fb}else img.src=fb;c.prepend(img);const label=document.createElement('span');label.className='station-label';label.textContent='研究站';c.insertBefore(label,q('h2,h3',c));if(st[1]){const line=document.createElement('p');line.className='mission-line';line.textContent='任務：'+st[1];const open=q('.open',c);if(open)c.insertBefore(line,open);else c.appendChild(line)}});
 }
 if(path.endsWith('/microscope-lab.html'))microscope();else if(path.endsWith('/tools/science/')||path.endsWith('/tools/science/index.html'))directory();else if(path.includes('/tools/science/')&&path.endsWith('.html'))scienceStation();else legacyStation();
+// Keep the short speech notch level with the mouth in the painted image,
+// including object-fit letterboxing, font wrapping and viewport changes.
+function alignWelcomeSpeech(){
+ qa('.researcher-scene').forEach(scene=>{
+  const doc=q('.doc',scene),bubble=q('.researcher-bubble',scene);
+  if(!doc||!bubble)return;
+  const align=()=>{
+   if(!scene.offsetWidth||!doc.naturalWidth)return;
+   const s=scene.getBoundingClientRect(),d=doc.getBoundingClientRect();
+   const scale=Math.min(d.width/doc.naturalWidth,d.height/doc.naturalHeight);
+   const w=doc.naturalWidth*scale,h=doc.naturalHeight*scale;
+   const x=d.left-s.left+(d.width-w)/2,y=d.top-s.top+(d.height-h)/2;
+   const microscope=doc.src.includes('doc-microscope'),wave=doc.src.includes('doc-wave');
+   const mouthY=y+h*(microscope?.32:wave?.28:.30);
+   const bw=bubble.offsetWidth,bh=bubble.offsetHeight,pad=s.width<500?12:24;
+   const left=Math.min(s.width-bw-pad,Math.max(s.width*.42,x+w*.70+24));
+   const top=Math.max(18,Math.min(s.height-bh-18,mouthY-bh*.65));
+   bubble.style.setProperty('--speech-left',(s.width<500?s.width-bw-pad:left)+'px');
+   bubble.style.setProperty('--speech-top',top+'px');
+   bubble.style.setProperty('--speech-tail-top',Math.max(12,Math.min(bh-32,mouthY-top-10))+'px');
+   bubble.classList.add('is-aligned');
+  };
+  doc.addEventListener('load',align);
+  if(typeof ResizeObserver!=='undefined'){
+   const observer=new ResizeObserver(align);observer.observe(scene);observer.observe(doc);observer.observe(bubble);
+  }
+  document.fonts?.ready.then(align);align();
+ });
+}
+alignWelcomeSpeech();
 })();

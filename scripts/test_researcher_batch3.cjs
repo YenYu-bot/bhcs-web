@@ -8,7 +8,7 @@ for(const id of ids){
  assert.equal(conf.noPrediction,true,id+' must enable prediction-free mode');
  assert.equal(d.getElementById('prediction'),null,id+' must not render prediction control');
  assert.ok(d.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),id+' versioned researcher css');
- assert.ok(d.querySelector('script[src="../../assets/researcher-lab.js"]'),id+' researcher js');
+ assert.ok(d.querySelector('script[src^="../../assets/researcher-lab.js?v="]'),id+' researcher js');
  const clone=d.body.cloneNode(true);clone.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!clone.textContent.includes('預測'),id+' visible UI still contains prediction wording');
  assert.match(clone.textContent,/研究工具箱/,id+' researcher toolbox');
