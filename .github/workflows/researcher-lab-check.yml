@@ -3,7 +3,7 @@ on:
   push:
     branches: [main, codex/researcher-lab-redesign]
   pull_request:
-    branches: [main]
+    branches: [main, codex/researcher-composition-verified]
 permissions:
   contents: read
 jobs:
@@ -39,9 +39,19 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_researcher_browser.cjs
+      - name: Check all station operations, records, and challenges
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_researcher_operations.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: researcher-composition-review
           path: composition-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: researcher-operation-review
+          path: operation-artifacts/
           retention-days: 14

@@ -1,0 +1,322 @@
+[
+  {
+    "id": "microscope",
+    "width": 390,
+    "changedControl": "specimen",
+    "pass": true
+  },
+  {
+    "id": "photosynthesis-factor",
+    "width": 390,
+    "changedControl": "light",
+    "pass": true
+  },
+  {
+    "id": "genetics-simulation",
+    "width": 390,
+    "changedControl": "trait",
+    "pass": true
+  },
+  {
+    "id": "force-motion",
+    "width": 390,
+    "changedControl": "mass",
+    "pass": true
+  },
+  {
+    "id": "circuit",
+    "width": 390,
+    "changedControl": "topology",
+    "pass": true
+  },
+  {
+    "id": "particle-reaction",
+    "width": 390,
+    "changedControl": "amountA",
+    "pass": true
+  },
+  {
+    "id": "acid-base-indicator",
+    "width": 390,
+    "changedControl": "acidConcentration",
+    "pass": true
+  },
+  {
+    "id": "heat-phase",
+    "width": 390,
+    "changedControl": "direction",
+    "pass": true
+  },
+  {
+    "id": "buoyancy-density",
+    "width": 390,
+    "changedControl": "mass",
+    "pass": true
+  },
+  {
+    "id": "plate-earthquake",
+    "width": 390,
+    "changedControl": "boundary",
+    "pass": true
+  },
+  {
+    "id": "optics",
+    "width": 390,
+    "diagram": {
+      "height": 228,
+      "scrollHeight": 228
+    },
+    "changedControl": "ctl-kind",
+    "pass": true
+  },
+  {
+    "id": "wave-sound",
+    "width": 390,
+    "diagram": {
+      "height": 506,
+      "scrollHeight": 506
+    },
+    "changedControl": "ctl-mode",
+    "pass": true
+  },
+  {
+    "id": "electromagnetism",
+    "width": 390,
+    "diagram": {
+      "height": 228,
+      "scrollHeight": 228
+    },
+    "changedControl": "ctl-mode",
+    "pass": true
+  },
+  {
+    "id": "pressure-fluid",
+    "width": 390,
+    "diagram": {
+      "height": 228,
+      "scrollHeight": 228
+    },
+    "changedControl": "ctl-mode",
+    "pass": true
+  },
+  {
+    "id": "energy",
+    "width": 390,
+    "diagram": {
+      "height": 228,
+      "scrollHeight": 228
+    },
+    "changedControl": "ctl-mass",
+    "pass": true
+  },
+  {
+    "id": "solubility",
+    "width": 390,
+    "diagram": {
+      "height": 422,
+      "scrollHeight": 422
+    },
+    "changedControl": "ctl-solute",
+    "pass": true
+  },
+  {
+    "id": "moon-eclipse",
+    "width": 390,
+    "diagram": {
+      "height": 937,
+      "scrollHeight": 937
+    },
+    "changedControl": "ctl-phase",
+    "pass": true
+  },
+  {
+    "id": "seasons",
+    "width": 390,
+    "diagram": {
+      "height": 395,
+      "scrollHeight": 395
+    },
+    "changedControl": "ctl-latitude",
+    "pass": true
+  },
+  {
+    "id": "plant-exchange",
+    "width": 390,
+    "diagram": {
+      "height": 523,
+      "scrollHeight": 523
+    },
+    "changedControl": "ctl-light",
+    "pass": true
+  },
+  {
+    "id": "ecosystem",
+    "width": 390,
+    "diagram": {
+      "height": 542,
+      "scrollHeight": 542
+    },
+    "changedControl": "ctl-energy",
+    "pass": true
+  },
+  {
+    "id": "microscope",
+    "width": 1280,
+    "changedControl": "specimen",
+    "pass": true
+  },
+  {
+    "id": "photosynthesis-factor",
+    "width": 1280,
+    "changedControl": "light",
+    "pass": true
+  },
+  {
+    "id": "genetics-simulation",
+    "width": 1280,
+    "changedControl": "trait",
+    "pass": true
+  },
+  {
+    "id": "force-motion",
+    "width": 1280,
+    "changedControl": "mass",
+    "pass": true
+  },
+  {
+    "id": "circuit",
+    "width": 1280,
+    "changedControl": "topology",
+    "pass": true
+  },
+  {
+    "id": "particle-reaction",
+    "width": 1280,
+    "changedControl": "amountA",
+    "pass": true
+  },
+  {
+    "id": "acid-base-indicator",
+    "width": 1280,
+    "changedControl": "acidConcentration",
+    "pass": true
+  },
+  {
+    "id": "heat-phase",
+    "width": 1280,
+    "changedControl": "direction",
+    "pass": true
+  },
+  {
+    "id": "buoyancy-density",
+    "width": 1280,
+    "changedControl": "mass",
+    "pass": true
+  },
+  {
+    "id": "plate-earthquake",
+    "width": 1280,
+    "changedControl": "boundary",
+    "pass": true
+  },
+  {
+    "id": "optics",
+    "width": 1280,
+    "diagram": {
+      "height": 380,
+      "scrollHeight": 380
+    },
+    "changedControl": "ctl-kind",
+    "pass": true
+  },
+  {
+    "id": "wave-sound",
+    "width": 1280,
+    "diagram": {
+      "height": 777,
+      "scrollHeight": 777
+    },
+    "changedControl": "ctl-mode",
+    "pass": true
+  },
+  {
+    "id": "electromagnetism",
+    "width": 1280,
+    "diagram": {
+      "height": 380,
+      "scrollHeight": 380
+    },
+    "changedControl": "ctl-mode",
+    "pass": true
+  },
+  {
+    "id": "pressure-fluid",
+    "width": 1280,
+    "diagram": {
+      "height": 380,
+      "scrollHeight": 380
+    },
+    "changedControl": "ctl-mode",
+    "pass": true
+  },
+  {
+    "id": "energy",
+    "width": 1280,
+    "diagram": {
+      "height": 380,
+      "scrollHeight": 380
+    },
+    "changedControl": "ctl-mass",
+    "pass": true
+  },
+  {
+    "id": "solubility",
+    "width": 1280,
+    "diagram": {
+      "height": 884,
+      "scrollHeight": 884
+    },
+    "changedControl": "ctl-solute",
+    "pass": true
+  },
+  {
+    "id": "moon-eclipse",
+    "width": 1280,
+    "diagram": {
+      "height": 530,
+      "scrollHeight": 530
+    },
+    "changedControl": "ctl-phase",
+    "pass": true
+  },
+  {
+    "id": "seasons",
+    "width": 1280,
+    "diagram": {
+      "height": 828,
+      "scrollHeight": 828
+    },
+    "changedControl": "ctl-latitude",
+    "pass": true
+  },
+  {
+    "id": "plant-exchange",
+    "width": 1280,
+    "diagram": {
+      "height": 814,
+      "scrollHeight": 814
+    },
+    "changedControl": "ctl-light",
+    "pass": true
+  },
+  {
+    "id": "ecosystem",
+    "width": 1280,
+    "diagram": {
+      "height": 856,
+      "scrollHeight": 856
+    },
+    "changedControl": "ctl-energy",
+    "pass": true
+  }
+]

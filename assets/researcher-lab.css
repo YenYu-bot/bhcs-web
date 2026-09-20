@@ -130,12 +130,14 @@ var(--lab-bg)!important}
 @media(max-width:700px){.researcher-station .layout>.observation{display:contents}.researcher-station .observation .stage{position:sticky;top:6px;z-index:10;min-height:180px;max-height:40svh;padding:6px;border-color:#60c3a4;box-shadow:0 8px 18px #294c3e28}.researcher-station .readouts{grid-template-columns:1fr 1fr}.researcher-station .controls .actions{grid-template-columns:1fr}}
 @media print{.researcher-station .observation .stage{position:static!important;max-height:none!important;overflow:visible!important;touch-action:auto}.researcher-station .observation .stage svg{max-height:none!important}.researcher-return,.researcher-bench-record{display:none!important}}
 
+/* Keep longer teaching diagrams in page flow at every viewport size. */
+.researcher-station .observation .stage.is-tall{position:static;max-height:none;overflow:visible}
+.researcher-station .observation .stage.is-tall svg{max-height:none}
+
 /* 手機圖解：預設整張縮入畫面；過高的多面板圖不固定；可切換放大 */
 .researcher-zoom{display:none}
 @media(max-width:700px){
 .researcher-station .observation .stage svg{width:100%;max-width:100%}
-.researcher-station .observation .stage.is-tall{position:static;max-height:none;overflow:visible}
-.researcher-station .observation .stage.is-tall svg{max-height:none}
 .researcher-station .observation .stage.is-zoomed{touch-action:pan-x pan-y;overflow:auto}
 .researcher-station .observation .stage.is-zoomed svg{width:620px;max-width:none;max-height:none}
 .researcher-zoom{display:inline-flex;width:auto;align-items:center;min-height:40px;margin:6px 0;padding:0 14px;border-radius:999px;border:2px solid #c9ddd2;background:#fff;font:inherit;font-size:.9rem;color:#1f4a3c}
@@ -247,3 +249,12 @@ font-family:inherit;
 .researcher-scene .researcher-bubble.is-aligned{left:var(--speech-left);right:auto;top:var(--speech-top)}
 .researcher-bubble.is-aligned:before{top:var(--speech-tail-top)}
 .researcher-bubble.is-aligned:after{top:calc(var(--speech-tail-top) + 3px)}
+
+.researcher-save{display:grid;gap:8px;margin-top:18px;padding:16px;background:#eff8f3;border:1px solid #b4d9c9;border-radius:16px}
+.researcher-save .researcher-bench-record{width:100%;margin:0;font:inherit;font-weight:800;line-height:1.5}
+.researcher-save-status{margin:0;color:#34584a;font-size:13px;line-height:1.6}
+.researcher-notebook-link{justify-self:start;min-height:44px;border:0;background:transparent;padding:5px 0;color:#246b57;font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.researcher-return[hidden]{display:none!important}
+.researcher-ui :is(.quizItem fieldset,#quizScore,.scopeStage,.labgrid>.card,.researcher-save){scroll-margin-top:86px}
+@media(max-width:850px){.researcher-ui :is(.quizItem fieldset,#quizScore,.scopeStage,.labgrid>.card,.researcher-save){scroll-margin-top:18px}}
+@media print{.researcher-save{display:none!important}}
