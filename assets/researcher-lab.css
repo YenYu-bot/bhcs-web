@@ -667,3 +667,30 @@ body.researcher-station .observation .stage.is-preview::after{
   content:attr(data-preview-label);position:absolute;left:10px;top:10px;z-index:2;opacity:1;
   font-family:var(--bh-mono);font-size:12px;letter-spacing:.06em;color:#fff;background:var(--bh-ink);padding:4px 10px;border-radius:2px;border-left:3px solid var(--bh-red);pointer-events:none}
 @media print{body.researcher-station .observation .stage.is-preview::after{display:none}}
+
+/* ---------- 19. 矮桌機首屏：保留任務與操作入口，省略重複裝備／時間提示 ---------- */
+@media (min-width:851px) and (max-height:800px){
+  body .researcher-header{min-height:52px}
+  body .researcher-nav{margin-top:10px;margin-bottom:10px}
+  body .researcher-nav button{min-height:42px}
+  body .researcher-welcome{min-height:calc(100svh - 128px)}
+  body .researcher-welcome-copy{padding:24px 32px}
+  body .researcher-welcome h1,body .researcher-welcome h2{font-size:36px;line-height:1.18;margin:8px 0 12px}
+  body .researcher-welcome p{font-size:15px;line-height:1.7;margin:0}
+  body .researcher-promise{padding:10px 14px;margin:14px 0;gap:3px}
+  body .researcher-promise b{margin-bottom:4px}
+  body .researcher-promise span{font-size:14px;line-height:1.7}
+  body .researcher-promise .researcher-guess{font-size:13px;line-height:1.5;margin-top:6px;padding-top:6px}
+  body .researcher-welcome .researcher-kit,body .researcher-welcome-copy>p:has(small){display:none}
+  body .researcher-scene{min-height:0}
+  body .researcher-scene .room{position:absolute;inset:0;width:100%;height:100%;min-height:0}
+  body .researcher-scene .doc{bottom:0}
+}
+
+/* ---------- 20. 顯微鏡桌機：器材在左、余老師從右側指向器材 ---------- */
+@media (min-width:851px){
+  body .researcher-scene.doc-right .room{transform:none;object-position:left center}
+  body .researcher-scene.doc-right .doc{left:auto;right:2%;bottom:0;transform:scaleX(-1);max-height:82%}
+  body .researcher-scene.doc-right .researcher-bubble::before{left:auto;right:-16px;clip-path:polygon(0 0,100% 50%,0 100%)}
+  body .researcher-scene.doc-right .researcher-bubble::after{left:auto;right:-11px;clip-path:polygon(0 0,100% 50%,0 100%)}
+}
