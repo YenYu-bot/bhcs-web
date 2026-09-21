@@ -11,6 +11,7 @@
 <meta property="og:url" content="https://www.bhcs.com.tw/tools/mini-lab/lab-safety.html">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11 3h10v8l8 15a2 2 0 0 1-2 3H5a2 2 0 0 1-2-3l8-15z' fill='%23BFE0FF' stroke='%232A5B8C' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{ --bg:#F4F6F8; --panel:#fff; --line:#D5DBE3; --ink:#1F2933; --muted:#65717F; --accent:#2E6FD8; --ok:#2E8B57; --no:#C0392B; --warn:#E8A400; --glass:rgba(205,228,246,.8); --glassEdge:#5b6b7a; }
   *{box-sizing:border-box}
@@ -261,6 +262,45 @@
   .backlink{position:absolute;right:22px;top:16px;z-index:3;color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:7px 14px;border:1px solid rgba(255,255,255,.4);border-radius:999px;background:rgba(255,255,255,.14)}
   .backlink:hover{background:rgba(255,255,255,.28)}
   @media(max-width:720px){.backlink{position:static;display:inline-block;margin-bottom:10px}}
+
+  /* ===== BHCS brand theme (2026-09-21)：方格紙＋紅筆；取代青綠漸層與大圓角 ===== */
+  :root{--bg:#FCFCFA;--panel:#fff;--line:#C9D2DE;--ink:#16233A;--muted:#43516B;--accent:#16233A;--ok:#1E7A4C;--no:#C8352B;--warn:#E8620C;
+    --shadow:0 1px 2px rgba(22,35,58,.06),0 8px 24px rgba(22,35,58,.06);--shadow-soft:none;
+    --bh-serif:"Noto Serif TC","Songti TC","PMingLiU",serif;--bh-mono:"IBM Plex Mono","Roboto Mono",ui-monospace,Menlo,Consolas,monospace}
+  html{background:#FCFCFA}body{background-color:#FCFCFA;background-image:linear-gradient(#DCE2EA 1px,transparent 1px),linear-gradient(90deg,#DCE2EA 1px,transparent 1px),linear-gradient(#C9D2DE 1px,transparent 1px),linear-gradient(90deg,#C9D2DE 1px,transparent 1px);background-size:24px 24px,24px 24px,120px 120px,120px 120px;background-position:-1px -1px!important;color:var(--ink);-webkit-font-smoothing:antialiased}
+  button:focus-visible,.tcard:focus-visible,.mcard:focus-visible,:focus-visible{outline:3px solid #E8620C;outline-offset:2px}
+  .hero{min-height:0;margin:0 0 18px;padding:28px 32px;border:1px solid var(--ink);border-radius:6px;color:var(--ink);background:#fff;box-shadow:var(--shadow)}
+  .hero:before,.orb{display:none}
+  .hero-copy::before{content:"LAB SAFETY · 國中實驗室安全與器材";display:block;font:500 12px var(--bh-mono);letter-spacing:.2em;color:var(--no);margin-bottom:10px}
+  .hero h1{display:inline-block;font:900 clamp(28px,3.6vw,42px)/1.25 var(--bh-serif);letter-spacing:-.01em;color:var(--ink);padding-bottom:12px;margin:0 0 12px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8 C 60 2, 120 11, 180 6 S 270 3, 297 7' fill='none' stroke='%23C8352B' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") left bottom/100% 10px no-repeat}
+  .hero h1 span{color:var(--muted)}
+  .hero p{color:var(--muted);font-size:16px}
+  .hero-art{width:150px;min-width:150px}.hero-art svg{width:130px;filter:none}
+  .backlink{background:#fff!important;color:var(--ink)!important;border:1px solid var(--ink)!important;border-radius:4px!important;box-shadow:none!important;backdrop-filter:none!important;font-weight:700}
+  .backlink:hover{background:#F2F4F7!important}
+  .tabs-shell{padding:0;border:1px solid var(--ink);border-radius:6px;background:#fff;backdrop-filter:none;box-shadow:none;overflow:hidden}
+  .tabs{gap:0}
+  .tab{border-radius:0;min-height:50px;color:var(--muted)}.tab+.tab{border-left:1px solid var(--line)}
+  .tab:hover{background:#F2F4F7}
+  .tab .tab-icon{background:none;width:auto;height:auto}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff;box-shadow:inset 0 -3px 0 var(--no)}
+  .tab[aria-selected="true"] .tab-icon{background:none}
+  .stage,.panel,.tcard,.mcard{border:1px solid var(--line)!important;border-radius:6px!important;box-shadow:var(--shadow)}
+  .stage:after{display:none}
+  .panel{background:#fff;box-shadow:none}
+  .panel h2{font:600 12px var(--bh-mono);letter-spacing:.12em;color:var(--no)}
+  .hint{border-radius:4px;border:1px solid var(--line);background:#FFF6D6;color:var(--ink)}
+  .ctrl button,.chips button{border:1px solid var(--line);border-radius:4px;box-shadow:none;background:#fff;color:var(--ink);font-weight:700}
+  .ctrl button:hover,.chips button:hover{border-color:var(--ink)}
+  .ctrl button[aria-pressed="true"],.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .ctrl button.primary{background:#E8620C;border-color:#C24F06;color:#fff}.ctrl button.primary:hover{background:#C24F06}
+  .score b{font-family:var(--bh-mono);color:var(--ink)}
+  .tcard:hover,.mcard:hover{border-color:var(--ink)!important;box-shadow:4px 4px 0 rgba(22,35,58,.10)}
+  .tcard[aria-pressed="true"]{border-color:var(--ink)!important;box-shadow:inset 0 -3px 0 var(--no)}
+  .found-list li.on b{background:var(--no)}
+  .hot:hover .hb{stroke:rgba(232,98,12,.6)}
+  @media(max-width:760px){.hero{padding:20px 18px}.hero-art{display:none}.tabs{grid-template-columns:repeat(5,1fr)}.tab{flex-direction:column;gap:2px;font-size:12px;padding:6px 2px;min-height:54px}}
 </style>
 </head>
 <body>
