@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#176b55"><title>百宏文教｜國小高年級數學 計算力練習出題器</title><meta name="description" content="國小高年級數學計算力練習出題器：分數與小數四則運算、四則簡化計算、解未知數、時間的計算與化聚、最大公因數與最小公倍數、比與比例式與百分率，六個主題一頁切換；可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g6-drills.html"><meta property="og:title" content="百宏文教｜國小高年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g6-drills.html"><meta property="og:type" content="website">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小高年級數學 計算力練習出題器</title><meta name="description" content="國小高年級數學計算力練習出題器：分數與小數四則運算、四則簡化計算、解未知數、時間的計算與化聚、最大公因數與最小公倍數、比與比例式與百分率，六個主題一頁切換；可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g6-drills.html"><meta property="og:title" content="百宏文教｜國小高年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g6-drills.html"><meta property="og:type" content="website">
 <style>
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
 *{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
@@ -12,6 +12,98 @@
 .preview{min-height:620px;padding:14px 8px 38px;overflow:auto}.sheet{width:210mm;min-height:297mm;margin:14px auto;padding:12mm;color:#111;background:#fff;box-shadow:0 9px 30px #263b351c}.head{border-bottom:2px solid var(--bhcs-green);padding-bottom:4px;margin-bottom:8px}.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:var(--bhcs-muted);line-height:1.3;margin:0 0 3px}.bhcs-brand b{color:var(--bhcs-green);font-weight:800;font-size:12px;letter-spacing:.5px}.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}.head h2{margin:0;font-size:20px}.head>span{display:block;margin-top:2px;font-size:14px}.sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:var(--bhcs-soft);padding:4px 10px;border-left:5px solid var(--bhcs-green);break-after:avoid;page-break-after:avoid}.tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}.grid{display:grid;gap:0 5mm}.grid.c2{grid-template-columns:repeat(2,1fr)}.grid.c3{grid-template-columns:repeat(3,1fr)}.grid.c4{grid-template-columns:repeat(4,1fr)}.prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}.q{font:15.5px/1.9 Georgia,"Times New Roman","Noto Serif TC",serif;display:flex;gap:4px;align-items:baseline;flex-wrap:wrap}.q .no{flex:none;color:#555;width:2em}.expr{min-width:0;overflow-wrap:anywhere}.work{font-size:14px;color:#333;margin-top:2mm;min-height:var(--work,16mm)}.work .ans{display:none;color:var(--bhcs-red);font-weight:700;font-size:15px;line-height:1.55}.teacher .work .ans{display:inline}.fr{display:inline-flex;flex-direction:column;text-align:center;align-items:center;vertical-align:middle;line-height:1;margin:0 .09em;font-size:.86em}.fr .n{min-width:1em;padding:0 .13em .08em;border-bottom:1px solid currentColor}.fr .d{padding:.08em .13em 0}.mixed{display:inline-flex;align-items:center;gap:.08em;white-space:nowrap}.note-answer{font:11px/1.25 "Microsoft JhengHei","Noto Sans TC",sans-serif;color:var(--bhcs-red)}sup{font-size:.72em}.grid.c4 .q{font-size:13px;line-height:1.75}.grid.c4 .q .no{width:1.7em}.grid.c4 .work{font-size:12.5px}.grid.c4 .work .ans{font-size:13px}.grid.c4 .prob{padding-top:2.5mm}.empty{width:min(720px,calc(100vw - 24px));margin:28px auto;padding:36px 20px;text-align:center;border:2px dashed #afc1bc;border-radius:10px;color:var(--bhcs-muted);background:#fff}.empty b{display:block;margin-bottom:4px;color:var(--bhcs-green2)}
 @media(max-width:1180px){.groups{grid-template-columns:1fr 1fr}.group.units{grid-column:1/-1}}@media(max-width:720px){.top{align-items:flex-start;flex-wrap:wrap}.topic-pick{margin-left:0;width:100%}.topic-pick select{max-width:none;flex:1}.top p{display:none}.back{font-size:11.5px}.groups{grid-template-columns:1fr}.group.units{grid-column:auto}.unit-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.status{width:100%;order:-1}.actions{flex-wrap:wrap}.action{flex:1}.total{margin-left:auto}.preview{padding-inline:4px}}@media(max-width:390px){.top{padding-inline:9px}.topic-logo{width:38px;height:38px}.top h1{font-size:15px}.back{font-size:10.5px}.panel-inner{padding-inline:7px}.group{padding:8px}.field{flex:1}.field select{flex:1;min-width:0}.unit-grid{grid-template-columns:1fr 1fr}.unit{grid-template-columns:auto minmax(0,1fr) 38px}.count{width:38px}.choice{padding-inline:6px}.level{flex:1;padding-inline:7px}.quick button{flex:1}.action{padding-inline:8px}}
 @page{size:A4 portrait;margin:8mm 8mm 9mm}@media print{body{background:#fff}.panel,.top,.no-print{display:none!important}.preview{padding:0;overflow:visible}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;zoom:1!important}html,body{font-size:10pt}.sec{-webkit-print-color-adjust:exact;print-color-adjust:exact}.prob:hover{background:transparent}}
+</style>
+
+<style id="bhcs-math-brand">
+/* P1: screen palette only; original print rules and worksheet geometry are preserved. */
+@media screen{
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #C8352B}
+.topic-logo{border-radius:6px}
+.topic-pick{color:#F2F4F7}
+.top p{color:#C9D2DE}
+.group{border:1px solid #F2F4F7;border-radius:6px;background:#FCFCFA}
+select{border:1px solid #43516B}
+.level{border:1px solid #43516B;border-radius:6px}
+.choice{border:1px solid #C9D2DE}
+.choice:has(input:checked){border-color:#16233A}
+.unit{border:1px solid #F2F4F7}
+.unit:has(.unit-check:checked){border-color:#C9D2DE}
+.count{border:1px solid #C9D2DE;border-radius:6px}
+.count:disabled{color:#43516B;background:#FCFCFA}
+.quick button{border:1px solid #43516B;border-radius:6px}
+.action{border-radius:6px}
+.sheet{box-shadow:0 9px 30px #16233A1c}
+.bhcs-brand i{color:#43516B}
+.tip{color:#43516B}
+.prob{border-bottom:1px dashed #C9D2DE}
+.empty{border:2px dashed #C9D2DE;border-radius:6px}
+svg [fill="#176b55" i]{fill:#16233A}
+svg [stroke="#176b55" i]{stroke:#16233A}
+svg [fill="#0f4f40" i]{fill:#16233A}
+svg [stroke="#0f4f40" i]{stroke:#16233A}
+svg [fill="#55cfad" i]{fill:#16233A}
+svg [stroke="#55cfad" i]{stroke:#16233A}
+svg [fill="#e8f5f0" i]{fill:#F2F4F7}
+svg [stroke="#e8f5f0" i]{stroke:#F2F4F7}
+svg [fill="#c8d4d1" i]{fill:#C9D2DE}
+svg [stroke="#c8d4d1" i]{stroke:#C9D2DE}
+svg [fill="#182d28" i]{fill:#16233A}
+svg [stroke="#182d28" i]{stroke:#16233A}
+svg [fill="#62736f" i]{fill:#43516B}
+svg [stroke="#62736f" i]{stroke:#43516B}
+svg [fill="#e8edef" i]{fill:#F2F4F7}
+svg [stroke="#e8edef" i]{stroke:#F2F4F7}
+svg [fill="#ae3f3f" i]{fill:#C8352B}
+svg [stroke="#ae3f3f" i]{stroke:#C8352B}
+svg [fill="#a66d00" i]{fill:#C8352B}
+svg [stroke="#a66d00" i]{stroke:#C8352B}
+svg [fill="#c8e8df" i]{fill:#F2F4F7}
+svg [stroke="#c8e8df" i]{stroke:#F2F4F7}
+svg [fill="#bed7cf" i]{fill:#C9D2DE}
+svg [stroke="#bed7cf" i]{stroke:#C9D2DE}
+svg [fill="#d7e1de" i]{fill:#F2F4F7}
+svg [stroke="#d7e1de" i]{stroke:#F2F4F7}
+svg [fill="#fbfdfc" i]{fill:#FCFCFA}
+svg [stroke="#fbfdfc" i]{stroke:#FCFCFA}
+svg [fill="#9eb2ac" i]{fill:#43516B}
+svg [stroke="#9eb2ac" i]{stroke:#43516B}
+svg [fill="#ccd9d5" i]{fill:#C9D2DE}
+svg [stroke="#ccd9d5" i]{stroke:#C9D2DE}
+svg [fill="#71bba5" i]{fill:#16233A}
+svg [stroke="#71bba5" i]{stroke:#16233A}
+svg [fill="#d6e1de" i]{fill:#F2F4F7}
+svg [stroke="#d6e1de" i]{stroke:#F2F4F7}
+svg [fill="#83c5b2" i]{fill:#C9D2DE}
+svg [stroke="#83c5b2" i]{stroke:#C9D2DE}
+svg [fill="#aebfba" i]{fill:#C9D2DE}
+svg [stroke="#aebfba" i]{stroke:#C9D2DE}
+svg [fill="#98a6a2" i]{fill:#43516B}
+svg [stroke="#98a6a2" i]{stroke:#43516B}
+svg [fill="#edf1f0" i]{fill:#FCFCFA}
+svg [stroke="#edf1f0" i]{stroke:#FCFCFA}
+svg [fill="#9fb7b0" i]{fill:#43516B}
+svg [stroke="#9fb7b0" i]{stroke:#43516B}
+svg [fill="#8a9793" i]{fill:#43516B}
+svg [stroke="#8a9793" i]{stroke:#43516B}
+svg [fill="#cdd5dc" i]{fill:#C9D2DE}
+svg [stroke="#cdd5dc" i]{stroke:#C9D2DE}
+svg [fill="#afc1bc" i]{fill:#C9D2DE}
+svg [stroke="#afc1bc" i]{stroke:#C9D2DE}
+
+html,body{background-color:var(--bhcs-bg)}
+button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--bhcs-green)}
+.top .logo,.top .topic-logo{color:#fff;background-color:var(--bhcs-green)}
+.top h1 b{color:#fff}
+header.no-print>div:first-child h1::before{color:#fff}
+header.no-print>div:first-child>div:first-child>div:first-child{color:#fff!important}
+:root body :is(#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]){background:#E8620C!important;color:#fff!important;border-color:#E8620C!important;box-shadow:none!important}
+:root body :is(#print,#btn-print-questions,#btn-print-answers,button[onclick^="printWorksheet("]){background:#fff!important;color:#16233A!important;border-color:#16233A!important;box-shadow:inset 0 0 0 1px #16233A!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C8352B}
+}
+.ans,.ans *,.answer,.note-answer,.sd,[id^="solution-"] ,[id^="solution-"] *,[id^="solution-box-"] ,[id^="solution-box-"] *{color:#C8352B!important}
 </style>
 </head>
 <body>

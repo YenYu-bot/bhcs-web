@@ -10,6 +10,7 @@
 - 教育觀點：文章正文及閱讀版面保留在 `wenzhang/*.html`。`build_site.mjs` 以首頁的頁首、頁尾及聯絡列為共用來源，套用至文章頁；品牌覆蓋樣式在 `assets/article-site.css`。新增或由外部流程產生文章後，也要執行這個步驟。
 - `build_site.mjs` 同時更新主站資源版本及頁尾營業時間；共用 CSS／JS 改動時更新該腳本的 `version`。
 - 數學單檔工具保留自身的出題與列印版面；來源及驗收說明見 `scripts/README.md`。
+- P1 數學螢幕配色由 `scripts/build_math_brand.mjs` 內嵌至 39 個單檔（88 個入口），不增加外部依賴；原始列印規則不改，教用答案統一品牌紅。後續 P2 或教材項目若刻意修改出題邏輯，須更新 `check_math_brand.cjs` 的 P1 基準與對應回歸測試，不能停用數學檢查。
 
 ## 建置與檢查
 
@@ -18,6 +19,7 @@ npm ci --prefix scripts
 node scripts/build_microscope.mjs
 node scripts/build_science.mjs
 node scripts/build_site.mjs
+node scripts/build_math_brand.mjs
 npm test --prefix scripts
 node scripts/check_science_integration.cjs
 ```

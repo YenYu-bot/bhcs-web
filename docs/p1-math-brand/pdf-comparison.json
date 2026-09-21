@@ -1,0 +1,74 @@
+[
+  {
+    "file": "estimation-after-student.pdf",
+    "pages": 3,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "estimation-after-teacher.pdf",
+    "pages": 3,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g6-drills-arithmetic-after-student.pdf",
+    "pages": 1,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g6-drills-arithmetic-after-teacher.pdf",
+    "pages": 1,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g7-factors-multiples-after-student.pdf",
+    "pages": 2,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g7-factors-multiples-after-teacher.pdf",
+    "pages": 2,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g8-pythagorean-after-student.pdf",
+    "pages": 2,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g8-pythagorean-after-teacher.pdf",
+    "pages": 2,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g9-1-2-parallel-proportional-after-student.pdf",
+    "pages": 2,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g9-1-2-parallel-proportional-after-teacher.pdf",
+    "pages": 3,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g9-1-4-trig-ratio-after-student.pdf",
+    "pages": 2,
+    "same_pages": true,
+    "same_text_positions": true
+  },
+  {
+    "file": "math-g9-1-4-trig-ratio-after-teacher.pdf",
+    "pages": 3,
+    "same_pages": true,
+    "same_text_positions": true
+  }
+]

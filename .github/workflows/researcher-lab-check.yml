@@ -20,6 +20,7 @@ jobs:
       - run: node scripts/build_microscope.mjs
       - run: node scripts/build_science.mjs
       - run: node scripts/build_site.mjs
+      - run: node scripts/build_math_brand.mjs
       - run: git diff --exit-code
       - run: npm test --prefix scripts
       - run: node scripts/check_science_integration.cjs
@@ -37,6 +38,11 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_site_browser.cjs
+      - name: Compare P1 math worksheets and print layouts
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+          MATH_BRAND_PDF: '1'
+        run: node scripts/check_math_brand_browser.cjs
       - name: Check all welcome layouts and capture review images
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -66,4 +72,10 @@ jobs:
         with:
           name: public-site-review
           path: site-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-math-brand-review
+          path: math-brand-artifacts/
           retention-days: 14
