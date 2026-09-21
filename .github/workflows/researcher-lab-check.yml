@@ -26,3 +26,22 @@ jobs:
       - run: node scripts/test_researcher_batch3.cjs
       - run: node scripts/test_researcher_batch4.cjs
       - run: node scripts/test_researcher_batch5.cjs
+      - name: Install Chromium for composition review
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@1.58.2
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Check all welcome layouts and capture review images
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_researcher_composition.cjs
+      - name: Check real microscope pointer input and navigation
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_researcher_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: researcher-composition-review
+          path: composition-artifacts/
+          retention-days: 14

@@ -20,7 +20,7 @@ for(const [file,action,resultId] of pages){
  const html=fs.readFileSync(path.join(root,'tools',file),'utf8'),staticDom=new JSDOM(html),sd=staticDom.window.document;
  assert.equal(sd.getElementById('prediction'),null,file+' prediction control must be removed');
  assert.ok(sd.querySelector('link[href^="../assets/researcher-lab.css?v="]'),file+' versioned researcher css missing');
- assert.ok(sd.querySelector('script[src="../assets/researcher-lab.js"]'),file+' researcher js missing');
+ assert.ok(sd.querySelector('script[src^="../assets/researcher-lab.js?v="]'),file+' researcher js missing');
  const visible=sd.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),file+' visible UI still contains prediction wording');
  staticDom.window.close();

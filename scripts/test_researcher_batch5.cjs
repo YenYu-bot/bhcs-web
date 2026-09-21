@@ -19,7 +19,7 @@ for(const [file,action,resultId] of pages){
  const html=fs.readFileSync(path.join(root,'tools',file),'utf8'),staticDom=new JSDOM(html),sd=staticDom.window.document;
  assert.equal(sd.getElementById('prediction'),null,file+' prediction control must be removed');
  assert.ok(sd.querySelector('link[href^="../assets/researcher-lab.css?v="]'),file+' versioned researcher css missing');
- assert.ok(sd.querySelector('script[src="../assets/researcher-lab.js"]'),file+' researcher js missing');
+ assert.ok(sd.querySelector('script[src^="../assets/researcher-lab.js?v="]'),file+' researcher js missing');
  const visible=sd.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),file+' visible UI still contains prediction wording');
  staticDom.window.close();
@@ -33,15 +33,8 @@ const shell=fs.readFileSync(path.join(root,'assets/researcher-lab.js'),'utf8');
 for(const key of ['plate-earthquake-lab.html','buoyancy-density-lab.html','acid-base-indicator-lab.html','photosynthesis-factor-lab.html'])assert.ok(shell.includes(key),'researcher shell missing '+key);
 assert.ok(shell.includes('余老師'),'researcher shell missing 余老師');
 const shellCss=fs.readFileSync(path.join(root,'assets/researcher-lab.css'),'utf8');
-assert.match(shellCss,/\.researcher-scene \.doc\{left:3\.5%;right:auto;bottom:-2px/, 'desktop welcome character must stay on the left');
-assert.match(shellCss,/\.researcher-bubble\{left:auto;right:6%;top:9%;[^}]*width:min\(260px,42%\)/, 'desktop welcome bubble must stay on the right');
-assert.match(shellCss,/@media\(max-width:850px\)[\s\S]*?\.researcher-scene \.doc\{left:3%;right:auto;[^}]*\}[\s\S]*?\.researcher-bubble\{left:auto;right:16%;/, 'tablet welcome layout must preserve the left-to-right composition');
-assert.match(shellCss,/\.researcher-scene \.doc\{left:4px;right:auto;width:155px/, 'mobile welcome character must stay on the left');
-assert.match(shellCss,/\.researcher-bubble\{left:auto;right:14px;top:16px;width:auto;max-width:calc\(100% - 172px\)/, 'mobile welcome bubble must stay on the right');
-assert.match(shellCss,/\.researcher-bubble:before,\.researcher-bubble:after\{[^}]*clip-path:polygon\(0 100%,28% 0,100% 0\)/, 'bubble tail must use a compact down-left shape');
-assert.match(shellCss,/\.researcher-bubble:before\{left:22px;bottom:-16px;width:22px;height:18px;[^}]*background:#58b99a\}/, 'desktop bubble tail must stay compact and attached to the bubble');
-assert.match(shellCss,/\.researcher-bubble:after\{left:26px;bottom:-11px;width:16px;height:13px;[^}]*background:rgba\(255,255,255,\.96\)\}/, 'desktop bubble tail inner fill missing');
-assert.match(shellCss,/@media\(max-width:700px\)[\s\S]*?\.researcher-bubble:before\{left:18px;bottom:-14px;width:18px;height:16px\}[\s\S]*?\.researcher-bubble:after\{left:21px;bottom:-9px;width:13px;height:11px\}/, 'mobile bubble tail must use the smaller compact shape');
+// Actual bounds, mouth alignment and tail size are checked in Chromium.
+for(const scene of ['physics','chemistry','earth'])assert.doesNotMatch(shellCss,new RegExp('\\.room\\[src\\*="scene-'+scene+'"\\][^{]*\\{[^}]*scaleX\\(-1\\)'),scene+' scene must retain its scientifically meaningful orientation');
 console.log('PASS researcher batch 5: final four legacy stations are prediction-free and directly operable');
 
 
@@ -51,7 +44,7 @@ for(const file of legacyAll){
  const html=fs.readFileSync(path.join(root,'tools',file),'utf8'),d=new JSDOM(html).window.document;
  assert.equal(d.getElementById('prediction'),null,file+' final audit: prediction control exists');
  assert.ok(d.querySelector('link[href^="../assets/researcher-lab.css?v="]'),file+' final audit: versioned researcher css missing');
- assert.ok(d.querySelector('script[src="../assets/researcher-lab.js"]'),file+' final audit: researcher js missing');
+ assert.ok(d.querySelector('script[src^="../assets/researcher-lab.js?v="]'),file+' final audit: researcher js missing');
  const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),file+' final audit: visible prediction wording remains');
 }
@@ -60,14 +53,14 @@ for(const id of sharedAll){
  assert.equal(conf.noPrediction,true,id+' final audit: noPrediction flag missing');
  assert.equal(d.getElementById('prediction'),null,id+' final audit: prediction control exists');
  assert.ok(d.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),id+' final audit: versioned researcher css missing');
- assert.ok(d.querySelector('script[src="../../assets/researcher-lab.js"]'),id+' final audit: researcher js missing');
+ assert.ok(d.querySelector('script[src^="../../assets/researcher-lab.js?v="]'),id+' final audit: researcher js missing');
  const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),id+' final audit: visible prediction wording remains');
  assert.ok(!html.includes('預測'),id+' final audit: inactive prediction program strings remain');
 }
 const directory=fs.readFileSync(path.join(root,'tools/science/index.html'),'utf8'),dirDom=new JSDOM(directory).window.document;
 assert.ok(dirDom.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),'directory final audit: versioned researcher css missing');
-assert.ok(dirDom.querySelector('script[src="../../assets/researcher-lab.js"]'),'directory final audit: researcher js missing');
+assert.ok(dirDom.querySelector('script[src^="../../assets/researcher-lab.js?v="]'),'directory final audit: researcher js missing');
 const dirVisible=dirDom.body.cloneNode(true);dirVisible.querySelectorAll('script,style').forEach(n=>n.remove());
 assert.ok(!dirVisible.textContent.includes('預測'),'directory final audit: visible prediction wording remains');
 const mini=fs.readFileSync(path.join(root,'tools/mini-lab/index.html'),'utf8');
