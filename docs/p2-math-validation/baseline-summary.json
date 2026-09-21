@@ -1,0 +1,485 @@
+{
+  "baseline": "d2ded3ec3be5235483e5345ee03090e2cfa8e1ff",
+  "requirement": "200 unique sig values per topic/unit/level/mode, using the existing 50-attempt safeQuestion",
+  "summary": {
+    "topics": 52,
+    "combinations": 1740,
+    "completed200": 1335,
+    "passed": 1309,
+    "failed": 431,
+    "generated": 308405,
+    "rejectedVerify": 753,
+    "exceptions": 2223,
+    "repeatedExpressionMarkup": 2585
+  },
+  "topics": [
+    {
+      "link": "g6-drills.html?topic=arithmetic",
+      "title": "分數與小數四則運算",
+      "units": 8,
+      "combinations": 69,
+      "passed": 62,
+      "failed": 7,
+      "completed200": 62
+    },
+    {
+      "link": "g6-drills.html?topic=simplify",
+      "title": "四則簡化計算",
+      "units": 6,
+      "combinations": 54,
+      "passed": 54,
+      "failed": 0,
+      "completed200": 54
+    },
+    {
+      "link": "g6-drills.html?topic=unknown",
+      "title": "解未知數",
+      "units": 6,
+      "combinations": 54,
+      "passed": 54,
+      "failed": 0,
+      "completed200": 54
+    },
+    {
+      "link": "g6-drills.html?topic=time",
+      "title": "時間的計算與化聚",
+      "units": 6,
+      "combinations": 51,
+      "passed": 51,
+      "failed": 0,
+      "completed200": 51
+    },
+    {
+      "link": "g6-drills.html?topic=gcd",
+      "title": "最大公因數與最小公倍數",
+      "units": 6,
+      "combinations": 18,
+      "passed": 18,
+      "failed": 0,
+      "completed200": 18
+    },
+    {
+      "link": "g6-drills.html?topic=ratio",
+      "title": "比、比例式與百分率",
+      "units": 6,
+      "combinations": 54,
+      "passed": 45,
+      "failed": 9,
+      "completed200": 45
+    },
+    {
+      "link": "g10-drills.html?topic=multiplication",
+      "title": "乘法公式",
+      "units": 8,
+      "combinations": 24,
+      "passed": 3,
+      "failed": 21,
+      "completed200": 3
+    },
+    {
+      "link": "g10-drills.html?topic=polynomial",
+      "title": "多項式四則運算",
+      "units": 6,
+      "combinations": 18,
+      "passed": 18,
+      "failed": 0,
+      "completed200": 18
+    },
+    {
+      "link": "g10-drills.html?topic=remainder",
+      "title": "餘式定理與因式定理",
+      "units": 5,
+      "combinations": 18,
+      "passed": 18,
+      "failed": 0,
+      "completed200": 18
+    },
+    {
+      "link": "g10-drills.html?topic=rationalexp",
+      "title": "分式的運算",
+      "units": 6,
+      "combinations": 18,
+      "passed": 14,
+      "failed": 4,
+      "completed200": 14
+    },
+    {
+      "link": "g10-drills.html?topic=radicals",
+      "title": "根式的運算",
+      "units": 7,
+      "combinations": 21,
+      "passed": 16,
+      "failed": 5,
+      "completed200": 16
+    },
+    {
+      "link": "g10-drills.html?topic=exponent",
+      "title": "指數",
+      "units": 9,
+      "combinations": 42,
+      "passed": 27,
+      "failed": 15,
+      "completed200": 34
+    },
+    {
+      "link": "g10-drills.html?topic=logarithms",
+      "title": "對數",
+      "units": 6,
+      "combinations": 27,
+      "passed": 16,
+      "failed": 11,
+      "completed200": 16
+    },
+    {
+      "link": "g10-drills.html?topic=absolute",
+      "title": "絕對值與區間",
+      "units": 6,
+      "combinations": 18,
+      "passed": 15,
+      "failed": 3,
+      "completed200": 15
+    },
+    {
+      "link": "g10-drills.html?topic=inequalities",
+      "title": "不等式",
+      "units": 5,
+      "combinations": 15,
+      "passed": 12,
+      "failed": 3,
+      "completed200": 12
+    },
+    {
+      "link": "g10-drills.html?topic=amgm",
+      "title": "算幾不等式",
+      "units": 8,
+      "combinations": 27,
+      "passed": 8,
+      "failed": 19,
+      "completed200": 8
+    },
+    {
+      "link": "g10-drills.html?topic=quadratic",
+      "title": "二次函數與對稱性",
+      "units": 7,
+      "combinations": 24,
+      "passed": 21,
+      "failed": 3,
+      "completed200": 21
+    },
+    {
+      "link": "g10-drills.html?topic=cubic",
+      "title": "三次函數與大域特徵",
+      "units": 8,
+      "combinations": 24,
+      "passed": 19,
+      "failed": 5,
+      "completed200": 21
+    },
+    {
+      "link": "g10-drills.html?topic=point",
+      "title": "分點公式",
+      "units": 7,
+      "combinations": 42,
+      "passed": 34,
+      "failed": 8,
+      "completed200": 34
+    },
+    {
+      "link": "g10-drills.html?topic=linecircle",
+      "title": "直線與圓",
+      "units": 5,
+      "combinations": 15,
+      "passed": 15,
+      "failed": 0,
+      "completed200": 15
+    },
+    {
+      "link": "g11-drills.html?topic=sequences",
+      "title": "數列與遞迴數列",
+      "units": 15,
+      "combinations": 45,
+      "passed": 43,
+      "failed": 2,
+      "completed200": 43
+    },
+    {
+      "link": "g11-drills.html?topic=series",
+      "title": "級數與常用公式",
+      "units": 15,
+      "combinations": 45,
+      "passed": 33,
+      "failed": 12,
+      "completed200": 33
+    },
+    {
+      "link": "g11-drills.html?topic=standarddev",
+      "title": "標準差與標準化數據",
+      "units": 15,
+      "combinations": 45,
+      "passed": 40,
+      "failed": 5,
+      "completed200": 41
+    },
+    {
+      "link": "g11-drills.html?topic=correlation",
+      "title": "相關係數與回歸直線",
+      "units": 16,
+      "combinations": 48,
+      "passed": 43,
+      "failed": 5,
+      "completed200": 43
+    },
+    {
+      "link": "g11-drills.html?topic=counting",
+      "title": "計數原理",
+      "units": 10,
+      "combinations": 30,
+      "passed": 14,
+      "failed": 16,
+      "completed200": 14
+    },
+    {
+      "link": "g11-drills.html?topic=permutations",
+      "title": "排列",
+      "units": 9,
+      "combinations": 27,
+      "passed": 11,
+      "failed": 16,
+      "completed200": 11
+    },
+    {
+      "link": "g11-drills.html?topic=combinations",
+      "title": "組合",
+      "units": 10,
+      "combinations": 30,
+      "passed": 10,
+      "failed": 20,
+      "completed200": 10
+    },
+    {
+      "link": "g11-drills.html?topic=probability",
+      "title": "機率",
+      "units": 11,
+      "combinations": 33,
+      "passed": 12,
+      "failed": 21,
+      "completed200": 12
+    },
+    {
+      "link": "g11-drills.html?topic=righttrig",
+      "title": "直角三角形的三角比",
+      "units": 12,
+      "combinations": 36,
+      "passed": 24,
+      "failed": 12,
+      "completed200": 26
+    },
+    {
+      "link": "g11-drills.html?topic=generalpolar",
+      "title": "廣義角與極座標",
+      "units": 14,
+      "combinations": 42,
+      "passed": 38,
+      "failed": 4,
+      "completed200": 38
+    },
+    {
+      "link": "g11-drills.html?topic=sincosarea",
+      "title": "正餘弦定理與三角形面積",
+      "units": 11,
+      "combinations": 33,
+      "passed": 9,
+      "failed": 24,
+      "completed200": 9
+    },
+    {
+      "link": "g11-drills.html?topic=radians",
+      "title": "弧度量",
+      "units": 4,
+      "combinations": 15,
+      "passed": 9,
+      "failed": 6,
+      "completed200": 9
+    },
+    {
+      "link": "g11-drills.html?topic=sector",
+      "title": "扇形的周長與面積",
+      "units": 6,
+      "combinations": 36,
+      "passed": 15,
+      "failed": 21,
+      "completed200": 15
+    },
+    {
+      "link": "g11-drills.html?topic=anglesum",
+      "title": "和差角公式",
+      "units": 6,
+      "combinations": 18,
+      "passed": 12,
+      "failed": 6,
+      "completed200": 12
+    },
+    {
+      "link": "g11-drills.html?topic=doublehalf",
+      "title": "倍角與半角",
+      "units": 9,
+      "combinations": 27,
+      "passed": 12,
+      "failed": 15,
+      "completed200": 12
+    },
+    {
+      "link": "g11-drills.html?topic=trigblend",
+      "title": "正餘弦疊合",
+      "units": 9,
+      "combinations": 27,
+      "passed": 17,
+      "failed": 10,
+      "completed200": 17
+    },
+    {
+      "link": "g11-drills.html?topic=trigtransform",
+      "title": "三角函數的伸縮與平移",
+      "units": 5,
+      "combinations": 24,
+      "passed": 23,
+      "failed": 1,
+      "completed200": 23
+    },
+    {
+      "link": "g11-drills.html?topic=expfunctions",
+      "title": "指數函數與圖形",
+      "units": 9,
+      "combinations": 27,
+      "passed": 23,
+      "failed": 4,
+      "completed200": 25
+    },
+    {
+      "link": "g11-drills.html?topic=expequations",
+      "title": "指數方程與應用",
+      "units": 5,
+      "combinations": 18,
+      "passed": 12,
+      "failed": 6,
+      "completed200": 12
+    },
+    {
+      "link": "g11-drills.html?topic=commonlog",
+      "title": "常用對數與對數律",
+      "units": 5,
+      "combinations": 24,
+      "passed": 7,
+      "failed": 17,
+      "completed200": 7
+    },
+    {
+      "link": "g11-drills.html?topic=loggraphs",
+      "title": "對數方程與圖形",
+      "units": 6,
+      "combinations": 21,
+      "passed": 15,
+      "failed": 6,
+      "completed200": 18
+    },
+    {
+      "link": "g11-drills.html?topic=vectorcauchy",
+      "title": "向量內積、正射影與柯西不等式",
+      "units": 6,
+      "combinations": 24,
+      "passed": 15,
+      "failed": 9,
+      "completed200": 15
+    },
+    {
+      "link": "g11-drills.html?topic=spaceconcept",
+      "title": "空間概念與三垂線",
+      "units": 10,
+      "combinations": 30,
+      "passed": 9,
+      "failed": 21,
+      "completed200": 9
+    },
+    {
+      "link": "g11-drills.html?topic=spacevector",
+      "title": "空間向量的基本性質",
+      "units": 12,
+      "combinations": 36,
+      "passed": 33,
+      "failed": 3,
+      "completed200": 33
+    },
+    {
+      "link": "g11-drills.html?topic=spaceinner",
+      "title": "空間向量內積",
+      "units": 12,
+      "combinations": 36,
+      "passed": 33,
+      "failed": 3,
+      "completed200": 36
+    },
+    {
+      "link": "g11-drills.html?topic=spacecross",
+      "title": "空間外積",
+      "units": 13,
+      "combinations": 39,
+      "passed": 36,
+      "failed": 3,
+      "completed200": 39
+    },
+    {
+      "link": "g11-drills.html?topic=plane3d",
+      "title": "平面方程",
+      "units": 15,
+      "combinations": 45,
+      "passed": 45,
+      "failed": 0,
+      "completed200": 45
+    },
+    {
+      "link": "g11-drills.html?topic=line3d",
+      "title": "空間直線方程",
+      "units": 16,
+      "combinations": 48,
+      "passed": 45,
+      "failed": 3,
+      "completed200": 48
+    },
+    {
+      "link": "g11-drills.html?topic=conditionalprob",
+      "title": "條件機率與獨立事件",
+      "units": 15,
+      "combinations": 45,
+      "passed": 36,
+      "failed": 9,
+      "completed200": 36
+    },
+    {
+      "link": "g11-drills.html?topic=bayes",
+      "title": "貝氏定理",
+      "units": 15,
+      "combinations": 45,
+      "passed": 27,
+      "failed": 18,
+      "completed200": 27
+    },
+    {
+      "link": "g11-drills.html?topic=matrixops",
+      "title": "矩陣運算",
+      "units": 17,
+      "combinations": 51,
+      "passed": 48,
+      "failed": 3,
+      "completed200": 48
+    },
+    {
+      "link": "g11-drills.html?topic=matrixapps",
+      "title": "矩陣應用",
+      "units": 19,
+      "combinations": 57,
+      "passed": 40,
+      "failed": 17,
+      "completed200": 40
+    }
+  ]
+}
