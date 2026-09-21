@@ -691,6 +691,14 @@ body.researcher-station .observation .stage.is-preview::after{
 @media (min-width:851px){
   body .researcher-scene.doc-right .room{transform:none;object-position:left center}
   body .researcher-scene.doc-right .doc{left:auto;right:2%;bottom:0;transform:scaleX(-1);max-height:82%}
-  body .researcher-scene.doc-right .researcher-bubble::before{left:auto;right:-16px;clip-path:polygon(0 0,100% 50%,0 100%)}
-  body .researcher-scene.doc-right .researcher-bubble::after{left:auto;right:-11px;clip-path:polygon(0 0,100% 50%,0 100%)}
 }
+
+/* ---------- 21. 對話置於人物上方，露出桌面器材；短尾向下指向說話者 ---------- */
+body .researcher-scene .doc,body .researcher-scene.doc-right .doc{
+  max-height:calc(100% - var(--speech-reserve,112px))}
+body .researcher-scene .researcher-bubble.is-aligned::before{
+  top:100%;bottom:auto;left:var(--speech-tail-left);right:auto;width:20px;height:14px;
+  clip-path:polygon(0 0,100% 0,50% 100%)}
+body .researcher-scene .researcher-bubble.is-aligned::after{
+  top:calc(100% - 1px);bottom:auto;left:calc(var(--speech-tail-left) + 3px);right:auto;width:14px;height:11px;
+  clip-path:polygon(0 0,100% 0,50% 100%)}

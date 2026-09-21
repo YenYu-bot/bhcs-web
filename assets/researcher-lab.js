@@ -126,19 +126,22 @@ function alignWelcomeSpeech(){
   if(!doc||!bubble)return;
   const align=()=>{
    if(!scene.offsetWidth||!doc.naturalWidth)return;
-   const s=scene.getBoundingClientRect(),d=doc.getBoundingClientRect();
+   const s=scene.getBoundingClientRect(),bw=bubble.offsetWidth,bh=bubble.offsetHeight;
+   // Reserve real space above the character, including the short downward tail.
+   scene.style.setProperty('--speech-reserve',(bh+28)+'px');
+   const d=doc.getBoundingClientRect();
    const scale=Math.min(d.width/doc.naturalWidth,d.height/doc.naturalHeight);
    const w=doc.naturalWidth*scale,h=doc.naturalHeight*scale;
    const x=d.left-s.left+(d.width-w)/2,y=d.top-s.top+(d.height-h)/2;
-   const microscope=doc.src.includes('doc-microscope'),wave=doc.src.includes('doc-wave');
-   const mouthY=y+h*(microscope?.32:wave?.28:.30);
-   const bw=bubble.offsetWidth,bh=bubble.offsetHeight,pad=s.width<500?12:24;
-   const rightSide=getComputedStyle(doc).transform.startsWith('matrix(-1');
-   const left=rightSide?Math.max(pad,x+w*.30-bw-24):Math.min(s.width-bw-pad,Math.max(s.width*.42,x+w*.70+24));
-   const top=Math.max(18,Math.min(s.height-bh-18,mouthY-bh*.65));
-   bubble.style.setProperty('--speech-left',(!rightSide&&s.width<500?s.width-bw-pad:left)+'px');
+   const mirrored=getComputedStyle(doc).transform.startsWith('matrix(-1');
+   const mouthFraction=doc.src.includes('doc-wave')?.5:.42;
+   const mouthX=x+w*(mirrored?1-mouthFraction:mouthFraction);
+   const pad=s.width<500?12:24;
+   const left=Math.max(pad,Math.min(s.width-bw-pad,mouthX-bw/2));
+   const top=Math.max(12,y+h*.025-bh-24);
+   bubble.style.setProperty('--speech-left',left+'px');
    bubble.style.setProperty('--speech-top',top+'px');
-   bubble.style.setProperty('--speech-tail-top',Math.max(12,Math.min(bh-32,mouthY-top-10))+'px');
+   bubble.style.setProperty('--speech-tail-left',Math.max(16,Math.min(bw-36,mouthX-left-10))+'px');
    bubble.classList.add('is-aligned');
   };
   doc.addEventListener('load',align);

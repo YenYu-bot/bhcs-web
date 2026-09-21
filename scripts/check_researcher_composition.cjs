@@ -49,10 +49,13 @@ const server=http.createServer((req,res)=>{
      const mouthFraction=microscope?.49:wave?.5:.42;
      const mouth={x:x+w*(mirrored?1-mouthFraction:mouthFraction),y:y+h*(microscope?.32:wave?.28:.30)};
      const tail=getComputedStyle(bubble,'::before');
-     const tailY=b.top+parseFloat(getComputedStyle(bubble).borderTopWidth)+parseFloat(tail.top)+parseFloat(tail.height)/2;
-     const tailX=mirrored?b.right-parseFloat(getComputedStyle(bubble).borderRightWidth)-parseFloat(tail.right):b.left+parseFloat(tail.left);
-     const tailAligned=Math.abs(tailY-mouth.y)<=4&&(mirrored?tailX<mouth.x:tailX>mouth.x);
-     const shortTail=parseFloat(tail.width)<=16&&parseFloat(tail.height)<=20;
+     const tailY=b.top+parseFloat(getComputedStyle(bubble).borderTopWidth)+parseFloat(tail.top)+parseFloat(tail.height);
+     const tailX=b.left+parseFloat(getComputedStyle(bubble).borderLeftWidth)+parseFloat(tail.left)+parseFloat(tail.width)/2;
+     const tailAligned=Math.abs(tailX-mouth.x)<=4&&tailY<mouth.y&&tailY>b.bottom;
+     const shortTail=parseFloat(tail.width)<=20&&parseFloat(tail.height)<=16;
+     // The requested upper placement must clear hair and the equipment area, not just the face.
+     const aboveCharacter=tailY<=y+h*.025-8;
+     const equipmentClear=b.bottom<=s.top+s.height*.40;
      const room=scene.querySelector('.room'),transform=getComputedStyle(room).transform;
      const scienceOrientation=!(room.src.match(/scene-(physics|chemistry|earth)/)&&transform.startsWith('matrix(-1'));
      // Measure text itself: decorative pseudo-element tails may extend scrollWidth.
@@ -64,12 +67,15 @@ const server=http.createServer((req,res)=>{
      const hit=document.elementFromPoint(c.x+c.width/2,c.y+c.height/2);
      const startInFirstScreen=!shortDesktop||(c.top>=0&&c.bottom<=innerHeight&&c.left>=0&&c.right<=innerWidth&&cta.contains(hit));
      const feetInFirstScreen=!shortDesktop||y+h<=innerHeight;
-     return {startInFirstScreen,feetInFirstScreen,ctaBottom:c.bottom,tailAligned,shortTail,scienceOrientation,tailOffset:Math.round((tailY-mouth.y)*100)/100,character:{x:x-s.x,y:y-s.y,width:w,height:h},loaded:[...scene.querySelectorAll('img')].every(i=>i.complete&&i.naturalWidth>0),overflow:document.documentElement.scrollWidth-innerWidth,bubbleInside:b.left>=s.left&&b.right<=s.right&&b.top>=s.top&&b.bottom<=s.bottom,textFits,characterInside:x>=s.left-5&&x+w<=s.right+5&&y>=s.top&&y+h<=s.bottom+3,faceCovered,scene:{width:s.width,height:s.height},bubble:{left:b.left-s.left,top:b.top-s.top,width:b.width,height:b.height}};
+     return {aboveCharacter,equipmentClear,startInFirstScreen,feetInFirstScreen,ctaBottom:c.bottom,tailAligned,shortTail,scienceOrientation,tailOffset:Math.round((tailX-mouth.x)*100)/100,character:{x:x-s.x,y:y-s.y,width:w,height:h},loaded:[...scene.querySelectorAll('img')].every(i=>i.complete&&i.naturalWidth>0),overflow:document.documentElement.scrollWidth-innerWidth,bubbleInside:b.left>=s.left&&b.right<=s.right&&b.top>=s.top&&b.bottom<=s.bottom,textFits,characterInside:x>=s.left-5&&x+w<=s.right+5&&y>=s.top&&y+h<=s.bottom+3,faceCovered,scene:{width:s.width,height:s.height},bubble:{left:b.left-s.left,top:b.top-s.top,width:b.width,height:b.height}};
     };
     await page.evaluate(()=>scrollTo(0,0));
     const checks=await page.evaluate(measure);
-    // Negative controls prove the new gates reject offscreen buttons and clipped text.
+    // Negative controls reject equipment overlap, offscreen buttons and clipped text.
     if(file===pages[0]&&width===1366&&height===650){
+     await page.evaluate(()=>document.querySelector('.researcher-bubble').style.transform='translateY(200px)');
+     if((await page.evaluate(measure)).equipmentClear)throw Error('Equipment-overlap negative control was not rejected');
+     await page.evaluate(()=>document.querySelector('.researcher-bubble').style.removeProperty('transform'));
      await page.evaluate(()=>{const c=document.querySelector('[data-start]');c.style.transform='translateY(1000px)'});
      if((await page.evaluate(measure)).startInFirstScreen)throw Error('Offscreen-button negative control was not rejected');
      await page.evaluate(()=>{document.querySelector('[data-start]').style.removeProperty('transform');const b=document.querySelector('.researcher-bubble');b.style.setProperty('width','40px','important');b.style.setProperty('height','20px','important');b.style.setProperty('overflow','hidden','important')});
@@ -81,7 +87,7 @@ const server=http.createServer((req,res)=>{
     await page.screenshot({path:path.join(output,id+'-viewport.png')});
     await page.locator('.researcher-welcome').screenshot({path:path.join(output,id+'.png')});
     await page.locator('.researcher-scene').screenshot({path:path.join(output,id+'-scene.png')});
-    results.push({file,width,height,...checks,errors,pass:checks.startInFirstScreen&&checks.feetInFirstScreen&&checks.tailAligned&&checks.shortTail&&checks.scienceOrientation&&checks.loaded&&checks.overflow<=2&&checks.bubbleInside&&checks.textFits&&checks.characterInside&&!checks.faceCovered&&!errors.length});
+    results.push({file,width,height,...checks,errors,pass:checks.aboveCharacter&&checks.equipmentClear&&checks.startInFirstScreen&&checks.feetInFirstScreen&&checks.tailAligned&&checks.shortTail&&checks.scienceOrientation&&checks.loaded&&checks.overflow<=2&&checks.bubbleInside&&checks.textFits&&checks.characterInside&&!checks.faceCovered&&!errors.length});
     await page.close();
    }
    await context.close();
