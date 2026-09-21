@@ -89,7 +89,8 @@ export function diagram(id,s,r){
   const fn=temp=>s.solute==='a'?20+.5*temp:35+.025*temp;
   extra=`<svg viewBox="0 0 660 360" role="img" aria-label="教學溶解度曲線，橫軸溫度0到80°C，縱軸每100g水可溶的克數0到65g">${plot(fn,80,65,'溫度（°C）；縱軸：g／100g水')}${circle(60+s.temperature/80*540,270-r.solubility/65*190,6,'#b54a5b')}${text(100,35,'模型'+s.solute.toUpperCase()+' 溶解度曲線（非實測）',18)}</svg>`;
  }
- return `<svg viewBox="0 0 660 400" role="img" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">本次${esc(id)}模型圖解</title><desc id="diagram-desc">與下方數值同步，完整數據見觀察結果。圖形為教學示意，請閱讀模型限制。</desc><defs><clipPath id="scene-clip"><rect width="660" height="400"/></clipPath></defs><g clip-path="url(#scene-clip)">${out}</g></svg>`+extra;
+ // 含可拖曳／可聚焦把手的圖不能用 role="img"：img 的子孫對輔助科技是隱藏的，裡面再放 role="button" 會觸發 axe nested-interactive。
+ return `<svg viewBox="0 0 660 400" role="${out.includes('data-lab-drag')?'group':'img'}" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">本次${esc(id)}模型圖解</title><desc id="diagram-desc">與下方數值同步，完整數據見觀察結果。圖形為教學示意，請閱讀模型限制。</desc><defs><clipPath id="scene-clip"><rect width="660" height="400"/></clipPath></defs><g clip-path="url(#scene-clip)">${out}</g></svg>`+extra;
 }
 
 // Orthographic phase boundary. Its lit area is pi*R²*(1-cos(phase))/2.

@@ -258,3 +258,412 @@ font-family:inherit;
 .researcher-ui :is(.quizItem fieldset,#quizScore,.scopeStage,.labgrid>.card,.researcher-save){scroll-margin-top:86px}
 @media(max-width:850px){.researcher-ui :is(.quizItem fieldset,#quizScore,.scopeStage,.labgrid>.card,.researcher-save){scroll-margin-top:18px}}
 @media print{.researcher-save{display:none!important}}
+
+/* ==========================================================================
+   BHCS brand theme — 百宏「實驗紀錄簿」 (2026-09-21)
+   設計語彙與官網一致：方格紙 + 紅筆批改。深藍墨水字、紅筆標註、橘色只留給「下一步」。
+   這一層只改外觀與排版順序，不改任何互動邏輯；要調整品牌色請改下面的 --bh-* 變數。
+   變數一律使用 --bh- 前綴：各教材頁自己的 :root 已經占用 --ink、--paper、--red 等名稱。
+   ========================================================================== */
+:root{
+  --bh-ink:#16233A;--bh-ink-soft:#43516B;--bh-ink-faint:#7C879B;
+  --bh-paper:#FCFCFA;--bh-card:#FFFFFF;--bh-surface:#F2F4F7;
+  --bh-grid:#DCE2EA;--bh-grid-strong:#C9D2DE;
+  --bh-red:#C8352B;--bh-red-soft:#F6E3E1;
+  --bh-orange:#E8620C;--bh-orange-dark:#C24F06;
+  --bh-note:#FFF6D6;--bh-note-line:#E9D48A;
+  --bh-ok:#1E7A4C;--bh-ok-soft:#E7F4EC;
+  --bh-sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --bh-serif:"Noto Serif TC","Songti TC","PMingLiU","Noto Serif CJK TC",serif;
+  --bh-mono:"IBM Plex Mono","Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
+  --bh-radius:6px;--bh-radius-s:4px;
+  --bh-shadow:0 1px 2px rgba(22,35,58,.06),0 8px 24px rgba(22,35,58,.06);
+  --bh-wrap:1180px;
+}
+
+/* ---------- 1. 底：方格紙 ---------- */
+body.researcher-ui,body.researcher-directory{
+  font-family:var(--bh-sans);color:var(--bh-ink);line-height:1.75;letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;
+  background-color:var(--bh-paper)!important;
+  background-image:
+    linear-gradient(var(--bh-grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--bh-grid) 1px,transparent 1px),
+    linear-gradient(var(--bh-grid-strong) 1px,transparent 1px),
+    linear-gradient(90deg,var(--bh-grid-strong) 1px,transparent 1px)!important;
+  background-size:24px 24px,24px 24px,120px 120px,120px 120px!important;
+  background-position:-1px -1px!important;background-attachment:scroll!important;
+}
+body.researcher-ui .topbar,body.researcher-directory .topbar{display:none!important}
+body.researcher-ui :focus-visible,body.researcher-directory :focus-visible{outline:3px solid var(--bh-orange);outline-offset:2px}
+body.researcher-ui a,body.researcher-directory a{color:var(--bh-ink);text-decoration-color:var(--bh-grid-strong);text-underline-offset:3px}
+body.researcher-ui a:hover,body.researcher-directory a:hover{text-decoration-color:var(--bh-red)}
+body.researcher-ui h1,body.researcher-ui h2,body.researcher-directory h1,body.researcher-directory h2{
+  font-family:var(--bh-serif);font-weight:900;color:var(--bh-ink);letter-spacing:-.01em}
+body.researcher-ui h3,body.researcher-directory h3{color:var(--bh-ink)}
+
+/* ---------- 2. 刊頭：與官網同一條 ---------- */
+body .researcher-header{
+  width:100%;max-width:none;margin:0;padding:0 max(16px,calc((100% - var(--bh-wrap))/2));
+  min-height:60px;display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:12px;
+  background:rgba(252,252,250,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:0;border-bottom:1px solid var(--bh-grid-strong);border-radius:0;box-shadow:none}
+body .researcher-brand{display:flex;align-items:center;gap:10px;min-width:0;color:var(--bh-ink);text-decoration:none}
+body .researcher-brand>span:first-child{display:none}
+body .researcher-brand .bh-logo{width:34px;height:34px;flex:none;background:url(logo.png) center/contain no-repeat}
+body .researcher-brand small{font-family:var(--bh-mono);font-size:10.5px;font-weight:500;letter-spacing:.2em;color:var(--bh-red);text-transform:uppercase;line-height:1.3}
+body .researcher-brand b{font-family:var(--bh-serif);font-weight:900;font-size:clamp(16px,2vw,19px);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+body .bh-header-links{display:flex;align-items:center;gap:4px;flex:none}
+body .researcher-home,body .bh-header-link{
+  background:none;border:0;border-radius:var(--bh-radius-s);padding:8px 10px;min-height:40px;display:inline-flex;align-items:center;
+  font-size:14px;font-weight:500;color:var(--bh-ink-soft);text-decoration:none;box-shadow:none;white-space:nowrap}
+body .researcher-home:hover,body .bh-header-link:hover{color:var(--bh-ink);background:var(--bh-surface)}
+body .researcher-home{border:1px solid var(--bh-ink);color:var(--bh-ink);font-weight:700}
+
+/* ---------- 3. 四步流程：紀錄簿索引標籤 ---------- */
+body .researcher-nav{
+  width:min(var(--bh-wrap),calc(100% - 32px));margin:18px auto 18px;padding:0;gap:0;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  background:var(--bh-card);border:1px solid var(--bh-ink);border-radius:var(--bh-radius);box-shadow:none;overflow:hidden;
+  position:sticky;top:8px;z-index:30}
+body .researcher-nav button{
+  position:relative;min-height:48px;border:0;border-radius:0;background:transparent;box-shadow:none;
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 8px;
+  font-family:var(--bh-sans);font-size:15px;font-weight:700;color:var(--bh-ink-soft);cursor:pointer}
+body .researcher-nav button+button{border-left:1px solid var(--bh-grid-strong)}
+body .researcher-nav button:hover{background:var(--bh-surface);color:var(--bh-ink)}
+body .researcher-nav button[aria-current=step]{background:var(--bh-ink);color:#fff;box-shadow:inset 0 -3px 0 var(--bh-red)}
+body .researcher-nav .researcher-step-number{
+  font-family:var(--bh-mono);font-size:12px;font-weight:600;letter-spacing:.04em;
+  width:auto;height:auto;background:none!important;border:0;border-radius:0;color:var(--bh-red);box-shadow:none}
+body .researcher-nav button[aria-current=step] .researcher-step-number{color:#FFB199}
+
+/* ---------- 4. 主要容器 ---------- */
+body.researcher-ui main.shell,body.researcher-ui main#main{width:min(var(--bh-wrap),calc(100% - 32px));margin-inline:auto;padding:0 0 56px}
+body.researcher-ui .card,body.researcher-ui .panel,body.researcher-ui .section,
+body.researcher-ui .researcher-welcome,body.researcher-directory .researcher-welcome{
+  background:var(--bh-card);border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius);box-shadow:var(--bh-shadow)}
+body.researcher-ui .panel h2,body.researcher-ui .section h2,body.researcher-ui .cardhead h2{font-size:1.25rem;line-height:1.4;color:var(--bh-ink)}
+body.researcher-ui .cardhead{border-bottom:1px solid var(--bh-grid);padding:14px 18px}
+body.researcher-ui .subtle,body.researcher-ui .panel p.subtle{color:var(--bh-ink-faint)}
+
+/* ---------- 5. 接任務（歡迎畫面） ---------- */
+body .researcher-welcome{overflow:hidden;border-color:var(--bh-ink)!important}
+body .researcher-welcome-copy{background:var(--bh-card)}
+body .researcher-kicker{
+  display:inline-block;background:none;border:0;border-radius:0;padding:0;
+  font-family:var(--bh-mono);font-size:12px;font-weight:500;letter-spacing:.2em;color:var(--bh-red);text-transform:uppercase}
+body .researcher-welcome h1,body .researcher-welcome h2{
+  font-family:var(--bh-serif);font-weight:900;color:var(--bh-ink);line-height:1.25;margin:10px 0 18px;
+  font-size:clamp(28px,3.6vw,44px);display:inline-block;padding-bottom:12px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8 C 60 2, 120 11, 180 6 S 270 3, 297 7' fill='none' stroke='%23C8352B' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") left bottom/100% 10px no-repeat}
+body .researcher-welcome p{color:var(--bh-ink-soft);font-size:16.5px;line-height:1.85}
+body .researcher-welcome p small{color:var(--bh-ink-faint);font-size:13.5px}
+body .researcher-promise{
+  background:var(--bh-paper);border:1px solid var(--bh-grid-strong);border-left:3px solid var(--bh-ink);
+  border-radius:var(--bh-radius-s);padding:14px 16px;margin:18px 0;box-shadow:none}
+body .researcher-promise b{display:block;font-family:var(--bh-mono);font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--bh-ink);margin-bottom:6px}
+body .researcher-promise span{display:block;color:var(--bh-ink);font-size:15px;line-height:1.9}
+body .researcher-promise .researcher-guess{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--bh-grid-strong);font-style:normal;color:var(--bh-ink-soft);font-size:14px}
+body .researcher-kit{gap:6px}
+body .researcher-kit span{background:var(--bh-surface);border:0;border-radius:var(--bh-radius-s);box-shadow:none;color:var(--bh-ink-soft);font-size:13px;font-weight:500;padding:4px 10px}
+body .researcher-scene{background:var(--bh-surface);border-left:1px solid var(--bh-ink)}
+body .researcher-welcome .researcher-badge,body .researcher-welcome-copy::after{display:none!important}
+body .researcher-scene .researcher-bubble{background:#fff;border-color:var(--bh-ink);border-radius:10px;box-shadow:3px 3px 0 rgba(22,35,58,.18);color:var(--bh-ink);font-weight:700}
+body .researcher-bubble:before{background:var(--bh-ink)}
+body .researcher-bubble:after{background:#fff}
+
+/* ---------- 6. 按鈕：橘色只給「下一步」 ---------- */
+body .researcher-primary,
+body.researcher-ui .btn.primary,body.researcher-ui button.primary,
+body.researcher-station .controls #run{
+  background:var(--bh-orange)!important;background-image:none!important;color:#fff!important;border:1px solid var(--bh-orange-dark)!important;
+  border-radius:var(--bh-radius-s)!important;box-shadow:none!important;font-weight:700;letter-spacing:.02em;
+  transition:background .15s,transform .15s}
+body .researcher-primary:hover,body.researcher-ui .btn.primary:hover,body.researcher-ui button.primary:hover,
+body.researcher-station .controls #run:hover{background:var(--bh-orange-dark)!important}
+body .researcher-primary:active{transform:translateY(1px)}
+body .researcher-primary:disabled,body.researcher-ui .btn:disabled,body.researcher-ui button:disabled{
+  background:var(--bh-surface)!important;color:var(--bh-ink-faint)!important;border-color:var(--bh-grid-strong)!important;opacity:1;cursor:not-allowed}
+body.researcher-ui .btn.secondary,body.researcher-ui button:not(.primary):not(.researcher-primary):not([data-to]):not(.researcher-notebook-link):not(.researcher-zoom),
+body.researcher-directory .actions button{
+  background:#fff;background-image:none;color:var(--bh-ink);border:1px solid var(--bh-ink);border-radius:var(--bh-radius-s);box-shadow:none;font-weight:700}
+body.researcher-ui .btn.secondary:hover,body.researcher-ui button:not(.primary):not(.researcher-primary):not([data-to]):hover{background:var(--bh-surface)}
+/* 「收進手冊」是完成一輪後的動作：用墨水色實心，和橘色「開始」分出先後 */
+body.researcher-station .controls #add-record:not(:disabled),
+body .researcher-save .researcher-bench-record:not(:disabled){
+  background:var(--bh-ink)!important;border-color:var(--bh-ink)!important;color:#fff!important}
+body.researcher-station .controls #add-record:not(:disabled):hover,
+body .researcher-save .researcher-bench-record:not(:disabled):hover{background:#0d1626!important}
+body .researcher-notebook-link,body .researcher-zoom{
+  background:none!important;border:0!important;box-shadow:none!important;padding:6px 0;min-height:40px;
+  color:var(--bh-ink)!important;font-weight:700;text-decoration:underline;text-decoration-color:var(--bh-red);text-underline-offset:4px;cursor:pointer}
+body .researcher-zoom{display:inline-flex;margin-top:6px}
+
+/* ---------- 7. 表單控制 ---------- */
+body.researcher-ui select,body.researcher-ui textarea,body.researcher-ui input[type=text],body.researcher-ui input[type=search],
+body.researcher-directory select,body.researcher-directory input[type=search]{
+  border:1px solid var(--bh-grid-strong)!important;border-radius:var(--bh-radius-s)!important;background-color:#fff;color:var(--bh-ink);box-shadow:none}
+body.researcher-ui select:hover,body.researcher-ui textarea:hover,body.researcher-directory select:hover,body.researcher-directory input[type=search]:hover{border-color:var(--bh-ink-faint)!important}
+body.researcher-ui input[type=range]{accent-color:var(--bh-ink)}
+body.researcher-ui input[type=radio],body.researcher-ui input[type=checkbox]{accent-color:var(--bh-ink);width:18px;height:18px}
+body.researcher-ui .control label,body.researcher-ui .control legend,body.researcher-station .controls label,body.researcher-station .controls legend{
+  color:var(--bh-ink)!important;font-size:14.5px;font-weight:700}
+body.researcher-ui .controls output,body.researcher-ui .control output,body.researcher-ui .value{font-family:var(--bh-mono);font-weight:600;color:var(--bh-red)!important}
+body.researcher-ui .choice label{border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s);background:#fff;color:var(--bh-ink-soft);box-shadow:none;font-weight:700}
+body.researcher-ui .choice input:checked+label{background:var(--bh-ink);border-color:var(--bh-ink);color:#fff;box-shadow:none}
+body.researcher-ui .choice input:focus-visible+label{outline:3px solid var(--bh-orange);outline-offset:2px}
+
+/* ---------- 8. 余老師提示：便利貼 ---------- */
+body .researcher-coach{
+  position:relative;grid-template-columns:56px 1fr;gap:14px;align-items:center;
+  background:var(--bh-note);border:1px solid var(--bh-note-line);border-radius:2px;box-shadow:2px 3px 0 rgba(22,35,58,.08);
+  padding:10px 16px 10px 14px;margin:0 0 18px}
+body .researcher-coach::before{content:"";position:absolute;left:50%;top:-9px;width:84px;height:18px;transform:translateX(-50%) rotate(-1.5deg);background:rgba(200,53,43,.16);border-left:1px dashed rgba(200,53,43,.35);border-right:1px dashed rgba(200,53,43,.35)}
+body .researcher-coach img{width:52px;height:58px}
+body .researcher-coach strong{font-family:var(--bh-mono);font-size:12px;letter-spacing:.14em;color:var(--bh-red)}
+body .researcher-coach p{color:var(--bh-ink);font-size:15px;line-height:1.7;margin:2px 0}
+body .researcher-coach p+p{color:var(--bh-ink-soft);font-size:14px}
+
+/* ---------- 9. 觀察區與儀表 ---------- */
+body.researcher-ui .stage,body.researcher-station .observation .stage,body.researcher-ui .scopeStage{
+  background:#fff;background-image:linear-gradient(var(--bh-surface) 1px,transparent 1px),linear-gradient(90deg,var(--bh-surface) 1px,transparent 1px);background-size:20px 20px;
+  border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s);box-shadow:none}
+body.researcher-ui .card>.stage,body.researcher-ui .card>.scopeStage{border:0;border-radius:0 0 var(--bh-radius) var(--bh-radius)}
+body.researcher-station .observation .stage .empty,body.researcher-ui .stage .empty{
+  color:var(--bh-ink-faint);font-size:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:240px;margin:0;text-align:center}
+body.researcher-station .observation .stage .empty::before{content:"";width:72px;height:80px;background:var(--bh-empty-art,none) center/contain no-repeat;opacity:.9}
+body.researcher-ui .readout,body.researcher-ui .readouts{gap:10px}
+body.researcher-ui .meter,body.researcher-station .readouts .meter{
+  min-height:0;padding:12px 14px;background:var(--bh-ink)!important;background-image:none!important;color:#C9D2DE;
+  border:0;border-radius:var(--bh-radius-s);box-shadow:none;font-size:13px;line-height:1.5}
+body.researcher-ui .meter strong,body.researcher-ui .meter b,body.researcher-ui .meter .big,body.researcher-station .readouts .meter strong{
+  display:block;font-family:var(--bh-mono);font-size:1.28rem;font-weight:600;color:#fff;letter-spacing:-.01em;margin-top:2px}
+body.researcher-ui .meter small,body.researcher-ui .meter span{color:#9FADC2}
+body.researcher-ui .status,body.researcher-station #mission-prompt{
+  background:var(--bh-paper)!important;border:1px solid var(--bh-grid-strong);border-left:3px solid var(--bh-ink)!important;border-radius:var(--bh-radius-s)!important;color:var(--bh-ink);box-shadow:none}
+body.researcher-ui .status.good{border-left-color:var(--bh-ok)!important;background:var(--bh-ok-soft)!important}
+body.researcher-ui .status.warn{border-left-color:var(--bh-red)!important;background:var(--bh-red-soft)!important}
+body.researcher-ui .formula{background:var(--bh-surface);border-radius:var(--bh-radius-s);font-family:var(--bh-mono);font-size:14px}
+body.researcher-station .step{background:none;border:0;padding:0;border-radius:0;font-family:var(--bh-mono);font-size:11.5px;font-weight:500;letter-spacing:.2em;color:var(--bh-red)}
+
+/* 任務卡 */
+body.researcher-station .missions button,body .researcher-taskbar button{
+  min-height:48px;text-align:left;padding:10px 14px;background:#fff!important;border:1px solid var(--bh-grid-strong)!important;border-radius:var(--bh-radius-s)!important;
+  box-shadow:none!important;color:var(--bh-ink)!important;font-size:14.5px;font-weight:700}
+body.researcher-station .missions button:hover,body .researcher-taskbar button:hover{border-color:var(--bh-ink)!important}
+body.researcher-station .missions button[aria-current=true],body .researcher-taskbar button.is-current{
+  border-color:var(--bh-ink)!important;box-shadow:inset 3px 0 0 var(--bh-red)!important;background:var(--bh-paper)!important}
+
+/* 兩欄操作台：先設定（左）→ 再觀察（右），和 01／02 的編號同方向 */
+@media(min-width:901px){
+  body.researcher-station .layout{grid-template-columns:minmax(300px,.62fr) minmax(0,1.38fr);grid-template-areas:"controls observation";gap:20px}
+  body.researcher-station .layout>.controls{order:1;position:sticky;top:72px;background:var(--bh-card)}
+  body.researcher-station .layout>.observation{order:2}
+}
+body.researcher-station .layout>.controls{background:var(--bh-card)}
+body.researcher-station label.coach{display:flex;align-items:center;gap:10px;background:var(--bh-paper);border:1px dashed var(--bh-grid-strong);border-radius:var(--bh-radius-s);padding:8px 12px;font-size:14px;color:var(--bh-ink-soft);font-weight:500;margin:0 0 8px}
+body.researcher-station label.coach input{flex:none;margin:0}
+body.researcher-station .lab-drag-tip{font-size:13.5px;color:var(--bh-ink-faint);margin:0 0 10px}
+body.researcher-station .display-mode{font-size:13.5px;color:var(--bh-ink-soft)}
+
+/* 收進手冊 */
+body .researcher-save{background:var(--bh-paper);border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s);box-shadow:none;padding:14px}
+body .researcher-save .researcher-primary{width:100%;margin:0 0 6px}
+body .researcher-save-status{color:var(--bh-ink-soft);font-size:13.5px}
+
+/* ---------- 10. 研究手冊 ---------- */
+body .researcher-notebook-intro{background:var(--bh-card);border:1px solid var(--bh-ink);border-left:1px solid var(--bh-ink);border-radius:var(--bh-radius);box-shadow:none;padding:16px 20px}
+body .researcher-notebook-intro h2{font-size:1.45rem}
+body .researcher-notebook-intro p{color:var(--bh-ink-soft)}
+body .researcher-return{background:var(--bh-note);border:1px solid var(--bh-note-line);border-radius:2px;box-shadow:2px 3px 0 rgba(22,35,58,.08)}
+body .researcher-return p{color:var(--bh-ink)}
+body.researcher-ui table{border-collapse:collapse;background:#fff}
+body.researcher-ui th{background:var(--bh-ink)!important;color:#fff!important;font-size:13.5px;font-weight:700;letter-spacing:.04em}
+body.researcher-ui td{border-bottom:1px solid var(--bh-grid)}
+body.researcher-ui .table-wrap{border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s)}
+body.researcher-ui .comparison-pair article{border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s);background:var(--bh-paper)}
+
+/* ---------- 11. 挑戰題：整列可點 ---------- */
+body.researcher-ui fieldset{border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s)}
+body.researcher-ui legend{font-weight:700;color:var(--bh-ink)}
+body.researcher-ui .quiz label,body.researcher-ui .quizItem label{
+  display:flex;align-items:center;gap:10px;min-height:46px;padding:8px 12px;margin:6px 0;
+  border:1px solid var(--bh-grid);border-radius:var(--bh-radius-s);background:#fff;cursor:pointer;font-weight:500}
+body.researcher-ui .quiz label:hover,body.researcher-ui .quizItem label:hover{border-color:var(--bh-ink-faint)}
+body.researcher-ui .quiz label:has(input:checked),body.researcher-ui .quizItem label:has(input:checked){border-color:var(--bh-ink);background:var(--bh-paper);box-shadow:inset 3px 0 0 var(--bh-red)}
+body.researcher-ui .quiz label input,body.researcher-ui .quizItem label input{margin:0;flex:none}
+body.researcher-ui .feedback{color:var(--bh-ink);font-weight:700}
+body.researcher-ui .feedback.good,body.researcher-ui .feedback.ok{color:var(--bh-ok)}
+body.researcher-ui .feedback.bad,body.researcher-ui .feedback.wrong{color:var(--bh-red)}
+body.researcher-ui details>summary{cursor:pointer;font-weight:700;color:var(--bh-ink)}
+
+/* ---------- 12. 頁尾 ---------- */
+body.researcher-ui footer,body.researcher-ui .foot,body.researcher-directory .foot,body.researcher-directory footer{
+  background:var(--bh-ink)!important;color:#C9D2DE;font-size:14px;border-top:3px solid var(--bh-red)}
+body.researcher-ui footer a,body.researcher-ui .foot a,body.researcher-directory .foot a{color:#fff!important;text-decoration-color:rgba(255,255,255,.4)}
+
+/* ---------- 13. 研究基地（總覽） ---------- */
+body.researcher-directory main.shell{width:min(var(--bh-wrap),calc(100% - 32px));padding-top:0}
+body.researcher-directory .researcher-lobby{margin:24px 0 28px}
+body.researcher-directory main>.panel{background:var(--bh-card);border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius);box-shadow:none;padding:16px 18px;margin-bottom:8px;
+  display:grid;grid-template-columns:1fr auto;gap:12px 18px;align-items:end}
+body.researcher-directory .filters{background:none;border:0;border-radius:0;padding:0;box-shadow:none;gap:12px}
+body.researcher-directory .filters label{font-size:13px;font-weight:700;color:var(--bh-ink-soft);margin-bottom:4px}
+body.researcher-directory .filters select,body.researcher-directory .filters input{min-height:44px}
+body.researcher-directory main>.panel .actions{margin:0;display:flex;align-items:center;gap:12px;flex-wrap:nowrap}
+body.researcher-directory .filter-count{margin:0;font-family:var(--bh-mono);font-size:13px;color:var(--bh-ink-soft);white-space:nowrap}
+body.researcher-directory .bh-group{margin:34px 0 0}
+body.researcher-directory .bh-group[hidden]{display:none}
+body.researcher-directory .bh-group-head{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bh-ink)}
+body.researcher-directory .bh-group-head h2{font-size:1.5rem;margin:0}
+body.researcher-directory .bh-group-head span{font-family:var(--bh-mono);font-size:12.5px;letter-spacing:.08em;color:var(--bh-red)}
+body.researcher-directory .bh-group-head p{margin:0 0 0 auto;font-size:14px;color:var(--bh-ink-soft)}
+body.researcher-directory .catalog{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+body.researcher-directory .resource{
+  position:relative;display:grid!important;grid-template-columns:64px 1fr;grid-template-rows:auto auto 1fr auto;column-gap:14px;row-gap:2px;align-content:start;
+  background:var(--bh-card)!important;border:1px solid var(--bh-grid-strong)!important;border-radius:var(--bh-radius)!important;box-shadow:none!important;
+  padding:16px!important;transition:border-color .15s,box-shadow .15s,transform .15s;outline:0}
+body.researcher-directory .resource::before,body.researcher-directory .resource::after{display:none!important}
+body.researcher-directory .resource:hover,body.researcher-directory .resource:focus-within{border-color:var(--bh-ink)!important;box-shadow:4px 4px 0 rgba(22,35,58,.10)!important;transform:translate(-1px,-1px)}
+body.researcher-directory .resource[hidden]{display:none!important}
+body.researcher-directory .resource .station-icon{grid-column:1;grid-row:1/span 3;width:64px;height:64px;margin:0;padding:6px;background:var(--bh-surface);border:0;border-radius:var(--bh-radius-s);box-shadow:none;object-fit:contain}
+body.researcher-directory .resource .tags,body.researcher-directory .resource .station-label{display:none!important}
+body.researcher-directory .resource .bh-meta{grid-column:2;grid-row:1;font-family:var(--bh-mono);font-size:11.5px;letter-spacing:.06em;color:var(--bh-red);margin:0}
+body.researcher-directory .resource h2{grid-column:2;grid-row:2;font-family:var(--bh-serif);font-size:1.12rem;line-height:1.4;margin:0 0 4px}
+body.researcher-directory .resource p{grid-column:2;margin:0;font-size:14px;line-height:1.7;color:var(--bh-ink-soft)}
+body.researcher-directory .resource p.subtle,body.researcher-directory .resource h2+p:not(.mission-line){display:none}
+body.researcher-directory .resource:not(:has(.mission-line)) h2+p{display:block}
+body.researcher-directory .resource .mission-line{grid-row:3;background:none;border:0;padding:0}
+body.researcher-directory .resource .open{
+  grid-column:1/-1;grid-row:4;margin:12px 0 0;padding:10px 0 0;border:0;border-top:1px dashed var(--bh-grid-strong);border-radius:0;background:none!important;box-shadow:none!important;
+  display:flex;justify-content:space-between;align-items:center;min-height:0;color:var(--bh-ink)!important;font-size:14px;font-weight:700;text-decoration:none;text-align:left}
+body.researcher-directory .resource .open::after{content:"";position:absolute;inset:0}
+body.researcher-directory .resource .open .bh-time{font-family:var(--bh-mono);font-weight:500;font-size:12.5px;color:var(--bh-ink-faint)}
+body.researcher-directory .resource:hover .open{color:var(--bh-orange-dark)!important}
+body.researcher-directory .empty{color:var(--bh-ink-soft)}
+
+/* ---------- 14. 手機 ---------- */
+@media(max-width:900px){
+  body.researcher-directory .catalog{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body .researcher-scene{border-left:0;border-bottom:1px solid var(--bh-ink)}
+}
+@media(max-width:700px){
+  body .researcher-header{min-height:52px;padding:0 12px}
+  body .researcher-brand small{display:none}
+  body .researcher-brand .bh-logo{width:30px;height:30px}
+  body .bh-header-link{display:none}
+  body .researcher-home{padding:6px 10px;min-height:36px;font-size:13px}
+  body .researcher-nav{width:calc(100% - 20px);margin:10px auto 12px;grid-template-columns:repeat(4,1fr)!important;top:6px}
+  body .researcher-nav button{min-height:46px;flex-direction:column;gap:0;font-size:13px;padding:4px 2px;line-height:1.3}
+  body .researcher-nav .researcher-step-number{font-size:10.5px}
+  body.researcher-ui main.shell,body.researcher-ui main#main,body.researcher-directory main.shell{width:calc(100% - 20px)}
+  body .researcher-welcome h1,body .researcher-welcome h2{font-size:clamp(26px,7.4vw,32px)}
+  body .researcher-coach{grid-template-columns:44px 1fr;gap:10px;padding:10px 12px}
+  body .researcher-coach img{width:42px;height:48px}
+  body .researcher-coach p{font-size:14px}
+  body .researcher-coach p+p{display:none}
+  body.researcher-directory main>.panel{grid-template-columns:1fr}
+  body.researcher-directory .filters{grid-template-columns:1fr 1fr}
+  body.researcher-directory .filters>div:last-child{grid-column:1/-1}
+  body.researcher-directory .catalog{grid-template-columns:1fr;gap:10px}
+  body.researcher-directory .resource{grid-template-columns:52px 1fr;padding:12px!important}
+  body.researcher-directory .resource .station-icon{width:52px;height:52px}
+  body.researcher-directory .bh-group-head p{display:none}
+  /* 操作台：設定 → 觀察 → 讀值 → 解釋 → 收進手冊，一路往下不回頭 */
+  body.researcher-station .layout{display:flex;flex-direction:column;gap:0;background:var(--bh-card);border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius);padding:14px;box-shadow:var(--bh-shadow)}
+  body.researcher-station .layout>.controls,body.researcher-station .layout>.observation{display:contents}
+  body.researcher-station .layout>.controls>*{order:1}
+  body.researcher-station .layout>.observation>*{order:2}
+  body.researcher-station .layout>.controls>label[for=explanation-input],
+  body.researcher-station .layout>.controls>#explanation-input,
+  body.researcher-station .layout>.controls>#add-record{order:3}
+  body.researcher-station .layout>.controls>label[for=explanation-input]{margin-top:18px;padding-top:14px;border-top:1px dashed var(--bh-grid-strong)}
+  body.researcher-station .layout>.observation>.step{margin-top:20px;padding-top:14px;border-top:1px dashed var(--bh-grid-strong)}
+  body.researcher-station .layout a[href="#observation-title"],body.researcher-station .layout a[href="#explanation-input"]{display:none}
+  body.researcher-station .missions{grid-template-columns:1fr}
+}
+@media print{
+  body.researcher-ui,body.researcher-directory{background:#fff!important;background-image:none!important}
+  body .researcher-header,body .researcher-nav,body .researcher-coach{display:none!important}
+}
+
+/* ---------- 15. 第一批教材的舊元件 ---------- */
+body.researcher-ui .choice input:checked+label{color:#fff!important}
+body.researcher-ui .meter .value,body.researcher-ui .meter output{color:#fff!important;font-family:var(--bh-mono);font-weight:600;font-size:clamp(1.2rem,2.4vw,1.6rem)}
+body.researcher-ui .meter .name{color:#C9D2DE;font-size:13px}
+body.researcher-ui .meter .note{color:#9FADC2;font-size:12px}
+body.researcher-ui .meter.alert{background:var(--bh-red)!important}
+body.researcher-ui.legacy-researcher .readouts,body.researcher-ui .labgrid~.readouts,body.researcher-ui .labgrid .readouts{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+body.researcher-ui .workflow{gap:0;border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s);overflow:hidden;background:#fff}
+body.researcher-ui .workflow div{border:0;border-radius:0;background:none;padding:10px 12px}
+body.researcher-ui .workflow div+div{border-left:1px solid var(--bh-grid)}
+body.researcher-ui .workflow b{font-family:var(--bh-mono);font-size:12px;color:var(--bh-red);letter-spacing:.06em}
+body.researcher-ui .workflow span{color:var(--bh-ink);font-size:14.5px;font-weight:700}
+body.researcher-ui .fact,body.researcher-ui .quizItem{border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s);background:#fff}
+body.researcher-ui .fact h3{color:var(--bh-ink)}
+body.researcher-ui .fact p,body.researcher-ui .lead{color:var(--bh-ink-soft)}
+body.researcher-ui .teacher{background:var(--bh-paper);border:1px dashed var(--bh-grid-strong);border-radius:var(--bh-radius-s)}
+body.researcher-ui .teacher h3{color:var(--bh-ink)}
+body.researcher-ui .safety{background:var(--bh-red-soft);border-color:#E5B9B4}
+body.researcher-ui .safety h2{color:var(--bh-red)}
+body.researcher-ui .tableWrap{border:1px solid var(--bh-grid-strong);border-radius:var(--bh-radius-s)}
+body.researcher-ui .quizItem fieldset{border:0}
+body.researcher-ui .feedback.no{color:var(--bh-red)}
+body.researcher-ui .mode select,body.researcher-ui .mode label{font-size:13.5px}
+body.researcher-ui .chip,body.researcher-ui .tag{border-radius:var(--bh-radius-s);border-color:var(--bh-grid-strong);color:var(--bh-ink-soft)}
+@media(max-width:700px){
+  body.researcher-ui .workflow{grid-template-columns:1fr 1fr}
+  body.researcher-ui .workflow div+div{border-left:0;border-top:1px solid var(--bh-grid)}
+}
+@media(max-width:850px){
+  body.researcher-ui .labgrid>*{width:100%;max-width:100%;align-self:stretch;min-width:0}
+  body.researcher-ui .labgrid .readouts,body.researcher-ui .labgrid>.readouts{grid-template-columns:1fr 1fr}
+  body.researcher-ui .stage{min-height:0}
+}
+@media(max-width:700px){
+  body.researcher-station .layout{align-items:stretch}
+  body.researcher-station .layout>.controls>*,body.researcher-station .layout>.observation>*{max-width:100%;min-width:0}
+  body.researcher-station .layout select,body.researcher-station .layout .actions button{width:100%}
+  body.researcher-station .layout .actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}
+}
+
+/* ---------- 16. 收尾：殘留的青綠／米黃外框 ---------- */
+body.researcher-ui .labgrid>.card,body.researcher-ui .labgrid>.panel{border:1px solid var(--bh-grid-strong)!important;box-shadow:var(--bh-shadow)!important;background:var(--bh-card)!important}
+body.researcher-ui .coach:not(label){background:var(--bh-note)!important;border:1px solid var(--bh-note-line)!important;border-left:3px solid var(--bh-red)!important;border-radius:var(--bh-radius-s)!important;color:var(--bh-ink);box-shadow:none!important}
+body.researcher-ui .coach:not(label) strong{color:var(--bh-ink)}
+body.researcher-ui .slide-workbench{background:var(--bh-paper)!important;border-top:1px dashed var(--bh-grid-strong)!important}
+body.researcher-ui .slide-pad{background:#fff!important;border:1px solid var(--bh-ink-faint)!important;border-radius:var(--bh-radius-s);box-shadow:inset 0 0 0 4px var(--bh-surface)!important}
+body.researcher-ui .objectiveChoices .choice input:checked+label{background:var(--bh-ink)!important;color:#fff!important;border-color:var(--bh-ink)!important}
+body.researcher-ui .objectiveChoices .choice input:disabled+label{background:var(--bh-surface)!important;color:var(--bh-ink-faint)!important;border-color:var(--bh-grid)!important}
+body.researcher-ui button:disabled,body.researcher-ui .btn:disabled{box-shadow:none!important;background-image:none!important}
+body.researcher-station #current-conditions:empty,body.researcher-station #readouts:empty{display:none}
+body.researcher-ui .featureTag,body.researcher-ui .present,body.researcher-ui .absent{border-radius:var(--bh-radius-s)}
+body.researcher-directory main>.catalog.bh-grouped{display:block}
+body.researcher-directory .resource h3{grid-column:2;grid-row:2;font-family:var(--bh-serif);font-weight:900;font-size:1.12rem;line-height:1.4;margin:0 0 4px;color:var(--bh-ink)}
+body.researcher-directory .resource h3+p:not(.mission-line){display:none}
+body.researcher-directory .resource:not(:has(.mission-line)) h3+p{display:block}
+body.researcher-ui .meter .value{font-size:clamp(1.05rem,1.55vw,1.35rem)!important;line-height:1.35}
+body.researcher-directory .resource .station-icon{background:var(--bh-surface)!important}
+
+/* ---------- 17. 完成狀態：余老師歡呼 ---------- */
+body .researcher-done,body .researcher-cheer{
+  display:grid;grid-template-columns:64px 1fr;gap:16px;align-items:center;margin:0 0 18px;padding:14px 18px;
+  background:var(--bh-ok-soft);border:1px solid #B9DCC7;border-left:3px solid var(--bh-ok);border-radius:var(--bh-radius-s)}
+body .researcher-cheer{margin:16px 0 0}
+body .researcher-done[hidden],body .researcher-cheer[hidden]{display:none}
+body .researcher-done img,body .researcher-cheer img{width:64px;height:auto;max-height:120px;object-fit:contain}
+body .researcher-done strong,body .researcher-cheer strong{display:block;font-family:var(--bh-serif);font-weight:900;font-size:1.15rem;color:var(--bh-ink)}
+body .researcher-done p,body .researcher-cheer p{margin:4px 0 10px;color:var(--bh-ink-soft);font-size:14.5px;line-height:1.7}
+body .researcher-done .researcher-primary,body .researcher-cheer .researcher-primary{min-height:42px;padding:8px 16px;font-size:14.5px}
+body.researcher-station .observation .stage .empty::before{width:70px;height:112px}
+@media(max-width:700px){body .researcher-done,body .researcher-cheer{grid-template-columns:48px 1fr;gap:12px;padding:12px}body .researcher-done img,body .researcher-cheer img{width:48px}}
+@media print{body .researcher-done,body .researcher-cheer{display:none!important}}
+
+/* ---------- 18. 預覽圖解：條件一變就先畫，讀值要按「開始觀察」 ---------- */
+body.researcher-station .observation .stage.is-preview{position:relative}
+body.researcher-station .observation .stage.is-preview>svg,body.researcher-station .observation .stage.is-preview>*:not(.empty){opacity:.5;filter:saturate(.6);transition:opacity .15s}
+body.researcher-station .observation .stage.is-preview::after{
+  content:attr(data-preview-label);position:absolute;left:10px;top:10px;z-index:2;opacity:1;
+  font-family:var(--bh-mono);font-size:12px;letter-spacing:.06em;color:#fff;background:var(--bh-ink);padding:4px 10px;border-radius:2px;border-left:3px solid var(--bh-red);pointer-events:none}
+@media print{body.researcher-station .observation .stage.is-preview::after{display:none}}

@@ -25,19 +25,21 @@
   document.querySelectorAll('[data-moon-phase]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.moonPhase===+$('ctl-phase').value)));
  }
  function status(message,warn=false){$('control-feedback').textContent=message;$('status').textContent=message;$('status').className='status'+(warn?' warn':'')}
+ // 無預測流程沒有要保留的懸念：條件一變就先畫出預覽圖，讀值與紀錄仍要按「開始觀察」才會產生。
+ function previewDiagram(){const stage=$('diagram');stage.classList.remove('is-preview');if(!noPrediction)return false;try{const s=state(),r=calculate(conf.id,s);stage.innerHTML=diagram(conf.id,s,r);stage.classList.add('is-preview');stage.dataset.previewLabel='預覽｜按「開始觀察」讀取數值';return true}catch(_){return false}}
  function invalidate(message=noPrediction?'條件已更新，請重新操作後查看結果。':'條件已更新，請重新預測後查看結果。'){
   moonExplore=false;$('diagram').classList.remove('is-exploring');const explore=$('moon-explore')||$('lab-explore');if(explore){explore.checked=false;explore.disabled=!hasObserved;}
-  current=null;if($('prediction'))$('prediction').value='';$('add-record').disabled=true;$('diagram').innerHTML=noPrediction?'<p class="empty">選好任務或設定條件後，按「開始觀察」。</p>':'<p class="empty">先選擇預測，再按「操作並觀察」。結果尚未揭露。</p>';$('readouts').replaceChildren();$('current-conditions').textContent='';$('print-current').textContent='本輪尚未操作；請參閱下方已儲存紀錄。';$('result-explanation').textContent='操作後，這裡會說明模型結果。';status(message+($('explanation-input').value?' 你的解釋草稿已保留，重新觀察後再確認內容。':''));labels();
+  current=null;if($('prediction'))$('prediction').value='';$('add-record').disabled=true;if(!previewDiagram())$('diagram').innerHTML=noPrediction?'<p class="empty">選好任務或設定條件後，按「開始觀察」。</p>':'<p class="empty">先選擇預測，再按「操作並觀察」。結果尚未揭露。</p>';$('readouts').replaceChildren();$('current-conditions').textContent='';$('print-current').textContent='本輪尚未操作；請參閱下方已儲存紀錄。';$('result-explanation').textContent='操作後，這裡會說明模型結果。';status(message+($('explanation-input').value?' 你的解釋草稿已保留，重新觀察後再確認內容。':''));labels();
  }
  function run(){if(!noPrediction&&!$('prediction').value){status('請先選擇一個預測；猜錯也能幫助學習。',true);$('prediction').focus();return}let s;try{s=state()}catch(_){status('控制值無效，請重新設定。',true);return}
   const r=calculate(conf.id,s),view=describe(conf.id,s,r);current={s,r,view,prediction:noPrediction?'':$('prediction').value,mission};
-  $('diagram').innerHTML=diagram(conf.id,s,r);$('readouts').replaceChildren();view.metrics.forEach(([name,value])=>{const box=node('div',name);box.className='meter';box.append(node('strong',value));$('readouts').append(box)});
+  $('diagram').classList.remove('is-preview');$('diagram').innerHTML=diagram(conf.id,s,r);$('readouts').replaceChildren();view.metrics.forEach(([name,value])=>{const box=node('div',name);box.className='meter';box.append(node('strong',value));$('readouts').append(box)});
   $('result-explanation').textContent=view.explanation;$('current-conditions').textContent='本次有效條件：'+conditions(s);$('add-record').disabled=false;
   const correct=conf.choices.find(c=>c[0]===r.kind)?.[1]||r.kind;status(noPrediction?'觀察完成：'+correct+'。請讀取圖像與數值，寫下依據並加入研究手冊。':(($('prediction').value===r.kind?'預測符合本模型。':'預測和本模型不同，可以回頭比較。')+' 觀察：'+correct+'。請寫下依據並加入紀錄。'));send('start');
   hasObserved=true;const explore=$('moon-explore')||$('lab-explore');if(explore)explore.disabled=false;
   setTimeout(()=>$('diagram').scrollIntoView?.({block:'start',behavior:'instant'}),0);
  }
- function previewMoon(){const s=state(),r=calculate(conf.id,s),view=describe(conf.id,s,r);current=null;if($('prediction'))$('prediction').value='';$('explanation-input').value='';$('add-record').disabled=true;$('diagram').innerHTML=diagram(conf.id,s,r);$('readouts').replaceChildren();view.metrics.forEach(([name,value])=>{const box=node('div',name);box.className='meter';box.append(node('strong',value));$('readouts').append(box)});$('current-conditions').textContent='自由觀察條件：'+conditions(s);$('result-explanation').textContent=view.explanation;labels();status(noPrediction?'自由觀察中：拖動滑桿，兩個視角會同步變化。要保留紀錄，先關閉自由觀察，再按「開始觀察」。':'自由觀察中：拖動滑桿，兩個視角會同步變化。要保留紀錄，先關閉自由觀察，再預測與操作。');}
+ function previewMoon(){const s=state(),r=calculate(conf.id,s),view=describe(conf.id,s,r);current=null;if($('prediction'))$('prediction').value='';$('explanation-input').value='';$('add-record').disabled=true;$('diagram').classList.remove('is-preview');$('diagram').innerHTML=diagram(conf.id,s,r);$('readouts').replaceChildren();view.metrics.forEach(([name,value])=>{const box=node('div',name);box.className='meter';box.append(node('strong',value));$('readouts').append(box)});$('current-conditions').textContent='自由觀察條件：'+conditions(s);$('result-explanation').textContent=view.explanation;labels();status(noPrediction?'自由觀察中：拖動滑桿，兩個視角會同步變化。要保留紀錄，先關閉自由觀察，再按「開始觀察」。':'自由觀察中：拖動滑桿，兩個視角會同步變化。要保留紀錄，先關閉自由觀察，再預測與操作。');}
  conf.controls.forEach(c=>$('ctl-'+c.key).addEventListener('input',()=>{if(moonExplore)previewMoon();else invalidate()}));
  if(conf.id==='moon-eclipse'){
   const presets=node('div','');presets.className='moon-presets';presets.setAttribute('aria-label','月相角度捷徑');for(const [angle,label] of [[0,'朔 0°'],[90,'上弦 90°'],[180,'望 180°'],[270,'下弦 270°']]){const b=node('button',label);b.type='button';b.dataset.moonPhase=angle;b.addEventListener('click',()=>{$('ctl-phase').value=angle;$('ctl-phase').dispatchEvent(new Event('input',{bubbles:true}))});presets.append(b)}$('control-fields').prepend(presets);
@@ -71,5 +73,5 @@
  let quizSent=false;
  $('check-quiz').addEventListener('click',()=>{let score=0,answered=0;conf.quiz.forEach((q,i)=>{const selected=document.querySelector(`input[name="quiz-${i}"]:checked`),out=$('feedback-'+i);if(selected)answered++;const correct=selected&&Number(selected.value)===q.answer;if(correct)score++;out.textContent=correct?'答對了。'+q.tip:selected?'再觀察一次：'+q.tip:'尚未作答，請先選擇答案。'});$('quiz-score').textContent=`已答${answered}/3，答對${score}/3。${answered<3?'請補完未答題。':''}`;if(answered===3&&!quizSent){send('quiz_complete');quizSent=true}});
  document.querySelectorAll('.quiz input').forEach(el=>el.addEventListener('change',()=>{quizSent=false;$('feedback-'+el.name.replace('quiz-','')).textContent='';$('quiz-score').textContent='答案已變更，請重新檢查。'}));
- $('control-fields').disabled=false;labels();renderRecords();
+ $('control-fields').disabled=false;labels();renderRecords();previewDiagram();
 })();

@@ -11,6 +11,7 @@
 <meta property="og:url" content="https://www.bhcs.com.tw/tools/mini-lab/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M12 3h8v8l7 14a3 3 0 0 1-3 4H8a3 3 0 0 1-3-4l7-14z' fill='%2360C3A4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{ --bg:#FFF8E7; --ink:#2B2B3A; --muted:#6B6F80; --line:#E7DFC9; --card:#fff; --accent:#FF8C42; --accent2:#60C3A4; --blue:#4FA3E3; --pink:#F06292; --gold:#F5C542; --no:#E5533D; }
   *{box-sizing:border-box}
@@ -109,11 +110,44 @@
   .rstar{position:absolute;left:50%;top:50%;width:14px;height:14px;background:var(--gold);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:starOut .9s .25s ease-out both}
   .rname{font-size:20px;font-weight:900;margin:2px 0}
   .rpts{color:#2E8B57;font-weight:900;font-size:18px;margin-bottom:10px}
+
+  /* ===== BHCS brand theme (2026-09-21)：方格紙＋紅筆；橘色只給主要動作，綠色只表示「正確」 ===== */
+  :root{--bg:#FCFCFA;--ink:#16233A;--muted:#43516B;--line:#C9D2DE;--accent:#E8620C;--accent2:#1E7A4C;--no:#C8352B;--gold:#E9B93A;
+    --bh-serif:"Noto Serif TC","Songti TC","PMingLiU",serif;--bh-mono:"IBM Plex Mono","Roboto Mono",ui-monospace,Menlo,Consolas,monospace}
+  html{background:#FCFCFA}body{background-color:#FCFCFA;background-image:linear-gradient(#DCE2EA 1px,transparent 1px),linear-gradient(90deg,#DCE2EA 1px,transparent 1px),linear-gradient(#C9D2DE 1px,transparent 1px),linear-gradient(90deg,#C9D2DE 1px,transparent 1px);background-size:24px 24px,24px 24px,120px 120px,120px 120px;background-position:-1px -1px;-webkit-font-smoothing:antialiased}
+  :focus-visible{outline:3px solid #E8620C;outline-offset:2px}
+  .topbar{margin:-12px -18px 16px;padding:8px 18px;min-height:60px;background:rgba(252,252,250,.94);border-bottom:1px solid var(--line)}
+  .topbar h1{display:flex;align-items:center;gap:10px;font:900 19px/1.25 var(--bh-serif);color:var(--ink)}
+  .topbar h1::before{content:"";width:34px;height:34px;flex:none;background:url(../../assets/logo.png) center/contain no-repeat}
+  .pill{border-radius:4px;border-color:var(--line);font-family:var(--bh-mono);font-weight:600}
+  .btn{border-radius:4px;box-shadow:none!important;border:1px solid #C24F06;letter-spacing:.02em;transition:background .15s}
+  .btn:hover:not(:disabled){background:#C24F06}.btn:active{transform:translateY(1px)}
+  .btn.alt{background:var(--ink);border-color:var(--ink)}.btn.alt:hover:not(:disabled){background:#0d1626}
+  .btn.ghost{border:1px solid var(--ink);color:var(--ink);font-size:14px}.btn.ghost:hover{background:#F2F4F7}
+  .btn:disabled{opacity:1;background:#F2F4F7;color:#7C879B;border-color:var(--line)}
+  .card,.stage{border-radius:6px;border-color:var(--line);box-shadow:0 1px 2px rgba(22,35,58,.06),0 8px 24px rgba(22,35,58,.06)}
+  .bubble,.say{border:1.5px solid var(--ink);border-radius:10px;box-shadow:3px 3px 0 rgba(22,35,58,.14)}
+  .bubble:before{border-right-color:var(--ink)}
+  input[type=text]{border:1px solid var(--line);border-radius:4px;min-height:44px}
+  .rule{border:1px solid var(--line);border-radius:6px}.rule:hover{border-color:var(--ink)}
+  .rule.on{border-color:var(--accent2);background:#E7F4EC;box-shadow:inset 0 -3px 0 var(--accent2)}
+  .opts button{border:1px solid var(--line);border-radius:4px;min-height:46px}.opts button:hover{border-color:var(--ink)}
+  .opts button.ok{border-color:var(--accent2);background:#E7F4EC}.opts button.no{border-color:var(--no);background:#F6E3E1}
+  .say.flash-ok{background:#E7F4EC}.say.flash-no{background:#F6E3E1}
+  .zone{fill:rgba(30,122,76,.10)}.zone.over{fill:rgba(30,122,76,.28)}
+  .prog i{border-radius:0;height:6px;background:#DCE2EA}
+  .notes p{border-left:3px solid var(--no)}
+  .toast{border-radius:4px;border-left:3px solid #C8352B}
+  .rbox{border-radius:8px;border:1px solid var(--ink)}.rbox h2{font-family:var(--bh-serif);font-weight:900;color:var(--ink)}
+  h2,h3{font-family:var(--bh-serif);font-weight:900;color:var(--ink)}
+  .ptsfloat,.rpts,.say .ok{color:var(--accent2)}
+  .btn.ghost,.pill{white-space:nowrap}
+  @media(max-width:700px){.badgebar{width:100%;margin-left:0;gap:6px;justify-content:flex-end;flex-wrap:nowrap}.badgebar #who{display:none}.topbar h1{font-size:16px}.topbar h1::before{width:28px;height:28px}.btn.ghost{padding:6px 10px!important;font-size:13px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><h1>🧪 小小研究員虛擬實驗室</h1>
+<div class="topbar"><h1>小小研究員虛擬實驗室</h1>
   <div class="badgebar"><span id="who"></span><span class="pill" id="ptsPill">⭐ <span id="pts">0</span> 分</span><button class="btn ghost" id="toNotebook" style="padding:6px 14px">📓 研究手冊</button><button class="btn ghost" id="toLab" style="padding:6px 14px">🏠 實驗室</button><a class="btn ghost" id="toAdv" href="lab-safety.html" style="padding:6px 14px;text-decoration:none">🎓 進階教室</a></div>
 </div>
 
