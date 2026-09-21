@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=20260921-site-audit-1">
 <link rel="icon" href="assets/favicon.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"@id":"https://www.bhcs.com.tw/#org","name":"百宏文教機構","alternateName":["台中市私立百宏文理短期補習班","BHCS","百宏補習班"],"url":"https://www.bhcs.com.tw/","telephone":"+886-4-2232-0448","foundingDate":"2010","description":"百宏文教機構是台中市北屯區的國小、國中、高中補習班，自2010年在興安路一段深耕，提供國小安親課輔、國中會考主科與高中升學課程。","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","postalCode":"406","addressCountry":"TW"},"geo":{"@type":"GeoCoordinates","latitude":24.1685666,"longitude":120.6937145},"areaServed":[{"@type":"AdministrativeArea","name":"台中市北屯區"},{"@type":"AdministrativeArea","name":"台中市大坑"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Tuesday","opens":"13:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Wednesday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Thursday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"21:30"}],"sameAs":["https://www.facebook.com/bhteams"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://www.bhcs.com.tw/"},{"@type":"ListItem","position":2,"name":"聯絡我們與預約試聽","item":"https://www.bhcs.com.tw/lianluo.html"}]}</script>
@@ -108,8 +108,15 @@
                 <textarea id="note" name="目前遇到的狀況" rows="4" placeholder="例：八年級理化跟不上，段考大約 50 分左右"></textarea>
               </div>
               <button class="btn btn-line" type="submit" style="width:100%">用 LINE 傳送預約資料</button>
+              <div class="form-actions"><button class="btn btn-ghost" id="clear-trial" type="button">清除填寫內容</button></div>
+              <div class="trial-preview" id="trial-preview" hidden>
+                <label for="trial-message">預約內容（尚未送出）</label>
+                <textarea id="trial-message" rows="8" readonly></textarea>
+                <button class="btn btn-ghost" id="copy-trial" type="button">複製預約內容</button>
+              </div>
+              <p class="formnote" id="trial-draft-note">填寫內容會在此分頁暫存最多 2 小時，可按「清除填寫內容」移除。</p>
               <p id="form-status" class="formnote" role="status" aria-live="polite"></p>
-              <p class="formnote">按下後會開啟百宏官方 LINE，資料會先顯示在訊息框中；請確認內容並按「傳送」，我們才會收到。若未安裝 LINE，也可直接來電 04-2232-0448。</p>
+              <p class="formnote">按下後會另開百宏官方 LINE，此頁會保留填寫內容。請在 LINE 確認並按「傳送」，我們才會收到；若沒有開啟，可複製頁面中的預約內容，或來電 04-2232-0448。</p>
             </form>
           </div>
         </div>
@@ -127,7 +134,7 @@
           </ul>
           <div class="hero-actions" style="margin-bottom:2rem">
             <a class="btn btn-primary" href="tel:+886422320448">撥打 04-2232-0448</a>
-            <a class="btn btn-line" href="https://line.me/R/ti/p/%40bhcs" rel="noopener">加 LINE 好友</a>
+            <a class="btn btn-line" href="https://line.me/R/ti/p/%40bhcs" rel="noopener">索取本期班表與費用</a>
           </div>
           <iframe class="mapframe" src="https://www.google.com/maps?q=%E5%8F%B0%E4%B8%AD%E5%B8%82%E5%8C%97%E5%B1%AF%E5%8D%80%E8%88%88%E5%AE%89%E8%B7%AF%E4%B8%80%E6%AE%B5142%E8%99%9F&output=embed" title="百宏文教機構位置地圖" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           <div class="hero-actions" style="margin-top:1.2rem">
@@ -203,7 +210,7 @@
     </div>
     <div class="legal">
       <span>Copyright © 百宏文教機構</span>
-      <span>週一至週五 12:30–22:00　週六 09:00–21:30　週日公休</span>
+      <span>週一至週五 12:30–22:00（週二 13:30 起）　週六 09:00–21:30　週日公休</span>
     </div>
   </div>
 </footer>
@@ -211,6 +218,6 @@
   <a class="btn-primary" href="tel:+886422320448" style="background:var(--orange);color:#fff">撥打電話</a>
   <a class="btn-line" href="https://line.me/R/ti/p/%40bhcs" style="background:var(--line-green);color:#fff">加 LINE 詢問</a>
 </div>
-<script src="assets/site.js" defer></script>
+<script src="assets/site.js?v=20260921-site-audit-1" defer></script>
 </body>
 </html>

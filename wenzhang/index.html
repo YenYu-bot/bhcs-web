@@ -36,6 +36,7 @@
   ]
 }
 </script>
+<link rel="stylesheet" href="../assets/style.css?v=20260921-site-audit-1">
 <style>
 :root{
   --paper:#faf6ee;
@@ -115,15 +116,29 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
 }
 </script>
+<link rel="stylesheet" href="../assets/article-site.css?v=20260921-site-audit-1">
 </head>
-<body>
+<body class="article-site">
+<a class="skip" href="#main">跳到主要內容</a>
 
-<header class="topbar">
-  <div class="wrap">
-    <a class="brand" href="../index.html">百宏文教機構</a>
-    <nav>
-      <a href="../index.html">回首頁</a>
+<header class="masthead">
+  <div class="wrap bar">
+    <a class="brand" href="../index.html">
+      <img src="../assets/logo.png" alt="百宏文教機構" width="38" height="38">
+      <b>百宏文教</b><span>BHCS</span>
+    </a>
+    <button class="burger" aria-label="開啟選單" aria-expanded="false"><span></span></button>
+    <nav class="nav" aria-label="主選單">
+      <a href="../guozhong.html">國中部</a>
+      <a href="../guoxiao.html">國小部</a>
+      <a href="../gaozhong.html">高中部</a>
+      <a href="../shizi.html">師資</a>
+      <a href="../xuexi-xitong.html">學習系統</a>
+      <a href="../chengguo.html">教學成果</a>
+      <a href="../ziyuan.html">學習資源</a>
+      <a href="./" aria-current="page">教育觀點</a>
       <a href="../lianluo.html">聯絡我們</a>
+      <a class="callbtn" href="tel:+886422320448">撥打 04-2232-0448</a>
     </nav>
   </div>
 </header>
@@ -136,10 +151,11 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
   </div>
 </div>
 
-<main class="list">
+<main id="main" class="list">
 
   <a class="card" href="duoding.html">
     <img src="duoding.webp" width="1600" height="900" alt="放學後的教室，男孩在桌前寫作業，老師坐在斜後方沒有看他，媽媽站在門口猶豫" loading="lazy">
+    <p class="illustration-note">情境示意圖</p>
     <div class="card-body">
       <time datetime="2026-09-12">2026-09-12</time>
       <h2>「老師能不能再多盯他一點？」——盯得住的是今天，盯不住的是他的十年</h2>
@@ -150,6 +166,7 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
 
   <a class="card" href="chengji-pinxing.html">
     <img src="chengji-pinxing.webp" width="1600" height="900" alt="家長陪孩子一起看考卷的溫暖插畫" loading="lazy">
+    <p class="illustration-note">情境示意圖</p>
     <div class="card-body">
       <time datetime="2026-09-03">2026-09-03</time>
       <h2>「我不重視成績，只重視品行」——很多父母沒發現，這句話少了最重要的後半句</h2>
@@ -162,9 +179,51 @@ if(localStorage.getItem('bhcs_noga')!=='1'){
 
 </main>
 
-<footer>
-  <p>© 百宏文教機構｜406 台中市北屯區興安路一段142號</p>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brandline"><img src="../assets/logo.png" alt="" width="30" height="30">百宏文教機構</div>
+        <p style="margin-bottom:.8em">台中市私立百宏文理短期補習班<br>自 2010 年深耕台中北屯</p>
+        <p style="margin:0">
+          406台中市北屯區興安路一段142號<br>
+          <a href="tel:+886422320448" style="font-family:var(--mono)">04-2232-0448</a>
+        </p>
+      </div>
+      <div>
+        <h4>課程</h4>
+        <ul>
+        <li><a href="../guozhong.html">國中部</a></li>
+        <li><a href="../guoxiao.html">國小部</a></li>
+        <li><a href="../gaozhong.html">高中部</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>認識我們</h4>
+        <ul>
+        <li><a href="../shizi.html">師資</a></li>
+        <li><a href="../xuexi-xitong.html">學習系統</a></li>
+        <li><a href="../chengguo.html">教學成果</a></li>
+        <li><a href="../ziyuan.html">學習資源</a></li>
+        <li><a href="../wenzhang/">教育觀點</a></li>
+        <li><a href="../lianluo.html">聯絡我們</a></li>
+          <li><a href="https://www.facebook.com/bhteams" rel="noopener">Facebook</a></li>
+          <li><a href="https://line.me/R/ti/p/%40bhcs" rel="noopener">LINE 官方帳號</a></li>
+          <li><a href="https://bhcs.teams.com.tw/v2/login.html" rel="noopener nofollow">學生登入 TEAMS</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>Copyright © 百宏文教機構</span>
+      <span>週一至週五 12:30–22:00（週二 13:30 起）　週六 09:00–21:30　週日公休</span>
+    </div>
+  </div>
 </footer>
 
+<div class="dock">
+  <a class="btn-primary" href="tel:+886422320448" style="background:var(--orange);color:#fff">撥打電話</a>
+  <a class="btn-line" href="https://line.me/R/ti/p/%40bhcs" style="background:var(--line-green);color:#fff">加 LINE 詢問</a>
+</div>
+<script src="../assets/site.js?v=20260921-site-audit-1" defer></script>
 </body>
 </html>
