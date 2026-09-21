@@ -17,16 +17,16 @@ function stateFor(id){const prior=history.state&&typeof history.state==='object'
 function show(id,options={}){const target=q('.researcher-screen[data-screen="'+id+'"]');if(!target)return;const previous=activeScreen(),push=options.push!==false;qa('.researcher-screen').forEach(s=>{const on=s===target;s.classList.toggle('is-active',on);s.setAttribute('aria-hidden',String(!on))});qa('.researcher-nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.to===id?'step':'false'));if(push&&previous&&previous!==id)history.pushState(stateFor(id),'');else if(options.replace)history.replaceState(stateFor(id),'');scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});if(options.focus!==false)requestAnimationFrame(()=>screenHeading(id)?.focus({preventScroll:true}));try{sessionStorage.setItem('bhcs-researcher-screen:'+path,id)}catch(_){ }updateNotebookReturn()}
 function nav(screens){const n=document.createElement('nav');n.className='researcher-nav';n.setAttribute('aria-label','研究流程');n.setAttribute('role','navigation');screens.forEach((s,i)=>{const screen=q('.researcher-screen[data-screen="'+s.id+'"]');if(screen){screen.setAttribute('role','region');screen.setAttribute('aria-label',s.label);screen.setAttribute('aria-hidden',String(i!==0))}const b=document.createElement('button');b.type='button';const parts=s.label.match(/^([①②③④])\s*(.*)$/);b.innerHTML=parts?'<span class="researcher-step-number" aria-hidden="true">'+safe(parts[1])+'</span><span>'+safe(parts[2])+'</span>':safe(s.label);b.setAttribute('aria-label',s.label);b.dataset.to=s.id;b.setAttribute('aria-current',i===0?'step':'false');b.onclick=()=>show(s.id);n.appendChild(b)});q('.researcher-header').after(n);history.replaceState(stateFor(activeScreen()||screens[0].id),'');addEventListener('popstate',event=>{if(event.state?.bhcsResearcher&&event.state.screen)show(event.state.screen,{push:false,focus:true})})}
 function recordCount(){const body=q('#records');return body?qa('tr',body).filter(row=>!q('.empty,[colspan]',row)).length:0}
-function updateNotebookReturn(){qa('[data-return-second]').forEach(button=>{button.hidden=recordCount()>=2})}
+function updateNotebookReturn(){const count=recordCount();qa('[data-return-second]').forEach(button=>{button.hidden=count>=2;button.closest('.researcher-return').hidden=count>=2});qa('[data-open-notebook]').forEach(button=>{button.textContent='查看研究手冊（'+count+'）'})}
 function installNotebookReturn(note){const wrap=document.createElement('div');wrap.className='researcher-return';wrap.innerHTML='<button class="researcher-primary" type="button" data-return-second>回去做第二筆 →</button><p>保留兩筆只差一個條件的觀察，才能比較。</p>';wrap.querySelector('button').onclick=()=>show('bench');const intro=q('.researcher-notebook-intro',note);intro?.after(wrap);updateNotebookReturn()}
 function coach(text,sub){const d=document.createElement('div');d.className='researcher-coach';d.innerHTML='<img src="'+imgBase+'doc-point.png" alt="" width="64" height="70"><div><strong>余老師提示</strong><p>'+text+'</p>'+(sub?'<p>'+sub+'</p>':'')+'</div>';return d}
 function welcome(){const s=document.createElement('section');s.className='researcher-screen is-active';s.dataset.screen='prepare';s.innerHTML='<div class="researcher-welcome"><div class="researcher-welcome-copy"><span class="researcher-kicker">MICROSCOPE MISSION · 顯微觀察站</span><h2>今天不背答案，<br>自己把規律找出來。</h2><p>你會親手移動試片、調焦、換倍率，再用兩筆觀察回答：「影像為什麼反著跑？高倍到底看得更多還是更少？」</p><div class="researcher-promise"><b>今天的研究任務</b><span>① 低倍找到清楚影像</span><span>② 拖動玻片找出影像方向</span><span>③ 換細胞標本比較倍率</span></div><div class="researcher-kit"><span>🔬 顯微鏡</span><span>🧫 玻片</span><span>📒 研究手冊</span></div><button class="researcher-primary" type="button" data-start>領取任務卡 →</button><p><small>建議 10–15 分鐘。直接動手操作，把你看到的變化記進研究手冊。</small></p></div><div class="researcher-scene">'+roomImg('顯微觀察站的生物實驗桌場景')+'<img class="doc" src="'+imgBase+'doc-microscope.png" data-fallback="'+imgBase+'doc-wave.png" alt="余老師正在看顯微鏡"><div class="researcher-bubble">先從低倍開始！<br>看清楚、動手移、再換高倍比較。</div></div></div>';s.querySelector('[data-start]').onclick=()=>show('bench');return s}
 function microscope(){document.body.classList.add('researcher-ui');header('science/','虛擬顯微鏡');const main=q('main');const old=[...main.children];old.forEach(x=>x.remove());
  const prep=welcome(),bench=document.createElement('section'),note=document.createElement('section'),check=document.createElement('section');bench.className='researcher-screen';bench.dataset.screen='bench';note.className='researcher-screen';note.dataset.screen='notebook';check.className='researcher-screen';check.dataset.screen='check';
- bench.append(coach('從 4× 物鏡開始。影像清楚之後，拖動下方玻片找出移動方向，再換高倍比較。','手機上視野會固定在上方，控制器往下捲即可。'));
+ bench.append(coach('從 4× 物鏡開始。影像清楚之後，拖動下方玻片找出移動方向，再換高倍比較。','拖曳玻片時看上方視野；觀察完成後，可直接在控制區收進研究手冊。'));
  const exp=old.find(x=>x.id==='experiment'),spec=old.find(x=>x.id==='specimens'),obs=old.find(x=>x.id==='observe'),record=old.find(x=>x.id==='record'),quiz=old.find(x=>x.id==='quiz'),guide=old.find(x=>x.classList&&x.classList.contains('lesson-route')),teaching=old.find(x=>x.matches&&x.matches('[aria-label="教材使用指南"]'));
  if(exp)bench.append(exp);if(spec){const tb=document.createElement('div');tb.className='researcher-taskbar';qa('.mission',spec).forEach((m,i)=>{m.classList.toggle('is-current',i===0);m.addEventListener('click',()=>qa('.mission',spec).forEach(x=>x.classList.toggle('is-current',x===m)));tb.append(m)});bench.append(tb);const txt=q('#missionText',spec);if(txt)bench.append(txt)}if(obs)bench.append(obs);
- const benchSave=document.createElement('button');benchSave.className='researcher-primary researcher-bench-record';benchSave.type='button';benchSave.textContent='把這次觀察收進手冊';benchSave.addEventListener('click',()=>q('#addRecord')?.click());bench.append(benchSave);const sourceSave=q('#addRecord');if(sourceSave){const syncSave=()=>{benchSave.disabled=sourceSave.disabled};syncSave();new MutationObserver(syncSave).observe(sourceSave,{attributes:true,attributeFilter:['disabled']})}
+
  note.innerHTML='<div class="researcher-notebook-intro"><img class="notebook-doc" src="'+imgBase+'doc-notebook.png" alt="" width="76" height="120" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'notebook-sticker\',textContent:\'📒\'}))"><div><h2>余老師的研究手冊</h2><p>留下低倍、高倍各一筆，再用自己的話寫：「我改了什麼？我看到什麼變化？」</p></div></div>';if(record)note.append(record);if(guide)note.append(guide);if(quiz)check.append(quiz);if(teaching)check.append(teaching);
  main.append(prep,bench,note,check);nav([{id:'prepare',label:'① 接任務'},{id:'bench',label:'② 動手做'},{id:'notebook',label:'③ 研究手冊'},{id:'check',label:'④ 挑戰題'}]);installNotebookReturn(note);
  q('#addRecord')?.addEventListener('click',()=>{setTimeout(updateNotebookReturn,60)});
@@ -64,6 +64,42 @@ function directory(){document.body.classList.add('researcher-directory');const m
  qa('.resource').forEach(c=>{const subject=c.dataset.subject||'國小自然';const href=(q('a.open,.open a,a[href]',c)||{}).getAttribute?.('href')||'';const key=href.replace(/\/$/,'').split('/').pop().replace(/\.html$/,'');const st=STATION[key]||[];const img=document.createElement('img');img.className='station-icon';img.alt='';img.loading='lazy';img.width=70;img.height=70;const fb='../mini-lab/img/'+(subjectIcons[subject]||'icon-tools.png');if(st[0]){img.src='../../assets/science/icons/icon-'+st[0]+'.webp';img.dataset.fallback=fb}else img.src=fb;c.prepend(img);const label=document.createElement('span');label.className='station-label';label.textContent='研究站';c.insertBefore(label,q('h2,h3',c));if(st[1]){const line=document.createElement('p');line.className='mission-line';line.textContent='任務：'+st[1];const open=q('.open',c);if(open)c.insertBefore(line,open);else c.appendChild(line)}});
 }
 if(path.endsWith('/microscope-lab.html'))microscope();else if(path.endsWith('/tools/science/')||path.endsWith('/tools/science/index.html'))directory();else if(path.includes('/tools/science/')&&path.endsWith('.html'))scienceStation();else legacyStation();
+// Give every legacy station the same save path as the newer stations.
+function installBenchRecords(){
+ const source=q('#addRecord'),bench=q('[data-screen="bench"]');
+ if(!source||!bench)return;
+ const box=document.createElement('div');box.className='researcher-save';
+ box.innerHTML='<button type="button" class="researcher-primary researcher-bench-record">把這次觀察收進手冊</button><p class="researcher-save-status" role="status" aria-live="polite"></p><button type="button" class="researcher-notebook-link" data-open-notebook>查看研究手冊</button>';
+ const save=q('.researcher-bench-record',box),message=q('.researcher-save-status',box);
+ const sync=()=>{save.disabled=source.disabled;if(source.disabled)message.textContent='完成本輪操作後，就能保存觀察。';else if(!message.dataset.saved)message.textContent='觀察已準備好，可以收進手冊。';};
+ save.addEventListener('click',()=>{const before=recordCount();source.click();if(recordCount()>before){message.dataset.saved='true';message.textContent='已收進第 '+recordCount()+' 筆觀察。只改一個條件，再做一次比較。';}updateNotebookReturn()});
+ q('[data-open-notebook]',box).addEventListener('click',()=>show('notebook'));
+ const target=q('#sampleStatus',bench)||q('.labgrid > .panel',bench);
+ if(target?.id==='sampleStatus')target.after(box);else (target||bench).append(box);
+ new MutationObserver(()=>{delete message.dataset.saved;sync()}).observe(source,{attributes:true,attributeFilter:['disabled']});sync();
+}
+function installNotebookUpdates(){
+ const records=q('#records');if(!records)return;
+ new MutationObserver(updateNotebookReturn).observe(records,{childList:true,subtree:true});updateNotebookReturn();
+}
+// Do not mark an unanswered question wrong or leave an old score after editing.
+function installLegacyQuizFeedback(){
+ const check=q('#checkQuiz'),score=q('#quizScore'),quiz=q('#quiz');if(!check||!score||!quiz)return;
+ const questions=qa('.quizItem fieldset',quiz);
+ check.addEventListener('click',event=>{
+  const missing=questions.filter(fs=>!q('input:checked',fs));if(!missing.length)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  questions.forEach(fs=>{const out=q('.feedback',fs.closest('.quizItem'));out.className='feedback';out.textContent=q('input:checked',fs)?'':'尚未作答，請先選擇答案。'});
+  score.textContent='已答 '+(questions.length-missing.length)+'／'+questions.length+' 題，請補完未答題後再檢查。';
+  const input=q('input',missing[0]);input?.focus({preventScroll:true});missing[0].scrollIntoView({block:'start',behavior:'instant'});
+ },true);
+ quiz.addEventListener('change',event=>{
+  if(!event.target.matches('input[type="radio"]'))return;
+  const out=q('.feedback',event.target.closest('.quizItem'));if(out){out.textContent='';out.className='feedback'}
+  score.textContent='答案已變更，請重新檢查。';
+ });
+}
+installBenchRecords();installNotebookUpdates();installLegacyQuizFeedback();
 // Keep the short speech notch level with the mouth in the painted image,
 // including object-fit letterboxing, font wrapping and viewport changes.
 function alignWelcomeSpeech(){
