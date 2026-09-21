@@ -21,7 +21,7 @@ const server=http.createServer((req,res)=>{
  const base='http://127.0.0.1:'+server.address().port;
  const browser=await chromium.launch();
  const results=[];
- const viewports=(process.env.COMPOSITION_VIEWPORTS|| (process.env.COMPOSITION_WIDTHS?process.env.COMPOSITION_WIDTHS.split(',').map(w=>w+'x'+(w==='390'?844:800)).join(','):'390x844,768x800,1280x800,1366x650,1024x600')).split(',').map(v=>{const [width,height]=v.split('x').map(Number);return {width,height}});
+ const viewports=(process.env.COMPOSITION_VIEWPORTS|| (process.env.COMPOSITION_WIDTHS?process.env.COMPOSITION_WIDTHS.split(',').map(w=>w+'x'+(w==='390'?844:800)).join(','):'390x844,768x800,1280x800,1366x768,1366x650,1024x600')).split(',').map(v=>{const [width,height]=v.split('x').map(Number);return {width,height}});
  fs.writeFileSync(path.join(output,'environment.json'),JSON.stringify({browser:await browser.version(),node:process.version,viewports},null,2));
  try{
   for(const {width,height} of viewports){
@@ -60,7 +60,7 @@ const server=http.createServer((req,res)=>{
      const textRects=[...range.getClientRects()].filter(r=>r.width>0&&r.height>0);
      const textFits=textRects.length>0&&textRects.every(r=>r.left>=b.left+1&&r.right<=b.right-1&&r.top>=b.top+1&&r.bottom<=b.bottom-1);
      const cta=document.querySelector('.researcher-welcome .researcher-primary'),c=cta.getBoundingClientRect();
-     const shortDesktop=innerWidth>=851&&innerHeight<=760;
+     const shortDesktop=innerWidth>=851&&innerHeight<=800;
      const hit=document.elementFromPoint(c.x+c.width/2,c.y+c.height/2);
      const startInFirstScreen=!shortDesktop||(c.top>=0&&c.bottom<=innerHeight&&c.left>=0&&c.right<=innerWidth&&cta.contains(hit));
      const feetInFirstScreen=!shortDesktop||y+h<=innerHeight;

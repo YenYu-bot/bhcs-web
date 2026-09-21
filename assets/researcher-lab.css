@@ -669,7 +669,7 @@ body.researcher-station .observation .stage.is-preview::after{
 @media print{body.researcher-station .observation .stage.is-preview::after{display:none}}
 
 /* ---------- 19. 矮桌機首屏：保留任務與操作入口，省略重複裝備／時間提示 ---------- */
-@media (min-width:851px) and (max-height:760px){
+@media (min-width:851px) and (max-height:800px){
   body .researcher-header{min-height:52px}
   body .researcher-nav{margin-top:10px;margin-bottom:10px}
   body .researcher-nav button{min-height:42px}
