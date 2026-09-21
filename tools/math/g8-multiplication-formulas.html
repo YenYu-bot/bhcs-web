@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#155f82">
+  <meta name="theme-color" content="#16233A">
   <title>百宏文教｜乘法公式 出題器</title>
 <meta name="description" content="國中數學國二「乘法公式」計算力練習出題器：可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
 <link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g8-multiplication-formulas.html">
@@ -37,7 +37,138 @@ html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,san
 </style>
 <style id="bhcs-theme-family">
 body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
-</style></head>
+</style>
+<style id="bhcs-math-brand">
+/* P1: screen palette only; original print rules and worksheet geometry are preserved. */
+@media screen{
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+:root{--blue:#16233A;--deep:#0D1626;--soft:#F2F4F7;--line:#C9D2DE;--ink:#16233A;--muted:#43516B;--bg:#FCFCFA;--red:#C8352B}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #C8352B}
+.top{border-bottom:4px solid #16233A}
+.logo{background:#C9D2DE;border-radius:6px;box-shadow:4px 4px 0 #16233A}
+.brand p{color:#F2F4F7}
+.total{background:#F2F4F7;border-radius:6px}
+.control-area{background:#FCFCFA;border-bottom:1px solid #C9D2DE;box-shadow:0 5px 16px #16233A12}
+.panel{border-radius:6px}
+.panel h2{color:#43516B}
+select,.title-input{border:1px solid #C9D2DE;border-radius:6px}
+.level{color:#43516B;border:1px solid #C9D2DE;border-radius:6px}
+.level[aria-pressed=true]{box-shadow:inset 0 -3px 0 #16233A}
+.number-choice{background:#FCFCFA;border:1px solid #C9D2DE;border-radius:6px}
+.number-choice:has(input:checked){border-color:#C9D2DE}
+.type{background:#FCFCFA;border:1px solid #F2F4F7;border-radius:6px}
+.type:has(.type-check:checked){border-color:#C9D2DE}
+.count{border:1px solid #C9D2DE}
+.count:disabled{color:#43516B;background:#FCFCFA}
+.action{border-radius:6px}
+.paper{box-shadow:0 15px 40px #16233A22}
+.badge{border-radius:6px}
+.instruction{color:#43516B}
+.question{border-bottom:.25mm solid #C9D2DE}
+.work-line{color:#43516B}
+.work-rule{border-bottom:.2mm solid #43516B}
+.footer{color:#43516B}
+.empty{border:2px dashed #C9D2DE;border-radius:6px}
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA}
+svg [fill="#147da8" i]{fill:#16233A}
+svg [stroke="#147da8" i]{stroke:#16233A}
+svg [fill="#15506b" i]{fill:#16233A}
+svg [stroke="#15506b" i]{stroke:#16233A}
+svg [fill="#e8f6fc" i]{fill:#F2F4F7}
+svg [stroke="#e8f6fc" i]{stroke:#F2F4F7}
+svg [fill="#cfdee5" i]{fill:#F2F4F7}
+svg [stroke="#cfdee5" i]{stroke:#F2F4F7}
+svg [fill="#18303b" i]{fill:#16233A}
+svg [stroke="#18303b" i]{stroke:#16233A}
+svg [fill="#60747e" i]{fill:#43516B}
+svg [stroke="#60747e" i]{stroke:#43516B}
+svg [fill="#e8edef" i]{fill:#F2F4F7}
+svg [stroke="#e8edef" i]{stroke:#F2F4F7}
+svg [fill="#a73838" i]{fill:#C8352B}
+svg [stroke="#a73838" i]{stroke:#C8352B}
+svg [fill="#f3ad43" i]{fill:#C8352B}
+svg [stroke="#f3ad43" i]{stroke:#C8352B}
+svg [fill="#68c7e8" i]{fill:#16233A}
+svg [stroke="#68c7e8" i]{stroke:#16233A}
+svg [fill="#8cdbf4" i]{fill:#C9D2DE}
+svg [stroke="#8cdbf4" i]{stroke:#C9D2DE}
+svg [fill="#0c3b50" i]{fill:#16233A}
+svg [stroke="#0c3b50" i]{stroke:#16233A}
+svg [fill="#cbe9f4" i]{fill:#F2F4F7}
+svg [stroke="#cbe9f4" i]{stroke:#F2F4F7}
+svg [fill="#e1f6fd" i]{fill:#F2F4F7}
+svg [stroke="#e1f6fd" i]{stroke:#F2F4F7}
+svg [fill="#f7fafb" i]{fill:#FCFCFA}
+svg [stroke="#f7fafb" i]{stroke:#FCFCFA}
+svg [fill="#c6d4da" i]{fill:#C9D2DE}
+svg [stroke="#c6d4da" i]{stroke:#C9D2DE}
+svg [fill="#274650" i]{fill:#43516B}
+svg [stroke="#274650" i]{stroke:#43516B}
+svg [fill="#a8bac2" i]{fill:#C9D2DE}
+svg [stroke="#a8bac2" i]{stroke:#C9D2DE}
+svg [fill="#294550" i]{fill:#43516B}
+svg [stroke="#294550" i]{stroke:#43516B}
+svg [fill="#acbec6" i]{fill:#C9D2DE}
+svg [stroke="#acbec6" i]{stroke:#C9D2DE}
+svg [fill="#0e526e" i]{fill:#16233A}
+svg [stroke="#0e526e" i]{stroke:#16233A}
+svg [fill="#f8fbfc" i]{fill:#FCFCFA}
+svg [stroke="#f8fbfc" i]{stroke:#FCFCFA}
+svg [fill="#cad9df" i]{fill:#C9D2DE}
+svg [stroke="#cad9df" i]{stroke:#C9D2DE}
+svg [fill="#82c7df" i]{fill:#C9D2DE}
+svg [stroke="#82c7df" i]{stroke:#C9D2DE}
+svg [fill="#dbe7eb" i]{fill:#F2F4F7}
+svg [stroke="#dbe7eb" i]{stroke:#F2F4F7}
+svg [fill="#8bcbe1" i]{fill:#C9D2DE}
+svg [stroke="#8bcbe1" i]{stroke:#C9D2DE}
+svg [fill="#b3c5cc" i]{fill:#C9D2DE}
+svg [stroke="#b3c5cc" i]{stroke:#C9D2DE}
+svg [fill="#9aa8ad" i]{fill:#43516B}
+svg [stroke="#9aa8ad" i]{stroke:#43516B}
+svg [fill="#edf1f2" i]{fill:#FCFCFA}
+svg [stroke="#edf1f2" i]{stroke:#FCFCFA}
+svg [fill="#3d4c52" i]{fill:#43516B}
+svg [stroke="#3d4c52" i]{stroke:#43516B}
+svg [fill="#b8c9cf" i]{fill:#C9D2DE}
+svg [stroke="#b8c9cf" i]{stroke:#C9D2DE}
+svg [fill="#7b878b" i]{fill:#43516B}
+svg [stroke="#7b878b" i]{stroke:#43516B}
+svg [fill="#9ba7ab" i]{fill:#43516B}
+svg [stroke="#9ba7ab" i]{stroke:#43516B}
+svg [fill="#61737a" i]{fill:#43516B}
+svg [stroke="#61737a" i]{stroke:#43516B}
+svg [fill="#b7c8ce" i]{fill:#C9D2DE}
+svg [stroke="#b7c8ce" i]{stroke:#C9D2DE}
+svg [fill="#176b55" i]{fill:#16233A}
+svg [stroke="#176b55" i]{stroke:#16233A}
+svg [fill="#0f4f40" i]{fill:#16233A}
+svg [stroke="#0f4f40" i]{stroke:#16233A}
+svg [fill="#55cfad" i]{fill:#16233A}
+svg [stroke="#55cfad" i]{stroke:#16233A}
+svg [fill="#e8f5f0" i]{fill:#F2F4F7}
+svg [stroke="#e8f5f0" i]{stroke:#F2F4F7}
+svg [fill="#c8d4d1" i]{fill:#C9D2DE}
+svg [stroke="#c8d4d1" i]{stroke:#C9D2DE}
+svg [fill="#182d28" i]{fill:#16233A}
+svg [stroke="#182d28" i]{stroke:#16233A}
+svg [fill="#62736f" i]{fill:#43516B}
+svg [stroke="#62736f" i]{stroke:#43516B}
+
+html,body{background-color:var(--bhcs-bg)}
+button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--bhcs-green)}
+.top .logo,.top .topic-logo{color:#fff;background-color:var(--bhcs-green)}
+.top h1 b{color:#fff}
+header.no-print>div:first-child h1::before{color:#fff}
+header.no-print>div:first-child>div:first-child>div:first-child{color:#fff!important}
+:root body :is(#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]){background:#E8620C!important;color:#fff!important;border-color:#E8620C!important;box-shadow:none!important}
+:root body :is(#print,#btn-print-questions,#btn-print-answers,button[onclick^="printWorksheet("]){background:#fff!important;color:#16233A!important;border-color:#16233A!important;box-shadow:inset 0 0 0 1px #16233A!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C8352B}
+}
+.ans,.ans *,.answer,.note-answer,.sd,[id^="solution-"] ,[id^="solution-"] *,[id^="solution-box-"] ,[id^="solution-box-"] *{color:#C8352B!important}
+</style>
+</head>
 <body>
   <header class="top"><div class="brand"><div class="logo">(a±b)²</div><div><h1>乘法公式考卷產生器</h1><p>百宏文教・數學計算力練習</p></div></div><div class="total" id="total">共 20 題</div></header>
   <section class="control-area"><div class="controls">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#176b55">
+<meta name="theme-color" content="#16233A">
 <title>百宏文教｜概算與估算 出題器</title>
 <meta name="description" content="國小數學「概算與估算」計算力練習出題器：無條件進入法、無條件捨去法、四捨五入法取概數，整數與小數的加減概算、乘除估算，可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。">
 <link rel="canonical" href="https://www.bhcs.com.tw/tools/estimation.html">
@@ -95,6 +95,82 @@ table.rt .corner{font-size:12px;line-height:1.3;text-align:left}
   .grid.c2,.grid.c3,.grid.c4{}
   .q .cond{background:none;border:1px solid #999}
 }
+</style>
+
+<style id="bhcs-math-brand">
+/* P1: screen palette only; original print rules and worksheet geometry are preserved. */
+@media screen{
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #C8352B}
+.top .logo{border-radius:6px}
+.top p{color:#F2F4F7}
+.top a.back{color:#F2F4F7}
+.grp{border:1px solid #F2F4F7;border-radius:6px;background:#FCFCFA}
+select,input[type=number]{border:1px solid #C9D2DE;border-radius:6px}
+.presets button{border-radius:6px}
+.btn{border-radius:6px}
+.bhcs-brand i{color:#43516B}
+.tip{color:#43516B}
+.prob{border-bottom:1px dashed #C9D2DE}
+.q .cond{color:#43516B;background:#FCFCFA;border-radius:6px}
+.work .steps{color:#C8352B}
+table.rt th{background:#FCFCFA}
+.pick{border:1.5px solid #16233A;border-radius:6px}
+.pick span.hit{border-radius:6px}
+svg [fill="#176b55" i]{fill:#16233A}
+svg [stroke="#176b55" i]{stroke:#16233A}
+svg [fill="#0f4f40" i]{fill:#16233A}
+svg [stroke="#0f4f40" i]{stroke:#16233A}
+svg [fill="#55cfad" i]{fill:#16233A}
+svg [stroke="#55cfad" i]{stroke:#16233A}
+svg [fill="#e8f5f0" i]{fill:#F2F4F7}
+svg [stroke="#e8f5f0" i]{stroke:#F2F4F7}
+svg [fill="#c8d4d1" i]{fill:#C9D2DE}
+svg [stroke="#c8d4d1" i]{stroke:#C9D2DE}
+svg [fill="#182d28" i]{fill:#16233A}
+svg [stroke="#182d28" i]{stroke:#16233A}
+svg [fill="#62736f" i]{fill:#43516B}
+svg [stroke="#62736f" i]{stroke:#43516B}
+svg [fill="#e8edef" i]{fill:#F2F4F7}
+svg [stroke="#e8edef" i]{stroke:#F2F4F7}
+svg [fill="#ae3f3f" i]{fill:#C8352B}
+svg [stroke="#ae3f3f" i]{stroke:#C8352B}
+svg [fill="#f2ad47" i]{fill:#C8352B}
+svg [stroke="#f2ad47" i]{stroke:#C8352B}
+svg [fill="#c8e8df" i]{fill:#F2F4F7}
+svg [stroke="#c8e8df" i]{stroke:#F2F4F7}
+svg [fill="#d9e0e6" i]{fill:#F2F4F7}
+svg [stroke="#d9e0e6" i]{stroke:#F2F4F7}
+svg [fill="#f8fafb" i]{fill:#FCFCFA}
+svg [stroke="#f8fafb" i]{stroke:#FCFCFA}
+svg [fill="#b7bfc7" i]{fill:#C9D2DE}
+svg [stroke="#b7bfc7" i]{stroke:#C9D2DE}
+svg [fill="#8a9793" i]{fill:#43516B}
+svg [stroke="#8a9793" i]{stroke:#43516B}
+svg [fill="#cdd5dc" i]{fill:#C9D2DE}
+svg [stroke="#cdd5dc" i]{stroke:#C9D2DE}
+svg [fill="#f1f5f3" i]{fill:#FCFCFA}
+svg [stroke="#f1f5f3" i]{stroke:#FCFCFA}
+svg [fill="#7a4b12" i]{fill:#C8352B}
+svg [stroke="#7a4b12" i]{stroke:#C8352B}
+svg [fill="#f3f6f5" i]{fill:#FCFCFA}
+svg [stroke="#f3f6f5" i]{stroke:#FCFCFA}
+svg [fill="#4c7fb6" i]{fill:#16233A}
+svg [stroke="#4c7fb6" i]{stroke:#16233A}
+
+html,body{background-color:var(--bhcs-bg)}
+button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--bhcs-green)}
+.top .logo,.top .topic-logo{color:#fff;background-color:var(--bhcs-green)}
+.top h1 b{color:#fff}
+header.no-print>div:first-child h1::before{color:#fff}
+header.no-print>div:first-child>div:first-child>div:first-child{color:#fff!important}
+:root body :is(#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]){background:#E8620C!important;color:#fff!important;border-color:#E8620C!important;box-shadow:none!important}
+:root body :is(#print,#btn-print-questions,#btn-print-answers,button[onclick^="printWorksheet("]){background:#fff!important;color:#16233A!important;border-color:#16233A!important;box-shadow:inset 0 0 0 1px #16233A!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C8352B}
+}
+.ans,.ans *,.answer,.note-answer,.sd,[id^="solution-"] ,[id^="solution-"] *,[id^="solution-box-"] ,[id^="solution-box-"] *{color:#C8352B!important}
 </style>
 </head>
 <body class="student">

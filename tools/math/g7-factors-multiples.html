@@ -83,7 +83,86 @@ select,input[type=number]{border-color:#aabcb7!important}
 .bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}
 @media print{.bhcs-brand{font-size:8pt;margin-bottom:2px}.bhcs-brand b{font-size:9pt;color:#000}.bhcs-brand i{font-size:7.5pt}}
 </style>
-<style id="bhcs-mobile-controls">@media (max-width:640px){.mods{grid-template-columns:repeat(2,minmax(0,1fr))!important}.mods>.h,.mods>span.h{grid-column:1/-1;white-space:normal}.mods label,.line label{white-space:normal!important;min-width:0}.grp{min-width:0;max-width:100%;box-sizing:border-box}.grp .line,.line{flex-wrap:wrap!important}.sheets{max-width:100%;min-width:0;overflow-x:hidden}}</style></head>
+<style id="bhcs-mobile-controls">@media (max-width:640px){.mods{grid-template-columns:repeat(2,minmax(0,1fr))!important}.mods>.h,.mods>span.h{grid-column:1/-1;white-space:normal}.mods label,.line label{white-space:normal!important;min-width:0}.grp{min-width:0;max-width:100%;box-sizing:border-box}.grp .line,.line{flex-wrap:wrap!important}.sheets{max-width:100%;min-width:0;overflow-x:hidden}}</style><meta name="theme-color" content="#16233A">
+<style id="bhcs-math-brand">
+/* P1: screen palette only; original print rules and worksheet geometry are preserved. */
+@media screen{
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+:root{--ink:#16233A;--ans:#C8352B;--accent:#16233A}
+body{background:#FCFCFA}
+.panel{border-bottom:1px solid #C9D2DE}
+.grp{border:1px solid #F2F4F7;border-radius:6px;background:#FCFCFA}
+.grp>b{color:#43516B}
+select,input[type=number]{border:1px solid #C9D2DE;border-radius:6px}
+.sec{background:#FCFCFA}
+.tip{color:#43516B}
+.prob{border-bottom:1px dashed #C9D2DE}
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA}
+:root{--accent:#16233A!important}
+.panel{box-shadow:0 5px 16px #16233A12}
+.panel>h1::before{border-radius:6px}
+.panel>h1::after{color:#F2F4F7}
+.sheet{box-shadow:0 15px 40px #16233A22!important}
+select,input[type=number]{border-color:#C9D2DE!important}
+.bhcs-brand{color:#43516B}
+.bhcs-brand b{color:#16233A}
+.bhcs-brand i{color:#43516B}
+svg [fill="#d62828" i]{fill:#C8352B}
+svg [stroke="#d62828" i]{stroke:#C8352B}
+svg [fill="#2a8f6a" i]{fill:#16233A}
+svg [stroke="#2a8f6a" i]{stroke:#16233A}
+svg [fill="#e9edf1" i]{fill:#FCFCFA}
+svg [stroke="#e9edf1" i]{stroke:#FCFCFA}
+svg [fill="#cfd6dd" i]{fill:#C9D2DE}
+svg [stroke="#cfd6dd" i]{stroke:#C9D2DE}
+svg [fill="#d9e0e6" i]{fill:#F2F4F7}
+svg [stroke="#d9e0e6" i]{stroke:#F2F4F7}
+svg [fill="#f8fafb" i]{fill:#FCFCFA}
+svg [stroke="#f8fafb" i]{stroke:#FCFCFA}
+svg [fill="#b7bfc7" i]{fill:#C9D2DE}
+svg [stroke="#b7bfc7" i]{stroke:#C9D2DE}
+svg [fill="#eaf5f0" i]{fill:#FCFCFA}
+svg [stroke="#eaf5f0" i]{stroke:#FCFCFA}
+svg [fill="#cdd5dc" i]{fill:#C9D2DE}
+svg [stroke="#cdd5dc" i]{stroke:#C9D2DE}
+svg [fill="#176b55" i]{fill:#16233A}
+svg [stroke="#176b55" i]{stroke:#16233A}
+svg [fill="#0f4f40" i]{fill:#16233A}
+svg [stroke="#0f4f40" i]{stroke:#16233A}
+svg [fill="#55cfad" i]{fill:#16233A}
+svg [stroke="#55cfad" i]{stroke:#16233A}
+svg [fill="#e8f5f0" i]{fill:#F2F4F7}
+svg [stroke="#e8f5f0" i]{stroke:#F2F4F7}
+svg [fill="#c8d4d1" i]{fill:#C9D2DE}
+svg [stroke="#c8d4d1" i]{stroke:#C9D2DE}
+svg [fill="#182d28" i]{fill:#16233A}
+svg [stroke="#182d28" i]{stroke:#16233A}
+svg [fill="#62736f" i]{fill:#43516B}
+svg [stroke="#62736f" i]{stroke:#43516B}
+svg [fill="#e8edef" i]{fill:#F2F4F7}
+svg [stroke="#e8edef" i]{stroke:#F2F4F7}
+svg [fill="#c8e8df" i]{fill:#F2F4F7}
+svg [stroke="#c8e8df" i]{stroke:#F2F4F7}
+svg [fill="#aabcb7" i]{fill:#C9D2DE}
+svg [stroke="#aabcb7" i]{stroke:#C9D2DE}
+svg [fill="#8a9793" i]{fill:#43516B}
+svg [stroke="#8a9793" i]{stroke:#43516B}
+[style="color:#678;font-size:13px"]{color:rgb(67 81 107)!important}
+
+html,body{background-color:var(--bhcs-bg)}
+button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--bhcs-green)}
+.top .logo,.top .topic-logo{color:#fff;background-color:var(--bhcs-green)}
+.top h1 b{color:#fff}
+header.no-print>div:first-child h1::before{color:#fff}
+header.no-print>div:first-child>div:first-child>div:first-child{color:#fff!important}
+:root body :is(#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]){background:#E8620C!important;color:#fff!important;border-color:#E8620C!important;box-shadow:none!important}
+:root body :is(#print,#btn-print-questions,#btn-print-answers,button[onclick^="printWorksheet("]){background:#fff!important;color:#16233A!important;border-color:#16233A!important;box-shadow:inset 0 0 0 1px #16233A!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C8352B}
+}
+.ans,.ans *,.answer,.note-answer,.sd,[id^="solution-"] ,[id^="solution-"] *,[id^="solution-box-"] ,[id^="solution-box-"] *{color:#C8352B!important}
+</style>
+</head>
 <body class="student">
 <div class="panel">
   <h1>因數與倍數 出題器（國一）</h1>
