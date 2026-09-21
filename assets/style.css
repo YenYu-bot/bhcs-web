@@ -344,7 +344,18 @@ td .num{font-weight:600}
   padding:.75rem .5rem;border-radius:var(--radius);font-size:.92rem;font-weight:700;
   text-decoration:none;
 }
-@media(max-width:760px){.dock{display:flex}body{padding-bottom:74px}}
+@media(max-width:760px){
+  .dock{display:flex}
+  .foot{padding-bottom:calc(2rem + 74px + env(safe-area-inset-bottom))}
+  body:has(input:focus,textarea:focus,select:focus,#trial-form:focus-within) .dock{display:none}
+  .home-page main>.hero .hero-actions .btn-line,.home-page main>.hero .hero-actions .btn-ghost{display:none}
+}
+.card-more{display:block;margin-top:1rem;color:var(--red);font-weight:700}
+.form-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem}
+.form-actions button{min-height:44px}
+.trial-preview{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--grid)}
+.trial-preview textarea{width:100%;min-height:13rem;resize:vertical;font:inherit;font-size:.95rem;padding:.8rem}
+[hidden]{display:none!important}
 
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:1rem;top:1rem;z-index:99;background:var(--ink);color:#fff;padding:.7rem 1rem;border-radius:var(--radius)}

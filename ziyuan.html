@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=20260921-site-audit-1">
 <link rel="icon" href="assets/favicon.png">
 <style>
 /* ===== 學習資源頁（僅此頁） ===== */
@@ -78,12 +78,11 @@
 .res-picks .prose h2{margin-top:0}
 .res-bar{position:sticky;top:0;z-index:30;background:#F7F9FC;border-bottom:1px solid #E1E7F0;padding:10px 0 8px}
 .res-bar .resource-search{max-width:none}
-.res-stages,.res-types{display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.res-stages::-webkit-scrollbar,.res-types::-webkit-scrollbar{display:none}
+.res-stages,.res-types{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .res-stages button,.res-types button{flex:0 0 auto;min-height:44px;padding:0 16px;border:1.5px solid #DDE3EC;border-radius:999px;background:#fff;color:#16233A;font:inherit;font-size:15px;cursor:pointer}
 .res-types button{min-height:36px;font-size:13px;padding:0 12px}
 .res-stages button[aria-pressed=true]{background:#16233A;border-color:#16233A;color:#fff}
-.res-types button[aria-pressed=true]{background:#0F7A5A;border-color:#0F7A5A;color:#fff}
+.res-types button[aria-pressed=true]{background:#C8352B;border-color:#C8352B;color:#fff}
 .res-stages small{opacity:.7;margin-left:2px}
 .res-bar .resource-filter-status{margin:8px 0 0;font-size:13px}
 .res-picks{padding:18px 0 4px}.res-picks h2{font-size:18px;margin:0 0 10px}
@@ -98,7 +97,7 @@
 .res-toggle::after{content:"＋";margin-left:auto;color:#6B7688;font-weight:400}
 .res-toggle[aria-expanded=true]::after{content:"－"}
 .res-toggle:focus-visible{outline:2px solid #16233A;outline-offset:-2px}
-.res-type{font-size:12px;font-weight:500;color:#0F7A5A;border:1px solid #CFE5DC;border-radius:999px;padding:1px 8px;white-space:nowrap}
+.res-type{font-size:12px;font-weight:500;color:#C8352B;border:1px solid #E5B9B4;border-radius:999px;padding:1px 8px;white-space:nowrap}
 .res-body{padding:0 16px 14px}
 @media(max-width:640px){.res-bar.is-stuck .res-types,.res-bar.is-stuck .resource-filter-status,.res-bar.is-stuck .resource-search label{display:none}.res-bar.is-stuck{padding:6px 0}.res-bar.is-stuck .res-stages button{min-height:40px}.res-pick-grid{grid-template-columns:1fr 1fr}.res-js .hero,.res-js section:first-of-type{--res-tight:1}.res-toggle{font-size:17px}}
 @media print{.res-bar,.res-picks{display:none}.res-body[hidden]{display:block!important}}
@@ -263,7 +262,7 @@
     </div>
     <div class="legal">
       <span>Copyright © 百宏文教機構</span>
-      <span>週一至週五 12:30–22:00　週六 09:00–21:30　週日公休</span>
+      <span>週一至週五 12:30–22:00（週二 13:30 起）　週六 09:00–21:30　週日公休</span>
     </div>
   </div>
 </footer>
@@ -323,6 +322,6 @@
  input.addEventListener('input',()=>{manual.clear();apply()});addEventListener('hashchange',fromHash);apply();fromHash();
 })();
 </script>
-<script src="assets/site.js" defer></script>
+<script src="assets/site.js?v=20260921-site-audit-1" defer></script>
 </body>
 </html>

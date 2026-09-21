@@ -1,0 +1,9 @@
+/* Shared article brand layer; reading layout and article text stay in each article. */
+:root{--paper:#FCFCFA;--ink:#16233A;--ink-soft:#43516B;--ink-faint:#66738A;--red:#C8352B;--orange:#E8620C;--line:#C9D2DE}
+.article-site .gridpaper{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.article-site .foot{margin-top:3rem;padding:3.2rem 0 2rem;text-align:left;border:0;color:#AEBACC}
+.article-site .card,.article-site .closing,.article-site .act{background:#fff;border-color:var(--grid-strong);box-shadow:var(--shadow)}
+.article-site .cover img{box-shadow:var(--shadow);border-color:var(--grid-strong)}
+.illustration-note{display:block;font-size:13px;color:var(--ink-soft);padding:.35rem .8rem;margin:0}
+.article-site .cover .illustration-note{padding-inline:0}
+@media(max-width:760px){.article-site .foot{padding-bottom:calc(2rem + 74px + env(safe-area-inset-bottom))}}

@@ -19,6 +19,8 @@ jobs:
       - run: npm install --prefix scripts
       - run: node scripts/build_microscope.mjs
       - run: node scripts/build_science.mjs
+      - run: node scripts/build_site.mjs
+      - run: git diff --exit-code
       - run: npm test --prefix scripts
       - run: node scripts/check_science_integration.cjs
       - run: node scripts/test_researcher_batch1.cjs
@@ -31,6 +33,10 @@ jobs:
           npm install --prefix /tmp/bhcs-composition playwright@1.58.2
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Check public site pages and contact flows
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_site_browser.cjs
       - name: Check all welcome layouts and capture review images
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -54,4 +60,10 @@ jobs:
         with:
           name: researcher-operation-review
           path: operation-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-site-review
+          path: site-artifacts/
           retention-days: 14
