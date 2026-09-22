@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 export const normalizeSig = s => String(s).replace(/<[^>]*>/g, '').replace(/\s+/g, '').normalize('NFKC');
 export function seedFor(text) {let h=2166136261;for(const c of text)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0;}
 export function auditCombination({unit,ctx,uiMax,safeQuestion,contentGuard=()=>true,resetRandom,seed}) {
- const result={seed,uiMax,bankSize:null,bankDeclared:Object.hasOwn(unit,'bankSize'),
+ const result={seed,uiMax,bankSize:null,bankDeclared:Object.hasOwn(unit,'bankSize'),bankCoverage:{attempted:0,distinct:0},
   raw:{calls:0,returned:0,nulls:0,verifyFalse:0,exceptions:0,invalid:0,distinct:0,guardRejected:0,examples:[]},
   sampling:{requested:200,produced:0,exhaustedAt:[],examples:[]},
   paper:{requested:0,produced:0,attempts:0,candidateNulls:0,candidateVerifyFalse:0,candidateExceptions:0,candidateGuardRejected:0,exhaustedAt:null,duplicates:0,examples:[]},issues:[],warnings:[],samples:[],pass:false};
@@ -40,7 +40,17 @@ export function auditCombination({unit,ctx,uiMax,safeQuestion,contentGuard=()=>t
  if(result.raw.rejectionRate>0.5)result.warnings.push({code:'high_null_rejection_rate',rate:result.raw.rejectionRate,detail:'Non-blocking: gen nulls / all gen calls during 200 independent safeQuestion samples'});
  if(result.raw.exceptions)issue('raw_exception',`${result.raw.exceptions} exceptions inside safeQuestion retries`);
  if(result.raw.verifyFalse)issue('raw_verify_false',`${result.raw.verifyFalse} failed candidate verifications inside safeQuestion retries`);
- if(result.bankSize!==null&&distinct.size!==result.bankSize)issue('bank_coverage',`${distinct.size} accepted distinct sig values sampled; declared ${result.bankSize}`);
+ if(result.bankSize!==null){
+  const coverage=new Set(distinct),limit=result.bankSize*200;
+  resetRandom(seedFor(`${seed}/bank-coverage`));
+  for(let i=0;i<limit&&coverage.size<=result.bankSize;i++){
+   let q;result.bankCoverage.attempted++;
+   try{q=safeQuestion(unit,ctx,new Set());}catch(e){issue('bank_coverage_exception',e.message);break;}
+   if(q&&typeof q.sig==='string'&&q.sig.trim())coverage.add(normalizeSig(q.sig));
+  }
+  result.bankCoverage.distinct=coverage.size;
+  if(coverage.size!==result.bankSize)issue('bank_coverage',`${coverage.size} accepted distinct sig values found; declared ${result.bankSize}`);
+ }
  result.paper.requested=result.bankSize===null?uiMax:Math.min(uiMax,result.bankSize);
  resetRandom(seedFor(`${seed}/paper`));const seen=new Set(),returned=new Set(),paperUnit=observer(result.paper,true);
  for(let i=0;i<result.paper.requested;i++){
