@@ -51,12 +51,22 @@ fs.writeFileSync(path.join(dir, 'classification-431.csv'),
   [fields.map(csv).join(','), ...csvRows.map(r => r.map(csv).join(','))].join('\n') + '\n');
 
 const legacyKeys = new Set(rows.map(r => key(r.previous)));
-const summary = {sourceCommit: old.commit, revisedSpecification: revised.specification, legacyCount: 431,
+const rs = {topics: revised.summary.topics, combinations: revised.summary.combinations,
+  passed: revised.summary.passed, failed: revised.summary.failed,
+  safeQuestionCalls: revised.summary.safeQuestionCalls ?? revised.summary.samplingSafeQuestionCalls,
+  samplingProduced: revised.summary.samplingProduced,
+  candidateGenCalls: revised.summary.candidateGenCalls, candidateNulls: revised.summary.candidateNulls,
+  candidateVerifyFalse: revised.summary.candidateVerifyFalse, candidateExceptions: revised.summary.candidateExceptions,
+  efficiencyWarningUnits: revised.summary.efficiencyWarningUnits,
+  efficiencyWarningCombinations: revised.summary.efficiencyWarningCombinations,
+  declaredBankCombinations: revised.summary.declaredBankCombinations ?? 0,
+  paperCompleted: revised.summary.paperCompleted, paperExhausted: revised.summary.paperExhausted};
+const summary = {sourceCommit: old.commit, revisedSpecification: '2.4 safeQuestion revision 2026-09-22', legacyCount: 431,
   categories: totals, category1NowPassed: rows.filter(r => r.category === 1 && r.now.pass).length,
   category1UndeclaredFixedBank: rows.filter(r => r.category === 1 && !r.now.pass && r.evidence).length,
   legacyNowPassed: rows.filter(r => r.now.pass).length, legacyStillFailed: rows.filter(r => !r.now.pass).length,
   newFailuresOutsideLegacy: revised.combinations.filter(r => !r.pass && !legacyKeys.has(key(r))).length,
-  revised: revised.summary};
+  revised: rs};
 fs.writeFileSync(path.join(dir, 'revised-summary.json'), JSON.stringify(summary, null, 2) + '\n');
 
 const grouped = list => {
@@ -94,7 +104,7 @@ for (const r of revised.combinations.filter(r => !r.pass)) {
   const group = failedGroups.get(k) || {topic:r.topic, unit:r.unit, kind:failureKind(r), count:0};
   group.count++; failedGroups.set(k, group);
 }
-md += `## 真正待修基準\n\n| 項目 | 結果 |\n|---|---:|\n| topic / 組合 | ${revised.summary.topics} / ${revised.summary.combinations} |\n| safeQuestion 抽樣 / 成功取題 | ${revised.summary.safeQuestionCalls} / ${revised.summary.samplingProduced} |\n| 通過 / 失敗 | ${revised.summary.passed} / ${revised.summary.failed} |\n| 候選 gen / null | ${revised.summary.candidateGenCalls} / ${revised.summary.candidateNulls} |\n| 候選 verify false / 例外 | ${revised.summary.candidateVerifyFalse} / ${revised.summary.candidateExceptions} |\n| 完成單卷 / 單卷耗盡 | ${revised.summary.paperCompleted} / ${revised.summary.paperExhausted} |\n| 高拒絕率 unit（非阻擋） | ${revised.summary.efficiencyWarningUnits} |\n\n`;
+md += `## 真正待修基準\n\n| 項目 | 結果 |\n|---|---:|\n| topic / 組合 | ${rs.topics} / ${rs.combinations} |\n| safeQuestion 抽樣 / 成功取題 | ${rs.safeQuestionCalls} / ${rs.samplingProduced} |\n| 通過 / 失敗 | ${rs.passed} / ${rs.failed} |\n| 候選 gen / null | ${rs.candidateGenCalls} / ${rs.candidateNulls} |\n| 候選 verify false / 例外 | ${rs.candidateVerifyFalse} / ${rs.candidateExceptions} |\n| 完成單卷 / 單卷耗盡 | ${rs.paperCompleted} / ${rs.paperExhausted} |\n| 高拒絕率 unit（非阻擋） | ${rs.efficiencyWarningUnits} |\n\n`;
 md += `| 類型 | topic / unit | 組數 |\n|---|---|---:|\n`;
 for (const g of failedGroups.values()) md += `| ${g.kind} | ${g.topic} / \`${g.unit}\` | ${g.count} |\n`;
 md += `\n共 53 組：例外 19、verify 16、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 ${summary.newFailuresOutsideLegacy}。\n\n`;

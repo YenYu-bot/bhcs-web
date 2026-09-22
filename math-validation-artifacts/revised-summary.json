@@ -1,6 +1,6 @@
 {
   "sourceCommit": "f1c83eb1f39559f19784dcc5597f64f14a361eb3",
-  "revisedSpecification": "2.4 safeQuestion revision",
+  "revisedSpecification": "2.4 safeQuestion revision 2026-09-22",
   "legacyCount": 431,
   "categories": {
     "1": 272,
@@ -24,9 +24,10 @@
     "candidateNulls": 27327,
     "candidateVerifyFalse": 515,
     "candidateExceptions": 2279,
-    "paperCompleted": 1722,
-    "paperExhausted": 18,
     "efficiencyWarningUnits": 12,
-    "efficiencyWarningCombinations": 23
+    "efficiencyWarningCombinations": 23,
+    "declaredBankCombinations": 0,
+    "paperCompleted": 1722,
+    "paperExhausted": 18
   }
 }
