@@ -245,7 +245,7 @@ function cubicConfig(){
  const result=(id,style,expr,answer,sig,verify)=>({expr,answer,sig:`${id}:${style}:${sig}`,verify,style});
  const make=(id,name,tip,gen)=>({id,name,tip,modes,gen});
  const counter={};const next=(id,level,map)=>{const list=map[level]||map.advanced;counter[id]=(counter[id]||0)+1;return list[(counter[id]-1)%list.length]};
- const lineThroughHTML=(m,r,v,mode,ctx)=>{const b=sub(v,mul(m,r));let out="y＝";if(m.n)out+=(m.n<0?"−":"")+coefAbs(m,mode,ctx,"x")+"x";if(b.n)out+=(b.n<0?"−":m.n?"＋":"−")+show(abs(b),mode,{...ctx,mixed:false});return out+(m.n||b.n?"":"0")};
+ const lineThroughHTML=(m,r,v,mode,ctx)=>{const b=sub(v,mul(m,r));let out="y＝";if(m.n)out+=(m.n<0?"−":"")+coefAbs(m,mode,ctx,"x")+"x";if(b.n)out+=(b.n<0?"−":m.n?"＋":"")+show(abs(b),mode,{...ctx,mixed:false});return out+(m.n||b.n?"":"0")};
  const leadingHTML=(a,mode,ctx)=>`${a.n<0?"−":""}${coefAbs(a,mode,ctx,"x")}x<sup>3</sup>`;
  const polyMul=(p,q)=>{const out=Array(p.length+q.length-1).fill(0).map(()=>Z);for(let i=0;i<p.length;i++)for(let j=0;j<q.length;j++)out[i+j]=add(out[i+j],mul(p[i],q[j]));return out};
  const fromRoots=(a,roots)=>{let p=[a];for(const r of roots)p=polyMul(p,[O,neg(r)]);return p};
