@@ -670,7 +670,7 @@ function exponentialFunctionsConfig(){
 
  const equation=unit("equation","同底數指數方程","底數相同且不為1時，函數一對一，所以指數相等。",ctx=>{
   const mode=pick(ctx.modes),a=baseFor(mode,ctx.level),x=R(rand(ctx.level==="basic"?-5:-12,ctx.level==="challenge"?12:9),ctx.level==="challenge"?pick([1,2,3,4]):1),m=ctx.level==="basic"?1:rand(1,5),n=shift(ctx.level),p=add(mul(R(m),x),R(n)),lhs=inside(-n,m),rhs=show(p,"fraction",ctx);if(p.d!==1&&ctx.level!=="challenge")return null;
-  return{expr:`解方程式 ${baseHTML(a,mode,ctx)}<sup>${lhs}</sup>＝${baseHTML(a,mode,ctx)}<sup>${rhs}</sup>。`,answer:`x＝${show(x,"fraction",ctx,true)}`,sig:`eq:${mode}:${plain(a)}:${m}:${n}:${plain(p)}`,verify:()=>eq(add(mul(R(m),x),R(n)),p)&&eq(powAlt(a,p.n),powR(a,p.n))}
+  return{expr:`解方程式 ${baseHTML(a,mode,ctx)}<sup>${lhs}</sup>＝${baseHTML(a,mode,ctx)}<sup>${rhs}</sup>。`,answer:`x＝${show(x,"fraction",ctx,true)}`,sig:`eq:${mode}:${plain(a)}:${m}:${n}:${plain(p)}`,verify:()=>eq(add(mul(R(m),x),R(n)),p)&&cmp(a,zero)>0&&!eq(a,one)}
  });
 
  const intersection=unit("intersection","圖形與水平線交點","先把水平線的 y 值移去平移量，再化成同底數。",ctx=>{
