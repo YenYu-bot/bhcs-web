@@ -22,7 +22,7 @@ for(const url of urls){const local=new URL(url).pathname;assert.ok(fs.existsSync
 // 2026-09-21：使用者核准數學總覽頁品牌化（僅外觀、搜尋與年級跳轉；88 個工具連結不變，下方另有斷言）。
 const approvedMathPreview=new Set(['tools/math/index.html','tools/math/g7-signed-numbers.html','tools/math/g7-scientific-notation.html','tools/math/g7-factors-multiples.html','tools/math/g7-linear-equation.html','tools/math/g7-simultaneous-equations.html','tools/math/g7-inequality.html','tools/math/g7-ratio.html','tools/math/g9b-2-1-quartiles.html','tools/math/g9b-2-1-boxplot.html','tools/math/g9-1-2-parallel-proportional-application.html','tools/math/g9-1-3-similar-triangles.html']);
 // P1 handoff explicitly authorizes screen branding of all 88 linked worksheets.
-// The P1 guard verifies scripts, original HTML and print rules against the approved baseline.
+// The P1 guard verifies original HTML and print rules; authorized P2 engine scripts have dedicated math regressions.
 const {files:mathBrandFiles}=require('./check_math_brand.cjs');
 const approvedMathFiles=new Set([...approvedMathPreview,...mathBrandFiles]);
 const changedMath=cp.execFileSync('git',['diff','--name-only','da02d2f','--','tools/math'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(Boolean);assert.ok(changedMath.every(file=>approvedMathFiles.has(file)),'Unexpected math tool changed: '+changedMath.filter(file=>!approvedMathFiles.has(file)).join(', '));
