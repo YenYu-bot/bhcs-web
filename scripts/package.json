@@ -4,6 +4,7 @@
   "scripts": {
     "test": "node test_science_models.mjs && node test_science_ui.cjs && node test_science_illustrations.cjs && node test_science_experience.cjs && node test_science_inquiry.cjs && node test_math_drills.mjs",
     "test:math": "node test_math_drills.mjs",
+    "test:math:diversity": "MATH_DIVERSITY_REPORT=../docs/math-diversity/diversity-latest.json node test_math_drills.mjs",
     "build:science": "node build_science.mjs"
   },
   "devDependencies": {"jsdom": "26.1.0", "axe-core": "4.10.3"}
