@@ -114,7 +114,9 @@ md += `\n共 ${rs.failed} 組：例外 ${failedKindTotals.get('例外') || 0}、
 md += `## 效率警示（不阻擋）\n\n| topic / unit | 最高 null 拒絕率 | 超過 50% 的難度×mode 組數 |\n|---|---:|---:|\n`;
 for (const w of revised.efficiencyWarnings) md += `| ${w.topic} / \`${w.unit}\` | ${pct(w.maximumRejectionRate)} | ${w.combinations.length} |\n`;
 md += `\n全部組合的實際拒絕率留在 JSON 與 CSV。警示只供後續調範圍參考，不阻擋合併。\n\n`;
-md += `## 判讀與順序\n\n- 標準差超過 10,000 的候選應在 gen 階段回傳 null；保留 verify、withinLimits、n 與 sd 範圍。\n- SSA 與反函數目前答案正確，屬驗證方式；三個空間 unit 需先檢查候選題面與答案。\n- 依決定先清完剩餘例外，再處理 verify、其他單卷耗盡、最後補固定題庫 bankSize。\n- 本報告由當前分支的正式出題程式重跑產生；各根因修改另見對應 PR 紀錄。\n`;
+md += rs.failed===0
+  ? `## 判讀與順序\n\n- P2 阻擋項已歸零：例外、verify false、未宣告固定小題庫及未解釋的單卷耗盡均為 0。\n- 已宣告有限題庫在卷末偶發漏抽最後一題仍列為非阻擋警示；容量另由加強覆蓋檢查驗證。\n- 下一階段依既定順序進入 P3 題型多樣性報表模式，先產 baseline JSON，不立即阻擋 CI。\n- 本報告由當前分支的正式出題程式重跑產生；各根因修改另見對應 PR 紀錄。\n`
+  : `## 判讀與順序\n\n- 標準差超過 10,000 的候選應在 gen 階段回傳 null；保留 verify、withinLimits、n 與 sd 範圍。\n- SSA 與反函數目前答案正確，屬驗證方式；三個空間 unit 需先檢查候選題面與答案。\n- 依決定先清完剩餘例外，再處理 verify、其他單卷耗盡、最後補固定題庫 bankSize。\n- 本報告由當前分支的正式出題程式重跑產生；各根因修改另見對應 PR 紀錄。\n`;
 fs.writeFileSync(path.join(dir, 'CLASSIFICATION.md'), md);
 fs.writeFileSync(path.join(dir, 'SAFEQUESTION-BASELINE.md'), md);
 

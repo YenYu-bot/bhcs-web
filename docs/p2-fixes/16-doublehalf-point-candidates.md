@@ -1,0 +1,7 @@
+# P2 修正 16：終邊點候選池移除必拒組合
+
+`doublehalf/point` 的三元組陣列含斜邊 13、17、25、29 的組合；二倍角的 `sin2θ`／`cos2θ` 約分後分母分別為 169、289、625、841，必定超過全域分母上限 100。這些候選不可能進入卷面，卻讓挑戰模式在卷末的 50 次重試耗盡。
+
+生成器改為只從兩個方向的 3–4–5 三元組選取（`triples.slice(0,2)`）。這不是縮減可印題庫：修正前、後各生成 20,000 個挑戰候選，正式 `contentGuard` 接受的 sig 集合皆為同一組 80 個；修正前有 16,019 個候選被 guard 拒絕（80.095%），修正後為 0。五題共同樣本見 `docs/p2-math-validation/SAMPLES-DOUBLEHALF-POINT.md`。
+
+`node scripts/math-regressions/doublehalf-point-candidates.mjs` 對三個難度各生成 20,000 題，逐題要求 `verify()` 與 `contentGuard` 通過；有效 sig 為基礎 48、進階 48、挑戰 80，均高於 UI 一卷 40 題，因此不宣告 `bankSize`。
