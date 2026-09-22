@@ -7,7 +7,7 @@
 | 1 舊 200 題去重假失敗 | 272 | 263 | 9 |
 | 2 verify() 不過 | 16 | 0 | 16 |
 | 3 曾回傳 null／單卷耗盡 | 124 | 115 | 9 |
-| 4 例外 | 19 | 10 | 9 |
+| 4 例外 | 19 | 0 | 19 |
 
 四類互斥且合計 431。完整難度、mode、拒絕率與失敗碼見 [classification-431.csv](classification-431.csv)。
 
@@ -108,9 +108,9 @@
 |---|---:|
 | topic / 組合 | 52 / 1740 |
 | safeQuestion 抽樣 / 成功取題 | 348000 / 348000 |
-| 通過 / 失敗 | 1697 / 43 |
-| 候選 gen / null | 406712 / 27299 |
-| 候選 verify false / 例外 | 515 / 275 |
+| 通過 / 失敗 | 1687 / 53 |
+| 候選 gen / null | 408747 / 27327 |
+| 候選 verify false / 例外 | 515 / 2279 |
 | 完成單卷 / 單卷耗盡 | 1722 / 18 |
 | 高拒絕率 unit（非阻擋） | 12 |
 
@@ -122,11 +122,15 @@
 | 例外 | exponent / `laws` | 4 |
 | 例外 | exponent / `algebra` | 1 |
 | 其他單卷耗盡 | exponent / `substitution` | 2 |
+| 例外 | cubic / `global` | 2 |
 | verify | standarddev / `deviationsum` | 1 |
+| 例外 | righttrig / `comparison` | 2 |
 | verify | sincosarea / `ambiguous` | 3 |
 | 其他單卷耗盡 | anglesum / `known` | 3 |
 | 其他單卷耗盡 | anglesum / `triangle` | 3 |
+| 例外 | doublehalf / `fromsin` | 3 |
 | 其他單卷耗盡 | doublehalf / `point` | 1 |
+| 例外 | doublehalf / `half` | 3 |
 | 例外 | expfunctions / `equation` | 2 |
 | 固定小題庫 | commonlog / `definition` | 3 |
 | verify | loggraphs / `inverse` | 3 |
@@ -134,7 +138,7 @@
 | verify | spacecross / `height` | 3 |
 | verify | line3d / `pointprojection` | 3 |
 
-共 43 組：例外 9、verify 16、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 0。
+共 53 組：例外 19、verify 16、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 0。
 
 ## 效率警示（不阻擋）
 
@@ -159,5 +163,5 @@
 
 - 標準差超過 10,000 的候選應在 gen 階段回傳 null；保留 verify、withinLimits、n 與 sd 範圍。
 - SSA 與反函數目前答案正確，屬驗證方式；三個空間 unit 需先檢查候選題面與答案。
-- 依決定先清完剩餘例外，再處理 verify、其他單卷耗盡、最後補固定題庫 bankSize。
-- 本報告由當前分支的正式出題程式重跑產生；各根因修改另見對應 PR 紀錄。
+- 依決定先修 19 組例外，再處理 verify、其他單卷耗盡、最後補固定題庫 bankSize。
+- 本 PR 只含測試與報告，沒有修改正式出題程式。
