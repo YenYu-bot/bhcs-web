@@ -4,16 +4,16 @@
 
 | 原 431 組分類 | 組數 | 新測試通過 | 仍失敗 |
 |---|---:|---:|---:|
-| 1 舊 200 題去重假失敗 | 274 | 274 | 0 |
+| 1 舊 200 題去重假失敗 | 277 | 277 | 0 |
 | 2 verify() 不過 | 16 | 16 | 0 |
-| 3 曾回傳 null／單卷耗盡 | 122 | 115 | 7 |
+| 3 曾回傳 null／單卷耗盡 | 119 | 118 | 1 |
 | 4 例外 | 19 | 19 | 0 |
 
 四類互斥且合計 431。完整難度、mode、拒絕率與失敗碼見 [classification-431.csv](classification-431.csv)。
 
 ## 每類完整 topic／unit 清單
 
-### 1 舊 200 題去重假失敗（274 組）
+### 1 舊 200 題去重假失敗（277 組）
 
 | 引擎 | topic | unit | 組數 |
 |---|---|---|---:|
@@ -42,6 +42,7 @@
 | g11 | sincosarea | `bisector`、`circumradius`、`classification`、`cosineangle`、`cosineside`、`heron`、`median`、`sineside` | 21 |
 | g11 | radians | `quadrant` | 3 |
 | g11 | sector | `arc`、`area`、`clock`、`cone`、`inverse`、`maximum` | 21 |
+| g11 | anglesum | `triangle` | 3 |
 | g11 | doublehalf | `point`、`sumdiff` | 5 |
 | g11 | trigblend | `condition`、`cosineform`、`identity`、`range`、`reverse`、`sineform` | 10 |
 | g11 | trigtransform | `intersections` | 1 |
@@ -67,7 +68,7 @@
 | g11 | spacecross | `height` | 3 |
 | g11 | line3d | `pointprojection` | 3 |
 
-### 3 曾回傳 null／單卷耗盡（122 組）
+### 3 曾回傳 null／單卷耗盡（119 組）
 
 | 引擎 | topic | unit | 組數 |
 |---|---|---|---:|
@@ -84,7 +85,7 @@
 | g11 | combinations | `atleast`、`basic`、`binomialterm`、`equalgroups`、`groups`、`identity` | 15 |
 | g11 | probability | `arrangeprob`、`balls`、`coins`、`complement`、`samplespace` | 13 |
 | g11 | radians | `convert` | 3 |
-| g11 | anglesum | `known`、`triangle` | 6 |
+| g11 | anglesum | `known` | 3 |
 | g11 | doublehalf | `fromtan`、`point` | 4 |
 | g11 | commonlog | `laws` | 3 |
 | g11 | loggraphs | `application` | 3 |
@@ -108,19 +109,17 @@
 |---|---:|
 | topic / 組合 | 52 / 1740 |
 | safeQuestion 抽樣 / 成功取題 | 348000 / 348000 |
-| 通過 / 失敗 | 1733 / 7 |
-| 候選 gen / null | 405958 / 27319 |
+| 通過 / 失敗 | 1739 / 1 |
+| 候選 gen / null | 403288 / 27319 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 1731 / 9 |
+| 完成單卷 / 單卷耗盡 | 1733 / 7 |
 | 高拒絕率 unit（非阻擋） | 12 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
-| 其他單卷耗盡 | anglesum / `known` | 3 |
-| 其他單卷耗盡 | anglesum / `triangle` | 3 |
 | 其他單卷耗盡 | doublehalf / `point` | 1 |
 
-共 7 組：例外 0、verify 0、固定小題庫 0、其他單卷耗盡 7；原本通過的組合新增失敗為 0。
+共 1 組：例外 0、verify 0、固定小題庫 0、其他單卷耗盡 1；原本通過的組合新增失敗為 0。
 
 ## 效率警示（不阻擋）
 
