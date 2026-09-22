@@ -1683,7 +1683,7 @@ function rightTriangleTrigConfig(){
  const comparison=unit("comparison","三角比大小比較","銳角範圍內 sin、tan 隨角度增大而增大，cos 隨角度增大而減小；sinθ 與 cosφ 可先化為同名。",MI,ctx=>{
   const pool=Array.from({length:17},(_,i)=>(i+1)*5),kind=pick(ctx.level==="basic"?["same"]:["same","cross","self"]);let left,right,lv,rv,sig;
   if(kind==="same"){const fn=pick(["sin","cos","tan"]),a=pick(pool),b=pick(pool.filter(x=>x!==a));left=`${fn}${a}°`;right=`${fn}${b}°`;lv=Math[fn](a*Math.PI/180);rv=Math[fn](b*Math.PI/180);sig=`${fn}:${a}:${b}`}
-  else if(kind==="cross"){const a=pick(pool),b=pick(pool.filter(x=>a+b!==90));left=`sin${a}°`;right=`cos${b}°`;lv=Math.sin(a*Math.PI/180);rv=Math.cos(b*Math.PI/180);sig=`sc:${a}:${b}`}
+  else if(kind==="cross"){const a=pick(pool),b=pick(pool.filter(x=>a+x!==90));left=`sin${a}°`;right=`cos${b}°`;lv=Math.sin(a*Math.PI/180);rv=Math.cos(b*Math.PI/180);sig=`sc:${a}:${b}`}
   else{const a=pick(pool.filter(x=>x!==45)),pair=pick([["sin","cos"],["tan","sin"]]);left=`${pair[0]}${a}°`;right=`${pair[1]}${a}°`;lv=Math[pair[0]](a*Math.PI/180);rv=Math[pair[1]](a*Math.PI/180);sig=`se:${pair}:${a}`}
   const op=lv>rv?"＞":"＜";return{expr:`在□中填入 ＞ 或 ＜：${left} □ ${right}。`,answer:op,sig:`cm:${kind}:${sig}`,verify:()=>Math.abs(lv-rv)>1e-9&&(op===(lv>rv?"＞":"＜"))};
  });
