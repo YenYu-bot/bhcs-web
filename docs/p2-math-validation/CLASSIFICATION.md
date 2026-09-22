@@ -7,7 +7,7 @@
 | 1 舊 200 題去重假失敗 | 272 | 263 | 9 |
 | 2 verify() 不過 | 16 | 0 | 16 |
 | 3 曾回傳 null／單卷耗盡 | 124 | 115 | 9 |
-| 4 例外 | 19 | 10 | 9 |
+| 4 例外 | 19 | 17 | 2 |
 
 四類互斥且合計 431。完整難度、mode、拒絕率與失敗碼見 [classification-431.csv](classification-431.csv)。
 
@@ -108,9 +108,9 @@
 |---|---:|
 | topic / 組合 | 52 / 1740 |
 | safeQuestion 抽樣 / 成功取題 | 348000 / 348000 |
-| 通過 / 失敗 | 1697 / 43 |
-| 候選 gen / null | 406712 / 27299 |
-| 候選 verify false / 例外 | 515 / 275 |
+| 通過 / 失敗 | 1704 / 36 |
+| 候選 gen / null | 406648 / 27299 |
+| 候選 verify false / 例外 | 515 / 195 |
 | 完成單卷 / 單卷耗盡 | 1722 / 18 |
 | 高拒絕率 unit（非阻擋） | 12 |
 
@@ -118,9 +118,6 @@
 |---|---|---:|
 | 固定小題庫 | multiplication / `cubefactor` | 3 |
 | 固定小題庫 | multiplication / `chain` | 3 |
-| 例外 | exponent / `fractional` | 2 |
-| 例外 | exponent / `laws` | 4 |
-| 例外 | exponent / `algebra` | 1 |
 | 其他單卷耗盡 | exponent / `substitution` | 2 |
 | verify | standarddev / `deviationsum` | 1 |
 | verify | sincosarea / `ambiguous` | 3 |
@@ -134,7 +131,7 @@
 | verify | spacecross / `height` | 3 |
 | verify | line3d / `pointprojection` | 3 |
 
-共 43 組：例外 9、verify 16、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 0。
+共 36 組：例外 2、verify 16、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 0。
 
 ## 效率警示（不阻擋）
 
