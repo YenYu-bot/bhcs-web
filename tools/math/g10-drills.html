@@ -233,6 +233,7 @@ function cubicConfig(){
  };
  const expand=c=>{const A=c.a,B=mul(R(-3),mul(c.a,c.h)),C=add(mul(R(3),mul(c.a,pow(c.h,2))),c.p),D=add(sub(c.k,mul(c.a,pow(c.h,3))),mul(neg(c.p),c.h));return[A,B,C,D]};
  const evalPoly=(cs,x)=>add(add(add(mul(cs[0],pow(x,3)),mul(cs[1],pow(x,2))),mul(cs[2],x)),cs[3]);
+ const localAt=(cs,r)=>({v:evalPoly(cs,r),m:add(add(mul(R(3),mul(cs[0],pow(r,2))),mul(R(2),mul(cs[1],r))),cs[2])});
  const evalCentered=(c,x)=>{const t=sub(x,c.h);return add(add(mul(c.a,pow(t,3)),mul(c.p,t)),c.k)};
  const centerFrom=cs=>{const h=div(neg(cs[1]),mul(R(3),cs[0]));return{h,k:evalPoly(cs,h)}};
  
