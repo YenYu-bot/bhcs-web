@@ -22,7 +22,6 @@ export function mathText(html){
  };
  return walk(d).replaceAll('−','-').replaceAll('＋','+').replaceAll('×','*').replaceAll('÷','/').replaceAll('（','(').replaceAll('）',')');
 }
-// Evaluate only the arithmetic grammar used in the returned worksheet markup.
 export function value(text,x=0){
  const tokens=text.replace(/\s/g,'').match(/\d+(?:\.\d+)?|[x()+\-*/^√]/g)||[];
  let i=0;

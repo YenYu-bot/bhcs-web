@@ -15,8 +15,8 @@ indexDom.window.close();
 assert.equal(links.length, 52, 'published topic coverage changed');
 assert.equal(new Set(links).size, 52, 'duplicate topic link');
 console.log(checkHarnessContract());
-const report = {schema: 2, specification: '2.4 revised 2026-09-22',
-  requirement: '200 direct gen calls; unique sig per paper at actual UI maximum; declared bankSize coverage; no production changes or skips',
+const report = {schema: 3, specification: '2.4 safeQuestion revision 2026-09-22',
+  requirement: '200 independent safeQuestion calls with 50 retries; null rejection is diagnostic; candidate exceptions/verify failures remain blocking; unique sig per paper and declared bank coverage',
   targetPerCombination: 200, topics: [], combinations: [], failures: []};
 for (const link of links) {
   const url = new URL(link, 'https://www.bhcs.com.tw/tools/math/');
@@ -66,10 +66,24 @@ for (const link of links) {
   console.log(`${link}: ${rows.filter(r => r.pass).length}/${rows.length} combinations passed`);
 }
 const sum = (field, key) => report.combinations.reduce((n, r) => n + (r[field]?.[key] || 0), 0);
+report.efficiencyWarnings = Object.values(report.combinations
+  .filter(r => r.raw?.rejectionRate > .5)
+  .reduce((groups, r) => {
+    const key = `${r.link}/${r.unit}`;
+    const group = groups[key] ||= {link: r.link, topic: r.topic, unit: r.unit, name: r.name,
+      combinations: [], maximumRejectionRate: 0};
+    group.combinations.push({level: r.level, mode: r.mode, rejectionRate: r.raw.rejectionRate,
+      candidateCalls: r.raw.calls, nulls: r.raw.nulls});
+    group.maximumRejectionRate = Math.max(group.maximumRejectionRate, r.raw.rejectionRate);
+    return groups;
+  }, {}));
 report.summary = {topics: report.topics.length, combinations: report.combinations.length,
   passed: report.combinations.filter(r => r.pass).length, failed: report.failures.length,
-  directGenCalls: sum('raw', 'calls'), directNulls: sum('raw', 'nulls'), directVerifyFalse: sum('raw', 'verifyFalse'),
-  directExceptions: sum('raw', 'exceptions'), declaredBankCombinations: report.combinations.filter(r => r.bankDeclared).length,
+  samplingSafeQuestionCalls: 200 * report.combinations.length, samplingProduced: sum('sampling', 'produced'),
+  candidateGenCalls: sum('raw', 'calls'), candidateNulls: sum('raw', 'nulls'), candidateVerifyFalse: sum('raw', 'verifyFalse'),
+  candidateExceptions: sum('raw', 'exceptions'), efficiencyWarningUnits: report.efficiencyWarnings.length,
+  efficiencyWarningCombinations: report.combinations.filter(r => r.raw?.rejectionRate > .5).length,
+  declaredBankCombinations: report.combinations.filter(r => r.bankDeclared).length,
   paperCompleted: report.combinations.filter(r => r.paper?.produced === r.paper?.requested).length,
   paperExhausted: report.combinations.filter(r => r.paper?.exhaustedAt !== null && r.paper?.exhaustedAt !== undefined).length};
 const output = process.env.MATH_REPORT || path.join(root, 'math-validation-artifacts/results.json');
