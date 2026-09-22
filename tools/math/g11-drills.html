@@ -557,7 +557,7 @@ function doubleHalfAngleConfig(){
  const unit=(id,name,tip,gen)=>({id,name,tip,modes,gen});
 
  const fromSin=unit("fromsin","由 sinθ 求二倍角","先由象限決定 cosθ 正負，再套用二倍角公式。",ctx=>{
-  const mode=pick(ctx.modes),q=rand(1,4),m=ratio(mode,ctx.level,.92),s=mul(m,R(qSin(q))),c=sqrtAlg(sub(O,mul(s,s)));if(qCos(q)<0)c=algNeg(c);const s2=algMulR(c,mul(T,s)),c2=sub(O,mul(T,mul(s,s)));if(!c2.n)return null;const t2=algDivR(s2,c2);
+  const mode=pick(ctx.modes),q=rand(1,4),m=ratio(mode,ctx.level,.92),s=mul(m,R(qSin(q)));let c=sqrtAlg(sub(O,mul(s,s)));if(qCos(q)<0)c=algNeg(c);const s2=algMulR(c,mul(T,s)),c2=sub(O,mul(T,mul(s,s)));if(!c2.n)return null;const t2=algDivR(s2,c2);
   return{expr:`θ為${qName(q)}角，且${given("sinθ",s,mode,ctx)}，求 sin2θ、cos2θ、tan2θ。`,answer:`sin2θ＝${algHTML(s2,mode,ctx)}；cos2θ＝${show(c2,mode,ctx,true)}；tan2θ＝${algHTML(t2,mode,ctx)}`,sig:`fs:${mode}:${q}:${plain(s)}`,verify:()=>near(algNum(c)**2+num(s)**2,1)&&near(algNum(s2),2*num(s)*algNum(c))&&near(num(c2),1-2*num(s)**2)&&near(algNum(t2),algNum(s2)/num(c2))}
  });
 
@@ -586,7 +586,7 @@ function doubleHalfAngleConfig(){
  const specialHalf=(mode,ctx)=>{const phi=pick([15,22.5,67.5,75,105,112.5,157.5,165]),r=phi%15===0?3:2,cs=Math.cos(2*phi*Math.PI/180)>0?1:-1,cosSign=phi<90?1:-1,tanSign=cosSign,nested=(op,sg=1)=>`${sg<0?"−":""}${fr(`√（2${op>0?"＋":"−"}√${r}）`,2)}`,sinH=nested(-cs),cosH=nested(cs,cosSign),tanCore=r===3?`2${cs>0?"−":"＋"}√3`:`√2${cs>0?"−":"＋"}1`,tanH=tanSign<0?`−（${tanCore}）`:tanCore;return{expr:`利用半角公式求 sin${phi}°、cos${phi}°、tan${phi}°。`,answer:`sin${phi}°＝${sinH}；cos${phi}°＝${cosH}；tan${phi}°＝${tanH}`,sig:`hs:${phi}`,verify:()=>near(Math.sqrt((1-Math.cos(2*phi*Math.PI/180))/2),Math.abs(Math.sin(phi*Math.PI/180)))&&near((cosSign*Math.sqrt((1+Math.cos(2*phi*Math.PI/180))/2)),Math.cos(phi*Math.PI/180))&&near(Math.tan(phi*Math.PI/180),tanSign*(r===3?(cs>0?2-Math.sqrt(3):2+Math.sqrt(3)):(cs>0?Math.sqrt(2)-1:Math.sqrt(2)+1)))}};
  const halfAngle=unit("half","半角與象限判號","半角公式先開根號，再依θ／2所在象限決定正負。",ctx=>{
   const mode=pick(ctx.modes);if(Math.random()<.22)return specialHalf(mode,ctx);
-  const q=rand(1,4),m=ratio(mode,ctx.level,.92),c=mul(m,R(qCos(q))),s=sqrtAlg(sub(O,mul(c,c)));if(qSin(q)<0)s=algNeg(s);const sh=sqrtAlg(div(sub(O,c),T)),ch=sqrtAlg(div(add(O,c),T)),halfQ=q<=2?1:2;if(halfQ===2)ch.q=neg(ch.q);const th=algDivR(s,add(O,c));
+  const q=rand(1,4),m=ratio(mode,ctx.level,.92),c=mul(m,R(qCos(q)));let s=sqrtAlg(sub(O,mul(c,c)));if(qSin(q)<0)s=algNeg(s);const sh=sqrtAlg(div(sub(O,c),T)),ch=sqrtAlg(div(add(O,c),T)),halfQ=q<=2?1:2;if(halfQ===2)ch.q=neg(ch.q);const th=algDivR(s,add(O,c));
   return{expr:`${qRange(q)}，且${given("cosθ",c,mode,ctx)}，求 sin${fr("θ","2")}、cos${fr("θ","2")}、tan${fr("θ","2")}。`,answer:`sin${fr("θ","2")}＝${algHTML(sh,mode,ctx)}；cos${fr("θ","2")}＝${algHTML(ch,mode,ctx)}；tan${fr("θ","2")}＝${algHTML(th,mode,ctx)}`,sig:`ha:${mode}:${q}:${plain(c)}`,verify:()=>near(algNum(sh)**2,num(div(sub(O,c),T)))&&near(algNum(ch)**2,num(div(add(O,c),T)))&&algNum(sh)>0&&(halfQ===1?algNum(ch)>0:algNum(ch)<0)&&near(algNum(th),algNum(sh)/algNum(ch))}
  });
 
