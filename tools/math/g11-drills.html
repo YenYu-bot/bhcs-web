@@ -1406,6 +1406,7 @@ function standardDeviationConfig(){
 
  const deviationsum=unit("deviationsum","離均差平方和","由 σ²＝Σ（xᵢ−μ）²／n，反求離均差平方和。",MI,ctx=>{
   const n=rand(4,ctx.level==="challenge"?60:30),sd=rand(1,ctx.level==="challenge"?15:9),ans=n*sd*sd;
+  if(ans>10000)return null;
   return{expr:`某組 ${n} 筆資料的標準差為 ${sd}，求 Σ（xᵢ−μ）²。`,answer:showI(ans),sig:`ds:${n}:${sd}`,verify:()=>ans===n*sd*sd&&ans<=10000};
  });
 
