@@ -126,7 +126,7 @@
 "1","g11-drills.html?topic=series","oddeven","奇數和與偶數和","basic","integer","744155608","84","0","0","0","true","200","0","0","0","78","0","0","40","","","40","40","",""
 "1","g11-drills.html?topic=series","oddeven","奇數和與偶數和","advanced","integer","1575771870","75","0","0","0","true","200","0","0","0","75","0","0","40","","","40","40","",""
 "1","g11-drills.html?topic=series","oddeven","奇數和與偶數和","challenge","integer","2577203387","167","0","0","0","true","200","0","0","0","114","0","0","40","","","40","40","",""
-"2","g11-drills.html?topic=standarddev","deviationsum","離均差平方和","challenge","integer","2763417807","200","0","5","0","false","205","0","5","0","182","0","0","40","","","40","40","","raw_verify_false;paper_candidate_verify_false"
+"2","g11-drills.html?topic=standarddev","deviationsum","離均差平方和","challenge","integer","2763417807","200","0","5","0","true","205","5","0","0","182","0","0.024390243902439025","40","","","40","40","",""
 "1","g11-drills.html?topic=standarddev","zproperties","標準化資料的性質","basic","integer","1797680781","77","0","0","0","true","200","0","0","0","73","0","0","40","","","40","40","",""
 "1","g11-drills.html?topic=standarddev","zproperties","標準化資料的性質","advanced","integer","4089963997","75","0","0","0","true","200","0","0","0","72","0","0","40","","","40","40","",""
 "1","g11-drills.html?topic=standarddev","zproperties","標準化資料的性質","challenge","integer","4050197382","113","0","0","0","true","200","0","0","0","91","0","0","40","","","40","40","",""
