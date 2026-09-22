@@ -1,0 +1,169 @@
+{
+  "baseline": {
+    "topics": 52,
+    "combinations": 1740,
+    "passed": 1148,
+    "failed": 592,
+    "directGenCalls": 348000,
+    "directNulls": 17582,
+    "directVerifyFalse": 398,
+    "directExceptions": 980,
+    "declaredBankCombinations": 0,
+    "paperCompleted": 1722,
+    "paperExhausted": 18
+  },
+  "afterSevenFixes": {
+    "topics": 52,
+    "combinations": 1740,
+    "passed": 1171,
+    "failed": 569,
+    "directGenCalls": 348000,
+    "directNulls": 17501,
+    "directVerifyFalse": 17,
+    "directExceptions": 175,
+    "declaredBankCombinations": 0,
+    "paperCompleted": 1722,
+    "paperExhausted": 18
+  },
+  "newFailures": [],
+  "newlyPassing": [
+    {
+      "topic": "righttrig",
+      "unit": "comparison",
+      "level": "advanced",
+      "mode": "integer"
+    },
+    {
+      "topic": "righttrig",
+      "unit": "comparison",
+      "level": "challenge",
+      "mode": "integer"
+    },
+    {
+      "topic": "sincosarea",
+      "unit": "ambiguous",
+      "level": "basic",
+      "mode": "integer"
+    },
+    {
+      "topic": "sincosarea",
+      "unit": "ambiguous",
+      "level": "advanced",
+      "mode": "integer"
+    },
+    {
+      "topic": "sincosarea",
+      "unit": "ambiguous",
+      "level": "challenge",
+      "mode": "integer"
+    },
+    {
+      "topic": "doublehalf",
+      "unit": "fromsin",
+      "level": "basic",
+      "mode": "fraction"
+    },
+    {
+      "topic": "doublehalf",
+      "unit": "fromsin",
+      "level": "advanced",
+      "mode": "fraction"
+    },
+    {
+      "topic": "doublehalf",
+      "unit": "fromsin",
+      "level": "challenge",
+      "mode": "fraction"
+    },
+    {
+      "topic": "doublehalf",
+      "unit": "half",
+      "level": "basic",
+      "mode": "fraction"
+    },
+    {
+      "topic": "doublehalf",
+      "unit": "half",
+      "level": "advanced",
+      "mode": "fraction"
+    },
+    {
+      "topic": "doublehalf",
+      "unit": "half",
+      "level": "challenge",
+      "mode": "fraction"
+    },
+    {
+      "topic": "loggraphs",
+      "unit": "inverse",
+      "level": "basic",
+      "mode": "integer"
+    },
+    {
+      "topic": "loggraphs",
+      "unit": "inverse",
+      "level": "advanced",
+      "mode": "integer"
+    },
+    {
+      "topic": "loggraphs",
+      "unit": "inverse",
+      "level": "challenge",
+      "mode": "integer"
+    },
+    {
+      "topic": "spaceinner",
+      "unit": "pointdistance",
+      "level": "basic",
+      "mode": "integer"
+    },
+    {
+      "topic": "spaceinner",
+      "unit": "pointdistance",
+      "level": "advanced",
+      "mode": "integer"
+    },
+    {
+      "topic": "spaceinner",
+      "unit": "pointdistance",
+      "level": "challenge",
+      "mode": "integer"
+    },
+    {
+      "topic": "line3d",
+      "unit": "pointprojection",
+      "level": "basic",
+      "mode": "integer"
+    },
+    {
+      "topic": "line3d",
+      "unit": "pointprojection",
+      "level": "advanced",
+      "mode": "integer"
+    },
+    {
+      "topic": "line3d",
+      "unit": "pointprojection",
+      "level": "challenge",
+      "mode": "integer"
+    },
+    {
+      "topic": "line3d",
+      "unit": "pointdistance",
+      "level": "basic",
+      "mode": "integer"
+    },
+    {
+      "topic": "line3d",
+      "unit": "pointdistance",
+      "level": "advanced",
+      "mode": "integer"
+    },
+    {
+      "topic": "line3d",
+      "unit": "pointdistance",
+      "level": "challenge",
+      "mode": "integer"
+    }
+  ]
+}
