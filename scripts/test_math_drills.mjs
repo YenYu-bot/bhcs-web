@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {JSDOM, VirtualConsole} from 'jsdom';
 import {auditCombination, seedFor, checkHarnessContract} from './math_test_harness.mjs';
@@ -18,6 +19,21 @@ console.log(checkHarnessContract());
 const report = {schema: 3, specification: '2.4 safeQuestion revision 2026-09-22',
   requirement: '200 independent safeQuestion calls with 50 retries; null rejection is diagnostic; candidate exceptions/verify failures remain blocking; unique sig per paper and declared bank coverage',
   targetPerCombination: 200, topics: [], combinations: [], failures: []};
+const diversityOutput = process.env.MATH_DIVERSITY_REPORT;
+const diversity = diversityOutput ? {schema: 1, mode: 'report-only', blocking: false, samplesPerLevel: 200,
+  normalization: 'SVG→[圖], fractions/superscripts/subscripts kept structurally, every numeric literal→#, signs/coefficient positions/comparison symbols retained',
+  generatedAt: '2026-09-22', topics: [], units: [], projectedGateFailures: []} : null;
+const visibleMath = html => {
+  let text = String(html).replace(/<svg\b[\s\S]*?<\/svg>/gi, '[圖]');
+  const fraction = /<span class="fr"><span class="n">([\s\S]*?)<\/span><span class="d">([\s\S]*?)<\/span><\/span>/g;
+  while (fraction.test(text)) text = text.replace(fraction, '(($1)/($2))');
+  return text.replace(/<sup>([\s\S]*?)<\/sup>/gi, '^($1)').replace(/<sub>([\s\S]*?)<\/sub>/gi, '_($1)')
+    .replace(/<[^>]*>/g, '').replace(/&nbsp;|&#160;/g, ' ').replace(/\s+/g, ' ').trim().normalize('NFKC');
+};
+const structureOf = html => visibleMath(html).replace(/\d+(?:\.\d+)?/g, '#');
+const structureHash = value => crypto.createHash('sha256').update(value).digest('hex').slice(0,16);
+const numbersOf = html => [...visibleMath(html).matchAll(/\d+(?:\.\d+)?/g)].map(m => Number(m[0])).filter(Number.isFinite);
+const median = values => {if (!values.length) return null; const sorted=[...values].sort((a,b)=>a-b),m=Math.floor(sorted.length/2);return sorted.length%2?sorted[m]:(sorted[m-1]+sorted[m])/2;};
 for (const link of links) {
   const url = new URL(link, 'https://www.bhcs.com.tw/tools/math/');
   const html = fs.readFileSync(path.join(root, url.pathname), 'utf8');
@@ -61,6 +77,42 @@ for (const link of links) {
       report.combinations.push(row);
       if (!row.pass) report.failures.push({link, unit: unit.id, level, mode, issues: row.issues});
     }
+  if (diversity) {
+    const topic = {link, topic: url.searchParams.get('topic'), title: cfg.title, unitIds: []};
+    for (const unit of cfg.units) {
+      const unitRow = {link, topic: topic.topic, unit: unit.id, name: unit.name, singleForm: unit.singleForm === true, levels: {}};
+      for (const level of ['basic', 'advanced', 'challenge']) {
+        const ctx = {level, modes: cfg.modes.filter(mode => unit.modes.includes(mode)), mixed: cfg.mixed === true};
+        const structures = new Set(), values = []; let produced = 0, exhausted = 0;
+        seed = seedFor(`${link}/${unit.id}/${level}/diversity`);
+        for (let i=0;i<diversity.samplesPerLevel;i++) {
+          const q = api.safeQuestion(unit, ctx, new Set());
+          if (!q) {exhausted++; continue;}
+          produced++; structures.add(structureOf(q.expr)); values.push(...numbersOf(q.expr));
+        }
+        unitRow.levels[level] = {requested: diversity.samplesPerLevel, produced, exhausted,
+          structureCount: structures.size, structures: [...structures].sort(), numberMedian: median(values), numericLiteralCount: values.length};
+      }
+      const basic = new Set(unitRow.levels.basic.structures), challenge = new Set(unitRow.levels.challenge.structures);
+      const challengeNewStructures = [...challenge].filter(value => !basic.has(value)).sort();
+      const b = unitRow.levels.basic.numberMedian, c = unitRow.levels.challenge.numberMedian;
+      unitRow.challengeToBasicMedianRatio = b > 0 && c !== null ? c / b : null;
+      unitRow.projectedStructureGatePass = unitRow.singleForm || Object.values(unitRow.levels).every(row => row.structureCount >= 3);
+      unitRow.projectedChallengeGatePass = challengeNewStructures.length >= 1 || unitRow.challengeToBasicMedianRatio >= 2;
+      if (!unitRow.projectedStructureGatePass || !unitRow.projectedChallengeGatePass)
+        diversity.projectedGateFailures.push({link, topic: unitRow.topic, unit: unitRow.unit, name: unitRow.name,
+          structureGate: unitRow.projectedStructureGatePass, challengeGate: unitRow.projectedChallengeGatePass});
+      unitRow.challengeNewStructureCount = challengeNewStructures.length;
+      unitRow.challengeNewStructureExamples = challengeNewStructures.slice(0,2).map(structure => ({hash:structureHash(structure),structure}));
+      unitRow.levels = Object.fromEntries(Object.entries(unitRow.levels).map(([level,row]) => {
+        const values=row.structures;delete row.structures;
+        row.structureExamples=values.slice(0,2).map(structure=>({hash:structureHash(structure),structure}));
+        return [level,row];
+      }));
+      topic.unitIds.push(unit.id); diversity.units.push(unitRow);
+    }
+    diversity.topics.push(topic);
+  }
   dom.window.close();
   const rows = report.combinations.filter(r => r.link === link);
   console.log(`${link}: ${rows.filter(r => r.pass).length}/${rows.length} combinations passed`);
@@ -88,5 +140,15 @@ report.summary = {topics: report.topics.length, combinations: report.combination
   paperExhausted: report.combinations.filter(r => r.paper?.exhaustedAt !== null && r.paper?.exhaustedAt !== undefined).length};
 const output = process.env.MATH_REPORT || path.join(root, 'math-validation-artifacts/results.json');
 fs.mkdirSync(path.dirname(output), {recursive: true}); fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
+if (diversity) {
+  diversity.summary = {topics: diversity.topics.length, units: diversity.units.length,
+    samplesRequested: diversity.units.length * 3 * diversity.samplesPerLevel,
+    samplesProduced: diversity.units.reduce((n,u)=>n+Object.values(u.levels).reduce((m,row)=>m+row.produced,0),0),
+    samplesExhausted: diversity.units.reduce((n,u)=>n+Object.values(u.levels).reduce((m,row)=>m+row.exhausted,0),0),
+    projectedGateFailures: diversity.projectedGateFailures.length};
+  const target = diversityOutput === '1' ? path.join(root,'math-validation-artifacts/diversity-baseline.json') : path.resolve(root,diversityOutput);
+  fs.mkdirSync(path.dirname(target), {recursive: true}); fs.writeFileSync(target, JSON.stringify(diversity, null, 2) + '\n');
+  console.log(JSON.stringify({diversityReport: target, ...diversity.summary}));
+}
 console.log(JSON.stringify(report.summary));
 if (report.failures.length) process.exitCode = 1;
