@@ -4,16 +4,16 @@
 
 | 原 431 組分類 | 組數 | 新測試通過 | 仍失敗 |
 |---|---:|---:|---:|
-| 1 舊 200 題去重假失敗 | 272 | 272 | 0 |
+| 1 舊 200 題去重假失敗 | 274 | 274 | 0 |
 | 2 verify() 不過 | 16 | 16 | 0 |
-| 3 曾回傳 null／單卷耗盡 | 124 | 115 | 9 |
+| 3 曾回傳 null／單卷耗盡 | 122 | 115 | 7 |
 | 4 例外 | 19 | 19 | 0 |
 
 四類互斥且合計 431。完整難度、mode、拒絕率與失敗碼見 [classification-431.csv](classification-431.csv)。
 
 ## 每類完整 topic／unit 清單
 
-### 1 舊 200 題去重假失敗（272 組）
+### 1 舊 200 題去重假失敗（274 組）
 
 | 引擎 | topic | unit | 組數 |
 |---|---|---|---:|
@@ -22,7 +22,7 @@
 | g10 | multiplication | `chain`、`conjugate`、`cube`、`cubefactor`、`squareminus`、`squareplus`、`trinomial` | 20 |
 | g10 | rationalexp | `cube`、`telescope` | 4 |
 | g10 | radicals | `telescope` | 3 |
-| g10 | exponent | `application`、`equation`、`scientific`、`substitution` | 5 |
+| g10 | exponent | `application`、`equation`、`scientific`、`substitution` | 7 |
 | g10 | logarithms | `definition`、`digits`、`growth` | 8 |
 | g10 | inequalities | `always` | 3 |
 | g10 | amgm | `application`、`fixedproduct`、`fixedsum`、`means` | 13 |
@@ -67,13 +67,13 @@
 | g11 | spacecross | `height` | 3 |
 | g11 | line3d | `pointprojection` | 3 |
 
-### 3 曾回傳 null／單卷耗盡（124 組）
+### 3 曾回傳 null／單卷耗盡（122 組）
 
 | 引擎 | topic | unit | 組數 |
 |---|---|---|---:|
 | g10 | multiplication | `powervalue` | 1 |
 | g10 | radicals | `simplify` | 2 |
-| g10 | exponent | `fractional`、`substitution` | 3 |
+| g10 | exponent | `fractional` | 1 |
 | g10 | logarithms | `laws` | 3 |
 | g10 | absolute | `error` | 3 |
 | g10 | amgm | `squarebound`、`weightedmax`、`weightedmin` | 6 |
@@ -108,20 +108,19 @@
 |---|---:|
 | topic / 組合 | 52 / 1740 |
 | safeQuestion 抽樣 / 成功取題 | 348000 / 348000 |
-| 通過 / 失敗 | 1731 / 9 |
+| 通過 / 失敗 | 1733 / 7 |
 | 候選 gen / null | 405958 / 27319 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 1730 / 10 |
+| 完成單卷 / 單卷耗盡 | 1731 / 9 |
 | 高拒絕率 unit（非阻擋） | 12 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
-| 其他單卷耗盡 | exponent / `substitution` | 2 |
 | 其他單卷耗盡 | anglesum / `known` | 3 |
 | 其他單卷耗盡 | anglesum / `triangle` | 3 |
 | 其他單卷耗盡 | doublehalf / `point` | 1 |
 
-共 9 組：例外 0、verify 0、固定小題庫 0、其他單卷耗盡 9；原本通過的組合新增失敗為 0。
+共 7 組：例外 0、verify 0、固定小題庫 0、其他單卷耗盡 7；原本通過的組合新增失敗為 0。
 
 ## 效率警示（不阻擋）
 
