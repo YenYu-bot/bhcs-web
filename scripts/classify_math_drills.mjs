@@ -99,19 +99,22 @@ for (const category of [1,2,3,4]) {
 const failureKind = r => r.issues.some(i => i.code.includes('exception')) ? '例外' :
   r.issues.some(i => i.code.includes('verify')) ? 'verify' : finiteEvidence(r) ? '固定小題庫' : '其他單卷耗盡';
 const failedGroups = new Map();
+const failedKindTotals = new Map();
 for (const r of revised.combinations.filter(r => !r.pass)) {
-  const k = `${r.topic}/${r.unit}/${failureKind(r)}`;
-  const group = failedGroups.get(k) || {topic:r.topic, unit:r.unit, kind:failureKind(r), count:0};
+  const kind = failureKind(r);
+  const k = `${r.topic}/${r.unit}/${kind}`;
+  const group = failedGroups.get(k) || {topic:r.topic, unit:r.unit, kind, count:0};
   group.count++; failedGroups.set(k, group);
+  failedKindTotals.set(kind, (failedKindTotals.get(kind) || 0) + 1);
 }
 md += `## 真正待修基準\n\n| 項目 | 結果 |\n|---|---:|\n| topic / 組合 | ${rs.topics} / ${rs.combinations} |\n| safeQuestion 抽樣 / 成功取題 | ${rs.safeQuestionCalls} / ${rs.samplingProduced} |\n| 通過 / 失敗 | ${rs.passed} / ${rs.failed} |\n| 候選 gen / null | ${rs.candidateGenCalls} / ${rs.candidateNulls} |\n| 候選 verify false / 例外 | ${rs.candidateVerifyFalse} / ${rs.candidateExceptions} |\n| 完成單卷 / 單卷耗盡 | ${rs.paperCompleted} / ${rs.paperExhausted} |\n| 高拒絕率 unit（非阻擋） | ${rs.efficiencyWarningUnits} |\n\n`;
 md += `| 類型 | topic / unit | 組數 |\n|---|---|---:|\n`;
 for (const g of failedGroups.values()) md += `| ${g.kind} | ${g.topic} / \`${g.unit}\` | ${g.count} |\n`;
-md += `\n共 53 組：例外 19、verify 16、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 ${summary.newFailuresOutsideLegacy}。\n\n`;
+md += `\n共 ${rs.failed} 組：例外 ${failedKindTotals.get('例外') || 0}、verify ${failedKindTotals.get('verify') || 0}、固定小題庫 ${failedKindTotals.get('固定小題庫') || 0}、其他單卷耗盡 ${failedKindTotals.get('其他單卷耗盡') || 0}；原本通過的組合新增失敗為 ${summary.newFailuresOutsideLegacy}。\n\n`;
 md += `## 效率警示（不阻擋）\n\n| topic / unit | 最高 null 拒絕率 | 超過 50% 的難度×mode 組數 |\n|---|---:|---:|\n`;
 for (const w of revised.efficiencyWarnings) md += `| ${w.topic} / \`${w.unit}\` | ${pct(w.maximumRejectionRate)} | ${w.combinations.length} |\n`;
 md += `\n全部組合的實際拒絕率留在 JSON 與 CSV。警示只供後續調範圍參考，不阻擋合併。\n\n`;
-md += `## 判讀與順序\n\n- 標準差超過 10,000 的候選應在 gen 階段回傳 null；保留 verify、withinLimits、n 與 sd 範圍。\n- SSA 與反函數目前答案正確，屬驗證方式；三個空間 unit 需先檢查候選題面與答案。\n- 依決定先修 19 組例外，再處理 verify、其他單卷耗盡、最後補固定題庫 bankSize。\n- 本 PR 只含測試與報告，沒有修改正式出題程式。\n`;
+md += `## 判讀與順序\n\n- 標準差超過 10,000 的候選應在 gen 階段回傳 null；保留 verify、withinLimits、n 與 sd 範圍。\n- SSA 與反函數目前答案正確，屬驗證方式；三個空間 unit 需先檢查候選題面與答案。\n- 依決定先清完剩餘例外，再處理 verify、其他單卷耗盡、最後補固定題庫 bankSize。\n- 本報告由當前分支的正式出題程式重跑產生；各根因修改另見對應 PR 紀錄。\n`;
 fs.writeFileSync(path.join(dir, 'CLASSIFICATION.md'), md);
 fs.writeFileSync(path.join(dir, 'SAFEQUESTION-BASELINE.md'), md);
 
