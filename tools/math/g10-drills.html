@@ -351,6 +351,7 @@ function exponentConfig(){
   if(style==="sum"&&mode==="integer"){const k=pick([5,6,7,10,11,13,14,15,17]),coef=R(k-3,k-2),s=Math.sqrt(k),u=(s+Math.sqrt(k-4))/2,lhs=(u**3+u**-3)/(u**2+u**-2),rhs=coef.n/coef.d*s;return{expr:`已知 a<sup>x</sup>＋a<sup>−x</sup>＝√${k}，求 ${fr("a<sup>3x</sup>＋a<sup>−3x</sup>","a<sup>2x</sup>＋a<sup>−2x</sup>")}。`,answer:radicalFrac(coef,k),sig:`substitution:s:${k}`,verify:()=>close(lhs,rhs)&&same(coef,R(k-3,k-2))}}
   const k=baseFor(mode,ctx.level,mode==="integer"?50:6),m=1,power=3,num=sub(powR(k,power),R(1)),den=mul(k,add(k,R(1))),value=div(num,den),u=Math.sqrt(k.n/k.d),lhs=(u**power-u**(-power))/(u+u**-1);return{expr:`已知 a<sup>x</sup>＝${radical(k,mode)}，求 ${fr(`a<sup>3x</sup>−a<sup>−3x</sup>`,`a<sup>x</sup>＋a<sup>−x</sup>`)}。`,answer:show(value,mode,true),sig:`substitution:v:${mode}:${plain(k)}`,verify:()=>same(value,div(sub(powR(k,3),R(1)),mul(k,add(k,R(1)))))&&close(lhs,value.n/value.d)}
  });
+ substitution.bankSize=ctx=>ctx.level==="challenge"?null:19;
 
  const relation=unit("relation","異底數與共同值代換","把各式改寫成共同值的冪，再比較指數。",modes,ctx=>{
   const mode=pick(ctx.modes);allowMixed=ctx.mixed;const primes=shuffle([2,3,5,7]),p=primes[0],q=primes[1],style=Math.random()<.5?"chain":"common";
