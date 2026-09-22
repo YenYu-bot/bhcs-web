@@ -14,6 +14,8 @@ for(const level of ['basic','advanced','challenge'])for(const mode of u.modes){
   const [a,r,m,v,x,y]=q.sig.split(':').slice(2).map(rational);
   const poly=mathText(q.answer).split('＝')[1];
   close(value(poly,r),v);close(value(poly,x),y);
+  const line=mathText(q.expr.match(/附近近似 y＝(.+)，且/)[1]);
+  close(value(line,r),v);close(value(line,r+1),v+m);
   // A cubic's symmetric unit-step difference includes its cubic coefficient.
   close((value(poly,r+1)-value(poly,r-1))/2-a,m);
  }
