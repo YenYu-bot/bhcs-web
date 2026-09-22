@@ -5,7 +5,7 @@
 | 原 431 組分類 | 組數 | 新測試通過 | 仍失敗 |
 |---|---:|---:|---:|
 | 1 舊 200 題去重假失敗 | 272 | 263 | 9 |
-| 2 verify() 不過 | 16 | 1 | 15 |
+| 2 verify() 不過 | 16 | 4 | 12 |
 | 3 曾回傳 null／單卷耗盡 | 124 | 115 | 9 |
 | 4 例外 | 19 | 19 | 0 |
 
@@ -108,9 +108,9 @@
 |---|---:|
 | topic / 組合 | 52 / 1740 |
 | safeQuestion 抽樣 / 成功取題 | 348000 / 348000 |
-| 通過 / 失敗 | 1707 / 33 |
-| 候選 gen / null | 406453 / 27304 |
-| 候選 verify false / 例外 | 510 / 0 |
+| 通過 / 失敗 | 1710 / 30 |
+| 候選 gen / null | 406188 / 27304 |
+| 候選 verify false / 例外 | 245 / 0 |
 | 完成單卷 / 單卷耗盡 | 1722 / 18 |
 | 高拒絕率 unit（非阻擋） | 12 |
 
@@ -119,7 +119,6 @@
 | 固定小題庫 | multiplication / `cubefactor` | 3 |
 | 固定小題庫 | multiplication / `chain` | 3 |
 | 其他單卷耗盡 | exponent / `substitution` | 2 |
-| verify | sincosarea / `ambiguous` | 3 |
 | 其他單卷耗盡 | anglesum / `known` | 3 |
 | 其他單卷耗盡 | anglesum / `triangle` | 3 |
 | 其他單卷耗盡 | doublehalf / `point` | 1 |
@@ -129,7 +128,7 @@
 | verify | spacecross / `height` | 3 |
 | verify | line3d / `pointprojection` | 3 |
 
-共 33 組：例外 0、verify 15、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 0。
+共 30 組：例外 0、verify 12、固定小題庫 9、其他單卷耗盡 9；原本通過的組合新增失敗為 0。
 
 ## 效率警示（不阻擋）
 
