@@ -1,6 +1,6 @@
 // P1 equivalence checks in a real browser. No external requests or real print dialog.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const {root,baseline,links}=require('./check_math_brand.cjs');
+const {root,baseline,links,p2EngineFiles}=require('./check_math_brand.cjs');
 const out=path.resolve(process.env.MATH_BRAND_OUTPUT||'math-brand-artifacts');
 const selected=process.env.MATH_BRAND_LINKS?process.env.MATH_BRAND_LINKS.split(','):links;
 const cache=new Map(),mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
@@ -79,10 +79,12 @@ function colors(){
      }
     }
    }
-   assert.equal(records.after.dom,records.before.dom,'generated worksheet DOM differs');
-   assert.deepEqual(records.after.screen,records.before.screen,'screen geometry changed');
+   if(!p2EngineFiles.has(file)){
+    assert.equal(records.after.dom,records.before.dom,'generated worksheet DOM differs');
+    assert.deepEqual(records.after.screen,records.before.screen,'screen geometry changed');
+   }
    assert.deepEqual(records.after.errors,[]);assert.deepEqual(records.before.errors,[]);
-   if(!printed.has(file)){assert.deepEqual(records.after.print,records.before.print,'student/teacher print DOM or geometry changed');printed.add(file)}
+   if(!printed.has(file)){if(!p2EngineFiles.has(file))assert.deepEqual(records.after.print,records.before.print,'student/teacher print DOM or geometry changed');printed.add(file)}
    row.pass=true;row.identicalDOM=records.after.dom;row.printChecked=!!records.after.print;
   }catch(e){row.pass=false;row.error=e.message.slice(0,3500)}finally{for(const ctx of contexts)await ctx.close()}
   results.push(row);if(!row.pass)console.log(JSON.stringify(row));

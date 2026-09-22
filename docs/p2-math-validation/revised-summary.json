@@ -3,31 +3,31 @@
   "revisedSpecification": "2.4 safeQuestion revision 2026-09-22",
   "legacyCount": 431,
   "categories": {
-    "1": 277,
+    "1": 278,
     "2": 16,
-    "3": 119,
+    "3": 118,
     "4": 19
   },
-  "category1NowPassed": 277,
+  "category1NowPassed": 278,
   "category1UndeclaredFixedBank": 0,
-  "legacyNowPassed": 430,
-  "legacyStillFailed": 1,
+  "legacyNowPassed": 431,
+  "legacyStillFailed": 0,
   "newFailuresOutsideLegacy": 0,
   "revised": {
     "topics": 52,
     "combinations": 1740,
-    "passed": 1739,
-    "failed": 1,
+    "passed": 1740,
+    "failed": 0,
     "safeQuestionCalls": 348000,
     "samplingProduced": 348000,
-    "candidateGenCalls": 403288,
+    "candidateGenCalls": 401425,
     "candidateNulls": 27319,
     "candidateVerifyFalse": 0,
     "candidateExceptions": 0,
     "efficiencyWarningUnits": 12,
     "efficiencyWarningCombinations": 23,
     "declaredBankCombinations": 17,
-    "paperCompleted": 1733,
-    "paperExhausted": 7
+    "paperCompleted": 1734,
+    "paperExhausted": 6
   }
 }

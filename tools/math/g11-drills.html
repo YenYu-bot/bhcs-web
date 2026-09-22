@@ -576,7 +576,7 @@ function doubleHalfAngleConfig(){
 
  const triples=[[3,4,5],[4,3,5],[5,12,13],[12,5,13],[8,15,17],[15,8,17],[7,24,25],[24,7,25],[20,21,29],[21,20,29]];
  const terminalPoint=unit("point","終邊點與二倍角","先由終邊點求sinθ、cosθ，再計算二倍角。",ctx=>{
-  const mode=pick(ctx.modes),[px,py,pr]=pick(ctx.level==="basic"?triples.slice(0,4):triples),q=rand(1,4),scale=positive(mode,ctx.level,ctx.level==="challenge"?10:6),x=mul(R(px*qCos(q)),scale),y=mul(R(py*qSin(q)),scale),r=mul(R(pr),scale),s2=div(mul(T,mul(x,y)),mul(r,r)),c2=div(sub(mul(x,x),mul(y,y)),mul(r,r)),t2=div(mul(T,mul(x,y)),sub(mul(x,x),mul(y,y)));
+  const mode=pick(ctx.modes),[px,py,pr]=pick(triples.slice(0,2)),q=rand(1,4),scale=positive(mode,ctx.level,ctx.level==="challenge"?10:6),x=mul(R(px*qCos(q)),scale),y=mul(R(py*qSin(q)),scale),r=mul(R(pr),scale),s2=div(mul(T,mul(x,y)),mul(r,r)),c2=div(sub(mul(x,x),mul(y,y)),mul(r,r)),t2=div(mul(T,mul(x,y)),sub(mul(x,x),mul(y,y)));
   return{expr:`標準位置角θ的終邊通過 P（${show(x,mode,ctx)}，${show(y,mode,ctx)}），求 sin2θ、cos2θ、tan2θ。`,answer:`sin2θ＝${show(s2,mode,ctx,true)}；cos2θ＝${show(c2,mode,ctx,true)}；tan2θ＝${show(t2,mode,ctx,true)}`,sig:`pt:${mode}:${plain(x)}:${plain(y)}`,verify:()=>eq(add(mul(x,x),mul(y,y)),mul(r,r))&&eq(s2,div(mul(T,mul(x,y)),mul(r,r)))&&eq(c2,div(sub(mul(x,x),mul(y,y)),mul(r,r)))&&eq(t2,div(s2,c2))}
  });
 

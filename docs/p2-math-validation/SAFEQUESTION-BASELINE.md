@@ -4,16 +4,16 @@
 
 | 原 431 組分類 | 組數 | 新測試通過 | 仍失敗 |
 |---|---:|---:|---:|
-| 1 舊 200 題去重假失敗 | 277 | 277 | 0 |
+| 1 舊 200 題去重假失敗 | 278 | 278 | 0 |
 | 2 verify() 不過 | 16 | 16 | 0 |
-| 3 曾回傳 null／單卷耗盡 | 119 | 118 | 1 |
+| 3 曾回傳 null／單卷耗盡 | 118 | 118 | 0 |
 | 4 例外 | 19 | 19 | 0 |
 
 四類互斥且合計 431。完整難度、mode、拒絕率與失敗碼見 [classification-431.csv](classification-431.csv)。
 
 ## 每類完整 topic／unit 清單
 
-### 1 舊 200 題去重假失敗（277 組）
+### 1 舊 200 題去重假失敗（278 組）
 
 | 引擎 | topic | unit | 組數 |
 |---|---|---|---:|
@@ -43,7 +43,7 @@
 | g11 | radians | `quadrant` | 3 |
 | g11 | sector | `arc`、`area`、`clock`、`cone`、`inverse`、`maximum` | 21 |
 | g11 | anglesum | `triangle` | 3 |
-| g11 | doublehalf | `point`、`sumdiff` | 5 |
+| g11 | doublehalf | `point`、`sumdiff` | 6 |
 | g11 | trigblend | `condition`、`cosineform`、`identity`、`range`、`reverse`、`sineform` | 10 |
 | g11 | trigtransform | `intersections` | 1 |
 | g11 | expfunctions | `graph`、`transform` | 2 |
@@ -68,7 +68,7 @@
 | g11 | spacecross | `height` | 3 |
 | g11 | line3d | `pointprojection` | 3 |
 
-### 3 曾回傳 null／單卷耗盡（119 組）
+### 3 曾回傳 null／單卷耗盡（118 組）
 
 | 引擎 | topic | unit | 組數 |
 |---|---|---|---:|
@@ -86,7 +86,7 @@
 | g11 | probability | `arrangeprob`、`balls`、`coins`、`complement`、`samplespace` | 13 |
 | g11 | radians | `convert` | 3 |
 | g11 | anglesum | `known` | 3 |
-| g11 | doublehalf | `fromtan`、`point` | 4 |
+| g11 | doublehalf | `fromtan` | 3 |
 | g11 | commonlog | `laws` | 3 |
 | g11 | loggraphs | `application` | 3 |
 | g11 | conditionalprob | `solveunion` | 3 |
@@ -109,17 +109,16 @@
 |---|---:|
 | topic / 組合 | 52 / 1740 |
 | safeQuestion 抽樣 / 成功取題 | 348000 / 348000 |
-| 通過 / 失敗 | 1739 / 1 |
-| 候選 gen / null | 403288 / 27319 |
+| 通過 / 失敗 | 1740 / 0 |
+| 候選 gen / null | 401425 / 27319 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 1733 / 7 |
+| 完成單卷 / 單卷耗盡 | 1734 / 6 |
 | 高拒絕率 unit（非阻擋） | 12 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
-| 其他單卷耗盡 | doublehalf / `point` | 1 |
 
-共 1 組：例外 0、verify 0、固定小題庫 0、其他單卷耗盡 1；原本通過的組合新增失敗為 0。
+共 0 組：例外 0、verify 0、固定小題庫 0、其他單卷耗盡 0；原本通過的組合新增失敗為 0。
 
 ## 效率警示（不阻擋）
 
@@ -142,7 +141,7 @@
 
 ## 判讀與順序
 
-- 標準差超過 10,000 的候選應在 gen 階段回傳 null；保留 verify、withinLimits、n 與 sd 範圍。
-- SSA 與反函數目前答案正確，屬驗證方式；三個空間 unit 需先檢查候選題面與答案。
-- 依決定先清完剩餘例外，再處理 verify、其他單卷耗盡、最後補固定題庫 bankSize。
+- P2 阻擋項已歸零：例外、verify false、未宣告固定小題庫及未解釋的單卷耗盡均為 0。
+- 已宣告有限題庫在卷末偶發漏抽最後一題仍列為非阻擋警示；容量另由加強覆蓋檢查驗證。
+- 下一階段依既定順序進入 P3 題型多樣性報表模式，先產 baseline JSON，不立即阻擋 CI。
 - 本報告由當前分支的正式出題程式重跑產生；各根因修改另見對應 PR 紀錄。
