@@ -8,16 +8,16 @@
     "3": 124,
     "4": 19
   },
-  "category1NowPassed": 263,
-  "category1UndeclaredFixedBank": 9,
-  "legacyNowPassed": 413,
-  "legacyStillFailed": 18,
+  "category1NowPassed": 269,
+  "category1UndeclaredFixedBank": 3,
+  "legacyNowPassed": 419,
+  "legacyStillFailed": 12,
   "newFailuresOutsideLegacy": 0,
   "revised": {
     "topics": 52,
     "combinations": 1740,
-    "passed": 1722,
-    "failed": 18,
+    "passed": 1728,
+    "failed": 12,
     "safeQuestionCalls": 348000,
     "samplingProduced": 348000,
     "candidateGenCalls": 405958,
@@ -26,8 +26,8 @@
     "candidateExceptions": 0,
     "efficiencyWarningUnits": 12,
     "efficiencyWarningCombinations": 23,
-    "declaredBankCombinations": 0,
-    "paperCompleted": 1722,
-    "paperExhausted": 18
+    "declaredBankCombinations": 6,
+    "paperCompleted": 1728,
+    "paperExhausted": 12
   }
 }
