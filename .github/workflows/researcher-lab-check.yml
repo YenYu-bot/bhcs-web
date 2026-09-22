@@ -23,6 +23,11 @@ jobs:
       - run: node scripts/build_math_brand.mjs
       - run: git diff --exit-code
       - run: npm test --prefix scripts
+      - name: Reproduce P2 classification even when math tests fail
+        if: always()
+        run: |
+          node scripts/classify_math_drills.mjs
+          git diff --exit-code -- docs/p2-math-validation
       - run: node scripts/check_science_integration.cjs
       - run: node scripts/test_researcher_batch1.cjs
       - run: node scripts/test_researcher_batch2.cjs

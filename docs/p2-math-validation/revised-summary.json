@@ -1,0 +1,29 @@
+{
+  "sourceCommit": "f1c83eb1f39559f19784dcc5597f64f14a361eb3",
+  "revisedSpecification": "2.4 revised 2026-09-22",
+  "legacyCount": 431,
+  "categories": {
+    "1": 272,
+    "2": 16,
+    "3": 124,
+    "4": 19
+  },
+  "category1NowPassed": 263,
+  "category1UndeclaredFixedBank": 9,
+  "legacyNowPassed": 264,
+  "legacyStillFailed": 167,
+  "newFailuresOutsideLegacy": 425,
+  "revised": {
+    "topics": 52,
+    "combinations": 1740,
+    "passed": 1148,
+    "failed": 592,
+    "directGenCalls": 348000,
+    "directNulls": 17582,
+    "directVerifyFalse": 398,
+    "directExceptions": 980,
+    "declaredBankCombinations": 0,
+    "paperCompleted": 1722,
+    "paperExhausted": 18
+  }
+}
