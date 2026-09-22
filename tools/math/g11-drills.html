@@ -1734,7 +1734,7 @@ function sineCosineAreaConfig(){
    {A:45,a:[1,2,1],b:[1,1,1],angles:[30]},
    {A:60,a:[1,3,1],b:[1,1,1],angles:[30]}
   ],q=pick(cases),k=rand(1,50),a=q.a,b=q.b,aText=surd(k*a[0],a[1],a[2]),bText=surd(k*b[0],b[1],b[2]),av=radicalValue(k*a[0],a[1],a[2]),bv=radicalValue(k*b[0],b[1],b[2]),sinB=bv*Math.sin(q.A*Math.PI/180)/av,count=q.angles.length;
-  return{expr:`△ABC 中，∠A＝${q.A}°、a＝${aText}、b＝${bText}。判斷可形成幾個三角形，並列出可能的 ∠B。`,answer:count?`可形成 ${count} 個；∠B＝${q.angles.join("° 或 ")}°`:"無法形成三角形",sig:`sa:${q.A}:${aText}:${bText}`,verify:()=>{if(sinB>1+1e-9)return count===0;const B=Math.asin(Math.min(1,sinB))*180/Math.PI,c=[B,180-B].filter((x,i,z)=>q.A+x<180-1e-8&&z.findIndex(y=>Math.abs(y-x)<1e-8)===i);return c.length===count&&c.every((x,i)=>Math.abs(x-q.angles[i])<1e-7)}};
+  return{expr:`△ABC 中，∠A＝${q.A}°、a＝${aText}、b＝${bText}。判斷可形成幾個三角形，並列出可能的 ∠B。`,answer:count?`可形成 ${count} 個；∠B＝${q.angles.join("° 或 ")}°`:"無法形成三角形",sig:`sa:${q.A}:${aText}:${bText}`,verify:()=>{const sinSquared=angle=>{const [c,r,d]=sinTable[angle];return R(c*c*r,d*d)},a2=R(k*k*a[0]*a[0]*a[1],a[2]*a[2]),b2=R(k*k*b[0]*b[0]*b[1],b[2]*b[2]),height2=mul(b2,sinSquared(q.A)),relative=cmp(a2,height2),expected=relative<0?0:relative===0?1:cmp(a2,b2)<0?2:1;return q.A>0&&q.A<90&&count===expected&&new Set(q.angles).size===count&&q.angles.every(B=>B>0&&q.A+B<180&&eq(mul(a2,sinSquared(B)),height2))}};
  });
 
  const circumradius=unit("circumradius","正弦定理與外接圓","延伸正弦定理：a／sinA＝2R。",ctx=>{
