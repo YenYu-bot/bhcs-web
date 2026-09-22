@@ -1,0 +1,3450 @@
+[
+  {
+    "link": "g6-drills.html?topic=arithmetic",
+    "unit": "div",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 199,
+    "error": "safeQuestion returned null at question 200"
+  },
+  {
+    "link": "g6-drills.html?topic=arithmetic",
+    "unit": "convert",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 145,
+    "error": "safeQuestion returned null at question 146"
+  },
+  {
+    "link": "g6-drills.html?topic=arithmetic",
+    "unit": "convert",
+    "level": "basic",
+    "mode": "decimal",
+    "generated": 179,
+    "error": "safeQuestion returned null at question 180"
+  },
+  {
+    "link": "g6-drills.html?topic=arithmetic",
+    "unit": "convert",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 180,
+    "error": "safeQuestion returned null at question 181"
+  },
+  {
+    "link": "g6-drills.html?topic=arithmetic",
+    "unit": "convert",
+    "level": "advanced",
+    "mode": "decimal",
+    "generated": 181,
+    "error": "safeQuestion returned null at question 182"
+  },
+  {
+    "link": "g6-drills.html?topic=arithmetic",
+    "unit": "convert",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 188,
+    "error": "safeQuestion returned null at question 189"
+  },
+  {
+    "link": "g6-drills.html?topic=arithmetic",
+    "unit": "convert",
+    "level": "challenge",
+    "mode": "decimal",
+    "generated": 178,
+    "error": "safeQuestion returned null at question 179"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 172,
+    "error": "safeQuestion returned null at question 173"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "basic",
+    "mode": "decimal",
+    "generated": 169,
+    "error": "safeQuestion returned null at question 170"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 99,
+    "error": "safeQuestion returned null at question 100"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 171,
+    "error": "safeQuestion returned null at question 172"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "advanced",
+    "mode": "decimal",
+    "generated": 168,
+    "error": "safeQuestion returned null at question 169"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 166,
+    "error": "safeQuestion returned null at question 167"
+  },
+  {
+    "link": "g6-drills.html?topic=ratio",
+    "unit": "convert",
+    "level": "challenge",
+    "mode": "decimal",
+    "generated": 172,
+    "error": "safeQuestion returned null at question 173"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "squareplus",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "squareplus",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 99,
+    "error": "safeQuestion returned null at question 100"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "squareplus",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "squareminus",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 90,
+    "error": "safeQuestion returned null at question 91"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "squareminus",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 97,
+    "error": "safeQuestion returned null at question 98"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "squareminus",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 99,
+    "error": "safeQuestion returned null at question 100"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "conjugate",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 81,
+    "error": "safeQuestion returned null at question 82"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "conjugate",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 61,
+    "error": "safeQuestion returned null at question 62"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "conjugate",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 63,
+    "error": "safeQuestion returned null at question 64"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "trinomial",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 122,
+    "error": "safeQuestion returned null at question 123"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "trinomial",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 124,
+    "error": "safeQuestion returned null at question 125"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "cube",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 153,
+    "error": "safeQuestion returned null at question 154"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "cube",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 128,
+    "error": "safeQuestion returned null at question 129"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "cube",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 128,
+    "error": "safeQuestion returned null at question 129"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "cubefactor",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 8,
+    "error": "safeQuestion returned null at question 9"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "cubefactor",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 8,
+    "error": "safeQuestion returned null at question 9"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "cubefactor",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 8,
+    "error": "safeQuestion returned null at question 9"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "chain",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 9,
+    "error": "safeQuestion returned null at question 10"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "chain",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 9,
+    "error": "safeQuestion returned null at question 10"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "chain",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 10,
+    "error": "safeQuestion returned null at question 11"
+  },
+  {
+    "link": "g10-drills.html?topic=multiplication",
+    "unit": "powervalue",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 65,
+    "error": "safeQuestion returned null at question 66"
+  },
+  {
+    "link": "g10-drills.html?topic=rationalexp",
+    "unit": "cube",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 199,
+    "error": "safeQuestion returned null at question 200"
+  },
+  {
+    "link": "g10-drills.html?topic=rationalexp",
+    "unit": "telescope",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 77,
+    "error": "safeQuestion returned null at question 78"
+  },
+  {
+    "link": "g10-drills.html?topic=rationalexp",
+    "unit": "telescope",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 77,
+    "error": "safeQuestion returned null at question 78"
+  },
+  {
+    "link": "g10-drills.html?topic=rationalexp",
+    "unit": "telescope",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 93,
+    "error": "safeQuestion returned null at question 94"
+  },
+  {
+    "link": "g10-drills.html?topic=radicals",
+    "unit": "simplify",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 159,
+    "error": "safeQuestion returned null at question 160"
+  },
+  {
+    "link": "g10-drills.html?topic=radicals",
+    "unit": "simplify",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 162,
+    "error": "safeQuestion returned null at question 163"
+  },
+  {
+    "link": "g10-drills.html?topic=radicals",
+    "unit": "telescope",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 78,
+    "error": "safeQuestion returned null at question 79"
+  },
+  {
+    "link": "g10-drills.html?topic=radicals",
+    "unit": "telescope",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 77,
+    "error": "safeQuestion returned null at question 78"
+  },
+  {
+    "link": "g10-drills.html?topic=radicals",
+    "unit": "telescope",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 115,
+    "error": "safeQuestion returned null at question 116"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "fractional",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 67,
+    "error": "safeQuestion returned null at question 68"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "fractional",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n9 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "fractional",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n5 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "laws",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n16 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "laws",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n24 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "laws",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n1 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "laws",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n29 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "algebra",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n1 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "substitution",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 15,
+    "error": "safeQuestion returned null at question 16"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "substitution",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 19,
+    "error": "safeQuestion returned null at question 20"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "substitution",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 51,
+    "error": "safeQuestion returned null at question 52"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "scientific",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 42,
+    "error": "safeQuestion returned null at question 43"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "equation",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 67,
+    "error": "safeQuestion returned null at question 68"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "application",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 127,
+    "error": "safeQuestion returned null at question 128"
+  },
+  {
+    "link": "g10-drills.html?topic=exponent",
+    "unit": "application",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 157,
+    "error": "safeQuestion returned null at question 158"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "definition",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 45,
+    "error": "safeQuestion returned null at question 46"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "definition",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 43,
+    "error": "safeQuestion returned null at question 44"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "definition",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 45,
+    "error": "safeQuestion returned null at question 46"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "laws",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 91,
+    "error": "safeQuestion returned null at question 92"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "laws",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 92,
+    "error": "safeQuestion returned null at question 93"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "laws",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 94,
+    "error": "safeQuestion returned null at question 95"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "digits",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 129,
+    "error": "safeQuestion returned null at question 130"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "digits",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 126,
+    "error": "safeQuestion returned null at question 127"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "growth",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 105,
+    "error": "safeQuestion returned null at question 106"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "growth",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 108,
+    "error": "safeQuestion returned null at question 109"
+  },
+  {
+    "link": "g10-drills.html?topic=logarithms",
+    "unit": "growth",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 168,
+    "error": "safeQuestion returned null at question 169"
+  },
+  {
+    "link": "g10-drills.html?topic=absolute",
+    "unit": "error",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 112,
+    "error": "safeQuestion returned null at question 113"
+  },
+  {
+    "link": "g10-drills.html?topic=absolute",
+    "unit": "error",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 114,
+    "error": "safeQuestion returned null at question 115"
+  },
+  {
+    "link": "g10-drills.html?topic=absolute",
+    "unit": "error",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 124,
+    "error": "safeQuestion returned null at question 125"
+  },
+  {
+    "link": "g10-drills.html?topic=inequalities",
+    "unit": "always",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 195,
+    "error": "safeQuestion returned null at question 196"
+  },
+  {
+    "link": "g10-drills.html?topic=inequalities",
+    "unit": "always",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 181,
+    "error": "safeQuestion returned null at question 182"
+  },
+  {
+    "link": "g10-drills.html?topic=inequalities",
+    "unit": "always",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 197,
+    "error": "safeQuestion returned null at question 198"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "means",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 140,
+    "error": "safeQuestion returned null at question 141"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "means",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 143,
+    "error": "safeQuestion returned null at question 144"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "means",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 132,
+    "error": "safeQuestion returned null at question 133"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "fixedproduct",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "fixedproduct",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 46,
+    "error": "safeQuestion returned null at question 47"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "fixedproduct",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "weightedmin",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 138,
+    "error": "safeQuestion returned null at question 139"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "weightedmin",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 136,
+    "error": "safeQuestion returned null at question 137"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "fixedsum",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "fixedsum",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "fixedsum",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "weightedmax",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 128,
+    "error": "safeQuestion returned null at question 129"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "weightedmax",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 139,
+    "error": "safeQuestion returned null at question 140"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "squarebound",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 137,
+    "error": "safeQuestion returned null at question 138"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "squarebound",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 139,
+    "error": "safeQuestion returned null at question 140"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "application",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 71,
+    "error": "safeQuestion returned null at question 72"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "application",
+    "level": "basic",
+    "mode": "decimal",
+    "generated": 54,
+    "error": "safeQuestion returned null at question 55"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "application",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 71,
+    "error": "safeQuestion returned null at question 72"
+  },
+  {
+    "link": "g10-drills.html?topic=amgm",
+    "unit": "application",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 70,
+    "error": "safeQuestion returned null at question 71"
+  },
+  {
+    "link": "g10-drills.html?topic=quadratic",
+    "unit": "application",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 125,
+    "error": "safeQuestion returned null at question 126"
+  },
+  {
+    "link": "g10-drills.html?topic=quadratic",
+    "unit": "application",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 122,
+    "error": "safeQuestion returned null at question 123"
+  },
+  {
+    "link": "g10-drills.html?topic=quadratic",
+    "unit": "application",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 131,
+    "error": "safeQuestion returned null at question 132"
+  },
+  {
+    "link": "g10-drills.html?topic=cubic",
+    "unit": "graph",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 62,
+    "error": "safeQuestion returned null at question 63"
+  },
+  {
+    "link": "g10-drills.html?topic=cubic",
+    "unit": "graph",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 120,
+    "error": "safeQuestion returned null at question 121"
+  },
+  {
+    "link": "g10-drills.html?topic=cubic",
+    "unit": "graph",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 120,
+    "error": "safeQuestion returned null at question 121"
+  },
+  {
+    "link": "g10-drills.html?topic=cubic",
+    "unit": "global",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n204 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=cubic",
+    "unit": "global",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n209 !== 0\n"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "midpoint",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 140,
+    "error": "safeQuestion returned null at question 141"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "midpoint",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 66,
+    "error": "safeQuestion returned null at question 67"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "internal",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 68,
+    "error": "safeQuestion returned null at question 69"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "endpoint",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 68,
+    "error": "safeQuestion returned null at question 69"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "ratio",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 72,
+    "error": "safeQuestion returned null at question 73"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "innerouter",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 88,
+    "error": "safeQuestion returned null at question 89"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "innerouter",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 168,
+    "error": "safeQuestion returned null at question 169"
+  },
+  {
+    "link": "g10-drills.html?topic=point",
+    "unit": "motion",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 71,
+    "error": "safeQuestion returned null at question 72"
+  },
+  {
+    "link": "g11-drills.html?topic=sequences",
+    "unit": "geometricmean",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 170,
+    "error": "safeQuestion returned null at question 171"
+  },
+  {
+    "link": "g11-drills.html?topic=sequences",
+    "unit": "geometricmean",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 170,
+    "error": "safeQuestion returned null at question 171"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "geolast",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 87,
+    "error": "safeQuestion returned null at question 88"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "geolast",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 92,
+    "error": "safeQuestion returned null at question 93"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "geolast",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 111,
+    "error": "safeQuestion returned null at question 112"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "geoinverse",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 115,
+    "error": "safeQuestion returned null at question 116"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "geoinverse",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 116,
+    "error": "safeQuestion returned null at question 117"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "geoinverse",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 140,
+    "error": "safeQuestion returned null at question 141"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "powersums",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 79,
+    "error": "safeQuestion returned null at question 80"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "powersums",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 125,
+    "error": "safeQuestion returned null at question 126"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "powersums",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 133,
+    "error": "safeQuestion returned null at question 134"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "oddeven",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 84,
+    "error": "safeQuestion returned null at question 85"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "oddeven",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 75,
+    "error": "safeQuestion returned null at question 76"
+  },
+  {
+    "link": "g11-drills.html?topic=series",
+    "unit": "oddeven",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 167,
+    "error": "safeQuestion returned null at question 168"
+  },
+  {
+    "link": "g11-drills.html?topic=standarddev",
+    "unit": "deviationsum",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n5 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=standarddev",
+    "unit": "zproperties",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 77,
+    "error": "safeQuestion returned null at question 78"
+  },
+  {
+    "link": "g11-drills.html?topic=standarddev",
+    "unit": "zproperties",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 75,
+    "error": "safeQuestion returned null at question 76"
+  },
+  {
+    "link": "g11-drills.html?topic=standarddev",
+    "unit": "zproperties",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 113,
+    "error": "safeQuestion returned null at question 114"
+  },
+  {
+    "link": "g11-drills.html?topic=standarddev",
+    "unit": "standardlist",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 197,
+    "error": "safeQuestion returned null at question 198"
+  },
+  {
+    "link": "g11-drills.html?topic=correlation",
+    "unit": "scatter",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 134,
+    "error": "safeQuestion returned null at question 135"
+  },
+  {
+    "link": "g11-drills.html?topic=correlation",
+    "unit": "scatter",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 140,
+    "error": "safeQuestion returned null at question 141"
+  },
+  {
+    "link": "g11-drills.html?topic=correlation",
+    "unit": "twoslopes",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 166,
+    "error": "safeQuestion returned null at question 167"
+  },
+  {
+    "link": "g11-drills.html?topic=correlation",
+    "unit": "twoslopes",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 139,
+    "error": "safeQuestion returned null at question 140"
+  },
+  {
+    "link": "g11-drills.html?topic=correlation",
+    "unit": "twoslopes",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 142,
+    "error": "safeQuestion returned null at question 143"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "multiplication",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 42,
+    "error": "safeQuestion returned null at question 43"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "tree",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 52,
+    "error": "safeQuestion returned null at question 53"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "tree",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 59,
+    "error": "safeQuestion returned null at question 60"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "tree",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 59,
+    "error": "safeQuestion returned null at question 60"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "digits",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 42,
+    "error": "safeQuestion returned null at question 43"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "digits",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 40,
+    "error": "safeQuestion returned null at question 41"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "digits",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 49,
+    "error": "safeQuestion returned null at question 50"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "subsets",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 44,
+    "error": "safeQuestion returned null at question 45"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "subsets",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 44,
+    "error": "safeQuestion returned null at question 45"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "subsets",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 42,
+    "error": "safeQuestion returned null at question 43"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "negation",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 197,
+    "error": "safeQuestion returned null at question 198"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "negation",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 196,
+    "error": "safeQuestion returned null at question 197"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "negation",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 194,
+    "error": "safeQuestion returned null at question 195"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "conditions",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 70,
+    "error": "safeQuestion returned null at question 71"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "conditions",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 71,
+    "error": "safeQuestion returned null at question 72"
+  },
+  {
+    "link": "g11-drills.html?topic=counting",
+    "unit": "conditions",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 111,
+    "error": "safeQuestion returned null at question 112"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "factorial",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 118,
+    "error": "safeQuestion returned null at question 119"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "adjacent",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 70,
+    "error": "safeQuestion returned null at question 71"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "adjacent",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 72,
+    "error": "safeQuestion returned null at question 73"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "adjacent",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 70,
+    "error": "safeQuestion returned null at question 71"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "separated",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "separated",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "separated",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "digits",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "digits",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "digits",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 50,
+    "error": "safeQuestion returned null at question 51"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "repeated",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 134,
+    "error": "safeQuestion returned null at question 135"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "repeated",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 114,
+    "error": "safeQuestion returned null at question 115"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "repeated",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 124,
+    "error": "safeQuestion returned null at question 125"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "distribution",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 64,
+    "error": "safeQuestion returned null at question 65"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "distribution",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 66,
+    "error": "safeQuestion returned null at question 67"
+  },
+  {
+    "link": "g11-drills.html?topic=permutations",
+    "unit": "distribution",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 66,
+    "error": "safeQuestion returned null at question 67"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "basic",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 131,
+    "error": "safeQuestion returned null at question 132"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "basic",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 122,
+    "error": "safeQuestion returned null at question 123"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "basic",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 124,
+    "error": "safeQuestion returned null at question 125"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "identity",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 100,
+    "error": "safeQuestion returned null at question 101"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "identity",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 102,
+    "error": "safeQuestion returned null at question 103"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "identity",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 183,
+    "error": "safeQuestion returned null at question 184"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "required",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 57,
+    "error": "safeQuestion returned null at question 58"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "required",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 55,
+    "error": "safeQuestion returned null at question 56"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "required",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 104,
+    "error": "safeQuestion returned null at question 105"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "atleast",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 133,
+    "error": "safeQuestion returned null at question 134"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "atleast",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 128,
+    "error": "safeQuestion returned null at question 129"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "groups",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 143,
+    "error": "safeQuestion returned null at question 144"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "groups",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 146,
+    "error": "safeQuestion returned null at question 147"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "groups",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 150,
+    "error": "safeQuestion returned null at question 151"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "equalgroups",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 54,
+    "error": "safeQuestion returned null at question 55"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "equalgroups",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 51,
+    "error": "safeQuestion returned null at question 52"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "equalgroups",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 53,
+    "error": "safeQuestion returned null at question 54"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "binomialterm",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 55,
+    "error": "safeQuestion returned null at question 56"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "binomialterm",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 81,
+    "error": "safeQuestion returned null at question 82"
+  },
+  {
+    "link": "g11-drills.html?topic=combinations",
+    "unit": "binomialterm",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 161,
+    "error": "safeQuestion returned null at question 162"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "samplespace",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 53,
+    "error": "safeQuestion returned null at question 54"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "samplespace",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 56,
+    "error": "safeQuestion returned null at question 57"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "samplespace",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 57,
+    "error": "safeQuestion returned null at question 58"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "coins",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 65,
+    "error": "safeQuestion returned null at question 66"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "coins",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 61,
+    "error": "safeQuestion returned null at question 62"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "coins",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 63,
+    "error": "safeQuestion returned null at question 64"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "dice",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 89,
+    "error": "safeQuestion returned null at question 90"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "dice",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 91,
+    "error": "safeQuestion returned null at question 92"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "dice",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 145,
+    "error": "safeQuestion returned null at question 146"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "balls",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 58,
+    "error": "safeQuestion returned null at question 59"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "balls",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 59,
+    "error": "safeQuestion returned null at question 60"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "balls",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 60,
+    "error": "safeQuestion returned null at question 61"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "cards",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 63,
+    "error": "safeQuestion returned null at question 64"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "cards",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 70,
+    "error": "safeQuestion returned null at question 71"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "cards",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 154,
+    "error": "safeQuestion returned null at question 155"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "complement",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "complement",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "complement",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "arrangeprob",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 116,
+    "error": "safeQuestion returned null at question 117"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "arrangeprob",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 127,
+    "error": "safeQuestion returned null at question 128"
+  },
+  {
+    "link": "g11-drills.html?topic=probability",
+    "unit": "arrangeprob",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 141,
+    "error": "safeQuestion returned null at question 142"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "definitions",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 116,
+    "error": "safeQuestion returned null at question 117"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "definitions",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 171,
+    "error": "safeQuestion returned null at question 172"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "definitions",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 178,
+    "error": "safeQuestion returned null at question 179"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "special",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 105,
+    "error": "safeQuestion returned null at question 106"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "identities",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 114,
+    "error": "safeQuestion returned null at question 115"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "solveside",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 131,
+    "error": "safeQuestion returned null at question 132"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "elevation",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 115,
+    "error": "safeQuestion returned null at question 116"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "twostations",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 95,
+    "error": "safeQuestion returned null at question 96"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "bearings",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 96,
+    "error": "safeQuestion returned null at question 97"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "comparison",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n225 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "comparison",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n159 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=righttrig",
+    "unit": "algebra",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 59,
+    "error": "safeQuestion returned null at question 60"
+  },
+  {
+    "link": "g11-drills.html?topic=generalpolar",
+    "unit": "quadrant",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 105,
+    "error": "safeQuestion returned null at question 106"
+  },
+  {
+    "link": "g11-drills.html?topic=generalpolar",
+    "unit": "fromratio",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 68,
+    "error": "safeQuestion returned null at question 69"
+  },
+  {
+    "link": "g11-drills.html?topic=generalpolar",
+    "unit": "fromratio",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 164,
+    "error": "safeQuestion returned null at question 165"
+  },
+  {
+    "link": "g11-drills.html?topic=generalpolar",
+    "unit": "fromratio",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 161,
+    "error": "safeQuestion returned null at question 162"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "classification",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 75,
+    "error": "safeQuestion returned null at question 76"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "classification",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 74,
+    "error": "safeQuestion returned null at question 75"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "classification",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 75,
+    "error": "safeQuestion returned null at question 76"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "sineside",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 116,
+    "error": "safeQuestion returned null at question 117"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "ambiguous",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 92,
+    "error": "safeQuestion returned null at question 93"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "ambiguous",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "ambiguous",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 194,
+    "error": "safeQuestion returned null at question 195"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "circumradius",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 82,
+    "error": "safeQuestion returned null at question 83"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "circumradius",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 195,
+    "error": "safeQuestion returned null at question 196"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "cosineside",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 66,
+    "error": "safeQuestion returned null at question 67"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "cosineside",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 111,
+    "error": "safeQuestion returned null at question 112"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "cosineside",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 167,
+    "error": "safeQuestion returned null at question 168"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "cosineangle",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 86,
+    "error": "safeQuestion returned null at question 87"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "cosineangle",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 89,
+    "error": "safeQuestion returned null at question 90"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "cosineangle",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 169,
+    "error": "safeQuestion returned null at question 170"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "heron",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 49,
+    "error": "safeQuestion returned null at question 50"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "heron",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 69,
+    "error": "safeQuestion returned null at question 70"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "heron",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 69,
+    "error": "safeQuestion returned null at question 70"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "median",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "median",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "median",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "bisector",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 89,
+    "error": "safeQuestion returned null at question 90"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "bisector",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 90,
+    "error": "safeQuestion returned null at question 91"
+  },
+  {
+    "link": "g11-drills.html?topic=sincosarea",
+    "unit": "bisector",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 84,
+    "error": "safeQuestion returned null at question 85"
+  },
+  {
+    "link": "g11-drills.html?topic=radians",
+    "unit": "convert",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 187,
+    "error": "safeQuestion returned null at question 188"
+  },
+  {
+    "link": "g11-drills.html?topic=radians",
+    "unit": "convert",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 184,
+    "error": "safeQuestion returned null at question 185"
+  },
+  {
+    "link": "g11-drills.html?topic=radians",
+    "unit": "convert",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 179,
+    "error": "safeQuestion returned null at question 180"
+  },
+  {
+    "link": "g11-drills.html?topic=radians",
+    "unit": "quadrant",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 115,
+    "error": "safeQuestion returned null at question 116"
+  },
+  {
+    "link": "g11-drills.html?topic=radians",
+    "unit": "quadrant",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 111,
+    "error": "safeQuestion returned null at question 112"
+  },
+  {
+    "link": "g11-drills.html?topic=radians",
+    "unit": "quadrant",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 115,
+    "error": "safeQuestion returned null at question 116"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "arc",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 120,
+    "error": "safeQuestion returned null at question 121"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "arc",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 118,
+    "error": "safeQuestion returned null at question 119"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "arc",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 116,
+    "error": "safeQuestion returned null at question 117"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "area",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 118,
+    "error": "safeQuestion returned null at question 119"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "area",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 117,
+    "error": "safeQuestion returned null at question 118"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "area",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 118,
+    "error": "safeQuestion returned null at question 119"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "inverse",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 186,
+    "error": "safeQuestion returned null at question 187"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "inverse",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 189,
+    "error": "safeQuestion returned null at question 190"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "inverse",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 195,
+    "error": "safeQuestion returned null at question 196"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "clock",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 120,
+    "error": "safeQuestion returned null at question 121"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "clock",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 119,
+    "error": "safeQuestion returned null at question 120"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "clock",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 118,
+    "error": "safeQuestion returned null at question 119"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "maximum",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 58,
+    "error": "safeQuestion returned null at question 59"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "maximum",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 124,
+    "error": "safeQuestion returned null at question 125"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "maximum",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 98,
+    "error": "safeQuestion returned null at question 99"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "maximum",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 109,
+    "error": "safeQuestion returned null at question 110"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "maximum",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 90,
+    "error": "safeQuestion returned null at question 91"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "maximum",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 124,
+    "error": "safeQuestion returned null at question 125"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "cone",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 93,
+    "error": "safeQuestion returned null at question 94"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "cone",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 93,
+    "error": "safeQuestion returned null at question 94"
+  },
+  {
+    "link": "g11-drills.html?topic=sector",
+    "unit": "cone",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 96,
+    "error": "safeQuestion returned null at question 97"
+  },
+  {
+    "link": "g11-drills.html?topic=anglesum",
+    "unit": "known",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 21,
+    "error": "safeQuestion returned null at question 22"
+  },
+  {
+    "link": "g11-drills.html?topic=anglesum",
+    "unit": "known",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 22,
+    "error": "safeQuestion returned null at question 23"
+  },
+  {
+    "link": "g11-drills.html?topic=anglesum",
+    "unit": "known",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 22,
+    "error": "safeQuestion returned null at question 23"
+  },
+  {
+    "link": "g11-drills.html?topic=anglesum",
+    "unit": "triangle",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 2,
+    "error": "safeQuestion returned null at question 3"
+  },
+  {
+    "link": "g11-drills.html?topic=anglesum",
+    "unit": "triangle",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 2,
+    "error": "safeQuestion returned null at question 3"
+  },
+  {
+    "link": "g11-drills.html?topic=anglesum",
+    "unit": "triangle",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 2,
+    "error": "safeQuestion returned null at question 3"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "fromsin",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 53,
+    "error": "safeQuestion returned null at question 54"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "fromsin",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 49,
+    "error": "safeQuestion returned null at question 50"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "fromsin",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 42,
+    "error": "safeQuestion returned null at question 43"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "fromtan",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 157,
+    "error": "safeQuestion returned null at question 158"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "fromtan",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 166,
+    "error": "safeQuestion returned null at question 167"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "fromtan",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 152,
+    "error": "safeQuestion returned null at question 153"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "sumdiff",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 139,
+    "error": "safeQuestion returned null at question 140"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "sumdiff",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 131,
+    "error": "safeQuestion returned null at question 132"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "sumdiff",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 150,
+    "error": "safeQuestion returned null at question 151"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "point",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "point",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 38,
+    "error": "safeQuestion returned null at question 39"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "point",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "half",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 55,
+    "error": "safeQuestion returned null at question 56"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "half",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=doublehalf",
+    "unit": "half",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 57,
+    "error": "safeQuestion returned null at question 58"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "sineform",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 111,
+    "error": "safeQuestion returned null at question 112"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "cosineform",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 110,
+    "error": "safeQuestion returned null at question 111"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "range",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 106,
+    "error": "safeQuestion returned null at question 107"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "condition",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 108,
+    "error": "safeQuestion returned null at question 109"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "reverse",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "reverse",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 60,
+    "error": "safeQuestion returned null at question 61"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "reverse",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 71,
+    "error": "safeQuestion returned null at question 72"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "identity",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 93,
+    "error": "safeQuestion returned null at question 94"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "identity",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 92,
+    "error": "safeQuestion returned null at question 93"
+  },
+  {
+    "link": "g11-drills.html?topic=trigblend",
+    "unit": "identity",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 168,
+    "error": "safeQuestion returned null at question 169"
+  },
+  {
+    "link": "g11-drills.html?topic=trigtransform",
+    "unit": "intersections",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 103,
+    "error": "safeQuestion returned null at question 104"
+  },
+  {
+    "link": "g11-drills.html?topic=expfunctions",
+    "unit": "graph",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 193,
+    "error": "safeQuestion returned null at question 194"
+  },
+  {
+    "link": "g11-drills.html?topic=expfunctions",
+    "unit": "transform",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 183,
+    "error": "safeQuestion returned null at question 184"
+  },
+  {
+    "link": "g11-drills.html?topic=expfunctions",
+    "unit": "equation",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n120 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=expfunctions",
+    "unit": "equation",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate generation threw (filtered by safeQuestion)\n\n76 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=expequations",
+    "unit": "quadratic",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 43,
+    "error": "safeQuestion returned null at question 44"
+  },
+  {
+    "link": "g11-drills.html?topic=expequations",
+    "unit": "quadratic",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g11-drills.html?topic=expequations",
+    "unit": "quadratic",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 63,
+    "error": "safeQuestion returned null at question 64"
+  },
+  {
+    "link": "g11-drills.html?topic=expequations",
+    "unit": "application",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 71,
+    "error": "safeQuestion returned null at question 72"
+  },
+  {
+    "link": "g11-drills.html?topic=expequations",
+    "unit": "application",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 69,
+    "error": "safeQuestion returned null at question 70"
+  },
+  {
+    "link": "g11-drills.html?topic=expequations",
+    "unit": "application",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 117,
+    "error": "safeQuestion returned null at question 118"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "definition",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 44,
+    "error": "safeQuestion returned null at question 45"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "definition",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 30,
+    "error": "safeQuestion returned null at question 31"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "definition",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 44,
+    "error": "safeQuestion returned null at question 45"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "definition",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 30,
+    "error": "safeQuestion returned null at question 31"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "definition",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 45,
+    "error": "safeQuestion returned null at question 46"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "definition",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 30,
+    "error": "safeQuestion returned null at question 31"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "laws",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 149,
+    "error": "safeQuestion returned null at question 150"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "laws",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 145,
+    "error": "safeQuestion returned null at question 146"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "laws",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 157,
+    "error": "safeQuestion returned null at question 158"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "change",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 188,
+    "error": "safeQuestion returned null at question 189"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "change",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 198,
+    "error": "safeQuestion returned null at question 199"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "scientific",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 149,
+    "error": "safeQuestion returned null at question 150"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "scientific",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 144,
+    "error": "safeQuestion returned null at question 145"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "scientific",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 186,
+    "error": "safeQuestion returned null at question 187"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "digits",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 104,
+    "error": "safeQuestion returned null at question 105"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "digits",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 80,
+    "error": "safeQuestion returned null at question 81"
+  },
+  {
+    "link": "g11-drills.html?topic=commonlog",
+    "unit": "digits",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 172,
+    "error": "safeQuestion returned null at question 173"
+  },
+  {
+    "link": "g11-drills.html?topic=loggraphs",
+    "unit": "inverse",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n7 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=loggraphs",
+    "unit": "inverse",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n4 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=loggraphs",
+    "unit": "inverse",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n4 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=loggraphs",
+    "unit": "application",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 45,
+    "error": "safeQuestion returned null at question 46"
+  },
+  {
+    "link": "g11-drills.html?topic=loggraphs",
+    "unit": "application",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 44,
+    "error": "safeQuestion returned null at question 45"
+  },
+  {
+    "link": "g11-drills.html?topic=loggraphs",
+    "unit": "application",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 60,
+    "error": "safeQuestion returned null at question 61"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "angle",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 155,
+    "error": "safeQuestion returned null at question 156"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "angle",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 153,
+    "error": "safeQuestion returned null at question 154"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "angle",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 151,
+    "error": "safeQuestion returned null at question 152"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "triangle",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 47,
+    "error": "safeQuestion returned null at question 48"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "triangle",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "triangle",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "cauchy",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 57,
+    "error": "safeQuestion returned null at question 58"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "cauchy",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 60,
+    "error": "safeQuestion returned null at question 61"
+  },
+  {
+    "link": "g11-drills.html?topic=vectorcauchy",
+    "unit": "cauchy",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 59,
+    "error": "safeQuestion returned null at question 60"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "decideplane",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 74,
+    "error": "safeQuestion returned null at question 75"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "decideplane",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 76,
+    "error": "safeQuestion returned null at question 77"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "decideplane",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 76,
+    "error": "safeQuestion returned null at question 77"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "linerelations",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 57,
+    "error": "safeQuestion returned null at question 58"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "linerelations",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 56,
+    "error": "safeQuestion returned null at question 57"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "linerelations",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 57,
+    "error": "safeQuestion returned null at question 58"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "lineplane",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 165,
+    "error": "safeQuestion returned null at question 166"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "lineplane",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 157,
+    "error": "safeQuestion returned null at question 158"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "lineplane",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 165,
+    "error": "safeQuestion returned null at question 166"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "planeplanes",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 164,
+    "error": "safeQuestion returned null at question 165"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "planeplanes",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 165,
+    "error": "safeQuestion returned null at question 166"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "planeplanes",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 158,
+    "error": "safeQuestion returned null at question 159"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "threeperpendicular",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 184,
+    "error": "safeQuestion returned null at question 185"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "threeperpendicular",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 182,
+    "error": "safeQuestion returned null at question 183"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "threeperpendicular",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 180,
+    "error": "safeQuestion returned null at question 181"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "nestedlength",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 114,
+    "error": "safeQuestion returned null at question 115"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "nestedlength",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 111,
+    "error": "safeQuestion returned null at question 112"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "nestedlength",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 158,
+    "error": "safeQuestion returned null at question 159"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "dihedral",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 46,
+    "error": "safeQuestion returned null at question 47"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "dihedral",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 48,
+    "error": "safeQuestion returned null at question 49"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceconcept",
+    "unit": "dihedral",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 45,
+    "error": "safeQuestion returned null at question 46"
+  },
+  {
+    "link": "g11-drills.html?topic=spacevector",
+    "unit": "unitvector",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 94,
+    "error": "safeQuestion returned null at question 95"
+  },
+  {
+    "link": "g11-drills.html?topic=spacevector",
+    "unit": "unitvector",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 94,
+    "error": "safeQuestion returned null at question 95"
+  },
+  {
+    "link": "g11-drills.html?topic=spacevector",
+    "unit": "unitvector",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 95,
+    "error": "safeQuestion returned null at question 96"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceinner",
+    "unit": "pointdistance",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n35 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceinner",
+    "unit": "pointdistance",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n40 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=spaceinner",
+    "unit": "pointdistance",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n31 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=spacecross",
+    "unit": "height",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n7 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=spacecross",
+    "unit": "height",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n6 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=spacecross",
+    "unit": "height",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n2 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=line3d",
+    "unit": "pointprojection",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n31 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=line3d",
+    "unit": "pointprojection",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n36 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=line3d",
+    "unit": "pointprojection",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 200,
+    "error": "candidate verify failed (filtered by safeQuestion)\n\n42 !== 0\n"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "solveunion",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 110,
+    "error": "safeQuestion returned null at question 111"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "solveunion",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 89,
+    "error": "safeQuestion returned null at question 90"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "solveunion",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 113,
+    "error": "safeQuestion returned null at question 114"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "binomial",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 152,
+    "error": "safeQuestion returned null at question 153"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "binomial",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 151,
+    "error": "safeQuestion returned null at question 152"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "binomial",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 149,
+    "error": "safeQuestion returned null at question 150"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "atleastone",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 76,
+    "error": "safeQuestion returned null at question 77"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "atleastone",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 81,
+    "error": "safeQuestion returned null at question 82"
+  },
+  {
+    "link": "g11-drills.html?topic=conditionalprob",
+    "unit": "atleastone",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 82,
+    "error": "safeQuestion returned null at question 83"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "medicalnegative",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 117,
+    "error": "safeQuestion returned null at question 118"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "medicalnegative",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 127,
+    "error": "safeQuestion returned null at question 128"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "medicalnegative",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 116,
+    "error": "safeQuestion returned null at question 117"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "factoryorigin",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 72,
+    "error": "safeQuestion returned null at question 73"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "factoryorigin",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 74,
+    "error": "safeQuestion returned null at question 75"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "factoryorigin",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 69,
+    "error": "safeQuestion returned null at question 70"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "reverseprior",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 73,
+    "error": "safeQuestion returned null at question 74"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "reverseprior",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 68,
+    "error": "safeQuestion returned null at question 69"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "reverseprior",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 58,
+    "error": "safeQuestion returned null at question 59"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "repeatedtest",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 158,
+    "error": "safeQuestion returned null at question 159"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "repeatedtest",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 159,
+    "error": "safeQuestion returned null at question 160"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "repeatedtest",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 161,
+    "error": "safeQuestion returned null at question 162"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "treatmenttype",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 101,
+    "error": "safeQuestion returned null at question 102"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "treatmenttype",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 102,
+    "error": "safeQuestion returned null at question 103"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "treatmenttype",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 120,
+    "error": "safeQuestion returned null at question 121"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "witness",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 103,
+    "error": "safeQuestion returned null at question 104"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "witness",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 106,
+    "error": "safeQuestion returned null at question 107"
+  },
+  {
+    "link": "g11-drills.html?topic=bayes",
+    "unit": "witness",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 103,
+    "error": "safeQuestion returned null at question 104"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixops",
+    "unit": "power",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 89,
+    "error": "safeQuestion returned null at question 90"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixops",
+    "unit": "power",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 80,
+    "error": "safeQuestion returned null at question 81"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixops",
+    "unit": "power",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 134,
+    "error": "safeQuestion returned null at question 135"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "rotation",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 93,
+    "error": "safeQuestion returned null at question 94"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "rotation",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 95,
+    "error": "safeQuestion returned null at question 96"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "rotation",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 97,
+    "error": "safeQuestion returned null at question 98"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "trianglearea",
+    "level": "basic",
+    "mode": "integer",
+    "generated": 142,
+    "error": "safeQuestion returned null at question 143"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "trianglearea",
+    "level": "advanced",
+    "mode": "integer",
+    "generated": 143,
+    "error": "safeQuestion returned null at question 144"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "trianglearea",
+    "level": "challenge",
+    "mode": "integer",
+    "generated": 146,
+    "error": "safeQuestion returned null at question 147"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "transitionbuild",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 87,
+    "error": "safeQuestion returned null at question 88"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "transitionbuild",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 88,
+    "error": "safeQuestion returned null at question 89"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "transitionbuild",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 88,
+    "error": "safeQuestion returned null at question 89"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "multistate",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 167,
+    "error": "safeQuestion returned null at question 168"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "multistate",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 173,
+    "error": "safeQuestion returned null at question 174"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "stationary",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 84,
+    "error": "safeQuestion returned null at question 85"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "stationary",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 88,
+    "error": "safeQuestion returned null at question 89"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "stationary",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 87,
+    "error": "safeQuestion returned null at question 88"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "reversestate",
+    "level": "basic",
+    "mode": "fraction",
+    "generated": 89,
+    "error": "safeQuestion returned null at question 90"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "reversestate",
+    "level": "advanced",
+    "mode": "fraction",
+    "generated": 99,
+    "error": "safeQuestion returned null at question 100"
+  },
+  {
+    "link": "g11-drills.html?topic=matrixapps",
+    "unit": "reversestate",
+    "level": "challenge",
+    "mode": "fraction",
+    "generated": 100,
+    "error": "safeQuestion returned null at question 101"
+  }
+]
