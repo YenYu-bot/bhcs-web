@@ -20,4 +20,6 @@ python scripts/build_sitemap.py
 
 `test_science_models.mjs`：數值驗收與控制邊界組合。`test_science_ui.cjs`：完整流程、任務、資料損毀與封鎖、無障礙結構、事件隱私及目錄篩選。JSDOM 不進行真實排版或列印，axe 測試停用色彩對比規則；實際裝置驗收見 docs/science-acceptance.md。
 
+數學出題器交付前可先跑純 Node 快速檢查，例如 `node scripts/math_local_check.mjs tools/math/g6-drills.html units 200`。它逐一檢查 unit × 難度 × 數型，包含候選題的例外與 `verify()` 失敗、200 次正式取題、卷內 `sig` 去重及結構數；候選 `null` 只列為診斷。這是交付前自測，正式門檻仍是 `test_math_drills.mjs`、P3 棘輪與 CI；快速檢查不能取代瀏覽器與列印驗收。
+
 顯微鏡繪圖來源為 `science/microscope-geometry.mjs` 與 `science/microscope-drawing.js`，使用 `build_microscope.mjs` 內嵌回單一HTML。`test_science_illustrations.cjs` 檢查比例尺、細胞尺寸與穩定性，以及熱相變的代表粒子數守恆。設定 `SCIENCE_RENDER_DIR` 並提供可解析的 `@napi-rs/canvas` 開發套件時，會另產生九種顯微視野的原生Canvas驗收圖；這不等同瀏覽器或實體顯微照片驗收。
