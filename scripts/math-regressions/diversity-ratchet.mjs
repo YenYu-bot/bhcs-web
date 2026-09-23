@@ -20,4 +20,9 @@ assert.ok(result.failures.filter(row=>row.code==='new_unit_single_form_forbidden
 
 result=evaluateDiversityRatchet({baseline,current:{units:[]},exemptions:[]});
 assert.ok(result.failures.some(row=>row.code==='baseline_unit_removed'));
+
+const approved={units:[unit({singleForm:true}),unit({topic:'other',unit:'v'})]};
+result=evaluateDiversityRatchet({baseline:approved,current:approved,exemptions:[{topic:'other',unit:'v'}]});
+assert.ok(result.failures.some(row=>row.code==='unapproved_single_form' && row.unit==='other/v'));
+assert.ok(result.failures.some(row=>row.code==='approved_single_form_removed' && row.unit==='demo/u'));
 console.log(JSON.stringify({test:'diversity-ratchet',passed:true}));

@@ -4,6 +4,12 @@ export function evaluateDiversityRatchet({baseline,current,exemptions}) {
   const before = new Map(baseline.units.map(unit=>[singleFormKey(unit.topic,unit.unit),unit]));
   const now = new Map(current.units.map(unit=>[singleFormKey(unit.topic,unit.unit),unit]));
   const failures = [], changedUnits = [], newUnits = [];
+  const approved = new Set(baseline.units.filter(unit=>unit.singleForm).map(unit=>singleFormKey(unit.topic,unit.unit)));
+  const configured = new Set(exemptions.map(row=>singleFormKey(row.topic,row.unit)));
+  for (const key of configured) if (!approved.has(key))
+    failures.push({code:'unapproved_single_form',unit:key});
+  for (const key of approved) if (!configured.has(key))
+    failures.push({code:'approved_single_form_removed',unit:key});
   for (const row of exemptions) if (!before.has(singleFormKey(row.topic,row.unit)))
     failures.push({code:'new_unit_single_form_forbidden',unit:singleFormKey(row.topic,row.unit)});
   for (const [key,prior] of before) {
