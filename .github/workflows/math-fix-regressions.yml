@@ -15,3 +15,8 @@ jobs:
           for test in scripts/math-regressions/*.mjs; do
             [ "$(basename "$test")" = helper.mjs ] || node "$test" || exit 1
           done
+      - name: Enforce P3 diversity ratchet
+        env:
+          MATH_DIVERSITY_GATE: '1'
+          MATH_DIVERSITY_REPORT: math-validation-artifacts/diversity-current.json
+        run: node scripts/test_math_drills.mjs
