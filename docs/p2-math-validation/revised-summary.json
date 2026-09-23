@@ -20,7 +20,7 @@
     "failed": 0,
     "safeQuestionCalls": 348000,
     "samplingProduced": 348000,
-    "candidateGenCalls": 401425,
+    "candidateGenCalls": 401368,
     "candidateNulls": 27319,
     "candidateVerifyFalse": 0,
     "candidateExceptions": 0,

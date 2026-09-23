@@ -1737,8 +1737,9 @@ function sineCosineAreaConfig(){
    {A:30,a:[1,1,1],b:[2,1,1],angles:[90]},
    {A:45,a:[1,2,1],b:[1,1,1],angles:[30]},
    {A:60,a:[1,3,1],b:[1,1,1],angles:[30]}
-  ],q=pick(cases),k=rand(1,50),a=q.a,b=q.b,aText=surd(k*a[0],a[1],a[2]),bText=surd(k*b[0],b[1],b[2]),av=radicalValue(k*a[0],a[1],a[2]),bv=radicalValue(k*b[0],b[1],b[2]),sinB=bv*Math.sin(q.A*Math.PI/180)/av,count=q.angles.length;
-  return{expr:`△ABC 中，∠A＝${q.A}°、a＝${aText}、b＝${bText}。判斷可形成幾個三角形，並列出可能的 ∠B。`,answer:count?`可形成 ${count} 個；∠B＝${q.angles.join("° 或 ")}°`:"無法形成三角形",sig:`sa:${q.A}:${aText}:${bText}`,verify:()=>{const sinSquared=angle=>{const [c,r,d]=sinTable[angle];return R(c*c*r,d*d)},a2=R(k*k*a[0]*a[0]*a[1],a[2]*a[2]),b2=R(k*k*b[0]*b[0]*b[1],b[2]*b[2]),height2=mul(b2,sinSquared(q.A)),relative=cmp(a2,height2),expected=relative<0?0:relative===0?1:cmp(a2,b2)<0?2:1;return q.A>0&&q.A<90&&count===expected&&new Set(q.angles).size===count&&q.angles.every(B=>B>0&&q.A+B<180&&eq(mul(a2,sinSquared(B)),height2))}};
+  ],q=pick(cases),promptKind=pick(["angleB","countOnly","angleC"]),k=rand(1,50),a=q.a,b=q.b,aText=surd(k*a[0],a[1],a[2]),bText=surd(k*b[0],b[1],b[2]),count=q.angles.length,cAngles=q.angles.map(B=>180-q.A-B).sort((x,y)=>x-y);
+  const stem=`△ABC 中，∠A＝${q.A}°、a＝${aText}、b＝${bText}。`,expr=promptKind==="angleB"?`${stem}判斷可形成幾個三角形，並列出可能的 ∠B。`:promptKind==="countOnly"?`${stem}這組 SSA 條件為無解、唯一解或兩解？並寫出三角形個數。`:`${stem}列出所有可能的 ∠C，並說明共有幾個三角形。`,answer=!count?"無法形成三角形":promptKind==="countOnly"?(count===1?"唯一解；可形成 1 個三角形":"兩解；可形成 2 個三角形"):promptKind==="angleC"?`可形成 ${count} 個；∠C＝${cAngles.join("° 或 ")}°`:`可形成 ${count} 個；∠B＝${q.angles.join("° 或 ")}°`,sig=promptKind==="angleB"?`sa:${q.A}:${aText}:${bText}`:`sa:${promptKind}:${q.A}:${aText}:${bText}`;
+  return{expr,answer,sig,verify:()=>{const sinSquared=angle=>{const [c,r,d]=sinTable[angle];return R(c*c*r,d*d)},a2=R(k*k*a[0]*a[0]*a[1],a[2]*a[2]),b2=R(k*k*b[0]*b[0]*b[1],b[2]*b[2]),height2=mul(b2,sinSquared(q.A)),relative=cmp(a2,height2),expected=relative<0?0:relative===0?1:cmp(a2,b2)<0?2:1;return q.A>0&&q.A<90&&count===expected&&new Set(q.angles).size===count&&q.angles.every(B=>B>0&&q.A+B<180&&eq(mul(a2,sinSquared(B)),height2))&&cAngles.length===count&&cAngles.every(C=>C>0&&C<180-q.A)}};
  });
 
  const circumradius=unit("circumradius","正弦定理與外接圓","延伸正弦定理：a／sinA＝2R。",ctx=>{
@@ -1751,9 +1752,14 @@ function sineCosineAreaConfig(){
   return{expr:`△ABC 中，b＝${b}、c＝${c}、∠A＝${A}°，求 a。`,answer:`a＝${ans}`,sig:`cs:${b}:${c}:${A}`,verify:()=>a2.d===1&&H.near(radicalValue(1,a2.n),Math.sqrt(sq(b)+sq(c)-2*b*c*Math.cos(A*Math.PI/180)))};
  });
 
- const cosineAngle=unit("cosineangle","餘弦定理求角的三角比","已知三邊時，先求 cosA＝(b²＋c²−a²)／2bc，再判斷角的種類。",ctx=>{
-  let s=scaledSides(),a=s[0],b=s[1],c=s[2];if(ctx.level==="challenge"&&Math.random()<.5)[a,b,c]=[s[2],s[0],s[1]];const z=R(sq(b)+sq(c)-sq(a),2*b*c),kind=z.n===0?"直角":z.n>0?"銳角":"鈍角";
-  return{expr:`△ABC 的三邊為 a＝${a}、b＝${b}、c＝${c}。求 cosA，並判斷 ∠A 為銳角、直角或鈍角。`,answer:`cosA＝${H.show(z,"fraction",true,{mixed:false})}；∠A 為${kind}`,sig:`ca:${a}:${b}:${c}`,verify:()=>eq(mul(R(2*b*c),z),R(sq(b)+sq(c)-sq(a)))&&a+b>c&&a+c>b&&b+c>a};
+ const cosineAngle=unit("cosineangle","餘弦定理求角","已知三邊時，以 cosA＝(b²＋c²−a²)／2bc 判斷角型或求特殊角。",ctx=>{
+  const promptKind=pick(ctx.level==="challenge"?["cosKind","degreeSymbol","degreeSegments","largestAngle"]:["cosKind","degreeSymbol","degreeSegments"]);
+  if(promptKind==="cosKind"){
+   let s=scaledSides(),a=s[0],b=s[1],c=s[2];if(ctx.level==="challenge"&&Math.random()<.5)[a,b,c]=[s[2],s[0],s[1]];const z=R(sq(b)+sq(c)-sq(a),2*b*c),kind=z.n===0?"直角":z.n>0?"銳角":"鈍角";
+   return{expr:`△ABC 的三邊為 a＝${a}、b＝${b}、c＝${c}。求 cosA，並判斷 ∠A 為銳角、直角或鈍角。`,answer:`cosA＝${H.show(z,"fraction",true,{mixed:false})}；∠A 為${kind}`,sig:`ca:${a}:${b}:${c}`,verify:()=>eq(mul(R(2*b*c),z),R(sq(b)+sq(c)-sq(a)))&&a+b>c&&a+c>b&&b+c>a};
+  }
+  const angleTriples=[[5,3,4,90],[13,5,12,90],[17,8,15,90],[5,5,5,60],[7,3,8,60],[7,5,3,120],[13,7,8,120]],largestTriples=angleTriples.filter(([a,b,c])=>a>=b&&a>=c),base=pick(promptKind==="largestAngle"?largestTriples:angleTriples),k=rand(1,10),[a,b,c,A]=[base[0]*k,base[1]*k,base[2]*k,base[3]],z=R(sq(b)+sq(c)-sq(a),2*b*c),expectedCos=A===60?R(1,2):A===90?R(0):R(-1,2),expr=promptKind==="degreeSymbol"?`△ABC 的三邊為 a＝${a}、b＝${b}、c＝${c}。用餘弦定理求 ∠A 的度數。`:promptKind==="degreeSegments"?`△ABC 中，AB＝${c}、AC＝${b}、BC＝${a}。用餘弦定理求 ∠BAC。`:`一三角形的三邊長為 ${a}、${b}、${c}，求最大角的度數。`;
+  return{expr,answer:`${A}°`,sig:`ca:${promptKind}:${a}:${b}:${c}`,verify:()=>eq(z,expectedCos)&&a+b>c&&a+c>b&&b+c>a&&H.near(Math.acos(z.n/z.d)*180/Math.PI,A)&&(promptKind!=="largestAngle"||a>=b&&a>=c)};
  });
 
  const includedArea=unit("includedarea","兩邊夾角求面積","三角形面積 K＝bc sinA／2。",ctx=>{
