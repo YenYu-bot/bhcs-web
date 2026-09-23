@@ -44,8 +44,14 @@
 
 - 純 Node 檢查 `vectorcauchy`：每個單元 × 三難度 × 適用數型各 200 題，候選 `verify()` 失敗 0、例外 0、卷內重複 0；本單元結構觀察值 3／7／9（快速檢查器採另一套結構正規化，顯示 3／7／9）。
 - 正式 `MATH_DIVERSITY_GATE=1 node scripts/test_math_drills.mjs`：全站 1740／1740 組通過，348000／348000 題產出，候選 verify 失敗 0、例外 0、棘輪失敗 0。
+- PR #47 的 Math CI 與 Researcher CI 均通過；P2 分類 CSV 只更新 `cauchy` 三筆產題統計。
+
+## 瀏覽器與列印檢視
+
+- Chromium 實際產生三難度 × 學用／教用各 12 題，儲存 1280px 截圖六張、390px 挑戰截圖兩張與 A4 PDF 六份；[Researcher CI #185](https://github.com/YenYu-bot/bhcs-web/actions/runs/35823545513) 的 `p4-vector-review` artifact 含全部原檔及 `results.json`，保存 14 天。
+- 已逐張查看八張截圖及六份 A4 PDF 渲染頁：題目與教用紅字答案位置正常，學用版未顯示答案；每份 PDF 都是單頁，無題幹截斷或橫向溢出。
+- 390px 手機的整張 A4 預覽會縮到畫面寬度，題文字級偏小；適合在桌面檢視或下載 A4 列印。這是目前共用出題器的縮放方式，本次沒有改動版面系統。
 
 ## 未驗證到的
 
-- 三難度學用／教用瀏覽器截圖、列印視覺檢查尚待 PR 的 Chromium CI 產物；截圖與逐張人工檢視完成後補進本報告。
 - 教材內容的最終審閱屬使用者的內容閘門。
