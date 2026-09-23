@@ -48,6 +48,10 @@ jobs:
           NODE_PATH: /tmp/bhcs-composition/node_modules
           MATH_BRAND_PDF: '1'
         run: node scripts/check_math_brand_browser.cjs
+      - name: Capture P4 vectorcauchy worksheet versions
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_p4_vector_browser.cjs
       - name: Check all welcome layouts and capture review images
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -89,4 +93,10 @@ jobs:
         with:
           name: p1-math-brand-review
           path: math-brand-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p4-vector-review
+          path: p4-vector-artifacts/
           retention-days: 14
