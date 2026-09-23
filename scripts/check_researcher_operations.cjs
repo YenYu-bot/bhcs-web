@@ -26,7 +26,7 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
    else await screenshot('save',page.locator('.researcher-save'));
    await page.locator(save).click();assert.equal(await count(),1);assert.equal(await page.locator('.researcher-screen.is-active').getAttribute('data-screen'),'bench','saving stays in the bench');
    await page.locator('[data-to="notebook"]').click();assert.ok(await page.locator('[data-return-second]').isVisible());
-   await page.locator('[data-return-second]').click();
+   await page.locator('[data-return-second]').click();await settle(page);
    const control=page.locator(item.shared?'#control-fields :is(select,input[type="range"]):visible:not(:disabled)':'.labgrid > .panel :is(select:not(#level),input[type="range"]):visible:not(:disabled)').first();
    result.changedControl=await control.getAttribute('id');
    if(await control.evaluate(el=>el.tagName)==='SELECT'){const value=await control.evaluate(el=>[...el.options].find(o=>o.value!==el.value).value);await control.selectOption(value)}
