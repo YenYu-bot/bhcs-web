@@ -1918,8 +1918,28 @@ function vectorCauchyConfig(){
  const angle=unit("angle","長度、夾角與內積","a·b＝|a||b|cosθ。",ctx=>{const mode="integer",tr=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),scale=R(rand(1,4)),la=mul(R(tr[2]),scale),lb=R(rand(1,8)),cos=R(tr[0],tr[2]),z=mul(mul(la,lb),cos);return{expr:`已知 |a|＝${H.show(la,mode,false,ctx)}、|b|＝${H.show(lb,mode,false,ctx)}，夾角 θ 的 cosθ＝${H.show(cos,"fraction")}，求 a·b。`,answer:H.show(z,mode,true,ctx),sig:`an:${tr}:${scale.n}:${lb.n}`,verify:()=>eq(z,mul(mul(la,lb),cos))}});
  const projection=unit("projection","正射影與分解","b在a上的正射影向量為[(a·b)／|a|²]a。",ctx=>{const mode="fraction",a=[R(rand(-4,4)),R(rand(-4,4))],b=[R(rand(-8,8)),R(rand(-8,8))],a2=norm2(a);if(!a2.n||a2.n>25||(!b[0].n&&!b[1].n)||eq(a[0],b[0])&&eq(a[1],b[1]))return null;const coef=div(dot(a,b),a2),pv=[mul(coef,a[0]),mul(coef,a[1])];return{expr:`a＝${vhtml(a,"integer",ctx)}、b＝${vhtml(b,"integer",ctx)}，求 b 在 a 方向上的正射影向量。`,answer:vhtml(pv,mode,ctx),sig:`pr:${a.map(H.plain)}:${b.map(H.plain)}`,verify:()=>a2.d===1&&a2.n<=25&&eq(dot([sub(b[0],pv[0]),sub(b[1],pv[1])],a),H.Z)}});
  const triangle=unit("triangle","三角形中的內積","由餘弦定理得AB·AC＝(AB²＋AC²−BC²)／2。",ctx=>{const mode=pick(ctx.modes),[p,q,r]=pick([[3,4,5],[5,5,6],[5,12,13],[7,8,9]]),s=H.pos(mode,ctx.level,100),ab=mul(R(p),s),ac=mul(R(q),s),bc=mul(R(r),s),z=div(sub(add(mul(ab,ab),mul(ac,ac)),mul(bc,bc)),R(2));return{expr:`△ABC 中，AB＝${H.show(ab,mode,false,ctx)}、AC＝${H.show(ac,mode,false,ctx)}、BC＝${H.show(bc,mode,false,ctx)}，求向量 AB·AC。`,answer:H.show(z,mode,true,ctx),sig:`tr:${p}:${q}:${r}:${H.plain(s)}`,verify:()=>eq(mul(R(2),z),sub(add(mul(ab,ab),mul(ac,ac)),mul(bc,bc)))}});
- const cauchy=unit("cauchy","柯西不等式求最值","ax＋by的絕對值不超過√(a²＋b²)√(x²＋y²)。",ctx=>{const mode=pick(ctx.modes),[a,b,c]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),r=H.pos(mode,ctx.level,100),mx=mul(R(c),r);return{expr:`實數 x、y 滿足 x<sup>2</sup>＋y<sup>2</sup>＝${H.show(mul(r,r),mode,false,ctx)}，求 ${a}x＋${b}y 的最大值。`,answer:H.show(mx,mode,true,ctx),sig:`cy:${a}:${b}:${H.plain(r)}`,verify:()=>eq(mul(R(a*a+b*b),mul(r,r)),mul(mx,mx))}});
- return{title:"向量內積、正射影與柯西不等式",symbol:"·",subtitle:"坐標內積・垂直判定・夾角・正射影・三角形・柯西最值",instruction:"解下列各題；向量內積可由坐標或長度與夾角計算。",modes:M,mixed:true,levels:{basic:"基礎：二維整數坐標與直接套用內積公式。",advanced:"進階：分數／小數縮放、正射影與幾何內積。",challenge:"挑戰：參數垂直、投影分解與柯西最值。"},units:[coordinate,perpendicular,angle,projection,triangle,cauchy],presets:{basic:{coordinate:3,perpendicular:3,angle:2,triangle:2},advanced:{coordinate:2,angle:2,projection:2,triangle:2,cauchy:2},challenge:{perpendicular:2,projection:2,triangle:2,cauchy:4}}};
+ const cauchy=unit("cauchy","柯西不等式求最值","線性式的最大與最小值由係數向量的長度決定；等號在兩向量同向或反向時成立。",ctx=>{
+  const mode=pick(ctx.modes),pair=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),
+   triple=pick([[1,2,2,3],[2,3,6,7],[1,4,8,9],[2,6,9,11]]),r=H.pos(mode,ctx.level,100);
+  const kinds=ctx.level==="basic"?["max2","min2","abs2"]:ctx.level==="advanced"?["max2","min2","abs2","max3","min3"]:["max2","min2","abs2","max3","min3","inverseMax","inverseMin"];
+  const kind=pick(kinds),inverse=kind.startsWith("inverse"),three=kind.endsWith("3"),min=kind==="min2"||kind==="min3"||kind==="inverseMin";
+  const coefficients=three?triple.slice(0,3):pair.slice(0,2),length=three?triple[3]:pair[2],extreme=mul(R(length),r),radius2=mul(r,r);
+  const variables=three?["x","y","z"]:["x","y"],linear=coefficients.map((n,i)=>`${n===1?"":n}${variables[i]}`).join("＋"),constraint=variables.map(v=>`${v}<sup>2</sup>`).join("＋");
+  const atEquality=sign=>coefficients.map(n=>mul(R(sign*n),div(r,R(length))));
+  const reaches=sign=>{const p=atEquality(sign),square=p.reduce((sum,x)=>add(sum,mul(x,x)),H.Z),value=p.reduce((sum,x,i)=>add(sum,mul(R(coefficients[i]),x)),H.Z);return eq(square,radius2)&&eq(value,mul(R(sign),extreme))};
+  let expr,answer;
+  if(inverse){expr=`實數 x、y 滿足 x<sup>2</sup>＋y<sup>2</sup>＝${H.show(radius2,mode,false,ctx)}。已知 b＞0，${pair[0]}x＋by 的${min?"最小":"最大"}值為 ${H.show(min?H.neg(extreme):extreme,mode,false,ctx)}，求 b。`;answer=`b＝${pair[1]}`}
+  else {expr=`實數 ${variables.join("、")} 滿足 ${constraint}＝${H.show(radius2,mode,false,ctx)}，求 ${kind==="abs2"?`|${linear}|`:linear} 的${min?"最小":"最大"}值。`;answer=H.show(min?H.neg(extreme):extreme,mode,true,ctx)}
+  return{expr,answer,sig:`cy:${kind}:${coefficients.join(":")}:${H.plain(r)}`,verify:()=>{
+   const claimed=Number((inverse?answer.slice(2):answer).replaceAll("−","-"));
+   if(!Number.isSafeInteger(claimed)||!coefficients.every(n=>Number.isSafeInteger(n))||length<=0)return false;
+   if(inverse){const bound=div(extreme,r);return claimed>0&&
+    eq(add(R(pair[0]*pair[0]),R(claimed*claimed)),mul(bound,bound))&&reaches(min?-1:1)}
+   return eq(R(claimed),kind==="abs2"?extreme:min?H.neg(extreme):extreme)&&
+    (kind==="abs2"?reaches(1)&&reaches(-1):reaches(min?-1:1));
+  }};
+ });
+ return{title:"向量內積、正射影與柯西不等式",symbol:"·",subtitle:"坐標內積・垂直判定・夾角・正射影・三角形・柯西最值",instruction:"解下列各題；向量內積可由坐標或長度與夾角計算。",modes:M,mixed:true,levels:{basic:"基礎：二維內積與柯西最大、最小及絕對值最值。",advanced:"進階：分數／小數縮放、投影與三變數柯西最值。",challenge:"挑戰：參數垂直、投影分解、三變數及由最值反求正係數。"},units:[coordinate,perpendicular,angle,projection,triangle,cauchy],presets:{basic:{coordinate:3,perpendicular:3,angle:2,triangle:2},advanced:{coordinate:2,angle:2,projection:2,triangle:2,cauchy:2},challenge:{perpendicular:2,projection:2,triangle:2,cauchy:4}}};
 }
 
 const UNIT_POLICIES={
