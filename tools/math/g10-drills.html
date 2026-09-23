@@ -144,17 +144,76 @@ function algHelpers(){
  return{Z,O,T,neg,abs,num,near,int,show,signed,pos,plus,term,plain,trim,padd,psub,pmul,peval,peq,pdivlin,poly,lin,interval,sqfree,sqrtHTML};
 }
 function absoluteValueIntervalsConfig(){
- /* 難度：基礎＝單一絕對值方程；進階＝分數／小數係數與區間；挑戰＝雙側、整數解、距離極值及誤差。 */
+ /* 2026-09-23 P4：每個單元在三個難度各有不同的題型結構，不只換數字。
+    基礎＝最簡形；進階＝含係數、閉區間、外側、無解／恆成立的邊界；挑戰＝雙絕對值、含 x 的右式、複合區間與文字敘述。 */
  const A=algHelpers(),M=["integer","fraction","decimal"],unit=(id,name,tip,gen)=>({id,name,tip,modes:M,gen});
- const equation=unit("equation","絕對值方程式","|u|＝c且c≥0時，分成u＝c或u＝−c。",ctx=>{const mode=pick(ctx.modes),a=A.pos(mode,ctx.level,8),h=A.signed(mode,ctx.level,10),c=A.pos(mode,ctx.level,12),x1=sub(h,div(c,a)),x2=add(h,div(c,a));return{expr:`解方程式 |${A.term(a,"x",mode,ctx)} ${A.plus(A.neg(mul(a,h)),mode,ctx)}|＝${A.show(c,mode,false,ctx)}。`,answer:`x＝${A.show(x1,mode,true,ctx)} 或 ${A.show(x2,mode,true,ctx)}`,sig:`eq:${A.plain(a)}:${A.plain(h)}:${A.plain(c)}`,verify:()=>[x1,x2].every(x=>eq(A.abs(sub(mul(a,x),mul(a,h))),c))}});
- const inequality=unit("inequality","絕對值不等式","|x−h|＜r表示在中心h兩側距離小於r。",ctx=>{const mode=pick(ctx.modes),h=A.signed(mode,ctx.level,10),r=A.pos(mode,ctx.level,12),inside=Math.random()<.5,closed=Math.random()<.5,op=inside?(closed?"≤":"＜"):(closed?"≥":"＞"),l=sub(h,r),u=add(h,r),ans=inside?A.interval(l,u,closed,closed,mode,ctx):[A.interval(-Infinity,l,false,closed,mode,ctx),A.interval(u,Infinity,closed,false,mode,ctx)].join("∪");return{expr:`解不等式 |x ${A.plus(A.neg(h),mode,ctx)}| ${op} ${A.show(r,mode,false,ctx)}。`,answer:ans,sig:`in:${A.plain(h)}:${A.plain(r)}:${op}`,verify:()=>eq(div(add(l,u),A.T),h)&&eq(div(sub(u,l),A.T),r)}});
- const reverse=unit("reverse","由區間反求絕對值式","區間中心是兩端平均，半徑是區間長的一半。",ctx=>{const mode=pick(ctx.modes),h=A.signed(mode,ctx.level,10),r=A.pos(mode,ctx.level,12),l=sub(h,r),u=add(h,r);return{expr:`將區間 ${A.interval(l,u,false,false,mode,ctx)} 改寫成 |x−a|＜b，求（a，b）。`,answer:`（${A.show(h,mode,true,ctx)}，${A.show(r,mode,true,ctx)}）`,sig:`rv:${A.plain(h)}:${A.plain(r)}`,verify:()=>eq(add(l,u),mul(A.T,h))&&eq(sub(u,l),mul(A.T,r))}});
- const integerCount=unit("integers","區間內整數解計數","先求左右邊界，再依端點是否包含逐一計數。",ctx=>{const mode=pick(ctx.modes),h=A.signed(mode,ctx.level,20),r=A.pos(mode,ctx.level,15),closed=Math.random()<.5,l=A.num(sub(h,r)),u=A.num(add(h,r)),first=closed?Math.ceil(l):Math.floor(l)+1,last=closed?Math.floor(u):Math.ceil(u)-1,count=Math.max(0,last-first+1),op=closed?"≤":"＜";return{expr:`不等式 |x ${A.plus(A.neg(h),mode,ctx)}| ${op} ${A.show(r,mode,false,ctx)} 有幾個整數解？`,answer:`${count} 個`,sig:`ic:${A.plain(h)}:${A.plain(r)}:${closed}`,verify:()=>count===Math.max(0,last-first+1)}});
- const distance=unit("distance","雙絕對值距離與極值","|x−a|＋|x−b|是x到a、b兩點距離和。",ctx=>{const mode=pick(ctx.modes),a=A.signed(mode,ctx.level,15),b=A.signed(mode,ctx.level,15);if(eq(a,b))return null;const lo=A.num(a)<A.num(b)?a:b,hi=A.num(a)<A.num(b)?b:a,min=sub(hi,lo);return{expr:`求 |x ${A.plus(A.neg(a),mode,ctx)}|＋|x ${A.plus(A.neg(b),mode,ctx)}| 的最小值及達成範圍。`,answer:`最小值 ${A.show(min,mode,true,ctx)}；${A.interval(lo,hi,true,true,mode,ctx)}`,sig:`ds:${A.plain(lo)}:${A.plain(hi)}`,verify:()=>eq(min,A.abs(sub(a,b)))}});
- const error=unit("error","測量誤差與百分比","相對誤差＝絕對誤差／真值，再乘100%。",ctx=>{const mode=pick(ctx.modes),truth=A.pos(mode,ctx.level,100),err=mode==="integer"?R(rand(1,10)):A.pos(mode,ctx.level,5);if(A.num(err)>=A.num(truth))return null;const measured=Math.random()<.5?add(truth,err):sub(truth,err),pct=mul(div(err,truth),R(100));return{expr:`真值為 ${A.show(truth,mode,false,ctx)}，測得 ${A.show(measured,mode,false,ctx)}，求絕對誤差與相對誤差百分比。`,answer:`絕對誤差 ${A.show(err,mode,true,ctx)}；相對誤差 ${A.show(pct,mode,true,ctx)}%`,sig:`er:${A.plain(truth)}:${A.plain(measured)}`,verify:()=>eq(A.abs(sub(measured,truth)),err)&&eq(pct,mul(div(err,truth),R(100)))}});
- return{title:"絕對值與區間",symbol:"|x|",subtitle:"絕對值方程・不等式・區間互換・整數解・距離極值・測量誤差",instruction:"解下列各題；區間端點是否包含，必須和不等號種類一致。",modes:M,mixed:true,levels:{basic:"基礎：單一絕對值方程與整數區間。",advanced:"進階：分數／小數係數、區間互換與整數解。",challenge:"挑戰：外側區間、雙絕對值距離與誤差百分比。"},units:[equation,inequality,reverse,integerCount,distance,error],presets:{basic:{equation:4,inequality:3,reverse:2,integers:1},advanced:{equation:2,inequality:3,reverse:2,integers:2,distance:1},challenge:{inequality:2,integers:2,distance:3,error:3}}};
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0,chance=p=>Math.random()<p,half=x=>div(x,A.T);
+ const absLin=(a,h,mode,ctx)=>`|${A.term(a,"x",mode,ctx)} ${A.plus(A.neg(mul(a,h)),mode,ctx)}|`; // |ax−ah|，中心 h
+ const absX=(h,mode,ctx)=>`|x ${A.plus(A.neg(h),mode,ctx)}|`;
+ const equation=unit("equation","絕對值方程式","|u|＝c：c＞0 分成 u＝c 或 u＝−c；c＝0 只有一解；c＜0 無解。右式含 x 時，解出後要代回檢查右式是否≥0。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),h=A.signed(mode,ctx.level,10),c=A.pos(mode,ctx.level,12);
+  const kind=L===0?(chance(.7)?"basic":"unit"):L===1?pick(["basic","zero","none","two"]):pick(["two","rhs","rhs","none"]);
+  if(kind==="basic"||kind==="unit"){const a=kind==="unit"?A.O:A.pos(mode,ctx.level,8),x1=sub(h,div(c,a)),x2=add(h,div(c,a));return{expr:`解方程式 ${absLin(a,h,mode,ctx)}＝${A.show(c,mode,false,ctx)}。`,answer:`x＝${A.show(x1,mode,true,ctx)} 或 ${A.show(x2,mode,true,ctx)}`,sig:`eq:${A.plain(a)}:${A.plain(h)}:${A.plain(c)}`,verify:()=>[x1,x2].every(x=>eq(A.abs(sub(mul(a,x),mul(a,h))),c))}}
+  if(kind==="zero"){const a=A.pos(mode,ctx.level,8);return{expr:`解方程式 ${absLin(a,h,mode,ctx)}＝0。`,answer:`x＝${A.show(h,mode,true,ctx)}（只有一解）`,sig:`eq0:${A.plain(a)}:${A.plain(h)}`,verify:()=>eq(mul(a,h),mul(a,h))&&A.num(A.abs(sub(mul(a,h),mul(a,h))))===0}}
+  if(kind==="none"){const a=A.pos(mode,ctx.level,8);return{expr:`解方程式 ${absLin(a,h,mode,ctx)}＝${A.show(A.neg(c),mode,false,ctx)}。`,answer:"無解（絕對值不可能是負數）",sig:`eqn:${A.plain(a)}:${A.plain(h)}:${A.plain(c)}`,verify:()=>A.num(c)>0}}
+  if(kind==="two"){let b=A.signed(mode,ctx.level,10);if(eq(b,h))b=add(h,A.T);const m=half(add(h,b));return{expr:`解方程式 ${absX(h,mode,ctx)}＝${absX(b,mode,ctx)}。`,answer:`x＝${A.show(m,mode,true,ctx)}（到 ${A.show(h,mode,true,ctx)} 與 ${A.show(b,mode,true,ctx)} 等距離的點）`,sig:`eq2:${A.plain(h)}:${A.plain(b)}`,verify:()=>eq(A.abs(sub(m,h)),A.abs(sub(m,b)))}}
+  // rhs：|x−h|＝kx＋d，先決定兩個候選解再反推 k、d，並要求至少一個候選要被捨去或兩個都成立，兩種情況都出
+  const keep=chance(.5);let k,x1,d,x2,rhs2,valid2,found=false; // keep=true：兩解都合；false：一解要捨
+  for(let t=0;t<40&&!found;t++){k=R(pick([2,3]));x1=add(h,A.pos(mode,ctx.level,6));d=sub(sub(x1,h),mul(k,x1));x2=div(sub(h,d),add(k,A.O));rhs2=add(mul(k,x2),d);valid2=A.num(rhs2)>=0&&A.num(x2)<=A.num(h);found=keep===valid2&&!eq(x1,x2)}
+  if(!found)return null;
+  const sols=valid2?[x2,x1].sort((p,q)=>A.num(p)-A.num(q)):[x1];
+  return{expr:`解方程式 ${absX(h,mode,ctx)}＝${A.term(k,"x",mode,ctx)} ${A.plus(d,mode,ctx)}。`,answer:sols.length===2?`x＝${A.show(sols[0],mode,true,ctx)} 或 ${A.show(sols[1],mode,true,ctx)}`:`x＝${A.show(x1,mode,true,ctx)}（另一候選 ${A.show(x2,mode,true,ctx)} 代入右式為負，捨去）`,sig:`eqr:${A.plain(h)}:${A.plain(k)}:${A.plain(d)}`,verify:()=>sols.every(x=>{const r=add(mul(k,x),d);return A.num(r)>=0&&eq(A.abs(sub(x,h)),r)})&&(valid2||A.num(rhs2)<0)}});
+ const inequality=unit("inequality","絕對值不等式","|u|＜r 是內側區間，|u|＞r 是外側兩段；u 含係數時先解出 u 的範圍，再除以係數。r≤0 要單獨判斷。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),h=A.signed(mode,ctx.level,10),r=A.pos(mode,ctx.level,12);
+  const kind=L===0?"plain":L===1?pick(["plain","coef","coef","edge"]):pick(["coef","edge","band","band"]);
+  const inside=chance(.5),closed=chance(.5),op=inside?(closed?"≤":"＜"):(closed?"≥":"＞");
+  if(kind==="plain"||kind==="coef"){const a=kind==="coef"?R(pick([2,3,4,5])):A.O,l=sub(h,div(r,a)),u=add(h,div(r,a)),ans=inside?A.interval(l,u,closed,closed,mode,ctx):[A.interval(-Infinity,l,false,closed),A.interval(u,Infinity,closed,false)].join("∪");
+   return{expr:`解不等式 ${absLin(a,h,mode,ctx)} ${op} ${A.show(r,mode,false,ctx)}。`,answer:ans,sig:`in:${A.plain(a)}:${A.plain(h)}:${A.plain(r)}:${op}`,verify:()=>{const mid=half(add(l,u)),half_=half(sub(u,l));return eq(mid,h)&&eq(mul(half_,a),r)}}}
+  if(kind==="edge"){const z=pick([0,1,2,3]);const expr=z===0?`${absX(h,mode,ctx)} ＜ 0`:z===1?`${absX(h,mode,ctx)} ≤ 0`:z===2?`${absX(h,mode,ctx)} ≥ 0`:`${absX(h,mode,ctx)} ＞ ${A.show(A.neg(r),mode,false,ctx)}`;
+   const ans=z===0?"無解":z===1?`x＝${A.show(h,mode,true,ctx)}`:"所有實數";
+   return{expr:`解不等式 ${expr}。`,answer:ans,sig:`ine:${z}:${A.plain(h)}:${A.plain(r)}`,verify:()=>z!==3||A.num(r)>0}}
+  // band：a ＜ |x−h| ＜ b（含等號變化），解為兩段
+  let s=A.pos(mode,ctx.level,6);if(A.num(s)>=A.num(r))s=sub(r,A.O);if(A.num(s)<=0)return null;
+  const lc=chance(.5),rc=chance(.5),o1=lc?"≤":"＜",o2=rc?"≤":"＜";
+  const seg1=A.interval(sub(h,r),sub(h,s),rc,lc,mode,ctx),seg2=A.interval(add(h,s),add(h,r),lc,rc,mode,ctx);
+  return{expr:`解不等式 ${A.show(s,mode,false,ctx)} ${o1} ${absX(h,mode,ctx)} ${o2} ${A.show(r,mode,false,ctx)}。`,answer:`${seg1}∪${seg2}`,sig:`inb:${A.plain(h)}:${A.plain(s)}:${A.plain(r)}:${o1}${o2}`,verify:()=>A.num(s)<A.num(r)&&eq(sub(add(h,r),add(h,s)),sub(r,s))}});
+ const reverse=unit("reverse","由區間反求絕對值式","區間中心 a 是兩端平均，半徑 b 是區間長的一半；外側兩段對應 |x−a|＞b；含係數時整條不等式先乘上係數。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),h=A.signed(mode,ctx.level,10),r=A.pos(mode,ctx.level,12),l=sub(h,r),u=add(h,r);
+  const kind=L===0?"open":L===1?pick(["open","closed","outside"]):pick(["outside","coef","words"]);
+  if(kind==="open"||kind==="closed"){const c=kind==="closed";return{expr:`將區間 ${A.interval(l,u,c,c,mode,ctx)} 改寫成 |x−a| ${c?"≤":"＜"} b，求（a，b）。`,answer:`（${A.show(h,mode,true,ctx)}，${A.show(r,mode,true,ctx)}）`,sig:`rv:${c}:${A.plain(h)}:${A.plain(r)}`,verify:()=>eq(add(l,u),mul(A.T,h))&&eq(sub(u,l),mul(A.T,r))}}
+  if(kind==="outside"){const c=chance(.5);return{expr:`將「x ${c?"≤":"＜"} ${A.show(l,mode,false,ctx)} 或 x ${c?"≥":"＞"} ${A.show(u,mode,false,ctx)}」改寫成 |x−a| ${c?"≥":"＞"} b，求（a，b）。`,answer:`（${A.show(h,mode,true,ctx)}，${A.show(r,mode,true,ctx)}）`,sig:`rvo:${c}:${A.plain(h)}:${A.plain(r)}`,verify:()=>eq(add(l,u),mul(A.T,h))&&eq(sub(u,l),mul(A.T,r))}}
+  if(kind==="coef"){const k=R(pick([2,3,4])),a=mul(k,h),b=mul(k,r);return{expr:`將區間 ${A.interval(l,u,false,false,mode,ctx)} 改寫成 |${A.show(k,mode,false,ctx)}x−a| ＜ b，求（a，b）。`,answer:`（${A.show(a,mode,true,ctx)}，${A.show(b,mode,true,ctx)}）`,sig:`rvc:${A.plain(k)}:${A.plain(h)}:${A.plain(r)}`,verify:()=>eq(div(a,k),h)&&eq(div(b,k),r)&&eq(sub(u,l),mul(A.T,r))}}
+  const far=chance(.5);return{expr:`「數線上與 ${A.show(h,mode,false,ctx)} 的距離${far?"大於":"小於"} ${A.show(r,mode,false,ctx)} 的點 x」，用絕對值不等式表示，並寫出 x 的範圍。`,answer:far?`${absX(h,mode,ctx)}＞${A.show(r,mode,true,ctx)}；x＜${A.show(l,mode,true,ctx)} 或 x＞${A.show(u,mode,true,ctx)}`:`${absX(h,mode,ctx)}＜${A.show(r,mode,true,ctx)}；${A.interval(l,u,false,false,mode,ctx)}`,sig:`rvw:${far}:${A.plain(h)}:${A.plain(r)}`,verify:()=>eq(sub(u,l),mul(A.T,r))&&eq(add(l,u),mul(A.T,h))}});
+ const integerCount=unit("integers","區間內整數解計數","先求左右邊界，再依端點是否包含逐一計數；≥ 型的外側區間有無限多個整數解。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),h=A.signed(mode,ctx.level,20),r=A.pos(mode,ctx.level,15),closed=chance(.5),op=closed?"≤":"＜";
+  const kind=L===0?"plain":L===1?pick(["plain","coef","coef"]):pick(["coef","outside","band"]);
+  const countIn=(lo,hi,lc,rc)=>{const first=lc?Math.ceil(lo):Math.floor(lo)+1,last=rc?Math.floor(hi):Math.ceil(hi)-1;return Math.max(0,last-first+1)};
+  const brute=(lo,hi,lc,rc)=>{let n=0;for(let x=Math.floor(lo)-1;x<=Math.ceil(hi)+1;x++)if((lc?x>=lo:x>lo)&&(rc?x<=hi:x<hi))n++;return n};
+  if(kind==="plain"||kind==="coef"){const a=kind==="coef"?R(pick([2,3,4])):A.O,lo=A.num(sub(h,div(r,a))),hi=A.num(add(h,div(r,a))),count=countIn(lo,hi,closed,closed);
+   return{expr:`不等式 ${absLin(a,h,mode,ctx)} ${op} ${A.show(r,mode,false,ctx)} 有幾個整數解？`,answer:`${count} 個`,sig:`ic:${A.plain(a)}:${A.plain(h)}:${A.plain(r)}:${closed}`,verify:()=>count===brute(lo,hi,closed,closed)}}
+  if(kind==="outside")return{expr:`不等式 ${absX(h,mode,ctx)} ${closed?"≥":"＞"} ${A.show(r,mode,false,ctx)} 有幾個整數解？`,answer:"無限多個（外側區間往兩邊無限延伸）",sig:`ico:${A.plain(h)}:${A.plain(r)}:${closed}`,verify:()=>A.num(r)>0};
+  let s=A.pos(mode,ctx.level,6);if(A.num(s)>=A.num(r))s=sub(r,A.O);if(A.num(s)<=0)return null;
+  const lc=chance(.5),rc=chance(.5),o1=lc?"≤":"＜",o2=rc?"≤":"＜",H=A.num(h),S=A.num(s),Rr=A.num(r);
+  const count=countIn(H-Rr,H-S,rc,lc)+countIn(H+S,H+Rr,lc,rc);
+  return{expr:`不等式 ${A.show(s,mode,false,ctx)} ${o1} ${absX(h,mode,ctx)} ${o2} ${A.show(r,mode,false,ctx)} 有幾個整數解？`,answer:`${count} 個`,sig:`icb:${A.plain(h)}:${A.plain(s)}:${A.plain(r)}:${o1}${o2}`,verify:()=>count===brute(H-Rr,H-S,rc,lc)+brute(H+S,H+Rr,lc,rc)}});
+ const distance=unit("distance","雙絕對值距離與極值","|x−a|＋|x−b| 是 x 到 a、b 的距離和，最小值 |a−b|；|x−a|−|x−b| 的值介於 −|a−b| 與 |a−b| 之間。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),a=A.signed(mode,ctx.level,15),b=A.signed(mode,ctx.level,15);if(eq(a,b))return null;
+  const lo=A.num(a)<A.num(b)?a:b,hi=A.num(a)<A.num(b)?b:a,gap=sub(hi,lo);
+  const kind=L===0?"min":L===1?pick(["min","range"]):pick(["range","solve","solve"]);
+  if(kind==="min")return{expr:`求 ${absX(a,mode,ctx)}＋${absX(b,mode,ctx)} 的最小值及達成範圍。`,answer:`最小值 ${A.show(gap,mode,true,ctx)}；${A.interval(lo,hi,true,true,mode,ctx)}`,sig:`ds:${A.plain(lo)}:${A.plain(hi)}`,verify:()=>eq(gap,A.abs(sub(a,b)))};
+  if(kind==="range")return{expr:`求 ${absX(a,mode,ctx)}−${absX(b,mode,ctx)} 的最大值與最小值。`,answer:`最大值 ${A.show(gap,mode,true,ctx)}（x≥${A.show(hi,mode,true,ctx)} 時），最小值 ${A.show(A.neg(gap),mode,true,ctx)}（x≤${A.show(lo,mode,true,ctx)} 時）`,sig:`dr:${A.plain(a)}:${A.plain(b)}`,verify:()=>{const f=x=>A.num(A.abs(sub(x,a)))-A.num(A.abs(sub(x,b)));return Math.abs(f(add(hi,A.O)))===A.num(gap)&&Math.abs(f(sub(lo,A.O)))===A.num(gap)}};
+  const extra=A.pos(mode,ctx.level,8),k=add(gap,mul(A.T,extra)),L1=sub(lo,extra),U1=add(hi,extra),closed=chance(.5);
+  return{expr:`解不等式 ${absX(a,mode,ctx)}＋${absX(b,mode,ctx)} ${closed?"≤":"＜"} ${A.show(k,mode,false,ctx)}。`,answer:A.interval(L1,U1,closed,closed,mode,ctx),sig:`dsv:${A.plain(lo)}:${A.plain(hi)}:${A.plain(k)}:${closed}`,verify:()=>{const f=x=>add(A.abs(sub(x,a)),A.abs(sub(x,b)));return eq(f(L1),k)&&eq(f(U1),k)&&A.num(k)>A.num(gap)}}});
+ const error=unit("error","測量誤差與百分比","相對誤差＝絕對誤差／真值，再乘 100%；由相對誤差反求時先把百分比化成小數。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),truth=A.pos(mode,ctx.level,100),err=mode==="integer"?R(rand(1,10)):A.pos(mode,ctx.level,5);if(A.num(err)>=A.num(truth))return null;
+  const measured=chance(.5)?add(truth,err):sub(truth,err),pct=mul(div(err,truth),R(100));
+  const kind=L===0?pick(["fwd","pct","back"]):L===1?pick(["fwd","range","pct","back"]):pick(["range","back","pct"]);
+  if(kind==="pct"){const p=R(pick([1,2,4,5,10,20,25])),ab=mul(truth,div(p,R(100)));if(!eq(ab,R(Math.round(A.num(ab)))))return null;return{expr:`真值為 ${A.show(truth,mode,false,ctx)}，某次測量的相對誤差為 ${A.show(p,mode,false,ctx)}%，求絕對誤差，並寫出兩個可能的測量值。`,answer:`絕對誤差 ${A.show(ab,mode,true,ctx)}；測量值 ${A.show(sub(truth,ab),mode,true,ctx)} 或 ${A.show(add(truth,ab),mode,true,ctx)}`,sig:`erp:${A.plain(truth)}:${A.plain(p)}`,verify:()=>eq(mul(div(ab,truth),R(100)),p)}}
+  if(kind==="fwd")return{expr:`真值為 ${A.show(truth,mode,false,ctx)}，測得 ${A.show(measured,mode,false,ctx)}，求絕對誤差與相對誤差百分比。`,answer:`絕對誤差 ${A.show(err,mode,true,ctx)}；相對誤差 ${A.show(pct,mode,true,ctx)}%`,sig:`er:${A.plain(truth)}:${A.plain(measured)}`,verify:()=>eq(A.abs(sub(measured,truth)),err)&&eq(pct,mul(div(err,truth),R(100)))};
+  if(kind==="range"){const p=R(pick([1,2,5,10])),tol=mul(truth,div(p,R(100)));return{expr:`真值為 ${A.show(truth,mode,false,ctx)}，要求相對誤差不超過 ${A.show(p,mode,false,ctx)}%，測量值 m 的範圍為何？（用絕對值不等式表示並解出）`,answer:`|m−${A.show(truth,mode,true,ctx)}|≤${A.show(tol,mode,true,ctx)}；${A.interval(sub(truth,tol),add(truth,tol),true,true,mode,ctx)}`,sig:`erg:${A.plain(truth)}:${A.plain(p)}`,verify:()=>eq(mul(div(tol,truth),R(100)),p)}}
+  if(A.num(measured)<=A.num(err))return null;return{expr:`測得 ${A.show(measured,mode,false,ctx)}，已知絕對誤差為 ${A.show(err,mode,true,ctx)}，真值可能是多少？（寫出所有可能）`,answer:`${A.show(sub(measured,err),mode,true,ctx)} 或 ${A.show(add(measured,err),mode,true,ctx)}`,sig:`erb:${A.plain(measured)}:${A.plain(err)}`,verify:()=>[sub(measured,err),add(measured,err)].some(t=>eq(t,truth))}});
+ return{title:"絕對值與區間",symbol:"|x|",subtitle:"絕對值方程・不等式・區間互換・整數解・距離極值・測量誤差",instruction:"解下列各題；區間端點是否包含，必須和不等號種類一致；若無解或恆成立，請寫明理由。",modes:M,mixed:true,levels:{basic:"基礎：單一絕對值方程與 |x−h| 型不等式、開區間反求。",advanced:"進階：含係數、閉區間與外側、c＝0 與無解的邊界、|x−a|＝|x−b|、距離差的範圍。",challenge:"挑戰：右式含 x 需檢驗、a＜|x−h|＜b 複合區間、由文字敘述反求、距離和的不等式與誤差反求。"},units:[equation,inequality,reverse,integerCount,distance,error],presets:{basic:{equation:4,inequality:3,reverse:2,integers:1},advanced:{equation:3,inequality:3,reverse:2,integers:2,distance:2},challenge:{equation:2,inequality:2,reverse:2,integers:2,distance:2,error:2}}};
 }
-
 function amgmConfig(){
  /* 本主題難度：基礎＝小正整數與直接套用；進階＝分數／小數、加權限制與倒數型；挑戰＝平方和界限、多條件與幾何應用。 */
  const modes=["integer","fraction","decimal"],vars=[["x","y"],["a","b"],["u","v"],["m","n"]];let allowMixed=true;
@@ -379,16 +438,97 @@ function exponentConfig(){
 }
 
 function inequalitiesConfig(){
- /* 難度：基礎＝一次與可分解二次不等式；進階＝分數／小數邊界及恆正條件；挑戰＝高次與分式號線。 */
- const A=algHelpers(),M=["integer","fraction","decimal"],unit=(id,name,tip,gen)=>({id,name,tip,modes:M,gen}),join=(parts)=>parts.join("∪");
- const linear=unit("linear","一次不等式","移項後除以負數時，不等號方向必須反轉。",ctx=>{const mode=pick(ctx.modes),a=A.signed(mode,ctx.level,8),bound=A.signed(mode,ctx.level,10),b=A.signed(mode,ctx.level,8),rhs=add(mul(a,bound),b),op=pick(["＞","≥","＜","≤"]),out=a.n>0?op:{"＞":"＜","≥":"≤","＜":"＞","≤":"≥"}[op];return{expr:`解不等式 ${A.term(a,"x",mode,ctx)} ${A.plus(b,mode,ctx)} ${op} ${A.show(rhs,mode,false,ctx)}。`,answer:`x ${out} ${A.show(bound,mode,true,ctx)}`,sig:`li:${A.plain(a)}:${A.plain(b)}:${A.plain(bound)}:${op}`,verify:()=>eq(add(mul(a,bound),b),rhs)&&a.n!==0}});
- const quadratic=unit("quadratic","二次不等式","先找零點，再依開口方向判斷各區間正負。",ctx=>{const mode=pick(ctx.modes);let r1=A.signed(mode,ctx.level,10),r2=A.signed(mode,ctx.level,10);if(A.num(r1)>A.num(r2))[r1,r2]=[r2,r1];if(eq(r1,r2))return null;const outside=Math.random()<.5,closed=Math.random()<.5,op=outside?(closed?"≥":"＞"):(closed?"≤":"＜"),ans=outside?join([A.interval(-Infinity,r1,false,closed,mode,ctx),A.interval(r2,Infinity,closed,false,mode,ctx)]):A.interval(r1,r2,closed,closed,mode,ctx),p=A.pmul([A.neg(r1),A.O],[A.neg(r2),A.O]);return{expr:`解不等式 ${A.poly(p,mode,ctx)} ${op} 0。`,answer:ans,sig:`qu:${A.plain(r1)}:${A.plain(r2)}:${op}`,verify:()=>A.peval(p,div(add(r1,r2),A.T)).n<0&&eq(A.peval(p,r1),A.Z)&&eq(A.peval(p,r2),A.Z)}});
- const always=unit("always","恆正與恆負條件","二次式恆正需開口向上且Δ＜0；恆負則相反。",ctx=>{const m=rand(1,200),c=R(m*m),bound=R(2*m);return{expr:`求實數 k 的範圍，使 x<sup>2</sup>＋kx＋${m*m} 對所有實數 x 恆正。`,answer:`${A.int(-2*m)}＜k＜${A.int(2*m)}`,sig:`al:${m}`,verify:()=>eq(mul(bound,bound),mul(R(4),c))}});
- const higher=unit("higher","高次多項式不等式","先標出各零點，跨過奇重根時正負改變。",ctx=>{const mode=pick(ctx.modes),rs=[A.signed(mode,ctx.level,12),A.signed(mode,ctx.level,12),A.signed(mode,ctx.level,12)].sort((x,y)=>A.num(x)-A.num(y));if(eq(rs[0],rs[1])||eq(rs[1],rs[2]))return null;const p=rs.reduce((q,r)=>A.pmul(q,[A.neg(r),A.O]),[A.O]),ans=join([A.interval(rs[0],rs[1],true,true,mode,ctx),A.interval(rs[2],Infinity,true,false,mode,ctx)]);return{expr:`解不等式 ${A.poly(p,mode,ctx)} ≥ 0。`,answer:ans,sig:`hi:${rs.map(A.plain)}`,verify:()=>rs.every(r=>eq(A.peval(p,r),A.Z))&&A.peval(p,add(rs[2],A.O)).n>0}});
- const rational=unit("rational","分式不等式","分子零點可取等號；分母零點永遠排除。",ctx=>{const mode=pick(ctx.modes),a=A.signed(mode,ctx.level,10),b=A.signed(mode,ctx.level,10);if(eq(a,b))return null;const lo=A.num(a)<A.num(b)?a:b,hi=A.num(a)<A.num(b)?b:a,positive=Math.random()<.5,op=positive?"＞":"＜",ans=positive?join([A.interval(-Infinity,lo,false,false,mode,ctx),A.interval(hi,Infinity,false,false,mode,ctx)]):A.interval(lo,hi,false,false,mode,ctx),value=x=>(x-A.num(a))/(x-A.num(b)),left=A.num(lo)-1,mid=(A.num(lo)+A.num(hi))/2,right=A.num(hi)+1;return{expr:`解不等式 ${fr(A.lin(a,mode,ctx),A.lin(b,mode,ctx))} ${op} 0。`,answer:`${ans}（x≠${A.show(b,mode,true,ctx)}）`,sig:`ra:${A.plain(a)}:${A.plain(b)}:${op}`,verify:()=>value(left)>0&&value(right)>0&&value(mid)<0&&!eq(a,b)}});
- return{title:"不等式",symbol:"≤",subtitle:"一次不等式・二次號線・恆正恆負・高次不等式・分式不等式",instruction:"解下列各題；畫號線時要把零點、分母禁值與端點是否包含標清楚。",modes:M,mixed:true,levels:{basic:"基礎：一次不等式與可直接分解的二次不等式。",advanced:"進階：分數／小數邊界與二次式恆正條件。",challenge:"挑戰：高次多項式與分式不等式號線。"},units:[linear,quadratic,always,higher,rational],presets:{basic:{linear:4,quadratic:4,always:2},advanced:{linear:2,quadratic:3,always:3,rational:2},challenge:{quadratic:2,always:2,higher:3,rational:3}}};
+ /* 2026-09-23 P4：五個單元三個難度各有不同結構。答案一律由「解集合」物件產生，verify 用數值取樣（端點、端點兩側、遠端）獨立比對不等式是否成立，不重複出題公式。 */
+ const A=algHelpers(),M=["integer","fraction","decimal"],unit=(id,name,tip,gen)=>({id,name,tip,modes:M,gen}),chance=p=>Math.random()<p,lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const OPS=["＞","≥","＜","≤"],holds=(v,op)=>op==="＞"?v>0:op==="≥"?v>=0:op==="＜"?v<0:v<=0,flip={"＞":"＜","≥":"≤","＜":"＞","≤":"≥"};
+ const NEGINF=-Infinity,POSINF=Infinity,nv=x=>x===NEGINF||x===POSINF?x:A.num(x);
+ // 解集合：陣列 of {l,u,lc,rc}；空陣列＝無解；全實數用 {l:-∞,u:∞}
+ const inSet=(S,x)=>S.some(({l,u,lc,rc})=>(lc?x>=nv(l):x>nv(l))&&(rc?x<=nv(u):x<nv(u)));
+ const showSet=(S,mode,ctx)=>S.length===0?"無解":S.length===1&&S[0].l===NEGINF&&S[0].u===POSINF?"所有實數":S.length===1&&S[0].lc&&S[0].rc&&eq(S[0].l,S[0].u)?`x＝${A.show(S[0].l,mode,true,ctx)}`:S.map(({l,u,lc,rc})=>A.interval(l,u,lc,rc,mode,ctx)).join("∪");
+ // 取樣點：每個有限端點、端點±½、最左−3、最右+3
+ const probes=S=>{const pts=new Set([-1000,1000]);S.forEach(({l,u})=>[l,u].forEach(e=>{if(e!==NEGINF&&e!==POSINF){const v=nv(e);[v,v-.5,v+.5,v-3,v+3].forEach(t=>pts.add(t))}}));return[...pts]};
+ const sampleCheck=(f,op,S,extra=[])=>probes(S).concat(extra).every(x=>{const v=f(x);if(v===null)return true;return holds(v,op)===inSet(S,x)});
+ const num=(p,x)=>p.reduceRight((s,c)=>s*x+A.num(c),0);
+ const fromRoots=(rs,lead=A.O)=>rs.reduce((q,r)=>A.pmul(q,[A.neg(r),A.O]),[lead]);
+ // 由零點與各區間正負建立解集合
+ const setFromSigns=(rs,f,op)=>{const pts=[...rs].map(nv).sort((a,b)=>a-b),S=[];let cur=null;const edges=[NEGINF,...pts,POSINF];
+  for(let i=0;i<edges.length-1;i++){const a=edges[i],b=edges[i+1],mid=a===NEGINF?b-1:b===POSINF?a+1:(a+b)/2,inside=holds(f(mid),op);
+   const lc=a!==NEGINF&&holds(f(a),op),rc=b!==POSINF&&holds(f(b),op);
+   if(inside){if(cur&&cur.u===a&&(cur.rc||lc)){cur.u=b;cur.rc=rc}else{cur={l:a,u:b,lc,rc};S.push(cur)}}
+   else if(a!==NEGINF&&holds(f(a),op)&&!(cur&&cur.u===a&&cur.rc)){S.push({l:a,u:a,lc:true,rc:true});cur=null}else cur=null}
+  return S.map(s=>({l:s.l===NEGINF?NEGINF:rs.find(r=>nv(r)===s.l)??R(s.l),u:s.u===POSINF?POSINF:rs.find(r=>nv(r)===s.u)??R(s.u),lc:s.lc,rc:s.rc}))};
+ const linear=unit("linear","一次不等式","移項後除以負數時，不等號方向必須反轉；兩邊都有 x 時先把 x 集中到一邊。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),kind=L===0?"plain":L===1?pick(["plain","both","double"]):pick(["both","double","system","count"]);
+  const op=pick(OPS),bound=A.signed(mode,ctx.level,10);
+  if(kind==="plain"){const a=A.signed(mode,ctx.level,8),b=A.signed(mode,ctx.level,8),rhs=add(mul(a,bound),b),out=a.n>0?op:flip[op],S=setFromSigns([bound],x=>a.n*x+A.num(b)-A.num(rhs),op);
+   return{expr:`解不等式 ${A.term(a,"x",mode,ctx)} ${A.plus(b,mode,ctx)} ${op} ${A.show(rhs,mode,false,ctx)}。`,answer:`x ${out} ${A.show(bound,mode,true,ctx)}`,sig:`li:${A.plain(a)}:${A.plain(b)}:${A.plain(bound)}:${op}`,verify:()=>sampleCheck(x=>a.n*x+A.num(b)-A.num(rhs),op,S)&&inSet(S,nv(bound)+(out==="＞"||out==="≥"?1:-1))}}
+  if(kind==="both"){let a=A.signed(mode,ctx.level,8),c=A.signed(mode,ctx.level,8);if(eq(a,c))c=add(c,A.O);const b=A.signed(mode,ctx.level,9),d=sub(add(b,mul(sub(a,c),bound)),A.Z);// a·x+b op c·x+d，解 x=bound：d=b+(a−c)·bound
+   const dd=add(b,mul(sub(a,c),bound)),f=x=>(a.n-c.n)*x+A.num(b)-A.num(dd),S=setFromSigns([bound],f,op),out=(a.n-c.n)>0?op:flip[op];
+   return{expr:`解不等式 ${A.term(a,"x",mode,ctx)} ${A.plus(b,mode,ctx)} ${op} ${A.term(c,"x",mode,ctx)} ${A.plus(dd,mode,ctx)}。`,answer:`x ${out} ${A.show(bound,mode,true,ctx)}`,sig:`lb:${A.plain(a)}:${A.plain(b)}:${A.plain(c)}:${A.plain(bound)}:${op}`,verify:()=>sampleCheck(f,op,S)}}
+  if(kind==="double"){const a=R(pick([2,3,4,-2,-3])),b=A.signed(mode,ctx.level,8),lo=bound,hi=add(bound,R(rand(1,6))),v1=add(mul(a,lo),b),v2=add(mul(a,hi),b),lc=chance(.5),rc=chance(.5),left=a.n>0?v1:v2,right=a.n>0?v2:v1,o1=lc?"≤":"＜",o2=rc?"≤":"＜";
+   const S=[{l:lo,u:hi,lc:a.n>0?lc:rc,rc:a.n>0?rc:lc}];
+   return{expr:`解不等式 ${A.show(left,mode,false,ctx)} ${o1} ${A.term(a,"x",mode,ctx)} ${A.plus(b,mode,ctx)} ${o2} ${A.show(right,mode,false,ctx)}。`,answer:showSet(S,mode,ctx),sig:`ld:${A.plain(a)}:${A.plain(b)}:${A.plain(lo)}:${A.plain(hi)}:${o1}${o2}`,verify:()=>probes(S).every(x=>{const t=a.n*x+A.num(b);const ok=(lc?t>=A.num(left):t>A.num(left))&&(rc?t<=A.num(right):t<A.num(right));return ok===inSet(S,x)})}}
+  if(kind==="system"){const p=A.signed(mode,ctx.level,10),q=A.signed(mode,ctx.level,10),a1=R(pick([1,2,3])),a2=R(pick([1,2,3])),b1=A.signed(mode,ctx.level,6),b2=A.signed(mode,ctx.level,6),o1=pick(OPS),o2=pick(OPS);
+   const f1=x=>a1.n*x+A.num(b1)-A.num(add(mul(a1,p),b1)),f2=x=>a2.n*x+A.num(b2)-A.num(add(mul(a2,q),b2));
+   const S1=setFromSigns([p],f1,o1),S2=setFromSigns([q],f2,o2);
+   // 交集
+   const S=[];S1.forEach(i1=>S2.forEach(i2=>{const l=nv(i1.l)>nv(i2.l)?i1:i2,u=nv(i1.u)<nv(i2.u)?i1:i2,lc=nv(i1.l)===nv(i2.l)?i1.lc&&i2.lc:l.lc,rc=nv(i1.u)===nv(i2.u)?i1.rc&&i2.rc:u.rc;if(nv(l.l)<nv(u.u)||(nv(l.l)===nv(u.u)&&lc&&rc))S.push({l:l.l,u:u.u,lc,rc})}));
+   return{expr:`解不等式組 ${A.term(a1,"x",mode,ctx)} ${A.plus(b1,mode,ctx)} ${o1} ${A.show(add(mul(a1,p),b1),mode,false,ctx)} 且 ${A.term(a2,"x",mode,ctx)} ${A.plus(b2,mode,ctx)} ${o2} ${A.show(add(mul(a2,q),b2),mode,false,ctx)}。`,answer:showSet(S,mode,ctx),sig:`ls:${A.plain(p)}:${A.plain(q)}:${o1}${o2}:${A.plain(a1)}:${A.plain(a2)}`,verify:()=>probes(S.length?S:S1.concat(S2)).every(x=>(holds(f1(x),o1)&&holds(f2(x),o2))===inSet(S,x))}}
+  // count：ax+b op c 的整數解個數（在給定範圍內）或最大／最小整數解
+  const a=R(pick([2,3,4,5])),b=A.signed(mode,ctx.level,9),rhs=A.signed(mode,ctx.level,30),f=x=>a.n*x+A.num(b)-A.num(rhs),root=div(sub(rhs,b),a),S=setFromSigns([root],f,op),wantMax=op==="＜"||op==="≤";
+  let best=null;for(let x=Math.floor(nv(root))-2;x<=Math.ceil(nv(root))+2;x++)if(inSet(S,x)){if(best===null||(wantMax?x>best:x<best))best=x}
+  return{expr:`求不等式 ${A.term(a,"x",mode,ctx)} ${A.plus(b,mode,ctx)} ${op} ${A.show(rhs,mode,false,ctx)} 的${wantMax?"最大":"最小"}整數解。`,answer:`x＝${A.int(best)}`,sig:`lc:${A.plain(a)}:${A.plain(b)}:${A.plain(rhs)}:${op}`,verify:()=>best!==null&&holds(f(best),op)&&!holds(f(wantMax?best+1:best-1),op)}});
+ const quadratic=unit("quadratic","二次不等式","先找零點，再依開口方向判斷各區間正負；重根處不變號；判別式＜0 時整個式子同號。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),kind=L===0?"plain":L===1?pick(["plain","lead","double"]):pick(["lead","double","noroot","reverse"]);
+  const op=pick(OPS);let r1=A.signed(mode,ctx.level,10),r2=A.signed(mode,ctx.level,10);if(nv(r1)>nv(r2))[r1,r2]=[r2,r1];
+  if(kind==="plain"||kind==="lead"){if(eq(r1,r2))return null;const lead=kind==="lead"?R(pick([2,3,-1,-2])):A.O,p=fromRoots([r1,r2],lead),f=x=>num(p,x),S=setFromSigns([r1,r2],f,op);
+   return{expr:`解不等式 ${A.poly(p,mode,ctx)} ${op} 0。`,answer:showSet(S,mode,ctx),sig:`qu:${A.plain(lead)}:${A.plain(r1)}:${A.plain(r2)}:${op}`,verify:()=>sampleCheck(f,op,S)&&eq(A.peval(p,r1),A.Z)&&eq(A.peval(p,r2),A.Z)}}
+  if(kind==="double"){const lead=chance(.3)?R(-1):A.O,p=fromRoots([r1,r1],lead),f=x=>num(p,x),S=setFromSigns([r1],f,op);
+   return{expr:`解不等式 ${A.poly(p,mode,ctx)} ${op} 0。`,answer:showSet(S,mode,ctx),sig:`qd:${A.plain(lead)}:${A.plain(r1)}:${op}`,verify:()=>sampleCheck(f,op,S,[nv(r1)])}}
+  if(kind==="noroot"){const h=A.signed(mode,ctx.level,6),k=A.pos(mode,ctx.level,9),lead=chance(.4)?R(-1):A.O;// lead·((x−h)²+k)
+   const p=A.padd(A.pmul([lead],fromRoots([h,h])),[mul(lead,k)]),f=x=>num(p,x),S=setFromSigns([],f,op);
+   return{expr:`解不等式 ${A.poly(p,mode,ctx)} ${op} 0。`,answer:showSet(S,mode,ctx),sig:`qn:${A.plain(lead)}:${A.plain(h)}:${A.plain(k)}:${op}`,verify:()=>{const disc=A.num(p[1])**2-4*A.num(p[2])*A.num(p[0]);return disc<0&&sampleCheck(f,op,S,[nv(h)])}}}
+  // reverse：已知 x²+bx+c ＜ 0（或 ≤ 0）的解為 r1＜x＜r2，求 b、c
+  if(eq(r1,r2))return null;const closed=chance(.5),p=fromRoots([r1,r2]),b=p[1],c=p[0];
+  return{expr:`已知不等式 x<sup>2</sup>＋bx＋c ${closed?"≤":"＜"} 0 的解為 ${A.interval(r1,r2,closed,closed,mode,ctx)}，求 b、c。`,answer:`b＝${A.show(b,mode,true,ctx)}，c＝${A.show(c,mode,true,ctx)}`,sig:`qr:${A.plain(r1)}:${A.plain(r2)}:${closed}`,verify:()=>eq(add(r1,r2),A.neg(b))&&eq(mul(r1,r2),c)}});
+ const always=unit("always","恆正與恆負條件","先看平方項係數決定開口方向，再要求Δ＜0：恆正需開口向上，恆負需開口向下；方向不合時無論 k 取多少都不成立。k 同時出現在多個係數時，Δ 本身是 k 的二次式。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),kind=L===0?pick(["pos","neg","sign","sign"]):L===1?pick(["sign","sign","lead","leadneg"]):pick(["sign","both","noroot","lead","leadneg"]);
+  const m=rand(1,L===0?20:12);
+  if(kind==="pos"||kind==="neg"){const neg=kind==="neg";return{expr:`求實數 k 的範圍，使 ${neg?"−x<sup>2</sup>＋kx−":"x<sup>2</sup>＋kx＋"}${m*m} 對所有實數 x 恆${neg?"負":"正"}。`,answer:`${A.int(-2*m)}＜k＜${A.int(2*m)}`,sig:`al:${kind}:${m}`,verify:()=>{const f=(k,x)=>(neg?-1:1)*(x*x)+k*x+(neg?-1:1)*m*m;return [-2*m+.5,0,2*m-.5].every(k=>[-3*m,-m,0,m,3*m].every(x=>neg?f(k,x)<0:f(k,x)>0))&&[-2*m,2*m].every(k=>f(k,neg?k/2:-k/2)===0)}}}
+  if(kind==="sign"){// a x²＋kx＋c，a 可正可負，c＝a·m²；問恆正或恆負；方向不合時答「不存在」
+   const a=R(pick([1,2,3,-1,-2,-3])),c=mul(a,R(m*m)),wantPos=chance(.5),okDir=(a.n>0)===wantPos,bound=2*Math.abs(a.n)*m;
+   const f=(k,x)=>a.n*x*x+k*x+A.num(c),lead=a.d===1&&Math.abs(a.n)===1?(a.n<0?"−":""):A.show(a,mode,false,ctx);
+   return{expr:`求實數 k 的範圍，使 ${lead}x<sup>2</sup>＋kx ${A.plus(c,mode,ctx)} 對所有實數 x 恆${wantPos?"正":"負"}。`,answer:okDir?`${A.int(-bound)}＜k＜${A.int(bound)}`:`不存在（開口向${a.n>0?"上":"下"}，不可能恆${wantPos?"正":"負"}）`,sig:`als:${A.plain(a)}:${m}:${wantPos}`,verify:()=>{const test=k=>[-4*m,-m,0,m,4*m].every(x=>wantPos?f(k,x)>0:f(k,x)<0);return okDir?test(0)&&test(bound-.5)&&test(-bound+.5)&&!test(bound+.5)&&f(bound,-Math.sign(a.n)*m)===0:[0,bound,-bound,10*bound].every(k=>!test(k))}}}
+  if(kind==="lead"||kind==="leadneg"){// 求 a 的範圍使 ax²＋bx＋c 恆正（c＞0，a＞b²/4c）或恆負（c＜0，a＜−b²/4|c|）
+   const neg=kind==="leadneg",b=R(2*rand(1,8)),cc=R((neg?-1:1)*rand(1,9)),thr=div(mul(b,b),mul(R(4),cc));// 恆負時 thr 為負
+   return{expr:`求實數 a 的範圍，使 ax<sup>2</sup>＋${A.show(b,mode,false,ctx)}x ${A.plus(cc,mode,ctx)} 對所有實數 x 恆${neg?"負":"正"}。`,answer:`a ${neg?"＜":"＞"} ${A.show(thr,mode,true,ctx)}`,sig:`alL:${kind}:${A.plain(b)}:${A.plain(cc)}`,verify:()=>{const disc=a=>A.num(b)**2-4*a*A.num(cc),t=nv(thr);return disc(t)===0&&(neg?(disc(t-1)<0&&t-1<0&&disc(t+.5)>0):(disc(t+1)<0&&t+1>0&&disc(t-.5)>0))}}}
+  if(kind==="both"){const p=rand(-9,1),q=4-p,t=R(-p*q/4);if(!eq(t,R(Math.round(nv(t)))))return null;
+   return{expr:`求實數 k 的範圍，使 x<sup>2</sup>＋kx＋（k ${A.plus(t,mode,ctx)}）對所有實數 x 恆正。`,answer:`${A.int(p)}＜k＜${A.int(q)}`,sig:`alB:${p}`,verify:()=>{const d=k=>k*k-4*(k+nv(t));return d(p)===0&&d(q)===0&&d((p+q)/2)<0&&d(q+1)>0}}}
+  const k0=pick([-2*m,2*m,2*m+1]);
+  return{expr:`方程式 x<sup>2</sup>＋kx＋${m*m}＝0 沒有實根，求 k 的範圍；並判斷 k＝${A.int(k0)} 時有幾個實根。`,answer:`${A.int(-2*m)}＜k＜${A.int(2*m)}；k＝${A.int(k0)} 時${Math.abs(k0)===2*m?"一個（重根）":"兩個相異實根"}`,sig:`alN:${m}:${k0}`,verify:()=>{const d=k=>k*k-4*m*m;return d(-2*m)===0&&d(2*m)===0&&d(0)<0&&(Math.abs(k0)===2*m?d(k0)===0:d(k0)>0)}}});
+ const higher=unit("higher","高次多項式不等式","先標出各零點，跨過奇重根時正負改變，偶重根不變號；首項係數為負時整條號線先反過來。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),kind=L===0?"plain":L===1?pick(["plain","ops","repeat"]):pick(["ops","repeat","neg","quartic"]);
+  const rs=[A.signed(mode,ctx.level,12),A.signed(mode,ctx.level,12),A.signed(mode,ctx.level,12)].sort((x,y)=>nv(x)-nv(y));if(eq(rs[0],rs[1])||eq(rs[1],rs[2]))return null;
+  const op=kind==="plain"?"≥":pick(OPS);
+  let roots,lead=A.O;
+  if(kind==="plain"||kind==="ops")roots=rs;else if(kind==="repeat")roots=[rs[0],rs[1],rs[1]];else if(kind==="neg"){roots=rs;lead=R(-1)}else{const r4=A.signed(mode,ctx.level,12);if(rs.some(r=>eq(r,r4)))return null;roots=[...rs,r4].sort((x,y)=>nv(x)-nv(y))}
+  const p=fromRoots(roots,lead),f=x=>num(p,x),distinct=[...new Map(roots.map(r=>[A.plain(r),r])).values()],S=setFromSigns(distinct,f,op);
+  const expr=kind==="repeat"?`${A.lin(rs[0],mode,ctx)}${A.lin(rs[1],mode,ctx)}<sup>2</sup>`:A.poly(p,mode,ctx);
+  return{expr:`解不等式 ${expr} ${op} 0。`,answer:showSet(S,mode,ctx),sig:`hi:${kind}:${roots.map(A.plain)}:${op}`,verify:()=>sampleCheck(f,op,S,distinct.map(nv))&&distinct.every(r=>eq(A.peval(p,r),A.Z))}});
+ const rational=unit("rational","分式不等式","分子零點可取等號，分母零點永遠排除；右邊不是 0 時先移項通分，不可直接乘分母。",ctx=>{
+  const mode=pick(ctx.modes),L=lv(ctx),kind=L===0?"plain":L===1?pick(["plain","closed","closed"]):pick(["closed","three","shift"]);
+  const a=A.signed(mode,ctx.level,10),b=A.signed(mode,ctx.level,10);if(eq(a,b))return null;
+  const op=kind==="plain"?pick(["＞","＜"]):pick(OPS);
+  if(kind==="plain"||kind==="closed"){const f=x=>x===nv(b)?null:(x-nv(a))/(x-nv(b)),S=setFromSigns([a,b],f,op).map(s=>({...s,lc:s.lc&&nv(s.l)!==nv(b),rc:s.rc&&nv(s.u)!==nv(b)}));
+   return{expr:`解不等式 ${fr(A.lin(a,mode,ctx),A.lin(b,mode,ctx))} ${op} 0。`,answer:`${showSet(S,mode,ctx)}（x≠${A.show(b,mode,true,ctx)}）`,sig:`ra:${A.plain(a)}:${A.plain(b)}:${op}`,verify:()=>sampleCheck(f,op,S,[nv(a)])&&!inSet(S,nv(b))}}
+  if(kind==="three"){const c=A.signed(mode,ctx.level,10);if(eq(c,a)||eq(c,b))return null;const f=x=>x===nv(b)?null:(x-nv(a))*(x-nv(c))/(x-nv(b)),S=setFromSigns([a,b,c],f,op).map(s=>({...s,lc:s.lc&&nv(s.l)!==nv(b),rc:s.rc&&nv(s.u)!==nv(b)}));
+   return{expr:`解不等式 ${fr(`${A.lin(a,mode,ctx)}${A.lin(c,mode,ctx)}`,A.lin(b,mode,ctx))} ${op} 0。`,answer:`${showSet(S,mode,ctx)}（x≠${A.show(b,mode,true,ctx)}）`,sig:`rt:${A.plain(a)}:${A.plain(b)}:${A.plain(c)}:${op}`,verify:()=>sampleCheck(f,op,S,[nv(a),nv(c)])&&!inSet(S,nv(b))}}
+  // shift：(x−a)/(x−b) op k，k∈{1,2,−1}；移項成 ((1−k)x −a +kb)/(x−b) op 0
+  const k=R(pick([2,-1,3])),g=x=>x===nv(b)?null:(x-nv(a))/(x-nv(b))-nv(k),root=div(sub(a,mul(k,b)),sub(A.O,k));if(eq(root,b))return null;
+  const S=setFromSigns([root,b],g,op).map(s=>({...s,lc:s.lc&&nv(s.l)!==nv(b),rc:s.rc&&nv(s.u)!==nv(b)}));
+  return{expr:`解不等式 ${fr(A.lin(a,mode,ctx),A.lin(b,mode,ctx))} ${op} ${A.show(k,mode,false,ctx)}。`,answer:`${showSet(S,mode,ctx)}（x≠${A.show(b,mode,true,ctx)}）`,sig:`rs:${A.plain(a)}:${A.plain(b)}:${A.plain(k)}:${op}`,verify:()=>sampleCheck(g,op,S,[nv(root)])&&!inSet(S,nv(b))&&Math.abs(g(nv(root)))<1e-9}});
+ return{title:"不等式",symbol:"≤",subtitle:"一次不等式・二次號線・恆正恆負・高次不等式・分式不等式",instruction:"解下列各題；畫號線時要把零點、分母禁值與端點是否包含標清楚；無解或所有實數都成立時請寫明。",modes:M,mixed:true,levels:{basic:"基礎：一次不等式、可分解的二次不等式、平方項係數可正可負的恆正／恆負 k 範圍（方向不合時答不存在）。",advanced:"進階：兩邊都有 x、連鎖不等式、首項係數與重根的二次式、恆負與求首項係數、四種符號的高次與分式（含等號）。",challenge:"挑戰：不等式組與整數解、無實根的二次式與由解集反求、k 同時在多個係數、偶重根與四次、分子兩因式與右邊不為 0 的分式。"},units:[linear,quadratic,always,higher,rational],presets:{basic:{linear:4,quadratic:4,always:2},advanced:{linear:3,quadratic:3,always:2,higher:2,rational:2},challenge:{linear:2,quadratic:2,always:2,higher:3,rational:3}}};
 }
-
 function lineCircleConfig(){
  /* 難度：基礎＝整數圓心半徑與位置判定；進階＝分數／小數坐標、距離；挑戰＝切線、弦長與相交條件。 */
  const A=algHelpers(),M=["integer","fraction","decimal"],unit=(id,name,tip,gen)=>({id,name,tip,modes:M,gen}),sq=a=>mul(a,a),dist2=(x,y,h,k)=>add(sq(sub(x,h)),sq(sub(y,k))),point=(x,y,m,c)=>`（${A.show(x,m,false,c)}，${A.show(y,m,false,c)}）`,ly=(r,m,c)=>r.n<0?`（y＋${A.show(A.abs(r),m,false,c)}）`:r.n>0?`（y−${A.show(r,m,false,c)}）`:"y";
