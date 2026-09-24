@@ -15,8 +15,8 @@ const indexDom = new JSDOM(htmlIndex);
 const links = [...indexDom.window.document.querySelectorAll('a.card')].map(a => a.getAttribute('href'))
   .filter(link => /g(?:6|10|11)-drills\.html\?topic=/.test(link));
 indexDom.window.close();
-assert.equal(links.length, 52, 'published topic coverage changed');
-assert.equal(new Set(links).size, 52, 'duplicate topic link');
+assert.equal(links.length, 55, 'published topic coverage changed');
+assert.equal(new Set(links).size, 55, 'duplicate topic link');
 console.log(checkHarnessContract());
 const report = {schema: 3, specification: '2.4 safeQuestion revision 2026-09-22',
   requirement: '200 independent safeQuestion calls with 50 retries; null rejection is diagnostic; candidate exceptions/verify failures remain blocking; unique sig per paper and declared bank coverage',
