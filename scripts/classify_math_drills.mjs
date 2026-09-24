@@ -13,7 +13,7 @@ const current = new Map(revised.combinations.map(r => [key(r), r]));
 assert.equal(old.combinations.length, 431);
 assert.equal(revised.schema, 3, 'run the safeQuestion math test before rebuilding this report');
 assert.deepEqual(new Set(old.combinations.map(key)), new Set(baseline.map(key)));
-assert.equal(current.size, 1740);
+assert.equal(current.size, revised.summary.combinations, 'classification must cover every current math combination');
 
 function finiteEvidence(r) {
   if (r.link === 'g10-drills.html?topic=multiplication' && r.mode === 'integer') {
