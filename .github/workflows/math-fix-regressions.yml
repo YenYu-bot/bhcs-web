@@ -20,3 +20,77 @@ jobs:
           MATH_DIVERSITY_GATE: '1'
           MATH_DIVERSITY_REPORT: math-validation-artifacts/diversity-current.json
         run: node scripts/test_math_drills.mjs
+      - name: Print P3 diversity failures
+        if: always()
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const currentPath = 'math-validation-artifacts/diversity-current.json';
+          const baselinePath = 'docs/math-diversity/baseline-20260922.json';
+          if (!fs.existsSync(currentPath)) {
+            console.log('P3 failure details unavailable: diversity-current.json was not produced.');
+            process.exit(0);
+          }
+          const current = JSON.parse(fs.readFileSync(currentPath, 'utf8'));
+          const baseline = fs.existsSync(baselinePath)
+            ? JSON.parse(fs.readFileSync(baselinePath, 'utf8'))
+            : {units: []};
+          const before = new Map((baseline.units || []).map(u => [`${u.topic}/${u.unit}`, u]));
+          const now = new Map((current.units || []).map(u => [`${u.topic}/${u.unit}`, u]));
+          const failures = current.ratchet?.failures || [];
+          console.log(`P3 failure details: ${failures.length}`);
+          for (const [index, failure] of failures.entries()) {
+            const key = failure.unit || 'unknown/unknown';
+            const slash = key.indexOf('/');
+            const topic = slash >= 0 ? key.slice(0, slash) : key;
+            const unit = slash >= 0 ? key.slice(slash + 1) : '';
+            const difficulty = failure.level || 'all';
+            const prior = before.get(key);
+            const next = now.get(key);
+            let baselineValue = 'n/a';
+            let currentValue = 'n/a';
+            if (failure.code === 'structure_count_regressed' || failure.code === 'sample_production_regressed') {
+              baselineValue = String(failure.before);
+              currentValue = String(failure.after);
+            } else if (failure.code === 'structure_gate_regressed') {
+              baselineValue = String(prior?.projectedStructureGatePass);
+              currentValue = String(next?.projectedStructureGatePass);
+            } else if (failure.code === 'challenge_gate_regressed') {
+              baselineValue = String(prior?.projectedChallengeGatePass);
+              currentValue = String(next?.projectedChallengeGatePass);
+            } else if (failure.code === 'changed_unit_must_pass_full_gate' || failure.code === 'new_unit_must_pass_full_gate') {
+              baselineValue = prior
+                ? `structureGate=${prior.projectedStructureGatePass},challengeGate=${prior.projectedChallengeGatePass}`
+                : 'new unit';
+              currentValue = `structureGate=${failure.structureGate},challengeGate=${failure.challengeGate}`;
+            } else if (failure.code === 'baseline_unit_removed') {
+              baselineValue = 'present';
+              currentValue = 'missing';
+            } else if (failure.code === 'unapproved_single_form' || failure.code === 'new_unit_single_form_forbidden') {
+              baselineValue = String(prior?.singleForm ?? false);
+              currentValue = String(next?.singleForm ?? true);
+            } else if (failure.code === 'approved_single_form_removed') {
+              baselineValue = String(prior?.singleForm ?? true);
+              currentValue = String(next?.singleForm ?? false);
+            }
+            console.log(JSON.stringify({
+              index: index + 1,
+              topic,
+              unit,
+              difficulty,
+              assert: failure.code,
+              baseline: baselineValue,
+              current: currentValue,
+              raw: failure
+            }));
+          }
+          NODE
+      - name: Upload math validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-validation-artifacts
+          path: |
+            math-validation-artifacts/diversity-current.json
+            math-validation-artifacts/results.json
+          if-no-files-found: warn
