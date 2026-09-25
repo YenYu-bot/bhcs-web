@@ -19,9 +19,10 @@ jobs:
         run: node scripts/math_local_check.mjs --all 40
       - name: Enforce P3 diversity ratchet
         env:
-          MATH_DIVERSITY_GATE: '1'
           MATH_DIVERSITY_REPORT: math-validation-artifacts/diversity-current.json
-        run: node scripts/test_math_drills.mjs
+        run: |
+          node scripts/test_math_drills.mjs
+          node scripts/enforce_math_diversity.mjs
       - name: Print P3 diversity failures
         if: always()
         run: |
@@ -42,6 +43,19 @@ jobs:
           const failures = current.ratchet?.failures || [];
           console.log(`P3 failure details: ${failures.length}`);
           for (const [index, failure] of failures.entries()) {
+            if (failure.topic && !failure.unit) {
+              console.log(JSON.stringify({
+                index: index + 1,
+                topic: failure.topic,
+                unit: '',
+                difficulty: failure.level || 'all',
+                assert: failure.code,
+                threshold: failure.threshold ?? 'n/a',
+                current: failure.current ?? 'n/a',
+                raw: failure
+              }));
+              continue;
+            }
             const key = failure.unit || 'unknown/unknown';
             const slash = key.indexOf('/');
             const topic = slash >= 0 ? key.slice(0, slash) : key;
