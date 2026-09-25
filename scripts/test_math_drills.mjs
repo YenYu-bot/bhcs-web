@@ -8,13 +8,12 @@ import {JSDOM, VirtualConsole} from 'jsdom';
 import {auditCombination, seedFor, checkHarnessContract} from './math_test_harness.mjs';
 import {singleFormExemptions, singleFormKey, singleFormPolicy} from './math-diversity-policy.mjs';
 import {evaluateDiversityRatchet} from './math-diversity-ratchet.mjs';
+import {assertMathDrillCoverage} from './math_drill_discovery.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const htmlIndex = fs.readFileSync(path.join(root, 'tools/math/index.html'), 'utf8');
-const indexDom = new JSDOM(htmlIndex);
-const links = [...indexDom.window.document.querySelectorAll('a.card')].map(a => a.getAttribute('href'))
-  .filter(link => /g(?:6|10|11)-drills\.html\?topic=/.test(link));
-indexDom.window.close();
+const discovery=assertMathDrillCoverage(root);
+const links=discovery.links;
+console.log(JSON.stringify({drillDiscovery:true,engines:discovery.engineFiles.length,topics:links.length}));
 assert.equal(links.length, 55, 'published topic coverage changed');
 assert.equal(new Set(links).size, 55, 'duplicate topic link');
 console.log(checkHarnessContract());

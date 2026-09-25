@@ -1,9 +1,37 @@
 // 純 Node 快速自測；正式驗收以 test_math_drills.mjs 與 P3 CI 為準。
-// 用法：node scripts/math_local_check.mjs tools/math/g6-drills.html units 200
+// 用法：node scripts/math_local_check.mjs <引擎 HTML> <topic> [每組抽題數]；或 --all [每組抽題數]
 import fs from 'node:fs';
+import path from 'node:path';
 import vm from 'node:vm';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {assertMathDrillCoverage} from './math_drill_discovery.mjs';
 
-const [file, topic, countText = '200'] = process.argv.slice(2);
+const args = process.argv.slice(2);
+if (args[0] === '--all') {
+  const countText = args[1] || '40', count = Number(countText);
+  if (!Number.isSafeInteger(count) || count < 1 || count > 1000) {
+    console.error('用法：node scripts/math_local_check.mjs --all [每組抽題數 1–1000]');
+    process.exit(2);
+  }
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const discovery = assertMathDrillCoverage(root);
+  const links = discovery.links;
+  console.log(`AUTO ${links.length} topics across ${discovery.engineFiles.length} drill engines; orphan check PASS`);
+  let failedTopics = 0;
+  for (const link of links) {
+    const url = new URL(link, 'https://www.bhcs.com.tw/tools/math/');
+    const file = path.join(root, url.pathname);
+    const rel = path.relative(process.cwd(), file);
+    const result = spawnSync(process.execPath, [fileURLToPath(import.meta.url), rel, url.searchParams.get('topic'), countText],
+      {stdio: 'inherit'});
+    if (result.status !== 0) failedTopics++;
+  }
+  console.log(failedTopics ? `FAIL ${failedTopics} topics` : `PASS AUTO ${links.length} topics`);
+  process.exit(failedTopics ? 1 : 0);
+}
+
+const [file, topic, countText = '200'] = args;
 const count = Number(countText);
 if (!file || !topic || !Number.isSafeInteger(count) || count < 1 || count > 1000) {
   console.error('用法：node scripts/math_local_check.mjs <引擎 HTML> <topic> [每組抽題數 1–1000]');
