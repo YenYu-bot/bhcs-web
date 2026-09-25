@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {JSDOM} from 'jsdom';
 import {legacy,firstBatch,firstMisconceptions} from './science/catalog.mjs';
 import {batch2} from './science/batch2.mjs';
 import {enhanceLessons} from './science/experience.mjs';
@@ -82,7 +83,12 @@ let resourceSection=read('ziyuan.html');
 resourceSection=resourceSection.replace(/<section class="res-sec" id="res-science">[\s\S]*?<\/section>/,`<section class="res-sec" id="res-science"><h3>國中自然 · 互動教材<span class="count">${junior.length} 項</span></h3><p class="lead">依生物、理化與地科分類。新一批探究教材採任務、操作、紀錄與檢核流程；原有演示工具持續保留。</p><div class="science-categories">${groups}</div></section>`);
 write('ziyuan.html',resourceSection);
 replaceBlock('ziyuan.html','science-card-style','<style>.science-categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.science-category{border:1px solid #cbdde4;border-radius:14px;background:#fff;padding:20px;min-width:0}.science-category h4{margin:0;font-size:1.25rem}.science-category small{font-size:.85rem;color:#496379}.science-category ul{padding-left:1.2em}.science-category li{margin:.55em 0;overflow-wrap:anywhere}.science-new{font-size:.7rem;color:#075f65;border:1px solid #b8d1d6;border-radius:6px;padding:2px 5px;white-space:nowrap}@media(max-width:800px){.science-categories{grid-template-columns:1fr}}</style>','</head>');
-// Counts are derived from the catalog; all unrelated math generators stay untouched.
-let resource=read('ziyuan.html');resource=resource.replace(/目前共 \d+ 項/,'目前共 '+(101+all.length-1)+' 項').replace(/國中自然<span>\d+<\/span>/,'國中自然<span>'+(all.length-1)+'</span>').replace(/國中自然 · 互動教材<span class="count">\d+ 項<\/span>/,'國中自然 · 互動教材<span class="count">'+(all.length-1)+' 項</span>');write('ziyuan.html',resource);
+// Count the rendered resource links, including new math cards, after science cards are rebuilt.
+let resource=read('ziyuan.html');
+resource=resource.replace(/國中自然<span>\d+<\/span>/,'國中自然<span>'+(all.length-1)+'</span>').replace(/國中自然 · 互動教材<span class="count">\d+ 項<\/span>/,'國中自然 · 互動教材<span class="count">'+(all.length-1)+' 項</span>');
+const resourceDom=new JSDOM(resource),resourceTotal=resourceDom.window.document.querySelectorAll('.res-sec .tpills>a,.science-category li>a').length;
+resourceDom.window.close();
+resource=resource.replace(/目前共 \d+ 項/,'目前共 '+resourceTotal+' 項').replace(/顯示全部 \d+ 項資源/,'顯示全部 '+resourceTotal+' 項資源');
+write('ziyuan.html',resource);
 console.log('Built science directory:',all.length,'resources');
 enhanceLessons(root,firstBatch,batch2);

@@ -623,7 +623,8 @@ function basecompareConfig(){
   const cells=bs.map((b,i)=>{const bl=blanks.findIndex(x=>x.i===i);return{b,top:bl>=0&&blanks[bl].pos==="top"?`（${"①②"[bl]}）`:tops[i],bot:bl>=0&&blanks[bl].pos==="bot"?`（${"①②"[bl]}）`:b}});
   const unitT=zero?pick(["公斤","元","公升","公尺","m²","cm"]):"";
   const ans=blanks.map((x,j)=>`${"①②"[j]} ${x.pos==="top"?shA(tops[x.i],ctx,mode):shA(bs[x.i],ctx,mode)}`);
-  return{expr:`${numLine(cells,unitT,zero)}填出雙數線的空格（上方是量、下方是倍數）。`,answer:ans.join("；"),sig:`nl:${plain(r)}:${bs.map(plain).join(",")}:${known}:${blanks.map(b=>b.i+b.pos).join(",")}`,
+  const desc=blanks.map((x,j)=>x.pos==="top"?`${"①②"[j]}求倍數 ${shA(bs[x.i],ctx,mode)} 對應的量`:`${"①②"[j]}求量 ${shA(tops[x.i],ctx,mode)}${unitT} 對應的倍數`).join("、");
+  return{expr:`${numLine(cells,unitT,zero)}雙數線上方是量、下方是倍數，已知倍數 ${shA(bs[known],ctx,mode)} 對應的量是 ${shA(tops[known],ctx,mode)}${unitT}；${desc}。`,answer:ans.join("；"),sig:`nl:${plain(r)}:${bs.map(plain).join(",")}:${known}:${blanks.map(b=>b.i+b.pos).join(",")}`,
    verify:()=>blanks.every(x=>x.pos==="top"?eq(div(tops[x.i],bs[x.i]),div(tops[known],bs[known])):eq(mul(bs[x.i],div(tops[known],bs[known])),tops[x.i]))}});
  // ③ 線段弧線圖
  const arcs=unit("arcline","線段圖求全部或部分","把標 1 的那一段當基準量：全部＝基準量×（各段倍數的和）；已知全部時，基準量＝全部÷（各段倍數的和）。",["integer","fraction","decimal"],ctx=>{
