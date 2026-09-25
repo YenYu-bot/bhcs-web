@@ -1,6 +1,6 @@
 // P1 equivalence checks in a real browser. No external requests or real print dialog.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const {root,baseline,links,p2EngineFiles}=require('./check_math_brand.cjs');
+const {root,baseline,links,p2EngineFiles,approvedCrosslinks}=require('./check_math_brand.cjs');
 const out=path.resolve(process.env.MATH_BRAND_OUTPUT||'math-brand-artifacts');
 const selected=process.env.MATH_BRAND_LINKS?process.env.MATH_BRAND_LINKS.split(','):links;
 const cache=new Map(),mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
@@ -15,7 +15,7 @@ const server=http.createServer((req,res)=>{
 });
 const hash=s=>crypto.createHash('sha256').update(typeof s==='string'?s:JSON.stringify(s)).digest('hex');
 // Playwright temporarily hides carets for screenshots and leaves empty style attributes.
-const hashDOM=s=>hash(s.replace(/ style=""/g,''));
+const hashDOM=s=>hash(s.replace(/ style=""/g,'').replace(/\n  <!-- g8-r5-related-start -->[\s\S]*?\n  <!-- g8-r5-related-end -->\n/g,''));
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 function geometry(){
  return [...document.body.querySelectorAll('*')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').map(e=>{
@@ -88,7 +88,7 @@ function colors(){
    }
    if(!isNew&&!p2EngineFiles.has(file)){
     assert.equal(records.after.dom,records.before.dom,'generated worksheet DOM differs');
-    assert.deepEqual(records.after.screen,records.before.screen,'screen geometry changed');
+    if(!approvedCrosslinks.has(file))assert.deepEqual(records.after.screen,records.before.screen,'screen geometry changed');
    }
    assert.deepEqual(records.after.errors,[]);if(!isNew)assert.deepEqual(records.before.errors,[]);
    if(!printed.has(file)){if(!isNew&&!p2EngineFiles.has(file))assert.deepEqual(records.after.print,records.before.print,'student/teacher print DOM or geometry changed');printed.add(file)}
