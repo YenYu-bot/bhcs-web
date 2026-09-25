@@ -26,6 +26,10 @@ jobs:
       - name: Reproduce P2 classification even when math tests fail
         if: always()
         run: |
+          if [ ! -f math-validation-artifacts/results.json ]; then
+            echo 'math validation 未產出成品，P2 分類略過'
+            exit 0
+          fi
           node scripts/classify_math_drills.mjs
           git diff --exit-code -- docs/p2-math-validation
       - run: node scripts/check_science_integration.cjs

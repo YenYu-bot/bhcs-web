@@ -18,26 +18,31 @@ function engineTopics(root,file){
  const full=path.join(root,'tools/math',file),html=fs.readFileSync(full,'utf8');
  const script=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(s=>s.includes('globalThis.__BHCS_TEST__'));
  if(!script)throw Error(file+': missing __BHCS_TEST__ hook');
- const configsRe=/\b(const|let|var)\s+CONFIGS\s*=/,topicsRe=/\b(const|let|var)\s+TOPICS\s*=/;
+ const assignment=name=>new RegExp('\\b'+name+'\\s*=');
+ const configsRe=assignment('CONFIGS');
+ const topicName=['TOPICS','TOPIC_ORDER'].find(name=>assignment(name).test(script));
  if(!configsRe.test(script))throw Error(file+': missing CONFIGS declaration');
- if(!topicsRe.test(script))throw Error(file+': missing TOPICS declaration');
+ if(!topicName){
+  const candidates=[...new Set([...script.matchAll(/\b[A-Z][A-Z0-9_]*\s*=/g)].map(m=>m[0].replace(/\s*=$/,'')))];
+  throw Error(file+': missing TOPICS or TOPIC_ORDER declaration; candidate variables: '+(candidates.join(', ')||'(none)'));
+ }
  const instrumented=script
-  .replace(topicsRe,'$1 TOPICS=globalThis.__BHCS_TOPICS__=')
-  .replace(configsRe,'$1 CONFIGS=globalThis.__BHCS_CONFIGS__=');
+  .replace(assignment(topicName),topicName+'=globalThis.__BHCS_TOPICS__=')
+  .replace(configsRe,'CONFIGS=globalThis.__BHCS_CONFIGS__=');
  let seed=1;const math=Object.create(Math);math.random=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);
  const context={URLSearchParams,location:{search:''},Math:math,console:{warn(){},log(){}},setTimeout};context.globalThis=context;vm.createContext(context);
  new vm.Script(instrumented,{filename:full}).runInContext(context,{timeout:10000});
  const configs=context.__BHCS_CONFIGS__,topics=context.__BHCS_TOPICS__;
  if(!configs||typeof configs!=='object')throw Error(file+': CONFIGS was not exposed');
- if(!Array.isArray(topics))throw Error(file+': TOPICS was not exposed as an array');
+ if(!Array.isArray(topics))throw Error(file+': '+topicName+' was not exposed as an array');
  const configKeys=Object.keys(configs).sort();
  const topicKeys=topics.map(row=>Array.isArray(row)?String(row[0]):String(row));
  if(!configKeys.length)throw Error(file+': CONFIGS has no topics');
- if(!topicKeys.length)throw Error(file+': TOPICS has no topics');
+ if(!topicKeys.length)throw Error(file+': '+topicName+' has no topics');
  const duplicateTopics=topicKeys.filter((key,i)=>topicKeys.indexOf(key)!==i);
- if(duplicateTopics.length)throw Error(file+': duplicate TOPICS keys: '+[...new Set(duplicateTopics)].join(', '));
+ if(duplicateTopics.length)throw Error(file+': duplicate '+topicName+' keys: '+[...new Set(duplicateTopics)].join(', '));
  const configSet=new Set(configKeys),errors=[],warnings=[];
- for(const key of topicKeys)if(!configSet.has(key))errors.push(file+': TOPICS key missing from CONFIGS: '+key);
+ for(const key of topicKeys)if(!configSet.has(key))errors.push(file+': '+topicName+' key missing from CONFIGS: '+key);
  const topicSet=new Set(topicKeys);
  for(const key of configKeys)if(!topicSet.has(key))warnings.push(file+': CONFIGS-only key is not user-openable and does not require a card: '+key);
  const openTopics=topicKeys.filter(key=>configSet.has(key));
