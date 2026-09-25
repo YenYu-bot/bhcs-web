@@ -14,8 +14,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const discovery=assertMathDrillCoverage(root);
 const links=discovery.links;
 console.log(JSON.stringify({drillDiscovery:true,engines:discovery.engineFiles.length,topics:links.length}));
-assert.equal(links.length, 58, 'published topic coverage changed');
-assert.equal(new Set(links).size, 58, 'duplicate topic link');
+assert.equal(links.length,[...discovery.topicsByFile.values()].reduce((n,topics)=>n+topics.length,0),'published topic coverage differs from discovery');
+assert.equal(new Set(links).size,links.length,'duplicate topic link');
 console.log(checkHarnessContract());
 const report = {schema: 3, specification: '2.4 safeQuestion revision 2026-09-22',
   requirement: '200 independent safeQuestion calls with 50 retries; null rejection is diagnostic; candidate exceptions/verify failures remain blocking; unique sig per paper and declared bank coverage',

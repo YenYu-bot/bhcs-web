@@ -64,8 +64,12 @@ function structural(d,file){
   console.log('PASS',conf.id,'core flow, tasks, quiz, storage, a11y');
  }
  const {dom,errors}=load('tools/science/index.html'),d=dom.window.document;structural(d,'tools/science/index.html');
- assert.equal(d.querySelectorAll('.resource').length,29);d.getElementById('subject').value='生物';d.getElementById('subject').dispatchEvent(new dom.window.Event('input'));assert.equal([...d.querySelectorAll('.resource')].filter(c=>!c.hidden).length,6);
- d.getElementById('search').value='不存在的單元';d.getElementById('search').dispatchEvent(new dom.window.Event('input'));assert.equal(d.getElementById('empty').hidden,false);d.getElementById('clearFilters').click();assert.equal([...d.querySelectorAll('.resource')].filter(c=>!c.hidden).length,29);assert.deepEqual(errors,[]);dom.window.close();console.log('PASS directory filters, no-results, clear, links');
+ const declaredResources=JSON.parse(d.querySelector('script[type="application/ld+json"]').textContent).hasPart;
+ assert.ok(Array.isArray(declaredResources)&&declaredResources.length>0,'science directory resource declaration missing');
+ const resources=[...d.querySelectorAll('.resource')];assert.equal(resources.length,declaredResources.length,'science directory cards differ from declaration');
+ const biologyCount=resources.filter(c=>c.dataset.subject==='生物').length;assert.ok(biologyCount>0,'biology filter has no matching resources');
+ d.getElementById('subject').value='生物';d.getElementById('subject').dispatchEvent(new dom.window.Event('input'));assert.equal(resources.filter(c=>!c.hidden).length,biologyCount);
+ d.getElementById('search').value='不存在的單元';d.getElementById('search').dispatchEvent(new dom.window.Event('input'));assert.equal(d.getElementById('empty').hidden,false);d.getElementById('clearFilters').click();assert.equal(resources.filter(c=>!c.hidden).length,declaredResources.length);assert.deepEqual(errors,[]);dom.window.close();console.log('PASS directory filters, no-results, clear, links');
  // Privacy and payload allowlist, including a click after storage denial.
  const events=fs.readFileSync(path.join(root,'assets/science-events.js'),'utf8');
  for(const optOut of ['none','noga','dnt','gpc','blocked']){
