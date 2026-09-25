@@ -24,10 +24,10 @@ export const hasG11R3Topics = current => {
 export const g11ChallengeBaselineFor = current =>
   hasG11R3Topics(current) ? g11ChallengeR3Baseline : g11ChallengeRolloutBaseline;
 
-export function evaluateDiversityRatchet({baseline,current,exemptions}) {
+export function evaluateDiversityRatchet({baseline,current,exemptions,modifiedG11Topics = new Set()}) {
   const before = new Map(baseline.units.map(unit=>[singleFormKey(unit.topic,unit.unit),unit]));
   const now = new Map(current.units.map(unit=>[singleFormKey(unit.topic,unit.unit),unit]));
-  const failures = [], changedUnits = [], newUnits = [], changedG11Topics = new Set();
+  const failures = [], changedUnits = [], newUnits = [];
   const baselineG11Topics = new Set(baseline.units.filter(isG11).map(unit=>unit.topic));
   const challengeBaseline = g11ChallengeBaselineFor(current);
   const challengeBaselineVersion = hasG11R3Topics(current) ? 'g11-r3' : 'rollout-main';
@@ -56,7 +56,6 @@ export function evaluateDiversityRatchet({baseline,current,exemptions}) {
       failures.push({code:'challenge_gate_regressed',unit:key});
     if (next.outputFingerprint !== prior.outputFingerprint) {
       changedUnits.push(key);
-      if (g11) changedG11Topics.add(next.topic || prior.topic);
       if (!g11 && (!next.projectedStructureGatePass || !next.projectedChallengeGatePass))
         failures.push({code:'changed_unit_must_pass_full_gate',unit:key,structureGate:next.projectedStructureGatePass,challengeGate:next.projectedChallengeGatePass});
     }
@@ -64,7 +63,6 @@ export function evaluateDiversityRatchet({baseline,current,exemptions}) {
 
   for (const [key,next] of now) if (!before.has(key)) {
     newUnits.push(key);
-    if (isG11(next)) changedG11Topics.add(next.topic);
     if (next.singleForm) failures.push({code:'new_unit_single_form_forbidden',unit:key});
     if (!isG11(next) && (!next.projectedStructureGatePass || !next.projectedChallengeGatePass))
       failures.push({code:'new_unit_must_pass_full_gate',unit:key,structureGate:next.projectedStructureGatePass,challengeGate:next.projectedChallengeGatePass});
@@ -85,7 +83,7 @@ export function evaluateDiversityRatchet({baseline,current,exemptions}) {
 
     const currentValue = Number.isFinite(topic.challengeGate?.current) ? topic.challengeGate.current : 0;
     const newTopic = !baselineG11Topics.has(topic.topic);
-    const modified = newTopic || changedG11Topics.has(topic.topic);
+    const modified = newTopic || modifiedG11Topics.has(topic.topic);
     const baselineValue = newTopic ? 0 : challengeBaseline[topic.topic];
     if (!newTopic && !Number.isFinite(baselineValue)) {
       failures.push({

@@ -68,12 +68,24 @@ assert.deepEqual(result.failures.find(row=>row.code==='g11_topic_challenge_regre
 assert.equal(regressed.challengeGate.required,2);
 assert.equal(regressed.challengeGate.gapToFull,2);
 
-// Once any unit in an old G11 topic changes, the topic must reach the full challenge threshold >=3.
+// A sampled output fingerprint may differ from the old report without a change in this PR's topic source.
+const unchangedSource=g11Topic();
+result=evaluateDiversityRatchet({
+  baseline:g11Baseline,
+  current:{units:[g11Unit({outputFingerprint:'changed'})],topics:[unchangedSource]},
+  exemptions:[]
+});
+assert.equal(result.failures.length,0);
+assert.equal(unchangedSource.challengeGate.modified,false);
+assert.equal(unchangedSource.challengeGate.required,2);
+
+// Only an actual topic source change in this PR requires the full challenge threshold >=3.
 const changedTopic=g11Topic();
 result=evaluateDiversityRatchet({
   baseline:g11Baseline,
   current:{units:[g11Unit({outputFingerprint:'changed'})],topics:[changedTopic]},
-  exemptions:[]
+  exemptions:[],
+  modifiedG11Topics:new Set(['standarddev'])
 });
 assert.deepEqual(result.changedUnits,['standarddev/u']);
 assert.deepEqual(result.failures.find(row=>row.code==='g11_topic_challenge_full_gate_required'),{
@@ -86,7 +98,8 @@ const changedPass=g11Topic({challengeGate:{current:3,qualifyingUnits:['a','b','c
 result=evaluateDiversityRatchet({
   baseline:g11Baseline,
   current:{units:[g11Unit({outputFingerprint:'changed'})],topics:[changedPass]},
-  exemptions:[]
+  exemptions:[],
+  modifiedG11Topics:new Set(['standarddev'])
 });
 assert.ok(!result.failures.some(row=>row.topic==='standarddev' && row.code.startsWith('g11_topic_challenge_')));
 assert.equal(changedPass.challengeGate.fullGatePass,true);
