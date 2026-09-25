@@ -6,14 +6,13 @@ import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {seedFor} from './math_test_harness.mjs';
 import {singleFormExemptions} from './math-diversity-policy.mjs';
-import {evaluateDiversityRatchet} from './math-diversity-ratchet.mjs';
+import {evaluateDiversityRatchet, g11ChallengeBaseline, g11ChallengeFullThreshold} from './math-diversity-ratchet.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const currentPath = path.resolve(root, process.env.MATH_DIVERSITY_REPORT || 'math-validation-artifacts/diversity-current.json');
 const baselinePath = path.join(root, 'docs/math-diversity/baseline-20260922.json');
 const levels = ['basic', 'advanced', 'challenge'];
 const topicStructureThreshold = 10;
-const challengeUnitThreshold = 3;
 const isG11 = row => /(?:^|\/)g11-drills\.html(?:\?|$)/.test(row?.link || '');
 
 assert.ok(fs.existsSync(currentPath), `missing diversity report: ${currentPath}`);
@@ -43,9 +42,11 @@ current.g11TopicPolicy = {
   },
   challenge: {
     scope: 'topic',
-    threshold: challengeUnitThreshold,
+    fullThreshold: g11ChallengeFullThreshold,
+    baselineSource: 'main 384267b9763b9f45bff989807ab57ad21e0d85bf',
     metric: 'qualifying units',
-    unitQualification: 'challenge vs basic adds >=1 normalized structure OR numeric median ratio >=2'
+    unitQualification: 'challenge vs basic adds >=1 normalized structure OR numeric median ratio >=2',
+    ratchet: 'unchanged legacy topic must not fall below baseline; modified/new topic must reach fullThreshold'
   },
   unitLevel: 'baseline no-regression only for produced samples and structureCount; no changed/new full-gate or projected structure/challenge gate for G11'
 };
@@ -109,21 +110,14 @@ for (const topicRow of (current.topics || []).filter(isG11)) {
     }];
   }));
   topicRow.challengeGate = {
-    threshold: challengeUnitThreshold,
     current: qualifyingUnits.length,
-    pass: qualifyingUnits.length >= challengeUnitThreshold,
-    qualifyingUnits
+    qualifyingUnits,
+    baseline: g11ChallengeBaseline[topicRow.topic] ?? null,
+    fullThreshold: g11ChallengeFullThreshold,
+    gapToFull: Math.max(0, g11ChallengeFullThreshold - qualifyingUnits.length)
   };
-  if (!topicRow.challengeGate.pass) current.projectedTopicGateFailures.push({
-    link,
-    topic: topicRow.topic,
-    level: 'challenge',
-    assert: 'challenge_qualifying_units',
-    threshold: challengeUnitThreshold,
-    current: qualifyingUnits.length
-  });
   topicRow.projectedStructureGatePass = levels.every(level => topicRow.levels[level].pass);
-  topicRow.projectedChallengeGatePass = topicRow.challengeGate.pass;
+  topicRow.projectedChallengeGatePass = qualifyingUnits.length >= g11ChallengeFullThreshold;
 }
 
 const {changedUnits, newUnits, failures} = evaluateDiversityRatchet({
@@ -131,6 +125,16 @@ const {changedUnits, newUnits, failures} = evaluateDiversityRatchet({
   current,
   exemptions: singleFormExemptions
 });
+current.g11P4Backlog = (current.topics || []).filter(isG11)
+  .map(topic => ({
+    topic: topic.topic,
+    qualifyingUnits: topic.challengeGate?.current ?? 0,
+    fullThreshold: g11ChallengeFullThreshold,
+    gapToFull: topic.challengeGate?.gapToFull ?? Math.max(0, g11ChallengeFullThreshold - (topic.challengeGate?.current ?? 0)),
+    priority: (topic.challengeGate?.current ?? 0) === 0 ? 'highest' : 'normal'
+  }))
+  .filter(row => row.qualifyingUnits < g11ChallengeFullThreshold)
+  .sort((a,b) => a.qualifyingUnits - b.qualifyingUnits || a.topic.localeCompare(b.topic));
 current.ratchet = {
   baseline: 'docs/math-diversity/baseline-20260922.json',
   changedUnits,
@@ -141,7 +145,8 @@ current.summary = {
   ...(current.summary || {}),
   projectedGateFailures: current.projectedGateFailures.length,
   projectedTopicGateFailures: current.projectedTopicGateFailures.length,
-  g11Topics: (current.topics || []).filter(isG11).length
+  g11Topics: (current.topics || []).filter(isG11).length,
+  g11P4Backlog: current.g11P4Backlog.length
 };
 fs.writeFileSync(currentPath, JSON.stringify(current, null, 2) + '\n');
 
@@ -156,6 +161,8 @@ console.log(JSON.stringify({
 console.log(JSON.stringify({
   g11TopicPolicy: true,
   topics: current.summary.g11Topics,
-  projectedTopicGateFailures: current.projectedTopicGateFailures.length
+  projectedTopicGateFailures: current.projectedTopicGateFailures.length,
+  p4Backlog: current.g11P4Backlog.length,
+  p4HighestPriority: current.g11P4Backlog.filter(row => row.priority === 'highest').map(row => row.topic)
 }));
 if (failures.length) process.exitCode = 1;
