@@ -51,7 +51,11 @@ jobs:
                 difficulty: failure.level || 'all',
                 assert: failure.code,
                 threshold: failure.threshold ?? 'n/a',
+                baseline: failure.baseline ?? 'n/a',
                 current: failure.current ?? 'n/a',
+                gapToFull: failure.gapToFull ?? 'n/a',
+                modified: failure.modified ?? 'n/a',
+                newTopic: failure.newTopic ?? 'n/a',
                 raw: failure
               }));
               continue;
