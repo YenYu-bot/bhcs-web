@@ -4,6 +4,11 @@ const {root,baseline,links,p2EngineFiles}=require('./check_math_brand.cjs');
 const out=path.resolve(process.env.MATH_BRAND_OUTPUT||'math-brand-artifacts');
 const selected=process.env.MATH_BRAND_LINKS?process.env.MATH_BRAND_LINKS.split(','):links;
 const cache=new Map(),mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
+const newFiles=new Map();
+function isNewFile(file){
+ if(!newFiles.has(file))newFiles.set(file,cp.spawnSync('git',['cat-file','-e',baseline+':'+file],{cwd:root,stdio:'ignore'}).status!==0);
+ return newFiles.get(file);
+}
 const server=http.createServer((req,res)=>{
  const u=new URL(req.url,'http://localhost'),parts=decodeURIComponent(u.pathname).split('/').filter(Boolean),version=parts.shift(),file=parts.join('/');
  try{let body;if(version==='before'){if(!cache.has(file))cache.set(file,cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,maxBuffer:4e6}));body=cache.get(file)}else body=fs.readFileSync(path.join(root,file));res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(body)}catch{res.writeHead(404).end()}
@@ -31,12 +36,14 @@ function colors(){
  return bad.slice(0,30);
 }
 (async()=>{
- fs.mkdirSync(out,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch(),results=[],printed=new Set();
+ fs.mkdirSync(out,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+ const executablePath=process.env.MATH_BRAND_CHROMIUM;
+ const browser=await chromium.launch(executablePath?{executablePath,args:['--no-sandbox']}:undefined),results=[],printed=new Set();
  try{for(const link of selected){
-  const id=link.replace(/^tools\//,'').replaceAll('/','-').replace('?topic=','-').replace('.html',''),file=link.split('?')[0],row={link},records={};
+  const id=link.replace(/^tools\//,'').replaceAll('/','-').replace('?topic=','-').replace('.html',''),file=link.split('?')[0],isNew=isNewFile(file),row={link,status:isNew?'new':'existing'},records={};
   const contexts=[];
   try{
-   for(const version of ['before','after']){
+   for(const version of isNew?['after']:['before','after']){
     const ctx=await browser.newContext({viewport:{width:1280,height:800},reducedMotion:'reduce'});contexts.push(ctx);
     await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
     await ctx.addInitScript(()=>{
@@ -79,15 +86,15 @@ function colors(){
      }
     }
    }
-   if(!p2EngineFiles.has(file)){
+   if(!isNew&&!p2EngineFiles.has(file)){
     assert.equal(records.after.dom,records.before.dom,'generated worksheet DOM differs');
     assert.deepEqual(records.after.screen,records.before.screen,'screen geometry changed');
    }
-   assert.deepEqual(records.after.errors,[]);assert.deepEqual(records.before.errors,[]);
-   if(!printed.has(file)){if(!p2EngineFiles.has(file))assert.deepEqual(records.after.print,records.before.print,'student/teacher print DOM or geometry changed');printed.add(file)}
+   assert.deepEqual(records.after.errors,[]);if(!isNew)assert.deepEqual(records.before.errors,[]);
+   if(!printed.has(file)){if(!isNew&&!p2EngineFiles.has(file))assert.deepEqual(records.after.print,records.before.print,'student/teacher print DOM or geometry changed');printed.add(file)}
    row.pass=true;row.identicalDOM=records.after.dom;row.printChecked=!!records.after.print;
   }catch(e){row.pass=false;row.error=e.message.slice(0,3500)}finally{for(const ctx of contexts)await ctx.close()}
   results.push(row);if(!row.pass)console.log(JSON.stringify(row));
  }}finally{await browser.close();server.close()}
- fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));const failures=results.filter(r=>!r.pass);console.log(JSON.stringify({checked:results.length,printed:printed.size,failed:failures.length,failures},null,2));if(failures.length)process.exitCode=1;
+ fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(results,null,2));const failures=results.filter(r=>!r.pass);console.log(JSON.stringify({checked:results.length,printed:printed.size,new:results.filter(r=>r.status==='new').length,failed:failures.length,failures},null,2));if(failures.length)process.exitCode=1;
 })().catch(e=>{console.error(e);server.close();process.exitCode=1});
