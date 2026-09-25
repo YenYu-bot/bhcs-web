@@ -6,7 +6,7 @@ import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {seedFor} from './math_test_harness.mjs';
 import {singleFormExemptions} from './math-diversity-policy.mjs';
-import {evaluateDiversityRatchet, g11ChallengeBaseline, g11ChallengeFullThreshold} from './math-diversity-ratchet.mjs';
+import {evaluateDiversityRatchet, g11ChallengeBaselineFor, g11ChallengeFullThreshold, hasG11R3Topics} from './math-diversity-ratchet.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const currentPath = path.resolve(root, process.env.MATH_DIVERSITY_REPORT || 'math-validation-artifacts/diversity-current.json');
@@ -43,13 +43,16 @@ current.g11TopicPolicy = {
   challenge: {
     scope: 'topic',
     fullThreshold: g11ChallengeFullThreshold,
-    baselineSource: 'main 384267b9763b9f45bff989807ab57ad21e0d85bf',
+    baselineSource: hasG11R3Topics(current)
+      ? 'claude-g11-r3 exact seeded sampling (legacy topics only; planevector/determinant remain new topics)'
+      : 'rollout main 384267b9763b9f45bff989807ab57ad21e0d85bf',
     metric: 'qualifying units',
     unitQualification: 'challenge vs basic adds >=1 normalized structure OR numeric median ratio >=2',
     ratchet: 'unchanged legacy topic must not fall below baseline; modified/new topic must reach fullThreshold'
   },
   unitLevel: 'baseline no-regression only for produced samples and structureCount; no changed/new full-gate or projected structure/challenge gate for G11'
 };
+const g11ChallengeBaseline = g11ChallengeBaselineFor(current);
 current.projectedTopicGateFailures = [];
 current.projectedGateFailures = (current.projectedGateFailures || []).filter(row => !isG11(row));
 for (const unit of current.units || []) if (isG11(unit)) unit.p3GatePolicy = 'baseline-no-regression-only';
