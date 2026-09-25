@@ -15,6 +15,8 @@ jobs:
           for test in scripts/math-regressions/*.mjs; do
             [ "$(basename "$test")" = helper.mjs ] || node "$test" || exit 1
           done
+      - name: Smoke all published math drill engines
+        run: node scripts/math_local_check.mjs --all 40
       - name: Enforce P3 diversity ratchet
         env:
           MATH_DIVERSITY_GATE: '1'
