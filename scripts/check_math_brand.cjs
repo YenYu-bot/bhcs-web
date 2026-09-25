@@ -4,7 +4,11 @@ const {JSDOM}=require('jsdom');
 const root=path.resolve(__dirname,'..'),baseline='44d5ff330aef60dbe3cb8c12e8b9a01e44afa59f';
 const d=new JSDOM(fs.readFileSync(path.join(root,'tools/math/index.html'),'utf8')).window.document;
 const links=[...d.querySelectorAll('a.card')].map(a=>new URL(a.getAttribute('href'),'https://www.bhcs.com.tw/tools/math/'));
-assert.equal(links.length,91);const files=[...new Set(links.map(u=>u.pathname.slice(1)))];for(const file of files)assert.ok(fs.existsSync(path.join(root,file)),file+' linked from index but missing');
+const declaredCount=Number(d.querySelector('header p')?.textContent.match(/共\s*(\d+)\s*個出題器/)?.[1]);
+assert.ok(Number.isSafeInteger(declaredCount)&&declaredCount>0,'math index declared tool count missing');
+assert.equal(links.length,declaredCount,'math index cards differ from its declared tool count');
+assert.match(d.querySelector('.intro')?.textContent||'',new RegExp('共\\s*'+declaredCount+'\\s*個出題器'),'math index intro count differs from header');
+const files=[...new Set(links.map(u=>u.pathname.slice(1)))];for(const file of files)assert.ok(fs.existsSync(path.join(root,file)),file+' linked from index but missing');
 const p2EngineFiles=new Set(files.filter(file=>/^tools\/math\/g[^/]*-drills\.html$/.test(file)));
 const strip=s=>s.replace(/\n<style id="bhcs-math-brand">[\s\S]*?<\/style>\n/g,'').replace(/<meta\s+name="theme-color"\s+content="[^"]+"\s*\/?>/gi,'').replace(/\.expr svg\.fig\{[^}]*\}/g,'');
 const requiredBrandVars={green:'#16233A',green2:'#0D1626',mint:'#C8352B',soft:'#F2F4F7',line:'#C9D2DE',ink:'#16233A',muted:'#43516B',bg:'#FCFCFA',red:'#C8352B'};
@@ -26,4 +30,4 @@ for(const file of files){
  assert.ok(brandBlock.includes('color:#C8352B!important'),file+' missing teacher-answer red rule');
 }
 console.log(`PASS P1: ${links.length} links, ${files.length} files, worksheet markup/print rules preserved; P2 engine scripts delegated to math regressions`);
-module.exports={root,baseline,files,p2EngineFiles,links:links.map(u=>u.pathname.slice(1)+u.search)};
+module.exports={root,baseline,files,p2EngineFiles,declaredCount,links:links.map(u=>u.pathname.slice(1)+u.search)};

@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {JSDOM} from 'jsdom';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const index=new JSDOM(fs.readFileSync(path.join(root,'tools/math/index.html'),'utf8'));
+const cardCount=index.window.document.querySelectorAll('a.card').length;
 const files=[...new Set([...index.window.document.querySelectorAll('a.card')].map(a=>new URL(a.getAttribute('href'),'https://www.bhcs.com.tw/tools/math/').pathname.slice(1)))].sort();
 index.window.close();
 const colors={green:'#16233A',green2:'#0D1626',mint:'#C8352B',soft:'#F2F4F7',line:'#C9D2DE',ink:'#16233A',muted:'#43516B',bg:'#FCFCFA',red:'#C8352B'};
@@ -86,4 +87,4 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
  next=next.replace('</head>',brand+'</head>');
  fs.writeFileSync(target,next);dom.window.close();
 }
-console.log(`Built P1 screen palette for ${files.length} single-file worksheets; 91 links unchanged`);
+console.log(`Built P1 screen palette for ${files.length} single-file worksheets; ${cardCount} links`);
