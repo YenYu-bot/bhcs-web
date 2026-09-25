@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {evaluateDiversityRatchet} from '../math-diversity-ratchet.mjs';
+import {evaluateDiversityRatchet, g11ChallengeBaselineFor, g11ChallengeR3Baseline} from '../math-diversity-ratchet.mjs';
 
 const unit=(overrides={})=>({link:'g10-drills.html?topic=demo',topic:'demo',unit:'u',singleForm:false,outputFingerprint:'same',
   projectedStructureGatePass:true,projectedChallengeGatePass:true,
@@ -41,6 +41,17 @@ result=evaluateDiversityRatchet({
 assert.equal(result.failures.length,0);
 assert.equal(result.current,undefined);
 assert.equal(g11Topic().challengeGate.current,2);
+assert.equal(g11ChallengeBaselineFor({topics:[g11Topic()]}).standarddev,2);
+
+// Once the cumulative G11 r3 marker topics are present, legacy topic baselines switch to the r3 sampled values.
+const r3Topics=[g11Topic(),
+  g11Topic({link:'g11-drills.html?topic=planevector',topic:'planevector'}),
+  g11Topic({link:'g11-drills.html?topic=determinant',topic:'determinant'})];
+assert.equal(g11ChallengeBaselineFor({topics:r3Topics}).standarddev,5);
+assert.equal(g11ChallengeBaselineFor({topics:r3Topics}).correlation,7);
+assert.equal(g11ChallengeBaselineFor({topics:r3Topics}).matrixapps,5);
+assert.equal(g11ChallengeR3Baseline.planevector,undefined);
+assert.equal(g11ChallengeR3Baseline.determinant,undefined);
 
 // But topic structureCount >=10 remains a hard gate for every G11 topic+difficulty.
 const lowStructure=g11Topic({levels:{basic:{structureCount:9},advanced:{structureCount:10},challenge:{structureCount:10}}});
@@ -92,5 +103,28 @@ const newFailure=result.failures.find(row=>row.code==='g11_topic_challenge_full_
 assert.equal(newFailure.threshold,3);
 assert.equal(newFailure.current,2);
 assert.equal(newFailure.newTopic,true);
+
+// r3 marker topics do not convert planevector/determinant into legacy topics: they remain new against the repository baseline.
+const r3Standard=g11Topic({challengeGate:{current:5,qualifyingUnits:['a','b','c','d','e']}});
+const planeTopic=g11Topic({link:'g11-drills.html?topic=planevector',topic:'planevector',challengeGate:{current:9,qualifyingUnits:['1','2','3','4','5','6','7','8','9']}});
+const detTopic=g11Topic({link:'g11-drills.html?topic=determinant',topic:'determinant',challengeGate:{current:5,qualifyingUnits:['1','2','3','4','5']}});
+result=evaluateDiversityRatchet({
+  baseline:g11Baseline,
+  current:{
+    units:[
+      g11Unit(),
+      g11Unit({link:'g11-drills.html?topic=planevector',topic:'planevector',unit:'pv',outputFingerprint:'pv'}),
+      g11Unit({link:'g11-drills.html?topic=determinant',topic:'determinant',unit:'dt',outputFingerprint:'dt'})
+    ],
+    topics:[r3Standard,planeTopic,detTopic]
+  },
+  exemptions:[]
+});
+assert.ok(result.newUnits.includes('planevector/pv'));
+assert.ok(result.newUnits.includes('determinant/dt'));
+assert.ok(!result.failures.some(row=>row.topic==='planevector' && row.code==='g11_topic_challenge_full_gate_required'));
+assert.ok(!result.failures.some(row=>row.topic==='determinant' && row.code==='g11_topic_challenge_full_gate_required'));
+assert.equal(r3Standard.challengeGate.baseline,5);
+assert.equal(r3Standard.challengeGate.baselineVersion,'g11-r3');
 
 console.log(JSON.stringify({test:'diversity-ratchet',passed:true}));
