@@ -107,13 +107,13 @@
 
 | 項目 | 結果 |
 |---|---:|
-| topic / 組合 | 55 / 1875 |
-| safeQuestion 抽樣 / 成功取題 | 375000 / 375000 |
-| 通過 / 失敗 | 1875 / 0 |
-| 候選 gen / null | 435425 / 35373 |
+| topic / 組合 | 58 / 2031 |
+| safeQuestion 抽樣 / 成功取題 | 406200 / 406200 |
+| 通過 / 失敗 | 2031 / 0 |
+| 候選 gen / null | 471362 / 40110 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 1869 / 6 |
-| 高拒絕率 unit（非阻擋） | 15 |
+| 完成單卷 / 單卷耗盡 | 2025 / 6 |
+| 高拒絕率 unit（非阻擋） | 17 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -128,6 +128,8 @@
 | simplify / `bracket` | 52.6% | 3 |
 | unknown / `same` | 51.0% | 1 |
 | units / `compare` | 81.6% | 6 |
+| speed / `average` | 81.6% | 2 |
+| speed / `meet` | 73.0% | 2 |
 | absolute / `error` | 66.6% | 3 |
 | linecircle / `tangent` | 52.7% | 1 |
 | series / `powersums` | 62.7% | 1 |
