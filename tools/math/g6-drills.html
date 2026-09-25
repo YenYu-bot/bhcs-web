@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["arithmetic","分數與小數四則運算"],["simplify","四則簡化計算"],["unknown","解未知數"],["time","時間的計算與化聚"],["gcd","最大公因數與最小公倍數"],["ratio","比、比例式與百分率"],["units","單位換算"],["area","周長與面積"],["circle","圓周長與圓面積"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"arithmetic",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["arithmetic","分數與小數四則運算"],["simplify","四則簡化計算"],["unknown","解未知數"],["time","時間的計算與化聚"],["gcd","最大公因數與最小公倍數"],["ratio","比、比例式與百分率"],["units","單位換算"],["area","周長與面積"],["circle","圓周長與圓面積"],["volume","體積與表面積"],["speed","速率"],["basecompare","基準量與比較量"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"arithmetic",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -139,6 +139,7 @@ function arithmeticConfig(){
 
 const roundScaled=(x,cut,method)=>{const factor=10**(x.s-cut);if(factor<=1)return{x:{...x},discard:0};const q=Math.floor(x.v/factor),rem=x.v%factor,inc=method==="up"?(rem>0?1:0):method==="half"?(rem*2>=factor?1:0):0,k=q+inc;return{x:cut>=0?{v:k,s:cut}:{v:k*10**(-cut),s:0},discard:rem}};
 const decObj=(v,s=0)=>({v,s}),decObjR=x=>R(x.v,10**x.s),fmtObj=(x,fixed=x.s)=>decHTML(decObjR(x),fixed),METHOD={up:"無條件進入法",down:"無條件捨去法",half:"四捨五入法"};
+/* estimation（估算）：舊作者留下的主題，未列入 TOPICS、總覽頁也沒有入口，所以不放進 CONFIGS；要上架時再加回 TOPICS 與 CONFIGS。 */
 function estimationConfig(){
  const methods=l=>l==="basic"?["half"]:l==="advanced"?["up","down","half"]:["up","down","half"];
  const roundUnit=(id,name,mode)=>({id,name,tip:mode==="integer"?"看指定位的下一位，依指定方法決定進位或捨去。":"小數取概數和整數相同，並保留指定的小數位數。",modes:[mode],gen(ctx){const method=pick(methods(ctx.level));if(mode==="integer"){const digits=ctx.level==="basic"?4:ctx.level==="advanced"?5:7,x=decObj(rand(10**(digits-1),10**digits-1),0),cut=-pick(ctx.level==="basic"?[1,2]:[1,2,3]);const rr=roundScaled(x,cut,method);return{expr:`${fmtObj(x,0)} 用${METHOD[method]}取概數到${cut===-1?"十位":cut===-2?"百位":"千位"}。`,answer:fmtObj(rr.x,0),sig:`${id}:${x.v}:${cut}:${method}`,verify:()=>roundScaled(x,cut,method).x.v===rr.x.v}}const s=ctx.level==="basic"?2:ctx.level==="advanced"?3:4,cut=rand(0,s-1),x=decObj(rand(10**s,99*10**s),s),rr=roundScaled(x,cut,method);return{expr:`${fmtObj(x,s)} 用${METHOD[method]}取概數到${cut===0?"個位":`小數第${["零","一","二","三"][cut]}位`}。`,answer:fmtObj(rr.x,cut),sig:`${id}:${x.v}:${s}:${cut}:${method}`,verify:()=>roundScaled(x,cut,method).x.v===rr.x.v&&roundScaled(x,cut,method).x.s===rr.x.s}}});
@@ -307,7 +308,9 @@ function circleConfig(){
  const sectorFig=(r,frac)=>{const cx=70,cy=64,R0=46;const d=frac===2?`M${cx-R0} ${cy} A${R0} ${R0} 0 0 1 ${cx+R0} ${cy} Z`:frac===4?`M${cx} ${cy} L${cx+R0} ${cy} A${R0} ${R0} 0 0 0 ${cx} ${cy-R0} Z`:`M${cx} ${cy} L${cx} ${cy-R0} A${R0} ${R0} 0 1 0 ${cx+R0} ${cy} Z`;return svg(150,125,`<path d="${d}" ${st}/>${frac===2?lbl(cx,cy+14,sv(mul(r,R(2)))+" "+U):lbl(cx+R0/2,cy+14,sv(r)+" "+U)}`)};
  const squareCircleFig=r=>svg(140,130,`<rect x="20" y="15" width="100" height="100" ${st}/><circle cx="70" cy="65" r="50" ${st}/>${lbl(70,128,sv(mul(r,R(2)))+" "+U)}`);
  const ringFig=(r1,r2)=>svg(150,125,`<circle cx="72" cy="60" r="50" ${st}/><circle cx="72" cy="60" r="26" ${st}/><line x1="72" y1="60" x2="98" y2="60" ${rd}/><line x1="72" y1="60" x2="122" y2="60" stroke="#C8352B" stroke-width="1.4"/>${lbl(85,55,sv(r1))}${lbl(112,75,sv(r2))}`);
- const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer","fraction","decimal"],gen});
+ const piNote=m=>m==="integer"?"（圓周率取 3）":m==="decimal"?"（圓周率取 3.14）":"（答案以 π 表示）";
+ // 同一份卷可能混合三種圓周率，所以先抽定模式、再把圓周率寫進題尾，學生才知道要用哪一個
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer","fraction","decimal"],gen:ctx=>{const m=pick(ctx.modes),q=gen({...ctx,modes:[m]});if(q)q.expr+=piNote(m);return q}});
  const circumference=unit("circumference","圓周長","圓周長＝直徑×圓周率＝半徑×2×圓周率；題目給的是半徑還是直徑要先看清楚。",ctx=>{
   const L=lv(ctx),mode=pick(ctx.modes),r=radius(L,mode),d=mul(r,R(2)),kind=L===0?pick(["r","d","half"]):L===1?pick(["r","d","reverse"]):pick(["reverse","reverseA","half"]);
   const C=V(d);
@@ -344,6 +347,346 @@ function circleConfig(){
   units:[circumference,area,sector,composite],presets:{basic:{circumference:3,area:3,sector:2,composite:2},advanced:{circumference:2,area:2,sector:3,composite:3},challenge:{circumference:2,area:2,sector:3,composite:3}}};
 }
 
+function volumeConfig(){
+ /* M4 體積與表面積（2026-09-24，Claude）。
+    數的類型：整數／小數／分數；圓柱的圓周率跟著勾選走——整數取 3、小數取 3.14、分數以 π 表示（沿用 M3 的做法，本主題覆寫勾選框標籤）。
+    小數模式最多兩個量帶一位小數，所以題面數字不超過兩位小數。體積、面積一律用 R 運算；verify 走另一條路徑（六個面逐一相加、補成大長方體再扣、代回公式）。
+    SVG 只用 #16233A（線）、#C8352B（標示）、#7C879B（示意圖字與隱藏線），不引入新顏色。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0,half=v=>div(v,R(2));
+ const U="cm",U2="cm<sup>2</sup>",U3="cm<sup>3</sup>";
+ const piOf=mode=>mode==="integer"?R(3):mode==="decimal"?R(314,100):null;
+ const finiteDec=v=>{let d=v.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
+ const show=(v,mode,ctx)=>mode==="fraction"?numHTML(v,"fraction",{mixed:ctx.mixed,answer:false}):v.d===1?numHTML(v,"integer"):numHTML(v,"decimal");
+ const showA=(v,mode,ctx)=>mode==="fraction"?numHTML(v,"fraction",{mixed:ctx.mixed,answer:true}):v.d===1?numHTML(v,"integer"):finiteDec(v)?numHTML(v,"decimal"):numHTML(v,"fraction",{answer:true});
+ // π 值：p＝π 的係數；numeric 依模式代入 3 或 3.14；fraction 模式以「kπ」表示
+ const piNote=m=>m==="integer"?"（圓周率取 3）":m==="decimal"?"（圓周率取 3.14）":"（答案以 π 表示）";
+ const piShow=(p,mode,ctx,unit)=>mode==="fraction"?`${eq(p,R(1))?"":numHTML(p,p.d===1?"integer":"fraction",{answer:true})}π ${unit}`:`${showA(mul(p,piOf(mode)),mode,ctx)} ${unit}`;
+ // 產生 k 個量：小數模式前 nd 個帶一位小數、分數模式前 nf 個為分數，其餘整數，最後打散
+ const one=(mode,max,kind)=>{if(kind==="d"){let n=rand(11,max*10);while(n%10===0)n=rand(11,max*10);return R(n,10)}if(kind==="f"){const d=pick([2,3,4]);let n=rand(d+1,max*d);while(n%d===0)n=rand(d+1,max*d);return R(n,d)}return R(rand(2,max))};
+ const dims=(mode,L,k,max,nSpecial)=>{const ns=mode==="integer"?0:Math.min(k,nSpecial??(L===2?2:1)),out=[];for(let i=0;i<k;i++)out.push(one(mode,max,i<ns?(mode==="decimal"?"d":"f"):"i"));return shuffle(out)};
+ const maxOf=L=>L===0?10:L===1?20:40;
+ // ---- SVG（示意圖，不按比例）----
+ const sv=v=>{if(v.d===1)return String(v.n);if(finiteDec(v))return decHTML(v);const w=Math.trunc(v.n/v.d),r=v.n-w*v.d;return (w?w+" ":"")+r+"/"+v.d};
+ const svg=(w,h,body)=>`<svg class="fig" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="示意圖"><text x="${w-4}" y="${h-3}" font-size="9" fill="#7C879B" text-anchor="end">示意圖</text>${body}</svg>`;
+ const lbl=(x,y,t,anchor="middle")=>`<text x="${x}" y="${y}" font-size="12" fill="#16233A" text-anchor="${anchor}" font-family="Noto Sans TC,sans-serif">${t}</text>`;
+ const st='fill="#fff" stroke="#16233A" stroke-width="1.5" stroke-linejoin="round"',hid='stroke="#7C879B" stroke-width="1" stroke-dasharray="3 3"',rd='stroke="#C8352B" stroke-width="1.3" stroke-dasharray="4 3"';
+ const poly=pts=>`<polygon points="${pts.map(p=>p.join(",")).join(" ")}" ${st}/>`,ln=(a,b,s)=>`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" ${s}/>`;
+ // 長方體：長 a（前下邊）、寬 b（右下斜邊）、高 c（右前直邊）
+ const boxFig=(a,b,c,unit=U)=>{const F1=[20,100],F2=[130,100],F3=[130,40],F4=[20,40],d=[40,-28],B=p=>[p[0]+d[0],p[1]+d[1]],B1=B(F1),B2=B(F2),B3=B(F3),B4=B(F4);
+  return svg(215,122,`${poly([F4,F3,B3,B4])}${poly([F2,B2,B3,F3])}${poly([F1,F2,F3,F4])}${ln(F1,B1,hid)}${ln(B1,B2,hid)}${ln(B1,B4,hid)}${lbl(75,115,sv(a)+" "+unit)}${lbl(154,96,sv(b)+" "+unit,"start")}${lbl(136,74,sv(c)+" "+unit,"start")}`)};
+ const cubeFig=(a,unit=U)=>{const F1=[20,105],F2=[90,105],F3=[90,35],F4=[20,35],d=[35,-25],B=p=>[p[0]+d[0],p[1]+d[1]],B1=B(F1),B2=B(F2),B3=B(F3),B4=B(F4);
+  return svg(170,122,`${poly([F4,F3,B3,B4])}${poly([F2,B2,B3,F3])}${poly([F1,F2,F3,F4])}${ln(F1,B1,hid)}${ln(B1,B2,hid)}${ln(B1,B4,hid)}${lbl(55,119,sv(a)+" "+unit)}${lbl(110,100,sv(a),"start")}${lbl(96,72,sv(a),"start")}`)};
+ const cylFig=(r,h,isD)=>svg(150,140,`<path d="M30 30 L30 105 A40 11 0 0 0 110 105 L110 30" ${st}/><path d="M30 105 A40 11 0 0 1 110 105" fill="none" ${hid}/><ellipse cx="70" cy="30" rx="40" ry="11" ${st}/>${isD?ln([30,30],[110,30],rd):ln([70,30],[110,30],rd)+'<circle cx="70" cy="30" r="2" fill="#16233A"/>'}${lbl(isD?70:90,24,sv(isD?mul(r,R(2)):r)+" "+U)}${lbl(116,72,sv(h)+" "+U,"start")}`);
+ const triFig=(b,h,l)=>{const P1=[20,105],P2=[110,105],P3=[20,45],d=[55,-24],B=p=>[p[0]+d[0],p[1]+d[1]];
+  return svg(215,122,`${poly([P3,P2,B(P2),B(P3)])}${poly([P1,P2,P3])}${ln(P1,B(P1),hid)}${ln(B(P1),B(P2),hid)}${ln(B(P1),B(P3),hid)}<path d="M28 105 L28 97 L20 97" fill="none" stroke="#C8352B" stroke-width="1"/>${lbl(65,119,sv(b)+" "+U)}${lbl(14,78,sv(h)+" "+U,"end")}${lbl(140,100,sv(l)+" "+U,"start")}`)};
+ const trapFig=(a,b,h,l)=>{const P1=[20,105],P2=[120,105],P3=[95,50],P4=[45,50],d=[50,-22],B=p=>[p[0]+d[0],p[1]+d[1]];
+  return svg(215,122,`${poly([P4,P3,B(P3),B(P4)])}${poly([P2,B(P2),B(P3),P3])}${poly([P1,P2,P3,P4])}${ln(P1,B(P1),hid)}${ln(B(P1),B(P2),hid)}${ln(B(P1),B(P4),hid)}${ln([70,50],[70,105],rd)}${lbl(70,119,sv(b)+" "+U)}${lbl(70,44,sv(a)+" "+U)}${lbl(74,82,sv(h),"start")}${lbl(150,100,sv(l)+" "+U,"start")}`)};
+ // L 形柱：底長 A、左高 H、上段寬 w、右段高 k、厚 D
+ const lFig=(A,H,w,k,D)=>{const f=[[20,110],[140,110],[140,80],[80,80],[80,30],[20,30]],d=[35,-22],B=p=>[p[0]+d[0],p[1]+d[1]];
+  return svg(215,130,`${poly([f[5],f[4],B(f[4]),B(f[5])])}${poly([f[4],f[3],B(f[3]),B(f[4])])}${poly([f[3],f[2],B(f[2]),B(f[3])])}${poly([f[2],f[1],B(f[1]),B(f[2])])}${poly(f)}${lbl(80,124,sv(A))}${lbl(14,74,sv(H),"end")}${lbl(50,24,sv(w))}${lbl(146,99,sv(k),"start")}${lbl(170,74,sv(D),"start")}`)};
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer","fraction","decimal"],gen});
+ const cuboid=unit("cuboid","長方體與正方體的體積","長方體體積＝長×寬×高；正方體體積＝邊長×邊長×邊長；也可以看成底面積×高。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),M=maxOf(L),kind=L===0?pick(["box","cube","count"]):L===1?pick(["box","cube","base","count"]):pick(["base","scale","compare","box"]);
+  if(kind==="box"){const [a,b,c]=dims(mode,L,3,M),V=mul(mul(a,b),c);return{expr:`${boxFig(a,b,c)}長方體的長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U}，求體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`vb:${plain(a)}:${plain(b)}:${plain(c)}`,verify:()=>eq(V,mul(c,mul(b,a)))}}
+  if(kind==="cube"){const [a]=dims(mode,L,1,L===0?10:15,mode==="decimal"?0:1),V=mul(mul(a,a),a);return{expr:`${cubeFig(a)}正方體的邊長 ${show(a,mode,ctx)} ${U}，求體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`vc:${plain(a)}`,verify:()=>eq(div(div(V,a),a),a)}}
+  if(kind==="count"){const [a,b,c]=[R(rand(2,L===0?6:10)),R(rand(2,L===0?6:10)),R(rand(2,L===0?5:8))],n=mul(mul(a,b),c);return{expr:`用邊長 1 ${U} 的小正方體堆成長 ${a.n} ${U}、寬 ${b.n} ${U}、高 ${c.n} ${U} 的長方體，共用了幾個？體積是多少？`,answer:`${n.n} 個；${n.n} ${U3}`,sig:`vn:${a.n}:${b.n}:${c.n}`,verify:()=>n.n===a.n*b.n*c.n}}
+  if(kind==="base"){const [S,h]=dims(mode,L,2,L===2?60:30),V=mul(S,h);return{expr:`長方體的底面積 ${show(S,mode,ctx)} ${U2}、高 ${show(h,mode,ctx)} ${U}，求體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`vs:${plain(S)}:${plain(h)}`,verify:()=>eq(div(V,h),S)}}
+  if(kind==="scale"){const a=R(rand(2,9)),k=rand(2,4),V1=mul(mul(a,a),a),V2=mul(V1,R(k*k*k));return{expr:`正方體的邊長由 ${a.n} ${U} 變成原來的 ${k} 倍，體積變成原來的幾倍？新的體積是多少？`,answer:`${k*k*k} 倍；${V2.n} ${U3}`,sig:`vk:${a.n}:${k}`,verify:()=>eq(V2,mul(mul(R(a.n*k),R(a.n*k)),R(a.n*k)))}}
+  // compare：長方體與正方體比體積
+  const [a,b,c]=dims(mode,L,3,M,1),s=R(rand(3,12)),V1=mul(mul(a,b),c),V2=mul(mul(s,s),s),d=sub(V1,V2);if(d.n===0)return null;const big=d.n>0?"長方體":"正方體",dd=d.n>0?d:sub(V2,V1);
+  return{expr:`長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U} 的長方體，和邊長 ${s.n} ${U} 的正方體，哪一個體積大？大多少？`,answer:`${big}大 ${showA(dd,mode,ctx)} ${U3}`,sig:`vx:${plain(a)}:${plain(b)}:${plain(c)}:${s.n}`,verify:()=>eq(add(V2,d),mul(c,mul(a,b)))}});
+ const surface=unit("surface","長方體與正方體的表面積","表面積＝六個面的面積和；長方體＝（長×寬＋長×高＋寬×高）×2，正方體＝邊長×邊長×6。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),M=L===0?10:L===1?15:25,kind=L===0?pick(["box","cube","face"]):L===1?pick(["box","cube","open"]):pick(["open","glue","cut","reverse"]);
+  const S6=(a,b,c)=>add(add(add(mul(a,b),mul(a,b)),add(mul(a,c),mul(a,c))),add(mul(b,c),mul(b,c)));
+  if(kind==="box"){const [a,b,c]=dims(mode,L,3,M),S=mul(add(add(mul(a,b),mul(a,c)),mul(b,c)),R(2));if(eq(a,b)&&eq(b,c))return null;return{expr:`${boxFig(a,b,c)}長方體的長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U}，求表面積。`,answer:`${showA(S,mode,ctx)} ${U2}`,sig:`sb:${plain(a)}:${plain(b)}:${plain(c)}`,verify:()=>eq(S,S6(a,b,c))}}
+  if(kind==="cube"){const [a]=dims(mode,L,1,M),S=mul(mul(a,a),R(6));return{expr:`${cubeFig(a)}正方體的邊長 ${show(a,mode,ctx)} ${U}，求表面積。`,answer:`${showA(S,mode,ctx)} ${U2}`,sig:`sc:${plain(a)}`,verify:()=>eq(S,S6(a,a,a))}}
+  if(kind==="face"){const [a,b,c]=dims(mode,L,3,M);if(eq(a,b)||eq(b,c)||eq(a,c))return null;const s=[mul(a,b),mul(a,c),mul(b,c)].sort((x,y)=>sub(x,y).n),big=s[2];return{expr:`長方體的長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U}，面積最大的一面是多少？這樣的面有幾個？`,answer:`${showA(big,mode,ctx)} ${U2}；2 個`,sig:`sf:${plain(a)}:${plain(b)}:${plain(c)}`,verify:()=>[mul(a,b),mul(a,c),mul(b,c)].every(x=>sub(big,x).n>=0)}}
+  if(kind==="open"){const [a,b,c]=dims(mode,L,3,M),S=add(mul(a,b),mul(add(mul(a,c),mul(b,c)),R(2)));return{expr:`${boxFig(a,b,c)}做一個沒有蓋子的長方體紙盒，長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U}，至少要用多少紙板？`,answer:`${showA(S,mode,ctx)} ${U2}（少了上面一面）`,sig:`so:${plain(a)}:${plain(b)}:${plain(c)}`,verify:()=>eq(add(S,mul(a,b)),S6(a,b,c))}}
+  if(kind==="glue"){const n=rand(2,4),[a]=dims(mode,L,1,12),S=mul(mul(a,a),R(4*n+2));return{expr:`${n} 個邊長 ${show(a,mode,ctx)} ${U} 的正方體排成一排黏在一起，求新形體的表面積。`,answer:`${showA(S,mode,ctx)} ${U2}`,sig:`sg:${n}:${plain(a)}`,verify:()=>eq(S,S6(mul(a,R(n)),a,a))}}
+  if(kind==="cut"){const [a,b,c]=dims(mode,L,3,M),S=mul(mul(b,c),R(2));return{expr:`長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U} 的長方體，平行於左右兩面切成兩塊，表面積總和增加多少？`,answer:`${showA(S,mode,ctx)} ${U2}（多了兩個切面）`,sig:`sx:${plain(a)}:${plain(b)}:${plain(c)}`,verify:()=>eq(add(S6(div(a,R(2)),b,c),S6(div(a,R(2)),b,c)),add(S6(a,b,c),S))}}
+  const a=R(rand(2,20)),S=mul(mul(a,a),R(6)),V=mul(mul(a,a),a);return{expr:`正方體的表面積 ${S.n} ${U2}，求它的邊長與體積。`,answer:`邊長 ${a.n} ${U}；體積 ${V.n} ${U3}`,sig:`sr:${a.n}`,verify:()=>eq(mul(mul(a,a),R(6)),S)&&V.n===a.n**3}});
+ const prism=unit("prism","柱體的體積","柱體體積＝底面積×高；三角柱的底是三角形、梯形柱的底是梯形、圓柱的底是圓。圓周率依勾選：整數取 3、小數取 3.14、分數以 π 表示。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),M=L===0?10:L===1?16:24,kind=L===0?pick(["tri","trap","cyl"]):L===1?pick(["tri","trap","cylD","basearea"]):pick(["cylD","pipe","halfcyl","trap"]);
+  if(kind==="tri"||kind==="trap"||kind==="basearea"){
+   if(kind==="basearea"){const [S,h]=dims(mode,L,2,40),V=mul(S,h);return{expr:`一個柱體的底面積 ${show(S,mode,ctx)} ${U2}、高 ${show(h,mode,ctx)} ${U}，求體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`pb:${plain(S)}:${plain(h)}`,verify:()=>eq(div(V,S),h)}}
+   if(kind==="tri"){const [b,h,l]=dims(mode,L,3,M),V=mul(half(mul(b,h)),l);return{expr:`${triFig(b,h,l)}三角柱的底面是直角三角形，兩股 ${show(b,mode,ctx)} ${U}、${show(h,mode,ctx)} ${U}，柱高 ${show(l,mode,ctx)} ${U}，求體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`pt:${plain(b)}:${plain(h)}:${plain(l)}`,verify:()=>eq(mul(V,R(2)),mul(mul(b,l),h))}}
+   const [a,h,l]=dims(mode,L,3,M),b=add(a,R(rand(2,8))),V=mul(half(mul(add(a,b),h)),l);return{expr:`${trapFig(a,b,h,l)}梯形柱的底面上底 ${show(a,mode,ctx)} ${U}、下底 ${show(b,mode,ctx)} ${U}、高 ${show(h,mode,ctx)} ${U}，柱高 ${show(l,mode,ctx)} ${U}，求體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`pz:${plain(a)}:${plain(b)}:${plain(h)}:${plain(l)}`,verify:()=>eq(mul(V,R(2)),add(mul(mul(a,h),l),mul(mul(b,h),l)))}}
+  const r=R(rand(1,L===2?12:8)),h=R(rand(2,L===2?20:12)),p=mul(mul(r,r),h);
+  if(kind==="cyl"||kind==="cylD"){const isD=kind==="cylD";return{expr:`${cylFig(r,h,isD)}圓柱的底面${isD?"直徑":"半徑"} ${show(isD?mul(r,R(2)):r,"integer",ctx)} ${U}、高 ${h.n} ${U}，求體積。${piNote(mode)}`,answer:piShow(p,mode,ctx,U3),sig:`pc:${kind}:${r.n}:${h.n}`,verify:()=>eq(p,mul(h,mul(div(mul(r,R(2)),R(2)),r)))}}
+  if(kind==="halfcyl"){const q=half(p);return{expr:`把底面半徑 ${r.n} ${U}、高 ${h.n} ${U} 的圓柱沿著直徑縱切成兩半，求其中一半的體積。${piNote(mode)}`,answer:piShow(q,mode,ctx,U3),sig:`ph:${r.n}:${h.n}`,verify:()=>eq(add(q,q),mul(mul(r,r),h))}}
+  const r2=add(r,R(rand(1,4))),q=mul(sub(mul(r2,r2),mul(r,r)),h);return{expr:`一段水管外半徑 ${r2.n} ${U}、內半徑 ${r.n} ${U}、長 ${h.n} ${U}，求水管本身（管壁）的體積。${piNote(mode)}`,answer:piShow(q,mode,ctx,U3),sig:`pp:${r.n}:${r2.n}:${h.n}`,verify:()=>eq(q,mul(mul(add(r2,r),sub(r2,r)),h))}});
+ const composite=unit("composite","複合形體的體積","可以切成幾塊長方體相加，也可以補成一個大長方體再扣掉缺的部分；兩種算法答案要一樣。",ctx=>{
+  const L=lv(ctx),mode=L===0?"integer":pick(ctx.modes),kind=L===0?pick(["lshape","stack","notch"]):L===1?pick(["lshape","stack","notch"]):pick(["lshape","tunnel","stairs"]);
+  const M=L===0?10:L===1?16:24;
+  if(kind==="lshape"){const [w,k,D]=dims(mode,L,3,M,1),A=add(w,R(rand(2,M))),H=add(k,R(rand(2,M))),V1=mul(add(mul(w,H),mul(sub(A,w),k)),D),V2=mul(sub(mul(A,H),mul(sub(A,w),sub(H,k))),D);
+   return{expr:`${lFig(A,H,w,k,D)}如圖的形體（單位 ${U}，前後厚度都是 ${show(D,mode,ctx)} ${U}），求體積。`,answer:`${showA(V1,mode,ctx)} ${U3}`,sig:`cl:${plain(A)}:${plain(H)}:${plain(w)}:${plain(k)}:${plain(D)}`,verify:()=>eq(V1,V2)}}
+  if(kind==="stack"){const [a,b,c,d,e,f]=dims(mode,L,6,M,1),V1=add(mul(mul(a,b),c),mul(mul(d,e),f));return{expr:`長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U} 的長方體上面，疊放一個長 ${show(d,mode,ctx)} ${U}、寬 ${show(e,mode,ctx)} ${U}、高 ${show(f,mode,ctx)} ${U} 的長方體，求總體積。`,answer:`${showA(V1,mode,ctx)} ${U3}`,sig:`cs:${[a,b,c,d,e,f].map(plain).join(":")}`,verify:()=>eq(sub(V1,mul(mul(d,e),f)),mul(c,mul(b,a)))}}
+  if(kind==="notch"){const [x,y,z]=dims(mode,L,3,L===0?5:8,1),a=add(x,R(rand(2,M))),b=add(y,R(rand(2,M))),c=add(z,R(rand(2,M))),V=sub(mul(mul(a,b),c),mul(mul(x,y),z));
+   return{expr:`從長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U} 的長方體的一個角，挖去長 ${show(x,mode,ctx)} ${U}、寬 ${show(y,mode,ctx)} ${U}、高 ${show(z,mode,ctx)} ${U} 的小長方體，求剩下的體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`cn:${[a,b,c,x,y,z].map(plain).join(":")}`,
+    // 另一條路徑：切成三塊——底層 a×b×(c−z)、上層扣角後的兩塊 (a−x)×b×z ＋ x×(b−y)×z
+    verify:()=>eq(V,add(add(mul(mul(a,b),sub(c,z)),mul(mul(sub(a,x),b),z)),mul(mul(x,sub(b,y)),z)))}}
+  if(kind==="tunnel"){const [x,y]=dims(mode,L,2,6,1),a=add(x,R(rand(2,12))),c=add(y,R(rand(2,12))),b=R(rand(4,20)),V=mul(sub(mul(a,c),mul(x,y)),b);
+   return{expr:`長 ${show(a,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U}、厚 ${b.n} ${U} 的長方體，從前到後挖穿一個寬 ${show(x,mode,ctx)} ${U}、高 ${show(y,mode,ctx)} ${U} 的長方形通道，求剩下的體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`ct:${[a,c,x,y].map(plain).join(":")}:${b.n}`,verify:()=>eq(add(V,mul(mul(x,y),b)),mul(mul(a,b),c))}}
+  // stairs：三層階梯，每階寬 s、高 t、深 D
+  const [s,t,D]=dims(mode,L,3,12,1),V=mul(mul(mul(s,t),D),R(6));
+  return{expr:`用混凝土做三層階梯，每一階的寬 ${show(s,mode,ctx)} ${U}、高 ${show(t,mode,ctx)} ${U}，階梯左右長 ${show(D,mode,ctx)} ${U}（最下層三階寬、中層兩階寬、最上層一階寬），求體積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`cp:${[s,t,D].map(plain).join(":")}`,verify:()=>eq(V,add(add(mul(mul(mul(s,R(3)),t),D),mul(mul(mul(s,R(2)),t),D)),mul(mul(s,t),D)))}});
+ const capacity=unit("capacity","容積與體積換算","1 cm³＝1 mL，1000 cm³＝1 L；容積用「內部」的長、寬、高；物體放進水中，水面上升的那一段就是物體的體積。",ctx=>{
+  const L=lv(ctx),mode=L===0?"integer":pick(ctx.modes),kind=L===0?pick(["cap","water","depth"]):L===1?pick(["cap","thick","stone","depth"]):pick(["thick","stone","pour","rise"]);
+  const toL=v=>`${showA(div(v,R(1000)),mode==="fraction"?"decimal":mode,ctx)} L`;
+  if(kind==="cap"){const [a,b,c]=dims(mode,L,3,L===0?30:40,1).map(x=>add(x,R(8))),V=mul(mul(a,b),c);return{expr:`一個水箱內部長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}、高 ${show(c,mode,ctx)} ${U}，容積是多少 ${U3}？合多少公升？`,answer:`${showA(V,mode,ctx)} ${U3}＝${toL(V)}`,sig:`kc:${plain(a)}:${plain(b)}:${plain(c)}`,verify:()=>eq(mul(div(V,R(1000)),R(1000)),mul(c,mul(b,a)))}}
+  if(kind==="water"){const a=R(rand(10,40)),b=R(rand(10,30)),w=R(rand(3,20)),V=mul(mul(a,b),w);return{expr:`${boxFig(a,b,add(w,R(rand(3,10))))}長方體水缸內部長 ${a.n} ${U}、寬 ${b.n} ${U}，裡面的水深 ${w.n} ${U}，水有多少 mL？`,answer:`${V.n} mL`,sig:`kw:${a.n}:${b.n}:${w.n}`,verify:()=>V.n===a.n*b.n*w.n}}
+  if(kind==="depth"){const a=R(rand(2,8)*5),b=R(rand(2,8)*5),w=R(rand(2,20)),V=mul(mul(a,b),w);return{expr:`把 ${toL(V)} 的水倒進內部長 ${a.n} ${U}、寬 ${b.n} ${U} 的長方體容器（容器夠高），水深多少 ${U}？`,answer:`${w.n} ${U}`,sig:`kd:${a.n}:${b.n}:${w.n}`,verify:()=>eq(mul(mul(a,b),w),V)}}
+  if(kind==="thick"){const t=mode==="decimal"?pick([R(5,10),R(1)]):R(rand(1,2)),[a,b,c]=[R(rand(12,40)),R(rand(10,30)),R(rand(10,30))],V=mul(mul(sub(a,mul(t,R(2))),sub(b,mul(t,R(2)))),sub(c,t));
+   return{expr:`一個沒有蓋子的長方體木箱，外部長 ${a.n} ${U}、寬 ${b.n} ${U}、高 ${c.n} ${U}，木板厚 ${show(t,mode,ctx)} ${U}，求容積。`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`kt:${a.n}:${b.n}:${c.n}:${plain(t)}`,verify:()=>eq(div(V,sub(c,t)),mul(sub(a,add(t,t)),sub(b,add(t,t))))}}
+  if(kind==="stone"){const a=R(rand(10,40)),b=R(rand(10,30)),[r]=dims(mode,L,1,6),V=mul(mul(a,b),r);return{expr:`內部長 ${a.n} ${U}、寬 ${b.n} ${U} 的長方體水缸裝了水，放入一塊石頭完全沉入水中後，水面上升 ${show(r,mode,ctx)} ${U}（水沒有溢出），石頭的體積是多少？`,answer:`${showA(V,mode,ctx)} ${U3}`,sig:`ks:${a.n}:${b.n}:${plain(r)}`,verify:()=>eq(div(V,mul(a,b)),r)}}
+  if(kind==="rise"){const a=R(rand(2,8)*5),b=R(rand(2,8)*5),r=pick([R(rand(1,12)),R(rand(1,40),4)]),V=mul(mul(a,b),r);if(mode==="integer"&&r.d!==1)return null;return{expr:`內部長 ${a.n} ${U}、寬 ${b.n} ${U} 的長方體水缸裝了水，放入體積 ${showA(V,mode,ctx)} ${U3} 的鐵塊完全沉入水中（水沒有溢出），水面上升多少 ${U}？`,answer:`${showA(r,mode,ctx)} ${U}`,sig:`kr:${a.n}:${b.n}:${plain(r)}`,verify:()=>eq(mul(r,mul(a,b)),V)}}
+  // pour：甲容器的水倒入乙容器
+  const a1=R(rand(2,6)*5),b1=R(rand(2,6)*5),w1=R(rand(4,20)),a2=R(rand(2,8)*5),b2=R(rand(2,8)*5),V=mul(mul(a1,b1),w1),w2=div(V,mul(a2,b2));if(!finiteDec(w2)||(mode==="integer"&&w2.d!==1)||w2.d>4)return null;
+  return{expr:`甲缸內部長 ${a1.n} ${U}、寬 ${b1.n} ${U}，水深 ${w1.n} ${U}；把水全部倒進內部長 ${a2.n} ${U}、寬 ${b2.n} ${U} 的乙缸（夠高），乙缸水深多少 ${U}？`,answer:`${showA(w2,mode==="fraction"?"fraction":"decimal",ctx)} ${U}`,sig:`kp:${[a1,b1,w1,a2,b2].map(plain).join(":")}`,verify:()=>eq(mul(mul(a2,b2),w2),mul(mul(w1,b1),a1))}});
+ const reverse=unit("reverse","已知體積反求邊長或高","長方體：高＝體積÷（長×寬）＝體積÷底面積；正方體：找哪個數連乘三次等於體積。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),M=L===0?10:L===1?20:30,kind=L===0?pick(["height","cube","base"]):L===1?pick(["height","cube","liter"]):pick(["cyl","ratio","cubeS","liter"]);
+  if(kind==="height"){const [a,b,c]=dims(mode,L,3,M),V=mul(mul(a,b),c);return{expr:`長方體的體積 ${show(V,mode,ctx)} ${U3}，長 ${show(a,mode,ctx)} ${U}、寬 ${show(b,mode,ctx)} ${U}，求高。`,answer:`${showA(c,mode,ctx)} ${U}`,sig:`rh:${plain(a)}:${plain(b)}:${plain(c)}`,verify:()=>eq(mul(mul(a,b),c),V)}}
+  if(kind==="base"){const [S,h]=dims(mode,L,2,M),V=mul(S,h);return{expr:`長方體的體積 ${show(V,mode,ctx)} ${U3}，底面積 ${show(S,mode,ctx)} ${U2}，求高。`,answer:`${showA(h,mode,ctx)} ${U}`,sig:`rb:${plain(S)}:${plain(h)}`,verify:()=>eq(mul(h,S),V)}}
+  if(kind==="cube"){const a=mode==="fraction"?R(rand(2,9),pick([2,3])):R(rand(2,L===0?10:15)),V=mul(mul(a,a),a);if(a.d!==1&&a.n%a.d===0)return null;return{expr:`正方體的體積 ${show(V,mode==="fraction"?"fraction":"integer",ctx)} ${U3}，求邊長。`,answer:`${showA(a,mode==="fraction"?"fraction":"integer",ctx)} ${U}`,sig:`rc:${plain(a)}`,verify:()=>eq(mul(mul(a,a),a),V)}}
+  if(kind==="liter"){const a=R(rand(2,8)*5),b=R(rand(2,8)*5),h=L===2&&mode!=="integer"?R(rand(21,99),2):R(rand(4,30)),V=mul(mul(a,b),h),Lt=div(V,R(1000));return{expr:`一個長方體容器內部長 ${a.n} ${U}、寬 ${b.n} ${U}，容積 ${showA(Lt,mode==="fraction"?"decimal":mode,ctx)} L，求內部的高。`,answer:`${showA(h,mode==="fraction"?"fraction":"decimal",ctx)} ${U}`,sig:`rl:${a.n}:${b.n}:${plain(h)}`,verify:()=>eq(mul(mul(a,h),b),mul(Lt,R(1000)))}}
+  if(kind==="ratio"){const [p,q,s]=shuffle([1,2,3,4,5]).slice(0,3),k=R(rand(2,6)),V=mul(R(p*q*s),mul(mul(k,k),k));return{expr:`長方體的長、寬、高的比是 ${p}：${q}：${s}，體積 ${V.n} ${U3}，求長、寬、高。`,answer:`長 ${p*k.n} ${U}、寬 ${q*k.n} ${U}、高 ${s*k.n} ${U}`,sig:`rr:${p}:${q}:${s}:${k.n}`,verify:()=>V.n===(p*k.n)*(q*k.n)*(s*k.n)}}
+  if(kind==="cubeS"){const a=R(rand(2,15)),S=mul(mul(a,a),R(6)),V=mul(mul(a,a),a);return{expr:`正方體的體積 ${V.n} ${U3}，求它的表面積。`,answer:`${S.n} ${U2}`,sig:`rs:${a.n}`,verify:()=>S.n===6*a.n*a.n&&a.n**3===V.n}}
+  // cyl：圓柱已知體積與半徑求高
+  const r=R(rand(1,10)),h=R(rand(2,20)),p=mul(mul(r,r),h);return{expr:`圓柱的體積 ${piShow(p,mode,ctx,U3)}，底面半徑 ${r.n} ${U}，求高。${piNote(mode)}`,answer:`${h.n} ${U}`,sig:`ry:${r.n}:${h.n}`,verify:()=>eq(div(p,mul(r,r)),h)}});
+ return{title:"體積與表面積",symbol:"▣",subtitle:"長方體與正方體・表面積・柱體・複合形體・容積換算・反求邊長",instruction:"依公式計算，注意單位：長度 cm、面積 cm²、體積 cm³；1 L＝1000 cm³。圖為示意圖不按比例，虛線表示看不到的邊。",modes:["integer","fraction","decimal"],modeLabels:{integer:"整數（圓周率取 3）",decimal:"小數（圓周率取 3.14）",fraction:"分數（圓周率以 π 表示）"},mixed:true,
+  levels:{basic:"基礎：整數，直接代公式；小正方體堆疊；三角柱、梯形柱、圓柱；容積與水量、倒水求水深。",advanced:"進階：一至兩個量含小數或分數；底面積×高；沒有蓋子的紙盒；木板厚度求容積；石頭排水法；由公升反求高。",challenge:"挑戰：邊長變 k 倍體積變 k³ 倍、比較體積；正方體黏合與切割後的表面積；圓管與半圓柱；挖通道、階梯；兩缸倒水、由體積求水面上升；連比求長寬高、圓柱反求高。"},
+  units:[cuboid,surface,prism,composite,capacity,reverse],presets:{basic:{cuboid:3,surface:2,prism:2,composite:1,capacity:2,reverse:2},advanced:{cuboid:2,surface:2,prism:2,composite:2,capacity:2,reverse:2},challenge:{cuboid:2,surface:2,prism:2,composite:2,capacity:2,reverse:2}}};
+}
+
+function speedConfig(){
+ /* M5 速率（2026-09-24，Claude）。
+    題目一律從答案反推：先定速率與時間，再算距離，所以所有題面數值都是乾淨的。時間以「小時」的有理數儲存，題面依需要轉成複名數（1 小時 20 分）或時刻。
+    數型：整數＝全部整數；小數＝時間或速率帶一位小數；分數＝時間為幾分之幾小時。verify 把求得的量代回另外兩個量的關係式，或走另一條算法。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const KH="公里/時",MM="公尺/分",MS="公尺/秒";
+ const finiteDec=v=>{let d=v.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
+ const sh=(v,mode,ctx,ans=false)=>mode==="fraction"&&v.d!==1?numHTML(v,"fraction",{mixed:ctx.mixed,answer:ans}):v.d===1?numHTML(v,"integer"):finiteDec(v)?decHTML(v):numHTML(v,"fraction",{mixed:ctx.mixed,answer:ans});
+ const shA=(v,mode,ctx)=>sh(v,mode,ctx,true);
+ // 小時（有理數）→「x 小時 y 分」；分鐘不是整數時回傳 null
+ const hm=h=>{const m=mul(h,R(60));if(m.d!==1||m.n<=0)return null;const H=Math.floor(m.n/60),M=m.n%60;return `${H?H+" 小時":""}${H&&M?" ":""}${M?M+" 分":""}`};
+ const msText=sec=>{const m=Math.floor(sec/60),s=sec%60;return `${m?m+" 分":""}${m&&s?" ":""}${s?s+" 秒":""}`};
+ const clock=min=>{min=((min%1440)+1440)%1440;const h=Math.floor(min/60),m=min%60;return `${h<12?"上午":h===12?"中午":"下午"} ${h%12||12} 時${m?" "+m+" 分":"整"}`};
+ const tVal=(mode,L)=>{if(mode==="decimal"){let n=rand(5,L===0?40:60);while(n%10===0)n=rand(5,60);return R(n,10)}if(mode==="fraction"){const d=pick([2,3,4,5,6]);let n=rand(d+1,3*d);while(n%d===0)n=rand(d+1,3*d);return R(n,d)}return R(rand(2,L===0?5:8))};
+ const vVal=(mode,lo,hi)=>mode==="decimal"&&Math.random()<.5?R(rand(lo,hi)*10+5,10):R(rand(lo,hi));
+ const nice=(v,mode)=>mode==="integer"?v.d===1:mode==="decimal"?finiteDec(v)&&100%v.d===0:true;
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer","fraction","decimal"],gen});
+ // ① 求速率
+ const findV=unit("findv","求速率","速率＝距離÷時間；時速看「每小時」、分速看「每分鐘」、秒速看「每秒」，距離與時間的單位要先對好。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["kh","mm","ms"]):L===1?pick(["hm","kmmin","mkm"]):pick(["compare","hm","mkm","hmmin"]);
+  if(kind==="kh"){const v=R(rand(20,90)),t=tVal(mode,L),d=mul(v,t);return{expr:`一輛汽車 ${sh(t,mode,ctx)} 小時行駛了 ${sh(d,mode,ctx)} 公里，時速多少公里？`,answer:`${v.n} ${KH}`,sig:`vk:${plain(v)}:${plain(t)}`,verify:()=>eq(mul(v,t),d)}}
+  if(kind==="mm"){const v=vVal(mode,40,90),t=R(rand(5,30)),d=mul(v,t);return{expr:`小明 ${t.n} 分鐘走了 ${sh(d,mode,ctx)} 公尺，分速多少公尺？`,answer:`${shA(v,mode,ctx)} ${MM}`,sig:`vm:${plain(v)}:${t.n}`,verify:()=>eq(div(d,v),t)}}
+  if(kind==="ms"){const v=vVal(mode,3,9),t=R(rand(6,30)),d=mul(v,t);return{expr:`一位選手 ${t.n} 秒跑了 ${sh(d,mode,ctx)} 公尺，秒速多少公尺？`,answer:`${shA(v,mode,ctx)} ${MS}`,sig:`vs:${plain(v)}:${t.n}`,verify:()=>eq(div(d,v),t)}}
+  if(kind==="hm"){const m=pick([10,15,20,30,40,45,50]),H=rand(1,L===2?4:2),t=add(R(H),R(m,60)),step=60/gcd(m,60),v=R(step*rand(Math.ceil(30/step),Math.floor(100/step))),d=mul(v,t);return{expr:`一輛機車行駛了 ${hm(t)}，共 ${sh(d,mode,ctx)} 公里，時速多少公里？`,answer:`${v.n} ${KH}`,sig:`vh:${v.n}:${plain(t)}`,verify:()=>eq(div(mul(d,R(60)),mul(t,R(60))),v)}}
+  if(kind==="kmmin"){const min=pick([20,25,40,50]),km=R(rand(1,L===2?9:5)),v=div(mul(km,R(1000)),R(min));return{expr:`小華騎腳踏車 ${min} 分鐘騎了 ${km.n} 公里，分速多少公尺？`,answer:`${v.n} ${MM}`,sig:`vkm:${min}:${km.n}`,verify:()=>eq(mul(v,R(min)),mul(km,R(1000)))}}
+  if(kind==="hmmin"){const m=pick([12,15,20,24,30,36,40,45,48]),H=rand(0,1),t=R(H*60+m),v=R(rand(4,12)*10),d=mul(v,t);if(d.n%100)return null;return{expr:`小美走了 ${hm(div(t,R(60)))}，共 ${decHTML(div(d,R(1000)))} 公里，分速多少公尺？`,answer:`${v.n} ${MM}`,sig:`vhm:${v.n}:${t.n}`,verify:()=>eq(mul(v,t),d)}}
+  if(kind==="mkm"){const v=R(pick([5,10,15,20,25])),t=R(rand(4,30)),d=mul(v,t),kh=mul(v,R(18,5));return{expr:`一台遙控車 ${t.n} 秒跑了 ${d.n} 公尺，時速多少公里？`,answer:`${kh.n} ${KH}`,sig:`vmk:${v.n}:${t.n}`,verify:()=>eq(div(mul(kh,R(1000)),R(3600)),div(d,t))}}
+  // compare：甲用小時與公里、乙用分鐘與公尺
+  const a=R(rand(4,12)*6),ta=R(rand(2,4)),b=R(rand(4,12)*6),tb=R(pick([20,30,40,50])),db=mul(div(mul(b,R(1000)),R(60)),tb);if(eq(a,b)||db.d!==1)return null;const fast=sub(a,b).n>0?"甲":"乙",diff=sub(a,b).n>0?sub(a,b):sub(b,a);
+  return{expr:`甲車 ${ta.n} 小時行駛了 ${mul(a,ta).n} 公里；乙車 ${tb.n} 分鐘行駛了 ${db.n} 公尺。誰比較快？時速相差多少公里？`,answer:`${fast}車比較快，時速相差 ${diff.n} 公里`,sig:`vc:${a.n}:${ta.n}:${b.n}:${tb.n}`,verify:()=>eq(div(mul(div(db,tb),R(60)),R(1000)),b)&&eq(div(mul(a,ta),ta),a)}});
+ // ② 求距離
+ const findD=unit("findd","求距離","距離＝速率×時間；時間是「分鐘」而速率是「時速」時，先把分鐘化成幾分之幾小時。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["kh","mm","ms"]):L===1?pick(["hm","mmkm","khmin"]):pick(["twoseg","clock","msms"]);
+  if(kind==="kh"){const v=vVal(mode,20,90),t=tVal(mode,L),d=mul(v,t);if(mode==="decimal"&&!nice(d,mode))return null;return{expr:`火車時速 ${sh(v,mode,ctx)} 公里，行駛 ${sh(t,mode,ctx)} 小時，共行駛多少公里？`,answer:`${shA(d,mode,ctx)} 公里`,sig:`dk:${plain(v)}:${plain(t)}`,verify:()=>eq(div(d,t),v)}}
+  if(kind==="mm"){const v=vVal(mode,40,90),t=R(rand(5,40)),d=mul(v,t);return{expr:`小明的分速 ${sh(v,mode,ctx)} 公尺，走了 ${t.n} 分鐘，共走多少公尺？`,answer:`${shA(d,mode,ctx)} 公尺`,sig:`dm:${plain(v)}:${t.n}`,verify:()=>eq(div(d,v),t)}}
+  if(kind==="ms"){const v=vVal(mode,3,9),t=R(rand(8,60)),d=mul(v,t);return{expr:`小狗的秒速 ${sh(v,mode,ctx)} 公尺，跑了 ${t.n} 秒，共跑多少公尺？`,answer:`${shA(d,mode,ctx)} 公尺`,sig:`ds:${plain(v)}:${t.n}`,verify:()=>eq(div(d,t),v)}}
+  if(kind==="hm"){const m=pick([10,15,20,30,40,45,50]),t=add(R(rand(1,3)),R(m,60)),step=60/gcd(m,60),v=R(step*rand(Math.ceil(30/step),Math.floor(100/step))),d=mul(v,t);return{expr:`汽車時速 ${v.n} 公里，行駛 ${hm(t)}，共行駛多少公里？`,answer:`${d.n} 公里`,sig:`dh:${v.n}:${plain(t)}`,verify:()=>eq(div(d,v),t)}}
+  if(kind==="mmkm"){const v=R(rand(5,25)*10),t=R(rand(5,60)),d=mul(v,t),km=div(d,R(1000));return{expr:`小華騎車分速 ${v.n} 公尺，騎了 ${t.n} 分鐘，共騎多少公里？`,answer:`${shA(km,"decimal",ctx)} 公里`,sig:`dmk:${v.n}:${t.n}`,verify:()=>eq(mul(km,R(1000)),mul(t,v))}}
+  if(kind==="khmin"){const min=pick([10,12,15,20,24,30,36,40,45,48,50]),v=R(rand(3,15)*(60/gcd(min,60))),d=mul(v,R(min,60));if(v.n>120)return null;return{expr:`汽車時速 ${v.n} 公里，行駛 ${min} 分鐘，共行駛多少公里？`,answer:`${shA(d,mode,ctx)} 公里`,sig:`dkm:${v.n}:${min}`,verify:()=>eq(div(mul(d,R(60)),R(min)),v)}}
+  if(kind==="twoseg"){const v1=vVal(mode,30,90),t1=tVal(mode,L),v2=vVal(mode,20,60),t2=tVal(mode,L),d=add(mul(v1,t1),mul(v2,t2));if(!nice(d,mode))return null;return{expr:`一輛車先以時速 ${sh(v1,mode,ctx)} 公里行駛 ${sh(t1,mode,ctx)} 小時，再以時速 ${sh(v2,mode,ctx)} 公里行駛 ${sh(t2,mode,ctx)} 小時，共行駛多少公里？`,answer:`${shA(d,mode,ctx)} 公里`,sig:`d2:${[v1,t1,v2,t2].map(plain).join(":")}`,verify:()=>eq(sub(d,mul(t2,v2)),mul(t1,v1))}}
+  if(kind==="clock"){const start=rand(6*60,10*60),min=pick([30,40,45,50,70,80,90,100,105,110,135,150]),v=R(rand(3,12)*(60/gcd(min,60))),d=mul(v,R(min,60));if(v.n>110||v.n<20)return null;return{expr:`客運從${clock(start)}出發，${clock(start+min)}到達，平均時速 ${v.n} 公里，兩地相距多少公里？`,answer:`${shA(d,mode,ctx)} 公里（行駛 ${hm(R(min,60))}）`,sig:`dc:${start}:${min}:${v.n}`,verify:()=>eq(div(d,v),R(min,60))}}
+  const v=vVal(mode,3,8),sec=rand(70,300),d=mul(v,R(sec));return{expr:`小明的秒速 ${sh(v,mode,ctx)} 公尺，跑了 ${msText(sec)}，共跑多少公尺？`,answer:`${shA(d,mode,ctx)} 公尺`,sig:`dss:${plain(v)}:${sec}`,verify:()=>eq(div(d,R(sec)),v)}});
+ // ③ 求時間
+ const findT=unit("findt","求時間","時間＝距離÷速率；答案若不是整數小時，可以化成「幾小時幾分」。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["kh","mm","ms"]):L===1?pick(["hm","kmmm","msms"]):pick(["arrive","depart","late"]);
+  if(kind==="kh"){const v=R(rand(20,90)),t=tVal(mode,L),d=mul(v,t);return{expr:`兩地相距 ${sh(d,mode,ctx)} 公里，汽車時速 ${v.n} 公里，需要幾小時？`,answer:`${shA(t,mode,ctx)} 小時`,sig:`tk:${v.n}:${plain(t)}`,verify:()=>eq(mul(t,v),d)}}
+  if(kind==="mm"){const v=vVal(mode,40,90),t=R(rand(5,40)),d=mul(v,t);return{expr:`學校到公園 ${sh(d,mode,ctx)} 公尺，小明分速 ${sh(v,mode,ctx)} 公尺，要走幾分鐘？`,answer:`${t.n} 分鐘`,sig:`tm:${plain(v)}:${t.n}`,verify:()=>eq(mul(t,v),d)}}
+  if(kind==="ms"){const v=vVal(mode,3,9),t=R(rand(8,60)),d=mul(v,t);return{expr:`跑道長 ${sh(d,mode,ctx)} 公尺，秒速 ${sh(v,mode,ctx)} 公尺，跑完要幾秒？`,answer:`${t.n} 秒`,sig:`ts:${plain(v)}:${t.n}`,verify:()=>eq(mul(t,v),d)}}
+  if(kind==="hm"){const m=pick([10,15,20,30,40,45,50]),t=add(R(rand(1,3)),R(m,60)),step=60/gcd(m,60),v=R(step*rand(Math.ceil(30/step),Math.floor(100/step))),d=mul(v,t);return{expr:`兩地相距 ${d.n} 公里，汽車時速 ${v.n} 公里，需要幾小時幾分？`,answer:hm(t),sig:`th:${v.n}:${plain(t)}`,verify:()=>eq(mul(v,t),d)}}
+  if(kind==="kmmm"){const v=R(rand(5,25)*10),t=R(rand(8,60)),d=mul(v,t);if(d.n%100)return null;return{expr:`從家裡到車站 ${decHTML(div(d,R(1000)))} 公里，小華騎車分速 ${v.n} 公尺，要騎幾分鐘？`,answer:`${t.n} 分鐘`,sig:`tkm:${v.n}:${t.n}`,verify:()=>eq(mul(v,t),mul(div(d,R(1000)),R(1000)))}}
+  if(kind==="msms"){const v=vVal(mode,3,8),sec=rand(70,300),d=mul(v,R(sec));return{expr:`跑完 ${sh(d,mode,ctx)} 公尺，秒速 ${sh(v,mode,ctx)} 公尺，需要幾分幾秒？`,answer:msText(sec),sig:`tss:${plain(v)}:${sec}`,verify:()=>eq(div(d,v),R(sec))}}
+  const m=pick([10,15,20,30,40,45,50]),t=add(R(rand(0,2)),R(m,60)),step=60/gcd(m,60),v=R(step*rand(Math.ceil(30/step),Math.floor(100/step))),d=mul(v,t),mins=mul(t,R(60)).n,start=rand(7*60,11*60);
+  if(kind==="arrive")return{expr:`${clock(start)}出發，兩地相距 ${d.n} 公里，時速 ${v.n} 公里，幾時幾分到達？`,answer:`${clock(start+mins)}（行駛 ${hm(t)}）`,sig:`ta:${start}:${v.n}:${plain(t)}`,verify:()=>eq(mul(v,R(mins,60)),d)};
+  if(kind==="depart")return{expr:`要在${clock(start+mins)}到達相距 ${d.n} 公里的地方，時速 ${v.n} 公里，最晚幾時幾分要出發？`,answer:`${clock(start)}（行駛 ${hm(t)}）`,sig:`td:${start}:${v.n}:${plain(t)}`,verify:()=>eq(mul(v,R(mins,60)),d)};
+  const late=pick([5,10,15,20]);return{expr:`${clock(start)}出發，要到相距 ${d.n} 公里的地方，時速 ${v.n} 公里，結果路上耽擱了 ${late} 分鐘，幾時幾分到達？`,answer:`${clock(start+mins+late)}`,sig:`tl:${start}:${v.n}:${plain(t)}:${late}`,verify:()=>eq(mul(v,R(mins,60)),d)}});
+ // ④ 速率單位換算
+ const conv=unit("convert","速率單位換算","時速→分速：公里化公尺（×1000）再÷60；分速→秒速÷60；時速→秒速可以直接÷3.6（1 公里/時＝1000 公尺÷3600 秒）。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["kh2mm","mm2kh","ms2mm"]):L===1?pick(["kh2ms","ms2kh","mm2ms"]):pick(["order","both","which"]);
+  const toMM=v=>div(mul(v,R(1000)),R(60)),toMS=v=>div(mul(v,R(1000)),R(3600));
+  const ok=v=>mode==="fraction"?true:mode==="decimal"?finiteDec(v)&&100%v.d===0:v.d===1;
+  if(kind==="kh2mm"){const v=R(rand(2,40)*3),a=toMM(v);if(!ok(a))return null;return{expr:`時速 ${v.n} 公里＝分速多少公尺？`,answer:`${shA(a,mode,ctx)} ${MM}`,sig:`c1:${v.n}`,verify:()=>eq(div(mul(a,R(60)),R(1000)),v)}}
+  if(kind==="mm2kh"){const v=R(mode==="integer"?rand(1,40)*50:rand(1,80)*25),a=div(mul(v,R(60)),R(1000));if(!ok(a))return null;return{expr:`分速 ${v.n} 公尺＝時速多少公里？`,answer:`${shA(a,mode,ctx)} ${KH}`,sig:`c2:${v.n}`,verify:()=>eq(toMM(a),v)}}
+  if(kind==="ms2mm"){const v=vVal(mode,2,20),a=mul(v,R(60));return{expr:`秒速 ${sh(v,mode,ctx)} 公尺＝分速多少公尺？`,answer:`${shA(a,mode,ctx)} ${MM}`,sig:`c3:${plain(v)}`,verify:()=>eq(div(a,R(60)),v)}}
+  if(kind==="kh2ms"){const v=R(rand(2,20)*(mode==="integer"?18:9)),a=toMS(v);if(!ok(a))return null;return{expr:`時速 ${v.n} 公里＝秒速多少公尺？`,answer:`${shA(a,mode,ctx)} ${MS}`,sig:`c4:${v.n}`,verify:()=>eq(mul(a,R(36,10)),v)}}
+  if(kind==="ms2kh"){const v=mode==="integer"?R(rand(1,8)*5):vVal(mode,3,30),a=mul(v,R(18,5));if(!ok(a))return null;return{expr:`秒速 ${sh(v,mode,ctx)} 公尺＝時速多少公里？`,answer:`${shA(a,mode,ctx)} ${KH}`,sig:`c5:${plain(v)}`,verify:()=>eq(toMS(a),v)}}
+  if(kind==="mm2ms"){const v=R(rand(2,30)*(mode==="integer"?60:6)),a=div(v,R(60));if(!ok(a))return null;return{expr:`分速 ${v.n} 公尺＝秒速多少公尺？`,answer:`${shA(a,mode,ctx)} ${MS}`,sig:`c6:${v.n}`,verify:()=>eq(mul(a,R(60)),v)}}
+  if(kind==="both"){const v=R(rand(2,15)*18),mm=toMM(v),ms=toMS(v);return{expr:`時速 ${v.n} 公里＝分速多少公尺＝秒速多少公尺？`,answer:`分速 ${shA(mm,mode,ctx)} 公尺；秒速 ${ms.n} 公尺`,sig:`c7:${v.n}`,verify:()=>eq(div(mm,R(60)),ms)}}
+  // order / which：把三個（或兩個）不同單位的速率化成同一單位比較
+  const base=R(rand(3,10)*5),kh=add(mul(base,R(18,5)),R(pick([-9,-3,3,9]))),mm=add(mul(base,R(60)),R(pick([-30,-12,12,30]))),vals=[["甲",`時速 ${kh.n} 公里`,toMS(kh)],["乙",`分速 ${mm.n} 公尺`,div(mm,R(60))],["丙",`秒速 ${base.n} 公尺`,base]];
+  if(kind==="which"){const [x,y]=shuffle(vals).slice(0,2);if(eq(x[2],y[2]))return null;const f=sub(x[2],y[2]).n>0?x:y;return{expr:`${x[0]}：${x[1]}；${y[0]}：${y[1]}。誰比較快？`,answer:`${f[0]}比較快（${x[0]}秒速 ${shA(x[2],"fraction",ctx)} 公尺，${y[0]}秒速 ${shA(y[2],"fraction",ctx)} 公尺）`,sig:`cw:${x[0]}${y[0]}:${kh.n}:${mm.n}:${base.n}`,verify:()=>sub(f[2],(f===x?y:x)[2]).n>0}}
+  const sorted=[...vals].sort((p,q)=>sub(q[2],p[2]).n);if(eq(sorted[0][2],sorted[1][2])||eq(sorted[1][2],sorted[2][2]))return null;
+  return{expr:`${vals.map(v=>v[0]+"："+v[1]).join("；")}。由快到慢排列。`,answer:`${sorted.map(v=>v[0]).join("＞")}`,sig:`co:${kh.n}:${mm.n}:${base.n}`,verify:()=>{const m={甲:toMM(kh),乙:mm,丙:mul(base,R(60))};return sub(m[sorted[0][0]],m[sorted[1][0]]).n>0&&sub(m[sorted[1][0]],m[sorted[2][0]]).n>0}}});
+ // ⑤ 平均速率
+ const avg=unit("average","平均速率","平均速率＝總距離÷總時間，不是兩個速率相加除以二；中途休息的時間也要算進總時間。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["twod","round","total"]):L===1?pick(["twov","rest","round"]):pick(["sameD","updown","halfway"]);
+  if(kind==="twod"){const t1=tVal(mode,L),t2=tVal(mode,L),a=R(rand(20,80)),D=mul(a,add(t1,t2)),d1=mul(R(rand(20,90)),t1),d2=sub(D,d1);if(d2.n<=0)return null;return{expr:`一輛車前 ${sh(t1,mode,ctx)} 小時行駛 ${sh(d1,mode,ctx)} 公里，後 ${sh(t2,mode,ctx)} 小時行駛 ${sh(d2,mode,ctx)} 公里，全程平均時速多少公里？`,answer:`${a.n} ${KH}`,sig:`a1:${[t1,t2,d1,d2].map(plain).join(":")}`,verify:()=>eq(mul(a,t1),sub(D,mul(a,t2)))}}
+  if(kind==="round"){const d=R(rand(3,30)*(mode==="integer"?6:2)),t1=tVal(mode,L),t2=tVal(mode,L),a=div(mul(d,R(2)),add(t1,t2));if(!nice(a,mode))return null;return{expr:`甲地到乙地 ${d.n} 公里，去程用了 ${sh(t1,mode,ctx)} 小時，回程用了 ${sh(t2,mode,ctx)} 小時，來回的平均時速多少公里？`,answer:`${shA(a,mode,ctx)} ${KH}`,sig:`a2:${d.n}:${plain(t1)}:${plain(t2)}`,verify:()=>eq(sub(mul(a,t1),d),sub(d,mul(a,t2)))}}
+  if(kind==="total"){const a=R(rand(3,8)*10),t=R(rand(2,6)),d=mul(a,t),n=rand(2,3),parts=[];let left=d.n;for(let i=0;i<n-1;i++){const p=rand(1,Math.max(1,Math.floor(left/2)));parts.push(p);left-=p}parts.push(left);if(parts.some(p=>p<=0))return null;return{expr:`小明騎車 ${t.n} 小時，分 ${n} 段依序騎了 ${parts.join(" 公里、")} 公里，平均時速多少公里？`,answer:`${a.n} ${KH}`,sig:`a3:${parts.join(":")}:${t.n}`,verify:()=>parts.reduce((s,p)=>s+p,0)===a.n*t.n}}
+  if(kind==="twov"){const v1=vVal(mode,30,90),t1=tVal(mode,L),v2=vVal(mode,20,60),t2=tVal(mode,L),D=add(mul(v1,t1),mul(v2,t2)),a=div(D,add(t1,t2));if(!nice(a,mode)||!nice(D,mode))return null;return{expr:`先以時速 ${sh(v1,mode,ctx)} 公里行駛 ${sh(t1,mode,ctx)} 小時，再以時速 ${sh(v2,mode,ctx)} 公里行駛 ${sh(t2,mode,ctx)} 小時，全程平均時速多少公里？`,answer:`${shA(a,mode,ctx)} ${KH}`,sig:`a4:${[v1,t1,v2,t2].map(plain).join(":")}`,verify:()=>eq(mul(a,add(t2,t1)),add(mul(t2,v2),mul(t1,v1)))}}
+  if(kind==="rest"){const v1=R(rand(4,12)*5),t1=R(rand(1,3)),v2=R(rand(4,12)*5),t2=R(rand(1,3)),r=pick([15,20,30,40,45,60]),D=add(mul(v1,t1),mul(v2,t2)),T=add(add(t1,t2),R(r,60)),a=div(D,T);if(!nice(a,mode))return null;return{expr:`以時速 ${v1.n} 公里騎 ${t1.n} 小時後，休息 ${r} 分鐘，再以時速 ${v2.n} 公里騎 ${t2.n} 小時。包含休息時間，全程平均時速多少公里？`,answer:`${shA(a,mode,ctx)} ${KH}`,sig:`a5:${[v1,t1,v2,t2].map(plain).join(":")}:${r}`,verify:()=>eq(mul(a,mul(T,R(60))),mul(D,R(60)))}}
+  // 同一段路來回（或上下坡、前後半）：先設路程為兩速率的公倍數
+  const m0=rand(1,6),n0=rand(1,6);if(m0===n0||gcd(m0,n0)!==1)return null;const need=(m0+n0)/gcd(2*m0*n0,m0+n0),k=need*rand(1,Math.max(1,Math.floor(120/(need*Math.max(m0,n0))))),a=R(k*m0),b=R(k*n0);if(a.n<5||b.n<5)return null;const d=R(lcm2(a.n,b.n)),T=add(div(d,a),div(d,b)),av=div(mul(d,R(2)),T),wrong=div(add(a,b),R(2));if(!nice(av,mode))return null;
+  const stem=kind==="sameD"?`去程時速 ${a.n} 公里，回程沿原路時速 ${b.n} 公里，來回的平均時速多少公里？`:kind==="updown"?`一段山路上坡時速 ${a.n} 公里，沿原路下坡時速 ${b.n} 公里，上下坡的平均時速多少公里？`:`一段路前半段時速 ${a.n} 公里，後半段時速 ${b.n} 公里，全程平均時速多少公里？`;
+  return{expr:stem,answer:`${shA(av,mode,ctx)} ${KH}（設單程 ${d.n} 公里；不是 ${shA(wrong,"decimal",ctx)}）`,sig:`a6:${kind}:${a.n}:${b.n}`,verify:()=>eq(av,div(mul(mul(a,b),R(2)),add(a,b)))}});
+ // ⑥ 相遇與追趕
+ const meet=unit("meet","相遇與追趕","相向而行：兩人每小時共靠近（甲速＋乙速）；同向追趕：每小時拉近（快速－慢速）。環形跑道同向出發，快的多跑一圈才第一次追上。",ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["meet","chase","apart"]):L===1?pick(["where","late","before"]):pick(["ringSame","ringOpp","lateWhere"]);
+  const a=vVal(mode,L===2?60:40,L===2?250:90),b=vVal(mode,L===2?40:30,L===2?200:80);
+  if(kind==="meet"){const t=tVal(mode,L),d=mul(add(a,b),t);return{expr:`甲、乙兩人相距 ${sh(d,mode,ctx)} 公里，同時相向而行，甲時速 ${sh(a,mode,ctx)} 公里、乙時速 ${sh(b,mode,ctx)} 公里，幾小時後相遇？`,answer:`${shA(t,mode,ctx)} 小時`,sig:`m1:${plain(a)}:${plain(b)}:${plain(t)}`,verify:()=>eq(add(mul(a,t),mul(b,t)),d)}}
+  if(kind==="chase"){if(!(sub(a,b).n>0))return null;const t=tVal(mode,L),g=mul(sub(a,b),t);return{expr:`乙在甲前方 ${sh(g,mode,ctx)} 公里，兩人同時同向出發，甲時速 ${sh(a,mode,ctx)} 公里、乙時速 ${sh(b,mode,ctx)} 公里，甲幾小時後追上乙？`,answer:`${shA(t,mode,ctx)} 小時`,sig:`m2:${plain(a)}:${plain(b)}:${plain(t)}`,verify:()=>eq(sub(mul(a,t),mul(b,t)),g)}}
+  if(kind==="apart"){const t=tVal(mode,L),d=mul(add(a,b),t);return{expr:`甲、乙從同一地點同時反向而行，甲時速 ${sh(a,mode,ctx)} 公里、乙時速 ${sh(b,mode,ctx)} 公里，${sh(t,mode,ctx)} 小時後兩人相距多少公里？`,answer:`${shA(d,mode,ctx)} 公里`,sig:`m3:${plain(a)}:${plain(b)}:${plain(t)}`,verify:()=>eq(div(d,t),add(b,a))}}
+  if(kind==="where"){const t=tVal(mode,L),d=mul(add(a,b),t),da=mul(a,t);return{expr:`兩地相距 ${sh(d,mode,ctx)} 公里，甲、乙分別從兩地同時相向出發，甲時速 ${sh(a,mode,ctx)} 公里、乙時速 ${sh(b,mode,ctx)} 公里。相遇時甲走了多少公里？`,answer:`${shA(da,mode,ctx)} 公里（${shA(t,mode,ctx)} 小時後相遇）`,sig:`m4:${plain(a)}:${plain(b)}:${plain(t)}`,verify:()=>eq(add(da,mul(b,t)),d)}}
+  if(kind==="before"){const t=tVal(mode,L),e=mul(add(a,b),R(pick([1,2]))),d=add(mul(add(a,b),t),e);return{expr:`兩地相距 ${sh(d,mode,ctx)} 公里，甲、乙同時相向出發，甲時速 ${sh(a,mode,ctx)} 公里、乙時速 ${sh(b,mode,ctx)} 公里，出發幾小時後兩人還相距 ${sh(e,mode,ctx)} 公里（尚未相遇）？`,answer:`${shA(t,mode,ctx)} 小時`,sig:`m5:${plain(a)}:${plain(b)}:${plain(t)}:${plain(e)}`,verify:()=>eq(sub(d,mul(add(a,b),t)),e)}}
+  // late / lateWhere：乙先出發 m 分鐘，甲從同地追（分速）
+  if(kind==="late"||kind==="lateWhere"){const va=R(rand(6,20)*10),vb=R(rand(4,15)*10);if(!(va.n>vb.n))return null;const m=rand(3,20),gap=mul(vb,R(m)),t=div(gap,sub(va,vb));if(!nice(t,mode))return null;const where=mul(va,t);
+   if(kind==="late")return{expr:`乙先出發 ${m} 分鐘後，甲從同一地點沿同一條路追趕。甲分速 ${va.n} 公尺、乙分速 ${vb.n} 公尺，甲出發後幾分鐘追上乙？`,answer:`${shA(t,mode,ctx)} 分鐘`,sig:`m6:${va.n}:${vb.n}:${m}`,verify:()=>eq(mul(va,t),mul(vb,add(t,R(m))))};
+   return{expr:`乙先出發 ${m} 分鐘後，甲從同一地點沿同一條路追趕。甲分速 ${va.n} 公尺、乙分速 ${vb.n} 公尺，甲追上乙時，距離出發點多少公尺？`,answer:`${shA(where,mode,ctx)} 公尺（甲出發後 ${shA(t,mode,ctx)} 分鐘）`,sig:`m7:${va.n}:${vb.n}:${m}`,verify:()=>eq(where,mul(vb,add(t,R(m))))}}
+  // 環形跑道（公尺、分速）
+  const va=R(rand(10,30)*10),vb=R(rand(8,25)*10),C=R(pick([300,400,500,600,800,1000]));if(eq(va,vb))return null;
+  if(kind==="ringSame"){const dv=sub(va,vb).n>0?sub(va,vb):sub(vb,va),t=div(C,dv);if(!nice(t,mode))return null;return{expr:`環形跑道一圈 ${C.n} 公尺，甲分速 ${va.n} 公尺、乙分速 ${vb.n} 公尺，兩人從同一點同時同向出發，幾分鐘後快的人第一次追上慢的人？`,answer:`${shA(t,mode,ctx)} 分鐘`,sig:`m8:${va.n}:${vb.n}:${C.n}`,verify:()=>eq(sub(mul(dv,t),C),R(0))&&eq(add(mul(t,va.n>vb.n?vb:va),C),mul(t,va.n>vb.n?va:vb))}}
+  const t=div(C,add(va,vb));if(!nice(t,mode))return null;return{expr:`環形跑道一圈 ${C.n} 公尺，甲分速 ${va.n} 公尺、乙分速 ${vb.n} 公尺，兩人從同一點同時反向出發，幾分鐘後第一次相遇？`,answer:`${shA(t,mode,ctx)} 分鐘`,sig:`m9:${va.n}:${vb.n}:${C.n}`,verify:()=>eq(add(mul(va,t),mul(vb,t)),C)}});
+ return{title:"速率",symbol:"➚",subtitle:"求速率・求距離・求時間・單位換算・平均速率・相遇與追趕",instruction:"速率＝距離÷時間；先確認單位一致（公里與公尺、小時與分鐘），答案要寫單位。",modes:["integer","fraction","decimal"],mixed:true,
+  levels:{basic:"基礎：單一步驟、單位已一致；平均速率給總距離與總時間；同時相向、同向追趕。",advanced:"進階：先換單位（複名數時間、公里與公尺、分鐘化小時）；中途休息；相遇地點、先出發後追。",challenge:"挑戰：兩段路程、時刻計算、三種單位比快慢；同一段路來回的平均速率（不是速率平均）；環形跑道同向追及與反向相遇。"},
+  units:[findV,findD,findT,conv,avg,meet],presets:{basic:{findv:2,findd:2,findt:2,convert:2,average:2,meet:2},advanced:{findv:2,findd:2,findt:2,convert:2,average:2,meet:2},challenge:{findv:2,findd:2,findt:2,convert:2,average:2,meet:2}}};
+}
+
+function basecompareConfig(){
+ /* M6 基準量與比較量（2026-09-24，Claude）。題型與句型全部取自百宏國小高年級講義（下）第 1 單元：
+    重點整理（指出基準量／比較量／比值）、講解 1–2 雙數線填空、講解 3 線段弧線圖、講解 4–18 文字題、講解 19–20 加成與折扣。講義沒有的「連續兩次折扣」不出。
+    數型：整數＝倍數為整數；小數＝倍數為小數或百分率；分數＝倍數為分數或帶分數。題目一律從答案反推，所有量都是整數或乾淨的小數。
+    雙數線：上方是量、下方是倍數，刻度位置依倍數等比例畫；SVG 內的分數用上下兩行純文字排成直式，不放 HTML。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const finiteDec=v=>{let d=v.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
+ let CUR="integer";
+ const sh=(v,ctx)=>CUR==="fraction"&&v.d!==1?numHTML(v,"fraction",{mixed:true}):v.d===1?numHTML(v,"integer"):finiteDec(v)&&v.d<=100?decHTML(v):numHTML(v,"fraction",{mixed:true});
+ const shA=(v,ctx,mode)=>v.d===1?numHTML(v,"integer"):mode!=="fraction"&&finiteDec(v)&&v.d<=100?decHTML(v):numHTML(v,"fraction",{mixed:true,answer:false});
+ const kS=(k,mode,ctx)=>mode==="fraction"&&k.d!==1?numHTML(k,"fraction",{mixed:true}):sh(k,ctx);
+ const pct=k=>`${decHTML(mul(k,R(100)))} %`;
+ const CN="零一二三四五六七八九",cheng=k=>{const t=mul(k,R(100)).n;return t%10?`${CN[Math.floor(t/10)]}成${CN[t%10]}`:`${CN[t/10]}成`};
+ // 倍數：mode 決定寫法；gt1 表示要大於 1
+ const K=(mode,L,gt1=true)=>{if(mode==="integer")return R(rand(2,L===0?5:9));if(mode==="decimal"){if(!gt1)return R(rand(1,9),10);let n=rand(11,L===0?35:48);while(n%10===0)n=rand(11,48);return R(n,10)}const d=pick(L===0?[2,3,4]:[2,3,4,5,6,7,8]);if(!gt1){const n=rand(1,d-1);return gcd(n,d)===1?R(n,d):R(1,d)}let n=rand(d+1,(L===0?3:4)*d);while(n%d===0)n=rand(d+1,4*d);return R(n,d)};
+ // ---- SVG ----
+ const svg=(w,h,body)=>`<svg class="fig" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="雙數線">${body}</svg>`;
+ const tx=(x,y,t,a="middle",s=12)=>`<text x="${x}" y="${y}" font-size="${s}" fill="#16233A" text-anchor="${a}" font-family="Noto Sans TC,sans-serif">${t}</text>`;
+ // 一個值在 SVG 裡：整數／小數一行；分數排成直式（帶分數整數在左）。y 為中線
+ const val=(x,y,v)=>{if(typeof v==="string")return tx(x,y+4,v);if(v.pc)return tx(x,y+4,v.pc);if(v.d===1||(CUR!=="fraction"&&finiteDec(v)&&v.d<=100))return tx(x,y+4,v.d===1?String(v.n):decHTML(v));const w=Math.floor(v.n/v.d),r=v.n-w*v.d,ox=w?5:0;return `${w?tx(x-4,y+4,String(w),"end"):""}${tx(x+ox,y-2,String(r),"middle",10)}<line x1="${x+ox-6}" y1="${y}" x2="${x+ox+6}" y2="${y}" stroke="#16233A" stroke-width=".8"/>${tx(x+ox,y+10,String(v.d),"middle",10)}`};
+ const numLine=(cells,unitTop,zero)=>{ // cells：[{b, top, bot}]，top/bot 為 R 或 "（①）"
+  const W=250,x0=zero?22:30,x1=W-(unitTop?40:18),maxB=cells.reduce((m,c)=>sub(c.b,m).n>0?c.b:m,R(0)),X=b=>x0+(x1-x0-12)*(b.n/b.d)/(maxB.n/maxB.d),Y=34;
+  let body=`<line x1="${x0-(zero?0:12)}" y1="${Y}" x2="${x1+6}" y2="${Y}" stroke="#16233A" stroke-width="1.6"/>`;
+  if(zero)body+=`<line x1="${x0}" y1="${Y-5}" x2="${x0}" y2="${Y+5}" stroke="#16233A" stroke-width="1"/>${tx(x0,Y-10,"0")}${tx(x0,Y+18,"0")}`;
+  for(const c of cells){const x=zero?X(c.b):x0+(x1-x0-12)*(c.b.n/c.b.d)/(maxB.n/maxB.d);body+=`<line x1="${x}" y1="${Y-5}" x2="${x}" y2="${Y+5}" stroke="#16233A" stroke-width="1"/>${val(x,Y-14,c.top)}${val(x,Y+16,c.bot)}`}
+  if(unitTop)body+=`${tx(W-4,Y-8,unitTop,"end",10)}${tx(W-4,Y+14,"倍","end",10)}`;
+  return svg(W,62,body)};
+ const arcLine=(segs,tops,whole,wholeTop)=>{ // segs：各段倍數；tops：[[段 index, 值], …]；wholeTop：整條上方的值
+  const W=250,x0=14,x1=236,tot=segs.reduce((s,k)=>s+k.n/k.d,0),xs=[x0];segs.forEach(k=>xs.push(xs[xs.length-1]+(x1-x0)*(k.n/k.d)/tot));const Y=66;
+  const arc=(a,b,up,h)=>`<path d="M${a} ${Y} Q${(a+b)/2} ${up?Y-h:Y+h} ${b} ${Y}" fill="none" stroke="#7C879B" stroke-width="1" stroke-dasharray="3 3"/>`;
+  let body=`<line x1="${x0}" y1="${Y}" x2="${x1}" y2="${Y}" stroke="#16233A" stroke-width="1.6"/>`+xs.map(x=>`<line x1="${x}" y1="${Y-4}" x2="${x}" y2="${Y+4}" stroke="#16233A" stroke-width="1"/>`).join("");
+  segs.forEach((k,i)=>{body+=arc(xs[i],xs[i+1],false,22)+val((xs[i]+xs[i+1])/2,Y+22,k)});
+  tops.forEach(t=>{body+=arc(xs[t[0]],xs[t[0]+1],true,28)+val((xs[t[0]]+xs[t[0]+1])/2,Y-22,t[1])});
+  if(wholeTop!==undefined)body+=arc(x0,x1,true,84)+val((x0+x1)/2,Y-50,wholeTop);
+  return svg(W,104,body)};
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen:ctx=>{const m=pick(ctx.modes);CUR=m;return gen({...ctx,modes:[m]})}});
+ // ① 指出基準量、比較量、比值
+ const PAIRS=[["父親體重","小琪體重"],["蘋果每公斤的價錢","梨每公斤價錢"],["甲繩長度","乙繩長度"],["甲班人數","乙班人數"],["大水桶容量","小水桶容量"],["今天雨量","昨天雨量"]];
+ const identify=unit("identify","基準量、比較量與比值","「是」後面的量是基準量，「是」前面的量是比較量；比值＝比較量÷基準量。",["integer","fraction","decimal"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["sentence","unit1","ratio"]):L===1?pick(["sentence","unit1","twoway"]):pick(["twoway","reverse","unit1"]);
+  if(kind==="sentence"){const [A,B]=pick(PAIRS),k=K(mode,L,Math.random()<.7);if(sub(k,R(4)).n>0)return null;return{expr:`${A}是${B}的 ${kS(k,mode,ctx)} 倍。指出基準量、比較量與比值。`,answer:`基準量：${B}；比較量：${A}；比值：${kS(k,mode,ctx)}`,sig:`is:${A}:${plain(k)}`,verify:()=>eq(div(mul(k,R(7)),R(7)),k)}}
+  if(kind==="ratio"){let p=rand(1,9),q=rand(2,9);if(p===q||gcd(p,q)!==1)return null;const k=R(p,q);return pick([0,1])?{expr:`甲：乙＝${p}：${q}，以乙為基準量，比值是多少？`,answer:`比值 ${numHTML(k,"fraction",{mixed:true})}（甲是比較量）`,sig:`ir:${p}:${q}`,verify:()=>eq(mul(k,R(q)),R(p))}:{expr:`甲÷乙＝${numHTML(k,"fraction",{})}，指出基準量、比較量與比值。`,answer:`基準量：乙；比較量：甲；比值：${numHTML(k,"fraction",{mixed:true})}`,sig:`id:${p}:${q}`,verify:()=>eq(mul(k,R(q)),R(p))}}
+  if(kind==="unit1"){const [u,base,max]=pick([["小時",R(rand(2,6)),30],["公尺",R(rand(2,12)),60],["公斤",R(rand(2,9)),50],["元",R(rand(2,20)*5),400]]),k=K(mode,L,Math.random()<.6),c=mul(base,k);if(!finiteDec(c)&&mode!=="fraction")return null;return{expr:`${sh(base,ctx)} ${u}當作 1，${sh(c,ctx)} ${u}相當於多少？`,answer:`${kS(k,mode,ctx)}（基準量 ${sh(base,ctx)} ${u}、比較量 ${sh(c,ctx)} ${u}）`,sig:`iu:${u}:${plain(base)}:${plain(k)}`,verify:()=>eq(div(c,base),k)}}
+  if(kind==="twoway"){const k=mode==="integer"?R(1,rand(2,9)):K(mode,L,false),b=R(rand(2,12)*k.d),a=mul(b,k),r=div(b,a);if(a.n<=0)return null;return{expr:`甲數是 ${sh(a,ctx)}，乙數是 ${sh(b,ctx)}，則甲數是乙數的幾分之幾？乙數是甲數的幾倍？`,answer:`甲是乙的 ${numHTML(k,"fraction",{mixed:true})}；乙是甲的 ${numHTML(r,"fraction",{mixed:true})} 倍`,sig:`it:${plain(a)}:${plain(b)}`,verify:()=>eq(mul(k,r),R(1))&&eq(mul(r,a),b)}}
+  const [A,B]=pick(PAIRS),k=K(mode,L,true),r=div(R(1),k);return{expr:`${A}是${B}的 ${kS(k,mode,ctx)} 倍，那麼${B}是${A}的幾倍？`,answer:`${numHTML(r,"fraction",{mixed:true})} 倍（基準量換成${A}）`,sig:`iv:${A}:${plain(k)}`,verify:()=>eq(mul(r,k),R(1))}});
+ // ② 雙數線填空
+ const numline=unit("numline","雙數線填空","上方的量÷下方的倍數＝1 倍的量；知道下方要求上方用乘，知道上方要求下方用除。",["integer","fraction","decimal"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes);
+  // 1 倍的量 r 與三個刻度的倍數 b
+  const r=mode==="integer"?R(rand(2,L===0?12:25)):mode==="decimal"?R(rand(12,L===0?60:95),10):(Math.random()<.6?R(rand(2,12)):K("fraction",0,true)),pickB=()=>mode==="integer"?R(rand(2,L===0?9:15)):mode==="decimal"?R(rand(2,40),pick([1,10])):K("fraction",0,Math.random()<.7);
+  const zero=L===2||(L===1&&Math.random()<.5);let bs=null;
+  for(let t=0;t<40&&!bs;t++){let c=L<2?[R(1),pickB(),pickB()]:[pickB(),pickB(),pickB()];c=c.sort((x,y)=>sub(x,y).n);const f=x=>x.n/x.d,span=f(c[2]);if(eq(c[0],c[1])||eq(c[1],c[2]))continue;if((f(c[1])-f(c[0]))/span<.2||(f(c[2])-f(c[1]))/span<.2)continue;if(zero&&f(c[0])/span<.18)continue;bs=c}
+  if(!bs)return null;
+  const tops=bs.map(b=>mul(b,r));if(tops.some(t=>!finiteDec(t)&&mode!=="fraction"))return null;
+  // 已知格：必須有一個刻度上下都已知
+  const known=L<2?bs.findIndex(b=>eq(b,R(1))):rand(0,2),others=[0,1,2].filter(i=>i!==known),blanks=others.map(i=>({i,pos:pick(["top","bot"])}));
+  const cells=bs.map((b,i)=>{const bl=blanks.findIndex(x=>x.i===i);return{b,top:bl>=0&&blanks[bl].pos==="top"?`（${"①②"[bl]}）`:tops[i],bot:bl>=0&&blanks[bl].pos==="bot"?`（${"①②"[bl]}）`:b}});
+  const unitT=zero?pick(["公斤","元","公升","公尺","m²","cm"]):"";
+  const ans=blanks.map((x,j)=>`${"①②"[j]} ${x.pos==="top"?shA(tops[x.i],ctx,mode):shA(bs[x.i],ctx,mode)}`);
+  return{expr:`${numLine(cells,unitT,zero)}填出雙數線的空格（上方是量、下方是倍數）。`,answer:ans.join("；"),sig:`nl:${plain(r)}:${bs.map(plain).join(",")}:${known}:${blanks.map(b=>b.i+b.pos).join(",")}`,
+   verify:()=>blanks.every(x=>x.pos==="top"?eq(div(tops[x.i],bs[x.i]),div(tops[known],bs[known])):eq(mul(bs[x.i],div(tops[known],bs[known])),tops[x.i]))}});
+ // ③ 線段弧線圖
+ const arcs=unit("arcline","線段圖求全部或部分","把標 1 的那一段當基準量：全部＝基準量×（各段倍數的和）；已知全部時，基準量＝全部÷（各段倍數的和）。",["integer","fraction","decimal"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["whole2","part2","seg2"]):L===1?pick(["whole2","part2","whole3","seg2"]):pick(["whole3","part2","part3","seg3"]);
+  const piece=()=>{const k=mode==="integer"?R(rand(2,4)):mode==="decimal"?R(rand(4,19)*5,100):K("fraction",L,false);if(mode==="fraction"&&k.n*3<k.d)return piece();if(mode==="decimal"&&Math.random()<.5)k.pc=pct(k);return k};
+  if(kind==="whole2"){const k=piece(),v=mode==="fraction"?R(rand(2,15)*k.d):R(rand(2,30)*10),W=mul(v,add(R(1),k));if(!finiteDec(W)&&mode!=="fraction")return null;return{expr:`${arcLine([R(1),k],[[0,v]],null,"（　）")}求整條線段上方括號的量。`,answer:shA(W,ctx,mode),sig:`aw:${plain(k)}:${plain(v)}`,verify:()=>eq(sub(W,v),mul(k,v))}}
+  if(kind==="seg2"){const k=piece(),v=mode==="fraction"?R(rand(2,15)*k.d):R(rand(2,30)*10),x=mul(v,k);if(!finiteDec(x)&&mode!=="fraction")return null;return{expr:`${arcLine([R(1),k],[[0,v],[1,"（　）"]])}求第二段上方括號的量。`,answer:shA(x,ctx,mode),sig:`ag:${plain(k)}:${plain(v)}`,verify:()=>eq(div(x,k),v)}}
+  if(kind==="part2"){const k=piece(),v=mode==="fraction"?R(rand(2,15)*k.d):R(rand(2,30)*10),W=mul(v,add(R(1),k));if(W.d!==1)return null;return{expr:`${arcLine([R(1),k],[[0,"（　）"]],null,W)}已知全部，求標 1 那一段上方括號的量。`,answer:shA(v,ctx,mode),sig:`ap:${plain(k)}:${plain(v)}`,verify:()=>eq(div(W,add(R(1),k)),v)}}
+  const k1=piece(),k2=piece();if(eq(k1,k2))return null;{const t=k1.n/k1.d+k2.n/k2.d+1;if(k1.n/k1.d/t<.15||k2.n/k2.d/t<.15)return null}const v=R(rand(2,20)*(mode==="fraction"?k1.d*k2.d/gcd(k1.d,k2.d):10)),sum=add(add(k1,k2),R(1)),W=mul(v,sum);if(W.d!==1||v.n>400)return null;
+  if(kind==="whole3")return{expr:`${arcLine([k1,k2,R(1)],[[2,v]],null,"（　）")}求整條線段上方括號的量。`,answer:shA(W,ctx,mode),sig:`a3:${plain(k1)}:${plain(k2)}:${plain(v)}`,verify:()=>eq(add(add(mul(v,k1),mul(v,k2)),v),W)};
+  if(kind==="seg3"){const x=mul(v,k1);return{expr:`${arcLine([k1,k2,R(1)],[[0,"（　）"]],null,W)}已知全部，求第一段上方括號的量。`,answer:shA(x,ctx,mode),sig:`a5:${plain(k1)}:${plain(k2)}:${plain(v)}`,verify:()=>eq(mul(div(x,k1),sum),W)}}
+  return{expr:`${arcLine([k1,k2,R(1)],[[2,"（　）"]],null,W)}已知全部，求標 1 那一段上方括號的量。`,answer:shA(v,ctx,mode),sig:`a4:${plain(k1)}:${plain(k2)}:${plain(v)}`,verify:()=>eq(div(W,sum),v)}});
+ // ④ 已知比較量求基準量（文字題）
+ const findbase=unit("findbase","已知比較量求基準量","先找「是」後面的基準量：基準量＝比較量÷比值。「還剩幾分之幾」要先算用掉的是幾分之幾。",["fraction","decimal"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["big","small","milk"]):L===1?pick(["cloth","school","pole","milk"]):pick(["minus","plus","age","age2"]);
+  const part=()=>K(mode,L,false),big=()=>K(mode,L,true);
+  if(kind==="big"){const k=big(),s=R(rand(2,20)*k.d*(mode==="decimal"?1:1)),b=mul(s,k);if(b.d!==1)return null;return{expr:`大、小二數，大數是小數的 ${kS(k,mode,ctx)} 倍，已知大數是 ${b.n}，問小數是多少？`,answer:`${shA(s,ctx,mode)}`,sig:`fb:${plain(k)}:${plain(s)}`,verify:()=>eq(mul(s,k),b)}}
+  if(kind==="small"){const k=part(),b=R(rand(2,20)*k.d),s=mul(b,k);if(s.d!==1)return null;return{expr:`大、小二數，小數是大數的 ${kS(k,mode,ctx)} 倍，已知小數是 ${s.n}，求大數是多少？`,answer:`${b.n}`,sig:`fs:${plain(k)}:${b.n}`,verify:()=>eq(div(s,k),b)}}
+  if(kind==="milk"){const k=part(),T=R(rand(2,10)*k.d),u=mul(T,k);if(u.d!==1)return null;return{expr:`牛奶一桶，喝去 ${u.n} 公升，占全桶的 ${kS(k,mode,ctx)}，牛奶一桶是多少公升？`,answer:`${T.n} 公升`,sig:`fm:${plain(k)}:${T.n}`,verify:()=>eq(mul(T,k),u)}}
+  if(kind==="cloth"){const k=part(),T=R(rand(2,10)*k.d),used=mul(T,sub(R(1),k));if(used.d!==1||used.n<=0)return null;return{expr:`布一匹，做外出服用去 ${used.n} 公尺，還剩 ${kS(k,mode,ctx)}，問布一匹是多少公尺？`,answer:`${T.n} 公尺（用去全部的 ${kS(sub(R(1),k),mode,ctx)}）`,sig:`fc:${plain(k)}:${T.n}`,verify:()=>eq(add(used,mul(T,k)),T)}}
+  if(kind==="school"){const k=part(),T=R(rand(3,30)*k.d*(mode==="decimal"?1:1)),boys=mul(T,k),girls=sub(T,boys);if(boys.d!==1||girls.n<=0)return null;const g=pick([0,1]);return g?{expr:`某國小的男生占全校的 ${kS(k,mode,ctx)}，已知男生的人數是 ${boys.n} 人，求全校的人數？女生有多少人？`,answer:`全校 ${T.n} 人；女生 ${girls.n} 人`,sig:`fsb:${plain(k)}:${T.n}`,verify:()=>eq(div(boys,k),T)}:{expr:`某國小的男生占全校的 ${kS(k,mode,ctx)}，已知女生的人數是 ${girls.n} 人，問全校的人數？男生有多少人？`,answer:`全校 ${T.n} 人；男生 ${boys.n} 人`,sig:`fsg:${plain(k)}:${T.n}`,verify:()=>eq(div(girls,sub(R(1),k)),T)}}
+  if(kind==="pole"){const k=part(),out=R(rand(2,15)*k.d*(mode==="decimal"?1:pick([1,5]))),inW=mul(out,k);if(inW.d!==1)return null;return{expr:`有一竹竿垂直插入水裡，插入水裡的長度是露出水面的 ${kS(k,mode,ctx)}，已知水裡的長度是 ${inW.n} cm，問露出水面長是多少？全長是多少？`,answer:`露出水面 ${out.n} cm；全長 ${add(out,inW).n} cm`,sig:`fp:${plain(k)}:${out.n}`,verify:()=>eq(div(inW,k),out)}}
+  if(kind==="minus"||kind==="plus"){const k=kind==="minus"?part():big(),x=R(rand(2,20)*k.d*pick([1,2])),d=kind==="minus"?sub(x,mul(x,k)):sub(mul(x,k),x);if(d.d!==1||d.n<=0)return null;return{expr:kind==="minus"?`某數減去 ${d.n}，剩餘的數恰好是某數的 ${kS(k,mode,ctx)}，求某數是多少？`:`某數加上 ${d.n}，和恰好是某數的 ${kS(k,mode,ctx)}，求某數是多少？`,answer:`${x.n}`,sig:`f${kind}:${plain(k)}:${x.n}`,verify:()=>kind==="minus"?eq(sub(x,d),mul(x,k)):eq(add(x,d),mul(x,k))}}
+  if(kind==="age"){const k=big(),g=R(rand(3,12)*k.d),f=mul(g,k),y=rand(2,6);if(f.d!==1||f.n<25||f.n>60)return null;return{expr:`父親今年的年齡是女兒的 ${kS(k,mode,ctx)} 倍，父親今年 ${f.n} 歲，${y} 年後女兒幾歲？`,answer:`${g.n+y} 歲（女兒今年 ${g.n} 歲）`,sig:`fa:${plain(k)}:${g.n}:${y}`,verify:()=>eq(div(f,k),g)}}
+  const k=big(),g=R(rand(5,16)),f=mul(g,k),y=rand(2,6);if(f.d!==1||f.n<25||f.n>60)return null;return{expr:`父親今年的年齡是女兒的 ${kS(k,mode,ctx)} 倍，女兒今年 ${g.n} 歲，問父親 ${y} 年前幾歲？`,answer:`${f.n-y} 歲（父親今年 ${f.n} 歲）`,sig:`fa2:${plain(k)}:${g.n}:${y}`,verify:()=>eq(div(f,g),k)}});
+ // ⑤ 和倍與差倍
+ const sumdiff=unit("sumdiff","和倍、差倍與應用","把小數（基準量）看成 1 份：大數是 k 份；相差是（k－1）份、和是（k＋1）份，先求 1 份。各加（減）同一個數時，要先調整總和。",["integer","fraction","decimal"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["diff","sum","sumdiff","compare"]):L===1?pick(["chicken","rect","perim","price",...(mode==="integer"?[]:["cheaper"])]):pick(["minusEach","spend","plusEach","gift"]);
+  const k=K(mode,L,true),base=()=>R(rand(2,L===2?40:25)*k.d*(mode==="decimal"?1:1));
+  if(kind==="diff"||kind==="sum"||kind==="sumdiff"){const s=base(),b=mul(s,k);if(b.d!==1)return null;const S=add(b,s),D=sub(b,s);
+   if(kind==="diff")return{expr:`大、小二數的差是 ${D.n}，大數是小數的 ${kS(k,mode,ctx)} 倍，求大、小二數各是多少？`,answer:`大數 ${b.n}；小數 ${s.n}`,sig:`sd:${plain(k)}:${s.n}`,verify:()=>eq(div(D,sub(k,R(1))),s)};
+   if(kind==="sum")return{expr:`大、小二數的和是 ${S.n}，大數是小數的 ${kS(k,mode,ctx)} 倍，求大、小二數各是多少？`,answer:`大數 ${b.n}；小數 ${s.n}`,sig:`ss:${plain(k)}:${s.n}`,verify:()=>eq(div(S,add(k,R(1))),s)};
+   return{expr:`大、小二數的和是 ${S.n}，大數是小數的 ${kS(k,mode,ctx)} 倍，求大、小二數的差是多少？`,answer:`${D.n}（大數 ${b.n}、小數 ${s.n}）`,sig:`sx:${plain(k)}:${s.n}`,verify:()=>eq(mul(div(S,add(k,R(1))),sub(k,R(1))),D)}}
+  if(kind==="compare"){const c=R(rand(10,60)*k.d*5),sheep=mul(c,k);if(sheep.d!==1)return null;return{expr:`牧場有牛 ${c.n} 頭，羊的頭數是牛的 ${kS(k,mode,ctx)} 倍，問牛和羊相差多少頭？`,answer:`${sub(sheep,c).n} 頭（羊 ${sheep.n} 頭）`,sig:`sc:${plain(k)}:${c.n}`,verify:()=>eq(mul(c,sub(k,R(1))),sub(sheep,c))}}
+  if(kind==="chicken"){const s=base(),b=mul(s,k);if(b.d!==1)return null;return{expr:`農場中雞的數比鴨多 ${sub(b,s).n} 隻，已知雞的隻數是鴨的 ${kS(k,mode,ctx)} 倍，問雞鴨共有多少隻？`,answer:`${add(b,s).n} 隻（雞 ${b.n}、鴨 ${s.n}）`,sig:`sk:${plain(k)}:${s.n}`,verify:()=>eq(mul(div(sub(b,s),sub(k,R(1))),add(k,R(1))),add(b,s))}}
+  if(kind==="rect"){const w=base(),l=mul(w,k);if(l.d!==1)return null;return{expr:`長方形花圃，長是寬的 ${kS(k,mode,ctx)} 倍，已知長是 ${l.n} 公尺，問周長是多少？`,answer:`${mul(add(l,w),R(2)).n} 公尺（寬 ${w.n} 公尺）`,sig:`sr:${plain(k)}:${w.n}`,verify:()=>eq(div(l,k),w)}}
+  if(kind==="perim"){const w=base(),l=mul(w,k),P=mul(add(l,w),R(2));if(l.d!==1)return null;return{expr:`長方形的周長 ${P.n} 公尺，長是寬的 ${kS(k,mode,ctx)} 倍，問寬是多少？`,answer:`${w.n} 公尺`,sig:`sp:${plain(k)}:${w.n}`,verify:()=>eq(div(div(P,R(2)),add(k,R(1))),w)}}
+  if(kind==="price"){const a=R(rand(3,20)*5*k.d),p=mul(a,k);if(p.d!==1)return null;return{expr:`蘋果 1 公斤賣 ${a.n} 元，桃子的價錢是蘋果的 ${kS(k,mode,ctx)} 倍，問桃子 1 公斤比蘋果 1 公斤貴多少元？`,answer:`${sub(p,a).n} 元`,sig:`spr:${plain(k)}:${a.n}`,verify:()=>eq(sub(mul(a,k),a),sub(p,a))}}
+  if(kind==="cheaper"){const q=K(mode,L,false),w=R(rand(3,20)*q.d*(mode==="decimal"?5:1)),pe=mul(w,q),d=sub(w,pe);if(pe.d!==1||d.n<=0)return null;return{expr:`梨子 1 公斤的價錢是水蜜桃的 ${kS(q,mode,ctx)}，梨子每公斤比水蜜桃便宜 ${d.n} 元，問梨子和水蜜桃 1 公斤各是多少元？`,answer:`梨子 ${pe.n} 元；水蜜桃 ${w.n} 元`,sig:`sch:${plain(q)}:${w.n}`,verify:()=>eq(div(d,sub(R(1),q)),w)}}
+  // 挑戰：先調整再用和倍
+  const s=base(),b=mul(s,k);if(b.d!==1)return null;
+  if(kind==="minusEach"){const c=R(rand(5,20)),A=add(b,c),B=add(s,c);return{expr:`甲、乙二數的和是 ${add(A,B).n}，各減去 ${c.n} 後，甲數是乙數的 ${kS(k,mode,ctx)} 倍，問甲、乙二數原來各是多少？`,answer:`甲 ${A.n}；乙 ${B.n}`,sig:`sme:${plain(k)}:${s.n}:${c.n}`,verify:()=>eq(sub(A,c),mul(sub(B,c),k))}}
+  if(kind==="plusEach"){const c=R(rand(5,20)),A=sub(b,c),B=sub(s,c);if(B.n<=0)return null;return{expr:`大、小二數的和是 ${add(A,B).n}，若各加上 ${c.n} 後，則大數是小數的 ${kS(k,mode,ctx)} 倍，問大、小二數原來各是多少？`,answer:`大數 ${A.n}；小數 ${B.n}`,sig:`spe:${plain(k)}:${s.n}:${c.n}`,verify:()=>eq(add(A,c),mul(add(B,c),k))}}
+  if(kind==="spend"){const x=R(rand(2,8)*50),y=R(rand(1,6)*50),A=add(b,x),B=add(s,y);return{expr:`兄弟二人共有 ${add(A,B).n} 元，兄用去 ${x.n} 元，弟用去 ${y.n} 元，兄剩餘的錢是弟的 ${kS(k,mode,ctx)} 倍，問兄弟原各有多少錢？`,answer:`兄 ${A.n} 元；弟 ${B.n} 元`,sig:`ssp:${plain(k)}:${s.n}:${x.n}:${y.n}`,verify:()=>eq(sub(A,x),mul(sub(B,y),k))}}
+  const x=R(rand(2,8)*20),y=R(rand(1,8)*20),A=sub(b,x),B=sub(s,y);if(A.n<=0||B.n<=0)return null;return{expr:`兄弟二人共有 ${add(A,B).n} 元，媽媽給兄 ${x.n} 元，給弟 ${y.n} 元後，兄的錢是弟的 ${kS(k,mode,ctx)} 倍，問兄、弟原來各有多少元？`,answer:`兄 ${A.n} 元；弟 ${B.n} 元`,sig:`sg:${plain(k)}:${s.n}:${x.n}:${y.n}`,verify:()=>eq(add(A,x),mul(add(B,y),k))}});
+ // ⑥ 加成與折扣
+ const discount=unit("discount","加成與折扣","加二成出售：售價是原價的（1＋0.2）倍；比原價少 25 % 售出：售價是原價的（1－0.25）倍。求原價就用售價除以這個倍數。",["integer","decimal"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["upF","downF","upR"]):L===1?pick(["upR","downR","gain"]):pick(["rateUp","rateDown","lossR"]);
+  const rt=()=>mode==="integer"?R(rand(1,5),10):R(pick([5,15,25,35,20,30,40,45]),100),word=r=>mode==="integer"?cheng(r):(r.n*10>=r.d&&Math.random()<.5?cheng(r):` ${pct(r)} `);
+  const r=rt(),upP=P=>mul(P,add(R(1),r)),dnP=P=>mul(P,sub(R(1),r)),P0=()=>R(rand(2,L===2?60:40)*(mode==="integer"?50:100));
+  if(kind==="upF"){const P=P0(),S=upP(P);if(S.d!==1)return null;const w=word(r);return{expr:`一件衣服原價 ${P.n} 元，加${w}出售，售價是多少元？`,answer:`${S.n} 元`,sig:`du:${P.n}:${plain(r)}`,verify:()=>eq(div(S,P),add(R(1),r))}}
+  if(kind==="downF"){const P=P0(),S=dnP(P);if(S.d!==1)return null;return{expr:`一件洋裝原價 ${P.n} 元，比原價少 ${pct(r)} 售出，售價是多少元？`,answer:`${S.n} 元`,sig:`dd:${P.n}:${plain(r)}`,verify:()=>eq(add(S,mul(P,r)),P)}}
+  if(kind==="upR"){const P=P0(),S=upP(P);if(S.d!==1)return null;const w=word(r);return{expr:`故事書一套，加${w}出售，售價是 ${S.n} 元，問原價是多少？`,answer:`${P.n} 元`,sig:`dr:${P.n}:${plain(r)}`,verify:()=>eq(mul(P,add(R(1),r)),S)}}
+  if(kind==="downR"){const P=P0(),S=dnP(P);if(S.d!==1)return null;return{expr:`西服一套，比原價少 ${pct(r)} 售出，賣價是 ${S.n} 元，問原價是多少？`,answer:`${P.n} 元`,sig:`dv:${P.n}:${plain(r)}`,verify:()=>eq(mul(P,sub(R(1),r)),S)}}
+  if(kind==="gain"){const P=P0(),S=upP(P);if(S.d!==1)return null;const w=word(r);return{expr:`文具一組，加${w}出售，售價是 ${S.n} 元，問售價比原價多多少元？`,answer:`${sub(S,P).n} 元（原價 ${P.n} 元）`,sig:`dg:${P.n}:${plain(r)}`,verify:()=>eq(div(sub(S,P),r),P)}}
+  if(kind==="rateUp"){const P=P0(),S=upP(P);if(S.d!==1)return null;return{expr:`一台電扇原價 ${P.n} 元，售價 ${S.n} 元，是加幾成出售？（以百分率表示也可）`,answer:`加${cheng(r)}（${pct(r)}）`,sig:`dru:${P.n}:${plain(r)}`,verify:()=>eq(div(sub(S,P),P),r)}}
+  if(kind==="rateDown"){const P=P0(),S=dnP(P);if(S.d!==1)return null;return{expr:`一雙球鞋原價 ${P.n} 元，特價 ${S.n} 元，是比原價少百分之多少售出？`,answer:`少 ${pct(r)}`,sig:`drd:${P.n}:${plain(r)}`,verify:()=>eq(div(sub(P,S),P),r)}}
+  const P=P0(),less=mul(P,r);if(less.d!==1)return null;return{expr:`一件外套比原價少 ${pct(r)} 售出，售價比原價便宜了 ${less.n} 元，問原價與售價各是多少元？`,answer:`原價 ${P.n} 元；售價 ${sub(P,less).n} 元`,sig:`dl:${P.n}:${plain(r)}`,verify:()=>eq(div(less,r),P)}});
+ return{title:"基準量與比較量",symbol:"⇆",subtitle:"基準量・比較量・比值・雙數線・線段圖・和倍差倍・加成與折扣",instruction:"先找「是」後面的量當基準量（1 倍）；比較量＝基準量×比值，基準量＝比較量÷比值。可以畫雙數線或線段圖幫助思考。",modes:["integer","fraction","decimal"],modeLabels:{integer:"整數倍",fraction:"分數倍",decimal:"小數倍與百分率"},mixed:true,
+  levels:{basic:"基礎：指出基準量與比較量、雙數線（含 1 倍）、兩段線段圖、和倍差倍的基本題、加成與折扣求售價。",advanced:"進階：「還剩幾分之幾」、男生女生、竹竿插水、周長與價錢應用；雙數線含 0 與單位；已知售價求原價。",challenge:"挑戰：某數加減後的倍數、年齡；各加（減）同數、用錢與給錢後的倍數；雙數線不含 1 倍；三段線段圖；由原價與售價求加幾成或少百分之幾。"},
+  units:[identify,numline,arcs,findbase,sumdiff,discount],presets:{basic:{identify:2,numline:2,arcline:2,findbase:2,sumdiff:2,discount:2},advanced:{identify:2,numline:2,arcline:2,findbase:2,sumdiff:2,discount:2},challenge:{identify:2,numline:2,arcline:2,findbase:2,sumdiff:2,discount:2}}};
+}
+
 function timeConfig(){
  const timeQ=(id,name,tip,kind)=>({id,name,tip,modes:kind==="fracdec"?["fraction","decimal"]:["integer","fraction","decimal"],gen(ctx){if(kind==="convert"){const sec=rand(61,ctx.level==="challenge"?200000:20000),compound=timeText(sec),toSmall=Math.random()<.5;return{expr:toSmall?`將 ${compound} 化成秒。`:`將 ${sec}秒化成複名數。`,answer:toSmall?`${sec}秒`:compound,sig:`tc:${sec}:${toSmall}`,verify:()=>{const d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60),s=sec%60;return d*86400+h*3600+m*60+s===sec}}}if(kind==="fracdec"){const avail=ctx.modes.filter(x=>x!=="integer");if(!avail.length)return null;const mode=pick(avail),whole=rand(1,30),part=mode==="decimal"?R(pick([5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95]),100):(()=>{const d=pick([2,3,4,5,6,10,12,15,20,30,60]);return R(rand(1,d-1),d)})();const v=add(R(whole),part),mins=mul(v,R(60));if(mins.d!==1)return null;return{expr:`將 ${numHTML(v,mode,{mixed:true})} 時化成分。`,answer:`${mins.n}分`,sig:`tfd:${mode}:${plain(v)}`,verify:()=>eq(mul(v,R(60)),mins)}}const a=rand(180,15000),b=rand(60,8000);if(kind==="add"){const v=a+b;return{expr:`${timeText(a)} ＋ ${timeText(b)}＝？`,answer:timeText(v),sig:`ta:${a}:${b}`,verify:()=>v===a+b}}if(kind==="sub"){const hi=Math.max(a,b),lo=Math.min(a,b),v=hi-lo;return{expr:`${timeText(hi)} − ${timeText(lo)}＝？`,answer:timeText(v),sig:`ts:${hi}:${lo}`,verify:()=>v===hi-lo}}if(kind==="mul"){const k=rand(2,9),v=a*k;return{expr:`${timeText(a)} × ${k}＝？`,answer:timeText(v),sig:`tm:${a}:${k}`,verify:()=>v===a*k}}const k=rand(2,9),v=rand(60,5000),total=v*k;return{expr:`${timeText(total)} ÷ ${k}＝？`,answer:timeText(v),sig:`td:${total}:${k}`,verify:()=>total/k===v}}});
  return{title:"時間的計算與化聚",symbol:"⏱",subtitle:"時間化聚・分數小數時間・加減乘除",instruction:"完成時間化聚或計算，過程寫在「原式＝」後面。",modes:["integer","fraction","decimal"],mixed:true,levels:{basic:"基礎：單一時間單位與兩階化聚。",advanced:"進階：複名數、進位退位與分數小數時間。",challenge:"挑戰：三階單位與較大的時間乘除。"},units:[timeQ("convert","整數時間化聚","小單位化大單位用除法；大單位化小單位用乘法。","convert"),timeQ("fracdec","分數與小數時間化聚","分數或小數時間乘以60，可化成較小單位。","fracdec"),timeQ("add","時間的加法","同單位相加，滿60進1；時滿24可進1日。","add"),timeQ("sub","時間的減法","不夠減時，向前一單位借1再化成小單位。","sub"),timeQ("mul","時間的乘法","先化成最小單位相乘，再化回複名數。","mul"),timeQ("div","時間的除法","先化成最小單位相除，再化回複名數。","div")],presets:{basic:{convert:3,add:2,sub:2,mul:2},advanced:{convert:2,fracdec:2,add:2,sub:2,mul:2,div:2},challenge:{convert:2,fracdec:2,add:2,sub:2,mul:2,div:2}}}
@@ -367,7 +710,7 @@ function gcdConfig(){
 }
 
 /* 難度定義：基礎＝小數值與單一步驟；進階＝多步驟並加入分數、小數；挑戰＝多項、括號或綜合應用。各主題的數值範圍與題型差異另列於 CFG.levels。 */
-const CONFIGS={arithmetic:arithmeticConfig,estimation:estimationConfig,ratio:ratioConfig,time:timeConfig,unknown:unknownConfig,simplify:simplifyConfig,gcd:gcdConfig,units:unitsConfig,area:areaConfig,circle:circleConfig},CFG=CONFIGS[TOPIC_KEY]();
+const CONFIGS={arithmetic:arithmeticConfig,ratio:ratioConfig,time:timeConfig,unknown:unknownConfig,simplify:simplifyConfig,gcd:gcdConfig,units:unitsConfig,area:areaConfig,circle:circleConfig,volume:volumeConfig,speed:speedConfig,basecompare:basecompareConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

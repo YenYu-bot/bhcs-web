@@ -86,4 +86,4 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
  next=next.replace('</head>',brand+'</head>');
  fs.writeFileSync(target,next);dom.window.close();
 }
-console.log(`Built P1 screen palette for ${files.length} single-file worksheets; 91 links unchanged`);
+console.log(`Built P1 screen palette for ${files.length} single-file worksheets; 94 links`);
