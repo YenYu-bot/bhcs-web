@@ -11,10 +11,34 @@ assert.match(d.querySelector('.intro')?.textContent||'',new RegExp('共\\s*'+dec
 const files=[...new Set(links.map(u=>u.pathname.slice(1)))];for(const file of files)assert.ok(fs.existsSync(path.join(root,file)),file+' linked from index but missing');
 const p2EngineFiles=new Set(files.filter(file=>/^tools\/math\/g[^/]*-drills\.html$/.test(file)));
 const approvedCrosslinks=new Set(['tools/math/g8-quadratic-arithmetic-sequence.html']);
-const strip=s=>s.replace(/\n<style id="bhcs-math-brand">[\s\S]*?<\/style>\n/g,'').replace(/<meta\s+name="theme-color"\s+content="[^"]+"\s*\/?>/gi,'').replace(/\.expr svg\.fig\{[^}]*\}/g,'').replace(/\n  <!-- g8-r5-related-start -->[\s\S]*?\n  <!-- g8-r5-related-end -->\n/g,'');
+const legacyLinks={
+ 'g9-2-1-sector-segment.html':['circle1','本頁內容已併入'],
+ 'g9-2-2-inscribed-angle-arc.html':['circle2','本頁內容已併入'],
+ 'g9-1-4-measurement.html':['similar','本頁內容已併入'],
+ 'g9-1-4-trig-ratio.html':['righttri','本頁內容已併入'],
+ 'g9-3-2-circumcenter.html':['centers','本頁內容已併入'],
+ 'g9-3-2-incenter.html':['centers','本頁內容已併入'],
+ 'g9-3-2-centroid.html':['centers','本頁內容已併入'],
+ 'g9-1-2-parallel-proportional.html':['parallelratio','相關主題'],
+ 'g9-1-2-parallel-proportional-application.html':['parallelratio','相關主題'],
+ 'g9-1-3-similar-triangles.html':['similar','相關主題'],
+ 'g9-1-4-similar-area.html':['similar','相關主題'],
+ 'g9-2-1-chord.html':['circle1','相關主題'],
+ 'g9-2-1-tangent.html':['circle1','相關主題'],
+ 'g9-2-2-central-angle-arc.html':['circle2','相關主題']
+};
+const strip=s=>s.replace(/\n<style id="bhcs-math-brand">[\s\S]*?<\/style>\n/g,'').replace(/<meta\s+name="theme-color"\s+content="[^"]+"\s*\/?>/gi,'').replace(/\.expr svg\.fig\{[^}]*\}/g,'').replace(/\n  <!-- g8-r5-related-start -->[\s\S]*?\n  <!-- g8-r5-related-end -->\n/g,'').replace(/\n          <!-- g9-legacy-link-start -->\n          <p class="[^"]+"><a href="g9-drills\.html\?topic=[a-z0-9]+" style="text-decoration:underline">[^<]+<\/a><\/p>\n          <!-- g9-legacy-link-end -->/g,'');
 const requiredBrandVars={green:'#16233A',green2:'#0D1626',mint:'#C8352B',soft:'#F2F4F7',line:'#C9D2DE',ink:'#16233A',muted:'#43516B',bg:'#FCFCFA',red:'#C8352B'};
 const brandPalette=hex=>{const h=hex.slice(1),[r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)),hi=Math.max(r,g,b),lo=Math.min(r,g,b);if(hi===lo)return null;if(hi-lo<12&&hi>240)return requiredBrandVars.bg;if(lo>=175&&hi>=225)return requiredBrandVars.soft;if(lo>=125&&hi>=185)return requiredBrandVars.line;if(r>g*1.25&&r>b*1.2)return requiredBrandVars.red;if(hi-lo<45&&hi>75&&hi<190)return requiredBrandVars.muted;return requiredBrandVars.ink;};
 const comparable=(file,s)=>{s=strip(s);return p2EngineFiles.has(file)?s.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,block=>block.includes('globalThis.__BHCS_TEST__')?'<script data-p2-engine></script>':block):s};
+for(const [name,[topic,label]] of Object.entries(legacyLinks)){
+ const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
+ assert.equal((s.match(/<!-- g9-legacy-link-start -->/g)||[]).length,1,file+' link missing/duplicated');
+ assert.equal((s.match(/<!-- g9-legacy-link-end -->/g)||[]).length,1,file+' link end missing/duplicated');
+ assert.ok(s.includes(`href="g9-drills.html?topic=${topic}" style="text-decoration:underline">${label} → `),file+' incorrect link');
+ const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
+ assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved link');
+}
 for(const file of files){
  const s=fs.readFileSync(path.join(root,file),'utf8'),oldRef=baseline+':'+file;
  if(approvedCrosslinks.has(file)){
@@ -36,4 +60,4 @@ for(const file of files){
  assert.ok(brandBlock.includes('color:#C8352B!important'),file+' missing teacher-answer red rule');
 }
 console.log(`PASS P1: ${links.length} links, ${files.length} files, worksheet markup/print rules preserved; P2 engine scripts delegated to math regressions`);
-module.exports={root,baseline,files,p2EngineFiles,approvedCrosslinks,declaredCount,links:links.map(u=>u.pathname.slice(1)+u.search)};
+module.exports={root,baseline,files,p2EngineFiles,approvedCrosslinks,legacyLinkFiles:Object.keys(legacyLinks).map(name=>'tools/math/'+name),declaredCount,links:links.map(u=>u.pathname.slice(1)+u.search)};
