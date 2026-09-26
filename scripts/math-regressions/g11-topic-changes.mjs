@@ -12,8 +12,20 @@ const CONFIGS={vectorcauchy:vectorCauchyConfig(),planevector:planeVectorConfig()
 assert.deepEqual([...topicSources(html).keys()], ['vectorcauchy', 'planevector']);
 assert.deepEqual([...changedTopicSources(html, html)], []);
 
-const altered = html.replace('function vectorCauchyConfig(){', 'function vectorCauchyConfig(){\n// modified topic program');
+const altered = html.replace('function vectorCauchyConfig(){', 'function vectorCauchyConfig(){\n// modified topic program\n');
 assert.deepEqual([...changedTopicSources(html, altered)], ['vectorcauchy']);
+const original = String.raw`function vectorCauchyConfig(){
+ const text="}"; /* } */ // }
+ const regex=/[{}]/;
+ const template=\`brace } \${(() => ({value: "{"}))().value}\`;
+ return {text,regex,template};
+}`.replaceAll('\\`','`').replaceAll('\\${','${');
+const before=original+'\nconst UNIT_POLICIES={vectorcauchy:{}};\nconst CONFIGS={vectorcauchy:vectorCauchyConfig()};';
+const after=original+'\nfunction planeVectorConfig(){return {nested:{}};}\nfunction determinantConfig(){return {};}\nconst UNIT_POLICIES={vectorcauchy:{},planevector:{},determinant:{}};\nconst CONFIGS={vectorcauchy:vectorCauchyConfig(),planevector:planeVectorConfig(),determinant:determinantConfig()};';
+assert.equal(topicSources(before).get('vectorcauchy'),original);
+assert.equal(topicSources(after).get('vectorcauchy'),original);
+assert.deepEqual([...changedTopicSources(before,after)],['planevector','determinant']);
+assert.deepEqual([...changedTopicSources(before,before.replace('vectorcauchy:{}','vectorcauchy:{modes:[]}'))],[]);
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'bhcs-g11-topic-'));
 const git=(...args)=>execFileSync('git',['-C',root,...args],{stdio:'pipe'});
 try{
