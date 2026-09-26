@@ -107,13 +107,13 @@
 
 | 項目 | 結果 |
 |---|---:|
-| topic / 組合 | 73 / 2385 |
-| safeQuestion 抽樣 / 成功取題 | 477000 / 477000 |
-| 通過 / 失敗 | 2385 / 0 |
-| 候選 gen / null | 558048 / 56720 |
+| topic / 組合 | 75 / 2445 |
+| safeQuestion 抽樣 / 成功取題 | 489000 / 489000 |
+| 通過 / 失敗 | 2445 / 0 |
+| 候選 gen / null | 575734 / 62406 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 2385 / 0 |
-| 高拒絕率 unit（非阻擋） | 26 |
+| 完成單卷 / 單卷耗盡 | 2445 / 0 |
+| 高拒絕率 unit（非阻擋） | 32 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -137,6 +137,12 @@
 | statistics / `missing` | 61.6% | 1 |
 | geoseq / `gmean` | 65.4% | 3 |
 | angles / `equation` | 70.5% | 1 |
+| parallelratio / `parallelSeg` | 74.1% | 2 |
+| parallelratio / `twoStep` | 52.7% | 2 |
+| parallelratio / `threeLines` | 61.7% | 2 |
+| parallelratio / `judge` | 56.1% | 2 |
+| parallelratio / `midsegment` | 50.7% | 1 |
+| parallelratio / `midpoint` | 58.5% | 4 |
 | absolute / `error` | 66.6% | 3 |
 | linecircle / `tangent` | 52.7% | 1 |
 | series / `powersums` | 62.7% | 1 |
