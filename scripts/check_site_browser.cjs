@@ -20,6 +20,24 @@ async function measureLayout(p,width){
  }
  return first;
 }
+async function overflowingElements(p){
+ return p.evaluate(()=>[...document.querySelectorAll('*')]
+  .filter(e=>e.getBoundingClientRect().right>window.innerWidth+1)
+  .slice(0,30).map(e=>{
+   const rect=e.getBoundingClientRect();
+   const selector=e.id?'#'+CSS.escape(e.id):(()=>{
+    const parts=[];let node=e;
+    while(node&&node.nodeType===1){
+     let part=node.localName;
+     if(node.classList.length)part+='.'+[...node.classList].slice(0,2).map(CSS.escape).join('.');
+     if(node.parentElement){const siblings=[...node.parentElement.children].filter(s=>s.localName===node.localName);if(siblings.length>1)part+=`:nth-of-type(${siblings.indexOf(node)+1})`}
+     parts.unshift(part);node=node.parentElement;
+    }
+    return parts.join(' > ');
+   })();
+   return{selector,width:Math.round(rect.width*100)/100,right:Math.round(rect.right*100)/100,content:(e.innerText||e.textContent||'').trim().replace(/\s+/g,' ').slice(0,100)};
+  }));
+}
 
 (async()=>{
  fs.mkdirSync(out,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch(),results=[];
@@ -58,7 +76,7 @@ async function measureLayout(p,width){
       if(capture.has(file))await p.screenshot({path:path.join(out,width+'-'+file.replaceAll('/','-')+'-footer.png')});
      }
      assert.deepEqual(errors,[]);assert.deepEqual(httpErrors,[]);row.pass=true;
-    }catch(e){row.pass=false;row.error=e.message;row.errors=errors;row.httpErrors=httpErrors;await p.screenshot({path:path.join(out,width+'-'+file.replaceAll('/','-')+'-failure.png')}).catch(()=>{})}
+    }catch(e){row.pass=false;row.error=e.message;row.errors=errors;row.httpErrors=httpErrors;if(e.message==='horizontal overflow')row.overflowElements=await overflowingElements(p).catch(()=>[]);await p.screenshot({path:path.join(out,width+'-'+file.replaceAll('/','-')+'-failure.png')}).catch(()=>{})}
     results.push(row);await p.close();
    }
    await ctx.close();

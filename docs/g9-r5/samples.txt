@@ -1,0 +1,54 @@
+[basic/centralArc/integer] A、B 兩點把圓 O 分成大小兩弧。若大弧的度數是小弧的 5 倍多 30°，求 ∠AOB（劣弧所對的圓心角）。  ⇒ ∠AOB＝55°
+[basic/centralArc/integer] 圓 O 上 A、B 兩點把圓分成優弧與劣弧，兩弧的度數比為 7：5，求劣弧所對的圓心角 ∠AOB。  ⇒ ∠AOB＝150°
+[basic/centralArc/integer] 圓 O 上 A、B 兩點把圓分成優弧與劣弧，兩弧的度數比為 11：4，求劣弧所對的圓心角 ∠AOB。  ⇒ ∠AOB＝96°
+[basic/inscribed/integer]  示意圖 O B C A 如圖，A、B、C 在圓 O 上，∠BAC＝68°，求 ∠BOC。  ⇒ ∠BOC＝136°
+[basic/inscribed/integer]  示意圖 O A B P 如圖，A、B、P 在圓 O 上，弧 AB（不含 P 的弧）的度數為 115°，求 ∠APB。  ⇒ ∠APB＝57.5°
+[basic/inscribed/integer]  示意圖 O A B P 如圖，A、B、P 在圓 O 上，弧 AB（不含 P 的弧）的度數為 132°，求 ∠APB。  ⇒ ∠APB＝66°
+[basic/semicircle/integer]  示意圖 O B C A D 如圖，BC 是圓 O 的直徑，AD⊥BC，∠ACB＝20°，求弧 BD 的度數。  ⇒ 弧 BD＝40°
+[basic/semicircle/integer]  示意圖 O B C A D 如圖，BC 是圓 O 的直徑，AD⊥BC，∠ACB＝43°，求弧 BD 的度數。  ⇒ 弧 BD＝86°
+[basic/semicircle/integer]  示意圖 O B C A D 如圖，BC 是圓 O 的直徑，AD⊥BC，∠ACB＝38°，求弧 BD 的度數。  ⇒ 弧 BD＝76°
+[basic/cyclic/integer]  示意圖 A B C D E 如圖，ABCD 為圓內接四邊形，E 在 BC 的延長線上。若 ∠A＝127°，求 ∠BCD 與外角 ∠DCE。  ⇒ ∠BCD＝53°，∠DCE＝127°
+[basic/cyclic/integer] 直線 PA 和直線 PB 切圓 O 於 A、B 兩點，∠P＝106°。C 在優弧 AB 上、D 在劣弧 AB 上，求 ∠ACB 與 ∠ADB。  ⇒ ∠ACB＝37°，∠ADB＝143°
+[basic/cyclic/integer]  示意圖 A B C D 如圖，ABCD 為圓內接四邊形，∠A＝43°、∠B＝65°，求 ∠C 與 ∠D。  ⇒ ∠C＝137°，∠D＝115°
+[basic/parallelChords/integer]  示意圖 A B C D 如圖，AB 和 CD 是圓的兩弦，AB∥CD。若弧 AC＝40°，求 ∠ADC、∠BAD 與弧 BD 的度數。  ⇒ ∠ADC＝20°，∠BAD＝20°，弧 BD＝40°
+[basic/parallelChords/integer]  示意圖 A B C D 如圖，AB 和 CD 是圓的兩弦，AB∥CD。若弧 AC＝36°，求 ∠ADC、∠BAD 與弧 BD 的度數。  ⇒ ∠ADC＝18°，∠BAD＝18°，弧 BD＝36°
+[basic/parallelChords/integer]  示意圖 O A B D C 如圖，弧 AB 是半圓，O 為圓心，C、D 在弧 AB 上且 AD∥OC。若弧 CD＝27°，求弧 AD 的度數。  ⇒ 弧 AD＝126°
+[basic/tangentAngles/integer]  示意圖 A B D C P 如圖，弦 AD 與 BC 交於圓內一點 P，弧 AB＝94°、弧 CD＝64°，求 ∠APB。  ⇒ ∠APB＝79°
+[basic/tangentAngles/integer] P 為圓外一點，PAB、PCD 為圓的兩條割線（A、C 靠近 P），弧 BD＝96°、弧 AC＝56°，求 ∠P。  ⇒ ∠P＝20°
+[basic/tangentAngles/integer] P 為圓外一點，PAB、PCD 為圓的兩條割線（A、C 靠近 P），弧 BD＝158°、弧 AC＝50°，求 ∠P。  ⇒ ∠P＝54°
+[advanced/centralArc/integer]  示意圖 O A B C D E 如圖，A、B、C、D、E 依序在圓 O 上，弧 AB＝弧 BC＝弧 CD＝弧 DE，且 ∠AOE＝72°，求弧 AB 的度數與 ∠AOB。  ⇒ 弧 AB＝18°，∠AOB＝18°
+[advanced/centralArc/integer]  示意圖 O A B C D E 如圖，A、B、C、D、E 依序在圓 O 上，弧 AB：弧 BC：弧 CD：弧 DE＝2：2：1：1，且 ∠AOE＝72°，求弧 AB 的度數與 ∠AOB。  ⇒ 弧 AB＝24°，∠AOB＝24°
+[advanced/centralArc/integer]  示意圖 O A C E B D F 如圖，AB、CD、EF 皆為圓 O 的直徑，弧 AC＝3x°、弧 CE＝x°、弧 EB＝x°，求 x 與 ∠COE、∠DOF。  ⇒ x＝36；∠COE＝36°，∠DOF＝36°
+[advanced/inscribed/integer]  示意圖 O A B C 如圖，A、B、C 在圓 O 上，∠ABC＝42°、∠ACB＝58°，求 ∠AOB、∠AOC、∠BOC。  ⇒ ∠AOB＝116°，∠AOC＝84°，∠BOC＝160°
+[advanced/inscribed/integer]  示意圖 A B C D E 如圖，A、B、C、D、E 五點都在圓上，求 ∠A＋∠B＋∠C＋∠D＋∠E。  ⇒ 180°
+[advanced/inscribed/integer]  示意圖 O A B C 如圖，A、B、C 在圓 O 上，∠ABC＝49°、∠ACB＝62°，求 ∠AOB、∠AOC、∠BOC。  ⇒ ∠AOB＝124°，∠AOC＝98°，∠BOC＝138°
+[advanced/semicircle/integer] AB 是一圓的直徑，C、D 是圓上的兩點。已知 AC＝16、BC＝63、AD＝39，求 BD。  ⇒ BD＝52
+[advanced/semicircle/integer] AB 是一圓的直徑，C、D 是圓上的兩點。已知 AC＝13、BC＝84、AD＝51，求 BD。  ⇒ BD＝68
+[advanced/semicircle/integer]  示意圖 O A B C D 如圖，AB 是圓 O 的直徑，C、D 在圓上，∠ACD＝32°，求 ∠DOB。  ⇒ ∠DOB＝116°
+[advanced/cyclic/integer]  示意圖 A B C D 如圖，ABCD 為圓內接四邊形，∠A＝83°，弧 AD＝64°、弧 BC＝114°，求 ∠C、∠D 與弧 AB 的度數。  ⇒ ∠C＝97°，∠D＝122°，弧 AB＝130°
+[advanced/cyclic/integer]  示意圖 A B C D 如圖，ABCD 為圓內接四邊形，∠A＝72°，弧 AD＝67°、弧 BC＝71°，求 ∠C、∠D 與弧 AB 的度數。  ⇒ ∠C＝108°，∠D＝110°，弧 AB＝149°
+[advanced/cyclic/integer]  示意圖 A B C D E 如圖，ABCD 為圓內接四邊形，E 在 BC 的延長線上。若 ∠A＝40°，求 ∠BCD 與外角 ∠DCE。  ⇒ ∠BCD＝140°，∠DCE＝40°
+[advanced/parallelChords/integer]  示意圖 O B C A D E 如圖，在圓 O 中 AC∥DE，DE 和 BC 都是直徑，弧 AC 的度數為 140°。求 ∠ABC、∠ACB、∠AOD 與 ∠COE。  ⇒ ∠ABC＝70°，∠ACB＝90°，∠AOD＝20°，∠COE＝20°
+[advanced/parallelChords/integer]  示意圖 O B C A D E 如圖，在圓 O 中 AC∥DE，DE 和 BC 都是直徑，弧 AC 的度數為 112°。求 ∠ABC、∠ACB、∠AOD 與 ∠COE。  ⇒ ∠ABC＝56°，∠ACB＝90°，∠AOD＝34°，∠COE＝34°
+[advanced/parallelChords/integer]  示意圖 O B C A D E 如圖，在圓 O 中 AC∥DE，DE 和 BC 都是直徑，弧 AC 的度數為 130°。求 ∠ABC、∠ACB、∠AOD 與 ∠COE。  ⇒ ∠ABC＝65°，∠ACB＝90°，∠AOD＝25°，∠COE＝25°
+[advanced/tangentAngles/integer] AP 為圓 O 的切線，P 為切點，OA 交圓 O 於 B 點。若 ∠A＝20°，求 ∠APB。  ⇒ ∠APB＝35°
+[advanced/tangentAngles/integer]  示意圖 A B D C P 如圖，弦 AD 與 BC 交於圓內一點 P，弧 AB＝52°、弧 CD＝82°，求 ∠APB。  ⇒ ∠APB＝67°
+[advanced/tangentAngles/integer] AP 為圓 O 的切線，P 為切點，OA 交圓 O 於 B 點。若 ∠A＝68°，求 ∠APB。  ⇒ ∠APB＝11°
+[challenge/centralArc/integer] 圓 O 的半徑為 6 公分，∠AOB＝3x°、∠BOC＝2x°、∠COD＝3x°、∠DOA＝x°，求弧 AB 的長。  ⇒ 4π 公分
+[challenge/centralArc/integer] 圓 O 的半徑為 6 公分，∠AOB＝x°、∠BOC＝2x°、∠COD＝3x°、∠DOA＝2x°，求弧 BC 的長。  ⇒ 3π 公分
+[challenge/centralArc/integer] 圓 O 的半徑為 4 公分，∠AOB＝2x°、∠BOC＝4x°、∠COD＝3x°、∠DOA＝x°，求弧 DA 的長。  ⇒ (4π/5) 公分
+[challenge/inscribed/integer] 圓 O 的半徑為 3，圓內接 △ABC 中 ∠A＝56°、∠B＝62°，求 ∠C 所對的弧 AB 的長。  ⇒ (31π/15)
+[challenge/inscribed/integer]  示意圖 O A B P Q R S T 如圖，P、Q、R、S、T 各點將半圓弧 AB 六等分，求 ∠AQT。  ⇒ ∠AQT＝105°
+[challenge/inscribed/integer]  示意圖 O A B P Q R S T 如圖，P、Q、R、S、T 各點將半圓弧 AB 六等分，求 ∠APQ。  ⇒ ∠APQ＝150°
+[challenge/semicircle/integer]  示意圖 O B C A D 如圖，BC 是圓 O 的直徑，AD⊥BC，∠ACB＝60°，求弧 BD 的度數。  ⇒ 弧 BD＝120°
+[challenge/semicircle/integer]  示意圖 O B C A D 如圖，BC 是圓 O 的直徑，AD⊥BC，∠ACB＝52°，求弧 BD 的度數。  ⇒ 弧 BD＝104°
+[challenge/semicircle/integer]  示意圖 O B C A D 如圖，BC 是圓 O 的直徑，AD⊥BC，∠ACB＝68°，求弧 BD 的度數。  ⇒ 弧 BD＝136°
+[challenge/cyclic/integer]  示意圖 A B C D 如圖，ABCD 為圓內接四邊形，∠A＝117°，弧 AD＝77°、弧 BC＝79°，求 ∠C、∠D 與弧 AB 的度數。  ⇒ ∠C＝63°，∠D＝64°，弧 AB＝49°
+[challenge/cyclic/integer] ABCD 為圓內接四邊形，直線 AB 與直線 DC 交於 P，直線 AD 與直線 BC 交於 Q（P、Q 在四邊形外）。若 ∠P＝56°、∠Q＝52°，求 ∠A 與 ∠C 的度數。  ⇒ ∠A＝36°，∠C＝144°
+[challenge/cyclic/integer] 直線 PA 和直線 PB 切圓 O 於 A、B 兩點，∠P＝38°。C 在優弧 AB 上、D 在劣弧 AB 上，求 ∠ACB 與 ∠ADB。  ⇒ ∠ACB＝71°，∠ADB＝109°
+[challenge/parallelChords/integer] PT、PB 是圓的切線段（T、B 為切點），A 在優弧 TB 上，∠TAB＝68°，求 ∠BPT 的度數。  ⇒ ∠BPT＝44°
+[challenge/parallelChords/integer] 自圓 O 外一點 P 作兩切線切圓 O 於 A、B。若 ∠APB＝60°、OP＝4 公分，求四邊形 AOBP 的面積與其外接圓的面積。  ⇒ 面積 4√3 平方公分；外接圓面積 4π 平方公分
+[challenge/parallelChords/integer] 自圓 O 外一點 P 作兩切線切圓 O 於 A、B。若 ∠APB＝60°、OP＝8 公分，求四邊形 AOBP 的面積與其外接圓的面積。  ⇒ 面積 16√3 平方公分；外接圓面積 16π 平方公分
+[challenge/tangentAngles/integer] 圓上依序有 A、B、D、C 四點，弧 AB：弧 BD：弧 DC：弧 CA＝3：4：4：1，弦 AD 與 BC 交於 P，求 ∠APB。  ⇒ ∠APB＝105°
+[challenge/tangentAngles/integer] AB 為圓 O 的直徑，P 為圓外一點，PA、PB 分別交圓於 C、D（C 在 PA 上、D 在 PB 上）。若 ∠COD＝52°，求 ∠P。  ⇒ ∠P＝64°
+[challenge/tangentAngles/integer] AB 為圓 O 的直徑，P 為圓外一點，PA、PB 分別交圓於 C、D（C 在 PA 上、D 在 PB 上）。若 ∠COD＝100°，求 ∠P。  ⇒ ∠P＝40°
