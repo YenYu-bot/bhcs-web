@@ -1190,6 +1190,34 @@ function permutationsConfig(){
   if(ans<=0||ans>10000)return null;return{expr,answer:show(ans),sig:`route:${a}:${b}:${k}:${l}`,verify:()=>ans===C(a+b,a)-(blocked?C(k+l,k)*C(a+b-k-l,a-k):0)};
  });
 
+ // P4-C: retain original generators; verify new counting rules by permutations.
+ const p4Counts=new Map();
+ const p4Enumerate=(n,kind,a,b=0)=>{
+  const key=[n,kind,a,b].join(':');if(p4Counts.has(key))return p4Counts.get(key);
+  let count=0;const pos=Array(n),used=Array(n).fill(false);
+  const consecutive=(start,size)=>{const v=pos.slice(start,start+size);return Math.max(...v)-Math.min(...v)===size-1};
+  const walk=i=>{if(i===n){
+   const yes=kind==="block"?consecutive(0,a):kind==="twoBlocks"?consecutive(0,a)&&consecutive(a,b):kind==="gaps"?pos.slice(0,a).every((v,j)=>pos.slice(j+1,a).every(w=>Math.abs(v-w)>1)):Math.abs(pos[0]-pos[1])>1&&Math.abs(pos[2]-pos[3])>1;
+   if(yes)count++;return;
+  }for(let j=0;j<n;j++)if(!used[j]){used[j]=true;pos[i]=j;walk(i+1);used[j]=false}};walk(0);p4Counts.set(key,count);return count;
+ };
+ adjacent.legacyGen=adjacent.gen;
+ adjacent.gen=ctx=>{
+  if(Math.random()<.35)return adjacent.legacyGen(ctx);
+  const n=rand(5,7),kind=ctx.level==="challenge"?pick(["block","twoBlocks"]):"block",a=rand(2,Math.min(4,n-2)),b=kind==="twoBlocks"?rand(2,n-a):0,ids=shuffle(Array.from({length:n},(_,i)=>i+1)),group=ids.slice(0,a).sort((x,y)=>x-y),other=ids.slice(a,a+b).sort((x,y)=>x-y),ans=fact(n-a-b+(b?2:1))*fact(a)*fact(b);
+  if(ans>10000)return null;
+  const expr=kind==="block"?`編號 1～${n} 的 ${n} 位同學排成一列，編號 ${group.join("、")} 的同學必須連成一段，段內順序不限，共有幾種排法？`:`編號 1～${n} 的 ${n} 位同學排成一列，編號 ${group.join("、")} 必須連成一段，編號 ${other.join("、")} 也必須連成一段，兩段內順序均不限，共有幾種排法？`;
+  return{expr,answer:show(ans),sig:`p4c:adjacent:${kind}:${expr}`,verify:()=>ans===p4Enumerate(n,kind,a,b)};
+ };
+ separated.legacyGen=separated.gen;
+ separated.gen=ctx=>{
+  if(Math.random()<.3)return separated.legacyGen(ctx);
+  const n=rand(5,7),kind=ctx.level==="challenge"?pick(["gaps","twoPairs"]):"gaps",a=kind==="gaps"?rand(2,Math.floor((n+1)/2)):4,ids=shuffle(Array.from({length:n},(_,i)=>i+1)).slice(0,a),ans=kind==="gaps"?fact(n-a)*P(n-a+1,a):fact(n)-4*fact(n-1)+4*fact(n-2);
+  if(ans>10000)return null;
+  const expr=kind==="gaps"?`編號 1～${n} 的 ${n} 位同學排成一列，編號 ${ids.sort((x,y)=>x-y).join("、")} 的同學彼此都不得相鄰，共有幾種排法？`:`編號 1～${n} 的 ${n} 位同學排成一列，${ids[0]} 號與 ${ids[1]} 號不得相鄰，且 ${ids[2]} 號與 ${ids[3]} 號也不得相鄰，共有幾種排法？`;
+  return{expr,answer:show(ans),sig:`p4c:separated:${kind}:${expr}`,verify:()=>ans===p4Enumerate(n,kind,a)};
+ };
+
  return{title:"排列",symbol:"P",subtitle:"階乘・部分排列・指定位置・相鄰與不相鄰・相同物排列・分配與路徑",instruction:"解下列各題；先分辨物件是否相異、是否考慮順序，再處理固定位置、相鄰、首位為 0 等限制。",modes:["integer"],allowMixed:false,mixed:false,levels:{basic:"基礎：階乘、部分排列、固定位置與基本數字排列。",advanced:"進階：相鄰、不相鄰、相同物排列與非空分配。",challenge:"挑戰：多重限制、三箱分配與避點最短路徑。"},units:[factorial,partial,fixed,adjacent,separated,digits,repeated,distribution,routes],presets:{basic:{factorial:1,partial:1,fixed:1,adjacent:1,separated:1,digits:1,repeated:1,distribution:1,routes:1},advanced:{factorial:1,partial:1,fixed:1,adjacent:1,separated:1,digits:1,repeated:1,distribution:1,routes:1},challenge:{factorial:1,partial:1,fixed:1,adjacent:1,separated:1,digits:1,repeated:1,distribution:1,routes:1}}};
 }
 
@@ -1261,6 +1289,38 @@ function probabilityConfig(){
   const total=rand(3,10),win=rand(1,total-1),lossUnit=rand(1,20),loss=lossUnit*win,reward=loss*(total-win)/win;if(!Number.isInteger(reward)||reward>10000)return null;
   return{expr:`一袋有 ${total} 顆等可能被抽中的球，其中 ${win} 顆為中獎球。抽中可得 x 元，未抽中須付 ${loss} 元。若遊戲公平，求 x。`,answer:`${showI(reward)} 元`,sig:`fair:${total}:${win}:${loss}`,verify:()=>win*reward-(total-win)*loss===0};
  });
+
+ // P4-C: formulas produce answers; labeled outcomes independently verify them.
+ dice.legacyGen=dice.gen;
+ dice.gen=ctx=>{
+  if(Math.random()<.45)return dice.legacyGen(ctx);
+  const s=rand(4,10),kind=pick(ctx.level==="challenge"?["atLeast","exactOne","weighted"]:["atLeast","exactOne"]),t=rand(1,s);let ans,expr,verify;
+  if(kind==="weighted"){
+   const b=pick(Array.from({length:s},(_,i)=>i+1).filter(v=>v!==t));ans=R(t+b,s*(s+1)/2);
+   expr=`一顆 ${s} 面骰子的點數為 1～${s}，各點數出現機率與點數成正比。擲一次，求出現 ${t} 點或 ${b} 點的機率。`;
+   verify=()=>{const tickets=[];for(let face=1;face<=s;face++)for(let j=0;j<face;j++)tickets.push(face);return eq(ans,R(tickets.filter(x=>x===t||x===b).length,tickets.length))};
+  }else{
+   ans=kind==="atLeast"?R(s*s-(s-1)**2,s*s):R(2*(s-1),s*s);
+   expr=`將點數為 1～${s} 的 ${s} 面公平骰子獨立投擲兩次，求${kind==="atLeast"?"至少一次":"恰有一次"}出現 ${t} 點的機率。`;
+   verify=()=>{let yes=0;for(let i=1;i<=s;i++)for(let j=1;j<=s;j++){const hits=Number(i===t)+Number(j===t);if(kind==="atLeast"?hits>=1:hits===1)yes++}return eq(ans,R(yes,s*s))};
+  }
+  if(!ok(ans))return null;return{expr,answer:showF(ans),sig:`p4c:dice:${kind}:${expr}`,verify};
+ };
+ balls.legacyGen=balls.gen;
+ balls.gen=ctx=>{
+  if(Math.random()<.25)return balls.legacyGen(ctx);
+  const kind=pick(ctx.level==="challenge"?["sameColor","atLeast","threeColors"]:["sameColor","atLeast"]),red=rand(2,10),blue=rand(2,10),white=kind==="threeColors"?rand(1,6):0,n=red+blue+white,take=kind==="sameColor"?2:rand(3,4),k=rand(1,Math.min(take,red));let fav=0,expr;
+  if(kind==="sameColor"){fav=C(red,2)+C(blue,2);expr=`袋中有紅球 ${red} 顆、藍球 ${blue} 顆，每球等可能被抽到。同時抽兩球且不放回，求兩球同色的機率。`}
+  else{
+   for(let j=k;j<=take;j++)fav+=C(red,j)*C(n-red,take-j);
+   expr=`袋中有紅球 ${red} 顆、藍球 ${blue} 顆${white?`、白球 ${white} 顆`:""}，每球等可能被抽到。同時抽 ${take} 球且不放回，求至少 ${k} 顆紅球的機率。`;
+  }
+  const ans=R(fav,C(n,take));if(!ok(ans)||ans.n<=0||ans.n>=ans.d)return null;
+  return{expr,answer:showF(ans),sig:`p4c:balls:${kind}:${expr}`,verify:()=>{
+   let total=0,yes=0;const chosen=[];
+   const walk=start=>{if(chosen.length===take){total++;const r=chosen.filter(i=>i<red).length;if(kind==="sameColor"?(r===0||r===2):r>=k)yes++;return}for(let i=start;i<n;i++){chosen.push(i);walk(i+1);chosen.pop()}};walk(0);return eq(ans,R(yes,total));
+  }};
+ };
 
  return{title:"機率",symbol:"P",subtitle:"樣本空間・事件運算・古典機率・排列組合型機率・期望值・公平遊戲",instruction:"解下列各題；機率與期望值均須化為最簡分數或整數，不使用小數近似。",modes:["integer","fraction"],allowMixed:false,mixed:false,levels:{basic:"基礎：樣本空間、硬幣骰子、抽球與基本期望值。",advanced:"進階：事件運算、補事件、數字卡與排列型機率。",challenge:"挑戰：多次試驗、組合型機率、期望值線性與公平遊戲。"},units:[samplespace,eventops,coins,dice,balls,cards,complement,arrangeprob,expectation,linearity,fairgame],presets:{basic:{samplespace:1,eventops:1,coins:1,dice:1,balls:1,cards:1,complement:1,arrangeprob:1,expectation:1,linearity:1,fairgame:1},advanced:{samplespace:1,eventops:1,coins:1,dice:1,balls:1,cards:1,complement:1,arrangeprob:1,expectation:1,linearity:1,fairgame:1},challenge:{samplespace:1,eventops:1,coins:1,dice:1,balls:1,cards:1,complement:1,arrangeprob:1,expectation:1,linearity:1,fairgame:1}}};
 }
@@ -1440,6 +1500,18 @@ function radianMeasureConfig(){
  const quadrant=unit("quadrant","象限與同界角","加減2π不改變終邊；先化到0≤θ＜2π。",ctx=>{const mode=pick(ctx.modes),base=pick([R(1,6),R(1,4),R(1,3),R(2,3),R(3,4),R(5,6),R(7,6),R(5,4),R(4,3),R(3,2),R(5,3),R(7,4),R(11,6)]),k=rand(-4,4),x=add(base,R(2*k)),deg=H.num(base)*180,q=deg<90?1:deg<180?2:deg<270?3:4;return{expr:`判斷角 ${H.pi(x)} 的終邊位於第幾象限，並寫出 [0，2π) 內同界角。`,answer:`第 ${q} 象限；${H.pi(base)}`,sig:`qu:${H.plain(base)}:${k}`,verify:()=>H.near(normDeg(H.num(x)*180),deg)}});
  const compare=unit("compare","三角函數值比較","先利用週期與正負化到熟悉區間，再比較。",ctx=>{const fn=pick(["sin","cos"]),angles=shuffle([R(rand(1,23),12),R(rand(1,23),12),R(rand(1,23),12)]),vals=angles.map(a=>fn==="sin"?Math.sin(Math.PI*H.num(a)):Math.cos(Math.PI*H.num(a)));if(new Set(angles.map(H.plain)).size<3||Math.min(Math.abs(vals[0]-vals[1]),Math.abs(vals[0]-vals[2]),Math.abs(vals[1]-vals[2]))<1e-8)return null;const idx=[0,1,2].sort((i,j)=>vals[i]-vals[j]);return{expr:`由小到大排列：${angles.map(a=>`${fn}${H.pi(a)}`).join("、")}。`,answer:idx.map(i=>`${fn}${H.pi(angles[i])}`).join("＜"),sig:`cp:${fn}:${angles.map(H.plain)}`,verify:()=>vals[idx[0]]<vals[idx[1]]&&vals[idx[1]]<vals[idx[2]]}});
  const special=unit("special","特殊弧度角三角值","先把弧度辨認為特殊角，再依象限決定正負。",ctx=>{const fn=pick(["sin","cos","tan"]),base=pick([R(1,6),R(1,4),R(1,3),R(2,3),R(3,4),R(5,6),R(7,6),R(5,4),R(4,3),R(5,3),R(7,4),R(11,6)]),a=add(base,R(2*rand(-4,4))),v=fn==="sin"?Math.sin(Math.PI*H.num(base)):fn==="cos"?Math.cos(Math.PI*H.num(base)):Math.tan(Math.PI*H.num(base)),values=[{x:0,s:"0"},{x:.5,s:fr(1,2)},{x:-.5,s:"−"+fr(1,2)},{x:1,s:"1"},{x:-1,s:"−1"},{x:Math.sqrt(2)/2,s:fr("√2",2)},{x:-Math.sqrt(2)/2,s:"−"+fr("√2",2)},{x:Math.sqrt(3)/2,s:fr("√3",2)},{x:-Math.sqrt(3)/2,s:"−"+fr("√3",2)},{x:Math.sqrt(3),s:"√3"},{x:-Math.sqrt(3),s:"−√3"},{x:1/Math.sqrt(3),s:fr("√3",3)},{x:-1/Math.sqrt(3),s:"−"+fr("√3",3)}],hit=values.find(z=>H.near(z.x,v));if(!hit)return null;return{expr:`求 ${fn}（${H.pi(a)}） 的值。`,answer:hit.s,sig:`sp:${fn}:${H.plain(a)}`,verify:()=>H.near(hit.x,v)}});
+ quadrant.legacyGen=quadrant.gen;
+ quadrant.gen=ctx=>{
+  if(Math.random()<.3)return quadrant.legacyGen(ctx);
+  const kind=pick(ctx.level==="challenge"?["realAngle","positive","negative"]:["realAngle","positive"]),x=R(rand(1,120)*pick([-1,1]),pick([1,2,3,4,5,6])),v=H.num(x),turns=Math.floor(v/(2*Math.PI)),beta=v-2*turns*Math.PI,q=Math.floor(beta/(Math.PI/2))+1,coefficient=-2*(kind==="negative"?turns+1:turns),rep=v+coefficient*Math.PI;
+  const tail=coefficient?`${coefficient<0?"−":"＋"}${Math.abs(coefficient)===1?"":Math.abs(coefficient)}π`:"",exact=`${H.show(x,"fraction")}${tail}`,expr=kind==="realAngle"?`角 θ＝${H.show(x,"fraction")} 弧度（不含 π 因子），判斷其終邊位於第幾象限。`:kind==="positive"?`求 ${H.show(x,"fraction")} 弧度的最小正同界角，以 π 的精確式表示。`:`角 θ＝${H.show(x,"fraction")} 弧度，求區間 [−2π，0) 內的同界角，並判斷其終邊象限。`;
+  const answer=kind==="realAngle"?`第 ${q} 象限`:kind==="positive"?exact:`${exact}；第 ${q} 象限`;
+  return{expr,answer,sig:`p4c:quadrant:${kind}:${expr}`,verify:()=>{
+   const sin=Math.sin(v),cos=Math.cos(v),check=sin>0?(cos>0?1:2):(cos<0?3:4);
+   return check===q&&(kind==="realAngle"||(kind==="negative"?rep>=-2*Math.PI&&rep<0:rep>0&&rep<2*Math.PI)&&H.near(Math.sin(rep),sin)&&H.near(Math.cos(rep),cos));
+  }};
+ };
+
  return{title:"弧度量",symbol:"rad",subtitle:"角度弧度互換・同界角・象限判定・三角比比較・特殊角求值",instruction:"解下列各題；必要時先把角化到 0≤θ＜2π。",modes:M,mixed:true,levels:{basic:"基礎：常見整數角與特殊弧度互換。",advanced:"進階：分數／小數角、同界角與象限。",challenge:"挑戰：大角、負角、三角比比較與綜合求值。"},units:[convert,quadrant,compare,special],presets:{basic:{convert:4,quadrant:2,special:4},advanced:{convert:3,quadrant:3,compare:2,special:2},challenge:{quadrant:3,compare:3,special:4}}};
 }
 
@@ -1835,6 +1907,27 @@ function sectorConfig(){
  const clock=unit("clock","時鐘指針路徑","先把經過時間換成轉過的弧度，再用l＝rθ。",ctx=>{const mode=pick(ctx.modes),r=H.pos(mode,ctx.level,15),mins=pick([5,10,15,20,25,30,40,45,50,55]),theta=R(mins,30),l=mul(r,theta);return{expr:`長 ${H.show(r,mode,false,ctx)} 公分的分針從整點走過 ${mins} 分鐘，針尖走過多長？`,answer:`${piAns(l,mode,ctx)} 公分`,sig:`cl:${H.plain(r)}:${mins}`,verify:()=>eq(theta,R(mins,30))&&eq(l,mul(r,theta))}});
  const maximum=unit("maximum","固定周長的最大面積","周長P＝2r＋l時，面積rl／2在l＝2r時最大。",ctx=>{const mode=pick(ctx.modes),limit=ctx.level==="basic"?60:ctx.level==="advanced"?150:300,r=mode==="integer"?R(rand(1,limit)):mode==="fraction"?R(rand(1,Math.min(limit*3,71)),rand(2,12)):R(rand(1,limit*100),100),P=mul(R(4),r),A=mul(r,r);return{expr:`一扇形周長固定為 ${H.show(P,mode,false,ctx)}，求其最大面積。`,answer:H.show(A,mode,true,ctx),sig:`mx:${H.plain(P)}`,verify:()=>eq(A,div(mul(P,P),R(16)))}});
  const cone=unit("cone","圓錐展開圖","圓錐底面圓周等於側面扇形的弧長。",ctx=>{const mode=pick(ctx.modes),slant=H.pos(mode,ctx.level,20),ratio=R(pick([1,2,3]),pick([4,5,6])),baseR=mul(slant,ratio),angle=mul(R(2),ratio);return{expr:`圓錐母線長 ${H.show(slant,mode,false,ctx)}，底面半徑為母線的 ${H.show(ratio,"fraction")} 倍。求側面展開扇形的圓心角（弧度）。`,answer:H.pi(angle),sig:`cn:${H.plain(slant)}:${H.plain(ratio)}`,verify:()=>eq(mul(R(2),baseR),mul(slant,angle))}});
+ cone.legacyGen=cone.gen;
+ cone.gen=ctx=>{
+  if(Math.random()<.3)return cone.legacyGen(ctx);
+  const mode=pick(ctx.modes),kind=pick(ctx.level==="challenge"?["baseRadius","lateralArea","heightAngle"]:["baseRadius","lateralArea"]);let expr,answer,verify;
+  if(kind==="heightAngle"){
+   const [r,h,l]=pick([[3,4,5],[4,3,5],[5,12,13],[12,5,13],[8,15,17],[15,8,17]]),scale=mode==="integer"?R(rand(1,12)):R(rand(1,30),pick([2,3,4,5,6])),radius=mul(R(r),scale),height=mul(R(h),scale),theta=R(2*r,l);
+   expr=`直圓錐底面半徑 ${H.show(radius,mode,false,ctx)}、高 ${H.show(height,mode,false,ctx)}，將側面沿母線剪開，求展開扇形的圓心角（弧度）。`;answer=H.pi(theta);
+   verify=()=>{const slant=Math.hypot(H.num(radius),H.num(height));return H.near(slant*H.num(theta)*Math.PI,2*Math.PI*H.num(radius))};
+  }else{
+   const slant=mode==="integer"?R(rand(3,30)):R(rand(3,90),pick([2,3,4,5,6])),ratio=pick([R(1,6),R(1,4),R(1,3),R(1,2),R(2,3),R(3,4)]),theta=mul(R(2),ratio),radius=mul(slant,ratio),area=mul(radius,slant);
+   if(kind==="baseRadius"){
+    expr=`圓錐側面展開扇形的半徑為 ${H.show(slant,mode,false,ctx)}，圓心角為 ${H.pi(theta)}。求圓錐底面半徑。`;answer=H.show(radius,mode,true,ctx);
+    verify=()=>H.near(2*Math.PI*H.num(radius),H.num(slant)*H.num(theta)*Math.PI);
+   }else{
+    expr=`直圓錐底面半徑 ${H.show(radius,mode,false,ctx)}、母線長 ${H.show(slant,mode,false,ctx)}，求側面積（保留 π）。`;answer=H.pi(area);
+    verify=()=>{const angle=2*Math.PI*H.num(radius)/H.num(slant);return H.near(H.num(area)*Math.PI,H.num(slant)**2*angle/2)};
+   }
+  }
+  return{expr,answer,sig:`p4c:cone:${kind}:${expr}`,verify};
+ };
+
  return{title:"扇形的周長與面積",symbol:"◔",subtitle:"弧長・扇形面積・逆推・時鐘・固定周長最值・圓錐展開",instruction:"解下列各題；若圓心角用弧度表示，可直接套用 l＝rθ。",modes:M,mixed:true,levels:{basic:"基礎：整數半徑與常見圓心角的直接計算。",advanced:"進階：分數／小數長度與弧長、面積逆推。",challenge:"挑戰：時鐘、固定周長最值與圓錐展開。"},units:[arc,area,inverse,clock,maximum,cone],presets:{basic:{arc:3,area:3,inverse:2,clock:2},advanced:{arc:2,area:2,inverse:3,clock:2,cone:1},challenge:{inverse:2,clock:2,maximum:3,cone:3}}};
 }
 
@@ -2149,6 +2242,25 @@ function trigTransformConfig(){
   return{expr:`在 0≤x＜2π 內，方程式 ${fn}（${b}x）＝${H.show(c,mode,false,ctx)} 有幾個相異實根？`,answer:`${count} 個`,sig:`ix:${fn}:${b}:${H.plain(c)}`,verify:()=>Math.abs(H.num(c))<1&&count===2*b};
  });
  const model=unit("model","週期現象建模","振幅是極差的一半，中心線是最大、最小值平均。",ctx=>{const mode=pick(ctx.modes),period=mode==="decimal"?pick([10,20]):pick([8,10,12,15,20]),center=mode==="decimal"?highNumberFor("decimal",ctx.level,30):R(rand(5,30)),radius=mode==="decimal"?highNumberFor("decimal",ctx.level,12):R(rand(1,12)),low=sub(center,radius);if(low.n<=0)return null;const omega=R(2,period),omegaText=mode==="decimal"?H.show(omega,"decimal",true,ctx)+"π":H.pi(omega);return{expr:`摩天輪中心高 ${H.show(center,mode,false,ctx)} 公尺、半徑 ${H.show(radius,mode,false,ctx)} 公尺，每 ${period} 分鐘一圈；t＝0 時座艙在最低點。以 y＝a cos（bt）＋d 表示高度，求（a，b，d）。`,answer:`（${H.show(H.neg(radius),mode,true,ctx)}，${omegaText}，${H.show(center,mode,true,ctx)}）`,sig:`mo:${H.plain(center)}:${H.plain(radius)}:${period}`,verify:()=>eq(add(center,H.neg(radius)),low)&&H.near(H.num(omega),2/period)}});
+ intersections.legacyGen=intersections.gen;
+ intersections.gen=ctx=>{
+  if(Math.random()<.25)return intersections.legacyGen(ctx);
+  const kind=pick(ctx.level==="challenge"?["tangent","outside","shifted"]:["tangent","outside"]),fn=trigName(),b=rand(1,6),a=rand(1,8),d=rand(-8,8),phase=kind==="shifted"?pick(phasePool.filter(x=>x.n)):R(0),side=pick([-1,1]),level=kind==="tangent"?d+side*a:kind==="outside"?d+side*(a+rand(1,5)):d,normalized=(level-d)/a,count=kind==="tangent"?b:kind==="outside"?0:2*b;
+  if(kind==="shifted"&&d===0)return null;
+  const coefficient=a===1?"":a,inside=`${b===1?"":b}x${phase.n?"−"+H.pi(phase):""}`,tail=d===0?"":`${d<0?"−":"＋"}${Math.abs(d)}`,formula=`${coefficient}${fn}（${inside}）${tail}`;
+  const expr=kind==="tangent"?`在 0≤x＜2π 內，水平線 y＝${H.int(level)} 與函數 y＝${formula} 相切，共有幾個相異交點？`:kind==="outside"?`在 0≤x＜2π 內，判斷直線 y＝${H.int(level)} 與函數 y＝${formula} 的相異交點個數。`:`在 0≤x＜2π 內，解含水平及鉛直平移的方程式 ${formula}＝${H.int(level)}，共有幾個相異實根？`;
+  return{expr,answer:`${count} 個`,sig:`p4c:intersections:${kind}:${expr}`,verify:()=>{
+   // Enumerate inverse-trig solution families and substitute every distinct root.
+   if(Math.abs(normalized)>1)return count===0;
+   const alpha=fn==="sin"?Math.asin(normalized):Math.acos(normalized),roots=[],bases=fn==="sin"?[alpha,Math.PI-alpha]:[alpha,-alpha];
+   for(const base of bases)for(let k=-8;k<=8;k++){
+    const x=(base+2*k*Math.PI+H.num(phase)*Math.PI)/b;
+    if(x>=-1e-9&&x<2*Math.PI-1e-9&&!roots.some(y=>Math.abs(x-y)<1e-8))roots.push(x);
+   }
+   return roots.length===count&&roots.every(x=>H.near(a*valAt(fn,b*x-H.num(phase)*Math.PI)+d,level));
+  }};
+ };
+
  return{title:"三角函數的伸縮與平移",symbol:"↔",subtitle:"振幅與週期・圖形伸縮・水平與鉛直平移・交點・週期模型",instruction:"解下列各題；判讀水平平移時，先整理括號內的 x 係數。",modes:M,mixed:true,levels:{basic:"基礎：整數係數、單一步驟伸縮與基本週期。",advanced:"進階：分數／小數係數、相位與複合平移。",challenge:"挑戰：交點計數與週期現象建模。"},units:[parameters,equation,shift,intersections,model],presets:{basic:{parameters:3,equation:3,shift:2,intersections:2},advanced:{parameters:3,equation:3,shift:2,model:2},challenge:{parameters:2,shift:2,intersections:3,model:3}}};
 }
 

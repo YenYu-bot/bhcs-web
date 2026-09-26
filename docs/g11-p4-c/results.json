@@ -1,0 +1,501 @@
+{
+  "passed": true,
+  "unchangedUnits": 359,
+  "replays": 4200,
+  "papers": 960,
+  "questions": 57600,
+  "legacyPromptRepeats": 0,
+  "rows": [
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "basic",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "advanced",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "challenge",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "basic",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "advanced",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "challenge",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "advanced",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "challenge",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    }
+  ],
+  "gateRows": [
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "before": {
+        "basic": 24,
+        "advanced": 24,
+        "challenge": 24
+      },
+      "structures": {
+        "basic": 27,
+        "advanced": 25,
+        "challenge": 36
+      },
+      "challengeNew": 9
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "before": {
+        "basic": 16,
+        "advanced": 16,
+        "challenge": 16
+      },
+      "structures": {
+        "basic": 19,
+        "advanced": 18,
+        "challenge": 20
+      },
+      "challengeNew": 1
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "before": {
+        "basic": 3,
+        "advanced": 3,
+        "challenge": 3
+      },
+      "structures": {
+        "basic": 5,
+        "advanced": 5,
+        "challenge": 6
+      },
+      "challengeNew": 1
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "before": {
+        "basic": 1,
+        "advanced": 1,
+        "challenge": 1
+      },
+      "structures": {
+        "basic": 3,
+        "advanced": 3,
+        "challenge": 4
+      },
+      "challengeNew": 1
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "before": {
+        "basic": 4,
+        "advanced": 4,
+        "challenge": 4
+      },
+      "structures": {
+        "basic": 11,
+        "advanced": 12,
+        "challenge": 16
+      },
+      "challengeNew": 5
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "before": {
+        "basic": 3,
+        "advanced": 3,
+        "challenge": 3
+      },
+      "structures": {
+        "basic": 14,
+        "advanced": 14,
+        "challenge": 18
+      },
+      "challengeNew": 4
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "before": {
+        "basic": 4,
+        "advanced": 4,
+        "challenge": 4
+      },
+      "structures": {
+        "basic": 47,
+        "advanced": 45,
+        "challenge": 65
+      },
+      "challengeNew": 30
+    }
+  ],
+  "samples": {
+    "permutations/adjacent/block": {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學必須連成一段，段內順序不限，共有幾種排法？",
+      "answer": "36",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學必須連成一段，段內順序不限，共有幾種排法？",
+      "answerHtml": "36"
+    },
+    "permutations/adjacent/twoBlocks": {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "challenge",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，編號 2、3、5 必須連成一段，編號 1、4 也必須連成一段，兩段內順序均不限，共有幾種排法？",
+      "answer": "24",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，編號 2、3、5 必須連成一段，編號 1、4 也必須連成一段，兩段內順序均不限，共有幾種排法？",
+      "answerHtml": "24"
+    },
+    "permutations/separated/gaps": {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學彼此都不得相鄰，共有幾種排法？",
+      "answer": "12",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學彼此都不得相鄰，共有幾種排法？",
+      "answerHtml": "12"
+    },
+    "permutations/separated/twoPairs": {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "challenge",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，5 號與 2 號不得相鄰，且 1 號與 4 號也不得相鄰，共有幾種排法？",
+      "answer": "48",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，5 號與 2 號不得相鄰，且 1 號與 4 號也不得相鄰，共有幾種排法？",
+      "answerHtml": "48"
+    },
+    "probability/dice/exactOne": {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求恰有一次出現 3 點的機率。",
+      "answer": "((3)/(8))",
+      "promptHtml": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求恰有一次出現 3 點的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">8</span></span>"
+    },
+    "probability/dice/atLeast": {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求至少一次出現 4 點的機率。",
+      "answer": "((7)/(16))",
+      "promptHtml": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求至少一次出現 4 點的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">7</span><span class=\"d\">16</span></span>"
+    },
+    "probability/dice/weighted": {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "一顆 9 面骰子的點數為 1～9，各點數出現機率與點數成正比。擲一次，求出現 2 點或 6 點的機率。",
+      "answer": "((8)/(45))",
+      "promptHtml": "一顆 9 面骰子的點數為 1～9，各點數出現機率與點數成正比。擲一次，求出現 2 點或 6 點的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">8</span><span class=\"d\">45</span></span>"
+    },
+    "probability/balls/sameColor": {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "袋中有紅球 6 顆、藍球 7 顆，每球等可能被抽到。同時抽兩球且不放回，求兩球同色的機率。",
+      "answer": "((6)/(13))",
+      "promptHtml": "袋中有紅球 6 顆、藍球 7 顆，每球等可能被抽到。同時抽兩球且不放回，求兩球同色的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">6</span><span class=\"d\">13</span></span>"
+    },
+    "probability/balls/atLeast": {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 3 顆紅球的機率。",
+      "answer": "((1)/(5))",
+      "promptHtml": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 3 顆紅球的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>"
+    },
+    "probability/balls/threeColors": {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "袋中有紅球 4 顆、藍球 2 顆、白球 1 顆，每球等可能被抽到。同時抽 4 球且不放回，求至少 2 顆紅球的機率。",
+      "answer": "((31)/(35))",
+      "promptHtml": "袋中有紅球 4 顆、藍球 2 顆、白球 1 顆，每球等可能被抽到。同時抽 4 球且不放回，求至少 2 顆紅球的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">31</span><span class=\"d\">35</span></span>"
+    },
+    "radians/quadrant/realAngle": {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "角 θ＝((67)/(6)) 弧度(不含 π 因子)，判斷其終邊位於第幾象限。",
+      "answer": "第 4 象限",
+      "promptHtml": "角 θ＝<span class=\"fr\"><span class=\"n\">67</span><span class=\"d\">6</span></span> 弧度（不含 π 因子），判斷其終邊位於第幾象限。",
+      "answerHtml": "第 4 象限"
+    },
+    "radians/quadrant/positive": {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "求 -38 弧度的最小正同界角，以 π 的精確式表示。",
+      "answer": "-38+14π",
+      "promptHtml": "求 −38 弧度的最小正同界角，以 π 的精確式表示。",
+      "answerHtml": "−38＋14π"
+    },
+    "radians/quadrant/negative": {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "角 θ＝-38 弧度，求區間 [-2π，0) 內的同界角，並判斷其終邊象限。",
+      "answer": "-38+12π；第 4 象限",
+      "promptHtml": "角 θ＝−38 弧度，求區間 [−2π，0) 內的同界角，並判斷其終邊象限。",
+      "answerHtml": "−38＋12π；第 4 象限"
+    },
+    "sector/cone/baseRadius": {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "圓錐側面展開扇形的半徑為 4，圓心角為 ((π)/(3))。求圓錐底面半徑。",
+      "answer": "((2)/(3))",
+      "promptHtml": "圓錐側面展開扇形的半徑為 4，圓心角為 <span class=\"fr\"><span class=\"n\">π</span><span class=\"d\">3</span></span>。求圓錐底面半徑。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span>"
+    },
+    "sector/cone/lateralArea": {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "直圓錐底面半徑 4((2)/(3))、母線長 7，求側面積(保留 π)。",
+      "answer": "((98π)/(3))",
+      "promptHtml": "直圓錐底面半徑 <span class=\"mixed\">4<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span></span>、母線長 7，求側面積（保留 π）。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">98π</span><span class=\"d\">3</span></span>"
+    },
+    "sector/cone/heightAngle": {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "challenge",
+      "mode": "integer",
+      "prompt": "直圓錐底面半徑 84、高 35，將側面沿母線剪開，求展開扇形的圓心角(弧度)。",
+      "answer": "((24π)/(13))",
+      "promptHtml": "直圓錐底面半徑 84、高 35，將側面沿母線剪開，求展開扇形的圓心角（弧度）。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">24π</span><span class=\"d\">13</span></span>"
+    },
+    "trigtransform/intersections/tangent": {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "在 0≤x＜2π 內，水平線 y＝3 與函數 y＝8cos(4x)-5 相切，共有幾個相異交點？",
+      "answer": "4 個",
+      "promptHtml": "在 0≤x＜2π 內，水平線 y＝3 與函數 y＝8cos（4x）−5 相切，共有幾個相異交點？",
+      "answerHtml": "4 個"
+    },
+    "trigtransform/intersections/outside": {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "在 0≤x＜2π 內，判斷直線 y＝2 與函數 y＝3sin(4x)-3 的相異交點個數。",
+      "answer": "0 個",
+      "promptHtml": "在 0≤x＜2π 內，判斷直線 y＝2 與函數 y＝3sin（4x）−3 的相異交點個數。",
+      "answerHtml": "0 個"
+    },
+    "trigtransform/intersections/shifted": {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "在 0≤x＜2π 內，解含水平及鉛直平移的方程式 7sin(3x-((π)/(4)))-8＝-8，共有幾個相異實根？",
+      "answer": "6 個",
+      "promptHtml": "在 0≤x＜2π 內，解含水平及鉛直平移的方程式 7sin（3x−<span class=\"fr\"><span class=\"n\">π</span><span class=\"d\">4</span></span>）−8＝−8，共有幾個相異實根？",
+      "answerHtml": "6 個"
+    }
+  }
+}
