@@ -1,0 +1,236 @@
+{
+  "base": "7c98d30f4b95ce588d3f43804c962cd608dfcbe0",
+  "regressions": [
+    {
+      "test": "anglesum-bank-size.mjs",
+      "exit": 0
+    },
+    {
+      "test": "commonlog-definition-bank-size.mjs",
+      "exit": 0
+    },
+    {
+      "test": "cubic-local.mjs",
+      "exit": 0
+    },
+    {
+      "test": "diversity-ratchet.mjs",
+      "exit": 0
+    },
+    {
+      "test": "doublehalf-point-candidates.mjs",
+      "exit": 0
+    },
+    {
+      "test": "doublehalf-signs.mjs",
+      "exit": 0
+    },
+    {
+      "test": "expfunctions-equation-safe-verification.mjs",
+      "exit": 0
+    },
+    {
+      "test": "exponent-safe-verification.mjs",
+      "exit": 0
+    },
+    {
+      "test": "exponent-substitution-bank-size.mjs",
+      "exit": 0
+    },
+    {
+      "test": "g11-p4-a.mjs",
+      "exit": 0
+    },
+    {
+      "test": "g11-p4-b.mjs",
+      "exit": 0
+    },
+    {
+      "test": "g11-topic-changes.mjs",
+      "exit": 0
+    },
+    {
+      "test": "line3d-pointprojection.mjs",
+      "exit": 0
+    },
+    {
+      "test": "log-inverse.mjs",
+      "exit": 0
+    },
+    {
+      "test": "multiplication-bank-sizes.mjs",
+      "exit": 0
+    },
+    {
+      "test": "righttrig-comparison.mjs",
+      "exit": 0
+    },
+    {
+      "test": "sincosarea-diversity.mjs",
+      "exit": 0
+    },
+    {
+      "test": "spacecross-height.mjs",
+      "exit": 0
+    },
+    {
+      "test": "spaceinner-pointdistance.mjs",
+      "exit": 0
+    },
+    {
+      "test": "ssa-boundary.mjs",
+      "exit": 0
+    },
+    {
+      "test": "standarddev-deviationsum-cap.mjs",
+      "exit": 0
+    },
+    {
+      "test": "g11-p4-c.mjs",
+      "exit": 0
+    }
+  ],
+  "p2": {
+    "topics": 72,
+    "combinations": 2367,
+    "passed": 2367,
+    "failed": 0,
+    "samplingSafeQuestionCalls": 473400,
+    "samplingProduced": 473400,
+    "candidateGenCalls": 554270,
+    "candidateNulls": 56542,
+    "candidateVerifyFalse": 0,
+    "candidateExceptions": 0,
+    "efficiencyWarningUnits": 26,
+    "efficiencyWarningCombinations": 61,
+    "declaredBankCombinations": 8,
+    "paperCompleted": 2366,
+    "paperExhausted": 1
+  },
+  "ratchetFailures": [],
+  "topicFailures": [],
+  "modifiedTopicGates": {
+    "permutations": {
+      "current": 3,
+      "qualifyingUnits": [
+        "fixed",
+        "adjacent",
+        "separated"
+      ],
+      "baseline": 1,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "probability": {
+      "current": 3,
+      "qualifyingUnits": [
+        "dice",
+        "balls",
+        "expectation"
+      ],
+      "baseline": 1,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "radians": {
+      "current": 3,
+      "qualifyingUnits": [
+        "quadrant",
+        "compare",
+        "special"
+      ],
+      "baseline": 2,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "sector": {
+      "current": 3,
+      "qualifyingUnits": [
+        "inverse",
+        "maximum",
+        "cone"
+      ],
+      "baseline": 2,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "trigtransform": {
+      "current": 3,
+      "qualifyingUnits": [
+        "parameters",
+        "equation",
+        "intersections"
+      ],
+      "baseline": 2,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    }
+  },
+  "changedFingerprints": [
+    "permutations/adjacent",
+    "permutations/separated",
+    "probability/dice",
+    "probability/balls",
+    "radians/quadrant",
+    "sector/cone",
+    "trigtransform/intersections"
+  ],
+  "unchangedFingerprints": 584,
+  "p4Backlog": [],
+  "checklist": {
+    "buildAndDirectory": "pass",
+    "p2Reports": "updated",
+    "legacyPrintMarkup": "pass; unchanged bytes; real-browser validation deferred to CI"
+  },
+  "smoke": "72/72",
+  "researcherAudit": "20 stations + directory + naming pass",
+  "axisReplay": {
+    "checked": 600,
+    "changed": 180,
+    "oldAxis": 30,
+    "oldAxisSigs": [
+      "qu:3/2:-1",
+      "qu:3/2:-2",
+      "qu:3/2:-3",
+      "qu:3/2:-4",
+      "qu:3/2:0",
+      "qu:3/2:1",
+      "qu:3/2:4"
+    ]
+  }
+}

@@ -1,0 +1,1597 @@
+{
+  "passed": true,
+  "axisReplay": {
+    "checked": 600,
+    "changed": 180,
+    "oldAxis": 30,
+    "changedSigs": [
+      {
+        "level": "basic",
+        "index": 0,
+        "before": "qu:3/2:-3",
+        "after": "qu:4/3:-3"
+      },
+      {
+        "level": "basic",
+        "index": 2,
+        "before": "qu:4/3:2",
+        "after": "qu:5/4:2"
+      },
+      {
+        "level": "basic",
+        "index": 7,
+        "before": "qu:5/6:1",
+        "after": "qu:3/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 13,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 16,
+        "before": "qu:5/4:1",
+        "after": "qu:7/6:1"
+      },
+      {
+        "level": "basic",
+        "index": 20,
+        "before": "qu:5/6:-1",
+        "after": "qu:3/4:-1"
+      },
+      {
+        "level": "basic",
+        "index": 24,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 31,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "basic",
+        "index": 32,
+        "before": "qu:1/3:-4",
+        "after": "qu:1/4:-4"
+      },
+      {
+        "level": "basic",
+        "index": 33,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "basic",
+        "index": 34,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "basic",
+        "index": 47,
+        "before": "qu:3/4:-1",
+        "after": "qu:2/3:-1"
+      },
+      {
+        "level": "basic",
+        "index": 58,
+        "before": "qu:3/2:4",
+        "after": "qu:4/3:4"
+      },
+      {
+        "level": "basic",
+        "index": 61,
+        "before": "qu:7/6:4",
+        "after": "qu:5/6:4"
+      },
+      {
+        "level": "basic",
+        "index": 65,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "basic",
+        "index": 66,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "basic",
+        "index": 68,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "basic",
+        "index": 70,
+        "before": "qu:5/3:4",
+        "after": "qu:7/4:4"
+      },
+      {
+        "level": "basic",
+        "index": 77,
+        "before": "qu:5/6:-2",
+        "after": "qu:3/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 80,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "basic",
+        "index": 81,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 82,
+        "before": "qu:5/3:-1",
+        "after": "qu:7/4:-1"
+      },
+      {
+        "level": "basic",
+        "index": 84,
+        "before": "qu:3/4:3",
+        "after": "qu:2/3:3"
+      },
+      {
+        "level": "basic",
+        "index": 87,
+        "before": "qu:5/3:2",
+        "after": "qu:7/4:2"
+      },
+      {
+        "level": "basic",
+        "index": 88,
+        "before": "qu:7/6:0",
+        "after": "qu:5/6:0"
+      },
+      {
+        "level": "basic",
+        "index": 95,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "basic",
+        "index": 96,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 98,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 103,
+        "before": "qu:5/6:3",
+        "after": "qu:3/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 107,
+        "before": "qu:5/4:-4",
+        "after": "qu:7/6:-4"
+      },
+      {
+        "level": "basic",
+        "index": 108,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "basic",
+        "index": 112,
+        "before": "qu:3/4:-4",
+        "after": "qu:2/3:-4"
+      },
+      {
+        "level": "basic",
+        "index": 116,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 118,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 119,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "basic",
+        "index": 123,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 125,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 127,
+        "before": "qu:5/6:0",
+        "after": "qu:3/4:0"
+      },
+      {
+        "level": "basic",
+        "index": 128,
+        "before": "qu:2/3:-4",
+        "after": "qu:1/3:-4"
+      },
+      {
+        "level": "basic",
+        "index": 131,
+        "before": "qu:3/4:-2",
+        "after": "qu:2/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 138,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 144,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 145,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "basic",
+        "index": 146,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 147,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "basic",
+        "index": 149,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "basic",
+        "index": 152,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 162,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 170,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 172,
+        "before": "qu:4/3:-4",
+        "after": "qu:5/4:-4"
+      },
+      {
+        "level": "basic",
+        "index": 177,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 178,
+        "before": "qu:3/2:-2",
+        "after": "qu:4/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 183,
+        "before": "qu:5/3:3",
+        "after": "qu:7/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 184,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 185,
+        "before": "qu:4/3:-1",
+        "after": "qu:5/4:-1"
+      },
+      {
+        "level": "basic",
+        "index": 190,
+        "before": "qu:7/6:-4",
+        "after": "qu:5/6:-4"
+      },
+      {
+        "level": "basic",
+        "index": 192,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "basic",
+        "index": 193,
+        "before": "qu:1/4:-2",
+        "after": "qu:1/6:-2"
+      },
+      {
+        "level": "basic",
+        "index": 197,
+        "before": "qu:3/2:-4",
+        "after": "qu:4/3:-4"
+      },
+      {
+        "level": "basic",
+        "index": 198,
+        "before": "qu:7/6:-1",
+        "after": "qu:5/6:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 0,
+        "before": "qu:3/2:-3",
+        "after": "qu:4/3:-3"
+      },
+      {
+        "level": "advanced",
+        "index": 2,
+        "before": "qu:4/3:2",
+        "after": "qu:5/4:2"
+      },
+      {
+        "level": "advanced",
+        "index": 7,
+        "before": "qu:5/6:1",
+        "after": "qu:3/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 13,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 16,
+        "before": "qu:5/4:1",
+        "after": "qu:7/6:1"
+      },
+      {
+        "level": "advanced",
+        "index": 20,
+        "before": "qu:5/6:-1",
+        "after": "qu:3/4:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 24,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 31,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 32,
+        "before": "qu:1/3:-4",
+        "after": "qu:1/4:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 33,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 34,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 47,
+        "before": "qu:3/4:-1",
+        "after": "qu:2/3:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 58,
+        "before": "qu:3/2:4",
+        "after": "qu:4/3:4"
+      },
+      {
+        "level": "advanced",
+        "index": 61,
+        "before": "qu:7/6:4",
+        "after": "qu:5/6:4"
+      },
+      {
+        "level": "advanced",
+        "index": 65,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 66,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "advanced",
+        "index": 68,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 70,
+        "before": "qu:5/3:4",
+        "after": "qu:7/4:4"
+      },
+      {
+        "level": "advanced",
+        "index": 77,
+        "before": "qu:5/6:-2",
+        "after": "qu:3/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 80,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "advanced",
+        "index": 81,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 82,
+        "before": "qu:5/3:-1",
+        "after": "qu:7/4:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 84,
+        "before": "qu:3/4:3",
+        "after": "qu:2/3:3"
+      },
+      {
+        "level": "advanced",
+        "index": 87,
+        "before": "qu:5/3:2",
+        "after": "qu:7/4:2"
+      },
+      {
+        "level": "advanced",
+        "index": 88,
+        "before": "qu:7/6:0",
+        "after": "qu:5/6:0"
+      },
+      {
+        "level": "advanced",
+        "index": 95,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "advanced",
+        "index": 96,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 98,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 103,
+        "before": "qu:5/6:3",
+        "after": "qu:3/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 107,
+        "before": "qu:5/4:-4",
+        "after": "qu:7/6:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 108,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 112,
+        "before": "qu:3/4:-4",
+        "after": "qu:2/3:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 116,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 118,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 119,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "advanced",
+        "index": 123,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 125,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 127,
+        "before": "qu:5/6:0",
+        "after": "qu:3/4:0"
+      },
+      {
+        "level": "advanced",
+        "index": 128,
+        "before": "qu:2/3:-4",
+        "after": "qu:1/3:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 131,
+        "before": "qu:3/4:-2",
+        "after": "qu:2/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 138,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 144,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 145,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "advanced",
+        "index": 146,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 147,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "advanced",
+        "index": 149,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "advanced",
+        "index": 152,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 162,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 170,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 172,
+        "before": "qu:4/3:-4",
+        "after": "qu:5/4:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 177,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 178,
+        "before": "qu:3/2:-2",
+        "after": "qu:4/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 183,
+        "before": "qu:5/3:3",
+        "after": "qu:7/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 184,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 185,
+        "before": "qu:4/3:-1",
+        "after": "qu:5/4:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 190,
+        "before": "qu:7/6:-4",
+        "after": "qu:5/6:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 192,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "advanced",
+        "index": 193,
+        "before": "qu:1/4:-2",
+        "after": "qu:1/6:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 197,
+        "before": "qu:3/2:-4",
+        "after": "qu:4/3:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 198,
+        "before": "qu:7/6:-1",
+        "after": "qu:5/6:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 0,
+        "before": "qu:3/2:-3",
+        "after": "qu:4/3:-3"
+      },
+      {
+        "level": "challenge",
+        "index": 2,
+        "before": "qu:4/3:2",
+        "after": "qu:5/4:2"
+      },
+      {
+        "level": "challenge",
+        "index": 7,
+        "before": "qu:5/6:1",
+        "after": "qu:3/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 13,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 16,
+        "before": "qu:5/4:1",
+        "after": "qu:7/6:1"
+      },
+      {
+        "level": "challenge",
+        "index": 20,
+        "before": "qu:5/6:-1",
+        "after": "qu:3/4:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 24,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 31,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 32,
+        "before": "qu:1/3:-4",
+        "after": "qu:1/4:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 33,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 34,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 47,
+        "before": "qu:3/4:-1",
+        "after": "qu:2/3:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 58,
+        "before": "qu:3/2:4",
+        "after": "qu:4/3:4"
+      },
+      {
+        "level": "challenge",
+        "index": 61,
+        "before": "qu:7/6:4",
+        "after": "qu:5/6:4"
+      },
+      {
+        "level": "challenge",
+        "index": 65,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 66,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "challenge",
+        "index": 68,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 70,
+        "before": "qu:5/3:4",
+        "after": "qu:7/4:4"
+      },
+      {
+        "level": "challenge",
+        "index": 77,
+        "before": "qu:5/6:-2",
+        "after": "qu:3/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 80,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "challenge",
+        "index": 81,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 82,
+        "before": "qu:5/3:-1",
+        "after": "qu:7/4:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 84,
+        "before": "qu:3/4:3",
+        "after": "qu:2/3:3"
+      },
+      {
+        "level": "challenge",
+        "index": 87,
+        "before": "qu:5/3:2",
+        "after": "qu:7/4:2"
+      },
+      {
+        "level": "challenge",
+        "index": 88,
+        "before": "qu:7/6:0",
+        "after": "qu:5/6:0"
+      },
+      {
+        "level": "challenge",
+        "index": 95,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "challenge",
+        "index": 96,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 98,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 103,
+        "before": "qu:5/6:3",
+        "after": "qu:3/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 107,
+        "before": "qu:5/4:-4",
+        "after": "qu:7/6:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 108,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 112,
+        "before": "qu:3/4:-4",
+        "after": "qu:2/3:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 116,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 118,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 119,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "challenge",
+        "index": 123,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 125,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 127,
+        "before": "qu:5/6:0",
+        "after": "qu:3/4:0"
+      },
+      {
+        "level": "challenge",
+        "index": 128,
+        "before": "qu:2/3:-4",
+        "after": "qu:1/3:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 131,
+        "before": "qu:3/4:-2",
+        "after": "qu:2/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 138,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 144,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 145,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "challenge",
+        "index": 146,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 147,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "challenge",
+        "index": 149,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "challenge",
+        "index": 152,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 162,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 170,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 172,
+        "before": "qu:4/3:-4",
+        "after": "qu:5/4:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 177,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 178,
+        "before": "qu:3/2:-2",
+        "after": "qu:4/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 183,
+        "before": "qu:5/3:3",
+        "after": "qu:7/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 184,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 185,
+        "before": "qu:4/3:-1",
+        "after": "qu:5/4:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 190,
+        "before": "qu:7/6:-4",
+        "after": "qu:5/6:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 192,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "challenge",
+        "index": 193,
+        "before": "qu:1/4:-2",
+        "after": "qu:1/6:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 197,
+        "before": "qu:3/2:-4",
+        "after": "qu:4/3:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 198,
+        "before": "qu:7/6:-1",
+        "after": "qu:5/6:-1"
+      }
+    ],
+    "oldAxisSigs": [
+      "qu:3/2:-1",
+      "qu:3/2:-2",
+      "qu:3/2:-3",
+      "qu:3/2:-4",
+      "qu:3/2:0",
+      "qu:3/2:1",
+      "qu:3/2:4"
+    ]
+  },
+  "unchangedUnits": 359,
+  "replays": 3600,
+  "papers": 960,
+  "questions": 57600,
+  "legacyPromptRepeats": 0,
+  "rows": [
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "basic",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "advanced",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "challenge",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "basic",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "advanced",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "challenge",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "advanced",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "challenge",
+      "mode": "integer",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "basic",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "advanced",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "challenge",
+      "mode": "fraction",
+      "formal": "40/40 × 20 seeds",
+      "stress": "80/80 × 20 seeds"
+    }
+  ],
+  "gateRows": [
+    {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "before": {
+        "basic": 24,
+        "advanced": 24,
+        "challenge": 24
+      },
+      "structures": {
+        "basic": 27,
+        "advanced": 25,
+        "challenge": 36
+      },
+      "challengeNew": 9
+    },
+    {
+      "topic": "permutations",
+      "unit": "separated",
+      "before": {
+        "basic": 16,
+        "advanced": 16,
+        "challenge": 16
+      },
+      "structures": {
+        "basic": 19,
+        "advanced": 18,
+        "challenge": 20
+      },
+      "challengeNew": 1
+    },
+    {
+      "topic": "probability",
+      "unit": "dice",
+      "before": {
+        "basic": 3,
+        "advanced": 3,
+        "challenge": 3
+      },
+      "structures": {
+        "basic": 5,
+        "advanced": 5,
+        "challenge": 6
+      },
+      "challengeNew": 1
+    },
+    {
+      "topic": "probability",
+      "unit": "balls",
+      "before": {
+        "basic": 1,
+        "advanced": 1,
+        "challenge": 1
+      },
+      "structures": {
+        "basic": 3,
+        "advanced": 3,
+        "challenge": 4
+      },
+      "challengeNew": 1
+    },
+    {
+      "topic": "radians",
+      "unit": "quadrant",
+      "before": {
+        "basic": 4,
+        "advanced": 4,
+        "challenge": 4
+      },
+      "structures": {
+        "basic": 11,
+        "advanced": 12,
+        "challenge": 16
+      },
+      "challengeNew": 5
+    },
+    {
+      "topic": "sector",
+      "unit": "cone",
+      "before": {
+        "basic": 3,
+        "advanced": 3,
+        "challenge": 3
+      },
+      "structures": {
+        "basic": 14,
+        "advanced": 14,
+        "challenge": 18
+      },
+      "challengeNew": 4
+    },
+    {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "before": {
+        "basic": 4,
+        "advanced": 4,
+        "challenge": 4
+      },
+      "structures": {
+        "basic": 47,
+        "advanced": 45,
+        "challenge": 65
+      },
+      "challengeNew": 30
+    }
+  ],
+  "samples": {
+    "permutations/adjacent/block": {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學必須連成一段，段內順序不限，共有幾種排法？",
+      "answer": "36",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學必須連成一段，段內順序不限，共有幾種排法？",
+      "answerHtml": "36"
+    },
+    "permutations/adjacent/twoBlocks": {
+      "topic": "permutations",
+      "unit": "adjacent",
+      "level": "challenge",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，編號 2、3、5 必須連成一段，編號 1、4 也必須連成一段，兩段內順序均不限，共有幾種排法？",
+      "answer": "24",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，編號 2、3、5 必須連成一段，編號 1、4 也必須連成一段，兩段內順序均不限，共有幾種排法？",
+      "answerHtml": "24"
+    },
+    "permutations/separated/gaps": {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學彼此都不得相鄰，共有幾種排法？",
+      "answer": "12",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，編號 1、2、5 的同學彼此都不得相鄰，共有幾種排法？",
+      "answerHtml": "12"
+    },
+    "permutations/separated/twoPairs": {
+      "topic": "permutations",
+      "unit": "separated",
+      "level": "challenge",
+      "mode": "integer",
+      "prompt": "編號 1～5 的 5 位同學排成一列，5 號與 2 號不得相鄰，且 1 號與 4 號也不得相鄰，共有幾種排法？",
+      "answer": "48",
+      "promptHtml": "編號 1～5 的 5 位同學排成一列，5 號與 2 號不得相鄰，且 1 號與 4 號也不得相鄰，共有幾種排法？",
+      "answerHtml": "48"
+    },
+    "probability/dice/exactOne": {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求恰有一次出現 3 點的機率。",
+      "answer": "((3)/(8))",
+      "promptHtml": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求恰有一次出現 3 點的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">8</span></span>"
+    },
+    "probability/dice/atLeast": {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求至少一次出現 4 點的機率。",
+      "answer": "((7)/(16))",
+      "promptHtml": "將點數為 1～4 的 4 面公平骰子獨立投擲兩次，求至少一次出現 4 點的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">7</span><span class=\"d\">16</span></span>"
+    },
+    "probability/dice/weighted": {
+      "topic": "probability",
+      "unit": "dice",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "一顆 9 面骰子的點數為 1～9，各點數出現機率與點數成正比。擲一次，求出現 2 點或 6 點的機率。",
+      "answer": "((8)/(45))",
+      "promptHtml": "一顆 9 面骰子的點數為 1～9，各點數出現機率與點數成正比。擲一次，求出現 2 點或 6 點的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">8</span><span class=\"d\">45</span></span>"
+    },
+    "probability/balls/sameColor": {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "袋中有紅球 6 顆、藍球 7 顆，每球等可能被抽到。同時抽兩球且不放回，求兩球同色的機率。",
+      "answer": "((6)/(13))",
+      "promptHtml": "袋中有紅球 6 顆、藍球 7 顆，每球等可能被抽到。同時抽兩球且不放回，求兩球同色的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">6</span><span class=\"d\">13</span></span>"
+    },
+    "probability/balls/atLeast": {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 2 顆紅球的機率。",
+      "answer": "((4)/(5))",
+      "promptHtml": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 2 顆紅球的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">5</span></span>"
+    },
+    "probability/balls/threeColors": {
+      "topic": "probability",
+      "unit": "balls",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "袋中有紅球 8 顆、藍球 6 顆、白球 4 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 1 顆紅球的機率。",
+      "answer": "((29)/(34))",
+      "promptHtml": "袋中有紅球 8 顆、藍球 6 顆、白球 4 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 1 顆紅球的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">29</span><span class=\"d\">34</span></span>"
+    },
+    "radians/quadrant/realAngle": {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "角 θ＝((67)/(6))(弧度)，判斷其終邊位於第幾象限。",
+      "answer": "第 4 象限",
+      "promptHtml": "角 θ＝<span class=\"fr\"><span class=\"n\">67</span><span class=\"d\">6</span></span>（弧度），判斷其終邊位於第幾象限。",
+      "answerHtml": "第 4 象限"
+    },
+    "radians/quadrant/positive": {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "求 -38 弧度的最小正同界角，以 π 的精確式表示。",
+      "answer": "-38+14π",
+      "promptHtml": "求 −38 弧度的最小正同界角，以 π 的精確式表示。",
+      "answerHtml": "−38＋14π"
+    },
+    "radians/quadrant/negative": {
+      "topic": "radians",
+      "unit": "quadrant",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "角 θ＝-38 弧度，求區間 [-2π，0) 內的同界角，並判斷其終邊象限。",
+      "answer": "-38+12π；第 4 象限",
+      "promptHtml": "角 θ＝−38 弧度，求區間 [−2π，0) 內的同界角，並判斷其終邊象限。",
+      "answerHtml": "−38＋12π；第 4 象限"
+    },
+    "sector/cone/baseRadius": {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "圓錐側面展開扇形的半徑為 4，圓心角為 ((π)/(3))。求圓錐底面半徑。",
+      "answer": "((2)/(3))",
+      "promptHtml": "圓錐側面展開扇形的半徑為 4，圓心角為 <span class=\"fr\"><span class=\"n\">π</span><span class=\"d\">3</span></span>。求圓錐底面半徑。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span>"
+    },
+    "sector/cone/lateralArea": {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "basic",
+      "mode": "integer",
+      "prompt": "直圓錐底面半徑 4((2)/(3))、母線長 7，求以 π 表示的側面積。",
+      "answer": "((98π)/(3))",
+      "promptHtml": "直圓錐底面半徑 <span class=\"mixed\">4<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span></span>、母線長 7，求以 π 表示的側面積。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">98π</span><span class=\"d\">3</span></span>"
+    },
+    "sector/cone/heightAngle": {
+      "topic": "sector",
+      "unit": "cone",
+      "level": "challenge",
+      "mode": "integer",
+      "prompt": "直圓錐底面半徑 84、高 35，將側面沿母線剪開，求展開扇形的圓心角(弧度)。",
+      "answer": "((24π)/(13))",
+      "promptHtml": "直圓錐底面半徑 84、高 35，將側面沿母線剪開，求展開扇形的圓心角（弧度）。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">24π</span><span class=\"d\">13</span></span>"
+    },
+    "trigtransform/intersections/tangent": {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "在 0≤x＜2π 內，水平線 y＝3 與函數 y＝8cos(4x)-5 相切，共有幾個相異交點？",
+      "answer": "4 個",
+      "promptHtml": "在 0≤x＜2π 內，水平線 y＝3 與函數 y＝8cos（4x）−5 相切，共有幾個相異交點？",
+      "answerHtml": "4 個"
+    },
+    "trigtransform/intersections/outside": {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "basic",
+      "mode": "fraction",
+      "prompt": "在 0≤x＜2π 內，判斷直線 y＝2 與函數 y＝3sin(4x)-3 的相異交點個數。",
+      "answer": "0 個",
+      "promptHtml": "在 0≤x＜2π 內，判斷直線 y＝2 與函數 y＝3sin（4x）−3 的相異交點個數。",
+      "answerHtml": "0 個"
+    },
+    "trigtransform/intersections/shifted": {
+      "topic": "trigtransform",
+      "unit": "intersections",
+      "level": "challenge",
+      "mode": "fraction",
+      "prompt": "在 0≤x＜2π 內，解含水平及鉛直平移的方程式 7sin(3x-((π)/(4)))-8＝-8，共有幾個相異實根？",
+      "answer": "6 個",
+      "promptHtml": "在 0≤x＜2π 內，解含水平及鉛直平移的方程式 7sin（3x−<span class=\"fr\"><span class=\"n\">π</span><span class=\"d\">4</span></span>）−8＝−8，共有幾個相異實根？",
+      "answerHtml": "6 個"
+    }
+  }
+}
