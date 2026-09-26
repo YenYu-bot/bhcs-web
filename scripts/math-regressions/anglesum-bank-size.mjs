@@ -26,15 +26,16 @@ assert.equal(triangleExact.size,32);
 const api=load('g11','anglesum');
 for(const [id,expected,exact] of [['known',22,knownExact],['triangle',32,triangleExact]]){
  const unit=api.CFG.units.find(candidate=>candidate.id===id);
- assert.equal(unit.bankSize,expected);
+ assert.equal(unit.legacyBankSize,expected);
  const sampled=new Set();
  for(let i=0;i<100000;i++){
-  const q=unit.gen({level:'challenge',modes:['fraction'],mixed:true});
+  const q=unit.legacyGen({level:'challenge',modes:['fraction'],mixed:true});
   if(!q)continue;
+  Object.assign(q,{numberMode:"fraction",topicKey:"anglesum",unitId:id});
   assert.equal(q.verify(),true);
   if(api.contentGuard(q,'challenge'))sampled.add(q.sig);
  }
  assert.deepEqual([...sampled].sort(),[...exact].sort());
 }
 
-console.log(JSON.stringify({test:'anglesum-bank-size',known:22,triangle:32,passed:true}));
+console.log(JSON.stringify({test:'anglesum-bank-size',legacyKnown:22,legacyTriangle:32,passed:true}));

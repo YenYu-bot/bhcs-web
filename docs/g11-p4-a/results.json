@@ -1,0 +1,430 @@
+{
+  "base": "a0bd8a91d7f38ce3e940fd02480c8fabba725930",
+  "units": [
+    {
+      "topic": "expequations",
+      "unit": "quadratic",
+      "before": [
+        3,
+        3,
+        3
+      ],
+      "after": [
+        6,
+        6,
+        8
+      ],
+      "challengeNewStructures": 2
+    },
+    {
+      "topic": "expequations",
+      "unit": "application",
+      "before": [
+        2,
+        2,
+        2
+      ],
+      "after": [
+        5,
+        5,
+        6
+      ],
+      "challengeNewStructures": 1
+    },
+    {
+      "topic": "anglesum",
+      "unit": "known",
+      "before": [
+        2,
+        2,
+        2
+      ],
+      "after": [
+        20,
+        20,
+        30
+      ],
+      "challengeNewStructures": 10
+    },
+    {
+      "topic": "anglesum",
+      "unit": "triangle",
+      "before": [
+        1,
+        1,
+        1
+      ],
+      "after": [
+        11,
+        12,
+        26
+      ],
+      "challengeNewStructures": 15
+    },
+    {
+      "topic": "vectorcauchy",
+      "unit": "projection",
+      "before": [
+        16,
+        16,
+        16
+      ],
+      "after": [
+        53,
+        47,
+        57
+      ],
+      "challengeNewStructures": 23
+    }
+  ],
+  "topicGates": {
+    "anglesum": {
+      "current": 4,
+      "qualifyingUnits": [
+        "identity",
+        "known",
+        "tangent",
+        "triangle"
+      ],
+      "baseline": 2,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "expequations": {
+      "current": 4,
+      "qualifyingUnits": [
+        "linear",
+        "quadratic",
+        "inequality",
+        "application"
+      ],
+      "baseline": 2,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "vectorcauchy": {
+      "current": 3,
+      "qualifyingUnits": [
+        "perpendicular",
+        "projection",
+        "cauchy"
+      ],
+      "baseline": 2,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    }
+  },
+  "unchangedUnitFingerprints": 586,
+  "ratchetFailures": [],
+  "validation": {
+    "passed": true,
+    "replays": 3000,
+    "papers": 720,
+    "questions": 43200,
+    "rows": [
+      {
+        "topic": "expequations",
+        "unit": "quadratic",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "quadratic",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "quadratic",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "basic",
+        "mode": "decimal",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "advanced",
+        "mode": "decimal",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "challenge",
+        "mode": "decimal",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "anglesum",
+        "unit": "known",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "anglesum",
+        "unit": "known",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "anglesum",
+        "unit": "known",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "anglesum",
+        "unit": "triangle",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "anglesum",
+        "unit": "triangle",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "anglesum",
+        "unit": "triangle",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "vectorcauchy",
+        "unit": "projection",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "vectorcauchy",
+        "unit": "projection",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "vectorcauchy",
+        "unit": "projection",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      }
+    ],
+    "samples": {
+      "p4qu:positiveRoot": {
+        "topic": "expequations",
+        "unit": "quadratic",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "解方程式 2*4^(2x)-14*4^(x)-288＝0。",
+        "answer": "x＝2"
+      },
+      "p4qu:doubleRoot": {
+        "topic": "expequations",
+        "unit": "quadratic",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "解方程式 6*3^(2x)-36*3^(x)+54＝0。",
+        "answer": "x＝1"
+      },
+      "p4qu:shiftedRoots": {
+        "topic": "expequations",
+        "unit": "quadratic",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "解方程式 6*3^(2(x+1))-504*3^(x+1)+1458＝0。",
+        "answer": "x＝0 或 3"
+      },
+      "p4ap:later": {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "某菌群每小時變為原來的 3 倍，第 4 小時數量為 7，求第 5 小時的數量。",
+        "answer": "21"
+      },
+      "p4ap:initial": {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "某菌群每小時變為原來的 3 倍，4 小時後數量為 729，求起初的數量。",
+        "answer": "9"
+      },
+      "p4ap:halfLife": {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "某物質的半衰期為 10 天，起初有 4 公克，求 10 天後剩餘的質量。",
+        "answer": "2 公克"
+      },
+      "p4ap:elapsed": {
+        "topic": "expequations",
+        "unit": "application",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "某菌群每 10 小時變為原來的 2 倍，數量從 2 增加到 4 共需幾小時？",
+        "answer": "10 小時"
+      },
+      "p4kn:tanSum": {
+        "topic": "anglesum",
+        "unit": "known",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "α、β為銳角，tanα＝1、tanβ＝4，求 tan(α+β)。",
+        "answer": "-1((2)/(3))"
+      },
+      "p4kn:tanDiff": {
+        "topic": "anglesum",
+        "unit": "known",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "α、β為銳角，tanα＝1((1)/(7))、tanβ＝((2)/(5))，求 tan(α-β)。",
+        "answer": "((26)/(51))"
+      },
+      "p4kn:inverseTan": {
+        "topic": "anglesum",
+        "unit": "known",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "α、β為銳角，tanα＝1((1)/(3))，tan(α+β)＝3((5)/(7))，求 tanβ。",
+        "answer": "((2)/(5))"
+      },
+      "p4tr:tanC": {
+        "topic": "anglesum",
+        "unit": "triangle",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "△ABC 中 A、B 均為銳角，tanA＝1、tanB＝4，求 tanC。",
+        "answer": "1((2)/(3))"
+      },
+      "p4tr:sinC": {
+        "topic": "anglesum",
+        "unit": "triangle",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "△ABC 中 A、B 均為銳角，sinA＝((4)/(5))、cosB＝((5)/(13))，求 sinC。",
+        "answer": "((56)/(65))"
+      },
+      "p4tr:cosC": {
+        "topic": "anglesum",
+        "unit": "triangle",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "△ABC 中 A、B 均為銳角，cosA＝((3)/(5))、cosB＝((12)/(13))，求 cosC。",
+        "answer": "-((16)/(65))"
+      },
+      "p4tr:recoverTanB": {
+        "topic": "anglesum",
+        "unit": "triangle",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "△ABC 中 A、B 均為銳角，tanA＝1((1)/(2))、tan(A+B)＝3((2)/(3))，求 tanB。",
+        "answer": "((1)/(3))"
+      },
+      "p4pr:points": {
+        "topic": "vectorcauchy",
+        "unit": "projection",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "已知 A(-3，3)、B(3，-1)、C(-7，0)，求向量 AB 在 AC 方向上的正射影向量。",
+        "answer": "(1((23)/(25))，1((11)/(25)))"
+      },
+      "p4pr:decompose": {
+        "topic": "vectorcauchy",
+        "unit": "projection",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "a＝(-3，2)、b＝(4，4)。將 b 分解為平行 a 的 u 與垂直 a 的 v，求 u、v。",
+        "answer": "u＝(((12)/(13))，-((8)/(13)))；v＝(3((1)/(13))，4((8)/(13)))"
+      },
+      "p4pr:inverse": {
+        "topic": "vectorcauchy",
+        "unit": "projection",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "a＝(2，4)、b＝(x，6)，已知 b 在 a 方向上的正射影向量為 2a，求 x。",
+        "answer": "x＝8"
+      }
+    }
+  }
+}

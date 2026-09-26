@@ -158,11 +158,34 @@ function angleSumDifferenceConfig(){
  const special=unit("special","特殊角求值","把角拆成45°±30°或60°±45°後套公式。",ctx=>{const fn=pick(["sin","cos","tan"]),base=pick([15,75,105,165,195,255,285,345]),deg=base+360*rand(-4,4),v=fn==="sin"?Math.sin(rad(base)):fn==="cos"?Math.cos(rad(base)):Math.tan(rad(base)),txt=(()=>{const rt6="√6",rt2="√2",sign=v<0?"−":"",av=Math.abs(v);if(fn==="tan")return v<0?(av<1?"√3−2":"−（2＋√3）"):(av<1?"2−√3":"2＋√3");const plus=base%180===15||base%180===165?fn==="sin"?false:true:fn==="sin"?true:false;return sign+fr(`${rt6}${plus?"＋":"−"}${rt2}`,4)})();return{expr:`利用和差角公式求 ${fn}${H.int(deg)}° 的值。`,answer:txt,sig:`sp:${fn}:${deg}`,verify:()=>Number.isFinite(v)&&Math.abs(v)>0}});
  const identity=unit("identity","公式展開與合併","依sin(α±β)、cos(α±β)、tan(α±β)辨認。",ctx=>{const fn=pick(["sin","cos"]),op=pick(["＋","−"]),a=rand(1,9),b=rand(1,9),x=a===1?"x":`${a}x`,y=b===1?"y":`${b}y`,core=fn==="sin"?(op==="＋"?`sin${x}cos${y}＋cos${x}sin${y}`:`sin${x}cos${y}−cos${x}sin${y}`):(op==="＋"?`cos${x}cos${y}−sin${x}sin${y}`:`cos${x}cos${y}＋sin${x}sin${y}`),ang=op==="＋"?`${x}＋${y}`:`${x}−${y}`;return{expr:`用和差角公式化簡：${core}。`,answer:`${fn}（${ang}）`,sig:`id:${fn}:${op}:${a}:${b}`,verify:()=>[.17,.42].every(t=>H.near(fn==="sin"?(op==="＋"?Math.sin(a*t)*Math.cos(b*t)+Math.cos(a*t)*Math.sin(b*t):Math.sin(a*t)*Math.cos(b*t)-Math.cos(a*t)*Math.sin(b*t)):(op==="＋"?Math.cos(a*t)*Math.cos(b*t)-Math.sin(a*t)*Math.sin(b*t):Math.cos(a*t)*Math.cos(b*t)+Math.sin(a*t)*Math.sin(b*t)),fn==="sin"?Math.sin((op==="＋"?a+b:a-b)*t):Math.cos((op==="＋"?a+b:a-b)*t)))}});
  const known=unit("known","已知三角比求和差角","先依象限補出另一個三角比，再套用和差角公式。",ctx=>{const mode="fraction",mk=()=>{const [a,b,c]=pick([[3,4,5],[4,3,5],[5,12,13],[12,5,13]]);return[R(a,c),R(b,c)]},u=mk(),v=mk();if(eq(u[0],v[0])&&eq(u[1],v[1]))return null;const op=pick([1,-1]),sa=u[0],ca=u[1],sb=v[0],cb=v[1],s=op===1?add(mul(sa,cb),mul(ca,sb)):sub(mul(sa,cb),mul(ca,sb));return{expr:`α、β為銳角，sinα＝${H.show(sa,mode,false,ctx)}、cosβ＝${H.show(cb,mode,false,ctx)}，求 sin（α${op===1?"＋":"−"}β）。`,answer:H.show(s,mode,true,ctx),sig:`kn:${H.plain(sa)}:${H.plain(ca)}:${H.plain(sb)}:${H.plain(cb)}:${op}`,verify:()=>H.near(H.num(sa)**2+H.num(ca)**2,1)&&H.near(H.num(sb)**2+H.num(cb)**2,1)&&eq(s,op===1?add(mul(sa,cb),mul(ca,sb)):sub(mul(sa,cb),mul(ca,sb)))}});
- known.bankSize=22;
+ known.legacyBankSize=22;
  const tangent=unit("tangent","正切和差公式","tan(α±β)＝(tanα±tanβ)／(1∓tanαtanβ)。",ctx=>{const mode="fraction",pool=[R(1),R(2),R(3),R(1,2),R(1,3),R(2,3),R(3,2),R(3,4),R(4,3),R(1,4),R(1,5)],a=mul(pick(pool),R(pick([-1,1]))),b=mul(pick(pool),R(pick([-1,1])));if(eq(a,b))return null;const op=pick([1,-1]),den=op===1?sub(H.O,mul(a,b)):add(H.O,mul(a,b));if(!den.n)return null;const z=div(op===1?add(a,b):sub(a,b),den);return{expr:`已知 tanα＝${H.show(a,mode,false,ctx)}、tanβ＝${H.show(b,mode,false,ctx)}，求 tan（α${op===1?"＋":"−"}β）。`,answer:H.show(z,mode,true,ctx),sig:`ta:${H.plain(a)}:${H.plain(b)}:${op}`,verify:()=>eq(mul(z,den),op===1?add(a,b):sub(a,b))}});
  const triangle=unit("triangle","三角形內角關係","A＋B＝180°−C，再搭配誘導公式。",ctx=>{const mode=pick(ctx.modes),m=rand(2,22),n=rand(1,m-1),swap=Math.random()<.5,a=swap?m*m-n*n:2*m*n,b=swap?2*m*n:m*m-n*n,c=m*m+n*n,g=gcd(gcd(a,b),c),sinC=R(a/g,c/g),cosC=R(b/g,c/g);return{expr:`△ABC 中 C 為銳角，sinC＝${H.show(sinC,mode,false,ctx)}。求 sin（A＋B）與 cos（A＋B）。`,answer:`sin（A＋B）＝${H.show(sinC,mode,true,ctx)}；cos（A＋B）＝${H.show(H.neg(cosC),mode,true,ctx)}`,sig:`tr:${H.plain(sinC)}:${H.plain(cosC)}`,verify:()=>H.near(H.num(sinC)**2+H.num(cosC)**2,1)&&sinC.n>0&&cosC.n>0}});
- triangle.bankSize=32;
+ triangle.legacyBankSize=32;
  const lines=unit("lines","兩直線的夾角","兩斜率m₁、m₂的夾角正切取絕對值。",ctx=>{const mode=pick(ctx.modes),m1=H.signed(mode,ctx.level,5),m2=H.signed(mode,ctx.level,5),den=add(H.O,mul(m1,m2));if(!den.n||eq(m1,m2))return null;const t=H.abs(div(sub(m2,m1),den));return{expr:`兩直線斜率分別為 ${H.show(m1,mode,false,ctx)}、${H.show(m2,mode,false,ctx)}，銳夾角為 θ，求 tanθ。`,answer:H.show(t,mode,true,ctx),sig:`ln:${H.plain(m1)}:${H.plain(m2)}`,verify:()=>eq(mul(t,H.abs(den)),H.abs(sub(m2,m1)))}});
+ // P4: additive branches; keep the original generators available for replay.
+ for(const u of [known,triangle])u.legacyGen=u.gen;
+ known.gen=ctx=>{
+  if(Math.random()<.4)return known.legacyGen(ctx);
+  const kind=pick(ctx.level==="challenge"?["tanSum","tanDiff","inverseTan"]:["tanSum","tanDiff"]),a=R(rand(1,12),rand(1,12)),b=R(rand(1,12),rand(1,12)),op=kind==="tanDiff"?-1:1,den=sub(H.O,mul(R(op),mul(a,b)));
+  if(!den.n)return null;const z=div(add(a,mul(R(op),b)),den);if(z.d>100||(kind==="inverseTan"&&z.d>12))return null;
+  const sh=x=>H.show(x,"fraction",false,ctx),answer=H.show(kind==="inverseTan"?b:z,"fraction",true,ctx);
+  const expr=kind==="inverseTan"?`α、β為銳角，tanα＝${sh(a)}，tan（α＋β）＝${sh(z)}，求 tanβ。`:`α、β為銳角，tanα＝${sh(a)}、tanβ＝${sh(b)}，求 tan（α${op===1?"＋":"−"}β）。`;
+  return{expr,answer,sig:`p4kn:${kind}:${H.plain(a)}:${H.plain(b)}`,verify:()=>{const A=Math.atan(H.num(a)),B=Math.atan(H.num(b));return H.near(Math.tan(A+op*B),H.num(z))&&(kind!=="inverseTan"||H.near(Math.tan(Math.atan(H.num(z))-A),H.num(b)))}};
+ };
+ triangle.gen=ctx=>{
+  if(Math.random()<.3)return triangle.legacyGen(ctx);
+  const kind=pick(ctx.level==="challenge"?["tanC","sinC","cosC","recoverTanB"]:["tanC","sinC","cosC"]),sh=x=>H.show(x,"fraction",false,ctx);
+  if(kind==="tanC"||kind==="recoverTanB"){
+   const a=R(rand(1,12),rand(1,12)),b=R(rand(1,12),rand(1,12)),den=sub(mul(a,b),H.O);if(!den.n)return null;
+   const z=div(add(a,b),den);if(z.d>100)return null;
+   if(kind==="recoverTanB"&&z.d>12)return null;
+   const expr=kind==="tanC"?`△ABC 中 A、B 均為銳角，tanA＝${sh(a)}、tanB＝${sh(b)}，求 tanC。`:`△ABC 中 A、B 均為銳角，tanA＝${sh(a)}、tan（A＋B）＝${sh(H.neg(z))}，求 tanB。`;
+   return{expr,answer:H.show(kind==="tanC"?z:b,"fraction",true,ctx),sig:`p4tr:${kind}:${H.plain(a)}:${H.plain(b)}`,verify:()=>{const A=Math.atan(H.num(a)),B=Math.atan(H.num(b)),C=Math.PI-A-B;return C>0&&C<Math.PI&&H.near(Math.tan(C),H.num(z))&&(kind!=="recoverTanB"||H.near(Math.tan(Math.atan(-H.num(z))-A),H.num(b)))}};
+  }
+  const triples=[[3,4,5],[4,3,5],[5,12,13],[12,5,13]],u=pick(triples),v=pick(triples),sa=R(u[0],u[2]),ca=R(u[1],u[2]),sb=R(v[0],v[2]),cb=R(v[1],v[2]),z=kind==="sinC"?add(mul(sa,cb),mul(ca,sb)):sub(mul(sa,sb),mul(ca,cb));if(z.d>100)return null;
+  return{expr:`△ABC 中 A、B 均為銳角，${kind==="sinC"?"sinA":"cosA"}＝${sh(kind==="sinC"?sa:ca)}、cosB＝${sh(cb)}，求 ${kind==="sinC"?"sinC":"cosC"}。`,answer:H.show(z,"fraction",true,ctx),sig:`p4tr:${kind}:${u}:${v}`,verify:()=>{const C=Math.PI-Math.asin(H.num(sa))-Math.acos(H.num(cb));return C>0&&H.near(kind==="sinC"?Math.sin(C):Math.cos(C),H.num(z))}};
+ };
  return{title:"和差角公式",symbol:"α±β",subtitle:"特殊角・公式化簡・已知三角比・正切技巧・三角形・直線夾角",instruction:"解下列各題；套用公式前先確認角度的和差與象限符號。",modes:M,mixed:true,levels:{basic:"基礎：15°、75°等特殊角與直接公式化簡。",advanced:"進階：分數／小數三角比、象限與正切和差。",challenge:"挑戰：三角形內角、直線夾角與綜合化簡。"},units:[special,identity,known,tangent,triangle,lines],presets:{basic:{special:3,identity:3,known:2,tangent:2},advanced:{special:2,known:3,tangent:3,triangle:2},challenge:{identity:2,known:2,tangent:2,triangle:2,lines:2}}};
 }
 
@@ -626,6 +649,27 @@ function exponentialEquationsConfig(){
  const quadratic=unit("quadratic","換元法解二次型指數","令t＝aˣ＞0，化成一元二次方程式。",ctx=>{const mode=pick(ctx.modes),base=pick([2,3,4,5]),x1=rand(-2,2),x2=rand(x1+1,ctx.level==="challenge"?4:3),t1=R(base**Math.max(x1,0),base**Math.max(-x1,0)),t2=R(base**Math.max(x2,0),base**Math.max(-x2,0)),S=add(t1,t2),P=mul(t1,t2);return{expr:`解方程式 ${base}<sup>2x</sup>−${H.show(S,mode,false,ctx)}×${base}<sup>x</sup>＋${H.show(P,mode,false,ctx)}＝0。`,answer:`x＝${H.int(x1)} 或 ${H.int(x2)}`,sig:`qu:${base}:${x1}:${x2}`,verify:()=>eq(add(t1,t2),S)&&eq(mul(t1,t2),P)}});
  const inequality=unit("inequality","指數不等式","底數大於1同向；介於0與1之間時不等號反向。",ctx=>{const mode=pick(ctx.modes),recip=Math.random()<.5,base=pick([2,3,5]),a=H.pos(mode,ctx.level,5),bound=H.signed(mode,ctx.level,6),b=sub(R(rand(-5,5)),mul(a,bound)),rhs=add(mul(a,bound),b),op=pick(["＞","≥","＜","≤"]),out=recip?({"＞":"＜","≥":"≤","＜":"＞","≤":"≥"}[op]):op;return{expr:`解不等式 ${recip?H.show(R(1,base),"fraction"):base}<sup>${H.term(a,"x",mode,ctx)} ${H.plus(b,mode,ctx)}</sup> ${op} ${recip?H.show(R(1,base),"fraction"):base}<sup>${H.show(rhs,mode,false,ctx)}</sup>。`,answer:`x ${out} ${H.show(bound,mode,true,ctx)}`,sig:`in:${recip}:${base}:${H.plain(a)}:${H.plain(b)}:${H.plain(bound)}:${op}`,verify:()=>eq(add(mul(a,bound),b),rhs)&&a.n>0}});
  const application=unit("application","指數成長、衰退與複利","每期乘固定倍數，經t期後為初值乘倍數的t次方。",ctx=>{const mode=pick(ctx.modes),growth=Math.random()<.55,t=rand(2,ctx.level==="challenge"?6:4),factor=growth?R(pick([2,3])):R(1,2);let p,amount;if(mode==="decimal"){if(growth){p=highNumberFor("decimal",ctx.level,4);amount=mul(p,R(factor.n**t))}else{amount=highNumberFor("decimal",ctx.level,12);p=mul(amount,R(2**t))}}else{p=highNumberFor("integer",ctx.level,12);amount=mul(p,R(factor.n**t,factor.d**t))}if(Math.abs(H.num(amount))>10000)return null;return{expr:`某數量初值為 ${H.show(p,mode,false,ctx)}，每期${growth?`變為原來的 ${factor.n} 倍`:"減少為原來的一半"}。${t} 期後是多少？`,answer:H.show(amount,mode,true,ctx),sig:`ap:${growth}:${H.plain(p)}:${t}`,verify:()=>eq(amount,mul(p,R(factor.n**t,factor.d**t)))}});
+ // P4: original branches are unchanged; new equations check roots by substitution.
+ quadratic.legacyGen=quadratic.gen;
+ quadratic.gen=ctx=>{
+  if(Math.random()<.4)return quadratic.legacyGen(ctx);
+  const kind=pick(ctx.level==="challenge"?["positiveRoot","doubleRoot","shiftedRoots"]:["positiveRoot","doubleRoot"]),base=pick([2,3,4,5]),e=rand(0,3),f=rand(e+1,4),k=rand(1,9),h=kind==="shiftedRoots"?pick([-3,-2,-1,1,2,3]):0,t1=base**e,t2=kind==="positiveRoot"?-rand(1,9):kind==="doubleRoot"?t1:base**f,B=-k*(t1+t2),C=k*t1*t2;
+  if(Math.max(Math.abs(B),Math.abs(C))>10000)return null;
+  const inner=h?`x${h>0?"＋":"−"}${Math.abs(h)}`:"x",power=h?`2（${inner}）`:"2x",xs=kind==="shiftedRoots"?[e-h,f-h]:[e],fmt=n=>H.int(n);
+  const expr=`解方程式 ${k}×${base}<sup>${power}</sup>${B<0?"−":"＋"}${Math.abs(B)}×${base}<sup>${inner}</sup>${C<0?"−":"＋"}${Math.abs(C)}＝0。`;
+  return{expr,answer:`x＝${xs.map(fmt).join(" 或 ")}`,sig:`p4qu:${kind}:${expr}`,verify:()=>{const disc=B*B-4*k*C;if(disc<0)return false;const positive=[(-B+Math.sqrt(disc))/(2*k),(-B-Math.sqrt(disc))/(2*k)].filter(t=>t>0),roots=[...new Set(positive.map(t=>Math.round((Math.log(t)/Math.log(base)-h)*1e9)/1e9))];return roots.length===xs.length&&roots.every(x=>xs.some(y=>H.near(x,y)))&&xs.every(x=>H.near(k*base**(2*(x+h))+B*base**(x+h)+C,0))}};
+ };
+ application.legacyGen=application.gen;
+ application.gen=ctx=>{
+  if(Math.random()<.3)return application.legacyGen(ctx);
+  const mode=pick(ctx.modes),kind=pick(ctx.level==="challenge"?["initial","later","halfLife","elapsed"]:["initial","later","halfLife"]),p=mode==="decimal"?R(rand(1,39),10):R(rand(1,12)),factor=pick([2,3]),n=rand(1,4),start=rand(1,4),period=rand(2,12),amount=mul(p,R(factor**n)),sh=(x,answer=false)=>H.show(x,mode,answer,ctx);
+  if(H.num(amount)>10000)return null;let expr,answer;
+  if(kind==="initial"){expr=`某菌群每小時變為原來的 ${factor} 倍，${n} 小時後數量為 ${sh(amount)}，求起初的數量。`;answer=sh(p,true)}
+  else if(kind==="later"){expr=`某菌群每小時變為原來的 ${factor} 倍，第 ${start} 小時數量為 ${sh(p)}，求第 ${start+n} 小時的數量。`;answer=sh(amount,true)}
+  else if(kind==="halfLife"){const initial=mul(p,R(2**n));expr=`某物質的半衰期為 ${period} 天，起初有 ${sh(initial)} 公克，求 ${period*n} 天後剩餘的質量。`;answer=`${sh(p,true)} 公克`}
+  else {expr=`某菌群每 ${period} 小時變為原來的 ${factor} 倍，數量從 ${sh(p)} 增加到 ${sh(amount)} 共需幾小時？`;answer=`${period*n} 小時`}
+  return{expr,answer,sig:`p4ap:${kind}:${expr}`,verify:()=>{let observed=H.num(kind==="halfLife"?mul(p,R(2**n)):p);const step=kind==="halfLife"?.5:factor;for(let i=0;i<n;i++)observed*=step;return H.near(observed,H.num(kind==="halfLife"?p:amount))&&(kind!=="elapsed"||Array.from({length:n+1},(_,i)=>i).filter(i=>{let v=H.num(p);for(let j=0;j<i;j++)v*=factor;return H.near(v,H.num(amount))}).length===1)}};
+ };
  return{title:"指數方程與應用",symbol:"aˣ",subtitle:"指數律・同底方程・換元法・指數不等式・成長與衰退",instruction:"解下列各題；同底化簡後先檢查底數條件，再處理指數。",modes:M,mixed:true,levels:{basic:"基礎：同底整數指數與直接比較指數。",advanced:"進階：分數／小數係數、底數互換與換元。",challenge:"挑戰：二次型指數、不等式與成長衰退。"},units:[linear,convert,quadratic,inequality,application],presets:{basic:{linear:3,convert:3,quadratic:2,application:2},advanced:{linear:2,convert:2,quadratic:3,inequality:2,application:1},challenge:{quadratic:3,inequality:3,application:4}}};
 }
 
@@ -1937,6 +1981,18 @@ function vectorCauchyConfig(){
  const perpendicular=unit("perpendicular","垂直與參數","兩非零向量垂直的充要條件是內積為0。",ctx=>{const mode=pick(ctx.modes),a=H.signed(mode,ctx.level,8),b=H.signed(mode,ctx.level,8),c=H.signed(mode,ctx.level,8);if(!a.n)return null;const t=H.neg(div(mul(b,c),a)),u=[a,b],v=[t,c];return{expr:`若向量 u＝（${H.show(a,mode,false,ctx)}，${H.show(b,mode,false,ctx)}）與 v＝（x，${H.show(c,mode,false,ctx)}）垂直，求 x。`,answer:H.show(t,mode,true,ctx),sig:`pe:${H.plain(a)}:${H.plain(b)}:${H.plain(c)}`,verify:()=>eq(dot(u,v),H.Z)}});
  const angle=unit("angle","長度、夾角與內積","a·b＝|a||b|cosθ。",ctx=>{const mode="integer",tr=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),scale=R(rand(1,4)),la=mul(R(tr[2]),scale),lb=R(rand(1,8)),cos=R(tr[0],tr[2]),z=mul(mul(la,lb),cos);return{expr:`已知 |a|＝${H.show(la,mode,false,ctx)}、|b|＝${H.show(lb,mode,false,ctx)}，夾角 θ 的 cosθ＝${H.show(cos,"fraction")}，求 a·b。`,answer:H.show(z,mode,true,ctx),sig:`an:${tr}:${scale.n}:${lb.n}`,verify:()=>eq(z,mul(mul(la,lb),cos))}});
  const projection=unit("projection","正射影與分解","b在a上的正射影向量為[(a·b)／|a|²]a。",ctx=>{const mode="fraction",a=[R(rand(-4,4)),R(rand(-4,4))],b=[R(rand(-8,8)),R(rand(-8,8))],a2=norm2(a);if(!a2.n||a2.n>25||(!b[0].n&&!b[1].n)||eq(a[0],b[0])&&eq(a[1],b[1]))return null;const coef=div(dot(a,b),a2),pv=[mul(coef,a[0]),mul(coef,a[1])];return{expr:`a＝${vhtml(a,"integer",ctx)}、b＝${vhtml(b,"integer",ctx)}，求 b 在 a 方向上的正射影向量。`,answer:vhtml(pv,mode,ctx),sig:`pr:${a.map(H.plain)}:${b.map(H.plain)}`,verify:()=>a2.d===1&&a2.n<=25&&eq(dot([sub(b[0],pv[0]),sub(b[1],pv[1])],a),H.Z)}});
+ // P4: verify projection through parallelism, orthogonality and reconstruction.
+ projection.legacyGen=projection.gen;
+ projection.gen=ctx=>{
+  if(Math.random()<.6)return projection.legacyGen(ctx);
+  const kind=pick(ctx.level==="challenge"?["points","decompose","inverse"]:["points","decompose"]),a=[R(rand(-4,4)),R(rand(-4,4))],b=[R(rand(-8,8)),R(rand(-8,8))],a2=norm2(a);if(!a2.n||a2.n>25||!a[0].n)return null;
+  const c=div(dot(a,b),a2),p=a.map(x=>mul(c,x)),r=b.map((x,i)=>sub(x,p[i])),at=[R(rand(-4,4)),R(rand(-4,4))],B=at.map((x,i)=>add(x,b[i])),C=at.map((x,i)=>add(x,a[i]));
+  if(kind==="inverse"&&(c.d>12||!a[1].n))return null;let expr,answer;
+  if(kind==="points"){expr=`已知 A${vhtml(at,"integer",ctx)}、B${vhtml(B,"integer",ctx)}、C${vhtml(C,"integer",ctx)}，求向量 AB 在 AC 方向上的正射影向量。`;answer=vhtml(p,"fraction",ctx)}
+  else if(kind==="decompose"){expr=`a＝${vhtml(a,"integer",ctx)}、b＝${vhtml(b,"integer",ctx)}。將 b 分解為平行 a 的 u 與垂直 a 的 v，求 u、v。`;answer=`u＝${vhtml(p,"fraction",ctx)}；v＝${vhtml(r,"fraction",ctx)}`}
+  else {expr=`a＝${vhtml(a,"integer",ctx)}、b＝（x，${H.int(b[1].n)}），已知 b 在 a 方向上的正射影向量為 ${H.show(c,"fraction",false,ctx)}a，求 x。`;answer=`x＝${H.int(b[0].n)}`}
+  return{expr,answer,sig:`p4pr:${kind}:${a.map(H.plain)}:${b.map(H.plain)}:${kind==="points"?at.map(H.plain):""}`,verify:()=>{const parallel=eq(mul(p[0],a[1]),mul(p[1],a[0])),perpendicular=eq(dot(r,a),H.Z),rebuild=r.every((x,i)=>eq(add(x,p[i]),b[i]));if(kind!=="inverse")return parallel&&perpendicular&&rebuild;const candidates=[];for(let x=-8;x<=8;x++)if(H.near((x-H.num(p[0]))*H.num(a[0])+(H.num(b[1])-H.num(p[1]))*H.num(a[1]),0))candidates.push(x);return parallel&&perpendicular&&rebuild&&candidates.length===1&&candidates[0]===b[0].n}};
+ };
  const triangle=unit("triangle","三角形中的內積","由餘弦定理得AB·AC＝(AB²＋AC²−BC²)／2。",ctx=>{const mode=pick(ctx.modes),[p,q,r]=pick([[3,4,5],[5,5,6],[5,12,13],[7,8,9]]),s=H.pos(mode,ctx.level,100),ab=mul(R(p),s),ac=mul(R(q),s),bc=mul(R(r),s),z=div(sub(add(mul(ab,ab),mul(ac,ac)),mul(bc,bc)),R(2));return{expr:`△ABC 中，AB＝${H.show(ab,mode,false,ctx)}、AC＝${H.show(ac,mode,false,ctx)}、BC＝${H.show(bc,mode,false,ctx)}，求向量 AB·AC。`,answer:H.show(z,mode,true,ctx),sig:`tr:${p}:${q}:${r}:${H.plain(s)}`,verify:()=>eq(mul(R(2),z),sub(add(mul(ab,ab),mul(ac,ac)),mul(bc,bc)))}});
  const cauchy=unit("cauchy","柯西不等式求最值","線性式的最大與最小值由係數向量的長度決定；等號在兩向量同向或反向時成立。",ctx=>{
   const mode=pick(ctx.modes),pair=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),
