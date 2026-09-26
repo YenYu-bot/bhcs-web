@@ -29,8 +29,9 @@ const hashDOM=s=>hash(s.replace(/ style=""/g,'').replace(/\n  <!-- g8-r5-related
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 function geometry(){
  const scope=window.__worksheetSelector?document.querySelector(window.__worksheetSelector):document.body;
+ const origin=window.__worksheetSelector?scope.getBoundingClientRect():{left:0,top:0};
  return [...scope.querySelectorAll('*')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').map(e=>{
-  const r=e.getBoundingClientRect(),s=getComputedStyle(e);return[e.tagName,e.id,...[r.x,r.y,r.width,r.height].map(n=>Math.round(n*100)/100),s.fontFamily,s.fontSize,s.lineHeight,s.padding,s.margin,s.borderTopWidth,s.borderBottomWidth,s.breakAfter,s.breakInside];
+  const r=e.getBoundingClientRect(),s=getComputedStyle(e);return[e.tagName,e.id,...[r.left-origin.left,r.top-origin.top,r.width,r.height].map(n=>Math.round(n*100)/100),s.fontFamily,s.fontSize,s.lineHeight,s.padding,s.margin,s.borderTopWidth,s.borderBottomWidth,s.breakAfter,s.breakInside];
  });
 }
 function colors(){
