@@ -97,8 +97,8 @@
     "failed": 0,
     "samplingSafeQuestionCalls": 473400,
     "samplingProduced": 473400,
-    "candidateGenCalls": 554257,
-    "candidateNulls": 56529,
+    "candidateGenCalls": 554270,
+    "candidateNulls": 56542,
     "candidateVerifyFalse": 0,
     "candidateExceptions": 0,
     "efficiencyWarningUnits": 26,
@@ -218,5 +218,19 @@
     "legacyPrintMarkup": "pass; unchanged bytes; real-browser validation deferred to CI"
   },
   "smoke": "72/72",
-  "researcherAudit": "20 stations + directory + naming pass"
+  "researcherAudit": "20 stations + directory + naming pass",
+  "axisReplay": {
+    "checked": 600,
+    "changed": 180,
+    "oldAxis": 30,
+    "oldAxisSigs": [
+      "qu:3/2:-1",
+      "qu:3/2:-2",
+      "qu:3/2:-3",
+      "qu:3/2:-4",
+      "qu:3/2:0",
+      "qu:3/2:1",
+      "qu:3/2:4"
+    ]
+  }
 }

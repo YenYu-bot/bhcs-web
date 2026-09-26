@@ -1,7 +1,1103 @@
 {
   "passed": true,
+  "axisReplay": {
+    "checked": 600,
+    "changed": 180,
+    "oldAxis": 30,
+    "changedSigs": [
+      {
+        "level": "basic",
+        "index": 0,
+        "before": "qu:3/2:-3",
+        "after": "qu:4/3:-3"
+      },
+      {
+        "level": "basic",
+        "index": 2,
+        "before": "qu:4/3:2",
+        "after": "qu:5/4:2"
+      },
+      {
+        "level": "basic",
+        "index": 7,
+        "before": "qu:5/6:1",
+        "after": "qu:3/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 13,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 16,
+        "before": "qu:5/4:1",
+        "after": "qu:7/6:1"
+      },
+      {
+        "level": "basic",
+        "index": 20,
+        "before": "qu:5/6:-1",
+        "after": "qu:3/4:-1"
+      },
+      {
+        "level": "basic",
+        "index": 24,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 31,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "basic",
+        "index": 32,
+        "before": "qu:1/3:-4",
+        "after": "qu:1/4:-4"
+      },
+      {
+        "level": "basic",
+        "index": 33,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "basic",
+        "index": 34,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "basic",
+        "index": 47,
+        "before": "qu:3/4:-1",
+        "after": "qu:2/3:-1"
+      },
+      {
+        "level": "basic",
+        "index": 58,
+        "before": "qu:3/2:4",
+        "after": "qu:4/3:4"
+      },
+      {
+        "level": "basic",
+        "index": 61,
+        "before": "qu:7/6:4",
+        "after": "qu:5/6:4"
+      },
+      {
+        "level": "basic",
+        "index": 65,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "basic",
+        "index": 66,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "basic",
+        "index": 68,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "basic",
+        "index": 70,
+        "before": "qu:5/3:4",
+        "after": "qu:7/4:4"
+      },
+      {
+        "level": "basic",
+        "index": 77,
+        "before": "qu:5/6:-2",
+        "after": "qu:3/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 80,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "basic",
+        "index": 81,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 82,
+        "before": "qu:5/3:-1",
+        "after": "qu:7/4:-1"
+      },
+      {
+        "level": "basic",
+        "index": 84,
+        "before": "qu:3/4:3",
+        "after": "qu:2/3:3"
+      },
+      {
+        "level": "basic",
+        "index": 87,
+        "before": "qu:5/3:2",
+        "after": "qu:7/4:2"
+      },
+      {
+        "level": "basic",
+        "index": 88,
+        "before": "qu:7/6:0",
+        "after": "qu:5/6:0"
+      },
+      {
+        "level": "basic",
+        "index": 95,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "basic",
+        "index": 96,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 98,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 103,
+        "before": "qu:5/6:3",
+        "after": "qu:3/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 107,
+        "before": "qu:5/4:-4",
+        "after": "qu:7/6:-4"
+      },
+      {
+        "level": "basic",
+        "index": 108,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "basic",
+        "index": 112,
+        "before": "qu:3/4:-4",
+        "after": "qu:2/3:-4"
+      },
+      {
+        "level": "basic",
+        "index": 116,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 118,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 119,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "basic",
+        "index": 123,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 125,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 127,
+        "before": "qu:5/6:0",
+        "after": "qu:3/4:0"
+      },
+      {
+        "level": "basic",
+        "index": 128,
+        "before": "qu:2/3:-4",
+        "after": "qu:1/3:-4"
+      },
+      {
+        "level": "basic",
+        "index": 131,
+        "before": "qu:3/4:-2",
+        "after": "qu:2/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 138,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 144,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 145,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "basic",
+        "index": 146,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 147,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "basic",
+        "index": 149,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "basic",
+        "index": 152,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 162,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "basic",
+        "index": 170,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 172,
+        "before": "qu:4/3:-4",
+        "after": "qu:5/4:-4"
+      },
+      {
+        "level": "basic",
+        "index": 177,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "basic",
+        "index": 178,
+        "before": "qu:3/2:-2",
+        "after": "qu:4/3:-2"
+      },
+      {
+        "level": "basic",
+        "index": 183,
+        "before": "qu:5/3:3",
+        "after": "qu:7/4:3"
+      },
+      {
+        "level": "basic",
+        "index": 184,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "basic",
+        "index": 185,
+        "before": "qu:4/3:-1",
+        "after": "qu:5/4:-1"
+      },
+      {
+        "level": "basic",
+        "index": 190,
+        "before": "qu:7/6:-4",
+        "after": "qu:5/6:-4"
+      },
+      {
+        "level": "basic",
+        "index": 192,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "basic",
+        "index": 193,
+        "before": "qu:1/4:-2",
+        "after": "qu:1/6:-2"
+      },
+      {
+        "level": "basic",
+        "index": 197,
+        "before": "qu:3/2:-4",
+        "after": "qu:4/3:-4"
+      },
+      {
+        "level": "basic",
+        "index": 198,
+        "before": "qu:7/6:-1",
+        "after": "qu:5/6:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 0,
+        "before": "qu:3/2:-3",
+        "after": "qu:4/3:-3"
+      },
+      {
+        "level": "advanced",
+        "index": 2,
+        "before": "qu:4/3:2",
+        "after": "qu:5/4:2"
+      },
+      {
+        "level": "advanced",
+        "index": 7,
+        "before": "qu:5/6:1",
+        "after": "qu:3/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 13,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 16,
+        "before": "qu:5/4:1",
+        "after": "qu:7/6:1"
+      },
+      {
+        "level": "advanced",
+        "index": 20,
+        "before": "qu:5/6:-1",
+        "after": "qu:3/4:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 24,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 31,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 32,
+        "before": "qu:1/3:-4",
+        "after": "qu:1/4:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 33,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 34,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 47,
+        "before": "qu:3/4:-1",
+        "after": "qu:2/3:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 58,
+        "before": "qu:3/2:4",
+        "after": "qu:4/3:4"
+      },
+      {
+        "level": "advanced",
+        "index": 61,
+        "before": "qu:7/6:4",
+        "after": "qu:5/6:4"
+      },
+      {
+        "level": "advanced",
+        "index": 65,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 66,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "advanced",
+        "index": 68,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 70,
+        "before": "qu:5/3:4",
+        "after": "qu:7/4:4"
+      },
+      {
+        "level": "advanced",
+        "index": 77,
+        "before": "qu:5/6:-2",
+        "after": "qu:3/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 80,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "advanced",
+        "index": 81,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 82,
+        "before": "qu:5/3:-1",
+        "after": "qu:7/4:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 84,
+        "before": "qu:3/4:3",
+        "after": "qu:2/3:3"
+      },
+      {
+        "level": "advanced",
+        "index": 87,
+        "before": "qu:5/3:2",
+        "after": "qu:7/4:2"
+      },
+      {
+        "level": "advanced",
+        "index": 88,
+        "before": "qu:7/6:0",
+        "after": "qu:5/6:0"
+      },
+      {
+        "level": "advanced",
+        "index": 95,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "advanced",
+        "index": 96,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 98,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 103,
+        "before": "qu:5/6:3",
+        "after": "qu:3/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 107,
+        "before": "qu:5/4:-4",
+        "after": "qu:7/6:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 108,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 112,
+        "before": "qu:3/4:-4",
+        "after": "qu:2/3:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 116,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 118,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 119,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "advanced",
+        "index": 123,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 125,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 127,
+        "before": "qu:5/6:0",
+        "after": "qu:3/4:0"
+      },
+      {
+        "level": "advanced",
+        "index": 128,
+        "before": "qu:2/3:-4",
+        "after": "qu:1/3:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 131,
+        "before": "qu:3/4:-2",
+        "after": "qu:2/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 138,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 144,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 145,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "advanced",
+        "index": 146,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 147,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "advanced",
+        "index": 149,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "advanced",
+        "index": 152,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 162,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "advanced",
+        "index": 170,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 172,
+        "before": "qu:4/3:-4",
+        "after": "qu:5/4:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 177,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "advanced",
+        "index": 178,
+        "before": "qu:3/2:-2",
+        "after": "qu:4/3:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 183,
+        "before": "qu:5/3:3",
+        "after": "qu:7/4:3"
+      },
+      {
+        "level": "advanced",
+        "index": 184,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 185,
+        "before": "qu:4/3:-1",
+        "after": "qu:5/4:-1"
+      },
+      {
+        "level": "advanced",
+        "index": 190,
+        "before": "qu:7/6:-4",
+        "after": "qu:5/6:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 192,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "advanced",
+        "index": 193,
+        "before": "qu:1/4:-2",
+        "after": "qu:1/6:-2"
+      },
+      {
+        "level": "advanced",
+        "index": 197,
+        "before": "qu:3/2:-4",
+        "after": "qu:4/3:-4"
+      },
+      {
+        "level": "advanced",
+        "index": 198,
+        "before": "qu:7/6:-1",
+        "after": "qu:5/6:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 0,
+        "before": "qu:3/2:-3",
+        "after": "qu:4/3:-3"
+      },
+      {
+        "level": "challenge",
+        "index": 2,
+        "before": "qu:4/3:2",
+        "after": "qu:5/4:2"
+      },
+      {
+        "level": "challenge",
+        "index": 7,
+        "before": "qu:5/6:1",
+        "after": "qu:3/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 13,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 16,
+        "before": "qu:5/4:1",
+        "after": "qu:7/6:1"
+      },
+      {
+        "level": "challenge",
+        "index": 20,
+        "before": "qu:5/6:-1",
+        "after": "qu:3/4:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 24,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 31,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 32,
+        "before": "qu:1/3:-4",
+        "after": "qu:1/4:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 33,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 34,
+        "before": "qu:7/6:-2",
+        "after": "qu:5/6:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 47,
+        "before": "qu:3/4:-1",
+        "after": "qu:2/3:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 58,
+        "before": "qu:3/2:4",
+        "after": "qu:4/3:4"
+      },
+      {
+        "level": "challenge",
+        "index": 61,
+        "before": "qu:7/6:4",
+        "after": "qu:5/6:4"
+      },
+      {
+        "level": "challenge",
+        "index": 65,
+        "before": "qu:3/2:-1",
+        "after": "qu:4/3:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 66,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "challenge",
+        "index": 68,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 70,
+        "before": "qu:5/3:4",
+        "after": "qu:7/4:4"
+      },
+      {
+        "level": "challenge",
+        "index": 77,
+        "before": "qu:5/6:-2",
+        "after": "qu:3/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 80,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "challenge",
+        "index": 81,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 82,
+        "before": "qu:5/3:-1",
+        "after": "qu:7/4:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 84,
+        "before": "qu:3/4:3",
+        "after": "qu:2/3:3"
+      },
+      {
+        "level": "challenge",
+        "index": 87,
+        "before": "qu:5/3:2",
+        "after": "qu:7/4:2"
+      },
+      {
+        "level": "challenge",
+        "index": 88,
+        "before": "qu:7/6:0",
+        "after": "qu:5/6:0"
+      },
+      {
+        "level": "challenge",
+        "index": 95,
+        "before": "qu:4/3:4",
+        "after": "qu:5/4:4"
+      },
+      {
+        "level": "challenge",
+        "index": 96,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 98,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 103,
+        "before": "qu:5/6:3",
+        "after": "qu:3/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 107,
+        "before": "qu:5/4:-4",
+        "after": "qu:7/6:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 108,
+        "before": "qu:5/4:-1",
+        "after": "qu:7/6:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 112,
+        "before": "qu:3/4:-4",
+        "after": "qu:2/3:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 116,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 118,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 119,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "challenge",
+        "index": 123,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 125,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 127,
+        "before": "qu:5/6:0",
+        "after": "qu:3/4:0"
+      },
+      {
+        "level": "challenge",
+        "index": 128,
+        "before": "qu:2/3:-4",
+        "after": "qu:1/3:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 131,
+        "before": "qu:3/4:-2",
+        "after": "qu:2/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 138,
+        "before": "qu:3/2:1",
+        "after": "qu:4/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 144,
+        "before": "qu:1/3:3",
+        "after": "qu:1/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 145,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "challenge",
+        "index": 146,
+        "before": "qu:2/3:1",
+        "after": "qu:1/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 147,
+        "before": "qu:7/6:2",
+        "after": "qu:5/6:2"
+      },
+      {
+        "level": "challenge",
+        "index": 149,
+        "before": "qu:3/2:0",
+        "after": "qu:4/3:0"
+      },
+      {
+        "level": "challenge",
+        "index": 152,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 162,
+        "before": "qu:3/4:1",
+        "after": "qu:2/3:1"
+      },
+      {
+        "level": "challenge",
+        "index": 170,
+        "before": "qu:2/3:-2",
+        "after": "qu:1/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 172,
+        "before": "qu:4/3:-4",
+        "after": "qu:5/4:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 177,
+        "before": "qu:4/3:1",
+        "after": "qu:5/4:1"
+      },
+      {
+        "level": "challenge",
+        "index": 178,
+        "before": "qu:3/2:-2",
+        "after": "qu:4/3:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 183,
+        "before": "qu:5/3:3",
+        "after": "qu:7/4:3"
+      },
+      {
+        "level": "challenge",
+        "index": 184,
+        "before": "qu:4/3:-2",
+        "after": "qu:5/4:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 185,
+        "before": "qu:4/3:-1",
+        "after": "qu:5/4:-1"
+      },
+      {
+        "level": "challenge",
+        "index": 190,
+        "before": "qu:7/6:-4",
+        "after": "qu:5/6:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 192,
+        "before": "qu:4/3:-3",
+        "after": "qu:5/4:-3"
+      },
+      {
+        "level": "challenge",
+        "index": 193,
+        "before": "qu:1/4:-2",
+        "after": "qu:1/6:-2"
+      },
+      {
+        "level": "challenge",
+        "index": 197,
+        "before": "qu:3/2:-4",
+        "after": "qu:4/3:-4"
+      },
+      {
+        "level": "challenge",
+        "index": 198,
+        "before": "qu:7/6:-1",
+        "after": "qu:5/6:-1"
+      }
+    ],
+    "oldAxisSigs": [
+      "qu:3/2:-1",
+      "qu:3/2:-2",
+      "qu:3/2:-3",
+      "qu:3/2:-4",
+      "qu:3/2:0",
+      "qu:3/2:1",
+      "qu:3/2:4"
+    ]
+  },
   "unchangedUnits": 359,
-  "replays": 4200,
+  "replays": 3600,
   "papers": 960,
   "questions": 57600,
   "legacyPromptRepeats": 0,
@@ -392,29 +1488,29 @@
       "unit": "balls",
       "level": "basic",
       "mode": "fraction",
-      "prompt": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 3 顆紅球的機率。",
-      "answer": "((1)/(5))",
-      "promptHtml": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 3 顆紅球的機率。",
-      "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>"
+      "prompt": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 2 顆紅球的機率。",
+      "answer": "((4)/(5))",
+      "promptHtml": "袋中有紅球 4 顆、藍球 2 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 2 顆紅球的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">5</span></span>"
     },
     "probability/balls/threeColors": {
       "topic": "probability",
       "unit": "balls",
       "level": "challenge",
       "mode": "fraction",
-      "prompt": "袋中有紅球 4 顆、藍球 2 顆、白球 1 顆，每球等可能被抽到。同時抽 4 球且不放回，求至少 2 顆紅球的機率。",
-      "answer": "((31)/(35))",
-      "promptHtml": "袋中有紅球 4 顆、藍球 2 顆、白球 1 顆，每球等可能被抽到。同時抽 4 球且不放回，求至少 2 顆紅球的機率。",
-      "answerHtml": "<span class=\"fr\"><span class=\"n\">31</span><span class=\"d\">35</span></span>"
+      "prompt": "袋中有紅球 8 顆、藍球 6 顆、白球 4 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 1 顆紅球的機率。",
+      "answer": "((29)/(34))",
+      "promptHtml": "袋中有紅球 8 顆、藍球 6 顆、白球 4 顆，每球等可能被抽到。同時抽 3 球且不放回，求至少 1 顆紅球的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">29</span><span class=\"d\">34</span></span>"
     },
     "radians/quadrant/realAngle": {
       "topic": "radians",
       "unit": "quadrant",
       "level": "basic",
       "mode": "fraction",
-      "prompt": "角 θ＝((67)/(6)) 弧度(不含 π 因子)，判斷其終邊位於第幾象限。",
+      "prompt": "角 θ＝((67)/(6))(弧度)，判斷其終邊位於第幾象限。",
       "answer": "第 4 象限",
-      "promptHtml": "角 θ＝<span class=\"fr\"><span class=\"n\">67</span><span class=\"d\">6</span></span> 弧度（不含 π 因子），判斷其終邊位於第幾象限。",
+      "promptHtml": "角 θ＝<span class=\"fr\"><span class=\"n\">67</span><span class=\"d\">6</span></span>（弧度），判斷其終邊位於第幾象限。",
       "answerHtml": "第 4 象限"
     },
     "radians/quadrant/positive": {
@@ -452,9 +1548,9 @@
       "unit": "cone",
       "level": "basic",
       "mode": "integer",
-      "prompt": "直圓錐底面半徑 4((2)/(3))、母線長 7，求側面積(保留 π)。",
+      "prompt": "直圓錐底面半徑 4((2)/(3))、母線長 7，求以 π 表示的側面積。",
       "answer": "((98π)/(3))",
-      "promptHtml": "直圓錐底面半徑 <span class=\"mixed\">4<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span></span>、母線長 7，求側面積（保留 π）。",
+      "promptHtml": "直圓錐底面半徑 <span class=\"mixed\">4<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span></span>、母線長 7，求以 π 表示的側面積。",
       "answerHtml": "<span class=\"fr\"><span class=\"n\">98π</span><span class=\"d\">3</span></span>"
     },
     "sector/cone/heightAngle": {

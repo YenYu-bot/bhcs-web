@@ -1309,7 +1309,7 @@ function probabilityConfig(){
  balls.legacyGen=balls.gen;
  balls.gen=ctx=>{
   if(Math.random()<.25)return balls.legacyGen(ctx);
-  const kind=pick(ctx.level==="challenge"?["sameColor","atLeast","threeColors"]:["sameColor","atLeast"]),red=rand(2,10),blue=rand(2,10),white=kind==="threeColors"?rand(1,6):0,n=red+blue+white,take=kind==="sameColor"?2:rand(3,4),k=rand(1,Math.min(take,red));let fav=0,expr;
+  const kind=pick(ctx.level==="challenge"?["sameColor","atLeast","threeColors"]:["sameColor","atLeast"]),red=rand(2,10),blue=rand(2,10),white=kind==="threeColors"?rand(1,6):0,n=red+blue+white,take=kind==="sameColor"?2:rand(3,4),k=rand(1,Math.min(take-1,red));let fav=0,expr;
   if(kind==="sameColor"){fav=C(red,2)+C(blue,2);expr=`袋中有紅球 ${red} 顆、藍球 ${blue} 顆，每球等可能被抽到。同時抽兩球且不放回，求兩球同色的機率。`}
   else{
    for(let j=k;j<=take;j++)fav+=C(red,j)*C(n-red,take-j);
@@ -1497,14 +1497,14 @@ function radianMeasureConfig(){
  /* 難度：基礎＝常見整數角互換；進階＝分數／小數角與同界角；挑戰＝大角、負角、比較與特殊角綜合。 */
  const H=hsHelpers(),M=["integer","fraction","decimal"],unit=(id,name,tip,gen)=>({id,name,tip,modes:M,gen}),normDeg=d=>((d%360)+360)%360;
  const convert=unit("convert","角度與弧度互換","角度乘π／180化弧度；弧度乘180／π化角度。",ctx=>{const mode=pick(ctx.modes),toRad=Math.random()<.5;let deg;if(mode==="integer")deg=R(15*rand(-48,48));else if(mode==="fraction")deg=R(15*rand(-96,96),2);else deg=R(225*rand(-40,40),10);if(!deg.n)return null;const r=R(deg.n,deg.d*180);return{expr:toRad?`將 ${H.show(deg,mode,false,ctx)}° 化為弧度。`:`將 ${H.pi(r)} 化為角度。`,answer:toRad?H.pi(r):`${H.show(deg,mode,true,ctx)}°`,sig:`cv:${toRad}:${H.plain(deg)}`,verify:()=>H.near(H.num(r)*Math.PI,H.num(deg)*Math.PI/180)}});
- const quadrant=unit("quadrant","象限與同界角","加減2π不改變終邊；先化到0≤θ＜2π。",ctx=>{const mode=pick(ctx.modes),base=pick([R(1,6),R(1,4),R(1,3),R(2,3),R(3,4),R(5,6),R(7,6),R(5,4),R(4,3),R(3,2),R(5,3),R(7,4),R(11,6)]),k=rand(-4,4),x=add(base,R(2*k)),deg=H.num(base)*180,q=deg<90?1:deg<180?2:deg<270?3:4;return{expr:`判斷角 ${H.pi(x)} 的終邊位於第幾象限，並寫出 [0，2π) 內同界角。`,answer:`第 ${q} 象限；${H.pi(base)}`,sig:`qu:${H.plain(base)}:${k}`,verify:()=>H.near(normDeg(H.num(x)*180),deg)}});
+ const quadrant=unit("quadrant","象限與同界角","加減2π不改變終邊；先化到0≤θ＜2π。",ctx=>{const mode=pick(ctx.modes),base=pick([R(1,6),R(1,4),R(1,3),R(2,3),R(3,4),R(5,6),R(7,6),R(5,4),R(4,3),R(5,3),R(7,4),R(11,6)]),k=rand(-4,4),x=add(base,R(2*k)),deg=H.num(base)*180,q=deg<90?1:deg<180?2:deg<270?3:4;return{expr:`判斷角 ${H.pi(x)} 的終邊位於第幾象限，並寫出 [0，2π) 內同界角。`,answer:`第 ${q} 象限；${H.pi(base)}`,sig:`qu:${H.plain(base)}:${k}`,verify:()=>H.near(normDeg(H.num(x)*180),deg)}});
  const compare=unit("compare","三角函數值比較","先利用週期與正負化到熟悉區間，再比較。",ctx=>{const fn=pick(["sin","cos"]),angles=shuffle([R(rand(1,23),12),R(rand(1,23),12),R(rand(1,23),12)]),vals=angles.map(a=>fn==="sin"?Math.sin(Math.PI*H.num(a)):Math.cos(Math.PI*H.num(a)));if(new Set(angles.map(H.plain)).size<3||Math.min(Math.abs(vals[0]-vals[1]),Math.abs(vals[0]-vals[2]),Math.abs(vals[1]-vals[2]))<1e-8)return null;const idx=[0,1,2].sort((i,j)=>vals[i]-vals[j]);return{expr:`由小到大排列：${angles.map(a=>`${fn}${H.pi(a)}`).join("、")}。`,answer:idx.map(i=>`${fn}${H.pi(angles[i])}`).join("＜"),sig:`cp:${fn}:${angles.map(H.plain)}`,verify:()=>vals[idx[0]]<vals[idx[1]]&&vals[idx[1]]<vals[idx[2]]}});
  const special=unit("special","特殊弧度角三角值","先把弧度辨認為特殊角，再依象限決定正負。",ctx=>{const fn=pick(["sin","cos","tan"]),base=pick([R(1,6),R(1,4),R(1,3),R(2,3),R(3,4),R(5,6),R(7,6),R(5,4),R(4,3),R(5,3),R(7,4),R(11,6)]),a=add(base,R(2*rand(-4,4))),v=fn==="sin"?Math.sin(Math.PI*H.num(base)):fn==="cos"?Math.cos(Math.PI*H.num(base)):Math.tan(Math.PI*H.num(base)),values=[{x:0,s:"0"},{x:.5,s:fr(1,2)},{x:-.5,s:"−"+fr(1,2)},{x:1,s:"1"},{x:-1,s:"−1"},{x:Math.sqrt(2)/2,s:fr("√2",2)},{x:-Math.sqrt(2)/2,s:"−"+fr("√2",2)},{x:Math.sqrt(3)/2,s:fr("√3",2)},{x:-Math.sqrt(3)/2,s:"−"+fr("√3",2)},{x:Math.sqrt(3),s:"√3"},{x:-Math.sqrt(3),s:"−√3"},{x:1/Math.sqrt(3),s:fr("√3",3)},{x:-1/Math.sqrt(3),s:"−"+fr("√3",3)}],hit=values.find(z=>H.near(z.x,v));if(!hit)return null;return{expr:`求 ${fn}（${H.pi(a)}） 的值。`,answer:hit.s,sig:`sp:${fn}:${H.plain(a)}`,verify:()=>H.near(hit.x,v)}});
  quadrant.legacyGen=quadrant.gen;
  quadrant.gen=ctx=>{
   if(Math.random()<.3)return quadrant.legacyGen(ctx);
   const kind=pick(ctx.level==="challenge"?["realAngle","positive","negative"]:["realAngle","positive"]),x=R(rand(1,120)*pick([-1,1]),pick([1,2,3,4,5,6])),v=H.num(x),turns=Math.floor(v/(2*Math.PI)),beta=v-2*turns*Math.PI,q=Math.floor(beta/(Math.PI/2))+1,coefficient=-2*(kind==="negative"?turns+1:turns),rep=v+coefficient*Math.PI;
-  const tail=coefficient?`${coefficient<0?"−":"＋"}${Math.abs(coefficient)===1?"":Math.abs(coefficient)}π`:"",exact=`${H.show(x,"fraction")}${tail}`,expr=kind==="realAngle"?`角 θ＝${H.show(x,"fraction")} 弧度（不含 π 因子），判斷其終邊位於第幾象限。`:kind==="positive"?`求 ${H.show(x,"fraction")} 弧度的最小正同界角，以 π 的精確式表示。`:`角 θ＝${H.show(x,"fraction")} 弧度，求區間 [−2π，0) 內的同界角，並判斷其終邊象限。`;
+  const tail=coefficient?`${coefficient<0?"−":"＋"}${Math.abs(coefficient)===1?"":Math.abs(coefficient)}π`:"",exact=`${H.show(x,"fraction")}${tail}`,expr=kind==="realAngle"?`角 θ＝${H.show(x,"fraction")}（弧度），判斷其終邊位於第幾象限。`:kind==="positive"?`求 ${H.show(x,"fraction")} 弧度的最小正同界角，以 π 的精確式表示。`:`角 θ＝${H.show(x,"fraction")} 弧度，求區間 [−2π，0) 內的同界角，並判斷其終邊象限。`;
   const answer=kind==="realAngle"?`第 ${q} 象限`:kind==="positive"?exact:`${exact}；第 ${q} 象限`;
   return{expr,answer,sig:`p4c:quadrant:${kind}:${expr}`,verify:()=>{
    const sin=Math.sin(v),cos=Math.cos(v),check=sin>0?(cos>0?1:2):(cos<0?3:4);
@@ -1921,7 +1921,7 @@ function sectorConfig(){
     expr=`圓錐側面展開扇形的半徑為 ${H.show(slant,mode,false,ctx)}，圓心角為 ${H.pi(theta)}。求圓錐底面半徑。`;answer=H.show(radius,mode,true,ctx);
     verify=()=>H.near(2*Math.PI*H.num(radius),H.num(slant)*H.num(theta)*Math.PI);
    }else{
-    expr=`直圓錐底面半徑 ${H.show(radius,mode,false,ctx)}、母線長 ${H.show(slant,mode,false,ctx)}，求側面積（保留 π）。`;answer=H.pi(area);
+    expr=`直圓錐底面半徑 ${H.show(radius,mode,false,ctx)}、母線長 ${H.show(slant,mode,false,ctx)}，求以 π 表示的側面積。`;answer=H.pi(area);
     verify=()=>{const angle=2*Math.PI*H.num(radius)/H.num(slant);return H.near(H.num(area)*Math.PI,H.num(slant)**2*angle/2)};
    }
   }
