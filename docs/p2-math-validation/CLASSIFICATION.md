@@ -107,13 +107,13 @@
 
 | 項目 | 結果 |
 |---|---:|
-| topic / 組合 | 70 / 2313 |
-| safeQuestion 抽樣 / 成功取題 | 462600 / 462600 |
-| 通過 / 失敗 | 2313 / 0 |
-| 候選 gen / null | 540811 / 53159 |
+| topic / 組合 | 72 / 2367 |
+| safeQuestion 抽樣 / 成功取題 | 473400 / 473400 |
+| 通過 / 失敗 | 2367 / 0 |
+| 候選 gen / null | 553701 / 55117 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 2307 / 6 |
-| 高拒絕率 unit（非阻擋） | 24 |
+| 完成單卷 / 單卷耗盡 | 2361 / 6 |
+| 高拒絕率 unit（非阻擋） | 25 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -145,6 +145,7 @@
 | correlation / `twoslopes` | 57.7% | 3 |
 | correlation / `application` | 55.6% | 3 |
 | trigtransform / `model` | 51.5% | 2 |
+| planevector / `lincomb` | 66.7% | 3 |
 | bayes / `medicalnegative` | 51.7% | 2 |
 | matrixapps / `multistate` | 75.2% | 3 |
 | matrixapps / `population` | 58.8% | 1 |

@@ -1,0 +1,162 @@
+[basic/components/integer] 已知 A（5，6）、B（5，7），求 vec(AB) 的坐標表示與長度。  ⇒ vec(AB)＝（0，1），|vec(AB)|＝1
+[basic/components/integer] 已知 A（4，1）、B（5，−3），求 vec(AB) 的坐標表示與長度。  ⇒ vec(AB)＝（1，−4），|vec(AB)|＝√17
+[basic/components/integer] 已知 vec(AB)＝（3，6），始點 A（0，5），求終點 B 的坐標。  ⇒ B（3，11）
+[basic/arithmetic/integer] 已知 vec(a)＝（1，6）、vec(b)＝（6，−6），求 2vec(a)−3vec(b)。  ⇒ （−16，30）
+[basic/arithmetic/integer] 已知 vec(a)＝（−2，6）、vec(b)＝（5，5），求 4vec(a)＋3vec(b)。  ⇒ （7，39）
+[basic/arithmetic/integer] 已知 vec(a)＝（−5，−6）、vec(b)＝（1，−6），求 vec(a)＋vec(b) 與 vec(a)−vec(b)。  ⇒ vec(a)＋vec(b)＝（−4，−12），vec(a)−vec(b)＝（−6，0）
+[basic/unitvector/fraction] 已知 vec(a)＝（6，−8），求與 vec(a) 反方向的單位向量。  ⇒ （−(3/5)，(4/5)）
+[basic/unitvector/fraction] 已知 vec(a)＝（−24，−10），求與 vec(a) 同方向的單位向量。  ⇒ （−(12/13)，−(5/13)）
+[basic/unitvector/fraction] 已知 vec(a)＝（8，−6），求與 vec(a) 同方向的單位向量。  ⇒ （(4/5)，−(3/5)）
+[basic/parallel/integer] 已知 vec(a)＝（2，−1）、vec(b)＝（k，−2）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝4
+[basic/parallel/integer] 已知 vec(a)＝（−4，5）、vec(b)＝（−12，k）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝15
+[basic/parallel/integer] 已知 vec(a)＝（−3，3）、vec(b)＝（9，k）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝−9
+[basic/lincomb/integer] 已知 vec(a)＝（2，5）、vec(b)＝（−3，4）、vec(c)＝（−13，2）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（−2，3）
+[basic/lincomb/integer] 已知 vec(a)＝（3，1）、vec(b)＝（4，−1）、vec(c)＝（10，−6）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（−2，4）
+[basic/lincomb/integer] 已知 vec(a)＝（2，3）、vec(b)＝（2，−4）、vec(c)＝（−6，5）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（−1，−2）
+[basic/lincomb/fraction] 已知 vec(a)＝（2，−3）、vec(b)＝（0，−6）、vec(c)＝（−5，−3）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（−(5/2)，(7/4)）
+[basic/lincomb/fraction] 已知 vec(a)＝（1，−5）、vec(b)＝（0，−4）、vec(c)＝（7，2）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（7，−(37/4)）
+[basic/lincomb/fraction] 已知 vec(a)＝（−2，0）、vec(b)＝（1，−4）、vec(c)＝（2，9）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（−(17/8)，−(9/4)）
+[basic/section/integer] 已知 A（7，7）、B（7，3），求線段 AB 的中點 M。  ⇒ M（7，5）
+[basic/section/integer] 已知 A（−8，2）、B（−12，−8），求線段 AB 的中點 M。  ⇒ M（−10，−3）
+[basic/section/integer] 已知 A（8，4）、B（8，12），求線段 AB 的中點 M。  ⇒ M（8，8）
+[basic/section/fraction] 已知 A（−2，−1）、B（−8，0），P 在線段 AB 上且 AP：PB＝3：5，求 P 點坐標。  ⇒ P（−(17/4)，−(5/8)）
+[basic/section/fraction] 已知 A（−2，0）、B（0，1），P 在線段 AB 上且 AP：PB＝5：4，求 P 點坐標。  ⇒ P（−(8/9)，(5/9)）
+[basic/section/fraction] 已知 A（6，6）、B（4，−3），P 在線段 AB 上且 AP：PB＝1：3，求 P 點坐標。  ⇒ P（(11/2)，(15/4)）
+[basic/points/integer] △ABC 中，A（−4，−8）、B（0，−9），重心 G（4，−1），求頂點 C 的坐標。  ⇒ C（16，14）
+[basic/points/integer] △ABC 的三頂點為 A（8，4）、B（6，−3）、C（1，−4），求重心 G 的坐標。  ⇒ G（5，−1）
+[basic/points/integer] △ABC 中，A（−7，−5）、B（−7，0），重心 G（−1，4），求頂點 C 的坐標。  ⇒ C（11，17）
+[basic/collinear/integer] 已知 A（−2，5）、B（−1，6）、C（k，4）三點共線，求 k。  ⇒ k＝−3
+[basic/collinear/integer] 已知 A（4，4）、B（6，7）、C（k，1）三點共線，求 k。  ⇒ k＝2
+[basic/collinear/integer] 判斷 A（−2，6）、B（−3，2）、C（−5，−2） 三點是否共線。  ⇒ 不共線
+[basic/combopoint/fraction] △ABC 中，點 D 在 BC 上且 BD：DC＝4：3。若 vec(AD)＝xvec(AB)＋yvec(AC)，求數對（x，y）。  ⇒ （x，y）＝（(3/7)，(4/7)）
+[basic/combopoint/fraction] G 為 △ABC 的重心。若 vec(BG)＝xvec(BA)＋yvec(BC)，求數對（x，y）。  ⇒ （x，y）＝（(1/3)，(1/3)）
+[basic/combopoint/fraction] △ABC 中，點 D 在 BC 上且 BD：DC＝6：5。若 vec(AD)＝xvec(AB)＋yvec(AC)，求數對（x，y）。  ⇒ （x，y）＝（(5/11)，(6/11)）
+[advanced/components/integer] 已知 vec(AB)＝（−2，2），終點 B（−11，10），求始點 A 的坐標。  ⇒ A（−9，8）
+[advanced/components/integer] 坐標平面上四點 A（5，4）、B（8，7）、C（x，4）、D（−2，y）。若 vec(AB)＝vec(CD)，求數對（x，y）。  ⇒ （x，y）＝（−5，7）
+[advanced/components/integer] 已知 vec(AB)＝（8，0），始點 A（5，−7），求終點 B 的坐標。  ⇒ B（13，−7）
+[advanced/arithmetic/integer] 已知 vec(a)＝（4，−1）、vec(b)＝（2，−4）、vec(c)＝（−1，1），求 −vec(a)−2vec(b)＋4vec(c)。  ⇒ （−12，13）
+[advanced/arithmetic/integer] 已知 vec(a)＝（−5，−5）、vec(b)＝（−1，−1）、vec(c)＝（2，4），求 vec(a)＋vec(b)−3vec(c)。  ⇒ （−12，−18）
+[advanced/arithmetic/integer] 已知 vec(a)＝（−4，3）、vec(b)＝（−1，4），求 3vec(a)−3vec(b)。  ⇒ （−9，−3）
+[advanced/unitvector/fraction] 已知 vec(a)＝（−4，−3），求與 vec(a) 同方向的單位向量。  ⇒ （−(4/5)，−(3/5)）
+[advanced/unitvector/fraction] 已知 vec(a)＝（−24，−18），求與 vec(a) 同方向且長度為 6 的向量。  ⇒ （−(24/5)，−(18/5)）
+[advanced/unitvector/fraction] 已知 vec(a)＝（−36，−15），求與 vec(a) 反方向的單位向量。  ⇒ （(12/13)，(5/13)）
+[advanced/parallel/integer] 已知 vec(a)＝（6，−1）、vec(b)＝（k，1）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝−6
+[advanced/parallel/integer] 已知 vec(a)＝（−2，1）、vec(b)＝（−2，6）、vec(c)＝（4，k）。若 vec(a)∥（vec(b)−vec(c)），求 k。  ⇒ k＝3
+[advanced/parallel/integer] 已知 vec(a)＝（k−5，3）、vec(b)＝（k−5，4）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝5
+[advanced/lincomb/integer] 已知 vec(a)＝（−5，4）、vec(b)＝（−2，0）、vec(c)＝（1，4）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（1，−3）
+[advanced/lincomb/integer] 已知 vec(a)＝（−3，−1）、vec(b)＝（−3，3）、vec(c)＝（0，16）。若 vec(c)＝mvec(a)＋nvec(b)，其中 m、n 為實數，求 3m＋n 的值。  ⇒ −8
+[advanced/lincomb/integer] 已知 vec(a)＝（2，−4）、vec(b)＝（2，−5）、vec(c)＝（−4，11），試將 vec(c) 表示成 vec(a) 與 vec(b) 的線性組合。  ⇒ vec(c)＝vec(a)−3vec(b)
+[advanced/lincomb/fraction] 已知 vec(a)＝（0，−5）、vec(b)＝（1，2）、vec(c)＝（−6，−6）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（−(6/5)，−6）
+[advanced/lincomb/fraction] 已知 vec(a)＝（3，−4）、vec(b)＝（−6，4）、vec(c)＝（−8，−2）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（(11/3)，(19/6)）
+[advanced/lincomb/fraction] 已知 vec(a)＝（−4，2）、vec(b)＝（−6，4）、vec(c)＝（4，3）。若 vec(c)＝rvec(a)＋svec(b)，求數對（r，s）。  ⇒ （r，s）＝（−(17/2)，5）
+[advanced/section/integer] 已知 A（4，4）、B（3，4），P 在直線 AB 上但不在線段 AB 上，且 AP：PB＝4：5，求 P 點坐標。  ⇒ P（8，4）
+[advanced/section/integer] 已知 A（5，−6）、B（20，4），點 P（17，2） 在線段 AB 上，求 AP：PB。  ⇒ AP：PB＝4：1
+[advanced/section/integer] 已知 A（−8，8）、B（−9，10），P 在直線 AB 上但不在線段 AB 上，且 AP：PB＝5：4，求 P 點坐標。  ⇒ P（−13，18）
+[advanced/section/fraction] 已知 A（1，−6）、B（−7，−14），點 P（−2，−9） 在線段 AB 上，求 AP：PB。  ⇒ AP：PB＝3：5
+[advanced/section/fraction] 已知 A（7，3）、B（−8，−8），P 在線段 AB 上且 AP：PB＝1：3，求 P 點坐標。  ⇒ P（(13/4)，(1/4)）
+[advanced/section/fraction] 已知 A（−2，−8）、B（2，5），P 在直線 AB 上但不在線段 AB 上，且 AP：PB＝3：5，求 P 點坐標。  ⇒ P（−8，−(55/2)）
+[advanced/points/integer] 以 vec(AB)、vec(AC) 為鄰邊作平行四邊形 ABDC，已知 A（5，2）、B（−8，−3）、C（−3，−3），求 D 點坐標。  ⇒ D（−16，−8）
+[advanced/points/integer] 以 vec(AB)、vec(AC) 為鄰邊作平行四邊形 ABDC，已知 A（−2，−8）、B（4，7）、C（−2，−6），求 D 點坐標。  ⇒ D（4，9）
+[advanced/points/integer] 以 vec(AB)、vec(AC) 為鄰邊作平行四邊形 ABDC，已知 A（−3，−5）、B（6，5）、C（6，−6），求 D 點坐標。  ⇒ D（15，4）
+[advanced/collinear/integer] O、A、B 三點不共線，P 在直線 AB 上，且 vec(OP)＝(7/9)vec(OA)＋tvec(OB)，求 t。  ⇒ t＝(2/9)
+[advanced/collinear/integer] O、A、B 三點不共線，P 在直線 AB 上，且 vec(OP)＝tvec(OA)＋(5/6)vec(OB)，求 t。  ⇒ t＝(1/6)
+[advanced/collinear/integer] O、A、B 三點不共線。若 vec(OP)＝（2x−2）vec(OA)＋（x−12）vec(OB)，且 P 在直線 AB 上，求 x。  ⇒ x＝5
+[advanced/combopoint/fraction] △PQR 中，點 D 在 QR 上且 QD：DR＝5：2。若 vec(PD)＝xvec(PQ)＋yvec(PR)，求數對（x，y）。  ⇒ （x，y）＝（(2/7)，(5/7)）
+[advanced/combopoint/fraction] △ABC 中，D 在 BC 上且 BD：DC＝6：5，E 在 AD 上且 AE：ED＝1：3。若 vec(AE)＝xvec(AB)＋yvec(AC)，求數對（x，y）。  ⇒ （x，y）＝（(5/44)，(3/22)）
+[advanced/combopoint/fraction] △ABC 中，AB＝8、AC＝9、BC＝8，∠BAC 的角平分線交 BC 於 D。若 vec(AD)＝xvec(AB)＋yvec(AC)，求數對（x，y）。  ⇒ （x，y）＝（(9/17)，(8/17)）
+[challenge/components/integer] 向量 vec(v) 的長度為 11，且與 x 軸正向的夾角為 45°，求 vec(v) 的坐標表示。  ⇒ vec(v)＝（(11√2/2)，(11√2/2)）
+[challenge/components/integer] 坐標平面上四點 A（−8，−4）、B（−3，−6）、C（x，1）、D（13，y）。若 vec(AB)＝vec(CD)，求數對（x，y）。  ⇒ （x，y）＝（8，−1）
+[challenge/components/integer] 已知 vec(AB)＝（5，9），始點 A（−2，−1），求終點 B 的坐標。  ⇒ B（3，8）
+[challenge/arithmetic/integer] 已知 vec(a)＝（−5，6）、vec(b)＝（−8，−12）。若向量 vec(u) 滿足 5vec(u)＋vec(a)＝2vec(u)＋vec(b)，求 vec(u)。  ⇒ vec(u)＝（−1，−6）
+[challenge/arithmetic/integer] 已知 vec(a)＝（−4，2）、vec(b)＝（−22，5）。若向量 vec(u) 滿足 5vec(u)＋vec(a)＝2vec(u)＋vec(b)，求 vec(u)。  ⇒ vec(u)＝（−6，1）
+[challenge/arithmetic/integer] 已知 vec(a)＝（2，−2）、vec(b)＝（0，−3），求 |−4vec(a)＋vec(b)|。  ⇒ √89
+[challenge/unitvector/fraction] 已知 vec(a)＝（2，−5），求與 vec(a) 同方向的單位向量。  ⇒ （(2√29/29)，−(5√29/29)）
+[challenge/unitvector/fraction] 已知 vec(a)＝（5，2），求與 vec(a) 同方向的單位向量。  ⇒ （(5√29/29)，(2√29/29)）
+[challenge/unitvector/fraction] 已知 vec(a)＝（−1，−1），求與 vec(a) 平行的單位向量。  ⇒ （−(√2/2)，−(√2/2)） 或 （(√2/2)，(√2/2)）
+[challenge/parallel/integer] 已知 vec(a)＝（k−2，−3）、vec(b)＝（−5，k）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝−3 或 5
+[challenge/parallel/integer] 已知 vec(a)＝（k−3，−1）、vec(b)＝（−3，k−1）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝0 或 4
+[challenge/parallel/integer] 已知 vec(a)＝（k−4，4）、vec(b)＝（−8，k＋8）。若 vec(a)∥vec(b) ，求 k。  ⇒ k＝−4 或 0
+[challenge/lincomb/integer] 設 vec(a)、vec(b) 為不平行的兩非零向量，實數 x、y 滿足（4x−4y−32）vec(a)＋（−3x−4y＋3）vec(b)＝vec(0)，求數對（x，y）。  ⇒ （x，y）＝（5，−3）
+[challenge/lincomb/integer] 已知 vec(a)＝（−3，−2）、vec(b)＝（1，−5）、vec(c)＝（−13，14）。若 vec(c)＝mvec(a)＋nvec(b)，其中 m、n 為實數，求 m＋3n 的值。  ⇒ −9
+[challenge/lincomb/integer] 已知 vec(a)＝（−1，−1）、vec(b)＝（1，0）、vec(c)＝（−3，−5）。若 vec(c)＝mvec(a)＋nvec(b)，其中 m、n 為實數，求 3m＋n 的值。  ⇒ 17
+[challenge/lincomb/fraction] 已知 vec(a)＝（1，−4）、vec(b)＝（3，−1）、vec(c)＝（1，0）。若 vec(c)＝mvec(a)＋nvec(b)，其中 m、n 為實數，求 2m＋n 的值。  ⇒ (2/11)
+[challenge/lincomb/fraction] 設 vec(a)、vec(b) 為不平行的兩非零向量，實數 x、y 滿足（x−y−7）vec(a)＋（−4x−4y＋9）vec(b)＝vec(0)，求數對（x，y）。  ⇒ （x，y）＝（(37/8)，−(19/8)）
+[challenge/lincomb/fraction] 已知 vec(a)＝（−3，−4）、vec(b)＝（1，2）、vec(c)＝（9，9），試將 vec(c) 表示成 vec(a) 與 vec(b) 的線性組合。  ⇒ vec(c)＝−(9/2)vec(a)−(9/2)vec(b)
+[challenge/section/integer] 已知 A（0，1）、B（−10，6），P 在直線 AB 上但不在線段 AB 上，且 AP：PB＝2：7，求 P 點坐標。  ⇒ P（4，−1）
+[challenge/section/integer] 已知 A（0，−6）、B（0，4），P 在直線 AB 上且 AP：PB＝2：3，求 P 點坐標（兩解）。  ⇒ P（0，−2） 或 P（0，−26）
+[challenge/section/integer] 已知 A（−1，2），點 P（−7，−2） 在線段 AB 上且 AP：PB＝2：5，求 B 點坐標。  ⇒ B（−22，−12）
+[challenge/section/fraction] 已知 A（−4，7）、B（5，−1），P 在直線 AB 上且 AP：PB＝2：1，求 P 點坐標（兩解）。  ⇒ P（2，(5/3)） 或 P（14，−9）
+[challenge/section/fraction] 已知 A（8，−7），點 P（8，−10） 在線段 AB 上且 AP：PB＝7：6，求 B 點坐標。  ⇒ B（8，−(88/7)）
+[challenge/section/fraction] 已知 A（−7，4），點 P（−5，7） 在線段 AB 上且 AP：PB＝2：3，求 B 點坐標。  ⇒ B（−2，(23/2)）
+[challenge/points/integer] 平行四邊形 ABCD 的兩條對角線交於 E（3，−5），已知 A（−4，−8）、B（−5，4），求 C、D 兩點坐標。  ⇒ C（10，−2），D（11，−14）
+[challenge/points/integer] A（6，2）、B（0，1）、C（1，6） 與點 D 恰為某平行四邊形的四個頂點，求 D 點所有可能的坐標。  ⇒ （−5，5）、（7，7）、（5，−3）
+[challenge/points/integer] △ABC 中，A（−4，6）、B（−2，−4），重心 G（1，4），求頂點 C 的坐標。  ⇒ C（9，10）
+[challenge/collinear/integer] O、A、B 三點不共線。若 vec(OP)＝（3x＋2）vec(OA)＋（−2x−5）vec(OB)，且 P 在直線 AB 上，求 x。  ⇒ x＝4
+[challenge/collinear/integer] 已知 A（2k，5）、B（0，k−1）、C（5，k＋4） 三點共線，求實數 k。  ⇒ k＝2
+[challenge/collinear/integer] O、A、B 三點不共線。若 vec(OP)＝（−2x＋4）vec(OA)＋（−3x＋2）vec(OB)，且 P 在直線 AB 上，求 x。  ⇒ x＝1
+[challenge/combopoint/fraction] △ABC 中，D 在 AB 上且 AD：DB＝1：2，E 在 AC 上且 AE：EC＝3：1，BE 與 CD 交於 P。若 vec(AP)＝xvec(AB)＋yvec(AC)，求數對（x，y）。  ⇒ （x，y）＝（(1/9)，(2/3)）
+[challenge/combopoint/fraction] △ABC 中，AB＝6、AC＝9、BC＝9，∠BAC 的角平分線交 BC 於 D。若 vec(AD)＝xvec(AB)＋yvec(AC)，求數對（x，y）。  ⇒ （x，y）＝（(3/5)，(2/5)）
+[challenge/combopoint/fraction] △ABC 中，AB＝5、AC＝7、BC＝4，∠BAC 的角平分線交 BC 於 D。若 vec(AD)＝xvec(AB)＋yvec(AC)，求數對（x，y）。  ⇒ （x，y）＝（(7/12)，(5/12)）
+[basic/evaluate/integer] 求行列式 0 3 7 −8 的值。  ⇒ −21
+[basic/evaluate/integer] 求行列式 1 −7 3 5 的值。  ⇒ 26
+[basic/evaluate/integer] 求行列式 4 8 −3 0 的值。  ⇒ 24
+[basic/evaluate/fraction] 求行列式 −(7/5) −1 5 4 的值。  ⇒ −(3/5)
+[basic/evaluate/fraction] 求行列式 −(7/3) −7 1 −2 的值。  ⇒ (35/3)
+[basic/evaluate/fraction] 求行列式 −9 (3/5) 9 −2 的值。  ⇒ (63/5)
+[basic/properties/integer] 已知 a b c d ＝3，求 −2a −2b c d 的值。  ⇒ −6
+[basic/properties/integer] 已知 a b c d ＝6，求 a 5b c 5d 的值。  ⇒ 30
+[basic/properties/integer] 已知 a b c d ＝−2，求 a c b d 的值。  ⇒ −2
+[basic/cramer/integer] 已知 a_1 b_1 a_2 b_2 ＝−6、 c_1 b_1 c_2 b_2 ＝30、 a_1 c_1 a_2 c_2 ＝24，求 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 的解。  ⇒ （x，y）＝（−5，−4）
+[basic/cramer/integer] 已知 a_1 b_1 a_2 b_2 ＝−5、 c_1 b_1 c_2 b_2 ＝30、 a_1 c_1 a_2 c_2 ＝5，求 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 的解。  ⇒ （x，y）＝（−6，−1）
+[basic/cramer/integer] 已知 a_1 b_1 a_2 b_2 ＝5、 c_1 b_1 c_2 b_2 ＝5、 a_1 c_1 a_2 c_2 ＝15，求 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 的解。  ⇒ （x，y）＝（1，3）
+[basic/cramer/fraction] 利用克拉瑪公式解 { −5x＋3y＝−1 −3x＋3y＝7 （寫出 Δ、Δ_x、Δ_y）。  ⇒ Δ＝−6，Δ_x＝−24，Δ_y＝−38；（x，y）＝（4，(19/3)）
+[basic/cramer/fraction] 已知 a_1 b_1 a_2 b_2 ＝6、 c_1 b_1 c_2 b_2 ＝−5、 a_1 c_1 a_2 c_2 ＝8，求 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 的解。  ⇒ （x，y）＝（−(5/6)，(4/3)）
+[basic/cramer/fraction] 已知 a_1 b_1 a_2 b_2 ＝−9、 c_1 b_1 c_2 b_2 ＝3、 a_1 c_1 a_2 c_2 ＝10，求 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 的解。  ⇒ （x，y）＝（−(1/3)，−(10/9)）
+[basic/solutions/integer] 判斷 { x−y＝−3 3x−3y＝−9 的解的情形；若恰有一組解，求出此解。  ⇒ 無限多組解（兩直線重合）
+[basic/solutions/integer] 判斷 { −4x−2y＝5 −8x−4y＝7 的解的情形；若恰有一組解，求出此解。  ⇒ 無解（兩直線平行）
+[basic/solutions/integer] 判斷 { −5x−y＝−5 −15x−3y＝−15 的解的情形；若恰有一組解，求出此解。  ⇒ 無限多組解（兩直線重合）
+[basic/area/integer] 已知 A（7，−2）、B（−3，−3）、C（3，7），求 △ABC 的面積。  ⇒ 47
+[basic/area/integer] 已知 A（2，−4）、B（1，0）、C（−5，−6），求 △ABC 的面積。  ⇒ 15
+[basic/area/integer] 求由 vec(a)＝（−8，5）、vec(b)＝（3，3） 所張成的平行四邊形面積。  ⇒ 39
+[advanced/evaluate/integer] 求行列式 296 277 288 269 的值。  ⇒ −152
+[advanced/evaluate/integer] 求行列式 10 7 7 12 的值。  ⇒ 71
+[advanced/evaluate/integer] 求行列式 −2√5 −4 −4 5√5 的值。  ⇒ −66
+[advanced/evaluate/fraction] 求行列式 1 (5/2) (9/2) −1 的值。  ⇒ −(49/4)
+[advanced/evaluate/fraction] 求行列式 1 −1 −4 (3/2) 的值。  ⇒ −(5/2)
+[advanced/evaluate/fraction] 求行列式 −1 −(4/5) −2 2 的值。  ⇒ −(18/5)
+[advanced/properties/integer] 已知 a b c d ＝9，求 a b＋4a c d＋4c 的值。  ⇒ 9
+[advanced/properties/integer] 已知 a b c d ＝1，求 −3a −2b −3c −2d 的值。  ⇒ 6
+[advanced/properties/integer] 已知 a b c d ＝−9，求 4a −b 4c −d 的值。  ⇒ 36
+[advanced/cramer/integer] 利用克拉瑪公式解 { −4x−7y＝−2 −4x＋2y＝−20 ，求 Δ、Δ_y 與 y。  ⇒ Δ＝−36，Δ_y＝72，y＝−2
+[advanced/cramer/integer] 已知 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 恰有一組解（x，y）＝（2，4），求 { −b_1x＋a_1y＝2c_1 −b_2x＋a_2y＝2c_2 的解。  ⇒ （x，y）＝（−8，4）
+[advanced/cramer/integer] 利用克拉瑪公式解 { 6x−3y＝−30 x＋2y＝10 ，求 Δ、Δ_x 與 x。  ⇒ Δ＝15，Δ_x＝−30，x＝−2
+[advanced/cramer/fraction] 利用克拉瑪公式解 { −2x＋y＝−8 −3x−4y＝5 ，求 Δ、Δ_x 與 x。  ⇒ Δ＝11，Δ_x＝27，x＝(27/11)
+[advanced/cramer/fraction] 利用克拉瑪公式解 { −2x−y＝−10 −2x＋4y＝5 （寫出 Δ、Δ_x、Δ_y）。  ⇒ Δ＝−10，Δ_x＝−35，Δ_y＝−30；（x，y）＝（(7/2)，3）
+[advanced/cramer/fraction] 利用克拉瑪公式解 { −4x−y＝−1 −7x−4y＝0 ，求 Δ、Δ_y 與 y。  ⇒ Δ＝9，Δ_y＝−7，y＝−(7/9)
+[advanced/solutions/integer] 判斷 { −x−5y＝−4 −2x−10y＝−10 的解的情形；若恰有一組解，求出此解。  ⇒ 無解（兩直線平行）
+[advanced/solutions/integer] 若 { （k＋1）x−y＝0 −5x＋（k−3）y＝0 除了 x＝0、y＝0 之外還有其他解，求實數 k。  ⇒ k＝−2 或 4
+[advanced/solutions/integer] 若 { （k＋1）x−9y＝−17 5x−3y＝−6 無解，求 k。  ⇒ k＝14
+[advanced/area/integer] 已知 vec(a)、vec(b) 所張成的平行四邊形面積為 4，求 4vec(a)−vec(b) 與 vec(a)＋vec(b) 所張成的平行四邊形面積。  ⇒ 20
+[advanced/area/integer] 已知 A（6，0）、B（4，6）、C（−7，−2），求 △ABC 的面積。  ⇒ 41
+[advanced/area/integer] 已知 vec(a)、vec(b) 所張成的三角形面積為 4，求 vec(a)−3vec(b) 與 2vec(a)−vec(b) 所張成的三角形面積。  ⇒ 20
+[challenge/evaluate/integer] 求行列式 1552 1558 1548 1554 的值。  ⇒ 24
+[challenge/evaluate/integer] 求行列式 755 751 749 745 的值。  ⇒ −24
+[challenge/evaluate/integer] 求行列式 2865 2886 2866 2887 的值。  ⇒ −21
+[challenge/evaluate/fraction] 求行列式 −(5/3) −(8/3) (7/6) −2 的值。  ⇒ (58/9)
+[challenge/evaluate/fraction] 求行列式 −2 6 −2 −(1/2) 的值。  ⇒ 13
+[challenge/evaluate/fraction] 求行列式 −(1/2) 4 −9 −8 的值。  ⇒ 40
+[challenge/properties/integer] 已知 a b c d ＝−2，求 −3a−2b a−3b −3c−2d c−3d 的值。  ⇒ −22
+[challenge/properties/integer] 已知 a b c d ＝−6、 a e c f ＝8，求 a 2b−e c 2d−f 的值。  ⇒ −20
+[challenge/properties/integer] 已知 a b c d ＝−9，求 a−c b−d 3a−c 3b−d 的值。  ⇒ −18
+[challenge/cramer/integer] 已知 a_1 b_1 a_2 b_2 ＝−5、 c_1 b_1 c_2 b_2 ＝10、 a_1 c_1 a_2 c_2 ＝25，求 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 的解。  ⇒ （x，y）＝（−2，−5）
+[challenge/cramer/integer] 已知 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 恰有一組解（x，y）＝（6，6），求 { 2a_1x＋（−a_1＋2b_1）y＝2c_1 2a_2x＋（−a_2＋2b_2）y＝2c_2 的解。  ⇒ （x，y）＝（9，6）
+[challenge/cramer/integer] 利用克拉瑪公式解 { −4x＋3y＝11 5x＋y＝−28 （寫出 Δ、Δ_x、Δ_y）。  ⇒ Δ＝−19，Δ_x＝95，Δ_y＝57；（x，y）＝（−5，−3）
+[challenge/cramer/fraction] 已知 a_1 b_1 a_2 b_2 ＝7、 c_1 b_1 c_2 b_2 ＝2、 a_1 c_1 a_2 c_2 ＝−4，求 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 的解。  ⇒ （x，y）＝（(2/7)，−(4/7)）
+[challenge/cramer/fraction] 利用克拉瑪公式解 { 3x−4y＝7 6x−5y＝−10 （寫出 Δ、Δ_x、Δ_y）。  ⇒ Δ＝9，Δ_x＝−75，Δ_y＝−72；（x，y）＝（−(25/3)，−8）
+[challenge/cramer/fraction] 已知 { a_1x＋b_1y＝c_1 a_2x＋b_2y＝c_2 恰有一組解（x，y）＝（−3，−5），求 { （−2a_1−2b_1）x−2b_1y＝c_1 （−2a_2−2b_2）x−2b_2y＝c_2 的解。  ⇒ （x，y）＝（(3/2)，1）
+[challenge/solutions/integer] 若 { kx−4y＝0 −x＋ky＝0 除了 x＝0、y＝0 之外還有其他解，求實數 k。  ⇒ k＝−2 或 2
+[challenge/solutions/integer] 若 { （k−5）x−2y＝0 7x＋（k＋4）y＝0 除了 x＝0、y＝0 之外還有其他解，求實數 k。  ⇒ k＝−2 或 3
+[challenge/solutions/integer] 若 { 9x＋（k＋3）y＝3 3x＋4y＝1 有無限多組解，求 k。  ⇒ k＝9
+[challenge/area/integer] 已知 vec(c)＝xvec(a)＋yvec(b)，其中 x＞0、y＞0。若 vec(a)、vec(b) 所張成的平行四邊形面積為 7，vec(a)、vec(c) 所張成的為 9，vec(b)、vec(c) 所張成的為 4，求數對（x，y）。  ⇒ （x，y）＝（(4/7)，(9/7)）
+[challenge/area/integer] 已知 A（1，6）、B（−3，3）、C（3，k），若 △ABC 的面積為 7，求 k。  ⇒ k＝4 或 11
+[challenge/area/integer] 已知 vec(a)、vec(b) 所張成的平行四邊形面積為 7，求 2vec(a)−3vec(b) 與 3vec(a)−3vec(b) 所張成的平行四邊形面積。  ⇒ 21
