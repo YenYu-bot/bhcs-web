@@ -22,8 +22,8 @@ const report = {schema: 3, specification: '2.4 safeQuestion revision 2026-09-22'
   targetPerCombination: 200, topics: [], combinations: [], failures: []};
 const diversityGate = process.env.MATH_DIVERSITY_GATE === '1';
 const diversityOutput = process.env.MATH_DIVERSITY_REPORT || (diversityGate ? 'math-validation-artifacts/diversity-current.json' : '');
-assert.equal(singleFormExemptions.length, 21, 'singleForm ruling must contain exactly 21 entries');
-assert.equal(singleFormPolicy.size, 21, 'singleForm ruling contains duplicate topic/unit keys');
+assert.equal(singleFormExemptions.length, 27, 'singleForm ruling must contain exactly 27 entries');
+assert.equal(singleFormPolicy.size, 27, 'singleForm ruling contains duplicate topic/unit keys');
 const diversity = diversityOutput ? {schema: 2, mode: diversityGate ? 'ratchet' : 'report-only', blocking: diversityGate, samplesPerLevel: 200,
   normalization: 'SVG→[圖], fractions/superscripts/subscripts kept structurally, every numeric literal→#, signs/coefficient positions/comparison symbols retained',
   generatedAt: '2026-09-22', topics: [], units: [], projectedGateFailures: []} : null;
@@ -106,7 +106,8 @@ for (const link of links) {
       const b = unitRow.levels.basic.numberMedian, c = unitRow.levels.challenge.numberMedian;
       unitRow.challengeToBasicMedianRatio = b > 0 && c !== null ? c / b : null;
       unitRow.projectedStructureGatePass = unitRow.singleForm || Object.values(unitRow.levels).every(row => row.structureCount >= 3);
-      unitRow.projectedChallengeGatePass = challengeNewStructures.length >= 1 || unitRow.challengeToBasicMedianRatio >= 2;
+      unitRow.projectedChallengeGatePass = (unitRow.topic === 'timestables' && unitRow.singleForm) ||
+        challengeNewStructures.length >= 1 || unitRow.challengeToBasicMedianRatio >= 2;
       if (!unitRow.projectedStructureGatePass || !unitRow.projectedChallengeGatePass)
         diversity.projectedGateFailures.push({link, topic: unitRow.topic, unit: unitRow.unit, name: unitRow.name,
           structureGate: unitRow.projectedStructureGatePass, challengeGate: unitRow.projectedChallengeGatePass});

@@ -23,6 +23,14 @@ result=evaluateDiversityRatchet({baseline,current:{units:[unit(),unit({topic:'ne
 assert.deepEqual(result.newUnits,['new/n']);
 assert.ok(result.failures.filter(row=>row.code==='new_unit_single_form_forbidden').length>=1);
 
+// G3 speed practice is the sole approved exception for new single-form units.
+const g3Unit=unit({link:'g3-drills.html?topic=timestables',topic:'timestables',unit:'tables',singleForm:true,
+  projectedStructureGatePass:false,projectedChallengeGatePass:false});
+result=evaluateDiversityRatchet({baseline,current:{units:[unit(),g3Unit],topics:[]},
+  exemptions:[{topic:'timestables',unit:'tables',singleForm:true,reason:'速度練習頁，題型即運算式版型'}]});
+assert.deepEqual(result.newUnits,['timestables/tables']);
+assert.deepEqual(result.failures,[]);
+
 result=evaluateDiversityRatchet({baseline,current:{units:[],topics:[]},exemptions:[]});
 assert.ok(result.failures.some(row=>row.code==='baseline_unit_removed'));
 
