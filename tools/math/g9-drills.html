@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -707,7 +707,141 @@ function righttriConfig(){
   units:[altitude,pythagoras,special,trig],presets:{basic:{altitude:3,pythagoras:3,special:3,trig:3},advanced:{altitude:3,pythagoras:3,special:3,trig:3},challenge:{altitude:2,pythagoras:3,special:3,trig:4}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig},CFG=CONFIGS[TOPIC_KEY]();
+function circle1Config(){
+ /* 國三上 2-1 圓：扇形、點線圓、切線、弦心距（2026-09-26，Claude）。題型取自百宏國三上二段講義 2-1：弧長與扇形面積、弓形與環形與部分面積、
+    點與圓／直線與圓的位置、切線垂直半徑（切線長、含 30°、45°）、切線長性質與圓外切四邊形、弦心距。含 π 與根式的答案用精確式。
+    verify：含 π、根式的答案用數值（Math.PI、Math.sqrt）比對；弦心距與切線長用畢氏定理代回；位置關係用距離平方比較。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false}),pl=v=>v.n+"/"+v.d,num=v=>v.n/v.d;
+ const radP=n=>{let a=1,b=n;for(let p=2;p*p<=b;p++)while(b%(p*p)===0){a*=p;b/=p*p}return{a,b}},radS=n=>{if(!n)return"0";const{a,b}=radP(n);return b===1?String(a):(a===1?"":a)+`√${b}`};
+ const coefS=(c,sym)=>{const n=Math.abs(c.n),top=(n===1&&sym?"":n)+sym;return c.d===1?top:fr(top,c.d)};
+ // 精確式：rat＋pi·π＋s2·√2＋s3·√3（各係數為有理數）
+ const form=({rat=R(0),pi=R(0),s2=R(0),s3=R(0)})=>{const parts=[];if(rat.n)parts.push([rat,""]);if(pi.n)parts.push([pi,"π"]);if(s2.n)parts.push([s2,"√2"]);if(s3.n)parts.push([s3,"√3"]);if(!parts.length)return"0";parts.sort((x,y)=>(y[0].n>0)-(x[0].n>0));return parts.map(([c,sym],i)=>(c.n<0?"−":i?"＋":"")+coefS(c,sym)).join("")};
+ const val=({rat=R(0),pi=R(0),s2=R(0),s3=R(0)})=>num(rat)+num(pi)*Math.PI+num(s2)*Math.SQRT2+num(s3)*Math.sqrt(3);
+ const W=190,H=150;
+ // 簡易圓弧圖（螢幕坐標，y 向下）：cx、cy、r、起訖角（度，逆時針為正，0° 在右）
+ const arcPath=(cx,cy,r,a1,a2,o={})=>{const p=t=>[cx+r*Math.cos(-t*Math.PI/180),cy+r*Math.sin(-t*Math.PI/180)],[x1,y1]=p(a1),[x2,y2]=p(a2),big=(a2-a1)%360>180?1:0;return`<path d="M${GEO.f(x1)} ${GEO.f(y1)} A${r} ${r} 0 ${big} 0 ${GEO.f(x2)} ${GEO.f(y2)}" fill="${o.fill||"none"}" stroke="${o.c||"#16233A"}" stroke-width="${o.w||1.5}"${o.dash?` stroke-dasharray="${o.dash}"`:""}/>`};
+ const circ=(cx,cy,r,o={})=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||"none"}" stroke="${o.c||"#16233A"}" stroke-width="${o.w||1.5}"/>`;
+ const T=(p,t,o={})=>GEO.text(p,t,{s:11,...o}),Ln=(p,q,o={})=>GEO.line(p,q,o),Dt=p=>GEO.dot(p);
+ const sectorFig=(deg,label)=>{const cx=80,cy=90,r=60,a=t=>[cx+r*Math.cos(-t*Math.PI/180),cy+r*Math.sin(-t*Math.PI/180)],A=a(0),B=a(deg);
+  return GEO.svg(W,H,arcPath(cx,cy,r,0,deg)+Ln([cx,cy],A)+Ln([cx,cy],B)+GEO.arc([cx,cy],A,B,label||`${deg}°`,{r:14})+Dt([cx,cy])+T([cx-8,cy+4],"O",{i:true})+T([A[0]+8,A[1]+4],"A",{i:true})+T([B[0]+(B[0]>cx?8:-8),B[1]-4],"B",{i:true}))};
+ const circleFig=(extra,r=55)=>GEO.svg(W,H,circ(100,80,r)+Dt([100,80])+T([100,93],"O",{i:true})+extra);
+
+ // ① 弧長與扇形面積
+ const sector=unit("sector","弧長與扇形面積","弧長＝2πr×(m／360)；扇形面積＝πr²×(m／360)＝½×半徑×弧長；扇形周長＝弧長＋2r。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["basic","fromArc","circleArea"]:L===1?["fromArc","perimeter","angleFromArea","concentric"]:["perimeter","concentric","between","angleFromArea"]);
+  const angles=[30,45,60,90,120,135,150,180,210,240,270,300],ok=v=>mode==="integer"?v.d===1:v.d!==1;
+  if(kind==="basic"){const r=rand(2,12),m=pick(angles),arc=R(2*r*m,360),area=R(r*r*m,360);if(!ok(area))return null;const ask=pick(["area","both"]);
+   return ask==="area"?{expr:`${sectorFig(m)}如圖，扇形 OAB 的半徑為 ${r}，圓心角 ${m}°，求扇形面積（保留 π）。`,answer:form({pi:area}),sig:`b:${r}:${m}`,verify:()=>Math.abs(val({pi:area})-Math.PI*r*r*m/360)<1e-9}:{expr:`${sectorFig(m)}如圖，扇形 OAB 的半徑為 ${r}，圓心角 ${m}°，求扇形的面積與周長（保留 π）。`,answer:`面積 ${form({pi:area})}；周長 ${form({rat:R(2*r),pi:arc})}`,sig:`bb:${r}:${m}`,verify:()=>Math.abs(val({pi:arc})-2*Math.PI*r*m/360)<1e-9&&Math.abs(val({pi:area})-Math.PI*r*r*m/360)<1e-9}}
+  if(kind==="fromArc"){const r=rand(3,20),l=rand(3,30),area=R(r*l,2);if(!ok(area))return null;return{expr:`已知一扇形的半徑為 ${r} 公分，所對的弧長為 ${l} 公分，求此扇形的面積。`,answer:`${S(area)} 平方公分`,sig:`fa:${r}:${l}`,verify:()=>Math.abs(num(area)-r*l/2)<1e-9}}
+  if(kind==="circleArea"){const A=rand(6,40)*6,m=pick([30,45,60,90,120,135,150,180,240,270]),s=R(A*m,360);if(!ok(s))return null;return{expr:`已知一圓的面積為 ${A} 平方公分，求 ${m}° 圓心角所決定的扇形面積。`,answer:`${S(s)} 平方公分`,sig:`ca:${A}:${m}`,verify:()=>Math.abs(num(s)-A*m/360)<1e-9}}
+  if(kind==="perimeter"){const r=rand(2,12),m=pick(angles),arc=R(2*r*m,360),area=R(r*r*m,360);if(!ok(area))return null;// 周長 2r＋arc·π ⇒ 反求圓心角與面積
+   return{expr:`一個扇形紙板的周長為 ${form({rat:R(2*r),pi:arc})} 公分，求它的圓心角與面積。`,answer:`圓心角 ${m}°；面積 ${form({pi:area})} 平方公分`,sig:`pe:${r}:${m}`,verify:()=>Math.abs(val({pi:arc})-2*Math.PI*r*m/360)<1e-9&&Math.abs(val({pi:area})-Math.PI*r*r*m/360)<1e-9}}
+  if(kind==="angleFromArea"){const r=rand(2,12),m=pick(angles),area=R(r*r*m,360),byArc=Math.random()<.5,arc=R(2*r*m,360);if(byArc){const C=R(2*r*360,m),len=arc;if(!ok(C))return null;// 已知 m° 弧長，求圓周長
+    return{expr:`一圓 ${m}° 的圓心角所對的弧長為 ${form({pi:len})}，求此圓的周長。`,answer:form({pi:R(2*r)}),sig:`ac:${r}:${m}`,verify:()=>Math.abs(val({pi:len})*360/m-2*Math.PI*r)<1e-9}}
+   return{expr:`一圓的半徑為 ${r} 公分，求面積為 ${form({pi:area})} 平方公分的扇形的圓心角。`,answer:`${m}°`,sig:`aa:${r}:${m}`,verify:()=>Math.abs(val({pi:area})-Math.PI*r*r*m/360)<1e-9}}
+  if(kind==="concentric"){const r1=rand(2,8),r2=r1+rand(2,8),m=pick([45,60,90,120,144,180]),l1=R(2*r1*m,360),l2=R(2*r2*m,360),area=R((r2*r2-r1*r1)*m,360);if(!ok(area))return null;
+   const cx=80,cy=90,s=55/r2,a=t=>[cx+r2*s*Math.cos(-t*Math.PI/180),cy+r2*s*Math.sin(-t*Math.PI/180)],b=t=>[cx+r1*s*Math.cos(-t*Math.PI/180),cy+r1*s*Math.sin(-t*Math.PI/180)];
+   const img=GEO.svg(W,H,arcPath(cx,cy,r2*s,0,m)+arcPath(cx,cy,r1*s,0,m)+Ln([cx,cy],a(0))+Ln([cx,cy],a(m))+Dt([cx,cy])+T([cx-8,cy+4],"O",{i:true})+T([a(0)[0]+8,a(0)[1]+4],"C",{i:true})+T([b(0)[0],b(0)[1]+12],"A",{i:true})+T([a(m)[0]+(a(m)[0]>cx?8:-8),a(m)[1]-4],"D",{i:true})+T([b(m)[0]+(b(m)[0]>cx?8:-8),b(m)[1]-4],"B",{i:true}));
+   return{expr:`${img}如圖，兩同心圓的半徑分別為 ${r1} 公分與 ${r2} 公分。若弧 AB 的長是 ${form({pi:l1})} 公分，求 ∠AOB 的度數、弧 CD 的長與斜線部分（兩弧之間）的面積。`,answer:`∠AOB＝${m}°；弧 CD＝${form({pi:l2})} 公分；面積 ${form({pi:area})} 平方公分`,sig:`co:${r1}:${r2}:${m}`,verify:()=>Math.abs(val({pi:l1})-2*Math.PI*r1*m/360)<1e-9&&Math.abs(val({pi:l2})-2*Math.PI*r2*m/360)<1e-9&&Math.abs(val({pi:area})-Math.PI*(r2*r2-r1*r1)*m/360)<1e-9}}
+  const r1=rand(2,8),r2=r1+rand(2,8),m=pick([45,60,90,120,135,150]),per={rat:R(2*(r2-r1)),pi:R(2*(r1+r2)*m,360)},area=R((r2*r2-r1*r1)*m,360);if(!ok(area))return null;
+  return{expr:`兩個同圓心的扇形，半徑分別為 ${r1} 和 ${r2}，圓心角都是 ${m}°，求兩扇形之間（環狀部分）的周長與面積。`,answer:`周長 ${form(per)}；面積 ${form({pi:area})}`,sig:`bt:${r1}:${r2}:${m}`,verify:()=>Math.abs(val(per)-(2*(r2-r1)+2*Math.PI*(r1+r2)*m/360))<1e-9&&Math.abs(val({pi:area})-Math.PI*(r2*r2-r1*r1)*m/360)<1e-9};
+ });
+
+ // ② 弓形、環形與部分面積
+ const segment=unit("segment","弓形、環形與部分面積","弓形面積＝扇形面積−三角形面積；環形面積＝π(R²−r²)；不規則區域先切成扇形、三角形與正方形。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["ring","squareQuarters","inscribed"]:L===1?["bow","ring","rectSector"]:["bow","ringRatio","quarterTwo"]);
+  if(kind==="bow"){const r=rand(2,12),m=pick([60,90,120]),sec=R(r*r*m,360);let area,per;if(m===60){area={pi:sec,s3:R(-r*r,4)};per={rat:R(r),pi:R(r,3)}}else if(m===90){area={pi:sec,rat:R(-r*r,2)};per={s2:R(r),pi:R(r,2)}}else{area={pi:sec,s3:R(-r*r,4)};per={s3:R(r),pi:R(2*r,3)}}
+   const img=sectorFig(m)+"";return{expr:`${img}如圖，圓 O 的半徑為 ${r}，∠AOB＝${m}°，求弦 AB 與弧 AB 所圍成的弓形的面積與周長。`,answer:`面積 ${form(area)}；周長 ${form(per)}`,sig:`bw:${r}:${m}`,verify:()=>{const th=m*Math.PI/180;return Math.abs(val(area)-(r*r*th/2-r*r*Math.sin(th)/2))<1e-9&&Math.abs(val(per)-(r*th+2*r*Math.sin(th/2)))<1e-9}}}
+  if(kind==="ring"){const r=rand(2,10),Rr=r+rand(1,10),a=R(Rr*Rr-r*r);return{expr:`兩同心圓的半徑分別為 ${Rr} 公分與 ${r} 公分，求兩圓之間環形區域的面積（保留 π）。`,answer:`${form({pi:a})} 平方公分`,sig:`rg:${r}:${Rr}`,verify:()=>Math.abs(val({pi:a})-Math.PI*(Rr*Rr-r*r))<1e-9}}
+  if(kind==="ringRatio"){const p=rand(1,4),q=rand(p+1,9);if(gcd(p,q)>1)return null;const k=R(q*q-p*p,p*p);return{expr:`兩個同心圓中，環形面積是小圓面積的 ${S(k)} 倍，求大、小兩圓的半徑比。`,answer:`${q}：${p}`,sig:`rr:${p}:${q}`,verify:()=>Math.abs((Math.PI*q*q-Math.PI*p*p)/(Math.PI*p*p)-num(k))<1e-9}}
+  if(kind==="squareQuarters"){const s=rand(2,12)*2,r=s/2,a={rat:R(s*s),pi:R(-r*r)},per={pi:R(2*r)};// 正方形四角各一個四分之一圓（半徑為邊長一半）
+   const img=GEO.svg(W,H,`<rect x="40" y="20" width="120" height="120" fill="none" stroke="#16233A" stroke-width="1.5"/>`+arcPath(40,20,60,270,360)+arcPath(160,20,60,180,270)+arcPath(160,140,60,90,180)+arcPath(40,140,60,0,90));
+   return{expr:`${img}如圖，正方形的邊長為 ${s}，四個角各有一個半徑為 ${r} 的四分之一圓，求中間斜線區域的面積與周長。`,answer:`面積 ${form(a)}；周長 ${form(per)}`,sig:`sq:${s}`,verify:()=>Math.abs(val(a)-(s*s-Math.PI*r*r))<1e-9&&Math.abs(val(per)-2*Math.PI*r)<1e-9}}
+  if(kind==="inscribed"){const s=rand(2,12)*2,r=s/2,a={rat:R(s*s),pi:R(-r*r)};const img=GEO.svg(W,H,`<rect x="40" y="20" width="120" height="120" fill="none" stroke="#16233A" stroke-width="1.5"/>`+circ(100,80,60));
+   return{expr:`${img}如圖，正方形的邊長為 ${s}，內有一個與四邊相切的圓，求正方形內圓外部分的面積。`,answer:form(a),sig:`in:${s}`,verify:()=>Math.abs(val(a)-(s*s-Math.PI*r*r))<1e-9}}
+  if(kind==="rectSector"){const w=rand(5,12),h=rand(3,w-1),r=h,a={rat:R(w*h),pi:R(-r*r,4)};const img=GEO.svg(W,H,`<rect x="30" y="35" width="${w*12}" height="${h*12}" fill="none" stroke="#16233A" stroke-width="1.5"/>`+arcPath(30,35+h*12,h*12,0,90)+T([26,35+h*12+12],"A",{i:true}));
+   return{expr:`${img}如圖，長方形長 ${w} 公分、寬 ${h} 公分，圖中的扇形以 A 為圓心、寬為半徑，求長方形內扇形外的斜線部分面積。`,answer:`${form(a)} 平方公分`,sig:`rs:${w}:${h}`,verify:()=>Math.abs(val(a)-(w*h-Math.PI*r*r/4))<1e-9}}
+  const s=rand(2,12),a={pi:R(s*s,2),rat:R(-s*s)},per={pi:R(s)};// 正方形內以兩個相鄰頂點為圓心、邊長為半徑的兩個四分之一圓，夾出的葉形
+  const img=GEO.svg(W,H,`<rect x="40" y="20" width="120" height="120" fill="none" stroke="#16233A" stroke-width="1.5"/>`+arcPath(40,140,120,0,90)+arcPath(160,140,120,90,180)+T([32,150],"B",{i:true})+T([168,150],"C",{i:true})+T([32,18],"A",{i:true})+T([168,18],"D",{i:true}));
+  return{expr:`${img}如圖，正方形 ABCD 的邊長為 ${s}，分別以 B、C 為圓心、邊長為半徑畫四分之一圓，求兩弧夾出的斜線區域的面積與周長。`,answer:`面積 ${form(a)}；周長 ${form(per)}`,sig:`qt:${s}`,verify:()=>Math.abs(val(a)-(Math.PI*s*s/2-s*s))<1e-9&&Math.abs(val(per)-Math.PI*s)<1e-9};
+ });
+
+ // ③ 點、線與圓的位置
+ const position=unit("position","點、線與圓的位置關係","比較距離與半徑：d＜r 在圓內（相交於兩點）、d＝r 在圓上（相切）、d＞r 在圓外（不相交）。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["point","line","chordMax"]:L===1?["pointCoord","line","chordMax"]:["pointCoord","twoCircles","chordMax"]);
+  if(kind==="point"){const d=rand(3,12)*2,r=d/2,ds=[rand(1,r-1),r,rand(r+1,r+6)],names=["A","B","C"],sh=shuffle([0,1,2]);
+   return{expr:`一圓的直徑為 ${d} 公分，${sh.map((i,j)=>`${names[j]} 點與圓心相距 ${ds[i]} 公分`).join("、")}，判斷 A、B、C 三點各在圓內、圓上或圓外。`,answer:sh.map((i,j)=>`${names[j]} 在圓${["內","上","外"][i]}`).join("；"),sig:`p:${d}:${sh}`,verify:()=>sh.every(i=>[ds[i]<r,ds[i]===r,ds[i]>r][i])}}
+  if(kind==="line"){const r=rand(3,12),ds=shuffle([rand(1,r-1),r,rand(r+1,r+8)]);
+   return{expr:`圓 O 的半徑為 ${r} 公分，圓心 O 到三條直線 L₁、L₂、L₃ 的距離分別為 ${ds.join("、")} 公分，這三條直線分別和圓 O 有幾個交點？`,answer:ds.map((d,i)=>`L${"₁₂₃"[i]}：${d<r?2:d===r?1:0} 個`).join("；"),sig:`l:${r}:${ds}`,verify:()=>ds.every(d=>(d<r?2:d===r?1:0)===(d*d<r*r?2:d*d===r*r?1:0))}}
+  if(kind==="pointCoord"){const r=rand(3,10),x=rand(-9,9),y=rand(-9,9),d2=x*x+y*y,rel=d2<r*r?"內":d2===r*r?"上":"外";
+   return{expr:`已知圓 O 的半徑為 ${r}，且圓心 O 是原點，判斷點（${x}，${y}）在圓內、圓上或圓外。`,answer:`圓${rel}（OP＝${radS(d2)}）`,sig:`pc:${r}:${x}:${y}`,verify:()=>(Math.hypot(x,y)<r)===(rel==="內")&&(Math.abs(Math.hypot(x,y)-r)<1e-9)===(rel==="上")}}
+  if(kind==="chordMax"){const r=rand(3,12),cands=[rand(1,2*r-1),2*r,2*r+rand(1,5),rand(1,2*r-1)],bad=cands.findIndex(c=>c>2*r);
+   return{expr:`一圓的半徑為 ${r} 公分，下列何者不可能是此圓的弦長？(A) ${cands[0]} 公分 (B) ${cands[1]} 公分 (C) ${cands[2]} 公分 (D) ${cands[3]} 公分`,answer:`(${"ABCD"[bad]})（弦長不能超過直徑 ${2*r}）`,sig:`cm:${r}:${cands}`,verify:()=>cands.filter(c=>c>2*r).length===1}}
+  const r1=rand(4,10),r2=rand(3,r1-1),d1=rand(1,r1+3),d2=rand(1,r2+3),in1=d1<r1,in2=d2<r2,region=in1&&in2?"兩圓的重疊區域內":in1?"只在圓 O₁ 內":in2?"只在圓 O₂ 內":"兩圓外";
+  return{expr:`平面上圓 O₁、圓 O₂ 相交於兩點，半徑分別為 ${r1}、${r2}。若一點 A 與 O₁、O₂ 的距離分別為 ${d1}、${d2}，則 A 點在哪個區域？`,answer:region,sig:`tc:${r1}:${r2}:${d1}:${d2}`,verify:()=>(d1<r1)===in1&&(d2<r2)===in2};
+ });
+
+ // ④ 切線與半徑
+ const tangent=unit("tangent","切線與半徑","圓心與切點的連線垂直切線，所以 OA⊥AP，可用畢氏定理；圓外一點到圓上最短距離＝OP−r，最長＝OP＋r。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["len","lenRad","ac"]:L===1?["ac","angle30","farNear"]:["angle45","incircle","coord"]);
+  const tanFig=(extra)=>GEO.svg(W,H,circ(70,80,45)+Dt([70,80])+T([70,93],"O",{i:true})+extra);
+  if(kind==="len"){const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]),k=rand(1,3),rad=p*k,ap=q*k,op=r*k;const img=tanFig(Ln([70,35],[180,35])+Ln([70,80],[70,35])+Ln([70,80],[180,35],{dash:"4 3"})+Dt([70,35])+Dt([180,35])+T([62,30],"A",{i:true})+T([188,39],"P",{i:true})+GEO.right([70,35],[70,80],[180,35]));
+   return{expr:`${img}如圖，直線 AP 切圓 O 於 A，圓的半徑為 ${rad}，OP＝${op}，求 AP 的長。`,answer:`AP＝${ap}`,sig:`ln:${rad}:${op}`,verify:()=>rad*rad+ap*ap===op*op}}
+  if(kind==="lenRad"){const rad=rand(2,9),op=rand(rad+1,rad+9),n=op*op-rad*rad,{a,b}=radP(n);const img=tanFig(Ln([70,35],[180,35])+Ln([70,80],[70,35])+Ln([70,80],[180,35],{dash:"4 3"})+Dt([70,35])+Dt([180,35])+T([62,30],"A",{i:true})+T([188,39],"P",{i:true})+GEO.right([70,35],[70,80],[180,35]));
+   return{expr:`${img}如圖，直線 AP 切圓 O 於 A，圓的半徑為 ${rad}，OP＝${op}，求 AP 的長（化為最簡根式）。`,answer:`AP＝${radS(n)}`,sig:`lr:${rad}:${op}`,verify:()=>Math.abs(a*Math.sqrt(b)-Math.sqrt(op*op-rad*rad))<1e-9}}
+  if(kind==="ac"){const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]),k=rand(1,5),rad=p*k,ab=q*k,ao=r*k,ac=ao-rad;
+   return{expr:`AB 切圓 O 於 B，AO 交圓 O 於 C。若 AB＝${ab}、OC＝${rad}，求 AC 的長。`,answer:`AC＝${ac}`,sig:`ac:${rad}:${ab}`,verify:()=>rad*rad+ab*ab===ao*ao&&ac===ao-rad}}
+  if(kind==="angle30"){const op=rand(1,20)*2,oa=op/2,ap=R(oa);return{expr:`PA 切圓 O 於 A，∠P＝30°，OP＝${op}，求 OA 與 AP。`,answer:`OA＝${oa}，AP＝${coefS(ap,"√3")}`,sig:`a3:${op}`,verify:()=>Math.abs(op*Math.sin(Math.PI/6)-oa)<1e-9&&Math.abs(op*Math.cos(Math.PI/6)-oa*Math.sqrt(3))<1e-9}}
+  if(kind==="angle45"){const op=rand(2,12),oa=R(op,2);return{expr:`PA 切圓 O 於 A，∠P＝45°，OP＝${op}，求 OA。`,answer:`OA＝${coefS(oa,"√2")}`,sig:`a4:${op}`,verify:()=>Math.abs(op*Math.sin(Math.PI/4)-num(oa)*Math.SQRT2)<1e-9}}
+  if(kind==="farNear"){const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]),k=rand(1,5),rad=p*k,pa=q*k,op=r*k;return{expr:`PA 切圓 O 於 A，PA＝${pa}，圓 O 的半徑為 ${rad}，求 P 到圓 O 上的點的最短距離與最長距離。`,answer:`最短 ${op-rad}，最長 ${op+rad}`,sig:`fn:${rad}:${pa}`,verify:()=>rad*rad+pa*pa===op*op}}
+  if(kind==="incircle"){const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]),k=rand(1,3),a=p*k,b=q*k,c=r*k,rIn=(a+b-c)/2,ask=Math.random()<.5;
+   return ask?{expr:`△ABC 中 ∠C＝90°，AC＝${b}、BC＝${a}，三邊都與圓 O 相切，求圓 O 的半徑。`,answer:`${rIn}`,sig:`ic:${a}:${b}`,verify:()=>2*rIn===a+b-c&&a*a+b*b===c*c&&Math.abs(rIn-a*b/(a+b+c))<1e-9}:{expr:`△ABC 中 ∠C＝90°，AC＝${b}、BC＝${a}，AC、BC 都與圓 O 相切，且 AB 通過圓心 O，求圓 O 的半徑。`,answer:S(R(a*b,a+b)),sig:`ih:${a}:${b}`,verify:()=>{const rr=a*b/(a+b);return Math.abs((a-rr)*b/a-rr)<1e-9}}}
+  const r=rand(2,6),x=rand(3,9),y=rand(1,9),op2=x*x+y*y,pq2=op2-r*r;if(pq2<=0)return null;
+  return{expr:`圓心為原點、半徑為 ${r} 的圓，P 點坐標為（${x}，${y}），PQ 為切線、Q 為切點，求 OP 與 PQ 的長。`,answer:`OP＝${radS(op2)}，PQ＝${radS(pq2)}`,sig:`cd:${r}:${x}:${y}`,verify:()=>{const{a,b}=radP(pq2);return Math.abs(a*Math.sqrt(b)-Math.sqrt(x*x+y*y-r*r))<1e-9}};
+ });
+
+ // ⑤ 切線長性質與外切四邊形
+ const tangentLen=unit("tangentLen","切線長性質與圓外切四邊形","圓外一點的兩切線等長；∠APB＋∠AOB＝180°；圓外切四邊形兩組對邊和相等：AB＋CD＝AD＋BC。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["angle","quadSide"]:L===1?["triSides","quadSide","triSeg"]:["triAngle","quadX","quadAngle"]);
+  if(kind==="angle"){const aob=rand(60,170),apb=180-aob,fwd=Math.random()<.5;return fwd?{expr:`直線 PA、PB 切圓 O 於 A、B 兩點，且 ∠AOB＝${aob}°，求 ∠APB。`,answer:`∠APB＝${apb}°`,sig:`an:${aob}`,verify:()=>aob+apb===180}:{expr:`直線 PA、PB 切圓 O 於 A、B 兩點，且 ∠APB＝${apb}°，求 ∠AOB。`,answer:`∠AOB＝${aob}°`,sig:`ao:${aob}`,verify:()=>aob+apb===180}}
+  if(kind==="quadSide"){const bc=rand(3,15),cd=rand(3,15),da=rand(3,15),ab=da+bc-cd;if(ab<=0||ab>=bc+cd+da)return null;return{expr:`四邊形 ABCD 的四邊分別與圓 O 相切。若 BC＝${bc}、CD＝${cd}、DA＝${da}，求 AB 的長。`,answer:`AB＝${ab}`,sig:`qs:${bc}:${cd}:${da}`,verify:()=>ab+cd===da+bc}}
+  if(kind==="triSides"){const x=rand(1,8),y=rand(1,8),z=rand(1,8),A=rand(30,100);return{expr:`△ABC 三邊切圓 O 於 P、Q、R（P 在 AB 上、Q 在 BC 上、R 在 AC 上），AP＝${x}、BQ＝${y}、CR＝${z}，求 AB、BC、AC；若 ∠A＝${A}°，求 ∠POR。`,answer:`AB＝${x+y}、BC＝${y+z}、AC＝${x+z}；∠POR＝${180-A}°`,sig:`ts:${x}:${y}:${z}:${A}`,verify:()=>(x+y)+(y+z)+(x+z)===2*(x+y+z)&&180-A+A===180}}
+  if(kind==="triSeg"){let a,b,c;do{a=rand(4,15);b=rand(4,15);c=rand(4,15)}while(a+b<=c||b+c<=a||a+c<=b||(a+c-b)%2);const ad=(a+c-b)/2;// AB＝a、BC＝b、AC＝c，D 在 AB 上：AD＝(AB＋AC−BC)/2
+   return{expr:`△ABC 的三邊 AB、BC、AC 分別切圓 O 於 D、E、F。若 AB＝${a}、BC＝${b}、AC＝${c}，求 AD 的長。`,answer:`AD＝${ad}`,sig:`tg:${a}:${b}:${c}`,verify:()=>{const bd=a-ad,ce=b-bd,af=c-ce;return af===ad}}}
+  if(kind==="triAngle"){const A=rand(30,100),B=rand(30,100);if(A+B>=160)return null;const C=180-A-B;return{expr:`圓 O 是 △ABC 的內切圓，切 AB、BC、CA 於 P、Q、R。若 ∠A＝${A}°、∠B＝${B}°，求 ∠POR 與 ∠QOR。`,answer:`∠POR＝${180-A}°，∠QOR＝${180-C}°`,sig:`ta:${A}:${B}`,verify:()=>(180-A)+(180-B)+(180-C)===360}}
+  if(kind==="quadX"){const x=rand(2,9),ab=rand(5,20),bc=rand(3,15),cdc=rand(1,9),da=ab+x+cdc-bc;if(da<=0||da>30)return null;// AB＋CD＝BC＋DA ⇒ ab＋x＋cdc＝bc＋da
+   return{expr:`圓外切四邊形 ABCD 中，AB＝${ab}、BC＝${bc}、CD＝x＋${cdc}、DA＝${da}，求 x 與四邊形的周長。`,answer:`x＝${x}；周長 ${ab+bc+x+cdc+da}`,sig:`qx:${x}:${ab}:${bc}:${cdc}`,verify:()=>ab+(x+cdc)===bc+da}}
+  const aob=rand(50,130),cod=180-aob;return{expr:`圓 O 為四邊形 ABCD 的內切圓。若 ∠AOB＝${aob}°，求 ∠COD。`,answer:`∠COD＝${cod}°`,sig:`qa:${aob}`,verify:()=>aob+cod===180};
+ });
+
+ // ⑥ 弦心距
+ const chord=unit("chord","弦心距","過圓心且垂直弦的線段平分此弦：(弦／2)²＋弦心距²＝半徑²；同圓中弦愈長，弦心距愈短。",["integer"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["dist","radius","chordLen"]:L===1?["twoChords","parallel","ringTangent"]:["parallel","bisect","shortLong"]);
+  const trip=()=>{const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),k=rand(1,3);return[p*k,q*k,r*k]};
+  const chordFig=(half,d,r)=>{const s=55/r,cx=100,cy=80,y=cy-d*s,x=half*s;return GEO.svg(W,H,circ(cx,cy,55)+Ln([cx-x,y],[cx+x,y])+Ln([cx,cy],[cx,y])+GEO.right([cx,y],[cx,cy],[cx+x,y])+Dt([cx,cy])+Dt([cx,y])+T([cx,cy+14],"O",{i:true})+T([cx-x-9,y+4],"A",{i:true})+T([cx+x+9,y+4],"B",{i:true})+T([cx+9,y-4],"M",{i:true}))};
+  if(kind==="dist"){const[a,b,c]=trip(),half=Math.random()<.5?a:b,dd=half===a?b:a;return{expr:`${chordFig(half,dd,c)}如圖，圓 O 的半徑是 ${c} 公分，弦 AB 長 ${2*half} 公分，OM⊥AB，求弦心距 OM。`,answer:`OM＝${dd} 公分`,sig:`d:${half}:${c}`,verify:()=>half*half+dd*dd===c*c}}
+  if(kind==="radius"){const[a,b,c]=trip(),half=Math.random()<.5?a:b,dd=half===a?b:a;return{expr:`${chordFig(half,dd,c)}如圖，直線 AB 與圓 O 交於 A、B 兩點，圓心 O 到 AB 的距離 OM＝${dd}，AB＝${2*half}，求圓 O 的半徑。`,answer:`${c}`,sig:`r:${half}:${dd}`,verify:()=>half*half+dd*dd===c*c}}
+  if(kind==="chordLen"){const[a,b,c]=trip(),half=Math.random()<.5?a:b,dd=half===a?b:a;return{expr:`${chordFig(half,dd,c)}如圖，圓 O 的半徑為 ${c} 公分，弦 AB 的弦心距 OM＝${dd} 公分，求 AB 的長。`,answer:`AB＝${2*half} 公分`,sig:`c:${dd}:${c}`,verify:()=>half*half+dd*dd===c*c}}
+  const TS=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]],CS=[5,10,13,15,17,20,25,26,29,30,34,35,39,40,45,50,51,52,55,58,60,65],scal=c=>TS.filter(t=>c%t[2]===0).flatMap(t=>{const m=c/t[2];return[[t[0]*m,t[1]*m],[t[1]*m,t[0]*m]]});
+  if(kind==="twoChords"){const c=pick(CS),ps=scal(c);if(ps.length<2)return null;const[[a,b],[half2,d2]]=shuffle(ps).slice(0,2);if(a===half2)return null;
+   return{expr:`圓 O 中，AB＝${2*a} 公分、CD＝${2*half2} 公分，AB 的弦心距 OM＝${b} 公分，求 CD 的弦心距 ON 的長。`,answer:`ON＝${d2} 公分`,sig:`tw:${a}:${b}:${half2}`,verify:()=>a*a+b*b===c*c&&half2*half2+d2*d2===c*c}}
+  if(kind==="parallel"){const c=pick(CS),ts=scal(c);if(ts.length<2)return null;const[p1,p2]=shuffle(ts).slice(0,2);if(p1[0]===p2[0])return null;
+   return{expr:`一圓的直徑為 ${2*c} 公分，圓上兩弦 AB 與 CD 互相平行，AB＝${2*p1[0]} 公分、CD＝${2*p2[0]} 公分，求 AB 與 CD 的距離（兩種情形）。`,answer:`${Math.abs(p1[1]-p2[1])} 公分或 ${p1[1]+p2[1]} 公分`,sig:`pa:${c}:${p1}:${p2}`,verify:()=>p1[0]*p1[0]+p1[1]*p1[1]===c*c&&p2[0]*p2[0]+p2[1]*p2[1]===c*c}}
+  if(kind==="ringTangent"){const half=rand(2,25),a=R(half*half);return{expr:`兩個同心圓，大圓的弦 AB 切小圓於 P 點。若 AB＝${2*half}，求兩圓之間環形區域的面積。`,answer:form({pi:a}),sig:`rt:${half}`,verify:()=>{const rr=rand(1,5),RR=Math.sqrt(rr*rr+half*half);return Math.abs(Math.PI*(RR*RR-rr*rr)-val({pi:a}))<1e-9}}}
+  if(kind==="bisect"){const[a,b,c]=trip(),half=Math.random()<.5?a:b,dd=half===a?b:a,am=c-dd;// 直徑 AB 平分弦 CD 於 M：AM＝r−d
+   return{expr:`圓 O 的直徑 AB 平分弦 CD 於 M 點，且 CD＝${2*half} 公分、AM＝${am} 公分（A 為較近 M 的端點），求 AB 的長。`,answer:`AB＝${2*c} 公分`,sig:`bi:${half}:${am}`,verify:()=>(c-am)*(c-am)+half*half===c*c}}
+  const c=rand(4,15),d=rand(1,c-1),n=c*c-d*d,{a,b}=radP(n),shortest=b===1?String(2*a):radS(4*n),tot=b===1?String(2*a+2*c):`${radS(4*n)}＋${2*c}`;
+  return{expr:`直徑 ${2*c} 公分的圓內有一點 P 與圓心相距 ${d} 公分，求過 P 點最短的弦與最長的弦的長，以及兩弦長之和。`,answer:`最短 ${shortest}，最長 ${2*c}；和 ${tot}`,sig:`sl:${c}:${d}`,verify:()=>{const q=radP(4*n);return Math.abs(2*Math.sqrt(c*c-d*d)-q.a*Math.sqrt(q.b))<1e-9}};
+ });
+
+ return{title:"圓：扇形、切線與弦心距",symbol:"◯",subtitle:"弧長與扇形面積・弓形環形與部分面積・點線圓的位置・切線與半徑・切線長性質・弦心距",instruction:"含 π 的答案保留 π；根式化為最簡；圖為示意，以題目給的數值為準。",modes:["integer","fraction"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：扇形面積與周長、由弧長求面積、環形與正方形內的圓、點與直線的位置、切線長、切線夾角與外切四邊形、弦心距三量互求。",advanced:"進階：由周長反求圓心角、同心圓的弧、弓形、長方形內的扇形、坐標點與圓、最長弦、AC＝AO−r、30° 切線、最遠最近距離、內切圓三邊、兩弦弦心距、平行弦兩解、切小圓的弦。",challenge:"挑戰：兩扇形之間、由環形比求半徑比、正方形內兩半圓、兩圓相交區域、45° 切線、內切圓半徑與坐標切線長、內切圓的角與含 x 的外切四邊形、直徑平分弦、過一點最短與最長的弦。"},
+  units:[sector,segment,position,tangent,tangentLen,chord],presets:{basic:{sector:3,segment:2,position:2,tangent:2,tangentLen:2,chord:3},advanced:{sector:3,segment:2,position:2,tangent:2,tangentLen:2,chord:3},challenge:{sector:2,segment:2,position:2,tangent:3,tangentLen:2,chord:3}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

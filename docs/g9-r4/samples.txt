@@ -1,0 +1,63 @@
+[basic/sector/integer]  示意圖 180° O A B 如圖，扇形 OAB 的半徑為 4，圓心角 180°，求扇形的面積與周長（保留 π）。  ⇒ 面積 8π；周長 8＋4π
+[basic/sector/integer] 已知一扇形的半徑為 17 公分，所對的弧長為 8 公分，求此扇形的面積。  ⇒ 68 平方公分
+[basic/sector/integer] 已知一圓的面積為 198 平方公分，求 240° 圓心角所決定的扇形面積。  ⇒ 132 平方公分
+[basic/sector/fraction]  示意圖 240° O A B 如圖，扇形 OAB 的半徑為 10，圓心角 240°，求扇形面積（保留 π）。  ⇒ (200π/3)
+[basic/sector/fraction] 已知一扇形的半徑為 17 公分，所對的弧長為 7 公分，求此扇形的面積。  ⇒ (119/2) 平方公分
+[basic/sector/fraction]  示意圖 135° O A B 如圖，扇形 OAB 的半徑為 11，圓心角 135°，求扇形的面積與周長（保留 π）。  ⇒ 面積 (363π/8)；周長 22＋(33π/4)
+[basic/segment/integer]  示意圖 如圖，正方形的邊長為 4，內有一個與四邊相切的圓，求正方形內圓外部分的面積。  ⇒ 16−4π
+[basic/segment/integer] 兩同心圓的半徑分別為 18 公分與 10 公分，求兩圓之間環形區域的面積（保留 π）。  ⇒ 224π 平方公分
+[basic/segment/integer]  示意圖 如圖，正方形的邊長為 6，四個角各有一個半徑為 3 的四分之一圓，求中間斜線區域的面積與周長。  ⇒ 面積 36−9π；周長 6π
+[basic/position/integer] 一圓的直徑為 24 公分，A 點與圓心相距 12 公分、B 點與圓心相距 8 公分、C 點與圓心相距 17 公分，判斷 A、B、C 三點各在圓內、圓上或圓外。  ⇒ A 在圓上；B 在圓內；C 在圓外
+[basic/position/integer] 一圓的直徑為 18 公分，A 點與圓心相距 15 公分、B 點與圓心相距 5 公分、C 點與圓心相距 9 公分，判斷 A、B、C 三點各在圓內、圓上或圓外。  ⇒ A 在圓外；B 在圓內；C 在圓上
+[basic/position/integer] 一圓的半徑為 6 公分，下列何者不可能是此圓的弦長？(A) 10 公分 (B) 12 公分 (C) 16 公分 (D) 10 公分  ⇒ (C)（弦長不能超過直徑 12）
+[basic/tangent/integer]  示意圖 O A P 如圖，直線 AP 切圓 O 於 A，圓的半徑為 5，OP＝6，求 AP 的長（化為最簡根式）。  ⇒ AP＝√11
+[basic/tangent/integer]  示意圖 O A P 如圖，直線 AP 切圓 O 於 A，圓的半徑為 4，OP＝7，求 AP 的長（化為最簡根式）。  ⇒ AP＝√33
+[basic/tangent/integer] AB 切圓 O 於 B，AO 交圓 O 於 C。若 AB＝48、OC＝20，求 AC 的長。  ⇒ AC＝32
+[basic/tangentLen/integer] 四邊形 ABCD 的四邊分別與圓 O 相切。若 BC＝3、CD＝5、DA＝6，求 AB 的長。  ⇒ AB＝4
+[basic/tangentLen/integer] 直線 PA、PB 切圓 O 於 A、B 兩點，且 ∠AOB＝142°，求 ∠APB。  ⇒ ∠APB＝38°
+[basic/tangentLen/integer] 四邊形 ABCD 的四邊分別與圓 O 相切。若 BC＝4、CD＝14、DA＝11，求 AB 的長。  ⇒ AB＝1
+[basic/chord/integer]  示意圖 O A B M 如圖，圓 O 的半徑是 29 公分，弦 AB 長 40 公分，OM⊥AB，求弦心距 OM。  ⇒ OM＝21 公分
+[basic/chord/integer]  示意圖 O A B M 如圖，圓 O 的半徑是 5 公分，弦 AB 長 6 公分，OM⊥AB，求弦心距 OM。  ⇒ OM＝4 公分
+[basic/chord/integer]  示意圖 O A B M 如圖，圓 O 的半徑為 17 公分，弦 AB 的弦心距 OM＝8 公分，求 AB 的長。  ⇒ AB＝30 公分
+[advanced/sector/integer] 一圓 240° 的圓心角所對的弧長為 (28π/3)，求此圓的周長。  ⇒ 14π
+[advanced/sector/integer] 已知一扇形的半徑為 17 公分，所對的弧長為 4 公分，求此扇形的面積。  ⇒ 34 平方公分
+[advanced/sector/integer] 已知一扇形的半徑為 14 公分，所對的弧長為 25 公分，求此扇形的面積。  ⇒ 175 平方公分
+[advanced/sector/fraction] 一個扇形紙板的周長為 18＋(9π/2) 公分，求它的圓心角與面積。  ⇒ 圓心角 90°；面積 (81π/4) 平方公分
+[advanced/sector/fraction] 一個扇形紙板的周長為 10＋(15π/4) 公分，求它的圓心角與面積。  ⇒ 圓心角 135°；面積 (75π/8) 平方公分
+[advanced/sector/fraction] 一圓的半徑為 8 公分，求面積為 (16π/3) 平方公分的扇形的圓心角。  ⇒ 30°
+[advanced/segment/integer]  示意圖 60° O A B 如圖，圓 O 的半徑為 7，∠AOB＝60°，求弦 AB 與弧 AB 所圍成的弓形的面積與周長。  ⇒ 面積 (49π/6)−(49√3/4)；周長 7＋(7π/3)
+[advanced/segment/integer]  示意圖 120° O A B 如圖，圓 O 的半徑為 6，∠AOB＝120°，求弦 AB 與弧 AB 所圍成的弓形的面積與周長。  ⇒ 面積 12π−9√3；周長 4π＋6√3
+[advanced/segment/integer]  示意圖 90° O A B 如圖，圓 O 的半徑為 2，∠AOB＝90°，求弦 AB 與弧 AB 所圍成的弓形的面積與周長。  ⇒ 面積 π−2；周長 π＋2√2
+[advanced/position/integer] 一圓的半徑為 3 公分，下列何者不可能是此圓的弦長？(A) 1 公分 (B) 6 公分 (C) 11 公分 (D) 1 公分  ⇒ (C)（弦長不能超過直徑 6）
+[advanced/position/integer] 一圓的半徑為 10 公分，下列何者不可能是此圓的弦長？(A) 17 公分 (B) 20 公分 (C) 24 公分 (D) 13 公分  ⇒ (C)（弦長不能超過直徑 20）
+[advanced/position/integer] 圓 O 的半徑為 11 公分，圓心 O 到三條直線 L₁、L₂、L₃ 的距離分別為 11、3、19 公分，這三條直線分別和圓 O 有幾個交點？  ⇒ L₁：1 個；L₂：2 個；L₃：0 個
+[advanced/tangent/integer] PA 切圓 O 於 A，PA＝60，圓 O 的半徑為 25，求 P 到圓 O 上的點的最短距離與最長距離。  ⇒ 最短 40，最長 90
+[advanced/tangent/integer] PA 切圓 O 於 A，∠P＝30°，OP＝26，求 OA 與 AP。  ⇒ OA＝13，AP＝13√3
+[advanced/tangent/integer] PA 切圓 O 於 A，PA＝4，圓 O 的半徑為 3，求 P 到圓 O 上的點的最短距離與最長距離。  ⇒ 最短 2，最長 8
+[advanced/tangentLen/integer] 四邊形 ABCD 的四邊分別與圓 O 相切。若 BC＝13、CD＝14、DA＝4，求 AB 的長。  ⇒ AB＝3
+[advanced/tangentLen/integer] △ABC 三邊切圓 O 於 P、Q、R（P 在 AB 上、Q 在 BC 上、R 在 AC 上），AP＝4、BQ＝7、CR＝5，求 AB、BC、AC；若 ∠A＝86°，求 ∠POR。  ⇒ AB＝11、BC＝12、AC＝9；∠POR＝94°
+[advanced/tangentLen/integer] △ABC 的三邊 AB、BC、AC 分別切圓 O 於 D、E、F。若 AB＝14、BC＝9、AC＝15，求 AD 的長。  ⇒ AD＝10
+[advanced/chord/integer] 圓 O 中，AB＝48 公分、CD＝36 公分，AB 的弦心距 OM＝18 公分，求 CD 的弦心距 ON 的長。  ⇒ ON＝24 公分
+[advanced/chord/integer] 一圓的直徑為 78 公分，圓上兩弦 AB 與 CD 互相平行，AB＝30 公分、CD＝72 公分，求 AB 與 CD 的距離（兩種情形）。  ⇒ 21 公分或 51 公分
+[advanced/chord/integer] 一圓的直徑為 34 公分，圓上兩弦 AB 與 CD 互相平行，AB＝16 公分、CD＝30 公分，求 AB 與 CD 的距離（兩種情形）。  ⇒ 7 公分或 23 公分
+[challenge/sector/integer] 一圓 45° 的圓心角所對的弧長為 2π，求此圓的周長。  ⇒ 16π
+[challenge/sector/integer] 一圓的半徑為 4 公分，求面積為 (20π/3) 平方公分的扇形的圓心角。  ⇒ 150°
+[challenge/sector/integer]  示意圖 O C A D B 如圖，兩同心圓的半徑分別為 2 公分與 10 公分。若弧 AB 的長是 (4π/3) 公分，求 ∠AOB 的度數、弧 CD 的長與斜線部分（兩弧之間）的面積。  ⇒ ∠AOB＝120°；弧 CD＝(20π/3) 公分；面積 32π 平方公分
+[challenge/sector/fraction] 兩個同圓心的扇形，半徑分別為 6 和 12，圓心角都是 45°，求兩扇形之間（環狀部分）的周長與面積。  ⇒ 周長 12＋(9π/2)；面積 (27π/2)
+[challenge/sector/fraction] 一個扇形紙板的周長為 10＋(35π/6) 公分，求它的圓心角與面積。  ⇒ 圓心角 210°；面積 (175π/12) 平方公分
+[challenge/sector/fraction] 一個扇形紙板的周長為 10＋(25π/6) 公分，求它的圓心角與面積。  ⇒ 圓心角 150°；面積 (125π/12) 平方公分
+[challenge/segment/integer]  示意圖 B C A D 如圖，正方形 ABCD 的邊長為 5，分別以 B、C 為圓心、邊長為半徑畫四分之一圓，求兩弧夾出的斜線區域的面積與周長。  ⇒ 面積 (25π/2)−25；周長 5π
+[challenge/segment/integer]  示意圖 90° O A B 如圖，圓 O 的半徑為 11，∠AOB＝90°，求弦 AB 與弧 AB 所圍成的弓形的面積與周長。  ⇒ 面積 (121π/4)−(121/2)；周長 (11π/2)＋11√2
+[challenge/segment/integer] 兩個同心圓中，環形面積是小圓面積的 63 倍，求大、小兩圓的半徑比。  ⇒ 8：1
+[challenge/position/integer] 平面上圓 O₁、圓 O₂ 相交於兩點，半徑分別為 6、5。若一點 A 與 O₁、O₂ 的距離分別為 4、5，則 A 點在哪個區域？  ⇒ 只在圓 O₁ 內
+[challenge/position/integer] 已知圓 O 的半徑為 9，且圓心 O 是原點，判斷點（-5，6）在圓內、圓上或圓外。  ⇒ 圓內（OP＝√61）
+[challenge/position/integer] 平面上圓 O₁、圓 O₂ 相交於兩點，半徑分別為 4、3。若一點 A 與 O₁、O₂ 的距離分別為 6、2，則 A 點在哪個區域？  ⇒ 只在圓 O₂ 內
+[challenge/tangent/integer] 圓心為原點、半徑為 2 的圓，P 點坐標為（4，9），PQ 為切線、Q 為切點，求 OP 與 PQ 的長。  ⇒ OP＝√97，PQ＝√93
+[challenge/tangent/integer] 圓心為原點、半徑為 5 的圓，P 點坐標為（8，8），PQ 為切線、Q 為切點，求 OP 與 PQ 的長。  ⇒ OP＝8√2，PQ＝√103
+[challenge/tangent/integer] PA 切圓 O 於 A，∠P＝45°，OP＝2，求 OA。  ⇒ OA＝√2
+[challenge/tangentLen/integer] 圓外切四邊形 ABCD 中，AB＝15、BC＝4、CD＝x＋5、DA＝23，求 x 與四邊形的周長。  ⇒ x＝7；周長 54
+[challenge/tangentLen/integer] 圓外切四邊形 ABCD 中，AB＝17、BC＝9、CD＝x＋2、DA＝14，求 x 與四邊形的周長。  ⇒ x＝4；周長 46
+[challenge/tangentLen/integer] 圓外切四邊形 ABCD 中，AB＝13、BC＝8、CD＝x＋7、DA＝21，求 x 與四邊形的周長。  ⇒ x＝9；周長 58
+[challenge/chord/integer] 圓 O 的直徑 AB 平分弦 CD 於 M 點，且 CD＝120 公分、AM＝24 公分（A 為較近 M 的端點），求 AB 的長。  ⇒ AB＝174 公分
+[challenge/chord/integer] 直徑 12 公分的圓內有一點 P 與圓心相距 5 公分，求過 P 點最短的弦與最長的弦的長，以及兩弦長之和。  ⇒ 最短 2√11，最長 12；和 2√11＋12
+[challenge/chord/integer] 直徑 18 公分的圓內有一點 P 與圓心相距 6 公分，求過 P 點最短的弦與最長的弦的長，以及兩弦長之和。  ⇒ 最短 6√5，最長 18；和 6√5＋18
