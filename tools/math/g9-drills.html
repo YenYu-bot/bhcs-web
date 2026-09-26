@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -598,7 +598,116 @@ function similarConfig(){
   units:[scale,sides,angles,judge,aa,area,measure],presets:{basic:{scale:2,sides:2,angles:2,judge:2,aa:2,area:2,measure:2},advanced:{scale:2,sides:2,angles:2,judge:2,aa:2,area:2,measure:2},challenge:{scale:2,sides:2,angles:1,judge:2,aa:2,area:3,measure:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig},CFG=CONFIGS[TOPIC_KEY]();
+function righttriConfig(){
+ /* 國三上 1-4(I)(IV)(V)、3-1(II) 直角三角形（2026-09-26，Claude）。題型取自百宏講義：直角三角形母子相似（比例中項）、畢氏定理的應用
+    （第三邊、三邊成等差、一股為質數的整數邊、m²−n²、2mn、m²＋n² 造邊）、30°-60°-90° 與 45°-45°-90° 特殊三角形、三角比
+    （sin、cos、tan、特別角、三角測量）。三角比為講義 1-4(V) 的內容，做成獨立單元，老師可不勾。
+    verify：母子相似用畢氏定理代回三個小直角三角形；特殊三角形與三角比用數值（Math.sqrt、Math.tan）比對；測量題用另一組比例式重算。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false}),D=(v,f)=>numHTML(v,"decimal"),pl=v=>v.n+"/"+v.d,num=v=>v.n/v.d;
+ const radP=n=>{let a=1,b=n;for(let p=2;p*p<=b;p++)while(b%(p*p)===0){a*=p;b/=p*p}return{a,b}},radS=n=>{if(!n)return"0";const{a,b}=radP(n);return b===1?String(a):(a===1?"":a)+`√${b}`};
+ const surd=(c,k)=>{if(!c.n)return"0";if(k===1)return S(c);const s=c.n<0?"−":"",n=Math.abs(c.n),top=(n===1?"":n)+`√${k}`;return c.d===1?s+top:s+fr(top,c.d)};
+ const plus=(a,c,k)=>{const l=a.n?S(a):"",r=surd(c,k);if(!c.n)return l||"0";if(!l)return r;return l+(c.n<0?"":"＋")+r}; // a＋c√k
+ const TRIP=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[9,40,41],[12,35,37]];
+ const W=230,H=150;
+ const fig=(pts,segs,rights=[],angs=[],w=W,h=H)=>{const names=Object.keys(pts),T=GEO.fit(names.map(n=>pts[n]),w,h,20),P={};names.forEach(n=>P[n]=T(pts[n]));const c=GEO.centroid(names.map(n=>P[n]));let b="";
+  segs.forEach(([p,q,o])=>b+=GEO.line(P[p],P[q],o||{}));rights.forEach(([v,p,q])=>b+=GEO.right(P[v],P[p],P[q]));angs.forEach(([v,p,q,l])=>b+=GEO.arc(P[v],P[p],P[q],l||""));
+  names.forEach(n=>b+=GEO.dot(P[n])+GEO.vlabel(P[n],c,n));return GEO.svg(w,h,b)};
+ const rtri=(a,b)=>({A:[0,b],B:[0,0],C:[a,0]}); // ∠B＝90°，BC＝a、AB＝b（僅供示意比例）
+
+ // ① 直角三角形母子相似
+ const altitude=unit("altitude","直角三角形母子相似","∠A＝90°、AD⊥BC：AB²＝BD·BC，AC²＝CD·BC，AD²＝BD·CD。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["abbd","bdcd","adbd"]:L===1?["bdcd","adbd","abbd"]:["abac","adbd","bdcd"]);
+  let AB,AC,BC,BD,CD,AD;
+  if(mode==="integer"){const t=pick([[3,4,5,12],[5,12,13,2],[8,15,17,1]]),k=rand(1,t[3]),[p,q,r]=t;AB=R(p*r*k);AC=R(q*r*k);BC=R(r*r*k);BD=R(p*p*k);CD=R(q*q*k);AD=R(p*q*k)}
+  else{const [p,q,r]=pick(TRIP.slice(0,4)),k=rand(1,3),a=p*k,b=q*k,c=r*k;AB=R(a);AC=R(b);BC=R(c);BD=R(a*a,c);CD=R(b*b,c);AD=R(a*b,c);if(BD.d===1)return null}
+  if(Math.random()<.5){[AB,AC]=[AC,AB];[BD,CD]=[CD,BD]}
+  const bd=num(BD),ad=num(AD),bc=num(BC),Bp=[0,0],Cp=[bc,0],Ap=[bd,ad],Dp=[bd,0],img=fig({A:Ap,B:Bp,C:Cp,D:Dp},[["A","B"],["B","C"],["C","A"],["A","D"]],[["A","B","C"],["D","A","C"]]);
+  const chk=()=>eq(mul(AB,AB),mul(BD,BC))&&eq(mul(AC,AC),mul(CD,BC))&&eq(mul(AD,AD),mul(BD,CD))&&eq(add(mul(AB,AB),mul(AC,AC)),mul(BC,BC));
+  const sg=`${kind}:${pl(AB)}:${pl(AC)}`;
+  if(kind==="abbd")return{expr:`${img}如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AB＝${S(AB)}、BD＝${S(BD)}，求 CD 與 AC。`,answer:`CD＝${S(CD)}，AC＝${S(AC)}`,sig:sg,verify:chk};
+  if(kind==="bdcd")return{expr:`${img}如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，BD＝${S(BD)}、CD＝${S(CD)}，求 AD、AB、AC。`,answer:`AD＝${S(AD)}，AB＝${S(AB)}，AC＝${S(AC)}`,sig:sg,verify:chk};
+  if(kind==="adbd")return{expr:`${img}如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝${S(AD)}、BD＝${S(BD)}，求 CD 與 BC。`,answer:`CD＝${S(CD)}，BC＝${S(BC)}`,sig:sg,verify:chk};
+  return{expr:`${img}如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AB＝${S(AB)}、AC＝${S(AC)}，求 BC、AD、BD。`,answer:`BC＝${S(BC)}，AD＝${S(AD)}，BD＝${S(BD)}`,sig:sg,verify:chk};
+ });
+
+ // ② 畢氏定理的應用
+ const pythagoras=unit("pythagoras","畢氏定理的應用","兩股平方和＝斜邊平方；三邊成等差的直角三角形三邊比為 3：4：5；m²−n²、2mn、m²＋n² 可作直角三角形三邊。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["third","radical"]:L===1?["radical","arith","mn"]:["prime","arith","mn"]);
+  if(kind==="third"){const [p,q,r]=pick(TRIP),k=rand(1,4),a=p*k,b=q*k,c=r*k,ask=pick(["c","a"]);const img=fig(rtri(a,b),[["A","B"],["B","C"],["C","A"]],[["B","A","C"]]);
+   return ask==="c"?{expr:`${img}如圖，直角三角形 ABC 中 ∠B＝90°，AB＝${b}、BC＝${a}，求 AC。`,answer:`AC＝${c}`,sig:`t:${a}:${b}`,verify:()=>a*a+b*b===c*c}:{expr:`${img}如圖，直角三角形 ABC 中 ∠B＝90°，AC＝${c}、AB＝${b}，求 BC。`,answer:`BC＝${a}`,sig:`ta:${c}:${b}`,verify:()=>a*a+b*b===c*c}}
+  if(kind==="radical"){const a=rand(1,9),b=rand(1,9),n=a*a+b*b,{a:s,b:t}=radP(n);if(t===1)return null;const hyp=Math.random()<.5;if(hyp){const img=fig(rtri(a,b),[["A","B"],["B","C"],["C","A"]],[["B","A","C"]]);return{expr:`${img}如圖，∠B＝90°，AB＝${b}、BC＝${a}，求 AC（化為最簡根式）。`,answer:`AC＝${radS(n)}`,sig:`r:${a}:${b}`,verify:()=>Math.abs(s*Math.sqrt(t)-Math.hypot(a,b))<1e-9}}
+   const c=rand(a+1,15),m=c*c-a*a,{a:s2,b:t2}=radP(m);if(t2===1)return null;const img=fig(rtri(a,Math.sqrt(m)),[["A","B"],["B","C"],["C","A"]],[["B","A","C"]]);return{expr:`${img}如圖，∠B＝90°，AC＝${c}、BC＝${a}，求 AB（化為最簡根式）。`,answer:`AB＝${radS(m)}`,sig:`rl:${a}:${c}`,verify:()=>Math.abs(s2*Math.sqrt(t2)-Math.sqrt(c*c-a*a))<1e-9}}
+  if(kind==="arith"){const d=rand(1,9),a=3*d,b=4*d,c=5*d,ask=pick(["sides","ratio"]);return ask==="sides"?{expr:`直角三角形的三邊長成等差數列，且最短邊為 ${a}，求另外兩邊。`,answer:`${b}、${c}`,sig:`ar:${d}`,verify:()=>a*a+b*b===c*c&&b-a===c-b}:{expr:`直角三角形的三邊長分別為 a、b、c，且 c−b＝b−a＝${d}＞0，求 a、b、c 與（c−a）／（c＋a）的值。`,answer:`a＝${a}、b＝${b}、c＝${c}；（c−a）／（c＋a）＝${S(R(c-a,c+a))}`,sig:`aq:${d}`,verify:()=>a*a+b*b===c*c&&eq(R(c-a,c+a),R(1,4))}}
+  if(kind==="mn"){const n=rand(1,5),m=rand(n+1,9),a=m*m-n*n,b=2*m*n,c=m*m+n*n;return{expr:`m＝${m}、n＝${n}，以 m²−n²、2mn、m²＋n² 為三邊長作三角形，求三邊長，並說明它是不是直角三角形。`,answer:`${a}、${b}、${c}；是（${a}²＋${b}²＝${c}²）`,sig:`mn:${m}:${n}`,verify:()=>a*a+b*b===c*c}}
+  const primes=[3,5,7,11,13,17,19,23,29,31],n=pick(primes),b=(n*n-1)/2,c=(n*n+1)/2,area=n*b/2;
+  return{expr:`已知直角三角形的一股長為 ${n}，且另外兩邊長都是整數，求此直角三角形的面積。`,answer:String(area),sig:`pr:${n}`,verify:()=>n*n+b*b===c*c&&area*2===n*b&&(c+b)===n*n&&c-b===1};
+ });
+
+ // ③ 特殊直角三角形
+ const special=unit("special","特殊直角三角形","30°-60°-90°：對邊比 1：√3：2；45°-45°-90°：1：1：√2；37°-53°-90° 近似 3：4：5。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["t30","t45","t37"]:L===1?["t30","iso","elev"]:["elev","mixed","iso"]);
+  const SQ3=Math.sqrt(3),SQ2=Math.SQRT2;
+  if(kind==="t30"){const x=rand(1,12),given=pick(["short","hyp","long"]),sh=R(x),lg=R(x),hy=R(2*x);// 短邊 x、長邊 x√3、斜邊 2x
+   const img=fig({A:[0,SQ3*x],B:[0,0],C:[x,0]},[["A","B"],["B","C"],["C","A"]],[["B","A","C"]],[["A","B","C","30°"],["C","A","B","60°"]]);
+   if(given==="short")return{expr:`${img}如圖，∠B＝90°、∠A＝30°、∠C＝60°，BC＝${x}，求 AB 與 AC。`,answer:`AB＝${surd(sh,3)}，AC＝${2*x}`,sig:`s:${x}`,verify:()=>Math.abs(Math.tan(Math.PI/3)*x-x*SQ3)<1e-9&&Math.hypot(x,x*SQ3)-2*x<1e-9};
+   if(given==="hyp")return{expr:`${img}如圖，∠B＝90°、∠A＝30°、∠C＝60°，AC＝${2*x}，求 BC 與 AB。`,answer:`BC＝${x}，AB＝${surd(sh,3)}`,sig:`h:${x}`,verify:()=>Math.abs(2*x*Math.sin(Math.PI/6)-x)<1e-9&&Math.abs(2*x*Math.cos(Math.PI/6)-x*SQ3)<1e-9};
+   const lgv=R(x),c=R(x,3),hyc=R(2*x,3);return{expr:`${img}如圖，∠B＝90°、∠A＝30°、∠C＝60°，AB＝${surd(lgv,3)}，求 BC 與 AC。`,answer:`BC＝${x}，AC＝${2*x}`,sig:`l:${x}`,verify:()=>Math.abs(x*SQ3/Math.tan(Math.PI/3)-x)<1e-9}}
+  if(kind==="t45"){const x=rand(1,12),hyp=Math.random()<.5,img=fig({A:[0,x],B:[0,0],C:[x,0]},[["A","B"],["B","C"],["C","A"]],[["B","A","C"]],[["A","B","C","45°"],["C","A","B","45°"]]);
+   return hyp?{expr:`${img}如圖，∠B＝90°、∠A＝∠C＝45°，AC＝${surd(R(x),2)}，求 AB 與 BC。`,answer:`AB＝BC＝${x}`,sig:`f:${x}`,verify:()=>Math.abs(Math.hypot(x,x)-x*SQ2)<1e-9}:{expr:`${img}如圖，∠B＝90°、∠A＝∠C＝45°，AB＝${x}，求 BC 與 AC。`,answer:`BC＝${x}，AC＝${surd(R(x),2)}`,sig:`g:${x}`,verify:()=>Math.abs(Math.hypot(x,x)-x*SQ2)<1e-9}}
+  if(kind==="t37"){const k=rand(1,8),a=3*k,b=4*k,c=5*k,given=pick(["hyp","short"]),img=fig({A:[0,b],B:[0,0],C:[a,0]},[["A","B"],["B","C"],["C","A"]],[["B","A","C"]],[["A","B","C","37°"],["C","A","B","53°"]]);
+   return given==="hyp"?{expr:`${img}已知 37°-53°-90° 的直角三角形三邊比約為 3：4：5。如圖，∠B＝90°、∠A＝37°，AC＝${c}，求 BC 與 AB。`,answer:`BC＝${a}，AB＝${b}`,sig:`n:${k}`,verify:()=>a*a+b*b===c*c&&Math.abs(Math.atan2(a,b)*180/Math.PI-37)<0.2}:{expr:`${img}已知 37°-53°-90° 的直角三角形三邊比約為 3：4：5。如圖，∠B＝90°、∠A＝37°，BC＝${a}，求 AB 與 AC。`,answer:`AB＝${b}，AC＝${c}`,sig:`m:${k}`,verify:()=>a*a+b*b===c*c}}
+  if(kind==="iso"){const l=rand(2,12),apex=pick([120,30,150,60]),k=apex===60||apex===120?3:1;// 面積＝½·l·l·sin(apex)
+   const sinv=Math.sin(apex*Math.PI/180),ans=apex===30||apex===150?S(R(l*l,4)):surd(R(l*l,4),3);
+   return{expr:`等腰三角形 ABC 中，AB＝AC＝${l}，頂角 ∠A＝${apex}°，求 △ABC 的面積。`,answer:ans,sig:`i:${l}:${apex}`,verify:()=>Math.abs(l*l*sinv/2-l*l/4*(k===3?SQ3:1))<1e-9}}
+  if(kind==="elev"){const d=rand(1,12)*10,two=Math.random()<.5;// 仰角 30°→60°：高＝(d/2)√3；15°→30°：高＝d/2
+   if(two)return{expr:`某生在 A 點測得大廈頂 B 的仰角為 30°，沿水平地面向大廈走 ${d} 公尺到 D 點，測得仰角為 60°，求大廈的高 BC（C 為樓底）。`,answer:`${surd(R(d,2),3)} 公尺`,sig:`e:${d}`,verify:()=>{const h=d/2*SQ3;return Math.abs(h/Math.tan(Math.PI/6)-h/Math.tan(Math.PI/3)-d)<1e-9}};
+   return{expr:`要測量塔 AB 的高度，在平直的路上向塔前進：在 C 處測得塔頂仰角 ∠BCA＝15°，前進 ${d} 公尺到 D 處測得 ∠BDA＝30°，求 AB。`,answer:`${d/2} 公尺`,sig:`e2:${d}`,verify:()=>{const h=d/2;return Math.abs(h/Math.tan(Math.PI/12)-h/Math.tan(Math.PI/6)-d)<1e-9}}}
+  // mixed：∠B＝45°、∠C＝30°，AC 已知（高 AH＝AC/2）
+  const ac=rand(1,8)*2,h=ac/2,bh=h,ch=h*SQ3,bc=plus(R(h),R(h),3);
+  const Bq=[0,0],Cq=[bh+ch,0],Aq=[bh,h];const img=fig({A:Aq,B:Bq,C:Cq,H:[bh,0]},[["A","B"],["B","C"],["C","A"],["A","H"]],[["H","A","C"]],[["B","A","C","45°"],["C","A","B","30°"]]);
+  return{expr:`${img}如圖，△ABC 中 ∠B＝45°、∠C＝30°，AC＝${ac}，AH⊥BC。求 BC 的長與 △ABC 的面積。`,answer:`BC＝${bc}；面積 ${plus(R(h*h,2),R(h*h,2),3)}`,sig:`x:${ac}`,verify:()=>Math.abs((bh+ch)*h/2-(h*h/2+h*h/2*SQ3))<1e-9&&Math.abs(ac*Math.sin(Math.PI/6)-h)<1e-9};
+ });
+
+ // ④ 三角比
+ const trig=unit("trig","三角比（sin、cos、tan）","sin＝對邊／斜邊，cos＝鄰邊／斜邊，tan＝對邊／鄰邊；sinθ＝cos(90°−θ)。",["fraction","decimal"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=mode==="decimal"?pick(L===0?["measure"]:L===1?["measure","area","two"]:["two","area","bend"]):pick(L===0?["sides","fromsin","fromtan"]:L===1?["fromsin","fromtan","special"]:["special","quad","ratio"]);
+  if(kind==="sides"){const [p,q,r]=pick(TRIP),k=rand(1,3),a=p*k,b=q*k,c=r*k,img=fig(rtri(a,b),[["A","B"],["B","C"],["C","A"]],[["B","A","C"]]);// ∠B 直角，BC＝a 對 A、AB＝b 對 C
+   return{expr:`${img}如圖，△ABC 中 ∠B＝90°，AB＝${b}、BC＝${a}、AC＝${c}，求 sin A、cos A、tan A 與 sin C、cos C、tan C。`,answer:`sin A＝${S(R(a,c))}，cos A＝${S(R(b,c))}，tan A＝${S(R(a,b))}；sin C＝${S(R(b,c))}，cos C＝${S(R(a,c))}，tan C＝${S(R(b,a))}`,sig:`s:${a}:${b}`,verify:()=>{const A=Math.atan2(a,b);return Math.abs(Math.sin(A)-a/c)<1e-9&&Math.abs(Math.cos(A)-b/c)<1e-9&&a*a+b*b===c*c}}}
+  if(kind==="fromsin"){const [p,q,r]=pick(TRIP),k=rand(1,3),a=p*k,b=q*k,c=r*k;// ∠C＝90°，BC＝a、AC＝b、AB＝c；sin A＝a/c
+   return{expr:`△ABC 中 ∠C＝90°，AC＝${b}，且 sin A＝${S(R(p,r))}，求 cos A、tan B 與 △ABC 的面積。`,answer:`cos A＝${S(R(q,r))}，tan B＝${S(R(q,p))}，面積 ${S(R(a*b,2))}`,sig:`fs:${p}${q}:${k}`,verify:()=>a*a+b*b===c*c&&eq(R(a,c),R(p,r))&&eq(R(b,c),R(q,r))}}
+  if(kind==="fromtan"){const [p,q,r]=pick(TRIP),k=rand(1,3),a=p*k,b=q*k,c=r*k;return{expr:`△ABC 中 ∠C＝90°，tan A＝${S(R(p,q))}，AC＝${b}，求 AB、cos A 與 sin B。`,answer:`AB＝${c}，cos A＝${S(R(q,r))}，sin B＝${S(R(q,r))}`,sig:`ft:${p}${q}:${k}`,verify:()=>a*a+b*b===c*c&&eq(R(a,b),R(p,q))}}
+  if(kind==="special"){// sin²60＋cos²60−tan²30 等；值以 30°、45°、60° 組合
+   const T={30:{sin:[R(1,2),1],cos:[R(1,2),3],tan:[R(1,3),3]},45:{sin:[R(1,2),2],cos:[R(1,2),2],tan:[R(1),1]},60:{sin:[R(1,2),3],cos:[R(1,2),1],tan:[R(1),3]}};
+   const terms=[];for(let i=0;i<3;i++)terms.push({f:pick(["sin","cos","tan"]),a:pick([30,45,60]),sq:Math.random()<.5,sg:i===0?1:pick([1,-1])});
+   // 值：平方項為有理數；非平方項含根式，把同根式合併
+   let rat=R(0),co={2:R(0),3:R(0)};for(const t of terms){const[c,k]=T[t.a][t.f];if(t.sq){rat=add(rat,mul(R(t.sg),mul(mul(c,c),R(k))))}else if(k===1)rat=add(rat,mul(R(t.sg),c));else co[k]=add(co[k],mul(R(t.sg),c))}
+   const partS=[S(rat)].concat([2,3].filter(k=>co[k].n).map(k=>surd(co[k],k)));let ans=partS[0];for(let i=1;i<partS.length;i++)ans+=(partS[i].startsWith("−")?"":"＋")+partS[i];if(!rat.n&&partS.length>1)ans=partS.slice(1).join("＋").replace("＋−","−");
+   const ex=terms.map((t,i)=>(i?(t.sg<0?" − ":" ＋ "):"")+`${t.f}${t.sq?"<sup>2</sup>":""}${t.a}°`).join("");
+   return{expr:`求 ${ex} 的值。`,answer:ans,sig:`sp:${terms.map(t=>t.f+t.a+t.sq+t.sg).join(",")}`,verify:()=>{const v=terms.reduce((s,t)=>{const r=t.a*Math.PI/180,x=Math[t.f](r);return s+t.sg*(t.sq?x*x:x)},0);return Math.abs(v-(num(rat)+num(co[2])*Math.SQRT2+num(co[3])*Math.sqrt(3)))<1e-9}}}
+  if(kind==="quad"){const k=rand(1,3),[ab,bc]=pick([[3,4],[4,3]]).map(v=>v*k),ac=5*k,cd=12*k,ad=13*k;// AB⊥BC、CD⊥AC：∠D 在 △ACD
+   return{expr:`四邊形 ABCD 中 AB⊥BC、CD⊥AC，AB＝${ab}、BC＝${bc}、CD＝${cd}，求 sin D、cos D、tan D。`,answer:`sin D＝${S(R(ac,ad))}，cos D＝${S(R(cd,ad))}，tan D＝${S(R(ac,cd))}`,sig:`q:${ab}:${bc}:${k}`,verify:()=>ab*ab+bc*bc===ac*ac&&ac*ac+cd*cd===ad*ad}}
+  if(kind==="ratio"){// BC＝(p/r)AB ⇒ tan A、sin A
+   const [p,q,r]=pick(TRIP),ask=Math.random()<.5;return ask?{expr:`△ABC 中 ∠C＝90°，且 BC＝${S(R(p,r))}AB，求 tan A 與 sin A。`,answer:`tan A＝${S(R(p,q))}，sin A＝${S(R(p,r))}`,sig:`ra:${p}${q}`,verify:()=>p*p+q*q===r*r}:{expr:`△ABC 中 ∠C＝90°，且 (1＋cos A)／cos A＝${S(R(r+q,q))}，求 cos A、tan A 與 sin B。`,answer:`cos A＝${S(R(q,r))}，tan A＝${S(R(p,q))}，sin B＝${S(R(q,r))}`,sig:`rc:${p}${q}`,verify:()=>eq(div(add(R(1),R(q,r)),R(q,r)),R(r+q,q))&&p*p+q*q===r*r}}
+  // 小數模式：三角測量，題目給三角函數值
+  const dec=(v,d)=>decHTML(R(Math.round(v*10**d),10**d));
+  if(kind==="measure"){const ang=pick([23,28,32,35,40,50]),tv={23:0.4245,28:0.5317,32:0.6249,35:0.7002,40:0.8391,50:1.1918}[ang],d=rand(5,30)*10,h=R(Math.round(d*tv*100),100),hs=D(h);
+   return{expr:`在離塔底 ${d} 公尺的地面處，測得塔頂的仰角為 ${ang}°，求塔高（tan ${ang}°＝${tv}）。`,answer:`${hs} 公尺`,sig:`me:${ang}:${d}`,verify:()=>Math.abs(num(h)-d*tv)<0.006}}
+  if(kind==="area"){const b=rand(5,15),c=rand(5,15),ang=pick([47,30,53,60]),sv={47:0.8,30:0.5,53:0.8,60:0.866}[ang],area=R(Math.round(b*c*sv*100/2),100);
+   return{expr:`△ABC 中 AB＝${c}、BC＝${b}、∠B＝${ang}°，求 △ABC 的面積（sin ${ang}°＝${sv}）。`,answer:D(area),sig:`ar:${b}:${c}:${ang}`,verify:()=>Math.abs(num(area)-b*c*sv/2)<0.006}}
+  if(kind==="two"){const d=rand(3,12)*10,t=pick([0.3,0.4,0.5]),h=R(Math.round(d*t/(1-t)*100),100);// tan θ＝t，再前進 d 到仰角 45°：h/(x+d)=t，h=x ⇒ h＝dt/(1−t)
+   return{expr:`從地面 M 處測得塔頂 A 的仰角為 θ，向塔前進 ${d} 公尺到 N 處，再測得仰角為 45°，求塔高（tan θ＝${t}）。`,answer:`${D(h)} 公尺`,sig:`tw:${d}:${t}`,verify:()=>Math.abs(num(h)/(num(h)+d)-t)<0.001}}
+  const d=rand(5,15),cv=0.6,tv=1.4,h=R(Math.round(d*tv*10),10),l=R(Math.round(d/cv*10),10),tot=add(h,l);// 樹折：地面 d，與地面成 54°
+  return{expr:`一棵樹被颱風吹折，樹頂著地處與樹根相距 ${d} 公尺，折斷的上半段與地面成 54° 角，求原樹高（cos 54°＝0.6，tan 54°＝1.4，答案取到小數第一位）。`,answer:`${D(tot)} 公尺`,sig:`bd:${d}`,verify:()=>Math.abs(num(h)-d*tv)<0.06&&Math.abs(num(l)-d/cv)<0.06};
+ });
+
+ return{title:"直角三角形",symbol:"⊾",subtitle:"母子相似・畢氏定理的應用・特殊直角三角形・三角比",instruction:"根式化為最簡；三角比化為最簡分數；有給三角函數值的題目依題目的位數作答。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：母子相似求邊、畢氏三數、30°-60°-90° 與 45°-45°-90°、37°-53°-90°、由三邊寫三角比、仰角測高。",advanced:"進階：由兩段求高、根式第三邊、三邊成等差、m²−n² 造邊、等腰三角形面積、兩次仰角、由 sin 或 tan 求其他三角比、特別角求值、面積公式。",challenge:"挑戰：由兩股求高與分段、一股為質數的整數邊、45° 與 30° 合併的三角形、四邊形中的三角比、由比值反求三角比、兩次仰角測塔高、吹折的樹。"},
+  units:[altitude,pythagoras,special,trig],presets:{basic:{altitude:3,pythagoras:3,special:3,trig:3},advanced:{altitude:3,pythagoras:3,special:3,trig:3},challenge:{altitude:2,pythagoras:3,special:3,trig:4}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

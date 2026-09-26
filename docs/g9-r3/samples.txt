@@ -1,0 +1,54 @@
+[basic/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AB＝20、BD＝16，求 CD 與 AC。  ⇒ CD＝9，AC＝15
+[basic/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝60、BD＝144，求 CD 與 BC。  ⇒ CD＝25，BC＝169
+[basic/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝120、BD＝225，求 CD 與 BC。  ⇒ CD＝64，BC＝289
+[basic/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AB＝4、BD＝(16/5)，求 CD 與 AC。  ⇒ CD＝(9/5)，AC＝3
+[basic/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，BD＝(128/17)、CD＝(450/17)，求 AD、AB、AC。  ⇒ AD＝(240/17)，AB＝16，AC＝30
+[basic/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝(12/5)、BD＝(9/5)，求 CD 與 BC。  ⇒ CD＝(16/5)，BC＝5
+[basic/pythagoras/integer]  示意圖 A B C 如圖，直角三角形 ABC 中 ∠B＝90°，AC＝29、AB＝21，求 BC。  ⇒ BC＝20
+[basic/pythagoras/integer]  示意圖 A B C 如圖，直角三角形 ABC 中 ∠B＝90°，AC＝34、AB＝30，求 BC。  ⇒ BC＝16
+[basic/pythagoras/integer]  示意圖 A B C 如圖，直角三角形 ABC 中 ∠B＝90°，AC＝82、AB＝80，求 BC。  ⇒ BC＝18
+[basic/special/integer]  示意圖 37° 53° A B C 已知 37°-53°-90° 的直角三角形三邊比約為 3：4：5。如圖，∠B＝90°、∠A＝37°，BC＝18，求 AB 與 AC。  ⇒ AB＝24，AC＝30
+[basic/special/integer]  示意圖 37° 53° A B C 已知 37°-53°-90° 的直角三角形三邊比約為 3：4：5。如圖，∠B＝90°、∠A＝37°，BC＝24，求 AB 與 AC。  ⇒ AB＝32，AC＝40
+[basic/special/integer]  示意圖 30° 60° A B C 如圖，∠B＝90°、∠A＝30°、∠C＝60°，BC＝1，求 AB 與 AC。  ⇒ AB＝√3，AC＝2
+[basic/trig/fraction]  示意圖 A B C 如圖，△ABC 中 ∠B＝90°，AB＝36、BC＝15、AC＝39，求 sin A、cos A、tan A 與 sin C、cos C、tan C。  ⇒ sin A＝(5/13)，cos A＝(12/13)，tan A＝(5/12)；sin C＝(12/13)，cos C＝(5/13)，tan C＝(12/5)
+[basic/trig/fraction] △ABC 中 ∠C＝90°，AC＝30，且 sin A＝(8/17)，求 cos A、tan B 與 △ABC 的面積。  ⇒ cos A＝(15/17)，tan B＝(15/8)，面積 240
+[basic/trig/fraction] △ABC 中 ∠C＝90°，tan A＝(9/40)，AC＝40，求 AB、cos A 與 sin B。  ⇒ AB＝41，cos A＝(40/41)，sin B＝(40/41)
+[basic/trig/decimal] 在離塔底 100 公尺的地面處，測得塔頂的仰角為 35°，求塔高（tan 35°＝0.7002）。  ⇒ 70.02 公尺
+[basic/trig/decimal] 在離塔底 70 公尺的地面處，測得塔頂的仰角為 50°，求塔高（tan 50°＝1.1918）。  ⇒ 83.43 公尺
+[basic/trig/decimal] 在離塔底 70 公尺的地面處，測得塔頂的仰角為 23°，求塔高（tan 23°＝0.4245）。  ⇒ 29.72 公尺
+[advanced/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝120、BD＝225，求 CD 與 BC。  ⇒ CD＝64，BC＝289
+[advanced/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝36、BD＝48，求 CD 與 BC。  ⇒ CD＝27，BC＝75
+[advanced/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝120、BD＝160，求 CD 與 BC。  ⇒ CD＝90，BC＝250
+[advanced/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AB＝6、BD＝(18/5)，求 CD 與 AC。  ⇒ CD＝(32/5)，AC＝8
+[advanced/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，BD＝(18/5)、CD＝(32/5)，求 AD、AB、AC。  ⇒ AD＝(24/5)，AB＝6，AC＝8
+[advanced/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，BD＝(32/5)、CD＝(18/5)，求 AD、AB、AC。  ⇒ AD＝(24/5)，AB＝8，AC＝6
+[advanced/pythagoras/integer] m＝6、n＝2，以 m²−n²、2mn、m²＋n² 為三邊長作三角形，求三邊長，並說明它是不是直角三角形。  ⇒ 32、24、40；是（32²＋24²＝40²）
+[advanced/pythagoras/integer] 直角三角形的三邊長成等差數列，且最短邊為 18，求另外兩邊。  ⇒ 24、30
+[advanced/pythagoras/integer] m＝5、n＝2，以 m²−n²、2mn、m²＋n² 為三邊長作三角形，求三邊長，並說明它是不是直角三角形。  ⇒ 21、20、29；是（21²＋20²＝29²）
+[advanced/special/integer] 要測量塔 AB 的高度，在平直的路上向塔前進：在 C 處測得塔頂仰角 ∠BCA＝15°，前進 100 公尺到 D 處測得 ∠BDA＝30°，求 AB。  ⇒ 50 公尺
+[advanced/special/integer] 等腰三角形 ABC 中，AB＝AC＝10，頂角 ∠A＝30°，求 △ABC 的面積。  ⇒ 25
+[advanced/special/integer]  示意圖 30° 60° A B C 如圖，∠B＝90°、∠A＝30°、∠C＝60°，AC＝18，求 BC 與 AB。  ⇒ BC＝9，AB＝9√3
+[advanced/trig/fraction] △ABC 中 ∠C＝90°，AC＝42，且 sin A＝(20/29)，求 cos A、tan B 與 △ABC 的面積。  ⇒ cos A＝(21/29)，tan B＝(21/20)，面積 840
+[advanced/trig/fraction] △ABC 中 ∠C＝90°，tan A＝(8/15)，AC＝15，求 AB、cos A 與 sin B。  ⇒ AB＝17，cos A＝(15/17)，sin B＝(15/17)
+[advanced/trig/fraction] △ABC 中 ∠C＝90°，tan A＝(9/40)，AC＝80，求 AB、cos A 與 sin B。  ⇒ AB＝82，cos A＝(40/41)，sin B＝(40/41)
+[advanced/trig/decimal] 從地面 M 處測得塔頂 A 的仰角為 θ，向塔前進 110 公尺到 N 處，再測得仰角為 45°，求塔高（tan θ＝0.5）。  ⇒ 110 公尺
+[advanced/trig/decimal] 在離塔底 280 公尺的地面處，測得塔頂的仰角為 28°，求塔高（tan 28°＝0.5317）。  ⇒ 148.88 公尺
+[advanced/trig/decimal] △ABC 中 AB＝5、BC＝15、∠B＝60°，求 △ABC 的面積（sin 60°＝0.866）。  ⇒ 32.48
+[challenge/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，BD＝81、CD＝144，求 AD、AB、AC。  ⇒ AD＝108，AB＝135，AC＝180
+[challenge/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AB＝165、AC＝220，求 BC、AD、BD。  ⇒ BC＝275，AD＝132，BD＝99
+[challenge/altitude/integer]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，BD＝288、CD＝50，求 AD、AB、AC。  ⇒ AD＝120，AB＝312，AC＝130
+[challenge/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝(120/17)、BD＝(64/17)，求 CD 與 BC。  ⇒ CD＝(225/17)，BC＝17
+[challenge/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AB＝8、AC＝6，求 BC、AD、BD。  ⇒ BC＝10，AD＝(24/5)，BD＝(32/5)
+[challenge/altitude/fraction]  示意圖 A B C D 如圖，△ABC 中 ∠BAC＝90°，AD⊥BC 於 D，AD＝(360/17)、BD＝(675/17)，求 CD 與 BC。  ⇒ CD＝(192/17)，BC＝51
+[challenge/pythagoras/integer] 已知直角三角形的一股長為 23，且另外兩邊長都是整數，求此直角三角形的面積。  ⇒ 3036
+[challenge/pythagoras/integer] 直角三角形的三邊長成等差數列，且最短邊為 15，求另外兩邊。  ⇒ 20、25
+[challenge/pythagoras/integer] 直角三角形的三邊長分別為 a、b、c，且 c−b＝b−a＝8＞0，求 a、b、c 與（c−a）／（c＋a）的值。  ⇒ a＝24、b＝32、c＝40；（c−a）／（c＋a）＝(1/4)
+[challenge/special/integer]  示意圖 45° 30° A B C H 如圖，△ABC 中 ∠B＝45°、∠C＝30°，AC＝12，AH⊥BC。求 BC 的長與 △ABC 的面積。  ⇒ BC＝6＋6√3；面積 18＋18√3
+[challenge/special/integer]  示意圖 45° 30° A B C H 如圖，△ABC 中 ∠B＝45°、∠C＝30°，AC＝8，AH⊥BC。求 BC 的長與 △ABC 的面積。  ⇒ BC＝4＋4√3；面積 8＋8√3
+[challenge/special/integer]  示意圖 45° 30° A B C H 如圖，△ABC 中 ∠B＝45°、∠C＝30°，AC＝14，AH⊥BC。求 BC 的長與 △ABC 的面積。  ⇒ BC＝7＋7√3；面積 (49/2)＋(49√3/2)
+[challenge/trig/fraction] △ABC 中 ∠C＝90°，且 BC＝(3/5)AB，求 tan A 與 sin A。  ⇒ tan A＝(3/4)，sin A＝(3/5)
+[challenge/trig/fraction] 四邊形 ABCD 中 AB⊥BC、CD⊥AC，AB＝9、BC＝12、CD＝36，求 sin D、cos D、tan D。  ⇒ sin D＝(5/13)，cos D＝(12/13)，tan D＝(5/12)
+[challenge/trig/fraction] 求 tan45° ＋ sin60° − sin 2 30° 的值。  ⇒ (3/4)＋(√3/2)
+[challenge/trig/decimal] 從地面 M 處測得塔頂 A 的仰角為 θ，向塔前進 80 公尺到 N 處，再測得仰角為 45°，求塔高（tan θ＝0.4）。  ⇒ 53.33 公尺
+[challenge/trig/decimal] 從地面 M 處測得塔頂 A 的仰角為 θ，向塔前進 120 公尺到 N 處，再測得仰角為 45°，求塔高（tan θ＝0.5）。  ⇒ 120 公尺
+[challenge/trig/decimal] 從地面 M 處測得塔頂 A 的仰角為 θ，向塔前進 100 公尺到 N 處，再測得仰角為 45°，求塔高（tan θ＝0.5）。  ⇒ 100 公尺
