@@ -3,6 +3,16 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
 const {root,baseline,links,p2EngineFiles,approvedCrosslinks}=require('./check_math_brand.cjs');
 const out=path.resolve(process.env.MATH_BRAND_OUTPUT||'math-brand-artifacts');
 const selected=process.env.MATH_BRAND_LINKS?process.env.MATH_BRAND_LINKS.split(','):links;
+// These legacy pages gained header links; compare the generated questions, not the header.
+const worksheetSelectors={
+ 'tools/math/g9-1-2-parallel-proportional.html':'#problems-grid',
+ 'tools/math/g9-1-2-parallel-proportional-application.html':'#problems-grid',
+ 'tools/math/g9-1-3-similar-triangles.html':'#problems-grid',
+ 'tools/math/g9-1-4-similar-area.html':'#questions-container',
+ 'tools/math/g9-2-1-tangent.html':'#questions-container',
+ 'tools/math/g9-2-1-chord.html':'#questions-container',
+ 'tools/math/g9-2-2-central-angle-arc.html':'#questions-container'
+};
 const cache=new Map(),mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const newFiles=new Map();
 function isNewFile(file){
@@ -18,7 +28,8 @@ const hash=s=>crypto.createHash('sha256').update(typeof s==='string'?s:JSON.stri
 const hashDOM=s=>hash(s.replace(/ style=""/g,'').replace(/\n  <!-- g8-r5-related-start -->[\s\S]*?\n  <!-- g8-r5-related-end -->\n/g,''));
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 function geometry(){
- return [...document.body.querySelectorAll('*')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').map(e=>{
+ const scope=window.__worksheetSelector?document.querySelector(window.__worksheetSelector):document.body;
+ return [...scope.querySelectorAll('*')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').map(e=>{
   const r=e.getBoundingClientRect(),s=getComputedStyle(e);return[e.tagName,e.id,...[r.x,r.y,r.width,r.height].map(n=>Math.round(n*100)/100),s.fontFamily,s.fontSize,s.lineHeight,s.padding,s.margin,s.borderTopWidth,s.borderBottomWidth,s.breakAfter,s.breakInside];
  });
 }
@@ -40,24 +51,26 @@ function colors(){
  const executablePath=process.env.MATH_BRAND_CHROMIUM;
  const browser=await chromium.launch(executablePath?{executablePath,args:['--no-sandbox']}:undefined),results=[],printed=new Set();
  try{for(const link of selected){
-  const id=link.replace(/^tools\//,'').replaceAll('/','-').replace('?topic=','-').replace('.html',''),file=link.split('?')[0],isNew=isNewFile(file),row={link,status:isNew?'new':'existing'},records={};
+  const id=link.replace(/^tools\//,'').replaceAll('/','-').replace('?topic=','-').replace('.html',''),file=link.split('?')[0],worksheetSelector=worksheetSelectors[file],isNew=isNewFile(file),row={link,status:isNew?'new':'existing'},records={};
   const contexts=[];
   try{
    for(const version of isNew?['after']:['before','after']){
     const ctx=await browser.newContext({viewport:{width:1280,height:800},reducedMotion:'reduce'});contexts.push(ctx);
     await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
-    await ctx.addInitScript(()=>{
+    await ctx.addInitScript(selector=>{
+     window.__worksheetSelector=selector;
      let seed=20260921;window.__seed=v=>seed=v;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
      const D=Date;window.Date=class extends D{constructor(...a){super(...(a.length?a:[1789977600000]))}static now(){return 1789977600000}};
-     window.__prints=[];window.print=()=>{window.__prints.push({html:document.documentElement.outerHTML,body:document.body.innerHTML,geometry:window.__geometry()})};
-    });
+     window.__prints=[];window.print=()=>{window.__prints.push({html:document.documentElement.outerHTML,body:document.body.innerHTML,worksheet:selector?document.querySelector(selector)?.innerHTML:null,geometry:window.__geometry()})};
+    },worksheetSelector||null);
     const p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(base+'/'+version+'/'+link+(link.includes('?')?'&':'?')+'noga=1',{waitUntil:'load'});
     // Freeze decorative transitions in both versions so print measurements are not taken mid-animation.
     await p.addStyleTag({content:'*,*::before,*::after{transition:none!important;animation:none!important}'});await settle(p);
     await p.evaluate(source=>window.__geometry=eval('('+source+')'),geometry.toString());
     const gen=p.locator('#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]');assert.ok(await gen.count(),link+' generator button');
     await p.evaluate(()=>{window.__seed(772109);document.querySelector('#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]')?.click()});await settle(p);
-    const data={dom:hashDOM(await p.locator('body').innerHTML()),screen:await p.evaluate(geometry),errors};records[version]=data;
+    if(worksheetSelector)assert.equal(await p.locator(worksheetSelector).count(),1,link+' worksheet scope missing/duplicated');
+    const data={dom:hashDOM(await p.locator(worksheetSelector||'body').innerHTML()),screen:await p.evaluate(geometry),errors};records[version]=data;
     if(version==='after'){
      assert.deepEqual(await p.evaluate(colors),[],'old screen colors remain');
      assert.equal(await gen.first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(232, 98, 12)','orange generate button');
@@ -75,7 +88,7 @@ function colors(){
        const buttons=[...document.querySelectorAll('button')];const b=buttons.find(b=>/列印/.test(b.textContent)&&b.textContent.includes(mode==='teacher'?'教用':'學用'))||buttons.find(b=>b.id==='print');if(!b)throw Error('No print control');b.click();
       },mode);
       await p.waitForFunction(n=>window.__prints.length>=n,mode==='student'?1:2);
-      const snap=await p.evaluate(()=>window.__prints.at(-1));data.print[mode]={dom:hashDOM(snap.body),geometry:snap.geometry};
+      const snap=await p.evaluate(()=>window.__prints.at(-1));if(worksheetSelector)assert.ok(snap.worksheet,link+' print worksheet scope missing');data.print[mode]={dom:hashDOM(worksheetSelector?snap.worksheet:snap.body),geometry:snap.geometry};
       if(process.env.MATH_BRAND_DEBUG==='1')fs.writeFileSync(path.join(out,id+'-'+version+'-'+mode+'.html'),snap.body);
       if(process.env.MATH_BRAND_PDF==='1'&&['tools/math/g6-drills.html','tools/math/g7-factors-multiples.html','tools/math/g8-pythagorean.html','tools/math/g9-1-4-trig-ratio.html','tools/math/g9-1-2-parallel-proportional.html','tools/estimation.html'].includes(file)){
        const printPage=await ctx.newPage();await printPage.setJavaScriptEnabled?.(false);
