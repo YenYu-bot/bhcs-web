@@ -8,7 +8,8 @@ import {topicSources,changedTopicSources} from '../math-g11-topic-changes.mjs';
 const targets={expequations:['quadratic','application'],anglesum:['known','triangle'],vectorcauchy:['projection']};
 const html=fs.readFileSync(new URL('../../tools/math/g11-drills.html',import.meta.url),'utf8');
 const baseline=execFileSync('git',['show','a0bd8a91d7f38ce3e940fd02480c8fabba725930:tools/math/g11-drills.html'],{encoding:'utf8'});
-assert.deepEqual([...changedTopicSources(baseline,html)].sort(),Object.keys(targets).sort());
+// Later batches may change other topics; keep the P4-A scope assertions local.
+for(const topic of Object.keys(targets))assert.ok(changedTopicSources(baseline,html).has(topic));
 const before=topicSources(baseline),after=topicSources(html);
 // Compare original source declarations byte-for-byte, including prompt, sig and verify.
 for(const [topic,ids]of Object.entries(targets))for(const id of ids){

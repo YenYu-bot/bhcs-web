@@ -9,6 +9,18 @@ const capture=new Set(['index.html','lianluo.html','ziyuan.html','wenzhang/index
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!f.startsWith(root+path.sep)){res.writeHead(403).end();return}try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',mime[path.extname(f)]||'application/octet-stream');res.end(fs.readFileSync(f))}catch{res.writeHead(404).end()}});
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+async function measureLayout(p,width){
+ const measure=async()=>{
+  await p.evaluate(()=>document.fonts.ready);await settle(p);
+  return p.evaluate(()=>({overflow:document.documentElement.scrollWidth-innerWidth,badImages:[...document.images].filter(i=>!i.naturalWidth).map(i=>i.getAttribute('src')),h1:document.querySelectorAll('h1').length}));
+ };
+ const first=await measure();
+ if(width===390&&first.overflow>0&&first.overflow<=2){
+  const second=await measure();return {...second,initialOverflow:first.overflow,remeasured:true};
+ }
+ return first;
+}
+
 (async()=>{
  fs.mkdirSync(out,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch(),results=[];
  try{
@@ -22,7 +34,7 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
      await p.goto(base+'/'+file+'?noga=1',{waitUntil:'networkidle'});await p.evaluate(()=>document.fonts.ready);
      await p.evaluate(()=>document.querySelectorAll('img').forEach(i=>i.loading='eager'));
      await p.waitForFunction(()=>[...document.images].every(i=>i.complete),null,{timeout:15000});await settle(p);
-     const layout=await p.evaluate(()=>({overflow:document.documentElement.scrollWidth-innerWidth,badImages:[...document.images].filter(i=>!i.naturalWidth).map(i=>i.getAttribute('src')),h1:document.querySelectorAll('h1').length}));
+     const layout=await measureLayout(p,width);
      Object.assign(row,layout);assert.ok(layout.overflow<=2,'horizontal overflow');assert.deepEqual(layout.badImages,[],'broken images');
      if(file==='tools/science/index.html')assert.equal(layout.h1,1,'one directory h1');
      if(file==='index.html'){

@@ -110,10 +110,10 @@
 | topic / 組合 | 72 / 2367 |
 | safeQuestion 抽樣 / 成功取題 | 473400 / 473400 |
 | 通過 / 失敗 | 2367 / 0 |
-| 候選 gen / null | 553400 / 55195 |
+| 候選 gen / null | 553693 / 56498 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 2365 / 2 |
-| 高拒絕率 unit（非阻擋） | 25 |
+| 完成單卷 / 單卷耗盡 | 2366 / 1 |
+| 高拒絕率 unit（非阻擋） | 26 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -146,6 +146,7 @@
 | correlation / `application` | 55.6% | 3 |
 | trigtransform / `model` | 51.5% | 2 |
 | planevector / `lincomb` | 66.7% | 3 |
+| bayes / `bayestwo` | 52.3% | 1 |
 | bayes / `medicalnegative` | 51.7% | 2 |
 | matrixapps / `multistate` | 75.2% | 3 |
 | matrixapps / `population` | 58.8% | 1 |
