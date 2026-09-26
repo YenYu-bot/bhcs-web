@@ -1,5 +1,8 @@
 import {singleFormKey} from './math-diversity-policy.mjs';
 
+// Only the six new G3 speed-drill units may enter the single-form policy without a baseline row.
+const newG3SingleForm = new Set(['tables','fill','div','rem','mixed','twodigit'].map(unit=>singleFormKey('timestables',unit)));
+
 const isG11 = row => /(?:^|\/)g11-drills\.html(?:\?|$)/.test(row?.link || '');
 const topicStructureThreshold = 10;
 export const g11ChallengeFullThreshold = 3;
@@ -33,11 +36,11 @@ export function evaluateDiversityRatchet({baseline,current,exemptions,modifiedG1
   const challengeBaselineVersion = hasG11R3Topics(current) ? 'g11-r3' : 'rollout-main';
   const approved = new Set(baseline.units.filter(unit=>unit.singleForm).map(unit=>singleFormKey(unit.topic,unit.unit)));
   const configured = new Set(exemptions.map(row=>singleFormKey(row.topic,row.unit)));
-  for (const key of configured) if (!approved.has(key))
+  for (const key of configured) if (!approved.has(key) && !newG3SingleForm.has(key))
     failures.push({code:'unapproved_single_form',unit:key});
   for (const key of approved) if (!configured.has(key))
     failures.push({code:'approved_single_form_removed',unit:key});
-  for (const row of exemptions) if (!before.has(singleFormKey(row.topic,row.unit)))
+  for (const row of exemptions) if (!before.has(singleFormKey(row.topic,row.unit)) && !newG3SingleForm.has(singleFormKey(row.topic,row.unit)))
     failures.push({code:'new_unit_single_form_forbidden',unit:singleFormKey(row.topic,row.unit)});
 
   for (const [key,prior] of before) {
@@ -63,8 +66,8 @@ export function evaluateDiversityRatchet({baseline,current,exemptions,modifiedG1
 
   for (const [key,next] of now) if (!before.has(key)) {
     newUnits.push(key);
-    if (next.singleForm) failures.push({code:'new_unit_single_form_forbidden',unit:key});
-    if (!isG11(next) && (!next.projectedStructureGatePass || !next.projectedChallengeGatePass))
+    if (next.singleForm && !newG3SingleForm.has(key)) failures.push({code:'new_unit_single_form_forbidden',unit:key});
+    if (!isG11(next) && !next.singleForm && (!next.projectedStructureGatePass || !next.projectedChallengeGatePass))
       failures.push({code:'new_unit_must_pass_full_gate',unit:key,structureGate:next.projectedStructureGatePass,challengeGate:next.projectedChallengeGatePass});
   }
 

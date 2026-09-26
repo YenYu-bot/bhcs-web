@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小中低年級數學 計算力練習出題器</title><meta name="description" content="國小中低年級數學計算力練習出題器：九九乘法、乘法填空、整除與有餘數的除法、乘除混合連算、二位數乘一位數心算，速度練習一頁 50～100 題；可指定要練的乘數段、難度與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g3-drills.html"><meta property="og:title" content="百宏文教｜國小中低年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g3-drills.html"><meta property="og:type" content="website">
+<style>
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
+*{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
+.top{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,3vw,28px);color:#fff;background:var(--bhcs-green2);border-bottom:4px solid var(--bhcs-mint)}.topic-logo{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:10px;background:var(--bhcs-mint);color:var(--bhcs-green2);font:800 22px Georgia,"Times New Roman",serif}.top-title{min-width:0}.topic-pick{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;color:#c8e8df;white-space:nowrap}.topic-pick select{padding:4px 8px;border-radius:6px;border:1px solid var(--bhcs-mint);background:#fff;color:var(--bhcs-ink);max-width:46vw}.top h1{margin:0;font-size:clamp(17px,2.3vw,23px);line-height:1.25}.top p{margin:2px 0 0;color:#bed7cf;font-size:12px}.back{margin-left:auto;color:#fff;text-decoration:none;font-size:13px;font-weight:700;white-space:nowrap}.back:hover{text-decoration:underline}
+.panel{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--bhcs-line)}.panel-inner{width:min(1480px,100%);margin:auto;padding:10px clamp(10px,2vw,22px)}.groups{display:grid;grid-template-columns:1.05fr 1fr 1.55fr;gap:10px}.group{min-width:0;padding:9px 10px;border:1px solid #d7e1de;border-radius:8px;background:#fbfdfc}.group h2{margin:0 0 7px;color:var(--bhcs-green2);font-size:13px}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.field{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;white-space:nowrap}select{height:34px;padding:4px 7px;border:1px solid #9eb2ac;border-radius:6px;background:#fff;color:var(--bhcs-ink);font-weight:700}.level{height:34px;padding:5px 12px;border:1px solid #9eb2ac;border-radius:7px;color:var(--bhcs-green2);background:#fff;font-weight:800}.level[aria-pressed=true]{border-color:var(--bhcs-green);color:#fff;background:var(--bhcs-green)}.choice{display:flex;align-items:center;gap:5px;min-height:34px;padding:4px 8px;border:1px solid #ccd9d5;border-radius:6px;background:#fff;font-size:12.5px;font-weight:700}.choice:has(input:checked){border-color:#71bba5;background:var(--bhcs-soft)}.choice input{width:15px;height:15px;accent-color:var(--bhcs-green)}.difficulty-note{margin:6px 0 0;color:var(--bhcs-muted);font-size:11.5px;line-height:1.4}
+.unit-grid{display:grid;grid-template-columns:repeat(3,minmax(132px,1fr));gap:5px}.unit{display:grid;grid-template-columns:auto minmax(0,1fr) 42px;align-items:center;gap:5px;min-height:33px;padding:3px 5px;border:1px solid #d6e1de;border-radius:6px;background:#fff}.unit:has(.unit-check:checked){border-color:#83c5b2;background:var(--bhcs-soft)}.unit-check{width:15px;height:15px;accent-color:var(--bhcs-green)}.unit label{font-size:11.5px;font-weight:700;line-height:1.2;cursor:pointer}.count{width:42px;height:27px;padding:2px;border:1px solid #aebfba;border-radius:5px;text-align:center;font-size:12px;font-weight:800}.count:disabled{color:#98a6a2;background:#edf1f0;cursor:not-allowed}.quick{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}.quick span{font-size:11px;color:var(--bhcs-muted)}.quick button{padding:3px 7px;border:1px solid #9fb7b0;border-radius:5px;color:var(--bhcs-green2);background:#fff;font-size:11px;font-weight:700}
+.actions{display:flex;align-items:center;gap:8px;margin-top:9px}.status{margin-right:auto;color:var(--bhcs-muted);font-size:12px}.action{min-height:38px;padding:7px 16px;border:1px solid var(--bhcs-green);border-radius:7px;font-weight:800}.primary{color:#fff;background:var(--bhcs-green)}.secondary{color:var(--bhcs-green);background:#fff}.total{padding:5px 9px;border-radius:6px;color:var(--bhcs-green2);background:var(--bhcs-soft);font-size:12px;font-weight:800;white-space:nowrap}
+.preview{min-height:620px;padding:14px 8px 38px;overflow:auto}.sheet{width:210mm;min-height:297mm;margin:14px auto;padding:12mm;color:#111;background:#fff;box-shadow:0 9px 30px #263b351c}.head{border-bottom:2px solid var(--bhcs-green);padding-bottom:4px;margin-bottom:8px}.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:var(--bhcs-muted);line-height:1.3;margin:0 0 3px}.bhcs-brand b{color:var(--bhcs-green);font-weight:800;font-size:12px;letter-spacing:.5px}.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}.head h2{margin:0;font-size:20px}.head>span{display:block;margin-top:2px;font-size:14px}.sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:var(--bhcs-soft);padding:4px 10px;border-left:5px solid var(--bhcs-green);break-after:avoid;page-break-after:avoid}.tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}.grid{display:grid;gap:0 5mm}.grid.c2{grid-template-columns:repeat(2,1fr)}.grid.c3{grid-template-columns:repeat(3,1fr)}.grid.c4{grid-template-columns:repeat(4,1fr)}.grid.c5{grid-template-columns:repeat(5,1fr)}.prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}.q{font:15.5px/1.9 Georgia,"Times New Roman","Noto Serif TC",serif;display:flex;gap:4px;align-items:baseline;flex-wrap:wrap}.q .no{flex:none;color:#555;width:2em}.expr{min-width:0;overflow-wrap:anywhere}.expr svg.fig{display:block;margin:2px 0 4px;max-width:100%;height:auto}.work{font-size:14px;color:#333;margin-top:2mm;min-height:var(--work,16mm)}.work .ans{display:none;color:var(--bhcs-red);font-weight:700;font-size:15px;line-height:1.55}.teacher .work .ans{display:inline}.fr{display:inline-flex;flex-direction:column;text-align:center;align-items:center;vertical-align:middle;line-height:1;margin:0 .09em;font-size:.86em}.fr .n{min-width:1em;padding:0 .13em .08em;border-bottom:1px solid currentColor}.fr .d{padding:.08em .13em 0}.mixed{display:inline-flex;align-items:center;gap:.08em;white-space:nowrap}.note-answer{font:11px/1.25 "Microsoft JhengHei","Noto Sans TC",sans-serif;color:var(--bhcs-red)}sup{font-size:.72em}.grid.c4 .q{font-size:13px;line-height:1.75}.grid.c4 .q .no{width:1.7em}.grid.c4 .work{font-size:12.5px}.grid.c4 .work .ans{font-size:13px}.grid.c4 .prob{padding-top:2.5mm}.empty{width:min(720px,calc(100vw - 24px));margin:28px auto;padding:36px 20px;text-align:center;border:2px dashed #afc1bc;border-radius:10px;color:var(--bhcs-muted);background:#fff}.empty b{display:block;margin-bottom:4px;color:var(--bhcs-green2)}
+@media(max-width:1180px){.groups{grid-template-columns:1fr 1fr}.group.units{grid-column:1/-1}}@media(max-width:720px){.top{align-items:flex-start;flex-wrap:wrap}.topic-pick{margin-left:0;width:100%}.topic-pick select{max-width:none;flex:1}.top p{display:none}.back{font-size:11.5px}.groups{grid-template-columns:1fr}.group.units{grid-column:auto}.unit-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.status{width:100%;order:-1}.actions{flex-wrap:wrap}.action{flex:1}.total{margin-left:auto}.preview{padding-inline:4px}}@media(max-width:390px){.top{padding-inline:9px}.topic-logo{width:38px;height:38px}.top h1{font-size:15px}.back{font-size:10.5px}.panel-inner{padding-inline:7px}.group{padding:8px}.field{flex:1}.field select{flex:1;min-width:0}.unit-grid{grid-template-columns:1fr 1fr}.unit{grid-template-columns:auto minmax(0,1fr) 38px}.count{width:38px}.choice{padding-inline:6px}.level{flex:1;padding-inline:7px}.quick button{flex:1}.action{padding-inline:8px}}
+@page{size:A4 portrait;margin:8mm 8mm 9mm}@media print{body{background:#fff}.panel,.top,.no-print{display:none!important}.preview{padding:0;overflow:visible}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;zoom:1!important}html,body{font-size:10pt}.sec{-webkit-print-color-adjust:exact;print-color-adjust:exact}.prob:hover{background:transparent}}
+</style>
+
+<style id="bhcs-math-brand">
+/* P1: screen palette only; original print rules and worksheet geometry are preserved. */
+@media screen{
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #C8352B}
+.topic-logo{border-radius:6px}
+.topic-pick{color:#F2F4F7}
+.top p{color:#C9D2DE}
+.group{border:1px solid #F2F4F7;border-radius:6px;background:#FCFCFA}
+select{border:1px solid #43516B}
+.level{border:1px solid #43516B;border-radius:6px}
+.choice{border:1px solid #C9D2DE}
+.choice:has(input:checked){border-color:#16233A}
+.unit{border:1px solid #F2F4F7}
+.unit:has(.unit-check:checked){border-color:#C9D2DE}
+.count{border:1px solid #C9D2DE;border-radius:6px}
+.count:disabled{color:#43516B;background:#FCFCFA}
+.quick button{border:1px solid #43516B;border-radius:6px}
+.action{border-radius:6px}
+.sheet{box-shadow:0 9px 30px #16233A1c}
+.bhcs-brand i{color:#43516B}
+.tip{color:#43516B}
+.prob{border-bottom:1px dashed #C9D2DE}
+.empty{border:2px dashed #C9D2DE;border-radius:6px}
+svg [fill="#176b55" i]{fill:#16233A}
+svg [stroke="#176b55" i]{stroke:#16233A}
+svg [fill="#0f4f40" i]{fill:#16233A}
+svg [stroke="#0f4f40" i]{stroke:#16233A}
+svg [fill="#55cfad" i]{fill:#16233A}
+svg [stroke="#55cfad" i]{stroke:#16233A}
+svg [fill="#e8f5f0" i]{fill:#F2F4F7}
+svg [stroke="#e8f5f0" i]{stroke:#F2F4F7}
+svg [fill="#c8d4d1" i]{fill:#C9D2DE}
+svg [stroke="#c8d4d1" i]{stroke:#C9D2DE}
+svg [fill="#182d28" i]{fill:#16233A}
+svg [stroke="#182d28" i]{stroke:#16233A}
+svg [fill="#62736f" i]{fill:#43516B}
+svg [stroke="#62736f" i]{stroke:#43516B}
+svg [fill="#e8edef" i]{fill:#F2F4F7}
+svg [stroke="#e8edef" i]{stroke:#F2F4F7}
+svg [fill="#ae3f3f" i]{fill:#C8352B}
+svg [stroke="#ae3f3f" i]{stroke:#C8352B}
+svg [fill="#a66d00" i]{fill:#C8352B}
+svg [stroke="#a66d00" i]{stroke:#C8352B}
+svg [fill="#c8e8df" i]{fill:#F2F4F7}
+svg [stroke="#c8e8df" i]{stroke:#F2F4F7}
+svg [fill="#bed7cf" i]{fill:#C9D2DE}
+svg [stroke="#bed7cf" i]{stroke:#C9D2DE}
+svg [fill="#d7e1de" i]{fill:#F2F4F7}
+svg [stroke="#d7e1de" i]{stroke:#F2F4F7}
+svg [fill="#fbfdfc" i]{fill:#FCFCFA}
+svg [stroke="#fbfdfc" i]{stroke:#FCFCFA}
+svg [fill="#9eb2ac" i]{fill:#43516B}
+svg [stroke="#9eb2ac" i]{stroke:#43516B}
+svg [fill="#ccd9d5" i]{fill:#C9D2DE}
+svg [stroke="#ccd9d5" i]{stroke:#C9D2DE}
+svg [fill="#71bba5" i]{fill:#16233A}
+svg [stroke="#71bba5" i]{stroke:#16233A}
+svg [fill="#d6e1de" i]{fill:#F2F4F7}
+svg [stroke="#d6e1de" i]{stroke:#F2F4F7}
+svg [fill="#83c5b2" i]{fill:#C9D2DE}
+svg [stroke="#83c5b2" i]{stroke:#C9D2DE}
+svg [fill="#aebfba" i]{fill:#C9D2DE}
+svg [stroke="#aebfba" i]{stroke:#C9D2DE}
+svg [fill="#98a6a2" i]{fill:#43516B}
+svg [stroke="#98a6a2" i]{stroke:#43516B}
+svg [fill="#edf1f0" i]{fill:#FCFCFA}
+svg [stroke="#edf1f0" i]{stroke:#FCFCFA}
+svg [fill="#9fb7b0" i]{fill:#43516B}
+svg [stroke="#9fb7b0" i]{stroke:#43516B}
+svg [fill="#8a9793" i]{fill:#43516B}
+svg [stroke="#8a9793" i]{stroke:#43516B}
+svg [fill="#cdd5dc" i]{fill:#C9D2DE}
+svg [stroke="#cdd5dc" i]{stroke:#C9D2DE}
+svg [fill="#afc1bc" i]{fill:#C9D2DE}
+svg [stroke="#afc1bc" i]{stroke:#C9D2DE}
+
+html,body{background-color:var(--bhcs-bg)}
+button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--bhcs-green)}
+.top .logo,.top .topic-logo{color:#fff;background-color:var(--bhcs-green)}
+.top h1 b{color:#fff}
+header.no-print>div:first-child h1::before{color:#fff}
+header.no-print>div:first-child>div:first-child>div:first-child{color:#fff!important}
+:root body :is(#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]){background:#E8620C!important;color:#fff!important;border-color:#E8620C!important;box-shadow:none!important}
+:root body :is(#print,#btn-print-questions,#btn-print-answers,button[onclick^="printWorksheet("]){background:#fff!important;color:#16233A!important;border-color:#16233A!important;box-shadow:inset 0 0 0 1px #16233A!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C8352B}
+}
+.ans,.ans *,.answer,.note-answer,.sd,[id^="solution-"] ,[id^="solution-"] *,[id^="solution-box-"] ,[id^="solution-box-"] *{color:#C8352B!important}
+</style>
+</head>
+<body>
+<header class="top"><div class="topic-logo" id="topicLogo">∑</div><div class="top-title"><h1><span class="brandmark">百宏文教｜</span><span id="topicTitle">數學計算力練習</span> 出題器</h1><p id="subtitle"></p></div><label class="topic-pick">主題 <select id="topicSel"></select></label><a class="back" href="../../ziyuan.html">← 回百宏學習資源</a></header>
+<section class="panel"><div class="panel-inner"><div class="groups">
+<section class="group"><h2>版面</h2><div class="row"><label class="field">版本<select id="version"><option value="student">學用版</option><option value="teacher">教用版</option></select></label><label class="field">每列題數<select id="columns"><option value="2">2 題</option><option value="3">3 題</option><option value="4">4 題</option><option value="5" selected>5 題</option></select></label><label class="field">作答空間<select id="space"><option value="small" selected>小</option><option value="medium">中</option><option value="large">大</option></select></label></div></section>
+<section class="group"><h2>難度與數的類型</h2><div class="row"><div class="row" role="group" aria-label="難度"><button class="level" data-level="basic" aria-pressed="false">基礎</button><button class="level" data-level="advanced" aria-pressed="true">進階</button><button class="level" data-level="challenge" aria-pressed="false">挑戰</button></div><span id="modeBoxes" class="row"></span><span id="extraBoxes" class="row"></span></div><p class="difficulty-note" id="difficultyNote"></p></section>
+<section class="group units"><h2>單元與題數</h2><div class="unit-grid" id="unitGrid"></div><div class="quick"><span>快速預設：</span><button type="button" data-each="1">各 1 題</button><button type="button" data-each="2">各 2 題</button><button type="button" data-each="3">各 3 題</button><button type="button" data-each="0">全歸零</button></div></section>
+</div><div class="actions"><span class="status" id="status">設定完成後按「重新出題」。</span><span class="total" id="total"></span><button class="action primary" id="generate">重新出題</button><button class="action secondary" id="print">列印 / 存 PDF</button></div></div></section>
+<main class="preview"><div id="output"></div></main>
+<script>
+(()=>{"use strict";
+const TOPICS=[["timestables","九九乘法與乘除心算"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"timestables",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
+const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
+const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
+function places(a){let d=a.d,p2=0,p5=0;while(d%2===0){d/=2;p2++}while(d%5===0){d/=5;p5++}return d===1?Math.max(p2,p5):-1}
+function decHTML(a,fixed=null){const p=places(a);if(p<0)throw Error("非有限小數");const use=fixed===null?p:Math.max(fixed,p),scale=10**use,n=a.n*(scale/a.d),sign=n<0?"−":"",digits=String(Math.abs(n)).padStart(use+1,"0");if(!use)return sign+digits;let out=`${digits.slice(0,-use)}.${digits.slice(-use)}`;if(fixed===null)out=out.replace(/0+$/,"").replace(/\.$/,"");return sign+out}
+function fracHTML(a,{mixed=false,answer=false}={}){const sign=a.n<0?"−":"",n=Math.abs(a.n),w=Math.floor(n/a.d),rem=n%a.d;if(!rem)return sign+w;if(w&&mixed){const m=`<span class="mixed">${sign}${w}${fr(rem,a.d)}</span>`;return answer?`${m}<span class="note-answer">（即 ${sign}${fr(n,a.d)}）</span>`:m}return`${sign}${fr(n,a.d)}`}
+const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):String(a.n).replace("-","−");
+function numberFor(mode,level,max=30){if(mode==="integer"){const k=level==="basic"?2:level==="advanced"?10:25;return R(rand(level==="basic"?2:Math.max(2,Math.floor(max*k/5)),max*k))}if(mode==="fraction"){const ds=level==="basic"?[2,3,4,5,6]:[2,3,4,5,6,8,9,10,12,15,20],d=pick(ds);let n=rand(1,(level==="challenge"?3:2)*d-1);while(n%d===0)n=rand(1,3*d-1);return R(n,d)}const p=level==="basic"?1:pick(level==="advanced"?[1,2]:[1,2,3]),s=10**p;let n=rand(1,max*s);while(n%10===0)n=rand(1,max*s);return R(n,s)}
+const norm=s=>String(s).replace(/<[^>]*>/g,"").replace(/\s+/g,"").normalize("NFKC");
+const okResult=q=>q&&typeof q.expr==="string"&&typeof q.answer==="string"&&q.expr&&!/\b(?:NaN|undefined|Infinity)\b/.test(q.expr+q.answer)&&typeof q.verify==="function"&&q.verify()===true;
+const MODE_LABEL={integer:"整數",fraction:"分數",decimal:"小數"};
+
+function timestablesConfig(){
+ /* M8 九九乘法與乘除心算（2026-09-26，Claude）。速度練習：預設每列 5 題、作答空間小、一頁 50～100 題，卷首用「用時／答對」。
+    控制面板多一組「指定乘數」（2～9）讓老師只練不熟的段；ctx.tables 是勾選的段（預設全部）。只有整數。
+    sig 規則放寬：同一份卷相同算式最多出現 2 次（CFG.sigRepeat＝2），因為老師只勾一、兩段時 81 種組合不夠一頁 50 題；
+    本機與 CI 健檢仍用 Set（不重複）計算，所以各單元在全段勾選時仍保證 40 題不重複。 */
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer"],gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const tables=ctx=>{const sel=(ctx.tables&&ctx.tables.length?ctx.tables:[2,3,4,5,6,7,8,9]).filter(t=>t>=2&&t<=9);if(lv(ctx)===0){const small=sel.filter(t=>t<=5);return small.length?small:sel}return sel};
+ const addUp=(a,n)=>{let s=0;for(let i=0;i<n;i++)s+=a;return s}; // verify 用連加，不用乘法
+ const blank="□";
+ // ① 九九乘法
+ const mult=unit("tables","九九乘法","背熟九九乘法表；兩個數也可能交換位置出現。",ctx=>{
+  const a=pick(tables(ctx)),b=rand(1,9),swap=Math.random()<(lv(ctx)===2?.5:.3),[x,y]=swap?[b,a]:[a,b],p=x*y;
+  return{expr:`${x} × ${y}＝`,answer:String(p),sig:`m:${x}:${y}`,verify:()=>addUp(x,y)===p&&addUp(y,x)===p};
+ });
+ mult.maxCount=40; // 基礎級只有 2～5 段；嚴格去重的單卷以 40 題為上限。
+ // ② 乘法填空
+ const fill=unit("fill","乘法填空","想「幾乘以幾會等於這個數」；空格也可能出現在前面。",ctx=>{
+  const a=pick(tables(ctx)),b=rand(1,9),p=a*b,front=Math.random()<(lv(ctx)>=1?.5:.3);
+  if(lv(ctx)===2&&Math.random()<.3){return{expr:`${p}＝${front?blank:a} × ${front?a:blank}`,answer:String(b),sig:`fe:${a}:${b}:${front}`,verify:()=>addUp(a,b)===p}}
+  return{expr:front?`${blank} × ${a}＝${p}`:`${a} × ${blank}＝${p}`,answer:String(b),sig:`f:${a}:${b}:${front}`,verify:()=>addUp(a,b)===p&&p%a===0&&p/a===b};
+ });
+ // ③ 除法（整除）
+ const divide=unit("div","除法（九九範圍）","除法是乘法的反向：想「幾乘以除數等於被除數」。",ctx=>{
+  const a=pick(tables(ctx)),b=rand(1,9),p=a*b;
+  if(lv(ctx)===2&&Math.random()<.4){const byA=Math.random()<.5;return{expr:byA?`${p} ÷ ${blank}＝${b}`:`${blank} ÷ ${a}＝${b}`,answer:String(byA?a:p),sig:`dm:${a}:${b}:${byA}`,verify:()=>addUp(a,b)===p}}
+  const byB=Math.random()<(lv(ctx)>=1?.5:.3),d=byB?b:a,q=byB?a:b;if(d===1)return null;
+  return{expr:`${p} ÷ ${d}＝`,answer:String(q),sig:`d:${p}:${d}`,verify:()=>addUp(d,q)===p&&p%d===0};
+ });
+ divide.maxCount=40; // 基礎級嚴格去重時 60 題會耗盡。
+ // ④ 有餘數的除法
+ const remainder=unit("rem","有餘數的除法","商是「不超過被除數的最大倍數」，餘數一定比除數小。",ctx=>{
+  const d=pick(tables(ctx)),qMax=lv(ctx)===2?Math.floor(99/d):9,q=rand(1,qMax),r=rand(1,d-1),a=d*q+r;if(a>99)return null;
+  return{expr:`${a} ÷ ${d}＝`,answer:`${q} … ${r}`,sig:`r:${a}:${d}`,verify:()=>addUp(d,q)+r===a&&r<d&&r>0&&addUp(d,q+1)>a};
+ });
+ // ⑤ 乘除混合連算
+ const mixed=unit("mixed","乘除混合連算","由左往右依序算，先算出前面的結果再算後面。",ctx=>{
+  const T=tables(ctx),L=lv(ctx);
+  if(L===0||Math.random()<.5){const a=pick(T),b=rand(2,9),c=L===0?pick([a,b].filter(v=>v>1)):pick(T),p=a*b;if(p%c)return null;const v=p/c;if(L===2&&v>99)return null;
+   return{expr:`${a} × ${b} ÷ ${c}＝`,answer:String(v),sig:`x:${a}:${b}:${c}`,verify:()=>addUp(c,v)===addUp(a,b)}}
+  const d=pick(T),q=rand(2,9),a=d*q,c=L===2?rand(2,12):pick(T),v=q*c;if(v>99&&L<2)return null;
+  return{expr:`${a} ÷ ${d} × ${c}＝`,answer:String(v),sig:`y:${a}:${d}:${c}`,verify:()=>addUp(d,q)===a&&addUp(c,q)===v};
+ });
+ // ⑥ 二位數×一位數心算
+ const twoDigit=unit("twodigit","二位數 × 一位數心算","把二位數拆成「幾十」和「幾」分別乘，再相加。",ctx=>{
+  const L=lv(ctx),b=pick(tables(ctx));let a;for(let t=0;t<40;t++){a=rand(11,99);const ones=a%10,tens=Math.floor(a/10);if(L===0&&(ones*b>=10||tens*b>=10||ones===0))continue;if(L===1&&(ones*b<10||ones===0))continue;if(L===2&&(ones*b<10||tens*b<10))continue;break}
+  const p=a*b;return{expr:`${a} × ${b}＝`,answer:String(p),sig:`t:${a}:${b}`,verify:()=>Math.floor(a/10)*10*b+(a%10)*b===p&&addUp(a,b)===p};
+ });
+ return{title:"九九乘法與乘除心算",symbol:"×",subtitle:"九九乘法・乘法填空・整除與有餘數的除法・乘除連算・二位數×一位數",instruction:"計時作答，直接把答案寫在等號後面；做完記下用時和答對題數。",modes:["integer"],mixed:false,answerLabel:"",header:"用時：___分___秒　答對：___題",sigRepeat:2,
+  extraControl:{id:"tables",label:"指定乘數",options:[2,3,4,5,6,7,8,9]},
+  levels:{basic:"基礎：2～5 段（未指定乘數時）、整除、無進位的二位數乘法。",advanced:"進階：2～9 段、空格在前的填空、有餘數除法、有進位的二位數乘法。",challenge:"挑戰：交換順序、反求除數或被除數、商為二位數的有餘數除法、連算與大數心算。"},
+  units:[mult,fill,divide,remainder,mixed,twoDigit],
+  presets:{basic:{tables:30,fill:10,div:10,rem:5,twodigit:5},advanced:{tables:20,fill:10,div:10,rem:10,mixed:5,twodigit:10},challenge:{tables:15,fill:10,div:10,rem:10,mixed:10,twodigit:15}}};
+}
+
+const CONFIGS={timestables:timestablesConfig},CFG=CONFIGS[TOPIC_KEY]();
+let state={level:"advanced",groups:[],paper:null,mixed:true};
+/* sig 規則放寬：seen 傳入 Map 時，同一 sig 最多可出現 CFG.sigRepeat 次（速度練習頁題量大、組合有限）；傳入 Set 時維持嚴格不重複（健檢工具用）。 */
+function safeQuestion(unit,ctx,seen){const limit=seen instanceof Map?(CFG.sigRepeat||1):1;for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);const c=seen instanceof Map?(seen.get(key)||0):(seen.has(key)?1:0);if(c>=limit)continue;if(seen instanceof Map)seen.set(key,c+1);else seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
+globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
+if(typeof document==="undefined")return;
+function build(){const sel=$("topicSel");TOPICS.forEach(([k,n])=>{const o=document.createElement("option");o.value=k;o.textContent=n;if(k===TOPIC_KEY)o.selected=true;sel.appendChild(o)});sel.addEventListener("change",()=>{location.search="?topic="+sel.value});$("topicTitle").textContent=CFG.title;$("topicLogo").textContent=CFG.symbol||"∑";document.title="百宏文教｜"+CFG.title+" 出題器";const can=document.querySelector('link[rel="canonical"]');if(can)can.href="https://www.bhcs.com.tw/tools/math/g3-drills.html?topic="+TOPIC_KEY;$("subtitle").textContent=CFG.subtitle;$("difficultyNote").textContent=CFG.levels.advanced;const mb=$("modeBoxes");CFG.modes.forEach(m=>{const label=document.createElement("label");label.className="choice";label.innerHTML=`<input type="checkbox" data-mode="${m}" checked>${(CFG.modeLabels||MODE_LABEL)[m]}`;mb.appendChild(label)});if(CFG.extraControl){const eb=$("extraBoxes"),t=document.createElement("span");t.className="field";t.textContent=CFG.extraControl.label;eb.appendChild(t);CFG.extraControl.options.forEach(v=>{const label=document.createElement("label");label.className="choice";label.innerHTML=`<input type="checkbox" data-${CFG.extraControl.id.replace(/s$/,"")}="${v}" checked>${v}`;eb.appendChild(label)})}if(CFG.mixed){const label=document.createElement("label");label.className="choice";label.innerHTML='<input id="mixedNumber" type="checkbox" checked>可用帶分數';mb.appendChild(label)}const grid=$("unitGrid");CFG.units.forEach(u=>{const box=document.createElement("div");box.className="unit";box.innerHTML=`<input class="unit-check" id="unit-${u.id}" type="checkbox" data-unit="${u.id}"><label for="unit-${u.id}">${u.name}</label><input class="count" type="number" min="1" max="${u.maxCount||60}" value="1" data-count="${u.id}" aria-label="${u.name}題數">`;grid.appendChild(box)});grid.addEventListener("change",e=>{if(e.target.matches(".unit-check"))grid.querySelector(`[data-count='${e.target.dataset.unit}']`).disabled=!e.target.checked;markChanged();updateTotal()});grid.addEventListener("input",e=>{if(e.target.matches(".count")){e.target.value=Math.max(1,Math.min(Number(e.target.max),Number(e.target.value)||1));markChanged();updateTotal()}});applyPreset("advanced")}
+const selectedModes=()=>[...document.querySelectorAll("[data-mode]:checked")].map(x=>x.dataset.mode),selectedUnits=()=>CFG.units.flatMap(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);return c.checked?[{...u,count:Math.max(1,Math.min(Number(n.max),Number(n.value)||1))}]:[]});
+function applyPreset(level){state.level=level;const p=CFG.presets[level];CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`),v=p[u.id]||0;c.checked=v>0;n.disabled=!c.checked;n.value=v||1});document.querySelectorAll(".level").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.level===level)));$("difficultyNote").textContent=CFG.levels[level];updateTotal();markChanged()}
+function setEach(v){CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);c.checked=v>0;n.disabled=!c.checked;if(v)n.value=Math.min(v,Number(n.max))});updateTotal();markChanged()}
+function updateTotal(){$("total").textContent=`共 ${selectedUnits().reduce((s,u)=>s+u.count,0)} 題`}function markChanged(){$("status").textContent="設定已變更，按「重新出題」套用。"}
+function generate(){const modes=selectedModes(),chosen=selectedUnits();if(!modes.length){$("status").textContent="請至少勾選一種數的類型。";return}if(!chosen.length){state.groups=[];state.paper=null;render();$("status").textContent="請至少勾選一個單元。";return}state.mixed=CFG.mixed&&$("mixedNumber")?.checked;const seen=new Map,skipped=[],tables=[...document.querySelectorAll("[data-table]:checked")].map(x=>Number(x.dataset.table));state.groups=[];for(const unit of chosen){const allowed=modes.filter(m=>unit.modes.includes(m));if(!allowed.length){skipped.push(unit.name);continue}const ctx={level:state.level,modes:allowed,mixed:state.mixed,tables},questions=[];for(let i=0;i<unit.count;i++){const q=safeQuestion(unit,ctx,seen);if(q)questions.push(q)}if(questions.length)state.groups.push({unit,questions})}state.paper={level:state.level,modes:[...modes],total:state.groups.reduce((s,g)=>s+g.questions.length,0)};render();$("status").textContent=`已產生 ${state.paper.total} 題，逐題驗證完成${skipped.length?`；數型不適用而略過：${skipped.join("、")}`:""}。`}
+function render(){const out=$("output");out.innerHTML="";if(!state.paper||!state.groups.length){out.innerHTML='<div class="empty"><b>尚未產生練習卷</b>請選擇數型與單元後按「重新出題」。</div>';return}const teacher=$("version").value==="teacher",cols=$("columns").value,work={small:"10mm",medium:"16mm",large:"26mm"}[$("space").value],sheet=document.createElement("div");sheet.className=`sheet ${teacher?"teacher":"student"}`;sheet.style.setProperty("--work",work);sheet.innerHTML=`<div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>${CFG.title} 計算力練習（${{basic:"基礎",advanced:"進階",challenge:"挑戰"}[state.paper.level]}）</h2><span>班級：______　姓名：__________　日期：___／___　${CFG.header||"作答時間：___分___秒"}</span></div><p class="tip">${CFG.instruction}</p>`;let no=1;state.groups.forEach(g=>{const sec=document.createElement("section");sec.innerHTML=`<div class="sec">${g.unit.name}</div><p class="tip">${g.unit.tip}</p><div class="grid c${cols}"></div>`;const grid=sec.querySelector(".grid");g.questions.forEach(q=>{const item=document.createElement("div");item.className="prob";item.innerHTML=`<div class="q"><span class="no">(${no++})</span><span class="expr">${q.expr}</span></div><div class="work">${CFG.answerLabel??"原式＝"}<span class="ans">${q.answer}</span></div>`;grid.appendChild(item)});sheet.appendChild(sec)});out.appendChild(sheet);fit()}
+function fit(){if(matchMedia("print").matches)return;const sheet=document.querySelector(".sheet");if(sheet)sheet.style.zoom=Math.min(1,Math.max(.42,(innerWidth-16)/794))}
+build();document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.level)));document.querySelectorAll("[data-mode],[data-table],#mixedNumber").forEach(c=>c.addEventListener("change",markChanged));document.querySelectorAll("[data-each]").forEach(b=>b.addEventListener("click",()=>setEach(Number(b.dataset.each))));$("generate").addEventListener("click",generate);$("print").addEventListener("click",()=>state.paper&&print());["version","columns","space"].forEach(id=>$(id).addEventListener("change",render));addEventListener("resize",fit);addEventListener("beforeprint",()=>{const s=document.querySelector(".sheet");if(s)s.style.zoom=1});addEventListener("afterprint",fit);generate();
+})();
+</script>
+</body>
+</html>
