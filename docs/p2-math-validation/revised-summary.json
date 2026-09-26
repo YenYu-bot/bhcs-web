@@ -20,14 +20,14 @@
     "failed": 0,
     "safeQuestionCalls": 473400,
     "samplingProduced": 473400,
-    "candidateGenCalls": 553400,
-    "candidateNulls": 55195,
+    "candidateGenCalls": 552795,
+    "candidateNulls": 55600,
     "candidateVerifyFalse": 0,
     "candidateExceptions": 0,
     "efficiencyWarningUnits": 25,
     "efficiencyWarningCombinations": 60,
-    "declaredBankCombinations": 11,
-    "paperCompleted": 2365,
-    "paperExhausted": 2
+    "declaredBankCombinations": 8,
+    "paperCompleted": 2366,
+    "paperExhausted": 1
   }
 }

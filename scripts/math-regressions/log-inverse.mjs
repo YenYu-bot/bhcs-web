@@ -7,7 +7,7 @@ let count=0;
 const bases=new Set(),shifts=new Set();
 
 for(const level of ['basic','advanced','challenge'])for(let i=0;i<200;i++){
- const q=unit.gen({level,modes:['integer'],mixed:false});
+ const q=unit.legacyGen({level,modes:['integer'],mixed:false});
  assert.ok(q);
  assert.equal(q.verify(),true);
  const [,base,h,k]=q.sig.split(':').map(Number);

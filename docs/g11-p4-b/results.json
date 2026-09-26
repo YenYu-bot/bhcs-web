@@ -1,0 +1,1295 @@
+{
+  "base": "8082004dc7843b7da3b481e72a0f77e11748679d",
+  "units": [
+    {
+      "topic": "bayes",
+      "unit": "bayestwo",
+      "before": [
+        1,
+        1,
+        1
+      ],
+      "after": [
+        3,
+        3,
+        4
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "bayes",
+      "unit": "medicalpositive",
+      "before": [
+        1,
+        1,
+        1
+      ],
+      "after": [
+        3,
+        3,
+        4
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "bayes",
+      "unit": "repeatedtest",
+      "before": [
+        2,
+        2,
+        2
+      ],
+      "after": [
+        3,
+        3,
+        4
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "combinations",
+      "unit": "required",
+      "before": [
+        3,
+        3,
+        3
+      ],
+      "after": [
+        5,
+        5,
+        6
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "combinations",
+      "unit": "atleast",
+      "before": [
+        1,
+        1,
+        1
+      ],
+      "after": [
+        3,
+        3,
+        4
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "combinations",
+      "unit": "groups",
+      "before": [
+        2,
+        2,
+        2
+      ],
+      "after": [
+        3,
+        3,
+        5
+      ],
+      "challengeNew": 2
+    },
+    {
+      "topic": "commonlog",
+      "unit": "definition",
+      "before": [
+        2,
+        2,
+        2
+      ],
+      "after": [
+        5,
+        5,
+        6
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "commonlog",
+      "unit": "laws",
+      "before": [
+        8,
+        8,
+        8
+      ],
+      "after": [
+        9,
+        9,
+        10
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "commonlog",
+      "unit": "change",
+      "before": [
+        1,
+        1,
+        1
+      ],
+      "after": [
+        3,
+        3,
+        4
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "conditionalprob",
+      "unit": "definition",
+      "before": [
+        1,
+        1,
+        1
+      ],
+      "after": [
+        3,
+        3,
+        4
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "conditionalprob",
+      "unit": "withoutreplacement",
+      "before": [
+        4,
+        4,
+        4
+      ],
+      "after": [
+        4,
+        4,
+        6
+      ],
+      "challengeNew": 2
+    },
+    {
+      "topic": "conditionalprob",
+      "unit": "solveunion",
+      "before": [
+        1,
+        1,
+        1
+      ],
+      "after": [
+        3,
+        3,
+        4
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "loggraphs",
+      "unit": "equation",
+      "before": [
+        8,
+        8,
+        8
+      ],
+      "after": [
+        10,
+        11,
+        13
+      ],
+      "challengeNew": 3
+    },
+    {
+      "topic": "loggraphs",
+      "unit": "combined",
+      "before": [
+        3,
+        3,
+        3
+      ],
+      "after": [
+        6,
+        6,
+        7
+      ],
+      "challengeNew": 1
+    },
+    {
+      "topic": "loggraphs",
+      "unit": "inverse",
+      "before": [
+        9,
+        8,
+        8
+      ],
+      "after": [
+        12,
+        12,
+        16
+      ],
+      "challengeNew": 4
+    }
+  ],
+  "topicGates": {
+    "combinations": {
+      "current": 3,
+      "qualifyingUnits": [
+        "required",
+        "atleast",
+        "groups"
+      ],
+      "baseline": 0,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "commonlog": {
+      "current": 3,
+      "qualifyingUnits": [
+        "definition",
+        "laws",
+        "change"
+      ],
+      "baseline": 0,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "loggraphs": {
+      "current": 3,
+      "qualifyingUnits": [
+        "equation",
+        "combined",
+        "inverse"
+      ],
+      "baseline": 0,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "conditionalprob": {
+      "current": 3,
+      "qualifyingUnits": [
+        "definition",
+        "withoutreplacement",
+        "solveunion"
+      ],
+      "baseline": 0,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    },
+    "bayes": {
+      "current": 3,
+      "qualifyingUnits": [
+        "bayestwo",
+        "medicalpositive",
+        "repeatedtest"
+      ],
+      "baseline": 0,
+      "fullThreshold": 3,
+      "gapToFull": 0,
+      "required": 3,
+      "modified": true,
+      "newTopic": false,
+      "gapToRequired": 0,
+      "fullGatePass": true,
+      "pass": true,
+      "baselineVersion": "g11-r3"
+    }
+  },
+  "unchangedUnitFingerprints": 576,
+  "ratchetFailures": [],
+  "validation": {
+    "passed": true,
+    "replays": 9000,
+    "papers": 2040,
+    "questions": 122400,
+    "legacyPromptRepeats": 0,
+    "rows": [
+      {
+        "topic": "bayes",
+        "unit": "bayestwo",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "bayestwo",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "bayestwo",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "medicalpositive",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "medicalpositive",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "medicalpositive",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "repeatedtest",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "repeatedtest",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "bayes",
+        "unit": "repeatedtest",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "required",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "required",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "required",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "atleast",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "atleast",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "atleast",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "groups",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "groups",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "combinations",
+        "unit": "groups",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "change",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "change",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "commonlog",
+        "unit": "change",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "definition",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "definition",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "definition",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "withoutreplacement",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "withoutreplacement",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "withoutreplacement",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "solveunion",
+        "level": "basic",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "solveunion",
+        "level": "advanced",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "solveunion",
+        "level": "challenge",
+        "mode": "fraction",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "equation",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "equation",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "equation",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "combined",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "combined",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "combined",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "inverse",
+        "level": "basic",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "inverse",
+        "level": "advanced",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "inverse",
+        "level": "challenge",
+        "mode": "integer",
+        "formal": "40/40 × 20 seeds",
+        "stress": "80/80 × 20 seeds"
+      }
+    ],
+    "gateRows": [
+      {
+        "topic": "bayes",
+        "unit": "bayestwo",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 4
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "bayes",
+        "unit": "medicalpositive",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 4
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "bayes",
+        "unit": "repeatedtest",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 4
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "combinations",
+        "unit": "required",
+        "structures": {
+          "basic": 5,
+          "advanced": 5,
+          "challenge": 6
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "combinations",
+        "unit": "atleast",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 4
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "combinations",
+        "unit": "groups",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 5
+        },
+        "challengeNew": 2
+      },
+      {
+        "topic": "commonlog",
+        "unit": "definition",
+        "structures": {
+          "basic": 5,
+          "advanced": 5,
+          "challenge": 6
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "commonlog",
+        "unit": "laws",
+        "structures": {
+          "basic": 9,
+          "advanced": 9,
+          "challenge": 10
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "commonlog",
+        "unit": "change",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 4
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "definition",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 4
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "withoutreplacement",
+        "structures": {
+          "basic": 4,
+          "advanced": 4,
+          "challenge": 6
+        },
+        "challengeNew": 2
+      },
+      {
+        "topic": "conditionalprob",
+        "unit": "solveunion",
+        "structures": {
+          "basic": 3,
+          "advanced": 3,
+          "challenge": 4
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "equation",
+        "structures": {
+          "basic": 10,
+          "advanced": 11,
+          "challenge": 13
+        },
+        "challengeNew": 3
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "combined",
+        "structures": {
+          "basic": 6,
+          "advanced": 6,
+          "challenge": 7
+        },
+        "challengeNew": 1
+      },
+      {
+        "topic": "loggraphs",
+        "unit": "inverse",
+        "structures": {
+          "basic": 12,
+          "advanced": 12,
+          "challenge": 16
+        },
+        "challengeNew": 4
+      }
+    ],
+    "samples": {
+      "bayes/bayestwo/good": {
+        "topic": "bayes",
+        "unit": "bayestwo",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "某批產品有 ((3)/(4)) 來自甲廠，其餘來自乙廠；兩廠不良率分別為 60％、90％。已知抽到良品，求來自甲廠的機率。",
+        "answer": "((12)/(13))",
+        "promptHtml": "某批產品有 <span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">4</span></span> 來自甲廠，其餘來自乙廠；兩廠不良率分別為 60％、90％。已知抽到良品，求來自甲廠的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">12</span><span class=\"d\">13</span></span>"
+      },
+      "bayes/bayestwo/counts": {
+        "topic": "bayes",
+        "unit": "bayestwo",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "甲、乙廠各有 11、5 件產品，其中不良品各有 2、4 件。合併後等可能抽一件，已知是不良品，求來自甲廠的機率。",
+        "answer": "((1)/(3))",
+        "promptHtml": "甲、乙廠各有 11、5 件產品，其中不良品各有 2、4 件。合併後等可能抽一件，已知是不良品，求來自甲廠的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">3</span></span>"
+      },
+      "bayes/bayestwo/prior": {
+        "topic": "bayes",
+        "unit": "bayestwo",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "甲、乙廠的不良率分別為 10％、20％。已知一件不良品來自甲廠的機率為 ((1)/(2))，求甲廠原本的供貨比例。",
+        "answer": "((2)/(3))",
+        "promptHtml": "甲、乙廠的不良率分別為 10％、20％。已知一件不良品來自甲廠的機率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">2</span></span>，求甲廠原本的供貨比例。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span>"
+      },
+      "bayes/medicalpositive/specificity": {
+        "topic": "bayes",
+        "unit": "medicalpositive",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "教學模型中患病率為 ((3)/(4))，檢驗靈敏度為 75％，特異度為 70％。已知檢驗陽性，求患病的機率。",
+        "answer": "((15)/(17))",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">4</span></span>，檢驗靈敏度為 75％，特異度為 70％。已知檢驗陽性，求患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">15</span><span class=\"d\">17</span></span>"
+      },
+      "bayes/medicalpositive/counts": {
+        "topic": "bayes",
+        "unit": "medicalpositive",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "教學用檢驗資料中，患者 19 人有 4 人呈陽性，健康者 21 人有 11 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
+        "answer": "((4)/(15))",
+        "promptHtml": "教學用檢驗資料中，患者 19 人有 4 人呈陽性，健康者 21 人有 11 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">15</span></span>"
+      },
+      "bayes/medicalpositive/falsePositive": {
+        "topic": "bayes",
+        "unit": "medicalpositive",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "教學模型中患病率為 ((1)/(4))，患者呈陽性的機率為 75％。已知陽性者患病的機率為 ((1)/(2))，求健康者被誤判陽性的機率(以百分率作答)。",
+        "answer": "25％",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">4</span></span>，患者呈陽性的機率為 75％。已知陽性者患病的機率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">2</span></span>，求健康者被誤判陽性的機率（以百分率作答）。",
+        "answerHtml": "25％"
+      },
+      "bayes/repeatedtest/mixed": {
+        "topic": "bayes",
+        "unit": "repeatedtest",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "教學模型中患病率為 ((1)/(3))；患者、健康者每次呈陽性的機率分別為 ((1)/(2))、((1)/(5))，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗第一次陽性，其餘陰性，求患病的機率。",
+        "answer": "((25)/(57))",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">3</span></span>；患者、健康者每次呈陽性的機率分別為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">2</span></span>、<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗第一次陽性，其餘陰性，求患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">25</span><span class=\"d\">57</span></span>"
+      },
+      "bayes/repeatedtest/atLeast": {
+        "topic": "bayes",
+        "unit": "repeatedtest",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "教學模型中患病率為 ((1)/(5))；患者、健康者每次呈陽性的機率分別為 ((4)/(5))、((1)/(5))，各次檢驗在健康狀態固定下互相獨立。已知 3 次檢驗至少一次陽性，求患病的機率。",
+        "answer": "((31)/(92))",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>；患者、健康者每次呈陽性的機率分別為 <span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">5</span></span>、<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>，各次檢驗在健康狀態固定下互相獨立。已知 3 次檢驗至少一次陽性，求患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">31</span><span class=\"d\">92</span></span>"
+      },
+      "combinations/required/includeMany": {
+        "topic": "combinations",
+        "unit": "required",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "從 10 人中選 5 人，指定 3 人全部必選，共有幾種選法？",
+        "answer": "21",
+        "promptHtml": "從 10 人中選 5 人，指定 3 人全部必選，共有幾種選法？",
+        "answerHtml": "21"
+      },
+      "combinations/required/excludeMany": {
+        "topic": "combinations",
+        "unit": "required",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "從 8 人中選 3 人，指定 2 人全部不得入選，共有幾種選法？",
+        "answer": "20",
+        "promptHtml": "從 8 人中選 3 人，指定 2 人全部不得入選，共有幾種選法？",
+        "answerHtml": "20"
+      },
+      "combinations/required/bothRules": {
+        "topic": "combinations",
+        "unit": "required",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "從 8 人中選 3 人，指定 2 人全部必選，另有 2 人全部不得入選，共有幾種選法？",
+        "answer": "4",
+        "promptHtml": "從 8 人中選 3 人，指定 2 人全部必選，另有 2 人全部不得入選，共有幾種選法？",
+        "answerHtml": "4"
+      },
+      "combinations/atleast/atMost": {
+        "topic": "combinations",
+        "unit": "atleast",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "有男生 5 人、女生 5 人，選出 6 人，其中至多 1 位女生，共有幾種選法？",
+        "answer": "5",
+        "promptHtml": "有男生 5 人、女生 5 人，選出 6 人，其中至多 1 位女生，共有幾種選法？",
+        "answerHtml": "5"
+      },
+      "combinations/atleast/exact": {
+        "topic": "combinations",
+        "unit": "atleast",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "有男生 4 人、女生 6 人，選出 6 人，其中恰有 3 位女生，共有幾種選法？",
+        "answer": "80",
+        "promptHtml": "有男生 4 人、女生 6 人，選出 6 人，其中恰有 3 位女生，共有幾種選法？",
+        "answerHtml": "80"
+      },
+      "combinations/atleast/between": {
+        "topic": "combinations",
+        "unit": "atleast",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "有男生 6 人、女生 6 人，選出 3 人，其中女生至少 2 位且至多 3 位，共有幾種選法？",
+        "answer": "110",
+        "promptHtml": "有男生 6 人、女生 6 人，選出 3 人，其中女生至少 2 位且至多 3 位，共有幾種選法？",
+        "answerHtml": "110"
+      },
+      "combinations/groups/fixed": {
+        "topic": "combinations",
+        "unit": "groups",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "將含小明、小華的 8 人分入有名稱的甲、乙、丙三組，人數為 3、2、3。小明必須在甲組，共有幾種分法？",
+        "answer": "210",
+        "promptHtml": "將含小明、小華的 8 人分入有名稱的甲、乙、丙三組，人數為 3、2、3。小明必須在甲組，共有幾種分法？",
+        "answerHtml": "210"
+      },
+      "combinations/groups/apart": {
+        "topic": "combinations",
+        "unit": "groups",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "將含小明、小華的 4 人分入有名稱的甲、乙、丙三組，人數為 2、1、1。小明、小華必須不同組，共有幾種分法？",
+        "answer": "10",
+        "promptHtml": "將含小明、小華的 4 人分入有名稱的甲、乙、丙三組，人數為 2、1、1。小明、小華必須不同組，共有幾種分法？",
+        "answerHtml": "10"
+      },
+      "combinations/groups/together": {
+        "topic": "combinations",
+        "unit": "groups",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "將含小明、小華的 8 人分入有名稱的甲、乙、丙三組，人數為 4、2、2。小明、小華必須同組，共有幾種分法？",
+        "answer": "120",
+        "promptHtml": "將含小明、小華的 8 人分入有名稱的甲、乙、丙三組，人數為 4、2、2。小明、小華必須同組，共有幾種分法？",
+        "answerHtml": "120"
+      },
+      "commonlog/definition/powerBase": {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "求 log5^(4)(5^(8))的值。",
+        "answer": "2",
+        "promptHtml": "求 log<sub>5<sup>4</sup></sub>（5<sup>8</sup>）的值。",
+        "answerHtml": "2"
+      },
+      "commonlog/definition/argument": {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "已知 log10(4x+0)＝4，求 x。",
+        "answer": "2500",
+        "promptHtml": "已知 log<sub>10</sub>（4x＋0）＝4，求 x。",
+        "answerHtml": "2500"
+      },
+      "commonlog/definition/substitute": {
+        "topic": "commonlog",
+        "unit": "definition",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "已知 x＞0 且 log3x＝2，求 log3(3^(1)x^(4))。",
+        "answer": "9",
+        "promptHtml": "已知 x＞0 且 log<sub>3</sub>x＝2，求 log<sub>3</sub>（3<sup>1</sup>x<sup>4</sup>）。",
+        "answerHtml": "9"
+      },
+      "commonlog/laws/threeTerms": {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "計算 log525+log5125-log51。",
+        "answer": "5",
+        "promptHtml": "計算 log<sub>5</sub>25＋log<sub>5</sub>125−log<sub>5</sub>1。",
+        "answerHtml": "5"
+      },
+      "commonlog/laws/weighted": {
+        "topic": "commonlog",
+        "unit": "laws",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "計算 4log5125+log51-log5125。",
+        "answer": "9",
+        "promptHtml": "計算 4log<sub>5</sub>125＋log<sub>5</sub>1−log<sub>5</sub>125。",
+        "answerHtml": "9"
+      },
+      "commonlog/change/ratio": {
+        "topic": "commonlog",
+        "unit": "change",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "計算 ((log1125)/(log115))。",
+        "answer": "2",
+        "promptHtml": "計算 <span class=\"fr\"><span class=\"n\">log<sub>11</sub>25</span><span class=\"d\">log<sub>11</sub>5</span></span>。",
+        "answerHtml": "2"
+      },
+      "commonlog/change/openChain": {
+        "topic": "commonlog",
+        "unit": "change",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "計算 log53 * log311 * log11625。",
+        "answer": "4",
+        "promptHtml": "計算 log<sub>5</sub>3 × log<sub>3</sub>11 × log<sub>11</sub>625。",
+        "answerHtml": "4"
+      },
+      "commonlog/change/symbolic": {
+        "topic": "commonlog",
+        "unit": "change",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "已知 u＝log 2、v＝log 3，以 u、v 表示 log 18。",
+        "answer": "1u+2v",
+        "promptHtml": "已知 u＝log 2、v＝log 3，以 u、v 表示 log 18。",
+        "answerHtml": "1u＋2v"
+      },
+      "commonlog/change/poweredChain": {
+        "topic": "commonlog",
+        "unit": "change",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "計算 log11^(2)2 * log2^(3)5 * log5^(2)(11^(24))。",
+        "answer": "2",
+        "promptHtml": "計算 log<sub>11<sup>2</sup></sub>2 × log<sub>2<sup>3</sup></sub>5 × log<sub>5<sup>2</sup></sub>（11<sup>24</sup>）。",
+        "answerHtml": "2"
+      },
+      "conditionalprob/conditionalDefinition/complement": {
+        "topic": "conditionalprob",
+        "unit": "definition",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "調查 35 人，同時屬 A、B 的有 9 人，只屬 A 的有 9 人，只屬 B 的有 14 人，兩者皆非有 3 人。求 P(A′｜B)。",
+        "answer": "((14)/(23))",
+        "promptHtml": "調查 35 人，同時屬 A、B 的有 9 人，只屬 A 的有 9 人，只屬 B 的有 14 人，兩者皆非有 3 人。求 P（A′｜B）。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">14</span><span class=\"d\">23</span></span>"
+      },
+      "conditionalprob/conditionalDefinition/reverse": {
+        "topic": "conditionalprob",
+        "unit": "definition",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "調查 42 人，同時屬 A、B 的有 5 人，只屬 A 的有 13 人，只屬 B 的有 15 人，兩者皆非有 9 人。求 P(B｜A)。",
+        "answer": "((5)/(18))",
+        "promptHtml": "調查 42 人，同時屬 A、B 的有 5 人，只屬 A 的有 13 人，只屬 B 的有 15 人，兩者皆非有 9 人。求 P（B｜A）。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">5</span><span class=\"d\">18</span></span>"
+      },
+      "conditionalprob/conditionalDefinition/unionGiven": {
+        "topic": "conditionalprob",
+        "unit": "definition",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "調查 37 人，同時屬 A、B 的有 12 人，只屬 A 的有 13 人，只屬 B 的有 3 人，兩者皆非有 9 人。求 P(A｜A∪B)。",
+        "answer": "((25)/(28))",
+        "promptHtml": "調查 37 人，同時屬 A、B 的有 12 人，只屬 A 的有 13 人，只屬 B 的有 3 人，兩者皆非有 9 人。求 P（A｜A∪B）。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">25</span><span class=\"d\">28</span></span>"
+      },
+      "conditionalprob/withoutreplacement/reverseLast": {
+        "topic": "conditionalprob",
+        "unit": "withoutreplacement",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "袋中紅球 4 顆、藍球 7 顆，依序抽兩球且不放回。已知第二球為紅球，求第一球為藍球的機率。",
+        "answer": "((7)/(10))",
+        "promptHtml": "袋中紅球 4 顆、藍球 7 顆，依序抽兩球且不放回。已知第二球為紅球，求第一球為藍球的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">7</span><span class=\"d\">10</span></span>"
+      },
+      "conditionalprob/withoutreplacement/twoKnown": {
+        "topic": "conditionalprob",
+        "unit": "withoutreplacement",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "袋中紅球 5 顆、藍球 4 顆，連抽三球且不放回。已知前兩球恰一紅一藍，求第三球為紅球的機率。",
+        "answer": "((4)/(7))",
+        "promptHtml": "袋中紅球 5 顆、藍球 4 顆，連抽三球且不放回。已知前兩球恰一紅一藍，求第三球為紅球的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">7</span></span>"
+      },
+      "conditionalprob/solveunion/neither": {
+        "topic": "conditionalprob",
+        "unit": "solveunion",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "A、B 為獨立事件，P(A)＝((1)/(6))，P(A′∩B′)＝((5)/(7))，求 P(B)。",
+        "answer": "((1)/(7))",
+        "promptHtml": "A、B 為獨立事件，P（A）＝<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">6</span></span>，P（A′∩B′）＝<span class=\"fr\"><span class=\"n\">5</span><span class=\"d\">7</span></span>，求 P（B）。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">7</span></span>"
+      },
+      "conditionalprob/solveunion/conditionalUnion": {
+        "topic": "conditionalprob",
+        "unit": "solveunion",
+        "level": "basic",
+        "mode": "fraction",
+        "prompt": "A、B 為獨立事件，P(A)＝((3)/(5))，P(A｜A∪B)＝((6)/(7))，求 P(B)。",
+        "answer": "((1)/(4))",
+        "promptHtml": "A、B 為獨立事件，P（A）＝<span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">5</span></span>，P（A｜A∪B）＝<span class=\"fr\"><span class=\"n\">6</span><span class=\"d\">7</span></span>，求 P（B）。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">4</span></span>"
+      },
+      "conditionalprob/solveunion/exactlyOne": {
+        "topic": "conditionalprob",
+        "unit": "solveunion",
+        "level": "challenge",
+        "mode": "fraction",
+        "prompt": "A、B 為獨立事件，P(A)＝((1)/(6))，恰有一個事件發生的機率＝((3)/(4))，求 P(B)。",
+        "answer": "((7)/(8))",
+        "promptHtml": "A、B 為獨立事件，P（A）＝<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">6</span></span>，恰有一個事件發生的機率＝<span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">4</span></span>，求 P（B）。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">7</span><span class=\"d\">8</span></span>"
+      },
+      "loggraphs/equation/equalLogs": {
+        "topic": "loggraphs",
+        "unit": "equation",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "解方程式 log2(4x-22)＝log2(2x-8)。",
+        "answer": "x＝7",
+        "promptHtml": "解方程式 log<sub>2</sub>（4x−22）＝log<sub>2</sub>（2x−8）。",
+        "answerHtml": "x＝7"
+      },
+      "loggraphs/equation/squareArgument": {
+        "topic": "loggraphs",
+        "unit": "equation",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "解方程式 log2［(x-2)^(2)］＝2。",
+        "answer": "x＝0 或 4",
+        "promptHtml": "解方程式 log<sub>2</sub>［（x−2）<sup>2</sup>］＝2。",
+        "answerHtml": "x＝0 或 4"
+      },
+      "loggraphs/combined/difference": {
+        "topic": "loggraphs",
+        "unit": "combined",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "解方程式 log2(x+20)-log2(x-4)＝log25。",
+        "answer": "x＝10",
+        "promptHtml": "解方程式 log<sub>2</sub>（x＋20）−log<sub>2</sub>（x−4）＝log<sub>2</sub>5。",
+        "answerHtml": "x＝10"
+      },
+      "loggraphs/combined/quadraticLog": {
+        "topic": "loggraphs",
+        "unit": "combined",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "解方程式(log2x)^(2)-6log2x+8＝0。",
+        "answer": "x＝4 或 16",
+        "promptHtml": "解方程式（log<sub>2</sub>x）<sup>2</sup>−6log<sub>2</sub>x＋8＝0。",
+        "answerHtml": "x＝4 或 16"
+      },
+      "loggraphs/inverse/fromLog": {
+        "topic": "loggraphs",
+        "unit": "inverse",
+        "level": "basic",
+        "mode": "integer",
+        "prompt": "求 f(x)＝log2(x-1)+1 的反函數。",
+        "answer": "f^(-1)(x)＝2^(x-1)+1",
+        "promptHtml": "求 f（x）＝log<sub>2</sub>（x−1）＋1 的反函數。",
+        "answerHtml": "f<sup>−1</sup>（x）＝2<sup>x−1</sup>＋1"
+      },
+      "loggraphs/inverse/scaledExponential": {
+        "topic": "loggraphs",
+        "unit": "inverse",
+        "level": "challenge",
+        "mode": "integer",
+        "prompt": "求 f(x)＝5*5^(x+3)+6 的反函數。",
+        "answer": "f^(-1)(x)＝log5(((x-6)/(5)))-3",
+        "promptHtml": "求 f（x）＝5×5<sup>x＋3</sup>＋6 的反函數。",
+        "answerHtml": "f<sup>−1</sup>（x）＝log<sub>5</sub>（<span class=\"fr\"><span class=\"n\">x−6</span><span class=\"d\">5</span></span>）−3"
+      }
+    }
+  }
+}
