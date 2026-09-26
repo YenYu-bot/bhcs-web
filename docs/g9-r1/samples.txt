@@ -1,0 +1,180 @@
+[basic/value/integer] 設 x：y：z＝1：4：6，求（3x＋3y＋z）：（3x＋2y＋z）的比值。  ⇒ (21/17)
+[basic/value/integer] 設 x、y、z 都不為 0，且 x／7＝y／1＝z／3，求（x＋y＋z）：y 的比值。  ⇒ 11
+[basic/value/integer] 設 x、y、z 都不為 0，且 x／6＝y／5＝z／5，求（x＋y＋z）：x 的比值。  ⇒ (8/3)
+[basic/value/fraction] 設 x、y、z 都不為 0，且 x／3＝y／2＝z／2，求（x＋y＋z）：y 的比值。  ⇒ (7/2)
+[basic/value/fraction] 設 x：y：z＝4：9：9，求（3x＋3y＋2z）：（2x＋y＋3z）的比值。  ⇒ (57/44)
+[basic/value/fraction] 設 x：y：z＝9：4：5，求（2x＋3y＋3z）：（3x＋y＋z）的比值。  ⇒ (5/4)
+[basic/solve/integer] 設 x：y：z＝5：6：3，且 2x＋2y＋z＝200，求 z。  ⇒ z＝24
+[basic/solve/integer] 設 x：y：z＝4：3：2，且 3x＋y＋2z＝228，求 z。  ⇒ z＝24
+[basic/solve/integer] 設 3a：4b：2c＝9：5：2，且 a＋b＋c＝84，求 c。  ⇒ c＝16
+[basic/share/integer] 把 91 按 3：2：2 分成三份，求各份的量。  ⇒ 39、26、26
+[basic/share/integer] 甲、乙、丙三人身高的比是 8：4：5。若乙身高 120 公分，求另外兩人的身高。  ⇒ 甲 240 公分、丙 150 公分
+[basic/share/integer] 甲、乙、丙三人身高的比是 9：6：8。若乙身高 144 公分，求另外兩人的身高。  ⇒ 甲 216 公分、丙 192 公分
+[basic/combine/integer] 已知 x：y＝2：1，y：z＝7：4，求 x：y：z。  ⇒ 14：7：4
+[basic/combine/integer] 已知 x：y＝9：7，x：z＝5：9，求 x：y：z。  ⇒ 45：35：81
+[basic/combine/integer] 已知 x：y＝3：4，x：z＝1：3，求 x：y：z。  ⇒ 3：4：9
+[basic/combine/fraction] 已知 x：z＝(8/5)：2，y：z＝(3/2)：(3/5)，求 x：y：z。  ⇒ 8：25：10
+[basic/combine/fraction] 已知 x：y＝(1/4)：1，x：z＝(2/5)：(3/4)，求 x：y：z。  ⇒ 8：32：15
+[basic/combine/fraction] 已知 x：y＝(4/5)：(5/2)，y：z＝(5/3)：(1/5)，求 x：y：z。  ⇒ 8：25：3
+[basic/apply/integer] 甲、乙、丙三人共有 46 元，甲與乙的錢數比為 3：4，乙與丙的錢數比為 8：9，求三人各有多少元。  ⇒ 12、16、18 元
+[basic/apply/integer] 甲、乙、丙三人共有 649 元，甲與乙的錢數比為 7：5，甲與丙的錢數比為 2：5，求三人各有多少元。  ⇒ 154、110、385 元
+[basic/apply/integer] 甲、乙、丙三人共有 100 元，甲與乙的錢數比為 7：1，甲與丙的錢數比為 1：6，求三人各有多少元。  ⇒ 14、2、84 元
+[basic/inverse/integer] 若 1／a：1／b：1／c＝5：2：5，求 a：b：c。  ⇒ 2：5：2
+[basic/inverse/integer] A、B、C 三個平行四邊形面積相等，它們的底分別為 7、1、4 公分，高分別為 x、y、z 公分，求 x：y：z。  ⇒ 4：28：7
+[basic/inverse/integer] A、B、C 三個平行四邊形面積相等，它們的底分別為 11、1、7 公分，高分別為 x、y、z 公分，求 x：y：z。  ⇒ 7：77：11
+[advanced/value/integer] 設 2x：4y：3z＝7：8：4，求 x：y：z 與（x＋y）／z 的值。  ⇒ x：y：z＝21：12：8，（x＋y）／z＝(33/8)
+[advanced/value/integer] 設 x：y：z＝1：8：8，求（3x＋3y＋z）：（3x＋3y＋3z）的比值。  ⇒ (35/51)
+[advanced/value/integer] 設 x、y、z 都不為 0，且 x／7＝y／2＝z／8，求（x＋y＋z）：y 的比值。  ⇒ (17/2)
+[advanced/value/fraction] 設 x、y、z 都不為 0，且 x／6＝y／8＝z／5，求（x＋y＋z）：y 的比值。  ⇒ (19/8)
+[advanced/value/fraction] 設 x、y、z 都不為 0，且 x／6＝y／3＝z／2，求（x＋y＋z）：y 的比值。  ⇒ (11/3)
+[advanced/value/fraction] 設 x、y、z 都不為 0，且 x／5＝y／9＝z／5，求（x＋y＋z）：x 的比值。  ⇒ (19/5)
+[advanced/solve/integer] 已知 x：y：z＝1：5：6，且 x、y、z 的最小公倍數為 180，求 2x＋2y＋3z。  ⇒ 180
+[advanced/solve/integer] 已知 x：y：z＝6：5：5，且 x、y、z 的最小公倍數為 210，求 3x＋3y＋2z。  ⇒ 301
+[advanced/solve/integer] 已知 x：y：z＝1：4：6，且 x、y、z 的最小公倍數為 48，求 x＋3y＋3z。  ⇒ 124
+[advanced/share/integer] 甲、乙、丙三人各用了 30 元後，餘款的比為 9：4：3。已知乙的餘款為 48 元，求三人原有錢的總和。  ⇒ 282 元
+[advanced/share/integer] 甲、乙、丙三人身高的比是 7：8：6。若乙身高 200 公分，求另外兩人的身高。  ⇒ 甲 175 公分、丙 150 公分
+[advanced/share/integer] 甲、乙、丙三人身高的比是 5：6：5。若甲身高 140 公分，求另外兩人的身高。  ⇒ 乙 168 公分、丙 140 公分
+[advanced/combine/integer] 若 5x＝6y、y＝9z，求連比 x：y：z。  ⇒ 54：45：5
+[advanced/combine/integer] 若 6x＝8y、y＝5z，求連比 x：y：z。  ⇒ 20：15：3
+[advanced/combine/integer] 若 4x＝6y、y＝6z，求連比 x：y：z。  ⇒ 9：6：1
+[advanced/combine/fraction] 已知 x：y＝(7/2)：(1/2)，y：z＝(1/4)：(9/4)，求 x：y：z。  ⇒ 7：1：9
+[advanced/combine/fraction] 若 (9/4)x＝(7/4)y、y＝(7/2)z，求連比 x：y：z。  ⇒ 49：63：18
+[advanced/combine/fraction] 已知 x：z＝2：1，y：z＝(1/4)：(9/10)，求 x：y：z。  ⇒ 36：5：18
+[advanced/apply/integer] 甲、乙、丙三位候選人共得 407 票，甲與乙的得票數比為 4：1，甲與丙的得票數比為 5：3，求三人中最低的得票數。  ⇒ 55 票
+[advanced/apply/integer] 甲、乙、丙三位候選人共得 780 票，甲與乙的得票數比為 1：7，甲與丙的得票數比為 7：9，求三人中最低的得票數。  ⇒ 84 票
+[advanced/apply/integer] 甲、乙、丙三位候選人共得 207 票，甲與乙的得票數比為 2：1，甲與丙的得票數比為 3：7，求三人中最低的得票數。  ⇒ 27 票
+[advanced/inverse/integer] A、B、C 三個平行四邊形面積相等，它們的底分別為 2、4、5 公分，高分別為 x、y、z 公分，求 x：y：z。  ⇒ 10：5：4
+[advanced/inverse/integer] A、B、C 三個平行四邊形面積相等，它們的底分別為 1、6、5 公分，高分別為 x、y、z 公分，求 x：y：z。  ⇒ 30：5：6
+[advanced/inverse/integer] 若 1／a：1／b：1／c＝6：5：7，求 a：b：c。  ⇒ 35：42：30
+[challenge/value/integer] 設 3x：2y：4z＝9：7：2，求 x：y：z 與（x＋y）／z 的值。  ⇒ x：y：z＝6：7：1，（x＋y）／z＝13
+[challenge/value/integer] 設 4x：3y：4z＝8：6：9，求 x：y：z 與（x＋y）／z 的值。  ⇒ x：y：z＝8：8：9，（x＋y）／z＝(16/9)
+[challenge/value/integer] 設 3x：2y：2z＝2：3：1，求 x：y：z 與（x＋y）／z 的值。  ⇒ x：y：z＝4：9：3，（x＋y）／z＝(13/3)
+[challenge/value/fraction] 設 xyz≠0，且 5xy＝7yz＝2zx，求 x：y：z，並求（3x＋y＋2z）：（2x＋y＋2z）的比值。  ⇒ x：y：z＝7：2：5；比值 (33/26)
+[challenge/value/fraction] 設 2x：3y：4z＝1：(1/3)：(1/3)，求 x：y：z 與（x＋y）／z 的值。  ⇒ x：y：z＝18：4：3，（x＋y）／z＝(22/3)
+[challenge/value/fraction] 設 4x：2y：4z＝1：(1/3)：(1/4)，求 x：y：z 與（x＋y）／z 的值。  ⇒ x：y：z＝12：8：3，（x＋y）／z＝(20/3)
+[challenge/solve/integer] 已知 a：b：c＝2：3：5，若 a、b、c 的最大公因數與最小公倍數的和是 186，求 a。  ⇒ a＝12
+[challenge/solve/integer] 已知 x：y：z＝6：6：5，且 x、y、z 的最小公倍數為 150，求 x＋2y＋z。  ⇒ 115
+[challenge/solve/integer] 已知 x：y：z＝5：5：2，且 x、y、z 的最小公倍數為 70，求 2x＋2y＋2z。  ⇒ 168
+[challenge/share/integer] 甲、乙、丙三人各用了 14 元後，餘款的比為 8：2：3。已知乙的餘款為 26 元，求三人原有錢的總和。  ⇒ 211 元
+[challenge/share/integer] 甲、乙、丙三人各用了 24 元後，餘款的比為 5：1：2。已知乙的餘款為 8 元，求三人原有錢的總和。  ⇒ 136 元
+[challenge/share/integer] 甲、乙、丙三人各用了 29 元後，餘款的比為 6：9：8。已知甲的餘款為 36 元，求三人原有錢的總和。  ⇒ 225 元
+[challenge/combine/integer] 設 a：b＝4：1、b：c＝3：1、c：d＝2：1，求 a：d。  ⇒ 24：1
+[challenge/combine/integer] 設 a：b＝4：9、b：c＝4：3、c：d＝9：7，求 a：d。  ⇒ 16：21
+[challenge/combine/integer] 甲的 3 倍等於乙的 5 倍，乙的 4 倍等於丙的 5 倍。求甲：乙：丙，並求（3甲＋乙＋2丙）：（2甲＋3乙＋丙）的比值。  ⇒ 甲：乙：丙＝25：15：12；比值 (114/107)
+[challenge/combine/fraction] 若 (2/5)x＝(5/4)y、y＝(7/3)z，求連比 x：y：z。  ⇒ 175：56：24
+[challenge/combine/fraction] 甲的 2 倍等於乙的 5 倍，乙的 6 倍等於丙的 4 倍。求甲：乙：丙，並求（2甲＋乙＋3丙）：（甲＋2乙＋3丙）的比值。  ⇒ 甲：乙：丙＝5：2：3；比值 (7/6)
+[challenge/combine/fraction] 甲的 4 倍等於乙的 6 倍，乙的 4 倍等於丙的 6 倍。求甲：乙：丙，並求（3甲＋3乙＋3丙）：（3甲＋3乙＋3丙）的比值。  ⇒ 甲：乙：丙＝9：6：4；比值 1
+[challenge/apply/integer] 三角形的周長為 78 公分，三邊長為 a、b、c 公分。若 4a：2b＝12：5，b：c＝5：2，求 a：b：c 與三邊長。  ⇒ a：b：c＝6：5：2；36、30、12 公分
+[challenge/apply/integer] 小英年齡的 2 倍剛好是父親的年齡，父親年齡的 2 倍是祖父年齡的 5 倍。求小英：父親：祖父的年齡比；若三人年齡共 38 歲，小英幾歲？  ⇒ 5：10：4；小英 10 歲
+[challenge/apply/integer] 三角形的周長為 230 公分，三邊長為 a、b、c 公分。若 4a：3b＝7：6，b：c＝1：1，求 a：b：c 與三邊長。  ⇒ a：b：c＝7：8：8；70、80、80 公分
+[challenge/inverse/integer] 甲摺完 3 個紙星星的時間，乙可以摺完 5 個；乙摺完 5 個的時間，丙可以摺完 4 個。三人用相同的時間共摺了 168 個，求甲、丙兩人摺的個數相差幾個。  ⇒ 14 個
+[challenge/inverse/integer] △ABC 三邊長為 a、b、c，各邊上的高分別為 hₐ、h_b、h_c。若 hₐ：h_b＝5：6、h_b：h_c＝6：5，求 a：b：c。  ⇒ 6：5：6
+[challenge/inverse/integer] △ABC 三邊長為 a、b、c，各邊上的高分別為 hₐ、h_b、h_c。若 hₐ：h_b＝3：1、h_b：h_c＝5：6，求 a：b：c。  ⇒ 2：6：5
+[basic/areaRatio/integer]  示意圖 A B C D E 如圖，D 在 BC 上，E 在 AD 上，BD：CD＝5：2，AE：ED＝1：1。求 △ABD：△ABC 與 △ABE：△ABC。  ⇒ △ABD：△ABC＝5：7；△ABE：△ABC＝5：14
+[basic/areaRatio/integer]  示意圖 A B C D E 如圖，D 在 BC 上，E 在 AD 上，BD：CD＝5：4，AE：ED＝3：1。求 △ABD：△ABC 與 △ABE：△ABC。  ⇒ △ABD：△ABC＝5：9；△ABE：△ABC＝5：12
+[basic/areaRatio/integer]  示意圖 A B C D E 如圖，D 在 AB 上，E 在 AC 上，AD：DB＝2：3，AE：EC＝1：2，求 △BDE 面積／△ABC 面積 的值。  ⇒ (1/5)
+[basic/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝9、DB＝9、AE＝5，求 EC。  ⇒ EC＝5
+[basic/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝6、DB＝2、BC＝12，求 DE。  ⇒ DE＝9
+[basic/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝4、DB＝4、AC＝6，求 AE。  ⇒ AE＝3
+[basic/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝9、DB＝10、BC＝16，求 DE。  ⇒ DE＝(144/19)
+[basic/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝5、DB＝1、AC＝8，求 AE。  ⇒ AE＝(20/3)
+[basic/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝9、DB＝10、AC＝7，求 AE。  ⇒ AE＝(63/19)
+[basic/twoStep/integer]  示意圖 A B C D E F 如圖，△ABC 中 DE∥AB、EF∥AC，AD＝4、DC＝8、AF＝8，求 BF。  ⇒ BF＝4
+[basic/twoStep/integer]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OA＝24、OB＝36，求 OC。  ⇒ OC＝54
+[basic/twoStep/integer]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OA＝4、OC＝9，求 OB。  ⇒ OB＝6
+[basic/twoStep/fraction]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OA＝4、OC＝9，求 OB。  ⇒ OB＝6
+[basic/twoStep/fraction]  示意圖 A B C D E F 如圖，△ABC 中 DE∥AB、EF∥AC，AD＝4、DC＝7、AF＝3，求 BF。  ⇒ BF＝(12/7)
+[basic/twoStep/fraction]  示意圖 A B C D E F 如圖，△ABC 中 DE∥AB、EF∥AC，AD＝9、DC＝4、AF＝5，求 BF。  ⇒ BF＝(45/4)
+[basic/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝4、BC＝9、DE＝8，求 EF。  ⇒ EF＝18
+[basic/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝6、BC＝3、DE＝12，求 EF。  ⇒ EF＝6
+[basic/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，DE＝3、EF＝6、AB＝6，求 BC。  ⇒ BC＝12
+[basic/threeLines/fraction]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB：BC＝9：5，DE＝11，求 DF。  ⇒ DF＝(154/9)
+[basic/threeLines/fraction]  示意圖 A D B E C F 如圖，AD∥BE∥CF，DE＝6、EF＝5、AB＝10，求 BC。  ⇒ BC＝(25/3)
+[basic/threeLines/fraction]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝8、BC＝3、DE＝5，求 EF。  ⇒ EF＝(15/8)
+[basic/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AD：DB＝3：1，AE：AC＝5：7，判斷 DE 是否平行 BC。  ⇒ 不平行（AD：AB＝3：4≠AE：AC）
+[basic/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AD：DB＝5：1，AE：AC＝5：6，判斷 DE 是否平行 BC。  ⇒ 平行（AD：AB＝5：6＝AE：AC）
+[basic/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AD＝7、DB＝2、AE＝8、EC＝3，判斷 DE 是否平行 BC。  ⇒ 不平行（7：2≠8：3）
+[basic/midsegment/integer]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝6、BC＝7、CA＝5，求 △DEF 的周長。  ⇒ 9
+[basic/midsegment/integer]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝14、BC＝14、CA＝14，求 △DEF 的周長。  ⇒ 21
+[basic/midsegment/integer]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝10、BC＝6、CA＝8，求 △DEF 的周長。  ⇒ 12
+[basic/midsegment/fraction]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝6、BC＝8、CA＝11，求 △DEF 的周長。  ⇒ (25/2)
+[basic/midsegment/fraction]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝7、BC＝12、CA＝12，求 △DEF 的周長。  ⇒ (31/2)
+[basic/midsegment/fraction]  示意圖 A B C D E 如圖，D、E 分別是 AB、AC 的中點，BC＝(15/2)，求 DE。  ⇒ DE＝(15/4)
+[basic/midpoint/integer] 一圓的直徑為 AB，A（9，−4）、B（−9，−2），求圓心坐標。  ⇒ （0，−3）
+[basic/midpoint/integer] 坐標平面上 A（1，−7）、B（3，3），求 AB 的中點坐標。  ⇒ （2，−2）
+[basic/midpoint/integer] 坐標平面上 A（1，−5）、B（7，1），求 AB 的中點坐標。  ⇒ （4，−2）
+[basic/midpoint/fraction] AB 是圓 M 的直徑，已知 A（3，−9）、圓心 M（(13/2)，−4），求 B 的坐標。  ⇒ （10，1）
+[basic/midpoint/fraction] AB 是圓 M 的直徑，已知 A（−3，−8）、圓心 M（−(5/2)，−6），求 B 的坐標。  ⇒ （−2，−4）
+[basic/midpoint/fraction] 坐標平面上 A（5，−8）、B（5，5），求 AB 的中點坐標。  ⇒ （5，−(3/2)）
+[advanced/areaRatio/integer]  示意圖 A B C D E 如圖，D 在 BC 上，E 在 AD 上，BD：CD＝3：4，AE：ED＝3：2。求 △ABD：△ABC 與 △ABE：△ABC。  ⇒ △ABD：△ABC＝3：7；△ABE：△ABC＝9：35
+[advanced/areaRatio/integer]  示意圖 A B C D E 如圖，D 在 AB 上，E 在 AC 上，AD：DB＝5：3，AE：EC＝1：1，求 △BDE 面積／△ABC 面積 的值。  ⇒ (3/16)
+[advanced/areaRatio/integer]  示意圖 A B C D E 如圖，D 在 AB 上，E 在 AC 上，AD：DB＝3：5，AE：EC＝3：4，求 △BDE 面積／△ABC 面積 的值。  ⇒ (15/56)
+[advanced/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝x−3、BD＝x−4，AE：EC＝5：4，求 x。  ⇒ x＝8
+[advanced/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝x−1、BD＝x−2，AE：EC＝9：8，求 x。  ⇒ x＝10
+[advanced/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝x−4、BD＝x−1，AE：EC＝2：5，求 x。  ⇒ x＝6
+[advanced/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝9、DB＝10、BC＝10，求 DE。  ⇒ DE＝(90/19)
+[advanced/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝9、DB＝10、BC＝9，求 DE。  ⇒ DE＝(81/19)
+[advanced/parallelSeg/fraction]  示意圖 A B C D E P Q 如圖，△ABC 中 DE∥PQ∥BC，AD＝4、DP＝4、PB＝6、AE＝2、BC＝10，求 AQ 與 PQ。  ⇒ AQ＝4，PQ＝(40/7)
+[advanced/twoStep/integer]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OB＝60、OC＝75，求 OA。  ⇒ OA＝48
+[advanced/twoStep/integer]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OA＝16、OB＝24，求 OC。  ⇒ OC＝36
+[advanced/twoStep/integer]  示意圖 A B C D E F 如圖，△ABC 中 DE∥BF、DF∥BC，DE＝3、DF＝9、BF＝11，求 BC。  ⇒ BC＝33
+[advanced/twoStep/fraction]  示意圖 A B C D E F 如圖，△ABC 中 DE∥AB、EF∥AC，AD＝2、DC＝5、AF＝4，求 BF。  ⇒ BF＝(8/5)
+[advanced/twoStep/fraction]  示意圖 A B C D E F 如圖，△ABC 中 DE∥AB、EF∥AC，AD＝9、DC＝2、AF＝3，求 BF。  ⇒ BF＝(27/2)
+[advanced/twoStep/fraction]  示意圖 A B C D E F 如圖，△ABC 中 DE∥BF、DF∥BC，DE＝4、DF＝3、BF＝6，求 BC。  ⇒ BC＝(9/2)
+[advanced/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝9、BC＝3、DE＝4x＋4、EF＝3x−2，求 x。  ⇒ x＝2
+[advanced/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝5、BC＝6、DE＝4x＋3、EF＝3x＋9，求 x。  ⇒ x＝3
+[advanced/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝3、BC＝7、DE＝x−3、EF＝x＋1，求 x。  ⇒ x＝6
+[advanced/threeLines/fraction]  示意圖 A D E G F H B C 如圖，AD∥EG∥FH∥BC，AB＝13、AE＝3、EF＝5、DC＝15，求 DG、GH、HC。  ⇒ DG＝(45/13)，GH＝(75/13)，HC＝(75/13)
+[advanced/threeLines/fraction]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝5、BC＝2、DE＝2x、EF＝3x−11，求 x。  ⇒ x＝5
+[advanced/threeLines/fraction]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝3、BC＝2、DE＝4x−2、EF＝4x−4，求 x。  ⇒ x＝2
+[advanced/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AD：DB＝3：2，AE：AC＝3：5，判斷 DE 是否平行 BC。  ⇒ 平行（AD：AB＝3：5＝AE：AC）
+[advanced/judge/integer]  示意圖 A B C D E F 如圖，△ABC 中 AB＝15、AC＝15、AD＝14，E、F 在 AC 上，AE＝14、AF＝6。DE、DF 哪一條平行 BC？  ⇒ DE∥BC
+[advanced/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AD：DB＝4：3，AE：AC＝6：8，判斷 DE 是否平行 BC。  ⇒ 不平行（AD：AB＝4：7≠AE：AC）
+[advanced/midsegment/integer]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝7、BC＝15、CA＝12，求 △DEF 的周長。  ⇒ 17
+[advanced/midsegment/integer]  示意圖 A B C D E F P Q R 如圖，D、E、F 是 △ABC 各邊的中點，P、Q、R 是 △DEF 各邊的中點。若 PQ＝5、QR＝14、PR＝15，求 △ABC 的周長。  ⇒ 136
+[advanced/midsegment/integer]  示意圖 A B C D E F P Q R 如圖，D、E、F 是 △ABC 各邊的中點，P、Q、R 是 △DEF 各邊的中點。若 PQ＝8、QR＝15、PR＝10，求 △ABC 的周長。  ⇒ 132
+[advanced/midsegment/fraction]  示意圖 A B C D E P Q 如圖，△ABC 中 BC＝18，PQ∥DE∥BC，D 是 AB 的中點，P 是 AD 的中點，求 PQ＋DE。  ⇒ (27/2)
+[advanced/midsegment/fraction]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝7、BC＝6、CA＝10，求 △DEF 的周長。  ⇒ (23/2)
+[advanced/midsegment/fraction]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，AB＝10、BC＝5、CA＝8，求 △DEF 的周長。  ⇒ (23/2)
+[advanced/midpoint/integer] 坐標平面上 A、B 兩點，AB 的中點坐標是 （1，−1）。若 A（−6，−4），求 B 的坐標。  ⇒ （8，2）
+[advanced/midpoint/integer] 坐標平面上 A、B 兩點，AB 的中點坐標是 （−2，−9）。若 A（9，7），求 B 的坐標。  ⇒ （−13，−25）
+[advanced/midpoint/integer] 四邊形 ABCD 為平行四邊形，A（−7，−4）、B（7，−2）、C（−5，4），P 為其對角線的交點。求 P 點與 D 點的坐標。  ⇒ P（−6，0），D（−19，2）
+[advanced/midpoint/fraction] 坐標平面上 A（−8，−4）、B（−4，5），C 在 AB 上且 AC：BC＝4：1，求 C 的坐標。  ⇒ （−(24/5)，(16/5)）
+[advanced/midpoint/fraction] 坐標平面上 A、B 兩點，AB 的中點坐標是 （(3/2)，−1）。若 A（5，8），求 B 的坐標。  ⇒ （−2，−10）
+[advanced/midpoint/fraction] AB 是圓 M 的直徑，已知 A（−1，−9）、圓心 M（(1/2)，0），求 B 的坐標。  ⇒ （2，9）
+[challenge/areaRatio/integer]  示意圖 A B C P Q 如圖，P 在 AB 上，Q 在 PC 上，AP：BP＝5：3，PQ：CQ＝4：1。求 △APC：△ABC 與 △ACQ：△ABC。  ⇒ △APC：△ABC＝5：8；△ACQ：△ABC＝1：8
+[challenge/areaRatio/integer]  示意圖 A B C D E 如圖，D、E 分別在 AB、BC 上，AD：DB＝CE：EB＝1：4，求 △DBE 與 △ADC 的面積比。  ⇒ 16：5
+[challenge/areaRatio/integer]  示意圖 A B C P Q 如圖，P 在 AB 上，Q 在 PC 上，AP：BP＝5：4，PQ：CQ＝4：3。求 △APC：△ABC 與 △ACQ：△ABC。  ⇒ △APC：△ABC＝5：9；△ACQ：△ABC＝5：21
+[challenge/parallelSeg/integer]  示意圖 A B C D E F 如圖，梯形 ABCD 中 AD∥BC，EF∥BC，AE：EB＝1：1，AD＝3、BC＝9，求 EF。  ⇒ EF＝6
+[challenge/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝x−4、BD＝x−2，AE：EC＝1：2，求 x。  ⇒ x＝6
+[challenge/parallelSeg/integer]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝12、BD＝x＋7、AE＝BC＝2x、CE＝10，求 x 與 △ADE 的周長。  ⇒ x＝5；周長 27
+[challenge/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝4、BD＝x＋5、AE＝BC＝2x、CE＝12，求 x 與 △ADE 的周長。  ⇒ x＝3；周長 12
+[challenge/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝x−1、BD＝x−2，AE：EC＝9：8，求 x。  ⇒ x＝10
+[challenge/parallelSeg/fraction]  示意圖 A B C D E 如圖，△ABC 中 DE∥BC，AD＝x−3、BD＝x−1，AE：EC＝4：5，求 x。  ⇒ x＝11
+[challenge/twoStep/integer]  示意圖 A B C D E F 如圖，△ABC 中 DE∥BF、DF∥BC，DE＝8、DF＝8、BF＝10，求 BC。  ⇒ BC＝10
+[challenge/twoStep/integer]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OA＝16、OC＝64，求 OB。  ⇒ OB＝32
+[challenge/twoStep/integer]  示意圖 A B C D E F 如圖，△ABC 中 DE∥AB、EF∥AC，AD＝6、DC＝6、AF＝5，求 BF。  ⇒ BF＝5
+[challenge/twoStep/fraction]  示意圖 A B C D E F 如圖，△ABC 中 DE∥AB、EF∥AC，AD＝7、DC＝9、AF＝3，求 BF。  ⇒ BF＝(7/3)
+[challenge/twoStep/fraction]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OA＝18、OC＝32，求 OB。  ⇒ OB＝24
+[challenge/twoStep/fraction]  示意圖 O A B C D E 如圖，AD∥BE、BD∥CE，OB＝6、OC＝9，求 OA。  ⇒ OA＝4
+[challenge/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝x−3、AC＝x＋4，DE＝8、EF＝x−4，求 x。  ⇒ x＝11
+[challenge/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝4、BC＝5、DE＝x＋4、EF＝3x−9，求 x。  ⇒ x＝8
+[challenge/threeLines/integer]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝6、BC＝3、DE＝4x＋4、EF＝4x−12，求 x。  ⇒ x＝7
+[challenge/threeLines/fraction]  示意圖 A D E G F H B C 如圖，AD∥EG∥FH∥BC，AB＝14、AE＝4、EF＝5、DC＝27，求 DG、GH、HC。  ⇒ DG＝(54/7)，GH＝(135/14)，HC＝(135/14)
+[challenge/threeLines/fraction]  示意圖 A D B E C F 如圖，AD∥BE∥CF，AB＝x−3、AC＝x＋13，DE＝5、EF＝x−1，求 x。  ⇒ x＝11
+[challenge/threeLines/fraction]  示意圖 A D E G F H B C 如圖，AD∥EG∥FH∥BC，AB＝12、AE＝3、EF＝6、DC＝9，求 DG、GH、HC。  ⇒ DG＝(9/4)，GH＝(9/2)，HC＝(9/4)
+[challenge/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AD：DB＝4：5，AE：AC＝5：9，判斷 DE 是否平行 BC。  ⇒ 不平行（AD：AB＝4：9≠AE：AC）
+[challenge/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AB＝6、AD＝2、BC＝9、DE＝3。只由這些條件，能否斷定 DE∥BC？  ⇒ 不能（AD：AB＝DE：BC 不能判斷平行，需要 AD：DB＝AE：EC 或 AD：AB＝AE：AC）
+[challenge/judge/integer]  示意圖 A B C D E 如圖，△ABC 中 D 在 AB 上、E 在 AC 上，AD：DB＝3：2，AE：AC＝3：4，判斷 DE 是否平行 BC。  ⇒ 不平行（AD：AB＝3：5≠AE：AC）
+[challenge/midsegment/integer]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，△DEF 的面積為 7，求 △ABC 的面積。  ⇒ 28
+[challenge/midsegment/integer]  示意圖 A B C D E P Q 如圖，△ABC 中 BC＝40，PQ∥DE∥BC，D 是 AB 的中點，P 是 AD 的中點，求 PQ＋DE。  ⇒ 30
+[challenge/midsegment/integer]  示意圖 A B C D E F P Q R 如圖，D、E、F 是 △ABC 各邊的中點，P、Q、R 是 △DEF 各邊的中點。若 AB＝8、BC＝7、AC＝13，求 △PQR 的周長。  ⇒ 7
+[challenge/midsegment/fraction]  示意圖 A B C D E P Q 如圖，△ABC 中 BC＝17，PQ∥DE∥BC，D 是 AB 的中點，P 是 AD 的中點，求 PQ＋DE。  ⇒ (51/4)
+[challenge/midsegment/fraction]  示意圖 A B C D E F 如圖，D、E、F 分別是 △ABC 三邊的中點，△DEF 的面積為 26，求 △ABC 的面積。  ⇒ 104
+[challenge/midsegment/fraction]  示意圖 A B C D E F P Q R 如圖，D、E、F 是 △ABC 各邊的中點，P、Q、R 是 △DEF 各邊的中點。若 AB＝12、BC＝11、AC＝8，求 △PQR 的周長。  ⇒ (31/4)
+[challenge/midpoint/integer] 坐標平面上 A（3，−1），B 在射線 OA 上（O 為原點）且 OB＝2OA，求 B 的坐標。  ⇒ （6，−2）
+[challenge/midpoint/integer] 坐標平面上 A（0，−4），B 在射線 OA 上（O 為原點）且 OB＝2OA，求 B 的坐標。  ⇒ （0，−8）
+[challenge/midpoint/integer] 四邊形 ABCD 為平行四邊形，A（5，−1）、B（0，0）、C（5，3），P 為其對角線的交點。求 P 點與 D 點的坐標。  ⇒ P（5，1），D（10，2）
+[challenge/midpoint/fraction] 四邊形 ABCD 為平行四邊形，A（−7，7）、B（−8，0）、C（4，4），P 為其對角線的交點。求 P 點與 D 點的坐標。  ⇒ P（−(3/2)，(11/2)），D（5，11）
+[challenge/midpoint/fraction] 坐標平面上 A（−4，−1）、B（2，5），C 在 AB 上且 AC：BC＝3：2，求 C 的坐標。  ⇒ （−(2/5)，(13/5)）
+[challenge/midpoint/fraction] 坐標平面上 A（7，9）、B（1，−3），C 在 AB 上且 AC：BC＝1：4，求 C 的坐標。  ⇒ （(29/5)，(33/5)）
