@@ -7,5 +7,9 @@
     "test:math:diversity": "MATH_DIVERSITY_REPORT=../docs/math-diversity/diversity-latest.json node test_math_drills.mjs",
     "build:science": "node build_science.mjs"
   },
-  "devDependencies": {"jsdom": "26.1.0", "axe-core": "4.10.3"}
+  "devDependencies": {
+    "acorn": "8.15.0",
+    "axe-core": "4.10.3",
+    "jsdom": "26.1.0"
+  }
 }

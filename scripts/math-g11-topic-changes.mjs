@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
+import {parseExpressionAt} from 'acorn';
 
 const enginePath = 'tools/math/g11-drills.html';
 const git = (...args) => execFileSync('git', args, {encoding: 'utf8'}).trimEnd();
@@ -11,11 +12,17 @@ export function topicSources(html) {
   const registry = [...config[1].matchAll(/\b([a-z]\w*):([A-Za-z]\w*)\(\)/g)];
   if (!registry.length) throw new Error('G11 CONFIGS registry is empty');
   const functions = new Map();
-  const starts = [...html.matchAll(/^function ([A-Za-z]\w*Config)\(/gm)];
-  for (let i = 0; i < starts.length; i++) {
-    const start = starts[i].index;
-    const end = i + 1 < starts.length ? starts[i + 1].index : config.index;
-    functions.set(starts[i][1], html.slice(start, end).trim());
+  const source = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+    .map(match => match[1]).find(script => /\bconst CONFIGS=/.test(script)) ?? html;
+  // The parser pairs the function body's braces while respecting strings,
+  // comments, regex literals and nested template expressions. body.end is just
+  // after that matching }, never the next function or the CONFIGS registry.
+  for (const match of source.matchAll(/^function ([A-Za-z]\w*Config)\(/gm)) {
+    const node = parseExpressionAt(source, match.index, {ecmaVersion: 'latest'});
+    if (node.type !== 'FunctionExpression' || node.id?.name !== match[1]) {
+      throw new Error(`Invalid G11 config function: ${match[1]}`);
+    }
+    functions.set(node.id.name, source.slice(node.start, node.body.end));
   }
   return new Map(registry.map(([, topic, name]) => {
     const source = functions.get(name);

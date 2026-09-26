@@ -83,6 +83,26 @@ let resourceSection=read('ziyuan.html');
 resourceSection=resourceSection.replace(/<section class="res-sec" id="res-science">[\s\S]*?<\/section>/,`<section class="res-sec" id="res-science"><h3>國中自然 · 互動教材<span class="count">${junior.length} 項</span></h3><p class="lead">依生物、理化與地科分類。新一批探究教材採任務、操作、紀錄與檢核流程；原有演示工具持續保留。</p><div class="science-categories">${groups}</div></section>`);
 write('ziyuan.html',resourceSection);
 replaceBlock('ziyuan.html','science-card-style','<style>.science-categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.science-category{border:1px solid #cbdde4;border-radius:14px;background:#fff;padding:20px;min-width:0}.science-category h4{margin:0;font-size:1.25rem}.science-category small{font-size:.85rem;color:#496379}.science-category ul{padding-left:1.2em}.science-category li{margin:.55em 0;overflow-wrap:anywhere}.science-new{font-size:.7rem;color:#075f65;border:1px solid #b8d1d6;border-radius:6px;padding:2px 5px;white-space:nowrap}@media(max-width:800px){.science-categories{grid-template-columns:1fr}}</style>','</head>');
+// G11 r3 entries are generated here so both directories keep the same topic order.
+const g11R3Cards=[
+ {topic:'planevector',title:'平面向量的基本運算與線性組合'},
+ {topic:'determinant',title:'二階行列式與克拉瑪公式'}
+];
+for(const [file,prefix,isMath] of [['ziyuan.html','tools/math/',false],['tools/math/index.html','',true]]){
+ let html=read(file);
+ for(const {topic} of g11R3Cards)html=html.replace(new RegExp(`<a\\b[^>]*href="[^"]*g11-drills\\.html\\?topic=${topic}"[^>]*>[\\s\\S]*?<\\/a>`,'g'),'');
+ const anchor=/<a\b[^>]*href="[^"]*g11-drills\.html\?topic=vectorcauchy"[^>]*>[\s\S]*?<\/a>/;
+ if(!anchor.test(html))throw Error('Missing G11 vector card: '+file);
+ const cards=g11R3Cards.map(({topic,title})=>`<a${isMath?' class="card"':''} href="${prefix}g11-drills.html?topic=${topic}">${isMath?'<b>'+title+'</b>':title}</a>`);
+ html=html.replace(anchor,match=>cards[0]+match+cards[1]);
+ html=html.replace(/(高二上・第三冊 A<(?:small|span)>)\d+ 個/,(_,label)=>label+'13 個');
+ if(isMath){
+  const dom=new JSDOM(html),count=dom.window.document.querySelectorAll('a.card').length;
+  dom.window.close();
+  html=html.replace(/共\s*\d+\s*個出題器/g,'共 '+count+' 個出題器');
+ }
+ write(file,html);
+}
 // Count the rendered resource links, including new math cards, after science cards are rebuilt.
 let resource=read('ziyuan.html');
 resource=resource.replace(/國中自然<span>\d+<\/span>/,'國中自然<span>'+(all.length-1)+'</span>').replace(/國中自然 · 互動教材<span class="count">\d+ 項<\/span>/,'國中自然 · 互動教材<span class="count">'+(all.length-1)+' 項</span>');
