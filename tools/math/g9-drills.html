@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -437,7 +437,168 @@ function parallelratioConfig(){
   units:[areaRatio,parallelSeg,twoStep,threeLines,judge,midsegment,midpoint],presets:{basic:{areaRatio:2,parallelSeg:3,twoStep:1,threeLines:2,judge:1,midsegment:2,midpoint:2},advanced:{areaRatio:2,parallelSeg:2,twoStep:2,threeLines:2,judge:1,midsegment:2,midpoint:2},challenge:{areaRatio:2,parallelSeg:2,twoStep:2,threeLines:2,judge:1,midsegment:2,midpoint:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig},CFG=CONFIGS[TOPIC_KEY]();
+function similarConfig(){
+ /* 國三上 1-3 相似形、1-4(II)(III)（2026-09-26，Claude）。題型取自百宏國三上一段講義 1-3 與二段講義 1-4：縮放與比例尺、相似形對應邊、對應角、
+    相似三角形判別（AA／SAS／SSS）、AA 相似求邊長、面積比＝對應邊平方比、簡易測量。不做作圖與看圖判讀。
+    verify：邊長題用「對應邊乘積相等」與另一組對應邊代回；角度題用內角和；面積題用實際坐標算面積；測量題用相似比另一路徑重算。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false}),D=v=>numHTML(v,"decimal"),pl=v=>v.n+"/"+v.d,rs=(a,b)=>{const g=gcd(a,b);return`${a/g}：${b/g}`};
+ const radP=n=>{let a=1,b=n;for(let p=2;p*p<=b;p++)while(b%(p*p)===0){a*=p;b/=p*p}return{a,b}},radS=n=>{const{a,b}=radP(n);return b===1?String(a):(a===1?"":a)+`√${b}`};
+ const surd=(c,k)=>{if(k===1)return S(c);const top=(c.n===1?"":c.n)+`√${k}`;return c.d===1?top:fr(top,c.d)};
+ const area2=(P,Q,Rr)=>Math.abs((Q[0]-P[0])*(Rr[1]-P[1])-(Rr[0]-P[0])*(Q[1]-P[1]));
+ const onSeg=(P,Q,t)=>[P[0]+(Q[0]-P[0])*t,P[1]+(Q[1]-P[1])*t];
+ const W=230,H=150;
+ const fig=(pts,segs,paras=[],angs=[],w=W,h=H)=>{const names=Object.keys(pts),T=GEO.fit(names.map(n=>pts[n]),w,h,20),P={};names.forEach(n=>P[n]=T(pts[n]));const c=GEO.centroid(names.map(n=>P[n]));let b="";
+  segs.forEach(([p,q,o])=>b+=GEO.line(P[p],P[q],o||{}));paras.forEach(([p,q,n])=>b+=GEO.arrow(P[p],P[q],n||1));angs.forEach(([v,p,q,l])=>b+=GEO.arc(P[v],P[p],P[q],l||""));
+  names.forEach(n=>b+=GEO.dot(P[n])+GEO.vlabel(P[n],c,n));return GEO.svg(w,h,b)};
+ const TRI=()=>{const a=pick([50,55,60,65,70]),b=pick([45,50,55,60,65]);return GEO.triByAngles(a,b,150)};
+ const tri3=(max=12)=>{let a,b,c;do{a=rand(3,max);b=rand(3,max);c=rand(3,max)}while(a+b<=c||b+c<=a||a+c<=b);return[a,b,c]};
+
+ // ① 縮放與比例尺
+ const scale=unit("scale","縮放與比例尺","縮放 k 倍：邊長變 k 倍、角度不變、周長變 k 倍、面積變 k² 倍；比例尺 1：n 表示圖上 1 單位＝實際 n 單位。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["side","copy","map"]:L===1?["twice","back","mapfind"]:["center","light","ratio"]);
+  if(kind==="side"){const k=pick([2,3,4,5]),[a,b,c]=tri3(9),ang=rand(30,120),ask=pick(["side","angle","perimeter"]);
+   const txt={side:`求 A′B′`,angle:`若 ∠A＝${ang}°，求 ∠A′`,perimeter:`求 △A′B′C′ 的周長`}[ask],ans={side:`A′B′＝${a*k}`,angle:`∠A′＝${ang}°`,perimeter:`${(a+b+c)*k}`}[ask];
+   return{expr:`△A′B′C′ 是 △ABC 以 O 為中心縮放 ${k} 倍的圖形，AB＝${a}、BC＝${b}、CA＝${c}，${txt}。`,answer:ans,sig:`s:${k}:${a}:${b}:${c}:${ask}`,verify:()=>a*k+b*k+c*k===(a+b+c)*k&&a*k/a===k}}
+  if(kind==="copy"){const pct=pick([50,60,75,80,120,125,150,200,250]),len=rand(2,12),ang=rand(40,130),v=R(len*pct,100);
+   return{expr:`把一個多邊形影印成 ${pct}％，得到一個新的多邊形。若原圖某一邊長 ${len} 公分、某一角為 ${ang}°，求新圖中對應邊的長與對應角的度數。`,answer:`${D(v)} 公分、${ang}°`,sig:`c:${pct}:${len}:${ang}`,verify:()=>eq(mul(v,R(100)),R(len*pct))}}
+  if(kind==="map"){const n=pick([1000,2000,5000,10000,25000,35000,50000]),cm=R(rand(12,80),10),real=mul(cm,R(n)),m=div(real,R(100));// 公分→公尺
+   return{expr:`在比例尺 1：${n} 的地圖上，量得甲地到乙地的直線距離是 ${D(cm)} 公分，求兩地的實際距離是多少公尺。`,answer:`${D(m)} 公尺`,sig:`m:${n}:${pl(cm)}`,verify:()=>eq(mul(m,R(100)),mul(cm,R(n)))}}
+  if(kind==="twice"){const k1=pick([2,3,4]),k2=pick([2,3,5]),k=k1*k2,S2=k*k*rand(1,5);return{expr:`若圖形甲縮放 ${k1} 倍後的圖形是乙，乙縮放 ${k2} 倍後的圖形是丙，則丙是甲縮放幾倍的圖形？若丙的面積是 ${S2} 平方公分，甲的面積是多少？`,answer:`${k} 倍；${S2/(k*k)} 平方公分`,sig:`t:${k1}:${k2}:${S2}`,verify:()=>k===k1*k2&&S2/(k*k)*k*k===S2}}
+  if(kind==="back"){const pct=pick([125,150,200,250,400,50,80,40]),back=R(10000,pct);return{expr:`利用影印機把甲圖${pct>100?"放大":"縮小"}為 ${pct}％ 得到乙圖。若要把乙圖${pct>100?"縮小":"放大"}回甲圖的大小，倍率應設為多少百分比？`,answer:`${S(back)}％`,sig:`b:${pct}`,verify:()=>eq(mul(back,R(pct)),R(10000))}}
+  if(kind==="mapfind"){const cm=rand(2,9),km=R(cm*pick([1,2,5,10,25]),pick([1,1,2,4])),n=div(mul(km,R(100000)),R(cm));if(n.d!==1)return null;
+   return{expr:`在某張地圖上量得 A、B 兩地的直線距離是 ${cm} 公分，已知實際距離是 ${S(km)} 公里，求此地圖的比例尺。`,answer:`1：${n.n}`,sig:`f:${cm}:${pl(km)}`,verify:()=>eq(mul(R(cm),n),mul(km,R(100000)))}}
+  if(kind==="center"){const oa=rand(2,6),k=rand(2,4),[a,b,c]=tri3(9),ask=pick(["ab","per"]);// OA：AA′＝1：(k−1) ⇒ 放大 k 倍
+   return{expr:`△A′B′C′ 是 △ABC 以 O 為中心點放大的相似形，OA：AA′＝1：${k-1}。若 AB＝${a}、BC＝${b}、CA＝${c}，${ask==="ab"?"求 A′B′":"求 △A′B′C′ 的周長"}。`,answer:ask==="ab"?`A′B′＝${a*k}`:String((a+b+c)*k),sig:`ce:${k}:${a}:${b}:${c}:${ask}`,verify:()=>(1+(k-1))===k&&a*k===k*a}}
+  if(kind==="light"){const d=pick([10,12,15,20,24,30]),k=[2,3,4,5,6].filter(x=>d%x===0);if(!k.length)return null;const kk=pick(k);
+   return{expr:`光源 O 到螢幕的距離 OP′＝${d}。若要使線段 AB 在螢幕上的影長是 AB 的 ${kk} 倍，O 到 AB 的距離應為多少？`,answer:String(d/kk),sig:`l:${d}:${kk}`,verify:()=>d/kk*kk===d}}
+  const oa=rand(2,5),oap=oa*rand(2,4),[a,b,c]=tri3(9),k=oap/oa;
+  return{expr:`△A′B′C′ 是 △ABC 以 O 為中心點縮放的相似形，OA＝${oa}、OA′＝${oap}，AB＝${a}、BC＝${b}、CA＝${c}，求縮放倍率與 △A′B′C′ 的周長。`,answer:`${k} 倍；周長 ${(a+b+c)*k}`,sig:`r:${oa}:${oap}:${a}:${b}:${c}`,verify:()=>oa*k===oap&&(a+b+c)*k===a*k+b*k+c*k};
+ });
+
+ // ② 相似形對應邊
+ const sides=unit("sides","相似形的對應邊","相似形對應邊成比例；周長比＝對應邊長比。先找出對應邊，再列比例式。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["one","perimeter"]:L===1?["perimeter","xexpr","shortest"]:["xexpr","ratioP","perimeters"]);
+  const ok=v=>mode==="integer"?v.d===1:v.d!==1;
+  const divs=n=>[2,3,4,5,6].filter(q=>n%q===0);
+  if(kind==="one"){const[a,b,c]=tri3(12);let k;if(mode==="fraction"){const ds=divs(a).filter(q=>b%q);if(!ds.length)return null;const q=pick(ds);let m;do{m=rand(2,9)}while(gcd(m,q)>1);k=R(m,q)}else k=R(rand(2,9));const d=mul(R(a),k),e=mul(R(b),k),f=mul(R(c),k);if(d.d!==1||!ok(e))return null;
+   return{expr:`已知 △ABC∼△DEF（A 對應 D、B 對應 E、C 對應 F），AB＝${a}、BC＝${b}、CA＝${c}，DE＝${S(d)}，求 EF 與 FD。`,answer:`EF＝${S(e)}，FD＝${S(f)}`,sig:`o:${a}:${b}:${c}:${pl(k)}`,verify:()=>eq(mul(e,R(a)),mul(d,R(b)))&&eq(mul(f,R(a)),mul(d,R(c)))}}
+  if(kind==="perimeter"){const n=pick([4,5]),ss=Array.from({length:n},()=>rand(3,12)),i=rand(0,n-1),tot=ss.reduce((x,y)=>x+y,0);let k;if(mode==="fraction"){const ds=divs(ss[i]).filter(q=>tot%q);if(!ds.length)return null;const q=pick(ds);let m;do{m=rand(2,9)}while(gcd(m,q)>1);k=R(m,q)}else k=R(rand(2,9));const t=mul(R(ss[i]),k),P=mul(R(tot),k);if(t.d!==1||!ok(P))return null;
+   return{expr:`一個多邊形各邊長為 ${ss.join("、")}，另有一個相似形，和 ${ss[i]} 對應的邊長為 ${S(t)}，求此相似形的周長。`,answer:S(P),sig:`p:${ss}:${i}:${pl(k)}`,verify:()=>eq(mul(P,R(ss[i])),mul(t,R(ss.reduce((x,y)=>x+y,0))))}}
+  if(kind==="shortest"){const ss=[rand(6,24),rand(6,24),rand(6,24),rand(6,24)],m=Math.min(...ss),t=R(rand(2,12)),P=div(mul(t,R(ss.reduce((x,y)=>x+y,0))),R(m));if(!ok(P))return null;
+   return{expr:`四邊形 ABCD 的四邊長分別為 ${ss.join("、")} 公分，另一相似四邊形的最短邊長為 ${S(t)} 公分，求此相似四邊形的周長。`,answer:`${S(P)} 公分`,sig:`sh:${ss}:${pl(t)}`,verify:()=>eq(mul(P,R(m)),mul(t,R(ss.reduce((x,y)=>x+y,0))))}}
+  if(kind==="xexpr"){for(let i=0;i<40;i++){const x=rand(2,9),p=rand(1,3),q=rand(1,5),r=rand(1,3),s=rand(1,5),ab=p*x+q,de=r*x+s,ac=rand(2,6)*x,k=R(de,ab),df=mul(R(ac),k);if(df.d!==1||p===r&&q===s||k.n===k.d)continue;
+    return{expr:`已知 △ABC∼△DEF，AB＝${p===1?"":p}x＋${q}、DE＝${r===1?"":r}x＋${s}、AC＝${ac/x}x、DF＝${df.n}，求 x 與 AB。`,answer:`x＝${x}；AB＝${ab}`,sig:`x:${x}:${p}:${q}:${r}:${s}:${ac}`,verify:()=>ab*df.n===de*ac}}return null}
+  if(kind==="ratioP"){const rr=[R(1),R(1,2),R(2,3),R(2)],k=R(rand(2,8)*6),ss=rr.map(v=>mul(v,k)),P=ss.reduce(add,R(0));if(!ok(P))return null;
+   return{expr:`四邊形 ABCD 與四邊形 A′B′C′D′ 相似，且 AB：BC：CD：DA＝${rr.map(S).join("：")}。若四邊形 A′B′C′D′ 的周長是 ${S(P)}，求 A′B′ 與 B′C′。`,answer:`A′B′＝${S(ss[0])}，B′C′＝${S(ss[1])}`,sig:`rp:${pl(k)}`,verify:()=>eq(ss.reduce(add,R(0)),P)&&eq(mul(ss[0],rr[1]),mul(ss[1],rr[0]))}}
+  const P1=rand(20,60),k=R(rand(2,5),rand(1,3)),P2=mul(R(P1),k),ef=R(rand(4,15)),ab=div(mul(ef,R(P1)),P2);if(P2.d!==1||!ok(ab))return null;
+  return{expr:`已知四邊形 ABCD∼四邊形 EFGH，周長分別是 ${P1} 公分與 ${S(P2)} 公分。若 EF＝${S(ef)} 公分，求 AB 的長。`,answer:`AB＝${S(ab)} 公分`,sig:`pp:${P1}:${pl(k)}:${pl(ef)}`,verify:()=>eq(mul(ab,P2),mul(ef,R(P1)))};
+ });
+
+ // ③ 相似形對應角
+ const angles=unit("angles","相似形的對應角","相似形對應角相等；配合內角和（三角形 180°、四邊形 360°、五邊形 540°）求角。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["tri","quad"]:L===1?["quad","coef","pent"]:["coef","pent","order"]);
+  if(kind==="tri"){let A,B;do{A=rand(30,100);B=rand(30,100)}while(A+B>=160||A===B);const C=180-A-B,names=pick([["D","E","F"],["P","Q","R"]]),i=rand(0,2);
+   return{expr:`已知 △ABC∼△${names.join("")}（依對應順序），∠A＝${A}°、∠B＝${B}°，求 ∠${names[i]}。`,answer:`∠${names[i]}＝${[A,B,C][i]}°`,sig:`t:${A}:${B}:${i}`,verify:()=>A+B+C===180}}
+  if(kind==="quad"){let r;do{r=[rand(1,6),rand(1,6),rand(1,6),rand(1,6)]}while(360%(r[0]+r[1]+r[2]+r[3])||new Set(r).size<3);const u=360/(r[0]+r[1]+r[2]+r[3]),i=rand(0,3),j=(i+rand(1,3))%4;
+   return{expr:`四邊形 ABCD 與四邊形 A′B′C′D′ 相似（依對應順序），且 ∠A′：∠B′：∠C′：∠D′＝${r.join("：")}，求 ∠${"ABCD"[i]} 與 ∠${"ABCD"[j]}。`,answer:`∠${"ABCD"[i]}＝${r[i]*u}°，∠${"ABCD"[j]}＝${r[j]*u}°`,sig:`q:${r}:${i}:${j}`,verify:()=>r.reduce((s,x)=>s+x*u,0)===360}}
+  if(kind==="coef"){for(let i=0;i<40;i++){let A,B;do{A=rand(30,100);B=rand(30,100)}while(A+B>=160||A===B);const C=180-A-B,p=rand(2,3),q=rand(2,3),g1=gcd(p*A,q*B),r2=rand(2,3),s=rand(2,3),g2=gcd(r2*B,s*C);if(p*A/g1>24||q*B/g1>24||r2*B/g2>24||s*C/g2>24)continue;
+    return{expr:`△ABC∼△EFD（A 對應 E、B 對應 F、C 對應 D），${p}∠A：${q}∠B＝${p*A/g1}：${q*B/g1}，${r2}∠B：${s}∠C＝${r2*B/g2}：${s*C/g2}，求 ∠D、∠E、∠F。`,answer:`∠D＝${C}°、∠E＝${A}°、∠F＝${B}°`,sig:`c:${A}:${B}:${p}${q}${r2}${s}`,verify:()=>p*A*(q*B/g1)===q*B*(p*A/g1)&&r2*B*(s*C/g2)===s*C*(r2*B/g2)&&A+B+C===180}}return null}
+  if(kind==="pent"){for(let i=0;i<60;i++){const r=[rand(1,5),rand(1,5),rand(1,5)],g=gcd(r[1],rand(1,5)),r3=[r[2],rand(1,5)],T=rand(90,160);const uSum=540-T;// ∠P:∠Q:∠R=r, ∠R:∠S=r3, ∠T 已知
+     const wP=r[0]*r3[0],wQ=r[1]*r3[0],wR=r[2]*r3[0],wS=r[2]*r3[1],tot=wP+wQ+wR+wS;if(uSum%tot||r3[0]===r3[1]&&Math.random()<.7)continue;const u=uSum/tot,ang=[wP*u,wQ*u,wR*u,wS*u,T];if(ang.some(x=>x<20||x>170))continue;const i2=rand(0,3);
+     return{expr:`五邊形 ABCDE∼五邊形 PQRST（依對應順序），∠P：∠Q：∠R＝${r.join("：")}，∠R：∠S＝${r3.join("：")}，∠T＝${T}°，求 ∠${"ABCDE"[i2]}。`,answer:`∠${"ABCDE"[i2]}＝${ang[i2]}°`,sig:`p:${r}:${r3}:${T}:${i2}`,verify:()=>ang.reduce((s,x)=>s+x,0)===540&&ang[0]*r[1]===ang[1]*r[0]&&ang[2]*r3[1]===ang[3]*r3[0]}}return null}
+  let A,B,C;do{A=rand(40,130);B=rand(40,130);C=rand(40,130)}while(A+B+C>=340||new Set([A,B,C]).size<3);const Dg=360-A-B-C;
+  return{expr:`四邊形 ABCD∼四邊形 A′B′C′D′，且 ∠D′ 是 ∠D 的對應角。若 ∠A＝${A}°、∠B＝${B}°、∠C＝${C}°，求 ∠D′。`,answer:`∠D′＝${Dg}°`,sig:`d:${A}:${B}:${C}`,verify:()=>A+B+C+Dg===360&&Dg>0};
+ });
+
+ // ④ 相似三角形的判別
+ const judge=unit("judge","相似三角形的判別","AA：兩角對應相等；SAS：一角相等且夾角的兩邊成比例；SSS：三邊成比例。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["aa","sss","rect"]:L===1?["sss","sssFind","boards"]:["sas","sssFind","boards"]);
+  if(kind==="aa"){let A,B;do{A=rand(30,100);B=rand(30,100)}while(A+B>=160||A===B);const C=180-A-B,yes=Math.random()<.5,pair=yes?pick([[A,B],[B,C],[A,C]]):[A,rand(20,120)];if(!yes&&(pair[1]===B||pair[1]===C||A+pair[1]>=175))return null;
+   return{expr:`△ABC 中 ∠A＝${A}°、∠B＝${B}°；△DEF 中 ∠D＝${pair[0]}°、∠E＝${pair[1]}°。判斷兩三角形是否相似，並說明依據。`,answer:yes?`相似（AA 相似：兩組角對應相等，第三角 ${180-pair[0]-pair[1]}°）`:`不相似（△DEF 的三角為 ${pair[0]}°、${pair[1]}°、${180-pair[0]-pair[1]}°，與 △ABC 的三角不對應）`,sig:`aa:${A}:${B}:${pair}`,verify:()=>{const s1=[A,B,C].sort((x,y)=>x-y),s2=[pair[0],pair[1],180-pair[0]-pair[1]].sort((x,y)=>x-y);return(s1.join()===s2.join())===yes}}}
+  if(kind==="sss"){const[a,b,c]=tri3(9),k=rand(2,4),yes=Math.random()<.5,t=yes?[a*k,b*k,c*k]:[a*k,b*k+pick([-1,1,2]),c*k];if(!yes&&(t[0]+t[1]<=t[2]||t[1]+t[2]<=t[0]||t[0]+t[2]<=t[1]))return null;const sh=shuffle(t);
+   return{expr:`甲三角形三邊長為 ${a}、${b}、${c}，乙三角形三邊長為 ${sh.join("、")}。判斷兩三角形是否相似，並說明依據。`,answer:yes?`相似（SSS 相似：三邊成比例 1：${k}）`:`不相似（三邊不成比例）`,sig:`sss:${a}:${b}:${c}:${sh}`,verify:()=>{const s1=[a,b,c].sort((x,y)=>x-y),s2=[...t].sort((x,y)=>x-y);return(s2[0]*s1[1]===s2[1]*s1[0]&&s2[1]*s1[2]===s2[2]*s1[1])===yes}}}
+  if(kind==="sssFind"){const[a,b,c]=tri3(9),k=rand(2,4),x=b*k,y=c*k;return{expr:`兩個相似三角形，其中一個三邊長依序為 ${a}、${b}、${c}，另一個對應的三邊長依序為 ${a*k}、x、y，求 x、y。`,answer:`x＝${x}，y＝${y}`,sig:`sf:${a}:${b}:${c}:${k}`,verify:()=>x*a===a*k*b&&y*a===a*k*c}}
+  if(kind==="boards"){const A=rand(35,70),B=rand(35,70);if(A===B||A+B>=150)return null;const C=180-A-B,names=["甲","乙","丙","丁"],good=[[A,B],[B,C],[A,C]],badA=rand(30,100),bad=[A,badA];if(badA===B||badA===C||A+badA>=170)return null;const idx=rand(0,3),list=shuffle(good).slice(0,3);list.splice(idx,0,bad);
+   return{expr:`有甲、乙、丙、丁四塊三角形紙板，各紙板的其中兩個內角分別為：${list.map((p,i)=>`${names[i]} ${p[0]}°、${p[1]}°`).join("；")}。另一塊紙板戊的兩內角為 ${B}°、${C}°。哪一塊與戊不相似？`,answer:names[idx],sig:`bd:${A}:${B}:${badA}:${idx}`,verify:()=>{const key=[A,B,C].sort((x,y)=>x-y).join();return list.every((p,i)=>([p[0],p[1],180-p[0]-p[1]].sort((x,y)=>x-y).join()===key)===(i!==idx))}}}
+  if(kind==="sas"){const A=rand(30,120),a=rand(3,9),b=rand(3,9),k=rand(2,3),yes=Math.random()<.5,d=a*k,e=yes?b*k:b*k+pick([-1,1]);if(a===b)return null;
+   return{expr:`△ABC 中 ∠A＝${A}°、AB＝${a}、AC＝${b}；△DEF 中 ∠D＝${A}°、DE＝${d}、DF＝${e}。判斷兩三角形是否相似，並說明依據。`,answer:yes?`相似（SAS 相似：∠A＝∠D，且 AB：DE＝AC：DF＝1：${k}）`:`不相似（夾角相等但 AB：DE≠AC：DF）`,sig:`sas:${A}:${a}:${b}:${d}:${e}`,verify:()=>(a*e===b*d)===yes}}
+  const w1=rand(2,9),h1=rand(2,9),k=rand(2,3),yes=Math.random()<.5,w2=w1*k,h2=yes?h1*k:h1*k+pick([-1,1]);if(w1===h1)return null;
+  return{expr:`長 ${w1} 公分、寬 ${h1} 公分的長方形，與長 ${w2} 公分、寬 ${h2} 公分的長方形是否相似？`,answer:yes?`相似（對應角都是直角，對應邊成比例 1：${k}）`:`不相似（對應邊不成比例）`,sig:`rc:${w1}:${h1}:${w2}:${h2}`,verify:()=>(w1*h2===h1*w2)===yes};
+ });
+
+ // ⑤ AA 相似求邊長
+ const aa=unit("aa","AA 相似求邊長","找出兩組相等的角（對頂角、平行線的內錯角、公共角），確定對應頂點後列比例式。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["cross","common","efbc"]:L===1?["common","bisector","parallelogram"]:["bisector","parallelogram","efbc"]);
+  const ok=v=>mode==="integer"?v.d===1:v.d!==1;
+  if(kind==="cross"){// AB∥CD，AD、BC 交於 E：EA：ED＝EB：EC＝AB：DC
+   const ab=rand(2,9),k=pick([R(2),R(3),R(3,2),R(4,3),R(5,2),R(5,3),R(1,2),R(1,3),R(2,3),R(3,4),R(3,5)]),dc=mul(R(ab),k),ea=R(rand(2,9)),ed=mul(ea,k),eb=R(rand(2,9)),ec=mul(eb,k);if(dc.d!==1||ed.d!==1||!ok(ec)||k.n===k.d)return null;
+   const A=[0,80],B=[70,80],E=[42,60],Dp=[E[0]+(E[0]-A[0])*H_(k),E[1]-(A[1]-E[1])*H_(k)],Cp=[E[0]+(E[0]-B[0])*H_(k),E[1]-(B[1]-E[1])*H_(k)];
+   return{expr:`${fig({A,B,C:Cp,D:Dp,E},[["A","B"],["C","D"],["A","D"],["B","C"]],[["A","B",1],["D","C",1]])}如圖，AB∥CD，AD 與 BC 交於 E。AB＝${ab}、DC＝${S(dc)}、EA＝${S(ea)}、EB＝${S(eb)}，求 ED 與 EC。`,answer:`ED＝${S(ed)}，EC＝${S(ec)}`,sig:`x:${ab}:${pl(k)}:${pl(ea)}:${pl(eb)}`,verify:()=>eq(mul(ed,R(ab)),mul(ea,dc))&&eq(mul(ec,R(ab)),mul(eb,dc))}}
+  if(kind==="common"){// △ABC 中 D 在 AB 上，∠BCD＝∠A ⇒ △BCD∼△BAC ⇒ BC²＝BD·BA
+   const bd=rand(1,9),k=rand(2,4),bc=bd*k,ba=bd*k*k,ad=ba-bd,ac=R(rand(ba-bc+1,ba+bc-1)),cd=div(mul(ac,R(bc)),R(ba));if(ba>60||!ok(cd)||bc<2)return null;const acv=ac.n,cosB=(ba*ba+bc*bc-acv*acv)/(2*ba*bc);if(Math.abs(cosB)>=.999)return null;const B=[0,0],A=[ba,0],C=[bc*cosB,bc*Math.sqrt(1-cosB*cosB)],Dp=onSeg(B,A,bd/ba);
+   return{expr:`${fig({A,B,C,D:Dp},[["A","B"],["B","C"],["C","A"],["C","D"]],[],[["C","B","D","1"],["A","B","C","1"]])}如圖，△ABC 中 D 在 AB 上，∠BCD＝∠A（圖中標 1）。若 AD＝${ad}、BD＝${bd}、AC＝${S(ac)}，求 BC 與 CD。`,answer:`BC＝${bc}，CD＝${S(cd)}`,sig:`c:${bd}:${k}:${pl(ac)}`,verify:()=>bc*bc===bd*ba&&eq(mul(cd,R(ba)),mul(ac,R(bc)))}}
+  if(kind==="bisector"){// AQ 為角平分線，PB⊥AB、QC⊥AC ⇒ △ABP∼△ACQ
+   const pb=rand(2,6),k=rand(2,4),qc=pb*k,ap=R(rand(3,15),mode==="fraction"?pick([2,3,4]):1),aq=mul(ap,R(k)),pq=sub(aq,ap);if(!ok(pq))return null;
+   return{expr:`AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝${pb}、QC＝${qc}、AP＝${S(ap)}，求 PQ。`,answer:`PQ＝${S(pq)}`,sig:`b:${pb}:${k}:${pl(ap)}`,verify:()=>eq(mul(add(ap,pq),R(pb)),mul(ap,R(qc)))}}
+  if(kind==="parallelogram"){// ▱ABCD，E 在 AD 上，BE 交 AC 於 F ⇒ AF：FC＝AE：BC
+   const m=rand(1,5),n=rand(1,5),ac=R(rand(5,20)),af=div(mul(ac,R(m)),R(2*m+n));if(gcd(m,n)>1||m===n&&Math.random()<.5||!ok(af))return null;// AE:ED=m:n ⇒ AE:BC=m:(m+n)
+   const A=[30,90],B=[0,0],C=[150,0],Dp=[180,90],E=onSeg(A,Dp,m/(m+n)),F=onSeg(A,C,m/(2*m+n));
+   return{expr:`${fig({A,B,C,D:Dp,E,F},[["A","B"],["B","C"],["C","D"],["D","A"],["A","C"],["B","E"]])}如圖，平行四邊形 ABCD 中，E 在 AD 上且 AE：ED＝${m}：${n}，BE 交 AC 於 F。求 AF：FC；若 AC＝${S(ac)}，求 AF。`,answer:`AF：FC＝${m}：${m+n}；AF＝${S(af)}`,sig:`pg:${m}:${n}:${pl(ac)}`,verify:()=>{const a2=area2(A,E,F),a3=area2(C,B,F);return Math.abs(a2*(m+n)*(m+n)-a3*m*m)<1e-6&&eq(mul(af,R(2*m+n)),mul(ac,R(m)))}}}
+  // efbc：EF∥BC，EF：BC＝m：n ⇒ EA：EB＝m：(n−m)
+  const m=rand(1,5),n=rand(m+1,9);if(gcd(m,n)>1)return null;const v=R(m,n-m),t=TRI(),{A,B,C}=t,E=onSeg(A,B,m/n),F=onSeg(A,C,m/n);if(!ok(v))return null;
+  return{expr:`${fig({A,B,C,E,F},[["A","B"],["B","C"],["C","A"],["E","F"]],[["E","F",1],["B","C",1]])}如圖，EF∥BC，EF：BC＝${m}：${n}，求 EA／EB 的值。`,answer:S(v),sig:`ef:${m}:${n}`,verify:()=>eq(v,R(m,n-m))&&Math.abs(Math.hypot(E[0]-A[0],E[1]-A[1])*(n-m)-Math.hypot(E[0]-B[0],E[1]-B[1])*m)<1e-6};
+  function H_(k){return k.n/k.d}
+ });
+
+ // ⑥ 面積比＝對應邊平方比
+ const area=unit("area","相似形的面積比","相似形面積比＝對應邊長的平方比；梯形中兩對角線分出的四個三角形：上下相似、左右面積相等。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["ratio","perimeter"]:L===1?["parallelHeight","trapezoid","center"]:["trapezoid","halfArea","trisect"]);
+  const ok=v=>mode==="integer"?v.d===1:v.d!==1;const t=TRI(),{A,B,C}=t;
+  if(kind==="ratio"){const m=rand(1,5),n=rand(1,7),fwd=Math.random()<.5,S1=rand(2,9)*m*m,S2=S1/(m*m)*n*n;if(gcd(m,n)>1||m===n)return null;
+   return fwd?{expr:`△ABC∼△DEF，AB：DE＝${m}：${n}，求 △ABC 面積：△DEF 面積。`,answer:rs(m*m,n*n),sig:`r:${m}:${n}`,verify:()=>{const g=gcd(m*m,n*n);return(m*m/g)*(n*n)===(n*n/g)*(m*m)}}:{expr:`△ABC∼△DEF，AB：DE＝${m}：${n}，若 △ABC 的面積為 ${S1}，求 △DEF 的面積。`,answer:String(S2),sig:`ra:${m}:${n}:${S1}`,verify:()=>S2*m*m===S1*n*n}}
+  if(kind==="perimeter"){const[a,b,c]=tri3(12),k=rand(2,4),P=(a+b+c)*k;return{expr:`△ABC∼△DEF，且 △ABC 面積：△DEF 面積＝1：${k*k}。若 △ABC 的三邊長為 ${a}、${b}、${c}，求 △DEF 的周長。`,answer:String(P),sig:`p:${a}:${b}:${c}:${k}`,verify:()=>P*P===(a+b+c)*(a+b+c)*k*k}}
+  if(kind==="parallelHeight"){const ah=R(rand(2,9)),bc=R(rand(3,12)),gh=R(rand(1,ah.n-1)),ag=sub(ah,gh),de=div(mul(bc,ag),ah);if(!ok(de))return null;const s=H_(ag)/H_(ah),Dp=onSeg(A,B,s),E=onSeg(A,C,s),Hh=[A[0],0],G=[A[0],A[1]*(1-s)];
+   return{expr:`${fig({A,B,C,D:Dp,E,G,H:Hh},[["A","B"],["B","C"],["C","A"],["D","E"],["A","H"]],[["D","E",1],["B","C",1]])}如圖，△ABC 中 DE∥BC，AH⊥BC 且交 DE 於 G。若 AH＝${S(ah)}、BC＝${S(bc)}、GH＝${S(gh)}，求 DE。`,answer:`DE＝${S(de)}`,sig:`ph:${pl(ah)}:${pl(bc)}:${pl(gh)}`,verify:()=>eq(mul(de,ah),mul(bc,ag))}}
+  if(kind==="trapezoid"){// AD∥BC，對角線交於 P：△ADP∼△CBP，面積比 m²：n²，△ABP＝△DCP＝mn·k
+   const m=rand(1,4),n=rand(m+1,6),k=rand(1,4),Sa=m*m*k,Sc=n*n*k,Sab=m*n*k,tot=Sa+Sc+2*Sab,bp=rand(2,6),dp=R(bp*m,n),bd=add(R(bp),dp);if(gcd(m,n)>1)return null;
+   const Bp=[0,0],Cp=[150,0],Ap=[45,90],Dp=[45+150*m/n,90],Pp=onSeg(Ap,Cp,m/(m+n)),ask=pick(["areas","bd"]);if(ask==="bd"&&!ok(dp))return null;
+   const img=fig({A:Ap,B:Bp,C:Cp,D:Dp,P:Pp},[["A","B"],["B","C"],["C","D"],["D","A"],["A","C"],["B","D"]],[["A","D",1],["B","C",1]]);
+   return ask==="areas"?{expr:`${img}如圖，梯形 ABCD 中 AD∥BC，AC 與 BD 交於 P。若 △ADP 的面積為 ${Sa}、△BPC 的面積為 ${Sc}，求 △ABP 的面積與梯形 ABCD 的面積。`,answer:`△ABP＝${Sab}；梯形 ${tot}`,sig:`tz:${m}:${n}:${k}`,verify:()=>Sab*Sab===Sa*Sc&&tot===Sa+Sc+2*Sab}:{expr:`${img}如圖，梯形 ABCD 中 AD∥BC，AC 與 BD 交於 P，△ADP 的面積為 ${Sa}、△BPC 的面積為 ${Sc}，BP＝${bp}，求 BD 的長。`,answer:`BD＝${S(bd)}`,sig:`tb:${m}:${n}:${k}:${bp}`,verify:()=>eq(mul(dp,R(n)),R(bp*m))&&Sa*n*n===Sc*m*m}}
+  if(kind==="center"){const p=rand(1,4),q=rand(1,5),S2=rand(1,6)*(p+q)*(p+q),S1=S2*p*p/((p+q)*(p+q));if(gcd(p,q)>1)return null;// OA：AA′＝p：q ⇒ 邊長比 p：(p+q)
+   return{expr:`以 O 為中心，四邊形 ABCD∼四邊形 A′B′C′D′，OA：AA′＝${p}：${q}。若 A′B′C′D′ 的面積為 ${S2} 平方公分，求 ABCD 的面積。`,answer:`${S1} 平方公分`,sig:`ce:${p}:${q}:${S2}`,verify:()=>S1*(p+q)*(p+q)===S2*p*p}}
+  if(kind==="halfArea"){const d=rand(2,60),c=R(d,2),ans=surd(c,2);return{expr:`△ABC 中 DE∥BC，且 DE 將 △ABC 的面積二等分。若 A 到 BC 的距離是 ${d}，求 A 到 DE 的距離。`,answer:ans,sig:`h:${d}`,verify:()=>Math.abs(c.n/c.d*Math.SQRT2-d/Math.SQRT2)<1e-9}}
+  const bc=rand(2,30),c=R(bc,3),ans=surd(c,6);// FG²：BC²＝2：3 ⇒ FG＝bc√6／3
+  return{expr:`△ABC 中 BC＝${bc}，DE∥FG∥BC，且 DE、FG 將 △ABC 的面積三等分（DE 較靠近 A），求 FG。`,answer:`FG＝${ans}`,sig:`t3:${bc}`,verify:()=>Math.abs(c.n/c.d*Math.sqrt(6)-bc*Math.sqrt(2/3))<1e-9};
+  function H_(v){return v.n/v.d}
+ });
+
+ // ⑦ 簡易測量
+ const measure=unit("measure","簡易測量","同一時刻物高與影長成比例；用相似三角形把不能直接量的長度換成能量的長度。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["shadow","river","mirror"]:L===1?["flag","mirror","river"]:["lamp","twopoles","flag"]);
+  const ok=v=>mode==="integer"?v.d===1:v.d!==1;
+  if(kind==="shadow"){const h1=R(rand(10,20),10),s1=R(rand(10,30),10),s2=R(rand(4,15)),h2=div(mul(h1,s2),s1);if(!ok(h2))return null;
+   return{expr:`同一時刻，高 ${D(h1)} 公尺的竹竿影長 ${D(s1)} 公尺，旁邊一棟建築物的影長 ${S(s2)} 公尺，求建築物的高。`,answer:`${S(h2)} 公尺`,sig:`s:${pl(h1)}:${pl(s1)}:${pl(s2)}`,verify:()=>eq(mul(h2,s1),mul(h1,s2))}}
+  if(kind==="river"){const ab=rand(2,5),bd=rand(2,6),ce=rand(6,30),bc=div(R(ab*ce),R(bd));if(!ok(div(R(ce*bd),R(ab))))return null;// △ABD∼△CED（D 在 BC 延長線？）依講義：AB⊥BC、CE⊥BC，AE 與 BC 交於 D ⇒ AB：CE＝BD：DC
+   const dc=div(R(ce*bd),R(ab));return{expr:`為了測量河寬 BC，在河岸邊設計兩個直角三角形：AB⊥BC、EC⊥BC，A、D、E 三點共線，D 在 BC 上。量得 AB＝${ab} 公尺、BD＝${bd} 公尺、CE＝${ce} 公尺，求河寬 BC（＝BD＋DC）。`,answer:`BC＝${S(add(R(bd),dc))} 公尺`,sig:`r:${ab}:${bd}:${ce}`,verify:()=>eq(mul(dc,R(ab)),R(ce*bd))}}
+  if(kind==="flag"){for(let i=0;i<60;i++){const h=R(rand(14,18),10),walk=rand(2,8),shadowPole=walk+rand(1,6),H2=div(mul(h,R(shadowPole)),R(shadowPole-walk));if(!ok(H2))continue;
+   return{expr:`旗桿在陽光下的影長為 ${shadowPole} 公尺。身高 ${D(h)} 公尺的小華從桿底沿影子方向走 ${walk} 公尺後，發現自己影子的前端剛好與桿影的端點重合，求旗桿的高。`,answer:`${S(H2)} 公尺`,sig:`f:${pl(h)}:${walk}:${shadowPole}`,verify:()=>eq(mul(H2,R(shadowPole-walk)),mul(h,R(shadowPole)))}}return null}
+  if(kind==="mirror"){const d1=rand(1,4),d2=rand(3,12),h=R(rand(140,180),100),T=div(mul(h,R(d2)),R(d1));if(!ok(T))return null;
+   return{expr:`小明想測樹高，在樹前平放一面鏡子。他站在離鏡子 ${d1} 公尺處看鏡子，恰好看到樹梢；已知樹離鏡子 ${d2} 公尺，小明眼睛離地 ${D(h)} 公尺（入射角＝反射角），求樹高。`,answer:`${S(T)} 公尺`,sig:`m:${d1}:${d2}:${pl(h)}`,verify:()=>eq(mul(T,R(d1)),mul(h,R(d2)))}}
+  if(kind==="lamp"){for(let i=0;i<60;i++){const h=R(rand(14,18),10),d0=rand(2,6),s0=R(rand(20,45),10),Dw=div(mul(s0,R(d0)),h),step=rand(1,d0-1),s1=div(mul(h,Dw),R(d0-step));if(!ok(s1))continue;// 影長 = h·D/d
+   return{expr:`地上一盞燈照著一道牆。身高 ${D(h)} 公尺的人站在離燈 ${d0} 公尺處時，牆上的人影長 ${D(s0)} 公尺。若此人再向燈走近 ${step} 公尺，牆上的人影長為多少公尺？`,answer:`${S(s1)} 公尺`,sig:`l:${pl(h)}:${d0}:${pl(s0)}:${step}`,verify:()=>eq(mul(s0,R(d0)),mul(h,Dw))&&eq(mul(s1,R(d0-step)),mul(h,Dw))}}return null}
+  // twopoles：同一時刻兩根等高標竿影長不同（因燈塔影），依講義：竿高 h、影 a；另一竿影 b，兩竿相距 g ⇒ 塔高 = h·(g + b − a)/(b − a)？講義解：兩次比例，塔影端在同一線上
+  for(let i=0;i<80;i++){const h=R(rand(15,18),10),a=rand(2,4),b=a+rand(1,4),g=rand(10,30),Hh=div(mul(h,R(g+b-a)),R(b-a));if(!ok(Hh))continue;// 由相似：塔高：(塔至第一竿距離＋a)＝h：a；塔高：(塔至第一竿距離＋g＋b)＝h：b ⇒ 距離 x：x+a = a/h·H … 解得 H = h(g+b−a)/(b−a)
+  return{expr:`夜晚燈塔頂端 A 的燈光照射地面。在 D 點豎立 ${D(h)} 公尺高的標竿，竿影 DE＝${a} 公尺（B 為塔底，B、D、E 在同一直線上）；在 DE 方向上更遠的 G 點豎立同高的標竿，其影長 GH＝${b} 公尺。已知 DG＝${g} 公尺，求燈塔高 AB。`,answer:`AB＝${S(Hh)} 公尺`,sig:`tp:${pl(h)}:${a}:${b}:${g}`,verify:()=>{const x=div(mul(R(a),Hh),h);return eq(sub(x,R(a)),sub(div(mul(R(b),Hh),h),R(g+b)))}}}return null;
+ });
+
+ return{title:"相似形",symbol:"∼",subtitle:"縮放與比例尺・對應邊・對應角・相似判別・AA 相似求邊長・面積比・簡易測量",instruction:"先確定對應頂點與對應邊，再列比例式；面積比是邊長比的平方。",modes:["integer","fraction"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：縮放後的邊角周長、影印與比例尺、對應邊求長、對應角、AA 與 SSS 判別、對頂角與公共角的相似、面積比、影長與河寬。",advanced:"進階：兩次縮放與倍率還原、含 x 的對應邊、係數化的角比、五邊形角、找出不相似的紙板、角平分線與平行四邊形的相似、平行線截高、梯形對角線、旗桿與鏡子。",challenge:"挑戰：中心點縮放與光源投影、四邊比與周長、SAS 判別、EF：BC 反求分段比、面積等分的距離（根式）、燈影與兩根標竿。"},
+  units:[scale,sides,angles,judge,aa,area,measure],presets:{basic:{scale:2,sides:2,angles:2,judge:2,aa:2,area:2,measure:2},advanced:{scale:2,sides:2,angles:2,judge:2,aa:2,area:2,measure:2},challenge:{scale:2,sides:2,angles:1,judge:2,aa:2,area:3,measure:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

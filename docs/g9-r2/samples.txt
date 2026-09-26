@@ -1,0 +1,99 @@
+[basic/scale/integer] 把一個多邊形影印成 200％，得到一個新的多邊形。若原圖某一邊長 3 公分、某一角為 80°，求新圖中對應邊的長與對應角的度數。  ⇒ 6 公分、80°
+[basic/scale/integer] 把一個多邊形影印成 125％，得到一個新的多邊形。若原圖某一邊長 7 公分、某一角為 87°，求新圖中對應邊的長與對應角的度數。  ⇒ 8.75 公分、87°
+[basic/scale/integer] △A′B′C′ 是 △ABC 以 O 為中心縮放 4 倍的圖形，AB＝5、BC＝9、CA＝5，求 A′B′。  ⇒ A′B′＝20
+[basic/sides/integer] 已知 △ABC∼△DEF（A 對應 D、B 對應 E、C 對應 F），AB＝5、BC＝8、CA＝6，DE＝25，求 EF 與 FD。  ⇒ EF＝40，FD＝30
+[basic/sides/integer] 已知 △ABC∼△DEF（A 對應 D、B 對應 E、C 對應 F），AB＝9、BC＝11、CA＝7，DE＝18，求 EF 與 FD。  ⇒ EF＝22，FD＝14
+[basic/sides/integer] 已知 △ABC∼△DEF（A 對應 D、B 對應 E、C 對應 F），AB＝4、BC＝8、CA＝6，DE＝20，求 EF 與 FD。  ⇒ EF＝40，FD＝30
+[basic/sides/fraction] 一個多邊形各邊長為 6、6、3、9、8，另有一個相似形，和 6 對應的邊長為 7，求此相似形的周長。  ⇒ (112/3)
+[basic/sides/fraction] 已知 △ABC∼△DEF（A 對應 D、B 對應 E、C 對應 F），AB＝5、BC＝11、CA＝12，DE＝4，求 EF 與 FD。  ⇒ EF＝(44/5)，FD＝(48/5)
+[basic/sides/fraction] 已知 △ABC∼△DEF（A 對應 D、B 對應 E、C 對應 F），AB＝9、BC＝8、CA＝9，DE＝12，求 EF 與 FD。  ⇒ EF＝(32/3)，FD＝12
+[basic/angles/integer] 四邊形 ABCD 與四邊形 A′B′C′D′ 相似（依對應順序），且 ∠A′：∠B′：∠C′：∠D′＝5：1：6：6，求 ∠B 與 ∠A。  ⇒ ∠B＝20°，∠A＝100°
+[basic/angles/integer] 已知 △ABC∼△PQR（依對應順序），∠A＝35°、∠B＝67°，求 ∠Q。  ⇒ ∠Q＝67°
+[basic/angles/integer] 已知 △ABC∼△PQR（依對應順序），∠A＝82°、∠B＝66°，求 ∠P。  ⇒ ∠P＝82°
+[basic/judge/integer] △ABC 中 ∠A＝68°、∠B＝78°；△DEF 中 ∠D＝68°、∠E＝66°。判斷兩三角形是否相似，並說明依據。  ⇒ 不相似（△DEF 的三角為 68°、66°、46°，與 △ABC 的三角不對應）
+[basic/judge/integer] △ABC 中 ∠A＝74°、∠B＝63°；△DEF 中 ∠D＝74°、∠E＝40°。判斷兩三角形是否相似，並說明依據。  ⇒ 不相似（△DEF 的三角為 74°、40°、66°，與 △ABC 的三角不對應）
+[basic/judge/integer] 甲三角形三邊長為 7、4、9，乙三角形三邊長為 36、18、28。判斷兩三角形是否相似，並說明依據。  ⇒ 不相似（三邊不成比例）
+[basic/aa/integer]  示意圖 A B C D E 如圖，AB∥CD，AD 與 BC 交於 E。AB＝6、DC＝12、EA＝4、EB＝2，求 ED 與 EC。  ⇒ ED＝8，EC＝4
+[basic/aa/integer]  示意圖 A B C E F 如圖，EF∥BC，EF：BC＝5：6，求 EA／EB 的值。  ⇒ 5
+[basic/aa/integer]  示意圖 A B C D E 如圖，AB∥CD，AD 與 BC 交於 E。AB＝9、DC＝27、EA＝4、EB＝3，求 ED 與 EC。  ⇒ ED＝12，EC＝9
+[basic/aa/fraction]  示意圖 A B C E F 如圖，EF∥BC，EF：BC＝5：9，求 EA／EB 的值。  ⇒ (5/4)
+[basic/aa/fraction]  示意圖 A B C E F 如圖，EF∥BC，EF：BC＝5：8，求 EA／EB 的值。  ⇒ (5/3)
+[basic/aa/fraction]  示意圖 A B C E F 如圖，EF∥BC，EF：BC＝1：8，求 EA／EB 的值。  ⇒ (1/7)
+[basic/area/integer] △ABC∼△DEF，且 △ABC 面積：△DEF 面積＝1：16。若 △ABC 的三邊長為 5、10、9，求 △DEF 的周長。  ⇒ 96
+[basic/area/integer] △ABC∼△DEF，AB：DE＝5：1，求 △ABC 面積：△DEF 面積。  ⇒ 25：1
+[basic/area/integer] △ABC∼△DEF，AB：DE＝5：6，求 △ABC 面積：△DEF 面積。  ⇒ 25：36
+[basic/area/fraction] △ABC∼△DEF，AB：DE＝4：5，若 △ABC 的面積為 144，求 △DEF 的面積。  ⇒ 225
+[basic/area/fraction] △ABC∼△DEF，AB：DE＝4：1，求 △ABC 面積：△DEF 面積。  ⇒ 16：1
+[basic/area/fraction] △ABC∼△DEF，且 △ABC 面積：△DEF 面積＝1：4。若 △ABC 的三邊長為 7、9、9，求 △DEF 的周長。  ⇒ 50
+[basic/measure/integer] 為了測量河寬 BC，在河岸邊設計兩個直角三角形：AB⊥BC、EC⊥BC，A、D、E 三點共線，D 在 BC 上。量得 AB＝2 公尺、BD＝2 公尺、CE＝19 公尺，求河寬 BC（＝BD＋DC）。  ⇒ BC＝21 公尺
+[basic/measure/integer] 為了測量河寬 BC，在河岸邊設計兩個直角三角形：AB⊥BC、EC⊥BC，A、D、E 三點共線，D 在 BC 上。量得 AB＝3 公尺、BD＝3 公尺、CE＝13 公尺，求河寬 BC（＝BD＋DC）。  ⇒ BC＝16 公尺
+[basic/measure/integer] 為了測量河寬 BC，在河岸邊設計兩個直角三角形：AB⊥BC、EC⊥BC，A、D、E 三點共線，D 在 BC 上。量得 AB＝5 公尺、BD＝3 公尺、CE＝15 公尺，求河寬 BC（＝BD＋DC）。  ⇒ BC＝12 公尺
+[basic/measure/fraction] 小明想測樹高，在樹前平放一面鏡子。他站在離鏡子 2 公尺處看鏡子，恰好看到樹梢；已知樹離鏡子 9 公尺，小明眼睛離地 1.54 公尺（入射角＝反射角），求樹高。  ⇒ (693/100) 公尺
+[basic/measure/fraction] 小明想測樹高，在樹前平放一面鏡子。他站在離鏡子 3 公尺處看鏡子，恰好看到樹梢；已知樹離鏡子 9 公尺，小明眼睛離地 1.74 公尺（入射角＝反射角），求樹高。  ⇒ (261/50) 公尺
+[basic/measure/fraction] 同一時刻，高 1.2 公尺的竹竿影長 2.3 公尺，旁邊一棟建築物的影長 7 公尺，求建築物的高。  ⇒ (84/23) 公尺
+[advanced/scale/integer] 在某張地圖上量得 A、B 兩地的直線距離是 7 公分，已知實際距離是 (35/2) 公里，求此地圖的比例尺。  ⇒ 1：250000
+[advanced/scale/integer] 若圖形甲縮放 3 倍後的圖形是乙，乙縮放 2 倍後的圖形是丙，則丙是甲縮放幾倍的圖形？若丙的面積是 144 平方公分，甲的面積是多少？  ⇒ 6 倍；4 平方公分
+[advanced/scale/integer] 在某張地圖上量得 A、B 兩地的直線距離是 5 公分，已知實際距離是 (25/2) 公里，求此地圖的比例尺。  ⇒ 1：250000
+[advanced/sides/integer] 已知 △ABC∼△DEF，AB＝2x＋4、DE＝x＋2、AC＝4x、DF＝8，求 x 與 AB。  ⇒ x＝4；AB＝12
+[advanced/sides/integer] 一個多邊形各邊長為 6、7、4、3、4，另有一個相似形，和 6 對應的邊長為 18，求此相似形的周長。  ⇒ 72
+[advanced/sides/integer] 已知 △ABC∼△DEF，AB＝x＋1、DE＝3x＋3、AC＝2x、DF＝36，求 x 與 AB。  ⇒ x＝6；AB＝7
+[advanced/sides/fraction] 一個多邊形各邊長為 4、8、7、10，另有一個相似形，和 8 對應的邊長為 10，求此相似形的周長。  ⇒ (145/4)
+[advanced/sides/fraction] 一個多邊形各邊長為 10、8、11、9、5，另有一個相似形，和 5 對應的邊長為 7，求此相似形的周長。  ⇒ (301/5)
+[advanced/sides/fraction] 已知 △ABC∼△DEF，AB＝x＋5、DE＝x＋4、AC＝4x、DF＝18，求 x 與 AB。  ⇒ x＝5；AB＝10
+[advanced/angles/integer] 四邊形 ABCD 與四邊形 A′B′C′D′ 相似（依對應順序），且 ∠A′：∠B′：∠C′：∠D′＝4：1：1：3，求 ∠B 與 ∠D。  ⇒ ∠B＝40°，∠D＝120°
+[advanced/angles/integer] 五邊形 ABCDE∼五邊形 PQRST（依對應順序），∠P：∠Q：∠R＝1：2：1，∠R：∠S＝1：2，∠T＝114°，求 ∠D。  ⇒ ∠D＝142°
+[advanced/angles/integer] 五邊形 ABCDE∼五邊形 PQRST（依對應順序），∠P：∠Q：∠R＝3：1：4，∠R：∠S＝4：5，∠T＝124°，求 ∠B。  ⇒ ∠B＝32°
+[advanced/judge/integer] 甲三角形三邊長為 6、7、5，乙三角形三邊長為 10、12、14。判斷兩三角形是否相似，並說明依據。  ⇒ 相似（SSS 相似：三邊成比例 1：2）
+[advanced/judge/integer] 有甲、乙、丙、丁四塊三角形紙板，各紙板的其中兩個內角分別為：甲 37°、78°；乙 61°、82°；丙 37°、82°；丁 37°、61°。另一塊紙板戊的兩內角為 61°、82°。哪一塊與戊不相似？  ⇒ 甲
+[advanced/judge/integer] 兩個相似三角形，其中一個三邊長依序為 9、8、8，另一個對應的三邊長依序為 18、x、y，求 x、y。  ⇒ x＝16，y＝16
+[advanced/aa/integer] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝6、QC＝12、AP＝12，求 PQ。  ⇒ PQ＝12
+[advanced/aa/integer]  示意圖 1 1 A B C D 如圖，△ABC 中 D 在 AB 上，∠BCD＝∠A（圖中標 1）。若 AD＝12、BD＝4、AC＝22，求 BC 與 CD。  ⇒ BC＝8，CD＝11
+[advanced/aa/integer] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝3、QC＝9、AP＝13，求 PQ。  ⇒ PQ＝26
+[advanced/aa/fraction] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝3、QC＝9、AP＝(13/3)，求 PQ。  ⇒ PQ＝(26/3)
+[advanced/aa/fraction] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝4、QC＝16、AP＝(3/2)，求 PQ。  ⇒ PQ＝(9/2)
+[advanced/aa/fraction] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝4、QC＝16、AP＝(5/2)，求 PQ。  ⇒ PQ＝(15/2)
+[advanced/area/integer] 以 O 為中心，四邊形 ABCD∼四邊形 A′B′C′D′，OA：AA′＝1：5。若 A′B′C′D′ 的面積為 108 平方公分，求 ABCD 的面積。  ⇒ 3 平方公分
+[advanced/area/integer]  示意圖 A B C D E G H 如圖，△ABC 中 DE∥BC，AH⊥BC 且交 DE 於 G。若 AH＝5、BC＝10、GH＝3，求 DE。  ⇒ DE＝4
+[advanced/area/integer] 以 O 為中心，四邊形 ABCD∼四邊形 A′B′C′D′，OA：AA′＝4：1。若 A′B′C′D′ 的面積為 50 平方公分，求 ABCD 的面積。  ⇒ 32 平方公分
+[advanced/area/fraction] 以 O 為中心，四邊形 ABCD∼四邊形 A′B′C′D′，OA：AA′＝3：4。若 A′B′C′D′ 的面積為 196 平方公分，求 ABCD 的面積。  ⇒ 36 平方公分
+[advanced/area/fraction]  示意圖 A B C D P 如圖，梯形 ABCD 中 AD∥BC，AC 與 BD 交於 P，△ADP 的面積為 27、△BPC 的面積為 48，BP＝5，求 BD 的長。  ⇒ BD＝(35/4)
+[advanced/area/fraction]  示意圖 A B C D E G H 如圖，△ABC 中 DE∥BC，AH⊥BC 且交 DE 於 G。若 AH＝7、BC＝6、GH＝4，求 DE。  ⇒ DE＝(18/7)
+[advanced/measure/integer] 旗桿在陽光下的影長為 10 公尺。身高 1.5 公尺的小華從桿底沿影子方向走 5 公尺後，發現自己影子的前端剛好與桿影的端點重合，求旗桿的高。  ⇒ 3 公尺
+[advanced/measure/integer] 小明想測樹高，在樹前平放一面鏡子。他站在離鏡子 4 公尺處看鏡子，恰好看到樹梢；已知樹離鏡子 8 公尺，小明眼睛離地 1.5 公尺（入射角＝反射角），求樹高。  ⇒ 3 公尺
+[advanced/measure/integer] 旗桿在陽光下的影長為 6 公尺。身高 1.5 公尺的小華從桿底沿影子方向走 3 公尺後，發現自己影子的前端剛好與桿影的端點重合，求旗桿的高。  ⇒ 3 公尺
+[advanced/measure/fraction] 為了測量河寬 BC，在河岸邊設計兩個直角三角形：AB⊥BC、EC⊥BC，A、D、E 三點共線，D 在 BC 上。量得 AB＝5 公尺、BD＝2 公尺、CE＝8 公尺，求河寬 BC（＝BD＋DC）。  ⇒ BC＝(26/5) 公尺
+[advanced/measure/fraction] 旗桿在陽光下的影長為 13 公尺。身高 1.7 公尺的小華從桿底沿影子方向走 7 公尺後，發現自己影子的前端剛好與桿影的端點重合，求旗桿的高。  ⇒ (221/60) 公尺
+[advanced/measure/fraction] 小明想測樹高，在樹前平放一面鏡子。他站在離鏡子 3 公尺處看鏡子，恰好看到樹梢；已知樹離鏡子 3 公尺，小明眼睛離地 1.54 公尺（入射角＝反射角），求樹高。  ⇒ (77/50) 公尺
+[challenge/scale/integer] △A′B′C′ 是 △ABC 以 O 為中心點縮放的相似形，OA＝2、OA′＝4，AB＝5、BC＝8、CA＝8，求縮放倍率與 △A′B′C′ 的周長。  ⇒ 2 倍；周長 42
+[challenge/scale/integer] 光源 O 到螢幕的距離 OP′＝15。若要使線段 AB 在螢幕上的影長是 AB 的 5 倍，O 到 AB 的距離應為多少？  ⇒ 3
+[challenge/scale/integer] △A′B′C′ 是 △ABC 以 O 為中心點放大的相似形，OA：AA′＝1：2。若 AB＝5、BC＝3、CA＝6，求 A′B′。  ⇒ A′B′＝15
+[challenge/sides/integer] 四邊形 ABCD 與四邊形 A′B′C′D′ 相似，且 AB：BC：CD：DA＝1：(1/2)：(2/3)：2。若四邊形 A′B′C′D′ 的周長是 125，求 A′B′ 與 B′C′。  ⇒ A′B′＝30，B′C′＝15
+[challenge/sides/integer] 四邊形 ABCD 與四邊形 A′B′C′D′ 相似，且 AB：BC：CD：DA＝1：(1/2)：(2/3)：2。若四邊形 A′B′C′D′ 的周長是 150，求 A′B′ 與 B′C′。  ⇒ A′B′＝36，B′C′＝18
+[challenge/sides/integer] 已知 △ABC∼△DEF，AB＝x＋1、DE＝x＋4、AC＝2x、DF＝15，求 x 與 AB。  ⇒ x＝5；AB＝6
+[challenge/sides/fraction] 已知 △ABC∼△DEF，AB＝x＋3、DE＝2x＋4、AC＝6x、DF＝99，求 x 與 AB。  ⇒ x＝9；AB＝12
+[challenge/sides/fraction] 已知 △ABC∼△DEF，AB＝2x＋2、DE＝x＋1、AC＝2x、DF＝6，求 x 與 AB。  ⇒ x＝6；AB＝14
+[challenge/sides/fraction] 已知 △ABC∼△DEF，AB＝2x＋2、DE＝2x＋3、AC＝6x、DF＝14，求 x 與 AB。  ⇒ x＝2；AB＝6
+[challenge/angles/integer] 四邊形 ABCD∼四邊形 A′B′C′D′，且 ∠D′ 是 ∠D 的對應角。若 ∠A＝58°、∠B＝76°、∠C＝124°，求 ∠D′。  ⇒ ∠D′＝102°
+[challenge/angles/integer] 四邊形 ABCD∼四邊形 A′B′C′D′，且 ∠D′ 是 ∠D 的對應角。若 ∠A＝113°、∠B＝118°、∠C＝61°，求 ∠D′。  ⇒ ∠D′＝68°
+[challenge/angles/integer] △ABC∼△EFD（A 對應 E、B 對應 F、C 對應 D），2∠A：3∠B＝6：13，2∠B：3∠C＝7：3，求 ∠D、∠E、∠F。  ⇒ ∠D＝26°、∠E＝63°、∠F＝91°
+[challenge/judge/integer] 有甲、乙、丙、丁四塊三角形紙板，各紙板的其中兩個內角分別為：甲 60°、64°；乙 60°、39°；丙 60°、81°；丁 39°、81°。另一塊紙板戊的兩內角為 39°、81°。哪一塊與戊不相似？  ⇒ 甲
+[challenge/judge/integer] △ABC 中 ∠A＝105°、AB＝7、AC＝5；△DEF 中 ∠D＝105°、DE＝14、DF＝10。判斷兩三角形是否相似，並說明依據。  ⇒ 相似（SAS 相似：∠A＝∠D，且 AB：DE＝AC：DF＝1：2）
+[challenge/judge/integer] △ABC 中 ∠A＝58°、AB＝9、AC＝6；△DEF 中 ∠D＝58°、DE＝27、DF＝18。判斷兩三角形是否相似，並說明依據。  ⇒ 相似（SAS 相似：∠A＝∠D，且 AB：DE＝AC：DF＝1：3）
+[challenge/aa/integer] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝6、QC＝24、AP＝6，求 PQ。  ⇒ PQ＝18
+[challenge/aa/integer] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝6、QC＝24、AP＝12，求 PQ。  ⇒ PQ＝36
+[challenge/aa/integer] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝4、QC＝16、AP＝15，求 PQ。  ⇒ PQ＝45
+[challenge/aa/fraction] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝6、QC＝18、AP＝(9/4)，求 PQ。  ⇒ PQ＝(9/2)
+[challenge/aa/fraction] AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝2、QC＝4、AP＝(13/2)，求 PQ。  ⇒ PQ＝(13/2)
+[challenge/aa/fraction]  示意圖 A B C E F 如圖，EF∥BC，EF：BC＝1：8，求 EA／EB 的值。  ⇒ (1/7)
+[challenge/area/integer] △ABC 中 DE∥BC，且 DE 將 △ABC 的面積二等分。若 A 到 BC 的距離是 48，求 A 到 DE 的距離。  ⇒ 24√2
+[challenge/area/integer] △ABC 中 BC＝28，DE∥FG∥BC，且 DE、FG 將 △ABC 的面積三等分（DE 較靠近 A），求 FG。  ⇒ FG＝(28√6/3)
+[challenge/area/integer] △ABC 中 BC＝16，DE∥FG∥BC，且 DE、FG 將 △ABC 的面積三等分（DE 較靠近 A），求 FG。  ⇒ FG＝(16√6/3)
+[challenge/area/fraction] △ABC 中 DE∥BC，且 DE 將 △ABC 的面積二等分。若 A 到 BC 的距離是 11，求 A 到 DE 的距離。  ⇒ (11√2/2)
+[challenge/area/fraction] △ABC 中 BC＝23，DE∥FG∥BC，且 DE、FG 將 △ABC 的面積三等分（DE 較靠近 A），求 FG。  ⇒ FG＝(23√6/3)
+[challenge/area/fraction] △ABC 中 DE∥BC，且 DE 將 △ABC 的面積二等分。若 A 到 BC 的距離是 6，求 A 到 DE 的距離。  ⇒ 3√2
+[challenge/measure/integer] 地上一盞燈照著一道牆。身高 1.4 公尺的人站在離燈 4 公尺處時，牆上的人影長 2 公尺。若此人再向燈走近 2 公尺，牆上的人影長為多少公尺？  ⇒ 4 公尺
+[challenge/measure/integer] 夜晚燈塔頂端 A 的燈光照射地面。在 D 點豎立 1.8 公尺高的標竿，竿影 DE＝3 公尺（B 為塔底，B、D、E 在同一直線上）；在 DE 方向上更遠的 G 點豎立同高的標竿，其影長 GH＝6 公尺。已知 DG＝22 公尺，求燈塔高 AB。  ⇒ AB＝15 公尺
+[challenge/measure/integer] 地上一盞燈照著一道牆。身高 1.7 公尺的人站在離燈 2 公尺處時，牆上的人影長 4 公尺。若此人再向燈走近 1 公尺，牆上的人影長為多少公尺？  ⇒ 8 公尺
+[challenge/measure/fraction] 地上一盞燈照著一道牆。身高 1.8 公尺的人站在離燈 6 公尺處時，牆上的人影長 4.2 公尺。若此人再向燈走近 3 公尺，牆上的人影長為多少公尺？  ⇒ (42/5) 公尺
+[challenge/measure/fraction] 夜晚燈塔頂端 A 的燈光照射地面。在 D 點豎立 1.5 公尺高的標竿，竿影 DE＝3 公尺（B 為塔底，B、D、E 在同一直線上）；在 DE 方向上更遠的 G 點豎立同高的標竿，其影長 GH＝7 公尺。已知 DG＝14 公尺，求燈塔高 AB。  ⇒ AB＝(27/4) 公尺
+[challenge/measure/fraction] 夜晚燈塔頂端 A 的燈光照射地面。在 D 點豎立 1.7 公尺高的標竿，竿影 DE＝3 公尺（B 為塔底，B、D、E 在同一直線上）；在 DE 方向上更遠的 G 點豎立同高的標竿，其影長 GH＝6 公尺。已知 DG＝19 公尺，求燈塔高 AB。  ⇒ AB＝(187/15) 公尺
