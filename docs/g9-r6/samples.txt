@@ -1,0 +1,54 @@
+[basic/circumcenter/integer]  示意圖 A B C O 如圖，△ABC 中 ∠B＝90°，AB＝56、BC＝33，O 為 △ABC 的外心，求 OB 的長。  ⇒ OB＝(65/2)
+[basic/circumcenter/integer] △ABC 中 ∠BAC＝40°、∠ABC＝89°，O 為 △ABC 的外心，求 ∠AOB、∠BOC、∠COA。  ⇒ ∠AOB＝102°，∠BOC＝80°，∠COA＝178°
+[basic/circumcenter/integer] 一三角形的三邊長分別為 9、40、41，求其外心到三頂點的距離和。  ⇒ (123/2)
+[basic/incenter/integer] △ABC 的周長是 198，面積是 1386，求其內切圓的半徑。  ⇒ 14
+[basic/incenter/integer] I 為 △ABC 的內心，∠ABC＝67°、∠ACB＝63°，求 ∠BIC。  ⇒ ∠BIC＝115°
+[basic/incenter/integer] △ABC 中 AB＝9、BC＝10、CA＝8，I 為內心，求 △AIB：△BIC：△CIA。  ⇒ 9：10：8
+[basic/rightTri/integer] △ABC 為直角三角形，∠A＝90°，圓 O 是內切圓，D 為 BC 上的切點。若 AB＝13、AC＝84，求 CD 的長。  ⇒ CD＝78
+[basic/rightTri/integer]  示意圖 A B C 如圖，直角 △ABC 中 ∠B＝90°，AB＝70、BC＝24，求外接圓半徑 R 與內切圓半徑 r。  ⇒ R＝37，r＝10
+[basic/rightTri/integer] △ABC 為直角三角形，∠A＝90°，圓 O 是內切圓，D 為 BC 上的切點。若 AB＝48、AC＝55，求 CD 的長。  ⇒ CD＝40
+[basic/centroid/integer] △ABC 的三中線 AD、BE、CF 相交於 G，若 AG＋BG＋CG＝12，求 AD＋BE＋CF。  ⇒ 18
+[basic/centroid/integer] 坐標平面上 A（2，-6）、B（-6，-3）、C（-3，2），求 △ABC 的重心坐標。  ⇒ （−(7/3)，−(7/3)）
+[basic/centroid/integer] △ABC 的三中線 AD、BE、CF 相交於 G，若 AG＋BG＋CG＝18，求 AD＋BE＋CF。  ⇒ 27
+[basic/centroidArea/integer] △ABC 的三中線 AD、BE、CF 相交於 G，且 △ABC 的面積為 168 平方公分，求 △ABG、△BDG 與 △DEF 的面積。  ⇒ △ABG＝56，△BDG＝28，△DEF＝42 平方公分
+[basic/centroidArea/integer] AM 為 △ABC 的中線，G 為重心，且 △GMC 的面積為 7，求 △ABC 的面積。  ⇒ 42
+[basic/centroidArea/integer] △ABC 的三中線 AD、BE、CF 相交於 G，且 △ABC 的面積為 84 平方公分，求 △ABG、△BDG 與 △DEF 的面積。  ⇒ △ABG＝28，△BDG＝14，△DEF＝21 平方公分
+[basic/special/integer] G 為直角 △ABC 的重心，∠B＝90°，O 為 △ABC 的外心，AB＝45、BC＝28，求 GO 的長。  ⇒ GO＝(53/6)
+[basic/special/integer] G 為直角 △ABC 的重心，∠B＝90°，O 為 △ABC 的外心，AB＝60、BC＝25，求 GO 的長。  ⇒ GO＝(65/6)
+[basic/special/integer] G 為直角 △ABC 的重心，∠B＝90°，O 為 △ABC 的外心，AB＝56、BC＝33，求 GO 的長。  ⇒ GO＝(65/6)
+[advanced/circumcenter/integer] 在銳角 △ABC 中，O 為外心。若 ∠OAB＝58°，求 ∠ACB。  ⇒ ∠ACB＝32°
+[advanced/circumcenter/integer] 一直角三角形的三邊長成等差數列，且面積為 294 平方公分，求：(1) 斜邊長 (2) 外心到三頂點的距離和 (3) 周長 (4) 外接圓面積。  ⇒ (1) 35 公分 (2) (105/2) 公分 (3) 84 公分 (4) (1225π/4) 平方公分
+[advanced/circumcenter/integer] 在銳角 △ABC 中，O 為外心。若 ∠OAB＝15°，求 ∠ACB。  ⇒ ∠ACB＝75°
+[advanced/incenter/integer] △ABC 的面積是 72，其內切圓半徑是 4，求 △ABC 的周長。  ⇒ 36
+[advanced/incenter/integer] 等腰 △ABC 中 AB＝AC＝17，BC＝16，求 △ABC 的面積與內切圓半徑。  ⇒ 面積 120；r＝(24/5)
+[advanced/incenter/integer] △ABC 的面積是 152，其內切圓半徑是 4，求 △ABC 的周長。  ⇒ 76
+[advanced/rightTri/integer]  示意圖 A B C 如圖，直角 △ABC 中 ∠B＝90°，AB＝35、BC＝12，求外接圓半徑 R 與內切圓半徑 r。  ⇒ R＝(37/2)，r＝5
+[advanced/rightTri/integer]  示意圖 A B C 如圖，直角 △ABC 中 ∠B＝90°，AB＝56、BC＝33，求外接圓半徑 R 與內切圓半徑 r。  ⇒ R＝(65/2)，r＝12
+[advanced/rightTri/integer] △ABC 為直角三角形，∠B＝90°，AB＝30、BC＝16，O 為內切圓圓心，求 OB 的長。  ⇒ OB＝6√2
+[advanced/centroid/integer] △ABC 中 AB＝AC＝10，BC＝12，G 是 △ABC 的重心，求 AG 的長。  ⇒ AG＝(16/3)
+[advanced/centroid/integer] 坐標平面上 A（-6，-2）、B（6，4）、C（5，-6），求 △ABC 的重心坐標。  ⇒ （(5/3)，−(4/3)）
+[advanced/centroid/integer] △ABC 中 AB＝AC＝26，BC＝20，G 是 △ABC 的重心，求 AG 的長。  ⇒ AG＝16
+[advanced/centroidArea/integer] AM 為 △ABC 的中線，G 為重心，且 △GMC 的面積為 3，求 △ABC 的面積。  ⇒ 18
+[advanced/centroidArea/integer] △ABC 的三中線 AD、BE、CF 相交於 G，且 △ABC 的面積為 192 平方公分，求 △ABG、△BDG 與 △DEF 的面積。  ⇒ △ABG＝64，△BDG＝32，△DEF＝48 平方公分
+[advanced/centroidArea/integer] D、E 為 △ABC 底邊 BC 的三等分點（B、D、E、C 依序），若 △ABC 的面積為 18 平方公分，求 △ABE 的面積。  ⇒ 12 平方公分
+[advanced/special/integer] 設 G 為正 △ABC 的重心（外心），若 AG＝23，求 AB 的長與 △ABC 的面積。  ⇒ AB＝23√3；面積 (1587√3/4)
+[advanced/special/integer] 設 G 為正 △ABC 的重心（外心），若 AG＝6，求 AB 的長與 △ABC 的面積。  ⇒ AB＝6√3；面積 27√3
+[advanced/special/integer] 一正三角形的面積為 289√3，求其外接圓半徑 R 與內切圓半徑 r。  ⇒ R＝(34√3/3)，r＝(17√3/3)
+[challenge/circumcenter/integer] 設 O 為 △ABC 的外心，若 ∠AOB＝84°，求 ∠C 的度數（考慮 O 在三角形內、外兩種情形）。  ⇒ ∠C＝42° 或 138°
+[challenge/circumcenter/integer] 設 O 為 △ABC 的外心，若 ∠AOB＝60°，求 ∠C 的度數（考慮 O 在三角形內、外兩種情形）。  ⇒ ∠C＝30° 或 150°
+[challenge/circumcenter/integer] 正 △ABC 的邊長為 16，O 為其外心，求 OA 的長、∠BOC 與 O 到 BC 的距離。  ⇒ OA＝(16√3/3)，∠BOC＝120°，距離 (8√3/3)
+[challenge/incenter/integer] I 為 △ABC 的內心，已知 ∠BIC＝129°，求 ∠ABC＋∠ACB 與 ∠A。  ⇒ ∠ABC＋∠ACB＝102°，∠A＝78°
+[challenge/incenter/integer] △ABC 中 AB＝14、BC＝12、CA＝10，面積為 24√6，I 為內心，IM⊥BC 於 M，求 IM 的長（即內切圓半徑）。  ⇒ IM＝(4√6/3)
+[challenge/incenter/integer] I 為 △ABC 的內心，O 為 △ABC 的外心，D、E 分別為 AB、AC 的中點。若 ∠BIC＝131°，求 ∠DOE。  ⇒ ∠DOE＝98°
+[challenge/rightTri/integer] △ABC 中 ∠A＝90°，AB＝AC＝16，求外接圓半徑 R 與內切圓半徑 r。  ⇒ R＝8√2，r＝16−8√2
+[challenge/rightTri/integer] △ABC 中 ∠A＝90°，AB＝AC＝19，求外接圓半徑 R 與內切圓半徑 r。  ⇒ R＝(19√2/2)，r＝19−(19√2/2)
+[challenge/rightTri/integer] 直角 △ABC 中 ∠C＝90°，BC＝36、AC＝77，圓 O₁ 為內切圓、圓 O₂ 為外接圓，求 O₁O₂ 的長。  ⇒ O₁O₂＝(√2465/2)
+[challenge/centroid/integer] △ABC 中 ∠C＝90°，AD、BE 為中線且交於重心 G。若 AB＝10，求 AD²＋BE² 的值。  ⇒ 125
+[challenge/centroid/integer] 等腰 △ABC 中 AB＝AC＝17，BC＝16，D 為 AC 的中點，G 為重心。求 (1) 中線 BD 的長 (2) AG＋BG＋CG。  ⇒ (1) BD＝(3√89/2) (2) 10＋2√89
+[challenge/centroid/integer] 等腰 △ABC 中 AB＝AC＝10，BC＝12，D 為 AC 的中點，G 為重心。求 (1) 中線 BD 的長 (2) AG＋BG＋CG。  ⇒ (1) BD＝√97 (2) (16/3)＋(4√97/3)
+[challenge/centroidArea/integer] G 為 △ABC 的重心，且四邊形 BDCG 為平行四邊形。若 △ABC 的面積為 54，求平行四邊形 BDCG 的面積。  ⇒ 36
+[challenge/centroidArea/integer] G 是 △ABC 的重心，過 G 作直線 L∥BC，分別交 AB 於 D、交 AC 於 E。若 △ABC 的面積為 117，求 △ADE 與四邊形 BCED 的面積。  ⇒ △ADE＝52，BCED＝65（4：5）
+[challenge/centroidArea/integer] G 為 △ABC 的重心，且四邊形 BDCG 為平行四邊形。若 △ABC 的面積為 36，求平行四邊形 BDCG 的面積。  ⇒ 24
+[challenge/special/integer] G 為 △ABC 的重心，∠C＝90°，D 在 AB 上且 GD⊥AB。若 AB＝85、AC＝84、BC＝13，求 GD 的長。  ⇒ GD＝(364/85)
+[challenge/special/integer] G 為 △ABC 的重心，∠C＝90°，D 在 AB 上且 GD⊥AB。若 AB＝65、AC＝63、BC＝16，求 GD 的長。  ⇒ GD＝(336/65)
+[challenge/special/integer] G 為 △ABC 的重心，M、N 分別在 AB、BC 上，且 GM⊥AB、GN⊥BC。若 AB＝42、BC＝40、∠B＝90°，求長方形 MBNG 的面積。  ⇒ (560/3)

@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -955,7 +955,135 @@ return{expr:`${cfig(pts,[["A","B"],["A","C"],["C","D"],[[cx,cy],"D"]])}如圖，
   units:[centralArc,inscribed,semicircle,cyclic,parallelChords,tangentAngles],presets:{basic:{centralArc:2,inscribed:3,semicircle:2,cyclic:2,parallelChords:2,tangentAngles:2},advanced:{centralArc:2,inscribed:3,semicircle:2,cyclic:2,parallelChords:2,tangentAngles:2},challenge:{centralArc:2,inscribed:3,semicircle:2,cyclic:2,parallelChords:2,tangentAngles:3}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config},CFG=CONFIGS[TOPIC_KEY]();
+function centersConfig(){
+ /* 國三上 3-2 三角形的外心、內心、重心（2026-09-27，Claude）。題型取自百宏國三上三段講義 3-2(I)(II)(III)：外心到三頂點等距、直角三角形的外心、
+    ∠BOC＝2∠A、正三角形的 R；內心與面積＝rs、面積比＝邊長比、∠BIC＝90°＋A/2、直角三角形的 r；重心分中線 2：1、重心坐標、中線與重心分面積、
+    直角三角形的外心與重心、正三角形的重心。不做證明、作圖、判讀選擇題。
+    verify：長度與面積用坐標或畢氏定理實算；角度用另一組關係重算；含根式與 π 的答案用數值比對。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false}),pl=v=>v.n+"/"+v.d,num=v=>v.n/v.d;
+ const coefS=(c,sym)=>{const n=Math.abs(c.n),top=(n===1&&sym?"":n)+sym;return c.d===1?top:fr(top,c.d)};
+ const form=({rat=R(0),pi=R(0),s2=R(0),s3=R(0),s5=R(0),s6=R(0)})=>{const parts=[];if(rat.n)parts.push([rat,""]);if(pi.n)parts.push([pi,"π"]);if(s2.n)parts.push([s2,"√2"]);if(s3.n)parts.push([s3,"√3"]);if(s5.n)parts.push([s5,"√5"]);if(s6.n)parts.push([s6,"√6"]);if(!parts.length)return"0";parts.sort((x,y)=>(y[0].n>0)-(x[0].n>0));return parts.map(([c,sym],i)=>(c.n<0?"−":i?"＋":"")+coefS(c,sym)).join("")};
+ const val=o=>num(o.rat||R(0))+num(o.pi||R(0))*Math.PI+num(o.s2||R(0))*Math.SQRT2+num(o.s3||R(0))*Math.sqrt(3)+num(o.s5||R(0))*Math.sqrt(5)+num(o.s6||R(0))*Math.sqrt(6);
+ const radP=n=>{let a=1,b=n;for(let p=2;p*p<=b;p++)while(b%(p*p)===0){a*=p;b/=p*p}return{a,b}},radS=n=>{const{a,b}=radP(n);return b===1?String(a):(a===1?"":a)+`√${b}`};
+ const TRIP=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[9,40,41],[12,35,37],[11,60,61],[28,45,53],[16,63,65],[33,56,65],[13,84,85],[36,77,85],[39,80,89],[48,55,73]];
+ const area2=(P,Q,Rr)=>Math.abs((Q[0]-P[0])*(Rr[1]-P[1])-(Rr[0]-P[0])*(Q[1]-P[1]));
+ const W=200,H=150;
+ const fig=(pts,segs,rights=[],dots=[],w=W,h=H)=>{const names=Object.keys(pts),T=GEO.fit(names.map(n=>pts[n]),w,h,20),P={};names.forEach(n=>P[n]=T(pts[n]));const c=GEO.centroid(names.map(n=>P[n]));let b="";
+  segs.forEach(([p,q,o])=>b+=GEO.line(P[p],P[q],o||{}));rights.forEach(([v,p,q])=>b+=GEO.right(P[v],P[p],P[q]));names.forEach(n=>b+=GEO.dot(P[n])+GEO.vlabel(P[n],c,n));return GEO.svg(w,h,b)};
+ const triPts=()=>{const t=GEO.triByAngles(pick([50,55,60,65]),pick([45,50,55,60]),150);return t};
+ const isoPts=(b,l)=>{const h=Math.sqrt(l*l-b*b/4);return{A:[0,h],B:[-b/2,0],C:[b/2,0]}};
+
+ // ① 外心
+ const circumcenter=unit("circumcenter","外心","外心是三邊中垂線的交點，到三頂點等距離；∠BOC＝2∠A（∠A 為銳角）；直角三角形的外心在斜邊中點。",["integer"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["rightR","angleBOC","distSum"]:L===1?["ratioAngles","OAB","arith"]:["twoSol","equiR","coord"]);
+  if(kind==="rightR"){const[p,q,r]=pick(TRIP),k=rand(1,Math.max(1,Math.floor(90/r))),c=r*k,Rr=R(c,2);const img=fig({A:[0,q*k],B:[0,0],C:[p*k,0],O:[p*k/2,q*k/2]},[["A","B"],["B","C"],["C","A"],["O","B"]],[["B","A","C"]]);
+   return{expr:`${img}如圖，△ABC 中 ∠B＝90°，AB＝${q*k}、BC＝${p*k}，O 為 △ABC 的外心，求 OB 的長。`,answer:`OB＝${S(Rr)}`,sig:`rr:${p}${q}:${k}`,verify:()=>{const O=[p*k/2,q*k/2];return Math.abs(Math.hypot(O[0],O[1])-num(Rr))<1e-9&&Math.abs(Math.hypot(O[0],O[1]-q*k)-num(Rr))<1e-9}}}
+  if(kind==="distSum"){const[p,q,r]=pick(TRIP),k=rand(1,Math.max(1,Math.floor(90/r))),c=r*k,sum=R(3*c,2);return{expr:`一三角形的三邊長分別為 ${p*k}、${q*k}、${r*k}，求其外心到三頂點的距離和。`,answer:S(sum),sig:`ds:${p}${q}:${k}`,verify:()=>(p*k)**2+(q*k)**2===c*c&&eq(sum,mul(R(3),R(c,2)))}}
+  if(kind==="angleBOC"){let A,B;do{A=rand(30,120);B=rand(25,100)}while(A+B>=165||A===B);const C=180-A-B,f=x=>x<90?2*x:x===90?180:360-2*x;const t=triPts();
+   return{expr:`△ABC 中 ∠BAC＝${A}°、∠ABC＝${B}°，O 為 △ABC 的外心，求 ∠AOB、∠BOC、∠COA。`,answer:`∠AOB＝${f(C)}°，∠BOC＝${f(A)}°，∠COA＝${f(B)}°`,sig:`ab:${A}:${B}`,verify:()=>{const s=[f(A),f(B),f(C)];return A+B+C===180&&(A<90&&B<90&&C<90?s[0]+s[1]+s[2]===360:true)&&(A>=90?f(A)===360-2*A:f(A)===2*A)}}}
+  if(kind==="ratioAngles"){let r;do{r=[rand(1,7),rand(1,7),rand(1,7)]}while(180%(r[0]+r[1]+r[2])||new Set(r).size<2);const u=180/(r[0]+r[1]+r[2]),ang=r.map(x=>x*u),i=rand(0,2),pair=[["AOB","C"],["BOC","A"],["AOC","B"]][i],opp=ang["ABC".indexOf(pair[1])],v=opp<90?2*opp:opp===90?180:360-2*opp;
+   return{expr:`O 是 △ABC 的外心，且 ∠A：∠B：∠C＝${r.join("：")}，求 ∠${pair[0]}。`,answer:`∠${pair[0]}＝${v}°`,sig:`ra:${r}:${i}`,verify:()=>ang.reduce((s,x)=>s+x,0)===180&&(opp<90?v===2*opp:opp>90?v===360-2*opp:v===180)}}
+  if(kind==="OAB"){const t=rand(10,80),C=90-t;return{expr:`在銳角 △ABC 中，O 為外心。若 ∠OAB＝${t}°，求 ∠ACB。`,answer:`∠ACB＝${C}°`,sig:`ob:${t}`,verify:()=>{const aob=180-2*t;return C===aob/2}}}
+  if(kind==="arith"){const d=rand(2,8),a=3*d,b=4*d,c=5*d,area=a*b/2,Rr=R(c,2);
+   return{expr:`一直角三角形的三邊長成等差數列，且面積為 ${area} 平方公分，求：(1) 斜邊長 (2) 外心到三頂點的距離和 (3) 周長 (4) 外接圓面積。`,answer:`(1) ${c} 公分 (2) ${S(mul(R(3),Rr))} 公分 (3) ${a+b+c} 公分 (4) ${form({pi:mul(Rr,Rr)})} 平方公分`,sig:`ar:${d}`,verify:()=>a*a+b*b===c*c&&a*b/2===area&&Math.abs(val({pi:mul(Rr,Rr)})-Math.PI*c*c/4)<1e-9}}
+  if(kind==="twoSol"){const v=rand(20,85)*2;return{expr:`設 O 為 △ABC 的外心，若 ∠AOB＝${v}°，求 ∠C 的度數（考慮 O 在三角形內、外兩種情形）。`,answer:`∠C＝${v/2}° 或 ${180-v/2}°`,sig:`ts:${v}`,verify:()=>2*(v/2)===v&&360-2*(180-v/2)===v}}
+  if(kind==="equiR"){const a=rand(1,10)*2,Rr={s3:R(a,3)},h={s3:R(a,2)},area={s3:R(a*a,4)},ask=pick(["side","area"]);
+   return ask==="side"?{expr:`正 △ABC 的邊長為 ${a}，O 為其外心，求 OA 的長、∠BOC 與 O 到 BC 的距離。`,answer:`OA＝${form(Rr)}，∠BOC＝120°，距離 ${form({s3:R(a,6)})}`,sig:`eq:${a}`,verify:()=>Math.abs(val(Rr)-a/Math.sqrt(3))<1e-9&&Math.abs(val({s3:R(a,6)})-a/(2*Math.sqrt(3)))<1e-9}:{expr:`已知正 △ABC 的面積為 ${form(area)}，O 為其外心，求 △ABC 的周長、OA 的長與外接圓的面積。`,answer:`周長 ${3*a}；OA＝${form(Rr)}；外接圓面積 ${form({pi:R(a*a,3)})}`,sig:`ea:${a}`,verify:()=>Math.abs(val(area)-Math.sqrt(3)/4*a*a)<1e-9&&Math.abs(val({pi:R(a*a,3)})-Math.PI*a*a/3)<1e-9}}
+  for(let i=0;i<40;i++){const O=[rand(-4,4),rand(-4,4)],rr=pick([5,10,13,17,25]);const cand=[];for(let x=-rr;x<=rr;x++){const y2=rr*rr-x*x,y=Math.round(Math.sqrt(y2));if(y*y===y2){cand.push([O[0]+x,O[1]+y]);if(y)cand.push([O[0]+x,O[1]-y])}}
+   const pts=shuffle(cand).slice(0,3);if(pts.length<3||!area2(...pts))continue;if(pts.some(p=>Math.abs(p[0])>12||Math.abs(p[1])>12))continue;
+   return{expr:`坐標平面上三點 A（${pts[0].join("，")}）、B（${pts[1].join("，")}）、C（${pts[2].join("，")}），求 △ABC 的外心坐標。`,answer:`（${O.join("，")}）`,sig:`co:${pts.map(p=>p.join(","))}`,verify:()=>pts.every(p=>Math.hypot(p[0]-O[0],p[1]-O[1])===rr)}}return null;
+ });
+
+ // ② 內心
+ const incenter=unit("incenter","內心","內心是三內角平分線的交點，到三邊等距離；面積＝r×(周長／2)；△AIB：△BIC：△CIA＝AB：BC：CA；∠BIC＝90°＋∠A／2。",["integer"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["rs","BIC","ratio"]:L===1?["rsPerimeter","CAI","isoR"]:["BICtoA","withO","sidesR"]);
+  const ok=v=>true;
+  if(kind==="rs"){const[p,q,r]=pick(TRIP),k=rand(1,Math.max(1,Math.floor(90/r))),a=p*k,b=q*k,c=r*k,P=a+b+c,A=a*b/2,rIn=R(2*A,P);if(!ok(rIn))return null;return{expr:`△ABC 的周長是 ${P}，面積是 ${A}，求其內切圓的半徑。`,answer:S(rIn),sig:`rs:${p}${q}:${k}`,verify:()=>eq(rIn,R(a+b-c,2))}}
+  if(kind==="rsPerimeter"){const rIn=rand(2,6),s=rand(10,40),A=rIn*s;return{expr:`△ABC 的面積是 ${A}，其內切圓半徑是 ${rIn}，求 △ABC 的周長。`,answer:String(2*s),sig:`rp:${rIn}:${s}`,verify:()=>rIn*(2*s)/2===A}}
+  if(kind==="ratio"){let a,b,c;do{a=rand(3,13);b=rand(3,13);c=rand(3,13)}while(a+b<=c||b+c<=a||a+c<=b||(a===b&&b===c));const g=gcd(gcd(a,b),c);return{expr:`△ABC 中 AB＝${c}、BC＝${a}、CA＝${b}，I 為內心，求 △AIB：△BIC：△CIA。`,answer:`${c/g}：${a/g}：${b/g}`,sig:`rt:${a}:${b}:${c}`,verify:()=>{const rr=2;return(c*rr/2)*(a/g)===(a*rr/2)*(c/g)&&(a*rr/2)*(b/g)===(b*rr/2)*(a/g)}}}
+  if(kind==="BIC"){let B,C;do{B=rand(20,90);C=rand(20,90)}while(B+C>=170);const A=180-B-C,v=90+A/2;if(v%1)return null;return{expr:`I 為 △ABC 的內心，∠ABC＝${B}°、∠ACB＝${C}°，求 ∠BIC。`,answer:`∠BIC＝${v}°`,sig:`bc:${B}:${C}`,verify:()=>v===180-B/2-C/2}}
+  if(kind==="CAI"){const t=rand(10,40);const v=90+t;return{expr:`I 為 △ABC 的內心，∠CAI＝${t}°，求 ∠ABC＋∠ACB 與 ∠BIC。`,answer:`∠ABC＋∠ACB＝${180-2*t}°，∠BIC＝${v}°`,sig:`ca:${t}`,verify:()=>v===180-(180-2*t)/2}}
+  if(kind==="BICtoA"){const A=rand(10,60)*2,v=90+A/2;return{expr:`I 為 △ABC 的內心，已知 ∠BIC＝${v}°，求 ∠ABC＋∠ACB 與 ∠A。`,answer:`∠ABC＋∠ACB＝${180-A}°，∠A＝${A}°`,sig:`ba:${A}`,verify:()=>2*(v-90)===A}}
+  if(kind==="withO"){const A=rand(10,60)*2,bic=90+A/2,doe=180-A;return{expr:`I 為 △ABC 的內心，O 為 △ABC 的外心，D、E 分別為 AB、AC 的中點。若 ∠BIC＝${bic}°，求 ∠DOE。`,answer:`∠DOE＝${doe}°`,sig:`wo:${A}`,verify:()=>doe===180-2*(bic-90)}}
+  if(kind==="isoR"){const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17]]),k=rand(1,2),b=2*p*k,l=r*k,h=q*k,A=b*h/2,s=(b+2*l)/2,rIn=R(A,s);if(!ok(rIn))return null;return{expr:`等腰 △ABC 中 AB＝AC＝${l}，BC＝${b}，求 △ABC 的面積與內切圓半徑。`,answer:`面積 ${A}；r＝${S(rIn)}`,sig:`ir:${p}${q}:${k}`,verify:()=>(b/2)**2+h*h===l*l&&eq(mul(rIn,R(s)),R(A))}}
+  const[a,b,c]=[5,6,7],A={s6:R(6)},rIn={s6:R(2,3)};const sc=rand(1,3);
+  return{expr:`△ABC 中 AB＝${7*sc}、BC＝${6*sc}、CA＝${5*sc}，面積為 ${form({s6:R(6*sc*sc)})}，I 為內心，IM⊥BC 於 M，求 IM 的長（即內切圓半徑）。`,answer:`IM＝${form({s6:R(2*sc,3)})}`,sig:`sr:${sc}`,verify:()=>{const s=(5+6+7)*sc/2,ar=Math.sqrt(s*(s-5*sc)*(s-6*sc)*(s-7*sc));return Math.abs(ar/s-2*sc*Math.sqrt(6)/3)<1e-9}};
+ });
+
+ // ③ 直角三角形的 R 與 r
+ const rightTri=unit("rightTri","直角三角形的外接圓與內切圓","∠C＝90°：R＝斜邊／2，r＝(兩股和−斜邊)／2；周長＝4R＋2r。",["integer"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["Rr","shaded","tangentSeg"]:L===1?["Rr","tangentSeg","OB"]:["isoRight","O1O2","AOBarea"]);
+  const ok=v=>true;
+  const T=()=>{const[p,q,r]=pick(TRIP),k=rand(1,Math.max(1,Math.floor(90/r)));return[p*k,q*k,r*k]};
+  if(kind==="Rr"){const[a,b,c]=T(),Rr=R(c,2),rIn=R(a+b-c,2);if(!ok(Rr))return null;const img=fig({A:[0,b],B:[0,0],C:[a,0]},[["A","B"],["B","C"],["C","A"]],[["B","A","C"]]);return{expr:`${img}如圖，直角 △ABC 中 ∠B＝90°，AB＝${b}、BC＝${a}，求外接圓半徑 R 與內切圓半徑 r。`,answer:`R＝${S(Rr)}，r＝${S(rIn)}`,sig:`rr:${a}:${b}`,verify:()=>a*a+b*b===c*c&&eq(mul(rIn,R(a+b+c,2)),R(a*b,2))}}
+  if(kind==="shaded"){const[a,b,c]=T(),rIn=(a+b-c)/2,area={rat:R(a*b,2),pi:R(-rIn*rIn)};return{expr:`圓 O 是直角 △ABC 的內切圓，∠C＝90°，AC＝${b}、BC＝${a}，求三角形內、圓外的斜線部分面積。`,answer:form(area),sig:`sh:${a}:${b}`,verify:()=>Math.abs(val(area)-(a*b/2-Math.PI*rIn*rIn))<1e-9}}
+  if(kind==="tangentSeg"){const[a,b,c]=T(),s=(a+b+c)/2,cd=s-c;return{expr:`△ABC 為直角三角形，∠A＝90°，圓 O 是內切圓，D 為 BC 上的切點。若 AB＝${a}、AC＝${b}，求 CD 的長。`,answer:`CD＝${S(R(s-a))}`,sig:`tg:${a}:${b}`,verify:()=>{const r=(a+b-c)/2;return s-a===b-r}}}
+  if(kind==="OB"){const[a,b,c]=T(),rIn=(a+b-c)/2,ob={s2:R(rIn)};return{expr:`△ABC 為直角三角形，∠B＝90°，AB＝${b}、BC＝${a}，O 為內切圓圓心，求 OB 的長。`,answer:`OB＝${form(ob)}`,sig:`ob:${a}:${b}`,verify:()=>Math.abs(val(ob)-Math.hypot(rIn,rIn))<1e-9}}
+  if(kind==="isoRight"){const l=rand(1,30),Rr={s2:R(l,2)},rIn={rat:R(l),s2:R(-l,2)};return{expr:`△ABC 中 ∠A＝90°，AB＝AC＝${l}，求外接圓半徑 R 與內切圓半徑 r。`,answer:`R＝${form(Rr)}，r＝${form(rIn)}`,sig:`is:${l}`,verify:()=>Math.abs(val(Rr)-l*Math.SQRT2/2)<1e-9&&Math.abs(val(rIn)-(2*l-l*Math.SQRT2)/2)<1e-9}}
+  if(kind==="O1O2"){const[a,b,c]=T(),rIn=(a+b-c)/2,I=[rIn,rIn],O=[a/2,b/2],d2=(O[0]-I[0])**2+(O[1]-I[1])**2,{a:sa,b:sb}=radP(d2*4),ans=Math.abs(d2*4-Math.round(d2*4))<1e-9?(sb===1?S(R(sa,2)):`${coefS(R(sa,2),"√"+sb)}`):null;if(!ans)return null;// 以 C 為原點：I(r,r)、O(a/2,b/2)
+   return{expr:`直角 △ABC 中 ∠C＝90°，BC＝${a}、AC＝${b}，圓 O₁ 為內切圓、圓 O₂ 為外接圓，求 O₁O₂ 的長。`,answer:`O₁O₂＝${ans}`,sig:`oo:${a}:${b}`,verify:()=>Math.abs(sa*Math.sqrt(sb)/2-Math.sqrt(d2))<1e-9}}
+  const l=rand(2,30),rIn=(2*l-l*Math.SQRT2)/2,ab=l*Math.SQRT2,area={rat:R(-l*l,2),s2:R(l*l,2)};// △AOB＝½·AB·r＝½·l√2·(l−l√2/2)＝(l²√2)/2−l²/2
+  return{expr:`等腰直角 △ABC 中 ∠C＝90°，O 為內心，AC＝${l}，求 △AOB 的面積。`,answer:form(area),sig:`ao:${l}`,verify:()=>Math.abs(val(area)-ab*rIn/2)<1e-9};
+ });
+
+ // ④ 重心與中線
+ const centroid=unit("centroid","重心與中線","重心到頂點的距離是中線長的 2／3；三中線長的和＝重心到三頂點距離和的 3／2＝重心到三邊中點距離和的 3 倍。",["integer"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["medians","sumV","coord"]:L===1?["sumM","isoMedian","coord"]:["rightSquares","distSide","isoSum"]);
+  const ok=v=>true;
+  if(kind==="medians"){const m=[rand(2,10)*3,rand(2,10)*3,rand(2,10)*3],ag=m.map(x=>x*2/3),gd=m.map(x=>x/3);return{expr:`△ABC 的三中線 AD、BE、CF 相交於 G，AD＝${m[0]}、BE＝${m[1]}、CF＝${m[2]}，求 AG、BG、FG 的長。`,answer:`AG＝${ag[0]}，BG＝${ag[1]}，FG＝${gd[2]}`,sig:`md:${m}`,verify:()=>ag[0]+gd[0]===m[0]&&ag[0]===2*gd[0]}}
+  if(kind==="sumV"){const s=rand(4,30)*2,tot=R(3*s,2);if(!ok(tot))return null;return{expr:`△ABC 的三中線 AD、BE、CF 相交於 G，若 AG＋BG＋CG＝${s}，求 AD＋BE＋CF。`,answer:S(tot),sig:`sv:${s}`,verify:()=>eq(mul(tot,R(2,3)),R(s))}}
+  if(kind==="sumM"){const s=rand(3,20),fwd=Math.random()<.5;return fwd?{expr:`△ABC 的三中線 AD、BE、CF 相交於 G，若 GD＋GE＋GF＝${s}，求 AD＋BE＋CF。`,answer:String(3*s),sig:`sm:${s}`,verify:()=>3*s/3===s}:(()=>{const x=rand(2,10),y=rand(2,8),z=rand(2,10);return{expr:`△ABC 中 AD、BE、CF 為三中線，G 為重心。若 AG＝${2*x}、GE＝${y}、CG＝${2*z}，求三中線長的和。`,answer:String(3*x+3*y+3*z),sig:`sm2:${x}:${y}:${z}`,verify:()=>2*x/(2/3)+y/(1/3)+2*z/(2/3)===3*x+3*y+3*z}})()}
+  if(kind==="coord"){const A=[rand(-6,6),rand(-6,6)],B=[rand(-6,6),rand(-6,6)],C=[rand(-6,6),rand(-6,6)],G=[R(A[0]+B[0]+C[0],3),R(A[1]+B[1]+C[1],3)];if(!area2(A,B,C))return null;
+   return{expr:`坐標平面上 A（${A.join("，")}）、B（${B.join("，")}）、C（${C.join("，")}），求 △ABC 的重心坐標。`,answer:`（${S(G[0])}，${S(G[1])}）`,sig:`co:${A}:${B}:${C}`,verify:()=>{const D=[(B[0]+C[0])/2,(B[1]+C[1])/2];return Math.abs(num(G[0])-(A[0]+2*D[0])/3)<1e-9&&Math.abs(num(G[1])-(A[1]+2*D[1])/3)<1e-9}}}
+  if(kind==="isoMedian"){const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17]]),k=rand(1,2),b=2*p*k,l=r*k,h=q*k,ag=R(2*h,3);if(!ok(ag))return null;return{expr:`△ABC 中 AB＝AC＝${l}，BC＝${b}，G 是 △ABC 的重心，求 AG 的長。`,answer:`AG＝${S(ag)}`,sig:`im:${p}${q}:${k}`,verify:()=>(b/2)**2+h*h===l*l&&eq(ag,mul(R(2,3),R(h)))}}
+  if(kind==="rightSquares"){const c=rand(2,12)*2,v=R(5*c*c,4);if(!ok(v))return null;return{expr:`△ABC 中 ∠C＝90°，AD、BE 為中線且交於重心 G。若 AB＝${c}，求 AD²＋BE² 的值。`,answer:S(v),sig:`rq:${c}`,verify:()=>{const a=3,b=Math.sqrt(c*c-9);return Math.abs((a*a+b*b/4)+(b*b+a*a/4)-num(v))<1e-9}}}
+  if(kind==="distSide"){const[a,b,c]=T2(),which=pick(["leg","hyp"]);if(which==="leg"){const d=R(b,3);if(!ok(d))return null;return{expr:`直角 △ABC 中 ∠B＝90°，AB＝${b}、BC＝${a}，G 為重心，求 G 到 BC 的距離。`,answer:S(d),sig:`dl:${a}:${b}`,verify:()=>eq(d,mul(R(1,3),R(b)))}}const d=R(a*b,3*c);if(!ok(d))return null;return{expr:`直角 △ABC 中 ∠C＝90°，CB＝${a}、CA＝${b}，G 為重心，求 G 到斜邊 AB 的距離。`,answer:S(d),sig:`dh:${a}:${b}`,verify:()=>eq(mul(d,R(3)),R(a*b,c))&&a*a+b*b===c*c}}
+  const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17]]),k=rand(1,2),b=2*p*k,l=r*k,h=q*k;// 等腰 AB=AC=l、BC=b：中線 BD（D 為 AC 中點）長 = √(b²+l²/2 … 用中線公式) m_b² = (2a²+2c²−b²)/4 with sides a=BC=b, c=AB=l, b=AC=l
+  const mb2=(2*b*b+2*l*l-l*l)/4,{a:sa,b:sb}=radP(mb2*4);if(!Number.isInteger(mb2*4)||mode==="fraction")return null;const bd=sb===1?String(sa/2):coefS(R(sa,2),"√"+sb);
+  const ag=R(2*h,3),bg=mul(R(2,3),R(sa,2));const tot=sb===1?S(add(ag,mul(R(2),bg))):`${S(ag)}＋${coefS(mul(R(2),bg),"√"+sb)}`;
+  return{expr:`等腰 △ABC 中 AB＝AC＝${l}，BC＝${b}，D 為 AC 的中點，G 為重心。求 (1) 中線 BD 的長 (2) AG＋BG＋CG。`,answer:`(1) BD＝${bd} (2) ${tot}`,sig:`is:${p}${q}:${k}`,verify:()=>{const A=[0,h],B=[-b/2,0],C=[b/2,0],D=[(A[0]+C[0])/2,(A[1]+C[1])/2],BD=Math.hypot(D[0]-B[0],D[1]-B[1]),G=[0,h/3];return Math.abs(BD*BD-mb2)<1e-9&&Math.abs(Math.hypot(G[0]-A[0],G[1]-A[1])+2*Math.hypot(G[0]-B[0],G[1]-B[1])-(num(ag)+2*num(bg)*Math.sqrt(sb)))<1e-9}};
+  function T2(){const[p,q,r]=pick(TRIP),k=rand(1,Math.max(1,Math.floor(90/r)));return[p*k,q*k,r*k]}
+ });
+
+ // ⑤ 重心與面積
+ const centroidArea=unit("centroidArea","重心與面積","中線平分面積；重心與三頂點連線把三角形分成三個等面積的三角形，三中線分成六個等面積的三角形。",["integer"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["three","six","reverse"]:L===1?["six","reverse","trisect"]:["parallel","parallelogram","rightAGD"]);
+  const ok=v=>true;
+  if(kind==="three"){const A=rand(4,30)*6,h=A/2,t=A/3;return{expr:`G 為 △ABC 的重心，AD 為 BC 邊上的中線。若 △ABC 的面積為 ${A}，求 △ABD、△AGB 與 △BGC 的面積。`,answer:`△ABD＝${h}，△AGB＝${t}，△BGC＝${t}`,sig:`th:${A}`,verify:()=>h*2===A&&t*3===A}}
+  if(kind==="six"){const A=rand(2,20)*12,v=[A/3,A/6,A/4];return{expr:`△ABC 的三中線 AD、BE、CF 相交於 G，且 △ABC 的面積為 ${A} 平方公分，求 △ABG、△BDG 與 △DEF 的面積。`,answer:`△ABG＝${v[0]}，△BDG＝${v[1]}，△DEF＝${v[2]} 平方公分`,sig:`sx:${A}`,verify:()=>v[0]*3===A&&v[1]*6===A&&v[2]*4===A}}
+  if(kind==="reverse"){const s=rand(1,12),A=6*s;return{expr:`AM 為 △ABC 的中線，G 為重心，且 △GMC 的面積為 ${s}，求 △ABC 的面積。`,answer:String(A),sig:`rv:${s}`,verify:()=>A/6===s}}
+  if(kind==="trisect"){const A=rand(2,20)*3,v=A*2/3;return{expr:`D、E 為 △ABC 底邊 BC 的三等分點（B、D、E、C 依序），若 △ABC 的面積為 ${A} 平方公分，求 △ABE 的面積。`,answer:`${v} 平方公分`,sig:`ts:${A}`,verify:()=>v*3===A*2}}
+  if(kind==="parallel"){const A=rand(2,30)*9;return{expr:`G 是 △ABC 的重心，過 G 作直線 L∥BC，分別交 AB 於 D、交 AC 於 E。若 △ABC 的面積為 ${A}，求 △ADE 與四邊形 BCED 的面積。`,answer:`△ADE＝${A*4/9}，BCED＝${A*5/9}（4：5）`,sig:`pa:${A}`,verify:()=>{const k=2/3;return Math.abs(A*k*k-A*4/9)<1e-9&&A*4/9+A*5/9===A}}}
+  if(kind==="parallelogram"){const A=rand(2,15)*6,v=A/3*2;return{expr:`G 為 △ABC 的重心，且四邊形 BDCG 為平行四邊形。若 △ABC 的面積為 ${A}，求平行四邊形 BDCG 的面積。`,answer:String(v),sig:`pg:${A}`,verify:()=>v===2*(A/3)}}
+  const[p,q,r]=pick(TRIP),k=rand(1,Math.max(1,Math.floor(90/r))),a=p*k,b=q*k,A=a*b/2,v=R(A,6);if(!ok(v))return null;
+  return{expr:`G 為直角 △ABC 的重心，∠ABC＝90°，AB＝${b}、BC＝${a}，D 為 BC 的中點，求 △BGD 的面積。`,answer:S(v),sig:`bg:${a}:${b}`,verify:()=>{const Bp=[0,0],D=[a/2,0],G=[a/3,b/3];return Math.abs(area2(Bp,G,D)/2-num(v))<1e-9}};
+ });
+
+ // ⑥ 直角三角形與正三角形的三心
+ const special=unit("special","直角三角形與正三角形的三心","直角三角形：外心在斜邊中點，OG＝斜邊／6；正三角形：外心、內心、重心合一，AG＝R＝2h／3，r＝h／3。",["integer"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["OG","equiAG","equiRr"]:L===1?["OGreverse","equiSide","equiRr"]:["equiArea","rect","GD"]);
+  const ok=v=>true;
+  const T=()=>{const[p,q,r]=pick(TRIP),k=rand(1,Math.max(1,Math.floor(90/r)));return[p*k,q*k,r*k]};
+  if(kind==="OG"){const[a,b,c]=T(),v=R(c,6);if(!ok(v))return null;return{expr:`G 為直角 △ABC 的重心，∠B＝90°，O 為 △ABC 的外心，AB＝${b}、BC＝${a}，求 GO 的長。`,answer:`GO＝${S(v)}`,sig:`og:${a}:${b}`,verify:()=>{const O=[a/2,b/2],G=[a/3,b/3];return Math.abs(Math.hypot(O[0]-G[0],O[1]-G[1])-num(v))<1e-9}}}
+  if(kind==="OGreverse"){const[ab,ac,c]=T(),og=R(c,6);return{expr:`直角 △ABC 中 ∠A＝90°，O 為外心，G 為重心，OG＝${S(og)}、AB＝${ab}，求 OA、AG 與 AC。`,answer:`OA＝${S(R(c,2))}，AG＝${S(R(c,3))}，AC＝${ac}`,sig:`or:${ab}:${ac}`,verify:()=>ab*ab+ac*ac===c*c&&eq(sub(R(c,2),R(c,3)),og)}}
+  if(kind==="equiAG"){const a=rand(1,30)*2,ag={s3:R(a,3)};return{expr:`G 為正 △ABC 的重心，AB＝${a}，求 AG 的長。`,answer:`AG＝${form(ag)}`,sig:`eg:${a}`,verify:()=>Math.abs(val(ag)-2/3*(a*Math.sqrt(3)/2))<1e-9}}
+  if(kind==="equiSide"){const a=rand(1,10)*3,ag=R(a,3),side={s3:ag},area={s3:R(a*a,4)};// AG＝a/3·？ 設 AG＝g ⇒ 邊＝g√3，面積＝(3√3/4)g²
+   const g=rand(2,30),sd={s3:R(g)},ar={s3:R(3*g*g,4)};return{expr:`設 G 為正 △ABC 的重心（外心），若 AG＝${g}，求 AB 的長與 △ABC 的面積。`,answer:`AB＝${form(sd)}；面積 ${form(ar)}`,sig:`es:${g}`,verify:()=>{const s=g*Math.sqrt(3);return Math.abs(val(ar)-Math.sqrt(3)/4*s*s)<1e-9&&Math.abs(2/3*(s*Math.sqrt(3)/2)-g)<1e-9}}}
+  if(kind==="equiRr"){const a=rand(1,30)*2,Rr={s3:R(a,3)},rIn={s3:R(a,6)},area={s3:R(a*a,4)};return{expr:`一正三角形的面積為 ${form(area)}，求其外接圓半徑 R 與內切圓半徑 r。`,answer:`R＝${form(Rr)}，r＝${form(rIn)}`,sig:`er:${a}`,verify:()=>Math.abs(val(Rr)-a/Math.sqrt(3))<1e-9&&Math.abs(val(rIn)-a/(2*Math.sqrt(3)))<1e-9&&Math.abs(val(area)-Math.sqrt(3)*a*a/4)<1e-9}}
+  if(kind==="equiArea"){const a=rand(1,8)*6,afg={s3:R(a*a,24)},dfg={s3:R(a*a,48)};return{expr:`正 △ABC 的三條中線 AD、BE、CF 交於 G，邊長為 ${a}，求 △AFG 與 △DFG 的面積。`,answer:`△AFG＝${form(afg)}，△DFG＝${form(dfg)}`,sig:`ea:${a}`,verify:()=>{const A=Math.sqrt(3)/4*a*a;return Math.abs(val(afg)-A/6)<1e-9&&Math.abs(val(dfg)-A/12)<1e-9}}}
+  if(kind==="rect"){const[a,b,c]=T(),v=R(a*b,9);if(!ok(v))return null;return{expr:`G 為 △ABC 的重心，M、N 分別在 AB、BC 上，且 GM⊥AB、GN⊥BC。若 AB＝${b}、BC＝${a}、∠B＝90°，求長方形 MBNG 的面積。`,answer:S(v),sig:`rc:${a}:${b}`,verify:()=>{const G=[a/3,b/3];return Math.abs(G[0]*G[1]-num(v))<1e-9}}}
+  const[a,b,c]=T(),v=R(a*b,3*c);if(!ok(v))return null;
+  return{expr:`G 為 △ABC 的重心，∠C＝90°，D 在 AB 上且 GD⊥AB。若 AB＝${c}、AC＝${b}、BC＝${a}，求 GD 的長。`,answer:`GD＝${S(v)}`,sig:`gd:${a}:${b}`,verify:()=>eq(mul(v,R(3)),R(a*b,c))&&a*a+b*b===c*c};
+ });
+
+ return{title:"三角形的外心、內心、重心",symbol:"◬",subtitle:"外心・內心・直角三角形的 R 與 r・重心與中線・重心與面積・直角與正三角形的三心",instruction:"根式化為最簡；含 π 的答案保留 π；長度與面積化為最簡分數。",modes:["integer","fraction"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：直角三角形的外心、∠BOC＝2∠A、外心距離和、面積＝rs、∠BIC、內心面積比、直角三角形的 R 與 r、中線與重心 2：1、重心坐標、中線與重心分面積、OG＝斜邊／6、正三角形的 AG。",advanced:"進階：角比求圓心角、∠OAB 求 ∠C、三邊成等差的外接圓、由面積求周長、∠CAI、等腰三角形的 r、內切圓切點、OB、等腰三角形的中線、六等分面積與反求、三等分點、由 OG 反求邊、正三角形的邊與 R、r。",challenge:"挑戰：兩組解的 ∠C、正三角形外接圓、坐標外心、由 ∠BIC 求 ∠A、內心與外心的角、5-6-7 的 r、等腰直角的 R 與 r、內心到外心距離、△AOB 面積、中線平方和、重心到邊的距離、等腰的中線和、L∥BC 的面積比、平行四邊形 BDCG、△AGD、正三角形中線分出的小三角形、長方形 MBNG、GD。"},
+  units:[circumcenter,incenter,rightTri,centroid,centroidArea,special],presets:{basic:{circumcenter:2,incenter:2,rightTri:2,centroid:2,centroidArea:2,special:2},advanced:{circumcenter:2,incenter:2,rightTri:2,centroid:2,centroidArea:2,special:2},challenge:{circumcenter:2,incenter:2,rightTri:2,centroid:2,centroidArea:2,special:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
