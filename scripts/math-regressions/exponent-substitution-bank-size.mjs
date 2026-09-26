@@ -3,6 +3,7 @@ import {load} from './helper.mjs';
 
 const api=load('g10','exponent');
 const unit=api.CFG.units.find(candidate=>candidate.id==='substitution');
+assert.equal(unit.maxCount,15);
 for(const level of ['basic','advanced','challenge']){
  const expected=level==='challenge'?null:19;
  assert.equal(unit.bankSize({level,modes:['integer'],mixed:true}),expected);
