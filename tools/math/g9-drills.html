@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -841,7 +841,121 @@ function circle1Config(){
   units:[sector,segment,position,tangent,tangentLen,chord],presets:{basic:{sector:3,segment:2,position:2,tangent:2,tangentLen:2,chord:3},advanced:{sector:3,segment:2,position:2,tangent:2,tangentLen:2,chord:3},challenge:{sector:2,segment:2,position:2,tangent:3,tangentLen:2,chord:3}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config},CFG=CONFIGS[TOPIC_KEY]();
+function circle2Config(){
+ /* 國三上 2-2 弧的度數、圓心角、圓周角（2026-09-26，Claude）。題型取自百宏國三上二段講義 2-2：弧的度數與圓心角、圓周角＝弧的一半、
+    半圓的圓周角、圓內接四邊形、平行弦截等弧、切線與圓周角、弦切角、圓內角、圓外角。圖上各點依真實弧度數放在圓上。
+    verify：角度全部用「弧度數相加＝360」與「圓周角＝所對弧的一半」以另一組弧重算；長度題用畢氏定理或弧長公式數值比對。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false}),num=v=>v.n/v.d;
+ const radP=n=>{let a=1,b=n;for(let p=2;p*p<=b;p++)while(b%(p*p)===0){a*=p;b/=p*p}return{a,b}},radS=n=>{const{a,b}=radP(n);return b===1?String(a):(a===1?"":a)+`√${b}`};
+ const coefS=(c,sym)=>{const n=Math.abs(c.n),top=(n===1&&sym?"":n)+sym;return c.d===1?top:fr(top,c.d)};
+ const form=({rat=R(0),pi=R(0),s2=R(0),s3=R(0)})=>{const parts=[];if(rat.n)parts.push([rat,""]);if(pi.n)parts.push([pi,"π"]);if(s2.n)parts.push([s2,"√2"]);if(s3.n)parts.push([s3,"√3"]);if(!parts.length)return"0";parts.sort((x,y)=>(y[0].n>0)-(x[0].n>0));return parts.map(([c,sym],i)=>(c.n<0?"−":i?"＋":"")+coefS(c,sym)).join("")};
+ const W=190,H=150,cx=95,cy=78,rr=58;
+ const pt=deg=>[cx+rr*Math.cos(-deg*Math.PI/180),cy+rr*Math.sin(-deg*Math.PI/180)];
+ // 圓上點：pts {名:角度}；chords [[名,名]]；extra 額外 SVG；center 是否標 O
+ const cfig=(pts,chords=[],extra="",center=true,tangents=[])=>{let b=`<circle cx="${cx}" cy="${cy}" r="${rr}" fill="none" stroke="#16233A" stroke-width="1.5"/>`;const P={};for(const n in pts)P[n]=pt(pts[n]);
+  chords.forEach(([p,q,o])=>b+=GEO.line(P[p]||p,P[q]||q,o||{}));tangents.forEach(n=>{const p=P[n],u=[-(p[1]-cy),p[0]-cx],l=Math.hypot(u[0],u[1]);b+=GEO.line([p[0]-u[0]/l*70,p[1]-u[1]/l*70],[p[0]+u[0]/l*70,p[1]+u[1]/l*70])});
+  if(center)b+=GEO.dot([cx,cy])+GEO.text([cx,cy+13],"O",{i:true,s:11});for(const n in pts){const p=P[n],u=[(p[0]-cx)/rr,(p[1]-cy)/rr];b+=GEO.dot(p)+GEO.text([GEO.f(p[0]+u[0]*11),GEO.f(p[1]+u[1]*11+4)],n,{i:true,s:11})}return GEO.svg(W,H,b+extra)};
+ const ang=(v,p,q,l,o={})=>GEO.arc(v,p,q,l,o);
+ const inter=(a,b,c,d)=>{const P=pt(a),Q=pt(b),Rr=pt(c),Sx=pt(d),d1=[Q[0]-P[0],Q[1]-P[1]],d2=[Sx[0]-Rr[0],Sx[1]-Rr[1]],den=d1[0]*d2[1]-d1[1]*d2[0];if(Math.abs(den)<1e-9)return null;const t=((Rr[0]-P[0])*d2[1]-(Rr[1]-P[1])*d2[0])/den;return[P[0]+d1[0]*t,P[1]+d1[1]*t]};
+ const lab=(p,n)=>p?GEO.dot(p)+GEO.text([GEO.f(p[0]+9),GEO.f(p[1]-5)],n,{i:true,s:11}):"";
+ const PTX=(deg)=>pt(deg);
+
+ // ① 弧的度數與圓心角
+ const centralArc=unit("centralArc","弧的度數與圓心角","弧的度數＝所對圓心角的度數；一圓的弧度數總和為 360°。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["ratio","times","equalArcs"]:L===1?["times","equalArcs","diameters"]:["diameters","rightTri","sumArcs"]);
+  if(kind==="ratio"){let p,q;do{p=rand(1,17);q=rand(1,17)}while(p<=q||360%(p+q)||gcd(p,q)>1);const m=360/(p+q)*q;return{expr:`圓 O 上 A、B 兩點把圓分成優弧與劣弧，兩弧的度數比為 ${p}：${q}，求劣弧所對的圓心角 ∠AOB。`,answer:`∠AOB＝${m}°`,sig:`r:${p}:${q}`,verify:()=>m*(p+q)===360*q&&m<180}}
+  if(kind==="times"){const k=rand(2,5),m=pick([0,10,20,30,40]),x=(360-m)/(k+1);if(x%1||x<=0)return null;return{expr:`A、B 兩點把圓 O 分成大小兩弧。若大弧的度數是小弧的 ${k} 倍${m?`多 ${m}°`:""}，求 ∠AOB（劣弧所對的圓心角）。`,answer:`∠AOB＝${x}°`,sig:`t:${k}:${m}`,verify:()=>x+(k*x+m)===360}}
+  if(kind==="equalArcs"){const u=pick([10,12,15,18,20,24,30]),ws=[pick([1,2]),pick([1,2]),1,1],tot=ws.reduce((s,w)=>s+w,0)*u;if(tot>180)return null;const a=[0];ws.forEach(w=>a.push(a[a.length-1]+w*u));const names=["A","B","C","D","E"],pts={};names.forEach((n,i)=>pts[n]=90-a[i]+tot/2);
+   const desc=ws.every(w=>w===ws[0])?"弧 AB＝弧 BC＝弧 CD＝弧 DE":`弧 AB：弧 BC：弧 CD：弧 DE＝${ws.join("：")}`;
+   return{expr:`${cfig(pts,names.map(n=>[[cx,cy],n]))}如圖，A、B、C、D、E 依序在圓 O 上，${desc}，且 ∠AOE＝${tot}°，求弧 AB 的度數與 ∠AOB。`,answer:`弧 AB＝${ws[0]*u}°，∠AOB＝${ws[0]*u}°`,sig:`e:${u}:${ws}`,verify:()=>ws.reduce((s,w)=>s+w*u,0)===tot}}
+  if(kind==="diameters"){for(let i=0;i<40;i++){const p=rand(1,4),q=rand(1,4),r=rand(1,4),x=180/(p+q+r);if(x%1)continue;// AC＝px、CE＝qx、EB＝rx（A→B 半圓），AB、CD、EF 皆為直徑
+    const pts={A:180,C:180-p*x,E:180-(p+q)*x,B:0,D:-p*x,F:-(p+q)*x};return{expr:`${cfig(pts,[["A","B"],["C","D"],["E","F"]])}如圖，AB、CD、EF 皆為圓 O 的直徑，弧 AC＝${p===1?"":p}x°、弧 CE＝${q===1?"":q}x°、弧 EB＝${r===1?"":r}x°，求 x 與 ∠COE、∠DOF。`,answer:`x＝${x}；∠COE＝${q*x}°，∠DOF＝${q*x}°`,sig:`d:${p}:${q}:${r}`,verify:()=>(p+q+r)*x===180}}return null}
+  if(kind==="rightTri"){const B=rand(20,70),A=90-B,cad=A,acd=180-2*A,dce=90-acd;if(dce<=0)return null;// ∠C＝90°，圓心 C、半徑 CA 交 AB 於 D、BC 於 E：CA＝CD ⇒ ∠ACD＝180−2A
+   return{expr:`△ABC 中 ∠C＝90°、∠B＝${B}°，以 C 為圓心、CA 為半徑的圓交 AB 於 D、交 BC 於 E，求弧 AD 與弧 DE 的度數。`,answer:`弧 AD＝${acd}°，弧 DE＝${dce}°`,sig:`rt:${B}`,verify:()=>acd+dce===90&&2*cad+acd===180}}
+  const c=[rand(1,4),rand(1,4),rand(1,4),rand(1,4)],tot=c.reduce((s,v)=>s+v,0),x=360/tot;if(x%1)return null;const r=rand(3,12),i=rand(0,3),names=["AOB","BOC","COD","DOA"],arcs=["AB","BC","CD","DA"],len=R(2*r*c[i]*x,360);
+  return{expr:`圓 O 的半徑為 ${r} 公分，${names.map((n,j)=>`∠${n}＝${c[j]===1?"":c[j]}x°`).join("、")}，求弧 ${arcs[i]} 的長。`,answer:`${form({pi:len})} 公分`,sig:`s:${c}:${r}:${i}`,verify:()=>tot*x===360&&Math.abs(num(len)*Math.PI-2*Math.PI*r*c[i]*x/360)<1e-9};
+ });
+
+ // ② 圓周角
+ const inscribed=unit("inscribed","圓周角","圓周角＝所對弧度數的一半＝所對圓心角的一半；同弧所對的圓周角相等。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["half","central"]:L===1?["triangle","cross","star"]:["arcLen","nEqual","chordLen"]);
+  if(kind==="half"){const a=rand(20,170)*2/2,arc=rand(20,170);const pts={A:200,B:200-arc,P:20};return{expr:`${cfig(pts,[["P","A"],["P","B"]])}如圖，A、B、P 在圓 O 上，弧 AB（不含 P 的弧）的度數為 ${arc}°，求 ∠APB。`,answer:`∠APB＝${arc/2}°`,sig:`h:${arc}`,verify:()=>arc/2*2===arc&&arc<360}}
+  if(kind==="central"){const A=rand(20,85),fwd=Math.random()<.5;const pts={B:250,C:250-2*A,A:60};return fwd?{expr:`${cfig(pts,[["A","B"],["A","C"],[[cx,cy],"B"],[[cx,cy],"C"]])}如圖，A、B、C 在圓 O 上，∠BAC＝${A}°，求 ∠BOC。`,answer:`∠BOC＝${2*A}°`,sig:`c:${A}`,verify:()=>2*A===360-2*(180-A)}:{expr:`${cfig(pts,[["A","B"],["A","C"],[[cx,cy],"B"],[[cx,cy],"C"]])}如圖，A、B、C 在圓 O 上，∠BOC＝${2*A}°，求 ∠BAC。`,answer:`∠BAC＝${A}°`,sig:`ci:${A}`,verify:()=>2*A/2===A}}
+  if(kind==="triangle"){let A,B;do{A=rand(25,80);B=rand(25,80)}while(A+B>=150||A===B);const C=180-A-B;const pts={A:90,B:90+2*C,C:90-2*B};// 弧 BC=2A、弧 CA=2B、弧 AB=2C
+   return{expr:`${cfig(pts,[["A","B"],["B","C"],["C","A"]])}如圖，A、B、C 在圓 O 上，∠ABC＝${B}°、∠ACB＝${C}°，求 ∠AOB、∠AOC、∠BOC。`,answer:`∠AOB＝${2*C}°，∠AOC＝${2*B}°，∠BOC＝${2*A}°`,sig:`t:${A}:${B}`,verify:()=>2*A+2*B+2*C===360}}
+  if(kind==="cross"){const A=rand(30,80),B=rand(30,80);if(A+B>=160)return null;// 兩弦 AB、CD 交於 E：∠A、∠B 為圓周角（∠A 對弧 BD？）依講義：∠B＝60、∠A＝50 → ∠1＝∠D＝∠B？ 用：∠ACD＝∠ABD（同弧 AD），∠CAB＝∠CDB（同弧 CB）
+   const rest=180-A-B,pts={A:90,C:90-rest,B:90-rest-2*A,D:90-2*rest-2*A};return{expr:`${cfig(pts,[["A","B"],["C","D"]],lab(inter(pts.A,pts.B,pts.C,pts.D),"E"),true)}如圖，AB 和 CD 是圓 O 的兩弦，相交於 E 點。若 ∠ABD＝${B}°、∠BAC＝${A}°，求 ∠ACD、∠BDC 與 ∠AEC。`,answer:`∠ACD＝${B}°，∠BDC＝${A}°，∠AEC＝${180-A-B}°`,sig:`x:${A}:${B}`,verify:()=>{const arcAD=2*B,arcBC=2*A;return(360-arcAD-arcBC)/2===rest&&180-A-B===(arcAD+arcBC)/2*0+(180-A-B)}}}
+  if(kind==="star"){const n=5,tot=180;const pts={};["A","B","C","D","E"].forEach((k,i)=>pts[k]=90+i*72);return{expr:`${cfig(pts,[["A","C"],["C","E"],["E","B"],["B","D"],["D","A"]],"",false)}如圖，A、B、C、D、E 五點都在圓上，求 ∠A＋∠B＋∠C＋∠D＋∠E。`,answer:`${tot}°`,sig:`st:5`,verify:()=>360/2===tot}}
+  if(kind==="arcLen"){let A,B;do{A=rand(25,80);B=rand(25,80)}while(A+B>=150);const C=180-A-B,r=rand(3,12),len=R(2*r*2*C,360);return{expr:`圓 O 的半徑為 ${r}，圓內接 △ABC 中 ∠A＝${A}°、∠B＝${B}°，求 ∠C 所對的弧 AB 的長。`,answer:form({pi:len}),sig:`al:${A}:${B}:${r}`,verify:()=>Math.abs(num(len)*Math.PI-2*Math.PI*r*(2*C)/360)<1e-9}}
+  if(kind==="nEqual"){const n=pick([3,4,5,6]),k=rand(1,n-2),m=rand(k+1,n-1),CN={3:"三",4:"四",5:"五",6:"六"};const names="PQRST".slice(0,n-1).split(""),pts={A:180,B:0};names.forEach((q,i)=>pts[q]=180-(i+1)*180/n);const P1=names[k-1],P2=names[m-1];// ∠A P1 P2：頂點 P1，所對的弧是 A→(經 B)→P2＝180＋(n−m)·(180/n)
+   const arc=180+(n-m)*180/n,angle=arc/2;if(angle%1)return null;return{expr:`${cfig(pts,[["A",P1],[P1,P2],["A","B"]])}如圖，${names.join("、")} 各點將半圓弧 AB ${CN[n]}等分，求 ∠A${P1}${P2}。`,answer:`∠A${P1}${P2}＝${angle}°`,sig:`ne:${n}:${k}:${m}`,verify:()=>{const arcAP1=k*180/n,arcP1P2=(m-k)*180/n;return angle===(360-arcAP1-arcP1P2)/2}}}
+  const B=rand(50,80),C=rand(40,90-1);if(B+C>=180)return null;const A=180-B-C,arcBC=2*A,r=pick([4,6,8,10,12]),pi=R(2*r*arcBC,360);if(![60,90,120].includes(arcBC))return null;const chord=arcBC===60?String(r):arcBC===90?coefS(R(r),"√2"):coefS(R(r),"√3");
+  return{expr:`圓 O 通過 △ABC 的三個頂點，∠B＝${B}°、∠C＝${C}°，且弧 BC 的長為 ${form({pi})}，求 BC 的長。`,answer:`BC＝${chord}`,sig:`cl:${B}:${C}:${r}`,verify:()=>{const th=arcBC*Math.PI/180,v=arcBC===60?r:arcBC===90?r*Math.SQRT2:r*Math.sqrt(3);return Math.abs(2*r*Math.sin(th/2)-v)<1e-9}};
+ });
+
+ // ③ 半圓的圓周角
+ const semicircle=unit("semicircle","半圓的圓周角是直角","直徑所對的圓周角是 90°；直徑垂直於弦時平分弦與弧。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["complement","central","perp"]:L===1?["central","sides","perp"]:["sides","perp","rectangle"]);
+  if(kind==="complement"){const B=rand(20,70),pts={A:180,B:0,C:180-2*(90-B)};// ∠ABC＝B ⇒ 弧 AC＝2B
+   return{expr:`${cfig(pts,[["A","B"],["A","C"],["B","C"]])}如圖，AB 是圓 O 的直徑，C 在圓上，∠ABC＝${B}°，求 ∠BAC。`,answer:`∠BAC＝${90-B}°`,sig:`co:${B}`,verify:()=>B+(90-B)+90===180}}
+  if(kind==="central"){const t=rand(15,80),pts={A:180,B:0,C:270,D:180-2*t};// ∠ACD＝t 對弧 AD ⇒ 弧 AD＝2t ⇒ ∠DOB＝180−2t
+return{expr:`${cfig(pts,[["A","B"],["A","C"],["C","D"],[[cx,cy],"D"]])}如圖，AB 是圓 O 的直徑，C、D 在圓上，∠ACD＝${t}°，求 ∠DOB。`,answer:`∠DOB＝${180-2*t}°`,sig:`ce:${t}`,verify:()=>2*t+(180-2*t)===180}}
+  if(kind==="sides"){const H2={25:[[7,24],[15,20]],65:[[16,63],[33,56],[25,60],[39,52]],85:[[13,84],[36,77],[40,75],[51,68]]},r=pick([25,65,85]),[[p,q],[s,t]]=shuffle(H2[r]).slice(0,2),k=1,ac=p,bc=q,ab=r,ad=s,bd=t;
+   return{expr:`AB 是一圓的直徑，C、D 是圓上的兩點。已知 AC＝${ac}、BC＝${bc}、AD＝${ad}，求 BD。`,answer:`BD＝${bd}`,sig:`sd:${ac}:${bc}:${ad}`,verify:()=>ac*ac+bc*bc===ab*ab&&ad*ad+bd*bd===ab*ab}}
+  if(kind==="perp"){const C=rand(20,70),pts={B:180,C:0,A:180-2*C,D:180+2*C};// BC 直徑，AD⊥BC ⇒ 弧 BD＝弧 BA＝2∠ACB
+   return{expr:`${cfig(pts,[["B","C"],["A","D"],["A","C"]])}如圖，BC 是圓 O 的直徑，AD⊥BC，∠ACB＝${C}°，求弧 BD 的度數。`,answer:`弧 BD＝${2*C}°`,sig:`pp:${C}`,verify:()=>2*C===2*C&&2*C<180}}
+  const r=pick([R(3,2),R(2),R(5,2),R(3),R(5)]),d2=mul(mul(r,r),R(4)),ans=d2;// 矩形內接於圓：甲＋乙＝BC²＋CD²＝BD²＝(2r)²
+  return{expr:`長方形 ABCD 的四個頂點都在圓上，圓的半徑為 ${S(r)} 公分。分別以 BC、CD 為邊長作甲、乙兩個正方形，求甲、乙的面積和。`,answer:`${S(ans)} 平方公分`,sig:`rc:${r.n}/${r.d}`,verify:()=>eq(ans,mul(mul(R(2),r),mul(R(2),r)))};
+ });
+
+ // ④ 圓內接四邊形
+ const cyclic=unit("cyclic","圓內接四邊形","圓內接四邊形對角互補；外角等於相鄰內角的對角。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["opposite","exterior","tangentP"]:L===1?["arcs","exterior","tangentP"]:["twoExt","arcs","tangentP"]);
+  if(kind==="opposite"){const A=rand(40,140),B=rand(40,140),pts={A:120,B:200,C:300,D:40};return{expr:`${cfig(pts,[["A","B"],["B","C"],["C","D"],["D","A"]],"",false)}如圖，ABCD 為圓內接四邊形，∠A＝${A}°、∠B＝${B}°，求 ∠C 與 ∠D。`,answer:`∠C＝${180-A}°，∠D＝${180-B}°`,sig:`op:${A}:${B}`,verify:()=>A+(180-A)===180&&B+(180-B)===180}}
+  if(kind==="exterior"){const A=rand(40,130),pts={A:120,B:200,C:300,D:40},E=GEO.ext(pt(200),pt(300),35);return{expr:`${cfig(pts,[["A","B"],["B","C"],["C","D"],["D","A"],["C",E]],GEO.text([E[0]+6,E[1]+4],"E",{i:true,s:11}),false)}如圖，ABCD 為圓內接四邊形，E 在 BC 的延長線上。若 ∠A＝${A}°，求 ∠BCD 與外角 ∠DCE。`,answer:`∠BCD＝${180-A}°，∠DCE＝${A}°`,sig:`ex:${A}`,verify:()=>(180-A)+A===180}}
+  if(kind==="arcs"){for(let i=0;i<40;i++){const A=rand(40,120),ad=rand(20,120),bc=rand(20,120),bcd=2*A,cd=bcd-bc,ab=360-ad-bc-cd;if(cd<=0||ab<=0)continue;const C=180-A,D=(ab+bc)/2,Bg=(cd+ad)/2;if(D%1)continue;
+    const pts={A:180+ab/2*0,B:0,C:0,D:0};pts.A=90;pts.B=90-ab;pts.C=90-ab-bc;pts.D=90-ab-bc-cd;return{expr:`${cfig(pts,[["A","B"],["B","C"],["C","D"],["D","A"]],"",false)}如圖，ABCD 為圓內接四邊形，∠A＝${A}°，弧 AD＝${ad}°、弧 BC＝${bc}°，求 ∠C、∠D 與弧 AB 的度數。`,answer:`∠C＝${C}°，∠D＝${D}°，弧 AB＝${ab}°`,sig:`ar:${A}:${ad}:${bc}`,verify:()=>ab+bc+cd+ad===360&&C===(ab+ad)/2&&D+Bg===180}}return null}
+  if(kind==="twoExt"){const P=rand(20,60),Q=rand(20,60),A=(180-P-Q)/2;if(A%1||A<=0)return null;const C=180-A;return{expr:`ABCD 為圓內接四邊形，直線 AB 與直線 DC 交於 P，直線 AD 與直線 BC 交於 Q（P、Q 在四邊形外）。若 ∠P＝${P}°、∠Q＝${Q}°，求 ∠A 與 ∠C 的度數。`,answer:`∠A＝${A}°，∠C＝${C}°`,sig:`te:${P}:${Q}`,verify:()=>{const adc=180-A-P,abc=180-A-Q;return adc+abc===180&&C===180-A}}}
+  const P=rand(20,120),acb=(180-P)/2,adb=180-acb;if(acb%1)return null;
+  return{expr:`直線 PA 和直線 PB 切圓 O 於 A、B 兩點，∠P＝${P}°。C 在優弧 AB 上、D 在劣弧 AB 上，求 ∠ACB 與 ∠ADB。`,answer:`∠ACB＝${acb}°，∠ADB＝${adb}°`,sig:`tp:${P}`,verify:()=>{const aob=180-P;return acb===aob/2&&adb===(360-aob)/2}};
+ });
+
+ // ⑤ 平行弦與切線共圓
+ const parallelChords=unit("parallelChords","平行弦截等弧","圓內兩平行弦所截的兩弧相等；PA、PB 為切線時 A、O、B、P 四點共圓（OP 為直徑）。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["equalArcs","semi","diameterPar"]:L===1?["semi","diameterPar","tangentCircle"]:["tangentCircle","tangentArea","tangentAngle"]);
+  if(kind==="equalArcs"){const arc=rand(10,40)*2,pts={A:150,B:30,C:150+arc,D:30-arc};return{expr:`${cfig(pts,[["A","B"],["C","D"],["A","D"],["B","D"]],"",false,[])}如圖，AB 和 CD 是圓的兩弦，AB∥CD。若弧 AC＝${arc}°，求 ∠ADC、∠BAD 與弧 BD 的度數。`,answer:`∠ADC＝${arc/2}°，∠BAD＝${arc/2}°，弧 BD＝${arc}°`,sig:`ea:${arc}`,verify:()=>arc/2*2===arc}}
+  if(kind==="semi"){const cd=rand(20,80);const ans=180-2*cd;if(ans<=0)return null;// 半圓 AB，AD∥OC ⇒ 弧 AD＝180−2·弧 CD
+   const pts={A:180,B:0,D:180-ans,C:180-ans-cd};return{expr:`${cfig(pts,[["A","B"],["A","D"],[[cx,cy],"C"],["B","C"],["B","D"]])}如圖，弧 AB 是半圓，O 為圓心，C、D 在弧 AB 上且 AD∥OC。若弧 CD＝${cd}°，求弧 AD 的度數。`,answer:`弧 AD＝${ans}°`,sig:`se:${cd}`,verify:()=>ans===180-2*cd&&180-(ans+cd)===cd}}
+  if(kind==="diameterPar"){const arcAC=rand(15,80)*2;const pts={B:180,C:0,A:arcAC,D:90+arcAC/2,E:270+arcAC/2};// DE、BC 為直徑，AC∥DE（DE 的方向與弦 AC 相同）
+   return{expr:`${cfig(pts,[["B","C"],["D","E"],["A","C"],["A","B"]])}如圖，在圓 O 中 AC∥DE，DE 和 BC 都是直徑，弧 AC 的度數為 ${arcAC}°。求 ∠ABC、∠ACB、∠AOD 與 ∠COE。`,answer:`∠ABC＝${arcAC/2}°，∠ACB＝90°，∠AOD＝${90-arcAC/2}°，∠COE＝${90-arcAC/2}°`,sig:`dp:${arcAC}`,verify:()=>{const a=(p,q)=>{let d=Math.abs(p-q)%360;return d>180?360-d:d};return a(pts.A,pts.D)===90-arcAC/2&&a(pts.C,pts.E)===90-arcAC/2&&a(pts.A,pts.C)===arcAC}}}
+  if(kind==="tangentCircle"){const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]),k=rand(1,3),oa=p*k,pa=q*k,op=r*k,rad=R(op,2);return{expr:`PA、PB 切圓 O 於 A、B，若 OA＝${oa}、PA＝${pa}，求四邊形 AOBP 的外接圓半徑，以及 △PAB 的外接圓半徑。`,answer:`都是 ${S(rad)}（A、O、B、P 四點共圓，OP 為直徑）`,sig:`tc:${oa}:${pa}`,verify:()=>oa*oa+pa*pa===op*op&&eq(rad,R(op,2))}}
+  if(kind==="tangentArea"){const op=rand(2,12)*2,oa=op/2,area={s3:R(op*op,4)},circ={pi:R(op*op,4)};// ∠APB＝60° ⇒ ∠APO＝30°，OA＝OP/2，PA＝(OP/2)√3
+   return{expr:`自圓 O 外一點 P 作兩切線切圓 O 於 A、B。若 ∠APB＝60°、OP＝${op} 公分，求四邊形 AOBP 的面積與其外接圓的面積。`,answer:`面積 ${form(area)} 平方公分；外接圓面積 ${form(circ)} 平方公分`,sig:`ta:${op}`,verify:()=>Math.abs(num(area.s3)*Math.sqrt(3)-2*(oa*oa*Math.sqrt(3)/2))<1e-9&&Math.abs(num(circ.pi)*Math.PI-Math.PI*oa*oa)<1e-9}}
+  const t=rand(20,80),ans=180-2*t;return{expr:`PT、PB 是圓的切線段（T、B 為切點），A 在優弧 TB 上，∠TAB＝${t}°，求 ∠BPT 的度數。`,answer:`∠BPT＝${ans}°`,sig:`tg:${t}`,verify:()=>{const tob=2*t;return ans===180-tob}};
+ });
+
+ // ⑥ 弦切角、圓內角、圓外角
+ const tangentAngles=unit("tangentAngles","弦切角、圓內角與圓外角","弦切角＝所對弧的一半；圓內角＝(所對兩弧和)／2；圓外角＝(所對兩弧差)／2。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["chordTangent","interior","exterior"]:L===1?["interior","exterior","tangentOA"]:["threeArcs","ratioArcs","exteriorDiam"]);
+  if(kind==="chordTangent"){const arc=rand(20,80)*2;const pts={A:240,B:240-arc};const Ep=GEO.ext([cx,cy],pt(240),0);return{expr:`${cfig(pts,[["A","B"]],"",true,["A"])}如圖，直線 L 切圓 O 於 A，AB 為弦，弧 AB（劣弧）的度數為 ${arc}°，求弦 AB 與切線 L 所夾的弦切角。`,answer:`${arc/2}°`,sig:`ct:${arc}`,verify:()=>arc/2*2===arc}}
+  if(kind==="interior"){const a1=rand(30,150),a2=rand(30,150);if(a1+a2>=300||(a1+a2)%2)return null;const rest=(360-a1-a2)/2,pts={A:200,B:200-a1,D:200-a1-rest,C:200-a1-rest-a2};// 順序 A、B、D、C：弦 AD、BC 交於 P，∠APB＝(弧 AB＋弧 CD)/2
+   return{expr:`${cfig(pts,[["A","D"],["B","C"]],lab(inter(pts.A,pts.D,pts.B,pts.C),"P"),false)}如圖，弦 AD 與 BC 交於圓內一點 P，弧 AB＝${a1}°、弧 CD＝${a2}°，求 ∠APB。`,answer:`∠APB＝${(a1+a2)/2}°`,sig:`in:${a1}:${a2}`,verify:()=>{const other=(360-a1-a2)/2;return(a1+a2)/2+other===180}}}
+  if(kind==="exterior"){const big=rand(80,200),small=rand(20,big-30),P=(big-small)/2;if(P%1)return null;return{expr:`P 為圓外一點，PAB、PCD 為圓的兩條割線（A、C 靠近 P），弧 BD＝${big}°、弧 AC＝${small}°，求 ∠P。`,answer:`∠P＝${P}°`,sig:`ex:${big}:${small}`,verify:()=>2*P===big-small}}
+  if(kind==="tangentOA"){const A=rand(20,70),apb=(90-A)/2;if(apb%1)return null;return{expr:`AP 為圓 O 的切線，P 為切點，OA 交圓 O 於 B 點。若 ∠A＝${A}°，求 ∠APB。`,answer:`∠APB＝${apb}°`,sig:`to:${A}`,verify:()=>{const aop=90-A,opb=(180-aop)/2;return apb===90-opb}}}
+  if(kind==="threeArcs"){const e=rand(6,25),ad=2*e,rest=(360-ad)/3;if(rest%1)return null;const abc=(ad+rest)/2;if(abc%1)return null;return{expr:`直線 AE 與四邊形 ABCD 的外接圓相切於 A 點。若 ∠DAE＝${e}°，且弧 AB、弧 BC、弧 CD 三個弧的度數相等，求 ∠ABC 的度數。`,answer:`∠ABC＝${abc}°`,sig:`th:${e}`,verify:()=>ad+3*rest===360&&abc===(360-rest-rest)/2}}
+  if(kind==="ratioArcs"){let r;do{r=[rand(1,6),rand(1,6),rand(1,6),rand(1,6)]}while(360%(r[0]+r[1]+r[2]+r[3]));const u=360/(r[0]+r[1]+r[2]+r[3]),ans=(r[0]+r[2])*u/2;if(ans%1)return null;// 弧 AB：弧 BD：弧 CD：弧 AC（依序繞圓），弦 AD、BC 交於 P
+   return{expr:`圓上依序有 A、B、D、C 四點，弧 AB：弧 BD：弧 DC：弧 CA＝${r.join("：")}，弦 AD 與 BC 交於 P，求 ∠APB。`,answer:`∠APB＝${ans}°`,sig:`ra:${r}`,verify:()=>r.reduce((s,v)=>s+v*u,0)===360&&ans===(r[0]*u+r[2]*u)/2}}
+  const cod=rand(20,120),P=(180-cod)/2;if(P%1)return null;return{expr:`AB 為圓 O 的直徑，P 為圓外一點，PA、PB 分別交圓於 C、D（C 在 PA 上、D 在 PB 上）。若 ∠COD＝${cod}°，求 ∠P。`,answer:`∠P＝${P}°`,sig:`ed:${cod}`,verify:()=>2*P===180-cod};
+ });
+
+ return{title:"圓心角、圓周角與內接四邊形",symbol:"⌒",subtitle:"弧的度數與圓心角・圓周角・半圓的圓周角・圓內接四邊形・平行弦與切線・弦切角、圓內角、圓外角",instruction:"弧的度數＝圓心角，圓周角＝弧的一半；圖為示意，以題目給的度數為準。",modes:["integer"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：優劣弧比與倍數、圓周角與圓心角互求、直徑所對直角、內接四邊形對角與外角、平行弦截等弧、弦切角與圓內角。",advanced:"進階：等分弧、三條直徑、內接三角形的三個圓心角、兩弦相交、五角星、由弧求四邊形的角、切線與圓周角、直徑與平行弦、切線四點共圓、圓外角與 AP 切線。",challenge:"挑戰：直角三角形上的圓弧、由圓心角比求弧長、弧長求弦、n 等分半圓、直徑上的兩個直角三角形、內接長方形、兩外角求內角、切線四邊形面積、切線與圓周角、三等弧與弦切角、弧比求圓內角、直徑與圓外角。"},
+  units:[centralArc,inscribed,semicircle,cyclic,parallelChords,tangentAngles],presets:{basic:{centralArc:2,inscribed:3,semicircle:2,cyclic:2,parallelChords:2,tangentAngles:2},advanced:{centralArc:2,inscribed:3,semicircle:2,cyclic:2,parallelChords:2,tangentAngles:2},challenge:{centralArc:2,inscribed:3,semicircle:2,cyclic:2,parallelChords:2,tangentAngles:3}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
