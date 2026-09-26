@@ -1,5 +1,6 @@
 {
   "base": "8082004dc7843b7da3b481e72a0f77e11748679d",
+  "revision": 2,
   "units": [
     {
       "topic": "bayes",
@@ -100,11 +101,11 @@
         2
       ],
       "after": [
-        5,
-        5,
-        6
+        10,
+        9,
+        11
       ],
-      "challengeNew": 1
+      "challengeNew": 2
     },
     {
       "topic": "commonlog",
@@ -190,11 +191,11 @@
         8
       ],
       "after": [
-        10,
-        11,
-        13
+        15,
+        16,
+        15
       ],
-      "challengeNew": 3
+      "challengeNew": 4
     },
     {
       "topic": "loggraphs",
@@ -205,11 +206,11 @@
         3
       ],
       "after": [
-        6,
-        6,
-        7
+        8,
+        8,
+        11
       ],
-      "challengeNew": 1
+      "challengeNew": 3
     },
     {
       "topic": "loggraphs",
@@ -220,11 +221,11 @@
         8
       ],
       "after": [
-        12,
-        12,
-        16
+        16,
+        16,
+        24
       ],
-      "challengeNew": 4
+      "challengeNew": 8
     }
   ],
   "topicGates": {
@@ -802,11 +803,11 @@
         "topic": "commonlog",
         "unit": "definition",
         "structures": {
-          "basic": 5,
-          "advanced": 5,
-          "challenge": 6
+          "basic": 10,
+          "advanced": 9,
+          "challenge": 11
         },
-        "challengeNew": 1
+        "challengeNew": 2
       },
       {
         "topic": "commonlog",
@@ -862,31 +863,31 @@
         "topic": "loggraphs",
         "unit": "equation",
         "structures": {
-          "basic": 10,
-          "advanced": 11,
-          "challenge": 13
+          "basic": 15,
+          "advanced": 16,
+          "challenge": 15
         },
-        "challengeNew": 3
+        "challengeNew": 4
       },
       {
         "topic": "loggraphs",
         "unit": "combined",
         "structures": {
-          "basic": 6,
-          "advanced": 6,
-          "challenge": 7
+          "basic": 8,
+          "advanced": 8,
+          "challenge": 11
         },
-        "challengeNew": 1
+        "challengeNew": 3
       },
       {
         "topic": "loggraphs",
         "unit": "inverse",
         "structures": {
-          "basic": 12,
-          "advanced": 12,
-          "challenge": 16
+          "basic": 16,
+          "advanced": 16,
+          "challenge": 24
         },
-        "challengeNew": 4
+        "challengeNew": 8
       }
     ],
     "samples": {
@@ -895,19 +896,19 @@
         "unit": "bayestwo",
         "level": "basic",
         "mode": "fraction",
-        "prompt": "某批產品有 ((3)/(4)) 來自甲廠，其餘來自乙廠；兩廠不良率分別為 60％、90％。已知抽到良品，求來自甲廠的機率。",
-        "answer": "((12)/(13))",
-        "promptHtml": "某批產品有 <span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">4</span></span> 來自甲廠，其餘來自乙廠；兩廠不良率分別為 60％、90％。已知抽到良品，求來自甲廠的機率。",
-        "answerHtml": "<span class=\"fr\"><span class=\"n\">12</span><span class=\"d\">13</span></span>"
+        "prompt": "某批產品有 ((3)/(4)) 來自甲廠，其餘來自乙廠；兩廠不良率分別為 25％、40％。已知抽到良品，求來自甲廠的機率。",
+        "answer": "((15)/(19))",
+        "promptHtml": "某批產品有 <span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">4</span></span> 來自甲廠，其餘來自乙廠；兩廠不良率分別為 25％、40％。已知抽到良品，求來自甲廠的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">15</span><span class=\"d\">19</span></span>"
       },
       "bayes/bayestwo/counts": {
         "topic": "bayes",
         "unit": "bayestwo",
         "level": "basic",
         "mode": "fraction",
-        "prompt": "甲、乙廠各有 11、5 件產品，其中不良品各有 2、4 件。合併後等可能抽一件，已知是不良品，求來自甲廠的機率。",
+        "prompt": "甲、乙廠各有 16、6 件產品，其中不良品各有 1、2 件。合併後等可能抽一件，已知是不良品，求來自甲廠的機率。",
         "answer": "((1)/(3))",
-        "promptHtml": "甲、乙廠各有 11、5 件產品，其中不良品各有 2、4 件。合併後等可能抽一件，已知是不良品，求來自甲廠的機率。",
+        "promptHtml": "甲、乙廠各有 16、6 件產品，其中不良品各有 1、2 件。合併後等可能抽一件，已知是不良品，求來自甲廠的機率。",
         "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">3</span></span>"
       },
       "bayes/bayestwo/prior": {
@@ -915,60 +916,60 @@
         "unit": "bayestwo",
         "level": "challenge",
         "mode": "fraction",
-        "prompt": "甲、乙廠的不良率分別為 10％、20％。已知一件不良品來自甲廠的機率為 ((1)/(2))，求甲廠原本的供貨比例。",
-        "answer": "((2)/(3))",
-        "promptHtml": "甲、乙廠的不良率分別為 10％、20％。已知一件不良品來自甲廠的機率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">2</span></span>，求甲廠原本的供貨比例。",
-        "answerHtml": "<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span>"
+        "prompt": "甲、乙廠的不良率分別為 15％、5％。已知一件不良品來自甲廠的機率為 ((1)/(4))，求甲廠原本的供貨比例。",
+        "answer": "((1)/(10))",
+        "promptHtml": "甲、乙廠的不良率分別為 15％、5％。已知一件不良品來自甲廠的機率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">4</span></span>，求甲廠原本的供貨比例。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">10</span></span>"
       },
       "bayes/medicalpositive/specificity": {
         "topic": "bayes",
         "unit": "medicalpositive",
         "level": "basic",
         "mode": "fraction",
-        "prompt": "教學模型中患病率為 ((3)/(4))，檢驗靈敏度為 75％，特異度為 70％。已知檢驗陽性，求患病的機率。",
-        "answer": "((15)/(17))",
-        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">4</span></span>，檢驗靈敏度為 75％，特異度為 70％。已知檢驗陽性，求患病的機率。",
-        "answerHtml": "<span class=\"fr\"><span class=\"n\">15</span><span class=\"d\">17</span></span>"
+        "prompt": "教學模型中患病率為 ((2)/(9))，檢驗靈敏度為 80％，特異度為 60％。已知檢驗陽性，求患病的機率。",
+        "answer": "((4)/(11))",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">9</span></span>，檢驗靈敏度為 80％，特異度為 60％。已知檢驗陽性，求患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">11</span></span>"
       },
       "bayes/medicalpositive/counts": {
         "topic": "bayes",
         "unit": "medicalpositive",
         "level": "basic",
         "mode": "fraction",
-        "prompt": "教學用檢驗資料中，患者 19 人有 4 人呈陽性，健康者 21 人有 11 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
-        "answer": "((4)/(15))",
-        "promptHtml": "教學用檢驗資料中，患者 19 人有 4 人呈陽性，健康者 21 人有 11 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
-        "answerHtml": "<span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">15</span></span>"
+        "prompt": "教學用檢驗資料中，患者 19 人有 12 人呈陽性，健康者 67 人有 23 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
+        "answer": "((12)/(35))",
+        "promptHtml": "教學用檢驗資料中，患者 19 人有 12 人呈陽性，健康者 67 人有 23 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">12</span><span class=\"d\">35</span></span>"
       },
       "bayes/medicalpositive/falsePositive": {
         "topic": "bayes",
         "unit": "medicalpositive",
         "level": "challenge",
         "mode": "fraction",
-        "prompt": "教學模型中患病率為 ((1)/(4))，患者呈陽性的機率為 75％。已知陽性者患病的機率為 ((1)/(2))，求健康者被誤判陽性的機率(以百分率作答)。",
-        "answer": "25％",
-        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">4</span></span>，患者呈陽性的機率為 75％。已知陽性者患病的機率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">2</span></span>，求健康者被誤判陽性的機率（以百分率作答）。",
-        "answerHtml": "25％"
+        "prompt": "教學模型中患病率為 ((1)/(7))，患者呈陽性的機率為 60％。已知陽性者患病的機率為 ((2)/(3))，求健康者被誤判陽性的機率(以百分率作答)。",
+        "answer": "5％",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">7</span></span>，患者呈陽性的機率為 60％。已知陽性者患病的機率為 <span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span>，求健康者被誤判陽性的機率（以百分率作答）。",
+        "answerHtml": "5％"
       },
       "bayes/repeatedtest/mixed": {
         "topic": "bayes",
         "unit": "repeatedtest",
         "level": "basic",
         "mode": "fraction",
-        "prompt": "教學模型中患病率為 ((1)/(3))；患者、健康者每次呈陽性的機率分別為 ((1)/(2))、((1)/(5))，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗第一次陽性，其餘陰性，求患病的機率。",
-        "answer": "((25)/(57))",
-        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">3</span></span>；患者、健康者每次呈陽性的機率分別為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">2</span></span>、<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗第一次陽性，其餘陰性，求患病的機率。",
-        "answerHtml": "<span class=\"fr\"><span class=\"n\">25</span><span class=\"d\">57</span></span>"
+        "prompt": "教學模型中患病率為 ((1)/(5))；患者、健康者每次呈陽性的機率分別為 ((2)/(3))、((1)/(6))，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗第一次陽性，其餘陰性，求患病的機率。",
+        "answer": "((2)/(7))",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>；患者、健康者每次呈陽性的機率分別為 <span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span>、<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">6</span></span>，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗第一次陽性，其餘陰性，求患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">7</span></span>"
       },
       "bayes/repeatedtest/atLeast": {
         "topic": "bayes",
         "unit": "repeatedtest",
         "level": "challenge",
         "mode": "fraction",
-        "prompt": "教學模型中患病率為 ((1)/(5))；患者、健康者每次呈陽性的機率分別為 ((4)/(5))、((1)/(5))，各次檢驗在健康狀態固定下互相獨立。已知 3 次檢驗至少一次陽性，求患病的機率。",
-        "answer": "((31)/(92))",
-        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>；患者、健康者每次呈陽性的機率分別為 <span class=\"fr\"><span class=\"n\">4</span><span class=\"d\">5</span></span>、<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>，各次檢驗在健康狀態固定下互相獨立。已知 3 次檢驗至少一次陽性，求患病的機率。",
-        "answerHtml": "<span class=\"fr\"><span class=\"n\">31</span><span class=\"d\">92</span></span>"
+        "prompt": "教學模型中患病率為 ((1)/(10))；患者、健康者每次呈陽性的機率分別為 ((3)/(5))、((1)/(4))，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗至少一次陽性，求患病的機率。",
+        "answer": "((16)/(91))",
+        "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">10</span></span>；患者、健康者每次呈陽性的機率分別為 <span class=\"fr\"><span class=\"n\">3</span><span class=\"d\">5</span></span>、<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">4</span></span>，各次檢驗在健康狀態固定下互相獨立。已知 2 次檢驗至少一次陽性，求患病的機率。",
+        "answerHtml": "<span class=\"fr\"><span class=\"n\">16</span><span class=\"d\">91</span></span>"
       },
       "combinations/required/includeMany": {
         "topic": "combinations",
@@ -1075,9 +1076,9 @@
         "unit": "definition",
         "level": "basic",
         "mode": "integer",
-        "prompt": "已知 log10(4x+0)＝4，求 x。",
+        "prompt": "已知 log10(4x)＝4，求 x。",
         "answer": "2500",
-        "promptHtml": "已知 log<sub>10</sub>（4x＋0）＝4，求 x。",
+        "promptHtml": "已知 log<sub>10</sub>（4x）＝4，求 x。",
         "answerHtml": "2500"
       },
       "commonlog/definition/substitute": {
@@ -1085,9 +1086,9 @@
         "unit": "definition",
         "level": "challenge",
         "mode": "integer",
-        "prompt": "已知 x＞0 且 log3x＝2，求 log3(3^(1)x^(4))。",
+        "prompt": "已知 x＞0 且 log3x＝2，求 log3(3x^(4))。",
         "answer": "9",
-        "promptHtml": "已知 x＞0 且 log<sub>3</sub>x＝2，求 log<sub>3</sub>（3<sup>1</sup>x<sup>4</sup>）。",
+        "promptHtml": "已知 x＞0 且 log<sub>3</sub>x＝2，求 log<sub>3</sub>（3x<sup>4</sup>）。",
         "answerHtml": "9"
       },
       "commonlog/laws/threeTerms": {
@@ -1095,20 +1096,20 @@
         "unit": "laws",
         "level": "basic",
         "mode": "integer",
-        "prompt": "計算 log525+log5125-log51。",
-        "answer": "5",
-        "promptHtml": "計算 log<sub>5</sub>25＋log<sub>5</sub>125−log<sub>5</sub>1。",
-        "answerHtml": "5"
+        "prompt": "計算 log5125+log5625-log55。",
+        "answer": "6",
+        "promptHtml": "計算 log<sub>5</sub>125＋log<sub>5</sub>625−log<sub>5</sub>5。",
+        "answerHtml": "6"
       },
       "commonlog/laws/weighted": {
         "topic": "commonlog",
         "unit": "laws",
         "level": "challenge",
         "mode": "integer",
-        "prompt": "計算 4log5125+log51-log5125。",
-        "answer": "9",
-        "promptHtml": "計算 4log<sub>5</sub>125＋log<sub>5</sub>1−log<sub>5</sub>125。",
-        "answerHtml": "9"
+        "prompt": "計算 4log5625+log55-log5125。",
+        "answer": "14",
+        "promptHtml": "計算 4log<sub>5</sub>625＋log<sub>5</sub>5−log<sub>5</sub>125。",
+        "answerHtml": "14"
       },
       "commonlog/change/ratio": {
         "topic": "commonlog",
@@ -1136,9 +1137,9 @@
         "level": "basic",
         "mode": "integer",
         "prompt": "已知 u＝log 2、v＝log 3，以 u、v 表示 log 18。",
-        "answer": "1u+2v",
+        "answer": "u+2v",
         "promptHtml": "已知 u＝log 2、v＝log 3，以 u、v 表示 log 18。",
-        "answerHtml": "1u＋2v"
+        "answerHtml": "u＋2v"
       },
       "commonlog/change/poweredChain": {
         "topic": "commonlog",
@@ -1291,5 +1292,79 @@
         "answerHtml": "f<sup>−1</sup>（x）＝log<sub>5</sub>（<span class=\"fr\"><span class=\"n\">x−6</span><span class=\"d\">5</span></span>）−3"
       }
     }
-  }
+  },
+  "revisionSamples": [
+    {
+      "topic": "commonlog",
+      "unit": "definition",
+      "kind": "argument",
+      "prompt": "已知 log3(3x)＝2，求 x。",
+      "answer": "3",
+      "promptHtml": "已知 log<sub>3</sub>（3x）＝2，求 x。",
+      "answerHtml": "3"
+    },
+    {
+      "topic": "commonlog",
+      "unit": "definition",
+      "kind": "substitute",
+      "prompt": "已知 x＞0 且 log3x＝4，求 log3(3x^(4))。",
+      "answer": "17",
+      "promptHtml": "已知 x＞0 且 log<sub>3</sub>x＝4，求 log<sub>3</sub>（3x<sup>4</sup>）。",
+      "answerHtml": "17"
+    },
+    {
+      "topic": "commonlog",
+      "unit": "change",
+      "kind": "symbolic",
+      "prompt": "已知 u＝log 2、v＝log 3，以 u、v 表示 log 18。",
+      "answer": "u+2v",
+      "promptHtml": "已知 u＝log 2、v＝log 3，以 u、v 表示 log 18。",
+      "answerHtml": "u＋2v"
+    },
+    {
+      "topic": "bayes",
+      "unit": "bayestwo",
+      "kind": "prior",
+      "prompt": "甲、乙廠的不良率分別為 25％、10％。已知一件不良品來自甲廠的機率為 ((1)/(5))，求甲廠原本的供貨比例。",
+      "answer": "((1)/(11))",
+      "promptHtml": "甲、乙廠的不良率分別為 25％、10％。已知一件不良品來自甲廠的機率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>，求甲廠原本的供貨比例。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">11</span></span>"
+    },
+    {
+      "topic": "bayes",
+      "unit": "medicalpositive",
+      "kind": "counts",
+      "prompt": "教學用檢驗資料中，患者 33 人有 29 人呈陽性，健康者 484 人有 70 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
+      "answer": "((29)/(99))",
+      "promptHtml": "教學用檢驗資料中，患者 33 人有 29 人呈陽性，健康者 484 人有 70 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">29</span><span class=\"d\">99</span></span>"
+    },
+    {
+      "topic": "bayes",
+      "unit": "repeatedtest",
+      "kind": "atLeast",
+      "prompt": "教學模型中患病率為 ((1)/(5))；患者、健康者每次呈陽性的機率分別為 ((2)/(3))、((1)/(3))，各次檢驗在健康狀態固定下互相獨立。已知 3 次檢驗至少一次陽性，求患病的機率。",
+      "answer": "((13)/(51))",
+      "promptHtml": "教學模型中患病率為 <span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">5</span></span>；患者、健康者每次呈陽性的機率分別為 <span class=\"fr\"><span class=\"n\">2</span><span class=\"d\">3</span></span>、<span class=\"fr\"><span class=\"n\">1</span><span class=\"d\">3</span></span>，各次檢驗在健康狀態固定下互相獨立。已知 3 次檢驗至少一次陽性，求患病的機率。",
+      "answerHtml": "<span class=\"fr\"><span class=\"n\">13</span><span class=\"d\">51</span></span>"
+    },
+    {
+      "topic": "commonlog",
+      "unit": "laws",
+      "kind": "threeTerms",
+      "prompt": "計算 log1010+log1010000-log101000。",
+      "answer": "2",
+      "promptHtml": "計算 log<sub>10</sub>10＋log<sub>10</sub>10000−log<sub>10</sub>1000。",
+      "answerHtml": "2"
+    },
+    {
+      "topic": "commonlog",
+      "unit": "laws",
+      "kind": "weighted",
+      "prompt": "計算 3log5125+log55-log525。",
+      "answer": "8",
+      "promptHtml": "計算 3log<sub>5</sub>125＋log<sub>5</sub>5−log<sub>5</sub>25。",
+      "answerHtml": "8"
+    }
+  ]
 }

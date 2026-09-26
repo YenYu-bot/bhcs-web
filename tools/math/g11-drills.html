@@ -259,16 +259,26 @@ function bayesTheoremConfig(){
  });
  // P4-B: add branches without changing the legacy generators.
  const p4Tickets=(p,d,h)=>{const L=d.d*h.d/gcd(d.d,h.d);let all=0,yes=0;for(let group=0;group<p.d;group++)for(let ticket=0;ticket<L;ticket++){const diseased=group<p.n,rate=diseased?d:h;if(ticket*rate.d<rate.n*L){all++;if(diseased)yes++}}return R(yes,all)};
+ // Rejected legacy draws keep their original source, wording and verification intact.
+ const p4Range=(x,lo,hi)=>x>=lo-1e-12&&x<=hi+1e-12;
+ const p4Legacy=(u,ctx)=>{const q=u.legacyGen(ctx);if(!q)return null;const [tag,...v]=q.sig.split(":"),num=x=>{const [n,d=1]=x.split("/").map(Number);return n/d};let allowed=false;
+  if(tag==="b2")allowed=v.slice(1).every(x=>p4Range(+x,5,40));
+  if(tag==="mp")allowed=p4Range(+v[0],5,25)&&p4Range(+v[1],60,95)&&p4Range(+v[2],5,40);
+  if(tag==="rt"){const sensitivity=v[2]==="true"?num(v[3]):1-num(v[3]);allowed=p4Range(num(v[0]),.05,.25)&&p4Range(sensitivity,.6,.95)&&p4Range(1-sensitivity,.05,.4)}
+  return allowed?q:null;
+ };
+ const p4Fractions=(lo,hi)=>{const pool=[];for(let d=2;d<=12;d++)for(let n=1;n<d;n++)if(gcd(n,d)===1&&p4Range(n/d,lo,hi))pool.push(R(n,d));return pool};
+ const p4Priors=p4Fractions(.05,.25),p4Sensitivity=[R(3,5),R(5,8),R(2,3),R(7,10),R(3,4),R(4,5),R(5,6),R(7,8),R(9,10)],p4FalsePositive=[R(1,12),R(1,10),R(1,8),R(1,6),R(1,5),R(1,4),R(3,10),R(1,3),R(2,5)],p4Rate=()=>{const k=5*rand(1,8);return[k,R(k,100)]};
  for(const u of [bayesTwo,medicalPositive,repeatedTest])u.legacyGen=u.gen;
  bayesTwo.gen=ctx=>{
-  if(Math.random()<.35)return bayesTwo.legacyGen(ctx);
+  if(Math.random()<.35)return p4Legacy(bayesTwo,ctx);
   const kind=pick(ctx.level==="challenge"?["good","counts","prior"]:["good","counts"]);let expr,ans,verify;
   if(kind==="counts"){
-   const n1=rand(5,25),n2=rand(5,25),d1=rand(1,n1-1),d2=rand(1,n2-1);ans=R(d1,d1+d2);
+   const n1=rand(5,40),n2=rand(5,40),d1=rand(Math.ceil(.05*n1),Math.floor(.4*n1)),d2=rand(Math.ceil(.05*n2),Math.floor(.4*n2));ans=R(d1,d1+d2);
    expr=`甲、乙廠各有 ${n1}、${n2} 件產品，其中不良品各有 ${d1}、${d2} 件。合併後等可能抽一件，已知是不良品，求來自甲廠的機率。`;
    verify=()=>{const items=[...Array.from({length:n1},(_,i)=>({a:true,bad:i<d1})),...Array.from({length:n2},(_,i)=>({a:false,bad:i<d2}))].filter(x=>x.bad);return eq(ans,R(items.filter(x=>x.a).length,items.length))};
   }else{
-   const p=pick(priorPool),[a,d]=rate(),[b,h]=rate();if(a===b)return null;const l1=kind==="good"?comp(d):d,l2=kind==="good"?comp(h):h,post=div(mul(p,l1),add(mul(p,l1),mul(comp(p),l2)));if(!ok(post)||(kind==="prior"&&post.d>12))return null;
+   const p=pick(kind==="prior"?p4Priors:priorPool),[a,d]=p4Rate(),[b,h]=p4Rate();if(a===b)return null;const l1=kind==="good"?comp(d):d,l2=kind==="good"?comp(h):h,post=div(mul(p,l1),add(mul(p,l1),mul(comp(p),l2)));if(!ok(post)||(kind==="prior"&&post.d>12))return null;
    ans=kind==="prior"?p:post;
    expr=kind==="good"?`某批產品有 ${show(p)} 來自甲廠，其餘來自乙廠；兩廠不良率分別為 ${a}％、${b}％。已知抽到良品，求來自甲廠的機率。`:`甲、乙廠的不良率分別為 ${a}％、${b}％。已知一件不良品來自甲廠的機率為 ${show(post)}，求甲廠原本的供貨比例。`;
    verify=()=>eq(p4Tickets(kind==="prior"?ans:p,l1,l2),post);
@@ -276,23 +286,23 @@ function bayesTheoremConfig(){
   return{expr,answer:show(ans),sig:`p4b:bayestwo:${kind}:${expr}`,verify};
  };
  medicalPositive.gen=ctx=>{
-  if(Math.random()<.35)return medicalPositive.legacyGen(ctx);
+  if(Math.random()<.35)return p4Legacy(medicalPositive,ctx);
   const kind=pick(ctx.level==="challenge"?["specificity","counts","falsePositive"]:["specificity","counts"]);let expr,ans,verify;
   if(kind==="counts"){
-   const D=rand(10,40),Hn=rand(20,60),dp=rand(2,D-1),hp=rand(1,12);ans=R(dp,dp+hp);
+   const D=rand(10,40),Hn=rand(3*D,19*D),dp=rand(Math.ceil(.6*D),Math.floor(.95*D)),hp=rand(Math.ceil(.05*Hn),Math.floor(.4*Hn));ans=R(dp,dp+hp);if(!ok(ans))return null;
    expr=`教學用檢驗資料中，患者 ${D} 人有 ${dp} 人呈陽性，健康者 ${Hn} 人有 ${hp} 人呈陽性。從所有陽性者等可能抽一人，求此人患病的機率。`;
    verify=()=>{const positive=[];for(let i=0;i<D+Hn;i++)if(i<D?i<dp:i-D<hp)positive.push(i<D);return eq(ans,R(positive.filter(Boolean).length,positive.length))};
   }else{
-   const p=pick(priorPool),se=pick([60,70,75,80,90]),fp=pick([5,10,15,20,25,30]),post=div(mul(p,R(se,100)),add(mul(p,R(se,100)),mul(comp(p),R(fp,100))));if(!ok(post)||(kind==="falsePositive"&&post.d>12))return null;
+   const p=pick(p4Priors),se=5*rand(12,19),fp=5*rand(1,8),post=div(mul(p,R(se,100)),add(mul(p,R(se,100)),mul(comp(p),R(fp,100))));if(!ok(post)||(kind==="falsePositive"&&post.d>12))return null;
    ans=kind==="falsePositive"?R(fp):post;
    expr=kind==="specificity"?`教學模型中患病率為 ${show(p)}，檢驗靈敏度為 ${se}％，特異度為 ${100-fp}％。已知檢驗陽性，求患病的機率。`:`教學模型中患病率為 ${show(p)}，患者呈陽性的機率為 ${se}％。已知陽性者患病的機率為 ${show(post)}，求健康者被誤判陽性的機率（以百分率作答）。`;
    verify=()=>eq(p4Tickets(p,R(se,100),R(kind==="falsePositive"?ans.n:fp,100)),post);
   }
   return{expr,answer:show(ans)+(kind==="falsePositive"?"％":""),sig:`p4b:medicalpositive:${kind}:${expr}`,verify};
  };
- const p4Repeat=[];for(const p of priorPool)for(const d of [R(1,2),R(2,3),R(3,4),R(4,5)])for(const h of [R(1,2),R(1,3),R(1,4),R(1,5)])for(const n of [2,3])for(const kind of ["mixed","atLeast"]){if(eq(d,h))continue;const ld=kind==="mixed"?mul(d,R((d.d-d.n)**(n-1),d.d**(n-1))):comp(R((d.d-d.n)**n,d.d**n)),lh=kind==="mixed"?mul(h,R((h.d-h.n)**(n-1),h.d**(n-1))):comp(R((h.d-h.n)**n,h.d**n)),ans=div(mul(p,ld),add(mul(p,ld),mul(comp(p),lh)));if(ok(ans))p4Repeat.push({p,d,h,n,kind,ans})}
+ const p4Repeat=[];for(const p of p4Priors)for(const d of p4Sensitivity)for(const h of p4FalsePositive)for(const n of [2,3,4])for(const kind of ["mixed","atLeast"]){if(eq(d,h))continue;const ld=kind==="mixed"?mul(d,R((d.d-d.n)**(n-1),d.d**(n-1))):comp(R((d.d-d.n)**n,d.d**n)),lh=kind==="mixed"?mul(h,R((h.d-h.n)**(n-1),h.d**(n-1))):comp(R((h.d-h.n)**n,h.d**n)),ans=div(mul(p,ld),add(mul(p,ld),mul(comp(p),lh)));if(ok(ans))p4Repeat.push({p,d,h,n,kind,ans})}
  repeatedTest.gen=ctx=>{
-  if(Math.random()<.45)return repeatedTest.legacyGen(ctx);
+  if(Math.random()<.45)return p4Legacy(repeatedTest,ctx);
   const {p,d,h,n,kind,ans}=pick(p4Repeat.filter(r=>ctx.level==="challenge"||r.kind==="mixed"));
   const expr=`教學模型中患病率為 ${show(p)}；患者、健康者每次呈陽性的機率分別為 ${show(d)}、${show(h)}，各次檢驗在健康狀態固定下互相獨立。已知 ${n} 次檢驗${kind==="mixed"?"第一次陽性，其餘陰性":"至少一次陽性"}，求患病的機率。`;
   return{expr,answer:show(ans),sig:`p4b:repeatedtest:${kind}:${expr}`,verify:()=>{let evidence=0,joint=0;for(const diseased of [true,false])for(let mask=0;mask<2**n;mask++){if(kind==="mixed"?mask!==1:mask===0)continue;const rate=diseased?H.num(d):H.num(h);let weight=diseased?H.num(p):1-H.num(p);for(let i=0;i<n;i++)weight*=mask&(1<<i)?rate:1-rate;evidence+=weight;if(diseased)joint+=weight}return H.near(joint/evidence,H.num(ans))}};
@@ -396,28 +406,29 @@ function commonLogConfig(){
  const change=unit("change","換底與連乘","logₐb＝log_cb／log_ca；連續換底可約消。",ctx=>{const pool=[2,3,5,7,11,13,17],a=pick(pool),b=pick(pool.filter(x=>x!==a)),c=pick(pool.filter(x=>x!==b&&x!==a));return{expr:`計算 log<sub>${a}</sub>${b} × log<sub>${b}</sub>${c} × log<sub>${c}</sub>${a}。`,answer:"1",sig:`ch:${a}:${b}:${c}`,verify:()=>H.near(Math.log(b)/Math.log(a)*Math.log(c)/Math.log(b)*Math.log(a)/Math.log(c),1)}});
  const scientific=unit("scientific","科學記號與首數","N＝a×10ⁿ且1≤a＜10時，logN＝n＋loga。",ctx=>{const mode=pick(ctx.modes),mant=mode==="integer"?R(rand(1,9)):mode==="fraction"?R(rand(10,59),10):ctx.level==="basic"?R(rand(10,99),10):R(rand(100,999),100),n=rand(-8,ctx.level==="challenge"?12:8),characteristic=n;return{expr:`N＝${H.show(mant,mode,false,ctx)}×10<sup>${n}</sup>，求常用對數 logN 的首數。`,answer:H.int(characteristic),sig:`sc:${H.plain(mant)}:${n}`,verify:()=>Math.floor(Math.log10(H.num(mant)*10**n))===characteristic}});
  const digits=unit("digits","整數位數","正整數N的位數為⌊logN⌋＋1。",ctx=>{const base=pick([2,3,5,7,9]),e=rand(ctx.level==="basic"?5:10,ctx.level==="challenge"?45:25),value=BigInt(base)**BigInt(e),d=String(value).length;return{expr:`正整數 ${base}<sup>${e}</sup> 共有幾位數？`,answer:`${d} 位`,sig:`di:${base}:${e}`,verify:()=>d===Math.floor(e*Math.log10(base))+1}});
+ const p4Tail=c=>c===0?"":`${c<0?"−":"＋"}${Math.abs(c)}`,p4Coeff=(a,v)=>a===0?"":`${a<0?"−":""}${Math.abs(a)===1?"":Math.abs(a)}${v}`,p4Power=(b,e)=>e===0?"1":e===1?String(b):`${b}<sup>${e}</sup>`;
  for(const u of [definition,laws,change])u.legacyGen=u.gen;
  definition.gen=ctx=>{
   if(Math.random()<.25)return definition.legacyGen(ctx);
   const mode=pick(ctx.modes),kind=pick(ctx.level==="challenge"?["argument","powerBase","substitute"]:["argument","powerBase"]),base=pick([2,3,5,7,10]),e=rand(1,4),a=rand(1,6),c=rand(-12,12);let expr,ans,verify;
   if(kind==="argument"){
    ans=R(base**e-c,a);if(mode==="integer"&&ans.d!==1)return null;
-   expr=`已知 log<sub>${base}</sub>（${a}x${c<0?"−":"＋"}${Math.abs(c)}）＝${e}，求 x。`;
+   expr=`已知 log<sub>${base}</sub>（${p4Coeff(a,"x")}${p4Tail(c)}）＝${e}，求 x。`;
    verify=()=>a*H.num(ans)+c>0&&H.near(Math.log(a*H.num(ans)+c)/Math.log(base),e);
   }else if(kind==="powerBase"){
    const p=rand(2,4),q=mode==="integer"?p*rand(1,4):rand(1,8);ans=R(q,p);
-   expr=`求 log<sub>${base}<sup>${p}</sup></sub>（${base}<sup>${q}</sup>）的值。`;
+   expr=`求 log<sub>${base}<sup>${p}</sup></sub>（${p4Power(base,q)}）的值。`;
    verify=()=>BigInt(base**p)**BigInt(ans.n)===BigInt(base**q)**BigInt(ans.d);
   }else{
    const k=rand(1,5),m=rand(2,4);ans=R(k+m*e);
-   expr=`已知 x＞0 且 log<sub>${base}</sub>x＝${e}，求 log<sub>${base}</sub>（${base}<sup>${k}</sup>x<sup>${m}</sup>）。`;
+   expr=`已知 x＞0 且 log<sub>${base}</sub>x＝${e}，求 log<sub>${base}</sub>（${base**k===1?"":p4Power(base,k)}${p4Power("x",m)}）。`;
    verify=()=>H.near(Math.log(base**k*(base**e)**m)/Math.log(base),H.num(ans));
   }
   return{expr,answer:H.show(ans,mode,true,ctx),sig:`p4b:definition:${kind}:${expr}`,verify};
  };
  laws.gen=ctx=>{
   if(Math.random()<.55)return laws.legacyGen(ctx);
-  const mode=pick(ctx.modes),kind=ctx.level==="challenge"?pick(["threeTerms","weighted"]):"threeTerms",b=pick([2,3,5,10]),p=rand(0,3),q=rand(0,3),r=rand(0,3),k=kind==="weighted"?rand(2,4):1,x=b**p,y=b**q,z=b**r,ans=k*p+q-r;
+  const mode=pick(ctx.modes),kind=ctx.level==="challenge"?pick(["threeTerms","weighted"]):"threeTerms",b=pick([2,3,5,10]),p=rand(1,4),q=pick([1,2,3,4].filter(e=>e!==p)),r=pick([1,2,3,4].filter(e=>e!==p&&e!==q)),k=kind==="weighted"?rand(2,4):1,x=b**p,y=b**q,z=b**r,ans=k*p+q-r;
   const expr=`計算 ${kind==="weighted"?k:""}log<sub>${b}</sub>${x}＋log<sub>${b}</sub>${y}−log<sub>${b}</sub>${z}。`;
   return{expr,answer:H.int(ans),sig:`p4b:laws:${kind}:${expr}`,verify:()=>H.near(Math.log(x**k*y/z)/Math.log(b),ans)};
  };
@@ -426,7 +437,7 @@ function commonLogConfig(){
   const kind=pick(ctx.level==="challenge"?["ratio","openChain","symbolic","poweredChain"]:["ratio","openChain","symbolic"]),pool=[2,3,5,7,11],a=pick(pool),b=pick(pool.filter(x=>x!==a)),c=pick(pool.filter(x=>x!==a&&x!==b)),k=rand(2,4);let expr,v;
   if(kind==="symbolic"){
    const p=rand(1,4),q=rand(1,4),N=2**p*3**q;expr=`已知 u＝log 2、v＝log 3，以 u、v 表示 log ${N}。`;
-   return{expr,answer:`${p}u＋${q}v`,sig:`p4b:change:${kind}:${expr}`,verify:()=>H.near(p*Math.log10(2)+q*Math.log10(3),Math.log10(N))};
+   return{expr,answer:`${p4Coeff(p,"u")}${q>0?"＋":""}${p4Coeff(q,"v")}`,sig:`p4b:change:${kind}:${expr}`,verify:()=>H.near(p*Math.log10(2)+q*Math.log10(3),Math.log10(N))};
   }
   if(kind==="ratio"){expr=`計算 ${fr(`log<sub>${c}</sub>${a**k}`,`log<sub>${c}</sub>${a}`)}。`;v=()=>Math.log(a**k)/Math.log(c)/(Math.log(a)/Math.log(c))}
   else if(kind==="openChain"){expr=`計算 log<sub>${a}</sub>${b} × log<sub>${b}</sub>${c} × log<sub>${c}</sub>${a**k}。`;v=()=>Math.log(b)/Math.log(a)*Math.log(c)/Math.log(b)*Math.log(a**k)/Math.log(c)}
@@ -879,16 +890,17 @@ function logEquationsGraphsConfig(){
  const graph=unit("graph","對數圖形與平移","y＝log_b(x−h)＋k 的漸近線是x＝h，定義域x＞h。",ctx=>{const base=pick([2,3,.5]),h=rand(-12,12),k=rand(-8,8),inc=base>1,x0=h+base**(-k);return{expr:`觀察圖形並回答其定義域、垂直漸近線與單調性：${graphSvg(base,h,k)}`,answer:`定義域 x＞${H.int(h)}；漸近線 x＝${H.int(h)}；${inc?"遞增":"遞減"}`,sig:`gr:${base}:${h}:${k}`,verify:()=>Number.isFinite(x0)&&(inc?logb(2,base)>logb(1,base):logb(2,base)<logb(1,base))}});
  const inverse=unit("inverse","指數與對數互為反函數","交換x、y後解出y，兩圖形關於y＝x對稱。",ctx=>{const base=pick([2,3,5,7,10]),h=rand(-9,9),k=rand(-8,8),inside=h<0?`x＋${Math.abs(h)}`:h>0?`x−${h}`:"x",tail=k<0?`− ${Math.abs(k)}`:k>0?`＋ ${k}`:"",invArg=k<0?`x＋${Math.abs(k)}`:k>0?`x−${k}`:"x",invTail=h<0?`− ${Math.abs(h)}`:h>0?`＋ ${h}`:"";return{expr:`求 f（x）＝${base}<sup>${inside}</sup> ${tail} 的反函數。`,answer:`f<sup>−1</sup>（x）＝log<sub>${base}</sub>（${invArg}） ${invTail}`,sig:`iv:${base}:${h}:${k}`,verify:()=>[.2,.7,1.3].every(offset=>{const t=h+offset;return H.near(logb((base**(t-h)+k)-k,base)+h,t)})}});
  const application=unit("application","對數模型應用","先把倍數關係寫成指數式，再取對數或辨認整次方。",ctx=>{const mode=pick(ctx.modes),half=Math.random()<.5,t=rand(2,ctx.level==="challenge"?6:4);let initial,value;if(mode==="decimal"){if(half){value=highNumberFor("decimal",ctx.level,12);initial=mul(value,R(2**t))}else{initial=highNumberFor("decimal",ctx.level,4);value=mul(initial,R(10**t))}}else{if(half){value=R(rand(1,12));initial=mul(value,R(2**t))}else{initial=R(rand(1,4));value=mul(initial,R(10**t))}}if(Math.abs(H.num(value))>10000)return null;return{expr:half?`某物質每期減為原來的一半，初量 ${H.show(initial,mode,false,ctx)}，${t} 期後剩多少？`:`某量每期增為 10 倍，初值 ${H.show(initial,mode,false,ctx)}，${t} 期後是多少？`,answer:H.show(value,mode,true,ctx),sig:`ap:${half}:${H.plain(initial)}:${t}`,verify:()=>eq(value,half?div(initial,R(2**t)):mul(initial,R(10**t)))}});
+ const p4Tail=c=>c===0?"":`${c<0?"−":"＋"}${Math.abs(c)}`,p4Coeff=(a,v)=>`${a===1?"":a===-1?"−":a}${v}`;
  for(const u of [equation,combined,inverse])u.legacyGen=u.gen;
  equation.gen=ctx=>{
   if(Math.random()<.6)return equation.legacyGen(ctx);
   const kind=ctx.level==="challenge"?pick(["equalLogs","squareArgument"]):"equalLogs",base=pick([2,3,5,10]);let expr,answer,verify;
   if(kind==="equalLogs"){
-   const a=rand(2,6),b=rand(1,a-1),x=rand(-8,8),target=rand(1,30),c=target-a*x,d=target-b*x,lin=(a,c)=>`${a}x${c<0?"−":"＋"}${Math.abs(c)}`;
+   const a=rand(2,6),b=rand(1,a-1),x=rand(-8,8),target=rand(1,30),c=target-a*x,d=target-b*x,lin=(a,c)=>`${p4Coeff(a,"x")}${p4Tail(c)}`;
    expr=`解方程式 log<sub>${base}</sub>（${lin(a,c)}）＝log<sub>${base}</sub>（${lin(b,d)}）。`;answer=`x＝${H.int(x)}`;
    verify=()=>a!==b&&a*x+c>0&&b*x+d>0&&H.near(logb(a*x+c,base),logb(b*x+d,base));
   }else{
-   const h=rand(-8,8),e=rand(1,3),v=base**e,x1=h-v,x2=h+v,inside=`x${h<0?"＋":"−"}${Math.abs(h)}`;
+   const h=rand(-8,8),e=rand(1,3),v=base**e,x1=h-v,x2=h+v,inside=`x${p4Tail(-h)}`;
    expr=`解方程式 log<sub>${base}</sub>［（${inside}）<sup>2</sup>］＝${2*e}。`;answer=`x＝${H.int(x1)} 或 ${H.int(x2)}`;
    verify=()=>x1!==x2&&[x1,x2].every(x=>(x-h)**2>0&&H.near(logb((x-h)**2,base),2*e));
   }
@@ -898,19 +910,19 @@ function logEquationsGraphsConfig(){
   if(Math.random()<.55)return combined.legacyGen(ctx);
   const kind=ctx.level==="challenge"?pick(["difference","quadraticLog"]):"difference",base=pick([2,3,5]);let expr,answer,verify;
   if(kind==="difference"){
-   const x=rand(3,15),q=rand(-4,x-1),ratio=rand(2,5),p=x-ratio*(x-q),term=v=>`x${v<0?"＋":"−"}${Math.abs(v)}`;
+   const x=rand(3,15),q=rand(-4,x-1),ratio=rand(2,5),p=x-ratio*(x-q),term=v=>`x${p4Tail(-v)}`;
    expr=`解方程式 log<sub>${base}</sub>（${term(p)}）−log<sub>${base}</sub>（${term(q)}）＝log<sub>${base}</sub>${ratio}。`;answer=`x＝${x}`;
    verify=()=>x>p&&x>q&&ratio!==1&&H.near(logb(x-p,base)-logb(x-q,base),logb(ratio,base));
   }else{
    const p=rand(0,2),q=rand(p+1,4),S=p+q,P=p*q,xs=[base**p,base**q];
-   expr=`解方程式（log<sub>${base}</sub>x）<sup>2</sup>−${S}log<sub>${base}</sub>x＋${P}＝0。`;answer=`x＝${xs.join(" 或 ")}`;
+   expr=`解方程式（log<sub>${base}</sub>x）<sup>2</sup>−${S===1?"":S}log<sub>${base}</sub>x${p4Tail(P)}＝0。`;answer=`x＝${xs.join(" 或 ")}`;
    verify=()=>xs.length===new Set(xs).size&&xs.every(x=>x>0&&H.near(logb(x,base)**2-S*logb(x,base)+P,0));
   }
   return{expr,answer,sig:`p4b:combined:${kind}:${expr}`,verify};
  };
  inverse.gen=ctx=>{
   if(Math.random()<.6)return inverse.legacyGen(ctx);
-  const kind=ctx.level==="challenge"?pick(["fromLog","scaledExponential"]):"fromLog",base=pick([2,3,5,7]),h=rand(-8,8),k=rand(-8,8),a=rand(2,5),inside=(v,c)=>`${v}${c<0?"＋":"−"}${Math.abs(c)}`,tail=c=>`${c<0?"−":"＋"}${Math.abs(c)}`;let expr,answer,verify;
+  const kind=ctx.level==="challenge"?pick(["fromLog","scaledExponential"]):"fromLog",base=pick([2,3,5,7]),h=rand(-8,8),k=rand(-8,8),a=rand(2,5),inside=(v,c)=>`${v}${p4Tail(-c)}`,tail=p4Tail;let expr,answer,verify;
   if(kind==="fromLog"){
    expr=`求 f（x）＝log<sub>${base}</sub>（${inside("x",h)}）${tail(k)} 的反函數。`;answer=`f<sup>−1</sup>（x）＝${base}<sup>${inside("x",k)}</sup>${tail(h)}`;
    verify=()=>[-1,0,1,2].every(t=>{const x=h+base**t,y=logb(x-h,base)+k;return H.near(base**(y-k)+h,x)&&H.near(logb((base**t+h)-h,base)+k,t+k)});

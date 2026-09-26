@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import {execFileSync} from 'node:child_process';
 import {parseExpressionAt} from 'acorn';
 import {load,mathText} from './helper.mjs';
+import {checkP4BQuestion} from '../math-p4-b-constraints.mjs';
 import {seedFor} from '../math_test_harness.mjs';
 import {topicSources,changedTopicSources} from '../math-g11-topic-changes.mjs';
 const targets={bayes:['bayestwo','medicalpositive','repeatedtest'],combinations:['required','atleast','groups'],commonlog:['definition','laws','change'],conditionalprob:['definition','withoutreplacement','solveunion'],loggraphs:['equation','combined','inverse']};
@@ -42,9 +43,10 @@ for(const [topic,ids]of Object.entries(targets))for(const id of ids){
    const observed={...u,gen(c){const q=u.gen(c);if(q)assert.equal(q.verify(),true,`${topic}/${id} raw verify: ${q.sig}`);return q;}};
    for(let i=0;i<size;i++){
     const q=api.safeQuestion(observed,ctx,seen);assert.ok(q,`${topic}/${id}/${level}/${mode} seed ${seed}: ${i}/${size}`);assert.equal(api.contentGuard(q,level),true);
-    const isNew=q.sig.startsWith('p4b:'),prompt=mathText(q.expr).replace(/\s/g,'').normalize('NFKC');
+    const isNew=q.sig.startsWith('p4b:'),text=mathText(q.expr),answer=mathText(q.answer),prompt=text.replace(/\s/g,'').normalize('NFKC');
+    checkP4BQuestion(topic,q,text,answer);
     if(prompts.has(prompt)){assert.ok(!isNew&&!prompts.get(prompt),`new duplicate visible prompt: ${topic}/${id} ${prompt}`);legacyPromptRepeats++;}prompts.set(prompt,isNew);questions++;
-    if(isNew){const kind=`${topic}/`+q.sig.split(':').slice(1,3).join('/');samples[kind]??={topic,unit:id,level,mode,prompt:mathText(q.expr),answer:mathText(q.answer)};}
+    if(isNew){const kind=`${topic}/`+q.sig.split(':').slice(1,3).join('/');samples[kind]??={topic,unit:id,level,mode,prompt:text,answer,promptHtml:q.expr,answerHtml:q.answer};}
    }
    papers++;
   }
