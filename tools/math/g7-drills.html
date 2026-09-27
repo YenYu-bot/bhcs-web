@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["signed","正負數四則運算"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -740,7 +740,154 @@ function hasDecType(e){ // 題目裡若出現小數，答案就用小數呈現
   units:U,presets:{basic:{add:6,sub:6,addsub:4,mul:4,div:4},advanced:{add:4,sub:4,addsub:4,mul:4,div:4,muldiv:4,four:3,brackets:2,laws:2},challenge:{addsub:4,mul:3,div:3,muldiv:4,four:4,brackets:3,laws:3}}};
 }
 
-const CONFIGS={signed:signedConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
+function exponentConfig(){
+ /* 國一 指數律（2026-09-27，Claude）。由舊的 g7-exponent-laws.html 重做進引擎：十二個單元名稱與題型保留（指數記法與求值、同底數乘除、同指數乘除、
+    乘方的乘方、零次方、混合運算、底數轉換、未知指數、指數大小比較、負數與分數比較、巧算、乘方的加減），舊工具中固定數字的題型改成參數化，
+    使每個單元每個難度都有足夠的題庫。指數形式的答案同時給出數值（不超過一千萬時）。verify：用 BigInt 直接算原式數值比對。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen:ctx=>{const q=gen(ctx);if(q){q.answer=q.answer.replace(/-(\d)/g,"−$1");q.expr=q.expr.replace(/-(\d)/g,"−$1")}return q}});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false});
+ const sup=e=>`<sup>${e}</sup>`,pw=(b,e)=>`${b}${sup(e)}`,pn=(b,e)=>`(${b})${sup(e)}`;
+ const bp=(b,e)=>BigInt(b)**BigInt(e);
+ const withVal=(b,e)=>{const v=bp(b,e);return v<=10000000n?`${pw(b,e)}（＝${v.toString()}）`:pw(b,e)};
+ const negS=b=>`−${b}`;
+
+ const power=unit("power","指數記法與求值","aⁿ 表示 n 個 a 相乘；(−a)ⁿ 中 n 為偶數得正、奇數得負；−aⁿ 是先乘方再加負號。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["plain","negBase","negOut"]:L===1?["negBase","negOut","pair"]:["pair","negOut","expand"]);
+  if(mode==="fraction"){let n,d;do{n=rand(1,7);d=rand(2,9)}while(gcd(n,d)>1);const e=rand(2,L===2?4:3),fk=pick(["pos","neg","pair","mul"]);
+   if(fk==="pos"){const v=R(n**e,d**e);return{expr:`${pn(fr(n,d),e)}＝`,answer:S(v),sig:`fp:${n}:${d}:${e}`,verify:()=>Math.abs(Math.pow(n/d,e)-v.n/v.d)<1e-9}}
+   if(fk==="neg"){const v=R((e%2?-1:1)*n**e,d**e);return{expr:`${pn("−"+fr(n,d),e)}＝`,answer:S(v),sig:`fn:${n}:${d}:${e}`,verify:()=>Math.abs(Math.pow(-n/d,e)-v.n/v.d)<1e-9}}
+   if(fk==="pair"){const v1=R((e%2?-1:1)*n**e,d**e),v2=R(-(n**e),d**e);return{expr:`${pn("−"+fr(n,d),e)} 與 −${pn(fr(n,d),e)} 的值分別為多少？`,answer:`${S(v1)}、${S(v2)}`,sig:`fq:${n}:${d}:${e}`,verify:()=>Math.abs(Math.pow(-n/d,e)-v1.n/v1.d)<1e-9&&Math.abs(-Math.pow(n/d,e)-v2.n/v2.d)<1e-9}}
+   const k=rand(1,2),v=R(n**(e+k),d**(e+k));return{expr:`${pn(fr(n,d),e)} × ${pn(fr(n,d),k)}＝`,answer:S(v),sig:`fm:${n}:${d}:${e}:${k}`,verify:()=>Math.abs(Math.pow(n/d,e+k)-v.n/v.d)<1e-9}}
+  if(kind==="plain"){const b=rand(2,L===0?12:15),e=rand(2,L===0?5:6),v=bp(b,e);return{expr:`${pw(b,e)}＝`,answer:v.toString(),sig:`p:${b}:${e}`,verify:()=>Number(v)===Math.pow(b,e)}}
+  if(kind==="negBase"){const b=rand(2,L===0?5:7),e=rand(2,L===0?4:5),v=(e%2?-1n:1n)*bp(b,e);return{expr:`${pn(negS(b),e)}＝`,answer:v.toString(),sig:`n:${b}:${e}`,verify:()=>Number(v)===Math.pow(-b,e)}}
+  if(kind==="negOut"){const b=rand(2,7),e=rand(2,5),v=-bp(b,e);return{expr:`−${pw(b,e)}＝`,answer:v.toString(),sig:`o:${b}:${e}`,verify:()=>Number(v)===-Math.pow(b,e)}}
+  if(kind==="pair"){const b=rand(2,6),e=rand(2,5),v1=(e%2?-1n:1n)*bp(b,e),v2=-bp(b,e);return{expr:`${pn(negS(b),e)} 與 −${pw(b,e)} 的值分別為多少？`,answer:`${v1}、${v2}`,sig:`q:${b}:${e}`,verify:()=>Number(v1)===Math.pow(-b,e)&&Number(v2)===-Math.pow(b,e)}}
+  const b=rand(2,9),e=rand(3,5);return{expr:`${Array(e).fill(String(b)).join(" × ")} 用指數記法表示為 aⁿ 的形式，並求其值。`,answer:`${withVal(b,e)}`,sig:`e:${b}:${e}`,verify:()=>Number(bp(b,e))===Math.pow(b,e)};
+ });
+
+ const sameBase=unit("sameBase","同底數的乘除","aᵐ × aⁿ＝aᵐ⁺ⁿ；aᵐ ÷ aⁿ＝aᵐ⁻ⁿ（m＞n）。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["mul","div","mul3"]:L===1?["mul3","div","mixed"]:["mixed","negBase","letter"]);
+  const b=rand(2,L===0?5:9);
+  if(kind==="mul"){const m=rand(2,L===0?6:9),n=rand(2,L===0?5:8);return{expr:`${pw(b,m)} × ${pw(b,n)}＝`,answer:withVal(b,m+n),sig:`m:${b}:${m}:${n}`,verify:()=>bp(b,m)*bp(b,n)===bp(b,m+n)}}
+  if(kind==="div"){const n=rand(2,L===0?5:8),m=n+rand(1,L===0?4:7);return{expr:`${pw(b,m)} ÷ ${pw(b,n)}＝`,answer:withVal(b,m-n),sig:`d:${b}:${m}:${n}`,verify:()=>bp(b,m)/bp(b,n)===bp(b,m-n)}}
+  if(kind==="mul3"){const m=rand(2,6),n=rand(2,6),k=rand(1,5);return{expr:`${pw(b,m)} × ${pw(b,n)} × ${pw(b,k)}＝`,answer:withVal(b,m+n+k),sig:`t:${b}:${m}:${n}:${k}`,verify:()=>bp(b,m)*bp(b,n)*bp(b,k)===bp(b,m+n+k)}}
+  if(kind==="mixed"){const m=rand(3,9),n=rand(2,6),k=rand(1,m+n-1);return{expr:`${pw(b,m)} × ${pw(b,n)} ÷ ${pw(b,k)}＝`,answer:withVal(b,m+n-k),sig:`x:${b}:${m}:${n}:${k}`,verify:()=>bp(b,m)*bp(b,n)/bp(b,k)===bp(b,m+n-k)}}
+  if(kind==="negBase"){const m=rand(2,6),n=rand(2,5),e=m+n,v=(e%2?-1n:1n)*bp(b,e);return{expr:`${pn(negS(b),m)} × ${pn(negS(b),n)}＝`,answer:`${pn(negS(b),e)}＝${v}`,sig:`nb:${b}:${m}:${n}`,verify:()=>Number(v)===Math.pow(-b,m)*Math.pow(-b,n)}}
+  const m=rand(3,9),n=rand(2,8);return{expr:`若 x≠0，${pw("x",m)} × ${pw("x",n)} ÷ ${pw("x",Math.min(m,n))}＝`,answer:pw("x",m+n-Math.min(m,n)),sig:`l:${m}:${n}`,verify:()=>{const x=3;return Math.abs(Math.pow(x,m)*Math.pow(x,n)/Math.pow(x,Math.min(m,n))-Math.pow(x,m+n-Math.min(m,n)))<1e-6}};
+ });
+
+ const sameExp=unit("sameExp","同指數的乘除","aⁿ × bⁿ＝(ab)ⁿ；aⁿ ÷ bⁿ＝(a÷b)ⁿ。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=mode==="fraction"?pick(L===0?["frac","fracMul","fracPow"]:["frac","fracMul","fracPow"]):pick(L===0?["mul","div","three"]:L===1?["mul","div","expand"]:["decimal","three","expand"]);
+  const e=rand(2,L===0?4:L===1?5:6);
+  if(kind==="expand"){const[a,c]=pick([[2,3],[2,5],[3,5],[3,4],[2,7],[5,7]]),n=rand(2,5);return{expr:`把 (${a} × ${c})${sup(n)} 寫成兩個乘方的乘積，並求值。`,answer:`${pw(a,n)} × ${pw(c,n)}＝${bp(a*c,n)}`,sig:`ex:${a}:${c}:${n}`,verify:()=>bp(a,n)*bp(c,n)===bp(a*c,n)}}
+  if(kind==="fracMul"){const[a,b]=pick([[2,3],[3,4],[3,5],[2,5],[5,6],[4,7]]),n=rand(2,4),v=R(a**n,b**n);return{expr:`${pn(fr(a,b),n)} × ${pn(fr(b,a),n)} × ${pn(fr(a,b),n)}＝`,answer:S(v),sig:`fx:${a}:${b}:${n}`,verify:()=>Math.abs(Math.pow(a/b,n)-v.n/v.d)<1e-9}}
+  if(kind==="fracPow"){const[a,b]=pick([[2,3],[3,4],[3,5],[2,5],[5,6],[4,7]]),n=rand(2,4),v=R(a**n*b**n,a**n*b**n);return{expr:`${pn(fr(a,b),n)} × ${pn(fr(b,a),n)}＝`,answer:"1",sig:`f1:${a}:${b}:${n}`,verify:()=>Math.abs(Math.pow(a/b,n)*Math.pow(b/a,n)-1)<1e-9}}
+  if(kind==="mul"){const[a,b]=pick([[2,5],[4,25],[8,125],[2,3],[3,4],[4,5],[5,6],[2,50],[4,2.5]]);if(!Number.isInteger(b))return null;return{expr:`${pw(a,e)} × ${pw(b,e)}＝`,answer:withVal(a*b,e),sig:`m:${a}:${b}:${e}`,verify:()=>bp(a,e)*bp(b,e)===bp(a*b,e)}}
+  if(kind==="div"){const[a,b]=pick([[12,4],[18,6],[15,5],[21,7],[24,8],[30,6],[36,9],[14,7]]);return{expr:`${pw(a,e)} ÷ ${pw(b,e)}＝`,answer:withVal(a/b,e),sig:`d:${a}:${b}:${e}`,verify:()=>bp(a,e)/bp(b,e)===bp(a/b,e)}}
+  if(kind==="decimal"){const d=pick([[25,4,100],[125,8,1000],[5,2,10],[2,5,10],[4,25,100],[8,125,1000]]),[a,b]=d,n=rand(2,6);return{expr:`${pw(a,n)} × ${pw(b,n)}＝`,answer:withVal(d[2],n),sig:`dc:${a}:${b}:${n}`,verify:()=>bp(a,n)*bp(b,n)===bp(d[2],n)}}
+  if(kind==="frac"){const[a,b]=pick([[2,3],[3,4],[3,5],[2,5],[4,3],[5,2]]),n=rand(2,4),v=R(a**n,b**n);return{expr:`${pw(a,n)} ÷ ${pw(b,n)}＝`,answer:`${pn(fr(a,b),n)}＝${S(v)}`,sig:`fr:${a}:${b}:${n}`,verify:()=>Math.abs(Math.pow(a/b,n)-v.n/v.d)<1e-9}}
+  const n=rand(2,5),[a,b,c]=pick([[2,5,3],[4,25,2],[8,125,3],[2,5,7],[5,2,9]]);return{expr:`${pw(a,n)} × ${pw(b,n)} × ${pw(c,n)}＝`,answer:withVal(a*b*c,n),sig:`th:${a}:${b}:${c}:${n}`,verify:()=>bp(a,n)*bp(b,n)*bp(c,n)===bp(a*b*c,n)};
+ });
+
+ const powerPower=unit("powerPower","乘方的乘方","(aᵐ)ⁿ＝aᵐⁿ；(ab)ⁿ＝aⁿbⁿ。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["basic","product","withMul"]:L===1?["basic","nested","withMul"]:["nested","withMul","withDiv"]);
+  const b=rand(2,L===0?7:9);
+  if(kind==="basic"){const m=rand(2,L===0?3:5),n=rand(2,L===0?3:4);return{expr:`(${pw(b,m)})${sup(n)}＝`,answer:withVal(b,m*n),sig:`b:${b}:${m}:${n}`,verify:()=>bp(b,m)**BigInt(n)===bp(b,m*n)}}
+  if(kind==="product"){const[a,c]=pick([[2,3],[2,5],[3,5],[3,4],[2,7]]),n=rand(2,4);return{expr:`(${a} × ${c})${sup(n)}＝`,answer:`${pw(a,n)} × ${pw(c,n)}＝${(bp(a*c,n)).toString()}`,sig:`pr:${a}:${c}:${n}`,verify:()=>bp(a,n)*bp(c,n)===bp(a*c,n)}}
+  if(kind==="nested"){const m=rand(2,3),n=rand(2,3),k=rand(2,3);return{expr:`〔(${pw(b,m)})${sup(n)}〕${sup(k)}＝`,answer:withVal(b,m*n*k),sig:`nn:${b}:${m}:${n}:${k}`,verify:()=>(bp(b,m)**BigInt(n))**BigInt(k)===bp(b,m*n*k)}}
+  if(kind==="withMul"){const m=rand(2,4),n=rand(2,3),k=rand(1,5);return{expr:`(${pw(b,m)})${sup(n)} × ${pw(b,k)}＝`,answer:withVal(b,m*n+k),sig:`wm:${b}:${m}:${n}:${k}`,verify:()=>bp(b,m)**BigInt(n)*bp(b,k)===bp(b,m*n+k)}}
+  const m=rand(2,4),n=rand(2,3),k=rand(1,m*n-1);return{expr:`(${pw(b,m)})${sup(n)} ÷ ${pw(b,k)}＝`,answer:withVal(b,m*n-k),sig:`wd:${b}:${m}:${n}:${k}`,verify:()=>bp(b,m)**BigInt(n)/bp(b,k)===bp(b,m*n-k)};
+ });
+
+ const zero=unit("zero","零次方","a≠0 時 a⁰＝1；(−a)⁰＝1，−a⁰＝−1。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["single","sum","neg"]:L===1?["neg","sum","expr"]:["expr","neg","mixedSum"]);
+  if(kind==="single"){const b=rand(2,99);return{expr:`${pw(b,0)}＝`,answer:"1",sig:`s:${b}`,verify:()=>Math.pow(b,0)===1}}
+  if(kind==="sum"){const a=rand(2,9),b=rand(10,20),c=rand(21,99);return{expr:`${pw(a,0)} ＋ ${pw(b,0)} ＋ ${pw(c,0)}＝`,answer:"3",sig:`u:${a}:${b}:${c}`,verify:()=>Math.pow(a,0)+Math.pow(b,0)+Math.pow(c,0)===3}}
+  if(kind==="neg"){const b=rand(2,20),v1=1,v2=-1;return{expr:`${pn(negS(b),0)} 與 −${pw(b,0)} 的值分別為多少？`,answer:`1、−1`,sig:`n:${b}`,verify:()=>Math.pow(-b,0)===v1&&-Math.pow(b,0)===v2}}
+  if(kind==="expr"){const a=rand(2,9),b=rand(2,9);if(a*a*a===b*b)return null;return{expr:`(${pw(a,3)} − ${pw(b,2)})${sup(0)} ＋ ${pw(a,0)} × ${pw(b,1)}＝`,answer:String(1+b),sig:`e:${a}:${b}`,verify:()=>Math.pow(a,3)-Math.pow(b,2)!==0&&1+1*b===1+b}}
+  const b=rand(2,9),e=rand(2,4),v=bp(b,e);return{expr:`${pw(b,e)} × ${pw(b,0)} − ${pn(negS(b),0)}＝`,answer:(v-1n).toString(),sig:`m:${b}:${e}`,verify:()=>Number(v)-1===Math.pow(b,e)*1-1};
+ });
+
+ const mixedOps=unit("mixedOps","混合運算","先把不同的底數化成相同的底數，再用指數律合併。",["integer"],ctx=>{
+  const L=lv(ctx),FAM=[[2,[[2,1],[4,2],[8,3]]],[3,[[3,1],[9,2],[27,3]]],[5,[[5,1],[25,2],[125,3]]]],[base,ps]=pick(FAM),P=()=>pick(ps);
+  const kind=pick(L===0?["mdc","ten","mm"]:L===1?["mdc","dm","ten"]:["mdm","dm","box"]);
+  if(kind==="ten"){const n=rand(3,9);return{expr:`${pw(2,n)} × ${pw(5,n)}＝${pw(10,"□")}，求 □。`,answer:`□＝${n}`,sig:`t:${n}`,verify:()=>bp(2,n)*bp(5,n)===bp(10,n)}}
+  if(kind==="mm"){const[a,pa]=P(),[b,pb]=P(),m=rand(2,4),n=rand(2,3);return{expr:`${pw(a,m)} × ${pw(b,n)}＝`,answer:withVal(base,pa*m+pb*n),sig:`mm:${a}:${m}:${b}:${n}`,verify:()=>bp(a,m)*bp(b,n)===bp(base,pa*m+pb*n)}}
+  if(kind==="mdc"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(2,4),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc));if(k<1)return null;return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)}＝`,answer:withVal(base,e-pc*k),sig:`mdc:${a}:${m}:${b}:${n}:${c}:${k}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)===bp(base,e-pc*k)}}
+  if(kind==="dm"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(3,5),k=rand(1,Math.floor((pa*m-1)/pb)),n=rand(1,3);if(k<1)return null;return{expr:`${pw(a,m)} ÷ ${pw(b,k)} × ${pw(c,n)}＝`,answer:withVal(base,pa*m-pb*k+pc*n),sig:`dm:${a}:${m}:${b}:${k}:${c}:${n}`,verify:()=>bp(a,m)/bp(b,k)*bp(c,n)===bp(base,pa*m-pb*k+pc*n)}}
+  if(kind==="mdm"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),[d,pd]=P(),m=rand(2,3),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc)),q=rand(1,2);if(k<1)return null;return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)} × ${pw(d,q)}＝`,answer:withVal(base,e-pc*k+pd*q),sig:`mdm:${a}:${m}:${b}:${n}:${c}:${k}:${d}:${q}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)*bp(d,q)===bp(base,e-pc*k+pd*q)}}
+  const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(2,4),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc));if(k<1)return null;return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)}＝${pw(base,"□")}，求 □。`,answer:`□＝${e-pc*k}`,sig:`box:${a}:${m}:${b}:${n}:${c}:${k}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)===bp(base,e-pc*k)};
+ });
+
+ const convert=unit("convert","底數轉換","把 4、8、16 化成 2 的乘方，9、27 化成 3 的乘方，25、125 化成 5 的乘方，再比較指數。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["one","two","div"]:L===1?["two","div","three"]:["three","div","reverse"]);
+  const fam=pick([[2,[[4,2],[8,3],[16,4]]],[3,[[9,2],[27,3],[81,4]]],[5,[[25,2],[125,3]]]]),[base,ps]=fam;
+  if(kind==="one"){const[b,p]=pick(ps),m=rand(2,6);return{expr:`${pw(b,m)}＝${pw(base,"□")}，求 □。`,answer:`□＝${p*m}`,sig:`o:${b}:${m}`,verify:()=>bp(b,m)===bp(base,p*m)}}
+  if(kind==="two"){const[b1,p1]=pick(ps),[b2,p2]=pick(ps),m=rand(2,5),n=rand(2,4);return{expr:`${pw(b1,m)} × ${pw(b2,n)}＝${pw(base,"□")}，求 □。`,answer:`□＝${p1*m+p2*n}`,sig:`t:${b1}:${m}:${b2}:${n}`,verify:()=>bp(b1,m)*bp(b2,n)===bp(base,p1*m+p2*n)}}
+  if(kind==="div"){const[b1,p1]=pick(ps),m=rand(3,6),n=rand(1,p1*m-1);return{expr:`${pw(b1,m)} ÷ ${pw(base,n)}＝${pw(base,"□")}，求 □。`,answer:`□＝${p1*m-n}`,sig:`d:${b1}:${m}:${n}`,verify:()=>bp(b1,m)/bp(base,n)===bp(base,p1*m-n)}}
+  if(kind==="three"){const[b1,p1]=pick(ps),[b2,p2]=pick(ps),m=rand(2,4),n=rand(2,3),k=rand(1,4);return{expr:`${pw(b1,m)} × ${pw(b2,n)} × ${pw(base,k)}＝${pw(base,"□")}，求 □。`,answer:`□＝${p1*m+p2*n+k}`,sig:`h:${b1}:${m}:${b2}:${n}:${k}`,verify:()=>bp(b1,m)*bp(b2,n)*bp(base,k)===bp(base,p1*m+p2*n+k)}}
+  const[b,p]=pick(ps),n=p*rand(2,6);return{expr:`${pw(base,n)}＝${pw(b,"□")}，求 □。`,answer:`□＝${n/p}`,sig:`r:${b}:${n}`,verify:()=>bp(base,n)===bp(b,n/p)};
+ });
+
+ const unknown=unit("unknown","未知指數","把兩邊化成同底數，指數相等；aᵐ × aˣ＝aⁿ ⇒ x＝n−m。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["value","mulX","divX"]:L===1?["mulX","divX","tenTriple"]:["tenTriple","twoBox","powX"]);
+  if(kind==="value"){const b=pick([2,3,5,10]),x=rand(2,b===2?10:b===3?6:b===5?5:6),v=bp(b,x);return{expr:`${pw(b,"x")}＝${v}，求 x。`,answer:`x＝${x}`,sig:`v:${b}:${x}`,verify:()=>bp(b,x)===v}}
+  if(kind==="mulX"){const b=rand(2,9),m=rand(2,6),n=m+rand(1,6);return{expr:`${pw(b,m)} × ${pw(b,"x")}＝${pw(b,n)}，求 x。`,answer:`x＝${n-m}`,sig:`m:${b}:${m}:${n}`,verify:()=>bp(b,m)*bp(b,n-m)===bp(b,n)}}
+  if(kind==="divX"){const b=rand(2,9),n=rand(2,8),x=rand(1,n-1);return{expr:`${pw(b,n)} ÷ ${pw(b,"x")}＝${pw(b,n-x)}，求 x。`,answer:`x＝${x}`,sig:`d:${b}:${n}:${x}`,verify:()=>bp(b,n)/bp(b,x)===bp(b,n-x)}}
+  if(kind==="tenTriple"){const a=pick([2,4,6]),b=rand(2,4),c=rand(2,4),sq=a+2*b+3*c;if(sq%2)return null;return{expr:`${pw(10,a)} × ${pw(100,b)} × ${pw(1000,c)}＝${pw(10,"□")}＝${pw(100,"△")}，求 □＋△。`,answer:`□＝${sq}，△＝${sq/2}，□＋△＝${sq+sq/2}`,sig:`t:${a}:${b}:${c}`,verify:()=>bp(10,a)*bp(100,b)*bp(1000,c)===bp(10,sq)&&bp(100,sq/2)===bp(10,sq)}}
+  if(kind==="twoBox"){const base=pick([2,3]),m=rand(4,7)*6,n=rand(1,3)*6,e=m-n;const b2=base*base,b3=base*base*base;return{expr:`${pw(base,m)} ÷ ${pw(base,n)}＝${pw(b2,"□")}＝${pw(b3,"△")}，求 □＋△。`,answer:`□＝${e/2}，△＝${e/3}，□＋△＝${e/2+e/3}`,sig:`w:${base}:${m}:${n}`,verify:()=>bp(base,m)/bp(base,n)===bp(b2,e/2)&&bp(b3,e/3)===bp(base,e)}}
+  const b=pick([2,3]),x=rand(2,5),n=rand(2,3),v=bp(b,x*n);return{expr:`(${pw(b,"x")})${sup(n)}＝${v}，求 x。`,answer:`x＝${x}`,sig:`p:${b}:${x}:${n}`,verify:()=>bp(b,x)**BigInt(n)===v};
+ });
+
+ const compare=unit("compare","指數大小比較","化成相同底數比指數，或化成相同指數比底數。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["sameBase","sameExp","two"]:L===1?["sameExp","toBase","two"]:["toBase","two","three"]);
+  const order=(items)=>[...items].sort((x,y)=>(y.v>x.v)-(y.v<x.v));
+  const fmtOrder=items=>items.map((x,i)=>(i?(x.v===items[i-1].v?" ＝ ":" ＞ "):"")+x.h).join("");
+  if(kind==="sameBase"){const b=rand(2,9),es=shuffle([rand(2,4),rand(5,7),rand(8,10)]),items=es.map(e=>({h:pw(b,e),v:bp(b,e)}));return{expr:`由大到小排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items)),sig:`sb:${b}:${es}`,verify:()=>{const o=order(items);return o[0].v>=o[1].v&&o[1].v>=o[2].v}}}
+  if(kind==="sameExp"){const e=rand(2,6),bs=shuffle([rand(2,4),rand(5,7),rand(8,12)]),items=bs.map(b=>({h:pw(b,e),v:bp(b,e)}));return{expr:`由小到大排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items).reverse()).replace(/＞/g,"＜"),sig:`se:${e}:${bs}`,verify:()=>{const o=order(items);return o[0].v>=o[1].v&&o[1].v>=o[2].v}}}
+  if(kind==="toBase"){const base=pick([2,3]),ps=base===2?[[2,1],[4,2],[8,3]]:[[3,1],[9,2],[27,3]],items=shuffle(ps).map(([b,p])=>{const e=rand(4,12);return{h:pw(b,e),v:bp(b,e),k:p*e}});return{expr:`${items.map(x=>x.h).join("、")} 三數中，哪一個最大？哪一個最小？`,answer:`最大 ${order(items)[0].h}，最小 ${order(items)[2].h}`,sig:`tb:${items.map(x=>x.h.replace(/<[^>]+>/g,""))}`,verify:()=>{const o=order(items);return o[0].k>=o[1].k&&o[1].k>=o[2].k}}}
+  if(kind==="two"){const[a,b]=pick([[10,8],[4,8],[2,24],[3,10],[9,5],[5,12],[25,6]]),[c,d]=pick([[2,24],[4,12],[8,8],[10,7],[3,15],[27,5]]),items=[{h:pw(a,b),v:bp(a,b)},{h:pw(c,d),v:bp(c,d)}];if(items[0].v===items[1].v)return null;return{expr:`比較 ${items[0].h} 與 ${items[1].h} 的大小。`,answer:fmtOrder(order(items)),sig:`tw:${a}:${b}:${c}:${d}`,verify:()=>{const o=order(items);return o[0].v>o[1].v}}}
+  const items=shuffle([[2,rand(20,30)],[4,rand(10,15)],[8,rand(6,10)],[16,rand(5,8)]]).slice(0,3).map(([b,e])=>({h:pw(b,e),v:bp(b,e)}));return{expr:`先化成同底數，再由大到小排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items)),sig:`th:${items.map(x=>x.h.replace(/<[^>]+>/g,""))}`,verify:()=>{const o=order(items);return o[0].v>=o[1].v&&o[1].v>=o[2].v}};
+ });
+
+ const negative=unit("negative","負數與分數的乘方比較","負數的偶次方為正、奇次方為負；真分數的次方愈高愈小。",["integer","fraction"],ctx=>{
+  const L=lv(ctx),mode=pick(ctx.modes),kind=mode==="fraction"?pick(["negFrac","posFrac","mixedFrac"]):pick(L===0?["negInt","negInt2","negIntOut"]:L===1?["negInt","negInt2","negIntOut"]:["negInt2","negIntOut","negInt"]);
+  const order=items=>[...items].sort((x,y)=>y.v-x.v),fmtOrder=items=>items.map(x=>x.h).join(" ＞ ");
+  if(kind==="negFrac"){let n,d;do{n=rand(1,9);d=n+rand(1,6)}while(gcd(n,d)>1);const es=shuffle([2,3,4,5]).slice(0,L===2?4:3).sort(),items=es.map(e=>({h:pn("−"+fr(n,d),e),v:Math.pow(-n/d,e)}));if(new Set(items.map(x=>x.v)).size<items.length)return null;return{expr:`由大到小排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items)),sig:`nf:${n}:${d}:${es}`,verify:()=>{const o=order(items);return o.every((x,i)=>!i||o[i-1].v>x.v)}}}
+  if(kind==="posFrac"){let n,d;do{n=rand(1,7);d=n+rand(1,4)}while(gcd(n,d)>1);const items=[1,2,3,4].map(e=>({h:e===1?fr(n,d):pn(fr(n,d),e),v:Math.pow(n/d,e)}));return{expr:`由大到小排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items)),sig:`pf:${n}:${d}`,verify:()=>{const o=order(items);return o.every((x,i)=>!i||o[i-1].v>x.v)}}}
+  if(kind==="mixedFrac"){let n,d;do{n=rand(1,5);d=n+rand(1,3)}while(gcd(n,d)>1);const items=[{h:pn(fr(n,d),2),v:(n/d)**2},{h:pn("−"+fr(n,d),3),v:-((n/d)**3)},{h:pn("−"+fr(n,d),2),v:(n/d)**2},{h:`−${pn(fr(n,d),2)}`,v:-((n/d)**2)}];const groups=order(items);return{expr:`比較大小：${items.map(x=>x.h).join("、")}（由大到小，相等者用「＝」）`,answer:groups.map((x,i)=>(i?(x.v===groups[i-1].v?" ＝ ":" ＞ "):"")+x.h).join(""),sig:`mf:${n}:${d}`,verify:()=>groups.every((x,i)=>!i||groups[i-1].v>=x.v)}}
+  if(kind==="negInt"){const b=rand(2,9),es=shuffle([2,3,4,5]).slice(0,3),items=es.map(e=>({h:pn(negS(b),e),v:Math.pow(-b,e)}));return{expr:`由大到小排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items)),sig:`ni:${b}:${es}`,verify:()=>{const o=order(items);return o.every((x,i)=>!i||o[i-1].v>x.v)}}}
+  if(kind==="negInt2"){const b=rand(2,9),c=rand(2,9),items=[{h:pn(negS(b),2),v:b*b},{h:pn(negS(c),3),v:-(c**3)},{h:`−${pw(b,2)}`,v:-b*b},{h:pn(negS(b),3),v:-(b**3)}];if(new Set(items.map(x=>x.v)).size<4)return null;return{expr:`由大到小排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items)),sig:`n2:${b}:${c}`,verify:()=>{const o=order(items);return o.every((x,i)=>!i||o[i-1].v>x.v)}}}
+  const b=rand(2,9),items=[{h:pn(negS(b),4),v:b**4},{h:`−${pw(b,4)}`,v:-(b**4)},{h:pn(negS(b),3),v:-(b**3)},{h:`−${pn(negS(b),3)}`,v:b**3}];return{expr:`由大到小排列：${items.map(x=>x.h).join("、")}`,answer:fmtOrder(order(items)),sig:`no:${b}`,verify:()=>{const o=order(items);return o.every((x,i)=>!i||o[i-1].v>x.v)}};
+ });
+
+ const smart=unit("smart","巧算與綜合應用","看到相同的因數就提出來：x² − x·y＝x(x − y)；(a×b)ⁿ 可拆成 aⁿ×bⁿ 湊出 10 的乘方。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["factor","ten","square"]:L===1?["factor","ten","square"]:["factorBig","ten","sumFactor"]);
+  if(kind==="factor"){const x=pick([101,123,205,314,208,417,512,620]),k=pick([100,10].filter(v=>x>v)),y=x-k,v=BigInt(x)*BigInt(k);return{expr:`${x}${sup(2)} − ${x} × ${y}＝`,answer:v.toString(),sig:`f:${x}:${k}`,verify:()=>BigInt(x)*BigInt(x)-BigInt(x)*BigInt(y)===v}}
+  if(kind==="factorBig"){const x=rand(1000,9999),k=pick([1000,10000,100]),y=Math.abs(x-k),v=x>k?BigInt(x)*BigInt(k):BigInt(x)*BigInt(x)-BigInt(x)*BigInt(y);if(x<=k)return null;return{expr:`${x}${sup(2)} − ${x} × ${y}＝`,answer:v.toString(),sig:`fb:${x}:${k}`,verify:()=>BigInt(x)*BigInt(x)-BigInt(x)*BigInt(y)===v}}
+  if(kind==="ten"){const n=rand(4,9),a=pick([2,4,8]),b=pick([5,25,125]),e=a===2?1:a===4?2:3,f=b===5?1:b===25?2:3,ex=Math.min(e*n,f*n);// 2ⁿ×5ⁿ 類：取到共同的 10 次方
+   const va=bp(a,n),vb=bp(b,n),v=va*vb;return{expr:`${pw(a,n)} × ${pw(b,n)}＝`,answer:withVal(a*b,n),sig:`t:${a}:${b}:${n}`,verify:()=>v===bp(a*b,n)}}
+  if(kind==="square"){const x=pick([201,301,401,99,199,299]),v=BigInt(x)*BigInt(x)-BigInt(x-1)*BigInt(x+1);return{expr:`${x}${sup(2)} − (${x-1}) × (${x+1})＝`,answer:v.toString(),sig:`s:${x}`,verify:()=>v===1n}}
+  const b=pick([2,3,5]),n=rand(3,7),v=bp(b,n+1)-bp(b,n);return{expr:`${pw(b,n+1)} − ${pw(b,n)}＝`,answer:`${(b-1)}×${pw(b,n)}＝${v}`,sig:`sf:${b}:${n}`,verify:()=>v===BigInt(b-1)*bp(b,n)};
+ });
+
+ const sum=unit("sum","乘方的加減","相同的乘方相加是「幾個」：aⁿ＋aⁿ＋aⁿ＝3aⁿ；不同指數先化成最小的乘方再提出。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["same","twoTerms"]:L===1?["same","chain","factorOut"]:["chain","factorOut","toPower"]);
+  if(kind==="same"){const b=rand(2,5),e=rand(2,4),c=rand(2,4),v=BigInt(c)*bp(b,e);return{expr:`${Array(c).fill(pw(b,e)).join(" ＋ ")}＝`,answer:v.toString(),sig:`s:${b}:${e}:${c}`,verify:()=>Number(v)===c*Math.pow(b,e)}}
+  if(kind==="twoTerms"){const b=rand(2,5),e=rand(2,4),v=bp(b,e)+bp(b,e+1);return{expr:`${pw(b,e)} ＋ ${pw(b,e+1)}＝`,answer:v.toString(),sig:`w:${b}:${e}`,verify:()=>Number(v)===Math.pow(b,e)+Math.pow(b,e+1)}}
+  if(kind==="chain"){const s=rand(3,9),v=bp(2,s)+bp(2,s+1)+bp(2,s+2)+bp(2,s+3);return{expr:`${[0,1,2,3].map(i=>pw(2,s+i)).join(" ＋ ")}＝`,answer:v.toString(),sig:`c:${s}`,verify:()=>Number(v)===15*Math.pow(2,s)}}
+  if(kind==="factorOut"){const b=pick([2,3,5,7]),n=rand(3,9),v=bp(b,n+2)-bp(b,n+1)+bp(b,n);return{expr:`${pw(b,n+2)} − ${pw(b,n+1)} ＋ ${pw(b,n)}＝`,answer:`${b*b-b+1}×${pw(b,n)}＝${v}`,sig:`fo:${b}:${n}`,verify:()=>v===BigInt(b*b-b+1)*bp(b,n)}}
+  const b=pick([2,3,4,5]),n=rand(3,15);return{expr:`${Array(b).fill(pw(b,n)).join(" ＋ ")}＝${pw(b,"□")}，求 □。`,answer:`□＝${n+1}`,sig:`tp:${b}:${n}`,verify:()=>BigInt(b)*bp(b,n)===bp(b,n+1)};
+ });
+
+ return{title:"指數律",symbol:"aⁿ",subtitle:"指數記法・同底數與同指數乘除・乘方的乘方・零次方・混合運算・底數轉換・未知指數・大小比較・負數與分數・巧算・乘方的加減",instruction:"用指數律化簡，答案寫成 aⁿ 的形式並求值（數值過大時只寫指數形式）。",modes:["integer","fraction"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：指數求值、五條基本規則與零次方；數字較小、步驟單純。",advanced:"進階：加入底數轉換、兩步驟運算、簡單未知指數與大小比較。",challenge:"挑戰：三步驟運算、乘方的乘方巢狀、負數與分數的比較、巧算與乘方加減的提公因數。"},
+  units:[power,sameBase,sameExp,powerPower,zero,mixedOps,convert,unknown,compare,negative,smart,sum],
+  presets:{basic:{power:4,sameBase:4,sameExp:3,powerPower:2,zero:3},advanced:{power:2,sameBase:3,sameExp:2,powerPower:2,zero:1,mixedOps:3,convert:3,unknown:2,sum:2},challenge:{mixedOps:4,convert:3,unknown:3,compare:3,negative:3,smart:3,sum:1}}};
+}
+
+const CONFIGS={signed:signedConfig,exponent:exponentConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
@@ -751,7 +898,7 @@ function applyPreset(level){state.level=level;const p=CFG.presets[level];CFG.uni
 function setEach(v){CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);c.checked=v>0;n.disabled=!c.checked;if(v)n.value=v});updateTotal();markChanged()}
 function updateTotal(){$("total").textContent=`共 ${selectedUnits().reduce((s,u)=>s+u.count,0)} 題`}function markChanged(){$("status").textContent="設定已變更，按「重新出題」套用。"}
 function generate(){const modes=selectedModes(),chosen=selectedUnits();if(!modes.length){$("status").textContent="請至少勾選一種數的類型。";return}if(!chosen.length){state.groups=[];state.paper=null;render();$("status").textContent="請至少勾選一個單元。";return}state.mixed=CFG.mixed&&$("mixedNumber")?.checked;const seen=new Set,skipped=[];state.groups=[];for(const unit of chosen){const allowed=modes.filter(m=>unit.modes.includes(m));if(!allowed.length){skipped.push(unit.name);continue}const ctx={level:state.level,modes:allowed,mixed:state.mixed},questions=[];for(let i=0;i<unit.count;i++){const q=safeQuestion(unit,ctx,seen);if(q)questions.push(q)}if(questions.length)state.groups.push({unit,questions})}state.paper={level:state.level,modes:[...modes],total:state.groups.reduce((s,g)=>s+g.questions.length,0)};render();$("status").textContent=`已產生 ${state.paper.total} 題，逐題驗證完成${skipped.length?`；數型不適用而略過：${skipped.join("、")}`:""}。`}
-function render(){const out=$("output");out.innerHTML="";if(!state.paper||!state.groups.length){out.innerHTML='<div class="empty"><b>尚未產生練習卷</b>請選擇數型與單元後按「重新出題」。</div>';return}const teacher=$("version").value==="teacher",cols=$("columns").value,work={small:"10mm",medium:"16mm",large:"26mm"}[$("space").value],sheet=document.createElement("div");sheet.className=`sheet ${teacher?"teacher":"student"}`;sheet.style.setProperty("--work",work);sheet.innerHTML=`<div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>${CFG.title} 計算力練習（${{basic:"基礎",advanced:"進階",challenge:"挑戰"}[state.paper.level]}）</h2><span>班級：______　姓名：__________　日期：___／___　作答時間：___分___秒</span></div><p class="tip">${CFG.instruction}</p>`;let no=1;state.groups.forEach(g=>{const sec=document.createElement("section");sec.innerHTML=`<div class="sec">${g.unit.name}</div><p class="tip">${g.unit.tip}</p><div class="grid c${cols}"></div>`;const grid=sec.querySelector(".grid");g.questions.forEach(q=>{const item=document.createElement("div");item.className="prob";item.innerHTML=`<div class="q"><span class="no">(${no++})</span><span class="expr">${q.expr}</span></div><div class="work">原式＝<span class="ans">${q.answer}</span></div>`;grid.appendChild(item)});sheet.appendChild(sec)});out.appendChild(sheet);fit()}
+function render(){const out=$("output");out.innerHTML="";if(!state.paper||!state.groups.length){out.innerHTML='<div class="empty"><b>尚未產生練習卷</b>請選擇數型與單元後按「重新出題」。</div>';return}const teacher=$("version").value==="teacher",cols=$("columns").value,work={small:"10mm",medium:"16mm",large:"26mm"}[$("space").value],sheet=document.createElement("div");sheet.className=`sheet ${teacher?"teacher":"student"}`;sheet.style.setProperty("--work",work);sheet.innerHTML=`<div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>${CFG.title} 計算力練習（${{basic:"基礎",advanced:"進階",challenge:"挑戰"}[state.paper.level]}）</h2><span>班級：______　姓名：__________　日期：___／___　作答時間：___分___秒</span></div><p class="tip">${CFG.instruction}</p>`;let no=1;state.groups.forEach(g=>{const sec=document.createElement("section");sec.innerHTML=`<div class="sec">${g.unit.name}</div><p class="tip">${g.unit.tip}</p><div class="grid c${cols}"></div>`;const grid=sec.querySelector(".grid");g.questions.forEach(q=>{const item=document.createElement("div");item.className="prob";item.innerHTML=`<div class="q"><span class="no">(${no++})</span><span class="expr">${q.expr}</span></div><div class="work">${CFG.answerLabel??"原式＝"}<span class="ans">${q.answer}</span></div>`;grid.appendChild(item)});sheet.appendChild(sec)});out.appendChild(sheet);fit()}
 function fit(){if(matchMedia("print").matches)return;const sheet=document.querySelector(".sheet");if(sheet)sheet.style.zoom=Math.min(1,Math.max(.42,(innerWidth-16)/794))}
 build();document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.level)));document.querySelectorAll("[data-mode],#mixedNumber").forEach(c=>c.addEventListener("change",markChanged));document.querySelectorAll("[data-each]").forEach(b=>b.addEventListener("click",()=>setEach(Number(b.dataset.each))));$("generate").addEventListener("click",generate);$("print").addEventListener("click",()=>state.paper&&print());["version","columns","space"].forEach(id=>$(id).addEventListener("change",render));addEventListener("resize",fit);addEventListener("beforeprint",()=>{const s=document.querySelector(".sheet");if(s)s.style.zoom=1});addEventListener("afterprint",fit);generate();
 })();
