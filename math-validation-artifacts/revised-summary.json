@@ -14,20 +14,20 @@
   "legacyStillFailed": 0,
   "newFailuresOutsideLegacy": 0,
   "revised": {
-    "topics": 83,
-    "combinations": 2697,
-    "passed": 2697,
+    "topics": 84,
+    "combinations": 2715,
+    "passed": 2715,
     "failed": 0,
-    "safeQuestionCalls": 539400,
-    "samplingProduced": 539400,
-    "candidateGenCalls": 632550,
+    "safeQuestionCalls": 543000,
+    "samplingProduced": 543000,
+    "candidateGenCalls": 636150,
     "candidateNulls": 68822,
     "candidateVerifyFalse": 0,
     "candidateExceptions": 0,
     "efficiencyWarningUnits": 37,
     "efficiencyWarningCombinations": 82,
     "declaredBankCombinations": 8,
-    "paperCompleted": 2697,
+    "paperCompleted": 2715,
     "paperExhausted": 0
   }
 }
