@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["signed","正負數四則運算"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -556,7 +556,191 @@ function statisticsConfig(){
 
 /* g7 引擎（2026-09-24，Claude）：由 g7-drills.html 複製引擎，只換主題。
    難度定義：基礎＝小數值與單一步驟；進階＝多步驟並加入分數、小數；挑戰＝多項、括號或綜合應用。各主題的數值範圍與題型差異另列於 CFG.levels。 */
-const CONFIGS={numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
+function signedConfig(){
+ /* 國一 正負數四則運算（2026-09-27，Claude）。由舊的 g7-signed-numbers.html（百宏自製）移植進引擎：運算式樹、抽數與九個單元的出題邏輯照舊，
+    只換成引擎的難度／數型／帶分數介面與數字格式。單元：加法、減法、加減混合、乘法、除法、乘除混合、四則混合（挑戰級含乘方）、去多重括號、計算定律。
+    verify：用浮點數重新計算整個運算式（與有理數運算不同路徑）比對。 */
+ const unit=(id,name,tip,make)=>({id,name,tip,modes:["integer","fraction","decimal"],gen:ctx=>{
+  CTX={diff:ctx.level==="challenge"?3:ctx.level==="advanced"?2:1,types:[ctx.modes[0]==="integer"?"int":ctx.modes[0]==="fraction"?"frac":"dec"],mixed:!!ctx.mixed};
+  const e=make(); if(!e)return null; if(id!=="laws")ensureNeg(e);
+  const html=render(e,{mixed:CTX.mixed,dec:true},true),v=ev(e),fd=hasDecType(e),ans=fmtNum(v,{mixed:CTX.mixed,forceDec:fd});
+  if(CTX.types[0]==="frac"&&!hasFrac(e))return null; if(CTX.types[0]==="dec"&&!fd)return null;
+  return{expr:html+"＝",answer:ans,sig:html.replace(/<[^>]+>/g,""),verify:()=>{const fl=n=>n.t==="n"?n.v.n/n.v.d:n.t==="p"?Math.pow(fl(n.a),n.k):(x=>{const a=fl(n.a),b=fl(n.b);return n.op==="+"?a+b:n.op==="-"?a-b:n.op==="*"?a*b:a/b})();return Math.abs(fl(e)-v.n/v.d)<1e-9*Math.max(1,Math.abs(v.n/v.d))}};
+ }});
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const coin=(p=.5)=>Math.random()<p;
+const gcd=(a,b)=>{ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
+const sgn=()=>coin()?1:-1;
+
+/* ================= 分數（有理數） ================= */
+class F{
+  constructor(n,d=1){ if(d<0){n=-n;d=-d;} const g=gcd(n,d)||1; this.n=n/g; this.d=d/g; }
+  static of(x){ return x instanceof F?x:new F(x,1); }
+  add(o){ o=F.of(o); return new F(this.n*o.d+o.n*this.d,this.d*o.d); }
+  sub(o){ o=F.of(o); return new F(this.n*o.d-o.n*this.d,this.d*o.d); }
+  mul(o){ o=F.of(o); return new F(this.n*o.n,this.d*o.d); }
+  div(o){ o=F.of(o); return new F(this.n*o.d,this.d*o.n); }
+  neg(){ return new F(-this.n,this.d); }
+  pow(k){ let r=new F(1); for(let i=0;i<k;i++) r=r.mul(this); return r; }
+  isInt(){ return this.d===1; }
+  isZero(){ return this.n===0; }
+  sign(){ return Math.sign(this.n); }
+  abs(){ return new F(Math.abs(this.n),this.d); }
+  eq(o){ o=F.of(o); return this.n===o.n&&this.d===o.d; }
+  val(){ return this.n/this.d; }
+  isDec(){ let d=this.d; while(d%2===0) d/=2; while(d%5===0) d/=5; return d===1; }
+}
+/* 顯示：dec=true 時，若分母是 2、5 的次方就用小數呈現 */
+function fmtNum(f,opt={}){
+  const neg=f.n<0, a=f.abs(); let body;
+  if(a.isInt()) body=String(a.n);
+  else if((opt.forceDec||(opt.dec&&f.dec))&&a.isDec()) body=numHTML(R(a.n,a.d),"decimal");
+  else body=numHTML(R(a.n,a.d),"fraction",{mixed:!!opt.mixed});
+  return (neg?'−':'')+body;
+}
+
+/* ================= 運算式樹 ================= */
+/* node: {t:'n',v:F} | {t:'o',op:'+'|'-'|'*'|'/',a,b} | {t:'p',a,k} */
+const N=v=>({t:'n',v:F.of(v)});
+const O=(op,a,b)=>({t:'o',op,a,b});
+const P=(a,k)=>({t:'p',a,k});
+const chain=(op,arr)=>arr.slice(1).reduce((acc,x)=>O(op,acc,x),arr[0]);
+function ev(n){ if(n.t==='n') return n.v; if(n.t==='p') return ev(n.a).pow(n.k); const a=ev(n.a), b=ev(n.b); return n.op==='+'?a.add(b):n.op==='-'?a.sub(b):n.op==='*'?a.mul(b):a.div(b); }
+const prec=op=>(op==='+'||op==='-')?1:2;
+const OPSYM={'+':'＋','-':'−','*':'×','/':'÷'};
+const BR=[['(',')'],['〔','〕'],['{','}']];
+/* 括號深度：只算「分組括號」，負數自己的小括號不算 */
+function depth(n){ if(n.t==='n') return n.v.n<0?0:-1; if(n.t==='p') return depth(n.a); let dd=-1; for(const c of [n.a,n.b]){ if(c.t==='o'&&needBr(n,c,c===n.b)) dd=Math.max(dd,depth(c)+1); else dd=Math.max(dd,depth(c)); } return dd; }
+function needBr(parent,child,isRight){ if(child.t!=='o') return false; const pp=prec(parent.op), pc=prec(child.op); return pc<pp||(pc===pp&&isRight&&(parent.op==='-'||parent.op==='/')); }
+function wrap(html,lvl){ const [l,r]=BR[Math.min(lvl,2)]; return `${l}${html}${r}`; }
+function render(n,opt,first=false){
+  if(n.t==='n'){ const s=fmtNum(n.v,opt); return (n.v.n<0&&!(first&&opt.bareLead))?wrap(s,0):s; }
+  if(n.t==='p'){ const inner=n.a.t==='n'?(n.a.v.n<0||!n.a.v.isInt()?wrap(fmtNum(n.a.v,opt),0):fmtNum(n.a.v,opt)):wrap(render(n.a,opt),depth(n.a)+1); return `${inner}<sup>${n.k}</sup>`; }
+  const L=render(n.a,opt,first), R=render(n.b,opt);
+  const lw=needBr(n,n.a,false)?wrap(L,depth(n.a)+1):L, rw=needBr(n,n.b,true)?wrap(R,depth(n.b)+1):R;
+  return `${lw}<span style="margin:0 .18em">${OPSYM[n.op]}</span>${rw}`;
+}
+function termCount(n){ return n.t==='n'?1:n.t==='p'?termCount(n.a):termCount(n.a)+termCount(n.b); }
+function hasFrac(n){ return n.t==='n'?!n.v.isInt():n.t==='p'?hasFrac(n.a):hasFrac(n.a)||hasFrac(n.b); }
+
+/* ================= 抽數 ================= */
+let CTX={diff:2,types:['int'],mixed:true};
+function rInt(mag){ let v=rnd(1,mag); return v; }
+const MAG={1:{add:30,mul:9,big:60},2:{add:120,mul:12,big:500},3:{add:600,mul:25,big:2000}};
+/* 取一個非零數；type: int|frac|dec */
+function num(type,kind='add',allowMixed=CTX.mixed){
+  const m=MAG[CTX.diff];
+  if(type==='int'){ const mag=kind==='mul'?m.mul:kind==='big'?m.big:m.add; return new F(sgn()*rInt(mag)); }
+  if(type==='dec'){ const places=kind==='mul'?(CTX.diff===3&&coin(.3)?2:1):(CTX.diff===1?1:rnd(1,2)); const scale=Math.pow(10,places); const mag=kind==='mul'?(CTX.diff===1?5:9):(CTX.diff===1?20:200); let v=rnd(1,mag*scale); if(v%10===0) v+=1; const f=new F(sgn()*v,scale); f.dec=true; return f; }
+  // 分數
+  const dens=CTX.diff===1?[2,3,4,5,6,8,9,10]:CTX.diff===2?[2,3,4,5,6,7,8,9,10,12,15]:[3,4,5,6,7,8,9,11,12,15,16,18,20,25,27];
+  const d=pick(dens); let n=rnd(1,d-1); if(gcd(n,d)!==1){ n=1; }
+  const ip=allowMixed&&coin(CTX.diff===1?.25:.45)?rnd(1,CTX.diff===3?9:5):0;
+  return new F(sgn()*(ip*d+n),d);
+}
+const T=()=>pick(CTX.types);
+/* 一題內的數字類型：整數題全整數；分數題可混一兩個整數；小數題可混整數 */
+function typeSet(k,t=T()){ if(t==='int') return Array(k).fill('int'); const arr=Array(k).fill(t); if(k>=3&&coin(.5)) arr[rnd(0,k-1)]='int'; return arr; }
+
+/* ================= 各單元出題 ================= */
+const posOf=n=>n; // 佔位
+function makeChain(ops,k){ const ts=typeSet(k); const nums=ts.map(t=>N(num(t,ops.includes('*')||ops.includes('/')?'mul':'add'))); let e=nums[0]; for(let i=1;i<k;i++) e=O(ops[(i-1)%ops.length],e,nums[i]); return e; }
+/* 整數除法要整除：用「商×除數」反推被除數 */
+function intDivChain(k,mixOps){ // k 個數
+  const m=MAG[CTX.diff]; let ops=[]; for(let i=1;i<k;i++) ops.push(mixOps?pick(['*','/','/']):'/');
+  // 由右往左：先決定每個除數，最後被除數 = 商 × 全部除數 / 乘數…直接用模擬：從一個商開始逆推
+  let q=new F(sgn()*rnd(1,m.mul)); const parts=[]; // 逐步：value_i = value_{i-1} op x_i；反推 value_0
+  const xs=ops.map(op=>new F(sgn()*rnd(2,m.mul)));
+  let v=q; for(let i=ops.length-1;i>=0;i--){ v=ops[i]==='/'?v.mul(xs[i]):v.div(xs[i]); }
+  // v 可能非整數（若中間有乘），則重抽
+  if(!v.isInt()||Math.abs(v.n)>m.big*4||v.isZero()) return null;
+  let e=N(v); ops.forEach((op,i)=>e=O(op,e,N(xs[i]))); return e;
+}
+const GEN={
+  add:{name:'加法',tip:'同號相加：絕對值相加，冠上原來的符號。異號相加：絕對值相減，冠上絕對值較大者的符號。',
+    make(){ const k=CTX.diff===1?2:coin(.6)?2:3; return makeChain(['+'],k); }},
+  sub:{name:'減法',tip:'減去一個數，等於加上它的相反數：a − b = a + (−b)，a − (−b) = a + b。',
+    make(){ const k=CTX.diff===1?2:coin(.6)?2:3; return makeChain(['-'],k); }},
+  addsub:{name:'加減混合',tip:'先用符號法則去括號，再由左而右計算；或把正數、負數分別合併，再求（正數之和）＋（負數之和）。',
+    make(){ const k=CTX.diff===1?3:CTX.diff===2?rnd(3,4):rnd(4,5); const ts=typeSet(k); const nums=ts.map(t=>N(num(t))); let e=nums[0]; for(let i=1;i<k;i++) e=O(coin()?'+':'-',e,nums[i]); return e; }},
+  mul:{name:'乘法',tip:'先數負號的個數：奇數個負數相乘得負，偶數個得正；再把絕對值相乘。分數先約分再乘。',
+    make(){ const k=CTX.diff===1?2:coin(.5)?3:rnd(3,4); const t=T();
+      if(t==='frac'){ // 造可以約分的分數
+        const nums=[]; for(let i=0;i<k;i++) nums.push(num('frac','mul')); if(k>=3&&coin(.5)) nums[rnd(0,k-1)]=new F(sgn()*rnd(2,12)); return chain('*',nums.map(N)); }
+      const ts=typeSet(k,t); if(t==='dec'){ let c=0; for(let i=0;i<k;i++){ if(ts[i]==='dec'&&++c>2) ts[i]='int'; } } const nums=ts.map(tt=>N(num(tt,'mul'))); if(CTX.diff>=2&&t==='int'&&coin(.12)) nums[rnd(1,k-1)]=N(0); return chain('*',nums); }},
+  div:{name:'除法',tip:'同號相除得正、異號相除得負。除以一個數等於乘以它的倒數；0 除以任何不為 0 的數都是 0，除數不可為 0。',
+    make(){ const t=T(); const k=CTX.diff===1?2:coin(.7)?2:3;
+      if(t==='int'){ for(let i=0;i<50;i++){ const e=intDivChain(k,false); if(e) return e; } }
+      if(t==='dec'){ const q=num('dec','mul'), b=new F(sgn()*rnd(2,CTX.diff===1?9:12)); const a=q.mul(b); a.dec=true; return O('/',N(a),N(b)); }
+      const nums=[]; for(let i=0;i<k;i++) nums.push(num('frac','mul')); if(coin(.3)) nums[rnd(0,k-1)]=new F(sgn()*rnd(2,9)); return chain('/',nums.map(N)); }},
+  muldiv:{name:'乘除混合',tip:'有括號先算括號內。先數整個算式有幾個負數決定結果的正負，再把除法改成乘倒數，連乘計算。',
+    make(){ const t=T(); const k=CTX.diff===1?3:rnd(3,4);
+      if(t==='int'){ for(let i=0;i<80;i++){ let e=intDivChain(k,true); if(!e) continue; if(CTX.diff>=2&&coin(.35)){ // 加一組括號 a ÷ 〔b × c〕
+          const a=new F(sgn()*rnd(2,9)), b=new F(sgn()*rnd(2,9)); e=O('/',N(a.mul(b).mul(new F(sgn()*rnd(1,MAG[CTX.diff].mul)))),O('*',N(a),N(b))); } if(!ev(e).isInt()) continue; return e; } }
+      const nums=[]; for(let i=0;i<k;i++) nums.push(t==='dec'?(i<2?num('dec','mul'):new F(sgn()*rnd(2,9))):num('frac','mul')); if(coin(.3)) nums[rnd(0,k-1)]=new F(sgn()*rnd(2,9));
+      let e=N(nums[0]); for(let i=1;i<k;i++){ const op=coin()?'*':'/'; if(CTX.diff>=2&&i===k-2&&coin(.4)){ e=O(op,e,O(coin()?'*':'/',N(nums[i]),N(nums[i+1]))); break; } e=O(op,e,N(nums[i])); }
+      if(t==='dec'&&!ev(e).isDec()) return this.make(); return e; }},
+  four:{name:'四則混合',tip:'先乘除、後加減；有括號先算括號內（小括號→中括號→大括號）。',
+    make(){ const t=T(); const usePow=CTX.diff>=3&&coin(.35);
+      const mk=k=>N(num(t,k));
+      const tmpl=[
+        ()=>O(coin()?'+':'-',O('*',mk('mul'),mk('mul')),O('/',mk('mul'),mk('mul'))),                 // a×b ± c÷d
+        ()=>O('-',mk(),O('*',mk('mul'),O('-',mk(),mk()))),                                            // a − b×(c−d)
+        ()=>O('+',mk(),O('*',mk('mul'),O('-',mk(),O('*',mk('mul'),mk('mul'))))),                      // a + b×〔c − d×e〕
+        ()=>O('-',O('/',O('+',mk(),mk()),mk('mul')),O('*',mk('mul'),mk('mul'))),                      // (a+b)÷c − d×e
+        ()=>O('-',mk(),O('*',mk('mul'),O('+',mk('mul'),O('/',mk('mul'),mk('mul'))))),                 // a − b×〔c + d÷e〕
+        ()=>O('+',O('/',O('+',mk(),mk()),mk('mul')),O('/',O('-',mk(),mk()),mk('mul'))),               // (a+b)÷c + (d−e)÷f
+      ];
+      const pool=CTX.diff===1?tmpl.slice(0,2):CTX.diff===2?tmpl.slice(0,4):tmpl;
+      for(let i=0;i<400;i++){ let e=pick(pool)(); if(usePow) e=injectPow(e); const v=ev(e); if(!okValue(e,v,t)) continue; return e; }
+      return O('+',O('*',N(3),N(-2)),N(5)); }},
+  brackets:{name:'去多重括號',tip:'先算小括號，再算中括號，最後大括號。也可以先用括號法則去括號：−(−a)＝＋a、−(＋a)＝−a、＋(−a)＝−a。',
+    make(){ const t=T(); const mk=()=>N(num(t));
+      const tmpl=[
+        ()=>O('-',O('-',mk(),mk()),O('-',mk(),O('-',mk(),mk()))),                                                    // 〔a−b〕−{c−〔d−e〕}
+        ()=>O('-',O('+',mk(),mk()),O('-',mk(),mk())),                                                                // 〔a+b〕−〔c−d〕
+        ()=>O('-',mk(),O('-',O('+',mk(),mk()),O('-',mk(),mk()))),                                                    // a−〔(b+c)−(d−e)〕
+        ()=>O('-',mk(),O('-',O('-',mk(),mk()),O('-',mk(),mk()))),                                                    // a−{(b−c)−〔d−e〕}
+        ()=>O('+',O('-',O('-',mk(),mk()),O('+',mk(),mk())),O('-',mk(),mk())),                                        // 〔(a−b)−(c+d)〕+(e−f)
+      ];
+      const pool=CTX.diff===1?tmpl.slice(1,3):tmpl;
+      for(let i=0;i<200;i++){ const e=pick(pool)(); if(t==='dec'&&!ev(e).isDec()) continue; return e; } return tmpl[1](); }},
+  laws:{name:'計算定律',tip:'交換律、結合律只適用於加法和乘法；分配律：甲×(乙±丙)＝甲×乙±甲×丙，看到相同的因數就可以提出來。',
+    make(){ const t=T(); const kind=pick(t==='int'?['dist','dist2','assocMul','assocAdd']:['dist','dist2','distFrac']);
+      if(kind==='assocAdd'){ const H=pick([100,200,300,500,1000]); const a=rnd(11,H-11), c=rnd(11,H-11); const nums=[a,H-a,c,H-c].map(x=>new F(x)); if(coin(.4)) nums[rnd(0,3)]=nums[rnd(0,3)].neg(); return chain('+',[nums[0],nums[2],nums[1],nums[3]].map(N)); }
+      if(kind==='assocMul'){ const pairs=pick([[[2,5]],[[4,25]],[[8,125]],[[2,5],[4,25]],[[8,125],[2,5]]]); let fs=[]; pairs.forEach(p=>fs.push(...p)); fs.push(rnd(2,9)); fs=fs.sort(()=>Math.random()-.5).map(x=>new F(sgn()*x)); return chain('*',fs.map(N)); }
+      if(kind==='distFrac'){ const d=pick([7,9,11,13,17,23,57,123]); const b=rnd(1,d-1), c=d-b; const k=num('frac','mul',false); return O('+',O('*',N(new F(b,d)),N(k)),O('*',N(new F(c,d)),N(k))); }
+      // 分配律：a×b + a×c (整數或分數)
+      const a=t==='int'?new F(sgn()*pick([12,25,37,47,98,123,532,3.5*2])):num(t,'mul');
+      const H=pick([10,100,20,50]); const b=rnd(1,H-1), c=H-b;
+      if(kind==='dist'){ const ops=coin()?['+']:['-']; const B=new F(coin()?b:H+b), C=ops[0]==='+'?new F(c):new F(B.n-H); return O(ops[0],O('*',N(a),N(B)),O('*',N(a),N(C))); }
+      // dist2: 三項  a×b + a×c − a×d
+      const B=new F(rnd(11,40)), C=new F(rnd(11,40)), D=new F(B.n+C.n-H); return O('-',O('+',O('*',N(a),N(B)),O('*',N(a),N(C))),O('*',N(a),N(D))); }},
+};
+function injectPow(e){ // 把某個乘法因數換成 (−k)^2 或 (−k)^3
+  const cands=[]; (function walk(n,par,key){ if(n.t==='o'){ walk(n.a,n,'a'); walk(n.b,n,'b'); } else if(n.t==='n'&&par&&par.op!=='/'&&n.v.isInt()&&Math.abs(n.v.n)<=5&&n.v.n!==0) cands.push({par,key}); })(e,null,null);
+  if(!cands.length) return e; const c=pick(cands); const base=new F(sgn()*rnd(2,4)); c.par[c.key]=P(N(base),coin()?2:3); return e;
+}
+function okValue(e,v,t){ if(v.isZero()&&coin(.8)) return false;
+  // 檢查每個除法都「乾淨」：整數題要整除；小數題結果要是有限小數
+  let ok=true; (function walk(n){ if(!ok||n.t==='n') return; if(n.t==='p'){ walk(n.a); return; } if(n.op==='/'){ const d=ev(n.b); if(d.isZero()) { ok=false; return; } const q=ev(n.a).div(d); if(t==='int'&&!q.isInt()) ok=false; if(t==='dec'&&!q.isDec()) ok=false; } walk(n.a); walk(n.b); })(e);
+  if(!ok) return false; if(t==='int'&&Math.abs(v.n)>5000) return false; return true;
+}
+
+function ensureNeg(e){ const leaves=[]; (function w(n){ if(n.t==='n') leaves.push(n); else if(n.t==='p') w(n.a); else { w(n.a); w(n.b); } })(e);
+  if(leaves.some(l=>l.v.n<0)) return; const cands=leaves.filter(l=>!l.v.isZero()); if(!cands.length) return; const l=pick(cands); const nv=l.v.neg(); nv.dec=l.v.dec; l.v=nv; }
+function hasDecType(e){ // 題目裡若出現小數，答案就用小數呈現
+  let has=false; (function w(n){ if(n.t==='n'){ if(n.v.dec) has=true; } else if(n.t==='p') w(n.a); else { w(n.a); w(n.b); } })(e); return has;
+}
+
+ const U=[["add","加法"],["sub","減法"],["addsub","加減混合"],["mul","乘法"],["div","除法"],["muldiv","乘除混合"],["four","四則混合"],["brackets","去多重括號"],["laws","計算定律"]].map(([k,n])=>unit(k,n,GEN[k].tip,()=>GEN[k].make()));
+ return{title:"正負數四則運算",symbol:"±",subtitle:"加法・減法・加減混合・乘法・除法・乘除混合・四則混合・去多重括號・計算定律",instruction:"求下列各式的值，把過程寫在「原式＝」後面。",modes:["integer","fraction","decimal"],mixed:true,
+  levels:{basic:"基礎：兩數運算、三數加減與乘除混合、簡單四則與去括號、分配律。",advanced:"進階：三到四個數、含括號的乘除、四則混合四種版型、多重括號、結合律與分配律。",challenge:"挑戰：四到五個數、四則混合六種版型且含乘方、五種多重括號版型、更大的數與分母。"},
+  units:U,presets:{basic:{add:6,sub:6,addsub:4,mul:4,div:4},advanced:{add:4,sub:4,addsub:4,mul:4,div:4,muldiv:4,four:3,brackets:2,laws:2},challenge:{addsub:4,mul:3,div:3,muldiv:4,four:4,brackets:3,laws:3}}};
+}
+
+const CONFIGS={signed:signedConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

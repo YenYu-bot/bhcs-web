@@ -1,0 +1,243 @@
+[basic/add/integer] (−25) ＋ (−28)＝  ⇒ −53
+[basic/add/integer] (−5) ＋ 30＝  ⇒ 25
+[basic/add/integer] (−4) ＋ 22＝  ⇒ 18
+[basic/add/fraction] (1/10) ＋ (−(1/8))＝  ⇒ −(1/40)
+[basic/add/fraction] (−(1/4)) ＋ (1/6)＝  ⇒ −(1/12)
+[basic/add/fraction] (−(1/4)) ＋ (3/8)＝  ⇒ (1/8)
+[basic/add/decimal] (−10.2) ＋ (−19.7)＝  ⇒ −29.9
+[basic/add/decimal] (−18.3) ＋ (−0.5)＝  ⇒ −18.8
+[basic/add/decimal] (−10.5) ＋ (−10.7)＝  ⇒ −21.2
+[basic/sub/integer] 22 − (−16)＝  ⇒ 38
+[basic/sub/integer] (−5) − (−24)＝  ⇒ 19
+[basic/sub/integer] (−6) − 28＝  ⇒ −34
+[basic/sub/fraction] (−(4/9)) − (−(1/3))＝  ⇒ −(1/9)
+[basic/sub/fraction] (−(1/4)) − (1/2)＝  ⇒ −(3/4)
+[basic/sub/fraction] (1/9) − (−(2/9))＝  ⇒ (1/3)
+[basic/sub/decimal] 0.2 − (−2.2)＝  ⇒ 2.4
+[basic/sub/decimal] (−8.1) − 18.4＝  ⇒ −26.5
+[basic/sub/decimal] 8.2 − (−1.6)＝  ⇒ 9.8
+[basic/addsub/integer] (−3) ＋ (−29) ＋ 30＝  ⇒ −2
+[basic/addsub/integer] 19 ＋ (−16) ＋ 19＝  ⇒ 22
+[basic/addsub/integer] (−13) − 12 ＋ 6＝  ⇒ −19
+[basic/addsub/fraction] (−13) − (1/2) − (−(1/3))＝  ⇒ −(79/6)
+[basic/addsub/fraction] (−(3/4)) − (−(1/2)) ＋ (−(2/3))＝  ⇒ −(11/12)
+[basic/addsub/fraction] (−(2/5)) ＋ (−30) ＋ (−(1/6))＝  ⇒ −(917/30)
+[basic/addsub/decimal] (−8.2) ＋ 15 − (−16.5)＝  ⇒ 23.3
+[basic/addsub/decimal] 11.1 − (−9.1) − (−27)＝  ⇒ 47.2
+[basic/addsub/decimal] (−14.9) − (−6) ＋ (−8.1)＝  ⇒ −17
+[basic/mul/integer] 3 × (−7)＝  ⇒ −21
+[basic/mul/integer] 2 × (−9)＝  ⇒ −18
+[basic/mul/integer] (−7) × 4＝  ⇒ −28
+[basic/mul/fraction] (1/6) × (−(7/10))＝  ⇒ −(7/60)
+[basic/mul/fraction] (1/6) × (−(5/6))＝  ⇒ −(5/36)
+[basic/mul/fraction] (2/5) × (−(5/8))＝  ⇒ −(1/4)
+[basic/mul/decimal] (−1.8) × 0.6＝  ⇒ −1.08
+[basic/mul/decimal] (−0.3) × 4.4＝  ⇒ −1.32
+[basic/mul/decimal] 4.9 × (−0.1)＝  ⇒ −0.49
+[basic/div/integer] 36 ÷ (−6)＝  ⇒ −6
+[basic/div/integer] (−14) ÷ (−7)＝  ⇒ 2
+[basic/div/integer] (−42) ÷ 6＝  ⇒ −7
+[basic/div/fraction] (1/6) ÷ (−(1/3))＝  ⇒ −(1/2)
+[basic/div/fraction] (1/10) ÷ (−(1/3))＝  ⇒ −(3/10)
+[basic/div/fraction] (−(1/6)) ÷ (1/9)＝  ⇒ −(3/2)
+[basic/div/decimal] (−18.2) ÷ 7＝  ⇒ −2.6
+[basic/div/decimal] (−9.9) ÷ 3＝  ⇒ −3.3
+[basic/div/decimal] (−2.8) ÷ 2＝  ⇒ −1.4
+[basic/muldiv/integer] (−72) ÷ (−3) ÷ (−3)＝  ⇒ −8
+[basic/muldiv/integer] 9 × (−6) ÷ 9＝  ⇒ −6
+[basic/muldiv/integer] (−50) ÷ 5 ÷ 5＝  ⇒ −2
+[basic/muldiv/fraction] (3/8) × (−(5/9)) ÷ (3/4)＝  ⇒ −(5/18)
+[basic/muldiv/fraction] (1/3) ÷ (−(1/8)) × (2/3)＝  ⇒ −(16/9)
+[basic/muldiv/fraction] (9/10) × (7/9) ÷ (−2)＝  ⇒ −(7/20)
+[basic/muldiv/decimal] (−1.7) × (−3.2) × (−5)＝  ⇒ −27.2
+[basic/muldiv/decimal] (−1.5) × (−0.1) × (−4)＝  ⇒ −0.6
+[basic/muldiv/decimal] 0.8 × 3.3 × (−6)＝  ⇒ −15.84
+[basic/four/integer] (−10) − 2 × 〔(−7) − (−7)〕＝  ⇒ −10
+[basic/four/integer] 4 − (−7) × 〔(−27) − 6〕＝  ⇒ −227
+[basic/four/integer] (−15) − 2 × (27 − 9)＝  ⇒ −51
+[basic/four/fraction] (−(2/3)) × (1/2) ＋ (1/2) ÷ (−(1/9))＝  ⇒ −(29/6)
+[basic/four/fraction] (1/9) − (−(1/2)) × 〔(3/10) − (−(1/4))〕＝  ⇒ (139/360)
+[basic/four/fraction] (−(9/10)) × (1/10) − (9/10) ÷ (1/10)＝  ⇒ −(909/100)
+[basic/four/decimal] 1.8 − 4.2 × 〔(−3.8) − (−3.6)〕＝  ⇒ 2.64
+[basic/four/decimal] (−8.5) − (−4.8) × 〔7.1 − (−6.4)〕＝  ⇒ 56.3
+[basic/four/decimal] (−17.3) − 0.3 × 〔(−17.3) − 18.9〕＝  ⇒ −6.44
+[basic/brackets/integer] 30 − {23 ＋ 9 − 〔(−19) − 1〕}＝  ⇒ −22
+[basic/brackets/integer] (−23) − {(−13) ＋ 24 − 〔(−29) − 11〕}＝  ⇒ −74
+[basic/brackets/integer] (−22) − 〔18 ＋ 26 − (2 − 30)〕＝  ⇒ −94
+[basic/brackets/fraction] (3/8) ＋ (1/2) − 〔(−(7/10)) − (−(1/8))〕＝  ⇒ (29/20)
+[basic/brackets/fraction] (−(2/5)) ＋ (−(1/10)) − 〔(−(1/9)) − (−(3/4))〕＝  ⇒ −(41/36)
+[basic/brackets/fraction] (−(5/9)) − {(−(2/3)) ＋ (−(2/5)) − 〔(1/2) − (−(3/4))〕}＝  ⇒ (317/180)
+[basic/brackets/decimal] 18.4 ＋ 18.2 − 〔0.7 − (−0.2)〕＝  ⇒ 35.7
+[basic/brackets/decimal] 16.6 − {19.3 ＋ (−16.8) − 〔(−1.7) − (−10.4)〕}＝  ⇒ 22.8
+[basic/brackets/decimal] 4.1 ＋ (−2.9) − 〔(−14.9) − 2.2〕＝  ⇒ 18.3
+[basic/laws/integer] (−12) × 63 ＋ (−12) × 37＝  ⇒ −1200
+[basic/laws/integer] 820 ＋ 14 ＋ 180 ＋ 986＝  ⇒ 2000
+[basic/laws/integer] (−37) × 5 ＋ (−37) × 15＝  ⇒ −740
+[basic/laws/fraction] (1/3) × 31 ＋ (1/3) × 37 − (1/3) × 48＝  ⇒ (20/3)
+[basic/laws/fraction] (5/11) × (−(1/3)) ＋ (6/11) × (−(1/3))＝  ⇒ −(1/3)
+[basic/laws/fraction] (1/4) × 35 ＋ (1/4) × 12 − (1/4) × (−53)＝  ⇒ 25
+[basic/laws/decimal] 2.1 × 30 ＋ 2.1 × 29 − 2.1 × 39＝  ⇒ 42
+[basic/laws/decimal] (−0.2) × 20 ＋ (−0.2) × 30 − (−0.2) × (−50)＝  ⇒ −20
+[basic/laws/decimal] 3.7 × 20 ＋ 3.7 × 19 − 3.7 × (−61)＝  ⇒ 370
+[advanced/add/integer] (−19) ＋ 110＝  ⇒ 91
+[advanced/add/integer] (−7) ＋ 79 ＋ 27＝  ⇒ 99
+[advanced/add/integer] (−9) ＋ 23＝  ⇒ 14
+[advanced/add/fraction] (1/12) ＋ (−(1/15)) ＋ (3/10)＝  ⇒ (19/60)
+[advanced/add/fraction] (−(1/12)) ＋ (−(1/6))＝  ⇒ −(1/4)
+[advanced/add/fraction] (−(1/12)) ＋ (−(2/7))＝  ⇒ −(31/84)
+[advanced/add/decimal] 105.9 ＋ (−82.9)＝  ⇒ 23
+[advanced/add/decimal] (−151.45) ＋ (−86.3)＝  ⇒ −237.75
+[advanced/add/decimal] 112.8 ＋ (−104.9) ＋ 85＝  ⇒ 92.9
+[advanced/sub/integer] (−2) − 49＝  ⇒ −51
+[advanced/sub/integer] 89 − 3 − (−20)＝  ⇒ 106
+[advanced/sub/integer] 119 − 37 − (−29)＝  ⇒ 111
+[advanced/sub/fraction] (−(2/7)) − (4/9)＝  ⇒ −(46/63)
+[advanced/sub/fraction] (1/10) − (−(2/3)) − (−(2/3))＝  ⇒ (43/30)
+[advanced/sub/fraction] (5/8) − (−(11/15))＝  ⇒ (163/120)
+[advanced/sub/decimal] 33.9 − (−8.35) − 72.7＝  ⇒ −30.45
+[advanced/sub/decimal] 11.9 − (−24.96)＝  ⇒ 36.86
+[advanced/sub/decimal] 191.4 − (−186.11) − (−176.9)＝  ⇒ 554.41
+[advanced/addsub/integer] 27 ＋ 100 ＋ (−49) − 100＝  ⇒ −22
+[advanced/addsub/integer] (−115) ＋ 90 − (−19) − 66＝  ⇒ −72
+[advanced/addsub/integer] 36 − 2 − 49 ＋ (−18)＝  ⇒ −33
+[advanced/addsub/fraction] 29 − (1/5) ＋ (7/8) ＋ (−(5/7))＝  ⇒ (8109/280)
+[advanced/addsub/fraction] (−(1/2)) ＋ (3/8) − (−(2/3)) − (−(7/10))＝  ⇒ (149/120)
+[advanced/addsub/fraction] (−(5/7)) − (−(1/4)) − (−(4/7)) − (−(1/6))＝  ⇒ (23/84)
+[advanced/addsub/decimal] (−118.1) ＋ 108 ＋ 134.1＝  ⇒ 124
+[advanced/addsub/decimal] 50.55 ＋ 20 − (−118.5)＝  ⇒ 189.05
+[advanced/addsub/decimal] 198.3 − (−6.52) − (−188.32) − (−110.1)＝  ⇒ 503.24
+[advanced/mul/integer] (−3) × 3 × 7＝  ⇒ −63
+[advanced/mul/integer] 2 × (−3) × 7＝  ⇒ −42
+[advanced/mul/integer] 3 × 0 × (−6)＝  ⇒ 0
+[advanced/mul/fraction] (1/6) × (−(1/15)) × (−(1/6))＝  ⇒ (1/540)
+[advanced/mul/fraction] (1/2) × (2/3) × 10 × (−(1/15))＝  ⇒ −(2/9)
+[advanced/mul/fraction] (−(1/10)) × (−(5/12)) × (2/3) × (3/4)＝  ⇒ (1/48)
+[advanced/mul/decimal] (−1) × (−4.3) × 7.5＝  ⇒ 32.25
+[advanced/mul/decimal] (−5) × 1.1 × 5.9＝  ⇒ −32.45
+[advanced/mul/decimal] (−2.2) × (−5.3) × 2＝  ⇒ 23.32
+[advanced/div/integer] 25 ÷ (−5)＝  ⇒ −5
+[advanced/div/integer] (−22) ÷ (−2)＝  ⇒ 11
+[advanced/div/integer] (−360) ÷ (−6) ÷ (−12)＝  ⇒ −5
+[advanced/div/fraction] (−(1/3)) ÷ (−(8/15))＝  ⇒ (5/8)
+[advanced/div/fraction] (1/4) ÷ (2/5) ÷ (−(1/6))＝  ⇒ −(15/4)
+[advanced/div/fraction] (1/6) ÷ (−(1/2)) ÷ (13/15)＝  ⇒ −(5/13)
+[advanced/div/decimal] (−3) ÷ (−6)＝  ⇒ 0.5
+[advanced/div/decimal] 48.6 ÷ (−9)＝  ⇒ −5.4
+[advanced/div/decimal] (−49.5) ÷ 11＝  ⇒ −4.5
+[advanced/muldiv/integer] (−54) ÷ 〔(−9) × 6〕＝  ⇒ 1
+[advanced/muldiv/integer] (−480) ÷ 〔6 × (−8)〕＝  ⇒ 10
+[advanced/muldiv/integer] (−528) ÷ 11 ÷ 3 ÷ (−8)＝  ⇒ 2
+[advanced/muldiv/fraction] (−2) × (−(1/10)) × (−(1/4)) ÷ (1/12)＝  ⇒ −(3/5)
+[advanced/muldiv/fraction] (5/6) ÷ (2/5) × (−(4/7)) ÷ (−(5/12))＝  ⇒ (20/7)
+[advanced/muldiv/fraction] (2/3) ÷ (4/5) × (2/7) × (−5)＝  ⇒ −(25/21)
+[advanced/muldiv/decimal] (−8.7) ÷ (−4.5) × 9 × 5＝  ⇒ 87
+[advanced/muldiv/decimal] 7.5 × (−2.4) ÷ 2＝  ⇒ −9
+[advanced/muldiv/decimal] 8.1 × (−1.4) × 2 ÷ 9＝  ⇒ −2.52
+[advanced/four/integer] (−33) − (−8) × 〔89 − (−8)〕＝  ⇒ 743
+[advanced/four/integer] 94 ＋ (−11) × 〔(−55) − 8 × 6〕＝  ⇒ 1227
+[advanced/four/integer] (−54) ＋ 5 × 〔(−108) − 10 × 2〕＝  ⇒ −694
+[advanced/four/fraction] (11/15) ＋ (−(1/2)) × ((1/2) − (1/3) × (1/3))＝  ⇒ (97/180)
+[advanced/four/fraction] (1/2) − (−(1/6)) × 〔(−(13/15)) − (−(1/3))〕＝  ⇒ (37/90)
+[advanced/four/fraction] ((7/12) ＋ (3/8)) ÷ (−(7/12)) − (−(1/2)) × (1/15)＝  ⇒ −(169/105)
+[advanced/four/decimal] (−84.31) ＋ (−8.2) × 〔(−105.3) − (−6.8) × 0.3〕＝  ⇒ 762.422
+[advanced/four/decimal] (−38.1) ＋ 8.1 × (145.42 − 5.9 × 1.8)＝  ⇒ 1053.78
+[advanced/four/decimal] 196.37 ＋ 3.5 × 〔197.96 − (−0.1) × 6.9〕＝  ⇒ 891.645
+[advanced/brackets/integer] 95 − {(−21) ＋ 52 − 〔21 − (−4)〕}＝  ⇒ 89
+[advanced/brackets/integer] (−35) − {(−71) ＋ (−94) − 〔(−1) − 78〕}＝  ⇒ 51
+[advanced/brackets/integer] (−10) − 90 − 〔78 ＋ (−17)〕 ＋ (−21) − (−120)＝  ⇒ −62
+[advanced/brackets/fraction] (−(1/6)) − (−(2/7)) − 〔(6/7) − ((8/9) − (5/8))〕＝  ⇒ −(239/504)
+[advanced/brackets/fraction] (−(3/7)) − {(1/2) ＋ (4/5) − 〔(−(1/2)) − (−(7/10))〕}＝  ⇒ −(107/70)
+[advanced/brackets/fraction] (−(1/2)) − {(−(1/2)) − (−(1/3)) − 〔(1/6) − (−(3/4))〕}＝  ⇒ (7/12)
+[advanced/brackets/decimal] (−48.9) − {75.27 ＋ 4.03 − 〔(−75.34) − 24.08〕}＝  ⇒ −227.62
+[advanced/brackets/decimal] (−167.6) − (−0.5) − 〔(−184.2) ＋ 84.6〕 ＋ 104.7 − 152.7＝  ⇒ −115.5
+[advanced/brackets/decimal] 110.52 − (−65.26) − 〔(−192.1) − (157.1 − 83.6)〕＝  ⇒ 441.38
+[advanced/laws/integer] 452 ＋ 58 ＋ 48 ＋ 442＝  ⇒ 1000
+[advanced/laws/integer] (−125) × (−8) × 2 × (−5) × 9＝  ⇒ −90000
+[advanced/laws/integer] (−123) × 27 ＋ (−123) × 27 − (−123) × 4＝  ⇒ −6150
+[advanced/laws/fraction] (3/7) × (−(1/2)) ＋ (4/7) × (−(1/2))＝  ⇒ −(1/2)
+[advanced/laws/fraction] (3/8) × 31 ＋ (3/8) × 40 − (3/8) × (−29)＝  ⇒ (75/2)
+[advanced/laws/fraction] (1/4) × 30 ＋ (1/4) × 25 − (1/4) × (−45)＝  ⇒ 25
+[advanced/laws/decimal] (−0.9) × 22 ＋ (−0.9) × 32 − (−0.9) × 44＝  ⇒ −9
+[advanced/laws/decimal] (−1.1) × 31 ＋ (−1.1) × 22 − (−1.1) × 33＝  ⇒ −22
+[advanced/laws/decimal] 8.1 × 31 ＋ 8.1 × 29 − 8.1 × (−40)＝  ⇒ 810
+[challenge/add/integer] (−428) ＋ (−14)＝  ⇒ −442
+[challenge/add/integer] (−498) ＋ (−586)＝  ⇒ −1084
+[challenge/add/integer] 342 ＋ (−546)＝  ⇒ −204
+[challenge/add/fraction] (−(1/18)) ＋ (1/16)＝  ⇒ (1/144)
+[challenge/add/fraction] (−(1/12)) ＋ (−(2/3))＝  ⇒ −(3/4)
+[challenge/add/fraction] (−(1/20)) ＋ (1/18) ＋ (1/9)＝  ⇒ (7/60)
+[challenge/add/decimal] (−35.88) ＋ (−36.59)＝  ⇒ −72.47
+[challenge/add/decimal] (−26.37) ＋ 196.11＝  ⇒ 169.74
+[challenge/add/decimal] (−98.1) ＋ 399 ＋ 176.3＝  ⇒ 477.2
+[challenge/sub/integer] 502 − (−36)＝  ⇒ 538
+[challenge/sub/integer] 220 − 71 − (−178)＝  ⇒ 327
+[challenge/sub/integer] 333 − 56 − (−557)＝  ⇒ 834
+[challenge/sub/fraction] (−17) − (1/16) − (1/27)＝  ⇒ −(7387/432)
+[challenge/sub/fraction] (−(8/15)) − (−356) − (4/5)＝  ⇒ (1064/3)
+[challenge/sub/fraction] (−(1/6)) − (1/18) − (6/7)＝  ⇒ −(68/63)
+[challenge/sub/decimal] 186.1 − (−19.6)＝  ⇒ 205.7
+[challenge/sub/decimal] (−184.5) − (−157.7)＝  ⇒ −26.8
+[challenge/sub/decimal] 79.01 − (−48.1) − 167.4＝  ⇒ −40.29
+[challenge/addsub/integer] 72 − (−284) − 347 ＋ (−536)＝  ⇒ −527
+[challenge/addsub/integer] (−107) ＋ (−185) − 532 − 32 − 308＝  ⇒ −1164
+[challenge/addsub/integer] (−450) ＋ 536 ＋ 88 ＋ 66 ＋ (−86)＝  ⇒ 154
+[challenge/addsub/fraction] (1/9) ＋ (−(16/25)) − (−36) − (−(5/12))＝  ⇒ (32299/900)
+[challenge/addsub/fraction] (−(4/5)) ＋ (−(1/6)) ＋ (20/27) ＋ (−(14/25)) − (−(13/18))＝  ⇒ −(43/675)
+[challenge/addsub/fraction] (14/27) − (−(11/18)) − (−(19/27)) ＋ (10/11) − (−484)＝  ⇒ (32125/66)
+[challenge/addsub/decimal] 158.3 ＋ 165.17 ＋ 267 − (−9.96) − 120.7＝  ⇒ 479.73
+[challenge/addsub/decimal] (−158.6) ＋ 520 − (−7.75) − 77.8＝  ⇒ 291.35
+[challenge/addsub/decimal] 105.3 − 175.92 − (−119.2) − (−70)＝  ⇒ 118.58
+[challenge/mul/integer] 10 × 0 × (−9) × 3＝  ⇒ 0
+[challenge/mul/integer] (−11) × 0 × 22＝  ⇒ 0
+[challenge/mul/integer] (−18) × (−9) × (−11)＝  ⇒ −1782
+[challenge/mul/fraction] (1/12) × (−11) × (1/9)＝  ⇒ −(11/108)
+[challenge/mul/fraction] (−9) × (−(2/3)) × (−(1/18))＝  ⇒ −(1/3)
+[challenge/mul/fraction] (3/8) × (−(1/6)) × (−(1/12))＝  ⇒ (1/192)
+[challenge/mul/decimal] 5.1 × (−2.2) × 9＝  ⇒ −100.98
+[challenge/mul/decimal] 3.6 × (−1.9) × 11＝  ⇒ −75.24
+[challenge/mul/decimal] (−5.1) × 2.9 × (−14) × (−1)＝  ⇒ −207.06
+[challenge/div/integer] (−504) ÷ 21＝  ⇒ −24
+[challenge/div/integer] (−1008) ÷ 7 ÷ (−9)＝  ⇒ 16
+[challenge/div/integer] 96 ÷ (−6)＝  ⇒ −16
+[challenge/div/fraction] (−(11/20)) ÷ (1/5)＝  ⇒ −(11/4)
+[challenge/div/fraction] (2/5) ÷ (−(11/15)) ÷ (1/11)＝  ⇒ −6
+[challenge/div/fraction] (−4) ÷ (1/4)＝  ⇒ −16
+[challenge/div/decimal] (−4.2) ÷ 2＝  ⇒ −2.1
+[challenge/div/decimal] 18.3 ÷ (−3)＝  ⇒ −6.1
+[challenge/div/decimal] (−7.2) ÷ (−2)＝  ⇒ 3.6
+[challenge/muldiv/integer] 459 ÷ (−3) ÷ (−9)＝  ⇒ 17
+[challenge/muldiv/integer] (−546) × 7 ÷ 13 ÷ 21＝  ⇒ −14
+[challenge/muldiv/integer] (−288) ÷ (6 × 3)＝  ⇒ −16
+[challenge/muldiv/fraction] (2/5) ÷ (−(1/15)) × (1/16)＝  ⇒ −(3/8)
+[challenge/muldiv/fraction] (1/12) × (−(11/20)) × (−(1/8))＝  ⇒ (11/1920)
+[challenge/muldiv/fraction] (−(13/15)) ÷ 〔(−(1/6)) ÷ (−(1/9))〕＝  ⇒ −(26/45)
+[challenge/muldiv/decimal] 3.45 × (−2.35) ÷ 3 × 5＝  ⇒ −13.5125
+[challenge/muldiv/decimal] (−3.5) × 3.96 ÷ 〔(−3) ÷ (−4)〕＝  ⇒ −18.48
+[challenge/muldiv/decimal] 0.28 × (−4.31) × 3＝  ⇒ −3.6204
+[challenge/four/integer] (−93) ＋ 24 × 〔(−131) − (−18) × 2 3 〕＝  ⇒ 219
+[challenge/four/integer] 495 − 5 × 〔(−499) − 72〕＝  ⇒ 3350
+[challenge/four/integer] (−1) × (−1) − 8 ÷ 1＝  ⇒ −7
+[challenge/four/fraction] (−(1/27)) ＋ (−(1/8)) × 〔(−(1/8)) − (1/16) × (−(1/20))〕＝  ⇒ −(1507/69120)
+[challenge/four/fraction] 〔(−(19/27)) ＋ (−(1/3))〕 ÷ (4/5) − (1/16) × (7/27)＝  ⇒ −(21/16)
+[challenge/four/fraction] (−(1/8)) × (4/15) ＋ (2/3) ÷ (16/25)＝  ⇒ (121/120)
+[challenge/four/decimal] (−112.31) − (−5.4) × 〔(−5.01) ＋ 1.1 ÷ (−0.64)〕＝  ⇒ −148.64525
+[challenge/four/decimal] (−50.1) ＋ (−1.49) × 〔121.76 − (−4.44) × 3.8〕＝  ⇒ −256.66168
+[challenge/four/decimal] 148.21 ＋ (−4.1) × 〔128.92 − (−1.96) × (−0.71)〕＝  ⇒ −374.65644
+[challenge/brackets/integer] (−202) − {(−183) − 306 − 〔(−169) − (−531)〕}＝  ⇒ 649
+[challenge/brackets/integer] 118 − (−398) − {405 − 〔(−195) − (−184)〕}＝  ⇒ 100
+[challenge/brackets/integer] (−252) − {439 − (−328) − 〔(−469) − (−351)〕}＝  ⇒ −1137
+[challenge/brackets/fraction] (3/7) − (−(1/3)) − 〔(7/18) − ((10/11) − (1/18))〕＝  ⇒ (850/693)
+[challenge/brackets/fraction] (1/6) − (3/11) − 〔(1/5) ＋ (−(1/27))〕 ＋ (−(8/27)) − (5/11)＝  ⇒ −(3029/2970)
+[challenge/brackets/fraction] (−(3/7)) ＋ (6/25) − 〔(−(5/27)) − (3/16)〕＝  ⇒ (13919/75600)
+[challenge/brackets/decimal] 30.97 − (−110.22) − {(−34.6) − 〔17.19 − (−178.6)〕}＝  ⇒ 371.58
+[challenge/brackets/decimal] 17.8 − {(−198.1) − 150.9 − 〔(−165.9) − (−54.73)〕}＝  ⇒ 255.63
+[challenge/brackets/decimal] (−131.02) − (−151.13) − {25.47 − 〔(−128.47) − (−142.26)〕}＝  ⇒ 8.43
+[challenge/laws/integer] 532 × 15 ＋ 532 × 16 − 532 × (−69)＝  ⇒ 53200
+[challenge/laws/integer] (−12) × 15 ＋ (−12) × 30 − (−12) × 25＝  ⇒ −240
+[challenge/laws/integer] (−98) × 4 − (−98) × (−16)＝  ⇒ −1960
+[challenge/laws/fraction] (−(1/12)) × 17 ＋ (−(1/12)) × 29 − (−(1/12)) × 36＝  ⇒ −(5/6)
+[challenge/laws/fraction] (−(1/8)) × 21 ＋ (−(1/8)) × 32 − (−(1/8)) × 43＝  ⇒ −(5/4)
+[challenge/laws/fraction] (9/17) × (−(1/20)) ＋ (8/17) × (−(1/20))＝  ⇒ −(1/20)
+[challenge/laws/decimal] (−2.76) × 19 ＋ (−2.76) × 17 − (−2.76) × 26＝  ⇒ −27.6
+[challenge/laws/decimal] (−8.9) × 14 ＋ (−8.9) × 38 − (−8.9) × 2＝  ⇒ −445
+[challenge/laws/decimal] 5.6 × 38 ＋ 5.6 × 31 − 5.6 × 49＝  ⇒ 112
