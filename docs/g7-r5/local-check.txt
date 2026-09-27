@@ -1,0 +1,20 @@
+## scinot
+basic/rep         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/unit        /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=12
+basic/expand      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+basic/addsub      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/muldiv      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=8
+basic/mix         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=20
+advanced/rep         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/unit        /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=56
+advanced/expand      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+advanced/addsub      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+advanced/muldiv      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=8
+advanced/mix         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=22
+challenge/rep         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+challenge/unit        /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=78
+challenge/expand      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+challenge/addsub      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=19
+challenge/muldiv      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=19
+challenge/mix         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=35
+PASS

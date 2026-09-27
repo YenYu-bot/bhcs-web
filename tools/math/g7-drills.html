@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["scinot","科學記號"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -887,7 +887,152 @@ function exponentConfig(){
   presets:{basic:{power:4,sameBase:4,sameExp:3,powerPower:2,zero:3},advanced:{power:2,sameBase:3,sameExp:2,powerPower:2,zero:1,mixedOps:3,convert:3,unknown:2,sum:2},challenge:{mixedOps:4,convert:3,unknown:3,compare:3,negative:3,smart:3,sum:1}}};
 }
 
-const CONFIGS={signed:signedConfig,exponent:exponentConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
+function scinotConfig(){
+ /* 國一 科學記號（2026-09-27，Claude）。由舊的 g7-scientific-notation.html（百宏自製）移植進引擎：數的表示（m×10^e）、抽數與六個單元
+    （表示法、單位換算、乘開、加減運算、乘除運算、綜合練習）的出題邏輯照舊，只換成引擎的難度介面。答案保留舊工具的解題步驟。
+    verify：獨立解析題目字串（含中文數字與單位換算）用浮點數求值，與答案最後的 a×10^n 比對。 */
+ const unit=(id,name,tip)=>({id,name,tip,modes:["integer"],gen:ctx=>{
+  D=ctx.level==="challenge"?3:ctx.level==="advanced"?2:1;
+  const it=GEN[id].make();if(!it)return null;
+  return{expr:it.q.replace("＝？","＝"),answer:it.a,sig:it.q.replace(/<[^>]+>/g,""),verify:it.verify||(()=>{const qv=evalQ(it.q),av=evalAns(it.a);if(qv===null||av===null)return false;return Math.abs(qv-av)<=1e-9*Math.max(1,Math.abs(av))})};
+ }});
+ const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),coin=(p=.5)=>Math.random()<p;
+let D=2;
+
+/* ---------- 數：value = m × 10^e，m 為整數（去掉尾端 0） ---------- */
+function S(m,e){ if(m===0) return {m:0,e:0}; while(m%10===0){ m/=10; e++; } return {m,e}; }
+const digits=m=>String(Math.abs(m)).length;
+const mul=(a,b)=>S(a.m*b.m,a.e+b.e);
+const add=(a,b)=>{ const e=Math.min(a.e,b.e); return S(a.m*Math.pow(10,a.e-e)+b.m*Math.pow(10,b.e-e),e); };
+const sub=(a,b)=>add(a,{m:-b.m,e:b.e});
+/* 除法：只在 b.m 能整除 a.m×10^k 時使用 */
+function div(a,b){ let m=a.m, e=a.e-b.e; let k=0; while(m%b.m!==0&&k<8){ m*=10; e--; k++; } if(m%b.m!==0) return null; return S(m/b.m,e); }
+const norm=x=>{ const d=digits(x.m); return {a:x.m,ad:d-1,n:x.e+d-1}; };   // a×10^n，a 的小數位 ad
+const decStr=(m,ad)=>{ const neg=m<0; let s=String(Math.abs(m)).padStart(ad+1,'0'); if(ad>0) s=s.slice(0,-ad)+'.'+s.slice(-ad); return (neg?'−':'')+s; };
+const p10=n=>`10<sup>${n<0?'−'+(-n):n}</sup>`;
+function sci(x){ if(x.m===0) return '0'; const {a,ad,n}=norm(x); return `${decStr(a,ad)}×${p10(n)}`; }
+/* 用「未整理」的形式呈現：a 有指定的小數位 */
+function asForm(x,ad){ const d=digits(x.m); const a=x.m, n=x.e+ad; return `${decStr(a,ad)}×${p10(n)}`; }
+function plain(x){ // 展開成一般數字
+  if(x.e>=0) return String(x.m)+'0'.repeat(x.e); return decStr(x.m,-x.e); }
+const sciWrap=x=>`(${sci(x)})`;
+/* 把 x 寫成 c×10^p 時的係數 c（字串） */
+function coef(x,p){ const e=x.e-p; if(e>=0) return String(x.m)+'0'.repeat(e); return decStr(x.m,-e); }
+const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`;
+
+/* ---------- 抽數 ---------- */
+const SIG=()=>D===1?rnd(2,3):D===2?rnd(2,4):rnd(3,5);
+const EXP=()=>{ const n=D===1?rnd(-6,6):D===2?rnd(-12,12):rnd(-25,25); return n===0?pick([-1,1,2]):n; };
+function rSci(sig=SIG(),n=EXP()){ let m=rnd(Math.pow(10,sig-1),Math.pow(10,sig)-1); if(m%10===0) m+=1; return S(m,n-(sig-1)); }
+function rMant(sig){ let m=rnd(Math.pow(10,sig-1),Math.pow(10,sig)-1); if(m%10===0) m+=1; return m; }
+
+/* ---------- 中文數字 ---------- */
+const CN='零一二三四五六七八九';
+function cnUnit(m,e){ // m×10^e，e≥4，用 萬/億/兆 表示，如 103億7千5百萬、7.5億、五千萬
+  const v=m*Math.pow(10,e); const yi=Math.floor(v/1e8), wan=Math.floor((v%1e8)/1e4), rest=v%1e4;
+  let s=''; if(yi) s+=yi+'億'; if(wan){ if(wan%1000===0) s+=(wan/1000)+'千萬'; else if(wan%100===0) s+=Math.floor(wan/1000)+'千'+((wan%1000)/100)+'百萬'; else s+=wan+'萬'; } if(rest) s+=rest; return s; }
+function cnBig(d,k){ // d(1~9 或 兩位) × 10^k 的口語：五千萬、四百億、百萬、一千萬分之
+  const units=['','十','百','千','萬','十萬','百萬','千萬','億','十億','百億','千億','兆']; const u=units[k]; const ds=d===1&&k>=4?'':CN[d]; return ds+u; }
+
+/* ---------- 各單元 ---------- */
+const NOTE='（結果須整理成 a×10<sup>n</sup>，1≦|a|＜10）';
+const GEN={
+  rep:{name:'表示法',tip:'把數寫成 a×10ⁿ，1≦|a|＜10、n 為整數。比 1 大的數：小數點向左移幾位，n 就是幾；比 1 小的數：小數點向右移幾位，n 就是負幾。若 a 不在範圍內，把 a 的小數點左移 k 位，指數就加 k；右移 k 位，指數就減 k。',
+    make(){ const x=rSci(); const kind=pick(D===1?['big','small','dec','form','frac']:D===2?['big','small','dec','form','frac']:['big','small','form','form','frac','mulform']);
+      let q,a=`<b>${sci(x)}</b>`; const {ad,n}=norm(x);
+      if(kind==='big'){ const y=S(x.m,Math.max(0,x.e)); const yy=S(y.m,Math.abs(y.e)>=0?Math.max(0,rnd(3,D===1?6:D===2?9:12)-digits(y.m)+1):0); return {q:plain(yy)+'＝？',a:`<b>${sci(yy)}</b>`,len:12}; }
+      if(kind==='small'){ const y=S(x.m,-rnd(digits(x.m)+1,D===1?7:D===2?9:11)); return {q:plain(y)+'＝？',a:`<b>${sci(y)}</b>`,len:12}; }
+      if(kind==='dec'){ if(digits(x.m)<3) return this.make(); const y=S(x.m,-rnd(1,digits(x.m)-2)); return {q:plain(y)+'＝？',a:`<b>${sci(y)}</b>`,len:12}; }
+      if(kind==='frac'){ const den=Math.pow(10,rnd(digits(x.m)+1,D===2?9:11)); const num=Math.abs(x.m); const y=S(num,-Math.log10(den)); return {q:fr(num,den)+'＝？',a:`<b>${sci(y)}</b>`,len:10}; }
+      if(kind==='form'){ const shift=pick([-3,-2,-1,1,2,3,4]); const adN=Math.max(0,ad-shift); const y=x; // 顯示成 a' × 10^n'，a' 不在 1~10
+        const aShown=decStr(y.m,adN), nShown=y.e+adN; return {q:`${aShown}×${p10(nShown)}＝？`,a:`<b>${sci(y)}</b>`,len:14}; }
+      // mulform: 0.00000007×10^12×10^-10
+      const y=x; const adN=ad+rnd(3,7); const n1=rnd(-15,15), n2=y.e+adN-n1; return {q:`${decStr(y.m,adN)}×${p10(n1)}×${p10(n2)}＝？`,a:`<b>${sci(y)}</b>`,len:22}; }},
+  unit:{name:'單位換算',tip:'1 km＝10³ m＝10⁵ cm；1 cm＝10⁻² m；1 mm＝10⁻³ m；1 μm＝10⁻⁶ m；1 nm＝10⁻⁹ m；1 kg＝10³ g；1 mL＝10⁻³ L。1 萬＝10⁴，1 億＝10⁸。換算後結果要整理成科學記號。',
+    make(){ const kind=pick(D===1?['cn','unit','unit']:['cn','cnfrac','unit','unit','unitsci']);
+      if(kind==='cn'){ // 中文數字：7.5億、103億7千5百萬
+        const yi=rnd(1,D===1?9:D===3?999:120); const wan=pick([0,0,rnd(1,9)*1000,rnd(1,9)*100+rnd(1,9)*1000,rnd(1,9999)]); const v=yi*1e8+(D===1?0:wan*1e4); const x=S(v,0);
+        let q; if(D===1&&coin(.5)){ const m=rMant(2); q=decStr(m,1)+'億'; const y=S(m,7); return {q:q+'＝？',a:`<b>${sci(y)}</b>`,len:8}; }
+        q=cnUnit(v,0); return {q:q+'＝？',a:`${v}＝<b>${sci(x)}</b>`,len:10}; }
+      if(kind==='cnfrac'){ const d=rnd(1,9), k=rnd(5,D===3?11:9); const num=rnd(1,9); const q=`${cnBig(d,k)}分之${CN[num]}`; // num/(d×10^k)
+        const r=div(S(num,0),S(d,k)); if(!r) return this.make(); return {q:q+'＝？',a:`${fr(num,d+'×'+p10(k))}＝<b>${sci(r)}</b>`,len:10}; }
+      const U=[['km',3,'m',0],['m',0,'km',3],['cm',-2,'m',0],['m',0,'cm',-2],['km',3,'cm',-2],['mm',-3,'m',0],['m',0,'mm',-3],['kg',3,'g',0],['g',0,'kg',3],['L',0,'mL',-3],['mL',-3,'L',0]];
+      const U3=[['μm',-6,'m',0],['nm',-9,'m',0],['m',0,'nm',-9],['km',3,'mm',-3],['nm',-9,'μm',-6]];
+      const [fu,fe,tu,te]=pick(D===3?[...U,...U3]:U); const x=rSci(SIG(),D===1?rnd(-4,6):EXP());
+      const y=S(x.m,x.e+fe-te);
+      if(kind==='unitsci'||D>=2&&coin(.6)) return {q:`${sci(x)}<span class="unit">${fu}</span>＝？<span class="unit">${tu}</span>`,a:`${sci(x)}×${p10(fe-te)}＝<b>${sci(y)}</b><span class="unit">${tu}</span>`,len:16};
+      const shown=Math.abs(x.e)<=6?plain(x):sci(x); return {q:`${shown}<span class="unit">${fu}</span>＝？<span class="unit">${tu}</span>`,a:`${shown}×${p10(fe-te)}＝<b>${sci(y)}</b><span class="unit">${tu}</span>`,len:16}; }},
+  expand:{name:'乘開',tip:'a×10ⁿ：n 為正，小數點向右移 n 位（不夠補 0）；n 為負，小數點向左移 n 位。',
+    make(){ const x=rSci(SIG(),D===1?rnd(-4,6):D===2?rnd(-6,8):rnd(-9,10)); return {q:sci(x)+'＝？',a:`<b>${plain(x)}</b>`,len:10}; }},
+  addsub:{name:'加減運算',tip:'先化成相同的 10 的次方，再用分配律：a×10ᵐ ± b×10ⁿ ＝ (c±d)×10ᵖ，最後整理成 1≦|c±d|＜10。',
+    make(){ const sig=SIG(); const n=EXP(); const k=D===3&&coin(.4)?3:2;
+      const xs=[]; for(let i=0;i<k;i++){ const gap=D===1?0:(i===0?0:pick([0,1,1,2,-1])); xs.push(rSci(sig,n-gap)); }
+      const ops=[]; for(let i=1;i<k;i++) ops.push(coin()?'+':'-');
+      let v=xs[0]; ops.forEach((op,i)=>{ v=op==='+'?add(v,xs[i+1]):sub(v,xs[i+1]); }); if(v.m===0) return this.make();
+      const show=xs.map((x,i)=>{ if(D===3&&coin(.35)){ const {ad}=norm(x); return asForm(x,Math.max(0,ad+pick([-2,-1,1,2]))); } return sci(x); });
+      let q=show[0]; ops.forEach((op,i)=>q+=`<span class="op">${op==='+'?'＋':'−'}</span>${show[i+1]}`);
+      // 解答：對齊到最小次方
+      const p=Math.max(...xs.map(x=>norm(x).n)); const cs=xs.map(x=>coef(x,p));
+      let st='('+cs[0]; ops.forEach((op,i)=>st+=(op==='+'?'＋':'−')+cs[i+1]); st+=')×'+p10(p);
+      const mid=`${coef(v,p)}×${p10(p)}`; const fin=sci(v);
+      return {q:q+'＝？',a:`${st}＝${mid===fin?'<b>'+fin+'</b>':mid+'＝<b>'+fin+'</b>'}`,len:16+(k-2)*8}; }},
+  muldiv:{name:'乘除運算',tip:'用指數律：(a×10ᵐ)×(b×10ⁿ)＝ab×10ᵐ⁺ⁿ；(a×10ᵐ)÷(b×10ⁿ)＝(a÷b)×10ᵐ⁻ⁿ，算完再整理成 c×10ᵖ，1≦|c|＜10。',
+    make(){ const op=coin()?'*':'/'; const sigA=D===1?rnd(1,2):rnd(2,3), sigB=D===1?1:rnd(1,2);
+      if(op==='*'){ const a=rSci(sigA), b=rSci(sigB); if(D===3&&coin(.3)){ // 三個因數或含普通數
+          const c=coin()?S(rnd(2,9)*10,0):rSci(1); const v=mul(mul(a,b),c); return {q:`${sciWrap(a)}×${sciWrap(b)}×${c.e===1?plain(c):sciWrap(c)}＝？`,a:`${a.m*b.m*c.m}×${p10(a.e+b.e+c.e)}＝<b>${sci(v)}</b>`,len:28}; }
+        const v=mul(a,b); const {a:aa,ad:ada,n:na}=norm(a), {a:ab,ad:adb,n:nb}=norm(b); const prod=S(aa*ab,-(ada+adb));
+        return {q:`${sciWrap(a)}×${sciWrap(b)}＝？`,a:`${decStr(prod.m*Math.pow(10,Math.max(0,prod.e+ada+adb)),Math.max(0,ada+adb))}×${p10(na+nb)}＝<b>${sci(v)}</b>`,len:20}; }
+      // 除法：先決定商與除數，被除數 = 商×除數
+      for(let t=0;t<50;t++){ const b=rSci(sigB), qv=rSci(D===1?1:rnd(1,2)); if(Math.abs(b.m)===1||Math.abs(qv.m)===1) continue; const a=mul(qv,b); if(digits(a.m)>5) continue; const {a:aa,ad:ada,n:na}=norm(a), {a:ab,ad:adb,n:nb}=norm(b);
+        const qm=div({m:aa,e:-ada},{m:ab,e:-adb}); const v=div(a,b); return {q:`${sciWrap(a)}÷${sciWrap(b)}＝？`,a:`${fr(decStr(aa,ada),decStr(ab,adb))}×${p10(na-nb)}＝${decStr(qm.m,Math.max(0,-qm.e))+(qm.e>0?'0'.repeat(qm.e):'')}×${p10(na-nb)}＝<b>${sci(v)}</b>`,len:20}; }
+      return this.make(); }},
+  mix:{name:'綜合練習',tip:'混合各種形式：普通數與科學記號相乘、分數形式、未整理的 a×10ⁿ，先各自化成科學記號再運算。',
+    make(){ const kind=pick(['plainmul','fracmul','formmul','addsub','muldiv','rep']);
+      if(GEN[kind]) return GEN[kind].make();
+      if(kind==='plainmul'){ const a=rSci(rnd(2,3),rnd(-8,8)), b=S(rnd(2,9)*pick([1,10,100]),0); const v=mul(a,b); const [x,y]=coin()?[sci(a),plain(b)]:[plain(b),sci(a)]; return {q:`${x}×${y}＝？`,a:`<b>${sci(v)}</b>`,len:16}; }
+      if(kind==='formmul'){ const a=rSci(rnd(1,3),rnd(-10,10)); const {ad}=norm(a); const shown=asForm(a,ad+rnd(3,6)); const b=rSci(1,rnd(-12,12)); const v=mul(a,b); return {q:`${shown}×${sci(b)}＝？`,a:`${sci(a)}×${sci(b)}＝<b>${sci(v)}</b>`,len:22}; }
+      // fracmul: 1/(2×10^8) × 3×10^-2
+      for(let t=0;t<30;t++){ const bm=pick([2,4,5,8]), be=rnd(2,10), c=rSci(1,rnd(-6,6)); const num=pick([1,3,5,7]); const r=div(S(num,0),S(bm,be)); if(!r) continue; const v=mul(r,c);
+        return {q:`${fr(num,bm+'×'+p10(be))}×${sci(c)}＝？`,a:`${sci(r)}×${sci(c)}＝<b>${sci(v)}</b>`,len:18}; }
+      return GEN.muldiv.make(); }},
+};
+
+ /* 乘開：舊工具只有「寫成一般的數」一種題型，這裡加入幾位數、小數點後第幾位、用萬／億表示三種 */
+ GEN.expand.make=function(){const kind=pick(D===1?['plain','digits','wan']:D===2?['plain','wan','decpos']:['digits','decpos','wan']);
+  if(kind==='plain'){const x=rSci(SIG(),D===1?rnd(-4,6):D===2?rnd(-6,8):rnd(-9,10));return{q:sci(x)+'＝？',a:`<b>${plain(x)}</b>`,len:10}}
+  if(kind==='digits'){const x=rSci(SIG(),rnd(D===1?2:4,D===1?8:D===2?12:20)),{n}=norm(x);return{q:`${sci(x)} 是幾位數？`,a:`<b>${n+1}</b> 位數`,len:12,verify:()=>{const v=norm(x);return v.n+1===String(Math.round(x.m*Math.pow(10,x.e))).length||x.e<0?true:String(x.m).length+x.e===v.n+1}}}
+  if(kind==='decpos'){const x=rSci(SIG(),-rnd(D===1?2:4,D===2?10:15)),{n}=norm(x);return{q:`${sci(x)} 化成小數後，小數點後第幾位是第一個不為 0 的數字？`,a:`第 <b>${-n}</b> 位`,len:14,verify:()=>{const s2=plain(x).replace('−','');const k=s2.indexOf('.')<0?0:s2.slice(s2.indexOf('.')+1).search(/[1-9]/)+1;return k===-n}}}
+  const k=pick([4,8]),x=rSci(SIG(),rnd(k,k+3)),v=x.m*Math.pow(10,x.e-k),unitName=k===4?'萬':'億';if(!Number.isInteger(v)&&String(v).split('.')[1].length>2)return null;
+  return{q:`${sci(x)} 用「${unitName}」作單位表示是多少？`,a:`<b>${v}${unitName}</b>`,len:14,verify:()=>Math.abs(v*Math.pow(10,k)-x.m*Math.pow(10,x.e))<1e-6*Math.abs(v*Math.pow(10,k))};
+ };
+ /* ---- 驗證用解析器（與出題邏輯無關的另一條路） ---- */
+ const CNV={零:0,一:1,二:2,三:3,四:4,五:5,六:6,七:7,八:8,九:9},UNITF={km:3,m:0,cm:-2,mm:-3,'μm':-6,nm:-9,kg:3,g:0,L:0,mL:-3};
+ function cnNumber(str){ // 103億7千5百萬、7.5億、五千萬（口語）：小單位（千百十）先算，遇到 萬／億／兆 再乘上
+  str=str.replace(/[，,]/g,'');const big={億:1e8,萬:1e4,兆:1e12},sub={十:10,百:100,千:1000};const parts=str.match(/(\d+(?:\.\d+)?|[零一二三四五六七八九]?)(十|百|千)?(兆|億|萬)?/g);if(!parts)return null;
+  let total=0,cur=0,any=false;for(const p of parts){if(!p)continue;const m=p.match(/(\d+(?:\.\d+)?|[零一二三四五六七八九]?)(十|百|千)?(兆|億|萬)?/);let n=m[1]===''?((m[2]||m[3])?1:0):(/^\d/.test(m[1])?parseFloat(m[1]):CNV[m[1]]);if(m[2])n*=sub[m[2]];any=true;if(m[3]){total+=(cur+n)*big[m[3]];cur=0}else cur+=n}
+  return any?total+cur:null}
+ function evalQ(q){
+  let t=q.replace('＝？','').replace(/<sup>([^<]*)<\/sup>/g,(_,e)=>'^('+e.replace('−','-')+')').replace(/<span class="fr"><span class="n">([^<]*)<\/span><span class="d">([^<]*)<\/span><\/span>/g,'($1)/($2)').replace(/<span class="op">([^<]*)<\/span>/g,'$1');
+  const units=[...t.matchAll(/<span class="unit">([^<]*)<\/span>/g)].map(m=>m[1]);t=t.replace(/<span class="unit">[^<]*<\/span>/g,'').replace(/<[^>]+>/g,'');
+  let factor=1;if(units.length===2){if(UNITF[units[0]]===undefined||UNITF[units[1]]===undefined)return null;factor=Math.pow(10,UNITF[units[0]]-UNITF[units[1]])}
+  if(/分之/.test(t)){const[den,num]=t.split('分之');const dv=cnNumber(den),nv=CNV[num]??parseFloat(num);if(!dv||nv===undefined)return null;return nv/dv}
+  if(/[億萬兆千百]/.test(t)){const v=cnNumber(t);return v===null?null:v*factor}
+  t=t.replace(/−/g,'-').replace(/＋/g,'+').replace(/×/g,'*').replace(/÷/g,'/').replace(/\s+/g,'');
+  // 10^(k) 與一般數字：用簡單遞迴下降
+  let i=0;const peek=()=>t[i],next=()=>t[i++];
+  function num(){let s=i;if(peek()==='-'){next()}if(peek()==='('){next();const v=expr();if(next()!==')')throw 0;return t[s]==='-'?-v:v}while(i<t.length&&/[\d.]/.test(t[i]))i++;if(s===i||(t[s]==='-'&&s+1===i))throw 0;let v=parseFloat(t.slice(s,i));if(peek()==='^'){next();let e;if(peek()==='('){next();e=expr();if(next()!==')')throw 0}else{let s2=i;if(peek()==='-')next();while(i<t.length&&/\d/.test(t[i]))i++;e=parseFloat(t.slice(s2,i))}v=Math.pow(v,e)}return v}
+  function term(){let v=num();while(peek()==='*'||peek()==='/'){const op=next(),r=num();v=op==='*'?v*r:v/r}return v}
+  function expr(){let v=term();while(peek()==='+'||peek()==='-'){const op=next(),r=term();v=op==='+'?v+r:v-r}return v}
+  try{const v=expr();if(i!==t.length||!isFinite(v))return null;return v*factor}catch(e){return null}
+ }
+ function evalAns(a){const m=a.match(/<b>([\s\S]*?)<\/b>/);if(!m)return null;let t=m[1].replace(/<sup>([^<]*)<\/sup>/g,(_,e)=>'^('+e.replace('−','-')+')').replace(/<[^>]+>/g,'').replace(/−/g,'-').replace(/×/g,'*');const mm=t.match(/^(-?[\d.]+)(?:\*10\^\((-?\d+)\))?$/);if(!mm)return null;return parseFloat(mm[1])*Math.pow(10,mm[2]?parseInt(mm[2]):0)}
+ const U=[["rep","表示法"],["unit","單位換算"],["expand","乘開"],["addsub","加減運算"],["muldiv","乘除運算"],["mix","綜合練習"]].map(([k,n])=>unit(k,n,GEN[k].tip));
+ return{title:"科學記號",symbol:"10ⁿ",subtitle:"表示法・單位換算・乘開・加減運算・乘除運算・綜合練習",instruction:"以科學記號 a×10ⁿ（1≦|a|＜10，n 為整數）表示下列各題的結果。",modes:["integer"],mixed:false,answerLabel:"",
+  levels:{basic:"基礎：兩、三位有效數字，指數 −6～6；大數、小數的表示；同次方的加減；一位數的乘除；常用單位換算。",advanced:"進階：指數 −12～12；未整理的 a×10ⁿ、分數形式；不同次方的加減；中文數字與分數的換算。",challenge:"挑戰：指數 −25～25，三到五位有效數字；三個數的加減、含普通數的連乘；μm、nm 換算；未整理形式混合運算。"},
+  units:U,presets:{basic:{rep:4,unit:3,expand:3,addsub:3,muldiv:3},advanced:{rep:3,unit:3,expand:2,addsub:3,muldiv:3,mix:3},challenge:{rep:3,unit:3,addsub:3,muldiv:3,mix:4}}};
+}
+
+const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
