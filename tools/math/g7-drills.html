@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["scinot","科學記號"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["scinot","科學記號"],["factors","因數與倍數"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1032,7 +1032,142 @@ const GEN={
   units:U,presets:{basic:{rep:4,unit:3,expand:3,addsub:3,muldiv:3},advanced:{rep:3,unit:3,expand:2,addsub:3,muldiv:3,mix:3},challenge:{rep:3,unit:3,addsub:3,muldiv:3,mix:4}}};
 }
 
-const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
+function factorsConfig(){
+ /* 國一 因數與倍數（2026-09-27，Claude）。由舊的 g7-factors-multiples.html（百宏自製）移植進引擎：造數、短除法表、六個單元（短除法、短除法應用、
+    輾轉相除法、標準分解式、標準分解式應用、綜合練習）的出題邏輯與解題步驟照舊，只換成引擎的難度介面；短除法表在教用版顯示。
+    verify：獨立解析題目字串（( ) 為最大公因數、〔 〕為最小公倍數、連乘積與標準分解式），用質因數分解的次方取小／取大另算，與答案的 <b> 值比對。 */
+ const unit=(id,name,tip)=>({id,name,tip,modes:["integer"],gen:ctx=>{
+  D=ctx.level==="challenge"?3:ctx.level==="advanced"?2:1;
+  const it=GEN[id].make();if(!it)return null;
+  return{expr:it.q.replace("＝？","＝"),answer:it.a,sig:it.q.replace(/<[^>]+>/g,""),verify:it.verify||(()=>{const qv=evalQ(it.q),av=evalAns(it.a);return qv!==null&&av!==null&&qv===av})};
+ }});
+ const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),coin=(p=.5)=>Math.random()<p,ctxShowTable=true;
+const gcd2=(a,b)=>{ while(b){ [a,b]=[b,a%b]; } return a; };
+const gcdN=arr=>arr.reduce(gcd2);
+const lcm2=(a,b)=>a/gcd2(a,b)*b;
+const lcmN=arr=>arr.reduce(lcm2);
+const PR=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+function factor(n){ const m={}; for(const p of PR){ while(n%p===0){ m[p]=(m[p]||0)+1; n/=p; } } if(n>1) m[n]=(m[n]||0)+1; return m; }
+const fromMap=m=>Object.entries(m).reduce((s,[p,e])=>s*Math.pow(+p,e),1);
+function fmtFac(m){ const ks=Object.keys(m).map(Number).sort((a,b)=>a-b); if(!ks.length) return '1'; return ks.map(p=>m[p]>1?`${p}<sup>${m[p]}</sup>`:`${p}`).join('×'); }
+const fac=n=>fmtFac(factor(n));
+let D=2;
+const PRIMES=()=>D===3?[2,3,5,7,11,13]:[2,3,5,7];
+
+/* ---------- 造數：g 是公因數骨架，各數 = g × 互質的餘因子 ---------- */
+function makeSet(k,maxN){
+  const ps=PRIMES();
+  for(let t=0;t<300;t++){
+    let g=1; const gc=D===1?rnd(1,2):rnd(1,3); for(let i=0;i<gc;i++) g*=pick(ps.slice(0,D===1?3:4));
+    if(g*2>maxN) continue;
+    // 可用的餘因子：g×c ≤ maxN
+    const cands=[]; for(let c=1;c*g<=maxN;c++){ let x=c, ok=true; for(const q of ps) while(x%q===0) x/=q; if(x===1) cands.push(c); }
+    if(cands.length<k+1) continue;
+    const cs=[]; const pool=cands.slice(); for(let i=0;i<k;i++){ const j=rnd(0,pool.length-1); cs.push(pool[j]); pool.splice(j,1); }
+    const nums=cs.map(c=>g*c); if(nums.some(n=>n<4)) continue;
+    if(gcdN(nums)<2) continue; if(lcmN(nums)>maxN*40) continue;
+    return nums;
+  }
+  return D===1?[12,18]:[60,72,84];
+}
+const MAXN=()=>D===1?100:D===2?300:1000;
+
+/* ---------- 短除法 ---------- */
+function shortDiv(nums,mode){ // mode 'gcd' | 'lcm'
+  const rows=[]; let cur=nums.slice(); const divs=[];
+  while(true){ let p=null;
+    for(const q of PR){ const cnt=cur.filter(x=>x%q===0).length; if(mode==='gcd'?cnt===cur.length:cnt>=2){ p=q; break; } }
+    if(!p) break; divs.push(p); rows.push({p,nums:cur.slice()}); cur=cur.map(x=>x%p===0?x/p:x); if(divs.length>12) break; }
+  return {rows,divs,rest:cur};
+}
+function sdTable(nums,mode){ const {rows,divs,rest}=shortDiv(nums,mode); const TD='style="padding:0 .4em;text-align:right"',TP='style="padding:0 .4em;border-right:1px solid currentColor"';let h='<table style="border-collapse:collapse;display:inline-table;margin:.2em 0;font-size:90%">'; rows.forEach(r=>{ h+=`<tr><td ${TP}>${r.p}</td>${r.nums.map(n=>`<td ${TD} style="padding:0 .4em;text-align:right;border-bottom:1px solid currentColor">${n}</td>`).join('')}</tr>`; }); h+=`<tr><td ${TP}></td>${rest.map(n=>`<td ${TD}>${n}</td>`).join('')}</tr></table><br>`;
+  const val=mode==='gcd'?gcdN(nums):lcmN(nums); const prod=mode==='gcd'?divs.join('×'):[...divs,...rest].join('×');
+  return {html:h,val,prod:prod||String(val)}; }
+const GCD=(...a)=>gcdN(a), LCM=(...a)=>lcmN(a);
+const wrapG=inner=>`<span>(</span>${inner}<span>)</span>`;
+const wrapL=inner=>`<span>〔</span>${inner}<span>〕</span>`;
+const list=arr=>arr.join('<span>，</span>');
+
+/* ---------- 各單元 ---------- */
+/* 每題回傳 {q:html, a:html(教用解答), len:估計長度} */
+const GEN={
+  sd:{name:'短除法',tip:'( A，B，C ) 表示最大公因數，〔A，B，C〕表示最小公倍數。求最大公因數：用所有數共同的質因數去除，除到沒有共同質因數為止，除數相乘。求最小公倍數：只要有兩個以上的數有共同質因數就繼續除，除到每兩個數都互質，再把所有除數和最後一列全部相乘。',
+    make(){ const k=D===1?pick([2,2,3]):D===2?pick([2,3,3]):pick([3,3,4]); const nums=makeSet(k,MAXN()); const mode=coin()?'gcd':'lcm'; const t=sdTable(nums,mode);
+      const q=(mode==='gcd'?wrapG(list(nums)):wrapL(list(nums)))+'＝？';
+      const a=(ctxShowTable?t.html:'')+`<span class="steps">${mode==='gcd'?wrapG(list(nums)):wrapL(list(nums))}＝${t.prod}＝<b>${t.val}</b></span>`;
+      return {q,a,len:nums.length*4}; }},
+  sdapp:{name:'短除法應用',tip:'先求括號內的值，再用求得的結果和其他數繼續求。例如〔(42，84)，315〕：先求 (42，84)＝42，再求〔42，315〕＝630。',
+    make(){ const nums=makeSet(3,MAXN()); const [a,b,c]=nums; const form=pick(D===3?['lg','gl','ll','gg','lgr','glr']:['lg','gl','ll','gg']);
+      let inner,innerV,q,val,steps;
+      if(form[0]==='g'){ inner=wrapG(list([a,b])); innerV=GCD(a,b); } else { inner=wrapL(list([a,b])); innerV=LCM(a,b); }
+      const rev=form.length===3; if(form[1]==='g'){ q=wrapG(rev?c+'<span>，</span>'+inner:inner+'<span>，</span>'+c); val=GCD(innerV,c); } else { q=wrapL(rev?c+'<span>，</span>'+inner:inner+'<span>，</span>'+c); val=LCM(innerV,c); }
+      steps=`先求 ${inner}＝${innerV}；再求 ${form[1]==='g'?wrapG(list([innerV,c])):wrapL(list([innerV,c]))}＝<b>${val}</b>`;
+      return {q:q+'＝？',a:`<span class="steps">${steps}</span>`,len:14}; }},
+  euclid:{name:'輾轉相除法',tip:'兩數很大、不易質因數分解時用。大數÷小數得餘數，再用小數÷餘數，反覆做到餘數為 0，最後一次的除數就是最大公因數。',
+    make(){ for(let t=0;t<200;t++){ const g=D===1?pick([12,13,14,15,17,18,19,21,23,24]):D===2?rnd(13,60):rnd(17,99);
+        const lim=D===1?999:D===2?9999:29999; const p=rnd(D===1?5:17,Math.floor(lim/g)), q=rnd(D===1?5:17,Math.floor(lim/g)); if(p===q||gcd2(p,q)!==1) continue;
+        let a=g*p, b=g*q; if(a<b) [a,b]=[b,a]; // 步驟數
+        const st=[]; let x=a,y=b; while(y){ st.push(`${x}÷${y}＝${Math.floor(x/y)}…${x%y}`); [x,y]=[y,x%y]; } if(st.length<(D===1?2:3)||st.length>6) continue;
+        return {q:wrapG(list([a,b]))+'＝？',a:`<span class="steps">${st.join('，')}<br>餘數為 0 時的除數＝<b>${g}</b></span>`,len:12}; }
+      return {q:wrapG(list([3927,663]))+'＝？',a:'<b>51</b>',len:12}; }},
+  __euclidPlain:null,
+  std:{name:'標準分解式',tip:'把每個數寫成質因數由小到大的連乘積（標準分解式）。最大公因數：取共同質因數，次方取較小的；最小公倍數：取所有質因數，次方取較大的。答案用標準分解式表示。',
+    make(){ const ps=PRIMES(); const mk=()=>{ const m={}; const cnt=rnd(2,D===1?2:3); for(let i=0;i<cnt;i++){ const p=pick(ps); m[p]=(m[p]||0)+rnd(1,D===1?2:D===3?4:3); } return m; };
+      const lo=D===1?20:D===2?100:300, hi=D===1?500:D===2?3000:8000;
+      for(let t=0;t<300;t++){ const A=mk(), B=mk(); const a=fromMap(A), b=fromMap(B); if(a<lo||a>hi||b<lo||b>hi||a===b) continue; if(gcd2(a,b)<2) continue; if(Object.keys(A).length<2||Object.keys(B).length<2) continue;
+        const mode=coin()?'gcd':'lcm'; const showA=coin(.5), showB=true; // 至少一個用分解式
+        const sa=showA?fmtFac(A):String(a), sb=showB?fmtFac(B):String(b);
+        const val=mode==='gcd'?gcd2(a,b):lcm2(a,b);
+        const q=(mode==='gcd'?wrapG:wrapL)(sa+'<span>，</span>'+sb)+'＝？';
+        const stepA=showA?'':`${a}＝${fmtFac(A)}；`; const a_=`<span class="steps">${stepA}${(mode==='gcd'?wrapG:wrapL)(fmtFac(A)+'，'+fmtFac(B))}＝<b>${fac(val)}</b>（＝${val}）</span>`;
+        return {q,a:a_,len:16}; }
+      return {q:wrapG('280，2<sup>4</sup>×7×11')+'＝？',a:'<b>2<sup>3</sup>×7</b>',len:16}; }},
+  stdapp:{name:'標準分解式應用',tip:'各數以連乘積給出時，不要真的乘開，先把每個數化成標準分解式再求，答案也用標準分解式表示。',
+    make(){ const small=[4,6,8,9,10,12,14,15,16,18,20,21,24,25,27,28,32,35,36,40,45,48,49,50,54,56,63,64,72,75,80,81,98,100,125];
+      const mkProd=()=>{ const k=D===1?2:rnd(2,D===3?4:3); const fs=[]; for(let i=0;i<k;i++) fs.push(pick(D===1?small.slice(0,14):small)); return fs; };
+      for(let t=0;t<100;t++){ const A=mkProd(), B=mkProd(); const a=A.reduce((x,y)=>x*y,1), b=B.reduce((x,y)=>x*y,1); if(gcd2(a,b)<2||a===b) continue;
+        const useStd=coin(.4); const sb=useStd?fac(b):B.join('×'); const mode=coin()?'gcd':'lcm'; const val=mode==='gcd'?gcd2(a,b):lcm2(a,b);
+        const q=(mode==='gcd'?wrapG:wrapL)(A.join('×')+'<span>，</span>'+sb)+'＝？';
+        const a_=`<span class="steps">${A.join('×')}＝${fac(a)}；${useStd?'':B.join('×')+'＝'+fac(b)+'；'}所求＝<b>${fac(val)}</b>${val<1e7?`（＝${val}）`:''}</span>`;
+        return {q,a:a_,len:20}; }
+      return {q:wrapG('7×50，4×6×5')+'＝？',a:'<b>2×5</b>',len:20}; }},
+  mix:{name:'綜合練習',tip:'混合各種題型：巢狀括號、最大公因數與最小公倍數的和、商，以及需要輾轉相除的大數。',
+    make(){ const kind=pick(['sd','sd','sdapp','euclid','std','sum','quot','nested2']);
+      if(GEN[kind]) return GEN[kind].make();
+      const nums=makeSet(kind==='nested2'?4:pick([2,3]),MAXN());
+      if(kind==='sum'){ const g=gcdN(nums), l=lcmN(nums); return {q:wrapG(list(nums))+'＋'+wrapL(list(nums))+'＝？',a:`<span class="steps">${wrapG(list(nums))}＝${g}，${wrapL(list(nums))}＝${l}，${g}＋${l}＝<b>${g+l}</b></span>`,len:nums.length*8}; }
+      if(kind==='quot'){ const g=gcdN(nums), l=lcmN(nums); return {q:wrapL(list(nums))+'÷'+wrapG(list(nums))+'＝？',a:`<span class="steps">${wrapL(list(nums))}＝${l}，${wrapG(list(nums))}＝${g}，${l}÷${g}＝<b>${l/g}</b></span>`,len:nums.length*8}; }
+      // nested2: 〔(a,b),〔c,d〕〕 或 ((a,b),〔c,d〕)
+      const [a,b,c,d]=nums; const g=gcd2(a,b), l=lcm2(c,d); const outer=coin()?'g':'l'; const val=outer==='g'?gcd2(g,l):lcm2(g,l);
+      return {q:(outer==='g'?wrapG:wrapL)(wrapG(list([a,b]))+'<span>，</span>'+wrapL(list([c,d])))+'＝？',a:`<span class="steps">${wrapG(list([a,b]))}＝${g}，${wrapL(list([c,d]))}＝${l}，${(outer==='g'?wrapG:wrapL)(list([g,l]))}＝<b>${val}</b></span>`,len:22}; }},
+};
+
+ /* ---- 驗證用解析器 ---- */
+ const pf=n=>{const m=new Map();let x=n;for(let p=2;p*p<=x;p++)while(x%p===0){m.set(p,(m.get(p)||0)+1);x/=p}if(x>1)m.set(x,(m.get(x)||0)+1);return m};
+ const G=(a,b)=>{const A=pf(a),B=pf(b);let r=1;for(const[p,e] of A)if(B.has(p))r*=Math.pow(p,Math.min(e,B.get(p)));return r};
+ const Lm=(a,b)=>{const A=pf(a),B=pf(b);let r=1;const ps=new Set([...A.keys(),...B.keys()]);for(const p of ps)r*=Math.pow(p,Math.max(A.get(p)||0,B.get(p)||0));return r};
+ function clean(h){return h.replace(/<sup>([^<]*)<\/sup>/g,'^$1').replace(/<[^>]+>/g,'').replace(/＝？/g,'').replace(/\s+/g,'')}
+ function evalQ(q){const t=clean(q);let i=0;const peek=()=>t[i],next=()=>t[i++];
+  function factor(){let s=i;while(i<t.length&&/\d/.test(t[i]))i++;if(s===i)throw 0;let v=parseInt(t.slice(s,i));if(peek()==='^'){next();let s2=i;while(i<t.length&&/\d/.test(t[i]))i++;v=Math.pow(v,parseInt(t.slice(s2,i)))}return v}
+  function product(){let v=factor();while(peek()==='×'){next();v*=factor()}return v}
+  function term(){if(peek()==='('||peek()==='〔'){const open=next(),close=open==='('?')':'〕',items=[expr()];while(peek()==='，'){next();items.push(expr())}if(next()!==close)throw 0;return items.reduce(open==='('?G:Lm)}return product()}
+  function expr(){let v=term();while(peek()==='＋'||peek()==='÷'){const op=next(),r=term();v=op==='＋'?v+r:v/r}return v}
+  try{const v=expr();return i===t.length&&Number.isFinite(v)?v:null}catch(e){return null}}
+ function evalAns(a){const m=a.match(/<b>([\s\S]*?)<\/b>/);if(!m)return null;const t=clean(m[1]);let v=1;for(const f of t.split('×')){const[b,e]=f.split('^');if(!/^\d+$/.test(b))return null;v*=Math.pow(parseInt(b),e?parseInt(e):1)}return v}
+ GEN.__euclidPlain=GEN.euclid.make;
+ GEN.euclid.make=function(){const kind=pick(D===1?['plain','words','apply']:D===2?['plain','words','apply']:['plain','three','apply']);const base=GEN.__euclidPlain.call(GEN.euclid);if(kind==='plain')return base;
+  const nums=(base.q.replace(/<[^>]+>/g,'').match(/\d+/g)||[]).map(Number),g=nums.reduce((x,y)=>{while(y){[x,y]=[y,x%y]}return x});
+  if(kind==='words')return{q:`用輾轉相除法求 ${nums[0]} 與 ${nums[1]} 的最大公因數。`,a:base.a,len:14,verify:()=>G(nums[0],nums[1])===g};
+  if(kind==='apply'){const item=pick([['兩條繩子長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分'],['兩塊布長','公尺','裁成一樣長的布條且不剩，每條最長幾公尺？','公尺'],['兩袋糖果各有','顆','平分給最多的小朋友且不剩，最多幾人？','人']]);return{q:`${item[0]} ${nums[0]} ${item[1]}與 ${nums[1]} ${item[1]}，${item[2]}`,a:base.a.replace(/<b>(\d+)<\/b>/,`<b>$1</b> ${item[3]}`),len:18,verify:()=>G(nums[0],nums[1])===g}}
+  const c=g*rnd(2,9);const st=[];let x=Math.max(nums[0],nums[1]),y=Math.min(nums[0],nums[1]);while(y){st.push(`${x}÷${y}＝${Math.floor(x/y)}…${x%y}`);[x,y]=[y,x%y]}
+  return{q:wrapG(list([nums[0],nums[1],c]))+'＝？',a:`<span class="steps">先求 ${wrapG(list([nums[0],nums[1]]))}：${st.join('，')}，得 ${g}；再求 ${wrapG(list([g,c]))}＝<b>${GCD(g,c)}</b></span>`,len:16,verify:()=>[nums[0],nums[1],c].reduce(G)===GCD(g,c)}};
+ const U=[["sd","短除法"],["sdapp","短除法應用"],["euclid","輾轉相除法"],["std","標準分解式"],["stdapp","標準分解式應用"],["mix","綜合練習"]].map(([k,n])=>unit(k,n,GEN[k].tip));
+ return{title:"因數與倍數",symbol:"( )",subtitle:"短除法・短除法應用・輾轉相除法・標準分解式・標準分解式應用・綜合練習",instruction:"( ) 表示最大公因數，〔 〕表示最小公倍數。求下列各題：",modes:["integer"],mixed:false,answerLabel:"",
+  levels:{basic:"基礎：兩數、100 以內的短除法；小的輾轉相除；一數為分解式的標準分解式；兩因數的連乘積。",advanced:"進階：三數、300 以內；括號內先求；四位數的輾轉相除；兩數都可為分解式；三因數連乘積；綜合練習。",challenge:"挑戰：三到四數、1000 以內，質因數含 11、13；五位數的輾轉相除；次方到 4；四因數連乘積；巢狀括號與和、商。"},
+  units:U,presets:{basic:{sd:5,sdapp:2,euclid:2,std:2,stdapp:2},advanced:{sd:4,sdapp:3,euclid:2,std:2,stdapp:2,mix:3},challenge:{sd:3,sdapp:3,euclid:2,std:3,stdapp:3,mix:4}}};
+}
+
+const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,factors:factorsConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
