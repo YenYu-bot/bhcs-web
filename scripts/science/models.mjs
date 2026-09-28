@@ -1,4 +1,8 @@
 // Pure models: numeric outputs are tested independently from the browser UI.
+// 前 20 號元素：[符號, 名稱, 族（主族欄 1–8）, 常見同位素的中子數（第一個為最常見）]
+export const ATOM_ELEMENTS=[['H','氫',1,[0,1,2]],['He','氦',8,[2,1]],['Li','鋰',1,[4,3]],['Be','鈹',2,[5]],['B','硼',3,[6,5]],['C','碳',4,[6,7,8]],['N','氮',5,[7,8]],['O','氧',6,[8,9,10]],['F','氟',7,[10]],['Ne','氖',8,[10,12,11]],['Na','鈉',1,[12]],['Mg','鎂',2,[12,14,13]],['Al','鋁',3,[14]],['Si','矽',4,[14,15,16]],['P','磷',5,[16]],['S','硫',6,[16,18,17,20]],['Cl','氯',7,[18,20]],['Ar','氬',8,[22,18,20]],['K','鉀',1,[20,22,21]],['Ca','鈣',2,[20,24,22,23,26,28]]];
+const ATOM_SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+export const ionCharge=c=>c===0?'':(Math.abs(c)===1?'':String(Math.abs(c)).split('').map(d=>ATOM_SUP[d]).join(''))+(c>0?'⁺':'⁻');
 export function calculate(id,s){
  const rad=Math.PI/180, sign=x=>Math.abs(x)<1e-9?'zero':x>0?'positive':'negative';
  switch(id){
@@ -72,6 +76,36 @@ export function calculate(id,s){
   const kind=Math.abs(a)<eps?(Math.abs(v0)<eps?'rest':'uniform'):Math.abs(v0)<eps||v0*a>0?'speeding':reversed?'reversing':'slowing';
   return {kind,v,x,path:pos+neg,pos,neg,a,turn:reversed?turn:null};
  }
+ case 'lever-torque':{
+  const eps=1e-9,rad=Math.PI/180,effective=s.d2*Math.sin(s.angle*rad),left=s.w1*s.d1/100,right=s.f2*effective/100,net=left-right;
+  return {kind:Math.abs(net)<eps?'balanced':net>0?'left':'right',left,right,net,effective};
+ }
+ case 'pulley-incline':{
+  const W=s.load,eta=1-s.loss/100,clamped=s.mode==='incline'&&s.len<s.h,L=clamped?s.h:s.len;
+  const ideal=s.mode==='fixed'?W:s.mode==='movable'?W/2:s.mode==='block'?W/s.n:W*s.h/L;
+  const distance=s.mode==='fixed'?s.h:s.mode==='movable'?2*s.h:s.mode==='block'?s.n*s.h:L;
+  const force=ideal/eta,input=force*distance,output=W*s.h;
+  return {kind:s.loss===0?'ideal':'lossy',ideal,force,distance,input,output,eta,clamped,L};
+ }
+ case 'reaction-rate':{
+  const sizeF={lump:1,granule:3,powder:9}[s.size],catF=s.cat==='yes'?4:1,tempF=Math.pow(2,(s.temp-25)/10);
+  const rate=s.conc*tempF*sizeF*catF,time=s.amount*60/rate,baseTime=s.amount*60,product=s.amount;
+  return {kind:Math.abs(rate-1)<1e-9?'same':rate>1?'faster':'slower',rate,time,baseTime,product,tempF,sizeF,catF};
+ }
+ case 'reflection-refraction':{
+  const n={'air-water':[1,1.33],'air-glass':[1,1.5],'water-air':[1.33,1],'glass-air':[1.5,1]}[s.media],[n1,n2]=n,deg=Math.PI/180;
+  const reflection=s.incident;
+  if(s.mode==='mirror')return {kind:'mirror',reflection,image:s.dist,refraction:null,critical:null,n1,n2};
+  const q=n1*Math.sin(s.incident*deg)/n2,critical=n1>n2?Math.asin(n2/n1)/deg:null;
+  if(q>1+1e-12)return {kind:'tir',reflection,refraction:null,critical,image:null,n1,n2};
+  const refraction=Math.asin(Math.min(1,q))/deg;
+  return {kind:s.incident===0?'normal':refraction<s.incident?'toward':'away',reflection,refraction,critical,image:null,n1,n2};
+ }
+ case 'atom-builder':{
+  const E=ATOM_ELEMENTS[s.p-1],A=s.p+s.n,charge=s.p-s.e,shells=[];let left=s.e;for(const cap of [2,8,8,2]){if(left<=0)break;const k=Math.min(cap,left);shells.push(k);left-=k}
+  const common=E[3],isotope=s.n===common[0]?'most':common.includes(s.n)?'common':'unusual';
+  return {kind:charge===0?'neutral':charge>0?'cation':'anion',symbol:E[0],name:E[1],A,charge,ion:E[0]+ionCharge(charge),shells,isotope,commonN:common[0],table:ATOM_ELEMENTS.map(x=>[x[0],x[2]])};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -90,5 +124,10 @@ export function describe(id,s,r){
  case 'plant-exchange':return {metrics:[['總光合作用',f(r.photo)+' 相對值'],['呼吸作用',f(r.respiration)+' 相對值'],['淨氧氣交換',f(r.net)+' 相對值'],['蒸散指標',f(r.transpiration,3)]],explanation:`本模型的淨氧氣交換=光合作用−呼吸作用=${f(r.net)}；${r.net>0?'呈淨釋出':'呈淨消耗或平衡'}。蒸散另受濕度和氣孔開度影響，不能把蒸散指標當氧氣量。`};
  case 'ecosystem':return {metrics:[['生產者能量',f(r.energy[0])+' kJ'],['初級消費者能量',f(r.energy[1])+' kJ'],['次級消費者能量',f(r.energy[2])+' kJ'],['模型族群數',f(r.population)+' 隻（期望值）']],explanation:`族群以固定K=${s.capacity}、r=${s.rate}的單物種模型計算；不等同食物網各物種一起變動。每階層傳遞${s.efficiency}%是本次設定，不是普遍常數。`};
  case 'motion-graphs':return {metrics:[['末速度',f(r.v)+' m/s'],['位移',f(r.x)+' m'],['路徑長',f(r.path)+' m'],['v-t 圖斜率',f(r.a)+' m/s²']],explanation:r.kind==='reversing'?`物體在第 ${f(r.turn)} 秒速度減到 0 後折返。v-t 圖在時間軸上方的面積 ${f(r.pos)} m、下方 ${f(r.neg)} m：位移是兩者相減＝${f(r.x)} m，路徑長是兩者相加＝${f(r.path)} m。`:r.kind==='rest'?'速度和加速度都是 0：x-t 圖是水平線，v-t 圖貼著時間軸，位移與路徑長都是 0。':r.kind==='uniform'?`加速度為 0：v-t 圖是水平線，x-t 圖是斜直線，斜率等於速度 ${f(s.v0)} m/s。位移＝v-t 圖下的長方形面積＝${f(r.x)} m。`:`沒有折返，位移大小等於路徑長 ${f(r.path)} m。v-t 圖的斜率就是加速度 ${f(r.a)} m/s²；${r.kind==='slowing'?'速度與加速度方向相反，速度大小變小。':'速度與加速度方向相同，速度大小變大。'}`};
+ case 'lever-torque':return {metrics:[['左側力矩',f(r.left)+' N·m'],['右側力矩',f(r.right)+' N·m'],['右側有效力臂',f(r.effective,1)+' cm'],['槓桿狀態',r.kind==='balanced'?'平衡':r.kind==='left'?'左側下沉':'右側下沉']],explanation:`左側 ${s.w1} N×${s.d1} cm＝${f(r.left)} N·m；右側 ${s.f2} N×有效力臂 ${f(r.effective,1)} cm＝${f(r.right)} N·m。${r.kind==='balanced'?'兩側力矩相等，所以平衡；力比較小的一側，靠較長的力臂補回來。':'兩側力矩不相等，力矩較大的一側會下沉。'}${s.angle!==90?`施力斜著拉（夾角 ${s.angle}°），有效力臂比施力點距離 ${s.d2} cm 短。`:''}`};
+ case 'pulley-incline':{const name={fixed:'定滑輪',movable:'動滑輪',block:'滑輪組',incline:'斜面'}[s.mode];return {metrics:[['施力',f(r.force)+' N'],['施力移動距離',f(r.distance)+' m'],['輸入功',f(r.input)+' J'],['輸出功',f(r.output)+' J']],explanation:`${name}：物重 ${s.load} N 上升 ${s.h} m，輸出功＝${s.load}×${s.h}＝${f(r.output)} J。施力 ${f(r.force)} N 移動 ${f(r.distance)} m，輸入功＝${f(r.input)} J。${r.kind==='ideal'?(s.mode==='fixed'?'定滑輪不省力，只改變施力方向。':'施力變小，移動距離就變長，兩者相乘的功不變：省力不省功。'):`有 ${s.loss}% 損耗，輸入功比輸出功多 ${f(r.input-r.output)} J，這部分轉成熱。`}${r.clamped?'（斜面長不能短於高度，已用斜面長＝'+s.h+' m 計算。）':''}`}}
+ case 'reaction-rate':return {metrics:[['相對速率',f(r.rate,3)],['完成時間',f(r.time,1)+' s'],['產物總量',f(r.product)+' 單位'],['和基準相比',r.kind==='same'?'一樣快':f(r.rate,3)+' 倍']],explanation:`相對速率＝${f(s.conc,1)}（濃度）×${f(r.tempF,3)}（溫度）×${r.sizeF}（顆粒）×${r.catF}（催化劑）＝${f(r.rate,3)}。完成時間 ${f(r.time,1)} s，基準條件要 ${f(r.baseTime,1)} s；產物總量仍是 ${f(r.product)} 單位，只由固體反應物的量決定。數值來自虛構教學模型。`};
+ case 'reflection-refraction':return s.mode==='mirror'?{metrics:[['反射角',f(r.reflection,1)+'°'],['像距',f(r.image)+' cm'],['像的性質','正立、等大、虛像'],['左右','左右相反']],explanation:`反射角＝入射角＝${f(r.reflection,1)}°，兩個角都從法線量起。物體離鏡面 ${s.dist} cm，像在鏡子後方 ${f(r.image)} cm，是反射光反向延長線的交點，所以是虛像，無法投影在屏幕上。`}:{metrics:[['反射角',f(r.reflection,1)+'°'],['折射角',r.kind==='tir'?'沒有折射光':f(r.refraction,2)+'°'],['偏折方向',{normal:'垂直入射，不偏折',toward:'偏向法線',away:'偏離法線',tir:'全反射'}[r.kind]],['臨界角',r.critical===null?'不適用（進入較密介質）':f(r.critical,2)+'°']],explanation:r.kind==='tir'?`入射角 ${s.incident}° 大於臨界角 ${f(r.critical,2)}°，n₁ sinθ₁ 超過 n₂，沒有折射光，光線全部反射回原介質（進階）。`:r.kind==='normal'?'入射角 0°：光沿法線前進，不偏折；仍有一部分光被反射回來。':`n₁ sinθ₁＝${f(r.n1*Math.sin(s.incident*Math.PI/180),4)}＝n₂ sinθ₂，折射角 ${f(r.refraction,2)}°。${r.kind==='toward'?'進入折射率較大的介質，光偏向法線。':'進入折射率較小的介質，光偏離法線。'}`};
+ case 'atom-builder':return {metrics:[['元素',r.symbol+' '+r.name],['質量數 A',String(r.A)],['電荷',r.charge===0?'0（電中性）':(r.charge>0?'+':'−')+Math.abs(r.charge)+'（'+r.ion+'）'],['電子層',r.shells.length?r.shells.join('、'):'沒有電子']],explanation:`質子數 ${s.p} 決定這是${r.name}（${r.symbol}）。質量數＝${s.p}＋${s.n}＝${r.A}。電荷＝${s.p}－${s.e}＝${r.charge>0?'+':''}${r.charge}，${r.kind==='neutral'?'質子與電子一樣多，是電中性的原子':r.kind==='cation'?'電子比質子少，是陽離子 '+r.ion:'電子比質子多，是陰離子 '+r.ion}。${r.isotope==='most'?'中子數 '+s.n+' 是最常見的組合。':r.isotope==='common'?'中子數和最常見的 '+r.commonN+' 不同：這是'+r.name+'的同位素（'+r.symbol+'-'+r.A+'）。':'中子數 '+s.n+' 不在常見同位素表內：非常見組合，本頁不判斷是否穩定。'}${Math.abs(r.charge)>3?'電荷超過 ±3 的離子在國中不會出現，這裡只作數字練習。':''}`};
  }
 }

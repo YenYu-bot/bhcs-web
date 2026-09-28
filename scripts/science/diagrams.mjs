@@ -95,6 +95,125 @@ export function diagram(id,s,r){
   if(cut!==null){out+=`<line data-turn x1="${tx(cut)}" y1="${top[0]-6}" x2="${tx(cut)}" y2="${bot[1]+4}" stroke="#b54a5b" stroke-width="2" stroke-dasharray="7 5"/>`+text(num(tx(cut)+6,1),bot[0]-10,'折返 t＝'+fmt(cut)+' s',14)}
   out+=text(20,390,'上：位置－時間（x-t）　下：速度－時間（v-t）；淡藍＝軸上方面積，淡紅＝軸下方面積',14);break;
  }
+ case 'lever-torque':{
+  // 槓桿依轉動方向固定傾斜 8°；有效力臂＝支點到力的作用線的垂線（紅色虛線）。
+  const F=[330,196],sc=5.4,phi=(r.kind==='left'?-8:r.kind==='right'?8:0)*Math.PI/180,u=[Math.cos(phi),Math.sin(phi)];
+  const at=d=>[num(F[0]+d*sc*u[0],1),num(F[1]+d*sc*u[1],1)],L=at(-52),R=at(52),W=at(-s.d1),A=at(s.d2);
+  const th=s.angle*Math.PI/180,dir=[u[0]*Math.cos(th)-u[1]*Math.sin(th),u[0]*Math.sin(th)+u[1]*Math.cos(th)];
+  const len=30+s.f2*4,tip=[num(A[0]+dir[0]*len,1),num(A[1]+dir[1]*len,1)];
+  const k=(F[0]-A[0])*dir[0]+(F[1]-A[1])*dir[1],foot=[num(A[0]+dir[0]*k,1),num(A[1]+dir[1]*k,1)];
+  out+=`<path d="M${F[0]},${F[1]} L${F[0]-26},${F[1]+48} L${F[0]+26},${F[1]+48} Z" fill="#9aaeb9"/>`+line(F[0]-60,F[1]+48,F[0]+60,F[1]+48,'#607e8d');
+  out+=`<line x1="${L[0]}" y1="${L[1]}" x2="${R[0]}" y2="${R[1]}" stroke="#8a5a2b" stroke-width="10" stroke-linecap="round"/>`;
+  for(let d=-50;d<=50;d+=10){const p=at(d);out+=`<line x1="${p[0]}" y1="${num(p[1]-5,1)}" x2="${p[0]}" y2="${num(p[1]+5,1)}" stroke="#f3e2c7" stroke-width="2"/>`}
+  // 左側重物（鉛直向下）
+  const box=18+s.w1*1.4;out+=line(W[0],W[1],W[0],num(W[1]+46,1),'#436779')+rect(num(W[0]-box/2,1),num(W[1]+46,1),num(box,1),num(box,1),'#607e8d')+text(num(W[0]-22,1),num(W[1]+box+68,1),s.w1+' N',16)+text(num(W[0]-26,1),num(W[1]-14,1),s.d1+' cm',14);
+  // 右側施力：作用線（灰虛線）、力箭頭（橘）、有效力臂（紅虛線）與直角記號
+  const ext=520;out+=`<line x1="${num(A[0]-dir[0]*ext,1)}" y1="${num(A[1]-dir[1]*ext,1)}" x2="${num(A[0]+dir[0]*ext,1)}" y2="${num(A[1]+dir[1]*ext,1)}" stroke="#9aaeb9" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  out+=arrow(A[0],A[1],tip[0],tip[1],'#d97b11')+text(num(tip[0]+8,1),num(tip[1]+6,1),s.f2+' N',16)+text(num(A[0]-20,1),num(A[1]-14,1),s.d2+' cm',14);
+  out+=`<line data-arm x1="${F[0]}" y1="${F[1]}" x2="${foot[0]}" y2="${foot[1]}" stroke="#b54a5b" stroke-width="5" stroke-dasharray="9 5"/>`;
+  if(Math.hypot(foot[0]-A[0],foot[1]-A[1])>12){const b=[foot[0]-dir[0]*10,foot[1]-dir[1]*10],n=[F[0]-foot[0],F[1]-foot[1]],nl=Math.hypot(n[0],n[1])||1,c=[b[0]+n[0]/nl*10,b[1]+n[1]/nl*10],e=[foot[0]+n[0]/nl*10,foot[1]+n[1]/nl*10];out+=`<path d="M${num(b[0],1)},${num(b[1],1)} L${num(c[0],1)},${num(c[1],1)} L${num(e[0],1)},${num(e[1],1)}" fill="none" stroke="#b54a5b" stroke-width="1.5"/>`}
+  out+=circle(F[0],F[1],5,'#142f46')+text(20,36,'左側力矩 '+num(r.left,2)+' N·m　右側力矩 '+num(r.right,2)+' N·m',18);
+  out+=text(20,382,'紅色虛線：有效力臂 '+num(r.effective,1)+' cm（支點到力的作用線的垂直距離）',15);break;
+ }
+ case 'pulley-incline':{
+  // 裝置畫在左側 x<440；右下角長條比較輸入功與輸出功。
+  const ink='#436779',rope='#8a5a2b',F=num(r.force,1),D=num(r.distance,2);
+  const crate=(x,y,w=70,h=46)=>rect(x-w/2,y,w,h,'#c8955a')+text(x-26,y+29,s.load+' N',15);
+  const pulley=(x,y,rad=24)=>`<circle cx="${x}" cy="${y}" r="${rad}" fill="#e4edf2" stroke="${ink}" stroke-width="3"/>`+circle(x,y,4,ink);
+  const seg=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${rope}" stroke-width="3"/>`;
+  const label=(x,y,n)=>`<circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="#b54a5b" stroke-width="2"/><text x="${x}" y="${y+5}" font-size="13" text-anchor="middle">${n}</text>`;
+  const ceiling=(x1,x2)=>line(x1,52,x2,52,ink)+Array.from({length:Math.floor((x2-x1)/16)},(_,i)=>line(x1+8+i*16,52,x1+i*16,44,'#9aaeb9')).join('');
+  if(s.mode==='fixed'){
+   out+=ceiling(170,330)+line(250,52,250,76,ink)+pulley(250,100)+seg(226,100,226,250)+seg(274,100,274,230)+crate(226,250)+arrow(274,230,274,300,'#d97b11')+text(284,300,'F＝'+F+' N',16)+arrow(150,300,150,250,'#087b78')+text(70,285,'上升 '+s.h+' m',14)+text(284,326,'向下拉 '+D+' m',14)+label(212,170,1);
+  }else if(s.mode==='movable'){
+   out+=ceiling(150,330)+seg(210,52,210,230)+seg(270,230,270,90)+pulley(240,230,30)+crate(240,262)+arrow(270,140,270,80,'#d97b11')+text(280,90,'F＝'+F+' N',16)+label(196,150,1)+label(284,180,2)+text(280,120,'向上拉 '+D+' m',14)+arrow(150,320,150,270,'#087b78')+text(62,305,'上升 '+s.h+' m',14);
+  }else if(s.mode==='block'){
+   const n=s.n,x0=250-(n-1)*14,xs=Array.from({length:n},(_,i)=>x0+i*28);
+   out+=ceiling(150,350)+line(250,52,250,72,ink)+rect(x0-24,72,(n-1)*28+48,26,'#e4edf2')+rect(x0-24,210,(n-1)*28+48,26,'#e4edf2');
+   xs.forEach((x,i)=>{out+=seg(x,98,x,210)+label(x,154,i+1)});out+=crate(250,236);
+   const fx=x0+(n-1)*28+40;
+   if(n%2===0)out+=seg(fx-16,85,fx,85)+seg(fx,85,fx,200)+arrow(fx,200,fx,270,'#d97b11')+text(fx+10,270,'F＝'+F+' N',16)+text(fx+10,294,'向下拉 '+D+' m',14);
+   else out+=seg(fx-16,223,fx,223)+seg(fx,223,fx,130)+arrow(fx,130,fx,70,'#d97b11')+text(fx+10,82,'F＝'+F+' N',16)+text(fx+10,106,'向上拉 '+D+' m',14);
+   out+=arrow(110,330,110,280,'#087b78')+text(40,316,'上升 '+s.h+' m',14)+text(40,360,'承重繩段 '+n+' 段（紅圈編號）',14);
+  }else{
+   const L=r.L,base=Math.sqrt(Math.max(0,L*L-s.h*s.h)),k=Math.min(360/Math.max(base,0.001),230/s.h,360/L),x0=60,y0=320,x1=num(x0+base*k,1),y1=num(y0-s.h*k,1);
+   out+=`<path d="M${x0},${y0} L${x1},${y0} L${x1},${y1} Z" fill="#e8dcc6" stroke="${ink}" stroke-width="3"/>`;
+   const ang=Math.atan2(y1-y0,x1-x0),mx=x0+(x1-x0)*.45,my=y0+(y1-y0)*.45,c=Math.cos(ang),sn=Math.sin(ang);
+   out+=`<g transform="translate(${num(mx,1)},${num(my,1)}) rotate(${num(ang*180/Math.PI,1)})"><rect x="-26" y="-40" width="52" height="40" rx="4" fill="#c8955a"/><text x="-20" y="-15" font-size="13">${s.load} N</text></g>`;
+   out+=arrow(num(mx+c*30,1),num(my+sn*30-20,1),num(mx+c*100,1),num(my+sn*100-20,1),'#d97b11')+text(num(mx+c*100+6,1),num(my+sn*100-26,1),'F＝'+F+' N',16);
+   out+=text(num(x1+8,1),num((y0+y1)/2,1),'h＝'+s.h+' m',15)+text(num(x0+(x1-x0)*.12-10,1),num(y0+(y1-y0)*.12-22,1),'L＝'+num(L,2)+' m',15);
+   if(r.clamped)out+=text(60,360,'斜面長不能短於高度：以 L＝h 計算',14);
+  }
+  // 功的比較
+  const mx2=Math.max(r.input,r.output),bw=v=>num(150*v/mx2,1);
+  out+=text(470,236,'功的比較（J）',15)+rect(470,248,bw(r.input),22,'#d97b11')+text(470,292,'輸入功 '+num(r.input,1),14)+rect(470,300,bw(r.output),22,'#087b78')+text(470,344,'輸出功 '+num(r.output,1),14);
+  out+=text(20,32,'施力 '+F+' N × 移動 '+D+' m ＝ 輸入功 '+num(r.input,1)+' J',18);break;
+ }
+ case 'reaction-rate':{
+  // 左：燒杯粒子示意（數量隨濃度、短線長度隨溫度）；右：產物—時間，實線為本次、虛線為基準條件，終點高度相同。
+  let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
+  out+=`<path d="M40,110 L40,330 Q40,350 60,350 L240,350 Q260,350 260,330 L260,110" fill="#e3f1f6" stroke="#436779" stroke-width="3"/>`;
+  const nP=Math.round(s.conc*14),tail=6+10*Math.min(4,r.tempF);
+  for(let i=0;i<nP;i++){const x=num(62+rnd()*176,1),y=num(140+rnd()*190,1),a=rnd()*Math.PI*2;out+=`<line x1="${x}" y1="${y}" x2="${num(x-Math.cos(a)*tail,1)}" y2="${num(y-Math.sin(a)*tail,1)}" stroke="#9aaeb9" stroke-width="2"/>`+circle(x,y,5,'#087b78')}
+  const piece=s.size==='lump'?[[150,316,38]]:s.size==='granule'?[[118,322,20],[150,318,22],[184,322,20]]:Array.from({length:12},(_,i)=>[74+i*14,330-(i%3)*6,7]);
+  piece.forEach(([x,y,w])=>out+=rect(x-w/2,y-w/2,w,w,'#b9b9bc'));
+  if(s.cat==='yes')out+=`<path d="M226,134 l10,-16 l10,16 Z" fill="#d97b11"/>`+text(178,132,'催化劑',13);
+  out+=text(40,96,'反應物溶液（示意）',16)+text(40,380,'點數≈濃度　短線≈粒子運動快慢',13);
+  const X0=320,X1=630,Y0=320,Y1=100,tMax=Math.max(r.time,r.baseTime)*1.1,px=t=>num(X0+(X1-X0)*Math.min(t,tMax)/tMax,1),top=Y1;
+  out+=line(X0,Y0,X1,Y0,'#436779')+line(X0,Y0,X0,Y1-10,'#436779')+text(X0,Y1-30,'產物量',15)+text(num((X0+X1)/2-30,1),Y0+22,'時間（s）',14)+text(X0-4,Y0+22,'0',13)+`<text x="${X1}" y="${Y0+22}" font-size="13" text-anchor="end">${num(tMax,0)} s</text>`;
+  out+=`<path d="M${X0},${Y0} L${px(r.baseTime)},${top} L${X1},${top}" fill="none" stroke="#7c879b" stroke-width="3" stroke-dasharray="7 5"/>`;
+  out+=`<path data-product-curve d="M${X0},${Y0} L${px(r.time)},${top} L${X1},${top}" fill="none" stroke="#d97b11" stroke-width="4"/>`;
+  out+=line(px(r.time),top,px(r.time),Y0,'#d97b11',true)+`<text x="${Math.min(px(r.time)+6,X1-4)}" y="${Y0-8}" font-size="13" text-anchor="${px(r.time)>X1-80?'end':'start'}">完成 ${num(r.time,1)} s</text>`;
+  out+=text(X0+8,top+20,'產物總量 '+r.product+' 單位',14)+text(X0,356,'實線：本次　虛線：基準條件',13)+text(X0,376,'（1 M、25°C、塊狀、無催化劑）',13);
+  out+=text(20,36,'相對速率 '+num(r.rate,3)+'　完成時間 '+num(r.time,1)+' s',18);break;
+ }
+ case 'reflection-refraction':{
+  // 所有角度都標在光線與法線（灰色虛線）之間。
+  const D=Math.PI/180,sn=a=>Math.sin(a*D),cs=a=>Math.cos(a*D);
+  const ray=(x1,y1,x2,y2,c,w=4,dash='')=>`<line x1="${num(x1,1)}" y1="${num(y1,1)}" x2="${num(x2,1)}" y2="${num(y2,1)}" stroke="${c}" stroke-width="${w}"${dash?` stroke-dasharray="${dash}"`:''}/>`;
+  const normal=(x1,y1,x2,y2)=>`<line data-normal x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#7c879b" stroke-width="2" stroke-dasharray="6 5"/>`;
+  // 角弧：頂點 O，從方向角 a0 到 a1（度，數學方向、y 向上），半徑 rr
+  const tag=(x,y,t,c,anchor='start')=>`<text x="${x}" y="${y}" font-size="15" text-anchor="${anchor}" fill="${c}">${esc(t)}</text>`;
+  const arc=(O,a0,a1,rr,c)=>{const p=a=>[num(O[0]+rr*Math.cos(a*D),1),num(O[1]-rr*Math.sin(a*D),1)],P0=p(a0),P1=p(a1),sweep=a1>a0?0:1;return Math.abs(a1-a0)<0.5?'':`<path d="M${P0[0]},${P0[1]} A${rr},${rr} 0 0 ${sweep} ${P1[0]},${P1[1]}" fill="none" stroke="${c}" stroke-width="2"/>`};
+  if(s.mode==='refraction'){
+   const O=[330,200],names={'air-water':['空氣','水'],'air-glass':['空氣','玻璃'],'water-air':['水','空氣'],'glass-air':['玻璃','空氣']}[s.media],fill=n=>n==='水'?'#d6ebf5':n==='玻璃'?'#e3e8f0':'#ffffff';
+   out+=rect(20,60,620,140,fill(names[0]))+rect(20,200,620,150,fill(names[1]))+line(20,200,640,200,'#436779')+normal(330,60,330,350);
+   out+=text(34,86,names[0]+'　n＝'+r.n1,16)+text(34,340,names[1]+'　n＝'+r.n2,16);
+   const th=s.incident,L=170;out+=ray(O[0]-L*sn(th),O[1]-L*cs(th),O[0],O[1],'#d97b11');
+   out+=arrow(num(O[0]-L*sn(th)*.55,1),num(O[1]-L*cs(th)*.55,1),num(O[0]-L*sn(th)*.45,1),num(O[1]-L*cs(th)*.45,1),'#d97b11');
+   out+=ray(O[0],O[1],O[0]+150*sn(th),O[1]-150*cs(th),'#d97b11',r.kind==='tir'?4:2,r.kind==='tir'?'':'8 5');
+   if(r.kind!=='tir'){const t2=r.refraction;out+=ray(O[0],O[1],O[0]+L*sn(t2),O[1]+L*cs(t2),'#b54a5b')+arc(O,270,270+t2,62,'#b54a5b')+tag(626,300,'折射角 '+num(t2,1)+'°','#b54a5b','end')}
+   else out+=text(360,280,'沒有折射光：全反射',17);
+   out+=arc(O,90,90+th,54,'#d97b11')+arc(O,90,90-th,78,'#087b78')+tag(34,130,'入射角 '+th+'°','#d97b11')+tag(626,110,'反射角 '+th+'°','#087b78','end');
+   out+=text(20,36,r.kind==='tir'?'全反射（進階）：入射角 '+th+'° ＞ 臨界角 '+num(r.critical,2)+'°':'n₁ sinθ₁ ＝ n₂ sinθ₂',18)+text(20,384,'灰色虛線是法線；角度都從法線量起。細虛線是部分反射光。',14);
+  }else{
+   // 上：一條光線在鏡面反射（法線水平）；下：物與像
+   const MX=380,H=[MX,120],th=s.incident,L=150;
+   out+=line(MX,56,MX,356,'#436779');for(let y=60;y<=350;y+=14)out+=line(MX,y,MX+10,y-8,'#9aaeb9');
+   out+=normal(MX-190,120,MX,120)+ray(H[0]-L*cs(th),H[1]-L*sn(th),H[0],H[1],'#d97b11')+ray(H[0],H[1],H[0]-L*cs(th),H[1]+L*sn(th),'#087b78');
+   out+=arc(H,180,180-th,50,'#d97b11')+arc(H,180,180+th,74,'#087b78')+tag(34,100,'入射角 '+th+'°','#d97b11')+tag(34,196,'反射角 '+th+'°','#087b78');
+   const sc=5,base=330,top=260,ox=MX-s.dist*sc,ix=MX+s.dist*sc,flag=(x,dir,dash)=>`<path d="M${x},${base} L${x},${top} L${x+dir*22},${top} M${x},${top+22} L${x+dir*15},${top+22}" fill="none" stroke="${dash?'#7c879b':'#142f46'}" stroke-width="4"${dash?' stroke-dasharray="6 4"':''}/>`;
+   out+=flag(ox,1,false)+flag(ix,-1,true)+text(ox-8,base+22,'物',15)+text(ix-8,base+22,'像',15);
+   const M2=[MX,300];out+=ray(ox,top,MX,top,'#b54a5b',2)+ray(MX,top,ox-40,top,'#b54a5b',2)+ray(MX,top,ix,top,'#b54a5b',2,'5 4');
+   const k=(M2[1]-top)/(MX-ox);out+=ray(ox,top,M2[0],M2[1],'#b54a5b',2)+ray(M2[0],M2[1],M2[0]-160,M2[1]+160*k,'#b54a5b',2)+ray(M2[0],M2[1],ix,top,'#b54a5b',2,'5 4');
+   out+=line(ox,base,ix,base,'#9aaeb9')+text(num((ox+MX)/2-20,1),base+44,s.dist+' cm',14)+text(num((MX+ix)/2-20,1),base+44,s.dist+' cm',14);
+   out+=text(20,36,'反射角＝入射角；像距＝物距',18)+text(430,90,'虛線：反向延長線',14);
+  }
+  break;
+ }
+ case 'atom-builder':{
+  // 左：波耳同心圓模型（簡化）；右上：前 20 號的迷你週期表，目前元素紅框。
+  const C=[200,204],R=[54,90,126,160];out+=`<circle cx="${C[0]}" cy="${C[1]}" r="32" fill="#f3d2d6" stroke="#b54a5b" stroke-width="2"/>`;
+  out+=`<text x="${C[0]}" y="${C[1]-3}" font-size="14" text-anchor="middle">${s.p} p⁺</text><text x="${C[0]}" y="${C[1]+15}" font-size="14" text-anchor="middle">${s.n} n</text>`;
+  r.shells.forEach((k,i)=>{out+=`<circle data-shell="${i+1}" cx="${C[0]}" cy="${C[1]}" r="${R[i]}" fill="none" stroke="#9aaeb9" stroke-width="2"/>`;for(let j=0;j<k;j++){const a=-Math.PI/2+j*2*Math.PI/k+i*0.3;out+=`<circle data-electron cx="${num(C[0]+R[i]*Math.cos(a),1)}" cy="${num(C[1]+R[i]*Math.sin(a),1)}" r="7" fill="#2f6fb2"/>`}});
+  if(!r.shells.length)out+=text(C[0]-40,C[1]+70,'沒有電子',14);
+  const x0=402,y0=46,w=30,h=30,pos=(z,E)=>{const period=z<=2?1:z<=10?2:z<=18?3:4;return [x0+(E[1]-1)*w,y0+(period-1)*h]};
+  r.table.forEach((E,i)=>{const [x,y]=pos(i+1,E),cur=i+1===s.p;out+=`<rect x="${x}" y="${y}" width="${w-2}" height="${h-2}" fill="${cur?'#fff':'#f2f4f7'}" stroke="${cur?'#b54a5b':'#c9d2de'}" stroke-width="${cur?3:1}"${cur?' data-current':''}/>`+`<text x="${x+(w-2)/2}" y="${y+19}" font-size="13" text-anchor="middle">${E[0]}</text>`});
+  out+=text(x0,y0+4*h+22,'前 20 號元素（主族）',13);
+  out+=`<text x="${x0}" y="${y0+4*h+64}" font-size="30" font-weight="700">${esc(r.ion||r.symbol)}</text>`+text(x0,y0+4*h+92,r.name+'　A＝'+r.A+'　'+(r.charge===0?'電中性':'電荷 '+(r.charge>0?'+':'−')+Math.abs(r.charge)),15);
+  out+=text(x0,y0+4*h+118,'電子層：'+(r.shells.length?r.shells.join('、'):'無'),15);
+  out+=text(20,392,'紅＝原子核（質子、中子）　藍＝電子　同心圓只是簡化模型',13);break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }

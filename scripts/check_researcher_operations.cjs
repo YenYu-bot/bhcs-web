@@ -1,9 +1,9 @@
-// Real browser flow for all 21 stations. No direct calls into model functions.
+// Real browser flow for all 26 stations. No direct calls into model functions.
 const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.OPERATIONS_OUTPUT||'operation-artifacts');
 const legacy=[['microscope','begin'],['photosynthesis-factor','start'],['genetics-simulation','cross'],['force-motion','step'],['circuit','verify'],['particle-reaction','react'],['acid-base-indicator','mix'],['heat-phase','begin'],['buoyancy-density','drop'],['plate-earthquake','begin']].map(([id,run])=>({id,file:'tools/'+id+'-lab.html',run}));
-const shared=['optics','wave-sound','electromagnetism','pressure-fluid','energy','solubility','moon-eclipse','seasons','plant-exchange','ecosystem','motion-graphs'].map(id=>({id,file:'tools/science/'+id+'.html',run:'run',shared:true}));
+const shared=['optics','wave-sound','electromagnetism','pressure-fluid','energy','solubility','moon-eclipse','seasons','plant-exchange','ecosystem','motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder'].map(id=>({id,file:'tools/science/'+id+'.html',run:'run',shared:true}));
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg'};
 const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return}try{res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file))}catch{res.writeHead(404).end()}});
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
