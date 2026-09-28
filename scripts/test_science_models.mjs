@@ -166,6 +166,26 @@ test('Lever torque: balanced default / slanted pull / sin symmetry / effective a
   const m=svg.match(/<line data-arm x1="([\d.-]+)" y1="([\d.-]+)" x2="([\d.-]+)" y2="([\d.-]+)"/);assert.ok(m,'effective arm line missing');
   assert.ok(Math.abs(Math.hypot(m[3]-m[1],m[4]-m[2])/5.4-q.effective)<0.1,`arm ${angle} ${d2}`);}
 });
+test('Lever force and mirror rays stay inside the 660 by 400 diagram at control extremes',()=>{
+ const check=(id,values,selector)=>{
+  const s={...defaults(id),...values},dom=new JSDOM(diagram(id,s,calculate(id,s)));
+  const rays=[...dom.window.document.querySelectorAll(selector)];assert.ok(rays.length,id+' missing visible ray');
+  for(const ray of rays)for(const end of ['1','2']){
+   const x=Number(ray.getAttribute('x'+end)),y=Number(ray.getAttribute('y'+end));
+   assert.ok(x>=8&&x<=652&&y>=8&&y<=392,`${id} ${JSON.stringify(values)} clipped endpoint (${x},${y})`);
+  }
+  if(id==='reflection-refraction'){
+   const labels=['data-object-distance','data-image-distance'].map(attr=>dom.window.document.querySelector('['+attr+']'));
+   assert.ok(labels.every(Boolean),'distance labels missing');
+   assert.ok(Number(labels[1].getAttribute('x'))-Number(labels[0].getAttribute('x'))>=64,'near-mirror distance labels overlap');
+  }
+  dom.window.close();
+ };
+ for(const angle of [30,90,150])for(const d2 of [5,40,50])for(const f2 of [1,20])for(const w1 of [1,20])
+  check('lever-torque',{angle,d2,f2,w1},'line[stroke="#d97b11"]');
+ for(const incident of [0,30,60,85])for(const dist of [5,20,50])
+  check('reflection-refraction',{mode:'mirror',incident,dist},'line[stroke="#d97b11"],line[stroke="#087b78"],line[stroke="#b54a5b"]');
+});
 test('Motion graphs: reversing / stops exactly at t / rest / area bookkeeping',()=>{
  const r=calc('motion-graphs');close(r.v,-10);close(r.x,0);close(r.path,20);assert.equal(r.kind,'reversing');close(r.turn,2);
  const e=calc('motion-graphs',{t:2});close(e.v,0);close(e.x,10);close(e.path,10);assert.equal(e.kind,'slowing');assert.equal(e.turn,null);
