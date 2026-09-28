@@ -117,6 +117,75 @@ test('Ecosystem: transfer / initial value / K / decline above K',()=>{
  close(calc('ecosystem',{initial:200}).population,200);
  assert.equal(calc('ecosystem',{initial:300,capacity:100}).kind,'decline');
 });
+test('Atom builder: Na+ / Cl- / C-14 isotope / no electrons / element fixed by protons',()=>{
+ const na=calc('atom-builder',{p:11,n:12,e:10});assert.equal(na.ion,'Na⁺');assert.equal(na.A,23);assert.deepEqual([...na.shells],[2,8]);assert.equal(na.kind,'cation');
+ const cl=calc('atom-builder',{p:17,n:18,e:18});assert.equal(cl.ion,'Cl⁻');assert.equal(cl.A,35);assert.deepEqual([...cl.shells],[2,8,8]);assert.equal(cl.kind,'anion');
+ const c=calc('atom-builder',{p:6,n:8,e:6});assert.equal(c.symbol,'C');assert.equal(c.A,14);assert.equal(c.kind,'neutral');assert.equal(c.isotope,'common');
+ assert.equal(calc('atom-builder',{p:6,n:6,e:6}).isotope,'most');assert.equal(calc('atom-builder',{p:6,n:0,e:6}).isotope,'unusual');
+ const z=calc('atom-builder',{p:9,n:10,e:0});assert.equal(z.shells.length,0);assert.equal(z.charge,9);
+ assert.equal(calc('atom-builder',{p:12,n:12,e:10}).ion,'Mg²⁺');assert.equal(calc('atom-builder',{p:8,n:8,e:10}).ion,'O²⁻');
+ for(let p=1;p<=20;p++)for(const e of [0,p,20]){const q=calc('atom-builder',{p,n:10,e});assert.equal(q.shells.reduce((a,b)=>a+b,0),e);assert.ok(q.shells.every((k,i)=>k<=[2,8,8,2][i]));
+  const svg=diagram('atom-builder',{p,n:10,e},q);assert.equal((svg.match(/data-electron/g)||[]).length,e);assert.equal((svg.match(/data-current/g)||[]).length,1);}
+});
+test('Reflection and refraction: toward / away / TIR critical angle / normal incidence / mirror',()=>{
+ const a=calc('reflection-refraction');assert.equal(Number(a.refraction.toFixed(2)),22.08);assert.equal(a.kind,'toward');close(a.reflection,30);
+ const w=calc('reflection-refraction',{media:'water-air',incident:45});assert.equal(Number(w.refraction.toFixed(2)),70.13);assert.equal(w.kind,'away');
+ const g=calc('reflection-refraction',{media:'glass-air',incident:45});assert.equal(g.kind,'tir');assert.equal(g.refraction,null);assert.equal(Number(g.critical.toFixed(2)),41.81);
+ assert.equal(calc('reflection-refraction',{media:'glass-air',incident:40}).kind,'away');
+ const z=calc('reflection-refraction',{incident:0});close(z.refraction,0);assert.equal(z.kind,'normal');
+ const m=calc('reflection-refraction',{mode:'mirror',dist:20});close(m.image,20);assert.equal(m.kind,'mirror');
+ for(const media of ['air-water','air-glass','water-air','glass-air'])for(let incident=0;incident<=85;incident+=5){const q=calc('reflection-refraction',{media,incident});
+  if(q.kind!=='tir'){close(q.n1*Math.sin(incident*Math.PI/180),q.n2*Math.sin(q.refraction*Math.PI/180))}else assert.ok(incident>q.critical);
+  const svg=diagram('reflection-refraction',{...defaults('reflection-refraction'),media,incident},q);assert.equal((svg.match(/data-normal/g)||[]).length,1);}
+});
+test('Reaction rate: baseline / +10°C doubles / catalyst keeps product / combined factors',()=>{
+ const b=calc('reaction-rate');close(b.rate,1);close(b.time,300);close(b.product,5);assert.equal(b.kind,'same');
+ const h=calc('reaction-rate',{temp:35});close(h.rate,2);close(h.time,150);assert.equal(h.kind,'faster');
+ const c=calc('reaction-rate',{cat:'yes'});close(c.rate,4);close(c.product,5);
+ close(calc('reaction-rate',{size:'powder',cat:'yes',conc:2}).rate,72);assert.equal(calc('reaction-rate',{temp:15}).kind,'slower');
+ for(const size of ['lump','granule','powder'])for(const cat of ['none','yes'])for(const temp of [5,25,65])for(const amount of [1,10]){const q=calc('reaction-rate',{size,cat,temp,amount});close(q.product,amount);close(q.rate*q.time,amount*60);
+  const svg=diagram('reaction-rate',{...defaults('reaction-rate'),size,cat,temp,amount},q),d=svg.match(/data-product-curve d="M[\d.]+,([\d.]+) L[\d.]+,([\d.]+) L[\d.]+,([\d.]+)"/);assert.ok(d);assert.equal(d[2],d[3],'curve ends flat at the same height');}
+});
+test('Pulley and incline: halving force doubles distance / incline ratio / L<h clamp / loss',()=>{
+ const f=calc('pulley-incline');close(f.force,100);close(f.distance,1);assert.equal(f.kind,'ideal');
+ const m=calc('pulley-incline',{mode:'movable'});close(m.force,50);close(m.distance,2);close(m.input,100);close(m.output,100);
+ const b=calc('pulley-incline',{mode:'block',n:4});close(b.force,25);close(b.distance,4);close(b.input,100);
+ close(calc('pulley-incline',{mode:'incline',len:1,h:1}).force,100);close(calc('pulley-incline',{mode:'incline',len:4,h:1}).force,25);
+ const c=calc('pulley-incline',{mode:'incline',len:1,h:3});assert.equal(c.clamped,true);close(c.force,100);close(c.distance,3);
+ const l=calc('pulley-incline',{mode:'movable',loss:20});close(l.force,62.5);close(l.input,125);close(l.output,100);assert.equal(l.kind,'lossy');
+ for(const mode of ['fixed','movable','block','incline'])for(const n of [2,3,6])for(const loss of [0,25,50]){const q=calc('pulley-incline',{mode,n,loss});assert.ok(q.input>=q.output-1e-9);if(!loss)close(q.input,q.output);
+  const svg=diagram('pulley-incline',{...defaults('pulley-incline'),mode,n,loss},q);if(mode==='block')assert.equal((svg.match(/stroke="#b54a5b" stroke-width="2"\/><text/g)||[]).length,n,'rope segments labelled 1…n');}
+});
+test('Lever torque: balanced default / slanted pull / sin symmetry / effective arm',()=>{
+ const r=calc('lever-torque');close(r.left,2);close(r.right,2);assert.equal(r.kind,'balanced');close(r.effective,40);
+ const s=calc('lever-torque',{angle:30});close(s.right,1);assert.equal(s.kind,'left');close(s.effective,20);
+ const t=calc('lever-torque',{angle:150});close(t.right,s.right);assert.equal(t.kind,s.kind);
+ assert.equal(calc('lever-torque',{d2:20}).kind,'left');assert.equal(calc('lever-torque',{d2:20,f2:10}).kind,'balanced');assert.equal(calc('lever-torque',{f2:6}).kind,'right');
+ assert.equal(calc('lever-torque',{w1:5,angle:30}).kind,'balanced');
+ for(const angle of [30,60,90,120,150])for(const d2 of [5,25,50]){const q=calc('lever-torque',{angle,d2}),svg=diagram('lever-torque',{...defaults('lever-torque'),angle,d2},q);
+  const m=svg.match(/<line data-arm x1="([\d.-]+)" y1="([\d.-]+)" x2="([\d.-]+)" y2="([\d.-]+)"/);assert.ok(m,'effective arm line missing');
+  assert.ok(Math.abs(Math.hypot(m[3]-m[1],m[4]-m[2])/5.4-q.effective)<0.1,`arm ${angle} ${d2}`);}
+});
+test('Lever force and mirror rays stay inside the 660 by 400 diagram at control extremes',()=>{
+ const check=(id,values,selector)=>{
+  const s={...defaults(id),...values},dom=new JSDOM(diagram(id,s,calculate(id,s)));
+  const rays=[...dom.window.document.querySelectorAll(selector)];assert.ok(rays.length,id+' missing visible ray');
+  for(const ray of rays)for(const end of ['1','2']){
+   const x=Number(ray.getAttribute('x'+end)),y=Number(ray.getAttribute('y'+end));
+   assert.ok(x>=8&&x<=652&&y>=8&&y<=392,`${id} ${JSON.stringify(values)} clipped endpoint (${x},${y})`);
+  }
+  if(id==='reflection-refraction'){
+   const labels=['data-object-distance','data-image-distance'].map(attr=>dom.window.document.querySelector('['+attr+']'));
+   assert.ok(labels.every(Boolean),'distance labels missing');
+   assert.ok(Number(labels[1].getAttribute('x'))-Number(labels[0].getAttribute('x'))>=64,'near-mirror distance labels overlap');
+  }
+  dom.window.close();
+ };
+ for(const angle of [30,90,150])for(const d2 of [5,40,50])for(const f2 of [1,20])for(const w1 of [1,20])
+  check('lever-torque',{angle,d2,f2,w1},'line[stroke="#d97b11"]');
+ for(const incident of [0,30,60,85])for(const dist of [5,20,50])
+  check('reflection-refraction',{mode:'mirror',incident,dist},'line[stroke="#d97b11"],line[stroke="#087b78"],line[stroke="#b54a5b"]');
+});
 test('Motion graphs: reversing / stops exactly at t / rest / area bookkeeping',()=>{
  const r=calc('motion-graphs');close(r.v,-10);close(r.x,0);close(r.path,20);assert.equal(r.kind,'reversing');close(r.turn,2);
  const e=calc('motion-graphs',{t:2});close(e.v,0);close(e.x,10);close(e.path,10);assert.equal(e.kind,'slowing');assert.equal(e.turn,null);
