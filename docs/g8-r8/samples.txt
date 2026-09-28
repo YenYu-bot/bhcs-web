@@ -1,0 +1,252 @@
+[basic/factorCheck/integer] 判斷 (x + 1) 是否為 2x 2 + 7x + 5 的因式。  ⇒ 是，商為 (2x + 5)
+[basic/factorCheck/integer] 判斷 (x + 5) 是否為 5x 2 + 28x + 15 的因式。  ⇒ 是，商為 (5x + 3)
+[basic/factorCheck/fraction] 判斷 (x − 5) 是否為 (5/2)x 2 − 11x − 7 的因式。  ⇒ 否
+[basic/factorCheck/fraction] 判斷 (3x − 1) 是否為 3x 2 − (11/2)x + (3/2) 的因式。  ⇒ 是，商為 (1/2)(2x − 3)
+[basic/factorCheck/decimal] 判斷 (4x − 3) 是否為 3x 2 + 1.75x − 2.75 的因式。  ⇒ 否
+[basic/factorCheck/decimal] 判斷 (3x − 2) 是否為 0.6x 2 + 0.8x − 0.8 的因式。  ⇒ 是，商為 0.2(x + 2)
+[basic/commonMonomial/integer] 因式分解：−20x + 8x 2   ⇒ 4x(2x − 5)
+[basic/commonMonomial/integer] 因式分解：2x 2 + 3x  ⇒ x(2x + 3)
+[basic/commonMonomial/fraction] 因式分解：−(35/4)x + (7/2)x 2   ⇒ (7/4)x(2x − 5)
+[basic/commonMonomial/fraction] 因式分解：(7/2)x 2 − (7/4)x  ⇒ (7/4)x(2x − 1)
+[basic/commonMonomial/decimal] 因式分解：1.2x 2 − 2.4x  ⇒ 1.2x(x − 2)
+[basic/commonMonomial/decimal] 因式分解：6x + 1.5x 2   ⇒ 1.5x(x + 4)
+[basic/commonBracket/integer] 因式分解：(2x − 3)(x + 3) + 4(x + 3)  ⇒ (x + 3)(2x + 1)
+[basic/commonBracket/integer] 因式分解：2[(4x + 1)(x − 3) + 4(x − 3)]  ⇒ 2(x − 3)(4x + 5)
+[basic/commonBracket/fraction] 因式分解：(2/3)[(5x + 3)(x + 4) − 5(x + 4)]  ⇒ (2/3)(x + 4)(5x − 2)
+[basic/commonBracket/fraction] 因式分解：(7/4)[(5x + 2)(x − 3) − 3(x − 3)]  ⇒ (7/4)(x − 3)(5x − 1)
+[basic/commonBracket/decimal] 因式分解：0.4[(x + 3)(x − 4) + 5(x − 4)]  ⇒ 0.4(x − 4)(x + 8)
+[basic/commonBracket/decimal] 因式分解：0.2[(x − 5)(x − 5) + (x − 5)]  ⇒ 0.2(x − 5)(x − 4)
+[basic/grouping/integer] 因式分解：8x 2 + 20x + 4x + 10  ⇒ 2(2x + 1)(2x + 5)
+[basic/grouping/integer] 因式分解：10x 2 + 40x − 4x − 16  ⇒ 2(5x − 2)(x + 4)
+[basic/grouping/fraction] 因式分解：(7/4)x 2 + (21/4)x − 7x − 21  ⇒ (7/4)(x − 4)(x + 3)
+[basic/grouping/fraction] 因式分解：(15/2)x 2 + 5x + 3x + 2  ⇒ (1/2)(5x + 2)(3x + 2)
+[basic/grouping/decimal] 因式分解：12x 2 + 15x − 9x − 11.25  ⇒ 0.75(4x − 3)(4x + 5)
+[basic/grouping/decimal] 因式分解：1.6x 2 + 1.2x − 3.2x − 2.4  ⇒ 0.4(x − 2)(4x + 3)
+[basic/squareSum/integer] 因式分解：12 + 12x + 3x 2   ⇒ 3(x + 2) 2 
+[basic/squareSum/integer] 因式分解：16 + 8x + x 2   ⇒ (x + 4) 2 
+[basic/squareSum/fraction] 因式分解：(36/5)x 2 + (24/5)x + (4/5)  ⇒ (4/5)(3x + 1) 2 
+[basic/squareSum/fraction] 因式分解：8 + 20x + (25/2)x 2   ⇒ (1/2)(5x + 4) 2 
+[basic/squareSum/decimal] 因式分解：8 + 20x + 12.5x 2   ⇒ 0.5(5x + 4) 2 
+[basic/squareSum/decimal] 因式分解：0.2 + 0.4x + 0.2x 2   ⇒ 0.2(x + 1) 2 
+[basic/squareDiff/integer] 因式分解：12 − 36x + 27x 2   ⇒ 3(3x − 2) 2 
+[basic/squareDiff/integer] 因式分解：36 − 120x + 100x 2   ⇒ 4(5x − 3) 2 
+[basic/squareDiff/fraction] 因式分解：(125/2)x 2 − 50x + 10  ⇒ (5/2)(5x − 2) 2 
+[basic/squareDiff/fraction] 因式分解：(8/3) − (40/3)x + (50/3)x 2   ⇒ (2/3)(5x − 2) 2 
+[basic/squareDiff/decimal] 因式分解：6.25 − 7.5x + 2.25x 2   ⇒ 0.25(3x − 5) 2 
+[basic/squareDiff/decimal] 因式分解：1.6x 2 − 8x + 10  ⇒ 0.4(2x − 5) 2 
+[basic/differenceSquares/integer] 因式分解：9x 2 − 4  ⇒ (3x + 2)(3x − 2)
+[basic/differenceSquares/integer] 因式分解：−16 + 9x 2   ⇒ (3x + 4)(3x − 4)
+[basic/differenceSquares/fraction] 因式分解：−(125/2) + 40x 2   ⇒ (5/2)(4x + 5)(4x − 5)
+[basic/differenceSquares/fraction] 因式分解：−(45/2) + (125/2)x 2   ⇒ (5/2)(5x + 3)(5x − 3)
+[basic/differenceSquares/decimal] 因式分解：−4 + 6.25x 2   ⇒ 0.25(5x + 4)(5x − 4)
+[basic/differenceSquares/decimal] 因式分解：3.6x 2 − 0.4  ⇒ 0.4(3x + 1)(3x − 1)
+[basic/monicTrinomial/integer] 因式分解：x 2 + x − 6  ⇒ (x − 2)(x + 3)
+[basic/monicTrinomial/integer] 因式分解：2x 2 + 8x + 6  ⇒ 2(x + 3)(x + 1)
+[basic/monicTrinomial/fraction] 因式分解：(2/3)x 2 + (10/3)x + 4  ⇒ (2/3)(x + 2)(x + 3)
+[basic/monicTrinomial/fraction] 因式分解：−(35/2) − (21/4)x + (7/4)x 2   ⇒ (7/4)(x − 5)(x + 2)
+[basic/monicTrinomial/decimal] 因式分解：−9 − 1.2x + 0.6x 2   ⇒ 0.6(x − 5)(x + 3)
+[basic/monicTrinomial/decimal] 因式分解：−4 − 0.2x + 0.2x 2   ⇒ 0.2(x + 4)(x − 5)
+[basic/nonmonicTrinomial/integer] 因式分解：8x 2 − 2x − 15  ⇒ (2x − 3)(4x + 5)
+[basic/nonmonicTrinomial/integer] 因式分解：4x 2 + 10x + 4  ⇒ 2(2x + 1)(x + 2)
+[basic/nonmonicTrinomial/fraction] 因式分解：(45/4)x 2 + (51/2)x + (45/4)  ⇒ (3/4)(3x + 5)(5x + 3)
+[basic/nonmonicTrinomial/fraction] 因式分解：−(5/2) + (5/2)x + 5x 2   ⇒ (5/2)(2x − 1)(x + 1)
+[basic/nonmonicTrinomial/decimal] 因式分解：3.6x 2 − 19.2x + 6  ⇒ 1.2(x − 5)(3x − 1)
+[basic/nonmonicTrinomial/decimal] 因式分解：−24 + 12x + 22.5x 2   ⇒ 1.5(3x + 4)(5x − 4)
+[basic/gcfThen/integer] 因式分解：−64x 2 + 4x 4   ⇒ 4x 2 (x + 4)(x − 4)
+[basic/gcfThen/integer] 因式分解：50x + 80x 2 + 32x 3   ⇒ 2x(4x + 5) 2 
+[basic/gcfThen/fraction] 因式分解：8x 4 − 4x 3 + (1/2)x 2   ⇒ (1/2)x 2 (4x − 1) 2 
+[basic/gcfThen/fraction] 因式分解：8x 3 − 12x 2 + (9/2)x  ⇒ (1/2)x(4x − 3) 2 
+[basic/gcfThen/decimal] 因式分解：3.6x 2 + 2.4x 3 + 0.4x 4   ⇒ 0.4x 2 (x + 3) 2 
+[basic/gcfThen/decimal] 因式分解：−0.6x 2 + 0.6x 4   ⇒ 0.6x 2 (x + 1)(x − 1)
+[basic/substitution/integer] 因式分解：2[(x − 5) 2 − (x − 5) − 2]  ⇒ 2(x − 4)(x − 7)
+[basic/substitution/integer] 因式分解：(x + 5) 2 − 3(x + 5) − 4  ⇒ (x + 6)(x + 1)
+[basic/substitution/fraction] 因式分解：(1/2)[(x + 3) 2 + 6(x + 3) + 8]  ⇒ (1/2)(x + 7)(x + 5)
+[basic/substitution/fraction] 因式分解：(1/2)[(x − 2) 2 + 4(x − 2) − 5]  ⇒ (1/2)(x + 3)(x − 3)
+[basic/substitution/decimal] 因式分解：0.5[(x + 1) 2 − 5(x + 1) + 6]  ⇒ 0.5(x − 2)(x − 1)
+[basic/substitution/decimal] 因式分解：1.5[(x + 4) 2 + 3(x + 4) − 4]  ⇒ 1.5(x + 8)(x + 3)
+[basic/completing/integer] 因式分解：72 − 8x 2 + 2x 4   ⇒ 2(x 2 + 4x + 6)(x 2 − 4x + 6)
+[basic/completing/integer] 因式分解：4x 4 + 32x 2 + 144  ⇒ 4(x 2 + 2x + 6)(x 2 − 2x + 6)
+[basic/completing/fraction] 因式分解：(1/2)x 4 − x 2 + (49/2)  ⇒ (1/2)(x 2 + 4x + 7)(x 2 − 4x + 7)
+[basic/completing/fraction] 因式分解：27 − 3x 2 + (3/4)x 4   ⇒ (3/4)(x 2 + 4x + 6)(x 2 − 4x + 6)
+[basic/completing/decimal] 因式分解：1.2x 4 − 3.6x 2 + 10.8  ⇒ 1.2(x 2 + 3x + 3)(x 2 − 3x + 3)
+[basic/completing/decimal] 因式分解：15 + 5.4x 2 + 0.6x 4   ⇒ 0.6(x 2 + x + 5)(x 2 − x + 5)
+[basic/splitTerms/integer] 因式分解：80 + 64x + 36x 2 + 16x 3 + 4x 4   ⇒ 4(x 2 + 4x + 5)(x 2 + 4)
+[basic/splitTerms/integer] 因式分解：2x 4 + 2x 3 + 10x 2 + 6x + 12  ⇒ 2(x 2 + x + 2)(x 2 + 3)
+[basic/splitTerms/fraction] 因式分解：(49/4) − 7x + 14x 2 − 7x 3 + (7/4)x 4   ⇒ (7/4)(x 2 − 4x + 7)(x 2 + 1)
+[basic/splitTerms/fraction] 因式分解：(3/4)x 4 + 3x 3 + 9x 2 + 12x + 24  ⇒ (3/4)(x 2 + 4x + 8)(x 2 + 4)
+[basic/splitTerms/decimal] 因式分解：0.4x 4 + 0.8x 3 + 5.2x 2 + 2.4x + 12  ⇒ 0.4(x 2 + 2x + 10)(x 2 + 3)
+[basic/splitTerms/decimal] 因式分解：135 + 67.5x + 37.5x 2 + 7.5x 3 + 2.5x 4   ⇒ 2.5(x 2 + 3x + 6)(x 2 + 9)
+[basic/multivariable/integer] 因式分解：10 + 5y + 13x − 15y 2 + 7xy + 4x 2   ⇒ (4x − 5y + 5)(x + 3y + 2)
+[basic/multivariable/integer] 因式分解：5 + 15y − 28x − 20y 2 + 13xy + 15x 2   ⇒ (3x + 5y − 5)(5x − 4y − 1)
+[basic/multivariable/fraction] 因式分解：(45/2) − (15/2)y + 60x − 30y 2 − (55/2)xy + (75/2)x 2   ⇒ (5/2)(3x − 4y + 3)(5x + 3y + 3)
+[basic/multivariable/fraction] 因式分解：(50/3)x 2 − 20xy + (16/3)y 2 − (40/3)x + (20/3)y + 2  ⇒ (2/3)(5x − 4y − 3)(5x − 2y − 1)
+[basic/multivariable/decimal] 因式分解：3x 2 + 5.6xy + y 2 − 2.6x − 1.4y + 0.4  ⇒ 0.2(5x + y − 1)(3x + 5y − 2)
+[basic/multivariable/decimal] 因式分解：6 − 6.5y − 10x − 2y 2 + 7xy + 4x 2   ⇒ 0.5(4x − y − 4)(2x + 4y − 3)
+[advanced/factorCheck/integer] 判斷 20x 2 − 21x + 5 是否為 (5x − 4) 的倍式。  ⇒ 否
+[advanced/factorCheck/integer] 判斷 14x 2 − 82x + 60 是否為 (x − 5) 的倍式。  ⇒ 是，因為被除後的商為 2(7x − 6)
+[advanced/factorCheck/fraction] 判斷 (21/2)x 2 − 31x + (17/2) 是否為 (3x − 8) 的倍式。  ⇒ 否
+[advanced/factorCheck/fraction] 判斷 28x 2 + (72/5)x − (28/5) 是否為 (5x + 4) 的倍式。  ⇒ 否
+[advanced/factorCheck/decimal] 判斷 (5x − 2) 是否為 3.75x 2 + 4.75x − 2.5 的因式。  ⇒ 是，商為 0.25(3x + 5)
+[advanced/factorCheck/decimal] 判斷 (8x − 7) 是否為 84x 2 − 121.5x + 43.5 的因式。  ⇒ 否
+[advanced/commonMonomial/integer] 因式分解：x 2 − 6x  ⇒ x(x − 6)
+[advanced/commonMonomial/integer] 因式分解：x 3 + 8x 2   ⇒ x 2 (x + 8)
+[advanced/commonMonomial/fraction] 因式分解：−(3/2)x + (5/2)x 2   ⇒ (1/2)x(5x − 3)
+[advanced/commonMonomial/fraction] 因式分解：(49/4)x 3 − (7/2)x 2   ⇒ (7/4)x 2 (7x − 2)
+[advanced/commonMonomial/decimal] 因式分解：0.6x + 1.2x 2   ⇒ 0.6x(2x + 1)
+[advanced/commonMonomial/decimal] 因式分解：x 2 + 0.8x  ⇒ 0.2x(5x + 4)
+[advanced/commonBracket/integer] 因式分解：2[(6x + 5)(x − 3) + 6(x − 3)]  ⇒ 2(x − 3)(6x + 11)
+[advanced/commonBracket/integer] 因式分解：4[(5x − 6)(x + 7) + 2(x + 7)]  ⇒ 4(x + 7)(5x − 4)
+[advanced/commonBracket/fraction] 因式分解：(5/2)[(x − 6)(x − 4) − 8(x − 4)]  ⇒ (5/2)(x − 4)(x − 14)
+[advanced/commonBracket/fraction] 因式分解：(1/2)[(8x + 1)(x − 7) + 6(x − 7)]  ⇒ (1/2)(x − 7)(8x + 7)
+[advanced/commonBracket/decimal] 因式分解：1.5[(x − 7)(x − 8) − (x − 8)]  ⇒ 1.5(x − 8)(x − 8)
+[advanced/commonBracket/decimal] 因式分解：0.25[(x + 7)(x + 1) + (x + 1)]  ⇒ 0.25(x + 1)(x + 8)
+[advanced/grouping/integer] 因式分解：63x 2 − 168x + 54x − 144  ⇒ 3(7x + 6)(3x − 8)
+[advanced/grouping/integer] 因式分解：140x 2 − 84x + 20x − 12  ⇒ 4(7x + 1)(5x − 3)
+[advanced/grouping/fraction] 因式分解：(27/4)x 2 + (45/4)x − 18x − 30  ⇒ (3/4)(3x − 8)(3x + 5)
+[advanced/grouping/fraction] 因式分解：84x 2 − 98x + (21/2)x − (49/4)  ⇒ (7/4)(8x + 1)(6x − 7)
+[advanced/grouping/decimal] 因式分解：3.2x 2 + 4.8x − 4x − 6  ⇒ 0.4(4x − 5)(2x + 3)
+[advanced/grouping/decimal] 因式分解：1.25x 2 + 0.25x + 5x + 1  ⇒ 0.25(x + 4)(5x + 1)
+[advanced/squareSum/integer] 因式分解：16x 2 + 56x + 49  ⇒ (4x + 7) 2 
+[advanced/squareSum/integer] 因式分解：25 + 20x + 4x 2   ⇒ (2x + 5) 2 
+[advanced/squareSum/fraction] 因式分解：(147/4)x 2 + (105/2)x + (75/4)  ⇒ (3/4)(7x + 5) 2 
+[advanced/squareSum/fraction] 因式分解：(125/2) + 150x + 90x 2   ⇒ (5/2)(6x + 5) 2 
+[advanced/squareSum/decimal] 因式分解：18.75x 2 + 7.5x + 0.75  ⇒ 0.75(5x + 1) 2 
+[advanced/squareSum/decimal] 因式分解：54 + 126x + 73.5x 2   ⇒ 1.5(7x + 6) 2 
+[advanced/squareDiff/integer] 因式分解：64x 2 − 112x + 49  ⇒ (8x − 7) 2 
+[advanced/squareDiff/integer] 因式分解：9x 2 − 6x + 1  ⇒ (3x − 1) 2 
+[advanced/squareDiff/fraction] 因式分解：(125/2)x 2 − 100x + 40  ⇒ (5/2)(5x − 4) 2 
+[advanced/squareDiff/fraction] 因式分解：(75/4)x 2 − (105/2)x + (147/4)  ⇒ (3/4)(5x − 7) 2 
+[advanced/squareDiff/decimal] 因式分解：0.2 − 1.6x + 3.2x 2   ⇒ 0.2(4x − 1) 2 
+[advanced/squareDiff/decimal] 因式分解：4.5 − 21x + 24.5x 2   ⇒ 0.5(7x − 3) 2 
+[advanced/differenceSquares/integer] 因式分解：50x 2 − 18  ⇒ 2(5x + 3)(5x − 3)
+[advanced/differenceSquares/integer] 因式分解：−144 + 100x 2   ⇒ 4(5x + 6)(5x − 6)
+[advanced/differenceSquares/fraction] 因式分解：−(1/2) + 2x 2   ⇒ (1/2)(2x + 1)(2x − 1)
+[advanced/differenceSquares/fraction] 因式分解：−3 + (75/4)x 2   ⇒ (3/4)(5x + 2)(5x − 2)
+[advanced/differenceSquares/decimal] 因式分解：−22.5 + 40x 2   ⇒ 2.5(4x + 3)(4x − 3)
+[advanced/differenceSquares/decimal] 因式分解：−5.4 + 0.6x 2   ⇒ 0.6(x + 3)(x − 3)
+[advanced/monicTrinomial/integer] 因式分解：−24 + 2x + x 2   ⇒ (x − 4)(x + 6)
+[advanced/monicTrinomial/integer] 因式分解：40 − 13x + x 2   ⇒ (x − 5)(x − 8)
+[advanced/monicTrinomial/fraction] 因式分解：75 + (55/2)x + (5/2)x 2   ⇒ (5/2)(x + 5)(x + 6)
+[advanced/monicTrinomial/fraction] 因式分解：−16 + 2x + (1/2)x 2   ⇒ (1/2)(x + 8)(x − 4)
+[advanced/monicTrinomial/decimal] 因式分解：−140 − 2.5x + 2.5x 2   ⇒ 2.5(x − 8)(x + 7)
+[advanced/monicTrinomial/decimal] 因式分解：1.5x 2 − 15x + 36  ⇒ 1.5(x − 4)(x − 6)
+[advanced/nonmonicTrinomial/integer] 因式分解：30 − 39x + 12x 2   ⇒ 3(4x − 5)(x − 2)
+[advanced/nonmonicTrinomial/integer] 因式分解：144x 2 + 258x + 105  ⇒ 3(6x + 7)(8x + 5)
+[advanced/nonmonicTrinomial/fraction] 因式分解：(21/4)x 2 − (133/4)x − 70  ⇒ (7/4)(x − 8)(3x + 5)
+[advanced/nonmonicTrinomial/fraction] 因式分解：(3/4) + 9x + 27x 2   ⇒ (3/4)(6x + 1)(6x + 1)
+[advanced/nonmonicTrinomial/decimal] 因式分解：5.4x 2 − 1.8x − 33.6  ⇒ 0.6(3x + 7)(3x − 8)
+[advanced/nonmonicTrinomial/decimal] 因式分解：18x 2 − 45.75x − 6  ⇒ 0.75(3x − 8)(8x + 1)
+[advanced/gcfThen/integer] 因式分解：4x 3 − x  ⇒ x(2x + 1)(2x − 1)
+[advanced/gcfThen/integer] 因式分解：4x 4 + 4x 3 + x 2   ⇒ x 2 (2x + 1) 2 
+[advanced/gcfThen/fraction] 因式分解：(49/2)x 2 + 35x 3 + (25/2)x 4   ⇒ (1/2)x 2 (5x + 7) 2 
+[advanced/gcfThen/fraction] 因式分解：6x 3 − (50/3)x  ⇒ (2/3)x(3x + 5)(3x − 5)
+[advanced/gcfThen/decimal] 因式分解：3.2x 3 − 1.8x  ⇒ 0.2x(4x + 3)(4x − 3)
+[advanced/gcfThen/decimal] 因式分解：1.5x + 6x 2 + 6x 3   ⇒ 1.5x(2x + 1) 2 
+[advanced/substitution/integer] 因式分解：2[(x + 4) 2 − 3(x + 4) − 10]  ⇒ 2(x + 6)(x − 1)
+[advanced/substitution/integer] 因式分解：(x − 6) 2 − 8(x − 6) + 7  ⇒ (x − 13)(x − 7)
+[advanced/substitution/fraction] 因式分解：(4/5)[(x − 4) 2 + 3(x − 4) − 40]  ⇒ (4/5)(x + 4)(x − 9)
+[advanced/substitution/fraction] 因式分解：(3/4)[(x − 5) 2 − 10(x − 5) + 16]  ⇒ (3/4)(x − 13)(x − 7)
+[advanced/substitution/decimal] 因式分解：1.5[(x + 6) 2 + 9(x + 6) + 18]  ⇒ 1.5(x + 12)(x + 9)
+[advanced/substitution/decimal] 因式分解：0.5[(x − 5) 2 + 6(x − 5) + 8]  ⇒ 0.5(x − 1)(x − 3)
+[advanced/completing/integer] 因式分解：x 4 + 4  ⇒ (x 2 + 2x + 2)(x 2 − 2x + 2)
+[advanced/completing/integer] 因式分解：2x 4 + 10x 2 + 18  ⇒ 2(x 2 + x + 3)(x 2 − x + 3)
+[advanced/completing/fraction] 因式分解：63 + 14x 2 + (7/4)x 4   ⇒ (7/4)(x 2 + 2x + 6)(x 2 − 2x + 6)
+[advanced/completing/fraction] 因式分解：(4/5)x 4 − (44/5)x 2 + (196/5)  ⇒ (4/5)(x 2 + 5x + 7)(x 2 − 5x + 7)
+[advanced/completing/decimal] 因式分解：22.5 − 7.5x 2 + 2.5x 4   ⇒ 2.5(x 2 + 3x + 3)(x 2 − 3x + 3)
+[advanced/completing/decimal] 因式分解：12.25 − 0.5x 2 + 0.25x 4   ⇒ 0.25(x 2 + 4x + 7)(x 2 − 4x + 7)
+[advanced/splitTerms/integer] 因式分解：28 + 14x + 11x 2 + 2x 3 + x 4   ⇒ (x 2 + 2x + 4)(x 2 + 7)
+[advanced/splitTerms/integer] 因式分解：60 − 30x + 27x 2 − 6x 3 + 3x 4   ⇒ 3(x 2 − 2x + 4)(x 2 + 5)
+[advanced/splitTerms/fraction] 因式分解：(7/4)x 4 − 7x 3 + 21x 2 − 35x + (245/4)  ⇒ (7/4)(x 2 − 4x + 7)(x 2 + 5)
+[advanced/splitTerms/fraction] 因式分解：(1/2)x 4 − 2x 3 + 7x 2 − 16x + 24  ⇒ (1/2)(x 2 − 4x + 6)(x 2 + 8)
+[advanced/splitTerms/decimal] 因式分解：4 − x + 4.5x 2 − x 3 + 0.5x 4   ⇒ 0.5(x 2 − 2x + 8)(x 2 + 1)
+[advanced/splitTerms/decimal] 因式分解：40 + 40x + 25x 2 + 5x 3 + 2.5x 4   ⇒ 2.5(x 2 + 2x + 2)(x 2 + 8)
+[advanced/multivariable/integer] 因式分解：−35 + 46y − 16x − 15y 2 + 12xy + 3x 2   ⇒ (3x − 3y + 5)(x + 5y − 7)
+[advanced/multivariable/integer] 因式分解：30x 2 − 9xy − 3y 2 − 8x + 11y − 6  ⇒ (6x − 3y + 2)(5x + y − 3)
+[advanced/multivariable/fraction] 因式分解：(56/3)x 2 − (14/3)xy − 14y 2 + (52/3)x − (10/3)y + 4  ⇒ (2/3)(7x − 7y + 3)(4x + 3y + 2)
+[advanced/multivariable/fraction] 因式分解：(7/2)x 2 + 26xy + (21/2)y 2 + 16x + 20y + 8  ⇒ (1/2)(x + 7y + 4)(7x + 3y + 4)
+[advanced/multivariable/decimal] 因式分解：22.5x 2 − 37.5xy − 35y 2 + 45x − 15y + 20  ⇒ 2.5(3x − 7y + 4)(3x + 2y + 2)
+[advanced/multivariable/decimal] 因式分解：60 − 10y + 55x − 50y 2 − 27.5xy + 10x 2   ⇒ 2.5(4x + 5y + 6)(x − 4y + 4)
+[challenge/factorCheck/integer] 判斷 −440x 2 − 436x − 40 是否為 (10x + 9) 的倍式。  ⇒ 否
+[challenge/factorCheck/integer] 判斷 33x 2 + 39x − 51 是否為 (11x − 9) 的倍式。  ⇒ 否
+[challenge/factorCheck/fraction] 判斷 (144/5)x 2 − (404/5)x + (184/5) 是否為 (9x − 5) 的倍式。  ⇒ 否
+[challenge/factorCheck/fraction] 若 (4x − 3) 是 36x 2 − 30x + 3 ＋ m 的因式，求 m 的值。  ⇒ m＝−(3/4)
+[challenge/factorCheck/decimal] 判斷 −7.5x 2 − 54.75x + 41.25 是否為 (10x − 7) 的倍式。  ⇒ 否
+[challenge/factorCheck/decimal] 判斷 (5x + 11) 是否為 50x 2 + 147.5x + 85 的因式。  ⇒ 否
+[challenge/commonMonomial/integer] 因式分解：−6x 3 − 7x 4   ⇒ −x 3 (7x + 6)
+[challenge/commonMonomial/integer] 因式分解：−x 3 + 7x 2   ⇒ −x 2 (x − 7)
+[challenge/commonMonomial/fraction] 因式分解：−6x 3 − (22/3)x 2   ⇒ −(2/3)x 2 (9x + 11)
+[challenge/commonMonomial/fraction] 因式分解：(49/4)x 2 − (35/4)x  ⇒ (7/4)x(7x − 5)
+[challenge/commonMonomial/decimal] 因式分解：−7.2x 4 + 6.6x 3   ⇒ −0.6x 3 (12x − 11)
+[challenge/commonMonomial/decimal] 因式分解：−0.8x 3 − x 4   ⇒ −0.2x 3 (5x + 4)
+[challenge/commonBracket/integer] 因式分解：2[(2x − 1)(x + 9) − 10(x + 9)]  ⇒ 2(x + 9)(2x − 11)
+[challenge/commonBracket/integer] 因式分解：4[(11x + 1)(x − 3) − 8(x − 3)]  ⇒ 4(x − 3)(11x − 7)
+[challenge/commonBracket/fraction] 已知 (x − 1) 是 (16/3)x 2 − (46/3)x + 10 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (2/3)(8x − 15)
+[challenge/commonBracket/fraction] 因式分解：(3/4)[(5x + 3)(x + 5) + (x + 5)]  ⇒ (3/4)(x + 5)(5x + 4)
+[challenge/commonBracket/decimal] 已知 (x − 3) 是 x 2 − 4.4x + 4.2 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 0.2(5x − 7)
+[challenge/commonBracket/decimal] 已知 (x + 6) 是 5x 2 + 12.5x − 105 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 2.5(2x − 7)
+[challenge/grouping/integer] 因式分解：49x 2 + 77x + 77x + 121  ⇒ (7x + 11)(7x + 11)
+[challenge/grouping/integer] 因式分解：132x 2 − 120x − 165x + 150  ⇒ 3(4x − 5)(11x − 10)
+[challenge/grouping/fraction] 因式分解：(20/3)x 2 − 20x − (14/3)x + 14  ⇒ (2/3)(10x − 7)(x − 3)
+[challenge/grouping/fraction] 已知 (12x + 11) 是 270x 2 + (555/2)x + (55/2) 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (5/2)(9x + 1)
+[challenge/grouping/decimal] 已知 (11x + 4) 是 −2.75x 2 − 34x − 12 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ −0.25(x + 12)
+[challenge/grouping/decimal] 因式分解：47.25x 2 + 36.75x − 6.75x − 5.25  ⇒ 0.75(7x − 1)(9x + 7)
+[challenge/squareSum/integer] 已知 (x + 7) 是 3x 2 + 42x + 147 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 3(x + 7)
+[challenge/squareSum/integer] 因式分解：288 + 240x + 50x 2   ⇒ 2(5x + 12) 2 
+[challenge/squareSum/fraction] 因式分解：112x 2 + 308x + (847/4)  ⇒ (7/4)(8x + 11) 2 
+[challenge/squareSum/fraction] 因式分解：54 + 84x + (98/3)x 2   ⇒ (2/3)(7x + 9) 2 
+[challenge/squareSum/decimal] 因式分解：62.5x 2 + 100x + 40  ⇒ 2.5(5x + 4) 2 
+[challenge/squareSum/decimal] 因式分解：6.25 + 20x + 16x 2   ⇒ 0.25(8x + 5) 2 
+[challenge/squareDiff/integer] 因式分解：121 − 176x + 64x 2   ⇒ (8x − 11) 2 
+[challenge/squareDiff/integer] 已知 (7x − 2) 是 49x 2 − 28x + 4 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (7x − 2)
+[challenge/squareDiff/fraction] 因式分解：112 − 252x + (567/4)x 2   ⇒ (7/4)(9x − 8) 2 
+[challenge/squareDiff/fraction] 因式分解：(196/5)x 2 − (448/5)x + (256/5)  ⇒ (4/5)(7x − 8) 2 
+[challenge/squareDiff/decimal] 因式分解：12 − 66x + 90.75x 2   ⇒ 0.75(11x − 4) 2 
+[challenge/squareDiff/decimal] 因式分解：1.8x 2 − 4.8x + 3.2  ⇒ 0.2(3x − 4) 2 
+[challenge/differenceSquares/integer] 因式分解：−4x 2 + 1  ⇒ −(2x + 1)(2x − 1)
+[challenge/differenceSquares/integer] 因式分解：−50 + 2x 2   ⇒ 2(x + 5)(x − 5)
+[challenge/differenceSquares/fraction] 已知 (x + 7) 是 (4/5)x 2 − (196/5) 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (4/5)(x − 7)
+[challenge/differenceSquares/fraction] 因式分解：−(64/5) + (36/5)x 2   ⇒ (4/5)(3x + 4)(3x − 4)
+[challenge/differenceSquares/decimal] 因式分解：−5.4 + 72.6x 2   ⇒ 0.6(11x + 3)(11x − 3)
+[challenge/differenceSquares/decimal] 因式分解：−12.8 + 1.8x 2   ⇒ 0.2(3x + 8)(3x − 8)
+[challenge/monicTrinomial/integer] 因式分解：−4x 2 + 56x − 160  ⇒ −4(x − 4)(x − 10)
+[challenge/monicTrinomial/integer] 已知 (x − 8) 是 x 2 + 2x − 80 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (x + 10)
+[challenge/monicTrinomial/fraction] 因式分解：(3/4)x 2 − (27/4)x − 27  ⇒ (3/4)(x − 12)(x + 3)
+[challenge/monicTrinomial/fraction] 已知 (x − 11) 是 (1/2)x 2 − (7/2)x − 22 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (1/2)(x + 4)
+[challenge/monicTrinomial/decimal] 因式分解：0.6x 2 − 6x + 5.4  ⇒ 0.6(x − 9)(x − 1)
+[challenge/monicTrinomial/decimal] 已知 (x + 10) 是 1.5x 2 + 25.5x + 105 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 1.5(x + 7)
+[challenge/nonmonicTrinomial/integer] 因式分解：28x 2 + 132x − 216  ⇒ 4(x + 6)(7x − 9)
+[challenge/nonmonicTrinomial/integer] 因式分解：77 + 74x + 9x 2   ⇒ (x + 7)(9x + 11)
+[challenge/nonmonicTrinomial/fraction] 因式分解：10 − (58/3)x + (16/3)x 2   ⇒ (2/3)(x − 3)(8x − 5)
+[challenge/nonmonicTrinomial/fraction] 因式分解：−25 − (45/2)x + 9x 2   ⇒ (1/2)(6x + 5)(3x − 10)
+[challenge/nonmonicTrinomial/decimal] 已知 (9x + 10) 是 13.5x 2 + 64.5x + 55 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 0.5(3x + 11)
+[challenge/nonmonicTrinomial/decimal] 因式分解：8.4 − 79.2x + 96x 2   ⇒ 1.2(8x − 1)(10x − 7)
+[challenge/gcfThen/integer] 已知 (x + 2) 是 3x 3 + 12x 2 + 12x 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 3x(x + 2)
+[challenge/gcfThen/integer] 因式分解：9x 5 − 48x 4 + 64x 3   ⇒ x 3 (3x − 8) 2 
+[challenge/gcfThen/fraction] 已知 (8x + 3) 是 112x 5 + 84x 4 + (63/4)x 3 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (7/4)x 3 (8x + 3)
+[challenge/gcfThen/fraction] 因式分解：(45/2)x 5 − 30x 4 + 10x 3   ⇒ (5/2)x 3 (3x − 2) 2 
+[challenge/gcfThen/decimal] 因式分解：−76.8x 5 + 134.4x 4 − 58.8x 3   ⇒ −1.2x 3 (8x − 7) 2 
+[challenge/gcfThen/decimal] 因式分解：−29.4x 2 − 25.2x 3 − 5.4x 4   ⇒ −0.6x 2 (3x + 7) 2 
+[challenge/substitution/integer] 因式分解：(x + 5) 2 + 13(x + 5) + 22  ⇒ (x + 16)(x + 7)
+[challenge/substitution/integer] 已知 (x − 11) 是 x 2 − 9x − 22 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (x + 2)
+[challenge/substitution/fraction] 因式分解：(7/4)[(x + 1) 2 + 11(x + 1) + 28]  ⇒ (7/4)(x + 8)(x + 5)
+[challenge/substitution/fraction] 因式分解：(4/5)[(x − 6) 2 + 13(x − 6) + 12]  ⇒ (4/5)(x + 6)(x − 5)
+[challenge/substitution/decimal] 因式分解：0.6[(x − 2) 2 − 17(x − 2) + 72]  ⇒ 0.6(x − 10)(x − 11)
+[challenge/substitution/decimal] 因式分解：0.25[(x − 4) 2 + (x − 4) − 56]  ⇒ 0.25(x + 4)(x − 11)
+[challenge/completing/integer] 因式分解：−x 4 − 4  ⇒ −(x 2 + 2x + 2)(x 2 − 2x + 2)
+[challenge/completing/integer] 因式分解：25 + 6x 2 + x 4   ⇒ (x 2 + 2x + 5)(x 2 − 2x + 5)
+[challenge/completing/fraction] 因式分解：(3/4)x 4 + (21/4)x 2 + 12  ⇒ (3/4)(x 2 + x + 4)(x 2 − x + 4)
+[challenge/completing/fraction] 因式分解：(3/4)x 4 + (57/4)x 2 + 75  ⇒ (3/4)(x 2 + x + 10)(x 2 − x + 10)
+[challenge/completing/decimal] 因式分解：−6.4 − 1.6x 2 − 0.4x 4   ⇒ −0.4(x 2 + 2x + 4)(x 2 − 2x + 4)
+[challenge/completing/decimal] 因式分解：2.4 + 0.6x 4   ⇒ 0.6(x 2 + 2x + 2)(x 2 − 2x + 2)
+[challenge/splitTerms/integer] 已知 (x 2 + x + 8) 是 x 4 + x 3 + 11x 2 + 3x + 24 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ (x 2 + 3)
+[challenge/splitTerms/integer] 已知 (x 2 − 4x + 8) 是 4x 4 − 16x 3 + 64x 2 − 128x + 256 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 4(x 2 + 8)
+[challenge/splitTerms/fraction] 因式分解：(3/4)x 4 − (9/4)x 3 + (21/2)x 2 − 9x + 30  ⇒ (3/4)(x 2 − 3x + 10)(x 2 + 4)
+[challenge/splitTerms/fraction] 因式分解：(2/3)x 4 + (4/3)x 3 + (16/3)x 2 + (8/3)x + 8  ⇒ (2/3)(x 2 + 2x + 6)(x 2 + 2)
+[challenge/splitTerms/decimal] 因式分解：12 + 9x + 6x 2 + 2.25x 3 + 0.75x 4   ⇒ 0.75(x 2 + 3x + 4)(x 2 + 4)
+[challenge/splitTerms/decimal] 因式分解：0.5x 4 − 0.5x 3 + 8x 2 − 3.5x + 31.5  ⇒ 0.5(x 2 − x + 9)(x 2 + 7)
+[challenge/multivariable/integer] 因式分解：16 + 20y − 36x − 24y 2 − 6xy + 18x 2   ⇒ 2(3x + 3y − 4)(3x − 4y − 2)
+[challenge/multivariable/integer] 已知 (x − 5y − 1) 是 6x 2 − 24xy − 30y 2 − 16x + 44y + 10 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 2(3x + 3y − 5)
+[challenge/multivariable/fraction] 因式分解：−(8/3) + 2y + (40/3)x + (20/3)y 2 + 8xy − (32/3)x 2   ⇒ −(2/3)(4x − 5y − 4)(4x + 2y − 1)
+[challenge/multivariable/fraction] 因式分解：−(21/2)x 2 + 20xy − 8y 2 + (1/2)x + 2y + 1  ⇒ −(1/2)(7x − 4y + 2)(3x − 4y − 1)
+[challenge/multivariable/decimal] 已知 (x − 6y + 5) 是 6x 2 − 31.5xy − 27y 2 + 34.5x − 4.5y + 22.5 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 1.5(4x + 3y + 3)
+[challenge/multivariable/decimal] 已知 (5x − 5y − 6) 是 18x 2 + 3xy − 21y 2 − 3.6x − 43.2y − 21.6 的一個因式，求另一個因式（寫成乘積的形式）。  ⇒ 0.6(6x + 7y + 6)
