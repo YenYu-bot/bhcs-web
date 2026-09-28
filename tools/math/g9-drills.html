@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1083,7 +1083,124 @@ function centersConfig(){
   units:[circumcenter,incenter,rightTri,centroid,centroidArea,special],presets:{basic:{circumcenter:2,incenter:2,rightTri:2,centroid:2,centroidArea:2,special:2},advanced:{circumcenter:2,incenter:2,rightTri:2,centroid:2,centroidArea:2,special:2},challenge:{circumcenter:2,incenter:2,rightTri:2,centroid:2,centroidArea:2,special:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig},CFG=CONFIGS[TOPIC_KEY]();
+function quadfuncConfig(){
+ /* 國三下 1-1 二次函數的圖形與最大值、最小值（2026-09-28，Claude）。依舊工具 g9b-1-1-quadratic-function.html 的五個單元重做：
+    頂點坐標、與 x 軸的交點個數、最大值與最小值、由頂點與一點求二次函數、y＝ax² 圖形的平移。舊工具每單元是固定題庫、只用頂點式，
+    這裡每個單元五種問法（基礎取第 1～3 種、進階第 2～4 種、挑戰第 3～5 種），加入一般式 y＝ax²＋bx＋c 配方、x 軸交點坐標、
+    判別式求 k 的範圍、限定範圍的最大最小值、由對稱軸與兩點或兩個 x 截距求函數、平移後的函數。分數模式時 a 為分數。
+    verify：一律把答案展開成一般式，用浮點數代點重算（頂點處的值、左右對稱、代回已知點、b²−4ac 的正負、在範圍內逐點掃描、平移前後對應點）。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const form=ctx=>pick([[0,1,2],[1,2,3],[2,3,4]][lv(ctx)]);
+ const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false}),num=v=>v.n/v.d,I=n=>R(n);
+ const nz=(a,b)=>{let v=0;while(!v)v=rand(a,b);return v};
+ const absS=v=>v.d===1?String(Math.abs(v.n)):fr(Math.abs(v.n),v.d);
+ const term=(c,sym,lead)=>{if(!c.n)return"";const one=Math.abs(c.n)===1&&c.d===1&&sym;return(c.n<0?"−":lead?"":"＋")+(one?"":absS(c))+sym};
+ const poly=(a,b,c)=>"y＝"+term(a,"x²",true)+term(b,"x",false)+term(c,"",false);
+ const xh=h=>h.n?`(x${h.n>0?"−":"＋"}${absS(h)})²`:"x²";
+ const aPre=a=>a.d===1&&Math.abs(a.n)===1?(a.n<0?"−":""):(a.n<0?"−":"")+absS(a);
+ const vform=(a,h,k)=>"y＝"+aPre(a)+xh(h)+term(k,"",false);
+ const pt=(x,y)=>`（${S(x)}，${S(y)}）`;
+ const axis=h=>`x＝${S(h)}`;
+ const expand=(a,h,k)=>({a,b:mul(R(-2),mul(a,h)),c:add(mul(a,mul(h,h)),k)});
+ const F=(p,x)=>num(p.a)*x*x+num(p.b)*x+num(p.c);
+ const near=(x,y)=>Math.abs(x-y)<1e-9*(1+Math.abs(x)+Math.abs(y));
+ // 頂點 (h,k) 的另一條驗證：f(h)＝k、左右對稱、往外一步的變化與 a 同號
+ const vOK=(p,h,k)=>{const x=num(h),y=num(k);return near(F(p,x),y)&&near(F(p,x+1.7),F(p,x-1.7))&&(F(p,x+1)-y)*num(p.a)>0};
+ const A=(ctx,big=false)=>{const s=pick([1,-1]);if(pick(ctx.modes)==="fraction"){const[n,d]=pick([[1,2],[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[3,2],[5,2],[4,3]]);return R(s*n,d)}return R(s*rand(1,big?6:lv(ctx)?5:3))};
+ const rng=ctx=>[5,8,10][lv(ctx)];
+ const H=ctx=>I(nz(-rng(ctx),rng(ctx))),K=ctx=>I(rand(-rng(ctx)-2,rng(ctx)+2));
+ const dirX=m=>m>0?`向右平移 ${m} 單位`:`向左平移 ${-m} 單位`,dirY=n=>n>0?`向上平移 ${n} 單位`:`向下平移 ${-n} 單位`;
+
+ // ① 頂點坐標
+ const vertex=unit("vertex","頂點坐標與對稱軸","y＝a(x−h)²＋k 的頂點是 (h，k)、對稱軸是 x＝h；a＞0 開口向上，a＜0 開口向下。一般式先配方成頂點式。",["integer","fraction"],ctx=>{
+  const f=form(ctx),a=A(ctx);let h=H(ctx),k=K(ctx);
+  if(f===0){const p=expand(a,h,k);return{expr:`求二次函數 ${vform(a,h,k)} 圖形的頂點坐標。`,answer:`頂點 ${pt(h,k)}`,sig:`v0:${plain(a)}:${h.n}:${k.n}`,verify:()=>vOK(p,h,k)}}
+  if(f===1){const sv=pick(["h0","k0"]);if(sv==="h0")h=I(0);else k=I(0);const p=expand(a,h,k);
+   return{expr:`求二次函數 ${vform(a,h,k)} 圖形的頂點坐標與對稱軸。`,answer:`頂點 ${pt(h,k)}，對稱軸 ${axis(h)}`,sig:`v1:${sv}:${plain(a)}:${h.n}:${k.n}`,verify:()=>vOK(p,h,k)}}
+  if(f===2){const p=expand(a,h,k);return{expr:`二次函數 ${vform(a,h,k)} 的圖形開口向上還是向下？並求其頂點坐標與對稱軸。`,answer:`開口向${a.n>0?"上":"下"}，頂點 ${pt(h,k)}，對稱軸 ${axis(h)}`,sig:`v2:${plain(a)}:${h.n}:${k.n}`,verify:()=>vOK(p,h,k)&&(F(p,num(h)+3)>num(k))===(a.n>0)}}
+  if(f===3){const p=expand(a,h,k);return{expr:`利用配方法，求二次函數 ${poly(p.a,p.b,p.c)} 圖形的頂點坐標與對稱軸。`,answer:`頂點 ${pt(h,k)}，對稱軸 ${axis(h)}`,sig:`v3:${plain(a)}:${h.n}:${k.n}`,verify:()=>{const hx=-num(p.b)/(2*num(p.a));return near(hx,num(h))&&near(F(p,hx),num(k))}}}
+  const p=expand(a,h,k);
+  return{expr:`二次函數 y＝${term(a,"x²",true)}＋bx＋c 的圖形頂點為 ${pt(h,k)}，求 b、c 的值。`,answer:`b＝${S(p.b)}，c＝${S(p.c)}`,sig:`v4:${plain(a)}:${h.n}:${k.n}`,verify:()=>{const hx=-num(p.b)/(2*num(a));return near(hx,num(h))&&near(num(a)*hx*hx+num(p.b)*hx+num(p.c),num(k))}};
+ });
+
+ // ② 與 x 軸的交點
+ const xaxis=unit("xaxis","與 x 軸的交點","a、k 異號時與 x 軸有兩個交點，k＝0 時恰有一個，a、k 同號時沒有交點；一般式可用判別式 b²−4ac 判斷。",["integer","fraction"],ctx=>{
+  const f=form(ctx),a=A(ctx),h=H(ctx),t=pick([0,1,2]);
+  const kOf=t=>{if(t===1)return I(0);const m=R(rand(1,rng(ctx)+2));return t===2?(a.n>0?R(-m.n):m):(a.n>0?m:R(-m.n))};
+  const cntS=t=>t===2?"2 個":t===1?"1 個":"0 個（沒有交點）";
+  const D=p=>num(p.b)**2-4*num(p.a)*num(p.c);
+  const cOK=(p,t)=>{const d=D(p);return t===2?d>1e-9:t===1?Math.abs(d)<1e-9:d<-1e-9};
+  if(f===0){const k=kOf(t),p=expand(a,h,k);return{expr:`判斷二次函數 ${vform(a,h,k)} 的圖形與 x 軸有幾個交點。`,answer:cntS(t),sig:`x0:${plain(a)}:${h.n}:${plain(k)}`,verify:()=>cOK(p,t)}}
+  if(f===1){const k=kOf(t),p=expand(a,h,k);return{expr:`二次函數 ${vform(a,h,k)} 的圖形與 x 軸有幾個交點？與 y 軸的交點坐標為何？`,answer:`與 x 軸 ${cntS(t)}；與 y 軸交於 ${pt(I(0),p.c)}`,sig:`x1:${plain(a)}:${h.n}:${plain(k)}`,verify:()=>cOK(p,t)&&near(F(p,0),num(p.c))}}
+  if(f===2){const k=kOf(t),p=expand(a,h,k);return{expr:`判斷二次函數 ${poly(p.a,p.b,p.c)} 的圖形與 x 軸有幾個交點。`,answer:cntS(t),sig:`x2:${plain(a)}:${h.n}:${plain(k)}`,verify:()=>{const yv=F(p,num(h));return t===2?yv*num(a)<0:t===1?Math.abs(yv)<1e-9:yv*num(a)>0}}}
+  if(f===3){const m=rand(1,lv(ctx)?6:4),k=R(-a.n*m*m,a.d),p=expand(a,h,k),x1=I(h.n-m),x2=I(h.n+m);const show=pick(["v","g"]);
+   return{expr:`求二次函數 ${show==="v"?vform(a,h,k):poly(p.a,p.b,p.c)} 的圖形與 x 軸的交點坐標。`,answer:`${pt(x1,I(0))}、${pt(x2,I(0))}`,sig:`x3:${show}:${plain(a)}:${h.n}:${m}`,verify:()=>near(F(p,h.n-m),0)&&near(F(p,h.n+m),0)&&m>0}}
+  // 由交點個數求 k 的值或範圍
+  const hh=I(nz(-6,6)),b=mul(R(-2),mul(a,hh)),k0=div(mul(b,b),mul(R(4),a)),want=pick([0,1,2]),rel=want===1?"＝":(want===2)===(a.n>0)?"＜":"＞";
+  const word=want===2?"有兩個交點":want===1?"恰有一個交點":"沒有交點";
+  return{expr:`若二次函數 y＝${term(a,"x²",true)}${term(b,"x",false)}＋k 的圖形與 x 軸${word}，求 k 的${want===1?"值":"範圍"}。`,answer:`k${rel}${S(k0)}`,sig:`x4:${plain(a)}:${hh.n}:${want}`,verify:()=>{const d=kk=>num(b)**2-4*num(a)*kk,x=num(k0),test=rel==="＝"?[x]:rel==="＜"?[x-0.5,x-3]:[x+0.5,x+3];return Math.abs(d(x))<1e-9&&test.every(kk=>want===2?d(kk)>0:want===1?Math.abs(d(kk))<1e-9:d(kk)<0)}};
+ });
+
+ // ③ 最大值與最小值
+ const extreme=unit("extreme","最大值與最小值","a＞0 時頂點是最低點，y 有最小值 k；a＜0 時頂點是最高點，y 有最大值 k；限定範圍時還要比較兩端點。",["integer","fraction"],ctx=>{
+  const f=form(ctx),a=A(ctx),h=H(ctx),k=K(ctx),p=expand(a,h,k),type=a.n>0?"最小值":"最大值";
+  const scan=(lo,hi)=>{let mx=-Infinity,mn=Infinity;for(let i=0;i<=4000;i++){const y=F(p,lo+(hi-lo)*i/4000);mx=Math.max(mx,y);mn=Math.min(mn,y)}return[mx,mn]};
+  const exOK=()=>{const[mx,mn]=scan(num(h)-5,num(h)+5);return near(a.n>0?mn:mx,num(k))};
+  const ans=`當 x＝${S(h)} 時，y 有${type} ${S(k)}`;
+  if(f===0)return{expr:`判斷二次函數 ${vform(a,h,k)} 在 x 為多少時 y 有最大值或最小值，並求其值。`,answer:ans,sig:`e0:${plain(a)}:${h.n}:${k.n}`,verify:exOK};
+  if(f===1){const kk=k.n?`${S(k)}${a.n<0?"−":"＋"}${a.d===1&&Math.abs(a.n)===1?"":absS(a)}${xh(h)}`:vform(a,h,k).slice(2);
+   return{expr:`二次函數 y＝${kk} 有最大值還是最小值？在 x 為多少時發生？其值為何？`,answer:ans,sig:`e1:${plain(a)}:${h.n}:${k.n}`,verify:exOK}}
+  if(f===2)return{expr:`利用配方法，求二次函數 ${poly(p.a,p.b,p.c)} 的最大值或最小值，以及此時 x 的值。`,answer:ans,sig:`e2:${plain(a)}:${h.n}:${k.n}`,verify:exOK};
+  if(f===3){return{expr:`若二次函數 y＝${term(a,"x²",true)}${term(p.b,"x",false)}＋c 的${type}為 ${S(k)}，求 c 的值。`,answer:`c＝${S(p.c)}`,sig:`e3:${plain(a)}:${h.n}:${k.n}`,verify:()=>{const hx=-num(p.b)/(2*num(a));return near(num(a)*hx*hx+num(p.b)*hx+num(p.c),num(k))&&exOK()}}}
+  let lo,hi;do{lo=h.n+rand(-5,3);hi=lo+rand(2,6)}while(Math.abs(lo-h.n)===Math.abs(hi-h.n));
+  const ex=[lo,hi].concat(lo<h.n&&h.n<hi?[h.n]:[]).map(x=>[x,add(mul(a,I((x-h.n)**2)),k)]);
+  const mx=ex.reduce((m,e)=>cmp(e[1],m[1])>0?e:m),mn=ex.reduce((m,e)=>cmp(e[1],m[1])<0?e:m);
+  return{expr:`當 ${S(I(lo))} ≤ x ≤ ${S(I(hi))} 時，求二次函數 ${vform(a,h,k)} 的最大值與最小值。`,answer:`x＝${S(I(mx[0]))} 時最大值 ${S(mx[1])}；x＝${S(I(mn[0]))} 時最小值 ${S(mn[1])}`,sig:`e4:${plain(a)}:${h.n}:${k.n}:${lo}:${hi}`,verify:()=>{const[M,m]=scan(lo,hi),tol=1e-4*(1+Math.abs(M)+Math.abs(m));return Math.abs(M-num(mx[1]))<tol&&Math.abs(m-num(mn[1]))<tol&&near(F(p,mx[0]),num(mx[1]))&&near(F(p,mn[0]),num(mn[1]))}};
+ });
+
+ // ④ 求二次函數
+ const findfn=unit("findfn","求二次函數","已知頂點 (h，k) 時設 y＝a(x−h)²＋k，再代入另一點求 a；已知對稱軸時設 y＝a(x−h)²＋k，代入兩點求 a、k。",["integer","fraction"],ctx=>{
+  const f=form(ctx),a=A(ctx);let h=H(ctx),k=K(ctx);
+  const dx=()=>{const q=a.d;return q===1?nz(-3,3):pick([-1,1])*q*rand(1,2)};
+  const at=x=>add(mul(a,I((x-h.n)**2)),k);
+  const fnOK=(pts)=>{const p=expand(a,h,k);return pts.every(([x,y])=>near(F(p,num(x)),num(y)))&&vOK(p,h,k)};
+  const ans=()=>vform(a,h,k);
+  if(f===0){const x1=h.n+dx(),y1=at(x1);return{expr:`二次函數圖形的頂點為 ${pt(h,k)}，且通過點 ${pt(I(x1),y1)}，求此二次函數。`,answer:ans(),sig:`f0:${plain(a)}:${h.n}:${k.n}:${x1}`,verify:()=>fnOK([[I(x1),y1]])}}
+  if(f===1){const on=pick(["x","y"]);if(on==="x")k=I(0);else h=I(0);const x1=h.n+dx(),y1=at(x1);
+   const cond=on==="x"?`頂點在 x 軸上，對稱軸為 ${axis(h)}`:`頂點在 y 軸上，且頂點為 ${pt(h,k)}`;
+   return{expr:`二次函數圖形的${cond}，並通過點 ${pt(I(x1),y1)}，求此二次函數。`,answer:ans(),sig:`f1:${on}:${plain(a)}:${h.n}:${k.n}:${x1}`,verify:()=>fnOK([[I(x1),y1]])}}
+  if(f===2){h=I(nz(-4,4));const c=at(0);if(c.d!==1||cmp(c,k)===0)return null;return{expr:`二次函數圖形的頂點為 ${pt(h,k)}，且與 y 軸交於點 ${pt(I(0),c)}，求此二次函數。`,answer:ans(),sig:`f2:${plain(a)}:${h.n}:${k.n}`,verify:()=>fnOK([[I(0),c]])}}
+  if(f===3){let d1,d2;do{d1=dx();d2=dx()}while(Math.abs(d1)===Math.abs(d2));const x1=h.n+d1,x2=h.n+d2;
+   return{expr:`二次函數圖形的對稱軸為 ${axis(h)}，且通過 ${pt(I(x1),at(x1))}、${pt(I(x2),at(x2))} 兩點，求此二次函數。`,answer:ans(),sig:`f3:${plain(a)}:${h.n}:${k.n}:${d1}:${d2}`,verify:()=>fnOK([[I(x1),at(x1)],[I(x2),at(x2)]])}}
+  const m=a.d===1?rand(1,4):a.d*(a.d>3?1:rand(1,2)),x1=h.n-m,x2=h.n+m;k=R(-a.n*m*m,a.d);
+  return{expr:`二次函數圖形與 x 軸交於 ${pt(I(x1),I(0))}、${pt(I(x2),I(0))} 兩點，且${a.n<0?"最大值":"最小值"}為 ${S(k)}，求此二次函數。`,answer:ans(),sig:`f4:${plain(a)}:${h.n}:${m}`,verify:()=>fnOK([[I(x1),I(0)],[I(x2),I(0)]])&&(a.n<0?k.n>0:k.n<0)};
+ });
+
+ // ⑤ 平移
+ const shift=unit("shift","圖形的平移","y＝ax² 向右平移 h、向上平移 k 得 y＝a(x−h)²＋k；平移不改變 a（開口方向與大小），只改變頂點。",["integer","fraction"],ctx=>{
+  const f=form(ctx),a=A(ctx),L=lv(ctx);
+  const moved=(p,m,n)=>x=>F(p,x-m)+n;
+  const shOK=(p0,m,n,p1)=>[-2.5,0,1,3.5].every(x=>near(moved(p0,m,n)(x),F(p1,x)));
+  const base="y＝"+term(a,"x²",true);
+  if(f===0){const sv=L?"both":pick(["x","y","both"]),m=sv==="y"?0:nz(-6,6),n=sv==="x"?0:nz(-8,8),h=I(m),k=I(n);
+   const how=[m?dirX(m):"",n?dirY(n):""].filter(Boolean).join("，再");
+   return{expr:`將二次函數 ${base} 的圖形${how}，求所得圖形的二次函數。`,answer:vform(a,h,k),sig:`s0:${plain(a)}:${m}:${n}`,verify:()=>shOK(expand(a,I(0),I(0)),m,n,expand(a,h,k))}}
+  if(f===1){const m=nz(-6,6),n=nz(-8,8),h=I(m),k=I(n);return{expr:`二次函數 ${vform(a,h,k)} 的圖形可由 ${base} 的圖形如何平移得到？`,answer:`${dirX(m)}，再${dirY(n)}`,sig:`s1:${plain(a)}:${m}:${n}`,verify:()=>shOK(expand(a,I(0),I(0)),m,n,expand(a,h,k))}}
+  if(f===2){const h=nz(-7,7),x1=h+nz(-2,2),y1=rand(-12,12),k=sub(I(y1),mul(a,I((x1-h)**2))),ax=`x${h>0?"−":"＋"}${Math.abs(h)}＝0`;
+   return{expr:`已知二次函數 y＝a(x−h)²＋k 的圖形可由 ${base} 的圖形平移後得到，其對稱軸為直線 ${ax}，且圖形通過點 ${pt(I(x1),I(y1))}，求此圖形的頂點坐標。`,answer:`頂點 ${pt(I(h),k)}`,sig:`s2:${plain(a)}:${h}:${x1}:${y1}`,verify:()=>{const p=expand(a,I(h),k);return near(F(p,x1),y1)&&vOK(p,I(h),k)}}}
+  if(f===3){const h0=I(nz(-5,5)),k0=I(rand(-6,6)),m=nz(-5,5),n=nz(-6,6),h=add(h0,I(m)),k=add(k0,I(n));
+   return{expr:`將二次函數 ${vform(a,h0,k0)} 的圖形${dirX(m)}，再${dirY(n)}，求新圖形的頂點坐標與二次函數。`,answer:`頂點 ${pt(h,k)}，${vform(a,h,k)}`,sig:`s3:${plain(a)}:${h0.n}:${k0.n}:${m}:${n}`,verify:()=>shOK(expand(a,h0,k0),m,n,expand(a,h,k))}}
+  const h0=I(nz(-5,5)),k0=I(rand(-6,6)),m=nz(-5,5),n=nz(-6,6),p0=expand(a,h0,k0),h=add(h0,I(m)),k=add(k0,I(n));
+  return{expr:`將二次函數 ${poly(p0.a,p0.b,p0.c)} 的圖形${dirX(m)}，再${dirY(n)}，求新圖形的頂點坐標與二次函數（寫成頂點式）。`,answer:`頂點 ${pt(h,k)}，${vform(a,h,k)}`,sig:`s4:${plain(a)}:${h0.n}:${k0.n}:${m}:${n}`,verify:()=>shOK(p0,m,n,expand(a,h,k))};
+ });
+
+ return{title:"二次函數的圖形與最大值、最小值",symbol:"∪",subtitle:"頂點坐標與對稱軸・與 x 軸的交點・最大值與最小值・求二次函數・圖形的平移",instruction:"頂點式 y＝a(x−h)²＋k 的頂點為 (h，k)、對稱軸為 x＝h；一般式先配方。答案為分數時化為最簡分數。",modes:["integer","fraction"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：頂點式求頂點、y＝ax²＋k 與 y＝a(x−h)² 的頂點與對稱軸、開口方向；頂點式判斷交點個數、與 y 軸交點、一般式判斷交點個數；頂點式與 y＝k＋a(x−h)² 求最值、一般式配方求最值；由頂點與一點、頂點在坐標軸上、頂點與 y 截距求函數；y＝ax² 的平移與反推、由對稱軸與一點求頂點。",advanced:"進階：開口方向、一般式配方求頂點、由頂點反求 b、c；交點個數、一般式判斷交點、求 x 軸交點坐標；最值、一般式配方、由最值反求 c；頂點在坐標軸上、頂點與 y 截距、對稱軸與兩點求函數；平移的反推、由對稱軸與一點求頂點、頂點式再平移。",challenge:"挑戰：一般式配方求頂點、由頂點反求 b、c；一般式判斷交點、x 軸交點坐標、由交點個數求 k 的值或範圍；由最值反求 c、限定範圍的最大值與最小值；對稱軸與兩點、兩個 x 截距與最值求函數；頂點式再平移、一般式平移後寫成頂點式。"},
+  units:[vertex,xaxis,extreme,findfn,shift],presets:{basic:{vertex:2,xaxis:2,extreme:2,findfn:2,shift:2},advanced:{vertex:2,xaxis:2,extreme:2,findfn:2,shift:2},challenge:{vertex:2,xaxis:2,extreme:2,findfn:2,shift:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

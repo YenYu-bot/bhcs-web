@@ -1,0 +1,468 @@
+{
+  "base": "2ec9581812675e13e88feb081e54a3b7b7a207a3",
+  "input": "claude-g9-r7.zip",
+  "p2": {
+    "topics": 97,
+    "combinations": 3879,
+    "passed": 3879,
+    "failed": 0,
+    "samplingSafeQuestionCalls": 775800,
+    "samplingProduced": 775800,
+    "candidateGenCalls": 874348,
+    "candidateNulls": 74220,
+    "candidateVerifyFalse": 0,
+    "candidateExceptions": 0,
+    "efficiencyWarningUnits": 39,
+    "efficiencyWarningCombinations": 87,
+    "declaredBankCombinations": 8,
+    "paperCompleted": 3879,
+    "paperExhausted": 0
+  },
+  "p3": {
+    "topics": 97,
+    "units": 807,
+    "samplesRequested": 484200,
+    "samplesProduced": 484200,
+    "samplesExhausted": 0,
+    "projectedGateFailures": 56,
+    "projectedTopicGateFailures": 0,
+    "g11Topics": 34,
+    "g11P4Backlog": 0
+  },
+  "ratchet": {
+    "topicFailures": 0,
+    "failures": 0
+  },
+  "quadfunc": {
+    "combinations": 30,
+    "units": [
+      {
+        "link": "g9-drills.html?topic=quadfunc",
+        "topic": "quadfunc",
+        "unit": "vertex",
+        "name": "頂點坐標與對稱軸",
+        "singleForm": false,
+        "singleFormReason": null,
+        "levels": {
+          "basic": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 73,
+            "numberMedian": 2,
+            "numericLiteralCount": 805,
+            "sampleFingerprint": "d072868d9cd0bf6f7deaa98b858405c35c268b1bd4943bf6f214a99ddfb1ef94",
+            "structureExamples": [
+              {
+                "hash": "628240dfd847ca1e",
+                "structure": "二次函數 y=#(x+#)# 的圖形開口向上還是向下?並求其頂點坐標與對稱軸。"
+              },
+              {
+                "hash": "83e3758ea04013c9",
+                "structure": "二次函數 y=#(x+#)#−# 的圖形開口向上還是向下?並求其頂點坐標與對稱軸。"
+              }
+            ]
+          },
+          "advanced": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 76,
+            "numberMedian": 3,
+            "numericLiteralCount": 846,
+            "sampleFingerprint": "5fb920c0c380dafcc64a3b91e9b010b4d51be2ffa85972c5c381c37771f64038",
+            "structureExamples": [
+              {
+                "hash": "86306e3c2c4232e6",
+                "structure": "二次函數 y=#(x+#)#+# 的圖形開口向上還是向下?並求其頂點坐標與對稱軸。"
+              },
+              {
+                "hash": "83e3758ea04013c9",
+                "structure": "二次函數 y=#(x+#)#−# 的圖形開口向上還是向下?並求其頂點坐標與對稱軸。"
+              }
+            ]
+          },
+          "challenge": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 64,
+            "numberMedian": 3,
+            "numericLiteralCount": 918,
+            "sampleFingerprint": "153fc8f203898c39b849ecd41f90d3c6d879d2c0abf0212933e0b8de535993b7",
+            "structureExamples": [
+              {
+                "hash": "628240dfd847ca1e",
+                "structure": "二次函數 y=#(x+#)# 的圖形開口向上還是向下?並求其頂點坐標與對稱軸。"
+              },
+              {
+                "hash": "86306e3c2c4232e6",
+                "structure": "二次函數 y=#(x+#)#+# 的圖形開口向上還是向下?並求其頂點坐標與對稱軸。"
+              }
+            ]
+          }
+        },
+        "challengeToBasicMedianRatio": 1.5,
+        "projectedStructureGatePass": true,
+        "projectedChallengeGatePass": true,
+        "challengeNewStructureCount": 45,
+        "challengeNewStructureExamples": [
+          {
+            "hash": "86306e3c2c4232e6",
+            "structure": "二次函數 y=#(x+#)#+# 的圖形開口向上還是向下?並求其頂點坐標與對稱軸。"
+          },
+          {
+            "hash": "ccf2bcb93935fc59",
+            "structure": "二次函數 y=#x#+bx+c 的圖形頂點為 (#,#),求 b、c 的值。"
+          }
+        ],
+        "outputFingerprint": "c58543a2c36161410a14b18a1d35c1e33ddd86c3459cfb15ecf6abbf9d5a52ba"
+      },
+      {
+        "link": "g9-drills.html?topic=quadfunc",
+        "topic": "quadfunc",
+        "unit": "xaxis",
+        "name": "與 x 軸的交點",
+        "singleForm": false,
+        "singleFormReason": null,
+        "levels": {
+          "basic": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 84,
+            "numberMedian": 3,
+            "numericLiteralCount": 853,
+            "sampleFingerprint": "2383ad71290308d599a9dff4914d6ee8e6249d66c74d751d5b72d9530b079133",
+            "structureExamples": [
+              {
+                "hash": "2fcaad6ed2dd44ee",
+                "structure": "二次函數 y=#(x+#)#+# 的圖形與 x 軸有幾個交點?與 y 軸的交點坐標為何?"
+              },
+              {
+                "hash": "72cd244ce3ec9bb4",
+                "structure": "二次函數 y=#(x+#)#−# 的圖形與 x 軸有幾個交點?與 y 軸的交點坐標為何?"
+              }
+            ]
+          },
+          "advanced": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 85,
+            "numberMedian": 3,
+            "numericLiteralCount": 906,
+            "sampleFingerprint": "2e2a6e710eab723bd22748ddadf5c977eae955815bb478eed693e0e69dd4fd8b",
+            "structureExamples": [
+              {
+                "hash": "8ef448abfef10e08",
+                "structure": "二次函數 y=#(x+#)# 的圖形與 x 軸有幾個交點?與 y 軸的交點坐標為何?"
+              },
+              {
+                "hash": "72cd244ce3ec9bb4",
+                "structure": "二次函數 y=#(x+#)#−# 的圖形與 x 軸有幾個交點?與 y 軸的交點坐標為何?"
+              }
+            ]
+          },
+          "challenge": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 90,
+            "numberMedian": 3,
+            "numericLiteralCount": 899,
+            "sampleFingerprint": "53536b6d8623be31d84f52f485a3d0daefff49bce9e79408c89ca28a172c7a8d",
+            "structureExamples": [
+              {
+                "hash": "febb2016ffc67046",
+                "structure": "判斷二次函數 y=#x#+#x+# 的圖形與 x 軸有幾個交點。"
+              },
+              {
+                "hash": "0465a4170ae569c8",
+                "structure": "判斷二次函數 y=#x#−#x+# 的圖形與 x 軸有幾個交點。"
+              }
+            ]
+          }
+        },
+        "challengeToBasicMedianRatio": 1,
+        "projectedStructureGatePass": true,
+        "projectedChallengeGatePass": true,
+        "challengeNewStructureCount": 73,
+        "challengeNewStructureExamples": [
+          {
+            "hash": "66415ca13af95dfc",
+            "structure": "判斷二次函數 y=((#)/(#))x#+x−((#)/(#)) 的圖形與 x 軸有幾個交點。"
+          },
+          {
+            "hash": "1716b1551b491e3f",
+            "structure": "判斷二次函數 y=((#)/(#))x#−x+((#)/(#)) 的圖形與 x 軸有幾個交點。"
+          }
+        ],
+        "outputFingerprint": "83cd415367a154d0f2bd90d7a69e4c77a0c89a5e5f1afa974159917c6de50de0"
+      },
+      {
+        "link": "g9-drills.html?topic=quadfunc",
+        "topic": "quadfunc",
+        "unit": "extreme",
+        "name": "最大值與最小值",
+        "singleForm": false,
+        "singleFormReason": null,
+        "levels": {
+          "basic": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 73,
+            "numberMedian": 3,
+            "numericLiteralCount": 895,
+            "sampleFingerprint": "6feb54126d06d7bdb4390162a3bbd52a98fc8468bdb2f23a44d6507b549758bf",
+            "structureExamples": [
+              {
+                "hash": "d008f50a6d2127f2",
+                "structure": "二次函數 y=#(x+#)# 有最大值還是最小值?在 x 為多少時發生?其值為何?"
+              },
+              {
+                "hash": "e6c9ad20c97f6bb5",
+                "structure": "二次函數 y=#(x−#)# 有最大值還是最小值?在 x 為多少時發生?其值為何?"
+              }
+            ]
+          },
+          "advanced": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 76,
+            "numberMedian": 3,
+            "numericLiteralCount": 931,
+            "sampleFingerprint": "db4946a5d0adb1cd4207f2d086b345438abaf3b5f51020f647c72cd2e729724d",
+            "structureExamples": [
+              {
+                "hash": "cc2000c76739ff06",
+                "structure": "二次函數 y=#+#(x+#)# 有最大值還是最小值?在 x 為多少時發生?其值為何?"
+              },
+              {
+                "hash": "10c8839830d5014d",
+                "structure": "二次函數 y=#+#(x−#)# 有最大值還是最小值?在 x 為多少時發生?其值為何?"
+              }
+            ]
+          },
+          "challenge": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 75,
+            "numberMedian": 3,
+            "numericLiteralCount": 1039,
+            "sampleFingerprint": "bba1798a6aae3f7d5bd4ab4ed7af3a8f94b9402c2409d992244867958cde986e",
+            "structureExamples": [
+              {
+                "hash": "494bd615fd6704f6",
+                "structure": "利用配方法,求二次函數 y=#x#+#x+# 的最大值或最小值,以及此時 x 的值。"
+              },
+              {
+                "hash": "4c0c7db2172856d5",
+                "structure": "利用配方法,求二次函數 y=#x#−#x+# 的最大值或最小值,以及此時 x 的值。"
+              }
+            ]
+          }
+        },
+        "challengeToBasicMedianRatio": 1,
+        "projectedStructureGatePass": true,
+        "projectedChallengeGatePass": true,
+        "challengeNewStructureCount": 59,
+        "challengeNewStructureExamples": [
+          {
+            "hash": "26e9f86a81f7f98a",
+            "structure": "利用配方法,求二次函數 y=((#)/(#))x#+#x−((#)/(#)) 的最大值或最小值,以及此時 x 的值。"
+          },
+          {
+            "hash": "e9fc2409212e2c4a",
+            "structure": "利用配方法,求二次函數 y=((#)/(#))x#−#x+# 的最大值或最小值,以及此時 x 的值。"
+          }
+        ],
+        "outputFingerprint": "c8102586cd79c1facd77ce7f353858b93c91d5dcae4699fc1e6a80acc570f022"
+      },
+      {
+        "link": "g9-drills.html?topic=quadfunc",
+        "topic": "quadfunc",
+        "unit": "findfn",
+        "name": "求二次函數",
+        "singleForm": false,
+        "singleFormReason": null,
+        "levels": {
+          "basic": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 37,
+            "numberMedian": 3,
+            "numericLiteralCount": 775,
+            "sampleFingerprint": "f03373b5d3fe87f244db2a3767aeabbfc87b5cf1d87f4c7a05d65355e6e6d20f",
+            "structureExamples": [
+              {
+                "hash": "3f09d10f0deedb1e",
+                "structure": "二次函數圖形的頂點在 x 軸上,對稱軸為 x=#,並通過點 (#,#),求此二次函數。"
+              },
+              {
+                "hash": "e4b6de6601fd5b74",
+                "structure": "二次函數圖形的頂點在 x 軸上,對稱軸為 x=#,並通過點 (#,−#),求此二次函數。"
+              }
+            ]
+          },
+          "advanced": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 44,
+            "numberMedian": 5,
+            "numericLiteralCount": 827,
+            "sampleFingerprint": "34acfe50ef2443f85dc5bfd7c93069001d72e40a492f7bbea87bc92e42f9a8cf",
+            "structureExamples": [
+              {
+                "hash": "8d714c8f457183ce",
+                "structure": "二次函數圖形的對稱軸為 x=#,且通過 (#,#)、(#,#) 兩點,求此二次函數。"
+              },
+              {
+                "hash": "62ef67f722a2d516",
+                "structure": "二次函數圖形的對稱軸為 x=#,且通過 (#,#)、(#,−#) 兩點,求此二次函數。"
+              }
+            ]
+          },
+          "challenge": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 37,
+            "numberMedian": 5,
+            "numericLiteralCount": 959,
+            "sampleFingerprint": "fe151a031c28fb6230f24116b0d3210c4d62768ba12709b865828c6d31506d61",
+            "structureExamples": [
+              {
+                "hash": "8d714c8f457183ce",
+                "structure": "二次函數圖形的對稱軸為 x=#,且通過 (#,#)、(#,#) 兩點,求此二次函數。"
+              },
+              {
+                "hash": "62ef67f722a2d516",
+                "structure": "二次函數圖形的對稱軸為 x=#,且通過 (#,#)、(#,−#) 兩點,求此二次函數。"
+              }
+            ]
+          }
+        },
+        "challengeToBasicMedianRatio": 1.6666666666666667,
+        "projectedStructureGatePass": true,
+        "projectedChallengeGatePass": true,
+        "challengeNewStructureCount": 29,
+        "challengeNewStructureExamples": [
+          {
+            "hash": "8d714c8f457183ce",
+            "structure": "二次函數圖形的對稱軸為 x=#,且通過 (#,#)、(#,#) 兩點,求此二次函數。"
+          },
+          {
+            "hash": "62ef67f722a2d516",
+            "structure": "二次函數圖形的對稱軸為 x=#,且通過 (#,#)、(#,−#) 兩點,求此二次函數。"
+          }
+        ],
+        "outputFingerprint": "811bf3e7186fe13b396ca8742b311ba9f340361ef513357abe64f5811c13710c"
+      },
+      {
+        "link": "g9-drills.html?topic=quadfunc",
+        "topic": "quadfunc",
+        "unit": "shift",
+        "name": "圖形的平移",
+        "singleForm": false,
+        "singleFormReason": null,
+        "levels": {
+          "basic": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 77,
+            "numberMedian": 2,
+            "numericLiteralCount": 1192,
+            "sampleFingerprint": "4c05b3b1b828932f592ecb3864dc131d9467fc4bcf787515ba22dd2253df3d4c",
+            "structureExamples": [
+              {
+                "hash": "fc2705233ab31102",
+                "structure": "二次函數 y=#(x+#)#+# 的圖形可由 y=#x# 的圖形如何平移得到?"
+              },
+              {
+                "hash": "6c854dc652476d5b",
+                "structure": "二次函數 y=#(x+#)#−# 的圖形可由 y=#x# 的圖形如何平移得到?"
+              }
+            ]
+          },
+          "advanced": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 87,
+            "numberMedian": 2,
+            "numericLiteralCount": 1356,
+            "sampleFingerprint": "e5e731d5ba615347c37a9e337820441623a93290a4648b9dad45cfe50bb4d291",
+            "structureExamples": [
+              {
+                "hash": "fc2705233ab31102",
+                "structure": "二次函數 y=#(x+#)#+# 的圖形可由 y=#x# 的圖形如何平移得到?"
+              },
+              {
+                "hash": "6c854dc652476d5b",
+                "structure": "二次函數 y=#(x+#)#−# 的圖形可由 y=#x# 的圖形如何平移得到?"
+              }
+            ]
+          },
+          "challenge": {
+            "requested": 200,
+            "produced": 200,
+            "exhausted": 0,
+            "structureCount": 122,
+            "numberMedian": 3,
+            "numericLiteralCount": 1377,
+            "sampleFingerprint": "9a0190df254bb0154c1536e2823230e38fb4ecee5243ee5b2c578795290d9535",
+            "structureExamples": [
+              {
+                "hash": "452244b2adfdfe49",
+                "structure": "將二次函數 y=#(x+#)#+# 的圖形向右平移 # 單位,再向下平移 # 單位,求新圖形的頂點坐標與二次函數。"
+              },
+              {
+                "hash": "e26cd697c4667f0b",
+                "structure": "將二次函數 y=#(x+#)#+# 的圖形向左平移 # 單位,再向上平移 # 單位,求新圖形的頂點坐標與二次函數。"
+              }
+            ]
+          }
+        },
+        "challengeToBasicMedianRatio": 1.5,
+        "projectedStructureGatePass": true,
+        "projectedChallengeGatePass": true,
+        "challengeNewStructureCount": 102,
+        "challengeNewStructureExamples": [
+          {
+            "hash": "452244b2adfdfe49",
+            "structure": "將二次函數 y=#(x+#)#+# 的圖形向右平移 # 單位,再向下平移 # 單位,求新圖形的頂點坐標與二次函數。"
+          },
+          {
+            "hash": "e26cd697c4667f0b",
+            "structure": "將二次函數 y=#(x+#)#+# 的圖形向左平移 # 單位,再向上平移 # 單位,求新圖形的頂點坐標與二次函數。"
+          }
+        ],
+        "outputFingerprint": "51e8d626f61f24f5c5c37b3b45e1621393bd56b4ebd53b241c9bb7c7b61a612f"
+      }
+    ]
+  },
+  "stress": {
+    "topic": "quadfunc",
+    "papers40": 225,
+    "papers80": 225,
+    "questions": 27000,
+    "exhausted": 0,
+    "duplicateQuestions": 0,
+    "jsdomErrors": [],
+    "scope": "DOM generation only; not browser layout/print acceptance"
+  },
+  "browser": "Not run locally: Chromium is unavailable; PR CI required.",
+  "regressions": {
+    "passed": 22,
+    "failed": 0,
+    "quickMode": false
+  },
+  "buildIdempotence": true
+}
