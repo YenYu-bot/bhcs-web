@@ -93,6 +93,7 @@ svg [fill="#afc1bc" i]{fill:#C9D2DE}
 svg [stroke="#afc1bc" i]{stroke:#C9D2DE}
 svg [fill="#7C879B" i]{fill:#43516B}
 svg [stroke="#7C879B" i]{stroke:#43516B}
+.expr table :is(td,th){border-color:var(--bhcs-muted)!important}
 
 html,body{background-color:var(--bhcs-bg)}
 button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
@@ -118,7 +119,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1196,11 +1197,105 @@ function quadfuncConfig(){
  });
 
  return{title:"二次函數的圖形與最大值、最小值",symbol:"∪",subtitle:"頂點坐標與對稱軸・與 x 軸的交點・最大值與最小值・求二次函數・圖形的平移",instruction:"頂點式 y＝a(x−h)²＋k 的頂點為 (h，k)、對稱軸為 x＝h；一般式先配方。答案為分數時化為最簡分數。",modes:["integer","fraction"],mixed:false,answerLabel:"答：",
-  levels:{basic:"基礎：頂點式求頂點、y＝ax²＋k 與 y＝a(x−h)² 的頂點與對稱軸、開口方向；頂點式判斷交點個數、與 y 軸交點、一般式判斷交點個數；頂點式與 y＝k＋a(x−h)² 求最值、一般式配方求最值；由頂點與一點、頂點在坐標軸上、頂點與 y 截距求函數；y＝ax² 的平移與反推、由對稱軸與一點求頂點。",advanced:"進階：開口方向、一般式配方求頂點、由頂點反求 b、c；交點個數、一般式判斷交點、求 x 軸交點坐標；最值、一般式配方、由最值反求 c；頂點在坐標軸上、頂點與 y 截距、對稱軸與兩點求函數；平移的反推、由對稱軸與一點求頂點、頂點式再平移。",challenge:"挑戰：一般式配方求頂點、由頂點反求 b、c；一般式判斷交點、x 軸交點坐標、由交點個數求 k 的值或範圍；由最值反求 c、限定範圍的最大值與最小值；對稱軸與兩點、兩個 x 截距與最值求函數；頂點式再平移、一般式平移後寫成頂點式。"},
+  levels:{basic:"基礎：頂點式求頂點、y＝ax²＋k 與 y＝a(x−h)² 的頂點與對稱軸、開口方向；頂點式判斷交點個數、加問 y 軸交點、一般式判斷交點個數；頂點式與 y＝k＋a(x−h)² 求最值、一般式配方求最值；由頂點與一點、頂點在坐標軸上、頂點與 y 截距求函數；y＝ax² 的平移與反推、由對稱軸與一點求頂點。",advanced:"進階：y＝ax²＋k 與 y＝a(x−h)² 的頂點與對稱軸、開口方向、一般式配方求頂點；交點個數與 y 軸交點、一般式判斷交點、求 x 軸交點坐標；y＝k＋a(x−h)² 求最值、一般式配方求最值、由最值反求 c；頂點在坐標軸上、頂點與 y 截距、對稱軸與兩點求函數；平移的反推、由對稱軸與一點求頂點、頂點式再平移。",challenge:"挑戰：開口方向、一般式配方求頂點、由頂點反求 b、c；一般式判斷交點、x 軸交點坐標、由交點個數求 k 的值或範圍；一般式配方求最值、由最值反求 c、限定範圍的最大值與最小值；頂點與 y 截距、對稱軸與兩點、兩個 x 截距與最值求函數；由對稱軸與一點求頂點、頂點式再平移、一般式平移後寫成頂點式。"},
   units:[vertex,xaxis,extreme,findfn,shift],presets:{basic:{vertex:2,xaxis:2,extreme:2,findfn:2,shift:2},advanced:{vertex:2,xaxis:2,extreme:2,findfn:2,shift:2},challenge:{vertex:2,xaxis:2,extreme:2,findfn:2,shift:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig},CFG=CONFIGS[TOPIC_KEY]();
+function quartileConfig(){
+ /* 國三下 2-1 資料的分析：中位數與四分位數（2026-09-28，Claude）。依舊工具 g9b-2-1-quartiles.html 的四個單元重做：中位數的應用、未分組資料的四分位數、
+    次數分配表求四分位數、分組資料（直方圖）的四分位數所在組。四分位數沿用原頁規則：位置 n×k／4 不是整數時取下一個整數位置的資料；
+    是整數 m 時取第 m 與第 m＋1 筆的平均（k＝2 即中位數）。分組資料若第 m、m＋1 筆落在不同組就不出題。直方圖的次數同時寫在題幹，圖只是輔助。
+    verify：答案用累積次數逐筆推位置；驗證時把資料全部展開成陣列（分組資料展開成組別編號），用浮點數排序後依位置規則直接取值比對。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const form=ctx=>pick([[0,1,2],[1,2,3],[2,3,4]][lv(ctx)]);
+ const D=v=>decHTML(v),F=v=>fracHTML(v),num=v=>v.n/v.d;
+ const near=(x,y)=>Math.abs(x-y)<1e-9;
+ const qpos=(n,k)=>{const p=n*k;return p%4===0?{int:true,m:p/4}:{int:false,m:Math.ceil(p/4)}};
+ // 答案路線：已排序的分數陣列依位置取值
+ const quartR=(arr,k)=>{const q=qpos(arr.length,k);return q.int?div(add(arr[q.m-1],arr[q.m]),R(2)):arr[q.m-1]};
+ // 驗證路線：浮點數重新排序後直接依定義計算
+ const quartF=(xs,k)=>{const a=[...xs].sort((x,y)=>x-y),n=a.length,p=n*k/4;return Math.abs(p-Math.round(p))<1e-9?(a[Math.round(p)-1]+a[Math.round(p)])/2:a[Math.ceil(p)-1]};
+ const sortR=a=>[...a].sort(cmp);
+ const INT=[["某班 N 位同學的數學小考成績","分",40,100],["N 位選手的跳遠成績","公分",320,420],["某地 N 天的最高氣溫","°C",18,34],["N 位同學一週的閱讀時間","分鐘",20,90],["N 位同學的身高","公分",148,176],["N 位同學的仰臥起坐次數","次",18,48]];
+ const DEC=[["N 位選手的百米成績","秒",120,170],["N 位同學的 50 公尺游泳成績","秒",300,450],["N 包餅乾的重量","公克",4800,5200],["N 位同學的握力","公斤",180,320]];
+ const scene=(mode,n)=>{const[t,u,lo,hi]=pick(mode==="decimal"?DEC:INT);return{t:t.replace("N",n),u,lo,hi,s:mode==="decimal"?10:1}};
+ const data=(sc,n,spread=1)=>{const w=Math.max(4,Math.round((sc.hi-sc.lo)*spread)),lo=sc.lo+rand(0,Math.max(0,sc.hi-sc.lo-w));return Array.from({length:n},()=>R(rand(lo,lo+w),sc.s))};
+ const list=a=>a.map(D).join("、");
+ const tbl=(head,rows)=>`<table style="border-collapse:collapse;margin:3px 0;font-size:.92em"><tr>${head.map(h=>`<td style="border:1px solid #7C879B;padding:1px 6px;text-align:center">${h}</td>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td style="border:1px solid #7C879B;padding:1px 6px;text-align:center">${c}</td>`).join("")}</tr>`).join("")}</table>`;
+ const QA=(qs,vals,u)=>qs.map((k,i)=>`${["","Q₁","Q₂","Q₃"][k]}＝${D(vals[i])}${u?" "+u:""}`).join("，");
+
+ // ① 中位數的應用
+ const median=unit("median","中位數的應用","資料先由小到大排列；n 為奇數時取第 (n＋1)／2 筆，n 為偶數時取第 n／2 與第 n／2＋1 筆的平均。",["integer","decimal"],ctx=>{
+  const f=form(ctx),L=lv(ctx),mode=pick(ctx.modes);
+  if(f===0){const n=rand(7,10+2*L),sc=scene(mode,n),a=data(sc,n),M=quartR(sortR(a),2);return{expr:`${sc.t}如下（單位：${sc.u}）：${list(a)}。求這組資料的中位數。`,answer:`${D(M)} ${sc.u}`,sig:`m0:${a.map(plain)}`,verify:()=>near(num(M),quartF(a.map(num),2))}}
+  if(f===1){const n=rand(8,12+2*L),sc=scene(mode,n);const[rt,rlo,rhi]=pick(mode==="decimal"?[["百米",118,150],["200 公尺",235,290]]:[["400 公尺",50,62],["800 公尺",125,140]]),race={t:`${n} 位選手的 ${rt} 成績`,u:"秒",lo:rlo,hi:rhi,s:mode==="decimal"?10:1};const a=data(race,n,.5),M=quartR(sortR(a),2),incl=pick([true,false]);
+   const out=a.filter(x=>incl?cmp(x,M)>=0:cmp(x,M)>0).length,ratio=R(out,n);if(!out||out===n)return null;
+   return{expr:`${race.t}如下（單位：${race.u}）：${list(a)}。規定秒數${incl?"在中位數以上（含）":"高於中位數"}的選手淘汰，求淘汰人數占全體的幾分之幾。`,answer:F(ratio),sig:`m1:${incl}:${a.map(plain)}`,verify:()=>{const m=quartF(a.map(num),2);return near(num(ratio)*n,a.map(num).filter(x=>incl?x>=m-1e-12:x>m+1e-12).length)}}}
+  if(f===2){const n=rand(10,14+2*L),sc=scene(mode,n),a=sortR(data(sc,n,.25)),M=quartR(a,2),le=a.filter(x=>cmp(x,M)<=0).length,ge=a.filter(x=>cmp(x,M)>=0).length;
+   return{expr:`${sc.t}由小到大排列如下（單位：${sc.u}）：${list(a)}。求 (1) 中位數以下（含）的資料占全部的幾分之幾 (2) 中位數以上（含）的資料占全部的幾分之幾。`,answer:`(1) ${F(R(le,n))} (2) ${F(R(ge,n))}`,sig:`m2:${a.map(plain)}`,verify:()=>{const m=quartF(a.map(num),2),x=a.map(num);return x.filter(v=>v<=m+1e-12).length===le&&x.filter(v=>v>=m-1e-12).length===ge}}}
+  if(f===3){const n=2*rand(4,6+L),sc=scene(mode,n),a=sortR(data(sc,n)),i=pick([n/2-1,n/2]),M=quartR(a,2),other=a[i===n/2-1?n/2:n/2-1],x=sub(mul(R(2),M),other);if(cmp(a[n/2-1],a[n/2])===0)return null;
+   const shown=a.map((v,j)=>j===i?"x":D(v));
+   return{expr:`${sc.t}由小到大排列如下（單位：${sc.u}）：${shown.join("、")}。若中位數為 ${D(M)}，求 x。`,answer:`x＝${D(x)}`,sig:`m3:${i}:${a.map(plain)}`,verify:()=>{const b=a.map(num);b[i]=num(x);return b.every((v,j)=>!j||b[j-1]<=v)&&near(quartF(b,2),num(M))}}}
+  const n=rand(8,13),sc=scene(mode,n),a=data(sc,n),v=data(sc,1,1.3)[0],M1=quartR(sortR(a),2),M2=quartR(sortR(a.concat([v])),2);
+  return{expr:`${sc.t}如下（單位：${sc.u}）：${list(a)}。(1) 求中位數 (2) 若再加入一筆 ${D(v)}，新的中位數是多少？`,answer:`(1) ${D(M1)} (2) ${D(M2)}`,sig:`m4:${plain(v)}:${a.map(plain)}`,verify:()=>near(num(M1),quartF(a.map(num),2))&&near(num(M2),quartF(a.map(num).concat(num(v)),2))};
+ });
+
+ // ② 未分組資料的四分位數
+ const raw=unit("raw","未分組資料的四分位數","n×1／4、n×2／4、n×3／4 不是整數時取下一個整數位置；是整數 m 時取第 m 與第 m＋1 筆的平均。",["integer","decimal"],ctx=>{
+  const f=form(ctx),L=lv(ctx),mode=pick(ctx.modes);
+  if(f===0||f===1||f===3){const n=f===3?rand(16,24):rand(8,12+3*L),sc=scene(mode,n),a=data(sc,n),s=sortR(a),ks=f===3?[1,3]:[1,2,3],v=ks.map(k=>quartR(s,k));
+   const shown=f===1?a:s;
+   return{expr:`${sc.t}${f===1?"如下":"由小到大排列如下"}（單位：${sc.u}）：${list(shown)}。求${ks.map(k=>["","第一四分位數 Q₁","第二四分位數 Q₂","第三四分位數 Q₃"][k]).join("、")}。`,answer:QA(ks,v,sc.u),sig:`r${f}:${shown.map(plain)}`,verify:()=>ks.every((k,i)=>near(num(v[i]),quartF(a.map(num),k)))}}
+  if(f===2){const n=rand(10,40+20*L),desc=[1,2,3].map(k=>{const q=qpos(n,k);return q.int?`第 ${q.m} 與第 ${q.m+1} 筆的平均`:`第 ${q.m} 筆`});
+   return{expr:`將 ${n} 筆資料由小到大排列，Q₁、Q₂、Q₃ 分別是第幾筆資料（若是兩筆的平均，寫出是哪兩筆）？`,answer:`Q₁：${desc[0]}；Q₂：${desc[1]}；Q₃：${desc[2]}`,sig:`r2:${n}`,verify:()=>{const idx=Array.from({length:n},(_,i)=>i+1);return[1,2,3].every(k=>{const q=qpos(n,k),v=quartF(idx,k);return q.int?near(v,q.m+.5):near(v,q.m)})}}}
+  const n=4*rand(3,5),sc=scene(mode,n),s=sortR(data(sc,n)),k=pick([1,3]),m=n*k/4,i=pick([m-1,m]),Q=quartR(s,k),other=s[i===m-1?m:m-1],x=sub(mul(R(2),Q),other);if(cmp(s[m-1],s[m])===0)return null;
+  return{expr:`${sc.t}由小到大排列如下（單位：${sc.u}）：${s.map((v,j)=>j===i?"x":D(v)).join("、")}。若 ${k===1?"Q₁":"Q₃"}＝${D(Q)}，求 x。`,answer:`x＝${D(x)}`,sig:`r4:${k}:${i}:${s.map(plain)}`,verify:()=>{const b=s.map(num);b[i]=num(x);return b.every((v,j)=>!j||b[j-1]<=v)&&near(quartF(b,k),num(Q))}};
+ });
+
+ // ③ 次數分配表
+ const TAB=[["擲一顆骰子","點數","點",1,6],["某班同學的家庭人口數","人數","人",3,8],["同學投籃 10 次的命中球數","命中球數","球",0,8],["同學一週的運動天數","天數","天",0,7],["小考 10 題的答對題數","答對題數","題",4,10]];
+ const table=unit("table","次數與累積次數分配表","由累積次數找出第 m 筆落在哪個數值：累積次數第一次大於或等於 m 的那一列。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx),[t,col,u,lo,hi]=pick(TAB),vals=Array.from({length:hi-lo+1},(_,i)=>lo+i).slice(0,rand(5,7)),cnt=()=>vals.map(()=>rand(L?0:1,4+3*L)),expand=c=>c.flatMap((k,i)=>Array(k).fill(vals[i])),cum=c=>c.reduce((s,k)=>(s.push((s.at(-1)||0)+k),s),[]);
+  const byCum=(c,k)=>{const n=c.reduce((s,x)=>s+x,0),q=qpos(n,k),C=cum(c),at=m=>vals[C.findIndex(x=>x>=m)];return q.int?R(at(q.m)+at(q.m+1),2):R(at(q.m))};
+  const chk=(c,ks,v)=>{const e=expand(c);return ks.every((k,i)=>near(num(v[i]),quartF(e,k)))};
+  if(f===4){const c1=cnt(),c2=cnt(),c=c1.map((x,i)=>x+c2[i]),n=c.reduce((s,x)=>s+x,0);if(n<8)return null;const v=[1,2,3].map(k=>byCum(c,k));
+   return{expr:`${t}，甲、乙兩組的次數分配如下表。把兩組資料合併後，求 Q₁、Q₂、Q₃。${tbl([col+"（"+u+"）","甲","乙"],vals.map((x,i)=>[x,c1[i],c2[i]]))}`,answer:QA([1,2,3],v,u),sig:`t4:${vals}:${c1}:${c2}`,verify:()=>{const e=expand(c1).concat(expand(c2));return[1,2,3].every((k,i)=>near(num(v[i]),quartF(e,k)))}}}
+  const c=cnt(),n=c.reduce((s,x)=>s+x,0);if(n<8)return null;const C=cum(c);
+  if(f===0){const v=[1,2,3].map(k=>byCum(c,k));return{expr:`${t}共 ${n} 筆資料，次數分配如下表，求 Q₁、Q₂、Q₃。${tbl([col+"（"+u+"）","次數"],vals.map((x,i)=>[x,c[i]]))}`,answer:QA([1,2,3],v,u),sig:`t0:${vals}:${c}`,verify:()=>chk(c,[1,2,3],v)}}
+  if(f===1){const M=byCum(c,2);return{expr:`${t}的次數分配如下表。(1) 依序寫出各列的累積次數 (2) 求中位數。${tbl([col+"（"+u+"）","次數"],vals.map((x,i)=>[x,c[i]]))}`,answer:`(1) ${C.join("、")} (2) ${D(M)} ${u}`,sig:`t1:${vals}:${c}`,verify:()=>{let s=0;return c.every((k,i)=>(s+=k)===C[i])&&chk(c,[2],[M])}}}
+  if(f===2){const v=[1,2,3].map(k=>byCum(c,k));return{expr:`${t}的累積次數分配如下表，求 Q₁、Q₂、Q₃。${tbl([col+"（"+u+"）","累積次數"],vals.map((x,i)=>[x,C[i]]))}`,answer:QA([1,2,3],v,u),sig:`t2:${vals}:${c}`,verify:()=>chk(c,[1,2,3],v)}}
+  const j=rand(0,vals.length-1);if(!c[j])return null;const ks=pick([[2],[1,3]]),v=ks.map(k=>byCum(c,k));
+  return{expr:`${t}共 ${n} 筆資料，次數分配如下表，其中一列的次數為 x。求 x 與 ${ks.map(k=>["","Q₁","Q₂","Q₃"][k]).join("、")}。${tbl([col+"（"+u+"）","次數"],vals.map((x,i)=>[x,i===j?"x":c[i]]))}`,answer:`x＝${c[j]}；${QA(ks,v,u)}`,sig:`t3:${j}:${ks}:${vals}:${c}`,verify:()=>n-c.reduce((s,x,i)=>i===j?s:s+x,0)===c[j]&&chk(c,ks,v)};
+ });
+
+ // ④ 分組資料：四分位數所在組
+ const GRP=[["某校學生的體重","公斤",30,10],["某班學生的身高","公分",130,10],["學生的數學測驗成績","分",30,10],["學生一分鐘仰臥起坐次數","次",15,5],["商店每日的營業額","萬元",10,5],["學生每週上網時數","小時",0,5]];
+ const group=unit("group","分組資料的四分位數所在組","組界「a～b」表示 a 以上、未滿 b；用累積次數找出第 m 筆資料所在的組。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx),[t,u,st,w]=pick(GRP),k=rand(5,7),edges=Array.from({length:k+1},(_,i)=>st+i*w),name=i=>`${edges[i]}～${edges[i+1]}`;
+  let c=Array.from({length:k},()=>rand(1,8+6*L));
+  if(f===4){const n=pick([20,25,40,50,100]);const cuts=new Set;while(cuts.size<k-1)cuts.add(rand(1,n-1));const cs=[0,...[...cuts].sort((x,y)=>x-y),n];c=cs.slice(1).map((x,i)=>x-cs[i])}
+  const n=c.reduce((s,x)=>s+x,0),C=c.reduce((s,x)=>(s.push((s.at(-1)||0)+x),s),[]);
+  const gOf=kk=>{const q=qpos(n,kk),g=m=>C.findIndex(x=>x>=m);if(q.int&&g(q.m)!==g(q.m+1))return -1;return g(q.m)};
+  const expand=()=>c.flatMap((x,i)=>Array(x).fill(i));
+  const gOK=(ks,gs)=>{const e=expand();return ks.every((kk,i)=>near(quartF(e,kk),gs[i]))};
+  const hist=()=>{const W=210,H=118,x0=26,y0=96,bw=(W-x0-8)/k,mx=Math.max(...c),sy=70/mx;let b=GEO.line([x0,y0],[W-4,y0])+GEO.line([x0,y0],[x0,y0-78]);c.forEach((v,i)=>{const x=x0+i*bw,h=v*sy;b+=`<rect x="${GEO.f(x)}" y="${GEO.f(y0-h)}" width="${GEO.f(bw)}" height="${GEO.f(h)}" fill="#fff" stroke="#16233A" stroke-width="1"/>`+GEO.text([GEO.f(x+bw/2),GEO.f(y0-h-3)],String(v),{s:9})});edges.forEach((e,i)=>b+=GEO.text([GEO.f(x0+i*bw),y0+11],String(e),{s:8,c:"#7C879B"}));b+=GEO.text([W-6,y0+21],`（${u}）`,{s:8,c:"#7C879B",a:"end"});return GEO.svg(W,H,b)};
+  const listC=arr=>arr.map((x,i)=>`${name(i)}：${x}`).join("；");
+  const gA=(ks,gs)=>ks.map((kk,i)=>`${["","Q₁","Q₂","Q₃"][kk]} 在 ${name(gs[i])} ${u}`).join("，");
+  if(f===0){const ks=[1,2,3],gs=ks.map(gOf);if(gs.includes(-1))return null;return{expr:`${hist()}${t}的次數分配直方圖如上，各組次數為 ${listC(c)}（單位：${u}）。Q₁、Q₂、Q₃ 各在哪一組？`,answer:gA(ks,gs),sig:`g0:${st}:${c}`,verify:()=>gOK(ks,gs)}}
+  if(f===1){const kk=pick([1,3]),g=gOf(kk);if(g<0)return null;const mid=R(edges[g]+edges[g+1],2);return{expr:`${hist()}${t}的次數分配直方圖如上，各組次數為 ${listC(c)}（單位：${u}）。${kk===1?"Q₁":"Q₃"} 在哪一組？該組的組中點是多少？`,answer:`${gA([kk],[g])}，組中點 ${D(mid)} ${u}`,sig:`g1:${kk}:${st}:${c}`,verify:()=>gOK([kk],[g])&&near(num(mid)*2,edges[g]+edges[g+1])}}
+  if(f===2){const ks=[1,2,3],gs=ks.map(gOf);if(gs.includes(-1))return null;return{expr:`${t}（單位：${u}）的累積次數為 ${listC(C)}。Q₁、Q₂、Q₃ 各在哪一組？`,answer:gA(ks,gs),sig:`g2:${st}:${c}`,verify:()=>gOK(ks,gs)}}
+  if(f===3){const j=rand(0,k-1),kk=pick([1,2,3]),g=gOf(kk);if(g<0)return null;return{expr:`${t}共 ${n} 筆資料（單位：${u}），各組次數為 ${c.map((x,i)=>`${name(i)}：${i===j?"x":x}`).join("；")}。求 x，並指出 ${["","Q₁","Q₂","Q₃"][kk]} 在哪一組。`,answer:`x＝${c[j]}；${gA([kk],[g])}`,sig:`g3:${j}:${kk}:${st}:${c}`,verify:()=>c.reduce((s,x)=>s+x,0)===n&&gOK([kk],[g])}}
+  const ks=[1,2,3],gs=ks.map(gOf);if(gs.includes(-1))return null;const P=C.map(x=>R(100*x,n));
+  return{expr:`${t}共 ${n} 筆資料（單位：${u}），各組的累積相對次數為 ${P.map((p,i)=>`${name(i)}：${D(p)}%`).join("；")}。Q₁、Q₂、Q₃ 各在哪一組？`,answer:gA(ks,gs),sig:`g4:${st}:${c}`,verify:()=>P.every((p,i)=>near(num(p)*n/100,C[i]))&&gOK(ks,gs)};
+ });
+
+ return{title:"中位數與四分位數",symbol:"Q",subtitle:"中位數的應用・未分組資料的四分位數・次數與累積次數分配表・分組資料的四分位數所在組",instruction:"四分位數：位置 n×k／4 不是整數時取下一個整數位置，是整數 m 時取第 m 與第 m＋1 筆的平均。比例化為最簡分數。",modes:["integer","decimal"],modeLabels:{integer:"整數資料",decimal:"小數資料"},mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：未排序資料求中位數、淘汰比例、中位數以下（含）與以上（含）的比例；已排序與未排序資料求 Q₁、Q₂、Q₃、Q₁～Q₃ 是第幾筆；次數分配表求 Q₁～Q₃、累積次數與中位數、累積次數表求 Q₁～Q₃；直方圖求 Q₁～Q₃ 所在組、Q₁ 或 Q₃ 所在組與組中點、由累積次數求所在組。",advanced:"進階：淘汰比例、中位數以下與以上的比例、由中位數反求 x；未排序資料的 Q₁～Q₃、第幾筆、較多筆資料的 Q₁ 與 Q₃；累積次數與中位數、累積次數表、表中缺一個次數；Q₁ 或 Q₃ 所在組與組中點、由累積次數求所在組、缺一組次數。",challenge:"挑戰：中位數以下與以上的比例、由中位數反求 x、加入一筆資料後的中位數；第幾筆、較多筆資料的 Q₁ 與 Q₃、由 Q₁ 或 Q₃ 反求 x；累積次數表、表中缺一個次數、兩組合併的 Q₁～Q₃；由累積次數求所在組、缺一組次數、由累積相對次數求所在組。"},
+  units:[median,raw,table,group],presets:{basic:{median:2,raw:2,table:2,group:2},advanced:{median:2,raw:2,table:2,group:2},challenge:{median:2,raw:2,table:2,group:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

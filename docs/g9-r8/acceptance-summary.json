@@ -1,0 +1,113 @@
+{
+  "base": "1e799eca0ef48dc79415e8ac4c189f956a85c2f5",
+  "input": "claude-g9-r8.zip",
+  "p2": {
+    "topics": 98,
+    "combinations": 3897,
+    "passed": 3897,
+    "failed": 0,
+    "samplingSafeQuestionCalls": 779400,
+    "samplingProduced": 779400,
+    "candidateGenCalls": 878114,
+    "candidateNulls": 74386,
+    "candidateVerifyFalse": 0,
+    "candidateExceptions": 0,
+    "efficiencyWarningUnits": 39,
+    "efficiencyWarningCombinations": 87,
+    "declaredBankCombinations": 8,
+    "paperCompleted": 3897,
+    "paperExhausted": 0
+  },
+  "p3": {
+    "topics": 98,
+    "units": 811,
+    "samplesRequested": 486600,
+    "samplesProduced": 486600,
+    "samplesExhausted": 0,
+    "projectedGateFailures": 56,
+    "projectedTopicGateFailures": 0,
+    "g11Topics": 34,
+    "g11P4Backlog": 0
+  },
+  "ratchet": {
+    "topicFailures": 0,
+    "failures": 0
+  },
+  "quartile": {
+    "combinations": 18,
+    "units": [
+      {
+        "unit": "median",
+        "structures": {
+          "basic": 88,
+          "advanced": 113,
+          "challenge": 131
+        },
+        "structureGate": true,
+        "challengeGate": true
+      },
+      {
+        "unit": "raw",
+        "structures": {
+          "basic": 74,
+          "advanced": 91,
+          "challenge": 98
+        },
+        "structureGate": true,
+        "challengeGate": true
+      },
+      {
+        "unit": "table",
+        "structures": {
+          "basic": 15,
+          "advanced": 26,
+          "challenge": 26
+        },
+        "structureGate": true,
+        "challengeGate": true
+      },
+      {
+        "unit": "group",
+        "structures": {
+          "basic": 53,
+          "advanced": 79,
+          "challenge": 93
+        },
+        "structureGate": true,
+        "challengeGate": true
+      }
+    ]
+  },
+  "stress": {
+    "topic": "quartile",
+    "papers40": 150,
+    "papers80": 150,
+    "questions": 18000,
+    "exhausted": 0,
+    "duplicateQuestions": 0,
+    "jsdomErrors": [],
+    "scope": "DOM generation only; not browser layout/print acceptance"
+  },
+  "decimalOnlySkipCheck": true,
+  "buildIdempotence": true,
+  "browser": "Unavailable locally: Chromium absent. New PR CI required.",
+  "regressions": {
+    "passed": 22,
+    "failed": 0,
+    "quickMode": false
+  },
+  "ciCorrection": {
+    "checkedHead": "a1851307c5a9c1d087204611fcfd036bbe2f642a",
+    "researcherRun": 36430743545,
+    "researcherConclusion": "failure",
+    "mathRegressionRun": 36430743641,
+    "mathRegressionConclusion": "success",
+    "failedStep": "Compare P1 math worksheets and print layouts",
+    "cause": "quartile dynamically generated table borders retained #7C879B",
+    "fix": "G9-only screen border-color override from brand builder",
+    "generatorAndPrintRulesUnchanged": true,
+    "staticGuardsPassed": true,
+    "quartileStressRerunPassed": true,
+    "fullCiAfterFix": "pending; not polled this turn"
+  }
+}
