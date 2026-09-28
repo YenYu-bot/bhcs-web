@@ -1,0 +1,216 @@
+[basic/nearProduct/integer] 用平方差公式計算 24 × 16，先寫成 (c＋d)(c−d) 的形式。  ⇒ 384
+[basic/nearProduct/integer] 11 × 9＝  ⇒ 99
+[basic/nearProduct/fraction] 計算 9(1/2) × 10(1/2) 的值。  ⇒ (399/4)
+[basic/nearProduct/fraction] 計算 12(1/2) × 13(1/2) 的值。  ⇒ (675/4)
+[basic/nearProduct/decimal] 6.9 × 5.1＝  ⇒ 35.19
+[basic/nearProduct/decimal] 6.1 × 5.9＝  ⇒ 35.99
+[basic/differenceValue/integer] 求 982 2 − 1018 2 的值。  ⇒ −72000
+[basic/differenceValue/integer] 31 2 − 29 2 ＝  ⇒ 120
+[basic/differenceValue/fraction] 計算 78(1/2) 2 − 77(1/2) 2 的值（兩數相差 1）。  ⇒ 156
+[basic/differenceValue/fraction] 計算 84(1/2) 2 − 83(1/2) 2 的值（兩數相差 1）。  ⇒ 168
+[basic/differenceValue/decimal] 計算 73.8 2 − 72.8 2 的值（兩數相差 1）。  ⇒ 146.6
+[basic/differenceValue/decimal] 求 25.2 2 − 26.8 2 的值。  ⇒ −83.2
+[basic/sumNumber/integer] 計算 54 2 的值。  ⇒ 2916
+[basic/sumNumber/integer] 計算 56 2 的值。  ⇒ 3136
+[basic/sumNumber/fraction] 計算 20(4/5) 2 的值。  ⇒ (10816/25)
+[basic/sumNumber/fraction]  9(3/5) 2 ＝  ⇒ (2304/25)
+[basic/sumNumber/decimal] 3.4 2 ＝  ⇒ 11.56
+[basic/sumNumber/decimal] 計算 18.6 2 的值。  ⇒ 345.96
+[basic/differenceNumber/integer] 利用 (40−6) 2 計算 34 2 。  ⇒ 1156
+[basic/differenceNumber/integer] 計算 183 2 的值。  ⇒ 33489
+[basic/differenceNumber/fraction]  2(1/2) 2 ＝  ⇒ (25/4)
+[basic/differenceNumber/fraction] 計算 21(4/5) 2 的值。  ⇒ (11881/25)
+[basic/differenceNumber/decimal] 利用 (10−0.3) 2 計算 9.7 2 。  ⇒ 94.09
+[basic/differenceNumber/decimal] 利用 (2−0.1) 2 計算 1.9 2 。  ⇒ 3.61
+[basic/conjugateExpand/integer] 展開：(x ＋ 4y)(x − 4y)  ⇒ x 2 − 16y 2 
+[basic/conjugateExpand/integer] 展開：(3x ＋ 4y)(3x − 4y)  ⇒ 9x 2 − 16y 2 
+[basic/conjugateExpand/fraction] 展開：((9/2)x ＋ (3/2))((9/2)x − (3/2))  ⇒ (81/4)x 2 − (9/4)
+[basic/conjugateExpand/fraction] 展開：((2/5)x ＋ (9/2)y)((2/5)x − (9/2)y)  ⇒ (4/25)x 2 − (81/4)y 2 
+[basic/conjugateExpand/decimal] 展開：(1.9x ＋ 0.8y)(1.9x − 0.8y)  ⇒ 3.61x 2 − 0.64y 2 
+[basic/conjugateExpand/decimal] 展開：(3.1x ＋ 3.7)(3.1x − 3.7)  ⇒ 9.61x 2 − 13.69
+[basic/sumExpand/integer] 展開：(3x 2 ＋ 5y) 2   ⇒ 9x 4 ＋ 30x 2 y ＋ 25y 2 
+[basic/sumExpand/integer] 展開：(4x ＋ 5y) 2   ⇒ 16x 2 ＋ 40xy ＋ 25y 2 
+[basic/sumExpand/fraction] 展開：((13/5)x ＋ (9/2)) 2   ⇒ (169/25)x 2 ＋ (117/5)x ＋ (81/4)
+[basic/sumExpand/fraction] 展開：((14/3)x ＋ (3/2)) 2   ⇒ (196/9)x 2 ＋ 14x ＋ (9/4)
+[basic/sumExpand/decimal] 展開：(4.7x ＋ 0.3y) 2   ⇒ 22.09x 2 ＋ 2.82xy ＋ 0.09y 2 
+[basic/sumExpand/decimal] 展開：(2.6x ＋ 1.7y) 2   ⇒ 6.76x 2 ＋ 8.84xy ＋ 2.89y 2 
+[basic/differenceExpand/integer] 展開：(5x − 5) 2   ⇒ 25x 2 − 50x ＋ 25
+[basic/differenceExpand/integer] 展開：(−4x ＋ 6y) 2   ⇒ 16x 2 − 48xy ＋ 36y 2 
+[basic/differenceExpand/fraction] 展開：((17/5)x − (11/4)) 2   ⇒ (289/25)x 2 − (187/10)x ＋ (121/16)
+[basic/differenceExpand/fraction] 展開：(−(8/3)x ＋ (9/2)y) 2   ⇒ (64/9)x 2 − 24xy ＋ (81/4)y 2 
+[basic/differenceExpand/decimal] 展開：(−5.9x ＋ 0.2y) 2   ⇒ 34.81x 2 − 2.36xy ＋ 0.04y 2 
+[basic/differenceExpand/decimal] 展開：(−4.6x ＋ 0.5y) 2   ⇒ 21.16x 2 − 4.6xy ＋ 0.25y 2 
+[basic/threeTerm/integer] 展開：(x ＋ y ＋ 2) 2   ⇒ x 2 ＋ 2xy ＋ y 2 ＋ 4x ＋ 4y ＋ 4
+[basic/threeTerm/integer] 展開：(4x ＋ y ＋ 4z) 2   ⇒ 16x 2 ＋ 8xy ＋ 32xz ＋ y 2 ＋ 8yz ＋ 16z 2 
+[basic/threeTerm/fraction] 展開：(x ＋ y ＋ (2/5)) 2   ⇒ x 2 ＋ 2xy ＋ y 2 ＋ (4/5)x ＋ (4/5)y ＋ (4/25)
+[basic/threeTerm/fraction] 展開：((4/3)x − (8/3)y ＋ (13/3)) 2   ⇒ (16/9)x 2 − (64/9)xy ＋ (64/9)y 2 ＋ (104/9)x − (208/9)y ＋ (169/9)
+[basic/threeTerm/decimal] 展開：(0.1x − 0.8y ＋ 1.3) 2   ⇒ 0.01x 2 − 0.16xy ＋ 0.64y 2 ＋ 0.26x − 2.08y ＋ 1.69
+[basic/threeTerm/decimal] 展開：(0.9x − 0.5y ＋ 3.5) 2   ⇒ 0.81x 2 − 0.9xy ＋ 0.25y 2 ＋ 6.3x − 3.5y ＋ 12.25
+[basic/sumRecognize/integer] 求值：23 2 ＋ 2 × 23 × 7 ＋ 7 2   ⇒ 900
+[basic/sumRecognize/integer] 求值：6 2 ＋ 156 ＋ 13 2   ⇒ 361
+[basic/sumRecognize/fraction] 求值： 10(1/4) 2 ＋ 56(3/8) ＋ 2(3/4) 2   ⇒ 169
+[basic/sumRecognize/fraction] 先整理成完全平方式再求值： 2(1/4) 2 ＋ 12(1/4) 2 ＋ 55(1/8)   ⇒ (841/4)
+[basic/sumRecognize/decimal] 求值：30.3 2 ＋ 1121.1 ＋ 18.5 2   ⇒ 2381.44
+[basic/sumRecognize/decimal] 先整理成完全平方式再求值：4.1 2 ＋ 38.9 2 ＋ 318.98  ⇒ 1849
+[basic/differenceRecognize/integer] 求值：16 2 − 320 ＋ 10 2   ⇒ 36
+[basic/differenceRecognize/integer] 求值：33 2 − 2 × 33 × 19 ＋ 19 2   ⇒ 196
+[basic/differenceRecognize/fraction] 求值： 14(1/4) 2 − 2 × 14(1/4) × 6(1/2) ＋ 6(1/2) 2   ⇒ (961/16)
+[basic/differenceRecognize/fraction] 求值： 7(1/2) 2 − 2 × 7(1/2) × 3(1/4) ＋ 3(1/4) 2   ⇒ (289/16)
+[basic/differenceRecognize/decimal] 求值：39.9 2 − 127.68 ＋ 1.6 2   ⇒ 1466.89
+[basic/differenceRecognize/decimal] 求值：47.8 2 − 2 × 47.8 × 2.3 ＋ 2.3 2   ⇒ 2070.25
+[basic/formulaChain/integer] 化簡：(x ＋ 4)(x − 4)(x 2 ＋ 16)  ⇒ x 4 − 256
+[basic/formulaChain/integer] 化簡：(x ＋ 8)(x − 8)(x 2 ＋ 64)  ⇒ x 4 − 4096
+[basic/formulaChain/fraction] 化簡：(x ＋ (9/2))(x − (9/2))(x 2 ＋ (81/4))  ⇒ x 4 − (6561/16)
+[basic/formulaChain/fraction] 化簡：((3/2)x ＋ (24/5)y)((3/2)x − (24/5)y)((9/4)x 2 ＋ (576/25)y 2 )  ⇒ (81/16)x 4 − (331776/625)y 4 
+[basic/formulaChain/decimal] 化簡：(6.3x ＋ 5.3y)(6.3x − 5.3y)(39.69x 2 ＋ 28.09y 2 )  ⇒ 1575.2961x 4 − 789.0481y 4 
+[basic/formulaChain/decimal] 化簡：(3.7x ＋ 2.8y)(3.7x − 2.8y)(13.69x 2 ＋ 7.84y 2 )  ⇒ 187.4161x 4 − 61.4656y 4 
+[basic/comprehensive/integer] 993 × 1007 ＋ 7 2 ＝  ⇒ 1000000
+[basic/comprehensive/integer] 493 × 507 ＋ 7 2 ＝  ⇒ 250000
+[basic/comprehensive/fraction] 30 2 − 29(3/4) × 30(1/4) ＝  ⇒ (1/16)
+[basic/comprehensive/fraction] (11 ＋ (3/5)) 2 − 2 × 11 × (3/5)＝  ⇒ (3034/25)
+[basic/comprehensive/decimal] 38.9 × 39.1 ＋ 0.1 2 ＝  ⇒ 1521
+[basic/comprehensive/decimal] 18 2 − 17.5 × 18.5＝  ⇒ 0.25
+[advanced/nearProduct/integer] 用平方差公式計算 19 × 1，先寫成 (c＋d)(c−d) 的形式。  ⇒ 19
+[advanced/nearProduct/integer] 計算 981 × 1019 的值。  ⇒ 999639
+[advanced/nearProduct/fraction] 計算 15(3/4) × 16(1/4) 的值。  ⇒ (4095/16)
+[advanced/nearProduct/fraction]  13(2/3) × 12(1/3) − 13 2 ＝  ⇒ −(4/9)
+[advanced/nearProduct/decimal] 用平方差公式計算 10.3 × 9.7，先寫成 (c＋d)(c−d) 的形式。  ⇒ 99.91
+[advanced/nearProduct/decimal] 計算 29.6 × 30.4 的值。  ⇒ 899.84
+[advanced/differenceValue/integer] (57 2 − 43 2 ) ÷ 100＝  ⇒ 14
+[advanced/differenceValue/integer] (1009 2 − 991 2 ) ÷ 2000＝  ⇒ 18
+[advanced/differenceValue/fraction] 計算 47(1/2) 2 − 46(1/2) 2 的值（兩數相差 1）。  ⇒ 94
+[advanced/differenceValue/fraction] 計算 44(1/2) 2 − 43(1/2) 2 的值（兩數相差 1）。  ⇒ 88
+[advanced/differenceValue/decimal] (25.1 2 − 24.9 2 ) ÷ 50＝  ⇒ 0.2
+[advanced/differenceValue/decimal] 求 15.5 2 − 16.5 2 的值。  ⇒ −32
+[advanced/sumNumber/integer] 計算 105 2 的值。  ⇒ 11025
+[advanced/sumNumber/integer] 計算 502 2 的值。  ⇒ 252004
+[advanced/sumNumber/fraction]  22(1/3) 2 − 22 2 ＝  ⇒ (133/9)
+[advanced/sumNumber/fraction]  5(1/2) 2 − 5 2 ＝  ⇒ (21/4)
+[advanced/sumNumber/decimal] 計算 29.2 2 的值。  ⇒ 852.64
+[advanced/sumNumber/decimal] 計算 33.6 2 的值。  ⇒ 1128.96
+[advanced/differenceNumber/integer] 計算 183 2 的值。  ⇒ 33489
+[advanced/differenceNumber/integer] 利用 (10−4) 2 計算 6 2 。  ⇒ 36
+[advanced/differenceNumber/fraction] 計算 26(1/2) 2 的值。  ⇒ (2809/4)
+[advanced/differenceNumber/fraction] 利用 (5−(4/5)) 2 計算 4(1/5) 2 。  ⇒ (441/25)
+[advanced/differenceNumber/decimal] 計算 14.6 2 的值。  ⇒ 213.16
+[advanced/differenceNumber/decimal] 計算 30.2 2 的值。  ⇒ 912.04
+[advanced/conjugateExpand/integer] 展開：(3x ＋ 3y)(3x − 3y)  ⇒ 9x 2 − 9y 2 
+[advanced/conjugateExpand/integer] 展開：(3x ＋ 2y)(3x − 2y)  ⇒ 9x 2 − 4y 2 
+[advanced/conjugateExpand/fraction] 展開：((5/3)x ＋ (28/5)y)((5/3)x − (28/5)y)  ⇒ (25/9)x 2 − (784/25)y 2 
+[advanced/conjugateExpand/fraction] 展開：((7/3)x 2 ＋ (15/4)y)((7/3)x 2 − (15/4)y)  ⇒ (49/9)x 4 − (225/16)y 2 
+[advanced/conjugateExpand/decimal] 展開：(0.9x ＋ 3.5y)(0.9x − 3.5y)  ⇒ 0.81x 2 − 12.25y 2 
+[advanced/conjugateExpand/decimal] 展開：(4.4x 2 ＋ 2.1y)(4.4x 2 − 2.1y)  ⇒ 19.36x 4 − 4.41y 2 
+[advanced/sumExpand/integer] 展開：(x 2 ＋ y) 2   ⇒ x 4 ＋ 2x 2 y ＋ y 2 
+[advanced/sumExpand/integer] 展開：(3x ＋ 2y) 2   ⇒ 9x 2 ＋ 12xy ＋ 4y 2 
+[advanced/sumExpand/fraction] 化簡：((11/3)x ＋ (14/3)y) 2 − ((11/3)x) 2   ⇒ (308/9)xy ＋ (196/9)y 2 
+[advanced/sumExpand/fraction] 化簡：((1/4)x ＋ (11/3)y) 2 − ((1/4)x) 2   ⇒ (11/6)xy ＋ (121/9)y 2 
+[advanced/sumExpand/decimal] 化簡：(5.1x ＋ 1.9y) 2 − (5.1x) 2   ⇒ 19.38xy ＋ 3.61y 2 
+[advanced/sumExpand/decimal] 展開：(1.6x 2 ＋ 3.4y) 2   ⇒ 2.56x 4 ＋ 10.88x 2 y ＋ 11.56y 2 
+[advanced/differenceExpand/integer] 化簡：(3x − 4y) 2 − (3x ＋ 4y) 2   ⇒ −48xy
+[advanced/differenceExpand/integer] 展開：(4x − 5y) 2   ⇒ 16x 2 − 40xy ＋ 25y 2 
+[advanced/differenceExpand/fraction] 展開：((7/2)x − (1/5)y) 2   ⇒ (49/4)x 2 − (7/5)xy ＋ (1/25)y 2 
+[advanced/differenceExpand/fraction] 化簡：((3/2)x − (8/3)y) 2 − ((3/2)x ＋ (8/3)y) 2   ⇒ −16xy
+[advanced/differenceExpand/decimal] 展開：(−4.4x ＋ 3.9y) 2   ⇒ 19.36x 2 − 34.32xy ＋ 15.21y 2 
+[advanced/differenceExpand/decimal] 化簡：(2.9x − 2.1y) 2 − (2.9x ＋ 2.1y) 2   ⇒ −24.36xy
+[advanced/threeTerm/integer] 展開：(4x − y ＋ 2) 2   ⇒ 16x 2 − 8xy ＋ y 2 ＋ 16x − 4y ＋ 4
+[advanced/threeTerm/integer] 展開：(2x ＋ y ＋ 2z) 2   ⇒ 4x 2 ＋ 4xy ＋ 8xz ＋ y 2 ＋ 4yz ＋ 4z 2 
+[advanced/threeTerm/fraction] 展開：((1/3)x ＋ (11/5)y ＋ (3/2)z) 2   ⇒ (1/9)x 2 ＋ (22/15)xy ＋ xz ＋ (121/25)y 2 ＋ (33/5)yz ＋ (9/4)z 2 
+[advanced/threeTerm/fraction] 展開：((15/4)x ＋ (3/2)y ＋ (8/3)z) 2   ⇒ (225/16)x 2 ＋ (45/4)xy ＋ 20xz ＋ (9/4)y 2 ＋ 8yz ＋ (64/9)z 2 
+[advanced/threeTerm/decimal] 展開：(0.2x − 0.1y ＋ 3.5) 2   ⇒ 0.04x 2 − 0.04xy ＋ 0.01y 2 ＋ 1.4x − 0.7y ＋ 12.25
+[advanced/threeTerm/decimal] 展開：(1.7x − 2.5y ＋ 2.1) 2   ⇒ 2.89x 2 − 8.5xy ＋ 6.25y 2 ＋ 7.14x − 10.5y ＋ 4.41
+[advanced/sumRecognize/integer] 已知 a＋b＝9、ab＝8，求 a 2 ＋b 2 。  ⇒ 65
+[advanced/sumRecognize/integer] 已知 a＋b＝18、ab＝81，求 a 2 ＋b 2 。  ⇒ 162
+[advanced/sumRecognize/fraction] 先整理成完全平方式再求值： 5(1/2) 2 ＋ 9(1/4) 2 ＋ 101(3/4)   ⇒ (3481/16)
+[advanced/sumRecognize/fraction] 求值： 11(1/2) 2 ＋ 2 × 11(1/2) × 2(3/4) ＋ 2(3/4) 2   ⇒ (3249/16)
+[advanced/sumRecognize/decimal] 已知 a＋b＝17、ab＝72，求 a 2 ＋b 2 。  ⇒ 145
+[advanced/sumRecognize/decimal] 先整理成完全平方式再求值：6.8 2 ＋ 3.8 2 ＋ 51.68  ⇒ 112.36
+[advanced/differenceRecognize/integer] 已知 a−b＝8、ab＝9，求 a 2 ＋b 2 。  ⇒ 82
+[advanced/differenceRecognize/integer] 求值：10 2 ＋ 33 2 − 660  ⇒ 529
+[advanced/differenceRecognize/fraction] 求值：11 2 − 2 × 11 × 5(1/2) ＋ 5(1/2) 2   ⇒ (121/4)
+[advanced/differenceRecognize/fraction] 求值： 4(1/4) 2 ＋ 12(3/4) 2 − 108(3/8)   ⇒ (289/4)
+[advanced/differenceRecognize/decimal] 已知 a−b＝−1、ab＝30，求 a 2 ＋b 2 。  ⇒ 61
+[advanced/differenceRecognize/decimal] 求值：24.4 2 − 2 × 24.4 × 6.7 ＋ 6.7 2   ⇒ 313.29
+[advanced/formulaChain/integer] 化簡：(7x ＋ 4y)(7x − 4y)(49x 2 ＋ 16y 2 )  ⇒ 2401x 4 − 256y 4 
+[advanced/formulaChain/integer] 化簡：(6x ＋ 7)(6x − 7)(36x 2 ＋ 49)  ⇒ 1296x 4 − 2401
+[advanced/formulaChain/fraction] 化簡：(2x ＋ 1)(2x − 1)(4x 2 ＋ 1)(16x 4 ＋ 1)  ⇒ 256x 8 − 1
+[advanced/formulaChain/fraction] 化簡：((13/5)x ＋ (5/3))((13/5)x − (5/3))((169/25)x 2 ＋ (25/9))  ⇒ (28561/625)x 4 − (625/81)
+[advanced/formulaChain/decimal] 化簡：(x ＋ 1)(x − 1)(x 2 ＋ 1)(x 4 ＋ 1)  ⇒ x 8 − 1
+[advanced/formulaChain/decimal] 化簡：(5.3x ＋ 1.5)(5.3x − 1.5)(28.09x 2 ＋ 2.25)  ⇒ 789.0481x 4 − 5.0625
+[advanced/comprehensive/integer] 8 2 ＋ 2 × 8 × 42 ＋ 42 2 ＝  ⇒ 2500
+[advanced/comprehensive/integer] (20 ＋ 5) 2 − 2 × 20 × 5＝  ⇒ 425
+[advanced/comprehensive/fraction] (3 ＋ (2/3)) 2 − 2 × 3 × (2/3)＝  ⇒ (85/9)
+[advanced/comprehensive/fraction]  5(3/4) 2 ＋ 2 × 5(3/4) × 44(1/4) ＋ 44(1/4) 2 ＝  ⇒ 2500
+[advanced/comprehensive/decimal] 21 2 − 20.8 × 21.2＝  ⇒ 0.04
+[advanced/comprehensive/decimal] 34 2 − 33.1 × 34.9＝  ⇒ 0.81
+[challenge/nearProduct/integer] 1019 × 981 − 1000 2 ＝  ⇒ −361
+[challenge/nearProduct/integer] 31 × 29 × (30 2 ＋ 1 2 )＝  ⇒ 809999
+[challenge/nearProduct/fraction] 21 × 19 × (20 2 ＋ 1 2 )＝  ⇒ 159999
+[challenge/nearProduct/fraction] 用平方差公式計算 11(3/5) × 10(2/5) ，先寫成 (c＋d)(c−d) 的形式。  ⇒ (3016/25)
+[challenge/nearProduct/decimal] 11.3 × 10.7 − 11 2 ＝  ⇒ −0.09
+[challenge/nearProduct/decimal] 用平方差公式計算 4.9 × 3.1，先寫成 (c＋d)(c−d) 的形式。  ⇒ 15.19
+[challenge/differenceValue/integer] 求 484 2 − 516 2 的值。  ⇒ −32000
+[challenge/differenceValue/integer] 23 2 − 17 2 − 6 2 ＝  ⇒ 204
+[challenge/differenceValue/fraction]  12(1/4) 2 − 11(3/4) 2 − (1/2) 2 ＝  ⇒ (47/4)
+[challenge/differenceValue/fraction] 求 28(1/2) 2 − 29(1/2) 2 的值。  ⇒ −58
+[challenge/differenceValue/decimal] 求 18.4 2 − 19.6 2 的值。  ⇒ −45.6
+[challenge/differenceValue/decimal] 8.1 2 − 7.9 2 − 0.2 2 ＝  ⇒ 3.16
+[challenge/sumNumber/integer] 503 2 − 500 2 ＝  ⇒ 3009
+[challenge/sumNumber/integer] 利用 (50＋1) 2 計算 51 2 。  ⇒ 2601
+[challenge/sumNumber/fraction] 利用 (5＋(1/2)) 2 計算 5(1/2) 2 。  ⇒ (121/4)
+[challenge/sumNumber/fraction]  7(2/5) 2 − 6(3/5) 2 （用和平方與差平方公式分別展開）＝  ⇒ (56/5)
+[challenge/sumNumber/decimal] 19.1 2 − 19 2 ＝  ⇒ 3.81
+[challenge/sumNumber/decimal] 利用 (10＋0.1) 2 計算 10.1 2 。  ⇒ 102.01
+[challenge/differenceNumber/integer] 1001 2 ＋ 999 2 ＝  ⇒ 2000002
+[challenge/differenceNumber/integer] 利用 (20−1) 2 計算 19 2 。  ⇒ 361
+[challenge/differenceNumber/fraction]  14(1/2) 2 ＋ 13(1/2) 2 ＝  ⇒ (785/2)
+[challenge/differenceNumber/fraction] 11 2 − 10(1/3) 2 ＝  ⇒ (128/9)
+[challenge/differenceNumber/decimal] 利用 (14−0.4) 2 計算 13.6 2 。  ⇒ 184.96
+[challenge/differenceNumber/decimal] 利用 (12−0.1) 2 計算 11.9 2 。  ⇒ 141.61
+[challenge/conjugateExpand/integer] 展開：(5x ＋ 2y)(5x − 2y)  ⇒ 25x 2 − 4y 2 
+[challenge/conjugateExpand/integer] 展開：(4x ＋ 4y)(4x − 4y)  ⇒ 16x 2 − 16y 2 
+[challenge/conjugateExpand/fraction] 化簡：(x ＋ (7/3))(x − (7/3)) − (x ＋ (21/5))(x − (21/5))  ⇒ (2744/225)
+[challenge/conjugateExpand/fraction] 展開：((7/3)x ＋ (3/2)y)((7/3)x − (3/2)y)  ⇒ (49/9)x 2 − (9/4)y 2 
+[challenge/conjugateExpand/decimal] 展開：(1.4x 2 ＋ 4.6y)(1.4x 2 − 4.6y)  ⇒ 1.96x 4 − 21.16y 2 
+[challenge/conjugateExpand/decimal] 展開：(3.5x 2 ＋ 2.8y)(3.5x 2 − 2.8y)  ⇒ 12.25x 4 − 7.84y 2 
+[challenge/sumExpand/integer] 化簡：(3x ＋ 5y) 2 ＋ (3x − 5y) 2   ⇒ 18x 2 ＋ 50y 2 
+[challenge/sumExpand/integer] 展開：(5x 2 ＋ 2y) 2   ⇒ 25x 4 ＋ 20x 2 y ＋ 4y 2 
+[challenge/sumExpand/fraction] 化簡：((13/5)x ＋ (27/5)y) 2 ＋ ((13/5)x − (27/5)y) 2   ⇒ (338/25)x 2 ＋ (1458/25)y 2 
+[challenge/sumExpand/fraction] 化簡：((4/5)x ＋ (17/5)y) 2 ＋ ((4/5)x − (17/5)y) 2   ⇒ (32/25)x 2 ＋ (578/25)y 2 
+[challenge/sumExpand/decimal] 展開：(3.5x 2 ＋ 2.3y) 2   ⇒ 12.25x 4 ＋ 16.1x 2 y ＋ 5.29y 2 
+[challenge/sumExpand/decimal] 化簡：(0.5x ＋ 5.1y) 2 − (0.5x) 2   ⇒ 5.1xy ＋ 26.01y 2 
+[challenge/differenceExpand/integer] 化簡：(4x − y) 2 − (4x ＋ y) 2   ⇒ −16xy
+[challenge/differenceExpand/integer] 化簡：(4x − 4y) 2 − (4x ＋ 4y)(4x − 4y)  ⇒ −32xy ＋ 32y 2 
+[challenge/differenceExpand/fraction] 化簡：((8/3)x − (14/5)y) 2 − ((8/3)x ＋ (14/5)y) 2   ⇒ −(448/15)xy
+[challenge/differenceExpand/fraction] 化簡：((11/3)x − (7/2)y) 2 − ((11/3)x ＋ (7/2)y)((11/3)x − (7/2)y)  ⇒ −(77/3)xy ＋ (49/2)y 2 
+[challenge/differenceExpand/decimal] 化簡：(3.2x − 5.1y) 2 − (3.2x ＋ 5.1y) 2   ⇒ −65.28xy
+[challenge/differenceExpand/decimal] 化簡：(2.8x − 2.8y) 2 − (2.8x ＋ 2.8y)(2.8x − 2.8y)  ⇒ −15.68xy ＋ 15.68y 2 
+[challenge/threeTerm/integer] 展開：(4x − 4y − 3z) 2   ⇒ 16x 2 − 32xy − 24xz ＋ 16y 2 ＋ 24yz ＋ 9z 2 
+[challenge/threeTerm/integer] 展開：(3x − 3y ＋ 2) 2   ⇒ 9x 2 − 18xy ＋ 9y 2 ＋ 12x − 12y ＋ 4
+[challenge/threeTerm/fraction] 展開：((4/3)x − (2/5)y ＋ (5/2)) 2   ⇒ (16/9)x 2 − (16/15)xy ＋ (4/25)y 2 ＋ (20/3)x − 2y ＋ (25/4)
+[challenge/threeTerm/fraction] 化簡：((7/4)x ＋ (9/4)y ＋ (2/5)z) 2 − ((7/4)x ＋ (9/4)y) 2   ⇒ (7/5)xz ＋ (9/5)yz ＋ (4/25)z 2 
+[challenge/threeTerm/decimal] 展開：(3.1x − 1.7y ＋ 3.8) 2   ⇒ 9.61x 2 − 10.54xy ＋ 2.89y 2 ＋ 23.56x − 12.92y ＋ 14.44
+[challenge/threeTerm/decimal] 化簡：(0.3x ＋ 3.9y ＋ 3.9z) 2 − (0.3x ＋ 3.9y) 2   ⇒ 2.34xz ＋ 30.42yz ＋ 15.21z 2 
+[challenge/sumRecognize/integer] 已知 a＋b＝14、ab＝48，求 a 2 ＋b 2 。  ⇒ 100
+[challenge/sumRecognize/integer] 已知 a＋b＝4、ab＝3，求 a 2 ＋b 2 。  ⇒ 10
+[challenge/sumRecognize/fraction] 已知 a＋b＝8、ab＝7，求 a 2 ＋b 2 。  ⇒ 50
+[challenge/sumRecognize/fraction] 已知 a＋b＝13、ab＝42，求 (a−b) 2 。  ⇒ 1
+[challenge/sumRecognize/decimal] 已知 a＋b＝9、ab＝18，求 (a−b) 2 。  ⇒ 9
+[challenge/sumRecognize/decimal] 已知 a＋b＝9、ab＝18，求 a 2 ＋b 2 。  ⇒ 45
+[challenge/differenceRecognize/integer] 已知 a−b＝3、ab＝10，求 a 2 ＋b 2 。  ⇒ 29
+[challenge/differenceRecognize/integer] 求值：15 2 ＋ 24 2 − 720  ⇒ 81
+[challenge/differenceRecognize/fraction] 已知 a＋b＝9、a−b＝5，求 ab。  ⇒ 14
+[challenge/differenceRecognize/fraction] 已知 a＋b＝26、a−b＝4，求 ab。  ⇒ 165
+[challenge/differenceRecognize/decimal] 求值：9.1 2 ＋ 46.2 2 − 840.84  ⇒ 1376.41
+[challenge/differenceRecognize/decimal] 已知 a−b＝7、ab＝60，求 a 2 ＋b 2 。  ⇒ 169
+[challenge/formulaChain/integer] 化簡：(7x ＋ 8y)(7x − 8y) − (7x − 8y) 2   ⇒ 112xy − 128y 2 
+[challenge/formulaChain/integer] 化簡：(8x ＋ 5y)(8x − 5y) − (8x − 5y) 2   ⇒ 80xy − 50y 2 
+[challenge/formulaChain/fraction] 化簡：((6/5)x ＋ (17/4)y)((6/5)x − (17/4)y) − ((6/5)x − (17/4)y) 2   ⇒ (51/5)xy − (289/8)y 2 
+[challenge/formulaChain/fraction] 化簡：((25/4)x ＋ (14/3)y)((25/4)x − (14/3)y)((625/16)x 2 ＋ (196/9)y 2 )  ⇒ (390625/256)x 4 − (38416/81)y 4 
+[challenge/formulaChain/decimal] 化簡：(3.2x ＋ 6.6y)(3.2x − 6.6y) − (3.2x − 6.6y) 2   ⇒ 42.24xy − 87.12y 2 
+[challenge/formulaChain/decimal] 化簡：(3.6x ＋ 1.2y)(3.6x − 1.2y)(12.96x 2 ＋ 1.44y 2 )  ⇒ 167.9616x 4 − 2.0736y 4 
+[challenge/comprehensive/integer] (30 ＋ 8) 2 − 2 × 30 × 8＝  ⇒ 964
+[challenge/comprehensive/integer] (113 2 − 87 2 ) ÷ (113 − 87)＝  ⇒ 200
+[challenge/comprehensive/fraction]  7(3/4) 2 ＋ 2 × 7(3/4) × 42(1/4) ＋ 42(1/4) 2 ＝  ⇒ 2500
+[challenge/comprehensive/fraction] ( 14(2/3) 2 − 13(1/3) 2 ) ÷ ( 14(2/3) − 13(1/3) )＝  ⇒ 28
+[challenge/comprehensive/decimal] (2 ＋ 0.6) 2 − 2 × 2 × 0.6＝  ⇒ 4.36
+[challenge/comprehensive/decimal] (10 ＋ 0.4) 2 − 2 × 10 × 0.4＝  ⇒ 100.16
