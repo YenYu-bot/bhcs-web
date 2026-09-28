@@ -1,0 +1,16 @@
+PASS boxplot/fivenum/basic/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=80
+PASS boxplot/fivenum/basic/decimal ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=45
+PASS boxplot/fivenum/advanced/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=109
+PASS boxplot/fivenum/advanced/decimal ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=70
+PASS boxplot/fivenum/challenge/integer ok=200/200 耗盡=0 候選null=31 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=112
+PASS boxplot/fivenum/challenge/decimal ok=200/200 耗盡=0 候選null=3 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=70
+PASS boxplot/compare/basic/integer ok=200/200 耗盡=0 候選null=11 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=29
+PASS boxplot/compare/advanced/integer ok=200/200 耗盡=0 候選null=8 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=30
+PASS boxplot/compare/challenge/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=28
+PASS boxplot/table/basic/integer ok=200/200 耗盡=0 候選null=4 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=18
+PASS boxplot/table/advanced/integer ok=200/200 耗盡=0 候選null=20 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=18
+PASS boxplot/table/challenge/integer ok=200/200 耗盡=0 候選null=34 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=18
+PASS boxplot/read/basic/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=20
+PASS boxplot/read/advanced/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=20
+PASS boxplot/read/challenge/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=21
+PASS

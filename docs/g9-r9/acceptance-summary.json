@@ -1,0 +1,472 @@
+{
+  "baseCommit": "799a340cfe68425005a1f67514f0a237aa9e81b5",
+  "input": "claude-g9-r9.zip",
+  "p2": {
+    "topics": 99,
+    "combinations": 3912,
+    "passed": 3912,
+    "failed": 0,
+    "samplingSafeQuestionCalls": 782400,
+    "samplingProduced": 782400,
+    "candidateGenCalls": 881219,
+    "candidateNulls": 74491,
+    "candidateVerifyFalse": 0,
+    "candidateExceptions": 0,
+    "efficiencyWarningUnits": 39,
+    "efficiencyWarningCombinations": 87,
+    "declaredBankCombinations": 8,
+    "paperCompleted": 3912,
+    "paperExhausted": 0
+  },
+  "p3": {
+    "topics": 99,
+    "units": 815,
+    "samplesRequested": 489000,
+    "samplesProduced": 489000,
+    "samplesExhausted": 0,
+    "projectedGateFailures": 56,
+    "projectedTopicGateFailures": 0,
+    "g11Topics": 34,
+    "g11P4Backlog": 0
+  },
+  "ratchet": {
+    "topicFailures": 0,
+    "failures": 0
+  },
+  "stress": {
+    "topic": "boxplot",
+    "papers40": 135,
+    "papers80": 120,
+    "questions": 15000,
+    "exhausted": 0,
+    "duplicateQuestions": 0,
+    "jsdomErrors": [],
+    "scope": "DOM generation only; not browser layout/print acceptance"
+  },
+  "boxplotUnits": [
+    {
+      "link": "g9-drills.html?topic=boxplot",
+      "topic": "boxplot",
+      "unit": "fivenum",
+      "name": "五數綜合、全距與四分位距",
+      "singleForm": false,
+      "singleFormReason": null,
+      "levels": {
+        "basic": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 100,
+          "numberMedian": 31,
+          "numericLiteralCount": 2167,
+          "sampleFingerprint": "bbe9928bf8d8b77e24cefce4d9b9cfc074705d7764d4ba2544b519d2c5d5d97b",
+          "structureExamples": [
+            {
+              "hash": "98acf6a2f91ce992",
+              "structure": "# 位同學的仰臥起坐次數如下(單位:次):#、#、#、#、#、#、#、#、#、#、#。求這組資料的五數綜合。"
+            },
+            {
+              "hash": "634b5cd833c3fa9c",
+              "structure": "# 位同學的仰臥起坐次數如下(單位:次):#、#、#、#、#、#、#、#。求這組資料的五數綜合。"
+            }
+          ]
+        },
+        "advanced": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 131,
+          "numberMedian": 44,
+          "numericLiteralCount": 3094,
+          "sampleFingerprint": "d97ba45e01af3581d10a741a3248042f2bec13cdfd2985d222f894fd82bbd6d6",
+          "structureExamples": [
+            {
+              "hash": "155f7c71d8af2409",
+              "structure": "# 位同學的仰臥起坐次數如下(單位:次):#、#、#、#、#、#、#、#、#、#、#、#、#、#、#。求這組資料的五數綜合。"
+            },
+            {
+              "hash": "946933050df0c225",
+              "structure": "# 位同學的仰臥起坐次數如下(單位:次):#、#、#、#、#、#、#、#、#、#。求這組資料的五數綜合。"
+            }
+          ]
+        },
+        "challenge": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 124,
+          "numberMedian": 32,
+          "numericLiteralCount": 3498,
+          "sampleFingerprint": "041787d29b7da50422d6f42bbafbbdd48adec6deec84c586f81c1aa6016cbcf5",
+          "structureExamples": [
+            {
+              "hash": "d5781c99a6657fd9",
+              "structure": "# 位同學的仰臥起坐次數由小到大排列如下(單位:次):#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#。求五數綜合、全距與四分位距。"
+            },
+            {
+              "hash": "9c5cfbf34b62f5cb",
+              "structure": "# 位同學的仰臥起坐次數由小到大排列如下(單位:次):#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#。求五數綜合、全距與四分位距。"
+            }
+          ]
+        }
+      },
+      "challengeToBasicMedianRatio": 1.032258064516129,
+      "projectedStructureGatePass": true,
+      "projectedChallengeGatePass": true,
+      "challengeNewStructureCount": 109,
+      "challengeNewStructureExamples": [
+        {
+          "hash": "d5781c99a6657fd9",
+          "structure": "# 位同學的仰臥起坐次數由小到大排列如下(單位:次):#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#。求五數綜合、全距與四分位距。"
+        },
+        {
+          "hash": "9c5cfbf34b62f5cb",
+          "structure": "# 位同學的仰臥起坐次數由小到大排列如下(單位:次):#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#、#。求五數綜合、全距與四分位距。"
+        }
+      ],
+      "outputFingerprint": "db1055702ce5543f4d1cbfa9b25cc52905779c756d25c6a0ec3f75a8d257ef26"
+    },
+    {
+      "link": "g9-drills.html?topic=boxplot",
+      "topic": "boxplot",
+      "unit": "compare",
+      "name": "兩組資料的比較",
+      "singleForm": false,
+      "singleFormReason": null,
+      "levels": {
+        "basic": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 30,
+          "numberMedian": 35,
+          "numericLiteralCount": 3770,
+          "sampleFingerprint": "8f17d822fc9671d60ebd727a9a499cd9a7438ae24eee127bed5dd7f1a1740965",
+          "structureExamples": [
+            {
+              "hash": "bd370c1b6ae14fcc",
+              "structure": "[圖]# 班與 # 班學生的身高的五數綜合為 # 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#;# 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:公分)。(#) # 班約有百分之幾的資料大於 #?(#) # 班約有百分之幾的資料大於 #?"
+            },
+            {
+              "hash": "99b78e4ccd56a4b2",
+              "structure": "[圖]# 班與 # 班學生的身高的五數綜合為 # 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#;# 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:公分)。(#) # 班約有百分之幾的資料大於 #?(#) # 班約有百分之幾的資料小於 #?"
+            }
+          ]
+        },
+        "advanced": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 30,
+          "numberMedian": 23,
+          "numericLiteralCount": 3962,
+          "sampleFingerprint": "f177288b67c3900a5661a5dd875ad65d120ac177c7adc34d7b93e4d0c6cb6d2b",
+          "structureExamples": [
+            {
+              "hash": "bd370c1b6ae14fcc",
+              "structure": "[圖]# 班與 # 班學生的身高的五數綜合為 # 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#;# 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:公分)。(#) # 班約有百分之幾的資料大於 #?(#) # 班約有百分之幾的資料大於 #?"
+            },
+            {
+              "hash": "99b78e4ccd56a4b2",
+              "structure": "[圖]# 班與 # 班學生的身高的五數綜合為 # 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#;# 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:公分)。(#) # 班約有百分之幾的資料大於 #?(#) # 班約有百分之幾的資料小於 #?"
+            }
+          ]
+        },
+        "challenge": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 30,
+          "numberMedian": 18,
+          "numericLiteralCount": 3901,
+          "sampleFingerprint": "228fd8b9a250d2567cd89bdf3b60f75b7eb5b2fc0089581dfa2f5084970a5562",
+          "structureExamples": [
+            {
+              "hash": "2054dc2cc81c7603",
+              "structure": "# 班與 # 班學生的身高(單位:公分)的部分統計量如下:# 班:最小值 #,Q#=#,Q#=#,全距 #,四分位距 #;# 班:最大值 #,Q#=#,Q#=#,全距 #,四分位距 #。求 # 班 的最大值與 Q#,以及 # 班 的最小值與 Q#。"
+            },
+            {
+              "hash": "bd370c1b6ae14fcc",
+              "structure": "[圖]# 班與 # 班學生的身高的五數綜合為 # 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#;# 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:公分)。(#) # 班約有百分之幾的資料大於 #?(#) # 班約有百分之幾的資料大於 #?"
+            }
+          ]
+        }
+      },
+      "challengeToBasicMedianRatio": 0.5142857142857142,
+      "projectedStructureGatePass": true,
+      "projectedChallengeGatePass": true,
+      "challengeNewStructureCount": 10,
+      "challengeNewStructureExamples": [
+        {
+          "hash": "2054dc2cc81c7603",
+          "structure": "# 班與 # 班學生的身高(單位:公分)的部分統計量如下:# 班:最小值 #,Q#=#,Q#=#,全距 #,四分位距 #;# 班:最大值 #,Q#=#,Q#=#,全距 #,四分位距 #。求 # 班 的最大值與 Q#,以及 # 班 的最小值與 Q#。"
+        },
+        {
+          "hash": "ea182b090a90ff21",
+          "structure": "[圖]# 班與 # 班學生的身高的五數綜合為 # 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#;# 班:最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:公分)。求 (#) 兩組中位數的差 (#) 兩組全距的差 (#) 兩組四分位距的差(皆以 # 班-# 班 表示)。"
+        }
+      ],
+      "outputFingerprint": "2beb881e844c9ffb4a89a78fe5472dc1382d566957df82d938cd1d84140f3165"
+    },
+    {
+      "link": "g9-drills.html?topic=boxplot",
+      "topic": "boxplot",
+      "unit": "table",
+      "name": "次數分配表的全距與四分位距",
+      "singleForm": false,
+      "singleFormReason": null,
+      "levels": {
+        "basic": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 18,
+          "numberMedian": 117182425262,
+          "numericLiteralCount": 288,
+          "sampleFingerprint": "e9c912d22acda4eca22580333aab9cb116974b66d175380c89d903e8270ad930",
+          "structureExamples": [
+            {
+              "hash": "2ea3652d970f3b47",
+              "structure": "作文模擬考共 # 筆資料,次數分配如下表,求全距與四分位距。級分次數#"
+            },
+            {
+              "hash": "762d140aba28e54f",
+              "structure": "作文模擬考的次數分配如下表,求五數綜合。級分次數#"
+            }
+          ]
+        },
+        "advanced": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 18,
+          "numberMedian": 228544041,
+          "numericLiteralCount": 338,
+          "sampleFingerprint": "57e5b9a506085d3a78cad84ccc9f76ac3c176b270f1837d6faa241ee98115819",
+          "structureExamples": [
+            {
+              "hash": "461ef16efd7a25f4",
+              "structure": "作文模擬考共 # 筆資料,次數分配如下表,其中一列的次數為 x。求 x 與四分位距。級分次數#x#"
+            },
+            {
+              "hash": "762d140aba28e54f",
+              "structure": "作文模擬考的次數分配如下表,求五數綜合。級分次數#"
+            }
+          ]
+        },
+        "challenge": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 18,
+          "numberMedian": 40700,
+          "numericLiteralCount": 442,
+          "sampleFingerprint": "aee0bdce5a7a7a769bdee1a1661ee2e7dce00b654c72cec37fec75198ef6d030",
+          "structureExamples": [
+            {
+              "hash": "97398f5521bfc71f",
+              "structure": "作文模擬考,甲、乙兩組的次數分配如下表。分別求兩組的四分位距,並指出哪一組中間 #% 的資料較分散。級分甲乙#"
+            },
+            {
+              "hash": "461ef16efd7a25f4",
+              "structure": "作文模擬考共 # 筆資料,次數分配如下表,其中一列的次數為 x。求 x 與四分位距。級分次數#x#"
+            }
+          ]
+        }
+      },
+      "challengeToBasicMedianRatio": 3.473217072355493e-07,
+      "projectedStructureGatePass": true,
+      "projectedChallengeGatePass": true,
+      "challengeNewStructureCount": 12,
+      "challengeNewStructureExamples": [
+        {
+          "hash": "97398f5521bfc71f",
+          "structure": "作文模擬考,甲、乙兩組的次數分配如下表。分別求兩組的四分位距,並指出哪一組中間 #% 的資料較分散。級分甲乙#"
+        },
+        {
+          "hash": "461ef16efd7a25f4",
+          "structure": "作文模擬考共 # 筆資料,次數分配如下表,其中一列的次數為 x。求 x 與四分位距。級分次數#x#"
+        }
+      ],
+      "outputFingerprint": "a65056b52a4573ccdb636584a277917ffd00ba4008f2813cff06a3da0f0a1e12"
+    },
+    {
+      "link": "g9-drills.html?topic=boxplot",
+      "topic": "boxplot",
+      "unit": "read",
+      "name": "由五數綜合判讀",
+      "singleForm": false,
+      "singleFormReason": null,
+      "levels": {
+        "basic": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 20,
+          "numberMedian": 23,
+          "numericLiteralCount": 1872,
+          "sampleFingerprint": "08d0ca782c625654359dd3f1418d8a9fe3929e405989877f68ca759e7892bf3b",
+          "structureExamples": [
+            {
+              "hash": "3ccf2880e04e8d8f",
+              "structure": "[圖]手機電池的待機時間的五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。(#) 中間 #% 的資料介於多少到多少之間?(#) 約有百分之幾的資料大於 #?"
+            },
+            {
+              "hash": "21c3b8ddb5bea863",
+              "structure": "[圖]手機電池的待機時間的五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。(#) 中間 #% 的資料介於多少到多少之間?(#) 約有百分之幾的資料小於 #?"
+            }
+          ]
+        },
+        "advanced": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 20,
+          "numberMedian": 29,
+          "numericLiteralCount": 2075,
+          "sampleFingerprint": "98796cf3d4b68ee5836d7e4f6d2a6a35520f79c8e0922da2d5ec61e3472eeb7b",
+          "structureExamples": [
+            {
+              "hash": "850752428bd4d0cd",
+              "structure": "[圖]手機電池的待機時間共 # 筆資料,五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。約有幾筆資料介於 # 與 # 之間?"
+            },
+            {
+              "hash": "3ccf2880e04e8d8f",
+              "structure": "[圖]手機電池的待機時間的五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。(#) 中間 #% 的資料介於多少到多少之間?(#) 約有百分之幾的資料大於 #?"
+            }
+          ]
+        },
+        "challenge": {
+          "requested": 200,
+          "produced": 200,
+          "exhausted": 0,
+          "structureCount": 21,
+          "numberMedian": 28,
+          "numericLiteralCount": 1912,
+          "sampleFingerprint": "355af1e7c02044f333a8d72cb65d0ddc7ac92c2395053b3c331473f8acc95e54",
+          "structureExamples": [
+            {
+              "hash": "850752428bd4d0cd",
+              "structure": "[圖]手機電池的待機時間共 # 筆資料,五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。約有幾筆資料介於 # 與 # 之間?"
+            },
+            {
+              "hash": "ef42d904fb1ef9d6",
+              "structure": "[圖]手機電池的待機時間共 # 筆資料,五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。若把最大的一筆資料改為 #(其餘不變),新的全距與四分位距各是多少?"
+            }
+          ]
+        }
+      },
+      "challengeToBasicMedianRatio": 1.2173913043478262,
+      "projectedStructureGatePass": true,
+      "projectedChallengeGatePass": true,
+      "challengeNewStructureCount": 16,
+      "challengeNewStructureExamples": [
+        {
+          "hash": "850752428bd4d0cd",
+          "structure": "[圖]手機電池的待機時間共 # 筆資料,五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。約有幾筆資料介於 # 與 # 之間?"
+        },
+        {
+          "hash": "ef42d904fb1ef9d6",
+          "structure": "[圖]手機電池的待機時間共 # 筆資料,五數綜合為 最小值=#,Q#=#,Q#=#,Q#=#,最大值=#(單位:小時)。若把最大的一筆資料改為 #(其餘不變),新的全距與四分位距各是多少?"
+        }
+      ],
+      "outputFingerprint": "44734dfe63e3cb6fff2673f7fdd528e9ad01abd01ebc31b8b85064952a507c3f"
+    }
+  ],
+  "browser": "not run locally; required CI pending",
+  "regressions": {
+    "count": 22,
+    "passed": true,
+    "quickMode": false,
+    "scripts": [
+      {
+        "file": "anglesum-bank-size.mjs",
+        "exit": 0
+      },
+      {
+        "file": "commonlog-definition-bank-size.mjs",
+        "exit": 0
+      },
+      {
+        "file": "cubic-local.mjs",
+        "exit": 0
+      },
+      {
+        "file": "diversity-ratchet.mjs",
+        "exit": 0
+      },
+      {
+        "file": "doublehalf-point-candidates.mjs",
+        "exit": 0
+      },
+      {
+        "file": "doublehalf-signs.mjs",
+        "exit": 0
+      },
+      {
+        "file": "expfunctions-equation-safe-verification.mjs",
+        "exit": 0
+      },
+      {
+        "file": "exponent-safe-verification.mjs",
+        "exit": 0
+      },
+      {
+        "file": "exponent-substitution-bank-size.mjs",
+        "exit": 0
+      },
+      {
+        "file": "g11-p4-a.mjs",
+        "exit": 0
+      },
+      {
+        "file": "g11-p4-b.mjs",
+        "exit": 0
+      },
+      {
+        "file": "g11-p4-c.mjs",
+        "exit": 0
+      },
+      {
+        "file": "g11-topic-changes.mjs",
+        "exit": 0
+      },
+      {
+        "file": "line3d-pointprojection.mjs",
+        "exit": 0
+      },
+      {
+        "file": "log-inverse.mjs",
+        "exit": 0
+      },
+      {
+        "file": "multiplication-bank-sizes.mjs",
+        "exit": 0
+      },
+      {
+        "file": "righttrig-comparison.mjs",
+        "exit": 0
+      },
+      {
+        "file": "sincosarea-diversity.mjs",
+        "exit": 0
+      },
+      {
+        "file": "spacecross-height.mjs",
+        "exit": 0
+      },
+      {
+        "file": "spaceinner-pointdistance.mjs",
+        "exit": 0
+      },
+      {
+        "file": "ssa-boundary.mjs",
+        "exit": 0
+      },
+      {
+        "file": "standarddev-deviationsum-cap.mjs",
+        "exit": 0
+      }
+    ]
+  }
+}

@@ -119,7 +119,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"],["boxplot","盒狀圖、全距與四分位距"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1295,7 +1295,103 @@ function quartileConfig(){
   units:[median,raw,table,group],presets:{basic:{median:2,raw:2,table:2,group:2},advanced:{median:2,raw:2,table:2,group:2},challenge:{median:2,raw:2,table:2,group:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig},CFG=CONFIGS[TOPIC_KEY]();
+function boxplotConfig(){
+ /* 國三下 2-1 盒狀圖、全距與四分位距（2026-09-28，Claude）。依舊工具 g9b-2-1-boxplot.html 重做計算部分（B 類）：五數綜合、全距與四分位距、
+    兩組資料比較、次數分配表、由五數綜合判讀。舊工具要求「繪製盒狀圖」與純看圖讀值的題型留在舊頁；引擎的盒狀圖只是輔助，五個數一律寫在題幹。
+    四分位數沿用原頁規則（位置 n×k／4 不是整數取下一個整數位置，是整數 m 取第 m 與第 m＋1 筆的平均）。
+    verify：由資料算的題目把資料展開、浮點數排序後依定義重算；由五數綜合出的題目用答案反推回已知條件（例如 最小值＋全距＝最大值、Q₁＋四分位距＝Q₃），百分比題用依五數綜合構造的 4m 筆資料實際計數。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const form=ctx=>pick([[0,1,2],[1,2,3],[2,3,4]][lv(ctx)]);
+ const D=v=>decHTML(v),num=v=>v.n/v.d,near=(x,y)=>Math.abs(x-y)<1e-9;
+ const qpos=(n,k)=>{const p=n*k;return p%4===0?{int:true,m:p/4}:{int:false,m:Math.ceil(p/4)}};
+ const quartR=(arr,k)=>{const q=qpos(arr.length,k);return q.int?div(add(arr[q.m-1],arr[q.m]),R(2)):arr[q.m-1]};
+ const quartF=(xs,k)=>{const a=[...xs].sort((x,y)=>x-y),n=a.length,p=n*k/4;return Math.abs(p-Math.round(p))<1e-9?(a[Math.round(p)-1]+a[Math.round(p)])/2:a[Math.ceil(p)-1]};
+ const sortR=a=>[...a].sort(cmp);
+ const five=s=>[s[0],quartR(s,1),quartR(s,2),quartR(s,3),s[s.length-1]];
+ const fiveF=xs=>{const a=[...xs].sort((x,y)=>x-y);return[a[0],quartF(a,1),quartF(a,2),quartF(a,3),a[a.length-1]]};
+ const LAB=["最小值","Q₁","Q₂","Q₃","最大值"];
+ const fiveS=v=>v.map((x,i)=>`${LAB[i]}＝${D(x)}`).join("，");
+ const INT=[["某班 N 位同學的數學小考成績","分",40,100],["N 位同學的身高","公分",148,178],["某地 N 天的最高氣溫","°C",16,35],["N 位同學的仰臥起坐次數","次",18,50],["N 位籃球隊員的身高","公分",172,196],["N 支手機的待機時間","小時",60,84]];
+ const DEC=[["N 位選手的百米成績","秒",120,170],["N 包餅乾的重量","公克",4800,5200],["N 位同學的握力","公斤",180,320]];
+ const scene=(mode,n)=>{const[t,u,lo,hi]=pick(mode==="decimal"?DEC:INT);return{t:t.replace("N",n),u,lo,hi,s:mode==="decimal"?10:1}};
+ const data=(sc,n)=>{const w=Math.max(6,Math.round((sc.hi-sc.lo)*pick([.5,.7,1]))),lo=sc.lo+rand(0,sc.hi-sc.lo-w);return Array.from({length:n},()=>R(rand(lo,lo+w),sc.s))};
+ const list=a=>a.map(D).join("、");
+ // 由最小值與四個間距產生整數五數綜合（嚴格遞增）
+ const G5=(lo,span)=>{const g=[0,0,0,0].map(()=>rand(1,Math.max(2,Math.floor(span/4))));const v=[lo];g.forEach(x=>v.push(v.at(-1)+x));return v.map(x=>R(x))};
+ // 盒狀圖（輔助示意）：rows＝[[名稱, 五數]]
+ const box=(rows,u)=>{const all=rows.flatMap(r=>r[1].map(num)),lo=Math.min(...all),hi=Math.max(...all),W=220,x0=34,x1=W-10,sx=v=>GEO.f(x0+(v-lo)/((hi-lo)||1)*(x1-x0)),rh=26,H=rows.length*rh+36;let b="";
+  rows.forEach(([nm,v],i)=>{const y=14+i*rh,m=y+8,p=v.map(x=>sx(num(x)));b+=GEO.text([x0-4,m+4],nm,{s:9,a:"end"})+GEO.line([p[0],m],[p[1],m])+GEO.line([p[3],m],[p[4],m])+GEO.line([p[0],m-5],[p[0],m+5])+GEO.line([p[4],m-5],[p[4],m+5])+`<rect x="${p[1]}" y="${y}" width="${GEO.f(p[3]-p[1])}" height="16" fill="#fff" stroke="#16233A" stroke-width="1.5"/>`+GEO.line([p[2],y],[p[2],y+16])});
+  const ya=rows.length*rh+10;b+=GEO.line([x0,ya],[x1,ya],{c:"#7C879B",w:1});[lo,hi].forEach(v=>b+=GEO.text([sx(v),ya+11],D(R(Math.round(v*10),10)),{s:8,c:"#7C879B"}));b+=GEO.text([x0-4,ya+4],`（${u}）`,{s:8,c:"#7C879B",a:"end"});return GEO.svg(W,H,b)};
+
+ // ① 五數綜合、全距與四分位距
+ const fivenum=unit("fivenum","五數綜合、全距與四分位距","五數綜合：最小值、Q₁、Q₂、Q₃、最大值；全距＝最大值－最小值，四分位距＝Q₃－Q₁。",["integer","decimal"],ctx=>{
+  const f=form(ctx),L=lv(ctx),mode=pick(ctx.modes);
+  if(f<4){const n=f===3?rand(16,24):rand(8,12+3*L),sc=scene(mode,n),a=data(sc,n),s=sortR(a),v=five(s),rg=sub(v[4],v[0]),iq=sub(v[3],v[1]);
+   const shown=f===1?a:s,intro=`${sc.t}${f===1?"如下":"由小到大排列如下"}（單位：${sc.u}）：${list(shown)}。`;
+   const ask=f===2?"求全距與四分位距。":f===3?"求五數綜合、全距與四分位距。":"求這組資料的五數綜合。";
+   const ans=f===2?`全距 ${D(rg)}，四分位距 ${D(iq)}`:f===3?`${fiveS(v)}；全距 ${D(rg)}，四分位距 ${D(iq)}`:fiveS(v);
+   return{expr:intro+ask,answer:ans,sig:`f${f}:${shown.map(plain)}`,verify:()=>{const w=fiveF(a.map(num));return w.every((x,i)=>near(x,num(v[i])))&&near(num(rg),w[4]-w[0])&&near(num(iq),w[3]-w[1])}}}
+  const n=4*rand(3,5),sc=scene(mode,n),s=sortR(data(sc,n)),m=3*n/4,i=pick([m-1,m]),Q3=quartR(s,3),Q1=quartR(s,1),iq=sub(Q3,Q1),other=s[i===m-1?m:m-1],x=sub(mul(R(2),Q3),other);if(cmp(s[m-1],s[m])===0||i-1<n/4)return null;
+  return{expr:`${sc.t}由小到大排列如下（單位：${sc.u}）：${s.map((v,j)=>j===i?"x":D(v)).join("、")}。若四分位距為 ${D(iq)}，求 x。`,answer:`x＝${D(x)}`,sig:`f4:${i}:${s.map(plain)}`,verify:()=>{const b=s.map(num);b[i]=num(x);return b.every((v,j)=>!j||b[j-1]<=v)&&near(quartF(b,3)-quartF(b,1),num(iq))}};
+ });
+
+ // ② 兩組資料的比較
+ const PAIR=[["810 班與 710 班學生的身高","810 班","710 班","公分",140,40],["甲、乙兩城市的月均溫","甲城市","乙城市","°C",2,30],["某班男生與女生的體重","男生","女生","公斤",34,40],["九年級英語與數學成績","英語","數學","分",20,80],["甲、乙兩品牌電池的使用時數","甲牌","乙牌","小時",40,40]];
+ const compare=unit("compare","兩組資料的比較","全距看整體的分散程度，四分位距看中間 50% 資料的分散程度；Q₁、Q₂、Q₃ 把資料分成約各占 25% 的四段。",["integer"],ctx=>{
+  const f=form(ctx),[t,A,B,u,lo,sp]=pick(PAIR),va=G5(lo+rand(0,6),sp),vb=G5(lo+rand(0,6),sp),ra=sub(va[4],va[0]),rb=sub(vb[4],vb[0]),ia=sub(va[3],va[1]),ib=sub(vb[3],vb[1]);
+  const txt=`${A}：${fiveS(va)}；${B}：${fiveS(vb)}（單位：${u}）`,img=box([[A,va],[B,vb]],u),sig=`c${f}:${t}:${va.map(plain)}:${vb.map(plain)}`;
+  if(f===0)return{expr:`${img}${t}的五數綜合為 ${txt}。分別求兩組的全距與四分位距。`,answer:`${A}：全距 ${D(ra)}，四分位距 ${D(ia)}；${B}：全距 ${D(rb)}，四分位距 ${D(ib)}`,sig,verify:()=>eq(add(va[0],ra),va[4])&&eq(add(vb[0],rb),vb[4])&&eq(add(va[1],ia),va[3])&&eq(add(vb[1],ib),vb[3])};
+  if(f===1){if(cmp(ra,rb)===0||cmp(ia,ib)===0)return null;const bigR=cmp(ra,rb)>0?A:B,bigI=cmp(ia,ib)>0?A:B;
+   return{expr:`${img}${t}的五數綜合為 ${txt}。哪一組的全距較大？哪一組中間 50% 資料的分散程度較大？`,answer:`全距較大：${bigR}（${A} ${D(ra)}、${B} ${D(rb)}）；四分位距較大：${bigI}（${A} ${D(ia)}、${B} ${D(ib)}）`,sig,verify:()=>((va[4].n-va[0].n)>(vb[4].n-vb[0].n))===(bigR===A)&&((va[3].n-va[1].n)>(vb[3].n-vb[1].n))===(bigI===A)}}
+  // 百分比：依五數綜合，約有百分之幾的資料 大於／小於 某個五數
+  const pct=(g,v)=>{const i=rand(1,3),gt=pick([true,false]),p=gt?100-25*i:25*i;return{i,gt,p,g,v}};
+  const ptxt=o=>`${o.g}約有百分之幾的資料${o.gt?"大於":"小於"} ${D(o.v[o.i])}`;
+  const pOK=o=>{const m=rand(3,6),xs=[];for(let q=0;q<4;q++)for(let j=0;j<m;j++)xs.push(num(o.v[q])+(num(o.v[q+1])-num(o.v[q]))*(j+.5)/m);const c=xs.filter(x=>o.gt?x>num(o.v[o.i]):x<num(o.v[o.i])).length;return near(100*c/xs.length,o.p)};
+  if(f===2){const o1=pct(A,va),o2=pct(B,vb);return{expr:`${img}${t}的五數綜合為 ${txt}。(1) ${ptxt(o1)}？(2) ${ptxt(o2)}？`,answer:`(1) ${o1.p}% (2) ${o2.p}%`,sig:sig+`:${o1.i}${o1.gt}${o2.i}${o2.gt}`,verify:()=>pOK(o1)&&pOK(o2)}}
+  if(f===3){const dR=sub(ra,rb),dI=sub(ia,ib),dM=sub(va[2],vb[2]);return{expr:`${img}${t}的五數綜合為 ${txt}。求 (1) 兩組中位數的差 (2) 兩組全距的差 (3) 兩組四分位距的差（皆以 ${A}－${B} 表示）。`,answer:`(1) ${D(dM)} (2) ${D(dR)} (3) ${D(dI)}`,sig,verify:()=>near(num(dM),num(va[2])-num(vb[2]))&&near(num(dR),(num(va[4])-num(va[0]))-(num(vb[4])-num(vb[0])))&&near(num(dI),(num(va[3])-num(va[1]))-(num(vb[3])-num(vb[1])))}}
+  // 由全距與四分位距反求缺少的五數
+  const known=`${A}：最小值 ${D(va[0])}，Q₂＝${D(va[2])}，Q₃＝${D(va[3])}，全距 ${D(ra)}，四分位距 ${D(ia)}；${B}：最大值 ${D(vb[4])}，Q₁＝${D(vb[1])}，Q₂＝${D(vb[2])}，全距 ${D(rb)}，四分位距 ${D(ib)}`;
+  return{expr:`${t}（單位：${u}）的部分統計量如下：${known}。求 ${A} 的最大值與 Q₁，以及 ${B} 的最小值與 Q₃。`,answer:`${A}：最大值 ${D(va[4])}，Q₁＝${D(va[1])}；${B}：最小值 ${D(vb[0])}，Q₃＝${D(vb[3])}`,sig:`c4:${t}:${va.map(plain)}:${vb.map(plain)}`,verify:()=>near(num(va[4])-num(va[0]),num(ra))&&near(num(va[3])-num(va[1]),num(ia))&&near(num(vb[4])-num(vb[0]),num(rb))&&near(num(vb[3])-num(vb[1]),num(ib))&&[va,vb].every(v=>v.every((x,i)=>!i||cmp(v[i-1],x)<=0))};
+ });
+
+ // ③ 次數分配表
+ const TAB=[["擲一顆骰子","點數","點",1,1,6],["某班同學的家庭人口數","人數","人",2,1,7],["同學投籃 10 次的命中球數","命中球數","球",0,1,9],["英語小考成績","成績","分",40,10,7],["作文模擬考","級分","級分",0,1,7],["女生的體重","體重","公斤",42,1,9]];
+ const tbl=(head,rows)=>`<table style="border-collapse:collapse;margin:3px 0;font-size:.92em"><tr>${head.map(h=>`<td style="border:1px solid #7C879B;padding:1px 6px;text-align:center">${h}</td>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td style="border:1px solid #7C879B;padding:1px 6px;text-align:center">${c}</td>`).join("")}</tr>`).join("")}</table>`;
+ const table=unit("table","次數分配表的全距與四分位距","全距看有出現（次數不為 0）的最大值與最小值；Q₁、Q₃ 用累積次數找位置。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx),[t,col,u,st,step,len]=pick(TAB),hd=col===u?col:col+"（"+u+"）",vals=Array.from({length:len},(_,i)=>st+i*step).slice(0,rand(5,len)),cnt=()=>vals.map((_,i)=>rand(i===0||i===vals.length-1?1:L?0:1,3+3*L)),exp=c=>c.flatMap((k,i)=>Array(k).fill(vals[i])),C=c=>c.reduce((s,k)=>(s.push((s.at(-1)||0)+k),s),[]);
+  const q=(c,k)=>{const n=c.reduce((s,x)=>s+x,0),p=qpos(n,k),cc=C(c),at=m=>vals[cc.findIndex(x=>x>=m)];return p.int?R(at(p.m)+at(p.m+1),2):R(at(p.m))};
+  const RI=c=>{const lo=vals[c.findIndex(x=>x>0)],hi=vals[c.length-1-[...c].reverse().findIndex(x=>x>0)];return[R(hi-lo),sub(q(c,3),q(c,1))]};
+  const RIF=c=>{const w=fiveF(exp(c));return[w[4]-w[0],w[3]-w[1]]};
+  const c=cnt(),n=c.reduce((s,x)=>s+x,0);if(n<8)return null;const[rg,iq]=RI(c);
+  if(f===0)return{expr:`${t}共 ${n} 筆資料，次數分配如下表，求全距與四分位距。${tbl([hd,"次數"],vals.map((x,i)=>[x,c[i]]))}`,answer:`全距 ${D(rg)} ${u}，四分位距 ${D(iq)} ${u}`,sig:`t0:${vals}:${c}`,verify:()=>{const w=RIF(c);return near(w[0],num(rg))&&near(w[1],num(iq))}};
+  if(f===1){const v=[R(vals[0]),q(c,1),q(c,2),q(c,3),R(vals.at(-1))];return{expr:`${t}的次數分配如下表，求五數綜合。${tbl([hd,"次數"],vals.map((x,i)=>[x,c[i]]))}`,answer:fiveS(v),sig:`t1:${vals}:${c}`,verify:()=>fiveF(exp(c)).every((x,i)=>near(x,num(v[i])))}}
+  if(f===2)return{expr:`${t}的累積次數分配如下表，求全距與四分位距。${tbl([hd,"累積次數"],vals.map((x,i)=>[x,C(c)[i]]))}`,answer:`全距 ${D(rg)} ${u}，四分位距 ${D(iq)} ${u}`,sig:`t2:${vals}:${c}`,verify:()=>{const w=RIF(c);return near(w[0],num(rg))&&near(w[1],num(iq))}};
+  if(f===3){const j=rand(1,vals.length-2);if(!c[j])return null;return{expr:`${t}共 ${n} 筆資料，次數分配如下表，其中一列的次數為 x。求 x 與四分位距。${tbl([hd,"次數"],vals.map((x,i)=>[x,i===j?"x":c[i]]))}`,answer:`x＝${c[j]}；四分位距 ${D(iq)} ${u}`,sig:`t3:${j}:${vals}:${c}`,verify:()=>c.reduce((s,x)=>s+x,0)===n&&near(RIF(c)[1],num(iq))}}
+  const c2=cnt(),[rg2,iq2]=RI(c2);if(c2.reduce((s,x)=>s+x,0)<8||cmp(iq,iq2)===0)return null;const big=cmp(iq,iq2)>0?"甲":"乙";
+  return{expr:`${t}，甲、乙兩組的次數分配如下表。分別求兩組的四分位距，並指出哪一組中間 50% 的資料較分散。${tbl([hd,"甲","乙"],vals.map((x,i)=>[x,c[i],c2[i]]))}`,answer:`甲 ${D(iq)}，乙 ${D(iq2)}；${big}組較分散`,sig:`t4:${vals}:${c}:${c2}`,verify:()=>{const a=RIF(c)[1],b=RIF(c2)[1];return near(a,num(iq))&&near(b,num(iq2))&&(a>b)===(big==="甲")}};
+ });
+
+ // ④ 由五數綜合判讀
+ const ONE=[["某班數學平時測驗成績","分",25,70],["手機電池的待機時間","小時",60,24],["籃球校隊隊員的身高","公分",172,24],["英語聽力競賽成績","分",70,28],["某社區居民的年齡","歲",5,80]];
+ const read=unit("read","由五數綜合判讀","中間 50% 的資料落在 Q₁ 到 Q₃ 之間；大於 Q₃、小於 Q₁ 的各約占 25%。",["integer"],ctx=>{
+  const f=form(ctx),[t,u,lo,sp]=pick(ONE),v=G5(lo+rand(0,4),sp),rg=sub(v[4],v[0]),iq=sub(v[3],v[1]),img=box([["",v]],u),txt=`${t}的五數綜合為 ${fiveS(v)}（單位：${u}）`,sig=`r${f}:${t}:${v.map(plain)}`;
+  if(f===0)return{expr:`${img}${txt}。求全距與四分位距。`,answer:`全距 ${D(rg)}，四分位距 ${D(iq)}`,sig,verify:()=>eq(add(v[0],rg),v[4])&&eq(add(v[1],iq),v[3])};
+  if(f===1){const i=rand(1,3),gt=pick([true,false]),p=gt?100-25*i:25*i;return{expr:`${img}${txt}。(1) 中間 50% 的資料介於多少到多少之間？(2) 約有百分之幾的資料${gt?"大於":"小於"} ${D(v[i])}？`,answer:`(1) ${D(v[1])} 到 ${D(v[3])} (2) ${p}%`,sig:sig+`:${i}${gt}`,verify:()=>{const xs=[];for(let q=0;q<4;q++)for(let j=0;j<5;j++)xs.push(num(v[q])+(num(v[q+1])-num(v[q]))*(j+.5)/5);const c=xs.filter(x=>gt?x>num(v[i]):x<num(v[i])).length;return c*5===p&&xs.filter(x=>x>num(v[1])&&x<num(v[3])).length===10}}}
+  if(f===2){const known=`最小值 ${D(v[0])}，Q₂＝${D(v[2])}，Q₃＝${D(v[3])}，全距 ${D(rg)}，四分位距 ${D(iq)}`;return{expr:`${t}（單位：${u}）的部分統計量為：${known}。求最大值與 Q₁。`,answer:`最大值 ${D(v[4])}，Q₁＝${D(v[1])}`,sig,verify:()=>near(num(v[4])-num(v[0]),num(rg))&&near(num(v[3])-num(v[1]),num(iq))&&cmp(v[1],v[2])<=0}}
+  if(f===3){const n=4*rand(5,15),b=pick([[1,3],[0,2],[2,4],[0,3],[1,4]]),cntv=n*(b[1]-b[0])/4;
+   return{expr:`${img}${t}共 ${n} 筆資料，五數綜合為 ${fiveS(v)}（單位：${u}）。約有幾筆資料介於 ${D(v[b[0]])} 與 ${D(v[b[1]])} 之間？`,answer:`約 ${cntv} 筆`,sig:sig+`:${n}:${b}`,verify:()=>{const m=n/4,xs=[];for(let q=0;q<4;q++)for(let j=0;j<m;j++)xs.push(num(v[q])+(num(v[q+1])-num(v[q]))*(j+.5)/m);return xs.filter(x=>x>num(v[b[0]])&&x<num(v[b[1]])).length===cntv}}}
+  // 最大值（或最小值）改變：全距改變、四分位距不變
+  const up=pick([true,false]),d=rand(2,9),nv=up?add(v[4],R(d)):sub(v[0],R(d)),nr=add(rg,R(d)),nn=rand(12,40);
+  return{expr:`${img}${t}共 ${nn} 筆資料，五數綜合為 ${fiveS(v)}（單位：${u}）。若把${up?"最大的一筆資料改為 "+D(nv):"最小的一筆資料改為 "+D(nv)}（其餘不變），新的全距與四分位距各是多少？`,answer:`全距 ${D(nr)}，四分位距 ${D(iq)}（不變）`,sig:sig+`:${up}:${d}:${nn}`,verify:()=>{const xs=[];for(let q=0;q<4;q++)for(let j=0;j<3;j++)xs.push(num(v[q])+(num(v[q+1])-num(v[q]))*j/3);xs.push(num(v[4]));const ys=[...xs];if(up)ys[ys.length-1]=num(nv);else ys[0]=num(nv);const w0=fiveF(xs),w1=fiveF(ys);return near(w1[4]-w1[0],num(nr))&&near(w1[3]-w1[1],w0[3]-w0[1])}};
+ });
+
+ return{title:"盒狀圖、全距與四分位距",symbol:"⊏",subtitle:"五數綜合・全距與四分位距・兩組資料的比較・次數分配表・由五數綜合判讀",instruction:"全距＝最大值－最小值，四分位距＝Q₃－Q₁；四分位數依位置 n×k／4 取值。盒狀圖為示意，以題目給的數值為準。",modes:["integer","decimal"],modeLabels:{integer:"整數資料",decimal:"小數資料"},mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：已排序與未排序資料的五數綜合、全距與四分位距；兩組的全距與四分位距、比較分散程度、百分比判讀；次數表求全距與四分位距、五數綜合、累積次數表；由五數綜合求全距與四分位距、中間 50% 與百分比、由全距與四分位距反求。",advanced:"進階：未排序資料的五數綜合、全距與四分位距、較多筆資料；比較分散程度、百分比判讀、兩組統計量的差；五數綜合、累積次數表、表中缺一個次數；中間 50% 與百分比、反求最大值與 Q₁、由筆數估計介於兩數之間的筆數。",challenge:"挑戰：全距與四分位距、較多筆資料、由四分位距反求 x；百分比判讀、兩組統計量的差、兩組反求缺少的五數；累積次數表、表中缺一個次數、甲乙兩組比較四分位距；反求最大值與 Q₁、估計筆數、極端值改變後的全距與四分位距。"},
+  units:[fivenum,compare,table,read],presets:{basic:{fivenum:2,compare:2,table:2,read:2},advanced:{fivenum:2,compare:2,table:2,read:2},challenge:{fivenum:2,compare:2,table:2,read:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig,boxplot:boxplotConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
