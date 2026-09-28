@@ -6,7 +6,7 @@ import {legacy,firstBatch,firstMisconceptions} from './science/catalog.mjs';
 import {batch2} from './science/batch2.mjs';
 import {enhanceLessons} from './science/experience.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const researcherCssVersion='20260922-focus-guard-9';
+const researcherCssVersion='20260928-motion-graphs-1';
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const write=(p,s)=>{fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),s)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -38,7 +38,7 @@ for(const file of firstBatch){
  html=html.replace(/if\(typeof window\.gtag==='function'\)window\.gtag\('event','([^']+)',\{[^}]*\}\);/g,(_,event)=>`if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack('${event==='epicenter_located'?'task_complete':'start'}','${file.replace('.html','')}');`);
  write('tools/'+file,html);
 }
-for(const [old,newLink,label] of [['lenses.html','science/optics.html','光學與透鏡成像'],['convex-lens-imaging.html','science/optics.html','光學與透鏡成像'],['waves.html','science/wave-sound.html','波動、聲音與共振'],['dc-motor.html','science/electromagnetism.html','電磁鐵、馬達與發電機'],['moon-phases/index.html','../science/moon-eclipse.html','月相、日食與月食']]){
+for(const [old,newLink,label] of [['lenses.html','science/optics.html','光學與透鏡成像'],['convex-lens-imaging.html','science/optics.html','光學與透鏡成像'],['waves.html','science/wave-sound.html','波動、聲音與共振'],['dc-motor.html','science/electromagnetism.html','電磁鐵、馬達與發電機'],['moon-phases/index.html','../science/moon-eclipse.html','月相、日食與月食'],['force-motion-lab.html','science/motion-graphs.html','直線運動圖表']]){
  replaceBlock('tools/'+old,'science-next',`<aside aria-label="延伸探究" style="padding:16px;margin:16px;border:1px solid #bacfd6;border-radius:12px;background:#eef7f5;color:#152f46;font:16px/1.7 system-ui"><strong>接著做一個完整探究</strong><p><a style="color:#075f80" href="${newLink}">${label}實驗室：動手操作、紀錄與檢核 →</a></p></aside>`,`</body>`);
 }
 for(const t of batch2){

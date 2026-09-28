@@ -117,6 +117,15 @@ test('Ecosystem: transfer / initial value / K / decline above K',()=>{
  close(calc('ecosystem',{initial:200}).population,200);
  assert.equal(calc('ecosystem',{initial:300,capacity:100}).kind,'decline');
 });
+test('Motion graphs: reversing / stops exactly at t / rest / area bookkeeping',()=>{
+ const r=calc('motion-graphs');close(r.v,-10);close(r.x,0);close(r.path,20);assert.equal(r.kind,'reversing');close(r.turn,2);
+ const e=calc('motion-graphs',{t:2});close(e.v,0);close(e.x,10);close(e.path,10);assert.equal(e.kind,'slowing');assert.equal(e.turn,null);
+ const z=calc('motion-graphs',{v0:0,a:0});close(z.v,0);close(z.x,0);close(z.path,0);assert.equal(z.kind,'rest');
+ assert.equal(calc('motion-graphs',{v0:5,a:0}).kind,'uniform');assert.equal(calc('motion-graphs',{v0:0,a:2}).kind,'speeding');assert.equal(calc('motion-graphs',{v0:-4,a:-1}).kind,'speeding');
+ const n=calc('motion-graphs',{v0:-6,a:2,t:5});close(n.x,-5);close(n.pos,4);close(n.neg,9);close(n.path,13);close(n.turn,3);
+ for(const v0 of [-10,-3,0,4,10])for(const a of [-5,-1.5,0,2.5,5])for(const t of [1,3,10]){const q=calc('motion-graphs',{v0,a,t});close(q.pos-q.neg,q.x);close(q.pos+q.neg,q.path);assert.ok(q.path>=Math.abs(q.x)-1e-9);
+  const svg=diagram('motion-graphs',{v0,a,t},q);assert.equal((svg.match(/data-turn/g)||[]).length,q.kind==='reversing'?1:0);}
+});
 for(const t of batch2){
  test(t.id+': every control option, pairwise extrema and preset renders finite',()=>{
   const base=defaults(t.id),cases=[base,...t.tasks.map(task=>({...base,...task.values}))];

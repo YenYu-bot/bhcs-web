@@ -64,6 +64,14 @@ export function calculate(id,s){
   const population=s.capacity/(1+(s.capacity/s.initial-1)*Math.exp(-s.rate*s.time));
   return {kind:Math.abs(population-s.initial)<1e-8?'steady':population>s.initial?'grow':'decline',energy,population};
  }
+ case 'motion-graphs':{
+  const {v0,a,t}=s,eps=1e-9,x=v0*t+a*t*t/2,v=v0+a*t;
+  const turn=Math.abs(a)>eps&&Math.abs(v0)>eps&&v0*a<0?-v0/a:null,reversed=turn!==null&&turn<t-eps;
+  const x1=reversed?v0*turn+a*turn*turn/2:x,x2=reversed?x-x1:0;
+  const pos=Math.max(x1,0)+Math.max(x2,0),neg=Math.max(-x1,0)+Math.max(-x2,0);
+  const kind=Math.abs(a)<eps?(Math.abs(v0)<eps?'rest':'uniform'):Math.abs(v0)<eps||v0*a>0?'speeding':reversed?'reversing':'slowing';
+  return {kind,v,x,path:pos+neg,pos,neg,a,turn:reversed?turn:null};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -81,5 +89,6 @@ export function describe(id,s,r){
  case 'seasons':return {metrics:[['太陽赤緯',f(r.declination)+'°'],['正午太陽高度',f(r.altitude)+'°'],['理想日長',r.boundary?'地平線邊界':f(r.hours)+' h'],['晝夜狀態',r.boundary?'中心貼地平線':r.hours===24?'極晝':r.hours===0?'極夜':'一般晝夜']],explanation:r.boundary?'在極點且赤緯為0的理想情況，太陽中心在地平線上，不能套用一般日長公式。':'北、南半球在同一軌道位置受到的日照不同；改變緯度即可比較。正午高度若為負，代表太陽中心在地平線下。'};
  case 'plant-exchange':return {metrics:[['總光合作用',f(r.photo)+' 相對值'],['呼吸作用',f(r.respiration)+' 相對值'],['淨氧氣交換',f(r.net)+' 相對值'],['蒸散指標',f(r.transpiration,3)]],explanation:`本模型的淨氧氣交換=光合作用−呼吸作用=${f(r.net)}；${r.net>0?'呈淨釋出':'呈淨消耗或平衡'}。蒸散另受濕度和氣孔開度影響，不能把蒸散指標當氧氣量。`};
  case 'ecosystem':return {metrics:[['生產者能量',f(r.energy[0])+' kJ'],['初級消費者能量',f(r.energy[1])+' kJ'],['次級消費者能量',f(r.energy[2])+' kJ'],['模型族群數',f(r.population)+' 隻（期望值）']],explanation:`族群以固定K=${s.capacity}、r=${s.rate}的單物種模型計算；不等同食物網各物種一起變動。每階層傳遞${s.efficiency}%是本次設定，不是普遍常數。`};
+ case 'motion-graphs':return {metrics:[['末速度',f(r.v)+' m/s'],['位移',f(r.x)+' m'],['路徑長',f(r.path)+' m'],['v-t 圖斜率',f(r.a)+' m/s²']],explanation:r.kind==='reversing'?`物體在第 ${f(r.turn)} 秒速度減到 0 後折返。v-t 圖在時間軸上方的面積 ${f(r.pos)} m、下方 ${f(r.neg)} m：位移是兩者相減＝${f(r.x)} m，路徑長是兩者相加＝${f(r.path)} m。`:r.kind==='rest'?'速度和加速度都是 0：x-t 圖是水平線，v-t 圖貼著時間軸，位移與路徑長都是 0。':r.kind==='uniform'?`加速度為 0：v-t 圖是水平線，x-t 圖是斜直線，斜率等於速度 ${f(s.v0)} m/s。位移＝v-t 圖下的長方形面積＝${f(r.x)} m。`:`沒有折返，位移大小等於路徑長 ${f(r.path)} m。v-t 圖的斜率就是加速度 ${f(r.a)} m/s²；${r.kind==='slowing'?'速度與加速度方向相反，速度大小變小。':'速度與加速度方向相同，速度大小變大。'}`};
  }
 }

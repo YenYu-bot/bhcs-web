@@ -13,7 +13,7 @@ table{table-layout:fixed}th:nth-child(1){width:5%}th:nth-child(2){width:30%}th:n
  .print-only{display:block}.print-record{border-top:1px solid #8196a2;padding:8px 0;overflow-wrap:anywhere;break-inside:auto}.print-record h3{margin:4px 0;break-after:avoid}.print-record p{margin:4px 0;orphans:3;widows:3}
  #records-section .table-wrap{display:none}#teacher details{display:none}h2,h3{break-after:avoid}.safety{background:white}
 }
-</style><script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"電磁鐵、馬達與發電機實驗室","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"url":"https://www.bhcs.com.tw/tools/science/electromagnetism.html","provider":{"@type":"Organization","name":"百宏文教"}}</script><link rel="stylesheet" href="../../assets/researcher-lab.css?v=20260922-focus-guard-9"><!-- science-experience-style:start -->
+</style><script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"電磁鐵、馬達與發電機實驗室","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"url":"https://www.bhcs.com.tw/tools/science/electromagnetism.html","provider":{"@type":"Organization","name":"百宏文教"}}</script><link rel="stylesheet" href="../../assets/researcher-lab.css?v=20260928-motion-graphs-1"><!-- science-experience-style:start -->
 <style>/* Shared, inline in all 20 labs. Keep diagrams and record tables independent. */
 .labgrid>*,.layout>*,.card,.panel{min-width:0}
 section[id],h2[id],.lesson-route a{scroll-margin-top:90px}
@@ -112,6 +112,14 @@ function calculate(id,s){
   const population=s.capacity/(1+(s.capacity/s.initial-1)*Math.exp(-s.rate*s.time));
   return {kind:Math.abs(population-s.initial)<1e-8?'steady':population>s.initial?'grow':'decline',energy,population};
  }
+ case 'motion-graphs':{
+  const {v0,a,t}=s,eps=1e-9,x=v0*t+a*t*t/2,v=v0+a*t;
+  const turn=Math.abs(a)>eps&&Math.abs(v0)>eps&&v0*a<0?-v0/a:null,reversed=turn!==null&&turn<t-eps;
+  const x1=reversed?v0*turn+a*turn*turn/2:x,x2=reversed?x-x1:0;
+  const pos=Math.max(x1,0)+Math.max(x2,0),neg=Math.max(-x1,0)+Math.max(-x2,0);
+  const kind=Math.abs(a)<eps?(Math.abs(v0)<eps?'rest':'uniform'):Math.abs(v0)<eps||v0*a>0?'speeding':reversed?'reversing':'slowing';
+  return {kind,v,x,path:pos+neg,pos,neg,a,turn:reversed?turn:null};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -129,6 +137,7 @@ function describe(id,s,r){
  case 'seasons':return {metrics:[['太陽赤緯',f(r.declination)+'°'],['正午太陽高度',f(r.altitude)+'°'],['理想日長',r.boundary?'地平線邊界':f(r.hours)+' h'],['晝夜狀態',r.boundary?'中心貼地平線':r.hours===24?'極晝':r.hours===0?'極夜':'一般晝夜']],explanation:r.boundary?'在極點且赤緯為0的理想情況，太陽中心在地平線上，不能套用一般日長公式。':'北、南半球在同一軌道位置受到的日照不同；改變緯度即可比較。正午高度若為負，代表太陽中心在地平線下。'};
  case 'plant-exchange':return {metrics:[['總光合作用',f(r.photo)+' 相對值'],['呼吸作用',f(r.respiration)+' 相對值'],['淨氧氣交換',f(r.net)+' 相對值'],['蒸散指標',f(r.transpiration,3)]],explanation:`本模型的淨氧氣交換=光合作用−呼吸作用=${f(r.net)}；${r.net>0?'呈淨釋出':'呈淨消耗或平衡'}。蒸散另受濕度和氣孔開度影響，不能把蒸散指標當氧氣量。`};
  case 'ecosystem':return {metrics:[['生產者能量',f(r.energy[0])+' kJ'],['初級消費者能量',f(r.energy[1])+' kJ'],['次級消費者能量',f(r.energy[2])+' kJ'],['模型族群數',f(r.population)+' 隻（期望值）']],explanation:`族群以固定K=${s.capacity}、r=${s.rate}的單物種模型計算；不等同食物網各物種一起變動。每階層傳遞${s.efficiency}%是本次設定，不是普遍常數。`};
+ case 'motion-graphs':return {metrics:[['末速度',f(r.v)+' m/s'],['位移',f(r.x)+' m'],['路徑長',f(r.path)+' m'],['v-t 圖斜率',f(r.a)+' m/s²']],explanation:r.kind==='reversing'?`物體在第 ${f(r.turn)} 秒速度減到 0 後折返。v-t 圖在時間軸上方的面積 ${f(r.pos)} m、下方 ${f(r.neg)} m：位移是兩者相減＝${f(r.x)} m，路徑長是兩者相加＝${f(r.path)} m。`:r.kind==='rest'?'速度和加速度都是 0：x-t 圖是水平線，v-t 圖貼著時間軸，位移與路徑長都是 0。':r.kind==='uniform'?`加速度為 0：v-t 圖是水平線，x-t 圖是斜直線，斜率等於速度 ${f(s.v0)} m/s。位移＝v-t 圖下的長方形面積＝${f(r.x)} m。`:`沒有折返，位移大小等於路徑長 ${f(r.path)} m。v-t 圖的斜率就是加速度 ${f(r.a)} m/s²；${r.kind==='slowing'?'速度與加速度方向相反，速度大小變小。':'速度與加速度方向相同，速度大小變大。'}`};
  }
 }
 
@@ -203,6 +212,31 @@ function diagram(id,s,r){
   const vals=[r.potential,r.kinetic,r.thermal],labels=['位能','動能','內能'];vals.forEach((v,i)=>{out+=rect(395+i*76,280-v/r.total*210,45,v/r.total*210,['#087b78','#d97b11','#9364a1'][i])+text(390+i*76,305,labels[i],15)+text(390+i*76,333,num(v,1)+' J',13)});
  out+=`<circle data-lab-drag="progress" data-units-per-px="${100/285}" cx="${60+285*p}" cy="${75+170*p}" r="25" fill="transparent" stroke="#d97b11" stroke-width="2" stroke-dasharray="4 3" tabindex="0" role="button" aria-label="拖移小球比較坡道位置，或按左右方向鍵"/>`;
   out+=text(390,45,`總能量 ${num(r.total,2)} J`,18);break;
+ }
+ case 'motion-graphs':{
+  // 上：x-t；下：v-t（共用時間軸）。面積依時間軸上下分色，折返時刻以紅色虛線貫穿兩圖。
+  const T=s.t,X0=78,X1=622,tx=u=>num(X0+(X1-X0)*u/T,1),xs=[],vs=[];
+  for(let i=0;i<=120;i++){const u=T*i/120;xs.push([u,s.v0*u+s.a*u*u/2]);vs.push([u,s.v0+s.a*u])}
+  const span=(arr,pad=1)=>{let lo=Math.min(0,...arr),hi=Math.max(0,...arr);if(hi-lo<pad){hi+=pad/2;lo-=pad/2}return [lo,hi]};
+  const [xlo,xhi]=span(xs.map(p=>p[1])),[vlo,vhi]=span(vs.map(p=>p[1]));
+  const top=[46,166],bot=[226,346],yX=v=>num(top[1]-(top[1]-top[0])*(v-xlo)/(xhi-xlo),1),yV=v=>num(bot[1]-(bot[1]-bot[0])*(v-vlo)/(vhi-vlo),1);
+  const fmt=n=>{const v=Number(n.toFixed(1));return (v<0?'−':'')+Math.abs(v)};
+  // v-t 面積：時間軸上方淡藍、下方淡紅（以折返時刻分段）
+  const cut=r.turn,seg=(a,b)=>{const p=[[a,s.v0+s.a*a],[b,s.v0+s.a*b]];return `M${tx(a)},${yV(0)} L${tx(a)},${yV(p[0][1])} L${tx(b)},${yV(p[1][1])} L${tx(b)},${yV(0)} Z`};
+  const parts=cut===null?[[0,T]]:[[0,cut],[cut,T]];
+  for(const [a,b] of parts){const mid=s.v0+s.a*(a+b)/2;if(Math.abs(mid)<1e-9)continue;out+=`<path d="${seg(a,b)}" fill="${mid>0?'#cfe3f3':'#f3d2d6'}" stroke="none"/>`;
+   const area=Math.abs((s.v0+s.a*a+s.v0+s.a*b)/2*(b-a));out+=text(num((tx(a)+tx(b))/2-26,1),num(mid>0?yV(0)-10:yV(0)+22,1),(mid>0?'+':'−')+fmt(area)+' m',14)}
+  // 座標軸
+  out+=line(X0,top[0],X0,top[1],'#436779')+line(X0,yX(0),X1,yX(0),'#436779')+line(X0,bot[0],X0,bot[1],'#436779')+line(X0,yV(0),X1,yV(0),'#436779');
+  const tick=(y,t)=>`<text x="${X0-8}" y="${num(y+5,1)}" font-size="13" text-anchor="end">${esc(t)}</text>`;
+  out+=text(X0+8,top[0]-12,'位置 x（m）',14)+text(X0+8,bot[0]-10,'速度 v（m/s）',14)+text(X1-78,bot[1]+18,'t（s）',14);
+  out+=tick(yX(xhi),fmt(xhi))+tick(yX(xlo),fmt(xlo))+tick(yV(vhi),fmt(vhi))+tick(yV(vlo),fmt(vlo));
+  out+=text(X0-4,bot[1]+18,'0',13)+text(X1-10,bot[1]+18,String(T),13);
+  // 曲線
+  out+=path('M'+xs.map(p=>tx(p[0])+','+yX(p[1])).join(' L'),'#087b78')+path('M'+vs.map(p=>tx(p[0])+','+yV(p[1])).join(' L'),'#d97b11');
+  out+=circle(tx(T),yX(r.x),5,'#087b78')+circle(tx(T),yV(r.v),5,'#d97b11');
+  if(cut!==null){out+=`<line data-turn x1="${tx(cut)}" y1="${top[0]-6}" x2="${tx(cut)}" y2="${bot[1]+4}" stroke="#b54a5b" stroke-width="2" stroke-dasharray="7 5"/>`+text(num(tx(cut)+6,1),bot[0]-10,'折返 t＝'+fmt(cut)+' s',14)}
+  out+=text(20,390,'上：位置－時間（x-t）　下：速度－時間（v-t）；淡藍＝軸上方面積，淡紅＝軸下方面積',14);break;
  }
  case 'moon-eclipse':{
   return moonScene(s,r);
@@ -351,7 +385,7 @@ function educationalScene(id,s,r){
  document.querySelectorAll('.quiz input').forEach(el=>el.addEventListener('change',()=>{quizSent=false;$('feedback-'+el.name.replace('quiz-','')).textContent='';$('quiz-score').textContent='答案已變更，請重新檢查。'}));
  $('control-fields').disabled=false;labels();renderRecords();previewDiagram();
 })();
-</script><script src="../../assets/researcher-lab.js?v=20260922-focus-guard-9" defer></script><!-- science-study-script:start -->
+</script><script src="../../assets/researcher-lab.js?v=20260928-motion-graphs-1" defer></script><!-- science-study-script:start -->
 <script>(() => {
  'use strict';
  const box=document.querySelector('.lesson-route');if(!box)return;
