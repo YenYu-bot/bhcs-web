@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["scinot","科學記號"],["factors","因數與倍數"],["linear","一元一次式與方程式"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["scinot","科學記號"],["factors","因數與倍數"],["linear","一元一次式與方程式"],["simultaneous","二元一次聯立方程式"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1395,7 +1395,147 @@ const GEN={
   units:U,presets:{basic:{s1:4,s2:4,e1:4,e2:4,e3:2},advanced:{s2:3,s3:2,s4:2,s5:1,e2:3,e3:3,e4:3,e5:1,e7:2},challenge:{s3:2,s4:2,s5:2,e3:2,e4:3,e5:2,e6:2,e7:2,mix:3}}};
 }
 
-const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,factors:factorsConfig,linear:linearConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
+function simultaneousConfig(){
+ /* 國一 二元一次聯立方程式（2026-09-27，Claude）。由舊的 g7-simultaneous-equations.html（百宏自製）移植進引擎：線性式、先定解再造式的做法與七個單元
+    （代入消去法、加減消去法、分數型與小數型、特殊係數型、A＝B＝C、替代法、綜合練習）照舊，只換成引擎的難度／數型介面；大括號改用內嵌樣式。
+    未知數符號沿用舊工具的隨機（x、y／a、b／m、n）；挑戰級三成五的題解為分數。
+    verify：記錄每個方程式的兩邊，用浮點數把解代回兩邊比對（與有理數運算不同路徑）；A＝B＝C 與替代法各有自己的檢查。 */
+ let REC=[],SOL=null;
+ const unit=(id,name,tip)=>({id,name,tip,modes:["integer","fraction","decimal"],gen:ctx=>{
+  D=ctx.level==="challenge"?3:ctx.level==="advanced"?2:1;TYPES=[ctx.modes[0]==="integer"?"int":ctx.modes[0]==="fraction"?"frac":"dec"];
+  [VX,VY]=pick([['x','y'],['x','y'],['a','b'],['m','n']]);REC=[];SOL=null;
+  let it;try{it=GEN[id].make()}catch(e){return null}if(!it||!SOL)return null;
+  const rec=REC.slice(),sol=SOL;
+  return{expr:it.q,answer:it.a,sig:it.q.replace(/<[^>]+>/g,""),verify:it.chk||(()=>{const lines=[...it.q.matchAll(/<div style="white-space:nowrap">([\s\S]*?)<\/div>/g)].map(m=>m[1]);if(lines.length!==2)return false;return lines.every(h=>{const e=rec.find(r=>r.h===h);if(!e)return false;const X=sol[0].val(),Y=sol[1].val(),nv=terms=>terms.reduce((acc,t)=>{let v=t.L.x.val()*X+t.L.y.val()*Y+t.L.k.val();if(t.t==='grp')v*=t.k.val();if(t.t==='frac')v/=F.of(t.d).val();return acc+t.s*v},0);return Math.abs(nv(e.l)-nv(e.r))<1e-9})})};
+ }});
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rnz=(a,b)=>{ let v; do v=rnd(a,b); while(v===0); return v; };
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const coin=(p=.5)=>Math.random()<p;
+const gcd=(a,b)=>{ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
+const sgn=()=>coin()?1:-1;
+class F{ constructor(n,d=1){ if(d<0){n=-n;d=-d;} const g=gcd(n,d)||1; this.n=n/g; this.d=d/g; }
+  static of(x){ return x instanceof F?x:new F(x,1); }
+  add(o){ o=F.of(o); return new F(this.n*o.d+o.n*this.d,this.d*o.d); } sub(o){ o=F.of(o); return new F(this.n*o.d-o.n*this.d,this.d*o.d); }
+  mul(o){ o=F.of(o); return new F(this.n*o.n,this.d*o.d); } div(o){ o=F.of(o); return new F(this.n*o.d,this.d*o.n); }
+  neg(){ return new F(-this.n,this.d); } abs(){ return new F(Math.abs(this.n),this.d); } isInt(){ return this.d===1; } isZero(){ return this.n===0; } eq(k){ const o=F.of(k); return this.n===o.n&&this.d===o.d; }
+  isDec(){ let d=this.d; while(d%2===0) d/=2; while(d%5===0) d/=5; return d===1; } val(){ return this.n/this.d; } }
+const Z=new F(0), ONE=new F(1);
+let D=2, TYPES=['int'], VX='x', VY='y';
+const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`;
+function decStr(f){ let d=f.d,n=Math.abs(f.n),k=0; while(d>1){ if(d%10===0){d/=10;k++;} else if(d%2===0){d/=2;n*=5;k++;} else {d/=5;n*=2;k++;} } let s=String(n).padStart(k+1,'0'); return (k?s.slice(0,-k)+'.'+s.slice(-k):s); }
+function absNum(f,dec){ const a=f.abs(); if(a.isInt()) return String(a.n); if(dec&&a.isDec()) return decStr(a); return fr(a.n,a.d); }
+const numStr=(f,dec)=>(f.n<0?'−':'')+absNum(f,dec);
+const V=n=>`<var>${n}</var>`;
+/* 線性式 {x,y,k}：x係數、y係數、常數 */
+const lin=(x,y,k=0)=>({x:F.of(x),y:F.of(y),k:F.of(k)});
+const ladd=(p,q)=>lin(p.x.add(q.x),p.y.add(q.y),p.k.add(q.k));
+const lscale=(p,s)=>lin(p.x.mul(s),p.y.mul(s),p.k.mul(s));
+const lval=(L,x0,y0)=>L.x.mul(x0).add(L.y.mul(y0)).add(L.k);
+function linStr(L,dec,order=['x','y','k']){ const parts=[]; const push=(c,v)=>{ if(c.isZero()) return; const first=!parts.length; const s=c.n<0?'−':(first?'':'＋'); const a=c.abs(); const body=v?((a.eq(1)?'':absNum(a,dec))+V(v)):absNum(a,dec); parts.push((first?s:`<span style="margin:0 .15em">${s}</span>`)+body); };
+  order.forEach(o=>{ if(o==='x') push(L.x,VX); else if(o==='y') push(L.y,VY); else push(L.k,null); }); return parts.length?parts.join(''):'0'; }
+const nterms=L=>[L.x,L.y,L.k].filter(v=>!v.isZero()).length;
+/* 一邊的式子：terms [{s, t:'lin'|'grp'|'frac', L, k|d}] */
+function sideEval(terms){ return terms.reduce((acc,t)=>{ let v=t.L; if(t.t==='grp') v=lscale(v,t.k); if(t.t==='frac') v=lscale(v,ONE.div(F.of(t.d))); return ladd(acc,lscale(v,t.s)); },lin(0,0,0)); }
+function sideStr(terms,dec){ let h=''; terms.forEach((t,i)=>{ let sign=t.s, body;
+  if(t.t==='lin'){ const L=t.L; if(nterms(L)>1&&i>0){ body=`(${linStr(L,dec,t.order)})`; } else if(nterms(L)>1){ body=linStr(L,dec,t.order); } else { const lead=L.x.n||L.y.n||L.k.n; if(lead<0){ sign*=-1; body=linStr(lscale(L,-1),dec,t.order); } else body=linStr(L,dec,t.order); } }
+  else if(t.t==='grp'){ sign*=Math.sign(t.k.n); const k=t.k.abs(); body=(k.eq(1)?'':absNum(k,dec))+`(${linStr(t.L,dec,t.order)})`; }
+  else { body=fr(linStr(t.L,dec,t.order),absNum(F.of(t.d),dec)); }
+  h+= i===0?(sign<0?'−':'')+body:`<span style="margin:0 .15em">${sign<0?'−':'＋'}</span>${body}`; }); return h; }
+const eqStr=(l,r,dec)=>{const h=`${sideStr(l,dec)}<span style="margin:0 .15em">＝</span>${sideStr(r,dec)}`;REC.push({h,l,r});return h};
+const T=(s,t,L,extra={})=>({s,t,L,...extra});
+/* 使方程式在 (x0,y0) 成立：調整右邊最後一個常數 */
+function balance(lhs,rhs,x0,y0){ const c=lval(sideEval(lhs),x0,y0).sub(lval(sideEval(rhs),x0,y0)); if(c.isZero()) return rhs; const last=rhs[rhs.length-1];
+  if(last.t==='lin'){ const L=last.L; return [...rhs.slice(0,-1),T(last.s,'lin',lin(L.x,L.y,L.k.add(c.mul(last.s))),{order:last.order})]; } return [...rhs,T(1,'lin',lin(0,0,c))]; }
+const sys=(e1,e2,tall)=>`<span style="display:inline-flex;align-items:center;gap:2px"><span style="font-size:${tall?4.2:2.9}em;font-weight:200;line-height:.9;font-family:'Times New Roman',serif;transform:scaleX(.7)">{</span><span style="display:flex;flex-direction:column;gap:2px"><div style="white-space:nowrap">${e1}</div><div style="white-space:nowrap">${e2}</div></span></span>`;
+function solStr(x0,y0,dec){ SOL=[x0,y0]; const f=v=>numStr(v)+(dec&&!v.isInt()&&v.isDec()?`（＝${numStr(v,true)}）`:''); return `<b>${V(VX)}＝${f(x0)}，${V(VY)}＝${f(y0)}</b>`; }
+/* 抽解 */
+function sol(){ const m=D===1?6:9; if(D===3&&coin(.35)){ const d=pick([2,3,4,5,7]); return [new F(rnz(-9,9),d),new F(rnz(-9,9),coin()?d:pick([2,3,4]))]; } return [new F(rnz(-m,m)),new F(rnz(-m,m))]; }
+const cI=(m=D===1?5:9)=>new F(sgn()*rnd(1,m));
+const cF=()=>{ const d=pick(D===1?[2,3,4]:[2,3,4,5,6]); let n=rnd(1,d-1); return new F(sgn()*n,d); };
+const cD=()=>{ let v=rnd(1,D===1?9:19); if(v%10===0) v++; return new F(sgn()*v,10); };
+const T_=()=>pick(TYPES);
+const indep=(L1,L2)=>!L1.x.mul(L2.y).eq(L1.y.mul(L2.x));
+/* 標準式 ax+by=c（係數依類型） */
+function std(type,x0,y0,opt={}){ const c=type==='frac'?cF:type==='dec'?cD:()=>cI(opt.max); let L,v; for(let t=0;t<40;t++){ let a=c(), b=c(); if(opt.one&&coin(.4)) (coin()?a=new F(sgn()):b=new F(sgn())); L=lin(a,b,0); v=lval(L,x0,y0); if(type!=='frac'||v.isInt()||t>30) break; } return {L,eq:eqStr([T(1,'lin',L)],[T(1,'lin',lin(0,0,v))],type==='dec')}; }
+
+/* ================= 各單元 ================= */
+const GEN={
+ sub:{name:'代入消去法',tip:'把其中一個方程式改寫成「y＝x 的一次式」（或 x＝y 的一次式），代入另一個方程式，變成一元一次方程式求解，再代回求另一個未知數。',
+  make(){ const [x0,y0]=sol(); const type=T_(); const dec=type==='dec';
+   const kind=pick(D===1?['y=','x=ky','coef1']:['y=','x=ky','coef1','coef1','=lin']); let e1,L1;
+   if(kind==='y='){ const a=cI(4); L1=lin(a.neg(),1,0); const c=lval(L1,x0,y0); e1=eqStr([T(1,'lin',lin(0,1,0))],[T(1,'lin',lin(a,0,c))],dec); if(coin(.5)){ const b=cI(4); L1=lin(1,b.neg(),0); const c2=lval(L1,x0,y0); e1=eqStr([T(1,'lin',lin(1,0,0))],[T(1,'lin',lin(0,b,c2))],dec); } }
+   else if(kind==='x=ky'){ const k=new F(sgn()*rnd(2,5)); if(!x0.eq(y0.mul(k))){ const yy=y0; const xx=yy.mul(k); return this.makeWith(xx,yy,k,type); } L1=lin(1,k.neg(),0); e1=eqStr([T(1,'lin',lin(1,0,0))],[T(1,'lin',lin(0,k,0))],dec); }
+   else if(kind==='coef1'){ const b=cI(5); L1=coin()?lin(1,b,0):lin(b,1,0); const c=lval(L1,x0,y0); e1=eqStr([T(1,'lin',L1)],[T(1,'lin',lin(0,0,c))],dec); }
+   else { const a=cI(4), b=cI(4); L1=lin(a,b.neg(),0); const c=lval(L1,x0,y0); e1=eqStr([T(1,'lin',lin(a,0,0))],[T(1,'lin',lin(0,b,c))],dec); }
+   let s2; for(let i=0;i<20;i++){ s2=std(type,x0,y0,{one:false}); if(indep(L1,s2.L)) break; }
+   const pair=coin()?[e1,s2.eq]:[s2.eq,e1]; return {q:sys(pair[0],pair[1]),a:solStr(x0,y0,dec),len:12}; },
+  makeWith(xx,yy,k,type){ const dec=type==='dec'; const L1=lin(1,k.neg(),0); const e1=eqStr([T(1,'lin',lin(1,0,0))],[T(1,'lin',lin(0,k,0))],dec); let s2; for(let i=0;i<20;i++){ s2=std(type,xx,yy); if(indep(L1,s2.L)) break; } return {q:sys(e1,s2.eq),a:solStr(xx,yy,dec),len:12}; }},
+ elim:{name:'加減消去法',tip:'先決定要消去哪個未知數（通常挑係數較小的），把它的係數絕對值用乘法化成相同，再「同號相減、異號相加」消去，解出一個未知數後代回求另一個。',
+  make(){ const [x0,y0]=sol(); const type=T_(); const dec=type==='dec';
+   for(let i=0;i<50;i++){ const s1=std(type,x0,y0,{one:D===1}), s2=std(type,x0,y0,{one:D===1}); if(!indep(s1.L,s2.L)) continue;
+     if(type==='int'){ const lx=Math.abs(s1.L.x.n*s2.L.x.n)/gcd(s1.L.x.n,s2.L.x.n), ly=Math.abs(s1.L.y.n*s2.L.y.n)/gcd(s1.L.y.n,s2.L.y.n); if(Math.min(lx,ly)>(D===1?10:D===2?24:45)) continue; }
+     return {q:sys(s1.eq,s2.eq),a:solStr(x0,y0,dec),len:12}; }
+   return this.make(); }},
+ fracdec:{name:'分數型與小數型',tip:'係數是分數：兩邊同乘以分母的最小公倍數；係數是小數：兩邊同乘以 10、100…，先化成整數係數的標準式再求解。',
+  make(){ const [x0,y0]=sol(); const t=TYPES.filter(x=>x!=='int'); const type=t.length?pick(t):pick(['frac','dec']); const dec=type==='dec';
+   const kind=type==='dec'?pick(['std','std','mixed']):pick(D===1?['coef','xoverd']:['coef','xoverd','grpfrac','mixed']); let e1,e2,L1,L2;
+   if(kind==='std'){ const a=std('dec',x0,y0), b=std('dec',x0,y0); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq),a:solStr(x0,y0,true),len:12}; }
+   if(kind==='mixed'){ const a=std(type,x0,y0), b=std('int',x0,y0); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq),a:solStr(x0,y0,dec),len:12}; }
+   const dens=pick([[2,3],[2,4],[3,4],[2,5],[3,6],[4,6]]);
+   if(kind==='coef'){ // ½x − 2y = 3
+     const mk=()=>{ const L=lin(new F(sgn(),pick(dens)),coin()?cI(5):new F(sgn(),pick(dens)),0); return {L,eq:eqStr([T(1,'lin',L)],[T(1,'lin',lin(0,0,lval(L,x0,y0)))],false)}; }; const a=mk(),b=mk(); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq),a:solStr(x0,y0),len:12}; }
+   if(kind==='xoverd'){ // x/3 + y/4 = c
+     const mk=()=>{ const L=lin(new F(sgn(),pick(dens)),new F(sgn(),pick(dens)),0); const c=lval(L,x0,y0); const lhs=[T(L.x.n<0?-1:1,'frac',lin(1,0,0),{d:L.x.d}),T(L.y.n<0?-1:1,'frac',lin(0,1,0),{d:L.y.d})]; return {L,eq:eqStr(lhs,[T(1,'lin',lin(0,0,c))],false)}; }; const a=mk(),b=mk(); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq,true),a:solStr(x0,y0),len:12}; }
+   // grpfrac: (x−1)/6 = 6 − y
+   const mk=()=>{ const d=pick([2,3,4,5,6]); const inner=lin(1,0,rnz(-5,5)); const lhs=[T(1,'frac',inner,{d})]; const rhsL=lin(0,new F(sgn()),0); const rhs=balance(lhs,[T(1,'lin',rhsL,{order:['k','y']})],x0,y0); const L=ladd(sideEval(lhs),lscale(sideEval(rhs),-1)); return {L,eq:eqStr(lhs,rhs,false)}; };
+   const mk2=()=>{ const d=pick([2,3,4,5,6]); const inner=lin(0,1,rnz(-5,5)); const lhs=[T(1,'frac',inner,{d})]; const rhs=balance(lhs,[T(1,'lin',lin(new F(sgn()),0,0),{order:['k','x']})],x0,y0); const L=ladd(sideEval(lhs),lscale(sideEval(rhs),-1)); return {L,eq:eqStr(lhs,rhs,false)}; };
+   const a=mk(), b=mk2(); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq,true),a:solStr(x0,y0),len:14}; }},
+ special:{name:'特殊係數型',tip:'係數很大時不要硬代入或硬消去。x、y 的係數互相交錯（123x＋77y、77x＋123y）：兩式相加、相減得 x＋y、x−y 再解。係數不交錯但相減後係數有公因數：先相減化簡再解。',
+  make(){ const [x0,y0]=[new F(rnz(-6,6)),new F(rnz(-6,6))]; const kind=pick(['swap','swap','diff']);
+   if(kind==='swap'){ const p=rnd(D===1?11:D===2?31:61,D===1?49:D===2?99:199), q=rnd(D===1?11:D===2?31:61,D===1?49:D===2?99:199); if(p===q) return this.make(); const s=coin()?1:-1; const L1=lin(p,q*s,0), L2s=lin(q,p*s,0); // s=-1 時：p x − q y、q x − p y
+     const e1=eqStr([T(1,'lin',L1)],[T(1,'lin',lin(0,0,lval(L1,x0,y0)))]), e2=eqStr([T(1,'lin',L2s)],[T(1,'lin',lin(0,0,lval(L2s,x0,y0)))]);
+     return {q:sys(e1,e2),a:solStr(x0,y0)+`　（兩式相加得 ${V(VX)}${s>0?'＋':'−'}${V(VY)}＝${numStr(x0.add(y0.mul(s)))}，相減得 ${V(VX)}${s>0?'−':'＋'}${V(VY)}＝${numStr(x0.sub(y0.mul(s)))}）`,len:14}; }
+   // diff：eq2 = a x + b y，eq1 = eq2 + t(px+qy)，t 是 10 的倍數
+   const a=rnz(11,79), b=rnz(11,79); const p=rnz(1,4), q=rnz(1,4); const t=pick(D===3?[50,100,150]:[10,20,50]); const L2=lin(a,b,0), L1=lin(a+t*p,b+t*q,0); if(!indep(L1,L2)) return this.make();
+   const e1=eqStr([T(1,'lin',L1)],[T(1,'lin',lin(0,0,lval(L1,x0,y0)))]), e2=eqStr([T(1,'lin',L2)],[T(1,'lin',lin(0,0,lval(L2,x0,y0)))]);
+   return {q:sys(e1,e2),a:solStr(x0,y0)+`　（兩式相減得 ${linStr(lin(t*p,t*q,0))}＝${numStr(lval(lin(t*p,t*q,0),x0,y0))}，化簡成 ${linStr(lin(p,q,0))}＝${numStr(lval(lin(p,q,0),x0,y0))}）`,len:14}; }},
+ chain:{name:'A式＝B式＝C式',tip:'由 A＝B＝C 可以拆成兩個方程式（A＝B 與 B＝C，或 A＝B 與 A＝C），再用代入或加減消去法解。',
+  make(){ const [x0,y0]=sol(); const useFrac=TYPES.includes('frac')&&coin(.5);
+   const mk=()=>{ const L=lin(coin(.7)?cI(5):0,coin(.7)?cI(5):0,rnz(-9,9)); if(nterms(L)<2) return mk(); return L; };
+   let A=mk(),B=mk(),C=mk(); if(!indep(ladd(A,lscale(B,-1)),ladd(B,lscale(C,-1)))) return this.make();
+   if(useFrac){ const ds=[pick([2,3,4,5,10]),pick([2,3,4,5,8]),pick([2,3,4,6,8])]; // (A)/d1 = (B)/d2 = (C)/d3，令共同值 v
+     const v=new F(rnz(-6,6)); const adj=(L,d)=>lin(L.x,L.y,L.k.add(v.mul(d).sub(lval(L,x0,y0)))); A=adj(A,ds[0]); B=adj(B,ds[1]); C=adj(C,ds[2]);
+     const q=`<span style="white-space:nowrap;padding-top:.3em">${fr(linStr(A),ds[0])}<span style="margin:0 .15em">＝</span>${fr(linStr(B),ds[1])}<span style="margin:0 .15em">＝</span>${fr(linStr(C),ds[2])}</span>`; return {q,a:solStr(x0,y0),len:18,chk:()=>{const nv=L=>L.x.val()*x0.val()+L.y.val()*y0.val()+L.k.val();const va=nv(A)/ds[0],vb=nv(B)/ds[1],vc=nv(C)/ds[2];return Math.abs(va-vb)<1e-9&&Math.abs(vb-vc)<1e-9}}; }
+   const v=new F(rnz(-9,9)); const adj=L=>lin(L.x,L.y,L.k.add(v.sub(lval(L,x0,y0)))); A=adj(A); B=adj(B); C=adj(C);
+   return {q:`<span style="white-space:nowrap;padding-top:.3em">${linStr(A)}<span style="margin:0 .15em">＝</span>${linStr(B)}<span style="margin:0 .15em">＝</span>${linStr(C)}</span>`,a:solStr(x0,y0),len:18,chk:()=>{const nv=L=>L.x.val()*x0.val()+L.y.val()*y0.val()+L.k.val();return Math.abs(nv(A)-nv(B))<1e-9&&Math.abs(nv(B)-nv(C))<1e-9}}; }},
+ subst:{name:'替代法',tip:'把重複出現的部分（如 x＋y、x−y、xy）看成新的未知數 a、b，先解出 a、b，再解出 x、y。',
+  make(){ const kind=pick(D===1?['sum-diff']:['sum-diff','xy-y','x+2,y-1']);
+   const p1=rnz(1,6), q1=rnz(1,6), p2=rnz(1,6), q2=rnz(1,6); if(p1*q2===p2*q1) return this.make();
+   let u,v,x0,y0,d1,d2,s,t;
+   if(kind==='sum-diff'){ u=rnz(-8,8); v=rnz(-8,8); if((u+v)%2||u===v||u===-v) return this.make(); x0=new F((u+v)/2); y0=new F((u-v)/2); d1=`${V(VX)}＋${V(VY)}`; d2=`${V(VX)}−${V(VY)}`; }
+   else if(kind==='xy-y'){ y0=new F(rnz(-4,4)); x0=new F(rnz(-4,4)); u=x0.n*y0.n; v=y0.n; d1=`${V(VX)}${V(VY)}`; d2=V(VY); }
+   else { s=rnz(-4,4); t=rnz(-4,4); u=rnz(-6,6); v=rnz(-6,6); if(u===s||v===t) return this.make(); x0=new F(u-s); y0=new F(v-t); d1=linStr(lin(1,0,s)); d2=linStr(lin(0,1,t)); }
+   const r1=new F(p1,u).add(new F(q1,v)), r2=new F(p2,u).add(new F(q2,v));
+   const mkEq=(p,q,r)=>`${p<0?'−':''}${fr(Math.abs(p),d1)}<span style="margin:0 .15em">${q<0?'−':'＋'}</span>${fr(Math.abs(q),d2)}<span style="margin:0 .15em">＝</span>${numStr(r)}`;
+   const s_=typeof s==='number'?s:0,t_=typeof t==='number'?t:0;return {q:sys(mkEq(p1,q1,r1),mkEq(p2,q2,r2),true),a:solStr(x0,y0)+`　（${d1}＝${numStr(new F(u))}，${d2}＝${numStr(new F(v))}）`,len:16,chk:()=>{const X=x0.val(),Y=y0.val();const[U,W]=kind==='sum-diff'?[X+Y,X-Y]:kind==='xy-y'?[X*Y,Y]:[X+s_,Y+t_];return U===u&&W===v&&Math.abs(p1/U+q1/W-r1.val())<1e-9&&Math.abs(p2/U+q2/W-r2.val())<1e-9}}; }},
+ mix:{name:'綜合練習',tip:'混合各種形式：含括號、未化簡的標準式（如 2x＋6y−6＝0）、分數、小數與特殊型，先移項化簡成標準式再選擇適當的方法。',
+  make(){ const kind=pick(['grp','grp','unsimp','sub','elim','fracdec','chain','special','subst']); if(GEN[kind]&&kind!=='mix') return GEN[kind].make();
+   const [x0,y0]=sol(); const dec=false;
+   if(kind==='grp'){ const mk=()=>{ const k=cI(4); const inner=lin(coin(.8)?1:0,coin(.8)?1:0,rnz(-6,6)); if(nterms(inner)<2) return mk(); const lhs=[T(1,'grp',inner,{k}),T(sgn(),'lin',lin(coin()?cI(4):0,coin()?cI(4):0,0))]; const L=sideEval(lhs); if(L.x.isZero()||L.y.isZero()) return mk(); const rhs=coin()?[T(1,'lin',lin(0,0,lval(L,x0,y0)))]:balance(lhs,[T(1,'lin',lin(cI(4),coin()?cI(4):0,0))],x0,y0); return {L:ladd(L,lscale(sideEval(rhs),-1)),eq:eqStr(lhs,rhs)}; };
+     const a=mk(),b=mk(); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq),a:solStr(x0,y0),len:16}; }
+   // unsimp: 2x+y−7=2、2x+6y−6=0
+   const mk=()=>{ const L=lin(cI(6),cI(6),0); const c=lval(L,x0,y0); const k=rnz(-9,9); const lhs=[T(1,'lin',lin(L.x,L.y,-k))]; const rhs=[T(1,'lin',lin(0,0,c.sub(k)))]; return {L,eq:eqStr(lhs,rhs)}; };
+   const a=mk(),b=mk(); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq),a:solStr(x0,y0),len:12}; }},
+};
+
+ const U=[["sub","代入消去法"],["elim","加減消去法"],["fracdec","分數型與小數型"],["special","特殊係數型"],["chain","A式＝B式＝C式"],["subst","替代法"],["mix","綜合練習"]].map(([k,n])=>unit(k,n,GEN[k].tip));
+ return{title:"二元一次聯立方程式",symbol:"{",subtitle:"代入消去法・加減消去法・分數型與小數型・特殊係數型・A＝B＝C・替代法・綜合練習",instruction:"求下列各聯立方程式的解。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"",
+  levels:{basic:"基礎：一式已是 y＝… 或係數為 1；加減消去只需乘一次；分數型兩種；特殊係數在 50 以內。",advanced:"進階：一般標準式、三種分數型與混合型、係數到 99、A＝B＝C 含分數、替代法三種、含括號與未化簡的標準式。",challenge:"挑戰：解可為分數、最小公倍數較大、係數到 199、相減後有公因數的特殊型。"},
+  units:U,presets:{basic:{sub:4,elim:4,fracdec:2,special:1},advanced:{sub:3,elim:3,fracdec:3,special:2,chain:2,subst:2,mix:2},challenge:{elim:3,fracdec:3,special:2,chain:2,subst:2,mix:4}}};
+}
+
+const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,factors:factorsConfig,linear:linearConfig,simultaneous:simultaneousConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
