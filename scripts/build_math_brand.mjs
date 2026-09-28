@@ -66,6 +66,9 @@ for(const file of files){
   const style=el.getAttribute('style').replaceAll('\\','\\\\').replaceAll('"','\\"');
   for(const prop of ['color','background','background-color','border-color']){const value=el.style.getPropertyValue(prop),next=recolor(value);if(value&&next!==value)css+=`\n[style="${style}"]{${prop}:${next}!important}`;}
  }
+ // G9 frequency tables are created at runtime, after the static DOM scan above.
+ // Override only their screen border color; keep inline geometry and print colors.
+ if(file==='tools/math/g9-drills.html')css+='\n.expr table :is(td,th){border-color:var(--bhcs-muted)!important}';
  const base=':root{'+Object.entries(colors).map(([k,v])=>`--bhcs-${k}:${v}`).join(';')+'}';
  const shared=`
 html,body{background-color:var(--bhcs-bg)}

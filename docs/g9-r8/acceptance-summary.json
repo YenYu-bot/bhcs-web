@@ -95,5 +95,19 @@
     "passed": 22,
     "failed": 0,
     "quickMode": false
+  },
+  "ciCorrection": {
+    "checkedHead": "a1851307c5a9c1d087204611fcfd036bbe2f642a",
+    "researcherRun": 36430743545,
+    "researcherConclusion": "failure",
+    "mathRegressionRun": 36430743641,
+    "mathRegressionConclusion": "success",
+    "failedStep": "Compare P1 math worksheets and print layouts",
+    "cause": "quartile dynamically generated table borders retained #7C879B",
+    "fix": "G9-only screen border-color override from brand builder",
+    "generatorAndPrintRulesUnchanged": true,
+    "staticGuardsPassed": true,
+    "quartileStressRerunPassed": true,
+    "fullCiAfterFix": "pending; not polled this turn"
   }
 }
