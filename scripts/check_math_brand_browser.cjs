@@ -2,9 +2,10 @@
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {root,baseline,links,p2EngineFiles,approvedCrosslinks}=require('./check_math_brand.cjs');
 const out=path.resolve(process.env.MATH_BRAND_OUTPUT||'math-brand-artifacts');
-const selected=process.env.MATH_BRAND_LINKS?process.env.MATH_BRAND_LINKS.split(','):[...links,'tools/math/g7-linear-equation.html','tools/math/g7-simultaneous-equations.html','tools/math/g7-inequality.html','tools/math/g7-ratio.html','tools/math/g7-function.html','tools/math/g8-multiplication-formulas.html','tools/math/g8-polynomial-operations.html','tools/math/g8-factorization.html','tools/math/g8-square-roots.html','tools/math/g8-pythagorean.html','tools/math/g8-quadratic-arithmetic-sequence.html','tools/math/g9b-1-1-quadratic-function.html','tools/math/g9b-2-1-quartiles.html'];
+const selected=process.env.MATH_BRAND_LINKS?process.env.MATH_BRAND_LINKS.split(','):[...links,'tools/math/g9b-2-2-probability.html','tools/math/g7-linear-equation.html','tools/math/g7-simultaneous-equations.html','tools/math/g7-inequality.html','tools/math/g7-ratio.html','tools/math/g7-function.html','tools/math/g8-multiplication-formulas.html','tools/math/g8-polynomial-operations.html','tools/math/g8-factorization.html','tools/math/g8-square-roots.html','tools/math/g8-pythagorean.html','tools/math/g8-quadratic-arithmetic-sequence.html','tools/math/g9b-1-1-quadratic-function.html','tools/math/g9b-2-1-quartiles.html'];
 // These legacy pages gained header links; compare the generated questions, not the header.
 const worksheetSelectors={
+ 'tools/math/g9b-2-2-probability.html':'#questions-container',
  'tools/math/g9b-2-1-boxplot.html':'#questions-container',
  'tools/math/g9b-2-1-quartiles.html':'#questions-container',
  'tools/math/g9b-1-1-quadratic-function.html':'#questions-container',

@@ -1,0 +1,13 @@
+PASS probability/bag/basic/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=104
+PASS probability/bag/advanced/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=115
+PASS probability/bag/challenge/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=93
+PASS probability/numbers/basic/integer ok=200/200 耗盡=0 候選null=18 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=8
+PASS probability/numbers/advanced/integer ok=200/200 耗盡=0 候選null=10 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=7
+PASS probability/numbers/challenge/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=7
+PASS probability/dice/basic/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=31
+PASS probability/dice/advanced/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=26
+PASS probability/dice/challenge/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=30
+PASS probability/poker/basic/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=151
+PASS probability/poker/advanced/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=138
+PASS probability/poker/challenge/integer ok=200/200 耗盡=0 候選null=0 verify失敗=0 例外=0 欄位錯=0 卷內重複=0 結構數=96
+PASS
