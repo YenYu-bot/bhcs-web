@@ -120,7 +120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["scinot","科學記號"],["factors","因數與倍數"],["linear","一元一次式與方程式"],["simultaneous","二元一次聯立方程式"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["signed","正負數四則運算"],["exponent","指數律"],["scinot","科學記號"],["factors","因數與倍數"],["linear","一元一次式與方程式"],["simultaneous","二元一次聯立方程式"],["inequality","一元一次不等式"],["numberline","數線與絕對值"],["coordinate","直角坐標"],["lineeq","二元一次方程式的圖形"],["statistics","統計圖表與資料分析"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numberline",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1535,7 +1535,532 @@ const GEN={
   units:U,presets:{basic:{sub:4,elim:4,fracdec:2,special:1},advanced:{sub:3,elim:3,fracdec:3,special:2,chain:2,subst:2,mix:2},challenge:{elim:3,fracdec:3,special:2,chain:2,subst:2,mix:4}}};
 }
 
-const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,factors:factorsConfig,linear:linearConfig,simultaneous:simultaneousConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
+function inequalityConfig(){
+ /* 國一 一元一次不等式（2026-09-27，Claude）。由舊的 g7-inequality.html（百宏自製）移植進引擎：有理數、一次式、運算式項目、解集合、解題步驟、數線 SVG 與
+    十個單元（基本型、括號型、分數型、小數型、合併形式、畫數線、讀數線、解不等式並圖示、絕對值不等式、綜合練習）照舊，只換成引擎的難度／數型介面。
+    需要在數線上作答的題（畫數線、解不等式並圖示、絕對值）題幹下方附一條空白數線；教用版的答案含解的數線。
+    verify：對解集合的每個端點與端點兩側的點，直接把 x 代入原不等式兩邊（val 求值＋比較）檢查是否符合開閉區間；無解時抽多個點檢查皆不成立。 */
+ const CFGI={lvl:2,types:['int']};
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a}
+function lcm(a,b){return a/gcd(a,b)*b}
+class F{
+  constructor(n,d=1){ if(d<0){n=-n;d=-d} const g=gcd(n,d)||1; this.n=n/g; this.d=d/g }
+  static of(x){return x instanceof F?x:new F(x)}
+  add(o){o=F.of(o);return new F(this.n*o.d+o.n*this.d,this.d*o.d)}
+  sub(o){o=F.of(o);return new F(this.n*o.d-o.n*this.d,this.d*o.d)}
+  mul(o){o=F.of(o);return new F(this.n*o.n,this.d*o.d)}
+  div(o){o=F.of(o);return new F(this.n*o.d,this.d*o.n)}
+  neg(){return new F(-this.n,this.d)}
+  abs(){return new F(Math.abs(this.n),this.d)}
+  cmp(o){o=F.of(o);return Math.sign(this.n*o.d-o.n*this.d)}
+  eq(o){return this.cmp(o)===0}
+  get sign(){return Math.sign(this.n)}
+  isInt(){return this.d===1}
+  isZero(){return this.n===0}
+  toNum(){return this.n/this.d}
+}
+const Z=new F(0), ONE=new F(1);
+// 一次式 p x + q
+class L{
+  constructor(p,q){this.p=F.of(p);this.q=F.of(q)}
+  add(o){return new L(this.p.add(o.p),this.q.add(o.q))}
+  sub(o){return new L(this.p.sub(o.p),this.q.sub(o.q))}
+  scale(k){return new L(this.p.mul(k),this.q.mul(k))}
+  at(x){return this.p.mul(x).add(this.q)}
+}
+
+// ================= 亂數 =================
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const chance=p=>Math.random()<p;
+const nz=(a,b)=>{let v;do{v=ri(a,b)}while(v===0);return v};
+const sgn=()=>chance(.5)?1:-1;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// ================= 顯示 =================
+const MINUS='−';
+function decStr(f){ // 假設分母整除 1000
+  let k=0; while((Math.pow(10,k))%f.d!==0)k++;
+  const n=Math.abs(f.n)*Math.pow(10,k)/f.d;
+  let s=String(n); while(s.length<=k)s='0'+s;
+  s=k?s.slice(0,s.length-k)+'.'+s.slice(s.length-k):s;
+  return (f.n<0?MINUS:'')+s;
+}
+function isDecDen(d){return 1000%d===0}
+function frHTML(n,d){return `<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`}
+// dec: 允許以小數顯示；abs: 不顯示負號；mixed: 帶分數
+function num(f,o={}){
+  f=F.of(f);
+  const neg=f.n<0&&!o.abs, a=Math.abs(f.n);
+  if(f.d===1) return (neg?MINUS:'')+a;
+  if(o.dec&&isDecDen(f.d)) return (neg?MINUS:'')+decStr(f.abs());
+  if(o.mixed&&a>f.d){const w=Math.floor(a/f.d);return (neg?MINUS:'')+w+frHTML(a-w*f.d,f.d)}
+  return (neg?MINUS:'')+frHTML(a,f.d);
+}
+const RELS={'<':'&lt;','>':'&gt;','le':'≦','ge':'≧'};
+const rel=r=>`<span style="margin:0 .2em">${RELS[r]}</span>`;
+const flip=r=>({'<':'>','>':'<','le':'ge','ge':'le'})[r];
+const X='<var>x</var>';
+
+// 式子 = 項目陣列；項目 {c:F, dec?, body:null|'x'|{br:Expr}|{fr:Expr,den:F}}
+const T=(c,body=null,dec=false)=>({c:F.of(c),body,dec});
+const brT=(c,inner,dec=false)=>T(c,{br:inner},dec);
+const frT=(c,inner,den,dec=false)=>T(c,{fr:inner,den:F.of(den)},dec);
+const lin=(a,b,dec=false)=>{const t=[];if(!F.of(a).isZero())t.push(T(a,'x',dec));if(!F.of(b).isZero())t.push(T(b,null,dec));return t.length?t:[T(0)]};
+
+function val(e){ // Expr -> L
+  let r=new L(0,0);
+  for(const t of e){
+    let v;
+    if(t.body===null) v=new L(0,1);
+    else if(t.body==='x') v=new L(1,0);
+    else if(t.body.br) v=val(t.body.br);
+    else v=val(t.body.fr).scale(ONE.div(t.body.den));
+    r=r.add(v.scale(t.c));
+  }
+  return r;
+}
+function renderTerm(t,first){
+  const neg=t.c.sign<0, m=t.c.abs(), one=m.eq(1), coef=num(m,{dec:t.dec});
+  const sign=first?(neg?MINUS:''):(`<span style="margin:0 .15em">${neg?MINUS:'+'}</span>`);
+  let body;
+  if(t.body===null) body=coef;
+  else if(t.body==='x') body=(one?'':coef)+X;
+  else if(t.body.br) body=(one?'':coef)+'('+render(t.body.br)+')';
+  else{
+    const fr=frHTML(render(t.body.fr),num(t.body.den));
+    body=one?fr:coef+'('+fr+')';
+  }
+  return sign+body;
+}
+function render(e){
+  const ts=e.filter(t=>!t.c.isZero());
+  if(!ts.length)return '0';
+  return ts.map((t,i)=>renderTerm(t,i===0)).join('');
+}
+function renderL(l,dec=false){return render(lin(l.p,l.q,dec))}
+function hasStruct(e){return e.some(t=>t.body&&t.body!=='x')}
+function denLcm(...fs){return fs.reduce((m,f)=>lcm(m,f.d),1)}
+
+// ================= 解集合 =================
+// {lo,loOpen,hi,hiOpen} | null(無解) | {union:[setA,setB]}
+function fromRel(r,v){
+  if(r==='<')return{hi:v,hiOpen:true,lo:null};
+  if(r==='le')return{hi:v,hiOpen:false,lo:null};
+  if(r==='>')return{lo:v,loOpen:true,hi:null};
+  return{lo:v,loOpen:false,hi:null};
+}
+function inter(a,b){
+  if(!a||!b)return null;
+  let lo=a.lo,loOpen=a.loOpen,hi=a.hi,hiOpen=a.hiOpen;
+  if(b.lo!==null&&b.lo!==undefined){ if(lo===null||lo===undefined||b.lo.cmp(lo)>0||(b.lo.eq(lo)&&b.loOpen)){lo=b.lo;loOpen=b.loOpen} }
+  if(b.hi!==null&&b.hi!==undefined){ if(hi===null||hi===undefined||b.hi.cmp(hi)<0||(b.hi.eq(hi)&&b.hiOpen)){hi=b.hi;hiOpen=b.hiOpen} }
+  const s={lo:lo??null,loOpen:!!loOpen,hi:hi??null,hiOpen:!!hiOpen};
+  if(s.lo&&s.hi){const c=s.lo.cmp(s.hi); if(c>0||(c===0&&(s.loOpen||s.hiOpen)))return null;}
+  return s;
+}
+function setHTML(s,o={}){ // o.rev 反向寫法, o.mixed, o.dec
+  if(!s)return '無解';
+  if(s.union)return setHTML(s.union[0],o)+' 或 '+setHTML(s.union[1],o);
+  const n=v=>num(v,o);
+  const lr=s.loOpen?'<':'le', hr=s.hiOpen?'<':'le';
+  if(s.lo&&s.hi){
+    if(s.lo.eq(s.hi))return X+' = '+n(s.lo);
+    return o.rev? n(s.hi)+rel(flip(hr))+X+rel(flip(lr))+n(s.lo) : n(s.lo)+rel(lr)+X+rel(hr)+n(s.hi);
+  }
+  if(s.lo) return o.rev? n(s.lo)+rel(flip(lr))+X : X+rel(flip(lr))+n(s.lo);
+  return o.rev? n(s.hi)+rel(flip(hr))+X : X+rel(hr)+n(s.hi);
+}
+
+// ================= 解題步驟 =================
+// 解 Lexpr rel Rexpr；回傳 {steps:[html], set, ok}
+function solve(Le,Re,r,dec=false){
+  const s=[];
+  let a=val(Le), b=val(Re);
+  if(a.p.eq(b.p))return{ok:false};
+  if(hasStruct(Le)||hasStruct(Re)) s.push(renderL(a,dec)+rel(r)+renderL(b,dec));
+  const M=denLcm(a.p,a.q,b.p,b.q);
+  if(M>1){a=a.scale(M);b=b.scale(M);s.push('同乘以 '+M+'：'+renderL(a)+rel(r)+renderL(b))}
+  const A=a.p.sub(b.p), B=b.q.sub(a.q);
+  const st=renderL(new L(A,0))+rel(r)+num(B);
+  if(s[s.length-1]!==st&&!(a.q.isZero()&&b.p.isZero()&&s.length===0&&false)) s.push(st);
+  const r2=A.sign>0?r:flip(r), v=B.div(A);
+  const fin=X+rel(r2)+num(v);
+  if(s[s.length-1]!==fin)s.push(fin);
+  return{ok:true,steps:s,set:fromRel(r2,v)};
+}
+const join=st=>st.join('，');
+const CMP={'<':(a,b)=>a.cmp(b)<0,'>':(a,b)=>a.cmp(b)>0,'le':(a,b)=>a.cmp(b)<=0,'ge':(a,b)=>a.cmp(b)>=0};
+const chk=(Le,Re,r)=>{const a=val(Le),b=val(Re);return x=>CMP[r](a.at(x),b.at(x))};
+
+// ================= 數線 SVG =================
+function svgNum(f,x,y,o){ // 數線標籤
+  f=F.of(f);
+  if(f.d===1||(o.dec&&isDecDen(f.d))) return `<text x="${x}" y="${y}" text-anchor="middle" font-size="11">${num(f,o).replace('&','&amp;')}</text>`;
+  const neg=f.n<0,a=Math.abs(f.n);let w=0,n=a;
+  if(o.mixed!==false&&a>f.d){w=Math.floor(a/f.d);n=a-w*f.d}
+  const pre=(neg?MINUS:'')+(w||'');
+  const pw=pre.length*5.5, tot=pw+11, sx=x-tot/2;
+  let out='';
+  if(pre)out+=`<text x="${sx+pw}" y="${y+2}" text-anchor="end" font-size="11">${pre}</text>`;
+  const fx=sx+pw+5.5;
+  out+=`<text x="${fx}" y="${y-2}" text-anchor="middle" font-size="8.5">${n}</text><line x1="${fx-5}" x2="${fx+5}" y1="${y}" y2="${y}" stroke="currentColor" stroke-width="1"/><text x="${fx}" y="${y+8}" text-anchor="middle" font-size="8.5">${f.d}</text>`;
+  return out;
+}
+function nlSVG(set,o={}){
+  const W=240,H=50,ax=8,bx=222,y=20;
+  let g=`<line x1="${ax}" x2="${bx}" y1="${y}" y2="${y}" stroke="currentColor" stroke-width="1.2"/><polygon points="${bx},${y-4} ${bx+9},${y} ${bx},${y+4}" fill="currentColor"/>`;
+  const cls='nl'+(o.blank?' blank':'');
+  if(!o.blank){
+    if(!set) g+=`<text x="${W/2}" y="${y+18}" text-anchor="middle" font-size="12">無解</text>`;
+    else{
+      const parts=set.union?set.union:[set];
+      const pts=[];parts.forEach(s=>{if(s.lo)pts.push(s.lo);if(s.hi&&!(s.lo&&s.hi.eq(s.lo)))pts.push(s.hi)});
+      pts.sort((a,b)=>a.cmp(b));
+      const pos={};const span=bx-ax-20;
+      if(pts.length===1)pos[0]=ax+10+span*.45; else pts.forEach((p,i)=>pos[i]=ax+10+span*(0.22+0.56*i/(pts.length-1)));
+      const px=v=>pos[pts.findIndex(p=>p.eq(v))];
+      const thick=(x1,x2,arrow)=>{let h=`<line x1="${x1}" x2="${x2}" y1="${y}" y2="${y}" stroke="currentColor" stroke-width="4.5" stroke-linecap="butt"/>`;if(arrow)h+=`<polygon points="${x2-2},${y-6} ${x2+10},${y} ${x2-2},${y+6}" fill="currentColor"/>`;return h};
+      for(const s of parts){
+        const x1=s.lo?px(s.lo):ax, x2=s.hi?px(s.hi):bx-8;
+        g+=thick(x1,x2,!s.hi);
+      }
+      for(const s of parts){
+        if(s.lo)g+=`<circle cx="${px(s.lo)}" cy="${y}" r="3.8" stroke="currentColor" stroke-width="1.6" fill="${s.loOpen?'#fff':'currentColor'}"/>`;
+        if(s.hi)g+=`<circle cx="${px(s.hi)}" cy="${y}" r="3.8" stroke="currentColor" stroke-width="1.6" fill="${s.hiOpen?'#fff':'currentColor'}"/>`;
+      }
+      pts.forEach((p,i)=>g+=svgNum(p,pos[i],y+19,o));
+    }
+  }
+  return `<svg class="fig" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;max-width:100%;height:auto">${g}</svg>`;
+}
+
+// ================= 係數形式 =================
+let CFG=CFGI;
+function style(pOther){ // 依勾選決定係數形式
+  const t=CFG.types; if(t.length===1)return t[0];
+  if(t.includes('int')&&!chance(pOther))return 'int';
+  return pick(t.filter(x=>x!=='int').length?t.filter(x=>x!=='int'):t);
+}
+function coef(st,lo,hi,{allowNeg=true,nonzero=true}={}){ // 依形式產生係數
+  const s=allowNeg?sgn():1;
+  if(st==='frac'){const d=pick([2,3,4,5,6]);let n;do{n=ri(1,Math.max(2,Math.min(hi,9)))}while(gcd(n,d)!==1);return{v:new F(s*n,d),dec:false}}
+  if(st==='dec'){let n;do{n=ri(1,Math.min(hi*10,29))}while(n%10===0&&chance(.8));return{v:new F(s*n,10),dec:true}}
+  const n=nonzero?nz(lo,hi):ri(lo,hi);return{v:new F(s*Math.abs(n)),dec:false};
+}
+const pickRel=()=>pick(['<','>','le','ge']);
+
+// ================= 單元產生器 =================
+// 每題回傳 {html, ans(html), set, line:bool(學用版留數線)}
+function retry(fn){for(let i=0;i<60;i++){const r=fn();if(r)return r}return fn(true)}
+
+function genBasic(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    const st=style(lvl===1?.3:.5);
+    const a=coef(st,2,lvl===3?15:9,{allowNeg:true}).v, adec=st==='dec';
+    let Le,Re;
+    if(lvl===1){
+      const x0=ri(-9,9)*(a.isInt()||adec?1:a.d), b=ri(-20,20);
+      const c=a.mul(x0).add(b);
+      Le=[T(a,'x',adec),T(b)]; if(b===0)Le=[T(a,'x',adec)];
+      Re=[T(c,null,adec)];
+      if(chance(.25)){[Le,Re]=[Re,Le]}
+    }else{
+      const st2=style(.4);
+      let c=coef(st2,1,lvl===3?15:9).v; if(c.eq(a))c=c.add(1);
+      const rng=lvl===3?60:30;
+      const b=ri(-rng,rng);
+      let d;
+      if(lvl===2&&chance(.6)){const x0=ri(-9,9)*((adec||st2==='dec')?1:denLcm(a,c));d=a.sub(c).mul(x0).add(b)} else d=new F(ri(-rng,rng));
+      const mk=(p,q,dec)=>{const t=lin(p,q,dec);return chance(.3)?t.slice().reverse():t};
+      Le=mk(a,b,adec); Re=mk(c,d,st2==='dec');
+    }
+    const so=solve(Le,Re,r);
+    if(!so.ok)return null;
+    if(lvl===1&&!so.set&&false)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+function innerLin(lvl){ // 括號內 ax+b
+  const a=nz(-(lvl>=2?5:3),lvl>=2?5:3), b=nz(-9,9);
+  return lin(a,b);
+}
+function genBracket(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    let Le,Re;
+    if(lvl===1){
+      const k=nz(-7,9), inner=lvl===1?lin(pick([1,1,2,3]),nz(-9,9)):innerLin(1);
+      const x0=ri(-8,8);
+      const m=chance(.6)?nz(-20,20):0;
+      Le=[brT(k,inner)]; if(m)Le.push(T(m));
+      Re=[T(val(Le).at(x0))];
+      if(chance(.3)){[Le,Re]=[Re,Le]}
+    }else if(lvl===2){
+      const k=nz(-6,7), n=nz(-6,7), i1=innerLin(2), i2=innerLin(2);
+      const m=chance(.6)?nz(-20,20):0;
+      Le=[brT(k,i1)]; if(m)Le.push(T(m));
+      Re=[brT(n,i2)];
+      if(chance(.6)){const x0=ri(-8,8);const e=val(Le).at(x0).sub(val(Re).at(x0));if(!e.isZero())Re.push(T(e))}
+      else if(chance(.5))Re.push(T(nz(-20,20)));
+      if(chance(.3))Re=Re.reverse();
+    }else{
+      const st=style(.5);
+      const c1=coef(st,2,7),c2=coef(style(.5),2,7),c3=coef(style(.3),2,7);
+      const i1=innerLin(3),i2=innerLin(3),i3=innerLin(3);
+      if(st==='frac'&&chance(.5)){ // 括號內含分數常數，如 6(2x − 3/2)
+        i3[1]=T(new F(nz(-9,9),pick([2,3,4])));
+      }
+      Le=[brT(c1.v,i1,c1.dec),brT(c2.v,i2,c2.dec)];
+      Re=[brT(c3.v,i3,c3.dec)];
+      if(chance(.3))Re.push(T(nz(-20,20)));
+      if(chance(.25))[Le,Re]=[Re,Le];
+    }
+    const so=solve(Le,Re,r);
+    if(!so.ok)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+function fracC(maxD=6){const d=pick([2,3,4,5,6].filter(x=>x<=maxD));let n;do{n=nz(-9,9)}while(gcd(n,d)!==1);return new F(n,d)}
+function genFrac(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    let Le,Re;
+    const il=()=>lin(nz(-5,5),nz(-7,7));
+    const dens=()=>{let a=pick([2,3,4,5,6]),b;do{b=pick([2,3,4,5,6])}while(b===a);return[a,b]};
+    const form=lvl===1?pick([1,2]):lvl===2?pick([3,4,7,2]):pick([5,6,7,8]);
+    if(form===1){const[d,f]=dens();Le=[frT(1,il(),d)];Re=[frT(1,il(),f)];if(chance(.4))Re.push(T(nz(-6,6)))}
+    else if(form===2){ // 1/3 x + 5/6 ≧ 10 − 1/2 x
+      Le=[T(fracC(),'x'),T(fracC())]; Re=[T(nz(-12,12)),T(fracC(),'x')]; if(chance(.4))Re.reverse();
+    }else if(form===3){const[d,f]=dens();Le=[frT(1,il(),d),frT(pick([1,-1]),il(),f)];Re=[T(nz(-9,9))];}
+    else if(form===4){const[d,f]=dens();Le=[frT(1,il(),d)];Re=[frT(1,il(),f),T(fracC(lcm(d,f)))];}
+    else if(form===5){ // 3/2 x − (2x−1)/6 < (3x+1)/2 − 5/2 ；x/2 − (3x−4)/3 ≧ (2x−1)/9
+      const[d,f]=dens();
+      Le=[chance(.5)?T(fracC(),'x'):frT(1,[T(1,'x')],pick([2,3,4])),frT(-1,il(),d)];
+      Re=[frT(1,il(),f)];if(chance(.6))Re.push(T(fracC()));
+    }else if(form===6){ // 3/2(4x−6) > −5/3(3x−9) ；3/2(x−8) < −1/3 x + 1/2
+      Le=[brT(fracC(),il())];
+      Re=chance(.5)?[brT(fracC(),il())]:[T(fracC(),'x'),T(fracC())];
+    }else if(form===7){const[d,f]=dens();Le=[frT(1,il(),d),frT(1,il(),f)];Re=[T(fracC(lcm(d,f)))];if(chance(.3))Re=[T(nz(-9,9))]}
+    else{ // 8: 3/8 x − (2x+1)/12 > (3x+1)/6 − 9/8
+      Le=[T(fracC(8),'x'),frT(-1,il(),pick([4,6,8,12]))];Re=[frT(1,il(),pick([3,6,8])),T(new F(nz(-9,9),8))];
+    }
+    const so=solve(Le,Re,r);
+    if(!so.ok)return null;
+    const M=denLcm(val(Le).p,val(Le).q,val(Re).p,val(Re).q); if(M>72)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+const dc=(lo,hi)=>{let n;do{n=nz(lo,hi)}while(n%10===0);return new F(n,10)};
+const dcT=(lo,hi,body)=>T(dc(lo,hi),body,true);
+function genDec(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const r=pickRel();
+    let Le,Re;
+    const form=lvl===1?pick([1,1,5]):lvl===2?pick([2,5,6]):pick([3,4,6]);
+    const dlin=()=>[dcT(-19,19,'x'),dcT(-99,99,null)]; // 0.7x + 2.3
+    if(form===1){ // 0.7x+23.5<1.1x−21.3
+      Le=[dcT(-19,19,'x'),T(chance(.5)?dc(-399,399):new F(ri(-30,30)),null,true)];
+      Re=[dcT(-19,19,'x'),T(chance(.5)?dc(-399,399):new F(ri(-30,30)),null,true)];
+      if(chance(.3))Re.reverse();
+    }else if(form===2){ // 0.2x − 3(0.5x−1) > 0.5x+5 ；0.3(0.2x−0.4) ≧ 0.9
+      if(chance(.5)){let kb;do{kb=nz(-5,5)}while(kb===1);Le=[dcT(-9,9,'x'),brT(kb,[dcT(-9,9,'x'),T(nz(-5,5))])];Re=[dcT(-9,9,'x'),T(nz(-9,9))]}
+      else{Le=[brT(dc(-9,9),[dcT(-9,9,'x'),dcT(-9,9,null)],true)];Re=[dcT(-29,29,null)]}
+    }else if(form===3){ // 1.4((x−4)/2) − 0.6(2x−3) < 0.5((2x+5)/5)
+      Le=[frT(dc(1,19),lin(pick([1,1,2,3]),nz(-9,9)),pick([2,5]),true),brT(dc(-9,9),lin(nz(-3,3),nz(-9,9)),true)];
+      Re=[frT(dc(1,9),lin(nz(-3,3),nz(-9,9)),pick([2,5]),true)];
+    }else if(form===4){ // 0.6(3x−7) − 5/2(2x−1) ≦ 12
+      const useF=CFG.types.includes('frac');
+      Le=[brT(dc(-9,9),lin(nz(-4,4),nz(-9,9)),true),useF?brT(fracC(4),lin(nz(-3,3),nz(-9,9))):brT(dc(-9,9),lin(nz(-3,3),nz(-9,9)),true)];
+      Re=[T(ri(-20,20))];
+    }else if(form===5){ // 1.2x+3.6 < 2.4(x−1)+0.9
+      Le=[dcT(-29,29,'x'),dcT(-59,59,null)];Re=[brT(dc(-29,29),lin(1,nz(-5,5)),true),dcT(-19,19,null)];
+      if(chance(.4))[Le,Re]=[Re,Le];
+    }else{ // 6: 1.3(x+3)+2.8 ≧ 3.1(2x−1)
+      Le=[brT(dc(-29,29),lin(pick([1,1,2]),nz(-5,5)),true),dcT(-39,39,null)];Re=[brT(dc(-29,29),lin(pick([1,2,3]),nz(-5,5)),true)];
+    }
+    const so=solve(Le,Re,r,true);
+    if(!so.ok)return null;
+    return{html:render(Le)+rel(r)+render(Re),ans:join(so.steps),set:so.set,_f:chk(Le,Re,r)};
+  });
+}
+
+// 合併形式：a<b<c 與聯立
+function genCombined(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    const isSys=chance(.5);
+    const r1=pick(['<','le']), r2=pick(['<','le']);
+    let E1,E2,E3, rels;
+    if(!isSys){
+      if(lvl===1){
+        if(chance(.5)){E1=[T(ri(-9,9))];E2=lin(nz(-7,9),nz(-9,9));E3=[T(ri(1,25))];if(val(E2).p.sign<0&&chance(.5)){} }
+        else{E1=lin(nz(-5,7),nz(-12,12));E2=[T(ri(-9,9))];E3=lin(nz(-5,7),nz(-12,12));}
+        rels=[r1,r2];
+        if(chance(.4))rels=[flip(r1),flip(r2)]; // 2x−4>2>3x−13
+      }else if(lvl===2){
+        const mk=()=>chance(.5)?lin(nz(-5,5),nz(-15,15)):[brT(nz(-4,4),lin(pick([1,2,3]),nz(-9,9))),T(nz(-15,15))];
+        E1=mk();E2=mk();E3=mk(); rels=chance(.7)?[r1,r2]:[flip(r1),flip(r2)];
+      }else{ // 3/2 < 1/2(3x−8)+11 < 10 ；−20x<2x+8<20 ；(x+2)/5 < (x−1)/2 ≦ (x+3)/4
+        const f=chance(.5);
+        if(f){E1=[T(chance(.5)?fracC():ri(-9,9))];E2=[brT(fracC(3),lin(nz(-4,4),nz(-9,9))),T(nz(-12,12))];E3=[T(ri(-9,20))];rels=[r1,r2]}
+        else{const d=()=>pick([2,3,4,5]);E1=[frT(1,lin(1,nz(-5,5)),d())];E2=[frT(1,lin(pick([1,2]),nz(-5,5)),d())];E3=[frT(1,lin(1,nz(-5,5)),d())];rels=[r1,r2]}
+      }
+      const s1=solve(E1,E2,rels[0]), s2=solve(E2,E3,rels[1]);
+      if(!s1.ok||!s2.ok)return null;
+      const set=inter(s1.set,s2.set);
+      if(!set&&!(lvl>=2&&chance(.25)))return null;
+      if(set&&set.lo&&set.hi&&set.lo.eq(set.hi))return null;
+      const html=render(E1)+rel(rels[0])+render(E2)+rel(rels[1])+render(E3);
+      const ans='由①：'+join(s1.steps)+'；由②：'+join(s2.steps)+'；故 <b>'+setHTML(set)+'</b>';
+      return{html,ans,set,_f:x=>chk(E1,E2,rels[0])(x)&&chk(E2,E3,rels[1])(x)};
+    }else{
+      const rA=pickRel(), rB=pickRel();
+      let LA,RA,LB,RB;
+      if(lvl===1){LA=lin(nz(-7,9),nz(-20,20));RA=lin(nz(-7,9),nz(-20,20));LB=lin(nz(-7,9),nz(-20,20));RB=lin(nz(-7,9),nz(-20,20));if(chance(.4))RB=[T(ri(-20,30))]}
+      else if(lvl===2){const mk=()=>chance(.5)?lin(nz(-5,5),nz(-15,15)):[brT(nz(-4,4),lin(pick([1,2,3]),nz(-9,9)))];LA=mk();RA=mk();LB=mk();RB=mk();if(chance(.5))RB.push(T(nz(-9,9)))}
+      else{
+        const st=style(.6);
+        const mk=()=>{const c=coef(st,1,5);return chance(.5)?[T(c.v,'x',c.dec),T(coef(st,1,9).v,null,c.dec)]:[brT(c.v,lin(pick([1,2,3]),nz(-9,9)),c.dec)]};
+        LA=mk();RA=mk();LB=mk();RB=mk();if(chance(.5))RB.push(T(nz(-9,9)));
+      }
+      const dec=lvl===3;
+      const s1=solve(LA,RA,rA,dec), s2=solve(LB,RB,rB,dec);
+      if(!s1.ok||!s2.ok)return null;
+      const set=inter(s1.set,s2.set);
+      if(!set&&!(lvl>=2&&chance(.25)))return null;
+      if(set&&set.lo&&set.hi&&set.lo.eq(set.hi))return null;
+      const html=`<span style="display:inline-flex;align-items:center;gap:2px"><span style="font-size:2.6em;font-weight:200;line-height:.9;font-family:'Times New Roman',serif;transform:scaleX(.7)">{</span><span style="display:flex;flex-direction:column;gap:2px"><span style="white-space:nowrap">${render(LA)+rel(rA)+render(RA)}</span><span style="white-space:nowrap">${render(LB)+rel(rB)+render(RB)}</span></span></span>`;
+      const ans='由①：'+join(s1.steps)+'；由②：'+join(s2.steps)+'；故 <b>'+setHTML(set)+'</b>';
+      return{html,ans,set,tall:true,_f:x=>chk(LA,RA,rA)(x)&&chk(LB,RB,rB)(x)};
+    }
+  });
+}
+
+// 圖示法端點
+function endpoint(lvl){
+  const st=lvl===1?'int':style(.5);
+  if(st==='dec')return{v:dc(-99,99),dec:true};
+  if(st==='frac'){const d=pick([2,3,4]);let n;do{n=nz(-20,20)}while(gcd(n,d)!==1);return{v:new F(n,d),dec:false}}
+  return{v:new F(ri(-9,9)),dec:false};
+}
+function randSet(lvl){
+  const two=chance(lvl===1?.75:.65);
+  const a=endpoint(lvl); let dec=a.dec;
+  if(!two)return{set:fromRel(pickRel(),a.v),dec};
+  let b;do{b=endpoint(lvl)}while(b.v.eq(a.v)); dec=dec||b.dec;
+  const[lo,hi]=a.v.cmp(b.v)<0?[a.v,b.v]:[b.v,a.v];
+  return{set:{lo,loOpen:chance(.5),hi,hiOpen:chance(.5)},dec};
+}
+function genGraphDraw(){
+  const {set,dec}=randSet(CFG.lvl);
+  const rev=CFG.lvl>=2&&chance(.4);
+  const o={mixed:true,dec,rev};
+  return{html:setHTML(set,o),ans:nlSVG(set,{mixed:true,dec}),set,line:true,nlOnly:true};
+}
+function genGraphRead(){
+  const {set,dec}=randSet(CFG.lvl);
+  const o={mixed:true,dec};
+  const pts=[set.lo,set.hi].filter(Boolean).map(v=>num(v,{mixed:true,dec}));const judge=CFG.lvl===3&&chance(.4);const lead=judge?`如圖，寫出 x 的範圍，並判斷 x＝${pts[0]} 是不是這個範圍內的數。`:chance(1/3)?'如圖（空心圓不含端點、實心圓含端點），寫出 x 的範圍。':pts.length===2?`如圖，數線上標示的端點為 ${pts[0]} 與 ${pts[1]}，寫出 x 的範圍。`:`如圖，數線上標示的端點為 ${pts[0]}，寫出 x 的範圍。`;const inc=set.lo?!set.loOpen:!set.hiOpen;return{html:nlSVG(set,o)+'<div style="margin-top:4px">'+lead+'</div>',ans:'<b>'+setHTML(set,o)+'</b>'+(judge?(inc?'；是（端點為實心圓）':'；不是（端點為空心圓）'):''),set,noWork:true};
+}
+function genSolveGraph(){
+  const lvl=CFG.lvl;
+  const g=lvl===1?pick([genBasic,genBracket]):lvl===2?pick([genBracket,genFrac,genBasic]):pick([genFrac,genDec,genBracket,genCombined]);
+  const q=g(); q.line=true; q.ans+=nlSVG(q.set,{mixed:false,dec:g===genDec}); return q;
+}
+
+function genAbs(){
+  const lvl=CFG.lvl;
+  return retry(()=>{
+    let a,b,k,r,extra=0,den=1,dec=false;
+    if(lvl===1){
+      r=pick(['le','<']);
+      a=ri(1,4); let e1=ri(-8,6),e2; do{e2=ri(e1+1,e1+9)}while((a*(e2-e1))%2);
+      if(chance(.3))a=1;
+      k=new F(a*(e2-e1)/2); b=new F(-a*e1).sub(k); a=new F(a);
+    }else if(lvl===2){
+      r=pickRel(); a=new F(nz(-6,6)); b=new F(nz(-12,12)); k=new F(ri(1,15));
+    }else{
+      r=pickRel();
+      const st=style(.6);
+      if(st==='frac'){a=fracC();b=fracC();k=fracC();if(chance(.5))[a,b]=[b,a]} // |1/2 − x/3| ≧ 1/5
+      else if(st==='dec'){a=dc(-19,19);b=dc(-49,49);k=dc(1,49);dec=true}
+      else{a=new F(nz(-6,6));b=new F(nz(-12,12));k=new F(ri(1,15));if(chance(.5))extra=nz(-6,6);else den=pick([2,3,4])}
+    }
+    // 內部式
+    let inner;
+    if(a.d>1&&b.d>1&&lvl===3&&!dec){ // 分數形：a x 用 x/d 顯示
+      inner=[T(b),T(a,'x')]; if(chance(.5))inner=[T(a,'x'),T(b)];
+    }else inner=lin(a,b,dec);
+    if(den>1)inner=[frT(1,inner,den)];
+    const innerHTML=`<span style="font-size:1.15em;margin:0 1px">|</span>${render(inner)}<span style="font-size:1.15em;margin:0 1px">|</span>`;
+    let html=innerHTML;
+    if(extra){html+=`<span style="margin:0 .15em">${extra<0?MINUS:'+'}</span>${Math.abs(extra)}`}
+    html+=rel(r)+num(k,{dec});
+    if(extra){k=k.sub(extra); if(k.sign<=0)return null; }
+    const kk=k;
+    const st=[];
+    if(extra)st.push(innerHTML+rel(r)+num(kk,{dec}));
+    const li=val(inner); // p x + q
+    let set;
+    if(r==='le'||r==='<'){
+      const R=rel(r);
+      let P=li.p,Q=li.q,lo=kk.neg(),hi=kk;
+      st.push(num(lo,{dec})+R+render(inner)+R+num(hi,{dec}));
+      const M=denLcm(P,Q,lo,hi);
+      if(M>1){P=P.mul(M);Q=Q.mul(M);lo=lo.mul(M);hi=hi.mul(M);st.push('同乘以 '+M+'：'+num(lo)+R+renderL(new L(P,Q))+R+num(hi))}
+      if(!Q.isZero()){lo=lo.sub(Q);hi=hi.sub(Q);st.push(num(lo)+R+renderL(new L(P,0))+R+num(hi))}
+      let x1=lo.div(P),x2=hi.div(P); if(P.sign<0)[x1,x2]=[x2,x1];
+      const fin=num(x1)+R+X+R+num(x2); if(st[st.length-1]!==fin)st.push(fin);
+      set={lo:x1,loOpen:r==='<',hi:x2,hiOpen:r==='<'};
+    }else{
+      const s1=solve(inner,[T(kk,null,dec)],r,dec), s2=solve(inner,[T(kk.neg(),null,dec)],flip(r),dec);
+      if(!s1.ok||!s2.ok)return null;
+      st.push(render(inner)+rel(r)+num(kk,{dec})+' 或 '+render(inner)+rel(flip(r))+num(kk.neg(),{dec}));
+      const n=Math.min(s1.steps.length,s2.steps.length);
+      for(let i=0;i<n;i++){ if(s1.steps[i]!==st[st.length-1]) st.push(s1.steps[i]+' 或 '+s2.steps[i].replace(/^同乘以 \d+：/,'')); }
+      const A=s1.set, B=s2.set;
+      set={union: A.hi?[A,B]:[B,A]};
+    }
+    if(!dec&&kk.d>1&&lvl===3&&li.p.d>1&&denLcm(li.p,li.q,kk)>36)return null;
+    return{html,ans:join(st)+nlSVG(set,{mixed:false,dec}),set,line:true,_f:x=>CMP[r](li.at(x).abs().add(extra),kk.add(extra))};
+  });
+}
+function genMixed(){
+  const g=pick([genBasic,genBracket,genFrac,genDec,genCombined,genAbs]);
+  const q=g(); if(g===genAbs){q.line=false} return q;
+}
+
+
+ const NAMES={basic:'基本型（不等式性質）',bracket:'括號型',frac:'分數型',dec:'小數型（分數、小數混合）',comb:'合併形式（a＜b＜c、聯立）',gdraw:'圖示法：畫數線',gread:'圖示法：讀數線',sgraph:'解不等式並圖示',abs:'絕對值不等式',mixed:'綜合練習'};
+ const GENS={basic:genBasic,bracket:genBracket,frac:genFrac,dec:genDec,comb:genCombined,gdraw:genGraphDraw,gread:genGraphRead,sgraph:genSolveGraph,abs:genAbs,mixed:genMixed};
+ const INST={basic:'解下列各一元一次不等式。',bracket:'解下列各一元一次不等式。',frac:'解下列各一元一次不等式。',dec:'解下列各一元一次不等式。',comb:'解下列各一元一次不等式。',gdraw:'在數線上圖示不等式的範圍。',gread:'依數線上的圖示寫出 x 的範圍。',sgraph:'解不等式，並在數線上標示解的範圍。',abs:'解絕對值不等式，並在數線上表示。',mixed:'解下列各不等式。'};
+ const TIPS={basic:'兩邊同加減一數不等號方向不變；同乘除正數不變，同乘除負數要變向。',bracket:'先去括號（注意負號變號），再移項、化簡。',frac:'兩邊同乘以分母的最小公倍數去分母，注意每一項都要乘。',dec:'兩邊同乘以 10、100 化成整數係數，或先化成分數。',comb:'a＜b＜c 拆成 a＜b 與 b＜c 兩個不等式分別解，再取共同範圍；聯立也是取交集。',gdraw:'空心圓表示不含端點（＜、＞），實心圓表示含端點（≦、≧），再往解的方向畫粗線。',gread:'先看圓是空心或實心，再看粗線的方向與範圍。',sgraph:'先解出範圍，再照圖示法畫在數線上。',abs:'|ax＋b|＜k ⇔ −k＜ax＋b＜k；|ax＋b|＞k ⇔ ax＋b＞k 或 ax＋b＜−k。',mixed:'混合各種題型，先判斷類型再選方法。'};
+ const eps=new F(1,1000);
+ function inSet(set,x){if(!set)return false;if(set.union)return set.union.some(p=>inSet(p,x));if(set.lo&&(x.cmp(set.lo)<0||(x.eq(set.lo)&&set.loOpen)))return false;if(set.hi&&(x.cmp(set.hi)>0||(x.eq(set.hi)&&set.hiOpen)))return false;return true}
+ function setPoints(set){const pts=[];const parts=set?(set.union||[set]):[];for(const p of parts){for(const v of [p.lo,p.hi])if(v){pts.push(v,v.sub(eps),v.add(eps))}}if(!pts.length)for(const v of [-50,-7,-1,0,1,7,50])pts.push(new F(v));return pts}
+ function checkSet(set,f){for(const x of setPoints(set)){let t;try{t=f(x)}catch(e){return false}if(t!==inSet(set,x))return false}return true}
+ const unit=id=>({id,name:NAMES[id],tip:INST[id]+TIPS[id],modes:["integer","fraction","decimal"],gen:ctx=>{
+  CFGI.lvl=ctx.level==="challenge"?3:ctx.level==="advanced"?2:1;CFGI.types=[ctx.modes[0]==="integer"?"int":ctx.modes[0]==="fraction"?"frac":"dec"];
+  let q;try{q=GENS[id]()}catch(e){return null}if(!q)return null;
+  const expr=q.html+(q.line?`<div style="margin-top:4px">${nlSVG(null,{blank:true})}</div>`:"");
+  return{expr,answer:q.ans,sig:q.html.replace(/<[^>]+>/g,""),verify:q._f?()=>checkSet(q.set,q._f):()=>{const s=q.set;if(!s)return false;const parts=s.union||[s];return parts.every(p=>(p.lo||p.hi)&&(!(p.lo&&p.hi)||p.lo.cmp(p.hi)<0))}};
+ }});
+ const U=['basic','bracket','frac','dec','comb','gdraw','gread','sgraph','abs','mixed'].map(unit);
+ return{title:"一元一次不等式",symbol:"＜",subtitle:"基本型・括號型・分數型・小數型・合併形式・畫數線・讀數線・解並圖示・絕對值不等式・綜合",instruction:"解下列各不等式；需要圖示的題目把解的範圍畫在數線上。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"",
+  levels:{basic:"基礎：ax＋b 與常數比較、一組括號、分數型兩種、小數型一種、a＜b＜c 與簡單聯立、整數端點的數線、|ax＋b|≦k。",advanced:"進階：兩邊都有 x、兩組括號、四種分數型、括號與小數混合、括號的合併形式、分數與小數端點、絕對值四種不等號。",challenge:"挑戰：三組括號含分數常數、複雜分數型、分數與小數混合的括號、分數的合併形式、分數係數的絕對值、含常數項與分母的絕對值。"},
+  units:U,presets:{basic:{basic:6,bracket:3,frac:2,gdraw:2,gread:2,abs:2},advanced:{basic:3,bracket:3,frac:3,dec:2,comb:2,gdraw:2,gread:2,sgraph:2,abs:2},challenge:{bracket:2,frac:3,dec:3,comb:3,sgraph:2,abs:3,mixed:3}}};
+}
+
+const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,factors:factorsConfig,linear:linearConfig,simultaneous:simultaneousConfig,inequality:inequalityConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
