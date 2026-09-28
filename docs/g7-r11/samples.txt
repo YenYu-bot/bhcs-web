@@ -1,0 +1,216 @@
+[basic/linearValue/integer] 設 f(x)＝−3x − 4，求 f(4)。  ⇒ −16
+[basic/linearValue/integer] 設 f(x)＝6x − 6，求 f(0) 與 f(−3)。  ⇒ f(0)＝−6，f(−3)＝−24
+[basic/linearValue/fraction] 設 f(x)＝−(5/4)x ＋ (1/2)，求 f(0) 與 f(−(3/2))。  ⇒ f(0)＝(1/2)，f(−(3/2))＝(19/8)
+[basic/linearValue/fraction] 設 f(x)＝−(4/3)x ＋ (4/3)，求 f((1/3)) 與 f(−(1/4))。  ⇒ f((1/3))＝(8/9)，f(−(1/4))＝(5/3)
+[basic/linearValue/decimal] 設 f(x)＝−5.2x，求 f(0) 與 f(−0.7)。  ⇒ f(0)＝0，f(−0.7)＝3.64
+[basic/linearValue/decimal] 一次函數 y＝−5.7x ＋ 3.5，當 x＝−1.1 時，y 的值為多少？  ⇒ 9.77
+[basic/quadraticValue/integer] 設 f(x)＝3x 2 ＋ 4x − 6，求 f(−3)。  ⇒ 9
+[basic/quadraticValue/integer] 二次函數 y＝2x 2 ＋ 4x − 2，當 x＝0 時，y 的值為多少？  ⇒ −2
+[basic/quadraticValue/fraction] 設 f(x)＝(1/3)x 2 ＋ (3/5)，求 f(−(2/3))。  ⇒ (101/135)
+[basic/quadraticValue/fraction] 設 f(x)＝(4/3)x 2 ＋ (2/5)x ＋ (5/4)，求 f(−(1/3))。  ⇒ (683/540)
+[basic/quadraticValue/decimal] 設 f(x)＝1.6x 2 ＋ 3.8x，求 f(0.8) 與 f(−0.8)。  ⇒ 4.064、−2.016
+[basic/quadraticValue/decimal] 二次函數 y＝0.2x 2 − 2.9x − 4.2，當 x＝2.9 時，y 的值為多少？  ⇒ −10.928
+[basic/constantValue/integer] 設 f(x)＝9，求 f(−9)。  ⇒ 9
+[basic/constantValue/integer] 設 f(x)＝8，g(x)＝2x − 3，求 f(7)＋g(−3)。  ⇒ −1
+[basic/constantValue/fraction] 設 f(x)＝(7/2)，求 f(−3)＋f(7)−f(18)。  ⇒ (7/2)
+[basic/constantValue/fraction] 設 f(x)＝(9/4)，g(x)＝−(3/5)x，求 f(2)＋g((4/5))。  ⇒ (177/100)
+[basic/constantValue/decimal] 設 f(x)＝−1.9，求 f(−8)＋f(6)−f(161)。  ⇒ −1.9
+[basic/constantValue/decimal] 設 f(x)＝−0.3，g(x)＝−1.9x ＋ 0.6，求 f(−1)＋g(−1.8)。  ⇒ 3.72
+[basic/combinedValue/integer] 設 f(x)＝−2x − 2，求 f(−1)−f(2)。  ⇒ 6
+[basic/combinedValue/integer] 設 f(x)＝3x − 4，求 f(−1)×f(5)。  ⇒ −77
+[basic/combinedValue/fraction] 設 f(x)＝(3/5)x ＋ (1/3)，求 f(−3)＋f(1)。  ⇒ −(8/15)
+[basic/combinedValue/fraction] 設 f(x)＝(3/2)x ＋ (3/5)，求 f(−1)−f(2)。  ⇒ −(9/2)
+[basic/combinedValue/decimal] 設 f(x)＝3.5x − 5.2，求 f(−4)×f(1)。  ⇒ 32.64
+[basic/combinedValue/decimal] 設 f(x)＝5.4x − 1.2，求 f(−1)−f(5)。  ⇒ −32.4
+[basic/piecewise/integer] 設 f(x)＝ { −2x ＋ 3，x＜0 −3x − 4，x≧0 ，求 f(−4) 與 f(3)。  ⇒ 11、−13
+[basic/piecewise/integer] 設 f(x)＝ { 3x ＋ 1，x＜0 −x − 3，x≧0 ，求 f(−2) 與 f(4)。  ⇒ −5、−7
+[basic/piecewise/fraction] 設 f(x)＝ { (4/3)x − (5/3)，x＜0 (1/5)x − (4/5)，x≧0 ，求 f(−1) 與 f(3)。  ⇒ −3、−(1/5)
+[basic/piecewise/fraction] 設 f(x)＝ { (3/2)x ＋ (3/5)，x＜0 −(3/5)x − (5/3)，x≧0 ，求 f(−4) 與 f(3)。  ⇒ −(27/5)、−(52/15)
+[basic/piecewise/decimal] 設 f(x)＝ { −0.8x − 4.2，x＜0 −2.3x 2 ＋ 2.5，x≧0 ，求 f(−4)＋f(0)。  ⇒ 1.5
+[basic/piecewise/decimal] 設 f(x)＝ { −3.3x − 0.7，x＜0 −1.9x − 3.7，x≧0 ，求 f(−4) 與 f(4)。  ⇒ 12.5、−11.3
+[basic/solveInput/integer] 設 f(x)＝−4x ＋ 5，g(x)＝5x ＋ 5。若 f(k)＝g(k)，求 k。  ⇒ 0
+[basic/solveInput/integer] 設 f(x)＝−4x − 4，g(x)＝5x ＋ 32。若 f(k)＝g(k)，求 k。  ⇒ −4
+[basic/solveInput/fraction] 一次函數 y＝(1/2)x − (5/3)，當 y＝−(31/24) 時，x 的值為多少？  ⇒ (3/4)
+[basic/solveInput/fraction] 設 f(x)＝−(1/3)x ＋ (1/4)，g(x)＝(1/2)x ＋ (59/36)。若 f(k)＝g(k)，求 k。  ⇒ −(5/3)
+[basic/solveInput/decimal] 設 f(x)＝4.6x ＋ 1.3。若 f(k)＝1.3，求 k。  ⇒ 0
+[basic/solveInput/decimal] 一次函數 y＝−1.7x ＋ 2.7，當 y＝2.7 時，x 的值為多少？  ⇒ 0
+[basic/linearCoeff/integer] 一次函數 y＝ax＋b 的圖形通過（−1，−3）與（4，2）兩點，求 a、b。  ⇒ a＝1，b＝−2
+[basic/linearCoeff/integer] 設 f(x)＝ax＋b，且 f(0)＝−5、f(5)＝−15，求 a、b。  ⇒ a＝−2，b＝−5
+[basic/linearCoeff/fraction] 設 f(x)＝ax＋b，且 f(0)＝−(1/5)、f(4)＝(97/15)，求 a、b。  ⇒ a＝(5/3)，b＝−(1/5)
+[basic/linearCoeff/fraction] 設 f(x)＝ax＋b，且 f(3)＝−(19/12)、f(1)＝−(1/12)，求 a、b。  ⇒ a＝−(3/4)，b＝(2/3)
+[basic/linearCoeff/decimal] 設 f(x)＝ax＋b，且 f(0)＝−3.9、f(3)＝−10.2，求 a、b。  ⇒ a＝−2.1，b＝−3.9
+[basic/linearCoeff/decimal] 設 f(x)＝ax＋b，且 f(0)＝4.6、f(3)＝−9.8，求 a、b。  ⇒ a＝−4.8，b＝4.6
+[basic/quadraticCoeff/integer] 設 f(x)＝x 2 ＋ax＋b，且 f(0)＝−1、f(3)＝−4，求 a、b。  ⇒ a＝−4，b＝−1
+[basic/quadraticCoeff/integer] 設 f(x)＝3x 2 ＋ax＋b，且 f(−2)＝5、f(1)＝8，求 a、b。  ⇒ a＝4，b＝1
+[basic/quadraticCoeff/fraction] 設 f(x)＝−(3/5)x 2 ＋ax＋b，且 f(−2)＝−(79/15)、f(−1)＝−(43/15)，求 a、b。  ⇒ a＝(3/5)，b＝−(5/3)
+[basic/quadraticCoeff/fraction] 設 f(x)＝ax 2 ＋b，且 f(2)＝−(5/3)、f(3)＝−(65/12)，求 a、b。  ⇒ a＝−(3/4)，b＝(4/3)
+[basic/quadraticCoeff/decimal] 設 f(x)＝2.3x 2 ＋ax＋b，且 f(1)＝3.7、f(−1)＝−0.9，求 a、b。  ⇒ a＝2.3，b＝−0.9
+[basic/quadraticCoeff/decimal] 設 f(x)＝ax 2 ＋b，且 f(1)＝5.2、f(3)＝11.6，求 a、b。  ⇒ a＝0.8，b＝4.4
+[basic/replaceFunction/integer] 已知 f(x)＝−x − 3，且 g(x)＝f(x＋1)，求 g(-3)。  ⇒ −1
+[basic/replaceFunction/integer] 已知 f(x)＝x − 5，且 g(x)＝f(4x)，求 g(-2)。  ⇒ −13
+[basic/replaceFunction/fraction] 已知 f(x)＝−(3/4)x − (1/2)，且 g(x−1)＝f(3x＋3)，求 g(-2)。  ⇒ −(1/2)
+[basic/replaceFunction/fraction] 已知 f(x)＝−(2/5)x − (2/3)，且 g(x)＝f(3x)，求 g(3)。  ⇒ −(64/15)
+[basic/replaceFunction/decimal] 已知 f(x)＝−2.5x ＋ 1.7，且 g(x)＝f(x＋3)，求 g(3)。  ⇒ −13.3
+[basic/replaceFunction/decimal] 已知 f(x)＝3.1x ＋ 4.3，且 g(x)＝f(x＋3)，求 g(0)。  ⇒ 13.6
+[basic/composite/integer] 設 f(x)＝4x ＋ 1，g(x)＝x ＋ 4，求 f(g(0)) 與 g(f(0))。  ⇒ 17、5
+[basic/composite/integer] 設 f(x)＝−3x − 1，g(x)＝−4x，求 g(f(−2))。  ⇒ −20
+[basic/composite/fraction] 設 f(x)＝(1/2)x − (1/2)，g(x)＝−(2/3)x − (1/5)，求 f(g(−1))。  ⇒ −(4/15)
+[basic/composite/fraction] 設 f(x)＝−(4/5)x，g(x)＝(3/2)x ＋ (1/4)，求 f(g(−2))。  ⇒ (11/5)
+[basic/composite/decimal] 設 f(x)＝−3.9x ＋ 0.9，g(x)＝−0.2x − 0.8，求 f(g(−1))。  ⇒ 3.24
+[basic/composite/decimal] 設 f(x)＝1.4x ＋ 0.5，g(x)＝3.4x，求 f(g(2))。  ⇒ 10.02
+[basic/sumValues/integer] 設 f(x)＝2x ＋ 2，求 f(1)＋f(2)＋⋯＋f(6)。  ⇒ 54
+[basic/sumValues/integer] 設 f(x)＝−2x − 4，求 f(−4)＋f(−3)＋⋯＋f(3)＋f(4)。  ⇒ −36
+[basic/sumValues/fraction] 設 f(x)＝(1/4)x ＋ (3/5)，求 f(−5)＋f(−4)＋⋯＋f(−1)。  ⇒ −(3/4)
+[basic/sumValues/fraction] 設 f(x)＝−(2/5)x − (2/5)，求 f(1)＋f(2)＋⋯＋f(8)。  ⇒ −(88/5)
+[basic/sumValues/decimal] 設 f(x)＝2.5x，求 f(−6)＋f(−5)＋⋯＋f(5)＋f(6)。  ⇒ 0
+[basic/sumValues/decimal] 設 f(x)＝−0.4x − 0.8，求 f(1)＋f(2)＋⋯＋f(5)。  ⇒ −10
+[basic/nested/integer] 設 f(x)＝2x ＋ 4，求 f(f(f(−2)))。  ⇒ 12
+[basic/nested/integer] 設 f(x)＝−x − 4，求 f(f(1))。  ⇒ 1
+[basic/nested/fraction] 設 f(x)＝−(3/2)x − (2/3)，求 f(f(−1))。  ⇒ −(23/12)
+[basic/nested/fraction] 設 f(x)＝−(1/2)x − (4/3)，求 f(−1) 與 f(f(−1))。  ⇒ −(5/6)、−(11/12)
+[basic/nested/decimal] 設 f(x)＝2.8x ＋ 3.9，求 f(−3) 與 f(f(−3))。  ⇒ −4.5、−8.7
+[basic/nested/decimal] 設 f(x)＝−1.8x − 1.8，求 f(−3) 與 f(f(−3))。  ⇒ 3.6、−8.28
+[advanced/linearValue/integer] 設 f(x)＝3x − 2，求 f(1) 與 f(−3)。  ⇒ f(1)＝1，f(−3)＝−11
+[advanced/linearValue/integer] 一次函數 y＝−6x ＋ 2，當 x＝3 時，y 的值為多少？  ⇒ −16
+[advanced/linearValue/fraction] 設 f(x)＝−(2/3)x，求 f(−(4/5)) 與 f(−(3/2))。  ⇒ f(−(4/5))＝(8/15)，f(−(3/2))＝1
+[advanced/linearValue/fraction] 一次函數 y＝(1/4)x − (1/5)，當 x＝(5/2) 時，y 的值為多少？  ⇒ (17/40)
+[advanced/linearValue/decimal] 設 f(x)＝−1.2x − 4.6，求 f(0.4) 與 f(−3.7)。  ⇒ f(0.4)＝−5.08，f(−3.7)＝−0.16
+[advanced/linearValue/decimal] 一次函數 y＝−5.2x，當 x＝−3.7 時，y 的值為多少？  ⇒ 19.24
+[advanced/quadraticValue/integer] 二次函數 y＝4x 2 − x − 6，當 x＝0 時，y 的值為多少？  ⇒ −6
+[advanced/quadraticValue/integer] 設 f(x)＝−3x 2 − 2x ＋ 1，求 f(−2)＋f(−3)。  ⇒ −27
+[advanced/quadraticValue/fraction] 設 f(x)＝−(4/3)x 2 − (1/4)x ＋ (3/4)，求 f(−(3/4)) 與 f((3/4))。  ⇒ (3/16)、−(3/16)
+[advanced/quadraticValue/fraction] 二次函數 y＝(2/3)x 2 − (3/2)x ＋ (3/5)，當 x＝−(4/5) 時，y 的值為多少？  ⇒ (167/75)
+[advanced/quadraticValue/decimal] 設 f(x)＝3.6x 2 − 4.1x − 3.5，求 f(1.8) 與 f(−1.8)。  ⇒ 0.784、15.544
+[advanced/quadraticValue/decimal] 設 f(x)＝1.3x 2 − 0.9x ＋ 4.8，求 f(2.6) 與 f(−2.6)。  ⇒ 11.248、15.928
+[advanced/constantValue/integer] 設 f(x)＝6，g(x)＝−2x，求 f(−8)＋g(2)。  ⇒ 2
+[advanced/constantValue/integer] 設 f(x)＝3，求 f(−6)×f(37)。  ⇒ 9
+[advanced/constantValue/fraction] 設 f(x)＝(7/2)，求 f(−4)＋f(2)−f(93)。  ⇒ (7/2)
+[advanced/constantValue/fraction] 設 f(x)＝(2/5)，g(x)＝(4/5)x − (4/5)，求 f(0)＋g((2/5))。  ⇒ −(2/25)
+[advanced/constantValue/decimal] 設 f(x)＝5.8，求 f(−4)×f(60)。  ⇒ 33.64
+[advanced/constantValue/decimal] 設 f(x)＝−4.7，求 f(3)×f(58)。  ⇒ 22.09
+[advanced/combinedValue/integer] 設 f(x)＝x ＋ 1，求 f(−1)×f(2)。  ⇒ 0
+[advanced/combinedValue/integer] 設 f(x)＝6x − 1，求 2f(−1)−3f(−2)。  ⇒ 25
+[advanced/combinedValue/fraction] 設 f(x)＝−(3/5)x ＋ (1/2)，求 2f(−2)−4f(−1)。  ⇒ −1
+[advanced/combinedValue/fraction] 設 f(x)＝(1/2)x ＋ (5/3)，求 f(−1)−f(2)。  ⇒ −(3/2)
+[advanced/combinedValue/decimal] 設 f(x)＝4.6x ＋ 0.5，求 f(−1)×f(1)。  ⇒ −20.91
+[advanced/combinedValue/decimal] 設 f(x)＝0.2x ＋ 3.3，求 f(−4)×f(4)。  ⇒ 10.25
+[advanced/piecewise/integer] 設 f(x)＝ { 2x − 4，x＜0 2x 2 ，x≧0 ，求 f(−2)＋f(3)。  ⇒ 10
+[advanced/piecewise/integer] 設 f(x)＝ { −2x，x＜0 −3x 2 ＋ 1，x≧0 ，求 f(−3) 與 f(4)。  ⇒ 6、−47
+[advanced/piecewise/fraction] 設 f(x)＝ { −(4/3)x，x＜-2 −(3/4)x − (1/2)，x≧-2 ，求 f(−2) 與 f(−5)。  ⇒ 1、(20/3)
+[advanced/piecewise/fraction] 設 f(x)＝ { −(3/5)x ＋ (1/5)，x＜0 −(2/5)x ＋ (5/3)，x≧0 ，求 f(0) 與 f(−2)。  ⇒ (5/3)、(7/5)
+[advanced/piecewise/decimal] 設 f(x)＝ { −2.2x ＋ 0.9，x＜0 −0.4x 2 − 2.8，x≧0 ，求 f(−3)＋f(0)。  ⇒ 4.7
+[advanced/piecewise/decimal] 設 f(x)＝ { 3.7x − 1.9，x＜0 1.9x 2 − 0.7，x≧0 ，求 f(−4) 與 f(1)。  ⇒ −16.7、1.2
+[advanced/solveInput/integer] 一次函數 y＝−2x，當 y＝10 時，x 的值為多少？  ⇒ −5
+[advanced/solveInput/integer] 設 f(x)＝−3x ＋ 3，g(x)＝3x ＋ 15。若 f(k)＝g(k)，求 k。  ⇒ −2
+[advanced/solveInput/fraction] 一次函數 y＝−(3/2)x − (1/2)，當 y＝−(19/8) 時，x 的值為多少？  ⇒ (5/4)
+[advanced/solveInput/fraction] 設 f(x)＝(1/4)x ＋ (5/4)，g(x)＝(2/3)x ＋ (25/24)。若 f(k)＝g(k)，求 k。  ⇒ (1/2)
+[advanced/solveInput/decimal] 設 f(x)＝−4.3x，g(x)＝−0.4x ＋ 6.63。若 f(k)＝g(k)，求 k。  ⇒ −1.7
+[advanced/solveInput/decimal] 設 f(x)＝1.3x − 4.7。若 f(3k)＝−8.99，求 k。  ⇒ −1.1
+[advanced/linearCoeff/integer] 設 f(x)＝ax＋b，且 f(2)−f(−2)＝12、f(2)＝11，求 a、b。  ⇒ a＝3，b＝5
+[advanced/linearCoeff/integer] 設 f(x)＝ax＋b，且 f(4)−f(−2)＝−30、f(3)＝−15，求 a、b。  ⇒ a＝−5，b＝0
+[advanced/linearCoeff/fraction] 設 f(x)＝ax＋b，且 f(0)＝−(5/4)、f(3)＝−2，求 a、b。  ⇒ a＝−(1/4)，b＝−(5/4)
+[advanced/linearCoeff/fraction] 設 f(x)＝ax＋b，且 f(0)＝0、f(2)＝(10/3)，求 a、b。  ⇒ a＝(5/3)，b＝0
+[advanced/linearCoeff/decimal] 設 f(x)＝ax＋b，且 f(0)＝0、f(2)＝9.2，求 a、b。  ⇒ a＝4.6，b＝0
+[advanced/linearCoeff/decimal] 設 f(x)＝ax＋b，且 f(4)−f(−3)＝30.8、f(−3)＝−12.7，求 a、b。  ⇒ a＝4.4，b＝0.5
+[advanced/quadraticCoeff/integer] 設 f(x)＝ax 2 ＋bx，且 f(1)＝−1、f(−1)＝9，求 a、b。  ⇒ a＝4，b＝−5
+[advanced/quadraticCoeff/integer] 設 f(x)＝ax 2 ＋bx，且 f(1)＝3、f(−1)＝−7，求 a、b。  ⇒ a＝−2，b＝5
+[advanced/quadraticCoeff/fraction] 設 f(x)＝(3/2)x 2 ＋ax＋b，且 f(0)＝−(5/4)、f(3)＝(55/4)，求 a、b。  ⇒ a＝(1/2)，b＝−(5/4)
+[advanced/quadraticCoeff/fraction] 設 f(x)＝(3/5)x 2 ＋ax＋b，且 f(0)＝−(4/5)、f(2)＝(1/10)，求 a、b。  ⇒ a＝−(3/4)，b＝−(4/5)
+[advanced/quadraticCoeff/decimal] 設 f(x)＝ax 2 ＋bx，且 f(1)＝3.9、f(−1)＝1.7，求 a、b。  ⇒ a＝2.8，b＝1.1
+[advanced/quadraticCoeff/decimal] 設 f(x)＝ax 2 ＋bx，且 f(1)＝0.2、f(−1)＝−5，求 a、b。  ⇒ a＝−2.4，b＝2.6
+[advanced/replaceFunction/integer] 已知 f(x)＝x ＋ 3，且 g(x)＝2f(x)＋3，求 g(-3)。  ⇒ 3
+[advanced/replaceFunction/integer] 已知 f(x)＝2x ＋ 3，且 g(x−2)＝f(2x＋3)，求 g(0)。  ⇒ 17
+[advanced/replaceFunction/fraction] 已知 f(x)＝(2/5)x − (3/4)，且 g(x−2)＝f(2x)，求 g(-1)。  ⇒ (1/20)
+[advanced/replaceFunction/fraction] 已知 f(x)＝(1/2)x ＋ (4/5)，且 g(x)＝2f(x)＋3，求 g(-1)。  ⇒ (18/5)
+[advanced/replaceFunction/decimal] 已知 f(x)＝−1.3x − 3.3，且 g(x)＝2f(x)−3，求 g(0)。  ⇒ −9.6
+[advanced/replaceFunction/decimal] 已知 f(x)＝−1.3x − 2.1，且 g(x)＝2f(x)−1，求 g(4)。  ⇒ −15.6
+[advanced/composite/integer] 設 f(x)＝4x − 2，g(x)＝x，求 g(f(4))。  ⇒ 14
+[advanced/composite/integer] 設 f(x)＝3x ＋ 3，g(x)＝−3x 2 ＋ 3，求 g(f(−2))。  ⇒ −24
+[advanced/composite/fraction] 設 f(x)＝−(1/2)x ＋ (1/2)，g(x)＝(1/2)x − (3/5)，求 f(g(−2)) 與 g(f(−2))。  ⇒ (13/10)、(3/20)
+[advanced/composite/fraction] 設 f(x)＝(4/5)x − (1/2)，g(x)＝(3/2)x，求 f(g(2)) 與 g(f(2))。  ⇒ (19/10)、(33/20)
+[advanced/composite/decimal] 設 f(x)＝−2.9x − 2.6，g(x)＝2.6x 2 ＋ 1.8，求 g(f(2))。  ⇒ 185.256
+[advanced/composite/decimal] 設 f(x)＝−3.9x − 0.6，g(x)＝−0.7x，求 f(g(−2)) 與 g(f(−2))。  ⇒ −6.06、−5.04
+[advanced/sumValues/integer] 設 f(x)＝x ＋ 1，求 f(1)＋f(3)＋f(5)＋⋯＋f(11)。  ⇒ 42
+[advanced/sumValues/integer] 設 f(x)＝−4x，求 f(1)＋f(2)＋⋯＋f(8)。  ⇒ −144
+[advanced/sumValues/fraction] 設 f(x)＝(1/2)x − (3/4)，求 f(−7)＋f(−6)＋⋯＋f(6)＋f(7)。  ⇒ −(45/4)
+[advanced/sumValues/fraction] 設 f(x)＝−(1/2)x − (5/4)，求 f(0)＋f(1)＋⋯＋f(5)。  ⇒ −15
+[advanced/sumValues/decimal] 設 f(x)＝−0.3x，求 f(−1)＋f(0)＋⋯＋f(3)。  ⇒ −1.5
+[advanced/sumValues/decimal] 設 f(x)＝2.8x ＋ 0.4，求 f(1)＋f(3)＋f(5)＋⋯＋f(7)。  ⇒ 46.4
+[advanced/nested/integer] 設 f(x)＝−x ＋ 4，求 f(0) 與 f(f(0))。  ⇒ 4、0
+[advanced/nested/integer] 設 f(x)＝−3x − 2，求 f(f(f(−1)))。  ⇒ 13
+[advanced/nested/fraction] 設 f(x)＝(2/3)x ＋ (3/5)，求 f(2) 與 f(f(2))。  ⇒ (29/15)、(17/9)
+[advanced/nested/fraction] 設 f(x)＝(1/2)x − (3/2)，求 f(−3) 與 f(f(−3))。  ⇒ −3、−3
+[advanced/nested/decimal] 設 f(x)＝2.7x − 1.2，求 f(f(f(2)))。  ⇒ 26.178
+[advanced/nested/decimal] 設 f(x)＝−2.3x ＋ 3.5，求 f(−2) 與 f(f(−2))。  ⇒ 8.1、−15.13
+[challenge/linearValue/integer] 設 f(x)＝−2x ＋ 5，求 f(−4) 與 f(−2)。  ⇒ f(−4)＝13，f(−2)＝9
+[challenge/linearValue/integer] 設 f(x)＝−2x。當 x 的值增加 3 時，f(x) 的值增加多少？（減少以負數表示）  ⇒ −6
+[challenge/linearValue/fraction] 設 f(x)＝−(3/2)x ＋ (3/5)，求 f(−(3/2)) 與 f((4/5))。  ⇒ f(−(3/2))＝(57/20)，f((4/5))＝−(3/5)
+[challenge/linearValue/fraction] 設 f(x)＝−(4/3)x ＋ (6/5)，求 f(0)、f(1)，並求 f(1)−f(0)。  ⇒ f(0)＝(6/5)，f(1)＝−(2/15)，f(1)−f(0)＝−(4/3)
+[challenge/linearValue/decimal] 設 f(x)＝4.4x − 0.5，求 f(0) 與 f(−3.1)。  ⇒ f(0)＝−0.5，f(−3.1)＝−14.14
+[challenge/linearValue/decimal] 設 f(x)＝2.6x − 3.9。當 x 的值增加 7 時，f(x) 的值增加多少？（減少以負數表示）  ⇒ 18.2
+[challenge/quadraticValue/integer] 設 f(x)＝−4x 2 ＋ 3x − 2，求 f(−3) 與 f(3)。  ⇒ −47、−29
+[challenge/quadraticValue/integer] 設 f(x)＝−x 2 ＋ 5x − 4，求 f(4) 與 f(−4)。  ⇒ 0、−40
+[challenge/quadraticValue/fraction] 設 f(x)＝(3/4)x 2 − (1/2)x，求 f(−(1/3)) 與 f((1/3))。  ⇒ (1/4)、−(1/12)
+[challenge/quadraticValue/fraction] 設 f(x)＝−(1/4)x 2 ＋ (1/4)x − (5/4)，求 f(−(4/3)) 與 f((4/3))。  ⇒ −(73/36)、−(49/36)
+[challenge/quadraticValue/decimal] 設 f(x)＝1.4x 2 ＋ 3.3x ＋ 2.5，求 f(2)−f(1)。  ⇒ 7.5
+[challenge/quadraticValue/decimal] 設 f(x)＝0.2x 2 ＋ 0.6x ＋ 0.5，求 f(0)−f(−1)。  ⇒ 0.4
+[challenge/constantValue/integer] 設 f(x)＝7，g(x)＝−2x − 1，求 f(7)＋g(5)。  ⇒ −4
+[challenge/constantValue/integer] 設 f(x)＝−6，g(x)＝x − 3，求 f(1)＋g(0)。  ⇒ −9
+[challenge/constantValue/fraction] 設 f(x)＝(3/5)，求 f(1)＋f(2)＋f(3)＋⋯＋f(18)。  ⇒ (54/5)
+[challenge/constantValue/fraction] 設 f(x)＝−(2/5)，求 f(1)＋f(2)＋f(3)＋⋯＋f(13)。  ⇒ −(26/5)
+[challenge/constantValue/decimal] 設 f(x)＝−3.9，g(x)＝2.6x − 2.1，求 f(7)＋g(2.9)。  ⇒ 1.54
+[challenge/constantValue/decimal] 設 f(x)＝6.1，求 f(1)＋f(2)＋f(3)＋⋯＋f(16)。  ⇒ 97.6
+[challenge/combinedValue/integer] 設 f(x)＝−4x − 4，求 f(−3)×f(3)。  ⇒ −128
+[challenge/combinedValue/integer] 設 f(x)＝−5x，求 f(−3)×f(2)。  ⇒ −150
+[challenge/combinedValue/fraction] 設 f(x)＝(2/5)x ＋ (5/2)，求 4f(3)−3f(2)。  ⇒ (49/10)
+[challenge/combinedValue/fraction] 設 f(x)＝(1/4)x − (3/5)，求 f(−1)×f(2)。  ⇒ (17/200)
+[challenge/combinedValue/decimal] 設 f(x)＝2.7x − 1.4，求 f(−2)÷f(2)。  ⇒ −1.7
+[challenge/combinedValue/decimal] 設 f(x)＝2.8x − 0.7，求 f(−3)×f(2)。  ⇒ −44.59
+[challenge/piecewise/integer] 設 f(x)＝ { x ＋ 1，x＜0 −2x − 2，x≧0 ，求 f(f(−4))。  ⇒ −2
+[challenge/piecewise/integer] 設 f(x)＝ { 2x，x＜-1 2x ＋ 5，x≧-1 ，求 f(−1) 與 f(−3)。  ⇒ 3、−6
+[challenge/piecewise/fraction] 設 f(x)＝ { 3x ＋ 5，x＜0 −x ＋ 1，x≧0 ，求 f(f(−4))。  ⇒ −16
+[challenge/piecewise/fraction] 設 f(x)＝ { −(4/3)x ＋ (1/2)，x＜0 (1/2)x 2 ＋ (1/5)，x≧0 ，求 f(−1)＋f(2)。  ⇒ (121/30)
+[challenge/piecewise/decimal] 設 f(x)＝ { −0.2x − 1.8，x＜-3 −1.4x − 4.6，x≧-3 ，求 f(−3) 與 f(−5)。  ⇒ −0.4、−0.8
+[challenge/piecewise/decimal] 設 f(x)＝ { x ＋ 2，x＜0 −x − 3，x≧0 ，求 f(f(−3))。  ⇒ 1
+[challenge/solveInput/integer] 設 f(x)＝−2x − 2。若 f(k)＋f(k＋1)＝−6，求 k。  ⇒ 0
+[challenge/solveInput/integer] 設 f(x)＝−5x ＋ 1。若 f(3k)＝16，求 k。  ⇒ −1
+[challenge/solveInput/fraction] 設 f(x)＝−(5/4)x − (3/2)。若 f(3k)＝(33/8)，求 k。  ⇒ −(3/2)
+[challenge/solveInput/fraction] 設 f(x)＝(2/3)x − (5/2)。若 f(2k)＝−(29/18)，求 k。  ⇒ (2/3)
+[challenge/solveInput/decimal] 設 f(x)＝−4.9x − 3.9。若 f(k)＋f(k＋1)＝14.74，求 k。  ⇒ −2.8
+[challenge/solveInput/decimal] 設 f(x)＝−4.5x ＋ 2.9。若 f(3k)＝38，求 k。  ⇒ −2.6
+[challenge/linearCoeff/integer] 設 f(x)＝ax＋b，且 f(1)−f(−2)＝15、f(−3)＝−20，求 a、b。  ⇒ a＝5，b＝−5
+[challenge/linearCoeff/integer] 設 f(x)＝ax＋b，且 f(0)＝5、f(5)＝0，求 a、b。  ⇒ a＝−1，b＝5
+[challenge/linearCoeff/fraction] 設 f(x)＝ax＋b，且 f(0)＝−(2/5)、f(2)＝−(16/15)，求 a、b。  ⇒ a＝−(1/3)，b＝−(2/5)
+[challenge/linearCoeff/fraction] 設 f(x)＝ax＋b，且 f(0)＝−(3/5)、f(2)＝(9/10)，求 a、b。  ⇒ a＝(3/4)，b＝−(3/5)
+[challenge/linearCoeff/decimal] 設 f(x)＝ax＋b，且 f(4)−f(−4)＝−36、f(0)＝0，求 a、b。  ⇒ a＝−4.5，b＝0
+[challenge/linearCoeff/decimal] 設 f(x)＝ax＋b，且 f(2)＋f(−2)＝6.8、f(2)−f(−2)＝−17.6，求 a、b。  ⇒ a＝−4.4，b＝3.4
+[challenge/quadraticCoeff/integer] 設 f(x)＝x 2 ＋ax＋b，且 f(1)＝−2、f(−1)＝0，求 a、b 與 f(3)。  ⇒ a＝−1，b＝−2，f(3)＝4
+[challenge/quadraticCoeff/integer] 設 f(x)＝ax 2 ＋b，且 f(2)＝15、f(3)＝30，求 a、b。  ⇒ a＝3，b＝3
+[challenge/quadraticCoeff/fraction] 設 f(x)＝ax 2 ＋bx，且 f(1)＝−(7/5)、f(−1)＝−(1/5)，求 a、b。  ⇒ a＝−(4/5)，b＝−(3/5)
+[challenge/quadraticCoeff/fraction] 設 f(x)＝ax 2 ＋bx，且 f(1)＝−(5/3)、f(−1)＝−1，求 a、b。  ⇒ a＝−(4/3)，b＝−(1/3)
+[challenge/quadraticCoeff/decimal] 設 f(x)＝ax 2 ＋b，且 f(2)＝−4.6、f(3)＝−10.6，求 a、b。  ⇒ a＝−1.2，b＝0.2
+[challenge/quadraticCoeff/decimal] 設 f(x)＝ax 2 ＋bx，且 f(1)＝4、f(−1)＝0.4，求 a、b。  ⇒ a＝2.2，b＝1.8
+[challenge/replaceFunction/integer] 已知 f(x)＝−2x，且 g(x−2)＝f(3x−4)，求 g(-1)。  ⇒ 2
+[challenge/replaceFunction/integer] 已知 f(x＋3)＝2x ＋ 2，求 f(2)。  ⇒ 0
+[challenge/replaceFunction/fraction] 已知 f(x)＝−(1/2)x − (3/4)，且 g(x−4)＝f(2x＋1)，求 g(-1)。  ⇒ −(17/4)
+[challenge/replaceFunction/fraction] 已知 f(x)＝−(3/2)x ＋ (4/3)，且 g(x−1)＝f(2x−3)，求 g(0)。  ⇒ (17/6)
+[challenge/replaceFunction/decimal] 已知 f(x)＝−1.1x ＋ 0.2，且 g(x−1)＝f(2x−2)，求 g(-1)。  ⇒ 2.4
+[challenge/replaceFunction/decimal] 已知 f(x)＝2.5x ＋ 1.4，且 g(x−3)＝f(2x−2)，求 g(1)。  ⇒ 16.4
+[challenge/composite/integer] 設 f(x)＝4x，g(x)＝−3x 2 ＋ 1，求 g(f(−2))。  ⇒ −191
+[challenge/composite/integer] 設 f(x)＝4x，g(x)＝x 2 ＋ 4，求 g(f(−1))。  ⇒ 20
+[challenge/composite/fraction] 設 f(x)＝−(1/3)x ＋ (3/5)，g(x)＝(1/2)x ＋ (4/5)，求 f(g(3)) 與 g(f(3))。  ⇒ −(1/6)、(3/5)
+[challenge/composite/fraction] 設 f(x)＝−(4/5)x − (1/2)，g(x)＝−(1/2)x 2 ，求 g(f(−3))。  ⇒ −(361/200)
+[challenge/composite/decimal] 設 f(x)＝1.2x ＋ 1.9，g(x)＝0.7x − 1.7，求 f(g(3)) 與 g(f(3))。  ⇒ 2.38、2.15
+[challenge/composite/decimal] 設 f(x)＝2.5x ＋ 0.9，g(x)＝1.2x ＋ 1.7，求 f(g(1)) 與 g(f(1))。  ⇒ 8.15、5.78
+[challenge/sumValues/integer] 設 f(x)＝−3x 2 ＋ 4，求 f(1)＋f(2)＋⋯＋f(6)。  ⇒ −249
+[challenge/sumValues/integer] 設 f(x)＝2x − 4，求 f(1)＋f(3)＋f(5)＋⋯＋f(5)。  ⇒ 6
+[challenge/sumValues/fraction] 設 f(x)＝(3/4)x − (1/5)，求 f(−6)＋f(−5)＋⋯＋f(5)＋f(6)。  ⇒ −(13/5)
+[challenge/sumValues/fraction] 設 f(x)＝−(1/2)x 2 ，求 f(1)＋f(2)＋⋯＋f(5)。  ⇒ −(55/2)
+[challenge/sumValues/decimal] 設 f(x)＝1.1x − 3.7，求 f(1)＋f(3)＋f(5)＋⋯＋f(11)。  ⇒ 17.4
+[challenge/sumValues/decimal] 設 f(x)＝1.6x 2 − 0.3，求 f(1)＋f(2)＋⋯＋f(4)。  ⇒ 46.8
+[challenge/nested/integer] 設 f(x)＝−3x ＋ 1，g(x)＝−3x − 3，求 g(f(g(−1)))。  ⇒ −6
+[challenge/nested/integer] 設 f(x)＝−2x，g(x)＝3x − 1，求 g(f(g(1)))。  ⇒ −13
+[challenge/nested/fraction] 設 f(x)＝(2/5)x ＋ (1/4)，求 f(3) 與 f(f(3))。  ⇒ (29/20)、(83/100)
+[challenge/nested/fraction] 設 f(x)＝(1/4)x − (1/5)，g(x)＝(3/4)x ＋ (1/5)，求 g(f(g(1)))。  ⇒ (73/320)
+[challenge/nested/decimal] 設 f(x)＝−0.7x ＋ 2.5，g(x)＝−0.8x ＋ 0.2，求 g(f(g(−1)))。  ⇒ −1.24
+[challenge/nested/decimal] 設 f(x)＝−2.8x − 2.6，g(x)＝−0.6x − 3.2，求 g(f(g(0)))。  ⇒ −7.016
