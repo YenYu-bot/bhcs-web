@@ -217,6 +217,51 @@ export function diagram(id,s,r){
   out+=text(x0,y0+4*h+118,'電子層：'+(r.shells.length?r.shells.join('、'):'無'),15);
   out+=text(20,392,'紅＝原子核（質子、中子）　藍＝電子　同心圓只是簡化模型',13);break;
  }
+ case 'stoichiometry':{
+  // 每種物質兩根長條：反應前（灰）與反應後（反應物紅、產物綠）；下方核對總質量。
+  const R=r.R,items=[[R.A[0],s.massA,r.leftA,'r'],[R.B[0],s.massB,r.leftB,'r'],...r.products.map(p=>[p[0],0,p[1],'p'])];
+  const mx=Math.max(1,...items.map(x=>Math.max(x[1],x[2]))),H=190,base=300,col=Math.min(130,600/items.length),x0=40+(600-col*items.length)/2;
+  const eq={h2o:'2H₂ ＋ O₂ → 2H₂O',mgo:'2Mg ＋ O₂ → 2MgO',caco3:'CaCO₃ ＋ 2HCl → CaCl₂ ＋ H₂O ＋ CO₂',nh3:'N₂ ＋ 3H₂ → 2NH₃'}[s.reaction];
+  out+=`<text x="330" y="40" font-size="22" text-anchor="middle">${esc(eq)}</text>`+line(30,base,630,base,'#436779');
+  items.forEach(([name,pre,post,t],i)=>{const cx=x0+col*i+col/2,bh=v=>num(H*v/mx,1),bw=24;
+   out+=rect(num(cx-bw-3,1),num(base-bh(pre),1),bw,bh(pre),'#c9d2de')+rect(num(cx+3,1),num(base-bh(post),1),bw,bh(post),t==='r'?'#b54a5b':'#087b78');
+   out+=`<text x="${num(cx-bw/2-3,1)}" y="${num(base-bh(pre)-6,1)}" font-size="13" text-anchor="middle">${num(pre,2)}</text><text x="${num(cx+bw/2+3,1)}" y="${num(base-bh(post)-6,1)}" font-size="13" text-anchor="middle">${num(post,2)}</text>`;
+   out+=`<text x="${num(cx,1)}" y="${base+24}" font-size="16" text-anchor="middle">${esc(name)}</text>`;
+   if(i===1&&items.length>2)out+=line(num(x0+col*2,1),70,num(x0+col*2,1),base+30,'#9aaeb9',true)});
+  out+=`<text data-mass-check x="330" y="${base+58}" font-size="17" text-anchor="middle">反應前總質量 ${num(r.before,2)} g ＝ 反應後總質量 ${num(r.after,2)} g</text>`;
+  out+=text(20,392,'灰＝反應前　紅＝反應後剩下的反應物　綠＝生成的產物（單位 g）',13);break;
+ }
+ case 'weather-systems':{
+  const blueF='#d6e6f5',redF='#f3d2d6';
+  if(s.mode==='pressure'){
+   // 左：俯視等壓線與 8 支近地面風向箭頭（切線方向為主、偏向內或外約 30°）；右：側視剖面的垂直氣流
+   const C=[180,214],cw=r.rotation==='cw',io=r.flow==='in'?-1:1,ca=Math.cos(Math.PI/6),sa=Math.sin(Math.PI/6);
+   [38,76,114,152].forEach(R=>out+=`<circle cx="${C[0]}" cy="${C[1]}" r="${R}" fill="none" stroke="#9aaeb9" stroke-width="2"/>`);
+   out+=`<text x="${C[0]}" y="${C[1]+12}" font-size="34" font-weight="700" text-anchor="middle" fill="${s.system==='high'?'#2f6fb2':'#b54a5b'}">${s.system==='high'?'H':s.system==='low'?'L':'颱'}</text>`;
+   for(let i=0;i<8;i++){const a=i*Math.PI/4,px=C[0]+95*Math.cos(a),py=C[1]+95*Math.sin(a),t=cw?[-Math.sin(a),Math.cos(a)]:[Math.sin(a),-Math.cos(a)],rd=[Math.cos(a)*io,Math.sin(a)*io],d=[t[0]*ca+rd[0]*sa,t[1]*ca+rd[1]*sa];
+    out+=`<g data-wind="${num(px,1)},${num(py,1)},${num(d[0],3)},${num(d[1],3)}">`+arrow(num(px-d[0]*22,1),num(py-d[1]*22,1),num(px+d[0]*22,1),num(py+d[1]*22,1),'#d97b11')+'</g>'}
+   out+=text(40,40,'俯視：'+(s.hemi==='north'?'北':'南')+'半球近地面風向',16);
+   const gx=400,gy=320;out+=line(gx,gy,640,gy,'#436779')+text(gx,40,'剖面：中心的垂直氣流',16);
+   if(r.vertical==='up'){out+=arrow(520,300,520,140,'#b54a5b')+arrow(430,306,500,306,'#d97b11')+arrow(610,306,540,306,'#d97b11')+`<ellipse cx="520" cy="112" rx="70" ry="26" fill="#e4edf2" stroke="#7c879b" stroke-width="2"/>`+text(440,190,'上升冷卻',14)}
+   else{out+=arrow(520,140,520,296,'#2f6fb2')+arrow(500,306,430,306,'#d97b11')+arrow(540,306,610,306,'#d97b11')+`<circle cx="600" cy="100" r="20" fill="#f6c453"/>`+text(440,190,'下沉增溫',14)}
+   out+=text(20,392,'橘色箭頭：近地面的風　'+(r.vertical==='up'?'紅':'藍')+'色箭頭：中心的垂直氣流',13);
+  }else{
+   // 上：天氣圖符號；下：側視剖面（冷氣團藍、暖氣團紅），觀察者位置依過境階段
+   const y0=110,fx=330;out+=line(60,y0,600,y0,s.front==='cold'?'#2f6fb2':s.front==='warm'?'#b54a5b':'#436779');
+   for(let i=0;i<6;i++){const x=90+i*90,col=s.front==='cold'||(s.front==='stationary'&&i%2===0)?'cold':'warm',up=s.front==='stationary'&&col==='warm';
+    out+=col==='cold'?`<path d="M${x-14},${y0} L${x},${up?y0+18:y0-18} L${x+14},${y0} Z" fill="#2f6fb2"/>`:`<path d="M${x-13},${y0} A13,13 0 0 ${up?0:1} ${x+13},${y0} Z" fill="#b54a5b"/>`}
+   out+=text(40,70,'天氣圖符號：'+{cold:'冷鋒（藍色三角形）',warm:'暖鋒（紅色半圓）',stationary:'滯留鋒（三角形與半圓交錯）'}[s.front],16);
+   const g=340,wedge=s.front==='cold'?`M40,${g} L${fx},${g} L150,${g-120} L40,${g-120} Z`:s.front==='warm'?`M620,${g} L${fx},${g} L620,${g-70} Z`:`M40,${g} L${fx},${g} L620,${g-60} L620,${g-60} L40,${g-60} Z`;
+   out+=rect(40,g-160,580,160,redF)+`<path d="${wedge}" fill="${blueF}" stroke="#2f6fb2" stroke-width="2"/>`+line(40,g,620,g,'#436779');
+   out+=text(s.front==='warm'?556:60,s.front==='warm'?g-30:s.front==='cold'?g-96:g-30,'冷氣團',15)+text(s.front==='warm'?60:s.front==='cold'?470:500,g-140,'暖氣團',15);
+   if(s.front==='cold')out+=`<path d="M200,${g-120} q30,-60 70,-40 q40,-40 70,10 q20,20 -10,30 Z" fill="#c9d2de" stroke="#7c879b" stroke-width="2"/>`+arrow(80,g-60,140,g-60,'#2f6fb2');
+   else out+=`<ellipse cx="${s.front==='warm'?460:330}" cy="${g-130}" rx="140" ry="16" fill="#c9d2de" stroke="#7c879b" stroke-width="2"/>`+(s.front==='warm'?arrow(380,g-30,520,g-60,'#b54a5b'):'');
+   const ox={cold:{before:520,during:fx,after:110},warm:{before:480,during:fx,after:130},stationary:{before:fx,during:fx,after:fx}}[s.front][s.phase];
+   out+=`<g data-observer="${ox}"><circle cx="${ox}" cy="${g-26}" r="7" fill="#142f46"/><line x1="${ox}" y1="${g-19}" x2="${ox}" y2="${g}" stroke="#142f46" stroke-width="4"/></g>`+text(ox-26,g+22,'觀察者',13);
+   out+=text(20,392,'藍＝冷氣團　紅＝暖氣團　灰＝雲　剖面坡度只是示意',13);
+  }
+  break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }

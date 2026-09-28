@@ -3,6 +3,8 @@
 export const ATOM_ELEMENTS=[['H','氫',1,[0,1,2]],['He','氦',8,[2,1]],['Li','鋰',1,[4,3]],['Be','鈹',2,[5]],['B','硼',3,[6,5]],['C','碳',4,[6,7,8]],['N','氮',5,[7,8]],['O','氧',6,[8,9,10]],['F','氟',7,[10]],['Ne','氖',8,[10,12,11]],['Na','鈉',1,[12]],['Mg','鎂',2,[12,14,13]],['Al','鋁',3,[14]],['Si','矽',4,[14,15,16]],['P','磷',5,[16]],['S','硫',6,[16,18,17,20]],['Cl','氯',7,[18,20]],['Ar','氬',8,[22,18,20]],['K','鉀',1,[20,22,21]],['Ca','鈣',2,[20,24,22,23,26,28]]];
 const ATOM_SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
 export const ionCharge=c=>c===0?'':(Math.abs(c)===1?'':String(Math.abs(c)).split('').map(d=>ATOM_SUP[d]).join(''))+(c>0?'⁺':'⁻');
+// 化學計量：式量以 0.1 為單位的整數（HCl 36.5 → 365），[化學式, 式量×10, 係數]；main 為主要產物索引。
+export const STOICH={h2o:{A:['H₂',20,2],B:['O₂',320,1],P:[['H₂O',180,2]],main:0},mgo:{A:['Mg',240,2],B:['O₂',320,1],P:[['MgO',400,2]],main:0},caco3:{A:['CaCO₃',1000,1],B:['HCl',365,2],P:[['CaCl₂',1110,1],['H₂O',180,1],['CO₂',440,1]],main:2},nh3:{A:['N₂',280,1],B:['H₂',20,3],P:[['NH₃',170,2]],main:0}};
 export function calculate(id,s){
  const rad=Math.PI/180, sign=x=>Math.abs(x)<1e-9?'zero':x>0?'positive':'negative';
  switch(id){
@@ -106,6 +108,27 @@ export function calculate(id,s){
   const common=E[3],isotope=s.n===common[0]?'most':common.includes(s.n)?'common':'unusual';
   return {kind:charge===0?'neutral':charge>0?'cation':'anion',symbol:E[0],name:E[1],A,charge,ion:E[0]+ionCharge(charge),shells,isotope,commonN:common[0],table:ATOM_ELEMENTS.map(x=>[x[0],x[2]])};
  }
+ case 'stoichiometry':{
+  const R=STOICH[s.reaction],a10=Math.round(s.massA*10),b10=Math.round(s.massB*10);
+  const molA=a10/R.A[1],molB=b10/R.B[1];
+  if(!a10||!b10)return {kind:'none',R,molA,molB,extent:0,products:R.P.map(p=>[p[0],0]),leftA:s.massA,leftB:s.massB,before:s.massA+s.massB,after:s.massA+s.massB,limiting:null};
+  // 整數比較 (a10/MA/cA) 與 (b10/MB/cB)：交叉相乘
+  const lhs=a10*R.B[1]*R.B[2],rhs=b10*R.A[1]*R.A[2],kind=lhs===rhs?'exact':lhs<rhs?'limitA':'limitB';
+  const extent=kind==='limitB'?molB/R.B[2]:molA/R.A[2];
+  const leftA=kind==='limitA'||kind==='exact'?0:s.massA-extent*R.A[2]*R.A[1]/10,leftB=kind==='limitB'||kind==='exact'?0:s.massB-extent*R.B[2]*R.B[1]/10;
+  const products=R.P.map(p=>[p[0],extent*p[2]*p[1]/10]),after=products.reduce((t,p)=>t+p[1],0)+leftA+leftB;
+  return {kind,R,molA,molB,extent,products,leftA,leftB,before:s.massA+s.massB,after,limiting:kind==='limitA'?R.A[0]:kind==='limitB'?R.B[0]:null};
+ }
+ case 'weather-systems':{
+  if(s.mode==='front'){
+   const F={cold:{cloud:'積雨雲（高聳）',rain:'雨勢急而短，常有雷陣雨',after:'down',now:{before:'暖氣團控制，天氣較穩定',during:'積雨雲通過，雷陣雨、雨勢急',after:'冷氣團控制，氣溫下降、氣壓上升，天氣轉晴'}},
+    warm:{cloud:'層狀雲（範圍廣）',rain:'雨勢緩而久',after:'up',now:{before:'雲層逐漸增厚，開始連續性降雨',during:'連續性降雨',after:'暖氣團控制，氣溫上升，雨停'}},
+    stationary:{cloud:'層狀雲為主，持續不散',rain:'長時間降雨（臺灣梅雨）',after:'flat',now:{before:'鋒面附近長時間降雨',during:'鋒面附近長時間降雨',after:'冷暖氣團勢力相當，鋒面滯留，天氣變化不明顯'}}}[s.front];
+   return {kind:s.front,cloud:F.cloud,rain:F.rain,now:F.now[s.phase],afterTemp:F.after,rotation:null};
+  }
+  const low=s.system!=='high',rotation=(s.hemi==='north')===low?'ccw':'cw';
+  return {kind:s.system,rotation,flow:low?'in':'out',vertical:low?'up':'down',weather:s.system==='high'?'晴朗、穩定':s.system==='low'?'容易成雲致雨':'強風豪雨'};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -129,5 +152,7 @@ export function describe(id,s,r){
  case 'reaction-rate':return {metrics:[['相對速率',f(r.rate,3)],['完成時間',f(r.time,1)+' s'],['產物總量',f(r.product)+' 單位'],['和基準相比',r.kind==='same'?'一樣快':f(r.rate,3)+' 倍']],explanation:`相對速率＝${f(s.conc,1)}（濃度）×${f(r.tempF,3)}（溫度）×${r.sizeF}（顆粒）×${r.catF}（催化劑）＝${f(r.rate,3)}。完成時間 ${f(r.time,1)} s，基準條件要 ${f(r.baseTime,1)} s；產物總量仍是 ${f(r.product)} 單位，只由固體反應物的量決定。數值來自虛構教學模型。`};
  case 'reflection-refraction':return s.mode==='mirror'?{metrics:[['反射角',f(r.reflection,1)+'°'],['像距',f(r.image)+' cm'],['像的性質','正立、等大、虛像'],['左右','左右相反']],explanation:`反射角＝入射角＝${f(r.reflection,1)}°，兩個角都從法線量起。物體離鏡面 ${s.dist} cm，像在鏡子後方 ${f(r.image)} cm，是反射光反向延長線的交點，所以是虛像，無法投影在屏幕上。`}:{metrics:[['反射角',f(r.reflection,1)+'°'],['折射角',r.kind==='tir'?'沒有折射光':f(r.refraction,2)+'°'],['偏折方向',{normal:'垂直入射，不偏折',toward:'偏向法線',away:'偏離法線',tir:'全反射'}[r.kind]],['臨界角',r.critical===null?'不適用（進入較密介質）':f(r.critical,2)+'°']],explanation:r.kind==='tir'?`入射角 ${s.incident}° 大於臨界角 ${f(r.critical,2)}°，n₁ sinθ₁ 超過 n₂，沒有折射光，光線全部反射回原介質（進階）。`:r.kind==='normal'?'入射角 0°：光沿法線前進，不偏折；仍有一部分光被反射回來。':`n₁ sinθ₁＝${f(r.n1*Math.sin(s.incident*Math.PI/180),4)}＝n₂ sinθ₂，折射角 ${f(r.refraction,2)}°。${r.kind==='toward'?'進入折射率較大的介質，光偏向法線。':'進入折射率較小的介質，光偏離法線。'}`};
  case 'atom-builder':return {metrics:[['元素',r.symbol+' '+r.name],['質量數 A',String(r.A)],['電荷',r.charge===0?'0（電中性）':(r.charge>0?'+':'−')+Math.abs(r.charge)+'（'+r.ion+'）'],['電子層',r.shells.length?r.shells.join('、'):'沒有電子']],explanation:`質子數 ${s.p} 決定這是${r.name}（${r.symbol}）。質量數＝${s.p}＋${s.n}＝${r.A}。電荷＝${s.p}－${s.e}＝${r.charge>0?'+':''}${r.charge}，${r.kind==='neutral'?'質子與電子一樣多，是電中性的原子':r.kind==='cation'?'電子比質子少，是陽離子 '+r.ion:'電子比質子多，是陰離子 '+r.ion}。${r.isotope==='most'?'中子數 '+s.n+' 是最常見的組合。':r.isotope==='common'?'中子數和最常見的 '+r.commonN+' 不同：這是'+r.name+'的同位素（'+r.symbol+'-'+r.A+'）。':'中子數 '+s.n+' 不在常見同位素表內：非常見組合，本頁不判斷是否穩定。'}${Math.abs(r.charge)>3?'電荷超過 ±3 的離子在國中不會出現，這裡只作數字練習。':''}`};
+ case 'stoichiometry':{const P=r.products[r.R.main];return {metrics:[['莫耳數',r.R.A[0]+' '+f(r.molA,3)+' mol、'+r.R.B[0]+' '+f(r.molB,3)+' mol'],['限量試劑',r.kind==='none'?'—（缺少反應物）':r.kind==='exact'?'無（恰好完全反應）':r.limiting],['主要產物',P[0]+' '+f(P[1],2)+' g'],['剩餘反應物',r.leftA>1e-9?r.R.A[0]+' '+f(r.leftA,2)+' g':r.leftB>1e-9?r.R.B[0]+' '+f(r.leftB,2)+' g':'無']],explanation:r.kind==='none'?'有一種反應物的質量是 0，反應無法進行。':`${r.R.A[0]} ${f(r.molA,3)} mol÷${r.R.A[2]}＝${f(r.molA/r.R.A[2],3)}，${r.R.B[0]} ${f(r.molB,3)} mol÷${r.R.B[2]}＝${f(r.molB/r.R.B[2],3)}；${r.kind==='exact'?'兩者相等，恰好完全反應。':'較小的 '+r.limiting+' 是限量試劑，先用完。'}反應前總質量 ${f(r.before,2)} g＝反應後總質量 ${f(r.after,2)} g。`}}
+ case 'weather-systems':return s.mode==='front'?{metrics:[['雲',r.cloud],['降雨',r.rain],['目前天氣',r.now],['過境後氣溫',{down:'下降',up:'上升',flat:'變化不大'}[r.afterTemp]]],explanation:{cold:'冷鋒：較重的冷氣團從後方推進、把暖空氣快速抬升，形成高聳的積雨雲；過境後由冷氣團控制，氣溫下降。',warm:'暖鋒：較輕的暖氣團沿著冷氣團緩緩爬升，形成範圍廣的層狀雲；過境後由暖氣團控制，氣溫上升。',stationary:'滯留鋒：冷暖氣團勢力相當，鋒面幾乎不移動，同一地區會長時間下雨，例如臺灣的梅雨。'}[s.front]}:{metrics:[['近地面風向',(r.rotation==='cw'?'順時針':'逆時針')+'、'+(r.flow==='in'?'向中心吹入':'向外吹出')],['中心氣流',r.vertical==='up'?'上升':'下沉'],['天氣',r.weather],['半球',s.hemi==='north'?'北半球':'南半球']],explanation:`${s.hemi==='north'?'北':'南'}半球的${{high:'高氣壓',low:'低氣壓',typhoon:'颱風'}[s.system]}：近地面的風${r.rotation==='cw'?'順時針':'逆時針'}旋轉並${r.flow==='in'?'向中心吹入，空氣在中心堆積後上升，上升冷卻容易成雲致雨':'向外吹出，中心由上空的空氣下沉補充，下沉增溫不易成雲'}。${s.system==='typhoon'?'颱風是強烈的熱帶低氣壓，旋轉方向與低氣壓相同。':''}換到另一個半球，旋轉方向相反，往內或往外不變。`};
  }
 }

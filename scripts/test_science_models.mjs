@@ -117,6 +117,25 @@ test('Ecosystem: transfer / initial value / K / decline above K',()=>{
  close(calc('ecosystem',{initial:200}).population,200);
  assert.equal(calc('ecosystem',{initial:300,capacity:100}).kind,'decline');
 });
+test('Weather systems: NH low / NH high / SH low / typhoon / front temperature / drawn wind rotation',()=>{
+ const l=calc('weather-systems');assert.equal(l.rotation,'ccw');assert.equal(l.flow,'in');assert.equal(l.vertical,'up');
+ const h=calc('weather-systems',{system:'high'});assert.equal(h.rotation,'cw');assert.equal(h.flow,'out');assert.equal(h.vertical,'down');
+ const sl=calc('weather-systems',{hemi:'south'});assert.equal(sl.rotation,'cw');assert.equal(sl.flow,'in');
+ assert.equal(calc('weather-systems',{system:'typhoon'}).rotation,'ccw');
+ assert.equal(calc('weather-systems',{mode:'front',front:'cold',phase:'after'}).afterTemp,'down');assert.equal(calc('weather-systems',{mode:'front',front:'warm',phase:'after'}).afterTemp,'up');assert.equal(calc('weather-systems',{mode:'front',front:'stationary'}).kind,'stationary');
+ // 由圖上箭頭反算：位置向量 × 方向的 z 分量（y 向下）>0 為順時針；位置向量·方向 <0 為向內
+ for(const hemi of ['north','south'])for(const system of ['high','low','typhoon']){const q=calc('weather-systems',{mode:'pressure',hemi,system}),svg=diagram('weather-systems',{...defaults('weather-systems'),mode:'pressure',hemi,system},q),ws=[...svg.matchAll(/data-wind="([^"]+)"/g)].map(m=>m[1].split(',').map(Number));assert.equal(ws.length,8);
+  for(const [px,py,dx,dy] of ws){const rx=px-180,ry=py-214,cross=rx*dy-ry*dx,dot=rx*dx+ry*dy;assert.equal(cross>0?'cw':'ccw',q.rotation);assert.equal(dot<0?'in':'out',q.flow)}}
+});
+test('Stoichiometry: exact / limiting O2 / CaCO3 + HCl exact / zero / mass conservation',()=>{
+ const a=calc('stoichiometry');close(a.molA,2);close(a.molB,1);assert.equal(a.kind,'exact');close(a.products[0][1],36);close(a.leftA,0);close(a.leftB,0);
+ const b=calc('stoichiometry',{massB:16});assert.equal(b.kind,'limitB');close(b.products[0][1],18);close(b.leftA,2);
+ const c=calc('stoichiometry',{reaction:'caco3',massA:10,massB:7.3});assert.equal(c.kind,'exact');close(c.products[2][1],4.4);
+ assert.equal(calc('stoichiometry',{reaction:'mgo',massA:4.8,massB:3.2}).kind,'exact');assert.equal(calc('stoichiometry',{reaction:'nh3',massA:2.8,massB:0.6}).kind,'exact');
+ assert.equal(calc('stoichiometry',{massA:0}).kind,'none');assert.equal(calc('stoichiometry',{massA:10,massB:10}).kind,'limitB');
+ for(const reaction of ['h2o','mgo','caco3','nh3'])for(const massA of [0.1,0.3,4,7.3,55.5,100])for(const massB of [0.1,0.2,3.2,7.3,32,100]){const q=calc('stoichiometry',{reaction,massA,massB});close(q.before,q.after);assert.ok(q.leftA>=-1e-9&&q.leftB>=-1e-9);
+  const svg=diagram('stoichiometry',{reaction,massA,massB},q);assert.ok(svg.includes('data-mass-check'));}
+});
 test('Atom builder: Na+ / Cl- / C-14 isotope / no electrons / element fixed by protons',()=>{
  const na=calc('atom-builder',{p:11,n:12,e:10});assert.equal(na.ion,'Na⁺');assert.equal(na.A,23);assert.deepEqual([...na.shells],[2,8]);assert.equal(na.kind,'cation');
  const cl=calc('atom-builder',{p:17,n:18,e:18});assert.equal(cl.ion,'Cl⁻');assert.equal(cl.A,35);assert.deepEqual([...cl.shells],[2,8,8]);assert.equal(cl.kind,'anion');
@@ -165,6 +184,23 @@ test('Lever torque: balanced default / slanted pull / sin symmetry / effective a
  for(const angle of [30,60,90,120,150])for(const d2 of [5,25,50]){const q=calc('lever-torque',{angle,d2}),svg=diagram('lever-torque',{...defaults('lever-torque'),angle,d2},q);
   const m=svg.match(/<line data-arm x1="([\d.-]+)" y1="([\d.-]+)" x2="([\d.-]+)" y2="([\d.-]+)"/);assert.ok(m,'effective arm line missing');
   assert.ok(Math.abs(Math.hypot(m[3]-m[1],m[4]-m[2])/5.4-q.effective)<0.1,`arm ${angle} ${d2}`);}
+});
+test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
+ const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems'];
+ const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
+ for(const id of ids){const t=batch2.find(x=>x.id===id),def=defaults(id);
+  const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];
+  for(const [k,vs] of lists)for(const v of vs)combos.push({[k]:v});
+  for(let i=0;i<lists.length;i++)for(let j=i+1;j<lists.length;j++)for(const a of lists[i][1])for(const b of lists[j][1])combos.push({[lists[i][0]]:a,[lists[j][0]]:b});
+  for(const c of combos){const s={...def,...c},raw=diagram(id,s,calculate(id,s)),where=id+' '+JSON.stringify(c);
+   for(const m of raw.matchAll(/<g transform="translate\(([-\d.]+),([-\d.]+)\)/g))assert.ok(+m[1]>=30&&+m[1]<=630&&+m[2]>=45&&+m[2]<=400,where+' group');
+   const svg=raw.replace(/<g transform=[^>]*>[\s\S]*?<\/g>/g,'');
+   for(const m of svg.matchAll(/<line([^>]*)>/g)){if(/stroke-width="1.5" stroke-dasharray="4 4"/.test(m[1]))continue;for(const e of ['1','2']){const x=attr(m[1],'x'+e),y=attr(m[1],'y'+e);assert.ok(x>=0&&x<=660&&y>=0&&y<=400,`${where} line end (${x},${y})`)}}
+   for(const m of svg.matchAll(/<circle([^>]*)>/g)){const x=attr(m[1],'cx'),y=attr(m[1],'cy'),r=attr(m[1],'r');assert.ok(x-r>=-1&&x+r<=661&&y-r>=-1&&y+r<=401,`${where} circle (${x},${y})`)}
+   for(const m of svg.matchAll(/<rect([^>]*)>/g)){const x=attr(m[1],'x'),y=attr(m[1],'y'),w=attr(m[1],'width'),h=attr(m[1],'height');assert.ok(w>=0&&h>=0&&x>=0&&y>=0&&x+w<=660&&y+h<=400,`${where} rect ${[x,y,w,h]}`)}
+   for(const m of svg.matchAll(/<path d="([^"]*)"/g))for(const n of m[1].matchAll(/[ML]\s*([-\d.]+)[, ]([-\d.]+)/g))assert.ok(+n[1]>=0&&+n[1]<=660&&+n[2]>=0&&+n[2]<=400,`${where} path (${n[1]},${n[2]})`);
+   for(const m of svg.matchAll(/<text([^>]*)>([^<]*)</g)){const fs=attr(m[1],'font-size')||14,anchor=(m[1].match(/text-anchor="(\w+)"/)||[])[1]||'start',w=[...m[2]].reduce((a,ch)=>a+(ch.charCodeAt(0)>255?fs:fs*.55),0),x=attr(m[1],'x'),y=attr(m[1],'y'),x0=anchor==='end'?x-w:anchor==='middle'?x-w/2:x;
+    assert.ok(x0>=-1&&x0+w<=661&&y-fs>=-1&&y<=401,`${where} text "${m[2]}"`)}}}
 });
 test('Lever force and mirror rays stay inside the 660 by 400 diagram at control extremes',()=>{
  const check=(id,values,selector)=>{
