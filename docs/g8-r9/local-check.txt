@@ -1,0 +1,128 @@
+## sqrt
+basic/rootMeaning /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/rootMeaning /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/rootMeaning /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/principalRoot/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/principalRoot/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/principalRoot/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/absoluteRoot/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+basic/absoluteRoot/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+basic/absoluteRoot/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+basic/simplify    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/simplify    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/simplify    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/estimate    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/estimate    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/estimate    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/notation    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=29
+basic/notation    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+basic/notation    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+basic/multiplyRadicals/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=48
+basic/multiplyRadicals/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=13
+basic/multiplyRadicals/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=13
+basic/divideRadicals/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+basic/divideRadicals/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+basic/divideRadicals/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+basic/rationalize /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/rationalize /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/rationalize /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+basic/addRadicals /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=80
+basic/addRadicals /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=24
+basic/addRadicals /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=24
+basic/conjugate   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=12
+basic/conjugate   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/conjugate   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/binomialDenominator/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=6
+basic/binomialDenominator/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=6
+basic/binomialDenominator/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=6
+basic/mixed       /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=20
+basic/mixed       /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/mixed       /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/telescoping /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+basic/telescoping /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+basic/telescoping /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+advanced/rootMeaning /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/rootMeaning /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/rootMeaning /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/principalRoot/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/principalRoot/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/principalRoot/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/absoluteRoot/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+advanced/absoluteRoot/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+advanced/absoluteRoot/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+advanced/simplify    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+advanced/simplify    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/simplify    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/estimate    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/estimate    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/estimate    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/notation    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=29
+advanced/notation    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+advanced/notation    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+advanced/multiplyRadicals/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=49
+advanced/multiplyRadicals/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=14
+advanced/multiplyRadicals/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=14
+advanced/divideRadicals/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=46
+advanced/divideRadicals/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=19
+advanced/divideRadicals/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=20
+advanced/rationalize /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=6
+advanced/rationalize /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+advanced/rationalize /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+advanced/addRadicals /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=93
+advanced/addRadicals /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=32
+advanced/addRadicals /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=30
+advanced/conjugate   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+advanced/conjugate   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/conjugate   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/binomialDenominator/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+advanced/binomialDenominator/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+advanced/binomialDenominator/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+advanced/mixed       /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=12
+advanced/mixed       /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/mixed       /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/telescoping /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/telescoping /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/telescoping /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/rootMeaning /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/rootMeaning /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/rootMeaning /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/principalRoot/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/principalRoot/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/principalRoot/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/absoluteRoot/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+challenge/absoluteRoot/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+challenge/absoluteRoot/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+challenge/simplify    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+challenge/simplify    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/simplify    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/estimate    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/estimate    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/estimate    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/notation    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=23
+challenge/notation    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=13
+challenge/notation    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=13
+challenge/multiplyRadicals/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=45
+challenge/multiplyRadicals/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=14
+challenge/multiplyRadicals/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=14
+challenge/divideRadicals/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=30
+challenge/divideRadicals/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+challenge/divideRadicals/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+challenge/rationalize /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=6
+challenge/rationalize /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+challenge/rationalize /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=5
+challenge/addRadicals /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=76
+challenge/addRadicals /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=34
+challenge/addRadicals /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=33
+challenge/conjugate   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=8
+challenge/conjugate   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/conjugate   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/binomialDenominator/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+challenge/binomialDenominator/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+challenge/binomialDenominator/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+challenge/mixed       /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=14
+challenge/mixed       /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/mixed       /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/telescoping /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/telescoping /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/telescoping /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+PASS
