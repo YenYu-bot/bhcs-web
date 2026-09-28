@@ -119,7 +119,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"],["boxplot","盒狀圖、全距與四分位距"],["probability","認識機率"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"],["boxplot","盒狀圖、全距與四分位距"],["probability","認識機率"],["treediagram","樹狀圖與機率"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1470,7 +1470,99 @@ function probabilityConfig(){
   units:[bag,numbers,dice,poker],presets:{basic:{bag:2,numbers:2,dice:2,poker:2},advanced:{bag:2,numbers:2,dice:2,poker:2},challenge:{bag:2,numbers:2,dice:2,poker:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig,boxplot:boxplotConfig,probability:probabilityConfig},CFG=CONFIGS[TOPIC_KEY]();
+function treediagramConfig(){
+ /* 國三下 2-2 機率：樹狀圖（2026-09-28，Claude）。依舊工具 g9b-2-2-tree-diagram.html 重做計算部分（B 類）：兩個以上步驟的試驗，
+    算出所有可能結果的個數與機率。要求「畫出樹狀圖」與 6×6 樣本空間圖的題型留在舊頁；引擎不附圖。舊頁「雙袋編號球」「卡牌比大小」
+    應有 9 種結果、圖卻只畫 6 種，引擎以正確的 3×3＝9 種計算（舊檔不動）。
+    verify：答案用乘法原理與分類計數（例：兩顆骰子點數和為 k 有 6－|k－7| 種）；驗證時用巢狀迴圈把所有結果逐一列出來實際計數。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const form=ctx=>pick([[0,1,2],[1,2,3],[2,3,4]][lv(ctx)]);
+ const Fr=(a,b)=>fracHTML(R(a,b));
+ const isPrime=n=>{if(n<2)return false;for(let d=2;d*d<=n;d++)if(n%d===0)return false;return true};
+ const prod=(...arrs)=>arrs.reduce((acc,a)=>acc.flatMap(x=>a.map(y=>x.concat([y]))),[[]]);
+ const P=(space,fn)=>R(space.filter(fn).length,space.length);
+ const ok=(space,fn,a,b)=>eq(P(space,fn),R(a,b));
+ const range=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+ const D6=[1,2,3,4,5,6],DD=prod(D6,D6);
+ const ans=ps=>ps.map((p,i)=>`(${i+1}) ${p}`).join(" ");
+
+ // ① 硬幣、生小孩、兩袋取球
+ const COL=["紅","白","藍","黃","黑","綠"];
+ const coins=unit("coins","硬幣、生小孩與兩袋取球","每一步的結果數相乘就是全部結果數；「至少一個」用 1 減去「一個都沒有」。",["integer"],ctx=>{
+  const f=form(ctx);
+  if(f===0){const[obj,A,B,both,mix]=pick([["投擲一枚均勻硬幣 2 次","正面","反面","兩次都是正面","一次正面一次反面"],["投擲一枚均勻硬幣 2 次","反面","正面","兩次都是反面","一次正面一次反面"],["一個家庭計劃生兩個小孩（生男生女機會相同）","男","女","兩個都是男孩","一男一女"],["一個家庭計劃生兩個小孩（生男生女機會相同）","女","男","兩個都是女孩","一男一女"]]),S=prod([A,B],[A,B]);
+   return{expr:`${obj}，求 (1) ${both}的機率 (2) ${mix}的機率。`,answer:ans([Fr(1,4),Fr(1,2)]),sig:`c0:${obj.length}:${A}`,verify:()=>ok(S,x=>x[0]===A&&x[1]===A,1,4)&&ok(S,x=>x[0]!==x[1],1,2)}}
+  if(f===1){const n=3,[obj,A,B]=pick([["投擲一枚均勻硬幣 3 次","正面","反面"],["一個家庭生三個小孩（生男生女機會相同）","男孩","女孩"],["同時投擲三枚均勻硬幣","正面","反面"]]),k=rand(1,2),S=prod([A,B],[A,B],[A,B]),c=3,un=A.length===2&&A.endsWith("孩")?"個":"個";
+   return{expr:`${obj}，求 (1) 恰好 ${k} 個${A}的機率 (2) 至少 1 個${A}的機率。`,answer:ans([Fr(c,8),Fr(7,8)]),sig:`c1:${A}:${k}:${obj.length}`,verify:()=>ok(S,x=>x.filter(y=>y===A).length===k,c,8)&&ok(S,x=>x.includes(A),7,8)}}
+  if(f===2){const[c1,c2]=shuffle(COL).slice(0,2),a1=rand(1,4),b1=rand(1,4),a2=rand(1,4),b2=rand(1,4),bag1=[...Array(a1).fill(c1),...Array(b1).fill(c2)],bag2=[...Array(a2).fill(c1),...Array(b2).fill(c2)],S=prod(bag1,bag2),n=(a1+b1)*(a2+b2),same=a1*a2+b1*b2;
+   return{expr:`甲袋有${c1}球 ${a1} 顆、${c2}球 ${b1} 顆；乙袋有${c1}球 ${a2} 顆、${c2}球 ${b2} 顆。從兩袋各取一球，求 (1) 兩球都是${c1}球的機率 (2) 兩球同色的機率。`,answer:ans([Fr(a1*a2,n),Fr(same,n)]),sig:`c2:${a1}${b1}${a2}${b2}`,verify:()=>ok(S,x=>x[0]===c1&&x[1]===c1,a1*a2,n)&&ok(S,x=>x[0]===x[1],same,n)}}
+  if(f===3){const m=rand(3,4),n=rand(3,4),A=Array.from({length:m},(_,i)=>i+1),B=Array.from({length:n},(_,i)=>i+1),S=prod(A,B),k=rand(3,m+n-1),sumC=A.reduce((s,a)=>s+(k-a>=1&&k-a<=n?1:0),0),gt=A.reduce((s,a)=>s+Math.min(a-1,n),0);
+   return{expr:`甲袋有編號 1～${m} 號的球各一顆，乙袋有編號 1～${n} 號的球各一顆。從兩袋各取一球，共有幾種結果？並求 (1) 兩球號碼和為 ${k} 的機率 (2) 甲袋的號碼大於乙袋的機率。`,answer:`共 ${m*n} 種；${ans([Fr(sumC,m*n),Fr(gt,m*n)])}`,sig:`c3:${m}:${n}:${k}`,verify:()=>S.length===m*n&&ok(S,x=>x[0]+x[1]===k,sumC,m*n)&&ok(S,x=>x[0]>x[1],gt,m*n)}}
+  // 同一袋連取兩次：放回或不放回
+  const[c1,c2]=shuffle(COL).slice(0,2),a=rand(2,5),b=rand(1,4),back=pick([true,false]),bag=[...Array(a).fill(c1),...Array(b).fill(c2)].map((c,i)=>[c,i]),S=prod(bag,bag).filter(x=>back||x[0][1]!==x[1][1]),t=a+b,n=back?t*t:t*(t-1),same=back?a*a+b*b:a*(a-1)+b*(b-1);
+  return{expr:`袋中有${c1}球 ${a} 顆、${c2}球 ${b} 顆。從袋中取出一球，${back?"記下顏色後放回":"不放回"}，再取出一球，求 (1) 兩次都是${c1}球的機率 (2) 兩次顏色相同的機率。`,answer:ans([Fr(back?a*a:a*(a-1),n),Fr(same,n)]),sig:`c4:${a}:${b}:${back}`,verify:()=>S.length===n&&ok(S,x=>x[0][0]===c1&&x[1][0]===c1,back?a*a:a*(a-1),n)&&ok(S,x=>x[0][0]===x[1][0],same,n)};
+ });
+
+ // ② 排數字、猜拳、比大小
+ const games=unit("games","排數字、猜拳與比大小","排數字時十位不能是 0、同一張卡不能重複用；猜拳每人有剪刀、石頭、布三種出法。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx);
+  if(f===0){let d;do{d=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,3).sort((x,y)=>x-y)}while(false);const S=prod(d,d).filter(x=>x[0]!==x[1]).map(x=>10*x[0]+x[1]),ev=pick([["偶數",x=>x%2===0,(t)=>d.filter(x=>x%2===0).length*2],["3 的倍數",x=>x%3===0,null],["5 的倍數",x=>x%5===0,t=>d.includes(5)?2:0]]),k=pick(S.slice().sort((x,y)=>x-y).slice(1,5));
+   const cE=ev[2]?ev[2]():d.flatMap(a=>d.filter(b=>b!==a).map(b=>a+b)).filter(s=>s%3===0).length,cK=S.length-[...S].sort((x,y)=>x-y).indexOf(k)-1;
+   return{expr:`有 ${d.join("、")} 三張數字卡，任取兩張排成一個二位數，共有幾種結果？並求 (1) 排出${ev[0]}的機率 (2) 排出的數大於 ${k} 的機率。`,answer:`共 6 種；${ans([Fr(cE,6),Fr(cK,6)])}`,sig:`g0:${d}:${ev[0]}:${k}`,verify:()=>S.length===6&&ok(S,ev[1],cE,6)&&ok(S,x=>x>k,cK,6)}}
+  const RPS=["剪刀","石頭","布"],beats=(a,b)=>(a===0&&b===2)||(a===1&&b===0)||(a===2&&b===1);
+  if(f===1){const S=prod([0,1,2],[0,1,2]),EV=[["甲獲勝",x=>beats(x[0],x[1]),3],["乙獲勝",x=>beats(x[1],x[0]),3],["平手",x=>x[0]===x[1],3],["甲不輸",x=>!beats(x[1],x[0]),6],["分出勝負",x=>x[0]!==x[1],6]],[e1,e2]=shuffle(EV).slice(0,2);
+   return{expr:`甲、乙兩人猜拳一次（每人出剪刀、石頭、布的機會相等），共有幾種結果？並求 (1) ${e1[0]}的機率 (2) ${e2[0]}的機率。`,answer:`共 9 種；${ans([Fr(e1[2],9),Fr(e2[2],9)])}`,sig:`g1:${e1[0]}:${e2[0]}`,verify:()=>S.length===9&&ok(S,e1[1],e1[2],9)&&ok(S,e2[1],e2[2],9)}}
+  if(f===2){const pool=shuffle(range(1,9+3*L)),A=pool.slice(0,3).sort((x,y)=>x-y),B=[...pool.slice(3,5),pick(A)].sort((x,y)=>x-y),S=prod(A,B),wA=A.reduce((s,a)=>s+B.filter(b=>b<a).length,0),tie=A.reduce((s,a)=>s+B.filter(b=>b===a).length,0);
+   return{expr:`甲有 ${A.join("、")} 三張數字卡，乙有 ${B.join("、")} 三張數字卡。兩人各出一張比大小，數字大者獲勝，相同則平手，共有幾種結果？並求 (1) 甲獲勝的機率 (2) 乙獲勝的機率。`,answer:`共 9 種；${ans([Fr(wA,9),Fr(9-wA-tie,9)])}`,sig:`g2:${A}:${B}`,verify:()=>S.length===9&&ok(S,x=>x[0]>x[1],wA,9)&&ok(S,x=>x[1]>x[0],9-wA-tie,9)}}
+  if(f===3){const d=[0,...shuffle([1,2,3,4,5,6,7,8,9]).slice(0,3)].sort((x,y)=>x-y),S=prod(d,d).filter(x=>x[0]!==x[1]&&x[0]!==0).map(x=>10*x[0]+x[1]),n=3*3,c3=d.flatMap(a=>a?d.filter(b=>b!==a).map(b=>(a+b)%3===0?1:0):[]).reduce((s,x)=>s+x,0),ev=d.filter(x=>x&&x%2===0).length*2+3;
+   const cEven=d.flatMap(a=>a?d.filter(b=>b!==a&&b%2===0):[]).length;
+   return{expr:`有 ${d.join("、")} 四張數字卡，任取兩張排成一個二位數（十位不能是 0），共有幾種結果？並求 (1) 排出 3 的倍數的機率 (2) 排出偶數的機率。`,answer:`共 ${n} 種；${ans([Fr(c3,n),Fr(cEven,n)])}`,sig:`g3:${d}`,verify:()=>S.length===n&&ok(S,x=>x%3===0,c3,n)&&ok(S,x=>x%2===0,cEven,n)}}
+  // 三人猜拳
+  const S=prod([0,1,2],[0,1,2],[0,1,2]),tie=3+6,one=9;
+  const oneWin=x=>{const set=new Set(x);if(set.size!==2)return false;const[p,q]=[...set],w=beats(p,q)?p:q;return x.filter(y=>y===w).length===1&&x[0]===w};
+  const EV=[["不分勝負（三人相同或三人各不相同）",x=>new Set(x).size!==2,tie],["只有甲一人獲勝",oneWin,3],["恰好有一人獲勝",x=>{const set=new Set(x);if(set.size!==2)return false;const[p,q]=[...set],w=beats(p,q)?p:q;return x.filter(y=>y===w).length===1},one],["甲、乙兩人獲勝（丙輸）",x=>x[0]===x[1]&&x[2]!==x[0]&&beats(x[0],x[2]),3]],[e1,e2]=shuffle(EV).slice(0,2);
+  return{expr:`甲、乙、丙三人猜拳一次（每人出剪刀、石頭、布的機會相等），共有幾種結果？並求 (1) ${e1[0]}的機率 (2) ${e2[0]}的機率。`,answer:`共 27 種；${ans([Fr(e1[2],27),Fr(e2[2],27)])}`,sig:`g4:${e1[0]}:${e2[0]}`,verify:()=>S.length===27&&ok(S,e1[1],e1[2],27)&&ok(S,e2[1],e2[2],27)};
+ });
+
+ // ③ 兩顆骰子：點數和與差
+ const sumdiff=unit("sumdiff","兩次擲骰子：點數和與差","連續投擲一顆骰子兩次共 6×6＝36 種結果；點數和為 k（2≦k≦12）的有 6－|k－7| 種。",["integer"],ctx=>{
+  const f=form(ctx),cs=k=>k<2||k>12?0:6-Math.abs(k-7),cd=d=>d===0?6:2*(6-d);
+  const intro=pick(["將一顆均勻骰子連續投擲兩次","同時投擲兩顆均勻骰子（甲、乙各一顆）"]);
+  if(f===0){const[k1,k2]=shuffle(range(2,12)).slice(0,2);return{expr:`${intro}，求 (1) 點數和為 ${k1} 的機率 (2) 點數和為 ${k2} 的機率。`,answer:ans([Fr(cs(k1),36),Fr(cs(k2),36)]),sig:`s0:${k1}:${k2}:${intro.length}`,verify:()=>ok(DD,x=>x[0]+x[1]===k1,cs(k1),36)&&ok(DD,x=>x[0]+x[1]===k2,cs(k2),36)}}
+  if(f===1){const k=rand(4,10),ge=pick([true,false]),c=range(ge?k:2,ge?12:k).reduce((s,x)=>s+cs(x),0),m=rand(3,5),cm=range(2,12).filter(x=>x%m===0).reduce((s,x)=>s+cs(x),0);
+   return{expr:`${intro}，求 (1) 點數和${ge?"大於或等於":"小於或等於"} ${k} 的機率 (2) 點數和是 ${m} 的倍數的機率。`,answer:ans([Fr(c,36),Fr(cm,36)]),sig:`s1:${k}:${ge}:${m}`,verify:()=>ok(DD,x=>ge?x[0]+x[1]>=k:x[0]+x[1]<=k,c,36)&&ok(DD,x=>(x[0]+x[1])%m===0,cm,36)}}
+  if(f===2){const d=rand(0,5),e=rand(1,4);return{expr:`${intro}，求 (1) 兩個點數的差（大減小）為 ${d} 的機率 (2) 兩個點數的差小於 ${e} 的機率。`,answer:ans([Fr(cd(d),36),Fr(range(0,e-1).reduce((s,x)=>s+cd(x),0),36)]),sig:`s2:${d}:${e}`,verify:()=>ok(DD,x=>Math.abs(x[0]-x[1])===d,cd(d),36)&&ok(DD,x=>Math.abs(x[0]-x[1])<e,range(0,e-1).reduce((s,x)=>s+cd(x),0),36)}}
+  if(f===3){const cp=range(2,12).filter(isPrime).reduce((s,x)=>s+cs(x),0),odd=9;const which=pick(["prime","prodEven"]);
+   return which==="prime"?{expr:`${intro}，求 (1) 點數和是質數的機率 (2) 兩個點數的積是奇數的機率。`,answer:ans([Fr(cp,36),Fr(odd,36)]),sig:`s3a:${intro.length}`,verify:()=>ok(DD,x=>isPrime(x[0]+x[1]),cp,36)&&ok(DD,x=>(x[0]*x[1])%2===1,odd,36)}:{expr:`${intro}，求 (1) 兩個點數的積是偶數的機率 (2) 點數和是偶數的機率。`,answer:ans([Fr(36-odd,36),Fr(18,36)]),sig:`s3b:${intro.length}`,verify:()=>ok(DD,x=>(x[0]*x[1])%2===0,27,36)&&ok(DD,x=>(x[0]+x[1])%2===0,18,36)}}
+  const k=rand(5,9),d=rand(1,3),both=D6.filter(a=>{const b=k-a;return b>=1&&b<=6&&Math.abs(a-b)===d}).length,c=cs(k)+cd(d)-both;
+  return{expr:`${intro}，求點數和為 ${k} 或兩個點數的差為 ${d} 的機率。`,answer:Fr(c,36),sig:`s4:${k}:${d}:${intro.length}`,verify:()=>ok(DD,x=>x[0]+x[1]===k||Math.abs(x[0]-x[1])===d,c,36)};
+ });
+
+ // ④ 兩顆骰子：大小關係與奇偶
+ const order=unit("order","兩次擲骰子：大小關係與奇偶","把第一次、第二次的點數寫成數對 (x，y)；x＝y 有 6 種，x＞y 與 x＜y 各有 15 種。",["integer"],ctx=>{
+  const f=form(ctx),intro="將一顆均勻骰子連續投擲兩次，第一次點數為 x、第二次點數為 y";
+  if(f===0){const REL=[["x＝y",v=>v[0]===v[1],6],["x＞y",v=>v[0]>v[1],15],["x＜y",v=>v[0]<v[1],15],["x≧y",v=>v[0]>=v[1],21],["x≦y",v=>v[0]<=v[1],21]],r=pick(REL),a=rand(1,5),b=rand(2,6),c=(6-a)*(b-1);
+   return{expr:`${intro}，求 (1) ${r[0]} 的機率 (2) x＞${a} 且 y＜${b} 的機率。`,answer:ans([Fr(r[2],36),Fr(c,36)]),sig:`o0:${r[0]}:${a}:${b}`,verify:()=>ok(DD,r[1],r[2],36)&&ok(DD,v=>v[0]>a&&v[1]<b,c,36)}}
+  if(f===1){const ask=pick([["x、y 都是奇數",9,v=>v[0]%2&&v[1]%2],["x、y 一奇一偶",18,v=>(v[0]+v[1])%2===1],["x、y 都是偶數",9,v=>v[0]%2===0&&v[1]%2===0]]),k=rand(1,5),and=pick([true,false]),c=and?(6-k)**2:36-k*k;
+   return{expr:`${intro}，求 (1) ${ask[0]}的機率 (2) x＞${k} ${and?"且":"或"} y＞${k} 的機率。`,answer:ans([Fr(ask[1],36),Fr(c,36)]),sig:`o1:${ask[0]}:${k}:${and}`,verify:()=>ok(DD,ask[2],ask[1],36)&&ok(DD,v=>and?v[0]>k&&v[1]>k:v[0]>k||v[1]>k,c,36)}}
+  if(f===2){const div=(p,q)=>p%q===0,REL=[["x 是 y 的倍數",v=>div(v[0],v[1]),14],["y 是 x 的倍數",v=>div(v[1],v[0]),14],["x、y 其中一個是另一個的倍數",v=>div(v[0],v[1])||div(v[1],v[0]),22],["x、y 互質",v=>gcd(v[0],v[1])===1,23]],r=pick(REL),k=rand(2,3),cm=2*Math.floor(6/k);
+   return{expr:`${intro}，求 (1) ${r[0]}的機率 (2) 其中一個點數是另一個的 ${k} 倍的機率。`,answer:ans([Fr(r[2],36),Fr(cm,36)]),sig:`o2:${r[0]}:${k}`,verify:()=>ok(DD,r[1],r[2],36)&&ok(DD,v=>v[0]===k*v[1]||v[1]===k*v[0],cm,36)}}
+  if(f===3){const m=rand(1,4),one=(6-m)*(7-m)/2,W=[["x 比 y 大 "+m+" 以上（x−y≧"+m+"）",v=>v[0]-v[1]>=m,one],["y 比 x 大 "+m+" 以上（y−x≧"+m+"）",v=>v[1]-v[0]>=m,one],["兩個點數相差 "+m+" 以上",v=>Math.abs(v[0]-v[1])>=m,2*one]],w=pick(W),Q=[["x＞y 且 x＋y 是偶數",v=>v[0]>v[1]&&(v[0]+v[1])%2===0,6],["x＞y 且 x＋y 是奇數",v=>v[0]>v[1]&&(v[0]+v[1])%2===1,9],["x＜y 且 x＋y 是偶數",v=>v[0]<v[1]&&(v[0]+v[1])%2===0,6],["x＜y 且 x＋y 是奇數",v=>v[0]<v[1]&&(v[0]+v[1])%2===1,9]],q=pick(Q);
+   return{expr:`${intro}，求 (1) ${w[0]}的機率 (2) ${q[0]}的機率。`,answer:ans([Fr(w[2],36),Fr(q[2],36)]),sig:`o3:${w[0]}:${q[0]}`,verify:()=>ok(DD,w[1],w[2],36)&&ok(DD,q[1],q[2],36)}}
+  const which=pick(["line","line","num"]);
+  if(which==="line"){const a=pick([1,2,-1,-2,3]),b=a>0?rand(-4,3):rand(4,12),c=D6.filter(x=>a*x+b>=1&&a*x+b<=6).length;if(!c)return null;const rhs=`${a===1?"":a===-1?"−":a<0?"−"+(-a):a}x${b?(b>0?"＋"+b:"−"+(-b)):""}`;
+   return{expr:`${intro}，以 (x，y) 為坐標，求此點落在直線 y＝${rhs} 上的機率。`,answer:Fr(c,36),sig:`o4:line:${a}:${b}`,verify:()=>ok(DD,v=>v[1]===a*v[0]+b,c,36)}}
+  const m=rand(2,9),c=D6.reduce((s,x)=>s+D6.filter(y=>(10*x+y)%m===0).length,0);if(!c)return null;
+  return{expr:`${intro}，以 x 為十位數字、y 為個位數字組成二位數，求這個二位數是 ${m} 的倍數的機率。`,answer:Fr(c,36),sig:`o4:${m}`,verify:()=>{let n=0;for(let x=11;x<=66;x++){const a=Math.floor(x/10),b=x%10;if(a>=1&&a<=6&&b>=1&&b<=6&&x%m===0)n++}return n===c}};
+ });
+
+ return{title:"樹狀圖與機率",symbol:"⋔",subtitle:"硬幣、生小孩與兩袋取球・排數字、猜拳與比大小・兩次擲骰子的和與差・大小關係與奇偶",instruction:"先算出所有可能結果的個數（每一步的結果數相乘），再數出符合條件的結果；機率化為最簡分數。",modes:["integer"],modeLabels:{integer:"最簡分數作答"},mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：兩枚硬幣或兩個小孩、三枚硬幣的恰好與至少、兩袋各取一球；排二位數、兩人猜拳、甲乙卡片比大小；點數和、和的範圍與倍數、點數差；x＝y 與大小、奇偶、倍數關係。",advanced:"進階：三枚硬幣、兩袋取球、兩袋編號球；兩人猜拳、卡片比大小、含 0 的四張卡排二位數；和的範圍與倍數、點數差、和為質數與積的奇偶；奇偶、倍數關係、x 比 y 大 m 以上。",challenge:"挑戰：兩袋取球、兩袋編號球、同一袋放回與不放回；卡片比大小、含 0 的四張卡、三人猜拳；點數差、和為質數與積的奇偶、「和為 k 或差為 d」；倍數關係、x 比 y 大 m 以上、坐標點在直線上與組成二位數的倍數。"},
+  units:[coins,games,sumdiff,order],presets:{basic:{coins:2,games:2,sumdiff:2,order:2},advanced:{coins:2,games:2,sumdiff:2,order:2},challenge:{coins:2,games:2,sumdiff:2,order:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig,boxplot:boxplotConfig,probability:probabilityConfig,treediagram:treediagramConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
