@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["sqrt","平方根"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["sqrt","平方根"],["pythagoras","畢氏定理與兩點距離"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1261,7 +1261,125 @@ function sqrtConfig(){
   presets:{basic:{rootMeaning:2,principalRoot:2,absoluteRoot:2,simplify:3,estimate:2,notation:2,multiplyRadicals:2,rationalize:2},advanced:{principalRoot:2,absoluteRoot:2,simplify:2,estimate:2,multiplyRadicals:2,divideRadicals:2,rationalize:2,addRadicals:2,conjugate:2,binomialDenominator:2},challenge:{simplify:2,estimate:2,divideRadicals:2,addRadicals:2,conjugate:2,binomialDenominator:2,mixed:3,telescoping:2}}};
 }
 
-const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,sqrt:sqrtConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
+function pythagorasConfig(){
+ /* 國二 畢氏定理與兩點距離（2026-09-28，Claude）。依舊的 g8-pythagorean.html（百宏自製）的十二個單元重做：求斜邊、求一股、根式邊長、斜邊上的高、矩形對角線、
+    複合圖形與應用、數線距離、水平／垂直距離、兩點距離、根式座標距離、反求未知座標、周長面積應用。舊工具每個單元只有一種句型，這裡每個單元五種問法，
+    基礎、進階、挑戰各取三種（挑戰有基礎沒有的兩種）；已知數量都寫在題幹文字裡，圖只是示意。
+    verify：用 Math.hypot、Math.sqrt 依題目條件直接重算（與畢氏數組、有理數運算不同路徑），反求題把答案代回條件。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const fv=a=>a.n/a.d,near=(u,v)=>Math.abs(u-v)<1e-7*Math.max(1,Math.abs(v)),neg=a=>R(-a.n,a.d),abs=a=>R(Math.abs(a.n),a.d),hy=Math.hypot,sr=Math.sqrt;
+ const term10=a=>{let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
+ const sh=(a,mode)=>{const s=numHTML(R(Math.abs(a.n),a.d),a.d===1?"integer":mode==="decimal"?"decimal":"fraction",{mixed:false});return(a.n<0?"−":"")+s};
+ const rt=x=>`√<span style="border-top:1px solid currentColor;padding:0 1px">${x}</span>`;
+ const simp=n=>{let o=1,i=n;for(let p=2;p*p<=i;p++)while(i%(p*p)===0){i/=p*p;o*=p}return{o,i}};
+ const radH=(k,n,mode)=>{const s=simp(n),c=mul(k,R(s.o));return s.i===1?sh(c,mode):(c.n===c.d?"":sh(c,mode))+rt(s.i)};
+ const TR=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[6,8,10],[9,12,15],[12,16,20],[9,40,41],[12,35,37]];
+ const scale=mode=>mode==="integer"?R(rand(1,3)):mode==="fraction"?pick([R(1,2),R(1,3),R(2,3),R(3,4),R(1,4),R(5,2)]):pick([R(1,10),R(2,10),R(3,10),R(5,10),R(12,10),R(15,10)]);
+ const tri=mode=>{const[a,b,c]=pick(TR),k=scale(mode);return{a:mul(k,R(a)),b:mul(k,R(b)),c:mul(k,R(c)),k,base:[a,b,c]}};
+ const val=(mode,max=9,pos=false)=>{const s=pos?1:(Math.random()<.5?-1:1);if(mode==="integer")return R(s*rand(pos?1:0,max));if(mode==="fraction"){const d=pick([2,3,4]);let n;do n=rand(1,max*d-1);while(n%d===0);return R(s*n,d)}let n;do n=rand(1,max*10-1);while(n%10===0);return R(s*n,10)};
+ const pt=(n,x,y,m)=>`${n}(${sh(x,m)}，${sh(y,m)})`;
+ const W=200,H=130;
+ const fig=(P,segs,rights,labs)=>{const names=Object.keys(P),T=GEO.fit(names.map(n=>P[n]),W,H,22),Q={};names.forEach(n=>Q[n]=T(P[n]));const c=GEO.centroid(names.map(n=>Q[n]));let b="";segs.forEach(([p,q])=>b+=GEO.line(Q[p],Q[q]));rights.forEach(([v,p,q])=>b+=GEO.right(Q[v],Q[p],Q[q]));
+  labs.forEach(([p,q,t])=>{const m=[(Q[p][0]+Q[q][0])/2,(Q[p][1]+Q[q][1])/2],u=GEO.unitv(Q[p],Q[q]),nr=[u[1],-u[0]],s=(m[0]-c[0])*nr[0]+(m[1]-c[1])*nr[1]>0?1:-1;b+=GEO.text([GEO.f(m[0]+nr[0]*11*s),GEO.f(m[1]+nr[1]*11*s+4)],t,{s:11})});names.forEach(n=>b+=GEO.dot(Q[n])+GEO.vlabel(Q[n],c,n));return GEO.svg(W,H,b)};
+ const rtFig=(a,b,la,lb,lc)=>fig({A:[0,fv(b)],B:[0,0],C:[fv(a),0]},[["A","B"],["B","C"],["C","A"]],[["B","A","C"]],[["B","C",la],["A","B",lb],["A","C",lc]]);
+ const one=(q,ansH,chk)=>({q,a:ansH,chk});
+ const mkUnit=(id,name,tip,kinds,label)=>({id,name,tip,modes:["integer","fraction","decimal"],answerLabel:label,gen:ctx=>{
+  const Lv=lv(ctx),mode=ctx.modes[0],k=kinds[pick([[0,1,2],[1,2,3],[2,3,4]][Lv])];let r;try{r=k(mode,Lv)}catch(e){return null}if(!r)return null;
+  return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<svg[\s\S]*?<\/svg>/g,"").replace(/<[^>]+>/g,""),verify:r.chk};
+ }});
+
+ const hypotenuse=mkUnit("hypotenuse","求斜邊","直角三角形中，斜邊²＝兩股平方和。",[
+  m=>{const t=tri(m);return one(`${rtFig(t.a,t.b,sh(t.a,m),sh(t.b,m),"x")}如圖，∠B＝90°，BC＝${sh(t.a,m)}、AB＝${sh(t.b,m)}，求斜邊 x。`,`x＝${sh(t.c,m)}`,()=>near(hy(fv(t.a),fv(t.b)),fv(t.c)))},
+  m=>{const t=tri(m);return one(`直角三角形的兩股長為 ${sh(t.a,m)} 與 ${sh(t.b,m)}，求斜邊長。`,sh(t.c,m),()=>near(hy(fv(t.a),fv(t.b)),fv(t.c)))},
+  m=>{const s=val(m,9,true);return one(`等腰直角三角形的一股長為 ${sh(s,m)}，求斜邊長（化為最簡根式）。`,radH(s,2,m),()=>near(fv(s)*sr(2),hy(fv(s),fv(s))))},
+  m=>{const t=tri(m),g=gcd(t.base[0],t.base[1]),p=t.base[0]/g,q=t.base[1]/g;return one(`直角三角形兩股長的比為 ${p}：${q}，斜邊長為 ${sh(t.c,m)}，求兩股長。`,`${sh(t.a,m)}、${sh(t.b,m)}`,()=>near(hy(fv(t.a),fv(t.b)),fv(t.c))&&near(fv(t.a)*q,fv(t.b)*p))},
+  m=>{const t=tri(m),per=add(add(t.a,t.b),t.c);return one(`直角三角形兩股長為 ${sh(t.a,m)}、${sh(t.b,m)}，求它的周長與面積。`,`周長 ${sh(per,m)}，面積 ${sh(mul(mul(t.a,t.b),R(1,2)),m)}`,()=>near(fv(t.a)+fv(t.b)+hy(fv(t.a),fv(t.b)),fv(per)))}],"");
+
+ const leg=mkUnit("leg","求一股","股²＝斜邊²−另一股²。",[
+  m=>{const t=tri(m);return one(`${rtFig(t.a,t.b,"x",sh(t.b,m),sh(t.c,m))}如圖，∠B＝90°，AC＝${sh(t.c,m)}、AB＝${sh(t.b,m)}，求 x。`,`x＝${sh(t.a,m)}`,()=>near(sr(fv(t.c)**2-fv(t.b)**2),fv(t.a)))},
+  m=>{const t=tri(m);return one(`直角三角形的斜邊長 ${sh(t.c,m)}，一股長 ${sh(t.a,m)}，求另一股長。`,sh(t.b,m),()=>near(sr(fv(t.c)**2-fv(t.a)**2),fv(t.b)))},
+  m=>{const t=tri(m),b2=mul(R(2),t.a);return one(`等腰三角形兩腰長都是 ${sh(t.c,m)}，底邊長 ${sh(b2,m)}，求底邊上的高與面積。`,`高 ${sh(t.b,m)}，面積 ${sh(mul(t.a,t.b),m)}`,()=>near(sr(fv(t.c)**2-(fv(b2)/2)**2),fv(t.b)))},
+  m=>{const t=tri(m),A=mul(mul(t.a,t.b),R(1,2));return one(`直角三角形的斜邊長 ${sh(t.c,m)}，一股長 ${sh(t.a,m)}，求面積。`,sh(A,m),()=>near(fv(t.a)*sr(fv(t.c)**2-fv(t.a)**2)/2,fv(A)))},
+  m=>{const t=tri(m),s=add(t.a,t.b),A=mul(mul(t.a,t.b),R(1,2));return one(`直角三角形兩股長的和為 ${sh(s,m)}，斜邊長為 ${sh(t.c,m)}，求面積。`,sh(A,m),()=>near((fv(s)**2-fv(t.c)**2)/4,fv(A)))}],"");
+
+ const radicalSide=mkUnit("radicalSide","根式邊長","邊長不是整數時，開根號後化為最簡根式。",[
+  m=>{let a,b;do{a=rand(1,9);b=rand(1,9)}while(Number.isInteger(sr(a*a+b*b)));const k=scale(m),A=mul(k,R(a)),B=mul(k,R(b));return one(`${rtFig(A,B,sh(A,m),sh(B,m),"x")}如圖，∠B＝90°，BC＝${sh(A,m)}、AB＝${sh(B,m)}，求 x（最簡根式）。`,`x＝${radH(k,a*a+b*b,m)}`,()=>near(fv(k)*sr(a*a+b*b),hy(fv(A),fv(B))))},
+  m=>{let a,c;do{a=rand(1,8);c=rand(a+1,12)}while(Number.isInteger(sr(c*c-a*a)));const k=scale(m),A=mul(k,R(a)),C=mul(k,R(c));return one(`直角三角形的斜邊長 ${sh(C,m)}，一股長 ${sh(A,m)}，求另一股長（最簡根式）。`,radH(k,c*c-a*a,m),()=>near(fv(k)*sr(c*c-a*a),sr(fv(C)**2-fv(A)**2)))},
+  m=>{const s=val(m,m==='integer'?40:12,true);return one(`正方形的邊長為 ${sh(s,m)}，求對角線長。`,radH(s,2,m),()=>near(fv(s)*sr(2),hy(fv(s),fv(s))))},
+  m=>{const s=val(m,m==='integer'?40:12,true),h=mul(s,R(1,2));return one(`正三角形的邊長為 ${sh(s,m)}，求它的高（最簡根式）。`,radH(h,3,m),()=>near(fv(h)*sr(3),sr(fv(s)**2-(fv(s)/2)**2)))},
+  m=>{const s=val(m,m==='integer'?40:12,true),A=mul(mul(s,s),R(1,4));return one(`正三角形的邊長為 ${sh(s,m)}，求它的面積（最簡根式）。`,radH(A,3,m),()=>near(fv(A)*sr(3),fv(s)*sr(fv(s)**2-(fv(s)/2)**2)/2))}],"");
+
+ const altitude=mkUnit("altitude","斜邊上的高","面積＝兩股×½＝斜邊×高×½，所以斜邊上的高＝兩股乘積÷斜邊。",[
+  m=>{const t=tri(m),h=div(mul(t.a,t.b),t.c);if(m==="decimal"&&!term10(h))return null;return one(`直角三角形兩股長為 ${sh(t.a,m)}、${sh(t.b,m)}，斜邊長為 ${sh(t.c,m)}，求斜邊上的高。`,sh(h,m),()=>near(fv(t.a)*fv(t.b)/hy(fv(t.a),fv(t.b)),fv(h)))},
+  m=>{const t=tri(m),h=div(mul(t.a,t.b),t.c);if(m==="decimal"&&!term10(h))return null;return one(`直角三角形兩股長為 ${sh(t.a,m)}、${sh(t.b,m)}，求斜邊長與斜邊上的高。`,`斜邊 ${sh(t.c,m)}，高 ${sh(h,m)}`,()=>near(fv(t.a)*fv(t.b)/hy(fv(t.a),fv(t.b)),fv(h)))},
+  m=>{const t=tri(m),h=div(mul(t.a,t.b),t.c);if(m==="decimal"&&!term10(h))return null;return one(`直角三角形的斜邊長 ${sh(t.c,m)}，斜邊上的高為 ${sh(h,m)}，一股長 ${sh(t.a,m)}，求另一股長。`,sh(t.b,m),()=>near(fv(h)*fv(t.c)/fv(t.a),fv(t.b)))},
+  m=>{const t=tri(m),h=div(mul(t.a,t.b),t.c),p=div(mul(t.a,t.a),t.c);if(m==="decimal"&&(!term10(h)||!term10(p)))return null;return one(`直角三角形兩股長為 ${sh(t.a,m)}、${sh(t.b,m)}，斜邊上的高把斜邊分成兩段，求靠近短股那一段的長。`,sh(fv(t.a)<=fv(t.b)?p:div(mul(t.b,t.b),t.c),m),()=>{const s=Math.min(fv(t.a),fv(t.b));return near(s*s/hy(fv(t.a),fv(t.b)),fv(fv(t.a)<=fv(t.b)?p:div(mul(t.b,t.b),t.c)))})},
+  m=>{const p=rand(1,9),q=rand(1,9),k=rand(1,5),P=R(k*k*p*p),Qv=R(k*k*q*q),h=R(k*k*p*q);return one(`直角三角形斜邊上的高把斜邊分成 ${P.n} 與 ${Qv.n} 兩段，求斜邊上的高。`,String(h.n),()=>near(sr(fv(P)*fv(Qv)),fv(h)))}],"");
+
+ const rectangle=mkUnit("rectangle","矩形對角線","矩形的對角線把矩形分成兩個直角三角形：對角線²＝長²＋寬²。",[
+  m=>{const t=tri(m);return one(`矩形的長 ${sh(t.b,m)}、寬 ${sh(t.a,m)}，求對角線長。`,sh(t.c,m),()=>near(hy(fv(t.a),fv(t.b)),fv(t.c)))},
+  m=>{const t=tri(m);return one(`矩形的對角線長 ${sh(t.c,m)}，寬 ${sh(t.a,m)}，求長與面積。`,`長 ${sh(t.b,m)}，面積 ${sh(mul(t.a,t.b),m)}`,()=>near(sr(fv(t.c)**2-fv(t.a)**2),fv(t.b)))},
+  m=>{const s=val(m,m==='integer'?40:12,true),d2=mul(mul(s,s),R(2));return one(`正方形的對角線長為 ${radH(s,2,m)}，求邊長與面積。`,`邊長 ${sh(s,m)}，面積 ${sh(mul(s,s),m)}`,()=>near(fv(s)*sr(2)/sr(2),fv(s)))},
+  m=>{const Q=[[1,2,2,3],[2,3,6,7],[1,4,8,9],[2,6,9,11],[4,4,7,9],[2,10,11,15]],[a,b,c,d]=pick(Q),k=scale(m);return one(`長方體的長、寬、高分別為 ${sh(mul(k,R(a)),m)}、${sh(mul(k,R(b)),m)}、${sh(mul(k,R(c)),m)}，求長方體的對角線長。`,sh(mul(k,R(d)),m),()=>near(fv(k)*sr(a*a+b*b+c*c),fv(k)*d))},
+  m=>{const t=tri(m),g=gcd(t.base[0],t.base[1]);return one(`矩形長與寬的比為 ${t.base[1]/g}：${t.base[0]/g}，對角線長 ${sh(t.c,m)}，求矩形的周長。`,sh(mul(R(2),add(t.a,t.b)),m),()=>near(hy(fv(t.a),fv(t.b)),fv(t.c)))}],"");
+
+ const composite=mkUnit("composite","複合圖形與應用","在圖形或情境中找出直角三角形，再用畢氏定理。",[
+  m=>{const Tm=[[5,9,12,13,15],[9,5,12,15,13],[6,15,8,10,17],[9,16,12,15,20],[5,16,12,13,20]],z=pick(Tm),k=scale(m),L=mul(k,R(z[0])),Rr=mul(k,R(z[1])),H0=mul(k,R(z[2])),known=mul(k,R(z[3])),ans=mul(k,R(z[4]));return one(`${fig({A:[z[0],z[2]],B:[0,0],D:[z[0],0],C:[z[0]+z[1],0]},[["A","B"],["B","C"],["C","A"],["A","D"]],[["D","A","C"]],[["B","D",sh(L,m)],["D","C",sh(Rr,m)],["A","B",sh(known,m)],["A","C","x"]])}如圖，AD⊥BC，AB＝${sh(known,m)}、BD＝${sh(L,m)}、DC＝${sh(Rr,m)}，求 AC＝x。`,`x＝${sh(ans,m)}`,()=>near(hy(fv(Rr),sr(fv(known)**2-fv(L)**2)),fv(ans)))},
+  m=>{const t=tri(m);return one(`一把長 ${sh(t.c,m)} 公尺的梯子斜靠在牆上，梯腳離牆 ${sh(t.a,m)} 公尺，梯頂離地多高？`,`${sh(t.b,m)} 公尺`,()=>near(sr(fv(t.c)**2-fv(t.a)**2),fv(t.b)))},
+  m=>{const t=tri(m);return one(`小明從 A 點向東走 ${sh(t.a,m)} 公尺，再向北走 ${sh(t.b,m)} 公尺到達 B 點，求 A、B 的直線距離。`,`${sh(t.c,m)} 公尺`,()=>near(hy(fv(t.a),fv(t.b)),fv(t.c)))},
+  m=>{const Sets=[[25,7,24,15,20],[10,6,8,6,8],[13,5,12,12,5],[25,15,20,7,24],[17,8,15,15,8]],[c,a0,b0,a1,b1]=pick(Sets);if(b1>=b0)return null;const k=scale(m),C=mul(k,R(c)),A0=mul(k,R(a0)),dropv=mul(k,R(b0-b1)),move=mul(k,R(a1-a0));return one(`長 ${sh(C,m)} 公尺的梯子斜靠在牆上，梯腳離牆 ${sh(A0,m)} 公尺。若梯頂下滑 ${sh(dropv,m)} 公尺，梯腳會向外滑多少公尺？`,`${sh(move,m)} 公尺`,()=>{const h0=sr(fv(C)**2-fv(A0)**2),h1=h0-fv(dropv);return near(sr(fv(C)**2-h1**2)-fv(A0),fv(move))})},
+  m=>{const Hh=rand(8,20),d=rand(2,Hh-1),x=R(Hh*Hh-d*d,2*Hh);if(m==="decimal"&&!term10(x))return null;return one(`一根高 ${Hh} 公尺的竹子被風吹折，竹梢著地處離竹根 ${d} 公尺，求折斷處離地面的高度。`,`${sh(x,"fraction")} 公尺`,()=>near(fv(x)**2+d*d,(Hh-fv(x))**2))}],"");
+
+ const numberLine=mkUnit("numberLine","數線距離","數線上兩點 A(a)、B(b) 的距離＝|a−b|。",[
+  m=>{const a=val(m,12),b=val(m,12);if(eq(a,b))return null;return one(`數線上 A(${sh(a,m)})、B(${sh(b,m)})，求 AB。`,`AB＝${sh(abs(sub(a,b)),m)}`,()=>near(Math.abs(fv(a)-fv(b)),fv(abs(sub(a,b)))))},
+  m=>{const a=neg(val(m,12,true)),b=neg(val(m,12,true));if(eq(a,b))return null;return one(`數線上兩點 A、B 的坐標分別是 ${sh(a,m)} 與 ${sh(b,m)}，求兩點的距離。`,sh(abs(sub(a,b)),m),()=>near(Math.abs(fv(a)-fv(b)),fv(abs(sub(a,b)))))},
+  m=>{const a=val(m,9),d=val(m,9,true);return one(`數線上與 A(${sh(a,m)}) 距離 ${sh(d,m)} 的點的坐標是多少？`,`${sh(sub(a,d),m)} 或 ${sh(add(a,d),m)}`,()=>near(Math.abs(fv(add(a,d))-fv(a)),fv(d))&&near(Math.abs(fv(sub(a,d))-fv(a)),fv(d)))},
+  m=>{const a=val(m,12),b=val(m,12);if(eq(a,b))return null;const M=mul(add(a,b),R(1,2));if(m==="decimal"&&!term10(M))return null;return one(`數線上 A(${sh(a,m)})、B(${sh(b,m)})，求 AB 的中點坐標與 AB 的長。`,`中點 ${sh(M,m)}，AB＝${sh(abs(sub(a,b)),m)}`,()=>near((fv(a)+fv(b))/2,fv(M)))},
+  m=>{const a=val(m,9),b=add(a,R(rand(3,15))),p=rand(1,4),q=rand(1,4),P=add(a,mul(sub(b,a),R(p,p+q)));if(m==="decimal"&&!term10(P))return null;return one(`數線上 A(${sh(a,m)})、B(${sh(b,m)})，P 在 AB 上且 AP：PB＝${p}：${q}，求 P 的坐標。`,sh(P,m),()=>near((fv(P)-fv(a))*q,(fv(b)-fv(P))*p))}],"");
+
+ const axisDistance=mkUnit("axisDistance","水平／垂直距離","兩點的 y 坐標相同時距離＝|x₁−x₂|；x 坐標相同時距離＝|y₁−y₂|。",[
+  m=>{const x=val(m,8),y=val(m,8),d=val(m,10,true),x2=add(x,d);return one(`${pt("A",x,y,m)}、${pt("B",x2,y,m)}，求 AB。`,`AB＝${sh(d,m)}`,()=>near(hy(fv(x2)-fv(x),0),fv(d)))},
+  m=>{const x=val(m,8),y=val(m,8),d=val(m,10,true),y2=sub(y,d);return one(`${pt("A",x,y,m)}、${pt("B",x,y2,m)}，求 AB。`,`AB＝${sh(d,m)}`,()=>near(hy(0,fv(y2)-fv(y)),fv(d)))},
+  m=>{const x=val(m,9),y=val(m,9);if(!x.n||!y.n)return null;return one(`求 ${pt("P",x,y,m)} 到 x 軸與到 y 軸的距離。`,`到 x 軸 ${sh(abs(y),m)}，到 y 軸 ${sh(abs(x),m)}`,()=>near(Math.abs(fv(y)),fv(abs(y)))&&near(Math.abs(fv(x)),fv(abs(x))))},
+  m=>{const x=val(m,9),y=val(m,9),c=val(m,9);if(eq(x,c)||c.n===0)return null;return one(`求 ${pt("P",x,y,m)} 到直線 x＝${sh(c,m)} 的距離。`,sh(abs(sub(x,c)),m),()=>near(Math.abs(fv(x)-fv(c)),fv(abs(sub(x,c)))))},
+  m=>{const x=val(m,8),y=val(m,8),d=val(m,10,true);return one(`${pt("A",x,y,m)}，B 在 A 的正上方或正下方且 AB＝${sh(d,m)}，求 B 的坐標。`,`(${sh(x,m)}，${sh(add(y,d),m)}) 或 (${sh(x,m)}，${sh(sub(y,d),m)})`,()=>near(Math.abs(fv(add(y,d))-fv(y)),fv(d)))}],"");
+
+ const trOff=(m)=>{const t=tri(m),sx=Math.random()<.5?1:-1,sy=Math.random()<.5?1:-1;return{t,dx:mul(t.a,R(sx)),dy:mul(t.b,R(sy))}};
+ const coordinateDistance=mkUnit("coordinateDistance","兩點距離","AB＝√[(x₁−x₂)²＋(y₁−y₂)²]。",[
+  m=>{const{t,dx,dy}=trOff(m),x=val(m,7),y=val(m,7);return one(`${pt("A",x,y,m)}、${pt("B",add(x,dx),add(y,dy),m)}，求 AB。`,`AB＝${sh(t.c,m)}`,()=>near(hy(fv(dx),fv(dy)),fv(t.c)))},
+  m=>{const{t,dx,dy}=trOff(m);return one(`求原點 O 到 ${pt("P",dx,dy,m)} 的距離。`,sh(t.c,m),()=>near(hy(fv(dx),fv(dy)),fv(t.c)))},
+  m=>{const{t,dx,dy}=trOff(m),x=val(m,7),y=val(m,7);return one(`坐標平面上兩點 A、B 的坐標為 (${sh(x,m)}，${sh(y,m)})、(${sh(add(x,dx),m)}，${sh(add(y,dy),m)})，求兩點的距離。`,sh(t.c,m),()=>near(hy(fv(dx),fv(dy)),fv(t.c)))},
+  m=>{const{t,dx,dy}=trOff(m),x=val(m,6),y=val(m,6),A=[x,y],B=[add(x,dx),y],C=[add(x,dx),add(y,dy)],per=add(add(t.a,t.b),t.c);return one(`${pt("A",A[0],A[1],m)}、${pt("B",B[0],B[1],m)}、${pt("C",C[0],C[1],m)}，求 △ABC 的周長。`,sh(per,m),()=>near(Math.abs(fv(dx))+Math.abs(fv(dy))+hy(fv(dx),fv(dy)),fv(per)))},
+  m=>{const{t,dx,dy}=trOff(m),x=val(m,6),y=val(m,6),yes=Math.random()<.5,B=[add(x,dx),y],C=yes?[add(x,dx),add(y,dy)]:[add(x,add(dx,R(1))),add(y,dy)];const d2=(P,Q)=>(fv(P[0])-fv(Q[0]))**2+(fv(P[1])-fv(Q[1]))**2,A=[x,y],s=[d2(A,B),d2(B,C),d2(A,C)].sort((u,v)=>u-v),right=Math.abs(s[0]+s[1]-s[2])<1e-9;return one(`${pt("A",A[0],A[1],m)}、${pt("B",B[0],B[1],m)}、${pt("C",C[0],C[1],m)}，判斷 △ABC 是不是直角三角形。`,right?"是（兩短邊平方和等於最長邊平方）":"不是（兩短邊平方和不等於最長邊平方）",()=>{const e=(P,Q)=>hy(fv(P[0])-fv(Q[0]),fv(P[1])-fv(Q[1])),L=[e(A,B),e(B,C),e(A,C)].sort((u,v)=>u-v);return(Math.abs(L[0]**2+L[1]**2-L[2]**2)<1e-7*L[2]**2)===right})}],"");
+
+ const coordinateRadical=mkUnit("coordinateRadical","根式座標距離","兩點距離開不盡時，化為最簡根式。",[
+  m=>{let dx,dy;do{dx=rand(1,9);dy=rand(1,9)}while(Number.isInteger(sr(dx*dx+dy*dy)));const x=R(rand(-6,6)),y=R(rand(-6,6));return one(`${pt("A",x,y,m)}、${pt("B",add(x,R(dx)),sub(y,R(dy)),m)}，求 AB（最簡根式）。`,`AB＝${radH(R(1),dx*dx+dy*dy,m)}`,()=>near(hy(dx,dy),sr(dx*dx+dy*dy)))},
+  m=>{let dx,dy;do{dx=rand(-9,9);dy=rand(-9,9)}while(!dx||!dy||Number.isInteger(sr(dx*dx+dy*dy)));return one(`求原點 O 到 ${pt("P",R(dx),R(dy),m)} 的距離（最簡根式）。`,radH(R(1),dx*dx+dy*dy,m),()=>near(hy(dx,dy),sr(dx*dx+dy*dy)))},
+  m=>{let a,b;do{a=rand(1,8);b=rand(1,8)}while(Number.isInteger(sr(a*a+b*b)));const k=scale(m),x=R(rand(-5,5)),y=R(rand(-5,5));return one(`${pt("A",x,y,m)}、${pt("B",add(x,mul(k,R(a))),add(y,mul(k,R(b))),m)}，求 AB（最簡根式）。`,radH(k,a*a+b*b,m),()=>near(fv(k)*hy(a,b),hy(fv(mul(k,R(a))),fv(mul(k,R(b))))))},
+  m=>{const a=rand(-6,6),b=rand(-6,6),c=rand(-6,6),d=rand(-6,6);if(a===c)return null;const P=R((c*c+d*d-a*a-b*b),2*(c-a));if(m==="decimal"&&!term10(P))return null;return one(`x 軸上一點 P 到 ${pt("A",R(a),R(b),m)} 與 ${pt("B",R(c),R(d),m)} 的距離相等，求 P 的坐標。`,`(${sh(P,"fraction")}，0)`,()=>near(hy(fv(P)-a,b),hy(fv(P)-c,d)))},
+  m=>{const p=[rand(-5,5),rand(-5,5)],q=[rand(-5,5),rand(-5,5)];const d1=p[0]**2+p[1]**2,d2=q[0]**2+q[1]**2;if(d1===d2||!d1||!d2)return null;return one(`${pt("P",R(p[0]),R(p[1]),m)}、${pt("Q",R(q[0]),R(q[1]),m)} 哪一點離原點比較遠？`,`${d1>d2?"P":"Q"}（OP＝${radH(R(1),d1,m)}，OQ＝${radH(R(1),d2,m)}）`,()=>(hy(...p)>hy(...q))===(d1>d2))}],"");
+
+ const unknownCoordinate=mkUnit("unknownCoordinate","反求未知座標","把距離公式列成方程式，開平方時要考慮正負兩種情形。",[
+  m=>{const t=tri(m),x=val(m,6),y=val(m,6),x2=add(x,t.a);return one(`${pt("A",x,y,m)}、B(${sh(x2,m)}，y)，且 AB＝${sh(t.c,m)}，求 y。`,`y＝${sh(add(y,t.b),m)} 或 ${sh(sub(y,t.b),m)}`,()=>near(hy(fv(t.a),fv(add(y,t.b))-fv(y)),fv(t.c))&&near(hy(fv(t.a),fv(sub(y,t.b))-fv(y)),fv(t.c)))},
+  m=>{const t=tri(m),x=val(m,6),y=val(m,6),y2=add(y,t.a);return one(`${pt("A",x,y,m)}、B(x，${sh(y2,m)})，且 AB＝${sh(t.c,m)}，求 x。`,`x＝${sh(add(x,t.b),m)} 或 ${sh(sub(x,t.b),m)}`,()=>near(hy(fv(add(x,t.b))-fv(x),fv(t.a)),fv(t.c)))},
+  m=>{const t=tri(m),x=val(m,6),y=m==="integer"?R(pick([-1,1])*t.a.n):pick([t.a,neg(t.a)]);return one(`x 軸上的點 P 與 ${pt("A",x,y,m)} 的距離為 ${sh(t.c,m)}，求 P 的坐標。`,`(${sh(add(x,t.b),m)}，0) 或 (${sh(sub(x,t.b),m)}，0)`,()=>near(hy(fv(t.b),fv(y)),fv(t.c)))},
+  m=>{const t=tri(m);return one(`A(${sh(t.a,m)}，0)、B(0，b)，且 AB＝${sh(t.c,m)}、b＞0，求 b 與 △OAB 的面積（O 為原點）。`,`b＝${sh(t.b,m)}，面積 ${sh(mul(mul(t.a,t.b),R(1,2)),m)}`,()=>near(sr(fv(t.c)**2-fv(t.a)**2),fv(t.b)))},
+  m=>{const t=tri(m),y=val(m,6),x=m==="integer"?R(pick([-1,1])*t.a.n):pick([t.a,neg(t.a)]);return one(`y 軸上的點 Q 與 ${pt("A",x,y,m)} 的距離為 ${sh(t.c,m)}，求 Q 的坐標。`,`(0，${sh(add(y,t.b),m)}) 或 (0，${sh(sub(y,t.b),m)})`,()=>near(hy(fv(x),fv(t.b)),fv(t.c)))}],"");
+
+ const shapeApplication=mkUnit("shapeApplication","周長面積應用","先由周長或面積求出另一邊，再用畢氏定理求對角線；也可以反過來。",[
+  m=>{const t=tri(m),P=mul(R(2),add(t.a,t.b));return one(`一矩形周長為 ${sh(P,m)}，其中一邊長 ${sh(t.a,m)}，求其對角線。`,sh(t.c,m),()=>near(hy(fv(t.a),fv(P)/2-fv(t.a)),fv(t.c)))},
+  m=>{const t=tri(m),A=mul(t.a,t.b);return one(`一矩形面積為 ${sh(A,m)}，其中一邊長 ${sh(t.a,m)}，求其對角線。`,sh(t.c,m),()=>near(hy(fv(t.a),fv(A)/fv(t.a)),fv(t.c)))},
+  m=>{const t=tri(m);return one(`一矩形對角線長 ${sh(t.c,m)}，其中一邊長 ${sh(t.b,m)}，求其面積。`,sh(mul(t.a,t.b),m),()=>near(fv(t.b)*sr(fv(t.c)**2-fv(t.b)**2),fv(mul(t.a,t.b))))},
+  m=>{const t=tri(m),P=mul(R(2),add(t.a,t.b)),A=mul(t.a,t.b);return one(`一矩形周長為 ${sh(P,m)}，對角線長 ${sh(t.c,m)}，求其面積。`,sh(A,m),()=>near(((fv(P)/2)**2-fv(t.c)**2)/2,fv(A)))},
+  m=>{const t=tri(m),d1=mul(R(2),t.a),d2=mul(R(2),t.b);return one(`菱形的兩條對角線長分別為 ${sh(d1,m)}、${sh(d2,m)}，求菱形的邊長與周長。`,`邊長 ${sh(t.c,m)}，周長 ${sh(mul(R(4),t.c),m)}`,()=>near(hy(fv(d1)/2,fv(d2)/2),fv(t.c)))}],"");
+
+ return{title:"畢氏定理與兩點距離",symbol:"c²",subtitle:"求斜邊・求一股・根式邊長・斜邊上的高・矩形對角線・複合與應用・數線距離・水平垂直距離・兩點距離・根式距離・反求坐標・周長面積",instruction:"根式化為最簡根式；反求坐標時注意兩組可能。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：由兩邊求第三邊、根式斜邊、矩形對角線、數線與水平垂直距離、坐標兩點距離、反求一個坐標。",advanced:"進階：等腰三角形的高、正方形與正三角形、斜邊上的高、梯子與行走距離、到坐標軸的距離、到原點的距離。",challenge:"挑戰：兩股比與和、正三角形面積、斜邊的分段、長方體對角線、梯子下滑、竹子折斷、數線分點、判斷直角、等距點、周長與對角線求面積、菱形。"},
+  units:[hypotenuse,leg,radicalSide,altitude,rectangle,composite,numberLine,axisDistance,coordinateDistance,coordinateRadical,unknownCoordinate,shapeApplication],
+  presets:{basic:{hypotenuse:3,leg:3,radicalSide:2,rectangle:2,numberLine:2,axisDistance:2,coordinateDistance:2},advanced:{hypotenuse:2,leg:2,radicalSide:2,altitude:2,rectangle:2,composite:2,coordinateDistance:2,coordinateRadical:2,unknownCoordinate:2},challenge:{leg:2,radicalSide:2,altitude:2,rectangle:2,composite:3,coordinateDistance:2,coordinateRadical:2,unknownCoordinate:2,shapeApplication:3}}};
+}
+
+const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,sqrt:sqrtConfig,pythagoras:pythagorasConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

@@ -1,0 +1,216 @@
+[basic/hypotenuse/integer] 直角三角形的兩股長為 12 與 16，求斜邊長。  ⇒ 20
+[basic/hypotenuse/integer] 直角三角形的兩股長為 16 與 30，求斜邊長。  ⇒ 34
+[basic/hypotenuse/fraction] 等腰直角三角形的一股長為 (11/2)，求斜邊長（化為最簡根式）。  ⇒ (11/2)√ 2 
+[basic/hypotenuse/fraction] 等腰直角三角形的一股長為 (7/2)，求斜邊長（化為最簡根式）。  ⇒ (7/2)√ 2 
+[basic/hypotenuse/decimal] 等腰直角三角形的一股長為 2.8，求斜邊長（化為最簡根式）。  ⇒ 2.8√ 2 
+[basic/hypotenuse/decimal] 直角三角形的兩股長為 2.1 與 7.2，求斜邊長。  ⇒ 7.5
+[basic/leg/integer] 等腰三角形兩腰長都是 45，底邊長 54，求底邊上的高與面積。  ⇒ 高 36，面積 972
+[basic/leg/integer] 直角三角形的斜邊長 26，一股長 10，求另一股長。  ⇒ 24
+[basic/leg/fraction]  示意圖 x 9 (39/4) A B C 如圖，∠B＝90°，AC＝(39/4)、AB＝9，求 x。  ⇒ x＝(15/4)
+[basic/leg/fraction]  示意圖 x 30 (123/4) A B C 如圖，∠B＝90°，AC＝(123/4)、AB＝30，求 x。  ⇒ x＝(27/4)
+[basic/leg/decimal]  示意圖 x 8 10 A B C 如圖，∠B＝90°，AC＝10、AB＝8，求 x。  ⇒ x＝6
+[basic/leg/decimal]  示意圖 x 1.2 1.5 A B C 如圖，∠B＝90°，AC＝1.5、AB＝1.2，求 x。  ⇒ x＝0.9
+[basic/radicalSide/integer] 直角三角形的斜邊長 16，一股長 14，求另一股長（最簡根式）。  ⇒ 2√ 15 
+[basic/radicalSide/integer] 直角三角形的斜邊長 16，一股長 12，求另一股長（最簡根式）。  ⇒ 4√ 7 
+[basic/radicalSide/fraction]  示意圖 6 (3/2) x A B C 如圖，∠B＝90°，BC＝6、AB＝(3/2)，求 x（最簡根式）。  ⇒ x＝(3/2)√ 17 
+[basic/radicalSide/fraction]  示意圖 3 (7/2) x A B C 如圖，∠B＝90°，BC＝3、AB＝(7/2)，求 x（最簡根式）。  ⇒ x＝(1/2)√ 85 
+[basic/radicalSide/decimal] 直角三角形的斜邊長 14.4，一股長 3.6，求另一股長（最簡根式）。  ⇒ 3.6√ 15 
+[basic/radicalSide/decimal] 直角三角形的斜邊長 9.6，一股長 7.2，求另一股長（最簡根式）。  ⇒ 2.4√ 7 
+[basic/altitude/integer] 直角三角形兩股長為 16、30，求斜邊長與斜邊上的高。  ⇒ 斜邊 34，高 (240/17)
+[basic/altitude/integer] 直角三角形兩股長為 6、8，求斜邊長與斜邊上的高。  ⇒ 斜邊 10，高 (24/5)
+[basic/altitude/fraction] 直角三角形兩股長為 (20/3)、7，求斜邊長與斜邊上的高。  ⇒ 斜邊 (29/3)，高 (140/29)
+[basic/altitude/fraction] 直角三角形兩股長為 15、20，斜邊長為 25，求斜邊上的高。  ⇒ 12
+[basic/altitude/decimal] 直角三角形的斜邊長 5，斜邊上的高為 1.344，一股長 1.4，求另一股長。  ⇒ 4.8
+[basic/altitude/decimal] 直角三角形的斜邊長 7.5，斜邊上的高為 3.6，一股長 4.5，求另一股長。  ⇒ 6
+[basic/rectangle/integer] 正方形的對角線長為 34√ 2 ，求邊長與面積。  ⇒ 邊長 34，面積 1156
+[basic/rectangle/integer] 矩形的對角線長 60，寬 36，求長與面積。  ⇒ 長 48，面積 1728
+[basic/rectangle/fraction] 矩形的長 30、寬 (25/2)，求對角線長。  ⇒ (65/2)
+[basic/rectangle/fraction] 矩形的對角線長 (17/2)，寬 4，求長與面積。  ⇒ 長 (15/2)，面積 30
+[basic/rectangle/decimal] 矩形的對角線長 12.5，寬 3.5，求長與面積。  ⇒ 長 12，面積 42
+[basic/rectangle/decimal] 矩形的長 7.5、寬 4，求對角線長。  ⇒ 8.5
+[basic/composite/integer] 小明從 A 點向東走 27 公尺，再向北走 36 公尺到達 B 點，求 A、B 的直線距離。  ⇒ 45 公尺
+[basic/composite/integer]  示意圖 10 32 26 x A B D C 如圖，AD⊥BC，AB＝26、BD＝10、DC＝32，求 AC＝x。  ⇒ x＝40
+[basic/composite/fraction] 小明從 A 點向東走 4 公尺，再向北走 (16/3) 公尺到達 B 點，求 A、B 的直線距離。  ⇒ (20/3) 公尺
+[basic/composite/fraction] 小明從 A 點向東走 (9/4) 公尺，再向北走 3 公尺到達 B 點，求 A、B 的直線距離。  ⇒ (15/4) 公尺
+[basic/composite/decimal] 一把長 6 公尺的梯子斜靠在牆上，梯腳離牆 3.6 公尺，梯頂離地多高？  ⇒ 4.8 公尺
+[basic/composite/decimal] 一把長 3.7 公尺的梯子斜靠在牆上，梯腳離牆 1.2 公尺，梯頂離地多高？  ⇒ 3.5 公尺
+[basic/numberLine/integer] 數線上兩點 A、B 的坐標分別是 −2 與 −4，求兩點的距離。  ⇒ 2
+[basic/numberLine/integer] 數線上 A(−12)、B(−1)，求 AB。  ⇒ AB＝11
+[basic/numberLine/fraction] 數線上兩點 A、B 的坐標分別是 −(29/3) 與 −(3/2)，求兩點的距離。  ⇒ (49/6)
+[basic/numberLine/fraction] 數線上與 A((1/2)) 距離 (29/4) 的點的坐標是多少？  ⇒ −(27/4) 或 (31/4)
+[basic/numberLine/decimal] 數線上兩點 A、B 的坐標分別是 −10.4 與 −7.9，求兩點的距離。  ⇒ 2.5
+[basic/numberLine/decimal] 數線上與 A(−3.8) 距離 7.3 的點的坐標是多少？  ⇒ −11.1 或 3.5
+[basic/axisDistance/integer] A(0，−7)、B(2，−7)，求 AB。  ⇒ AB＝2
+[basic/axisDistance/integer] A(−5，−3)、B(−5，−8)，求 AB。  ⇒ AB＝5
+[basic/axisDistance/fraction] A((10/3)，(3/2))、B((10/3)，−6)，求 AB。  ⇒ AB＝(15/2)
+[basic/axisDistance/fraction] A((8/3)，−(7/2))、B((19/6)，−(7/2))，求 AB。  ⇒ AB＝(1/2)
+[basic/axisDistance/decimal] A(−2.3，0.1)、B(−2.3，−6)，求 AB。  ⇒ AB＝6.1
+[basic/axisDistance/decimal] A(−7.3，2.8)、B(−5.5，2.8)，求 AB。  ⇒ AB＝1.8
+[basic/coordinateDistance/integer] 求原點 O 到 P(−27，36) 的距離。  ⇒ 45
+[basic/coordinateDistance/integer] A(0，−7)、B(7，−31)，求 AB。  ⇒ AB＝25
+[basic/coordinateDistance/fraction] 求原點 O 到 P(−2，−(8/3)) 的距離。  ⇒ (10/3)
+[basic/coordinateDistance/fraction] 坐標平面上兩點 A、B 的坐標為 (−(9/2)，(19/4))、(−(3/2)，(3/4))，求兩點的距離。  ⇒ 5
+[basic/coordinateDistance/decimal] 坐標平面上兩點 A、B 的坐標為 (−1.5，−0.3)、(−13.5，−22.8)，求兩點的距離。  ⇒ 25.5
+[basic/coordinateDistance/decimal] 坐標平面上兩點 A、B 的坐標為 (5.5，−3.3)、(23.5，20.7)，求兩點的距離。  ⇒ 30
+[basic/coordinateRadical/integer] A(−3，−4)、B(15，5)，求 AB（最簡根式）。  ⇒ 9√ 5 
+[basic/coordinateRadical/integer] A(−2，0)、B(4，9)，求 AB（最簡根式）。  ⇒ 3√ 13 
+[basic/coordinateRadical/fraction] A(2，2)、B((7/2)，(7/2))，求 AB（最簡根式）。  ⇒ (3/2)√ 2 
+[basic/coordinateRadical/fraction] A(−4，0)、B(4，−2)，求 AB（最簡根式）。  ⇒ AB＝2√ 17 
+[basic/coordinateRadical/decimal] A(−5，−5)、B(−4，−8)，求 AB（最簡根式）。  ⇒ AB＝√ 10 
+[basic/coordinateRadical/decimal] 求原點 O 到 P(5，8) 的距離（最簡根式）。  ⇒ √ 89 
+[basic/unknownCoordinate/integer] A(5，0)、B(14，y)，且 AB＝15，求 y。  ⇒ y＝12 或 −12
+[basic/unknownCoordinate/integer] A(0，−6)、B(20，y)，且 AB＝29，求 y。  ⇒ y＝15 或 −27
+[basic/unknownCoordinate/fraction] A(−(10/3)，−(11/2))、B(x，(9/2))，且 AB＝(29/2)，求 x。  ⇒ x＝(43/6) 或 −(83/6)
+[basic/unknownCoordinate/fraction] x 軸上的點 P 與 A(−(1/2)，−8) 的距離為 (74/3)，求 P 的坐標。  ⇒ ((137/6)，0) 或 (−(143/6)，0)
+[basic/unknownCoordinate/decimal] x 軸上的點 P 與 A(−0.7，−1.4) 的距離為 5，求 P 的坐標。  ⇒ (4.1，0) 或 (−5.5，0)
+[basic/unknownCoordinate/decimal] x 軸上的點 P 與 A(3.1，−8.4) 的距離為 30，求 P 的坐標。  ⇒ (31.9，0) 或 (−25.7，0)
+[basic/shapeApplication/integer] 一矩形周長為 102，其中一邊長 15，求其對角線。  ⇒ 39
+[basic/shapeApplication/integer] 一矩形對角線長 50，其中一邊長 48，求其面積。  ⇒ 672
+[basic/shapeApplication/fraction] 一矩形周長為 (98/3)，其中一邊長 3，求其對角線。  ⇒ (41/3)
+[basic/shapeApplication/fraction] 一矩形面積為 (27/4)，其中一邊長 (9/4)，求其對角線。  ⇒ (15/4)
+[basic/shapeApplication/decimal] 一矩形周長為 5.6，其中一邊長 1.2，求其對角線。  ⇒ 2
+[basic/shapeApplication/decimal] 一矩形對角線長 5.8，其中一邊長 4.2，求其面積。  ⇒ 16.8
+[advanced/hypotenuse/integer] 直角三角形的兩股長為 15 與 36，求斜邊長。  ⇒ 39
+[advanced/hypotenuse/integer] 等腰直角三角形的一股長為 5，求斜邊長（化為最簡根式）。  ⇒ 5√ 2 
+[advanced/hypotenuse/fraction] 直角三角形兩股長的比為 20：21，斜邊長為 (145/2)，求兩股長。  ⇒ 50、(105/2)
+[advanced/hypotenuse/fraction] 直角三角形的兩股長為 (14/3) 與 16，求斜邊長。  ⇒ (50/3)
+[advanced/hypotenuse/decimal] 直角三角形兩股長的比為 3：4，斜邊長為 3，求兩股長。  ⇒ 1.8、2.4
+[advanced/hypotenuse/decimal] 直角三角形的兩股長為 0.8 與 1.5，求斜邊長。  ⇒ 1.7
+[advanced/leg/integer] 等腰三角形兩腰長都是 25，底邊長 14，求底邊上的高與面積。  ⇒ 高 24，面積 168
+[advanced/leg/integer] 直角三角形的斜邊長 60，一股長 36，求面積。  ⇒ 864
+[advanced/leg/fraction] 直角三角形的斜邊長 (41/2)，一股長 (9/2)，求另一股長。  ⇒ 20
+[advanced/leg/fraction] 等腰三角形兩腰長都是 15，底邊長 18，求底邊上的高與面積。  ⇒ 高 12，面積 108
+[advanced/leg/decimal] 直角三角形的斜邊長 3.7，一股長 1.2，求另一股長。  ⇒ 3.5
+[advanced/leg/decimal] 直角三角形的斜邊長 44.4，一股長 14.4，求另一股長。  ⇒ 42
+[advanced/radicalSide/integer] 正方形的邊長為 20，求對角線長。  ⇒ 20√ 2 
+[advanced/radicalSide/integer] 正方形的邊長為 17，求對角線長。  ⇒ 17√ 2 
+[advanced/radicalSide/fraction] 正方形的邊長為 (45/4)，求對角線長。  ⇒ (45/4)√ 2 
+[advanced/radicalSide/fraction] 正方形的邊長為 (5/2)，求對角線長。  ⇒ (5/2)√ 2 
+[advanced/radicalSide/decimal] 正三角形的邊長為 10.8，求它的高（最簡根式）。  ⇒ 5.4√ 3 
+[advanced/radicalSide/decimal] 直角三角形的斜邊長 2.4，一股長 0.2，求另一股長（最簡根式）。  ⇒ 0.2√ 143 
+[advanced/altitude/integer] 直角三角形兩股長為 27、120，求斜邊長與斜邊上的高。  ⇒ 斜邊 123，高 (1080/41)
+[advanced/altitude/integer] 直角三角形的斜邊長 10，斜邊上的高為 (24/5)，一股長 6，求另一股長。  ⇒ 8
+[advanced/altitude/fraction] 直角三角形兩股長為 2、(8/3)，斜邊上的高把斜邊分成兩段，求靠近短股那一段的長。  ⇒ (6/5)
+[advanced/altitude/fraction] 直角三角形兩股長為 (45/2)、100，斜邊上的高把斜邊分成兩段，求靠近短股那一段的長。  ⇒ (405/82)
+[advanced/altitude/decimal] 直角三角形兩股長為 14.4、19.2，斜邊上的高把斜邊分成兩段，求靠近短股那一段的長。  ⇒ 8.64
+[advanced/altitude/decimal] 直角三角形兩股長為 0.9、1.2，斜邊上的高把斜邊分成兩段，求靠近短股那一段的長。  ⇒ 0.54
+[advanced/rectangle/integer] 長方體的長、寬、高分別為 2、6、9，求長方體的對角線長。  ⇒ 11
+[advanced/rectangle/integer] 正方形的對角線長為 32√ 2 ，求邊長與面積。  ⇒ 邊長 32，面積 1024
+[advanced/rectangle/fraction] 正方形的對角線長為 (14/3)√ 2 ，求邊長與面積。  ⇒ 邊長 (14/3)，面積 (196/9)
+[advanced/rectangle/fraction] 長方體的長、寬、高分別為 (4/3)、2、4，求長方體的對角線長。  ⇒ (14/3)
+[advanced/rectangle/decimal] 正方形的對角線長為 4.7√ 2 ，求邊長與面積。  ⇒ 邊長 4.7，面積 22.09
+[advanced/rectangle/decimal] 長方體的長、寬、高分別為 0.4、0.4、0.7，求長方體的對角線長。  ⇒ 0.9
+[advanced/composite/integer] 小明從 A 點向東走 24 公尺，再向北走 32 公尺到達 B 點，求 A、B 的直線距離。  ⇒ 40 公尺
+[advanced/composite/integer] 長 34 公尺的梯子斜靠在牆上，梯腳離牆 16 公尺。若梯頂下滑 14 公尺，梯腳會向外滑多少公尺？  ⇒ 14 公尺
+[advanced/composite/fraction] 小明從 A 點向東走 (9/2) 公尺，再向北走 6 公尺到達 B 點，求 A、B 的直線距離。  ⇒ (15/2) 公尺
+[advanced/composite/fraction] 小明從 A 點向東走 30 公尺，再向北走 (175/2) 公尺到達 B 點，求 A、B 的直線距離。  ⇒ (185/2) 公尺
+[advanced/composite/decimal] 一把長 1.3 公尺的梯子斜靠在牆上，梯腳離牆 0.5 公尺，梯頂離地多高？  ⇒ 1.2 公尺
+[advanced/composite/decimal] 小明從 A 點向東走 18 公尺，再向北走 24 公尺到達 B 點，求 A、B 的直線距離。  ⇒ 30 公尺
+[advanced/numberLine/integer] 數線上 A(5)、B(−6)，求 AB 的中點坐標與 AB 的長。  ⇒ 中點 −(1/2)，AB＝11
+[advanced/numberLine/integer] 數線上與 A(2) 距離 9 的點的坐標是多少？  ⇒ −7 或 11
+[advanced/numberLine/fraction] 數線上 A(−(28/3))、B(−(23/2))，求 AB 的中點坐標與 AB 的長。  ⇒ 中點 −(125/12)，AB＝(13/6)
+[advanced/numberLine/fraction] 數線上與 A((4/3)) 距離 (17/2) 的點的坐標是多少？  ⇒ −(43/6) 或 (59/6)
+[advanced/numberLine/decimal] 數線上 A(1.3)、B(6.8)，求 AB 的中點坐標與 AB 的長。  ⇒ 中點 4.05，AB＝5.5
+[advanced/numberLine/decimal] 數線上兩點 A、B 的坐標分別是 −8.4 與 −11.7，求兩點的距離。  ⇒ 3.3
+[advanced/axisDistance/integer] A(−2，−7)、B(−2，−8)，求 AB。  ⇒ AB＝1
+[advanced/axisDistance/integer] A(−1，−2)、B(−1，−4)，求 AB。  ⇒ AB＝2
+[advanced/axisDistance/fraction] A(−(14/3)，−(15/2))、B(−(14/3)，−(83/6))，求 AB。  ⇒ AB＝(19/3)
+[advanced/axisDistance/fraction] 求 P((17/3)，(11/2)) 到 x 軸與到 y 軸的距離。  ⇒ 到 x 軸 (11/2)，到 y 軸 (17/3)
+[advanced/axisDistance/decimal] 求 P(5.6，−6.8) 到直線 x＝−2.9 的距離。  ⇒ 8.5
+[advanced/axisDistance/decimal] 求 P(−5.2，−6.4) 到直線 x＝−8.6 的距離。  ⇒ 3.4
+[advanced/coordinateDistance/integer] 坐標平面上兩點 A、B 的坐標為 (2，1)、(−19，73)，求兩點的距離。  ⇒ 75
+[advanced/coordinateDistance/integer] 求原點 O 到 P(−14，−48) 的距離。  ⇒ 50
+[advanced/coordinateDistance/fraction] A((1/2)，−(5/2))、B((61/2)，−(5/2))、C((61/2)，−(85/2))，求 △ABC 的周長。  ⇒ 120
+[advanced/coordinateDistance/fraction] 求原點 O 到 P(−6，(45/4)) 的距離。  ⇒ (51/4)
+[advanced/coordinateDistance/decimal] A(1.5，5.6)、B(−4.5，5.6)、C(−4.5，20)，求 △ABC 的周長。  ⇒ 36
+[advanced/coordinateDistance/decimal] 坐標平面上兩點 A、B 的坐標為 (3.9，1.2)、(2.4，−2.4)，求兩點的距離。  ⇒ 3.9
+[advanced/coordinateRadical/integer] A(−4，3)、B(5，12)，求 AB（最簡根式）。  ⇒ 9√ 2 
+[advanced/coordinateRadical/integer] 求原點 O 到 P(−8，5) 的距離（最簡根式）。  ⇒ √ 89 
+[advanced/coordinateRadical/fraction] x 軸上一點 P 到 A(−1，1) 與 B(−6，0) 的距離相等，求 P 的坐標。  ⇒ (−(17/5)，0)
+[advanced/coordinateRadical/fraction] A(−5，2)、B(−3，(11/3))，求 AB（最簡根式）。  ⇒ (1/3)√ 61 
+[advanced/coordinateRadical/decimal] A(−1，5)、B(0.2，7.4)，求 AB（最簡根式）。  ⇒ 1.2√ 5 
+[advanced/coordinateRadical/decimal] A(−1，5)、B(−0.8，5.8)，求 AB（最簡根式）。  ⇒ 0.2√ 17 
+[advanced/unknownCoordinate/integer] x 軸上的點 P 與 A(0，−27) 的距離為 123，求 P 的坐標。  ⇒ (120，0) 或 (−120，0)
+[advanced/unknownCoordinate/integer] A(6，0)、B(0，b)，且 AB＝10、b＞0，求 b 與 △OAB 的面積（O 為原點）。  ⇒ b＝8，面積 24
+[advanced/unknownCoordinate/fraction] A((9/4)，0)、B(0，b)，且 AB＝(41/4)、b＞0，求 b 與 △OAB 的面積（O 為原點）。  ⇒ b＝10，面積 (45/4)
+[advanced/unknownCoordinate/fraction] A((3/2)，0)、B(0，b)，且 AB＝(5/2)、b＞0，求 b 與 △OAB 的面積（O 為原點）。  ⇒ b＝2，面積 (3/2)
+[advanced/unknownCoordinate/decimal] A(18，0)、B(0，b)，且 AB＝30、b＞0，求 b 與 △OAB 的面積（O 為原點）。  ⇒ b＝24，面積 216
+[advanced/unknownCoordinate/decimal] x 軸上的點 P 與 A(3.5，7.5) 的距離為 19.5，求 P 的坐標。  ⇒ (21.5，0) 或 (−14.5，0)
+[advanced/shapeApplication/integer] 一矩形對角線長 10，其中一邊長 8，求其面積。  ⇒ 48
+[advanced/shapeApplication/integer] 一矩形周長為 164，對角線長 58，求其面積。  ⇒ 1680
+[advanced/shapeApplication/fraction] 一矩形面積為 (80/3)，其中一邊長 (10/3)，求其對角線。  ⇒ (26/3)
+[advanced/shapeApplication/fraction] 一矩形面積為 (945/4)，其中一邊長 15，求其對角線。  ⇒ (87/4)
+[advanced/shapeApplication/decimal] 一矩形對角線長 1，其中一邊長 0.8，求其面積。  ⇒ 0.48
+[advanced/shapeApplication/decimal] 一矩形周長為 49，對角線長 20.5，求其面積。  ⇒ 90
+[challenge/hypotenuse/integer] 直角三角形兩股長的比為 9：40，斜邊長為 82，求兩股長。  ⇒ 18、80
+[challenge/hypotenuse/integer] 直角三角形兩股長為 12、35，求它的周長與面積。  ⇒ 周長 84，面積 210
+[challenge/hypotenuse/fraction] 等腰直角三角形的一股長為 (7/3)，求斜邊長（化為最簡根式）。  ⇒ (7/3)√ 2 
+[challenge/hypotenuse/fraction] 直角三角形兩股長的比為 5：12，斜邊長為 (65/2)，求兩股長。  ⇒ (25/2)、30
+[challenge/hypotenuse/decimal] 等腰直角三角形的一股長為 6.9，求斜邊長（化為最簡根式）。  ⇒ 6.9√ 2 
+[challenge/hypotenuse/decimal] 直角三角形兩股長的比為 3：4，斜邊長為 2.5，求兩股長。  ⇒ 1.5、2
+[challenge/leg/integer] 等腰三角形兩腰長都是 30，底邊長 36，求底邊上的高與面積。  ⇒ 高 24，面積 432
+[challenge/leg/integer] 等腰三角形兩腰長都是 20，底邊長 24，求底邊上的高與面積。  ⇒ 高 16，面積 192
+[challenge/leg/fraction] 直角三角形兩股長的和為 (31/3)，斜邊長為 (25/3)，求面積。  ⇒ (28/3)
+[challenge/leg/fraction] 直角三角形兩股長的和為 (23/4)，斜邊長為 (17/4)，求面積。  ⇒ (15/4)
+[challenge/leg/decimal] 直角三角形兩股長的和為 3.5，斜邊長為 2.5，求面積。  ⇒ 1.5
+[challenge/leg/decimal] 直角三角形的斜邊長 18，一股長 10.8，求面積。  ⇒ 77.76
+[challenge/radicalSide/integer] 正方形的邊長為 9，求對角線長。  ⇒ 9√ 2 
+[challenge/radicalSide/integer] 正三角形的邊長為 16，求它的面積（最簡根式）。  ⇒ 64√ 3 
+[challenge/radicalSide/fraction] 正三角形的邊長為 (1/2)，求它的高（最簡根式）。  ⇒ (1/4)√ 3 
+[challenge/radicalSide/fraction] 正三角形的邊長為 (3/2)，求它的高（最簡根式）。  ⇒ (3/4)√ 3 
+[challenge/radicalSide/decimal] 正三角形的邊長為 3.6，求它的高（最簡根式）。  ⇒ 1.8√ 3 
+[challenge/radicalSide/decimal] 正方形的邊長為 5.7，求對角線長。  ⇒ 5.7√ 2 
+[challenge/altitude/integer] 直角三角形斜邊上的高把斜邊分成 100 與 900 兩段，求斜邊上的高。  ⇒ 300
+[challenge/altitude/integer] 直角三角形的斜邊長 45，斜邊上的高為 (108/5)，一股長 27，求另一股長。  ⇒ 36
+[challenge/altitude/fraction] 直角三角形斜邊上的高把斜邊分成 400 與 900 兩段，求斜邊上的高。  ⇒ 600
+[challenge/altitude/fraction] 直角三角形斜邊上的高把斜邊分成 900 與 100 兩段，求斜邊上的高。  ⇒ 300
+[challenge/altitude/decimal] 直角三角形斜邊上的高把斜邊分成 256 與 196 兩段，求斜邊上的高。  ⇒ 224
+[challenge/altitude/decimal] 直角三角形兩股長為 0.9、1.2，斜邊上的高把斜邊分成兩段，求靠近短股那一段的長。  ⇒ 0.54
+[challenge/rectangle/integer] 長方體的長、寬、高分別為 12、12、21，求長方體的對角線長。  ⇒ 27
+[challenge/rectangle/integer] 長方體的長、寬、高分別為 2、10、11，求長方體的對角線長。  ⇒ 15
+[challenge/rectangle/fraction] 矩形長與寬的比為 4：3，對角線長 5，求矩形的周長。  ⇒ 14
+[challenge/rectangle/fraction] 正方形的對角線長為 (7/3)√ 2 ，求邊長與面積。  ⇒ 邊長 (7/3)，面積 (49/9)
+[challenge/rectangle/decimal] 長方體的長、寬、高分別為 0.1、0.2、0.2，求長方體的對角線長。  ⇒ 0.3
+[challenge/rectangle/decimal] 長方體的長、寬、高分別為 1.5、3、3，求長方體的對角線長。  ⇒ 4.5
+[challenge/composite/integer] 一根高 12 公尺的竹子被風吹折，竹梢著地處離竹根 11 公尺，求折斷處離地面的高度。  ⇒ (23/24) 公尺
+[challenge/composite/integer] 一根高 19 公尺的竹子被風吹折，竹梢著地處離竹根 6 公尺，求折斷處離地面的高度。  ⇒ (325/38) 公尺
+[challenge/composite/fraction] 一根高 9 公尺的竹子被風吹折，竹梢著地處離竹根 7 公尺，求折斷處離地面的高度。  ⇒ (16/9) 公尺
+[challenge/composite/fraction] 小明從 A 點向東走 (27/4) 公尺，再向北走 9 公尺到達 B 點，求 A、B 的直線距離。  ⇒ (45/4) 公尺
+[challenge/composite/decimal] 長 7.5 公尺的梯子斜靠在牆上，梯腳離牆 2.1 公尺。若梯頂下滑 1.2 公尺，梯腳會向外滑多少公尺？  ⇒ 2.4 公尺
+[challenge/composite/decimal] 小明從 A 點向東走 10 公尺，再向北走 10.5 公尺到達 B 點，求 A、B 的直線距離。  ⇒ 14.5 公尺
+[challenge/numberLine/integer] 數線上與 A(5) 距離 7 的點的坐標是多少？  ⇒ −2 或 12
+[challenge/numberLine/integer] 數線上 A(−9)、B(−8)，求 AB 的中點坐標與 AB 的長。  ⇒ 中點 −(17/2)，AB＝1
+[challenge/numberLine/fraction] 數線上 A(−(1/2))、B(−(5/2))，求 AB 的中點坐標與 AB 的長。  ⇒ 中點 −(3/2)，AB＝2
+[challenge/numberLine/fraction] 數線上 A(−(22/3))、B((17/2))，求 AB 的中點坐標與 AB 的長。  ⇒ 中點 (7/12)，AB＝(95/6)
+[challenge/numberLine/decimal] 數線上 A(10.3)、B(−7.6)，求 AB 的中點坐標與 AB 的長。  ⇒ 中點 1.35，AB＝17.9
+[challenge/numberLine/decimal] 數線上 A(5.4)、B(9.4)，P 在 AB 上且 AP：PB＝2：3，求 P 的坐標。  ⇒ 7
+[challenge/axisDistance/integer] A(2，7)，B 在 A 的正上方或正下方且 AB＝2，求 B 的坐標。  ⇒ (2，9) 或 (2，5)
+[challenge/axisDistance/integer] A(−3，−4)，B 在 A 的正上方或正下方且 AB＝5，求 B 的坐標。  ⇒ (−3，1) 或 (−3，−9)
+[challenge/axisDistance/fraction] 求 P((9/2)，−(5/2)) 到直線 x＝−(11/3) 的距離。  ⇒ (49/6)
+[challenge/axisDistance/fraction] 求 P(−(10/3)，(1/4)) 到 x 軸與到 y 軸的距離。  ⇒ 到 x 軸 (1/4)，到 y 軸 (10/3)
+[challenge/axisDistance/decimal] 求 P(7.9，6.5) 到直線 x＝−4.3 的距離。  ⇒ 12.2
+[challenge/axisDistance/decimal] A(5.2，−3.6)，B 在 A 的正上方或正下方且 AB＝0.2，求 B 的坐標。  ⇒ (5.2，−3.4) 或 (5.2，−3.8)
+[challenge/coordinateDistance/integer] 坐標平面上兩點 A、B 的坐標為 (6，4)、(−14，25)，求兩點的距離。  ⇒ 29
+[challenge/coordinateDistance/integer] 坐標平面上兩點 A、B 的坐標為 (−6，0)、(−15，−40)，求兩點的距離。  ⇒ 41
+[challenge/coordinateDistance/fraction] A((11/2)，(14/3))、B((43/6)，(14/3))、C((43/6)，(26/3))，求 △ABC 的周長。  ⇒ 10
+[challenge/coordinateDistance/fraction] A(−(11/2)，−(1/2))、B((5/4)，−(1/2))、C((9/4)，−(19/2))，判斷 △ABC 是不是直角三角形。  ⇒ 不是（兩短邊平方和不等於最長邊平方）
+[challenge/coordinateDistance/decimal] A(0.9，−0.6)、B(2.3，−0.6)、C(2.3，4.2)，求 △ABC 的周長。  ⇒ 11.2
+[challenge/coordinateDistance/decimal] 坐標平面上兩點 A、B 的坐標為 (5.5，3.2)、(9，15.2)，求兩點的距離。  ⇒ 12.5
+[challenge/coordinateRadical/integer] A(0，−1)、B(10，5)，求 AB（最簡根式）。  ⇒ 2√ 34 
+[challenge/coordinateRadical/integer] A(5，−3)、B(23，18)，求 AB（最簡根式）。  ⇒ 3√ 85 
+[challenge/coordinateRadical/fraction] x 軸上一點 P 到 A(6，3) 與 B(−5，−5) 的距離相等，求 P 的坐標。  ⇒ (−(5/22)，0)
+[challenge/coordinateRadical/fraction] A(−5，−4)、B(−3，−3)，求 AB（最簡根式）。  ⇒ √ 5 
+[challenge/coordinateRadical/decimal] A(−4，−1)、B(−1.5，2.5)，求 AB（最簡根式）。  ⇒ 0.5√ 74 
+[challenge/coordinateRadical/decimal] P(4，−3)、Q(3，−5) 哪一點離原點比較遠？  ⇒ Q（OP＝5，OQ＝√ 34 ）
+[challenge/unknownCoordinate/integer] x 軸上的點 P 與 A(−4，−18) 的距離為 82，求 P 的坐標。  ⇒ (76，0) 或 (−84，0)
+[challenge/unknownCoordinate/integer] A(9，0)、B(0，b)，且 AB＝41、b＞0，求 b 與 △OAB 的面積（O 為原點）。  ⇒ b＝40，面積 180
+[challenge/unknownCoordinate/fraction] y 軸上的點 Q 與 A(8，(7/3)) 的距離為 (40/3)，求 Q 的坐標。  ⇒ (0，13) 或 (0，−(25/3))
+[challenge/unknownCoordinate/fraction] x 軸上的點 P 與 A((5/3)，−(3/2)) 的距離為 (5/2)，求 P 的坐標。  ⇒ ((11/3)，0) 或 (−(1/3)，0)
+[challenge/unknownCoordinate/decimal] x 軸上的點 P 與 A(−5.9，−18) 的距離為 55.5，求 P 的坐標。  ⇒ (46.6，0) 或 (−58.4，0)
+[challenge/unknownCoordinate/decimal] A(1.2，0)、B(0，b)，且 AB＝2、b＞0，求 b 與 △OAB 的面積（O 為原點）。  ⇒ b＝1.6，面積 0.96
+[challenge/shapeApplication/integer] 一矩形對角線長 39，其中一邊長 36，求其面積。  ⇒ 540
+[challenge/shapeApplication/integer] 一矩形周長為 46，對角線長 17，求其面積。  ⇒ 120
+[challenge/shapeApplication/fraction] 一矩形對角線長 25，其中一邊長 20，求其面積。  ⇒ 300
+[challenge/shapeApplication/fraction] 一矩形周長為 (141/2)，對角線長 (111/4)，求其面積。  ⇒ (945/4)
+[challenge/shapeApplication/decimal] 一矩形周長為 41，對角線長 14.5，求其面積。  ⇒ 105
+[challenge/shapeApplication/decimal] 一矩形對角線長 30，其中一邊長 28.8，求其面積。  ⇒ 241.92

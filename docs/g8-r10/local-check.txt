@@ -1,0 +1,110 @@
+## pythagoras
+basic/hypotenuse  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/hypotenuse  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/hypotenuse  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/leg         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/leg         /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/leg         /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/radicalSide /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/radicalSide /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/radicalSide /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/altitude    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/altitude    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/altitude    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/rectangle   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/rectangle   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/rectangle   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/composite   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/composite   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/composite   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+basic/numberLine  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+basic/numberLine  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+basic/numberLine  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+basic/axisDistance/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=12
+basic/axisDistance/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=12
+basic/axisDistance/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=12
+basic/coordinateDistance/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=36
+basic/coordinateDistance/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=33
+basic/coordinateDistance/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=35
+basic/coordinateRadical/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+basic/coordinateRadical/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+basic/coordinateRadical/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+basic/unknownCoordinate/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=14
+basic/unknownCoordinate/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+basic/unknownCoordinate/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+basic/shapeApplication/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/shapeApplication/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+basic/shapeApplication/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/hypotenuse  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/hypotenuse  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/hypotenuse  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/leg         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/leg         /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/leg         /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/radicalSide /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/radicalSide /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/radicalSide /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/altitude    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/altitude    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/altitude    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/rectangle   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=4
+advanced/rectangle   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/rectangle   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/composite   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/composite   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/composite   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/numberLine  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+advanced/numberLine  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+advanced/numberLine  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=7
+advanced/axisDistance/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+advanced/axisDistance/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+advanced/axisDistance/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+advanced/coordinateDistance/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=36
+advanced/coordinateDistance/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=32
+advanced/coordinateDistance/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=34
+advanced/coordinateRadical/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=27
+advanced/coordinateRadical/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=29
+advanced/coordinateRadical/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=27
+advanced/unknownCoordinate/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+advanced/unknownCoordinate/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=11
+advanced/unknownCoordinate/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=11
+advanced/shapeApplication/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/shapeApplication/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+advanced/shapeApplication/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/hypotenuse  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/hypotenuse  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/hypotenuse  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/leg         /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/leg         /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/leg         /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/radicalSide /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/radicalSide /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/radicalSide /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/altitude    /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/altitude    /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/altitude    /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/rectangle   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/rectangle   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/rectangle   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/composite   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/composite   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/composite   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/numberLine  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+challenge/numberLine  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+challenge/numberLine  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+challenge/axisDistance/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+challenge/axisDistance/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+challenge/axisDistance/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+challenge/coordinateDistance/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=46
+challenge/coordinateDistance/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=47
+challenge/coordinateDistance/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=49
+challenge/coordinateRadical/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=38
+challenge/coordinateRadical/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=41
+challenge/coordinateRadical/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=40
+challenge/unknownCoordinate/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+challenge/unknownCoordinate/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+challenge/unknownCoordinate/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=9
+challenge/shapeApplication/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/shapeApplication/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+challenge/shapeApplication/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=3
+PASS
