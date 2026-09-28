@@ -38,7 +38,7 @@ const g7LegacyLinks={
  'g7-function.html':['function','函數']
 };
 const g8LegacyLinks={'g8-multiplication-formulas.html':['mulformula','乘法公式'],'g8-polynomial-operations.html':['polyops','多項式四則'],'g8-factorization.html':['factor','因式分解'],'g8-square-roots.html':['sqrt','平方根'],'g8-pythagorean.html':['pythagoras','畢氏定理與兩點距離']};
-const strip=s=>s.replace(/\n<style id="bhcs-math-brand">[\s\S]*?<\/style>\n/g,'').replace(/<meta\s+name="theme-color"\s+content="[^"]+"\s*\/?>/gi,'').replace(/\.expr svg\.fig\{[^}]*\}/g,'').replace(/\n  <!-- g8-r5-related-start -->[\s\S]*?\n  <!-- g8-r5-related-end -->\n/g,'').replace(/<!-- g7-legacy-link-start --><p><a href="g7-drills\.html\?topic=(?:exponent|scinot|factors|linear|simultaneous|inequality|ratio|function)" style="text-decoration:underline(?:;color:inherit)?">本頁內容已併入 → [^<]+<\/a><\/p><!-- g7-legacy-link-end -->/g,'').replace(/<!-- g8-legacy-link-start --><p><a href="g8-drills\.html\?topic=(?:mulformula|polyops|factor|sqrt|pythagoras)" style="text-decoration:underline;color:inherit">本頁內容已併入 → [^<]+<\/a><\/p><!-- g8-legacy-link-end -->/g,'').replace(/\n          <!-- g9-legacy-link-start -->\n          <p class="[^"]+"><a href="g9-drills\.html\?topic=[a-z0-9]+" style="text-decoration:underline">[^<]+<\/a><\/p>\n          <!-- g9-legacy-link-end -->/g,'');
+const strip=s=>s.replace(/\n<style id="bhcs-math-brand">[\s\S]*?<\/style>\n/g,'').replace(/<meta\s+name="theme-color"\s+content="[^"]+"\s*\/?>/gi,'').replace(/\.expr svg\.fig\{[^}]*\}/g,'').replace(/\n  <!-- g8-r5-related-start -->[\s\S]*?\n  <!-- g8-r5-related-end -->\n/g,'').replace(/\n          <!-- g8-dual-legacy-link-start -->[\s\S]*?<!-- g8-dual-legacy-link-end -->/g,'').replace(/<!-- g7-legacy-link-start --><p><a href="g7-drills\.html\?topic=(?:exponent|scinot|factors|linear|simultaneous|inequality|ratio|function)" style="text-decoration:underline(?:;color:inherit)?">本頁內容已併入 → [^<]+<\/a><\/p><!-- g7-legacy-link-end -->/g,'').replace(/<!-- g8-legacy-link-start --><p><a href="g8-drills\.html\?topic=(?:mulformula|polyops|factor|sqrt|pythagoras)" style="text-decoration:underline;color:inherit">本頁內容已併入 → [^<]+<\/a><\/p><!-- g8-legacy-link-end -->/g,'').replace(/\n          <!-- g9-legacy-link-start -->\n          <p class="[^"]+"><a href="g9-drills\.html\?topic=[a-z0-9]+" style="text-decoration:underline">[^<]+<\/a><\/p>\n          <!-- g9-legacy-link-end -->/g,'');
 const requiredBrandVars={green:'#16233A',green2:'#0D1626',mint:'#C8352B',soft:'#F2F4F7',line:'#C9D2DE',ink:'#16233A',muted:'#43516B',bg:'#FCFCFA',red:'#C8352B'};
 const brandPalette=hex=>{const h=hex.slice(1),[r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)),hi=Math.max(r,g,b),lo=Math.min(r,g,b);if(hi===lo)return null;if(hi-lo<12&&hi>240)return requiredBrandVars.bg;if(lo>=175&&hi>=225)return requiredBrandVars.soft;if(lo>=125&&hi>=185)return requiredBrandVars.line;if(r>g*1.25&&r>b*1.2)return requiredBrandVars.red;if(hi-lo<45&&hi>75&&hi<190)return requiredBrandVars.muted;return requiredBrandVars.ink;};
 const comparable=(file,s)=>{s=strip(s);return p2EngineFiles.has(file)?s.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,block=>block.includes('globalThis.__BHCS_TEST__')?'<script data-p2-engine></script>':block):s};
@@ -49,6 +49,16 @@ for(const [name,[topic,label]] of Object.entries(g8LegacyLinks)){
  assert.ok(s.includes(`href="g8-drills.html?topic=${topic}" style="text-decoration:underline;color:inherit">本頁內容已併入 → ${label}</a>`),file+' incorrect link');
  const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
  assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved link');
+}
+{
+ const file='tools/math/g8-quadratic-arithmetic-sequence.html',s=fs.readFileSync(path.join(root,file),'utf8');
+ assert.equal((s.match(/<!-- g8-dual-legacy-link-start -->/g)||[]).length,1,file+' link missing/duplicated');
+ assert.equal((s.match(/<!-- g8-dual-legacy-link-end -->/g)||[]).length,1,file+' link end missing/duplicated');
+ for(const [topic,label] of [['arithseq','等差數列與等差級數'],['quadsolve','解一元二次方程式']])
+  assert.ok(s.includes(`href="g8-drills.html?topic=${topic}" style="text-decoration:underline;color:inherit">${label}</a>`),file+' incorrect '+topic+' link');
+ assert.ok(s.includes('本頁內容已併入 → '),file+' missing link label');
+ const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
+ assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved links');
 }
 for(const [name,[topic,label]] of Object.entries(g7LegacyLinks)){
  const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
@@ -87,4 +97,4 @@ for(const file of files){
  assert.ok(brandBlock.includes('color:#C8352B!important'),file+' missing teacher-answer red rule');
 }
 console.log(`PASS P1: ${links.length} links, ${files.length} files, worksheet markup/print rules preserved; P2 engine scripts delegated to math regressions`);
-module.exports={root,baseline,files,p2EngineFiles,approvedCrosslinks,legacyLinkFiles:[...Object.keys(legacyLinks),...Object.keys(g7LegacyLinks),...Object.keys(g8LegacyLinks)].map(name=>'tools/math/'+name),declaredCount,links:links.map(u=>u.pathname.slice(1)+u.search)};
+module.exports={root,baseline,files,p2EngineFiles,approvedCrosslinks,legacyLinkFiles:[...Object.keys(legacyLinks),...Object.keys(g7LegacyLinks),...Object.keys(g8LegacyLinks),'g8-quadratic-arithmetic-sequence.html'].map(name=>'tools/math/'+name),declaredCount,links:links.map(u=>u.pathname.slice(1)+u.search)};

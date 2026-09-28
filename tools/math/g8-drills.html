@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["sqrt","平方根"],["pythagoras","畢氏定理與兩點距離"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["sqrt","平方根"],["pythagoras","畢氏定理與兩點距離"],["arithseq","等差數列與等差級數"],["quadsolve","解一元二次方程式"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1379,7 +1379,126 @@ function pythagorasConfig(){
   presets:{basic:{hypotenuse:3,leg:3,radicalSide:2,rectangle:2,numberLine:2,axisDistance:2,coordinateDistance:2},advanced:{hypotenuse:2,leg:2,radicalSide:2,altitude:2,rectangle:2,composite:2,coordinateDistance:2,coordinateRadical:2,unknownCoordinate:2},challenge:{leg:2,radicalSide:2,altitude:2,rectangle:2,composite:3,coordinateDistance:2,coordinateRadical:2,unknownCoordinate:2,shapeApplication:3}}};
 }
 
-const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,sqrt:sqrtConfig,pythagoras:pythagorasConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
+function arithseqConfig(){
+ /* 國二 等差數列與等差級數（2026-09-28，Claude）。依舊的 g8-quadratic-arithmetic-sequence.html（雙工作台）的「等差數列」六個單元重做：規律填空、公差判斷、
+    指定項與一般項、等差中項、等差級數求和、級數巧算。每個單元五種問法，基礎、進階、挑戰各取三種（挑戰有基礎沒有的兩種）；首項與公差依數型抽整數、分數或小數。
+    verify：用浮點數逐項相加或逐項產生數列重算（不用公式），反求題把答案代回條件。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const fv=a=>a.n/a.d,near=(u,v)=>Math.abs(u-v)<1e-7*Math.max(1,Math.abs(v)),neg=a=>R(-a.n,a.d);
+ const term10=a=>{let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
+ const sh=(a,mode)=>{const s=numHTML(R(Math.abs(a.n),a.d),a.d===1?"integer":mode==="decimal"?"decimal":"fraction",{mixed:false});return(a.n<0?"−":"")+s};
+ const num=(mode,lo,hi)=>{if(mode==="integer")return R(rand(lo,hi));if(mode==="fraction"){const d=pick([2,3,4]);return R(rand(lo*d,hi*d),d)}return R(rand(lo*10,hi*10),10)};
+ const dif=(mode)=>{let d;do d=num(mode,-8,9);while(d.n===0);return d};
+ const seq=(a,d,n)=>Array.from({length:n},(_,i)=>add(a,mul(d,R(i))));
+ const sub_=s=>`a<sub>${s}</sub>`,BL="（　）",lin=(p,q,v="n")=>{const P=p.n===p.d?"":p.n===-p.d?"−":sh(p,"fraction");return(p.n?P+v:"")+(q.n?(p.n?(q.n<0?" − ":" ＋ "):(q.n<0?"−":""))+sh(R(Math.abs(q.n),q.d),"fraction"):(p.n?"":"0"))};
+ const mkUnit=(id,name,tip,kinds,label)=>({id,name,tip,modes:["integer","fraction","decimal"],answerLabel:label,gen:ctx=>{
+  const Lv=lv(ctx),mode=ctx.modes[0],k=kinds[pick([[0,1,2],[1,2,3],[2,3,4]][Lv])];let r;try{r=k(mode,Lv)}catch(e){return null}if(!r)return null;r.q=r.q.replace(/-(\d)/g,"−$1");r.a=r.a.replace(/-(\d)/g,"−$1");
+  return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<[^>]+>/g,""),verify:r.chk};
+ }});
+ const fill=mkUnit("fill","數列規律填空","找出相鄰兩項的差，依規律補上空格。",[
+  m=>{const a=num(m,-20,30),d=dif(m),s=seq(a,d,6),disp=s.map((v,i)=>i===3||i===5?BL:sh(v,m));return{q:`在空格中填入適當的數：${disp.join("、")}`,a:`${sh(s[3],m)}、${sh(s[5],m)}`,chk:()=>near(fv(s[3])-fv(s[2]),fv(s[1])-fv(s[0]))&&near(fv(s[5])-fv(s[4]),fv(s[1])-fv(s[0]))}},
+  m=>{const a=num(m,-20,30),d=dif(m),s=seq(a,d,5);return{q:`等差數列的首項為 ${sh(a,m)}、公差為 ${sh(d,m)}，寫出前五項。`,a:s.map(v=>sh(v,m)).join("、"),chk:()=>{let x=fv(a);return s.every(v=>{const ok=near(fv(v),x);x+=fv(d);return ok})}}},
+  m=>{const a=num(m,-20,30),d=dif(m),s=seq(a,d,6),disp=s.map((v,i)=>i===0||i===2?BL:sh(v,m));return{q:`在空格中填入適當的數：${disp.join("、")}`,a:`${sh(s[0],m)}、${sh(s[2],m)}`,chk:()=>near(fv(s[3])-fv(s[2]),fv(s[5])-fv(s[4]))&&near(fv(s[1])-fv(s[0]),fv(s[4])-fv(s[3]))}},
+  m=>{const[va,vb]=pick([["a","b"],["x","y"],["m","n"]]),p=rand(1,3),q=rand(1,4),T=i=>{const c1=1+i*p,c2=i*q;return`${c1===1?"":c1}${va}${c2?` ＋ ${c2===1?"":c2}${vb}`:""}`},disp=[0,1,2,3,4].map(i=>i===3?BL:T(i));return{q:`觀察規律，在空格中填入適當的式子：${disp.join("、")}`,a:T(3),chk:()=>{const A=1.7,B=-0.9,v=i=>(1+i*p)*A+i*q*B;return near(v(3)-v(2),v(2)-v(1))}}},
+  m=>{const n1=rand(1,5),dn=rand(1,3),d1=rand(7,15),dd=rand(2,6),items=[0,1,2,3,4,5].map(i=>fr(n1+i*dn,d1+i*dd)),disp=items.map((x,i)=>i===4?BL:x);return{q:`分子、分母各成等差數列，在空格中填入適當的分數：${disp.join("、")}`,a:fr(n1+4*dn,d1+4*dd),chk:()=>n1+4*dn-(n1+3*dn)===dn&&d1+4*dd-(d1+3*dd)===dd}}],"");
+ const judge=mkUnit("judge","公差判斷","相鄰兩項的差（後項減前項）都相同才是等差數列，這個差就是公差。",[
+  m=>{const a=num(m,-20,30),d=dif(m),yes=Math.random()<.6,s=seq(a,d,5);if(!yes)s[3]=add(s[3],pick([R(1),R(2),R(-1)]));return{q:`判斷 ${s.map(v=>sh(v,m)).join("，")} 是否為等差數列；若是，寫出公差。`,a:yes?`是，公差 ${sh(d,m)}`:"不是",chk:()=>{const df=s.slice(1).map((v,i)=>fv(v)-fv(s[i]));return df.every(x=>near(x,df[0]))===yes}}},
+  m=>{const a=num(m,-20,30),d=dif(m),s=seq(a,d,5);return{q:`求等差數列 ${s.map(v=>sh(v,m)).join("，")}，… 的公差與第 6 項。`,a:`公差 ${sh(d,m)}，第 6 項 ${sh(add(s[4],d),m)}`,chk:()=>near(fv(s[4])+fv(s[1])-fv(s[0]),fv(add(s[4],d)))}},
+  m=>{const a=num(m,-10,20),d=dif(m),s=seq(a,d,4);return{q:`若 ${sh(s[0],m)}，x，${sh(s[2],m)}，y 成等差數列，求 x 與 y。`,a:`x＝${sh(s[1],m)}，y＝${sh(s[3],m)}`,chk:()=>near(2*fv(s[1]),fv(s[0])+fv(s[2]))&&near(fv(s[3])-fv(s[2]),fv(s[2])-fv(s[1]))}},
+  m=>{const p=R(rand(-9,9)||3),q=R(rand(-20,20));return{q:`數列的第 n 項為 ${sub_("n")}＝${lin(p,q)}，它是不是等差數列？若是，寫出首項與公差。`,a:`是，首項 ${sh(add(p,q),m)}，公差 ${sh(p,m)}`,chk:()=>{const v=n=>fv(p)*n+fv(q);return near(v(3)-v(2),v(2)-v(1))&&near(v(1),fv(add(p,q)))}}},
+  m=>{const c=rand(1,5),e=rand(-9,9),s=[1,2,3,4].map(n=>n*n+c*n+e);return{q:`數列的第 n 項為 ${sub_("n")}＝n<sup>2</sup> ＋ ${c===1?"":c}n ${e<0?"−":"＋"} ${Math.abs(e)}，寫出前四項，並判斷它是不是等差數列。`,a:`${s.join("、")}；不是（相鄰兩項的差不固定）`,chk:()=>s[1]-s[0]!==s[2]-s[1]}}],"");
+ const term=mkUnit("term","指定項與一般項","aₙ＝a₁＋(n−1)d；由兩項求 d 時，d＝(aₘ−aₖ)÷(m−k)。",[
+  m=>{const a=num(m,-30,40),d=dif(m),n=rand(10,35),an=add(a,mul(d,R(n-1)));return{q:`等差數列首項 ${sub_(1)}＝${sh(a,m)}，公差 d＝${sh(d,m)}，求第 ${n} 項。`,a:`${sub_(n)}＝${sh(an,m)}`,chk:()=>{let x=fv(a);for(let i=1;i<n;i++)x+=fv(d);return near(x,fv(an))}}},
+  m=>{const a=R(rand(-30,40)),d=R(rand(-9,9)||4);return{q:`等差數列首項 ${sub_(1)}＝${sh(a,m)}，公差 d＝${sh(d,m)}，求第 n 項 ${sub_("n")}（以 n 表示）。`,a:`${sub_("n")}＝${lin(d,sub(a,d))}`,chk:()=>[1,2,5].every(n=>near(fv(a)+(n-1)*fv(d),fv(d)*n+fv(sub(a,d))))}},
+  m=>{const a=num(m,-20,30),d=dif(m),i=rand(2,6),j=i+rand(3,9),ai=add(a,mul(d,R(i-1))),aj=add(a,mul(d,R(j-1)));return{q:`等差數列中 ${sub_(i)}＝${sh(ai,m)}、${sub_(j)}＝${sh(aj,m)}，求首項與公差。`,a:`${sub_(1)}＝${sh(a,m)}，d＝${sh(d,m)}`,chk:()=>near(fv(a)+(i-1)*fv(d),fv(ai))&&near(fv(a)+(j-1)*fv(d),fv(aj))}},
+  m=>{const a=R(rand(-30,40)),d=R(rand(-9,9)||3),n=rand(8,40),v=add(a,mul(d,R(n-1)));return{q:`等差數列 ${[0,1,2].map(i=>sh(add(a,mul(d,R(i))),m)).join("，")}，… 中，${sh(v,m)} 是第幾項？`,a:`第 ${n} 項`,chk:()=>near(fv(a)+(n-1)*fv(d),fv(v))}},
+  m=>{const d=R(-rand(2,9)),n0=rand(8,30),a=R(-d.n*(n0-1)+rand(1,-d.n-1)*0+rand(0,-d.n-1));const first=(()=>{let k=1,x=fv(a);while(x>=0){x+=fv(d);k++}return k})();return{q:`等差數列首項 ${sh(a,m)}、公差 ${sh(d,m)}，從第幾項開始出現負數？`,a:`第 ${first} 項`,chk:()=>fv(a)+(first-1)*fv(d)<0&&fv(a)+(first-2)*fv(d)>=0}}],"");
+ const mid=mkUnit("mid","等差中項","若 a、b、c 成等差數列，b 是 a、c 的等差中項：b＝(a＋c)÷2。",[
+  m=>{let a=num(m,-50,70),c=num(m,-50,70),b=div(add(a,c),R(2));if(m==="decimal"&&!term10(b))return null;return{q:`求 ${sh(a,m)} 與 ${sh(c,m)} 的等差中項。`,a:sh(b,m),chk:()=>near(fv(b)-fv(a),fv(c)-fv(b))}},
+  m=>{const a=num(m,-20,20),d=dif(m),c=add(a,mul(d,R(2)));return{q:`已知 ${sh(a,m)}、x、${sh(c,m)} 成等差數列，求 x。`,a:`x＝${sh(add(a,d),m)}`,chk:()=>near(2*fv(add(a,d)),fv(a)+fv(c))}},
+  m=>{const a=num(m,-20,20),d=dif(m),s=seq(a,d,5);return{q:`在 ${sh(s[0],m)} 與 ${sh(s[4],m)} 之間插入三個數，使這五個數成等差數列，求插入的三個數。`,a:s.slice(1,4).map(v=>sh(v,m)).join("、"),chk:()=>near(fv(s[2])*2,fv(s[0])+fv(s[4]))&&near(fv(s[1])*2,fv(s[0])+fv(s[2]))}},
+  m=>{const c=[rand(-5,5),rand(-6,6),rand(-5,5),rand(-6,6)];if((c[0]+c[2])%2)c[2]++;if((c[1]+c[3])%2)c[3]++;const E=(p,q)=>lin(R(p),R(0),"x").replace(/^0$/,"")+(q?` ${q<0?"−":"＋"} ${Math.abs(q)===1?"":Math.abs(q)}y`:"");const M=E((c[0]+c[2])/2,(c[1]+c[3])/2);return{q:`求 ${E(c[0],c[1])||"0"} 與 ${E(c[2],c[3])||"0"} 的等差中項。`,a:M||"0",chk:()=>{const x=1.3,y=-0.7,v=(p,q)=>p*x+q*y;return near(2*v((c[0]+c[2])/2,(c[1]+c[3])/2),v(c[0],c[1])+v(c[2],c[3]))}}},
+  m=>{const p=rand(1,4),x=rand(-6,9),q=rand(1,8),A=[p,-q],B=[p+rand(1,3),0];const C=[2*B[0]-A[0],0];const k=2*B[1]-A[1];const exprs=[`${p===1?"":p}x − ${q}`,`${B[0]===1?"":B[0]}x`,`${C[0]===1?"":C[0]===-1?"−":C[0]}x ${k<0?"−":"＋"} ${Math.abs(k)}`];if(C[0]===0)return null;return{q:`若 ${exprs.join("、")} 依序成等差數列，而且第三項是 ${C[0]*x+k}，求 x 與這三項。`,a:`x＝${x}；${p*x-q}、${B[0]*x}、${C[0]*x+k}`,chk:()=>2*B[0]*x===(p*x-q)+(C[0]*x+k)}}],"");
+ const sum=mkUnit("sum","等差級數求和","Sₙ＝n(a₁＋aₙ)÷2＝n[2a₁＋(n−1)d]÷2；先算出項數 n。",[
+  m=>{const a=num(m,-25,30),d=dif(m),n=rand(7,18),an=add(a,mul(d,R(n-1))),S=div(mul(R(n),add(a,an)),R(2));if(m==="decimal"&&!term10(S))return null;return{q:`求等差級數的和：${sh(a,m)} ＋ ${sh(add(a,d),m)} ＋ ${sh(add(a,mul(d,R(2))),m)} ＋ ⋯ ＋ ${sh(an,m)}`,a:sh(S,m),chk:()=>{let s=0,x=fv(a);for(let i=0;i<n;i++){s+=x;x+=fv(d)}return near(s,fv(S))}}},
+  m=>{const a=num(m,-25,30),d=dif(m),n=rand(8,30),S=div(mul(R(n),add(mul(a,R(2)),mul(d,R(n-1)))),R(2));if(m==="decimal"&&!term10(S))return null;return{q:`等差級數首項 ${sh(a,m)}、公差 ${sh(d,m)}，求前 ${n} 項的和。`,a:`S<sub>${n}</sub>＝${sh(S,m)}`,chk:()=>{let s=0,x=fv(a);for(let i=0;i<n;i++){s+=x;x+=fv(d)}return near(s,fv(S))}}},
+  m=>{const a=num(m,-25,30),an=num(m,-25,60),n=rand(6,30),S=div(mul(R(n),add(a,an)),R(2));if(m==="decimal"&&!term10(S))return null;return{q:`等差級數共 ${n} 項，首項 ${sh(a,m)}、末項 ${sh(an,m)}，求總和。`,a:sh(S,m),chk:()=>{const d=(fv(an)-fv(a))/(n-1);let s=0,x=fv(a);for(let i=0;i<n;i++){s+=x;x+=d}return near(s,fv(S))}}},
+  m=>{const k=pick([1,3,5,7]),n=rand(10,50),S=n*n;return{q:`求 1 ＋ 3 ＋ 5 ＋ ⋯ ＋ ${2*n-1} 的值。`,a:String(S),chk:()=>{let s=0;for(let i=1;i<=2*n-1;i+=2)s+=i;return s===S}}},
+  m=>{const a=rand(1,15),d=rand(1,6),n=rand(5,25),S=n*(2*a+(n-1)*d)/2;return{q:`等差級數 ${a} ＋ ${a+d} ＋ ${a+2*d} ＋ ⋯ 前幾項的和是 ${S}？`,a:`前 ${n} 項`,chk:()=>{let s=0,k=0,x=a;while(s<S){s+=x;x+=d;k++}return s===S&&k===n}}}],"");
+ const trick=mkUnit("trick","級數巧算","中間項定理：奇數項的等差級數和＝項數×中間項；可以提出公因數，或把常數分開加。",[
+  m=>{const n=pick([7,9,11,13,15,25]),mi=Math.floor(n/2)+1,v=rand(-18,25),S=n*v;return{q:`等差數列共 ${n} 項，第 ${mi} 項是 ${v}，求這 ${n} 項的和。`,a:String(S),chk:()=>{const d=1.7,a1=v-(mi-1)*d;let s=0;for(let i=0;i<n;i++)s+=a1+i*d;return near(s,S)}}},
+  m=>{const k=pick([-5,-4,-3,3,4,5,8]),a=rand(3,12),d=pick([3,4,5,10]),n=rand(5,8),parts=[],sm=Array.from({length:n},(_,i)=>a+i*d);sm.forEach(x=>parts.push(`${x}×(${k<0?"−"+(-k):k})`));const T=k*sm.reduce((s,x)=>s+x,0);return{q:`利用分配律求值：${parts.join(" ＋ ")}`,a:String(T),chk:()=>sm.reduce((s,x)=>s+x*k,0)===T}},
+  m=>{const c=rand(2,9),a=rand(18,32),d=-pick([2,3,4]),n=pick([6,8,10]),terms=Array.from({length:n},(_,i)=>a+i*d),T=terms.reduce((s,x)=>s+x+c,0);return{q:`求值：${terms.slice(0,3).map(x=>`(${x}＋${c})`).join(" ＋ ")} ＋ ⋯ ＋ (${terms[n-1]}＋${c})（共 ${n} 項）`,a:String(T),chk:()=>terms.reduce((s,x)=>s+(x+c),0)===T}},
+  m=>{const k=rand(3,9),N=rand(60,300),cnt=Math.floor(N/k),S=k*cnt*(cnt+1)/2;return{q:`求 1 到 ${N} 之間所有 ${k} 的倍數的和。`,a:String(S),chk:()=>{let s=0;for(let i=k;i<=N;i+=k)s+=i;return s===S}}},
+  m=>{const n=rand(10,40),S=n*(n+1)/2,T=S-(n%2?0:0);const e=Array.from({length:n},(_,i)=>(i%2?-1:1)*(i+1)).reduce((s,x)=>s+x,0);return{q:`求 1 − 2 ＋ 3 − 4 ＋ ⋯ ${n%2?"＋":"−"} ${n} 的值。`,a:String(e),chk:()=>{let s=0;for(let i=1;i<=n;i++)s+=i%2?i:-i;return s===e}}}],"");
+ return{title:"等差數列與等差級數",symbol:"aₙ",subtitle:"規律填空・公差判斷・指定項與一般項・等差中項・級數求和・級數巧算",instruction:"寫出必要的過程；一般項以 n 表示。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：規律填空、判斷等差與公差、求指定項與一般項、等差中項、級數求和、中間項與分配律巧算。",advanced:"進階：寫出前五項、補首項、由兩項求首項與公差、第幾項、插入三數、代數式的中項、末項求和、分離常數。",challenge:"挑戰：代數式與分數的規律、由一般項判斷等差、非等差數列、開始為負的項、三式成等差求 x、奇數和、由和求項數、倍數和與正負相間。"},
+  units:[fill,judge,term,mid,sum,trick],presets:{basic:{fill:3,judge:3,term:3,mid:3,sum:3,trick:2},advanced:{fill:2,judge:2,term:3,mid:3,sum:3,trick:3},challenge:{fill:2,judge:2,term:3,mid:3,sum:3,trick:3}}};
+}
+
+function quadsolveConfig(){
+ /* 國二 解一元二次方程式（2026-09-28，Claude）。依舊的 g8-quadratic-arithmetic-sequence.html（雙工作台）的「一元二次方程式」六個單元重做：解的檢驗、提公因式與分組、
+    乘法公式、十字交乘、開平方法與配方法、判別式・公式解・根與係數。每個單元五種問法，基礎、進階、挑戰各取三種。整數係數。
+    根為無理數時化為最簡根式：x＝(−b±√D)／(2a) 並約分。verify：把每個根用浮點數代回原方程式，判別式題用 b²−4ac 另算。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const near=(u,v)=>Math.abs(u-v)<1e-7*Math.max(1,Math.abs(v)),fv=a=>a.n/a.d;
+ const sh=a=>{const s=numHTML(R(Math.abs(a.n),a.d),a.d===1?"integer":"fraction",{mixed:false});return(a.n<0?"−":"")+s};
+ const rt=x=>`√<span style="border-top:1px solid currentColor;padding:0 1px">${x}</span>`;
+ const simp=n=>{let o=1,i=n;for(let p=2;p*p<=i;p++)while(i%(p*p)===0){i/=p*p;o*=p}return{o,i}};
+ const nz=(lo,hi)=>{let v;do v=rand(lo,hi);while(!v);return v};
+ const Qh=(a,b,c,rhs="0")=>{const t=(k,v,f)=>{if(!k)return"";const m=Math.abs(k),s=(m===1&&v?"":m)+v;return f?(k<0?"−":"")+s:` ${k<0?"−":"＋"} ${s}`};let s=t(a,"x<sup>2</sup>",true);s+=t(b,"x",!s);s+=t(c,"",!s);return`${s||"0"}＝${rhs}`};
+ const L=(a,b)=>{const t=a===1?"x":a===-1?"−x":`${a}x`;return b?`${t} ${b<0?"−":"＋"} ${Math.abs(b)}`:t};
+ const roots=(a,b,c)=>{const D=b*b-4*a*c;if(D<0)return{txt:"無實數解",vals:[]};const s=Math.sqrt(D);if(Number.isInteger(s)){const r1=R(-b+s,2*a),r2=R(-b-s,2*a);if(r1.n===r2.n&&r1.d===r2.d)return{txt:`x＝${sh(r1)}（重根）`,vals:[fv(r1)]};return{txt:`x＝${sh(r1)} 或 x＝${sh(r2)}`,vals:[fv(r1),fv(r2)]}}
+  const{o,i}=simp(D);let den=2*a,p=-b,g=gcd(gcd(Math.abs(p),o),Math.abs(den));p/=g;let q=o/g;den/=g;if(den<0){den=-den;p=-p}const top=`${p?`${p} ± `:"±"}${q===1?"":q}${rt(i)}`;return{txt:`x＝${den===1?top:fr(top,den)}`,vals:[(-b+s)/(2*a),(-b-s)/(2*a)]}};
+ const chkR=(a,b,c,vals,n)=>()=>vals.length===n&&vals.every(x=>Math.abs(a*x*x+b*x+c)<1e-7*Math.max(1,Math.abs(c),Math.abs(b*x)));
+ const solveQ=(q,a,b,c)=>{const r=roots(a,b,c);return{q,a:r.txt,chk:chkR(a,b,c,r.vals,r.vals.length||0)}};
+ const mkUnit=(id,name,tip,kinds,label)=>({id,name,tip,modes:["integer"],answerLabel:label,gen:ctx=>{
+  const Lv=lv(ctx),k=kinds[pick([[0,1,2],[1,2,3],[2,3,4]][Lv])];let r;try{r=k(Lv)}catch(e){return null}if(!r)return null;r.q=r.q.replace(/-(\d)/g,"−$1");r.a=r.a.replace(/-(\d)/g,"−$1");
+  return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<[^>]+>/g,""),verify:r.chk};
+ }});
+ const two=(lo=-9,hi=9)=>{let r1,r2;do{r1=rand(lo,hi);r2=rand(lo,hi)}while(r1===r2);return[r1,r2]};
+ const check=mkUnit("check","解的檢驗","把數代入方程式，左右兩邊相等才是解；知道一個解時，可以代入求未知係數。",[
+  ()=>{const[r1,r2]=two(-6,6),b=-(r1+r2),c=r1*r2,cands=shuffle([...new Set([r1,r2,r1+pick([-1,1]),r2+pick([-2,2])])]);return{q:`下列哪些數是 ${Qh(1,b,c)} 的解？${cands.map(x=>`x＝${x}`).join("、")}`,a:[r1,r2].filter(x=>cands.includes(x)).map(x=>`x＝${x}`).join("、"),chk:()=>[r1,r2].every(x=>x*x+b*x+c===0)&&cands.filter(x=>x*x+b*x+c===0).length===2}},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`已知 x＝${r1} 是 x<sup>2</sup> ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x ＋ k＝0 的一個解，求 k。`,a:`k＝${c}`,chk:()=>r1*r1+b*r1+c===0}},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`已知 x＝${r1} 是 ${Qh(1,b,c)} 的一個解，求另一個解。`,a:`x＝${r2}`,chk:()=>r2*r2+b*r2+c===0}},
+  ()=>{const a=rand(1,4),[r1,r2]=two(-5,5),b=-a*(r1+r2),c=a*r1*r2;return{q:`已知 x＝${r1} 是 ${a===1?"":a}x<sup>2</sup> ＋ kx ${c<0?"−":"＋"} ${Math.abs(c)}＝0 的一個解，求 k 與另一個解。`,a:`k＝${b}，另一解 x＝${r2}`,chk:()=>a*r1*r1+b*r1+c===0&&a*r2*r2+b*r2+c===0}},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`寫出一個以 ${r1} 與 ${r2} 為解、x<sup>2</sup> 項係數為 1 的一元二次方程式。`,a:Qh(1,b,c),chk:()=>[r1,r2].every(x=>x*x+b*x+c===0)}}],"");
+ const factor=mkUnit("factor","提公因式與分組","移項使一邊為 0，提出公因式後令每個因式等於 0；不可把兩邊的未知式直接約掉。",[
+  ()=>{const a=pick([1,2,3,5]),b=nz(-14,14);return solveQ(`解方程式：${Qh(a,b,0)}`,a,b,0)},
+  ()=>{const a=pick([1,2,3,4]),b=nz(-14,14);return solveQ(`解方程式：${a===1?"":a}x<sup>2</sup>＝${b===1?"":b===-1?"−":b}x`,a,-b,0)},
+  ()=>{const p=nz(-6,6),c=rand(2,4),d=rand(-5,5),f=rand(-5,5);if(d===f)return null;const A=c-1,B=(d-f)+A*p,C=p*(d-f);return solveQ(`解方程式：(${L(1,p)})(${L(c,d)})＝(${L(1,p)})(${L(1,f)})`,A,B,C)},
+  ()=>{const m=rand(2,9),n=rand(2,9);if(m===n)return null;return solveQ(`解方程式：x<sup>2</sup> − ${m}x − ${n}x ＋ ${m*n}＝0`,1,-(m+n),m*n)},
+  ()=>{const p=nz(-6,6),k=nz(-6,6);if(p===k)return null;return solveQ(`解方程式：x(${L(1,p)})＝${k<0?`(${k})`:k}(${L(1,p)})`,1,p-k,-k*p)}],"");
+ const formula=mkUnit("formula","乘法公式","a²−b²＝(a＋b)(a−b)；a²±2ab＋b²＝(a±b)²，完全平方式的方程式有重根。",[
+  ()=>{const a=rand(1,6),b=rand(1,9);return solveQ(`解方程式：${Qh(a*a,0,-b*b)}`,a*a,0,-b*b)},
+  ()=>{const k=nz(-9,9);return solveQ(`解方程式：${Qh(1,2*k,k*k)}`,1,2*k,k*k)},
+  ()=>{const p=nz(-6,6),q=rand(1,8);return solveQ(`解方程式：(${L(1,p)})<sup>2</sup> − ${q*q}＝0`,1,2*p,p*p-q*q)},
+  ()=>{const a=rand(1,3),b=nz(-6,6),c=rand(1,3),d=nz(-6,6);if(a===c&&b===d||a===c&&b===-d)return null;return solveQ(`解方程式：(${L(a,b)})<sup>2</sup>＝(${L(c,d)})<sup>2</sup>`,a*a-c*c,2*a*b-2*c*d,b*b-d*d)},
+  ()=>{const a=rand(2,5),b=nz(-7,7);if(gcd(a,Math.abs(b))>1)return null;return solveQ(`解方程式：${Qh(a*a,2*a*b,b*b)}`,a*a,2*a*b,b*b)}],"");
+ const cross=mkUnit("cross","十字交乘","x²＋bx＋c：找兩數相乘為 c、相加為 b；非首一時用十字交乘；先整理成一般式。",[
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：${Qh(1,b,c)}`,1,b,c)},
+  ()=>{const p=rand(2,5),q=nz(-7,7),s=rand(1,4),t=nz(-7,7);if(gcd(p,Math.abs(q))>1||gcd(s,Math.abs(t))>1)return null;const A=p*s,B=p*t+q*s,C=q*t;return solveQ(`解方程式：${Qh(A,B,C)}`,A,B,C)},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x<sup>2</sup> ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x＝${-c}`,1,b,c)},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x(${L(1,b)})＝${-c}`,1,b,c)},
+  ()=>{const p=nz(-6,6),q=nz(-6,6),k=nz(-12,12),B=p+q,C=p*q-k,D=B*B-4*C;if(D<0||!Number.isInteger(Math.sqrt(D)))return null;return solveQ(`解方程式：(${L(1,p)})(${L(1,q)})＝${k}`,1,B,C)}],"");
+ const square=mkUnit("square","開平方法與配方法","(x＋p)²＝q（q≧0）⇒ x＋p＝±√q；x²＋bx＋c＝0 可配成 (x＋b/2)²＝(b/2)²−c。",[
+  ()=>{const p=nz(-9,9),q=rand(1,9);return solveQ(`解方程式：(${L(1,p)})<sup>2</sup>＝${q*q}`,1,2*p,p*p-q*q)},
+  ()=>{const p=nz(-9,9),q=pick([2,3,5,6,7,8,10,12,18,20]);return solveQ(`解方程式：(${L(1,p)})<sup>2</sup>＝${q}`,1,2*p,p*p-q)},
+  ()=>{const q=pick([4,9,16,25,2,3,5,8,12,18,27,50]),a=rand(1,3);return solveQ(`解方程式：${a===1?"":a}x<sup>2</sup>＝${a*q}`,a,0,-a*q)},
+  ()=>{const h=nz(-6,6),c=rand(-15,h*h-1);return solveQ(`用配方法解方程式：${Qh(1,2*h,c)}`,1,2*h,c)},
+  ()=>{const a=rand(2,4),p=nz(-6,6),q=pick([2,3,5,6,8,12]);return solveQ(`解方程式：${a}(${L(1,p)})<sup>2</sup>＝${a*q}`,a,2*a*p,a*(p*p-q))}],"");
+ const sol=mkUnit("sol","判別式・公式解・根與係數","判別式 D＝b²−4ac：D＞0 兩相異實根、D＝0 重根、D＜0 無實數解；公式解 x＝(−b±√D)／2a；兩根和＝−b/a、兩根積＝c/a。",[
+  ()=>{const a=rand(1,4),b=rand(-9,9),c=rand(-9,9),D=b*b-4*a*c;return{q:`判斷 ${Qh(a,b,c)} 的解的情形。`,a:`D＝${D}，${D>0?"兩相異實數解":D===0?"兩相等實數解（重根）":"無實數解"}`,chk:()=>{const r=roots(a,b,c);return D>0?r.vals.length===2:D===0?r.vals.length===1:r.vals.length===0}}},
+  ()=>{let a,b,c,D;do{a=rand(1,4);b=rand(-9,9);c=rand(-9,9);D=b*b-4*a*c}while(D<=0||Number.isInteger(Math.sqrt(D)));return solveQ(`用公式解解方程式：${Qh(a,b,c)}`,a,b,c)},
+  ()=>{const a=rand(1,4),b=rand(-12,12),c=nz(-12,12);return{q:`設 α、β 是 ${Qh(a,b,c)} 的兩根，求 α＋β 與 αβ。`,a:`α＋β＝${sh(R(-b,a))}，αβ＝${sh(R(c,a))}`,chk:()=>{const r=roots(a,b,c);return r.vals.length<2||near(r.vals[0]+r.vals[1],-b/a)&&near(r.vals[0]*r.vals[1],c/a)}}},
+  ()=>{const h=nz(-8,8),a=rand(1,3);return{q:`若 ${a===1?"":a}x<sup>2</sup> ${2*a*h<0?"−":"＋"} ${Math.abs(2*a*h)}x ＋ k＝0 有兩個相等的實數解，求 k 與這個解。`,a:`k＝${a*h*h}，x＝${-h}`,chk:()=>(2*a*h)**2-4*a*(a*h*h)===0&&a*h*h-2*a*h*h+a*h*h===0}},
+  ()=>{const[r1,r2]=two(-7,7),b=-(r1+r2),c=r1*r2;return{q:`設 α、β 是 ${Qh(1,b,c)} 的兩根，求 α<sup>2</sup>＋β<sup>2</sup>。`,a:String(r1*r1+r2*r2),chk:()=>b*b-2*c===r1*r1+r2*r2}}],"");
+ return{title:"解一元二次方程式",symbol:"ax²",subtitle:"解的檢驗・提公因式與分組・乘法公式・十字交乘・開平方與配方・判別式與公式解",instruction:"解出所有的解；無理數的解化為最簡根式。",modes:["integer"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：代入檢驗與求係數、提公因式與移項後提公因式、平方差與完全平方、首一與非首一十字交乘、開平方、判別式與公式解。",advanced:"進階：由一解求另一解、共同括號、(x＋p)²−q²、未整理成一般式、根式的開平方、ax²＝c、兩根和與積。",challenge:"挑戰：由一解求 k 與另一解、以兩數為解寫方程式、x(x＋p)＝k(x＋p)、(ax＋b)²＝(cx＋d)²、(x＋p)(x＋q)＝k、配方法、a(x＋p)²＝c、重根求 k、α²＋β²。"},
+  units:[check,factor,formula,cross,square,sol],presets:{basic:{check:2,factor:3,formula:3,cross:4,square:3,sol:3},advanced:{check:2,factor:3,formula:3,cross:3,square:3,sol:3},challenge:{check:2,factor:3,formula:3,cross:3,square:3,sol:3}}};
+}
+
+const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,sqrt:sqrtConfig,pythagoras:pythagorasConfig,arithseq:arithseqConfig,quadsolve:quadsolveConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

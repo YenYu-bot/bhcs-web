@@ -1,0 +1,144 @@
+[basic/fill/integer] 等差數列的首項為 13、公差為 1，寫出前五項。  ⇒ 13、14、15、16、17
+[basic/fill/integer] 在空格中填入適當的數：（ ）、−6、（ ）、4、9、14  ⇒ −11、−1
+[basic/fill/fraction] 等差數列的首項為 (39/2)、公差為 −(22/3)，寫出前五項。  ⇒ (39/2)、(73/6)、(29/6)、−(5/2)、−(59/6)
+[basic/fill/fraction] 等差數列的首項為 6、公差為 8，寫出前五項。  ⇒ 6、14、22、30、38
+[basic/fill/decimal] 等差數列的首項為 4.2、公差為 −5，寫出前五項。  ⇒ 4.2、−0.8、−5.8、−10.8、−15.8
+[basic/fill/decimal] 在空格中填入適當的數：2.6、3.8、5、（ ）、7.4、（ ）  ⇒ 6.2、8.6
+[basic/judge/integer] 若 −10，x，−2，y 成等差數列，求 x 與 y。  ⇒ x＝−6，y＝2
+[basic/judge/integer] 求等差數列 21，18，15，12，9，… 的公差與第 6 項。  ⇒ 公差 −3，第 6 項 6
+[basic/judge/fraction] 若 −4，x，−16，y 成等差數列，求 x 與 y。  ⇒ x＝−10，y＝−22
+[basic/judge/fraction] 判斷 (43/3)，(55/3)，(67/3)，(79/3)，(91/3) 是否為等差數列；若是，寫出公差。  ⇒ 是，公差 4
+[basic/judge/decimal] 求等差數列 19，14.8，10.6，6.4，2.2，… 的公差與第 6 項。  ⇒ 公差 −4.2，第 6 項 −2
+[basic/judge/decimal] 求等差數列 13.2，20.7，28.2，35.7，43.2，… 的公差與第 6 項。  ⇒ 公差 7.5，第 6 項 50.7
+[basic/term/integer] 等差數列中 a_2＝32、a_10＝80，求首項與公差。  ⇒ a_1＝26，d＝6
+[basic/term/integer] 等差數列首項 a_1＝35，公差 d＝−4，求第 n 項 a_n（以 n 表示）。  ⇒ a_n＝−4n ＋ 39
+[basic/term/fraction] 等差數列首項 a_1＝(23/2)，公差 d＝5，求第 26 項。  ⇒ a_26＝(273/2)
+[basic/term/fraction] 等差數列首項 a_1＝7，公差 d＝−1，求第 n 項 a_n（以 n 表示）。  ⇒ a_n＝−n ＋ 8
+[basic/term/decimal] 等差數列中 a_3＝11.4、a_12＝14.1，求首項與公差。  ⇒ a_1＝10.8，d＝0.3
+[basic/term/decimal] 等差數列首項 a_1＝−26，公差 d＝3，求第 n 項 a_n（以 n 表示）。  ⇒ a_n＝3n − 29
+[basic/mid/integer] 在 −5 與 −29 之間插入三個數，使這五個數成等差數列，求插入的三個數。  ⇒ −11、−17、−23
+[basic/mid/integer] 已知 5、x、11 成等差數列，求 x。  ⇒ x＝8
+[basic/mid/fraction] 已知 −(17/4)、x、−(77/4) 成等差數列，求 x。  ⇒ x＝−(47/4)
+[basic/mid/fraction] 在 (39/2) 與 (5/2) 之間插入三個數，使這五個數成等差數列，求插入的三個數。  ⇒ (61/4)、11、(27/4)
+[basic/mid/decimal] 已知 −15.1、x、−13.5 成等差數列，求 x。  ⇒ x＝−14.3
+[basic/mid/decimal] 求 58.7 與 66.8 的等差中項。  ⇒ 62.75
+[basic/sum/integer] 求等差級數的和：16 ＋ 19 ＋ 22 ＋ ⋯ ＋ 37  ⇒ 212
+[basic/sum/integer] 等差級數首項 22、公差 3，求前 26 項的和。  ⇒ S_26＝1547
+[basic/sum/fraction] 求等差級數的和：(67/4) ＋ (193/12) ＋ (185/12) ＋ ⋯ ＋ (73/12)  ⇒ (2329/12)
+[basic/sum/fraction] 等差級數首項 −(37/2)、公差 (9/2)，求前 30 項的和。  ⇒ S_30＝(2805/2)
+[basic/sum/decimal] 等差級數首項 −7.4、公差 2，求前 19 項的和。  ⇒ S_19＝201.4
+[basic/sum/decimal] 等差級數共 15 項，首項 24.6、末項 20.4，求總和。  ⇒ 337.5
+[basic/trick/integer] 求值：(23＋6) ＋ (19＋6) ＋ (15＋6) ＋ ⋯ ＋ (−5＋6)（共 8 項）  ⇒ 120
+[basic/trick/integer] 求值：(23＋4) ＋ (20＋4) ＋ (17＋4) ＋ ⋯ ＋ (2＋4)（共 8 項）  ⇒ 132
+[basic/trick/fraction] 等差數列共 13 項，第 7 項是 2，求這 13 項的和。  ⇒ 26
+[basic/trick/fraction] 等差數列共 11 項，第 6 項是 23，求這 11 項的和。  ⇒ 253
+[basic/trick/decimal] 等差數列共 9 項，第 5 項是 −3，求這 9 項的和。  ⇒ −27
+[basic/trick/decimal] 求值：(18＋6) ＋ (15＋6) ＋ (12＋6) ＋ ⋯ ＋ (−9＋6)（共 10 項）  ⇒ 105
+[advanced/fill/integer] 觀察規律，在空格中填入適當的式子：a、2a ＋ 3b、3a ＋ 6b、（ ）、5a ＋ 12b  ⇒ 4a ＋ 9b
+[advanced/fill/integer] 在空格中填入適當的數：（ ）、−10、（ ）、4、11、18  ⇒ −17、−3
+[advanced/fill/fraction] 等差數列的首項為 −6、公差為 3，寫出前五項。  ⇒ −6、−3、0、3、6
+[advanced/fill/fraction] 等差數列的首項為 −(11/2)、公差為 (3/2)，寫出前五項。  ⇒ −(11/2)、−4、−(5/2)、−1、(1/2)
+[advanced/fill/decimal] 觀察規律，在空格中填入適當的式子：m、2m ＋ n、3m ＋ 2n、（ ）、5m ＋ 4n  ⇒ 4m ＋ 3n
+[advanced/fill/decimal] 觀察規律，在空格中填入適當的式子：x、3x ＋ 3y、5x ＋ 6y、（ ）、9x ＋ 12y  ⇒ 7x ＋ 9y
+[advanced/judge/integer] 若 −5，x，−7，y 成等差數列，求 x 與 y。  ⇒ x＝−6，y＝−8
+[advanced/judge/integer] 求等差數列 −20，−11，−2，7，16，… 的公差與第 6 項。  ⇒ 公差 9，第 6 項 25
+[advanced/judge/fraction] 求等差數列 (95/4)，(75/4)，(55/4)，(35/4)，(15/4)，… 的公差與第 6 項。  ⇒ 公差 −5，第 6 項 −(5/4)
+[advanced/judge/fraction] 求等差數列 23，27，31，35，39，… 的公差與第 6 項。  ⇒ 公差 4，第 6 項 43
+[advanced/judge/decimal] 求等差數列 2，10.2，18.4，26.6，34.8，… 的公差與第 6 項。  ⇒ 公差 8.2，第 6 項 43
+[advanced/judge/decimal] 求等差數列 −16.7，−10.7，−4.7，1.3，7.3，… 的公差與第 6 項。  ⇒ 公差 6，第 6 項 13.3
+[advanced/term/integer] 等差數列首項 a_1＝−14，公差 d＝2，求第 n 項 a_n（以 n 表示）。  ⇒ a_n＝2n − 16
+[advanced/term/integer] 等差數列中 a_2＝12、a_6＝4，求首項與公差。  ⇒ a_1＝14，d＝−2
+[advanced/term/fraction] 等差數列首項 a_1＝−29，公差 d＝−9，求第 n 項 a_n（以 n 表示）。  ⇒ a_n＝−9n − 20
+[advanced/term/fraction] 等差數列中 a_3＝(56/3)、a_11＝(32/3)，求首項與公差。  ⇒ a_1＝(62/3)，d＝−1
+[advanced/term/decimal] 等差數列首項 a_1＝−1，公差 d＝−2，求第 n 項 a_n（以 n 表示）。  ⇒ a_n＝−2n ＋ 1
+[advanced/term/decimal] 等差數列中 a_6＝−46.1、a_9＝−66.2，求首項與公差。  ⇒ a_1＝−12.6，d＝−6.7
+[advanced/mid/integer] 已知 −7、x、−19 成等差數列，求 x。  ⇒ x＝−13
+[advanced/mid/integer] 在 6 與 30 之間插入三個數，使這五個數成等差數列，求插入的三個數。  ⇒ 12、18、24
+[advanced/mid/fraction] 在 (23/2) 與 (79/2) 之間插入三個數，使這五個數成等差數列，求插入的三個數。  ⇒ (37/2)、(51/2)、(65/2)
+[advanced/mid/fraction] 求 −3x ＋ 6y 與 −3x ＋ 2y 的等差中項。  ⇒ −3x ＋ 4y
+[advanced/mid/decimal] 求 x ＋ y 與 −x − 5y 的等差中項。  ⇒  − 2y
+[advanced/mid/decimal] 求 − 2y 與 ＋ 6y 的等差中項。  ⇒  ＋ 2y
+[advanced/sum/integer] 等差級數共 30 項，首項 3、末項 −9，求總和。  ⇒ −90
+[advanced/sum/integer] 等差級數共 20 項，首項 24、末項 60，求總和。  ⇒ 840
+[advanced/sum/fraction] 求 1 ＋ 3 ＋ 5 ＋ ⋯ ＋ 87 的值。  ⇒ 1936
+[advanced/sum/fraction] 求 1 ＋ 3 ＋ 5 ＋ ⋯ ＋ 25 的值。  ⇒ 169
+[advanced/sum/decimal] 求 1 ＋ 3 ＋ 5 ＋ ⋯ ＋ 99 的值。  ⇒ 2500
+[advanced/sum/decimal] 等差級數首項 −0.9、公差 9，求前 20 項的和。  ⇒ S_20＝1692
+[advanced/trick/integer] 求值：(22＋6) ＋ (18＋6) ＋ (14＋6) ＋ ⋯ ＋ (−14＋6)（共 10 項）  ⇒ 100
+[advanced/trick/integer] 求 1 到 141 之間所有 4 的倍數的和。  ⇒ 2520
+[advanced/trick/fraction] 利用分配律求值：4×(3) ＋ 14×(3) ＋ 24×(3) ＋ 34×(3) ＋ 44×(3) ＋ 54×(3)  ⇒ 522
+[advanced/trick/fraction] 求值：(26＋4) ＋ (23＋4) ＋ (20＋4) ＋ ⋯ ＋ (11＋4)（共 6 項）  ⇒ 135
+[advanced/trick/decimal] 利用分配律求值：4×(4) ＋ 14×(4) ＋ 24×(4) ＋ 34×(4) ＋ 44×(4) ＋ 54×(4) ＋ 64×(4)  ⇒ 952
+[advanced/trick/decimal] 求值：(26＋7) ＋ (22＋7) ＋ (18＋7) ＋ ⋯ ＋ (6＋7)（共 6 項）  ⇒ 138
+[challenge/fill/integer] 在空格中填入適當的數：（ ）、19、（ ）、27、31、35  ⇒ 15、23
+[challenge/fill/integer] 分子、分母各成等差數列，在空格中填入適當的分數：(3/13)、(4/17)、(5/21)、(6/25)、（ ）、(8/33)  ⇒ (7/29)
+[challenge/fill/fraction] 分子、分母各成等差數列，在空格中填入適當的分數：(1/7)、(4/9)、(7/11)、(10/13)、（ ）、(16/17)  ⇒ (13/15)
+[challenge/fill/fraction] 分子、分母各成等差數列，在空格中填入適當的分數：(3/15)、(5/18)、(7/21)、(9/24)、（ ）、(13/30)  ⇒ (11/27)
+[challenge/fill/decimal] 分子、分母各成等差數列，在空格中填入適當的分數：(1/13)、(3/19)、(5/25)、(7/31)、（ ）、(11/43)  ⇒ (9/37)
+[challenge/fill/decimal] 觀察規律，在空格中填入適當的式子：x、3x ＋ 3y、5x ＋ 6y、（ ）、9x ＋ 12y  ⇒ 7x ＋ 9y
+[challenge/judge/integer] 數列的第 n 項為 a_n＝−5n − 10，它是不是等差數列？若是，寫出首項與公差。  ⇒ 是，首項 −15，公差 −5
+[challenge/judge/integer] 若 14，x，24，y 成等差數列，求 x 與 y。  ⇒ x＝19，y＝29
+[challenge/judge/fraction] 若 9，x，7，y 成等差數列，求 x 與 y。  ⇒ x＝8，y＝6
+[challenge/judge/fraction] 若 −9，x，1，y 成等差數列，求 x 與 y。  ⇒ x＝−4，y＝6
+[challenge/judge/decimal] 數列的第 n 項為 a_n＝−3n ＋ 1，它是不是等差數列？若是，寫出首項與公差。  ⇒ 是，首項 −2，公差 −3
+[challenge/judge/decimal] 數列的第 n 項為 a_n＝9n − 9，它是不是等差數列？若是，寫出首項與公差。  ⇒ 是，首項 0，公差 9
+[challenge/term/integer] 等差數列中 a_3＝7、a_11＝23，求首項與公差。  ⇒ a_1＝3，d＝2
+[challenge/term/integer] 等差數列 27，28，29，… 中，47 是第幾項？  ⇒ 第 21 項
+[challenge/term/fraction] 等差數列首項 73、公差 −7，從第幾項開始出現負數？  ⇒ 第 12 項
+[challenge/term/fraction] 等差數列中 a_4＝(22/3)、a_8＝−(34/3)，求首項與公差。  ⇒ a_1＝(64/3)，d＝−(14/3)
+[challenge/term/decimal] 等差數列中 a_3＝29.6、a_7＝36.8，求首項與公差。  ⇒ a_1＝26，d＝1.8
+[challenge/term/decimal] 等差數列中 a_3＝−22.4、a_6＝−28.1，求首項與公差。  ⇒ a_1＝−18.6，d＝−1.9
+[challenge/mid/integer] 在 −7 與 −15 之間插入三個數，使這五個數成等差數列，求插入的三個數。  ⇒ −9、−11、−13
+[challenge/mid/integer] 在 −9 與 −21 之間插入三個數，使這五個數成等差數列，求插入的三個數。  ⇒ −12、−15、−18
+[challenge/mid/fraction] 若 2x − 6、5x、8x ＋ 6 依序成等差數列，而且第三項是 −10，求 x 與這三項。  ⇒ x＝−2；−10、−10、−10
+[challenge/mid/fraction] 求 −3x − 3y 與 x ＋ 7y 的等差中項。  ⇒ −x ＋ 2y
+[challenge/mid/decimal] 若 4x − 4、6x、8x ＋ 4 依序成等差數列，而且第三項是 36，求 x 與這三項。  ⇒ x＝4；12、24、36
+[challenge/mid/decimal] 在 18.5 與 24.9 之間插入三個數，使這五個數成等差數列，求插入的三個數。  ⇒ 20.1、21.7、23.3
+[challenge/sum/integer] 等差級數共 18 項，首項 11、末項 −1，求總和。  ⇒ 90
+[challenge/sum/integer] 等差級數 10 ＋ 14 ＋ 18 ＋ ⋯ 前幾項的和是 442？  ⇒ 前 13 項
+[challenge/sum/fraction] 等差級數共 12 項，首項 (19/4)、末項 −15，求總和。  ⇒ −(123/2)
+[challenge/sum/fraction] 等差級數共 15 項，首項 (17/4)、末項 (105/4)，求總和。  ⇒ (915/4)
+[challenge/sum/decimal] 等差級數 7 ＋ 9 ＋ 11 ＋ ⋯ 前幾項的和是 216？  ⇒ 前 12 項
+[challenge/sum/decimal] 等差級數 3 ＋ 8 ＋ 13 ＋ ⋯ 前幾項的和是 93？  ⇒ 前 6 項
+[challenge/trick/integer] 求值：(27＋8) ＋ (23＋8) ＋ (19＋8) ＋ ⋯ ＋ (−1＋8)（共 8 項）  ⇒ 168
+[challenge/trick/integer] 求值：(25＋5) ＋ (21＋5) ＋ (17＋5) ＋ ⋯ ＋ (5＋5)（共 6 項）  ⇒ 120
+[challenge/trick/fraction] 求 1 到 68 之間所有 5 的倍數的和。  ⇒ 455
+[challenge/trick/fraction] 求 1 到 190 之間所有 3 的倍數的和。  ⇒ 6048
+[challenge/trick/decimal] 求值：(31＋3) ＋ (27＋3) ＋ (23＋3) ＋ ⋯ ＋ (3＋3)（共 8 項）  ⇒ 160
+[challenge/trick/decimal] 求 1 到 112 之間所有 9 的倍數的和。  ⇒ 702
+[basic/check/integer] 已知 x＝−3 是 x 2 − 6x ＋ k＝0 的一個解，求 k。  ⇒ k＝−27
+[basic/check/integer] 已知 x＝2 是 x 2 ＋ 4x − 12＝0 的一個解，求另一個解。  ⇒ x＝−6
+[basic/factor/integer] 解方程式：(x ＋ 2)(2x ＋ 3)＝(x ＋ 2)(x − 4)  ⇒ x＝−2 或 x＝−7
+[basic/factor/integer] 解方程式：2x 2 ＋ 3x＝0  ⇒ x＝0 或 x＝−(3/2)
+[basic/formula/integer] 解方程式：25x 2 − 16＝0  ⇒ x＝(4/5) 或 x＝−(4/5)
+[basic/formula/integer] 解方程式：(x ＋ 4) 2 − 49＝0  ⇒ x＝3 或 x＝−11
+[basic/cross/integer] 解方程式：x 2 − x − 72＝0  ⇒ x＝9 或 x＝−8
+[basic/cross/integer] 解方程式：x 2 − 7x＝−12  ⇒ x＝4 或 x＝3
+[basic/square/integer] 解方程式：(x ＋ 2) 2 ＝8  ⇒ x＝−2 ± 2√ 2 
+[basic/square/integer] 解方程式：3x 2 ＝15  ⇒ x＝±√ 5 
+[basic/sol/integer] 用公式解解方程式：3x 2 ＋ 7x − 5＝0  ⇒ x＝ −7 ± √ 109 6 
+[basic/sol/integer] 設 α、β 是 x 2 − 2x − 9＝0 的兩根，求 α＋β 與 αβ。  ⇒ α＋β＝2，αβ＝−9
+[advanced/check/integer] 已知 x＝3 是 2x 2 ＋ kx − 6＝0 的一個解，求 k 與另一個解。  ⇒ k＝−4，另一解 x＝−1
+[advanced/check/integer] 已知 x＝−4 是 4x 2 ＋ kx − 80＝0 的一個解，求 k 與另一個解。  ⇒ k＝−4，另一解 x＝5
+[advanced/factor/integer] 解方程式：(x − 2)(2x ＋ 1)＝(x − 2)(x ＋ 5)  ⇒ x＝4 或 x＝2
+[advanced/factor/integer] 解方程式：(x ＋ 3)(2x − 2)＝(x ＋ 3)(x)  ⇒ x＝2 或 x＝−3
+[advanced/formula/integer] 解方程式：(x ＋ 5) 2 − 25＝0  ⇒ x＝0 或 x＝−10
+[advanced/formula/integer] 解方程式：(2x ＋ 5) 2 ＝(3x − 2) 2   ⇒ x＝−(3/5) 或 x＝7
+[advanced/cross/integer] 解方程式：x 2 − 4x＝32  ⇒ x＝8 或 x＝−4
+[advanced/cross/integer] 解方程式：x(x ＋ 1)＝6  ⇒ x＝2 或 x＝−3
+[advanced/square/integer] 解方程式：(x ＋ 3) 2 ＝7  ⇒ x＝−3 ± √ 7 
+[advanced/square/integer] 解方程式：3x 2 ＝24  ⇒ x＝±2√ 2 
+[advanced/sol/integer] 若 x 2 ＋ 6x ＋ k＝0 有兩個相等的實數解，求 k 與這個解。  ⇒ k＝9，x＝−3
+[advanced/sol/integer] 設 α、β 是 x 2 ＋ 12x − 11＝0 的兩根，求 α＋β 與 αβ。  ⇒ α＋β＝−12，αβ＝−11
+[challenge/check/integer] 已知 x＝2 是 x 2 ＋ kx ＋ 8＝0 的一個解，求 k 與另一個解。  ⇒ k＝−6，另一解 x＝4
+[challenge/check/integer] 已知 x＝−2 是 x 2 ＋ kx ＋ 8＝0 的一個解，求 k 與另一個解。  ⇒ k＝6，另一解 x＝−4
+[challenge/factor/integer] 解方程式：x 2 − 5x − 9x ＋ 45＝0  ⇒ x＝9 或 x＝5
+[challenge/factor/integer] 解方程式：(x − 3)(3x − 3)＝(x − 3)(x − 5)  ⇒ x＝3 或 x＝−1
+[challenge/formula/integer] 解方程式：(2x ＋ 5) 2 ＝(x − 2) 2   ⇒ x＝−1 或 x＝−7
+[challenge/formula/integer] 解方程式：9x 2 ＋ 12x ＋ 4＝0  ⇒ x＝−(2/3)（重根）
+[challenge/cross/integer] 解方程式：x 2 − 12x＝−35  ⇒ x＝7 或 x＝5
+[challenge/cross/integer] 解方程式：x 2 − 4x＝45  ⇒ x＝9 或 x＝−5
+[challenge/square/integer] 解方程式：2x 2 ＝6  ⇒ x＝±√ 3 
+[challenge/square/integer] 解方程式：4(x − 5) 2 ＝32  ⇒ x＝5 ± 2√ 2 
+[challenge/sol/integer] 若 x 2 − 14x ＋ k＝0 有兩個相等的實數解，求 k 與這個解。  ⇒ k＝49，x＝7
+[challenge/sol/integer] 設 α、β 是 x 2 ＋ 2x＝0 的兩根，求 α 2 ＋β 2 。  ⇒ 4
