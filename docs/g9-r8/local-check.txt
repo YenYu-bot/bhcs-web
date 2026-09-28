@@ -1,0 +1,34 @@
+median         basic     integer  uniq=200/200 struct=59 vfail=0 exc=0 null=0
+median         basic     decimal  uniq=200/200 struct=55 vfail=0 exc=0 null=0
+median         advanced  integer  uniq=200/200 struct=83 vfail=0 exc=0 null=10
+median         advanced  decimal  uniq=200/200 struct=74 vfail=0 exc=0 null=2
+median         challenge integer  uniq=200/200 struct=108 vfail=0 exc=0 null=11
+median         challenge decimal  uniq=200/200 struct=83 vfail=0 exc=0 null=2
+raw            basic     integer  uniq=200/200 struct=55 vfail=0 exc=0 null=0
+raw            basic     decimal  uniq=200/200 struct=39 vfail=0 exc=0 null=0
+raw            advanced  integer  uniq=200/200 struct=75 vfail=0 exc=0 null=0
+raw            advanced  decimal  uniq=200/200 struct=61 vfail=0 exc=0 null=0
+raw            challenge integer  uniq=200/200 struct=78 vfail=0 exc=0 null=8
+raw            challenge decimal  uniq=200/200 struct=65 vfail=0 exc=0 null=7
+table          basic     integer  uniq=200/200 struct=15 vfail=0 exc=0 null=3
+table          advanced  integer  uniq=200/200 struct=27 vfail=0 exc=0 null=14
+table          challenge integer  uniq=200/200 struct=26 vfail=0 exc=0 null=10
+group          basic     integer  uniq=200/200 struct=54 vfail=0 exc=0 null=23
+group          advanced  integer  uniq=200/200 struct=85 vfail=0 exc=0 null=14
+group          challenge integer  uniq=200/200 struct=84 vfail=0 exc=0 null=25
+PASS
+median         105/166/214 challengeNew=172
+raw            96/155/170 challengeNew=169
+table          15/29/27 challengeNew=22
+group          53/96/92 challengeNew=75
+PASS
+ratio3 PASS
+parallelratio PASS
+similar PASS
+righttri PASS
+circle1 PASS
+circle2 PASS
+centers PASS
+quadfunc PASS
+stress quartile STRESS PASS
+print quartile: 2/3/4 欄 × 學用/教用 × 三難度 × 2 次 PASS, pageerrors 0
