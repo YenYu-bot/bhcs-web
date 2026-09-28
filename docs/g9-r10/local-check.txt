@@ -1,0 +1,21 @@
+PASS
+PASS
+PASS
+bag            126/141/104 challengeNew=78
+numbers        8/7/7 challengeNew=5
+dice           30/34/34 challengeNew=9
+poker          186/188/112 challengeNew=80
+PASS
+ratio3 PASS
+parallelratio PASS
+similar PASS
+righttri PASS
+circle1 PASS
+circle2 PASS
+centers PASS
+quadfunc PASS
+quartile PASS
+boxplot PASS
+stress probability STRESS PASS
+pageerrors []
+PRINT PASS

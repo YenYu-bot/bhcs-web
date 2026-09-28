@@ -119,7 +119,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"],["boxplot","盒狀圖、全距與四分位距"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"],["boxplot","盒狀圖、全距與四分位距"],["probability","認識機率"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1391,7 +1391,86 @@ function boxplotConfig(){
   units:[fivenum,compare,table,read],presets:{basic:{fivenum:2,compare:2,table:2,read:2},advanced:{fivenum:2,compare:2,table:2,read:2},challenge:{fivenum:2,compare:2,table:2,read:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig,boxplot:boxplotConfig},CFG=CONFIGS[TOPIC_KEY]();
+function probabilityConfig(){
+ /* 國三下 2-2 認識機率（2026-09-28，Claude）。依舊工具 g9b-2-2-probability.html 的四個單元重做：袋中取球、整數籤筒與倍數事件、投擲一顆骰子、
+    52 張撲克牌。只做一次試驗的機率（兩次以上的試驗在 treediagram）。每單元五種問法，加入三色球、放入球後的機率、由機率反求球數與要放入的球數、
+    任意範圍的倍數、質數與平方數、「或」事件、特殊骰子與正多面體骰子、抽走部分牌後的機率。
+    verify：答案用計數公式（倍數用 ⌊N／m⌋、排容等）；驗證時把樣本空間逐一列出來實際計數。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const form=ctx=>pick([[0,1,2],[1,2,3],[2,3,4]][lv(ctx)]);
+ const P=(a,b)=>fracHTML(R(a,b)),num=v=>v.n/v.d;
+ const cnt=(space,fn)=>space.filter(fn).length;
+ const okP=(space,fn,p)=>eq(R(cnt(space,fn),space.length),p);
+ const range=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+ const isPrime=n=>{if(n<2)return false;for(let d=2;d*d<=n;d++)if(n%d===0)return false;return true};
+ const lcm=(a,b)=>a/gcd(a,b)*b;
+
+ // ① 袋中取球
+ const COL=["紅球","白球","藍球","黃球","綠球","黑球"];
+ const bag=unit("bag","袋中取球","機率＝該事件的結果數÷所有可能的結果數；每顆球被取出的機會相等。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx),[A,B,C]=shuffle(COL),a=rand(1,6+4*L),b=rand(1,6+4*L),c=rand(1,5+3*L);
+  const mk=o=>Object.entries(o).flatMap(([k,v])=>Array(v).fill(k));
+  if(f===0){const S=mk({[A]:a,[B]:b}),pa=R(a,a+b),pb=R(b,a+b);return{expr:`袋中有大小、形狀、重量都相同的${A} ${a} 顆和${B} ${b} 顆，從袋中任意取出 1 顆，求 (1) 取出${A}的機率 (2) 取出${B}的機率。`,answer:`(1) ${fracHTML(pa)} (2) ${fracHTML(pb)}`,sig:`b0:${A}${a}${B}${b}`,verify:()=>okP(S,x=>x===A,pa)&&okP(S,x=>x===B,pb)}}
+  if(f===1){const S=mk({[A]:a,[B]:b,[C]:c}),n=a+b+c,pc=R(c,n),pn=R(n-a,n);return{expr:`袋中有${A} ${a} 顆、${B} ${b} 顆、${C} ${c} 顆，各球被取出的機會相等。任意取出 1 顆，求 (1) 取出${C}的機率 (2) 取出的不是${A}的機率。`,answer:`(1) ${fracHTML(pc)} (2) ${fracHTML(pn)}`,sig:`b1:${A}${a}${B}${b}${C}${c}`,verify:()=>okP(S,x=>x===C,pc)&&okP(S,x=>x!==A,pn)}}
+  if(f===2){const k=rand(1,6),S=mk({[A]:a+k,[B]:b}),p0=R(a,a+b),p1=R(a+k,a+b+k);return{expr:`袋中有${A} ${a} 顆和${B} ${b} 顆。(1) 任意取出 1 顆是${A}的機率是多少？(2) 若再放入 ${k} 顆${A}，任意取出 1 顆是${A}的機率變成多少？`,answer:`(1) ${fracHTML(p0)} (2) ${fracHTML(p1)}`,sig:`b2:${A}${a}${B}${b}:${k}`,verify:()=>okP(mk({[A]:a,[B]:b}),x=>x===A,p0)&&okP(S,x=>x===A,p1)}}
+  if(f===3){const p=R(a,a+b),giveTotal=pick([true,false]);
+   return{expr:giveTotal?`袋中共有 ${a+b} 顆球，只有${A}和${B}兩種。若任意取出 1 顆是${A}的機率為 ${fracHTML(p)}，袋中有幾顆${B}？`:`袋中有${B} ${b} 顆，其餘都是${A}。若任意取出 1 顆是${A}的機率為 ${fracHTML(p)}，袋中有幾顆${A}？`,answer:giveTotal?`${b} 顆`:`${a} 顆`,sig:`b3:${giveTotal}:${a}:${b}`,verify:()=>{const hits=[];for(let x=0;x<=300;x++)if(giveTotal?eq(R(a+b-x,a+b),p):eq(R(x,x+b),p))hits.push(x);return hits.length===1&&hits[0]===(giveTotal?b:a)&&okP(mk({[A]:a,[B]:b}),y=>y===A,p)}}}
+  // 要再放入幾顆，使機率變成指定值
+  const k=rand(1,8),p=R(a,a+b+k);
+  return{expr:`袋中有${A} ${a} 顆和${B} ${b} 顆。要再放入幾顆${B}，才能使任意取出 1 顆是${A}的機率為 ${fracHTML(p)}？`,answer:`${k} 顆`,sig:`b4:${a}:${b}:${k}`,verify:()=>{let first=-1;for(let x=0;x<=200&&first<0;x++)if(eq(R(a,a+b+x),p))first=x;return first===k}};
+ });
+
+ // ② 整數籤筒與倍數事件
+ const numbers=unit("numbers","整數籤筒與倍數","1～N 中 m 的倍數有 ⌊N÷m⌋ 個；既是 a 又是 b 的倍數＝最小公倍數的倍數；「a 或 b 的倍數」＝兩者相加再扣掉重複的。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx),N=rand(20,50+50*L),[m1,m2]=shuffle([2,3,4,5,6,7,8,9]).slice(0,2),S=range(1,N),fl=(n,m)=>Math.floor(n/m),l=lcm(m1,m2);
+  const intro=pick([`從 1 到 ${N} 的整數中任意取出一個數`,`籤筒中有 ${N} 支籤，分別標上 1～${N} 號，任意抽出一支`,`袋中有 ${N} 顆號碼球，分別寫著 1～${N}，任意取出一顆`]);
+  if(f===0){const p1=R(fl(N,m1),N),p2=R(fl(N,m2),N);return{expr:`${intro}，求 (1) 是 ${m1} 的倍數的機率 (2) 是 ${m2} 的倍數的機率。`,answer:`(1) ${fracHTML(p1)} (2) ${fracHTML(p2)}`,sig:`n0:${N}:${m1}:${m2}`,verify:()=>okP(S,x=>x%m1===0,p1)&&okP(S,x=>x%m2===0,p2)}}
+  if(f===1){const both=fl(N,l),pb=R(both,N),pn=R(N-fl(N,m1)-fl(N,m2)+both,N);if(!both)return null;return{expr:`${intro}，求 (1) 既是 ${m1} 的倍數又是 ${m2} 的倍數的機率 (2) 既不是 ${m1} 的倍數也不是 ${m2} 的倍數的機率。`,answer:`(1) ${fracHTML(pb)} (2) ${fracHTML(pn)}`,sig:`n1:${N}:${m1}:${m2}`,verify:()=>okP(S,x=>x%m1===0&&x%m2===0,pb)&&okP(S,x=>x%m1&&x%m2,pn)}}
+  if(f===2){const M=rand(20,40+30*L),T=range(1,M),pr=T.filter(isPrime).length,sq=Math.floor(Math.sqrt(M)),pp=R(pr,M),ps=R(sq,M);
+   const two=pick([false,true]),p2=two?R(Math.min(M,99)-9,M):ps;return{expr:`從 1 到 ${M} 的整數中任意取出一個數，求 (1) 是質數的機率 (2) 是${two?"二位數":"完全平方數"}的機率。`,answer:`(1) ${fracHTML(pp)} (2) ${fracHTML(p2)}`,sig:`n2:${M}:${two}`,verify:()=>okP(T,x=>{for(let d=2;d<x;d++)if(x%d===0)return false;return x>1},pp)&&okP(T,x=>two?String(x).length===2:Number.isInteger(Math.sqrt(x)),p2)}}
+  if(f===3){const a=rand(10,60),b=a+rand(20,60),T=range(a,b),c=fl(b,m1)-fl(a-1,m1),neg=pick([false,true]),p=R(neg?b-a+1-c:c,b-a+1);return{expr:`從 ${a} 到 ${b} 的整數中任意取出一個數，每個數被取出的機會相等，求取出的數${neg?"不是":"是"} ${m1} 的倍數的機率。`,answer:fracHTML(p),sig:`n3:${a}:${b}:${m1}:${neg}`,verify:()=>okP(T,x=>neg?x%m1!==0:x%m1===0,p)}}
+  const d=rand(0,9),pOr=R(fl(N,m1)+fl(N,m2)-fl(N,l),N),pd=R(fl(N-d,10)+(d>0?1:0),N);
+  return{expr:`${intro}，求 (1) 是 ${m1} 或 ${m2} 的倍數的機率 (2) 個位數字是 ${d} 的機率。`,answer:`(1) ${fracHTML(pOr)} (2) ${fracHTML(pd)}`,sig:`n4:${N}:${m1}:${m2}:${d}`,verify:()=>okP(S,x=>x%m1===0||x%m2===0,pOr)&&okP(S,x=>x%10===d,pd)};
+ });
+
+ // ③ 投擲骰子
+ const dice=unit("dice","投擲一顆骰子","均勻骰子每一面出現的機會相等；先列出所有可能的點數，再數出符合條件的有幾個。",["integer"],ctx=>{
+  const f=form(ctx),S=range(1,6);
+  if(f===0){const k=rand(2,5),pe=R(1,6),pg=R(6-k,6),pl=R(k-1,6);return{expr:`投擲一顆均勻骰子，求 (1) 出現 ${k} 點的機率 (2) 點數大於 ${k} 的機率 (3) 點數小於 ${k} 的機率。`,answer:`(1) ${fracHTML(pe)} (2) ${fracHTML(pg)} (3) ${fracHTML(pl)}`,sig:`d0:${k}`,verify:()=>okP(S,x=>x===k,pe)&&okP(S,x=>x>k,pg)&&okP(S,x=>x<k,pl)}}
+  if(f===1){const k=rand(1,6),ge=pick([true,false]),[a,b]=pick([[2,3],[2,5],[3,4],[2,4]]),pab=R(S.filter(x=>x%a===0&&x%b===0).length,6),pk=R(ge?7-k:k,6);
+   return{expr:`投擲一顆均勻骰子，求 (1) 點數既是 ${a} 的倍數也是 ${b} 的倍數的機率 (2) 點數${ge?"大於或等於":"小於或等於"} ${k} 的機率。`,answer:`(1) ${fracHTML(pab)} (2) ${fracHTML(pk)}`,sig:`d1:${a}${b}:${k}:${ge}`,verify:()=>okP(S,x=>x%a===0&&x%b===0,pab)&&okP(S,x=>ge?x>=k:x<=k,pk)}}
+  if(f===2){const EV=[["奇數",x=>x%2===1],["偶數",x=>x%2===0],["質數",isPrime],["合數",x=>x>1&&!isPrime(x)],["12 的因數",x=>12%x===0],["8 的因數",x=>8%x===0],["既不是質數也不是合數的數",x=>x===1]],[e1,e2]=shuffle(EV).slice(0,2),p1=R(S.filter(e1[1]).length,6),p2=R(S.filter(e2[1]).length,6);
+   return{expr:`投擲一顆均勻骰子，求 (1) 點數是${e1[0]}的機率 (2) 點數是${e2[0]}的機率。`,answer:`(1) ${fracHTML(p1)} (2) ${fracHTML(p2)}`,sig:`d2:${e1[0]}:${e2[0]}`,verify:()=>{const c=nm=>({奇數:[1,3,5],偶數:[2,4,6],質數:[2,3,5],合數:[4,6],"12 的因數":[1,2,3,4,6],"8 的因數":[1,2,4],既不是質數也不是合數的數:[1]})[nm].length;return eq(R(c(e1[0]),6),p1)&&eq(R(c(e2[0]),6),p2)}}}
+  if(f===3){let faces;do{faces=Array.from({length:6},()=>rand(1,4)).sort((x,y)=>x-y)}while(new Set(faces).size<3);const v=pick([...new Set(faces)]),k=rand(2,4),pv=R(faces.filter(x=>x===v).length,6),pk=R(faces.filter(x=>x>=k).length,6);
+   return{expr:`一顆均勻骰子的六個面分別寫著 ${faces.join("、")}，投擲一次，求 (1) 出現 ${v} 的機率 (2) 出現的數大於或等於 ${k} 的機率。`,answer:`(1) ${fracHTML(pv)} (2) ${fracHTML(pk)}`,sig:`d3:${faces}:${v}:${k}`,verify:()=>{let a=0,b=0;for(const x of faces){if(x===v)a++;if(x>=k)b++}return eq(R(a,6),pv)&&eq(R(b,6),pk)}}}
+  const[nm,n]=pick([["正四面體",4],["正八面體",8],["正十二面體",12],["正二十面體",20]]),T=range(1,n),m=rand(2,Math.min(5,n-1)),k=rand(2,n-1),pm=R(Math.floor(n/m),n),pp=R(T.filter(isPrime).length,n),pk=R(n-k,n);
+  return{expr:`一顆均勻的${nm}骰子，各面分別標上 1～${n}，投擲一次，求 (1) 點數是 ${m} 的倍數的機率 (2) 點數是質數的機率 (3) 點數大於 ${k} 的機率。`,answer:`(1) ${fracHTML(pm)} (2) ${fracHTML(pp)} (3) ${fracHTML(pk)}`,sig:`d4:${n}:${m}:${k}`,verify:()=>okP(T,x=>x%m===0,pm)&&okP(T,x=>{for(let d=2;d<x;d++)if(x%d===0)return false;return x>1},pp)&&okP(T,x=>x>k,pk)};
+ });
+
+ // ④ 撲克牌
+ const SUIT=["黑桃","紅心","方塊","梅花"],RED=s=>s==="紅心"||s==="方塊",RK=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+ const DECK=SUIT.flatMap(s=>RK.map((r,i)=>({s,r,v:i+1})));
+ const EVT=[["紅心",c=>c.s==="紅心"],["紅色的牌",c=>RED(c.s)],["黑色的牌",c=>!RED(c.s)],["A",c=>c.r==="A"],["人頭牌（J、Q、K）",c=>c.v>10],["紅心 K",c=>c.s==="紅心"&&c.r==="K"],["黑色的 A",c=>!RED(c.s)&&c.r==="A"],["數字牌（2～10）",c=>c.v>=2&&c.v<=10],["點數是 3 的倍數的數字牌（3、6、9）",c=>[3,6,9].includes(c.v)],["方塊的人頭牌",c=>c.s==="方塊"&&c.v>10],["梅花的數字牌（2～10）",c=>c.s==="梅花"&&c.v>=2&&c.v<=10]];
+ const poker=unit("poker","撲克牌","一副撲克牌 52 張（不含鬼牌），四種花色各 13 張：A、2～10、J、Q、K；紅心、方塊是紅色，黑桃、梅花是黑色。",["integer"],ctx=>{
+  const f=form(ctx),intro="從一副 52 張的撲克牌（不含鬼牌）中任意抽出一張";
+  // 答案路線：用花色數×點數個數的乘法計數
+  const count=nm=>({"紅心":13,"紅色的牌":26,"黑色的牌":26,"A":4,"人頭牌（J、Q、K）":12,"紅心 K":1,"黑色的 A":2,"數字牌（2～10）":36,"點數是 3 的倍數的數字牌（3、6、9）":12,"方塊的人頭牌":3,"梅花的數字牌（2～10）":9})[nm];
+  if(f===0||f===1){const es=shuffle(f===0?EVT.slice(0,5):EVT.slice(4)).slice(0,3),ps=es.map(e=>R(count(e[0]),52));
+   return{expr:`${intro}，求抽到下列各牌的機率：${es.map((e,i)=>`(${i+1}) ${e[0]}`).join(" ")}。`,answer:ps.map((p,i)=>`(${i+1}) ${fracHTML(p)}`).join(" "),sig:`p${f}:${es.map(e=>e[0])}`,verify:()=>es.every((e,i)=>okP(DECK,e[1],ps[i]))}}
+  if(f===2){const es=shuffle(EVT).slice(0,2),ps=es.map(e=>R(52-count(e[0]),52));return{expr:`${intro}，求 (1) 不是${es[0][0]}的機率 (2) 不是${es[1][0]}的機率。`,answer:`(1) ${fracHTML(ps[0])} (2) ${fracHTML(ps[1])}`,sig:`p2:${es.map(e=>e[0])}`,verify:()=>es.every((e,i)=>okP(DECK,c=>!e[1](c),ps[i]))}}
+  if(f===3){const rm=pick(RK.slice(9).concat(["A"])),rest=DECK.filter(c=>c.r!==rm),[e1,e2]=shuffle([["紅心",c=>c.s==="紅心",12],["紅色的牌",c=>RED(c.s),24],["人頭牌（J、Q、K）",c=>c.v>10,rm==="A"||rm==="10"?12:8],["數字牌（2～10）",c=>c.v>=2&&c.v<=10,rm==="10"?32:36]]).slice(0,2),p1=R(e1[2],48),p2=R(e2[2],48);
+   return{expr:`把一副 52 張撲克牌（不含鬼牌）中的 4 張 ${rm} 全部取走，再從剩下的牌中任意抽出一張，求 (1) 抽到${e1[0]}的機率 (2) 抽到${e2[0]}的機率。`,answer:`(1) ${fracHTML(p1)} (2) ${fracHTML(p2)}`,sig:`p3:${rm}:${e1[0]}:${e2[0]}`,verify:()=>rest.length===48&&okP(rest,e1[1],p1)&&okP(rest,e2[1],p2)}}
+  const pairs=[["紅心","人頭牌（J、Q、K）",13+12-3],["A","黑色的牌",4+26-2],["紅色的牌","K",26+4-2],["梅花","A",13+4-1],["方塊","數字牌（2～10）",13+36-9],["人頭牌（J、Q、K）","黑色的牌",12+26-6]],[x,y,n]=pick(pairs),is=nm=>EVT.find(e=>e[0]===nm)?.[1]||(SUIT.includes(nm)?(c=>c.s===nm):(c=>c.r===nm)),fx=is(x),fy=is(y),p=R(n,52);
+  return{expr:`${intro}，求抽到「${x}或${y}」的機率。`,answer:fracHTML(p),sig:`p4:${x}:${y}`,verify:()=>okP(DECK,c=>fx(c)||fy(c),p)};
+ });
+
+ return{title:"認識機率",symbol:"P",subtitle:"袋中取球・整數籤筒與倍數・投擲一顆骰子・撲克牌",instruction:"機率＝該事件的結果數÷所有可能的結果數，答案化為最簡分數。",modes:["integer"],modeLabels:{integer:"最簡分數作答"},mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：兩色球、三色球與「不是」、放入球後的機率；兩個倍數、既是又是與都不是、質數與完全平方數；等於大於小於某點數、兩個倍數與大於等於、奇偶質合數與因數；花色與 A、人頭牌等、「不是」某種牌。",advanced:"進階：三色球與「不是」、放入球後的機率、由機率反求球數；既是又是與都不是、質數與完全平方數、任意範圍的倍數；兩個倍數與大於等於、奇偶質合數與因數、特殊骰子；人頭牌與數字牌、「不是」某種牌、取走四張後的機率。",challenge:"挑戰：放入球後的機率、由機率反求球數、要放入幾顆球；質數與完全平方數、任意範圍的倍數、「或」的倍數與個位數字；奇偶質合數與因數、特殊骰子、正多面體骰子；「不是」某種牌、取走四張後的機率、「或」事件。"},
+  units:[bag,numbers,dice,poker],presets:{basic:{bag:2,numbers:2,dice:2,poker:2},advanced:{bag:2,numbers:2,dice:2,poker:2},challenge:{bag:2,numbers:2,dice:2,poker:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig,boxplot:boxplotConfig,probability:probabilityConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
