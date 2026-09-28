@@ -1,0 +1,18 @@
+PASS
+fivenum        132/203/209 challengeNew=168
+compare        30/30/30 challengeNew=10
+table          18/18/18 challengeNew=12
+read           20/20/21 challengeNew=16
+PASS
+ratio3 PASS
+parallelratio PASS
+similar PASS
+righttri PASS
+circle1 PASS
+circle2 PASS
+centers PASS
+quadfunc PASS
+quartile PASS
+stress boxplot STRESS PASS
+pageerrors []
+PRINT PASS
