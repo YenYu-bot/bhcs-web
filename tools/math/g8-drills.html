@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["sqrt","平方根"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1124,7 +1124,144 @@ const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}
   units:U,presets:{basic:{factorCheck:2,commonMonomial:3,commonBracket:2,squareSum:2,squareDiff:2,differenceSquares:3,monicTrinomial:3},advanced:{commonMonomial:2,commonBracket:2,grouping:2,squareSum:2,squareDiff:2,differenceSquares:2,monicTrinomial:2,nonmonicTrinomial:3,gcfThen:2,substitution:2},challenge:{grouping:2,differenceSquares:2,nonmonicTrinomial:3,gcfThen:2,substitution:2,completing:2,splitTerms:2,multivariable:3}}};
 }
 
-const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
+function sqrtConfig(){
+ /* 國二 平方根（2026-09-28，Claude）。依舊的 g8-square-roots.html（百宏自製）的十四個單元重做：平方根的意義、正平方根、根號與絕對值、最簡根式、根號估算、根式簡記、
+    根式乘法、根式除法、分母有理化、同類方根加減、共軛根式與根式平方、雙根號分母有理化、根式綜合、連鎖有理化。
+    舊工具每個單元只有一種句型，這裡每個單元五種問法，基礎、進階、挑戰各取三種（挑戰有基礎沒有的兩種）；係數依數型抽整數、分數或小數。
+    根式以「有理係數×√無平方因數」的和表示，乘法、有理化以此計算並化簡。verify：用 Math.sqrt 依題目的原式直接算出浮點數，與答案的值比對。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const fv=a=>a.n/a.d,near=(u,v)=>Math.abs(u-v)<1e-7*Math.max(1,Math.abs(v)),Z=()=>R(0),neg=a=>R(-a.n,a.d),sq=a=>mul(a,a),sr=Math.sqrt;
+ const term10=a=>{let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
+ const sh=(a,mode)=>{const s=numHTML(R(Math.abs(a.n),a.d),a.d===1?"integer":mode==="decimal"?"decimal":"fraction",{mixed:false});return(a.n<0?"−":"")+s};
+ const rt=x=>`√<span style="border-top:1px solid currentColor;padding:0 1px">${x}</span>`;
+ const SF=[2,3,5,6,7,10,11,13,14,15,17,19,21,22,23,26,29,30];
+ const simp=n=>{let o=1,i=n;for(let p=2;p*p<=i;p++)while(i%(p*p)===0){i/=p*p;o*=p}return{o,i}};
+ // 根式運算式：[{c:R,d:整數}]，d＝1 為有理數
+ const En=e=>{const m=new Map;e.forEach(t=>{const s=simp(t.d),c=mul(t.c,R(s.o));m.set(s.i,add(m.get(s.i)||Z(),c))});return[...m].map(([d,c])=>({c,d})).filter(t=>t.c.n!==0).sort((a,b)=>a.d-b.d)};
+ const Ea=(...es)=>En(es.flat()),Es=(e,k)=>En(e.map(t=>({c:mul(t.c,k),d:t.d}))),Em=(a,b)=>En(a.flatMap(s=>b.map(t=>({c:mul(s.c,t.c),d:s.d*t.d})))),Eneg=e=>Es(e,R(-1));
+ const Ev=e=>e.reduce((s,t)=>s+fv(t.c)*sr(t.d),0),Q=(c,d=1)=>[{c,d}];
+ const Einv=e=>{e=En(e);if(e.length===1){const{c,d}=e[0];return En([{c:div(R(1),mul(c,R(d))),d}])}if(e.length===2){const cj=[e[0],{c:neg(e[1].c),d:e[1].d}],den=Em(e,cj);if(den.length!==1||den[0].d!==1)return null;return Es(cj,div(R(1),den[0].c))}return null};
+ const Eh=(e,mode)=>{e=En(e);if(!e.length)return"0";return e.map((t,i)=>{const a=R(Math.abs(t.c.n),t.c.d),mag=t.d===1?sh(a,mode):(a.n===a.d?"":sh(a,mode))+rt(t.d);return(i?` ${t.c.n<0?"−":"＋"} `:(t.c.n<0?"−":""))+mag}).join("")};
+ const okE=(e,mode)=>mode!=="decimal"||En(e).every(t=>term10(t.c));
+ const val=(mode,max=8,pos=true)=>{const s=pos?1:(Math.random()<.5?-1:1);if(mode==="integer")return R(s*rand(1,max>=12?max+10:max));if(mode==="fraction"){const d=pick([2,3,4,5]);let n;do n=rand(1,Math.min(max*d-1,3*d-1));while(n%d===0);return R(s*n,d)}let n;do n=rand(1,Math.min(max,4)*10-1);while(n%10===0);return R(s*n,10)};
+ const sv=(m,x)=>val(m,x,false),pv=(m,x)=>val(m,x,true),sf=k=>pick(SF.slice(0,k));
+ const P=(e,mode)=>`(${Eh(e,mode)})`;
+ const fr2=(a,b)=>`<span class="fr"><span class="n">${a}</span><span class="d">${b}</span></span>`;
+ const ans=(q,e,mode,f)=>okE(e,mode)?{q,a:Eh(e,mode),chk:()=>near(f(),Ev(e))}:null;
+ const mkUnit=(id,name,tip,kinds,label)=>({id,name,tip,modes:["integer","fraction","decimal"],answerLabel:label,gen:ctx=>{
+  const Lv=lv(ctx),mode=ctx.modes[0],k=kinds[pick([[0,1,2],[1,2,3],[2,3,4]][Lv])];let r;try{r=k(mode,Lv)}catch(e){return null}if(!r)return null;
+  return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<[^>]+>/g,""),verify:r.chk};
+ }});
+
+ const rootMeaning=mkUnit("rootMeaning","平方根的意義","若 x²＝a（a≧0），x 就是 a 的平方根；正數有兩個平方根，互為相反數；負數沒有實數平方根。",[
+  m=>{const a=pv(m,12),n=sq(a);return{q:`求 ${sh(n,m)} 的平方根。`,a:`±${sh(a,m)}`,chk:()=>near(fv(a)**2,fv(n))}},
+  m=>{const a=pv(m,12),n=sq(a);return{q:`若 x<sup>2</sup>＝${sh(n,m)}，求 x。`,a:`x＝±${sh(a,m)}`,chk:()=>near(fv(a)**2,fv(n))}},
+  m=>{const a=pv(m,10),n=neg(sq(a));return{q:`${sh(n,m)} 有沒有平方根？說明理由。`,a:`沒有（任何數的平方都不會是負數）`,chk:()=>fv(n)<0}},
+  m=>{const a=pv(m,12),n=sq(a);return{q:`寫出 ${sh(n,m)} 的負平方根。`,a:`−${sh(a,m)}`,chk:()=>near((-fv(a))**2,fv(n))}},
+  m=>{const a=pv(m,12),n=sq(a);return{q:`若 p、q 是 ${sh(n,m)} 的兩個平方根，求 p＋q 與 pq。`,a:`p＋q＝0，pq＝${sh(neg(n),m)}`,chk:()=>near(fv(a)*(-fv(a)),-fv(n))}}],"");
+
+ const principalRoot=mkUnit("principalRoot","正平方根","√a 表示 a 的正平方根，一定≧0；−√a 是負平方根。",[
+  m=>{const a=pv(m,15);return ans(`求值：${rt(sh(sq(a),m))}`,Q(a),m,()=>sr(fv(a)**2))},
+  m=>{const a=pv(m,15);return ans(`求值：−${rt(sh(sq(a),m))}`,Q(neg(a)),m,()=>-sr(fv(a)**2))},
+  m=>{const a=pv(m,12),b=pv(m,12);return ans(`求值：${rt(sh(sq(a),m))} ＋ ${rt(sh(sq(b),m))}`,Q(add(a,b)),m,()=>sr(fv(a)**2)+sr(fv(b)**2))},
+  m=>{const a=pv(m,12),b=pv(m,12);return ans(`求值：${rt(sh(sq(a),m))} − ${rt(sh(sq(b),m))}`,Q(sub(a,b)),m,()=>sr(fv(a)**2)-sr(fv(b)**2))},
+  m=>{const a=pv(m,12),b=pv(m,12),v=div(a,b);if(m==="decimal"&&!term10(v))return null;return ans(`求值：${rt(sh(sq(a),m))} ÷ ${rt(sh(sq(b),m))}`,Q(v),m,()=>sr(fv(a)**2)/sr(fv(b)**2))}],"原式＝");
+
+ const absoluteRoot=mkUnit("absoluteRoot","根號與絕對值","√(a²)＝|a|：a≧0 時等於 a，a＜0 時等於 −a。",[
+  m=>{const a=sv(m,12);return ans(`求值：${rt(`(${sh(a,m)})<sup>2</sup>`)}`,Q(R(Math.abs(a.n),a.d)),m,()=>sr(fv(a)**2))},
+  m=>{const a=pv(m,12);return ans(`求值：−${rt(`(−${sh(a,m)})<sup>2</sup>`)}`,Q(neg(a)),m,()=>-sr(fv(a)**2))},
+  m=>{const a=sv(m,9),b=sv(m,9),v=add(R(Math.abs(a.n),a.d),R(Math.abs(b.n),b.d));return ans(`求值：${rt(`(${sh(a,m)})<sup>2</sup>`)} ＋ ${rt(`(${sh(b,m)})<sup>2</sup>`)}`,Q(v),m,()=>sr(fv(a)**2)+sr(fv(b)**2))},
+  m=>{const c=rand(1,9),p=rand(-9,9);if(p===c)return null;return ans(`當 x＝${p<0?"−"+(-p):p} 時，求 ${rt(`(x − ${c})<sup>2</sup>`)} 的值。`,Q(R(Math.abs(p-c))),m,()=>sr((p-c)**2))},
+  m=>{const c=rand(1,9);return{q:`若 x＜${c}，化簡 ${rt(`(x − ${c})<sup>2</sup>`)}。`,a:`${c} − x`,chk:()=>{const x=c-1.37;return near(sr((x-c)**2),c-x)}}}],"原式＝");
+
+ const simplify=mkUnit("simplify","最簡根式","把根號內的平方因數開出來：√(k²d)＝k√d，直到根號內沒有平方因數。",[
+  m=>{const k=rand(2,6),d=sf(8);return ans(`化簡：${rt(k*k*d)}`,Q(R(k),d),m,()=>sr(k*k*d))},
+  m=>{const k=rand(4,12),d=sf(14);return ans(`把 ${rt(k*k*d)} 化成最簡根式。`,Q(R(k),d),m,()=>sr(k*k*d))},
+  m=>{const a=pv(m,6),k=rand(2,6),d=sf(12);return ans(`化簡：${a.n===a.d?"":sh(a,m)}${rt(k*k*d)}`,Q(mul(a,R(k)),d),m,()=>fv(a)*sr(k*k*d))},
+  m=>{const x=rand(2,20),y=rand(2,20);if(simp(x*y).o===1)return null;return ans(`化簡：${rt(x)} × ${rt(y)}`,Q(R(1),x*y),m,()=>sr(x)*sr(y))},
+  m=>{const p=rand(1,9),q=sf(10);if(p%q===0)return null;return ans(`化簡：${rt(fr2(p,q))}（化為最簡根式）`,Q(R(1,q),p*q),m,()=>sr(p/q))}],"原式＝");
+
+ const estimate=mkUnit("estimate","根號估算","找出夾住根號內數字的兩個連續完全平方數，再逐位試算。",[
+  m=>{let n;do n=rand(2,150);while(Number.isInteger(sr(n)));const lo=Math.floor(sr(n));return{q:`${rt(n)} 介於哪兩個連續整數之間？`,a:`${lo}＜${rt(n)}＜${lo+1}`,chk:()=>lo<sr(n)&&sr(n)<lo+1}},
+  m=>{let n;do n=rand(2,99);while(Number.isInteger(sr(n)));const v=sr(n).toFixed(2);return{q:`求 ${rt(n)} 的近似值到小數第二位（四捨五入）。`,a:v,chk:()=>Math.abs(sr(n)-Number(v))<=0.005}},
+  m=>{let n;do n=rand(20,400);while(Number.isInteger(sr(n)));const lo=Math.floor(sr(n));return{q:`${rt(n)} 的整數部分是多少？`,a:String(lo),chk:()=>lo<sr(n)&&sr(n)<lo+1}},
+  m=>{let n;do n=rand(2,99);while(Number.isInteger(sr(n)));const lo=Math.floor(sr(n));return{q:`設 ${rt(n)} 的整數部分為 a、小數部分為 b，求 a 與 b。`,a:`a＝${lo}，b＝${rt(n)} − ${lo}`,chk:()=>lo<sr(n)&&sr(n)-lo<1}},
+  m=>{const a=rand(2,7),b=pick([2,3,5,6,7]),c=rand(2,7),d=pick([2,3,5,6,7]);if(a*a*b===c*c*d)return null;const big=a*a*b>c*c*d;return{q:`比較 ${a}${rt(b)} 與 ${c}${rt(d)} 的大小。`,a:big?`${a}${rt(b)}＞${c}${rt(d)}（${rt(a*a*b)}＞${rt(c*c*d)}）`:`${a}${rt(b)}＜${c}${rt(d)}（${rt(a*a*b)}＜${rt(c*c*d)}）`,chk:()=>(a*sr(b)>c*sr(d))===big}}],"");
+
+ const notation=mkUnit("notation","根式簡記","數字與根式相乘，係數相乘，根號照寫：a×b√d＝ab√d；係數可以移進根號：a√b＝√(a²b)。",[
+  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);return ans(`化簡：(${sh(a,m)}) × ${Eh(Q(b,d),m)}`,Q(mul(a,b),d),m,()=>fv(a)*fv(b)*sr(d))},
+  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);return ans(`化簡：${P(Q(a,d),m)} × (${sh(b,m)})`,Q(mul(a,b),d),m,()=>fv(a)*sr(d)*fv(b))},
+  m=>{const a=sv(m,6),b=sv(m,6),c=sv(m,6),d=sf(10);return ans(`化簡：(${sh(a,m)}) × ${P(Q(b,d),m)} × (${sh(c,m)})`,Q(mul(mul(a,b),c),d),m,()=>fv(a)*fv(b)*sr(d)*fv(c))},
+  m=>{const a=sv(m,8),b=sv(m,6),d=sf(10),v=div(a,b);return ans(`化簡：${P(Q(a,d),m)} ÷ (${sh(b,m)})`,Q(v,d),m,()=>fv(a)*sr(d)/fv(b))},
+  m=>{const a=rand(2,9),b=sf(10);return{q:`把 ${a}${rt(b)} 寫成 √n 的形式。`,a:rt(a*a*b),chk:()=>near(a*sr(b),sr(a*a*b))}}],"原式＝");
+
+ const multiplyRadicals=mkUnit("multiplyRadicals","根式乘法","√a×√b＝√(ab)；係數與係數相乘，根號與根號相乘，最後化成最簡根式。",[
+  m=>{const x=sf(10),y=sf(10);return ans(`化簡：${rt(x)} × ${rt(y)}`,Em(Q(R(1),x),Q(R(1),y)),m,()=>sr(x)*sr(y))},
+  m=>{const a=sv(m,6),b=sv(m,6),x=sf(10),y=sf(10),A=Q(a,x),B=Q(b,y);return ans(`化簡：${P(A,m)}${P(B,m)}`,Em(A,B),m,()=>Ev(A)*Ev(B))},
+  m=>{const a=sv(m,4),b=sv(m,4),c=sv(m,4),x=sf(8),y=sf(8),z=sf(8),A=Q(a,x),B=Q(b,y),C=Q(c,z);return ans(`化簡：${P(A,m)}${P(B,m)}${P(C,m)}`,Em(Em(A,B),C),m,()=>fv(a)*sr(x)*fv(b)*sr(y)*fv(c)*sr(z))},
+  m=>{const a=sv(m,6),x=sf(12),A=Q(a,x);return ans(`化簡：${P(A,m)}<sup>2</sup>`,Em(A,A),m,()=>(fv(a)*sr(x))**2)},
+  m=>{const a=sv(m,5),x=sf(10),y=sf(10),b=sv(m,5),A=Q(a,x),B=Ea(Q(R(1),y),Q(b));return ans(`化簡：${P(A,m)}${P(B,m)}`,Em(A,B),m,()=>fv(a)*sr(x)*(sr(y)+fv(b)))}],"原式＝");
+
+ const divideRadicals=mkUnit("divideRadicals","根式除法","√a÷√b＝√(a÷b)；結果若根號在分母，要再有理化。",[
+  m=>{const d=sf(10),k=rand(2,6);return ans(`化簡：${rt(d*k*k)} ÷ ${rt(d)}`,Q(R(k)),m,()=>sr(d*k*k)/sr(d))},
+  m=>{const a=sv(m,6),b=sv(m,6),d=sf(10),k=rand(2,6),v=mul(div(a,b),R(k));return ans(`化簡：${Eh(Q(a,d*k*k),m)} ÷ ${P(Q(b,d),m)}`,Q(v),m,()=>fv(a)*sr(d*k*k)/(fv(b)*sr(d)))},
+  m=>{const x=rand(2,30),y=sf(10);if(x%y===0)return null;return ans(`化簡：${rt(x)} ÷ ${rt(y)}`,Q(R(1,y),x*y),m,()=>sr(x)/sr(y))},
+  m=>{const a=sv(m,5),b=sv(m,5),c=sv(m,5),x=sf(8),y=sf(8),v=div(mul(a,b),c);return ans(`化簡：${P(Q(a,x),m)}${P(Q(b,y),m)} ÷ ${P(Q(c,x*y),m)}`,Q(v),m,()=>fv(a)*sr(x)*fv(b)*sr(y)/(fv(c)*sr(x*y)))},
+  m=>{const p=rand(2,30),q=sf(10),r=sf(10);return ans(`化簡：${rt(p)} ÷ ${rt(q)} × ${rt(r)}`,Q(R(1,q),p*q*r),m,()=>sr(p)/sr(q)*sr(r))}],"原式＝");
+
+ const rationalize=mkUnit("rationalize","分母有理化","分子分母同乘以分母的根號，使分母變成有理數。",[
+  m=>{const c=sv(m,9),d=sf(12);return ans(`化簡：${fr2(sh(c,m),rt(d))}`,Q(div(c,R(d)),d),m,()=>fv(c)/sr(d))},
+  m=>{const c=sv(m,9),b=pv(m,5),d=sf(12);return ans(`化簡：${fr2(sh(c,m),Eh(Q(b,d),m))}`,Q(div(c,mul(b,R(d))),d),m,()=>fv(c)/(fv(b)*sr(d)))},
+  m=>{const x=sf(12),y=sf(12);if(x===y)return null;return ans(`化簡：${fr2(rt(x),rt(y))}`,Q(R(1,y),x*y),m,()=>sr(x)/sr(y))},
+  m=>{const c=sv(m,6),x=sf(10),y=sf(10);if(x===y)return null;return ans(`化簡：${fr2(Eh(Q(c,x),m),rt(y))}`,Q(div(c,R(y)),x*y),m,()=>fv(c)*sr(x)/sr(y))},
+  m=>{const a=sv(m,6),d=sf(10),N=Ea(Q(a),Q(R(1),d));return ans(`化簡：${fr2(Eh(N,m),rt(d))}`,Em(N,Q(R(1,d),d)),m,()=>(fv(a)+sr(d))/sr(d))}],"原式＝");
+
+ const likeTerms=(m,count,ds)=>{let items=[],raw="";for(let i=0;i<count;i++){const d=pick(ds),c=sv(m,7),k=rand(1,5);items.push({c:mul(c,R(k)),d});raw+=(raw?` ${c.n<0?"−":"＋"} `:(c.n<0?"−":""))+(Math.abs(c.n)===c.d?"":sh(R(Math.abs(c.n),c.d),m))+rt(d*k*k)}return{raw,items,f:()=>items.reduce((s,t)=>s+fv(t.c)*sr(t.d),0)}};
+ const addRadicals=mkUnit("addRadicals","同類方根加減","先把每一項化成最簡根式，根號內相同的才是同類方根，再合併係數。",[
+  m=>{const d=sf(10),{raw,items,f}=likeTerms(m,3,[d]);return ans(`化簡：${raw}`,En(items),m,f)},
+  m=>{const d=sf(10),{raw,items,f}=likeTerms(m,4,[d]);return ans(`化簡：${raw}`,En(items),m,f)},
+  m=>{const d1=sf(6),d2=pick([2,3,5,6,7].filter(x=>x!==d1)),{raw,items,f}=likeTerms(m,4,[d1,d2]);return ans(`化簡：${raw}`,En(items),m,f)},
+  m=>{const d=sf(10),{raw,items,f}=likeTerms(m,3,[d]),c=sv(m,9);return ans(`化簡：${raw} ${c.n<0?"−":"＋"} ${sh(R(Math.abs(c.n),c.d),m)}`,Ea(items,Q(c)),m,()=>f()+fv(c))},
+  m=>{const d1=sf(6),d2=pick([2,3,5,6,7].filter(x=>x!==d1)),a=pv(m,5),b=pv(m,5),c=pv(m,5),k=rand(2,4),A=Q(a,d1*k*k),B=Q(b,d2),C=Q(c,d1);return ans(`化簡：${Eh(A,m)} − (${Eh(B,m)} − ${Eh(C,m)})`,Ea(A,Eneg(B),C),m,()=>Ev(A)-(Ev(B)-Ev(C)))}],"原式＝");
+
+ const two=(m)=>{const a=pv(m,6),b=pv(m,6),x=sf(8),y=pick(SF.slice(0,8).filter(v=>v!==x));return[Q(a,x),Q(b,y)]};
+ const conjugate=mkUnit("conjugate","共軛根式與根式平方","(a＋b)(a−b)＝a²−b²；(a±b)²＝a²±2ab＋b²，根式平方後變成有理數。",[
+  m=>{const[A,B]=two(m);return ans(`化簡：(${Eh(A,m)} ＋ ${Eh(B,m)})(${Eh(A,m)} − ${Eh(B,m)})`,Em(Ea(A,B),Ea(A,Eneg(B))),m,()=>(Ev(A)+Ev(B))*(Ev(A)-Ev(B)))},
+  m=>{const[A,B]=two(m),S=Ea(A,B);return ans(`化簡：(${Eh(A,m)} ＋ ${Eh(B,m)})<sup>2</sup>`,Em(S,S),m,()=>(Ev(A)+Ev(B))**2)},
+  m=>{const[A,B]=two(m),S=Ea(A,Eneg(B));return ans(`化簡：(${Eh(A,m)} − ${Eh(B,m)})<sup>2</sup>`,Em(S,S),m,()=>(Ev(A)-Ev(B))**2)},
+  m=>{const a=pv(m,9),d=sf(12),A=Q(a),B=Q(R(1),d);return ans(`化簡：(${sh(a,m)} ＋ ${rt(d)})(${sh(a,m)} − ${rt(d)})`,Em(Ea(A,B),Ea(A,Eneg(B))),m,()=>(fv(a)+sr(d))*(fv(a)-sr(d)))},
+  m=>{const[A,B]=two(m),S=Ea(A,B),D=Ea(A,Eneg(B));return ans(`化簡：(${Eh(A,m)} ＋ ${Eh(B,m)})<sup>2</sup> − (${Eh(A,m)} − ${Eh(B,m)})<sup>2</sup>`,Ea(Em(S,S),Eneg(Em(D,D))),m,()=>(Ev(A)+Ev(B))**2-(Ev(A)-Ev(B))**2)}],"原式＝");
+
+ const pr=()=>{const a=pick([5,6,7,10,11,13,17]),b=pick([2,3,5,6,7].filter(x=>x<a));return[a,b]};
+ const binomialDenominator=mkUnit("binomialDenominator","雙根號分母有理化","分母是 √a＋√b 時，分子分母同乘以 √a−√b，分母變成 a−b。",[
+  m=>{const c=sv(m,8),[a,b]=pr(),D=Ea(Q(R(1),a),Q(R(1),b));return ans(`化簡：${fr2(sh(c,m),`${rt(a)} ＋ ${rt(b)}`)}`,Es(Einv(D),c),m,()=>fv(c)/(sr(a)+sr(b)))},
+  m=>{const c=sv(m,8),[a,b]=pr(),D=Ea(Q(R(1),a),Q(R(-1),b));return ans(`化簡：${fr2(sh(c,m),`${rt(a)} − ${rt(b)}`)}`,Es(Einv(D),c),m,()=>fv(c)/(sr(a)-sr(b)))},
+  m=>{const c=sv(m,8),k=rand(2,6),d=sf(8);if(k*k===d)return null;const D=Ea(Q(R(k)),Q(R(1),d));return ans(`化簡：${fr2(sh(c,m),`${k} ＋ ${rt(d)}`)}`,Es(Einv(D),c),m,()=>fv(c)/(k+sr(d)))},
+  m=>{const[a,b]=pr(),D=Ea(Q(R(1),a),Q(R(1),b));return ans(`化簡：${fr2(rt(a),`${rt(a)} ＋ ${rt(b)}`)}`,Em(Q(R(1),a),Einv(D)),m,()=>sr(a)/(sr(a)+sr(b)))},
+  m=>{const[a,b]=pr(),N=Ea(Q(R(1),a),Q(R(1),b)),D=Ea(Q(R(1),a),Q(R(-1),b));return ans(`化簡：${fr2(`${rt(a)} ＋ ${rt(b)}`,`${rt(a)} − ${rt(b)}`)}`,Em(N,Einv(D)),m,()=>(sr(a)+sr(b))/(sr(a)-sr(b)))}],"原式＝");
+
+ const mixed=mkUnit("mixed","根式綜合","先用乘法公式或分配律展開，再把根式化簡、合併同類方根。",[
+  m=>{const[A,B]=two(m),s=pick([1,-1]),S=Ea(A,s>0?B:Eneg(B));return ans(`化簡：(${Eh(A,m)} ${s>0?"＋":"−"} ${Eh(B,m)})<sup>2</sup>`,Em(S,S),m,()=>(Ev(A)+s*Ev(B))**2)},
+  m=>{const x=sf(8),y=sf(8),z=pick(SF.slice(0,8).filter(v=>v!==y)),A=Q(R(1),x),B=Ea(Q(R(1),y),Q(R(1),z));return ans(`化簡：${rt(x)}(${Eh(B,m)})`,Em(A,B),m,()=>sr(x)*(sr(y)+sr(z)))},
+  m=>{const[A,B]=two(m),[C,D]=two(m),X=Ea(A,B),Y=Ea(C,Eneg(D));return ans(`化簡：(${Eh(A,m)} ＋ ${Eh(B,m)})(${Eh(C,m)} − ${Eh(D,m)})`,Em(X,Y),m,()=>(Ev(A)+Ev(B))*(Ev(C)-Ev(D)))},
+  m=>{const x=sf(8),y=pick(SF.slice(0,8).filter(v=>v!==x)),X=Ea(Q(R(1),x),Q(R(1),y)),Y=Ea(Q(R(1),x),Q(R(-1),y));return{q:`設 a＝${rt(x)} ＋ ${rt(y)}、b＝${rt(x)} − ${rt(y)}，求 a<sup>2</sup>＋b<sup>2</sup> 與 ab。`,a:`a<sup>2</sup>＋b<sup>2</sup>＝${Eh(Ea(Em(X,X),Em(Y,Y)),m)}，ab＝${Eh(Em(X,Y),m)}`,chk:()=>near((sr(x)+sr(y))**2+(sr(x)-sr(y))**2,2*(x+y))&&near((sr(x)+sr(y))*(sr(x)-sr(y)),x-y)}},
+  m=>{const x=sf(8),y=pick(SF.slice(0,8).filter(v=>v!==x)),X=Ea(Q(R(1),x),Q(R(1),y)),Y=Ea(Q(R(1),x),Q(R(-1),y)),S=Ea(Em(X,Einv(Y)),Em(Y,Einv(X)));return ans(`化簡：${fr2(`${rt(x)} ＋ ${rt(y)}`,`${rt(x)} − ${rt(y)}`)} ＋ ${fr2(`${rt(x)} − ${rt(y)}`,`${rt(x)} ＋ ${rt(y)}`)}`,S,m,()=>(sr(x)+sr(y))/(sr(x)-sr(y))+(sr(x)-sr(y))/(sr(x)+sr(y)))}],"原式＝");
+
+ const tel=(i,st)=>fr2("1",`${rt(i)} ＋ ${rt(i+st)}`);
+ const telescoping=mkUnit("telescoping","連鎖有理化","每一項有理化後是 √(n＋1)−√n，相加時中間的項互相抵消。",[
+  m=>{const N=pick([3,4,5,6,7,8,9,10]),parts=[];for(let i=1;i<=N;i++)parts.push(tel(i,1));return ans(`化簡：${parts.length>4?parts.slice(0,2).join(" ＋ ")+" ＋ ⋯ ＋ "+parts[parts.length-1]:parts.join(" ＋ ")}`,Ea(Q(R(1),N+1),Q(R(-1))),m,()=>{let s=0;for(let i=1;i<=N;i++)s+=1/(sr(i)+sr(i+1));return s})},
+  m=>{const s0=rand(2,6),N=s0+rand(3,10),parts=[];for(let i=s0;i<=N;i++)parts.push(tel(i,1));return ans(`求 ${parts.slice(0,2).join(" ＋ ")} ＋ ⋯ ＋ ${parts[parts.length-1]} 的值。`,Ea(Q(R(1),N+1),Q(R(-1),s0)),m,()=>{let s=0;for(let i=s0;i<=N;i++)s+=1/(sr(i)+sr(i+1));return s})},
+  m=>{const c=pv(m,5),N=pick([3,4,5,6,7,8,9,10]);return ans(`化簡：${sh(c,m)}（${tel(1,1)} ＋ ${tel(2,1)} ＋ ⋯ ＋ ${tel(N,1)}）`,Es(Ea(Q(R(1),N+1),Q(R(-1))),c),m,()=>{let s=0;for(let i=1;i<=N;i++)s+=1/(sr(i)+sr(i+1));return fv(c)*s})},
+  m=>{const N=pick([5,7,9,11,13,15,17,19,23]);return ans(`化簡（每項分母兩個根號內的數相差 2）：${tel(1,2)} ＋ ${tel(3,2)} ＋ ⋯ ＋ ${tel(N,2)}`,Es(Ea(Q(R(1),N+2),Q(R(-1))),R(1,2)),m,()=>{let s=0;for(let i=1;i<=N;i+=2)s+=1/(sr(i)+sr(i+2));return s})},
+  m=>{const k=rand(2,9),N=(k+1)*(k+1)-1;return{q:`若 ${tel(1,1)} ＋ ${tel(2,1)} ＋ ⋯ ＋ ${fr2("1",`${rt("n")} ＋ ${rt("n＋1")}`)}＝${k}，求 n。`,a:`n＝${N}`,chk:()=>{let s=0;for(let i=1;i<=N;i++)s+=1/(sr(i)+sr(i+1));return near(s,k)}}}],"原式＝");
+
+ return{title:"平方根",symbol:"√",subtitle:"平方根的意義・正平方根・根號與絕對值・最簡根式・估算・根式的乘除・有理化・同類方根・共軛・綜合・連鎖有理化",instruction:"根式化為最簡根式，分母有理化。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"原式＝",
+  levels:{basic:"基礎：平方根的意義、正平方根、√(a²)、最簡根式、估算、簡記、根式乘除與有理化、同類方根、共軛根式、雙根號分母有理化。",advanced:"進階：負平方根、兩根號加減、代入求 √((x−c)²)、係數在外的根式、三個根式相乘、連除、根式平方、有理數＋根號的分母。",challenge:"挑戰：兩平方根的和與積、化簡 √((x−c)²)、根號內分數、整數與小數部分、比大小、括號內的加減、平方差、(a＋b)²−(a−b)²、a²＋b² 與 ab、奇數項連鎖與反求 n。"},
+  units:[rootMeaning,principalRoot,absoluteRoot,simplify,estimate,notation,multiplyRadicals,divideRadicals,rationalize,addRadicals,conjugate,binomialDenominator,mixed,telescoping],
+  presets:{basic:{rootMeaning:2,principalRoot:2,absoluteRoot:2,simplify:3,estimate:2,notation:2,multiplyRadicals:2,rationalize:2},advanced:{principalRoot:2,absoluteRoot:2,simplify:2,estimate:2,multiplyRadicals:2,divideRadicals:2,rationalize:2,addRadicals:2,conjugate:2,binomialDenominator:2},challenge:{simplify:2,estimate:2,divideRadicals:2,addRadicals:2,conjugate:2,binomialDenominator:2,mixed:3,telescoping:2}}};
+}
+
+const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,sqrt:sqrtConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

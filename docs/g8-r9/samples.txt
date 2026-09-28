@@ -1,0 +1,252 @@
+[basic/rootMeaning/integer] 求 324 的平方根。  ⇒ ±18
+[basic/rootMeaning/integer] −81 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[basic/rootMeaning/fraction] −(81/16) 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[basic/rootMeaning/fraction] −(1/4) 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[basic/rootMeaning/decimal] 若 x 2 ＝11.56，求 x。  ⇒ x＝±3.4
+[basic/rootMeaning/decimal] 若 x 2 ＝2.25，求 x。  ⇒ x＝±1.5
+[basic/principalRoot/integer] 求值：√ 64   ⇒ 8
+[basic/principalRoot/integer] 求值：√ 361 ＋ √ 441   ⇒ 40
+[basic/principalRoot/fraction] 求值：−√ (25/4)   ⇒ −(5/2)
+[basic/principalRoot/fraction] 求值：√ (64/9) ＋ √ (25/4)   ⇒ (31/6)
+[basic/principalRoot/decimal] 求值：−√ 15.21   ⇒ −3.9
+[basic/principalRoot/decimal] 求值：√ 3.24   ⇒ 1.8
+[basic/absoluteRoot/integer] 求值：√ (21) 2   ⇒ 21
+[basic/absoluteRoot/integer] 求值：√ (5) 2 ＋ √ (2) 2   ⇒ 7
+[basic/absoluteRoot/fraction] 求值：√ (−(1/2)) 2 ＋ √ ((7/5)) 2   ⇒ (19/10)
+[basic/absoluteRoot/fraction] 求值：√ ((3/5)) 2 ＋ √ (−(5/2)) 2   ⇒ (31/10)
+[basic/absoluteRoot/decimal] 求值：√ (−3.6) 2 ＋ √ (2.1) 2   ⇒ 5.7
+[basic/absoluteRoot/decimal] 求值：−√ (−2.6) 2   ⇒ −2.6
+[basic/simplify/integer] 化簡：5√ 76   ⇒ 10√ 19 
+[basic/simplify/integer] 化簡：2√ 304   ⇒ 8√ 19 
+[basic/simplify/fraction] 把 √ 612 化成最簡根式。  ⇒ 6√ 17 
+[basic/simplify/fraction] 把 √ 686 化成最簡根式。  ⇒ 7√ 14 
+[basic/simplify/decimal] 化簡：√ 96   ⇒ 4√ 6 
+[basic/simplify/decimal] 把 √ 160 化成最簡根式。  ⇒ 4√ 10 
+[basic/estimate/integer] √ 396 的整數部分是多少？  ⇒ 19
+[basic/estimate/integer] √ 23 介於哪兩個連續整數之間？  ⇒ 4＜√ 23 ＜5
+[basic/estimate/fraction] 求 √ 60 的近似值到小數第二位（四捨五入）。  ⇒ 7.75
+[basic/estimate/fraction] 求 √ 23 的近似值到小數第二位（四捨五入）。  ⇒ 4.80
+[basic/estimate/decimal] 求 √ 15 的近似值到小數第二位（四捨五入）。  ⇒ 3.87
+[basic/estimate/decimal] 求 √ 8 的近似值到小數第二位（四捨五入）。  ⇒ 2.83
+[basic/notation/integer] 化簡：(5√ 7 ) × (2)  ⇒ 10√ 7 
+[basic/notation/integer] 化簡：(−6) × (−√ 2 ) × (2)  ⇒ 12√ 2 
+[basic/notation/fraction] 化簡：((12/5)) × (−(12/5)√ 11 ) × ((4/3))  ⇒ −(192/25)√ 11 
+[basic/notation/fraction] 化簡：(−(9/4)) × (11/5)√ 3   ⇒ −(99/20)√ 3 
+[basic/notation/decimal] 化簡：(3.1√ 5 ) × (0.7)  ⇒ 2.17√ 5 
+[basic/notation/decimal] 化簡：(2.6) × (−3.2√ 7 ) × (1.4)  ⇒ −11.648√ 7 
+[basic/multiplyRadicals/integer] 化簡：(4√ 6 )(3√ 2 )  ⇒ 24√ 3 
+[basic/multiplyRadicals/integer] 化簡：√ 6 × √ 2   ⇒ 2√ 3 
+[basic/multiplyRadicals/fraction] 化簡：((1/2)√ 2 )((12/5)√ 13 )(−(2/5)√ 3 )  ⇒ −(12/25)√ 78 
+[basic/multiplyRadicals/fraction] 化簡：((1/2)√ 10 )((7/4)√ 15 )  ⇒ (35/8)√ 6 
+[basic/multiplyRadicals/decimal] 化簡：(−1.9√ 10 )(0.5√ 3 )  ⇒ −0.95√ 30 
+[basic/multiplyRadicals/decimal] 化簡：(1.8√ 7 )(2.5√ 2 )  ⇒ 4.5√ 14 
+[basic/divideRadicals/integer] 化簡：12√ 7 ÷ (−2√ 7 )  ⇒ −6
+[basic/divideRadicals/integer] 化簡：√ 7 ÷ √ 11   ⇒ (1/11)√ 77 
+[basic/divideRadicals/fraction] 化簡：−4√ 13 ÷ (−(5/2)√ 13 )  ⇒ (8/5)
+[basic/divideRadicals/fraction] 化簡：(27/5)√ 5 ÷ (−(3/2)√ 5 )  ⇒ −(18/5)
+[basic/divideRadicals/decimal] 化簡：√ 208 ÷ √ 13   ⇒ 4
+[basic/divideRadicals/decimal] 化簡：√ 12 ÷ √ 15   ⇒ 0.4√ 5 
+[basic/rationalize/integer] 化簡： 8 5√ 11   ⇒ (8/55)√ 11 
+[basic/rationalize/integer] 化簡： −5 √ 2   ⇒ −(5/2)√ 2 
+[basic/rationalize/fraction] 化簡： √ 13 √ 14   ⇒ (1/14)√ 182 
+[basic/rationalize/fraction] 化簡： −(1/3) √ 2   ⇒ −(1/6)√ 2 
+[basic/rationalize/decimal] 化簡： √ 15 √ 6   ⇒ 0.5√ 10 
+[basic/rationalize/decimal] 化簡： √ 15 √ 2   ⇒ 0.5√ 30 
+[basic/addRadicals/integer] 化簡：−4√ 8 ＋ 4√ 12 − √ 18 ＋ 2√ 32   ⇒ −3√ 2 ＋ 8√ 3 
+[basic/addRadicals/integer] 化簡：−6√ 117 − 7√ 13 − 5√ 325   ⇒ −50√ 13 
+[basic/addRadicals/fraction] 化簡：(3/2)√ 11 ＋ (5/2)√ 275 ＋ (5/2)√ 44 ＋ (8/3)√ 11   ⇒ (65/3)√ 11 
+[basic/addRadicals/fraction] 化簡：(5/4)√ 135 ＋ (1/2)√ 60 ＋ (4/3)√ 60   ⇒ (89/12)√ 15 
+[basic/addRadicals/decimal] 化簡：−2.3√ 7 ＋ 1.2√ 112 − 0.3√ 18 ＋ 3.9√ 2   ⇒ 3√ 2 ＋ 2.5√ 7 
+[basic/addRadicals/decimal] 化簡：−3.7√ 8 − 3.1√ 50 − 1.3√ 50 − 2.1√ 32   ⇒ −37.8√ 2 
+[basic/conjugate/integer] 化簡：(6√ 2 ＋ 6√ 6 ) 2   ⇒ 288 ＋ 144√ 3 
+[basic/conjugate/integer] 化簡：(2√ 3 ＋ 3√ 2 )(2√ 3 − 3√ 2 )  ⇒ −6
+[basic/conjugate/fraction] 化簡：((14/5)√ 7 ＋ (5/4)√ 3 )((14/5)√ 7 − (5/4)√ 3 )  ⇒ (20077/400)
+[basic/conjugate/fraction] 化簡：((9/5)√ 2 ＋ (4/3)√ 11 )((9/5)√ 2 − (4/3)√ 11 )  ⇒ −(2942/225)
+[basic/conjugate/decimal] 化簡：(0.9√ 2 ＋ 1.6√ 6 ) 2   ⇒ 16.98 ＋ 5.76√ 3 
+[basic/conjugate/decimal] 化簡：(3.2√ 3 ＋ 3.5√ 11 ) 2   ⇒ 165.47 ＋ 22.4√ 33 
+[basic/binomialDenominator/integer] 化簡： 2 √ 7 − √ 2   ⇒ (2/5)√ 2 ＋ (2/5)√ 7 
+[basic/binomialDenominator/integer] 化簡： 7 √ 17 ＋ √ 5   ⇒ −(7/12)√ 5 ＋ (7/12)√ 17 
+[basic/binomialDenominator/fraction] 化簡： (3/2) √ 11 ＋ √ 6   ⇒ −(3/10)√ 6 ＋ (3/10)√ 11 
+[basic/binomialDenominator/fraction] 化簡： −(1/2) √ 10 − √ 5   ⇒ −(1/10)√ 5 − (1/10)√ 10 
+[basic/binomialDenominator/decimal] 化簡： −2.4 √ 11 − √ 3   ⇒ −0.3√ 3 − 0.3√ 11 
+[basic/binomialDenominator/decimal] 化簡： −2.9 √ 17 ＋ √ 7   ⇒ 0.29√ 7 − 0.29√ 17 
+[basic/mixed/integer] 化簡：(2√ 7 ＋ 2√ 13 ) 2   ⇒ 80 ＋ 8√ 91 
+[basic/mixed/integer] 化簡：√ 7 (√ 2 ＋ √ 7 )  ⇒ 7 ＋ √ 14 
+[basic/mixed/fraction] 化簡：((4/3)√ 11 ＋ (7/3)√ 13 )((2/3)√ 6 − (11/5)√ 5 )  ⇒ −(44/15)√ 55 − (77/15)√ 65 ＋ (8/9)√ 66 ＋ (14/9)√ 78 
+[basic/mixed/fraction] 化簡：((11/5)√ 11 − (9/4)√ 13 ) 2   ⇒ (47621/400) − (99/10)√ 143 
+[basic/mixed/decimal] 化簡：√ 5 (√ 7 ＋ √ 13 )  ⇒ √ 35 ＋ √ 65 
+[basic/mixed/decimal] 化簡：√ 5 (√ 5 ＋ √ 6 )  ⇒ 5 ＋ √ 30 
+[basic/telescoping/integer] 化簡：1（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 9 ＋ √ 10 ）  ⇒ −1 ＋ √ 10 
+[basic/telescoping/integer] 化簡： 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ 1 √ 3 ＋ √ 4 ＋ 1 √ 4 ＋ √ 5   ⇒ −1 ＋ √ 5 
+[basic/telescoping/fraction] 化簡：(3/2)（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 3 ＋ √ 4 ）  ⇒ (3/2)
+[basic/telescoping/fraction] 化簡：(3/2)（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 6 ＋ √ 7 ）  ⇒ −(3/2) ＋ (3/2)√ 7 
+[basic/telescoping/decimal] 化簡：1.2（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 6 ＋ √ 7 ）  ⇒ −1.2 ＋ 1.2√ 7 
+[basic/telescoping/decimal] 求 1 √ 3 ＋ √ 4 ＋ 1 √ 4 ＋ √ 5 ＋ ⋯ ＋ 1 √ 11 ＋ √ 12 的值。  ⇒ √ 3 
+[advanced/rootMeaning/integer] 寫出 256 的負平方根。  ⇒ −16
+[advanced/rootMeaning/integer] −100 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[advanced/rootMeaning/fraction] −(169/25) 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[advanced/rootMeaning/fraction] −(25/9) 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[advanced/rootMeaning/decimal] 寫出 15.21 的負平方根。  ⇒ −3.9
+[advanced/rootMeaning/decimal] −0.81 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[advanced/principalRoot/integer] 求值：√ 1 − √ 144   ⇒ −11
+[advanced/principalRoot/integer] 求值：√ 256 ＋ √ 289   ⇒ 33
+[advanced/principalRoot/fraction] 求值：√ (1/25) ＋ √ (9/4)   ⇒ (17/10)
+[advanced/principalRoot/fraction] 求值：−√ (9/4)   ⇒ −(3/2)
+[advanced/principalRoot/decimal] 求值：−√ 0.25   ⇒ −0.5
+[advanced/principalRoot/decimal] 求值：−√ 3.61   ⇒ −1.9
+[advanced/absoluteRoot/integer] 當 x＝1 時，求 √ (x − 9) 2 的值。  ⇒ 8
+[advanced/absoluteRoot/integer] 求值：√ (−6) 2 ＋ √ (2) 2   ⇒ 8
+[advanced/absoluteRoot/fraction] 求值：−√ (−(1/2)) 2   ⇒ −(1/2)
+[advanced/absoluteRoot/fraction] 求值：√ ((3/2)) 2 ＋ √ ((5/4)) 2   ⇒ (11/4)
+[advanced/absoluteRoot/decimal] 求值：√ (0.2) 2 ＋ √ (−2.9) 2   ⇒ 3.1
+[advanced/absoluteRoot/decimal] 求值：√ (−1.8) 2 ＋ √ (1.4) 2   ⇒ 3.2
+[advanced/simplify/integer] 把 √ 98 化成最簡根式。  ⇒ 7√ 2 
+[advanced/simplify/integer] 化簡：2√ 216   ⇒ 12√ 6 
+[advanced/simplify/fraction] 化簡：(4/3)√ 504   ⇒ 8√ 14 
+[advanced/simplify/fraction] 把 √ 50 化成最簡根式。  ⇒ 5√ 2 
+[advanced/simplify/decimal] 化簡：1.7√ 325   ⇒ 8.5√ 13 
+[advanced/simplify/decimal] 化簡：√ 5 × √ 8   ⇒ 2√ 10 
+[advanced/estimate/integer] √ 388 的整數部分是多少？  ⇒ 19
+[advanced/estimate/integer] 求 √ 74 的近似值到小數第二位（四捨五入）。  ⇒ 8.60
+[advanced/estimate/fraction] √ 238 的整數部分是多少？  ⇒ 15
+[advanced/estimate/fraction] √ 210 的整數部分是多少？  ⇒ 14
+[advanced/estimate/decimal] 設 √ 72 的整數部分為 a、小數部分為 b，求 a 與 b。  ⇒ a＝8，b＝√ 72 − 8
+[advanced/estimate/decimal] 求 √ 37 的近似值到小數第二位（四捨五入）。  ⇒ 6.08
+[advanced/notation/integer] 化簡：(6√ 5 ) ÷ (−3)  ⇒ −2√ 5 
+[advanced/notation/integer] 化簡：(2√ 5 ) × (4)  ⇒ 8√ 5 
+[advanced/notation/fraction] 化簡：((5/3)) × ((9/4)√ 6 ) × (−(1/3))  ⇒ −(5/4)√ 6 
+[advanced/notation/fraction] 化簡：((9/4)) × ((2/5)√ 14 ) × (−(9/4))  ⇒ −(81/40)√ 14 
+[advanced/notation/decimal] 化簡：(2.4) × (−0.7√ 7 ) × (−0.7)  ⇒ 1.176√ 7 
+[advanced/notation/decimal] 化簡：(0.4) × (3.4√ 2 ) × (−1.6)  ⇒ −2.176√ 2 
+[advanced/multiplyRadicals/integer] 化簡：(−3√ 6 )(−√ 2 )(2√ 3 )  ⇒ 36
+[advanced/multiplyRadicals/integer] 化簡：(−2√ 3 )(−4√ 11 )(−3√ 13 )  ⇒ −24√ 429 
+[advanced/multiplyRadicals/fraction] 化簡：((12/5)√ 7 )((9/4)√ 5 )(−(5/3)√ 2 )  ⇒ −9√ 70 
+[advanced/multiplyRadicals/fraction] 化簡：((13/5)√ 13 ) 2   ⇒ (2197/25)
+[advanced/multiplyRadicals/decimal] 化簡：(−2.9√ 14 ) 2   ⇒ 117.74
+[advanced/multiplyRadicals/decimal] 化簡：(0.3√ 5 )(−0.4√ 6 )(−3.8√ 6 )  ⇒ 2.736√ 5 
+[advanced/divideRadicals/integer] 化簡：(√ 6 )(4√ 3 ) ÷ (12√ 2 )  ⇒ 1
+[advanced/divideRadicals/integer] 化簡：(−3√ 10 )(√ 13 ) ÷ (−√ 130 )  ⇒ 3
+[advanced/divideRadicals/fraction] 化簡：(18/5)√ 6 ÷ (−(13/5)√ 6 )  ⇒ −(18/13)
+[advanced/divideRadicals/fraction] 化簡：(84/5)√ 6 ÷ (−(5/2)√ 6 )  ⇒ −(168/25)
+[advanced/divideRadicals/decimal] 化簡：−2.8√ 11 ÷ (0.4√ 11 )  ⇒ −7
+[advanced/divideRadicals/decimal] 化簡：(−2.2√ 10 )(0.2√ 6 ) ÷ (−0.4√ 15 )  ⇒ 2.2
+[advanced/rationalize/integer] 化簡： 6√ 15 √ 10   ⇒ 3√ 6 
+[advanced/rationalize/integer] 化簡： −4 4√ 14   ⇒ −(1/14)√ 14 
+[advanced/rationalize/fraction] 化簡： (3/4) (5/3)√ 14   ⇒ (9/280)√ 14 
+[advanced/rationalize/fraction] 化簡： −(3/2) (5/3)√ 17   ⇒ −(9/170)√ 17 
+[advanced/rationalize/decimal] 化簡： −2.3√ 14 √ 7   ⇒ −2.3√ 2 
+[advanced/rationalize/decimal] 化簡： −3.9 0.8√ 6   ⇒ −0.8125√ 6 
+[advanced/addRadicals/integer] 化簡：2√ 275 − 5√ 44 − 2√ 275 ＋ 4  ⇒ 4 − 10√ 11 
+[advanced/addRadicals/integer] 化簡：√ 175 − 2√ 175 − 3√ 45 − 2√ 5   ⇒ −11√ 5 − 5√ 7 
+[advanced/addRadicals/fraction] 化簡：(7/5)√ 48 ＋ (5/2)√ 12 ＋ (5/4)√ 27 − (3/2)  ⇒ −(3/2) ＋ (287/20)√ 3 
+[advanced/addRadicals/fraction] 化簡：(9/5)√ 224 − (7/4)√ 224 ＋ (1/5)√ 224 − (3/5)√ 224   ⇒ −(7/5)√ 14 
+[advanced/addRadicals/decimal] 化簡：0.9√ 20 − 1.1√ 80 ＋ 2.6√ 125 ＋ 2.7√ 80   ⇒ 21.2√ 5 
+[advanced/addRadicals/decimal] 化簡：−3.3√ 2 ＋ 1.5√ 50 ＋ 1.9√ 50 − 3.7√ 8   ⇒ 6.3√ 2 
+[advanced/conjugate/integer] 化簡：(3√ 7 − 5√ 10 ) 2   ⇒ 313 − 30√ 70 
+[advanced/conjugate/integer] 化簡：(6√ 3 ＋ 5√ 13 ) 2   ⇒ 433 ＋ 60√ 39 
+[advanced/conjugate/fraction] 化簡：((1/3)√ 11 ＋ (3/5)√ 13 ) 2   ⇒ (1328/225) ＋ (2/5)√ 143 
+[advanced/conjugate/fraction] 化簡：((8/3)√ 6 − (8/3)√ 3 ) 2   ⇒ 64 − (128/3)√ 2 
+[advanced/conjugate/decimal] 化簡：(2.2√ 2 − 2.1√ 11 ) 2   ⇒ 58.19 − 9.24√ 22 
+[advanced/conjugate/decimal] 化簡：(2.8√ 7 ＋ 2.7√ 2 ) 2   ⇒ 69.46 ＋ 15.12√ 14 
+[advanced/binomialDenominator/integer] 化簡： 2 √ 13 − √ 6   ⇒ (2/7)√ 6 ＋ (2/7)√ 13 
+[advanced/binomialDenominator/integer] 化簡： √ 11 √ 11 ＋ √ 6   ⇒ (11/5) − (1/5)√ 66 
+[advanced/binomialDenominator/fraction] 化簡： −(1/2) √ 13 − √ 2   ⇒ −(1/22)√ 2 − (1/22)√ 13 
+[advanced/binomialDenominator/fraction] 化簡： (5/2) 5 ＋ √ 11   ⇒ (25/28) − (5/28)√ 11 
+[advanced/binomialDenominator/decimal] 化簡： −2.4 √ 10 − √ 6   ⇒ −0.6√ 6 − 0.6√ 10 
+[advanced/binomialDenominator/decimal] 化簡： √ 6 √ 6 ＋ √ 3   ⇒ 2 − √ 2 
+[advanced/mixed/integer] 化簡：(4√ 10 ＋ 3√ 6 )(3√ 2 − 5√ 5 )  ⇒ −100√ 2 ＋ 18√ 3 ＋ 24√ 5 − 15√ 30 
+[advanced/mixed/integer] 設 a＝√ 11 ＋ √ 13 、b＝√ 11 − √ 13 ，求 a 2 ＋b 2 與 ab。  ⇒ a 2 ＋b 2 ＝48，ab＝−2
+[advanced/mixed/fraction] 設 a＝√ 7 ＋ √ 10 、b＝√ 7 − √ 10 ，求 a 2 ＋b 2 與 ab。  ⇒ a 2 ＋b 2 ＝34，ab＝−3
+[advanced/mixed/fraction] 化簡：((2/5)√ 3 ＋ (8/5)√ 7 )((2/3)√ 5 − (8/3)√ 13 )  ⇒ (4/15)√ 15 ＋ (16/15)√ 35 − (16/15)√ 39 − (64/15)√ 91 
+[advanced/mixed/decimal] 化簡：√ 11 (√ 2 ＋ √ 13 )  ⇒ √ 22 ＋ √ 143 
+[advanced/mixed/decimal] 設 a＝√ 7 ＋ √ 13 、b＝√ 7 − √ 13 ，求 a 2 ＋b 2 與 ab。  ⇒ a 2 ＋b 2 ＝40，ab＝−6
+[advanced/telescoping/integer] 化簡：5（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 4 ＋ √ 5 ）  ⇒ −5 ＋ 5√ 5 
+[advanced/telescoping/integer] 化簡：4（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 5 ＋ √ 6 ）  ⇒ −4 ＋ 4√ 6 
+[advanced/telescoping/fraction] 化簡（每項分母兩個根號內的數相差 2）： 1 √ 1 ＋ √ 3 ＋ 1 √ 3 ＋ √ 5 ＋ ⋯ ＋ 1 √ 15 ＋ √ 17   ⇒ −(1/2) ＋ (1/2)√ 17 
+[advanced/telescoping/fraction] 求 1 √ 5 ＋ √ 6 ＋ 1 √ 6 ＋ √ 7 ＋ ⋯ ＋ 1 √ 8 ＋ √ 9 的值。  ⇒ 3 − √ 5 
+[advanced/telescoping/decimal] 化簡：1.7（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 3 ＋ √ 4 ）  ⇒ 1.7
+[advanced/telescoping/decimal] 求 1 √ 3 ＋ √ 4 ＋ 1 √ 4 ＋ √ 5 ＋ ⋯ ＋ 1 √ 10 ＋ √ 11 的值。  ⇒ −√ 3 ＋ √ 11 
+[challenge/rootMeaning/integer] −100 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[challenge/rootMeaning/integer] 若 p、q 是 289 的兩個平方根，求 p＋q 與 pq。  ⇒ p＋q＝0，pq＝−289
+[challenge/rootMeaning/fraction] 若 p、q 是 (81/16) 的兩個平方根，求 p＋q 與 pq。  ⇒ p＋q＝0，pq＝−(81/16)
+[challenge/rootMeaning/fraction] −(25/4) 有沒有平方根？說明理由。  ⇒ 沒有（任何數的平方都不會是負數）
+[challenge/rootMeaning/decimal] 若 p、q 是 0.04 的兩個平方根，求 p＋q 與 pq。  ⇒ p＋q＝0，pq＝−0.04
+[challenge/rootMeaning/decimal] 若 p、q 是 3.61 的兩個平方根，求 p＋q 與 pq。  ⇒ p＋q＝0，pq＝−3.61
+[challenge/principalRoot/integer] 求值：√ 9 − √ 196   ⇒ −11
+[challenge/principalRoot/integer] 求值：√ 225 ÷ √ 169   ⇒ (15/13)
+[challenge/principalRoot/fraction] 求值：√ (1/4) ＋ √ (1/4)   ⇒ 1
+[challenge/principalRoot/fraction] 求值：√ (25/4) − √ (16/9)   ⇒ (7/6)
+[challenge/principalRoot/decimal] 求值：√ 1.21 ＋ √ 9.61   ⇒ 4.2
+[challenge/principalRoot/decimal] 求值：√ 1.21 ＋ √ 12.25   ⇒ 4.6
+[challenge/absoluteRoot/integer] 求值：√ (−2) 2 ＋ √ (−2) 2   ⇒ 4
+[challenge/absoluteRoot/integer] 求值：√ (9) 2 ＋ √ (3) 2   ⇒ 12
+[challenge/absoluteRoot/fraction] 求值：√ (−(1/2)) 2 ＋ √ ((12/5)) 2   ⇒ (29/10)
+[challenge/absoluteRoot/fraction] 求值：√ ((7/3)) 2 ＋ √ (−(6/5)) 2   ⇒ (53/15)
+[challenge/absoluteRoot/decimal] 當 x＝−3 時，求 √ (x − 9) 2 的值。  ⇒ 12
+[challenge/absoluteRoot/decimal] 當 x＝−6 時，求 √ (x − 4) 2 的值。  ⇒ 10
+[challenge/simplify/integer] 化簡：6√ 240   ⇒ 24√ 15 
+[challenge/simplify/integer] 化簡：2√ 360   ⇒ 12√ 10 
+[challenge/simplify/fraction] 化簡：(3/5)√ 40   ⇒ (6/5)√ 10 
+[challenge/simplify/fraction] 化簡：(3/4)√ 52   ⇒ (3/2)√ 13 
+[challenge/simplify/decimal] 化簡：1.9√ 75   ⇒ 9.5√ 3 
+[challenge/simplify/decimal] 化簡：√ 19 × √ 12   ⇒ 2√ 57 
+[challenge/estimate/integer] 設 √ 21 的整數部分為 a、小數部分為 b，求 a 與 b。  ⇒ a＝4，b＝√ 21 − 4
+[challenge/estimate/integer] √ 158 的整數部分是多少？  ⇒ 12
+[challenge/estimate/fraction] 設 √ 42 的整數部分為 a、小數部分為 b，求 a 與 b。  ⇒ a＝6，b＝√ 42 − 6
+[challenge/estimate/fraction] √ 360 的整數部分是多少？  ⇒ 18
+[challenge/estimate/decimal] √ 399 的整數部分是多少？  ⇒ 19
+[challenge/estimate/decimal] √ 240 的整數部分是多少？  ⇒ 15
+[challenge/notation/integer] 把 7√ 5 寫成 √n 的形式。  ⇒ √ 245 
+[challenge/notation/integer] 化簡：(−3√ 15 ) ÷ (−1)  ⇒ 3√ 15 
+[challenge/notation/fraction] 化簡：(−(3/2)) × (−(11/5)√ 10 ) × (−(1/3))  ⇒ −(11/10)√ 10 
+[challenge/notation/fraction] 把 7√ 6 寫成 √n 的形式。  ⇒ √ 294 
+[challenge/notation/decimal] 把 9√ 11 寫成 √n 的形式。  ⇒ √ 891 
+[challenge/notation/decimal] 把 7√ 11 寫成 √n 的形式。  ⇒ √ 539 
+[challenge/multiplyRadicals/integer] 化簡：(−2√ 2 )(2√ 3 )(−3√ 3 )  ⇒ 36√ 2 
+[challenge/multiplyRadicals/integer] 化簡：(−4√ 6 ) 2   ⇒ 96
+[challenge/multiplyRadicals/fraction] 化簡：(−(11/4)√ 5 )((9/4)√ 7 )(−(7/5)√ 2 )  ⇒ (693/80)√ 70 
+[challenge/multiplyRadicals/fraction] 化簡：(−(5/3)√ 7 )(−(11/4)√ 13 )(−(8/3)√ 10 )  ⇒ −(110/9)√ 910 
+[challenge/multiplyRadicals/decimal] 化簡：(−2.5√ 3 )(−0.5√ 3 )(−2.2√ 2 )  ⇒ −8.25√ 2 
+[challenge/multiplyRadicals/decimal] 化簡：(1.4√ 2 )(−2.5√ 11 )(−1.7√ 13 )  ⇒ 5.95√ 286 
+[challenge/divideRadicals/integer] 化簡：√ 7 ÷ √ 10 × √ 6   ⇒ (1/5)√ 105 
+[challenge/divideRadicals/integer] 化簡：√ 22 ÷ √ 7 × √ 3   ⇒ (1/7)√ 462 
+[challenge/divideRadicals/fraction] 化簡：√ 22 ÷ √ 6 × √ 11   ⇒ (11/3)√ 3 
+[challenge/divideRadicals/fraction] 化簡：((3/4)√ 6 )(−(14/5)√ 3 ) ÷ ((27/5)√ 2 )  ⇒ −(7/6)
+[challenge/divideRadicals/decimal] 化簡：√ 28 ÷ √ 5   ⇒ 0.4√ 35 
+[challenge/divideRadicals/decimal] 化簡：√ 9 ÷ √ 15 × √ 13   ⇒ 0.2√ 195 
+[challenge/rationalize/integer] 化簡： √ 17 √ 11   ⇒ (1/11)√ 187 
+[challenge/rationalize/integer] 化簡： −3 ＋ √ 6 √ 6   ⇒ 1 − (1/2)√ 6 
+[challenge/rationalize/fraction] 化簡： (8/5)√ 6 √ 10   ⇒ (8/25)√ 15 
+[challenge/rationalize/fraction] 化簡： −(3/2) ＋ √ 15 √ 15   ⇒ 1 − (1/10)√ 15 
+[challenge/rationalize/decimal] 化簡： 1.5√ 13 √ 10   ⇒ 0.15√ 130 
+[challenge/rationalize/decimal] 化簡： −3.6√ 5 √ 2   ⇒ −1.8√ 10 
+[challenge/addRadicals/integer] 化簡：20√ 2 − (3√ 3 − √ 2 )  ⇒ 21√ 2 − 3√ 3 
+[challenge/addRadicals/integer] 化簡：−5√ 7 − 7√ 6 − 4√ 150 − 7√ 54   ⇒ −48√ 6 − 5√ 7 
+[challenge/addRadicals/fraction] 化簡：(7/3)√ 75 − (8/3)√ 20 − (1/5)√ 80 ＋ (2/3)√ 27   ⇒ (41/3)√ 3 − (92/15)√ 5 
+[challenge/addRadicals/fraction] 化簡：−(1/2)√ 12 − (5/2)√ 27 − (5/2)√ 48 − (1/3)  ⇒ −(1/3) − (37/2)√ 3 
+[challenge/addRadicals/decimal] 化簡：−3.7√ 15 ＋ 0.8√ 60 − 2.8√ 60 ＋ 2.7  ⇒ 2.7 − 7.7√ 15 
+[challenge/addRadicals/decimal] 化簡：10√ 10 − (3.6√ 3 − 3.3√ 10 )  ⇒ −3.6√ 3 ＋ 13.3√ 10 
+[challenge/conjugate/integer] 化簡：(9 ＋ √ 3 )(9 − √ 3 )  ⇒ 78
+[challenge/conjugate/integer] 化簡：(6√ 13 − 4√ 3 ) 2   ⇒ 516 − 48√ 39 
+[challenge/conjugate/fraction] 化簡：((1/3)√ 6 ＋ (3/4)√ 3 ) 2 − ((1/3)√ 6 − (3/4)√ 3 ) 2   ⇒ 3√ 2 
+[challenge/conjugate/fraction] 化簡：((1/4) ＋ √ 13 )((1/4) − √ 13 )  ⇒ −(207/16)
+[challenge/conjugate/decimal] 化簡：(3.1√ 7 − 2.7√ 6 ) 2   ⇒ 111.01 − 16.74√ 42 
+[challenge/conjugate/decimal] 化簡：(3.2√ 13 ＋ 2.2√ 2 ) 2 − (3.2√ 13 − 2.2√ 2 ) 2   ⇒ 28.16√ 26 
+[challenge/binomialDenominator/integer] 化簡： √ 13 √ 13 ＋ √ 7   ⇒ (13/6) − (1/6)√ 91 
+[challenge/binomialDenominator/integer] 化簡： √ 6 ＋ √ 3 √ 6 − √ 3   ⇒ 3 ＋ 2√ 2 
+[challenge/binomialDenominator/fraction] 化簡： −(5/2) 4 ＋ √ 7   ⇒ −(10/9) ＋ (5/18)√ 7 
+[challenge/binomialDenominator/fraction] 化簡： (3/2) 2 ＋ √ 6   ⇒ −(3/2) ＋ (3/4)√ 6 
+[challenge/binomialDenominator/decimal] 化簡： √ 6 √ 6 ＋ √ 3   ⇒ 2 − √ 2 
+[challenge/binomialDenominator/decimal] 化簡： 1.2 5 ＋ √ 5   ⇒ 0.3 − 0.06√ 5 
+[challenge/mixed/integer] 設 a＝√ 10 ＋ √ 7 、b＝√ 10 − √ 7 ，求 a 2 ＋b 2 與 ab。  ⇒ a 2 ＋b 2 ＝34，ab＝3
+[challenge/mixed/integer] 化簡： √ 7 ＋ √ 13 √ 7 − √ 13 ＋ √ 7 − √ 13 √ 7 ＋ √ 13   ⇒ −(20/3)
+[challenge/mixed/fraction] 化簡： √ 6 ＋ √ 3 √ 6 − √ 3 ＋ √ 6 − √ 3 √ 6 ＋ √ 3   ⇒ 6
+[challenge/mixed/fraction] 化簡：((3/2)√ 11 ＋ (3/2)√ 7 )((3/4)√ 2 − (12/5)√ 6 )  ⇒ (9/8)√ 14 ＋ (9/8)√ 22 − (18/5)√ 42 − (18/5)√ 66 
+[challenge/mixed/decimal] 設 a＝√ 7 ＋ √ 3 、b＝√ 7 − √ 3 ，求 a 2 ＋b 2 與 ab。  ⇒ a 2 ＋b 2 ＝20，ab＝4
+[challenge/mixed/decimal] 化簡：(3.1√ 13 ＋ 0.7√ 10 )(3.3√ 10 − 1.8√ 3 )  ⇒ 23.1 − 1.26√ 30 − 5.58√ 39 ＋ 10.23√ 130 
+[challenge/telescoping/integer] 若 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ n ＋ √ n＋1 ＝6，求 n。  ⇒ n＝48
+[challenge/telescoping/integer] 化簡：2（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 8 ＋ √ 9 ）  ⇒ 4
+[challenge/telescoping/fraction] 若 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ n ＋ √ n＋1 ＝2，求 n。  ⇒ n＝8
+[challenge/telescoping/fraction] 若 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ n ＋ √ n＋1 ＝4，求 n。  ⇒ n＝24
+[challenge/telescoping/decimal] 若 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ n ＋ √ n＋1 ＝2，求 n。  ⇒ n＝8
+[challenge/telescoping/decimal] 化簡：0.2（ 1 √ 1 ＋ √ 2 ＋ 1 √ 2 ＋ √ 3 ＋ ⋯ ＋ 1 √ 9 ＋ √ 10 ）  ⇒ −0.2 ＋ 0.2√ 10 
