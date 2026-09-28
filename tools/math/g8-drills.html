@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國二數學 計算力練習出題器</title><meta name="description" content="國二數學計算力練習出題器：一元二次方程式應用題、等比數列、三角形的角與全等、三角形邊角關係、平行線及四邊形等八個主題一頁切換；可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g8-drills.html"><meta property="og:title" content="百宏文教｜國二數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g8-drills.html"><meta property="og:type" content="website">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國二數學 計算力練習出題器</title><meta name="description" content="國二數學計算力練習出題器：分數與小數四則運算、四則簡化計算、解未知數、時間的計算與化聚、最大公因數與最小公倍數、比與比例式與百分率，六個主題一頁切換；可設定難度（基礎／進階／挑戰）、數的類型與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g8-drills.html"><meta property="og:title" content="百宏文教｜國二數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g8-drills.html"><meta property="og:type" content="website">
 <style>
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
 *{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
@@ -93,7 +93,6 @@ svg [fill="#afc1bc" i]{fill:#C9D2DE}
 svg [stroke="#afc1bc" i]{stroke:#C9D2DE}
 svg [fill="#7C879B" i]{fill:#43516B}
 svg [stroke="#7C879B" i]{stroke:#43516B}
-[style="color:#16233A"]{color:rgb(22 35 58)!important}
 
 html,body{background-color:var(--bhcs-bg)}
 button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
@@ -111,7 +110,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 </head>
 <body>
 <header class="top"><div class="topic-logo" id="topicLogo">∑</div><div class="top-title"><h1><span class="brandmark">百宏文教｜</span><span id="topicTitle">數學計算力練習</span> 出題器</h1><p id="subtitle"></p></div><label class="topic-pick">主題 <select id="topicSel"></select></label><a class="back" href="../../ziyuan.html">← 回百宏學習資源</a></header>
-<nav class="no-print" aria-label="國二相關出題器" style="padding:8px 16px;text-align:center"><a href="g8-quadratic-arithmetic-sequence.html" style="color:#16233A">一元二次方程式與等差數列（舊版雙工作台）→</a></nav>
 <section class="panel"><div class="panel-inner"><div class="groups">
 <section class="group"><h2>版面</h2><div class="row"><label class="field">版本<select id="version"><option value="student">學用版</option><option value="teacher">教用版</option></select></label><label class="field">每列題數<select id="columns"><option value="2">2 題</option><option value="3" selected>3 題</option><option value="4">4 題</option></select></label><label class="field">作答空間<select id="space"><option value="small">小</option><option value="medium" selected>中</option><option value="large">大</option></select></label></div></section>
 <section class="group"><h2>難度與數的類型</h2><div class="row"><div class="row" role="group" aria-label="難度"><button class="level" data-level="basic" aria-pressed="false">基礎</button><button class="level" data-level="advanced" aria-pressed="true">進階</button><button class="level" data-level="challenge" aria-pressed="false">挑戰</button></div><span id="modeBoxes" class="row"></span></div><p class="difficulty-note" id="difficultyNote"></p></section>
@@ -120,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -807,7 +805,267 @@ function quadappsConfig(){
 
 /* g8 引擎（2026-09-24，Claude）：由 g8-drills.html 複製引擎，只換主題。
    難度定義：基礎＝小數值與單一步驟；進階＝多步驟並加入分數、小數；挑戰＝多項、括號或綜合應用。各主題的數值範圍與題型差異另列於 CFG.levels。 */
-const CONFIGS={quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
+function mulformulaConfig(){
+ /* 國二 乘法公式（2026-09-28，Claude）。依舊的 g8-multiplication-formulas.html（百宏自製）的十二個單元重做：中心數乘積、平方差求值、和平方速算、差平方速算、
+    平方差展開、和平方展開、差平方展開、三項式平方、和平方辨識、差平方辨識、公式連鎖化簡、綜合計算。舊工具每個單元只有一種句型，這裡每個單元五種問法，
+    基礎、進階、挑戰各取三種（挑戰有基礎沒有的兩種）；係數依數型抽整數、分數或小數。
+    展開題用多項式乘法算出結果；verify 在一組非整數的 x、y、z 值下，把題目的各個因式分別用浮點數求值再相乘相加，與答案多項式的值比對。數值題用浮點數重算。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const fv=a=>a.n/a.d,near=(x,y)=>Math.abs(x-y)<1e-7*Math.max(1,Math.abs(y));
+ const sh=(a,mode,mixed=false)=>{const s=numHTML(R(Math.abs(a.n),a.d),a.d===1?"integer":mode==="decimal"?"decimal":"fraction",{mixed});return(a.n<0?"−":"")+s};
+ const term10=a=>{let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
+ const PT=[1.3,-0.7,2.1];
+ // 多項式：[{c:R,e:[ex,ey,ez]}]
+ const K=e=>e.join(","),V=["x","y","z"];
+ const norm=p=>{const m=new Map();p.forEach(t=>{const k=K(t.e);m.set(k,add(m.get(k)||R(0),t.c))});return[...m].filter(([,c])=>c.n!==0).map(([k,c])=>({c,e:k.split(",").map(Number)})).sort((a,b)=>{const da=a.e[0]+a.e[1]+a.e[2],db=b.e[0]+b.e[1]+b.e[2];if(da!==db)return db-da;for(let i=0;i<3;i++)if(a.e[i]!==b.e[i])return b.e[i]-a.e[i];return 0})};
+ const pm=(p,q)=>norm(p.flatMap(s=>q.map(t=>({c:mul(s.c,t.c),e:s.e.map((v,i)=>v+t.e[i])})))),pa=(...ps)=>norm(ps.flat()),ps_=(p,k)=>norm(p.map(t=>({c:mul(t.c,k),e:t.e}))),pn=p=>ps_(p,R(-1));
+ const pev=p=>p.reduce((s,t)=>s+fv(t.c)*t.e.reduce((m,v,i)=>m*Math.pow(PT[i],v),1),0);
+ const body=e=>e.map((v,i)=>v?V[i]+(v>1?`<sup>${v}</sup>`:""):"").join("");
+ const rend=(p,mode)=>{if(!p.length)return"0";return p.map((t,i)=>{const neg=t.c.n<0,a=R(Math.abs(t.c.n),t.c.d),b=body(t.e),mag=(a.n===a.d&&b)?"":sh(a,mode);return(i?` ${neg?"−":"＋"} `:(neg?"−":""))+mag+b}).join("")};
+ const fac=(p,mode)=>`(${rend(p,mode)})`;
+ const M=(c,e)=>[{c,e}];
+ const pos=(mode,max=5)=>{if(mode==="integer")return R(rand(1,max));if(mode==="fraction"){let d=pick([2,3,4,5]),n;do n=rand(1,d*max-1);while(n%d===0);return R(n,d)}let n;do n=rand(1,max*10-1);while(n%10===0);return R(n,10)};
+ const X=[1,0,0],Y=[0,1,0],Z=[0,0,1],C0=[0,0,0],X2=[2,0,0];
+ const mkUnit=(id,name,tip,kinds,label)=>({id,name,tip,modes:["integer","fraction","decimal"],answerLabel:label,gen:ctx=>{
+  const Lv=lv(ctx),mode=ctx.modes[0],k=kinds[pick([[0,1,2],[1,2,3],[2,3,4]][Lv])];let r;try{r=k(mode,Lv)}catch(e){return null}if(!r)return null;
+  return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<[^>]+>/g,""),verify:r.chk};
+ }});
+ // 展開題：factors 為多項式陣列（相乘），extra 為加減的其他乘積 [{s:±1,f:[...]}]
+ const expandQ=(prefix,parts,mode)=>{let res=[];parts.forEach(pt=>{let prod=[{c:R(1),e:C0}];pt.f.forEach(f=>prod=pm(prod,f));res=pa(res,pt.s<0?pn(prod):prod)});
+  const txt=parts.map((pt,i)=>(i?(pt.s<0?" − ":" ＋ "):(pt.s<0?"−":""))+pt.f.map((f,j)=>fac(f,mode)+(pt.pow&&j===pt.f.length-1?`<sup>${pt.pow}</sup>`:"")).join("")).join("");
+  return{q:`${prefix}${txt}`,a:rend(res,mode),chk:()=>near(parts.reduce((s,pt)=>s+pt.s*pt.f.reduce((m,f)=>m*pev(f),1),0),pev(res))}};
+ const sq2=(f,s=1)=>({s,f:[f,f],pow:0});
+ // 平方題顯示為 (…)²：把兩個相同因式合成一個並加上 ²
+ const sqPart=(f,s=1)=>({s,f:[f,f],_sq:true});
+ const expandSq=(prefix,parts,mode)=>{const r=expandQ(prefix,parts,mode);const txt=parts.map((pt,i)=>(i?(pt.s<0?" − ":" ＋ "):(pt.s<0?"−":""))+(pt._sq?fac(pt.f[0],mode)+"<sup>2</sup>":pt.f.map(f=>fac(f,mode)).join(""))).join("");r.q=prefix+txt;return r};
+ const one=(q,v,mode,chk)=>mode==="decimal"&&!term10(v)?null:({q,a:sh(v,mode),chk});
+ const cen=(mode,large)=>{if(mode==="integer"){const c=large?pick([50,100,200,500,1000]):pick([10,20,30,40,50,100]),d=rand(1,Math.min(large?19:9,c-1));return[R(c),R(d)]}if(mode==="fraction"){const c=R(rand(3,large?30:12)),den=pick([2,3,4,5]);return[c,R(rand(1,den-1),den)]}return[R(rand(2,large?40:15)),R(rand(1,9),10)]};
+ const dn=(a,mode)=>sh(a,mode,mode==="fraction");
+
+ const nearProduct=mkUnit("nearProduct","中心數乘積","兩數以中間的整數為中心對稱時，(c＋d)(c−d)＝c²−d²。",[
+  m=>{const[c,d]=cen(m,false),v=sub(mul(c,c),mul(d,d));return one(`${dn(add(c,d),m)} × ${dn(sub(c,d),m)}＝`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d)),fv(v)))},
+  m=>{const[c,d]=cen(m,true),v=sub(mul(c,c),mul(d,d));return one(`計算 ${dn(sub(c,d),m)} × ${dn(add(c,d),m)} 的值。`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d)),fv(v)))},
+  m=>{const[c,d]=cen(m,false),v=sub(mul(c,c),mul(d,d));return one(`用平方差公式計算 ${dn(add(c,d),m)} × ${dn(sub(c,d),m)}，先寫成 (c＋d)(c−d) 的形式。`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d)),fv(v)))},
+  m=>{const[c,d]=cen(m,true),v=R(-(d.n*d.n),d.d*d.d);return one(`${dn(add(c,d),m)} × ${dn(sub(c,d),m)} − ${dn(c,m)}<sup>2</sup>＝`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d))-fv(c)**2,fv(v)))},
+  m=>{const c=R(pick([10,20,30])),d=R(rand(1,3)),v=sub(mul(mul(c,c),mul(c,c)),mul(mul(d,d),mul(d,d)));return one(`${c.n+d.n} × ${c.n-d.n} × (${c.n}<sup>2</sup> ＋ ${d.n}<sup>2</sup>)＝`,v,m,()=>near((c.n+d.n)*(c.n-d.n)*(c.n**2+d.n**2),fv(v)))}],"原式＝");
+
+ const differenceValue=mkUnit("differenceValue","平方差求值","a²−b²＝(a＋b)(a−b)，先算和與差再相乘。",[
+  m=>{const[c,d]=cen(m,false),u=add(c,d),w=sub(c,d),v=sub(mul(u,u),mul(w,w));return one(`${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))},
+  m=>{const u=m==="integer"?R(rand(50,999)):m==="fraction"?add(R(rand(10,99)),R(1,2)):R(rand(100,999),10),w=sub(u,R(1)),v=add(u,w);return one(`計算 ${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup> 的值（兩數相差 1）。`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=sub(mul(w,w),mul(u,u));return one(`求 ${dn(w,m)}<sup>2</sup> − ${dn(u,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(w)**2-fv(u)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=sub(u,w);return one(`(${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>) ÷ ${dn(add(u,w),m)}＝`,v,m,()=>near((fv(u)**2-fv(w)**2)/(fv(u)+fv(w)),fv(v)))},
+  m=>{const[c,d]=cen(m,false),u=add(c,d),w=sub(c,d),e=sub(u,w),v=sub(sub(mul(u,u),mul(w,w)),mul(e,e));return one(`${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup> − ${dn(e,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2-fv(w)**2-fv(e)**2,fv(v)))}],"原式＝");
+
+ const nb=(m,plus,large)=>{const[c,d]=cen(m,large);return[c,d,plus?add(c,d):sub(c,d)]};
+ const sumNumber=mkUnit("sumNumber","和平方速算","(a＋b)²＝a²＋2ab＋b²，把數拆成整十、整百再加上一個小數。",[
+  m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`${dn(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,true,true),v=mul(n,n);return one(`計算 ${dn(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`利用 (${dn(c,m)}＋${dn(d,m)})<sup>2</sup> 計算 ${dn(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)+fv(d))**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,true,true),v=sub(mul(n,n),mul(c,c));return one(`${dn(n,m)}<sup>2</sup> − ${dn(c,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2-fv(c)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=mul(R(4),mul(c,d));return one(`${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>（用和平方與差平方公式分別展開）＝`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))}],"原式＝");
+
+ const differenceNumber=mkUnit("differenceNumber","差平方速算","(a−b)²＝a²−2ab＋b²，把數寫成整十、整百減去一個小數。",[
+  m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`${dn(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,false,true),v=mul(n,n);return one(`計算 ${dn(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`利用 (${dn(c,m)}−${dn(d,m)})<sup>2</sup> 計算 ${dn(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)-fv(d))**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,false,true),v=sub(mul(c,c),mul(n,n));return one(`${dn(c,m)}<sup>2</sup> − ${dn(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(c)**2-fv(n)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=add(mul(u,u),mul(w,w));return one(`${dn(u,m)}<sup>2</sup> ＋ ${dn(w,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2+fv(w)**2,fv(v)))}],"原式＝");
+
+ const A1=(m,b1,b2,mx)=>[M(pos(m,mx),b1),M(pos(m,mx),b2)];
+ const conj=(a,b)=>[pa(a,b),pa(a,pn(b))];
+ const conjugateExpand=mkUnit("conjugateExpand","平方差展開","(A＋B)(A−B)＝A²−B²。",[
+  m=>{const[a,b]=A1(m,X,C0,5),[p,q]=conj(a,b);return expandQ("展開：",[{s:1,f:[p,q]}],m)},
+  m=>{const[a,b]=A1(m,X,Y,5),[p,q]=conj(a,b);return expandQ("展開：",[{s:1,f:[p,q]}],m)},
+  m=>{const[a,b]=A1(m,X,Y,6);return expandQ("展開：",[{s:1,f:[pa(b,a),pa(pn(b),a)]}],m)},
+  m=>{const[a,b]=A1(m,X2,Y,5),[p,q]=conj(a,b);return expandQ("展開：",[{s:1,f:[p,q]}],m)},
+  m=>{const a=M(R(1),X),b=M(pos(m,5),C0),c=M(pos(m,5),C0);if(eq(b[0].c,c[0].c))return null;const[p,q]=conj(a,b),[r,s]=conj(a,c);return expandQ("化簡：",[{s:1,f:[p,q]},{s:-1,f:[r,s]}],m)}],"原式＝");
+
+ const sumExpand=mkUnit("sumExpand","和平方展開","(A＋B)²＝A²＋2AB＋B²。",[
+  m=>{const[a,b]=A1(m,X,C0,5);return expandSq("展開：",[sqPart(pa(a,b))],m)},
+  m=>{const[a,b]=A1(m,X,Y,5);return expandSq("展開：",[sqPart(pa(a,b))],m)},
+  m=>{const[a,b]=A1(m,X2,Y,5);return expandSq("展開：",[sqPart(pa(a,b))],m)},
+  m=>{const[a,b]=A1(m,X,Y,6);return expandSq("化簡：",[sqPart(pa(a,b)),{s:-1,f:[a,a],_sq:true}],m)},
+  m=>{const[a,b]=A1(m,X,Y,6);return expandSq("化簡：",[sqPart(pa(a,b)),sqPart(pa(a,pn(b)))],m)}],"原式＝");
+
+ const differenceExpand=mkUnit("differenceExpand","差平方展開","(A−B)²＝A²−2AB＋B²；(−A＋B)² 與 (A−B)² 相同。",[
+  m=>{const[a,b]=A1(m,X,C0,5);return expandSq("展開：",[sqPart(pa(a,pn(b)))],m)},
+  m=>{const[a,b]=A1(m,X,Y,5);return expandSq("展開：",[sqPart(pa(a,pn(b)))],m)},
+  m=>{const[a,b]=A1(m,X,Y,6);return expandSq("展開：",[sqPart(pa(pn(a),b))],m)},
+  m=>{const[a,b]=A1(m,X,Y,6);return expandSq("化簡：",[sqPart(pa(a,pn(b))),sqPart(pa(a,b),-1)],m)},
+  m=>{const[a,b]=A1(m,X,Y,6),[p,q]=conj(a,b);return expandSq("化簡：",[sqPart(pa(a,pn(b))),{s:-1,f:[p,q]}],m)}],"原式＝");
+
+ const threeTerm=mkUnit("threeTerm","三項式平方","(A＋B＋C)²＝A²＋B²＋C²＋2AB＋2BC＋2CA，注意每一項的正負號。",[
+  m=>{const t=pa(M(R(1),X),M(R(1),Y),M(pos(m,5),C0));return expandSq("展開：",[sqPart(t)],m)},
+  m=>{const t=pa(M(pos(m,4),X),M(pos(m,4),Y),M(pos(m,4),Z));return expandSq("展開：",[sqPart(t)],m)},
+  m=>{const t=pa(M(pos(m,4),X),pn(M(pos(m,4),Y)),M(pos(m,5),C0));return expandSq("展開：",[sqPart(t)],m)},
+  m=>{const t=pa(M(pos(m,4),X),pn(M(pos(m,4),Y)),pn(M(pos(m,4),Z)));return expandSq("展開：",[sqPart(t)],m)},
+  m=>{const a=M(pos(m,4),X),b=M(pos(m,4),Y),c=M(pos(m,4),Z);return expandSq("化簡：",[sqPart(pa(a,b,c)),sqPart(pa(a,b),-1)],m)}],"原式＝");
+
+ const pn2=(m,max)=>{const a=m==="integer"?R(rand(5,max)):m==="fraction"?add(R(rand(2,max>20?15:6)),R(rand(1,3),4)):R(rand(11,max*10),10);return a};
+ const sumRecognize=mkUnit("sumRecognize","和平方辨識","看出 a²＋2ab＋b² 的形式，直接寫成 (a＋b)²。",[
+  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> ＋ ${dn(mid,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
+  m=>{const a=pn2(m,40),b=pn2(m,20),v=mul(add(a,b),add(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> ＋ 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
+  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`先整理成完全平方式再求值：${dn(b,m)}<sup>2</sup> ＋ ${dn(a,m)}<sup>2</sup> ＋ ${dn(mid,m)}`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
+  m=>{const a=R(rand(1,9)),b=R(rand(1,9)),s=add(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(s.n**2-2*p.n,fv(v)))},
+  m=>{const a=R(rand(1,12)),b=R(rand(1,12)),s=add(a,b),p=mul(a,b),v=mul(sub(a,b),sub(a,b));return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 (a−b)<sup>2</sup>。`,v,m,()=>near(s.n**2-4*p.n,fv(v)))}],"");
+
+ const differenceRecognize=mkUnit("differenceRecognize","差平方辨識","看出 a²−2ab＋b² 的形式，直接寫成 (a−b)²。",[
+  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> − ${dn(mid,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
+  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const v=mul(sub(a,b),sub(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> − 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
+  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dn(b,m)}<sup>2</sup> ＋ ${dn(a,m)}<sup>2</sup> − ${dn(mid,m)}`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
+  m=>{const a=R(rand(3,12)),b=R(rand(1,9)),s=sub(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));return one(`已知 a−b＝${sh(s,m)}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(fv(s)**2+2*p.n,fv(v)))},
+  m=>{const a=R(rand(3,15)),b=R(rand(1,12)),s=add(a,b),d=sub(a,b),v=mul(a,b);return one(`已知 a＋b＝${s.n}、a−b＝${sh(d,m)}，求 ab。`,v,m,()=>near((s.n**2-fv(d)**2)/4,fv(v)))}],"");
+
+ const formulaChain=mkUnit("formulaChain","公式連鎖化簡","先用平方差公式合併兩個因式，得到的結果再和下一個因式套公式。",[
+  m=>{const a=M(R(1),X),b=M(m==='integer'?R(rand(1,12)):pos(m,5),C0),[p,q]=conj(a,b),s=pa(pm(a,a),pm(b,b));return expandQ("化簡：",[{s:1,f:[p,q,s]}],m)},
+  m=>{const a=M(pos(m,6),X),b=M(pos(m,9),C0),[p,q]=conj(a,b),s=pa(pm(a,a),pm(b,b));return expandQ("化簡：",[{s:1,f:[p,q,s]}],m)},
+  m=>{const a=M(pos(m,7),X),b=M(pos(m,7),Y),[p,q]=conj(a,b),s=pa(pm(a,a),pm(b,b));return expandQ("化簡：",[{s:1,f:[p,q,s]}],m)},
+  m=>{const a=M(R(rand(1,2)),X),b=M(R(rand(1,3)),C0),[p,q]=conj(a,b),b2=pm(b,b),s=pa(pm(a,a),b2),t=pa(pm(pm(a,a),pm(a,a)),pm(b2,b2));return expandQ("化簡：",[{s:1,f:[p,q,s,t]}],m)},
+  m=>{const[a,b]=A1(m,X,Y,8),[p,q]=conj(a,b);return expandSq("化簡：",[{s:1,f:[p,q]},sqPart(q,-1)],m)}],"原式＝");
+
+ const comprehensive=mkUnit("comprehensive","綜合計算","把算式整理成公式的形式再計算；可以先看出中心數或 a、b。",[
+  m=>{const[c,d]=cen(m,true),u=sub(c,d),w=add(c,d),v=mul(c,c);return one(`${dn(u,m)} × ${dn(w,m)} ＋ ${dn(d,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)*fv(w)+fv(d)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=sub(c,d),w=add(c,d),v=mul(d,d);return one(`${dn(c,m)}<sup>2</sup> − ${dn(u,m)} × ${dn(w,m)}＝`,v,m,()=>near(fv(c)**2-fv(u)*fv(w),fv(v)))},
+  m=>{const[c,d]=cen(m,false),v=add(mul(c,c),mul(d,d));return one(`(${dn(c,m)} ＋ ${dn(d,m)})<sup>2</sup> − 2 × ${dn(c,m)} × ${dn(d,m)}＝`,v,m,()=>near((fv(c)+fv(d))**2-2*fv(c)*fv(d),fv(v)))},
+  m=>{const u=pn2(m,30),w=sub(R(pick([50,100])),u),v=mul(add(u,w),add(u,w));if(fv(w)<=0)return null;return one(`${dn(u,m)}<sup>2</sup> ＋ 2 × ${dn(u,m)} × ${dn(w,m)} ＋ ${dn(w,m)}<sup>2</sup>＝`,v,m,()=>near((fv(u)+fv(w))**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=add(u,w);return one(`(${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>) ÷ (${dn(u,m)} − ${dn(w,m)})＝`,v,m,()=>near((fv(u)**2-fv(w)**2)/(fv(u)-fv(w)),fv(v)))}],"原式＝");
+
+ return{title:"乘法公式",symbol:"(a±b)²",subtitle:"中心數乘積・平方差求值・和差平方速算・三個公式的展開・三項式平方・完全平方辨識・連鎖化簡・綜合計算",instruction:"利用平方差、和平方、差平方公式計算或展開。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"原式＝",
+  levels:{basic:"基礎：以整十整百為中心的速算、直接套三個公式展開 (ax±b)、(ax±by)。",advanced:"進階：大數速算、明寫公式的計算、交換順序與負號在前的展開、三項式平方、a＋b 與 ab 求 a²＋b²。",challenge:"挑戰：速算後再加減、含 x² 的展開、公式相減的化簡、(x±1)(x²＋1)(x⁴＋1) 連鎖、由和差求 ab。"},
+  units:[nearProduct,differenceValue,sumNumber,differenceNumber,conjugateExpand,sumExpand,differenceExpand,threeTerm,sumRecognize,differenceRecognize,formulaChain,comprehensive],
+  presets:{basic:{nearProduct:3,differenceValue:3,sumNumber:3,differenceNumber:3,conjugateExpand:2,sumExpand:2,differenceExpand:2},advanced:{nearProduct:2,differenceValue:2,sumNumber:2,differenceNumber:2,conjugateExpand:2,sumExpand:2,differenceExpand:2,threeTerm:2,sumRecognize:2,differenceRecognize:2},challenge:{conjugateExpand:2,sumExpand:2,differenceExpand:2,threeTerm:2,sumRecognize:2,differenceRecognize:2,formulaChain:3,comprehensive:3}}};
+}
+
+function polyopsConfig(){
+ /* 國二 多項式四則（2026-09-28，Claude）。依舊的 g8-polynomial-operations.html（百宏自製）的十三個單元重做：合併同類項、多項式加法、多項式減法、多層括號化簡、
+    單項式乘法、多項式乘單項式、兩多項式相乘、多項式乘法進階、單項式除法、多項式除以單項式、多項式長除法、代入 A、B、C 運算、四則混合運算。
+    舊工具每個單元只有一種句型，這裡每個單元五種問法，基礎、進階、挑戰各取三種（挑戰有基礎沒有的兩種）；係數依數型抽整數、分數或小數。
+    除法題先定商與餘式再造被除式。verify：在 x＝1.3、−0.7 把題目的運算用浮點數直接算出，與答案多項式的值比對；除法題檢查「被除式＝除式×商＋餘式」且餘式次數小於除式。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const fv=a=>a.n/a.d,near=(x,y)=>Math.abs(x-y)<1e-7*Math.max(1,Math.abs(y)),Z=()=>R(0);
+ const sh=(a,mode)=>{const s=numHTML(R(Math.abs(a.n),a.d),a.d===1?"integer":mode==="decimal"?"decimal":"fraction",{mixed:false});return(a.n<0?"−":"")+s};
+ const trim=p=>{p=p.map(x=>R(x.n,x.d));while(p.length>1&&p[p.length-1].n===0)p.pop();return p.length?p:[Z()]},deg=p=>trim(p).length-1,isZ=p=>{p=trim(p);return p.length===1&&p[0].n===0};
+ const addP=(a,b)=>trim(Array.from({length:Math.max(a.length,b.length)},(_,i)=>add(a[i]||Z(),b[i]||Z()))),subP=(a,b)=>trim(Array.from({length:Math.max(a.length,b.length)},(_,i)=>sub(a[i]||Z(),b[i]||Z()))),scP=(p,k)=>trim(p.map(c=>mul(c,k)));
+ const mulP=(a,b)=>{const r=Array(a.length+b.length-1).fill(0).map(Z);a.forEach((x,i)=>b.forEach((y,j)=>r[i+j]=add(r[i+j],mul(x,y))));return trim(r)};
+ const mono=(c,e)=>Array(e).fill(0).map(Z).concat([c]);
+ const ev=(p,x)=>p.reduce((s,c,i)=>s+fv(c)*Math.pow(x,i),0),XS=[1.37,-2.13];
+ const cf=(mode,max=7,allowZero=false)=>{if(allowZero&&Math.random()<.22)return Z();const s=Math.random()<.45?-1:1;if(mode==="integer")return R(s*rand(1,max));if(mode==="fraction"){let d=pick([2,3,4,5]),n;do n=rand(1,max*d-1);while(n%d===0);return R(s*n,d)}let n;do n=rand(1,max*10-1);while(n%10===0);return R(s*n,10)};
+ const pc=(mode,max=5)=>{const c=cf(mode,max);return R(Math.abs(c.n),c.d)};
+ const rp=(mode,d,max=7,dens=.8)=>{const p=Array(d+1).fill(0).map(Z);p[d]=cf(mode,max);for(let i=0;i<d;i++)p[i]=Math.random()<dens?cf(mode,max):Z();return trim(p)};
+ const mon=(mode,d,max=5)=>{const p=rp(mode,d,max);p[d]=R(1);return trim(p)};
+ const term=(c,e,mode,first)=>{if(c.n===0)return"";const neg=c.n<0,a=R(Math.abs(c.n),c.d),v=e?`x${e===1?"":`<sup>${e}</sup>`}`:"",mag=(a.n===a.d&&e)?"":sh(a,mode);return(first?(neg?"−":""):` ${neg?"−":"＋"} `)+mag+v};
+ const H=(p,mode)=>{p=trim(p);let s="";for(let e=p.length-1;e>=0;e--)s+=term(p[e],e,mode,!s);return s||"0"},W=(p,mode)=>`(${H(p,mode)})`,MH=(c,e,mode)=>term(c,e,mode,true);
+ const nzr=(mode,d)=>{const r=rp(mode,d,4,.65);return isZ(r)?[cf(mode,4)]:r};
+ const polyAns=(q,p,mode,f)=>({q,a:H(p,mode),chk:()=>XS.every(x=>near(f(x),ev(p,x)))});
+ const divAns=(q,dvd,dvs,Q,Rm,mode)=>({q,a:`商：${H(Q,mode)}；餘式：${H(Rm,mode)}`,chk:()=>(isZ(Rm)||deg(Rm)<deg(dvs))&&XS.every(x=>near(ev(dvd,x),ev(dvs,x)*ev(Q,x)+ev(Rm,x)))});
+ const mkUnit=(id,name,tip,kinds,label)=>({id,name,tip,modes:["integer","fraction","decimal"],answerLabel:label,gen:ctx=>{
+  const Lv=lv(ctx),mode=ctx.modes[0],k=kinds[pick([[0,1,2],[1,2,3],[2,3,4]][Lv])];let r;try{r=k(mode,Lv)}catch(e){return null}if(!r)return null;
+  return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<[^>]+>/g,""),verify:r.chk};
+ }});
+
+ const rawTerms=(mode,d)=>{const ex=[];for(let e=0;e<=d;e++)ex.push(e,e);shuffle(ex);const ts=ex.map(e=>({c:cf(mode,7),e}));let raw="";ts.forEach(t=>raw+=term(t.c,t.e,mode,!raw));const ans=Array(d+1).fill(0).map(Z);ts.forEach(t=>ans[t.e]=add(ans[t.e],t.c));return{raw,ts,ans:trim(ans)}};
+ const tsev=(ts,x)=>ts.reduce((s,t)=>s+fv(t.c)*Math.pow(x,t.e),0);
+ const combine=mkUnit("combine","合併同類項","次數相同的項才是同類項，把係數相加減，由高次排到低次。",[
+  m=>{const{raw,ts,ans}=rawTerms(m,1);return polyAns(`化簡：${raw}`,ans,m,x=>tsev(ts,x))},
+  m=>{const{raw,ts,ans}=rawTerms(m,2);return polyAns(`化簡：${raw}`,ans,m,x=>tsev(ts,x))},
+  m=>{const{raw,ts,ans}=rawTerms(m,3);return polyAns(`化簡：${raw}`,ans,m,x=>tsev(ts,x))},
+  m=>{const{raw,ts,ans}=rawTerms(m,3);return{q:`化簡 ${raw}，並寫出它的次數與常數項。`,a:`${H(ans,m)}；次數 ${deg(ans)}，常數項 ${sh(ans[0],m)}`,chk:()=>XS.every(x=>near(tsev(ts,x),ev(ans,x)))}},
+  m=>{const{raw,ts,ans}=rawTerms(m,2),x0=R(rand(-3,3)),v=ans.reduce((s,c,i)=>add(s,mul(c,R(Math.pow(x0.n,i)))),Z());return{q:`化簡 ${raw}，再求 x＝${sh(x0,m)} 時的值。`,a:`${H(ans,m)}；值為 ${sh(v,m)}`,chk:()=>near(tsev(ts,x0.n),fv(v))}}],"原式＝");
+
+ const addition=mkUnit("addition","多項式加法","去括號後合併同類項；缺項可以先補 0 對齊。",[
+  m=>{const a=rp(m,1),b=rp(m,1);return polyAns(`計算：${W(a,m)} ＋ ${W(b,m)}`,addP(a,b),m,x=>ev(a,x)+ev(b,x))},
+  m=>{const a=rp(m,2),b=rp(m,2);return polyAns(`計算：${W(a,m)} ＋ ${W(b,m)}`,addP(a,b),m,x=>ev(a,x)+ev(b,x))},
+  m=>{const a=rp(m,2),b=rp(m,2),c=rp(m,1);return polyAns(`計算：${W(a,m)} ＋ ${W(b,m)} ＋ ${W(c,m)}`,addP(addP(a,b),c),m,x=>ev(a,x)+ev(b,x)+ev(c,x))},
+  m=>{const a=rp(m,3,7,.5),b=rp(m,2,7,.6);return polyAns(`計算：${W(a,m)} ＋ ${W(b,m)}`,addP(a,b),m,x=>ev(a,x)+ev(b,x))},
+  m=>{const a=rp(m,2),b=rp(m,2),s=addP(a,b);return polyAns(`若 ${W(a,m)} ＋（　　）＝ ${H(s,m)}，求括號內的多項式。`,b,m,x=>ev(s,x)-ev(a,x))}],"");
+
+ const subtraction=mkUnit("subtraction","多項式減法","減去一個括號時，括號內每一項都要變號。",[
+  m=>{const a=rp(m,1),b=rp(m,1);return polyAns(`計算：${W(a,m)} − ${W(b,m)}`,subP(a,b),m,x=>ev(a,x)-ev(b,x))},
+  m=>{const a=rp(m,2),b=rp(m,2);return polyAns(`計算：${W(a,m)} − ${W(b,m)}`,subP(a,b),m,x=>ev(a,x)-ev(b,x))},
+  m=>{const a=rp(m,2),b=rp(m,2),c=rp(m,1);return polyAns(`計算：${W(a,m)} − ${W(b,m)} − ${W(c,m)}`,subP(subP(a,b),c),m,x=>ev(a,x)-ev(b,x)-ev(c,x))},
+  m=>{const a=rp(m,2),b=rp(m,2),c=rp(m,2);return polyAns(`計算：${W(a,m)} − [${H(b,m)} − ${W(c,m)}]`,subP(a,subP(b,c)),m,x=>ev(a,x)-(ev(b,x)-ev(c,x)))},
+  m=>{const b=rp(m,2),c=rp(m,2);return polyAns(`某多項式減去 ${W(b,m)} 得 ${H(c,m)}，求此多項式。`,addP(b,c),m,x=>ev(b,x)+ev(c,x))}],"");
+
+ const nested=mkUnit("nested","多層括號化簡","由內往外去括號：先小括號、再中括號、最後大括號，每層注意前面的負號。",[
+  m=>{const a=rp(m,1,5),b=rp(m,1,5),c=rp(m,1,5),k=pc(m,3);return polyAns(`化簡：${W(a,m)} − ${sh(k,m)}[${H(b,m)} − ${W(c,m)}]`,subP(a,scP(subP(b,c),k)),m,x=>ev(a,x)-fv(k)*(ev(b,x)-ev(c,x)))},
+  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,2,5),k=pc(m,3);return polyAns(`化簡：${W(a,m)} − ${sh(k,m)}[${H(b,m)} − ${W(c,m)}]`,subP(a,scP(subP(b,c),k)),m,x=>ev(a,x)-fv(k)*(ev(b,x)-ev(c,x)))},
+  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,1,5),d=rp(m,1,5);return polyAns(`化簡：${H(a,m)} − [${H(b,m)} − (${H(c,m)} − ${W(d,m)})]`,subP(a,subP(b,subP(c,d))),m,x=>ev(a,x)-(ev(b,x)-(ev(c,x)-ev(d,x))))},
+  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,2,5),k1=pc(m,3),k2=pc(m,3),k3=pc(m,3);return polyAns(`化簡：${sh(k1,m)}${W(a,m)} − ${sh(k2,m)}[${H(b,m)} − ${sh(k3,m)}${W(c,m)}]`,subP(scP(a,k1),scP(subP(b,scP(c,k3)),k2)),m,x=>fv(k1)*ev(a,x)-fv(k2)*(ev(b,x)-fv(k3)*ev(c,x)))},
+  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,1,5),d=rp(m,1,5),k=pc(m,3);return polyAns(`化簡：${sh(k,m)}{${H(a,m)} − [${H(b,m)} − (${H(c,m)} − ${W(d,m)})]}`,scP(subP(a,subP(b,subP(c,d))),k),m,x=>fv(k)*(ev(a,x)-(ev(b,x)-(ev(c,x)-ev(d,x)))))}],"原式＝");
+
+ const P=(c,e,m)=>`(${MH(c,e,m)})`;
+ const monoMultiply=mkUnit("monoMultiply","單項式乘法","係數相乘、次數相加：axᵐ·bxⁿ＝abxᵐ⁺ⁿ；(axᵐ)²＝a²x²ᵐ。",[
+  m=>{const a=cf(m,8),b=cf(m,8),e1=rand(1,3),e2=rand(1,3);return polyAns(`計算：${P(a,e1,m)}${P(b,e2,m)}`,mono(mul(a,b),e1+e2),m,x=>fv(a)*x**e1*fv(b)*x**e2)},
+  m=>{const a=cf(m,6),b=cf(m,6),c=cf(m,5),e1=rand(1,3),e2=rand(1,3),e3=rand(0,2);return polyAns(`計算：${P(a,e1,m)}${P(b,e2,m)}${P(c,e3,m)}`,mono(mul(mul(a,b),c),e1+e2+e3),m,x=>fv(a)*fv(b)*fv(c)*x**(e1+e2+e3))},
+  m=>{const a=cf(m,6),e=rand(1,4);return polyAns(`計算：${P(a,e,m)}<sup>2</sup>`,mono(mul(a,a),2*e),m,x=>(fv(a)*x**e)**2)},
+  m=>{const a=cf(m,5),b=cf(m,5),e1=rand(1,3),e2=rand(1,3),e3=rand(1,3),c=cf(m,4);return polyAns(`計算：${P(a,e1,m)}<sup>2</sup>${P(b,e2,m)}`,mono(mul(mul(a,a),b),2*e1+e2),m,x=>(fv(a)*x**e1)**2*fv(b)*x**e2)},
+  m=>{const a=cf(m,4),e=rand(1,3),b=cf(m,5),f=rand(1,3);return polyAns(`計算：${P(a,e,m)}<sup>3</sup> × ${P(b,f,m)}`,mono(mul(mul(mul(a,a),a),b),3*e+f),m,x=>(fv(a)*x**e)**3*fv(b)*x**f)}],"原式＝");
+
+ const polyTimesMono=mkUnit("polyTimesMono","多項式乘單項式","用分配律把單項式乘進括號內的每一項。",[
+  m=>{const p=rp(m,2,6),c=cf(m,6);return polyAns(`展開：${sh(c,m)}${W(p,m)}`,scP(p,c),m,x=>fv(c)*ev(p,x))},
+  m=>{const p=rp(m,2,6),c=cf(m,6),e=rand(1,2);return polyAns(`展開：${P(c,e,m)}${W(p,m)}`,mulP(mono(c,e),p),m,x=>fv(c)*x**e*ev(p,x))},
+  m=>{const p=rp(m,3,6),c=cf(m,6),e=rand(1,3);return polyAns(`展開：${W(p,m)}${P(c,e,m)}`,mulP(mono(c,e),p),m,x=>fv(c)*x**e*ev(p,x))},
+  m=>{const p=rp(m,2,5),q=rp(m,2,5),c=cf(m,5),d=pc(m,5),e=rand(1,2),f=rand(1,2);return polyAns(`化簡：${P(c,e,m)}${W(p,m)} − ${P(d,f,m)}${W(q,m)}`,subP(mulP(mono(c,e),p),mulP(mono(d,f),q)),m,x=>fv(c)*x**e*ev(p,x)-fv(d)*x**f*ev(q,x))},
+  m=>{const p=rp(m,2,5),q=rp(m,2,5),c=cf(m,5);return polyAns(`化簡：x${W(p,m)} ＋ ${sh(c,m)}${W(q,m)}`,addP(mulP(mono(R(1),1),p),scP(q,c)),m,x=>x*ev(p,x)+fv(c)*ev(q,x))}],"原式＝");
+
+ const binomialMultiply=mkUnit("binomialMultiply","兩多項式相乘","兩個一次式相乘：每一項都要乘到，共四項再合併。",[
+  m=>{const a=[cf(m,9),R(1)],b=[cf(m,9),R(1)];return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1);return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),k=cf(m,5);return polyAns(`展開：${sh(k,m)}${W(a,m)}${W(b,m)}`,scP(mulP(a,b),k),m,x=>fv(k)*ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),c=cf(m,6);return polyAns(`化簡：${W(a,m)}${W(b,m)} ＋ ${MH(c,2,m)}`,addP(mulP(a,b),mono(c,2)),m,x=>ev(a,x)*ev(b,x)+fv(c)*x*x)},
+  m=>{const a=rp(m,1,4,1),b=rp(m,1,4,1),c=rp(m,1,4,1);return polyAns(`展開：${W(a,m)}${W(b,m)}${W(c,m)}`,mulP(mulP(a,b),c),m,x=>ev(a,x)*ev(b,x)*ev(c,x))}],"原式＝");
+
+ const polyMultiply=mkUnit("polyMultiply","多項式乘法進階","用直式或分配律，把每一項乘開後依次數對齊合併；缺項補 0。",[
+  m=>{const a=rp(m,1,5,1),b=rp(m,2,5,.9);return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=[cf(m,5),Z(),cf(m,5)],b=[cf(m,5),Z(),cf(m,5)];return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,2,5,.9),b=rp(m,1,5,1);return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,2,4,.9),b=rp(m,2,4,.9);return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,1,4,1),b=rp(m,1,4,1);return polyAns(`展開：${W(a,m)}<sup>2</sup>${W(b,m)}`,mulP(mulP(a,a),b),m,x=>ev(a,x)**2*ev(b,x))}],"原式＝");
+
+ const monoDivide=mkUnit("monoDivide","單項式除法","係數相除、次數相減：axᵐ÷bxⁿ＝(a÷b)xᵐ⁻ⁿ。",[
+  m=>{const d=cf(m,6),q=cf(m,6),de=rand(1,3),qe=rand(1,3);return polyAns(`計算：${P(mul(d,q),de+qe,m)} ÷ ${P(d,de,m)}`,mono(q,qe),m,x=>fv(mul(d,q))*x**(de+qe)/(fv(d)*x**de))},
+  m=>{const d=cf(m,9),q=cf(m,9),de=rand(2,4),qe=rand(1,5);return polyAns(`計算：${P(mul(d,q),de+qe,m)} ÷ ${P(d,de,m)}`,mono(q,qe),m,x=>fv(mul(d,q))*x**(de+qe)/(fv(d)*x**de))},
+  m=>{const d1=cf(m,4),d2=cf(m,4),q=cf(m,5),e1=rand(1,2),e2=rand(1,2),qe=rand(1,3),N=mul(mul(d1,d2),q);return polyAns(`計算：${P(N,e1+e2+qe,m)} ÷ ${P(d1,e1,m)} ÷ ${P(d2,e2,m)}`,mono(q,qe),m,x=>fv(N)*x**(e1+e2+qe)/(fv(d1)*x**e1)/(fv(d2)*x**e2))},
+  m=>{const a=cf(m,5),b=cf(m,5),c=cf(m,4),e1=rand(2,4),e2=rand(2,4),e3=rand(1,3),q=div(mul(a,b),c);if(m==="decimal"&&!term10ok(q))return null;return polyAns(`計算：${P(a,e1,m)}${P(b,e2,m)} ÷ ${P(c,e3,m)}`,mono(q,e1+e2-e3),m,x=>fv(a)*x**e1*fv(b)*x**e2/(fv(c)*x**e3))},
+  m=>{const a=cf(m,5),b=cf(m,4),e=rand(2,3),f=rand(1,2*e-1),q=div(mul(a,a),b);if(m==="decimal"&&!term10ok(q))return null;return polyAns(`計算：${P(a,e,m)}<sup>2</sup> ÷ ${P(b,f,m)}`,mono(q,2*e-f),m,x=>(fv(a)*x**e)**2/(fv(b)*x**f))}],"原式＝");
+ function term10ok(a){let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1}
+
+ const polyDivideMono=mkUnit("polyDivideMono","多項式除以單項式","每一項分別除以單項式；次數比除式低的項留作餘式。",[
+  m=>{const c=pc(m,5),Q=rp(m,2,5,.85),dvs=[c],dvd=mulP(dvs,Q);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${sh(c,m)}`,dvd,dvs,Q,[Z()],m)},
+  m=>{const c=cf(m,5),Q=rp(m,2,5,.85),dvs=mono(c,1),dvd=mulP(dvs,Q);return divAns(`求商與餘式：${W(dvd,m)} ÷ (${MH(c,1,m)})`,dvd,dvs,Q,[Z()],m)},
+  m=>{const c=cf(m,5),Q=rp(m,2,5,.85),dvs=mono(c,2),dvd=mulP(dvs,Q);return divAns(`求商與餘式：${W(dvd,m)} ÷ (${MH(c,2,m)})`,dvd,dvs,Q,[Z()],m)},
+  m=>{const e=rand(1,2),c=cf(m,5),Q=rp(m,3,5,.85),dvs=mono(c,e),Rm=nzr(m,e-1),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ (${MH(c,e,m)})`,dvd,dvs,Q,Rm,m)},
+  m=>{const e=rand(1,2),c=cf(m,5),Q=rp(m,2,5,.85),dvs=mono(c,e),Rm=nzr(m,e-1),dvd=addP(mulP(dvs,Q),Rm);return polyAns(`某多項式除以 ${MH(c,e,m)}，得到商式 ${H(Q,m)}、餘式 ${H(Rm,m)}，求此多項式。`,dvd,m,x=>fv(c)*x**e*ev(Q,x)+ev(Rm,x))}],"");
+
+ const longDivision=mkUnit("longDivision","多項式長除法","用長除法：每次用除式的最高次項去除被除式的最高次項，乘回去相減，直到餘式次數小於除式。",[
+  m=>{const dvs=mon(m,1),Q=rp(m,1,5,.85),dvd=mulP(dvs,Q);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,[Z()],m)},
+  m=>{const dvs=mon(m,1),Q=rp(m,2,5,.85),Rm=nzr(m,0),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
+  m=>{const dvs=rp(m,1,4,1),Q=rp(m,2,4,.85),Rm=Math.random()<.5?[Z()]:nzr(m,0),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
+  m=>{const dvs=mon(m,2,4),Q=rp(m,pick([1,2]),4,.85),Rm=nzr(m,1),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
+  m=>{if(m!=="integer")return null;const a=R(rand(-4,4)),Q=rp(m,2,5,.85),dvs=[R(-a.n),R(1)],full=mulP(dvs,Q),known=[Z()].concat(full.slice(1)),k=full[0];if(k.n===0)return null;return{q:`若 ${H(known,m)} ＋ k 能被 ${W(dvs,m)} 整除，求 k 的值與商式。`,a:`k＝${sh(k,m)}；商：${H(Q,m)}`,chk:()=>near(ev(known,a.n)+fv(k),0)&&XS.every(x=>near(ev(known,x)+fv(k),ev(dvs,x)*ev(Q,x)))}}],"");
+
+ const defs=(A,B,C,m)=>`<div style="font-size:90%;margin-bottom:2px">設 A＝${H(A,m)}，B＝${H(B,m)}${C?`，C＝${H(C,m)}`:""}</div>`;
+ const definedOps=mkUnit("definedOps","代入 A、B、C 運算","把 A、B、C 代表的多項式加上括號代入，再去括號合併。",[
+  m=>{const A=rp(m,2,4),B=rp(m,2,4);return polyAns(`${defs(A,B,null,m)}求 A＋B。`,addP(A,B),m,x=>ev(A,x)+ev(B,x))},
+  m=>{const A=rp(m,2,4),B=rp(m,2,4),u=rand(2,4),v=rand(1,3);return polyAns(`${defs(A,B,null,m)}求 ${u}A − ${v}B。`,subP(scP(A,R(u)),scP(B,R(v))),m,x=>u*ev(A,x)-v*ev(B,x))},
+  m=>{const A=rp(m,2,4),B=rp(m,2,4),C=rp(m,2,4),u=rand(2,4),v=rand(1,3),w=rand(1,3);return polyAns(`${defs(A,B,C,m)}求 ${u}A − ${v}B ＋ ${w}C。`,addP(subP(scP(A,R(u)),scP(B,R(v))),scP(C,R(w))),m,x=>u*ev(A,x)-v*ev(B,x)+w*ev(C,x))},
+  m=>{const A=rp(m,1,4,1),B=rp(m,2,4);return polyAns(`${defs(A,B,null,m)}求 AB。`,mulP(A,B),m,x=>ev(A,x)*ev(B,x))},
+  m=>{const A=rp(m,1,4,1),B=rp(m,1,4,1),C=rp(m,2,4);return polyAns(`${defs(A,B,C,m)}求 AB − C。`,subP(mulP(A,B),C),m,x=>ev(A,x)*ev(B,x)-ev(C,x))}],"");
+
+ const mixedOps=mkUnit("mixedOps","四則混合運算","先乘除後加減；乘開後再和其他項合併同類項。",[
+  m=>{const a=rp(m,1,5,1),b=rp(m,1,5,.9),p=rp(m,2,5);return polyAns(`化簡：${W(a,m)}${W(b,m)} − ${W(p,m)}`,subP(mulP(a,b),p),m,x=>ev(a,x)*ev(b,x)-ev(p,x))},
+  m=>{const a=rp(m,1,5,1),b=rp(m,1,5,1),c=rp(m,1,5,1),d=rp(m,1,5,1);return polyAns(`化簡：${W(a,m)}${W(b,m)} ＋ ${W(c,m)}${W(d,m)}`,addP(mulP(a,b),mulP(c,d)),m,x=>ev(a,x)*ev(b,x)+ev(c,x)*ev(d,x))},
+  m=>{const a=rp(m,1,5,1),b=rp(m,1,5,1),c=rp(m,1,5,1);return polyAns(`化簡：${W(a,m)}<sup>2</sup> − ${W(b,m)}${W(c,m)}`,subP(mulP(a,a),mulP(b,c)),m,x=>ev(a,x)**2-ev(b,x)*ev(c,x))},
+  m=>{const c=cf(m,4),e=1,Q=rp(m,2,4),dvd=mulP(mono(c,e),Q),B=rp(m,2,4);return polyAns(`化簡：${W(dvd,m)} ÷ (${MH(c,e,m)}) ＋ ${W(B,m)}`,addP(Q,B),m,x=>ev(dvd,x)/(fv(c)*x)+ev(B,x))},
+  m=>{const a=rp(m,1,4,1),b=rp(m,1,4,1),dvs=mon(m,1),Q=rp(m,1,4,1),dvd=mulP(dvs,Q);return polyAns(`化簡：${W(a,m)}${W(b,m)} − ${W(dvd,m)} ÷ ${W(dvs,m)}`,subP(mulP(a,b),Q),m,x=>ev(a,x)*ev(b,x)-ev(dvd,x)/ev(dvs,x))}],"原式＝");
+
+ return{title:"多項式四則",symbol:"P(x)",subtitle:"合併同類項・加減・多層括號・單項式與多項式的乘除・長除法・代入 A、B、C・四則混合",instruction:"依降冪排列寫出答案；除法寫出商式與餘式。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"原式＝",
+  levels:{basic:"基礎：一、二次式的合併與加減、單層括號、單項式的乘除、除以常數或 x、一次式相乘、x−a 的整除。",advanced:"進階：三次式、三個多項式相加減、雙層括號、單項式的平方、多項式乘單項式、有餘式的除法、uA−vB。",challenge:"挑戰：化簡後求值、反求括號內的多項式、三層括號與大括號、(axᵐ)³、二次式除以二次式、整除求 k、AB−C 與含除法的混合運算。"},
+  units:[combine,addition,subtraction,nested,monoMultiply,polyTimesMono,binomialMultiply,polyMultiply,monoDivide,polyDivideMono,longDivision,definedOps,mixedOps],
+  presets:{basic:{combine:3,addition:3,subtraction:3,monoMultiply:3,polyTimesMono:2,monoDivide:2},advanced:{combine:2,addition:2,subtraction:2,nested:2,polyTimesMono:2,binomialMultiply:2,monoDivide:2,polyDivideMono:2,longDivision:2},challenge:{nested:2,binomialMultiply:2,polyMultiply:2,polyDivideMono:2,longDivision:3,definedOps:2,mixedOps:3}}};
+}
+
+const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
@@ -818,7 +1076,7 @@ function applyPreset(level){state.level=level;const p=CFG.presets[level];CFG.uni
 function setEach(v){CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);c.checked=v>0;n.disabled=!c.checked;if(v)n.value=v});updateTotal();markChanged()}
 function updateTotal(){$("total").textContent=`共 ${selectedUnits().reduce((s,u)=>s+u.count,0)} 題`}function markChanged(){$("status").textContent="設定已變更，按「重新出題」套用。"}
 function generate(){const modes=selectedModes(),chosen=selectedUnits();if(!modes.length){$("status").textContent="請至少勾選一種數的類型。";return}if(!chosen.length){state.groups=[];state.paper=null;render();$("status").textContent="請至少勾選一個單元。";return}state.mixed=CFG.mixed&&$("mixedNumber")?.checked;const seen=new Set,skipped=[];state.groups=[];for(const unit of chosen){const allowed=modes.filter(m=>unit.modes.includes(m));if(!allowed.length){skipped.push(unit.name);continue}const ctx={level:state.level,modes:allowed,mixed:state.mixed},questions=[];for(let i=0;i<unit.count;i++){const q=safeQuestion(unit,ctx,seen);if(q)questions.push(q)}if(questions.length)state.groups.push({unit,questions})}state.paper={level:state.level,modes:[...modes],total:state.groups.reduce((s,g)=>s+g.questions.length,0)};render();$("status").textContent=`已產生 ${state.paper.total} 題，逐題驗證完成${skipped.length?`；數型不適用而略過：${skipped.join("、")}`:""}。`}
-function render(){const out=$("output");out.innerHTML="";if(!state.paper||!state.groups.length){out.innerHTML='<div class="empty"><b>尚未產生練習卷</b>請選擇數型與單元後按「重新出題」。</div>';return}const teacher=$("version").value==="teacher",cols=$("columns").value,work={small:"10mm",medium:"16mm",large:"26mm"}[$("space").value],sheet=document.createElement("div");sheet.className=`sheet ${teacher?"teacher":"student"}`;sheet.style.setProperty("--work",work);sheet.innerHTML=`<div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>${CFG.title} 計算力練習（${{basic:"基礎",advanced:"進階",challenge:"挑戰"}[state.paper.level]}）</h2><span>班級：______　姓名：__________　日期：___／___　作答時間：___分___秒</span></div><p class="tip">${CFG.instruction}</p>`;let no=1;state.groups.forEach(g=>{const sec=document.createElement("section");sec.innerHTML=`<div class="sec">${g.unit.name}</div><p class="tip">${g.unit.tip}</p><div class="grid c${cols}"></div>`;const grid=sec.querySelector(".grid");g.questions.forEach(q=>{const item=document.createElement("div");item.className="prob";item.innerHTML=`<div class="q"><span class="no">(${no++})</span><span class="expr">${q.expr}</span></div><div class="work">${CFG.answerLabel??"原式＝"}<span class="ans">${q.answer}</span></div>`;grid.appendChild(item)});sheet.appendChild(sec)});out.appendChild(sheet);fit()}
+function render(){const out=$("output");out.innerHTML="";if(!state.paper||!state.groups.length){out.innerHTML='<div class="empty"><b>尚未產生練習卷</b>請選擇數型與單元後按「重新出題」。</div>';return}const teacher=$("version").value==="teacher",cols=$("columns").value,work={small:"10mm",medium:"16mm",large:"26mm"}[$("space").value],sheet=document.createElement("div");sheet.className=`sheet ${teacher?"teacher":"student"}`;sheet.style.setProperty("--work",work);sheet.innerHTML=`<div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>${CFG.title} 計算力練習（${{basic:"基礎",advanced:"進階",challenge:"挑戰"}[state.paper.level]}）</h2><span>班級：______　姓名：__________　日期：___／___　作答時間：___分___秒</span></div><p class="tip">${CFG.instruction}</p>`;let no=1;state.groups.forEach(g=>{const sec=document.createElement("section");sec.innerHTML=`<div class="sec">${g.unit.name}</div><p class="tip">${g.unit.tip}</p><div class="grid c${cols}"></div>`;const grid=sec.querySelector(".grid");g.questions.forEach(q=>{const item=document.createElement("div");item.className="prob";item.innerHTML=`<div class="q"><span class="no">(${no++})</span><span class="expr">${q.expr}</span></div><div class="work">${g.unit.answerLabel??CFG.answerLabel??"原式＝"}<span class="ans">${q.answer}</span></div>`;grid.appendChild(item)});sheet.appendChild(sec)});out.appendChild(sheet);fit()}
 function fit(){if(matchMedia("print").matches)return;const sheet=document.querySelector(".sheet");if(sheet)sheet.style.zoom=Math.min(1,Math.max(.42,(innerWidth-16)/794))}
 build();document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.level)));document.querySelectorAll("[data-mode],#mixedNumber").forEach(c=>c.addEventListener("change",markChanged));document.querySelectorAll("[data-each]").forEach(b=>b.addEventListener("click",()=>setEach(Number(b.dataset.each))));$("generate").addEventListener("click",generate);$("print").addEventListener("click",()=>state.paper&&print());["version","columns","space"].forEach(id=>$(id).addEventListener("change",render));addEventListener("resize",fit);addEventListener("beforeprint",()=>{const s=document.querySelector(".sheet");if(s)s.style.zoom=1});addEventListener("afterprint",fit);generate();
 })();

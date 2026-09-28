@@ -1,0 +1,234 @@
+[basic/combine/integer] 化簡：−2 − 4 − 7x ＋ 7x − 3x 2 ＋ x 2   ⇒ −2x 2 − 6
+[basic/combine/integer] 化簡：−2 − 7 ＋ 2x − 2x ＋ 4x 2 − 7x 2   ⇒ −3x 2 − 9
+[basic/combine/fraction] 化簡：−(5/4) ＋ (14/3) ＋ (14/3)x ＋ (19/3)x ＋ (9/4)x 2 ＋ (13/2)x 2 ＋ (1/2)x 3 ＋ (3/2)x 3   ⇒ 2x 3 ＋ (35/4)x 2 ＋ 11x ＋ (41/12)
+[basic/combine/fraction] 化簡：(3/2) − (4/3) − (33/5)x ＋ (4/3)x  ⇒ −(79/15)x ＋ (1/6)
+[basic/combine/decimal] 化簡：−6.3 − 0.9 ＋ 3.2x ＋ 4.1x ＋ 2.8x 2 − 1.4x 2   ⇒ 1.4x 2 ＋ 7.3x − 7.2
+[basic/combine/decimal] 化簡：−3.8 − 2.5 ＋ 4.7x − 4.5x  ⇒ 0.2x − 6.3
+[basic/addition/integer] 計算：(4x 2 ＋ 6) ＋ (−4x 2 − 4x ＋ 5) ＋ (3x)  ⇒ −x ＋ 11
+[basic/addition/integer] 計算：(7x 2 − 2x − 5) ＋ (−5x 2 ＋ 3x)  ⇒ 2x 2 ＋ x − 5
+[basic/addition/fraction] 計算：((27/4)x 2 ＋ (1/2)x ＋ (11/2)) ＋ (−(1/3)x 2 ＋ (20/3)x) ＋ (−(1/2)x)  ⇒ (77/12)x 2 ＋ (20/3)x ＋ (11/2)
+[basic/addition/fraction] 計算：(−(33/5)x 2 ＋ (18/5)x) ＋ ((13/2)x 2 ＋ (10/3)) ＋ ((13/2)x ＋ (3/4))  ⇒ −(1/10)x 2 ＋ (101/10)x ＋ (49/12)
+[basic/addition/decimal] 計算：(2.7x 2 ＋ 4.9x) ＋ (5.8x 2 ) ＋ (4.1x)  ⇒ 8.5x 2 ＋ 9x
+[basic/addition/decimal] 計算：(−3.5x ＋ 5.8) ＋ (2.6x − 6.5)  ⇒ −0.9x − 0.7
+[basic/subtraction/integer] 計算：(7x − 6) − (3x − 2)  ⇒ 4x − 4
+[basic/subtraction/integer] 計算：(−6x 2 − 3x − 2) − (2x 2 ＋ 6x − 6)  ⇒ −8x 2 − 9x ＋ 4
+[basic/subtraction/fraction] 計算：((11/2)x 2 ＋ (8/5)x) − (−(1/4)x 2 − (31/5)x − (19/3))  ⇒ (23/4)x 2 ＋ (39/5)x ＋ (19/3)
+[basic/subtraction/fraction] 計算：(−(8/3)x − (21/5)) − ((7/2)x ＋ (11/5))  ⇒ −(37/6)x − (32/5)
+[basic/subtraction/decimal] 計算：(2.2x 2 ＋ 1.2x ＋ 1.1) − (−0.8x 2 − 1.9x − 5.3) − (−1.4x − 0.4)  ⇒ 3x 2 ＋ 4.5x ＋ 6.8
+[basic/subtraction/decimal] 計算：(4.7x − 1.8) − (2.4x ＋ 5.7)  ⇒ 2.3x − 7.5
+[basic/nested/integer] 化簡：(−2x 2 ＋ 3x ＋ 1) − 2[−2x 2 − 2 − (−3x 2 − x ＋ 1)]  ⇒ −4x 2 ＋ x ＋ 7
+[basic/nested/integer] 化簡：x 2 − 3x ＋ 4 − [4x 2 − x − (4x ＋ 3 − (−x ＋ 2))]  ⇒ −3x 2 ＋ 3x ＋ 5
+[basic/nested/fraction] 化簡：−(1/2)x 2 ＋ (11/5)x − [−(9/5)x 2 − (−(11/3)x − (7/2) − ((9/5)x ＋ (11/4)))]  ⇒ (13/10)x 2 − (49/15)x − (25/4)
+[basic/nested/fraction] 化簡：(7/2)x 2 ＋ (5/4)x − [−(5/3)x 2 ＋ (7/2)x ＋ (4/3) − (−(7/3)x ＋ (8/5) − ((1/2)x ＋ (2/3)))]  ⇒ (31/6)x 2 − (61/12)x − (2/5)
+[basic/nested/decimal] 化簡：(−0.7x ＋ 4.4) − 1.7[3.8x ＋ 0.4 − (4.3x ＋ 0.9)]  ⇒ 0.15x ＋ 5.25
+[basic/nested/decimal] 化簡：−3.6x 2 ＋ 1.4 − [1.6x 2 − 2.6x ＋ 0.7 − (−0.6x − 1.1 − (−1.5x ＋ 1.9))]  ⇒ −5.2x 2 ＋ 3.5x − 2.3
+[basic/monoMultiply/integer] 計算：(3x 2 ) 2   ⇒ 9x 4 
+[basic/monoMultiply/integer] 計算：(x) 2   ⇒ x 2 
+[basic/monoMultiply/fraction] 計算：((11/4)x 3 ) 2   ⇒ (121/16)x 6 
+[basic/monoMultiply/fraction] 計算：((11/2)x)(−(10/3)x 3 )  ⇒ −(55/3)x 4 
+[basic/monoMultiply/decimal] 計算：(2.5x 4 ) 2   ⇒ 6.25x 8 
+[basic/monoMultiply/decimal] 計算：(−4.6x 2 )(−2.4x 2 )(−4.6)  ⇒ −50.784x 4 
+[basic/polyTimesMono/integer] 展開：(x 2 )(−5x 2 ＋ 5x − 5)  ⇒ −5x 4 ＋ 5x 3 − 5x 2 
+[basic/polyTimesMono/integer] 展開：−4(x 2 − x ＋ 6)  ⇒ −4x 2 ＋ 4x − 24
+[basic/polyTimesMono/fraction] 展開：((15/4)x 3 ＋ (19/4))(−(3/2)x 2 )  ⇒ −(45/8)x 5 − (57/8)x 2 
+[basic/polyTimesMono/fraction] 展開：−(7/3)((7/3)x 2 − (2/5)x)  ⇒ −(49/9)x 2 ＋ (14/15)x
+[basic/polyTimesMono/decimal] 展開：(2.4x 3 ＋ 3.4x 2 − 5.3x ＋ 3.2)(−0.6x 3 )  ⇒ −1.44x 6 − 2.04x 5 ＋ 3.18x 4 − 1.92x 3 
+[basic/polyTimesMono/decimal] 展開：(1.2x 3 ＋ 2.6x ＋ 4.3)(2.4x 2 )  ⇒ 2.88x 5 ＋ 6.24x 3 ＋ 10.32x 2 
+[basic/binomialMultiply/integer] 展開：(−x ＋ 1)(−x − 5)  ⇒ x 2 ＋ 4x − 5
+[basic/binomialMultiply/integer] 展開：(−4x ＋ 6)(5x − 2)  ⇒ −20x 2 ＋ 38x − 12
+[basic/binomialMultiply/fraction] 展開：(−(3/2)x − (17/3))(−(8/5)x − (28/5))  ⇒ (12/5)x 2 ＋ (262/15)x ＋ (476/15)
+[basic/binomialMultiply/fraction] 展開：(x ＋ (1/2))(x − (17/2))  ⇒ x 2 − 8x − (17/4)
+[basic/binomialMultiply/decimal] 展開：(x − 7.1)(x ＋ 1.1)  ⇒ x 2 − 6x − 7.81
+[basic/binomialMultiply/decimal] 展開：1.8(−5.6x − 3.1)(4.2x ＋ 2.5)  ⇒ −42.336x 2 − 48.636x − 13.95
+[basic/polyMultiply/integer] 展開：(4x 2 ＋ 5)(−x 2 − 1)  ⇒ −4x 4 − 9x 2 − 5
+[basic/polyMultiply/integer] 展開：(−3x 2 − 3x ＋ 5)(−4x ＋ 4)  ⇒ 12x 3 − 32x ＋ 20
+[basic/polyMultiply/fraction] 展開：(−(21/5)x 2 ＋ (4/3))(−(7/3)x 2 ＋ (1/4))  ⇒ (49/5)x 4 − (749/180)x 2 ＋ (1/3)
+[basic/polyMultiply/fraction] 展開：(−(9/2)x ＋ (1/3))((11/5)x 2 − (4/5)x ＋ (14/3))  ⇒ −(99/10)x 3 ＋ (13/3)x 2 − (319/15)x ＋ (14/9)
+[basic/polyMultiply/decimal] 展開：(0.3x 2 ＋ 2.1)(3.3x 2 ＋ 2.9)  ⇒ 0.99x 4 ＋ 7.8x 2 ＋ 6.09
+[basic/polyMultiply/decimal] 展開：(2.9x ＋ 3.4)(−4.5x 2 ＋ 0.3x ＋ 3.7)  ⇒ −13.05x 3 − 14.43x 2 ＋ 11.75x ＋ 12.58
+[basic/monoDivide/integer] 計算：(−18x 4 ) ÷ (−2x 2 )  ⇒ 9x 2 
+[basic/monoDivide/integer] 計算：(−6x 6 ) ÷ (2x 2 )  ⇒ −3x 4 
+[basic/monoDivide/fraction] 計算：(−(2/3)x 3 ) ÷ ((8/3)x) ÷ ((1/2)x)  ⇒ −(1/2)x
+[basic/monoDivide/fraction] 計算：(−(176/3)x 6 ) ÷ ((20/3)x 2 )  ⇒ −(44/5)x 4 
+[basic/monoDivide/decimal] 計算：(14.88x 7 ) ÷ (3.1x 4 )  ⇒ 4.8x 3 
+[basic/monoDivide/decimal] 計算：(−1.36x 4 ) ÷ (0.8x 3 )  ⇒ −1.7x
+[basic/polyDivideMono/integer] 求商與餘式：(−8x 4 − 2x 3 − 10x 2 ) ÷ (−2x 2 )  ⇒ 商：4x 2 ＋ x ＋ 5；餘式：0
+[basic/polyDivideMono/integer] 求商與餘式：(4x 4 − 2x 3 − x 2 ) ÷ (−x 2 )  ⇒ 商：−4x 2 ＋ 2x ＋ 1；餘式：0
+[basic/polyDivideMono/fraction] 求商與餘式：(−(7/2)x 2 ＋ (15/4)x ＋ (39/8)) ÷ (3/2)  ⇒ 商：−(7/3)x 2 ＋ (5/2)x ＋ (13/4)；餘式：0
+[basic/polyDivideMono/fraction] 求商與餘式：(−(2/3)x 2 − (11/6)x ＋ (4/3)) ÷ (1/2)  ⇒ 商：−(4/3)x 2 − (11/3)x ＋ (8/3)；餘式：0
+[basic/polyDivideMono/decimal] 求商與餘式：(1.9x 2 ＋ 0.1x − 1.3) ÷ 0.5  ⇒ 商：3.8x 2 ＋ 0.2x − 2.6；餘式：0
+[basic/polyDivideMono/decimal] 求商與餘式：(11.44x 3 ＋ 18.92x 2 − 12.76x) ÷ (4.4x)  ⇒ 商：2.6x 2 ＋ 4.3x − 2.9；餘式：0
+[basic/longDivision/integer] 求商與餘式：(3x 3 − 10x 2 ＋ 9x ＋ 2) ÷ (3x − 1)  ⇒ 商：x 2 − 3x ＋ 2；餘式：4
+[basic/longDivision/integer] 求商與餘式：(8x 3 − 10x 2 − 4x ＋ 2) ÷ (−4x − 3)  ⇒ 商：−2x 2 ＋ 4x − 2；餘式：−4
+[basic/longDivision/fraction] 求商與餘式：((77/12)x 3 − (167/36)x 2 − (455/36)x ＋ (61/6)) ÷ ((7/3)x − (11/3))  ⇒ 商：(11/4)x 2 ＋ (7/3)x − (7/4)；餘式：(15/4)
+[basic/longDivision/fraction] 求商與餘式：((35/6)x 3 − (25/12)x 2 ＋ (45/8)x − (75/8)) ÷ (−(5/2)x ＋ (5/2))  ⇒ 商：−(7/3)x 2 − (3/2)x − (15/4)；餘式：0
+[basic/longDivision/decimal] 求商與餘式：(3.7x 3 ＋ 13.31x 2 − 15.28x − 19.83) ÷ (x ＋ 4.3)  ⇒ 商：3.7x 2 − 2.6x − 4.1；餘式：−2.2
+[basic/longDivision/decimal] 求商與餘式：(−0.85x 3 − 6.54x 2 − 4.06x − 0.65) ÷ (−1.7x − 0.5)  ⇒ 商：0.5x 2 ＋ 3.7x ＋ 1.3；餘式：0
+[basic/definedOps/integer]  設 A＝3x 2 ＋ 4x − 3，B＝2x 2 ＋ 3x ＋ 2 求 3A − 2B。  ⇒ 5x 2 ＋ 6x − 13
+[basic/definedOps/integer]  設 A＝3x 2 ＋ 4x，B＝−4x 2 − x − 4 求 2A − 2B。  ⇒ 14x 2 ＋ 10x ＋ 8
+[basic/definedOps/fraction]  設 A＝−(7/5)x 2 − (15/4)，B＝(7/2)x 2 − (7/5)x 求 3A − 1B。  ⇒ −(77/10)x 2 ＋ (7/5)x − (45/4)
+[basic/definedOps/fraction]  設 A＝(5/2)x 2 ＋ (3/4)x ＋ (3/2)，B＝−(1/5)x 2 − (11/5)x − (12/5)，C＝−(8/5)x 2 − (2/5)x ＋ (7/2) 求 4A − 1B ＋ 1C。  ⇒ (43/5)x 2 ＋ (24/5)x ＋ (119/10)
+[basic/definedOps/decimal]  設 A＝−2.1x 2 ＋ 3.6x ＋ 0.8，B＝1.3x 2 ＋ 2.6x − 1.5 求 3A − 1B。  ⇒ −7.6x 2 ＋ 8.2x ＋ 3.9
+[basic/definedOps/decimal]  設 A＝3.3x 2 ＋ 1.5x ＋ 0.6，B＝3.6x 2 ＋ 0.1 求 2A − 2B。  ⇒ −0.6x 2 ＋ 3x ＋ 1
+[basic/mixedOps/integer] 化簡：(−3x ＋ 3) 2 − (5x − 1)(4x − 5)  ⇒ −11x 2 ＋ 11x ＋ 4
+[basic/mixedOps/integer] 化簡：(4x ＋ 3)(−x ＋ 3) ＋ (4x − 1)(5x − 4)  ⇒ 16x 2 − 12x ＋ 13
+[basic/mixedOps/fraction] 化簡：(−(17/4)x − (3/4)) 2 − ((9/2)x ＋ (8/3))(−(13/4)x ＋ (8/3))  ⇒ (523/16)x 2 ＋ (73/24)x − (943/144)
+[basic/mixedOps/fraction] 化簡：(−(10/3)x ＋ (8/3))(−(12/5)x − (1/2)) − (−(17/4)x 2 ＋ (8/3)x ＋ (5/2))  ⇒ (49/4)x 2 − (37/5)x − (23/6)
+[basic/mixedOps/decimal] 化簡：(4.5x ＋ 2.4)(−4.5x ＋ 4.4) ＋ (−0.4x ＋ 0.5)(3.2x ＋ 1.5)  ⇒ −21.53x 2 ＋ 10x ＋ 11.31
+[basic/mixedOps/decimal] 化簡：(−4.3x ＋ 2.8)(2.6x − 1.2) ＋ (−1.2x ＋ 3.6)(2.9x − 2.1)  ⇒ −14.66x 2 ＋ 25.4x − 10.92
+[advanced/combine/integer] 化簡 3 − 6 ＋ 4x ＋ 3x − 7x 2 − 5x 2 − 6x 3 ＋ 7x 3 ，並寫出它的次數與常數項。  ⇒ x 3 − 12x 2 ＋ 7x − 3；次數 3，常數項 −3
+[advanced/combine/integer] 化簡：3 ＋ 1 ＋ 5x − 6x ＋ 7x 2 − 2x 2 ＋ 6x 3 − 6x 3   ⇒ 5x 2 − x ＋ 4
+[advanced/combine/fraction] 化簡：−(3/2) ＋ (11/2) ＋ (29/5)x − (7/2)x ＋ (18/5)x 2 ＋ (27/4)x 2   ⇒ (207/20)x 2 ＋ (23/10)x ＋ 4
+[advanced/combine/fraction] 化簡：(14/3) − (7/4) − (14/3)x − (7/2)x − (5/3)x 2 − (9/2)x 2   ⇒ −(37/6)x 2 − (49/6)x ＋ (35/12)
+[advanced/combine/decimal] 化簡 6.5 ＋ 3.1 ＋ 1.3x ＋ 5.2x − 0.4x 2 ＋ 1.3x 2 ＋ 0.8x 3 ＋ 2.1x 3 ，並寫出它的次數與常數項。  ⇒ 2.9x 3 ＋ 0.9x 2 ＋ 6.5x ＋ 9.6；次數 3，常數項 9.6
+[advanced/combine/decimal] 化簡 3.9 − 2.3 ＋ 0.5x ＋ 1.3x ＋ 0.4x 2 − 4.4x 2 ＋ 2.9x 3 ＋ 5.3x 3 ，並寫出它的次數與常數項。  ⇒ 8.2x 3 − 4x 2 ＋ 1.8x ＋ 1.6；次數 3，常數項 1.6
+[advanced/addition/integer] 計算：(2x 3 ＋ 7x 2 ) ＋ (x 2 − 3x)  ⇒ 2x 3 ＋ 8x 2 − 3x
+[advanced/addition/integer] 計算：(−4x 3 − x 2 ＋ 7) ＋ (6x 2 ＋ 2)  ⇒ −4x 3 ＋ 5x 2 ＋ 9
+[advanced/addition/fraction] 計算：((32/5)x 2 − (16/3)x − (2/5)) ＋ ((7/2)x 2 ＋ (11/4)x)  ⇒ (99/10)x 2 − (31/12)x − (2/5)
+[advanced/addition/fraction] 計算：(−(7/2)x 3 ) ＋ ((5/2)x 2 − (26/5)x − (9/5))  ⇒ −(7/2)x 3 ＋ (5/2)x 2 − (26/5)x − (9/5)
+[advanced/addition/decimal] 計算：(−4.4x 2 − 3.2x − 3.9) ＋ (−2.9x 2 − 4.7x − 1.7) ＋ (−5.9x − 2.8)  ⇒ −7.3x 2 − 13.8x − 8.4
+[advanced/addition/decimal] 計算：(−2.6x 3 ＋ 6.1x 2 ＋ 2.9x) ＋ (−4.5x 2 ＋ 3.4x)  ⇒ −2.6x 3 ＋ 1.6x 2 ＋ 6.3x
+[advanced/subtraction/integer] 計算：(6x 2 ＋ 4x − 1) − [4x 2 − 2x − 3 − (−6x 2 − 5x − 5)]  ⇒ −4x 2 ＋ x − 3
+[advanced/subtraction/integer] 計算：(5x 2 − 4x) − [−5x 2 − 3x − (−7x 2 − 5x − 4)]  ⇒ 3x 2 − 6x − 4
+[advanced/subtraction/fraction] 計算：(−(20/3)x 2 ＋ (3/2)) − (−(9/2)x 2 ) − ((23/4)x)  ⇒ −(13/6)x 2 − (23/4)x ＋ (3/2)
+[advanced/subtraction/fraction] 計算：((34/5)x 2 − (34/5)x) − ((7/3)x 2 ＋ (21/4)x − (12/5)) − ((1/2)x ＋ (32/5))  ⇒ (67/15)x 2 − (251/20)x − 4
+[advanced/subtraction/decimal] 計算：(−5.4x 2 ＋ 2.9) − (2.4x 2 − 0.3x ＋ 5.6) − (−5.4x ＋ 2.7)  ⇒ −7.8x 2 ＋ 5.7x − 5.4
+[advanced/subtraction/decimal] 計算：(3.3x 2 − 6.3x − 3.8) − (−3.4x 2 ) − (3.1x − 4.8)  ⇒ 6.7x 2 − 9.4x ＋ 1
+[advanced/nested/integer] 化簡：2(5x 2 ＋ 5x − 2) − 3[−4x 2 − 4x ＋ 4 − 2(x 2 ＋ 3x − 4)]  ⇒ 28x 2 ＋ 40x − 40
+[advanced/nested/integer] 化簡：(5x 2 − 2x ＋ 2) − 1[−5x 2 − x − 4 − (2x 2 ＋ 4x − 1)]  ⇒ 12x 2 ＋ 3x ＋ 5
+[advanced/nested/fraction] 化簡：(3/4)x 2 ＋ (1/2)x − (17/5) − [(13/3)x 2 − (4/3)x − (−(3/2)x ＋ (18/5) − ((14/5)x − (8/3)))]  ⇒ −(43/12)x 2 − (37/15)x ＋ (43/15)
+[advanced/nested/fraction] 化簡：(1/2)x 2 − (14/3)x − (17/4) − [(19/4)x 2 − (15/4)x − (11/3) − ((5/2)x ＋ (1/3) − (−(15/4)x − (1/2)))]  ⇒ −(17/4)x 2 ＋ (16/3)x ＋ (1/4)
+[advanced/nested/decimal] 化簡：2.2(2.8x 2 ) − 2.4[1.7x 2 − 2.6(0.3x 2 ＋ 0.4)]  ⇒ 3.952x 2 ＋ 2.496
+[advanced/nested/decimal] 化簡：(−2.3x 2 ＋ 3.7x − 0.9) − 2.5[0.7x 2 ＋ 0.6x − (−2.2x 2 ＋ 1.9x − 3.7)]  ⇒ −9.55x 2 ＋ 6.95x − 10.15
+[advanced/monoMultiply/integer] 計算：(5x 2 ) 2 (x 2 )  ⇒ 25x 6 
+[advanced/monoMultiply/integer] 計算：(3x 3 ) 2   ⇒ 9x 6 
+[advanced/monoMultiply/fraction] 計算：((7/5)x 2 ) 2 ((13/4)x 3 )  ⇒ (637/100)x 7 
+[advanced/monoMultiply/fraction] 計算：(−(23/5)x 3 ) 2 ((1/3)x 2 )  ⇒ (529/75)x 8 
+[advanced/monoMultiply/decimal] 計算：(5.6x 3 ) 2   ⇒ 31.36x 6 
+[advanced/monoMultiply/decimal] 計算：(−4.2x 2 ) 2   ⇒ 17.64x 4 
+[advanced/polyTimesMono/integer] 化簡：(2x)(x 2 ＋ 5x − 2) − (4x)(4x 2 ＋ 4x)  ⇒ −14x 3 − 6x 2 − 4x
+[advanced/polyTimesMono/integer] 展開：(2x 2 )(x 2 ＋ 5x ＋ 2)  ⇒ 2x 4 ＋ 10x 3 ＋ 4x 2 
+[advanced/polyTimesMono/fraction] 展開：((7/2)x 3 − (11/2)x 2 − (23/5)x − (5/4))((3/2)x)  ⇒ (21/4)x 4 − (33/4)x 3 − (69/10)x 2 − (15/8)x
+[advanced/polyTimesMono/fraction] 化簡：(−(3/2)x 2 )((13/4)x 2 − (11/3)) − ((7/2)x 2 )((1/4)x 2 ＋ (13/3)x)  ⇒ −(23/4)x 4 − (91/6)x 3 ＋ (11/2)x 2 
+[advanced/polyTimesMono/decimal] 展開：(−5.1x 3 ＋ 4.4x 2 − 5.6x ＋ 4.9)(−3.1x)  ⇒ 15.81x 4 − 13.64x 3 ＋ 17.36x 2 − 15.19x
+[advanced/polyTimesMono/decimal] 化簡：(3.4x 2 )(2.1x 2 ＋ 1.2) − (1.8x 2 )(1.6x 2 − 0.6x − 0.5)  ⇒ 4.26x 4 ＋ 1.08x 3 ＋ 4.98x 2 
+[advanced/binomialMultiply/integer] 展開：(x ＋ 6)(2x − 7)  ⇒ 2x 2 ＋ 5x − 42
+[advanced/binomialMultiply/integer] 展開：(x ＋ 5)(−3x − 3)  ⇒ −3x 2 − 18x − 15
+[advanced/binomialMultiply/fraction] 展開：(5/3)((14/3)x − (13/5))(−(8/5)x ＋ (18/5))  ⇒ −(112/9)x 2 ＋ (524/15)x − (78/5)
+[advanced/binomialMultiply/fraction] 展開：(7/2)((9/2)x ＋ (8/3))(−(8/3)x ＋ (1/3))  ⇒ −42x 2 − (707/36)x ＋ (28/9)
+[advanced/binomialMultiply/decimal] 展開：−1.2(0.3x ＋ 6.7)(−4.1x ＋ 3.4)  ⇒ 1.476x 2 ＋ 31.74x − 27.336
+[advanced/binomialMultiply/decimal] 展開：1.2(1.1x − 5.4)(−5.8x ＋ 6.9)  ⇒ −7.656x 2 ＋ 46.692x − 44.712
+[advanced/polyMultiply/integer] 展開：(−2x 2 − 2)(2x 2 − 4)  ⇒ −4x 4 ＋ 4x 2 ＋ 8
+[advanced/polyMultiply/integer] 展開：(−2x 2 ＋ 2x − 4)(−2x 2 − 3x − 1)  ⇒ 4x 4 ＋ 2x 3 ＋ 4x 2 ＋ 10x ＋ 4
+[advanced/polyMultiply/fraction] 展開：(−(13/3)x 2 − (22/5))((13/3)x 2 ＋ (4/5))  ⇒ −(169/9)x 4 − (338/15)x 2 − (88/25)
+[advanced/polyMultiply/fraction] 展開：((9/2)x 2 ＋ (11/4))((16/5)x 2 − (7/3))  ⇒ (72/5)x 4 − (17/10)x 2 − (77/12)
+[advanced/polyMultiply/decimal] 展開：(−0.5x 2 ＋ 3.1)(1.6x 2 − 2.5x)  ⇒ −0.8x 4 ＋ 1.25x 3 ＋ 4.96x 2 − 7.75x
+[advanced/polyMultiply/decimal] 展開：(4.4x 2 − 3.8)(4.5x 2 − 2.2)  ⇒ 19.8x 4 − 26.78x 2 ＋ 8.36
+[advanced/monoDivide/integer] 計算：(−4x 6 ) ÷ (−x 2 ) ÷ (2x)  ⇒ 2x 3 
+[advanced/monoDivide/integer] 計算：(−2x 5 ) ÷ (x 2 ) ÷ (x)  ⇒ −2x 2 
+[advanced/monoDivide/fraction] 計算：((21/5)x 2 )((5/2)x 3 ) ÷ (−(3/5)x)  ⇒ −(35/2)x 4 
+[advanced/monoDivide/fraction] 計算：(−(39/16)x 5 ) ÷ (−(1/3)x 2 ) ÷ (−(9/4)x 2 )  ⇒ −(13/4)x
+[advanced/monoDivide/decimal] 計算：(13.728x 6 ) ÷ (1.3x) ÷ (2.4x 2 )  ⇒ 4.4x 3 
+[advanced/monoDivide/decimal] 計算：(4.05x 7 ) ÷ (0.5x 4 )  ⇒ 8.1x 3 
+[advanced/polyDivideMono/integer] 求商與餘式：(−20x 3 ＋ 20x 2 ＋ 8x) ÷ (−4x)  ⇒ 商：5x 2 − 5x − 2；餘式：0
+[advanced/polyDivideMono/integer] 求商與餘式：(9x 5 − 12x 4 ＋ 9x 3 ＋ 9x 2 ＋ 3x ＋ 2) ÷ (3x 2 )  ⇒ 商：3x 3 − 4x 2 ＋ 3x ＋ 3；餘式：3x ＋ 2
+[advanced/polyDivideMono/fraction] 求商與餘式：((7/3)x 3 ＋ (56/5)x 2 − (14/5)x) ÷ (−(14/3)x)  ⇒ 商：−(1/2)x 2 − (12/5)x ＋ (3/5)；餘式：0
+[advanced/polyDivideMono/fraction] 求商與餘式：(6x 3 ＋ (189/10)x 2 − (117/10)x) ÷ (−(9/2)x)  ⇒ 商：−(4/3)x 2 − (21/5)x ＋ (13/5)；餘式：0
+[advanced/polyDivideMono/decimal] 求商與餘式：(−8.64x 3 ＋ 3.24x 2 ＋ 5.58x) ÷ (−1.8x)  ⇒ 商：4.8x 2 − 1.8x − 3.1；餘式：0
+[advanced/polyDivideMono/decimal] 求商與餘式：(−8.25x 3 ＋ 10.89x 2 ＋ 1.32x) ÷ (−3.3x)  ⇒ 商：2.5x 2 − 3.3x − 0.4；餘式：0
+[advanced/longDivision/integer] 求商與餘式：(3x 3 ＋ 2x 2 − 3x − 1) ÷ (x − 1)  ⇒ 商：3x 2 ＋ 5x ＋ 2；餘式：1
+[advanced/longDivision/integer] 求商與餘式：(−2x 3 ＋ 9x 2 − 12x ＋ 11) ÷ (x − 3)  ⇒ 商：−2x 2 ＋ 3x − 3；餘式：2
+[advanced/longDivision/fraction] 求商與餘式：((17/5)x 3 ＋ (136/15)x 2 ＋ (8/3)x ＋ (83/18)) ÷ (x ＋ (8/3))  ⇒ 商：(17/5)x 2 ＋ (8/3)；餘式：−(5/2)
+[advanced/longDivision/fraction] 求商與餘式：(−x 3 − (121/24)x 2 − (437/72)x − (3/2)) ÷ (−(2/3)x − (9/4))  ⇒ 商：(3/2)x 2 ＋ (5/2)x ＋ (2/3)；餘式：0
+[advanced/longDivision/decimal] 求商與餘式：(−1.3x 3 ＋ 0.21x 2 ＋ 11.61x − 4.59) ÷ (x − 2.7)  ⇒ 商：−1.3x 2 − 3.3x ＋ 2.7；餘式：2.7
+[advanced/longDivision/decimal] 求商與餘式：(12.25x 3 ＋ 4.9x 2 ＋ 9.93x ＋ 7.54) ÷ (3.5x ＋ 1.3)  ⇒ 商：3.5x 2 ＋ 0.1x ＋ 2.8；餘式：3.9
+[advanced/definedOps/integer]  設 A＝4x 2 − 4x ＋ 2，B＝2x 2 ＋ x − 2 求 3A − 3B。  ⇒ 6x 2 − 15x ＋ 12
+[advanced/definedOps/integer]  設 A＝x 2 − x，B＝−2x 2 − 3x − 3 求 4A − 2B。  ⇒ 8x 2 ＋ 2x ＋ 6
+[advanced/definedOps/fraction]  設 A＝(5/2)x 2 − (2/5)x ＋ (19/5)，B＝(3/2)x 2 ＋ (9/5)x ＋ (17/5)，C＝−(17/5)x 2 − (10/3)x − (7/2) 求 2A − 3B ＋ 2C。  ⇒ −(63/10)x 2 − (193/15)x − (48/5)
+[advanced/definedOps/fraction]  設 A＝−(4/5)x 2 ＋ (7/4)x − (16/5)，B＝(1/3)x 2 ＋ (1/2)x 求 4A − 2B。  ⇒ −(58/15)x 2 ＋ 6x − (64/5)
+[advanced/definedOps/decimal]  設 A＝1.1x 2 − 3.2x，B＝0.5x 2 − 0.4x − 1.3 求 4A − 3B。  ⇒ 2.9x 2 − 11.6x ＋ 3.9
+[advanced/definedOps/decimal]  設 A＝1.3x 2 ＋ 3.2x ＋ 2.9，B＝−0.2x 2 − 0.9x ＋ 2.1，C＝−3.5x 2 − 2.4x 求 2A − 3B ＋ 2C。  ⇒ −3.8x 2 ＋ 4.3x − 0.5
+[advanced/mixedOps/integer] 化簡：(4x 3 ＋ 8x 2 ＋ 4x) ÷ (2x) ＋ (−4x 2 − 4x − 4)  ⇒ −2x 2 − 2
+[advanced/mixedOps/integer] 化簡：(8x 3 ＋ 6x 2 − 6x) ÷ (2x) ＋ (−x 2 − 1)  ⇒ 3x 2 ＋ 3x − 4
+[advanced/mixedOps/fraction] 化簡：(−(5/2)x − (9/4))((3/2)x − (4/5)) ＋ ((1/2)x ＋ (13/5))((17/4)x ＋ (5/3))  ⇒ −(13/8)x 2 ＋ (1261/120)x ＋ (92/15)
+[advanced/mixedOps/fraction] 化簡：((5/4)x 3 − (5/8)x 2 − (5/4)x) ÷ (−(1/2)x) ＋ (−(7/2)x 2 ＋ (11/4)x)  ⇒ −6x 2 ＋ 4x ＋ (5/2)
+[advanced/mixedOps/decimal] 化簡：(1.2x − 0.2)(0.4x ＋ 3.9) ＋ (0.2x ＋ 1.4)(4.9x − 3.5)  ⇒ 1.46x 2 ＋ 10.76x − 5.68
+[advanced/mixedOps/decimal] 化簡：(3.7x ＋ 0.3) 2 − (1.4x − 2.8)(−4.1x − 1.2)  ⇒ 19.43x 2 − 7.58x − 3.27
+[challenge/combine/integer] 化簡 1 − 5 ＋ x ＋ 2x ＋ x 2 ＋ x 2 ，再求 x＝−3 時的值。  ⇒ 2x 2 ＋ 3x − 4；值為 5
+[challenge/combine/integer] 化簡 5 ＋ 6 − 2x ＋ 3x ＋ 2x 2 − x 2 ＋ x 3 − 2x 3 ，並寫出它的次數與常數項。  ⇒ −x 3 ＋ x 2 ＋ x ＋ 11；次數 3，常數項 11
+[challenge/combine/fraction] 化簡 −(13/2) ＋ (20/3) ＋ (1/4)x ＋ (16/3)x − (31/5)x 2 ＋ (20/3)x 2 ，再求 x＝−1 時的值。  ⇒ (7/15)x 2 ＋ (67/12)x ＋ (1/6)；值為 −(99/20)
+[challenge/combine/fraction] 化簡：(11/4) ＋ (17/4) ＋ (10/3)x ＋ (7/3)x ＋ (23/4)x 2 ＋ (12/5)x 2 − (26/5)x 3 ＋ (5/3)x 3   ⇒ −(53/15)x 3 ＋ (163/20)x 2 ＋ (17/3)x ＋ 7
+[challenge/combine/decimal] 化簡 −5.9 − 5.2 ＋ 0.5x − 4.9x − 0.3x 2 ＋ 4.6x 2 − 3.6x 3 − 1.5x 3 ，並寫出它的次數與常數項。  ⇒ −5.1x 3 ＋ 4.3x 2 − 4.4x − 11.1；次數 3，常數項 −11.1
+[challenge/combine/decimal] 化簡：3.1 ＋ 6.7 − 4.3x − 3.6x − 2.6x 2 ＋ 6.7x 2 ＋ 4.9x 3 ＋ 6.7x 3   ⇒ 11.6x 3 ＋ 4.1x 2 − 7.9x ＋ 9.8
+[challenge/addition/integer] 計算：(−6x 3 ＋ 4x 2 − 7x ＋ 5) ＋ (2x 2 ＋ 4)  ⇒ −6x 3 ＋ 6x 2 − 7x ＋ 9
+[challenge/addition/integer] 計算：(3x 2 ＋ x − 3) ＋ (x 2 ＋ 2x − 4) ＋ (−2x)  ⇒ 4x 2 ＋ x − 7
+[challenge/addition/fraction] 計算：(−(3/2)x 3 − (10/3)x) ＋ ((12/5)x 2 − (32/5)x ＋ (21/4))  ⇒ −(3/2)x 3 ＋ (12/5)x 2 − (146/15)x ＋ (21/4)
+[challenge/addition/fraction] 計算：(−(7/3)x 2 − (7/2)) ＋ ((13/4)x 2 ＋ (9/2)x) ＋ (−(17/4)x)  ⇒ (11/12)x 2 ＋ (1/4)x − (7/2)
+[challenge/addition/decimal] 若 (−4.5x 2 − 3.7x − 0.2) ＋（ ）＝ −7.2x 2 − 7.3x − 0.2，求括號內的多項式。  ⇒ −2.7x 2 − 3.6x
+[challenge/addition/decimal] 若 (0.9x 2 ＋ 2.9x − 0.8) ＋（ ）＝ −5.6x 2 ＋ 9.1x − 1.4，求括號內的多項式。  ⇒ −6.5x 2 ＋ 6.2x − 0.6
+[challenge/subtraction/integer] 某多項式減去 (5x 2 − 5x ＋ 4) 得 −4x 2 − 6x，求此多項式。  ⇒ x 2 − 11x ＋ 4
+[challenge/subtraction/integer] 計算：(−7x 2 ＋ 6x ＋ 2) − (6x 2 − 3x) − (−2x)  ⇒ −13x 2 ＋ 11x ＋ 2
+[challenge/subtraction/fraction] 計算：(−(26/5)x 2 ＋ (7/2)x − (5/4)) − (−(1/5)x 2 ＋ (1/5)x) − (−(5/3)x − (33/5))  ⇒ −5x 2 ＋ (149/30)x ＋ (107/20)
+[challenge/subtraction/fraction] 計算：(−(3/2)x 2 ＋ (13/3)x ＋ (28/5)) − [(8/5)x 2 ＋ (14/5)x ＋ (9/2) − (−(3/2)x 2 ＋ (23/4)x − (5/2))]  ⇒ −(23/5)x 2 ＋ (437/60)x − (7/5)
+[challenge/subtraction/decimal] 某多項式減去 (−6.2x 2 ＋ 5.8) 得 3.6x 2 − 6.8x，求此多項式。  ⇒ −2.6x 2 − 6.8x ＋ 5.8
+[challenge/subtraction/decimal] 計算：(−5.4x 2 − 5.8x ＋ 1.4) − (6.4x 2 − 0.4) − (0.3x ＋ 3.6)  ⇒ −11.8x 2 − 6.1x − 1.8
+[challenge/nested/integer] 化簡：4x 2 ＋ 3x ＋ 5 − [2x 2 ＋ 2x ＋ 1 − (4x − (−5x − 2))]  ⇒ 2x 2 ＋ 10x ＋ 6
+[challenge/nested/integer] 化簡：5x 2 − 5x ＋ 4 − [5x 2 − 1 − (−3x − 5 − (−x ＋ 1))]  ⇒ −7x − 1
+[challenge/nested/fraction] 化簡：(7/5){−(11/4)x 2 ＋ (17/4) − [−(5/3)x 2 ＋ (10/3)x − ((3/4)x ＋ (7/5) − ((2/5)x ＋ (11/3)))]}  ⇒ −(91/60)x 2 − (1253/300)x ＋ (833/300)
+[challenge/nested/fraction] 化簡：(8/5){−(13/4)x 2 ＋ (5/4)x − (19/5) − [(23/5)x 2 − (3/2)x − (8/3) − (−(3/5)x ＋ (5/2) − (−(3/4)x ＋ (7/3)))]}  ⇒ −(314/25)x 2 ＋ (116/25)x − (116/75)
+[challenge/nested/decimal] 化簡：2.9x 2 ＋ 2.4x − 4.6 − [−0.7x 2 − 1.8x − 2.5 − (0.1x − 0.5 − (1.3x ＋ 4.8))]  ⇒ 3.6x 2 ＋ 3x − 7.4
+[challenge/nested/decimal] 化簡：4.3x 2 ＋ 2.4x ＋ 1.9 − [−1.8x 2 ＋ 1.4x − 4.3 − (4.7x ＋ 3.6 − (−1.4x ＋ 2.8))]  ⇒ 6.1x 2 ＋ 7.1x ＋ 7
+[challenge/monoMultiply/integer] 計算：(−3x 2 ) 2 (3x)  ⇒ 27x 5 
+[challenge/monoMultiply/integer] 計算：(−4x 3 ) 3 × (−2x 2 )  ⇒ 128x 11 
+[challenge/monoMultiply/fraction] 計算：(−(7/2)x 3 ) 2 ((22/5)x 3 )  ⇒ (539/10)x 9 
+[challenge/monoMultiply/fraction] 計算：(−(11/5)x) 3 × ((9/2)x 2 )  ⇒ −(11979/250)x 5 
+[challenge/monoMultiply/decimal] 計算：(−4.6x 3 ) 2   ⇒ 21.16x 6 
+[challenge/monoMultiply/decimal] 計算：(−1.3x) 3 × (−1.8x)  ⇒ 3.9546x 4 
+[challenge/polyTimesMono/integer] 化簡：x(5x 2 − 2x ＋ 3) ＋ 3(2x 2 − x − 3)  ⇒ 5x 3 ＋ 4x 2 − 9
+[challenge/polyTimesMono/integer] 化簡：(−x)(4x 2 ＋ 4x − 4) − (5x 2 )(−x 2 − 5x ＋ 3)  ⇒ 5x 4 ＋ 21x 3 − 19x 2 ＋ 4x
+[challenge/polyTimesMono/fraction] 展開：((2/5)x 3 ＋ (3/2)x 2 ＋ (5/2))(−(11/4)x 3 )  ⇒ −(11/10)x 6 − (33/8)x 5 − (55/8)x 3 
+[challenge/polyTimesMono/fraction] 化簡：(−(5/3)x 2 )(−(11/3)x 2 − (1/3)x) − ((3/2)x 2 )((7/2)x 2 ＋ (2/5)x ＋ (11/3))  ⇒ (31/36)x 4 − (2/45)x 3 − (11/2)x 2 
+[challenge/polyTimesMono/decimal] 展開：(4.9x 3 ＋ 3.1x 2 ＋ 0.3x)(1.8x 3 )  ⇒ 8.82x 6 ＋ 5.58x 5 ＋ 0.54x 4 
+[challenge/polyTimesMono/decimal] 化簡：x(−0.6x 2 − 3.5) ＋ −2.8(1.3x 2 ＋ 1.4x)  ⇒ −0.6x 3 − 3.64x 2 − 7.42x
+[challenge/binomialMultiply/integer] 展開：(−4x ＋ 3)(2x − 3)(−4x − 3)  ⇒ 32x 3 − 48x 2 − 18x ＋ 27
+[challenge/binomialMultiply/integer] 展開：3(−x ＋ 6)(−6x ＋ 1)  ⇒ 18x 2 − 111x ＋ 18
+[challenge/binomialMultiply/fraction] 展開：(22/5)(−(17/4)x − (22/5))((4/3)x ＋ (4/3))  ⇒ −(374/15)x 2 − (3806/75)x − (1936/75)
+[challenge/binomialMultiply/fraction] 化簡：((26/5)x − (15/4))((7/2)x − (19/3)) ＋ −(16/3)x 2   ⇒ (193/15)x 2 − (5527/120)x ＋ (95/4)
+[challenge/binomialMultiply/decimal] 化簡：(4.2x − 3.2)(−1.5x ＋ 6.1) ＋ −3.7x 2   ⇒ −10x 2 ＋ 30.42x − 19.52
+[challenge/binomialMultiply/decimal] 展開：(3.5x − 0.8)(−0.9x − 1.3)(0.1x ＋ 0.1)  ⇒ −0.315x 3 − 0.698x 2 − 0.279x ＋ 0.104
+[challenge/polyMultiply/integer] 展開：(4x 2 ＋ 3x ＋ 4)(4x 2 ＋ x − 3)  ⇒ 16x 4 ＋ 16x 3 ＋ 7x 2 − 5x − 12
+[challenge/polyMultiply/integer] 展開：(−3x ＋ 4) 2 (3x − 3)  ⇒ 27x 3 − 99x 2 ＋ 120x − 48
+[challenge/polyMultiply/fraction] 展開：(−(9/4)x 2 − (5/2)x − (1/2))((7/2)x 2 ＋ (12/5)x ＋ (3/4))  ⇒ −(63/8)x 4 − (283/20)x 3 − (151/16)x 2 − (123/40)x − (3/8)
+[challenge/polyMultiply/fraction] 展開：((9/2)x 2 ＋ (7/2)x ＋ (13/3))((1/2)x ＋ (16/5))  ⇒ (9/4)x 3 ＋ (323/20)x 2 ＋ (401/30)x ＋ (208/15)
+[challenge/polyMultiply/decimal] 展開：(2.9x ＋ 2.6) 2 (3.5x ＋ 2.8)  ⇒ 29.435x 3 ＋ 76.328x 2 ＋ 65.884x ＋ 18.928
+[challenge/polyMultiply/decimal] 展開：(3.8x 2 − 1.7x ＋ 4.3)(−4.9x ＋ 1.3)  ⇒ −18.62x 3 ＋ 13.27x 2 − 23.28x ＋ 5.59
+[challenge/monoDivide/integer] 計算：(5x 2 )(x 2 ) ÷ (−2x 3 )  ⇒ −(5/2)x
+[challenge/monoDivide/integer] 計算：(24x 5 ) ÷ (−3x) ÷ (2x 2 )  ⇒ −4x 2 
+[challenge/monoDivide/fraction] 計算：((1/3)x 2 )((7/2)x 2 ) ÷ ((8/3)x 3 )  ⇒ (7/16)x
+[challenge/monoDivide/fraction] 計算：((14/5)x 2 ) 2 ÷ (−(18/5)x)  ⇒ −(98/45)x 3 
+[challenge/monoDivide/decimal] 計算：(−2.9x 3 )(1.3x 2 ) ÷ (2.6x 2 )  ⇒ −1.45x 3 
+[challenge/monoDivide/decimal] 計算：(4.2x 2 ) 2 ÷ (0.9x)  ⇒ 19.6x 3 
+[challenge/polyDivideMono/integer] 某多項式除以 2x 2 ，得到商式 3x 2 − 2、餘式 x − 4，求此多項式。  ⇒ 6x 4 − 4x 2 ＋ x − 4
+[challenge/polyDivideMono/integer] 求商與餘式：(9x 4 ) ÷ (3x 2 )  ⇒ 商：3x 2 ；餘式：0
+[challenge/polyDivideMono/fraction] 某多項式除以 (1/3)x 2 ，得到商式 −(1/5)x 2 ＋ (8/5)x ＋ (7/2)、餘式 (3/2)x − (1/2)，求此多項式。  ⇒ −(1/15)x 4 ＋ (8/15)x 3 ＋ (7/6)x 2 ＋ (3/2)x − (1/2)
+[challenge/polyDivideMono/fraction] 求商與餘式：((28/5)x 4 ＋ (161/10)x 2 ) ÷ ((7/2)x 2 )  ⇒ 商：(8/5)x 2 ＋ (23/5)；餘式：0
+[challenge/polyDivideMono/decimal] 某多項式除以 −2.2x 2 ，得到商式 1.2x 2 − 3.7x ＋ 2.3、餘式 −2.1x ＋ 1.5，求此多項式。  ⇒ −2.64x 4 ＋ 8.14x 3 − 5.06x 2 − 2.1x ＋ 1.5
+[challenge/polyDivideMono/decimal] 求商與餘式：(−2.94x 4 ＋ 0.42x 3 − 9.87x 2 ) ÷ (−2.1x 2 )  ⇒ 商：1.4x 2 − 0.2x ＋ 4.7；餘式：0
+[challenge/longDivision/integer] 求商與餘式：(−x 3 ＋ x 2 ＋ 2x − 3) ÷ (x ＋ 1)  ⇒ 商：−x 2 ＋ 2x；餘式：−3
+[challenge/longDivision/integer] 求商與餘式：(−4x 3 − 5x 2 ＋ 2x ＋ 6) ÷ (x ＋ 1)  ⇒ 商：−4x 2 − x ＋ 3；餘式：3
+[challenge/longDivision/fraction] 求商與餘式：((7/3)x 4 − (83/30)x 3 − (7/10)x 2 ＋ (12/5)x − (2/5)) ÷ (x 2 − (7/5)x)  ⇒ 商：(7/3)x 2 ＋ (1/2)x；餘式：(12/5)x − (2/5)
+[challenge/longDivision/fraction] 求商與餘式：((49/8)x 3 − (35/4)x 2 − (154/45)x ＋ (28/5)) ÷ (−(7/4)x ＋ (7/3))  ⇒ 商：−(7/2)x 2 ＋ (1/3)x ＋ (12/5)；餘式：0
+[challenge/longDivision/decimal] 求商與餘式：(−3.4x 4 − 8.32x 3 − 3.29x 2 ＋ 12.23x − 1.64) ÷ (x 2 ＋ 3.3x ＋ 3.9)  ⇒ 商：−3.4x 2 ＋ 2.9x ＋ 0.4；餘式：−0.4x − 3.2
+[challenge/longDivision/decimal] 求商與餘式：(−3.57x 3 ＋ 4.62x 2 ＋ 0.34x − 0.44) ÷ (1.7x − 2.2)  ⇒ 商：−2.1x 2 ＋ 0.2；餘式：0
+[challenge/definedOps/integer]  設 A＝x 2 − x ＋ 1，B＝−x 2 − x − 2，C＝−4x 2 ＋ 3x ＋ 1 求 4A − 1B ＋ 2C。  ⇒ −3x 2 ＋ 3x ＋ 8
+[challenge/definedOps/integer]  設 A＝−2x ＋ 2，B＝4x 2 ＋ x ＋ 2 求 AB。  ⇒ −8x 3 ＋ 6x 2 − 2x ＋ 4
+[challenge/definedOps/fraction]  設 A＝(16/5)x ＋ (5/3)，B＝−(6/5)x − (7/3)，C＝−(19/5)x 2 ＋ (3/4) 求 AB − C。  ⇒ −(1/25)x 2 − (142/15)x − (167/36)
+[challenge/definedOps/fraction]  設 A＝−(5/2)x ＋ (7/2)，B＝−(3/4)x 2 ＋ (11/5)x ＋ (7/3) 求 AB。  ⇒ (15/8)x 3 − (65/8)x 2 ＋ (28/15)x ＋ (49/6)
+[challenge/definedOps/decimal]  設 A＝−0.3x ＋ 0.3，B＝1.5x 2 − 3.7x ＋ 1.7 求 AB。  ⇒ −0.45x 3 ＋ 1.56x 2 − 1.62x ＋ 0.51
+[challenge/definedOps/decimal]  設 A＝−1.7x − 2.5，B＝3.4x − 0.3，C＝−3.5x 2 − 3.8x 求 AB − C。  ⇒ −2.28x 2 − 4.19x ＋ 0.75
+[challenge/mixedOps/integer] 化簡：(−x ＋ 2) 2 − (5x ＋ 2)(2x ＋ 5)  ⇒ −9x 2 − 33x − 6
+[challenge/mixedOps/integer] 化簡：(−6x 3 − 6x 2 ) ÷ (−2x) ＋ (−3x 2 ＋ 4x)  ⇒ 7x
+[challenge/mixedOps/fraction] 化簡：((8/3)x − (11/5))((8/3)x − (10/3)) − ((3/2)x 2 − (12/5)x) ÷ (x)  ⇒ (64/9)x 2 − (1463/90)x ＋ (146/15)
+[challenge/mixedOps/fraction] 化簡：((3/2)x ＋ (11/5))(−(2/3)x ＋ (9/4)) − ((3/4)x 2 ＋ (3/4)x − (35/6)) ÷ (x − (7/3))  ⇒ −x 2 ＋ (139/120)x ＋ (49/20)
+[challenge/mixedOps/decimal] 化簡：(−4.6x ＋ 1.9) 2 − (−3.5x − 4.9)(0.3x − 4.8)  ⇒ 22.21x 2 − 32.81x − 19.91
+[challenge/mixedOps/decimal] 化簡：(−13.65x 3 − 8.58x) ÷ (3.9x) ＋ (−1.9x 2 ＋ 3.3x − 2.1)  ⇒ −5.4x 2 ＋ 3.3x − 4.3
