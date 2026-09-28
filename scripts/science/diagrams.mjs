@@ -70,6 +70,31 @@ export function diagram(id,s,r){
  out+=`<circle data-lab-drag="progress" data-units-per-px="${100/285}" cx="${60+285*p}" cy="${75+170*p}" r="25" fill="transparent" stroke="#d97b11" stroke-width="2" stroke-dasharray="4 3" tabindex="0" role="button" aria-label="拖移小球比較坡道位置，或按左右方向鍵"/>`;
   out+=text(390,45,`總能量 ${num(r.total,2)} J`,18);break;
  }
+ case 'motion-graphs':{
+  // 上：x-t；下：v-t（共用時間軸）。面積依時間軸上下分色，折返時刻以紅色虛線貫穿兩圖。
+  const T=s.t,X0=78,X1=622,tx=u=>num(X0+(X1-X0)*u/T,1),xs=[],vs=[];
+  for(let i=0;i<=120;i++){const u=T*i/120;xs.push([u,s.v0*u+s.a*u*u/2]);vs.push([u,s.v0+s.a*u])}
+  const span=(arr,pad=1)=>{let lo=Math.min(0,...arr),hi=Math.max(0,...arr);if(hi-lo<pad){hi+=pad/2;lo-=pad/2}return [lo,hi]};
+  const [xlo,xhi]=span(xs.map(p=>p[1])),[vlo,vhi]=span(vs.map(p=>p[1]));
+  const top=[46,166],bot=[226,346],yX=v=>num(top[1]-(top[1]-top[0])*(v-xlo)/(xhi-xlo),1),yV=v=>num(bot[1]-(bot[1]-bot[0])*(v-vlo)/(vhi-vlo),1);
+  const fmt=n=>{const v=Number(n.toFixed(1));return (v<0?'−':'')+Math.abs(v)};
+  // v-t 面積：時間軸上方淡藍、下方淡紅（以折返時刻分段）
+  const cut=r.turn,seg=(a,b)=>{const p=[[a,s.v0+s.a*a],[b,s.v0+s.a*b]];return `M${tx(a)},${yV(0)} L${tx(a)},${yV(p[0][1])} L${tx(b)},${yV(p[1][1])} L${tx(b)},${yV(0)} Z`};
+  const parts=cut===null?[[0,T]]:[[0,cut],[cut,T]];
+  for(const [a,b] of parts){const mid=s.v0+s.a*(a+b)/2;if(Math.abs(mid)<1e-9)continue;out+=`<path d="${seg(a,b)}" fill="${mid>0?'#cfe3f3':'#f3d2d6'}" stroke="none"/>`;
+   const area=Math.abs((s.v0+s.a*a+s.v0+s.a*b)/2*(b-a));out+=text(num((tx(a)+tx(b))/2-26,1),num(mid>0?yV(0)-10:yV(0)+22,1),(mid>0?'+':'−')+fmt(area)+' m',14)}
+  // 座標軸
+  out+=line(X0,top[0],X0,top[1],'#436779')+line(X0,yX(0),X1,yX(0),'#436779')+line(X0,bot[0],X0,bot[1],'#436779')+line(X0,yV(0),X1,yV(0),'#436779');
+  const tick=(y,t)=>`<text x="${X0-8}" y="${num(y+5,1)}" font-size="13" text-anchor="end">${esc(t)}</text>`;
+  out+=text(X0+8,top[0]-12,'位置 x（m）',14)+text(X0+8,bot[0]-10,'速度 v（m/s）',14)+text(X1-78,bot[1]+18,'t（s）',14);
+  out+=tick(yX(xhi),fmt(xhi))+tick(yX(xlo),fmt(xlo))+tick(yV(vhi),fmt(vhi))+tick(yV(vlo),fmt(vlo));
+  out+=text(X0-4,bot[1]+18,'0',13)+text(X1-10,bot[1]+18,String(T),13);
+  // 曲線
+  out+=path('M'+xs.map(p=>tx(p[0])+','+yX(p[1])).join(' L'),'#087b78')+path('M'+vs.map(p=>tx(p[0])+','+yV(p[1])).join(' L'),'#d97b11');
+  out+=circle(tx(T),yX(r.x),5,'#087b78')+circle(tx(T),yV(r.v),5,'#d97b11');
+  if(cut!==null){out+=`<line data-turn x1="${tx(cut)}" y1="${top[0]-6}" x2="${tx(cut)}" y2="${bot[1]+4}" stroke="#b54a5b" stroke-width="2" stroke-dasharray="7 5"/>`+text(num(tx(cut)+6,1),bot[0]-10,'折返 t＝'+fmt(cut)+' s',14)}
+  out+=text(20,390,'上：位置－時間（x-t）　下：速度－時間（v-t）；淡藍＝軸上方面積，淡紅＝軸下方面積',14);break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }
