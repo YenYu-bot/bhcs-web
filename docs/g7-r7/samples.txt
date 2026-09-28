@@ -1,0 +1,234 @@
+[basic/s1/integer]  ( −3 x ) · 5＝  ⇒  −15 x 
+[basic/s1/integer] −2 x ＋ 4 x ＝  ⇒  2 x 
+[basic/s1/fraction]  ( −(1/2) ) · ( −(1/3) x ) ＝  ⇒  (1/6) x 
+[basic/s1/fraction] −(5/4) x − (1/3) x ＝  ⇒  −(19/12) x 
+[basic/s1/decimal] −0.3 x ＋ 1.7 x ＝  ⇒  1.4 x 
+[basic/s1/decimal] 0.9 x ＋ 1.3 x ＝  ⇒  2.2 x 
+[basic/s2/integer] − ( 2 x ＋ 6 ) − 2 ( − x − 10 ) ＝  ⇒  14 
+[basic/s2/integer] 5 ( −7 x ＋ 3 ) − ( −5 x − 8 ) ＝  ⇒  −30 x ＋ 23 
+[basic/s2/fraction] 8 x − 9 ＋ ( −4 x ＋ 9 ) ＝  ⇒  4 x 
+[basic/s2/fraction] 8 x − 6 − ( −2 x ＋ 10 ) ＝  ⇒  10 x − 16 
+[basic/s2/decimal] − ( −2 x ) ＋ ( −3 x ＋ 4 ) ＝  ⇒  − x ＋ 4 
+[basic/s2/decimal] 5 x ＋ 2 ＋ ( −8 x ) ＝  ⇒  −3 x ＋ 2 
+[basic/s3/integer] − x ＋ 2 〔 −2 x − ( −9 x − 4 ) 〕 ＝  ⇒  13 x ＋ 8 
+[basic/s3/integer] −8 x − 〔 −6 x − 3 ( −6 x − 7 ) 〕 ＝  ⇒  −20 x − 21 
+[basic/s3/fraction] 8 x ＋ 〔 −4 x ＋ 3 ( −2 x ＋ 8 ) 〕 ＝  ⇒  −2 x ＋ 24 
+[basic/s3/fraction] −6 x ＋ 〔 5 x − 2 ( 2 x ＋ 10 ) 〕 ＝  ⇒  −5 x − 20 
+[basic/s3/decimal]  x − 〔 2 x ＋ ( −6 x ＋ 5 ) 〕 ＝  ⇒  5 x − 5 
+[basic/s3/decimal] −7 x − 〔 8 x − 2 ( −8 x ＋ 8 ) 〕 ＝  ⇒  −31 x ＋ 16 
+[basic/s4/integer]  −4 x ＋ 2 2 ＋ 4 x ＋ 12 4 ＝  ⇒  − x ＋ 4 
+[basic/s4/integer] (1/6) ( 4 x − 10 ) ＋ (1/2) ( −3 x − 3 ) ＝  ⇒  −(5/6) x − (19/6) 
+[basic/s4/fraction] (5/9) ( 3 x ＋ 7 ) ＋ (8/9) ( −3 x ＋ 12 ) ＝  ⇒  − x ＋ (131/9) 
+[basic/s4/fraction]  5 x ＋ 10 2 − 6 x − 12 2 ＝  ⇒  −(1/2) x ＋ 11 
+[basic/s4/decimal]  −3 x ＋ 3 2 ＋ −3 x − 10 3 ＝  ⇒  −(5/2) x − (11/6) 
+[basic/s4/decimal] (2/3) ( 2 x − 2 ) − (2/3) ( − x ＋ 12 ) ＝  ⇒  2 x − (28/3) 
+[basic/s5/integer]  設 A＝−5 x − 6，B＝ x ＋ 8，C＝−5 x ＋ 7，將下式化為 x 的一次式： −4A ＋ 3B ＋ 2C＝  ⇒  13 x ＋ 62 
+[basic/s5/integer]  設 A＝−5 x ＋ 8，B＝4 x − 7，C＝2 x ＋ 7，將下式化為 x 的一次式： −4A − B − 3C＝  ⇒  10 x − 46 
+[basic/s5/fraction]  設 A＝−2 x − 3，B＝−2 x − 2，C＝2 x ＋ 5，將下式化為 x 的一次式： −A ＋ 4B − 4C＝  ⇒  −14 x − 25 
+[basic/s5/fraction]  設 A＝−5 x ＋ 9，B＝3 x − 9，C＝− x ＋ 8，將下式化為 x 的一次式： (2/3)A − (1/3)B − C＝  ⇒  −(10/3) x ＋ 1 
+[basic/s5/decimal]  設 A＝ x ＋ 8，B＝−3 x − 4，C＝4 x ＋ 3，將下式化為 x 的一次式： −5A ＋ 4B ＋ 2C＝  ⇒  −9 x − 50 
+[basic/s5/decimal]  設 A＝−3 x − 1，B＝− x − 9，C＝−5 x − 8，將下式化為 x 的一次式： −5A − 3B − 3C＝  ⇒  33 x ＋ 56 
+[basic/e1/integer] 6 ＝ x ＋ 4  ⇒  x ＝2 
+[basic/e1/integer]  x ÷ 4 ＝ −(5/4)  ⇒  x ＝−5 
+[basic/e1/fraction]  x ÷ 5 ＝ −(1/5)  ⇒  x ＝−1 
+[basic/e1/fraction] 4 ＝ x ＋ 12  ⇒  x ＝−8 
+[basic/e1/decimal]  x ÷ 2 ＝ −(7/2)  ⇒  x ＝−7 
+[basic/e1/decimal] −5 ＝ x ＋ 6  ⇒  x ＝−11 
+[basic/e2/integer] 9 x ＋ 1 ＝ 4 x − 4  ⇒  x ＝−1 
+[basic/e2/integer] −5 x − 12 ＝ −7 x − 4  ⇒  x ＝4 
+[basic/e2/fraction] (1/2) x ＋ 1 ＝ (9/5) x − (8/5)  ⇒  x ＝2 
+[basic/e2/fraction] −(1/4) x − 4 ＝ (3/2) x − 25  ⇒  x ＝12 
+[basic/e2/decimal] −3 x ＋ 8 ＝ −9 x − 7  ⇒  x ＝−(5/2) （＝−2.5）
+[basic/e2/decimal] −9 x ＋ 12 ＝ 2 x − 1.2  ⇒  x ＝(6/5) （＝1.2）
+[basic/e3/integer] −4 ( 5 x ＋ 10 ) ＝ −20  ⇒  x ＝−1 
+[basic/e3/integer] 2 ( 2 x − 4 ) ＝ 8  ⇒  x ＝4 
+[basic/e3/fraction] −(1/3) ( 7 x ＋ 6 ) ＝ 19  ⇒  x ＝−9 
+[basic/e3/fraction] −(2/5) ( −5 x ＋ 12 ) ＝ (6/5)  ⇒  x ＝3 
+[basic/e3/decimal] −0.9 ( 6 x ＋ 2 ) ＝ 3.6  ⇒  x ＝−1 
+[basic/e3/decimal] 1.5 ( −5 x ＋ 2 ) ＋ ( 6 x − 5 ) ＝ −0.2  ⇒  x ＝−(6/5) （＝−1.2）
+[basic/e4/integer] −4 x − 7 x − 11 10 ＝ −13  ⇒  x ＝3 
+[basic/e4/integer] −4 x ＋ 4 x ＋ 12 3 ＝ −4  ⇒  x ＝3 
+[basic/e4/fraction] 2 x ＋ x ＋ 4 2 ＝ −8  ⇒  x ＝−4 
+[basic/e4/fraction]  x − 10 2 ＝ −3 x − 1 2 − (5/2)  ⇒  x ＝1 
+[basic/e4/decimal]  −6 x − 10 2 ＝ 2 x − 7 2 − (19/2)  ⇒  x ＝2 
+[basic/e4/decimal]  2 x ＋ 2 6 ＝ −7 x ＋ 9 6 − (8/3)  ⇒  x ＝−1 
+[basic/e5/integer] −6 x − 〔 x ＋ ( −3 x ＋ 11 ) 〕 ＝ −7  ⇒  x ＝−1 
+[basic/e5/integer] −2 〔 −3 ( −6 x ＋ 5 ) − 4 〕 ＋ 9 ＝ −61  ⇒  x ＝3 
+[basic/e5/fraction] (1/3) 〔 4 x ＋ (1/6) ( −6 x ＋ 7 ) 〕 − 3 ＝ −(11/18)  ⇒  x ＝2 
+[basic/e5/fraction] 6 x ＋ 2 ( − x − 4 ＋ 8 ) ＝ −8  ⇒  x ＝−4 
+[basic/e5/decimal] 4 x ＋ 3 〔 −3 x − ( −4 x − 4 ) 〕 ＝ −9  ⇒  x ＝−3 
+[basic/e5/decimal] −3 ( −4 x ＋ 10 ＋ 6 ) ＋ 6 ＝ −6  ⇒  x ＝3 
+[basic/e6/integer] 1.5 ( −3 x ＋ 6 ) − 5 x − 4 2 ＝ −4 x − 1 4 ＋ 5.25  ⇒  x ＝1 
+[basic/e6/integer] −1.1 ( −5 x − 10 ) ＋ −2 x − 12 3 ＝ x ＋ 1 2   ⇒  x ＝−(3/2) （＝−1.5）
+[basic/e6/fraction] 1.3 x ＋ 0.4 ＝ 0.4 x − 0.05  ⇒  x ＝−(1/2) （＝−0.5）
+[basic/e6/fraction] 1.7 ( 3 x − 5 ) − −4 x ＋ 7 3 ＝ −4 x − 11 3 − 22.7  ⇒  x ＝−2 
+[basic/e6/decimal] 0.8 x ＋ 1.6 ＝ −0.3 x − 0.6  ⇒  x ＝−2 
+[basic/e6/decimal] −0.1 x ＋ 1.7 ＝ −1.5 x ＋ 3.1  ⇒  x ＝1 
+[basic/e7/integer] 3 ( 4 x − 9 ) ＋ ( −5 x − 1 ) ＝ −7 ( − x − 6 ) − 70  ⇒  x 為任意數（無限多解） 
+[basic/e7/integer] −2 ( x ＋ 2 ) ＋ ( 4 x − 5 ) ＝ − ( −2 x − 9 ) − 18  ⇒  x 為任意數（無限多解） 
+[basic/e7/fraction]  ( 5 x − 2 ) − ( −3 x − 1 ) ＝ ( 8 x ＋ 3 ) − 5  ⇒  無解 
+[basic/e7/fraction] 2 ( 5 x − 11 ) − ( 3 x ＋ 7 ) ＝ −3 ( 2 x − 6 ) ＋ 5  ⇒  x ＝4 
+[basic/e7/decimal] −3 ( −6 x − 5 ) ＋ ( −4 x ＋ 1 ) ＝ −7 ( −2 x ＋ 8 ) ＋ 66  ⇒  無解 
+[basic/e7/decimal] 4 ( 6 x − 1 ) ＋ ( x − 3 ) ＝ −5 ( −5 x − 1 ) − 15  ⇒  無解 
+[basic/mix/integer] − ( −2 x − 3 ) ＝ 5  ⇒  x ＝1 
+[basic/mix/integer]  x − 3 〔 −2 x − ( x ＋ 3 ) 〕 ＝ 19  ⇒  x ＝1 
+[basic/mix/fraction]  3 x ＋ 11 6 ＝ 6 x ＋ 12 3 − (20/3)  ⇒  x ＝3 
+[basic/mix/fraction] −(2/3) ( −2 x ＋ 7 ) ＝ −10  ⇒  x ＝−4 
+[basic/mix/decimal] 2 ( −3 x − 12 ) ＋ ( − x − 3 ) ＝ − ( 7 x ＋ 1 ) − 26  ⇒  x 為任意數（無限多解） 
+[basic/mix/decimal] −2 x ＋ − x ＋ 9 4 ＝ 9  ⇒  x ＝−3 
+[advanced/s1/integer] 7 x ÷ ( −1 ) ＝  ⇒  −7 x 
+[advanced/s1/integer] 4 x ＋ 6 x ＋ 5 x ＝  ⇒  15 x 
+[advanced/s1/fraction] −(5/4) x − (1/10) x ＋ (1/2) x ＝  ⇒  −(17/20) x 
+[advanced/s1/fraction]  ( −(1/6) ) · (11/10) x ＝  ⇒  −(11/60) x 
+[advanced/s1/decimal]  ( −0.6 x ) ÷ ( −1.8 ) ＝  ⇒  (1/3) x 
+[advanced/s1/decimal] 3.5 · 0.7 x ＝  ⇒  2.45 x 
+[advanced/s2/integer] 9 x − 9 y − ( −2 x ＋ y − 8 ) − ( −8 x − y ＋ 12 ) ＝  ⇒  19 x − 9 y − 4 
+[advanced/s2/integer] 7 x ＋ 3 − ( 8 x − 11 ) ＝  ⇒  − x ＋ 14 
+[advanced/s2/fraction] −(9/5) ( −6 x ＋ 4 y − 8 ) − ( 2 x ＋ 9 y − 4 ) − ( 6 x ＋ 6 y ＋ 4 ) ＝  ⇒  (14/5) x − (111/5) y ＋ (72/5) 
+[advanced/s2/fraction] 7 x − 10 ＋ (1/2) ( 2 x ＋ 6 ) ＝  ⇒  8 x − 7 
+[advanced/s2/decimal] 4 x − 9 y ＋ 2 − ( 3 x − 6 y ＋ 12 ) ＝  ⇒  x − 3 y − 10 
+[advanced/s2/decimal] −2.1 ( −6 x ＋ 1 ) ＋ 2.1 ( −3 x ＋ 11 ) ＝  ⇒  6.3 x ＋ 21 
+[advanced/s3/integer] −2 x ＋ 〔 3 x − ( 6 x ＋ 3 ) 〕 ＝  ⇒  −5 x − 3 
+[advanced/s3/integer] 8 x ＋ 〔 9 x − ( −3 x − 5 ) 〕 ＝  ⇒  20 x ＋ 5 
+[advanced/s3/fraction] −5 x ＋ { −3 x ＋ 〔 −7 x ＋ 2 ( −2 x ＋ 4 ) 〕 } ＝  ⇒  −19 x ＋ 8 
+[advanced/s3/fraction] 3 x ＋ 3 { −6 x ＋ 〔 −3 x − ( 7 x − 1 ) 〕 } ＝  ⇒  −45 x ＋ 3 
+[advanced/s3/decimal] −4 x ＋ 〔 x ＋ ( 3 x ＋ 10 ) 〕 ＝  ⇒  10 
+[advanced/s3/decimal] −4 x ＋ { −7 x − 〔 5 x ＋ ( −4 x − 4 ) 〕 } ＝  ⇒  −12 x ＋ 4 
+[advanced/s4/integer] (3/4) ( −7 x − 8 ) ＋ (1/12) ( −2 x − 5 ) − (5/6) ( 3 x − 7 ) ＝  ⇒  −(95/12) x − (7/12) 
+[advanced/s4/integer]  −8 x ＋ 12 12 − −6 x ＋ 7 4 − 2＝  ⇒  (5/6) x − (11/4) 
+[advanced/s4/fraction]  3 x ＋ 7 8 − 6 x − 3 8 − 5 x ＋ 5 4 ＝  ⇒  −(13/8) x 
+[advanced/s4/fraction] (2/3) ( 5 x − 12 ) ＋ (5/6) ( − x − 5 ) − (1/4) ( − x − 1 ) ＝  ⇒  (11/4) x − (143/12) 
+[advanced/s4/decimal]  −6 x ＋ 3 9 − −2 x ＋ 1 2 ＝  ⇒  (1/3) x − (1/6) 
+[advanced/s4/decimal]  7 x − 7 4 − 4 x ＋ 5 4 ＋ 3 x − 5 4 − 9＝  ⇒  (3/2) x − (53/4) 
+[advanced/s5/integer]  設 A＝− x − 8，B＝−4 x − 1，C＝− x ＋ 3，將下式化為 x 的一次式： 5A − 4B ＋ 4C＝  ⇒  7 x − 24 
+[advanced/s5/integer]  設 A＝ x ＋ 5，B＝ x ＋ 7，C＝5 x − 5，將下式化為 x 的一次式： A ＋ B − 5C＝  ⇒  −23 x ＋ 37 
+[advanced/s5/fraction]  設 A＝−2 x ＋ 5，B＝ x ＋ 8，C＝5 x ＋ 6，將下式化為 x 的一次式： (1/4)A ＋ (2/3)B − (4/3)C＝  ⇒  −(13/2) x − (17/12) 
+[advanced/s5/fraction]  設 A＝ x − 1，B＝−5 x − 4，C＝− x ＋ 7，將下式化為 x 的一次式： (1/4)A − (3/4)B ＋ (1/6)C＝  ⇒  (23/6) x ＋ (47/12) 
+[advanced/s5/decimal]  設 A＝2 x ＋ 3，B＝4 x − 5，C＝−5 x − 3，將下式化為 x 的一次式： − ( A − B ) − 3 ( 3A ＋ 2B − 3C ) ＝  ⇒  −85 x − 32 
+[advanced/s5/decimal]  設 A＝5 x ＋ 2，B＝5 x − 9，C＝−2 x − 7，將下式化為 x 的一次式： −3A ＋ 4B ＋ 2C＝  ⇒  x − 56 
+[advanced/e1/integer]  x ＋ 12 ＝ 14  ⇒  x ＝2 
+[advanced/e1/integer] −3 x ＝ −27  ⇒  x ＝9 
+[advanced/e1/fraction] −108 ÷ ( 9 x ) ＝ 2  ⇒  x ＝−6 
+[advanced/e1/fraction]  x − 11 ＝ −19  ⇒  x ＝−8 
+[advanced/e1/decimal] 8 x ＝ 72  ⇒  x ＝9 
+[advanced/e1/decimal] −8 ＝ x − 3  ⇒  x ＝−5 
+[advanced/e2/integer] 5 x − 11 ＝ 6 x − 1  ⇒  x ＝−10 
+[advanced/e2/integer] −2 x ＋ 5 ＝ −4 x − 3  ⇒  x ＝−4 
+[advanced/e2/fraction] −(1/2) x ＋ 12 ＝ −(1/3) x ＋ (21/2)  ⇒  x ＝9 
+[advanced/e2/fraction] (1/2) x − 3 ＝ −(1/6) x − 7  ⇒  x ＝−6 
+[advanced/e2/decimal] 7 x ＋ 12 ＝ −5 x ＋ 6  ⇒  x ＝−(1/2) （＝−0.5）
+[advanced/e2/decimal] 6 x ＋ 10 ＝ 5 x ＋ 3  ⇒  x ＝−7 
+[advanced/e3/integer] 6 ( 4 x ＋ 9 ) − 7 ( 7 x − 9 ) ＝ −4 x ＋ 54  ⇒  x ＝3 
+[advanced/e3/integer] −2 x ＋ 3 ＋ 4 ( −3 x ＋ 9 ) ＝ 2 ( x ＋ 10 ) − 13  ⇒  x ＝2 
+[advanced/e3/fraction] (1/8) ( −5 x − 6 ) ＝ −7  ⇒  x ＝10 
+[advanced/e3/fraction] (4/5) ( x ＋ 7 ) − ( − x − 7 ) ＝ −9  ⇒  x ＝−12 
+[advanced/e3/decimal] −0.9 ( 2 x ＋ 8 ) ＝ −0.9  ⇒  x ＝−(7/2) （＝−3.5）
+[advanced/e3/decimal] 19 ＋ 1.1 ( 3 x − 9 ) ＝ 0.52  ⇒  x ＝−(13/5) （＝−2.6）
+[advanced/e4/integer]  4 x − 1 2 ＝ 7 x − 1 6 − 7  ⇒  x ＝−8 
+[advanced/e4/integer]  4 x ＋ 9 12 − −5 x ＋ 5 4 ＝ − x − 3 12 − (41/4)  ⇒  x ＝−6 
+[advanced/e4/fraction]  x ＝ 1 ＋ x 3 ＋ x 9 ＋ x 27 ＋ x 81 ＋ x 243   ⇒  x ＝(243/122) 
+[advanced/e4/fraction]  −5 x ＋ 2 2 ＋ −3 x − 7 6 ＝ −(55/6)  ⇒  x ＝3 
+[advanced/e4/decimal] −2 x − 2 x − 8 6 ＝ −8  ⇒  x ＝4 
+[advanced/e4/decimal]  x ＝ 1 ＋ x 2 − x 4 ＋ x 8 ＋ x 16 ＋ x 32   ⇒  x ＝(32/17) 
+[advanced/e5/integer] −6 x − { 〔 −3 ( − x − 6 ) − 8 〕 − 7 } ＝ 6  ⇒  x ＝−1 
+[advanced/e5/integer] − { x ＋ 3 〔 5 x − 3 ( x − 11 ) 〕 } ＋ 3 ＝ −12  ⇒  x ＝−12 
+[advanced/e5/fraction] (1/6) 〔 (1/3) ( 2 x − 8 ) ＋ 6 〕 − 6 ＝ −(14/3)  ⇒  x ＝7 
+[advanced/e5/fraction] 4 x ＋ 2 〔 3 x ＋ 2 ( 5 x − 4 ) 〕 ＝ −46  ⇒  x ＝−1 
+[advanced/e5/decimal] −5 x ＋ 2 〔 − ( −4 x − 3 ＋ 6 ) ＋ 2 〕 ＝ −8  ⇒  x ＝−2 
+[advanced/e5/decimal] −6 x − 4 ( 6 x ＋ 2 ＋ 6 ) ＝ 28  ⇒  x ＝−2 
+[advanced/e6/integer] −3.9 x ＋ 0.2 ＝ 3.4 x ＋ 0.93  ⇒  x ＝−(1/10) （＝−0.1）
+[advanced/e6/integer] 1.6 x − 0.72 x ＋ 0.54 0.9 ＝ 0.5 x ＋ 0.825  ⇒  x ＝(19/4) （＝4.75）
+[advanced/e6/fraction] 2.4 x ＋ 1.3 ＝ 0.8 x ＋ 4.5  ⇒  x ＝2 
+[advanced/e6/fraction] 3.7 x − 2.5 ＝ 0.35 x − 0.49  ⇒  x ＝(3/5) （＝0.6）
+[advanced/e6/decimal] 1.2 ( 5 x ＋ 12 ) ＋ − x ＋ 11 4 ＝ 4 x − 12 2 ＋ 6.275  ⇒  x ＝−(9/2) （＝−4.5）
+[advanced/e6/decimal] 0.4 ( 2 x ＋ 10 ) − 4 x − 2 5 ＝ 6 x − 10 4 ＋ 6  ⇒  x ＝(3/5) （＝0.6）
+[advanced/e7/integer] 4 ( 6 x ＋ 11 ) − ( 3 x − 4 ) ＝ 3 ( 7 x ＋ 3 ) ＋ 39  ⇒  x 為任意數（無限多解） 
+[advanced/e7/integer]  ( −5 x − 8 ) − ( −3 x − 3 ) ＝ 2 ( − x − 8 ) ＋ 11  ⇒  x 為任意數（無限多解） 
+[advanced/e7/fraction] 2 ( x ＋ 8 ) − ( −2 x ＋ 12 ) ＝ ( 4 x ＋ 9 ) − 2  ⇒  無解 
+[advanced/e7/fraction] 4 ( 4 x ＋ 11 ) ＋ ( − x ＋ 10 ) ＝ 5 ( 3 x − 8 ) ＋ 94  ⇒  x 為任意數（無限多解） 
+[advanced/e7/decimal] 2 ( 4 x ＋ 9 ) − ( x ＋ 6 ) ＝ ( 7 x − 7 ) ＋ 14  ⇒  無解 
+[advanced/e7/decimal] 2 ( 2 x ＋ 7 ) ＋ ( 5 x − 3 ) ＝ 2 ( − x − 12 ) ＋ 2  ⇒  x ＝−3 
+[advanced/mix/integer] −4 x − 10 ＝ − x − 4  ⇒  x ＝−2 
+[advanced/mix/integer]  2 x − 9 15 ＝ −2 x − 10 5 ＋ (1/3)  ⇒  x ＝−2 
+[advanced/mix/fraction] 3 − (1/10) ( −6 x ＋ 3 ) ＝ (15/2)  ⇒  x ＝8 
+[advanced/mix/fraction] −5 x − 〔 4 x − 4 ( x ＋ 10 ) 〕 ＝ 15  ⇒  x ＝5 
+[advanced/mix/decimal] 2.5 ( 2 x ＋ 3 ) − ( −5 x − 5 ) ＝ 0  ⇒  x ＝−(5/4) （＝−1.25）
+[advanced/mix/decimal] 1.7 x − 0.12 x − 0.12 0.4 ＝ 0.7 x − 0.4  ⇒  x ＝−1 
+[challenge/s1/integer] 12 x ＋ 3 x ＋ 11 x ＝  ⇒  26 x 
+[challenge/s1/integer] 4 x − 9 x − 3 x ＝  ⇒  −8 x 
+[challenge/s1/fraction] (11/10) x − (7/5) x ＝  ⇒  −(3/10) x 
+[challenge/s1/fraction] (11/9) x ÷ ( −(1/3) ) ＝  ⇒  −(11/3) x 
+[challenge/s1/decimal]  ( −5.7 ) · ( −5.3 x ) ＝  ⇒  30.21 x 
+[challenge/s1/decimal] 3.2 x ÷ 3.5＝  ⇒  (32/35) x 
+[challenge/s2/integer] 4 x − 8 ＋ 4 x − 5 ( −3 x − 6 ) ＝  ⇒  23 x ＋ 22 
+[challenge/s2/integer] −9 x − 3 y − 10 − ( 6 x − 9 y − 6 ) − ( −9 x − 2 y ＋ 8 ) ＝  ⇒  −6 x ＋ 8 y − 12 
+[challenge/s2/fraction] −8 x − 6 − ( 6 x ＋ 12 ) − x ＝  ⇒  −15 x − 18 
+[challenge/s2/fraction] − ( −7 x ) − ( −9 x ＋ 11 ) ＋ ( 6 x ＋ 9 ) ＝  ⇒  22 x − 2 
+[challenge/s2/decimal]  x − 1.5 ( 9 x ＋ 1 ) − ( −5 x − 2 ) ＝  ⇒  −7.5 x ＋ 0.5 
+[challenge/s2/decimal] 9 x − 2 y ＋ 0.05 ( 6 x ＋ 4 y ＋ 11 ) − ( 7 x − 3 y − 5 ) ＝  ⇒  2.3 x ＋ 1.2 y ＋ 5.55 
+[challenge/s3/integer] −2 x − { −4 x − 〔 6 x ＋ 2 ( 2 x − 4 ) 〕 } ＝  ⇒  12 x − 8 
+[challenge/s3/integer] − x − −7 x − { −2 x ＋ 3 〔 8 x ＋ ( −6 x ＋ 8 ) 〕 } 6 ＝  ⇒  (5/6) x ＋ 4 
+[challenge/s3/fraction] 8 x ＋ 4 { 3 x − 4 〔 −4 x − 4 ( x − 9 ) 〕 } ＝  ⇒  148 x − 576 
+[challenge/s3/fraction] 6 x − { −5 x ＋ 4 〔 −7 x ＋ ( −8 x − 11 ) 〕 } ＝  ⇒  71 x ＋ 44 
+[challenge/s3/decimal] 9 x − x ＋ 2 { x − 4 〔 − x − ( −6 x ＋ 12 ) 〕 } 3 ＝  ⇒  (64/3) x − 32 
+[challenge/s3/decimal] −5 x − 3 { −8 x ＋ 3 〔 x ＋ ( x − 8 ) 〕 } ＝  ⇒  x ＋ 72 
+[challenge/s4/integer]  − x ＋ 3 4 − 5 x − 9 12 ＋ 2＝  ⇒  −(2/3) x ＋ (7/2) 
+[challenge/s4/integer]  −2 x ＋ 3 10 ＋ −6 x ＋ 8 5 ＝  ⇒  −(7/5) x ＋ (19/10) 
+[challenge/s4/fraction]  3 x − 4 3 ＋ 5 x − 3 9 − 2＝  ⇒  (14/9) x − (11/3) 
+[challenge/s4/fraction] (2/3) ( 5 x ＋ 9 ) − (1/3) ( −8 x ＋ 2 ) − 1＝  ⇒  6 x ＋ (13/3) 
+[challenge/s4/decimal]  7 x − 12 3 − −2 x ＋ 7 9 ＋ 5 x − 12 3 − 5＝  ⇒  (38/9) x − (124/9) 
+[challenge/s4/decimal]  −7 x − 9 9 − 2 x − 5 3 − x − 5 3 − 5＝  ⇒  −(16/9) x − (8/3) 
+[challenge/s5/integer]  設 A＝5 x ＋ 4，B＝3 x ＋ 5，C＝−3 x − 2，將下式化為 x 的一次式： −3A ＋ 4B − C＝  ⇒  10 
+[challenge/s5/integer]  設 A＝−3 x − 7，B＝4 x − 7，C＝3 x ＋ 8，將下式化為 x 的一次式： A ＋ 4B − 3C＝  ⇒  4 x − 59 
+[challenge/s5/fraction]  設 A＝3 x − 9，B＝− x − 5，C＝− x ＋ 3，將下式化為 x 的一次式： −2 ( A − B ) ＋ 2 ( 2A − 3B − C ) ＝  ⇒  12 x − 4 
+[challenge/s5/fraction]  設 A＝−2 x − 4，B＝−2 x ＋ 9，C＝4 x − 4，將下式化為 x 的一次式： 2A ＋ 2B ＋ 2C＝  ⇒  2 
+[challenge/s5/decimal]  設 A＝2 x ＋ 9，B＝5 x − 3，C＝−5 x − 7，將下式化為 x 的一次式： ( A ＋ B ) ＋ 3 ( −2A − B ＋ 2C ) ＝  ⇒  −50 x − 81 
+[challenge/s5/decimal]  設 A＝4 x − 6，B＝−4 x − 7，C＝−4 x ＋ 3，將下式化為 x 的一次式： −2 ( A − B ) − ( −3A − 4B − 2C ) ＝  ⇒  −28 x − 42 
+[challenge/e1/integer]  x − 10 ＝ −16  ⇒  x ＝−6 
+[challenge/e1/integer] −5 x − 10 ＝ −65  ⇒  x ＝11 
+[challenge/e1/fraction] 3 x ＋ 7 ＝ −11  ⇒  x ＝−6 
+[challenge/e1/fraction] −11 ＝ − x − 13  ⇒  x ＝−2 
+[challenge/e1/decimal] 10 − 7 x ＝ 38  ⇒  x ＝−4 
+[challenge/e1/decimal] 5 x − 9 ＝ −39  ⇒  x ＝−6 
+[challenge/e2/integer]  x ＋ 5 ＝ 6 x − 20  ⇒  x ＝5 
+[challenge/e2/integer] −5 x − 2 ＝ x − 20  ⇒  x ＝3 
+[challenge/e2/fraction] (3/2) x − 12 ＝ (1/3) x − (3/2)  ⇒  x ＝9 
+[challenge/e2/fraction] −(2/5) x − 9 ＝ −(3/2) x − (25/4)  ⇒  x ＝(5/2) 
+[challenge/e2/decimal] 3 x − 10 ＝ 5 x ＋ 14  ⇒  x ＝−12 
+[challenge/e2/decimal] 8 x ＋ 6 ＝ −2 x ＋ 4  ⇒  x ＝−(1/5) （＝−0.2）
+[challenge/e3/integer] 4 ( − x − 5 ) ＝ −4  ⇒  x ＝−4 
+[challenge/e3/integer] −5 ( 6 x ＋ 3 ) − 2 ( 6 x ＋ 6 ) ＝ 4 x ＋ 19  ⇒  x ＝−1 
+[challenge/e3/fraction] −(11/9) ( 4 x ＋ 7 ) − ( 4 x − 12 ) ＝ −41  ⇒  x ＝5 
+[challenge/e3/fraction] − x − 6 − (1/4) ( 7 x ＋ 1 ) ＝ (9/5) ( −6 x ＋ 6 ) − (179/2)  ⇒  x ＝−9 
+[challenge/e3/decimal] 0.8 ( −3 x ＋ 3 ) ＝ −6  ⇒  x ＝(7/2) （＝3.5）
+[challenge/e3/decimal] 14 − 4.2 ( − x ＋ 8 ) ＝ −3.64  ⇒  x ＝(19/5) （＝3.8）
+[challenge/e4/integer]  x ＝ 1 ＋ x 3 ＋ x 9 ＋ x 27   ⇒  x ＝(27/14) 
+[challenge/e4/integer]  5 x ＋ 12 9 ＝ −7 x ＋ 3 9 ＋ 13  ⇒  x ＝9 
+[challenge/e4/fraction]  x ＝ 1 ＋ x 2 − x 4 − x 8   ⇒  x ＝(8/7) 
+[challenge/e4/fraction]  −7 x ＋ 8 5 ＋ −3 x − 3 3 ＝ 3  ⇒  x ＝−1 
+[challenge/e4/decimal]  4 x ＋ 8 8 ＝ x ＋ 12 8 − 5  ⇒  x ＝−12 
+[challenge/e4/decimal]  x ＝ 1 ＋ x 2 ＋ x 4 ＋ x 8 − x 16 − x 32   ⇒  x ＝(32/7) 
+[challenge/e5/integer] 4 x ＋ 4 { −2 〔 4 ( 5 x − 5 ) ＋ 7 〕 − 5 } ＝ 2 x − 74  ⇒  x ＝1 
+[challenge/e5/integer] 5 x ＋ 3 { 〔 2 ( 5 x − 2 ) ＋ 2 〕 − 1 } ＝ 61  ⇒  x ＝2 
+[challenge/e5/fraction] −2 〔 ( − x − 5 − 4 ) − 7 〕 ＋ 9 ＝ 3 x ＋ 31  ⇒  x ＝10 
+[challenge/e5/fraction] (1/6) { (1/2) 〔 6 x − (1/6) ( 4 x ＋ 7 ) 〕 ＋ 5 } − 1 ＝ x ＋ (7/24)  ⇒  x ＝−1 
+[challenge/e5/decimal] −3 { 5 x − { 〔 − x ＋ ( x ＋ 10 ) 〕 − 4 } } − 1 ＝ 47  ⇒  x ＝−2 
+[challenge/e5/decimal] 5 x − 2 〔 6 x ＋ 3 ( −6 x − 1 − 5 ) 〕 ＝ 94  ⇒  x ＝2 
+[challenge/e6/integer] 1.8 x − 0.06 x ＋ 0.21 0.3 ＝ 0.8 x ＋ 4.1  ⇒  x ＝6 
+[challenge/e6/integer] 1.8 x − 0.63 x ＋ 0.63 0.9 ＝ 0.4 x ＋ 4.55  ⇒  x ＝(15/2) （＝7.5）
+[challenge/e6/fraction] −0.15 x ＋ 1.7 ＝ 0.75 x ＋ 0.125  ⇒  x ＝(7/4) （＝1.75）
+[challenge/e6/fraction] 1.4 ＝ 0.12 x ＋ 0.09 0.3 − 0.01 x ＋ 0.02 0.2 ＋ 4  ⇒  x ＝−8 
+[challenge/e6/decimal] −4.2 x ＋ 3.9 ＝ −3.8 x ＋ 1.1  ⇒  x ＝7 
+[challenge/e6/decimal] 1.4 x − 0.49 x ＋ 0.42 0.7 ＝ 0.4 x − 1.8  ⇒  x ＝−4 
+[challenge/e7/integer] 2 ( 3 x − 5 ) ＋ ( x ＋ 4 ) ＝ ( 7 x − 1 ) − 11  ⇒  無解 
+[challenge/e7/integer] − ( −2 x ＋ 1 ) ＋ ( −3 x ＋ 3 ) ＝ ( 3 x − 5 ) ＋ 3  ⇒  x ＝1 
+[challenge/e7/fraction]  ( −3 x − 8 ) ＋ ( − x ＋ 7 ) ＝ 2 ( −2 x ＋ 4 ) − 3  ⇒  無解 
+[challenge/e7/fraction] − ( −6 x − 3 ) − ( −6 x − 12 ) ＝ 4 ( 3 x ＋ 3 ) − 3  ⇒  無解 
+[challenge/e7/decimal] −3 ( 4 x ＋ 4 ) − ( −4 x ＋ 2 ) ＝ −8 ( x ＋ 9 ) ＋ 63  ⇒  無解 
+[challenge/e7/decimal] 4 ( 3 x − 4 ) − ( 6 x − 3 ) ＝ ( 6 x ＋ 7 ) − 20  ⇒  x 為任意數（無限多解） 
+[challenge/mix/integer] −2 x ＋ 7 ＋ 6 ( 5 x − 7 ) ＝ 2 ( −6 x ＋ 9 ) ＋ 27  ⇒  x ＝2 
+[challenge/mix/integer] 1.1 ( −2 x − 4 ) ＋ −2 x ＋ 1 2 ＝ x − 10 3 ＋ 0.14  ⇒  x ＝−(1/5) （＝−0.2）
+[challenge/mix/fraction]  −4 x ＋ 1 9 ＋ 6 x ＋ 3 9 ＝ −2  ⇒  x ＝−11 
+[challenge/mix/fraction] −2.8 x − 3.1 ＝ 4.5 x − 10.4  ⇒  x ＝1 
+[challenge/mix/decimal] 1.4 ＝ 0.21 x ＋ 0.63 0.7 − 0.27 x − 0.24 0.3 ＋ 1.5  ⇒  x ＝3 
+[challenge/mix/decimal]  2 x ＋ 10 2 − −4 x − 5 6 ＝ (15/2)  ⇒  x ＝1 
