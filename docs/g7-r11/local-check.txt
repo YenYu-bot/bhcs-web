@@ -1,0 +1,110 @@
+## function
+basic/linearValue /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=73
+basic/linearValue /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=45
+basic/linearValue /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=44
+basic/quadraticValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=131
+basic/quadraticValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=74
+basic/quadraticValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=73
+basic/constantValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=49
+basic/constantValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=41
+basic/constantValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=39
+basic/combinedValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=31
+basic/combinedValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+basic/combinedValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+basic/piecewise   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=129
+basic/piecewise   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=80
+basic/piecewise   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=81
+basic/solveInput  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=64
+basic/solveInput  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=40
+basic/solveInput  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=46
+basic/linearCoeff /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=28
+basic/linearCoeff /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=29
+basic/linearCoeff /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=31
+basic/quadraticCoeff/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=42
+basic/quadraticCoeff/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=24
+basic/quadraticCoeff/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=27
+basic/replaceFunction/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=73
+basic/replaceFunction/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=49
+basic/replaceFunction/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=46
+basic/composite   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=156
+basic/composite   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=121
+basic/composite   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=112
+basic/sumValues   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=41
+basic/sumValues   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=24
+basic/sumValues   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=28
+basic/nested      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=63
+basic/nested      /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=34
+basic/nested      /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=35
+advanced/linearValue /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=55
+advanced/linearValue /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=41
+advanced/linearValue /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=37
+advanced/quadraticValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=143
+advanced/quadraticValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=85
+advanced/quadraticValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=85
+advanced/constantValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=42
+advanced/constantValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=40
+advanced/constantValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=39
+advanced/combinedValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=50
+advanced/combinedValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=33
+advanced/combinedValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=33
+advanced/piecewise   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=140
+advanced/piecewise   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=102
+advanced/piecewise   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=112
+advanced/solveInput  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=75
+advanced/solveInput  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=42
+advanced/solveInput  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=46
+advanced/linearCoeff /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=26
+advanced/linearCoeff /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=25
+advanced/linearCoeff /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=25
+advanced/quadraticCoeff/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=21
+advanced/quadraticCoeff/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=15
+advanced/quadraticCoeff/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+advanced/replaceFunction/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=92
+advanced/replaceFunction/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=58
+advanced/replaceFunction/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=62
+advanced/composite   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=157
+advanced/composite   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=113
+advanced/composite   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=119
+advanced/sumValues   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=46
+advanced/sumValues   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=30
+advanced/sumValues   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=29
+advanced/nested      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=87
+advanced/nested      /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=62
+advanced/nested      /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=59
+challenge/linearValue /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=51
+challenge/linearValue /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=32
+challenge/linearValue /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=34
+challenge/quadraticValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=140
+challenge/quadraticValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=90
+challenge/quadraticValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=88
+challenge/constantValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=47
+challenge/constantValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=36
+challenge/constantValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=41
+challenge/combinedValue/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=64
+challenge/combinedValue/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=47
+challenge/combinedValue/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=46
+challenge/piecewise   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=116
+challenge/piecewise   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=82
+challenge/piecewise   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=93
+challenge/solveInput  /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=74
+challenge/solveInput  /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=43
+challenge/solveInput  /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=44
+challenge/linearCoeff /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=15
+challenge/linearCoeff /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=15
+challenge/linearCoeff /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+challenge/quadraticCoeff/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=24
+challenge/quadraticCoeff/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+challenge/quadraticCoeff/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=16
+challenge/replaceFunction/integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=87
+challenge/replaceFunction/fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=63
+challenge/replaceFunction/decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=61
+challenge/composite   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=161
+challenge/composite   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=114
+challenge/composite   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=123
+challenge/sumValues   /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=36
+challenge/sumValues   /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+challenge/sumValues   /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=18
+challenge/nested      /integer  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=104
+challenge/nested      /fraction ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=65
+challenge/nested      /decimal  ok=200 卷內耗盡=0 verify失敗=0 例外=0 原始例外=0 原始verify失敗=0 結構數=57
+PASS
