@@ -1,0 +1,47 @@
+vertex         basic     integer  uniq=200/200 struct=55 vfail=0 exc=0 null=0
+vertex         basic     fraction uniq=200/200 struct=32 vfail=0 exc=0 null=0
+vertex         advanced  integer  uniq=200/200 struct=46 vfail=0 exc=0 null=0
+vertex         advanced  fraction uniq=200/200 struct=30 vfail=0 exc=0 null=0
+vertex         challenge integer  uniq=200/200 struct=35 vfail=0 exc=0 null=0
+vertex         challenge fraction uniq=200/200 struct=26 vfail=0 exc=0 null=0
+xaxis          basic     integer  uniq=200/200 struct=54 vfail=0 exc=0 null=0
+xaxis          basic     fraction uniq=200/200 struct=35 vfail=0 exc=0 null=0
+xaxis          advanced  integer  uniq=200/200 struct=53 vfail=0 exc=0 null=0
+xaxis          advanced  fraction uniq=200/200 struct=38 vfail=0 exc=0 null=0
+xaxis          challenge integer  uniq=200/200 struct=47 vfail=0 exc=0 null=0
+xaxis          challenge fraction uniq=200/200 struct=35 vfail=0 exc=0 null=0
+extreme        basic     integer  uniq=200/200 struct=53 vfail=0 exc=0 null=0
+extreme        basic     fraction uniq=200/200 struct=30 vfail=0 exc=0 null=0
+extreme        advanced  integer  uniq=200/200 struct=45 vfail=0 exc=0 null=0
+extreme        advanced  fraction uniq=200/200 struct=30 vfail=0 exc=0 null=0
+extreme        challenge integer  uniq=200/200 struct=53 vfail=0 exc=0 null=0
+extreme        challenge fraction uniq=200/200 struct=34 vfail=0 exc=0 null=0
+findfn         basic     integer  uniq=200/200 struct=37 vfail=0 exc=0 null=0
+findfn         basic     fraction uniq=200/200 struct=40 vfail=0 exc=0 null=50
+findfn         advanced  integer  uniq=200/200 struct=37 vfail=0 exc=0 null=0
+findfn         advanced  fraction uniq=200/200 struct=46 vfail=0 exc=0 null=38
+findfn         challenge integer  uniq=200/200 struct=31 vfail=0 exc=0 null=0
+findfn         challenge fraction uniq=200/200 struct=37 vfail=0 exc=0 null=56
+shift          basic     integer  uniq=200/200 struct=59 vfail=0 exc=0 null=0
+shift          basic     fraction uniq=200/200 struct=39 vfail=0 exc=0 null=0
+shift          advanced  integer  uniq=200/200 struct=76 vfail=0 exc=0 null=0
+shift          advanced  fraction uniq=200/200 struct=53 vfail=0 exc=0 null=0
+shift          challenge integer  uniq=200/200 struct=84 vfail=0 exc=0 null=0
+shift          challenge fraction uniq=200/200 struct=71 vfail=0 exc=0 null=0
+PASS
+vertex         62/50/53 challengeNew=33
+xaxis          66/63/63 challengeNew=50
+extreme        60/53/67 challengeNew=53
+findfn         40/49/40 challengeNew=32
+shift          73/92/132 challengeNew=110
+PASS
+ratio3 PASS
+parallelratio PASS
+similar PASS
+righttri PASS
+circle1 PASS
+circle2 PASS
+centers PASS
+STRESS PASS
+pageerrors []
+PRINT PASS
