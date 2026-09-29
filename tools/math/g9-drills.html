@@ -119,7 +119,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"],["boxplot","盒狀圖、全距與四分位距"],["probability","認識機率"],["treediagram","樹狀圖與機率"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["ratio3","連比與比例分配"],["parallelratio","平行線截比例線段"],["similar","相似形"],["righttri","直角三角形"],["circle1","圓：扇形、切線與弦心距"],["circle2","圓心角、圓周角與內接四邊形"],["centers","三角形的外心、內心、重心"],["quadfunc","二次函數的圖形與最大值、最小值"],["quartile","中位數與四分位數"],["boxplot","盒狀圖、全距與四分位距"],["probability","認識機率"],["treediagram","樹狀圖與機率"],["solid","立體圖形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"ratio3",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1562,7 +1562,113 @@ function treediagramConfig(){
   units:[coins,games,sumdiff,order],presets:{basic:{coins:2,games:2,sumdiff:2,order:2},advanced:{coins:2,games:2,sumdiff:2,order:2},challenge:{coins:2,games:2,sumdiff:2,order:2}}};
 }
 
-const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig,boxplot:boxplotConfig,probability:probabilityConfig,treediagram:treediagramConfig},CFG=CONFIGS[TOPIC_KEY]();
+function solidConfig(){
+ /* 國三下 3-1 立體圖形（2026-09-28，Claude）。依舊工具 g9b-3-1-solids.html 的六個單元重做：柱錐的頂點面邊數、空間對角線、角柱的體積與表面積、
+    圓柱與中空容器、角錐的表面積、圓錐展開圖與表面積。舊工具③的底面尺寸只標在圖上，引擎全部寫進題幹；不附圖。依課綱不出角錐、圓錐的體積。
+    含 π 的答案保留 π，根式化為最簡。每單元五種問法（基礎取第 1～3 種、進階第 2～4 種、挑戰第 3～5 種）。
+    verify：頂點面邊數用尤拉公式 V−E＋F＝2 與另一種數法；長度用空間坐標兩點距離；體積與表面積把每一個面分開算面積後相加（浮點數含 π）；
+    圓錐用「扇形弧長＝底圓周長」與「扇形面積＝πrl」兩條關係。 */
+ const unit=(id,name,tip,modes,gen)=>({id,name,tip,modes,gen});
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const form=ctx=>pick([[0,1,2],[1,2,3],[2,3,4]][lv(ctx)]);
+ const near=(x,y)=>Math.abs(x-y)<1e-7*(1+Math.abs(x)+Math.abs(y));
+ const radP=n=>{let a=1,b=n;for(let p=2;p*p<=b;p++)while(b%(p*p)===0){a*=p;b/=p*p}return{a,b}};
+ const rad=(k,n)=>{const{a,b}=radP(n),c=k*a;return b===1?String(c):`${c===1?"":c}√${b}`};
+ const radV=(k,n)=>k*Math.sqrt(n);
+ const pi=k=>k===0?"0":`${k===1?"":k}π`;
+ const TRIP=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[7,24,25],[12,16,20],[20,21,29]];
+ const QUAD=[[1,2,2,3],[2,3,6,7],[1,4,8,9],[4,4,7,9],[2,6,9,11],[6,6,7,11],[3,4,12,13],[2,10,11,15],[1,12,12,17],[8,9,12,17],[4,5,20,21],[12,15,16,25],[2,5,14,15],[4,8,19,21]];
+ const dist3=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2]);
+ const ASK=()=>pick(["求它的體積與表面積。","它的體積與表面積各是多少？","求它的體積與表面積各為多少。"]);
+ const BOX=()=>pick(["一個長方體","一個長方體紙盒","一塊長方體積木"]),TRI=()=>pick(["一個三角柱","一塊三角柱形積木","一個三角柱形紙盒"]),CYL=()=>pick(["一個圓柱","一塊圓柱形木塊","一個圓柱形的鐵罐（視為實心）"]),PYR=()=>pick(["一個正四角錐","一塊正四角錐形木塊","一個有底的正四角錐形紙模型"]),CON=()=>pick(["一個圓錐","一塊圓錐形木塊","一個有底的圓錐形紙模型"]);
+ const CN=["","","","三","四","五","六","七","八","九","十","十一","十二"];
+
+ // ① 頂點、面、邊
+ const count=unit("count","柱體與錐體的頂點、面、邊","n 角柱：頂點 2n、面 n＋2、邊 3n；n 角錐：頂點 n＋1、面 n＋1、邊 2n。",["integer"],ctx=>{
+  const f=form(ctx),pr=n=>({V:2*n,F:n+2,E:3*n}),py=n=>({V:n+1,F:n+1,E:2*n});
+  // 另一種數法：柱＝兩個 n 邊形＋n 條側稜；錐＝一個 n 邊形＋頂點與 n 條側稜；再用尤拉公式
+  const alt=(kind,n)=>kind==="柱"?{V:n+n,E:n+n+n,F:2+n}:{V:n+1,E:n+n,F:1+n};
+  const okE=(kind,n,o)=>{const a=alt(kind,n);return a.V===o.V&&a.E===o.E&&a.F===o.F&&o.V-o.E+o.F===2};
+  if(f===0||f===1){const kind=f===0?"柱":"錐",n=rand(3,12),o=kind==="柱"?pr(n):py(n);return{expr:`一個${CN[n]}角${kind}有幾個頂點、幾個面、幾個邊？`,answer:`頂點 ${o.V} 個，面 ${o.F} 個，邊 ${o.E} 個`,sig:`k${f}:${n}`,verify:()=>okE(kind,n,o)}}
+  if(f===2){const kind=pick(["柱","錐"]),n=rand(3,12),o=kind==="柱"?pr(n):py(n),give=pick(["E","V","F"]),nm={E:"邊",V:"頂點",F:"面"},other=give==="E"?"V":"E";
+   return{expr:`一個角${kind}共有 ${o[give]} 個${nm[give]}，它是幾角${kind}？共有幾個${nm[other]}？`,answer:`${CN[n]}角${kind}，${o[other]} 個${nm[other]}`,sig:`k2:${kind}:${n}:${give}`,verify:()=>{const hits=[];for(let m=3;m<=40;m++){const q=kind==="柱"?pr(m):py(m);if(q[give]===o[give])hits.push(m)}return hits.length===1&&hits[0]===n&&okE(kind,n,o)}}}
+  if(f===3){const kind=pick(["柱","錐"]),n=rand(3,12),o=kind==="柱"?pr(n):py(n),S=o.V+o.F+o.E;return{expr:`一個角${kind}的頂點數、面數、邊數的總和是 ${S}，它是幾角${kind}？`,answer:`${CN[n]}角${kind}`,sig:`k3:${kind}:${n}`,verify:()=>{let hit=0;for(let m=3;m<=40;m++){const q=kind==="柱"?pr(m):py(m);if(q.V+q.F+q.E===S)hit=m}return hit===n&&okE(kind,n,o)}}}
+  const n=2*rand(2,6),m=3*n/2,o=py(m);return{expr:`一個${CN[n]}角柱與一個角錐的邊數相同，這個角錐是幾角錐？它有幾個頂點、幾個面？`,answer:`${CN[m]}角錐，頂點 ${o.V} 個，面 ${o.F} 個`,sig:`k4:${n}`,verify:()=>pr(n).E===py(m).E&&okE("錐",m,o)};
+ });
+
+ // ② 空間對角線
+ const diagonal=unit("diagonal","空間對角線","長方體的長、寬、高為 a、b、c 時，空間對角線長＝√(a²＋b²＋c²)；正方體邊長 a 的對角線長＝a√3。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx);
+  if(f===0){const exact=pick([true,false]);let a,b,c,d2;if(exact){const q=pick(QUAD),k=rand(1,L?3:2);[a,b,c]=shuffle(q.slice(0,3)).map(x=>x*k);d2=(q[3]*k)**2}else{a=rand(2,12);b=rand(2,12);c=rand(2,12);d2=a*a+b*b+c*c}
+   return{expr:`一個長方體的長、寬、高分別為 ${a}、${b}、${c} 公分，求它的空間對角線長。`,answer:`${rad(1,d2)} 公分`,sig:`d0:${a}:${b}:${c}`,verify:()=>near(dist3([0,0,0],[a,b,c]),radV(1,d2))}}
+  if(f===1){const a=rand(2,15),rev=pick([false,true]);return rev?{expr:`一個正方體的空間對角線長為 ${rad(a,3)} 公分，求此正方體的邊長與體積。`,answer:`邊長 ${a} 公分，體積 ${a**3} 立方公分`,sig:`d1r:${a}`,verify:()=>near(dist3([0,0,0],[a,a,a]),a*Math.sqrt(3))}:{expr:`一個正方體的邊長為 ${a} 公分，求它的空間對角線長。`,answer:`${rad(a,3)} 公分`,sig:`d1:${a}`,verify:()=>near(dist3([0,0,0],[a,a,a]),radV(a,3))}}
+  if(f===2){const q=pick(QUAD),k=rand(1,2),[x,y,z]=shuffle(q.slice(0,3)).map(v=>v*k),d=q[3]*k,item=pick(["雨傘","球棒","教鞭","掃把"]),ask=pick(["長","寬","高"]),giv={長:x,寬:y,高:z},others=["長","寬","高"].filter(t=>t!==ask);
+   return{expr:`一支長 ${d} 公分的${item}恰好可以沿空間對角線斜放進一個長方體箱子。已知箱子的${others[0]}為 ${giv[others[0]]} 公分、${others[1]}為 ${giv[others[1]]} 公分，求箱子的${ask}。`,answer:`${giv[ask]} 公分`,sig:`d2:${x}:${y}:${z}:${ask}`,verify:()=>near(dist3([0,0,0],[x,y,z]),d)}}
+  if(f===3){const a=rand(2,12),b=rand(2,12),c=rand(2,12);return{expr:`一個長方體的底面長 ${a} 公分、寬 ${b} 公分，高 ${c} 公分，求 (1) 底面的對角線長 (2) 空間對角線長。`,answer:`(1) ${rad(1,a*a+b*b)} 公分 (2) ${rad(1,a*a+b*b+c*c)} 公分`,sig:`d3:${a}:${b}:${c}`,verify:()=>near(dist3([0,0,0],[a,b,0]),radV(1,a*a+b*b))&&near(dist3([0,0,0],[a,b,c]),radV(1,a*a+b*b+c*c))}}
+  const q=pick(QUAD),k=rand(1,3),[p,r,s]=q.slice(0,3),d=q[3]*k;
+  return{expr:`一個長方體的長、寬、高的比為 ${p}：${r}：${s}，空間對角線長為 ${d} 公分，求它的長、寬、高與體積。`,answer:`長 ${p*k}、寬 ${r*k}、高 ${s*k} 公分，體積 ${p*r*s*k**3} 立方公分`,sig:`d4:${q}:${k}`,verify:()=>near(dist3([0,0,0],[p*k,r*k,s*k]),d)};
+ });
+
+ // ③ 角柱的體積與表面積：每個面分開算再相加
+ const prism=unit("prism","角柱的體積與表面積","角柱體積＝底面積×高；表面積＝2×底面積＋底面周長×高。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx);
+  const faces=(base,peri,h)=>2*base+peri.reduce((s,e)=>s+e*h,0);
+  if(f===0){const a=rand(2,12+4*L),b=rand(2,12),c=rand(2,12),V=a*b*c,S=2*(a*b+b*c+a*c);return{expr:`${BOX()}的長、寬、高分別為 ${a}、${b}、${c} 公分，${ASK()}`,answer:`體積 ${V} 立方公分，表面積 ${S} 平方公分`,sig:`p0:${a}:${b}:${c}`,verify:()=>faces(a*b,[a,b,a,b],c)===S&&V===c*a*b}}
+  if(f===1){const[p,q,r]=pick(TRIP),k=rand(1,2),a=p*k,b=q*k,c=r*k,h=rand(3,15),B=a*b/2,V=B*h,S=2*B+(a+b+c)*h;
+   return{expr:`${TRI()}的底面是直角三角形，兩股長 ${a}、${b} 公分，斜邊長 ${c} 公分，柱高 ${h} 公分，${ASK()}`,answer:`體積 ${V} 立方公分，表面積 ${S} 平方公分`,sig:`p1:${a}:${b}:${h}`,verify:()=>a*a+b*b===c*c&&faces(B,[a,b,c],h)===S&&near(V,0.5*a*b*h)}}
+  // 直角梯形底：上底 u、下底 u＋d、高 k（垂直的腰）、斜腰 s，(d,k,s) 為畢氏三數
+  const trap=()=>{const[d,k,s]=pick(TRIP.slice(0,5)),u=rand(2,10);return{u,lo:u+d,k,s}};
+  if(f===2){const t=trap(),h=rand(3,12),B=(t.u+t.lo)*t.k/2,V=B*h,S=2*B+(t.u+t.lo+t.k+t.s)*h;if(!Number.isInteger(B))return null;
+   return{expr:`一個四角柱的底面是直角梯形，上底 ${t.u} 公分、下底 ${t.lo} 公分，垂直於兩底的腰長 ${t.k} 公分、另一腰長 ${t.s} 公分，柱高 ${h} 公分，${ASK()}`,answer:`體積 ${V} 立方公分，表面積 ${S} 平方公分`,sig:`p2:${t.u}:${t.lo}:${t.k}:${h}`,verify:()=>(t.lo-t.u)**2+t.k**2===t.s**2&&faces(B,[t.u,t.lo,t.k,t.s],h)===S&&near(V,h*(t.u*t.k+(t.lo-t.u)*t.k/2))}}
+  if(f===3){const[p,q,r]=pick(TRIP),k=rand(1,2),a=p*k,b=q*k,c=r*k,h=rand(3,15),B=a*b/2,V=B*h,S=2*B+(a+b+c)*h;
+   return{expr:`${TRI()}的底面是直角三角形，兩股長 ${a}、${b} 公分，斜邊長 ${c} 公分。若它的體積為 ${V} 立方公分，求柱高與表面積。`,answer:`高 ${h} 公分，表面積 ${S} 平方公分`,sig:`p3:${a}:${b}:${h}`,verify:()=>near(0.5*a*b*h,V)&&faces(B,[a,b,c],h)===S}}
+  const a=rand(3,12),b=rand(3,12),h=rand(3,15),S=2*(a*b+b*h+a*h);
+  return{expr:`${BOX()}的底面長 ${a} 公分、寬 ${b} 公分，表面積為 ${S} 平方公分，求它的高與體積。`,answer:`高 ${h} 公分，體積 ${a*b*h} 立方公分`,sig:`p4:${a}:${b}:${h}`,verify:()=>{const hh=(S-2*a*b)/(2*(a+b));return near(hh,h)&&faces(a*b,[a,b,a,b],hh)===S}};
+ });
+
+ // ④ 圓柱與中空容器（π 保留）
+ const cylinder=unit("cylinder","圓柱與中空容器","圓柱體積＝πr²h；表面積＝2πr²＋2πrh；無蓋少一個底面；中空的部分要扣掉，內側面也要算。",["integer"],ctx=>{
+  const f=form(ctx),L=lv(ctx),P=Math.PI;
+  if(f===0){const r=rand(1,10+5*L),h=rand(2,15);return{expr:`${CYL()}的底面半徑為 ${r} 公分、高為 ${h} 公分，${ASK()}`,answer:`體積 ${pi(r*r*h)} 立方公分，表面積 ${pi(2*r*r+2*r*h)} 平方公分`,sig:`y0:${r}:${h}`,verify:()=>near(P*r*r*h,(r*r*h)*P)&&near(2*P*r*r+(2*P*r)*h,(2*r*r+2*r*h)*P)}}
+  if(f===1){const r=rand(1,12),h=rand(2,15);return{expr:`${CYL()}的底面直徑為 ${2*r} 公分、高為 ${h} 公分，求它的側面積與體積。`,answer:`側面積 ${pi(2*r*h)} 平方公分，體積 ${pi(r*r*h)} 立方公分`,sig:`y1:${r}:${h}`,verify:()=>near(P*(2*r)*h,2*r*h*P)&&near(P*(2*r/2)**2*h,r*r*h*P)}}
+  if(f===2){const r=rand(1,12),h=rand(2,15);return{expr:`${pick(["一個無蓋的圓柱形水桶","一個無蓋的圓柱形筆筒","一個無蓋的圓柱形花盆"])}，底面半徑 ${r} 公分、高 ${h} 公分，求它的容積（視為體積）與外表面積（底面＋側面）。`,answer:`體積 ${pi(r*r*h)} 立方公分，表面積 ${pi(r*r+2*r*h)} 平方公分`,sig:`y2:${r}:${h}`,verify:()=>near(P*r*r+2*P*r*h,(r*r+2*r*h)*P)}}
+  if(f===3){const R2=rand(3,12),r=rand(1,R2-1),h=rand(2,15),V=(R2*R2-r*r)*h,S=2*(R2*R2-r*r)+2*R2*h+2*r*h;
+   return{expr:`${pick(["一段中空的圓柱形水管","一個中空的圓柱形套筒","一段中空的圓柱形鐵管"])}，外半徑 ${R2} 公分、內半徑 ${r} 公分、長 ${h} 公分，求水管本身的體積與表面積（含內、外側面與兩端的環形）。`,answer:`體積 ${pi(V)} 立方公分，表面積 ${pi(S)} 平方公分`,sig:`y3:${R2}:${r}:${h}`,verify:()=>near(P*R2*R2*h-P*r*r*h,V*P)&&near(2*(P*R2*R2-P*r*r)+2*P*R2*h+2*P*r*h,S*P)}}
+  const R2=rand(3,12),r=rand(1,R2-1),H=rand(4,15),D=rand(2,H-1),V=R2*R2*H-r*r*D,S=2*R2*R2+2*R2*H+2*r*D;
+  return{expr:`一個無蓋的圓柱形容器，外半徑 ${R2} 公分、外高 ${H} 公分；內部挖空成半徑 ${r} 公分、深 ${D} 公分的圓柱（開口在上方）。求容器本體的體積與表面積（外底、外側、頂端環形、內側、內底）。`,answer:`體積 ${pi(V)} 立方公分，表面積 ${pi(S)} 平方公分`,sig:`y4:${R2}:${r}:${H}:${D}`,verify:()=>near(P*R2*R2*H-P*r*r*D,V*P)&&near(P*R2*R2+2*P*R2*H+(P*R2*R2-P*r*r)+2*P*r*D+P*r*r,S*P)};
+ });
+
+ // ⑤ 角錐的表面積
+ const pyramid=unit("pyramid","角錐的表面積","正四角錐表面積＝底面積＋4 個等腰三角形（½×底邊×斜高）；正四面體的四個面都是正三角形，表面積＝√3 a²。",["integer"],ctx=>{
+  const f=form(ctx),tri=(a,s)=>a*s/2;
+  if(f===0){const a=rand(2,16),s=rand(a/2+1|0,20),S=a*a+2*a*s;return{expr:`${PYR()}的底面是邊長 ${a} 公分的正方形，側面等腰三角形的斜高為 ${s} 公分，求它的表面積。`,answer:`${S} 平方公分`,sig:`q0:${a}:${s}`,verify:()=>near(a*a+4*tri(a,s),S)}}
+  if(f===1){const a=rand(2,20);return{expr:`${pick(["一個正四面體（四個面都是正三角形）","一個三角錐的底面和側面都是正三角形，","一塊正四面體形的木塊"])}${"" }的邊長為 ${a} 公分，求它的表面積。`.replace("，的邊長","，邊長"),answer:`${rad(a*a,3)} 平方公分`,sig:`q1:${a}`,verify:()=>{const h=Math.sqrt(a*a-(a/2)**2);return near(4*tri(a,h),a*a*Math.sqrt(3))}}}
+  if(f===2){const[p,q,r]=pick(TRIP),k=rand(1,2),half=p*k,H=q*k,s=r*k,a=2*half,S=a*a+2*a*s;return{expr:`${PYR()}的底面邊長 ${a} 公分、高 ${H} 公分，求側面的斜高與表面積。`,answer:`斜高 ${s} 公分，表面積 ${S} 平方公分`,sig:`q2:${a}:${H}`,verify:()=>near(dist3([0,0,H],[half,0,0]),s)&&near(a*a+4*tri(a,s),S)}}
+  if(f===3){const[p,q,r]=pick(TRIP),k=rand(1,2),half=p*k,s=q*k,e=r*k,a=2*half,S=a*a+2*a*s;return{expr:`${PYR()}的底面邊長 ${a} 公分、側稜長 ${e} 公分，求側面的斜高與表面積。`,answer:`斜高 ${s} 公分，表面積 ${S} 平方公分`,sig:`q3:${a}:${e}`,verify:()=>near(Math.hypot(half,s),e)&&near(a*a+4*tri(a,s),S)}}
+  const a=rand(2,16),s=rand(a/2+1|0,20),S=a*a+2*a*s,tetra=pick([false,true]);
+  if(tetra){const b=rand(2,20);return{expr:`一個正四面體的表面積為 ${rad(b*b,3)} 平方公分，求它的邊長。`,answer:`${b} 公分`,sig:`q4t:${b}`,verify:()=>near(4*tri(b,Math.sqrt(b*b-b*b/4)),b*b*Math.sqrt(3))}}
+  return{expr:`${PYR()}的底面邊長 ${a} 公分，表面積為 ${S} 平方公分，求側面的斜高。`,answer:`${s} 公分`,sig:`q4:${a}:${s}`,verify:()=>near((S-a*a)/(2*a),s)};
+ });
+
+ // ⑥ 圓錐的展開圖與表面積
+ const cone=unit("cone","圓錐的展開圖與表面積","展開圖的扇形：半徑＝母線長 l，弧長＝底圓周長 2πr，所以圓心角＝360°×r／l；側面積＝πrl，表面積＝πr²＋πrl。",["integer"],ctx=>{
+  const f=form(ctx),P=Math.PI;
+  const pair=()=>{let r,l;do{r=rand(1,12);l=rand(r+1,30)}while((360*r)%l);return[r,l,360*r/l]};
+  const arcOK=(r,l,t)=>near(2*P*l*t/360,2*P*r)&&near(P*l*l*t/360,P*r*l);
+  if(f===0){const[r,l,t]=pair();return{expr:`${CON()}的展開圖中，扇形的圓心角為 ${t}°，底圓半徑為 ${r} 公分，求扇形的半徑（母線長）。`,answer:`${l} 公分`,sig:`n0:${r}:${l}`,verify:()=>arcOK(r,l,t)}}
+  if(f===1){const[r,l,t]=pair();return{expr:`${CON()}的母線長為 ${l} 公分、底圓半徑為 ${r} 公分，求它的展開圖中扇形的圓心角。`,answer:`${t}°`,sig:`n1:${r}:${l}`,verify:()=>arcOK(r,l,t)}}
+  if(f===2){const r=rand(1,12),l=rand(r+1,30);return{expr:`${CON()}的底圓半徑為 ${r} 公分、母線長為 ${l} 公分，求它的側面積與表面積。`,answer:`側面積 ${pi(r*l)} 平方公分，表面積 ${pi(r*r+r*l)} 平方公分`,sig:`n2:${r}:${l}`,verify:()=>{const t=360*r/l;return near(P*l*l*t/360,r*l*P)&&near(P*r*r+P*l*l*t/360,(r*r+r*l)*P)}}}
+  if(f===3){const[r,l,t]=pair();return{expr:`${CON()}的展開圖中，扇形的半徑為 ${l} 公分、圓心角為 ${t}°，求底圓半徑與圓錐的表面積。`,answer:`底圓半徑 ${r} 公分，表面積 ${pi(r*r+r*l)} 平方公分`,sig:`n3:${r}:${l}`,verify:()=>arcOK(r,l,t)&&near(P*r*r+P*l*l*t/360,(r*r+r*l)*P)}}
+  const[p,q,s]=pick(TRIP),k=rand(1,2),r=p*k,h=q*k,l=s*k,t=R(360*r,l),swap=pick([false,true]),rr=swap?h:r,hh=swap?r:h,tt=R(360*rr,l);if(tt.d!==1)return null;
+  return{expr:`${CON()}的底圓半徑為 ${rr} 公分、高為 ${hh} 公分，求 (1) 母線長 (2) 表面積 (3) 展開圖中扇形的圓心角。`,answer:`(1) ${l} 公分 (2) ${pi(rr*rr+rr*l)} 平方公分 (3) ${fracHTML(tt)}°`,sig:`n4:${rr}:${hh}`,verify:()=>near(dist3([0,0,hh],[rr,0,0]),l)&&near(2*P*l*(tt.n/tt.d)/360,2*P*rr)};
+ });
+
+ return{title:"立體圖形",symbol:"⬡",subtitle:"頂點面邊數・空間對角線・角柱的體積與表面積・圓柱與中空容器・角錐的表面積・圓錐展開圖",instruction:"含 π 的答案保留 π，根式化為最簡；單位：長度公分、面積平方公分、體積立方公分。",modes:["integer"],modeLabels:{integer:"整數邊長"},mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：角柱與角錐的頂點面邊數、由一種個數反求幾角柱（錐）；長方體與正方體的對角線、由對角線與兩邊求第三邊；長方體、直角三角柱、直角梯形柱的體積與表面積；圓柱的體積與表面積、側面積、無蓋水桶；正四角錐與正四面體的表面積、由高求斜高；由圓心角求母線、由母線求圓心角、圓錐的側面積與表面積。",advanced:"進階：角錐的頂點面邊數、反求幾角柱（錐）、由總和反求；正方體、由對角線與兩邊求第三邊、底面對角線與空間對角線；直角三角柱、直角梯形柱、由體積反求高；圓柱的側面積、無蓋水桶、中空水管；正四面體、由高求斜高、由側稜求斜高；由母線求圓心角、側面積與表面積、由扇形求底圓半徑。",challenge:"挑戰：反求幾角柱（錐）、由總和反求、角柱與角錐邊數相同；由對角線與兩邊求第三邊、底面與空間對角線、由邊長比與對角線求體積；直角梯形柱、由體積反求高、由表面積反求高；無蓋水桶、中空水管、無蓋中空容器；由高求斜高、由側稜求斜高、由表面積反求斜高或邊長；圓錐的表面積、由扇形求底圓半徑、由半徑與高求母線、表面積與圓心角。"},
+  units:[count,diagonal,prism,cylinder,pyramid,cone],presets:{basic:{count:2,diagonal:2,prism:2,cylinder:2,pyramid:2,cone:2},advanced:{count:2,diagonal:2,prism:2,cylinder:2,pyramid:2,cone:2},challenge:{count:2,diagonal:2,prism:2,cylinder:2,pyramid:2,cone:2}}};
+}
+
+const CONFIGS={ratio3:ratio3Config,parallelratio:parallelratioConfig,similar:similarConfig,righttri:righttriConfig,circle1:circle1Config,circle2:circle2Config,centers:centersConfig,quadfunc:quadfuncConfig,quartile:quartileConfig,boxplot:boxplotConfig,probability:probabilityConfig,treediagram:treediagramConfig,solid:solidConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
