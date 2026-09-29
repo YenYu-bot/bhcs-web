@@ -233,8 +233,15 @@ test('Spring and friction: static follows pull / edge / kinetic drop / zero pull
  assert.equal(calc('spring-friction',{mode:'spring',k:10,hang:2,limit:0.3}).kind,'over');
  for(const surface of ['smooth','rough','rubber'])for(const mass of [0.5,2,10])for(const pull of [0,1,5.88,20,100]){const q=calc('spring-friction',{mode:'block',mass,surface,pull});assert.ok(q.friction<=q.fs+1e-9);assert.ok(q.fk<q.fs);if(q.kind==='moving')assert.ok(q.friction<pull);else close(q.friction,pull);}
 });
+test('Electric power: 6 V 6 Ω 70 s / fixed current vs fixed voltage doubling / zero time / boiling cap',()=>{
+ const a=calc('electric-power');close(a.I,1);close(a.P,6);close(a.E,420);assert.equal(Number(a.dT.toFixed(2)),1);assert.equal(a.kind,'heating');
+ close(calc('electric-power',{mode:'fixedI',amp:1,ohm:12}).P,12);close(calc('electric-power',{mode:'fixedV',volt:6,ohm:12}).P,3);
+ const z=calc('electric-power',{time:0});close(z.E,0);close(z.dT,0);assert.equal(z.kind,'idle');
+ assert.equal(calc('electric-power',{volt:12,ohm:1,time:600,water:50}).kind,'boiling');
+ for(const mode of ['fixedV','fixedI'])for(const ohm of [1,6,50])for(const loss of [0,25,50]){const q=calc('electric-power',{mode,ohm,loss,volt:9,amp:2,time:100});close(q.P,q.V*q.I);close(q.V,q.I*ohm);assert.ok(q.heat<=q.E+1e-9);close(q.heat*100,q.E*(100-loss));}
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
- const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction'];
+ const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
  for(const id of ids){const t=batch2.find(x=>x.id===id),def=defaults(id);
   const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];

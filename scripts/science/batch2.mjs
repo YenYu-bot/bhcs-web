@@ -289,5 +289,18 @@ export const batch2 = [
  misconception:'靜摩擦力不是固定值；它等於外力，直到達到最大靜摩擦為止。',safety:'彈簧不要拉超過限度或突然放手讓它彈回；拉動重物時注意桌面邊緣，避免掉落。',
  source:['OpenStax：摩擦力','https://openstax.org/books/college-physics-2e/pages/5-1-friction'],related:[['../force-motion-lab.html','力與運動實驗室'],['lever-torque.html','槓桿與力矩']],
  quiz:[quiz('木塊沒有動，拉力從 2 N 加到 5 N，靜摩擦力？',['一直等於最大靜摩擦','跟著變成 5 N','變成 0'],1,'用任務②比較兩筆紀錄的摩擦力。'),quiz('在彈性限度內，彈簧掛的質量加倍，伸長量？',['加倍','不變','變成四倍'],0,'用任務①，只改吊掛質量。'),quiz('木塊剛開始滑動之後，摩擦力和最大靜摩擦相比？',['比較大','比較小','一樣大'],1,'看摩擦力—拉力圖在臨界點之後往下掉。')]
+ },
+ {
+ id:'electric-power',noPrediction:true,title:'電流熱效應實驗室',subject:'理化',grade:'國中',unit:'電流熱效應',minutes:'15–20',prior:'電壓、電流、電阻、歐姆定律',
+ description:'把電熱線放進水裡通電，比較電功率、電能與水溫上升；再比較「固定電壓」和「固定電流」時，電阻加倍的結果為什麼相反。',
+ goals:['用 P＝IV 求電功率，用 E＝Pt 求電能','由電能與水的質量估算水溫上升','說明固定電壓與固定電流時，電阻對發熱的影響相反'],
+ controls:[select('mode','比較條件',[['fixedV','固定電壓'],['fixedI','固定電流']],'fixedV'),range('volt','電壓（固定電壓時）',1,12,1,6,'V'),range('amp','電流（固定電流時）',0.5,3,0.5,1,'A'),range('ohm','電阻',1,50,1,6,'Ω'),range('time','通電時間',0,600,10,70,'s'),range('water','水的質量',50,500,50,100,'g'),range('loss','散失到環境',0,50,5,0,'%')],
+ prediction:'目前的狀態是？',choices:[['idle','沒有通電（時間為 0）'],['heating','通電加熱中'],['boiling','水已加熱到沸點']],
+ tasks:[task('① 讀功率與溫升',{mode:'fixedV',volt:6,ohm:6,time:70,water:100,loss:0},'電流、功率、電能各是多少？水溫上升幾度？'),task('② 固定電壓，電阻加倍',{mode:'fixedV',volt:6,ohm:12,time:70,water:100,loss:0},'只把電阻從 6 Ω 改成 12 Ω：功率變大還是變小？'),task('③ 固定電流，電阻加倍',{mode:'fixedI',amp:1,ohm:12,time:70,water:100,loss:0},'改成固定電流 1 A，同樣把電阻加倍：結論和任務②相反，為什麼？')],
+ formula:'固定電壓：I＝V／R，P＝V²／R。固定電流：V＝IR，P＝I²R。電能 E＝Pt（J），1 度＝1 kWh＝3.6×10⁶ J。水溫上升 ΔT＝E×(1－散失比例)÷(水的質量×4.2)，水的比熱取 4.2 J/g·°C。',
+ limits:'電熱線的電阻固定，不隨溫度改變；電源理想，電壓或電流不受負載影響。水的初溫設為 25°C，到 100°C 即標示「已達沸點」，本模型不處理沸騰與水的蒸發。散失比例為教學設定值。',
+ misconception:'「電阻越大越熱」只在電流相同時成立；電壓相同時，電阻越小功率越大。',safety:'不可自行拆接家用插座或用電熱線加熱；本頁為模擬。',
+ source:['OpenStax：電功率與電能','https://openstax.org/books/college-physics-2e/pages/20-4-electric-power-and-energy'],related:[['../circuit-lab.html','電路實驗室'],['energy.html','能量轉換與守恆']],
+ quiz:[quiz('電壓固定時，把電阻加倍，電功率會？',['加倍','變成一半','不變'],1,'用任務②比較兩筆紀錄。'),quiz('電流固定時，把電阻加倍，電功率會？',['加倍','變成一半','不變'],0,'用任務③，P＝I²R。'),quiz('功率 6 W 通電 70 秒，電能是？',['76 J','420 J','11.7 J'],1,'E＝Pt。')]
  }
 ];

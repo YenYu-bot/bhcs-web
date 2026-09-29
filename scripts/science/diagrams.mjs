@@ -358,6 +358,22 @@ export function diagram(id,s,r){
   }
   break;
  }
+ case 'electric-power':{
+  // 左：電源、導線、燒杯中的電熱線與溫度計；右：電能與水吸收的熱比較。
+  const ink='#436779',bx=120,by=150,bw=200,bh=190,glow=Math.min(1,r.P/40);
+  out+=rect(30,70,70,40,'#e4edf2')+text(38,96,s.mode==='fixedV'?s.volt+' V':num(r.V,1)+' V',15)+line(100,80,180,80,ink)+line(180,80,180,196,ink)+line(100,100,260,100,ink)+line(260,100,260,196,ink);
+  out+=`<path d="M${bx},${by} L${bx},${by+bh} Q${bx},${by+bh+12} ${bx+12},${by+bh+12} L${bx+bw-12},${by+bh+12} Q${bx+bw},${by+bh+12} ${bx+bw},${by+bh} L${bx+bw},${by}" fill="none" stroke="${ink}" stroke-width="3"/>`+rect(bx+2,by+40,bw-4,bh-28,'#d6ebf5');
+  let coil='M180,196';for(let i=0;i<8;i++)coil+=` L${180+i*10+5},${i%2?300:320}`;coil+=' L260,300 L260,196';
+  out+=`<path data-coil d="${coil}" fill="none" stroke="rgb(${num(150+105*glow,0)},${num(90-40*glow,0)},60)" stroke-width="${num(3+3*glow,1)}"/>`;
+  const tc=Math.min(100,r.T),ty=v=>num(330-(v-0)*2.2,1);out+=rect(340,110,16,220,'#f2f4f7')+`<rect x="342" y="${ty(tc)}" width="12" height="${num(330-ty(tc),1)}" fill="#b54a5b"/>`+circle(348,340,12,'#b54a5b');
+  for(const v of [25,50,75,100])out+=line(356,ty(v),364,ty(v),ink)+`<text x="368" y="${num(ty(v)+4,1)}" font-size="12">${v}°C</text>`;
+  out+=text(bx,by+bh+34,'水 '+s.water+' g（初溫 25°C）',14);
+  const E=Math.max(r.E,1e-9),bw2=v=>num(200*v/E,1),X=430;out+=text(X,150,'能量（J）',15);
+  out+=rect(X,164,r.E>0?200:0,24,'#d97b11')+text(X,208,'電能 '+num(r.E,1),13)+rect(X,220,r.E>0?bw2(r.heat):0,24,'#2f6fb2')+text(X,264,'水吸收 '+num(r.heat,1),13);
+  if(r.E>0&&s.loss>0)out+=rect(num(X+bw2(r.heat),1),220,bw2(r.E-r.heat),24,'#c9d2de')+text(X,286,'散失 '+num(r.E-r.heat,1),13);
+  out+=text(20,32,'P＝'+num(r.P,2)+' W　E＝'+num(r.E,1)+' J　水溫上升 '+(r.kind==='boiling'?'已達沸點':num(r.dT,2)+'°C'),17);
+  out+=text(20,392,'電熱線越紅代表功率越大　溫度計最高畫到 100°C（本模型不處理沸騰）',12);break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }
