@@ -145,6 +145,13 @@ export function calculate(id,s){
   if(peak>110)hormones.push('胰島素');if(min<80)hormones.push('升糖素');
   return {kind:peak>110?'high':min<80?'low':'steady',peak,min,recovery,hormones};
  }
+ case 'spring-friction':{
+  const g=9.8;
+  if(s.mode==='spring'){const F=s.hang*g,x=F/s.k;return {kind:x>s.limit+1e-12?'over':'within',F,x,limit:s.limit}}
+  const mu={smooth:[0.3,0.2],rough:[0.6,0.4],rubber:[0.9,0.7]}[s.surface],N=s.mass*g,fs=mu[0]*N,fk=mu[1]*N;
+  const edge=Math.abs(s.pull-fs)<1e-6,moving=!edge&&s.pull>fs,friction=moving?fk:s.pull,a=moving?(s.pull-fk)/s.mass:0;
+  return {kind:edge?'edge':moving?'moving':'rest',N,fs,fk,friction,a,mu};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -173,5 +180,6 @@ export function describe(id,s,r){
  case 'circulation':return {metrics:[['心跳',f(r.hr)+' 次／分'],['每分鐘心輸出量',f(r.co,2)+' L／分'],['所選血管',r.vessel+'：'+(r.kind==='oxygenated'?'充氧血':'缺氧血')],['所屬循環',r.circuit==='lung'?'肺循環':'體循環']],explanation:`${r.vessel}屬於${r.circuit==='lung'?'肺循環':'體循環'}，血液從${r.from}流向${r.to}，裡面是${r.kind==='oxygenated'?'充氧血':'缺氧血'}。${s.site==='pa'?'它叫動脈，是因為血液離開心臟，不是因為含氧多。':s.site==='pv'?'它叫靜脈，是因為血液流回心臟，裡面卻是充氧血。':''}心跳 ${f(r.hr)} 次／分×每搏 ${f(r.sv)} mL＝每分鐘 ${f(r.co,2)} L，是靜止時的 ${f(r.coRatio,2)} 倍（心跳是 ${f(r.hrRatio,2)} 倍）。數值來自教學模型。`};
  case 'nerve-reflex':return {metrics:[['中樞',r.center],['是否經大腦判斷',r.viaBrain?'是':r.painLater?'否（痛覺之後才傳到大腦）':'否'],['路徑步驟數',r.steps+' 步'],['接尺反應時間',f(r.time,3)+' s']],explanation:`路徑：${r.path.map(p=>p[0]+(p[1]?'（'+p[1]+'）':'')).join(' → ')}。${r.kind==='reflex'?'中樞在脊髓，不必等大腦判斷，所以很快。'+(r.painLater?'訊息另外往上傳到大腦產生痛覺，但那是縮手之後的事。':''):'要先由大腦判斷球在哪裡，再下指令給手，所以比反射慢。'}接尺：尺落下 ${s.drop} cm，t＝√(2×${f(s.drop/100,2)}÷9.8)＝${f(r.time,3)} s。`};
  case 'homeostasis':return s.mode==='temp'?{metrics:[['核心體溫','37 °C（維持恆定）'],['皮膚血管',r.vessel],['調節方式',r.method],['環境',s.env+' °C（'+{cold:'偏冷',neutral:'適中',hot:'偏熱'}[r.kind]+'）']],explanation:r.kind==='cold'?`環境 ${s.env}°C 比較冷：皮膚血管收縮，流到皮膚的血變少、散熱變少；肌肉顫抖產生熱。核心體溫維持在 37°C。`:r.kind==='hot'?`環境 ${s.env}°C 比較熱：皮膚血管舒張，流到皮膚的血變多、散熱變多；流汗，汗水蒸發帶走熱。核心體溫維持在 37°C。`:`環境 ${s.env}°C 適中：不需要明顯調節，核心體溫維持在 37°C。`}:{metrics:[['血糖峰值',f(r.peak)+' mg/dL'],['血糖最低值',f(r.min)+' mg/dL'],['回穩時間',r.recovery?r.recovery+' 小時':'不需要（沒有升高）'],['主要作用的激素',r.hormones.length?r.hormones.join('、')+' 增加':'無明顯變化']],explanation:`${s.carb?'進食 '+s.carb+' g 醣類後血糖升到 '+f(r.peak)+'，':''}${r.peak>110?'超過 110，胰臟分泌胰島素增加，讓血糖回到 90'+(s.insulin==='low'?'；胰島素不足時峰值較高、要 '+r.recovery+' 小時才回穩。':'，約 '+r.recovery+' 小時。'):''}${r.min<80?'運動使血糖降到 '+f(r.min)+'，低於 80，升糖素增加，把血糖拉回來。':''}${r.kind==='steady'?'血糖維持在正常範圍，沒有明顯的激素調節。':''}數值是虛構的教學模型，不能用於健康判斷。`};
+ case 'spring-friction':return s.mode==='spring'?{metrics:[['彈力',f(r.F,2)+' N'],['伸長量',f(r.x,3)+' m（'+f(r.x*100,1)+' cm）'],['彈性限度',f(r.limit,2)+' m'],['狀態',r.kind==='over'?'已超過彈性限度':'在彈性限度內']],explanation:r.kind==='over'?`伸長量 ${f(r.x,3)} m 超過彈性限度 ${f(r.limit,2)} m：F＝kx 的計算值僅供參考，虎克定律已不適用，真實彈簧可能無法恢復原長。`:`彈力＝mg＝${f(s.hang,1)}×9.8＝${f(r.F,2)} N；伸長量 x＝F÷k＝${f(r.F,2)}÷${s.k}＝${f(r.x,3)} m。在彈性限度內，伸長量和外力成正比。`}:{metrics:[['正向力',f(r.N,2)+' N'],['摩擦力',f(r.friction,2)+' N（'+(r.kind==='moving'?'動摩擦':'靜摩擦')+'）'],['最大靜摩擦',f(r.fs,2)+' N'],['加速度',f(r.a,2)+' m/s²']],explanation:r.kind==='moving'?`拉力 ${f(s.pull,2)} N 超過最大靜摩擦 ${f(r.fs,2)} N，木塊滑動，摩擦力變成動摩擦 ${f(r.fk,2)} N，比最大靜摩擦小；加速度＝(${f(s.pull,2)}－${f(r.fk,2)})÷${s.mass}＝${f(r.a,2)} m/s²。`:r.kind==='edge'?`拉力恰好等於最大靜摩擦 ${f(r.fs,2)} N，這是臨界情況；再加一點點拉力，木塊就會開始滑動。`:`木塊不動：靜摩擦力等於拉力 ${f(s.pull,2)} N，還沒到最大靜摩擦 ${f(r.fs,2)} N。摩擦係數為教學值。`};
  }
 }

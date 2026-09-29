@@ -326,6 +326,38 @@ export function diagram(id,s,r){
   }
   break;
  }
+ case 'spring-friction':{
+  const ink='#436779';
+  if(s.mode==='spring'){
+   // 左：彈簧與刻度尺；右：F－x 圖（彈性限度內實線，超過後虛線）
+   const top=56,L0=50,xMax=Math.max(s.limit*1.4,r.x*1.1,0.1),sc=230/xMax,len=num(L0+r.x*sc,1),x0=170;
+   out+=line(100,top,240,top,ink);for(let x=104;x<240;x+=14)out+=line(x,top,x-8,top-8,'#9aaeb9');
+   const coils=12,pts=[[x0,top],[x0,top+10]];for(let i=1;i<=coils;i++)pts.push([x0+(i%2?-16:16),num(top+10+(len-20)*i/coils,1)]);pts.push([x0,num(top+len-10,1)],[x0,num(top+len,1)]);
+   out+=`<path data-spring d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="${r.kind==='over'?'#b54a5b':'#2f6fb2'}" stroke-width="3"/>`;
+   out+=rect(x0-24,num(top+len,1),48,34,'#607e8d')+text(x0-18,num(top+len+22,1),s.hang+' kg',13);
+   const rx=270,y0=top+L0;out+=rect(rx,top,22,300,'#f6e8c8');
+   const stepCm=[1,2,5,10,20,50,100].find(v=>v>=xMax*100/6)||100;for(let c=0;c<=xMax*100+1e-9;c+=stepCm){const y=num(y0+c/100*sc,1);if(y<=top+300)out+=line(rx,y,rx+10,y,ink)+`<text x="${rx+26}" y="${num(y+4,1)}" font-size="12">${c} cm</text>`}
+   const ly=num(y0+s.limit*sc,1);out+=`<line x1="${rx-8}" y1="${ly}" x2="${rx+30}" y2="${ly}" stroke="#b54a5b" stroke-width="2" stroke-dasharray="5 4"/>`+`<text x="${rx-12}" y="${num(ly+4,1)}" font-size="12" text-anchor="end" fill="#b54a5b">限度</text>`;
+   out+=line(x0+30,num(top+len,1),rx-2,num(top+len,1),'#d97b11',true);
+   const gx=400,gy=330,gw=230,gh=230,Fm=Math.max(s.k*xMax,r.F*1.1,1),px=v=>num(gx+gw*v/xMax,1),py=F=>num(gy-gh*F/Fm,1);
+   out+=line(gx,gy,gx+gw,gy,ink)+line(gx,gy,gx,gy-gh-6,ink)+text(gx,gy-gh-14,'彈力 F（N）',13)+text(gx+gw-70,gy+22,'伸長量 x',13);
+   out+=`<line x1="${gx}" y1="${gy}" x2="${px(s.limit)}" y2="${py(s.k*s.limit)}" stroke="#2f6fb2" stroke-width="3"/><line x1="${px(s.limit)}" y1="${py(s.k*s.limit)}" x2="${px(xMax)}" y2="${py(s.k*xMax)}" stroke="#2f6fb2" stroke-width="2" stroke-dasharray="6 5"/>`;
+   out+=circle(px(r.x),py(r.F),6,r.kind==='over'?'#b54a5b':'#d97b11')+text(20,32,'F＝kx：'+num(r.F,2)+' N ÷ '+s.k+' N/m ＝ '+num(r.x,3)+' m'+(r.kind==='over'?'（已超過彈性限度）':''),16);
+   out+=text(20,392,'紅虛線＝彈性限度　右圖虛線段：超過限度，虎克定律不適用',12);
+  }else{
+   // 上：木塊受力圖；下：摩擦力－拉力圖（先等於拉力，到最大靜摩擦後降為動摩擦）
+   const bx=250,by=90,bw=110,bh=64,Fm=Math.max(s.pull,r.fs)*1.25||1,L=F=>num(Math.max(0,150*F/Fm),1);
+   out+=line(60,by+bh,600,by+bh,ink)+rect(bx,by,bw,bh,'#c8955a')+text(bx+30,by+38,s.mass+' kg',15);
+   if(s.pull>0)out+=`<g data-pull>`+arrow(bx+bw,by+bh/2,num(bx+bw+L(s.pull),1),by+bh/2,'#d97b11')+`</g>`+text(num(bx+bw+L(s.pull)+6,1),by+bh/2-6,'拉力 '+num(s.pull,2)+' N',14);
+   if(r.friction>0)out+=`<g data-friction>`+arrow(bx,by+bh-6,num(bx-L(r.friction),1),by+bh-6,'#b54a5b')+`</g>`+`<text x="${num(bx-L(r.friction)-6,1)}" y="${by+bh-12}" font-size="14" text-anchor="end" fill="#b54a5b">摩擦力 ${num(r.friction,2)} N</text>`;
+   const gx=110,gy=350,gw=440,gh=140,Pm=Math.max(r.fs*2,s.pull*1.1,1),px=v=>num(gx+gw*Math.min(v,Pm)/Pm,1),py=F=>num(gy-gh*F/(r.fs*1.15),1);
+   out+=line(gx,gy,gx+gw,gy,ink)+line(gx,gy,gx,gy-gh-6,ink)+text(gx-80,gy-gh+4,'摩擦力（N）',13)+text(gx+gw-60,gy+20,'拉力（N）',13);
+   out+=`<path d="M${gx},${gy} L${px(r.fs)},${py(r.fs)} L${px(r.fs)},${py(r.fk)} L${px(Pm)},${py(r.fk)}" fill="none" stroke="#2f6fb2" stroke-width="3"/>`+`<line x1="${gx}" y1="${py(r.fs)}" x2="${px(r.fs)}" y2="${py(r.fs)}" stroke="#9aaeb9" stroke-width="1" stroke-dasharray="4 4"/>`+`<text x="${gx-6}" y="${num(py(r.fs)+4,1)}" font-size="12" text-anchor="end">${num(r.fs,2)}</text>`;
+   out+=circle(px(s.pull),py(r.friction),6,r.kind==='moving'?'#b54a5b':'#d97b11');
+   out+=text(20,32,{rest:'靜止：靜摩擦力＝拉力',edge:'臨界：拉力＝最大靜摩擦',moving:'滑動：摩擦力降為動摩擦'}[r.kind]+'（係數為教學值）',16)+text(20,392,'橘箭頭＝拉力　紅箭頭＝摩擦力　下圖圓點＝目前的拉力與摩擦力',12);
+  }
+  break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }

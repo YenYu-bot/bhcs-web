@@ -223,8 +223,18 @@ test('Homeostasis: meal peak / insulin deficit / fasting exercise / steady / col
   const ys=[...svg.match(/data-glucose d="M([^"]+)"/)[1].split(' L')].map(p=>Number(p.split(',')[1])),hi=Math.max(180,q.peak+10),g=y=>40+(330-y)*(hi-40)/260;
   assert.ok(Math.abs(g(Math.min(...ys))-q.peak)<1.5,`peak ${carb} ${exercise} ${insulin}`);assert.ok(Math.abs(g(Math.max(...ys))-q.min)<1.5,`min ${carb} ${exercise} ${insulin}`);}
 });
+test('Spring and friction: static follows pull / edge / kinetic drop / zero pull / Hooke extension',()=>{
+ const base={mode:'block',mass:2,surface:'smooth'};
+ const r=calc('spring-friction',{...base,pull:5});close(r.N,19.6);close(r.friction,5);assert.equal(r.kind,'rest');
+ assert.equal(calc('spring-friction',{...base,pull:5.88}).kind,'edge');
+ const m=calc('spring-friction',{...base,pull:10});close(m.friction,3.92);close(m.a,3.04);assert.equal(m.kind,'moving');
+ close(calc('spring-friction',{...base,pull:0}).friction,0);
+ const sp=calc('spring-friction',{mode:'spring',k:50,hang:0.5,limit:0.3});close(sp.x,0.098);assert.equal(sp.kind,'within');close(calc('spring-friction',{mode:'spring',k:50,hang:1,limit:0.3}).x,0.196);
+ assert.equal(calc('spring-friction',{mode:'spring',k:10,hang:2,limit:0.3}).kind,'over');
+ for(const surface of ['smooth','rough','rubber'])for(const mass of [0.5,2,10])for(const pull of [0,1,5.88,20,100]){const q=calc('spring-friction',{mode:'block',mass,surface,pull});assert.ok(q.friction<=q.fs+1e-9);assert.ok(q.fk<q.fs);if(q.kind==='moving')assert.ok(q.friction<pull);else close(q.friction,pull);}
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
- const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis'];
+ const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
  for(const id of ids){const t=batch2.find(x=>x.id===id),def=defaults(id);
   const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];
