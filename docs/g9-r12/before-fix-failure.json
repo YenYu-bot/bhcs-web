@@ -1,0 +1,115 @@
+[
+  {
+    "seed": 1912912488,
+    "uiMax": 40,
+    "bankSize": null,
+    "bankDeclared": false,
+    "bankCoverage": {
+      "attempted": 0,
+      "distinct": 0
+    },
+    "raw": {
+      "calls": 230,
+      "returned": 230,
+      "nulls": 0,
+      "verifyFalse": 0,
+      "exceptions": 0,
+      "invalid": 30,
+      "distinct": 66,
+      "guardRejected": 0,
+      "examples": [
+        {
+          "code": "invalid_question",
+          "expr": "一個十角柱與一個角錐的邊數相同，這個角錐是幾角錐？它有幾個頂點、幾個面？",
+          "answer": "undefined角錐，頂點 16 個，面 16 個",
+          "sig": "k4:10"
+        },
+        {
+          "code": "invalid_question",
+          "expr": "一個十二角柱與一個角錐的邊數相同，這個角錐是幾角錐？它有幾個頂點、幾個面？",
+          "answer": "undefined角錐，頂點 19 個，面 19 個",
+          "sig": "k4:12"
+        },
+        {
+          "code": "invalid_question",
+          "expr": "一個十二角柱與一個角錐的邊數相同，這個角錐是幾角錐？它有幾個頂點、幾個面？",
+          "answer": "undefined角錐，頂點 19 個，面 19 個",
+          "sig": "k4:12"
+        }
+      ],
+      "rejectionRate": 0
+    },
+    "sampling": {
+      "requested": 200,
+      "produced": 200,
+      "exhaustedAt": [],
+      "examples": []
+    },
+    "paper": {
+      "requested": 40,
+      "produced": 40,
+      "attempts": 81,
+      "candidateNulls": 0,
+      "candidateVerifyFalse": 0,
+      "candidateExceptions": 0,
+      "candidateGuardRejected": 0,
+      "exhaustedAt": null,
+      "duplicates": 0,
+      "examples": [
+        {
+          "code": "invalid_question",
+          "expr": "一個十角柱與一個角錐的邊數相同，這個角錐是幾角錐？它有幾個頂點、幾個面？",
+          "answer": "undefined角錐，頂點 16 個，面 16 個",
+          "sig": "k4:10"
+        },
+        {
+          "code": "invalid_question",
+          "expr": "一個十角柱與一個角錐的邊數相同，這個角錐是幾角錐？它有幾個頂點、幾個面？",
+          "answer": "undefined角錐，頂點 16 個，面 16 個",
+          "sig": "k4:10"
+        },
+        {
+          "code": "invalid_question",
+          "expr": "一個十二角柱與一個角錐的邊數相同，這個角錐是幾角錐？它有幾個頂點、幾個面？",
+          "answer": "undefined角錐，頂點 19 個，面 19 個",
+          "sig": "k4:12"
+        }
+      ]
+    },
+    "issues": [
+      {
+        "code": "raw_invalid_question",
+        "detail": "Invalid non-null candidate"
+      },
+      {
+        "code": "paper_candidate_invalid",
+        "detail": "Invalid non-null candidate"
+      }
+    ],
+    "warnings": [],
+    "samples": [
+      {
+        "expr": "一個角柱共有 27 個邊，它是幾角柱？共有幾個頂點？",
+        "answer": "九角柱，18 個頂點",
+        "sig": "k2:柱:9:E"
+      },
+      {
+        "expr": "一個角柱共有 9 個邊，它是幾角柱？共有幾個頂點？",
+        "answer": "三角柱，6 個頂點",
+        "sig": "k2:柱:3:E"
+      },
+      {
+        "expr": "一個角柱的頂點數、面數、邊數的總和是 44，它是幾角柱？",
+        "answer": "七角柱",
+        "sig": "k3:柱:7"
+      }
+    ],
+    "pass": false,
+    "link": "g9-drills.html?topic=solid",
+    "topic": "solid",
+    "unit": "count",
+    "name": "柱體與錐體的頂點、面、邊",
+    "level": "challenge",
+    "mode": "integer"
+  }
+]
