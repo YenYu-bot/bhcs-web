@@ -6,7 +6,7 @@ const http=require('node:http');
 const root=path.resolve(__dirname,'..');
 const output=path.resolve(process.env.COMPOSITION_OUTPUT||'composition-artifacts');
 const legacy=['microscope','photosynthesis-factor','genetics-simulation','force-motion','circuit','particle-reaction','acid-base-indicator','heat-phase','buoyancy-density','plate-earthquake'].map(x=>'tools/'+x+'-lab.html');
-const shared=['optics','wave-sound','electromagnetism','pressure-fluid','energy','solubility','moon-eclipse','seasons','plant-exchange','ecosystem','motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems'].map(x=>'tools/science/'+x+'.html');
+const shared=['optics','wave-sound','electromagnetism','pressure-fluid','energy','solubility','moon-eclipse','seasons','plant-exchange','ecosystem','motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex'].map(x=>'tools/science/'+x+'.html');
 const pages=[...legacy,...shared,'tools/science/index.html'];
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{

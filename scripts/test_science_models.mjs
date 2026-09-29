@@ -185,8 +185,23 @@ test('Lever torque: balanced default / slanted pull / sin symmetry / effective a
   const m=svg.match(/<line data-arm x1="([\d.-]+)" y1="([\d.-]+)" x2="([\d.-]+)" y2="([\d.-]+)"/);assert.ok(m,'effective arm line missing');
   assert.ok(Math.abs(Math.hypot(m[3]-m[1],m[4]-m[2])/5.4-q.effective)<0.1,`arm ${angle} ${d2}`);}
 });
+test('Circulation: resting / maximal output / pulmonary artery and vein / one bold vessel',()=>{
+ const r=calc('circulation');close(r.hr,70);close(r.co,4.9);assert.equal(r.kind,'deoxygenated');assert.equal(r.circuit,'lung');
+ const m=calc('circulation',{intensity:100});close(m.hr,180);close(m.sv,110);close(m.co,19.8);
+ assert.equal(calc('circulation',{site:'pv'}).kind,'oxygenated');assert.equal(calc('circulation',{site:'aorta'}).circuit,'body');assert.equal(calc('circulation',{site:'vc'}).kind,'deoxygenated');
+ let last=0;for(let intensity=0;intensity<=100;intensity+=10)for(const site of ['pa','pv','aorta','vc']){const q=calc('circulation',{intensity,site}),svg=diagram('circulation',{intensity,site},q);
+  assert.equal((svg.match(/data-selected/g)||[]).length,1);assert.ok(svg.includes(`data-vessel="${site}" data-selected`));const flows=(svg.match(/data-flow/g)||[]).length;if(site==='pa'){assert.ok(flows>=last);last=flows}}
+});
+test('Nerve and reaction time: ruler drop times / reflex centre / voluntary path / numbered steps',()=>{
+ assert.equal(Number(calc('nerve-reflex',{drop:19.6}).time.toFixed(3)),0.2);assert.equal(Number(calc('nerve-reflex',{drop:5}).time.toFixed(3)),0.101);close(calc('nerve-reflex',{drop:0}).time,0);
+ const k=calc('nerve-reflex');assert.equal(k.kind,'reflex');assert.equal(k.center,'脊髓');assert.equal(k.viaBrain,false);
+ const c=calc('nerve-reflex',{action:'catch'});assert.equal(c.kind,'voluntary');assert.equal(c.center,'大腦');assert.equal(c.viaBrain,true);
+ assert.equal(calc('nerve-reflex',{action:'withdraw'}).painLater,true);
+ for(const action of ['knee','withdraw','catch'])for(let drop=0;drop<=50;drop+=5){const q=calc('nerve-reflex',{action,drop}),svg=diagram('nerve-reflex',{action,drop},q);
+  assert.equal((svg.match(/data-step=/g)||[]).length,q.steps);assert.equal(svg.includes('data-pain'),action==='withdraw');close(0.5*9.8*q.time*q.time,drop/100);}
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
- const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems'];
+ const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
  for(const id of ids){const t=batch2.find(x=>x.id===id),def=defaults(id);
   const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];

@@ -129,6 +129,16 @@ export function calculate(id,s){
   const low=s.system!=='high',rotation=(s.hemi==='north')===low?'ccw':'cw';
   return {kind:s.system,rotation,flow:low?'in':'out',vertical:low?'up':'down',weather:s.system==='high'?'晴朗、穩定':s.system==='low'?'容易成雲致雨':'強風豪雨'};
  }
+ case 'circulation':{
+  const hr=70+1.1*s.intensity,sv=70+0.4*s.intensity,co=hr*sv/1000;
+  const V={pa:['肺動脈',false,'lung','右心室','肺臟'],pv:['肺靜脈',true,'lung','肺臟','左心房'],aorta:['主動脈',true,'body','左心室','全身組織'],vc:['大靜脈',false,'body','全身組織','右心房']}[s.site];
+  return {kind:V[1]?'oxygenated':'deoxygenated',hr,sv,co,vessel:V[0],circuit:V[2],from:V[3],to:V[4],coRatio:co/4.9,hrRatio:hr/70};
+ }
+ case 'nerve-reflex':{
+  const P={knee:[['受器','膝蓋下方的肌腱'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','大腿前側肌肉']],withdraw:[['受器','手指皮膚'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','手臂肌肉']],catch:[['受器','眼睛'],['感覺神經',''],['大腦','判斷'],['脊髓','傳遞'],['運動神經',''],['動器','手部肌肉']]}[s.action];
+  const time=Math.sqrt(2*(s.drop/100)/9.8);
+  return {kind:s.action==='catch'?'voluntary':'reflex',center:s.action==='catch'?'大腦':'脊髓',viaBrain:s.action==='catch',painLater:s.action==='withdraw',path:P,steps:P.length,time};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -154,5 +164,7 @@ export function describe(id,s,r){
  case 'atom-builder':return {metrics:[['元素',r.symbol+' '+r.name],['質量數 A',String(r.A)],['電荷',r.charge===0?'0（電中性）':(r.charge>0?'+':'−')+Math.abs(r.charge)+'（'+r.ion+'）'],['電子層',r.shells.length?r.shells.join('、'):'沒有電子']],explanation:`質子數 ${s.p} 決定這是${r.name}（${r.symbol}）。質量數＝${s.p}＋${s.n}＝${r.A}。電荷＝${s.p}－${s.e}＝${r.charge>0?'+':''}${r.charge}，${r.kind==='neutral'?'質子與電子一樣多，是電中性的原子':r.kind==='cation'?'電子比質子少，是陽離子 '+r.ion:'電子比質子多，是陰離子 '+r.ion}。${r.isotope==='most'?'中子數 '+s.n+' 是最常見的組合。':r.isotope==='common'?'中子數和最常見的 '+r.commonN+' 不同：這是'+r.name+'的同位素（'+r.symbol+'-'+r.A+'）。':'中子數 '+s.n+' 不在常見同位素表內：非常見組合，本頁不判斷是否穩定。'}${Math.abs(r.charge)>3?'電荷超過 ±3 的離子在國中不會出現，這裡只作數字練習。':''}`};
  case 'stoichiometry':{const P=r.products[r.R.main];return {metrics:[['莫耳數',r.R.A[0]+' '+f(r.molA,3)+' mol、'+r.R.B[0]+' '+f(r.molB,3)+' mol'],['限量試劑',r.kind==='none'?'—（缺少反應物）':r.kind==='exact'?'無（恰好完全反應）':r.limiting],['主要產物',P[0]+' '+f(P[1],2)+' g'],['剩餘反應物',r.leftA>1e-9?r.R.A[0]+' '+f(r.leftA,2)+' g':r.leftB>1e-9?r.R.B[0]+' '+f(r.leftB,2)+' g':'無']],explanation:r.kind==='none'?'有一種反應物的質量是 0，反應無法進行。':`${r.R.A[0]} ${f(r.molA,3)} mol÷${r.R.A[2]}＝${f(r.molA/r.R.A[2],3)}，${r.R.B[0]} ${f(r.molB,3)} mol÷${r.R.B[2]}＝${f(r.molB/r.R.B[2],3)}；${r.kind==='exact'?'兩者相等，恰好完全反應。':'較小的 '+r.limiting+' 是限量試劑，先用完。'}反應前總質量 ${f(r.before,2)} g＝反應後總質量 ${f(r.after,2)} g。`}}
  case 'weather-systems':return s.mode==='front'?{metrics:[['雲',r.cloud],['降雨',r.rain],['目前天氣',r.now],['過境後氣溫',{down:'下降',up:'上升',flat:'變化不大'}[r.afterTemp]]],explanation:{cold:'冷鋒：較重的冷氣團從後方推進、把暖空氣快速抬升，形成高聳的積雨雲；過境後由冷氣團控制，氣溫下降。',warm:'暖鋒：較輕的暖氣團沿著冷氣團緩緩爬升，形成範圍廣的層狀雲；過境後由暖氣團控制，氣溫上升。',stationary:'滯留鋒：冷暖氣團勢力相當，鋒面幾乎不移動，同一地區會長時間下雨，例如臺灣的梅雨。'}[s.front]}:{metrics:[['近地面風向',(r.rotation==='cw'?'順時針':'逆時針')+'、'+(r.flow==='in'?'向中心吹入':'向外吹出')],['中心氣流',r.vertical==='up'?'上升':'下沉'],['天氣',r.weather],['半球',s.hemi==='north'?'北半球':'南半球']],explanation:`${s.hemi==='north'?'北':'南'}半球的${{high:'高氣壓',low:'低氣壓',typhoon:'颱風'}[s.system]}：近地面的風${r.rotation==='cw'?'順時針':'逆時針'}旋轉並${r.flow==='in'?'向中心吹入，空氣在中心堆積後上升，上升冷卻容易成雲致雨':'向外吹出，中心由上空的空氣下沉補充，下沉增溫不易成雲'}。${s.system==='typhoon'?'颱風是強烈的熱帶低氣壓，旋轉方向與低氣壓相同。':''}換到另一個半球，旋轉方向相反，往內或往外不變。`};
+ case 'circulation':return {metrics:[['心跳',f(r.hr)+' 次／分'],['每分鐘心輸出量',f(r.co,2)+' L／分'],['所選血管',r.vessel+'：'+(r.kind==='oxygenated'?'充氧血':'缺氧血')],['所屬循環',r.circuit==='lung'?'肺循環':'體循環']],explanation:`${r.vessel}屬於${r.circuit==='lung'?'肺循環':'體循環'}，血液從${r.from}流向${r.to}，裡面是${r.kind==='oxygenated'?'充氧血':'缺氧血'}。${s.site==='pa'?'它叫動脈，是因為血液離開心臟，不是因為含氧多。':s.site==='pv'?'它叫靜脈，是因為血液流回心臟，裡面卻是充氧血。':''}心跳 ${f(r.hr)} 次／分×每搏 ${f(r.sv)} mL＝每分鐘 ${f(r.co,2)} L，是靜止時的 ${f(r.coRatio,2)} 倍（心跳是 ${f(r.hrRatio,2)} 倍）。數值來自教學模型。`};
+ case 'nerve-reflex':return {metrics:[['中樞',r.center],['是否經大腦判斷',r.viaBrain?'是':r.painLater?'否（痛覺之後才傳到大腦）':'否'],['路徑步驟數',r.steps+' 步'],['接尺反應時間',f(r.time,3)+' s']],explanation:`路徑：${r.path.map(p=>p[0]+(p[1]?'（'+p[1]+'）':'')).join(' → ')}。${r.kind==='reflex'?'中樞在脊髓，不必等大腦判斷，所以很快。'+(r.painLater?'訊息另外往上傳到大腦產生痛覺，但那是縮手之後的事。':''):'要先由大腦判斷球在哪裡，再下指令給手，所以比反射慢。'}接尺：尺落下 ${s.drop} cm，t＝√(2×${f(s.drop/100,2)}÷9.8)＝${f(r.time,3)} s。`};
  }
 }

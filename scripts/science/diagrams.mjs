@@ -262,6 +262,41 @@ export function diagram(id,s,r){
   }
   break;
  }
+ case 'circulation':{
+  // 簡化循環圖：肺在上、全身在下、心臟四腔在中（圖左是心臟的右側）。紅＝充氧血、藍＝缺氧血；所選血管加粗；箭頭數隨心輸出量。
+  const RED='#b54a5b',BLUE='#2f6fb2';
+  out+=`<ellipse cx="250" cy="74" rx="62" ry="30" fill="#f6e3e6" stroke="#7c879b" stroke-width="2"/><ellipse cx="410" cy="74" rx="62" ry="30" fill="#f6e3e6" stroke="#7c879b" stroke-width="2"/>`+`<text x="330" y="80" font-size="15" text-anchor="middle">肺臟</text>`;
+  out+=rect(150,318,360,44,'#efe6da')+`<text x="330" y="346" font-size="15" text-anchor="middle">全身組織</text>`;
+  out+=rect(272,150,48,58,'#dce8f5')+rect(340,150,48,58,'#f6dfe3')+rect(272,212,48,70,'#dce8f5')+rect(340,212,48,70,'#f6dfe3');
+  [['右心房',296,183],['左心房',364,183],['右心室',296,251],['左心室',364,251]].forEach(([t,x,y])=>out+=`<text x="${x}" y="${y}" font-size="13" text-anchor="middle">${t}</text>`);
+  const V={pa:[[[318,262],[330,262],[330,130],[250,104]],BLUE,'肺動脈',[236,150]],pv:[[[410,104],[364,130],[364,150]],RED,'肺靜脈',[430,150]],aorta:[[[388,240],[470,240],[470,318]],RED,'主動脈',[480,230]],vc:[[[190,318],[190,180],[272,180]],BLUE,'大靜脈',[120,230]]};
+  const n=Math.max(1,Math.min(5,Math.round(r.co/4)));
+  for(const [key,[pts,col,name,lab]] of Object.entries(V)){const sel=key===s.site,d='M'+pts.map(p=>p.join(',')).join(' L');
+   out+=`<path data-vessel="${key}"${sel?' data-selected':''} d="${d}" fill="none" stroke="${col}" stroke-width="${sel?12:6}" stroke-linejoin="round"/>`;
+   const segs=pts.slice(1).map((p,i)=>[pts[i],p]),tot=segs.reduce((a,[p,q])=>a+Math.hypot(q[0]-p[0],q[1]-p[1]),0);
+   for(let i=1;i<=n;i++){let dist=tot*i/(n+1);for(const [p,q] of segs){const L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(dist<=L){const u=[(q[0]-p[0])/L,(q[1]-p[1])/L],c=[p[0]+u[0]*dist,p[1]+u[1]*dist];out+=`<path data-flow d="M${num(c[0]-u[0]*7-u[1]*6,1)},${num(c[1]-u[1]*7+u[0]*6,1)} L${num(c[0]+u[0]*7,1)},${num(c[1]+u[1]*7,1)} L${num(c[0]-u[0]*7+u[1]*6,1)},${num(c[1]-u[1]*7-u[0]*6,1)}" fill="none" stroke="#fff" stroke-width="2.5"/>`;break}dist-=L}}
+   out+=`<text x="${lab[0]}" y="${lab[1]}" font-size="${sel?16:14}"${sel?' font-weight="700"':''} text-anchor="middle" fill="${col}">${name}</text>`}
+  out+=text(20,32,'心跳 '+num(r.hr,0)+' 次／分　心輸出量 '+num(r.co,2)+' L／分（教學模型）',17);
+  out+=text(20,392,'紅＝充氧血　藍＝缺氧血（藍色只是繪圖慣例，實際是暗紅色）　粗線＝目前選的血管',13);break;
+ }
+ case 'nerve-reflex':{
+  // 左：放大的人形；感覺神經（藍）走肢體下側、運動神經（橘）走上側，紅圈編號依序。中：路徑清單。右：接尺刻度與反應時間。
+  const ink='#436779';out+=`<circle cx="150" cy="70" r="44" fill="#f2f4f7" stroke="${ink}" stroke-width="3"/>`+text(134,106,'大腦',13)+line(150,114,150,262,'#9aaeb9')+text(96,214,'脊髓',13);
+  out+=line(150,130,240,180,ink)+line(240,180,310,178,ink)+`<circle cx="324" cy="178" r="14" fill="#f2f4f7" stroke="${ink}" stroke-width="3"/>`+line(150,260,250,300,ink)+line(250,300,232,370,ink)+`<circle cx="186" cy="58" r="5" fill="${ink}"/>`;
+  const R={knee:{sens:[[256,318],[205,302],[150,262]],motor:[[150,262],[192,258],[222,284]],steps:[[256,318],[205,302],[150,262],[192,258],[222,284]]},
+   withdraw:{sens:[[324,178],[246,200],[150,150]],motor:[[150,150],[192,138],[214,154]],steps:[[324,178],[246,200],[150,150],[192,138],[214,154]]},
+   catch:{sens:[[186,58],[168,86],[132,66]],motor:[[132,66],[140,150],[195,138],[292,170]],steps:[[186,58],[168,88],[126,66],[140,150],[195,136],[292,168]]}}[s.action];
+  const pl=(pts,c)=>`<path d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="${c}" stroke-width="4" stroke-linejoin="round"/>`;
+  out+=pl(R.sens,'#2f6fb2')+pl(R.motor,'#d97b11');
+  if(r.painLater)out+=`<line data-pain x1="138" y1="150" x2="138" y2="112" stroke="#b54a5b" stroke-width="3" stroke-dasharray="6 5"/>`+text(54,130,'痛覺（較晚）',13);
+  R.steps.forEach(([x,y],i)=>out+=`<g data-step="${i+1}"><circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="#b54a5b" stroke-width="2"/><text x="${x}" y="${y+5}" font-size="12" text-anchor="middle">${i+1}</text></g>`);
+  out+=r.path.map((p,i)=>`<text x="348" y="${70+i*26}" font-size="13">${i+1}. ${esc(p[0]+(p[1]?'（'+p[1]+'）':''))}</text>`).join('');
+  // 接尺：0–50 cm，每公分 5.6 px；時間標在尺右側（白底蓋住該處刻度文字）
+  const rx=540,ry=60,px=d=>num(ry+d*5.6,1);out+=rect(rx,ry,30,280,'#f6e8c8')+text(rx-6,ry-16,'接尺實驗',15);
+  for(let d=0;d<=50;d+=5)out+=line(rx,px(d),rx+(d%10?9:15),px(d),ink)+(d%10?'':`<text x="${rx+36}" y="${num(px(d)+5,1)}" font-size="12">${d} cm</text>`);
+  out+=`<line data-catch x1="${rx-10}" y1="${px(s.drop)}" x2="${rx+40}" y2="${px(s.drop)}" stroke="#b54a5b" stroke-width="3"/>`+rect(rx+34,num(px(s.drop)-11,1),62,20,'#ffffff')+`<text x="${rx+36}" y="${num(px(s.drop)+5,1)}" font-size="13" fill="#b54a5b">${num(r.time,3)} s</text>`;
+  out+=text(20,392,'紅圈＝路徑順序　藍線＝感覺神經（往中樞）　橘線＝運動神經（往動器）　尺上紅線＝抓住的位置',12);break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }
