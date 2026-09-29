@@ -1,0 +1,24 @@
+PASS
+PASS
+count          26/18/11 challengeNew=5
+diagonal       15/15/14 challengeNew=2
+prism          21/15/9 challengeNew=6
+cylinder       15/9/7 challengeNew=4
+pyramid        9/9/10 challengeNew=7
+cone           9/9/9 challengeNew=6
+PASS
+stress solid STRESS PASS
+ratio3 PASS
+parallelratio PASS
+similar PASS
+righttri PASS
+circle1 PASS
+circle2 PASS
+centers PASS
+quadfunc PASS
+quartile PASS
+boxplot PASS
+probability PASS
+treediagram PASS
+pageerrors []
+PRINT PASS
