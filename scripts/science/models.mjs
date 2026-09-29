@@ -166,6 +166,59 @@ export function calculate(id,s){
    contact:{kind:'same',net:sg*3,near:sg,far:sg,flow:sg<0?'接觸時電子從棒轉移到球':'接觸時電子從球轉移到棒'}}[s.step];
   return {...T,rodSign:sg,electrons:8-T.net,netText:sign(T.net),nearText:sign(T.near),farText:sign(T.far),rodPresent:s.step==='near'||s.step==='ground',groundPresent:s.step==='ground'};
  }
+ case 'equilibrium':{
+  const K={low:0.5,mid:2,high:4}[s.temp],T0=s.a0+s.b0,A1=T0/(1+K),B1=T0*K/(1+K),T=T0+s.add,A=T/(1+K),B=T*K/(1+K);
+  const dir=T0===0?'none':s.b0*1>K*s.a0+1e-12?'left':Math.abs(s.b0-K*s.a0)<1e-12?'none':'right';
+  return {kind:T===0?'empty':s.add>0?'shifted':'equilibrium',K,A1,B1,A,B,T,frac:T?B/T:0,initialDir:dir,rate:K*A};
+ }
+ case 'metal-activity':{
+  const M={mg:['Mg','鎂',2,5],zn:['Zn','鋅',2,4],fe:['Fe','鐵',2,3],h:['H','氫',1,2],cu:['Cu','銅',2,1],ag:['Ag','銀',1,0]},S={mgso4:['硫酸鎂','mg'],znso4:['硫酸鋅','zn'],feso4:['硫酸亞鐵','fe'],cuso4:['硫酸銅','cu'],agno3:['硝酸銀','ag'],hcl:['稀鹽酸','h']};
+  const color=k=>k==='cu'?'藍色':k==='fe'?'淺綠色':'',ion=k=>M[k][0]+(M[k][2]===1?'⁺':'²⁺');
+  const me=M[s.metal],sol=S[s.solution],ck=sol[1],ca=M[ck],same=ck===s.metal,react=!same&&me[3]>ca[3];
+  const g=(a,b)=>b?g(b,a%b):a,gg=g(me[2],ca[2]),cm=ca[2]/gg,ci=me[2]/gg,electrons=cm*me[2];
+  const product=ck==='h'?'H₂':ca[0],pc=ck==='h'?1:ci;
+  const co=(n,x)=>(n>1?n:'')+x,eq=react?`${co(cm,me[0])} ＋ ${co(ci,ion(ck))} → ${co(cm,ion(s.metal))} ＋ ${ck==='h'?'H₂':co(ci,ca[0])}`:'';
+  const oc=color(ck),pcol=color(s.metal),change=!react?(oc?oc+'，不變':'無色，不變'):oc&&!pcol?oc+'變淡':!oc&&pcol?'逐漸變成'+pcol:oc&&pcol?oc+'變淡，逐漸帶'+pcol:'維持無色';
+  return {kind:same?'same':!react?'none':ck==='h'?'hydrogen':'displace',react,metalSym:me[0],metalName:me[1],ionSym:ion(ck),metalIon:ion(s.metal),product,eq,electrons,change,rankMetal:me[3],rankIon:ca[3],solName:sol[0],ionKey:ck};
+ }
+ case 'cell-electrolysis':{
+  const ne=s.amp*s.time/96500,h=ne/2,run=ne>0;
+  const R={cell:{neg:'鋅極（Zn）減少 '+(h*65.4).toFixed(3)+' g',pos:'銅極（Cu）增加 '+(h*63.5).toFixed(3)+' g',flow:'導線上：電子由鋅極流向銅極',sol:'硫酸銅溶液的藍色逐漸變淡',negMass:-h*65.4,posMass:h*63.5},
+   water:{neg:'負極產生氫氣 '+(h).toPrecision(3)+' mol',pos:'正極產生氧氣 '+(ne/4).toPrecision(3)+' mol',flow:'電子由電源負極經導線流到負極，再由正極流回電源',sol:'水逐漸減少（加少量電解質幫助導電）',h2:h,o2:ne/4},
+   cuC:{neg:'負極（碳棒）析出銅 '+(h*63.5).toFixed(4)+' g',pos:'正極（碳棒）產生氧氣 '+(ne/4).toPrecision(3)+' mol',flow:'電子由電源負極經導線流到負極，再由正極流回電源',sol:'藍色逐漸變淡',negMass:h*63.5,o2:ne/4},
+   cuCu:{neg:'負極（銅棒）增加 '+(h*63.5).toFixed(4)+' g',pos:'正極（銅棒）減少 '+(h*63.5).toFixed(4)+' g',flow:'電子由電源負極經導線流到負極，再由正極流回電源',sol:'顏色不變（正極溶出的 Cu²⁺ 補回負極析出的量）',negMass:h*63.5,posMass:-h*63.5}}[s.mode];
+  if(!run)return {kind:'idle',ne:0,neg:'沒有變化',pos:'沒有變化',flow:'沒有電流',sol:'沒有變化',negMass:0,posMass:0,h2:0,o2:0};
+  return {kind:'running',ne,negMass:0,posMass:0,h2:0,o2:0,...R};
+ }
+ case 'specific-heat':{
+  const C={water:['水',4.2,100],alcohol:['酒精',2.4,78],sand:['沙',0.8,null],iron:['鐵',0.45,null],copper:['銅',0.39,null]},A=C[s.subA],B=C[s.subB],Q=s.power*s.time;
+  const one=X=>{const dT=Q/(s.mass*X[1]),T=20+dT,boil=X[2]!==null&&T>=X[2];return {name:X[0],c:X[1],dT,T,boil,bp:X[2]}};
+  const a=one(A),b=one(B);
+  return {kind:s.time===0?'idle':a.boil||b.boil?'limit':'heating',Q,a,b,ratio:a.dT>0?b.dT/a.dT:null};
+ }
+ case 'neutralization':{
+  const ca=Number(s.ca),cb=Number(s.cb),nH=ca*s.va,nOH=cb*s.vb,V=s.va+s.vb,veq=nH/cb,diff=nH-nOH,eps=1e-9*Math.max(1,nH);
+  const pH=Math.abs(diff)<=eps?7:diff>0?-Math.log10(diff/V):14+Math.log10(-diff/V);
+  const ions=(nH+nOH+Math.abs(diff))/V;  // Na⁺＋Cl⁻＋過量的 H⁺ 或 OH⁻（mmol/mL＝M）
+  return {kind:Math.abs(diff)<=eps?'neutral':diff>0?'acidic':'basic',pH,veq,excess:Math.abs(diff)<=eps?null:diff>0?'H⁺':'OH⁻',excessM:Math.abs(diff)/V,cond:ions,cond0:2*ca,pink:pH>8.2};
+ }
+ case 'cell-division':{
+  const n2=Number(s.n2),n=n2/2,st=s.stage;
+  const MI=[['間期（複製前）',1,n2,2,false,'interphase'],['間期（複製後）',1,n2,4,true,'interphase'],['前期',1,n2,4,true,'dividing'],['中期',1,n2,4,true,'dividing'],['後期',1,2*n2,4,false,'dividing'],['末期（兩個子細胞）',2,n2,2,false,'done']];
+  const ME=[['間期（複製前）',1,n2,2,false,'interphase'],['間期（複製後）',1,n2,4,true,'interphase'],['第一次分裂中期（同源染色體配對排列）',1,n2,4,true,'dividing'],['第一次分裂結束（兩個細胞）',2,n,2,true,'dividing'],['第二次分裂中期',2,n,2,true,'dividing'],['第二次分裂結束（四個細胞）',4,n,1,false,'done']];
+  const T=(s.type==='mitosis'?MI:ME),row=T[st];
+  return {kind:row[5],stageName:row[0],cells:row[1],perCell:row[2],dna:row[3],replicated:row[4],n2,n,dnaSeries:T.map(x=>x[3]),names:T.map(x=>x[0])};
+ }
+ case 'enzyme':{
+  const opt=s.enzyme==='pepsin'?2:7,den=s.temp>=60,tf=den?0:s.temp<=37?0.05+0.95*s.temp/37:(60-s.temp)/23,pf=Math.exp(-(((s.ph-opt)/1.5)**2)),act=tf*pf*s.conc;
+  return {kind:den?'denatured':tf*pf>=0.5&&s.conc>0?'active':'low',tf,pf,act,opt,den};
+ }
+ case 'tides':{
+  const P=12.42,lag=(s.day*50/60)%P,amp=0.6+0.4*Math.abs(Math.cos(2*Math.PI*s.day/29.5)),h=amp*Math.cos(2*Math.PI*(s.hour-lag)/P);
+  let next=lag;while(next<s.hour-1e-9)next+=P;
+  const ph=s.day%29.5,phase=ph<1.8||ph>27.7?'新月':ph<5.6?'眉月':ph<9.2?'上弦月':ph<12.9?'盈凸月':ph<16.6?'滿月':ph<20.3?'虧凸月':ph<24?'下弦月':'殘月';
+  return {kind:amp>=0.9?'spring':amp<=0.7?'neap':'middle',amp,h,lag,next,P,phase,moonAngle:2*Math.PI*s.day/29.5};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -197,5 +250,13 @@ export function describe(id,s,r){
  case 'spring-friction':return s.mode==='spring'?{metrics:[['彈力',f(r.F,2)+' N'],['伸長量',f(r.x,3)+' m（'+f(r.x*100,1)+' cm）'],['彈性限度',f(r.limit,2)+' m'],['狀態',r.kind==='over'?'已超過彈性限度':'在彈性限度內']],explanation:r.kind==='over'?`伸長量 ${f(r.x,3)} m 超過彈性限度 ${f(r.limit,2)} m：F＝kx 的計算值僅供參考，虎克定律已不適用，真實彈簧可能無法恢復原長。`:`彈力＝mg＝${f(s.hang,1)}×9.8＝${f(r.F,2)} N；伸長量 x＝F÷k＝${f(r.F,2)}÷${s.k}＝${f(r.x,3)} m。在彈性限度內，伸長量和外力成正比。`}:{metrics:[['正向力',f(r.N,2)+' N'],['摩擦力',f(r.friction,2)+' N（'+(r.kind==='moving'?'動摩擦':'靜摩擦')+'）'],['最大靜摩擦',f(r.fs,2)+' N'],['加速度',f(r.a,2)+' m/s²']],explanation:r.kind==='moving'?`拉力 ${f(s.pull,2)} N 超過最大靜摩擦 ${f(r.fs,2)} N，木塊滑動，摩擦力變成動摩擦 ${f(r.fk,2)} N，比最大靜摩擦小；加速度＝(${f(s.pull,2)}－${f(r.fk,2)})÷${s.mass}＝${f(r.a,2)} m/s²。`:r.kind==='edge'?`拉力恰好等於最大靜摩擦 ${f(r.fs,2)} N，這是臨界情況；再加一點點拉力，木塊就會開始滑動。`:`木塊不動：靜摩擦力等於拉力 ${f(s.pull,2)} N，還沒到最大靜摩擦 ${f(r.fs,2)} N。摩擦係數為教學值。`};
  case 'electric-power':return {metrics:[['電流',f(r.I,2)+' A'],['電功率',f(r.P,2)+' W'],['電能',f(r.E,1)+' J（約 '+(r.kWh?String(Number(r.kWh.toPrecision(3))):'0')+' 度）'],['水溫上升',r.kind==='boiling'?'已達沸點（計算值 '+f(r.dT,1)+' °C）':f(r.dT,2)+' °C']],explanation:`${s.mode==='fixedV'?'固定電壓 '+s.volt+' V：I＝V÷R＝'+f(r.I,2)+' A，P＝V²÷R＝'+f(r.P,2)+' W。':'固定電流 '+s.amp+' A：V＝IR＝'+f(r.V,2)+' V，P＝I²R＝'+f(r.P,2)+' W。'}電能＝${f(r.P,2)}×${s.time}＝${f(r.E,1)} J；水吸收 ${f(r.heat,1)} J，溫度上升 ${f(r.dT,2)}°C。${r.kind==='boiling'?'水的初溫 25°C，已加熱到 100°C，本模型不處理沸騰。':''}${s.mode==='fixedV'?'電壓固定時，電阻越小，電流越大，功率越大。':'電流固定時，電阻越大，功率越大。'}`};
  case 'electrostatics':return {metrics:[['金屬球淨電荷',r.net===0?'0（電中性）':'帶'+r.netText+'電'],['近端電性',r.near===0?'不帶電':r.nearText+'電'],['遠端電性',r.far===0?'不帶電':r.farText+'電'],['電子移動',r.flow]],explanation:{polarized:'只靠近時，電子只在球內移動，總數沒變，所以淨電荷為 0；但兩端分別帶異性電，這叫極化。',grounded:'接地時，電子可以在球與大地之間移動；棒還在旁邊，球帶與棒相反的電，集中在靠近棒的一端。',opposite:'先斷開接地，電子就回不來；再移開棒，球帶與棒相反的電，並且均勻分布在表面。這就是感應起電。',neutral:'先移開棒時接地還連著，電子又回到原來的數量，球回到電中性。移開的順序決定結果。',same:'接觸時電子直接在棒和球之間轉移，球最後帶和棒相同的電，這是接觸起電。'}[r.kind]+'圖上的正號從頭到尾都沒有移動。'};
+ case 'equilibrium':return {metrics:[['平衡時 A 的量',f(r.A,3)+' 單位'],['平衡時 B 的量',f(r.B,3)+' 單位'],['B 的比例（顏色深淺）',f(r.frac*100,1)+'%'],['平衡移動方向',r.kind==='empty'?'—（沒有反應物）':r.kind==='shifted'?'向右（加入的 A 部分轉變成 B）':{right:'向右（A 轉變成 B）',left:'向左（B 轉變成 A）',none:'一開始就在平衡'}[r.initialDir]]],explanation:r.kind==='empty'?'A 與 B 都是 0，沒有反應。':`K＝${r.K}：平衡時 B÷A＝${r.K}，總量 ${f(r.T,1)}，所以 A＝${f(r.A,3)}、B＝${f(r.B,3)}，兩邊不一樣多。平衡時正、逆反應速率相等（相對值 ${f(r.rate,3)}），反應沒有停止。${r.kind==='shifted'?`加入 ${s.add} 單位 A 前，平衡時 A＝${f(r.A1,3)}、B＝${f(r.B1,3)}；加入後平衡向右移，但加入的 A 只有一部分變成 B。`:''}`};
+ case 'metal-activity':return {metrics:[['是否反應',r.react?'會反應':'不反應'],['生成物',r.react?(r.kind==='hydrogen'?'氫氣 H₂（冒泡）':'析出 '+r.product):'—'],['被氧化（失去電子）',r.react?r.metalSym+' → '+r.metalIon:'—'],['被還原（得到電子）',r.react?r.ionSym+' → '+r.product:'—']],explanation:r.kind==='same'?'同一種金屬放進自己的離子溶液，不會反應。':r.react?`${r.metalName}的活性比溶液中的 ${r.ionSym} 大：${r.eq}。${r.metalSym} 失去電子被氧化，${r.ionSym} 得到電子被還原；溶液顏色：${r.change}。`:`${r.metalName}的活性比溶液中的 ${r.ionSym} 小，搶不到電子給它，所以不反應；溶液顏色：${r.change}。`};
+ case 'cell-electrolysis':return {metrics:[['負極變化',r.neg],['正極變化',r.pos],['電子流向',r.flow],['溶液變化',r.sol]],explanation:r.kind==='idle'?'電流或時間為 0，沒有電子通過，兩極都沒有變化。':`（進階）通過的電子＝${s.amp}×${s.time}÷96500＝${f(r.ne,4)} mol。${{cell:'鋅比銅活潑，鋅失去電子成為 Zn²⁺，電子經導線流到銅極，溶液中的 Cu²⁺ 在銅極得到電子析出銅。',water:'負極的 H⁺ 得到電子產生氫氣，正極產生氧氣；氫氣的莫耳數是氧氣的 2 倍，所以體積比 2：1。',cuC:'負極的 Cu²⁺ 得到電子析出銅；碳棒不會溶解，溶液中的 Cu²⁺ 越來越少，藍色變淡。',cuCu:'負極析出多少銅，正極的銅棒就溶出多少 Cu²⁺，溶液中的 Cu²⁺ 數量不變，顏色不變。'}[s.mode]}`};
+ case 'specific-heat':{const d=x=>x.boil?'已達沸點 '+x.bp+'°C（計算值 '+f(x.dT,2)+'°C）':f(x.dT,2)+' °C';return {metrics:[['吸收熱量（各自）',f(r.Q)+' J'],['甲的溫度上升',d(r.a)+'（'+r.a.name+'）'],['乙的溫度上升',d(r.b)+'（'+r.b.name+'）'],['溫升倍數（乙÷甲）',r.ratio===null?'—':f(r.ratio,2)+' 倍']],explanation:r.kind==='idle'?'還沒加熱，兩者都是 20°C。':`兩者各吸收 ${f(r.Q)} J。${r.a.name}：ΔT＝${f(r.Q)}÷(${s.mass}×${r.a.c})＝${f(r.a.dT,2)}°C；${r.b.name}：ΔT＝${f(r.Q)}÷(${s.mass}×${r.b.c})＝${f(r.b.dT,2)}°C。比熱越小，溫度上升越多。${r.kind==='limit'?'有液體已達沸點，本模型不處理沸騰，請見熱與物態實驗室。':''}`}}
+ case 'neutralization':return {metrics:[['pH',f(r.pH,2)],['過量的離子',r.excess?r.excess+'（'+f(r.excessM,4)+' M）':'無（恰好中和）'],['當量點體積',f(r.veq,2)+' mL'],['酚酞顏色',r.pink?'粉紅色':'無色']],explanation:`H⁺ ${f(Number(s.ca)*s.va,3)} mmol、OH⁻ ${f(Number(s.cb)*s.vb,3)} mmol，總體積 ${f(s.va+s.vb,1)} mL。${r.kind==='neutral'?'兩者恰好相等，這是當量點，pH＝7。':r.kind==='acidic'?'H⁺ 過量，溶液仍是酸性；還要滴到 '+f(r.veq,2)+' mL 才到當量點。':'已超過當量點，OH⁻ 過量，溶液變成鹼性。'}酚酞在 pH 大於約 8.2 時才變粉紅色。`};
+ case 'cell-division':return {metrics:[['目前階段',r.stageName],['細胞數',r.cells+' 個'],['每個細胞的染色體數',r.perCell+' 條'+(r.replicated?'（每條含兩條姊妹染色分體）':'')],['每個細胞的 DNA 相對量',String(r.dna)]],explanation:(s.type==='mitosis'?{0:'間期先準備，DNA 還沒複製。',1:'DNA 複製後，每條染色體含兩條相同的姊妹染色分體，DNA 量加倍，但染色體數不變。',2:'染色體濃縮變粗，看得見。',3:'染色體排列在細胞中央。',4:'姊妹染色分體分開，被拉向兩極，這時一個細胞內的染色體數暫時變成兩倍。',5:'分成兩個子細胞，每個細胞的染色體數與母細胞相同。'}:{0:'間期先準備，DNA 還沒複製。',1:'DNA 複製後，每條染色體含兩條姊妹染色分體。',2:'同源染色體兩兩配對，排列在細胞中央。',3:'同源染色體分開，得到兩個細胞，每個細胞的染色體數減半（n），但每條仍含兩條姊妹染色分體。',4:'兩個細胞各自進行第二次分裂，染色體排列在中央。',5:'姊妹染色分體分開，最後得到四個細胞，每個只有 n 條染色體、DNA 量是複製後的四分之一。'})[s.stage]};
+ case 'enzyme':return {metrics:[['相對活性',f(r.act*100,1)+'%'],['是否變性',r.den?'已變性（無法恢復）':'沒有變性'],['溫度因子',f(r.tf,3)],['pH 因子',f(r.pf,3)]],explanation:r.den?`${s.temp}°C 使酵素變性：蛋白質的形狀改變，活性部位對不上受質，活性為 0；就算降回 37°C 也不會恢復。`:`溫度因子 ${f(r.tf,3)}×pH 因子 ${f(r.pf,3)}×酵素的量 ${s.conc}＝相對活性 ${f(r.act*100,1)}%。${s.enzyme==='pepsin'?'胃蛋白酶在胃的強酸環境（pH 約 2）活性最高。':'唾液澱粉酶在接近中性（pH 約 7）活性最高。'}${s.temp<20?'低溫只讓酵素變慢，回到適當溫度就會恢復。':''}數值是教學模型。`};
+ case 'tides':{const hm=t=>{const x=((t%24)+24)%24,h=Math.floor(x),m=Math.round((x-h)*60);return (m===60?h+1:h)+' 時 '+(m===60?0:m)+' 分'};return {metrics:[['月相',r.phase+'（月齡 '+s.day+' 天）'],['潮差',{spring:'大潮',middle:'中潮',neap:'小潮'}[r.kind]+'（相對 '+f(r.amp*2,2)+'）'],['下一次滿潮',(r.next>=24?'隔天 ':'')+hm(r.next)],['目前潮高（相對）',f(r.h,2)]],explanation:`${r.phase}時，太陽、月球與地球${r.kind==='spring'?'大致成一直線，兩者的引潮力疊加，是大潮':r.kind==='neap'?'大致成直角，引潮力互相抵消一部分，是小潮':'介於兩者之間，是中潮'}。面向與背對月球的兩側海水都會隆起，地球自轉一圈約經過兩次，所以約每 12 小時 25 分滿潮一次；月球每天在軌道上前進，滿潮時間每天大約往後延 50 分鐘。這是簡化模型，不是潮汐預報。`}}
  }
 }

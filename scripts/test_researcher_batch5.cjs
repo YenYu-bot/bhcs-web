@@ -39,7 +39,7 @@ console.log('PASS researcher batch 5: final four legacy stations are prediction-
 
 
 const legacyAll=['circuit-lab.html','force-motion-lab.html','particle-reaction-lab.html','microscope-lab.html','plate-earthquake-lab.html','heat-phase-lab.html','buoyancy-density-lab.html','acid-base-indicator-lab.html','photosynthesis-factor-lab.html','genetics-simulation-lab.html'];
-const sharedAll=['optics','wave-sound','electromagnetism','pressure-fluid','solubility','energy','moon-eclipse','seasons','plant-exchange','ecosystem','motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics'];
+const sharedAll=['optics','wave-sound','electromagnetism','pressure-fluid','solubility','energy','moon-eclipse','seasons','plant-exchange','ecosystem','motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics','equilibrium','metal-activity','cell-electrolysis','specific-heat','neutralization','cell-division','enzyme','tides'];
 for(const file of legacyAll){
  const html=fs.readFileSync(path.join(root,'tools',file),'utf8'),d=new JSDOM(html).window.document;
  assert.equal(d.getElementById('prediction'),null,file+' final audit: prediction control exists');
@@ -71,4 +71,4 @@ const resourceHtml=fs.readFileSync(path.join(root,'ziyuan.html'),'utf8'),resourc
 assert.ok(resourceInput,'resource search missing');const resourceLinks=resourceDoc.querySelectorAll('.res-sec .tpills>a,.science-category li>a'),declaredResourceTotal=Number(resourceDoc.querySelector('section.resource-finder p.lead')?.textContent.match(/目前共\s*(\d+)\s*項/)?.[1]);assert.ok(Number.isSafeInteger(declaredResourceTotal),'resource total declaration missing');assert.equal(resourceLinks.length,declaredResourceTotal,'resource total changed');assert.equal(resourceDoc.querySelectorAll('#res-hs-math .trow').length,4,'high-school four-book grouping changed');
 resourceInput.value='分數';resourceInput.dispatchEvent(new resourceDom.window.Event('input',{bubbles:true}));assert.ok(![...resourceDoc.querySelectorAll('.res-sec .tpills>a,.science-category li>a')].find(a=>a.textContent.includes('分數練習單')).classList.contains('resource-hidden'),'fraction search failed');
 resourceInput.value='透鏡';resourceInput.dispatchEvent(new resourceDom.window.Event('input',{bubbles:true}));assert.ok([...resourceDoc.querySelectorAll('.science-category li>a')].some(a=>a.textContent.includes('透鏡')&&!a.closest('li').classList.contains('resource-hidden')),'lens search failed');resourceDom.window.close();
-console.log('PASS full researcher audit: 34 stations + directory + 余老師 naming');
+console.log('PASS full researcher audit: 42 stations + directory + 余老師 naming');

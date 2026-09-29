@@ -248,8 +248,63 @@ test('Electrostatics: induction order / contact / polarization / only electrons 
  for(const rod of ['neg','pos'])for(const step of ['near','ground','g1','g2','contact']){const q=calc('electrostatics',{rod,step}),svg=diagram('electrostatics',{rod,step},q);
   assert.equal((svg.match(/data-proton/g)||[]).length,8,'protons fixed');assert.equal((svg.match(/data-electron/g)||[]).length,8-q.net,'electron count matches net charge');}
 });
+test('Equilibrium: K=2 from A / added A shifts right / path independence / empty / rates equal',()=>{
+ const r=calc('equilibrium');assert.equal(Number(r.A.toFixed(3)),3.333);assert.equal(Number(r.B.toFixed(3)),6.667);assert.equal(r.kind,'equilibrium');
+ const a=calc('equilibrium',{add:2});close(a.A,4);close(a.B,8);assert.equal(a.kind,'shifted');
+ const p=calc('equilibrium',{a0:0,b0:10});close(p.A,r.A);close(p.B,r.B);assert.equal(p.initialDir,'left');assert.equal(r.initialDir,'right');
+ assert.equal(calc('equilibrium',{a0:0,b0:0}).kind,'empty');
+ for(const temp of ['low','mid','high'])for(const a0 of [0,3,10])for(const b0 of [0,4,10])for(const add of [0,5]){const q=calc('equilibrium',{a0,b0,temp,add});close(q.A+q.B,a0+b0+add);if(q.T)close(q.B,q.K*q.A);
+  if(q.T){const svg=diagram('equilibrium',{a0,b0,temp,add},q),ys=svg.match(/data-a d="M([^"]+)"/)[1].split(' L').map(p=>+p.split(',')[1]);assert.ok(Math.abs(ys.at(-1)-(300-230*q.A/Math.max(1,q.T,a0,b0)))<0.6,'A curve settles at equilibrium');}}
+});
+test('Metal activity: Zn in CuSO4 / Cu in ZnSO4 / Cu in HCl / Mg in HCl / same metal / Cu in AgNO3 / electron balance',()=>{
+ const a=calc('metal-activity',{metal:'zn',solution:'cuso4'});assert.equal(a.kind,'displace');assert.equal(a.product,'Cu');assert.equal(a.metalSym,'Zn');assert.equal(a.electrons,2);
+ assert.equal(calc('metal-activity',{metal:'cu',solution:'znso4'}).kind,'none');assert.equal(calc('metal-activity',{metal:'cu',solution:'hcl'}).kind,'none');
+ const h=calc('metal-activity',{metal:'mg',solution:'hcl'});assert.equal(h.kind,'hydrogen');assert.equal(h.eq,'Mg ＋ 2H⁺ → Mg²⁺ ＋ H₂');
+ assert.equal(calc('metal-activity',{metal:'zn',solution:'znso4'}).kind,'same');
+ const g=calc('metal-activity',{metal:'cu',solution:'agno3'});assert.equal(g.kind,'displace');assert.equal(g.product,'Ag');assert.equal(g.eq,'Cu ＋ 2Ag⁺ → Cu²⁺ ＋ 2Ag');assert.equal(g.change,'逐漸變成藍色');
+ for(const metal of ['mg','zn','fe','cu','ag'])for(const solution of ['mgso4','znso4','feso4','cuso4','agno3','hcl']){const q=calc('metal-activity',{metal,solution});assert.equal(q.react,q.kind!=='same'&&q.rankMetal>q.rankIon);
+  const svg=diagram('metal-activity',{metal,solution},q);assert.equal(svg.includes('data-electron-transfer'),q.react);assert.equal(svg.includes('data-deposit'),q.kind==='displace');}
+});
+test('Cell and electrolysis: 1 A for 965 s / copper deposit / zinc loss / water 2:1 / idle / copper electrodes balance',()=>{
+ const c=calc('cell-electrolysis');close(c.ne,0.01);close(c.negMass,-0.327);close(c.posMass,0.3175);
+ close(calc('cell-electrolysis',{mode:'cuC'}).negMass,0.3175);const w=calc('cell-electrolysis',{mode:'water'});close(w.h2,0.005);close(w.o2,0.0025);close(w.h2/w.o2,2);
+ const z=calc('cell-electrolysis',{amp:0});assert.equal(z.kind,'idle');close(z.ne,0);
+ const u=calc('cell-electrolysis',{mode:'cuCu'});close(u.negMass,-u.posMass);assert.match(u.sol,/不變/);
+ for(const mode of ['cell','water','cuC','cuCu'])for(const amp of [0,0.5,2])for(const time of [0,965,3600]){const q=calc('cell-electrolysis',{mode,amp,time}),svg=diagram('cell-electrolysis',{mode,amp,time},q);close(q.ne,amp*time/96500);assert.equal(svg.includes('data-electron-wire'),q.kind==='running');}
+});
+test('Specific heat: water 1.00 / iron 9.33 / ratio / zero time / alcohol reaches boiling',()=>{
+ const r=calc('specific-heat');close(r.Q,420);close(r.a.dT,1);assert.equal(Number(r.b.dT.toFixed(2)),9.33);assert.equal(Number(r.ratio.toFixed(2)),9.33);
+ const z=calc('specific-heat',{time:0});close(z.a.dT,0);assert.equal(z.kind,'idle');
+ assert.equal(calc('specific-heat',{subA:'alcohol',mass:50,time:170}).kind,'limit');assert.equal(calc('specific-heat',{subA:'alcohol',mass:50,time:160}).kind,'heating');
+ for(const subA of ['water','alcohol','sand','iron','copper'])for(const mass of [50,500])for(const time of [0,300]){const q=calc('specific-heat',{subA,subB:'copper',mass,time});close(q.a.dT*mass*q.a.c,q.Q);close(q.b.dT*mass*q.b.c,q.Q);}
+});
+test('Neutralization: 0.1 M 25 mL titration pH values / equivalence / phenolphthalein',()=>{
+ const p=v=>calc('neutralization',{ca:'0.1',va:25,cb:'0.1',vb:v});
+ assert.equal(Number(p(0).pH.toFixed(2)),1);assert.equal(Number(p(10).pH.toFixed(2)),1.37);assert.equal(Number(p(25).pH.toFixed(2)),7);assert.equal(p(25).kind,'neutral');assert.equal(Number(p(50).pH.toFixed(2)),12.52);
+ close(p(0).veq,25);assert.equal(p(24).pink,false);assert.equal(p(26).pink,true);assert.equal(p(40).excess,'OH⁻');
+ for(const ca of ['0.01','0.1','1'])for(const cb of ['0.01','0.1','1'])for(const va of [10,50])for(const vb of [0,5,50,100]){const q=calc('neutralization',{ca,va,cb,vb});assert.ok(q.pH>=0&&q.pH<=14.5);assert.equal(q.kind==='acidic',Number(ca)*va>Number(cb)*vb+1e-9);}
+});
+test('Cell division: mitosis 2 cells of 2n / meiosis 4 cells of n / DNA doubles then quarters / drawn chromosome count',()=>{
+ const m=calc('cell-division',{type:'mitosis',n2:'4',stage:5});assert.equal(m.cells,2);assert.equal(m.perCell,4);
+ const e=calc('cell-division',{type:'meiosis',n2:'4',stage:5});assert.equal(e.cells,4);assert.equal(e.perCell,2);
+ assert.equal(calc('cell-division',{type:'mitosis',stage:1}).dna,2*calc('cell-division',{type:'mitosis',stage:0}).dna);
+ assert.equal(e.dna*4,calc('cell-division',{type:'meiosis',stage:1}).dna);assert.equal(calc('cell-division',{type:'mitosis',stage:4}).perCell,8);
+ for(const type of ['mitosis','meiosis'])for(const n2 of ['4','6','8'])for(let stage=0;stage<=5;stage++){const q=calc('cell-division',{type,n2,stage}),svg=diagram('cell-division',{type,n2,stage},q);assert.equal((svg.match(/data-chr/g)||[]).length,q.cells*q.perCell,`${type} ${n2} ${stage}`);}
+});
+test('Enzyme: amylase optimum / 70 C denatured / pepsin at pH 7 / 0 C low but not denatured',()=>{
+ const a=calc('enzyme');close(a.act,1);assert.equal(a.kind,'active');
+ const d=calc('enzyme',{temp:70});close(d.act,0);assert.equal(d.kind,'denatured');assert.equal(d.den,true);
+ const p=calc('enzyme',{enzyme:'pepsin'});assert.ok(p.act<0.01);assert.equal(p.kind,'low');assert.ok(calc('enzyme',{enzyme:'pepsin',ph:2}).act>0.99);
+ const c=calc('enzyme',{temp:0});assert.ok(c.act<0.1);assert.equal(c.den,false);assert.equal(c.kind,'low');
+ for(let temp=0;temp<=80;temp+=5)for(const ph of [1,2,7,13])for(const enzyme of ['amylase','pepsin']){const q=calc('enzyme',{temp,ph,enzyme,conc:1});assert.ok(q.act>=0&&q.act<=1+1e-9);if(temp>=60)assert.equal(q.act,0);const svg=diagram('enzyme',{temp,ph,enzyme,conc:1},q);assert.ok(svg.includes(temp>=60?'data-enzyme="denatured"':'data-enzyme="normal"'));}
+});
+test('Tides: new moon spring / first quarter neap / semidiurnal period / next high tide is a maximum',()=>{
+ assert.equal(calc('tides',{day:0}).kind,'spring');assert.equal(calc('tides',{day:15}).kind,'spring');assert.equal(calc('tides',{day:7.5}).kind,'neap');
+ const t=calc('tides');close(t.P,12.42);assert.ok(calc('tides',{day:1}).next>t.next+0.8);
+ for(let day=0;day<=29.5;day+=2.5)for(const hour of [0,6.5,13,23.5]){const q=calc('tides',{day,hour}),h=x=>q.amp*Math.cos(2*Math.PI*(x-q.lag)/q.P);assert.ok(q.next>=hour-1e-9&&q.next<hour+q.P);assert.ok(Math.abs(h(q.next)-q.amp)<1e-9);assert.ok(h(q.next+0.3)<q.amp&&h(q.next-0.3)<q.amp);}
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
- const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics'];
+ const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics','equilibrium','metal-activity','cell-electrolysis','specific-heat','neutralization','cell-division','enzyme','tides'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
  for(const id of ids){const t=batch2.find(x=>x.id===id),def=defaults(id);
   const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];

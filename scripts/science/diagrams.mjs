@@ -393,6 +393,137 @@ export function diagram(id,s,r){
   out+=text(20,32,'淨電荷：'+(r.net===0?'0（電中性）':'帶'+r.netText+'電')+'　電子 '+r.electrons+' 個、正電荷 8 個（示意）',16);
   out+=text(20,392,'紅＋＝原子核的正電（固定不動）　藍−＝電子（可移動）　藍箭頭＝電子移動方向',12);break;
  }
+ case 'equilibrium':{
+  // 左：量—時間（A 藍、B 橘，趨近平衡後變平但不歸零；加入 A 時畫一個階梯）；右：試管顏色依 B 的比例；下：正、逆反應速率。
+  const X0=70,X1=420,Y0=300,Y1=70,tEnd=10,tAdd=5,k=0.9,mx=Math.max(1,r.T,s.a0,s.b0),tx=t=>num(X0+(X1-X0)*t/tEnd,1),ty=v=>num(Y0-(Y0-Y1)*v/mx,1);
+  const at=t=>{if(t<=tAdd||!s.add){const e=Math.exp(-k*t);return [r.A1+(s.a0-r.A1)*e,r.B1+(s.b0-r.B1)*e]}const e5=Math.exp(-k*tAdd),a5=r.A1+(s.a0-r.A1)*e5+s.add,b5=r.B1+(s.b0-r.B1)*e5,e=Math.exp(-k*(t-tAdd));return [r.A+(a5-r.A)*e,r.B+(b5-r.B)*e]};
+  const pa=[],pb=[];for(let i=0;i<=200;i++){const t=tEnd*i/200;if(s.add&&Math.abs(t-tAdd)<1e-9){const e5=Math.exp(-k*tAdd);pa.push(tx(t)+','+ty(r.A1+(s.a0-r.A1)*e5));}const [a,b]=at(t);pa.push(tx(t)+','+ty(a));pb.push(tx(t)+','+ty(b))}
+  out+=line(X0,Y0,X1,Y0,'#436779')+line(X0,Y0,X0,Y1-10,'#436779')+text(X0,Y1-18,'量（單位）',14)+text(X1-70,Y0+22,'時間（示意）',13);
+  if(r.T>0){out+=`<path data-a d="M${pa.join(' L')}" fill="none" stroke="#2f6fb2" stroke-width="3"/><path data-b d="M${pb.join(' L')}" fill="none" stroke="#d97b11" stroke-width="3"/>`;
+   out+=`<text x="${X1+6}" y="${num(+ty(r.A)+5,1)}" font-size="14" fill="#2f6fb2">A ${num(r.A,2)}</text><text x="${X1+6}" y="${num(+ty(r.B)+5,1)}" font-size="14" fill="#d97b11">B ${num(r.B,2)}</text>`;
+   if(s.add)out+=line(tx(tAdd),Y1,tx(tAdd),Y0,'#9aaeb9',true)+text(num(+tx(tAdd)+4,1),Y1+12,'加入 A',13)}
+  const col=`rgba(170,90,30,${num(0.08+0.85*r.frac,3)})`;out+=`<path d="M540,70 L540,300 Q540,330 565,330 Q590,330 590,300 L590,70" fill="#fff" stroke="#436779" stroke-width="3"/><path data-tube d="M543,${num(300-200*Math.min(1,r.T/10),1)} L543,300 Q543,327 565,327 Q587,327 587,300 L587,${num(300-200*Math.min(1,r.T/10),1)} Z" fill="${col}"/>`+text(512,56,'試管顏色',14)+text(508,352,'B 的比例 '+num(r.frac*100,1)+'%',13);
+  if(r.T>0){const w=num(Math.min(150,40*r.rate),1);out+=text(70,344,'正反應速率',13)+rect(150,333,w,12,'#2f6fb2')+text(70,364,'逆反應速率',13)+rect(150,353,w,12,'#d97b11')+text(num(158+w,1),364,'相等',13)}
+  out+=text(20,32,'A（無色）⇌ B（有色）　K＝'+r.K+'　平衡時 B÷A＝K',17)+text(20,392,'藍＝A　橘＝B　曲線形狀為示意；平衡時兩條線都不歸零',12);break;
+ }
+ case 'metal-activity':{
+  // 上：活性順序（標出金屬與溶液中的陽離子）；左：燒杯與金屬片；右：粒子層的電子轉移。
+  const order=[['Mg','mg'],['Zn','zn'],['Fe','fe'],['(H)','h'],['Cu','cu'],['Ag','ag']],mk={Mg:'mg',Zn:'zn',Fe:'fe',Cu:'cu',Ag:'ag'}[r.metalSym];
+  order.forEach(([t,k],i)=>{const x=60+i*96,isM=k===mk,isI=k===r.ionKey;out+=`<rect x="${x}" y="46" width="70" height="30" rx="4" fill="${isM?'#fbe3cf':isI?'#dce8f5':'#f2f4f7'}" stroke="${isM?'#d97b11':isI?'#2f6fb2':'#c9d2de'}" stroke-width="${isM||isI?3:1}"/><text x="${x+35}" y="67" font-size="16" text-anchor="middle">${t}</text>`+(i<5?`<text x="${x+83}" y="67" font-size="16" text-anchor="middle">＞</text>`:'')});
+  out+=text(60,32,'活性順序（左邊活性大）　橘框＝放入的金屬　藍框＝溶液中的陽離子',13);
+  const base={cu:'#8fc0e6',fe:'#cfe8c8'}[r.ionKey]||'#eef4f8',after=!r.react?base:r.metalSym==='Cu'?'#b9d6ee':r.metalSym==='Fe'?'#dcefd6':base==='#eef4f8'?base:({cu:'#c6def0',fe:'#e2f0de'}[r.ionKey]);
+  out+=`<path d="M70,120 L70,330 Q70,346 86,346 L274,346 Q290,346 290,330 L290,120" fill="none" stroke="#436779" stroke-width="3"/><rect data-solution x="73" y="170" width="214" height="173" fill="${after}"/>`+rect(166,100,28,200,'#9aa3ad')+text(160,94,r.metalSym,15);
+  if(r.kind==='displace'){const dc={Cu:'#b5651d',Ag:'#c9ccd1',Fe:'#555b61',Zn:'#8d949b',Mg:'#b8bcc2'}[r.product]||'#777';for(let i=0;i<9;i++)out+=`<circle data-deposit cx="${i%2?196:164}" cy="${190+i*11}" r="6" fill="${dc}"/>`}
+  if(r.kind==='hydrogen')for(let i=0;i<7;i++)out+=`<circle cx="${160+(i%3)*18}" cy="${160+i*16}" r="${4+i%3}" fill="none" stroke="#2f6fb2" stroke-width="2"/>`;
+  out+=text(70,372,r.solName+'：'+r.change,14);
+  if(r.react){out+=`<circle cx="380" cy="200" r="30" fill="#f6e8c8" stroke="#436779" stroke-width="2"/><text x="380" y="206" font-size="16" text-anchor="middle">${r.metalSym}</text><circle cx="580" cy="200" r="30" fill="#dce8f5" stroke="#436779" stroke-width="2"/><text x="580" y="206" font-size="15" text-anchor="middle">${esc(r.ionSym)}</text>`;
+   out+=`<g data-electron-transfer>`+arrow(414,190,546,190,'#2f6fb2')+`</g>`+text(440,178,r.electrons+' 個電子（'+r.electrons+'e⁻）',14)+text(340,260,'失去電子（氧化）',13)+text(530,260,'得到電子（還原）',13);
+   out+=`<text x="480" y="300" font-size="15" text-anchor="middle">${esc(r.eq)}</text>`}
+  else out+=`<text x="480" y="200" font-size="18" text-anchor="middle">${r.kind==='same'?'同一種金屬：不反應':'不反應'}</text>`+(r.kind==='same'?'':`<text x="480" y="232" font-size="14" text-anchor="middle">${esc(r.metalSym+' 的活性比 '+r.ionSym+' 小')}</text>`);
+  out+=text(20,392,'只畫電子的轉移；溶液顏色：藍＝Cu²⁺、淺綠＝Fe²⁺、其餘視為無色',12);break;
+ }
+ case 'cell-electrolysis':{
+  // 電子箭頭只畫在導線上；溶液中只畫離子的移動。
+  const ink='#436779',e=r.kind==='running';
+  const beaker=(x,w,fill)=>`<path d="M${x},150 L${x},330 Q${x},346 ${x+16},346 L${x+w-16},346 Q${x+w},346 ${x+w},330 L${x+w},150" fill="none" stroke="${ink}" stroke-width="3"/><rect x="${x+3}" y="180" width="${w-6}" height="163" fill="${fill}"/>`;
+  if(s.mode==='cell'){
+   out+=beaker(60,220,'#eef4f8')+beaker(380,220,e?'#b3d3ec':'#8fc0e6')+`<path d="M230,190 L230,150 Q230,120 260,120 L400,120 Q430,120 430,150 L430,190" fill="none" stroke="#c8955a" stroke-width="14"/>`+text(290,112,'鹽橋',13);
+   out+=rect(158,110,22,190,'#8d949b')+rect(478,110,22,190,'#b5651d')+line(169,110,169,70,ink)+line(169,70,489,70,ink)+line(489,70,489,110,ink)+circle(329,70,14,'#f6c453');
+   if(e)out+=`<g data-electron-wire>`+arrow(200,58,290,58,'#2f6fb2')+arrow(370,58,460,58,'#2f6fb2')+`</g>`+text(260,48,'電子 e⁻',13)+arrow(130,280,100,300,'#b54a5b')+text(84,322,'Zn²⁺',13)+arrow(440,300,470,280,'#b54a5b')+text(424,322,'Cu²⁺',13);
+   out+=text(90,370,'負極：鋅（ZnSO₄）',14)+text(410,370,'正極：銅（CuSO₄）',14);
+  }else{
+   const fill=s.mode==='water'?'#eef4f8':s.mode==='cuC'&&e?'#b9d6ee':'#8fc0e6';out+=beaker(170,320,fill);
+   const elec=s.mode==='cuCu'?'#b5651d':'#555b61',negX=250,posX=410;out+=rect(negX-11,110,22,200,elec)+rect(posX-11,110,22,200,elec);
+   out+=rect(300,52,60,30,'#e4edf2')+text(306,72,'電源',14)+text(286,100,'－',18)+text(360,100,'＋',18)+line(negX,110,negX,67,ink)+line(negX,67,300,67,ink)+line(360,67,posX,67,ink)+line(posX,67,posX,110,ink);
+   if(e){out+=`<g data-electron-wire>`+arrow(292,56,262,56,'#2f6fb2')+arrow(398,56,368,56,'#2f6fb2')+`</g>`+text(196,48,'電子 e⁻',13);
+    out+=arrow(360,250,280,250,'#b54a5b')+text(292,242,s.mode==='water'?'H⁺':'Cu²⁺',13)+arrow(300,290,380,290,'#087b78')+text(318,308,s.mode==='water'?'OH⁻':'SO₄²⁻',13);
+    if(s.mode==='water'){for(let i=0;i<6;i++)out+=`<circle cx="${negX+(i%2?8:-8)}" cy="${280-i*22}" r="5" fill="none" stroke="#2f6fb2" stroke-width="2"/>`;for(let i=0;i<3;i++)out+=`<circle cx="${posX+(i%2?8:-8)}" cy="${280-i*40}" r="5" fill="none" stroke="#b54a5b" stroke-width="2"/>`;out+=text(520,200,'氫氣：氧氣',14)+text(520,222,'＝ 2：1',14)}
+    if(s.mode!=='water')for(let i=0;i<7;i++)out+=`<circle data-deposit cx="${negX+(i%2?12:-12)}" cy="${190+i*16}" r="5" fill="#b5651d"/>`;
+    if(s.mode==='cuC')for(let i=0;i<3;i++)out+=`<circle cx="${posX+(i%2?8:-8)}" cy="${280-i*40}" r="5" fill="none" stroke="#b54a5b" stroke-width="2"/>`}
+   out+=text(180,370,'負極（接電源負極）',14)+text(360,370,'正極（接電源正極）',14);
+  }
+  out+=text(20,32,{cell:'鋅銅電池',water:'電解水',cuC:'電解硫酸銅（碳棒）',cuCu:'電解硫酸銅（銅棒）'}[s.mode]+(e?'　通過電子 '+num(r.ne,4)+' mol（進階）':'　沒有電流'),16)+text(20,392,'藍箭頭＝導線上的電子　紅、綠箭頭＝溶液中的離子（電子不會游過溶液）',12);break;
+ }
+ case 'specific-heat':{
+  // 上：兩個容器、溫度計與加熱板；下：溫度—時間兩條直線（液體到沸點後停止）。
+  const ink='#436779',tEnd=Math.max(10,s.time),cap=x=>x.bp===null?Infinity:x.bp,Tat=(x,t)=>Math.min(cap(x),20+s.power*t/(s.mass*x.c));
+  const top=Math.max(40,Math.min(cap(r.a),r.a.T),Math.min(cap(r.b),r.b.T))*1.12;
+  [[r.a,90,'甲','#2f6fb2'],[r.b,330,'乙','#d97b11']].forEach(([x,cx,lab,col])=>{const liquid=x.bp!==null;
+   out+=`<path d="M${cx},70 L${cx},150 L${cx+110},150 L${cx+110},70" fill="none" stroke="${ink}" stroke-width="3"/>`+(liquid?rect(cx+3,92,104,55,x.name==='水'?'#d6ebf5':'#eef2e0'):rect(cx+25,110,60,37,x.name==='沙'?'#e3cf9f':'#9aa3ad'))+rect(cx-6,152,122,12,'#b54a5b');
+   const shown=Math.min(cap(x),x.T),ty=v=>num(146-80*Math.min(1,(v-20)/Math.max(1,top-20)),1);out+=rect(cx+130,60,10,90,'#f2f4f7')+`<rect x="${cx+131}" y="${ty(shown)}" width="8" height="${num(150-ty(shown),1)}" fill="${col}"/>`;
+   out+=text(cx,54,lab+'：'+x.name+'　'+num(shown,1)+'°C'+(x.boil?'（沸點）':''),14)});
+  const X0=90,X1=600,Y0=350,Y1=200,tx=t=>num(X0+(X1-X0)*t/tEnd,1),ty=v=>num(Y0-(Y0-Y1)*(v-20)/(top-20),1);
+  out+=line(X0,Y0,X1,Y0,ink)+line(X0,Y0,X0,Y1-8,ink)+text(X0-10,Y1-14,'溫度（°C）',13)+text(X1-60,Y0+20,'時間（s）',13)+`<text x="${X0-6}" y="${Y0+4}" font-size="12" text-anchor="end">20</text>`;
+  [[r.a,'#2f6fb2'],[r.b,'#d97b11']].forEach(([x,col],i)=>{const pts=[];for(let k=0;k<=60;k++){const t=tEnd*k/60;pts.push(tx(t)+','+ty(Tat(x,t)))}out+=`<path data-temp-line="${i?'B':'A'}" d="M${pts.join(' L')}" fill="none" stroke="${col}" stroke-width="3"/>`});
+  out+=text(20,32,'同樣吸收 '+num(r.Q,0)+' J：'+r.a.name+' 上升 '+num(r.a.dT,2)+'°C，'+r.b.name+' 上升 '+num(r.b.dT,2)+'°C',16)+text(20,392,'藍＝甲　橘＝乙　液體到沸點後線條變平（本模型不處理沸騰）',12);break;
+ }
+ case 'neutralization':{
+  // 左：滴定管與錐形瓶（酚酞顏色）；右：pH—滴入體積曲線，當量點虛線、目前位置紅點；下：相對導電度。
+  const ink='#436779',ca=Number(s.ca),cb=Number(s.cb);
+  out+=rect(92,44,20,150,'#f2f4f7')+rect(94,60,16,num(130*(1-Math.min(1,s.vb/100)),1),'#e8f0f7')+line(102,194,102,214,ink)+`<circle cx="102" cy="${s.vb>0?224:0}" r="${s.vb>0?4:0}" fill="#9cc6e6"/>`+text(60,36,'NaOH '+s.cb+' M',13);
+  out+=`<path d="M86,236 L86,262 L40,340 Q36,350 48,350 L156,350 Q168,350 164,340 L118,262 L118,236" fill="none" stroke="${ink}" stroke-width="3"/><path data-flask d="M60,316 L144,316 L160,344 Q162,348 156,348 L48,348 Q42,348 44,344 Z" fill="${r.pink?'#f4a6c8':'#eef4f8'}"/>`+text(34,372,'HCl '+s.ca+' M、'+s.va+' mL',13);
+  out+=text(178,300,r.excess?'過量 '+r.excess:'恰好中和',14);
+  const X0=250,X1=620,Y0=320,Y1=70,vmax=100,px=v=>num(X0+(X1-X0)*v/vmax,1),py=p=>num(Y0-(Y0-Y1)*p/14,1),pts=[];
+  for(let i=0;i<=400;i++){const vb=vmax*i/400,nH=ca*s.va,nOH=cb*vb,d=nH-nOH,V=s.va+vb,p=Math.abs(d)<1e-9*Math.max(1,nH)?7:d>0?-Math.log10(d/V):14+Math.log10(-d/V);pts.push(px(vb)+','+py(Math.max(0,Math.min(14,p))))}
+  out+=line(X0,Y0,X1,Y0,ink)+line(X0,Y0,X0,Y1-6,ink)+text(X0-6,Y1-12,'pH',13)+text(X1-120,Y0+22,'滴入 NaOH（mL）',13);
+  for(const p of [0,7,14])out+=`<text x="${X0-8}" y="${num(+py(p)+4,1)}" font-size="12" text-anchor="end">${p}</text>`;for(const v of [0,50,100])out+=`<text x="${px(v)}" y="${Y0+16}" font-size="12" text-anchor="middle">${v}</text>`;
+  out+=`<line x1="${X0}" y1="${py(8.2)}" x2="${X1}" y2="${py(8.2)}" stroke="#f4a6c8" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  if(r.veq<=vmax)out+=`<line data-eq x1="${px(r.veq)}" y1="${Y1}" x2="${px(r.veq)}" y2="${Y0}" stroke="#7c879b" stroke-width="2" stroke-dasharray="6 5"/><text x="${+px(r.veq)>X1-100?num(+px(r.veq)-4,1):num(+px(r.veq)+4,1)}" y="${Y1+12}" font-size="12" text-anchor="${+px(r.veq)>X1-100?'end':'start'}">當量點 ${num(r.veq,2)} mL</text>`;
+  out+=`<path d="M${pts.join(' L')}" fill="none" stroke="#2f6fb2" stroke-width="3"/>`+circle(px(s.vb),py(Math.max(0,Math.min(14,r.pH))),6,'#b54a5b');
+  const cw=num(Math.min(220,160*r.cond/Math.max(r.cond0,1e-9)),1);out+=text(250,356,'相對導電度',13)+rect(330,345,cw,12,'#087b78');
+  out+=text(20,20,'pH＝'+num(r.pH,2)+'　'+{acidic:'酸性',neutral:'中性',basic:'鹼性'}[r.kind],16)+text(20,392,'粉紅虛線＝酚酞變色（約 pH 8.2）　灰虛線＝當量點　紅點＝目前位置',12);break;
+ }
+ case 'cell-division':{
+  // 左：細胞與染色體（每一對用長度區分，紅＝來自母方、藍＝來自父方）；右：各階段 DNA 相對量。
+  const R='#b54a5b',B='#2f6fb2',lens=[40,32,25,18],np=r.n2/2;
+  const chr=(x,y,len,col,rep)=>`<g data-chr>`+(rep?`<line x1="${x-3}" y1="${y-len/2}" x2="${x-3}" y2="${y+len/2}" stroke="${col}" stroke-width="5" stroke-linecap="round"/><line x1="${x+3}" y1="${y-len/2}" x2="${x+3}" y2="${y+len/2}" stroke="${col}" stroke-width="5" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="3.5" fill="#142f46"/>`:`<line x1="${x}" y1="${y-len/2}" x2="${x}" y2="${y+len/2}" stroke="${col}" stroke-width="5" stroke-linecap="round"/>`)+`</g>`;
+  const cell=(cx,cy,rx,ry)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#f6f1e4" stroke="#436779" stroke-width="3"/>`;
+  const all=[];for(let p=0;p<np;p++){all.push([lens[p],R]);all.push([lens[p],B])}
+  const scatter=(cx,cy,list,rep,w=150)=>list.map(([len,col],i)=>chr(num(cx-w/2+((i%4)+0.5)*w/4,1),num(cy-34+Math.floor(i/4)*66,1),len,col,rep)).join('');
+  const row=(cx,cy,list,rep,gap=26)=>list.map(([len,col],i)=>chr(num(cx+(i-(list.length-1)/2)*gap,1),cy,len,col,rep)).join('');
+  const half=k=>Array.from({length:np},(_,p)=>[lens[p],(p+k)%2?B:R]);
+  const st=s.stage,mit=s.type==='mitosis';
+  if(st<=2&&(mit||st<2)){out+=cell(220,210,170,130)+scatter(220,210,all,r.replicated,240)}
+  else if(mit&&st===3){out+=cell(220,210,170,130)+row(220,210,all,true,28)+line(220,90,220,330,'#9aaeb9',true)}
+  else if(mit&&st===4){out+=cell(220,210,195,120)+row(110,210,all,false,20)+row(330,210,all,false,20)+arrow(170,150,110,150,'#7c879b')+arrow(270,150,330,150,'#7c879b')}
+  else if(mit&&st===5){out+=cell(120,210,95,110)+cell(320,210,95,110)+scatter(120,210,all,false,150)+scatter(320,210,all,false,150)}
+  else if(!mit&&st===2){out+=cell(220,210,170,130)+Array.from({length:np},(_,p)=>chr(num(220+(p-(np-1)/2)*56-8,1),210,lens[p],R,true)+chr(num(220+(p-(np-1)/2)*56+8,1),210,lens[p],B,true)).join('')+line(220,90,220,330,'#9aaeb9',true)}
+  else if(!mit&&st===3){out+=cell(120,210,95,110)+cell(320,210,95,110)+row(120,210,half(0),true)+row(320,210,half(1),true)}
+  else if(!mit&&st===4){out+=cell(120,210,95,110)+cell(320,210,95,110)+row(120,210,half(0),true)+row(320,210,half(1),true)+line(120,110,120,310,'#9aaeb9',true)+line(320,110,320,310,'#9aaeb9',true)}
+  else{[[110,130,0],[320,130,0],[110,300,1],[320,300,1]].forEach(([cx,cy,k])=>out+=cell(cx,cy,88,72)+row(cx,cy,half(k),false,22))}
+  const X0=460,X1=640,Y0=300,Y1=110,bw=(X1-X0)/6;out+=text(X0,92,'每個細胞的 DNA 相對量',13)+line(X0,Y0,X1,Y0,'#436779');
+  r.dnaSeries.forEach((v,i)=>out+=`<rect x="${num(X0+i*bw+3,1)}" y="${num(Y0-v*44,1)}" width="${num(bw-6,1)}" height="${v*44}" fill="${i===st?'#d97b11':'#c9d2de'}"/><text x="${num(X0+i*bw+bw/2,1)}" y="${Y0+16}" font-size="12" text-anchor="middle">${i}</text>`);
+  out+=text(X0,Y0+36,'階段',12)+text(20,32,(mit?'有絲分裂':'減數分裂')+'　階段 '+st+'：'+r.stageName,16)+text(20,392,'紅＝來自母方　藍＝來自父方　長度相同＝同源染色體　兩條並排＝已複製（姊妹染色分體）',12);break;
+ }
+ case 'enzyme':{
+  // 上左：活性—溫度（目前 pH）；上右：活性—pH（目前溫度），兩種酵素都畫；下：酵素與受質的形狀示意（變性時活性部位變形）。
+  const ink='#436779',opt=r.opt,tfx=T=>T>=60?0:T<=37?0.05+0.95*T/37:(60-T)/23,pfx=(p,o)=>Math.exp(-(((p-o)/1.5)**2));
+  const G=(x0,y0,w,h,xmin,xmax,f,col,label)=>{const pts=[];for(let i=0;i<=120;i++){const x=xmin+(xmax-xmin)*i/120;pts.push(num(x0+w*i/120,1)+','+num(y0-h*Math.min(1,f(x)),1))}return `<path d="M${pts.join(' L')}" fill="none" stroke="${col}" stroke-width="3"/>`};
+  out+=line(60,200,290,200,ink)+line(60,200,60,70,ink)+text(60,60,'活性—溫度（pH '+s.ph+'）',13)+text(296,204,'°C',12)+G(60,200,230,120,0,80,T=>tfx(T)*pfx(s.ph,opt),'#d97b11');
+  for(const T of [0,37,60,80])out+=`<text x="${num(60+230*T/80,1)}" y="216" font-size="11" text-anchor="middle">${T}</text>`;
+  out+=`<rect x="${num(60+230*48/80,1)}" y="70" width="${num(230*20/80,1)}" height="130" fill="#b54a5b" opacity="0.08"/>`+circle(num(60+230*s.temp/80,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b');
+  out+=line(360,200,630,200,ink)+line(360,200,360,70,ink)+text(360,60,'活性—pH（'+s.temp+'°C）',13)+text(636,204,'pH',12)+G(360,200,270,120,1,13,p=>tfx(s.temp)*pfx(p,7),'#2f6fb2')+G(360,200,270,120,1,13,p=>tfx(s.temp)*pfx(p,2),'#087b78');
+  for(const p of [1,2,7,13])out+=`<text x="${num(360+270*(p-1)/12,1)}" y="216" font-size="11" text-anchor="middle">${p}</text>`;
+  out+=circle(num(360+270*(s.ph-1)/12,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b')+text(520,86,'藍＝唾液澱粉酶',12)+text(520,102,'綠＝胃蛋白酶',12);
+  // 下：鎖與鑰匙示意
+  const ey=300;if(!r.den)out+=`<path data-enzyme="normal" d="M200,${ey-40} L300,${ey-40} L300,${ey+30} L200,${ey+30} L200,${ey} L230,${ey} L240,${ey-18} L260,${ey-18} L270,${ey} L200,${ey} Z" fill="#dce8f5" stroke="${ink}" stroke-width="2"/><path d="M232,${ey-2} L241,${ey-16} L259,${ey-16} L268,${ey-2} Z" fill="#f6c453" stroke="${ink}" stroke-width="2"/>`+text(320,ey,'酵素（藍）與受質（黃）形狀吻合',13);
+  else out+=`<path data-enzyme="denatured" d="M200,${ey-40} Q260,${ey-70} 300,${ey-30} Q320,${ey+10} 290,${ey+30} Q240,${ey+50} 205,${ey+20} Q180,${ey} 200,${ey-40} Z" fill="#e4d6d8" stroke="${ink}" stroke-width="2"/><path d="M330,${ey-22} L339,${ey-36} L357,${ey-36} L366,${ey-22} Z" fill="#f6c453" stroke="${ink}" stroke-width="2"/>`+text(380,ey,'高溫變性：形狀改變，受質對不上',13);
+  out+=text(20,32,'相對活性 '+num(r.act*100,1)+'%'+(r.den?'（已變性）':''),16)+text(20,392,'紅點＝目前條件　淡紅區＝60°C 以上變性　曲線為教學模型',12);break;
+ }
+ case 'tides':{
+  // 上：俯視圖（太陽在右、月球依月齡繞地球，海水沿地月方向拉長）；下：48 小時潮高曲線與目前時刻。
+  const ink='#436779',E=[180,160],a=r.moonAngle,mx=E[0]+Math.cos(a)*120,my=E[1]-Math.sin(a)*86,deg=-a*180/Math.PI,stretch=34+20*r.amp;
+  out+=`<circle cx="610" cy="150" r="26" fill="#f6c453"/>`+text(588,196,'太陽',13)+arrow(570,150,420,150,'#f6c453');
+  out+=`<ellipse data-bulge cx="${E[0]}" cy="${E[1]}" rx="${num(stretch+22,1)}" ry="36" transform="rotate(${num(deg,1)} ${E[0]} ${E[1]})" fill="#9cc6e6" opacity="0.8"/><circle cx="${E[0]}" cy="${E[1]}" r="32" fill="#6f9a5c"/>`+text(E[0]-14,E[1]+5,'地球',12);
+  out+=`<ellipse cx="${E[0]}" cy="${E[1]}" rx="120" ry="86" fill="none" stroke="#c9d2de" stroke-dasharray="4 4"/><circle cx="${num(mx,1)}" cy="${num(my,1)}" r="12" fill="#d8dce2" stroke="${ink}"/>`+text(num(mx-12,1),num(my-18,1),'月球',12);
+  out+=text(330,70,'海水朝向與背對月球的兩側隆起（示意）',13)+text(330,92,r.phase+'　'+{spring:'大潮',middle:'中潮',neap:'小潮'}[r.kind],15);
+  const X0=60,X1=630,Y0=308,H=38,tx=t=>num(X0+(X1-X0)*t/48,1),ty=v=>num(Y0-H*v,1),pts=[];
+  for(let i=0;i<=240;i++){const t=48*i/240;pts.push(tx(t)+','+ty(r.amp*Math.cos(2*Math.PI*(t-r.lag)/r.P)))}
+  out+=line(X0,Y0,X1,Y0,'#c9d2de')+`<path data-tide d="M${pts.join(' L')}" fill="none" stroke="#2f6fb2" stroke-width="3"/>`+text(330,262,'潮高（相對）：今天與明天',13);
+  for(const t of [0,12,24,36,48])out+=`<text x="${tx(t)}" y="${Y0+H+18}" font-size="11" text-anchor="middle">${t===24?'隔天 0':t===48?'48':t%24}</text>`;
+  out+=line(tx(s.hour),Y0-H-6,tx(s.hour),Y0+H+4,'#b54a5b')+circle(tx(s.hour),ty(r.h),6,'#b54a5b');
+  out+=text(20,32,'月齡 '+s.day+' 天、'+s.hour+' 時：潮高 '+num(r.h,2)+'（相對值）',16)+text(20,392,'紅線＝目前時刻　簡化的半日潮模型，不是潮汐預報',12);break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }
