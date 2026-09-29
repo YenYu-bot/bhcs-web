@@ -101,7 +101,7 @@
    box.append(btn('跳過引導，直接自由練習',finishGuide,'guide-skip'))};
   function startGuide(i){gi=i;guideActive=true;const st=guideSteps[i];if(i>0||st.values){conf.controls.forEach(c=>$('ctl-'+c.key).value=st.values&&Object.hasOwn(st.values,c.key)?st.values[c.key]:c.value);invalidate('余老師引導：照著步驟操作。')}gPhase=st.focus?'set':'observe';render();guideMark();if(i>0&&box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'})}
   function finishGuide(){guideActive=false;gPhase='';clearMarks();try{localStorage.setItem(guideKey,'done')}catch(_){}render();status('引導完成，現在可以自由練習。')}
-  conf.controls.forEach(c=>$('ctl-'+c.key).addEventListener('input',()=>{if(!guideActive||gPhase!=='set')return;const st=guideSteps[gi];if(c.key===st.focus&&String(Number($('ctl-'+c.key).value))===String(st.target)){gPhase='observe';render();guideMark()}}));
+  conf.controls.forEach(c=>['input','change'].forEach(ev=>$('ctl-'+c.key).addEventListener(ev,()=>{if(!guideActive||gPhase!=='set')return;const st=guideSteps[gi];const v=$('ctl-'+c.key).value;if(c.key===st.focus&&(v===String(st.target)||(typeof st.target==='number'&&Number(v)===st.target))){gPhase='observe';render();guideMark()}})));
   $('run').addEventListener('click',()=>{if(guideActive&&gPhase==='observe'&&current){gPhase='check';render();guideMark()}});
   let seen=false;try{seen=localStorage.getItem(guideKey)==='done'}catch(_){}
   if(seen){guideActive=false;render()}else{guideActive=true;gi=0;gPhase=guideSteps[0].focus?'set':'observe';render()}
