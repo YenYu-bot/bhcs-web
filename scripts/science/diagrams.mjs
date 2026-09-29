@@ -374,6 +374,25 @@ export function diagram(id,s,r){
   out+=text(20,32,'P＝'+num(r.P,2)+' W　E＝'+num(r.E,1)+' J　水溫上升 '+(r.kind==='boiling'?'已達沸點':num(r.dT,2)+'°C'),17);
   out+=text(20,392,'電熱線越紅代表功率越大　溫度計最高畫到 100°C（本模型不處理沸騰）',12);break;
  }
+ case 'electrostatics':{
+  // 金屬球內用棋盤格排位：正電荷固定佔一種格（8 個，不移動），電子只放另一種格；偏近端、偏遠端或均勻都從電子格挑選。
+  const C=[380,168],R=92,ink='#436779',cells=[];
+  for(let i=0;i<7;i++)for(let j=0;j<6;j++){const x=-72+i*24,y=-60+j*24;if(x*x+y*y<=78*78)cells.push([x,y,(i+j)%2])}
+  const pc=cells.filter(c=>c[2]===0),ec=cells.filter(c=>c[2]===1),pick=(arr,k)=>{const out=[];const rest=[...arr].sort((a,b)=>a[0]-b[0]||a[1]-b[1]);if(k>0)out.push(rest.shift());while(out.length<k&&rest.length){let bi=0,bd=-1;rest.forEach((c,i)=>{const d=Math.min(...out.map(o=>(o[0]-c[0])**2+(o[1]-c[1])**2));if(d>bd){bd=d;bi=i}});out.push(rest.splice(bi,1)[0])}return out};
+  out+=`<circle cx="${C[0]}" cy="${C[1]}" r="${R}" fill="#e4edf2" stroke="${ink}" stroke-width="3"/>`+rect(C[0]-8,C[1]+R,16,80,'#c8955a')+rect(C[0]-50,C[1]+R+80,100,14,'#9aaeb9')+text(C[0]+18,C[1]+R+50,'絕緣座',13);
+  pick(pc,8).forEach(([dx,dy])=>out+=`<text data-proton x="${C[0]+dx}" y="${C[1]+dy+7}" font-size="20" font-weight="700" text-anchor="middle" fill="#b54a5b">＋</text>`);
+  const bias=r.kind==='polarized'||r.kind==='grounded'?(r.rodSign<0?1:-1):0,n=r.electrons;
+  const order=bias?[...ec].sort((a,b)=>bias*(b[0]-a[0])||a[1]-b[1]):ec,chosen=bias?order.slice(0,n):pick(ec,n);
+  chosen.forEach(([dx,dy])=>{const x=C[0]+dx,y=C[1]+dy;out+=`<g data-electron><circle cx="${x}" cy="${y}" r="10" fill="#2f6fb2"/><text x="${x}" y="${y+5}" font-size="16" text-anchor="middle" fill="#fff">−</text></g>`});
+  if(r.rodPresent){const col=r.rodSign<0?'#2f6fb2':'#b54a5b';out+=`<rect x="80" y="${C[1]-14}" width="170" height="28" rx="6" fill="#f2f4f7" stroke="${col}" stroke-width="3"/>`;for(let i=0;i<5;i++)out+=`<text x="${100+i*32}" y="${C[1]+7}" font-size="18" text-anchor="middle" fill="${col}">${r.rodSign<0?'−':'＋'}</text>`;out+=text(80,C[1]-26,r.rodSign<0?'帶負電的棒':'帶正電的棒',14)}
+  if(r.groundPresent){const gx=580,gy=318;out+=line(C[0]+R*0.7,C[1]+R*0.7,gx,gy,ink)+line(gx-20,gy,gx+20,gy,ink)+line(gx-12,gy+8,gx+12,gy+8,ink)+line(gx-4,gy+16,gx+4,gy+16,ink)+text(gx-14,gy+38,'接地',13);
+   const into=r.rodSign>0,a=[C[0]+R*0.82,C[1]+R*0.82],b=[gx-14,gy-14];out+=into?arrow(b[0],b[1],a[0],a[1],'#2f6fb2'):arrow(a[0],a[1],b[0],b[1],'#2f6fb2')}
+  if(r.kind==='polarized')out+=arrow(C[0]+(r.rodSign<0?-40:40),C[1]-R-14,C[0]+(r.rodSign<0?40:-40),C[1]-R-14,'#2f6fb2');
+  if(r.kind==='same')out+=text(30,C[1]-40,r.rodSign<0?'棒已移開（接觸時電子從棒移到球）':'棒已移開（接觸時電子從球移到棒）',13);
+  if(r.kind==='opposite'||r.kind==='neutral')out+=text(30,C[1]-40,'棒與接地都已移開',13);
+  out+=text(20,32,'淨電荷：'+(r.net===0?'0（電中性）':'帶'+r.netText+'電')+'　電子 '+r.electrons+' 個、正電荷 8 個（示意）',16);
+  out+=text(20,392,'紅＋＝原子核的正電（固定不動）　藍−＝電子（可移動）　藍箭頭＝電子移動方向',12);break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }

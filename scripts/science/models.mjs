@@ -156,6 +156,16 @@ export function calculate(id,s){
   const I=s.mode==='fixedV'?s.volt/s.ohm:s.amp,V=s.mode==='fixedV'?s.volt:s.amp*s.ohm,P=V*I,E=P*s.time,heat=E*(1-s.loss/100),dT=heat/(s.water*4.2),T=25+dT;
   return {kind:s.time===0?'idle':T>=100?'boiling':'heating',I,V,P,E,kWh:E/3.6e6,heat,dT,T};
  }
+ case 'electrostatics':{
+  // 以「電子數相對電中性的增減」表示：rodSign＝棒的電性（+1／−1）；net＝球的淨電荷（正為帶正電），單位只表示方向與相對多寡。
+  const sg=s.rod==='neg'?-1:1,sign=v=>v>0?'正':v<0?'負':'0';
+  const T={near:{kind:'polarized',net:0,near:-sg,far:sg,flow:sg<0?'球內電子被排斥到遠端':'球內電子被吸引到近端'},
+   ground:{kind:'grounded',net:-sg*3,near:-sg,far:0,flow:sg<0?'電子經接地線流入大地':'電子從大地經接地線流入球'},
+   g1:{kind:'opposite',net:-sg*3,near:-sg,far:-sg,flow:(sg<0?'電子先經接地線流入大地':'電子先從大地流入球')+'；斷開接地後再移開棒，電子無法回來，重新均勻分布'},
+   g2:{kind:'neutral',net:0,near:0,far:0,flow:(sg<0?'電子先流入大地；移開棒時接地仍連著，電子又從大地流回球':'電子先從大地流入球；移開棒時接地仍連著，電子又流回大地')},
+   contact:{kind:'same',net:sg*3,near:sg,far:sg,flow:sg<0?'接觸時電子從棒轉移到球':'接觸時電子從球轉移到棒'}}[s.step];
+  return {...T,rodSign:sg,electrons:8-T.net,netText:sign(T.net),nearText:sign(T.near),farText:sign(T.far),rodPresent:s.step==='near'||s.step==='ground',groundPresent:s.step==='ground'};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -186,5 +196,6 @@ export function describe(id,s,r){
  case 'homeostasis':return s.mode==='temp'?{metrics:[['核心體溫','37 °C（維持恆定）'],['皮膚血管',r.vessel],['調節方式',r.method],['環境',s.env+' °C（'+{cold:'偏冷',neutral:'適中',hot:'偏熱'}[r.kind]+'）']],explanation:r.kind==='cold'?`環境 ${s.env}°C 比較冷：皮膚血管收縮，流到皮膚的血變少、散熱變少；肌肉顫抖產生熱。核心體溫維持在 37°C。`:r.kind==='hot'?`環境 ${s.env}°C 比較熱：皮膚血管舒張，流到皮膚的血變多、散熱變多；流汗，汗水蒸發帶走熱。核心體溫維持在 37°C。`:`環境 ${s.env}°C 適中：不需要明顯調節，核心體溫維持在 37°C。`}:{metrics:[['血糖峰值',f(r.peak)+' mg/dL'],['血糖最低值',f(r.min)+' mg/dL'],['回穩時間',r.recovery?r.recovery+' 小時':'不需要（沒有升高）'],['主要作用的激素',r.hormones.length?r.hormones.join('、')+' 增加':'無明顯變化']],explanation:`${s.carb?'進食 '+s.carb+' g 醣類後血糖升到 '+f(r.peak)+'，':''}${r.peak>110?'超過 110，胰臟分泌胰島素增加，讓血糖回到 90'+(s.insulin==='low'?'；胰島素不足時峰值較高、要 '+r.recovery+' 小時才回穩。':'，約 '+r.recovery+' 小時。'):''}${r.min<80?'運動使血糖降到 '+f(r.min)+'，低於 80，升糖素增加，把血糖拉回來。':''}${r.kind==='steady'?'血糖維持在正常範圍，沒有明顯的激素調節。':''}數值是虛構的教學模型，不能用於健康判斷。`};
  case 'spring-friction':return s.mode==='spring'?{metrics:[['彈力',f(r.F,2)+' N'],['伸長量',f(r.x,3)+' m（'+f(r.x*100,1)+' cm）'],['彈性限度',f(r.limit,2)+' m'],['狀態',r.kind==='over'?'已超過彈性限度':'在彈性限度內']],explanation:r.kind==='over'?`伸長量 ${f(r.x,3)} m 超過彈性限度 ${f(r.limit,2)} m：F＝kx 的計算值僅供參考，虎克定律已不適用，真實彈簧可能無法恢復原長。`:`彈力＝mg＝${f(s.hang,1)}×9.8＝${f(r.F,2)} N；伸長量 x＝F÷k＝${f(r.F,2)}÷${s.k}＝${f(r.x,3)} m。在彈性限度內，伸長量和外力成正比。`}:{metrics:[['正向力',f(r.N,2)+' N'],['摩擦力',f(r.friction,2)+' N（'+(r.kind==='moving'?'動摩擦':'靜摩擦')+'）'],['最大靜摩擦',f(r.fs,2)+' N'],['加速度',f(r.a,2)+' m/s²']],explanation:r.kind==='moving'?`拉力 ${f(s.pull,2)} N 超過最大靜摩擦 ${f(r.fs,2)} N，木塊滑動，摩擦力變成動摩擦 ${f(r.fk,2)} N，比最大靜摩擦小；加速度＝(${f(s.pull,2)}－${f(r.fk,2)})÷${s.mass}＝${f(r.a,2)} m/s²。`:r.kind==='edge'?`拉力恰好等於最大靜摩擦 ${f(r.fs,2)} N，這是臨界情況；再加一點點拉力，木塊就會開始滑動。`:`木塊不動：靜摩擦力等於拉力 ${f(s.pull,2)} N，還沒到最大靜摩擦 ${f(r.fs,2)} N。摩擦係數為教學值。`};
  case 'electric-power':return {metrics:[['電流',f(r.I,2)+' A'],['電功率',f(r.P,2)+' W'],['電能',f(r.E,1)+' J（約 '+(r.kWh?String(Number(r.kWh.toPrecision(3))):'0')+' 度）'],['水溫上升',r.kind==='boiling'?'已達沸點（計算值 '+f(r.dT,1)+' °C）':f(r.dT,2)+' °C']],explanation:`${s.mode==='fixedV'?'固定電壓 '+s.volt+' V：I＝V÷R＝'+f(r.I,2)+' A，P＝V²÷R＝'+f(r.P,2)+' W。':'固定電流 '+s.amp+' A：V＝IR＝'+f(r.V,2)+' V，P＝I²R＝'+f(r.P,2)+' W。'}電能＝${f(r.P,2)}×${s.time}＝${f(r.E,1)} J；水吸收 ${f(r.heat,1)} J，溫度上升 ${f(r.dT,2)}°C。${r.kind==='boiling'?'水的初溫 25°C，已加熱到 100°C，本模型不處理沸騰。':''}${s.mode==='fixedV'?'電壓固定時，電阻越小，電流越大，功率越大。':'電流固定時，電阻越大，功率越大。'}`};
+ case 'electrostatics':return {metrics:[['金屬球淨電荷',r.net===0?'0（電中性）':'帶'+r.netText+'電'],['近端電性',r.near===0?'不帶電':r.nearText+'電'],['遠端電性',r.far===0?'不帶電':r.farText+'電'],['電子移動',r.flow]],explanation:{polarized:'只靠近時，電子只在球內移動，總數沒變，所以淨電荷為 0；但兩端分別帶異性電，這叫極化。',grounded:'接地時，電子可以在球與大地之間移動；棒還在旁邊，球帶與棒相反的電，集中在靠近棒的一端。',opposite:'先斷開接地，電子就回不來；再移開棒，球帶與棒相反的電，並且均勻分布在表面。這就是感應起電。',neutral:'先移開棒時接地還連著，電子又回到原來的數量，球回到電中性。移開的順序決定結果。',same:'接觸時電子直接在棒和球之間轉移，球最後帶和棒相同的電，這是接觸起電。'}[r.kind]+'圖上的正號從頭到尾都沒有移動。'};
  }
 }

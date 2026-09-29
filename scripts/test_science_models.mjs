@@ -240,8 +240,16 @@ test('Electric power: 6 V 6 Ω 70 s / fixed current vs fixed voltage doubling / 
  assert.equal(calc('electric-power',{volt:12,ohm:1,time:600,water:50}).kind,'boiling');
  for(const mode of ['fixedV','fixedI'])for(const ohm of [1,6,50])for(const loss of [0,25,50]){const q=calc('electric-power',{mode,ohm,loss,volt:9,amp:2,time:100});close(q.P,q.V*q.I);close(q.V,q.I*ohm);assert.ok(q.heat<=q.E+1e-9);close(q.heat*100,q.E*(100-loss));}
 });
+test('Electrostatics: induction order / contact / polarization / only electrons move',()=>{
+ assert.ok(calc('electrostatics',{rod:'neg',step:'g1'}).net>0);assert.ok(calc('electrostatics',{rod:'pos',step:'g1'}).net<0);
+ assert.equal(calc('electrostatics',{rod:'neg',step:'g2'}).net,0);assert.equal(calc('electrostatics',{rod:'pos',step:'g2'}).kind,'neutral');
+ assert.ok(calc('electrostatics',{rod:'neg',step:'contact'}).net<0);assert.ok(calc('electrostatics',{rod:'pos',step:'contact'}).net>0);
+ const p=calc('electrostatics',{rod:'neg',step:'near'});assert.equal(p.net,0);assert.equal(p.kind,'polarized');assert.ok(p.near>0&&p.far<0);
+ for(const rod of ['neg','pos'])for(const step of ['near','ground','g1','g2','contact']){const q=calc('electrostatics',{rod,step}),svg=diagram('electrostatics',{rod,step},q);
+  assert.equal((svg.match(/data-proton/g)||[]).length,8,'protons fixed');assert.equal((svg.match(/data-electron/g)||[]).length,8-q.net,'electron count matches net charge');}
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
- const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power'];
+ const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
  for(const id of ids){const t=batch2.find(x=>x.id===id),def=defaults(id);
   const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];
