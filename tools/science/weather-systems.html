@@ -187,6 +187,12 @@ function calculate(id,s){
   const time=Math.sqrt(2*(s.drop/100)/9.8);
   return {kind:s.action==='catch'?'voluntary':'reflex',center:s.action==='catch'?'大腦':'脊髓',viaBrain:s.action==='catch',painLater:s.action==='withdraw',path:P,steps:P.length,time};
  }
+ case 'homeostasis':{
+  if(s.mode==='temp'){const kind=s.env<20?'cold':s.env>30?'hot':'neutral';return {kind,core:37,vessel:{cold:'收縮',neutral:'無明顯變化',hot:'舒張'}[kind],method:{cold:'顫抖產熱、減少散熱',neutral:'無明顯調節',hot:'流汗散熱、增加散熱'}[kind]}}
+  const peak=90+(s.insulin==='low'?1.6:0.8)*s.carb,min=90-0.5*s.exercise,recovery=s.carb>0?(s.insulin==='low'?5:2):0,hormones=[];
+  if(peak>110)hormones.push('胰島素');if(min<80)hormones.push('升糖素');
+  return {kind:peak>110?'high':min<80?'low':'steady',peak,min,recovery,hormones};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -214,6 +220,7 @@ function describe(id,s,r){
  case 'weather-systems':return s.mode==='front'?{metrics:[['雲',r.cloud],['降雨',r.rain],['目前天氣',r.now],['過境後氣溫',{down:'下降',up:'上升',flat:'變化不大'}[r.afterTemp]]],explanation:{cold:'冷鋒：較重的冷氣團從後方推進、把暖空氣快速抬升，形成高聳的積雨雲；過境後由冷氣團控制，氣溫下降。',warm:'暖鋒：較輕的暖氣團沿著冷氣團緩緩爬升，形成範圍廣的層狀雲；過境後由暖氣團控制，氣溫上升。',stationary:'滯留鋒：冷暖氣團勢力相當，鋒面幾乎不移動，同一地區會長時間下雨，例如臺灣的梅雨。'}[s.front]}:{metrics:[['近地面風向',(r.rotation==='cw'?'順時針':'逆時針')+'、'+(r.flow==='in'?'向中心吹入':'向外吹出')],['中心氣流',r.vertical==='up'?'上升':'下沉'],['天氣',r.weather],['半球',s.hemi==='north'?'北半球':'南半球']],explanation:`${s.hemi==='north'?'北':'南'}半球的${{high:'高氣壓',low:'低氣壓',typhoon:'颱風'}[s.system]}：近地面的風${r.rotation==='cw'?'順時針':'逆時針'}旋轉並${r.flow==='in'?'向中心吹入，空氣在中心堆積後上升，上升冷卻容易成雲致雨':'向外吹出，中心由上空的空氣下沉補充，下沉增溫不易成雲'}。${s.system==='typhoon'?'颱風是強烈的熱帶低氣壓，旋轉方向與低氣壓相同。':''}換到另一個半球，旋轉方向相反，往內或往外不變。`};
  case 'circulation':return {metrics:[['心跳',f(r.hr)+' 次／分'],['每分鐘心輸出量',f(r.co,2)+' L／分'],['所選血管',r.vessel+'：'+(r.kind==='oxygenated'?'充氧血':'缺氧血')],['所屬循環',r.circuit==='lung'?'肺循環':'體循環']],explanation:`${r.vessel}屬於${r.circuit==='lung'?'肺循環':'體循環'}，血液從${r.from}流向${r.to}，裡面是${r.kind==='oxygenated'?'充氧血':'缺氧血'}。${s.site==='pa'?'它叫動脈，是因為血液離開心臟，不是因為含氧多。':s.site==='pv'?'它叫靜脈，是因為血液流回心臟，裡面卻是充氧血。':''}心跳 ${f(r.hr)} 次／分×每搏 ${f(r.sv)} mL＝每分鐘 ${f(r.co,2)} L，是靜止時的 ${f(r.coRatio,2)} 倍（心跳是 ${f(r.hrRatio,2)} 倍）。數值來自教學模型。`};
  case 'nerve-reflex':return {metrics:[['中樞',r.center],['是否經大腦判斷',r.viaBrain?'是':r.painLater?'否（痛覺之後才傳到大腦）':'否'],['路徑步驟數',r.steps+' 步'],['接尺反應時間',f(r.time,3)+' s']],explanation:`路徑：${r.path.map(p=>p[0]+(p[1]?'（'+p[1]+'）':'')).join(' → ')}。${r.kind==='reflex'?'中樞在脊髓，不必等大腦判斷，所以很快。'+(r.painLater?'訊息另外往上傳到大腦產生痛覺，但那是縮手之後的事。':''):'要先由大腦判斷球在哪裡，再下指令給手，所以比反射慢。'}接尺：尺落下 ${s.drop} cm，t＝√(2×${f(s.drop/100,2)}÷9.8)＝${f(r.time,3)} s。`};
+ case 'homeostasis':return s.mode==='temp'?{metrics:[['核心體溫','37 °C（維持恆定）'],['皮膚血管',r.vessel],['調節方式',r.method],['環境',s.env+' °C（'+{cold:'偏冷',neutral:'適中',hot:'偏熱'}[r.kind]+'）']],explanation:r.kind==='cold'?`環境 ${s.env}°C 比較冷：皮膚血管收縮，流到皮膚的血變少、散熱變少；肌肉顫抖產生熱。核心體溫維持在 37°C。`:r.kind==='hot'?`環境 ${s.env}°C 比較熱：皮膚血管舒張，流到皮膚的血變多、散熱變多；流汗，汗水蒸發帶走熱。核心體溫維持在 37°C。`:`環境 ${s.env}°C 適中：不需要明顯調節，核心體溫維持在 37°C。`}:{metrics:[['血糖峰值',f(r.peak)+' mg/dL'],['血糖最低值',f(r.min)+' mg/dL'],['回穩時間',r.recovery?r.recovery+' 小時':'不需要（沒有升高）'],['主要作用的激素',r.hormones.length?r.hormones.join('、')+' 增加':'無明顯變化']],explanation:`${s.carb?'進食 '+s.carb+' g 醣類後血糖升到 '+f(r.peak)+'，':''}${r.peak>110?'超過 110，胰臟分泌胰島素增加，讓血糖回到 90'+(s.insulin==='low'?'；胰島素不足時峰值較高、要 '+r.recovery+' 小時才回穩。':'，約 '+r.recovery+' 小時。'):''}${r.min<80?'運動使血糖降到 '+f(r.min)+'，低於 80，升糖素增加，把血糖拉回來。':''}${r.kind==='steady'?'血糖維持在正常範圍，沒有明顯的激素調節。':''}數值是虛構的教學模型，不能用於健康判斷。`};
  }
 }
 
@@ -516,6 +523,35 @@ function diagram(id,s,r){
   out+=`<line data-catch x1="${rx-10}" y1="${px(s.drop)}" x2="${rx+40}" y2="${px(s.drop)}" stroke="#b54a5b" stroke-width="3"/>`+rect(rx+34,num(px(s.drop)-11,1),62,20,'#ffffff')+`<text x="${rx+36}" y="${num(px(s.drop)+5,1)}" font-size="13" fill="#b54a5b">${num(r.time,3)} s</text>`;
   out+=text(20,392,'紅圈＝路徑順序　藍線＝感覺神經（往中樞）　橘線＝運動神經（往動器）　尺上紅線＝抓住的位置',12);break;
  }
+ case 'homeostasis':{
+  if(s.mode==='glucose'){
+   // 血糖—時間：進食造成的升高（0.5 小時到峰值，回穩時間回到 90）與運動造成的下降分開畫；90 為灰色虛線。
+   const X0=80,X1=620,Y0=330,Y1=70,T=8,lo=40,hi=Math.max(180,r.peak+10),tx=t=>num(X0+(X1-X0)*t/T,1),gy=g=>num(Y0-(Y0-Y1)*(g-lo)/(hi-lo),1);
+   const tr=r.recovery,td=s.carb>0?tr+1:1,bump=t=>s.carb<=0?0:t<=0.5?t/0.5:t>=tr?0:1-(t-0.5)/(tr-0.5),dip=t=>Math.max(0,1-Math.abs(t-td)/0.75);
+   const g=t=>90+(r.peak-90)*bump(t)-(90-r.min)*dip(t),pts=[];for(let i=0;i<=160;i++){const t=T*i/160;pts.push(tx(t)+','+gy(g(t)))}
+   out+=line(X0,Y0,X1,Y0,'#436779')+line(X0,Y0,X0,Y1-10,'#436779')+text(X0-60,Y1-18,'血糖（mg/dL）',14)+text(num((X0+X1)/2-40,1),Y0+40,'時間（小時）',14);
+   for(let t=0;t<=T;t+=2)out+=`<text x="${tx(t)}" y="${Y0+20}" font-size="12" text-anchor="middle">${t}</text>`;
+   [[110,'#b54a5b'],[80,'#2f6fb2']].forEach(([v,c])=>out+=`<line x1="${X0}" y1="${gy(v)}" x2="${X1}" y2="${gy(v)}" stroke="${c}" stroke-width="1" stroke-dasharray="3 4"/><text x="${X0-8}" y="${num(gy(v)+4,1)}" font-size="12" text-anchor="end" fill="${c}">${v}</text>`);
+   out+=`<line x1="${X0}" y1="${gy(90)}" x2="${X1}" y2="${gy(90)}" stroke="#7c879b" stroke-width="2" stroke-dasharray="7 5"/><text x="${X0-8}" y="${num(gy(90)+4,1)}" font-size="12" text-anchor="end">90</text>`;
+   out+=`<path data-glucose d="M${pts.join(' L')}" fill="none" stroke="#d97b11" stroke-width="4"/>`;
+   if(r.peak>110)out+=`<text x="${tx(0.5)}" y="${num(gy(r.peak)-10,1)}" font-size="14" fill="#b54a5b">峰值 ${num(r.peak,0)}　胰島素↑</text>`;
+   if(r.min<80)out+=`<text x="${tx(td)}" y="${num(gy(r.min)+22,1)}" font-size="14" text-anchor="middle" fill="#2f6fb2">最低 ${num(r.min,0)}　升糖素↑</text>`;
+   out+=text(20,32,'血糖：偏離後被拉回 90（虛構教學模型，不能用於健康判斷）',16)+text(20,392,'灰色虛線＝基準 90　紅虛線＝110（胰島素增加）　藍虛線＝80（升糖素增加）',12);
+  }else{
+   // 人形與皮膚血管：收縮畫細、舒張畫粗；天冷畫顫抖線，天熱畫汗滴；左側溫度計標環境溫度。
+   const ink='#436779',w=r.kind==='hot'?7:r.kind==='cold'?2:4;
+   out+=`<circle cx="330" cy="92" r="34" fill="#f6e3d6" stroke="${ink}" stroke-width="3"/>`+`<rect x="286" y="130" width="88" height="150" rx="18" fill="#f6e3d6" stroke="${ink}" stroke-width="3"/>`+line(300,280,292,366,ink)+line(360,280,368,366,ink)+line(286,146,244,236,ink)+line(374,146,416,236,ink);
+   for(const x of [296,364])out+=`<path data-skin-vessel d="M${x},140 C${x+(x<330?-6:6)},180 ${x+(x<330?6:-6)},220 ${x},270" fill="none" stroke="#b54a5b" stroke-width="${w}"/>`;
+   out+=`<text x="330" y="200" font-size="14" text-anchor="middle">核心</text><text x="330" y="220" font-size="14" text-anchor="middle">37°C</text>`;
+   if(r.kind==='cold')[[262,200],[398,200],[330,300]].forEach(([x,y])=>out+=`<path d="M${x-10},${y} l5,-6 l5,6 l5,-6 l5,6" fill="none" stroke="#2f6fb2" stroke-width="2"/>`);
+   if(r.kind==='hot')[[270,160],[392,176],[312,300],[352,310]].forEach(([x,y])=>out+=`<path d="M${x},${y-10} q6,10 0,14 q-6,-4 0,-14 Z" fill="#9cc6e6" stroke="#2f6fb2" stroke-width="1.5"/>`);
+   const ty=v=>num(330-v*6,1);out+=rect(90,90,20,240,'#f2f4f7')+`<rect x="92" y="${ty(s.env)}" width="16" height="${num(330-ty(s.env),1)}" fill="#b54a5b"/>`+`<circle cx="100" cy="340" r="16" fill="#b54a5b"/>`;
+   for(let v=0;v<=40;v+=10)out+=line(110,ty(v),118,ty(v),ink)+`<text x="124" y="${num(ty(v)+4,1)}" font-size="12">${v}°C</text>`;
+   out+=text(60,72,'環境 '+s.env+'°C',15)+text(450,120,'皮膚血管：'+r.vessel,15)+text(450,150,r.method,15);
+   out+=text(20,32,'體溫：核心維持 37°C（教學模型）',16)+text(20,392,'紅線＝皮膚血管（粗＝舒張、細＝收縮）　藍波紋＝顫抖　水滴＝流汗',12);
+  }
+  break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }
@@ -605,7 +641,7 @@ function educationalScene(id,s,r){
   const pair=node('div','');pair.className='comparison-pair';records.slice(-2).forEach((r,i)=>{const card=node('article','');card.append(node('h3','紀錄 '+(records.length-1+i)));for(const [label,value] of [['結果',r.result],['我的解釋',r.explanation]]){const p=node('p','');p.append(node('strong',label+'：'),document.createTextNode(value));card.append(p)}const details=node('details','');details.append(node('summary',noPrediction?'檢查實驗條件':'檢查條件與事前判斷'),node('p',r.conditions));if(!noPrediction)details.append(node('p','事前判斷：'+r.prediction));card.append(details);pair.append(card)});region.append(pair,node('p','先檢查兩筆是否只差一個條件，再說讀值如何改變；若同時改多個條件，還不能直接歸因。'));
  }
  function state(){const s={};for(const c of conf.controls){const el=$('ctl-'+c.key);if(c.options){if(!c.options.some(o=>o[0]===el.value))throw Error('Invalid option');s[c.key]=el.value}else {const n=Number(el.value);if(!Number.isFinite(n)||n<c.min||n>c.max)throw Error('Invalid number');s[c.key]=n}}return s}
- function activeKeys(mode){return conf.id==='electromagnetism'?({magnet:['mode','turns','current'],motor:['mode','turns','current','field','angle'],generator:['mode','turns','field','angle','rpm']})[mode]:conf.id==='pressure-fluid'?({water:['mode','depth','density'],gas:['mode','volume'],flow:['mode','density','ratio','speed']})[mode]:conf.id==='pulley-incline'?({fixed:['mode','load','h','loss'],movable:['mode','load','h','loss'],block:['mode','load','n','h','loss'],incline:['mode','load','h','len','loss']})[mode]:conf.id==='reflection-refraction'?({refraction:['mode','incident','media'],mirror:['mode','incident','dist']})[mode]:conf.id==='weather-systems'?({pressure:['mode','hemi','system'],front:['mode','front','phase']})[mode]:null}
+ function activeKeys(mode){return conf.id==='electromagnetism'?({magnet:['mode','turns','current'],motor:['mode','turns','current','field','angle'],generator:['mode','turns','field','angle','rpm']})[mode]:conf.id==='pressure-fluid'?({water:['mode','depth','density'],gas:['mode','volume'],flow:['mode','density','ratio','speed']})[mode]:conf.id==='pulley-incline'?({fixed:['mode','load','h','loss'],movable:['mode','load','h','loss'],block:['mode','load','n','h','loss'],incline:['mode','load','h','len','loss']})[mode]:conf.id==='reflection-refraction'?({refraction:['mode','incident','media'],mirror:['mode','incident','dist']})[mode]:conf.id==='weather-systems'?({pressure:['mode','hemi','system'],front:['mode','front','phase']})[mode]:conf.id==='homeostasis'?({glucose:['mode','carb','exercise','insulin'],temp:['mode','env']})[mode]:null}
  function conditions(s){const active=activeKeys(s.mode);return conf.controls.filter(c=>!active||active.includes(c.key)).map(c=>`${c.label}：${c.options?c.options.find(o=>o[0]===s[c.key])[1]:s[c.key]+' '+c.unit}`).join('；')}
  function labels(){
   const active=activeKeys($('ctl-mode')?.value);

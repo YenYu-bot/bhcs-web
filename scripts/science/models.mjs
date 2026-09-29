@@ -139,6 +139,12 @@ export function calculate(id,s){
   const time=Math.sqrt(2*(s.drop/100)/9.8);
   return {kind:s.action==='catch'?'voluntary':'reflex',center:s.action==='catch'?'大腦':'脊髓',viaBrain:s.action==='catch',painLater:s.action==='withdraw',path:P,steps:P.length,time};
  }
+ case 'homeostasis':{
+  if(s.mode==='temp'){const kind=s.env<20?'cold':s.env>30?'hot':'neutral';return {kind,core:37,vessel:{cold:'收縮',neutral:'無明顯變化',hot:'舒張'}[kind],method:{cold:'顫抖產熱、減少散熱',neutral:'無明顯調節',hot:'流汗散熱、增加散熱'}[kind]}}
+  const peak=90+(s.insulin==='low'?1.6:0.8)*s.carb,min=90-0.5*s.exercise,recovery=s.carb>0?(s.insulin==='low'?5:2):0,hormones=[];
+  if(peak>110)hormones.push('胰島素');if(min<80)hormones.push('升糖素');
+  return {kind:peak>110?'high':min<80?'low':'steady',peak,min,recovery,hormones};
+ }
  default:throw Error('Unknown model '+id);
  }
 }
@@ -166,5 +172,6 @@ export function describe(id,s,r){
  case 'weather-systems':return s.mode==='front'?{metrics:[['雲',r.cloud],['降雨',r.rain],['目前天氣',r.now],['過境後氣溫',{down:'下降',up:'上升',flat:'變化不大'}[r.afterTemp]]],explanation:{cold:'冷鋒：較重的冷氣團從後方推進、把暖空氣快速抬升，形成高聳的積雨雲；過境後由冷氣團控制，氣溫下降。',warm:'暖鋒：較輕的暖氣團沿著冷氣團緩緩爬升，形成範圍廣的層狀雲；過境後由暖氣團控制，氣溫上升。',stationary:'滯留鋒：冷暖氣團勢力相當，鋒面幾乎不移動，同一地區會長時間下雨，例如臺灣的梅雨。'}[s.front]}:{metrics:[['近地面風向',(r.rotation==='cw'?'順時針':'逆時針')+'、'+(r.flow==='in'?'向中心吹入':'向外吹出')],['中心氣流',r.vertical==='up'?'上升':'下沉'],['天氣',r.weather],['半球',s.hemi==='north'?'北半球':'南半球']],explanation:`${s.hemi==='north'?'北':'南'}半球的${{high:'高氣壓',low:'低氣壓',typhoon:'颱風'}[s.system]}：近地面的風${r.rotation==='cw'?'順時針':'逆時針'}旋轉並${r.flow==='in'?'向中心吹入，空氣在中心堆積後上升，上升冷卻容易成雲致雨':'向外吹出，中心由上空的空氣下沉補充，下沉增溫不易成雲'}。${s.system==='typhoon'?'颱風是強烈的熱帶低氣壓，旋轉方向與低氣壓相同。':''}換到另一個半球，旋轉方向相反，往內或往外不變。`};
  case 'circulation':return {metrics:[['心跳',f(r.hr)+' 次／分'],['每分鐘心輸出量',f(r.co,2)+' L／分'],['所選血管',r.vessel+'：'+(r.kind==='oxygenated'?'充氧血':'缺氧血')],['所屬循環',r.circuit==='lung'?'肺循環':'體循環']],explanation:`${r.vessel}屬於${r.circuit==='lung'?'肺循環':'體循環'}，血液從${r.from}流向${r.to}，裡面是${r.kind==='oxygenated'?'充氧血':'缺氧血'}。${s.site==='pa'?'它叫動脈，是因為血液離開心臟，不是因為含氧多。':s.site==='pv'?'它叫靜脈，是因為血液流回心臟，裡面卻是充氧血。':''}心跳 ${f(r.hr)} 次／分×每搏 ${f(r.sv)} mL＝每分鐘 ${f(r.co,2)} L，是靜止時的 ${f(r.coRatio,2)} 倍（心跳是 ${f(r.hrRatio,2)} 倍）。數值來自教學模型。`};
  case 'nerve-reflex':return {metrics:[['中樞',r.center],['是否經大腦判斷',r.viaBrain?'是':r.painLater?'否（痛覺之後才傳到大腦）':'否'],['路徑步驟數',r.steps+' 步'],['接尺反應時間',f(r.time,3)+' s']],explanation:`路徑：${r.path.map(p=>p[0]+(p[1]?'（'+p[1]+'）':'')).join(' → ')}。${r.kind==='reflex'?'中樞在脊髓，不必等大腦判斷，所以很快。'+(r.painLater?'訊息另外往上傳到大腦產生痛覺，但那是縮手之後的事。':''):'要先由大腦判斷球在哪裡，再下指令給手，所以比反射慢。'}接尺：尺落下 ${s.drop} cm，t＝√(2×${f(s.drop/100,2)}÷9.8)＝${f(r.time,3)} s。`};
+ case 'homeostasis':return s.mode==='temp'?{metrics:[['核心體溫','37 °C（維持恆定）'],['皮膚血管',r.vessel],['調節方式',r.method],['環境',s.env+' °C（'+{cold:'偏冷',neutral:'適中',hot:'偏熱'}[r.kind]+'）']],explanation:r.kind==='cold'?`環境 ${s.env}°C 比較冷：皮膚血管收縮，流到皮膚的血變少、散熱變少；肌肉顫抖產生熱。核心體溫維持在 37°C。`:r.kind==='hot'?`環境 ${s.env}°C 比較熱：皮膚血管舒張，流到皮膚的血變多、散熱變多；流汗，汗水蒸發帶走熱。核心體溫維持在 37°C。`:`環境 ${s.env}°C 適中：不需要明顯調節，核心體溫維持在 37°C。`}:{metrics:[['血糖峰值',f(r.peak)+' mg/dL'],['血糖最低值',f(r.min)+' mg/dL'],['回穩時間',r.recovery?r.recovery+' 小時':'不需要（沒有升高）'],['主要作用的激素',r.hormones.length?r.hormones.join('、')+' 增加':'無明顯變化']],explanation:`${s.carb?'進食 '+s.carb+' g 醣類後血糖升到 '+f(r.peak)+'，':''}${r.peak>110?'超過 110，胰臟分泌胰島素增加，讓血糖回到 90'+(s.insulin==='low'?'；胰島素不足時峰值較高、要 '+r.recovery+' 小時才回穩。':'，約 '+r.recovery+' 小時。'):''}${r.min<80?'運動使血糖降到 '+f(r.min)+'，低於 80，升糖素增加，把血糖拉回來。':''}${r.kind==='steady'?'血糖維持在正常範圍，沒有明顯的激素調節。':''}數值是虛構的教學模型，不能用於健康判斷。`};
  }
 }

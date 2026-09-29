@@ -212,8 +212,19 @@ test('Knee reflex receptor is a thigh muscle spindle, distinct from the tendon t
  assert.ok(Math.hypot(x-Number(effector.getAttribute('cx')),y-Number(effector.getAttribute('cy')))>=22,'receptor and effector markers must not overlap');
  dom.window.close();
 });
+test('Homeostasis: meal peak / insulin deficit / fasting exercise / steady / cold / drawn curve extremes',()=>{
+ const n=calc('homeostasis');close(n.peak,130);assert.equal(n.recovery,2);assert.deepEqual([...n.hormones],['胰島素']);assert.equal(n.kind,'high');
+ const l=calc('homeostasis',{insulin:'low'});close(l.peak,170);assert.equal(l.recovery,5);
+ const x=calc('homeostasis',{carb:0,exercise:60});close(x.min,60);assert.deepEqual([...x.hormones],['升糖素']);assert.equal(x.kind,'low');
+ const z=calc('homeostasis',{carb:0,exercise:0});close(z.peak,90);assert.equal(z.kind,'steady');assert.equal(z.recovery,0);
+ const c=calc('homeostasis',{mode:'temp',env:10});assert.equal(c.kind,'cold');assert.equal(c.core,37);assert.equal(calc('homeostasis',{mode:'temp',env:35}).kind,'hot');assert.equal(calc('homeostasis',{mode:'temp',env:25}).kind,'neutral');
+ // 從圖上曲線反算：最高點與最低點的血糖值要等於模型的峰值與最低值
+ for(const carb of [0,50,100])for(const exercise of [0,30,60])for(const insulin of ['normal','low']){const s={...defaults('homeostasis'),mode:'glucose',carb,exercise,insulin},q=calc('homeostasis',s),svg=diagram('homeostasis',s,q);
+  const ys=[...svg.match(/data-glucose d="M([^"]+)"/)[1].split(' L')].map(p=>Number(p.split(',')[1])),hi=Math.max(180,q.peak+10),g=y=>40+(330-y)*(hi-40)/260;
+  assert.ok(Math.abs(g(Math.min(...ys))-q.peak)<1.5,`peak ${carb} ${exercise} ${insulin}`);assert.ok(Math.abs(g(Math.max(...ys))-q.min)<1.5,`min ${carb} ${exercise} ${insulin}`);}
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
- const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex'];
+ const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
  for(const id of ids){const t=batch2.find(x=>x.id===id),def=defaults(id);
   const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];

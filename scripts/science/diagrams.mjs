@@ -297,6 +297,35 @@ export function diagram(id,s,r){
   out+=`<line data-catch x1="${rx-10}" y1="${px(s.drop)}" x2="${rx+40}" y2="${px(s.drop)}" stroke="#b54a5b" stroke-width="3"/>`+rect(rx+34,num(px(s.drop)-11,1),62,20,'#ffffff')+`<text x="${rx+36}" y="${num(px(s.drop)+5,1)}" font-size="13" fill="#b54a5b">${num(r.time,3)} s</text>`;
   out+=text(20,392,'紅圈＝路徑順序　藍線＝感覺神經（往中樞）　橘線＝運動神經（往動器）　尺上紅線＝抓住的位置',12);break;
  }
+ case 'homeostasis':{
+  if(s.mode==='glucose'){
+   // 血糖—時間：進食造成的升高（0.5 小時到峰值，回穩時間回到 90）與運動造成的下降分開畫；90 為灰色虛線。
+   const X0=80,X1=620,Y0=330,Y1=70,T=8,lo=40,hi=Math.max(180,r.peak+10),tx=t=>num(X0+(X1-X0)*t/T,1),gy=g=>num(Y0-(Y0-Y1)*(g-lo)/(hi-lo),1);
+   const tr=r.recovery,td=s.carb>0?tr+1:1,bump=t=>s.carb<=0?0:t<=0.5?t/0.5:t>=tr?0:1-(t-0.5)/(tr-0.5),dip=t=>Math.max(0,1-Math.abs(t-td)/0.75);
+   const g=t=>90+(r.peak-90)*bump(t)-(90-r.min)*dip(t),pts=[];for(let i=0;i<=160;i++){const t=T*i/160;pts.push(tx(t)+','+gy(g(t)))}
+   out+=line(X0,Y0,X1,Y0,'#436779')+line(X0,Y0,X0,Y1-10,'#436779')+text(X0-60,Y1-18,'血糖（mg/dL）',14)+text(num((X0+X1)/2-40,1),Y0+40,'時間（小時）',14);
+   for(let t=0;t<=T;t+=2)out+=`<text x="${tx(t)}" y="${Y0+20}" font-size="12" text-anchor="middle">${t}</text>`;
+   [[110,'#b54a5b'],[80,'#2f6fb2']].forEach(([v,c])=>out+=`<line x1="${X0}" y1="${gy(v)}" x2="${X1}" y2="${gy(v)}" stroke="${c}" stroke-width="1" stroke-dasharray="3 4"/><text x="${X0-8}" y="${num(gy(v)+4,1)}" font-size="12" text-anchor="end" fill="${c}">${v}</text>`);
+   out+=`<line x1="${X0}" y1="${gy(90)}" x2="${X1}" y2="${gy(90)}" stroke="#7c879b" stroke-width="2" stroke-dasharray="7 5"/><text x="${X0-8}" y="${num(gy(90)+4,1)}" font-size="12" text-anchor="end">90</text>`;
+   out+=`<path data-glucose d="M${pts.join(' L')}" fill="none" stroke="#d97b11" stroke-width="4"/>`;
+   if(r.peak>110)out+=`<text x="${tx(0.5)}" y="${num(gy(r.peak)-10,1)}" font-size="14" fill="#b54a5b">峰值 ${num(r.peak,0)}　胰島素↑</text>`;
+   if(r.min<80)out+=`<text x="${tx(td)}" y="${num(gy(r.min)+22,1)}" font-size="14" text-anchor="middle" fill="#2f6fb2">最低 ${num(r.min,0)}　升糖素↑</text>`;
+   out+=text(20,32,'血糖：偏離後被拉回 90（虛構教學模型，不能用於健康判斷）',16)+text(20,392,'灰色虛線＝基準 90　紅虛線＝110（胰島素增加）　藍虛線＝80（升糖素增加）',12);
+  }else{
+   // 人形與皮膚血管：收縮畫細、舒張畫粗；天冷畫顫抖線，天熱畫汗滴；左側溫度計標環境溫度。
+   const ink='#436779',w=r.kind==='hot'?7:r.kind==='cold'?2:4;
+   out+=`<circle cx="330" cy="92" r="34" fill="#f6e3d6" stroke="${ink}" stroke-width="3"/>`+`<rect x="286" y="130" width="88" height="150" rx="18" fill="#f6e3d6" stroke="${ink}" stroke-width="3"/>`+line(300,280,292,366,ink)+line(360,280,368,366,ink)+line(286,146,244,236,ink)+line(374,146,416,236,ink);
+   for(const x of [296,364])out+=`<path data-skin-vessel d="M${x},140 C${x+(x<330?-6:6)},180 ${x+(x<330?6:-6)},220 ${x},270" fill="none" stroke="#b54a5b" stroke-width="${w}"/>`;
+   out+=`<text x="330" y="200" font-size="14" text-anchor="middle">核心</text><text x="330" y="220" font-size="14" text-anchor="middle">37°C</text>`;
+   if(r.kind==='cold')[[262,200],[398,200],[330,300]].forEach(([x,y])=>out+=`<path d="M${x-10},${y} l5,-6 l5,6 l5,-6 l5,6" fill="none" stroke="#2f6fb2" stroke-width="2"/>`);
+   if(r.kind==='hot')[[270,160],[392,176],[312,300],[352,310]].forEach(([x,y])=>out+=`<path d="M${x},${y-10} q6,10 0,14 q-6,-4 0,-14 Z" fill="#9cc6e6" stroke="#2f6fb2" stroke-width="1.5"/>`);
+   const ty=v=>num(330-v*6,1);out+=rect(90,90,20,240,'#f2f4f7')+`<rect x="92" y="${ty(s.env)}" width="16" height="${num(330-ty(s.env),1)}" fill="#b54a5b"/>`+`<circle cx="100" cy="340" r="16" fill="#b54a5b"/>`;
+   for(let v=0;v<=40;v+=10)out+=line(110,ty(v),118,ty(v),ink)+`<text x="124" y="${num(ty(v)+4,1)}" font-size="12">${v}°C</text>`;
+   out+=text(60,72,'環境 '+s.env+'°C',15)+text(450,120,'皮膚血管：'+r.vessel,15)+text(450,150,r.method,15);
+   out+=text(20,32,'體溫：核心維持 37°C（教學模型）',16)+text(20,392,'紅線＝皮膚血管（粗＝舒張、細＝收縮）　藍波紋＝顫抖　水滴＝流汗',12);
+  }
+  break;
+ }
  case 'moon-eclipse':{
   return moonScene(s,r);
  }
