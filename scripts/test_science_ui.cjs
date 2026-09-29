@@ -1,9 +1,9 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),vm=require('node:vm');
 const {JSDOM,VirtualConsole}=require('jsdom');const axe=require('axe-core');
-const root=path.resolve(__dirname,'..');
+const root=path.resolve(__dirname,'..');const {readSciencePage}=require('./science-page.cjs');
 function load(file,{saved=null,blocked=false}={}){
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
- const dom=new JSDOM(fs.readFileSync(path.join(root,file),'utf8'),{runScripts:'dangerously',url:'https://www.bhcs.com.tw/'+file+'?noga=1',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){w.print=()=>{};w.confirm=()=>true;if(saved)Object.entries(saved).forEach(([k,v])=>w.localStorage.setItem(k,v));if(blocked)Object.defineProperty(w,'localStorage',{get(){throw new Error('Storage blocked')}})}});
+ const dom=new JSDOM(readSciencePage(file),{runScripts:'dangerously',url:'https://www.bhcs.com.tw/'+file+'?noga=1',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){w.print=()=>{};w.confirm=()=>true;if(saved)Object.entries(saved).forEach(([k,v])=>w.localStorage.setItem(k,v));if(blocked)Object.defineProperty(w,'localStorage',{get(){throw new Error('Storage blocked')}})}});
  return {dom,errors};
 }
 function structural(d,file){

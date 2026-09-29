@@ -1,8 +1,8 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {JSDOM,VirtualConsole}=require('jsdom');
-const root=path.resolve(__dirname,'..');
+const root=path.resolve(__dirname,'..');const {readSciencePage}=require('./science-page.cjs');
 function open(file){const errors=[],frames=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));vc.on('error',e=>errors.push(String(e)));
- const dom=new JSDOM(fs.readFileSync(path.join(root,'tools',file),'utf8'),{url:'https://www.bhcs.com.tw/tools/'+file+'?noga=1',runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.HTMLCanvasElement.prototype.getContext=()=>new Proxy({measureText:s=>({width:s.length*8}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>o[k]||(()=>{}),set:(o,k,v)=>(o[k]=v,true)});w.requestAnimationFrame=f=>(frames.push(f),frames.length);w.cancelAnimationFrame=()=>{};w.matchMedia=()=>({matches:true});w.confirm=()=>true;w.print=()=>{}}});
+ const dom=new JSDOM(readSciencePage(path.join('tools',file)),{url:'https://www.bhcs.com.tw/tools/'+file+'?noga=1',runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.HTMLCanvasElement.prototype.getContext=()=>new Proxy({measureText:s=>({width:s.length*8}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>o[k]||(()=>{}),set:(o,k,v)=>(o[k]=v,true)});w.requestAnimationFrame=f=>(frames.push(f),frames.length);w.cancelAnimationFrame=()=>{};w.matchMedia=()=>({matches:true});w.confirm=()=>true;w.print=()=>{}}});
  const w=dom.window,d=w.document,$=id=>d.getElementById(id),event=(el,type)=>el.dispatchEvent(new w.Event(type,{bubbles:true})),select=(id,value)=>{$(id).value=value;event($(id),'change')};let frameTime=0;
  return {dom,w,d,$,errors,event,select,flush(){while(frames.length)frames.shift()(0)},advanceFrames(limit=500,step=50){let count=0;while(frames.length&&count++<limit)frames.shift()(frameTime+=step);assert.ok(count<limit,'Animation did not settle')}};
 }
