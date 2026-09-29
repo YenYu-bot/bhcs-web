@@ -6,7 +6,7 @@ import {legacy,firstBatch,firstMisconceptions} from './science/catalog.mjs';
 import {batch2} from './science/batch2.mjs';
 import {enhanceLessons} from './science/experience.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const researcherCssVersion='20260928-atom-builder-1';
+const researcherCssVersion='20260928-nerve-reflex-1';
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const write=(p,s)=>{fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),s)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
