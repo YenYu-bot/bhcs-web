@@ -706,7 +706,7 @@ function diagram(id,s,r){
  }
  case 'equilibrium':{
   // 左：量—時間（A 藍、B 橘，趨近平衡後變平但不歸零；加入 A 時畫一個階梯）；右：試管顏色依 B 的比例；下：正、逆反應速率。
-  const X0=70,X1=420,Y0=300,Y1=70,tEnd=10,tAdd=5,k=0.9,mx=Math.max(1,r.T,s.a0,s.b0),tx=t=>num(X0+(X1-X0)*t/tEnd,1),ty=v=>num(Y0-(Y0-Y1)*v/mx,1);
+  const X0=70,X1=420,Y0=300,Y1=70,tEnd=10,tAdd=5,k=1.5,mx=Math.max(1,r.T,s.a0,s.b0),tx=t=>num(X0+(X1-X0)*t/tEnd,1),ty=v=>num(Y0-(Y0-Y1)*v/mx,1);
   const at=t=>{if(t<=tAdd||!s.add){const e=Math.exp(-k*t);return [r.A1+(s.a0-r.A1)*e,r.B1+(s.b0-r.B1)*e]}const e5=Math.exp(-k*tAdd),a5=r.A1+(s.a0-r.A1)*e5+s.add,b5=r.B1+(s.b0-r.B1)*e5,e=Math.exp(-k*(t-tAdd));return [r.A+(a5-r.A)*e,r.B+(b5-r.B)*e]};
   const pa=[],pb=[];for(let i=0;i<=200;i++){const t=tEnd*i/200;if(s.add&&Math.abs(t-tAdd)<1e-9){const e5=Math.exp(-k*tAdd);pa.push(tx(t)+','+ty(r.A1+(s.a0-r.A1)*e5));}const [a,b]=at(t);pa.push(tx(t)+','+ty(a));pb.push(tx(t)+','+ty(b))}
   out+=line(X0,Y0,X1,Y0,'#436779')+line(X0,Y0,X0,Y1-10,'#436779')+text(X0,Y1-18,'量（單位）',14)+text(X1-70,Y0+22,'時間（示意）',13);
