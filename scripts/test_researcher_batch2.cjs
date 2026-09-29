@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {JSDOM}=require('jsdom');
-const root=path.resolve(__dirname,'..');
+const root=path.resolve(__dirname,'..');const {readSciencePage}=require('./science-page.cjs');
 const ids=['optics','wave-sound','energy','pressure-fluid','solubility'];
 for(const id of ids){
  const file=path.join(root,'tools/science',id+'.html'),html=fs.readFileSync(file,'utf8');
@@ -54,5 +54,5 @@ assert.match(guide,/history\.pushState\(stateFor\(id\)/,'screen changes must ent
 assert.ok(guide.includes('data-return-second'),'notebook must offer a route back for the second record');
 assert.ok(!guide.includes("if(recordCount())show('notebook')"),'saving a record must keep the learner on the experiment screen');
 assert.ok(!guide.includes('document.title='),'researcher shell must preserve each lesson title');
-for(const id of ['optics','energy']){const html=fs.readFileSync(path.join(root,'tools/science',id+'.html'),'utf8');assert.match(html,/data-lab-drag="[^"]+"[^>]+r="25"/s,id+' drag target must be at least 48 px wide')}
+for(const id of ['optics','energy']){const html=readSciencePage(path.join('tools/science',id+'.html'));assert.match(html,/data-lab-drag="[^"]+"[^>]+r="25"/s,id+' drag target must be at least 48 px wide')}
 console.log('PASS researcher batch 2: five prediction-free stations, unified 余老師 naming and mini-lab shell');

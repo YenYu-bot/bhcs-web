@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {JSDOM,VirtualConsole}=require('jsdom');
-const root=path.resolve(__dirname,'..');
+const root=path.resolve(__dirname,'..');const {readSciencePage}=require('./science-page.cjs');
 const pages=[
  ['plate-earthquake-lab.html','begin','motionValue'],
  ['buoyancy-density-lab.html','drop','canvasCover'],
@@ -9,7 +9,7 @@ const pages=[
 ];
 function open(file){
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));vc.on('error',e=>errors.push(String(e)));
- const dom=new JSDOM(fs.readFileSync(path.join(root,'tools',file),'utf8'),{url:'https://www.bhcs.com.tw/tools/'+file+'?noga=1',runScripts:'dangerously',virtualConsole:vc,beforeParse(w){
+ const dom=new JSDOM(readSciencePage(path.join('tools',file)),{url:'https://www.bhcs.com.tw/tools/'+file+'?noga=1',runScripts:'dangerously',virtualConsole:vc,beforeParse(w){
   w.HTMLCanvasElement.prototype.getContext=()=>new Proxy({measureText:s=>({width:String(s).length*8}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>o[k]||(()=>{}),set:(o,k,v)=>(o[k]=v,true)});
   w.requestAnimationFrame=()=>1;w.cancelAnimationFrame=()=>{};w.matchMedia=()=>({matches:true});w.confirm=()=>true;w.print=()=>{};
  }});
