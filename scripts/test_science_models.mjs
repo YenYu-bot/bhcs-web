@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {calculate,describe} from './science/models.mjs';
-import {diagram} from './science/diagrams.mjs';
+import {diagram,SCIENCE_PROPS} from './science/diagrams.mjs';
 import {batch2} from './science/batch2.mjs';
 import {JSDOM} from 'jsdom';
 const defaults=id=>Object.fromEntries(batch2.find(t=>t.id===id).controls.map(c=>[c.key,c.value]));
@@ -332,6 +332,28 @@ test('Guided walkthroughs: every step is reachable, needs a real change, and has
    assert.ok(st.say&&st.hint&&st.explain,where+' has say, hint and explain');
   });
  }
+});
+test('Every default, task preset and guide value sits on its slider grid (browsers snap off-grid values)',()=>{
+ const on=(c,v)=>v>=c.min-1e-9&&v<=c.max+1e-9&&Math.abs((v-c.min)/c.step-Math.round((v-c.min)/c.step))<1e-9;
+ for(const t of batch2)for(const c of t.controls){if(c.options)continue;
+  assert.ok(on(c,c.value),`${t.id} default ${c.key}=${c.value}`);
+  t.tasks.forEach((k,i)=>{if(Object.hasOwn(k.values,c.key))assert.ok(on(c,k.values[c.key]),`${t.id} task ${i+1} ${c.key}`)});
+  (t.guide||[]).forEach((g,i)=>{if(g.values&&Object.hasOwn(g.values,c.key))assert.ok(on(c,g.values[c.key]),`${t.id} guide ${i+1} ${c.key}`)})}
+});
+test('Illustrated props: every illustrated station keeps its images inside the scene at control extremes',()=>{
+ globalThis.SCIENCE_ASSETS=new Set(Object.values(SCIENCE_PROPS).flat());
+ try{
+  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
+  for(const id of Object.keys(SCIENCE_PROPS)){const t=batch2.find(x=>x.id===id),def=defaults(id);
+   const lists=t.controls.map(c=>[c.key,c.options?c.options.map(o=>o[0]):[c.min,(c.min+c.max)/2,c.max].map(v=>Math.round(v/c.step)*c.step)]),combos=[{}];
+   for(const [k,vs] of lists)for(const v of vs)combos.push({[k]:v});
+   for(let i=0;i<lists.length;i++)for(let j=i+1;j<lists.length;j++)for(const a of lists[i][1])for(const b of lists[j][1])combos.push({[lists[i][0]]:a,[lists[j][0]]:b});
+   let drawn=0;
+   for(const c of combos){const s={...def,...c},raw=diagram(id,s,calculate(id,s)),svg=raw.replace(/<g transform=[^>]*>[\s\S]*?<\/g>/g,'');drawn+=(raw.match(/<image/g)||[]).length;
+    for(const m of svg.matchAll(/<image([^>]*)>/g)){const a=m[1];if(/data-prop="bg-/.test(a)||/transform=/.test(a))continue;const x=attr(a,'x'),y=attr(a,'y'),w=attr(a,'width'),h=attr(a,'height'),clipped=/clip-path=/.test(a);
+     assert.ok(x>=-1&&y>=-1&&x+w<=661&&(clipped||y+h<=401),`${id} ${JSON.stringify(c)} image ${a.match(/data-prop="([^"]+)"/)[1]} ${[x,y,w,h]}`)}}
+   assert.ok(drawn>0,id+' draws at least one illustration');}
+ }finally{delete globalThis.SCIENCE_ASSETS}
 });
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
  const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics','equilibrium','metal-activity','cell-electrolysis','specific-heat','neutralization','cell-division','enzyme','tides'];

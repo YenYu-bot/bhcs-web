@@ -263,8 +263,10 @@ function describe(id,s,r){
 
 // Geometry and measurements use the tested models; selected illustrative textures are external assets.
 // 插畫道具：runtime 預先載入，載好才加入 SCIENCE_ASSETS；沒有載入（或在測試環境）時一律使用程式繪圖。
-const SCIENCE_PROPS={'lever-torque':['bg-physics-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight'],'atom-builder':['item-proton','item-neutron','item-electron'],'neutralization':['bg-chem-bench','prop-retort-stand','prop-burette','prop-erlenmeyer']};
+const SCIENCE_PROPS={'optics':['bg-physics-bench','prop-candle','prop-convex-lens'],'electromagnetism':['bg-electric-bench','prop-coil'],'pressure-fluid':['bg-physics-bench'],'energy':['bg-physics-bench','prop-toy-cart','prop-track'],'pulley-incline':['bg-physics-bench','prop-wooden-crate','prop-pulley-wheel'],'reflection-refraction':['prop-plane-mirror','prop-laser-pointer'],'spring-friction':['bg-physics-bench','prop-wooden-block','prop-hanging-weight'],'electric-power':['bg-electric-bench','prop-beaker','prop-power-supply','prop-thermometer'],'electrostatics':['bg-electric-bench','prop-metal-sphere','prop-plastic-rod'],'specific-heat':['bg-physics-bench','prop-beaker','prop-hotplate','prop-thermometer','prop-metal-block'],'lever-torque':['bg-physics-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight'],'atom-builder':['item-proton','item-neutron','item-electron'],'neutralization':['bg-chem-bench','prop-retort-stand','prop-burette','prop-erlenmeyer']};
 // 錐形瓶內部輪廓（相對於 prop-erlenmeyer 圖的比例）：[y, 左內緣 x, 右內緣 x]
+// 整張背景（在圖解最後統一墊到最底層）；槓桿與酸鹼中和在各自的分支內處理
+const SCIENCE_BACKDROP={'optics':'bg-physics-bench','electromagnetism':'bg-electric-bench','pressure-fluid':'bg-physics-bench','energy':'bg-physics-bench','pulley-incline':'bg-physics-bench','spring-friction':'bg-physics-bench','electric-power':'bg-electric-bench','electrostatics':'bg-electric-bench','specific-heat':'bg-physics-bench'};
 const FLASK_ROWS=[[0.293, 0.336, 0.6588], [0.3047, 0.3307, 0.6667], [0.3164, 0.3228, 0.6745], [0.3281, 0.3176, 0.6798], [0.3398, 0.3097, 0.6877], [0.3516, 0.3018, 0.6929], [0.3633, 0.2966, 0.7008], [0.375, 0.2887, 0.7087], [0.3867, 0.2835, 0.7139], [0.3984, 0.2756, 0.7218], [0.4102, 0.2703, 0.727], [0.4219, 0.2625, 0.7349], [0.4336, 0.2572, 0.7402], [0.4453, 0.2493, 0.748], [0.457, 0.2441, 0.7533], [0.4688, 0.2362, 0.7612], [0.4805, 0.231, 0.7664], [0.4922, 0.2231, 0.7717], [0.5039, 0.2178, 0.7795], [0.5156, 0.21, 0.7848], [0.5273, 0.2047, 0.7927], [0.5391, 0.1995, 0.7979], [0.5508, 0.1916, 0.8058], [0.5625, 0.1864, 0.811], [0.5742, 0.1785, 0.8189], [0.5859, 0.1732, 0.8241], [0.5977, 0.168, 0.8294], [0.6094, 0.1601, 0.8373], [0.6211, 0.1549, 0.8425], [0.6328, 0.147, 0.8504], [0.6445, 0.1417, 0.8556], [0.6562, 0.1365, 0.8609], [0.668, 0.1286, 0.8688], [0.6797, 0.1234, 0.874], [0.6914, 0.1155, 0.8793], [0.7031, 0.1102, 0.8871], [0.7148, 0.105, 0.8924], [0.7266, 0.0971, 0.9003], [0.7383, 0.0919, 0.9055], [0.75, 0.0866, 0.9108], [0.7617, 0.0787, 0.9186], [0.7734, 0.0735, 0.9239], [0.7852, 0.0682, 0.9291], [0.7969, 0.0604, 0.9344], [0.8086, 0.0551, 0.9423], [0.8203, 0.0499, 0.9475], [0.832, 0.0446, 0.9528], [0.8438, 0.0394, 0.958], [0.8555, 0.0341, 0.9633], [0.8672, 0.0315, 0.9659], [0.8789, 0.0289, 0.9685], [0.8906, 0.0289, 0.9659], [0.9023, 0.0341, 0.9633], [0.9141, 0.0394, 0.9554], [0.9258, 0.0525, 0.9449], [0.9375, 0.0709, 0.9265], [0.9492, 0.0997, 0.895], [0.9609, 0.1549, 0.8399], [0.9727, 0.2546, 0.7375]];
 function diagram(id,s,r){
  if(["wave-sound","plant-exchange","ecosystem"].includes(id))return educationalScene(id,s,r);
@@ -286,9 +288,10 @@ function diagram(id,s,r){
  case 'optics':{
   const extent=Math.max(s.u,Math.abs(r.f)*2,Math.abs(r.v||0),20)*1.15,scale=280/extent,cx=330,axis=190;
   const h=45/Math.max(1,Math.abs(r.m||1)),ox=cx-s.u*scale,oy=axis-h;
-  out=line(25,axis,635,axis,'#9aaeb9')+line(cx,45,cx,325,'#087b78')+text(cx-22,35,s.kind==='convex'?'凸透鏡':'凹透鏡',15);
+  const LENS=s.kind==='convex'&&HAS('prop-convex-lens');out=line(25,axis,635,axis,'#9aaeb9')+(LENS?prop('prop-convex-lens',cx-260*164/512/2,axis-0.4*260,260*164/512,260):line(cx,45,cx,325,'#087b78'))+text(cx-22,35,s.kind==='convex'?'凸透鏡':'凹透鏡',15);
   for(const a of [-2,-1,1,2])out+=circle(cx+a*s.f*scale,axis,3,'#142f46')+text(cx+a*s.f*scale-8,axis+24,Math.abs(a)===2?'2F':'F',12);
-  out+=line(ox,axis,ox,oy,'#d97b11')+circle(ox,oy,4,'#d97b11')+text(ox-10,axis+48,'物',16);
+  if(HAS('prop-candle'))out+=prop('prop-candle',ox-h*350/512*0.47,oy,h*350/512,h)+text(ox-10,axis+48,'物',16);
+  else out+=line(ox,axis,ox,oy,'#d97b11')+circle(ox,oy,4,'#d97b11')+text(ox-10,axis+48,'物',16);
   // Parallel incident ray and undeviated central ray.
   const end=625,rayY=oy+h*(end-cx)/(r.f*scale);
   out+=line(ox,oy,cx,oy,'#d97b11')+line(cx,oy,end,rayY,'#d97b11');
@@ -301,7 +304,8 @@ function diagram(id,s,r){
  case 'electromagnetism':{
   out=text(30,35,s.mode==='magnet'?'空心長線圈與有號磁場':'線圈法線與外加磁場',20);
   if(s.mode==='magnet'){
-   for(let i=0;i<12;i++){
+   if(HAS('prop-coil'))out+=prop('prop-coil',118,112,380,116);
+   else for(let i=0;i<12;i++){
     const x=165+i*26;
     out+=`<path d="M${x},105 A13,65 0 0 0 ${x},235" fill="none" stroke="#e6b979" stroke-width="2" opacity=".58"/>`;
     out+=`<path d="M${x},105 A13,65 0 0 1 ${x},235" fill="none" stroke="#bf731a" stroke-width="4"/>`;
@@ -335,7 +339,8 @@ function diagram(id,s,r){
  }
  case 'energy':{
   const p=s.progress/100;
-  out=line(60,90,345,260,'#607e8d')+circle(60+285*p,75+170*p,14,'#d97b11')+text(45,320,`下降 ${s.progress}%`,18)+text(35,350,`速度 ${num(r.speed,2)} m/s`,18);
+  const CART=HAS('prop-toy-cart')&&HAS('prop-track'),slope=Math.atan2(170,285)*180/Math.PI;
+  out=(CART?prop('prop-track',202.5-166,175-6,332,12,` transform="rotate(${num(slope,2)} 202.5 175)"`)+prop('prop-toy-cart',60+285*p-30,90+170*p-22,60,20,` transform="rotate(${num(slope,2)} ${num(60+285*p,1)} ${num(90+170*p-12,1)})"`):line(60,90,345,260,'#607e8d')+circle(60+285*p,75+170*p,14,'#d97b11'))+text(45,320,`下降 ${s.progress}%`,18)+text(35,350,`速度 ${num(r.speed,2)} m/s`,18);
   const vals=[r.potential,r.kinetic,r.thermal],labels=['位能','動能','內能'];vals.forEach((v,i)=>{out+=rect(395+i*76,280-v/r.total*210,45,v/r.total*210,['#087b78','#d97b11','#9364a1'][i])+text(390+i*76,305,labels[i],15)+text(390+i*76,333,num(v,1)+' J',13)});
  out+=`<circle data-lab-drag="progress" data-units-per-px="${100/285}" cx="${60+285*p}" cy="${75+170*p}" r="25" fill="transparent" stroke="#d97b11" stroke-width="2" stroke-dasharray="4 3" tabindex="0" role="button" aria-label="拖移小球比較坡道位置，或按左右方向鍵"/>`;
   out+=text(390,45,`總能量 ${num(r.total,2)} J`,18);break;
@@ -395,13 +400,13 @@ function diagram(id,s,r){
  case 'pulley-incline':{
   // 裝置畫在左側 x<440；右下角長條比較輸入功與輸出功。
   const ink='#436779',rope='#8a5a2b',F=num(r.force,1),D=num(r.distance,2);
-  const crate=(x,y,w=70,h=46)=>rect(x-w/2,y,w,h,'#c8955a')+text(x-26,y+29,s.load+' N',15);
+  const crate=(x,y,w=70,h=46)=>HAS('prop-wooden-crate')?prop('prop-wooden-crate',x-28,y-6,56,56)+`<text x="${x}" y="${y+29}" font-size="15" font-weight="700" text-anchor="middle" fill="#142f46" stroke="#fff" stroke-width="3" paint-order="stroke">${s.load} N</text>`:rect(x-w/2,y,w,h,'#c8955a')+text(x-26,y+29,s.load+' N',15);
   const pulley=(x,y,rad=24)=>`<circle cx="${x}" cy="${y}" r="${rad}" fill="#e4edf2" stroke="${ink}" stroke-width="3"/>`+circle(x,y,4,ink);
   const seg=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${rope}" stroke-width="3"/>`;
   const label=(x,y,n)=>`<circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="#b54a5b" stroke-width="2"/><text x="${x}" y="${y+5}" font-size="13" text-anchor="middle">${n}</text>`;
   const ceiling=(x1,x2)=>line(x1,52,x2,52,ink)+Array.from({length:Math.floor((x2-x1)/16)},(_,i)=>line(x1+8+i*16,52,x1+i*16,44,'#9aaeb9')).join('');
   if(s.mode==='fixed'){
-   out+=ceiling(170,330)+line(250,52,250,76,ink)+pulley(250,100)+seg(226,100,226,250)+seg(274,100,274,230)+crate(226,250)+arrow(274,230,274,300,'#d97b11')+text(284,300,'F＝'+F+' N',16)+arrow(150,300,150,250,'#087b78')+text(70,285,'上升 '+s.h+' m',14)+text(284,326,'向下拉 '+D+' m',14)+label(212,170,1);
+   out+=ceiling(170,330)+line(250,52,250,76,ink)+(HAS('prop-pulley-wheel')?prop('prop-pulley-wheel',250-26.7,100-0.7*79,53.3,79):pulley(250,100))+seg(226,100,226,250)+seg(274,100,274,230)+crate(226,250)+arrow(274,230,274,300,'#d97b11')+text(284,300,'F＝'+F+' N',16)+arrow(150,300,150,250,'#087b78')+text(70,285,'上升 '+s.h+' m',14)+text(284,326,'向下拉 '+D+' m',14)+label(212,170,1);
   }else if(s.mode==='movable'){
    out+=ceiling(150,330)+seg(210,52,210,230)+seg(270,230,270,90)+pulley(240,230,30)+crate(240,262)+arrow(270,140,270,80,'#d97b11')+text(280,90,'F＝'+F+' N',16)+label(196,150,1)+label(284,180,2)+text(280,120,'向上拉 '+D+' m',14)+arrow(150,320,150,270,'#087b78')+text(62,305,'上升 '+s.h+' m',14);
   }else if(s.mode==='block'){
@@ -416,7 +421,7 @@ function diagram(id,s,r){
    const L=r.L,base=Math.sqrt(Math.max(0,L*L-s.h*s.h)),k=Math.min(360/Math.max(base,0.001),230/s.h,360/L),x0=60,y0=320,x1=num(x0+base*k,1),y1=num(y0-s.h*k,1);
    out+=`<path d="M${x0},${y0} L${x1},${y0} L${x1},${y1} Z" fill="#e8dcc6" stroke="${ink}" stroke-width="3"/>`;
    const ang=Math.atan2(y1-y0,x1-x0),mx=x0+(x1-x0)*.45,my=y0+(y1-y0)*.45,c=Math.cos(ang),sn=Math.sin(ang);
-   out+=`<g transform="translate(${num(mx,1)},${num(my,1)}) rotate(${num(ang*180/Math.PI,1)})"><rect x="-26" y="-40" width="52" height="40" rx="4" fill="#c8955a"/><text x="-20" y="-15" font-size="13">${s.load} N</text></g>`;
+   out+=`<g transform="translate(${num(mx,1)},${num(my,1)}) rotate(${num(ang*180/Math.PI,1)})">${HAS('prop-wooden-crate')?`<image data-prop="prop-wooden-crate" href="../../assets/science/props/prop-wooden-crate.webp" x="-24" y="-46" width="48" height="47"/>`:'<rect x="-26" y="-40" width="52" height="40" rx="4" fill="#c8955a"/>'}<text x="-20" y="-15" font-size="13">${s.load} N</text></g>`;
    out+=arrow(num(mx+c*30,1),num(my+sn*30-20,1),num(mx+c*100,1),num(my+sn*100-20,1),'#d97b11')+text(num(mx+c*100+6,1),num(my+sn*100-26,1),'F＝'+F+' N',16);
    out+=text(num(x1+8,1),num((y0+y1)/2,1),'h＝'+s.h+' m',15)+text(num(x0+(x1-x0)*.12-10,1),num(y0+(y1-y0)*.12-22,1),'L＝'+num(L,2)+' m',15);
    if(r.clamped)out+=text(60,360,'斜面長不能短於高度：以 L＝h 計算',14);
@@ -457,6 +462,7 @@ function diagram(id,s,r){
    out+=rect(20,60,620,140,fill(names[0]))+rect(20,200,620,150,fill(names[1]))+line(20,200,640,200,'#436779')+normal(330,60,330,350);
    out+=text(34,86,names[0]+'　n＝'+r.n1,16)+text(34,340,names[1]+'　n＝'+r.n2,16);
    const th=s.incident,L=170;out+=ray(O[0]-L*sn(th),O[1]-L*cs(th),O[0],O[1],'#d97b11');
+   {const sx=O[0]-L*sn(th),sy=O[1]-L*cs(th);if(HAS('prop-laser-pointer'))out+=prop('prop-laser-pointer',sx,sy-5.5,62,11,` transform="rotate(${num(90-th,2)} ${num(sx,1)} ${num(sy,1)})"`)}
    out+=arrow(num(O[0]-L*sn(th)*.55,1),num(O[1]-L*cs(th)*.55,1),num(O[0]-L*sn(th)*.45,1),num(O[1]-L*cs(th)*.45,1),'#d97b11');
    out+=ray(O[0],O[1],O[0]+150*sn(th),O[1]-150*cs(th),'#d97b11',r.kind==='tir'?4:2,r.kind==='tir'?'':'8 5');
    if(r.kind!=='tir'){const t2=r.refraction;out+=ray(O[0],O[1],O[0]+L*sn(t2),O[1]+L*cs(t2),'#b54a5b')+arc(O,270,270+t2,62,'#b54a5b')+tag(626,300,'折射角 '+num(t2,1)+'°','#b54a5b','end')}
@@ -466,7 +472,8 @@ function diagram(id,s,r){
   }else{
    // 上：一條光線在鏡面反射（法線水平）；下：物與像
    const MX=380,H=[MX,120],th=s.incident,L=Math.min(150,85/Math.max(sn(th),1e-9));
-   out+=line(MX,56,MX,356,'#436779');for(let y=60;y<=350;y+=14)out+=line(MX,y,MX+10,y-8,'#9aaeb9');
+   if(HAS('prop-plane-mirror'))out+=prop('prop-plane-mirror',MX-0.44*86,52,86,322);
+   else{out+=line(MX,56,MX,356,'#436779');for(let y=60;y<=350;y+=14)out+=line(MX,y,MX+10,y-8,'#9aaeb9')}
    out+=normal(MX-190,120,MX,120)+ray(H[0]-L*cs(th),H[1]-L*sn(th),H[0],H[1],'#d97b11')+ray(H[0],H[1],H[0]-L*cs(th),H[1]+L*sn(th),'#087b78');
    out+=arc(H,180,180-th,50,'#d97b11')+arc(H,180,180+th,74,'#087b78')+tag(34,100,'入射角 '+th+'°','#d97b11')+tag(34,196,'反射角 '+th+'°','#087b78');
    const sc=5,base=330,top=260,ox=MX-s.dist*sc,ix=MX+s.dist*sc,flag=(x,dir,dash)=>`<path d="M${x},${base} L${x},${top} L${x+dir*22},${top} M${x},${top+22} L${x+dir*15},${top+22}" fill="none" stroke="${dash?'#7c879b':'#142f46'}" stroke-width="4"${dash?' stroke-dasharray="6 4"':''}/>`;
@@ -613,7 +620,7 @@ function diagram(id,s,r){
    out+=line(100,top,240,top,ink);for(let x=104;x<240;x+=14)out+=line(x,top,x-8,top-8,'#9aaeb9');
    const coils=12,pts=[[x0,top],[x0,top+10]];for(let i=1;i<=coils;i++)pts.push([x0+(i%2?-16:16),num(top+10+(len-20)*i/coils,1)]);pts.push([x0,num(top+len-10,1)],[x0,num(top+len,1)]);
    out+=`<path data-spring d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="${r.kind==='over'?'#b54a5b':'#2f6fb2'}" stroke-width="3"/>`;
-   out+=rect(x0-24,num(top+len,1),48,34,'#607e8d')+text(x0-18,num(top+len+22,1),s.hang+' kg',13);
+   out+=(HAS('prop-hanging-weight')?prop('prop-hanging-weight',x0-14,num(top+len-4,1),28,56)+text(x0+18,num(top+len+36,1),s.hang+' kg',13):rect(x0-24,num(top+len,1),48,34,'#607e8d')+text(x0-18,num(top+len+22,1),s.hang+' kg',13));
    const rx=270,y0=top+L0;out+=rect(rx,top,22,300,'#f6e8c8');
    const stepCm=[1,2,5,10,20,50,100].find(v=>v>=xMax*100/6)||100;for(let c=0;c<=xMax*100+1e-9;c+=stepCm){const y=num(y0+c/100*sc,1);if(y<=top+300)out+=line(rx,y,rx+10,y,ink)+`<text x="${rx+26}" y="${num(y+4,1)}" font-size="12">${c} cm</text>`}
    const ly=num(y0+s.limit*sc,1);out+=`<line x1="${rx-8}" y1="${ly}" x2="${rx+30}" y2="${ly}" stroke="#b54a5b" stroke-width="2" stroke-dasharray="5 4"/>`+`<text x="${rx-12}" y="${num(ly+4,1)}" font-size="12" text-anchor="end" fill="#b54a5b">限度</text>`;
@@ -626,7 +633,7 @@ function diagram(id,s,r){
   }else{
    // 上：木塊受力圖；下：摩擦力－拉力圖（先等於拉力，到最大靜摩擦後降為動摩擦）
    const bx=250,by=90,bw=110,bh=64,Fm=Math.max(s.pull,r.fs)*1.25||1,L=F=>num(Math.max(0,150*F/Fm),1);
-   out+=line(60,by+bh,600,by+bh,ink)+rect(bx,by,bw,bh,'#c8955a')+text(bx+30,by+38,s.mass+' kg',15);
+   out+=line(60,by+bh,600,by+bh,ink)+(HAS('prop-wooden-block')?prop('prop-wooden-block',bx,by+14,bw,50)+`<text x="${bx+bw/2}" y="${by+45}" font-size="15" font-weight="700" text-anchor="middle" fill="#142f46" stroke="#fff" stroke-width="3" paint-order="stroke">${s.mass} kg</text>`:rect(bx,by,bw,bh,'#c8955a')+text(bx+30,by+38,s.mass+' kg',15));
    if(s.pull>0)out+=`<g data-pull>`+arrow(bx+bw,by+bh/2,num(bx+bw+L(s.pull),1),by+bh/2,'#d97b11')+`</g>`+text(num(bx+bw+L(s.pull)+6,1),by+bh/2-6,'拉力 '+num(s.pull,2)+' N',14);
    if(r.friction>0)out+=`<g data-friction>`+arrow(bx,by+bh-6,num(bx-L(r.friction),1),by+bh-6,'#b54a5b')+`</g>`+`<text x="${num(bx-L(r.friction)-6,1)}" y="${by+bh-12}" font-size="14" text-anchor="end" fill="#b54a5b">摩擦力 ${num(r.friction,2)} N</text>`;
    const gx=110,gy=350,gw=440,gh=140,Pm=Math.max(r.fs*2,s.pull*1.1,1),px=v=>num(gx+gw*Math.min(v,Pm)/Pm,1),py=F=>num(gy-gh*F/(r.fs*1.15),1);
@@ -640,11 +647,13 @@ function diagram(id,s,r){
  case 'electric-power':{
   // 左：電源、導線、燒杯中的電熱線與溫度計；右：電能與水吸收的熱比較。
   const ink='#436779',bx=120,by=150,bw=200,bh=190,glow=Math.min(1,r.P/40);
-  out+=rect(30,70,70,40,'#e4edf2')+text(38,96,s.mode==='fixedV'?s.volt+' V':num(r.V,1)+' V',15)+line(100,80,180,80,ink)+line(180,80,180,196,ink)+line(100,100,260,100,ink)+line(260,100,260,196,ink);
-  out+=`<path d="M${bx},${by} L${bx},${by+bh} Q${bx},${by+bh+12} ${bx+12},${by+bh+12} L${bx+bw-12},${by+bh+12} Q${bx+bw},${by+bh+12} ${bx+bw},${by+bh} L${bx+bw},${by}" fill="none" stroke="${ink}" stroke-width="3"/>`+rect(bx+2,by+40,bw-4,bh-28,'#d6ebf5');
+  out+=(HAS('prop-power-supply')?prop('prop-power-supply',26,52,72,73)+`<text x="62" y="80" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">${s.mode==='fixedV'?s.volt+' V':num(r.V,1)+' V'}</text>`:rect(30,70,70,40,'#e4edf2')+text(38,96,s.mode==='fixedV'?s.volt+' V':num(r.V,1)+' V',15))+line(100,80,180,80,ink)+line(180,80,180,196,ink)+line(100,100,260,100,ink)+line(260,100,260,196,ink);
+  const BEAK=HAS('prop-beaker');out+=BEAK?rect(142,196,160,146,'#cfe6f5'):`<path d="M${bx},${by} L${bx},${by+bh} Q${bx},${by+bh+12} ${bx+12},${by+bh+12} L${bx+bw-12},${by+bh+12} Q${bx+bw},${by+bh+12} ${bx+bw},${by+bh} L${bx+bw},${by}" fill="none" stroke="${ink}" stroke-width="3"/>`+rect(bx+2,by+40,bw-4,bh-28,'#d6ebf5');
   let coil='M180,196';for(let i=0;i<8;i++)coil+=` L${180+i*10+5},${i%2?300:320}`;coil+=' L260,300 L260,196';
-  out+=`<path data-coil d="${coil}" fill="none" stroke="rgb(${num(150+105*glow,0)},${num(90-40*glow,0)},60)" stroke-width="${num(3+3*glow,1)}"/>`;
-  const tc=Math.min(100,r.T),ty=v=>num(330-(v-0)*2.2,1);out+=rect(340,110,16,220,'#f2f4f7')+`<rect x="342" y="${ty(tc)}" width="12" height="${num(330-ty(tc),1)}" fill="#b54a5b"/>`+circle(348,340,12,'#b54a5b');
+  out+=`<path data-coil d="${coil}" fill="none" stroke="rgb(${num(150+105*glow,0)},${num(90-40*glow,0)},60)" stroke-width="${num(3+3*glow,1)}"/>`;if(BEAK)out+=prop('prop-beaker',132,146,178,210);
+  const tc=Math.min(100,r.T),ty=v=>num(330-(v-0)*2.2,1);
+  if(HAS('prop-thermometer'))out+=`<rect x="343" y="${ty(tc)}" width="10" height="${num(330-ty(tc),1)}" fill="#b54a5b"/>`+circle(348,351,9,'#b54a5b')+prop('prop-thermometer',328.7,102,43,268);
+  else out+=rect(340,110,16,220,'#f2f4f7')+`<rect x="342" y="${ty(tc)}" width="12" height="${num(330-ty(tc),1)}" fill="#b54a5b"/>`+circle(348,340,12,'#b54a5b');
   for(const v of [25,50,75,100])out+=line(356,ty(v),364,ty(v),ink)+`<text x="368" y="${num(ty(v)+4,1)}" font-size="12">${v}°C</text>`;
   out+=text(bx,by+bh+34,'水 '+s.water+' g（初溫 25°C）',14);
   const E=Math.max(r.E,1e-9),bw2=v=>num(200*v/E,1),X=430;out+=text(X,150,'能量（J）',15);
@@ -658,12 +667,13 @@ function diagram(id,s,r){
   const C=[380,168],R=92,ink='#436779',cells=[];
   for(let i=0;i<7;i++)for(let j=0;j<6;j++){const x=-72+i*24,y=-60+j*24;if(x*x+y*y<=78*78)cells.push([x,y,(i+j)%2])}
   const pc=cells.filter(c=>c[2]===0),ec=cells.filter(c=>c[2]===1),pick=(arr,k)=>{const out=[];const rest=[...arr].sort((a,b)=>a[0]-b[0]||a[1]-b[1]);if(k>0)out.push(rest.shift());while(out.length<k&&rest.length){let bi=0,bd=-1;rest.forEach((c,i)=>{const d=Math.min(...out.map(o=>(o[0]-c[0])**2+(o[1]-c[1])**2));if(d>bd){bd=d;bi=i}});out.push(rest.splice(bi,1)[0])}return out};
-  out+=`<circle cx="${C[0]}" cy="${C[1]}" r="${R}" fill="#e4edf2" stroke="${ink}" stroke-width="3"/>`+rect(C[0]-8,C[1]+R,16,80,'#c8955a')+rect(C[0]-50,C[1]+R+80,100,14,'#9aaeb9')+text(C[0]+18,C[1]+R+50,'絕緣座',13);
+  if(HAS('prop-metal-sphere')){const w=R/0.47,hh=w*512/247;out+=`<clipPath id="es-clip"><rect x="0" y="0" width="660" height="376"/></clipPath>`+prop('prop-metal-sphere',C[0]-w/2,C[1]-0.2*hh,w,hh,' clip-path="url(#es-clip)"')+text(C[0]+30,C[1]+R+50,'絕緣座',13)}
+  else out+=`<circle cx="${C[0]}" cy="${C[1]}" r="${R}" fill="#e4edf2" stroke="${ink}" stroke-width="3"/>`+rect(C[0]-8,C[1]+R,16,80,'#c8955a')+rect(C[0]-50,C[1]+R+80,100,14,'#9aaeb9')+text(C[0]+18,C[1]+R+50,'絕緣座',13);
   pick(pc,8).forEach(([dx,dy])=>out+=`<text data-proton x="${C[0]+dx}" y="${C[1]+dy+7}" font-size="20" font-weight="700" text-anchor="middle" fill="#b54a5b">＋</text>`);
   const bias=r.kind==='polarized'||r.kind==='grounded'?(r.rodSign<0?1:-1):0,n=r.electrons;
   const order=bias?[...ec].sort((a,b)=>bias*(b[0]-a[0])||a[1]-b[1]):ec,chosen=bias?order.slice(0,n):pick(ec,n);
   chosen.forEach(([dx,dy])=>{const x=C[0]+dx,y=C[1]+dy;out+=`<g data-electron><circle cx="${x}" cy="${y}" r="10" fill="#2f6fb2"/><text x="${x}" y="${y+5}" font-size="16" text-anchor="middle" fill="#fff">−</text></g>`});
-  if(r.rodPresent){const col=r.rodSign<0?'#2f6fb2':'#b54a5b';out+=`<rect x="80" y="${C[1]-14}" width="170" height="28" rx="6" fill="#f2f4f7" stroke="${col}" stroke-width="3"/>`;for(let i=0;i<5;i++)out+=`<text x="${100+i*32}" y="${C[1]+7}" font-size="18" text-anchor="middle" fill="${col}">${r.rodSign<0?'−':'＋'}</text>`;out+=text(80,C[1]-26,r.rodSign<0?'帶負電的棒':'帶正電的棒',14)}
+  if(r.rodPresent){const col=r.rodSign<0?'#2f6fb2':'#b54a5b';out+=HAS('prop-plastic-rod')?prop('prop-plastic-rod',80,C[1]-12,170,24):`<rect x="80" y="${C[1]-14}" width="170" height="28" rx="6" fill="#f2f4f7" stroke="${col}" stroke-width="3"/>`;for(let i=0;i<5;i++)out+=`<text x="${100+i*32}" y="${C[1]+7}" font-size="18" text-anchor="middle" fill="${col}">${r.rodSign<0?'−':'＋'}</text>`;out+=text(80,C[1]-26,r.rodSign<0?'帶負電的棒':'帶正電的棒',14)}
   if(r.groundPresent){const gx=580,gy=318;out+=line(C[0]+R*0.7,C[1]+R*0.7,gx,gy,ink)+line(gx-20,gy,gx+20,gy,ink)+line(gx-12,gy+8,gx+12,gy+8,ink)+line(gx-4,gy+16,gx+4,gy+16,ink)+text(gx-14,gy+38,'接地',13);
    const into=r.rodSign>0,a=[C[0]+R*0.82,C[1]+R*0.82],b=[gx-14,gy-14];out+=into?arrow(b[0],b[1],a[0],a[1],'#2f6fb2'):arrow(a[0],a[1],b[0],b[1],'#2f6fb2')}
   if(r.kind==='polarized')out+=arrow(C[0]+(r.rodSign<0?-40:40),C[1]-R-14,C[0]+(r.rodSign<0?40:-40),C[1]-R-14,'#2f6fb2');
@@ -727,11 +737,15 @@ function diagram(id,s,r){
   // 上：兩個容器、溫度計與加熱板；下：溫度—時間兩條直線（液體到沸點後停止）。
   const ink='#436779',tEnd=Math.max(10,s.time),cap=x=>x.bp===null?Infinity:x.bp,Tat=(x,t)=>Math.min(cap(x),20+s.power*t/(s.mass*x.c));
   const top=Math.max(40,Math.min(cap(r.a),r.a.T),Math.min(cap(r.b),r.b.T))*1.12;
+  const ART=HAS('prop-beaker')&&HAS('prop-hotplate')&&HAS('prop-thermometer')&&HAS('prop-metal-block');
   [[r.a,90,'甲','#2f6fb2'],[r.b,330,'乙','#d97b11']].forEach(([x,cx,lab,col])=>{const liquid=x.bp!==null;
-   out+=`<path d="M${cx},70 L${cx},150 L${cx+110},150 L${cx+110},70" fill="none" stroke="${ink}" stroke-width="3"/>`+(liquid?rect(cx+3,92,104,55,x.name==='水'?'#d6ebf5':'#eef2e0'):rect(cx+25,110,60,37,x.name==='沙'?'#e3cf9f':'#9aa3ad'))+rect(cx-6,152,122,12,'#b54a5b');
-   const shown=Math.min(cap(x),x.T),ty=v=>num(146-80*Math.min(1,(v-20)/Math.max(1,top-20)),1);out+=rect(cx+130,60,10,90,'#f2f4f7')+`<rect x="${cx+131}" y="${ty(shown)}" width="8" height="${num(150-ty(shown),1)}" fill="${col}"/>`;
+   const shown=Math.min(cap(x),x.T),ty=v=>num(146-80*Math.min(1,(v-20)/Math.max(1,top-20)),1);
+   if(ART){const bx=cx+16;out+=prop('prop-hotplate',cx-5,138,120,66)+(liquid?rect(bx+7,92,68,53,x.name==='水'?'#cfe6f5':'#e6efd2'):x.name==='沙'?`<path d="M${bx+10},145 Q${bx+39},104 ${bx+68},145 Z" fill="#e3cf9f" stroke="#b9975a"/>`:prop('prop-metal-block',bx+14,122,50,22))+prop('prop-beaker',bx,58,78,92);
+    out+=`<rect x="${cx+131.5}" y="${ty(shown)}" width="6" height="${num(150-ty(shown),1)}" fill="${col}"/>`+circle(cx+134.5,159,5,col)+prop('prop-thermometer',cx+125.4,56.7,18,110)}
+   else{out+=`<path d="M${cx},70 L${cx},150 L${cx+110},150 L${cx+110},70" fill="none" stroke="${ink}" stroke-width="3"/>`+(liquid?rect(cx+3,92,104,55,x.name==='水'?'#d6ebf5':'#eef2e0'):rect(cx+25,110,60,37,x.name==='沙'?'#e3cf9f':'#9aa3ad'))+rect(cx-6,152,122,12,'#b54a5b');
+   out+=rect(cx+130,60,10,90,'#f2f4f7')+`<rect x="${cx+131}" y="${ty(shown)}" width="8" height="${num(150-ty(shown),1)}" fill="${col}"/>`}
    out+=text(cx,54,lab+'：'+x.name+'　'+num(shown,1)+'°C'+(x.boil?'（沸點）':''),14)});
-  const X0=90,X1=600,Y0=350,Y1=200,tx=t=>num(X0+(X1-X0)*t/tEnd,1),ty=v=>num(Y0-(Y0-Y1)*(v-20)/(top-20),1);
+  const X0=90,X1=600,Y0=350,Y1=ART?222:200,tx=t=>num(X0+(X1-X0)*t/tEnd,1),ty=v=>num(Y0-(Y0-Y1)*(v-20)/(top-20),1);
   out+=line(X0,Y0,X1,Y0,ink)+line(X0,Y0,X0,Y1-8,ink)+text(X0-10,Y1-14,'溫度（°C）',13)+text(X1-60,Y0+20,'時間（s）',13)+`<text x="${X0-6}" y="${Y0+4}" font-size="12" text-anchor="end">20</text>`;
   [[r.a,'#2f6fb2'],[r.b,'#d97b11']].forEach(([x,col],i)=>{const pts=[];for(let k=0;k<=60;k++){const t=tEnd*k/60;pts.push(tx(t)+','+ty(Tat(x,t)))}out+=`<path data-temp-line="${i?'B':'A'}" d="M${pts.join(' L')}" fill="none" stroke="${col}" stroke-width="3"/>`});
   out+=text(20,32,'同樣吸收 '+num(r.Q,0)+' J：'+r.a.name+' 上升 '+num(r.a.dT,2)+'°C，'+r.b.name+' 上升 '+num(r.b.dT,2)+'°C',16)+text(20,392,'藍＝甲　橘＝乙　液體到沸點後線條變平（本模型不處理沸騰）',12);break;
@@ -835,6 +849,7 @@ function diagram(id,s,r){
   extra=`<svg viewBox="0 0 660 360" role="img" aria-label="教學溶解度曲線，橫軸溫度0到80°C，縱軸每100g水可溶的克數0到65g">${plot(fn,80,65,'溫度（°C）；縱軸：g／100g水')}${circle(60+s.temperature/80*540,270-r.solubility/65*190,6,'#b54a5b')}${text(100,35,'模型'+s.solute.toUpperCase()+' 溶解度曲線（非實測）',18)}</svg>`;
  }
  // 含可拖曳／可聚焦把手的圖不能用 role="img"：img 的子孫對輔助科技是隱藏的，裡面再放 role="button" 會觸發 axe nested-interactive。
+ if(SCIENCE_BACKDROP[id])out=backdrop(SCIENCE_BACKDROP[id])+out;
  return `<svg viewBox="0 0 660 400" role="${out.includes('data-lab-drag')?'group':'img'}" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">本次${esc(id)}模型圖解</title><desc id="diagram-desc">與下方數值同步，完整數據見觀察結果。圖形為教學示意，請閱讀模型限制。</desc><defs><clipPath id="scene-clip"><rect width="660" height="400"/></clipPath></defs><g clip-path="url(#scene-clip)">${out}</g></svg>`+extra;
 }
 
@@ -988,7 +1003,7 @@ function educationalScene(id,s,r){
    box.append(btn('跳過引導，直接自由練習',finishGuide,'guide-skip'))};
   function startGuide(i){gi=i;guideActive=true;const st=guideSteps[i];if(i>0||st.values){conf.controls.forEach(c=>$('ctl-'+c.key).value=st.values&&Object.hasOwn(st.values,c.key)?st.values[c.key]:c.value);invalidate('余老師引導：照著步驟操作。')}gPhase=st.focus?'set':'observe';render();guideMark();if(i>0&&box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'})}
   function finishGuide(){guideActive=false;gPhase='';clearMarks();try{localStorage.setItem(guideKey,'done')}catch(_){}render();status('引導完成，現在可以自由練習。')}
-  conf.controls.forEach(c=>$('ctl-'+c.key).addEventListener('input',()=>{if(!guideActive||gPhase!=='set')return;const st=guideSteps[gi];if(c.key===st.focus&&String(Number($('ctl-'+c.key).value))===String(st.target)){gPhase='observe';render();guideMark()}}));
+  conf.controls.forEach(c=>['input','change'].forEach(ev=>$('ctl-'+c.key).addEventListener(ev,()=>{if(!guideActive||gPhase!=='set')return;const st=guideSteps[gi];const v=$('ctl-'+c.key).value;if(c.key===st.focus&&(v===String(st.target)||(typeof st.target==='number'&&Number(v)===st.target))){gPhase='observe';render();guideMark()}})));
   $('run').addEventListener('click',()=>{if(guideActive&&gPhase==='observe'&&current){gPhase='check';render();guideMark()}});
   let seen=false;try{seen=localStorage.getItem(guideKey)==='done'}catch(_){}
   if(seen){guideActive=false;render()}else{guideActive=true;gi=0;gPhase=guideSteps[0].focus?'set':'observe';render()}
