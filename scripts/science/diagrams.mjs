@@ -1,4 +1,8 @@
 // Geometry and measurements use the tested models; selected illustrative textures are external assets.
+// 插畫道具：runtime 預先載入，載好才加入 SCIENCE_ASSETS；沒有載入（或在測試環境）時一律使用程式繪圖。
+export const SCIENCE_PROPS={'lever-torque':['bg-physics-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight'],'atom-builder':['item-proton','item-neutron','item-electron'],'neutralization':['bg-chem-bench','prop-retort-stand','prop-burette','prop-erlenmeyer']};
+// 錐形瓶內部輪廓（相對於 prop-erlenmeyer 圖的比例）：[y, 左內緣 x, 右內緣 x]
+const FLASK_ROWS=[[0.293, 0.336, 0.6588], [0.3047, 0.3307, 0.6667], [0.3164, 0.3228, 0.6745], [0.3281, 0.3176, 0.6798], [0.3398, 0.3097, 0.6877], [0.3516, 0.3018, 0.6929], [0.3633, 0.2966, 0.7008], [0.375, 0.2887, 0.7087], [0.3867, 0.2835, 0.7139], [0.3984, 0.2756, 0.7218], [0.4102, 0.2703, 0.727], [0.4219, 0.2625, 0.7349], [0.4336, 0.2572, 0.7402], [0.4453, 0.2493, 0.748], [0.457, 0.2441, 0.7533], [0.4688, 0.2362, 0.7612], [0.4805, 0.231, 0.7664], [0.4922, 0.2231, 0.7717], [0.5039, 0.2178, 0.7795], [0.5156, 0.21, 0.7848], [0.5273, 0.2047, 0.7927], [0.5391, 0.1995, 0.7979], [0.5508, 0.1916, 0.8058], [0.5625, 0.1864, 0.811], [0.5742, 0.1785, 0.8189], [0.5859, 0.1732, 0.8241], [0.5977, 0.168, 0.8294], [0.6094, 0.1601, 0.8373], [0.6211, 0.1549, 0.8425], [0.6328, 0.147, 0.8504], [0.6445, 0.1417, 0.8556], [0.6562, 0.1365, 0.8609], [0.668, 0.1286, 0.8688], [0.6797, 0.1234, 0.874], [0.6914, 0.1155, 0.8793], [0.7031, 0.1102, 0.8871], [0.7148, 0.105, 0.8924], [0.7266, 0.0971, 0.9003], [0.7383, 0.0919, 0.9055], [0.75, 0.0866, 0.9108], [0.7617, 0.0787, 0.9186], [0.7734, 0.0735, 0.9239], [0.7852, 0.0682, 0.9291], [0.7969, 0.0604, 0.9344], [0.8086, 0.0551, 0.9423], [0.8203, 0.0499, 0.9475], [0.832, 0.0446, 0.9528], [0.8438, 0.0394, 0.958], [0.8555, 0.0341, 0.9633], [0.8672, 0.0315, 0.9659], [0.8789, 0.0289, 0.9685], [0.8906, 0.0289, 0.9659], [0.9023, 0.0341, 0.9633], [0.9141, 0.0394, 0.9554], [0.9258, 0.0525, 0.9449], [0.9375, 0.0709, 0.9265], [0.9492, 0.0997, 0.895], [0.9609, 0.1549, 0.8399], [0.9727, 0.2546, 0.7375]];
 export function diagram(id,s,r){
  if(["wave-sound","plant-exchange","ecosystem"].includes(id))return educationalScene(id,s,r);
  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -12,6 +16,9 @@ export function diagram(id,s,r){
  const bars=(labels,values,unit,max=null)=>{max=max||Math.max(1,...values.map(Math.abs));return values.map((v,i)=>text(35,65+i*65,labels[i],16)+rect(230,43+i*65,Math.abs(v)/max*300,24,['#087b78','#d97b11','#9364a1'][i%3])+text(240,90+i*65,`${num(v,3)} ${unit}`,14)).join('')};
  const plot=(fn,xmax,ymax,label)=>{let p='';for(let i=0;i<=100;i++){const x=xmax*i/100,y=fn(x);p+=(i?' L':'M')+(60+i*5.4)+','+(270-190*Math.max(0,Math.min(ymax,y))/ymax)}return line(60,40,60,270)+line(60,270,600,270)+path(p)+text(20,42,num(ymax,2),13)+text(40,290,'0',13)+text(550,290,num(xmax,2),13)+text(62,325,label,15)};
  let out='';
+ const HAS=n=>typeof SCIENCE_ASSETS!=='undefined'&&SCIENCE_ASSETS.has(n);
+ const prop=(n,x,y,w,h,extra='')=>`<image data-prop="${n}" href="../../assets/science/props/${n}.webp" x="${num(x,1)}" y="${num(y,1)}" width="${num(w,1)}" height="${num(h,1)}" preserveAspectRatio="none"${extra}/>`;
+ const backdrop=(n,w=660)=>HAS(n)?(w<660?`<clipPath id="bd-${n}"><rect x="0" y="0" width="${w}" height="400" rx="10"/></clipPath>`:'')+`<image data-prop="${n}" href="../../assets/science/props/${n}.webp" x="0" y="0" width="660" height="400" preserveAspectRatio="xMidYMid slice" opacity="0.5"${w<660?` clip-path="url(#bd-${n})"`:''}/>`:'';
  switch(id){
  case 'optics':{
   const extent=Math.max(s.u,Math.abs(r.f)*2,Math.abs(r.v||0),20)*1.15,scale=280/extent,cx=330,axis=190;
@@ -105,11 +112,15 @@ export function diagram(id,s,r){
   const yRoom=Math.abs(dir[1])<1e-9?Infinity:(dir[1]>0?350-A[1]:A[1]-50)/Math.abs(dir[1]);
   const len=Math.min(30+s.f2*4,xRoom,yRoom),tip=[num(A[0]+dir[0]*len,1),num(A[1]+dir[1]*len,1)];
   const k=(F[0]-A[0])*dir[0]+(F[1]-A[1])*dir[1],foot=[num(A[0]+dir[0]*k,1),num(A[1]+dir[1]*k,1)];
-  out+=`<path d="M${F[0]},${F[1]} L${F[0]-26},${F[1]+48} L${F[0]+26},${F[1]+48} Z" fill="#9aaeb9"/>`+line(F[0]-60,F[1]+48,F[0]+60,F[1]+48,'#607e8d');
-  out+=`<line x1="${L[0]}" y1="${L[1]}" x2="${R[0]}" y2="${R[1]}" stroke="#8a5a2b" stroke-width="10" stroke-linecap="round"/>`;
+  const ART=HAS('prop-lever-plank')&&HAS('prop-lever-fulcrum');out+=backdrop('bg-physics-bench');
+  if(ART){out+=prop('prop-lever-fulcrum',F[0]-36,F[1]-2,72,55)+prop('prop-lever-plank',F[0]-281,F[1]-9,562,18,` transform="rotate(${num(phi*180/Math.PI,2)} ${F[0]} ${F[1]})"`)}
+  else{out+=`<path d="M${F[0]},${F[1]} L${F[0]-26},${F[1]+48} L${F[0]+26},${F[1]+48} Z" fill="#9aaeb9"/>`+line(F[0]-60,F[1]+48,F[0]+60,F[1]+48,'#607e8d');
+  out+=`<line x1="${L[0]}" y1="${L[1]}" x2="${R[0]}" y2="${R[1]}" stroke="#8a5a2b" stroke-width="10" stroke-linecap="round"/>`}
   for(let d=-50;d<=50;d+=10){const p=at(d);out+=`<line x1="${p[0]}" y1="${num(p[1]-5,1)}" x2="${p[0]}" y2="${num(p[1]+5,1)}" stroke="#f3e2c7" stroke-width="2"/>`}
   // 左側重物（鉛直向下）
-  const box=18+s.w1*1.4;out+=line(W[0],W[1],W[0],num(W[1]+46,1),'#436779')+rect(num(W[0]-box/2,1),num(W[1]+46,1),num(box,1),num(box,1),'#607e8d')+text(num(W[0]-22,1),num(W[1]+box+68,1),s.w1+' N',16)+text(num(W[0]-26,1),num(W[1]-14,1),s.d1+' cm',14);
+  const box=18+s.w1*1.4;
+  if(HAS('prop-hanging-weight')){const hh=box*1.7,ww=hh*249/512;out+=line(W[0],W[1],W[0],num(W[1]+30,1),'#436779')+prop('prop-hanging-weight',W[0]-ww/2,W[1]+26,ww,hh)+text(num(W[0]-22,1),num(W[1]+hh+46,1),s.w1+' N',16)+text(num(W[0]-26,1),num(W[1]-14,1),s.d1+' cm',14)}
+  else out+=line(W[0],W[1],W[0],num(W[1]+46,1),'#436779')+rect(num(W[0]-box/2,1),num(W[1]+46,1),num(box,1),num(box,1),'#607e8d')+text(num(W[0]-22,1),num(W[1]+box+68,1),s.w1+' N',16)+text(num(W[0]-26,1),num(W[1]-14,1),s.d1+' cm',14);
   // 右側施力：作用線（灰虛線）、力箭頭（橘）、有效力臂（紅虛線）與直角記號
   const ext=520;out+=`<line x1="${num(A[0]-dir[0]*ext,1)}" y1="${num(A[1]-dir[1]*ext,1)}" x2="${num(A[0]+dir[0]*ext,1)}" y2="${num(A[1]+dir[1]*ext,1)}" stroke="#9aaeb9" stroke-width="1.5" stroke-dasharray="4 4"/>`;
   out+=arrow(A[0],A[1],tip[0],tip[1],'#d97b11')+text(num(Math.min(605,tip[0]+8),1),num(tip[1]>320?tip[1]-18:tip[1]+24,1),s.f2+' N',16)+text(num(A[0]-20,1),num(A[1]-14,1),s.d2+' cm',14);
@@ -206,9 +217,14 @@ export function diagram(id,s,r){
  }
  case 'atom-builder':{
   // 左：波耳同心圓模型（簡化）；右上：前 20 號的迷你週期表，目前元素紅框。
-  const C=[200,204],R=[54,90,126,160];out+=`<circle cx="${C[0]}" cy="${C[1]}" r="32" fill="#f3d2d6" stroke="#b54a5b" stroke-width="2"/>`;
-  out+=`<text x="${C[0]}" y="${C[1]-3}" font-size="14" text-anchor="middle">${s.p} p⁺</text><text x="${C[0]}" y="${C[1]+15}" font-size="14" text-anchor="middle">${s.n} n</text>`;
-  r.shells.forEach((k,i)=>{out+=`<circle data-shell="${i+1}" cx="${C[0]}" cy="${C[1]}" r="${R[i]}" fill="none" stroke="#9aaeb9" stroke-width="2"/>`;for(let j=0;j<k;j++){const a=-Math.PI/2+j*2*Math.PI/k+i*0.3;out+=`<circle data-electron cx="${num(C[0]+R[i]*Math.cos(a),1)}" cy="${num(C[1]+R[i]*Math.sin(a),1)}" r="7" fill="#2f6fb2"/>`}});
+  const C=[200,204],R=[54,90,126,160],BALLS=HAS('item-proton')&&HAS('item-neutron'),EIMG=HAS('item-electron');
+  if(BALLS){// 原子核：質子（紅）與中子（灰）以向日葵排列，數量與設定相同
+   const N=s.p+s.n,balls=[];for(let i=0;i<N;i++){const a=i*2.39996,rr=5.4*Math.sqrt(i+0.5),isP=Math.floor((i+1)*s.p/N)>Math.floor(i*s.p/N);balls.push([C[0]+rr*Math.cos(a),C[1]+rr*Math.sin(a),isP])}
+   balls.reverse().forEach(([x,y,isP])=>out+=prop(isP?'item-proton':'item-neutron',x-6,y-6,12,12,isP?' data-proton':' data-neutron'));
+   out+=text(20,60,s.p+' 個質子、'+s.n+' 個中子',14)}
+  else{out+=`<circle cx="${C[0]}" cy="${C[1]}" r="32" fill="#f3d2d6" stroke="#b54a5b" stroke-width="2"/>`;
+  out+=`<text x="${C[0]}" y="${C[1]-3}" font-size="14" text-anchor="middle">${s.p} p⁺</text><text x="${C[0]}" y="${C[1]+15}" font-size="14" text-anchor="middle">${s.n} n</text>`}
+  r.shells.forEach((k,i)=>{out+=`<circle data-shell="${i+1}" cx="${C[0]}" cy="${C[1]}" r="${R[i]}" fill="none" stroke="#9aaeb9" stroke-width="2"/>`;for(let j=0;j<k;j++){const a=-Math.PI/2+j*2*Math.PI/k+i*0.3,ex=C[0]+R[i]*Math.cos(a),ey=C[1]+R[i]*Math.sin(a);out+=EIMG?prop('item-electron',ex-9,ey-9,18,18,' data-electron'):`<circle data-electron cx="${num(ex,1)}" cy="${num(ey,1)}" r="7" fill="#2f6fb2"/>`}});
   if(!r.shells.length)out+=text(C[0]-40,C[1]+70,'沒有電子',14);
   const x0=402,y0=46,w=30,h=30,pos=(z,E)=>{const period=z<=2?1:z<=10?2:z<=18?3:4;return [x0+(E[1]-1)*w,y0+(period-1)*h]};
   r.table.forEach((E,i)=>{const [x,y]=pos(i+1,E),cur=i+1===s.p;out+=`<rect x="${x}" y="${y}" width="${w-2}" height="${h-2}" fill="${cur?'#fff':'#f2f4f7'}" stroke="${cur?'#b54a5b':'#c9d2de'}" stroke-width="${cur?3:1}"${cur?' data-current':''}/>`+`<text x="${x+(w-2)/2}" y="${y+19}" font-size="13" text-anchor="middle">${E[0]}</text>`});
@@ -460,9 +476,21 @@ export function diagram(id,s,r){
  case 'neutralization':{
   // 左：滴定管與錐形瓶（酚酞顏色）；右：pH—滴入體積曲線，當量點虛線、目前位置紅點；下：相對導電度。
   const ink='#436779',ca=Number(s.ca),cb=Number(s.cb);
-  out+=rect(92,44,20,150,'#f2f4f7')+rect(94,60,16,num(130*(1-Math.min(1,s.vb/100)),1),'#e8f0f7')+line(102,194,102,214,ink)+`<circle cx="102" cy="${s.vb>0?224:0}" r="${s.vb>0?4:0}" fill="#9cc6e6"/>`+text(60,36,'NaOH '+s.cb+' M',13);
+  const ART=HAS('prop-retort-stand')&&HAS('prop-burette')&&HAS('prop-erlenmeyer');out+=backdrop('bg-chem-bench',236);
+  if(ART){// 鐵架台、滴定管、錐形瓶用插畫；滴定管內液面、液滴與瓶內液體由程式依數值繪製
+   const SX=10,SY=60,SH=312,SW=SH*274/512,cx=SX+SW*0.88,BH=196,BW=BH*103/512,BX=cx-BW*0.3155,BY=SY+SH*0.29-BH*0.36,FH=128,FW=FH*381/512,FX=cx-FW/2,FY=372-FH;
+   const tubeL=BX+BW*0.2233,tubeR=BX+BW*0.4078,tTop=BY+BH*0.0586,tBot=BY+BH*0.7324,lvl=tTop+(tBot-tTop)*Math.min(1,s.vb/100);
+   out+=prop('prop-retort-stand',SX,SY,SW,SH)+rect(num(tubeL,1),num(lvl,1),num(tubeR-tubeL,1),num(Math.max(0,tBot-lvl),1),'#8fc0e6');
+   // 錐形瓶液體：依總體積在瓶身截面「面積」中取液面高度，沿內緣畫多邊形，頂端畫彎月面
+   const rows=FLASK_ROWS.map(([y,l,rr])=>[FX+FW*l,FY+FH*y,FX+FW*rr]).sort((a,b)=>b[1]-a[1]);let acc=0;const cum=rows.map((row,i)=>{if(i)acc+=((row[2]-row[0])+(rows[i-1][2]-rows[i-1][0]))/2*(rows[i-1][1]-row[1]);return acc});
+   const want=cum.at(-1)*Math.min(1,(s.va+s.vb)/200);let k=cum.findIndex(v=>v>=want);if(k<0)k=rows.length-1;const kept=rows.slice(0,Math.max(2,k+1)),top=kept.at(-1);
+   const col=r.pink?'#f29bc0':'#bcdcf1';out+=`<path data-flask d="M${kept.map(q=>num(q[0],1)+','+num(q[1],1)).join(' L')} Q${num((top[0]+top[2])/2,1)},${num(top[1]+4,1)} ${kept.slice().reverse().map(q=>num(q[2],1)+','+num(q[1],1)).join(' L')} Z" fill="${col}" opacity="0.92"/>`;
+   out+=prop('prop-burette',BX,BY,BW,BH)+prop('prop-erlenmeyer',FX,FY,FW,FH);
+   if(s.vb>0)out+=`<circle cx="${num(cx,1)}" cy="${num(BY+BH+8,1)}" r="4" fill="#9cc6e6"/>`;
+   out+=text(num(cx+18,1),num(BY+24,1),'NaOH '+s.cb+' M',13)+text(14,46,'錐形瓶：HCl '+s.ca+' M、'+s.va+' mL',13)+text(num(cx+36,1),num(FY+40,1),r.excess?'過量 '+r.excess:'恰好中和',14)}
+  else{out+=rect(92,44,20,150,'#f2f4f7')+rect(94,60,16,num(130*(1-Math.min(1,s.vb/100)),1),'#e8f0f7')+line(102,194,102,214,ink)+`<circle cx="102" cy="${s.vb>0?224:0}" r="${s.vb>0?4:0}" fill="#9cc6e6"/>`+text(60,36,'NaOH '+s.cb+' M',13);
   out+=`<path d="M86,236 L86,262 L40,340 Q36,350 48,350 L156,350 Q168,350 164,340 L118,262 L118,236" fill="none" stroke="${ink}" stroke-width="3"/><path data-flask d="M60,316 L144,316 L160,344 Q162,348 156,348 L48,348 Q42,348 44,344 Z" fill="${r.pink?'#f4a6c8':'#eef4f8'}"/>`+text(34,372,'HCl '+s.ca+' M、'+s.va+' mL',13);
-  out+=text(178,300,r.excess?'過量 '+r.excess:'恰好中和',14);
+  out+=text(178,300,r.excess?'過量 '+r.excess:'恰好中和',14)}
   const X0=250,X1=620,Y0=320,Y1=70,vmax=100,px=v=>num(X0+(X1-X0)*v/vmax,1),py=p=>num(Y0-(Y0-Y1)*p/14,1),pts=[];
   for(let i=0;i<=400;i++){const vb=vmax*i/400,nH=ca*s.va,nOH=cb*vb,d=nH-nOH,V=s.va+vb,p=Math.abs(d)<1e-9*Math.max(1,nH)?7:d>0?-Math.log10(d/V):14+Math.log10(-d/V);pts.push(px(vb)+','+py(Math.max(0,Math.min(14,p))))}
   out+=line(X0,Y0,X1,Y0,ink)+line(X0,Y0,X0,Y1-6,ink)+text(X0-6,Y1-12,'pH',13)+text(X1-120,Y0+22,'滴入 NaOH（mL）',13);

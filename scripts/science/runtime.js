@@ -2,6 +2,7 @@
  'use strict';
  const $=id=>document.getElementById(id), conf=JSON.parse($('lab-config').textContent), storageKey='bhcs-science-v2-'+conf.id, noPrediction=!!conf.noPrediction;
  let current=null,mission=null,records=[],saveNotice='',moonExplore=false,hasObserved=false;
+ let guideActive=false,guideMark=null;
  const draftKey=storageKey+'-draft';try{$('explanation-input').value=localStorage.getItem(draftKey)||''}catch(_){}
  $('explanation-input').addEventListener('input',()=>{try{localStorage.setItem(draftKey,$('explanation-input').value.slice(0,1000))}catch(_){}});
  const send=action=>{if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack(action,conf.id)};
@@ -23,6 +24,7 @@
   const active=activeKeys($('ctl-mode')?.value);
   conf.controls.forEach(c=>{const el=$('ctl-'+c.key),inactive=!!(active&&!active.includes(c.key)),label=document.querySelector(`label[for="ctl-${c.key}"]`);el.disabled=inactive;el.hidden=inactive;if(label)label.hidden=inactive;if(!c.options)$('out-'+c.key).textContent=inactive?'本模式不使用':el.value+' '+c.unit})
   document.querySelectorAll('[data-moon-phase]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.moonPhase===+$('ctl-phase').value)));
+  if(guideActive&&guideMark)guideMark();
  }
  function status(message,warn=false){$('control-feedback').textContent=message;$('status').textContent=message;$('status').className='status'+(warn?' warn':'')}
  // 無預測流程沒有要保留的懸念：條件一變就先畫出預覽圖，讀值與紀錄仍要按「開始觀察」才會產生。
@@ -73,5 +75,37 @@
  let quizSent=false;
  $('check-quiz').addEventListener('click',()=>{let score=0,answered=0;conf.quiz.forEach((q,i)=>{const selected=document.querySelector(`input[name="quiz-${i}"]:checked`),out=$('feedback-'+i);if(selected)answered++;const correct=selected&&Number(selected.value)===q.answer;if(correct)score++;out.textContent=correct?'答對了。'+q.tip:selected?'再觀察一次：'+q.tip:'尚未作答，請先選擇答案。'});$('quiz-score').textContent=`已答${answered}/3，答對${score}/3。${answered<3?'請補完未答題。':''}`;if(answered===3&&!quizSent){send('quiz_complete');quizSent=true}});
  document.querySelectorAll('.quiz input').forEach(el=>el.addEventListener('change',()=>{quizSent=false;$('feedback-'+el.name.replace('quiz-','')).textContent='';$('quiz-score').textContent='答案已變更，請重新檢查。'}));
+ // 插畫道具：預先載入本站用到的圖，全部結束後重繪一次；任何一張失敗都不影響，圖解會用程式繪圖代替。
+ window.SCIENCE_ASSETS=window.SCIENCE_ASSETS||new Set();
+ const artList=(typeof SCIENCE_PROPS!=='undefined'&&SCIENCE_PROPS[conf.id])||[];
+ if(artList.length){let pending=artList.length;const done=()=>{if(--pending)return;const stage=$('diagram');if(current)stage.innerHTML=diagram(conf.id,current.s,current.r);else if(stage.querySelector('svg'))previewDiagram()};artList.forEach(n=>{const im=new Image();im.onload=()=>{window.SCIENCE_ASSETS.add(n);done()};im.onerror=done;im.src='../../assets/science/props/'+n+'.webp'})}
+ // 預覽狀態的圖解原本淡化得太多，國中站改成稍微淡化即可。
+ if(!document.getElementById('science-preview-style'))document.head.insertAdjacentHTML('beforeend','<style id="science-preview-style">body.researcher-station .observation .stage.is-preview>svg{opacity:.88!important;filter:saturate(.92)!important}</style>');
+ // 余老師引導：第一次進入先一步一步帶操作（淡化其他控制項、閃爍要調的那一個、每步一題確認），完成後才進入自由練習。
+ // 引導只給提示、不鎖住控制項，所以不會干擾既有流程；完成狀態記在 localStorage。
+ const guideSteps=Array.isArray(conf.guide)?conf.guide:[],guideKey=storageKey+'-guide';let gi=0,gPhase='';
+ if(guideSteps.length){
+  const box=node('div','');box.id='guide-box';box.className='guide-box';box.setAttribute('aria-live','polite');
+  const fields=$('control-fields');fields.parentNode.insertBefore(box,fields);
+  const labelOf=k=>(conf.controls.find(c=>c.key===k)||{}).label||k,unitOf=k=>(conf.controls.find(c=>c.key===k)||{}).unit||'';
+  const ok=(st,opt)=>{const q=st.check,v=current&&current.r[q.from];if(v===undefined)return false;if(q.round!==undefined)return Number(opt)===Number(Number(v).toFixed(q.round));if(typeof v==='number')return Math.abs(Number(opt)-v)<1e-6;return String(v)===opt};
+  guideMark=()=>{const st=guideSteps[gi]||{};conf.controls.forEach(c=>{const el=$('ctl-'+c.key),lab=document.querySelector(`label[for="ctl-${c.key}"]`),focus=gPhase==='set'&&st.focus===c.key;[el,lab].forEach(n=>{if(!n)return;n.classList.toggle('guide-focus',focus);n.classList.toggle('guide-dim',gPhase!==''&&!focus)})});$('run').classList.toggle('guide-focus',gPhase==='observe')};
+  const clearMarks=()=>{document.querySelectorAll('.guide-focus,.guide-dim').forEach(n=>n.classList.remove('guide-focus','guide-dim'))};
+  const btn=(txt,fn,cls='')=>{const b=node('button',txt);b.type='button';if(cls)b.className=cls;b.addEventListener('click',fn);return b};
+  const render=()=>{box.replaceChildren();const st=guideSteps[gi];
+   if(!guideActive){const done=node('p','你已完成余老師的引導，現在可以自由練習：試試任務，或自己改條件觀察。');box.append(done,btn('重看引導',()=>startGuide(0),'guide-replay'));box.classList.add('guide-done');return}
+   box.classList.remove('guide-done');box.append(node('strong',`余老師引導 ${gi+1}／${guideSteps.length}`),node('p',st.say));
+   const todo=gPhase==='set'?`把「${labelOf(st.focus)}」調到 ${st.target}${unitOf(st.focus)?' '+unitOf(st.focus):''}。`:gPhase==='observe'?'按「開始觀察」看結果。':'';if(todo){const t=node('p',todo);t.className='guide-todo';box.append(t)}
+   if(gPhase==='check'){const q=node('p',st.check.q);q.className='guide-question';const opts=node('div','');opts.className='guide-options';const fb=node('p','');fb.className='guide-feedback';
+    st.check.options.forEach(([val,label])=>opts.append(btn(label,()=>{if(ok(st,val)){fb.textContent='答對了！'+(st.explain||'');opts.querySelectorAll('button').forEach(b=>b.disabled=true);box.append(gi+1<guideSteps.length?btn('下一步 →',()=>startGuide(gi+1),'primary'):btn('完成引導，開始自由練習 →',finishGuide,'primary'))}else fb.textContent='再看一次：'+(st.hint||'看右邊的讀值。')})));box.append(q,opts,fb)}
+   box.append(btn('跳過引導，直接自由練習',finishGuide,'guide-skip'))};
+  function startGuide(i){gi=i;guideActive=true;const st=guideSteps[i];if(i>0||st.values){conf.controls.forEach(c=>$('ctl-'+c.key).value=st.values&&Object.hasOwn(st.values,c.key)?st.values[c.key]:c.value);invalidate('余老師引導：照著步驟操作。')}gPhase=st.focus?'set':'observe';render();guideMark();if(i>0&&box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'})}
+  function finishGuide(){guideActive=false;gPhase='';clearMarks();try{localStorage.setItem(guideKey,'done')}catch(_){}render();status('引導完成，現在可以自由練習。')}
+  conf.controls.forEach(c=>$('ctl-'+c.key).addEventListener('input',()=>{if(!guideActive||gPhase!=='set')return;const st=guideSteps[gi];if(c.key===st.focus&&String(Number($('ctl-'+c.key).value))===String(st.target)){gPhase='observe';render();guideMark()}}));
+  $('run').addEventListener('click',()=>{if(guideActive&&gPhase==='observe'&&current){gPhase='check';render();guideMark()}});
+  let seen=false;try{seen=localStorage.getItem(guideKey)==='done'}catch(_){}
+  if(seen){guideActive=false;render()}else{guideActive=true;gi=0;gPhase=guideSteps[0].focus?'set':'observe';render()}
+  if(!document.getElementById('science-guide-style'))document.head.insertAdjacentHTML('beforeend','<style id="science-guide-style">.guide-box{scroll-margin-top:110px;border:2px solid #d97b11;border-radius:12px;background:#fff8ee;padding:12px 14px;margin:0 0 14px}.guide-box strong{color:#b35c00}.guide-box p{margin:.35em 0}.guide-todo{font-weight:700}.guide-question{font-weight:700;margin-top:.6em}.guide-options{display:flex;flex-wrap:wrap;gap:8px;margin:.4em 0}.guide-options button{min-height:44px;padding:6px 14px;border:2px solid #436779;border-radius:10px;background:#fff;cursor:pointer}.guide-options button:disabled{opacity:.6}.guide-box>button{margin:.4em .4em 0 0;min-height:44px}.guide-box .guide-skip{background:none;border:0;color:#436779;text-decoration:underline;min-height:0;padding:4px 0}.guide-done{border-color:#087b78;background:#eefaf8}.guide-dim{opacity:.45}.guide-focus{outline:3px solid #d97b11;outline-offset:3px;border-radius:6px;animation:guidePulse 1.4s ease-in-out infinite}@keyframes guidePulse{50%{outline-color:rgba(217,123,17,.25)}}@media (prefers-reduced-motion:reduce){.guide-focus{animation:none}}</style>');
+ }
  $('control-fields').disabled=false;labels();renderRecords();previewDiagram();
 })();

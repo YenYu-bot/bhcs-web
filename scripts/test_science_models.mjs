@@ -303,6 +303,36 @@ test('Tides: new moon spring / first quarter neap / semidiurnal period / next hi
  const t=calc('tides');close(t.P,12.42);assert.ok(calc('tides',{day:1}).next>t.next+0.8);
  for(let day=0;day<=29.5;day+=2.5)for(const hour of [0,6.5,13,23.5]){const q=calc('tides',{day,hour}),h=x=>q.amp*Math.cos(2*Math.PI*(x-q.lag)/q.P);assert.ok(q.next>=hour-1e-9&&q.next<hour+q.P);assert.ok(Math.abs(h(q.next)-q.amp)<1e-9);assert.ok(h(q.next+0.3)<q.amp&&h(q.next-0.3)<q.amp);}
 });
+test('Illustrated props: pilot stations keep counts and stay inside the scene when every image is loaded',()=>{
+ const all=['bg-physics-bench','bg-chem-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight','item-proton','item-neutron','item-electron','prop-burette','prop-erlenmeyer','prop-retort-stand'];
+ globalThis.SCIENCE_ASSETS=new Set(all);
+ try{
+  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
+  const inside=(svg,where)=>{for(const m of svg.matchAll(/<image([^>]*)>/g)){const a=m[1];if(/data-prop="bg-/.test(a)||/transform=/.test(a))continue;const x=attr(a,'x'),y=attr(a,'y'),w=attr(a,'width'),h=attr(a,'height');assert.ok(x>=-1&&y>=-1&&x+w<=661&&y+h<=401,`${where} image ${a.match(/data-prop="([^"]+)"/)[1]} ${[x,y,w,h]}`)}};
+  for(const p of [1,6,11,20])for(const n of [0,12,22])for(const e of [0,10,20]){const q=calc('atom-builder',{p,n,e}),svg=diagram('atom-builder',{p,n,e},q);
+   assert.equal((svg.match(/data-proton/g)||[]).length,p);assert.equal((svg.match(/data-neutron/g)||[]).length,n);assert.equal((svg.match(/data-electron/g)||[]).length,e);inside(svg,`atom ${p}/${n}/${e}`);}
+  for(const angle of [30,90,150])for(const d2 of [5,50])for(const w1 of [1,20]){const s={...defaults('lever-torque'),angle,d2,w1},q=calc('lever-torque',s),svg=diagram('lever-torque',s,q);
+   assert.ok(svg.includes('data-prop="prop-lever-plank"')&&svg.includes('data-arm'));inside(svg,`lever ${angle}/${d2}/${w1}`);}
+  for(const vb of [0,25,50,100])for(const va of [10,50]){const s={...defaults('neutralization'),vb,va},q=calc('neutralization',s),svg=diagram('neutralization',s,q);
+   assert.ok(svg.includes('data-prop="prop-erlenmeyer"')&&svg.includes('data-flask'));assert.equal(svg.includes('fill="#f29bc0"'),q.pink,'flask colour follows phenolphthalein');inside(svg,`neutralization ${vb}/${va}`);}
+ }finally{delete globalThis.SCIENCE_ASSETS}
+});
+test('Guided walkthroughs: every step is reachable, needs a real change, and has exactly one correct answer from the model',()=>{
+ const withGuide=batch2.filter(t=>Array.isArray(t.guide));assert.ok(withGuide.length>=3);
+ for(const t of withGuide){const def=defaults(t.id);let cur={...def};
+  t.guide.forEach((st,i)=>{const where=`${t.id} step ${i+1}`;
+   if(i>0||st.values)cur={...def,...(st.values||{})};
+   if(st.focus){const c=t.controls.find(x=>x.key===st.focus);assert.ok(c,where+' focus control exists');
+    if(c.options)assert.ok(c.options.some(o=>o[0]===String(st.target)),where+' target is an option');
+    else{assert.ok(st.target>=c.min&&st.target<=c.max,where+' target in range');assert.ok(Math.abs((st.target-c.min)/c.step-Math.round((st.target-c.min)/c.step))<1e-9,where+' target on the slider grid')}
+    assert.notEqual(String(cur[st.focus]),String(st.target),where+' needs an actual change');cur={...cur,[st.focus]:st.target}}
+   const r=calculate(t.id,cur),q=st.check,v=r[q.from];assert.notEqual(v,undefined,where+' reads '+q.from);
+   const ok=opt=>q.round!==undefined?Number(opt)===Number(Number(v).toFixed(q.round)):typeof v==='number'?Math.abs(Number(opt)-v)<1e-6:String(v)===opt;
+   assert.equal(q.options.filter(([o])=>ok(o)).length,1,where+' exactly one correct option');
+   assert.ok(st.say&&st.hint&&st.explain,where+' has say, hint and explain');
+  });
+ }
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
  const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics','equilibrium','metal-activity','cell-electrolysis','specific-heat','neutralization','cell-division','enzyme','tides'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);
