@@ -200,6 +200,18 @@ test('Nerve and reaction time: ruler drop times / reflex centre / voluntary path
  for(const action of ['knee','withdraw','catch'])for(let drop=0;drop<=50;drop+=5){const q=calc('nerve-reflex',{action,drop}),svg=diagram('nerve-reflex',{action,drop},q);
   assert.equal((svg.match(/data-step=/g)||[]).length,q.steps);assert.equal(svg.includes('data-pain'),action==='withdraw');close(0.5*9.8*q.time*q.time,drop/100);}
 });
+test('Knee reflex receptor is a thigh muscle spindle, distinct from the tendon tap site',()=>{
+ const s={...defaults('nerve-reflex'),action:'knee'},r=calculate('nerve-reflex',s);
+ assert.match(r.path[0][1],/肌梭/,'knee reflex receptor must be a muscle spindle');
+ assert.doesNotMatch(r.path[0][1],/肌腱/,'tendon tap site is not the receptor');
+ const dom=new JSDOM(diagram('nerve-reflex',s,r)),d=dom.window.document;
+ assert.match(d.querySelector('svg').textContent,/肌梭/);
+ const receptor=d.querySelector('[data-step="1"] circle'),effector=d.querySelector('[data-step="5"] circle');
+ const x=+receptor.getAttribute('cx'),y=+receptor.getAttribute('cy');
+ assert.ok(x>150&&x<250&&y>260&&y<300,'receptor marker must sit at the thigh above the knee');
+ assert.ok(Math.hypot(x-Number(effector.getAttribute('cx')),y-Number(effector.getAttribute('cy')))>=22,'receptor and effector markers must not overlap');
+ dom.window.close();
+});
 test('New-wave diagrams keep every drawn element inside the 660 by 400 scene at control extremes',()=>{
  const ids=['motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex'];
  const attr=(a,k)=>Number((a.match(new RegExp(' '+k+'="([-\\d.]+)"'))||[,0])[1]);

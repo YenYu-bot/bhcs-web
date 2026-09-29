@@ -183,7 +183,7 @@ function calculate(id,s){
   return {kind:V[1]?'oxygenated':'deoxygenated',hr,sv,co,vessel:V[0],circuit:V[2],from:V[3],to:V[4],coRatio:co/4.9,hrRatio:hr/70};
  }
  case 'nerve-reflex':{
-  const P={knee:[['受器','膝蓋下方的肌腱'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','大腿前側肌肉']],withdraw:[['受器','手指皮膚'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','手臂肌肉']],catch:[['受器','眼睛'],['感覺神經',''],['大腦','判斷'],['脊髓','傳遞'],['運動神經',''],['動器','手部肌肉']]}[s.action];
+  const P={knee:[['受器','大腿肌肉內的肌梭'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','大腿前側肌肉']],withdraw:[['受器','手指皮膚'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','手臂肌肉']],catch:[['受器','眼睛'],['感覺神經',''],['大腦','判斷'],['脊髓','傳遞'],['運動神經',''],['動器','手部肌肉']]}[s.action];
   const time=Math.sqrt(2*(s.drop/100)/9.8);
   return {kind:s.action==='catch'?'voluntary':'reflex',center:s.action==='catch'?'大腦':'脊髓',viaBrain:s.action==='catch',painLater:s.action==='withdraw',path:P,steps:P.length,time};
  }
@@ -502,7 +502,7 @@ function diagram(id,s,r){
   // 左：放大的人形；感覺神經（藍）走肢體下側、運動神經（橘）走上側，紅圈編號依序。中：路徑清單。右：接尺刻度與反應時間。
   const ink='#436779';out+=`<circle cx="150" cy="70" r="44" fill="#f2f4f7" stroke="${ink}" stroke-width="3"/>`+text(134,106,'大腦',13)+line(150,114,150,262,'#9aaeb9')+text(96,214,'脊髓',13);
   out+=line(150,130,240,180,ink)+line(240,180,310,178,ink)+`<circle cx="324" cy="178" r="14" fill="#f2f4f7" stroke="${ink}" stroke-width="3"/>`+line(150,260,250,300,ink)+line(250,300,232,370,ink)+`<circle cx="186" cy="58" r="5" fill="${ink}"/>`;
-  const R={knee:{sens:[[256,318],[205,302],[150,262]],motor:[[150,262],[192,258],[222,284]],steps:[[256,318],[205,302],[150,262],[192,258],[222,284]]},
+  const R={knee:{sens:[[228,276],[184,254],[150,238]],motor:[[150,238],[182,282],[216,300]],steps:[[228,276],[184,254],[150,238],[182,282],[216,300]]},
    withdraw:{sens:[[324,178],[246,200],[150,150]],motor:[[150,150],[192,138],[214,154]],steps:[[324,178],[246,200],[150,150],[192,138],[214,154]]},
    catch:{sens:[[186,58],[168,86],[132,66]],motor:[[132,66],[140,150],[195,138],[292,170]],steps:[[186,58],[168,88],[126,66],[140,150],[195,136],[292,168]]}}[s.action];
   const pl=(pts,c)=>`<path d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="${c}" stroke-width="4" stroke-linejoin="round"/>`;

@@ -135,7 +135,7 @@ export function calculate(id,s){
   return {kind:V[1]?'oxygenated':'deoxygenated',hr,sv,co,vessel:V[0],circuit:V[2],from:V[3],to:V[4],coRatio:co/4.9,hrRatio:hr/70};
  }
  case 'nerve-reflex':{
-  const P={knee:[['受器','膝蓋下方的肌腱'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','大腿前側肌肉']],withdraw:[['受器','手指皮膚'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','手臂肌肉']],catch:[['受器','眼睛'],['感覺神經',''],['大腦','判斷'],['脊髓','傳遞'],['運動神經',''],['動器','手部肌肉']]}[s.action];
+  const P={knee:[['受器','大腿肌肉內的肌梭'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','大腿前側肌肉']],withdraw:[['受器','手指皮膚'],['感覺神經',''],['脊髓','反射中樞'],['運動神經',''],['動器','手臂肌肉']],catch:[['受器','眼睛'],['感覺神經',''],['大腦','判斷'],['脊髓','傳遞'],['運動神經',''],['動器','手部肌肉']]}[s.action];
   const time=Math.sqrt(2*(s.drop/100)/9.8);
   return {kind:s.action==='catch'?'voluntary':'reflex',center:s.action==='catch'?'大腦':'脊髓',viaBrain:s.action==='catch',painLater:s.action==='withdraw',path:P,steps:P.length,time};
  }
