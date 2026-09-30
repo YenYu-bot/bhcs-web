@@ -153,3 +153,50 @@ function alignWelcomeSpeech(){
 }
 alignWelcomeSpeech();
 })();
+
+/* 第一批研究站的余老師引導：頁面內有 <script type="application/json" id="lab-guide"> 時才啟動。
+   沒有共用模型，所以確認題的答案取自按下主要按鈕後頁面上顯示的讀值（等讀值穩定才出題）。
+   只做提示、不鎖住控制項；完成狀態記在 localStorage。 */
+(function(){
+ const cfgEl=document.getElementById('lab-guide');if(!cfgEl)return;
+ let cfg;try{cfg=JSON.parse(cfgEl.textContent)}catch(_){return}
+ const steps=cfg.steps||[],runBtn=document.getElementById(cfg.run);if(!steps.length||!runBtn)return;
+ const key='bhcs-legacy-guide-'+location.pathname.split('/').pop(),$=id=>document.getElementById(id);
+ const panel=runBtn.closest('.panel,aside,section')||runBtn.parentNode;
+ // 同一面板的控制項，再加上步驟中指名、但放在其他面板的控制項（例如顯微鏡的物鏡）
+ const named=new Set(steps.flatMap(st=>[st.focus&&st.focus.id,...Object.keys(st.values||{})]).filter(Boolean));
+ const controls=[...new Set([...panel.querySelectorAll('input,select'),...[...named].map(id=>document.getElementById(id)).filter(Boolean)])].filter(e=>e.id&&e.id!=='level'&&e.type!=='hidden');
+ const initial=Object.fromEntries(controls.map(e=>[e.id,(e.type==='radio'||e.type==='checkbox')?e.checked:e.value]));
+ const wrap=e=>e.closest('label,.field,.control')||e;
+ const box=document.createElement('div');box.id='guide-box';box.className='guide-box';box.setAttribute('aria-live','polite');panel.insertBefore(box,panel.querySelector('h2,h3')?panel.querySelector('h2,h3').nextSibling:panel.firstChild);
+ let gi=0,phase='',active=false,pollTimer=null;
+ const node=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!=null)n.textContent=txt;if(cls)n.className=cls;return n};
+ const btn=(txt,fn,cls)=>{const b=node('button',txt,cls);b.type='button';b.addEventListener('click',fn);return b};
+ const fire=e=>{e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))};
+ const setCtl=(id,v)=>{const e=$(id);if(!e)return;if(e.type==='radio'||e.type==='checkbox'){if(e.checked!==!!v){if(e.type==='radio'&&v)e.click();else{e.checked=!!v;fire(e)}}}else if(String(e.value)!==String(v)){e.value=v;fire(e)}};
+ const focusOk=st=>{const f=st.focus;if(!f)return true;const e=$(f.id);if(!e)return false;return f.checked!==undefined?e.checked===f.checked:String(e.value)===String(f.value)};
+ const mark=()=>{const st=steps[gi]||{};const fw=new Set(controls.filter(e=>phase==='set'&&st.focus&&st.focus.id===e.id).map(wrap));new Set(controls.map(wrap)).forEach(w=>{const isF=fw.has(w);w.toggleAttribute('data-guide-focus',isF);w.toggleAttribute('data-guide-dim',active&&phase!==''&&!isF)});runBtn.toggleAttribute('data-guide-focus',active&&phase==='observe')};
+ const clear=()=>document.querySelectorAll('[data-guide-focus],[data-guide-dim]').forEach(n=>{n.removeAttribute('data-guide-focus');n.removeAttribute('data-guide-dim')});
+ const labelOf=id=>{const e=$(id);if(!e)return id;const l=document.querySelector('label[for="'+id+'"]');return (l?l.textContent:wrap(e).textContent||id).replace(/\s+/g,' ').trim().slice(0,20)};
+ function render(){box.replaceChildren();
+  if(!active){box.classList.add('guide-done');box.append(node('p','你已完成余老師的引導，現在可以自由練習：試試任務，或自己改條件觀察。'),btn('重看引導',()=>start(0),'guide-replay'));return}
+  box.classList.remove('guide-done');const st=steps[gi];box.append(node('strong','余老師引導 '+(gi+1)+'／'+steps.length),node('p',st.say));
+  const todo=phase==='set'?(st.focus.checked!==undefined?'選擇「'+labelOf(st.focus.id)+'」。':'把「'+labelOf(st.focus.id)+'」調到 '+(st.focus.label||st.focus.value)+'。'):phase==='observe'?'按「'+runBtn.textContent.trim()+'」看結果。':phase==='wait'?'觀察中……':'';if(todo)box.append(node('p',todo,'guide-todo'));
+  if(phase==='check'){const opts=node('div',null,'guide-options'),fb=node('p','','guide-feedback'),now=($(st.read)||{}).textContent;
+   box.append(node('p',st.q,'guide-question'),opts,fb);
+   st.options.forEach(([val,label])=>opts.append(btn(label,()=>{if(String(now).trim()===val){fb.textContent='答對了！'+(st.explain||'');opts.querySelectorAll('button').forEach(b=>b.disabled=true);box.insertBefore(gi+1<steps.length?btn('下一步 →',()=>start(gi+1),'primary'):btn('完成引導，開始自由練習 →',finish,'primary'),box.querySelector('.guide-skip'))}else fb.textContent='再看一次：'+(st.hint||'看讀值。')})))}
+  box.append(btn('跳過引導，直接自由練習',finish,'guide-skip'))}
+ function start(i){gi=i;active=true;const st=steps[i];if(i>0||st.values){controls.forEach(e=>{if(e.type==='radio'){if(initial[e.id])setCtl(e.id,true)}else setCtl(e.id,initial[e.id])});Object.entries(st.values||{}).forEach(([k,v])=>setCtl(k,v))}
+  if(st.focus&&!focusOk(st)){phase='set';render();mark()}else toObserve();if(i>0&&box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'})}
+ function finish(){active=false;phase='';clear();try{localStorage.setItem(key,'done')}catch(_){}render()}
+ controls.forEach(e=>['input','change'].forEach(ev=>e.addEventListener(ev,()=>{if(active&&phase==='set'&&focusOk(steps[gi]))toObserve()})));
+ const runUsable=()=>!runBtn.disabled&&runBtn.offsetParent!==null&&getComputedStyle(runBtn).visibility!=='hidden';
+ function waitRead(){phase='wait';render();mark();const st=steps[gi];let last=null,same=0,tries=0;clearInterval(pollTimer);
+  pollTimer=setInterval(()=>{const t=(($(st.read)||{}).textContent||'').trim();tries++;if(t&&t!=='—'&&t===last)same++;else same=0;last=t;if(same>=2||tries>60){clearInterval(pollTimer);phase='check';render();mark()}},300)}
+ // 主要按鈕用過後就隱藏或停用的頁面（例如顯微鏡），調好控制項就直接等讀值
+ function toObserve(){if(runUsable()){phase='observe';render();mark()}else waitRead()}
+ runBtn.addEventListener('click',()=>{if(active&&phase==='observe')waitRead()});
+ if(!document.getElementById('science-guide-style'))document.head.insertAdjacentHTML('beforeend','<style id="science-guide-style">.guide-box{scroll-margin-top:110px;border:2px solid #d97b11;border-radius:12px;background:#fff8ee;padding:12px 14px;margin:0 0 14px}.guide-box strong{color:#b35c00}.guide-box p{margin:.35em 0}.guide-todo{font-weight:700}.guide-question{font-weight:700;margin-top:.6em}.guide-options{display:flex;flex-wrap:wrap;gap:8px;margin:.4em 0}.guide-options button{min-height:44px;padding:6px 14px;border:2px solid #436779;border-radius:10px;background:#fff;cursor:pointer}.guide-options button:disabled{opacity:.6}.guide-box>button{margin:.4em .4em 0 0;min-height:44px}.guide-box .guide-skip{background:none;border:0;color:#436779;text-decoration:underline;min-height:0;padding:4px 0}.guide-done{border-color:#087b78;background:#eefaf8}.guide-dim,[data-guide-dim]{opacity:.45}.guide-focus,[data-guide-focus]{outline:3px solid #d97b11;outline-offset:3px;border-radius:6px;animation:guidePulse 1.4s ease-in-out infinite}@keyframes guidePulse{50%{outline-color:rgba(217,123,17,.25)}}@media (prefers-reduced-motion:reduce){.guide-focus,[data-guide-focus]{animation:none}}</style>');
+ let seen=false;try{seen=localStorage.getItem(key)==='done'}catch(_){}
+ if(seen){active=false;render()}else{active=true;gi=0;phase=steps[0].focus&&!focusOk(steps[0])?'set':'observe';render();mark()}
+})();

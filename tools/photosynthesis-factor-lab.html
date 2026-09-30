@@ -31,7 +31,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 <!-- science-schema:start -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"光合作用因素實驗室","url":"https://www.bhcs.com.tw/tools/photosynthesis-factor-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
 <!-- science-schema:end -->
-<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-station-icons-1">
+<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-legacy-guide-1">
 <!-- science-experience-style:start -->
 <style>/* Shared, inline in all 20 labs. Keep diagrams and record tables independent. */
 .labgrid>*,.layout>*,.card,.panel{min-width:0}
@@ -176,7 +176,8 @@ runTests();syncLabels();drawLab();drawGraph();renderRecords();
 <!-- science-events:start -->
 <script src="../assets/science-events.js" defer></script>
 <!-- science-events:end -->
-<script src="../assets/researcher-lab.js?v=20260930-station-icons-1" defer></script>
+<script src="../assets/researcher-lab.js?v=20260930-legacy-guide-1" defer></script>
+<script type="application/json" id="lab-guide">{"run": "start", "steps": [{"say": "先看預設：光照 50、二氧化碳 400 ppm、溫度 25°C。按下開始後，等曲線跑完。", "read": "limitValue", "q": "主要的限制因子是？", "options": [["光照", "光照"], ["二氧化碳", "二氧化碳"], ["溫度", "溫度"]], "hint": "三項因子中哪一項最低？", "explain": "二氧化碳的因子最低，它限制了光合作用速率。"}, {"say": "把光照調到 0。", "values": {}, "focus": {"id": "light", "value": "0", "label": "0"}, "read": "limitValue", "q": "主要的限制因子是？", "options": [["光照", "光照"], ["二氧化碳", "二氧化碳"], ["溫度", "溫度"]], "hint": "沒有光還能行光合作用嗎？", "explain": "沒有光，光合作用速率變成 0，光照成為限制因子。"}, {"say": "光照回到 50，把二氧化碳加到 1200 ppm。", "values": {}, "focus": {"id": "co2", "value": "1200", "label": "1200 ppm"}, "read": "rateValue", "q": "光合作用速率變成？", "options": [["16.1 單位／分", "16.1 單位／分"], ["14.3 單位／分", "14.3 單位／分（不變）"], ["0.0 單位／分", "0.0 單位／分"]], "hint": "和第 1 步比較。", "explain": "補足二氧化碳後速率變大；這時換成其他因子成為限制因子。"}, {"say": "二氧化碳回到 400 ppm，把溫度調到 45°C。", "values": {}, "focus": {"id": "temperature", "value": "45", "label": "45°C"}, "read": "limitValue", "q": "主要的限制因子是？", "options": [["光照", "光照"], ["二氧化碳", "二氧化碳"], ["溫度", "溫度"]], "hint": "溫度太高對酵素有什麼影響？", "explain": "溫度過高，參與光合作用的酵素活性下降，溫度成為限制因子。"}]}</script>
 <!-- science-study-script:start -->
 <script>(() => {
  'use strict';

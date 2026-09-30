@@ -31,7 +31,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 <!-- science-schema:start -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"遺傳模擬實驗室","url":"https://www.bhcs.com.tw/tools/genetics-simulation-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
 <!-- science-schema:end -->
-<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-station-icons-1">
+<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-legacy-guide-1">
 <!-- science-experience-style:start -->
 <style>/* Shared, inline in all 20 labs. Keep diagrams and record tables independent. */
 .labgrid>*,.layout>*,.card,.panel{min-width:0}
@@ -178,7 +178,8 @@ runTests();setParentLabels();drawChart();renderRecords();
 <!-- science-events:start -->
 <script src="../assets/science-events.js" defer></script>
 <!-- science-events:end -->
-<script src="../assets/researcher-lab.js?v=20260930-station-icons-1" defer></script>
+<script src="../assets/researcher-lab.js?v=20260930-legacy-guide-1" defer></script>
+<script type="application/json" id="lab-guide">{"run": "cross", "steps": [{"say": "先看預設：兩株 Tt 的豌豆雜交。", "read": "recessiveValue", "q": "子代出現矮莖（tt）的機率？", "options": [["25%", "25%"], ["50%", "50%"], ["0%", "0%"]], "hint": "看棋盤方格中 tt 有幾格。", "explain": "四個等可能的組合中只有 1 格是 tt，機率 25%。"}, {"say": "把親代一改成 TT。", "values": {}, "focus": {"id": "parentOne", "value": "2", "label": "TT"}, "read": "recessiveValue", "q": "子代出現矮莖的機率？", "options": [["25%", "25%"], ["50%", "50%"], ["0%", "0%"]], "hint": "TT 能給出 t 嗎？", "explain": "親代一只能給 T，子代一定至少有一個 T，不會出現矮莖。"}, {"say": "親代一回到 Tt，把親代二改成 tt。", "values": {}, "focus": {"id": "parentTwo", "value": "0", "label": "tt"}, "read": "recessiveValue", "q": "子代出現矮莖的機率？", "options": [["25%", "25%"], ["50%", "50%"], ["0%", "0%"]], "hint": "tt 只能給出哪一種配子？", "explain": "Tt × tt，一半的子代是 tt，機率 50%。"}, {"say": "親代一改成 TT、親代二維持 tt。", "values": {"parentOne": "2"}, "focus": {"id": "parentTwo", "value": "0", "label": "tt"}, "read": "heteroValue", "q": "子代是 Tt 的機率？", "options": [["100%", "100%"], ["50%", "50%"], ["25%", "25%"]], "hint": "TT 給 T、tt 給 t。", "explain": "每個子代都拿到一個 T 和一個 t，全部是 Tt。"}]}</script>
 <!-- science-study-script:start -->
 <script>(() => {
  'use strict';
