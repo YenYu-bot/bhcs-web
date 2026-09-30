@@ -263,7 +263,7 @@ function describe(id,s,r){
 
 // Geometry and measurements use the tested models; selected illustrative textures are external assets.
 // 插畫道具：runtime 預先載入，載好才加入 SCIENCE_ASSETS；沒有載入（或在測試環境）時一律使用程式繪圖。
-const SCIENCE_PROPS={'solubility':['prop-beaker'],'reaction-rate':['prop-beaker','prop-stopwatch'],'equilibrium':['prop-test-tube'],'metal-activity':['prop-beaker','prop-strip-magnesium','prop-strip-zinc','prop-strip-iron','prop-strip-copper','prop-strip-silver'],'cell-electrolysis':['prop-beaker','prop-strip-zinc-plate','prop-strip-copper-plate','prop-carbon-rod','prop-salt-bridge','prop-light-bulb','prop-power-supply'],'optics':['bg-physics-bench','prop-candle','prop-convex-lens'],'electromagnetism':['bg-electric-bench','prop-coil'],'pressure-fluid':['bg-physics-bench'],'energy':['bg-physics-bench','prop-toy-cart','prop-track'],'pulley-incline':['bg-physics-bench','prop-wooden-crate','prop-pulley-wheel'],'reflection-refraction':['prop-plane-mirror','prop-laser-pointer'],'spring-friction':['bg-physics-bench','prop-wooden-block','prop-hanging-weight'],'electric-power':['bg-electric-bench','prop-beaker','prop-power-supply','prop-thermometer'],'electrostatics':['bg-electric-bench','prop-metal-sphere','prop-plastic-rod'],'specific-heat':['bg-physics-bench','prop-beaker','prop-hotplate','prop-thermometer','prop-metal-block'],'lever-torque':['bg-physics-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight'],'atom-builder':['item-proton','item-neutron','item-electron'],'neutralization':['bg-chem-bench','prop-retort-stand','prop-burette','prop-erlenmeyer']};
+const SCIENCE_PROPS={'seasons':['prop-sun','prop-earth-globe'],'tides':['prop-sun','prop-earth-globe','prop-moon'],'weather-systems':['prop-sun','prop-cloud-white','prop-cloud-storm','prop-cloud-layer','prop-kid-observer'],'circulation':['prop-lung-left','prop-lung-right'],'nerve-reflex':['prop-brain'],'homeostasis':['prop-thermometer'],'enzyme':['prop-enzyme-normal','prop-enzyme-denatured','prop-substrate'],'solubility':['prop-beaker'],'reaction-rate':['prop-beaker','prop-stopwatch'],'equilibrium':['prop-test-tube'],'metal-activity':['prop-beaker','prop-strip-magnesium','prop-strip-zinc','prop-strip-iron','prop-strip-copper','prop-strip-silver'],'cell-electrolysis':['prop-beaker','prop-strip-zinc-plate','prop-strip-copper-plate','prop-carbon-rod','prop-salt-bridge','prop-light-bulb','prop-power-supply'],'optics':['bg-physics-bench','prop-candle','prop-convex-lens'],'electromagnetism':['bg-electric-bench','prop-coil'],'pressure-fluid':['bg-physics-bench'],'energy':['bg-physics-bench','prop-toy-cart','prop-track'],'pulley-incline':['bg-physics-bench','prop-wooden-crate','prop-pulley-wheel'],'reflection-refraction':['prop-plane-mirror','prop-laser-pointer'],'spring-friction':['bg-physics-bench','prop-wooden-block','prop-hanging-weight'],'electric-power':['bg-electric-bench','prop-beaker','prop-power-supply','prop-thermometer'],'electrostatics':['bg-electric-bench','prop-metal-sphere','prop-plastic-rod'],'specific-heat':['bg-physics-bench','prop-beaker','prop-hotplate','prop-thermometer','prop-metal-block'],'lever-torque':['bg-physics-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight'],'atom-builder':['item-proton','item-neutron','item-electron'],'neutralization':['bg-chem-bench','prop-retort-stand','prop-burette','prop-erlenmeyer']};
 // 錐形瓶內部輪廓（相對於 prop-erlenmeyer 圖的比例）：[y, 左內緣 x, 右內緣 x]
 // 整張背景（在圖解最後統一墊到最底層）；槓桿與酸鹼中和在各自的分支內處理
 const SCIENCE_BACKDROP={'optics':'bg-physics-bench','electromagnetism':'bg-electric-bench','pressure-fluid':'bg-physics-bench','energy':'bg-physics-bench','pulley-incline':'bg-physics-bench','spring-friction':'bg-physics-bench','electric-power':'bg-electric-bench','electrostatics':'bg-electric-bench','specific-heat':'bg-physics-bench'};
@@ -531,8 +531,8 @@ function diagram(id,s,r){
     out+=`<g data-wind="${num(px,1)},${num(py,1)},${num(d[0],3)},${num(d[1],3)}">`+arrow(num(px-d[0]*22,1),num(py-d[1]*22,1),num(px+d[0]*22,1),num(py+d[1]*22,1),'#d97b11')+'</g>'}
    out+=text(40,40,'俯視：'+(s.hemi==='north'?'北':'南')+'半球近地面風向',16);
    const gx=400,gy=320;out+=line(gx,gy,640,gy,'#436779')+text(gx,40,'剖面：中心的垂直氣流',16);
-   if(r.vertical==='up'){out+=arrow(520,300,520,140,'#b54a5b')+arrow(430,306,500,306,'#d97b11')+arrow(610,306,540,306,'#d97b11')+`<ellipse cx="520" cy="112" rx="70" ry="26" fill="#e4edf2" stroke="#7c879b" stroke-width="2"/>`+text(440,190,'上升冷卻',14)}
-   else{out+=arrow(520,140,520,296,'#2f6fb2')+arrow(500,306,430,306,'#d97b11')+arrow(540,306,610,306,'#d97b11')+`<circle cx="600" cy="100" r="20" fill="#f6c453"/>`+text(440,190,'下沉增溫',14)}
+   if(r.vertical==='up'){out+=arrow(520,300,520,140,'#b54a5b')+arrow(430,306,500,306,'#d97b11')+arrow(610,306,540,306,'#d97b11')+(HAS('prop-cloud-white')?prop('prop-cloud-white',445,70,150,86):`<ellipse cx="520" cy="112" rx="70" ry="26" fill="#e4edf2" stroke="#7c879b" stroke-width="2"/>`)+text(440,190,'上升冷卻',14)}
+   else{out+=arrow(520,140,520,296,'#2f6fb2')+arrow(500,306,430,306,'#d97b11')+arrow(540,306,610,306,'#d97b11')+(HAS('prop-sun')?prop('prop-sun',576,76,48,48):`<circle cx="600" cy="100" r="20" fill="#f6c453"/>`)+text(440,190,'下沉增溫',14)}
    out+=text(20,392,'橘色箭頭：近地面的風　'+(r.vertical==='up'?'紅':'藍')+'色箭頭：中心的垂直氣流',13);
   }else{
    // 上：天氣圖符號；下：側視剖面（冷氣團藍、暖氣團紅），觀察者位置依過境階段
@@ -543,10 +543,10 @@ function diagram(id,s,r){
    const g=340,wedge=s.front==='cold'?`M40,${g} L${fx},${g} L150,${g-120} L40,${g-120} Z`:s.front==='warm'?`M620,${g} L${fx},${g} L620,${g-70} Z`:`M40,${g} L${fx},${g} L620,${g-60} L620,${g-60} L40,${g-60} Z`;
    out+=rect(40,g-160,580,160,redF)+`<path d="${wedge}" fill="${blueF}" stroke="#2f6fb2" stroke-width="2"/>`+line(40,g,620,g,'#436779');
    out+=text(s.front==='warm'?556:60,s.front==='warm'?g-30:s.front==='cold'?g-96:g-30,'冷氣團',15)+text(s.front==='warm'?60:s.front==='cold'?470:500,g-140,'暖氣團',15);
-   if(s.front==='cold')out+=`<path d="M200,${g-120} q30,-60 70,-40 q40,-40 70,10 q20,20 -10,30 Z" fill="#c9d2de" stroke="#7c879b" stroke-width="2"/>`+arrow(80,g-60,140,g-60,'#2f6fb2');
-   else out+=`<ellipse cx="${s.front==='warm'?460:330}" cy="${g-130}" rx="140" ry="16" fill="#c9d2de" stroke="#7c879b" stroke-width="2"/>`+(s.front==='warm'?arrow(380,g-30,520,g-60,'#b54a5b'):'');
+   if(s.front==='cold')out+=(HAS('prop-cloud-storm')?prop('prop-cloud-storm',210,g-250,112,122):`<path d="M200,${g-120} q30,-60 70,-40 q40,-40 70,10 q20,20 -10,30 Z" fill="#c9d2de" stroke="#7c879b" stroke-width="2"/>`)+arrow(80,g-60,140,g-60,'#2f6fb2');
+   else out+=(HAS('prop-cloud-layer')?prop('prop-cloud-layer',(s.front==='warm'?460:330)-140,g-166,280,72):`<ellipse cx="${s.front==='warm'?460:330}" cy="${g-130}" rx="140" ry="16" fill="#c9d2de" stroke="#7c879b" stroke-width="2"/>`)+(s.front==='warm'?arrow(380,g-30,520,g-60,'#b54a5b'):'');
    const ox={cold:{before:520,during:fx,after:110},warm:{before:480,during:fx,after:130},stationary:{before:fx,during:fx,after:fx}}[s.front][s.phase];
-   out+=`<g data-observer="${ox}"><circle cx="${ox}" cy="${g-26}" r="7" fill="#142f46"/><line x1="${ox}" y1="${g-19}" x2="${ox}" y2="${g}" stroke="#142f46" stroke-width="4"/></g>`+text(ox-26,g+22,'觀察者',13);
+   out+=(HAS('prop-kid-observer')?`<g data-observer="${ox}">`+prop('prop-kid-observer',ox-9,g-44,18,44)+'</g>':`<g data-observer="${ox}"><circle cx="${ox}" cy="${g-26}" r="7" fill="#142f46"/><line x1="${ox}" y1="${g-19}" x2="${ox}" y2="${g}" stroke="#142f46" stroke-width="4"/></g>`)+text(ox-26,g+22,'觀察者',13);
    out+=text(20,392,'藍＝冷氣團　紅＝暖氣團　灰＝雲　剖面坡度只是示意',13);
   }
   break;
@@ -554,7 +554,7 @@ function diagram(id,s,r){
  case 'circulation':{
   // 簡化循環圖：肺在上、全身在下、心臟四腔在中（圖左是心臟的右側）。紅＝充氧血、藍＝缺氧血；所選血管加粗；箭頭數隨心輸出量。
   const RED='#b54a5b',BLUE='#2f6fb2';
-  out+=`<ellipse cx="250" cy="74" rx="62" ry="30" fill="#f6e3e6" stroke="#7c879b" stroke-width="2"/><ellipse cx="410" cy="74" rx="62" ry="30" fill="#f6e3e6" stroke="#7c879b" stroke-width="2"/>`+`<text x="330" y="80" font-size="15" text-anchor="middle">肺臟</text>`;
+  out+=(HAS('prop-lung-left')&&HAS('prop-lung-right')?prop('prop-lung-left',225,36,50,90)+prop('prop-lung-right',385,36,50,90):`<ellipse cx="250" cy="74" rx="62" ry="30" fill="#f6e3e6" stroke="#7c879b" stroke-width="2"/><ellipse cx="410" cy="74" rx="62" ry="30" fill="#f6e3e6" stroke="#7c879b" stroke-width="2"/>`)+`<text x="330" y="80" font-size="15" text-anchor="middle">肺臟</text>`;
   out+=rect(150,318,360,44,'#efe6da')+`<text x="330" y="346" font-size="15" text-anchor="middle">全身組織</text>`;
   out+=rect(272,150,48,58,'#dce8f5')+rect(340,150,48,58,'#f6dfe3')+rect(272,212,48,70,'#dce8f5')+rect(340,212,48,70,'#f6dfe3');
   [['右心房',296,183],['左心房',364,183],['右心室',296,251],['左心室',364,251]].forEach(([t,x,y])=>out+=`<text x="${x}" y="${y}" font-size="13" text-anchor="middle">${t}</text>`);
@@ -570,7 +570,7 @@ function diagram(id,s,r){
  }
  case 'nerve-reflex':{
   // 左：放大的人形；感覺神經（藍）走肢體下側、運動神經（橘）走上側，紅圈編號依序。中：路徑清單。右：接尺刻度與反應時間。
-  const ink='#436779';out+=`<circle cx="150" cy="70" r="44" fill="#f2f4f7" stroke="${ink}" stroke-width="3"/>`+text(134,106,'大腦',13)+line(150,114,150,262,'#9aaeb9')+text(96,214,'脊髓',13);
+  const ink='#436779';out+=`<circle cx="150" cy="70" r="44" fill="#f2f4f7" stroke="${ink}" stroke-width="3"/>`+(HAS('prop-brain')?`<clipPath id="nr-head"><circle cx="150" cy="70" r="41"/></clipPath>`+prop('prop-brain',114,40,72,47,' clip-path="url(#nr-head)"'):'')+text(134,106,'大腦',13)+line(150,114,150,262,'#9aaeb9')+text(96,214,'脊髓',13);
   out+=line(150,130,240,180,ink)+line(240,180,310,178,ink)+`<circle cx="324" cy="178" r="14" fill="#f2f4f7" stroke="${ink}" stroke-width="3"/>`+line(150,260,250,300,ink)+line(250,300,232,370,ink)+`<circle cx="186" cy="58" r="5" fill="${ink}"/>`;
   const R={knee:{sens:[[228,276],[184,254],[150,238]],motor:[[150,238],[182,282],[216,300]],steps:[[228,276],[184,254],[150,238],[182,282],[216,300]]},
    withdraw:{sens:[[324,178],[246,200],[150,150]],motor:[[150,150],[192,138],[214,154]],steps:[[324,178],[246,200],[150,150],[192,138],[214,154]]},
@@ -608,7 +608,7 @@ function diagram(id,s,r){
    out+=`<text x="330" y="200" font-size="14" text-anchor="middle">核心</text><text x="330" y="220" font-size="14" text-anchor="middle">37°C</text>`;
    if(r.kind==='cold')[[262,200],[398,200],[330,300]].forEach(([x,y])=>out+=`<path d="M${x-10},${y} l5,-6 l5,6 l5,-6 l5,6" fill="none" stroke="#2f6fb2" stroke-width="2"/>`);
    if(r.kind==='hot')[[270,160],[392,176],[312,300],[352,310]].forEach(([x,y])=>out+=`<path d="M${x},${y-10} q6,10 0,14 q-6,-4 0,-14 Z" fill="#9cc6e6" stroke="#2f6fb2" stroke-width="1.5"/>`);
-   const ty=v=>num(330-v*6,1);out+=rect(90,90,20,240,'#f2f4f7')+`<rect x="92" y="${ty(s.env)}" width="16" height="${num(330-ty(s.env),1)}" fill="#b54a5b"/>`+`<circle cx="100" cy="340" r="16" fill="#b54a5b"/>`;
+   const ty=v=>num(330-v*6,1);out+=HAS('prop-thermometer')?`<rect x="93" y="${ty(s.env)}" width="14" height="${num(330-ty(s.env),1)}" fill="#b54a5b"/>`+circle(100,353,11,'#b54a5b')+prop('prop-thermometer',77.4,81.2,47,293):rect(90,90,20,240,'#f2f4f7')+`<rect x="92" y="${ty(s.env)}" width="16" height="${num(330-ty(s.env),1)}" fill="#b54a5b"/>`+`<circle cx="100" cy="340" r="16" fill="#b54a5b"/>`;
    for(let v=0;v<=40;v+=10)out+=line(110,ty(v),118,ty(v),ink)+`<text x="124" y="${num(ty(v)+4,1)}" font-size="12">${v}°C</text>`;
    out+=text(60,72,'環境 '+s.env+'°C',15)+text(450,120,'皮膚血管：'+r.vessel,15)+text(450,150,r.method,15);
    out+=text(20,32,'體溫：核心維持 37°C（教學模型）',16)+text(20,392,'紅線＝皮膚血管（粗＝舒張、細＝收縮）　藍波紋＝顫抖　水滴＝流汗',12);
@@ -820,16 +820,18 @@ function diagram(id,s,r){
   for(const p of [1,2,7,13])out+=`<text x="${num(360+270*(p-1)/12,1)}" y="216" font-size="11" text-anchor="middle">${p}</text>`;
   out+=circle(num(360+270*(s.ph-1)/12,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b')+text(520,86,'藍＝唾液澱粉酶',12)+text(520,102,'綠＝胃蛋白酶',12);
   // 下：鎖與鑰匙示意
-  const ey=300;if(!r.den)out+=`<path data-enzyme="normal" d="M200,${ey-40} L300,${ey-40} L300,${ey+30} L200,${ey+30} L200,${ey} L230,${ey} L240,${ey-18} L260,${ey-18} L270,${ey} L200,${ey} Z" fill="#dce8f5" stroke="${ink}" stroke-width="2"/><path d="M232,${ey-2} L241,${ey-16} L259,${ey-16} L268,${ey-2} Z" fill="#f6c453" stroke="${ink}" stroke-width="2"/>`+text(320,ey,'酵素（藍）與受質（黃）形狀吻合',13);
+  const ey=300,ENZ=HAS('prop-enzyme-normal')&&HAS('prop-enzyme-denatured')&&HAS('prop-substrate');
+  if(ENZ){if(!r.den)out+=`<g data-enzyme="normal">`+prop('prop-enzyme-normal',192,ey-44,116,84)+prop('prop-substrate',230,ey-50,40,26)+'</g>'+text(320,ey,'酵素（藍）與受質（黃）形狀吻合',13);else out+=`<g data-enzyme="denatured">`+prop('prop-enzyme-denatured',192,ey-46,116,90)+'</g>'+prop('prop-substrate',330,ey-58,40,26)+text(380,ey,'高溫變性：形狀改變，受質對不上',13)}
+  else if(!r.den)out+=`<path data-enzyme="normal" d="M200,${ey-40} L300,${ey-40} L300,${ey+30} L200,${ey+30} L200,${ey} L230,${ey} L240,${ey-18} L260,${ey-18} L270,${ey} L200,${ey} Z" fill="#dce8f5" stroke="${ink}" stroke-width="2"/><path d="M232,${ey-2} L241,${ey-16} L259,${ey-16} L268,${ey-2} Z" fill="#f6c453" stroke="${ink}" stroke-width="2"/>`+text(320,ey,'酵素（藍）與受質（黃）形狀吻合',13);
   else out+=`<path data-enzyme="denatured" d="M200,${ey-40} Q260,${ey-70} 300,${ey-30} Q320,${ey+10} 290,${ey+30} Q240,${ey+50} 205,${ey+20} Q180,${ey} 200,${ey-40} Z" fill="#e4d6d8" stroke="${ink}" stroke-width="2"/><path d="M330,${ey-22} L339,${ey-36} L357,${ey-36} L366,${ey-22} Z" fill="#f6c453" stroke="${ink}" stroke-width="2"/>`+text(380,ey,'高溫變性：形狀改變，受質對不上',13);
   out+=text(20,32,'相對活性 '+num(r.act*100,1)+'%'+(r.den?'（已變性）':''),16)+text(20,392,'紅點＝目前條件　淡紅區＝60°C 以上變性　曲線為教學模型',12);break;
  }
  case 'tides':{
   // 上：俯視圖（太陽在右、月球依月齡繞地球，海水沿地月方向拉長）；下：48 小時潮高曲線與目前時刻。
   const ink='#436779',E=[180,160],a=r.moonAngle,mx=E[0]+Math.cos(a)*120,my=E[1]-Math.sin(a)*86,deg=-a*180/Math.PI,stretch=34+20*r.amp;
-  out+=`<circle cx="610" cy="150" r="26" fill="#f6c453"/>`+text(588,196,'太陽',13)+arrow(570,150,420,150,'#f6c453');
-  out+=`<ellipse data-bulge cx="${E[0]}" cy="${E[1]}" rx="${num(stretch+22,1)}" ry="36" transform="rotate(${num(deg,1)} ${E[0]} ${E[1]})" fill="#9cc6e6" opacity="0.8"/><circle cx="${E[0]}" cy="${E[1]}" r="32" fill="#6f9a5c"/>`+text(E[0]-14,E[1]+5,'地球',12);
-  out+=`<ellipse cx="${E[0]}" cy="${E[1]}" rx="120" ry="86" fill="none" stroke="#c9d2de" stroke-dasharray="4 4"/><circle cx="${num(mx,1)}" cy="${num(my,1)}" r="12" fill="#d8dce2" stroke="${ink}"/>`+text(num(mx-12,1),num(my-18,1),'月球',12);
+  out+=(HAS('prop-sun')?prop('prop-sun',578,118,64,64):`<circle cx="610" cy="150" r="26" fill="#f6c453"/>`)+text(588,196,'太陽',13)+arrow(570,150,420,150,'#f6c453');
+  out+=`<ellipse data-bulge cx="${E[0]}" cy="${E[1]}" rx="${num(stretch+22,1)}" ry="36" transform="rotate(${num(deg,1)} ${E[0]} ${E[1]})" fill="#9cc6e6" opacity="0.8"/>`+(HAS('prop-earth-globe')?prop('prop-earth-globe',E[0]-32,E[1]-32,64,64)+`<text x="${E[0]}" y="${E[1]+5}" font-size="12" text-anchor="middle" fill="#fff" stroke="#142f46" stroke-width="3" paint-order="stroke">地球</text>`:`<circle cx="${E[0]}" cy="${E[1]}" r="32" fill="#6f9a5c"/>`+text(E[0]-14,E[1]+5,'地球',12));
+  out+=`<ellipse cx="${E[0]}" cy="${E[1]}" rx="120" ry="86" fill="none" stroke="#c9d2de" stroke-dasharray="4 4"/>`+(HAS('prop-moon')?prop('prop-moon',mx-13,my-13,26,26):`<circle cx="${num(mx,1)}" cy="${num(my,1)}" r="12" fill="#d8dce2" stroke="${ink}"/>`)+text(num(mx-12,1),num(my-18,1),'月球',12);
   out+=text(330,70,'海水朝向與背對月球的兩側隆起（示意）',13)+text(330,92,r.phase+'　'+{spring:'大潮',middle:'中潮',neap:'小潮'}[r.kind],15);
   const X0=60,X1=630,Y0=308,H=38,tx=t=>num(X0+(X1-X0)*t/48,1),ty=v=>num(Y0-H*v,1),pts=[];
   for(let i=0;i<=240;i++){const t=48*i/240;pts.push(tx(t)+','+ty(r.amp*Math.cos(2*Math.PI*(t-r.lag)/r.P)))}
@@ -843,15 +845,15 @@ function diagram(id,s,r){
  }
  case 'seasons':{
   const alt=r.altitude*Math.PI/180,sunX=310+145*Math.cos(alt),sunY=210-145*Math.sin(alt);
-  out=path('M70,210 A240,160 0 0 1 550,210','#bdcfd8',true)+line(60,210,610,210,'#436779')+text(450,237,'地平線',16)+circle(310,210,9,'#087b78')+line(310,210,sunX,sunY,'#d97b11')+circle(sunX,sunY,15,'#efb633')+text(45,35,'正午天空示意',20)+text(45,310,`高度 ${num(r.altitude,2)}°　赤緯 ${num(r.declination,2)}°`,20)+text(45,350,r.boundary?'極點春秋分：太陽中心貼地平線':`理想日長 ${num(r.hours,2)} 小時`,20);break;
+  out=path('M70,210 A240,160 0 0 1 550,210','#bdcfd8',true)+line(60,210,610,210,'#436779')+text(450,237,'地平線',16)+circle(310,210,9,'#087b78')+line(310,210,sunX,sunY,'#d97b11')+(HAS('prop-sun')?prop('prop-sun',sunX-19,sunY-19,38,38):circle(sunX,sunY,15,'#efb633'))+text(45,35,'正午天空示意',20)+text(45,310,`高度 ${num(r.altitude,2)}°　赤緯 ${num(r.declination,2)}°`,20)+text(45,350,r.boundary?'極點春秋分：太陽中心貼地平線':`理想日長 ${num(r.hours,2)} 小時`,20);break;
  }
 
  }
  let extra='';
  if(id==='seasons'){
   const a=s.season*Math.PI/180,tilt=s.tilt*Math.PI/180,axisX=20*Math.sin(tilt),axisY=-20*Math.cos(tilt);
-  const earth=(x,y,active=false)=>`<circle cx="${x}" cy="${y}" r="16" fill="${active?'#248273':'#77a8bc'}"/><line x1="${x-axisX}" y1="${y-axisY}" x2="${x+axisX}" y2="${y+axisY}" stroke="#30374a" stroke-width="3"/><text x="${x+axisX+4}" y="${y+axisY-4}" font-size="12">北</text>`;
-  extra=`<svg viewBox="0 0 660 310" role="img" aria-label="地球公轉位置與平行地軸示意；北端固定朝畫面右上方。公轉角 ${s.season} 度，地軸傾角 ${s.tilt} 度。"><text x="25" y="30" font-size="20">為什麼有四季？比較地軸朝向</text><ellipse cx="330" cy="155" rx="150" ry="85" fill="none" stroke="#acbcbc" stroke-dasharray="5 5"/><circle cx="330" cy="155" r="28" fill="#f0b946"/><text x="310" y="204" font-size="16">太陽</text>${[[330,70],[180,155],[330,240],[480,155]].map(([x,y])=>earth(x,y)).join('')}${earth(330-150*Math.sin(a),155-85*Math.cos(a),true)}<circle cx="${330-150*Math.sin(a)}" cy="${155-85*Math.cos(a)}" r="25" fill="none" stroke="#b95215" stroke-width="3"/><text x="25" y="288" font-size="16">橘圈：目前位置；各處地軸保持平行。尺寸與距離未按比例。</text></svg>`;
+  const EG=HAS('prop-earth-globe');const earth=(x,y,active=false)=>(EG?`<image data-prop="prop-earth-globe" href="../../assets/science/props/prop-earth-globe.webp" x="${num(x-16,1)}" y="${num(y-16,1)}" width="32" height="32"${active?'':' opacity="0.55"'}/>`:`<circle cx="${x}" cy="${y}" r="16" fill="${active?'#248273':'#77a8bc'}"/>`)+`<line x1="${x-axisX}" y1="${y-axisY}" x2="${x+axisX}" y2="${y+axisY}" stroke="#30374a" stroke-width="3"/><text x="${x+axisX+4}" y="${y+axisY-4}" font-size="12">北</text>`;
+  extra=`<svg viewBox="0 0 660 310" role="img" aria-label="地球公轉位置與平行地軸示意；北端固定朝畫面右上方。公轉角 ${s.season} 度，地軸傾角 ${s.tilt} 度。"><text x="25" y="30" font-size="20">為什麼有四季？比較地軸朝向</text><ellipse cx="330" cy="155" rx="150" ry="85" fill="none" stroke="#acbcbc" stroke-dasharray="5 5"/>${HAS('prop-sun')?'<image data-prop="prop-sun" href="../../assets/science/props/prop-sun.webp" x="294" y="119" width="72" height="72"/>':'<circle cx="330" cy="155" r="28" fill="#f0b946"/>'}<text x="310" y="204" font-size="16">太陽</text>${[[330,70],[180,155],[330,240],[480,155]].map(([x,y])=>earth(x,y)).join('')}${earth(330-150*Math.sin(a),155-85*Math.cos(a),true)}<circle cx="${330-150*Math.sin(a)}" cy="${155-85*Math.cos(a)}" r="25" fill="none" stroke="#b95215" stroke-width="3"/><text x="25" y="288" font-size="16">橘圈：目前位置；各處地軸保持平行。尺寸與距離未按比例。</text></svg>`;
  }
  if(id==='solubility'){
   const fn=temp=>s.solute==='a'?20+.5*temp:35+.025*temp;
