@@ -154,7 +154,7 @@
 <!-- ===== 大廳 ===== -->
 <section class="screen active" id="foyer">
   <div class="foyer">
-    <div class="card" style="text-align:center"><svg class="docimg" viewBox="0 0 200 220" style="width:100%;max-width:260px"><use href="#doc"/></svg></div>
+    <div class="card" style="text-align:center"><svg class="docimg" viewBox="0 0 200 220" style="width:100%;max-width:260px"><image href="img/doc-wave.png" x="0" y="0" width="200" height="220" preserveAspectRatio="xMidYMid meet"/></svg></div>
     <div>
       <div class="bubble"><b>嗨！我是余老師。</b>歡迎來到虛擬實驗室！這裡跟真的實驗室一樣：先做好安全準備，再挑一個實驗動手做，完成後可以拿到徽章。你叫什麼名字？</div>
       <p style="margin:12px 0 6px"><input type="text" id="name" placeholder="輸入你的名字" maxlength="12"></p>
@@ -183,7 +183,7 @@
     <div class="stage"><svg id="scene" viewBox="0 0 800 460"></svg></div>
     <aside class="side">
       <div class="card"><h2 id="expTitle" style="margin:0 0 6px;font-size:19px"></h2><div class="prog" id="prog"></div>
-        <div class="host"><svg class="docimg" viewBox="0 0 200 220"><use href="#doc"/></svg><div class="say" id="say"></div></div>
+        <div class="host"><svg class="docimg" viewBox="0 0 200 220"><image href="img/doc-wave.png" x="-50" y="14" width="300" height="394" preserveAspectRatio="xMidYMin meet"/></svg><div class="say" id="say"></div></div>
         <div class="opts" id="opts" style="margin-top:10px"></div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="nextStep">下一步 →</button><button class="btn ghost" id="quitExp">回實驗室</button></div>
       </div>
@@ -201,7 +201,7 @@
 </section>
 <div class="reward" id="reward"><div class="rbox">
   <h2>🎉 獲得徽章！</h2>
-  <div class="rrow"><svg class="docimg" viewBox="0 0 200 220"><use href="#doc"/></svg><div class="rbadgewrap" id="rStars"><div class="rbadge" id="rBadge"></div></div></div>
+  <div class="rrow"><svg class="docimg" viewBox="0 0 200 220"><image href="img/doc-wave.png" x="0" y="0" width="200" height="220" preserveAspectRatio="xMidYMid meet"/></svg><div class="rbadgewrap" id="rStars"><div class="rbadge" id="rBadge"></div></div></div>
   <div class="rname" id="rName"></div><div class="rpts" id="rPts"></div>
   <button class="btn" id="rOk">收進研究手冊 →</button>
 </div></div>
@@ -234,9 +234,11 @@
 <script>
 const $=id=>document.getElementById(id); const NS='http://www.w3.org/2000/svg';
 const IMG={room:'img/lab-room.jpg',icon_tools:'img/icon-tools.png',icon_rules:'img/icon-rules.png',icon_water:'img/icon-water.png',icon_cabbage:'img/icon-cabbage.png',icon_density:'img/icon-density.png',icon_photo:'img/icon-photo.png',icon_fizz:'img/icon-fizz.png',icon_soap:'img/icon-soap.png',icon_solar:'img/icon-solar.png',tool_beaker:'img/tool-beaker.png',tool_tube:'img/tool-tube.png',tool_flask:'img/tool-flask.png',tool_cylinder:'img/tool-cylinder.png',tool_dropper:'img/tool-dropper.png',tool_lamp:'img/tool-lamp.png',tool_funnel:'img/tool-funnel.png',tool_tongs:'img/tool-tongs.png',tool_thermo:'img/tool-thermo.png',tool_balance:'img/tool-balance.png',tool_rack:'img/tool-rack.png',tool_glassrod:'img/tool-glassrod.png',tool_evapdish:'img/tool-evapdish.png',tool_tweezers:'img/tool-tweezers.png',tool_goggles:'img/tool-goggles.png',safetyRoom:'img/safety-room.jpg',bench:'img/scene-bench.jpg',prop_aquarium:'img/prop-aquarium.png',prop_lamp:'img/prop-lamp.png',item_lampcard:'img/prop-lamp.png',prop_bottle:'img/prop-bottle.png',item_balloon:'img/item-balloon.png',prop_balloon_full:'img/prop-balloon-full.png',prop_panel:'img/prop-panel.png',prop_sun:'img/prop-sun.png',prop_cloud:'img/prop-cloud.png',prop_meter:'img/prop-meter.png',item_salt:'img/item-salt.png',item_dish:'img/item-dish.png',item_alcohol:'img/item-alcohol.png',item_detergent:'img/item-detergent.png',item_bluewater:'img/item-bluewater.png',badge_safety:'img/badge-safety.png',badge_tools:'img/badge-tools.png',badge_rules:'img/badge-rules.png',badge_water:'img/badge-water.png',badge_cabbage:'img/badge-cabbage.png',badge_density:'img/badge-density.png',badge_photo:'img/badge-photo.png',badge_fizz:'img/badge-fizz.png',badge_soap:'img/badge-soap.png',badge_solar:'img/badge-solar.png',badge_master:'img/badge-master.png',prop_filter:'img/prop-filter-bottle.png',prop_cup:'img/prop-cup.png',prop_glass:'img/prop-glass.png',prop_cylinder:'img/prop-cylinder.png',tex_cotton:'img/tex-cotton.jpg',tex_charcoal:'img/tex-charcoal.jpg',tex_sand:'img/tex-sand.jpg',tex_gravel:'img/tex-gravel.jpg',item_cotton:'img/item-cotton.png',item_charcoal:'img/item-charcoal.png',item_sand:'img/item-sand.png',item_gravel:'img/item-gravel.png',item_dirty:'img/item-dirtywater.png',item_clean:'img/item-cleanwater.png',item_lemon:'img/item-lemon.png',item_vinegar:'img/item-vinegar.png',item_water:'img/item-water.png',item_soda:'img/item-soda.png',item_soap:'img/item-soap.png',item_soapy:'img/item-sodaash.png',item_honey:'img/item-honey.png',item_oil:'img/item-oil.png',haz_eat:'img/haz-eat.png',haz_hair:'img/haz-hair.png',haz_smell:'img/haz-smell.png',haz_run:'img/haz-run.png',haz_goggles:'img/haz-goggles.png',haz_taste:'img/haz-taste.png',safe_goggles:'img/safe-goggles.png',safe_kit:'img/safe-kit.png',wave:'img/doc-wave.png',point:'img/doc-point.png',wow:'img/doc-wow.png',thumb:'img/doc-thumb.png',safety:'img/doc-safety.png'};
-const HAS={}; Object.entries(IMG).forEach(([k,src])=>{ const i=new Image(); i.onload=()=>{HAS[k]=true; setDoc(curPose); clearTimeout(HAS._h); HAS._h=setTimeout(()=>{ if($('lab').classList.contains('active')) drawRoom(); if($('expScreen').classList.contains('active')&&E) draw(); },150);}; i.onerror=()=>HAS[k]=false; i.src=src; });
+const HAS={}; Object.entries(IMG).forEach(([k,src])=>{ const i=new Image(); i.onload=()=>{HAS[k]=true; setDoc(curPose); clearTimeout(HAS._h); HAS._h=setTimeout(()=>{ if($('lab').classList.contains('active')) drawRoom(); if($('expScreen').classList.contains('active')&&E) draw(); },150);}; i.onerror=()=>{HAS[k]=false; if(k===curPose) setDoc(curPose);}; i.src=src; });
 let curPose='wave';
-function docInto(svg,pose){ svg.innerHTML=''; if(HAS[pose]){ const im=document.createElementNS(NS,'image'); im.setAttribute('href',IMG[pose]); im.setAttribute('x',0); im.setAttribute('y',0); im.setAttribute('width',200); im.setAttribute('height',220); im.setAttribute('preserveAspectRatio','xMidYMid meet'); svg.appendChild(im); } else { const u=document.createElementNS(NS,'use'); u.setAttribute('href','#doc'); svg.appendChild(u); } }
+// 余老師：一律直接顯示插畫（圖檔還在下載時是空白，不再先閃出簡易小人）；只有圖檔確定載入失敗才退回簡易小人。
+// 對話框旁的小頭像（.host）只顯示上半身，讓臉看得清楚；其他位置維持全身。
+function docInto(svg,pose){ svg.innerHTML=''; if(IMG[pose]&&HAS[pose]!==false){ const im=document.createElementNS(NS,'image'); im.setAttribute('href',IMG[pose]); const bust=!!svg.closest('.host'); im.setAttribute('x',bust?-50:0); im.setAttribute('y',bust?14:0); im.setAttribute('width',bust?300:200); im.setAttribute('height',bust?394:220); im.setAttribute('preserveAspectRatio',bust?'xMidYMin meet':'xMidYMid meet'); im.addEventListener('error',()=>{HAS[pose]=false; docInto(svg,pose);}); svg.appendChild(im); } else { const u=document.createElementNS(NS,'use'); u.setAttribute('href','#doc'); svg.appendChild(u); } }
 function setDoc(pose){ const svs=document.querySelectorAll('svg.docimg'); if(pose===curPose){ svs.forEach(sv=>docInto(sv,pose)); return; }
   curPose=pose; svs.forEach(sv=>sv.classList.add('swap')); clearTimeout(setDoc._h);
   setDoc._h=setTimeout(()=>{ svs.forEach(sv=>{ docInto(sv,pose); sv.classList.remove('swap'); }); },170); }
