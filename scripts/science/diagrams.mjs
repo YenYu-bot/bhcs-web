@@ -1,6 +1,6 @@
 // Geometry and measurements use the tested models; selected illustrative textures are external assets.
 // 插畫道具：runtime 預先載入，載好才加入 SCIENCE_ASSETS；沒有載入（或在測試環境）時一律使用程式繪圖。
-export const SCIENCE_PROPS={'optics':['bg-physics-bench','prop-candle','prop-convex-lens'],'electromagnetism':['bg-electric-bench','prop-coil'],'pressure-fluid':['bg-physics-bench'],'energy':['bg-physics-bench','prop-toy-cart','prop-track'],'pulley-incline':['bg-physics-bench','prop-wooden-crate','prop-pulley-wheel'],'reflection-refraction':['prop-plane-mirror','prop-laser-pointer'],'spring-friction':['bg-physics-bench','prop-wooden-block','prop-hanging-weight'],'electric-power':['bg-electric-bench','prop-beaker','prop-power-supply','prop-thermometer'],'electrostatics':['bg-electric-bench','prop-metal-sphere','prop-plastic-rod'],'specific-heat':['bg-physics-bench','prop-beaker','prop-hotplate','prop-thermometer','prop-metal-block'],'lever-torque':['bg-physics-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight'],'atom-builder':['item-proton','item-neutron','item-electron'],'neutralization':['bg-chem-bench','prop-retort-stand','prop-burette','prop-erlenmeyer']};
+export const SCIENCE_PROPS={'solubility':['prop-beaker'],'reaction-rate':['prop-beaker','prop-stopwatch'],'equilibrium':['prop-test-tube'],'metal-activity':['prop-beaker','prop-strip-magnesium','prop-strip-zinc','prop-strip-iron','prop-strip-copper','prop-strip-silver'],'cell-electrolysis':['prop-beaker','prop-strip-zinc-plate','prop-strip-copper-plate','prop-carbon-rod','prop-salt-bridge','prop-light-bulb','prop-power-supply'],'optics':['bg-physics-bench','prop-candle','prop-convex-lens'],'electromagnetism':['bg-electric-bench','prop-coil'],'pressure-fluid':['bg-physics-bench'],'energy':['bg-physics-bench','prop-toy-cart','prop-track'],'pulley-incline':['bg-physics-bench','prop-wooden-crate','prop-pulley-wheel'],'reflection-refraction':['prop-plane-mirror','prop-laser-pointer'],'spring-friction':['bg-physics-bench','prop-wooden-block','prop-hanging-weight'],'electric-power':['bg-electric-bench','prop-beaker','prop-power-supply','prop-thermometer'],'electrostatics':['bg-electric-bench','prop-metal-sphere','prop-plastic-rod'],'specific-heat':['bg-physics-bench','prop-beaker','prop-hotplate','prop-thermometer','prop-metal-block'],'lever-torque':['bg-physics-bench','prop-lever-plank','prop-lever-fulcrum','prop-hanging-weight'],'atom-builder':['item-proton','item-neutron','item-electron'],'neutralization':['bg-chem-bench','prop-retort-stand','prop-burette','prop-erlenmeyer']};
 // 錐形瓶內部輪廓（相對於 prop-erlenmeyer 圖的比例）：[y, 左內緣 x, 右內緣 x]
 // 整張背景（在圖解最後統一墊到最底層）；槓桿與酸鹼中和在各自的分支內處理
 const SCIENCE_BACKDROP={'optics':'bg-physics-bench','electromagnetism':'bg-electric-bench','pressure-fluid':'bg-physics-bench','energy':'bg-physics-bench','pulley-incline':'bg-physics-bench','spring-friction':'bg-physics-bench','electric-power':'bg-electric-bench','electrostatics':'bg-electric-bench','specific-heat':'bg-physics-bench'};
@@ -20,6 +20,8 @@ export function diagram(id,s,r){
  let out='';
  const HAS=n=>typeof SCIENCE_ASSETS!=='undefined'&&SCIENCE_ASSETS.has(n);
  const prop=(n,x,y,w,h,extra='')=>`<image data-prop="${n}" href="../../assets/science/props/${n}.webp" x="${num(x,1)}" y="${num(y,1)}" width="${num(w,1)}" height="${num(h,1)}" preserveAspectRatio="none"${extra}/>`;
+ const beakerClip=(cid,x,y,w,h)=>`<clipPath id="${cid}"><path d="M${num(x+0.03*w,1)},${num(y+0.05*h,1)} L${num(x+0.115*w,1)},${num(y+0.86*h,1)} Q${num(x+0.14*w,1)},${num(y+0.955*h,1)} ${num(x+0.23*w,1)},${num(y+0.957*h,1)} L${num(x+0.81*w,1)},${num(y+0.957*h,1)} Q${num(x+0.9*w,1)},${num(y+0.955*h,1)} ${num(x+0.93*w,1)},${num(y+0.86*h,1)} L${num(x+0.97*w,1)},${num(y+0.05*h,1)} Z"/></clipPath>`;
+ const fillIn=(cid,x,y,w,h,col,extra='')=>`<rect x="${num(x,1)}" y="${num(y,1)}" width="${num(w,1)}" height="${num(h,1)}" fill="${col}" clip-path="url(#${cid})"${extra}/>`;
  const backdrop=(n,w=660)=>HAS(n)?(w<660?`<clipPath id="bd-${n}"><rect x="0" y="0" width="${w}" height="400" rx="10"/></clipPath>`:'')+`<image data-prop="${n}" href="../../assets/science/props/${n}.webp" x="0" y="0" width="660" height="400" preserveAspectRatio="xMidYMid slice" opacity="0.5"${w<660?` clip-path="url(#bd-${n})"`:''}/>`:'';
  switch(id){
  case 'optics':{
@@ -72,7 +74,7 @@ export function diagram(id,s,r){
   else {const hh=50*Math.sqrt(s.ratio);out=path(`M50,110 H260 L370,${160-hh} H610 M50,210 H260 L370,${160+hh} H610`)+arrow(95,160,230,160)+arrow(415,160,560,160)+text(60,70,`入口 ${s.speed} m/s`,18)+text(360,70,`出口 ${num(r.v2)} m/s`,18)+text(50,285,`A₂/A₁=${s.ratio}；出口壓力 ${num(r.absolute/1000)} kPa`,20)+text(50,330,'同高、穩定流、不可壓縮、無黏性。',17)}break;
  }
  case 'solubility':{
-  out=rect(85,75,220,205,'#d6eff5')+rect(85,280-r.solid/150*85,220,r.solid/150*85,'#b9b9bc')+path('M80,55 V285 H310 V55','#435f6e')+text(90,35,'溶液與剩餘固體（示意）',18)+text(350,95,`容量 ${num(r.capacity)} g`,20)+text(350,145,`已溶 ${num(r.dissolved)} g`,20)+text(350,195,`固體 ${num(r.solid)} g`,20)+text(90,330,`濃度 ${num(r.percent,2)}%（只計入溶液）`,20)+text(90,365,'A、B均為虛構教學溶質，不是實測曲線。',16);break;
+  out=(HAS('prop-beaker')?beakerClip('bk-sol',85,40,220,260)+fillIn('bk-sol',85,75,220,225,'#b9def0')+fillIn('bk-sol',85,289-r.solid/150*85,220,r.solid/150*85+12,'#8d949b')+prop('prop-beaker',85,40,220,260):rect(85,75,220,205,'#d6eff5')+rect(85,280-r.solid/150*85,220,r.solid/150*85,'#b9b9bc')+path('M80,55 V285 H310 V55','#435f6e'))+text(90,35,'溶液與剩餘固體（示意）',18)+text(350,95,`容量 ${num(r.capacity)} g`,20)+text(350,145,`已溶 ${num(r.dissolved)} g`,20)+text(350,195,`固體 ${num(r.solid)} g`,20)+text(90,330,`濃度 ${num(r.percent,2)}%（只計入溶液）`,20)+text(90,365,'A、B均為虛構教學溶質，不是實測曲線。',16);break;
  }
  case 'energy':{
   const p=s.progress/100;
@@ -171,12 +173,13 @@ export function diagram(id,s,r){
  case 'reaction-rate':{
   // 左：燒杯粒子示意（數量隨濃度、短線長度隨溫度）；右：產物—時間，實線為本次、虛線為基準條件，終點高度相同。
   let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
-  out+=`<path d="M40,110 L40,330 Q40,350 60,350 L240,350 Q260,350 260,330 L260,110" fill="#e3f1f6" stroke="#436779" stroke-width="3"/>`;
+  const RB=HAS('prop-beaker');out+=RB?beakerClip('bk-rr',44,104,212,250)+fillIn('bk-rr',44,130,212,230,'#d8ecf6'):`<path d="M40,110 L40,330 Q40,350 60,350 L240,350 Q260,350 260,330 L260,110" fill="#e3f1f6" stroke="#436779" stroke-width="3"/>`;
   const nP=Math.round(s.conc*14),tail=6+10*Math.min(4,r.tempF);
   for(let i=0;i<nP;i++){const x=num(62+rnd()*176,1),y=num(140+rnd()*190,1),a=rnd()*Math.PI*2;out+=`<line x1="${x}" y1="${y}" x2="${num(x-Math.cos(a)*tail,1)}" y2="${num(y-Math.sin(a)*tail,1)}" stroke="#9aaeb9" stroke-width="2"/>`+circle(x,y,5,'#087b78')}
   const piece=s.size==='lump'?[[150,316,38]]:s.size==='granule'?[[118,322,20],[150,318,22],[184,322,20]]:Array.from({length:12},(_,i)=>[74+i*14,330-(i%3)*6,7]);
   piece.forEach(([x,y,w])=>out+=rect(x-w/2,y-w/2,w,w,'#b9b9bc'));
   if(s.cat==='yes')out+=`<path d="M226,134 l10,-16 l10,16 Z" fill="#d97b11"/>`+text(178,132,'催化劑',13);
+  if(RB)out+=prop('prop-beaker',44,104,212,250);if(HAS('prop-stopwatch'))out+=prop('prop-stopwatch',592,42,44,51);
   out+=text(40,96,'反應物溶液（示意）',16)+text(40,380,'點數≈濃度　短線≈粒子運動快慢',13);
   const X0=320,X1=630,Y0=320,Y1=100,tMax=Math.max(r.time,r.baseTime)*1.1,px=t=>num(X0+(X1-X0)*Math.min(t,tMax)/tMax,1),top=Y1;
   out+=line(X0,Y0,X1,Y0,'#436779')+line(X0,Y0,X0,Y1-10,'#436779')+text(X0,Y1-30,'產物量',15)+text(num((X0+X1)/2-30,1),Y0+22,'時間（s）',14)+text(X0-4,Y0+22,'0',13)+`<text x="${X1}" y="${Y0+22}" font-size="13" text-anchor="end">${num(tMax,0)} s</text>`;
@@ -428,7 +431,7 @@ export function diagram(id,s,r){
   if(r.T>0){out+=`<path data-a d="M${pa.join(' L')}" fill="none" stroke="#2f6fb2" stroke-width="3"/><path data-b d="M${pb.join(' L')}" fill="none" stroke="#d97b11" stroke-width="3"/>`;
    out+=`<text x="${X1+6}" y="${num(+ty(r.A)+5,1)}" font-size="14" fill="#2f6fb2">A ${num(r.A,2)}</text><text x="${X1+6}" y="${num(+ty(r.B)+5,1)}" font-size="14" fill="#d97b11">B ${num(r.B,2)}</text>`;
    if(s.add)out+=line(tx(tAdd),Y1,tx(tAdd),Y0,'#9aaeb9',true)+text(num(+tx(tAdd)+4,1),Y1+12,'加入 A',13)}
-  const col=`rgba(170,90,30,${num(0.08+0.85*r.frac,3)})`;out+=`<path d="M540,70 L540,300 Q540,330 565,330 Q590,330 590,300 L590,70" fill="#fff" stroke="#436779" stroke-width="3"/><path data-tube d="M543,${num(300-200*Math.min(1,r.T/10),1)} L543,300 Q543,327 565,327 Q587,327 587,300 L587,${num(300-200*Math.min(1,r.T/10),1)} Z" fill="${col}"/>`+text(512,56,'試管顏色',14)+text(508,352,'B 的比例 '+num(r.frac*100,1)+'%',13);
+  const col=`rgba(170,90,30,${num(0.08+0.85*r.frac,3)})`;out+=HAS('prop-test-tube')?`<path data-tube d="M541,${num(340-220*Math.min(1,r.T/10),1)} L541,314 Q541,342 565,342 Q589,342 589,314 L589,${num(340-220*Math.min(1,r.T/10),1)} Z" fill="${col}"/>`+prop('prop-test-tube',527.5,60,75,289):`<path d="M540,70 L540,300 Q540,330 565,330 Q590,330 590,300 L590,70" fill="#fff" stroke="#436779" stroke-width="3"/><path data-tube d="M543,${num(300-200*Math.min(1,r.T/10),1)} L543,300 Q543,327 565,327 Q587,327 587,300 L587,${num(300-200*Math.min(1,r.T/10),1)} Z" fill="${col}"/>`+text(512,56,'試管顏色',14)+text(508,352,'B 的比例 '+num(r.frac*100,1)+'%',13);
   if(r.T>0){const w=num(Math.min(150,40*r.rate),1);out+=text(70,344,'正反應速率',13)+rect(150,333,w,12,'#2f6fb2')+text(70,364,'逆反應速率',13)+rect(150,353,w,12,'#d97b11')+text(num(158+w,1),364,'相等',13)}
   out+=text(20,32,'A（無色）⇌ B（有色）　K＝'+r.K+'　平衡時 B÷A＝K',17)+text(20,392,'藍＝A　橘＝B　曲線形狀為示意；平衡時兩條線都不歸零',12);break;
  }
@@ -438,9 +441,11 @@ export function diagram(id,s,r){
   order.forEach(([t,k],i)=>{const x=60+i*96,isM=k===mk,isI=k===r.ionKey;out+=`<rect x="${x}" y="46" width="70" height="30" rx="4" fill="${isM?'#fbe3cf':isI?'#dce8f5':'#f2f4f7'}" stroke="${isM?'#d97b11':isI?'#2f6fb2':'#c9d2de'}" stroke-width="${isM||isI?3:1}"/><text x="${x+35}" y="67" font-size="16" text-anchor="middle">${t}</text>`+(i<5?`<text x="${x+83}" y="67" font-size="16" text-anchor="middle">＞</text>`:'')});
   out+=text(60,32,'活性順序（左邊活性大）　橘框＝放入的金屬　藍框＝溶液中的陽離子',13);
   const base={cu:'#8fc0e6',fe:'#cfe8c8'}[r.ionKey]||'#eef4f8',after=!r.react?base:r.metalSym==='Cu'?'#b9d6ee':r.metalSym==='Fe'?'#dcefd6':base==='#eef4f8'?base:({cu:'#c6def0',fe:'#e2f0de'}[r.ionKey]);
-  out+=`<path d="M70,120 L70,330 Q70,346 86,346 L274,346 Q290,346 290,330 L290,120" fill="none" stroke="#436779" stroke-width="3"/><rect data-solution x="73" y="170" width="214" height="173" fill="${after}"/>`+rect(166,100,28,200,'#9aa3ad')+text(160,94,r.metalSym,15);
+  const MB=HAS('prop-beaker'),strip={Mg:'prop-strip-magnesium',Zn:'prop-strip-zinc',Fe:'prop-strip-iron',Cu:'prop-strip-copper',Ag:'prop-strip-silver'}[r.metalSym];
+  out+=(MB?beakerClip('bk-ma',62,76,236,278)+fillIn('bk-ma',62,170,236,190,after,' data-solution'):`<path d="M70,120 L70,330 Q70,346 86,346 L274,346 Q290,346 290,330 L290,120" fill="none" stroke="#436779" stroke-width="3"/><rect data-solution x="73" y="170" width="214" height="173" fill="${after}"/>`)+(HAS(strip)?prop(strip,160,106,40,171):rect(166,100,28,200,'#9aa3ad'))+text(160,94,r.metalSym,15);
   if(r.kind==='displace'){const dc={Cu:'#b5651d',Ag:'#c9ccd1',Fe:'#555b61',Zn:'#8d949b',Mg:'#b8bcc2'}[r.product]||'#777';for(let i=0;i<9;i++)out+=`<circle data-deposit cx="${i%2?196:164}" cy="${190+i*11}" r="6" fill="${dc}"/>`}
   if(r.kind==='hydrogen')for(let i=0;i<7;i++)out+=`<circle cx="${160+(i%3)*18}" cy="${160+i*16}" r="${4+i%3}" fill="none" stroke="#2f6fb2" stroke-width="2"/>`;
+  if(MB)out+=prop('prop-beaker',62,76,236,278);
   out+=text(70,372,r.solName+'：'+r.change,14);
   if(r.react){out+=`<circle cx="380" cy="200" r="30" fill="#f6e8c8" stroke="#436779" stroke-width="2"/><text x="380" y="206" font-size="16" text-anchor="middle">${r.metalSym}</text><circle cx="580" cy="200" r="30" fill="#dce8f5" stroke="#436779" stroke-width="2"/><text x="580" y="206" font-size="15" text-anchor="middle">${esc(r.ionSym)}</text>`;
    out+=`<g data-electron-transfer>`+arrow(414,190,546,190,'#2f6fb2')+`</g>`+text(440,178,r.electrons+' 個電子（'+r.electrons+'e⁻）',14)+text(340,260,'失去電子（氧化）',13)+text(530,260,'得到電子（還原）',13);
@@ -453,14 +458,18 @@ export function diagram(id,s,r){
   const ink='#436779',e=r.kind==='running';
   const beaker=(x,w,fill)=>`<path d="M${x},150 L${x},330 Q${x},346 ${x+16},346 L${x+w-16},346 Q${x+w},346 ${x+w},330 L${x+w},150" fill="none" stroke="${ink}" stroke-width="3"/><rect x="${x+3}" y="180" width="${w-6}" height="163" fill="${fill}"/>`;
   if(s.mode==='cell'){
-   out+=beaker(60,220,'#eef4f8')+beaker(380,220,e?'#b3d3ec':'#8fc0e6')+`<path d="M230,190 L230,150 Q230,120 260,120 L400,120 Q430,120 430,150 L430,190" fill="none" stroke="#c8955a" stroke-width="14"/>`+text(290,112,'鹽橋',13);
-   out+=rect(158,110,22,190,'#8d949b')+rect(478,110,22,190,'#b5651d')+line(169,110,169,70,ink)+line(169,70,489,70,ink)+line(489,70,489,110,ink)+circle(329,70,14,'#f6c453');
+   const CART=HAS('prop-beaker')&&HAS('prop-salt-bridge');
+   if(CART)out+=beakerClip('bk-c1',80,138,180,212)+beakerClip('bk-c2',400,138,180,212)+fillIn('bk-c1',80,180,180,175,'#e3eef6')+fillIn('bk-c2',400,180,180,175,e?'#b3d3ec':'#8fc0e6')+prop('prop-salt-bridge',223,112,214,110)+text(310,108,'鹽橋',13);
+   else out+=beaker(60,220,'#eef4f8')+beaker(380,220,e?'#b3d3ec':'#8fc0e6')+`<path d="M230,190 L230,150 Q230,120 260,120 L400,120 Q430,120 430,150 L430,190" fill="none" stroke="#c8955a" stroke-width="14"/>`+text(290,112,'鹽橋',13);
+   out+=(HAS('prop-strip-zinc-plate')?prop('prop-strip-zinc-plate',146,106,46,171):rect(158,110,22,190,'#8d949b'))+(HAS('prop-strip-copper-plate')?prop('prop-strip-copper-plate',466,106,46,171):rect(478,110,22,190,'#b5651d'))+line(169,110,169,70,ink)+line(169,70,489,70,ink)+line(489,70,489,110,ink)+(HAS('prop-light-bulb')?prop('prop-light-bulb',312,36,34,60):circle(329,70,14,'#f6c453'));
+   if(CART)out+=prop('prop-beaker',80,138,180,212)+prop('prop-beaker',400,138,180,212);
    if(e)out+=`<g data-electron-wire>`+arrow(200,58,290,58,'#2f6fb2')+arrow(370,58,460,58,'#2f6fb2')+`</g>`+text(260,48,'電子 e⁻',13)+arrow(130,280,100,300,'#b54a5b')+text(84,322,'Zn²⁺',13)+arrow(440,300,470,280,'#b54a5b')+text(424,322,'Cu²⁺',13);
    out+=text(90,370,'負極：鋅（ZnSO₄）',14)+text(410,370,'正極：銅（CuSO₄）',14);
   }else{
    const fill=s.mode==='water'?'#eef4f8':s.mode==='cuC'&&e?'#b9d6ee':'#8fc0e6';out+=beaker(170,320,fill);
-   const elec=s.mode==='cuCu'?'#b5651d':'#555b61',negX=250,posX=410;out+=rect(negX-11,110,22,200,elec)+rect(posX-11,110,22,200,elec);
-   out+=rect(300,52,60,30,'#e4edf2')+text(306,72,'電源',14)+text(286,100,'－',18)+text(360,100,'＋',18)+line(negX,110,negX,67,ink)+line(negX,67,300,67,ink)+line(360,67,posX,67,ink)+line(posX,67,posX,110,ink);
+   const elec=s.mode==='cuCu'?'#b5651d':'#555b61',negX=250,posX=410,EL=s.mode==='cuCu'?'prop-strip-copper-plate':'prop-carbon-rod';
+   out+=HAS(EL)?(s.mode==='cuCu'?prop(EL,negX-24,106,48,178)+prop(EL,posX-24,106,48,178):prop(EL,negX-12.5,110,25,200)+prop(EL,posX-12.5,110,25,200)):rect(negX-11,110,22,200,elec)+rect(posX-11,110,22,200,elec);
+   out+=(HAS('prop-power-supply')?prop('prop-power-supply',300,36,60,61):rect(300,52,60,30,'#e4edf2')+text(306,72,'電源',14))+text(286,100,'－',18)+text(360,100,'＋',18)+line(negX,110,negX,67,ink)+line(negX,67,300,67,ink)+line(360,67,posX,67,ink)+line(posX,67,posX,110,ink);
    if(e){out+=`<g data-electron-wire>`+arrow(292,56,262,56,'#2f6fb2')+arrow(398,56,368,56,'#2f6fb2')+`</g>`+text(196,48,'電子 e⁻',13);
     out+=arrow(360,250,280,250,'#b54a5b')+text(292,242,s.mode==='water'?'H⁺':'Cu²⁺',13)+arrow(300,290,380,290,'#087b78')+text(318,308,s.mode==='water'?'OH⁻':'SO₄²⁻',13);
     if(s.mode==='water'){for(let i=0;i<6;i++)out+=`<circle cx="${negX+(i%2?8:-8)}" cy="${280-i*22}" r="5" fill="none" stroke="#2f6fb2" stroke-width="2"/>`;for(let i=0;i<3;i++)out+=`<circle cx="${posX+(i%2?8:-8)}" cy="${280-i*40}" r="5" fill="none" stroke="#b54a5b" stroke-width="2"/>`;out+=text(520,200,'氫氣：氧氣',14)+text(520,222,'＝ 2：1',14)}
@@ -586,7 +595,7 @@ export function diagram(id,s,r){
   extra=`<svg viewBox="0 0 660 360" role="img" aria-label="教學溶解度曲線，橫軸溫度0到80°C，縱軸每100g水可溶的克數0到65g">${plot(fn,80,65,'溫度（°C）；縱軸：g／100g水')}${circle(60+s.temperature/80*540,270-r.solubility/65*190,6,'#b54a5b')}${text(100,35,'模型'+s.solute.toUpperCase()+' 溶解度曲線（非實測）',18)}</svg>`;
  }
  // 含可拖曳／可聚焦把手的圖不能用 role="img"：img 的子孫對輔助科技是隱藏的，裡面再放 role="button" 會觸發 axe nested-interactive。
- if(SCIENCE_BACKDROP[id])out=backdrop(SCIENCE_BACKDROP[id])+out;
+ if(SCIENCE_BACKDROP[id]){const b=SCIENCE_BACKDROP[id];out=(Array.isArray(b)?backdrop(b[0],b[1]):backdrop(b))+out}
  return `<svg viewBox="0 0 660 400" role="${out.includes('data-lab-drag')?'group':'img'}" aria-labelledby="diagram-title diagram-desc"><title id="diagram-title">本次${esc(id)}模型圖解</title><desc id="diagram-desc">與下方數值同步，完整數據見觀察結果。圖形為教學示意，請閱讀模型限制。</desc><defs><clipPath id="scene-clip"><rect width="660" height="400"/></clipPath></defs><g clip-path="url(#scene-clip)">${out}</g></svg>`+extra;
 }
 
