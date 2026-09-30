@@ -35,7 +35,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 <!-- science-schema:start -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"力與運動實驗室","url":"https://www.bhcs.com.tw/tools/force-motion-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
 <!-- science-schema:end -->
-<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-station-icons-1">
+<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-legacy-guide-1">
 <!-- science-experience-style:start -->
 <style>/* Shared, inline in all 20 labs. Keep diagrams and record tables independent. */
 .labgrid>*,.layout>*,.card,.panel{min-width:0}
@@ -217,10 +217,11 @@ runTests();renderRecords();changed();
 <!-- science-events:start -->
 <script src="../assets/science-events.js" defer></script>
 <!-- science-events:end -->
-<script src="../assets/researcher-lab.js?v=20260930-station-icons-1" defer></script>
+<script src="../assets/researcher-lab.js?v=20260930-legacy-guide-1" defer></script>
 <!-- science-next:start -->
 <aside aria-label="延伸探究" style="padding:16px;margin:16px;border:1px solid #bacfd6;border-radius:12px;background:#eef7f5;color:#152f46;font:16px/1.7 system-ui"><strong>接著做一個完整探究</strong><p><a style="color:#075f80" href="science/motion-graphs.html">直線運動圖表實驗室：動手操作、紀錄與檢核 →</a></p></aside>
 <!-- science-next:end -->
+<script type="application/json" id="lab-guide">{"run": "start", "steps": [{"say": "先看預設：2 kg 的推車受到 6 N 向右的力，沒有摩擦。", "read": "accelValue", "q": "加速度是多少？", "options": [["3 m/s²", "3 m/s²"], ["2 m/s²", "2 m/s²"], ["1.5 m/s²", "1.5 m/s²"]], "hint": "a＝F÷m。", "explain": "6÷2＝3 m/s²。"}, {"say": "只把施力改成 4 N。", "values": {}, "focus": {"id": "force", "value": "4", "label": "4 N"}, "read": "accelValue", "q": "加速度變成？", "options": [["3 m/s²", "3 m/s²"], ["2 m/s²", "2 m/s²"], ["1.5 m/s²", "1.5 m/s²"]], "hint": "看讀值「加速度」。", "explain": "質量相同時，力越小，加速度越小：4÷2＝2 m/s²。"}, {"say": "施力回到 6 N，把質量改成 4 kg。", "values": {}, "focus": {"id": "mass", "value": "4", "label": "4 kg"}, "read": "accelValue", "q": "加速度變成？", "options": [["3 m/s²", "3 m/s²"], ["2 m/s²", "2 m/s²"], ["1.5 m/s²", "1.5 m/s²"]], "hint": "質量加倍會怎樣？", "explain": "力相同時，質量加倍，加速度變成一半：6÷4＝1.5 m/s²。"}, {"say": "回到 2 kg，把施力改成 0 N。", "values": {}, "focus": {"id": "force", "value": "0", "label": "0 N"}, "read": "netValue", "q": "合力是多少？", "options": [["0 N", "0 N"], ["6 N", "6 N"], ["2 N", "2 N"]], "hint": "看讀值「合力」。", "explain": "沒有施力、也沒有摩擦，合力為 0，推車維持原來的運動狀態。"}]}</script>
 <!-- science-study-script:start -->
 <script>(() => {
  'use strict';

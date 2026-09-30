@@ -31,7 +31,7 @@ main{padding:28px 0 56px}.labgrid{display:grid;grid-template-columns:minmax(0,1.
 <!-- science-schema:start -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"浮力與密度實驗室","url":"https://www.bhcs.com.tw/tools/buoyancy-density-lab.html","inLanguage":"zh-Hant","educationalLevel":"國中","learningResourceType":"互動模擬實驗","isAccessibleForFree":true,"provider":{"@type":"Organization","name":"百宏文教"}}</script>
 <!-- science-schema:end -->
-<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-station-icons-1">
+<link rel="stylesheet" href="../assets/researcher-lab.css?v=20260930-legacy-guide-1">
 <!-- science-experience-style:start -->
 <style>/* Shared, inline in all 20 labs. Keep diagrams and record tables independent. */
 .labgrid>*,.layout>*,.card,.panel{min-width:0}
@@ -185,7 +185,8 @@ runTests();syncOutputs();drawMeasure();renderRecords();
 <!-- science-events:start -->
 <script src="../assets/science-events.js" defer></script>
 <!-- science-events:end -->
-<script src="../assets/researcher-lab.js?v=20260930-station-icons-1" defer></script>
+<script src="../assets/researcher-lab.js?v=20260930-legacy-guide-1" defer></script>
+<script type="application/json" id="lab-guide">{"run": "drop", "steps": [{"say": "先看預設：質量 80 g、體積 100 cm³ 的物體放進水中。", "read": "stateValue", "q": "物體會？", "options": [["漂浮", "漂浮"], ["下沉到底部", "沉到底部"], ["懸浮", "懸浮在水中"]], "hint": "比較物體密度和水的密度。", "explain": "物體密度 0.8 g/cm³ 小於水，所以漂浮。"}, {"say": "只把質量加到 120 g。", "values": {}, "focus": {"id": "mass", "value": "120", "label": "120 g"}, "read": "stateValue", "q": "物體會？", "options": [["漂浮", "漂浮"], ["下沉到底部", "沉到底部"], ["懸浮", "懸浮在水中"]], "hint": "物體密度變成多少？", "explain": "密度 1.2 g/cm³ 大於水，物體下沉到底部。"}, {"say": "質量回到 80 g，把液體換成鹽水。", "values": {}, "focus": {"id": "fluid", "value": "salt", "label": "鹽水"}, "read": "submergedValue", "q": "浸在液體中的比例？", "options": [["66.7%", "66.7%"], ["80.0%", "80.0%"], ["100.0%", "100.0%"]], "hint": "看讀值「浸入比例」。", "explain": "鹽水密度較大，同樣的浮力只需要排開較少的液體，所以浸得比較淺。"}, {"say": "回到清水，比較漂浮時的兩個力。", "values": {}, "read": "forcesValue", "q": "浮力和重量？", "options": [["0.78／0.78 N", "一樣大"], ["1.18／0.98 N", "重量比較大"], ["0.98／0.78 N", "浮力比較大"]], "hint": "看讀值「重量／浮力」。", "explain": "漂浮時浮力等於重量，物體才能靜止。"}]}</script>
 <!-- science-study-script:start -->
 <script>(() => {
  'use strict';
