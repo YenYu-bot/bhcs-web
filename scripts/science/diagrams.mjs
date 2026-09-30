@@ -20,7 +20,8 @@ export function diagram(id,s,r){
  let out='';
  const HAS=n=>typeof SCIENCE_ASSETS!=='undefined'&&SCIENCE_ASSETS.has(n);
  const prop=(n,x,y,w,h,extra='')=>`<image data-prop="${n}" href="../../assets/science/props/${n}.webp" x="${num(x,1)}" y="${num(y,1)}" width="${num(w,1)}" height="${num(h,1)}" preserveAspectRatio="none"${extra}/>`;
- const beakerClip=(cid,x,y,w,h)=>`<clipPath id="${cid}"><path d="M${num(x+0.03*w,1)},${num(y+0.05*h,1)} L${num(x+0.115*w,1)},${num(y+0.86*h,1)} Q${num(x+0.14*w,1)},${num(y+0.955*h,1)} ${num(x+0.23*w,1)},${num(y+0.957*h,1)} L${num(x+0.81*w,1)},${num(y+0.957*h,1)} Q${num(x+0.9*w,1)},${num(y+0.955*h,1)} ${num(x+0.93*w,1)},${num(y+0.86*h,1)} L${num(x+0.97*w,1)},${num(y+0.05*h,1)} Z"/></clipPath>`;
+ // 燒杯內壁輪廓由插畫逐列量得：主體內壁在寬度 11.1%～93.5%，底部從 86% 開始收成圓弧
+ const beakerClip=(cid,x,y,w,h)=>`<clipPath id="${cid}"><path d="M${num(x+0.111*w,1)},${num(y+0.1*h,1)} L${num(x+0.111*w,1)},${num(y+0.86*h,1)} Q${num(x+0.125*w,1)},${num(y+0.96*h,1)} ${num(x+0.3*w,1)},${num(y+0.972*h,1)} L${num(x+0.742*w,1)},${num(y+0.972*h,1)} Q${num(x+0.92*w,1)},${num(y+0.96*h,1)} ${num(x+0.935*w,1)},${num(y+0.86*h,1)} L${num(x+0.935*w,1)},${num(y+0.1*h,1)} Z"/></clipPath>`;
  const fillIn=(cid,x,y,w,h,col,extra='')=>`<rect x="${num(x,1)}" y="${num(y,1)}" width="${num(w,1)}" height="${num(h,1)}" fill="${col}" clip-path="url(#${cid})"${extra}/>`;
  const backdrop=(n,w=660)=>HAS(n)?(w<660?`<clipPath id="bd-${n}"><rect x="0" y="0" width="${w}" height="400" rx="10"/></clipPath>`:'')+`<image data-prop="${n}" href="../../assets/science/props/${n}.webp" x="0" y="0" width="660" height="400" preserveAspectRatio="xMidYMid slice" opacity="0.5"${w<660?` clip-path="url(#bd-${n})"`:''}/>`:'';
  switch(id){
@@ -175,7 +176,7 @@ export function diagram(id,s,r){
   let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
   const RB=HAS('prop-beaker');out+=RB?beakerClip('bk-rr',44,104,212,250)+fillIn('bk-rr',44,130,212,230,'#d8ecf6'):`<path d="M40,110 L40,330 Q40,350 60,350 L240,350 Q260,350 260,330 L260,110" fill="#e3f1f6" stroke="#436779" stroke-width="3"/>`;
   const nP=Math.round(s.conc*14),tail=6+10*Math.min(4,r.tempF);
-  for(let i=0;i<nP;i++){const x=num(62+rnd()*176,1),y=num(140+rnd()*190,1),a=rnd()*Math.PI*2;out+=`<line x1="${x}" y1="${y}" x2="${num(x-Math.cos(a)*tail,1)}" y2="${num(y-Math.sin(a)*tail,1)}" stroke="#9aaeb9" stroke-width="2"/>`+circle(x,y,5,'#087b78')}
+  for(let i=0;i<nP;i++){const x=num(RB?74+rnd()*156:62+rnd()*176,1),y=num(140+rnd()*190,1),a=rnd()*Math.PI*2;out+=`<line x1="${x}" y1="${y}" x2="${num(x-Math.cos(a)*tail,1)}" y2="${num(y-Math.sin(a)*tail,1)}" stroke="#9aaeb9" stroke-width="2"/>`+circle(x,y,5,'#087b78')}
   const piece=s.size==='lump'?[[150,316,38]]:s.size==='granule'?[[118,322,20],[150,318,22],[184,322,20]]:Array.from({length:12},(_,i)=>[74+i*14,330-(i%3)*6,7]);
   piece.forEach(([x,y,w])=>out+=rect(x-w/2,y-w/2,w,w,'#b9b9bc'));
   if(s.cat==='yes')out+=`<path d="M226,134 l10,-16 l10,16 Z" fill="#d97b11"/>`+text(178,132,'催化劑',13);
