@@ -20,8 +20,11 @@ jobs:
       - run: node scripts/build_microscope.mjs
       - run: node scripts/build_science.mjs
       - run: node scripts/build_site.mjs
+      - run: python3 scripts/build_shell.py
+      - run: python3 scripts/build_resources.py
       - run: node scripts/build_math_brand.mjs
       - run: git diff --exit-code
+      - run: python3 scripts/check_resources.py
       - run: npm test --prefix scripts
       - name: Reproduce P2 classification even when math tests fail
         if: always()

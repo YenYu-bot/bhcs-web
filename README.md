@@ -7,8 +7,10 @@
 - 主站頁面：根目錄 HTML；共用樣式 `assets/style.css`，選單與預約流程 `assets/site.js`。
 - 研究站：`scripts/science/` 為教材與互動來源，`assets/researcher-lab.*` 為共用研究員介面。修改來源後執行 `build_science.mjs`，不要只改產出頁。
 - 顯微鏡：繪圖來源由 `build_microscope.mjs` 內嵌到 HTML。
-- 教育觀點：文章正文及閱讀版面保留在 `wenzhang/*.html`。`build_site.mjs` 以首頁的頁首、頁尾及聯絡列為共用來源，套用至文章頁；品牌覆蓋樣式在 `assets/article-site.css`。新增或由外部流程產生文章後，也要執行這個步驟。
-- `build_site.mjs` 同時更新主站資源版本及頁尾營業時間；共用 CSS／JS 改動時更新該腳本的 `version`。
+- 頁首、頁尾、聯絡列與營業時間：單一來源在 `scripts/site/`（`header.html`、`footer.html`、`dock.html`、`site.json`）。`build_shell.py` 以 `<!-- site-header:start -->` 等標記注入主站各頁與文章頁，並同步各頁 JSON-LD 的 `openingHoursSpecification`；改導覽或營業時間只改來源，不要直接改頁面。
+- 教育觀點：文章正文及閱讀版面保留在 `wenzhang/*.html`。`build_site.mjs` 套用文章頁的樣式與腳本；品牌覆蓋樣式在 `assets/article-site.css`。新增或由外部流程產生文章後，也要執行這個步驟。
+- `build_site.mjs` 同時更新主站資源版本；共用 CSS／JS 改動時更新該腳本的 `version`。
+- 學習資源頁的所有數字（總數、分類膠囊、各區塊與單元列計數、「顯示全部 N 項」）由 `build_resources.py` 依頁面實際連結計算：`.res-sec` 內 `.tpills` 的直接子連結與 `.science-category li` 內的連結各算一項，同一單元列有幾個按鈕就算幾項。`check_resources.py` 檢查本地 href 存在、`?topic=` 對得到引擎的 topic key，並列出重複 href 與同名不同 href。
 - 數學單檔工具保留自身的出題與列印版面；來源及驗收說明見 `scripts/README.md`。
 - P1 數學螢幕配色由 `scripts/build_math_brand.mjs` 內嵌至 39 個單檔（88 個入口），不增加外部依賴；原始列印規則不改，教用答案統一品牌紅。後續 P2 或教材項目若刻意修改出題邏輯，須更新 `check_math_brand.cjs` 的 P1 基準與對應回歸測試，不能停用數學檢查。
 
@@ -19,7 +21,10 @@ npm ci --prefix scripts
 node scripts/build_microscope.mjs
 node scripts/build_science.mjs
 node scripts/build_site.mjs
+python3 scripts/build_shell.py
+python3 scripts/build_resources.py
 node scripts/build_math_brand.mjs
+python3 scripts/check_resources.py
 npm test --prefix scripts
 node scripts/check_science_integration.cjs
 ```
