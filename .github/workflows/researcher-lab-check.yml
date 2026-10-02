@@ -23,6 +23,7 @@ jobs:
       - run: python3 scripts/build_shell.py
       - run: python3 scripts/build_resources.py
       - run: node scripts/build_math_brand.mjs
+      - run: python3 scripts/build_sitemap.py
       - run: git diff --exit-code
       - run: python3 scripts/check_resources.py
       - run: npm test --prefix scripts
