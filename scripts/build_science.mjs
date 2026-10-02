@@ -99,20 +99,14 @@ for(const [file,prefix,isMath] of [['ziyuan.html','tools/math/',false],['tools/m
  if(!anchor.test(html))throw Error('Missing G11 vector card: '+file);
  const cards=g11R3Cards.map(({topic,title})=>`<a${isMath?' class="card"':''} href="${prefix}g11-drills.html?topic=${topic}">${isMath?'<b>'+title+'</b>':title}</a>`);
  html=html.replace(anchor,match=>cards[0]+match+cards[1]);
- html=html.replace(/(高二上・第三冊 A<(?:small|span)>)\d+ 個/,(_,label)=>label+'13 個');
  if(isMath){
+  html=html.replace(/(高二上・第三冊 A<(?:small|span)>)\d+ 個/,(_,label)=>label+'13 個');
   const dom=new JSDOM(html),count=dom.window.document.querySelectorAll('a.card').length;
   dom.window.close();
   html=html.replace(/共\s*\d+\s*個出題器/g,'共 '+count+' 個出題器');
  }
  write(file,html);
 }
-// Count the rendered resource links, including new math cards, after science cards are rebuilt.
-let resource=read('ziyuan.html');
-resource=resource.replace(/國中自然<span>\d+<\/span>/,'國中自然<span>'+(all.length-1)+'</span>').replace(/國中自然 · 互動教材<span class="count">\d+ 項<\/span>/,'國中自然 · 互動教材<span class="count">'+(all.length-1)+' 項</span>');
-const resourceDom=new JSDOM(resource),resourceTotal=resourceDom.window.document.querySelectorAll('.res-sec .tpills>a,.science-category li>a').length;
-resourceDom.window.close();
-resource=resource.replace(/目前共 \d+ 項/,'目前共 '+resourceTotal+' 項').replace(/顯示全部 \d+ 項資源/,'顯示全部 '+resourceTotal+' 項資源');
-write('ziyuan.html',resource);
+// Resource page counts (nav, headings, totals) are computed by build_resources.py from the rendered links.
 console.log('Built science directory:',all.length,'resources');
 enhanceLessons(root,firstBatch,batch2);
