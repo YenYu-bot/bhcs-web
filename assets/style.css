@@ -318,19 +318,27 @@ td .num{font-weight:600}
   display:flex;align-items:center;gap:.5rem}
 .foot .brandline img{width:30px;height:30px;object-fit:contain;filter:brightness(0) invert(1)}
 
-/* 師資卡 */
+/* 師資卡：不同插畫放進同一套教師資料框（方形圓角、暖白 matte、雙線外框） */
 .staff{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 .staff-card{background:var(--paper);border:1px solid var(--grid-strong);border-radius:var(--radius);
-  padding:1.4rem;display:flex;gap:1.15rem;align-items:flex-start}
-.staff-card img{width:92px;height:92px;flex:0 0 92px;border-radius:50%;object-fit:cover;
-  background:var(--surface);border:1px solid var(--grid-strong)}
+  padding:1.4rem;display:flex;gap:1.4rem;align-items:flex-start}
+.staff-card img{
+  width:104px;height:104px;flex:0 0 104px;display:block;
+  object-fit:cover;object-position:center center;
+  border-radius:12px;padding:5px;background:var(--paper);border:1px solid var(--grid-strong);
+  box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--grid);
+}
 .staff-card .role{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--red);
-  display:block;margin-bottom:.4rem}
+  display:block;margin-bottom:.4rem;padding-top:.15rem}
 .staff-card h3{font-size:1.12rem;margin-bottom:.15em}
 .staff-card .yrs{font-family:var(--mono);font-size:.82rem;color:var(--ink-faint);margin-bottom:.6rem;display:block}
 .staff-card .motto{font-weight:700;font-size:.95rem;margin:0 0 .45em;color:var(--ink)}
 .staff-card p{font-size:.9rem;line-height:1.7;color:var(--ink-soft);margin:0}
-@media(max-width:420px){.staff-card{flex-direction:column}.staff-card img{width:80px;height:80px;flex:none}}
+@media(max-width:520px){
+  .staff-card{display:grid;grid-template-columns:76px minmax(0,1fr);gap:.9rem;padding:1.1rem 1rem}
+  .staff-card img{width:76px;height:76px;flex:none;padding:4px;border-radius:10px}
+  .staff-card .role{padding-top:0}
+}
 
 /* ---------- 手機底部固定操作列 ---------- */
 .dock{
@@ -450,8 +458,8 @@ td .num{font-weight:600}
 .home-page .team-sample{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,auto);gap:1.4rem 1.6rem}
 .home-page .team-sample li{margin:0;display:flex;flex-direction:column;align-items:center;gap:.5rem}
 .home-page .team-sample img{
-  width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;
-  background:var(--surface);border:1px solid var(--grid-strong);box-shadow:0 0 0 4px var(--paper),0 0 0 5px var(--grid);
+  width:112px;height:112px;border-radius:12px;object-fit:cover;object-position:center center;display:block;
+  padding:5px;background:var(--paper);border:1px solid var(--grid-strong);box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--grid);
 }
 .home-page .team-sample span{font-weight:700;font-size:.95rem}
 
@@ -511,8 +519,8 @@ td .num{font-weight:600}
     background:var(--red);box-shadow:0 0 0 3px var(--surface);
   }
   .home-page .process-steps h3{margin-top:0;font-size:1.08rem}
-  .home-page .team-sample{grid-template-columns:repeat(4,1fr);gap:.8rem .4rem;width:100%}
-  .home-page .team-sample img{width:min(100%,88px);height:auto;aspect-ratio:1/1}
+  .home-page .team-sample{grid-template-columns:repeat(4,1fr);gap:.8rem .5rem;width:100%}
+  .home-page .team-sample img{width:min(100%,80px);height:auto;aspect-ratio:1/1;padding:4px;border-radius:10px}
   .home-page .team-sample span{font-size:.86rem}
   .home-page .resource-links{grid-template-columns:1fr 1fr;gap:.7rem}
   .home-page .resource-links a{padding:1rem 1rem .95rem}
