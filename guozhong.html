@@ -22,13 +22,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20261003-teacher-hierarchy-1">
+<link rel="stylesheet" href="assets/style.css?v=20261003-course-pages-h1">
 <link rel="icon" href="assets/favicon.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"@id":"https://www.bhcs.com.tw/#org","name":"百宏文教機構","alternateName":["台中市私立百宏文理短期補習班","BHCS","百宏補習班"],"url":"https://www.bhcs.com.tw/","telephone":"+886-4-2232-0448","foundingDate":"2010","description":"百宏文教機構是台中市北屯區的國小、國中、高中補習班，自2010年在興安路一段深耕，提供國小安親課輔、國中會考主科與高中升學課程。","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","postalCode":"406","addressCountry":"TW"},"geo":{"@type":"GeoCoordinates","latitude":24.1685666,"longitude":120.6937145},"areaServed":[{"@type":"AdministrativeArea","name":"台中市北屯區"},{"@type":"AdministrativeArea","name":"台中市大坑"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Tuesday","opens":"13:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Wednesday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Thursday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"21:30"}],"sameAs":["https://www.facebook.com/bhteams"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://www.bhcs.com.tw/"},{"@type":"ListItem","position":2,"name":"北屯國中補習班","item":"https://www.bhcs.com.tw/guozhong.html"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"國中會考主科課程","description":"針對國中七至九年級開設的數學、理化、生物、英文、國文分科課程，依學校進度與版本授課，段考前加強複習，國三進入總複習與會考衝刺。","educationalLevel":"國中","inLanguage":"zh-TW","provider":{"@type":"EducationalOrganization","name":"百宏文教機構","@id":"https://www.bhcs.com.tw/#org","url":"https://www.bhcs.com.tw/"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"onsite","location":{"@type":"Place","name":"百宏文教機構","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","addressCountry":"TW"}}}}</script>
 </head>
-<body>
+<body class="course-page course-middle">
 <a class="skip" href="#main">跳到主要內容</a>
 <!-- site-header:start -->
 <header class="masthead">
@@ -67,67 +67,90 @@
     </div>
   </section>
 
-  <section>
-    <div class="wrap-narrow prose">
-      <h2>三個年級，三個不同的任務</h2>
-      <div class="plan">
-        <div class="plan-row">
-          <div class="k">七年級</div>
-          <div class="v">
-            <h4>把國小的習慣換掉</h4>
-            <p>國一最大的挑戰不是內容，是節奏。從一科老師教全部，變成每科各有進度與考試。數學進入負數與代數、英文開始有文法結構、生物有大量名詞需要理解而非背誦。這一年若能建立起「先弄懂再練習」的方式，後面兩年會輕鬆很多。</p>
-          </div>
-        </div>
-        <div class="plan-row">
-          <div class="k">八年級</div>
-          <div class="v">
-            <h4>最容易掉隊的一年</h4>
-            <p>理化在這一年進場，數學進入函數與幾何證明，英文開始考長篇閱讀。八年級是我們看過最多學生成績出現斷崖的階段，而且往往不是因為八年級的內容，是七年級的基礎沒補起來。所以八年級新生入班，我們一定會回頭確認七年級的觀念。</p>
-          </div>
-        </div>
-        <div class="plan-row">
-          <div class="k">九年級</div>
-          <div class="v">
-            <h4>從讀完到會考</h4>
-            <p>國三上學期一邊跟新進度、一邊開始總複習，時間壓力最大。我們會依照孩子目前的落點決定取捨——哪些單元值得再花時間拉，哪些該先確保不失分。下學期進入考古題與模擬考檢討，重點放在答題節奏與失分類型分析。</p>
-          </div>
-        </div>
-      </div>
+  <section class="course-intro">
+    <div class="wrap">
+      <ul class="course-facts" aria-label="本年段重點">
+        <li>分科授課・可單科</li>
+        <li>依各校版本與進度</li>
+        <li>段考前安排加強複習</li>
+      </ul>
+      <nav class="course-jump" aria-label="本頁快速跳轉">
+        <a href="#path">三年任務</a>
+        <a href="#subjects">分科課程</a>
+        <a href="#exam">段考準備</a>
+        <a href="#faq">常見問題</a>
+      </nav>
+    </div>
+  </section>
 
-      <h2>分科課程</h2>
-      <p>國中部全部分科授課，可依需要單科報名。以下三科各有獨立說明頁：</p>
-      <div class="cards" style="margin:1.8rem 0 2.4rem">
+  <section id="path">
+    <div class="wrap">
+      <span class="eyebrow">三年任務</span>
+      <h2>三個年級，三個不同的任務</h2>
+      <div class="grade-path">
+        <div><span class="k">七年級</span><h3>先適應國中的速度</h3><p>科目變多、進度變快。數學開始進入代數，英文建立文法結構，生物也需要整理大量概念；這一年先把讀書節奏建立起來。</p></div>
+        <div><span class="k">八年級</span><h3>最容易出現落差的一年</h3><p>理化加入，數學進入函數與幾何，英文閱讀量增加。新生入班時，我們會先確認七年級的基礎是否有斷點。</p></div>
+        <div><span class="k">九年級</span><h3>從校內進度轉進會考</h3><p>上學期兼顧新進度與總複習，下學期進入考古題與模擬考；依目前落點決定哪些要拉高、哪些先守住。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-tint" id="subjects">
+    <div class="wrap">
+      <span class="eyebrow">分科課程</span>
+      <h2>分科授課，可依需要單科報名</h2>
+      <div class="cards course-subjects">
         <a class="card" href="guozhong-shuxue.html">
           <span class="tag">數學</span>
           <h3>國中數學</h3>
           <p>從代數、函數到幾何證明。用圖解拆解題意，不是背公式套題型。</p>
+          <span class="card-more">了解課程 →</span>
         </a>
         <a class="card" href="guozhong-lihua.html">
           <span class="tag">理化</span>
           <h3>國中理化</h3>
           <p>八九年級理化與國一生物。實驗現象、計算與圖表判讀並重。</p>
+          <span class="card-more">了解課程 →</span>
         </a>
         <a class="card" href="guozhong-yingwen.html">
           <span class="tag">英文</span>
           <h3>國中英文</h3>
           <p>單字、文法、閱讀三線並行，另有全民英檢初級輔導。</p>
+          <span class="card-more">了解課程 →</span>
         </a>
+        <div class="card card-info">
+          <span class="tag">國文・讀書班</span>
+          <h3>國文・讀書班</h3>
+          <p>閱讀理解、文言文與寫作架構；實際班別與時段可直接詢問。</p>
+        </div>
       </div>
-      <p>國文另設有讀書班與寫作課程，內容包含閱讀理解訓練、文言文解讀與會考寫作測驗的架構練習。詳細班別與時段請來電或用 LINE 詢問。</p>
+    </div>
+  </section>
 
-      <h2>依照學校進度上課，不是照參考書上課</h2>
-      <p>北屯區各國中使用的教科書版本不同，段考範圍與命題風格也有差異。同一個單元，甲校可能重計算、乙校可能重觀念題。若補習班只發一本通用講義，孩子等於要自己做對照，效率很差。</p>
-      <p>我們的做法是依照學生所屬學校的進度與版本編寫講義，段考前依各校公布的範圍分別安排複習。同一個班的老師因此需要同時掌握多份進度表，段考前再依各校公布的範圍分別安排複習。</p>
-      <blockquote>
-        <p>如果孩子的學校版本比較特殊，諮詢時請直接告訴我們校名與年級，我們會說明目前該校的班別安排狀況。</p>
-      </blockquote>
+  <section id="method">
+    <div class="wrap">
+      <span class="eyebrow">百宏怎麼處理</span>
+      <h2>照學校進度上課，用錯題決定下一步</h2>
+      <div class="course-method-grid">
+        <div>
+          <h3>跟著孩子的學校進度</h3>
+          <p>北屯各校版本與段考範圍不同。我們依學生所屬學校安排講義與複習，段考前再按各校公布範圍調整。</p>
+          <p class="note">如果孩子的學校版本比較特殊，諮詢時請直接告訴我們校名與年級，我們會說明目前該校的班別安排狀況。</p>
+        </div>
+        <div>
+          <h3>用錯題紀錄決定下一步</h3>
+          <p>作答紀錄會累積成知識點與錯題分布，老師可以看到反覆失分的位置，再決定下一輪要補什麼。另設 AI 雙師讀書班，課後練習同樣留下紀錄。</p>
+          <p class="course-more"><a href="xuexi-xitong.html">看學習系統怎麼運作 →</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <h2>AI 雙師讀書班</h2>
-      <p>除了一般課程，我們另設有 AI 雙師讀書班。學生在課後練習的每一題作答都會留下紀錄，系統會累積並標示出反覆錯在同一類型的題目——例如「一元二次方程式的應用題」連續三次失分，而不是籠統的「數學不好」。</p>
-      <p>老師拿到的是具體的錯誤分布，據此決定下一堂補強什麼。學生自己也看得到進步軌跡，知道哪一塊已經穩了、哪一塊還要練。詳細的運作方式請見<a href="xuexi-xitong.html">學習系統說明</a>。</p>
-
-      <h2>段考前後我們做什麼</h2>
-      <table>
+  <section class="sec-tint" id="exam">
+    <div class="wrap-narrow">
+      <span class="eyebrow">段考準備</span>
+      <h2>一次段考，我們怎麼準備</h2>
+      <table class="exam-table">
         <thead><tr><th>時間</th><th>安排</th></tr></thead>
         <tbody>
           <tr><td>段考前 3–4 週</td><td>依各校公布範圍調整進度，確認課內單元全部教完</td></tr>
@@ -139,8 +162,18 @@
     </div>
   </section>
 
+  <section class="course-cta">
+    <div class="wrap-narrow">
+      <p class="course-cta-q">不知道是進度問題，還是基礎沒接上？</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="lianluo.html">預約免費程度確認</a>
+        <a class="btn btn-line" href="https://line.me/R/ti/p/%40bhcs" rel="noopener">LINE 詢問</a>
+      </div>
+    </div>
+  </section>
+
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"國二理化跟不上，還來得及嗎？","acceptedAnswer":{"@type":"Answer","text":"來得及，但要先確認問題出在哪。理化的計算多半建立在國一數學的比例與代數上，很多學生不是理化聽不懂，是數學的基礎不夠。我們會先做程度確認找出真正的卡點，再決定要從哪裡開始補。"}},{"@type":"Question","name":"國三才開始補會不會太晚？","acceptedAnswer":{"@type":"Answer","text":"不算太晚，但要有取捨。國三時間有限，我們會依照孩子目前的落點決定哪些單元值得再花時間拉、哪些先確保不失分，而不是從頭全部重來。建議盡早來做一次程度確認，時間才有辦法有效分配。"}},{"@type":"Question","name":"可以只補數學或只補理化嗎？","acceptedAnswer":{"@type":"Answer","text":"可以。國中部全部分科授課，每一科都能單獨報名。我們會先了解各科狀況再給建議，不會要求整包報名。"}},{"@type":"Question","name":"段考前有加強班嗎？","acceptedAnswer":{"@type":"Answer","text":"有。段考前 2 週開始安排範圍複習與加強練習時段，考前一週針對個別學生的弱項再做單獨補強。段考後會做考卷檢討與失分類型分析。"}},{"@type":"Question","name":"孩子的學校版本跟別人不一樣怎麼辦？","acceptedAnswer":{"@type":"Answer","text":"我們的講義依照學生所屬學校的進度與版本編寫，段考前也會依各校範圍分別安排複習。諮詢時請直接告訴我們校名與年級，我們會說明該校目前的班別安排。"}}]}</script>
-  <section class="sec-tint">
+  <section class="sec-tint" id="faq">
     <div class="wrap-narrow faq">
       <span class="eyebrow">常見問題</span>
       <h2>家長最常問我們的事</h2>
@@ -204,6 +237,6 @@
   <a class="btn-line" href="https://line.me/R/ti/p/%40bhcs" style="background:var(--line-green);color:#fff">加 LINE 詢問</a>
 </div>
 <!-- site-dock:end -->
-<script src="assets/site.js?v=20261003-teacher-hierarchy-1" defer></script>
+<script src="assets/site.js?v=20261003-course-pages-h1" defer></script>
 </body>
 </html>

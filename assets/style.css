@@ -364,6 +364,135 @@ td .num{font-weight:600}
   .teacher-fulltime{padding:1.2rem 1.1rem 1.1rem 1.6rem}
 }
 
+/* ============================================================
+   招生主頁（guoxiao／guozhong／gaozhong）：只作用於 .course-page
+   ============================================================ */
+.course-page .course-intro{padding-block:1.4rem 0;border-bottom:1px solid var(--grid)}
+.course-page .course-facts{
+  display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;list-style:none;padding:0;margin:0 0 1rem;
+  color:var(--ink-soft);font-size:.9rem;font-weight:600;
+}
+.course-page .course-facts li{margin:0;display:flex;align-items:center;gap:.45rem}
+.course-page .course-facts li::before{content:"✓";color:var(--red);font-family:var(--mono);font-weight:700}
+.course-page .course-jump{display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -1.2rem;padding:0 1.2rem;white-space:nowrap}
+.course-page .course-jump::-webkit-scrollbar{display:none}
+.course-page .course-jump a{
+  flex:0 0 auto;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;color:var(--ink-soft);text-decoration:none;
+  padding:.75rem .7rem .7rem;border-bottom:2px solid transparent;
+}
+.course-page .course-jump a:hover{color:var(--ink);border-bottom-color:var(--red)}
+.course-page .course-jump a::before{content:"→ ";color:var(--red)}
+.course-page section[id]{scroll-margin-top:76px}
+.course-page .eyebrow+h2{margin-top:0}
+.course-page .course-more{margin:1.2rem 0 0;font-weight:700}
+.course-page .course-more a{color:var(--red);text-decoration-color:transparent}
+.course-page .course-more a:hover{text-decoration-color:var(--red)}
+
+/* 年級任務 */
+.course-page .grade-path{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:1.6rem;border-top:1.5px solid var(--ink)}
+.course-page .grade-path>div{padding:1.1rem 0 .3rem}
+.course-page .grade-path .k{font-family:var(--mono);font-size:.8rem;color:var(--red);font-weight:600;display:block;margin-bottom:.5rem}
+.course-page .grade-path h3{font-size:1.15rem;margin:0 0 .4em}
+.course-page .grade-path p{margin:0;font-size:.95rem;color:var(--ink-soft);line-height:1.75}
+
+/* 國小一天流程 */
+.course-page .day-flow{list-style:none;margin:1.6rem 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem}
+.course-page .day-flow li{position:relative;margin:0;padding-top:1.1rem}
+.course-page .day-flow li::before{content:"";position:absolute;top:0;left:0;right:-1.4rem;height:1.5px;background:var(--ink)}
+.course-page .day-flow li:last-child::before{right:0}
+.course-page .day-flow .k{position:absolute;top:-.45rem;left:0;background:var(--paper);padding-right:.5rem;font-family:var(--mono);font-size:.8rem;color:var(--red);font-weight:600;line-height:1}
+.course-page .day-flow h3{font-size:1.1rem;margin:.6rem 0 .35em}
+.course-page .day-flow p{margin:0;font-size:.93rem;color:var(--ink-soft);line-height:1.7}
+
+/* 國小課程卡 */
+.course-page .course-offerings{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.6rem}
+.course-page .offering{background:var(--paper);border:1px solid var(--grid-strong);border-radius:var(--radius);padding:1.3rem 1.3rem 1.2rem}
+.course-page .offering .tag,.course-page .subject-grid .tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;color:var(--red);display:block;margin-bottom:.6rem}
+.course-page .offering h3,.course-page .subject-grid h3{font-size:1.12rem;margin:0 0 .35em}
+.course-page .offering p,.course-page .subject-grid p{margin:0;font-size:.93rem;color:var(--ink-soft);line-height:1.7}
+
+/* 國小升國一 callout */
+.course-page .course-callout{
+  position:relative;max-width:760px;margin:0;padding:1.6rem 1.8rem 1.5rem 2.1rem;
+  background:#FBF9F3;border:1px solid var(--grid);border-radius:var(--radius);
+}
+.course-page .course-callout::before{content:"";position:absolute;top:1.3rem;bottom:1.3rem;left:.9rem;width:2px;background:var(--red);opacity:.8}
+.course-page .course-callout h2{font-size:clamp(1.35rem,2.6vw,1.8rem);margin-bottom:.5em}
+.course-page .course-callout p{margin:0 0 .6em;color:var(--ink-soft);line-height:1.8}
+.course-page .course-callout .course-more{margin-top:.8rem}
+
+/* 國中分科卡（含資訊卡） */
+.course-page .course-subjects{margin-top:1.6rem;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:640px){.course-page .course-subjects{grid-template-columns:1fr}}
+.course-page .card-info{background:var(--surface);border-style:dashed}
+
+/* 高中科目 2×2 */
+.course-page .subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.6rem}
+.course-page .subject-grid>div{background:var(--paper);border:1px solid var(--grid-strong);border-top:3px solid var(--ink);border-radius:var(--radius);padding:1.3rem 1.3rem 1.2rem}
+
+/* 雙欄做法 */
+.course-page .course-method-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem 2.4rem;margin-top:1.6rem}
+.course-page .course-method-grid>div{border-top:1.5px solid var(--ink);padding-top:1rem}
+.course-page .course-method-grid h3{font-size:1.15rem;margin:0 0 .4em}
+.course-page .course-method-grid p{margin:0 0 .6em;font-size:.95rem;color:var(--ink-soft);line-height:1.75}
+.course-page .course-method-grid .note{font-size:.86rem;color:var(--ink-faint);border-left:2px solid var(--grid-strong);padding-left:.8rem}
+
+/* 高中免費工具 callout（方格紙） */
+.course-page .course-resource-box{border:1.5px solid var(--ink);border-radius:var(--radius);padding:clamp(1.4rem,3.5vw,2.2rem)}
+.course-page .course-resource-box>p{max-width:60ch;color:var(--ink-soft)}
+.course-page .resource-entries{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:1.4rem}
+.course-page .resource-entries a{display:block;background:var(--paper);border:1px solid var(--grid-strong);border-top:3px solid var(--ink);border-radius:var(--radius);padding:1rem 1.1rem;text-decoration:none;color:inherit;transition:border-color .18s}
+.course-page .resource-entries a:hover{border-color:var(--red)}
+.course-page .resource-entries b{display:block;font-size:1rem}
+.course-page .resource-entries span{display:block;font-size:.84rem;color:var(--ink-soft);margin-top:.2rem}
+
+/* 段考表格：桌機維持 table，手機改為卡列 */
+.course-page .exam-table{margin-top:1.4rem}
+.course-page .exam-table td:first-child{font-family:var(--mono);font-size:.88rem;font-weight:600;white-space:nowrap}
+
+/* mid-page CTA */
+.course-page .course-cta{padding-block:clamp(2.2rem,5vw,3.2rem);border-top:1px solid var(--grid)}
+.course-page .course-cta .wrap-narrow{border:1.5px solid var(--ink);background:var(--paper);padding:1.5rem clamp(1.2rem,4vw,2rem);display:flex;align-items:center;justify-content:space-between;gap:1rem 2rem;flex-wrap:wrap}
+.course-page .course-cta-q{margin:0;font-family:var(--serif);font-weight:900;font-size:clamp(1.1rem,2.2vw,1.35rem);line-height:1.4}
+.course-page .course-cta .hero-actions{margin:0}
+
+@media(max-width:1100px){
+  .course-page .day-flow{grid-template-columns:1fr 1fr;row-gap:2rem}
+  .course-page .day-flow li:nth-child(2)::before{right:0}
+  .course-page .course-offerings{grid-template-columns:1fr 1fr}
+}
+@media(max-width:860px){
+  .course-page .grade-path{grid-template-columns:1fr;gap:0;border-top:0}
+  .course-page .grade-path>div{border-top:1px solid var(--grid-strong);padding:1rem 0}
+  .course-page .grade-path>div:first-child{border-top:1.5px solid var(--ink)}
+  .course-page .course-method-grid{grid-template-columns:1fr;gap:1.4rem}
+  .course-page .resource-entries{grid-template-columns:1fr}
+  .course-page .course-cta .wrap-narrow{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:640px){
+  .course-page .course-facts{gap:.4rem .9rem;font-size:.84rem}
+  .course-page .day-flow{grid-template-columns:1fr;gap:0;padding-left:1.9rem;border-left:1.5px solid var(--ink)}
+  .course-page .day-flow li{padding:0 0 1.5rem}
+  .course-page .day-flow li:last-child{padding-bottom:0}
+  .course-page .day-flow li::before{display:none}
+  .course-page .day-flow .k{position:static;display:block;background:none;padding:0;margin-bottom:.3rem}
+  .course-page .day-flow li::after{content:"";position:absolute;left:calc(-1.9rem - 5px);top:.2rem;width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px var(--paper)}
+  .course-page .day-flow h3{margin-top:0}
+  .course-page .course-offerings{grid-template-columns:1fr}
+  .course-page .course-callout{padding:1.3rem 1.2rem 1.2rem 1.7rem}
+  .course-page .exam-table,.course-page .exam-table tbody,.course-page .exam-table tr,.course-page .exam-table td{display:block;width:100%}
+  .course-page .exam-table thead{display:none}
+  .course-page .exam-table tr{border:1px solid var(--grid-strong);border-radius:var(--radius);background:var(--paper);margin-bottom:.7rem}
+  .course-page .exam-table td{border:0;padding:.55rem .9rem}
+  .course-page .exam-table td:first-child{color:var(--red);padding-bottom:0;white-space:normal}
+  .course-page .exam-table td:last-child{padding-top:.2rem;padding-bottom:.8rem;color:var(--ink-soft)}
+  .course-page .course-cta .hero-actions{width:100%}
+  .course-page .course-cta .hero-actions .btn{flex:1 1 100%}
+}
+@media(max-width:380px){
+  .course-page .subject-grid{grid-template-columns:1fr}
+}
+
 /* ---------- 手機底部固定操作列 ---------- */
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;
