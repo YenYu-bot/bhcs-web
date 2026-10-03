@@ -22,13 +22,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20261003-teacher-hierarchy-1">
+<link rel="stylesheet" href="assets/style.css?v=20261003-course-pages-h1">
 <link rel="icon" href="assets/favicon.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"@id":"https://www.bhcs.com.tw/#org","name":"百宏文教機構","alternateName":["台中市私立百宏文理短期補習班","BHCS","百宏補習班"],"url":"https://www.bhcs.com.tw/","telephone":"+886-4-2232-0448","foundingDate":"2010","description":"百宏文教機構是台中市北屯區的國小、國中、高中補習班，自2010年在興安路一段深耕，提供國小安親課輔、國中會考主科與高中升學課程。","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","postalCode":"406","addressCountry":"TW"},"geo":{"@type":"GeoCoordinates","latitude":24.1685666,"longitude":120.6937145},"areaServed":[{"@type":"AdministrativeArea","name":"台中市北屯區"},{"@type":"AdministrativeArea","name":"台中市大坑"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Tuesday","opens":"13:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Wednesday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Thursday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"21:30"}],"sameAs":["https://www.facebook.com/bhteams"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://www.bhcs.com.tw/"},{"@type":"ListItem","position":2,"name":"北屯安親班","item":"https://www.bhcs.com.tw/guoxiao.html"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"國小安親課輔與才藝課程","description":"國小一至六年級的課後安親輔導，包含作業完成與訂正、學科複習，另設兒童美語、STEAM科學、數學菁英班與私立中學入學準備。","educationalLevel":"國小","inLanguage":"zh-TW","provider":{"@type":"EducationalOrganization","name":"百宏文教機構","@id":"https://www.bhcs.com.tw/#org","url":"https://www.bhcs.com.tw/"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"onsite","location":{"@type":"Place","name":"百宏文教機構","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","addressCountry":"TW"}}}}</script>
 </head>
-<body>
+<body class="course-page course-primary">
 <a class="skip" href="#main">跳到主要內容</a>
 <!-- site-header:start -->
 <header class="masthead">
@@ -67,42 +67,72 @@
     </div>
   </section>
 
-  <section>
-    <div class="wrap-narrow prose">
+  <section class="course-intro">
+    <div class="wrap">
+      <ul class="course-facts" aria-label="本年段重點">
+        <li>接送・到班點名</li>
+        <li>作業完成＋訂正</li>
+        <li>美語・科學・數學同址銜接</li>
+      </ul>
+      <nav class="course-jump" aria-label="本頁快速跳轉">
+        <a href="#day">一天怎麼過</a>
+        <a href="#courses">有哪些課程</a>
+        <a href="#grade7">升國一準備</a>
+        <a href="#faq">常見問題</a>
+      </nav>
+    </div>
+  </section>
+
+  <section id="day">
+    <div class="wrap">
+      <span class="eyebrow">一天怎麼過</span>
       <h2>一天的流程</h2>
-      <div class="plan">
-        <div class="plan-row"><div class="k">放學</div><div class="v"><h4>接送與點名</h4><p>由專人接送至教室，到班即點名確認。若孩子當天未到，我們會主動聯繫家長確認。</p></div></div>
-        <div class="plan-row"><div class="k">第一段</div><div class="v"><h4>完成當日作業</h4><p>老師在旁陪伴，遇到不會的先引導思考再講解。作業完成後由老師逐項檢查，錯的當場訂正。</p></div></div>
-        <div class="plan-row"><div class="k">第二段</div><div class="v"><h4>訂正與複習</h4><p>訂正不是把答案抄對，是請孩子講一次為什麼。講不出來就再回到觀念。這一段也會安排當週學科的複習與練習。</p></div></div>
-        <div class="plan-row"><div class="k">加選課程</div><div class="v"><h4>美語・科學・數學</h4><p>依家長選擇銜接兒童美語、STEAM 科學或數學菁英班，不需要再轉場到其他地方。</p></div></div>
-      </div>
+      <ol class="day-flow">
+        <li><span class="k">01</span><h3>放學接送</h3><p>由專人接送到班並點名；孩子未到班時主動與家長確認。</p></li>
+        <li><span class="k">02</span><h3>完成作業</h3><p>老師陪伴完成當日作業，不會的先引導思考，再進一步講解。</p></li>
+        <li><span class="k">03</span><h3>訂正與複習</h3><p>作業完成後逐項檢查；訂正時請孩子說出自己的想法，確認是真的懂。</p></li>
+        <li><span class="k">04</span><h3>加選課程</h3><p>依安排銜接兒童美語、STEAM 科學或數學菁英班，不需要再轉場。</p></li>
+      </ol>
+    </div>
+  </section>
 
+  <section class="sec-tint" id="courses">
+    <div class="wrap">
+      <span class="eyebrow">有哪些課程</span>
       <h2>課程內容</h2>
-      <h3>安親課輔</h3>
-      <p>核心是三件事：作業完成、訂正到懂、學科複習。我們不用「先寫完再說」的方式趕進度，遇到不會的題目會先引導孩子自己想，想不出來再拆解講解。訂正時會請孩子用自己的話說一次解題過程，說不出來就代表還沒懂，回到觀念重講。</p>
-      <p>這樣做速度比較慢，但國小階段真正在建立的是學習方法。一個習慣把不會的跳過的孩子，到了國中會很辛苦。</p>
+      <div class="course-offerings">
+        <div class="offering"><span class="tag">核心</span><h3>安親課輔</h3><p>作業完成、訂正到懂、學科複習。遇到不會的先引導思考，再拆解講解。</p></div>
+        <div class="offering"><span class="tag">加選</span><h3>兒童美語</h3><p>從發音、拼讀到句型與閱讀，逐步銜接國中英文，也讓孩子願意開口使用英文。</p></div>
+        <div class="offering"><span class="tag">加選</span><h3>STEAM 科學</h3><p>透過實驗與製作理解原理，重點是保留對「為什麼」的好奇與觀察能力。</p></div>
+        <div class="offering"><span class="tag">加選</span><h3>數學菁英班</h3><p>給行有餘力的孩子，練習解題策略、邏輯推演與進階題型，而不是單純提前寫國中內容。</p></div>
+        <div class="offering"><span class="tag">高年級</span><h3>私中升學準備</h3><p>依考科熟悉題型與應試節奏；建議提早規劃，避免準備時間過度壓縮。</p></div>
+      </div>
+    </div>
+  </section>
 
-      <h3>兒童美語</h3>
-      <p>從字母發音與自然發音法開始，建立看到單字能拼讀的能力，而不是靠死背。中高年級進入基礎句型與短文閱讀，銜接國中英文的文法架構。上課以口說練習為主，讓孩子敢開口。</p>
+  <section id="grade7">
+    <div class="wrap">
+      <aside class="course-callout">
+        <span class="eyebrow">升國一準備</span>
+        <h2>小六升國一，真正要換的是學習方式</h2>
+        <p>國中科目更多、速度更快，很多國小成績穩定的孩子，第一次段考才發現原本的方法不夠用。六年級下學期開始，我們會逐步調整整理、複習與訂正的節奏，讓轉換不要等到國一才發生。</p>
+        <p class="course-more"><a href="guozhong.html">看看國中部怎麼安排 →</a></p>
+      </aside>
+    </div>
+  </section>
 
-      <h3>STEAM 科學</h3>
-      <p>以動手實作為主的科學課程，透過實驗與製作理解原理。目的不是提前學國中理化，是讓孩子保有對「為什麼會這樣」的好奇心。這份好奇心到了國中理化階段，是很難用補習補回來的東西。</p>
-
-      <h3>數學菁英班</h3>
-      <p>給行有餘力、對數學有興趣的孩子。內容包含數學思考訓練、進階題型與競賽數學的入門，重點在解題策略與邏輯推演，而不是提前寫國中的題目。</p>
-
-      <h3>私中升學準備</h3>
-      <p>針對計畫報考私立中學的高年級學生，依考科進行準備，包含考題型式熟悉與應試節奏訓練。建議提前一年開始，時間太趕反而會影響校內成績。</p>
-
-      <h2>小六升國一，是最需要注意的一年</h2>
-      <p>國小六年級下學期到國一上學期，是我們觀察到落差最容易被拉開的階段。國中的科目變多、進度變快、考試變密集，很多在國小成績穩定的孩子，到國一第一次段考會突然跌一大截。</p>
-      <p>原因通常不是能力問題，是方法問題——國小可以靠上課聽懂加寫完作業就應付得來，國中不行。我們在六年級下學期會開始調整孩子的學習節奏，讓這個轉換不要發生在國一的第一次段考上。</p>
-      <p>相關的國中課程內容，可以參考<a href="guozhong.html">國中部說明</a>。</p>
+  <section class="course-cta">
+    <div class="wrap-narrow">
+      <p class="course-cta-q">想先看看孩子放學後會怎麼安排？</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="lianluo.html">預約參觀教室</a>
+        <a class="btn btn-line" href="https://line.me/R/ti/p/%40bhcs" rel="noopener">LINE 詢問</a>
+      </div>
     </div>
   </section>
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"有接送嗎？","acceptedAnswer":{"@type":"Answer","text":"有，由專人接送至教室，到班即點名確認。若孩子當天未到，我們會主動聯繫家長。實際接送的學校與路線請來電 04-2232-0448 確認。"}},{"@type":"Question","name":"作業寫完之後還會做什麼？","acceptedAnswer":{"@type":"Answer","text":"作業完成後由老師逐項檢查並當場訂正，接著進行當週學科的複習與練習。訂正時會請孩子用自己的話說明解題過程，確認是真的懂了而不是抄對答案。"}},{"@type":"Question","name":"安親班可以同時上美語或科學嗎？","acceptedAnswer":{"@type":"Answer","text":"可以。兒童美語、STEAM 科學與數學菁英班都在同一個地點銜接，不需要再轉場。實際時段安排請諮詢時說明孩子的年級，我們會提供可搭配的課表。"}},{"@type":"Question","name":"孩子準備考私中，什麼時候開始比較好？","acceptedAnswer":{"@type":"Answer","text":"建議提前一年開始。私中準備需要熟悉考題型式與應試節奏，時間太趕不僅效果有限，還可能影響校內成績。歡迎先來談談孩子目前的狀況再決定。"}},{"@type":"Question","name":"低年級和高年級是分開的嗎？","acceptedAnswer":{"@type":"Answer","text":"是的，依年段分班，作業內容與複習重點都不同。實際班級安排請來電詢問目前該年段的狀況。"}}]}</script>
-  <section class="sec-tint">
+  <section class="sec-tint" id="faq">
     <div class="wrap-narrow faq">
       <span class="eyebrow">常見問題</span>
       <h2>家長最常問我們的事</h2>
@@ -166,6 +196,6 @@
   <a class="btn-line" href="https://line.me/R/ti/p/%40bhcs" style="background:var(--line-green);color:#fff">加 LINE 詢問</a>
 </div>
 <!-- site-dock:end -->
-<script src="assets/site.js?v=20261003-teacher-hierarchy-1" defer></script>
+<script src="assets/site.js?v=20261003-course-pages-h1" defer></script>
 </body>
 </html>
