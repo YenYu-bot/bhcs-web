@@ -8,6 +8,9 @@ const declaredCount=Number(d.querySelector('header p')?.textContent.match(/共\s
 assert.ok(Number.isSafeInteger(declaredCount)&&declaredCount>0,'math index declared tool count missing');
 assert.equal(links.length,declaredCount,'math index cards differ from its declared tool count');
 assert.match(d.querySelector('.intro')?.textContent||'',new RegExp('共\\s*'+declaredCount+'\\s*個出題器'),'math index intro count differs from header');
+assert.match(d.querySelector('meta[name="description"]')?.getAttribute('content')||'',new RegExp('共\\s*'+declaredCount+'\\s*個出題器'),'math index meta description count differs from header');
+for(const h2 of d.querySelectorAll('section > h2')){const span=h2.querySelector('span');if(!span)continue;const group=h2.childNodes[0].textContent.trim(),declared=Number(span.textContent.match(/(\d+)\s*個/)?.[1]),grid=h2.nextElementSibling;assert.ok(Number.isSafeInteger(declared),group+' group count missing');assert.ok(grid&&grid.classList.contains('grid'),group+' heading is not followed by its .grid');const actual=grid.querySelectorAll(':scope > a.card').length;assert.equal(actual,declared,`math index group ${group} declares ${declared} but has ${actual} cards`)}
+for(const [file,label] of [['g9b-2-1-boxplot.html','盒狀圖繪製與讀圖'],['g9b-2-2-tree-diagram.html','樹狀圖繪製與樣本空間圖']]){const card=d.querySelector(`a.card[href="${file}"]`);assert.ok(card,file+' card missing from math index');assert.equal(card.querySelector('b')?.textContent,label,file+' card label must match ziyuan.html (B-class legacy page)')}
 const files=[...new Set(links.map(u=>u.pathname.slice(1)))];for(const file of files)assert.ok(fs.existsSync(path.join(root,file)),file+' linked from index but missing');
 const p2EngineFiles=new Set(files.filter(file=>/^tools\/math\/g[^/]*-drills\.html$/.test(file)));
 const approvedCrosslinks=new Set(['tools/math/g8-quadratic-arithmetic-sequence.html']);

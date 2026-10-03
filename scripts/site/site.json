@@ -1,15 +1,47 @@
 {
-  "_comment": "主站共用資料。營業時間：沿用 2026-10 盤點時全站一致的版本（頁尾 17 處、JSON-LD 14 處皆相同），尚待 YenYu 確認；請勿在此之外的頁面另寫營業時間。",
+  "_comment": "主站共用資料。營業時間沿用 2026-10 正式站各頁一致版本；如有變更，只修改此檔。",
   "hours": {
-    "status": "待 YenYu 確認",
+    "status": "正式站現行 canonical",
     "text": "週一至週五 12:30–22:00（週二 13:30 起）　週六 09:00–21:30　週日公休",
+    "faqText": "週日公休。週一至週五 12:30–22:00（週二 13:30 起），週六 09:00–21:30。",
+    "contactMeta": "百宏文教機構位於406台中市北屯區興安路一段142號，電話04-2232-0448。歡迎預約免費試聽與參觀教室，週一至週六皆有課程，週日公休。",
     "specification": [
-      {"@type": "OpeningHoursSpecification", "dayOfWeek": "Monday", "opens": "12:30", "closes": "22:00"},
-      {"@type": "OpeningHoursSpecification", "dayOfWeek": "Tuesday", "opens": "13:30", "closes": "22:00"},
-      {"@type": "OpeningHoursSpecification", "dayOfWeek": "Wednesday", "opens": "12:30", "closes": "22:00"},
-      {"@type": "OpeningHoursSpecification", "dayOfWeek": "Thursday", "opens": "12:30", "closes": "22:00"},
-      {"@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "12:30", "closes": "22:00"},
-      {"@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "21:30"}
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Monday",
+        "opens": "12:30",
+        "closes": "22:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Tuesday",
+        "opens": "13:30",
+        "closes": "22:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Wednesday",
+        "opens": "12:30",
+        "closes": "22:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Thursday",
+        "opens": "12:30",
+        "closes": "22:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Friday",
+        "opens": "12:30",
+        "closes": "22:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Saturday",
+        "opens": "09:00",
+        "closes": "21:30"
+      }
     ]
   }
 }

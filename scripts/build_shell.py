@@ -18,6 +18,12 @@ page depth and the matching nav link gets aria-current="page".
 The JSON-LD "openingHoursSpecification" array of every page is rewritten from
 site.json as well, so the footer text and structured data cannot drift apart.
 
+lianluo.html additionally carries the hours in prose: the meta/og description
+(hours.contactMeta) and the "週日有上課嗎？" FAQ answer in both the visible
+<details> and the FAQPage JSON-LD (hours.faqText). Those four slots are
+rewritten with explicit anchors and the build fails if any anchor is missing
+or duplicated, so a markup change cannot silently detach them from site.json.
+
 Run after build_site.mjs (which owns asset cache versions and article pages).
 """
 
@@ -35,6 +41,13 @@ MARKER = {
     "site-dock": re.compile(r'<div class="dock">[\s\S]*?</div>'),
 }
 HOURS_RE = re.compile(r'"openingHoursSpecification":\[[^\]]*\]')
+CONTACT_PAGE = "lianluo.html"
+CONTACT_SLOTS = {
+    "meta description": re.compile(r'(<meta name="description" content=")[^"]*(")'),
+    "og description": re.compile(r'(<meta property="og:description" content=")[^"]*(")'),
+    "FAQ JSON-LD answer": re.compile(r'("name":"週日有上課嗎？","acceptedAnswer":\{"@type":"Answer","text":")[^"]*(")'),
+    "visible FAQ answer": re.compile(r'(<summary>週日有上課嗎？</summary><p>)[^<]*(</p>)'),
+}
 NAV_LINK_RE = re.compile(r'(<a href=")([^"]+)(">)(?=[^<]*</a>)')
 
 
@@ -83,6 +96,21 @@ def inject(text: str, key: str, html: str) -> str:
     raise SystemExit(f"{key}: no marker or legacy block found")
 
 
+def sync_contact(text: str, hours: dict) -> str:
+    """Rewrite the four prose hours slots of lianluo.html; fail loudly if any anchor is off."""
+    values = {
+        "meta description": hours["contactMeta"],
+        "og description": hours["contactMeta"],
+        "FAQ JSON-LD answer": hours["faqText"],
+        "visible FAQ answer": hours["faqText"],
+    }
+    for name, pattern in CONTACT_SLOTS.items():
+        text, count = pattern.subn(lambda m, v=values[name]: f"{m.group(1)}{v}{m.group(2)}", text)
+        if count != 1:
+            raise SystemExit(f"{CONTACT_PAGE}: expected exactly 1 {name} anchor, found {count}")
+    return text
+
+
 def main() -> None:
     site = json.loads((SOURCE / "site.json").read_text(encoding="utf-8"))
     hours_text = site["hours"]["text"]
@@ -105,6 +133,8 @@ def main() -> None:
         except SystemExit as error:
             raise SystemExit(f"{rel}: {error}") from None
         text = HOURS_RE.sub(lambda _: hours_spec, text)
+        if rel == CONTACT_PAGE:
+            text = sync_contact(text, site["hours"])
         if text != before:
             page.write_text(text, encoding="utf-8")
             changed += 1
