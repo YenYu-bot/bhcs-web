@@ -332,12 +332,36 @@ td .num{font-weight:600}
   display:block;margin-bottom:.4rem;padding-top:.15rem}
 .staff-card h3{font-size:1.12rem;margin-bottom:.15em}
 .staff-card .yrs{font-family:var(--mono);font-size:.82rem;color:var(--ink-faint);margin-bottom:.6rem;display:block}
-.staff-card .motto{font-weight:700;font-size:.95rem;margin:0 0 .45em;color:var(--ink)}
+.staff-card .motto{font-weight:700;font-size:.95rem;margin:0 0 .45em;color:var(--ink);line-height:1.6}
+.staff-alias{font-family:var(--mono);font-size:.8rem;font-weight:400;color:var(--ink-faint);margin-left:.35em}
 .staff-card p{font-size:.9rem;line-height:1.7;color:var(--ink-soft);margin:0}
 @media(max-width:520px){
   .staff-card{display:grid;grid-template-columns:76px minmax(0,1fr);gap:.9rem;padding:1.1rem 1rem}
   .staff-card img{width:76px;height:76px;flex:none;padding:4px;border-radius:10px}
   .staff-card .role{padding-top:0}
+}
+
+/* 師資頁：三項要求（細線、mono 紅編號）與全職 callout（紅筆直線＋淺紙色） */
+.teacher-principles{list-style:none;margin:0 0 2.6rem;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0 2rem;border-top:1.5px solid var(--ink)}
+.teacher-principles li{margin:0;padding:1.1rem 0 .4rem;border-top:0}
+.teacher-principles .k{font-family:var(--mono);font-size:.8rem;color:var(--red);font-weight:600;display:block;margin-bottom:.55rem}
+.teacher-principles h3{font-size:1.15rem;margin:0 0 .4em}
+.teacher-principles p{margin:0;font-size:.95rem;color:var(--ink-soft);line-height:1.75}
+.teacher-fulltime{
+  position:relative;max-width:760px;margin:0;padding:1.4rem 1.6rem 1.3rem 1.9rem;
+  background:#FBF9F3;border:1px solid var(--grid);border-radius:var(--radius);
+}
+.teacher-fulltime::before{content:"";position:absolute;top:1.1rem;bottom:1.1rem;left:.85rem;width:2px;background:var(--red);opacity:.8}
+.teacher-fulltime h3{font-size:1.15rem;margin:0 0 .6em}
+.teacher-fulltime p{margin:0 0 .7em;font-size:.97rem;line-height:1.8;color:var(--ink-soft)}
+.teacher-fulltime p:last-child{margin-bottom:0}
+.teacher-fulltime strong{color:var(--ink)}
+@media(max-width:860px){
+  .teacher-principles{grid-template-columns:1fr;gap:0;border-top:0}
+  .teacher-principles li{border-top:1px solid var(--grid-strong);padding:1rem 0}
+  .teacher-principles li:first-child{border-top:1.5px solid var(--ink)}
+  .teacher-principles li:last-child{padding-bottom:.4rem}
+  .teacher-fulltime{padding:1.2rem 1.1rem 1.1rem 1.6rem}
 }
 
 /* ---------- 手機底部固定操作列 ---------- */
