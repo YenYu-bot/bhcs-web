@@ -493,6 +493,121 @@ td .num{font-weight:600}
   .course-page .subject-grid{grid-template-columns:1fr}
 }
 
+/* ============================================================
+   學習系統頁（xuexi-xitong）：只作用於 .system-page
+   ============================================================ */
+.system-page .system-intro{padding-block:1.4rem 0;border-bottom:1px solid var(--grid)}
+.system-page .system-facts{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;list-style:none;padding:0;margin:0 0 1rem;color:var(--ink-soft);font-size:.9rem;font-weight:600}
+.system-page .system-facts li{margin:0;display:flex;align-items:center;gap:.45rem}
+.system-page .system-facts li::before{content:"✓";color:var(--red);font-family:var(--mono);font-weight:700}
+.system-page .system-jump{display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -1.2rem;padding:0 1.2rem;white-space:nowrap}
+.system-page .system-jump::-webkit-scrollbar{display:none}
+.system-page .system-jump a{flex:0 0 auto;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;color:var(--ink-soft);text-decoration:none;padding:.75rem .7rem .7rem;border-bottom:2px solid transparent}
+.system-page .system-jump a:hover{color:var(--ink);border-bottom-color:var(--red)}
+.system-page .system-jump a::before{content:"→ ";color:var(--red)}
+.system-page section[id]{scroll-margin-top:76px}
+.system-page .eyebrow+h2{margin-top:0}
+.system-page .system-more{margin:1.2rem 0 0;font-weight:700}
+.system-page .system-more a{color:var(--red);text-decoration-color:transparent}
+.system-page .system-more a:hover{text-decoration-color:var(--red)}
+
+/* 四步流程 */
+.system-page .diagnostic-flow{list-style:none;margin:1.6rem 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem}
+.system-page .diagnostic-flow li{position:relative;margin:0;padding-top:1.1rem}
+.system-page .diagnostic-flow li::before{content:"";position:absolute;top:0;left:0;right:-1.4rem;height:1.5px;background:var(--ink)}
+.system-page .diagnostic-flow li:last-child::before{right:0}
+.system-page .diagnostic-flow li:not(:last-child)::after{content:"→";position:absolute;top:-.7rem;right:-.45rem;font-family:var(--mono);color:var(--red);font-weight:700;background:var(--paper);padding:0 .15rem}
+.system-page .diagnostic-flow .k{position:absolute;top:-.45rem;left:0;background:var(--paper);padding-right:.5rem;font-family:var(--mono);font-size:.8rem;color:var(--red);font-weight:600;line-height:1}
+.system-page .diagnostic-flow h3{font-size:1.12rem;margin:.6rem 0 .35em}
+.system-page .diagnostic-flow p{margin:0;font-size:.93rem;color:var(--ink-soft);line-height:1.7}
+
+/* 五項能力卡：3＋2 */
+.system-page .system-capabilities{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;margin-top:1.6rem}
+.system-page .system-capabilities>div{grid-column:span 2;background:var(--paper);border:1px solid var(--grid-strong);border-radius:var(--radius);padding:1.3rem 1.3rem 1.2rem}
+.system-page .system-capabilities>div:nth-child(4){grid-column:1/4}
+.system-page .system-capabilities>div:nth-child(5){grid-column:4/7}
+.system-page .system-capabilities .k{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--red);display:block;margin-bottom:.6rem}
+.system-page .system-capabilities h3{font-size:1.1rem;margin:0 0 .35em}
+.system-page .system-capabilities p{margin:0;font-size:.93rem;color:var(--ink-soft);line-height:1.7}
+
+/* 系統 vs 老師 */
+.system-page .system-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem 2.4rem;margin-top:1.6rem}
+.system-page .system-role-grid>div{border-top:1.5px solid var(--ink);padding-top:1rem}
+.system-page .system-role-grid h3{font-size:1.15rem;margin:0 0 .6em}
+.system-page .system-role-grid ul{list-style:none;padding:0;margin:0 0 .9em}
+.system-page .system-role-grid li{margin:0 0 .35em;padding-left:1.1em;position:relative;font-weight:600;font-size:.95rem}
+.system-page .system-role-grid li::before{content:"";position:absolute;left:0;top:.72em;width:.5em;height:2px;background:var(--red)}
+.system-page .system-role-grid p{margin:0;font-size:.95rem;color:var(--ink-soft);line-height:1.75}
+
+/* 學生登入卡 */
+.system-page .system-login{padding-block:clamp(2rem,5vw,3rem)}
+.system-page .system-login-card{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:1.4rem 2.4rem;align-items:center;border:1.5px solid var(--ink);background:var(--paper);padding:clamp(1.3rem,3.5vw,2rem)}
+.system-page .system-login-card h2{font-size:clamp(1.3rem,2.6vw,1.7rem);margin-bottom:.4em}
+.system-page .system-login-card p{margin:0;color:var(--ink-soft);font-size:.97rem;line-height:1.75}
+.system-page .system-login-actions .hero-actions{margin-top:0}
+.system-page .system-login-url{margin:.7rem 0 0!important;font-family:var(--mono);font-size:.82rem;color:var(--ink-faint)!important}
+
+/* 涵蓋範圍：桌機 table，手機卡列 */
+.system-page .system-coverage{margin-top:1.4rem;font-size:.92rem}
+.system-page .system-coverage td:first-child{font-weight:700;white-space:nowrap}
+.system-page .system-coverage-note{margin:1.2rem 0 0;color:var(--ink-soft);font-size:.95rem}
+
+/* 其他配套 */
+.system-page .system-extras{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.6rem}
+.system-page .system-extras>div{background:var(--paper);border:1px solid var(--grid-strong);border-top:3px solid var(--ink);border-radius:var(--radius);padding:1.3rem 1.3rem 1.2rem}
+.system-page .system-extras h3{font-size:1.1rem;margin:0 0 .35em}
+.system-page .system-extras p{margin:0;font-size:.93rem;color:var(--ink-soft);line-height:1.7}
+
+/* 品牌提醒 callout */
+.system-page .system-reminder{position:relative;max-width:760px;margin:0;padding:1.6rem 1.8rem 1.5rem 2.1rem;background:#FBF9F3;border:1px solid var(--grid);border-radius:var(--radius)}
+.system-page .system-reminder::before{content:"";position:absolute;top:1.3rem;bottom:1.3rem;left:.9rem;width:2px;background:var(--red);opacity:.8}
+.system-page .system-reminder h2{font-size:clamp(1.3rem,2.6vw,1.75rem);margin-bottom:.5em}
+.system-page .system-reminder p{margin:0 0 .6em;color:var(--ink-soft);line-height:1.8}
+.system-page .system-reminder .system-more{margin-top:.8rem}
+
+/* mid-page CTA */
+.system-page .system-cta{padding-block:clamp(2.2rem,5vw,3.2rem);border-top:1px solid var(--grid)}
+.system-page .system-cta .wrap-narrow{border:1.5px solid var(--ink);background:var(--paper);padding:1.5rem clamp(1.2rem,4vw,2rem);display:flex;align-items:center;justify-content:space-between;gap:1rem 2rem;flex-wrap:wrap}
+.system-page .system-cta-q{margin:0;font-family:var(--serif);font-weight:900;font-size:clamp(1.1rem,2.2vw,1.35rem);line-height:1.4}
+.system-page .system-cta .hero-actions{margin:0}
+
+@media(max-width:1100px){
+  .system-page .diagnostic-flow{grid-template-columns:1fr 1fr;row-gap:2rem}
+  .system-page .diagnostic-flow li:nth-child(2)::before{right:0}
+  .system-page .diagnostic-flow li:nth-child(2)::after{display:none}
+  .system-page .system-capabilities{grid-template-columns:1fr 1fr}
+  .system-page .system-capabilities>div,.system-page .system-capabilities>div:nth-child(4),.system-page .system-capabilities>div:nth-child(5){grid-column:auto}
+}
+@media(max-width:860px){
+  .system-page .system-role-grid{grid-template-columns:1fr;gap:1.4rem}
+  .system-page .system-login-card{grid-template-columns:1fr}
+  .system-page .system-extras{grid-template-columns:1fr}
+  .system-page .system-cta .wrap-narrow{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:640px){
+  .system-page .system-facts{gap:.4rem .9rem;font-size:.84rem}
+  .system-page .diagnostic-flow{grid-template-columns:1fr;gap:0;padding-left:1.9rem;border-left:1.5px solid var(--ink)}
+  .system-page .diagnostic-flow li{padding:0 0 1.5rem}
+  .system-page .diagnostic-flow li:last-child{padding-bottom:0}
+  .system-page .diagnostic-flow li::before,.system-page .diagnostic-flow li::after{display:none}
+  .system-page .diagnostic-flow .k{position:static;display:block;background:none;padding:0;margin-bottom:.3rem}
+  .system-page .diagnostic-flow li{--dot:1}
+  .system-page .diagnostic-flow li::after{display:block;content:"";position:absolute;left:calc(-1.9rem - 5px);top:.2rem;width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px var(--paper)}
+  .system-page .diagnostic-flow h3{margin-top:0}
+  .system-page .system-capabilities{grid-template-columns:1fr}
+  .system-page .system-login-actions .hero-actions .btn{flex:1 1 100%}
+  .system-page .system-coverage,.system-page .system-coverage tbody,.system-page .system-coverage tr,.system-page .system-coverage td{display:block;width:100%}
+  .system-page .system-coverage thead{display:none}
+  .system-page .system-coverage tr{border:1px solid var(--grid-strong);border-radius:var(--radius);background:var(--paper);margin-bottom:.7rem}
+  .system-page .system-coverage td{border:0;padding:.35rem .9rem}
+  .system-page .system-coverage td:first-child{color:var(--red);font-family:var(--mono);font-size:.84rem;padding-top:.7rem;padding-bottom:.1rem;white-space:normal}
+  .system-page .system-coverage td:nth-child(2){font-weight:600}
+  .system-page .system-coverage td:last-child{padding-bottom:.8rem;color:var(--ink-soft);font-size:.88rem}
+  .system-page .system-reminder{padding:1.3rem 1.2rem 1.2rem 1.7rem}
+  .system-page .system-cta .hero-actions{width:100%}
+  .system-page .system-cta .hero-actions .btn{flex:1 1 100%}
+}
+
 /* ---------- 手機底部固定操作列 ---------- */
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;
