@@ -56,7 +56,7 @@ async function overflowingElements(p){
      Object.assign(row,layout);assert.ok(layout.overflow<=2,'horizontal overflow');assert.deepEqual(layout.badImages,[],'broken images');
      if(file==='tools/science/index.html')assert.equal(layout.h1,1,'one directory h1');
      if(file==='index.html'){
-      assert.equal(await p.locator('.hero').first().locator('.hero-actions a:visible').count(),width===390?1:3);
+      assert.equal(await p.locator('.hero').first().locator('.hero-actions a:visible').count(),2);
       assert.equal(await p.locator('.card-more').count(),3);
       if(width===390){await p.locator('.burger').click();assert.equal(await p.locator('.burger').getAttribute('aria-expanded'),'true');await p.keyboard.press('Escape');assert.equal(await p.locator('.burger').getAttribute('aria-expanded'),'false');assert.ok(await p.locator('.burger').evaluate(el=>el===document.activeElement));}
      }
