@@ -10,6 +10,15 @@ for(const name of fs.readdirSync(root).filter(n=>n.endsWith('.html'))){
  s=s.replace(/assets\/(style\.css|site\.js)(?:\?v=[^"']*)?/g,(_,f)=>`assets/${f}?v=${version}`);
  fs.writeFileSync(file,s);
 }
+// Legacy tool pages that already load site.js for privacy-aware GA page views keep the same cache version.
+// Only files that reference assets/site.js are touched; nothing is inserted into other tools.
+const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(d=>d.isDirectory()?walk(path.join(dir,d.name)):d.name.endsWith('.html')?[path.join(dir,d.name)]:[]);
+for(const file of walk(path.join(root,'tools'))){
+ const s=fs.readFileSync(file,'utf8');
+ if(!/(?:\.\.\/)+assets\/site\.js/.test(s))continue;
+ const out=s.replace(/((?:\.\.\/)+assets\/site\.js)(?:\?v=[^"']*)?/g,(_,f)=>`${f}?v=${version}`);
+ if(out!==s)fs.writeFileSync(file,out);
+}
 for(const name of fs.readdirSync(path.join(root,'wenzhang')).filter(n=>n.endsWith('.html'))){
  const file=path.join(root,'wenzhang',name);let s=fs.readFileSync(file,'utf8');
  s=s.replace(/<body(?: class="[^"]*")?>/,'<body class="article-site">');
