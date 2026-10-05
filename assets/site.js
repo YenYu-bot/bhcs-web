@@ -1,5 +1,75 @@
 // 百宏文教機構 — 介面腳本（無相依套件）
 (function () {
+  // ---------- 網站分析（GA4）：全站唯一 loader ----------
+  // 事件只送固定分類的匿名參數；任何表單欄位、自由文字或 LINE 訊息內容都不會進入分析。
+  var GA_ID = 'G-GHN2GDS2RQ';
+  var EVENT_NAMES = { cta_trial: 1, cta_line: 1, cta_phone: 1, cta_map: 1, trial_form_start: 1, trial_line_open: 1, trial_copy: 1 };
+  var PARAM_NAMES = { page_group: 1, cta_location: 1 };
+  var PAGE_GROUPS = {
+    '': 'home', 'index.html': 'home',
+    'guoxiao.html': 'elementary', 'guozhong.html': 'junior_high', 'gaozhong.html': 'senior_high',
+    'guozhong-shuxue.html': 'junior_math', 'guozhong-lihua.html': 'junior_science', 'guozhong-yingwen.html': 'junior_english',
+    'shizi.html': 'teachers', 'xuexi-xitong.html': 'learning_system', 'chengguo.html': 'results',
+    'ziyuan.html': 'resources', 'lianluo.html': 'contact', 'app.html': 'app'
+  };
+  function analyticsAllowed() {
+    // 自己人排除：任何主站頁面網址加 ?noga=1 開啟一次，這台瀏覽器從此不計入統計（localStorage bhcs_noga=1）。
+    var allowed = true;
+    try {
+      if (new URLSearchParams(location.search).get('noga') === '1') localStorage.setItem('bhcs_noga', '1');
+      allowed = localStorage.getItem('bhcs_noga') !== '1';
+    } catch (_) { allowed = false; }
+    if (navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true) allowed = false;
+    return allowed;
+  }
+  var analyticsOn = analyticsAllowed();
+  if (analyticsOn && typeof window.gtag !== 'function') {
+    // 若頁面已有 gtag（例如自然研究站的 science-events.js），不再插入第二支 Google script。
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID);
+    var ga = document.createElement('script');
+    ga.async = true;
+    ga.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(ga);
+  }
+  function pageGroup() {
+    var path = location.pathname || '';
+    if (path.indexOf('/wenzhang/') > -1) return 'articles';
+    var file = path.split('/').pop();
+    return PAGE_GROUPS[file] || 'other';
+  }
+  function ctaLocation(el) {
+    if (el.closest('.dock')) return 'dock';
+    if (el.closest('.masthead')) return 'header';
+    if (el.closest('.foot')) return 'footer';
+    if (el.closest('#trial-form')) return 'form';
+    if (el.closest('.direct-contact')) return 'direct';
+    if (el.closest('.hero')) return 'hero';
+    return 'mid';
+  }
+  function track(name, params) {
+    if (!analyticsOn || !EVENT_NAMES[name] || typeof window.gtag !== 'function') return;
+    var safe = {};
+    Object.keys(params || {}).forEach(function (key) {
+      var value = params[key];
+      if (PARAM_NAMES[key] && typeof value === 'string' && /^[a-z_]{1,32}$/.test(value)) safe[key] = value;
+    });
+    window.gtag('event', name, safe);
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    var group = pageGroup();
+    if (/^tel:/i.test(href)) { track('cta_phone', { page_group: group, cta_location: ctaLocation(a) }); return; }
+    if (/line\.me\/R\/oaMessage\//.test(href)) return; // 預約表單送出由 trial_line_open 記錄
+    if (/line\.me\//.test(href)) { track('cta_line', { page_group: group, cta_location: ctaLocation(a) }); return; }
+    if (/google\.com\/maps\/dir/.test(href)) { track('cta_map', { page_group: group }); return; }
+    if (/(^|\/)lianluo\.html(#|$)/.test(href) && a.classList.contains('btn')) track('cta_trial', { page_group: group, cta_location: ctaLocation(a) });
+  });
+
   var burger = document.querySelector('.burger');
   var nav = document.querySelector('.nav');
   if (burger && nav) {
@@ -55,8 +125,12 @@
       });
     } else clearDraft();
   } catch (_) { clearDraft(); }
+  var formStarted = false;
+  function formStart() { if (formStarted) return; formStarted = true; track('trial_form_start', { page_group: pageGroup() }); }
   form.addEventListener('input', saveDraft);
   form.addEventListener('change', saveDraft);
+  form.addEventListener('input', formStart);
+  form.addEventListener('change', formStart);
   var clear = document.getElementById('clear-trial');
   if (clear) clear.addEventListener('click', function () {
     form.reset(); clearDraft();
@@ -66,6 +140,7 @@
   });
   var copy = document.getElementById('copy-trial');
   if (copy) copy.addEventListener('click', async function () {
+    track('trial_copy', { page_group: pageGroup() });
     message.value = text();
     try {
       await navigator.clipboard.writeText(message.value);
@@ -85,6 +160,7 @@
       if (preview) { preview.hidden = false; message.value = content; }
       status.textContent = '資料尚未送出。請在 LINE 確認並按「傳送」；若沒有開啟，請複製頁面中的預約內容。';
       status.style.color = '#16233A';
+      track('trial_line_open', { page_group: pageGroup() });
       // Keep this page and draft available. A button action avoids putting personal data in tracked outbound links.
       window.open(action.replace(/\/$/, '') + '/?' + encodeURIComponent(content), '_blank', 'noopener,noreferrer');
       return;

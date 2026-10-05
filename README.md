@@ -40,3 +40,11 @@ node scripts/check_science_integration.cjs
 若要改為直接收件，先提供實際可用的端點、收件目的地及成功／失敗回應契約，再串接與驗證。Google 評論、實景照片、費用方式、班級人數需以實際資料補充。
 
 正式站驗收可加 `?noga=1`，避免測試流量進入網站分析。驗收 LINE 流程應攔截外部開啟，不向官方帳號發送測試訊息。
+
+## Analytics
+
+GA4: `G-GHN2GDS2RQ`。主站唯一的 loader 在 `assets/site.js`（所有載入 `site.js` 的頁面共用，HTML 內不再內嵌 GA）；自然研究站由 `assets/science-events.js` 自行載入同一個 ID，兩者都會先檢查 `window.gtag` 是否已存在，避免重複插入。
+
+Internal traffic exclusion: open any main-site page once with `?noga=1`. This persists `bhcs_noga=1` in localStorage, and that browser is excluded from then on. Browsers sending Do Not Track or Global Privacy Control are excluded automatically. No cookie banner or consent UI is added by the site.
+
+Conversion events (`cta_trial`, `cta_line`, `cta_phone`, `cta_map`, `trial_form_start`, `trial_line_open`, `trial_copy`) carry only the fixed `page_group` and `cta_location` categories. Conversion events never include form field values or free text.
