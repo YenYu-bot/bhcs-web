@@ -695,6 +695,87 @@ td .num{font-weight:600}
   .results-page .results-review-request .btn{width:100%}
 }
 
+/* ============================================================
+   聯絡／試聽頁（lianluo）：只作用於 .contact-page
+   ============================================================ */
+.contact-page .contact-intro{padding-block:1.4rem 0;border-bottom:1px solid var(--grid)}
+.contact-page .contact-facts{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;list-style:none;padding:0;margin:0 0 1rem;color:var(--ink-soft);font-size:.9rem;font-weight:600}
+.contact-page .contact-facts li{margin:0;display:flex;align-items:center;gap:.45rem}
+.contact-page .contact-facts li::before{content:"✓";color:var(--red);font-family:var(--mono);font-weight:700}
+.contact-page .contact-jump{display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -1.2rem;padding:0 1.2rem;white-space:nowrap}
+.contact-page .contact-jump::-webkit-scrollbar{display:none}
+.contact-page .contact-jump a{flex:0 0 auto;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;color:var(--ink-soft);text-decoration:none;padding:.75rem .7rem .7rem;border-bottom:2px solid transparent}
+.contact-page .contact-jump a:hover{color:var(--ink);border-bottom-color:var(--red)}
+.contact-page .contact-jump a::before{content:"→ ";color:var(--red)}
+.contact-page section[id],.contact-page #direct{scroll-margin-top:76px}
+.contact-page .eyebrow+h2{margin-top:0}
+
+/* 預約雙欄：左表單、右直接聯絡 */
+.contact-page .booking-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);gap:2.4rem;align-items:start}
+.contact-page .booking-lede{color:var(--ink-soft);margin:0 0 1.4rem}
+.contact-page .booking-steps{list-style:none;margin:0 0 1.5rem;padding:0 0 1.4rem;border-bottom:1px solid var(--grid);display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.contact-page .booking-steps li{margin:0;border-top:1.5px solid var(--ink);padding-top:.6rem}
+.contact-page .booking-steps .k{font-family:var(--mono);font-size:.74rem;color:var(--red);font-weight:600;display:block;margin-bottom:.2rem}
+.contact-page .booking-steps h3{font-family:var(--sans);font-size:1rem;font-weight:700;letter-spacing:0;margin:0 0 .25em;line-height:1.4}
+.contact-page .booking-steps p{margin:0;font-size:.86rem;color:var(--ink-soft);line-height:1.6}
+.contact-page .required-mark,.contact-page .optional-mark{display:inline-block;margin-left:.45rem;font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.08em;line-height:1.5;padding:0 .4rem;border-radius:2px;vertical-align:.1em}
+.contact-page .required-mark{color:var(--red);background:var(--red-soft)}
+.contact-page .optional-mark{color:var(--ink-faint);background:var(--surface)}
+.contact-page .formcard .btn-line{width:100%;min-height:48px}
+.contact-page .booking-send-note{margin:.8rem 0 0;padding:.7rem .9rem;background:#FBF9F3;border-left:2px solid var(--red);font-size:.9rem;color:var(--ink);line-height:1.65}
+.contact-page .formcard .form-actions{margin-top:1rem}
+.contact-page .trial-preview{margin-top:1.3rem}
+.contact-page .trial-preview label{display:block;font-size:.88rem;font-weight:700;margin-bottom:.4rem}
+.contact-page .trial-preview textarea{border:1px solid var(--grid-strong);border-radius:var(--radius);margin-bottom:.7rem;color:var(--ink)}
+.contact-page .booking-draft-note{font-size:.8rem;margin-top:.5rem}
+
+/* 直接聯絡 */
+.contact-page .direct-contact{border:1px solid var(--grid-strong);border-top:3px solid var(--ink);background:var(--paper);border-radius:var(--radius);padding:1.5rem 1.4rem 1.3rem}
+.contact-page .direct-contact h2{font-size:clamp(1.3rem,2.4vw,1.6rem)}
+.contact-page .direct-contact>p{color:var(--ink-soft);font-size:.95rem;margin-bottom:0}
+.contact-page .direct-actions{display:flex;flex-direction:column;gap:.7rem;margin:1.2rem 0 1.3rem}
+.contact-page .direct-actions .btn{width:100%;min-height:48px;font-size:1rem}
+.contact-page .direct-info{border-top:1px solid var(--grid)}
+.contact-page .direct-info .k{flex-basis:64px}
+.contact-page .direct-info .hours{font-size:.86rem;line-height:1.9}
+.contact-page .direct-legal{margin:.9rem 0 0;font-size:.78rem;color:var(--ink-faint);line-height:1.6}
+
+/* 來之前準備 */
+.contact-page .prepare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.6rem}
+.contact-page .prepare-grid>div{background:var(--paper);border:1px solid var(--grid-strong);border-top:3px solid var(--ink);border-radius:var(--radius);padding:1.3rem 1.3rem 1.2rem}
+.contact-page .prepare-grid .k{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--red);display:block;margin-bottom:.6rem}
+.contact-page .prepare-grid h3{font-size:1.1rem;margin:0 0 .35em}
+.contact-page .prepare-grid p{margin:0;font-size:.93rem;color:var(--ink-soft);line-height:1.7}
+.contact-page .prepare-note{position:relative;margin:1.4rem 0 0;padding-left:1.1rem;font-size:.95rem;color:var(--ink-soft)}
+.contact-page .prepare-note::before{content:"";position:absolute;left:0;top:.3em;bottom:.3em;width:2px;background:var(--red)}
+
+/* 地址交通 */
+.contact-page .location-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2rem 3rem;align-items:start}
+.contact-page .location-list{list-style:none;padding:0;margin:0 0 .4rem}
+.contact-page .location-list li{display:flex;gap:.9rem;padding:.7rem 0;border-bottom:1px solid var(--grid-strong);margin:0;font-size:.97rem}
+.contact-page .location-list .k{flex:0 0 56px;font-size:.8rem;color:var(--ink-faint);padding-top:.2rem}
+.contact-page .location-list .v{flex:1;font-weight:500}
+.contact-page .location-list a{font-family:var(--mono);text-decoration:none;font-weight:600}
+.contact-page .contact-location .hero-actions{margin-top:1.4rem}
+.contact-page #faq{border-top:1px solid var(--grid)}
+
+@media(max-width:960px){
+  .contact-page .booking-layout{grid-template-columns:1fr;gap:2rem}
+  .contact-page .location-grid{grid-template-columns:1fr}
+}
+@media(max-width:860px){
+  .contact-page .prepare-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .contact-page .contact-facts{gap:.4rem .9rem;font-size:.84rem}
+  .contact-page .booking-steps{grid-template-columns:1fr;gap:0;padding:0 0 1.3rem 1.5rem;border-left:1.5px solid var(--ink)}
+  .contact-page .booking-steps li{border-top:0;padding:0 0 1rem;position:relative}
+  .contact-page .booking-steps li:last-child{padding-bottom:0}
+  .contact-page .booking-steps li::before{content:"";position:absolute;left:calc(-1.5rem - 5px);top:.45rem;width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px var(--paper)}
+  .contact-page .direct-contact{padding:1.3rem 1.1rem 1.2rem}
+  .contact-page .contact-location .hero-actions .btn{flex:1 1 100%}
+}
+
 /* ---------- 手機底部固定操作列 ---------- */
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const version='20261005-results-page-h1';
+const version='20261005-contact-page-h1';
 for(const name of fs.readdirSync(root).filter(n=>n.endsWith('.html'))){
  const file=path.join(root,name);let s=fs.readFileSync(file,'utf8');
  s=s.replace(/assets\/(style\.css|site\.js)(?:\?v=[^"']*)?/g,(_,f)=>`assets/${f}?v=${version}`);

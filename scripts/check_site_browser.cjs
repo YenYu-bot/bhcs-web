@@ -87,6 +87,7 @@ async function overflowingElements(p){
    const p=await ctx.newPage(),errors=[],row={flow:'trial form',storageDenied};p.on('pageerror',e=>errors.push(e.message));
    try{
     await p.goto(base+'/lianluo.html?noga=1');await p.locator('button[type=submit]').click();assert.equal(await p.evaluate(()=>__opened.length),0,'invalid form stays local');
+    assert.equal(await p.locator('.booking-steps li').count(),3,'three booking steps');assert.match(await p.locator('button[type=submit]').textContent(),/LINE/,'submit names LINE');assert.equal(await p.locator('#trial-draft-note').count(),1,'draft note present');
     await p.locator('#pname').fill('驗收家長');await p.locator('#phone').fill('0900000000');await p.locator('#grade').selectOption({label:'國中八年級'});await p.locator('#note').fill('理化 & 數學\n想了解費用 <測試>');
     assert.equal(await p.locator('.dock').isVisible(),false,'dock hides while typing');await p.locator('#note').blur();assert.ok(await p.locator('.dock').isVisible());
     if(!storageDenied){await p.reload();assert.equal(await p.locator('#pname').inputValue(),'驗收家長');assert.match(await p.locator('#note').inputValue(),/& 數學/)}else assert.match(await p.locator('#trial-draft-note').textContent(),/無法暫存/);
