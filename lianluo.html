@@ -22,13 +22,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20261005-results-page-h1">
+<link rel="stylesheet" href="assets/style.css?v=20261005-contact-page-h1">
 <link rel="icon" href="assets/favicon.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"@id":"https://www.bhcs.com.tw/#org","name":"百宏文教機構","alternateName":["台中市私立百宏文理短期補習班","BHCS","百宏補習班"],"url":"https://www.bhcs.com.tw/","telephone":"+886-4-2232-0448","foundingDate":"2010","description":"百宏文教機構是台中市北屯區的國小、國中、高中補習班，自2010年在興安路一段深耕，提供國小安親課輔、國中會考主科與高中升學課程。","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","postalCode":"406","addressCountry":"TW"},"geo":{"@type":"GeoCoordinates","latitude":24.1685666,"longitude":120.6937145},"areaServed":[{"@type":"AdministrativeArea","name":"台中市北屯區"},{"@type":"AdministrativeArea","name":"台中市大坑"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Tuesday","opens":"13:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Wednesday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Thursday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"21:30"}],"sameAs":["https://www.facebook.com/bhteams"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://www.bhcs.com.tw/"},{"@type":"ListItem","position":2,"name":"聯絡我們與預約試聽","item":"https://www.bhcs.com.tw/lianluo.html"}]}</script>
 
 </head>
-<body>
+<body class="contact-page">
 <a class="skip" href="#main">跳到主要內容</a>
 <!-- site-header:start -->
 <header class="masthead">
@@ -59,31 +59,54 @@
     <div class="wrap">
       <p class="loc">聯絡我們 · 興安路一段142號</p>
       <h1>先來看看，<br>再決定<span class="mark">要不要來<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8.4C38 4.2 78 2.8 118 3.6c28 .6 52 2.2 79 4.4"/></svg></span></h1>
-      <p class="lede">歡迎預約免費試聽，或直接來教室走一趟。看看上課的樣子、看看老師怎麼講、看看孩子坐在裡面自不自在。</p>
+      <p class="lede">歡迎先來試聽或看看教室。實際看看老師怎麼教，也讓我們先了解孩子目前遇到的狀況。</p>
     </div>
   </section>
 
-  <section>
+  <section class="contact-intro">
     <div class="wrap">
-      <div class="contact-grid">
-        <div>
+      <ul class="contact-facts" aria-label="預約重點">
+        <li>免費試聽・參觀</li>
+        <li>LINE 或電話都可預約</li>
+        <li>興安路一段 142 號</li>
+      </ul>
+      <nav class="contact-jump" aria-label="本頁快速跳轉">
+        <a href="#booking">預約試聽</a>
+        <a href="#direct">直接聯絡</a>
+        <a href="#prepare">來之前準備</a>
+        <a href="#location">地址交通</a>
+        <a href="#faq">常見問題</a>
+      </nav>
+    </div>
+  </section>
+
+  <section id="booking">
+    <div class="wrap">
+      <div class="booking-layout">
+        <div class="booking-form">
           <span class="eyebrow">預約試聽</span>
-          <h2>整理好資料，用 LINE 傳給我們</h2>
+          <h2>填好基本資料，再用 LINE 傳給我們</h2>
+          <p class="booking-lede">不需要先決定班別。告訴我們孩子的年級與目前狀況，我們再一起確認適合的課程與時段。</p>
           <div class="formcard">
+            <ol class="booking-steps" aria-label="預約三步驟">
+              <li><span class="k">01</span><h3>填基本資料</h3><p>姓名、電話與孩子年級。</p></li>
+              <li><span class="k">02</span><h3>開啟 LINE</h3><p>按下按鈕後，系統會整理成一則預約訊息並開啟百宏官方 LINE。</p></li>
+              <li><span class="k">03</span><h3>確認後傳送</h3><p>請在 LINE 再按一次「傳送」，我們才會真正收到資料。</p></li>
+            </ol>
             <form id="trial-form" action="https://line.me/R/oaMessage/%40bhcs/" method="GET" data-submit-mode="line">
               <div class="field-row">
                 <div class="field">
-                  <label for="pname">家長姓名</label>
+                  <label for="pname">家長姓名<span class="required-mark">必填</span></label>
                   <input id="pname" name="家長姓名" type="text" required autocomplete="name">
                 </div>
                 <div class="field">
-                  <label for="phone">聯絡電話</label>
+                  <label for="phone">聯絡電話<span class="required-mark">必填</span></label>
                   <input id="phone" name="聯絡電話" type="tel" required autocomplete="tel" inputmode="tel">
                 </div>
               </div>
               <div class="field-row">
                 <div class="field">
-                  <label for="grade">孩子年級</label>
+                  <label for="grade">孩子年級<span class="required-mark">必填</span></label>
                   <select id="grade" name="孩子年級" required>
                     <option value="">請選擇</option>
                     <option>國小低年級</option>
@@ -98,74 +121,88 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="school">就讀學校</label>
+                  <label for="school">就讀學校<span class="optional-mark">選填</span></label>
                   <input id="school" name="就讀學校" type="text" placeholder="例：四維國小">
                 </div>
               </div>
               <div class="field">
-                <label for="subject">想了解的科目</label>
+                <label for="subject">想了解的科目<span class="optional-mark">選填</span></label>
                 <input id="subject" name="想了解的科目" type="text" placeholder="例：國中數學、理化">
               </div>
               <div class="field">
-                <label for="note">目前遇到的狀況</label>
-                <textarea id="note" name="目前遇到的狀況" rows="4" placeholder="例：八年級理化跟不上，段考大約 50 分左右"></textarea>
+                <label for="note">目前遇到的狀況<span class="optional-mark">選填</span></label>
+                <textarea id="note" name="目前遇到的狀況" rows="4" placeholder="例：八年級理化跟不上，或想先了解適合的班別"></textarea>
               </div>
-              <button class="btn btn-line" type="submit" style="width:100%">用 LINE 傳送預約資料</button>
+              <button class="btn btn-line" type="submit">整理預約內容並開啟 LINE</button>
+              <p class="booking-send-note">按下後會開啟百宏官方 LINE；只有在 LINE 再按「傳送」，我們才會收到資料。</p>
               <div class="form-actions"><button class="btn btn-ghost" id="clear-trial" type="button">清除填寫內容</button></div>
               <div class="trial-preview" id="trial-preview" hidden>
                 <label for="trial-message">預約內容（尚未送出）</label>
                 <textarea id="trial-message" rows="8" readonly></textarea>
                 <button class="btn btn-ghost" id="copy-trial" type="button">複製預約內容</button>
               </div>
-              <p class="formnote" id="trial-draft-note">填寫內容會在此分頁暫存最多 2 小時，可按「清除填寫內容」移除。</p>
               <p id="form-status" class="formnote" role="status" aria-live="polite"></p>
-              <p class="formnote">按下後會另開百宏官方 LINE，此頁會保留填寫內容。請在 LINE 確認並按「傳送」，我們才會收到；若沒有開啟，可複製頁面中的預約內容，或來電 04-2232-0448。</p>
+              <p class="formnote booking-draft-note" id="trial-draft-note">填寫內容會在此分頁暫存最多 2 小時，可按「清除填寫內容」移除。</p>
+              <p class="formnote booking-draft-note">若 LINE 沒有開啟，可複製頁面中的預約內容，或來電 04-2232-0448。</p>
             </form>
           </div>
         </div>
 
-        <div>
-          <span class="eyebrow">直接聯絡</span>
-          <h2>或者直接打給我們</h2>
-          <ul class="nap">
-            <li><span class="k">機構名稱</span><span class="v">百宏文教機構<br><small style="color:var(--ink-faint)">台中市私立百宏文理短期補習班</small></span></li>
-            <li><span class="k">地址</span><span class="v">406台中市北屯區興安路一段142號</span></li>
-            <li><span class="k">電話</span><span class="v"><a href="tel:+886422320448">04-2232-0448</a></span></li>
-            <li><span class="k">LINE</span><span class="v"><a href="https://line.me/R/ti/p/%40bhcs" rel="noopener">@bhcs</a></span></li>
-            <li><span class="k">Facebook</span><span class="v"><a href="https://www.facebook.com/bhteams" rel="noopener">百宏文教機構</a></span></li>
-            <li><span class="k">上課時間</span><span class="v"><span class="hours">週一 12:30–22:00<br>週二 13:30–22:00<br>週三至週五 12:30–22:00<br>週六 09:00–21:30<br>週日公休</span></span></li>
-          </ul>
-          <div class="hero-actions" style="margin-bottom:2rem">
+        <div class="direct-contact" id="direct">
+          <span class="eyebrow">不想填表？</span>
+          <h2>直接問我們也可以</h2>
+          <p>如果只是想先問班別、時段或費用，直接打電話或 LINE 就可以。</p>
+          <div class="direct-actions">
             <a class="btn btn-primary" href="tel:+886422320448">撥打 04-2232-0448</a>
-            <a class="btn btn-line" href="https://line.me/R/ti/p/%40bhcs" rel="noopener">索取本期班表與費用</a>
+            <a class="btn btn-line" href="https://line.me/R/ti/p/%40bhcs" rel="noopener">LINE 詢問班表與費用</a>
           </div>
-          <iframe class="mapframe" src="https://www.google.com/maps?q=%E5%8F%B0%E4%B8%AD%E5%B8%82%E5%8C%97%E5%B1%AF%E5%8D%80%E8%88%88%E5%AE%89%E8%B7%AF%E4%B8%80%E6%AE%B5142%E8%99%9F&output=embed" title="百宏文教機構位置地圖" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          <div class="hero-actions" style="margin-top:1.2rem">
-            <a class="btn btn-ghost" href="https://www.google.com/maps/dir/?api=1&destination=%E7%99%BE%E5%AE%8F%E8%A3%9C%E7%BF%92%E7%8F%AD+%E5%8F%B0%E4%B8%AD%E5%B8%82%E5%8C%97%E5%B1%AF%E5%8D%80%E8%88%88%E5%AE%89%E8%B7%AF%E4%B8%80%E6%AE%B5142%E8%99%9F" rel="noopener">開啟 Google 導航</a>
-          </div>
+          <ul class="nap direct-info">
+            <li><span class="k">地址</span><span class="v">406台中市北屯區興安路一段142號</span></li>
+            <li><span class="k">營業時間</span><span class="v"><span class="hours">週一 12:30–22:00<br>週二 13:30–22:00<br>週三至週五 12:30–22:00<br>週六 09:00–21:30<br>週日公休</span></span></li>
+            <li><span class="k">Facebook</span><span class="v"><a href="https://www.facebook.com/bhteams" rel="noopener">百宏文教機構</a></span></li>
+          </ul>
+          <p class="direct-legal">百宏文教機構・台中市私立百宏文理短期補習班</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="sec-tint">
-    <div class="wrap-narrow prose">
-      <h2>怎麼找到我們</h2>
-      <p>百宏文教機構位於北屯區興安路一段 142 號，鄰近四維國小、文昌國小與兒童公園。從崇德路或文心路方向過來都很方便，路邊與周邊皆有停車空間。</p>
-      <p>如果您是第一次來，建議先來電確認時段，我們會安排老師與您說明孩子的狀況，而不是讓您在櫃檯等。</p>
+  <section class="contact-prepare" id="prepare">
+    <div class="wrap">
+      <span class="eyebrow">來之前可以準備</span>
+      <h2>有這些資料，我們會更快看出問題在哪</h2>
+      <div class="prepare-grid">
+        <div><span class="k">01</span><h3>最近一次考卷</h3><p>特別是錯得比較多的那幾張，最容易看出失分類型。</p></div>
+        <div><span class="k">02</span><h3>最近一次成績</h3><p>知道目前大致位置即可，不需要整理完整歷史紀錄。</p></div>
+        <div><span class="k">03</span><h3>固定行程</h3><p>方便一起確認不衝突的上課與自習時段。</p></div>
+      </div>
+      <p class="prepare-note">臨時找不到考卷或成績單也沒關係，可以先來談；需要時我們也有程度確認題目。</p>
+    </div>
+  </section>
 
-      <h2>來之前可以先準備的</h2>
-      <ul>
-        <li>孩子最近一次的段考成績單（各科分數與班排即可）</li>
-        <li>最近一次的考卷，特別是錯比較多的那幾張</li>
-        <li>孩子目前的作息與固定行程，方便我們安排不衝突的時段</li>
-      </ul>
-      <p>帶考卷來的意義是：我們可以當場看出孩子失分的類型是觀念、計算還是題意誤解，這比只看分數準確得多。如果臨時找不到也沒關係，我們有程度確認的題目可以現場做。</p>
+  <section class="contact-location sec-tint" id="location">
+    <div class="wrap">
+      <div class="location-grid">
+        <div>
+          <span class="eyebrow">地址交通</span>
+          <h2>興安路一段 142 號</h2>
+          <ul class="location-list">
+            <li><span class="k">地址</span><span class="v">406 台中市北屯區興安路一段 142 號</span></li>
+            <li><span class="k">鄰近</span><span class="v">四維國小、文昌國小與兒童公園</span></li>
+            <li><span class="k">電話</span><span class="v"><a href="tel:+886422320448">04-2232-0448</a></span></li>
+            <li><span class="k">停車</span><span class="v">路邊與周邊皆有停車空間</span></li>
+          </ul>
+          <div class="hero-actions">
+            <a class="btn btn-ghost" href="https://www.google.com/maps/dir/?api=1&destination=%E7%99%BE%E5%AE%8F%E8%A3%9C%E7%BF%92%E7%8F%AD+%E5%8F%B0%E4%B8%AD%E5%B8%82%E5%8C%97%E5%B1%AF%E5%8D%80%E8%88%88%E5%AE%89%E8%B7%AF%E4%B8%80%E6%AE%B5142%E8%99%9F" rel="noopener">開啟 Google 導航</a>
+          </div>
+        </div>
+        <iframe class="mapframe" src="https://www.google.com/maps?q=%E5%8F%B0%E4%B8%AD%E5%B8%82%E5%8C%97%E5%B1%AF%E5%8D%80%E8%88%88%E5%AE%89%E8%B7%AF%E4%B8%80%E6%AE%B5142%E8%99%9F&output=embed" title="百宏文教機構位置地圖" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
     </div>
   </section>
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"試聽要收費嗎？","acceptedAnswer":{"@type":"Answer","text":"不收費。歡迎預約免費試聽，讓孩子實際上一堂課，家長也可以一起了解教學內容與環境。請先來電 04-2232-0448 或用 LINE 預約時段。"}},{"@type":"Question","name":"可以只是先來參觀教室嗎？","acceptedAnswer":{"@type":"Answer","text":"當然可以。建議先來電確認時段，我們會安排老師與您說明，而不是讓您在櫃檯等。"}},{"@type":"Question","name":"停車方便嗎？","acceptedAnswer":{"@type":"Answer","text":"興安路一段路邊與周邊皆有停車空間。若接送時間較尖峰，建議稍微提早幾分鐘。"}},{"@type":"Question","name":"週日有上課嗎？","acceptedAnswer":{"@type":"Answer","text":"週日公休。週一至週五 12:30–22:00（週二 13:30 起），週六 09:00–21:30。"}},{"@type":"Question","name":"要準備什麼資料來？","acceptedAnswer":{"@type":"Answer","text":"帶孩子最近一次的段考成績單與考卷最有幫助，我們可以當場看出失分的類型是觀念、計算還是題意誤解。如果找不到也沒關係，我們有程度確認的題目可以現場做。"}}]}</script>
-  <section class="sec-tint">
+  <section class="sec-tint" id="faq">
     <div class="wrap-narrow faq">
       <span class="eyebrow">常見問題</span>
       <h2>家長最常問我們的事</h2>
@@ -226,6 +263,6 @@
   <a class="btn-line" href="https://line.me/R/ti/p/%40bhcs" style="background:var(--line-green);color:#fff">加 LINE 詢問</a>
 </div>
 <!-- site-dock:end -->
-<script src="assets/site.js?v=20261005-results-page-h1" defer></script>
+<script src="assets/site.js?v=20261005-contact-page-h1" defer></script>
 </body>
 </html>
