@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..'),out=path.resolve(process.env.SITE_OUTPUT
 const files=[...new Set(cp.execFileSync('git',['ls-files','--cached','--others','--exclude-standard'],{cwd:root,encoding:'utf8'}).trim().split('\n'))];
 const allPages=files.filter(f=>f.endsWith('.html')&&!f.startsWith('scripts/'));
 const pages=process.env.SITE_PAGES?process.env.SITE_PAGES.split(','):allPages;
-const capture=new Set(['index.html','lianluo.html','ziyuan.html','xuexi-xitong.html','wenzhang/index.html','wenzhang/duoding.html','wenzhang/chengji-pinxing.html']);
+const capture=new Set(['index.html','lianluo.html','ziyuan.html','xuexi-xitong.html','chengguo.html','wenzhang/index.html','wenzhang/duoding.html','wenzhang/chengji-pinxing.html']);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!f.startsWith(root+path.sep)){res.writeHead(403).end();return}try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',mime[path.extname(f)]||'application/octet-stream');res.end(fs.readFileSync(f))}catch{res.writeHead(404).end()}});
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));

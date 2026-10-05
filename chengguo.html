@@ -22,13 +22,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=20261003-system-page-h1">
+<link rel="stylesheet" href="assets/style.css?v=20261005-results-page-h1">
 <link rel="icon" href="assets/favicon.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["EducationalOrganization","LocalBusiness"],"@id":"https://www.bhcs.com.tw/#org","name":"百宏文教機構","alternateName":["台中市私立百宏文理短期補習班","BHCS","百宏補習班"],"url":"https://www.bhcs.com.tw/","telephone":"+886-4-2232-0448","foundingDate":"2010","description":"百宏文教機構是台中市北屯區的國小、國中、高中補習班，自2010年在興安路一段深耕，提供國小安親課輔、國中會考主科與高中升學課程。","address":{"@type":"PostalAddress","streetAddress":"興安路一段142號","addressLocality":"北屯區","addressRegion":"台中市","postalCode":"406","addressCountry":"TW"},"geo":{"@type":"GeoCoordinates","latitude":24.1685666,"longitude":120.6937145},"areaServed":[{"@type":"AdministrativeArea","name":"台中市北屯區"},{"@type":"AdministrativeArea","name":"台中市大坑"}],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Tuesday","opens":"13:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Wednesday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Thursday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"12:30","closes":"22:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"21:30"}],"sameAs":["https://www.facebook.com/bhteams"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://www.bhcs.com.tw/"},{"@type":"ListItem","position":2,"name":"教學成果與家長評價","item":"https://www.bhcs.com.tw/chengguo.html"}]}</script>
 
 </head>
-<body>
+<body class="results-page">
 <a class="skip" href="#main">跳到主要內容</a>
 <!-- site-header:start -->
 <header class="masthead">
@@ -59,7 +59,7 @@
     <div class="wrap">
       <p class="loc">認識我們 · 教學成果</p>
       <h1>比起榜單，<br>我們更在意<span class="mark">進步幅度<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8.4C38 4.2 78 2.8 118 3.6c28 .6 52 2.2 79 4.4"/></svg></span></h1>
-      <p class="lede">前段學生考得好，未必是補習班的功勞。真正能說明教學有沒有用的，是那些從及格邊緣拉到穩定的孩子。</p>
+      <p class="lede">好成績不一定能直接證明補習的效果。我們更在意同一個孩子進來前後，哪些地方真的開始改變。</p>
       <dl class="report">
         <div><dt>Google 評價</dt><dd class="review-link"><a href="https://www.google.com/search?q=%E7%99%BE%E5%AE%8F%E8%A3%9C%E7%BF%92%E7%8F%AD+%E5%8C%97%E5%B1%AF" rel="noopener">查看評論 →</a></dd></div>
         <div><dt>深耕年數</dt><dd class="num">2010<small>起</small></dd></div>
@@ -68,74 +68,104 @@
     </div>
   </section>
 
-  <section>
-    <div class="wrap-narrow prose">
-      <h2>榜單有一個結構性的問題</h2>
-      <p>榜單有一個限制：<strong>它反映的是學生的程度，不一定是教學的成效。</strong>一個原本程度就很好的學生，即使最後考上第一志願，也很難只從結果判斷究竟有多少是補習帶來的效果。</p>
-      <p>真正能反映教學品質的，是同一個孩子在進來前後的變化。而這個東西沒辦法印在傳單上——它是一次一次的段考、一張一張的訂正累積出來的。</p>
-      <p>所以諮詢時我們不談榜單，我們做這三件事。</p>
+  <section class="results-intro">
+    <div class="wrap">
+      <nav class="results-jump" aria-label="本頁快速跳轉">
+        <a href="#stance">我們怎麼看成果</a>
+        <a href="#case">實際案例</a>
+        <a href="#signals">怎麼追蹤進步</a>
+        <a href="#reviews">家長評價</a>
+        <a href="#faq">常見問題</a>
+      </nav>
+    </div>
+  </section>
 
-      <div class="plan">
-        <div class="plan-row">
-          <div class="k">01</div>
-          <div class="v">
-            <h4>先看孩子現在的狀況</h4>
-            <p>帶最近一次的段考成績單與考卷來。我們當場看得出失分的類型是觀念沒建立、計算不穩，還是題意誤解——這三種的補救方式完全不同，而只看分數看不出來。</p>
-          </div>
+  <section id="stance">
+    <div class="wrap-narrow">
+      <span class="eyebrow">我們怎麼看成果</span>
+      <h2>結果重要，但要先知道孩子從哪裡出發</h2>
+      <p class="results-stance">榜單只能看到最後結果，卻看不到學生原本的位置。對我們來說，更有意義的是同一個孩子在一段時間內，錯題、觀念與成績怎麼改變。</p>
+      <p class="results-note">所以諮詢時，我們先看孩子現在的狀況，不先談能提高幾分。</p>
+    </div>
+  </section>
+
+  <section class="sec-tint" id="assessment">
+    <div class="wrap">
+      <span class="eyebrow">諮詢怎麼進行</span>
+      <h2>諮詢時，我們先做三件事</h2>
+      <ol class="results-assessment">
+        <li><span class="k">01</span><h3>看現在的位置</h3><p>看最近的考卷與成績，先分辨問題是觀念、計算，還是題意理解。</p></li>
+        <li><span class="k">02</span><h3>說清楚先補哪裡</h3><p>把真正的斷點找出來，說明應該先處理什麼，以及短期內可能看到哪些變化。</p></li>
+        <li><span class="k">03</span><h3>判斷我們能不能幫</h3><p>如果問題不在補習，或某一科其實不需要補，我們會直接說明。</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="case">
+    <div class="wrap">
+      <article class="results-case">
+        <div class="results-case-head">
+          <span class="eyebrow">真實教學案例</span>
+          <h2>國中數學｜40 → 80</h2>
+          <p class="results-case-score" aria-hidden="true"><span>40</span><span class="arrow">→</span><span>80</span></p>
+          <p class="results-case-unit">段考分數・實際教學期間</p>
         </div>
-        <div class="plan-row">
-          <div class="k">02</div>
-          <div class="v">
-            <h4>說明我們認為問題出在哪、需要多久</h4>
-            <p>例如八年級理化跟不上，很多時候真正的斷點在七年級的比例與代數。我們會直說要先補哪裡、大概需要多少時間，以及在那之前分數可能不會馬上動。</p>
-          </div>
-        </div>
-        <div class="plan-row">
-          <div class="k">03</div>
-          <div class="v">
-            <h4>如果幫不上忙，我們會直說</h4>
-            <p>有些孩子的問題不在補習——可能是作息、可能是某一科其實靠自己讀就夠了。評估下來如果我們幫不上忙，或某一科不需要補，我們會告訴您。</p>
-          </div>
-        </div>
+        <ol class="results-case-stages">
+          <li><span class="k">起點</span><p>數學基礎較弱，遇到綜合題時常不知道從哪一步開始。</p></li>
+          <li><span class="k">處理</span><p>把題目拆成小問題，回到核心觀念，並持續追蹤作業與訂正是否落實。</p></li>
+          <li><span class="k">結果</span><p>實際教學期間，數學成績由 40 分提升至 80 分。</p></li>
+        </ol>
+        <p class="results-disclaimer">個別學習成果會因學生起點、出席、練習量與投入程度不同；此案例為實際教學紀錄，不代表保證分數。</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec-tint" id="signals">
+    <div class="wrap">
+      <span class="eyebrow">追蹤方式</span>
+      <h2>分數還沒變之前，有些進步已經看得見</h2>
+      <div class="results-signals">
+        <div><span class="k">01</span><h3>錯題分布</h3><p>原本整章都錯，逐漸收斂成少數題型。</p></div>
+        <div><span class="k">02</span><h3>知識點熟練度</h3><p>哪些觀念已經穩定、哪些還在反覆出錯，可以持續追蹤。</p></div>
+        <div><span class="k">03</span><h3>段考成績</h3><p>最後再回到學校考試，看學習是否真正轉成成果。</p></div>
       </div>
+      <p class="results-more"><a href="xuexi-xitong.html">看看學習系統怎麼追蹤 →</a></p>
+    </div>
+  </section>
 
-      <h2>一個實際教學案例</h2>
-      <p>我們公開的成果以可核對的教學紀錄為主，不使用學生姓名，也不把個別結果包裝成所有人都能複製的保證。</p>
-      <div class="case-card">
-        <div class="case-title">國中數學｜40 分提升至 80 分</div>
-        <dl>
-          <dt>起點</dt><dd>數學基礎較弱，面對綜合題時容易找不到下手位置。</dd>
-          <dt>處理方式</dt><dd>把複雜題目拆成小問題，以核心觀念逐步引導，並持續追蹤作業與訂正是否落實。</dd>
-          <dt>結果</dt><dd>在實際教學期間，數學成績由 40 分提升至 80 分。</dd>
-        </dl>
-      </div>
-      <p style="font-size:.86rem;color:var(--ink-faint)">※ 個別成效會受起點、出席、練習與投入程度影響，本案例不代表保證分數。</p>
+  <section id="principle">
+    <div class="wrap">
+      <aside class="results-principle">
+        <span class="eyebrow">我們對成績的態度</span>
+        <h2>成績是結果，訂正才是方法</h2>
+        <p>我們重視成績，但不靠單純增加題量換短期分數。訂正時要讓孩子說出原本卡在哪一步、正確的想法差在哪裡；說不出來，就代表還需要回到觀念。</p>
+      </aside>
+    </div>
+  </section>
 
-      <h2>家長怎麼說</h2>
-      <p>與其看我們自己寫的東西，不如看實際上過課的家長留下的評價。以下連結會開啟 Google 上的完整評論，內容未經我們篩選，包含每一則的原文與日期。</p>
-      <div class="hero-actions" style="margin-bottom:2.4rem">
-        <a class="btn btn-ghost" href="https://www.google.com/search?q=%E7%99%BE%E5%AE%8F%E8%A3%9C%E7%BF%92%E7%8F%AD+%E5%8C%97%E5%B1%AF" rel="noopener">看 Google 上的完整評論</a>
-      </div>
-
-      <h2>進步是怎麼被看見的</h2>
-      <p>我們不靠印象判斷孩子有沒有進步。<a href="xuexi-xitong.html">學習系統</a>會把每個單元拆成知識點逐一檢測，累積孩子答錯的題目，產出個人診斷報告——哪一個知識點已經穩了、哪一個還在錯，一目了然。</p>
-      <p>這份紀錄的意義在於：<strong>進步可以在分數變化之前就被看見。</strong>孩子的段考成績可能還沒動，但錯題的分布已經從「整章都錯」收斂成「只錯應用題」——這是老師和家長都該知道的訊號，也是我們每月固定回報的內容。</p>
-
-      <h2>我們對成績的態度</h2>
-      <p>成績重要，但它是結果不是方法。一個孩子如果只是被逼著多寫，分數可能短期上去，長期還是會掉回來，因為他沒有學會怎麼面對不會的題目。</p>
-      <p>所以我們花很多時間在訂正上，而且堅持<strong>訂正要說得出來</strong>——請孩子用自己的話說明原本卡在哪一步、正確的想法差在哪裡。說不出來就代表還沒懂，回到觀念重講。這樣做速度比較慢，但那才是真的學會。</p>
-
-      <h2>如果您是我們的家長</h2>
-      <p>如果孩子在百宏有實際的進步，歡迎在 Google 上留下您的評價。對其他正在選補習班的家長來說，真實的經驗分享比任何廣告都有參考價值。也歡迎寫下不滿意的地方，我們需要知道。</p>
+  <section class="sec-tint" id="reviews">
+    <div class="wrap-narrow results-reviews">
+      <span class="eyebrow">家長怎麼說</span>
+      <h2>不用只聽我們自己說</h2>
+      <p>Google 上的評論保留原文與日期，我們不在官網摘錄幾句重新包裝。想了解其他家長的實際經驗，可以直接查看完整評論。</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid=ChIJSwXaY-YXaTQR9J-WAQegLSI" rel="noopener">在 Google 留下評價</a>
-        <a class="btn btn-ghost" href="lianluo.html">預約免費試聽</a>
+        <a class="btn btn-ghost" href="https://www.google.com/search?q=%E7%99%BE%E5%AE%8F%E8%A3%9C%E7%BF%92%E7%8F%AD+%E5%8C%97%E5%B1%AF" rel="noopener">查看 Google 完整評論 →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="results-cta">
+    <div class="wrap-narrow">
+      <p class="results-cta-q">帶一張最近的考卷來，我們先一起看問題在哪裡。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="lianluo.html">預約免費程度確認</a>
+        <a class="btn btn-line" href="https://line.me/R/ti/p/%40bhcs" rel="noopener">LINE 詢問</a>
       </div>
     </div>
   </section>
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"你們的升學榜單在哪裡？","acceptedAnswer":{"@type":"Answer","text":"我們刻意不用榜單當作招生訴求。榜單反映的是學生的程度，不一定是教學的成效。歡迎帶孩子最近的段考成績單與考卷來，我們當場說明我們看到什麼、能幫上什麼。"}},{"@type":"Question","name":"諮詢時要準備什麼？","acceptedAnswer":{"@type":"Answer","text":"帶孩子最近一次的段考成績單，以及錯比較多的那幾張考卷。我們可以當場看出失分的類型是觀念、計算還是題意誤解，這比只看分數準確得多。臨時找不到也沒關係，我們有程度確認的題目可以現場做。"}},{"@type":"Question","name":"你們會保證進步幾分嗎？","acceptedAnswer":{"@type":"Answer","text":"不會。任何保證分數的說法都不該相信，因為進步取決於孩子的起點、投入程度與時間長短。我們會說明我們認為問題出在哪、大概需要多久，以及在那之前分數可能不會馬上動。"}},{"@type":"Question","name":"怎麼知道孩子有沒有在進步？","acceptedAnswer":{"@type":"Answer","text":"除了段考成績，我們用學習系統的診斷報告追蹤知識點的熟練度變化。有時候分數還沒動，但錯題分布已經從整章都錯收斂到只錯應用題，那就是進步的訊號。這些會在每月的家長聯繫中說明。"}},{"@type":"Question","name":"如果補了之後沒有效果呢？","acceptedAnswer":{"@type":"Answer","text":"請直接告訴我們。我們會重新檢視是方向錯了、時間不夠，還是問題本來就不在補習。如果評估下來我們幫不上忙，我們會直接告訴您。"}}]}</script>
-  <section class="sec-tint">
+  <section class="sec-tint" id="faq">
     <div class="wrap-narrow faq">
       <span class="eyebrow">常見問題</span>
       <h2>家長最常問我們的事</h2>
@@ -147,6 +177,14 @@
     </div>
   </section>
 
+  <section class="results-review-request">
+    <div class="wrap-narrow">
+      <span class="eyebrow">已是百宏家長？</span>
+      <h2>歡迎留下您的真實經驗</h2>
+      <p>無論滿意或不滿意，都歡迎直接留下實際感受，讓其他家長有更多資訊可以參考。</p>
+      <a class="btn btn-ghost" href="https://search.google.com/local/writereview?placeid=ChIJSwXaY-YXaTQR9J-WAQegLSI" rel="noopener">在 Google 留下評價</a>
+    </div>
+  </section>
 </main>
 <!-- site-footer:start -->
 <footer class="foot">
@@ -196,6 +234,6 @@
   <a class="btn-line" href="https://line.me/R/ti/p/%40bhcs" style="background:var(--line-green);color:#fff">加 LINE 詢問</a>
 </div>
 <!-- site-dock:end -->
-<script src="assets/site.js?v=20261003-system-page-h1" defer></script>
+<script src="assets/site.js?v=20261005-results-page-h1" defer></script>
 </body>
 </html>
