@@ -5,6 +5,13 @@ const root=path.resolve(__dirname,'..'),out=path.resolve(process.env.SITE_OUTPUT
 const files=[...new Set(cp.execFileSync('git',['ls-files','--cached','--others','--exclude-standard'],{cwd:root,encoding:'utf8'}).trim().split('\n'))];
 const allPages=files.filter(f=>f.endsWith('.html')&&!f.startsWith('scripts/'));
 const pages=process.env.SITE_PAGES?process.env.SITE_PAGES.split(','):allPages;
+// Analytics ownership and privacy guards (static): the GA loader lives only in assets/site.js and assets/science-events.js,
+// and the analytics code never reads form fields or free text into gtag/dataLayer/track.
+for(const f of allPages.filter(f=>fs.readFileSync(path.join(root,f),'utf8').includes('assets/site.js'))){const html=fs.readFileSync(path.join(root,f),'utf8');assert.ok(!html.includes('googletagmanager.com')&&!html.includes('G-GHN2GDS2RQ'),f+' must not embed its own GA loader');}
+{const src=fs.readFileSync(path.join(root,'assets/site.js'),'utf8');assert.ok(src.includes("'G-GHN2GDS2RQ'"),'site.js owns the GA id');for(const line of src.split('\n'))if(/\b(gtag|track)\s*\(|dataLayer\.push/.test(line))assert.doesNotMatch(line,/家長姓名|聯絡電話|就讀學校|想了解的科目|目前遇到的狀況|trial-message|content|message\.value|form\.elements/,'analytics call must not touch form data: '+line.trim());}
+const gtagStub=()=>{window.__events=[];window.gtag=function(){window.__events.push([].slice.call(arguments))}};
+const eventsOf=p=>p.evaluate(()=>window.__events.filter(e=>e[0]==='event').map(e=>[e[1],e[2]]));
+const stopNavigation=p=>p.evaluate(()=>{window.__events.length=0;document.addEventListener('click',e=>e.preventDefault(),true)});
 const capture=new Set(['index.html','lianluo.html','ziyuan.html','xuexi-xitong.html','chengguo.html','app.html','guozhong-shuxue.html','guozhong-lihua.html','guozhong-yingwen.html','wenzhang/index.html','wenzhang/duoding.html','wenzhang/chengji-pinxing.html']);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!f.startsWith(root+path.sep)){res.writeHead(403).end();return}try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',mime[path.extname(f)]||'application/octet-stream');res.end(fs.readFileSync(f))}catch{res.writeHead(404).end()}});
@@ -44,12 +51,12 @@ async function overflowingElements(p){
  try{
   for(const width of [390,1280]){
    const ctx=await browser.newContext({viewport:{width,height:width===390?844:800},reducedMotion:'reduce'});
-   await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
+   await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());await ctx.addInitScript(gtagStub);
    for(const file of pages){
     const p=await ctx.newPage(),errors=[],httpErrors=[];p.on('pageerror',e=>errors.push(e.message));p.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)httpErrors.push(r.status()+' '+r.url())});
     const row={file,width};
     try{
-     await p.goto(base+'/'+file+'?noga=1',{waitUntil:'networkidle'});await p.evaluate(()=>document.fonts.ready);
+     await p.goto(base+'/'+file,{waitUntil:'networkidle'});await p.evaluate(()=>document.fonts.ready);
      await p.evaluate(()=>document.querySelectorAll('img').forEach(i=>i.loading='eager'));
      await p.waitForFunction(()=>[...document.images].every(i=>i.complete),null,{timeout:15000});await settle(p);
      const layout=await measureLayout(p,width);
@@ -59,7 +66,12 @@ async function overflowingElements(p){
       assert.equal(await p.locator('.hero').first().locator('.hero-actions a:visible').count(),2);
       assert.equal(await p.locator('.card-more').count(),3);
       if(width===390){await p.locator('.burger').click();assert.equal(await p.locator('.burger').getAttribute('aria-expanded'),'true');await p.keyboard.press('Escape');assert.equal(await p.locator('.burger').getAttribute('aria-expanded'),'false');assert.ok(await p.locator('.burger').evaluate(el=>el===document.activeElement));}
+
+      await stopNavigation(p);await p.locator('.hero .hero-actions a[href*="line.me"]').first().click();await p.locator('.hero .hero-actions a[href*="lianluo.html"]').first().click();if(width===390)await p.locator('.dock a[href^="tel:"]').click();
+      const ev=await eventsOf(p);assert.deepEqual(ev[0],['cta_line',{page_group:'home',cta_location:'hero'}]);assert.deepEqual(ev[1],['cta_trial',{page_group:'home',cta_location:'hero'}]);if(width===390)assert.deepEqual(ev[2],['cta_phone',{page_group:'home',cta_location:'dock'}]);assert.equal(ev.length,width===390?3:2,'no extra events');
      }
+     if(file==='guozhong-shuxue.html'){await stopNavigation(p);await p.locator('.subject-cta a[href*="lianluo.html"]').click();assert.deepEqual(await eventsOf(p),[['cta_trial',{page_group:'junior_math',cta_location:'mid'}]]);}
+     if(await p.locator('script[src*="assets/site.js"]').count())assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'page must not insert a second GA loader when gtag exists');
      if(file==='ziyuan.html'){
       const clipped=await p.locator('.res-stages').evaluate(el=>el.scrollWidth>el.clientWidth+1);assert.equal(clipped,false,'all stage choices fit');
       await p.locator('.res-stages [data-val="升學"]').click();assert.ok(await p.locator('#res-exam').isVisible());assert.equal(await p.locator('#res-hs-math').isVisible(),false);
@@ -90,20 +102,33 @@ async function overflowingElements(p){
    catch(e){row.pass=false;row.error=e.message}
    results.push(row);await ctx.close();
   }
+  {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());const p=await ctx.newPage(),row={flow:'analytics loader'};
+   try{await p.goto(base+'/index.html',{waitUntil:'networkidle'});assert.equal(await p.locator('script[src*="googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ"]').count(),1,'single GA loader');assert.ok(await p.evaluate(()=>window.dataLayer.some(a=>a[0]==='config'&&a[1]==='G-GHN2GDS2RQ')),'config pushed');row.pass=true}catch(e){row.pass=false;row.error=e.message}
+   results.push(row);await ctx.close();}
+  {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());const p=await ctx.newPage(),row={flow:'analytics opt-out noga'};
+   try{await p.goto(base+'/index.html?noga=1',{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag),'undefined','noga: no gtag');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'noga: no loader');
+    await p.goto(base+'/index.html',{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag+'|'+localStorage.getItem('bhcs_noga')),'undefined|1','exclusion persists');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'still no loader');row.pass=true}catch(e){row.pass=false;row.error=e.message}
+   results.push(row);await ctx.close();}
+  {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());await ctx.addInitScript(()=>{Object.defineProperty(navigator,'globalPrivacyControl',{get:()=>true,configurable:true})});const p=await ctx.newPage(),row={flow:'analytics opt-out gpc'};
+   try{await p.goto(base+'/lianluo.html',{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag),'undefined','gpc: no gtag');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'gpc: no loader');await p.locator('#pname').fill('x');assert.equal(await p.evaluate(()=>(window.dataLayer||[]).length),0,'gpc: no events');row.pass=true}catch(e){row.pass=false;row.error=e.message}
+   results.push(row);await ctx.close();}
   for(const storageDenied of [false,true]){
    const ctx=await browser.newContext({viewport:{width:390,height:844}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
-   await ctx.addInitScript(denied=>{window.__opened=[];window.open=(url,target,features)=>{window.__opened.push({url,target,features});return null};Object.defineProperty(navigator,'clipboard',{value:{writeText:async v=>{window.__copied=v}},configurable:true});if(denied)Object.defineProperty(window,'sessionStorage',{get(){throw Error('Storage blocked')}})},storageDenied);
+   await ctx.addInitScript(gtagStub);await ctx.addInitScript(denied=>{window.__opened=[];window.open=(url,target,features)=>{window.__opened.push({url,target,features});return null};Object.defineProperty(navigator,'clipboard',{value:{writeText:async v=>{window.__copied=v}},configurable:true});if(denied)Object.defineProperty(window,'sessionStorage',{get(){throw Error('Storage blocked')}})},storageDenied);
    const p=await ctx.newPage(),errors=[],row={flow:'trial form',storageDenied};p.on('pageerror',e=>errors.push(e.message));
    try{
-    await p.goto(base+'/lianluo.html?noga=1');await p.locator('button[type=submit]').click();assert.equal(await p.evaluate(()=>__opened.length),0,'invalid form stays local');
+    await p.goto(base+'/lianluo.html');await p.locator('button[type=submit]').click();assert.equal(await p.evaluate(()=>__opened.length),0,'invalid form stays local');assert.deepEqual(await eventsOf(p),[],'invalid submit sends no event');
     assert.equal(await p.locator('.booking-steps li').count(),3,'three booking steps');assert.match(await p.locator('button[type=submit]').textContent(),/LINE/,'submit names LINE');assert.equal(await p.locator('#trial-draft-note').count(),1,'draft note present');
     await p.locator('#pname').fill('驗收家長');await p.locator('#phone').fill('0900000000');await p.locator('#grade').selectOption({label:'國中八年級'});await p.locator('#note').fill('理化 & 數學\n想了解費用 <測試>');
+    assert.deepEqual(await eventsOf(p),[['trial_form_start',{page_group:'contact'}]],'form start once per load');
     assert.equal(await p.locator('.dock').isVisible(),false,'dock hides while typing');await p.locator('#note').blur();assert.ok(await p.locator('.dock').isVisible());
     if(!storageDenied){await p.reload();assert.equal(await p.locator('#pname').inputValue(),'驗收家長');assert.match(await p.locator('#note').inputValue(),/& 數學/)}else assert.match(await p.locator('#trial-draft-note').textContent(),/無法暫存/);
     await p.locator('button[type=submit]').click();assert.match(p.url(),/lianluo.html/);assert.ok(await p.locator('#trial-preview').isVisible());assert.match(await p.locator('#form-status').textContent(),/尚未送出/);
+    assert.deepEqual((await eventsOf(p)).filter(e=>e[0]==='trial_line_open'),[['trial_line_open',{page_group:'contact'}]],'line open event once');
     const opened=await p.evaluate(()=>__opened);assert.equal(opened.length,1);assert.equal(opened[0].target,'_blank');assert.match(opened[0].features,/noopener/);assert.ok(opened[0].url.startsWith('https://line.me/R/oaMessage/%40bhcs/?'));assert.match(decodeURIComponent(new URL(opened[0].url).search.slice(1)),/理化 & 數學\n想了解費用 <測試>/);
     await p.locator('#note').fill('更新後的內容');await p.locator('#copy-trial').click();await p.waitForFunction(()=>window.__copied?.includes('更新後的內容'));assert.match(await p.evaluate(()=>__copied),/更新後的內容/);
     await p.evaluate(()=>{navigator.clipboard.writeText=async()=>{throw Error('Clipboard blocked')}});await p.locator('#copy-trial').click();assert.match(await p.locator('#form-status').textContent(),/已選取/);
+    assert.equal((await eventsOf(p)).filter(e=>e[0]==='trial_copy').length,2,'copy event per click');assert.doesNotMatch(JSON.stringify(await p.evaluate(()=>window.__events)),/驗收家長|0900000000|理化 & 數學|更新後的內容|<測試>/,'no form data in analytics events');
     await p.screenshot({path:path.join(out,'trial-preview-'+storageDenied+'.png')});
     await p.locator('#clear-trial').click();await p.reload();assert.equal(await p.locator('#pname').inputValue(),'');assert.equal(await p.locator('#trial-preview').isVisible(),false);
     if(!storageDenied){for(const value of [JSON.stringify({savedAt:Date.now()-3*60*60*1000,values:{家長姓名:'過期'}}),'{broken']){await p.evaluate(v=>sessionStorage.setItem('bhcs_trial_draft_v1',v),value);await p.reload();assert.equal(await p.locator('#pname').inputValue(),'')}}
