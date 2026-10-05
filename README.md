@@ -47,4 +47,6 @@ GA4: `G-GHN2GDS2RQ`。主站唯一的 loader 在 `assets/site.js`（所有載入
 
 Internal traffic exclusion: open any main-site page once with `?noga=1`. This persists `bhcs_noga=1` in localStorage, and that browser is excluded from then on. Browsers sending Do Not Track or Global Privacy Control are excluded automatically. No cookie banner or consent UI is added by the site.
 
+Legacy tool pages under `tools/` that are not part of the science station set also load `assets/site.js` for privacy-aware GA page views only (no `science_*` events); `build_site.mjs` keeps their `site.js` cache version in sync.
+
 Conversion events (`cta_trial`, `cta_line`, `cta_phone`, `cta_map`, `trial_form_start`, `trial_line_open`, `trial_copy`) carry only the fixed `page_group` and `cta_location` categories. Conversion events never include form field values or free text.

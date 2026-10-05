@@ -68,18 +68,6 @@
     @page{size:A4;margin:12mm}
   }
 </style>
-<!-- Google Analytics 4 -->
-<script>
-if(location.search.indexOf('noga=1')>-1) localStorage.setItem('bhcs_noga','1');
-if(localStorage.getItem('bhcs_noga')!=='1'){
-  var s=document.createElement('script'); s.async=true;
-  s.src='https://www.googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ';
-  document.head.appendChild(s);
-  window.dataLayer=window.dataLayer||[];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js',new Date()); gtag('config','G-GHN2GDS2RQ');
-}
-</script>
 </head>
 <body class="student">
 <div class="panel">
@@ -281,5 +269,6 @@ function syncDivUI(){ const dec=+$('divAd').value||+$('divBd').value; $('divR').
 generate();
 </script>
 <script src="../assets/a4-preview-fit.js"></script>
+<script src="../assets/site.js?v=20261005-site-analytics-1" defer></script>
 </body>
 </html>

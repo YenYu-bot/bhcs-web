@@ -9,6 +9,10 @@ const pages=process.env.SITE_PAGES?process.env.SITE_PAGES.split(','):allPages;
 // and the analytics code never reads form fields or free text into gtag/dataLayer/track.
 for(const f of allPages.filter(f=>fs.readFileSync(path.join(root,f),'utf8').includes('assets/site.js'))){const html=fs.readFileSync(path.join(root,f),'utf8');assert.ok(!html.includes('googletagmanager.com')&&!html.includes('G-GHN2GDS2RQ'),f+' must not embed its own GA loader');}
 {const src=fs.readFileSync(path.join(root,'assets/site.js'),'utf8');assert.ok(src.includes("'G-GHN2GDS2RQ'"),'site.js owns the GA id');for(const line of src.split('\n'))if(/\b(gtag|track)\s*\(|dataLayer\.push/.test(line))assert.doesNotMatch(line,/家長姓名|聯絡電話|就讀學校|想了解的科目|目前遇到的狀況|trial-message|content|message\.value|form\.elements/,'analytics call must not touch form data: '+line.trim());}
+// Legacy tool pages use site.js for privacy-aware GA page views only: no inline loader, no science-events adapter.
+const legacyToolPages=['tools/lenses.html','tools/waves.html','tools/eye-lesson.html','tools/dc-motor.html','tools/color-primaries.html','tools/moon-phases/index.html','tools/frog-dissection/index.html','tools/vertical.html','tools/convex-lens-imaging.html'];
+for(const f of legacyToolPages){const html=fs.readFileSync(path.join(root,f),'utf8');assert.ok(!html.includes('G-GHN2GDS2RQ')&&!html.includes('googletagmanager.com/gtag/js'),f+' must not embed GA');assert.equal((html.match(/assets\/site\.js/g)||[]).length,1,f+' loads site.js exactly once');assert.ok(!html.includes('science-events.js'),f+' must not load science-events.js');}
+for(const f of allPages)assert.ok(!fs.readFileSync(path.join(root,f),'utf8').includes('G-GHN2GDS2RQ'),f+' must not contain the GA id; loaders live in assets/site.js and assets/science-events.js');
 const gtagStub=()=>{window.__events=[];window.gtag=function(){window.__events.push([].slice.call(arguments))}};
 const eventsOf=p=>p.evaluate(()=>window.__events.filter(e=>e[0]==='event').map(e=>[e[1],e[2]]));
 const stopNavigation=p=>p.evaluate(()=>{window.__events.length=0;document.addEventListener('click',e=>e.preventDefault(),true)});
@@ -112,6 +116,25 @@ async function overflowingElements(p){
   {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());await ctx.addInitScript(()=>{Object.defineProperty(navigator,'globalPrivacyControl',{get:()=>true,configurable:true})});const p=await ctx.newPage(),row={flow:'analytics opt-out gpc'};
    try{await p.goto(base+'/lianluo.html',{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag),'undefined','gpc: no gtag');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'gpc: no loader');await p.locator('#pname').fill('x');assert.equal(await p.evaluate(()=>(window.dataLayer||[]).length),0,'gpc: no events');row.pass=true}catch(e){row.pass=false;row.error=e.message}
    results.push(row);await ctx.close();}
+  for(const [file,smoke] of [
+   ['tools/lenses.html',async p=>{await p.locator('.tab[data-page="focus"]').click();assert.equal(await p.locator('.tab[data-page="focus"]').getAttribute('aria-selected'),'true','lenses tab switches');const range=p.locator('input[type=range]').first();if(await range.count()){await range.evaluate(el=>{el.value=el.max;el.dispatchEvent(new Event('input',{bubbles:true}))});}}],
+   ['tools/moon-phases/index.html',async p=>{await p.locator('.tab[data-page="sim"]').click();assert.equal(await p.locator('.tab[data-page="sim"]').getAttribute('aria-selected'),'true','moon tab switches');}],
+   ['tools/vertical.html',async p=>{await p.locator('#gen').click();assert.ok(await p.locator('#out').evaluate(el=>el.children.length>0||el.textContent.trim().length>0),'vertical generates problems');}]
+  ]){
+   const row={flow:'legacy tool analytics',file};
+   try{
+    {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());const p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error'&&!/net::ERR_FAILED|Failed to load resource/.test(m.text()))errors.push(m.text())});
+     await p.goto(base+'/'+file,{waitUntil:'networkidle'});assert.equal(await p.locator('script[src*="googletagmanager.com/gtag/js?id=G-GHN2GDS2RQ"]').count(),1,'single GA loader');assert.ok(await p.evaluate(()=>typeof window.gtag==='function'&&window.dataLayer.some(a=>a[0]==='config'&&a[1]==='G-GHN2GDS2RQ')),'config pushed');
+     await smoke(p);assert.deepEqual(errors,[],'tool runs without errors');await ctx.close();}
+    {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());const p=await ctx.newPage();
+     await p.goto(base+'/'+file+'?noga=1',{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag+'|'+localStorage.getItem('bhcs_noga')),'undefined|1','noga stored, no gtag');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'noga: no loader');
+     await p.goto(base+'/'+file,{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag),'undefined','exclusion persists');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'still no loader');await ctx.close();}
+    {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());await ctx.addInitScript(()=>{Object.defineProperty(navigator,'globalPrivacyControl',{get:()=>true,configurable:true})});const p=await ctx.newPage();
+     await p.goto(base+'/'+file,{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag),'undefined','gpc: no gtag');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'gpc: no loader');await ctx.close();}
+    row.pass=true;
+   }catch(e){row.pass=false;row.error=e.message}
+   results.push(row);
+  }
   for(const storageDenied of [false,true]){
    const ctx=await browser.newContext({viewport:{width:390,height:844}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
    await ctx.addInitScript(gtagStub);await ctx.addInitScript(denied=>{window.__opened=[];window.open=(url,target,features)=>{window.__opened.push({url,target,features});return null};Object.defineProperty(navigator,'clipboard',{value:{writeText:async v=>{window.__copied=v}},configurable:true});if(denied)Object.defineProperty(window,'sessionStorage',{get(){throw Error('Storage blocked')}})},storageDenied);
