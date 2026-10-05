@@ -67,9 +67,26 @@ def similar_title(title: str) -> str:
     return re.sub(r"[（(].*?[)）]|[\s・·、，：:]|與|和|的", "", title)
 
 
+CONTENT_RULES = (
+    ("ziyuan.html", "奇奇博士", False),
+    ("ziyuan.html", "同一類型連續三次都對", False),
+    ("tools/mini-lab/index.html", "余老師", True),
+)
+
+
+def content_errors() -> list[str]:
+    """Guard the mini-lab host name and the practice advice against stale wording."""
+    errors = []
+    for rel, needle, expected in CONTENT_RULES:
+        present = needle in (ROOT / rel).read_text(encoding="utf-8")
+        if present != expected:
+            errors.append(f"{rel} {'must contain' if expected else 'must not contain'} {needle!r}")
+    return errors
+
+
 def main() -> None:
     rows = links()
-    errors: list[str] = []
+    errors: list[str] = content_errors()
 
     for row in rows:
         href = row["href"]
