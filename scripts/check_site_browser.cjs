@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..'),out=path.resolve(process.env.SITE_OUTPUT
 const files=[...new Set(cp.execFileSync('git',['ls-files','--cached','--others','--exclude-standard'],{cwd:root,encoding:'utf8'}).trim().split('\n'))];
 const allPages=files.filter(f=>f.endsWith('.html')&&!f.startsWith('scripts/'));
 const pages=process.env.SITE_PAGES?process.env.SITE_PAGES.split(','):allPages;
-const capture=new Set(['index.html','lianluo.html','ziyuan.html','xuexi-xitong.html','chengguo.html','wenzhang/index.html','wenzhang/duoding.html','wenzhang/chengji-pinxing.html']);
+const capture=new Set(['index.html','lianluo.html','ziyuan.html','xuexi-xitong.html','chengguo.html','guozhong-shuxue.html','guozhong-lihua.html','guozhong-yingwen.html','wenzhang/index.html','wenzhang/duoding.html','wenzhang/chengji-pinxing.html']);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!f.startsWith(root+path.sep)){res.writeHead(403).end();return}try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',mime[path.extname(f)]||'application/octet-stream');res.end(fs.readFileSync(f))}catch{res.writeHead(404).end()}});
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
@@ -67,6 +67,7 @@ async function overflowingElements(p){
       await p.locator('#resource-search').fill('不存在的教材測試');assert.match(await p.locator('#resource-filter-status').textContent(),/找不到/);
       await p.locator('#resource-search').fill('');await p.locator('#resource-search').blur();await p.evaluate(()=>scrollTo(0,0));
      }
+     if(/^guozhong-(shuxue|lihua|yingwen)\.html$/.test(file)){assert.doesNotMatch(await p.locator('main').innerText(),/八成不是不會算|有一半是數學的問題|兩週後剩不到三成|真正的原因只有那一個單元/,'unsupported claims removed');assert.equal(await p.locator('.subject-jump a').count(),4,'subject jump nav');}
      if(file.startsWith('wenzhang/')){assert.equal(await p.locator('.masthead .brand img').count(),1);assert.equal(await p.locator('main#main').count(),1);assert.equal(await p.locator('.foot a[href="tel:+886422320448"]').count(),1);assert.equal(await p.locator('.dock').isVisible(),width===390);}
      if(capture.has(file)){await p.evaluate(()=>scrollTo(0,0));await settle(p);await p.screenshot({path:path.join(out,width+'-'+file.replaceAll('/','-')+'.png')});}
      if(width===390&&await p.locator('.foot .legal').count()){
