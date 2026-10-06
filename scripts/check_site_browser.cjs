@@ -15,6 +15,8 @@ for(const f of legacyToolPages){const html=fs.readFileSync(path.join(root,f),'ut
 for(const f of allPages)assert.ok(!fs.readFileSync(path.join(root,f),'utf8').includes('G-GHN2GDS2RQ'),f+' must not contain the GA id; loaders live in assets/site.js and assets/science-events.js');
 // Moon-phase images are deferred: no eager preload loop, lazy loader present.
 {const moon=fs.readFileSync(path.join(root,'tools/moon-phases/index.html'),'utf8');assert.doesNotMatch(moon,/Object\.entries\(IMG\)\.forEach/,'moon-phases must not preload all images');assert.ok(moon.includes('IMAGE_STATE')&&moon.includes('function ensurePageImages'),'moon-phases lazy image loader present');}
+// Mini-lab keyboard accessibility: labelled name field, native safety buttons with aria-pressed, keyboard-operable SVG stations.
+{const mini=fs.readFileSync(path.join(root,'tools/mini-lab/index.html'),'utf8');assert.ok(mini.includes('<label class="sr-only" for="name">'),'mini-lab name field needs a label');assert.equal((mini.match(/<button type="button" class="rule" data-r="[a-z]+" aria-pressed="false">/g)||[]).length,3,'mini-lab safety rules are buttons with aria-pressed');assert.ok(!mini.includes('<div class="rule"'),'mini-lab rules must not be divs');assert.equal((mini.match(/class:'station',role:'button',tabindex:'0','aria-label':/g)||[]).length,2,'mini-lab stations are keyboard buttons');assert.ok(mini.includes('<a class="skip" href="#main">')&&mini.includes('<main id="main" tabindex="-1">'),'mini-lab skip link and main landmark');}
 const gtagStub=()=>{window.__events=[];window.gtag=function(){window.__events.push([].slice.call(arguments))}};
 const eventsOf=p=>p.evaluate(()=>window.__events.filter(e=>e[0]==='event').map(e=>[e[1],e[2]]));
 const stopNavigation=p=>p.evaluate(()=>{window.__events.length=0;document.addEventListener('click',e=>e.preventDefault(),true)});
@@ -162,6 +164,40 @@ async function overflowingElements(p){
     row.pass=true;
    }catch(e){row.pass=false;row.error=e.message}
    results.push(row);
+  }
+  for(const width of [390,1280]){
+   const row={flow:'mini-lab keyboard accessibility',width};
+   const ctx=await browser.newContext({viewport:{width,height:width<700?844:900}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
+   const p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error'&&!/net::ERR_FAILED|Failed to load resource/.test(m.text()))errors.push(m.text())});
+   const active=()=>p.evaluate(()=>({tag:document.activeElement.tagName,id:document.activeElement.id,cls:document.activeElement.getAttribute('class')||'',text:(document.activeElement.textContent||'').trim(),label:document.activeElement.getAttribute('aria-label')}));
+   const tabToStation=async()=>{for(let i=0;i<12;i++){await p.keyboard.press('Tab');const a=await active();if(/\bstation\b/.test(a.cls))return a;}throw new Error('no station reachable by Tab')};
+   try{
+    await p.goto(base+'/tools/mini-lab/',{waitUntil:'networkidle'});await settle(p);
+    assert.equal(await p.locator('h1').count(),1);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),0,'no overflow');
+    // A: accessible name
+    assert.equal(await p.getByLabel('你的名字').count(),1,'name field labelled');assert.equal(await p.locator('#name').getAttribute('placeholder'),'輸入你的名字');
+    // B: skip link is first in tab order and focuses main
+    await p.keyboard.press('Tab');assert.deepEqual((await active()).text,'跳到主要內容','skip link first');await p.keyboard.press('Enter');await settle(p);assert.equal(await p.evaluate(()=>location.hash),'#main');assert.equal((await active()).id,'main','main landmark focused');
+    // C: safety rules by keyboard
+    await p.locator('#name').focus();await p.keyboard.type('鍵盤測試');const rules=p.locator('.rule');assert.equal(await rules.count(),3);
+    for(const [i,key] of [[0,'Space'],[1,'Enter'],[2,'Space']]){assert.equal(await rules.nth(i).getAttribute('aria-pressed'),'false');await rules.nth(i).focus();await p.keyboard.press(key);assert.equal(await rules.nth(i).getAttribute('aria-pressed'),'true','rule '+i+' pressed via '+key);assert.ok(await rules.nth(i).evaluate(el=>el.classList.contains('on')&&el.tagName==='BUTTON'));}
+    assert.equal(await p.locator('#enter').isDisabled(),false,'enter enabled after three rules');
+    // D: enter the lab by keyboard; stations are keyboard buttons
+    await p.locator('#enter').focus();await p.keyboard.press('Enter');await settle(p);assert.ok(await p.locator('#lab.screen.active').count()===1,'lab shown');
+    const stations=await p.evaluate(()=>[...document.querySelectorAll('#room .station')].map(s=>({role:s.getAttribute('role'),tab:s.getAttribute('tabindex'),label:s.getAttribute('aria-label'),hit:!!s.querySelector('.station-hit')})));const expected=await p.evaluate(()=>EXPERIMENTS.length+1);
+    assert.equal(stations.length,expected,'experiments plus advanced door');assert.ok(stations.every(s=>s.role==='button'&&s.tab==='0'&&s.label&&s.hit),'station semantics');assert.ok(stations.some(s=>s.label==='進階教室'),'advanced door labelled');
+    // E: Tab reaches a station with a visible focus ring; Enter opens it
+    const focused=await tabToStation();assert.ok(await p.evaluate(()=>{const s=document.activeElement;return s.matches(':focus-visible')&&getComputedStyle(s.querySelector('.station-hit')).strokeWidth==='5px'}),'station focus ring visible');
+    await p.keyboard.press('Enter');await settle(p);assert.equal(await p.locator('#expScreen.screen.active').count(),1,'Enter opens experiment');assert.equal(await p.locator('#expTitle').textContent(),focused.label,'experiment title matches station');
+    await p.locator('#quitExp').click();await settle(p);assert.equal(await p.locator('#lab.screen.active').count(),1);
+    await tabToStation();await p.keyboard.press('Space');await settle(p);assert.equal(await p.locator('#expScreen.screen.active').count(),1,'Space opens experiment');
+    // F: pointer regression on a fresh load
+    await p.evaluate(()=>localStorage.removeItem('minilab'));await p.goto(base+'/tools/mini-lab/',{waitUntil:'networkidle'});await settle(p);
+    for(let i=0;i<3;i++)await p.locator('.rule').nth(i).click();assert.deepEqual(await p.locator('.rule').evaluateAll(els=>els.map(e=>e.getAttribute('aria-pressed'))),['true','true','true'],'pointer toggles rules');await p.locator('#name').fill('滑鼠測試');await p.locator('#enter').click();await settle(p);
+    await p.locator('#room .station').first().click();await settle(p);assert.equal(await p.locator('#expScreen.screen.active').count(),1,'click opens experiment');
+    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),0,'no overflow in experiment');assert.deepEqual(errors,[]);row.pass=true;
+   }catch(e){row.pass=false;row.error=e.message}
+   results.push(row);await ctx.close();
   }
   for(const storageDenied of [false,true]){
    const ctx=await browser.newContext({viewport:{width:390,height:844}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
