@@ -18,6 +18,9 @@
 | C | Trial 2 完成條件不可能成立（屏幕鎖在 15、理論 30）：拆成 move／find 兩個 state gate；Trial 3 search 無 sharp completion，改為三區搜尋完成 | §6.4、§8.1A、§8.2 |
 | D | `observedScreenPosition` 不得硬編碼：Compare Card、Notebook、Trial 記錄一律由 record 模板產生；文中 15／30 僅為示例 | §7.5、§8.2、§9 |
 | E | 搜尋區改為連續半開區間：`8 ≤ s < 17`、`17 ≤ s < 29`、`29 ≤ s ≤ 40`（0.5 cm snap 下無空隙） | §8.2、§10.3 |
+| G | state machine 與 §8.1A 不一致：`*-complete` 為 sharp 自動進入、`*-recorded` 為 CTA 進入（寫 record）；Trial 3 三區完成只解鎖 CTA，按 CTA 才 transition | §8.1A、§8.2 |
+| H | `trial2-move-object` 屏幕鎖定值、§7.4 Trial 2 的 `e` 皆改為 `trial1.observedScreenPosition`，不再硬編碼 15 | §6.2、§7.4 |
+| I | 殘留文字：ARIA 範例改模板 `{s}`；§16 改為「清楚像距 `{observedScreenPosition}`」，theoreticalV 到 concept 階段才與 observed 比較 | §6.5、§16 |
 | F | `PageUp/PageDown` 僅在 draggable 取得 focus 時攔截預設捲動，其他情況保留頁面行為 | §6.5 |
 
 ### v1 → v1.1（已併入）
@@ -159,8 +162,8 @@ Guided Mode 可視範圍：左 -35 cm ～ 右 +40 cm（共 75 cm）
 | 狀態 | 蠟燭 `u` | 屏幕 `s` | 透鏡 |
 |---|---|---|---|
 | trial1-find-screen | 鎖定（30） | `8 ≤ s ≤ 40` | 鎖定 |
-| trial2-move-object | `12 ≤ u ≤ 35` | 鎖定（15） | 鎖定 |
-| trial2-find-screen | 鎖定（15） | `8 ≤ s ≤ 40` | 鎖定 |
+| trial2-move-object | `12 ≤ u ≤ 35` | 鎖定（`trial1.observedScreenPosition`） | 鎖定 |
+| trial2-find-screen | 鎖定（15） | `8 ≤ s ≤ 40`（起點為 `trial1.observedScreenPosition`） | 鎖定 |
 | trial3-move-object | `5 ≤ u ≤ 35` | 鎖定 | 鎖定 |
 | trial3-search-screen | 鎖定（5） | `8 ≤ s ≤ 40` | 鎖定 |
 
@@ -205,7 +208,7 @@ Guided Mode 可視範圍：左 -35 cm ～ 右 +40 cm（共 75 cm）
 - `Home` / `End` 不列必要項（一鍵跳界與「尋找清楚位置」目的關聯低）。
 - 大步移動同樣受 §6.2 clamp 與 snap 約束。
 
-首次 focus 可顯示：「可以拖動，也可以用左右方向鍵移動，PageUp／PageDown 可以一次移動較遠。」不要每次 focus 重複朗讀。`PageUp`／`PageDown` **只在 draggable 取得 focus 時**攔截（`preventDefault`）；focus 在其他位置時保留瀏覽器正常的頁面捲動行為。ARIA label 含目前狀態，例如：「屏幕，目前距離凸透鏡 22 公分，可用左右方向鍵移動。」
+首次 focus 可顯示：「可以拖動，也可以用左右方向鍵移動，PageUp／PageDown 可以一次移動較遠。」不要每次 focus 重複朗讀。`PageUp`／`PageDown` **只在 draggable 取得 focus 時**攔截（`preventDefault`）；focus 在其他位置時保留瀏覽器正常的頁面捲動行為。ARIA label 含目前狀態，例如：「屏幕，目前距離凸透鏡 {s} 公分，可用左右方向鍵移動。」
 
 ### 6.6 Pointer 與 Touch 手勢
 
@@ -274,7 +277,7 @@ t = clamp(0.06 × f, 0.75, 1.25) cm            （f=10 → t=0.75）
 
 **Trial 1**（`f=10, u=30`）：`v=15, m=-0.5`，實像、倒立、縮小。屏幕初始位置 **`s=20`**（`e=5`，落在 Lv3 `2.25 < e ≤ 5.25` 明顯模糊；離答案仍有 5 cm，且與開場台詞一致。`s=22` 的 `e=7` 屬 Lv4，故不用）。學生必須主動找到約 15 cm。
 
-**Trial 2**（`f=10`，蠟燭 30 → 15）：`u=15 → v=30, m=-2`。屏幕**仍停在 Trial 1 記錄值 15 cm**，立刻變模糊（`e=15`，Lv4），學生重新找到 30 cm。形成「我只移動蠟燭，原本清楚的位置就失效了」的因果經驗。
+**Trial 2**（`f=10`，蠟燭 30 → 15）：`u=15 → v=30, m=-2`。屏幕**仍停在 `trial1.observedScreenPosition`**；由於合法第一輪記錄為 14.5–15.5 cm，而第二輪理論像距為 30 cm（`e` 為 14.5–15.5），此時必為 Lv4。學生重新找到約 30 cm。形成「我只移動蠟燭，原本清楚的位置就失效了」的因果經驗。
 
 **Trial 3**（`f=10, u=5`）：`v=-10, m=+2`。學生仍可移動屏幕，但右側所有位置都不會 sharp。
 
@@ -301,17 +304,26 @@ welcome → mission
 → challenge-1 → challenge-2 → challenge-3 → complete
 ```
 
-### 8.1A 各 state 的完成 gate（互不混用）
+### 8.1A State transition contract（互不混用）
 
-| State | 進入下一步的 gate |
-|---|---|
-| trial1-find-screen | `effectiveClarityLevel = 1`，且學生按「記錄第一次結果」（寫入 record，見 §7.5） |
-| trial2-move-object | `u === 15`（僅此一條；此時屏幕鎖在 Trial 1 位置，**必然不是** sharp） |
-| trial2-find-screen | `effectiveClarityLevel = 1`，且學生按「記錄第二次結果」 |
-| trial3-move-object | `u === 5`（途中經過的 `u=10` 及 bench 溢出位置皆不觸發任何 gate） |
-| trial3-search-screen | **沒有 sharp completion**；gate 為 `searchedZones` 三區皆已探索（§8.2、§10.3），之後才出現「我找不到清楚實像」CTA |
+「**自動 transition**」＝條件成立即進入下一 state；「**CTA transition**」＝條件只負責解鎖／啟用 CTA，學生按下 CTA 才 transition。同一個條件不得同時扮演兩種角色。
 
-每個 gate 只在其 state 內檢查；離開該 state 後再次滿足條件不得重複觸發（§8.3）。
+| Transition | 類型 | 條件 |
+|---|---|---|
+| `trial1-find-screen → trial1-complete` | 自動 | `effectiveClarityLevel === 1` |
+| `trial1-complete → trial1-recorded` | CTA | 學生按「記錄第一次結果」，**且按下當下仍為 `effectiveClarityLevel === 1`**；此時才寫入 record（`observedScreenPosition` ＝ 當下屏幕位置） |
+| `trial1-recorded → trial2-move-object` | 自動 | record 已寫入 |
+| `trial2-move-object → trial2-find-screen` | 自動 | `u === 15`（此時屏幕鎖在 `trial1.observedScreenPosition`，必為 Lv4，**不是** sharp） |
+| `trial2-find-screen → trial2-complete` | 自動 | `effectiveClarityLevel === 1` |
+| `trial2-complete → trial2-recorded` | CTA | 學生按「記錄第二次結果」，**且當下仍為 sharp**；此時才寫入 record |
+| `trial2-recorded → compare` | 自動 | record 已寫入 |
+| `trial3-move-object → trial3-search-screen` | 自動 | `u === 5`（途中經過的 `u=10` 與 bench 溢出位置不觸發任何 transition） |
+| `trial3-search-screen → trial3-no-real-screen-image` | CTA | 學生按「我找不到清楚實像」。CTA 的**解鎖條件**為 `searchedZones` 三區皆已探索；解鎖本身不 transition |
+
+補充規則：
+- `trial1-complete`／`trial2-complete` 內屏幕仍可微調；若學生移出 sharp，「記錄」CTA 停用（並提示「再回到最清楚的位置」），回到 sharp 後重新啟用。移出 sharp **不會**退回 `*-find-screen`。
+- `trial3-search-screen` **沒有 sharp completion**，沒有任何以 `effectiveClarityLevel` 觸發的 transition。
+- 每個條件只在其 state 內檢查；離開該 state 後再次滿足不得重複觸發（§8.3）。
 
 ### 8.2 各狀態
 
@@ -322,11 +334,11 @@ welcome → mission
 **trial1-find-screen**：僅屏幕可操作；`f=10, u=30`；屏幕自 20 cm 開始（Lv3，見 §7.4）。
 - 首次拖動：「試試看哪個位置比較清楚。」
 - 接近 sharp band：「快找到了。」
-- 進入 sharp：「就是這裡。影像現在最清楚。」 CTA「記錄第一次結果」。
+- 進入 sharp（自動進入 `trial1-complete`）：「就是這裡。影像現在最清楚。」顯示 CTA「記錄第一次結果」。
 
 **錯誤方向提示**：不因單次 1 cm 判斷。僅當**連續遠離**理論像距方向且**累積 ≥ 3 cm** 時觸發；方向以 `theoreticalV − s` 由 model 計算；每個 trial 最多自動出現一次：「剛才影像變得更模糊了。試試另一個方向。」只適用於有限目標像距的 trial（見 §8.5）。
 
-**trial1-complete**：記錄 `焦距 10 cm／物距 30 cm／清楚像距＝{observedScreenPosition}／倒立、較小`（像距為學生按下記錄當下的屏幕位置，不是 15 的硬編碼）。余老師：「第一筆證據有了。接下來只改一個地方。」
+**trial1-complete**（影像最清楚，等待學生記錄）：顯示 CTA「記錄第一次結果」。按下後進入 `trial1-recorded`，寫入 `焦距 10 cm／物距 30 cm／清楚像距＝{observedScreenPosition}／倒立、較小`（像距為按下記錄當下的屏幕位置，不是 15 的硬編碼）。`trial1-recorded` 時余老師：「第一筆證據有了。接下來只改一個地方。」
 
 **trial2-move-object**：屏幕與透鏡鎖定，蠟燭可拖（`12–35`）。「把蠟燭移到離透鏡 15 cm 的位置。」完成：「好，這次只有物距改變。」強化「只改一個條件」。
 
@@ -353,7 +365,7 @@ welcome → mission
 - 首次移動：「這次也試著找找看。」
 - 探索兩區仍未找到：「目前還沒有找到清楚的位置。」
 - 三區皆探索：「你已經檢查過近、中、遠的位置了。看起來問題可能不在你找得不夠仔細。」→「這次可能真的沒有能接到清楚影像的位置。」
-- CTA「我找不到清楚實像」**僅在三區都探索後出現**；不得提前公布「沒有實像」。
+- CTA「我找不到清楚實像」**僅在三區都探索後解鎖**；解鎖不自動換 state，須學生按下才進入 `trial3-no-real-screen-image`；不得提前公布「沒有實像」。
 
 **trial3-no-real-screen-image**：「不是你找得不夠仔細。這一次，屏幕本來就接不到清楚實像。」→「但是如果不用屏幕，而是直接透過透鏡看呢？」CTA「從透鏡後面看」。
 
@@ -526,7 +538,7 @@ Compare Card 必須讀取真實記錄並顯示 `observedScreenPosition`；修改
 ## 16. 設計原則
 
 - 若須在「數值控制更方便」與「學生更像在操作真實實驗」之間選擇，Guided Mode 優先選後者；Advanced Mode 才服務前者。
-- 學生第一次看到 `u = 30`、`v = 15` 時，這兩個數字必須代表**「我剛才自己找到的結果」**，而不是網站顯示的答案（這是 Science Lab 2.0 與一般參數模擬器最大的差異）。
+- 學生第一次看到「物距 30 cm」與「清楚像距 {observedScreenPosition} cm」時，後者必須代表**「我剛才自己找到的結果」**，而不是網站先告訴我的理論答案。到 concept 階段才把 `theoreticalV = 15` 拿來和 `observedScreenPosition`（14.5／15／15.5）比較（這是 Science Lab 2.0 與一般參數模擬器最大的差異）。
 
 ### 最終驗收三問
 
