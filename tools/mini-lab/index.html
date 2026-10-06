@@ -148,6 +148,7 @@
   .skip{position:fixed;left:12px;top:-80px;z-index:100;padding:8px 12px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:6px;font-weight:700;text-decoration:none}
   .skip:focus{top:12px}
   .rule{display:block;width:100%;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+  .rule-label{display:block}
   .station:hover .glow,.station:focus-visible .glow{opacity:1}
   .station:focus{outline:none}
   .station:focus-visible .station-hit{stroke:var(--accent);stroke-width:5}
@@ -170,9 +171,9 @@
       <p style="margin:12px 0 6px"><label class="sr-only" for="name">你的名字</label><input type="text" id="name" placeholder="輸入你的名字" maxlength="12"></p>
       <p style="margin:6px 0"><b>進實驗室前，把三樣安全裝備都點一下：</b></p>
       <div class="rules" id="rules">
-        <button type="button" class="rule" data-r="goggles" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-goggles"/></svg><div>護目鏡</div></button>
-        <button type="button" class="rule" data-r="coat" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-coat"/></svg><div>實驗衣</div></button>
-        <button type="button" class="rule" data-r="hands" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-hands"/></svg><div>洗手、不吃東西</div></button>
+        <button type="button" class="rule" data-r="goggles" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-goggles"/></svg><span class="rule-label">護目鏡</span></button>
+        <button type="button" class="rule" data-r="coat" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-coat"/></svg><span class="rule-label">實驗衣</span></button>
+        <button type="button" class="rule" data-r="hands" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-hands"/></svg><span class="rule-label">洗手、不吃東西</span></button>
       </div>
       <button class="btn" id="enter" disabled>進入實驗室 →</button>
     </div>
