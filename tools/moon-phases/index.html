@@ -160,7 +160,20 @@
 /* ============ 可調整參數 ============ */
 const CFG = { orbitR: 250, earthR: 46, moonR: 22, synodic: 29.53 };
 const IMG = { earth:'img/earth.png', moon:'img/moon.png', sun:'img/sun.png', skyDay:'img/sky-day.jpg', skyNight:'img/sky-night.jpg', horizon:'img/horizon.png' };   // 圖片缺檔時自動退回向量繪圖
-const HAS={}; Object.entries(IMG).forEach(([k,src])=>{ const i=new Image(); i.onload=()=>{HAS[k]=true; if(typeof render==='function') render();}; i.onerror=()=>HAS[k]=false; i.src=src; });
+/* 圖片延後載入：初始只用向量繪圖，使用者開始操作（切頁、拖曳、按鍵）後才依頁面需求補上 bitmap；每張最多請求一次 */
+const HAS={}; const IMAGE_STATE={};   // idle(未定義) | loading | loaded | failed
+const IMAGE_GROUPS={ core:['earth','moon','sun'], sky:['skyDay','skyNight','horizon'] };
+const PAGE_IMAGES={ cause:IMAGE_GROUPS.core, lock:['earth','moon'], time:[...IMAGE_GROUPS.core,...IMAGE_GROUPS.sky], date:[...IMAGE_GROUPS.core,...IMAGE_GROUPS.sky], sim:[...IMAGE_GROUPS.core,...IMAGE_GROUPS.sky], quiz:[...IMAGE_GROUPS.core,...IMAGE_GROUPS.sky] };
+function loadImage(key){
+  if(!IMG[key] || IMAGE_STATE[key]) return;
+  IMAGE_STATE[key]='loading';
+  const i=new Image(); i.decoding='async'; if('fetchPriority' in i) i.fetchPriority='low';
+  i.onload=()=>{ HAS[key]=true; IMAGE_STATE[key]='loaded'; if(typeof render==='function') render(); };
+  i.onerror=()=>{ HAS[key]=false; IMAGE_STATE[key]='failed'; };
+  i.src=IMG[key];
+}
+function ensureImages(keys){ keys.forEach(loadImage); }
+function ensurePageImages(page){ ensureImages(PAGE_IMAGES[page]||IMAGE_GROUPS.core); }
 
 /* ============ 狀態 ============ */
 var Q={hideSun:false};
@@ -400,7 +413,7 @@ function setPage(p){
   if(p==='quiz') newQuestion();
   renderText(); render();
 }
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setPage(t.dataset.page));
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ const page=t.dataset.page; ensurePageImages(page); setPage(page); });
 
 /* ============ 同步自轉示範 ============ */
 let lockRAF=null;
@@ -468,7 +481,12 @@ $('qNext').onclick=newQuestion;
 
 /* 離開測驗時恢復 */
 const _setPage=setPage;
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ $('moon').style.opacity=1; $('refLines').style.opacity=1; $('observer').style.opacity=1; Q.hideSun=false; setPage(t.dataset.page); });
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ const page=t.dataset.page; ensurePageImages(page); $('moon').style.opacity=1; $('refLines').style.opacity=1; $('observer').style.opacity=1; Q.hideSun=false; setPage(page); });
+
+/* 第一次真正互動才載圖；點分頁時以目標頁為準，不先載目前頁的圖 */
+function primeCurrentPageImages(e){ if(e && e.target && e.target.closest && e.target.closest('.tab')) return; ensurePageImages(S.page); }
+document.addEventListener('pointerdown',primeCurrentPageImages,{passive:true});
+document.addEventListener('keydown',primeCurrentPageImages);
 
 setPage('cause');
 </script>
