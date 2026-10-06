@@ -1,13 +1,26 @@
 # Science Lab 2.0 Prototype
 ## 光學與透鏡成像 2.0｜Implementation-ready Spec
 
-版本：**Spec v1.1**
+版本：**Spec v1.2**
 日期：2026-10-06
-狀態：**規格審核中，不進入實作**（v1.1 為整合版，取代 v1 全文；不另附補充說明）
+狀態：**規格審核中，不進入實作**（v1.2 為整合版，取代 v1／v1.1 全文；不另附補充說明）
 
 ---
 
-## 變更紀錄（v1 → v1.1）
+## 變更紀錄
+
+### v1.1 → v1.2（交叉檢查後的邏輯一致性修正）
+
+| # | 修正 | 併入章節 |
+|---|---|---|
+| A | Trial 1 初始屏幕 `s=22` 的 `e=7 > 7t=5.25`，實為 Lv4；不改 threshold，改為 **`s=20`**（`e=5`，Lv3） | §4.2、§7.4、§8.2、§17 |
+| B | bench 溢出 clarity 兩套規則衝突：拆成 `rawClarityLevel` 與 `effectiveClarityLevel`（`imageType≠real` → Lv4；`real` 且 bench 內 → raw；`real` 但 bench 外 → `max(raw, 2)`，永不為 Lv1） | §6.4、§7.3、§14.2 |
+| C | Trial 2 完成條件不可能成立（屏幕鎖在 15、理論 30）：拆成 move／find 兩個 state gate；Trial 3 search 無 sharp completion，改為三區搜尋完成 | §6.4、§8.1A、§8.2 |
+| D | `observedScreenPosition` 不得硬編碼：Compare Card、Notebook、Trial 記錄一律由 record 模板產生；文中 15／30 僅為示例 | §7.5、§8.2、§9 |
+| E | 搜尋區改為連續半開區間：`8 ≤ s < 17`、`17 ≤ s < 29`、`29 ≤ s ≤ 40`（0.5 cm snap 下無空隙） | §8.2、§10.3 |
+| F | `PageUp/PageDown` 僅在 draggable 取得 focus 時攔截預設捲動，其他情況保留頁面行為 | §6.5 |
+
+### v1 → v1.1（已併入）
 
 下列七項已直接併入正文對應章節，正文即為唯一有效條文。
 
@@ -15,13 +28,13 @@
 |---|---|---|
 | 1 | 焦點穿越狀態正式納入：經過 `u=f` 不禁止，但回傳 `imageType=infinite`，畫面為無法聚焦的散開光影，無 NaN／Infinity UI／閃爍；完成條件只認指定目標 | §6.4、§9.3、§10 |
 | 2 | Trial 2 蠟燭範圍收窄為 `12 ≤ u ≤ 35`；Trial 3 才解鎖 `5 ≤ u ≤ 35` | §6.2 |
-| 3 | Trial 1 初始屏幕改為 `s=22`（Lv3）；開場台詞改為「很模糊」；明寫手機 1 cm snap 與 `t=0.75` 的交互結果 | §4.2、§7.4、§8.3 |
+| 3 | Trial 1 初始屏幕改為較遠的模糊位置（v1.2 定為 `s=20`）；開場台詞改為「很模糊」；明寫手機 1 cm snap 與 `t=0.75` 的交互結果 | §4.2、§7.4、§8.3 |
 | 4 | 鍵盤新增 `PageUp/PageDown`＝5 cm；Home/End 不列必要項 | §6.5 |
 | 5 | Touch：只有 draggable hit target 使用 `touch-action: none`，其餘桌面維持 `pan-y` | §6.6 |
 | 6 | Hint 3 方向由 physics model 計算；`u ≤ f` 的 trial 停用方向型 Hint，改採近／中／遠搜尋進度提示 | §8.5 |
 | 7 | 區分 `theoreticalV`（引擎真值）與 `observedScreenPosition`（學生證據）；完成條件 `projectionWithinBench ∧ abs(observed − theoreticalV) ≤ t`；Compare Card 顯示 observed | §7.5、§11、§12 |
 
-另有三處為整合時順帶補齊的邏輯一致性修正（見 §7.3 sharp gate 與 bench 邊界、§6.4 bench 溢出狀態、§8.2 Trial 2 錯誤方向判斷來源），審核時請一併確認。
+v1.1 另補的三處（sharp gate 與 bench 邊界、bench 溢出狀態、搜尋區累計時機）已於 v1.2 審核通過並保留，其中 bench 溢出的 clarity 呈現依 v1.2-B 改寫。
 
 ---
 
@@ -78,7 +91,7 @@
 > 屏幕上的影像很模糊。
 > 把屏幕移到最清楚的位置。
 
-（v1 為「有點模糊」；因 Trial 1 初始誤差落在 Lv3「明顯模糊」，措辭改為「很模糊」。）
+（v1 為「有點模糊」；因 Trial 1 初始 `s=20`、誤差 5 cm 落在 Lv3「明顯模糊」，措辭改為「很模糊」。）
 
 ## 5. 版面規格
 
@@ -166,14 +179,14 @@ Guided Mode 可視範圍：左 -35 cm ～ 右 +40 cm（共 75 cm）
 蠟燭拖曳經過 `u = f` **不禁止**（如 Trial 3 從 15 拖到 5 必經 `u=10`）。此時：
 
 - 模型回傳 `imageType = infinite`、`theoreticalV = null`、`imageOrientation = undefined`。
-- 屏幕不得出現有限的清楚像；呈現為**無法聚焦的散開光影**（blur 最大、對比低，但 opacity 不降為 0）。
+- 屏幕不得出現有限的清楚像；`effectiveClarityLevel` 恆為 Lv4，呈現為**無法聚焦的散開光影**（blur 最大、對比低，但 opacity 不降為 0）。
 - UI 不得出現 NaN、Infinity、`∞ cm` 的數字、或畫面閃爍／抖動。
-- 不得觸發任何完成事件，也不得計入搜尋區域；完成條件只認指定目標值（Trial 2：`u=15` 且 sharp；Trial 3：`u=5`）。
+- 不得觸發任何完成事件，也不得計入搜尋區域；完成條件只認指定目標值，且各 state 的 gate 分開（見 §8.1A）。
 
 同理，當 `f < u` 但 `v` 超出實驗桌（如 `u=12 → v=60`、`u=10.5 → v=210`）：
 
 - `imageType = real`、`projectable = true`、`projectionWithinBench = false`。
-- 屏幕任何位置都不得達到 sharp（見 §7.3），畫面同樣為散開光影。
+- 屏幕任何位置都**永遠不得達到 sharp**（見 §7.3）。畫面依 `effectiveClarityLevel` 呈現：越接近桌面邊界越接近 Lv2（已經很接近但仍略模糊），距離足夠遠才進 Lv4 散開光影。
 - 學生語言：「會形成實像，但清楚位置已經超出這張實驗桌的範圍。」
 
 上述兩種中間狀態都不得被當成「虛像」，也不得導致資料層寫入錯誤分類。
@@ -192,7 +205,7 @@ Guided Mode 可視範圍：左 -35 cm ～ 右 +40 cm（共 75 cm）
 - `Home` / `End` 不列必要項（一鍵跳界與「尋找清楚位置」目的關聯低）。
 - 大步移動同樣受 §6.2 clamp 與 snap 約束。
 
-首次 focus 可顯示：「可以拖動，也可以用左右方向鍵移動，PageUp／PageDown 可以一次移動較遠。」不要每次 focus 重複朗讀。ARIA label 含目前狀態，例如：「屏幕，目前距離凸透鏡 22 公分，可用左右方向鍵移動。」
+首次 focus 可顯示：「可以拖動，也可以用左右方向鍵移動，PageUp／PageDown 可以一次移動較遠。」不要每次 focus 重複朗讀。`PageUp`／`PageDown` **只在 draggable 取得 focus 時**攔截（`preventDefault`）；focus 在其他位置時保留瀏覽器正常的頁面捲動行為。ARIA label 含目前狀態，例如：「屏幕，目前距離凸透鏡 22 公分，可用左右方向鍵移動。」
 
 ### 6.6 Pointer 與 Touch 手勢
 
@@ -231,23 +244,35 @@ e = |s - theoreticalV|                       （僅在 imageType=real 時定義�
 t = clamp(0.06 × f, 0.75, 1.25) cm            （f=10 → t=0.75）
 ```
 
+**`rawClarityLevel`**（僅依 `e`，只在 `imageType=real` 時定義）：
+
 | Level | 條件 | 文字 |
 |---|---|---|
-| 1 sharp | `e ≤ t` 且 `projectionWithinBench` | ✓ 影像最清楚 |
+| 1 sharp | `e ≤ t` | ✓ 影像最清楚 |
 | 2 | `t < e ≤ 3t` | 已經很接近了 |
-| 3 | `3t < e ≤ 7t` | 影像還很模糊 |
-| 4 | `e > 7t`，或 `imageType ≠ real`（infinite／virtual），或 `projectionWithinBench=false` 的 sharp 判定 | 只有散開的光影，已看不出清楚的蠟燭形狀 |
+| 3 | `3t < e ≤ 7t`（f=10：`2.25 < e ≤ 5.25`） | 影像還很模糊 |
+| 4 | `e > 7t`（f=10：`e > 5.25`） | 只有散開的光影，已看不出清楚的蠟燭形狀 |
+
+**`effectiveClarityLevel`**（畫面、訊息、scoring、state transition 一律使用此值）：
+
+| 條件 | effective level |
+|---|---|
+| `imageType ≠ real`（infinite／virtual） | 恆為 Lv4 |
+| `imageType = real` 且 `projectionWithinBench = true` | `rawClarityLevel` |
+| `imageType = real` 且 `projectionWithinBench = false` | `max(rawClarityLevel, 2)`，**永不為 Lv1** |
+
+例（`s=40`）：`v=40.5, e=0.5` → raw Lv1 → effective Lv2；`v=42, e=2` → Lv2；`v=44, e=4` → Lv3；`v=60, e=20` → Lv4。bench 外且 effective 為 Lv2／Lv3 時，訊息使用 bench 溢出語言（「會形成實像，但清楚位置已經超出這張實驗桌的範圍」），不使用「已經很接近了」。
 
 - Level 4 不得寫「沒有光」。
-- `projectionWithinBench` 定義：`8 ≤ theoreticalV ≤ 40`。若 `v` 略大於 40（如 40.5）而屏幕停在 40 使 `e ≤ t`，仍**不得**判為 sharp（整合時補上的邊界）；此時屏幕最高為 Lv2／Lv3 並顯示 bench 溢出語言。
-- 視覺 blur／contrast／edge definition 依 `e` **連續變化**；四級只用於教學訊息、scoring、state transition。opacity 不得降成 0。
+- `projectionWithinBench` 定義：`8 ≤ theoreticalV ≤ 40`；`virtual`／`infinite` 為 `false`。
+- 視覺 blur／contrast／edge definition 依 `e` 與 effective level **連續變化**；四級只用於教學訊息、scoring、state transition。opacity 不得降成 0。
 - 成功回饋不得只靠顏色，至少同時有文字、icon、視覺清晰度（如「✓ 影像最清楚」）。
 
 **手機 snap 與 sharp 的交互（刻意設計，非容差 bug）：** 手機 1 cm snap 配 `t=0.75`，theoretical 為整數時只有**正確整數位置**會進 sharp（例：`v=15` 時 14、16 為 Lv2）。桌機 0.5 cm snap 時 `v±0.5` 亦會進 sharp。驗收須分別驗證。
 
 ### 7.4 三輪正式實驗
 
-**Trial 1**（`f=10, u=30`）：`v=15, m=-0.5`，實像、倒立、縮小。屏幕初始位置 **`s=22`**（`e=7`，Lv3 明顯模糊；不靠近答案但與開場台詞一致）。學生必須主動找到約 15 cm。
+**Trial 1**（`f=10, u=30`）：`v=15, m=-0.5`，實像、倒立、縮小。屏幕初始位置 **`s=20`**（`e=5`，落在 Lv3 `2.25 < e ≤ 5.25` 明顯模糊；離答案仍有 5 cm，且與開場台詞一致。`s=22` 的 `e=7` 屬 Lv4，故不用）。學生必須主動找到約 15 cm。
 
 **Trial 2**（`f=10`，蠟燭 30 → 15）：`u=15 → v=30, m=-2`。屏幕**仍停在 Trial 1 記錄值 15 cm**，立刻變模糊（`e=15`，Lv4），學生重新找到 30 cm。形成「我只移動蠟燭，原本清楚的位置就失效了」的因果經驗。
 
@@ -258,7 +283,8 @@ t = clamp(0.06 × f, 0.75, 1.25) cm            （f=10 → t=0.75）
 - `theoreticalV`：physics engine 真值，只供模型、驗證、清晰度計算與進階內容使用。
 - `observedScreenPosition`：學生實際找到並**按下記錄**時的屏幕位置，是研究手冊與 Compare Card 的證據。
 - 兩欄位**不得混用**。Guided Mode 介面不顯示 `theoreticalV`。
-- **完成記錄的必要條件：** `projectionWithinBench ∧ abs(observedScreenPosition − theoreticalV) ≤ t`（即 `clarity = sharp`）。僅進入「稍微模糊」不算完成。
+- **完成記錄的必要條件：** `projectionWithinBench ∧ abs(observedScreenPosition − theoreticalV) ≤ t`（即 `effectiveClarityLevel = 1`）。僅進入「稍微模糊」不算完成。
+- 桌機 0.5 cm snap 配 `t=0.75`，合法記錄值不唯一（Trial 1：14.5／15／15.5；Trial 2：29.5／30／30.5）。因此**所有顯示學生證據的地方（Trial 記錄、Compare Card、研究手冊模板）一律讀 record 的 `observedScreenPosition`，不得 hard-code 15／30**；本規格中的 15／30 僅為示例值。
 
 ## 8. 狀態機與腳本
 
@@ -275,32 +301,44 @@ welcome → mission
 → challenge-1 → challenge-2 → challenge-3 → complete
 ```
 
+### 8.1A 各 state 的完成 gate（互不混用）
+
+| State | 進入下一步的 gate |
+|---|---|
+| trial1-find-screen | `effectiveClarityLevel = 1`，且學生按「記錄第一次結果」（寫入 record，見 §7.5） |
+| trial2-move-object | `u === 15`（僅此一條；此時屏幕鎖在 Trial 1 位置，**必然不是** sharp） |
+| trial2-find-screen | `effectiveClarityLevel = 1`，且學生按「記錄第二次結果」 |
+| trial3-move-object | `u === 5`（途中經過的 `u=10` 及 bench 溢出位置皆不觸發任何 gate） |
+| trial3-search-screen | **沒有 sharp completion**；gate 為 `searchedZones` 三區皆已探索（§8.2、§10.3），之後才出現「我找不到清楚實像」CTA |
+
+每個 gate 只在其 state 內檢查；離開該 state 後再次滿足條件不得重複觸發（§8.3）。
+
 ### 8.2 各狀態
 
 **welcome**：「為什麼投影機的屏幕放錯位置，畫面就會模糊？」 CTA「開始實驗」。不顯示公式。
 
 **mission**：「桌上有一支蠟燭、一片凸透鏡和一面屏幕。現在屏幕上的影像很模糊。」→「把屏幕移到影像最清楚的位置。」 CTA「動手試試看」。
 
-**trial1-find-screen**：僅屏幕可操作；`f=10, u=30`；屏幕自 22 cm 開始。
+**trial1-find-screen**：僅屏幕可操作；`f=10, u=30`；屏幕自 20 cm 開始（Lv3，見 §7.4）。
 - 首次拖動：「試試看哪個位置比較清楚。」
 - 接近 sharp band：「快找到了。」
 - 進入 sharp：「就是這裡。影像現在最清楚。」 CTA「記錄第一次結果」。
 
 **錯誤方向提示**：不因單次 1 cm 判斷。僅當**連續遠離**理論像距方向且**累積 ≥ 3 cm** 時觸發；方向以 `theoreticalV − s` 由 model 計算；每個 trial 最多自動出現一次：「剛才影像變得更模糊了。試試另一個方向。」只適用於有限目標像距的 trial（見 §8.5）。
 
-**trial1-complete**：記錄 `焦距 10 cm／物距 30 cm／清楚像距（observed）／倒立、較小`。余老師：「第一筆證據有了。接下來只改一個地方。」
+**trial1-complete**：記錄 `焦距 10 cm／物距 30 cm／清楚像距＝{observedScreenPosition}／倒立、較小`（像距為學生按下記錄當下的屏幕位置，不是 15 的硬編碼）。余老師：「第一筆證據有了。接下來只改一個地方。」
 
 **trial2-move-object**：屏幕與透鏡鎖定，蠟燭可拖（`12–35`）。「把蠟燭移到離透鏡 15 cm 的位置。」完成：「好，這次只有物距改變。」強化「只改一個條件」。
 
-**trial2-find-screen**：屏幕仍在 15 cm，理論 30 cm。畫面立即顯示「原本清楚的影像現在模糊了。」余老師：「蠟燭的位置改了，原本的屏幕位置也不再清楚。再找一次。」找到 `s≈30`：「影像又清楚了。」並讓學生看出像變大、仍倒立。CTA「記錄第二次結果」。
+**trial2-find-screen**：屏幕仍在 Trial 1 記錄的 `observedScreenPosition`（示例 15 cm），理論 30 cm（此時 `e ≥ 14.5`，Lv4）。畫面立即顯示「原本清楚的影像現在模糊了。」余老師：「蠟燭的位置改了，原本的屏幕位置也不再清楚。再找一次。」進入 sharp（示例 `s≈30`，實際為 29.5–30.5 內的 snapped 位置）：「影像又清楚了。」並讓學生看出像變大、仍倒立。CTA「記錄第二次結果」。
 
-**compare**：畫面中央 Evidence Compare Card，**資料取自實際記錄**（observed），不得 hard-code：
+**compare**：畫面中央 Evidence Compare Card，**資料取自實際記錄**（`f`、`u`、`observedScreenPosition`、`imageSize`），不得 hard-code。下表的 15／30 **僅為示例值**，正式 UI 必須讀 record（學生若記錄 14.5，就顯示 14.5）：
 
 | | 第一次 | 第二次 |
 |---|---:|---:|
 | 焦距 | 10 cm | 10 cm |
 | 物距 | 30 cm | 15 cm |
-| 清楚像距 | 15 cm | 30 cm |
+| 清楚像距（示例） | {t1.observed}＝15 cm | {t2.observed}＝30 cm |
 | 影像大小 | 較小 | 較大 |
 
 下方：「✅ 兩次只有物距不同，可以直接比較。」
@@ -311,7 +349,7 @@ welcome → mission
 **trial3-move-object**：「如果再把蠟燭往透鏡靠近，會一直有清楚的屏幕位置嗎？」→「把蠟燭移到 5 cm。」（範圍解鎖為 `5–35`；途中穿越行為依 §6.4。）
 
 **trial3-search-screen**：蠟燭到達 5 cm 後才開始搜尋追蹤。
-- 區域：近 `8–16`、中 `17–28`、遠 `29–40`（以屏幕 snapped 位置歸屬）。
+- 區域（連續半開區間，以屏幕 snapped 位置歸屬，0.5 cm snap 下無空隙）：近 `8 ≤ s < 17`、中 `17 ≤ s < 29`、遠 `29 ≤ s ≤ 40`。
 - 首次移動：「這次也試著找找看。」
 - 探索兩區仍未找到：「目前還沒有找到清楚的位置。」
 - 三區皆探索：「你已經檢查過近、中、遠的位置了。看起來問題可能不在你找得不夠仔細。」→「這次可能真的沒有能接到清楚影像的位置。」
@@ -325,7 +363,7 @@ welcome → mission
 - 實像：光線真的在某個位置會合，可以投在屏幕上。
 - 虛像：光線沒有真的在看起來的影像位置會合；眼睛能看到，但屏幕接不到。
 
-之後才出現公式，標題為「**剛才找到的位置，其實可以用這個關係算出來。**」（不寫「請記住公式」），並代入 Trial 1（`f=10, u=30 → v=15`）與 Trial 2（`f=10, u=15 → v=30`），讓公式成為解釋實驗結果的工具。
+之後才出現公式，標題為「**剛才找到的位置，其實可以用這個關係算出來。**」（不寫「請記住公式」），並代入學生 record 的 `f`、`u`（Trial 1：`f=10, u=30 → v=15`；Trial 2：`f=10, u=15 → v=30`，此為公式計算值），再與學生自己找到的 `observedScreenPosition` 並列（如「你找到 14.5 cm，公式算出 15 cm，在誤差範圍內」），讓公式成為解釋實驗結果的工具，而不是取代學生的證據。
 
 ### 8.3 重複操作
 
@@ -351,7 +389,7 @@ Trial 已正式記錄後，若學生把器材移回同一結果：「這筆結�
 
 完成前兩次實驗後進入，先讓學生看到**自己的真實資料**，不得重置成假範例。Compare Card 與手冊皆讀取 `observedScreenPosition`。
 
-- **Level A｜幫我整理**：系統帶入「我把物距從 **30 cm** 改成 **15 cm**。清楚像距從 **15 cm** 變成 **30 cm**。」學生完成：「所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會＿＿＿＿。」（離透鏡更遠）；影像大小會＿＿＿＿。（變大）
+- **Level A｜幫我整理**：系統以模板帶入「我把物距從 **{trial1.u} cm** 改成 **{trial2.u} cm**。清楚像距從 **{trial1.observedScreenPosition} cm** 變成 **{trial2.observedScreenPosition} cm**。」（示例為 30→15、15→30；實際顯示學生記錄值，如 14.5，不得 hard-code。）學生完成：「所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會＿＿＿＿。」（離透鏡更遠）；影像大小會＿＿＿＿。（變大）
 - **Level B｜自己說**：請用第一次和第二次的數據說明你發現的規律。自由輸入，Evidence Card 保留在旁，不需靠記憶抄數據。
 - **Level C｜研究員挑戰**：這兩筆資料支持了什麼結論？哪些事情還不能只靠這兩筆資料判斷？可接受概念：尚不能知道所有物距都如此；尚不能知道不同焦距是否相同；尚不能由兩筆資料直接證明完整公式。
 
@@ -372,7 +410,8 @@ imageOrientation         upright | inverted | undefined   （u = f → undefined
 imageSize
 projectable              true ⇔ u > f（理論上可成屏幕實像）
 projectionWithinBench    boolean（8 ≤ theoreticalV ≤ 40；virtual／infinite 為 false）
-clarity                  sharp | ...
+clarity                  記錄當下的 effectiveClarityLevel（完成記錄必為 1／sharp）
+rawClarityLevel          1–4 | null（imageType≠real 時為 null）
 changedVariables
 ```
 
@@ -387,7 +426,7 @@ studentConclusion: { level, relationPosition, relationSize, freeText, evidenceTe
 ### 10.3 Trial 3 額外資料
 
 ```text
-searchedZones: ["near", "middle", "far"]    （僅 trial3-search-screen 狀態內累計）
+searchedZones: ["near", "middle", "far"]    （僅 trial3-search-screen 狀態內累計；區間為 `8 ≤ s < 17`／`17 ≤ s < 29`／`29 ≤ s ≤ 40`）
 screenImageFound: false
 ```
 
@@ -428,7 +467,19 @@ Guided Mode 是**做實驗**，Advanced Mode 是**研究模型**；Advanced 的�
 
 ### 14.2 Clarity Gate
 
-以 `f=10,u=30,v=15` 測 `s = 15 / 15.5 / 16 / 18 / 22 / 30`，期望依序為 Lv1／Lv1／Lv2／Lv3／Lv4／Lv4（`t=0.75`，邊界 `0.75 / 2.25 / 5.25`）。另需測：`u=10`（infinite）、`u=5`（virtual）、`u=12`（real 但 bench 外）在**任何** `s` 皆不得為 sharp；`v` 略大於 40 時屏幕在 40 不得為 sharp。
+以 `f=10,u=30,v=15` 測 `s = 15 / 15.5 / 16 / 18 / 20 / 22 / 30`，期望依序為 Lv1／Lv1／Lv2／Lv3／**Lv3**／**Lv4**／Lv4（`t=0.75`，邊界 `0.75 / 2.25 / 5.25`；`s=20` 為 Trial 1 初始值，`e=5` 必須是 Lv3；`s=22` 是 Lv4）。
+
+bench 外 effective level（`s=40`，直接以 `theoreticalV` 測 clarity 函式）：
+
+| theoreticalV | e | raw | effective |
+|---|---|---|---|
+| 40.5 | 0.5 | 1 | **2**（不得 1） |
+| 42 | 2 | 2 | 2 |
+| 44 | 4 | 3 | 3 |
+| 60 | 20 | 4 | 4 |
+| 210（`u=10.5`） | 170 | 4 | 4 |
+
+另需測：`u=10`（infinite）、`u=5`（virtual）恆為 effective Lv4；`u=12`（real、bench 外）在**任何** `s` 皆不得為 effective Lv1。Trial 3 搜尋區邊界：`16.5`、`28.5` 必須各有且只有一個區域歸屬。
 
 ### 14.3 Pointer／Touch／Keyboard
 
@@ -442,7 +493,7 @@ Guided Mode 是**做實驗**，Advanced Mode 是**研究模型**；Advanced 的�
 
 ### 14.4 Research Record
 
-Compare Card 必須讀取真實記錄並顯示 `observedScreenPosition`；修改初始條件後仍須由紀錄產生；`theoreticalV` 不得出現在 Guided Mode UI。記錄完成條件須測 `abs(observed − theoreticalV) ≤ t` 與 `projectionWithinBench`。
+Compare Card 必須讀取真實記錄並顯示 `observedScreenPosition`；修改初始條件後仍須由紀錄產生；`theoreticalV` 不得出現在 Guided Mode UI。須以桌機 snap 下的非整數記錄（如 Trial 1 記 14.5、Trial 2 記 29.5）測試：Compare Card、研究手冊 Level A、Trial 記錄皆顯示 14.5／29.5，而非 15／30。記錄完成條件須測 `abs(observed − theoreticalV) ≤ t` 與 `projectionWithinBench`。
 
 ### 14.5 版面
 
@@ -491,7 +542,7 @@ Compare Card 必須讀取真實記錄並顯示 `observedScreenPosition`；修改
 2. 手機不採水平捲動實驗桌。
 3. 主流程只直接操作蠟燭與屏幕。
 4. Slider／Select 降到自由探索模式。
-5. Trial 1：`f10 / u30 / v15`，屏幕初始 22 cm。
+5. Trial 1：`f10 / u30 / v15`，屏幕初始 20 cm（Lv3）。
 6. Trial 2：`f10 / u15 / v30`，蠟燭範圍 `12–35`。
 7. Trial 3：`f10 / u5 / v-10`，蠟燭範圍解鎖為 `5–35`。
 8. Trial 3 必須先實際搜尋近、中、遠位置，不能直接公布「沒有實像」。
@@ -504,7 +555,7 @@ Compare Card 必須讀取真實記錄並顯示 `observedScreenPosition`；修改
 ## 18. 流程順序
 
 ```text
-A：Spec v1.1 → 使用者審核
+A：Spec v1.2 → 使用者審核
 B：repo／舊頁重用盤點與 implementation task breakdown（含新頁覆蓋或並存的 migration strategy）
 C：physics／clarity model 與單元測試，再決定是否進入正式實作
 ```
