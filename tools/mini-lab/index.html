@@ -152,6 +152,17 @@
   .station:hover .glow,.station:focus-visible .glow{opacity:1}
   .station:focus{outline:none}
   .station:focus-visible .station-hit{stroke:var(--accent);stroke-width:5}
+  /* 場景內可點的 SVG 元素（器材卡、危險行為、場景按鈕）：鍵盤可聚焦，focus ring 畫在 hit 形狀上 */
+  .svg-action{cursor:pointer}
+  .svg-action:focus{outline:none}
+  .svg-action:focus-visible .svg-action-hit{stroke:var(--accent);stroke-width:5}
+  .say:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  /* 拖曳步驟的鍵盤替代操作面板 */
+  .drag-alt{display:flex;flex-direction:column;gap:6px;min-width:0;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;background:#FFFDF7}
+  .drag-alt p{margin:0;font-size:14px;color:var(--muted)}
+  .drag-alt label{font-size:14px;color:var(--muted)}
+  .drag-alt select{display:block;width:100%;max-width:100%;min-width:0;font:inherit;font-size:15px;padding:8px 10px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+  .drag-alt button:disabled{opacity:.45;cursor:default}
 </style>
 </head>
 <body>
@@ -194,7 +205,7 @@
     <div class="stage"><svg id="scene" viewBox="0 0 800 460"></svg></div>
     <aside class="side">
       <div class="card"><h2 id="expTitle" style="margin:0 0 6px;font-size:19px"></h2><div class="prog" id="prog"></div>
-        <div class="host"><svg class="docimg" viewBox="0 0 200 220"><image href="img/doc-wave.png" x="-50" y="14" width="300" height="394" preserveAspectRatio="xMidYMin meet"/></svg><div class="say" id="say"></div></div>
+        <div class="host"><svg class="docimg" viewBox="0 0 200 220"><image href="img/doc-wave.png" x="-50" y="14" width="300" height="394" preserveAspectRatio="xMidYMin meet"/></svg><div class="say" id="say" tabindex="-1"></div></div>
         <div class="opts" id="opts" style="margin-top:10px"></div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="nextStep">下一步 →</button><button class="btn ghost" id="quitExp">回實驗室</button></div>
       </div>
@@ -278,6 +289,11 @@ $('resetAll').onclick=()=>{ if(confirm('確定要清除所有進度？')){ local
 /* ---------- 實驗室房間 ---------- */
 /* SVG 實驗站可用鍵盤啟動：Enter／Space 與點擊同一動作 */
 function bindStation(node,action){ node.onclick=action; node.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); action(); } }; }
+/* 場景內可點的 SVG 群組（器材卡、危險行為、場景按鈕）共用：role=button、tabindex=0、aria-label，Enter／Space 與點擊同一動作。
+   動作通常會 draw() 重建場景，鍵盤觸發時把焦點放回同一位置的新元素（沒有就回對話框），不讓焦點掉到 body。 */
+function bindSvgAction(node,label,action,hit){ node.classList.add('svg-action'); node.setAttribute('role','button'); node.setAttribute('tabindex','0'); node.setAttribute('aria-label',label); if(hit) hit.classList.add('svg-action-hit');
+  node.onclick=action; node.onkeydown=e=>{ if(e.key!=='Enter'&&e.key!==' ') return; e.preventDefault(); const idx=[...scene.querySelectorAll('.svg-action')].indexOf(node); action();
+    if(node.isConnected) return; const again=[...scene.querySelectorAll('.svg-action')]; (again[Math.min(idx,again.length-1)]||$('say')).focus(); }; return node; }
 function drawRoom(){
   const r=$('room'); r.innerHTML='';
   const bg=HAS.room;
@@ -336,17 +352,39 @@ function showRewards(q,done){ const r=$('reward'); if(!q.length){ r.classList.re
   const box=r.querySelector('.rbox'); box.style.animation='none'; void box.offsetWidth; box.style.animation='';
   r.classList.add('show'); docInto(r.querySelector('svg.docimg'),'thumb'); $('rOk').textContent=q.length>1?'下一個 →':'收進研究手冊 →';
   $('rOk').onclick=()=>showRewards(q.slice(1),done); }
-function draw(){ scene.innerHTML=''; E.draw(scene,st,step()); }
+function draw(){ scene.innerHTML=''; E.draw(scene,st,step()); if(step().type==='drag') renderDragAlternative(); }
 // 拖曳
 scene.addEventListener('pointerdown',e=>{ const t=e.target.closest('[data-item]'); if(!t||step().type!=='drag') return; const p=pt(e); drag={item:t.dataset.item,g:t,ox:p.x,oy:p.y,tr:t.getAttribute('transform')||''}; t.classList.add('lift'); if(t.parentNode===scene) scene.appendChild(t); scene.setPointerCapture(e.pointerId); });
 function inZoneOf(s,p){ return p.x>=s.zone.x&&p.x<=s.zone.x+s.zone.w&&p.y>=s.zone.y&&p.y<=s.zone.y+s.zone.h; }
 scene.addEventListener('pointermove',e=>{ if(!drag) return; const p=pt(e); drag.g.setAttribute('transform',`${drag.tr} translate(${p.x-drag.ox} ${p.y-drag.oy})`); drag.cur=p; const z=scene.querySelector('.zone'); if(z) z.classList.toggle('over',inZoneOf(step(),p)); });
 scene.addEventListener('pointerup',e=>{ if(!drag) return; const s=step(); const p=drag.cur||pt(e); const inZone=inZoneOf(s,p); const item=drag.item; const dx=p.x-drag.ox, dy=p.y-drag.oy; drag=null;
-  const say=$('say'); say.classList.remove('flash-ok','flash-no'); void say.offsetWidth;
-  if(inZone){ const res=s.onDrop(st,item,p);
-    if(res.ok){ say.innerHTML=`<span class="ok">✔</span> ${res.msg}`; say.classList.add('flash-ok'); draw(); fxZone(s.zone,true); fxCheck(p.x,p.y); fxBurst(p.x,p.y,'#60C3A4'); addPts(10,{at:{x:p.x,y:p.y-46}}); if(res.done) setTimeout(advance,1200); }
-    else { say.innerHTML=s.text+`<br><span class="no">${res.msg}</span>`; say.classList.add('flash-no'); draw(); fxZone(s.zone,false); fxReturn(item,dx,dy); } }
-  else { draw(); fxReturn(item,dx,dy); } });
+  if(inZone) completeDrop(item,p,{dx,dy,pointer:true});
+  else { const say=$('say'); say.classList.remove('flash-ok','flash-no'); void say.offsetWidth; draw(); fxReturn(item,dx,dy); } });
+/* 放下物件的共用路徑：滑鼠／觸控拖曳與鍵盤替代操作都走這裡，onDrop、狀態、回饋、分數、前進只有一份 */
+function completeDrop(item,p,{dx=0,dy=0,pointer=false}={}){ const s=step(); const say=$('say'); say.classList.remove('flash-ok','flash-no'); void say.offsetWidth;
+  const res=s.onDrop(st,item,p);
+  if(res.ok){ say.innerHTML=`<span class="ok">✔</span> ${res.msg}`; say.classList.add('flash-ok'); draw(); fxZone(s.zone,true); fxCheck(p.x,p.y); fxBurst(p.x,p.y,'#60C3A4'); addPts(10,{at:{x:p.x,y:p.y-46}}); if(res.done) setTimeout(advance,1200); }
+  else { say.innerHTML=s.text+`<br><span class="no">${res.msg}</span>`; say.classList.add('flash-no'); draw(); fxZone(s.zone,false); if(pointer) fxReturn(item,dx,dy); }
+  return res; }
+/* 鍵盤替代操作：按鈕／選單 → completeDrop；完成後把焦點放回面板或對話框，不讓焦點掉到 body */
+function keyboardDrop(item,p){ const res=completeDrop(item,p); const o=$('opts');
+  const next=res.done?null:(res.ok?null:o.querySelector(`[data-alt="${item}"]`))||o.querySelector('select,button:not(:disabled)'); (next||$('say')).focus(); return res; }
+function renderDragAlternative(){ const s=step(); const o=$('opts'); const prev=document.activeElement&&o.contains(document.activeElement)?(document.activeElement.dataset.alt||document.activeElement.id):null;
+  const keep={name:$('altName')?$('altName').value:'',target:$('altTarget')?$('altTarget').value:''}; o.innerHTML=''; if(s.type!=='drag') return;
+  const box=document.createElement('div'); box.className='drag-alt'; box.setAttribute('role','group'); box.setAttribute('aria-label','拖曳替代操作');
+  const p=document.createElement('p'); box.appendChild(p);
+  if(s.alt==='match'){ // 器材配對：名字牌 × 用途描述（不直接顯示器材名稱）
+    p.textContent='不方便拖曳？用選單配對：'; const left=TOOLS.filter(t=>!st.matched.includes(t.id));
+    const mk=(id,label,opts)=>{ const l=document.createElement('label'); l.htmlFor=id; l.textContent=label; const sel=document.createElement('select'); sel.id=id; sel.appendChild(new Option('請選擇','')); opts.forEach(([v,t])=>sel.appendChild(new Option(t,v))); box.appendChild(l); box.appendChild(sel); return sel; };
+    const nameSel=mk('altName','名字牌',left.map(t=>[t.id,t.name])); const targetSel=mk('altTarget','對應器材（依用途選）',left.map(t=>[t.id,t.use.split('。')[0]]));
+    if(left.some(t=>t.id===keep.name)) nameSel.value=keep.name; if(left.some(t=>t.id===keep.target)) targetSel.value=keep.target;
+    const b=document.createElement('button'); b.type='button'; b.id='altMatch'; b.textContent='配對'; const sync=()=>{ b.disabled=!(nameSel.value&&targetSel.value); }; nameSel.onchange=targetSel.onchange=sync; sync();
+    b.onclick=()=>{ if(b.disabled) return; const i=TOOLS.findIndex(t=>t.id===targetSel.value); if(i<0) return; keyboardDrop(nameSel.value,toolPos(i)); }; box.appendChild(b); }
+  else { const items=[...scene.querySelectorAll('[data-item]')].map(n=>({id:n.dataset.item,label:n.dataset.label||n.dataset.item})); if(!items.length) return;
+    p.textContent='不方便拖曳？用按鈕完成同一操作：'; const c={x:s.zone.x+s.zone.w/2,y:s.zone.y+s.zone.h/2};
+    items.forEach(it=>{ const b=document.createElement('button'); b.type='button'; b.dataset.alt=it.id; b.textContent=`放入「${it.label}」`; b.onclick=()=>keyboardDrop(it.id,c); box.appendChild(b); }); }
+  o.appendChild(box);
+  if(prev){ const again=o.querySelector(`[data-alt="${prev}"]`)||document.getElementById(prev); if(again&&o.contains(again)) again.focus(); } }
 
 /* ---------- 特效 ---------- */
 function fxLayer(){ let f=scene.querySelector('#fx'); if(!f) f=el('g',{id:'fx'},scene); scene.appendChild(f); return f; }
@@ -365,7 +403,7 @@ function fxReturn(item,dx,dy){ const g=scene.querySelector(`[data-item="${item}"
   anim(g,'animateTransform',{attributeName:'transform',type:'translate',additive:'sum',from:`${dx} ${dy}`,to:'0 0',dur:'.3s',calcMode:'spline',keySplines:'.2 .8 .3 1'}); }
 
 /* ---------- 共用零件 ---------- */
-function shelf(g,items,y=380){ items.forEach((it,i)=>{ const x=70+i*115; const gg=el('g',{class:'drag','data-item':it.id,transform:`translate(${x} ${y})`},g); el('rect',{x:-50,y:-56,width:100,height:92,rx:12,fill:'rgba(255,255,255,.92)',stroke:'#E7DFC9'},gg);
+function shelf(g,items,y=380){ items.forEach((it,i)=>{ const x=70+i*115; const gg=el('g',{class:'drag','data-item':it.id,'data-label':it.name,transform:`translate(${x} ${y})`},g); el('rect',{x:-50,y:-56,width:100,height:92,rx:12,fill:'rgba(255,255,255,.92)',stroke:'#E7DFC9'},gg);
   const key='item_'+(it.img||it.id); if(HAS[key]) el('image',{href:IMG[key],x:-40,y:-52,width:80,height:66,preserveAspectRatio:'xMidYMid meet'},gg); else it.draw(gg); txt(0,30,it.name,{'text-anchor':'middle','font-size':13,'font-weight':600},gg); }); }
 function sceneBg(g,fallback){ if(HAS.bench) el('image',{href:IMG.bench,x:0,y:0,width:800,height:460,preserveAspectRatio:'xMidYMid slice'},g); else fallback(); }
 /* 液體：x,y 左上角，w,h 尺寸；topR 液面橢圓半高；rb 底部圓角；taper 底部縮窄比例 */
@@ -502,10 +540,10 @@ const TOOLS=[
 ];
 let toolCompact=false; function toolPos(i){ return {x:90+(i%5)*155, y:(toolCompact?52:76)+Math.floor(i/5)*(toolCompact?108:124)}; }
 function toolGrid(g,st,clickable){ TOOLS.forEach((t,i)=>{ const {x,y}=toolPos(i); const gg=el('g',{transform:`translate(${x} ${y})`,style:clickable?'cursor:pointer':''},g);
-  el('rect',{x:-62,y:-50,width:124,height:104,rx:12,fill:st.seen&&st.seen.includes(t.id)?'#EAF8F2':'#fff',stroke:st.sel===t.id?'#FF8C42':'#E7DFC9','stroke-width':st.sel===t.id?3:1.5},gg);
+  const card=el('rect',{x:-62,y:-50,width:124,height:104,rx:12,fill:st.seen&&st.seen.includes(t.id)?'#EAF8F2':'#fff',stroke:st.sel===t.id?'#FF8C42':'#E7DFC9','stroke-width':st.sel===t.id?3:1.5},gg);
   if(HAS['tool_'+t.id]) el('image',{href:IMG['tool_'+t.id],x:-42,y:-48,width:84,height:80,preserveAspectRatio:'xMidYMid meet'},gg); else { const vg=el('g',{transform:'scale(.85) translate(0 -4)'},gg); t.draw(vg); }
   if(st.showNames!==false) txt(0,46,t.name,{'text-anchor':'middle','font-size':13,'font-weight':700},gg); else txt(0,46,'？',{'text-anchor':'middle','font-size':16,fill:'#bbb'},gg);
-  if(clickable) gg.onclick=()=>{ st.sel=t.id; if(!st.seen.includes(t.id)) st.seen.push(t.id); $('say').innerHTML=`<b>${t.name}</b>：${t.use}`+(st.seen.length<TOOLS.length?`<br><span style="color:#6B6F80;font-size:14px">還有 ${TOOLS.length-st.seen.length} 種沒看</span>`:'<br><span class="ok">十五種都認識了！按「下一步」。</span>'); $('nextStep').style.display=st.seen.length===TOOLS.length?'':'none'; draw(); }; }); }
+  if(clickable) bindSvgAction(gg,`${t.name}：${t.use}`,()=>{ st.sel=t.id; if(!st.seen.includes(t.id)) st.seen.push(t.id); $('say').innerHTML=`<b>${t.name}</b>：${t.use}`+(st.seen.length<TOOLS.length?`<br><span style="color:#6B6F80;font-size:14px">還有 ${TOOLS.length-st.seen.length} 種沒看</span>`:'<br><span class="ok">十五種都認識了！按「下一步」。</span>'); $('nextStep').style.display=st.seen.length===TOOLS.length?'':'none'; draw(); },card); }); }
 const EXP_TOOLS={ id:'tools', title:'認識實驗器材', note:'量體積用量筒、量少量液體用滴管、加熱用酒精燈（熄火要用蓋子蓋）、夾熱試管用試管夾。',
   icon:g=>{ el('path',{d:'M-60 -110 h40 v60 q0 6 -6 6 h-28 q-6 0 -6 -6z',fill:'#DFF5FF',stroke:'#8a93a2','stroke-width':3},g); el('path',{d:'M10 -120 v70 a10 10 0 0 0 20 0 v-70z',fill:'#DFF5FF',stroke:'#8a93a2','stroke-width':3},g); el('path',{d:'M46 -120 h14 v20 l18 40 q2 8 -6 8 h-38 q-8 0 -6 -8 l18 -40z',fill:'#DFF5FF',stroke:'#8a93a2','stroke-width':3},g); },
   init:()=>({seen:[],sel:null,matched:[],showNames:true}),
@@ -513,13 +551,13 @@ const EXP_TOOLS={ id:'tools', title:'認識實驗器材', note:'量體積用量�
     {type:'observe',text:'實驗室裡的器材各有各的工作。<b>把十五種器材都點一遍</b>，看看它們是做什麼用的。',run:st=>{ $('nextStep').style.display='none'; }},
     {type:'choose',text:'要量出剛好 50 毫升的水，用哪一個最準？',options:['燒杯','量筒','錐形瓶'],answer:1,why:'燒杯的刻度只是大概，量筒才是拿來量體積的。'},
     {type:'choose',text:'酒精燈用完要怎麼熄火？',options:['用嘴吹熄','用燈蓋蓋熄','用水澆熄'],answer:1,why:'吹氣可能把火焰吹到旁邊的酒精，蓋上燈蓋隔絕空氣最安全。'},
-    {type:'drag',text:'最後考考你：名字牌都拿掉了，把名字拖到正確的器材上。',zone:{x:0,y:0,w:800,h:330},
+    {type:'drag',alt:'match',text:'最後考考你：名字牌都拿掉了，把名字拖到正確的器材上。',zone:{x:0,y:0,w:800,h:330},
       onDrop:(st,item,p)=>{ let best=null,bd=1e9; TOOLS.forEach((t,i)=>{ const {x,y}=toolPos(i); const d=Math.hypot(p.x-x,p.y-y); if(d<bd){bd=d;best=t;} }); if(bd>75) return {ok:false,msg:'請放在某一個器材上。'}; if(best.id!==item) return {ok:false,msg:`那是${best.name}，再找找。`}; st.matched.push(item); return {ok:true,msg:`${best.name}配對成功！`+(st.matched.length<TOOLS.length?'':' 全部完成！'),done:st.matched.length===TOOLS.length}; }},
     {type:'say',text:'太棒了！你已經認識實驗室的十五種基本器材，可以進行下一關「實驗室安全守則」。'},
   ],
   draw:(g,st,s)=>{ el('rect',{x:0,y:0,width:800,height:460,fill:'#FFF9F2'},g);
     if(s.type==='drag'){ st.showNames=false; toolCompact=true; toolGrid(g,st,false); TOOLS.forEach((t,i)=>{ if(st.matched.includes(t.id)){ const {x,y}=toolPos(i); txt(x,y+46,t.name,{'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#2E8B57'},g); } });
-      const left=TOOLS.filter(t=>!st.matched.includes(t.id)); left.forEach((t,i)=>{ const gg=el('g',{class:'drag','data-item':t.id,transform:`translate(${62+(i%8)*96} ${(i<8?366:412)})`},g); el('rect',{x:-40,y:-18,width:80,height:36,rx:8,fill:'#FF8C42'},gg); txt(0,5,t.name,{'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#fff'},gg); }); }
+      const left=TOOLS.filter(t=>!st.matched.includes(t.id)); left.forEach((t,i)=>{ const gg=el('g',{class:'drag','data-item':t.id,'data-label':t.name,transform:`translate(${62+(i%8)*96} ${(i<8?366:412)})`},g); el('rect',{x:-40,y:-18,width:80,height:36,rx:8,fill:'#FF8C42'},gg); txt(0,5,t.name,{'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#fff'},gg); }); }
     else { st.showNames=true; toolCompact=false; toolGrid(g,st,si===0); } } };
 
 /* ---------- 關卡 B：實驗室安全守則 ---------- */
@@ -558,19 +596,19 @@ const EXP_SAFETY={ id:'rules', title:'實驗室安全守則', note:'安全五守
         const wrap=el('g',p.clip?{'clip-path':'url(#benchClip)'}:{},g);
         const gg=el('g',{style:hunting&&!found?'cursor:pointer':''},wrap);
         el('image',{href:IMG['haz_'+h.id],x:p.x-p.w/2,y:p.y-p.h/2,width:p.w,height:p.h,preserveAspectRatio:'xMidYMax meet'},gg);
-        el('rect',{x:p.x-p.w/2,y:p.y-p.h/2,width:p.w,height:p.h,fill:'transparent'},gg);
+        const hit=el('rect',{x:p.x-p.w/2,y:p.y-p.h/2,width:p.w,height:p.h,fill:'transparent'},gg);
         if(found){ el('rect',{x:p.x-p.w/2-4,y:p.y-p.h/2-4,width:p.w+8,height:(p.clip?196-(p.y-p.h/2):p.h)+8,rx:12,fill:'rgba(229,83,61,.12)',stroke:'#E5533D','stroke-width':3},g);
           txt(p.x,p.y-p.h/2-8,'✗ '+h.name,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#E5533D','paint-order':'stroke',stroke:'#fff','stroke-width':4},g); }
-        if(hunting&&!found) gg.onclick=()=>hazClick(st,h); });
+        if(hunting&&!found) bindSvgAction(gg,`危險行為：${h.name}`,()=>hazClick(st,h),hit); });
     } else {
       el('rect',{x:0,y:0,width:800,height:460,fill:'#E8F4FB'},g); el('rect',{x:0,y:340,width:800,height:120,fill:'#D9C7A3'},g);
       el('rect',{x:40,y:200,width:720,height:30,rx:6,fill:'#5C7A8C'},g); el('rect',{x:60,y:230,width:680,height:110,fill:'#48627A'},g);
       SAFE.forEach(sf=>{ const gg=el('g',{transform:`translate(${sf.x} ${sf.y})`},g); sf.draw(gg); });
       HAZ.forEach(h=>{ const found=st.found.includes(h.id); const gg=el('g',{transform:`translate(${h.x} ${h.y})`,style:hunting&&!found?'cursor:pointer':''},g);
         if(found) el('circle',{cx:0,cy:0,r:h.r+4,fill:'rgba(229,83,61,.15)',stroke:'#E5533D','stroke-width':3},gg);
-        h.draw(gg); el('circle',{cx:0,cy:0,r:h.r,fill:'transparent'},gg);
+        h.draw(gg); const hit=el('circle',{cx:0,cy:0,r:h.r,fill:'transparent'},gg);
         if(found) txt(0,h.r+16,'✗ '+h.name,{'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#E5533D'},gg);
-        if(hunting&&!found) gg.onclick=()=>hazClick(st,h); });
+        if(hunting&&!found) bindSvgAction(gg,`危險行為：${h.name}`,()=>hazClick(st,h),hit); });
       txt(120,110,'✔ 有戴護目鏡',{'text-anchor':'middle','font-size':11,fill:'#2E8B57'},g);
     }
     if(hunting){ txt(400,30,`找到 ${st.found.length} / ${HAZ.length}`,{'text-anchor':'middle','font-size':18,'font-weight':700,fill:'#E5533D','paint-order':'stroke',stroke:'#fff','stroke-width':5},g); } } };
@@ -579,7 +617,7 @@ function hazClick(st,h){ st.found.push(h.id); const hp=HAZPOS[h.id]; addPts(10,h
 
 
 /* ---------- 場景內按鈕 ---------- */
-function sbtn(g,x,y,label,on,active){ const gg=el('g',{transform:`translate(${x} ${y})`,style:'cursor:pointer'},g); el('rect',{x:-40,y:-16,width:80,height:32,rx:16,fill:active?'#FF8C42':'#fff',stroke:active?'#FF8C42':'#E7DFC9','stroke-width':2},gg); txt(0,5,label,{'text-anchor':'middle','font-size':14,'font-weight':700,fill:active?'#fff':'#2B2B3A'},gg); gg.onclick=on; return gg; }
+function sbtn(g,x,y,label,on,active){ const gg=el('g',{transform:`translate(${x} ${y})`,style:'cursor:pointer'},g); const r=el('rect',{x:-40,y:-16,width:80,height:32,rx:16,fill:active?'#FF8C42':'#fff',stroke:active?'#FF8C42':'#E7DFC9','stroke-width':2},gg); txt(0,5,label,{'text-anchor':'middle','font-size':14,'font-weight':700,fill:active?'#fff':'#2B2B3A'},gg); return bindSvgAction(gg,label,on,r); }
 
 /* ---------- 實驗 4：水草泡泡（光合作用） ---------- */
 const EXP_PHOTO={ id:'photo', title:'水草的泡泡', note:'光合作用：植物用光把水和二氧化碳變成養分，並放出氧氣；光愈強，冒出的氧氣泡泡愈多。',
