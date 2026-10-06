@@ -13,12 +13,15 @@ for(const f of allPages.filter(f=>fs.readFileSync(path.join(root,f),'utf8').incl
 const legacyToolPages=['tools/lenses.html','tools/waves.html','tools/eye-lesson.html','tools/dc-motor.html','tools/color-primaries.html','tools/moon-phases/index.html','tools/frog-dissection/index.html','tools/vertical.html','tools/convex-lens-imaging.html'];
 for(const f of legacyToolPages){const html=fs.readFileSync(path.join(root,f),'utf8');assert.ok(!html.includes('G-GHN2GDS2RQ')&&!html.includes('googletagmanager.com/gtag/js'),f+' must not embed GA');assert.equal((html.match(/assets\/site\.js/g)||[]).length,1,f+' loads site.js exactly once');assert.ok(!html.includes('science-events.js'),f+' must not load science-events.js');}
 for(const f of allPages)assert.ok(!fs.readFileSync(path.join(root,f),'utf8').includes('G-GHN2GDS2RQ'),f+' must not contain the GA id; loaders live in assets/site.js and assets/science-events.js');
+// Moon-phase images are deferred: no eager preload loop, lazy loader present.
+{const moon=fs.readFileSync(path.join(root,'tools/moon-phases/index.html'),'utf8');assert.doesNotMatch(moon,/Object\.entries\(IMG\)\.forEach/,'moon-phases must not preload all images');assert.ok(moon.includes('IMAGE_STATE')&&moon.includes('function ensurePageImages'),'moon-phases lazy image loader present');}
 const gtagStub=()=>{window.__events=[];window.gtag=function(){window.__events.push([].slice.call(arguments))}};
 const eventsOf=p=>p.evaluate(()=>window.__events.filter(e=>e[0]==='event').map(e=>[e[1],e[2]]));
 const stopNavigation=p=>p.evaluate(()=>{window.__events.length=0;document.addEventListener('click',e=>e.preventDefault(),true)});
 const capture=new Set(['index.html','lianluo.html','ziyuan.html','xuexi-xitong.html','chengguo.html','app.html','guozhong-shuxue.html','guozhong-lihua.html','guozhong-yingwen.html','wenzhang/index.html','wenzhang/duoding.html','wenzhang/chengji-pinxing.html']);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
-const server=http.createServer((req,res)=>{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!f.startsWith(root+path.sep)){res.writeHead(403).end();return}try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',mime[path.extname(f)]||'application/octet-stream');res.end(fs.readFileSync(f))}catch{res.writeHead(404).end()}});
+const server=http.createServer((req,res)=>{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!f.startsWith(root+path.sep)){res.writeHead(403).end();return}try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',mime[path.extname(f)]||'application/octet-stream');const body=fs.readFileSync(f);if(!f.endsWith('.html')){servedAssets.push(path.relative(root,f).split(path.sep).join('/'));res.setHeader('Cache-Control','public, max-age=600');}res.end(body)}catch{res.writeHead(404).end()}});
+const servedAssets=[];// network fetches actually served by the test server (memory-cache hits never reach it)
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 async function measureLayout(p,width){
  const measure=async()=>{
@@ -131,6 +134,31 @@ async function overflowingElements(p){
      await p.goto(base+'/'+file,{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag),'undefined','exclusion persists');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'still no loader');await ctx.close();}
     {const ctx=await browser.newContext({viewport:{width:1280,height:800}});await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());await ctx.addInitScript(()=>{Object.defineProperty(navigator,'globalPrivacyControl',{get:()=>true,configurable:true})});const p=await ctx.newPage();
      await p.goto(base+'/'+file,{waitUntil:'networkidle'});assert.equal(await p.evaluate(()=>typeof window.gtag),'undefined','gpc: no gtag');assert.equal(await p.locator('script[src*="googletagmanager"]').count(),0,'gpc: no loader');await ctx.close();}
+    row.pass=true;
+   }catch(e){row.pass=false;row.error=e.message}
+   results.push(row);
+  }
+  {const row={flow:'moon-phase lazy images'};
+   // Route interception disables Chromium's HTTP cache, which would turn every re-rendered SVG <image> into a new fetch; so these contexts use no route (the page has no external requests with ?noga=1) except the deliberate image-failure case.
+   const openMoon=async(route)=>{const ctx=await browser.newContext({viewport:{width:1280,height:900}});if(route)await ctx.route('**/*',r=>{const u=r.request().url();if(!u.startsWith(base)||route(u))return r.abort();return r.continue()});servedAssets.length=0;const p=await ctx.newPage(),errors=[];p.on('request',r=>{if(!r.url().startsWith(base))errors.push('external request '+r.url())});p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error'&&!/net::ERR_FAILED|Failed to load resource/.test(m.text()))errors.push(m.text())});const reqs={get list(){return servedAssets.filter(u=>u.startsWith('tools/moon-phases/img/')).map(u=>u.split('/').pop())}};await p.goto(base+'/tools/moon-phases/index.html?noga=1',{waitUntil:'networkidle'});await settle(p);return{ctx,p,errors,reqs}};
+   const uniq=a=>[...new Set(a)].sort();const boxes=p=>p.evaluate(()=>({orbit:document.getElementById('orbit').getBoundingClientRect().toJSON(),sky:document.getElementById('sky')?document.getElementById('sky').getBoundingClientRect().toJSON():null,height:document.documentElement.scrollHeight}));
+   try{
+    // A: initial load requests no bitmap; vector fallback renders
+    {const {ctx,p,errors,reqs}=await openMoon();assert.deepEqual(reqs.list,[],'initial load requests no moon-phase images');assert.equal(await p.locator('h1').count(),1);assert.ok(await p.locator('#orbit circle, #orbit path').count()>0,'vector orbit rendered');assert.deepEqual(errors,[]);
+     // B: lock tab loads only earth + moon
+     const before=await boxes(p);await p.locator('.tab[data-page="lock"]').click();await p.waitForLoadState('networkidle');await p.waitForTimeout(300);
+     assert.deepEqual(uniq(reqs.list),['earth.png','moon.png'],'lock loads earth and moon only');assert.equal(reqs.list.length,2,'no duplicate requests');assert.equal(await p.locator('.tab[data-page="lock"]').getAttribute('aria-selected'),'true');assert.ok(await p.locator('#lockDemo image, #lockDemo circle').count()>0,'lock scene renders');assert.deepEqual(errors,[]);
+     // C: sky page completes the set, each image once
+     await p.locator('.tab[data-page="sim"]').click();await p.waitForLoadState('networkidle');await p.waitForTimeout(300);
+     assert.deepEqual(uniq(reqs.list),['earth.png','horizon.png','moon.png','sky-day.jpg','sky-night.jpg','sun.png'],'sim loads the remaining images');assert.equal(reqs.list.length,6,'each image requested once');assert.ok(await p.evaluate(()=>HAS.earth&&HAS.moon&&HAS.sun&&HAS.skyDay&&HAS.skyNight&&HAS.horizon),'all images marked loaded');assert.ok(await p.locator('#orbit image').count()>0,'bitmap enhancement rendered');
+     // back on the same page as the initial measurement, now with bitmaps: no layout shift
+     await p.locator('.tab[data-page="cause"]').click();await settle(p);const after=await boxes(p);assert.deepEqual(after.orbit,before.orbit,'orbit box unchanged');assert.deepEqual(after.sky,before.sky,'sky box unchanged');assert.equal(after.height,before.height,'page height unchanged');assert.equal(reqs.list.length,6,'no refetch on re-render');assert.deepEqual(errors,[]);await ctx.close();}
+    // D: first drag on cause loads the core group only
+    {const {ctx,p,errors,reqs}=await openMoon();const m0=await p.evaluate(()=>S.moon);const box=await p.locator('#moon').boundingBox();const cx=box.x+box.width/2,cy=box.y+box.height/2;await p.mouse.move(cx,cy);await p.mouse.down();await p.mouse.move(cx+40,cy+25,{steps:4});await p.mouse.up();await p.waitForLoadState('networkidle');await p.waitForTimeout(300);
+     assert.deepEqual(uniq(reqs.list),['earth.png','moon.png','sun.png'],'first drag loads core images only');assert.equal(reqs.list.length,3,'core requested once each');assert.notEqual(await p.evaluate(()=>S.moon),m0,'moon drag still works');assert.deepEqual(errors,[]);await ctx.close();}
+    // E: failed image keeps the vector fallback and the tool usable
+    {const {ctx,p,errors,reqs}=await openMoon(u=>u.endsWith('/img/moon.png'));await p.locator('.tab[data-page="lock"]').click();await p.waitForLoadState('networkidle');await p.waitForTimeout(400);
+     assert.equal(await p.evaluate(()=>HAS.moon!==true&&IMAGE_STATE.moon==='failed'),true,'failed image marked failed');assert.ok(await p.locator('#lockDemo circle[r="34"]').count()>0,'vector moon fallback in lock scene');await p.locator('.tab[data-page="cause"]').click();await settle(p);assert.ok(await p.locator('#orbit circle, #orbit path').count()>0,'tool still renders after image failure');assert.deepEqual(errors,[]);await ctx.close();}
     row.pass=true;
    }catch(e){row.pass=false;row.error=e.message}
    results.push(row);
