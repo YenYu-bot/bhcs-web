@@ -143,26 +143,37 @@
   .ptsfloat,.rpts,.say .ok{color:var(--accent2)}
   .btn.ghost,.pill{white-space:nowrap}
   @media(max-width:700px){.badgebar{width:100%;margin-left:0;gap:6px;justify-content:flex-end;flex-wrap:nowrap}.badgebar #who{display:none}.topbar h1{font-size:16px}.topbar h1::before{width:28px;height:28px}.btn.ghost{padding:6px 10px!important;font-size:13px}}
+  /* 鍵盤可及性：skip link、視覺隱藏 label、原生 button 重設、SVG 實驗站 focus ring */
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .skip{position:fixed;left:12px;top:-80px;z-index:100;padding:8px 12px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:6px;font-weight:700;text-decoration:none}
+  .skip:focus{top:12px}
+  .rule{display:block;width:100%;font:inherit;color:inherit;-webkit-appearance:none;appearance:none}
+  .rule-label{display:block}
+  .station:hover .glow,.station:focus-visible .glow{opacity:1}
+  .station:focus{outline:none}
+  .station:focus-visible .station-hit{stroke:var(--accent);stroke-width:5}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">跳到主要內容</a>
 <div class="wrap">
 <div class="topbar"><h1>小小研究員虛擬實驗室</h1>
   <div class="badgebar"><span id="who"></span><span class="pill" id="ptsPill">⭐ <span id="pts">0</span> 分</span><button class="btn ghost" id="toNotebook" style="padding:6px 14px">📓 研究手冊</button><button class="btn ghost" id="toLab" style="padding:6px 14px">🏠 實驗室</button><a class="btn ghost" id="toAdv" href="lab-safety.html" style="padding:6px 14px;text-decoration:none">🎓 進階教室</a></div>
 </div>
 
+<main id="main" tabindex="-1">
 <!-- ===== 大廳 ===== -->
 <section class="screen active" id="foyer">
   <div class="foyer">
     <div class="card" style="text-align:center"><svg class="docimg" viewBox="0 0 200 220" style="width:100%;max-width:260px"><image href="img/doc-wave.png" x="0" y="0" width="200" height="220" preserveAspectRatio="xMidYMid meet"/></svg></div>
     <div>
       <div class="bubble"><b>嗨！我是余老師。</b>歡迎來到虛擬實驗室！這裡跟真的實驗室一樣：先做好安全準備，再挑一個實驗動手做，完成後可以拿到徽章。你叫什麼名字？</div>
-      <p style="margin:12px 0 6px"><input type="text" id="name" placeholder="輸入你的名字" maxlength="12"></p>
+      <p style="margin:12px 0 6px"><label class="sr-only" for="name">你的名字</label><input type="text" id="name" placeholder="輸入你的名字" maxlength="12"></p>
       <p style="margin:6px 0"><b>進實驗室前，把三樣安全裝備都點一下：</b></p>
       <div class="rules" id="rules">
-        <div class="rule" data-r="goggles"><svg viewBox="0 0 64 64"><use href="#ico-goggles"/></svg><div>護目鏡</div></div>
-        <div class="rule" data-r="coat"><svg viewBox="0 0 64 64"><use href="#ico-coat"/></svg><div>實驗衣</div></div>
-        <div class="rule" data-r="hands"><svg viewBox="0 0 64 64"><use href="#ico-hands"/></svg><div>洗手、不吃東西</div></div>
+        <button type="button" class="rule" data-r="goggles" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-goggles"/></svg><span class="rule-label">護目鏡</span></button>
+        <button type="button" class="rule" data-r="coat" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-coat"/></svg><span class="rule-label">實驗衣</span></button>
+        <button type="button" class="rule" data-r="hands" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-hands"/></svg><span class="rule-label">洗手、不吃東西</span></button>
       </div>
       <button class="btn" id="enter" disabled>進入實驗室 →</button>
     </div>
@@ -199,6 +210,7 @@
     <p style="margin-top:14px"><button class="btn ghost" id="resetAll">清除進度重新開始</button></p>
   </div>
 </section>
+</main>
 <div class="reward" id="reward"><div class="rbox">
   <h2>🎉 獲得徽章！</h2>
   <div class="rrow"><svg class="docimg" viewBox="0 0 200 220"><image href="img/doc-wave.png" x="0" y="0" width="200" height="220" preserveAspectRatio="xMidYMid meet"/></svg><div class="rbadgewrap" id="rStars"><div class="rbadge" id="rBadge"></div></div></div>
@@ -256,12 +268,16 @@ function addPts(n,o={}){ const from=P.pts; P.pts=Math.max(0,P.pts+n); save(); if
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id)); window.scrollTo(0,0); }
 
 /* ---------- 大廳 ---------- */
-const rules={}; document.querySelectorAll('.rule').forEach(r=>r.onclick=()=>{ rules[r.dataset.r]=!rules[r.dataset.r]; r.classList.toggle('on',rules[r.dataset.r]); $('enter').disabled=!(rules.goggles&&rules.coat&&rules.hands); });
+const rules={};
+function toggleRule(r){ rules[r.dataset.r]=!rules[r.dataset.r]; r.classList.toggle('on',rules[r.dataset.r]); r.setAttribute('aria-pressed',rules[r.dataset.r]?'true':'false'); $('enter').disabled=!(rules.goggles&&rules.coat&&rules.hands); }
+document.querySelectorAll('.rule').forEach(r=>r.onclick=()=>toggleRule(r));
 $('name').value=P.name; $('enter').onclick=()=>{ P.name=$('name').value.trim()||'小小研究員'; save(); if(!P.badges.safety){ P.badges.safety=true; addPts(10); } drawRoom(); show('lab'); };
 $('toLab').onclick=()=>{ if(!P.name){ show('foyer'); return; } drawRoom(); show('lab'); }; $('toNotebook').onclick=()=>{ renderNotebook(); show('notebook'); };
 $('resetAll').onclick=()=>{ if(confirm('確定要清除所有進度？')){ localStorage.removeItem('minilab'); location.reload(); } };
 
 /* ---------- 實驗室房間 ---------- */
+/* SVG 實驗站可用鍵盤啟動：Enter／Space 與點擊同一動作 */
+function bindStation(node,action){ node.onclick=action; node.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); action(); } }; }
 function drawRoom(){
   const r=$('room'); r.innerHTML='';
   const bg=HAS.room;
@@ -270,19 +286,19 @@ function drawRoom(){
     for(let i=0;i<9;i++){ const x=80+i*100; el('path',{d:`M${x} 12 h18 v10 l6 14 v4 h-30 v-4 l6 -14z`,fill:['#FFD1DC','#C8F7DC','#FFF3B0','#D6E4FF'][i%4],stroke:'#8a93a2'},r); } }
   const rows=[EXPERIMENTS.slice(0,5),EXPERIMENTS.slice(5)];
   rows.forEach((row,ri)=>{ const by=bg?(ri===0?232:342):(ri===0?215:420); if(!bg){ el('rect',{x:40,y:by,width:920,height:24,rx:6,fill:'#5C7A8C'},r); el('rect',{x:60,y:by+24,width:880,height:ri===0?60:70,fill:'#48627A'},r); }
-    row.forEach((E,i)=>{ const x=bg?(ri===0?200+i*150:170+i*220):(row.length===1?500:110+i*(780/(row.length-1))); const g=el('g',{class:'station',transform:`translate(${x} ${by}) scale(${bg?(ri===0?.55:.5):.62})`},r);
-      el('ellipse',{class:'glow',cx:0,cy:0,rx:100,ry:24,fill:'rgba(255,140,66,.35)'},g); if(HAS['icon_'+E.id]) el('image',{href:IMG['icon_'+E.id],x:-95,y:-190,width:190,height:190,preserveAspectRatio:'xMidYMax meet'},g); else E.icon(g); el('rect',{x:-95,y:-190,width:190,height:230,fill:'transparent'},g);
+    row.forEach((E,i)=>{ const x=bg?(ri===0?200+i*150:170+i*220):(row.length===1?500:110+i*(780/(row.length-1))); const g=el('g',{class:'station',role:'button',tabindex:'0','aria-label':E.title,transform:`translate(${x} ${by}) scale(${bg?(ri===0?.55:.5):.62})`},r);
+      el('ellipse',{class:'glow',cx:0,cy:0,rx:100,ry:24,fill:'rgba(255,140,66,.35)'},g); if(HAS['icon_'+E.id]) el('image',{href:IMG['icon_'+E.id],x:-95,y:-190,width:190,height:190,preserveAspectRatio:'xMidYMax meet'},g); else E.icon(g); el('rect',{class:'station-hit',x:-95,y:-190,width:190,height:230,fill:'transparent'},g);
       const ly = bg ? (ri===0 ? -202 : 62) : 52;
       txt(0,ly,E.title,{'text-anchor':'middle','font-size':bg?26:22,'font-weight':700,fill:bg&&ri===0?'#2B2B3A':'#fff','paint-order':'stroke',stroke:bg&&ri===0?'rgba(255,255,255,.9)':'rgba(0,0,0,.35)','stroke-width':bg?6:0},g);
-      if(P.badges[E.id]) txt(80,-130,'✔',{'font-size':30,fill:'#F5C542'},g); g.onclick=()=>startExp(E); }); });
+      if(P.badges[E.id]) txt(80,-130,'✔',{'font-size':30,fill:'#F5C542'},g); bindStation(g,()=>startExp(E)); }); });
   if(HAS.wave) el('image',{href:IMG.wave,x:850,y:30,width:130,height:170,preserveAspectRatio:'xMidYMid meet'},r); else { const d=el('g',{transform:'translate(900 60) scale(.42)'},r); el('use',{href:'#doc'},d); }
   // 進階教室的門牌
-  const dr=el('g',{class:'station',transform:'translate(878 490)',style:'cursor:pointer'},r);
-  el('rect',{x:-68,y:-24,width:136,height:50,rx:12,fill:'#fff',stroke:'#FF8C42','stroke-width':3},dr);
+  const dr=el('g',{class:'station',role:'button',tabindex:'0','aria-label':'進階教室',transform:'translate(878 490)',style:'cursor:pointer'},r);
+  el('rect',{class:'station-hit',x:-68,y:-24,width:136,height:50,rx:12,fill:'#fff',stroke:'#FF8C42','stroke-width':3},dr);
   txt(0,-3,'🎓 進階教室 →',{'text-anchor':'middle','font-size':16,'font-weight':700,fill:'#2B2B3A'},dr);
   const adv=JSON.parse(localStorage.getItem('labsafety')||'{}');
   txt(0,16,adv.best!=null?`測驗最高 ${adv.best}/20`:'國中版：圖鑑・大搜查・測驗',{'text-anchor':'middle','font-size':10,'font-weight':adv.best!=null?700:400,fill:adv.best!=null?'#2E8B57':'#6B6F80'},dr);
-  dr.onclick=()=>{ location.href='lab-safety.html'; };
+  bindStation(dr,()=>{ location.href='lab-safety.html'; });
   const done=EXPERIMENTS.filter(E=>P.badges[E.id]).length, total=EXPERIMENTS.length;
   const b=el('g',{transform:'translate(590 30)'},r); el('rect',{x:0,y:0,width:250,height:56,rx:12,fill:'#fff',stroke:'#60C3A4','stroke-width':2},b);
   txt(125,24,done===0?'先從「認識實驗器材」開始吧！':done<total?`太棒了！還有 ${total-done} 個關卡等你挑戰。`:'全部完成了，你是真正的研究員！',{'text-anchor':'middle','font-size':13},b);
