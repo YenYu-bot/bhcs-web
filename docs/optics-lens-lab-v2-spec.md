@@ -140,10 +140,11 @@ v1.1 另補的三處（sharp gate 與 bench 邊界、bench 溢出狀態、搜尋
 透鏡位置 = 0 cm
 物體位置 = -u（左側）
 屏幕位置 = +s（右側）
-Guided Mode 可視範圍：左 -35 cm ～ 右 +40 cm（共 75 cm）
+器材中心可動範圍：蠟燭 u ≤ 35（左 -35 cm）、屏幕 s ≤ 40（右 +40 cm）
+Guided Mode 可視範圍：左 -40 cm ～ 右 +48 cm（共 88 cm）；兩端各留邊距，讓器材在軌道最遠端仍完整可見
 ```
 
-75 cm 壓入約 350 px，390px 手機約 4～5 px/cm，足以搭配 snapping。
+88 cm 壓入約 358 px，390px 手機約 4 px/cm，足以搭配 1 cm snapping。（v1.2 原為 -35～+40；I4 實作時發現屏幕在 s=40 會被切掉一半，故加邊距。）
 
 ### 5.5 Touch target
 

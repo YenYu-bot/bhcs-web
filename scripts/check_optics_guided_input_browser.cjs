@@ -37,7 +37,7 @@ const server=http.createServer((req,res)=>{
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 const info=p=>p.evaluate(()=>({s:window.__optics.state.s,u:window.__optics.state.u,phase:window.__optics.state.phase,types:window.__optics.actions.map(a=>a.type),scrollY:Math.round(scrollY),scrollX:Math.round(scrollX),overflow:document.documentElement.scrollWidth-innerWidth}));
 const center=async(p,id)=>{const b=await p.locator('#'+id).boundingBox();return {x:b.x+b.width/2,y:b.y+b.height/2}};
-const xOfCm=(rect,axisCm)=>rect.x+((axisCm+35)/75)*rect.width;
+const xOfCm=(rect,axisCm)=>rect.x+((axisCm+40)/88)*rect.width;   // bench view is -40…48 cm
 async function open(browser,{width,height,touch}){
  const ctx=await browser.newContext({viewport:{width,height},hasTouch:!!touch,isMobile:!!touch,reducedMotion:'reduce'});
  const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});

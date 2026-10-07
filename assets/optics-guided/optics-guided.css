@@ -1,0 +1,99 @@
+/* Guided optics lab (Lab Spec v2 prototype). Scoped to .optics-guided; does not use researcher-lab.css or body.researcher-ui.
+   Brand tokens copied from researcher-lab.css on 2026-10-07.
+   Keep values aligned intentionally; do not import the legacy shell CSS. */
+.optics-guided {
+  --bh-ink: #16233A; --bh-ink-soft: #43516B; --bh-ink-faint: #7C879B;
+  --bh-paper: #FCFCFA; --bh-card: #FFFFFF; --bh-surface: #F2F4F7;
+  --bh-grid: #DCE2EA; --bh-grid-strong: #C9D2DE;
+  --bh-orange: #E8620C; --bh-orange-dark: #C24F06;
+  --bh-ok: #1E7A4C; --bh-ok-soft: #E7F4EC;
+  --bh-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --bh-radius: 12px; --bh-shadow: 0 1px 2px rgba(22,35,58,.06), 0 8px 24px rgba(22,35,58,.06); --bh-wrap: 1180px;
+  margin: 0; font: 16px/1.7 var(--bh-sans); color: var(--bh-ink); background: var(--bh-paper);
+}
+.optics-guided *, .optics-guided *::before, .optics-guided *::after { box-sizing: border-box; }
+.og-wrap { width: min(var(--bh-wrap), calc(100% - 32px)); margin: 0 auto; }
+.og-skip { position: absolute; left: 8px; top: -60px; background: #fff; padding: 8px 12px; z-index: 10; }
+.og-skip:focus { top: 8px; }
+
+.og-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; }
+.og-brand { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; min-width: 0; }
+.og-brand img { width: 30px; height: 30px; flex: none; }
+.og-brand small { display: block; color: var(--bh-ink-soft); font-size: 12px; line-height: 1.3; }
+.og-brand b { display: block; font-size: 16px; line-height: 1.3; }
+
+.og-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 5px; background: var(--bh-card);
+  border: 1px solid var(--bh-grid-strong); border-radius: var(--bh-radius); margin-bottom: 12px; }
+.og-nav button { display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 46px; padding: 4px 2px;
+  border: 0; border-radius: 9px; background: transparent; color: var(--bh-ink-soft); font: 600 14px/1.2 var(--bh-sans); white-space: nowrap; cursor: default; }
+.og-nav button[aria-current="step"] { background: var(--bh-ok-soft); color: var(--bh-ok); box-shadow: inset 0 0 0 1px var(--bh-ok); }
+.og-step { font-size: 11px; opacity: .75; }
+
+.og-main { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); padding-bottom: 32px; }
+.og-coach { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 10px; align-items: center; background: var(--bh-card);
+  border: 1px solid var(--bh-grid-strong); border-radius: var(--bh-radius); padding: 8px 12px; }
+.og-coach img { width: 48px; height: auto; display: block; }
+.og-coach strong { display: block; font-size: 13px; color: var(--bh-ink-soft); }
+.og-coach p { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.5; }
+
+.og-bench { position: relative; height: 320px; background: linear-gradient(#F7FAFC, #EDF3F7); border: 1px solid var(--bh-grid-strong);
+  border-radius: var(--bh-radius); overflow: hidden; user-select: none; -webkit-user-select: none; }
+.og-svg { display: block; width: 100%; height: 100%; pointer-events: none; }
+.og-axis-line { stroke: var(--bh-grid-strong); stroke-width: 1.5; stroke-dasharray: 6 6; }
+.og-table-line { stroke: var(--bh-grid-strong); stroke-width: 2; }
+.og-tick { stroke: var(--bh-grid-strong); stroke-width: 1.5; }
+.og-tick-text { fill: var(--bh-ink-faint); font-family: var(--bh-sans); }
+.og-post { fill: #AEB9C7; }
+.og-track-line { stroke: var(--bh-orange); stroke-width: 3; stroke-linecap: round; opacity: 0; }
+.og-bench:has(.og-hit:focus-visible) .og-track-line { opacity: .35; }
+.og-bench:has(.og-hit:active) .og-track-line { opacity: .6; }
+.og-ray { stroke: var(--bh-orange); stroke-width: 2; opacity: .85; }
+.og-ray-virtual { stroke-dasharray: 6 5; opacity: .7; }
+.og-ghost { opacity: .6; }
+.og-eye-shape { fill: #fff; stroke: var(--bh-ink); stroke-width: 2; }
+.og-eye-iris { fill: #3B6FB6; }
+.og-eye-text { fill: var(--bh-ink-soft); font-family: var(--bh-sans); }
+
+.og-hit { position: absolute; transform: translate(-50%, -50%); min-width: 44px; min-height: 44px; border-radius: 12px; background: transparent; cursor: grab; touch-action: none; }
+.og-hit[data-locked="true"] { cursor: default; }
+.og-hit:not([data-locked="true"]):hover { background: rgba(232, 98, 12, .08); }
+.og-hit:not([data-locked="true"]):active { cursor: grabbing; background: rgba(232, 98, 12, .14); box-shadow: 0 0 0 3px rgba(232, 98, 12, .35); }
+.og-hit:focus-visible { outline: 3px solid var(--bh-orange); outline-offset: 2px; }
+.og-hit { transition: box-shadow .12s, background-color .12s; }
+
+.og-status { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 14px; background: var(--bh-card);
+  border: 1px solid var(--bh-grid-strong); border-radius: var(--bh-radius); font-weight: 600; min-height: 48px; }
+.og-status-icon { flex: none; width: 1.4em; text-align: center; font-size: 1.1em; color: var(--bh-ink-soft); }
+.og-status[data-level="1"] { background: var(--bh-ok-soft); border-color: var(--bh-ok); color: var(--bh-ok); }
+.og-status[data-level="1"] .og-status-icon { color: var(--bh-ok); }
+
+.og-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.og-cta { min-height: 48px; padding: 10px 24px; border: 0; border-radius: 999px; background: var(--bh-orange); color: #fff; font: 700 16px var(--bh-sans); cursor: pointer; }
+.og-cta:hover:not(:disabled) { background: var(--bh-orange-dark); }
+.og-cta:disabled { background: var(--bh-grid); color: var(--bh-ink-faint); cursor: not-allowed; }
+.og-cta:focus-visible { outline: 3px solid var(--bh-ink); outline-offset: 2px; }
+.og-cta[hidden] { display: none; }
+
+.og-card { background: var(--bh-card); border: 1px solid var(--bh-grid-strong); border-radius: var(--bh-radius); box-shadow: var(--bh-shadow); padding: 12px 16px; }
+.og-card h2 { font-size: 1rem; margin: 0 0 4px; }
+.og-card dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; margin: 0; }
+.og-card dt { color: var(--bh-ink-soft); } .og-card dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.og-advanced { font-size: 14px; color: var(--bh-ink-soft); }
+.og-advanced a { color: var(--bh-ink-soft); }
+
+/* Mobile first: DOM order is nav → coach → bench → status → CTA → data card. Desktop moves the coach and data card to the right column. */
+@media (min-width: 900px) {
+  .og-brand b { font-size: 18px; }
+  .og-nav button { font-size: 15px; gap: 8px; }
+  .og-main { grid-template-columns: minmax(0, 8fr) minmax(280px, 4fr); grid-template-rows: auto 1fr auto auto; align-items: start; column-gap: 20px; }
+  .og-coach { grid-column: 2; grid-row: 1; grid-template-columns: 64px minmax(0, 1fr); padding: 12px 16px; }
+  .og-coach img { width: 64px; }
+  .og-bench-card { grid-column: 1; grid-row: 1 / span 2; }
+  .og-bench { height: 400px; }
+  .og-data { grid-column: 2; grid-row: 2; }
+  .og-status { grid-column: 1; grid-row: 3; }
+  .og-actions { grid-column: 1; grid-row: 4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .optics-guided *, .optics-guided *::before, .optics-guided *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}

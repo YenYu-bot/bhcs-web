@@ -6,7 +6,8 @@ import { rangesFor } from './engine.js';
 export const SNAP_DESKTOP = 0.5;      // cm
 export const SNAP_MOBILE = 1;         // cm
 export const MOBILE_MAX_WIDTH = 767;  // px: viewport ≤ 767 → mobile snap
-export const BENCH_VIEW = Object.freeze({ minCm: -35, maxCm: 40 });   // lens at 0, candle at -u, screen at +s
+// Visible bench: lens at 0, candle at -u (u ≤ 35), screen at +s (s ≤ 40). The margins keep the objects whole at both ends of their rails.
+export const BENCH_VIEW = Object.freeze({ minCm: -40, maxCm: 48 });
 export const DRAG_SLOP_PX = 3;        // pointer travel before a press becomes a drag (a tap never moves anything)
 export const KEY_STEP = Object.freeze({ arrow: 1, fine: 0.5, page: 5 });
 

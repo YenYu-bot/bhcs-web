@@ -9,8 +9,9 @@ import {createInputController,keyboardTarget,snapForWidth,snapTo,clientXToCm,pos
   SNAP_DESKTOP,SNAP_MOBILE,BENCH_VIEW,KEY_STEP,DRAG_SLOP_PX} from '../assets/optics-guided/input.js';
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
 
-const RECT={left:100,width:750};            // 75 cm over 750 px → 10 px per cm; lens (0 cm) at x = 450
-const xOfScreen=s=>RECT.left+(s+35)*10,xOfCandle=u=>RECT.left+(-u+35)*10;
+const RECT={left:100,width:880};            // the 88 cm bench view over 880 px → 10 px per cm; lens (0 cm) at x = 500
+const xOfAxis=cm=>RECT.left+(cm-BENCH_VIEW.minCm)*RECT.width/(BENCH_VIEW.maxCm-BENCH_VIEW.minCm);
+const xOfScreen=s=>xOfAxis(s),xOfCandle=u=>xOfAxis(-u);
 const dom=new JSDOM('<body><div id="screen" tabindex="0"></div><div id="candle" tabindex="0"></div><div id="other" tabindex="0"></div></body>');
 const {window}=dom;
 
@@ -50,11 +51,11 @@ test('snap: desktop 0.5 cm, mobile 1 cm, split at 767 px',()=>{
  assert.equal(snapTo(0.1+0.2,0.5),0.5);assert.ok(Number.isInteger(snapTo(29.9999999,1)));
 });
 
-test('geometry: 75 cm view, lens at 0, candle at -u, screen at +s',()=>{
- assert.deepEqual([BENCH_VIEW.minCm,BENCH_VIEW.maxCm],[-35,40]);
- assert.equal(clientXToCm(100,RECT),-35);assert.equal(clientXToCm(450,RECT),0);assert.equal(clientXToCm(850,RECT),40);
- assert.equal(positionFromClientX('screen',xOfScreen(15),RECT),15);assert.equal(positionFromClientX('candle',xOfCandle(30),RECT),30);
- assert.equal(positionFromClientX('candle',xOfCandle(15),RECT),15);
+test('geometry: 88 cm view (-40…48), lens at 0, candle at -u, screen at +s',()=>{
+ assert.deepEqual([BENCH_VIEW.minCm,BENCH_VIEW.maxCm],[-40,48]);
+ assert.equal(clientXToCm(100,RECT),-40);assert.equal(clientXToCm(500,RECT),0);assert.equal(clientXToCm(980,RECT),48);
+ const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-9,a+' != '+b);near(positionFromClientX('screen',xOfScreen(15),RECT),15);near(positionFromClientX('candle',xOfCandle(30),RECT),30);
+ near(positionFromClientX('candle',xOfCandle(15),RECT),15);
 });
 
 test('contract 2: keys — ←/→ 1 cm, Shift 0.5 cm, PageDown/PageUp left/right 5 cm',()=>{
