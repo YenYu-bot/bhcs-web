@@ -28,12 +28,12 @@ test('every spec line is present verbatim (Spec §33–§47)',()=>{
  const lines=['為什麼投影機的屏幕放錯位置，畫面就會模糊？','桌上有一支蠟燭、一片凸透鏡和一面屏幕。現在屏幕上的影像很模糊。','把屏幕移到影像最清楚的位置。','試試看哪個位置比較清楚。','快找到了。',
   '就是這裡。影像現在最清楚。','第一筆證據有了。接下來只改一個地方。','把蠟燭移到離透鏡 15 cm 的位置。','好，這次只有物距改變。','蠟燭的位置改了，原本的屏幕位置也不再清楚。再找一次。',
   '剛才影像變得更模糊了。','試試另一個方向。','看看屏幕上的影像是變清楚，還是變模糊。','如果越移越模糊，可以試試另一個方向。','這筆結果已經記好了。','接下來看看只改變蠟燭位置後會發生什麼。',
-  '你剛才已經找到一個規律了。','在還能形成實像的情況下，物體往焦點靠近時，清楚影像的位置會往更遠處移，而且影像會變大。','如果再把蠟燭往透鏡靠近，會一直有清楚的屏幕位置嗎？','把蠟燭移到 5 cm。',
+  '你剛才已經找到一個規律了。','在屏幕還能接到清楚影像的情況下，物體往焦點靠近時，清楚影像的位置會往更遠處移，而且影像會變大。','如果再把蠟燭往透鏡靠近，會一直有清楚的屏幕位置嗎？','把蠟燭移到 5 cm。',
   '這次也試著找找看。','目前還沒有找到清楚的位置。','你已經檢查過近、中、遠的位置了。','看起來問題可能不在你找得不夠仔細。','這次可能真的沒有能接到清楚影像的位置。','再看看影像的大小和方向，有什麼變化？','不是你找得不夠仔細。這一次，屏幕本來就接不到清楚影像。','但是如果不用屏幕，而是直接透過透鏡看呢？',
   '你現在看得到一個正立、放大的蠟燭。','可是剛才屏幕怎麼都接不到它。這和前兩次有什麼不同？','這種只能透過透鏡看到、卻不能直接接在屏幕上的像，叫做「虛像」。','剛才哪個結果變得更明顯？'];
  const all=Object.values(MESSAGES).flatMap(m=>[m.main,m.sub]).filter(Boolean).join('\n');
  for(const l of lines)assert.ok(all.includes(l),'missing: '+l);
- assert.ok(MESSAGES.compareDone.sub.startsWith('在還能形成實像的情況下'),'the qualifier is never dropped');
+ assert.ok(MESSAGES.compareDone.sub.startsWith('在屏幕還能接到清楚影像的情況下'),'the qualifier is never dropped');
  assert.equal(MESSAGES.hint3Left.main,'清楚的位置就在你目前位置的左邊。');assert.equal(MESSAGES.hint3Right.main,'清楚的位置就在你目前位置的右邊。');
 });
 
@@ -139,7 +139,7 @@ test('records list and concept model use the learner\'s numbers; the formula res
  assert.equal(c.formula.lines[0].found,'你找到 14.5 cm');assert.equal(c.formula.lines[1].found,'你找到 29.5 cm');
  assert.equal(c.formula.negativeNote,'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
  // I7.5: no formal term before the concept stage in Trial 3 learner-facing text
- for(const k of ['noReal','searchDone','searchFirst'])if(MESSAGES[k])assert.ok(!JSON.stringify(MESSAGES[k]).includes('實像')&&!JSON.stringify(MESSAGES[k]).includes('虛像'),k);
+ for(const k of ['welcome','mission','find1','findStart','near','wrongDirection','hint1','hint2','hint3Left','hint3Right','complete1','moveCandle','moveCandlePlain','find2','complete2','alreadyRecorded','compare','compareRetry','compareDone','moveCandle3','search','searchTwo','searchDone','noReal','viewThrough']){assert.ok(MESSAGES[k],'key '+k);assert.ok(!/實像|虛像/.test(JSON.stringify(MESSAGES[k])),'formal term before naming: '+k)}
  assert.ok(!JSON.stringify(MESSAGES).includes('負的像距'),'negative-v note only after naming');
  assert.equal(conceptModel({1:null,2:null,3:null}),null);
  assert.equal(formatCm(15),'15');assert.equal(formatCm(14.5),'14.5');assert.equal(formatCm(14.25),'14.3');

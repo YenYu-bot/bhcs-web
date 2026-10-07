@@ -109,7 +109,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await page.getByLabel('更靠近透鏡').isChecked(),true,'the answer given before the reload is still there');assert.equal(await page.getByLabel('變大').isChecked(),true);
     assert.deepEqual((await page.locator('#og-compare-rows tr').evaluateAll(rows=>rows.map(r=>r.children[1].textContent.trim())))[2],`${f(O1)} cm`);
     await page.getByLabel('更遠離透鏡').check();await settle(page);
-    c=await coach();assert.equal(c.main,'你剛才已經找到一個規律了。');assert.ok(c.sub.startsWith('在還能形成實像的情況下，物體往焦點靠近時'));
+    c=await coach();assert.equal(c.main,'你剛才已經找到一個規律了。');assert.ok(c.sub.startsWith('在屏幕還能接到清楚影像的情況下，物體往焦點靠近時'));
     assert.equal(await cta().isDisabled(),false);await shot('6-compare-done');
     await cta().click();await settle(page);
     // --- trial 3
