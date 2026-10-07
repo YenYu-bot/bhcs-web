@@ -80,6 +80,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_optics_guided_view_browser.cjs
+      - name: Check the guided optics student flow (script, evidence, focus) in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_optics_guided_flow_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -103,6 +107,12 @@ jobs:
         with:
           name: optics-view-review
           path: optics-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: optics-flow-review
+          path: optics-flow-artifacts/
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: always()

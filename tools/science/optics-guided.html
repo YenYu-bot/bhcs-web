@@ -23,14 +23,31 @@
     <button type="button" data-step="notebook"><span class="og-step" aria-hidden="true">03</span><span>研究手冊</span></button>
     <button type="button" data-step="challenge"><span class="og-step" aria-hidden="true">04</span><span>挑戰題</span></button>
   </nav>
-  <main id="main" class="og-main">
-    <section class="og-coach" aria-label="余老師提示"><img src="../mini-lab/img/doc-point.png" alt="" width="64" height="70"><div><strong>余老師</strong><p id="og-coach-text"></p></div></section>
-    <section class="og-bench-card" aria-label="虛擬實驗桌"><div class="og-bench" id="og-bench" data-optics-bench></div></section>
-    <p class="og-status" id="og-status" role="status" aria-live="polite"><span class="og-status-icon" id="og-status-icon" aria-hidden="true"></span><span id="og-status-text"></span></p>
+  <main id="main" class="og-main" data-screen="welcome">
+    <section class="og-card og-hero" id="og-welcome" aria-labelledby="og-welcome-title">
+      <h2 id="og-welcome-title" tabindex="-1"></h2>
+      <p>接下來你會親手移動蠟燭和屏幕，自己找出答案。</p>
+    </section>
+    <section class="og-coach" id="og-coach" aria-label="余老師提示"><img src="../mini-lab/img/doc-point.png" alt="" width="64" height="70"><div><strong>余老師</strong><div class="og-coach-text" id="og-coach-text" role="status" aria-live="polite"><p class="og-coach-main" id="og-coach-main"></p><p class="og-coach-sub" id="og-coach-sub"></p></div></div></section>
+    <section class="og-bench-card" id="og-bench-card" aria-label="虛擬實驗桌"><div class="og-bench" id="og-bench" data-optics-bench></div></section>
+    <section class="og-card og-compare" id="og-compare" aria-labelledby="og-compare-title">
+      <h2 id="og-compare-title" tabindex="-1">兩次實驗的證據</h2>
+      <div class="og-table-wrap"><table class="og-table"><caption class="og-sr">兩次實驗的條件與你找到的結果</caption><thead><tr><th scope="col"><span class="og-sr">項目</span></th><th scope="col">第一次</th><th scope="col">第二次</th></tr></thead><tbody id="og-compare-rows"></tbody></table></div>
+      <p class="og-notice" id="og-compare-notice"></p>
+      <div id="og-questions"></div>
+    </section>
+    <section class="og-card og-concept" id="og-concept" aria-labelledby="og-concept-title">
+      <h2 id="og-concept-title" tabindex="-1">兩種像</h2>
+      <div class="og-concept-cards" id="og-concept-cards"></div>
+      <div class="og-formula" id="og-formula"></div>
+    </section>
+    <section class="og-card og-placeholder" id="og-placeholder" aria-labelledby="og-placeholder-title"><h2 id="og-placeholder-title" tabindex="-1">研究手冊與挑戰題</h2><p>這一段還在製作中。</p></section>
+    <p class="og-status" id="og-status"><span class="og-status-icon" id="og-status-icon" aria-hidden="true"></span><span id="og-status-text"></span></p>
     <div class="og-actions"><button type="button" class="og-cta" id="og-cta" hidden></button></div>
     <section class="og-card og-data" aria-label="這次實驗條件">
       <h2>這次實驗條件</h2>
       <dl><dt>焦距</dt><dd id="og-f"></dd><dt>物距</dt><dd id="og-u"></dd></dl>
+      <div id="og-records-wrap" hidden><h3 class="og-records-title">已記錄的實驗</h3><ul class="og-records" id="og-records"></ul></div>
       <details class="og-advanced"><summary>進階</summary><p><a href="./optics.html">自由探索／精確數值</a></p></details>
     </section>
   </main>

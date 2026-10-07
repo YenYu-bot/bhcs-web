@@ -97,6 +97,8 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
   }
 
   const PAGE='/tools/science/optics-guided.html?debug=1';
+  // The page opens on the welcome screen; these bench checks walk through welcome and mission like a learner does.
+  async function openBench(browser,opts){const o=await open(browser,PAGE,opts);await o.page.locator('#og-cta').click();await o.page.locator('#og-cta').click();await settle(o.page);return o}
   const rectOf=(page,sel)=>page.locator(sel).first().evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,r:r.right,b:r.bottom}});
   const state=page=>page.evaluate(()=>window.__opticsGuided.getState());
   const press=async(page,key,n=1)=>{for(let i=0;i<n;i++)await page.keyboard.press(key);await settle(page)};
@@ -106,7 +108,7 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
 
   for(const [label,width,height,touch] of [['390',390,844,true],['1280',1280,800,false]]){
    await check(`page ${label}: layout, order, touch targets and styling contract`,async()=>{
-    const {ctx,page,errors,failed}=await open(browser,PAGE,{width,height,touch});
+    const {ctx,page,errors,failed}=await openBench(browser,{width,height,touch});
     const R={nav:await rectOf(page,'.og-nav'),coach:await rectOf(page,'.og-coach'),bench:await rectOf(page,'.og-bench'),status:await rectOf(page,'.og-status'),cta:await rectOf(page,'.og-cta'),data:await rectOf(page,'.og-data')};
     const over=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);assert.ok(over<=0,'no horizontal overflow: '+over);
     if(width<900){
@@ -142,14 +144,14 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
     const aria=await page.evaluate(()=>['screen','candle'].map(k=>{const e=document.querySelector('.og-hit-'+k);return {role:e.getAttribute('role'),label:e.getAttribute('aria-label'),now:e.getAttribute('aria-valuenow'),disabled:e.getAttribute('aria-disabled'),tab:e.tabIndex}}));
     assert.deepEqual(aria[0],{role:'slider',label:'屏幕，目前距離凸透鏡 20 公分，可用左右方向鍵移動。',now:'20',disabled:null,tab:0});
     assert.deepEqual(aria[1],{role:'slider',label:'蠟燭，目前距離凸透鏡 30 公分，已固定。',now:'30',disabled:'true',tab:-1});
-    assert.equal(await page.locator('#og-status').getAttribute('role'),'status');
+    assert.equal(await page.locator('#og-coach-text').getAttribute('role'),'status','the coach line is the live region');assert.equal(await page.locator('#og-status').getAttribute('role'),null,'the clarity line is visual only (no per-drag announcements)');
     await page.screenshot({path:path.join(output,`${label}-page-start.png`),fullPage:true});
     assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);await ctx.close();
    });
   }
 
   await check('reduced motion: transitions are removed, positions unaffected',async()=>{
-   const calm=await open(browser,PAGE,{width:1280,height:800,reducedMotion:'reduce'}),norm=await open(browser,PAGE,{width:1280,height:800});
+   const calm=await openBench(browser,{width:1280,height:800,reducedMotion:'reduce'}),norm=await openBench(browser,{width:1280,height:800});
    const dur=p=>p.page.evaluate(()=>getComputedStyle(document.querySelector('.og-hit-screen')).transitionDuration);
    assert.equal(await dur(calm),'0s');assert.notEqual(await dur(norm),'0s');
    for(const p of [calm,norm]){await focus(p.page,'screen');await press(p.page,'PageDown');}
@@ -159,8 +161,8 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
 
   for(const [label,width,height,touch] of [['390',390,844,true],['1280',1280,800,false]]){
    await check(`page ${label}: keyboard walk through all three trials into the virtual-image view`,async()=>{
-    const {ctx,page,errors,failed}=await open(browser,PAGE,{width,height,touch});
-    const lvl=()=>page.locator('.og-bench').getAttribute('data-clarity-level'),phase=()=>page.locator('.og-bench').getAttribute('data-phase');
+    const {ctx,page,errors,failed}=await openBench(browser,{width,height,touch});
+    const lvl=()=>page.locator('.og-bench').getAttribute('data-clarity-level'),phase=async()=>(await state(page)).phase;
     const shot=name=>page.screenshot({path:path.join(output,`${label}-flow-${name}.png`),fullPage:true});
     assert.equal(await phase(),'trial1-find-screen');assert.equal(await lvl(),'3');
     await focus(page,'screen');await press(page,'ArrowLeft',5);
@@ -196,7 +198,7 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
   }
 
   await check('page 1280: a real mouse drag on the drawn screen reaches the clear position',async()=>{
-   const {ctx,page,errors}=await open(browser,PAGE,{width:1280,height:800});
+   const {ctx,page,errors}=await openBench(browser,{width:1280,height:800});
    const bench=await rectOf(page,'.og-bench'),hit=await rectOf(page,'.og-hit-screen');
    const sx=hit.x+hit.w/2,sy=hit.y+hit.h/2;
    await page.mouse.move(sx,sy);await page.mouse.down();
@@ -206,7 +208,7 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
    assert.deepEqual(errors,[]);await ctx.close();
   });
   await check('page 390: a real touch drag on the drawn screen reaches the clear position and does not scroll',async()=>{
-   const {ctx,page,errors}=await open(browser,PAGE,{width:390,height:844,touch:true});
+   const {ctx,page,errors}=await openBench(browser,{width:390,height:844,touch:true});
    const bench=await rectOf(page,'.og-bench'),hit=await rectOf(page,'.og-hit-screen');
    const sx=hit.x+hit.w/2,sy=hit.y+hit.h/2,tx=sx+(clientXOf(bench,15.3)-clientXOf(bench,20));
    const cdp=await page.context().newCDPSession(page),pt=(x,y)=>[{x,y,id:1}];

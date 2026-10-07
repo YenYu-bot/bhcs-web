@@ -15,7 +15,7 @@ export const snapForWidth = (viewportWidth) => (viewportWidth <= MOBILE_MAX_WIDT
 
 export const snapTo = (value, snap) => Number((Math.round(value / snap) * snap).toFixed(6));
 
-/** Horizontal client coordinate → logical cm on the bench (rect: { left, width } of the 75 cm view). */
+/** Horizontal client coordinate → logical cm on the bench (rect: { left, width } of the 88 cm view). */
 export const clientXToCm = (clientX, rect) => BENCH_VIEW.minCm + ((clientX - rect.left) / rect.width) * (BENCH_VIEW.maxCm - BENCH_VIEW.minCm);
 
 // Object position along the bench axis: the screen sits at +s, the candle at -u.
