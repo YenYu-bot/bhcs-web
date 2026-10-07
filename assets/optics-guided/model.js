@@ -18,6 +18,10 @@ const finite = (name, x) => {
   if (typeof x !== 'number' || !Number.isFinite(x)) throw new RangeError(`${name} must be a finite number`);
   return x;
 };
+const checkBench = (min, max) => {
+  finite('benchMin', min); finite('benchMax', max);
+  if (min >= max) throw new RangeError('benchMin must be less than benchMax');
+};
 const nearZero = (x, scale = 1) => Math.abs(x) <= NUMERIC_EPSILON * Math.max(1, Math.abs(scale));
 const within = (x, min, max) => x >= min - NUMERIC_EPSILON && x <= max + NUMERIC_EPSILON;
 
@@ -32,7 +36,7 @@ export function clarityTolerance(f) {
  * u = f has no finite image: theoreticalV and magnification are null (never Infinity / NaN).
  */
 export function calculateLensState({ f, u, benchMin = BENCH_MIN, benchMax = BENCH_MAX }) {
-  positive('f', f); positive('u', u); finite('benchMin', benchMin); finite('benchMax', benchMax);
+  positive('f', f); positive('u', u); checkBench(benchMin, benchMax);
   const base = { f, u, benchMin, benchMax };
   if (nearZero(u - f, Math.max(f, u))) {
     return { ...base, theoreticalV: null, magnification: null, absoluteMagnification: null,
@@ -64,11 +68,11 @@ const rawLevel = (e, t) => {
 export function calculateClarity({ lensState, screenPosition, benchMin = lensState?.benchMin, benchMax = lensState?.benchMax }) {
   if (!lensState || typeof lensState !== 'object') throw new TypeError('lensState is required');
   finite('screenPosition', screenPosition);
+  checkBench(benchMin, benchMax);
   const tolerance = clarityTolerance(lensState.f);
   if (lensState.imageType !== 'real') {
     return { screenPosition, error: null, tolerance, rawClarityLevel: null, effectiveClarityLevel: 4, projectionWithinBench: false };
   }
-  finite('benchMin', benchMin); finite('benchMax', benchMax);
   const error = Math.abs(screenPosition - lensState.theoreticalV);
   const raw = rawLevel(error, tolerance);
   const projectionWithinBench = within(lensState.theoreticalV, benchMin, benchMax);

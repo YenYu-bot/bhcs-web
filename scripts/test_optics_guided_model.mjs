@@ -92,4 +92,11 @@ test('invalid input throws instead of returning NaN',()=>{
  assert.throws(()=>calculateClarity({lensState:lens(10,30),screenPosition:Infinity}),RangeError);
  assert.throws(()=>calculateClarity({screenPosition:15}),TypeError);
 });
+test('bench range must satisfy benchMin < benchMax (fail fast)',()=>{
+ for(const [benchMin,benchMax] of [[40,40],[50,40]]){
+  assert.throws(()=>calculateLensState({f:10,u:30,benchMin,benchMax}),RangeError);
+  assert.throws(()=>calculateClarity({lensState:lens(10,30),screenPosition:15,benchMin,benchMax}),RangeError);
+ }
+ assert.doesNotThrow(()=>calculateLensState({f:10,u:30,benchMin:8,benchMax:40.5}));
+});
 console.log(`PASS optics guided model: ${tests} tests`);
