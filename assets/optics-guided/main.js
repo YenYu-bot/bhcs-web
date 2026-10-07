@@ -5,15 +5,15 @@ import { createBenchView } from './render.js';
 import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
+import { analyticsFor, createTracker } from './analytics.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
 const benchView = createBenchView(bench);
-const params = new URLSearchParams(location.search);
-
 const safeStorage = () => { try { return window.localStorage; } catch (_) { return null; } };
 const store = createStore({ storage: safeStorage() });
 const restored = restore(store.load());
+const track = createTracker(window);
 
 let state = restored ?? createInitialState();
 let ui = { naming: false };
@@ -244,6 +244,7 @@ function dispatch(action) {
     if (state.phase === 'notebook' && state.conclusion.level === null) state = reduce(state, { type: 'SAVE_CONCLUSION', fields: { level: 'A' } }).state;
     if (result.transitions.length) ui = { naming: false };
     if (result.accepted) store.save(state);
+    track(analyticsFor(result));
   }
   const view = deriveView(state);
   coach = reduceCoach(coach, { state, view, events: result.events, transitions: result.transitions, ui });
@@ -268,5 +269,3 @@ $('og-restart').addEventListener('click', () => {
 if (state.phase === 'notebook' && state.conclusion.level === null) state = reduce(state, { type: 'SAVE_CONCLUSION', fields: { level: 'A' } }).state;
 coach = reduceCoach(null, { state, view: deriveView(state), ui });
 render();
-// Test hook, only with ?debug=1.
-if (params.get('debug') === '1') window.__opticsGuided = { dispatch, getState: () => state, view: () => deriveView(state), store };

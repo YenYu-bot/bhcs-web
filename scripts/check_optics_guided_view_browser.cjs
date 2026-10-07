@@ -2,6 +2,7 @@
 // Needs Playwright (CI: NODE_PATH=/tmp/bhcs-composition/node_modules). Locally set PLAYWRIGHT_CHROMIUM_EXECUTABLE.
 // Screenshots go to OPTICS_VIEW_OUTPUT (default optics-view-artifacts/).
 const {chromium}=require('playwright');
+const {guardContext,axeScan}=require('./optics_guided_test_support.cjs');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.OPTICS_VIEW_OUTPUT||'optics-view-artifacts');
 fs.mkdirSync(output,{recursive:true});
@@ -59,8 +60,9 @@ const server=http.createServer((req,res)=>{
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 let base;const results=[];
 const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=e.message}row.pass=!row.error;results.push(row);console.log(JSON.stringify(row))};
-async function open(browser,url,{width,height,reducedMotion='no-preference',touch=false}){
+async function open(browser,url,{width,height,reducedMotion='no-preference',touch=false,hook=false}){
  const ctx=await browser.newContext({viewport:{width,height},reducedMotion,hasTouch:touch,isMobile:touch});
+ await guardContext(ctx,base,{hook});
  const page=await ctx.newPage(),errors=[],failed=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  page.on('response',r=>{if(r.status()>=400)failed.push(r.status()+' '+r.url())});page.on('requestfailed',r=>failed.push(r.url()));
@@ -96,9 +98,9 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
    });
   }
 
-  const PAGE='/tools/science/optics-guided.html?debug=1';
+  const PAGE='/tools/science/optics-guided.html';
   // The page opens on the welcome screen; these bench checks walk through welcome and mission like a learner does.
-  async function openBench(browser,opts){const o=await open(browser,PAGE,opts);await o.page.locator('#og-cta').click();await o.page.locator('#og-cta').click();await settle(o.page);return o}
+  async function openBench(browser,opts){const o=await open(browser,PAGE,{...opts,hook:true});await o.page.locator('#og-cta').click();await o.page.locator('#og-cta').click();await settle(o.page);return o}
   const rectOf=(page,sel)=>page.locator(sel).first().evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,r:r.right,b:r.bottom}});
   const state=page=>page.evaluate(()=>window.__opticsGuided.getState());
   const press=async(page,key,n=1)=>{for(let i=0;i<n;i++)await page.keyboard.press(key);await settle(page)};
