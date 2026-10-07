@@ -3,6 +3,7 @@
 // Student-facing numbers come only from the learner's own records (observedScreenPosition); theoreticalV appears
 // only in the concept stage, after the experiments, as "the formula result" next to what the learner found.
 import { compareRecords } from './engine.js';
+import { CHALLENGES, challengeById, challengeProgress, stepOf, notebookReady, LIMITATION_IDEAS, HINT_AFTER_ATTEMPTS } from './challenges.js';
 
 export const formatCm = (x) => (Number.isInteger(x) ? String(x) : String(+x.toFixed(1)));
 const SIGN = (x) => (x < 0 ? '−' : '') + formatCm(Math.abs(x));
@@ -40,7 +41,11 @@ export const MESSAGES = Object.freeze({
   viewThrough: M('你現在看得到一個正立、放大的蠟燭。', '可是剛才屏幕怎麼都接不到它。這和前兩次有什麼不同？'),
   naming: M('這種只能透過透鏡看到、卻不能直接接在屏幕上的像，叫做「虛像」。'),
   concept: M('剛才三次實驗，其實分成兩種像。'),
-  placeholder: M('研究手冊和挑戰題在下一批完成。'),
+  notebook: M('回頭看看你的兩筆證據，用自己的話寫下你發現了什麼。'),
+  challengeIntro: M('換一個情境，用你剛才的發現試試看。'),
+  challengeRetry: M('剛才哪個結果變得更明顯？', '回想一下你的三次實驗。'),
+  complete: M('這一站完成了。', '你自己找到了規律，也說得出為什麼焦距內的像接不到。'),
+  placeholder: M('這一段還在製作中。'),
 });
 export const searchProgress = (unexplored) => M(`你還沒檢查過${unexplored.map((z) => ZONE_WORD[z]).join('、')}的位置。`);
 
@@ -48,7 +53,7 @@ const ENTRY = {
   welcome: 'welcome', mission: 'mission', 'trial1-find-screen': 'find1', 'trial1-complete': 'complete1', 'trial2-move-object': 'moveCandlePlain',
   'trial2-find-screen': 'find2', 'trial2-complete': 'complete2', compare: 'compare', 'trial3-move-object': 'moveCandle3',
   'trial3-search-screen': 'search', 'trial3-no-real-screen-image': 'noReal', 'trial3-view-through-lens': 'viewThrough', concept: 'concept',
-  notebook: 'placeholder', 'challenge-1': 'placeholder', 'challenge-2': 'placeholder', 'challenge-3': 'placeholder', complete: 'placeholder',
+  notebook: 'notebook', 'challenge-1': 'challengeIntro', 'challenge-2': 'challengeIntro', 'challenge-3': 'challengeIntro', complete: 'complete',
 };
 const FIND_PHASES = new Set(['trial1-find-screen', 'trial2-find-screen']);
 
@@ -66,6 +71,12 @@ export function reduceCoach(prev, { state, view, events = [], transitions = [], 
     return make(id, MESSAGES[id]);
   }
   const ev = (t) => events.find((e) => e.type === t);
+  const answered = ev('challenge-answered');
+  if (answered) {
+    const step = stepOf(answered.id, answered.step);
+    if (answered.correct) return make('challengeRight', M(step.right));
+    return answered.attempts >= HINT_AFTER_ATTEMPTS ? make('challengeHint', M(step.hint)) : make('challengeRetry', MESSAGES.challengeRetry);
+  }
   const find = FIND_PHASES.has(state.phase), search = state.phase === 'trial3-search-screen';
   let id = null, msg = null;
   const hint = ev('hint');
@@ -97,7 +108,9 @@ export function screenFor(state) {
   if (state.phase === 'welcome') return 'welcome';
   if (state.phase === 'compare') return 'compare';
   if (state.phase === 'concept') return 'concept';
-  if (['notebook', 'challenge-1', 'challenge-2', 'challenge-3', 'complete'].includes(state.phase)) return 'placeholder';
+  if (state.phase === 'notebook') return 'notebook';
+  if (/^challenge-/.test(state.phase)) return 'challenge';
+  if (state.phase === 'complete') return 'complete';
   return 'bench';
 }
 export const stepFor = (phase) => (phase === 'welcome' || phase === 'mission' ? 'mission' : phase === 'notebook' ? 'notebook'
@@ -116,6 +129,9 @@ export function ctaFor(state, view, ui = {}) {
     case 'trial3-no-real-screen-image': return { label: '從透鏡後面看', action: 'VIEW_THROUGH_LENS', enabled: true };
     case 'trial3-view-through-lens': return ui.naming ? { label: '看看這兩種像', action: 'CONTINUE', enabled: true } : { label: '我觀察到了', action: 'UI_NAMING', enabled: true };
     case 'concept': return { label: '進入研究手冊', action: 'CONTINUE', enabled: true };
+    case 'notebook': return { label: '進入挑戰題', action: 'CONTINUE', enabled: view.notebook.ready };
+    case 'challenge-1': case 'challenge-2': return { label: '下一題', action: 'CONTINUE', enabled: view.challenge.allCorrect };
+    case 'challenge-3': return { label: '完成', action: 'CONTINUE', enabled: view.challenge.allCorrect };
     default: return null;
   }
 }
@@ -174,4 +190,58 @@ export function conceptModel(records) {
       ],
     },
   };
+}
+
+const POSITION_WORD = { closer: '離透鏡更近', farther: '離透鏡更遠', same: '位置不變' };
+const SIZE_WORD_CHANGE = { smaller: '變小', larger: '變大', same: '不變' };
+
+/** Research notebook content. Level A's first two sentences are filled from the learner's records. */
+export function notebookModel(records, conclusion) {
+  const card = compareCard(records);
+  if (!card) return null;
+  const a = records[1], b = records[2], c = compareRecords(a, b);
+  return {
+    evidenceRows: card.rows, notice: card.notice,
+    levels: [
+      { id: 'A', title: '幫我整理', desc: '前面兩句已經幫你寫好，你完成最後一句。' },
+      { id: 'B', title: '自己說', desc: '用自己的話說出你發現的規律。' },
+      { id: 'C', title: '研究員挑戰', desc: '想一想：這些資料能支持什麼，又還不能決定什麼？' },
+    ],
+    a: {
+      given: [`我把物距從 ${formatCm(a.u)} cm 改成 ${formatCm(b.u)} cm。`, `清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm。`],
+      positionStem: '所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會', positionOptions: Object.entries(POSITION_WORD),
+      sizeStem: '影像大小會', sizeOptions: Object.entries(SIZE_WORD_CHANGE),
+      // a gentle pointer back to the evidence, never a verdict
+      nudge: (conclusion.relationPosition && conclusion.relationPosition !== c.positionChange) || (conclusion.relationSize && conclusion.relationSize !== c.sizeChange)
+        ? `再對照一下上面的證據：清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm，影像大小從${SIZE_WORD[a.imageSize]}變成${SIZE_WORD[b.imageSize]}。` : null,
+    },
+    b: { prompt: '請用第一次和第二次的數據，說明你發現的規律。', placeholder: '例如：我把物距從…改成…，清楚像距從…變成…，所以…' },
+    c: { q1: '這兩筆資料支持了什麼結論？', q2: '哪些事情還不能只靠這兩筆資料判斷？', ideas: LIMITATION_IDEAS },
+    ready: notebookReady(conclusion),
+  };
+}
+
+/** One challenge as the learner sees it: steps unlock in order, feedback follows the attempts so far. */
+export function challengeModel(state, id) {
+  const def = challengeById(id), progress = challengeProgress(id, state.challenges[id]);
+  return {
+    id, title: def.title, scenario: def.scenario, count: CHALLENGES.length,
+    steps: def.steps.map((step, i) => {
+      const p = progress.steps[i];
+      const feedback = p.correct ? step.right : p.attempts >= HINT_AFTER_ATTEMPTS ? step.hint : p.attempts >= 1 ? MESSAGES.challengeRetry.main : null;
+      return { id: step.id, question: step.question, options: step.options, unlocked: p.unlocked, choice: p.choice, attempts: p.attempts, correct: p.correct, feedback };
+    }),
+    note: def.note && progress.allCorrect ? { ...def.note, text: state.challenges[id].note ?? '' } : null,
+    allCorrect: progress.allCorrect,
+  };
+}
+
+/** Closing summary: the learner's own conclusion, in the form they chose to write it. */
+export function completeModel(state) {
+  const c = state.conclusion;
+  const lines = [];
+  if (c.level === 'A') lines.push(`當物體往凸透鏡靠近時，清楚影像${POSITION_WORD[c.relationPosition]}，影像大小${SIZE_WORD_CHANGE[c.relationSize]}。`);
+  else if (c.level === 'B') lines.push(c.freeText);
+  else if (c.level === 'C') lines.push(c.evidenceText, c.limitationText);
+  return { level: c.level, lines: lines.filter(Boolean) };
 }

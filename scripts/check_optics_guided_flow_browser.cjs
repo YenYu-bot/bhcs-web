@@ -23,9 +23,11 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
   for(const [label,width,height,touch] of [['390',390,844,true],['1280',1280,800,false]]){
    await check(`flow ${label}: welcome → concept with the learner's own numbers`,async()=>{
     const ctx=await browser.newContext({viewport:{width,height},hasTouch:touch,isMobile:touch});
-    const page=await ctx.newPage(),errors=[],failed=[];
+    await ctx.addInitScript(()=>{if(!localStorage.getItem('bhcs-science-v2-optics'))localStorage.setItem('bhcs-science-v2-optics','LEGACY-OPTICS-RECORDS')});
+    const page=await ctx.newPage(),errors=[],failed=[],requests=[];
     page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
     page.on('response',r=>{if(r.status()>=400)failed.push(r.status()+' '+r.url())});
+    page.on('request',r=>requests.push({url:r.url(),body:r.postData()||''}));
     await page.goto(base+'/tools/science/optics-guided.html?debug=1');await page.waitForLoadState('networkidle');
     const text=()=>page.evaluate(()=>document.body.innerText);
     const state=()=>page.evaluate(()=>window.__opticsGuided.getState());
@@ -35,6 +37,8 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     const cta=()=>page.locator('#og-cta');
     const shot=name=>page.screenshot({path:path.join(output,`${label}-${name}.png`),fullPage:true});
     const noOverflow=async(where)=>assert.ok((await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth))<=0,'no horizontal overflow at '+where);
+    const focusHit=k=>page.evaluate(k=>document.querySelector('.og-hit-'+k).focus({preventScroll:true}),k);
+    const reload=async()=>{await page.reload();await page.waitForLoadState('networkidle');await settle(page)};
     const hitState=k=>page.evaluate(k=>{const e=document.querySelector('.og-hit-'+k);return {locked:e.getAttribute('aria-disabled')==='true',tab:e.tabIndex}},k);
 
     // --- welcome
@@ -72,8 +76,14 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.deepEqual(await coach(),{main:'第一筆證據有了。接下來只改一個地方。',sub:'把蠟燭移到離透鏡 15 cm 的位置。'});
     assert.match(await active(),/og-hit-candle/,'the candle takes over: focus follows the task');assert.equal(await cta().isHidden(),true);
     assert.equal(await page.locator('#og-records li').first().innerText(),`第一次紀錄完成 ✓ 物距 30 cm，清楚像距 ${f(O1)} cm`);
+    // --- reload right after the first record: progress is saved, the trial restarts cleanly with the learner's own position
+    await reload();
+    assert.equal((await state()).phase,'trial2-move-object');assert.equal((await state()).s,O1);assert.equal((await state()).u,30);
+    assert.equal(await page.locator('#og-records li').first().innerText(),`第一次紀錄完成 ✓ 物距 30 cm，清楚像距 ${f(O1)} cm`);
+    assert.ok((await page.locator('#og-save-note').innerText()).includes('已接續你上次做到的地方'));
+    assert.equal((await coach()).main,'把蠟燭移到離透鏡 15 cm 的位置。');
     // --- trial 2
-    await press('PageUp',3);
+    await focusHit('candle');await press('PageUp',3);
     assert.equal((await state()).phase,'trial2-find-screen');
     let c=await coach();assert.equal(c.main,'好，這次只有物距改變。');assert.ok(c.sub.includes('原本清楚的影像現在模糊了')&&c.sub.includes('再找一次'));
     assert.match(await active(),/og-hit-screen/,'candle just locked → focus moves to the screen');
@@ -93,6 +103,9 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await noOverflow('compare');await shot('5-compare');
     await page.getByLabel('更靠近透鏡').check();await page.getByLabel('變大').check();await settle(page);
     assert.equal((await coach()).main,'剛才哪個結果變得更明顯？');assert.ok(!(await text()).includes('錯了'));assert.equal(await cta().isDisabled(),true);
+    await reload();assert.equal(await page.locator('#main').getAttribute('data-screen'),'compare');
+    assert.equal(await page.getByLabel('更靠近透鏡').isChecked(),true,'the answer given before the reload is still there');assert.equal(await page.getByLabel('變大').isChecked(),true);
+    assert.deepEqual((await page.locator('#og-compare-rows tr').evaluateAll(rows=>rows.map(r=>r.children[1].textContent.trim())))[2],`${f(O1)} cm`);
     await page.getByLabel('更遠離透鏡').check();await settle(page);
     c=await coach();assert.equal(c.main,'你剛才已經找到一個規律了。');assert.ok(c.sub.startsWith('在還能形成實像的情況下，物體往焦點靠近時'));
     assert.equal(await cta().isDisabled(),false);await shot('6-compare-done');
@@ -130,8 +143,82 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal((await coach()).main,'剛才三次實驗，其實分成兩種像。');assert.equal(await cta().innerText(),'進入研究手冊');
     await noOverflow('concept');await shot('8-concept');
     await cta().click();await settle(page);
-    assert.equal(await page.locator('#main').getAttribute('data-screen'),'placeholder');
-    assert.equal(await page.locator('.og-nav button[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'03研究手冊');
+    // --- notebook
+    const step=()=>page.locator('.og-nav button[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,''));
+    const NB=page.locator('#og-notebook');
+    assert.equal(await page.locator('#main').getAttribute('data-screen'),'notebook');assert.equal(await step(),'03研究手冊');
+    assert.match(await active(),/og-notebook-title/);assert.equal((await coach()).main,'回頭看看你的兩筆證據，用自己的話寫下你發現了什麼。');
+    assert.deepEqual(await page.locator('#og-nb-rows tr').evaluateAll(rows=>rows.map(r=>[...r.children].map(c=>c.textContent.trim()))),[['焦距','10 cm','10 cm'],['物距','30 cm','15 cm'],['清楚像距',`${f(O1)} cm`,`${f(O2)} cm`],['影像大小','較小','較大']]);
+    assert.equal(await page.locator('input[name="og-level"]:checked').getAttribute('value'),'A','Level A is the default');
+    assert.equal((await page.locator('.og-given').innerText()).replace(/\s+/g,' '),`我把物距從 30 cm 改成 15 cm。 清楚像距從 ${f(O1)} cm 變成 ${f(O2)} cm。`);
+    assert.equal(await cta().innerText(),'進入挑戰題');assert.equal(await cta().isDisabled(),true);
+    t=await text();assert.ok(!/理論像距/.test(t));await shot('9-notebook-A');
+    await NB.getByLabel('離透鏡更近').check();await NB.getByLabel('變大').check();await settle(page);
+    assert.equal(await page.locator('.og-nudge').isVisible(),true,'a gentle pointer back to the evidence');assert.ok(!(await page.locator('.og-nudge').innerText()).match(/錯|答案/));assert.equal(await cta().isDisabled(),false);
+    await NB.getByLabel('離透鏡更遠').check();await settle(page);assert.equal(await page.locator('.og-nudge').isVisible(),false);
+    // Level B: its own readiness; Level A's choices do not count
+    await NB.getByLabel('B　自己說').check();await settle(page);
+    assert.equal(await page.locator('#og-nb-free').isVisible(),true);assert.equal(await cta().isDisabled(),true);
+    const TOKEN='TOKEN-'+Math.random().toString(36).slice(2,8);
+    await page.locator('#og-nb-free').fill(`距離變小，像距變大 ${TOKEN}`);await page.waitForTimeout(450);assert.equal(await cta().isDisabled(),false);
+    // Level C
+    await NB.getByLabel('C　研究員挑戰').check();await settle(page);assert.equal(await cta().isDisabled(),true);
+    await page.locator('#og-nb-evidence').fill('物距變小時，清楚像距變大，影像也變大。');await page.waitForTimeout(450);assert.equal(await cta().isDisabled(),true,'both answers are needed');
+    assert.equal(await page.locator('.og-ideas').isHidden(),true);
+    await page.locator('#og-nb-limit').fill('還不知道換別的焦距會不會一樣。');await page.waitForTimeout(450);assert.equal(await cta().isDisabled(),false);
+    assert.equal(await page.locator('.og-ideas').isVisible(),true,'researcher ideas appear after writing, not before');
+    await shot('10-notebook-C');
+    // reload keeps everything the learner wrote, in the level they chose
+    await reload();
+    assert.equal(await page.locator('#main').getAttribute('data-screen'),'notebook');assert.equal(await page.locator('input[name="og-level"]:checked').getAttribute('value'),'C');
+    assert.equal(await page.locator('#og-nb-evidence').inputValue(),'物距變小時，清楚像距變大，影像也變大。');assert.equal(await page.locator('#og-nb-limit').inputValue(),'還不知道換別的焦距會不會一樣。');
+    await NB.getByLabel('B　自己說').check();await settle(page);assert.equal(await page.locator('#og-nb-free').inputValue(),`距離變小，像距變大 ${TOKEN}`,'the other levels\' text is kept');
+    await NB.getByLabel('C　研究員挑戰').check();await settle(page);
+    assert.equal(await cta().isDisabled(),false);await cta().click();await settle(page);
+    // --- challenges
+    assert.equal(await page.locator('#main').getAttribute('data-screen'),'challenge');assert.equal(await step(),'04挑戰題');assert.match(await active(),/og-challenge-title/);
+    assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 1／3　模糊投影');
+    assert.equal(await page.locator('#og-ch-scenario').innerText(),'在這個實驗裝置裡，蠟燭和透鏡都沒有移動，但屏幕上的影像突然變得模糊。');
+    assert.equal(await cta().innerText(),'下一題');assert.equal(await cta().isDisabled(),true);
+    await page.getByLabel('蠟燭的位置').check();await settle(page);assert.equal((await coach()).main,'剛才哪個結果變得更明顯？');
+    await page.getByLabel('換一片焦距不同的透鏡').check();await settle(page);assert.ok((await coach()).main.startsWith('蠟燭和透鏡都沒有動。'),'second try → a hint pointing at the learner\'s own first experiment');
+    assert.ok(!(await text()).includes('錯了')&&!(await text()).includes('正確答案'));
+    await page.getByLabel('屏幕的位置').check();await settle(page);
+    assert.equal((await coach()).main,'因為在其他條件不變時，清楚實像只會出現在特定位置附近。');assert.equal(await page.locator('input[name="og-ch-1-adjust"]').first().isDisabled(),true,'a solved step stays solved');
+    assert.equal(await cta().isDisabled(),false);await cta().click();await settle(page);
+    assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 2／3　焦距內');
+    assert.equal(await page.locator('#og-ch-steps fieldset').nth(1).isHidden(),true,'the follow-up waits for the first answer');
+    assert.ok(!(await text()).match(/1\/f|公式/),'no calculation asked');
+    await page.getByLabel('可以',{exact:true}).check();await settle(page);assert.equal(await cta().isDisabled(),true);
+    await page.getByLabel('不可以').check();await settle(page);assert.equal(await page.locator('#og-ch-steps fieldset').nth(1).isVisible(),true);
+    // reload in the middle of challenge 2
+    await reload();assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 2／3　焦距內');
+    assert.equal(await page.getByLabel('不可以').isChecked(),true);assert.equal(await page.getByLabel('不可以').isDisabled(),true);assert.equal(await page.locator('#og-ch-steps fieldset').nth(1).isVisible(),true);
+    await page.getByLabel('倒立放大的實像').check();await page.getByLabel('正立放大的虛像').check();await settle(page);
+    assert.equal((await coach()).main,'透過透鏡看，會看到正立、放大的虛像。');await cta().click();await settle(page);
+    assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 3／3　放大鏡');assert.equal(await cta().innerText(),'完成');
+    assert.equal(await page.locator('#og-ch-note').isHidden(),true);
+    await page.getByLabel('因為形成的是實像，只是白紙放得不夠遠。').check();await page.getByLabel('因為白紙會把光吸收掉，所以看不到影像。').check();await settle(page);
+    await page.getByLabel('因為字在放大鏡的焦距以內，形成的是虛像。眼睛看得到，但不能直接投到紙上。').check();await settle(page);
+    assert.equal(await page.locator('#og-ch-note').isVisible(),true);await page.locator('#og-ch-note-input').fill('我自己的說法');await page.waitForTimeout(450);
+    assert.equal(await cta().isDisabled(),false);await shot('11-challenge-3');await cta().click();await settle(page);
+    // --- complete
+    assert.equal(await page.locator('#main').getAttribute('data-screen'),'complete');assert.equal(await page.locator('#og-complete-title').innerText(),'這一站完成了');
+    assert.deepEqual(await page.locator('#og-complete-summary p').allInnerTexts(),['物距變小時，清楚像距變大，影像也變大。','還不知道換別的焦距會不會一樣。']);
+    assert.equal(await page.locator('.og-link-button').getAttribute('href'),'./optics.html');assert.equal((await coach()).main,'這一站完成了。');
+    assert.equal(await step(),'04挑戰題');await noOverflow('complete');await shot('12-complete');
+    await reload();assert.equal(await page.locator('#main').getAttribute('data-screen'),'complete','finished stays finished');
+    // --- privacy and isolation: nothing typed leaves the page; the legacy lab's key is untouched; one key of our own
+    const leaked=requests.filter(r=>r.url.includes(TOKEN)||r.body.includes(TOKEN)||decodeURIComponent(r.url).includes('我自己的說法'));assert.deepEqual(leaked,[]);
+    assert.ok(requests.every(r=>new URL(r.url).host===new URL(base).host),'only same-origin requests: '+requests.filter(r=>new URL(r.url).host!==new URL(base).host).map(r=>r.url));
+    assert.equal(await page.evaluate(()=>typeof window.gtag+'|'+typeof window.dataLayer),'undefined|undefined','no analytics on this page yet');
+    const keys=await page.evaluate(()=>Object.fromEntries(Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)])));
+    assert.deepEqual(Object.keys(keys).sort(),['bhcs-lens-guided:v1','bhcs-science-v2-optics']);assert.equal(keys['bhcs-science-v2-optics'],'LEGACY-OPTICS-RECORDS');
+    assert.ok(keys['bhcs-lens-guided:v1'].includes(TOKEN),'the learner\'s own words are kept, on this device only');
+    // --- start over
+    page.once('dialog',d=>d.accept());await page.locator('#og-restart').click();await page.waitForLoadState('networkidle');await settle(page);
+    assert.equal(await page.locator('#main').getAttribute('data-screen'),'welcome');
+    assert.equal(await page.evaluate(()=>localStorage.getItem('bhcs-lens-guided:v1')),null);assert.equal(await page.evaluate(()=>localStorage.getItem('bhcs-science-v2-optics')),'LEGACY-OPTICS-RECORDS','the old lab is left alone');
     assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);await ctx.close();
    });
   }
@@ -142,6 +229,47 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
    await page.evaluate(()=>{const g=window.__opticsGuided;for(const type of ['START','BEGIN'])g.dispatch({type});g.dispatch({type:'MOVE_SCREEN',position:15});g.dispatch({type:'RECORD'});g.dispatch({type:'MOVE_CANDLE',position:15});g.dispatch({type:'MOVE_SCREEN',position:30});g.dispatch({type:'RECORD'})});
    assert.equal(await page.locator('#og-compare-notice').getAttribute('data-kind'),'ok');
    await ctx.close();
+  });
+  // ---- hostile storage and quick exits (debug hook only reaches phases fast; what is checked is what the learner sees)
+  const jump=page=>page.evaluate(()=>{const g=window.__opticsGuided,run=a=>g.dispatch(a);
+   for(const type of ['START','BEGIN'])run({type});run({type:'MOVE_SCREEN',position:15});run({type:'RECORD'});run({type:'MOVE_CANDLE',position:15});run({type:'MOVE_SCREEN',position:30});run({type:'RECORD'});
+   run({type:'ANSWER_COMPARE',question:'position',answer:'farther'});run({type:'ANSWER_COMPARE',question:'size',answer:'larger'});run({type:'CONTINUE'});run({type:'MOVE_CANDLE',position:5});
+   for(const p of [8,20,35]){run({type:'MOVE_SCREEN',position:p});run({type:'SETTLE_SCREEN'})}
+   for(const type of ['CONFIRM_NO_REAL_IMAGE','VIEW_THROUGH_LENS','CONTINUE','CONTINUE'])run({type});return g.getState().phase});
+  const fresh=async(init,opts={})=>{const ctx=await browser.newContext({viewport:{width:1280,height:800},...opts});if(init)await ctx.addInitScript(init);
+   const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&!/Failed to load resource/.test(m.text()))errors.push(m.text())});
+   await page.goto(base+'/tools/science/optics-guided.html?debug=1');await page.waitForLoadState('networkidle');return {ctx,page,errors}};
+  await check('storage that refuses to save: the lab still works and says so',async()=>{
+   const {ctx,page,errors}=await fresh(()=>{Storage.prototype.setItem=function(){throw new DOMException('full','QuotaExceededError')}});
+   assert.equal(await jump(page),'notebook');
+   assert.ok((await page.locator('#og-save-note').innerText()).includes('無法保存'),'tells the learner progress will not be kept');
+   assert.equal(await page.locator('#main').getAttribute('data-screen'),'notebook');assert.deepEqual(errors,[]);await ctx.close();
+  });
+  await check('blocked storage (no localStorage at all) does not break the page',async()=>{
+   const {ctx,page,errors}=await fresh(()=>{Object.defineProperty(window,'localStorage',{get(){throw new DOMException('denied','SecurityError')}})});
+   assert.equal(await page.locator('#main').getAttribute('data-screen'),'welcome');assert.equal(await jump(page),'notebook');assert.deepEqual(errors,[]);await ctx.close();
+  });
+  for(const [name,value] of [['corrupted JSON','{not json'],['a save from a future version',JSON.stringify({version:9,phase:'notebook'})],['a forged record (not a sharp position)',JSON.stringify({version:1,phase:'concept',records:{1:{f:10,u:30,observed:22},2:null,3:null},compare:{},conclusion:{},challenges:{}})]]){
+   await check(`unusable saved data (${name}) → a normal welcome screen`,async()=>{
+    const c2=await browser.newContext({viewport:{width:1280,height:800}});await c2.addInitScript(`localStorage.setItem('bhcs-lens-guided:v1',${JSON.stringify(value)})`);
+    const p2=await c2.newPage(),errs=[];p2.on('pageerror',e=>errs.push(e.message));await p2.goto(base+'/tools/science/optics-guided.html?debug=1');await p2.waitForLoadState('networkidle');
+    assert.equal(await p2.locator('#main').getAttribute('data-screen'),'welcome');assert.equal(await p2.locator('#og-cta').innerText(),'開始實驗');assert.deepEqual(errs,[]);await c2.close();
+   });
+  }
+  await check('typing and leaving within a moment keeps the text (saved on page hide)',async()=>{
+   const {ctx,page}=await fresh();assert.equal(await jump(page),'notebook');
+   await page.locator('#og-notebook').getByLabel('B　自己說').check();
+   await page.locator('#og-nb-free').fill('走得很快也要留下來');
+   await page.reload();await page.waitForLoadState('networkidle');
+   assert.equal(await page.locator('#og-nb-free').inputValue(),'走得很快也要留下來');assert.equal(await page.locator('input[name="og-level"]:checked').getAttribute('value'),'B');await ctx.close();
+  });
+  await check('the notebook does not rewrite what is being typed (caret and text survive a state change)',async()=>{
+   const {ctx,page}=await fresh();await jump(page);
+   await page.locator('#og-notebook').getByLabel('B　自己說').check();
+   const box=page.locator('#og-nb-free');await box.click();await box.pressSequentially('第一段',{delay:20});
+   await page.evaluate(()=>window.__opticsGuided.dispatch({type:'SAVE_CONCLUSION',fields:{relationSize:'larger'}}));   // a re-render while the box has focus
+   await box.pressSequentially('第二段',{delay:20});
+   assert.equal(await box.inputValue(),'第一段第二段');assert.equal(await page.evaluate(()=>document.activeElement.id),'og-nb-free');await ctx.close();
   });
  }finally{await browser.close();server.close()}
  const failed=results.filter(r=>!r.pass);console.log(JSON.stringify({checked:results.length,failed:failed.length,output}));if(failed.length)process.exitCode=1;

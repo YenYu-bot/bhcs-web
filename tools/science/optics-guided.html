@@ -41,13 +41,30 @@
       <div class="og-concept-cards" id="og-concept-cards"></div>
       <div class="og-formula" id="og-formula"></div>
     </section>
-    <section class="og-card og-placeholder" id="og-placeholder" aria-labelledby="og-placeholder-title"><h2 id="og-placeholder-title" tabindex="-1">研究手冊與挑戰題</h2><p>這一段還在製作中。</p></section>
+    <section class="og-card og-notebook" id="og-notebook" aria-labelledby="og-notebook-title">
+      <h2 id="og-notebook-title" tabindex="-1">我的研究手冊</h2>
+      <div class="og-table-wrap"><table class="og-table"><caption class="og-sr">你的兩次實驗證據</caption><thead><tr><th scope="col"><span class="og-sr">項目</span></th><th scope="col">第一次</th><th scope="col">第二次</th></tr></thead><tbody id="og-nb-rows"></tbody></table></div>
+      <div id="og-nb-body"></div>
+    </section>
+    <section class="og-card og-challenge" id="og-challenge" aria-labelledby="og-challenge-title">
+      <h2 id="og-challenge-title" tabindex="-1"></h2>
+      <p class="og-scenario" id="og-ch-scenario"></p>
+      <div id="og-ch-steps"></div>
+      <div class="og-note" id="og-ch-note" hidden><label for="og-ch-note-input" id="og-ch-note-label"></label><textarea id="og-ch-note-input" rows="3" maxlength="1000"></textarea></div>
+    </section>
+    <section class="og-card og-complete" id="og-complete" aria-labelledby="og-complete-title">
+      <h2 id="og-complete-title" tabindex="-1">這一站完成了</h2>
+      <div id="og-complete-summary"></div>
+      <p><a class="og-link-button" href="./optics.html">自由探索／精確數值</a></p>
+    </section>
     <p class="og-status" id="og-status"><span class="og-status-icon" id="og-status-icon" aria-hidden="true"></span><span id="og-status-text"></span></p>
     <div class="og-actions"><button type="button" class="og-cta" id="og-cta" hidden></button></div>
     <section class="og-card og-data" aria-label="這次實驗條件">
       <h2>這次實驗條件</h2>
       <dl><dt>焦距</dt><dd id="og-f"></dd><dt>物距</dt><dd id="og-u"></dd></dl>
       <div id="og-records-wrap" hidden><h3 class="og-records-title">已記錄的實驗</h3><ul class="og-records" id="og-records"></ul></div>
+      <p class="og-save-note" id="og-save-note"></p>
+      <button type="button" class="og-link-action" id="og-restart" hidden>清除我的紀錄並重新開始</button>
       <details class="og-advanced"><summary>進階</summary><p><a href="./optics.html">自由探索／精確數值</a></p></details>
     </section>
   </main>

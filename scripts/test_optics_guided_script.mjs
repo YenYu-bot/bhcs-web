@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {reduce,createInitialState,deriveView} from '../assets/optics-guided/engine.js';
-import {MESSAGES,reduceCoach,screenFor,stepFor,ctaFor,evidenceList,compareCard,conceptModel,formatCm,searchProgress} from '../assets/optics-guided/script.js';
+import {MESSAGES,reduceCoach,screenFor,stepFor,ctaFor,evidenceList,compareCard,conceptModel,formatCm,searchProgress,notebookModel,challengeModel,completeModel} from '../assets/optics-guided/script.js';
+import {CHALLENGES,LIMITATION_IDEAS} from '../assets/optics-guided/challenges.js';
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
 
 const mS=position=>({type:'MOVE_SCREEN',position}),mC=position=>({type:'MOVE_CANDLE',position}),settle={type:'SETTLE_SCREEN'};
@@ -146,7 +147,7 @@ test('CTA table covers every guided moment and never offers a dead button',()=>{
  for(const a of acts){const r=reduce(st,a);st=r.state;const c=ctaFor(st,deriveView(st));seen.set(st.phase,c);void flow}
  for(const phase of ['trial2-move-object','trial3-move-object'])assert.equal(seen.get(phase),null,phase+' has no button: the next move is with the equipment');
  assert.equal(seen.get('trial1-complete').label,'記錄第一次結果');assert.equal(seen.get('trial2-complete').label,'記錄第二次結果');
- assert.equal(seen.get('notebook'),null);void ui;
+ assert.deepEqual(seen.get('notebook'),{label:'進入挑戰題',action:'CONTINUE',enabled:false},'the notebook button waits for the learner\'s writing');void ui;
 });
 
 test('script.js builds content from records and events only',()=>{
@@ -154,6 +155,73 @@ test('script.js builds content from records and events only',()=>{
  assert.ok(!/from '\.\/model\.js'/.test(src),'no model import: values come from records');
  assert.ok(!/\bu\s*-\s*f\b|\bf\s*\*\s*u\b|1\s*\/\s*f\s*[-+=]|-\s*v\s*\/\s*u/.test(src.replace(/1\/f = 1\/u \+ 1\/v/g,'')),'no formulas computed here');
  assert.ok(!/document|window/.test(src),'no DOM');
+});
+
+
+const toNotebook=(o1=14.5,o2=29.5)=>play([{type:'START'},{type:'BEGIN'},mS(o1),{type:'RECORD'},mC(15),mS(o2),{type:'RECORD'},{type:'ANSWER_COMPARE',question:'position',answer:'farther'},{type:'ANSWER_COMPARE',question:'size',answer:'larger'},{type:'CONTINUE'},mC(5),mS(8),settle,mS(20),settle,mS(35),settle,{type:'CONFIRM_NO_REAL_IMAGE'},{type:'VIEW_THROUGH_LENS'},{type:'UI_NAMING'},{type:'CONTINUE'},{type:'CONTINUE'}]);
+const ans=(id,step,choice)=>({type:'ANSWER_CHALLENGE',id,step,choice});
+
+test('notebook model: Level A sentences carry the learner\'s own numbers; the nudge points back to the evidence without judging',()=>{
+ const nb=toNotebook();assert.equal(nb.state.phase,'notebook');assert.equal(nb.coach.id,'notebook');assert.equal(screenFor(nb.state),'notebook');
+ const m=notebookModel(nb.state.records,nb.state.conclusion);
+ assert.deepEqual(m.a.given,['我把物距從 30 cm 改成 15 cm。','清楚像距從 14.5 cm 變成 29.5 cm。']);
+ assert.equal(m.a.positionStem,'所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會');assert.equal(m.a.sizeStem,'影像大小會');
+ assert.deepEqual(m.a.positionOptions.map(o=>o[0]),['closer','farther','same']);assert.deepEqual(m.a.sizeOptions.map(o=>o[0]),['smaller','larger','same']);
+ assert.deepEqual(m.levels.map(l=>l.id+l.title),['A幫我整理','B自己說','C研究員挑戰']);
+ assert.equal(m.b.prompt,'請用第一次和第二次的數據，說明你發現的規律。');
+ assert.deepEqual([m.c.q1,m.c.q2],['這兩筆資料支持了什麼結論？','哪些事情還不能只靠這兩筆資料判斷？']);assert.deepEqual(m.c.ideas,LIMITATION_IDEAS);
+ assert.equal(m.a.nudge,null,'nothing chosen yet → nothing to say');
+ const wrong=notebookModel(nb.state.records,{...nb.state.conclusion,relationPosition:'closer'});
+ assert.ok(wrong.a.nudge.includes('再對照一下上面的證據')&&wrong.a.nudge.includes('14.5 cm')&&wrong.a.nudge.includes('29.5 cm'));assert.ok(!/錯|答案/.test(wrong.a.nudge));
+ assert.equal(notebookModel(notebookModel.length?{1:null,2:null,3:null}:null,nb.state.conclusion),null);
+ // the card in the notebook is the same evidence as in compare, never theoreticalV
+ assert.ok(!JSON.stringify(m).includes('theoretical'));
+ const ready=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:'farther',relationSize:'larger'}}],{from:nb});
+ assert.deepEqual(ctaFor(ready.state,deriveView(ready.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:true});
+});
+
+test('challenge content: spec scenarios, no formula needed, feedback never states the answer early',()=>{
+ assert.equal(CHALLENGES.length,3);
+ assert.equal(CHALLENGES[0].scenario,'在這個實驗裝置裡，蠟燭和透鏡都沒有移動，但屏幕上的影像突然變得模糊。');assert.equal(CHALLENGES[0].steps[0].question,'你會先調整哪個東西？');
+ assert.equal(CHALLENGES[0].steps[0].right,'因為在其他條件不變時，清楚實像只會出現在特定位置附近。');
+ assert.ok(CHALLENGES[1].scenario.includes('10 cm')&&CHALLENGES[1].scenario.includes('8 cm'));assert.deepEqual(CHALLENGES[1].steps.map(x=>x.question),['可以把清楚的蠟燭影像接在屏幕上嗎？','比較可能看到哪一種像？']);
+ assert.ok(!/1\/f|公式|算/.test(JSON.stringify(CHALLENGES[1])),'challenge 2 never asks for a calculation');
+ assert.equal(CHALLENGES[1].steps[1].options.find(o=>o[0]===CHALLENGES[1].steps[1].correct)[1],'正立放大的虛像');
+ assert.equal(CHALLENGES[2].scenario,'用放大鏡看文字時，可以看到正立放大的字，但把白紙放到後面卻接不到那個字的影像。');
+ for(const c of CHALLENGES)for(const st of c.steps){
+  const right=st.options.find(o=>o[0]===st.correct)[1];
+  assert.ok(!st.hint.includes(right)&&!st.hint.includes('答案'),'hint does not hand over the answer: '+st.hint);
+  for(const t of [st.right,st.hint,st.question,c.scenario])for(const bad of ['錯了','錯誤','答錯','不對','正確答案是'])assert.ok(!t.includes(bad),`${bad} in ${t}`);
+  assert.ok(st.options.length>=2&&st.options.filter(o=>o[0]===st.correct).length===1);
+ }
+});
+
+test('challenge flow in the coach: question first, hint only after repeated tries, right feedback only when found',()=>{
+ let r=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:'farther',relationSize:'larger'}},{type:'CONTINUE'}],{from:toNotebook()});
+ assert.equal(r.state.phase,'challenge-1');assert.equal(r.coach.id,'challengeIntro');assert.equal(screenFor(r.state),'challenge');assert.equal(stepFor(r.state.phase),'challenge');
+ assert.equal(ctaFor(r.state,deriveView(r.state)).enabled,false);assert.equal(ctaFor(r.state,deriveView(r.state)).label,'下一題');
+ r=play([ans(1,'adjust','candle')],{from:r});assert.equal(r.coach.id,'challengeRetry');assert.equal(r.coach.main,'剛才哪個結果變得更明顯？');
+ r=play([ans(1,'adjust','lens')],{from:r});assert.equal(r.coach.id,'challengeHint');assert.equal(r.coach.main,CHALLENGES[0].steps[0].hint);assert.ok(!r.coach.main.includes('屏幕的位置'));
+ r=play([ans(1,'adjust','screen')],{from:r});assert.equal(r.coach.id,'challengeRight');assert.equal(r.coach.main,CHALLENGES[0].steps[0].right);assert.equal(ctaFor(r.state,deriveView(r.state)).enabled,true);
+ const m1=challengeModel(r.state,1);assert.deepEqual([m1.steps[0].correct,m1.steps[0].attempts,m1.steps[0].feedback],[true,3,CHALLENGES[0].steps[0].right]);
+ // challenge 2: the follow-up opens after the first step; challenge 3 gets its optional note and a "完成" button
+ r=play([{type:'CONTINUE'},ans(2,'project','no')],{from:r});const m2=challengeModel(r.state,2);assert.deepEqual(m2.steps.map(x=>x.unlocked),[true,true]);
+ r=play([ans(2,'kind','virtual'),{type:'CONTINUE'}],{from:r});assert.equal(r.state.phase,'challenge-3');assert.equal(challengeModel(r.state,3).note,null,'no note before the answer');
+ r=play([ans(3,'why','virtual')],{from:r});assert.deepEqual(Object.keys(challengeModel(r.state,3).note).sort(),['label','placeholder','text']);assert.equal(ctaFor(r.state,deriveView(r.state)).label,'完成');
+ r=play([{type:'CONTINUE'}],{from:r});assert.equal(r.state.phase,'complete');assert.equal(screenFor(r.state),'complete');assert.equal(r.coach.id,'complete');assert.equal(ctaFor(r.state,deriveView(r.state)),null);
+ assert.equal(stepFor('complete'),'challenge');
+});
+
+test('completion summary shows the learner\'s own words in the form they chose',()=>{
+ const base=toNotebook().state;
+ const A=completeModel({...base,conclusion:{...base.conclusion,level:'A',relationPosition:'farther',relationSize:'larger'}});assert.deepEqual(A.lines,['當物體往凸透鏡靠近時，清楚影像離透鏡更遠，影像大小變大。']);
+ assert.deepEqual(completeModel({...base,conclusion:{...base.conclusion,level:'B',freeText:'距離變近，像變大<b>'}}).lines,['距離變近，像變大<b>'],'plain text is passed through untouched (rendered with textContent)');
+ assert.deepEqual(completeModel({...base,conclusion:{...base.conclusion,level:'C',evidenceText:'位置會變遠',limitationText:'不知道其他焦距'}}).lines,['位置會變遠','不知道其他焦距']);
+ assert.deepEqual(completeModel({...base,conclusion:{...base.conclusion,level:'B',freeText:''}}).lines,[]);
+});
+
+test('new coach lines keep the tone rules too',()=>{
+ for(const k of ['notebook','challengeIntro','challengeRetry','complete'])for(const t of [MESSAGES[k].main,MESSAGES[k].sub].filter(Boolean))for(const bad of ['錯了','錯誤','答錯','不對','正確答案是'])assert.ok(!t.includes(bad),`${bad} in ${k}`);
 });
 
 console.log(`PASS optics guided script: ${tests} tests`);

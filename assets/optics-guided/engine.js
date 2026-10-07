@@ -2,6 +2,7 @@
 // Pure reducer: no DOM, no input handling, no timers. All physics comes from model.js; this file never
 // recomputes v, m, sharpness, bench overflow or focus.
 import { calculateLensState, calculateClarity, clarityTolerance, NUMERIC_EPSILON } from './model.js';
+import { judgeChallenge, challengeProgress, emptyChallenges, notebookReady, sanitizeConclusionFields, TEXT_MAX } from './challenges.js';
 
 export const PHASES = [
   'welcome', 'mission',
@@ -49,7 +50,7 @@ export function createInitialState() {
     alreadyRecordedActive: false,
     compare: { position: null, size: null },
     conclusion: { level: null, relationPosition: null, relationSize: null, freeText: '', evidenceText: '', limitationText: '' },
-    challenges: { 1: null, 2: null, 3: null },
+    challenges: emptyChallenges(),
   };
 }
 
@@ -86,20 +87,23 @@ export function changedVariables(prev, next) {
   return prev ? CHANGEABLE.filter((k) => !eq(prev[k], next[k])) : [];
 }
 
-function buildRecord(state, trial, observedScreenPosition, prevRecord) {
-  const { lensState, clarity } = lensAndClarity(state);
+/** A trial record, derived entirely from the model: f, u and what the learner observed (null in Trial 3). */
+export function makeRecord({ trial, f, u, observed, screen, prev = null, zones = [] }) {
+  const lensState = calculateLensState({ f, u });
+  const clarity = calculateClarity({ lensState, screenPosition: observed ?? screen });
   const record = {
-    trial, f: state.f, u: state.u,
-    theoreticalV: lensState.theoreticalV, observedScreenPosition,
+    trial, f, u,
+    theoreticalV: lensState.theoreticalV, observedScreenPosition: observed,
     magnification: lensState.magnification, absoluteMagnification: lensState.absoluteMagnification,
     imageType: lensState.imageType, imageOrientation: lensState.imageOrientation, imageSize: lensState.imageSize,
     projectable: lensState.projectable, projectionWithinBench: lensState.projectionWithinBench,
     clarity: clarity.effectiveClarityLevel, rawClarityLevel: clarity.rawClarityLevel,
-    changedVariables: changedVariables(prevRecord, { f: state.f, u: state.u }),
+    changedVariables: changedVariables(prev, { f, u }),
   };
-  if (trial === 3) record.search = { searchedZones: [...state.search.zones], screenImageFound: false };
+  if (trial === 3) record.search = { searchedZones: [...zones], screenImageFound: false };
   return record;
 }
+const buildRecord = (state, trial, observed, prev) => makeRecord({ trial, f: state.f, u: state.u, observed, screen: state.s, prev, zones: state.search.zones });
 
 /** Evidence comparison built only from records (Spec §8.2 compare, §12 controlled variable). */
 export function compareRecords(a, b) {
@@ -130,6 +134,8 @@ export function deriveView(state) {
     recordEnabled: (state.phase === 'trial1-complete' || state.phase === 'trial2-complete') && clarity.effectiveClarityLevel === 1,
     search: { explored, unexplored: ZONE_IDS.filter((z) => !explored.includes(z)), ctaUnlocked: state.search.ctaUnlocked },
     compare: null,
+    notebook: { ready: notebookReady(state.conclusion) },
+    challenge: /^challenge-[123]$/.test(state.phase) ? challengeProgress(Number(state.phase.slice(-1)), state.challenges[Number(state.phase.slice(-1))]) : null,
   };
   if (state.records[1] && state.records[2]) {
     const c = compareRecords(state.records[1], state.records[2]);
@@ -293,7 +299,12 @@ export function reduce(prev, action) {
       break;
     case 'CONTINUE':
       if (st.phase === 'compare') linear(ctx, action, 'compare', 'trial3-move-object', (s) => deriveView(s).compare?.allCorrect === true);
-      else if (st.phase === 'notebook') linear(ctx, action, 'notebook', 'challenge-1', (s) => s.conclusion.relationPosition !== null && s.conclusion.relationSize !== null);
+      else if (st.phase === 'notebook') linear(ctx, action, 'notebook', 'challenge-1', (s) => notebookReady(s.conclusion));
+      else if (/^challenge-[123]$/.test(st.phase)) {
+        const id = Number(st.phase.slice(-1));
+        if (!challengeProgress(id, st.challenges[id]).allCorrect) reject(ctx, action, 'locked');
+        else enter(ctx, NEXT_ON_CONTINUE[st.phase]);
+      }
       else if (NEXT_ON_CONTINUE[st.phase]) enter(ctx, NEXT_ON_CONTINUE[st.phase]);
       else reject(ctx, action, 'wrong-phase');
       break;
@@ -303,13 +314,35 @@ export function reduce(prev, action) {
       else { st.records[3] = buildRecord(st, 3, null, st.records[2]); ctx.events.push({ type: 'record-written', trial: 3 }); enter(ctx, 'trial3-no-real-screen-image'); }
       break;
     case 'VIEW_THROUGH_LENS': linear(ctx, action, 'trial3-no-real-screen-image', 'trial3-view-through-lens'); break;
-    case 'SAVE_CONCLUSION':
+    case 'SAVE_CONCLUSION': {
+      const fields = sanitizeConclusionFields(action.fields);
       if (st.phase !== 'notebook') reject(ctx, action, 'wrong-phase');
-      else Object.assign(st.conclusion, Object.fromEntries(Object.entries(action.fields ?? {}).filter(([k]) => k in st.conclusion)));
+      else if (!fields) reject(ctx, action, 'invalid');
+      else Object.assign(st.conclusion, fields);
       break;
-    case 'ANSWER_CHALLENGE':
-      if (!/^challenge-[123]$/.test(st.phase) || action.id !== Number(st.phase.slice(-1))) reject(ctx, action, 'wrong-phase');
-      else st.challenges[action.id] = action.answer ?? null;
+    }
+    case 'ANSWER_CHALLENGE': {
+      const id = Number(String(st.phase).slice(10));
+      if (!/^challenge-[123]$/.test(st.phase) || action.id !== id) { reject(ctx, action, 'wrong-phase'); break; }
+      const progress = challengeProgress(id, st.challenges[id]), step = progress.steps.find((x) => x.id === action.step);
+      const correct = judgeChallenge(id, action.step, action.choice);
+      if (!step || correct === null) reject(ctx, action, 'invalid');
+      else if (!step.unlocked || step.correct) reject(ctx, action, 'locked');
+      else {
+        const attempts = step.attempts + 1;
+        st.challenges[id].steps[action.step] = { choice: action.choice, correct, attempts };
+        ctx.events.push({ type: 'challenge-answered', id, step: action.step, correct, attempts });
+      }
+      break;
+    }
+    case 'SAVE_CHALLENGE_NOTE':
+      if (st.phase !== 'challenge-3') reject(ctx, action, 'wrong-phase');
+      else if (typeof action.text !== 'string') reject(ctx, action, 'invalid');
+      else if (!challengeProgress(3, st.challenges[3]).allCorrect) reject(ctx, action, 'locked');
+      else st.challenges[3].note = action.text.slice(0, TEXT_MAX);
+      break;
+    case 'RESTART':
+      ctx.state = createInitialState(); ctx.transitions.push('welcome');
       break;
     default: reject(ctx, action ?? {}, 'unknown-action');
   }

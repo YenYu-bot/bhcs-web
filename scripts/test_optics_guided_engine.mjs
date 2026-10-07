@@ -247,19 +247,75 @@ test('compare: built from records, controlled-variable rule, derived answers',()
  assert.equal(run(c0,{type:'ANSWER_COMPARE',question:'bogus',answer:'x'}).last.accepted,false);
 });
 
-test('after Trial 3 the machine runs linearly; notebook is gated on the Level A answers',()=>{
+const toNotebook=()=>{
+ const st=run(unlocked().state,{type:'CONFIRM_NO_REAL_IMAGE'}).state;
+ return run(st,{type:'VIEW_THROUGH_LENS'},{type:'CONTINUE'},{type:'CONTINUE'}).state;
+};
+const toChallenges=()=>run(toNotebook(),{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:'farther',relationSize:'larger'}},{type:'CONTINUE'}).state;
+const ans=(id,step,choice)=>({type:'ANSWER_CHALLENGE',id,step,choice});
+
+test('after Trial 3 the machine runs linearly into the notebook',()=>{
  let st=run(unlocked().state,{type:'CONFIRM_NO_REAL_IMAGE'}).state;
  assert.equal(run(st,{type:'CONTINUE'}).last.accepted,false,'view-through-lens must be requested first');
  const view=run(st,{type:'VIEW_THROUGH_LENS'});assert.deepEqual(view.transitions,['trial3-view-through-lens']);
  const nb=run(view.state,{type:'CONTINUE'},{type:'CONTINUE'});assert.equal(nb.state.phase,'notebook');
- const gated=run(nb.state,{type:'CONTINUE'});assert.equal(gated.last.accepted,false);assert.equal(gated.state.phase,'notebook');
- const saved=run(nb.state,{type:'SAVE_CONCLUSION',fields:{relationPosition:'farther',relationSize:'larger',freeText:'x',bogus:1}});
- assert.equal(saved.state.conclusion.relationPosition,'farther');assert.equal('bogus' in saved.state.conclusion,false);
- const ch=run(saved.state,{type:'CONTINUE'});assert.equal(ch.state.phase,'challenge-1');
- assert.equal(run(ch.state,{type:'ANSWER_CHALLENGE',id:2,answer:'x'}).last.accepted,false);
- const end=run(ch.state,{type:'ANSWER_CHALLENGE',id:1,answer:'screen'},{type:'CONTINUE'},{type:'ANSWER_CHALLENGE',id:2,answer:'no'},{type:'CONTINUE'},{type:'CONTINUE'});
- assert.equal(end.state.phase,'complete');assert.equal(end.state.challenges[1],'screen');
- assert.equal(run(end.state,{type:'CONTINUE'}).last.accepted,false);
+});
+
+test('notebook: each level has its own readiness rule; fields are validated and capped',()=>{
+ const nb=toNotebook();
+ assert.equal(run(nb,{type:'CONTINUE'}).last.accepted,false,'no level chosen yet');
+ // Level A: both choices
+ const a1=run(nb,{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:'farther'}});assert.equal(deriveView(a1.state).notebook.ready,false);assert.equal(run(a1.state,{type:'CONTINUE'}).last.accepted,false);
+ const a2=run(a1.state,{type:'SAVE_CONCLUSION',fields:{relationSize:'larger'}});assert.equal(deriveView(a2.state).notebook.ready,true);assert.equal(run(a2.state,{type:'CONTINUE'}).state.phase,'challenge-1');
+ // Level B: a sentence; choices of Level A do not count
+ const b0=run(nb,{type:'SAVE_CONCLUSION',fields:{level:'B',relationPosition:'farther',relationSize:'larger'}});assert.equal(deriveView(b0.state).notebook.ready,false);
+ assert.equal(deriveView(run(b0.state,{type:'SAVE_CONCLUSION',fields:{freeText:'  '}}).state).notebook.ready,false,'whitespace is not an answer');
+ assert.equal(deriveView(run(b0.state,{type:'SAVE_CONCLUSION',fields:{freeText:'更遠'}}).state).notebook.ready,true);
+ // Level C: both answers
+ const c1=run(nb,{type:'SAVE_CONCLUSION',fields:{level:'C',evidenceText:'物距變小，像距變大'}});assert.equal(deriveView(c1.state).notebook.ready,false);
+ assert.equal(deriveView(run(c1.state,{type:'SAVE_CONCLUSION',fields:{limitationText:'不知道別的焦距'}}).state).notebook.ready,true);
+ // the other levels' text is kept (one notebook, three ways to write it)
+ const keep=run(nb,{type:'SAVE_CONCLUSION',fields:{level:'B',freeText:'我的話'}},{type:'SAVE_CONCLUSION',fields:{level:'A'}});assert.equal(keep.state.conclusion.freeText,'我的話');
+ // validation: unknown enums and non-strings are rejected whole; unknown keys are ignored; text is capped
+ for(const fields of [{level:'D'},{relationPosition:'up'},{relationSize:3},{freeText:5},{level:'A',relationPosition:'nope'}]){const r=run(nb,{type:'SAVE_CONCLUSION',fields});assert.equal(r.last.accepted,false,JSON.stringify(fields));assert.deepEqual(r.state.conclusion,nb.conclusion)}
+ assert.equal(run(nb,{type:'SAVE_CONCLUSION',fields:{freeText:'x'.repeat(5000)}}).state.conclusion.freeText.length,1000);
+ const ign=run(nb,{type:'SAVE_CONCLUSION',fields:{bogus:1,freeText:'ok'}});assert.equal('bogus' in ign.state.conclusion,false);assert.equal(ign.state.conclusion.freeText,'ok');
+ assert.equal(run(start(),{type:'SAVE_CONCLUSION',fields:{freeText:'x'}}).last.accepted,false,'only inside the notebook');
+ assert.deepEqual(Object.keys(nb.conclusion),['level','relationPosition','relationSize','freeText','evidenceText','limitationText'],'studentConclusion schema');
+});
+
+test('challenges: sequential steps, retry rules, attempts, locked once right, note after success',()=>{
+ const ch=toChallenges();assert.equal(ch.phase,'challenge-1');
+ assert.equal(run(ch,{type:'CONTINUE'}).last.accepted,false,'cannot skip a challenge');
+ // wrong answers can be changed; attempts are counted; nothing says what the answer is
+ let r=run(ch,ans(1,'adjust','candle'));const w=types(r.events,'challenge-answered')[0];assert.deepEqual([w.correct,w.attempts],[false,1]);
+ assert.equal(JSON.stringify(r.state.challenges[1]).includes('screen'),false);
+ r=run(r.state,ans(1,'adjust','lens'));assert.equal(types(r.events,'challenge-answered')[0].attempts,2);
+ assert.equal(run(r.state,{type:'CONTINUE'}).last.accepted,false);
+ r=run(r.state,ans(1,'adjust','screen'));assert.equal(types(r.events,'challenge-answered')[0].correct,true);assert.equal(r.state.challenges[1].steps.adjust.attempts,3);
+ assert.equal(run(r.state,ans(1,'adjust','candle')).last.accepted,false,'a solved step stays solved');
+ assert.equal(deriveView(r.state).challenge.allCorrect,true);
+ // invalid input
+ for(const bad of [ans(1,'nope','screen'),ans(1,'adjust','banana'),ans(2,'project','no'),{type:'ANSWER_CHALLENGE',id:1,step:'adjust'}]){assert.equal(run(ch,bad).last.accepted,false,JSON.stringify(bad))}
+ // challenge 2 has a follow-up that opens only after the first step
+ const c2=run(r.state,{type:'CONTINUE'}).state;assert.equal(c2.phase,'challenge-2');
+ assert.equal(run(c2,ans(2,'kind','virtual')).last.accepted,false,'follow-up is locked');
+ assert.equal(deriveView(c2).challenge.steps.map(s=>s.unlocked).join(),'true,false');
+ let c=run(c2,ans(2,'project','yes'));assert.equal(types(c.events,'challenge-answered')[0].correct,false);
+ c=run(c.state,ans(2,'project','no'));assert.equal(deriveView(c.state).challenge.steps.map(s=>s.unlocked).join(),'true,true');assert.equal(run(c.state,{type:'CONTINUE'}).last.accepted,false,'both steps are needed');
+ c=run(c.state,ans(2,'kind','real-large'),ans(2,'kind','virtual'));assert.equal(deriveView(c.state).challenge.allCorrect,true);
+ // challenge 3: the note opens after the answer, is capped, and is not required
+ const c3=run(c.state,{type:'CONTINUE'}).state;assert.equal(c3.phase,'challenge-3');
+ assert.equal(run(c3,{type:'SAVE_CHALLENGE_NOTE',id:3,text:'x'}).last.accepted,false,'locked until answered');
+ const done=run(c3,ans(3,'why','far'),ans(3,'why','absorb'),ans(3,'why','virtual'));assert.equal(done.state.challenges[3].steps.why.attempts,3);
+ const note=run(done.state,{type:'SAVE_CHALLENGE_NOTE',id:3,text:'y'.repeat(2000)});assert.equal(note.state.challenges[3].note.length,1000);
+ assert.equal(run(done.state,{type:'SAVE_CHALLENGE_NOTE',id:3,text:7}).last.accepted,false);
+ const end=run(done.state,{type:'CONTINUE'});assert.equal(end.state.phase,'complete');
+ assert.equal(run(end.state,{type:'CONTINUE'}).last.accepted,false);assert.ok(!/NaN|Infinity|undefined/.test(JSON.stringify(end.state)));
+});
+
+test('RESTART returns to a clean welcome state from anywhere',()=>{
+ for(const st of [start(),toNotebook(),toChallenges()]){const r=run(st,{type:'RESTART'});assert.deepEqual(r.state,createInitialState());assert.deepEqual(r.transitions,['welcome'])}
 });
 
 test('records come from the model; whole flow is JSON-safe and never leaks NaN / Infinity',()=>{
