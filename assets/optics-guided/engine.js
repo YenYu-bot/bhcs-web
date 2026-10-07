@@ -26,18 +26,12 @@ export const CANDLE_RANGE = Object.freeze({
 // Trial 3 search zones: near 8 ≤ s < 17, middle 17 ≤ s < 29, far 29 ≤ s ≤ 40.
 export const ZONE_IDS = Object.freeze(['near', 'middle', 'far']);
 const ZONE_BOUNDS = { near: [-Infinity, 17], middle: [17, 29], far: [29, Infinity] };   // [from, to)
-export const zoneOf = (s) => ZONE_IDS.find((id) => s >= ZONE_BOUNDS[id][0] && s < ZONE_BOUNDS[id][1]);
+/** Zone of a screen position on the bench (8 ≤ s ≤ 40); null outside the bench. */
+export const zoneOf = (s) => (typeof s === 'number' && s >= SCREEN_RANGE.min && s <= SCREEN_RANGE.max
+  ? ZONE_IDS.find((id) => s >= ZONE_BOUNDS[id][0] && s < ZONE_BOUNDS[id][1]) : null);
 
-// Zones touched by moving from `prev` to `next`: everything in (prev, next] or [next, prev); the start point is excluded.
-export function zonesCovered(prev, next) {
-  if (next === prev) return [];
-  return ZONE_IDS.filter((id) => {
-    const [za, zb] = ZONE_BOUNDS[id];
-    return next > prev ? (next >= za && prev < zb) : (next < zb && prev > za);
-  });
-}
-
-// Stall hints: cm of screen travel without a new best error (or, in Trial 3, without a newly explored zone).
+// Stall hints: cm of screen travel without a new best error (or, in Trial 3, without a newly settled zone).
+// Prototype calibration values, not part of the permanent contract: tune after the student-flow test (I8).
 export const HINT_TRAVEL_CM = Object.freeze([10, 20, 30]);
 export const WRONG_DIRECTION_CM = 3;
 
@@ -221,17 +215,27 @@ function moveScreen(ctx, action) {
     if (progressed) h.bestError = after;
     stallHints(ctx, progressed);
   } else if (st.phase === 'trial3-search-screen') {
+    // Moving is not observing: zones are credited only by SETTLE_SCREEN.
     if (!h.firstMoveShown) { h.firstMoveShown = true; ctx.events.push({ type: 'first-screen-move' }); }
     h.travel += travelled;
-    const before = st.search.zones.length;
-    for (const z of zonesCovered(prev, next)) if (!st.search.zones.includes(z)) st.search.zones.push(z);
-    st.search.zones.sort((a, b) => ZONE_IDS.indexOf(a) - ZONE_IDS.indexOf(b));
-    const count = st.search.zones.length, progressed = count > before;
-    if (progressed && count >= 2) ctx.events.push({ type: 'zones-explored', count });
-    if (count === ZONE_IDS.length && !st.search.ctaUnlocked) { st.search.ctaUnlocked = true; ctx.events.push({ type: 'zones-complete' }); }
-    stallHints(ctx, progressed);
+    stallHints(ctx, false);
   }
   trackAlreadyRecorded(ctx);
+}
+
+// The learner finished an operation at the current (snapped) screen position: pointer release or one keyboard step.
+// Only in Trial 3's search does this do anything: it credits the zone the screen is resting in.
+function settleScreen(ctx) {
+  const st = ctx.state;
+  if (st.phase !== 'trial3-search-screen') return;
+  const zone = zoneOf(st.s);
+  if (zone === null || st.search.zones.includes(zone)) return;
+  st.search.zones.push(zone);
+  st.search.zones.sort((a, b) => ZONE_IDS.indexOf(a) - ZONE_IDS.indexOf(b));
+  const count = st.search.zones.length;
+  if (count >= 2) ctx.events.push({ type: 'zones-explored', count });
+  if (count === ZONE_IDS.length && !st.search.ctaUnlocked) { st.search.ctaUnlocked = true; ctx.events.push({ type: 'zones-complete' }); }
+  stallHints(ctx, true);
 }
 
 function moveCandle(ctx, action) {
@@ -280,6 +284,7 @@ export function reduce(prev, action) {
       break;
     case 'MOVE_SCREEN': moveScreen(ctx, action); break;
     case 'MOVE_CANDLE': moveCandle(ctx, action); break;
+    case 'SETTLE_SCREEN': settleScreen(ctx); break;
     case 'RECORD': record(ctx, action); break;
     case 'ANSWER_COMPARE':
       if (st.phase !== 'compare') reject(ctx, action, 'wrong-phase');

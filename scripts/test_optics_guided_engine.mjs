@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {calculateLensState,calculateClarity} from '../assets/optics-guided/model.js';
-import {reduce,createInitialState,deriveView,rangesFor,hintDirection,compareRecords,zoneOf,zonesCovered,
+import {reduce,createInitialState,deriveView,rangesFor,hintDirection,compareRecords,zoneOf,
   PHASES,SCREEN_RANGE,CANDLE_RANGE,HINT_TRAVEL_CM,ZONE_IDS} from '../assets/optics-guided/engine.js';
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
 
@@ -15,7 +15,8 @@ function run(state,...actions){
  return {state,events,transitions,results,last:results.at(-1)};
 }
 const types=(events,t)=>events.filter(e=>e.type===t);
-const mS=position=>({type:'MOVE_SCREEN',position}),mC=position=>({type:'MOVE_CANDLE',position});
+const settle={type:'SETTLE_SCREEN'};
+const mS=position=>({type:'MOVE_SCREEN',position}),at=position=>[mS(position),settle],mC=position=>({type:'MOVE_CANDLE',position});
 const start=()=>run(createInitialState(),{type:'START'},{type:'BEGIN'}).state;
 const trial1=(obs=15)=>run(start(),mS(obs));                       // → trial1-complete
 const afterTrial1=(obs=15)=>run(trial1(obs).state,{type:'RECORD'}); // → trial2-move-object
@@ -24,7 +25,7 @@ const trial2=(obs1=15,obs2=30)=>run(trial2Find(obs1).state,mS(obs2));
 const compare=(o1=15,o2=30)=>run(trial2(o1,o2).state,{type:'RECORD'});
 const trial3Move=(o1=15,o2=30)=>run(compare(o1,o2).state,{type:'ANSWER_COMPARE',question:'position',answer:'farther'},{type:'ANSWER_COMPARE',question:'size',answer:'larger'},{type:'CONTINUE'});
 const search=(o1=15,o2=30)=>run(trial3Move(o1,o2).state,mC(5));
-const unlocked=()=>run(search().state,mS(8),mS(20),mS(35));
+const unlocked=()=>run(search().state,at(8),at(20),at(35));
 
 test('phase list matches the Spec v1.2 state machine',()=>{
  assert.deepEqual(PHASES,['welcome','mission','trial1-find-screen','trial1-complete','trial1-recorded','trial2-move-object','trial2-find-screen','trial2-complete','trial2-recorded','compare','trial3-move-object','trial3-search-screen','trial3-no-real-screen-image','trial3-view-through-lens','concept','notebook','challenge-1','challenge-2','challenge-3','complete']);
@@ -106,26 +107,27 @@ test('contract 5b: focus crossing and bench overflow never trigger a transition 
  assert.deepEqual(run(base,mC(12),mC(10),mC(5)).transitions,['trial3-search-screen'],'only reaching 5 enters the search');
 });
 
-test('contract 6: Trial 3 zones are tracked only inside trial3-search-screen',()=>{
+test('contract 6: Trial 3 zones are credited only by SETTLE_SCREEN inside trial3-search-screen',()=>{
  const move=trial3Move().state;
- const rej=run(move,mS(10));assert.equal(rej.last.accepted,false);assert.equal(rej.state.search.zones.length,0);
- const s=search().state;assert.equal(s.phase,'trial3-search-screen');assert.deepEqual(s.search.zones,[],'starting position is not counted');
+ const rej=run(move,mS(10),settle);assert.equal(rej.last.accepted,true,'settle outside the search is a harmless no-op');assert.equal(rej.state.search.zones.length,0);assert.deepEqual(rej.events.map(e=>e.type),['rejected']);
+ const s=search().state;assert.equal(s.phase,'trial3-search-screen');assert.deepEqual(s.search.zones,[],'nothing is credited on entry');
  assert.equal(s.s,30,'screen starts at Trial 2 observed');
- const stay=run(s,mS(30));assert.deepEqual(stay.state.search.zones,[]);
- assert.deepEqual(run(s,mS(29.5)).state.search.zones,['far'],'moving inside the starting zone counts that zone');
- assert.deepEqual(run(s,mS(25)).state.search.zones,['middle','far'].sort((a,b)=>ZONE_IDS.indexOf(a)-ZONE_IDS.indexOf(b)));
+ assert.deepEqual(run(s,mS(29.5)).state.search.zones,[],'moving alone credits nothing');
+ assert.deepEqual(run(s,at(29.5)).state.search.zones,['far']);
+ assert.deepEqual(run(s,settle).state.search.zones,['far'],'settling where the screen rests credits that zone');
+ const dup=run(s,at(35),at(31),settle);assert.deepEqual(dup.state.search.zones,['far'],'no duplicates');assert.equal(types(dup.events,'zones-explored').length,0);
+ assert.deepEqual(run(createInitialState(),settle).events,[]);assert.equal(run(start(),settle).last.accepted,true);
 });
 
-test('contract 7: three zones only unlock the CTA; the learner confirms',()=>{
+test('contract 7: three settled zones only unlock the CTA; the learner confirms',()=>{
  const s=search().state;
- const two=run(s,mS(20));
- assert.deepEqual(two.state.search.zones,['middle','far']);assert.equal(two.state.search.ctaUnlocked,false,'two zones do not unlock');
- assert.equal(types(two.events,'zones-explored')[0].count,2);assert.equal(types(two.events,'zones-complete').length,0);
- const three=run(two.state,mS(10));assert.deepEqual(three.state.search.zones,['near','middle','far']);assert.equal(three.state.search.ctaUnlocked,true);
- const r=unlocked();
- assert.equal(r.state.phase,'trial3-search-screen','no automatic transition');assert.equal(r.state.search.ctaUnlocked,true);
- assert.equal(types(r.events,'zones-complete').length,1);assert.deepEqual(r.transitions,[]);
- const early=run(search().state,mS(20),{type:'CONFIRM_NO_REAL_IMAGE'});
+ const near=run(s,at(8));assert.deepEqual(near.state.search.zones,['near']);assert.deepEqual(types(near.events,'zones-explored'),[]);
+ const mid=run(near.state,at(20));assert.deepEqual(mid.state.search.zones,['near','middle']);assert.equal(types(mid.events,'zones-explored')[0].count,2);
+ assert.equal(mid.state.search.ctaUnlocked,false,'two zones do not unlock');assert.equal(types(mid.events,'zones-complete').length,0);
+ const r=run(mid.state,at(35));
+ assert.deepEqual(r.state.search.zones,['near','middle','far']);assert.equal(r.state.search.ctaUnlocked,true);
+ assert.equal(r.state.phase,'trial3-search-screen','no automatic transition');assert.deepEqual(r.transitions,[]);assert.equal(types(r.events,'zones-complete').length,1);
+ const early=run(search().state,at(20),{type:'CONFIRM_NO_REAL_IMAGE'});
  assert.equal(early.last.accepted,false);assert.equal(early.state.phase,'trial3-search-screen');assert.equal(early.state.records[3],null);
  const done=run(r.state,{type:'CONFIRM_NO_REAL_IMAGE'});
  assert.deepEqual(done.transitions,['trial3-no-real-screen-image']);
@@ -135,13 +137,21 @@ test('contract 7: three zones only unlock the CTA; the learner confirms',()=>{
  assert.equal(rec.theoreticalV,-10);assert.equal(rec.magnification,2);
 });
 
-test('contract 8: 16.5 and 28.5 each belong to exactly one zone',()=>{
+test('contract 7b: sweeping across the bench without settling credits nothing',()=>{
+ const sweep=run(search().state,mS(28),mS(20),mS(12),mS(8));
+ assert.deepEqual(sweep.state.search.zones,[]);assert.equal(sweep.state.search.ctaUnlocked,false);
+ assert.deepEqual(run(search().state,mS(8),mS(40),mS(8),mS(40),mS(8)).state.search.zones,[]);
+ assert.deepEqual(run(search().state,mS(8)).state.s,8);
+ const one=run(search().state,mS(8),settle);assert.deepEqual(one.state.search.zones,['near'],'a 30 → 8 drag released at 8 is one observation');
+ assert.equal(one.state.search.ctaUnlocked,false);
+ // keyboard-style: one step + settle each time
+ const kb=run(search().state,at(25),at(20),at(15));assert.deepEqual(kb.state.search.zones,['near','middle'],'far was never settled in');
+});
+
+test('contract 8: zoneOf — 16.5 and 28.5 each belong to exactly one zone; null outside the bench',()=>{
  for(const [s,z] of [[8,'near'],[16.5,'near'],[16.99,'near'],[17,'middle'],[28.5,'middle'],[28.99,'middle'],[29,'far'],[40,'far']])assert.equal(zoneOf(s),z,String(s));
  for(let s=8;s<=40;s+=.5)assert.equal(ZONE_IDS.filter(z=>zoneOf(s)===z).length,1);
- assert.deepEqual(zonesCovered(30,28.5),['middle','far']);assert.deepEqual(zonesCovered(29,28.5),['middle']);
- assert.deepEqual(zonesCovered(20,8),['near','middle']);assert.deepEqual(zonesCovered(8,40),['near','middle','far']);assert.deepEqual(zonesCovered(20,20),[]);
- assert.deepEqual(run(search().state,mS(8)).state.search.zones,['near','middle','far'],'a jump across the bench counts every zone it passes');
- assert.deepEqual(run(search().state,mS(28.5),mS(16.5)).state.search.zones,['near','middle','far']);
+ for(const s of [7.99,40.01,0,100,-5,NaN,Infinity,null,undefined,'20'])assert.equal(zoneOf(s),null,String(s));
 });
 
 test('contract 9: hint direction comes only from the model and is disabled without a finite on-bench target',()=>{
@@ -181,9 +191,12 @@ test('contract 9b: stall hints escalate by lack of progress; level 3 gives a sid
 test('contract 9c: Trial 3 uses search-progress hints, never a direction',()=>{
  let st=search().state;const ev=[];
  for(let i=0;i<40;i++){const r=run(st,mS(i%2?31:40));st=r.state;ev.push(...r.events)}
- const hints=types(ev,'hint');assert.ok(hints.length>=3);
+ const hints=types(ev,'hint');assert.deepEqual(hints.map(h=>h.level),[1,2,3]);
  assert.ok(hints.every(h=>h.direction===undefined));
- assert.ok(hints.some(h=>h.kind==='search-progress'&&h.unexplored.includes('near')&&h.unexplored.includes('middle')));
+ assert.deepEqual(hints[2].unexplored,['near','middle','far'],'nothing settled yet');
+ let st2=run(search().state,at(31)).state;const ev2=[];for(let i=0;i<40;i++){const r=run(st2,mS(i%2?31:40));st2=r.state;ev2.push(...r.events)}
+ assert.deepEqual(types(ev2,'hint').at(-1).unexplored,['near','middle'],'a settled zone drops out of the progress hint');
+ const reset=run(search().state,mS(40),mS(31),mS(40),at(8));assert.equal(reset.state.hints.travel,0,'a newly settled zone counts as progress');
  assert.ok(types(ev,'first-screen-move').length===1);
 });
 
@@ -251,7 +264,7 @@ test('after Trial 3 the machine runs linearly; notebook is gated on the Level A 
 
 test('records come from the model; whole flow is JSON-safe and never leaks NaN / Infinity',()=>{
  const flow=run(createInitialState(),{type:'START'},{type:'BEGIN'},mS(14.5),{type:'RECORD'},mC(20),mC(15),mS(29.5),{type:'RECORD'},
-  {type:'ANSWER_COMPARE',question:'position',answer:'farther'},{type:'ANSWER_COMPARE',question:'size',answer:'larger'},{type:'CONTINUE'},mC(10),mC(5),mS(8),mS(20),mS(33),{type:'CONFIRM_NO_REAL_IMAGE'});
+  {type:'ANSWER_COMPARE',question:'position',answer:'farther'},{type:'ANSWER_COMPARE',question:'size',answer:'larger'},{type:'CONTINUE'},mC(10),mC(5),...at(8),...at(20),...at(33),{type:'CONFIRM_NO_REAL_IMAGE'});
  for(const t of [1,2,3]){
   const r=flow.state.records[t],l=calculateLensState({f:r.f,u:r.u});
   assert.equal(r.theoreticalV,l.theoreticalV);assert.equal(r.magnification,l.magnification);assert.equal(r.imageType,l.imageType);assert.equal(r.projectionWithinBench,l.projectionWithinBench);
