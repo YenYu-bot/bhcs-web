@@ -64,7 +64,7 @@ test('state table: level, image, message',()=>{
   if(level===1)assert.equal(p.blurSigma,0,name);else assert.ok(p.blurSigma>=.8,name);
   assert.ok(!/NaN|Infinity/.test(JSON.stringify(p)),name+' params are finite');
  }
- for(const lvl of [2,3])assert.ok(clarityMessage(view('trial2-find-screen',uForV(10,lvl===2?40.5:44),40)).text.includes('實像'),'bench wording says real image');
+ for(const lvl of [2,3])assert.ok(clarityMessage(view('trial2-find-screen',uForV(10,lvl===2?40.5:44),40)).text.includes('影像'),'bench wording says image');
 });
 
 test('image size follows the model magnification, not a hard-coded value',()=>{

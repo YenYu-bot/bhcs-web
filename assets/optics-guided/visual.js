@@ -32,7 +32,7 @@ export function clarityMessage(view) {
   if (view.phase === 'trial3-view-through-lens') return { icon: '◉', text: '你現在看得到一個正立、放大的蠟燭。' };
   if (lens.imageType === 'infinite') return { icon: '◌', text: '光線離開透鏡後幾乎平行，在有限距離的屏幕上找不到清楚影像。' };
   if (lens.imageType === 'real' && !lens.projectionWithinBench && (level === 2 || level === 3)) {
-    return { icon: '◐', text: '會形成實像，但清楚位置已經超出這張實驗桌的範圍。' };
+    return { icon: '◐', text: '會形成影像，但清楚位置已經超出這張實驗桌的範圍。' };
   }
   return ({
     1: { icon: '✓', text: '影像最清楚' },

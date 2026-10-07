@@ -121,7 +121,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await press('PageDown',3);assert.equal((await coach()).main,'目前還沒有找到清楚的位置。');
     await press('PageUp',4);
     c=await coach();assert.equal(c.main,'你已經檢查過近、中、遠的位置了。');assert.equal(c.sub,'看起來問題可能不在你找得不夠仔細。這次可能真的沒有能接到清楚影像的位置。');
-    assert.equal(await cta().innerText(),'我找不到清楚實像');assert.equal(await cta().isDisabled(),false);assert.equal((await state()).phase,'trial3-search-screen');
+    assert.equal(await cta().innerText(),'我找不到清楚影像');assert.equal(await cta().isDisabled(),false);assert.equal((await state()).phase,'trial3-search-screen');
     await cta().click();await settle(page);
     c=await coach();assert.ok(c.main.startsWith('不是你找得不夠仔細')&&c.sub==='但是如果不用屏幕，而是直接透過透鏡看呢？');
     assert.equal(await cta().innerText(),'從透鏡後面看');await cta().click();await settle(page);
@@ -140,6 +140,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.ok(cards[1].startsWith('虛像 光線沒有真的在看起來的影像位置會合。 眼睛能看到，但屏幕接不到。')&&cards[1].includes('蠟燭在 5 cm'));
     assert.equal(await page.locator('#og-formula h3').innerText(),'剛才找到的位置，其實可以用這個關係算出來。');
     assert.equal(await page.locator('.og-formula-expression').innerText(),'1/f = 1/u + 1/v');
+    assert.equal(await page.locator('.og-formula-note').innerText(),'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
     const lines=await page.locator('#og-formula li').evaluateAll(ls=>ls.map(l=>l.innerText.replace(/\s+/g,' ').trim()));
     assert.deepEqual(lines,[`第一次：f = 10 cm，u = 30 cm → v = 15 cm 你找到 ${f(O1)} cm`,`第二次：f = 10 cm，u = 15 cm → v = 30 cm 你找到 ${f(O2)} cm`,'第三次：f = 10 cm，u = 5 cm → v = −10 cm v 是負的：像在蠟燭這一側，屏幕接不到']);
     assert.equal((await coach()).main,'剛才三次實驗，其實分成兩種像。');assert.equal(await cta().innerText(),'進入研究手冊');

@@ -77,7 +77,8 @@ function renderConcept() {
   const cards = $('og-concept-cards'); cards.replaceChildren();
   for (const c of model.cards) cards.append(el('article', { className: 'og-concept-card' }, el('h3', {}, c.title), ...c.body.map((t) => el('p', {}, t)), el('p', { className: 'og-evidence' }, c.evidence)));
   $('og-formula').replaceChildren(el('h3', {}, model.formula.heading), el('p', { className: 'og-formula-expression' }, model.formula.expression),
-    el('ul', {}, ...model.formula.lines.map((l) => el('li', {}, l.text, el('span', {}, l.found)))));
+    el('ul', {}, ...model.formula.lines.map((l) => el('li', {}, l.text, el('span', {}, l.found)))),
+    el('p', { className: 'og-formula-note' }, model.formula.negativeNote));
 }
 
 // ---- research notebook: three ways to write the same finding; Level A is the default

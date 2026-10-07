@@ -37,7 +37,7 @@ export const MESSAGES = Object.freeze({
   search: M('這次也試著找找看。'),
   searchTwo: M('目前還沒有找到清楚的位置。'),
   searchDone: M('你已經檢查過近、中、遠的位置了。', '看起來問題可能不在你找得不夠仔細。這次可能真的沒有能接到清楚影像的位置。'),
-  noReal: M('不是你找得不夠仔細。這一次，屏幕本來就接不到清楚實像。', '但是如果不用屏幕，而是直接透過透鏡看呢？'),
+  noReal: M('不是你找得不夠仔細。這一次，屏幕本來就接不到清楚影像。', '但是如果不用屏幕，而是直接透過透鏡看呢？'),
   viewThrough: M('你現在看得到一個正立、放大的蠟燭。', '可是剛才屏幕怎麼都接不到它。這和前兩次有什麼不同？'),
   naming: M('這種只能透過透鏡看到、卻不能直接接在屏幕上的像，叫做「虛像」。'),
   concept: M('剛才三次實驗，其實分成兩種像。'),
@@ -125,7 +125,7 @@ export function ctaFor(state, view, ui = {}) {
     case 'trial1-find-screen': case 'trial1-complete': return rec(1);
     case 'trial2-find-screen': case 'trial2-complete': return rec(2);
     case 'compare': return { label: '繼續', action: 'CONTINUE', enabled: view.compare?.allCorrect === true };
-    case 'trial3-search-screen': return { label: '我找不到清楚實像', action: 'CONFIRM_NO_REAL_IMAGE', enabled: view.search.ctaUnlocked };
+    case 'trial3-search-screen': return { label: '我找不到清楚影像', action: 'CONFIRM_NO_REAL_IMAGE', enabled: view.search.ctaUnlocked };
     case 'trial3-no-real-screen-image': return { label: '從透鏡後面看', action: 'VIEW_THROUGH_LENS', enabled: true };
     case 'trial3-view-through-lens': return ui.naming ? { label: '看看這兩種像', action: 'CONTINUE', enabled: true } : { label: '我觀察到了', action: 'UI_NAMING', enabled: true };
     case 'concept': return { label: '進入研究手冊', action: 'CONTINUE', enabled: true };
@@ -143,7 +143,7 @@ export function evidenceList(records) {
     const r = records[t];
     if (r) out.push({ trial: t, text: `第${t === 1 ? '一' : '二'}次紀錄完成 ✓`, detail: `物距 ${formatCm(r.u)} cm，清楚像距 ${formatCm(r.observedScreenPosition)} cm` });
   }
-  if (records[3]) out.push({ trial: 3, text: '第三次紀錄完成 ✓', detail: `物距 ${formatCm(records[3].u)} cm，屏幕上找不到清楚實像` });
+  if (records[3]) out.push({ trial: 3, text: '第三次紀錄完成 ✓', detail: `物距 ${formatCm(records[3].u)} cm，屏幕上找不到清楚影像` });
   return out;
 }
 
@@ -188,6 +188,7 @@ export function conceptModel(records) {
         { text: line(2, b), found: `你找到 ${formatCm(b.observedScreenPosition)} cm` },
         { text: line(3, c), found: 'v 是負的：像在蠟燭這一側，屏幕接不到' },
       ],
+      negativeNote: '負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。',
     },
   };
 }
