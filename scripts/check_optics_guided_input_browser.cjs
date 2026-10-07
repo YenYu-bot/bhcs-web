@@ -86,6 +86,16 @@ const check=async(name,fn)=>{const row={name};try{await fn();row.pass=true}catch
    await page.evaluate(()=>document.getElementById('screen').focus({preventScroll:true}));const y=r.scrollY;await page.keyboard.press('PageUp');await page.waitForTimeout(150);assert.equal((await info(page)).scrollY,y,'focused again: no page scroll');
    await ctx.close();
   });
+  await check('keyboard: a locked draggable in focus leaves PageUp/PageDown to the page and does not move',async()=>{
+   const {ctx,page}=await open(browser,{width:1280,height:800});   // Trial 1: the candle is locked but still focusable
+   await page.evaluate(()=>document.getElementById('candle').focus({preventScroll:true}));
+   assert.equal(await page.evaluate(()=>document.activeElement.id),'candle');
+   await page.keyboard.press('PageDown');await page.waitForTimeout(250);
+   let r=await info(page);assert.ok(r.scrollY>0,'page scrolled normally: '+r.scrollY);assert.equal(r.u,30,'locked candle did not move');assert.deepEqual(r.types,[]);
+   const y=r.scrollY;await page.keyboard.press('ArrowRight');await page.keyboard.press('PageUp');await page.waitForTimeout(250);
+   r=await info(page);assert.equal(r.u,30);assert.deepEqual(r.types,[]);assert.ok(r.scrollY<y,'PageUp also scrolls the page back up');
+   await ctx.close();
+  });
   await check('keyboard: Trial 2 candle needs three PageUp; edge keys do not settle',async()=>{
    const {ctx,page}=await open(browser,{width:1280,height:800});
    await page.evaluate(()=>{for(const a of [{type:'MOVE_SCREEN',position:15},{type:'RECORD'}])window.__optics.dispatch(a);window.__optics.actions.length=0});

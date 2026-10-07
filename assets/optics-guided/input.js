@@ -103,6 +103,7 @@ export function createInputController({ getState, dispatch, getSnap, getRect, is
 
     const onKey = (e) => {
       if (e.altKey || e.ctrlKey || e.metaKey) return;
+      if (isLocked(kind, getState())) return;   // a locked draggable leaves every key to the page
       const target = keyboardTarget(kind, e.key, e.shiftKey, current(kind), getSnap());
       if (target === null) return;
       e.preventDefault();                 // only reached while this draggable has focus

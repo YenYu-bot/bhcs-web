@@ -92,6 +92,19 @@ test('contract 4: PageUp/PageDown/arrows are claimed only by the focused draggab
  assert.equal(edge.key(edge.screen,'ArrowRight').defaultPrevented,true);
 });
 
+test('locked draggables leave keys to the page; the unlocked one still claims them',()=>{
+ const r=rig(trial2Move());                                  // screen locked, candle free
+ for(const k of ['PageDown','PageUp','ArrowLeft','ArrowRight'])assert.equal(r.key(r.screen,k).defaultPrevented,false,'locked screen: '+k);
+ assert.deepEqual(r.log,[],'a locked draggable sends no MOVE_SCREEN');assert.equal(r.state.s,15);
+ assert.equal(r.key(r.candle,'PageUp').defaultPrevented,true);assert.deepEqual(types(r),['MOVE_CANDLE']);assert.equal(r.state.u,25);
+ const t1=rig(trial1());                                     // candle locked, screen free
+ assert.equal(t1.key(t1.candle,'PageDown').defaultPrevented,false);assert.deepEqual(t1.log,[]);assert.equal(t1.key(t1.screen,'PageDown').defaultPrevented,true);
+ // locking is read live: once the engine hands over to the next phase the keys switch owners
+ for(let i=0;i<2;i++)r.key(r.candle,'PageUp');
+ assert.equal(r.state.phase,'trial2-find-screen');
+ assert.equal(r.key(r.candle,'PageUp').defaultPrevented,false,'candle locked at 15');assert.equal(r.key(r.screen,'PageUp').defaultPrevented,true,'screen now free');
+});
+
 test('contract 9: keyboard sends SETTLE_SCREEN only when the screen really moved',()=>{
  const r=rig(trial1());
  r.key(r.screen,'ArrowLeft');assert.deepEqual(types(r),['MOVE_SCREEN','SETTLE_SCREEN']);assert.equal(r.state.s,19);
