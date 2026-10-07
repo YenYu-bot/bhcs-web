@@ -1,8 +1,8 @@
 // Saving and restoring the learner's progress (I6). Pure serialize/restore plus a thin storage wrapper.
 // Records are rebuilt from the model on restore (only f, u and what the learner observed are trusted), challenge
 // correctness is re-judged, free text is capped, and nothing from the legacy lab's keys is ever read or written.
-import { createInitialState, makeRecord, PHASES, START_CANDLE, TARGET_TRIAL2_U, ZONE_IDS } from './engine.js';
-import { CHALLENGES, judgeChallenge, challengeProgress, emptyChallenges, notebookReady, sanitizeConclusionFields, TEXT_MAX } from './challenges.js';
+import { createInitialState, makeRecord, notebookIsReady, PHASES, FOCAL_LENGTH, START_CANDLE, START_SCREEN, TARGET_TRIAL2_U, TARGET_TRIAL3_U, ZONE_IDS } from './engine.js';
+import { CHALLENGES, judgeChallenge, challengeProgress, emptyChallenges, sanitizeConclusionFields, TEXT_MAX } from './challenges.js';
 
 export const STORAGE_KEY = 'bhcs-lens-guided:v1';
 export const SCHEMA_VERSION = 1;
@@ -20,18 +20,26 @@ export function serialize(state) {
   };
 }
 
+// The guided flow is one fixed experiment, so a saved record must be exactly the one the flow can produce:
+// same lens, same object distance, and for Trial 3 a finished three-zone search with no image on the screen.
+const GUIDED_U = { 1: START_CANDLE, 2: TARGET_TRIAL2_U, 3: TARGET_TRIAL3_U };
+const same = (a, b) => Math.abs(a - b) <= 1e-9;
+
 function rebuildRecords(saved) {
   const r = saved?.records;
   if (!r || typeof r !== 'object') return {};
   const out = {};
   const one = (n, prev) => {
     const x = r[n];
-    if (!x || !isNum(x.f) || !isNum(x.u) || x.f <= 0 || x.u <= 0) return null;
+    if (!x || !isNum(x.f) || !isNum(x.u) || !same(x.f, FOCAL_LENGTH) || !same(x.u, GUIDED_U[n])) return null;
     if (n < 3 && !isNum(x.observed)) return null;
+    if (n === 3 && x.observed !== null && x.observed !== undefined) return null;
     const zones = n === 3 && Array.isArray(x.zones) ? ZONE_IDS.filter((z) => x.zones.includes(z)) : [];
-    const rec = makeRecord({ trial: n, f: x.f, u: x.u, observed: n < 3 ? x.observed : null, screen: 30, prev, zones });
-    // a real record 1/2 was written at a sharp position; anything else is not our data
-    return n < 3 && rec.clarity !== 1 ? null : rec;
+    if (n === 3 && zones.length !== ZONE_IDS.length) return null;                  // the CTA only unlocks after all three zones
+    const rec = makeRecord({ trial: n, f: FOCAL_LENGTH, u: GUIDED_U[n], observed: n < 3 ? x.observed : null, screen: START_SCREEN, prev, zones });
+    if (n < 3 && rec.clarity !== 1) return null;                                   // written at a sharp position, or it is not our data
+    if (n === 3 && rec.imageType !== 'virtual') return null;
+    return rec;
   };
   out[1] = one(1, null);
   out[2] = out[1] ? one(2, out[1]) : null;
@@ -80,7 +88,7 @@ export function restore(saved) {
   }
   const u3 = records[3].u, s3 = records[2].observedScreenPosition;
   if (idx < PHASES.indexOf('concept')) return at('trial3-no-real-screen-image', u3, s3);
-  if (P === 'concept' || P === 'notebook' || !notebookReady(st.conclusion)) return at(P === 'concept' ? 'concept' : 'notebook', u3, s3);
+  if (P === 'concept' || P === 'notebook' || !notebookIsReady(st)) return at(P === 'concept' ? 'concept' : 'notebook', u3, s3);
   const firstOpen = [1, 2, 3].find((id) => !challengeProgress(id, st.challenges[id]).allCorrect);
   if (firstOpen === undefined) return at('complete', u3, s3);
   const want = P === 'complete' ? 99 : Number(P.slice(-1));

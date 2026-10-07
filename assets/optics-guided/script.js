@@ -2,7 +2,7 @@
 // Pure functions: engine state/view/events in → what 余老師 says, what the evidence card shows, which CTA is offered.
 // Student-facing numbers come only from the learner's own records (observedScreenPosition); theoreticalV appears
 // only in the concept stage, after the experiments, as "the formula result" next to what the learner found.
-import { compareRecords } from './engine.js';
+import { compareRecords, expectedRelations } from './engine.js';
 import { CHALLENGES, challengeById, challengeProgress, stepOf, notebookReady, LIMITATION_IDEAS, HINT_AFTER_ATTEMPTS } from './challenges.js';
 
 export const formatCm = (x) => (Number.isInteger(x) ? String(x) : String(+x.toFixed(1)));
@@ -217,7 +217,7 @@ export function notebookModel(records, conclusion) {
     },
     b: { prompt: '請用第一次和第二次的數據，說明你發現的規律。', placeholder: '例如：我把物距從…改成…，清楚像距從…變成…，所以…' },
     c: { q1: '這兩筆資料支持了什麼結論？', q2: '哪些事情還不能只靠這兩筆資料判斷？', ideas: LIMITATION_IDEAS },
-    ready: notebookReady(conclusion),
+    ready: notebookReady(conclusion, expectedRelations(records)),
   };
 }
 

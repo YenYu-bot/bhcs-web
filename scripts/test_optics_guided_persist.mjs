@@ -1,5 +1,7 @@
 // I6 gate (pure part): saving and restoring progress (assets/optics-guided/persist.js). No DOM.
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {fileURLToPath} from 'node:url';
 import {reduce,createInitialState,deriveView,PHASES} from '../assets/optics-guided/engine.js';
 import {serialize,restore,createStore,STORAGE_KEY,SCHEMA_VERSION} from '../assets/optics-guided/persist.js';
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
@@ -83,6 +85,41 @@ test('untrusted data: tampered, malformed or foreign saves never produce a broke
  const junk=mut(c=>{c.conclusion={level:'A',__proto__:{x:1},evil:'<script>',freeText:{a:1}};c.compare={position:'up',size:7}});
  const rj=restore(junk);assert.ok(rj);assert.equal('evil' in rj.conclusion,false);assert.equal(rj.conclusion.freeText,'');assert.deepEqual(rj.compare,{position:null,size:null});
  assert.equal(({}).x,undefined,'no prototype pollution');
+});
+
+test('guided identity: a record the flow can never produce is rejected, even if it is physically sharp (f / u / zones / image type)',()=>{
+ const good=serialize(phases.notebookReady);
+ const mut=f=>{const c=structuredClone(good);f(c);return c};
+ // 1. Trial 1 sharp but a different experiment → no progress at all
+ for(const [f,u,observed] of [[5,10,10],[10,20,20],[10,30.5,15.25],[20,40,40]]){
+  const forged=mut(c=>{c.records[1]={f,u,observed}});assert.equal(restore(forged),null,`trial 1 f=${f} u=${u}`);
+ }
+ // the same numbers really are sharp for their own lens, so only the identity check can reject them
+ assert.equal(deriveView(run(createInitialState(),{type:'START'},{type:'BEGIN'})).clarity.effectiveClarityLevel,3);
+ // 2. Trial 2 sharp but u != 15 → record 2 (and 3) dropped, back to Trial 2
+ for(const u of [20,12,14.5,30]){const r=restore(mut(c=>{c.records[2]={f:10,u,observed:u===12?60:u}}));assert.ok(r,'u='+u);assert.equal(r.phase,'trial2-move-object','u='+u);assert.equal(r.records[2],null);assert.equal(r.records[3],null)}
+ assert.equal(restore(mut(c=>{c.records[2].f=12})).phase,'trial2-move-object','wrong focal length');
+ // 3. Trial 3: wrong object distance, or a search that is not finished
+ for(const [name,f] of [['u = 7',c=>{c.records[3].u=7}],['u = 10 (focus)',c=>{c.records[3].u=10}],['u = 4',c=>{c.records[3].u=4}],['zones missing far',c=>{c.records[3].zones=['near','middle']}],['no zones',c=>{c.records[3].zones=[]}],['zones absent',c=>{delete c.records[3].zones}],['zones junk',c=>{c.records[3].zones=['x','y','z']}],['wrong f',c=>{c.records[3].f=15}]]){
+  const r=restore(mut(f));assert.ok(r,name);assert.equal(r.records[3],null,name);assert.ok(['trial3-move-object','compare'].includes(r.phase),name+' → '+r.phase);
+  assert.ok(!['trial3-no-real-screen-image','concept','notebook','challenge-1','complete'].includes(r.phase),name);
+ }
+ // 4. a Trial 3 that is a real image, or that claims an observed screen position
+ for(const [name,f] of [['real image u=15',c=>{c.records[3].u=15}],['real image u=25',c=>{c.records[3].u=25}],['observed position present',c=>{c.records[3].observed=30}],['observed 0',c=>{c.records[3].observed=0}]]){
+  const r=restore(mut(f));assert.equal(r.records[3],null,name);assert.ok(!['concept','notebook','complete'].includes(r.phase),name+' → '+r.phase);
+ }
+ // the genuine record still restores, and the constants come from the engine (not retyped in persist.js)
+ const ok=restore(good);assert.equal(ok.records[3].u,5);assert.deepEqual(ok.records[3].search.searchedZones,['near','middle','far']);assert.equal(ok.phase,'notebook');
+ const src=fs.readFileSync(fileURLToPath(new URL('../assets/optics-guided/persist.js',import.meta.url)),'utf8').replace(/\/\/.*$/gm,'');
+ assert.deepEqual([...src.matchAll(/(?<![\w.'"-])(?:5|10|15|30)(?![\w'"])/g)].map(m=>m[0]),[],'no retyped 10/30/15/5: the guided identity comes from the engine constants');
+});
+
+test('Level A progress is not trusted either: a saved wrong relation resumes at the notebook, not in the challenges',()=>{
+ const forged=serialize(run(phases.notebookReady,{type:'CONTINUE'}));      // saved in challenge-1 with a valid conclusion
+ assert.equal(restore(forged).phase,'challenge-1');
+ forged.conclusion.relationPosition='closer';
+ assert.equal(restore(forged).phase,'notebook','Level A that contradicts the records sends the learner back to fix it');
+ forged.conclusion={...forged.conclusion,level:'B',freeText:'我的話'};assert.equal(restore(forged).phase,'challenge-1','free-text levels are unaffected');
 });
 
 test('store: guarded storage calls, own key only, no legacy keys',()=>{

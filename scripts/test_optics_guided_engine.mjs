@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {calculateLensState,calculateClarity} from '../assets/optics-guided/model.js';
-import {reduce,createInitialState,deriveView,rangesFor,hintDirection,compareRecords,zoneOf,
+import {reduce,createInitialState,deriveView,rangesFor,hintDirection,compareRecords,expectedRelations,zoneOf,
   PHASES,SCREEN_RANGE,CANDLE_RANGE,HINT_TRAVEL_CM,ZONE_IDS} from '../assets/optics-guided/engine.js';
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
 
@@ -282,6 +282,29 @@ test('notebook: each level has its own readiness rule; fields are validated and 
  const ign=run(nb,{type:'SAVE_CONCLUSION',fields:{bogus:1,freeText:'ok'}});assert.equal('bogus' in ign.state.conclusion,false);assert.equal(ign.state.conclusion.freeText,'ok');
  assert.equal(run(start(),{type:'SAVE_CONCLUSION',fields:{freeText:'x'}}).last.accepted,false,'only inside the notebook');
  assert.deepEqual(Object.keys(nb.conclusion),['level','relationPosition','relationSize','freeText','evidenceText','limitationText'],'studentConclusion schema');
+});
+
+test('notebook Level A: the structured answer must match what the records show (engine gate, not just UI)',()=>{
+ const nb=toNotebook();
+ const A=(position,size)=>run(nb,{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:position,relationSize:size}});
+ for(const [p,sz,label] of [['closer','larger','position wrong'],['farther','smaller','size wrong'],['closer','smaller','both wrong'],['same','same','both "unchanged"'],['farther',null,'only one answered'],[null,null,'none']]){
+  const r=A(p,sz);assert.equal(deriveView(r.state).notebook.ready,false,label);
+  const c=run(r.state,{type:'CONTINUE'});assert.equal(c.last.accepted,false,label);assert.equal(c.state.phase,'notebook');
+  assert.equal(r.state.conclusion.relationPosition,p,'the learner\'s choice is kept, not reset');assert.equal(r.state.conclusion.relationSize,sz);
+ }
+ const ok=A('farther','larger');assert.equal(deriveView(ok.state).notebook.ready,true);assert.equal(run(ok.state,{type:'CONTINUE'}).state.phase,'challenge-1');
+ // changing a wrong answer to the right one unlocks it
+ assert.equal(run(A('closer','larger').state,{type:'SAVE_CONCLUSION',fields:{relationPosition:'farther'}},{type:'CONTINUE'}).state.phase,'challenge-1');
+ // Level B / C stay free expression; wrong Level A choices lying around do not block them
+ assert.equal(deriveView(run(A('closer','smaller').state,{type:'SAVE_CONCLUSION',fields:{level:'B',freeText:'我的看法'}}).state).notebook.ready,true);
+ assert.equal(deriveView(run(A('closer','smaller').state,{type:'SAVE_CONCLUSION',fields:{level:'C',evidenceText:'我的證據',limitationText:'我的限制'}}).state).notebook.ready,true);
+ // the expected answer comes from the records, not from a constant
+ const swapped={...nb,records:{1:nb.records[2],2:nb.records[1],3:nb.records[3]}};
+ const sw=(p,sz)=>run(swapped,{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:p,relationSize:sz}});
+ assert.equal(deriveView(sw('farther','larger').state).notebook.ready,false,'with the records reversed, "farther/larger" is no longer right');
+ assert.equal(deriveView(sw('closer','smaller').state).notebook.ready,true);
+ assert.deepEqual(expectedRelations(nb.records),{position:'farther',size:'larger'});assert.equal(expectedRelations({1:null,2:null,3:null}),null);
+ assert.equal(deriveView({...nb,records:{1:null,2:null,3:null},conclusion:{...nb.conclusion,level:'A',relationPosition:'farther',relationSize:'larger'}}).notebook.ready,false,'no records → nothing to match');
 });
 
 test('challenges: sequential steps, retry rules, attempts, locked once right, note after success',()=>{

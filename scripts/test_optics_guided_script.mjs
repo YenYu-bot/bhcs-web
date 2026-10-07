@@ -176,6 +176,12 @@ test('notebook model: Level A sentences carry the learner\'s own numbers; the nu
  assert.equal(notebookModel(notebookModel.length?{1:null,2:null,3:null}:null,nb.state.conclusion),null);
  // the card in the notebook is the same evidence as in compare, never theoreticalV
  assert.ok(!JSON.stringify(m).includes('theoretical'));
+ // Level A must match the records: a mismatch keeps the button off and shows the pointer back to the evidence
+ for(const [p,sz] of [['closer','larger'],['farther','smaller'],['closer','smaller']]){
+  const st=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:p,relationSize:sz}}],{from:nb});
+  const mm=notebookModel(st.state.records,st.state.conclusion);assert.equal(mm.ready,false,p+sz);assert.ok(mm.a.nudge.includes('再對照一下上面的證據'));assert.deepEqual(ctaFor(st.state,deriveView(st.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:false});
+ }
+ const good=notebookModel(nb.state.records,{...nb.state.conclusion,level:'A',relationPosition:'farther',relationSize:'larger'});assert.equal(good.ready,true);assert.equal(good.a.nudge,null);
  const ready=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:'farther',relationSize:'larger'}}],{from:nb});
  assert.deepEqual(ctaFor(ready.state,deriveView(ready.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:true});
 });

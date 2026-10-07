@@ -124,6 +124,14 @@ export function compareRecords(a, b) {
   };
 }
 
+/** What the two records show, in the vocabulary of Level A's choices; null until both exist. */
+export function expectedRelations(records) {
+  if (!records[1] || !records[2]) return null;
+  const c = compareRecords(records[1], records[2]);
+  return { position: c.positionChange, size: c.sizeChange };
+}
+export const notebookIsReady = (state) => notebookReady(state.conclusion, expectedRelations(state.records));
+
 /** Read-only projection of the state for the UI. */
 export function deriveView(state) {
   const { lensState, clarity } = lensAndClarity(state);
@@ -134,7 +142,7 @@ export function deriveView(state) {
     recordEnabled: (state.phase === 'trial1-complete' || state.phase === 'trial2-complete') && clarity.effectiveClarityLevel === 1,
     search: { explored, unexplored: ZONE_IDS.filter((z) => !explored.includes(z)), ctaUnlocked: state.search.ctaUnlocked },
     compare: null,
-    notebook: { ready: notebookReady(state.conclusion) },
+    notebook: { ready: notebookIsReady(state) },
     challenge: /^challenge-[123]$/.test(state.phase) ? challengeProgress(Number(state.phase.slice(-1)), state.challenges[Number(state.phase.slice(-1))]) : null,
   };
   if (state.records[1] && state.records[2]) {
@@ -299,7 +307,7 @@ export function reduce(prev, action) {
       break;
     case 'CONTINUE':
       if (st.phase === 'compare') linear(ctx, action, 'compare', 'trial3-move-object', (s) => deriveView(s).compare?.allCorrect === true);
-      else if (st.phase === 'notebook') linear(ctx, action, 'notebook', 'challenge-1', (s) => notebookReady(s.conclusion));
+      else if (st.phase === 'notebook') linear(ctx, action, 'notebook', 'challenge-1', notebookIsReady);
       else if (/^challenge-[123]$/.test(st.phase)) {
         const id = Number(st.phase.slice(-1));
         if (!challengeProgress(id, st.challenges[id]).allCorrect) reject(ctx, action, 'locked');

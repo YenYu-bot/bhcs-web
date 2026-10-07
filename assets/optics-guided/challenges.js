@@ -74,10 +74,14 @@ export function challengeProgress(id, saved) {
   return { id, steps, allCorrect: steps.every((s) => s.correct) };
 }
 
-/** Is the notebook finished for the level the learner chose? Level A needs both choices; B a sentence; C both answers. */
-export function notebookReady(c) {
+/**
+ * Is the notebook finished for the level the learner chose?
+ * Level A is a structured choice, so it must match what the two records show (`expected` = { position, size } from the
+ * records, or null when they are missing); B and C are free expression and only need to be written.
+ */
+export function notebookReady(c, expected = null) {
   const filled = (t) => typeof t === 'string' && t.trim().length >= 2;
-  if (c.level === 'A') return c.relationPosition !== null && c.relationSize !== null;
+  if (c.level === 'A') return expected !== null && c.relationPosition === expected.position && c.relationSize === expected.size;
   if (c.level === 'B') return filled(c.freeText);
   if (c.level === 'C') return filled(c.evidenceText) && filled(c.limitationText);
   return false;

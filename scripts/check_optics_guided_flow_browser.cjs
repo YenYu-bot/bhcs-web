@@ -154,8 +154,9 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await cta().innerText(),'進入挑戰題');assert.equal(await cta().isDisabled(),true);
     t=await text();assert.ok(!/理論像距/.test(t));await shot('9-notebook-A');
     await NB.getByLabel('離透鏡更近').check();await NB.getByLabel('變大').check();await settle(page);
-    assert.equal(await page.locator('.og-nudge').isVisible(),true,'a gentle pointer back to the evidence');assert.ok(!(await page.locator('.og-nudge').innerText()).match(/錯|答案/));assert.equal(await cta().isDisabled(),false);
-    await NB.getByLabel('離透鏡更遠').check();await settle(page);assert.equal(await page.locator('.og-nudge').isVisible(),false);
+    assert.equal(await page.locator('.og-nudge').isVisible(),true,'a gentle pointer back to the evidence');assert.ok(!(await page.locator('.og-nudge').innerText()).match(/錯|答案/));
+    assert.equal(await cta().isDisabled(),true,'a Level A answer that contradicts the evidence does not unlock the challenges');assert.equal(await NB.getByLabel('離透鏡更近').isChecked(),true,'the learner\'s choice stays on screen');
+    await NB.getByLabel('離透鏡更遠').check();await settle(page);assert.equal(await page.locator('.og-nudge').isVisible(),false);assert.equal(await cta().isDisabled(),false,'both choices now match the two records');
     // Level B: its own readiness; Level A's choices do not count
     await NB.getByLabel('B　自己說').check();await settle(page);
     assert.equal(await page.locator('#og-nb-free').isVisible(),true);assert.equal(await cta().isDisabled(),true);
