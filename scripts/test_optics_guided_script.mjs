@@ -28,7 +28,7 @@ test('every spec line is present verbatim (Spec §33–§47)',()=>{
   '就是這裡。影像現在最清楚。','第一筆證據有了。接下來只改一個地方。','把蠟燭移到離透鏡 15 cm 的位置。','好，這次只有物距改變。','蠟燭的位置改了，原本的屏幕位置也不再清楚。再找一次。',
   '剛才影像變得更模糊了。','試試另一個方向。','看看屏幕上的影像是變清楚，還是變模糊。','如果越移越模糊，可以試試另一個方向。','這筆結果已經記好了。','接下來看看只改變蠟燭位置後會發生什麼。',
   '你剛才已經找到一個規律了。','在還能形成實像的情況下，物體往焦點靠近時，清楚影像的位置會往更遠處移，而且影像會變大。','如果再把蠟燭往透鏡靠近，會一直有清楚的屏幕位置嗎？','把蠟燭移到 5 cm。',
-  '這次也試著找找看。','目前還沒有找到清楚的位置。','你已經檢查過近、中、遠的位置了。','這次可能真的沒有能接到清楚影像的位置。','不是你找得不夠仔細。這一次，屏幕本來就接不到清楚實像。','但是如果不用屏幕，而是直接透過透鏡看呢？',
+  '這次也試著找找看。','目前還沒有找到清楚的位置。','你已經檢查過近、中、遠的位置了。','看起來問題可能不在你找得不夠仔細。','這次可能真的沒有能接到清楚影像的位置。','再看看影像的大小和方向，有什麼變化？','不是你找得不夠仔細。這一次，屏幕本來就接不到清楚實像。','但是如果不用屏幕，而是直接透過透鏡看呢？',
   '你現在看得到一個正立、放大的蠟燭。','可是剛才屏幕怎麼都接不到它。這和前兩次有什麼不同？','這種只能透過透鏡看到、卻不能直接接在屏幕上的像，叫做「虛像」。','剛才哪個結果變得更明顯？'];
  const all=Object.values(MESSAGES).flatMap(m=>[m.main,m.sub]).filter(Boolean).join('\n');
  for(const l of lines)assert.ok(all.includes(l),'missing: '+l);
@@ -111,7 +111,7 @@ test('Trial 3 script: move → search → three zones → reveal → view throug
  let r=play([mC(10),mC(5)],{from:base});assert.equal(r.coach.id,'search');
  r=play([mS(25),settle],{from:r});assert.ok(r.log.includes('findStart')===false);
  r=play([mS(10),settle],{from:r});assert.equal(r.coach.id,'searchTwo');assert.equal(r.coach.main,'目前還沒有找到清楚的位置。');
- r=play([mS(35),settle],{from:r});assert.equal(r.coach.id,'searchDone');assert.equal(r.coach.sub,'這次可能真的沒有能接到清楚影像的位置。');
+ r=play([mS(35),settle],{from:r});assert.equal(r.coach.id,'searchDone');assert.equal(r.coach.main,'你已經檢查過近、中、遠的位置了。');assert.equal(r.coach.sub,'看起來問題可能不在你找得不夠仔細。這次可能真的沒有能接到清楚影像的位置。');
  assert.deepEqual(ctaFor(r.state,deriveView(r.state)),{label:'我找不到清楚實像',action:'CONFIRM_NO_REAL_IMAGE',enabled:true});
  r=play([{type:'CONFIRM_NO_REAL_IMAGE'}],{from:r});assert.equal(r.coach.id,'noReal');assert.ok(r.coach.main.startsWith('不是你找得不夠仔細'));assert.equal(ctaFor(r.state,deriveView(r.state)).label,'從透鏡後面看');
  r=play([{type:'VIEW_THROUGH_LENS'}],{from:r});assert.equal(r.coach.id,'viewThrough');assert.equal(ctaFor(r.state,deriveView(r.state),r.ui).label,'我觀察到了');

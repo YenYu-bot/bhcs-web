@@ -80,7 +80,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await page.locator('#og-status-text').innerText(),'只有散開的光影，已看不出清楚的蠟燭形狀');assert.equal((await state()).s,O1,'the old position is kept, not reset');
     await shot('4-trial2-stale');
     await press('PageUp',3);assert.equal((await state()).s,O2);assert.equal((await state()).phase,'trial2-complete');
-    assert.equal((await coach()).main,'影像又清楚了。');assert.equal(await cta().innerText(),'記錄第二次結果');
+    c=await coach();assert.equal(c.main,'影像又清楚了。');assert.equal(c.sub,'再看看影像的大小和方向，有什麼變化？');assert.ok(!c.sub.includes('倒立'),'the prompt does not hint at the answer');assert.equal(await cta().innerText(),'記錄第二次結果');
     await cta().click();await settle(page);
     // --- compare
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'compare');assert.equal(await page.locator('#og-bench-card').isVisible(),false);
@@ -105,7 +105,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await press('PageDown');assert.equal((await coach()).main,'這次也試著找找看。');
     await press('PageDown',3);assert.equal((await coach()).main,'目前還沒有找到清楚的位置。');
     await press('PageUp',4);
-    c=await coach();assert.equal(c.main,'你已經檢查過近、中、遠的位置了。');assert.equal(c.sub,'這次可能真的沒有能接到清楚影像的位置。');
+    c=await coach();assert.equal(c.main,'你已經檢查過近、中、遠的位置了。');assert.equal(c.sub,'看起來問題可能不在你找得不夠仔細。這次可能真的沒有能接到清楚影像的位置。');
     assert.equal(await cta().innerText(),'我找不到清楚實像');assert.equal(await cta().isDisabled(),false);assert.equal((await state()).phase,'trial3-search-screen');
     await cta().click();await settle(page);
     c=await coach();assert.ok(c.main.startsWith('不是你找得不夠仔細')&&c.sub==='但是如果不用屏幕，而是直接透過透鏡看呢？');
