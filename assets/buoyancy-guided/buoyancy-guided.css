@@ -1,0 +1,43 @@
+/* Guided buoyancy lab, B3 scaffold: layout just enough to operate the controls, plus the rules the input layer relies on.
+   The real look (art, colour, spacing) arrives with the visual pass; every class here uses the prototype prefix bg-. */
+.buoyancy-guided { margin: 0; background: #f6f8fa; color: #1f2a37; font: 16px/1.6 system-ui, "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+.buoyancy-guided *, .buoyancy-guided *::before, .buoyancy-guided *::after { box-sizing: border-box; }
+.bg-wrap { max-width: 960px; margin: 0 auto; padding: 16px; }
+.bg-skip { position: absolute; left: -9999px; }
+.bg-skip:focus { left: 16px; top: 8px; background: #fff; padding: 8px 12px; z-index: 10; }
+.bg-h1 { margin: 0 0 12px; font-size: 1.5rem; }
+.bg-card { background: #fff; border: 1px solid #d4dde6; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.bg-card[hidden] { display: none; }
+
+/* touch behaviour: a movable object takes over its own gestures; everything else lets the page scroll vertically */
+.bg-scroll-surface { touch-action: pan-y; }
+.bg-direct-manipulation { touch-action: none; }
+
+.bg-bench { display: grid; gap: 12px; }
+.bg-tank { position: relative; min-height: 160px; border: 3px solid #4b6a85; border-radius: 8px; background: #dff0fb; }
+.bg-tank::after { content: attr(data-label); position: absolute; left: 12px; bottom: 8px; color: #35526b; font-weight: 700; }
+.bg-table { display: flex; flex-wrap: wrap; gap: 12px; }
+.bg-tools { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.bg-liquids { display: flex; flex-wrap: wrap; gap: 8px; border: 0; margin: 0; padding: 0; }
+.bg-liquids[hidden], .bg-object[hidden], .bg-tool[hidden] { display: none; }
+.bg-readout { font-weight: 700; }
+
+/* hit areas: at least 48 px on a desktop viewport, at least 64 px on a narrow one */
+.bg-object, .bg-tool, .bg-pill, .bg-cta { min-width: 48px; min-height: 48px; padding: 8px 16px; font: inherit; border-radius: 10px; border: 2px solid #5a7a96; background: #fff; color: inherit; cursor: pointer; }
+.bg-pill { display: inline-flex; align-items: center; gap: 8px; }
+.bg-pill input { width: 20px; height: 20px; margin: 0; }
+.bg-object { background: #f2e3c4; }
+.bg-object[data-where="tank"] { background: #cfe8c8; }
+.bg-cta { background: var(--bh-orange-dark, #c4500a); border-color: transparent; color: #fff; font-weight: 700; }
+.bg-cta:disabled { background: #cbd5de; color: #4a5a68; cursor: not-allowed; }
+.bg-cta[hidden] { display: none; }
+@media (max-width: 767px) {
+  .bg-object, .bg-tool, .bg-pill, .bg-cta { min-width: 64px; min-height: 64px; }
+}
+
+[data-locked="true"] { opacity: 0.6; cursor: not-allowed; }
+[data-dragging="true"] { opacity: 0.85; outline: 3px dashed #35526b; }
+.buoyancy-guided :focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+.bg-hint { min-height: 1.6em; margin: 8px 0; color: #35526b; }
+.bg-actions { margin: 16px 0; }
+@media (prefers-reduced-motion: reduce) { .buoyancy-guided * { transition: none !important; animation: none !important; } }

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>浮沉與密度（導引版原型）｜百宏文教</title>
+<meta name="description" content="親手把東西放進水裡，找出浮沉的規律。導引版原型，尚未公開。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/science/buoyancy-guided.html">
+<link rel="icon" href="../../assets/favicon.png">
+<link rel="stylesheet" href="../../assets/buoyancy-guided/buoyancy-guided.css">
+</head>
+<body class="buoyancy-guided" data-science-lab="buoyancy-guided">
+<a class="bg-skip" href="#main">跳到主要內容</a>
+<div class="bg-wrap">
+  <header><h1 class="bg-h1" id="bg-heading" tabindex="-1">浮沉與密度</h1></header>
+  <main id="main" data-screen="welcome">
+    <section class="bg-card" id="bg-welcome" aria-labelledby="bg-welcome-title">
+      <h2 id="bg-welcome-title">物體很重，就一定會沉下去嗎？</h2>
+      <p>接下來你會親手把東西放進水裡，自己找出答案。</p>
+    </section>
+    <section class="bg-card" id="bg-bench-card" aria-label="虛擬實驗桌" hidden>
+      <div class="bg-bench bg-scroll-surface" id="bg-bench" data-bg-bench>
+        <div class="bg-tank" data-bg-tank role="group" aria-label="水槽"></div>
+        <div class="bg-table" role="group" aria-label="桌面">
+          <button type="button" class="bg-object" data-bg-object="block" aria-pressed="false">方塊</button>
+          <button type="button" class="bg-object" data-bg-object="wood" aria-pressed="false" hidden>大木塊</button>
+          <button type="button" class="bg-object" data-bg-object="stone" aria-pressed="false" hidden>小石頭</button>
+        </div>
+        <div class="bg-tools" role="group" aria-label="操作">
+          <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="block">放入水中</button>
+          <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="wood" hidden>把大木塊放入水中</button>
+          <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="stone" hidden>把小石頭放入水中</button>
+          <button type="button" class="bg-tool" data-bg-action="take-out">拿出來</button>
+          <button type="button" class="bg-tool" data-bg-action="remove-ballast">取下一個配重（−20 g）</button>
+          <button type="button" class="bg-tool" data-bg-action="add-ballast">加一個配重（+20 g）</button>
+          <output class="bg-readout" data-bg-mass></output>
+        </div>
+        <fieldset class="bg-liquids" data-bg-liquid-group>
+          <legend>槽內的液體</legend>
+          <label class="bg-pill"><input type="radio" name="bg-liquid" value="water" data-bg-liquid checked>水</label>
+          <label class="bg-pill"><input type="radio" name="bg-liquid" value="brine" data-bg-liquid>濃鹽水</label>
+        </fieldset>
+      </div>
+    </section>
+    <section class="bg-card" id="bg-later" hidden><p>這一段還在製作中。</p></section>
+    <p class="bg-hint" id="bg-hint"></p>
+    <div class="bg-actions"><button type="button" class="bg-cta" id="bg-cta" hidden></button></div>
+  </main>
+</div>
+<script type="module" src="../../assets/buoyancy-guided/main.js"></script>
+</body>
+</html>
