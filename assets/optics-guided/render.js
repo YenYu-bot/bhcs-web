@@ -1,7 +1,7 @@
 // DOM/SVG renderer for the guided optics bench (I4). It draws what visual.js computes from the engine's view;
 // it holds no optics or state logic. Interactive targets are HTML overlays (>= 44 px) positioned over the SVG.
 import { visualParams, VIEW_W, xOf } from './visual.js';
-import { BENCH_VIEW } from './input.js';
+import { BENCH_VIEW, MOBILE_MAX_WIDTH } from './input.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const PROPS = new URL('../science/props/', import.meta.url).href;
@@ -14,7 +14,7 @@ const svgEl = (name, attrs = {}, parent) => {
   return el;
 };
 const set = (el, attrs) => { for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, typeof v === 'number' ? +v.toFixed(2) : v); };
-const HIT_MIN_PX = 48;
+const hitMinPx = () => (window.innerWidth <= MOBILE_MAX_WIDTH ? 64 : 48);     // phones: a thumb-sized target; larger screens keep 48
 
 /**
  * createBenchView(root, { labels }) — root is the `.og-bench[data-optics-bench]` element.
@@ -36,9 +36,10 @@ export function createBenchView(root, { labels = { screen: '屏幕', candle: '�
   svgEl('stop', { offset: '1', 'stop-color': '#ff9a3c', 'stop-opacity': '0' }, glowGrad);
 
   const layer = (cls) => svgEl('g', { class: cls }, svg);
-  const gTrack = layer('og-track'), gAxis = layer('og-axis'), gRays = layer('og-rays'), gPost = layer('og-posts'),
+  const gTop = layer('og-tabletop-layer'), gTrack = layer('og-track'), gAxis = layer('og-axis'), gFocal = layer('og-focal'), gRays = layer('og-rays'), gPost = layer('og-posts'),
     gLens = layer('og-lens'), gCandle = layer('og-candle'), gVirtual = layer('og-virtual'), gScreen = layer('og-screen'), gEye = layer('og-eye');
   const trackScreen = svgEl('line', { class: 'og-track-line' }, gTrack), trackCandle = svgEl('line', { class: 'og-track-line' }, gTrack);
+  const tabletop = svgEl('rect', { class: 'og-tabletop' }, gTop);
   const axis = svgEl('line', { class: 'og-axis-line' }, gAxis);
   const table = svgEl('line', { class: 'og-table-line' }, gAxis);
   const post = svgEl('rect', { class: 'og-post', rx: 2 }, gPost), foot = svgEl('rect', { class: 'og-post', rx: 3 }, gPost);
@@ -55,7 +56,8 @@ export function createBenchView(root, { labels = { screen: '屏幕', candle: '�
   svgEl('path', { d: 'M-24 0 Q0 -16 24 0 Q0 16 -24 0Z', class: 'og-eye-shape' }, eye);
   svgEl('circle', { r: 6, class: 'og-eye-iris' }, eye);
   const eyeText = svgEl('text', { y: 30, 'text-anchor': 'middle', class: 'og-eye-text' }, eye); eyeText.textContent = '眼睛從這裡看';
-  const tickEls = [];
+  const tickEls = [], focalEls = [-1, 1].map(() => ({ dot: svgEl('circle', { class: 'og-focal-dot' }, gFocal), text: svgEl('text', { class: 'og-focal-text', 'text-anchor': 'middle' }, gFocal) }));
+  focalEls.forEach((f) => { f.text.textContent = 'F'; });
 
   root.append(svg);
   const mkHit = (kind) => {
@@ -80,6 +82,8 @@ export function createBenchView(root, { labels = { screen: '屏幕', candle: '�
     const { axisY, tableY } = p;
     const labelSize = Math.min(26, Math.max(11, 11 / scale * 0.85));      // keep labels ≈ 10 px on screen at any bench width
     set(eyeText, { 'font-size': labelSize * 1.1 });
+    set(tabletop, { x: 0, y: tableY, width: p.w, height: Math.max(0, p.h - tableY) });
+    p.focal.forEach((f, i) => { set(focalEls[i].dot, { cx: f.x, cy: axisY, r: Math.max(3.5, 4 / scale * 0.6) }); set(focalEls[i].text, { x: f.x, y: axisY - 12, 'font-size': labelSize * 1.25 }); });
     set(axis, { x1: 0, x2: p.w, y1: axisY, y2: axisY }); set(table, { x1: 0, x2: p.w, y1: tableY, y2: tableY });
     const r = view.ranges;       // movable rails, drawn only for objects the engine lets the learner move
     trackScreen.style.display = r.screen.locked ? 'none' : ''; trackCandle.style.display = r.candle.locked ? 'none' : '';
@@ -120,9 +124,9 @@ export function createBenchView(root, { labels = { screen: '屏幕', candle: '�
     gRays.replaceChildren();
     for (const r of p.rays || []) svgEl('line', { x1: r.x1, y1: r.y1, x2: r.x2, y2: r.y2, class: r.solid ? 'og-ray' : 'og-ray og-ray-virtual' }, gRays);
 
-    // interactive overlays: always >= 48 px, centred on the visible object
+    // interactive overlays: >= 48 px (64 px on phones), centred on the visible object
     const place = (el, spec, label, state, range) => {
-      const wPx = Math.max(HIT_MIN_PX, 60 * scale), hPx = Math.max(HIT_MIN_PX, spec.h * scale);
+      const min = hitMinPx(), wPx = Math.max(min, 60 * scale), hPx = Math.max(min, spec.h * scale);
       Object.assign(el.style, { left: `${(spec.x / p.w) * 100}%`, top: `${(spec.y / p.h) * 100}%`, width: `${wPx}px`, height: `${hPx}px` });
       const locked = range.locked;
       if (locked) el.setAttribute('aria-disabled', 'true'); else el.removeAttribute('aria-disabled');

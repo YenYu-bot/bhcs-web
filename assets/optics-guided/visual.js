@@ -8,9 +8,9 @@ export const UNITS_PER_CM = VIEW_W / (BENCH_VIEW.maxCm - BENCH_VIEW.minCm);   //
 export const xOf = (axisCm) => (axisCm - BENCH_VIEW.minCm) * UNITS_PER_CM;
 
 // Sprite geometry (viewBox units at k = 1). Fractions locate landmarks inside the source images.
-export const CANDLE = Object.freeze({ h: 76, aspect: 350 / 512, flame: { x: 0.443, y: 0.166 } });   // flame centre sits on the axis
-export const LENS = Object.freeze({ h: 220, aspect: 164 / 512, squeeze: 0.6, body: 0.346 });          // lens body centre on the axis
-export const SCREEN = Object.freeze({ h: 300, aspect: 488 / 512, squeeze: 0.34, face: { x: 0.04, y: 0.04, w: 0.92, h: 0.56 } });
+export const CANDLE = Object.freeze({ h: 86, aspect: 350 / 512, flame: { x: 0.443, y: 0.166 } });   // flame centre sits on the axis
+export const LENS = Object.freeze({ h: 240, aspect: 164 / 512, squeeze: 0.6, body: 0.346 });          // lens body centre on the axis
+export const SCREEN = Object.freeze({ h: 320, aspect: 488 / 512, squeeze: 0.34, face: { x: 0.04, y: 0.04, w: 0.92, h: 0.56 } });
 export const TABLE_BELOW_AXIS = LENS.h * (1 - LENS.body);    // lens stand reaches the table; everything else is posted to it
 export const EYE_AT_CM = 38;
 export const IMAGE_SQUEEZE = 0.7;                           // the projected candle is drawn slightly narrower, like the oblique screen
@@ -49,8 +49,8 @@ export function clarityMessage(view) {
  */
 export function visualParams(view, { height = 380, rays = false } = {}) {
   const { lensState: lens, clarity } = view;
-  const k = clamp(height / 380, 1, 1.25);
-  const axisY = height * 0.5, tableY = axisY + TABLE_BELOW_AXIS * k;
+  const k = clamp(height / 380, 1, 1.4);
+  const axisY = height * 0.46, tableY = axisY + TABLE_BELOW_AXIS * k;
   const level = clarity.effectiveClarityLevel, e = clarity.error;
   const viewThrough = view.phase === 'trial3-view-through-lens';
 
@@ -79,6 +79,7 @@ export function visualParams(view, { height = 380, rays = false } = {}) {
     screenOpacity: viewThrough ? 0.25 : 1,
     clarity: { level, rawLevel: clarity.rawClarityLevel, error: e, imageType: lens.imageType, withinBench: lens.projectionWithinBench, ...clarityMessage(view) },
     hit: { screen: { x: screenX, y: face.y + face.h / 2, h: sH }, candle: { x: candleX, y: axisY + cH * 0.3, h: cH } },
+    focal: [-view.f, view.f].map((cm) => ({ x: xOf(cm), cm })),
     ticks: [], rays: null, virtual: null, eye: null,
   };
   for (let cm = Math.ceil(BENCH_VIEW.minCm / 5) * 5; cm <= BENCH_VIEW.maxCm; cm += 5) if (cm !== 0) out.ticks.push({ x: xOf(cm), cm, label: Math.abs(cm) % 10 === 0 && cm > BENCH_VIEW.minCm && cm < BENCH_VIEW.maxCm ? String(Math.abs(cm)) : null });

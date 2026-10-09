@@ -138,6 +138,16 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
     for(const kind of ['screen','candle']){
      const hit=await rectOf(page,'.og-hit-'+kind);assert.ok(hit.w>=44&&hit.h>=44,kind+' hit '+hit.w+'×'+hit.h);
     }
+    // Visual Pass V1 guards: thumb-sized targets on phones, nothing paints over a draggable, keyboard focus stays visible
+    if(width<900)for(const kind of ['screen','candle']){const hit=await rectOf(page,'.og-hit-'+kind);assert.ok(hit.w>=64&&hit.h>=64,kind+' hit on a phone is >=64 px: '+hit.w+'×'+hit.h)}
+    for(const kind of ['screen','candle']){
+     const covered=await page.evaluate(k=>{const h=document.querySelector('.og-hit-'+k),r=h.getBoundingClientRect(),e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return !(e===h||h.contains(e))},kind);
+     assert.equal(covered,false,kind+' hit layer is the top element at its centre');
+    }
+    await page.keyboard.press('Tab');
+    const ring=await page.evaluate(()=>{const e=document.querySelector('.og-hit-screen');e.focus({preventScroll:true});const c=getComputedStyle(e);return {visible:e.matches(':focus-visible'),style:c.outlineStyle,width:parseFloat(c.outlineWidth)}});
+    assert.ok(ring.visible&&ring.style!=='none'&&ring.width>=2,'focus ring on the draggable: '+JSON.stringify(ring));
+    await page.evaluate(()=>document.activeElement&&document.activeElement.blur());
     const screenHit=await rectOf(page,'.og-hit-screen'),face=await page.locator('.og-screen image').first().evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x,r:r.right,y:r.y,b:r.bottom}});
     assert.ok(screenHit.x+screenHit.w/2>face.x&&screenHit.x+screenHit.w/2<face.r&&screenHit.y+screenHit.h/2>face.y&&screenHit.y+screenHit.h/2<face.b,'screen hit overlay sits on the drawn screen');
     const candleHit=await rectOf(page,'.og-hit-candle'),cimg=await page.locator('.og-candle image').first().evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x,r:r.right,y:r.y,b:r.bottom}});
@@ -167,15 +177,16 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
     const lvl=()=>page.locator('.og-bench').getAttribute('data-clarity-level'),phase=async()=>(await state(page)).phase;
     const shot=name=>page.screenshot({path:path.join(output,`${label}-flow-${name}.png`),fullPage:true});
     assert.equal(await phase(),'trial1-find-screen');assert.equal(await lvl(),'3');
+    const benchSize=()=>page.locator('.og-bench').evaluate(el=>{const r=el.getBoundingClientRect();return r.width.toFixed(1)+'×'+r.height.toFixed(1)});const bench0=await benchSize();
     await focus(page,'screen');await press(page,'ArrowLeft',5);
     assert.equal(await lvl(),'1');assert.equal(await phase(),'trial1-complete');
     assert.equal(await page.locator('#og-status-text').textContent(),'影像最清楚');assert.equal(await page.locator('#og-status-icon').textContent(),'✓');
-    assert.equal(await page.locator('.og-ray').count(),4,'rays appear once found');assert.equal(await page.locator('#og-cta').isDisabled(),false);await shot('t1-sharp');
+    assert.equal(await page.locator('.og-ray').count(),4,'rays appear once found');assert.equal(await page.locator('#og-cta').isDisabled(),false);await shot('t1-sharp');assert.equal(await benchSize(),bench0,'the bench keeps its size in every phase');
     await page.locator('#og-cta').click();await settle(page);
     assert.equal(await phase(),'trial2-move-object');
     assert.deepEqual(await page.evaluate(()=>['screen','candle'].map(k=>document.querySelector('.og-hit-'+k).getAttribute('aria-disabled'))),['true',null],'the engine hands the candle over');
     await focus(page,'candle');await press(page,'PageUp',3);
-    assert.equal(await phase(),'trial2-find-screen');assert.equal(await lvl(),'4','the old screen position no longer works');assert.equal(await page.locator('.og-ray').count(),0);await shot('t2-stale');
+    assert.equal(await phase(),'trial2-find-screen');assert.equal(await lvl(),'4','the old screen position no longer works');assert.equal(await page.locator('.og-ray').count(),0);await shot('t2-stale');assert.equal(await benchSize(),bench0,'the bench keeps its size in every phase');
     await focus(page,'screen');await press(page,'PageUp',3);
     assert.equal(await lvl(),'1');await page.locator('#og-cta').click();await settle(page);await shot('t2-sharp');
     assert.equal(await phase(),'compare');
@@ -188,12 +199,12 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
     await focus(page,'screen');await press(page,'PageDown');await press(page,'PageDown',3);
     assert.equal(await page.locator('#og-cta').isDisabled(),true);
     await press(page,'PageUp',4);
-    assert.equal((await state(page)).search.zones.join(),'near,middle,far');assert.equal(await page.locator('#og-cta').isDisabled(),false);await shot('t3-search');
+    assert.equal((await state(page)).search.zones.join(),'near,middle,far');assert.equal(await page.locator('#og-cta').isDisabled(),false);await shot('t3-search');assert.equal(await benchSize(),bench0,'the bench keeps its size in every phase');
     await page.locator('#og-cta').click();await settle(page);assert.equal(await phase(),'trial3-no-real-screen-image');
     await page.locator('#og-cta').click();await settle(page);
     assert.equal(await phase(),'trial3-view-through-lens');assert.equal(await page.locator('.og-bench').getAttribute('data-view-through'),'true');
     assert.equal(await page.locator('.og-eye-icon').evaluate(el=>getComputedStyle(el.parentElement).display!=='none'),true);
-    assert.equal(await page.locator('#og-status-text').textContent(),'你現在看得到一個正立、放大的蠟燭。');await shot('view-through');
+    assert.equal(await page.locator('#og-status-text').textContent(),'你現在看得到一個正立、放大的蠟燭。');await shot('view-through');assert.equal(await benchSize(),bench0,'the bench keeps its size in every phase');
     const over=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);assert.ok(over<=0);
     assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);await ctx.close();
    });

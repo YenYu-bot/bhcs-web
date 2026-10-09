@@ -94,7 +94,7 @@ test('ray layer is off unless asked and follows the image type',()=>{
 
 test('responsive sizing: mobile viewBox is taller and objects scale up; hit areas are sized in the renderer',()=>{
  const d=P('trial1-find-screen',30,20,{height:369}),m=P('trial1-find-screen',30,20,{height:670});
- assert.equal(d.k,1);assert.equal(m.k,1.25);assert.ok(m.candle.h>d.candle.h);assert.ok(m.axisY>d.axisY);
+ assert.equal(d.k,1);assert.equal(m.k,1.4);assert.ok(m.candle.h>d.candle.h);assert.ok(m.axisY>d.axisY);
  for(const p of [d,m]){assert.ok(p.tableY+30<p.h,'stands and rail fit');assert.ok(p.screen.imgY>=0&&p.screen.imgY+p.screen.h<=p.h);assert.ok(p.lens.imgY>=0);assert.ok(p.face.y>=0)}
  assert.ok(d.hit.screen.h>0&&d.hit.candle.h>0);
 });
