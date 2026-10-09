@@ -49,6 +49,7 @@ addEventListener('pagehide', flush);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
 
 // ---- compare
+const ROW_ROLE = { f: 'same', u: 'variable', observedScreenPosition: 'response', imageSize: 'response' };   // styling only: what stayed, what was changed, what was observed
 function renderCompare() {
   const card = compareCard(state.records);
   if (!card) return;
@@ -56,7 +57,7 @@ function renderCompare() {
   if (key !== renderedCompare) {
     renderedCompare = key;
     const rows = $('og-compare-rows'); rows.replaceChildren();
-    for (const r of card.rows) rows.append(el('tr', {}, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
+    for (const r of card.rows) rows.append(el('tr', { 'data-role': ROW_ROLE[r.key] ?? '' }, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
     const qs = $('og-questions'); qs.replaceChildren();
     for (const q of card.questions) {
       const group = el('div', { className: 'og-options' });
@@ -86,7 +87,7 @@ const nb = {};
 function buildNotebook(m) {
   const body = $('og-nb-body'); body.replaceChildren();
   const rows = $('og-nb-rows'); rows.replaceChildren();
-  for (const r of m.evidenceRows) rows.append(el('tr', {}, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
+  for (const r of m.evidenceRows) rows.append(el('tr', { 'data-role': ROW_ROLE[r.key] ?? '' }, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
 
   const levels = el('div', { className: 'og-options' });
   for (const l of m.levels) levels.append(radioPill('og-level', l.id, `${l.id}　${l.title}`, (v) => { flush(); dispatch({ type: 'SAVE_CONCLUSION', fields: { level: v } }); }));

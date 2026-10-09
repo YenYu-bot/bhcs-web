@@ -102,7 +102,11 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await page.locator('#og-compare-notice').innerText(),'✅ 兩次只有物距不同，可以直接比較。');
     t=await text();assert.ok(!/1\/f|公式|理論|虛像/.test(t),'compare shows evidence, not formula or terms');
     assert.equal(await cta().isDisabled(),true);assert.equal((await coach()).main,'把兩次的證據放在一起看。');
-    await noOverflow('compare');await shot('5-compare');await axeScan(page,label+' compare');
+    await noOverflow('compare');
+    // Visual Pass V1: the evidence table stays a readable table on a phone (no sideways scroll inside it, no sliver columns), the changed row is marked
+    const tbl=await page.locator('#og-compare .og-table-wrap').evaluate(w=>({scrolls:w.scrollWidth>w.clientWidth+1,cols:[...w.querySelectorAll('tbody tr:first-child > *')].map(c=>c.getBoundingClientRect().width),roles:[...w.querySelectorAll('tbody tr')].map(r=>r.dataset.role)}));
+    assert.equal(tbl.scrolls,false,'compare table does not scroll sideways');assert.ok(tbl.cols.every(w=>w>=70),'compare columns stay readable: '+tbl.cols.join(','));assert.deepEqual(tbl.roles,['same','variable','response','response']);
+    await shot('5-compare');await axeScan(page,label+' compare');
     await page.getByLabel('更靠近透鏡').check();await page.getByLabel('變大').check();await settle(page);
     assert.equal((await coach()).main,'剛才哪個結果變得更明顯？');assert.ok(!(await text()).includes('錯了'));assert.equal(await cta().isDisabled(),true);
     await reload();assert.equal(await page.locator('#main').getAttribute('data-screen'),'compare');
