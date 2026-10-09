@@ -1,6 +1,6 @@
-# Science Lab 2.0 Component Spec v1.1(待驗收)
+# Science Lab 2.0 Component Spec v1.1 final
 
-狀態:v1.1 草案,待驗收。這份文件只定義**共用呈現層的 contract**,不含任何實作。
+狀態:Approved。這份文件只定義**共用呈現層的 contract**,不含任何實作。
 適用站:光學導引站(Pilot #1,`aec25ba`)與「浮沉與密度」導引站(Pilot #2,`8080d14`),兩站皆已實作。
 依據:Optics Pilot #1 vs Buoyancy Pilot #2 的 Contract Audit(唯讀,已核准)。
 v1.0(`science-guided-component-spec-v1.0.md`)保留為已核准的歷史基準,本文件取代其 contract。
@@ -17,7 +17,7 @@ v1.0(`science-guided-component-spec-v1.0.md`)保留為已核准的歷史基準,�
 | F6 | 3.1 Shell、第 5 節 | 焦點交接多一個觸發條件:目前焦點元素已從 document 移除;`stationTitle` 明訂為每次 render 重新供應。 |
 | F7 | 3.12 ChallengeCard | `note?` 改為結構化選用輸入 `{label, placeholder?, value}`,沿用 Notebook 的緩衝與 flush 規則;storage 仍由 station 處理。 |
 | 附 | 3.14 ExperimentBenchShell | 「固定比例容器」改為「穩定的實驗桌幾何」:兩站實作不同(固定高度 / 固定長寬比),共同規則是不得產生非預期的高度跳動。 |
-| 附 | 第 6、7 節 | 第 6 節補上 Audit 對 9 項缺口的核對與新增的 Optics debt;第 7 節補上 F1、F2、F3 對應的 contract 檢查。 |
+| 附 | 第 6、7 節 | 第 6 節補上 Audit 對 9 項缺口的核對與新增的 Optics debt;第 7 節補上 F1、F2、F3、F6 對應的 contract 檢查。 |
 
 ## 1. 原則與邊界
 
@@ -205,7 +205,7 @@ CompareCard = EvidenceComparisonModel + {
   allCorrect }
 ```
 
-- 一次只顯示一題;只畫出已解鎖的 step;答對的 step 鎖定;重試/提示由 station 算好放進 `feedback`;不顯示「答錯了」。
+- 一次只顯示一個 challenge;同一 challenge 內只呈現已解鎖的 steps。已完成的 step 可以保留在畫面上,但必須鎖定,不得再次觸發 `onAnswer`。重試/提示由 station 算好放進 `feedback`;不顯示「答錯了」。
 - **互動語意(v1 shared renderer):**
   - 選項固定為原生 `<button type="button">`。
   - `onAnswer(stepId, value)` **只能由 click / Enter / Space 的明確啟動產生**;焦點移動、Tab、方向鍵、選取移動都不得觸發,也不算一次 attempt。
@@ -250,7 +250,7 @@ CompareCard = EvidenceComparisonModel + {
 | persistence schema 與 storage 寫入 | 留 station |
 | analytics 事件表 | 留 station |
 
-v1.0 級別:GuidedLabShell A、StepNav A、CoachCard A、ActionBar A、CompletionCard A、StatusBar B、DataCard B、EvidenceCard B、CompareCard B、ConceptReveal B、Notebook B、ChallengeCard A/B、ExperimentBenchShell C。
+v1.1 級別:GuidedLabShell A、StepNav A、CoachCard A、ActionBar A、CompletionCard A、StatusBar B、DataCard B、EvidenceCard B、CompareCard B、ConceptReveal B、Notebook B、ChallengeCard A/B、ExperimentBenchShell C。
 
 ## 5. 跨元件規則
 
