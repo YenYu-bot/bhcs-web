@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>浮沉實驗（導引版原型）｜百宏文教</title>
+<meta name="description" content="親手把東西放進水裡，找出浮沉的規律。導引版原型，尚未公開。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/science/buoyancy-guided.html">
+<link rel="icon" href="../../assets/favicon.png">
+<link rel="stylesheet" href="../../assets/buoyancy-guided/buoyancy-guided.css">
+<script src="../../assets/science-events.js" defer></script>
+</head>
+<body class="buoyancy-guided" data-science-lab="buoyancy-guided">
+<a class="bg-skip" href="#main">跳到主要內容</a>
+<div class="bg-wrap">
+  <header><h1 class="bg-h1" id="bg-heading" tabindex="-1"></h1></header>
+  <main id="main" data-screen="welcome">
+    <nav class="bg-stepnav" id="bg-stepnav"><ol class="bg-steps" id="bg-steps"></ol></nav>
+    <div class="bg-shell">
+      <section class="bg-card bg-coach" id="bg-coach">
+        <p class="bg-coach-name" id="bg-coach-name"></p>
+        <p class="bg-coach-main" id="bg-coach-main"></p>
+        <p class="bg-coach-sub" id="bg-coach-sub"></p>
+        <p class="bg-coach-tip" id="bg-coach-tip" hidden></p>
+      </section>
+      <div class="bg-stage" id="bg-stage">
+        <section class="bg-card" id="bg-welcome" aria-labelledby="bg-welcome-title">
+          <svg class="bg-welcome-art" viewBox="0 0 300 110" aria-hidden="true" focusable="false">
+            <rect class="bg-table-slab" x="0" y="92" width="300" height="18"/><rect class="bg-table-top" x="0" y="88" width="300" height="4"/>
+            <rect class="bg-tank-inner" x="150" y="14" width="124" height="74"/><rect x="156" y="38" width="112" height="50" fill="#cfe8f6"/>
+            <path class="bg-tank-frame" d="M150 14 V88 H274 V14"/><line class="bg-surface" x1="156" x2="268" y1="38" y2="38"/>
+            <rect class="bg-block-body" x="44" y="54" width="34" height="34" rx="5" fill="#e6d29f" stroke="#7a6535" stroke-width="2"/>
+            <rect x="52" y="62" width="18" height="20" rx="3" fill="#cdb87e"/>
+          </svg>
+          <h2 id="bg-welcome-title" tabindex="-1"></h2>
+          <p id="bg-welcome-sub"></p>
+        </section>
+        <section class="bg-card" id="bg-bench-card" aria-label="虛擬實驗桌" hidden>
+          <div class="bg-bench bg-scroll-surface" id="bg-bench" data-bg-bench>
+            <div class="bg-scene" id="bg-scene">
+              <svg class="bg-svg" viewBox="0 0 750 420" aria-hidden="true" focusable="false"></svg>
+              <div class="bg-tank-zone" data-bg-tank role="group" aria-label="水槽"></div>
+              <div class="bg-hit-layer" role="group" aria-label="桌面與水槽">
+                <button type="button" class="bg-object" data-bg-object="block" aria-pressed="false"><span class="bg-sr-only">方塊</span></button>
+                <button type="button" class="bg-object" data-bg-object="wood" aria-pressed="false" hidden><span class="bg-sr-only">大木塊</span></button>
+                <button type="button" class="bg-object" data-bg-object="stone" aria-pressed="false" hidden><span class="bg-sr-only">小石頭</span></button>
+              </div>
+            </div>
+            <div class="bg-tools" role="group" aria-label="操作">
+              <span class="bg-slot">
+                <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="block">放入水中</button>
+                <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="wood" hidden>把大木塊放入水中</button>
+              </span>
+              <button type="button" class="bg-tool" data-bg-action="take-out">拿出來</button>
+              <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="stone" hidden>把小石頭放入水中</button>
+              <button type="button" class="bg-tool" data-bg-action="remove-ballast">取下一個配重（−20 g）</button>
+              <button type="button" class="bg-tool" data-bg-action="add-ballast">加一個配重（+20 g）</button>
+              <span class="bg-readout" data-bg-mass></span>
+            </div>
+            <fieldset class="bg-liquids" data-bg-liquid-group>
+              <legend>槽內的液體</legend>
+              <label class="bg-pill"><input type="radio" name="bg-liquid" value="water" data-bg-liquid checked>水</label>
+              <label class="bg-pill"><input type="radio" name="bg-liquid" value="brine" data-bg-liquid>濃鹽水</label>
+            </fieldset>
+          </div>
+        </section>
+        <section class="bg-card" id="bg-compare" aria-labelledby="bg-compare-title" hidden>
+          <h2 id="bg-compare-title" tabindex="-1"></h2>
+          <div data-bg-compare-body></div>
+        </section>
+        <section class="bg-card" id="bg-concept" aria-labelledby="bg-concept-title" hidden>
+          <h2 id="bg-concept-title" tabindex="-1"></h2>
+          <div data-bg-concept-body></div>
+        </section>
+        <section class="bg-card" id="bg-notebook" aria-labelledby="bg-notebook-title" hidden>
+          <h2 id="bg-notebook-title" tabindex="-1"></h2>
+          <div data-bg-notebook-body></div>
+        </section>
+        <section class="bg-card" id="bg-challenge" aria-labelledby="bg-challenge-title" hidden>
+          <h2 id="bg-challenge-title" tabindex="-1"></h2>
+          <div data-bg-challenge-body></div>
+        </section>
+        <section class="bg-card" id="bg-complete" aria-labelledby="bg-complete-title" hidden>
+          <h2 id="bg-complete-title" tabindex="-1"></h2>
+          <div data-bg-complete-body></div>
+        </section>
+        <p class="bg-hint" id="bg-hint"></p>
+        <div class="bg-status" id="bg-status" data-kind="neutral" hidden><span class="bg-status-icon" data-bg-status-icon aria-hidden="true"></span><span data-bg-status-text></span></div>
+        <div class="bg-actions"><button type="button" class="bg-cta" id="bg-cta" hidden></button></div>
+        <p class="bg-storage-note" id="bg-storage-note" hidden></p>
+      </div>
+      <aside class="bg-side" id="bg-side">
+        <section class="bg-card" id="bg-data" hidden></section>
+        <section class="bg-card" id="bg-evidence" hidden></section>
+      </aside>
+    </div>
+    <div class="bg-sr" id="bg-announcer" aria-live="polite" aria-atomic="true"></div>
+  </main>
+  <footer class="bg-footer"><p class="bg-privacy" id="bg-privacy-note"></p></footer>
+</div>
+<script type="module" src="../../assets/buoyancy-guided/main.js"></script>
+</body>
+</html>
