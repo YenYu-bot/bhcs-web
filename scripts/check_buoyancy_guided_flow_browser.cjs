@@ -187,6 +187,10 @@ async function walk(browser,{width,height,touch,tag}){
   const r=await info(p);assert.deepEqual([r.phase,r.screen,r.active.id],['compare','compare','bg-compare-title']);
   assert.deepEqual(await coach(p),{main:'把兩次的證據放在一起看。',sub:'',tip:'',visible:true});
   const table=await p.evaluate(()=>[...document.querySelectorAll('.bg-compare-table tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
+  // Visual Pass V1: the evidence table stays readable at any width (stacked cards on a phone), keeps its table roles and marks the one changed row
+  const cmp=await p.evaluate(()=>{const wrap=document.querySelector('#bg-compare [data-bg-compare-body]'),t=wrap.querySelector('table'),rows=[...t.querySelectorAll('tbody tr')];return {scrolls:wrap.scrollWidth>wrap.clientWidth+1,roles:[t.getAttribute('role'),...rows.map(r=>r.getAttribute('role'))],changed:rows.filter(r=>r.classList.contains('is-changed')).length,cells:[...t.querySelectorAll('tbody td')].map(c=>c.getBoundingClientRect().width),vw:innerWidth}});
+  assert.equal(cmp.scrolls,false,'compare: no sideways scroll');assert.equal(cmp.changed,1,'compare: exactly one changed row');assert.ok(cmp.roles.every(r=>r==='table'||r==='row'),'compare: table roles kept');
+  assert.ok(cmp.cells.every(w=>w>=(cmp.vw<=767?100:120)),'compare: every value cell stays readable: '+cmp.cells.map(Math.round).join(','));
   assert.deepEqual(table,[['液體（改變的）','水','濃鹽水'],['方塊體積（保持相同）','100 cm³'],['放入方式（保持相同）','相同'],['判定（保持相同）','停在液體中'],
    ['原本 100 g 的方塊','停在水中','浮起來（約 83% 在水面下）'],['讓方塊停住所需質量','100 g','120 g']]);
   assert.equal(await txt(p,'.bg-notice'),'這次改的是液體；其他條件保持相同。');
@@ -423,6 +427,10 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal(await txt(p,'.bg-step-question'),'哪個說法最合理？');
   const texts=await p.locator('[data-bg-option]').allInnerTexts();
   assert.deepEqual(texts,['鋁箔折成船以後質量變小了。','折成船後，鋁箔和裡面的空氣一起占了更大的整體體積，同樣的質量分布在更大的體積中，所以整體平均密度變小。','水只會托住船形的東西。','東西攤得越開就越會浮。']);
+  // Visual Pass V1: on a phone the long options wrap inside the card, stay readable and never push the page sideways
+  const optBox=await p.evaluate(()=>{const card=document.querySelector('[data-bg-step]').getBoundingClientRect();return [...document.querySelectorAll('[data-bg-option]')].map(b=>{const r=b.getBoundingClientRect(),cs=getComputedStyle(b);return {w:r.width,card:card.width,fits:b.scrollWidth<=b.clientWidth+1,align:cs.textAlign,wrap:cs.whiteSpace,font:parseFloat(cs.fontSize),lh:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize)}})});
+  for(const o of optBox){assert.ok(o.fits&&o.w>=o.card*0.85&&o.align==='left'&&o.wrap!=='nowrap'&&o.font>=15&&o.lh>=1.4,'challenge 3 option: '+JSON.stringify(o))}
+  assert.ok((await info(p)).overflow<=0,'challenge 3: no sideways scroll');
   const wrap=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-option]')].map(b=>({over:b.scrollWidth-b.clientWidth,right:b.getBoundingClientRect().right,vw:innerWidth})));
   for(const w of wrap){assert.ok(w.over<=1,`an option scrolls inside itself by ${w.over}`);assert.ok(w.right<=w.vw+0.5,'an option is wider than the screen')}
   assert.ok(!(await allText(p)).includes('排開'));
