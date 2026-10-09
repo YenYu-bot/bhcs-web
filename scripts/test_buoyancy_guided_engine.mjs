@@ -554,7 +554,7 @@ test('N. static guards: engine and challenges hold no interface, no wording, no 
   assert.ok(/from '\.\/model\.js'/.test(engine));
   for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.js') && !['model.js', 'engine.js'].includes(f))) {
     const src = code(file);
-    assert.ok(!/\boutcomeIn\b|\brelation\(|\bdensity\(|immersionFraction\s*[:=]/.test(src), `${file} must not decide physics`);
+    assert.ok(!/\boutcomeIn\b|\brelation\(|\bdensity\(|\/\s*liquidDensity|objectDensity\s*\/|massG\s*\//.test(src), `${file} must not decide physics`);   // passing a fact through (visual.js reads immersionFraction) is fine; computing one is not
   }
 });
 

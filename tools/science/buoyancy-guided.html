@@ -21,17 +21,22 @@
     </section>
     <section class="bg-card" id="bg-bench-card" aria-label="虛擬實驗桌" hidden>
       <div class="bg-bench bg-scroll-surface" id="bg-bench" data-bg-bench>
-        <div class="bg-tank" data-bg-tank role="group" aria-label="水槽"></div>
-        <div class="bg-table" role="group" aria-label="桌面">
-          <button type="button" class="bg-object" data-bg-object="block" aria-pressed="false">方塊</button>
-          <button type="button" class="bg-object" data-bg-object="wood" aria-pressed="false" hidden>大木塊</button>
-          <button type="button" class="bg-object" data-bg-object="stone" aria-pressed="false" hidden>小石頭</button>
+        <div class="bg-scene" id="bg-scene">
+          <svg class="bg-svg" viewBox="0 0 750 420" aria-hidden="true" focusable="false"></svg>
+          <div class="bg-tank-zone" data-bg-tank role="group" aria-label="水槽"></div>
+          <div class="bg-hit-layer" role="group" aria-label="桌面與水槽">
+            <button type="button" class="bg-object" data-bg-object="block" aria-pressed="false"><span class="bg-sr-only">方塊</span></button>
+            <button type="button" class="bg-object" data-bg-object="wood" aria-pressed="false" hidden><span class="bg-sr-only">大木塊</span></button>
+            <button type="button" class="bg-object" data-bg-object="stone" aria-pressed="false" hidden><span class="bg-sr-only">小石頭</span></button>
+          </div>
         </div>
         <div class="bg-tools" role="group" aria-label="操作">
-          <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="block">放入水中</button>
-          <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="wood" hidden>把大木塊放入水中</button>
-          <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="stone" hidden>把小石頭放入水中</button>
+          <span class="bg-slot">
+            <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="block">放入水中</button>
+            <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="wood" hidden>把大木塊放入水中</button>
+          </span>
           <button type="button" class="bg-tool" data-bg-action="take-out">拿出來</button>
+          <button type="button" class="bg-tool" data-bg-action="put-in" data-bg-for="stone" hidden>把小石頭放入水中</button>
           <button type="button" class="bg-tool" data-bg-action="remove-ballast">取下一個配重（−20 g）</button>
           <button type="button" class="bg-tool" data-bg-action="add-ballast">加一個配重（+20 g）</button>
           <output class="bg-readout" data-bg-mass></output>

@@ -76,6 +76,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_buoyancy_guided_input_browser.cjs
+      - name: Check guided buoyancy bench states and page layout in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_buoyancy_guided_view_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -93,6 +97,12 @@ jobs:
         with:
           name: researcher-operation-review
           path: operation-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buoyancy-view-review
+          path: buoyancy-view-artifacts/
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: always()
