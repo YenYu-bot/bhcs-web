@@ -93,16 +93,20 @@ function structureOf(model) {
 
 /** The shared evidence table (EvidenceComparisonModel): what changed, what was kept the same, what was seen. */
 function buildEvidenceTable(model, heads) {
+  // Explicit table roles: on a phone the rows are laid out as stacked cards (CSS display changes), which would otherwise drop the table meaning.
   const iv = model.independentVariable;
   const rows = [];
-  if (iv) rows.push(h('tr', { class: 'is-changed' }, h('th', { scope: 'row', text: `${iv.label}（${heads.changed}）` }), h('td', { text: iv.from }), h('td', { text: iv.to })));
+  const row = (cls, head, ...cells) => h('tr', { class: cls, role: 'row' }, head, ...cells);
+  const rowHead = (text) => h('th', { scope: 'row', role: 'rowheader', text });
+  const cell = (text, label) => h('td', { role: 'cell', 'data-label': label ?? null, text });
+  if (iv) rows.push(row('is-changed', rowHead(`${iv.label}（${heads.changed}）`), cell(iv.from, heads.first), cell(iv.to, heads.second)));
   for (const c of model.controlledVariables ?? []) {
-    rows.push(h('tr', {}, h('th', { scope: 'row', text: `${c.label}（${heads.same}）` }), h('td', { colspan: 2, text: c.value })));
+    rows.push(row('is-same', rowHead(`${c.label}（${heads.same}）`), h('td', { role: 'cell', colspan: 2, text: c.value })));
   }
-  for (const r of model.observedResponse) rows.push(h('tr', {}, h('th', { scope: 'row', text: r.label }), h('td', { text: r.first }), h('td', { text: r.second })));
-  return h('table', { class: 'bg-compare-table' },
-    h('thead', {}, h('tr', {}, h('th', { scope: 'col', text: heads.item }), h('th', { scope: 'col', text: heads.first }), h('th', { scope: 'col', text: heads.second }))),
-    h('tbody', {}, ...rows));
+  for (const r of model.observedResponse) rows.push(row('is-observed', rowHead(r.label), cell(r.first, heads.first), cell(r.second, heads.second)));
+  return h('table', { class: 'bg-compare-table', role: 'table' },
+    h('thead', { role: 'rowgroup' }, h('tr', { role: 'row' }, h('th', { scope: 'col', role: 'columnheader', text: heads.item }), h('th', { scope: 'col', role: 'columnheader', text: heads.first }), h('th', { scope: 'col', role: 'columnheader', text: heads.second }))),
+    h('tbody', { role: 'rowgroup' }, ...rows));
 }
 
 function buildCompare(model, text, onAnswer) {

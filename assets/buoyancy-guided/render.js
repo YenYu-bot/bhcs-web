@@ -30,17 +30,24 @@ export function createRenderer({ scene, labels }) {
   const tankZone = scene.querySelector('[data-bg-tank]');
   const hits = Object.fromEntries(OBJECT_IDS.map((id) => [id, scene.querySelector(`[data-bg-object="${id}"]`)]));
 
-  // static picture: table, tank, water
-  const table = svgEl('rect', { class: 'bg-table-slab', x: 0, width: 0, height: 28 });
+  // static picture: table (a top face and a front edge), a glass tank open at the top, water
+  const stop = (offset, color) => svgEl('stop', { offset, 'stop-color': color });
+  const defs = svgEl('defs', {},
+    svgEl('linearGradient', { id: 'bg-water-grad', x1: 0, y1: 0, x2: 0, y2: 1 }, stop(0, '#dcf0fa'), stop(1, '#c3e3f4')),
+    svgEl('linearGradient', { id: 'bg-brine-grad', x1: 0, y1: 0, x2: 0, y2: 1 }, stop(0, '#cfe6f3'), stop(1, '#a9d0e8')));
+  const table = svgEl('rect', { class: 'bg-table-slab', x: 0, width: VIEW_W, height: 22 });
+  const tableTop = svgEl('rect', { class: 'bg-table-top', x: 0, width: VIEW_W, height: 6 });
   const tankInner = svgEl('rect', { class: 'bg-tank-inner' });
   const water = svgEl('rect', { class: 'bg-water', 'data-bg-water': '' });
   const surface = svgEl('line', { class: 'bg-surface', 'data-bg-surface': '' });
+  const sheen = svgEl('line', { class: 'bg-sheen' });
   const floor = svgEl('line', { class: 'bg-floor', 'data-bg-floor': '' });
-  const frame = svgEl('rect', { class: 'bg-tank-frame', 'data-bg-tank-frame': '', rx: 6 });
+  const glass = svgEl('path', { class: 'bg-glass' });
+  const frame = svgEl('path', { class: 'bg-tank-frame', 'data-bg-tank-frame': '' });
   const liquidLabel = svgEl('text', { class: 'bg-liquid-label', 'data-bg-liquid-label': '' });
   const labelLayer = svgEl('g', { class: 'bg-labels' });
   const objectLayer = svgEl('g', { class: 'bg-objects' });
-  svg.append(table, tankInner, water, surface, floor, objectLayer, frame, liquidLabel, labelLayer);
+  svg.append(defs, table, tableTop, tankInner, water, surface, sheen, floor, objectLayer, glass, frame, liquidLabel, labelLayer);
 
   const arts = {}, tableLabels = {};
   for (const id of OBJECT_IDS) {
@@ -49,9 +56,15 @@ export function createRenderer({ scene, labels }) {
     const sub = svgEl('rect', { class: 'bg-submerged', 'data-bg-submerged': '', rx: 0 });
     const line = svgEl('line', { class: 'bg-objwaterline', 'data-bg-objwaterline': '' });
     const cells = id === 'block' ? Array.from({ length: 6 }, (_, i) => svgEl('rect', { class: 'bg-cell', 'data-bg-cell': i, rx: 2 })) : [];
-    g.append(body, sub, line, ...cells);
+    // decoration only: it never changes the object's outline, which is the body rectangle
+    const deco = {
+      block: [svgEl('rect', { class: 'bg-block-lid', rx: 6 }), svgEl('rect', { class: 'bg-block-panel', rx: 4 })],
+      wood: [0, 1, 2].map(() => svgEl('path', { class: 'bg-grain' })).concat(svgEl('ellipse', { class: 'bg-knot' })),
+      stone: [svgEl('path', { class: 'bg-rock-light' }), svgEl('path', { class: 'bg-rock-shade' }), svgEl('circle', { class: 'bg-rock-fleck' }), svgEl('circle', { class: 'bg-rock-fleck' })],
+    }[id];
+    g.append(body, ...deco, sub, line, ...cells);
     objectLayer.append(g);
-    arts[id] = { g, body, sub, line, cells };
+    arts[id] = { g, body, sub, line, cells, deco };
     const t = svgEl('text', { class: 'bg-table-label', 'data-bg-label': id, 'text-anchor': 'middle' });
     labelLayer.append(t);
     tableLabels[id] = t;
@@ -62,12 +75,16 @@ export function createRenderer({ scene, labels }) {
 
   function render(params) {
     const { tank, liquid, table: tbl } = params;
-    setAttrs(table, { y: tbl.y, width: tbl.w, height: 28 });
+    setAttrs(tableTop, { y: tbl.y });
+    setAttrs(table, { y: tbl.y + 6 });
     setAttrs(tankInner, { x: tank.x + tank.wall, y: tank.y, width: tank.w - 2 * tank.wall, height: tank.bottomY - tank.y });
     setAttrs(water, { x: tank.x + tank.wall, y: tank.waterY, width: tank.w - 2 * tank.wall, height: tank.bottomY - tank.waterY, 'data-liquid': liquid.id });
     setAttrs(surface, { x1: tank.x + tank.wall, x2: tank.x + tank.w - tank.wall, y1: liquid.surfaceY, y2: liquid.surfaceY });
     setAttrs(floor, { x1: tank.x + tank.wall, x2: tank.x + tank.w - tank.wall, y1: tank.bottomY, y2: tank.bottomY });
-    setAttrs(frame, { x: tank.x, y: tank.y, width: tank.w, height: tank.h - 0 });
+    setAttrs(sheen, { x1: tank.x + tank.wall + 6, x2: tank.x + tank.w - tank.wall - 6, y1: liquid.surfaceY + 5, y2: liquid.surfaceY + 5 });
+    const open = `M ${tank.x} ${tank.y} V ${tank.y + tank.h} H ${tank.x + tank.w} V ${tank.y}`;       // a glass tank: walls and base, no lid
+    setAttrs(frame, { d: open });
+    setAttrs(glass, { d: `M ${tank.x} ${tank.y} V ${tank.y + tank.h} H ${tank.x + tank.w} V ${tank.y} H ${tank.x + tank.w - tank.wall} V ${tank.y + tank.h - tank.wall} H ${tank.x + tank.wall} V ${tank.y} Z` });
     setAttrs(liquidLabel, { x: tank.x + tank.wall + 12, y: tank.waterY + 26 });
     liquidLabel.textContent = labels[liquid.id] ?? '';
     svg.dataset.liquid = liquid.id;
@@ -93,6 +110,7 @@ export function createRenderer({ scene, labels }) {
         a.sub.setAttribute('visibility', 'hidden');
         a.line.setAttribute('visibility', 'hidden');
       }
+      decorate(id, a, p);
       const t = tableLabels[id];
       t.textContent = labels[id] ?? '';
       t.setAttribute('visibility', p.visible && p.where === 'table' ? 'visible' : 'hidden');
@@ -121,6 +139,23 @@ export function createRenderer({ scene, labels }) {
       first = false;
       void svg.getBoundingClientRect();   // settle the first pose before transitions are allowed
       for (const id of OBJECT_IDS) arts[id].g.classList.remove('bg-no-anim');
+    }
+  }
+
+  // The extra strokes that make a block look like a box, wood like a log and stone like a rock. Sizes follow the body.
+  function decorate(id, a, p) {
+    const w = p.w, h = p.h;
+    if (id === 'block') {
+      setAttrs(a.deco[0], { x: 3, y: 3, width: w - 6, height: 7 });
+      setAttrs(a.deco[1], { x: 6, y: 12, width: w - 12, height: h - 18 });
+    } else if (id === 'wood') {
+      [0.3, 0.55, 0.8].forEach((f, i) => setAttrs(a.deco[i], { d: `M ${w * 0.08} ${h * f} Q ${w * 0.35} ${h * (f - 0.05)} ${w * 0.6} ${h * f} T ${w * 0.92} ${h * f}` }));
+      setAttrs(a.deco[3], { cx: w * 0.7, cy: h * 0.42, rx: w * 0.05, ry: h * 0.035 });
+    } else {
+      setAttrs(a.deco[0], { d: `M ${w * 0.18} ${h * 0.4} Q ${w * 0.3} ${h * 0.16} ${w * 0.6} ${h * 0.14} Q ${w * 0.4} ${h * 0.24} ${w * 0.18} ${h * 0.4} Z` });
+      setAttrs(a.deco[1], { d: `M ${w * 0.55} ${h * 0.97} Q ${w * 0.92} ${h * 0.9} ${w * 0.97} ${h * 0.5} Q ${w * 0.85} ${h * 0.78} ${w * 0.55} ${h * 0.97} Z` });
+      setAttrs(a.deco[2], { cx: w * 0.62, cy: h * 0.42, r: Math.max(1.2, w * 0.03) });
+      setAttrs(a.deco[3], { cx: w * 0.34, cy: h * 0.7, r: Math.max(1.2, w * 0.025) });
     }
   }
 

@@ -65,7 +65,8 @@ async function common(p,label,ref){
  const g=await geo(p);
  assert.equal(g.viewBox,'0 0 750 420');assert.equal(g.svgHidden,'true','the drawing is decorative');
  assert.ok(g.overflow<=0,`${label}: page scrolls sideways by ${g.overflow}`);
- if(ref.h===undefined)ref.h=g.card.h;else near(g.card.h,ref.h,0.6,`${label}: the bench card height changed`);
+ const phase=(await info(p)).phase,grp=phase==='mission'?'mission':phase.startsWith('trial3')?'t3':'t12';
+ if(ref[grp]===undefined)ref[grp]=g.card.h;else near(g.card.h,ref[grp],0.6,`${label}: the bench card height changed within ${grp}`);
  assert.ok(g.scene.left>=g.card.left-0.5&&g.scene.left+g.scene.w<=g.card.right+0.5,`${label}: the scene is wider than its card`);
  assert.ok(g.frame.left>=0&&g.frame.right<=750&&g.frame.top>=0&&g.frame.bottom<=420,`${label}: the tank is outside the view`);
  assert.ok(g.zone.left>=0&&g.zone.right<=g.vw,`${label}: the whole tank is not on screen`);
@@ -78,6 +79,16 @@ async function common(p,label,ref){
  }
  const clipped=await p.evaluate(()=>{const bad=[];for(const el of document.querySelectorAll('[data-bg-object]:not([hidden]),.bg-tool:not([hidden]),.bg-pill')){for(let a=el.parentElement;a&&a!==document.body;a=a.parentElement){const s=getComputedStyle(a);if(/(hidden|clip)/.test(s.overflowX+s.overflowY))bad.push((el.dataset.bgObject||el.textContent.trim())+' in '+(a.className||a.tagName))}}return bad});
  assert.deepEqual(clipped,[],`${label}: a focus ring could be clipped`);
+ // Visual Pass V1 guards: no blank band between the parts of the bench, nothing paints over a control, tools are thumb-sized, the focus ring shows
+ const parts=await p.evaluate(()=>{const kids=[...document.getElementById('bg-bench').children].filter(e=>getComputedStyle(e).display!=='none').map(e=>e.getBoundingClientRect());return kids.slice(1).map((r,i)=>r.top-kids[i].bottom)});
+ for(const gap of parts)assert.ok(gap<=40,`${label}: a blank band of ${gap.toFixed(0)} px inside the bench`);
+ const tops=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-object]:not([hidden]),.bg-tool,.bg-pill input')].filter(e=>getComputedStyle(e).visibility!=='hidden'&&e.getBoundingClientRect().width>0).map(e=>{const r=e.getBoundingClientRect(),t=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {id:e.dataset.bgObject||e.dataset.bgAction||e.className,ok:!!t&&(t===e||e.contains(t)||t.closest('label')===e.closest('label'))}}));
+ for(const t of tops)assert.ok(t.ok,`${label}: something paints over ${t.id}`);
+ const tools=await p.evaluate(()=>[...document.querySelectorAll('.bg-tool')].filter(e=>getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).display!=='none').map(e=>{const r=e.getBoundingClientRect();return {id:e.dataset.bgAction,w:r.width,h:r.height}}));
+ for(const t of tools)assert.ok(t.h>=minHit(g.vw)-0.5&&t.w>=minHit(g.vw)-0.5,`${label}: tool ${t.id} is ${t.w.toFixed(0)}×${t.h.toFixed(0)}`);
+ await p.keyboard.press('Tab');
+ const ring=await p.evaluate(()=>{const e=document.querySelector('[data-bg-object]:not([hidden])')||document.querySelector('.bg-tool:not([hidden])');if(!e)return null;e.focus({preventScroll:true});const c=getComputedStyle(e);const r={visible:e.matches(':focus-visible'),style:c.outlineStyle,width:parseFloat(c.outlineWidth)};e.blur();return r});
+ if(ring)assert.ok(ring.visible&&ring.style!=='none'&&ring.width>=2,`${label}: focus ring ${JSON.stringify(ring)}`);
  const covered=await p.evaluate(()=>{const z=document.querySelector('[data-bg-tank]').getBoundingClientRect();const el=document.elementFromPoint(z.left+z.width/2,z.top+z.height*0.2);return !!el&&document.getElementById('bg-scene').contains(el)});
  assert.ok(covered,`${label}: something other than the scene covers the tank`);
  return g;
@@ -109,9 +120,10 @@ async function walk(browser,{width,height,touch,tag}){
  near((B.objects.block.rect.bottom-B.surfaceY)/B.objects.block.rect.h,0.6,0.04,'60% under the surface');
  const aboveB=B.surfaceY-B.objects.block.rect.top;
 
+ const exposed=(o,g)=>g.surfaceY-o.rect.top;
  const C=await at('C-float-80',async()=>{await click(p,'拿出來');await click(p,'加一個配重（+20 g）');await click(p,'放入水中')});
  near((C.objects.block.rect.bottom-C.surfaceY)/C.objects.block.rect.h,0.8,0.04,'80% under the surface');
- assert.ok(C.surfaceY-C.objects.block.rect.top<aboveB,'80% shows less above the surface than 60%');
+ assert.ok(C.surfaceY-C.objects.block.rect.top<aboveB,'80% shows less above the surface than 60%');const aboveC=C.surfaceY-C.objects.block.rect.top;
  near(C.objects.block.rect.w,blockSize,0.6,'the block is as big with 3 cells as with 1');assert.equal(C.objects.block.cells.filter(c=>c.filled).length,2);
 
  const D=await at('D-stay-100g',async()=>{await click(p,'拿出來');await click(p,'加一個配重（+20 g）');await click(p,'放入水中')});
@@ -121,7 +133,8 @@ async function walk(browser,{width,height,touch,tag}){
 
  const E=await at('E-sink-120g',async()=>{await click(p,'拿出來');await click(p,'加一個配重（+20 g）');await click(p,'放入水中')});
  assert.equal((await info(p)).phase,'trial1-complete','the phase does not go back');assert.equal(E.objects.block.outcome,'sink');near(E.objects.block.rect.bottom,E.floorY,TOL,'a sunk block rests on the floor');
- assert.ok(E.objects.block.rect.bottom-D.objects.block.rect.bottom>=20,'stay and sink are visibly different');assert.equal(E.objects.block.cells.filter(c=>c.filled).length,4);
+ assert.ok(E.objects.block.rect.bottom-D.objects.block.rect.bottom>=20,'stay and sink are visibly different');
+ assert.ok(E.objects.block.rect.left>=E.frame.left&&E.objects.block.rect.right<=E.frame.right&&E.objects.block.rect.bottom<=E.floorY+TOL&&E.objects.block.rect.top>=E.surfaceY,'a sunk block is wholly inside the tank');assert.equal(E.objects.block.cells.filter(c=>c.filled).length,4);
 
  await click(p,'拿出來');await click(p,'取下一個配重（−20 g）');await click(p,'放入水中');
  await click(p,'記錄第一次結果');
@@ -133,6 +146,7 @@ async function walk(browser,{width,height,touch,tag}){
  const F=await at('F-float-83-brine',async()=>{await click(p,'放入水中')});
  assert.equal(F.objects.block.outcome,'float');near((F.objects.block.rect.bottom-F.surfaceY)/F.objects.block.rect.h,0.8333,0.04,'83% under the surface');
  assert.ok(F.surfaceY-F.objects.block.rect.top<aboveB-5,'83% shows clearly less above the surface than 60%');
+ assert.ok(aboveB>aboveC&&aboveC>exposed(F.objects.block,F)&&exposed(F.objects.block,F)>0,'the part above the surface shrinks steadily from 60% to 80% to 83%, and never vanishes');
  assert.equal(F.liquidLabel,'濃鹽水');assert.notEqual(F.waterFill,A.waterFill,'brine is drawn differently');
  near(F.surfaceY,A.surfaceY,0,'the surface line is the same');near(F.floorY,A.floorY,0,'and so is the floor');near(F.frame.w,A.frame.w,0.01,'and the tank');
 
@@ -153,7 +167,9 @@ async function walk(browser,{width,height,touch,tag}){
  assert.ok(H.objects.wood.rect.top>=H.frame.top-TOL,'the wood stays inside the tank');near(H.objects.wood.rect.w,119.7,TOL,'wood size');
 
  const I=await at('I-stone',async()=>{await click(p,'拿出來');await click(p,'把小石頭放入水中')});
+ assert.ok(I.objects.stone.rect.left>=I.frame.left&&I.objects.stone.rect.right<=I.frame.right&&I.objects.stone.rect.bottom<=I.floorY+TOL,'the stone is wholly inside the tank');
  assert.equal((await info(p)).phase,'trial3-observed');assert.equal(I.objects.stone.outcome,'sink');near(I.objects.stone.rect.bottom,I.floorY,TOL,'the stone rests on the floor');near(I.objects.stone.rect.w,51.6,TOL,'stone size');
+ assert.ok(ref.t3<ref.t12&&ref.mission<ref.t12,`the mission and trial 3 are compact: ${JSON.stringify(ref)}`);
  clean(s);await s.ctx.close();
  return seen;
 }
@@ -166,14 +182,20 @@ async function walk(browser,{width,height,touch,tag}){
   await check('1280: every representative state is drawn right (A table, B 60%, C 80%, D stay, E sink, F 83% brine, G stay brine, H wood, I stone, J shelf)',()=>walk(browser,{width:1280,height:900,touch:false,tag:'desktop'}));
   await check('390: the same states, with 64 px hit areas, the whole tank on screen and no sideways scroll',()=>walk(browser,{width:390,height:844,touch:true,tag:'phone'}));
 
-  await check('1280: the surface line, the floor and the tank are the same in water and brine, and the bench card keeps its height from the mission to the last bench state',async()=>{
-   const s=await open(browser,{width:1280,height:900});const p=s.page;await click(p,'開始實驗');const h0=(await geo(p)).card.h;await click(p,'動手試試看');
-   near((await geo(p)).card.h,h0,0.6,'mission to trial 1');
+  await check('1280: the bench card keeps its height from the first trial to the second; the mission and trial 3 are compact, not blank',async()=>{
+   const s=await open(browser,{width:1280,height:900});const p=s.page;await click(p,'開始實驗');const m0=(await geo(p)).card.h;await click(p,'動手試試看');const h0=(await geo(p)).card.h;
+   assert.ok(m0<h0,'the mission does not reserve room for tools it does not have');
    await hookDispatch(p,{type:'ADD_BALLAST'},{type:'ADD_BALLAST'},{type:'PUT_IN',objectId:'block'},{type:'RECORD_TRIAL',trial:1});near((await geo(p)).card.h,h0,0.6,'trial 2 waiting');
    await hookDispatch(p,{type:'SELECT_LIQUID',liquidId:'brine'},{type:'PUT_IN',objectId:'block'});near((await geo(p)).card.h,h0,0.6,'trial 2 first drop');
    await hookDispatch(p,{type:'TAKE_OUT'},{type:'ADD_BALLAST'},{type:'PUT_IN',objectId:'block'},{type:'RECORD_TRIAL',trial:2},{type:'CONTINUE'},{type:'ANSWER_COMPARE',question:'stayMass',answer:'larger'},{type:'ANSWER_COMPARE',question:'firstDrop',answer:'float'},{type:'CONTINUE'});
-   near((await geo(p)).card.h,h0,0.6,'trial 3 shelf');
-   await hookDispatch(p,{type:'PUT_IN',objectId:'wood'},{type:'TAKE_OUT'},{type:'PUT_IN',objectId:'stone'});near((await geo(p)).card.h,h0,0.6,'trial 3 observed');
+   const t3=(await geo(p)).card.h;assert.ok(t3<h0,'trial 3 drops the tools it no longer has');
+   await hookDispatch(p,{type:'PUT_IN',objectId:'wood'},{type:'TAKE_OUT'},{type:'PUT_IN',objectId:'stone'});near((await geo(p)).card.h,t3,0.6,'trial 3 observed');
+   clean(s);await s.ctx.close();
+  });
+  await check('1280: the surface line, the floor and the tank are the same in water and brine',async()=>{
+   const s=await open(browser,{width:1280,height:900});const p=s.page;await click(p,'開始實驗');await click(p,'動手試試看');await hookDispatch(p,{type:'ADD_BALLAST'},{type:'ADD_BALLAST'},{type:'PUT_IN',objectId:'block'},{type:'RECORD_TRIAL',trial:1});const a=await geo(p);
+   await hookDispatch(p,{type:'SELECT_LIQUID',liquidId:'brine'});const b=await geo(p);
+   near(b.surfaceY,a.surfaceY,0,'surface');near(b.floorY,a.floorY,0,'floor');near(b.frame.w,a.frame.w,0.01,'tank');assert.notEqual(b.waterFill,a.waterFill,'brine is drawn differently');
    clean(s);await s.ctx.close();
   });
   await check('1280: ballast cells fill one by one while the block\'s outline does not move',async()=>{
