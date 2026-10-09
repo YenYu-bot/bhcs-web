@@ -80,7 +80,7 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_buoyancy_guided_view_browser.cjs
-      - name: Check guided buoyancy student flow through concept in a real browser
+      - name: Check guided buoyancy full student flow in a real browser
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_buoyancy_guided_flow_browser.cjs

@@ -1,15 +1,20 @@
-// Page glue for the guided buoyancy lab: holds the state, asks the engine, asks the script what to say, draws, and hands
-// focus over. It holds no learner wording and no science: the words come from script.js, the truth from engine.js, the
-// pictures from visual.js / render.js, the cards from cards.js, the controls from input.js.
+// Page glue for the guided buoyancy lab: holds the state, asks the engine, asks the script what to say, draws, saves, and
+// hands focus over. It holds no learner wording and no science: the words come from script.js, the truth from engine.js,
+// the pictures from visual.js / render.js, the cards from cards.js, the controls from input.js, and the saving (and
+// every check of what comes back out of a save) from persist.js.
 import { createInitialState, reduce, deriveView } from './engine.js';
 import { createInputController, syncControls, focusHandoff } from './input.js';
 import { visualParams } from './visual.js';
 import { createRenderer } from './render.js';
+import { TEXT_MAX } from './challenges.js';
+import { createStore } from './persist.js';
 import {
   COACH_NAME, LABELS, TEXT, stationTitleFor, MESSAGES, stepNavModel, screenFor, ctaFor, reduceCoach, hintFor, statusModel, dataModel, evidenceModel,
-  compareModel, conceptModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
+  compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
-import { renderSteps, renderCoach, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createAnnouncer } from './cards.js';
+import {
+  renderSteps, renderCoach, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion, createAnnouncer,
+} from './cards.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -20,28 +25,39 @@ const tank = bench.querySelector('[data-bg-tank]');
 const renderer = createRenderer({ scene: $('bg-scene'), labels: LABELS });
 const announcer = createAnnouncer($('bg-announcer'));
 const coachEls = { root: $('bg-coach'), name: $('bg-coach-name'), main: $('bg-coach-main'), sub: $('bg-coach-sub'), tip: $('bg-coach-tip') };
-const SCREENS = ['welcome', 'bench', 'compare', 'concept', 'later'];
-const CARD_OF = { welcome: 'bg-welcome', bench: 'bg-bench-card', compare: 'bg-compare', concept: 'bg-concept', later: 'bg-later' };
+const SCREENS = ['welcome', 'bench', 'compare', 'concept', 'notebook', 'challenge', 'complete'];
+const CARD_OF = { welcome: 'bg-welcome', bench: 'bg-bench-card', compare: 'bg-compare', concept: 'bg-concept', notebook: 'bg-notebook', challenge: 'bg-challenge', complete: 'bg-complete' };
 
-let state = createInitialState();
+const store = createStore();
+const restored = store.load();          // a restore dispatches nothing, announces nothing and sends nothing: the first render simply shows where the learner was
+let state = restored ? restored.state : createInitialState();
 let coach = reduceCoach(null, null, state, deriveView(state));
 let lastScreen = null;
 let pendingRestore = false;            // a drag ended without the engine moving anything: draw the objects back where they belong
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };
+
+const notebook = createNotebook($('bg-notebook'), TEXT, {
+  maxLength: TEXT_MAX,
+  onLevel: (level) => dispatch({ type: 'SAVE_CONCLUSION', fields: { level } }),
+  onRelation: (id, value) => dispatch({ type: 'SAVE_CONCLUSION', fields: { [id]: value } }),
+  onDraft: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
+  onFlush: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
+});
 
 $('bg-stepnav').setAttribute('aria-label', TEXT.stepNavLabel);
 coachEls.root.setAttribute('aria-label', COACH_NAME);
 $('bg-welcome-title').textContent = MESSAGES.welcome.main;
 $('bg-welcome-sub').textContent = MESSAGES.welcome.sub;
 $('bg-compare-title').textContent = TEXT.compareTitle;
-$('bg-later-title').textContent = MESSAGES.later.main;
+$('bg-storage-note').textContent = TEXT.storageUnavailable;
 
 function render(wasCta = false) {
   const active = document.activeElement;   // read before the controls are synced: a browser drops focus the moment the focused control is disabled
   const view = deriveView(state);
   const screen = screenFor(state);
-  const screenChanged = screen.id !== lastScreen;
-  lastScreen = screen.id;
+  const where = screen.id === 'challenge' ? state.phase : screen.id;     // each challenge is a place of its own: arriving at one starts at its title
+  const screenChanged = where !== lastScreen;
+  lastScreen = where;
 
   main.dataset.screen = screen.id;
   for (const id of SCREENS) $(CARD_OF[id]).hidden = id !== screen.id;
@@ -60,6 +76,17 @@ function render(wasCta = false) {
   const concept = screen.id === 'concept' ? conceptModel(state, view) : null;
   if (concept) put($('bg-concept-title'), concept.heading);
   renderConcept($('bg-concept'), concept);
+  const book = screen.id === 'notebook' ? notebookModel(state, view) : null;
+  if (book) put($('bg-notebook-title'), book.heading);
+  notebook.update(book);
+  const challenge = screen.id === 'challenge' ? challengeModel(state, view) : null;
+  if (challenge) put($('bg-challenge-title'), challenge.title);
+  renderChallenge($('bg-challenge'), challenge,
+    (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: challenge.id, step, choice }));
+  const done = screen.id === 'complete' ? completeModel(state) : null;
+  if (done) put($('bg-complete-title'), done.heading);
+  renderCompletion($('bg-complete'), done);
+  $('bg-storage-note').hidden = !store.failed;
 
   syncControls(bench, view);
   const mass = bench.querySelector('[data-bg-mass]');
@@ -72,7 +99,9 @@ function render(wasCta = false) {
   cta.hidden = !c;
   if (c) { put(cta, c.label); cta.disabled = !c.enabled; cta.dataset.action = c.action.type; }
   const targets = screenChanged ? [`#${screen.headingId}`, ...screen.focusTargets] : screen.focusTargets;
-  focusHandoff({ root: document.body, active, ctaGone: wasCta && (!c || cta.hidden), targets });
+  const arrivedAtEnd = screenChanged && screen.id === 'complete';           // the finish is announced by its heading, not by leaving focus on the button
+  const redrawn = Boolean(active) && active !== document.body && !document.body.contains(active);   // a card was rebuilt under the focus (a challenge step opened)
+  focusHandoff({ root: document.body, active, ctaGone: redrawn || (wasCta && (!c || cta.hidden || arrivedAtEnd)), targets });
 }
 
 function dispatch(action) {
@@ -81,6 +110,7 @@ function dispatch(action) {
   state = result.state;
   if (result.accepted) {
     hint.textContent = '';
+    if (action.type === 'RESTART') { store.clear(); notebook.reset(); } else store.save(state);
     const view = deriveView(state);
     coach = reduceCoach(coach, result, state, view);
     announcer.say(announcementFor(result, state, view, action));
@@ -97,9 +127,12 @@ function keepCoachInView() {
 }
 
 cta.addEventListener('click', () => {
+  notebook.flush();                      // what was just typed counts before the button decides whether it is ready
   const c = ctaFor(state, deriveView(state));
   if (c && c.enabled) dispatch(c.action);
 });
+window.addEventListener('pagehide', () => notebook.flush());
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') notebook.flush(); });
 
 createInputController({
   root: bench,

@@ -149,3 +149,42 @@
   .bg-steps { gap: 4px; }
   .bg-step { padding: 4px 6px; font-size: 0.8rem; }
 }
+
+/* ---- B6 notebook, challenges, finish ------------------------------------------------------------------------------- */
+.bg-storage-note { margin: 8px 0 0; color: #4a5a68; font-size: 0.9rem; }
+.bg-storage-note[hidden] { display: none; }
+.bg-nb-evidence { margin: 0 0 16px; }
+.bg-levels { margin: 0 0 16px; padding: 0; border: 0; min-width: 0; }
+.bg-levels legend { padding: 0; margin: 0 0 8px; font-weight: 700; }
+.bg-level-pill { align-items: flex-start; }
+.bg-level-pill > span { display: flex; flex-direction: column; gap: 2px; }
+.bg-level-desc { color: #4a5a68; font-size: 0.9rem; }
+.bg-panel { margin: 0 0 12px; padding: 12px 14px; border: 1px solid #d4dde6; border-radius: 10px; background: #f9fbfd; }
+.bg-panel[hidden] { display: none; }
+.bg-given { margin: 0 0 12px; padding-left: 1.2em; }
+.bg-field { display: grid; gap: 6px; margin: 0 0 12px; }
+.bg-field label { font-weight: 700; }
+.bg-field textarea { width: 100%; font: inherit; padding: 8px 10px; border: 2px solid #5a7a96; border-radius: 8px; resize: vertical; min-height: 6em; }
+.bg-help { margin: 0; color: #4a5a68; font-size: 0.9rem; }
+.bg-ideas { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid #8fb3cf; background: #fff; }
+.bg-ideas[hidden] { display: none; }
+.bg-ideas p { margin: 0 0 4px; font-weight: 700; }
+.bg-ideas ul { margin: 0; padding-left: 1.2em; }
+.bg-notice[hidden] { display: none; }
+.bg-notice[data-kind="ok"] { border-color: #2f7d4f; background: #eef8f1; }
+
+.bg-scenario { margin: 0 0 12px; font-size: 1.05rem; font-weight: 700; }
+.bg-step-card { margin: 0 0 16px; padding: 12px 14px; border: 1px solid #d4dde6; border-radius: 10px; background: #f9fbfd; }
+.bg-step-card[data-solved="true"] { border-color: #2f7d4f; }
+.bg-step-question { margin: 0 0 8px; font-weight: 700; }
+.bg-option-list { display: grid; gap: 8px; }
+.bg-option { min-height: var(--bg-hit-min); padding: 8px 16px; font: inherit; text-align: left; border-radius: 10px; border: 2px solid #5a7a96; background: #fff; color: inherit; cursor: pointer; overflow-wrap: anywhere; }
+.bg-option:disabled { cursor: not-allowed; color: #4a5a68; background: #eef2f6; }
+.bg-option[aria-pressed="true"] { border-color: #2f7d4f; background: #eef8f1; font-weight: 700; color: #1f2a37; }
+
+.bg-complete-intro { margin: 0 0 8px; font-weight: 700; }
+.bg-claims { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 10px; }
+.bg-claims li { padding: 10px 12px; border: 1px solid #b9d9c4; border-radius: 10px; background: #eef8f1; }
+.bg-tick { color: #2f7d4f; font-weight: 700; }
+.bg-complete-link { margin: 0; }
+.bg-link { display: inline-flex; align-items: center; min-height: var(--bg-hit-min); color: #1d4ed8; font-weight: 700; }

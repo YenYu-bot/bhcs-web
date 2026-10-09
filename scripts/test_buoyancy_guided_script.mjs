@@ -8,6 +8,8 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
+import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
+import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
 const here = (rel) => fileURLToPath(new URL(rel, import.meta.url));
 const read = (rel) => fs.readFileSync(here(rel), 'utf8');
@@ -21,6 +23,7 @@ const A = {
   rec1: { type: 'RECORD_TRIAL', trial: 1 }, rec2: { type: 'RECORD_TRIAL', trial: 2 }, next: { type: 'CONTINUE' },
   q: (question, answer) => ({ type: 'ANSWER_COMPARE', question, answer }),
   putWood: { type: 'PUT_IN', objectId: 'wood' }, putStone: { type: 'PUT_IN', objectId: 'stone' },
+  save: (fields) => ({ type: 'SAVE_CONCLUSION', fields }), ch: (id, step, choice) => ({ type: 'ANSWER_CHALLENGE', id, step, choice }),
 };
 class Run {
   constructor() { this.state = createInitialState(); this.coach = S.reduceCoach(null, null, this.state, deriveView(this.state)); this.snaps = []; this.snap(null, null); }
@@ -45,6 +48,15 @@ const TO_COMPARE = [...TO_TRIAL2_DONE, A.next];
 const TO_TRIAL3 = [...TO_COMPARE, A.q('stayMass', 'smaller'), A.q('stayMass', 'larger'), A.q('firstDrop', 'float'), A.next];
 const TO_OBSERVED = [...TO_TRIAL3, A.putWood, A.out, A.putStone];
 const TO_CONCEPT = [...TO_OBSERVED, A.next];
+const TO_NOTEBOOK = [...TO_CONCEPT, A.next];
+const NOTEBOOK_A = A.save({ level: 'A', relationLiquid: 'larger', relationWood: 'density' });
+const TO_C1 = [...TO_NOTEBOOK, NOTEBOOK_A, A.next];
+const C1 = [A.ch(1, 'c1-outcome', 'sink')];
+const TO_C2 = [...TO_C1, ...C1, A.next];
+const C2 = [A.ch(2, 'c2-where', 'under-80'), A.ch(2, 'c2-brine', 'less')];
+const TO_C3 = [...TO_C2, ...C2, A.next];
+const C3 = [A.ch(3, 'c3-reason', 'volume-spread')];
+const TO_COMPLETE = [...TO_C3, ...C3, A.next];
 const run = (...actions) => new Run().do(...actions);
 
 // every string a function hands to the page, wherever it sits in the object
@@ -64,6 +76,7 @@ const NEVER = ['浮力', '受力', '排開', '阿基米德'];
 const everything = ({ state, view, result, action }) => [
   S.screenFor(state), S.stepNavModel(state), S.ctaFor(state, view), S.hintFor(view), S.statusModel(state, view), S.dataModel(state, view),
   S.evidenceModel(state, view), S.compareModel(state, view), S.announcementFor(result, state, view, action),
+  S.conceptModel(state, view), S.notebookModel(state, view), S.challengeModel(state, view), S.completeModel(state),
 ];
 
 await test('welcome: the question, the line under it, and one button', () => {
@@ -97,7 +110,14 @@ await test('buttons: one per phase, with the engine action they send; none while
   assert.equal(at([...TO_COMPARE, A.q('stayMass', 'larger'), A.q('firstDrop', 'float')]).enabled, true);
   assert.equal(at(TO_TRIAL3), null, 'trial3-drop moves on by itself');
   assert.deepEqual(at(TO_OBSERVED), { label: '我觀察到了', action: { type: 'CONTINUE' }, enabled: true });
-  assert.equal(at(TO_CONCEPT), null, 'the concept is where this stage ends');
+  assert.deepEqual(at(TO_CONCEPT), { label: '進入研究手冊', action: { type: 'CONTINUE' }, enabled: true });
+  assert.deepEqual(at(TO_NOTEBOOK), { label: '進入挑戰題', action: { type: 'CONTINUE' }, enabled: false }, 'nothing chosen or written yet');
+  assert.equal(at([...TO_NOTEBOOK, NOTEBOOK_A]).enabled, true);
+  assert.deepEqual(at(TO_C1), { label: '下一個挑戰', action: { type: 'CONTINUE' }, enabled: false });
+  assert.equal(at([...TO_C1, ...C1]).enabled, true);
+  assert.deepEqual(at([...TO_C3]), { label: '看看我完成了什麼', action: { type: 'CONTINUE' }, enabled: false });
+  assert.equal(at([...TO_C3, ...C3]).enabled, true);
+  assert.deepEqual(at(TO_COMPLETE), { label: '再做一次', action: { type: 'RESTART' }, enabled: true });
 });
 
 await test('trial 1: the coach and the status describe what was seen, in plain words', () => {
@@ -319,7 +339,7 @@ await test('concept: the learner\'s numbers come straight from the engine\'s fac
 
 await test('concept: the formula sits on the learner\'s own lines', () => {
   const m = S.conceptModel(run(...TO_CONCEPT).state, run(...TO_CONCEPT).view);
-  assert.equal(m.formula.expression, 'ρ = m ÷ V');
+  assert.equal(m.formula.expression, 'ρ = m / V');
   assert.equal(m.formula.lines[0].text, '密度 = 質量 ÷ 體積');
   const found = m.formula.lines.filter((l) => l.found).map((l) => l.text);
   assert.equal(found.length, 4);
@@ -360,7 +380,9 @@ await test('no formal word reaches the learner before the concept: messages, hin
 
 await test('no force vocabulary anywhere in the guided lab, concept included', () => {
   const r = run(...TO_CONCEPT);
-  const pool = [...strings(S.MESSAGES), ...strings(S.CONCEPT_MESSAGES), ...strings(S.TEXT), ...strings(S.CONCEPT_TEXT), ...strings(S.conceptModel(r.state, r.view))];
+  const pool = [...strings(S.MESSAGES), ...strings(S.CONCEPT_MESSAGES), ...strings(S.TEXT), ...strings(S.CONCEPT_TEXT), ...strings(S.LATE_TEXT), ...strings(S.conceptModel(r.state, r.view))];
+  const full = run(...TO_COMPLETE);
+  for (const snap of full.snaps) pool.push(...strings(everything(snap)), snap.coach.main, snap.coach.sub ?? '');
   for (const snap of r.snaps) pool.push(...strings(everything(snap)));
   for (const word of NEVER) for (const text of pool) assert.ok(!text.includes(word), `"${word}" in "${text}"`);
   const page = read('../tools/science/buoyancy-guided.html');
@@ -467,7 +489,7 @@ await test('screens and steps: every phase has a screen, and the step list moves
     'trial1-recorded': ['bench', 'experiment'], 'trial2-switch-liquid': ['bench', 'experiment'], 'trial2-test': ['bench', 'experiment'],
     'trial2-complete': ['bench', 'experiment'], 'trial2-recorded': ['bench', 'experiment'], compare: ['compare', 'experiment'],
     'trial3-drop': ['bench', 'experiment'], 'trial3-observed': ['bench', 'experiment'], concept: ['concept', 'experiment'],
-    notebook: ['later', 'notebook'], 'challenge-1': ['later', 'challenge'], 'challenge-2': ['later', 'challenge'], 'challenge-3': ['later', 'challenge'], complete: ['later', 'challenge'],
+    notebook: ['notebook', 'notebook'], 'challenge-1': ['challenge', 'challenge'], 'challenge-2': ['challenge', 'challenge'], 'challenge-3': ['challenge', 'challenge'], complete: ['complete', 'challenge'],
   };
   assert.deepEqual(Object.keys(expected), [...PHASES]);
   for (const phase of PHASES) {
@@ -577,7 +599,7 @@ await test('cards: concept, evidence, data, status and coach draw without a live
   cards.renderConcept(doc.getElementById('bg-concept'), S.conceptModel(r.state, r.view));
   const concept = doc.getElementById('bg-concept');
   assert.equal(concept.querySelectorAll('[data-bg-concept-card]').length, 2);
-  assert.equal(concept.querySelector('[data-bg-formula] .bg-formula').textContent, 'ρ = m ÷ V');
+  assert.equal(concept.querySelector('[data-bg-formula] .bg-formula').textContent, 'ρ = m / V');
   assert.equal(concept.querySelectorAll('[data-bg-formula] li[data-found="true"]').length, 4);
   cards.renderEvidence(doc.getElementById('bg-evidence'), S.evidenceModel(r.state, r.view), S.TEXT.evidenceTitle);
   assert.equal(doc.querySelectorAll('[data-bg-evidence-item]').length, 4);
@@ -612,6 +634,301 @@ await test('static guards: cards.js and main.js hold no wording; neither reaches
   const main = strip('../assets/buoyancy-guided/main.js');
   assert.ok(!/window\.__/.test(main), 'main.js ships no test hook');
   assert.ok(!/immersionPercent|immersionFraction|massG|volumeCm3/.test(main.replace(/view\.facts\.currentBlock\.massG/g, '')), 'main.js reads no facts but the mass readout');
+});
+
+
+// ---- B6: notebook, challenges, finish ---------------------------------------------------------------------------------
+
+await test('notebook: heading, the learner\'s own two experiments, and the three ways to finish', () => {
+  const r = run(...TO_NOTEBOOK);
+  assert.equal(r.coach.main, '把你發現的整理成研究手冊。');
+  assert.equal(r.coach.sub, '選一種你喜歡的方式來完成。');
+  const m = S.notebookModel(r.state, r.view);
+  assert.equal(m.heading, '我的研究手冊');
+  assert.deepEqual(m.levels.map((l) => [l.id, l.title]), [['A', '幫我整理'], ['B', '我自己說'], ['C', '我能提出證據']]);
+  assert.equal(m.selectedLevel, null);
+  assert.deepEqual(m.evidenceSummary.observedResponse, [
+    { label: '原本 100 g 的方塊', first: '停在水中', second: '浮起來（約 83% 在水面下）' },
+    { label: '讓方塊停住所需質量', first: '100 g', second: '120 g' },
+  ]);
+  assert.deepEqual(m.evidenceSummary.independentVariable, { label: '液體', from: '水', to: '濃鹽水' });
+  assert.deepEqual(m.levelA.given, ['第一次（水）：讓方塊停住需要 100 g。', '第二次（濃鹽水）：讓方塊停住需要 120 g。']);
+  assert.equal(S.notebookModel(run(...TO_CONCEPT).state, run(...TO_CONCEPT).view), null, 'only in the notebook phase');
+  assert.equal(S.stepNavModel(r.state).currentStep, 'notebook');
+});
+
+await test('notebook level A: the two sentences, what was chosen, a nudge that gives nothing away, and a ready that is the engine\'s', () => {
+  const r = run(...TO_NOTEBOOK, A.save({ level: 'A' }));
+  let m = S.notebookModel(r.state, r.view);
+  assert.deepEqual(m.levelA.stems.map((x) => [x.id, x.legend, x.options.map((o) => o.label), x.selectedValue]), [
+    ['relationLiquid', '換成密度較大的液體後，讓同一個方塊停在液體中，需要的質量會……', ['變大', '變小', '一樣'], null],
+    ['relationWood', '木塊比石頭重，卻浮著，是因為木塊的……比水小。', ['質量', '體積', '密度'], null],
+  ]);
+  assert.equal(m.levelA.nudge, null, 'nothing chosen: nothing to nudge');
+  r.do(A.save({ relationLiquid: 'smaller' }));
+  assert.equal(S.notebookModel(r.state, r.view).levelA.nudge, null, 'one sentence chosen: still nothing');
+  r.do(A.save({ relationWood: 'volume' }));
+  m = S.notebookModel(r.state, r.view);
+  assert.equal(m.levelA.nudge, '再對照一下你剛才的實驗證據。');
+  assert.equal(m.ready, false);
+  assert.deepEqual(m.levelA.stems.map((x) => x.selectedValue), ['smaller', 'volume']);
+  const keys = [...keysDeep(m)].map((k) => k.toLowerCase());
+  assert.ok(!keys.some((k) => /correct|answer|expected/.test(k)), keys.join());
+  assert.ok(!/答錯|錯了/.test(JSON.stringify(m)));
+  r.do(A.save({ relationLiquid: 'larger', relationWood: 'density' }));
+  m = S.notebookModel(r.state, r.view);
+  assert.equal(m.ready, true);
+  assert.equal(m.levelA.nudge, null);
+  assert.equal(m.readyNote, '整理好了，可以進入挑戰題。');
+  const tampered = structuredClone(r.view);
+  tampered.notebook.ready = false;
+  assert.equal(S.notebookModel(r.state, tampered).ready, false, 'ready is read from the engine\'s view');
+  assert.equal(S.ctaFor(r.state, tampered).enabled, false);
+});
+
+await test('notebook levels B and C: the prompts, what was written, and the limitation ideas that wait for the learner\'s own words', () => {
+  const b = run(...TO_NOTEBOOK, A.save({ level: 'B', freeText: '重的不一定沉' }));
+  const mb = S.notebookModel(b.state, b.view);
+  assert.equal(mb.levelB.prompt, '用你自己的話，說說物體什麼時候會浮、什麼時候會沉。');
+  assert.equal(mb.levelB.value, '重的不一定沉');
+  assert.equal(mb.ready, true);
+  assert.equal(S.notebookModel(run(...TO_NOTEBOOK, A.save({ level: 'B', freeText: '重' })).state, run(...TO_NOTEBOOK, A.save({ level: 'B', freeText: '重' })).view).ready, false, 'one character is not enough');
+  const c = run(...TO_NOTEBOOK, A.save({ level: 'C', evidenceText: '第二次實驗' }));
+  let mc = S.notebookModel(c.state, c.view);
+  assert.equal(mc.levelC.q1.label, '你的哪一次實驗，讓你這樣想？');
+  assert.equal(mc.levelC.q2.label, '這個實驗哪裡可能不夠完整？');
+  assert.deepEqual(mc.levelC.ideas, ['只測了水和濃鹽水。', '配重一次增加 20 g，可能找不到更細的停住位置。', '只用了少數幾種物體。']);
+  assert.equal(mc.levelC.showIdeas, false, 'the ideas wait until the learner has written a limitation of their own');
+  assert.equal(mc.ready, false);
+  c.do(A.save({ limitationText: '   ' }));
+  assert.equal(S.notebookModel(c.state, c.view).levelC.showIdeas, false, 'spaces are not writing');
+  c.do(A.save({ limitationText: '只有兩種液體' }));
+  mc = S.notebookModel(c.state, c.view);
+  assert.equal(mc.levelC.showIdeas, true);
+  assert.equal(mc.ready, true);
+  c.do(A.save({ level: 'A' }));
+  assert.equal(S.notebookModel(c.state, c.view).levelC.q1.value, '第二次實驗', 'switching level keeps what was written');
+});
+
+await test('challenges: the three scenarios, questions and options, word for word', () => {
+  const at = (actions) => { const r = run(...actions); return S.challengeModel(r.state, r.view); };
+  const c1 = at(TO_C1), c2 = at(TO_C2), c3 = at(TO_C3);
+  assert.deepEqual([c1.title, c1.scenario, c1.steps[0].question, c1.steps[0].options.map((o) => o.label)], ['挑戰 1／3', '剛才在水中能停住的 100 g 方塊，現在放進食用油。', '結果最可能是？', ['浮起來', '停在液體中', '沉到底']]);
+  assert.deepEqual([c2.title, c2.scenario], ['挑戰 2／3', '一個 80 g、100 cm³ 的方塊放進水裡。']);
+  assert.deepEqual(c2.steps.map((s) => [s.question, s.options.map((o) => o.label), s.unlocked]), [
+    ['靜止後最可能在哪裡？', ['整顆在水面上', '約 80% 在水面下', '停在水中', '沉到底'], true],
+    ['如果換成濃鹽水，在液面下的比例會……', ['變大', '變小', '不變'], false],
+  ]);
+  assert.deepEqual([c3.title, c3.scenario, c3.steps[0].question], ['挑戰 3／3', '同一張鋁箔，揉成小球會沉，折成小船卻能浮。', '哪個說法最合理？']);
+  assert.deepEqual(c3.steps[0].options.map((o) => o.label), [
+    '鋁箔折成船以後質量變小了。',
+    '折成船後，鋁箔和裡面的空氣一起占了更大的整體體積，同樣的質量分布在更大的體積中，所以整體平均密度變小。',
+    '水只會托住船形的東西。',
+    '東西攤得越開就越會浮。',
+  ]);
+  assert.equal(S.challengeModel(run(...TO_CONCEPT).state, run(...TO_CONCEPT).view), null);
+  const keys = [...keysDeep(c3)].map((k) => k.toLowerCase());
+  assert.ok(!keys.some((k) => /answer|expected|solution/.test(k)), keys.join());
+  assert.ok(!JSON.stringify([c1, c2, c3]).includes('排開'));
+});
+
+await test('challenges: the words match the setups the engine and the model really use', () => {
+  const by = (id, step) => CHALLENGES.find((c) => c.id === id).steps.find((x) => x.id === step);
+  for (const c of CHALLENGES) {                                                                              // ids and order are the engine\'s, not the script\'s
+    const m = S.challengeModel(...(() => { const r = run(...[TO_C1, TO_C2, TO_C3][c.id - 1]); return [r.state, r.view]; })());
+    assert.deepEqual(m.steps.map((s) => s.id), c.steps.map((s) => s.id));
+    for (const step of c.steps) assert.deepEqual(m.steps.find((x) => x.id === step.id).options.map((o) => o.value), [...step.options], step.id);
+  }
+  const c1 = by(1, 'c1-outcome');
+  assert.equal(c1.setup.liquidId, 'oil');
+  assert.equal(blockMassG(c1.setup.slots), 100, 'the 100 g in the scenario is what the setup really weighs');
+  assert.equal(blockOutcome(c1.setup).outcome, c1.correct, 'and the engine\'s answer is what the model says');
+  const where = by(2, 'c2-where'), brine = by(2, 'c2-brine');
+  assert.equal(blockMassG(where.setup.slots), 80);
+  assert.equal(BLOCK.volumeCm3, 100);
+  const inWater = blockOutcome(where.setup), inBrine = blockOutcome(brine.setup);
+  assert.equal(inWater.outcome, 'float');
+  assert.equal(Math.round(inWater.immersionFraction * 100), 80, 'about 80%');
+  assert.equal(where.correct, 'under-80');
+  assert.ok(inBrine.immersionFraction < inWater.immersionFraction, 'smaller in brine');
+  assert.equal(brine.correct, 'less');
+  assert.equal(by(3, 'c3-reason').correct, 'volume-spread');
+  assert.equal(S.LATE_TEXT.challenge.items[3].steps['c3-reason'].options.find(([v]) => v === 'volume-spread')[1].includes('整體平均密度變小'), true);
+  const scenarioText = S.LATE_TEXT.challenge.items[2].scenario;
+  assert.ok(scenarioText.includes(`${blockMassG(where.setup.slots)} g`) && scenarioText.includes(`${BLOCK.volumeCm3} cm³`));
+  assert.ok(S.LATE_TEXT.challenge.items[1].scenario.includes(`${blockMassG(c1.setup.slots)} g`));
+  assert.ok(!JSON.stringify(S.LATE_TEXT).includes('0.92'), 'the oil\'s density is nowhere in the script');
+  assert.equal(HINT_AFTER_ATTEMPTS, 2, 'the script\'s "hint from the second try" is the engine\'s constant');
+});
+
+await test('challenge feedback: a confirmation, a generic nudge first, the hint from the second try, never "wrong"', () => {
+  const r = run(...TO_C1);
+  const fb = () => S.challengeModel(r.state, r.view).steps[0].feedback;
+  assert.equal(fb(), null);
+  r.do(A.ch(1, 'c1-outcome', 'float'));
+  assert.deepEqual(fb(), { kind: 'nudge', text: '剛才哪個結果變得更明顯？' });
+  r.do(A.ch(1, 'c1-outcome', 'stay'));
+  assert.deepEqual(fb(), { kind: 'hint', text: '想想第二次實驗：液體變重時，方塊浮起來了；現在液體變輕了。' });
+  r.do(A.ch(1, 'c1-outcome', 'float'));
+  assert.equal(fb().kind, 'hint', 'and it stays');
+  r.do(A.ch(1, 'c1-outcome', 'sink'));
+  assert.deepEqual(fb(), { kind: 'success', text: '這個方塊的密度比食用油大，所以會沉到底。' });
+  const step = S.challengeModel(r.state, r.view).steps[0];
+  assert.deepEqual([step.attempts, step.correct, step.choice], [4, true, 'sink']);
+  assert.equal(S.challengeModel(r.state, r.view).allCorrect, true);
+  assert.equal(r.coach.main, '這題完成了。');
+  for (const item of Object.values(S.LATE_TEXT.challenge.items)) for (const st of Object.values(item.steps)) {
+    for (const t of [st.success, st.hint, st.question]) assert.ok(!/答錯|錯了|正確答案|排開/.test(t), t);
+  }
+  const c2 = run(...TO_C2);
+  assert.deepEqual(S.challengeModel(c2.state, c2.view).steps.map((x) => x.unlocked), [true, false]);
+  c2.do(A.ch(2, 'c2-where', 'all-out'));
+  assert.deepEqual(S.challengeModel(c2.state, c2.view).steps.map((x) => x.unlocked), [true, false], 'a try that did not settle it opens nothing');
+  c2.do(A.ch(2, 'c2-where', 'under-80'));
+  assert.deepEqual(S.challengeModel(c2.state, c2.view).steps.map((x) => x.unlocked), [true, true]);
+  assert.equal(reduce(run(...TO_C2).state, A.ch(2, 'c2-brine', 'less')).accepted, false, 'the engine refuses a step that is not open');
+});
+
+await test('complete: the title, the three claims and the way out, only after the last challenge', () => {
+  const r = run(...TO_COMPLETE);
+  assert.equal(r.coach.main, '你完成這一站了。');
+  assert.deepEqual(S.completeModel(r.state), {
+    heading: '這一站完成了',
+    intro: '你今天自己證明了：',
+    claims: [
+      '同一個方塊換成濃鹽水後，要增加更多內部配重，才會停在液體中。',
+      '300 g 的木塊比 120 g 的石頭重，卻是木塊浮起、石頭沉底，所以不能只看總質量判斷浮沉。',
+      '當物體和液體的密度相同時，物體會停在液體中；要判斷浮沉，要比較物體和液體的密度。',
+    ],
+    link: { href: '../buoyancy-density-lab.html', label: '自由探索／精確數值' },
+  });
+  assert.equal(S.completeModel(r.state).claims.length, 3);
+  assert.equal(S.completeModel(run(...TO_C3, ...C3).state), null);
+  assert.equal(S.screenFor(r.state).id, 'complete');
+  assert.equal(S.stepFor(r.state), 'challenge');
+  assert.equal(S.stationTitleFor(r.state), '浮沉與密度');
+});
+
+await test('announcements: one per real challenge submission, the finish, and the two chosen sentences of level A', () => {
+  const r = run(...TO_NOTEBOOK);
+  const say = (action) => { r.do(action); const snap = r.last; return S.announcementFor(snap.result, snap.state, snap.view, snap.action); };
+  assert.equal(say(A.save({ level: 'A' })), null, 'choosing a level says nothing');
+  assert.equal(say(A.save({ relationLiquid: 'smaller' })), null, 'one sentence chosen: nothing yet');
+  assert.deepEqual(say(A.save({ relationWood: 'volume' })), { id: 'notebook-smaller-volume', text: '再對照一下你剛才的實驗證據。' });
+  assert.deepEqual(say(A.save({ relationLiquid: 'larger', relationWood: 'density' })), { id: 'notebook-larger-density', text: '整理好了，可以進入挑戰題。' });
+  assert.equal(say(A.save({ freeText: '寫了很多字' })), null, 'typing is never announced');
+  r.do(A.save({ level: 'A' }));
+  const c = run(...TO_C1);
+  const ans = (action) => { c.do(action); const snap = c.last; return S.announcementFor(snap.result, snap.state, snap.view, snap.action); };
+  assert.deepEqual(ans(A.ch(1, 'c1-outcome', 'float')), { id: 'challenge-1-c1-outcome-1', text: '剛才哪個結果變得更明顯？' });
+  assert.deepEqual(ans(A.ch(1, 'c1-outcome', 'stay')), { id: 'challenge-1-c1-outcome-2', text: '想想第二次實驗：液體變重時，方塊浮起來了；現在液體變輕了。' });
+  assert.deepEqual(ans(A.ch(1, 'c1-outcome', 'sink')), { id: 'challenge-1-c1-outcome-3', text: '這個方塊的密度比食用油大，所以會沉到底。' });
+  const done = run(...TO_COMPLETE).last;
+  assert.deepEqual(S.announcementFor(done.result, done.state, done.view, done.action), { id: 'complete', text: '這一站完成了。' });
+  const refused = reduce(c.state, A.ch(1, 'c1-outcome', 'sink'));
+  assert.equal(refused.accepted, false);
+  assert.equal(S.announcementFor(refused, c.state, c.view, A.ch(1, 'c1-outcome', 'sink')), null, 'a solved step ignores further presses');
+});
+
+await test('cards: the notebook buffers typing, flushes on leaving, never clobbers what is being typed and never touches storage', async () => {
+  const dom = page();
+  const doc = dom.window.document;
+  const calls = [];
+  const card = cards.createNotebook(doc.getElementById('bg-notebook'), S.TEXT, {
+    maxLength: TEXT_MAX,
+    onLevel: (l) => calls.push(['level', l]), onRelation: (id, v) => calls.push(['relation', id, v]),
+    onDraft: (f) => calls.push(['draft', f]), onFlush: (f) => calls.push(['flush', f]),
+  });
+  const r = run(...TO_NOTEBOOK, A.save({ level: 'B' }));
+  const draw = () => card.update(S.notebookModel(r.state, deriveView(r.state)));
+  draw();
+  const free = doc.getElementById('bg-nb-free');
+  assert.equal(free.getAttribute('maxlength'), String(TEXT_MAX));
+  assert.equal(doc.querySelector('label[for="bg-nb-free"]').textContent, '用你自己的話，說說物體什麼時候會浮、什麼時候會沉。', 'a real label');
+  assert.equal(doc.querySelector('[data-bg-panel="B"]').hidden, false);
+  assert.equal(doc.querySelector('[data-bg-panel="A"]').hidden, true);
+  const type = (el, value) => { el.value = value; el.dispatchEvent(new dom.window.Event('input', { bubbles: true })); };
+  type(free, '重'); type(free, '重的'); type(free, '重的不一定');
+  assert.deepEqual(calls, [], 'nothing leaves while the learner is still typing');
+  await new Promise((resolve) => setTimeout(resolve, 360));
+  assert.deepEqual(calls, [['draft', { freeText: '重的不一定' }]], 'one draft, the last text, after the pause');
+  type(free, '重的不一定沉');
+  free.dispatchEvent(new dom.window.Event('blur'));
+  assert.deepEqual(calls.at(-1), ['flush', { freeText: '重的不一定沉' }], 'leaving the field flushes at once');
+  await new Promise((resolve) => setTimeout(resolve, 360));
+  assert.equal(calls.length, 2, 'and the pending draft is gone with it');
+  type(free, 'abc'); card.flush();
+  assert.deepEqual(calls.at(-1), ['flush', { freeText: 'abc' }]);
+  card.flush();
+  assert.equal(calls.length, 3, 'nothing pending: nothing sent');
+  // typing is never overwritten by an older state
+  type(free, 'newer text');
+  draw();
+  assert.equal(free.value, 'newer text');
+  card.reset();
+  const other = doc.getElementById('bg-nb-evidence');
+  assert.ok(other, 'level C fields exist from the start so nothing is rebuilt when the level changes');
+  // a pasted tag stays text
+  r.do(A.save({ freeText: '<img src=x onerror=alert(1)>' }));
+  card.reset();
+  free.value = ''; draw();
+  assert.equal(free.value, '<img src=x onerror=alert(1)>');
+  assert.equal(doc.querySelectorAll('img').length, 0);
+  const radios = doc.querySelectorAll('input[data-bg-level]');
+  radios[2].checked = true; radios[2].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.deepEqual(calls.at(-1), ['level', 'C']);
+  const src = read('../assets/buoyancy-guided/cards.js').replace(/\/\/.*$/gm, '');
+  assert.ok(!/localStorage|sessionStorage|innerHTML|insertAdjacentHTML|outerHTML/.test(src), 'cards.js never writes storage and never builds HTML from text');
+});
+
+await test('cards: challenge options are real buttons; only an activation is an answer; a solved step locks; the next step appears when it opens', () => {
+  const dom = page();
+  const doc = dom.window.document;
+  const root = doc.getElementById('bg-challenge');
+  const answers = [];
+  const r = run(...TO_C2);
+  const draw = () => cards.renderChallenge(root, S.challengeModel(r.state, deriveView(r.state)), (step, choice) => answers.push([step, choice]));
+  draw();
+  const buttons = [...root.querySelectorAll('[data-bg-option]')];
+  assert.equal(buttons.length, 4, 'only the open step is drawn');
+  assert.ok(buttons.every((b) => b.tagName === 'BUTTON' && b.type === 'button'));
+  assert.equal(root.querySelectorAll('input[type=radio]').length, 0, 'no radios: moving never answers');
+  assert.equal(root.querySelector('[data-bg-step="c2-brine"]'), null, 'the second step does not exist yet');
+  buttons[1].focus();
+  for (const key of ['ArrowDown', 'ArrowRight', 'Tab']) buttons[1].dispatchEvent(new dom.window.KeyboardEvent('keydown', { key, bubbles: true }));
+  buttons[2].focus(); buttons[0].focus();
+  assert.deepEqual(answers, [], 'focus and arrows are not answers');
+  buttons[2].click();
+  assert.deepEqual(answers, [['c2-where', 'stay']], 'one activation, one answer');
+  r.do(A.ch(2, 'c2-where', 'stay'));
+  draw();
+  const again = [...root.querySelectorAll('[data-bg-option]')];
+  assert.ok(again.every((b, i) => b === buttons[i]), 'a wrong try keeps the same buttons, so focus stays where it was');
+  assert.equal(root.querySelector('[data-bg-step="c2-where"]').dataset.attempts, '1');
+  assert.equal(root.querySelector('[data-bg-step-feedback]').textContent, '剛才哪個結果變得更明顯？');
+  r.do(A.ch(2, 'c2-where', 'under-80'));
+  draw();
+  const solved = root.querySelector('[data-bg-step="c2-where"]');
+  assert.equal(solved.dataset.solved, 'true');
+  assert.ok([...solved.querySelectorAll('button')].every((b) => b.disabled), 'solved: locked');
+  assert.equal(solved.querySelector('[aria-pressed="true"]').dataset.bgOption, 'under-80');
+  assert.equal(root.querySelectorAll('[data-bg-step]').length, 2, 'the next step is drawn once it opens');
+  assert.equal(root.querySelectorAll('[data-bg-step="c2-brine"] button:not(:disabled)').length, 3);
+  assert.equal(root.querySelectorAll('[aria-live]').length, 0);
+});
+
+await test('cards: the finish draws its three claims and one link', () => {
+  const dom = page();
+  const doc = dom.window.document;
+  const r = run(...TO_COMPLETE);
+  cards.renderCompletion(doc.getElementById('bg-complete'), S.completeModel(r.state));
+  assert.equal(doc.querySelectorAll('.bg-claims li').length, 3);
+  assert.equal(doc.querySelector('.bg-complete-link a').getAttribute('href'), '../buoyancy-density-lab.html');
+  assert.equal(doc.getElementById('bg-complete').hidden, false);
+  cards.renderCompletion(doc.getElementById('bg-complete'), null);
+  assert.equal(doc.getElementById('bg-complete').hidden, true);
+  const live = [...doc.querySelectorAll('[aria-live], [role=status], [role=alert], output')].map((e) => e.id);
+  assert.deepEqual(live, ['bg-announcer']);
 });
 
 console.log(`\nbuoyancy-guided script: ${tests} tests passed`);

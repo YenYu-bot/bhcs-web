@@ -46,12 +46,15 @@ export const MESSAGES = deepFreeze({
   'compare-done': { main: '你剛才已經找到一個規律了。', sub: '換了液體，同一個方塊要改變質量，才能再次停在液體中。' },
   trial3: { main: '如果換成別的東西呢？', sub: '這次也放放看。' },
   'trial3-observed': { main: '木塊比石頭重，卻浮著；石頭比較輕，卻沉了。', sub: '這和前兩次有什麼不同？' },
-  later: { main: '這一段還在製作中。' },
 });
 
 /** The coach's message once the concept is allowed to be named. */
 export const CONCEPT_MESSAGES = deepFreeze({
   concept: { main: '剛才幾次實驗，其實都在比較同一件事。', sub: '先看看是什麼。' },
+  notebook: { main: '把你發現的整理成研究手冊。', sub: '選一種你喜歡的方式來完成。' },
+  challenge: { main: '來挑戰看看。', sub: '你剛學到的，在新的情況下也成立嗎？' },
+  'challenge-done': { main: '這題完成了。', sub: '可以往下走了。' },
+  complete: { main: '你完成這一站了。', sub: '把你自己證明的事情看一遍。' },
 });
 
 /** Everything else the learner reads before the concept: headings, labels, hints, messages about the controls. */
@@ -101,6 +104,7 @@ export const TEXT = deepFreeze({
     shelfStone: '再把小石頭放進水裡看看。',
   },
   announce: { record1: '第一筆結果已記錄。', record2: '第二筆結果已記錄。' },
+  storageUnavailable: '這台裝置不能儲存進度。',
 });
 
 /** Words that exist only from the concept screen on. conceptModel() is the single way they reach the page. */
@@ -116,12 +120,106 @@ export const CONCEPT_TEXT = deepFreeze({
       '物體的密度比液體大：沉到底，叫做「下沉」。',
     ],
   },
-  formula: { heading: '密度怎麼算', expression: 'ρ = m ÷ V', words: '密度 = 質量 ÷ 體積', note: '上面每一行，都是用你自己的質量和體積算出來的。' },
+  formula: { heading: '密度怎麼算', expression: 'ρ = m / V', words: '密度 = 質量 ÷ 體積', note: '上面每一行，都是用你自己的質量和體積算出來的。' },
   densityUnit: 'g/cm³',
   densityOf: { block: '停在水中的方塊', brineBlock: '停在濃鹽水中的方塊', wood: '大木塊', stone: '小石頭' },
   named: { float: '漂浮', stay: '懸浮', sink: '下沉' },
   versus: { float: '<', stay: '=', sink: '>' },
   objectDensity: '的密度', liquidDensity: '的密度',
+});
+
+/** Words for the notebook, the challenges and the finish: all after the concept, so the formal names are fair game here. */
+export const LATE_TEXT = deepFreeze({
+  cta: { notebook: '進入研究手冊', challenge: '進入挑戰題', nextChallenge: '下一個挑戰', finish: '看看我完成了什麼', again: '再做一次' },
+  notebook: {
+    title: '我的研究手冊',
+    evidenceHeading: '你的兩次實驗',
+    levelsLegend: '選一種方式來完成',
+    levels: [
+      { id: 'A', title: '幫我整理', desc: '選出你剛才發現的關係。' },
+      { id: 'B', title: '我自己說', desc: '用自己的話寫下來。' },
+      { id: 'C', title: '我能提出證據', desc: '寫出你的證據，也想想哪裡不夠完整。' },
+    ],
+    levelA: {
+      stems: {
+        relationLiquid: { legend: '換成密度較大的液體後，讓同一個方塊停在液體中，需要的質量會……', options: [['larger', '變大'], ['smaller', '變小'], ['same', '一樣']] },
+        relationWood: { legend: '木塊比石頭重，卻浮著，是因為木塊的……比水小。', options: [['mass', '質量'], ['volume', '體積'], ['density', '密度']] },
+      },
+      nudge: '再對照一下你剛才的實驗證據。',
+      ready: '整理好了，可以進入挑戰題。',
+    },
+    levelB: { prompt: '用你自己的話，說說物體什麼時候會浮、什麼時候會沉。', placeholder: '寫下你的想法', help: '至少寫兩個字，就可以繼續。' },
+    levelC: {
+      q1: '你的哪一次實驗，讓你這樣想？',
+      q2: '這個實驗哪裡可能不夠完整？',
+      help: '兩欄都至少寫兩個字，就可以繼續。',
+      ideasHeading: '想不到的話，可以對照看看：',
+      ideas: ['只測了水和濃鹽水。', '配重一次增加 20 g，可能找不到更細的停住位置。', '只用了少數幾種物體。'],
+    },
+    given: { first: '第一次', second: '第二次', needs: '讓方塊停住需要' },
+  },
+  challenge: {
+    generic: '剛才哪個結果變得更明顯？',
+    count: '／3',
+    titlePrefix: '挑戰 ',
+    items: {
+      1: {
+        scenario: '剛才在水中能停住的 100 g 方塊，現在放進食用油。',
+        steps: {
+          'c1-outcome': {
+            question: '結果最可能是？',
+            options: [['float', '浮起來'], ['stay', '停在液體中'], ['sink', '沉到底']],
+            success: '這個方塊的密度比食用油大，所以會沉到底。',
+            hint: '想想第二次實驗：液體變重時，方塊浮起來了；現在液體變輕了。',
+          },
+        },
+      },
+      2: {
+        scenario: '一個 80 g、100 cm³ 的方塊放進水裡。',
+        steps: {
+          'c2-where': {
+            question: '靜止後最可能在哪裡？',
+            options: [['all-out', '整顆在水面上'], ['under-80', '約 80% 在水面下'], ['stay', '停在水中'], ['sink', '沉到底']],
+            success: '它會浮著，只有一部分在水面下。',
+            hint: '浮起來不代表整顆都在水面上，回想你看過的「水面下約 N%」。',
+          },
+          'c2-brine': {
+            question: '如果換成濃鹽水，在液面下的比例會……',
+            options: [['more', '變大'], ['less', '變小'], ['same', '不變']],
+            success: '濃鹽水的密度比水大，方塊浸入的比例會變小。',
+            hint: '想想第二次實驗：換成濃鹽水後，原本停在水中的方塊浮起來了。',
+          },
+        },
+      },
+      3: {
+        scenario: '同一張鋁箔，揉成小球會沉，折成小船卻能浮。',
+        steps: {
+          'c3-reason': {
+            question: '哪個說法最合理？',
+            options: [
+              ['mass-less', '鋁箔折成船以後質量變小了。'],
+              ['volume-spread', '折成船後，鋁箔和裡面的空氣一起占了更大的整體體積，同樣的質量分布在更大的體積中，所以整體平均密度變小。'],
+              ['boat-shape-only', '水只會托住船形的東西。'],
+              ['spread-out', '東西攤得越開就越會浮。'],
+            ],
+            success: '質量沒有變，但體積變大了，整體平均密度就變小。',
+            hint: '質量沒有變，那什麼變了？',
+          },
+        },
+      },
+    },
+  },
+  complete: {
+    heading: '這一站完成了',
+    intro: '你今天自己證明了：',
+    claims: [
+      '同一個方塊換成濃鹽水後，要增加更多內部配重，才會停在液體中。',
+      '300 g 的木塊比 120 g 的石頭重，卻是木塊浮起、石頭沉底，所以不能只看總質量判斷浮沉。',
+      '當物體和液體的密度相同時，物體會停在液體中；要判斷浮沉，要比較物體和液體的密度。',
+    ],
+    link: { href: '../buoyancy-density-lab.html', label: '自由探索／精確數值' },
+  },
+  announce: { complete: '這一站完成了。' },
 });
 
 // ---- small formatters (no arithmetic: they place already-decided numbers into words) -----------------------------
@@ -167,7 +265,9 @@ export function screenFor(state) {
   }
   if (phase === 'compare') return { id: 'compare', headingId: 'bg-compare-title', stepId: 'experiment', focusTargets: ['[data-bg-compare]', '#bg-cta', '#bg-compare-title'] };
   if (phase === 'concept') return { id: 'concept', headingId: 'bg-concept-title', stepId: 'experiment', focusTargets: ['#bg-cta', '#bg-concept-title'] };
-  return { id: 'later', headingId: 'bg-later-title', stepId: stepFor(state), focusTargets: ['#bg-cta', '#bg-later-title'] };
+  if (phase === 'notebook') return { id: 'notebook', headingId: 'bg-notebook-title', stepId: 'notebook', focusTargets: ['#bg-cta', '#bg-notebook-title'] };
+  if (phase === 'complete') return { id: 'complete', headingId: 'bg-complete-title', stepId: 'challenge', focusTargets: ['#bg-cta', '#bg-complete-title'] };
+  return { id: 'challenge', headingId: 'bg-challenge-title', stepId: 'challenge', focusTargets: ['[data-bg-option]', '#bg-cta', '#bg-challenge-title'] };
 }
 
 /** The name at the top of the page: neutral until the concept, then the lab's full name. */
@@ -194,6 +294,12 @@ export function ctaFor(state, view) {
     case 'trial2-recorded': return { label: label.compare, action: { type: 'CONTINUE' }, enabled: true };
     case 'compare': return { label: label.continue, action: { type: 'CONTINUE' }, enabled: view.compare?.allCorrect === true };
     case 'trial3-observed': return { label: label.observed, action: { type: 'CONTINUE' }, enabled: true };
+    case 'concept': return { label: LATE_TEXT.cta.notebook, action: { type: 'CONTINUE' }, enabled: true };
+    case 'notebook': return { label: LATE_TEXT.cta.challenge, action: { type: 'CONTINUE' }, enabled: view.notebook?.ready === true };
+    case 'challenge-1': case 'challenge-2':
+      return { label: LATE_TEXT.cta.nextChallenge, action: { type: 'CONTINUE' }, enabled: view.challenge?.allCorrect === true };
+    case 'challenge-3': return { label: LATE_TEXT.cta.finish, action: { type: 'CONTINUE' }, enabled: view.challenge?.allCorrect === true };
+    case 'complete': return { label: LATE_TEXT.cta.again, action: { type: 'RESTART' }, enabled: true };
     default: return null;
   }
 }
@@ -227,7 +333,10 @@ function coachKeyFor(prevKey, result, state, view) {
     case 'trial3-drop': return 'trial3';
     case 'trial3-observed': return 'trial3-observed';
     case 'concept': return 'concept';
-    default: return 'later';
+    case 'notebook': return 'notebook';
+    case 'challenge-1': case 'challenge-2': case 'challenge-3': return view.challenge?.allCorrect ? 'challenge-done' : 'challenge';
+    case 'complete': return 'complete';
+    default: return unknown('phase', state.phase);
   }
 }
 
@@ -435,6 +544,102 @@ export function conceptModel(state, view) {
   };
 }
 
+
+// ---- notebook, challenges, finish -----------------------------------------------------------------------------------
+
+const written = (text) => typeof text === 'string' && text.trim().length > 0;
+
+/**
+ * The notebook. Its evidence summary is the compare model without the questions. `ready` is the engine's; this only says
+ * what was chosen or written so far and which hint-free nudge to show when the two chosen relations do not yet fit the records.
+ */
+export function notebookModel(state, view) {
+  if (state.phase !== 'notebook') return null;
+  const compare = compareModel(state, view);
+  if (!compare) return null;
+  const N = LATE_TEXT.notebook, c = state.conclusion, A = N.levelA;
+  const { record1, record2 } = view.facts;
+  const stem = (id) => ({
+    id,
+    legend: A.stems[id].legend,
+    options: A.stems[id].options.map(([value, label]) => ({ value, label })),
+    selectedValue: c[id],
+  });
+  const bothChosen = c.relationLiquid !== null && c.relationWood !== null;
+  return {
+    heading: N.title,
+    evidenceHeading: N.evidenceHeading,
+    evidenceSummary: {
+      independentVariable: compare.independentVariable,
+      controlledVariables: compare.controlledVariables,
+      observedResponse: compare.observedResponse,
+      procedureNote: compare.procedureNote,
+    },
+    levelsLegend: N.levelsLegend,
+    levels: N.levels.map((l) => ({ ...l })),
+    selectedLevel: c.level,
+    levelA: {
+      given: [
+        `${N.given.first}（${labelOf(state.records[1].liquidId)}）：${N.given.needs} ${formatMass(record1.stayMassG)}。`,
+        `${N.given.second}（${labelOf(state.records[2].liquidId)}）：${N.given.needs} ${formatMass(record2.stayMassG)}。`,
+      ],
+      stems: [stem('relationLiquid'), stem('relationWood')],
+      nudge: bothChosen && !view.notebook.ready ? A.nudge : null,
+    },
+    levelB: { prompt: N.levelB.prompt, placeholder: N.levelB.placeholder, help: N.levelB.help, value: c.freeText },
+    levelC: {
+      q1: { label: N.levelC.q1, value: c.evidenceText },
+      q2: { label: N.levelC.q2, value: c.limitationText },
+      help: N.levelC.help,
+      ideasHeading: N.levelC.ideasHeading,
+      ideas: [...N.levelC.ideas],
+      showIdeas: written(c.limitationText),
+    },
+    ready: view.notebook.ready === true,
+    readyNote: view.notebook.ready === true ? A.ready : null,
+  };
+}
+
+const HINT_FROM_ATTEMPT = 2;
+/** What a step says about the learner's tries so far: nothing, a confirmation, a generic nudge, or (from the second try) the step's hint. */
+function challengeFeedback(challengeId, stepId, { correct, attempts }) {
+  const item = LATE_TEXT.challenge.items[challengeId]?.steps[stepId] ?? unknown('challenge step', stepId);
+  if (correct) return { kind: 'success', text: item.success };
+  if (attempts < 1) return null;
+  return attempts < HINT_FROM_ATTEMPT ? { kind: 'nudge', text: LATE_TEXT.challenge.generic } : { kind: 'hint', text: item.hint };
+}
+
+/** One challenge: its scenario, and each step with what the engine says about it (unlocked, choice, attempts, solved). No answer. */
+export function challengeModel(state, view) {
+  if (!view.challenge) return null;
+  const id = Number(state.phase.slice(-1));
+  const C = LATE_TEXT.challenge, item = C.items[id];
+  return {
+    id,
+    title: `${C.titlePrefix}${id}${C.count}`,
+    scenario: item.scenario,
+    count: 3,
+    steps: view.challenge.steps.map((step) => ({
+      id: step.id,
+      question: item.steps[step.id].question,
+      options: item.steps[step.id].options.map(([value, label]) => ({ value, label })),
+      unlocked: step.unlocked,
+      choice: step.choice,
+      attempts: step.attempts,
+      correct: step.correct,
+      feedback: challengeFeedback(id, step.id, step),
+    })),
+    allCorrect: view.challenge.allCorrect,
+  };
+}
+
+/** The finish: three fixed claims, reachable only by getting through every step before it. */
+export function completeModel(state) {
+  if (state.phase !== 'complete') return null;
+  const C = LATE_TEXT.complete;
+  return { heading: C.heading, intro: C.intro, claims: [...C.claims], link: { ...C.link } };
+}
+
 // ---- announcements --------------------------------------------------------------------------------------------------
 
 /**
@@ -452,6 +657,17 @@ export function announcementFor(result, state, view, action = null) {
   }
   const written = result.events.find((e) => e.type === 'record-written' && (e.trial === 1 || e.trial === 2));
   if (written) return { id: written.id, text: written.trial === 1 ? TEXT.announce.record1 : TEXT.announce.record2 };
+  const answered = result.events.find((e) => e.type === 'challenge-answered');
+  if (answered) {
+    const fb = challengeFeedback(answered.challengeId, answered.step, answered);
+    return { id: `challenge-${answered.challengeId}-${answered.step}-${answered.attempts}`, text: fb.text };
+  }
+  if (result.transitions.includes('complete')) return { id: 'complete', text: LATE_TEXT.announce.complete };
+  if (action?.type === 'SAVE_CONCLUSION' && state.phase === 'notebook' && ('relationLiquid' in action.fields || 'relationWood' in action.fields)) {
+    const c = state.conclusion;
+    if (c.relationLiquid === null || c.relationWood === null) return null;
+    return { id: `notebook-${c.relationLiquid}-${c.relationWood}`, text: view.notebook.ready ? LATE_TEXT.notebook.levelA.ready : LATE_TEXT.notebook.levelA.nudge };
+  }
   if (action?.type === 'ANSWER_COMPARE') {
     const model = compareModel(state, view);
     const q = model?.questions.find((x) => x.id === action.question);
