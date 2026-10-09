@@ -108,7 +108,7 @@ test('existing labs, builders and shared harnesses are untouched by this branch'
   try { base = git('merge-base', 'HEAD', 'origin/main').trim(); } catch { console.log('  (origin/main not available: change-set check skipped)'); return; }
   const changed = git('diff', '--name-only', base).trim().split('\n').filter(Boolean);
   const allowed = [/^assets\/buoyancy-guided\//, /^tools\/science\/buoyancy-guided\.html$/, /^scripts\/(?:check|test)_buoyancy_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/buoyancy_guided_test_support\.cjs$/,
-    /^scripts\/package\.json$/, /^\.github\/workflows\/researcher-lab-check\.yml$/, /^docs\/(?:science-guided-component-spec-v1\.0|buoyancy-guided-spec-v1\.1|buoyancy-guided-prototype-tech-spec-v1\.0)\.md$/];
+    /^scripts\/package\.json$/, /^\.github\/workflows\/researcher-lab-check\.yml$/, /^docs\/(?:science-guided-component-spec-v1\.[01]|buoyancy-guided-spec-v1\.1|buoyancy-guided-prototype-tech-spec-v1\.0)\.md$/];
   assert.deepEqual(changed.filter((f) => !allowed.some((re) => re.test(f))), [], 'files outside the prototype changed');
   for (const protectedFile of ['tools/buoyancy-density-lab.html', 'tools/science/optics.html', 'assets/science-events.js', 'assets/science-lab.js', 'assets/researcher-lab.js', 'assets/researcher-lab.css',
     'tools/science/index.html', 'ziyuan.html', 'sitemap.xml', 'index.html', 'scripts/build_science.mjs', 'scripts/check_researcher_operations.cjs', 'scripts/check_researcher_composition.cjs', 'scripts/test_researcher_batch5.cjs'])
