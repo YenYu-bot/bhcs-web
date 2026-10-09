@@ -370,7 +370,7 @@ async function walk(browser,{width,height,touch,tag}){
   await p.keyboard.press('Tab');assert.equal((await info(p)).active.option,'stay');
   await p.keyboard.press('Space');await settle(p);
   assert.equal(await attempts('c1-outcome'),'2','one Space, one try');
-  assert.equal(await fbText('c1-outcome'),'想想第二次實驗：液體變重時，方塊浮起來了；現在液體變輕了。');
+  assert.equal(await fbText('c1-outcome'),'想想第二次實驗：液體的密度變大時，原本停在水中的方塊浮起來了。現在換成密度比水小的食用油，結果會怎樣？');
   assert.equal((await said(p)).id,'challenge-1-c1-outcome-2');
   await stage('challenge 1 hint',{concept:true});
   await opt('sink').click();await settle(p);
@@ -399,7 +399,7 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('challenge 2 step 1',{concept:true});
   await opt('under-80').click();await settle(p);
   assert.equal(await p.locator('[data-bg-step]').count(),2);
-  assert.equal(await fbText('c2-where'),'它會浮著，只有一部分在水面下。');
+  assert.equal(await fbText('c2-where'),'對，約 80% 在水面下，還有一部分露在水面上。');
   assert.equal((await info(p)).active.option,'more','focus goes to the step that just opened');
   assert.equal(await p.locator('[data-bg-step="c2-where"] [data-bg-option]:not(:disabled)').count(),0);
   assert.equal(await txt(p,'[data-bg-step="c2-brine"] .bg-step-question'),'如果換成濃鹽水，在液面下的比例會……');
@@ -424,7 +424,7 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal(await fbText('c3-reason'),'剛才哪個結果變得更明顯？');
   await stage('challenge 3',{concept:true});
   await opt('volume-spread').click();await settle(p);
-  assert.equal(await fbText('c3-reason'),'質量沒有變，但體積變大了，整體平均密度就變小。');
+  assert.equal(await fbText('c3-reason'),'折成船後，鋁箔和裡面的空氣一起占了更大的整體體積；同樣的質量分布在更大的體積中，所以整體平均密度變小。');
   assert.deepEqual(await cta(p),{label:'看看我完成了什麼',enabled:true});
  });
  await step('complete: the title, the three claims, two ways out; focus on the heading; the announcer says it once',async()=>{

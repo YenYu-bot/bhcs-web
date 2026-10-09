@@ -758,6 +758,7 @@ await test('challenges: the words match the setups the engine and the model real
   assert.ok(scenarioText.includes(`${blockMassG(where.setup.slots)} g`) && scenarioText.includes(`${BLOCK.volumeCm3} cm³`));
   assert.ok(S.LATE_TEXT.challenge.items[1].scenario.includes(`${blockMassG(c1.setup.slots)} g`));
   assert.ok(!JSON.stringify(S.LATE_TEXT).includes('0.92'), 'the oil\'s density is nowhere in the script');
+  for (const t of strings([S.TEXT, S.LATE_TEXT, S.CONCEPT_TEXT, S.MESSAGES, S.CONCEPT_MESSAGES])) assert.ok(!/N%/.test(t), `"N%" is a note-taking placeholder, not learner text: ${t}`);
   assert.equal(HINT_AFTER_ATTEMPTS, 2, 'the script\'s "hint from the second try" is the engine\'s constant');
 });
 
@@ -768,7 +769,7 @@ await test('challenge feedback: a confirmation, a generic nudge first, the hint 
   r.do(A.ch(1, 'c1-outcome', 'float'));
   assert.deepEqual(fb(), { kind: 'nudge', text: '剛才哪個結果變得更明顯？' });
   r.do(A.ch(1, 'c1-outcome', 'stay'));
-  assert.deepEqual(fb(), { kind: 'hint', text: '想想第二次實驗：液體變重時，方塊浮起來了；現在液體變輕了。' });
+  assert.deepEqual(fb(), { kind: 'hint', text: '想想第二次實驗：液體的密度變大時，原本停在水中的方塊浮起來了。現在換成密度比水小的食用油，結果會怎樣？' });
   r.do(A.ch(1, 'c1-outcome', 'float'));
   assert.equal(fb().kind, 'hint', 'and it stays');
   r.do(A.ch(1, 'c1-outcome', 'sink'));
@@ -778,7 +779,11 @@ await test('challenge feedback: a confirmation, a generic nudge first, the hint 
   assert.equal(S.challengeModel(r.state, r.view).allCorrect, true);
   assert.equal(r.coach.main, '這題完成了。');
   for (const item of Object.values(S.LATE_TEXT.challenge.items)) for (const st of Object.values(item.steps)) {
-    for (const t of [st.success, st.hint, st.question]) assert.ok(!/答錯|錯了|正確答案|排開/.test(t), t);
+    for (const t of [st.success, st.hint, st.question]) {
+      assert.ok(!/答錯|錯了|正確答案|排開/.test(t), t);
+      assert.ok(!/N%/.test(t), `a placeholder from the notes reached the learner: ${t}`);
+      assert.ok(!/液體變重|液體變輕/.test(t), `after the concept a liquid is dense or not, not heavy or light: ${t}`);
+    }
   }
   const c2 = run(...TO_C2);
   assert.deepEqual(S.challengeModel(c2.state, c2.view).steps.map((x) => x.unlocked), [true, false]);
@@ -821,7 +826,7 @@ await test('announcements: one per real challenge submission, the finish, and th
   const c = run(...TO_C1);
   const ans = (action) => { c.do(action); const snap = c.last; return S.announcementFor(snap.result, snap.state, snap.view, snap.action); };
   assert.deepEqual(ans(A.ch(1, 'c1-outcome', 'float')), { id: 'challenge-1-c1-outcome-1', text: '剛才哪個結果變得更明顯？' });
-  assert.deepEqual(ans(A.ch(1, 'c1-outcome', 'stay')), { id: 'challenge-1-c1-outcome-2', text: '想想第二次實驗：液體變重時，方塊浮起來了；現在液體變輕了。' });
+  assert.deepEqual(ans(A.ch(1, 'c1-outcome', 'stay')), { id: 'challenge-1-c1-outcome-2', text: '想想第二次實驗：液體的密度變大時，原本停在水中的方塊浮起來了。現在換成密度比水小的食用油，結果會怎樣？' });
   assert.deepEqual(ans(A.ch(1, 'c1-outcome', 'sink')), { id: 'challenge-1-c1-outcome-3', text: '這個方塊的密度比食用油大，所以會沉到底。' });
   const done = run(...TO_COMPLETE).last;
   assert.deepEqual(S.announcementFor(done.result, done.state, done.view, done.action), { id: 'complete', text: '這一站完成了。' });
