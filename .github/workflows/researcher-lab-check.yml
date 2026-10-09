@@ -80,6 +80,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_buoyancy_guided_view_browser.cjs
+      - name: Check guided buoyancy student flow through concept in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_buoyancy_guided_flow_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -103,6 +107,12 @@ jobs:
         with:
           name: buoyancy-view-review
           path: buoyancy-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buoyancy-flow-review
+          path: buoyancy-flow-artifacts/
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: always()

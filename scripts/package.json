@@ -2,7 +2,7 @@
   "name": "bhcs-site-checks",
   "private": true,
   "scripts": {
-    "test": "node test_science_models.mjs && node test_science_ui.cjs && node test_science_illustrations.cjs && node test_science_experience.cjs && node test_science_inquiry.cjs && node test_buoyancy_guided_model.mjs && node test_buoyancy_guided_engine.mjs && node test_buoyancy_guided_input.mjs && node test_buoyancy_guided_visual.mjs && node test_math_drills.mjs",
+    "test": "node test_science_models.mjs && node test_science_ui.cjs && node test_science_illustrations.cjs && node test_science_experience.cjs && node test_science_inquiry.cjs && node test_buoyancy_guided_model.mjs && node test_buoyancy_guided_engine.mjs && node test_buoyancy_guided_input.mjs && node test_buoyancy_guided_visual.mjs && node test_buoyancy_guided_script.mjs && node test_math_drills.mjs",
     "test:math": "node test_math_drills.mjs",
     "test:math:diversity": "MATH_DIVERSITY_REPORT=../docs/math-diversity/diversity-latest.json node test_math_drills.mjs",
     "build:science": "node build_science.mjs"

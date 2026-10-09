@@ -138,12 +138,12 @@ const clean=({errors,external})=>{assert.deepEqual(errors,[]);assert.deepEqual(e
    a=(await info(p)).active;assert.notEqual(a.action,'remove-ballast');assert.ok(a.object==='block'||a.id==='bg-cta'||a.id==='bg-heading');
    clean(s);await s.ctx.close();
   });
-  await check('1280 focus: after the record button goes away focus lands on the heading when nothing else is usable',async()=>{
+  await check('1280 focus: after the record button goes away focus lands on the first thing left to do: the liquid choice',async()=>{
    const s=await open(browser,{width:1280,height:900});await toTrial1(s.page);const p=s.page;
    await dispatch(p,{type:'ADD_BALLAST'},{type:'ADD_BALLAST'},{type:'PUT_IN',objectId:'block'});
    await p.evaluate(()=>document.body.focus());await pressUntil(p,a=>a.id==='bg-cta');
    assert.equal(await p.locator('#bg-cta').isEnabled(),true);await p.keyboard.press('Enter');
-   const r=await info(p);assert.equal(r.phase,'trial2-switch-liquid');assert.equal(r.active.id,'bg-heading');
+   const r=await info(p);assert.equal(r.phase,'trial2-switch-liquid');assert.equal(r.active.liquid,'water','the liquid choice is the only thing usable');
    clean(s);await s.ctx.close();
   });
   await check('1280 trial 3: wood and stone go in one at a time; the second waits for the first to come out',async()=>{
@@ -184,32 +184,32 @@ const clean=({errors,external})=>{assert.deepEqual(errors,[]);assert.deepEqual(e
    clean(s);await s.ctx.close();
   });
   await check('390 touch: dragging the block into the tank puts it in, and the page does not scroll',async()=>{
-   const s=await open(browser,{width:390,height:844,touch:true});await toTrial1(s.page);const p=s.page;await tall(p);
+   const s=await open(browser,{width:390,height:844,touch:true});await toTrial1(s.page);const p=s.page;await tall(p);const y0=(await info(p)).scrollY;
    await touchDrag(p,await center(p,BLOCK),await center(p,TANK));
-   const r=await info(p);assert.equal(r.tank,'block');assert.equal(r.drops,1);assert.equal(r.scrollY,0);assert.equal(r.scrollX,0);
-   await touchDrag(p,await center(p,BLOCK),{x:195,y:10});const out=await info(p);assert.equal(out.tank,'','dragged out of the tank');assert.equal(out.scrollY,0);
+   const r=await info(p);assert.equal(r.tank,'block');assert.equal(r.drops,1);assert.equal(r.scrollY,y0,'the page stayed where it was');assert.equal(r.scrollX,0);
+   await touchDrag(p,await center(p,BLOCK),{x:195,y:10});const out=await info(p);assert.equal(out.tank,'','dragged out of the tank');assert.equal(out.scrollY,y0);
    clean(s);await s.ctx.close();
   });
   await check('390 touch: let go outside the tank puts nothing in and says why',async()=>{
-   const s=await open(browser,{width:390,height:844,touch:true});await toTrial1(s.page);const p=s.page;await tall(p);
+   const s=await open(browser,{width:390,height:844,touch:true});await toTrial1(s.page);const p=s.page;await tall(p);const y0=(await info(p)).scrollY;
    await touchDrag(p,await center(p,BLOCK),{x:195,y:10});
-   const r=await info(p);assert.equal(r.tank,'');assert.equal(r.drops,0);assert.match(r.hint,/水槽/);assert.equal(r.scrollY,0);
+   const r=await info(p);assert.equal(r.tank,'');assert.equal(r.drops,0);assert.match(r.hint,/水槽/);assert.equal(r.scrollY,y0,'the page stayed where it was');
    clean(s);await s.ctx.close();
   });
   await check('390 touch: a vertical swipe on the tank scrolls the page and moves nothing; a sideways swipe never scrolls sideways',async()=>{
-   const s=await open(browser,{width:390,height:844,touch:true});await toTrial1(s.page);const p=s.page;await tall(p);
+   const s=await open(browser,{width:390,height:844,touch:true});await toTrial1(s.page);const p=s.page;await tall(p);const y0=(await info(p)).scrollY;
    const t=await center(p,TANK);await touchDrag(p,t,{x:t.x,y:t.y-60});
-   const r=await info(p);assert.ok(r.scrollY>0,'the page scrolled');assert.equal(r.tank,'');assert.equal(r.drops,0);
-   await p.evaluate(()=>scrollTo(0,0));await touchDrag(p,{x:300,y:t.y},{x:40,y:t.y});
+   const r=await info(p);assert.ok(r.scrollY>y0,'the page scrolled');assert.equal(r.tank,'');assert.equal(r.drops,0);
+   await p.evaluate(()=>scrollTo(0,0));const t2=await center(p,TANK);await touchDrag(p,{x:300,y:t2.y},{x:40,y:t2.y});
    const side=await info(p);assert.equal(side.scrollX,0);assert.equal(side.tank,'');
    clean(s);await s.ctx.close();
   });
   await check('390 touch: a locked object leaves the swipe to the page',async()=>{
-   const s=await open(browser,{width:390,height:844,touch:true});await toSwitch(s.page);const p=s.page;await tall(p);
+   const s=await open(browser,{width:390,height:844,touch:true});await toSwitch(s.page);const p=s.page;await tall(p);const y0=(await info(p)).scrollY;
    assert.equal(await p.locator(BLOCK).getAttribute('aria-disabled'),'true');
    assert.equal(await p.locator(BLOCK).evaluate(e=>getComputedStyle(e).touchAction),'pan-y');
    const c=await center(p,BLOCK);await touchDrag(p,c,{x:c.x,y:c.y-60});
-   const r=await info(p);assert.ok(r.scrollY>0,'the page scrolled from a locked object');assert.equal(r.tank,'');
+   const r=await info(p);assert.ok(r.scrollY>y0,'the page scrolled from a locked object');assert.equal(r.tank,'');
    clean(s);await s.ctx.close();
   });
 
