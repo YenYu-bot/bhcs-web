@@ -72,6 +72,18 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_researcher_operations.cjs
+      - name: Check guided optics input layer in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_optics_guided_input_browser.cjs
+      - name: Check guided optics bench states and page layout in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_optics_guided_view_browser.cjs
+      - name: Check the guided optics student flow (script, evidence, focus) in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_optics_guided_flow_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -89,6 +101,18 @@ jobs:
         with:
           name: researcher-operation-review
           path: operation-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: optics-view-review
+          path: optics-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: optics-flow-review
+          path: optics-flow-artifacts/
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: always()
