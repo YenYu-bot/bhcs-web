@@ -7,12 +7,26 @@ const root=path.resolve(__dirname,'..');
 const MAIN='/assets/buoyancy-guided/main.js';
 const HOOK='\nwindow.__bgTest = { dispatch, getState: () => state, view: () => deriveView(state) };\n';
 
-/** Same-origin only; optionally serves main.js with the test hook appended. `external` collects every non-same-origin URL requested. */
-async function guardContext(ctx,base,{hook=false,external=[]}={}){
+const ADAPTER='/assets/science-events.js';
+// The site adapter is replaced in every browser check, so a test never reaches the real analytics transport:
+//   spy     (default)  records every call in window.__testScienceEvents and does nothing else
+//   throw              an adapter that raises on every call
+//   absent             an adapter script that defines nothing
+const ADAPTERS={
+ spy:'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); };\n',
+ throw:'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); throw new Error("adapter down"); };\n',
+ absent:'/* no adapter on this page */\n',
+};
+
+/** Same-origin only; optionally serves main.js with the test hook appended, and always stands in for the site adapter.
+ *  `external` collects every non-same-origin URL requested. */
+async function guardContext(ctx,base,{hook=false,external=[],adapter='spy'}={}){
  await ctx.route('**/*',route=>{
   const url=route.request().url();
   if(url.startsWith(base)){
-   if(hook&&new URL(url).pathname===MAIN)return route.fulfill({status:200,contentType:'text/javascript',body:fs.readFileSync(path.join(root,MAIN),'utf8')+HOOK});
+   const pathname=new URL(url).pathname;
+   if(pathname===ADAPTER)return route.fulfill({status:200,contentType:'text/javascript',body:ADAPTERS[adapter]});
+   if(hook&&pathname===MAIN)return route.fulfill({status:200,contentType:'text/javascript',body:fs.readFileSync(path.join(root,MAIN),'utf8')+HOOK});
    return route.continue();
   }
   external.push(url);

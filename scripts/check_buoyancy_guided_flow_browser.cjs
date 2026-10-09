@@ -47,14 +47,18 @@ const liveRegions=p=>p.evaluate(()=>({attr:[...document.querySelectorAll('[aria-
  announcer:{live:document.getElementById('bg-announcer').getAttribute('aria-live'),atomic:document.getElementById('bg-announcer').getAttribute('aria-atomic')}}));
 
 const shot=async(p,name,tag)=>{fs.mkdirSync(OUT,{recursive:true});await p.screenshot({path:path.join(OUT,`${tag}-${name}.png`),fullPage:true})};
-async function open(browser,{width,height,touch=false}){
+async function open(browser,{width,height,touch=false,adapter='spy'}){
  const ctx=await browser.newContext({viewport:{width,height},hasTouch:touch,isMobile:touch,reducedMotion:'reduce'});
- const external=[];await guardContext(ctx,base,{hook:false,external});        // no test hook: the walk uses the page the learner has
+ const external=[];await guardContext(ctx,base,{hook:false,external,adapter});        // no test hook: the walk uses the page the learner has; the site adapter is a spy
  const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  await page.goto(base+PAGE);await page.waitForSelector('#main[data-phase]');
  return {ctx,page,errors,external};
 }
 const clean=({errors,external})=>{assert.deepEqual(errors,[]);assert.deepEqual(external,[])};
+
+const LAB='buoyancy-guided';
+const SEQUENCE=['lab_start','trial_recorded','trial_recorded','compare_complete','trial_recorded','counterexample_observed','notebook_complete','challenge_complete','challenge_complete','challenge_complete','lab_complete'];
+const track=p=>p.evaluate(()=>window.__testScienceEvents||null);      // what the page handed the (spy) site adapter
 
 let base;const results=[];
 const check=async(name,fn)=>{const row={name};try{await fn();row.pass=true}catch(e){row.pass=false;row.error=e.message}results.push(row);console.log(JSON.stringify(row));return row.pass};
@@ -91,6 +95,8 @@ async function walk(browser,{width,height,touch,tag}){
   assert.deepEqual(await cta(p),{label:'開始實驗',enabled:true});
   assert.equal(await p.locator('#bg-coach').isHidden(),true);assert.equal(await p.locator('#bg-side').isHidden(),true);
   assert.equal(await txt(p,'#bg-heading'),'浮沉實驗');
+  assert.equal(await txt(p,'#bg-privacy-note'),'匿名使用事件不含研究手冊文字、作答內容或學生姓名。','the page says what is and is not sent');
+  assert.deepEqual(await track(p),[],'opening the page is not a milestone');
   const steps=await p.evaluate(()=>({tag:document.getElementById('bg-steps').tagName,labels:[...document.querySelectorAll('#bg-steps li')].map(li=>li.textContent.replace(/\s+/g,' ').trim()),current:[...document.querySelectorAll('#bg-steps li')].map(li=>li.getAttribute('aria-current')),interactive:document.querySelectorAll('#bg-steps button,#bg-steps a,#bg-steps [tabindex]').length}));
   assert.deepEqual(steps,{tag:'OL',labels:['01 接任務','02 動手做','03 研究手冊','04 挑戰題'],current:['step',null,null,null],interactive:0});
   await stage('welcome');
@@ -442,12 +448,17 @@ async function walk(browser,{width,height,touch,tag}){
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   const a=await said(p);assert.deepEqual([a.id,a.text],['complete','這一站完成了。']);
   assert.equal((await saved()).phase,'complete');
+  const sent=await track(p);
+  assert.deepEqual(sent.map(c=>c[0]),SEQUENCE,'eleven milestones, in order, for one whole visit');
+  assert.ok(sent.every(c=>c.length===2&&c[1]===LAB),'each call is (name, lab id) and nothing more');
+  for(const secret of ['SECRET','重的不一定沉','第二次實驗','只有兩種液體','larger','density'])assert.ok(!JSON.stringify(sent).includes(secret),secret);
   await stage('complete',{concept:true});
  });
  await step('reload at the finish: still finished, and nothing is announced for a restore',async()=>{
   await p.reload();await p.waitForSelector('#main[data-phase]');
   const r=await info(p);assert.deepEqual([r.phase,r.screen],['complete','complete']);
   const a=await said(p);assert.deepEqual([a.id,a.text,a.writes],[null,'',0]);
+  assert.deepEqual(await track(p),[],'restoring the finish sends no lab_complete, nor anything else');
   assert.equal(await p.locator('.bg-claims li').count(),3);
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   assert.equal(await txt(p,'#bg-heading'),'浮沉與密度');
@@ -466,6 +477,7 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal(await p.evaluate(k=>localStorage.getItem(k),KEY),null);
   await click(p,'開始實驗');await click(p,'動手試試看');
   assert.equal((await info(p)).phase,'trial1-test','and the lab can be done again');
+  assert.deepEqual(await track(p),[['lab_start',LAB]],'a restart sends nothing; the next real start sends one lab_start');
   const live=await liveRegions(p);assert.deepEqual(live.attr,['bg-announcer']);
  });
  await step('console: no errors and no request left the site',async()=>{clean(s)});
@@ -666,6 +678,44 @@ async function persistence(browser){
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
   await ctx.close();
  });
+ await check('save J: a restore sends no milestone; the first real step after it sends exactly its own',async()=>{
+  const s=await open(browser,sizes[0]);const p=s.page;
+  await p.goto(base+PAGE);
+  await inject(p,serialize(play(...CMPD)));
+  assert.equal((await info(p)).phase,'compare');assert.deepEqual(await track(p),[],'restoring the compare sends nothing');
+  await click(p,'繼續實驗');
+  assert.deepEqual(await track(p),[['compare_complete',LAB]],'the first real step brings its own milestone');
+  await inject(p,serialize(play(...NB,A.save({level:'B',freeText:'重的東西不一定沉'}))));
+  assert.equal((await info(p)).phase,'notebook');assert.deepEqual(await track(p),[],'restoring the notebook sends nothing');
+  await p.getByRole('button',{name:'進入挑戰題',exact:true}).click();await settle(p);
+  assert.deepEqual(await track(p),[['notebook_complete',LAB]]);
+  await inject(p,serialize(play(...C2S1)));
+  assert.equal((await info(p)).phase,'challenge-2');assert.deepEqual(await track(p),[],'restoring a challenge sends nothing');
+  await p.locator('[data-bg-option="less"]').click();await settle(p);
+  assert.deepEqual(await track(p),[],'an answer is not a milestone');
+  await click(p,'下一個挑戰');
+  assert.deepEqual(await track(p),[['challenge_complete',LAB]]);
+  await inject(p,serialize(play(...C2,A.ch(2,'c2-where','under-80'),A.ch(2,'c2-brine','less'),A.next,A.ch(3,'c3-reason','volume-spread'))));
+  assert.equal((await info(p)).phase,'challenge-3');assert.deepEqual(await track(p),[]);
+  await click(p,'看看我完成了什麼');
+  assert.deepEqual(await track(p),[['challenge_complete',LAB],['lab_complete',LAB]],'the finish sends its two, once');
+  assert.equal((await said(p)).id,'complete');
+  clean(s);await s.ctx.close();
+ });
+ for(const adapter of ['absent','throw']){
+  await check(`adapter ${adapter}: the lab runs on, with no error on the page`,async()=>{
+   const s=await open(browser,{...sizes[0],adapter});const p=s.page;
+   await ui(p,'record1');
+   assert.equal((await info(p)).phase,'trial2-switch-liquid');
+   await p.locator('input[data-bg-liquid][value="brine"]').check();await click(p,'放入水中');
+   assert.equal((await info(p)).phase,'trial2-test','and the lab carries on');
+   const events=await track(p);
+   if(adapter==='throw')assert.deepEqual(events.map(c=>c[0]),['lab_start','trial_recorded'],'the adapter was called, failed, and nothing else noticed');
+   else assert.equal(events,null,'there was no adapter to call');
+   assert.equal((await saved(p)).records['1'].slots,3,'and saving is not affected either');
+   clean(s);await s.ctx.close();
+  });
+ }
  for(const size of sizes){
   await check(`${size.tag} restore: notebook levels B and C come back as written, with the button, and pass axe`,async()=>{
    const s=await open(browser,size);const p=s.page;

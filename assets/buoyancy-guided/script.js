@@ -105,6 +105,7 @@ export const TEXT = deepFreeze({
   },
   announce: { record1: '第一筆結果已記錄。', record2: '第二筆結果已記錄。' },
   storageUnavailable: '這台裝置不能儲存進度。',
+  privacyNote: '匿名使用事件不含研究手冊文字、作答內容或學生姓名。',
 });
 
 /** Words that exist only from the concept screen on. conceptModel() is the single way they reach the page. */

@@ -8,6 +8,7 @@ import { visualParams } from './visual.js';
 import { createRenderer } from './render.js';
 import { TEXT_MAX } from './challenges.js';
 import { createStore } from './persist.js';
+import { analyticsFor, createTracker } from './analytics.js';
 import {
   COACH_NAME, LABELS, TEXT, stationTitleFor, MESSAGES, stepNavModel, screenFor, ctaFor, reduceCoach, hintFor, statusModel, dataModel, evidenceModel,
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
@@ -29,6 +30,7 @@ const SCREENS = ['welcome', 'bench', 'compare', 'concept', 'notebook', 'challeng
 const CARD_OF = { welcome: 'bg-welcome', bench: 'bg-bench-card', compare: 'bg-compare', concept: 'bg-concept', notebook: 'bg-notebook', challenge: 'bg-challenge', complete: 'bg-complete' };
 
 const store = createStore();
+const trackAnalytics = createTracker();
 const restored = store.load();          // a restore dispatches nothing, announces nothing and sends nothing: the first render simply shows where the learner was
 let state = restored ? restored.state : createInitialState();
 let coach = reduceCoach(null, null, state, deriveView(state));
@@ -50,6 +52,7 @@ $('bg-welcome-title').textContent = MESSAGES.welcome.main;
 $('bg-welcome-sub').textContent = MESSAGES.welcome.sub;
 $('bg-compare-title').textContent = TEXT.compareTitle;
 $('bg-storage-note').textContent = TEXT.storageUnavailable;
+$('bg-privacy-note').textContent = TEXT.privacyNote;
 
 function render(wasCta = false) {
   const active = document.activeElement;   // read before the controls are synced: a browser drops focus the moment the focused control is disabled
@@ -110,6 +113,7 @@ function dispatch(action) {
   state = result.state;
   if (result.accepted) {
     hint.textContent = '';
+    trackAnalytics(analyticsFor(result));      // milestones only, from what this accepted action did; never from the restore
     if (action.type === 'RESTART') { store.clear(); notebook.reset(); } else store.save(state);
     const view = deriveView(state);
     coach = reduceCoach(coach, result, state, view);
