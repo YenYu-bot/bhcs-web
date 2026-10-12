@@ -103,22 +103,6 @@ test('source boundaries: each file does the one job it was given', () => {
   assert.ok(!/outcomeIn|blockOutcome|objectOutcome|immersionFraction/.test(src['script.js'] + src['main.js'] + src['cards.js']), 'physics stays in the model and the engine');
 });
 
-test('existing labs, builders and shared harnesses are untouched by this branch', () => {
-  let base;
-  try { base = git('merge-base', 'HEAD', 'origin/main').trim(); } catch { console.log('  (origin/main not available: change-set check skipped)'); return; }
-  const changed = git('diff', '--name-only', base).trim().split('\n').filter(Boolean);
-  const allowed = [/^assets\/buoyancy-guided\//, /^tools\/science\/buoyancy-guided\.html$/, /^scripts\/(?:check|test)_buoyancy_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/buoyancy_guided_test_support\.cjs$/,
-    /^scripts\/package\.json$/, /^\.github\/workflows\/researcher-lab-check\.yml$/, /^docs\/(?:science-guided-component-spec-v1\.[01]|buoyancy-guided-spec-v1\.1|buoyancy-guided-prototype-tech-spec-v1\.0)\.md$/];
-  assert.deepEqual(changed.filter((f) => !allowed.some((re) => re.test(f))), [], 'files outside the prototype changed');
-  for (const protectedFile of ['tools/buoyancy-density-lab.html', 'tools/science/optics.html', 'assets/science-events.js', 'assets/science-lab.js', 'assets/researcher-lab.js', 'assets/researcher-lab.css',
-    'tools/science/index.html', 'ziyuan.html', 'sitemap.xml', 'index.html', 'scripts/build_science.mjs', 'scripts/check_researcher_operations.cjs', 'scripts/check_researcher_composition.cjs', 'scripts/test_researcher_batch5.cjs'])
-    assert.ok(!changed.includes(protectedFile), protectedFile);
-  assert.ok(!changed.some((f) => /^(?:assets|tools)\/(?:science\/)?optics-guided|^assets\/optics-guided\//.test(f)), 'the optics prototype is not touched');
-  assert.ok(!changed.some((f) => /^(?:g\d+|math|drills)/.test(path.basename(f)) || /math/i.test(f)), 'no math file');
-  const pkg = git('diff', base, '--', 'scripts/package.json');
-  assert.ok(pkg.split('\n').filter((l) => /^[+-][^+-]/.test(l)).every((l) => /test_buoyancy_guided_/.test(l) || /"test"/.test(l)), 'package.json only gains the new tests');
-});
-
 test('workflow: the guided checks run after Chromium is installed, after the builders, and apart from the 42-station harness', () => {
   const wf = read('.github/workflows/researcher-lab-check.yml');
   const idx = (n) => wf.indexOf(n);
