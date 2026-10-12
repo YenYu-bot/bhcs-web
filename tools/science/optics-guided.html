@@ -8,6 +8,7 @@
 <meta name="description" content="動手移動屏幕與蠟燭，找出清楚影像的位置。導引版原型，尚未公開。">
 <link rel="canonical" href="https://www.bhcs.com.tw/tools/science/optics-guided.html">
 <link rel="icon" href="../../assets/favicon.png">
+<link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
 <link rel="stylesheet" href="../../assets/optics-guided/optics-guided.css">
 <link rel="stylesheet" href="../../assets/optics-guided/input.css">
 </head>
@@ -29,7 +30,7 @@
       <h2 id="og-welcome-title" tabindex="-1"></h2>
       <p>接下來你會親手移動蠟燭和屏幕，自己找出答案。</p>
     </section>
-    <section class="og-coach" id="og-coach" aria-label="余老師提示"><img src="../mini-lab/img/doc-point.png" alt="" width="64" height="70"><div><strong>余老師</strong><div class="og-coach-text" id="og-coach-text" role="status" aria-live="polite"><p class="og-coach-main" id="og-coach-main"></p><p class="og-coach-sub" id="og-coach-sub"></p></div></div></section>
+    <section class="og-coach" id="og-coach" aria-label="余老師提示"><img src="../mini-lab/img/doc-point.png" alt="" width="64" height="70"><div><strong>余老師</strong><div class="og-coach-text" id="og-coach-text"><p class="og-coach-main" id="og-coach-main"></p><p class="og-coach-sub" id="og-coach-sub"></p></div></div></section>
     <section class="og-bench-card" id="og-bench-card" aria-label="虛擬實驗桌"><div class="og-bench" id="og-bench" data-optics-bench></div></section>
     <section class="og-card og-compare" id="og-compare" aria-labelledby="og-compare-title">
       <h2 id="og-compare-title" tabindex="-1">兩次實驗的證據</h2>
@@ -68,6 +69,7 @@
       <button type="button" class="og-link-action" id="og-restart" hidden>清除我的紀錄並重新開始</button>
       <details class="og-advanced"><summary>進階</summary><p><a href="./optics.html">自由探索／精確數值</a></p></details>
     </section>
+    <div class="sg-sr" id="og-announcer" aria-live="polite" aria-atomic="true"></div>
   </main>
   <footer class="og-foot"><p>百宏文教｜免費使用・不需登入</p><p>操作紀錄只在本機儲存；匿名使用事件不含研究筆記、作答內容或學生姓名。</p></footer>
 </div>

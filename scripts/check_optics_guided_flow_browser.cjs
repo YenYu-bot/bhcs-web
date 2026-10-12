@@ -31,9 +31,12 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     page.on('response',r=>{if(r.status()>=400)failed.push(r.status()+' '+r.url())});
     page.on('request',r=>requests.push({url:r.url(),body:r.postData()||''}));
     await page.goto(base+'/tools/science/optics-guided.html');await page.waitForLoadState('networkidle');
+    assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('[aria-live]')].map(e=>e.id)),['og-announcer'],'the announcer is the only live region');
+    assert.equal(await page.locator('#og-coach-text').getAttribute('role'),null);
     const text=()=>page.evaluate(()=>document.body.innerText);
     const state=()=>page.evaluate(()=>window.__opticsGuided.getState());
     const coach=async()=>({main:await page.locator('#og-coach-main').innerText(),sub:await page.locator('#og-coach-sub').innerText()});
+    const said=async()=>{await page.waitForTimeout(80);return page.evaluate(()=>{const a=document.getElementById('og-announcer');return {id:a.dataset.id||null,text:a.textContent,writes:Number(a.dataset.writes||0)}})};
     const active=()=>page.evaluate(()=>document.activeElement&&(document.activeElement.id||document.activeElement.className));
     const press=async(key,n=1)=>{for(let i=0;i<n;i++)await page.keyboard.press(key);await settle(page)};
     const cta=()=>page.locator('#og-cta');
@@ -53,6 +56,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     // --- mission
     await cta().click();await settle(page);
     assert.deepEqual(await coach(),{main:'桌上有一支蠟燭、一片凸透鏡和一面屏幕。現在屏幕上的影像很模糊。',sub:'把屏幕移到影像最清楚的位置。'});
+    let spoken=await said();assert.ok(spoken.id&&spoken.text.includes('桌上有一支蠟燭'),'mission is announced outside the coach card');
     assert.equal(await page.locator('#og-bench-card').isVisible(),true);assert.equal(await cta().innerText(),'動手試試看');
     assert.deepEqual([await hitState('screen'),await hitState('candle')].map(h=>h.locked),[true,true],'nothing moves before the learner starts');
     await shot('2-mission');await axeScan(page,label+' mission');
@@ -61,7 +65,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.match(await active(),/og-hit-screen/,'focus goes to the first movable object');
     assert.equal((await coach()).main,'把屏幕移到影像最清楚的位置。');
     assert.equal(await page.locator('.og-nav button[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'02動手做');
-    // quiet live regions: a drag-length of key presses must not re-announce each step
+    // Coach text only changes on real teaching-message changes; the dedicated live region stays separate.
     await page.evaluate(()=>{window.__mut=0;new MutationObserver(m=>{window.__mut+=m.length}).observe(document.getElementById('og-coach-text'),{subtree:true,childList:true,characterData:true});window.__statusMut=0;new MutationObserver(m=>{window.__statusMut+=m.length}).observe(document.getElementById('og-status'),{subtree:true,attributes:true,attributeFilter:['aria-live']})});
     await press('ArrowLeft');assert.equal((await coach()).main,'試試看哪個位置比較清楚。');
     await press('ArrowLeft',2);assert.equal((await coach()).main,'快找到了。');

@@ -14,8 +14,6 @@
 .bg-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* touch behaviour: a movable object takes over its own gestures; everything else lets the page scroll vertically */
-.bg-scroll-surface { touch-action: pan-y; }
-.bg-direct-manipulation { touch-action: none; }
 
 /* the scene: one fixed-ratio box. The drawing, the tank zone and the touch controls all share it, so percentages line up */
 .bg-bench { display: grid; gap: 12px; }
@@ -111,7 +109,6 @@
 }
 
 /* ---- B5 teaching shell: steps, coach, stage, side cards, status, compare, concept ----------------------------------- */
-.bg-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .bg-wrap { max-width: 1180px; }
 .bg-stepnav { margin: 0 0 12px; }
 .bg-steps { list-style: none; margin: 0; padding: 5px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #fff; border: 1px solid var(--bg-line); border-radius: var(--bg-radius); }

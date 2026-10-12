@@ -40,7 +40,7 @@ test('nothing public links to it: no other page, catalog, sitemap or data file n
 
 test('page shape: hand-written, scoped CSS only, site adapter, no legacy shell, one h1, a privacy note', () => {
   assert.ok(!html.includes('science-self-study') && !html.includes('lab-config'), 'not a builder-generated lab page');
-  assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((m) => m[1]), ['../../assets/buoyancy-guided/buoyancy-guided.css']);
+  assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((m) => m[1]), ['../../assets/science-guided/science-guided.css', '../../assets/buoyancy-guided/buoyancy-guided.css']);
   assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]), ['../../assets/science-events.js', '../../assets/buoyancy-guided/main.js']);
   assert.ok(/<script src="\.\.\/\.\.\/assets\/science-events\.js" defer><\/script>/.test(html), 'the adapter is loaded as it is on the other labs');
   assert.ok(/<script type="module" src="\.\.\/\.\.\/assets\/buoyancy-guided\/main\.js"><\/script>/.test(html));

@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -15,6 +15,7 @@ const safeStorage = () => { try { return window.localStorage; } catch (_) { retu
 const store = createStore({ storage: safeStorage() });
 const restored = restore(store.load());
 const track = createTracker(window);
+const announcer = createAnnouncer($('og-announcer'));
 const actionBar = createActionBar(cta, {
   onAction: (action) => { if (cta.disabled) return; flush(); if (!cta.disabled) dispatch({ type: action }); },
 });
@@ -22,6 +23,7 @@ const actionBar = createActionBar(cta, {
 let state = restored ?? createInitialState();
 let ui = { naming: false };
 let coach = null;
+let announcementSeq = 0;
 let renderedCompare = '', renderedConcept = false, notebookBuilt = false, challengeKey = '';
 
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };   // writing identical text would re-announce in a live region
@@ -198,18 +200,9 @@ function renderRecords() {
 
 const hits = benchView.hits;
 const HEADING = { welcome: 'og-welcome-title', compare: 'og-compare-title', concept: 'og-concept-title', notebook: 'og-notebook-title', challenge: 'og-challenge-title', complete: 'og-complete-title' };
-function focusTargetAfter(wasCta, screen) {
-  const a = document.activeElement;
-  const usable = (e) => e && !e.hidden && !e.disabled && e.dataset.locked !== 'true' && e.offsetParent !== null;
-  const lockedHit = a && (a === hits.screen || a === hits.candle) && a.dataset.locked === 'true';
-  const ctaGone = wasCta && !usable(cta);
-  if (!lockedHit && !ctaGone) return;
-  const next = [hits.screen, hits.candle].find((h) => usable(h) && h !== a) ?? (usable(cta) && a !== cta ? cta : null)
-    ?? (HEADING[screen] ? $(HEADING[screen]) : null);
-  next?.focus({ preventScroll: true });
-}
 
 function render(wasCta = false) {
+  const active = document.activeElement;
   const view = deriveView(state), screen = screenFor(state);
   main.dataset.screen = screen;
   const step = stepFor(state.phase);
@@ -236,7 +229,9 @@ function render(wasCta = false) {
 
   const c = ctaFor(state, view, ui);
   actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action } : null);
-  focusTargetAfter(wasCta, screen);
+  const targets = ['.og-hit-screen', '.og-hit-candle', '#og-cta', ...(HEADING[screen] ? [`#${HEADING[screen]}`] : [])];
+  const ctaGone = wasCta && (cta.hidden || cta.disabled || !document.body.contains(cta));
+  focusHandoff({ root: document.body, active, ctaGone, targets });
 }
 
 function dispatch(action) {
@@ -252,7 +247,11 @@ function dispatch(action) {
     track(analyticsFor(result));
   }
   const view = deriveView(state);
+  const previousCoach = coach;
   coach = reduceCoach(coach, { state, view, events: result.events, transitions: result.transitions, ui });
+  if (result.accepted && coach && coach !== previousCoach) {
+    announcer.say({ id: `optics-coach-${++announcementSeq}`, text: [coach.main, coach.sub].filter(Boolean).join(' ') });
+  }
   render(wasCta);
   return result;
 }

@@ -62,8 +62,8 @@ export function syncControls(root, view) {
     el.dataset.where = o.where;
     el.setAttribute('aria-pressed', String(o.where === 'tank'));
     setLocked(el, locked);
-    toggle(el, 'bg-direct-manipulation', !locked);   // only a movable object takes over touch gestures
-    toggle(el, 'bg-scroll-surface', locked);
+    toggle(el, 'sg-direct-manipulation', !locked);   // only a movable object takes over touch gestures
+    toggle(el, 'sg-scroll-surface', locked);
   }
   const anyShown = Object.values(objects).some((o) => o.available);
   for (const el of root.querySelectorAll('[data-bg-action]')) {

@@ -108,17 +108,24 @@ test('focus handoff reacts when the just-used CTA disappears', () => {
   assert.strictEqual(focusHandoff({ root, active: a, ctaGone: true, targets: ['.target'] }), h);
 });
 
-test('both pilot stations use the shared ActionBar; buoyancy also uses shared announcer and focus handoff', () => {
+test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
   assert.match(optics, /from '\.\.\/science-guided\/components\.js'/);
-  assert.match(optics, /createActionBar/);
+  for (const name of ['createActionBar', 'createAnnouncer', 'focusHandoff']) assert.match(optics, new RegExp(name));
+  assert.ok(!/function focusTargetAfter/.test(optics), 'Optics no longer owns a second focus handoff');
   assert.match(buoyancy, /from '\.\.\/science-guided\/components\.js'/);
   for (const name of ['createActionBar', 'createAnnouncer', 'focusHandoff']) assert.match(buoyancy, new RegExp(name));
   const cards = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/cards.js'), 'utf8');
   const input = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/input.js'), 'utf8');
   assert.ok(!/export function createAnnouncer/.test(cards));
   assert.ok(!/export function focusHandoff/.test(input));
+  const opticsPage = fs.readFileSync(path.join(rootDir, 'tools/science/optics-guided.html'), 'utf8');
+  const buoyancyPage = fs.readFileSync(path.join(rootDir, 'tools/science/buoyancy-guided.html'), 'utf8');
+  for (const page of [opticsPage, buoyancyPage]) assert.match(page, /assets\/science-guided\/science-guided\.css/);
+  assert.match(opticsPage, /id="og-announcer" aria-live="polite" aria-atomic="true"/);
+  assert.ok(!/id="og-coach-text"[^>]*(?:aria-live|role="status")/.test(opticsPage), 'Optics coach is visual only');
+  assert.match(buoyancyPage, /class="sg-sr" id="bg-announcer"/);
 });
 
 test('shared CSS contains only the approved behavior utilities in this batch', () => {
