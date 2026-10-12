@@ -33,7 +33,7 @@ test('nothing public links to it: no other page, catalog, sitemap or data file n
   assert.deepEqual(pages, [PAGE], 'no other HTML page contains the prototype\'s name');
   const everywhere = git('grep', '-l', 'buoyancy-guided').trim().split('\n').filter(Boolean);
   const allowed = [/^assets\/buoyancy-guided\//, /^tools\/science\/buoyancy-guided\.html$/, /^scripts\/(?:check|test)_buoyancy_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/buoyancy_guided_test_support\.cjs$/,
-    /^scripts\/package\.json$/, /^\.github\/workflows\/researcher-lab-check\.yml$/, /^docs\/.*buoyancy-guided.*\.md$/];
+    /^scripts\/package\.json$/, /^scripts\/test_science_guided_shared\.mjs$/, /^\.github\/workflows\/researcher-lab-check\.yml$/, /^docs\/.*buoyancy-guided.*\.md$/];
   assert.deepEqual(everywhere.filter((f) => !allowed.some((re) => re.test(f))), [], 'only the prototype\'s own files, tests, workflow and docs mention it');
   assert.ok(!read('tools/buoyancy-density-lab.html').includes('buoyancy-guided'), 'the legacy lab does not link back to the guided page');
 });
