@@ -33,14 +33,6 @@ export function renderCoachExtras(els, coach, tip) {
   els.root.dataset.coach = coach.key;
 }
 
-export function renderStatus(root, status) {
-  root.hidden = !status;
-  if (!status) return;
-  root.dataset.kind = status.kind;
-  put(root.querySelector('[data-bg-status-icon]'), status.icon);
-  put(root.querySelector('[data-bg-status-text]'), status.text);
-}
-
 /** DataCard: a list of conditions, each marked normal / locked / changed. */
 export function renderData(root, model, title, stateText = {}) {
   root.hidden = !model;

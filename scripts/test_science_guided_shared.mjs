@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -222,6 +222,39 @@ test('CoachCard leaves the DOM alone when nothing changed and knows no phase or 
   assert.ok(!doc.getElementById('c').hasAttribute('data-coach'));
 });
 
+const STATUS_HTML = '<div id="b" data-kind="neutral" hidden><span id="i" aria-hidden="true"></span><span id="t"></span></div>';
+const statusEls = (doc) => ({ root: doc.getElementById('b'), icon: doc.getElementById('i'), text: doc.getElementById('t') });
+
+test('StatusBar draws kind/icon/text, hides for null, and is not live (Optics and Buoyancy fixtures)', () => {
+  const dom = new JSDOM(STATUS_HTML);
+  const doc = dom.window.document;
+  const els = statusEls(doc);
+  for (const kind of ['neutral', 'progress', 'success', 'notice', 'warning']) {
+    renderStatusBar(els, { kind, icon: '*', text: kind + ' text' });
+    assert.deepEqual([els.root.hidden, els.root.dataset.kind, els.icon.textContent, els.text.textContent], [false, kind, '*', kind + ' text']);
+  }
+  // Optics-shaped model: clarity level mapped to a presentation kind
+  renderStatusBar(els, { kind: 'success', icon: '✓', text: 'clear' });
+  assert.equal(els.root.dataset.kind, 'success');
+  renderStatusBar(els, null);
+  assert.equal(els.root.hidden, true);
+  renderStatusBar(els, { kind: 'unknown-kind', icon: '', text: 'x' });
+  assert.equal(els.root.dataset.kind, 'neutral', 'an unknown kind falls back to neutral');
+  assert.equal(doc.querySelectorAll('[aria-live], [role=status], [role=alert]').length, 0);
+});
+
+test('StatusBar writes nothing when the model is unchanged', async () => {
+  const dom = new JSDOM(STATUS_HTML);
+  const doc = dom.window.document;
+  const els = statusEls(doc);
+  renderStatusBar(els, { kind: 'progress', icon: 'o', text: 'same' });
+  const seen = [];
+  new dom.window.MutationObserver((r) => seen.push(...r)).observe(els.root, { subtree: true, childList: true, attributes: true, characterData: true });
+  renderStatusBar(els, { kind: 'progress', icon: 'o', text: 'same' });
+  await wait();
+  assert.equal(seen.length, 0);
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -242,6 +275,9 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(buoyancyPage, /class="sg-sr" id="bg-announcer"/);
   assert.match(optics, /renderStepNav/);
   assert.match(optics, /renderCoachCard/);
+  assert.match(optics, /renderStatusBar/);
+  assert.match(buoyancy, /renderStatusBar/);
+  assert.ok(!/export function renderStatus\b/.test(cards), 'Buoyancy cards.js no longer owns renderStatus');
   assert.match(buoyancy, /renderCoachCard/);
   assert.ok(!/export function renderCoach\b/.test(cards), 'Buoyancy cards.js no longer owns renderCoach');
   assert.match(buoyancy, /renderStepNav/);

@@ -14,9 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderCoachExtras, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
+  renderCoachExtras, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
 } from './cards.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -34,6 +34,7 @@ const actionBar = createActionBar(cta, {
   },
 });
 const coachEls = { root: $('bg-coach'), name: $('bg-coach-name'), main: $('bg-coach-main'), sub: $('bg-coach-sub'), tip: $('bg-coach-tip') };
+const statusEls = { root: $('bg-status'), icon: $('bg-status').querySelector('[data-bg-status-icon]'), text: $('bg-status').querySelector('[data-bg-status-text]') };
 const SCREENS = ['welcome', 'bench', 'compare', 'concept', 'notebook', 'challenge', 'complete'];
 const CARD_OF = { welcome: 'bg-welcome', bench: 'bg-bench-card', compare: 'bg-compare', concept: 'bg-concept', notebook: 'bg-notebook', challenge: 'bg-challenge', complete: 'bg-complete' };
 
@@ -80,7 +81,7 @@ function render(wasCta = false) {
   renderStepNav($('bg-steps'), stepNavModel(state));
   renderCoachCard(coachEls, coach);
   renderCoachExtras(coachEls, coach, hintFor(view));
-  renderStatus($('bg-status'), statusModel(state, view));
+  renderStatusBar(statusEls, statusModel(state, view));
   renderData($('bg-data'), dataModel(state, view), TEXT.dataTitle, TEXT.dataStates);
   renderEvidence($('bg-evidence'), evidenceModel(state, view), TEXT.evidenceTitle);
   renderCompare($('bg-compare'), screen.id === 'compare' ? compareModel(state, view) : null, TEXT,

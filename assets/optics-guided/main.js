@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -32,6 +32,11 @@ const STEPS = [
   { id: 'notebook', number: '03', label: '研究手冊' }, { id: 'challenge', number: '04', label: '挑戰題' },
 ];
 const stepNavModel = (phase) => ({ steps: STEPS, currentStep: stepFor(phase) });
+
+// Presentation-only mapping from the bench's clarity level to a status kind; the words and icon still come from clarityMessage.
+const CLARITY_KIND = { 1: 'success', 2: 'progress', 3: 'progress', 4: 'neutral' };
+const statusModel = (view) => ({ kind: CLARITY_KIND[view.clarity.effectiveClarityLevel] ?? 'neutral', ...clarityMessage(view) });
+const statusEls = { root: $('og-status'), icon: $('og-status-icon'), text: $('og-status-text') };
 
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };   // writing identical text would re-announce in a live region
 
@@ -219,9 +224,8 @@ function render(wasCta = false) {
   if (screen === 'bench') {
     benchView.measure();                     // the bench was display:none until now
     benchView.update(view, { rays: state.phase === 'trial1-complete' || state.phase === 'trial2-complete' });
-    const msg = clarityMessage(view);
     $('og-status').dataset.level = String(view.clarity.effectiveClarityLevel);
-    put($('og-status-icon'), msg.icon); put($('og-status-text'), msg.text);
+    renderStatusBar(statusEls, statusModel(view));
   }
   if (screen === 'compare') renderCompare();
   if (screen === 'concept') renderConcept();

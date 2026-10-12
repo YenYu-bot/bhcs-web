@@ -138,3 +138,19 @@ export function renderCoachCard(els, coach) {
   putText(els.sub, coach.sub ?? '');
   setHidden(els.sub, !coach.sub);
 }
+
+const STATUS_KINDS = new Set(['neutral', 'progress', 'success', 'notice', 'warning']);
+
+/**
+ * Shared StatusBar: draws { kind, icon, text } into elements the station owns, or hides the bar for a null model.
+ * Visual only (no aria-live, no status role); the page's single announcer is what speaks.
+ * els = { root, icon, text }.
+ */
+export function renderStatusBar(els, status) {
+  setHidden(els.root, !status);
+  if (!status) return;
+  const kind = STATUS_KINDS.has(status.kind) ? status.kind : 'neutral';
+  if (els.root.dataset.kind !== kind) els.root.dataset.kind = kind;
+  putText(els.icon, status.icon ?? '');
+  putText(els.text, status.text ?? '');
+}
