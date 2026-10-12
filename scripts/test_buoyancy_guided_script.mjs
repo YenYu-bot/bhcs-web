@@ -8,6 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
+import { createAnnouncer } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -442,7 +443,7 @@ await test('announcements: the engine\'s event id decides; same words with anoth
   assert.match(a.id, /^observation-\d+$/);
   const b = { ...a, id: second.id };                                                                       // the same words under the next event id
   const el = { dataset: {}, textContent: '' };
-  const speaker = cards.createAnnouncer(el, { delayMs: 0 });
+  const speaker = createAnnouncer(el, { delayMs: 0 });
   const wait = () => new Promise((resolve) => setTimeout(resolve, 5));
   assert.equal(speaker.say(a), true); await wait();
   assert.equal(el.textContent, a.text); assert.equal(el.dataset.writes, '1');
