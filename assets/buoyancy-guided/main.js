@@ -3,7 +3,7 @@
 // the pictures from visual.js / render.js, the cards from cards.js, the controls from input.js, and the saving (and
 // every check of what comes back out of a save) from persist.js.
 import { createInitialState, reduce, deriveView } from './engine.js';
-import { createInputController, syncControls, focusHandoff } from './input.js';
+import { createInputController, syncControls } from './input.js';
 import { visualParams } from './visual.js';
 import { createRenderer } from './render.js';
 import { TEXT_MAX } from './challenges.js';
@@ -14,8 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderSteps, renderCoach, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion, createAnnouncer,
+  renderSteps, renderCoach, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
 } from './cards.js';
+import { createActionBar, createAnnouncer, focusHandoff } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -25,6 +26,13 @@ const hint = $('bg-hint');
 const tank = bench.querySelector('[data-bg-tank]');
 const renderer = createRenderer({ scene: $('bg-scene'), labels: LABELS });
 const announcer = createAnnouncer($('bg-announcer'));
+const actionBar = createActionBar(cta, {
+  onAction: (action) => {
+    notebook.flush();
+    const current = ctaFor(state, deriveView(state));
+    if (current && current.enabled) dispatch(action);
+  },
+});
 const coachEls = { root: $('bg-coach'), name: $('bg-coach-name'), main: $('bg-coach-main'), sub: $('bg-coach-sub'), tip: $('bg-coach-tip') };
 const SCREENS = ['welcome', 'bench', 'compare', 'concept', 'notebook', 'challenge', 'complete'];
 const CARD_OF = { welcome: 'bg-welcome', bench: 'bg-bench-card', compare: 'bg-compare', concept: 'bg-concept', notebook: 'bg-notebook', challenge: 'bg-challenge', complete: 'bg-complete' };
@@ -99,8 +107,7 @@ function render(wasCta = false) {
   if (screen.id === 'bench') renderer.render(visualParams(view));
 
   const c = ctaFor(state, view);
-  cta.hidden = !c;
-  if (c) { put(cta, c.label); cta.disabled = !c.enabled; cta.dataset.action = c.action.type; }
+  actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action.type } : null);
   const targets = screenChanged ? [`#${screen.headingId}`, ...screen.focusTargets] : screen.focusTargets;
   const arrivedAtEnd = screenChanged && screen.id === 'complete';           // the finish is announced by its heading, not by leaving focus on the button
   const redrawn = Boolean(active) && active !== document.body && !document.body.contains(active);   // a card was rebuilt under the focus (a challenge step opened)
@@ -130,11 +137,6 @@ function keepCoachInView() {
   if (target.getBoundingClientRect().top < 0) target.scrollIntoView({ block: 'start' });
 }
 
-cta.addEventListener('click', () => {
-  notebook.flush();                      // what was just typed counts before the button decides whether it is ready
-  const c = ctaFor(state, deriveView(state));
-  if (c && c.enabled) dispatch(c.action);
-});
 window.addEventListener('pagehide', () => notebook.flush());
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') notebook.flush(); });
 

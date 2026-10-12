@@ -166,32 +166,6 @@ export function renderConcept(root, model) {
   ].filter(Boolean));
 }
 
-// ---- announcer -------------------------------------------------------------------------------------------------------
-
-/**
- * The page's one live region. Same id: nothing is written. A new id: cleared first, then written after a beat, so the
- * same words spoken twice are heard twice. `data-id` and `data-writes` are for the checks, not for the learner.
- */
-export function createAnnouncer(el, { delayMs = 40 } = {}) {
-  let lastId = null, token = 0;
-  return {
-    say(announcement) {
-      if (!announcement || announcement.id === lastId) return false;
-      lastId = announcement.id;
-      const mine = ++token;
-      el.textContent = '';
-      el.dataset.id = announcement.id;
-      setTimeout(() => {
-        if (mine !== token) return;
-        el.textContent = announcement.text;
-        el.dataset.writes = String(Number(el.dataset.writes ?? 0) + 1);
-      }, delayMs);
-      return true;
-    },
-    get lastId() { return lastId; },
-  };
-}
-
 // ---- notebook ----------------------------------------------------------------------------------------------------------
 
 const DEBOUNCE_MS = 300;

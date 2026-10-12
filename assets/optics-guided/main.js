@@ -6,6 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
+import { createActionBar } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -14,6 +15,9 @@ const safeStorage = () => { try { return window.localStorage; } catch (_) { retu
 const store = createStore({ storage: safeStorage() });
 const restored = restore(store.load());
 const track = createTracker(window);
+const actionBar = createActionBar(cta, {
+  onAction: (action) => { if (cta.disabled) return; flush(); if (!cta.disabled) dispatch({ type: action }); },
+});
 
 let state = restored ?? createInitialState();
 let ui = { naming: false };
@@ -231,8 +235,7 @@ function render(wasCta = false) {
   put($('og-save-note'), store.failed ? '這個瀏覽器無法保存進度；關閉頁面後會消失。' : state.records[1] ? (restored ? '已接續你上次做到的地方。進度只儲存在這台瀏覽器。' : '進度只儲存在這台瀏覽器。') : '');
 
   const c = ctaFor(state, view, ui);
-  cta.hidden = !c;
-  if (c) { put(cta, c.label); cta.disabled = !c.enabled; cta.dataset.action = c.action; }
+  actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action } : null);
   focusTargetAfter(wasCta, screen);
 }
 
@@ -261,7 +264,6 @@ const controller = createInputController({
 });
 controller.attach(hits.screen, 'screen');
 controller.attach(hits.candle, 'candle');
-cta.addEventListener('click', () => { if (cta.disabled) return; flush(); if (!cta.disabled) dispatch({ type: cta.dataset.action }); });
 $('og-restart').addEventListener('click', () => {
   if (!confirm('清除這台瀏覽器上的紀錄並重新開始？')) return;
   store.clear();

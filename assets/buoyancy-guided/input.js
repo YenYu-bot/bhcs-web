@@ -82,25 +82,6 @@ export function syncControls(root, view) {
   for (const tank of root.querySelectorAll('[data-bg-tank]')) tank.dataset.object = view.tank.objectId ?? '';
 }
 
-// ---- focus -------------------------------------------------------------------------------------------------------------
-
-/**
- * Moves focus only when it has been left on something that just became unavailable, or when the button that was just
- * pressed has gone. Otherwise it leaves focus alone. `targets` are selectors in order of preference.
- * Returns the element that received focus, or null.
- */
-export function focusHandoff({ root, active, ctaGone = false, targets }) {
-  const body = root.ownerDocument.body;
-  const stranded = Boolean(active) && active !== body && !isUsable(active);
-  if (!stranded && !ctaGone) return null;
-  for (const selector of targets) {
-    for (const el of root.querySelectorAll(selector)) {
-      if (el !== active && isUsable(el) && typeof el.focus === 'function') { el.focus({ preventScroll: true }); return el; }
-    }
-  }
-  return null;
-}
-
 // ---- the controller -------------------------------------------------------------------------------------------------
 
 /**
