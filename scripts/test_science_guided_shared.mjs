@@ -108,6 +108,36 @@ test('focus handoff reacts when the just-used CTA disappears', () => {
   assert.strictEqual(focusHandoff({ root, active: a, ctaGone: true, targets: ['.target'] }), h);
 });
 
+test('focus handoff skips CSS-hidden targets (self, ancestor, visibility)', () => {
+  const cases = {
+    self: '<button class="first" style="display:none"></button>',
+    ancestor: '<div style="display:none"><button class="first"></button></div>',
+    'visibility:hidden': '<button class="first" style="visibility:hidden"></button>',
+    'visibility:collapse': '<button class="first" style="visibility:collapse"></button>',
+  };
+  for (const [mode, first] of Object.entries(cases)) {
+    const dom = new JSDOM(`<body><main id="root"><button id="a"></button>${first}<h2 class="second" tabindex="-1"></h2></main></body>`, { pretendToBeVisual: true });
+    const doc = dom.window.document;
+    const root = doc.getElementById('root');
+    const a = doc.getElementById('a');
+    a.focus();
+    const got = focusHandoff({ root, active: a, ctaGone: true, targets: ['.first', '.second'] });
+    assert.strictEqual(got, doc.querySelector('.second'), mode);
+    assert.equal(doc.activeElement, doc.querySelector('.second'), mode);
+  }
+});
+
+test('focus handoff treats a CSS-hidden active control as stranded and keeps a visible one', () => {
+  const dom = new JSDOM('<body><main id="root"><div id="wrap"><button id="a"></button></div><h2 class="t" tabindex="-1"></h2></main></body>', { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const root = doc.getElementById('root');
+  const a = doc.getElementById('a');
+  a.focus();
+  assert.equal(focusHandoff({ root, active: a, targets: ['.t'] }), null);
+  doc.getElementById('wrap').style.display = 'none';
+  assert.strictEqual(focusHandoff({ root, active: a, targets: ['.t'] }), doc.querySelector('.t'));
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');

@@ -1,7 +1,18 @@
 // Shared presentation behavior for Science Lab 2.0 guided stations.
 // This module owns no science, phase transitions, persistence schema, analytics event tables, or learner wording.
 
-const isHidden = (el) => Boolean(el?.hidden || el?.closest?.('[hidden]'));
+/** Hidden by the hidden attribute, or by CSS (display:none / visibility:hidden|collapse) on the element or any ancestor. */
+const isHidden = (el) => {
+  if (!el) return true;
+  if (el.hidden || el.closest?.('[hidden]')) return true;
+  const win = el.ownerDocument?.defaultView;
+  if (!win?.getComputedStyle) return false;
+  for (let node = el; node && node.nodeType === 1; node = node.parentElement) {
+    const style = win.getComputedStyle(node);
+    if (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse') return true;
+  }
+  return false;
+};
 export const isLocked = (el) => Boolean(el) && (
   el.dataset?.locked === 'true' ||
   el.getAttribute?.('aria-disabled') === 'true' ||
