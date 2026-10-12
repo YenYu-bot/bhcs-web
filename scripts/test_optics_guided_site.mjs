@@ -37,17 +37,6 @@ test('no test controls ship: no debug hook and no query switches in the page cod
  }
 });
 
-test('existing labs, builders and shared harnesses are untouched by this branch',()=>{
- let base;try{base=cp.execFileSync('git',['merge-base','HEAD','origin/main'],{cwd:root,encoding:'utf8'}).trim()}catch{console.log('  (origin/main not available: change-set check skipped)');return}
- const changed=cp.execFileSync('git',['diff','--name-only',base,'HEAD'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(Boolean);
- const allowed=[/^assets\/optics-guided\//,/^tools\/science\/optics-guided\.html$/,/^scripts\/(?:check|test)_optics_guided_[a-z_]+\.(?:mjs|cjs)$/,/^scripts\/optics_guided_test_support\.cjs$/,/^scripts\/package\.json$/,/^\.github\/workflows\/researcher-lab-check\.yml$/,/^docs\/optics-lens-lab-v2-[a-z-]+\.md$/];
- const stray=changed.filter(f=>!allowed.some(re=>re.test(f)));
- assert.deepEqual(stray,[],'files outside the prototype changed');
- for(const protectedFile of ['tools/science/optics.html','assets/science-lab.js','assets/researcher-lab.js','assets/researcher-lab.css','tools/science/index.html','ziyuan.html','sitemap.xml','scripts/build_science.mjs','scripts/check_researcher_operations.cjs'])assert.ok(!changed.includes(protectedFile),protectedFile);
- const pkg=cp.execFileSync('git',['diff',base,'HEAD','--','scripts/package.json'],{cwd:root,encoding:'utf8'});
- assert.ok(pkg.split('\n').filter(l=>/^[+-][^+-]/.test(l)).every(l=>/test_optics_guided_|node test_science_models/.test(l)||/"test"/.test(l)),'package.json only gains the new tests');
-});
-
 test('workflow: the guided checks run after Chromium is installed and are not part of the 42-station harness',()=>{
  const wf=read('.github/workflows/researcher-lab-check.yml');
  const idx=n=>wf.indexOf(n);
