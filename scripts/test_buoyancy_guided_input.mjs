@@ -6,7 +6,8 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView } from '../assets/buoyancy-guided/engine.js';
-import { DRAG_SLOP_PX, MOBILE_MAX_WIDTH, HIT_MIN_PX, hitMinFor, pointInRect, isLocked, isUsable, objectAction, toolAction, syncControls, focusHandoff, createInputController } from '../assets/buoyancy-guided/input.js';
+import { DRAG_SLOP_PX, MOBILE_MAX_WIDTH, HIT_MIN_PX, hitMinFor, pointInRect, isLocked, isUsable, objectAction, toolAction, syncControls, createInputController } from '../assets/buoyancy-guided/input.js';
+import { focusHandoff } from '../assets/science-guided/components.js';
 
 const here = (rel) => fileURLToPath(new URL(rel, import.meta.url));
 const HTML = fs.readFileSync(here('../tools/science/buoyancy-guided.html'), 'utf8');
