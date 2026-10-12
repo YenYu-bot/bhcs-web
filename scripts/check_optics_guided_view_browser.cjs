@@ -129,7 +129,7 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
     assert.equal(nav.length,4);for(const b of nav){assert.ok(b.h>=44,b.text+' height');assert.ok(b.lines.every(n=>n===1),b.text+' stays on one line');assert.ok(b.fits,b.text+' fits')}
     // styling contract: scoped CSS only
     const sheets=await page.evaluate(()=>[...document.styleSheets].map(s=>s.href&&new URL(s.href).pathname));
-    assert.deepEqual(sheets.sort(),['/assets/optics-guided/input.css','/assets/optics-guided/optics-guided.css']);
+    assert.deepEqual(sheets.sort(),['/assets/optics-guided/input.css','/assets/optics-guided/optics-guided.css','/assets/science-guided/science-guided.css']);
     assert.equal(await page.evaluate(()=>[...document.scripts].some(s=>/researcher-lab/.test(s.src))||document.body.className.includes('researcher')),false);
     assert.deepEqual(await page.evaluate(()=>[document.body.classList.contains('researcher-ui'),!!document.querySelector('.researcher-screen,.researcher-nav')]),[false,false]);
     const ta=await page.evaluate(()=>({bench:getComputedStyle(document.querySelector('.og-bench')).touchAction,screen:getComputedStyle(document.querySelector('.og-hit-screen')).touchAction,candle:getComputedStyle(document.querySelector('.og-hit-candle')).touchAction}));
@@ -156,7 +156,8 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
     const aria=await page.evaluate(()=>['screen','candle'].map(k=>{const e=document.querySelector('.og-hit-'+k);return {role:e.getAttribute('role'),label:e.getAttribute('aria-label'),now:e.getAttribute('aria-valuenow'),disabled:e.getAttribute('aria-disabled'),tab:e.tabIndex}}));
     assert.deepEqual(aria[0],{role:'slider',label:'屏幕，目前距離凸透鏡 20 公分，可用左右方向鍵移動。',now:'20',disabled:null,tab:0});
     assert.deepEqual(aria[1],{role:'slider',label:'蠟燭，目前距離凸透鏡 30 公分，已固定。',now:'30',disabled:'true',tab:-1});
-    assert.equal(await page.locator('#og-coach-text').getAttribute('role'),'status','the coach line is the live region');assert.equal(await page.locator('#og-status').getAttribute('role'),null,'the clarity line is visual only (no per-drag announcements)');
+    assert.equal(await page.locator('#og-coach-text').getAttribute('role'),null,'coach is visual only');assert.equal(await page.locator('#og-coach-text').getAttribute('aria-live'),null,'coach is not a live region');assert.equal(await page.locator('#og-status').getAttribute('role'),null,'the clarity line is visual only (no per-drag announcements)');assert.equal(await page.locator('#og-status').getAttribute('aria-live'),null,'clarity status does not announce every drag step');
+    const live=await page.evaluate(()=>[...document.querySelectorAll('[aria-live]')].map(el=>({id:el.id,live:el.getAttribute('aria-live'),atomic:el.getAttribute('aria-atomic')})));assert.deepEqual(live,[{id:'og-announcer',live:'polite',atomic:'true'}]);
     await page.screenshot({path:path.join(output,`${label}-page-start.png`),fullPage:true});
     assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);await ctx.close();
    });
