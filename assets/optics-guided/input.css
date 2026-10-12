@@ -1,0 +1,4 @@
+/* Touch policy (Spec §6.6): only the draggable hit target reserves touch gestures;
+   the rest of the bench keeps vertical page scrolling. */
+[data-optics-bench] { touch-action: pan-y; }
+[data-optics-draggable] { touch-action: none; user-select: none; -webkit-user-select: none; }
