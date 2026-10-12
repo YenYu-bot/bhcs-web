@@ -1,5 +1,5 @@
 // Shared presentation behavior for Science Lab 2.0 guided stations.
-// This module owns no science, phase transitions, persistence schema, analytics event tables, or learner wording.
+// This module owns no science, phase transitions, persistence schema, event tables, or learner wording.
 
 /** Hidden by the hidden attribute, or by CSS (display:none / visibility:hidden|collapse) on the element or any ancestor. */
 const isHidden = (el) => {
@@ -90,4 +90,36 @@ export function createActionBar(button, { onAction }) {
     },
     get action() { return current?.action; },
   };
+}
+
+/**
+ * Shared StepNav: a read-only progress list. The station decides which step is current; this only draws it.
+ * model = { steps: [{ id, number, label }], currentStep }. Nothing here is a control.
+ */
+export function renderStepNav(ol, { steps, currentStep }) {
+  const doc = ol.ownerDocument;
+  const sig = JSON.stringify(steps.map((s) => [s.id, s.number, s.label]));
+  if (ol.dataset.sgSteps !== sig) {
+    ol.dataset.sgSteps = sig;
+    ol.replaceChildren(...steps.map((s) => {
+      const li = doc.createElement('li');
+      li.className = 'sg-step';
+      li.dataset.step = s.id;
+      const num = doc.createElement('span');
+      num.className = 'sg-step-num';
+      num.textContent = s.number;
+      const label = doc.createElement('span');
+      label.className = 'sg-step-label';
+      label.textContent = s.label;
+      li.append(num, ' ', label);
+      return li;
+    }));
+  }
+  const at = steps.findIndex((s) => s.id === currentStep);
+  [...ol.children].forEach((li, i) => {
+    li.classList.toggle('is-done', at >= 0 && i < at);
+    li.classList.toggle('is-current', i === at);
+    if (i === at) { if (li.getAttribute('aria-current') !== 'step') li.setAttribute('aria-current', 'step'); }
+    else if (li.hasAttribute('aria-current')) li.removeAttribute('aria-current');
+  });
 }

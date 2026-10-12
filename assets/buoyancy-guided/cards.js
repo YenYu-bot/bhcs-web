@@ -26,17 +26,6 @@ function rebuildIf(root, model, build) {
   return true;
 }
 
-export function renderSteps(ol, { steps, currentStep }) {
-  rebuildIf(ol, { steps, currentStep }, () => {
-    const at = steps.findIndex((s) => s.id === currentStep);
-    return steps.map((s, i) => h('li', {
-      class: `bg-step${i < at ? ' is-done' : ''}${i === at ? ' is-current' : ''}`,
-      'data-step': s.id,
-      'aria-current': i === at ? 'step' : null,
-    }, h('span', { class: 'bg-step-num', text: s.number }), ' ', h('span', { class: 'bg-step-label', text: s.label })));
-  });
-}
-
 export function renderCoach(els, coach, tip) {
   put(els.name, coach.name);
   put(els.main, coach.main);

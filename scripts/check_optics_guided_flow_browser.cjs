@@ -51,7 +51,8 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await page.locator('#og-welcome-title').innerText(),'為什麼投影機的屏幕放錯位置，畫面就會模糊？');
     assert.equal(await page.locator('#og-bench-card').isVisible(),false,'no equipment yet');assert.equal(await page.locator('#og-coach').isVisible(),false);
     assert.equal(await cta().innerText(),'開始實驗');assert.equal(await cta().isDisabled(),false);
-    assert.equal(await page.locator('.og-nav button[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'01接任務');
+    assert.equal(await page.locator('.og-nav li[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'01接任務');
+    assert.deepEqual(await page.evaluate(()=>({ol:document.querySelectorAll('nav.og-nav > ol > li').length,controls:document.querySelectorAll('.og-nav button,.og-nav a,.og-nav [tabindex],.og-nav [role="button"]').length,current:document.querySelectorAll('.og-nav [aria-current]').length})),{ol:4,controls:0,current:1},'step nav is an ol/li progress list with no controls');
     let t=await text();assert.ok(!/1\/f|公式|理論|虛像/.test(t),'welcome shows no formula or terms');await noOverflow('welcome');await shot('1-welcome');await axeScan(page,label+' welcome');
     // --- mission
     await cta().click();await settle(page);
@@ -64,7 +65,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await cta().click();await settle(page);
     assert.match(await active(),/og-hit-screen/,'focus goes to the first movable object');
     assert.equal((await coach()).main,'把屏幕移到影像最清楚的位置。');
-    assert.equal(await page.locator('.og-nav button[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'02動手做');
+    assert.equal(await page.locator('.og-nav li[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'02動手做');
     // Coach text only changes on real teaching-message changes; the dedicated live region stays separate.
     await page.evaluate(()=>{window.__mut=0;new MutationObserver(m=>{window.__mut+=m.length}).observe(document.getElementById('og-coach-text'),{subtree:true,childList:true,characterData:true});window.__statusMut=0;new MutationObserver(m=>{window.__statusMut+=m.length}).observe(document.getElementById('og-status'),{subtree:true,attributes:true,attributeFilter:['aria-live']})});
     await press('ArrowLeft');assert.equal((await coach()).main,'試試看哪個位置比較清楚。');
@@ -155,7 +156,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await noOverflow('concept');await shot('8-concept');await axeScan(page,label+' concept');
     await cta().click();await settle(page);
     // --- notebook
-    const step=()=>page.locator('.og-nav button[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,''));
+    const step=()=>page.locator('.og-nav li[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,''));
     const NB=page.locator('#og-notebook');
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'notebook');assert.equal(await step(),'03研究手冊');
     assert.match(await active(),/og-notebook-title/);assert.equal((await coach()).main,'回頭看看你的兩筆證據，用自己的話寫下你發現了什麼。');

@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -556,7 +556,7 @@ await test('cards: the step list is an <ol> that marks the current step; nothing
   const dom = page();
   const ol = dom.window.document.getElementById('bg-steps');
   assert.equal(ol.tagName, 'OL');
-  cards.renderSteps(ol, S.stepNavModel({ ...createInitialState(), phase: 'trial1-test' }));
+  renderStepNav(ol, S.stepNavModel({ ...createInitialState(), phase: 'trial1-test' }));
   assert.equal(ol.children.length, 4);
   assert.deepEqual([...ol.children].map((li) => li.getAttribute('aria-current')), [null, 'step', null, null]);
   assert.equal(ol.querySelectorAll('button, a, [tabindex]').length, 0);

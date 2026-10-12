@@ -112,10 +112,10 @@
 .bg-wrap { max-width: 1180px; }
 .bg-stepnav { margin: 0 0 12px; }
 .bg-steps { list-style: none; margin: 0; padding: 5px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: #fff; border: 1px solid var(--bg-line); border-radius: var(--bg-radius); }
-.bg-step { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 4px 6px; border-radius: 9px; background: transparent; color: var(--bg-ink-soft); font-size: .92rem; font-weight: 600; line-height: 1.2; white-space: nowrap; }
-.bg-step-num { font-weight: 700; font-size: .72rem; }
-.bg-step.is-done { color: var(--bg-ok); }
-.bg-step.is-current { background: var(--bg-ok-soft); color: var(--bg-ok); box-shadow: inset 0 0 0 1px var(--bg-ok); }
+.sg-step { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 4px 6px; border-radius: 9px; background: transparent; color: var(--bg-ink-soft); font-size: .92rem; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+.sg-step-num { font-weight: 700; font-size: .72rem; }
+.sg-step.is-done { color: var(--bg-ok); }
+.sg-step.is-current { background: var(--bg-ok-soft); color: var(--bg-ok); box-shadow: inset 0 0 0 1px var(--bg-ok); }
 
 .bg-shell { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; }
 .bg-shell > .bg-coach { grid-area: auto; }
@@ -202,7 +202,7 @@
   .bg-tools > [data-bg-action="remove-ballast"] { grid-column: 1; grid-row: 3; }
   .bg-tools > [data-bg-action="add-ballast"] { grid-column: 2; grid-row: 3; }
   .bg-steps { gap: 2px; padding: 4px; }
-  .bg-step { padding: 4px 2px; font-size: 0.8rem; gap: 3px; }
+  .sg-step { padding: 4px 2px; font-size: 0.8rem; gap: 3px; }
   .bg-tool[data-bg-action="add-ballast"], .bg-tool[data-bg-action="remove-ballast"] { padding-inline: 8px; font-size: .88rem; }
   /* the evidence table becomes stacked cards on a phone: the row name on top, the two times side by side under it */
   .bg-compare-table, .bg-compare-table tbody { display: block; }

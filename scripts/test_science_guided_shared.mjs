@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -138,6 +138,56 @@ test('focus handoff treats a CSS-hidden active control as stranded and keeps a v
   assert.strictEqual(focusHandoff({ root, active: a, targets: ['.t'] }), doc.querySelector('.t'));
 });
 
+const OPTICS_STEPS = [{ id: 'mission', number: '01', label: 'a' }, { id: 'bench', number: '02', label: 'b' }, { id: 'notebook', number: '03', label: 'c' }, { id: 'challenge', number: '04', label: 'd' }];
+const BUOYANCY_STEPS = [{ id: 'mission', number: '1', label: 'a' }, { id: 'trials', number: '2', label: 'b' }, { id: 'notebook', number: '3', label: 'c' }, { id: 'challenge', number: '4', label: 'd' }];
+
+test('StepNav draws an ol/li progress list with no controls (Optics and Buoyancy fixtures)', () => {
+  for (const steps of [OPTICS_STEPS, BUOYANCY_STEPS]) {
+    const dom = new JSDOM('<nav><ol id="o"></ol></nav>');
+    const ol = dom.window.document.getElementById('o');
+    renderStepNav(ol, { steps, currentStep: steps[1].id });
+    assert.equal(ol.tagName, 'OL');
+    assert.equal(ol.parentElement.tagName, 'NAV');
+    assert.equal(ol.children.length, 4);
+    assert.ok([...ol.children].every((li) => li.tagName === 'LI'));
+    assert.equal(ol.querySelectorAll('button, a, input, [tabindex], [role=button]').length, 0);
+    assert.deepEqual([...ol.children].map((li) => li.getAttribute('aria-current')), [null, 'step', null, null]);
+    assert.deepEqual([...ol.children].map((li) => li.classList.contains('is-done')), [true, false, false, false]);
+    assert.deepEqual([...ol.children].map((li) => li.classList.contains('is-current')), [false, true, false, false]);
+    assert.deepEqual([...ol.children].map((li) => li.dataset.step), steps.map((s) => s.id));
+    assert.deepEqual([...ol.children].map((li) => li.textContent), steps.map((s) => `${s.number} ${s.label}`));
+  }
+});
+
+test('StepNav takes currentStep from the station and does not rebuild when only the current step moves', () => {
+  const dom = new JSDOM('<ol id="o"></ol>');
+  const ol = dom.window.document.getElementById('o');
+  renderStepNav(ol, { steps: OPTICS_STEPS, currentStep: 'mission' });
+  const before = [...ol.children];
+  renderStepNav(ol, { steps: OPTICS_STEPS, currentStep: 'notebook' });
+  assert.ok([...ol.children].every((li, i) => li === before[i]), 'same nodes');
+  assert.deepEqual([...ol.children].map((li) => li.getAttribute('aria-current')), [null, null, 'step', null]);
+  assert.deepEqual([...ol.children].map((li) => li.classList.contains('is-done')), [true, true, false, false]);
+  renderStepNav(ol, { steps: OPTICS_STEPS, currentStep: 'nowhere' });
+  assert.equal(ol.querySelectorAll('[aria-current]').length, 0);
+  assert.equal(ol.querySelectorAll('.is-done, .is-current').length, 0);
+  renderStepNav(ol, { steps: BUOYANCY_STEPS, currentStep: 'trials' });
+  assert.equal(ol.children.length, 4);
+  assert.equal(ol.children[1].dataset.step, 'trials');
+});
+
+test('StepNav writes nothing when the model is unchanged', async () => {
+  const dom = new JSDOM('<ol id="o"></ol>');
+  const ol = dom.window.document.getElementById('o');
+  renderStepNav(ol, { steps: OPTICS_STEPS, currentStep: 'bench' });
+  const seen = [];
+  const mo = new dom.window.MutationObserver((records) => seen.push(...records));
+  mo.observe(ol, { subtree: true, childList: true, attributes: true, characterData: true });
+  renderStepNav(ol, { steps: OPTICS_STEPS, currentStep: 'bench' });
+  await wait();
+  assert.equal(seen.length, 0);
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -156,11 +206,16 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(opticsPage, /id="og-announcer" aria-live="polite" aria-atomic="true"/);
   assert.ok(!/id="og-coach-text"[^>]*(?:aria-live|role="status")/.test(opticsPage), 'Optics coach is visual only');
   assert.match(buoyancyPage, /class="sg-sr" id="bg-announcer"/);
+  assert.match(optics, /renderStepNav/);
+  assert.match(buoyancy, /renderStepNav/);
+  assert.ok(!/export function renderSteps/.test(cards), 'Buoyancy cards.js no longer owns renderSteps');
+  assert.ok(!/<button/.test(opticsPage.match(/<nav class="og-nav"[\s\S]*?<\/nav>/)[0]), 'Optics step nav has no buttons');
+  assert.match(opticsPage, /<nav class="og-nav"[^>]*><ol [^>]*id="og-steps"/);
 });
 
 test('shared CSS contains only the approved behavior utilities in this batch', () => {
   const css = fs.readFileSync(path.join(rootDir, 'assets/science-guided/science-guided.css'), 'utf8');
-  for (const cls of ['.sg-sr', '.sg-direct-manipulation', '.sg-scroll-surface']) assert.ok(css.includes(cls));
+  for (const cls of ['.sg-sr', '.sg-direct-manipulation', '.sg-scroll-surface', '.sg-steps']) assert.ok(css.includes(cls));
   assert.match(css, /\.sg-direct-manipulation\s*\{\s*touch-action:\s*none;/);
   assert.match(css, /\.sg-scroll-surface\s*\{\s*touch-action:\s*pan-y;/);
   assert.ok(!/\.(?:og|bg)-/.test(css), 'shared CSS contains no station-specific selectors');
@@ -168,9 +223,10 @@ test('shared CSS contains only the approved behavior utilities in this batch', (
 
 test('shared behavior module contains no science-specific decisions', () => {
   const src = fs.readFileSync(path.join(rootDir, 'assets/science-guided/components.js'), 'utf8');
-  for (const bad of ['density', 'magnification', 'focal', 'ballast', 'virtual image', 'localStorage', 'bhcsScienceTrack']) {
+  for (const bad of ['optics', 'buoyancy', 'focal', 'lens', 'density', 'ballast', 'mass', 'volume', 'magnification', 'virtual image', 'localStorage', 'sessionStorage', 'bhcsScienceTrack', 'analytics', 'physics']) {
     assert.ok(!src.toLowerCase().includes(bad.toLowerCase()), bad);
   }
+  assert.ok(!/\b(?:og|bg)-/.test(src), 'no station class names in the shared module');
 });
 
 for (const [name, fn] of tests) {

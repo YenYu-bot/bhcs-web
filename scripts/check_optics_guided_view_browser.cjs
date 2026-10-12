@@ -125,7 +125,7 @@ async function open(browser,url,{width,height,reducedMotion='no-preference',touc
      assert.ok(R.status.y>=R.bench.b-1&&R.cta.y>=R.status.b-1,'status and CTA under the bench');
     }
     // nav: four steps on one line each, comfortable targets
-    const nav=await page.locator('.og-nav button').evaluateAll(bs=>bs.map(b=>({h:b.getBoundingClientRect().height,lines:[...b.querySelectorAll('span')].map(sp=>Math.round(sp.getBoundingClientRect().height/parseFloat(getComputedStyle(sp).lineHeight))),fits:b.scrollWidth<=b.clientWidth+1,text:b.textContent.trim()})));
+    const nav=await page.locator('.og-nav li').evaluateAll(bs=>bs.map(b=>({h:b.getBoundingClientRect().height,lines:[...b.querySelectorAll('span')].map(sp=>Math.round(sp.getBoundingClientRect().height/parseFloat(getComputedStyle(sp).lineHeight))),fits:b.scrollWidth<=b.clientWidth+1,text:b.textContent.trim()})));
     assert.equal(nav.length,4);for(const b of nav){assert.ok(b.h>=44,b.text+' height');assert.ok(b.lines.every(n=>n===1),b.text+' stays on one line');assert.ok(b.fits,b.text+' fits')}
     // styling contract: scoped CSS only
     const sheets=await page.evaluate(()=>[...document.styleSheets].map(s=>s.href&&new URL(s.href).pathname));

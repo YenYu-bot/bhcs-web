@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -25,6 +25,13 @@ let ui = { naming: false };
 let coach = null;
 let announcementSeq = 0;
 let renderedCompare = '', renderedConcept = false, notebookBuilt = false, challengeKey = '';
+
+// Station adapter: the labels are this station's wording; which step is current is still decided by stepFor(state.phase).
+const STEPS = [
+  { id: 'mission', number: '01', label: '接任務' }, { id: 'bench', number: '02', label: '動手做' },
+  { id: 'notebook', number: '03', label: '研究手冊' }, { id: 'challenge', number: '04', label: '挑戰題' },
+];
+const stepNavModel = (phase) => ({ steps: STEPS, currentStep: stepFor(phase) });
 
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };   // writing identical text would re-announce in a live region
 
@@ -205,8 +212,7 @@ function render(wasCta = false) {
   const active = document.activeElement;
   const view = deriveView(state), screen = screenFor(state);
   main.dataset.screen = screen;
-  const step = stepFor(state.phase);
-  for (const b of document.querySelectorAll('.og-nav button')) b.setAttribute('aria-current', b.dataset.step === step ? 'step' : 'false');
+  renderStepNav($('og-steps'), stepNavModel(state.phase));
 
   put($('og-welcome-title'), MESSAGES.welcome.main);
   put($('og-coach-main'), coach?.main ?? ''); put($('og-coach-sub'), coach?.sub ?? '');
