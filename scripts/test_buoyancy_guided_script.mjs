@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer, renderStepNav } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav, renderCoachCard } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -614,7 +614,9 @@ await test('cards: concept, evidence, data, status and coach draw without a live
   assert.equal(doc.getElementById('bg-status').hidden, false);
   cards.renderStatus(doc.getElementById('bg-status'), null);
   assert.equal(doc.getElementById('bg-status').hidden, true);
-  cards.renderCoach({ root: doc.getElementById('bg-coach'), name: doc.getElementById('bg-coach-name'), main: doc.getElementById('bg-coach-main'), sub: doc.getElementById('bg-coach-sub'), tip: doc.getElementById('bg-coach-tip') }, t1.coach, '提示');
+  const coachEls = { root: doc.getElementById('bg-coach'), name: doc.getElementById('bg-coach-name'), main: doc.getElementById('bg-coach-main'), sub: doc.getElementById('bg-coach-sub'), tip: doc.getElementById('bg-coach-tip') };
+  renderCoachCard(coachEls, t1.coach);
+  cards.renderCoachExtras(coachEls, t1.coach, '提示');
   assert.equal(doc.getElementById('bg-coach-tip').hidden, false);
   assert.equal(doc.getElementById('bg-coach-name').textContent, '余老師');
   const live = [...doc.querySelectorAll('[aria-live], [role=status], [role=alert], output')];

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -188,6 +188,40 @@ test('StepNav writes nothing when the model is unchanged', async () => {
   assert.equal(seen.length, 0);
 });
 
+const COACH_HTML = '<section id="c"><strong id="n"></strong><p id="m"></p><p id="s"></p></section>';
+const coachEls = (doc) => ({ name: doc.getElementById('n'), main: doc.getElementById('m'), sub: doc.getElementById('s') });
+
+test('CoachCard draws name/main/sub, hides an empty sub, and is never a live region (Optics and Buoyancy fixtures)', () => {
+  const dom = new JSDOM(COACH_HTML);
+  const doc = dom.window.document;
+  const els = coachEls(doc);
+  renderCoachCard(els, { name: 'coach', main: 'do this', sub: 'because' });
+  assert.deepEqual([els.name.textContent, els.main.textContent, els.sub.textContent, els.sub.hidden], ['coach', 'do this', 'because', false]);
+  renderCoachCard(els, { name: 'coach', main: 'next', sub: null });
+  assert.deepEqual([els.main.textContent, els.sub.textContent, els.sub.hidden], ['next', '', true]);
+  renderCoachCard(els, { main: 'only main' });
+  assert.equal(els.name.textContent, 'coach', 'a model without a name leaves the name alone');
+  assert.equal(els.sub.hidden, true);
+  // Optics has no name element
+  renderCoachCard({ main: els.main, sub: els.sub }, { main: 'optics line', sub: 'more' });
+  assert.deepEqual([els.main.textContent, els.sub.hidden], ['optics line', false]);
+  assert.equal(doc.querySelectorAll('[aria-live], [role=status], [role=alert]').length, 0);
+});
+
+test('CoachCard leaves the DOM alone when nothing changed and knows no phase or mood', async () => {
+  const dom = new JSDOM(COACH_HTML);
+  const doc = dom.window.document;
+  const els = coachEls(doc);
+  renderCoachCard(els, { name: 'coach', main: 'a', sub: null, mood: 'happy', phase: 'trial1' });
+  const seen = [];
+  new dom.window.MutationObserver((r) => seen.push(...r)).observe(doc.getElementById('c'), { subtree: true, childList: true, attributes: true, characterData: true });
+  renderCoachCard(els, { name: 'coach', main: 'a', sub: null });
+  await wait();
+  assert.equal(seen.length, 0);
+  assert.ok(!doc.getElementById('c').outerHTML.includes('happy'));
+  assert.ok(!doc.getElementById('c').hasAttribute('data-coach'));
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -207,6 +241,9 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.ok(!/id="og-coach-text"[^>]*(?:aria-live|role="status")/.test(opticsPage), 'Optics coach is visual only');
   assert.match(buoyancyPage, /class="sg-sr" id="bg-announcer"/);
   assert.match(optics, /renderStepNav/);
+  assert.match(optics, /renderCoachCard/);
+  assert.match(buoyancy, /renderCoachCard/);
+  assert.ok(!/export function renderCoach\b/.test(cards), 'Buoyancy cards.js no longer owns renderCoach');
   assert.match(buoyancy, /renderStepNav/);
   assert.ok(!/export function renderSteps/.test(cards), 'Buoyancy cards.js no longer owns renderSteps');
   assert.ok(!/<button/.test(opticsPage.match(/<nav class="og-nav"[\s\S]*?<\/nav>/)[0]), 'Optics step nav has no buttons');

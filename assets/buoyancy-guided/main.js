@@ -14,9 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderCoach, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
+  renderCoachExtras, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
 } from './cards.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -78,7 +78,8 @@ function render(wasCta = false) {
 
   put($('bg-heading'), stationTitleFor(state));
   renderStepNav($('bg-steps'), stepNavModel(state));
-  renderCoach(coachEls, coach, hintFor(view));
+  renderCoachCard(coachEls, coach);
+  renderCoachExtras(coachEls, coach, hintFor(view));
   renderStatus($('bg-status'), statusModel(state, view));
   renderData($('bg-data'), dataModel(state, view), TEXT.dataTitle, TEXT.dataStates);
   renderEvidence($('bg-evidence'), evidenceModel(state, view), TEXT.evidenceTitle);

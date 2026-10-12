@@ -123,3 +123,18 @@ export function renderStepNav(ol, { steps, currentStep }) {
     else if (li.hasAttribute('aria-current')) li.removeAttribute('aria-current');
   });
 }
+
+const putText = (el, text) => { if (el.textContent !== text) el.textContent = text; };
+const setHidden = (el, hidden) => { if (el.hidden !== hidden) el.hidden = hidden; };
+
+/**
+ * Shared CoachCard: draws { name, main, sub? } into elements the station owns. Visual only: it never sets
+ * aria-live or a status role, and it leaves the DOM alone when the text did not change.
+ * els = { main, sub, name? }.
+ */
+export function renderCoachCard(els, coach) {
+  if (els.name && coach.name !== undefined && coach.name !== null) putText(els.name, coach.name);
+  putText(els.main, coach.main ?? '');
+  putText(els.sub, coach.sub ?? '');
+  setHidden(els.sub, !coach.sub);
+}

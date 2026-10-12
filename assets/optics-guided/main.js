@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -215,7 +215,7 @@ function render(wasCta = false) {
   renderStepNav($('og-steps'), stepNavModel(state.phase));
 
   put($('og-welcome-title'), MESSAGES.welcome.main);
-  put($('og-coach-main'), coach?.main ?? ''); put($('og-coach-sub'), coach?.sub ?? '');
+  renderCoachCard({ main: $('og-coach-main'), sub: $('og-coach-sub') }, coach ?? { main: '', sub: null });
   if (screen === 'bench') {
     benchView.measure();                     // the bench was display:none until now
     benchView.update(view, { rays: state.phase === 'trial1-complete' || state.phase === 'trial2-complete' });

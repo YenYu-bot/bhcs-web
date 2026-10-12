@@ -26,11 +26,8 @@ function rebuildIf(root, model, build) {
   return true;
 }
 
-export function renderCoach(els, coach, tip) {
-  put(els.name, coach.name);
-  put(els.main, coach.main);
-  put(els.sub, coach.sub ?? '');
-  els.sub.hidden = !coach.sub;
+/** The parts of the coach card that belong to this station: the situational tip and the card's key. The card itself is shared. */
+export function renderCoachExtras(els, coach, tip) {
   put(els.tip, tip ?? '');
   els.tip.hidden = !tip;
   els.root.dataset.coach = coach.key;
