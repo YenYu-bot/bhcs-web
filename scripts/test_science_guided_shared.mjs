@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -255,6 +255,51 @@ test('StatusBar writes nothing when the model is unchanged', async () => {
   assert.equal(seen.length, 0);
 });
 
+const OPTICS_DATA = { conditions: [{ label: 'f', value: '10 cm' }, { label: 'u', value: '30 cm' }] };
+const BUOYANCY_DATA = { conditions: [{ label: 'liquid', value: 'water', state: 'locked' }, { label: 'block', value: '60 g', state: 'changed' }, { label: 'mass', value: '1', state: 'normal' }] };
+
+test('DataCard is hidden for null and draws ordered dl/dt/dd with only a generic state hook', () => {
+  const dom = new JSDOM('<section id="d"></section>');
+  const doc = dom.window.document;
+  const root = doc.getElementById('d');
+  renderDataCard(root, null, { title: 'x' });
+  assert.equal(root.hidden, true);
+  for (const model of [OPTICS_DATA, BUOYANCY_DATA]) {
+    renderDataCard(root, model, { title: 'Conditions' });
+    assert.equal(root.hidden, false);
+    assert.equal(root.querySelectorAll('dl').length, 1);
+    assert.deepEqual([...root.querySelectorAll('dl > *')].map((e) => e.tagName), model.conditions.flatMap(() => ['DT', 'DD']));
+    assert.deepEqual([...root.querySelectorAll('dt')].map((e) => e.textContent), model.conditions.map((c) => c.label));
+    assert.deepEqual([...root.querySelectorAll('dd')].map((e) => e.textContent), model.conditions.map((c) => c.value));
+    assert.deepEqual([...root.querySelectorAll('dd')].map((e) => e.dataset.state), model.conditions.map((c) => c.state ?? 'normal'));
+    assert.equal(root.querySelector('h2').textContent, 'Conditions');
+    assert.equal(root.getAttribute('aria-labelledby'), root.querySelector('h2').id);
+  }
+  assert.equal(root.querySelectorAll('[aria-live], [role=status]').length, 0);
+});
+
+test('DataCard does not translate states itself and falls back to normal for unknown ones', () => {
+  const dom = new JSDOM('<section id="d"></section>');
+  const root = dom.window.document.getElementById('d');
+  renderDataCard(root, { conditions: [{ label: 'a', value: '1', state: 'locked' }, { label: 'b', value: '2', state: 'weird' }] });
+  assert.equal(root.querySelectorAll('.sg-state-tag').length, 0, 'no words without station labels');
+  assert.equal(root.querySelectorAll('dd')[1].dataset.state, 'normal');
+  assert.equal(root.querySelector('h2'), null, 'no title unless the station gives one');
+  renderDataCard(root, { conditions: [{ label: 'a', value: '1', state: 'locked' }] }, { stateLabels: { locked: '(fixed)' } });
+  assert.equal(root.querySelector('.sg-state-tag').textContent, '(fixed)');
+});
+
+test('DataCard writes nothing when the model is unchanged', async () => {
+  const dom = new JSDOM('<section id="d"></section>');
+  const root = dom.window.document.getElementById('d');
+  renderDataCard(root, OPTICS_DATA, { title: 'T' });
+  const seen = [];
+  new dom.window.MutationObserver((r) => seen.push(...r)).observe(root, { subtree: true, childList: true, attributes: true, characterData: true });
+  renderDataCard(root, OPTICS_DATA, { title: 'T' });
+  await wait();
+  assert.equal(seen.length, 0);
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -276,6 +321,13 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(optics, /renderStepNav/);
   assert.match(optics, /renderCoachCard/);
   assert.match(optics, /renderStatusBar/);
+  assert.match(optics, /renderDataCard/);
+  assert.match(buoyancy, /renderDataCard/);
+  assert.ok(!/export function renderData\b/.test(cards), 'Buoyancy cards.js no longer owns renderData');
+  assert.ok(!/id="og-f"|id="og-u"/.test(opticsPage), 'Optics data card is drawn by the shared module');
+  const dataSection = opticsPage.match(/<section class="og-card og-data"[\s\S]*?<\/section>/)[0];
+  assert.ok(!/og-records|og-save-note|og-restart|og-advanced|<ul|<button/.test(dataSection), 'DataCard holds no evidence, save note, restart or advanced link');
+  assert.match(opticsPage, /id="og-utility"[\s\S]*og-save-note[\s\S]*og-restart[\s\S]*og-advanced/, 'save note, restart and advanced link live in the station utility block');
   assert.match(buoyancy, /renderStatusBar/);
   assert.ok(!/export function renderStatus\b/.test(cards), 'Buoyancy cards.js no longer owns renderStatus');
   assert.match(buoyancy, /renderCoachCard/);

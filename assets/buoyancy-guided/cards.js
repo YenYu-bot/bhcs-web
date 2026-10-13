@@ -33,20 +33,6 @@ export function renderCoachExtras(els, coach, tip) {
   els.root.dataset.coach = coach.key;
 }
 
-/** DataCard: a list of conditions, each marked normal / locked / changed. */
-export function renderData(root, model, title, stateText = {}) {
-  root.hidden = !model;
-  if (!model) return;
-  rebuildIf(root, { model, title, stateText }, () => [
-    h('h2', { class: 'bg-card-title', id: `${root.id}-title`, text: title }),
-    h('dl', { class: 'bg-facts' }, ...model.conditions.flatMap((c) => [
-      h('dt', { text: c.label }),
-      h('dd', { 'data-state': c.state ?? 'normal' }, c.value, stateText[c.state] ? h('span', { class: 'bg-state-tag', text: stateText[c.state] }) : null),
-    ])),
-  ]);
-  root.setAttribute('aria-labelledby', `${root.id}-title`);
-}
-
 /** EvidenceCard: one block per thing the learner recorded or watched. */
 export function renderEvidence(root, model, title) {
   const shown = Boolean(model) && model.items.length > 0;

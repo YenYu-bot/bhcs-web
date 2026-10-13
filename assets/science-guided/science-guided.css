@@ -13,3 +13,4 @@
 .sg-direct-manipulation { touch-action: none; }
 .sg-scroll-surface { touch-action: pan-y; }
 .sg-steps { list-style: none; margin: 0; padding: 0; }
+.sg-facts { margin: 0; }

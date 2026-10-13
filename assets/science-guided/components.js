@@ -154,3 +154,57 @@ export function renderStatusBar(els, status) {
   putText(els.icon, status.icon ?? '');
   putText(els.text, status.text ?? '');
 }
+
+// ---- cards ------------------------------------------------------------------------------------------------------------
+
+const node = (doc, tag, attrs = {}, ...kids) => {
+  const e = doc.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'text') e.textContent = v;
+    else e.setAttribute(k, v === true ? '' : String(v));
+  }
+  e.append(...kids.filter((k) => k !== null && k !== undefined));
+  return e;
+};
+
+/** Rebuilds `target` only when the model actually changed, so identical renders touch nothing. */
+function rebuildIf(target, model, build) {
+  const sig = JSON.stringify(model);
+  if (target.dataset.sgSig === sig) return false;
+  target.dataset.sgSig = sig;
+  target.replaceChildren(...build().filter(Boolean));
+  return true;
+}
+
+function labelCard(root, title) {
+  if (title && root.id) {
+    const id = `${root.id}-title`;
+    if (root.getAttribute('aria-labelledby') !== id) root.setAttribute('aria-labelledby', id);
+  }
+}
+
+const DATA_STATES = new Set(['normal', 'locked', 'hidden', 'changed']);
+
+/**
+ * Shared DataCard: the conditions the learner is working with right now, as a description list.
+ * model = { conditions: [{ label, value, state? }] } | null. `state` is only a presentation hook (data-state);
+ * `stateLabels` lets the station supply the words for a state, because this module translates nothing.
+ */
+export function renderDataCard(root, model, { title, stateLabels = {} } = {}) {
+  setHidden(root, !model);
+  if (!model) return;
+  const doc = root.ownerDocument;
+  rebuildIf(root, { model, title, stateLabels }, () => [
+    title ? node(doc, 'h2', { class: 'sg-card-title', id: `${root.id}-title`, text: title }) : null,
+    node(doc, 'dl', { class: 'sg-facts' }, ...model.conditions.flatMap((c) => {
+      const state = DATA_STATES.has(c.state) ? c.state : 'normal';
+      return [
+        node(doc, 'dt', { text: c.label }),
+        node(doc, 'dd', { 'data-state': state }, c.value, stateLabels[state] ? node(doc, 'span', { class: 'sg-state-tag', text: stateLabels[state] }) : null),
+      ];
+    })),
+  ]);
+  labelCard(root, title);
+}

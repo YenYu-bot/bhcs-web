@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -37,6 +37,10 @@ const stepNavModel = (phase) => ({ steps: STEPS, currentStep: stepFor(phase) });
 const CLARITY_KIND = { 1: 'success', 2: 'progress', 3: 'progress', 4: 'neutral' };
 const statusModel = (view) => ({ kind: CLARITY_KIND[view.clarity.effectiveClarityLevel] ?? 'neutral', ...clarityMessage(view) });
 const statusEls = { root: $('og-status'), icon: $('og-status-icon'), text: $('og-status-text') };
+
+// Station adapter: the conditions the learner is working with right now. Wording lives here, not in the shared card.
+const DATA_TITLE = '這次實驗條件';
+const dataModel = (st) => ({ conditions: [{ label: '焦距', value: `${st.f} cm` }, { label: '物距', value: `${st.u} cm` }] });
 
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };   // writing identical text would re-announce in a live region
 
@@ -206,7 +210,7 @@ function renderComplete() {
 
 function renderRecords() {
   const list = evidenceList(state.records), ul = $('og-records');
-  $('og-records-wrap').hidden = list.length === 0;
+  $('og-evidence').hidden = list.length === 0;
   ul.replaceChildren(...list.map((r) => el('li', {}, el('b', {}, r.text), ` ${r.detail}`)));
 }
 
@@ -232,7 +236,7 @@ function render(wasCta = false) {
   if (screen === 'notebook') syncNotebook();
   if (screen === 'challenge') syncChallenge();
   if (screen === 'complete') renderComplete();
-  put($('og-f'), `${state.f} cm`); put($('og-u'), `${state.u} cm`);
+  renderDataCard($('og-data'), dataModel(state), { title: DATA_TITLE });
   renderRecords();
   $('og-restart').hidden = !state.records[1];
   put($('og-save-note'), store.failed ? '這個瀏覽器無法保存進度；關閉頁面後會消失。' : state.records[1] ? (restored ? '已接續你上次做到的地方。進度只儲存在這台瀏覽器。' : '進度只儲存在這台瀏覽器。') : '');

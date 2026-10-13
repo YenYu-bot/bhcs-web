@@ -82,6 +82,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await cta().click();await settle(page);
     assert.deepEqual(await coach(),{main:'第一筆證據有了。接下來只改一個地方。',sub:'把蠟燭移到離透鏡 15 cm 的位置。'});
     assert.match(await active(),/og-hit-candle/,'the candle takes over: focus follows the task');assert.equal(await cta().isHidden(),true);
+    assert.deepEqual(await page.evaluate(()=>({dt:[...document.querySelectorAll('#og-data dt')].map(e=>e.textContent),inside:['og-records','og-save-note','og-restart'].filter(id=>document.getElementById('og-data').contains(document.getElementById(id))),advanced:document.querySelectorAll('#og-data details,#og-data a').length,utility:['og-save-note','og-restart'].every(id=>document.getElementById('og-utility').contains(document.getElementById(id)))})),{dt:['焦距','物距'],inside:[],advanced:0,utility:true},'the data card holds only the current conditions; the footer utility is separate');
     assert.equal(await page.locator('#og-records li').first().innerText(),`第一次紀錄完成 ✓ 物距 30 cm，清楚像距 ${f(O1)} cm`);
     // --- reload right after the first record: progress is saved, the trial restarts cleanly with the learner's own position
     await reload();

@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -608,7 +608,7 @@ await test('cards: concept, evidence, data, status and coach draw without a live
   cards.renderEvidence(doc.getElementById('bg-evidence'), { items: [] }, 'x');
   assert.equal(doc.getElementById('bg-evidence').hidden, true);
   const t1 = run(A.start, A.begin);
-  cards.renderData(doc.getElementById('bg-data'), S.dataModel(t1.state, t1.view), S.TEXT.dataTitle, S.TEXT.dataStates);
+  renderDataCard(doc.getElementById('bg-data'), S.dataModel(t1.state, t1.view), { title: S.TEXT.dataTitle, stateLabels: S.TEXT.dataStates });
   assert.equal(doc.querySelectorAll('#bg-data dt').length, 3);
   const statusEls = { root: doc.getElementById('bg-status'), icon: doc.querySelector('[data-bg-status-icon]'), text: doc.querySelector('[data-bg-status-text]') };
   renderStatusBar(statusEls, S.statusModel(t1.state, t1.view));

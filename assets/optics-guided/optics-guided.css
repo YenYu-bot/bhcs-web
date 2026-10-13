@@ -100,6 +100,8 @@
 .og-data dl { grid-template-columns: auto auto auto auto; justify-content: start; column-gap: 8px; align-items: baseline; }          /* the conditions right now, side by side */
 .og-data dd { font-size: 1.2rem; margin-right: 22px; }
 .og-evidence { margin: 12px 0 4px; padding: 8px 12px; border-radius: 10px; background: var(--bh-ok-soft); border: 1px solid #BFE0CC; }       /* what has been done and written down */
+.og-evidence-card { background: var(--bh-ok-soft); border-color: #BFE0CC; box-shadow: none; }
+.og-evidence-card[hidden] { display: none; }
 .og-advanced { font-size: 14px; color: var(--bh-ink-soft); }
 .og-advanced a { color: var(--bh-ink-soft); }
 
@@ -107,7 +109,7 @@
 .og-main > :is(.og-hero, .og-compare, .og-concept, .og-notebook, .og-challenge, .og-complete) { display: none; }
 .og-main[data-screen="welcome"] > .og-hero, .og-main[data-screen="compare"] > .og-compare, .og-main[data-screen="concept"] > .og-concept,
 .og-main[data-screen="notebook"] > .og-notebook, .og-main[data-screen="challenge"] > .og-challenge, .og-main[data-screen="complete"] > .og-complete { display: block; }
-.og-main[data-screen="welcome"] > :is(.og-coach, .og-bench-card, .og-status, .og-data),
+.og-main[data-screen="welcome"] > :is(.og-coach, .og-bench-card, .og-status, .og-data, .og-evidence-card, .og-utility),
 .og-main:is([data-screen="compare"], [data-screen="concept"], [data-screen="notebook"], [data-screen="challenge"], [data-screen="complete"]) > :is(.og-bench-card, .og-status),
 .og-main[data-screen="complete"] > .og-actions { display: none; }
 .og-hero { text-align: center; padding: 28px 20px 32px; }
@@ -189,6 +191,8 @@
   .og-coach { min-height: 0; }
   .og-coach p { font-size: 18px; }
   .og-data { grid-column: 2; grid-row: 2; }
+  .og-evidence-card { grid-column: 2; grid-row: 3; }
+  .og-utility { grid-column: 2; grid-row: 4; }
   .og-status { grid-column: 1; grid-row: 3; }
   .og-actions { grid-column: 1; grid-row: 4; }
 }

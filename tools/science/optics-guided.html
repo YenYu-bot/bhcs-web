@@ -56,14 +56,16 @@
     </section>
     <p class="og-status" id="og-status"><span class="og-status-icon" id="og-status-icon" aria-hidden="true"></span><span id="og-status-text"></span></p>
     <div class="og-actions"><button type="button" class="og-cta" id="og-cta" hidden></button></div>
-    <section class="og-card og-data" aria-label="這次實驗條件">
-      <h2>這次實驗條件</h2>
-      <dl><dt>焦距</dt><dd id="og-f"></dd><dt>物距</dt><dd id="og-u"></dd></dl>
-      <div id="og-records-wrap" class="og-evidence" hidden><h3 class="og-records-title">已記錄的實驗</h3><ul class="og-records" id="og-records"></ul></div>
+    <section class="og-card og-data" id="og-data"></section>
+    <section class="og-card og-evidence-card" id="og-evidence" aria-labelledby="og-evidence-title" hidden>
+      <h2 class="og-records-title" id="og-evidence-title">已記錄的實驗</h2>
+      <ul class="og-records" id="og-records"></ul>
+    </section>
+    <div class="og-card og-utility" id="og-utility">
       <p class="og-save-note" id="og-save-note"></p>
       <button type="button" class="og-link-action" id="og-restart" hidden>清除我的紀錄並重新開始</button>
       <details class="og-advanced"><summary>進階</summary><p><a href="./optics.html">自由探索／精確數值</a></p></details>
-    </section>
+    </div>
     <div class="sg-sr" id="og-announcer" aria-live="polite" aria-atomic="true"></div>
   </main>
   <footer class="og-foot"><p>百宏文教｜免費使用・不需登入</p><p>操作紀錄只在本機儲存；匿名使用事件不含研究筆記、作答內容或學生姓名。</p></footer>
