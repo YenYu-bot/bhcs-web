@@ -62,8 +62,8 @@ export function syncControls(root, view) {
     el.dataset.where = o.where;
     el.setAttribute('aria-pressed', String(o.where === 'tank'));
     setLocked(el, locked);
-    toggle(el, 'bg-direct-manipulation', !locked);   // only a movable object takes over touch gestures
-    toggle(el, 'bg-scroll-surface', locked);
+    toggle(el, 'sg-direct-manipulation', !locked);   // only a movable object takes over touch gestures
+    toggle(el, 'sg-scroll-surface', locked);
   }
   const anyShown = Object.values(objects).some((o) => o.available);
   for (const el of root.querySelectorAll('[data-bg-action]')) {
@@ -80,25 +80,6 @@ export function syncControls(root, view) {
     r.disabled = view.controls.liquid.locked;
   }
   for (const tank of root.querySelectorAll('[data-bg-tank]')) tank.dataset.object = view.tank.objectId ?? '';
-}
-
-// ---- focus -------------------------------------------------------------------------------------------------------------
-
-/**
- * Moves focus only when it has been left on something that just became unavailable, or when the button that was just
- * pressed has gone. Otherwise it leaves focus alone. `targets` are selectors in order of preference.
- * Returns the element that received focus, or null.
- */
-export function focusHandoff({ root, active, ctaGone = false, targets }) {
-  const body = root.ownerDocument.body;
-  const stranded = Boolean(active) && active !== body && !isUsable(active);
-  if (!stranded && !ctaGone) return null;
-  for (const selector of targets) {
-    for (const el of root.querySelectorAll(selector)) {
-      if (el !== active && isUsable(el) && typeof el.focus === 'function') { el.focus({ preventScroll: true }); return el; }
-    }
-  }
-  return null;
 }
 
 // ---- the controller -------------------------------------------------------------------------------------------------

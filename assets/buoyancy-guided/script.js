@@ -264,11 +264,11 @@ export function screenFor(state) {
   if (BENCH_SCREEN.has(phase)) {
     return { id: 'bench', headingId: 'bg-heading', stepId: stepFor(state), focusTargets: ['[data-bg-object]', 'input[data-bg-liquid]', '#bg-cta', '#bg-heading'] };
   }
-  if (phase === 'compare') return { id: 'compare', headingId: 'bg-compare-title', stepId: 'experiment', focusTargets: ['[data-bg-compare]', '#bg-cta', '#bg-compare-title'] };
+  if (phase === 'compare') return { id: 'compare', headingId: 'bg-compare-title', stepId: 'experiment', focusTargets: ['[data-compare]', '#bg-cta', '#bg-compare-title'] };
   if (phase === 'concept') return { id: 'concept', headingId: 'bg-concept-title', stepId: 'experiment', focusTargets: ['#bg-cta', '#bg-concept-title'] };
   if (phase === 'notebook') return { id: 'notebook', headingId: 'bg-notebook-title', stepId: 'notebook', focusTargets: ['#bg-cta', '#bg-notebook-title'] };
   if (phase === 'complete') return { id: 'complete', headingId: 'bg-complete-title', stepId: 'challenge', focusTargets: ['#bg-cta', '#bg-complete-title'] };
-  return { id: 'challenge', headingId: 'bg-challenge-title', stepId: 'challenge', focusTargets: ['[data-bg-option]', '#bg-cta', '#bg-challenge-title'] };
+  return { id: 'challenge', headingId: 'bg-challenge-title', stepId: 'challenge', focusTargets: ['[data-option]', '#bg-cta', '#bg-challenge-title'] };
 }
 
 /** The name at the top of the page: neutral until the concept, then the lab's full name. */
@@ -516,11 +516,11 @@ export function conceptModel(state, view) {
   const T = CONCEPT_TEXT;
   const by = Object.fromEntries(c.map((row) => [row.id, row]));
   const names = { 'block-water': T.densityOf.block, 'block-brine': T.densityOf.brineBlock, wood: T.densityOf.wood, stone: T.densityOf.stone };
-  const evidence = c.map((row) => ({ id: row.id, label: names[row.id], text: equation(row.massG, row.volumeCm3, row.density) }));
+  const evidence = c.map((row) => ({ label: names[row.id], text: equation(row.massG, row.volumeCm3, row.density) }));
   const { record1, wood, stone } = view.facts;
   const water = labelOf('water');
-  const versus = (id, who, density, outcome, liquidDensity) =>
-    ({ id, text: `${who}${T.objectDensity} ${formatDensity(density)} ${T.versus[outcome]} ${water}${T.liquidDensity} ${formatDensity(liquidDensity)} → ${T.named[outcome]}` });
+  const versus = (who, density, outcome, liquidDensity) =>
+    ({ text: `${who}${T.objectDensity} ${formatDensity(density)} ${T.versus[outcome]} ${water}${T.liquidDensity} ${formatDensity(liquidDensity)} → ${T.named[outcome]}` });
   return {
     heading: T.title,
     cards: [
@@ -530,16 +530,16 @@ export function conceptModel(state, view) {
         title: T.resultsCard.title,
         body: [...T.resultsCard.body],
         evidence: [
-          versus('wood', labelOf('wood'), by.wood.density, wood.outcome, wood.liquidDensity),
-          versus('block-water', T.densityOf.block, by['block-water'].density, record1.outcome, record1.liquidDensity),
-          versus('stone', labelOf('stone'), by.stone.density, stone.outcome, stone.liquidDensity),
+          versus(labelOf('wood'), by.wood.density, wood.outcome, wood.liquidDensity),
+          versus(T.densityOf.block, by['block-water'].density, record1.outcome, record1.liquidDensity),
+          versus(labelOf('stone'), by.stone.density, stone.outcome, stone.liquidDensity),
         ],
       },
     ],
     formula: {
       heading: T.formula.heading,
       expression: T.formula.expression,
-      lines: [{ text: T.formula.words, found: false }, ...evidence.map((row) => ({ text: `${row.label}：${row.text}`, found: true }))],
+      lines: [{ text: T.formula.words }, ...evidence.map((row) => ({ text: `${row.label}：${row.text}`, emphasis: true }))],
       note: T.formula.note,
     },
   };

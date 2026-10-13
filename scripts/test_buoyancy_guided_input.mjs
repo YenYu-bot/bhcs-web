@@ -6,7 +6,8 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView } from '../assets/buoyancy-guided/engine.js';
-import { DRAG_SLOP_PX, MOBILE_MAX_WIDTH, HIT_MIN_PX, hitMinFor, pointInRect, isLocked, isUsable, objectAction, toolAction, syncControls, focusHandoff, createInputController } from '../assets/buoyancy-guided/input.js';
+import { DRAG_SLOP_PX, MOBILE_MAX_WIDTH, HIT_MIN_PX, hitMinFor, pointInRect, isLocked, isUsable, objectAction, toolAction, syncControls, createInputController } from '../assets/buoyancy-guided/input.js';
+import { focusHandoff } from '../assets/science-guided/components.js';
 
 const here = (rel) => fileURLToPath(new URL(rel, import.meta.url));
 const HTML = fs.readFileSync(here('../tools/science/buoyancy-guided.html'), 'utf8');
@@ -108,7 +109,7 @@ await test('sync: availability, lock state, pressed state and touch behaviour fo
   assert.equal(block.dataset.locked, 'false');
   assert.equal(block.hasAttribute('aria-disabled'), false);
   assert.equal(block.getAttribute('aria-pressed'), 'false');
-  assert.ok(block.classList.contains('bg-direct-manipulation') && !block.classList.contains('bg-scroll-surface'));
+  assert.ok(block.classList.contains('sg-direct-manipulation') && !block.classList.contains('sg-scroll-surface'));
   assert.equal(t.tool('put-in', 'block').hidden, false);
   assert.equal(t.tool('put-in', 'wood').hidden, true);
   assert.equal(t.tool('add-ballast').hidden, false);
@@ -129,7 +130,7 @@ await test('sync: availability, lock state, pressed state and touch behaviour fo
   assert.equal(t.tool('take-out').dataset.locked, 'false');
   const sw = atSwitch();
   assert.equal(sw.obj('block').dataset.locked, 'true');
-  assert.ok(sw.obj('block').classList.contains('bg-scroll-surface') && !sw.obj('block').classList.contains('bg-direct-manipulation'), 'a locked object leaves touch to the page');
+  assert.ok(sw.obj('block').classList.contains('sg-scroll-surface') && !sw.obj('block').classList.contains('sg-direct-manipulation'), 'a locked object leaves touch to the page');
   assert.equal(sw.$('input[value="brine"]').disabled, false);
   const t3 = atTrial3();
   assert.equal(t3.obj('block').hidden, true);

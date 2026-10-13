@@ -6,6 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook, createChallengeCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -14,226 +15,130 @@ const safeStorage = () => { try { return window.localStorage; } catch (_) { retu
 const store = createStore({ storage: safeStorage() });
 const restored = restore(store.load());
 const track = createTracker(window);
+const announcer = createAnnouncer($('og-announcer'));
+const actionBar = createActionBar(cta, {
+  onAction: (action) => { if (cta.disabled) return; flush(); if (!cta.disabled) dispatch({ type: action }); },
+});
 
 let state = restored ?? createInitialState();
 let ui = { naming: false };
 let coach = null;
-let renderedCompare = '', renderedConcept = false, notebookBuilt = false, challengeKey = '';
+let announcementSeq = 0;
+
+// Station adapter: the labels are this station's wording; which step is current is still decided by stepFor(state.phase).
+const STEPS = [
+  { id: 'mission', number: '01', label: '接任務' }, { id: 'bench', number: '02', label: '動手做' },
+  { id: 'notebook', number: '03', label: '研究手冊' }, { id: 'challenge', number: '04', label: '挑戰題' },
+];
+const stepNavModel = (phase) => ({ steps: STEPS, currentStep: stepFor(phase) });
+
+// Presentation-only mapping from the bench's clarity level to a status kind; the words and icon still come from clarityMessage.
+const CLARITY_KIND = { 1: 'success', 2: 'progress', 3: 'progress', 4: 'neutral' };
+const statusModel = (view) => ({ kind: CLARITY_KIND[view.clarity.effectiveClarityLevel] ?? 'neutral', ...clarityMessage(view) });
+const statusEls = { root: $('og-status'), icon: $('og-status-icon'), text: $('og-status-text') };
+
+// Station adapter: the conditions the learner is working with right now. Wording lives here, not in the shared card.
+const DATA_TITLE = '這次實驗條件';
+const dataModel = (st) => ({ conditions: [{ label: '焦距', value: `${st.f} cm` }, { label: '物距', value: `${st.u} cm` }] });
 
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };   // writing identical text would re-announce in a live region
 
-function el(tag, props = {}, ...kids) {
-  const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(props)) k in e ? (e[k] = v) : e.setAttribute(k, v);
-  e.append(...kids.filter((k) => k !== null && k !== undefined));
-  return e;
-}
-const radioPill = (name, value, label, onChange, cls = '') => {
-  const input = el('input', { type: 'radio', name, value });
-  input.addEventListener('change', () => onChange(value));
-  return el('label', { className: `og-option ${cls}`.trim() }, input, el('span', {}, label));
-};
-
-// ---- typed text is saved shortly after the learner pauses, and always before a button acts or the page is left
-const pending = { conclusion: {}, note: null };
-let timer = null;
-function flush() {
-  clearTimeout(timer);
-  const fields = pending.conclusion, note = pending.note;
-  pending.conclusion = {}; pending.note = null;
-  if (Object.keys(fields).length) dispatch({ type: 'SAVE_CONCLUSION', fields });
-  if (note !== null) dispatch({ type: 'SAVE_CHALLENGE_NOTE', id: 3, text: note });
-}
-const queue = () => { clearTimeout(timer); timer = setTimeout(flush, 300); };
+// ---- typed text is saved shortly after the learner pauses, and always before a button acts or the page is left.
+// The notebook and the challenge note each buffer their own text (shared cards); the page only says when to flush.
+function flush() { notebook.flush(); challengeCard.flushNote(); }
 addEventListener('pagehide', flush);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
 
 // ---- compare
-const ROW_ROLE = { f: 'same', u: 'variable', observedScreenPosition: 'response', imageSize: 'response' };   // styling only: what stayed, what was changed, what was observed
-function renderCompare() {
+// Station adapter: compareCard builds the evidence and the questions; this adds the learner's own choice and this station's table words.
+const COMPARE_OPTIONS = { heads: { item: '項目', first: '第一次', second: '第二次' }, caption: '兩次實驗的條件與你找到的結果', itemHeadingHidden: true };
+const compareEls = { root: $('og-compare'), body: $('og-compare-body') };
+function drawCompare() {
   const card = compareCard(state.records);
-  if (!card) return;
-  const key = JSON.stringify(card.rows);
-  if (key !== renderedCompare) {
-    renderedCompare = key;
-    const rows = $('og-compare-rows'); rows.replaceChildren();
-    for (const r of card.rows) rows.append(el('tr', { 'data-role': ROW_ROLE[r.key] ?? '' }, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
-    const qs = $('og-questions'); qs.replaceChildren();
-    for (const q of card.questions) {
-      const group = el('div', { className: 'og-options' });
-      for (const [value, label] of q.options) group.append(radioPill(`og-q-${q.id}`, value, label, (v) => dispatch({ type: 'ANSWER_COMPARE', question: q.id, answer: v })));
-      qs.append(el('fieldset', { className: 'og-question' }, el('legend', {}, q.text), group));
-    }
-  }
-  const notice = $('og-compare-notice');
-  put(notice, card.notice.text); notice.dataset.kind = card.notice.kind;
-  for (const q of card.questions) for (const input of document.querySelectorAll(`input[name="og-q-${q.id}"]`)) input.checked = state.compare[q.id] === input.value;
+  renderCompareCard(compareEls, card && { ...card, questions: card.questions.map((q) => ({ ...q, selectedValue: state.compare[q.id] ?? null })) },
+    { ...COMPARE_OPTIONS, onAnswer: (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }) });
 }
 
-function renderConcept() {
-  if (renderedConcept) return;
-  const model = conceptModel(state.records);
-  if (!model) return;
-  renderedConcept = true;
-  const cards = $('og-concept-cards'); cards.replaceChildren();
-  for (const c of model.cards) cards.append(el('article', { className: 'og-concept-card' }, el('h3', {}, c.title), ...c.body.map((t) => el('p', {}, t)), el('p', { className: 'og-evidence' }, c.evidence)));
-  $('og-formula').replaceChildren(el('h3', {}, model.formula.heading), el('p', { className: 'og-formula-expression' }, model.formula.expression),
-    el('ul', {}, ...model.formula.lines.map((l) => el('li', {}, l.text, el('span', {}, l.found)))),
-    el('p', { className: 'og-formula-note' }, model.formula.negativeNote));
-}
+// Station adapter: conceptModel (only non-null once three rounds are recorded) already carries the learner's own numbers.
+const conceptEls = { root: $('og-concept'), body: $('og-concept-body') };
+function drawConcept() { renderConceptReveal(conceptEls, conceptModel(state.records)); }
 
 // ---- research notebook: three ways to write the same finding; Level A is the default
-const nb = {};
-function buildNotebook(m) {
-  const body = $('og-nb-body'); body.replaceChildren();
-  const rows = $('og-nb-rows'); rows.replaceChildren();
-  for (const r of m.evidenceRows) rows.append(el('tr', { 'data-role': ROW_ROLE[r.key] ?? '' }, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
-
-  const levels = el('div', { className: 'og-options' });
-  for (const l of m.levels) levels.append(radioPill('og-level', l.id, `${l.id}　${l.title}`, (v) => { flush(); dispatch({ type: 'SAVE_CONCLUSION', fields: { level: v } }); }));
-  nb.levelDesc = el('p', { className: 'og-level-desc' });
-  body.append(el('fieldset', { className: 'og-nb-levels' }, el('legend', {}, '你想怎麼寫？'), levels, nb.levelDesc));
-
-  // Level A
-  const a = el('div', { className: 'og-level-panel', 'data-level': 'A' });
-  nb.given = el('p', { className: 'og-given' });
-  const posGroup = el('div', { className: 'og-options' }), sizeGroup = el('div', { className: 'og-options' });
-  for (const [v, label] of m.a.positionOptions) posGroup.append(radioPill('og-a-position', v, label, (x) => dispatch({ type: 'SAVE_CONCLUSION', fields: { relationPosition: x } })));
-  for (const [v, label] of m.a.sizeOptions) sizeGroup.append(radioPill('og-a-size', v, label, (x) => dispatch({ type: 'SAVE_CONCLUSION', fields: { relationSize: x } })));
-  nb.nudge = el('p', { className: 'og-nudge' });
-  a.append(nb.given, el('fieldset', { className: 'og-question' }, el('legend', { className: 'og-stem' }, `${m.a.positionStem}……`), posGroup),
-    el('fieldset', { className: 'og-question' }, el('legend', { className: 'og-stem' }, `${m.a.sizeStem}……`), sizeGroup), nb.nudge);
-  // Level B
-  const b = el('div', { className: 'og-level-panel', 'data-level': 'B' });
-  nb.free = el('textarea', { id: 'og-nb-free', rows: 5, maxLength: 1000, placeholder: m.b.placeholder });
-  nb.free.addEventListener('input', () => { pending.conclusion.freeText = nb.free.value; queue(); });
-  nb.free.addEventListener('blur', flush);
-  b.append(el('label', { className: 'og-field', htmlFor: 'og-nb-free' }, m.b.prompt), nb.free);
-  // Level C
-  const c = el('div', { className: 'og-level-panel', 'data-level': 'C' });
-  nb.evidence = el('textarea', { id: 'og-nb-evidence', rows: 4, maxLength: 1000 });
-  nb.limit = el('textarea', { id: 'og-nb-limit', rows: 4, maxLength: 1000 });
-  nb.evidence.addEventListener('input', () => { pending.conclusion.evidenceText = nb.evidence.value; queue(); });
-  nb.limit.addEventListener('input', () => { pending.conclusion.limitationText = nb.limit.value; queue(); });
-  nb.evidence.addEventListener('blur', flush); nb.limit.addEventListener('blur', flush);
-  nb.ideas = el('details', { className: 'og-ideas', hidden: true }, el('summary', {}, '研究員常會想到的限制（寫完再看）'), el('ul', {}, ...m.c.ideas.map((t) => el('li', {}, t))));
-  c.append(el('label', { className: 'og-field', htmlFor: 'og-nb-evidence' }, m.c.q1), nb.evidence, el('label', { className: 'og-field', htmlFor: 'og-nb-limit' }, m.c.q2), nb.limit, nb.ideas);
-  nb.panels = { A: a, B: b, C: c };
-  body.append(a, b, c);
-  nb.levels = m.levels; nb.aGiven = m.a.given;
-}
-
-function syncNotebook() {
+// Station adapter: the level pills read "A　幫我整理" here (the letter is part of how this station names them).
+function drawableNotebook() {
   const m = notebookModel(state.records, state.conclusion);
-  if (!m) return;
-  if (!notebookBuilt) { buildNotebook(m); notebookBuilt = true; }
-  const c = state.conclusion;
-  for (const input of document.querySelectorAll('input[name="og-level"]')) input.checked = c.level === input.value;
-  put(nb.levelDesc, m.levels.find((l) => l.id === c.level)?.desc ?? '');
-  for (const [id, panel] of Object.entries(nb.panels)) panel.hidden = c.level !== id;
-  nb.given.replaceChildren(...m.a.given.map((t, i) => el('span', {}, i ? ' ' : '', t)));
-  for (const input of document.querySelectorAll('input[name="og-a-position"]')) input.checked = c.relationPosition === input.value;
-  for (const input of document.querySelectorAll('input[name="og-a-size"]')) input.checked = c.relationSize === input.value;
-  put(nb.nudge, m.a.nudge ?? '');
-  for (const [node, text] of [[nb.free, c.freeText], [nb.evidence, c.evidenceText], [nb.limit, c.limitationText]]) {
-    if (document.activeElement !== node && node.value !== text) node.value = text;      // never rewrite what the learner is typing
-  }
-  nb.ideas.hidden = c.limitationText.trim().length < 2;
+  return m && { ...m, levels: m.levels.map((l) => ({ ...l, title: `${l.id}　${l.title}` })) };
 }
+const notebook = createNotebook($('og-notebook'), {
+  body: $('og-nb-body'), idPrefix: 'og', maxLength: 1000, ideasCollapsible: true,
+  comparison: { heads: { item: '項目', first: '第一次', second: '第二次' }, caption: '你的兩次實驗證據', itemHeadingHidden: true },
+}, {
+  onLevel: (level) => { flush(); dispatch({ type: 'SAVE_CONCLUSION', fields: { level } }); },
+  onRelation: (id, value) => dispatch({ type: 'SAVE_CONCLUSION', fields: { [id]: value } }),
+  onDraft: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
+  onFlush: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
+});
 
-// ---- challenges: built once per challenge, then updated in place so focus and typing are never lost
-const ch = {};
-function buildChallenge(id) {
-  const m = challengeModel(state, id);
-  put($('og-challenge-title'), `挑戰 ${id}／${m.count}　${m.title}`);
-  put($('og-ch-scenario'), m.scenario);
-  const steps = $('og-ch-steps'); steps.replaceChildren();
-  ch.steps = {};
-  for (const s of m.steps) {
-    const group = el('div', { className: 'og-options og-options-col' });
-    for (const [value, label] of s.options) group.append(radioPill(`og-ch-${id}-${s.id}`, value, label, (v) => dispatch({ type: 'ANSWER_CHALLENGE', id, step: s.id, choice: v })));
-    const fb = el('p', { className: 'og-feedback' });
-    const fs = el('fieldset', { className: 'og-question' }, el('legend', {}, s.question), group, fb);
-    steps.append(fs); ch.steps[s.id] = { fs, fb, name: `og-ch-${id}-${s.id}` };
-  }
-  const note = $('og-ch-note-input');
-  note.value = '';
-  challengeKey = String(id);
-}
-function syncChallenge() {
+// ---- challenges: steps unlock in order; the card builds each once and updates it in place so focus and typing are never lost
+const challengeNoteId = () => Number(state.phase.slice(-1)) || 3;
+const challengeCard = createChallengeCard({ root: $('og-challenge'), heading: $('og-challenge-title'), body: $('og-challenge-body') }, { idPrefix: 'og', maxLength: 1000 }, {
+  onAnswer: (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: Number(state.phase.slice(-1)), step, choice }),
+  onNoteDraft: (text) => dispatch({ type: 'SAVE_CHALLENGE_NOTE', id: challengeNoteId(), text }),
+  onNoteFlush: (text) => dispatch({ type: 'SAVE_CHALLENGE_NOTE', id: challengeNoteId(), text }),
+});
+function drawChallenge() {
   const id = Number(state.phase.slice(-1));
-  if (challengeKey !== String(id)) buildChallenge(id);
   const m = challengeModel(state, id);
-  for (const s of m.steps) {
-    const node = ch.steps[s.id];
-    node.fs.hidden = !s.unlocked;
-    for (const input of node.fs.querySelectorAll('input')) { input.checked = s.choice === input.value; input.disabled = s.correct; }
-    put(node.fb, s.feedback ?? ''); node.fb.dataset.correct = String(s.correct);
-  }
-  $('og-ch-note').hidden = !m.note;
-  if (m.note) {
-    put($('og-ch-note-label'), m.note.label);
-    const input = $('og-ch-note-input');
-    input.placeholder = m.note.placeholder;
-    if (document.activeElement !== input && input.value !== m.note.text) input.value = m.note.text;
-  }
-}
-$('og-ch-note-input').addEventListener('input', (e) => { pending.note = e.target.value; queue(); });
-$('og-ch-note-input').addEventListener('blur', flush);
-
-function renderComplete() {
-  const m = completeModel(state);
-  $('og-complete-summary').replaceChildren(el('h3', {}, '你的發現'), el('div', { className: 'og-complete-lines' }, ...m.lines.map((t) => el('p', {}, t))));
+  challengeCard.update({ ...m, title: `挑戰 ${id}／${m.count}　${m.title}` });   // the heading wording is this station's
 }
 
-function renderRecords() {
-  const list = evidenceList(state.records), ul = $('og-records');
-  $('og-records-wrap').hidden = list.length === 0;
-  ul.replaceChildren(...list.map((r) => el('li', {}, el('b', {}, r.text), ` ${r.detail}`)));
+// Station adapter: completeModel keeps what the learner wrote; the claims stay empty because this station states no claim of its own.
+const COMPLETE_HEADING = '這一站完成了';
+const COMPLETE_LINK = { href: './optics.html', label: '自由探索／精確數值' };
+const completeEls = { root: $('og-complete'), heading: $('og-complete-title'), body: $('og-complete-summary') };
+function drawCompletion() {
+  renderCompletionCard(completeEls, { heading: COMPLETE_HEADING, claims: [], conclusion: completeModel(state).lines, link: COMPLETE_LINK });
+}
+
+// Station adapter: evidenceList keeps the station's wording and logic; this only reshapes it for the shared card.
+const EVIDENCE_TITLE = '已記錄的實驗';
+function drawEvidence() {
+  const items = evidenceList(state.records).map((r) => ({ id: `trial-${r.trial}`, title: r.text, rows: r.rows, note: r.note }));
+  renderEvidenceCard($('og-evidence'), { items }, { title: EVIDENCE_TITLE });
 }
 
 const hits = benchView.hits;
 const HEADING = { welcome: 'og-welcome-title', compare: 'og-compare-title', concept: 'og-concept-title', notebook: 'og-notebook-title', challenge: 'og-challenge-title', complete: 'og-complete-title' };
-function focusTargetAfter(wasCta, screen) {
-  const a = document.activeElement;
-  const usable = (e) => e && !e.hidden && !e.disabled && e.dataset.locked !== 'true' && e.offsetParent !== null;
-  const lockedHit = a && (a === hits.screen || a === hits.candle) && a.dataset.locked === 'true';
-  const ctaGone = wasCta && !usable(cta);
-  if (!lockedHit && !ctaGone) return;
-  const next = [hits.screen, hits.candle].find((h) => usable(h) && h !== a) ?? (usable(cta) && a !== cta ? cta : null)
-    ?? (HEADING[screen] ? $(HEADING[screen]) : null);
-  next?.focus({ preventScroll: true });
-}
 
 function render(wasCta = false) {
+  const active = document.activeElement;
   const view = deriveView(state), screen = screenFor(state);
   main.dataset.screen = screen;
-  const step = stepFor(state.phase);
-  for (const b of document.querySelectorAll('.og-nav button')) b.setAttribute('aria-current', b.dataset.step === step ? 'step' : 'false');
+  renderStepNav($('og-steps'), stepNavModel(state.phase));
 
   put($('og-welcome-title'), MESSAGES.welcome.main);
-  put($('og-coach-main'), coach?.main ?? ''); put($('og-coach-sub'), coach?.sub ?? '');
+  renderCoachCard({ main: $('og-coach-main'), sub: $('og-coach-sub') }, coach ?? { main: '', sub: null });
   if (screen === 'bench') {
     benchView.measure();                     // the bench was display:none until now
     benchView.update(view, { rays: state.phase === 'trial1-complete' || state.phase === 'trial2-complete' });
-    const msg = clarityMessage(view);
     $('og-status').dataset.level = String(view.clarity.effectiveClarityLevel);
-    put($('og-status-icon'), msg.icon); put($('og-status-text'), msg.text);
+    renderStatusBar(statusEls, statusModel(view));
   }
-  if (screen === 'compare') renderCompare();
-  if (screen === 'concept') renderConcept();
-  if (screen === 'notebook') syncNotebook();
-  if (screen === 'challenge') syncChallenge();
-  if (screen === 'complete') renderComplete();
-  put($('og-f'), `${state.f} cm`); put($('og-u'), `${state.u} cm`);
-  renderRecords();
+  if (screen === 'compare') drawCompare();
+  if (screen === 'concept') drawConcept();
+  if (screen === 'notebook') notebook.update(drawableNotebook());
+  if (screen === 'challenge') drawChallenge();
+  if (screen === 'complete') drawCompletion();
+  renderDataCard($('og-data'), dataModel(state), { title: DATA_TITLE });
+  drawEvidence();
   $('og-restart').hidden = !state.records[1];
   put($('og-save-note'), store.failed ? '這個瀏覽器無法保存進度；關閉頁面後會消失。' : state.records[1] ? (restored ? '已接續你上次做到的地方。進度只儲存在這台瀏覽器。' : '進度只儲存在這台瀏覽器。') : '');
 
   const c = ctaFor(state, view, ui);
-  cta.hidden = !c;
-  if (c) { put(cta, c.label); cta.disabled = !c.enabled; cta.dataset.action = c.action; }
-  focusTargetAfter(wasCta, screen);
+  actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action } : null);
+  const targets = ['.og-hit-screen', '.og-hit-candle', '#og-cta', ...(HEADING[screen] ? [`#${HEADING[screen]}`] : [])];
+  const ctaGone = wasCta && (cta.hidden || cta.disabled || !document.body.contains(cta));
+  focusHandoff({ root: document.body, active, ctaGone, targets });
 }
 
 function dispatch(action) {
@@ -249,7 +154,11 @@ function dispatch(action) {
     track(analyticsFor(result));
   }
   const view = deriveView(state);
+  const previousCoach = coach;
   coach = reduceCoach(coach, { state, view, events: result.events, transitions: result.transitions, ui });
+  if (result.accepted && coach && coach !== previousCoach) {
+    announcer.say({ id: `optics-coach-${++announcementSeq}`, text: [coach.main, coach.sub].filter(Boolean).join(' ') });
+  }
   render(wasCta);
   return result;
 }
@@ -261,7 +170,6 @@ const controller = createInputController({
 });
 controller.attach(hits.screen, 'screen');
 controller.attach(hits.candle, 'candle');
-cta.addEventListener('click', () => { if (cta.disabled) return; flush(); if (!cta.disabled) dispatch({ type: cta.dataset.action }); });
 $('og-restart').addEventListener('click', () => {
   if (!confirm('清除這台瀏覽器上的紀錄並重新開始？')) return;
   store.clear();

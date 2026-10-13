@@ -89,10 +89,14 @@ test('compare: card built from the learner\'s own records; wrong answers get a q
  for(const [o1,o2] of [[14.5,29.5],[15,30],[15.5,30.5]]){
   const st=play([{type:'START'},{type:'BEGIN'},mS(o1),{type:'RECORD'},mC(15),mS(o2),{type:'RECORD'}]);
   assert.equal(st.state.phase,'compare');assert.equal(st.coach.id,'compare');
-  const card=compareCard(st.state.records),row=k=>card.rows.find(r=>r.key===k);
-  assert.deepEqual([row('observedScreenPosition').first,row('observedScreenPosition').second],[`${formatCm(o1)} cm`,`${formatCm(o2)} cm`],'shows what was recorded, not 15/30');
-  assert.deepEqual([row('f').first,row('u').first,row('u').second,row('imageSize').first,row('imageSize').second],['10 cm','30 cm','15 cm','較小','較大']);
-  assert.equal(card.notice.text,'✅ 兩次只有物距不同，可以直接比較。');assert.equal(card.directComparable,true);
+  const card=compareCard(st.state.records),seen=label=>card.observedResponse.find(r=>r.label===label);
+  assert.deepEqual([seen('清楚像距').first,seen('清楚像距').second],[`${formatCm(o1)} cm`,`${formatCm(o2)} cm`],'shows what was recorded, not 15/30');
+  assert.deepEqual([card.independentVariable,card.controlledVariables],[{label:'物距',from:'30 cm',to:'15 cm'},[{label:'焦距',value:'10 cm'}]],'the changed condition is the independent variable, the other is kept');
+  assert.deepEqual([seen('影像大小').first,seen('影像大小').second],['較小','較大']);
+  assert.equal(card.notice.text,'✅ 兩次只有物距不同，可以直接比較。');assert.equal(card.notice.kind,'ok');
+  assert.ok(!('directComparable' in card)&&!('rows' in card),'the shared card contract carries no engine flag and no legacy rows');
+  assert.deepEqual(card.questions.map(q=>q.options.every(o=>typeof o.value==='string'&&typeof o.label==='string')),[true,true],'options are {value,label}');
+  assert.ok(!/correctAnswer|answerKey|expectedAnswer/.test(JSON.stringify(card)),'no answer key in the card');
   assert.ok(!JSON.stringify(card).includes('theoretical'),'no theoreticalV in the card');
   let r=play([{type:'ANSWER_COMPARE',question:'position',answer:'closer'},{type:'ANSWER_COMPARE',question:'size',answer:'larger'}],{from:st});
   assert.equal(r.coach.id,'compareRetry');assert.equal(r.coach.main,'剛才哪個結果變得更明顯？');assert.equal(ctaFor(r.state,deriveView(r.state)).enabled,false);
@@ -102,7 +106,7 @@ test('compare: card built from the learner\'s own records; wrong answers get a q
  }
  assert.equal(compareCard({1:null,2:null,3:null}),null);
  const rec=(f,u,obs)=>({f,u,observedScreenPosition:obs,imageSize:'larger',absoluteMagnification:2});
- const multi=compareCard({1:rec(10,30,15),2:rec(12,15,60),3:null});assert.equal(multi.notice.kind,'warn');assert.equal(multi.notice.text,'⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。');assert.equal(multi.directComparable,false);
+ const multi=compareCard({1:rec(10,30,15),2:rec(12,15,60),3:null});assert.equal(multi.notice.kind,'warn');assert.equal(multi.notice.text,'⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。');assert.equal(multi.independentVariable,undefined,'two changes: no single independent variable');
  const onlyF=compareCard({1:rec(10,30,15),2:rec(12,30,15),3:null});assert.equal(onlyF.notice.text,'✅ 兩次只有焦距不同，可以直接比較。');
 });
 
@@ -133,11 +137,11 @@ test('records list and concept model use the learner\'s numbers; the formula res
  const c=conceptModel(flow.state.records);
  assert.deepEqual(c.cards.map(x=>x.id),['real','virtual']);
  assert.deepEqual(c.cards[0].body,['光線真的在某個位置會合。','可以投在屏幕上。']);assert.deepEqual(c.cards[1].body,['光線沒有真的在看起來的影像位置會合。','眼睛能看到，但屏幕接不到。']);
- assert.ok(c.cards[0].evidence.includes('14.5')&&c.cards[0].evidence.includes('29.5'));
+ assert.ok(Array.isArray(c.cards[0].evidence)&&c.cards[0].evidence.every(e=>typeof e.text==='string'),'evidence is [{text}]');assert.ok(c.cards[0].evidence[0].text.includes('14.5')&&c.cards[0].evidence[0].text.includes('29.5'));
  assert.equal(c.formula.heading,'剛才找到的位置，其實可以用這個關係算出來。');assert.equal(c.formula.expression,'1/f = 1/u + 1/v');
  assert.deepEqual(c.formula.lines.map(l=>l.text),['第一次：f = 10 cm，u = 30 cm → v = 15 cm','第二次：f = 10 cm，u = 15 cm → v = 30 cm','第三次：f = 10 cm，u = 5 cm → v = −10 cm']);
- assert.equal(c.formula.lines[0].found,'你找到 14.5 cm');assert.equal(c.formula.lines[1].found,'你找到 29.5 cm');
- assert.equal(c.formula.negativeNote,'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
+ assert.equal(c.formula.lines[0].note,'你找到 14.5 cm');assert.equal(c.formula.lines[1].note,'你找到 29.5 cm');assert.ok(c.formula.lines.every(l=>!('found' in l)));
+ assert.ok(!('negativeNote' in c.formula));assert.equal(c.formula.note,'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
  // I7.5: no formal term before the concept stage in Trial 3 learner-facing text
  for(const k of ['welcome','mission','find1','findStart','near','wrongDirection','hint1','hint2','hint3Left','hint3Right','complete1','moveCandle','moveCandlePlain','find2','complete2','alreadyRecorded','compare','compareRetry','compareDone','moveCandle3','search','searchTwo','searchDone','noReal','viewThrough']){assert.ok(MESSAGES[k],'key '+k);assert.ok(!/實像|虛像/.test(JSON.stringify(MESSAGES[k])),'formal term before naming: '+k)}
  assert.ok(!JSON.stringify(MESSAGES).includes('負的像距'),'negative-v note only after naming');
@@ -168,24 +172,24 @@ const ans=(id,step,choice)=>({type:'ANSWER_CHALLENGE',id,step,choice});
 test('notebook model: Level A sentences carry the learner\'s own numbers; the nudge points back to the evidence without judging',()=>{
  const nb=toNotebook();assert.equal(nb.state.phase,'notebook');assert.equal(nb.coach.id,'notebook');assert.equal(screenFor(nb.state),'notebook');
  const m=notebookModel(nb.state.records,nb.state.conclusion);
- assert.deepEqual(m.a.given,['我把物距從 30 cm 改成 15 cm。','清楚像距從 14.5 cm 變成 29.5 cm。']);
- assert.equal(m.a.positionStem,'所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會');assert.equal(m.a.sizeStem,'影像大小會');
- assert.deepEqual(m.a.positionOptions.map(o=>o[0]),['closer','farther','same']);assert.deepEqual(m.a.sizeOptions.map(o=>o[0]),['smaller','larger','same']);
+ assert.deepEqual(m.levelA.given,['我把物距從 30 cm 改成 15 cm。','清楚像距從 14.5 cm 變成 29.5 cm。']);
+ assert.deepEqual(m.levelA.stems.map(x=>[x.id,x.legend]),[['relationPosition','所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會……'],['relationSize','影像大小會……']]);
+ assert.deepEqual(m.levelA.stems[0].options.map(o=>o.value),['closer','farther','same']);assert.deepEqual(m.levelA.stems[1].options.map(o=>o.value),['smaller','larger','same']);assert.ok(m.levelA.stems.every(x=>x.options.every(o=>typeof o.label==='string')),'options are {value,label}');
  assert.deepEqual(m.levels.map(l=>l.id+l.title),['A幫我整理','B自己說','C研究員挑戰']);
- assert.equal(m.b.prompt,'請用第一次和第二次的數據，說明你發現的規律。');
- assert.deepEqual([m.c.q1,m.c.q2],['這兩筆資料支持了什麼結論？','哪些事情還不能只靠這兩筆資料判斷？']);assert.deepEqual(m.c.ideas,LIMITATION_IDEAS);
- assert.equal(m.a.nudge,null,'nothing chosen yet → nothing to say');
+ assert.equal(m.levelB.prompt,'請用第一次和第二次的數據，說明你發現的規律。');
+ assert.deepEqual([m.levelC.q1.label,m.levelC.q2.label],['這兩筆資料支持了什麼結論？','哪些事情還不能只靠這兩筆資料判斷？']);assert.deepEqual(m.levelC.ideas,LIMITATION_IDEAS);assert.equal(m.levelC.showIdeas,false);assert.ok(!('questions' in m.evidenceSummary)&&!JSON.stringify(m).includes('theoretical'),'the evidence summary is the comparison without questions');
+ assert.equal(m.levelA.nudge,null,'nothing chosen yet → nothing to say');
  const wrong=notebookModel(nb.state.records,{...nb.state.conclusion,relationPosition:'closer'});
- assert.ok(wrong.a.nudge.includes('再對照一下上面的證據')&&wrong.a.nudge.includes('14.5 cm')&&wrong.a.nudge.includes('29.5 cm'));assert.ok(!/錯|答案/.test(wrong.a.nudge));
+ assert.ok(wrong.levelA.nudge.includes('再對照一下上面的證據')&&wrong.levelA.nudge.includes('14.5 cm')&&wrong.levelA.nudge.includes('29.5 cm'));assert.ok(!/錯|答案/.test(wrong.levelA.nudge));
  assert.equal(notebookModel(notebookModel.length?{1:null,2:null,3:null}:null,nb.state.conclusion),null);
  // the card in the notebook is the same evidence as in compare, never theoreticalV
  assert.ok(!JSON.stringify(m).includes('theoretical'));
  // Level A must match the records: a mismatch keeps the button off and shows the pointer back to the evidence
  for(const [p,sz] of [['closer','larger'],['farther','smaller'],['closer','smaller']]){
   const st=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:p,relationSize:sz}}],{from:nb});
-  const mm=notebookModel(st.state.records,st.state.conclusion);assert.equal(mm.ready,false,p+sz);assert.ok(mm.a.nudge.includes('再對照一下上面的證據'));assert.deepEqual(ctaFor(st.state,deriveView(st.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:false});
+  const mm=notebookModel(st.state.records,st.state.conclusion);assert.equal(mm.ready,false,p+sz);assert.ok(mm.levelA.nudge.includes('再對照一下上面的證據'));assert.deepEqual(ctaFor(st.state,deriveView(st.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:false});
  }
- const good=notebookModel(nb.state.records,{...nb.state.conclusion,level:'A',relationPosition:'farther',relationSize:'larger'});assert.equal(good.ready,true);assert.equal(good.a.nudge,null);
+ const good=notebookModel(nb.state.records,{...nb.state.conclusion,level:'A',relationPosition:'farther',relationSize:'larger'});assert.equal(good.ready,true);assert.equal(good.levelA.nudge,null);
  const ready=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:'farther',relationSize:'larger'}}],{from:nb});
  assert.deepEqual(ctaFor(ready.state,deriveView(ready.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:true});
 });
@@ -213,7 +217,7 @@ test('challenge flow in the coach: question first, hint only after repeated trie
  r=play([ans(1,'adjust','candle')],{from:r});assert.equal(r.coach.id,'challengeRetry');assert.equal(r.coach.main,'剛才哪個結果變得更明顯？');
  r=play([ans(1,'adjust','lens')],{from:r});assert.equal(r.coach.id,'challengeHint');assert.equal(r.coach.main,CHALLENGES[0].steps[0].hint);assert.ok(!r.coach.main.includes('屏幕的位置'));
  r=play([ans(1,'adjust','screen')],{from:r});assert.equal(r.coach.id,'challengeRight');assert.equal(r.coach.main,CHALLENGES[0].steps[0].right);assert.equal(ctaFor(r.state,deriveView(r.state)).enabled,true);
- const m1=challengeModel(r.state,1);assert.deepEqual([m1.steps[0].correct,m1.steps[0].attempts,m1.steps[0].feedback],[true,3,CHALLENGES[0].steps[0].right]);
+ const m1=challengeModel(r.state,1);assert.deepEqual([m1.steps[0].correct,m1.steps[0].attempts,m1.steps[0].feedback],[true,3,{kind:'success',text:CHALLENGES[0].steps[0].right}]);assert.ok(m1.steps[0].options.every(o=>typeof o.value==='string'&&typeof o.label==='string'),'options are {value,label}');assert.ok(!/correctAnswer|answerKey|"correct":"/.test(JSON.stringify(m1.steps[0].options)),'no answer key inside the options');
  // challenge 2: the follow-up opens after the first step; challenge 3 gets its optional note and a "完成" button
  r=play([{type:'CONTINUE'},ans(2,'project','no')],{from:r});const m2=challengeModel(r.state,2);assert.deepEqual(m2.steps.map(x=>x.unlocked),[true,true]);
  r=play([ans(2,'kind','virtual'),{type:'CONTINUE'}],{from:r});assert.equal(r.state.phase,'challenge-3');assert.equal(challengeModel(r.state,3).note,null,'no note before the answer');

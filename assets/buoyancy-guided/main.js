@@ -3,7 +3,7 @@
 // the pictures from visual.js / render.js, the cards from cards.js, the controls from input.js, and the saving (and
 // every check of what comes back out of a save) from persist.js.
 import { createInitialState, reduce, deriveView } from './engine.js';
-import { createInputController, syncControls, focusHandoff } from './input.js';
+import { createInputController, syncControls } from './input.js';
 import { visualParams } from './visual.js';
 import { createRenderer } from './render.js';
 import { TEXT_MAX } from './challenges.js';
@@ -14,8 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderSteps, renderCoach, renderStatus, renderData, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion, createAnnouncer,
+  renderCoachExtras, comparisonOptions,
 } from './cards.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook, createChallengeCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -25,7 +26,15 @@ const hint = $('bg-hint');
 const tank = bench.querySelector('[data-bg-tank]');
 const renderer = createRenderer({ scene: $('bg-scene'), labels: LABELS });
 const announcer = createAnnouncer($('bg-announcer'));
+const actionBar = createActionBar(cta, {
+  onAction: (action) => {
+    notebook.flush();
+    const current = ctaFor(state, deriveView(state));
+    if (current && current.enabled) dispatch(action);
+  },
+});
 const coachEls = { root: $('bg-coach'), name: $('bg-coach-name'), main: $('bg-coach-main'), sub: $('bg-coach-sub'), tip: $('bg-coach-tip') };
+const statusEls = { root: $('bg-status'), icon: $('bg-status').querySelector('[data-bg-status-icon]'), text: $('bg-status').querySelector('[data-bg-status-text]') };
 const SCREENS = ['welcome', 'bench', 'compare', 'concept', 'notebook', 'challenge', 'complete'];
 const CARD_OF = { welcome: 'bg-welcome', bench: 'bg-bench-card', compare: 'bg-compare', concept: 'bg-concept', notebook: 'bg-notebook', challenge: 'bg-challenge', complete: 'bg-complete' };
 
@@ -38,8 +47,13 @@ let lastScreen = null;
 let pendingRestore = false;            // a drag ended without the engine moving anything: draw the objects back where they belong
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };
 
-const notebook = createNotebook($('bg-notebook'), TEXT, {
-  maxLength: TEXT_MAX,
+let challengeId = null;
+const challengeCard = createChallengeCard({ root: $('bg-challenge'), heading: $('bg-challenge-title'), body: $('bg-challenge').querySelector('[data-bg-challenge-body]') }, { idPrefix: 'bg' }, {
+  onAnswer: (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: challengeId, step, choice }),
+});
+const notebook = createNotebook($('bg-notebook'), {
+  body: $('bg-notebook').querySelector('[data-bg-notebook-body]'), idPrefix: 'bg', maxLength: TEXT_MAX, comparison: comparisonOptions(TEXT),
+}, {
   onLevel: (level) => dispatch({ type: 'SAVE_CONCLUSION', fields: { level } }),
   onRelation: (id, value) => dispatch({ type: 'SAVE_CONCLUSION', fields: { [id]: value } }),
   onDraft: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
@@ -69,26 +83,25 @@ function render(wasCta = false) {
   $('bg-side').hidden = screen.id === 'welcome';
 
   put($('bg-heading'), stationTitleFor(state));
-  renderSteps($('bg-steps'), stepNavModel(state));
-  renderCoach(coachEls, coach, hintFor(view));
-  renderStatus($('bg-status'), statusModel(state, view));
-  renderData($('bg-data'), dataModel(state, view), TEXT.dataTitle, TEXT.dataStates);
-  renderEvidence($('bg-evidence'), evidenceModel(state, view), TEXT.evidenceTitle);
-  renderCompare($('bg-compare'), screen.id === 'compare' ? compareModel(state, view) : null, TEXT,
-    (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }));
-  const concept = screen.id === 'concept' ? conceptModel(state, view) : null;
-  if (concept) put($('bg-concept-title'), concept.heading);
-  renderConcept($('bg-concept'), concept);
+  renderStepNav($('bg-steps'), stepNavModel(state));
+  renderCoachCard(coachEls, coach);
+  renderCoachExtras(coachEls, coach, hintFor(view));
+  renderStatusBar(statusEls, statusModel(state, view));
+  renderDataCard($('bg-data'), dataModel(state, view), { title: TEXT.dataTitle, stateLabels: TEXT.dataStates });
+  renderEvidenceCard($('bg-evidence'), evidenceModel(state, view), { title: TEXT.evidenceTitle });
+  renderCompareCard({ root: $('bg-compare'), body: $('bg-compare').querySelector('[data-bg-compare-body]') }, screen.id === 'compare' ? compareModel(state, view) : null,
+    { ...comparisonOptions(TEXT), onAnswer: (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }) });
+  renderConceptReveal({ root: $('bg-concept'), heading: $('bg-concept-title'), body: $('bg-concept').querySelector('[data-bg-concept-body]') },
+    screen.id === 'concept' ? conceptModel(state, view) : null, { labelSuffix: '：' });
   const book = screen.id === 'notebook' ? notebookModel(state, view) : null;
   if (book) put($('bg-notebook-title'), book.heading);
   notebook.update(book);
   const challenge = screen.id === 'challenge' ? challengeModel(state, view) : null;
-  if (challenge) put($('bg-challenge-title'), challenge.title);
-  renderChallenge($('bg-challenge'), challenge,
-    (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: challenge.id, step, choice }));
+  if (challenge) challengeId = challenge.id;
+  challengeCard.update(challenge);
   const done = screen.id === 'complete' ? completeModel(state) : null;
-  if (done) put($('bg-complete-title'), done.heading);
-  renderCompletion($('bg-complete'), done);
+  renderCompletionCard({ root: $('bg-complete'), heading: $('bg-complete-title'), body: $('bg-complete').querySelector('[data-bg-complete-body]') },
+    done && { heading: done.heading, claims: done.claims, conclusion: [done.intro], link: done.link });
   $('bg-storage-note').hidden = !store.failed;
 
   syncControls(bench, view);
@@ -99,8 +112,7 @@ function render(wasCta = false) {
   if (screen.id === 'bench') renderer.render(visualParams(view));
 
   const c = ctaFor(state, view);
-  cta.hidden = !c;
-  if (c) { put(cta, c.label); cta.disabled = !c.enabled; cta.dataset.action = c.action.type; }
+  actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action.type } : null);
   const targets = screenChanged ? [`#${screen.headingId}`, ...screen.focusTargets] : screen.focusTargets;
   const arrivedAtEnd = screenChanged && screen.id === 'complete';           // the finish is announced by its heading, not by leaving focus on the button
   const redrawn = Boolean(active) && active !== document.body && !document.body.contains(active);   // a card was rebuilt under the focus (a challenge step opened)
@@ -130,11 +142,6 @@ function keepCoachInView() {
   if (target.getBoundingClientRect().top < 0) target.scrollIntoView({ block: 'start' });
 }
 
-cta.addEventListener('click', () => {
-  notebook.flush();                      // what was just typed counts before the button decides whether it is ready
-  const c = ctaFor(state, deriveView(state));
-  if (c && c.enabled) dispatch(c.action);
-});
 window.addEventListener('pagehide', () => notebook.flush());
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') notebook.flush(); });
 

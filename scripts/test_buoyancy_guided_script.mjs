@@ -8,6 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
+import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook, createChallengeCard } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -341,7 +342,7 @@ await test('concept: the formula sits on the learner\'s own lines', () => {
   const m = S.conceptModel(run(...TO_CONCEPT).state, run(...TO_CONCEPT).view);
   assert.equal(m.formula.expression, 'ρ = m / V');
   assert.equal(m.formula.lines[0].text, '密度 = 質量 ÷ 體積');
-  const found = m.formula.lines.filter((l) => l.found).map((l) => l.text);
+  const found = m.formula.lines.filter((l) => l.emphasis).map((l) => l.text);
   assert.equal(found.length, 4);
   assert.ok(found[0].includes('100 g ÷ 100 cm³ = 1.0 g/cm³'));
   assert.ok(found[3].includes('120 g ÷ 40 cm³ = 3.0 g/cm³'));
@@ -442,7 +443,7 @@ await test('announcements: the engine\'s event id decides; same words with anoth
   assert.match(a.id, /^observation-\d+$/);
   const b = { ...a, id: second.id };                                                                       // the same words under the next event id
   const el = { dataset: {}, textContent: '' };
-  const speaker = cards.createAnnouncer(el, { delayMs: 0 });
+  const speaker = createAnnouncer(el, { delayMs: 0 });
   const wait = () => new Promise((resolve) => setTimeout(resolve, 5));
   assert.equal(speaker.say(a), true); await wait();
   assert.equal(el.textContent, a.text); assert.equal(el.dataset.writes, '1');
@@ -555,7 +556,7 @@ await test('cards: the step list is an <ol> that marks the current step; nothing
   const dom = page();
   const ol = dom.window.document.getElementById('bg-steps');
   assert.equal(ol.tagName, 'OL');
-  cards.renderSteps(ol, S.stepNavModel({ ...createInitialState(), phase: 'trial1-test' }));
+  renderStepNav(ol, S.stepNavModel({ ...createInitialState(), phase: 'trial1-test' }));
   assert.equal(ol.children.length, 4);
   assert.deepEqual([...ol.children].map((li) => li.getAttribute('aria-current')), [null, 'step', null, null]);
   assert.equal(ol.querySelectorAll('button, a, [tabindex]').length, 0);
@@ -568,9 +569,9 @@ await test('cards: compare is drawn from the model, updated in place, and locks 
   const root = doc.getElementById('bg-compare');
   const answers = [];
   const r = run(...TO_COMPARE);
-  const draw = () => cards.renderCompare(root, S.compareModel(r.state, deriveView(r.state)), S.TEXT, (q, a) => answers.push([q, a]));
+  const draw = () => renderCompareCard({ root, body: root.querySelector('[data-bg-compare-body]') }, S.compareModel(r.state, deriveView(r.state)), { ...cards.comparisonOptions(S.TEXT), onAnswer: (q, a) => answers.push([q, a]) });
   draw();
-  const radios = [...root.querySelectorAll('input[type=radio][data-bg-compare]')];
+  const radios = [...root.querySelectorAll('input[type=radio][data-compare]')];
   assert.equal(radios.length, 6);
   assert.equal(root.querySelectorAll('table').length, 1);
   assert.equal(root.querySelector('tbody tr:first-child th').textContent, '液體（改變的）');
@@ -579,16 +580,16 @@ await test('cards: compare is drawn from the model, updated in place, and locks 
   assert.deepEqual(answers, [['stayMass', 'smaller']]);
   r.do(A.q('stayMass', 'smaller'));
   draw();
-  assert.equal(root.querySelector('[data-bg-feedback="stayMass"]').hidden, false);
-  assert.equal(root.querySelector('[data-bg-feedback="stayMass"]').textContent, '再看看兩次讓方塊停住的質量。');
-  assert.deepEqual(root.querySelectorAll('input[data-bg-compare]').length, 6);
+  assert.equal(root.querySelector('[data-feedback="stayMass"]').hidden, false);
+  assert.equal(root.querySelector('[data-feedback="stayMass"]').textContent, '再看看兩次讓方塊停住的質量。');
+  assert.deepEqual(root.querySelectorAll('input[data-compare]').length, 6);
   r.do(A.q('stayMass', 'larger'));
   draw();
-  const after = [...root.querySelectorAll('input[type=radio][data-bg-compare]')];
+  const after = [...root.querySelectorAll('input[type=radio][data-compare]')];
   assert.ok(after.every((el, i) => el === radios[i]), 'the same controls, so focus is never lost to a rebuild');
   assert.deepEqual(after.map((el) => el.disabled), [true, true, true, false, false, false]);
   assert.equal(after[0].checked, true);
-  assert.equal(root.querySelector('[data-bg-feedback="stayMass"]').dataset.kind, 'success');
+  assert.equal(root.querySelector('[data-feedback="stayMass"]').dataset.kind, 'success');
   assert.equal(root.querySelectorAll('[aria-live]').length, 0);
 });
 
@@ -596,24 +597,27 @@ await test('cards: concept, evidence, data, status and coach draw without a live
   const dom = page();
   const doc = dom.window.document;
   const r = run(...TO_CONCEPT);
-  cards.renderConcept(doc.getElementById('bg-concept'), S.conceptModel(r.state, r.view));
+  renderConceptReveal({ root: doc.getElementById('bg-concept'), heading: doc.getElementById('bg-concept-title'), body: doc.querySelector('[data-bg-concept-body]') }, S.conceptModel(r.state, r.view), { labelSuffix: '：' });
   const concept = doc.getElementById('bg-concept');
-  assert.equal(concept.querySelectorAll('[data-bg-concept-card]').length, 2);
-  assert.equal(concept.querySelector('[data-bg-formula] .bg-formula').textContent, 'ρ = m / V');
-  assert.equal(concept.querySelectorAll('[data-bg-formula] li[data-found="true"]').length, 4);
-  cards.renderEvidence(doc.getElementById('bg-evidence'), S.evidenceModel(r.state, r.view), S.TEXT.evidenceTitle);
-  assert.equal(doc.querySelectorAll('[data-bg-evidence-item]').length, 4);
+  assert.equal(concept.querySelectorAll('[data-concept-card]').length, 2);
+  assert.equal(concept.querySelector('[data-formula] .sg-formula').textContent, 'ρ = m / V');
+  assert.equal(concept.querySelectorAll('[data-formula] li[data-emphasis="true"]').length, 4);
+  renderEvidenceCard(doc.getElementById('bg-evidence'), S.evidenceModel(r.state, r.view), { title: S.TEXT.evidenceTitle });
+  assert.equal(doc.querySelectorAll('[data-evidence-item]').length, 4);
   assert.equal(doc.getElementById('bg-evidence').hidden, false);
-  cards.renderEvidence(doc.getElementById('bg-evidence'), { items: [] }, 'x');
+  renderEvidenceCard(doc.getElementById('bg-evidence'), { items: [] }, { title: 'x' });
   assert.equal(doc.getElementById('bg-evidence').hidden, true);
   const t1 = run(A.start, A.begin);
-  cards.renderData(doc.getElementById('bg-data'), S.dataModel(t1.state, t1.view), S.TEXT.dataTitle, S.TEXT.dataStates);
+  renderDataCard(doc.getElementById('bg-data'), S.dataModel(t1.state, t1.view), { title: S.TEXT.dataTitle, stateLabels: S.TEXT.dataStates });
   assert.equal(doc.querySelectorAll('#bg-data dt').length, 3);
-  cards.renderStatus(doc.getElementById('bg-status'), S.statusModel(t1.state, t1.view));
+  const statusEls = { root: doc.getElementById('bg-status'), icon: doc.querySelector('[data-bg-status-icon]'), text: doc.querySelector('[data-bg-status-text]') };
+  renderStatusBar(statusEls, S.statusModel(t1.state, t1.view));
   assert.equal(doc.getElementById('bg-status').hidden, false);
-  cards.renderStatus(doc.getElementById('bg-status'), null);
+  renderStatusBar(statusEls, null);
   assert.equal(doc.getElementById('bg-status').hidden, true);
-  cards.renderCoach({ root: doc.getElementById('bg-coach'), name: doc.getElementById('bg-coach-name'), main: doc.getElementById('bg-coach-main'), sub: doc.getElementById('bg-coach-sub'), tip: doc.getElementById('bg-coach-tip') }, t1.coach, '提示');
+  const coachEls = { root: doc.getElementById('bg-coach'), name: doc.getElementById('bg-coach-name'), main: doc.getElementById('bg-coach-main'), sub: doc.getElementById('bg-coach-sub'), tip: doc.getElementById('bg-coach-tip') };
+  renderCoachCard(coachEls, t1.coach);
+  cards.renderCoachExtras(coachEls, t1.coach, '提示');
   assert.equal(doc.getElementById('bg-coach-tip').hidden, false);
   assert.equal(doc.getElementById('bg-coach-name').textContent, '余老師');
   const live = [...doc.querySelectorAll('[aria-live], [role=status], [role=alert], output')];
@@ -839,8 +843,9 @@ await test('cards: the notebook buffers typing, flushes on leaving, never clobbe
   const dom = page();
   const doc = dom.window.document;
   const calls = [];
-  const card = cards.createNotebook(doc.getElementById('bg-notebook'), S.TEXT, {
-    maxLength: TEXT_MAX,
+  const card = createNotebook(doc.getElementById('bg-notebook'), {
+    body: doc.querySelector('[data-bg-notebook-body]'), idPrefix: 'bg', maxLength: TEXT_MAX, comparison: cards.comparisonOptions(S.TEXT),
+  }, {
     onLevel: (l) => calls.push(['level', l]), onRelation: (id, v) => calls.push(['relation', id, v]),
     onDraft: (f) => calls.push(['draft', f]), onFlush: (f) => calls.push(['flush', f]),
   });
@@ -850,8 +855,8 @@ await test('cards: the notebook buffers typing, flushes on leaving, never clobbe
   const free = doc.getElementById('bg-nb-free');
   assert.equal(free.getAttribute('maxlength'), String(TEXT_MAX));
   assert.equal(doc.querySelector('label[for="bg-nb-free"]').textContent, '用你自己的話，說說物體什麼時候會浮、什麼時候會沉。', 'a real label');
-  assert.equal(doc.querySelector('[data-bg-panel="B"]').hidden, false);
-  assert.equal(doc.querySelector('[data-bg-panel="A"]').hidden, true);
+  assert.equal(doc.querySelector('[data-panel="B"]').hidden, false);
+  assert.equal(doc.querySelector('[data-panel="A"]').hidden, true);
   const type = (el, value) => { el.value = value; el.dispatchEvent(new dom.window.Event('input', { bubbles: true })); };
   type(free, '重'); type(free, '重的'); type(free, '重的不一定');
   assert.deepEqual(calls, [], 'nothing leaves while the learner is still typing');
@@ -879,11 +884,13 @@ await test('cards: the notebook buffers typing, flushes on leaving, never clobbe
   free.value = ''; draw();
   assert.equal(free.value, '<img src=x onerror=alert(1)>');
   assert.equal(doc.querySelectorAll('img').length, 0);
-  const radios = doc.querySelectorAll('input[data-bg-level]');
+  const radios = doc.querySelectorAll('input[data-level]');
   radios[2].checked = true; radios[2].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
   assert.deepEqual(calls.at(-1), ['level', 'C']);
-  const src = read('../assets/buoyancy-guided/cards.js').replace(/\/\/.*$/gm, '');
-  assert.ok(!/localStorage|sessionStorage|innerHTML|insertAdjacentHTML|outerHTML/.test(src), 'cards.js never writes storage and never builds HTML from text');
+  for (const file of ['../assets/buoyancy-guided/cards.js', '../assets/science-guided/components.js']) {
+    const src = read(file).replace(/\/\/.*$/gm, '');
+    assert.ok(!/localStorage|sessionStorage|innerHTML|insertAdjacentHTML|outerHTML/.test(src), `${file} never writes storage and never builds HTML from text`);
+  }
 });
 
 await test('cards: challenge options are real buttons; only an activation is an answer; a solved step locks; the next step appears when it opens', () => {
@@ -892,13 +899,14 @@ await test('cards: challenge options are real buttons; only an activation is an 
   const root = doc.getElementById('bg-challenge');
   const answers = [];
   const r = run(...TO_C2);
-  const draw = () => cards.renderChallenge(root, S.challengeModel(r.state, deriveView(r.state)), (step, choice) => answers.push([step, choice]));
+  const card = createChallengeCard({ root, heading: doc.getElementById('bg-challenge-title'), body: root.querySelector('[data-bg-challenge-body]') }, { idPrefix: 'bg' }, { onAnswer: (step, choice) => answers.push([step, choice]) });
+  const draw = () => card.update(S.challengeModel(r.state, deriveView(r.state)));
   draw();
-  const buttons = [...root.querySelectorAll('[data-bg-option]')];
+  const buttons = [...root.querySelectorAll('[data-option]')];
   assert.equal(buttons.length, 4, 'only the open step is drawn');
   assert.ok(buttons.every((b) => b.tagName === 'BUTTON' && b.type === 'button'));
   assert.equal(root.querySelectorAll('input[type=radio]').length, 0, 'no radios: moving never answers');
-  assert.equal(root.querySelector('[data-bg-step="c2-brine"]'), null, 'the second step does not exist yet');
+  assert.equal(root.querySelector('[data-challenge-step="c2-brine"]'), null, 'the second step does not exist yet');
   buttons[1].focus();
   for (const key of ['ArrowDown', 'ArrowRight', 'Tab']) buttons[1].dispatchEvent(new dom.window.KeyboardEvent('keydown', { key, bubbles: true }));
   buttons[2].focus(); buttons[0].focus();
@@ -907,18 +915,18 @@ await test('cards: challenge options are real buttons; only an activation is an 
   assert.deepEqual(answers, [['c2-where', 'stay']], 'one activation, one answer');
   r.do(A.ch(2, 'c2-where', 'stay'));
   draw();
-  const again = [...root.querySelectorAll('[data-bg-option]')];
+  const again = [...root.querySelectorAll('[data-option]')];
   assert.ok(again.every((b, i) => b === buttons[i]), 'a wrong try keeps the same buttons, so focus stays where it was');
-  assert.equal(root.querySelector('[data-bg-step="c2-where"]').dataset.attempts, '1');
-  assert.equal(root.querySelector('[data-bg-step-feedback]').textContent, '剛才哪個結果變得更明顯？');
+  assert.equal(root.querySelector('[data-challenge-step="c2-where"]').dataset.attempts, '1');
+  assert.equal(root.querySelector('[data-step-feedback]').textContent, '剛才哪個結果變得更明顯？');
   r.do(A.ch(2, 'c2-where', 'under-80'));
   draw();
-  const solved = root.querySelector('[data-bg-step="c2-where"]');
+  const solved = root.querySelector('[data-challenge-step="c2-where"]');
   assert.equal(solved.dataset.solved, 'true');
   assert.ok([...solved.querySelectorAll('button')].every((b) => b.disabled), 'solved: locked');
-  assert.equal(solved.querySelector('[aria-pressed="true"]').dataset.bgOption, 'under-80');
-  assert.equal(root.querySelectorAll('[data-bg-step]').length, 2, 'the next step is drawn once it opens');
-  assert.equal(root.querySelectorAll('[data-bg-step="c2-brine"] button:not(:disabled)').length, 3);
+  assert.equal(solved.querySelector('[aria-pressed="true"]').dataset.option, 'under-80');
+  assert.equal(root.querySelectorAll('[data-challenge-step]').length, 2, 'the next step is drawn once it opens');
+  assert.equal(root.querySelectorAll('[data-challenge-step="c2-brine"] button:not(:disabled)').length, 3);
   assert.equal(root.querySelectorAll('[aria-live]').length, 0);
 });
 
@@ -926,11 +934,13 @@ await test('cards: the finish draws its three claims and one link', () => {
   const dom = page();
   const doc = dom.window.document;
   const r = run(...TO_COMPLETE);
-  cards.renderCompletion(doc.getElementById('bg-complete'), S.completeModel(r.state));
-  assert.equal(doc.querySelectorAll('.bg-claims li').length, 3);
-  assert.equal(doc.querySelector('.bg-complete-link a').getAttribute('href'), '../buoyancy-density-lab.html');
+  const done = S.completeModel(r.state);
+  const els = { root: doc.getElementById('bg-complete'), heading: doc.getElementById('bg-complete-title'), body: doc.querySelector('[data-bg-complete-body]') };
+  renderCompletionCard(els, { heading: done.heading, claims: done.claims, conclusion: [done.intro], link: done.link });
+  assert.equal(doc.querySelectorAll('.sg-claims li').length, 3);
+  assert.equal(doc.querySelector('.sg-complete-link a').getAttribute('href'), '../buoyancy-density-lab.html');
   assert.equal(doc.getElementById('bg-complete').hidden, false);
-  cards.renderCompletion(doc.getElementById('bg-complete'), null);
+  renderCompletionCard(els, null);
   assert.equal(doc.getElementById('bg-complete').hidden, true);
   const live = [...doc.querySelectorAll('[aria-live], [role=status], [role=alert], output')].map((e) => e.id);
   assert.deepEqual(live, ['bg-announcer']);

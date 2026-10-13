@@ -27,13 +27,13 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
 const click=async(p,name)=>{await p.getByRole('button',{name,exact:true}).click();await settle(p)};
 const txt=(p,sel)=>p.locator(sel).innerText();
 const info=p=>p.evaluate(()=>{const m=document.getElementById('main').dataset,a=document.activeElement;return {phase:m.phase,screen:m.screen,slots:Number(m.slots),liquid:m.liquid,tank:m.tankObject,
- active:a?{id:a.id,object:a.dataset.bgObject||null,action:a.dataset.bgAction||null,liquid:a.dataset.bgLiquid!==undefined?a.value:null,q:a.dataset.q||null,option:a.dataset.bgOption&&a.tagName==='BUTTON'&&a.classList.contains('bg-option')?a.dataset.bgOption:null,value:a.dataset.bgCompare!==undefined?a.value:null}:null,
+ active:a?{id:a.id,object:a.dataset.bgObject||null,action:a.dataset.bgAction||null,liquid:a.dataset.bgLiquid!==undefined?a.value:null,q:a.dataset.q||null,option:a.dataset.option&&a.tagName==='BUTTON'&&a.classList.contains('sg-option')?a.dataset.option:null,value:a.dataset.compare!==undefined?a.value:null}:null,
  overflow:document.documentElement.scrollWidth-innerWidth,vw:innerWidth}});
 // what the announcer says, once its short delay has passed
 const said=async p=>{await p.waitForTimeout(120);return p.evaluate(()=>{const a=document.getElementById('bg-announcer');return {id:a.dataset.id||null,text:a.textContent,writes:Number(a.dataset.writes||0)}})};
 const coach=p=>p.evaluate(()=>({main:document.getElementById('bg-coach-main').textContent,sub:document.getElementById('bg-coach-sub').hidden?'':document.getElementById('bg-coach-sub').textContent,tip:document.getElementById('bg-coach-tip').hidden?'':document.getElementById('bg-coach-tip').textContent,visible:!document.getElementById('bg-coach').hidden}));
 const status=p=>p.evaluate(()=>{const s=document.getElementById('bg-status');return s.hidden?null:{kind:s.dataset.kind,text:s.querySelector('[data-bg-status-text]').textContent}});
-const evidenceIds=p=>p.evaluate(()=>[...document.querySelectorAll('[data-bg-evidence-item]')].map(e=>e.dataset.bgEvidenceItem));
+const evidenceIds=p=>p.evaluate(()=>[...document.querySelectorAll('[data-evidence-item]')].map(e=>e.dataset.evidenceItem));
 const cta=p=>p.evaluate(()=>{const b=document.getElementById('bg-cta');return b.hidden?null:{label:b.textContent,enabled:!b.disabled}});
 
 /** Every word a learner could read or hear on the page: what is drawn, what is hidden but present, the labels, the title. */
@@ -67,7 +67,7 @@ const check=async(name,fn)=>{const row={name};try{await fn();row.pass=true}catch
 async function stageOf(p,tag,label,{concept=false}={}){
  if(!concept){
   await noFormal(p,label);
-  const c=await p.evaluate(()=>({hidden:document.getElementById('bg-concept').hidden,cards:document.querySelectorAll('[data-bg-concept-card],[data-bg-formula]').length,screen:document.getElementById('main').dataset.screen,heading:document.getElementById('bg-heading').textContent}));
+  const c=await p.evaluate(()=>({hidden:document.getElementById('bg-concept').hidden,cards:document.querySelectorAll('[data-concept-card],[data-formula]').length,screen:document.getElementById('main').dataset.screen,heading:document.getElementById('bg-heading').textContent}));
   assert.deepEqual(c,{hidden:true,cards:0,screen:c.screen,heading:'浮沉實驗'},`${label}: the concept is on the page before its time`);
   assert.notEqual(c.screen,'concept',`${label}: the concept screen is showing before its time`);
  }
@@ -143,9 +143,9 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal((await info(p)).phase,'trial2-switch-liquid');
   assert.deepEqual(await coach(p),{main:'第一筆證據有了。接下來只先換一件事。',sub:'把液體換成濃鹽水。',tip:'',visible:true});
   assert.deepEqual(await evidenceIds(p),['record-1']);
-  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-evidence-item=record-1] dl > *')].map(e=>e.textContent));
+  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-evidence-item=record-1] dl > *')].map(e=>e.textContent));
   assert.deepEqual(rows,['液體','水','方塊體積','100 cm³','停在液體中時的質量','100 g']);
-  assert.ok((await txt(p,'[data-bg-evidence-item=record-1] h3')).startsWith('第一次紀錄完成'));
+  assert.ok((await txt(p,'[data-evidence-item=record-1] h3')).startsWith('第一次紀錄完成'));
   const a=await said(p);assert.match(a.id,/^record-written-\d+$/);assert.equal(a.text,'第一筆結果已記錄。');
   const r=await info(p);assert.equal(r.active.liquid,'water','focus is on the one usable control');
   assert.equal(await p.locator('#bg-cta').isHidden(),true);
@@ -176,7 +176,7 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal((await info(p)).phase,'trial2-recorded');
   assert.deepEqual(await coach(p),{main:'兩筆證據都有了。',sub:'',tip:'',visible:true});
   assert.deepEqual(await evidenceIds(p),['record-1','record-2']);
-  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-evidence-item=record-2] dl > *')].map(e=>e.textContent));
+  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-evidence-item=record-2] dl > *')].map(e=>e.textContent));
   assert.deepEqual(rows,['液體','濃鹽水','方塊體積','100 cm³','停在液體中時的質量','120 g','一開始放入的 100 g 方塊','浮起來（約 83% 在水面下）']);
   assert.deepEqual(await cta(p),{label:'比較兩次',enabled:true});
   assert.equal((await said(p)).text,'第二筆結果已記錄。');
@@ -186,16 +186,16 @@ async function walk(browser,{width,height,touch,tag}){
   await click(p,'比較兩次');
   const r=await info(p);assert.deepEqual([r.phase,r.screen,r.active.id],['compare','compare','bg-compare-title']);
   assert.deepEqual(await coach(p),{main:'把兩次的證據放在一起看。',sub:'',tip:'',visible:true});
-  const table=await p.evaluate(()=>[...document.querySelectorAll('.bg-compare-table tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
+  const table=await p.evaluate(()=>[...document.querySelectorAll('.sg-compare-table tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
   // Visual Pass V1: the evidence table stays readable at any width (stacked cards on a phone), keeps its table roles and marks the one changed row
-  const cmp=await p.evaluate(()=>{const wrap=document.querySelector('#bg-compare [data-bg-compare-body]'),t=wrap.querySelector('table'),rows=[...t.querySelectorAll('tbody tr')];return {scrolls:wrap.scrollWidth>wrap.clientWidth+1,roles:[t.getAttribute('role'),...rows.map(r=>r.getAttribute('role'))],changed:rows.filter(r=>r.classList.contains('is-changed')).length,cells:[...t.querySelectorAll('tbody td')].map(c=>c.getBoundingClientRect().width),vw:innerWidth}});
+  const cmp=await p.evaluate(()=>{const wrap=document.querySelector('#bg-compare [data-bg-compare-body]'),t=wrap.querySelector('table'),rows=[...t.querySelectorAll('tbody tr')];return {scrolls:wrap.scrollWidth>wrap.clientWidth+1,roles:[t.getAttribute('role'),...rows.map(r=>r.getAttribute('role'))],changed:rows.filter(r=>r.dataset.kind==='changed').length,cells:[...t.querySelectorAll('tbody td')].map(c=>c.getBoundingClientRect().width),vw:innerWidth}});
   assert.equal(cmp.scrolls,false,'compare: no sideways scroll');assert.equal(cmp.changed,1,'compare: exactly one changed row');assert.ok(cmp.roles.every(r=>r==='table'||r==='row'),'compare: table roles kept');
   assert.ok(cmp.cells.every(w=>w>=(cmp.vw<=767?100:120)),'compare: every value cell stays readable: '+cmp.cells.map(Math.round).join(','));
   assert.deepEqual(table,[['液體（改變的）','水','濃鹽水'],['方塊體積（保持相同）','100 cm³'],['放入方式（保持相同）','相同'],['判定（保持相同）','停在液體中'],
    ['原本 100 g 的方塊','停在水中','浮起來（約 83% 在水面下）'],['讓方塊停住所需質量','100 g','120 g']]);
-  assert.equal(await txt(p,'.bg-notice'),'這次改的是液體；其他條件保持相同。');
-  assert.equal(await txt(p,'.bg-procedure'),'先只換液體，再用相同方法重新測量。');
-  const qs=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-question]')].map(f=>({legend:f.querySelector('legend').textContent,options:[...f.querySelectorAll('label')].map(l=>l.textContent),checked:f.querySelectorAll('input:checked').length})));
+  assert.equal(await txt(p,'#bg-compare .sg-notice'),'這次改的是液體；其他條件保持相同。');
+  assert.equal(await txt(p,'#bg-compare .sg-procedure'),'先只換液體，再用相同方法重新測量。');
+  const qs=await p.evaluate(()=>[...document.querySelectorAll('[data-question]')].map(f=>({legend:f.querySelector('legend').textContent,options:[...f.querySelectorAll('label')].map(l=>l.textContent),checked:f.querySelectorAll('input:checked').length})));
   assert.deepEqual(qs,[{legend:'換成濃鹽水後，讓方塊停在液體中所需的質量怎麼變？',options:['變大','變小','差不多'],checked:0},{legend:'原本停在水中的方塊放進濃鹽水後，結果是？',options:['浮起來','停在液體中','沉到底'],checked:0}]);
   assert.deepEqual(await cta(p),{label:'繼續實驗',enabled:false});
   assert.equal(await status(p),null);
@@ -203,8 +203,8 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('compare');
  });
  await step('compare: a first try that does not match the records gets a neutral nudge; the next button still waits',async()=>{
-  await p.locator('input[data-bg-compare][data-q="stayMass"][value="smaller"]').check();await settle(p);
-  const fb=await p.locator('[data-bg-feedback="stayMass"]').innerText();
+  await p.locator('input[data-compare][data-q="stayMass"][value="smaller"]').check();await settle(p);
+  const fb=await p.locator('[data-feedback="stayMass"]').innerText();
   assert.equal(fb,'再看看兩次讓方塊停住的質量。');
   assert.ok(!/答錯|錯了|不對/.test(await allText(p)));
   assert.deepEqual(await cta(p),{label:'繼續實驗',enabled:false});
@@ -212,11 +212,11 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('compare nudge');
  });
  await step('compare: the right choice is confirmed and settled; focus moves on to the next question, then to the button',async()=>{
-  await p.locator('input[data-bg-compare][data-q="stayMass"][value="larger"]').check();await settle(p);
-  assert.equal(await p.locator('[data-bg-feedback="stayMass"]').innerText(),'和你的紀錄一致。');
+  await p.locator('input[data-compare][data-q="stayMass"][value="larger"]').check();await settle(p);
+  assert.equal(await p.locator('[data-feedback="stayMass"]').innerText(),'和你的紀錄一致。');
   assert.equal(await p.locator('input[data-q="stayMass"]:disabled').count(),3,'a settled question is locked');
   let r=await info(p);assert.deepEqual([r.active.q,r.active.value],['firstDrop','float'],'focus is not lost to the lock: it moves to the next open question');
-  await p.locator('input[data-bg-compare][data-q="firstDrop"][value="float"]').check();await settle(p);
+  await p.locator('input[data-compare][data-q="firstDrop"][value="float"]').check();await settle(p);
   assert.deepEqual(await coach(p),{main:'你剛才已經找到一個規律了。',sub:'換了液體，同一個方塊要改變質量，才能再次停在液體中。',tip:'',visible:true});
   assert.deepEqual(await cta(p),{label:'繼續實驗',enabled:true});
   r=await info(p);assert.equal(r.active.id,'bg-cta','focus lands on the button that just opened');
@@ -240,7 +240,7 @@ async function walk(browser,{width,height,touch,tag}){
   assert.deepEqual(await evidenceIds(p),['record-1','record-2','wood','stone']);
   assert.equal(await p.locator('#bg-bench-card').isVisible(),true,'the two objects are still on the bench to look at');
   assert.equal((await info(p)).screen,'bench');
-  const rows=await p.evaluate(()=>['wood','stone'].map(id=>[...document.querySelectorAll(`[data-bg-evidence-item=${id}] dl > *`)].map(e=>e.textContent)));
+  const rows=await p.evaluate(()=>['wood','stone'].map(id=>[...document.querySelectorAll(`[data-evidence-item=${id}] dl > *`)].map(e=>e.textContent)));
   assert.deepEqual(rows,[['質量','300 g','體積','500 cm³','結果','浮起來（約 60% 在水面下）'],['質量','120 g','體積','40 cm³','結果','沉到底']]);
   const a=await said(p);assert.equal(a.text,'小石頭沉到底了。');
   await stage('trial 3 observed');
@@ -252,13 +252,13 @@ async function walk(browser,{width,height,touch,tag}){
   assert.deepEqual(await coach(p),{main:'剛才幾次實驗，其實都在比較同一件事。',sub:'先看看是什麼。',tip:'',visible:true});
   assert.equal(await txt(p,'#bg-heading'),'浮沉與密度');
   assert.equal(await p.locator('#bg-bench-card').isHidden(),true);
-  const lines=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-concept-card=density] [data-bg-line]')].map(l=>l.textContent));
+  const lines=await p.evaluate(()=>[...document.querySelectorAll('[data-concept-card=density] .sg-concept-evidence li')].map(l=>l.textContent));
   assert.deepEqual(lines,['停在水中的方塊：100 g ÷ 100 cm³ = 1.0 g/cm³','停在濃鹽水中的方塊：120 g ÷ 100 cm³ = 1.2 g/cm³','大木塊：300 g ÷ 500 cm³ = 0.6 g/cm³','小石頭：120 g ÷ 40 cm³ = 3.0 g/cm³']);
-  assert.equal(await txt(p,'[data-bg-formula] .bg-formula'),'ρ = m / V');
-  assert.ok((await txt(p,'[data-bg-formula]')).includes('密度 = 質量 ÷ 體積'));
-  const results=await txt(p,'[data-bg-concept-card=results]');
+  assert.equal(await txt(p,'[data-formula] .sg-formula'),'ρ = m / V');
+  assert.ok((await txt(p,'[data-formula]')).includes('密度 = 質量 ÷ 體積'));
+  const results=await txt(p,'[data-concept-card=results]');
   for(const w of ['漂浮','懸浮','下沉'])assert.ok(results.includes(w),w);
-  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-bg-concept-card=results] [data-bg-line]')].map(l=>l.textContent)),
+  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-concept-card=results] .sg-concept-evidence li')].map(l=>l.textContent)),
    ['大木塊的密度 0.6 < 水的密度 1.0 → 漂浮','停在水中的方塊的密度 1.0 = 水的密度 1.0 → 懸浮','小石頭的密度 3.0 > 水的密度 1.0 → 下沉']);
   assert.ok((await allText(p)).includes('密度'));
   await stage('concept',{concept:true});
@@ -272,11 +272,11 @@ async function walk(browser,{width,height,touch,tag}){
   else{assert.ok(g.coach.top>=g.steps.bottom-1&&g.stage.top>=g.coach.bottom-1&&g.side.top>=g.stage.bottom-1,'mobile: one column in reading order');assert.ok(g.stage.width>=g.vw-40)}
  });
  const KEY='bhcs-buoyancy-guided:v1';
- const attempts=id=>p.locator(`[data-bg-step="${id}"]`).getAttribute('data-attempts');
+ const attempts=id=>p.locator(`[data-challenge-step="${id}"]`).getAttribute('data-attempts');
  const saved=()=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)||'null'),KEY);
- const opt=v=>p.locator(`[data-bg-option="${v}"]`);
+ const opt=v=>p.locator(`[data-option="${v}"]`);
  const stepsNav=()=>p.evaluate(()=>[...document.querySelectorAll('#bg-steps li')].map(li=>li.getAttribute('aria-current')));
- const fbText=id=>p.locator(`[data-bg-step-feedback="${id}"]`).innerText();
+ const fbText=id=>p.locator(`[data-step-feedback="${id}"]`).innerText();
  const tabTo=async(pred,limit=30)=>{for(let i=0;i<limit;i++){await p.keyboard.press('Tab');const a=(await info(p)).active;if(a&&pred(a))return a}throw new Error('focus never reached the target')};
 
  await step('notebook: the concept hands over to "我的研究手冊" with the learner\'s own two experiments and three ways to finish',async()=>{
@@ -286,39 +286,39 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal(await txt(p,'#bg-heading'),'浮沉與密度');
   assert.deepEqual(await stepsNav(),[null,null,'step',null]);
   assert.deepEqual(await coach(p),{main:'把你發現的整理成研究手冊。',sub:'選一種你喜歡的方式來完成。',tip:'',visible:true});
-  const table=await p.evaluate(()=>[...document.querySelectorAll('.bg-nb-evidence tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
+  const table=await p.evaluate(()=>[...document.querySelectorAll('.sg-nb-evidence tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
   assert.deepEqual(table.slice(-2),[['原本 100 g 的方塊','停在水中','浮起來（約 83% 在水面下）'],['讓方塊停住所需質量','100 g','120 g']]);
-  const levels=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-levels] label')].map(l=>({text:l.textContent.replace(/\s+/g,' ').trim(),checked:l.querySelector('input').checked})));
+  const levels=await p.evaluate(()=>[...document.querySelectorAll('[data-levels] label')].map(l=>({text:l.textContent.replace(/\s+/g,' ').trim(),checked:l.querySelector('input').checked})));
   assert.deepEqual(levels.map(l=>[l.text.split(' ')[0],l.checked]),[['幫我整理',false],['我自己說',false],['我能提出證據',false]]);
-  assert.equal(await p.locator('[data-bg-panel]:not([hidden])').count(),0);
+  assert.equal(await p.locator('[data-panel]:not([hidden])').count(),0);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
   assert.equal(await saved().then(x=>x.phase),'notebook','the save follows the learner');
   await stage('notebook start',{concept:true});
  });
  await step('notebook level A: a relation that does not fit the evidence keeps the button shut, with a nudge that gives nothing away',async()=>{
-  await p.locator('input[data-bg-level][value="A"]').check();await settle(p);
-  assert.deepEqual(await p.locator('[data-bg-stem] legend').allInnerTexts(),['換成密度較大的液體後，讓同一個方塊停在液體中，需要的質量會……','木塊比石頭重，卻浮著，是因為木塊的……比水小。']);
-  assert.deepEqual(await p.locator('[data-bg-stem="relationWood"] label').allInnerTexts(),['質量','體積','密度']);
-  await p.locator('input[data-bg-relation][data-q="relationLiquid"][value="smaller"]').check();await settle(p);
+  await p.locator('input[data-level][value="A"]').check();await settle(p);
+  assert.deepEqual(await p.locator('[data-stem] legend').allInnerTexts(),['換成密度較大的液體後，讓同一個方塊停在液體中，需要的質量會……','木塊比石頭重，卻浮著，是因為木塊的……比水小。']);
+  assert.deepEqual(await p.locator('[data-stem="relationWood"] label').allInnerTexts(),['質量','體積','密度']);
+  await p.locator('input[data-relation][data-q="relationLiquid"][value="smaller"]').check();await settle(p);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
-  assert.equal(await p.locator('[data-bg-nudge]').isHidden(),true,'one sentence only: nothing to say yet');
-  await p.locator('input[data-bg-relation][data-q="relationWood"][value="volume"]').check();await settle(p);
-  assert.equal(await p.locator('[data-bg-nudge]').innerText(),'再對照一下你剛才的實驗證據。');
+  assert.equal(await p.locator('[data-nudge]').isHidden(),true,'one sentence only: nothing to say yet');
+  await p.locator('input[data-relation][data-q="relationWood"][value="volume"]').check();await settle(p);
+  assert.equal(await p.locator('[data-nudge]').innerText(),'再對照一下你剛才的實驗證據。');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
   assert.ok(!/答錯|錯了|不對/.test(await allText(p)));
   assert.deepEqual([(await said(p)).id,(await said(p)).text],['notebook-smaller-volume','再對照一下你剛才的實驗證據。']);
   await stage('notebook A nudge',{concept:true});
-  await p.locator('input[data-bg-relation][data-q="relationLiquid"][value="larger"]').check();
-  await p.locator('input[data-bg-relation][data-q="relationWood"][value="density"]').check();await settle(p);
+  await p.locator('input[data-relation][data-q="relationLiquid"][value="larger"]').check();
+  await p.locator('input[data-relation][data-q="relationWood"][value="density"]').check();await settle(p);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
-  assert.equal(await p.locator('[data-bg-nudge]').isHidden(),true);
-  assert.equal(await p.locator('[data-bg-ready]').innerText(),'整理好了，可以進入挑戰題。');
+  assert.equal(await p.locator('[data-nudge]').isHidden(),true);
+  assert.equal(await p.locator('[data-ready]').innerText(),'整理好了，可以進入挑戰題。');
   assert.equal((await said(p)).id,'notebook-larger-density');
   await stage('notebook A ready',{concept:true});
  });
  await step('notebook level B: one character is not enough; the words count once the pause or a blur has passed them on',async()=>{
-  await p.locator('input[data-bg-level][value="B"]').check();await settle(p);
-  assert.equal(await p.locator('[data-bg-panel="B"]').isVisible(),true);assert.equal(await p.locator('[data-bg-panel="A"]').isHidden(),true);
+  await p.locator('input[data-level][value="B"]').check();await settle(p);
+  assert.equal(await p.locator('[data-panel="B"]').isVisible(),true);assert.equal(await p.locator('[data-panel="A"]').isHidden(),true);
   assert.equal(await p.locator('label[for="bg-nb-free"]').innerText(),'用你自己的話，說說物體什麼時候會浮、什麼時候會沉。');
   assert.equal(await p.locator('#bg-nb-free').getAttribute('maxlength'),'1000');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false},'level B is empty even though A was finished: the level chosen is the one that counts');
@@ -334,22 +334,22 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('notebook B',{concept:true});
  });
  await step('notebook level C: the ideas wait for the learner\'s own limitation; leaving the field passes the text on at once',async()=>{
-  await p.locator('input[data-bg-level][value="C"]').check();await settle(p);
+  await p.locator('input[data-level][value="C"]').check();await settle(p);
   assert.equal(await p.locator('label[for="bg-nb-evidence"]').innerText(),'你的哪一次實驗，讓你這樣想？');
   assert.equal(await p.locator('label[for="bg-nb-limit"]').innerText(),'這個實驗哪裡可能不夠完整？');
-  assert.equal(await p.locator('[data-bg-ideas]').isHidden(),true);
+  assert.equal(await p.locator('[data-ideas]').isHidden(),true);
   await p.locator('#bg-nb-evidence').fill('第二次實驗');await p.locator('#bg-nb-evidence').blur();await settle(p);
   assert.equal((await saved()).conclusion.evidenceText,'第二次實驗','a blur flushes at once');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
-  assert.equal(await p.locator('[data-bg-ideas]').isHidden(),true,'still hidden: nothing written in the limitation');
+  assert.equal(await p.locator('[data-ideas]').isHidden(),true,'still hidden: nothing written in the limitation');
   await p.locator('#bg-nb-limit').fill('只有兩種液體');await p.locator('#bg-nb-limit').blur();await settle(p);
-  assert.equal(await p.locator('[data-bg-ideas]').isVisible(),true);
-  assert.deepEqual(await p.locator('[data-bg-ideas] li').allInnerTexts(),['只測了水和濃鹽水。','配重一次增加 20 g，可能找不到更細的停住位置。','只用了少數幾種物體。']);
+  assert.equal(await p.locator('[data-ideas]').isVisible(),true);
+  assert.deepEqual(await p.locator('[data-ideas] li').allInnerTexts(),['只測了水和濃鹽水。','配重一次增加 20 g，可能找不到更細的停住位置。','只用了少數幾種物體。']);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
   await stage('notebook C',{concept:true});
-  await p.locator('input[data-bg-level][value="B"]').check();await settle(p);
+  await p.locator('input[data-level][value="B"]').check();await settle(p);
   assert.equal(await p.locator('#bg-nb-free').inputValue(),'重的不一定沉','switching level keeps what was written');
-  await p.locator('input[data-bg-level][value="A"]').check();await settle(p);
+  await p.locator('input[data-level][value="A"]').check();await settle(p);
   assert.equal(await p.locator('input[data-q="relationWood"][value="density"]').isChecked(),true);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
  });
@@ -359,9 +359,9 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal(await txt(p,'#bg-challenge-title'),'挑戰 1／3');
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   assert.deepEqual(await coach(p),{main:'來挑戰看看。',sub:'你剛學到的，在新的情況下也成立嗎？',tip:'',visible:true});
-  assert.equal(await txt(p,'.bg-scenario'),'剛才在水中能停住的 100 g 方塊，現在放進食用油。');
-  assert.deepEqual(await p.locator('[data-bg-option]').allInnerTexts(),['浮起來','停在液體中','沉到底']);
-  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-bg-option]')].map(b=>b.tagName+':'+b.type)),['BUTTON:button','BUTTON:button','BUTTON:button']);
+  assert.equal(await txt(p,'#bg-challenge .sg-scenario'),'剛才在水中能停住的 100 g 方塊，現在放進食用油。');
+  assert.deepEqual(await p.locator('[data-option]').allInnerTexts(),['浮起來','停在液體中','沉到底']);
+  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-option]')].map(b=>b.tagName+':'+b.type)),['BUTTON:button','BUTTON:button','BUTTON:button']);
   assert.equal(await p.locator('#bg-challenge input[type=radio]').count(),0);
   assert.deepEqual(await cta(p),{label:'下一個挑戰',enabled:false});
   assert.equal(await attempts('c1-outcome'),'0');
@@ -385,9 +385,9 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('challenge 1 hint',{concept:true});
   await opt('sink').click();await settle(p);
   assert.equal(await attempts('c1-outcome'),'3');
-  assert.equal(await p.locator('[data-bg-step="c1-outcome"]').getAttribute('data-solved'),'true');
+  assert.equal(await p.locator('[data-challenge-step="c1-outcome"]').getAttribute('data-solved'),'true');
   assert.equal(await fbText('c1-outcome'),'這個方塊的密度比食用油大，所以會沉到底。');
-  assert.equal(await p.locator('[data-bg-option]:not(:disabled)').count(),0,'a solved step locks');
+  assert.equal(await p.locator('[data-option]:not(:disabled)').count(),0,'a solved step locks');
   assert.deepEqual(await cta(p),{label:'下一個挑戰',enabled:true});
   assert.equal((await info(p)).active.id,'bg-cta','focus moves on to the button that just opened');
   assert.deepEqual(await coach(p),{main:'這題完成了。',sub:'可以往下走了。',tip:'',visible:true});
@@ -399,20 +399,20 @@ async function walk(browser,{width,height,touch,tag}){
   await click(p,'下一個挑戰');
   const r=await info(p);assert.deepEqual([r.phase,r.active.id],['challenge-2','bg-challenge-title']);
   assert.equal(await txt(p,'#bg-challenge-title'),'挑戰 2／3');
-  assert.equal(await txt(p,'.bg-scenario'),'一個 80 g、100 cm³ 的方塊放進水裡。');
-  assert.equal(await p.locator('[data-bg-step]').count(),1);
-  assert.equal(await p.locator('[data-bg-step="c2-brine"]').count(),0);
-  assert.deepEqual(await p.locator('[data-bg-step="c2-where"] [data-bg-option]').allInnerTexts(),['整顆在水面上','約 80% 在水面下','停在水中','沉到底']);
+  assert.equal(await txt(p,'#bg-challenge .sg-scenario'),'一個 80 g、100 cm³ 的方塊放進水裡。');
+  assert.equal(await p.locator('[data-challenge-step]').count(),1);
+  assert.equal(await p.locator('[data-challenge-step="c2-brine"]').count(),0);
+  assert.deepEqual(await p.locator('[data-challenge-step="c2-where"] [data-option]').allInnerTexts(),['整顆在水面上','約 80% 在水面下','停在水中','沉到底']);
   await opt('all-out').click();await settle(p);
   assert.equal(await fbText('c2-where'),'剛才哪個結果變得更明顯？');
-  assert.equal(await p.locator('[data-bg-step]').count(),1,'a try that does not settle it opens nothing');
+  assert.equal(await p.locator('[data-challenge-step]').count(),1,'a try that does not settle it opens nothing');
   await stage('challenge 2 step 1',{concept:true});
   await opt('under-80').click();await settle(p);
-  assert.equal(await p.locator('[data-bg-step]').count(),2);
+  assert.equal(await p.locator('[data-challenge-step]').count(),2);
   assert.equal(await fbText('c2-where'),'對，約 80% 在水面下，還有一部分露在水面上。');
   assert.equal((await info(p)).active.option,'more','focus goes to the step that just opened');
-  assert.equal(await p.locator('[data-bg-step="c2-where"] [data-bg-option]:not(:disabled)').count(),0);
-  assert.equal(await txt(p,'[data-bg-step="c2-brine"] .bg-step-question'),'如果換成濃鹽水，在液面下的比例會……');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"] [data-option]:not(:disabled)').count(),0);
+  assert.equal(await txt(p,'[data-challenge-step="c2-brine"] .sg-step-question'),'如果換成濃鹽水，在液面下的比例會……');
   assert.deepEqual(await cta(p),{label:'下一個挑戰',enabled:false});
   await opt('less').click();await settle(p);
   assert.equal(await fbText('c2-brine'),'濃鹽水的密度比水大，方塊浸入的比例會變小。');
@@ -423,15 +423,15 @@ async function walk(browser,{width,height,touch,tag}){
  await step('challenge 3: the long options wrap inside the page; nothing about "排開"',async()=>{
   await click(p,'下一個挑戰');
   assert.equal(await txt(p,'#bg-challenge-title'),'挑戰 3／3');
-  assert.equal(await txt(p,'.bg-scenario'),'同一張鋁箔，揉成小球會沉，折成小船卻能浮。');
-  assert.equal(await txt(p,'.bg-step-question'),'哪個說法最合理？');
-  const texts=await p.locator('[data-bg-option]').allInnerTexts();
+  assert.equal(await txt(p,'#bg-challenge .sg-scenario'),'同一張鋁箔，揉成小球會沉，折成小船卻能浮。');
+  assert.equal(await txt(p,'.sg-step-question'),'哪個說法最合理？');
+  const texts=await p.locator('[data-option]').allInnerTexts();
   assert.deepEqual(texts,['鋁箔折成船以後質量變小了。','折成船後，鋁箔和裡面的空氣一起占了更大的整體體積，同樣的質量分布在更大的體積中，所以整體平均密度變小。','水只會托住船形的東西。','東西攤得越開就越會浮。']);
   // Visual Pass V1: on a phone the long options wrap inside the card, stay readable and never push the page sideways
-  const optBox=await p.evaluate(()=>{const card=document.querySelector('[data-bg-step]').getBoundingClientRect();return [...document.querySelectorAll('[data-bg-option]')].map(b=>{const r=b.getBoundingClientRect(),cs=getComputedStyle(b);return {w:r.width,card:card.width,fits:b.scrollWidth<=b.clientWidth+1,align:cs.textAlign,wrap:cs.whiteSpace,font:parseFloat(cs.fontSize),lh:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize)}})});
+  const optBox=await p.evaluate(()=>{const card=document.querySelector('[data-challenge-step]').getBoundingClientRect();return [...document.querySelectorAll('[data-option]')].map(b=>{const r=b.getBoundingClientRect(),cs=getComputedStyle(b);return {w:r.width,card:card.width,fits:b.scrollWidth<=b.clientWidth+1,align:cs.textAlign,wrap:cs.whiteSpace,font:parseFloat(cs.fontSize),lh:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize)}})});
   for(const o of optBox){assert.ok(o.fits&&o.w>=o.card*0.85&&o.align==='left'&&o.wrap!=='nowrap'&&o.font>=15&&o.lh>=1.4,'challenge 3 option: '+JSON.stringify(o))}
   assert.ok((await info(p)).overflow<=0,'challenge 3: no sideways scroll');
-  const wrap=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-option]')].map(b=>({over:b.scrollWidth-b.clientWidth,right:b.getBoundingClientRect().right,vw:innerWidth})));
+  const wrap=await p.evaluate(()=>[...document.querySelectorAll('[data-option]')].map(b=>({over:b.scrollWidth-b.clientWidth,right:b.getBoundingClientRect().right,vw:innerWidth})));
   for(const w of wrap){assert.ok(w.over<=1,`an option scrolls inside itself by ${w.over}`);assert.ok(w.right<=w.vw+0.5,'an option is wider than the screen')}
   assert.ok(!(await allText(p)).includes('排開'));
   await opt('boat-shape-only').click();await settle(p);
@@ -445,13 +445,13 @@ async function walk(browser,{width,height,touch,tag}){
   await click(p,'看看我完成了什麼');
   const r=await info(p);assert.deepEqual([r.phase,r.screen,r.active.id],['complete','complete','bg-complete-title']);
   assert.equal(await txt(p,'#bg-complete-title'),'這一站完成了');
-  assert.equal(await txt(p,'.bg-complete-intro'),'你今天自己證明了：');
-  assert.deepEqual((await p.locator('.bg-claims li').allInnerTexts()).map(t=>t.replace(/^✓\s*/,'')),[
+  assert.equal(await txt(p,'.sg-complete-conclusion'),'你今天自己證明了：');
+  assert.deepEqual((await p.locator('.sg-claims li').allInnerTexts()).map(t=>t.replace(/^✓\s*/,'')),[
    '同一個方塊換成濃鹽水後，要增加更多內部配重，才會停在液體中。',
    '300 g 的木塊比 120 g 的石頭重，卻是木塊浮起、石頭沉底，所以不能只看總質量判斷浮沉。',
    '當物體和液體的密度相同時，物體會停在液體中；要判斷浮沉，要比較物體和液體的密度。']);
-  assert.equal(await p.locator('.bg-complete-link a').getAttribute('href'),'../buoyancy-density-lab.html');
-  assert.equal(await p.locator('.bg-complete-link a').innerText(),'自由探索／精確數值');
+  assert.equal(await p.locator('.sg-complete-link a').getAttribute('href'),'../buoyancy-density-lab.html');
+  assert.equal(await p.locator('.sg-complete-link a').innerText(),'自由探索／精確數值');
   assert.deepEqual(await cta(p),{label:'再做一次',enabled:true});
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   const a=await said(p);assert.deepEqual([a.id,a.text],['complete','這一站完成了。']);
@@ -467,7 +467,7 @@ async function walk(browser,{width,height,touch,tag}){
   const r=await info(p);assert.deepEqual([r.phase,r.screen],['complete','complete']);
   const a=await said(p);assert.deepEqual([a.id,a.text,a.writes],[null,'',0]);
   assert.deepEqual(await track(p),[],'restoring the finish sends no lab_complete, nor anything else');
-  assert.equal(await p.locator('.bg-claims li').count(),3);
+  assert.equal(await p.locator('.sg-claims li').count(),3);
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   assert.equal(await txt(p,'#bg-heading'),'浮沉與密度');
   const live=await liveRegions(p);assert.deepEqual(live.attr,['bg-announcer']);
@@ -587,11 +587,11 @@ async function persistence(browser){
   const s=await open(browser,sizes[0]);const p=s.page;
   await p.goto(base+PAGE);await inject(p,serialize(play(...NB)));
   assert.equal((await info(p)).phase,'notebook');
-  await p.locator('input[data-bg-level][value="B"]').check();
+  await p.locator('input[data-level][value="B"]').check();
   await p.locator('#bg-nb-free').fill('重的東西不一定沉');await p.waitForTimeout(500);
   await reload(p);
   const r=await info(p);assert.equal(r.phase,'notebook');
-  assert.equal(await p.locator('input[data-bg-level][value="B"]').isChecked(),true);
+  assert.equal(await p.locator('input[data-level][value="B"]').isChecked(),true);
   assert.equal(await p.locator('#bg-nb-free').inputValue(),'重的東西不一定沉');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
   await silent(p);
@@ -601,12 +601,12 @@ async function persistence(browser){
   ['the field loses focus',p=>p.locator('#bg-nb-free').blur()],
   ['the page is hidden',p=>p.evaluate(()=>{Object.defineProperty(document,'visibilityState',{value:'hidden',configurable:true});document.dispatchEvent(new Event('visibilitychange'))})],
   ['the page is being left (pagehide)',p=>p.evaluate(()=>window.dispatchEvent(new Event('pagehide')))],
-  ['the main button is pressed',async p=>{await p.locator('#bg-nb-free').fill('重的東西不一定沉');await p.locator('input[data-bg-level][value="A"]').check({force:true});await settle(p)}],
+  ['the main button is pressed',async p=>{await p.locator('#bg-nb-free').fill('重的東西不一定沉');await p.locator('input[data-level][value="A"]').check({force:true});await settle(p)}],
  ]){
   await check(`save D: text typed and not yet past the pause is kept when ${way}`,async()=>{
    const s=await open(browser,sizes[0]);const p=s.page;
    await p.goto(base+PAGE);await inject(p,serialize(play(...NB)));
-   await p.locator('input[data-bg-level][value="B"]').check();
+   await p.locator('input[data-level][value="B"]').check();
    await p.locator('#bg-nb-free').fill('重的東西不一定沉');
    await fire(p);
    assert.equal((await saved(p)).conclusion.freeText,'重的東西不一定沉','saved right away, before the 300 ms pause could have passed');
@@ -618,7 +618,7 @@ async function persistence(browser){
  await check('save D: pressing the main button right after typing counts the new words (the button is judged after the text is passed on)',async()=>{
   const s=await open(browser,sizes[0]);const p=s.page;
   await p.goto(base+PAGE);await inject(p,serialize(play(...NB)));
-  await p.locator('input[data-bg-level][value="B"]').check();
+  await p.locator('input[data-level][value="B"]').check();
   await p.locator('#bg-nb-free').fill('重的東西不一定沉');
   await p.getByRole('button',{name:'進入挑戰題',exact:true}).click();await settle(p);
   assert.equal((await info(p)).phase,'challenge-1','the click came after the text was passed on');
@@ -639,17 +639,17 @@ async function persistence(browser){
   const s=await open(browser,sizes[0]);const p=s.page;
   await p.goto(base+PAGE);await inject(p,serialize(play(...C2S1)));
   let r=await info(p);assert.equal(r.phase,'challenge-2');
-  assert.equal(await p.locator('[data-bg-step="c2-where"]').getAttribute('data-solved'),'true');
-  assert.equal(await p.locator('[data-bg-step="c2-where"] [data-bg-option]:not(:disabled)').count(),0);
-  assert.equal(await p.locator('[data-bg-step="c2-brine"] [data-bg-option]:not(:disabled)').count(),3);
-  assert.equal(await p.locator('[data-bg-step="c2-where"] [aria-pressed="true"]').getAttribute('data-bg-option'),'under-80');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"]').getAttribute('data-solved'),'true');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"] [data-option]:not(:disabled)').count(),0);
+  assert.equal(await p.locator('[data-challenge-step="c2-brine"] [data-option]:not(:disabled)').count(),3);
+  assert.equal(await p.locator('[data-challenge-step="c2-where"] [aria-pressed="true"]').getAttribute('data-option'),'under-80');
   await silent(p);
   const forged=JSON.parse(serialize(play(...C2S1)));
   forged.challenges['2']['c2-where']={choice:'all-out',attempts:1,correct:true,allCorrect:true};forged.phase='challenge-2';
   await inject(p,forged);
-  assert.equal(await p.locator('[data-bg-step="c2-where"]').getAttribute('data-solved'),'false','"correct" in the save is not believed');
-  assert.equal(await p.locator('[data-bg-step]').count(),1,'and the second step stays shut');
-  assert.equal(await p.locator('[data-bg-step="c2-where"]').getAttribute('data-attempts'),'1');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"]').getAttribute('data-solved'),'false','"correct" in the save is not believed');
+  assert.equal(await p.locator('[data-challenge-step]').count(),1,'and the second step stays shut');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"]').getAttribute('data-attempts'),'1');
   clean(s);await s.ctx.close();
  });
  await check('save H: a save that claims the finish but whose compare is wrong lands on the compare, with nothing downstream',async()=>{
@@ -699,7 +699,7 @@ async function persistence(browser){
   assert.deepEqual(await track(p),[['notebook_complete',LAB]]);
   await inject(p,serialize(play(...C2S1)));
   assert.equal((await info(p)).phase,'challenge-2');assert.deepEqual(await track(p),[],'restoring a challenge sends nothing');
-  await p.locator('[data-bg-option="less"]').click();await settle(p);
+  await p.locator('[data-option="less"]').click();await settle(p);
   assert.deepEqual(await track(p),[],'an answer is not a milestone');
   await click(p,'下一個挑戰');
   assert.deepEqual(await track(p),[['challenge_complete',LAB]]);
@@ -736,7 +736,7 @@ async function persistence(browser){
    await inject(p,serialize(play(...NB,A.save({level:'C',evidenceText:'第二次實驗',limitationText:'只有兩種液體'}))));
    assert.equal(await p.locator('#bg-nb-evidence').inputValue(),'第二次實驗');
    assert.equal(await p.locator('#bg-nb-limit').inputValue(),'只有兩種液體');
-   assert.equal(await p.locator('[data-bg-ideas]').isVisible(),true);
+   assert.equal(await p.locator('[data-ideas]').isVisible(),true);
    assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
    await stageOf(p,size.tag,'restored notebook C',{concept:true});
    clean(s);await s.ctx.close();

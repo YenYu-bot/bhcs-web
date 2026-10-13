@@ -49,7 +49,7 @@ async function touchDrag(p,from,to,{steps=12}={}){
 const tall=p=>p.evaluate(()=>{const d=document.createElement('div');d.style.height='3000px';d.id='pad';document.querySelector('.bg-wrap').append(d)});
 const pressUntil=async(p,pred,key='Tab',limit=40)=>{for(let i=0;i<limit;i++){await p.keyboard.press(key);const a=(await info(p)).active;if(a&&pred(a))return a}throw new Error('focus never reached the target')};
 const hitSizes=async(p,min)=>{
- const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-object],[data-bg-action],.bg-pill,#bg-cta')].filter(e=>!e.hidden&&!e.closest('[hidden]')&&e.getClientRects().length).map(e=>{const r=e.getBoundingClientRect();return {what:e.dataset.bgObject||e.dataset.bgAction||e.id||e.textContent.trim(),w:r.width,h:r.height}}));
+ const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-object],[data-bg-action],.bg-pill,.sg-pill,#bg-cta')].filter(e=>!e.hidden&&!e.closest('[hidden]')&&e.getClientRects().length).map(e=>{const r=e.getBoundingClientRect();return {what:e.dataset.bgObject||e.dataset.bgAction||e.id||e.textContent.trim(),w:r.width,h:r.height}}));
  assert.ok(rows.length>=4,'controls were measured');
  for(const r of rows)assert.ok(r.w>=min-0.5&&r.h>=min-0.5,`${r.what} is ${r.w.toFixed(1)}×${r.h.toFixed(1)}, needs ${min}`);
 };

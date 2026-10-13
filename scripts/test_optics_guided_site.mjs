@@ -20,7 +20,7 @@ test('prototype visibility: noindex, self canonical, not in sitemap, directory, 
 
 test('page shape: hand-written, scoped CSS only, science adapter, no legacy shell, no inline analytics',()=>{
  assert.ok(!html.includes('science-self-study')&&!html.includes('lab-config'),'not a builder-generated lab page');
- assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]),['../../assets/optics-guided/optics-guided.css','../../assets/optics-guided/input.css']);
+ assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]),['../../assets/science-guided/science-guided.css','../../assets/optics-guided/optics-guided.css','../../assets/optics-guided/input.css']);
  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map(m=>m[1]),['../../assets/science-events.js','../../assets/optics-guided/main.js']);
  assert.ok(/<script src="\.\.\/\.\.\/assets\/science-events\.js" defer>/.test(html)&&/<script type="module" src="\.\.\/\.\.\/assets\/optics-guided\/main\.js">/.test(html));
  assert.ok(!/researcher-lab|site\.js|googletagmanager|G-GHN2GDS2RQ|gtag\(/.test(html),'no legacy shell, second analytics loader or inline GA');

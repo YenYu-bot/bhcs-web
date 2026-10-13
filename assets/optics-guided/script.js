@@ -141,30 +141,55 @@ export function evidenceList(records) {
   const out = [];
   for (const t of [1, 2]) {
     const r = records[t];
-    if (r) out.push({ trial: t, text: `第${t === 1 ? '一' : '二'}次紀錄完成 ✓`, detail: `物距 ${formatCm(r.u)} cm，清楚像距 ${formatCm(r.observedScreenPosition)} cm` });
+    if (r) {
+      const rows = [{ label: '物距', value: `${formatCm(r.u)} cm` }, { label: '清楚像距', value: `${formatCm(r.observedScreenPosition)} cm` }];
+      out.push({ trial: t, text: `第${t === 1 ? '一' : '二'}次紀錄完成 ✓`, detail: `物距 ${formatCm(r.u)} cm，清楚像距 ${formatCm(r.observedScreenPosition)} cm`, rows });
+    }
   }
-  if (records[3]) out.push({ trial: 3, text: '第三次紀錄完成 ✓', detail: `物距 ${formatCm(records[3].u)} cm，屏幕上找不到清楚影像` });
+  if (records[3]) {
+    const note = '屏幕上找不到清楚影像';
+    out.push({ trial: 3, text: '第三次紀錄完成 ✓', detail: `物距 ${formatCm(records[3].u)} cm，${note}`, rows: [{ label: '物距', value: `${formatCm(records[3].u)} cm` }], note });
+  }
   return out;
 }
 
-/** Evidence Compare Card, built from the two records only. Never contains theoreticalV. */
-export function compareCard(records) {
+const conditionCell = (a, b, key) => ({ first: `${formatCm(a[key])} cm`, second: `${formatCm(b[key])} cm` });
+
+function compareNotice(c) {
+  return c.status === 'single' ? { kind: 'ok', text: `✅ 兩次只有${VAR_WORD[c.changedVariables[0]]}不同，可以直接比較。` }
+    : c.status === 'multiple' ? { kind: 'warn', text: '⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。' }
+    : { kind: 'warn', text: '兩次的條件一樣，先改變一個條件再比較。' };
+}
+
+/**
+ * EvidenceComparisonModel from the two records only: which condition changed (compareRecords decides, not the card),
+ * which were kept, and what was seen. Never contains theoreticalV.
+ */
+export function comparisonEvidence(records) {
   const a = records[1], b = records[2];
   if (!a || !b) return null;
   const c = compareRecords(a, b);
-  const rows = [
-    { key: 'f', label: '焦距', first: `${formatCm(a.f)} cm`, second: `${formatCm(b.f)} cm` },
-    { key: 'u', label: '物距', first: `${formatCm(a.u)} cm`, second: `${formatCm(b.u)} cm` },
-    { key: 'observedScreenPosition', label: '清楚像距', first: `${formatCm(a.observedScreenPosition)} cm`, second: `${formatCm(b.observedScreenPosition)} cm` },
-    { key: 'imageSize', label: '影像大小', first: SIZE_WORD[a.imageSize], second: SIZE_WORD[b.imageSize] },
+  const model = {};
+  if (c.status === 'single') {
+    const key = c.changedVariables[0], cell = conditionCell(a, b, key);
+    model.independentVariable = { label: VAR_WORD[key], from: cell.first, to: cell.second };
+  }
+  model.controlledVariables = ['f', 'u'].filter((key) => !c.changedVariables.includes(key)).map((key) => ({ label: VAR_WORD[key], value: conditionCell(a, b, key).first }));
+  model.observedResponse = [
+    { label: '清楚像距', ...conditionCell(a, b, 'observedScreenPosition') },
+    { label: '影像大小', first: SIZE_WORD[a.imageSize], second: SIZE_WORD[b.imageSize] },
   ];
-  const notice = c.status === 'single' ? { kind: 'ok', text: `✅ 兩次只有${VAR_WORD[c.changedVariables[0]]}不同，可以直接比較。` }
-    : c.status === 'multiple' ? { kind: 'warn', text: '⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。' }
-    : { kind: 'warn', text: '兩次的條件一樣，先改變一個條件再比較。' };
-  return { rows, notice, directComparable: c.directComparable,
+  return model;
+}
+
+/** The CompareCard model: the evidence comparison, a notice, and the questions. It holds no answer; the learner's choice is added by the page. */
+export function compareCard(records) {
+  const evidence = comparisonEvidence(records);
+  if (!evidence) return null;
+  return { ...evidence, notice: compareNotice(compareRecords(records[1], records[2])),
     questions: [
-      { id: 'position', text: '蠟燭靠近凸透鏡後，清楚影像的位置怎麼變？', options: [['closer', '更靠近透鏡'], ['farther', '更遠離透鏡'], ['same', '沒有改變']] },
-      { id: 'size', text: '影像大小呢？', options: [['smaller', '變小'], ['larger', '變大'], ['same', '一樣']] },
+      { id: 'position', text: '蠟燭靠近凸透鏡後，清楚影像的位置怎麼變？', options: [{ value: 'closer', label: '更靠近透鏡' }, { value: 'farther', label: '更遠離透鏡' }, { value: 'same', label: '沒有改變' }] },
+      { id: 'size', text: '影像大小呢？', options: [{ value: 'smaller', label: '變小' }, { value: 'larger', label: '變大' }, { value: 'same', label: '一樣' }] },
     ] };
 }
 
@@ -177,18 +202,18 @@ export function conceptModel(records) {
   return {
     cards: [
       { id: 'real', title: '實像', body: ['光線真的在某個位置會合。', '可以投在屏幕上。'],
-        evidence: `第一次、第二次：你在屏幕 ${formatCm(a.observedScreenPosition)} cm 和 ${formatCm(b.observedScreenPosition)} cm 找到清楚的影像。` },
+        evidence: [{ text: `第一次、第二次：你在屏幕 ${formatCm(a.observedScreenPosition)} cm 和 ${formatCm(b.observedScreenPosition)} cm 找到清楚的影像。` }] },
       { id: 'virtual', title: '虛像', body: ['光線沒有真的在看起來的影像位置會合。', '眼睛能看到，但屏幕接不到。'],
-        evidence: `第三次：蠟燭在 ${formatCm(c.u)} cm，屏幕怎麼移都找不到，透過透鏡卻看得到。` },
+        evidence: [{ text: `第三次：蠟燭在 ${formatCm(c.u)} cm，屏幕怎麼移都找不到，透過透鏡卻看得到。` }] },
     ],
     formula: {
       heading: '剛才找到的位置，其實可以用這個關係算出來。', expression: '1/f = 1/u + 1/v',
       lines: [
-        { text: line(1, a), found: `你找到 ${formatCm(a.observedScreenPosition)} cm` },
-        { text: line(2, b), found: `你找到 ${formatCm(b.observedScreenPosition)} cm` },
-        { text: line(3, c), found: 'v 是負的：像在蠟燭這一側，屏幕接不到' },
+        { text: line(1, a), note: `你找到 ${formatCm(a.observedScreenPosition)} cm` },
+        { text: line(2, b), note: `你找到 ${formatCm(b.observedScreenPosition)} cm` },
+        { text: line(3, c), note: 'v 是負的：像在蠟燭這一側，屏幕接不到' },
       ],
-      negativeNote: '負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。',
+      note: '負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。',
     },
   };
 }
@@ -196,28 +221,42 @@ export function conceptModel(records) {
 const POSITION_WORD = { closer: '離透鏡更近', farther: '離透鏡更遠', same: '位置不變' };
 const SIZE_WORD_CHANGE = { smaller: '變小', larger: '變大', same: '不變' };
 
-/** Research notebook content. Level A's first two sentences are filled from the learner's records. */
+const relationOptions = (words) => Object.entries(words).map(([value, label]) => ({ value, label }));
+
+/**
+ * Research notebook content in the shared Notebook contract. Level A's first two sentences are filled from the learner's
+ * records; the evidence summary is the comparison model without its questions. `ready` is this station's own gate (the main
+ * button), kept beside the contract: the shared card never reads it.
+ */
 export function notebookModel(records, conclusion) {
-  const card = compareCard(records);
-  if (!card) return null;
+  const evidence = comparisonEvidence(records);
+  if (!evidence) return null;
   const a = records[1], b = records[2], c = compareRecords(a, b);
+  const nudge = (conclusion.relationPosition && conclusion.relationPosition !== c.positionChange) || (conclusion.relationSize && conclusion.relationSize !== c.sizeChange)
+    ? `再對照一下上面的證據：清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm，影像大小從${SIZE_WORD[a.imageSize]}變成${SIZE_WORD[b.imageSize]}。` : null;   // a gentle pointer back to the evidence, never a verdict
   return {
-    evidenceRows: card.rows, notice: card.notice,
+    evidenceSummary: evidence,
+    levelsLegend: '你想怎麼寫？',
     levels: [
       { id: 'A', title: '幫我整理', desc: '前面兩句已經幫你寫好，你完成最後一句。' },
       { id: 'B', title: '自己說', desc: '用自己的話說出你發現的規律。' },
       { id: 'C', title: '研究員挑戰', desc: '想一想：這些資料能支持什麼，又還不能決定什麼？' },
     ],
-    a: {
+    selectedLevel: conclusion.level,
+    levelA: {
       given: [`我把物距從 ${formatCm(a.u)} cm 改成 ${formatCm(b.u)} cm。`, `清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm。`],
-      positionStem: '所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會', positionOptions: Object.entries(POSITION_WORD),
-      sizeStem: '影像大小會', sizeOptions: Object.entries(SIZE_WORD_CHANGE),
-      // a gentle pointer back to the evidence, never a verdict
-      nudge: (conclusion.relationPosition && conclusion.relationPosition !== c.positionChange) || (conclusion.relationSize && conclusion.relationSize !== c.sizeChange)
-        ? `再對照一下上面的證據：清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm，影像大小從${SIZE_WORD[a.imageSize]}變成${SIZE_WORD[b.imageSize]}。` : null,
+      stems: [
+        { id: 'relationPosition', legend: '所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會……', options: relationOptions(POSITION_WORD), selectedValue: conclusion.relationPosition },
+        { id: 'relationSize', legend: '影像大小會……', options: relationOptions(SIZE_WORD_CHANGE), selectedValue: conclusion.relationSize },
+      ],
+      nudge,
     },
-    b: { prompt: '請用第一次和第二次的數據，說明你發現的規律。', placeholder: '例如：我把物距從…改成…，清楚像距從…變成…，所以…' },
-    c: { q1: '這兩筆資料支持了什麼結論？', q2: '哪些事情還不能只靠這兩筆資料判斷？', ideas: LIMITATION_IDEAS },
+    levelB: { prompt: '請用第一次和第二次的數據，說明你發現的規律。', placeholder: '例如：我把物距從…改成…，清楚像距從…變成…，所以…', value: conclusion.freeText },
+    levelC: {
+      q1: { label: '這兩筆資料支持了什麼結論？', value: conclusion.evidenceText },
+      q2: { label: '哪些事情還不能只靠這兩筆資料判斷？', value: conclusion.limitationText },
+      ideasHeading: '研究員常會想到的限制（寫完再看）', ideas: LIMITATION_IDEAS, showIdeas: conclusion.limitationText.trim().length >= 2,
+    },
     ready: notebookReady(conclusion, expectedRelations(records)),
   };
 }
@@ -229,8 +268,9 @@ export function challengeModel(state, id) {
     id, title: def.title, scenario: def.scenario, count: CHALLENGES.length,
     steps: def.steps.map((step, i) => {
       const p = progress.steps[i];
-      const feedback = p.correct ? step.right : p.attempts >= HINT_AFTER_ATTEMPTS ? step.hint : p.attempts >= 1 ? MESSAGES.challengeRetry.main : null;
-      return { id: step.id, question: step.question, options: step.options, unlocked: p.unlocked, choice: p.choice, attempts: p.attempts, correct: p.correct, feedback };
+      const text = p.correct ? step.right : p.attempts >= HINT_AFTER_ATTEMPTS ? step.hint : p.attempts >= 1 ? MESSAGES.challengeRetry.main : null;
+      const feedback = text === null ? null : { kind: p.correct ? 'success' : p.attempts >= HINT_AFTER_ATTEMPTS ? 'hint' : 'nudge', text };
+      return { id: step.id, question: step.question, options: step.options.map(([value, label]) => ({ value, label })), unlocked: p.unlocked, choice: p.choice, attempts: p.attempts, correct: p.correct, feedback };
     }),
     note: def.note && progress.allCorrect ? { ...def.note, text: state.challenges[id].note ?? '' } : null,
     allCorrect: progress.allCorrect,
