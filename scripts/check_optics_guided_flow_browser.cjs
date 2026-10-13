@@ -162,26 +162,36 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     const NB=page.locator('#og-notebook');
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'notebook');assert.equal(await step(),'03研究手冊');
     assert.match(await active(),/og-notebook-title/);assert.equal((await coach()).main,'回頭看看你的兩筆證據，用自己的話寫下你發現了什麼。');
-    assert.deepEqual(await page.locator('#og-nb-rows tr').evaluateAll(rows=>rows.map(r=>[...r.children].map(c=>c.textContent.trim()))),[['焦距','10 cm','10 cm'],['物距','30 cm','15 cm'],['清楚像距',`${f(O1)} cm`,`${f(O2)} cm`],['影像大小','較小','較大']]);
+    assert.deepEqual(await page.locator('#og-notebook tbody tr').evaluateAll(rows=>rows.map(r=>[...r.children].map(c=>c.textContent.trim()))),[['物距','30 cm','15 cm'],['焦距','10 cm'],['清楚像距',`${f(O1)} cm`,`${f(O2)} cm`],['影像大小','較小','較大']]);
     assert.equal(await page.locator('input[name="og-level"]:checked').getAttribute('value'),'A','Level A is the default');
-    assert.equal((await page.locator('.og-given').innerText()).replace(/\s+/g,' '),`我把物距從 30 cm 改成 15 cm。 清楚像距從 ${f(O1)} cm 變成 ${f(O2)} cm。`);
+    assert.equal((await page.locator('#og-notebook .sg-given').innerText()).replace(/\s+/g,' '),`我把物距從 30 cm 改成 15 cm。 清楚像距從 ${f(O1)} cm 變成 ${f(O2)} cm。`);
     assert.equal(await cta().innerText(),'進入挑戰題');assert.equal(await cta().isDisabled(),true);
     t=await text();assert.ok(!/理論像距/.test(t));await shot('9-notebook-A');await axeScan(page,label+' notebook A');
     await NB.getByLabel('離透鏡更近').check();await NB.getByLabel('變大').check();await settle(page);
-    assert.equal(await page.locator('.og-nudge').isVisible(),true,'a gentle pointer back to the evidence');assert.ok(!(await page.locator('.og-nudge').innerText()).match(/錯|答案/));
+    assert.equal(await page.locator('#og-notebook [data-nudge]').isVisible(),true,'a gentle pointer back to the evidence');assert.ok(!(await page.locator('#og-notebook [data-nudge]').innerText()).match(/錯|答案/));
     assert.equal(await cta().isDisabled(),true,'a Level A answer that contradicts the evidence does not unlock the challenges');assert.equal(await NB.getByLabel('離透鏡更近').isChecked(),true,'the learner\'s choice stays on screen');
-    await NB.getByLabel('離透鏡更遠').check();await settle(page);assert.equal(await page.locator('.og-nudge').isVisible(),false);assert.equal(await cta().isDisabled(),false,'both choices now match the two records');
+    await NB.getByLabel('離透鏡更遠').check();await settle(page);assert.equal(await page.locator('#og-notebook [data-nudge]').isVisible(),false);assert.equal(await cta().isDisabled(),false,'both choices now match the two records');
     // Level B: its own readiness; Level A's choices do not count
     await NB.getByLabel('B　自己說').check();await settle(page);
     assert.equal(await page.locator('#og-nb-free').isVisible(),true);assert.equal(await cta().isDisabled(),true);
     const TOKEN='TOKEN-'+Math.random().toString(36).slice(2,8);
     await page.locator('#og-nb-free').fill(`距離變小，像距變大 ${TOKEN}`);await page.waitForTimeout(450);assert.equal(await cta().isDisabled(),false);
+    // typing is never rewritten by a redraw, and every way out of the field saves what was typed (no waiting for the pause)
+    const saved=()=>page.evaluate(()=>window.__opticsGuided.getState().conclusion.freeText);
+    await page.locator('#og-nb-free').fill('abc');await page.evaluate(()=>window.__opticsGuided.dispatch({type:'SAVE_CONCLUSION',fields:{level:'B'}}));
+    assert.equal(await page.locator('#og-nb-free').inputValue(),'abc','a redraw does not overwrite what is being typed');
+    await page.locator('#og-nb-free').blur();assert.equal(await saved(),'abc','leaving the field saves it');
+    await page.locator('#og-nb-free').fill('abcd');await page.evaluate(()=>{Object.defineProperty(document,'visibilityState',{value:'hidden',configurable:true});document.dispatchEvent(new Event('visibilitychange'));Object.defineProperty(document,'visibilityState',{value:'visible',configurable:true})});
+    assert.equal(await saved(),'abcd','a hidden page saves it');
+    await page.locator('#og-nb-free').fill('abcde');await page.evaluate(()=>window.dispatchEvent(new Event('pagehide')));assert.equal(await saved(),'abcde','leaving the page saves it');
+    await page.locator('#og-nb-free').fill(`距離變小，像距變大 ${TOKEN}`);await page.waitForTimeout(450);assert.equal(await saved(),`距離變小，像距變大 ${TOKEN}`);
+    assert.equal(await page.locator('#og-notebook [aria-live],#og-notebook [role=status]').count(),0,'the notebook is not a live region');
     // Level C
     await NB.getByLabel('C　研究員挑戰').check();await settle(page);assert.equal(await cta().isDisabled(),true);
     await page.locator('#og-nb-evidence').fill('物距變小時，清楚像距變大，影像也變大。');await page.waitForTimeout(450);assert.equal(await cta().isDisabled(),true,'both answers are needed');
-    assert.equal(await page.locator('.og-ideas').isHidden(),true);
+    assert.equal(await page.locator('#og-notebook [data-ideas]').isHidden(),true);
     await page.locator('#og-nb-limit').fill('還不知道換別的焦距會不會一樣。');await page.waitForTimeout(450);assert.equal(await cta().isDisabled(),false);
-    assert.equal(await page.locator('.og-ideas').isVisible(),true,'researcher ideas appear after writing, not before');
+    assert.equal(await page.locator('#og-notebook [data-ideas]').isVisible(),true,'researcher ideas appear after writing, not before');
     await shot('10-notebook-C');await axeScan(page,label+' notebook C');
     // reload keeps everything the learner wrote, in the level they chose
     await reload();
@@ -189,7 +199,8 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await page.locator('#og-nb-evidence').inputValue(),'物距變小時，清楚像距變大，影像也變大。');assert.equal(await page.locator('#og-nb-limit').inputValue(),'還不知道換別的焦距會不會一樣。');
     await NB.getByLabel('B　自己說').check();await settle(page);assert.equal(await page.locator('#og-nb-free').inputValue(),`距離變小，像距變大 ${TOKEN}`,'the other levels\' text is kept');
     await NB.getByLabel('C　研究員挑戰').check();await settle(page);
-    assert.equal(await cta().isDisabled(),false);await cta().click();await settle(page);
+    assert.equal(await cta().isDisabled(),false);
+    await page.locator('#og-nb-limit').fill('還不知道換別的焦距會不會一樣。（按下按鈕前才打的）');await cta().click();await settle(page);   // the button flushes what is still being typed before it acts
     // --- challenges
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'challenge');assert.equal(await step(),'04挑戰題');assert.match(await active(),/og-challenge-title/);
     assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 1／3　模糊投影');
@@ -219,7 +230,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await cta().isDisabled(),false);await shot('11-challenge-3');await axeScan(page,label+' challenge 3');await cta().click();await settle(page);
     // --- complete
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'complete');assert.equal(await page.locator('#og-complete-title').innerText(),'這一站完成了');
-    assert.deepEqual(await page.locator('#og-complete-summary .sg-complete-conclusion').allInnerTexts(),['物距變小時，清楚像距變大，影像也變大。','還不知道換別的焦距會不會一樣。']);
+    assert.deepEqual(await page.locator('#og-complete-summary .sg-complete-conclusion').allInnerTexts(),['物距變小時，清楚像距變大，影像也變大。','還不知道換別的焦距會不會一樣。（按下按鈕前才打的）']);
     assert.equal(await page.locator('#og-complete a.sg-link').getAttribute('href'),'./optics.html');assert.equal((await coach()).main,'這一站完成了。');
     assert.equal(await step(),'04挑戰題');await noOverflow('complete');await shot('12-complete');await axeScan(page,label+' complete');
     await reload();assert.equal(await page.locator('#main').getAttribute('data-screen'),'complete','finished stays finished');

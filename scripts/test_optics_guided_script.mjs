@@ -172,24 +172,24 @@ const ans=(id,step,choice)=>({type:'ANSWER_CHALLENGE',id,step,choice});
 test('notebook model: Level A sentences carry the learner\'s own numbers; the nudge points back to the evidence without judging',()=>{
  const nb=toNotebook();assert.equal(nb.state.phase,'notebook');assert.equal(nb.coach.id,'notebook');assert.equal(screenFor(nb.state),'notebook');
  const m=notebookModel(nb.state.records,nb.state.conclusion);
- assert.deepEqual(m.a.given,['我把物距從 30 cm 改成 15 cm。','清楚像距從 14.5 cm 變成 29.5 cm。']);
- assert.equal(m.a.positionStem,'所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會');assert.equal(m.a.sizeStem,'影像大小會');
- assert.deepEqual(m.a.positionOptions.map(o=>o[0]),['closer','farther','same']);assert.deepEqual(m.a.sizeOptions.map(o=>o[0]),['smaller','larger','same']);
+ assert.deepEqual(m.levelA.given,['我把物距從 30 cm 改成 15 cm。','清楚像距從 14.5 cm 變成 29.5 cm。']);
+ assert.deepEqual(m.levelA.stems.map(x=>[x.id,x.legend]),[['relationPosition','所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會……'],['relationSize','影像大小會……']]);
+ assert.deepEqual(m.levelA.stems[0].options.map(o=>o.value),['closer','farther','same']);assert.deepEqual(m.levelA.stems[1].options.map(o=>o.value),['smaller','larger','same']);assert.ok(m.levelA.stems.every(x=>x.options.every(o=>typeof o.label==='string')),'options are {value,label}');
  assert.deepEqual(m.levels.map(l=>l.id+l.title),['A幫我整理','B自己說','C研究員挑戰']);
- assert.equal(m.b.prompt,'請用第一次和第二次的數據，說明你發現的規律。');
- assert.deepEqual([m.c.q1,m.c.q2],['這兩筆資料支持了什麼結論？','哪些事情還不能只靠這兩筆資料判斷？']);assert.deepEqual(m.c.ideas,LIMITATION_IDEAS);
- assert.equal(m.a.nudge,null,'nothing chosen yet → nothing to say');
+ assert.equal(m.levelB.prompt,'請用第一次和第二次的數據，說明你發現的規律。');
+ assert.deepEqual([m.levelC.q1.label,m.levelC.q2.label],['這兩筆資料支持了什麼結論？','哪些事情還不能只靠這兩筆資料判斷？']);assert.deepEqual(m.levelC.ideas,LIMITATION_IDEAS);assert.equal(m.levelC.showIdeas,false);assert.ok(!('questions' in m.evidenceSummary)&&!JSON.stringify(m).includes('theoretical'),'the evidence summary is the comparison without questions');
+ assert.equal(m.levelA.nudge,null,'nothing chosen yet → nothing to say');
  const wrong=notebookModel(nb.state.records,{...nb.state.conclusion,relationPosition:'closer'});
- assert.ok(wrong.a.nudge.includes('再對照一下上面的證據')&&wrong.a.nudge.includes('14.5 cm')&&wrong.a.nudge.includes('29.5 cm'));assert.ok(!/錯|答案/.test(wrong.a.nudge));
+ assert.ok(wrong.levelA.nudge.includes('再對照一下上面的證據')&&wrong.levelA.nudge.includes('14.5 cm')&&wrong.levelA.nudge.includes('29.5 cm'));assert.ok(!/錯|答案/.test(wrong.levelA.nudge));
  assert.equal(notebookModel(notebookModel.length?{1:null,2:null,3:null}:null,nb.state.conclusion),null);
  // the card in the notebook is the same evidence as in compare, never theoreticalV
  assert.ok(!JSON.stringify(m).includes('theoretical'));
  // Level A must match the records: a mismatch keeps the button off and shows the pointer back to the evidence
  for(const [p,sz] of [['closer','larger'],['farther','smaller'],['closer','smaller']]){
   const st=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:p,relationSize:sz}}],{from:nb});
-  const mm=notebookModel(st.state.records,st.state.conclusion);assert.equal(mm.ready,false,p+sz);assert.ok(mm.a.nudge.includes('再對照一下上面的證據'));assert.deepEqual(ctaFor(st.state,deriveView(st.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:false});
+  const mm=notebookModel(st.state.records,st.state.conclusion);assert.equal(mm.ready,false,p+sz);assert.ok(mm.levelA.nudge.includes('再對照一下上面的證據'));assert.deepEqual(ctaFor(st.state,deriveView(st.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:false});
  }
- const good=notebookModel(nb.state.records,{...nb.state.conclusion,level:'A',relationPosition:'farther',relationSize:'larger'});assert.equal(good.ready,true);assert.equal(good.a.nudge,null);
+ const good=notebookModel(nb.state.records,{...nb.state.conclusion,level:'A',relationPosition:'farther',relationSize:'larger'});assert.equal(good.ready,true);assert.equal(good.levelA.nudge,null);
  const ready=play([{type:'SAVE_CONCLUSION',fields:{level:'A',relationPosition:'farther',relationSize:'larger'}}],{from:nb});
  assert.deepEqual(ctaFor(ready.state,deriveView(ready.state)),{label:'進入挑戰題',action:'CONTINUE',enabled:true});
 });

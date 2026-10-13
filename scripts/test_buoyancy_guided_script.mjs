@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -843,8 +843,9 @@ await test('cards: the notebook buffers typing, flushes on leaving, never clobbe
   const dom = page();
   const doc = dom.window.document;
   const calls = [];
-  const card = cards.createNotebook(doc.getElementById('bg-notebook'), S.TEXT, {
-    maxLength: TEXT_MAX,
+  const card = createNotebook(doc.getElementById('bg-notebook'), {
+    body: doc.querySelector('[data-bg-notebook-body]'), idPrefix: 'bg', maxLength: TEXT_MAX, comparison: cards.comparisonOptions(S.TEXT),
+  }, {
     onLevel: (l) => calls.push(['level', l]), onRelation: (id, v) => calls.push(['relation', id, v]),
     onDraft: (f) => calls.push(['draft', f]), onFlush: (f) => calls.push(['flush', f]),
   });
@@ -854,8 +855,8 @@ await test('cards: the notebook buffers typing, flushes on leaving, never clobbe
   const free = doc.getElementById('bg-nb-free');
   assert.equal(free.getAttribute('maxlength'), String(TEXT_MAX));
   assert.equal(doc.querySelector('label[for="bg-nb-free"]').textContent, '用你自己的話，說說物體什麼時候會浮、什麼時候會沉。', 'a real label');
-  assert.equal(doc.querySelector('[data-bg-panel="B"]').hidden, false);
-  assert.equal(doc.querySelector('[data-bg-panel="A"]').hidden, true);
+  assert.equal(doc.querySelector('[data-panel="B"]').hidden, false);
+  assert.equal(doc.querySelector('[data-panel="A"]').hidden, true);
   const type = (el, value) => { el.value = value; el.dispatchEvent(new dom.window.Event('input', { bubbles: true })); };
   type(free, '重'); type(free, '重的'); type(free, '重的不一定');
   assert.deepEqual(calls, [], 'nothing leaves while the learner is still typing');
@@ -883,11 +884,13 @@ await test('cards: the notebook buffers typing, flushes on leaving, never clobbe
   free.value = ''; draw();
   assert.equal(free.value, '<img src=x onerror=alert(1)>');
   assert.equal(doc.querySelectorAll('img').length, 0);
-  const radios = doc.querySelectorAll('input[data-bg-level]');
+  const radios = doc.querySelectorAll('input[data-level]');
   radios[2].checked = true; radios[2].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
   assert.deepEqual(calls.at(-1), ['level', 'C']);
-  const src = read('../assets/buoyancy-guided/cards.js').replace(/\/\/.*$/gm, '');
-  assert.ok(!/localStorage|sessionStorage|innerHTML|insertAdjacentHTML|outerHTML/.test(src), 'cards.js never writes storage and never builds HTML from text');
+  for (const file of ['../assets/buoyancy-guided/cards.js', '../assets/science-guided/components.js']) {
+    const src = read(file).replace(/\/\/.*$/gm, '');
+    assert.ok(!/localStorage|sessionStorage|innerHTML|insertAdjacentHTML|outerHTML/.test(src), `${file} never writes storage and never builds HTML from text`);
+  }
 });
 
 await test('cards: challenge options are real buttons; only an activation is an answer; a solved step locks; the next step appears when it opens', () => {

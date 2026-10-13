@@ -361,3 +361,104 @@ export function renderConceptReveal({ root, heading, body }, model, { labelSuffi
       model.formula.note ? node(doc, 'p', { class: 'sg-formula-note', text: model.formula.note }) : null) : null,
   ]);
 }
+
+// ---- notebook -----------------------------------------------------------------------------------------------------------
+
+const NOTEBOOK_FIELDS = ['freeText', 'evidenceText', 'limitationText'];
+
+/**
+ * Shared Notebook: the learner's own write-up, in the level they choose (A: finish the sentences, B: free text, C: evidence
+ * and limits). It buffers what is typed (debounce; blur flushes) and hands it on through onDraft / onFlush; it never touches
+ * storage and knows no station, phase or action name. The station flushes on pagehide, a hidden page and a main-button press.
+ *   options:  { body, idPrefix, maxLength, comparison, ideasCollapsible, debounceMs }
+ *   handlers: { onLevel(levelId), onRelation(stemId, value), onDraft(fields), onFlush(fields) }
+ * → { update(model), flush(), reset() }
+ */
+export function createNotebook(root, { body, idPrefix, maxLength = 1000, comparison = {}, ideasCollapsible = false, debounceMs = 300 }, { onLevel, onRelation, onDraft, onFlush }) {
+  const doc = root.ownerDocument;
+  const fieldId = { freeText: `${idPrefix}-nb-free`, evidenceText: `${idPrefix}-nb-evidence`, limitationText: `${idPrefix}-nb-limit` };
+  let pending = {}, timer = null;
+  const hasPending = () => Object.keys(pending).length > 0;
+  const take = () => { const fields = pending; pending = {}; clearTimeout(timer); timer = null; return fields; };
+  const flush = () => { if (hasPending()) onFlush(take()); };
+  const schedule = () => { clearTimeout(timer); timer = setTimeout(() => { timer = null; if (hasPending()) onDraft(take()); }, debounceMs); };
+
+  const textarea = (field, rows, placeholder) => {
+    const t = node(doc, 'textarea', { id: fieldId[field], rows, maxlength: maxLength, 'data-field': field, placeholder: placeholder ?? null });
+    t.addEventListener('input', () => { pending[field] = t.value; schedule(); });
+    t.addEventListener('blur', flush);
+    return t;
+  };
+  const labelled = (field, label, control) => node(doc, 'div', { class: 'sg-field' }, node(doc, 'label', { for: fieldId[field], text: label }), control);
+
+  function build(model) {
+    const levels = node(doc, 'fieldset', { class: 'sg-levels', 'data-levels': '' }, node(doc, 'legend', { text: model.levelsLegend }),
+      node(doc, 'div', { class: 'sg-options' }, ...model.levels.map((l) => {
+        const input = node(doc, 'input', { type: 'radio', name: `${idPrefix}-level`, value: l.id, 'data-level': '' });
+        input.addEventListener('change', () => { if (input.checked) onLevel(l.id); });
+        return node(doc, 'label', { class: 'sg-pill sg-level-pill' }, input, node(doc, 'span', {}, node(doc, 'strong', { text: l.title }), ' ', node(doc, 'span', { class: 'sg-level-desc', text: l.desc })));
+      })));
+    const A = model.levelA;
+    const panelA = node(doc, 'section', { class: 'sg-panel', 'data-panel': 'A', hidden: true },
+      node(doc, 'ul', { class: 'sg-given' }, ...A.given.map((g) => node(doc, 'li', { text: g }))),
+      ...A.stems.map((stem) => node(doc, 'fieldset', { class: 'sg-question', 'data-stem': stem.id }, node(doc, 'legend', { text: stem.legend }),
+        node(doc, 'div', { class: 'sg-options' }, ...stem.options.map((o) => {
+          const input = node(doc, 'input', { type: 'radio', name: `${idPrefix}-rel-${stem.id}`, value: o.value, 'data-relation': '', 'data-q': stem.id });
+          input.addEventListener('change', () => { if (input.checked) onRelation(stem.id, o.value); });
+          return node(doc, 'label', { class: 'sg-pill' }, input, node(doc, 'span', { text: o.label }));
+        })))),
+      node(doc, 'p', { class: 'sg-feedback', 'data-nudge': '', hidden: true }));
+    const B = model.levelB;
+    const panelB = node(doc, 'section', { class: 'sg-panel', 'data-panel': 'B', hidden: true },
+      labelled('freeText', B.prompt, textarea('freeText', 5, B.placeholder)), B.help ? node(doc, 'p', { class: 'sg-help', text: B.help }) : null);
+    const C = model.levelC;
+    const ideas = C.ideas?.length
+      ? node(doc, ideasCollapsible ? 'details' : 'div', { class: 'sg-ideas', 'data-ideas': '', hidden: true },
+        ideasCollapsible ? node(doc, 'summary', { text: C.ideasHeading }) : node(doc, 'p', { text: C.ideasHeading }), node(doc, 'ul', {}, ...C.ideas.map((idea) => node(doc, 'li', { text: idea }))))
+      : null;
+    const panelC = node(doc, 'section', { class: 'sg-panel', 'data-panel': 'C', hidden: true },
+      labelled('evidenceText', C.q1.label, textarea('evidenceText', 4)), labelled('limitationText', C.q2.label, textarea('limitationText', 4)),
+      ideas, C.help ? node(doc, 'p', { class: 'sg-help', text: C.help }) : null);
+    return [
+      node(doc, 'section', { class: 'sg-nb-evidence' }, model.evidenceHeading ? node(doc, 'h3', { class: 'sg-card-title', text: model.evidenceHeading }) : null,
+        buildComparisonTable(doc, model.evidenceSummary, comparison),
+        model.evidenceSummary.procedureNote ? node(doc, 'p', { class: 'sg-procedure', text: model.evidenceSummary.procedureNote }) : null),
+      levels, panelA, panelB, panelC, node(doc, 'p', { class: 'sg-notice', 'data-ready': '', 'data-kind': 'ok', hidden: true }),
+    ];
+  }
+
+  function setIfIdle(el, value) {
+    if (!el) return;
+    if (doc.activeElement === el || NOTEBOOK_FIELDS.some((f) => f in pending && el.dataset.field === f)) return;   // never rewrite what the learner is typing
+    if (el.value !== value) el.value = value;
+  }
+  return {
+    update(model) {
+      setHidden(root, !model);
+      if (!model) return;
+      const { levelA, levelB, levelC } = model;
+      const structure = {
+        ev: model.evidenceSummary, evHeading: model.evidenceHeading ?? null, legend: model.levelsLegend, levels: model.levels, given: levelA.given,
+        a: levelA.stems.map((x) => [x.id, x.legend, x.options]), b: [levelB.prompt, levelB.placeholder ?? null, levelB.help ?? null],
+        c: [levelC.q1.label, levelC.q2.label, levelC.ideasHeading ?? null, levelC.ideas ?? null, levelC.help ?? null], ideasCollapsible, maxLength,
+      };
+      rebuildIf(body, structure, () => build(model));       // nothing a learner types or chooses is part of the structure: focus is never rebuilt away
+      for (const input of body.querySelectorAll('input[data-level]')) if (input.checked !== (input.value === model.selectedLevel)) input.checked = input.value === model.selectedLevel;
+      for (const panel of body.querySelectorAll('[data-panel]')) setHidden(panel, panel.dataset.panel !== model.selectedLevel);
+      for (const stem of levelA.stems) for (const input of body.querySelectorAll(`input[data-relation][data-q="${stem.id}"]`)) {
+        if (input.checked !== (input.value === stem.selectedValue)) input.checked = input.value === stem.selectedValue;
+      }
+      const nudge = body.querySelector('[data-nudge]');
+      setHidden(nudge, !levelA.nudge); putText(nudge, levelA.nudge ?? '');
+      setIfIdle(body.querySelector(`#${fieldId.freeText}`), levelB.value);
+      setIfIdle(body.querySelector(`#${fieldId.evidenceText}`), levelC.q1.value);
+      setIfIdle(body.querySelector(`#${fieldId.limitationText}`), levelC.q2.value);
+      const ideas = body.querySelector('[data-ideas]');
+      if (ideas) setHidden(ideas, !levelC.showIdeas);
+      const ready = body.querySelector('[data-ready]');
+      setHidden(ready, !model.readyNote); putText(ready, model.readyNote ?? '');
+    },
+    flush,
+    reset() { take(); },
+  };
+}

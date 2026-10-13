@@ -155,16 +155,6 @@ export function evidenceList(records) {
 
 const conditionCell = (a, b, key) => ({ first: `${formatCm(a[key])} cm`, second: `${formatCm(b[key])} cm` });
 
-/** One row per condition and per result, in the old fixed order. The notebook's evidence table still draws these (Phase 5B). */
-function conditionRows(a, b) {
-  return [
-    { key: 'f', label: '焦距', ...conditionCell(a, b, 'f') },
-    { key: 'u', label: '物距', ...conditionCell(a, b, 'u') },
-    { key: 'observedScreenPosition', label: '清楚像距', ...conditionCell(a, b, 'observedScreenPosition') },
-    { key: 'imageSize', label: '影像大小', first: SIZE_WORD[a.imageSize], second: SIZE_WORD[b.imageSize] },
-  ];
-}
-
 function compareNotice(c) {
   return c.status === 'single' ? { kind: 'ok', text: `✅ 兩次只有${VAR_WORD[c.changedVariables[0]]}不同，可以直接比較。` }
     : c.status === 'multiple' ? { kind: 'warn', text: '⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。' }
@@ -231,27 +221,42 @@ export function conceptModel(records) {
 const POSITION_WORD = { closer: '離透鏡更近', farther: '離透鏡更遠', same: '位置不變' };
 const SIZE_WORD_CHANGE = { smaller: '變小', larger: '變大', same: '不變' };
 
-/** Research notebook content. Level A's first two sentences are filled from the learner's records. */
+const relationOptions = (words) => Object.entries(words).map(([value, label]) => ({ value, label }));
+
+/**
+ * Research notebook content in the shared Notebook contract. Level A's first two sentences are filled from the learner's
+ * records; the evidence summary is the comparison model without its questions. `ready` is this station's own gate (the main
+ * button), kept beside the contract: the shared card never reads it.
+ */
 export function notebookModel(records, conclusion) {
-  if (!comparisonEvidence(records)) return null;
+  const evidence = comparisonEvidence(records);
+  if (!evidence) return null;
   const a = records[1], b = records[2], c = compareRecords(a, b);
+  const nudge = (conclusion.relationPosition && conclusion.relationPosition !== c.positionChange) || (conclusion.relationSize && conclusion.relationSize !== c.sizeChange)
+    ? `再對照一下上面的證據：清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm，影像大小從${SIZE_WORD[a.imageSize]}變成${SIZE_WORD[b.imageSize]}。` : null;   // a gentle pointer back to the evidence, never a verdict
   return {
-    evidenceRows: conditionRows(a, b), notice: compareNotice(c),
+    evidenceSummary: evidence,
+    levelsLegend: '你想怎麼寫？',
     levels: [
       { id: 'A', title: '幫我整理', desc: '前面兩句已經幫你寫好，你完成最後一句。' },
       { id: 'B', title: '自己說', desc: '用自己的話說出你發現的規律。' },
       { id: 'C', title: '研究員挑戰', desc: '想一想：這些資料能支持什麼，又還不能決定什麼？' },
     ],
-    a: {
+    selectedLevel: conclusion.level,
+    levelA: {
       given: [`我把物距從 ${formatCm(a.u)} cm 改成 ${formatCm(b.u)} cm。`, `清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm。`],
-      positionStem: '所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會', positionOptions: Object.entries(POSITION_WORD),
-      sizeStem: '影像大小會', sizeOptions: Object.entries(SIZE_WORD_CHANGE),
-      // a gentle pointer back to the evidence, never a verdict
-      nudge: (conclusion.relationPosition && conclusion.relationPosition !== c.positionChange) || (conclusion.relationSize && conclusion.relationSize !== c.sizeChange)
-        ? `再對照一下上面的證據：清楚像距從 ${formatCm(a.observedScreenPosition)} cm 變成 ${formatCm(b.observedScreenPosition)} cm，影像大小從${SIZE_WORD[a.imageSize]}變成${SIZE_WORD[b.imageSize]}。` : null,
+      stems: [
+        { id: 'relationPosition', legend: '所以當物體往凸透鏡靠近時，在仍能形成實像的範圍內，清楚影像會……', options: relationOptions(POSITION_WORD), selectedValue: conclusion.relationPosition },
+        { id: 'relationSize', legend: '影像大小會……', options: relationOptions(SIZE_WORD_CHANGE), selectedValue: conclusion.relationSize },
+      ],
+      nudge,
     },
-    b: { prompt: '請用第一次和第二次的數據，說明你發現的規律。', placeholder: '例如：我把物距從…改成…，清楚像距從…變成…，所以…' },
-    c: { q1: '這兩筆資料支持了什麼結論？', q2: '哪些事情還不能只靠這兩筆資料判斷？', ideas: LIMITATION_IDEAS },
+    levelB: { prompt: '請用第一次和第二次的數據，說明你發現的規律。', placeholder: '例如：我把物距從…改成…，清楚像距從…變成…，所以…', value: conclusion.freeText },
+    levelC: {
+      q1: { label: '這兩筆資料支持了什麼結論？', value: conclusion.evidenceText },
+      q2: { label: '哪些事情還不能只靠這兩筆資料判斷？', value: conclusion.limitationText },
+      ideasHeading: '研究員常會想到的限制（寫完再看）', ideas: LIMITATION_IDEAS, showIdeas: conclusion.limitationText.trim().length >= 2,
+    },
     ready: notebookReady(conclusion, expectedRelations(records)),
   };
 }

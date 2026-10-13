@@ -14,9 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderCoachExtras, comparisonOptions, createNotebook, renderChallenge,
+  renderCoachExtras, comparisonOptions, renderChallenge,
 } from './cards.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -47,8 +47,9 @@ let lastScreen = null;
 let pendingRestore = false;            // a drag ended without the engine moving anything: draw the objects back where they belong
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };
 
-const notebook = createNotebook($('bg-notebook'), TEXT, {
-  maxLength: TEXT_MAX,
+const notebook = createNotebook($('bg-notebook'), {
+  body: $('bg-notebook').querySelector('[data-bg-notebook-body]'), idPrefix: 'bg', maxLength: TEXT_MAX, comparison: comparisonOptions(TEXT),
+}, {
   onLevel: (level) => dispatch({ type: 'SAVE_CONCLUSION', fields: { level } }),
   onRelation: (id, value) => dispatch({ type: 'SAVE_CONCLUSION', fields: { [id]: value } }),
   onDraft: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),

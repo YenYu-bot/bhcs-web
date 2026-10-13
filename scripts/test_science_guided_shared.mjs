@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, buildComparisonTable, renderConceptReveal } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, buildComparisonTable, renderConceptReveal, createNotebook } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -571,6 +571,126 @@ test('ConceptReveal writes nothing when the model is unchanged and ignores legac
   assert.ok(!els.body.innerHTML.includes('legacy') && !els.body.innerHTML.includes('theoretical'));
 });
 
+const NB_HTML = '<section id="nb" hidden><div id="body"></div></section>';
+const nbModel = (over = {}) => ({
+  evidenceHeading: 'Evidence', evidenceSummary: { independentVariable: { label: 'u', from: '30', to: '15' }, controlledVariables: [{ label: 'f', value: '10' }], observedResponse: [{ label: 'v', first: '15', second: '30' }], procedureNote: 'only u changed' },
+  levelsLegend: 'How?', levels: [{ id: 'A', title: 'A help', desc: 'sentences' }, { id: 'B', title: 'B own', desc: 'words' }, { id: 'C', title: 'C research', desc: 'evidence' }],
+  selectedLevel: 'A',
+  levelA: { given: ['one', 'two'], stems: [{ id: 'relationPosition', legend: 'position...', options: [{ value: 'closer', label: 'closer' }, { value: 'farther', label: 'farther' }], selectedValue: null }, { id: 'relationSize', legend: 'size...', options: [{ value: 'smaller', label: 'smaller' }, { value: 'larger', label: 'larger' }], selectedValue: 'larger' }], nudge: null },
+  levelB: { prompt: 'say it', placeholder: 'e.g.', value: '' },
+  levelC: { q1: { label: 'what', value: '' }, q2: { label: 'limits', value: '' }, ideas: ['idea one', 'idea two'], ideasHeading: 'ideas', showIdeas: false },
+  ...over,
+});
+const mountNotebook = (opts = {}) => {
+  const dom = new JSDOM(NB_HTML, { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const calls = { level: [], relation: [], draft: [], flush: [] };
+  const nb = createNotebook(doc.getElementById('nb'), { body: doc.getElementById('body'), idPrefix: 'x', maxLength: 50, comparison: { heads: HEADS }, ...opts }, {
+    onLevel: (l) => calls.level.push(l), onRelation: (id, v) => calls.relation.push([id, v]), onDraft: (f) => calls.draft.push(f), onFlush: (f) => calls.flush.push(f),
+  });
+  return { dom, doc, nb, calls, root: doc.getElementById('nb'), body: doc.getElementById('body') };
+};
+const type = (dom, el, value) => { el.value = value; el.dispatchEvent(new dom.window.Event('input', { bubbles: true })); };
+
+test('Notebook hides for null, draws the evidence table, native level radios and one hidden panel per level', () => {
+  const { nb, root, body } = mountNotebook();
+  nb.update(null);
+  assert.equal(root.hidden, true);
+  nb.update(nbModel());
+  assert.equal(root.hidden, false);
+  assert.equal(body.querySelector('.sg-nb-evidence h3').textContent, 'Evidence');
+  assert.deepEqual([...body.querySelectorAll('.sg-nb-evidence tbody tr')].map((r) => r.dataset.kind), ['changed', 'controlled', 'observed']);
+  assert.equal(body.querySelector('.sg-procedure').textContent, 'only u changed');
+  const levels = [...body.querySelectorAll('input[type=radio][data-level]')];
+  assert.deepEqual(levels.map((r) => [r.value, r.name, r.checked]), [['A', 'x-level', true], ['B', 'x-level', false], ['C', 'x-level', false]]);
+  assert.deepEqual([...body.querySelectorAll('[data-panel]')].map((p) => [p.dataset.panel, p.hidden]), [['A', false], ['B', true], ['C', true]]);
+  nb.update(nbModel({ selectedLevel: 'C' }));
+  assert.deepEqual([...body.querySelectorAll('[data-panel]')].map((p) => [p.dataset.panel, p.hidden]), [['A', true], ['B', true], ['C', false]]);
+  nb.update(nbModel({ selectedLevel: null }));
+  assert.equal(body.querySelectorAll('[data-panel]:not([hidden])').length, 0, 'no level chosen, no panel');
+  assert.equal(root.querySelectorAll('[aria-live], [role=status]').length, 0);
+});
+
+test('Notebook Level A: given lines, stems as radio groups, selection restored, relation changes reported', () => {
+  const { dom, nb, body, calls } = mountNotebook();
+  nb.update(nbModel());
+  assert.deepEqual([...body.querySelectorAll('.sg-given li')].map((l) => l.textContent), ['one', 'two']);
+  assert.deepEqual([...body.querySelectorAll('[data-stem] legend')].map((l) => l.textContent), ['position...', 'size...']);
+  const radios = [...body.querySelectorAll('input[data-relation]')];
+  assert.deepEqual(radios.map((r) => r.checked), [false, false, false, true], 'selectedValue restores checked');
+  radios[1].checked = true; radios[1].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.deepEqual(calls.relation, [['relationPosition', 'farther']]);
+  nb.update(nbModel({ levelA: { ...nbModel().levelA, nudge: 'look again' } }));
+  assert.equal(body.querySelector('[data-nudge]').hidden, false);
+  assert.equal(body.querySelector('[data-nudge]').textContent, 'look again');
+  const levels = body.querySelectorAll('input[data-level]');
+  levels[1].checked = true; levels[1].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.deepEqual(calls.level, ['B']);
+});
+
+test('Notebook text: maxLength, 300 ms debounce with only the final draft, blur and explicit flush, reset', async () => {
+  const { dom, nb, body, calls } = mountNotebook({ debounceMs: 20 });
+  nb.update(nbModel());
+  const free = body.querySelector('#x-nb-free'), ev = body.querySelector('#x-nb-evidence'), lim = body.querySelector('#x-nb-limit');
+  assert.deepEqual([free, ev, lim].map((t) => t.maxLength), [50, 50, 50]);
+  assert.equal(body.querySelector('label[for="x-nb-free"]').textContent, 'say it');
+  type(dom, free, 'a'); type(dom, free, 'ab'); type(dom, free, 'abc');
+  assert.deepEqual(calls.draft, [], 'typing sends nothing at once');
+  await wait(60);
+  assert.deepEqual(calls.draft, [{ freeText: 'abc' }], 'only the last text after the pause');
+  type(dom, ev, 'E'); free.dispatchEvent(new dom.window.Event('blur'));   // a blur of any field hands on everything pending
+  assert.deepEqual(calls.flush, [{ evidenceText: 'E' }]);
+  type(dom, lim, 'L'); nb.flush();
+  assert.deepEqual(calls.flush, [{ evidenceText: 'E' }, { limitationText: 'L' }], 'explicit flush');
+  type(dom, free, 'zzz'); nb.reset(); nb.flush(); await wait(60);
+  assert.equal(calls.draft.length, 1, 'reset drops what was pending');
+  assert.equal(calls.flush.length, 2);
+});
+
+test('Notebook update never overwrites a focused or pending field, and never rebuilds on a level switch or relation change', async () => {
+  const { dom, doc, nb, body, calls } = mountNotebook({ debounceMs: 20 });
+  nb.update(nbModel({ selectedLevel: 'B' }));
+  const free = body.querySelector('#x-nb-free');
+  const nodes = [...body.querySelectorAll('textarea, input')];
+  free.focus();
+  type(dom, free, 'new text');
+  nb.update(nbModel({ selectedLevel: 'B', levelB: { prompt: 'say it', placeholder: 'e.g.', value: 'OLD' } }));
+  assert.equal(free.value, 'new text', 'a focused field keeps what is being typed');
+  free.blur();                       // blur flushes, so it is no longer pending; give it a value again with focus elsewhere
+  type(dom, free, 'pending text');
+  assert.equal(doc.activeElement === free, false);
+  nb.update(nbModel({ selectedLevel: 'B', levelB: { prompt: 'say it', placeholder: 'e.g.', value: 'OLD' } }));
+  assert.equal(free.value, 'pending text', 'a pending field keeps it too');
+  await wait(60);
+  nb.update(nbModel({ selectedLevel: 'B', levelB: { prompt: 'say it', placeholder: 'e.g.', value: 'SAVED' } }));
+  assert.equal(free.value, 'SAVED', 'an idle field follows the model');
+  nb.update(nbModel({ selectedLevel: 'C' }));
+  nb.update(nbModel({ selectedLevel: 'A', levelA: { ...nbModel().levelA, stems: nbModel().levelA.stems.map((x) => ({ ...x, selectedValue: x.options[0].value })) } }));
+  assert.deepEqual([...body.querySelectorAll('textarea, input')], nodes, 'same controls: a level switch or a relation change rebuilds nothing');
+  assert.ok(calls.draft.length >= 1);
+});
+
+test('Notebook ideas, ready note, optional parts, and fixtures for both stations', () => {
+  const { nb, body } = mountNotebook({ ideasCollapsible: true });
+  nb.update(nbModel());
+  assert.equal(body.querySelector('[data-ideas]').tagName, 'DETAILS');
+  assert.equal(body.querySelector('[data-ideas]').hidden, true);
+  nb.update(nbModel({ levelC: { ...nbModel().levelC, showIdeas: true } }));
+  assert.equal(body.querySelector('[data-ideas]').hidden, false);
+  assert.deepEqual([...body.querySelectorAll('[data-ideas] li')].map((l) => l.textContent), ['idea one', 'idea two']);
+  assert.equal(body.querySelector('[data-ready]').hidden, true, 'no ready note unless the station gives one');
+  nb.update(nbModel({ readyNote: 'ready to go on' }));
+  assert.equal(body.querySelector('[data-ready]').hidden, false);
+  assert.equal(body.querySelector('[data-ready]').textContent, 'ready to go on');
+  const plain = mountNotebook({ idPrefix: 'y' });
+  plain.nb.update(nbModel({ evidenceHeading: undefined, levelB: { prompt: 'p', value: '', help: 'a hint' }, levelC: { q1: { label: 'a', value: '' }, q2: { label: 'b', value: '' }, help: 'c hint' } }));
+  assert.equal(plain.body.querySelector('.sg-nb-evidence h3'), null, 'the evidence heading is optional');
+  assert.equal(plain.body.querySelector('[data-ideas]'), null, 'no ideas without ideas');
+  assert.deepEqual([...plain.body.querySelectorAll('.sg-help')].map((e) => e.textContent), ['a hint', 'c hint']);
+  const src = fs.readFileSync(path.join(rootDir, 'assets/science-guided/components.js'), 'utf8');
+  assert.ok(!/localStorage|sessionStorage|indexedDB|fetch\(|sendBeacon|bhcsScienceTrack|SAVE_CONCLUSION|SAVE_CHALLENGE_NOTE|ANSWER_CHALLENGE/.test(src), 'no storage, network, analytics or station action names in the shared module');
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -596,6 +716,10 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(optics, /renderEvidenceCard/);
   assert.match(optics, /renderCompletionCard/);
   assert.match(optics, /renderCompareCard/);
+  assert.match(optics, /createNotebook/);
+  assert.match(buoyancy, /createNotebook/);
+  assert.ok(!/export function createNotebook\b/.test(cards), 'Buoyancy cards.js no longer owns the notebook');
+  assert.ok(!/function buildNotebook\b|function syncNotebook\b|const nb = \{\}|og-nb-rows/.test(optics + opticsPage), 'Optics keeps no local notebook renderer');
   assert.match(optics, /renderConceptReveal/);
   assert.match(buoyancy, /renderConceptReveal/);
   assert.ok(!/export function renderConcept\b/.test(cards), 'Buoyancy cards.js no longer owns renderConcept');

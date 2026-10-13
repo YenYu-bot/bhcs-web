@@ -220,23 +220,23 @@
 /* ---- B6 notebook, challenges, finish ------------------------------------------------------------------------------- */
 .bg-storage-note { margin: 8px 0 0; color: var(--bg-ink-soft); font-size: 0.9rem; }
 .bg-storage-note[hidden] { display: none; }
-.bg-nb-evidence { margin: 0 0 16px; }
-.bg-levels { margin: 0 0 16px; padding: 0; border: 0; min-width: 0; }
-.bg-levels legend { padding: 0; margin: 0 0 8px; font-weight: 700; }
-.bg-level-pill { align-items: flex-start; flex: 1 1 100%; }
-.bg-level-pill > span { display: flex; flex-direction: column; gap: 2px; }
-.bg-level-desc { color: #4a5a68; font-size: 0.9rem; }
-.bg-panel { margin: 0 0 12px; padding: 14px 16px; border: 1px solid var(--bg-line); border-radius: 10px; background: #F9FBFD; }
-.bg-panel[hidden] { display: none; }
-.bg-given { margin: 0 0 12px; padding-left: 1.2em; }
-.bg-field { display: grid; gap: 6px; margin: 0 0 12px; }
-.bg-field label { font-weight: 700; }
-.bg-field textarea { width: 100%; font: inherit; padding: 10px 12px; border: 2px solid var(--bg-line); border-radius: 10px; resize: vertical; min-height: 8em; line-height: 1.6; background: #fff; color: var(--bg-ink); }
-.bg-help { margin: 0; color: var(--bg-ink-soft); font-size: 0.9rem; }
-.bg-ideas { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid #B9CBDB; background: #fff; color: var(--bg-ink-soft); font-size: .93rem; }
-.bg-ideas[hidden] { display: none; }
-.bg-ideas p { margin: 0 0 4px; font-weight: 700; }
-.bg-ideas ul { margin: 0; padding-left: 1.2em; }
+.sg-nb-evidence { margin: 0 0 16px; }
+.sg-levels { margin: 0 0 16px; padding: 0; border: 0; min-width: 0; }
+.sg-levels legend { padding: 0; margin: 0 0 8px; font-weight: 700; }
+.sg-level-pill { align-items: flex-start; flex: 1 1 100%; }
+.sg-level-pill > span { display: flex; flex-direction: column; gap: 2px; }
+.sg-level-desc { color: #4a5a68; font-size: 0.9rem; }
+.sg-panel { margin: 0 0 12px; padding: 14px 16px; border: 1px solid var(--bg-line); border-radius: 10px; background: #F9FBFD; }
+.sg-panel[hidden] { display: none; }
+.sg-given { margin: 0 0 12px; padding-left: 1.2em; }
+.sg-field { display: grid; gap: 6px; margin: 0 0 12px; }
+.sg-field label { font-weight: 700; }
+.sg-field textarea { width: 100%; font: inherit; padding: 10px 12px; border: 2px solid var(--bg-line); border-radius: 10px; resize: vertical; min-height: 8em; line-height: 1.6; background: #fff; color: var(--bg-ink); }
+.sg-help { margin: 0; color: var(--bg-ink-soft); font-size: 0.9rem; }
+.sg-ideas { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid #B9CBDB; background: #fff; color: var(--bg-ink-soft); font-size: .93rem; }
+.sg-ideas[hidden] { display: none; }
+.sg-ideas p { margin: 0 0 4px; font-weight: 700; }
+.sg-ideas ul { margin: 0; padding-left: 1.2em; }
 .bg-notice[hidden], .sg-notice[hidden] { display: none; }
 .bg-notice[data-kind="ok"], .sg-notice[data-kind="ok"] { border-color: var(--bg-ok); background: var(--bg-ok-soft); color: var(--bg-ok); font-weight: 600; }
 

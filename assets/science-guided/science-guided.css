@@ -17,3 +17,4 @@
 .sg-claims { list-style: none; margin: 0; padding: 0; }
 .sg-table-wrap { overflow-x: auto; }
 .sg-notice[hidden], .sg-feedback[hidden] { display: none; }
+.sg-panel[hidden], .sg-ideas[hidden], .sg-challenge-note[hidden], .sg-ready[hidden] { display: none; }

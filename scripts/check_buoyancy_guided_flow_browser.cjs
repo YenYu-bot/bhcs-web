@@ -286,39 +286,39 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal(await txt(p,'#bg-heading'),'浮沉與密度');
   assert.deepEqual(await stepsNav(),[null,null,'step',null]);
   assert.deepEqual(await coach(p),{main:'把你發現的整理成研究手冊。',sub:'選一種你喜歡的方式來完成。',tip:'',visible:true});
-  const table=await p.evaluate(()=>[...document.querySelectorAll('.bg-nb-evidence tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
+  const table=await p.evaluate(()=>[...document.querySelectorAll('.sg-nb-evidence tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
   assert.deepEqual(table.slice(-2),[['原本 100 g 的方塊','停在水中','浮起來（約 83% 在水面下）'],['讓方塊停住所需質量','100 g','120 g']]);
-  const levels=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-levels] label')].map(l=>({text:l.textContent.replace(/\s+/g,' ').trim(),checked:l.querySelector('input').checked})));
+  const levels=await p.evaluate(()=>[...document.querySelectorAll('[data-levels] label')].map(l=>({text:l.textContent.replace(/\s+/g,' ').trim(),checked:l.querySelector('input').checked})));
   assert.deepEqual(levels.map(l=>[l.text.split(' ')[0],l.checked]),[['幫我整理',false],['我自己說',false],['我能提出證據',false]]);
-  assert.equal(await p.locator('[data-bg-panel]:not([hidden])').count(),0);
+  assert.equal(await p.locator('[data-panel]:not([hidden])').count(),0);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
   assert.equal(await saved().then(x=>x.phase),'notebook','the save follows the learner');
   await stage('notebook start',{concept:true});
  });
  await step('notebook level A: a relation that does not fit the evidence keeps the button shut, with a nudge that gives nothing away',async()=>{
-  await p.locator('input[data-bg-level][value="A"]').check();await settle(p);
-  assert.deepEqual(await p.locator('[data-bg-stem] legend').allInnerTexts(),['換成密度較大的液體後，讓同一個方塊停在液體中，需要的質量會……','木塊比石頭重，卻浮著，是因為木塊的……比水小。']);
-  assert.deepEqual(await p.locator('[data-bg-stem="relationWood"] label').allInnerTexts(),['質量','體積','密度']);
-  await p.locator('input[data-bg-relation][data-q="relationLiquid"][value="smaller"]').check();await settle(p);
+  await p.locator('input[data-level][value="A"]').check();await settle(p);
+  assert.deepEqual(await p.locator('[data-stem] legend').allInnerTexts(),['換成密度較大的液體後，讓同一個方塊停在液體中，需要的質量會……','木塊比石頭重，卻浮著，是因為木塊的……比水小。']);
+  assert.deepEqual(await p.locator('[data-stem="relationWood"] label').allInnerTexts(),['質量','體積','密度']);
+  await p.locator('input[data-relation][data-q="relationLiquid"][value="smaller"]').check();await settle(p);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
-  assert.equal(await p.locator('[data-bg-nudge]').isHidden(),true,'one sentence only: nothing to say yet');
-  await p.locator('input[data-bg-relation][data-q="relationWood"][value="volume"]').check();await settle(p);
-  assert.equal(await p.locator('[data-bg-nudge]').innerText(),'再對照一下你剛才的實驗證據。');
+  assert.equal(await p.locator('[data-nudge]').isHidden(),true,'one sentence only: nothing to say yet');
+  await p.locator('input[data-relation][data-q="relationWood"][value="volume"]').check();await settle(p);
+  assert.equal(await p.locator('[data-nudge]').innerText(),'再對照一下你剛才的實驗證據。');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
   assert.ok(!/答錯|錯了|不對/.test(await allText(p)));
   assert.deepEqual([(await said(p)).id,(await said(p)).text],['notebook-smaller-volume','再對照一下你剛才的實驗證據。']);
   await stage('notebook A nudge',{concept:true});
-  await p.locator('input[data-bg-relation][data-q="relationLiquid"][value="larger"]').check();
-  await p.locator('input[data-bg-relation][data-q="relationWood"][value="density"]').check();await settle(p);
+  await p.locator('input[data-relation][data-q="relationLiquid"][value="larger"]').check();
+  await p.locator('input[data-relation][data-q="relationWood"][value="density"]').check();await settle(p);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
-  assert.equal(await p.locator('[data-bg-nudge]').isHidden(),true);
-  assert.equal(await p.locator('[data-bg-ready]').innerText(),'整理好了，可以進入挑戰題。');
+  assert.equal(await p.locator('[data-nudge]').isHidden(),true);
+  assert.equal(await p.locator('[data-ready]').innerText(),'整理好了，可以進入挑戰題。');
   assert.equal((await said(p)).id,'notebook-larger-density');
   await stage('notebook A ready',{concept:true});
  });
  await step('notebook level B: one character is not enough; the words count once the pause or a blur has passed them on',async()=>{
-  await p.locator('input[data-bg-level][value="B"]').check();await settle(p);
-  assert.equal(await p.locator('[data-bg-panel="B"]').isVisible(),true);assert.equal(await p.locator('[data-bg-panel="A"]').isHidden(),true);
+  await p.locator('input[data-level][value="B"]').check();await settle(p);
+  assert.equal(await p.locator('[data-panel="B"]').isVisible(),true);assert.equal(await p.locator('[data-panel="A"]').isHidden(),true);
   assert.equal(await p.locator('label[for="bg-nb-free"]').innerText(),'用你自己的話，說說物體什麼時候會浮、什麼時候會沉。');
   assert.equal(await p.locator('#bg-nb-free').getAttribute('maxlength'),'1000');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false},'level B is empty even though A was finished: the level chosen is the one that counts');
@@ -334,22 +334,22 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('notebook B',{concept:true});
  });
  await step('notebook level C: the ideas wait for the learner\'s own limitation; leaving the field passes the text on at once',async()=>{
-  await p.locator('input[data-bg-level][value="C"]').check();await settle(p);
+  await p.locator('input[data-level][value="C"]').check();await settle(p);
   assert.equal(await p.locator('label[for="bg-nb-evidence"]').innerText(),'你的哪一次實驗，讓你這樣想？');
   assert.equal(await p.locator('label[for="bg-nb-limit"]').innerText(),'這個實驗哪裡可能不夠完整？');
-  assert.equal(await p.locator('[data-bg-ideas]').isHidden(),true);
+  assert.equal(await p.locator('[data-ideas]').isHidden(),true);
   await p.locator('#bg-nb-evidence').fill('第二次實驗');await p.locator('#bg-nb-evidence').blur();await settle(p);
   assert.equal((await saved()).conclusion.evidenceText,'第二次實驗','a blur flushes at once');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:false});
-  assert.equal(await p.locator('[data-bg-ideas]').isHidden(),true,'still hidden: nothing written in the limitation');
+  assert.equal(await p.locator('[data-ideas]').isHidden(),true,'still hidden: nothing written in the limitation');
   await p.locator('#bg-nb-limit').fill('只有兩種液體');await p.locator('#bg-nb-limit').blur();await settle(p);
-  assert.equal(await p.locator('[data-bg-ideas]').isVisible(),true);
-  assert.deepEqual(await p.locator('[data-bg-ideas] li').allInnerTexts(),['只測了水和濃鹽水。','配重一次增加 20 g，可能找不到更細的停住位置。','只用了少數幾種物體。']);
+  assert.equal(await p.locator('[data-ideas]').isVisible(),true);
+  assert.deepEqual(await p.locator('[data-ideas] li').allInnerTexts(),['只測了水和濃鹽水。','配重一次增加 20 g，可能找不到更細的停住位置。','只用了少數幾種物體。']);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
   await stage('notebook C',{concept:true});
-  await p.locator('input[data-bg-level][value="B"]').check();await settle(p);
+  await p.locator('input[data-level][value="B"]').check();await settle(p);
   assert.equal(await p.locator('#bg-nb-free').inputValue(),'重的不一定沉','switching level keeps what was written');
-  await p.locator('input[data-bg-level][value="A"]').check();await settle(p);
+  await p.locator('input[data-level][value="A"]').check();await settle(p);
   assert.equal(await p.locator('input[data-q="relationWood"][value="density"]').isChecked(),true);
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
  });
@@ -587,11 +587,11 @@ async function persistence(browser){
   const s=await open(browser,sizes[0]);const p=s.page;
   await p.goto(base+PAGE);await inject(p,serialize(play(...NB)));
   assert.equal((await info(p)).phase,'notebook');
-  await p.locator('input[data-bg-level][value="B"]').check();
+  await p.locator('input[data-level][value="B"]').check();
   await p.locator('#bg-nb-free').fill('重的東西不一定沉');await p.waitForTimeout(500);
   await reload(p);
   const r=await info(p);assert.equal(r.phase,'notebook');
-  assert.equal(await p.locator('input[data-bg-level][value="B"]').isChecked(),true);
+  assert.equal(await p.locator('input[data-level][value="B"]').isChecked(),true);
   assert.equal(await p.locator('#bg-nb-free').inputValue(),'重的東西不一定沉');
   assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
   await silent(p);
@@ -601,12 +601,12 @@ async function persistence(browser){
   ['the field loses focus',p=>p.locator('#bg-nb-free').blur()],
   ['the page is hidden',p=>p.evaluate(()=>{Object.defineProperty(document,'visibilityState',{value:'hidden',configurable:true});document.dispatchEvent(new Event('visibilitychange'))})],
   ['the page is being left (pagehide)',p=>p.evaluate(()=>window.dispatchEvent(new Event('pagehide')))],
-  ['the main button is pressed',async p=>{await p.locator('#bg-nb-free').fill('重的東西不一定沉');await p.locator('input[data-bg-level][value="A"]').check({force:true});await settle(p)}],
+  ['the main button is pressed',async p=>{await p.locator('#bg-nb-free').fill('重的東西不一定沉');await p.locator('input[data-level][value="A"]').check({force:true});await settle(p)}],
  ]){
   await check(`save D: text typed and not yet past the pause is kept when ${way}`,async()=>{
    const s=await open(browser,sizes[0]);const p=s.page;
    await p.goto(base+PAGE);await inject(p,serialize(play(...NB)));
-   await p.locator('input[data-bg-level][value="B"]').check();
+   await p.locator('input[data-level][value="B"]').check();
    await p.locator('#bg-nb-free').fill('重的東西不一定沉');
    await fire(p);
    assert.equal((await saved(p)).conclusion.freeText,'重的東西不一定沉','saved right away, before the 300 ms pause could have passed');
@@ -618,7 +618,7 @@ async function persistence(browser){
  await check('save D: pressing the main button right after typing counts the new words (the button is judged after the text is passed on)',async()=>{
   const s=await open(browser,sizes[0]);const p=s.page;
   await p.goto(base+PAGE);await inject(p,serialize(play(...NB)));
-  await p.locator('input[data-bg-level][value="B"]').check();
+  await p.locator('input[data-level][value="B"]').check();
   await p.locator('#bg-nb-free').fill('重的東西不一定沉');
   await p.getByRole('button',{name:'進入挑戰題',exact:true}).click();await settle(p);
   assert.equal((await info(p)).phase,'challenge-1','the click came after the text was passed on');
@@ -736,7 +736,7 @@ async function persistence(browser){
    await inject(p,serialize(play(...NB,A.save({level:'C',evidenceText:'第二次實驗',limitationText:'只有兩種液體'}))));
    assert.equal(await p.locator('#bg-nb-evidence').inputValue(),'第二次實驗');
    assert.equal(await p.locator('#bg-nb-limit').inputValue(),'只有兩種液體');
-   assert.equal(await p.locator('[data-bg-ideas]').isVisible(),true);
+   assert.equal(await p.locator('[data-ideas]').isVisible(),true);
    assert.deepEqual(await cta(p),{label:'進入挑戰題',enabled:true});
    await stageOf(p,size.tag,'restored notebook C',{concept:true});
    clean(s);await s.ctx.close();

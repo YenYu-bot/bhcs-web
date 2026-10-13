@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -24,7 +24,7 @@ let state = restored ?? createInitialState();
 let ui = { naming: false };
 let coach = null;
 let announcementSeq = 0;
-let notebookBuilt = false, challengeKey = '';
+let challengeKey = '';
 
 // Station adapter: the labels are this station's wording; which step is current is still decided by stepFor(state.phase).
 const STEPS = [
@@ -56,14 +56,15 @@ const radioPill = (name, value, label, onChange, cls = '') => {
   return el('label', { className: `og-option ${cls}`.trim() }, input, el('span', {}, label));
 };
 
-// ---- typed text is saved shortly after the learner pauses, and always before a button acts or the page is left
-const pending = { conclusion: {}, note: null };
+// ---- typed text is saved shortly after the learner pauses, and always before a button acts or the page is left.
+// The notebook buffers its own text (shared card); only the challenge note is still buffered here.
+const pending = { note: null };
 let timer = null;
 function flush() {
   clearTimeout(timer);
-  const fields = pending.conclusion, note = pending.note;
-  pending.conclusion = {}; pending.note = null;
-  if (Object.keys(fields).length) dispatch({ type: 'SAVE_CONCLUSION', fields });
+  notebook.flush();
+  const note = pending.note;
+  pending.note = null;
   if (note !== null) dispatch({ type: 'SAVE_CHALLENGE_NOTE', id: 3, text: note });
 }
 const queue = () => { clearTimeout(timer); timer = setTimeout(flush, 300); };
@@ -71,7 +72,6 @@ addEventListener('pagehide', flush);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
 
 // ---- compare
-const ROW_ROLE = { f: 'same', u: 'variable', observedScreenPosition: 'response', imageSize: 'response' };   // styling only (the notebook table): what stayed, what was changed, what was observed
 // Station adapter: compareCard builds the evidence and the questions; this adds the learner's own choice and this station's table words.
 const COMPARE_OPTIONS = { heads: { item: '項目', first: '第一次', second: '第二次' }, caption: '兩次實驗的條件與你找到的結果', itemHeadingHidden: true };
 const compareEls = { root: $('og-compare'), body: $('og-compare-body') };
@@ -86,63 +86,20 @@ const conceptEls = { root: $('og-concept'), body: $('og-concept-body') };
 function drawConcept() { renderConceptReveal(conceptEls, conceptModel(state.records)); }
 
 // ---- research notebook: three ways to write the same finding; Level A is the default
-const nb = {};
-function buildNotebook(m) {
-  const body = $('og-nb-body'); body.replaceChildren();
-  const rows = $('og-nb-rows'); rows.replaceChildren();
-  for (const r of m.evidenceRows) rows.append(el('tr', { 'data-role': ROW_ROLE[r.key] ?? '' }, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
-
-  const levels = el('div', { className: 'og-options' });
-  for (const l of m.levels) levels.append(radioPill('og-level', l.id, `${l.id}　${l.title}`, (v) => { flush(); dispatch({ type: 'SAVE_CONCLUSION', fields: { level: v } }); }));
-  nb.levelDesc = el('p', { className: 'og-level-desc' });
-  body.append(el('fieldset', { className: 'og-nb-levels' }, el('legend', {}, '你想怎麼寫？'), levels, nb.levelDesc));
-
-  // Level A
-  const a = el('div', { className: 'og-level-panel', 'data-level': 'A' });
-  nb.given = el('p', { className: 'og-given' });
-  const posGroup = el('div', { className: 'og-options' }), sizeGroup = el('div', { className: 'og-options' });
-  for (const [v, label] of m.a.positionOptions) posGroup.append(radioPill('og-a-position', v, label, (x) => dispatch({ type: 'SAVE_CONCLUSION', fields: { relationPosition: x } })));
-  for (const [v, label] of m.a.sizeOptions) sizeGroup.append(radioPill('og-a-size', v, label, (x) => dispatch({ type: 'SAVE_CONCLUSION', fields: { relationSize: x } })));
-  nb.nudge = el('p', { className: 'og-nudge' });
-  a.append(nb.given, el('fieldset', { className: 'og-question' }, el('legend', { className: 'og-stem' }, `${m.a.positionStem}……`), posGroup),
-    el('fieldset', { className: 'og-question' }, el('legend', { className: 'og-stem' }, `${m.a.sizeStem}……`), sizeGroup), nb.nudge);
-  // Level B
-  const b = el('div', { className: 'og-level-panel', 'data-level': 'B' });
-  nb.free = el('textarea', { id: 'og-nb-free', rows: 5, maxLength: 1000, placeholder: m.b.placeholder });
-  nb.free.addEventListener('input', () => { pending.conclusion.freeText = nb.free.value; queue(); });
-  nb.free.addEventListener('blur', flush);
-  b.append(el('label', { className: 'og-field', htmlFor: 'og-nb-free' }, m.b.prompt), nb.free);
-  // Level C
-  const c = el('div', { className: 'og-level-panel', 'data-level': 'C' });
-  nb.evidence = el('textarea', { id: 'og-nb-evidence', rows: 4, maxLength: 1000 });
-  nb.limit = el('textarea', { id: 'og-nb-limit', rows: 4, maxLength: 1000 });
-  nb.evidence.addEventListener('input', () => { pending.conclusion.evidenceText = nb.evidence.value; queue(); });
-  nb.limit.addEventListener('input', () => { pending.conclusion.limitationText = nb.limit.value; queue(); });
-  nb.evidence.addEventListener('blur', flush); nb.limit.addEventListener('blur', flush);
-  nb.ideas = el('details', { className: 'og-ideas', hidden: true }, el('summary', {}, '研究員常會想到的限制（寫完再看）'), el('ul', {}, ...m.c.ideas.map((t) => el('li', {}, t))));
-  c.append(el('label', { className: 'og-field', htmlFor: 'og-nb-evidence' }, m.c.q1), nb.evidence, el('label', { className: 'og-field', htmlFor: 'og-nb-limit' }, m.c.q2), nb.limit, nb.ideas);
-  nb.panels = { A: a, B: b, C: c };
-  body.append(a, b, c);
-  nb.levels = m.levels; nb.aGiven = m.a.given;
-}
-
-function syncNotebook() {
+// Station adapter: the level pills read "A　幫我整理" here (the letter is part of how this station names them).
+function drawableNotebook() {
   const m = notebookModel(state.records, state.conclusion);
-  if (!m) return;
-  if (!notebookBuilt) { buildNotebook(m); notebookBuilt = true; }
-  const c = state.conclusion;
-  for (const input of document.querySelectorAll('input[name="og-level"]')) input.checked = c.level === input.value;
-  put(nb.levelDesc, m.levels.find((l) => l.id === c.level)?.desc ?? '');
-  for (const [id, panel] of Object.entries(nb.panels)) panel.hidden = c.level !== id;
-  nb.given.replaceChildren(...m.a.given.map((t, i) => el('span', {}, i ? ' ' : '', t)));
-  for (const input of document.querySelectorAll('input[name="og-a-position"]')) input.checked = c.relationPosition === input.value;
-  for (const input of document.querySelectorAll('input[name="og-a-size"]')) input.checked = c.relationSize === input.value;
-  put(nb.nudge, m.a.nudge ?? '');
-  for (const [node, text] of [[nb.free, c.freeText], [nb.evidence, c.evidenceText], [nb.limit, c.limitationText]]) {
-    if (document.activeElement !== node && node.value !== text) node.value = text;      // never rewrite what the learner is typing
-  }
-  nb.ideas.hidden = c.limitationText.trim().length < 2;
+  return m && { ...m, levels: m.levels.map((l) => ({ ...l, title: `${l.id}　${l.title}` })) };
 }
+const notebook = createNotebook($('og-notebook'), {
+  body: $('og-nb-body'), idPrefix: 'og', maxLength: 1000, ideasCollapsible: true,
+  comparison: { heads: { item: '項目', first: '第一次', second: '第二次' }, caption: '你的兩次實驗證據', itemHeadingHidden: true },
+}, {
+  onLevel: (level) => { flush(); dispatch({ type: 'SAVE_CONCLUSION', fields: { level } }); },
+  onRelation: (id, value) => dispatch({ type: 'SAVE_CONCLUSION', fields: { [id]: value } }),
+  onDraft: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
+  onFlush: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
+});
 
 // ---- challenges: built once per challenge, then updated in place so focus and typing are never lost
 const ch = {};
@@ -218,7 +175,7 @@ function render(wasCta = false) {
   }
   if (screen === 'compare') drawCompare();
   if (screen === 'concept') drawConcept();
-  if (screen === 'notebook') syncNotebook();
+  if (screen === 'notebook') notebook.update(drawableNotebook());
   if (screen === 'challenge') syncChallenge();
   if (screen === 'complete') drawCompletion();
   renderDataCard($('og-data'), dataModel(state), { title: DATA_TITLE });
