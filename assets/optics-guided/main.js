@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -208,10 +208,11 @@ function renderComplete() {
   $('og-complete-summary').replaceChildren(el('h3', {}, '你的發現'), el('div', { className: 'og-complete-lines' }, ...m.lines.map((t) => el('p', {}, t))));
 }
 
+// Station adapter: evidenceList keeps the station's wording and logic; this only reshapes it for the shared card.
+const EVIDENCE_TITLE = '已記錄的實驗';
 function renderRecords() {
-  const list = evidenceList(state.records), ul = $('og-records');
-  $('og-evidence').hidden = list.length === 0;
-  ul.replaceChildren(...list.map((r) => el('li', {}, el('b', {}, r.text), ` ${r.detail}`)));
+  const items = evidenceList(state.records).map((r) => ({ id: `trial-${r.trial}`, title: r.text, rows: r.rows, note: r.note }));
+  renderEvidenceCard($('og-evidence'), { items }, { title: EVIDENCE_TITLE });
 }
 
 const hits = benchView.hits;

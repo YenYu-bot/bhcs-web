@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -602,10 +602,10 @@ await test('cards: concept, evidence, data, status and coach draw without a live
   assert.equal(concept.querySelectorAll('[data-bg-concept-card]').length, 2);
   assert.equal(concept.querySelector('[data-bg-formula] .bg-formula').textContent, 'ρ = m / V');
   assert.equal(concept.querySelectorAll('[data-bg-formula] li[data-found="true"]').length, 4);
-  cards.renderEvidence(doc.getElementById('bg-evidence'), S.evidenceModel(r.state, r.view), S.TEXT.evidenceTitle);
-  assert.equal(doc.querySelectorAll('[data-bg-evidence-item]').length, 4);
+  renderEvidenceCard(doc.getElementById('bg-evidence'), S.evidenceModel(r.state, r.view), { title: S.TEXT.evidenceTitle });
+  assert.equal(doc.querySelectorAll('[data-evidence-item]').length, 4);
   assert.equal(doc.getElementById('bg-evidence').hidden, false);
-  cards.renderEvidence(doc.getElementById('bg-evidence'), { items: [] }, 'x');
+  renderEvidenceCard(doc.getElementById('bg-evidence'), { items: [] }, { title: 'x' });
   assert.equal(doc.getElementById('bg-evidence').hidden, true);
   const t1 = run(A.start, A.begin);
   renderDataCard(doc.getElementById('bg-data'), S.dataModel(t1.state, t1.view), { title: S.TEXT.dataTitle, stateLabels: S.TEXT.dataStates });

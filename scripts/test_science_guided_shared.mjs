@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -300,6 +300,60 @@ test('DataCard writes nothing when the model is unchanged', async () => {
   assert.equal(seen.length, 0);
 });
 
+const OPTICS_EVIDENCE = { items: [
+  { id: 'trial-1', title: 'first', rows: [{ label: 'u', value: '30 cm' }, { label: 'v', value: '15 cm' }] },
+  { id: 'trial-3', title: 'third', rows: [{ label: 'u', value: '5 cm' }], note: 'no clear image' },
+] };
+const BUOYANCY_EVIDENCE = { items: [{ id: 'record-1', title: 'record', rows: [{ label: 'liquid', value: 'water' }, { label: 'outcome', value: 'floats' }] }] };
+
+test('EvidenceCard hides for null or no items and draws one section per item with a dl of rows', () => {
+  const dom = new JSDOM('<section id="e"></section>');
+  const root = dom.window.document.getElementById('e');
+  renderEvidenceCard(root, null, { title: 'x' });
+  assert.equal(root.hidden, true);
+  renderEvidenceCard(root, { items: [] }, { title: 'x' });
+  assert.equal(root.hidden, true);
+  for (const model of [OPTICS_EVIDENCE, BUOYANCY_EVIDENCE]) {
+    renderEvidenceCard(root, model, { title: 'Evidence' });
+    assert.equal(root.hidden, false);
+    const items = [...root.querySelectorAll('[data-evidence-item]')];
+    assert.deepEqual(items.map((e) => e.dataset.evidenceItem), model.items.map((i) => i.id));
+    assert.ok(items.every((e) => e.tagName === 'SECTION' && e.querySelector('h3') && e.querySelector('dl')));
+    items.forEach((e, i) => {
+      assert.deepEqual([...e.querySelectorAll('dt')].map((x) => x.textContent), model.items[i].rows.map((r) => r.label));
+      assert.deepEqual([...e.querySelectorAll('dd')].map((x) => x.textContent), model.items[i].rows.map((r) => r.value));
+      assert.equal(e.querySelectorAll('.sg-evidence-note').length, model.items[i].note ? 1 : 0, 'note is optional');
+    });
+    assert.equal(root.querySelector('h2').textContent, 'Evidence');
+  }
+  assert.equal(root.querySelectorAll('[aria-live], [role=status]').length, 0);
+  renderEvidenceCard(root, null);
+  assert.equal(root.hidden, true);
+});
+
+test('EvidenceCard fixtures and output carry no theoretical or expected values', () => {
+  const dom = new JSDOM('<section id="e"></section>');
+  const root = dom.window.document.getElementById('e');
+  for (const model of [OPTICS_EVIDENCE, BUOYANCY_EVIDENCE]) {
+    renderEvidenceCard(root, model, { title: 't' });
+    for (const bad of ['theoretical', 'theoreticalValue', 'expected', 'expectedValue', 'correctAnswer']) {
+      assert.ok(!JSON.stringify(model).includes(bad), bad);
+      assert.ok(!root.innerHTML.includes(bad), bad);
+    }
+  }
+});
+
+test('EvidenceCard writes nothing when the model is unchanged', async () => {
+  const dom = new JSDOM('<section id="e"></section>');
+  const root = dom.window.document.getElementById('e');
+  renderEvidenceCard(root, OPTICS_EVIDENCE, { title: 'T' });
+  const seen = [];
+  new dom.window.MutationObserver((r) => seen.push(...r)).observe(root, { subtree: true, childList: true, attributes: true, characterData: true });
+  renderEvidenceCard(root, OPTICS_EVIDENCE, { title: 'T' });
+  await wait();
+  assert.equal(seen.length, 0);
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -322,6 +376,10 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(optics, /renderCoachCard/);
   assert.match(optics, /renderStatusBar/);
   assert.match(optics, /renderDataCard/);
+  assert.match(optics, /renderEvidenceCard/);
+  assert.match(buoyancy, /renderEvidenceCard/);
+  assert.ok(!/export function renderEvidence\b/.test(cards), 'Buoyancy cards.js no longer owns renderEvidence');
+  assert.ok(!/id="og-records"|og-records-wrap/.test(opticsPage), 'Optics evidence is drawn by the shared module');
   assert.match(buoyancy, /renderDataCard/);
   assert.ok(!/export function renderData\b/.test(cards), 'Buoyancy cards.js no longer owns renderData');
   assert.ok(!/id="og-f"|id="og-u"/.test(opticsPage), 'Optics data card is drawn by the shared module');

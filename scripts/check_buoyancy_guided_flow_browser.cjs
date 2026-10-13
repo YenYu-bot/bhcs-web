@@ -33,7 +33,7 @@ const info=p=>p.evaluate(()=>{const m=document.getElementById('main').dataset,a=
 const said=async p=>{await p.waitForTimeout(120);return p.evaluate(()=>{const a=document.getElementById('bg-announcer');return {id:a.dataset.id||null,text:a.textContent,writes:Number(a.dataset.writes||0)}})};
 const coach=p=>p.evaluate(()=>({main:document.getElementById('bg-coach-main').textContent,sub:document.getElementById('bg-coach-sub').hidden?'':document.getElementById('bg-coach-sub').textContent,tip:document.getElementById('bg-coach-tip').hidden?'':document.getElementById('bg-coach-tip').textContent,visible:!document.getElementById('bg-coach').hidden}));
 const status=p=>p.evaluate(()=>{const s=document.getElementById('bg-status');return s.hidden?null:{kind:s.dataset.kind,text:s.querySelector('[data-bg-status-text]').textContent}});
-const evidenceIds=p=>p.evaluate(()=>[...document.querySelectorAll('[data-bg-evidence-item]')].map(e=>e.dataset.bgEvidenceItem));
+const evidenceIds=p=>p.evaluate(()=>[...document.querySelectorAll('[data-evidence-item]')].map(e=>e.dataset.evidenceItem));
 const cta=p=>p.evaluate(()=>{const b=document.getElementById('bg-cta');return b.hidden?null:{label:b.textContent,enabled:!b.disabled}});
 
 /** Every word a learner could read or hear on the page: what is drawn, what is hidden but present, the labels, the title. */
@@ -143,9 +143,9 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal((await info(p)).phase,'trial2-switch-liquid');
   assert.deepEqual(await coach(p),{main:'第一筆證據有了。接下來只先換一件事。',sub:'把液體換成濃鹽水。',tip:'',visible:true});
   assert.deepEqual(await evidenceIds(p),['record-1']);
-  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-evidence-item=record-1] dl > *')].map(e=>e.textContent));
+  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-evidence-item=record-1] dl > *')].map(e=>e.textContent));
   assert.deepEqual(rows,['液體','水','方塊體積','100 cm³','停在液體中時的質量','100 g']);
-  assert.ok((await txt(p,'[data-bg-evidence-item=record-1] h3')).startsWith('第一次紀錄完成'));
+  assert.ok((await txt(p,'[data-evidence-item=record-1] h3')).startsWith('第一次紀錄完成'));
   const a=await said(p);assert.match(a.id,/^record-written-\d+$/);assert.equal(a.text,'第一筆結果已記錄。');
   const r=await info(p);assert.equal(r.active.liquid,'water','focus is on the one usable control');
   assert.equal(await p.locator('#bg-cta').isHidden(),true);
@@ -176,7 +176,7 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal((await info(p)).phase,'trial2-recorded');
   assert.deepEqual(await coach(p),{main:'兩筆證據都有了。',sub:'',tip:'',visible:true});
   assert.deepEqual(await evidenceIds(p),['record-1','record-2']);
-  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-evidence-item=record-2] dl > *')].map(e=>e.textContent));
+  const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-evidence-item=record-2] dl > *')].map(e=>e.textContent));
   assert.deepEqual(rows,['液體','濃鹽水','方塊體積','100 cm³','停在液體中時的質量','120 g','一開始放入的 100 g 方塊','浮起來（約 83% 在水面下）']);
   assert.deepEqual(await cta(p),{label:'比較兩次',enabled:true});
   assert.equal((await said(p)).text,'第二筆結果已記錄。');
@@ -240,7 +240,7 @@ async function walk(browser,{width,height,touch,tag}){
   assert.deepEqual(await evidenceIds(p),['record-1','record-2','wood','stone']);
   assert.equal(await p.locator('#bg-bench-card').isVisible(),true,'the two objects are still on the bench to look at');
   assert.equal((await info(p)).screen,'bench');
-  const rows=await p.evaluate(()=>['wood','stone'].map(id=>[...document.querySelectorAll(`[data-bg-evidence-item=${id}] dl > *`)].map(e=>e.textContent)));
+  const rows=await p.evaluate(()=>['wood','stone'].map(id=>[...document.querySelectorAll(`[data-evidence-item=${id}] dl > *`)].map(e=>e.textContent)));
   assert.deepEqual(rows,[['質量','300 g','體積','500 cm³','結果','浮起來（約 60% 在水面下）'],['質量','120 g','體積','40 cm³','結果','沉到底']]);
   const a=await said(p);assert.equal(a.text,'小石頭沉到底了。');
   await stage('trial 3 observed');

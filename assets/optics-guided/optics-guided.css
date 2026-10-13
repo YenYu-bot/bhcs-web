@@ -102,6 +102,10 @@
 .og-evidence { margin: 12px 0 4px; padding: 8px 12px; border-radius: 10px; background: var(--bh-ok-soft); border: 1px solid #BFE0CC; }       /* what has been done and written down */
 .og-evidence-card { background: var(--bh-ok-soft); border-color: #BFE0CC; box-shadow: none; }
 .og-evidence-card[hidden] { display: none; }
+.og-evidence-card .sg-card-title { font-size: .95rem; margin: 0 0 4px; color: var(--bh-ok); }
+.og-evidence-card .sg-evidence-item { margin: 0 0 6px; } .og-evidence-card .sg-evidence-item:last-child { margin-bottom: 0; }
+.og-evidence-card .sg-evidence-title { margin: 0 0 2px; font-size: 14px; color: var(--bh-ok); }
+.og-evidence-card dl { font-size: 14px; } .og-evidence-card .sg-evidence-note { margin: 2px 0 0; font-size: 14px; }
 .og-advanced { font-size: 14px; color: var(--bh-ink-soft); }
 .og-advanced a { color: var(--bh-ink-soft); }
 

@@ -208,3 +208,23 @@ export function renderDataCard(root, model, { title, stateLabels = {} } = {}) {
   ]);
   labelCard(root, title);
 }
+
+/**
+ * Shared EvidenceCard: what the learner has recorded or watched, one block per item.
+ * model = { items: [{ id, title, rows: [{ label, value }], note? }] } | null. null or no items hides the card.
+ * It knows nothing about trials or units, and carries no expected or reference values: stations pass only what was observed.
+ */
+export function renderEvidenceCard(root, model, { title } = {}) {
+  const shown = Boolean(model) && model.items.length > 0;
+  setHidden(root, !shown);
+  if (!shown) return;
+  const doc = root.ownerDocument;
+  rebuildIf(root, { model, title }, () => [
+    title ? node(doc, 'h2', { class: 'sg-card-title', id: `${root.id}-title`, text: title }) : null,
+    ...model.items.map((item) => node(doc, 'section', { class: 'sg-evidence-item', 'data-evidence-item': item.id },
+      node(doc, 'h3', { class: 'sg-evidence-title', text: item.title }),
+      node(doc, 'dl', { class: 'sg-facts' }, ...item.rows.flatMap((r) => [node(doc, 'dt', { text: r.label }), node(doc, 'dd', { text: r.value })])),
+      item.note ? node(doc, 'p', { class: 'sg-evidence-note', text: item.note }) : null)),
+  ]);
+  labelCard(root, title);
+}

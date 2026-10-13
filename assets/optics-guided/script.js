@@ -141,9 +141,15 @@ export function evidenceList(records) {
   const out = [];
   for (const t of [1, 2]) {
     const r = records[t];
-    if (r) out.push({ trial: t, text: `第${t === 1 ? '一' : '二'}次紀錄完成 ✓`, detail: `物距 ${formatCm(r.u)} cm，清楚像距 ${formatCm(r.observedScreenPosition)} cm` });
+    if (r) {
+      const rows = [{ label: '物距', value: `${formatCm(r.u)} cm` }, { label: '清楚像距', value: `${formatCm(r.observedScreenPosition)} cm` }];
+      out.push({ trial: t, text: `第${t === 1 ? '一' : '二'}次紀錄完成 ✓`, detail: `物距 ${formatCm(r.u)} cm，清楚像距 ${formatCm(r.observedScreenPosition)} cm`, rows });
+    }
   }
-  if (records[3]) out.push({ trial: 3, text: '第三次紀錄完成 ✓', detail: `物距 ${formatCm(records[3].u)} cm，屏幕上找不到清楚影像` });
+  if (records[3]) {
+    const note = '屏幕上找不到清楚影像';
+    out.push({ trial: 3, text: '第三次紀錄完成 ✓', detail: `物距 ${formatCm(records[3].u)} cm，${note}`, rows: [{ label: '物距', value: `${formatCm(records[3].u)} cm` }], note });
+  }
   return out;
 }
 

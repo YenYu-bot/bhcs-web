@@ -66,6 +66,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.match(await active(),/og-hit-screen/,'focus goes to the first movable object');
     assert.equal((await coach()).main,'把屏幕移到影像最清楚的位置。');
     assert.equal(await page.locator('.og-nav li[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'02動手做');
+    assert.equal(await page.locator('#og-evidence').isHidden(),true,'no evidence card before the first record');
     // Coach text only changes on real teaching-message changes; the dedicated live region stays separate.
     await page.evaluate(()=>{window.__mut=0;new MutationObserver(m=>{window.__mut+=m.length}).observe(document.getElementById('og-coach-text'),{subtree:true,childList:true,characterData:true});window.__statusMut=0;new MutationObserver(m=>{window.__statusMut+=m.length}).observe(document.getElementById('og-status'),{subtree:true,attributes:true,attributeFilter:['aria-live']})});
     await press('ArrowLeft');assert.equal((await coach()).main,'試試看哪個位置比較清楚。');
@@ -82,12 +83,12 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await cta().click();await settle(page);
     assert.deepEqual(await coach(),{main:'第一筆證據有了。接下來只改一個地方。',sub:'把蠟燭移到離透鏡 15 cm 的位置。'});
     assert.match(await active(),/og-hit-candle/,'the candle takes over: focus follows the task');assert.equal(await cta().isHidden(),true);
-    assert.deepEqual(await page.evaluate(()=>({dt:[...document.querySelectorAll('#og-data dt')].map(e=>e.textContent),inside:['og-records','og-save-note','og-restart'].filter(id=>document.getElementById('og-data').contains(document.getElementById(id))),advanced:document.querySelectorAll('#og-data details,#og-data a').length,utility:['og-save-note','og-restart'].every(id=>document.getElementById('og-utility').contains(document.getElementById(id)))})),{dt:['焦距','物距'],inside:[],advanced:0,utility:true},'the data card holds only the current conditions; the footer utility is separate');
-    assert.equal(await page.locator('#og-records li').first().innerText(),`第一次紀錄完成 ✓ 物距 30 cm，清楚像距 ${f(O1)} cm`);
+    assert.deepEqual(await page.evaluate(()=>({dt:[...document.querySelectorAll('#og-data dt')].map(e=>e.textContent),inside:['og-evidence','og-save-note','og-restart'].filter(id=>document.getElementById('og-data').contains(document.getElementById(id))),advanced:document.querySelectorAll('#og-data details,#og-data a').length,utility:['og-save-note','og-restart'].every(id=>document.getElementById('og-utility').contains(document.getElementById(id)))})),{dt:['焦距','物距'],inside:[],advanced:0,utility:true},'the data card holds only the current conditions; the footer utility is separate');
+    assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#og-evidence [data-evidence-item="trial-1"] :is(h3,dt,dd)')].map(e=>e.textContent)),['第一次紀錄完成 ✓','物距','30 cm','清楚像距',`${f(O1)} cm`]);
     // --- reload right after the first record: progress is saved, the trial restarts cleanly with the learner's own position
     await reload();
     assert.equal((await state()).phase,'trial2-move-object');assert.equal((await state()).s,O1);assert.equal((await state()).u,30);
-    assert.equal(await page.locator('#og-records li').first().innerText(),`第一次紀錄完成 ✓ 物距 30 cm，清楚像距 ${f(O1)} cm`);
+    assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#og-evidence [data-evidence-item="trial-1"] :is(h3,dt,dd)')].map(e=>e.textContent)),['第一次紀錄完成 ✓','物距','30 cm','清楚像距',`${f(O1)} cm`]);
     assert.ok((await page.locator('#og-save-note').innerText()).includes('已接續你上次做到的地方'));
     assert.equal((await coach()).main,'把蠟燭移到離透鏡 15 cm 的位置。');
     // --- trial 2

@@ -33,21 +33,6 @@ export function renderCoachExtras(els, coach, tip) {
   els.root.dataset.coach = coach.key;
 }
 
-/** EvidenceCard: one block per thing the learner recorded or watched. */
-export function renderEvidence(root, model, title) {
-  const shown = Boolean(model) && model.items.length > 0;
-  root.hidden = !shown;
-  if (!shown) return;
-  rebuildIf(root, { model, title }, () => [
-    h('h2', { class: 'bg-card-title', id: `${root.id}-title`, text: title }),
-    ...model.items.map((item) => h('section', { class: 'bg-evidence-item', 'data-bg-evidence-item': item.id },
-      h('h3', { class: 'bg-evidence-title', text: item.title }),
-      h('dl', { class: 'bg-facts' }, ...item.rows.flatMap((r) => [h('dt', { text: r.label }), h('dd', { text: r.value })])),
-      item.note ? h('p', { class: 'bg-evidence-note', text: item.note }) : null)),
-  ]);
-  root.setAttribute('aria-labelledby', `${root.id}-title`);
-}
-
 // ---- compare ---------------------------------------------------------------------------------------------------------
 
 function structureOf(model) {

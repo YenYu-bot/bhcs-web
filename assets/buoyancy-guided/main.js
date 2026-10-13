@@ -14,9 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderCoachExtras, renderEvidence, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
+  renderCoachExtras, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
 } from './cards.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -83,7 +83,7 @@ function render(wasCta = false) {
   renderCoachExtras(coachEls, coach, hintFor(view));
   renderStatusBar(statusEls, statusModel(state, view));
   renderDataCard($('bg-data'), dataModel(state, view), { title: TEXT.dataTitle, stateLabels: TEXT.dataStates });
-  renderEvidence($('bg-evidence'), evidenceModel(state, view), TEXT.evidenceTitle);
+  renderEvidenceCard($('bg-evidence'), evidenceModel(state, view), { title: TEXT.evidenceTitle });
   renderCompare($('bg-compare'), screen.id === 'compare' ? compareModel(state, view) : null, TEXT,
     (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }));
   const concept = screen.id === 'concept' ? conceptModel(state, view) : null;
