@@ -27,7 +27,7 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
 const click=async(p,name)=>{await p.getByRole('button',{name,exact:true}).click();await settle(p)};
 const txt=(p,sel)=>p.locator(sel).innerText();
 const info=p=>p.evaluate(()=>{const m=document.getElementById('main').dataset,a=document.activeElement;return {phase:m.phase,screen:m.screen,slots:Number(m.slots),liquid:m.liquid,tank:m.tankObject,
- active:a?{id:a.id,object:a.dataset.bgObject||null,action:a.dataset.bgAction||null,liquid:a.dataset.bgLiquid!==undefined?a.value:null,q:a.dataset.q||null,option:a.dataset.bgOption&&a.tagName==='BUTTON'&&a.classList.contains('bg-option')?a.dataset.bgOption:null,value:a.dataset.bgCompare!==undefined?a.value:null}:null,
+ active:a?{id:a.id,object:a.dataset.bgObject||null,action:a.dataset.bgAction||null,liquid:a.dataset.bgLiquid!==undefined?a.value:null,q:a.dataset.q||null,option:a.dataset.bgOption&&a.tagName==='BUTTON'&&a.classList.contains('bg-option')?a.dataset.bgOption:null,value:a.dataset.compare!==undefined?a.value:null}:null,
  overflow:document.documentElement.scrollWidth-innerWidth,vw:innerWidth}});
 // what the announcer says, once its short delay has passed
 const said=async p=>{await p.waitForTimeout(120);return p.evaluate(()=>{const a=document.getElementById('bg-announcer');return {id:a.dataset.id||null,text:a.textContent,writes:Number(a.dataset.writes||0)}})};
@@ -186,16 +186,16 @@ async function walk(browser,{width,height,touch,tag}){
   await click(p,'比較兩次');
   const r=await info(p);assert.deepEqual([r.phase,r.screen,r.active.id],['compare','compare','bg-compare-title']);
   assert.deepEqual(await coach(p),{main:'把兩次的證據放在一起看。',sub:'',tip:'',visible:true});
-  const table=await p.evaluate(()=>[...document.querySelectorAll('.bg-compare-table tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
+  const table=await p.evaluate(()=>[...document.querySelectorAll('.sg-compare-table tbody tr')].map(tr=>[...tr.children].map(c=>c.textContent)));
   // Visual Pass V1: the evidence table stays readable at any width (stacked cards on a phone), keeps its table roles and marks the one changed row
-  const cmp=await p.evaluate(()=>{const wrap=document.querySelector('#bg-compare [data-bg-compare-body]'),t=wrap.querySelector('table'),rows=[...t.querySelectorAll('tbody tr')];return {scrolls:wrap.scrollWidth>wrap.clientWidth+1,roles:[t.getAttribute('role'),...rows.map(r=>r.getAttribute('role'))],changed:rows.filter(r=>r.classList.contains('is-changed')).length,cells:[...t.querySelectorAll('tbody td')].map(c=>c.getBoundingClientRect().width),vw:innerWidth}});
+  const cmp=await p.evaluate(()=>{const wrap=document.querySelector('#bg-compare [data-bg-compare-body]'),t=wrap.querySelector('table'),rows=[...t.querySelectorAll('tbody tr')];return {scrolls:wrap.scrollWidth>wrap.clientWidth+1,roles:[t.getAttribute('role'),...rows.map(r=>r.getAttribute('role'))],changed:rows.filter(r=>r.dataset.kind==='changed').length,cells:[...t.querySelectorAll('tbody td')].map(c=>c.getBoundingClientRect().width),vw:innerWidth}});
   assert.equal(cmp.scrolls,false,'compare: no sideways scroll');assert.equal(cmp.changed,1,'compare: exactly one changed row');assert.ok(cmp.roles.every(r=>r==='table'||r==='row'),'compare: table roles kept');
   assert.ok(cmp.cells.every(w=>w>=(cmp.vw<=767?100:120)),'compare: every value cell stays readable: '+cmp.cells.map(Math.round).join(','));
   assert.deepEqual(table,[['液體（改變的）','水','濃鹽水'],['方塊體積（保持相同）','100 cm³'],['放入方式（保持相同）','相同'],['判定（保持相同）','停在液體中'],
    ['原本 100 g 的方塊','停在水中','浮起來（約 83% 在水面下）'],['讓方塊停住所需質量','100 g','120 g']]);
-  assert.equal(await txt(p,'.bg-notice'),'這次改的是液體；其他條件保持相同。');
-  assert.equal(await txt(p,'.bg-procedure'),'先只換液體，再用相同方法重新測量。');
-  const qs=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-question]')].map(f=>({legend:f.querySelector('legend').textContent,options:[...f.querySelectorAll('label')].map(l=>l.textContent),checked:f.querySelectorAll('input:checked').length})));
+  assert.equal(await txt(p,'#bg-compare .sg-notice'),'這次改的是液體；其他條件保持相同。');
+  assert.equal(await txt(p,'#bg-compare .sg-procedure'),'先只換液體，再用相同方法重新測量。');
+  const qs=await p.evaluate(()=>[...document.querySelectorAll('[data-question]')].map(f=>({legend:f.querySelector('legend').textContent,options:[...f.querySelectorAll('label')].map(l=>l.textContent),checked:f.querySelectorAll('input:checked').length})));
   assert.deepEqual(qs,[{legend:'換成濃鹽水後，讓方塊停在液體中所需的質量怎麼變？',options:['變大','變小','差不多'],checked:0},{legend:'原本停在水中的方塊放進濃鹽水後，結果是？',options:['浮起來','停在液體中','沉到底'],checked:0}]);
   assert.deepEqual(await cta(p),{label:'繼續實驗',enabled:false});
   assert.equal(await status(p),null);
@@ -203,8 +203,8 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('compare');
  });
  await step('compare: a first try that does not match the records gets a neutral nudge; the next button still waits',async()=>{
-  await p.locator('input[data-bg-compare][data-q="stayMass"][value="smaller"]').check();await settle(p);
-  const fb=await p.locator('[data-bg-feedback="stayMass"]').innerText();
+  await p.locator('input[data-compare][data-q="stayMass"][value="smaller"]').check();await settle(p);
+  const fb=await p.locator('[data-feedback="stayMass"]').innerText();
   assert.equal(fb,'再看看兩次讓方塊停住的質量。');
   assert.ok(!/答錯|錯了|不對/.test(await allText(p)));
   assert.deepEqual(await cta(p),{label:'繼續實驗',enabled:false});
@@ -212,11 +212,11 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('compare nudge');
  });
  await step('compare: the right choice is confirmed and settled; focus moves on to the next question, then to the button',async()=>{
-  await p.locator('input[data-bg-compare][data-q="stayMass"][value="larger"]').check();await settle(p);
-  assert.equal(await p.locator('[data-bg-feedback="stayMass"]').innerText(),'和你的紀錄一致。');
+  await p.locator('input[data-compare][data-q="stayMass"][value="larger"]').check();await settle(p);
+  assert.equal(await p.locator('[data-feedback="stayMass"]').innerText(),'和你的紀錄一致。');
   assert.equal(await p.locator('input[data-q="stayMass"]:disabled').count(),3,'a settled question is locked');
   let r=await info(p);assert.deepEqual([r.active.q,r.active.value],['firstDrop','float'],'focus is not lost to the lock: it moves to the next open question');
-  await p.locator('input[data-bg-compare][data-q="firstDrop"][value="float"]').check();await settle(p);
+  await p.locator('input[data-compare][data-q="firstDrop"][value="float"]').check();await settle(p);
   assert.deepEqual(await coach(p),{main:'你剛才已經找到一個規律了。',sub:'換了液體，同一個方塊要改變質量，才能再次停在液體中。',tip:'',visible:true});
   assert.deepEqual(await cta(p),{label:'繼續實驗',enabled:true});
   r=await info(p);assert.equal(r.active.id,'bg-cta','focus lands on the button that just opened');

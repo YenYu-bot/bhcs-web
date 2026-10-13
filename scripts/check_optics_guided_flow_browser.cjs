@@ -104,21 +104,21 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     // --- compare
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'compare');assert.equal(await page.locator('#og-bench-card').isVisible(),false);
     assert.match(await active(),/og-compare-title/,'focus lands on the card heading');
-    const cells=await page.locator('#og-compare-rows tr').evaluateAll(rows=>rows.map(r=>[...r.children].map(c=>c.textContent.trim())));
-    assert.deepEqual(cells,[['焦距','10 cm','10 cm'],['物距','30 cm','15 cm'],['清楚像距',`${f(O1)} cm`,`${f(O2)} cm`],['影像大小','較小','較大']]);
-    assert.equal(await page.locator('#og-compare-notice').innerText(),'✅ 兩次只有物距不同，可以直接比較。');
+    const cells=await page.locator('#og-compare tbody tr').evaluateAll(rows=>rows.map(r=>[...r.children].map(c=>c.textContent.trim())));
+    assert.deepEqual(cells,[['物距','30 cm','15 cm'],['焦距','10 cm'],['清楚像距',`${f(O1)} cm`,`${f(O2)} cm`],['影像大小','較小','較大']]);
+    assert.equal(await page.locator('#og-compare .sg-notice').innerText(),'✅ 兩次只有物距不同，可以直接比較。');
     t=await text();assert.ok(!/1\/f|公式|理論|虛像/.test(t),'compare shows evidence, not formula or terms');
     assert.equal(await cta().isDisabled(),true);assert.equal((await coach()).main,'把兩次的證據放在一起看。');
     await noOverflow('compare');
     // Visual Pass V1: the evidence table stays a readable table on a phone (no sideways scroll inside it, no sliver columns), the changed row is marked
-    const tbl=await page.locator('#og-compare .og-table-wrap').evaluate(w=>({scrolls:w.scrollWidth>w.clientWidth+1,cols:[...w.querySelectorAll('tbody tr:first-child > *')].map(c=>c.getBoundingClientRect().width),roles:[...w.querySelectorAll('tbody tr')].map(r=>r.dataset.role)}));
-    assert.equal(tbl.scrolls,false,'compare table does not scroll sideways');assert.ok(tbl.cols.every(w=>w>=70),'compare columns stay readable: '+tbl.cols.join(','));assert.deepEqual(tbl.roles,['same','variable','response','response']);
+    const tbl=await page.locator('#og-compare .sg-table-wrap').evaluate(w=>({scrolls:w.scrollWidth>w.clientWidth+1,cols:[...w.querySelectorAll('tbody tr:first-child > *')].map(c=>c.getBoundingClientRect().width),roles:[...w.querySelectorAll('tbody tr')].map(r=>r.dataset.kind)}));
+    assert.equal(tbl.scrolls,false,'compare table does not scroll sideways');assert.ok(tbl.cols.every(w=>w>=70),'compare columns stay readable: '+tbl.cols.join(','));assert.deepEqual(tbl.roles,['changed','controlled','observed','observed']);
     await shot('5-compare');await axeScan(page,label+' compare');
     await page.getByLabel('更靠近透鏡').check();await page.getByLabel('變大').check();await settle(page);
     assert.equal((await coach()).main,'剛才哪個結果變得更明顯？');assert.ok(!(await text()).includes('錯了'));assert.equal(await cta().isDisabled(),true);
     await reload();assert.equal(await page.locator('#main').getAttribute('data-screen'),'compare');
     assert.equal(await page.getByLabel('更靠近透鏡').isChecked(),true,'the answer given before the reload is still there');assert.equal(await page.getByLabel('變大').isChecked(),true);
-    assert.deepEqual((await page.locator('#og-compare-rows tr').evaluateAll(rows=>rows.map(r=>r.children[1].textContent.trim())))[2],`${f(O1)} cm`);
+    assert.deepEqual((await page.locator('#og-compare tbody tr').evaluateAll(rows=>rows.map(r=>r.children[1].textContent.trim())))[2],`${f(O1)} cm`);
     await page.getByLabel('更遠離透鏡').check();await settle(page);
     c=await coach();assert.equal(c.main,'你剛才已經找到一個規律了。');assert.ok(c.sub.startsWith('在屏幕還能接到清楚影像的情況下，物體往焦點靠近時'));
     assert.equal(await cta().isDisabled(),false);await shot('6-compare-done');
@@ -246,7 +246,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
    await page.goto(base+'/tools/science/optics-guided.html');await page.waitForLoadState('networkidle');
    // Reach compare through the engine hook; the two-variable warning is covered by the pure compareCard tests.
    await page.evaluate(()=>{const g=window.__opticsGuided;for(const type of ['START','BEGIN'])g.dispatch({type});g.dispatch({type:'MOVE_SCREEN',position:15});g.dispatch({type:'RECORD'});g.dispatch({type:'MOVE_CANDLE',position:15});g.dispatch({type:'MOVE_SCREEN',position:30});g.dispatch({type:'RECORD'})});
-   assert.equal(await page.locator('#og-compare-notice').getAttribute('data-kind'),'ok');
+   assert.equal(await page.locator('#og-compare .sg-notice').getAttribute('data-kind'),'ok');
    await ctx.close();
   });
   // ---- hostile storage and quick exits (debug hook only reaches phases fast; what is checked is what the learner sees)

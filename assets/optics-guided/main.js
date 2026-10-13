@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -24,7 +24,7 @@ let state = restored ?? createInitialState();
 let ui = { naming: false };
 let coach = null;
 let announcementSeq = 0;
-let renderedCompare = '', renderedConcept = false, notebookBuilt = false, challengeKey = '';
+let renderedConcept = false, notebookBuilt = false, challengeKey = '';
 
 // Station adapter: the labels are this station's wording; which step is current is still decided by stepFor(state.phase).
 const STEPS = [
@@ -71,25 +71,14 @@ addEventListener('pagehide', flush);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
 
 // ---- compare
-const ROW_ROLE = { f: 'same', u: 'variable', observedScreenPosition: 'response', imageSize: 'response' };   // styling only: what stayed, what was changed, what was observed
-function renderCompare() {
+const ROW_ROLE = { f: 'same', u: 'variable', observedScreenPosition: 'response', imageSize: 'response' };   // styling only (the notebook table): what stayed, what was changed, what was observed
+// Station adapter: compareCard builds the evidence and the questions; this adds the learner's own choice and this station's table words.
+const COMPARE_OPTIONS = { heads: { item: '項目', first: '第一次', second: '第二次' }, caption: '兩次實驗的條件與你找到的結果', itemHeadingHidden: true };
+const compareEls = { root: $('og-compare'), body: $('og-compare-body') };
+function drawCompare() {
   const card = compareCard(state.records);
-  if (!card) return;
-  const key = JSON.stringify(card.rows);
-  if (key !== renderedCompare) {
-    renderedCompare = key;
-    const rows = $('og-compare-rows'); rows.replaceChildren();
-    for (const r of card.rows) rows.append(el('tr', { 'data-role': ROW_ROLE[r.key] ?? '' }, el('th', { scope: 'row' }, r.label), el('td', {}, r.first), el('td', {}, r.second)));
-    const qs = $('og-questions'); qs.replaceChildren();
-    for (const q of card.questions) {
-      const group = el('div', { className: 'og-options' });
-      for (const [value, label] of q.options) group.append(radioPill(`og-q-${q.id}`, value, label, (v) => dispatch({ type: 'ANSWER_COMPARE', question: q.id, answer: v })));
-      qs.append(el('fieldset', { className: 'og-question' }, el('legend', {}, q.text), group));
-    }
-  }
-  const notice = $('og-compare-notice');
-  put(notice, card.notice.text); notice.dataset.kind = card.notice.kind;
-  for (const q of card.questions) for (const input of document.querySelectorAll(`input[name="og-q-${q.id}"]`)) input.checked = state.compare[q.id] === input.value;
+  renderCompareCard(compareEls, card && { ...card, questions: card.questions.map((q) => ({ ...q, selectedValue: state.compare[q.id] ?? null })) },
+    { ...COMPARE_OPTIONS, onAnswer: (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }) });
 }
 
 function renderConcept() {
@@ -235,7 +224,7 @@ function render(wasCta = false) {
     $('og-status').dataset.level = String(view.clarity.effectiveClarityLevel);
     renderStatusBar(statusEls, statusModel(view));
   }
-  if (screen === 'compare') renderCompare();
+  if (screen === 'compare') drawCompare();
   if (screen === 'concept') renderConcept();
   if (screen === 'notebook') syncNotebook();
   if (screen === 'challenge') syncChallenge();

@@ -3,6 +3,8 @@
 // stores nothing and keeps no state of its own beyond what is on the page. Anything that can hold focus (the compare
 // choices) is updated in place instead of rebuilt, so a keyboard user is never thrown off the control they are on.
 
+import { buildComparisonTable } from '../science-guided/components.js';
+
 const h = (tag, attrs = {}, ...kids) => {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -35,64 +37,9 @@ export function renderCoachExtras(els, coach, tip) {
 
 // ---- compare ---------------------------------------------------------------------------------------------------------
 
-function structureOf(model) {
-  const { independentVariable, controlledVariables, observedResponse, procedureNote, notice, questions } = model;
-  return { independentVariable, controlledVariables, observedResponse, procedureNote, notice, questions: questions.map(({ id, text, options }) => ({ id, text, options })) };
-}
-
-/** The shared evidence table (EvidenceComparisonModel): what changed, what was kept the same, what was seen. */
-function buildEvidenceTable(model, heads) {
-  // Explicit table roles: on a phone the rows are laid out as stacked cards (CSS display changes), which would otherwise drop the table meaning.
-  const iv = model.independentVariable;
-  const rows = [];
-  const row = (cls, head, ...cells) => h('tr', { class: cls, role: 'row' }, head, ...cells);
-  const rowHead = (text) => h('th', { scope: 'row', role: 'rowheader', text });
-  const cell = (text, label) => h('td', { role: 'cell', 'data-label': label ?? null, text });
-  if (iv) rows.push(row('is-changed', rowHead(`${iv.label}（${heads.changed}）`), cell(iv.from, heads.first), cell(iv.to, heads.second)));
-  for (const c of model.controlledVariables ?? []) {
-    rows.push(row('is-same', rowHead(`${c.label}（${heads.same}）`), h('td', { role: 'cell', colspan: 2, text: c.value })));
-  }
-  for (const r of model.observedResponse) rows.push(row('is-observed', rowHead(r.label), cell(r.first, heads.first), cell(r.second, heads.second)));
-  return h('table', { class: 'bg-compare-table', role: 'table' },
-    h('thead', { role: 'rowgroup' }, h('tr', { role: 'row' }, h('th', { scope: 'col', role: 'columnheader', text: heads.item }), h('th', { scope: 'col', role: 'columnheader', text: heads.first }), h('th', { scope: 'col', role: 'columnheader', text: heads.second }))),
-    h('tbody', { role: 'rowgroup' }, ...rows));
-}
-
-function buildCompare(model, text, onAnswer) {
-  const table = buildEvidenceTable(model, text.compareHeads);
-  const questions = model.questions.map((q) => h('fieldset', { class: 'bg-question', 'data-bg-question': q.id },
-    h('legend', { text: q.text }),
-    h('div', { class: 'bg-options' }, ...q.options.map((o) => {
-      const input = h('input', { type: 'radio', name: `bg-q-${q.id}`, value: o.value, 'data-bg-compare': '', 'data-q': q.id });
-      input.addEventListener('change', () => { if (input.checked) onAnswer(q.id, o.value); });
-      return h('label', { class: 'bg-pill' }, input, o.label);
-    })),
-    h('p', { class: 'bg-feedback', 'data-bg-feedback': q.id, hidden: true })));
-  return [
-    model.notice ? h('p', { class: 'bg-notice', 'data-kind': model.notice.kind, text: model.notice.text }) : null,
-    table,
-    model.procedureNote ? h('p', { class: 'bg-procedure', text: model.procedureNote }) : null,
-    ...questions,
-  ].filter(Boolean);
-}
-
-/** CompareCard: the evidence table and the two questions. The card only shows what the model says; it judges nothing. */
-export function renderCompare(root, model, text, onAnswer) {
-  root.hidden = !model;
-  if (!model) return;
-  const body = root.querySelector('[data-bg-compare-body]');
-  rebuildIf(body, structureOf(model), () => buildCompare(model, text, onAnswer));
-  for (const q of model.questions) {
-    const box = body.querySelector(`[data-bg-question="${q.id}"]`);
-    for (const input of box.querySelectorAll('input[data-bg-compare]')) {
-      input.checked = input.value === q.selectedValue;
-      input.disabled = q.disabled === true;
-    }
-    const fb = box.querySelector('[data-bg-feedback]');
-    fb.hidden = !q.feedback;
-    fb.dataset.kind = q.feedback?.kind ?? '';
-    put(fb, q.feedback?.text ?? '');
-  }
+/** This station's words for the shared comparison table (the CompareCard and the notebook's evidence summary draw the same table). */
+export function comparisonOptions(text) {
+  return { heads: text.compareHeads, tagLabel: (label, tag) => (tag ? `${label}（${tag}）` : label) };
 }
 
 // ---- concept ---------------------------------------------------------------------------------------------------------
@@ -168,7 +115,7 @@ export function createNotebook(root, text, { maxLength, onLevel, onRelation, onD
       h('div', { class: 'bg-ideas', 'data-bg-ideas': '', hidden: true }, h('p', { text: C.ideasHeading }), h('ul', {}, ...C.ideas.map((idea) => h('li', { text: idea })))),
       h('p', { class: 'bg-help', text: C.help }));
     return [
-      h('section', { class: 'bg-nb-evidence' }, h('h3', { class: 'bg-card-title', text: model.evidenceHeading }), buildEvidenceTable(model.evidenceSummary, text.compareHeads),
+      h('section', { class: 'bg-nb-evidence' }, h('h3', { class: 'bg-card-title', text: model.evidenceHeading }), buildComparisonTable(document, model.evidenceSummary, comparisonOptions(text)),
         model.evidenceSummary.procedureNote ? h('p', { class: 'bg-procedure', text: model.evidenceSummary.procedureNote }) : null),
       levels, panelA, panelB, panelC, h('p', { class: 'bg-notice', 'data-bg-ready': '', 'data-kind': 'ok', hidden: true }),
     ];

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, buildComparisonTable } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -400,6 +400,116 @@ test('CompletionCard writes nothing when the model is unchanged', async () => {
   assert.equal(seen.length, 0);
 });
 
+const COMPARE_HTML = '<section id="c"><div id="b"></div></section>';
+const compareEls = (doc) => ({ root: doc.getElementById('c'), body: doc.getElementById('b') });
+const HEADS = { item: 'item', first: 'first', second: 'second', changed: 'changed', same: 'same' };
+const OPTICS_COMPARE = {
+  independentVariable: { label: 'u', from: '30 cm', to: '15 cm' },
+  controlledVariables: [{ label: 'f', value: '10 cm' }],
+  observedResponse: [{ label: 'v', first: '15 cm', second: '30 cm' }, { label: 'size', first: 'small', second: 'large' }],
+  notice: { kind: 'ok', text: 'only u changed' },
+  questions: [
+    { id: 'position', text: 'where?', options: [{ value: 'closer', label: 'closer' }, { value: 'farther', label: 'farther' }, { value: 'same', label: 'same' }], selectedValue: null },
+    { id: 'size', text: 'size?', options: [{ value: 'smaller', label: 'smaller' }, { value: 'larger', label: 'larger' }], selectedValue: 'larger' },
+  ],
+};
+const BUOYANCY_COMPARE = {
+  independentVariable: { label: 'liquid', from: 'water', to: 'brine' },
+  controlledVariables: [{ label: 'volume', value: '100 cm3' }, { label: 'method', value: 'same' }],
+  observedResponse: [{ label: 'block', first: 'stays', second: 'floats' }],
+  procedureNote: 'change only the liquid',
+  notice: { kind: 'info', text: 'liquid changed' },
+  questions: [{ id: 'stayMass', text: 'mass?', options: [{ value: 'larger', label: 'larger' }, { value: 'same', label: 'same' }], selectedValue: 'larger', disabled: true, feedback: { kind: 'success', text: 'matches' } }],
+};
+const deepKeys = (value, out = new Set()) => {
+  if (value && typeof value === 'object') for (const [k, v] of Object.entries(value)) { out.add(k); deepKeys(v, out); }
+  return out;
+};
+
+test('CompareCard hides for null, draws a semantic table with generic row kinds, and every part is optional but the response', () => {
+  const dom = new JSDOM(COMPARE_HTML);
+  const doc = dom.window.document;
+  const els = compareEls(doc);
+  renderCompareCard(els, null, { heads: HEADS });
+  assert.equal(els.root.hidden, true);
+  for (const model of [OPTICS_COMPARE, BUOYANCY_COMPARE]) {
+    renderCompareCard(els, model, { heads: HEADS, onAnswer() {} });
+    assert.equal(els.root.hidden, false);
+    assert.equal(els.body.querySelectorAll('table').length, 1);
+    assert.deepEqual([...els.body.querySelectorAll('thead th')].map((e) => e.getAttribute('scope')), ['col', 'col', 'col']);
+    assert.ok([...els.body.querySelectorAll('tbody th')].every((e) => e.getAttribute('scope') === 'row'));
+    const kinds = [...els.body.querySelectorAll('tbody tr')].map((e) => e.dataset.kind);
+    assert.deepEqual(kinds, ['changed', ...model.controlledVariables.map(() => 'controlled'), ...model.observedResponse.map(() => 'observed')]);
+    assert.equal(els.body.querySelectorAll('.sg-procedure').length, model.procedureNote ? 1 : 0);
+    assert.equal(els.body.querySelector('.sg-notice').textContent, model.notice.text);
+    assert.equal(els.body.querySelector('.sg-notice').dataset.kind, model.notice.kind);
+    assert.equal(els.body.querySelectorAll('[data-bg-kind],[data-og-kind],[class*="bg-"],[class*="og-"]').length, 0);
+  }
+  renderCompareCard(els, { observedResponse: [{ label: 'v', first: '1', second: '2' }], questions: [] }, { heads: HEADS });
+  assert.deepEqual([...els.body.querySelectorAll('tbody tr')].map((e) => e.dataset.kind), ['observed'], 'independentVariable and controlledVariables are optional');
+  assert.equal(els.body.querySelectorAll('.sg-notice, .sg-procedure, fieldset').length, 0);
+  const wide = buildComparisonTable(doc, OPTICS_COMPARE, { heads: HEADS, caption: 'cap', itemHeadingHidden: true });
+  assert.equal(wide.querySelector('caption').textContent, 'cap');
+  assert.equal(wide.querySelector('thead th .sg-sr').textContent, 'item');
+});
+
+test('CompareCard takes options as { value, label }, restores selected/disabled/feedback, and calls onAnswer(questionId, value) only on a real change', () => {
+  const dom = new JSDOM(COMPARE_HTML);
+  const doc = dom.window.document;
+  const els = compareEls(doc);
+  const answers = [];
+  renderCompareCard(els, OPTICS_COMPARE, { heads: HEADS, onAnswer: (q, v) => answers.push([q, v]) });
+  const radios = [...els.body.querySelectorAll('input[type=radio]')];
+  assert.deepEqual(radios.map((r) => r.value), ['closer', 'farther', 'same', 'smaller', 'larger']);
+  assert.deepEqual(radios.map((r) => r.checked), [false, false, false, false, true], 'selectedValue restores checked');
+  assert.deepEqual(radios.map((r) => r.disabled), [false, false, false, false, false]);
+  const label = radios[1].closest('label');
+  assert.equal(label.textContent.trim(), 'farther');
+  for (const key of ['focus', 'keydown', 'keyup', 'click']) radios[0].dispatchEvent(new dom.window.Event(key, { bubbles: true }));
+  assert.deepEqual(answers, [], 'focusing or arrowing through the choices answers nothing by itself');
+  radios[1].checked = true;
+  radios[1].dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.deepEqual(answers, [['position', 'farther']]);
+  renderCompareCard(els, BUOYANCY_COMPARE, { heads: HEADS });
+  assert.equal([...els.body.querySelectorAll('input[type=radio]')].every((r) => r.disabled), true, 'disabled is restored');
+  assert.equal(els.body.querySelector('[data-feedback="stayMass"]').hidden, false);
+  assert.equal(els.body.querySelector('[data-feedback="stayMass"]').dataset.kind, 'success');
+  assert.equal(els.body.querySelector('[data-feedback="stayMass"]').textContent, 'matches');
+  assert.throws(() => renderCompareCard(els, { ...OPTICS_COMPARE, questions: [{ id: 'q', text: 't', options: [['closer', 'Closer']] }] }, { heads: HEADS }), TypeError, 'tuple options are refused');
+});
+
+test('CompareCard keeps the same radio nodes and keeps focus when only the selection or feedback changes', () => {
+  const dom = new JSDOM(COMPARE_HTML, { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const els = compareEls(doc);
+  renderCompareCard(els, OPTICS_COMPARE, { heads: HEADS, onAnswer() {} });
+  const radios = [...els.body.querySelectorAll('input[type=radio]')];
+  radios[1].focus();
+  assert.equal(doc.activeElement, radios[1]);
+  const seen = [];
+  new dom.window.MutationObserver((r) => seen.push(...r)).observe(els.body, { childList: true, subtree: true });
+  const next = structuredClone(OPTICS_COMPARE);
+  next.questions[0].selectedValue = 'farther';
+  next.questions[0].feedback = { kind: 'nudge', text: 'look again' };
+  next.notice = { kind: 'warn', text: 'changed notice' };
+  renderCompareCard(els, next, { heads: HEADS, onAnswer() {} });
+  assert.deepEqual([...els.body.querySelectorAll('input[type=radio]')], radios, 'same node identity');
+  assert.equal(doc.activeElement, radios[1], 'focus is not lost');
+  assert.equal(radios[1].checked, true);
+  assert.equal(els.body.querySelector('[data-feedback="position"]').textContent, 'look again');
+  assert.equal(els.body.querySelector('.sg-notice').textContent, 'changed notice');
+  assert.equal(seen.filter((r) => r.type === 'childList' && [...r.addedNodes, ...r.removedNodes].some((n) => n.nodeType === 1 && !n.matches?.('.sg-feedback'))).length, 0, 'no structural rebuild');
+});
+
+test('CompareCard fixtures carry no answer key', () => {
+  for (const model of [OPTICS_COMPARE, BUOYANCY_COMPARE]) {
+    const keys = deepKeys(model);
+    for (const bad of ['correctAnswer', 'answerKey', 'expectedAnswer', 'correct']) assert.ok(!keys.has(bad), bad);
+  }
+  const src = fs.readFileSync(path.join(rootDir, 'assets/science-guided/components.js'), 'utf8');
+  assert.ok(!/correctAnswer|answerKey|expectedAnswer|directComparable|theoretical/.test(src), 'the shared module never judges an answer');
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -424,6 +534,10 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(optics, /renderDataCard/);
   assert.match(optics, /renderEvidenceCard/);
   assert.match(optics, /renderCompletionCard/);
+  assert.match(optics, /renderCompareCard/);
+  assert.match(buoyancy, /renderCompareCard/);
+  assert.ok(!/export function renderCompare\b|function buildCompare\b|function structureOf\b|function buildEvidenceTable\b/.test(cards), 'Buoyancy cards.js no longer owns the compare card');
+  assert.ok(!/function renderCompare\b|og-compare-rows|og-compare-notice|og-questions/.test(optics + opticsPage), 'Optics keeps no local compare renderer');
   assert.match(buoyancy, /renderCompletionCard/);
   assert.ok(!/export function renderCompletion\b/.test(cards), 'Buoyancy cards.js no longer owns renderCompletion');
   assert.ok(!/function renderRecords|function renderComplete\b|og-complete-lines|og-records-wrap/.test(optics), 'Optics keeps no duplicate records/complete renderer');

@@ -89,10 +89,14 @@ test('compare: card built from the learner\'s own records; wrong answers get a q
  for(const [o1,o2] of [[14.5,29.5],[15,30],[15.5,30.5]]){
   const st=play([{type:'START'},{type:'BEGIN'},mS(o1),{type:'RECORD'},mC(15),mS(o2),{type:'RECORD'}]);
   assert.equal(st.state.phase,'compare');assert.equal(st.coach.id,'compare');
-  const card=compareCard(st.state.records),row=k=>card.rows.find(r=>r.key===k);
-  assert.deepEqual([row('observedScreenPosition').first,row('observedScreenPosition').second],[`${formatCm(o1)} cm`,`${formatCm(o2)} cm`],'shows what was recorded, not 15/30');
-  assert.deepEqual([row('f').first,row('u').first,row('u').second,row('imageSize').first,row('imageSize').second],['10 cm','30 cm','15 cm','較小','較大']);
-  assert.equal(card.notice.text,'✅ 兩次只有物距不同，可以直接比較。');assert.equal(card.directComparable,true);
+  const card=compareCard(st.state.records),seen=label=>card.observedResponse.find(r=>r.label===label);
+  assert.deepEqual([seen('清楚像距').first,seen('清楚像距').second],[`${formatCm(o1)} cm`,`${formatCm(o2)} cm`],'shows what was recorded, not 15/30');
+  assert.deepEqual([card.independentVariable,card.controlledVariables],[{label:'物距',from:'30 cm',to:'15 cm'},[{label:'焦距',value:'10 cm'}]],'the changed condition is the independent variable, the other is kept');
+  assert.deepEqual([seen('影像大小').first,seen('影像大小').second],['較小','較大']);
+  assert.equal(card.notice.text,'✅ 兩次只有物距不同，可以直接比較。');assert.equal(card.notice.kind,'ok');
+  assert.ok(!('directComparable' in card)&&!('rows' in card),'the shared card contract carries no engine flag and no legacy rows');
+  assert.deepEqual(card.questions.map(q=>q.options.every(o=>typeof o.value==='string'&&typeof o.label==='string')),[true,true],'options are {value,label}');
+  assert.ok(!/correctAnswer|answerKey|expectedAnswer/.test(JSON.stringify(card)),'no answer key in the card');
   assert.ok(!JSON.stringify(card).includes('theoretical'),'no theoreticalV in the card');
   let r=play([{type:'ANSWER_COMPARE',question:'position',answer:'closer'},{type:'ANSWER_COMPARE',question:'size',answer:'larger'}],{from:st});
   assert.equal(r.coach.id,'compareRetry');assert.equal(r.coach.main,'剛才哪個結果變得更明顯？');assert.equal(ctaFor(r.state,deriveView(r.state)).enabled,false);
@@ -102,7 +106,7 @@ test('compare: card built from the learner\'s own records; wrong answers get a q
  }
  assert.equal(compareCard({1:null,2:null,3:null}),null);
  const rec=(f,u,obs)=>({f,u,observedScreenPosition:obs,imageSize:'larger',absoluteMagnification:2});
- const multi=compareCard({1:rec(10,30,15),2:rec(12,15,60),3:null});assert.equal(multi.notice.kind,'warn');assert.equal(multi.notice.text,'⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。');assert.equal(multi.directComparable,false);
+ const multi=compareCard({1:rec(10,30,15),2:rec(12,15,60),3:null});assert.equal(multi.notice.kind,'warn');assert.equal(multi.notice.text,'⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。');assert.equal(multi.independentVariable,undefined,'two changes: no single independent variable');
  const onlyF=compareCard({1:rec(10,30,15),2:rec(12,30,15),3:null});assert.equal(onlyF.notice.text,'✅ 兩次只有焦距不同，可以直接比較。');
 });
 

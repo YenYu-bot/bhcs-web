@@ -264,7 +264,7 @@ export function screenFor(state) {
   if (BENCH_SCREEN.has(phase)) {
     return { id: 'bench', headingId: 'bg-heading', stepId: stepFor(state), focusTargets: ['[data-bg-object]', 'input[data-bg-liquid]', '#bg-cta', '#bg-heading'] };
   }
-  if (phase === 'compare') return { id: 'compare', headingId: 'bg-compare-title', stepId: 'experiment', focusTargets: ['[data-bg-compare]', '#bg-cta', '#bg-compare-title'] };
+  if (phase === 'compare') return { id: 'compare', headingId: 'bg-compare-title', stepId: 'experiment', focusTargets: ['[data-compare]', '#bg-cta', '#bg-compare-title'] };
   if (phase === 'concept') return { id: 'concept', headingId: 'bg-concept-title', stepId: 'experiment', focusTargets: ['#bg-cta', '#bg-concept-title'] };
   if (phase === 'notebook') return { id: 'notebook', headingId: 'bg-notebook-title', stepId: 'notebook', focusTargets: ['#bg-cta', '#bg-notebook-title'] };
   if (phase === 'complete') return { id: 'complete', headingId: 'bg-complete-title', stepId: 'challenge', focusTargets: ['#bg-cta', '#bg-complete-title'] };

@@ -250,3 +250,86 @@ export function renderCompletionCard(els, model) {
     model.link ? node(doc, 'p', { class: 'sg-complete-link' }, node(doc, 'a', { class: 'sg-link', href: model.link.href, text: model.link.label })) : null,
   ]);
 }
+
+// ---- comparison ---------------------------------------------------------------------------------------------------------
+
+const ROW_KINDS = { changed: 'changed', controlled: 'controlled', observed: 'observed' };
+
+/**
+ * The shared evidence table for an EvidenceComparisonModel: what was changed, what was kept the same, what was seen.
+ * heads = { item, first, second, changed?, same? } are the station's words; tagLabel(label, tag) joins a row name and its tag.
+ * The table never decides which condition changed: it only draws the model it is given.
+ */
+export function buildComparisonTable(doc, model, { heads, tagLabel = (label, tag) => (tag ? `${label} (${tag})` : label), caption = null, itemHeadingHidden = false } = {}) {
+  // Explicit table roles: on a phone the rows can be laid out as stacked cards (CSS display changes), which would otherwise drop the table meaning.
+  const rowHead = (text) => node(doc, 'th', { scope: 'row', role: 'rowheader', text });
+  const cell = (text, label) => node(doc, 'td', { role: 'cell', 'data-label': label ?? null, text });
+  const row = (kind, head, ...cells) => node(doc, 'tr', { role: 'row', 'data-kind': ROW_KINDS[kind] }, head, ...cells);
+  const rows = [];
+  const iv = model.independentVariable;
+  if (iv) rows.push(row('changed', rowHead(tagLabel(iv.label, heads.changed)), cell(iv.from, heads.first), cell(iv.to, heads.second)));
+  for (const c of model.controlledVariables ?? []) rows.push(row('controlled', rowHead(tagLabel(c.label, heads.same)), node(doc, 'td', { role: 'cell', colspan: 2, text: c.value })));
+  for (const r of model.observedResponse) rows.push(row('observed', rowHead(r.label), cell(r.first, heads.first), cell(r.second, heads.second)));
+  const itemHead = node(doc, 'th', { scope: 'col', role: 'columnheader' }, itemHeadingHidden ? node(doc, 'span', { class: 'sg-sr', text: heads.item }) : heads.item);
+  return node(doc, 'div', { class: 'sg-table-wrap' }, node(doc, 'table', { class: 'sg-compare-table', role: 'table' },
+    caption ? node(doc, 'caption', { class: 'sg-sr', text: caption }) : null,
+    node(doc, 'thead', { role: 'rowgroup' }, node(doc, 'tr', { role: 'row' }, itemHead,
+      node(doc, 'th', { scope: 'col', role: 'columnheader', text: heads.first }), node(doc, 'th', { scope: 'col', role: 'columnheader', text: heads.second }))),
+    node(doc, 'tbody', { role: 'rowgroup' }, ...rows)));
+}
+
+const answerHandlers = new WeakMap();
+
+/**
+ * Shared CompareCard: the evidence table and the questions about it. The card shows what the model says and judges nothing:
+ * there is no answer key in its contract. Controls are built once per structure and then updated in place, so a keyboard
+ * learner is never thrown off the radio they are on.
+ * els = { root, body }; model = EvidenceComparisonModel + { notice?: { kind, text }, questions: [{ id, text, options: [{ value, label }],
+ * selectedValue?, disabled?, feedback?: { kind, text } }] } | null; opts = { heads, tagLabel?, caption?, itemHeadingHidden?, onAnswer(questionId, value) }.
+ */
+export function renderCompareCard({ root, body }, model, opts = {}) {
+  setHidden(root, !model);
+  if (!model) return;
+  const doc = body.ownerDocument;
+  answerHandlers.set(body, opts.onAnswer);
+  for (const q of model.questions) for (const o of q.options) {
+    if (!o || typeof o !== 'object' || Array.isArray(o) || typeof o.value !== 'string') throw new TypeError(`question ${q.id}: options must be { value, label }`);
+  }
+  const structure = {
+    independentVariable: model.independentVariable ?? null, controlledVariables: model.controlledVariables ?? [], observedResponse: model.observedResponse,
+    procedureNote: model.procedureNote ?? null, hasNotice: Boolean(model.notice), heads: opts.heads, caption: opts.caption ?? null, itemHeadingHidden: opts.itemHeadingHidden === true,
+    questions: model.questions.map(({ id, text, options }) => ({ id, text, options })),
+  };
+  rebuildIf(body, structure, () => [
+    model.notice ? node(doc, 'p', { class: 'sg-notice' }) : null,
+    buildComparisonTable(doc, model, opts),
+    model.procedureNote ? node(doc, 'p', { class: 'sg-procedure', text: model.procedureNote }) : null,
+    ...model.questions.map((q) => node(doc, 'fieldset', { class: 'sg-question', 'data-question': q.id },
+      node(doc, 'legend', { text: q.text }),
+      node(doc, 'div', { class: 'sg-options' }, ...q.options.map((o) => {
+        const input = node(doc, 'input', { type: 'radio', name: `sg-q-${q.id}`, value: o.value, 'data-compare': '', 'data-q': q.id });
+        input.addEventListener('change', () => { if (input.checked) answerHandlers.get(body)?.(q.id, o.value); });
+        return node(doc, 'label', { class: 'sg-pill' }, input, node(doc, 'span', { text: o.label }));
+      })),
+      node(doc, 'p', { class: 'sg-feedback', 'data-feedback': q.id, hidden: true }))),
+  ]);
+  const notice = body.querySelector('.sg-notice');
+  if (notice && model.notice) {
+    putText(notice, model.notice.text);
+    if (notice.dataset.kind !== model.notice.kind) notice.dataset.kind = model.notice.kind;
+  }
+  for (const q of model.questions) {
+    const box = [...body.querySelectorAll('[data-question]')].find((e) => e.dataset.question === q.id);
+    for (const input of box.querySelectorAll('input[data-compare]')) {
+      const checked = input.value === (q.selectedValue ?? null);
+      if (input.checked !== checked) input.checked = checked;
+      const disabled = q.disabled === true;
+      if (input.disabled !== disabled) input.disabled = disabled;
+    }
+    const fb = box.querySelector('[data-feedback]');
+    setHidden(fb, !q.feedback);
+    const kind = q.feedback?.kind ?? '';
+    if ((fb.dataset.kind ?? '') !== kind) fb.dataset.kind = kind;
+    putText(fb, q.feedback?.text ?? '');
+  }
+}

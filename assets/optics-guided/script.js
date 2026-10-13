@@ -153,24 +153,53 @@ export function evidenceList(records) {
   return out;
 }
 
-/** Evidence Compare Card, built from the two records only. Never contains theoreticalV. */
-export function compareCard(records) {
+const conditionCell = (a, b, key) => ({ first: `${formatCm(a[key])} cm`, second: `${formatCm(b[key])} cm` });
+
+/** One row per condition and per result, in the old fixed order. The notebook's evidence table still draws these (Phase 5B). */
+function conditionRows(a, b) {
+  return [
+    { key: 'f', label: '焦距', ...conditionCell(a, b, 'f') },
+    { key: 'u', label: '物距', ...conditionCell(a, b, 'u') },
+    { key: 'observedScreenPosition', label: '清楚像距', ...conditionCell(a, b, 'observedScreenPosition') },
+    { key: 'imageSize', label: '影像大小', first: SIZE_WORD[a.imageSize], second: SIZE_WORD[b.imageSize] },
+  ];
+}
+
+function compareNotice(c) {
+  return c.status === 'single' ? { kind: 'ok', text: `✅ 兩次只有${VAR_WORD[c.changedVariables[0]]}不同，可以直接比較。` }
+    : c.status === 'multiple' ? { kind: 'warn', text: '⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。' }
+    : { kind: 'warn', text: '兩次的條件一樣，先改變一個條件再比較。' };
+}
+
+/**
+ * EvidenceComparisonModel from the two records only: which condition changed (compareRecords decides, not the card),
+ * which were kept, and what was seen. Never contains theoreticalV.
+ */
+export function comparisonEvidence(records) {
   const a = records[1], b = records[2];
   if (!a || !b) return null;
   const c = compareRecords(a, b);
-  const rows = [
-    { key: 'f', label: '焦距', first: `${formatCm(a.f)} cm`, second: `${formatCm(b.f)} cm` },
-    { key: 'u', label: '物距', first: `${formatCm(a.u)} cm`, second: `${formatCm(b.u)} cm` },
-    { key: 'observedScreenPosition', label: '清楚像距', first: `${formatCm(a.observedScreenPosition)} cm`, second: `${formatCm(b.observedScreenPosition)} cm` },
-    { key: 'imageSize', label: '影像大小', first: SIZE_WORD[a.imageSize], second: SIZE_WORD[b.imageSize] },
+  const model = {};
+  if (c.status === 'single') {
+    const key = c.changedVariables[0], cell = conditionCell(a, b, key);
+    model.independentVariable = { label: VAR_WORD[key], from: cell.first, to: cell.second };
+  }
+  model.controlledVariables = ['f', 'u'].filter((key) => !c.changedVariables.includes(key)).map((key) => ({ label: VAR_WORD[key], value: conditionCell(a, b, key).first }));
+  model.observedResponse = [
+    { label: '清楚像距', ...conditionCell(a, b, 'observedScreenPosition') },
+    { label: '影像大小', first: SIZE_WORD[a.imageSize], second: SIZE_WORD[b.imageSize] },
   ];
-  const notice = c.status === 'single' ? { kind: 'ok', text: `✅ 兩次只有${VAR_WORD[c.changedVariables[0]]}不同，可以直接比較。` }
-    : c.status === 'multiple' ? { kind: 'warn', text: '⚠ 這兩次同時改變了兩個條件，還不能知道是哪個因素造成結果。' }
-    : { kind: 'warn', text: '兩次的條件一樣，先改變一個條件再比較。' };
-  return { rows, notice, directComparable: c.directComparable,
+  return model;
+}
+
+/** The CompareCard model: the evidence comparison, a notice, and the questions. It holds no answer; the learner's choice is added by the page. */
+export function compareCard(records) {
+  const evidence = comparisonEvidence(records);
+  if (!evidence) return null;
+  return { ...evidence, notice: compareNotice(compareRecords(records[1], records[2])),
     questions: [
-      { id: 'position', text: '蠟燭靠近凸透鏡後，清楚影像的位置怎麼變？', options: [['closer', '更靠近透鏡'], ['farther', '更遠離透鏡'], ['same', '沒有改變']] },
-      { id: 'size', text: '影像大小呢？', options: [['smaller', '變小'], ['larger', '變大'], ['same', '一樣']] },
+      { id: 'position', text: '蠟燭靠近凸透鏡後，清楚影像的位置怎麼變？', options: [{ value: 'closer', label: '更靠近透鏡' }, { value: 'farther', label: '更遠離透鏡' }, { value: 'same', label: '沒有改變' }] },
+      { id: 'size', text: '影像大小呢？', options: [{ value: 'smaller', label: '變小' }, { value: 'larger', label: '變大' }, { value: 'same', label: '一樣' }] },
     ] };
 }
 
@@ -204,11 +233,10 @@ const SIZE_WORD_CHANGE = { smaller: '變小', larger: '變大', same: '不變' }
 
 /** Research notebook content. Level A's first two sentences are filled from the learner's records. */
 export function notebookModel(records, conclusion) {
-  const card = compareCard(records);
-  if (!card) return null;
+  if (!comparisonEvidence(records)) return null;
   const a = records[1], b = records[2], c = compareRecords(a, b);
   return {
-    evidenceRows: card.rows, notice: card.notice,
+    evidenceRows: conditionRows(a, b), notice: compareNotice(c),
     levels: [
       { id: 'A', title: '幫我整理', desc: '前面兩句已經幫你寫好，你完成最後一句。' },
       { id: 'B', title: '自己說', desc: '用自己的話說出你發現的規律。' },

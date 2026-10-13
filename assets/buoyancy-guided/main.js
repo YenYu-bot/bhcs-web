@@ -14,9 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderCoachExtras, renderCompare, renderConcept, createNotebook, renderChallenge,
+  renderCoachExtras, comparisonOptions, renderConcept, createNotebook, renderChallenge,
 } from './cards.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -84,8 +84,8 @@ function render(wasCta = false) {
   renderStatusBar(statusEls, statusModel(state, view));
   renderDataCard($('bg-data'), dataModel(state, view), { title: TEXT.dataTitle, stateLabels: TEXT.dataStates });
   renderEvidenceCard($('bg-evidence'), evidenceModel(state, view), { title: TEXT.evidenceTitle });
-  renderCompare($('bg-compare'), screen.id === 'compare' ? compareModel(state, view) : null, TEXT,
-    (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }));
+  renderCompareCard({ root: $('bg-compare'), body: $('bg-compare').querySelector('[data-bg-compare-body]') }, screen.id === 'compare' ? compareModel(state, view) : null,
+    { ...comparisonOptions(TEXT), onAnswer: (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }) });
   const concept = screen.id === 'concept' ? conceptModel(state, view) : null;
   if (concept) put($('bg-concept-title'), concept.heading);
   renderConcept($('bg-concept'), concept);

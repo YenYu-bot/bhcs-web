@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -569,9 +569,9 @@ await test('cards: compare is drawn from the model, updated in place, and locks 
   const root = doc.getElementById('bg-compare');
   const answers = [];
   const r = run(...TO_COMPARE);
-  const draw = () => cards.renderCompare(root, S.compareModel(r.state, deriveView(r.state)), S.TEXT, (q, a) => answers.push([q, a]));
+  const draw = () => renderCompareCard({ root, body: root.querySelector('[data-bg-compare-body]') }, S.compareModel(r.state, deriveView(r.state)), { ...cards.comparisonOptions(S.TEXT), onAnswer: (q, a) => answers.push([q, a]) });
   draw();
-  const radios = [...root.querySelectorAll('input[type=radio][data-bg-compare]')];
+  const radios = [...root.querySelectorAll('input[type=radio][data-compare]')];
   assert.equal(radios.length, 6);
   assert.equal(root.querySelectorAll('table').length, 1);
   assert.equal(root.querySelector('tbody tr:first-child th').textContent, '液體（改變的）');
@@ -580,16 +580,16 @@ await test('cards: compare is drawn from the model, updated in place, and locks 
   assert.deepEqual(answers, [['stayMass', 'smaller']]);
   r.do(A.q('stayMass', 'smaller'));
   draw();
-  assert.equal(root.querySelector('[data-bg-feedback="stayMass"]').hidden, false);
-  assert.equal(root.querySelector('[data-bg-feedback="stayMass"]').textContent, '再看看兩次讓方塊停住的質量。');
-  assert.deepEqual(root.querySelectorAll('input[data-bg-compare]').length, 6);
+  assert.equal(root.querySelector('[data-feedback="stayMass"]').hidden, false);
+  assert.equal(root.querySelector('[data-feedback="stayMass"]').textContent, '再看看兩次讓方塊停住的質量。');
+  assert.deepEqual(root.querySelectorAll('input[data-compare]').length, 6);
   r.do(A.q('stayMass', 'larger'));
   draw();
-  const after = [...root.querySelectorAll('input[type=radio][data-bg-compare]')];
+  const after = [...root.querySelectorAll('input[type=radio][data-compare]')];
   assert.ok(after.every((el, i) => el === radios[i]), 'the same controls, so focus is never lost to a rebuild');
   assert.deepEqual(after.map((el) => el.disabled), [true, true, true, false, false, false]);
   assert.equal(after[0].checked, true);
-  assert.equal(root.querySelector('[data-bg-feedback="stayMass"]').dataset.kind, 'success');
+  assert.equal(root.querySelector('[data-feedback="stayMass"]').dataset.kind, 'success');
   assert.equal(root.querySelectorAll('[aria-live]').length, 0);
 });
 
