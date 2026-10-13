@@ -212,18 +212,18 @@ export function conceptModel(records) {
   return {
     cards: [
       { id: 'real', title: '實像', body: ['光線真的在某個位置會合。', '可以投在屏幕上。'],
-        evidence: `第一次、第二次：你在屏幕 ${formatCm(a.observedScreenPosition)} cm 和 ${formatCm(b.observedScreenPosition)} cm 找到清楚的影像。` },
+        evidence: [{ text: `第一次、第二次：你在屏幕 ${formatCm(a.observedScreenPosition)} cm 和 ${formatCm(b.observedScreenPosition)} cm 找到清楚的影像。` }] },
       { id: 'virtual', title: '虛像', body: ['光線沒有真的在看起來的影像位置會合。', '眼睛能看到，但屏幕接不到。'],
-        evidence: `第三次：蠟燭在 ${formatCm(c.u)} cm，屏幕怎麼移都找不到，透過透鏡卻看得到。` },
+        evidence: [{ text: `第三次：蠟燭在 ${formatCm(c.u)} cm，屏幕怎麼移都找不到，透過透鏡卻看得到。` }] },
     ],
     formula: {
       heading: '剛才找到的位置，其實可以用這個關係算出來。', expression: '1/f = 1/u + 1/v',
       lines: [
-        { text: line(1, a), found: `你找到 ${formatCm(a.observedScreenPosition)} cm` },
-        { text: line(2, b), found: `你找到 ${formatCm(b.observedScreenPosition)} cm` },
-        { text: line(3, c), found: 'v 是負的：像在蠟燭這一側，屏幕接不到' },
+        { text: line(1, a), note: `你找到 ${formatCm(a.observedScreenPosition)} cm` },
+        { text: line(2, b), note: `你找到 ${formatCm(b.observedScreenPosition)} cm` },
+        { text: line(3, c), note: 'v 是負的：像在蠟燭這一側，屏幕接不到' },
       ],
-      negativeNote: '負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。',
+      note: '負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。',
     },
   };
 }

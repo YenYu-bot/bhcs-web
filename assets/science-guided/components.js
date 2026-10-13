@@ -333,3 +333,31 @@ export function renderCompareCard({ root, body }, model, opts = {}) {
     putText(fb, q.feedback?.text ?? '');
   }
 }
+
+// ---- concept ------------------------------------------------------------------------------------------------------------
+
+/**
+ * Shared ConceptReveal: named ideas, each next to the learner's own evidence, then the formula that ties them together.
+ * It only draws what it is given; whether the concept may be shown yet is the station's decision (null means not yet).
+ * els = { root, heading?, body }; model = { heading?, cards: [{ id, title, body: string[], evidence: [{ label?, text }] }],
+ * formula?: { heading, expression, lines: [{ text, note?, emphasis? }], note? } } | null; opts = { labelSuffix }.
+ */
+export function renderConceptReveal({ root, heading, body }, model, { labelSuffix = ': ' } = {}) {
+  setHidden(root, !model);
+  if (!model) return;
+  if (heading && model.heading) putText(heading, model.heading);
+  const doc = body.ownerDocument;
+  rebuildIf(body, { cards: model.cards, formula: model.formula ?? null, labelSuffix }, () => [
+    ...model.cards.map((card) => node(doc, 'article', { class: 'sg-concept-card', 'data-concept-card': card.id },
+      node(doc, 'h3', { class: 'sg-concept-title', text: card.title }),
+      ...card.body.map((line) => node(doc, 'p', { text: line })),
+      node(doc, 'ul', { class: 'sg-concept-evidence' }, ...card.evidence.map((e) => node(doc, 'li', {},
+        e.label ? node(doc, 'span', { class: 'sg-line-label', text: `${e.label}${labelSuffix}` }) : null, node(doc, 'span', { text: e.text })))))),
+    model.formula ? node(doc, 'section', { class: 'sg-formula-card', 'data-formula': '' },
+      node(doc, 'h3', { class: 'sg-concept-title', text: model.formula.heading }),
+      node(doc, 'p', { class: 'sg-formula', text: model.formula.expression }),
+      node(doc, 'ul', { class: 'sg-formula-lines' }, ...model.formula.lines.map((l) => node(doc, 'li', { 'data-emphasis': l.emphasis === true ? 'true' : null },
+        l.text, l.note ? node(doc, 'span', { class: 'sg-line-note', text: l.note }) : null))),
+      model.formula.note ? node(doc, 'p', { class: 'sg-formula-note', text: model.formula.note }) : null) : null,
+  ]);
+}

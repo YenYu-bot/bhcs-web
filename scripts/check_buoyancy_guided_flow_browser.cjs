@@ -67,7 +67,7 @@ const check=async(name,fn)=>{const row={name};try{await fn();row.pass=true}catch
 async function stageOf(p,tag,label,{concept=false}={}){
  if(!concept){
   await noFormal(p,label);
-  const c=await p.evaluate(()=>({hidden:document.getElementById('bg-concept').hidden,cards:document.querySelectorAll('[data-bg-concept-card],[data-bg-formula]').length,screen:document.getElementById('main').dataset.screen,heading:document.getElementById('bg-heading').textContent}));
+  const c=await p.evaluate(()=>({hidden:document.getElementById('bg-concept').hidden,cards:document.querySelectorAll('[data-concept-card],[data-formula]').length,screen:document.getElementById('main').dataset.screen,heading:document.getElementById('bg-heading').textContent}));
   assert.deepEqual(c,{hidden:true,cards:0,screen:c.screen,heading:'浮沉實驗'},`${label}: the concept is on the page before its time`);
   assert.notEqual(c.screen,'concept',`${label}: the concept screen is showing before its time`);
  }
@@ -252,13 +252,13 @@ async function walk(browser,{width,height,touch,tag}){
   assert.deepEqual(await coach(p),{main:'剛才幾次實驗，其實都在比較同一件事。',sub:'先看看是什麼。',tip:'',visible:true});
   assert.equal(await txt(p,'#bg-heading'),'浮沉與密度');
   assert.equal(await p.locator('#bg-bench-card').isHidden(),true);
-  const lines=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-concept-card=density] [data-bg-line]')].map(l=>l.textContent));
+  const lines=await p.evaluate(()=>[...document.querySelectorAll('[data-concept-card=density] .sg-concept-evidence li')].map(l=>l.textContent));
   assert.deepEqual(lines,['停在水中的方塊：100 g ÷ 100 cm³ = 1.0 g/cm³','停在濃鹽水中的方塊：120 g ÷ 100 cm³ = 1.2 g/cm³','大木塊：300 g ÷ 500 cm³ = 0.6 g/cm³','小石頭：120 g ÷ 40 cm³ = 3.0 g/cm³']);
-  assert.equal(await txt(p,'[data-bg-formula] .bg-formula'),'ρ = m / V');
-  assert.ok((await txt(p,'[data-bg-formula]')).includes('密度 = 質量 ÷ 體積'));
-  const results=await txt(p,'[data-bg-concept-card=results]');
+  assert.equal(await txt(p,'[data-formula] .sg-formula'),'ρ = m / V');
+  assert.ok((await txt(p,'[data-formula]')).includes('密度 = 質量 ÷ 體積'));
+  const results=await txt(p,'[data-concept-card=results]');
   for(const w of ['漂浮','懸浮','下沉'])assert.ok(results.includes(w),w);
-  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-bg-concept-card=results] [data-bg-line]')].map(l=>l.textContent)),
+  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-concept-card=results] .sg-concept-evidence li')].map(l=>l.textContent)),
    ['大木塊的密度 0.6 < 水的密度 1.0 → 漂浮','停在水中的方塊的密度 1.0 = 水的密度 1.0 → 懸浮','小石頭的密度 3.0 > 水的密度 1.0 → 下沉']);
   assert.ok((await allText(p)).includes('密度'));
   await stage('concept',{concept:true});

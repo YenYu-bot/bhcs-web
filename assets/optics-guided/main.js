@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -24,7 +24,7 @@ let state = restored ?? createInitialState();
 let ui = { naming: false };
 let coach = null;
 let announcementSeq = 0;
-let renderedConcept = false, notebookBuilt = false, challengeKey = '';
+let notebookBuilt = false, challengeKey = '';
 
 // Station adapter: the labels are this station's wording; which step is current is still decided by stepFor(state.phase).
 const STEPS = [
@@ -81,17 +81,9 @@ function drawCompare() {
     { ...COMPARE_OPTIONS, onAnswer: (question, answer) => dispatch({ type: 'ANSWER_COMPARE', question, answer }) });
 }
 
-function renderConcept() {
-  if (renderedConcept) return;
-  const model = conceptModel(state.records);
-  if (!model) return;
-  renderedConcept = true;
-  const cards = $('og-concept-cards'); cards.replaceChildren();
-  for (const c of model.cards) cards.append(el('article', { className: 'og-concept-card' }, el('h3', {}, c.title), ...c.body.map((t) => el('p', {}, t)), el('p', { className: 'og-evidence' }, c.evidence)));
-  $('og-formula').replaceChildren(el('h3', {}, model.formula.heading), el('p', { className: 'og-formula-expression' }, model.formula.expression),
-    el('ul', {}, ...model.formula.lines.map((l) => el('li', {}, l.text, el('span', {}, l.found)))),
-    el('p', { className: 'og-formula-note' }, model.formula.negativeNote));
-}
+// Station adapter: conceptModel (only non-null once three rounds are recorded) already carries the learner's own numbers.
+const conceptEls = { root: $('og-concept'), body: $('og-concept-body') };
+function drawConcept() { renderConceptReveal(conceptEls, conceptModel(state.records)); }
 
 // ---- research notebook: three ways to write the same finding; Level A is the default
 const nb = {};
@@ -225,7 +217,7 @@ function render(wasCta = false) {
     renderStatusBar(statusEls, statusModel(view));
   }
   if (screen === 'compare') drawCompare();
-  if (screen === 'concept') renderConcept();
+  if (screen === 'concept') drawConcept();
   if (screen === 'notebook') syncNotebook();
   if (screen === 'challenge') syncChallenge();
   if (screen === 'complete') drawCompletion();

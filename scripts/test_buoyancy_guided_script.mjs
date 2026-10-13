@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -342,7 +342,7 @@ await test('concept: the formula sits on the learner\'s own lines', () => {
   const m = S.conceptModel(run(...TO_CONCEPT).state, run(...TO_CONCEPT).view);
   assert.equal(m.formula.expression, 'ρ = m / V');
   assert.equal(m.formula.lines[0].text, '密度 = 質量 ÷ 體積');
-  const found = m.formula.lines.filter((l) => l.found).map((l) => l.text);
+  const found = m.formula.lines.filter((l) => l.emphasis).map((l) => l.text);
   assert.equal(found.length, 4);
   assert.ok(found[0].includes('100 g ÷ 100 cm³ = 1.0 g/cm³'));
   assert.ok(found[3].includes('120 g ÷ 40 cm³ = 3.0 g/cm³'));
@@ -597,11 +597,11 @@ await test('cards: concept, evidence, data, status and coach draw without a live
   const dom = page();
   const doc = dom.window.document;
   const r = run(...TO_CONCEPT);
-  cards.renderConcept(doc.getElementById('bg-concept'), S.conceptModel(r.state, r.view));
+  renderConceptReveal({ root: doc.getElementById('bg-concept'), heading: doc.getElementById('bg-concept-title'), body: doc.querySelector('[data-bg-concept-body]') }, S.conceptModel(r.state, r.view), { labelSuffix: '：' });
   const concept = doc.getElementById('bg-concept');
-  assert.equal(concept.querySelectorAll('[data-bg-concept-card]').length, 2);
-  assert.equal(concept.querySelector('[data-bg-formula] .bg-formula').textContent, 'ρ = m / V');
-  assert.equal(concept.querySelectorAll('[data-bg-formula] li[data-found="true"]').length, 4);
+  assert.equal(concept.querySelectorAll('[data-concept-card]').length, 2);
+  assert.equal(concept.querySelector('[data-formula] .sg-formula').textContent, 'ρ = m / V');
+  assert.equal(concept.querySelectorAll('[data-formula] li[data-emphasis="true"]').length, 4);
   renderEvidenceCard(doc.getElementById('bg-evidence'), S.evidenceModel(r.state, r.view), { title: S.TEXT.evidenceTitle });
   assert.equal(doc.querySelectorAll('[data-evidence-item]').length, 4);
   assert.equal(doc.getElementById('bg-evidence').hidden, false);

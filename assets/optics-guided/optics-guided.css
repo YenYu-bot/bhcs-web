@@ -99,7 +99,6 @@
 .og-card dt { color: var(--bh-ink-soft); } .og-card dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 .og-data dl { grid-template-columns: auto auto auto auto; justify-content: start; column-gap: 8px; align-items: baseline; }          /* the conditions right now, side by side */
 .og-data dd { font-size: 1.2rem; margin-right: 22px; }
-.og-evidence { margin: 12px 0 4px; padding: 8px 12px; border-radius: 10px; background: var(--bh-ok-soft); border: 1px solid #BFE0CC; }       /* what has been done and written down */
 .og-evidence-card { background: var(--bh-ok-soft); border-color: #BFE0CC; box-shadow: none; }
 .og-evidence-card[hidden] { display: none; }
 .og-evidence-card .sg-card-title { font-size: .95rem; margin: 0 0 4px; color: var(--bh-ok); }
@@ -139,16 +138,17 @@
 .og-option:has(input:checked), .sg-pill:has(input:checked) { border-color: var(--bh-ink); background: var(--bh-surface); font-weight: 700; }
 .og-option:has(input:focus-visible), .sg-pill:has(input:focus-visible) { outline: 3px solid var(--bh-orange); outline-offset: 2px; }
 .og-option input, .sg-pill input { width: 18px; height: 18px; margin: 0; accent-color: var(--bh-ink); }
-.og-concept-cards { display: grid; gap: 10px; margin-bottom: 14px; }
-.og-concept-card { border: 1px solid var(--bh-grid-strong); border-radius: 10px; padding: 10px 14px; background: var(--bh-surface); }
-.og-concept-card:nth-child(1) { border-left: 5px solid var(--bh-orange); } .og-concept-card:nth-child(2) { border-left: 5px solid #3B6FB6; }     /* same colours as the rays on the bench */
-.og-concept-card h3 { margin: 0 0 4px; font-size: 1.1rem; } .og-concept-card p { margin: 0; } .og-concept-card .og-evidence { margin-top: 6px; color: var(--bh-ink-soft); font-size: 14px; }
-.og-formula { border-top: 1px solid var(--bh-grid-strong); padding-top: 12px; }
-.og-formula h3 { font-size: 1.05rem; margin: 0 0 6px; }
-.og-formula li span { width: fit-content; margin-top: 2px; padding: 1px 10px; border-radius: 999px; background: var(--bh-ok-soft); color: var(--bh-ok) !important; font-weight: 600; }
-.og-formula-note { margin: 10px 0 0; padding: 8px 12px; border-left: 4px solid var(--bh-grid-strong); border-radius: 0 8px 8px 0; background: var(--bh-surface); font-size: 15px; color: var(--bh-ink-soft); }
-.og-formula-expression { font: 700 1.1rem var(--bh-sans); letter-spacing: .02em; margin: 4px 0 8px; }
-.og-formula ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; } .og-formula li span { display: block; color: var(--bh-ink-soft); font-size: 14px; }
+#og-concept-body { display: grid; gap: 10px; }
+.sg-concept-card { border: 1px solid var(--bh-grid-strong); border-radius: 10px; padding: 10px 14px; background: var(--bh-surface); }
+.sg-concept-card:nth-child(1) { border-left: 5px solid var(--bh-orange); } .sg-concept-card:nth-child(2) { border-left: 5px solid #3B6FB6; }     /* same colours as the rays on the bench */
+.sg-concept-card h3 { margin: 0 0 4px; font-size: 1.1rem; } .sg-concept-card p { margin: 0; }
+.og-concept .sg-concept-evidence { list-style: none; padding: 0; margin: 6px 0 0; color: var(--bh-ink-soft); font-size: 14px; }
+.og-concept .sg-formula-card { border-top: 1px solid var(--bh-grid-strong); margin-top: 4px; padding-top: 12px; }
+.og-concept .sg-formula-card h3 { font-size: 1.05rem; margin: 0 0 6px; }
+.og-concept .sg-formula { font: 700 1.1rem var(--bh-sans); letter-spacing: .02em; margin: 4px 0 8px; }
+.og-concept .sg-formula-lines { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.og-concept .sg-line-note { display: block; width: fit-content; margin-top: 2px; padding: 1px 10px; border-radius: 999px; background: var(--bh-ok-soft); color: var(--bh-ok) !important; font-size: 14px; font-weight: 600; }
+.og-concept .sg-formula-note { margin: 10px 0 0; padding: 8px 12px; border-left: 4px solid var(--bh-grid-strong); border-radius: 0 8px 8px 0; background: var(--bh-surface); font-size: 15px; color: var(--bh-ink-soft); }
 .og-records-title { font-size: .95rem; margin: 0 0 4px; color: var(--bh-ok); } .og-records { list-style: none; padding: 0; margin: 0 0 6px; } .og-records li { font-size: 14px; } .og-records b { color: var(--bh-ok); }
 .og-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 

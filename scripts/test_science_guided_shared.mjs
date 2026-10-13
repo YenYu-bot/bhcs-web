@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, buildComparisonTable } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, buildComparisonTable, renderConceptReveal } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -510,6 +510,67 @@ test('CompareCard fixtures carry no answer key', () => {
   assert.ok(!/correctAnswer|answerKey|expectedAnswer|directComparable|theoretical/.test(src), 'the shared module never judges an answer');
 });
 
+const CONCEPT_HTML = '<section id="c" hidden><h2 id="h"></h2><div id="b"></div></section>';
+const conceptEls = (doc) => ({ root: doc.getElementById('c'), heading: doc.getElementById('h'), body: doc.getElementById('b') });
+const OPTICS_CONCEPT = {
+  cards: [
+    { id: 'real', title: 'real', body: ['a', 'b'], evidence: [{ text: 'you found 14.5 and 29.5' }] },
+    { id: 'virtual', title: 'virtual', body: ['c'], evidence: [{ text: 'at 5 cm no screen position' }] },
+  ],
+  formula: {
+    heading: 'the relation', expression: '1/f = 1/u + 1/v',
+    lines: [{ text: 'round 1', note: 'you found 14.5' }, { text: 'round 2', note: 'you found 29.5' }, { text: 'round 3', note: 'v is negative' }],
+    note: 'negative is virtual',
+  },
+};
+const BUOYANCY_CONCEPT = {
+  heading: 'Concept',
+  cards: [{ id: 'density', title: 'density', body: ['x'], evidence: [{ label: 'block', text: '100 g / 100 cm3' }, { label: 'wood', text: '300 g / 500 cm3' }] }],
+  formula: { heading: 'formula', expression: 'rho = m / V', lines: [{ text: 'density = mass / volume' }, { text: 'block: 1.0', emphasis: true }] },
+};
+
+test('ConceptReveal hides for null and draws cards, array evidence with optional labels, and an optional formula', () => {
+  const dom = new JSDOM(CONCEPT_HTML);
+  const doc = dom.window.document;
+  const els = conceptEls(doc);
+  renderConceptReveal(els, null);
+  assert.equal(els.root.hidden, true);
+  renderConceptReveal(els, OPTICS_CONCEPT);
+  assert.equal(els.root.hidden, false);
+  assert.deepEqual([...els.body.querySelectorAll('[data-concept-card]')].map((e) => e.dataset.conceptCard), ['real', 'virtual']);
+  assert.deepEqual([...els.body.querySelectorAll('[data-concept-card="real"] > p')].map((e) => e.textContent), ['a', 'b']);
+  assert.deepEqual([...els.body.querySelectorAll('[data-concept-card="real"] .sg-concept-evidence li')].map((e) => e.textContent), ['you found 14.5 and 29.5']);
+  assert.equal(els.body.querySelectorAll('.sg-line-label').length, 0, 'evidence label is optional');
+  assert.equal(els.body.querySelector('.sg-formula').textContent, '1/f = 1/u + 1/v');
+  assert.deepEqual([...els.body.querySelectorAll('.sg-formula-lines li')].map((e) => e.firstChild.textContent), ['round 1', 'round 2', 'round 3']);
+  assert.deepEqual([...els.body.querySelectorAll('.sg-line-note')].map((e) => e.textContent), ['you found 14.5', 'you found 29.5', 'v is negative']);
+  assert.equal(els.body.querySelector('.sg-formula-note').textContent, 'negative is virtual');
+  assert.equal(els.body.querySelectorAll('[data-emphasis]').length, 0, 'emphasis is only set when asked for');
+  renderConceptReveal(els, BUOYANCY_CONCEPT, { labelSuffix: ': ' });
+  assert.equal(els.heading.textContent, 'Concept');
+  assert.deepEqual([...els.body.querySelectorAll('.sg-concept-evidence li')].map((e) => e.textContent), ['block: 100 g / 100 cm3', 'wood: 300 g / 500 cm3']);
+  assert.deepEqual([...els.body.querySelectorAll('.sg-formula-lines li')].map((e) => e.dataset.emphasis ?? null), [null, 'true']);
+  assert.equal(els.body.querySelectorAll('.sg-line-note, .sg-formula-note').length, 0, 'line note and formula note are optional');
+  renderConceptReveal(els, { cards: BUOYANCY_CONCEPT.cards });
+  assert.equal(els.body.querySelectorAll('[data-formula]').length, 0, 'the formula is optional');
+  assert.equal(doc.querySelectorAll('[aria-live], [role=status]').length, 0);
+  assert.equal(els.body.querySelectorAll('[class*="bg-"],[class*="og-"],[data-found],[data-bg-line]').length, 0);
+});
+
+test('ConceptReveal writes nothing when the model is unchanged and ignores legacy fields', async () => {
+  const dom = new JSDOM(CONCEPT_HTML);
+  const els = conceptEls(dom.window.document);
+  renderConceptReveal(els, OPTICS_CONCEPT);
+  const seen = [];
+  new dom.window.MutationObserver((r) => seen.push(...r)).observe(els.root, { subtree: true, childList: true, attributes: true, characterData: true });
+  renderConceptReveal(els, OPTICS_CONCEPT);
+  await wait();
+  assert.equal(seen.length, 0);
+  renderConceptReveal(els, { cards: [], formula: { heading: 'h', expression: 'e', lines: [{ text: 't', found: 'legacy', theoreticalValue: 9 }], negativeNote: 'legacy' } });
+  assert.equal(els.body.querySelectorAll('.sg-line-note, .sg-formula-note').length, 0, 'the old found/negativeNote fields are no longer read');
+  assert.ok(!els.body.innerHTML.includes('legacy') && !els.body.innerHTML.includes('theoretical'));
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -535,6 +596,10 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(optics, /renderEvidenceCard/);
   assert.match(optics, /renderCompletionCard/);
   assert.match(optics, /renderCompareCard/);
+  assert.match(optics, /renderConceptReveal/);
+  assert.match(buoyancy, /renderConceptReveal/);
+  assert.ok(!/export function renderConcept\b/.test(cards), 'Buoyancy cards.js no longer owns renderConcept');
+  assert.ok(!/function renderConcept\b|og-concept-cards|id="og-formula"|negativeNote/.test(optics + opticsPage), 'Optics keeps no local concept renderer');
   assert.match(buoyancy, /renderCompareCard/);
   assert.ok(!/export function renderCompare\b|function buildCompare\b|function structureOf\b|function buildEvidenceTable\b/.test(cards), 'Buoyancy cards.js no longer owns the compare card');
   assert.ok(!/function renderCompare\b|og-compare-rows|og-compare-notice|og-questions/.test(optics + opticsPage), 'Optics keeps no local compare renderer');

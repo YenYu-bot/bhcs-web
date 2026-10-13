@@ -145,14 +145,14 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     await cta().click();await settle(page);
     // --- concept
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'concept');
-    const cards=await page.locator('.og-concept-card').evaluateAll(cs=>cs.map(c=>c.innerText.replace(/\s+/g,' ').trim()));
+    const cards=await page.locator('.sg-concept-card:not(.sg-formula-card)').evaluateAll(cs=>cs.map(c=>c.innerText.replace(/\s+/g,' ').trim()));
     assert.equal(cards.length,2);
     assert.ok(cards[0].startsWith('實像 光線真的在某個位置會合。 可以投在屏幕上。')&&cards[0].includes(`${f(O1)} cm 和 ${f(O2)} cm`));
     assert.ok(cards[1].startsWith('虛像 光線沒有真的在看起來的影像位置會合。 眼睛能看到，但屏幕接不到。')&&cards[1].includes('蠟燭在 5 cm'));
-    assert.equal(await page.locator('#og-formula h3').innerText(),'剛才找到的位置，其實可以用這個關係算出來。');
-    assert.equal(await page.locator('.og-formula-expression').innerText(),'1/f = 1/u + 1/v');
-    assert.equal(await page.locator('.og-formula-note').innerText(),'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
-    const lines=await page.locator('#og-formula li').evaluateAll(ls=>ls.map(l=>l.innerText.replace(/\s+/g,' ').trim()));
+    assert.equal(await page.locator('#og-concept .sg-formula-card h3').innerText(),'剛才找到的位置，其實可以用這個關係算出來。');
+    assert.equal(await page.locator('#og-concept .sg-formula').innerText(),'1/f = 1/u + 1/v');
+    assert.equal(await page.locator('#og-concept .sg-formula-note').innerText(),'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
+    const lines=await page.locator('#og-concept .sg-formula-lines li').evaluateAll(ls=>ls.map(l=>l.innerText.replace(/\s+/g,' ').trim()));
     assert.deepEqual(lines,[`第一次：f = 10 cm，u = 30 cm → v = 15 cm 你找到 ${f(O1)} cm`,`第二次：f = 10 cm，u = 15 cm → v = 30 cm 你找到 ${f(O2)} cm`,'第三次：f = 10 cm，u = 5 cm → v = −10 cm v 是負的：像在蠟燭這一側，屏幕接不到']);
     assert.equal((await coach()).main,'剛才三次實驗，其實分成兩種像。');assert.equal(await cta().innerText(),'進入研究手冊');
     await noOverflow('concept');await shot('8-concept');await axeScan(page,label+' concept');

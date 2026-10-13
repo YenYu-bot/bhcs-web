@@ -137,11 +137,11 @@ test('records list and concept model use the learner\'s numbers; the formula res
  const c=conceptModel(flow.state.records);
  assert.deepEqual(c.cards.map(x=>x.id),['real','virtual']);
  assert.deepEqual(c.cards[0].body,['光線真的在某個位置會合。','可以投在屏幕上。']);assert.deepEqual(c.cards[1].body,['光線沒有真的在看起來的影像位置會合。','眼睛能看到，但屏幕接不到。']);
- assert.ok(c.cards[0].evidence.includes('14.5')&&c.cards[0].evidence.includes('29.5'));
+ assert.ok(Array.isArray(c.cards[0].evidence)&&c.cards[0].evidence.every(e=>typeof e.text==='string'),'evidence is [{text}]');assert.ok(c.cards[0].evidence[0].text.includes('14.5')&&c.cards[0].evidence[0].text.includes('29.5'));
  assert.equal(c.formula.heading,'剛才找到的位置，其實可以用這個關係算出來。');assert.equal(c.formula.expression,'1/f = 1/u + 1/v');
  assert.deepEqual(c.formula.lines.map(l=>l.text),['第一次：f = 10 cm，u = 30 cm → v = 15 cm','第二次：f = 10 cm，u = 15 cm → v = 30 cm','第三次：f = 10 cm，u = 5 cm → v = −10 cm']);
- assert.equal(c.formula.lines[0].found,'你找到 14.5 cm');assert.equal(c.formula.lines[1].found,'你找到 29.5 cm');
- assert.equal(c.formula.negativeNote,'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
+ assert.equal(c.formula.lines[0].note,'你找到 14.5 cm');assert.equal(c.formula.lines[1].note,'你找到 29.5 cm');assert.ok(c.formula.lines.every(l=>!('found' in l)));
+ assert.ok(!('negativeNote' in c.formula));assert.equal(c.formula.note,'負的像距不是叫你把屏幕放到負的位置，而是表示這次形成的是虛像。');
  // I7.5: no formal term before the concept stage in Trial 3 learner-facing text
  for(const k of ['welcome','mission','find1','findStart','near','wrongDirection','hint1','hint2','hint3Left','hint3Right','complete1','moveCandle','moveCandlePlain','find2','complete2','alreadyRecorded','compare','compareRetry','compareDone','moveCandle3','search','searchTwo','searchDone','noReal','viewThrough']){assert.ok(MESSAGES[k],'key '+k);assert.ok(!/實像|虛像/.test(JSON.stringify(MESSAGES[k])),'formal term before naming: '+k)}
  assert.ok(!JSON.stringify(MESSAGES).includes('負的像距'),'negative-v note only after naming');

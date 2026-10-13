@@ -42,26 +42,6 @@ export function comparisonOptions(text) {
   return { heads: text.compareHeads, tagLabel: (label, tag) => (tag ? `${label}（${tag}）` : label) };
 }
 
-// ---- concept ---------------------------------------------------------------------------------------------------------
-
-/** ConceptReveal: named ideas, each next to the learner's own numbers, then the formula that ties them together. */
-export function renderConcept(root, model) {
-  root.hidden = !model;
-  if (!model) return;
-  const body = root.querySelector('[data-bg-concept-body]');
-  rebuildIf(body, model, () => [
-    ...model.cards.map((card) => h('article', { class: 'bg-concept-card', 'data-bg-concept-card': card.id },
-      h('h3', { class: 'bg-concept-title', text: card.title }),
-      ...card.body.map((line) => h('p', { text: line })),
-      h('ul', { class: 'bg-concept-evidence' }, ...card.evidence.map((e) => h('li', { 'data-bg-line': e.id }, e.label && e.label !== e.text ? h('span', { class: 'bg-line-label', text: `${e.label}：` }) : null, h('span', { text: e.text })))))),
-    model.formula ? h('section', { class: 'bg-formula-card', 'data-bg-formula': '' },
-      h('h3', { class: 'bg-concept-title', text: model.formula.heading }),
-      h('p', { class: 'bg-formula', text: model.formula.expression }),
-      h('ul', { class: 'bg-formula-lines' }, ...model.formula.lines.map((l) => h('li', { 'data-found': String(l.found === true), text: l.text }))),
-      model.formula.note ? h('p', { class: 'bg-evidence-note', text: model.formula.note }) : null) : null,
-  ].filter(Boolean));
-}
-
 // ---- notebook ----------------------------------------------------------------------------------------------------------
 
 const DEBOUNCE_MS = 300;
