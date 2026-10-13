@@ -217,7 +217,7 @@ test('challenge flow in the coach: question first, hint only after repeated trie
  r=play([ans(1,'adjust','candle')],{from:r});assert.equal(r.coach.id,'challengeRetry');assert.equal(r.coach.main,'剛才哪個結果變得更明顯？');
  r=play([ans(1,'adjust','lens')],{from:r});assert.equal(r.coach.id,'challengeHint');assert.equal(r.coach.main,CHALLENGES[0].steps[0].hint);assert.ok(!r.coach.main.includes('屏幕的位置'));
  r=play([ans(1,'adjust','screen')],{from:r});assert.equal(r.coach.id,'challengeRight');assert.equal(r.coach.main,CHALLENGES[0].steps[0].right);assert.equal(ctaFor(r.state,deriveView(r.state)).enabled,true);
- const m1=challengeModel(r.state,1);assert.deepEqual([m1.steps[0].correct,m1.steps[0].attempts,m1.steps[0].feedback],[true,3,CHALLENGES[0].steps[0].right]);
+ const m1=challengeModel(r.state,1);assert.deepEqual([m1.steps[0].correct,m1.steps[0].attempts,m1.steps[0].feedback],[true,3,{kind:'success',text:CHALLENGES[0].steps[0].right}]);assert.ok(m1.steps[0].options.every(o=>typeof o.value==='string'&&typeof o.label==='string'),'options are {value,label}');assert.ok(!/correctAnswer|answerKey|"correct":"/.test(JSON.stringify(m1.steps[0].options)),'no answer key inside the options');
  // challenge 2: the follow-up opens after the first step; challenge 3 gets its optional note and a "完成" button
  r=play([{type:'CONTINUE'},ans(2,'project','no')],{from:r});const m2=challengeModel(r.state,2);assert.deepEqual(m2.steps.map(x=>x.unlocked),[true,true]);
  r=play([ans(2,'kind','virtual'),{type:'CONTINUE'}],{from:r});assert.equal(r.state.phase,'challenge-3');assert.equal(challengeModel(r.state,3).note,null,'no note before the answer');

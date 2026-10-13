@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, buildComparisonTable, renderConceptReveal, createNotebook } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, buildComparisonTable, renderConceptReveal, createNotebook, createChallengeCard } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -691,6 +691,123 @@ test('Notebook ideas, ready note, optional parts, and fixtures for both stations
   assert.ok(!/localStorage|sessionStorage|indexedDB|fetch\(|sendBeacon|bhcsScienceTrack|SAVE_CONCLUSION|SAVE_CHALLENGE_NOTE|ANSWER_CHALLENGE/.test(src), 'no storage, network, analytics or station action names in the shared module');
 });
 
+const CH_HTML = '<section id="ch" hidden><h2 id="h"></h2><div id="body"></div></section>';
+const chStep = (id, over = {}) => ({ id, question: `q ${id}`, options: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }, { value: 'c', label: 'C' }], unlocked: true, choice: null, attempts: 0, correct: false, feedback: null, ...over });
+const chModel = (steps, over = {}) => ({ id: 1, title: 'Challenge 1', scenario: 'a scenario', count: 3, steps, note: null, ...over });
+const mountChallenge = (opts = {}) => {
+  const dom = new JSDOM(CH_HTML, { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const calls = { answer: [], draft: [], flush: [] };
+  const card = createChallengeCard({ root: doc.getElementById('ch'), heading: doc.getElementById('h'), body: doc.getElementById('body') }, { idPrefix: 'x', debounceMs: 20, ...opts },
+    { onAnswer: (s, v) => calls.answer.push([s, v]), onNoteDraft: (t) => calls.draft.push(t), onNoteFlush: (t) => calls.flush.push(t) });
+  return { dom, doc, card, calls, root: doc.getElementById('ch'), body: doc.getElementById('body') };
+};
+
+test('ChallengeCard hides for null, draws only unlocked steps, and every choice is a real button', () => {
+  const { card, root, body, doc } = mountChallenge();
+  card.update(null);
+  assert.equal(root.hidden, true);
+  card.update(chModel([chStep('one'), chStep('two', { unlocked: false })]));
+  assert.equal(root.hidden, false);
+  assert.equal(doc.getElementById('h').textContent, 'Challenge 1');
+  assert.equal(body.querySelector('.sg-scenario').textContent, 'a scenario');
+  assert.deepEqual([...body.querySelectorAll('[data-challenge-step]')].map((e) => e.dataset.challengeStep), ['one']);
+  const options = [...body.querySelectorAll('[data-option]')];
+  assert.deepEqual(options.map((b) => [b.tagName, b.type, b.textContent]), [['BUTTON', 'button', 'A'], ['BUTTON', 'button', 'B'], ['BUTTON', 'button', 'C']]);
+  assert.equal(body.querySelectorAll('input[type=radio]').length, 0, 'no radio controls');
+  assert.equal(body.querySelector('[role=group]').getAttribute('aria-labelledby'), body.querySelector('.sg-step-question').id);
+  assert.equal(root.querySelectorAll('[aria-live], [role=status]').length, 0);
+});
+
+test('ChallengeCard: only an activation answers; focus, arrows and hover do not; a click answers once', () => {
+  const { dom, doc, card, body, calls } = mountChallenge();
+  card.update(chModel([chStep('one')]));
+  const [a, b] = body.querySelectorAll('[data-option]');
+  a.focus();
+  for (const key of ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Tab']) a.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key, bubbles: true }));
+  b.dispatchEvent(new dom.window.MouseEvent('mouseover', { bubbles: true }));
+  b.focus();
+  assert.deepEqual(calls.answer, [], 'focus, arrows and hover answer nothing');
+  b.click();
+  assert.deepEqual(calls.answer, [['one', 'b']], 'one click, one answer with (stepId, value)');
+  // Enter and Space activate a native button as a click (the browser does this; the card adds no key handling of its own)
+  assert.equal(doc.activeElement, b);
+  const src = fs.readFileSync(path.join(rootDir, 'assets/science-guided/components.js'), 'utf8');
+  assert.ok(!/keydown|keyup|keypress/.test(src.slice(src.indexOf('export function createChallengeCard'))), 'the card has no key handler: Enter and Space are the native button activation');
+});
+
+test('ChallengeCard keeps the same buttons and focus when attempts, choice or feedback change, and shows solved steps locked', () => {
+  const { doc, card, body } = mountChallenge();
+  card.update(chModel([chStep('one')]));
+  const buttons = [...body.querySelectorAll('button')];
+  buttons[1].focus();
+  const seen = [];
+  new doc.defaultView.MutationObserver((r) => seen.push(...r)).observe(body, { childList: true, subtree: true });
+  card.update(chModel([chStep('one', { choice: 'b', attempts: 1, feedback: { kind: 'nudge', text: 'look again' } })]));
+  assert.deepEqual([...body.querySelectorAll('button')], buttons, 'same node identity');
+  assert.equal(doc.activeElement, buttons[1], 'focus is not lost');
+  assert.equal(body.querySelector('[data-challenge-step]').dataset.attempts, '1');
+  assert.equal(body.querySelector('[data-step-feedback]').textContent, 'look again');
+  assert.equal(body.querySelector('[data-step-feedback]').dataset.kind, 'nudge');
+  assert.equal(seen.filter((r) => r.type === 'childList' && [...r.addedNodes, ...r.removedNodes].some((n) => n.nodeType === 1)).length, 0, 'no structural rebuild');
+  card.update(chModel([chStep('one', { choice: 'c', attempts: 2, correct: true, feedback: { kind: 'success', text: 'yes' } })]));
+  assert.deepEqual(buttons.map((b) => b.disabled), [true, true, true], 'a solved step is locked');
+  assert.deepEqual(buttons.map((b) => b.getAttribute('aria-pressed')), ['false', 'false', 'true'], 'the right choice is the one pressed');
+  assert.equal(body.querySelector('[data-challenge-step]').dataset.solved, 'true');
+});
+
+test('ChallengeCard: the next step appears when it unlocks, earlier steps keep their buttons, a new challenge starts clean', () => {
+  const { card, body } = mountChallenge();
+  card.update(chModel([chStep('one'), chStep('two', { unlocked: false })]));
+  const first = [...body.querySelectorAll('[data-challenge-step="one"] button')];
+  card.update(chModel([chStep('one', { choice: 'a', attempts: 1, correct: true }), chStep('two')]));
+  assert.deepEqual([...body.querySelectorAll('[data-challenge-step]')].map((e) => e.dataset.challengeStep), ['one', 'two']);
+  assert.deepEqual([...body.querySelectorAll('[data-challenge-step="one"] button')], first, 'the solved step is not redrawn');
+  card.update(chModel([chStep('x1')], { id: 2, title: 'Challenge 2', scenario: 'next' }));
+  assert.deepEqual([...body.querySelectorAll('[data-challenge-step]')].map((e) => e.dataset.challengeStep), ['x1']);
+  assert.equal(body.querySelector('.sg-scenario').textContent, 'next');
+});
+
+test('ChallengeCard note is optional, buffered, flushed on blur, and never overwrites typing', async () => {
+  const { dom, doc, card, body, calls } = mountChallenge();
+  card.update(chModel([chStep('one', { correct: true })]));
+  assert.equal(body.querySelector('[data-note]').hidden, true, 'no note unless supplied');
+  const model = (text) => chModel([chStep('one', { correct: true })], { note: { label: 'your words', placeholder: 'write', text } });
+  card.update(model('saved'));
+  const note = body.querySelector('#x-ch-note-input');
+  assert.equal(body.querySelector('[data-note]').hidden, false);
+  assert.equal(body.querySelector('label[for="x-ch-note-input"]').textContent, 'your words');
+  assert.equal(note.getAttribute('placeholder'), 'write');
+  assert.equal(note.value, 'saved');
+  type(dom, note, 'n'); type(dom, note, 'ne'); type(dom, note, 'new');
+  assert.deepEqual(calls.draft, [], 'debounced');
+  card.update(model('OLD'));
+  assert.equal(note.value, 'new', 'a pending note is not overwritten');
+  await wait(60);
+  assert.deepEqual(calls.draft, ['new'], 'only the last text');
+  type(dom, note, 'blurred'); note.dispatchEvent(new dom.window.Event('blur'));
+  assert.deepEqual(calls.flush, ['blurred']);
+  type(dom, note, 'explicit'); card.flushNote();
+  assert.deepEqual(calls.flush, ['blurred', 'explicit']);
+  card.update(model('FROM-MODEL'));
+  assert.equal(note.value, 'FROM-MODEL', 'an idle note follows the model');
+  assert.equal(doc.querySelectorAll('[aria-live], [role=status]').length, 0);
+});
+
+test('ChallengeCard fixtures for both stations carry no answer key and the module judges nothing', () => {
+  const optics = chModel([chStep('adjust', { options: [{ value: 'candle', label: 'candle' }, { value: 'screen', label: 'screen' }], feedback: 'plain string' })], { title: 'Challenge 1 of 3' });
+  const buoyancy = chModel([chStep('c1-outcome', { feedback: { kind: 'hint', text: 'think about density' } })], { id: 'c1' });
+  const { card, body } = mountChallenge();
+  for (const model of [optics, buoyancy]) {
+    for (const bad of ['correctAnswer', 'answerKey', 'expectedAnswer']) assert.ok(!deepKeys(model).has(bad), bad);
+    card.update(model);
+  }
+  const src = fs.readFileSync(path.join(rootDir, 'assets/science-guided/components.js'), 'utf8');
+  const chunk = src.slice(src.indexOf('export function createChallengeCard'));
+  assert.ok(!/correctAnswer|answerKey|expectedAnswer|attempts\s*[<>]|HINT/.test(chunk), 'no correctness or hint-timing logic in the shared card');
+  assert.ok(body.querySelector('[data-challenge-step]'));
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -720,6 +837,10 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(buoyancy, /createNotebook/);
   assert.ok(!/export function createNotebook\b/.test(cards), 'Buoyancy cards.js no longer owns the notebook');
   assert.ok(!/function buildNotebook\b|function syncNotebook\b|const nb = \{\}|og-nb-rows/.test(optics + opticsPage), 'Optics keeps no local notebook renderer');
+  assert.match(optics, /createChallengeCard/);
+  assert.match(buoyancy, /createChallengeCard/);
+  assert.ok(!/export function renderChallenge\b/.test(cards), 'Buoyancy cards.js no longer owns the challenge card');
+  assert.ok(!/function buildChallenge\b|function syncChallenge\b|radioPill|const ch = \{\}|og-ch-steps|og-ch-scenario/.test(optics + opticsPage), 'Optics keeps no local challenge renderer and no radio challenge');
   assert.match(optics, /renderConceptReveal/);
   assert.match(buoyancy, /renderConceptReveal/);
   assert.ok(!/export function renderConcept\b/.test(cards), 'Buoyancy cards.js no longer owns renderConcept');

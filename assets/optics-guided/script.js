@@ -268,8 +268,9 @@ export function challengeModel(state, id) {
     id, title: def.title, scenario: def.scenario, count: CHALLENGES.length,
     steps: def.steps.map((step, i) => {
       const p = progress.steps[i];
-      const feedback = p.correct ? step.right : p.attempts >= HINT_AFTER_ATTEMPTS ? step.hint : p.attempts >= 1 ? MESSAGES.challengeRetry.main : null;
-      return { id: step.id, question: step.question, options: step.options, unlocked: p.unlocked, choice: p.choice, attempts: p.attempts, correct: p.correct, feedback };
+      const text = p.correct ? step.right : p.attempts >= HINT_AFTER_ATTEMPTS ? step.hint : p.attempts >= 1 ? MESSAGES.challengeRetry.main : null;
+      const feedback = text === null ? null : { kind: p.correct ? 'success' : p.attempts >= HINT_AFTER_ATTEMPTS ? 'hint' : 'nudge', text };
+      return { id: step.id, question: step.question, options: step.options.map(([value, label]) => ({ value, label })), unlocked: p.unlocked, choice: p.choice, attempts: p.attempts, correct: p.correct, feedback };
     }),
     note: def.note && progress.allCorrect ? { ...def.note, text: state.challenges[id].note ?? '' } : null,
     allCorrect: progress.allCorrect,

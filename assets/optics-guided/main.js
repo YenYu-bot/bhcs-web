@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook, createChallengeCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -24,7 +24,6 @@ let state = restored ?? createInitialState();
 let ui = { naming: false };
 let coach = null;
 let announcementSeq = 0;
-let challengeKey = '';
 
 // Station adapter: the labels are this station's wording; which step is current is still decided by stepFor(state.phase).
 const STEPS = [
@@ -44,30 +43,9 @@ const dataModel = (st) => ({ conditions: [{ label: '焦距', value: `${st.f} cm`
 
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };   // writing identical text would re-announce in a live region
 
-function el(tag, props = {}, ...kids) {
-  const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(props)) k in e ? (e[k] = v) : e.setAttribute(k, v);
-  e.append(...kids.filter((k) => k !== null && k !== undefined));
-  return e;
-}
-const radioPill = (name, value, label, onChange, cls = '') => {
-  const input = el('input', { type: 'radio', name, value });
-  input.addEventListener('change', () => onChange(value));
-  return el('label', { className: `og-option ${cls}`.trim() }, input, el('span', {}, label));
-};
-
 // ---- typed text is saved shortly after the learner pauses, and always before a button acts or the page is left.
-// The notebook buffers its own text (shared card); only the challenge note is still buffered here.
-const pending = { note: null };
-let timer = null;
-function flush() {
-  clearTimeout(timer);
-  notebook.flush();
-  const note = pending.note;
-  pending.note = null;
-  if (note !== null) dispatch({ type: 'SAVE_CHALLENGE_NOTE', id: 3, text: note });
-}
-const queue = () => { clearTimeout(timer); timer = setTimeout(flush, 300); };
+// The notebook and the challenge note each buffer their own text (shared cards); the page only says when to flush.
+function flush() { notebook.flush(); challengeCard.flushNote(); }
 addEventListener('pagehide', flush);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
 
@@ -101,45 +79,18 @@ const notebook = createNotebook($('og-notebook'), {
   onFlush: (fields) => dispatch({ type: 'SAVE_CONCLUSION', fields }),
 });
 
-// ---- challenges: built once per challenge, then updated in place so focus and typing are never lost
-const ch = {};
-function buildChallenge(id) {
-  const m = challengeModel(state, id);
-  put($('og-challenge-title'), `挑戰 ${id}／${m.count}　${m.title}`);
-  put($('og-ch-scenario'), m.scenario);
-  const steps = $('og-ch-steps'); steps.replaceChildren();
-  ch.steps = {};
-  for (const s of m.steps) {
-    const group = el('div', { className: 'og-options og-options-col' });
-    for (const [value, label] of s.options) group.append(radioPill(`og-ch-${id}-${s.id}`, value, label, (v) => dispatch({ type: 'ANSWER_CHALLENGE', id, step: s.id, choice: v })));
-    const fb = el('p', { className: 'og-feedback' });
-    const fs = el('fieldset', { className: 'og-question' }, el('legend', {}, s.question), group, fb);
-    steps.append(fs); ch.steps[s.id] = { fs, fb, name: `og-ch-${id}-${s.id}` };
-  }
-  const note = $('og-ch-note-input');
-  note.value = '';
-  challengeKey = String(id);
-}
-function syncChallenge() {
+// ---- challenges: steps unlock in order; the card builds each once and updates it in place so focus and typing are never lost
+const challengeNoteId = () => Number(state.phase.slice(-1)) || 3;
+const challengeCard = createChallengeCard({ root: $('og-challenge'), heading: $('og-challenge-title'), body: $('og-challenge-body') }, { idPrefix: 'og', maxLength: 1000 }, {
+  onAnswer: (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: Number(state.phase.slice(-1)), step, choice }),
+  onNoteDraft: (text) => dispatch({ type: 'SAVE_CHALLENGE_NOTE', id: challengeNoteId(), text }),
+  onNoteFlush: (text) => dispatch({ type: 'SAVE_CHALLENGE_NOTE', id: challengeNoteId(), text }),
+});
+function drawChallenge() {
   const id = Number(state.phase.slice(-1));
-  if (challengeKey !== String(id)) buildChallenge(id);
   const m = challengeModel(state, id);
-  for (const s of m.steps) {
-    const node = ch.steps[s.id];
-    node.fs.hidden = !s.unlocked;
-    for (const input of node.fs.querySelectorAll('input')) { input.checked = s.choice === input.value; input.disabled = s.correct; }
-    put(node.fb, s.feedback ?? ''); node.fb.dataset.correct = String(s.correct);
-  }
-  $('og-ch-note').hidden = !m.note;
-  if (m.note) {
-    put($('og-ch-note-label'), m.note.label);
-    const input = $('og-ch-note-input');
-    input.placeholder = m.note.placeholder;
-    if (document.activeElement !== input && input.value !== m.note.text) input.value = m.note.text;
-  }
+  challengeCard.update({ ...m, title: `挑戰 ${id}／${m.count}　${m.title}` });   // the heading wording is this station's
 }
-$('og-ch-note-input').addEventListener('input', (e) => { pending.note = e.target.value; queue(); });
-$('og-ch-note-input').addEventListener('blur', flush);
 
 // Station adapter: completeModel keeps what the learner wrote; the claims stay empty because this station states no claim of its own.
 const COMPLETE_HEADING = '這一站完成了';
@@ -176,7 +127,7 @@ function render(wasCta = false) {
   if (screen === 'compare') drawCompare();
   if (screen === 'concept') drawConcept();
   if (screen === 'notebook') notebook.update(drawableNotebook());
-  if (screen === 'challenge') syncChallenge();
+  if (screen === 'challenge') drawChallenge();
   if (screen === 'complete') drawCompletion();
   renderDataCard($('og-data'), dataModel(state), { title: DATA_TITLE });
   drawEvidence();

@@ -204,29 +204,42 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     // --- challenges
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'challenge');assert.equal(await step(),'04挑戰題');assert.match(await active(),/og-challenge-title/);
     assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 1／3　模糊投影');
-    assert.equal(await page.locator('#og-ch-scenario').innerText(),'在這個實驗裝置裡，蠟燭和透鏡都沒有移動，但屏幕上的影像突然變得模糊。');
+    assert.equal(await page.locator('#og-challenge .sg-scenario').innerText(),'在這個實驗裝置裡，蠟燭和透鏡都沒有移動，但屏幕上的影像突然變得模糊。');
+    // every choice is a real button (only an activation is an answer); there is no radio group, and focus, Tab, arrows and hover are not tries
+    assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#og-challenge [data-option]')].map(b=>b.tagName+':'+b.type)).then(a=>[...new Set(a)]),['BUTTON:button']);
+    assert.equal(await page.locator('#og-challenge input[type=radio]').count(),0,'no radio group in a challenge');
+    const attempts=id=>page.locator(`#og-challenge [data-challenge-step="${id}"]`).getAttribute('data-attempts');
+    await page.locator('#og-challenge [data-option]').first().focus();for(const k of ['ArrowRight','ArrowDown','ArrowLeft','ArrowUp','Tab','Shift+Tab'])await page.keyboard.press(k);await page.locator('#og-challenge [data-option]').nth(1).hover();await settle(page);
+    assert.equal(await attempts('adjust'),'0','moving focus, arrows and hover are not tries');assert.equal((await coach()).main.startsWith('剛才哪個'),false);
     assert.equal(await cta().innerText(),'下一題');assert.equal(await cta().isDisabled(),true);
-    await page.getByLabel('蠟燭的位置').check();await settle(page);assert.equal((await coach()).main,'剛才哪個結果變得更明顯？');
-    await page.getByLabel('換一片焦距不同的透鏡').check();await settle(page);assert.ok((await coach()).main.startsWith('蠟燭和透鏡都沒有動。'),'second try → a hint pointing at the learner\'s own first experiment');
+    const opt=name=>page.getByRole('button',{name,exact:true});
+    await page.evaluate(()=>{window.__mark=document.querySelector('#og-challenge [data-challenge-step="adjust"] [data-option]')});
+    await opt('蠟燭的位置').click();await settle(page);assert.equal((await coach()).main,'剛才哪個結果變得更明顯？');assert.equal(await attempts('adjust'),'1','one click is one try');
+    await opt('換一片焦距不同的透鏡').focus();await page.keyboard.press('Enter');await settle(page);assert.ok((await coach()).main.startsWith('蠟燭和透鏡都沒有動。'),'second try → a hint pointing at the learner\'s own first experiment');assert.equal(await attempts('adjust'),'2','Enter is one try');
+    assert.deepEqual(await page.evaluate(()=>({same:window.__mark===document.querySelector('#og-challenge [data-challenge-step="adjust"] [data-option]'),focus:document.activeElement.dataset.option||null})),{same:true,focus:await page.locator('#og-challenge [data-option]',{hasText:'換一片焦距不同的透鏡'}).getAttribute('data-option')},'a wrong try keeps the same buttons and the same focus');
     assert.ok(!(await text()).includes('錯了')&&!(await text()).includes('正確答案'));
-    await page.getByLabel('屏幕的位置').check();await settle(page);
-    assert.equal((await coach()).main,'因為在其他條件不變時，清楚實像只會出現在特定位置附近。');assert.equal(await page.locator('input[name="og-ch-1-adjust"]').first().isDisabled(),true,'a solved step stays solved');
+    await opt('屏幕的位置').click();await settle(page);
+    assert.equal((await coach()).main,'因為在其他條件不變時，清楚實像只會出現在特定位置附近。');assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#og-challenge [data-challenge-step="adjust"] [data-option]')].map(b=>[b.disabled,b.getAttribute('aria-pressed')])).then(r=>[r.every(x=>x[0]),r.filter(x=>x[1]==='true').length]),[true,1],'a solved step stays solved, and the right choice is the one pressed');
     assert.equal(await cta().isDisabled(),false);await cta().click();await settle(page);
     assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 2／3　焦距內');
-    assert.equal(await page.locator('#og-ch-steps fieldset').nth(1).isHidden(),true,'the follow-up waits for the first answer');
+    assert.equal(await page.locator('#og-challenge [data-challenge-step]').count(),1,'the follow-up waits for the first answer');
     assert.ok(!(await text()).match(/1\/f|公式/),'no calculation asked');
-    await page.getByLabel('可以',{exact:true}).check();await settle(page);assert.equal(await cta().isDisabled(),true);
-    await page.getByLabel('不可以').check();await settle(page);assert.equal(await page.locator('#og-ch-steps fieldset').nth(1).isVisible(),true);
+    await opt('可以').focus();await page.keyboard.press('Space');await settle(page);assert.equal(await cta().isDisabled(),true);assert.equal(await page.locator('#og-challenge [data-challenge-step]').count(),1,'Space on a wrong choice is one try and opens nothing');
+    await opt('不可以').click();await settle(page);assert.equal(await page.locator('#og-challenge [data-challenge-step]').count(),2,'the next step appears');
     // reload in the middle of challenge 2
     await reload();assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 2／3　焦距內');
-    assert.equal(await page.getByLabel('不可以').isChecked(),true);assert.equal(await page.getByLabel('不可以').isDisabled(),true);assert.equal(await page.locator('#og-ch-steps fieldset').nth(1).isVisible(),true);
-    await page.getByLabel('倒立放大的實像').check();await page.getByLabel('正立放大的虛像').check();await settle(page);
+    assert.equal(await opt('不可以').getAttribute('aria-pressed'),'true');assert.equal(await opt('不可以').isDisabled(),true);assert.equal(await page.locator('#og-challenge [data-challenge-step]').count(),2);
+    await opt('倒立放大的實像').click();await opt('正立放大的虛像').click();await settle(page);
     assert.equal((await coach()).main,'透過透鏡看，會看到正立、放大的虛像。');await cta().click();await settle(page);
     assert.equal(await page.locator('#og-challenge-title').innerText(),'挑戰 3／3　放大鏡');assert.equal(await cta().innerText(),'完成');
-    assert.equal(await page.locator('#og-ch-note').isHidden(),true);
-    await page.getByLabel('因為形成的是實像，只是白紙放得不夠遠。').check();await page.getByLabel('因為白紙會把光吸收掉，所以看不到影像。').check();await settle(page);
-    await page.getByLabel('因為字在放大鏡的焦距以內，形成的是虛像。眼睛看得到，但不能直接投到紙上。').check();await settle(page);
-    assert.equal(await page.locator('#og-ch-note').isVisible(),true);await page.locator('#og-ch-note-input').fill('我自己的說法');await page.waitForTimeout(450);
+    assert.equal(await page.locator('#og-challenge [data-note]').isHidden(),true);
+    await opt('因為形成的是實像，只是白紙放得不夠遠。').click();await opt('因為白紙會把光吸收掉，所以看不到影像。').click();await settle(page);
+    await opt('因為字在放大鏡的焦距以內，形成的是虛像。眼睛看得到，但不能直接投到紙上。').click();await settle(page);
+    assert.equal(await page.locator('#og-challenge [data-note]').isVisible(),true);
+    const noteSaved=()=>page.evaluate(()=>window.__opticsGuided.getState().challenges[3].note);
+    await page.locator('#og-ch-note-input').fill('abc');await page.evaluate(()=>window.__opticsGuided.dispatch({type:'MOVE_CANDLE',position:5}));assert.equal(await page.locator('#og-ch-note-input').inputValue(),'abc','a redraw does not overwrite the note being typed');
+    await page.locator('#og-ch-note-input').blur();assert.equal(await noteSaved(),'abc','leaving the note saves it');
+    await page.locator('#og-ch-note-input').fill('我自己的說法');await page.waitForTimeout(450);assert.equal(await noteSaved(),'我自己的說法','a pause saves it');
     assert.equal(await cta().isDisabled(),false);await shot('11-challenge-3');await axeScan(page,label+' challenge 3');await cta().click();await settle(page);
     // --- complete
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'complete');assert.equal(await page.locator('#og-complete-title').innerText(),'這一站完成了');

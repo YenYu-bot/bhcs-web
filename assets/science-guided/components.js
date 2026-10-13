@@ -462,3 +462,84 @@ export function createNotebook(root, { body, idPrefix, maxLength = 1000, compari
     reset() { take(); },
   };
 }
+
+// ---- challenge ----------------------------------------------------------------------------------------------------------
+
+/**
+ * Shared ChallengeCard. Each option is a real button: only an activation (click, Enter, Space) is an answer, so moving focus or
+ * the arrow keys never count as a try. Only unlocked steps are drawn and a step is built once: attempts, the solved lock, the
+ * chosen button and the feedback are updated in place, so a keyboard learner keeps the button they are on. The card judges
+ * nothing: it trusts the model's `correct`, and an optional note is buffered like the notebook's text.
+ *   els: { root, heading, body }; options: { idPrefix, maxLength, debounceMs }
+ *   handlers: { onAnswer(stepId, value), onNoteDraft(text), onNoteFlush(text) }
+ * → { update(model), flushNote(), reset() }
+ */
+export function createChallengeCard({ root, heading, body }, { idPrefix, maxLength = 1000, debounceMs = 300 }, { onAnswer, onNoteDraft = () => {}, onNoteFlush = () => {} }) {
+  const doc = root.ownerDocument;
+  let currentId = null, notePending = null, noteTimer = null;
+  const takeNote = () => { const text = notePending; notePending = null; clearTimeout(noteTimer); noteTimer = null; return text; };
+  const flushNote = () => { if (notePending !== null) onNoteFlush(takeNote()); };
+
+  const scenario = node(doc, 'p', { class: 'sg-scenario' });
+  const stepsHost = node(doc, 'div', { class: 'sg-challenge-steps' });
+  const noteInput = node(doc, 'textarea', { id: `${idPrefix}-ch-note-input`, rows: 3, maxlength: maxLength });
+  const noteLabel = node(doc, 'label', { for: noteInput.id });
+  const noteBox = node(doc, 'div', { class: 'sg-challenge-note', 'data-note': '', hidden: true }, noteLabel, noteInput);
+  noteInput.addEventListener('input', () => { notePending = noteInput.value; clearTimeout(noteTimer); noteTimer = setTimeout(() => { noteTimer = null; if (notePending !== null) onNoteDraft(takeNote()); }, debounceMs); });
+  noteInput.addEventListener('blur', flushNote);
+  body.replaceChildren(scenario, stepsHost, noteBox);
+
+  const buildStep = (s) => {
+    const qid = `${idPrefix}-q-${s.id}`;
+    const section = node(doc, 'section', { class: 'sg-challenge-step', 'data-challenge-step': s.id },
+      node(doc, 'p', { class: 'sg-step-question', id: qid, text: s.question }),
+      node(doc, 'div', { class: 'sg-option-list', role: 'group', 'aria-labelledby': qid }, ...s.options.map((o) => {
+        const b = node(doc, 'button', { type: 'button', class: 'sg-option', 'data-option': o.value, text: o.label });
+        b.addEventListener('click', () => onAnswer(s.id, o.value));
+        return b;
+      })),
+      node(doc, 'p', { class: 'sg-feedback', 'data-step-feedback': s.id, hidden: true }));
+    section.dataset.sgSig = JSON.stringify([s.question, s.options]);
+    return section;
+  };
+
+  return {
+    update(model) {
+      setHidden(root, !model);
+      if (!model) return;
+      if (heading) putText(heading, model.title);
+      putText(scenario, model.scenario);
+      if (model.id !== currentId) { currentId = model.id; stepsHost.replaceChildren(); takeNote(); noteInput.value = ''; }
+      const shown = model.steps.filter((s) => s.unlocked);
+      for (const el of [...stepsHost.children]) if (!shown.some((s) => s.id === el.dataset.challengeStep)) el.remove();
+      let previous = null;
+      for (const s of shown) {
+        let box = [...stepsHost.children].find((e) => e.dataset.challengeStep === s.id);
+        if (box && box.dataset.sgSig !== JSON.stringify([s.question, s.options])) { const fresh = buildStep(s); box.replaceWith(fresh); box = fresh; }
+        else if (!box) { box = buildStep(s); stepsHost.insertBefore(box, previous ? previous.nextSibling : stepsHost.firstChild); }
+        previous = box;
+        if (box.dataset.attempts !== String(s.attempts)) box.dataset.attempts = String(s.attempts);
+        if (box.dataset.solved !== String(s.correct)) box.dataset.solved = String(s.correct);
+        for (const b of box.querySelectorAll('button[data-option]')) {
+          if (b.disabled !== (s.correct === true)) b.disabled = s.correct === true;
+          const pressed = String(s.choice === b.dataset.option && s.correct === true);
+          if (b.getAttribute('aria-pressed') !== pressed) b.setAttribute('aria-pressed', pressed);
+        }
+        const fb = box.querySelector('[data-step-feedback]');
+        setHidden(fb, !s.feedback);
+        const kind = s.feedback?.kind ?? '';
+        if ((fb.dataset.kind ?? '') !== kind) fb.dataset.kind = kind;
+        putText(fb, s.feedback?.text ?? '');
+      }
+      setHidden(noteBox, !model.note);
+      if (model.note) {
+        putText(noteLabel, model.note.label);
+        const placeholder = model.note.placeholder ?? '';
+        if ((noteInput.getAttribute('placeholder') ?? '') !== placeholder) noteInput.setAttribute('placeholder', placeholder);
+        if (doc.activeElement !== noteInput && notePending === null && noteInput.value !== model.note.text) noteInput.value = model.note.text;
+      }
+    },
+    flushNote,
+    reset() { takeNote(); },
+  };
+}

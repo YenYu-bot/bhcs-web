@@ -14,9 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderCoachExtras, comparisonOptions, renderChallenge,
+  renderCoachExtras, comparisonOptions,
 } from './cards.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard, renderCompareCard, renderConceptReveal, createNotebook, createChallengeCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -47,6 +47,10 @@ let lastScreen = null;
 let pendingRestore = false;            // a drag ended without the engine moving anything: draw the objects back where they belong
 const put = (el, text) => { if (el.textContent !== text) el.textContent = text; };
 
+let challengeId = null;
+const challengeCard = createChallengeCard({ root: $('bg-challenge'), heading: $('bg-challenge-title'), body: $('bg-challenge').querySelector('[data-bg-challenge-body]') }, { idPrefix: 'bg' }, {
+  onAnswer: (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: challengeId, step, choice }),
+});
 const notebook = createNotebook($('bg-notebook'), {
   body: $('bg-notebook').querySelector('[data-bg-notebook-body]'), idPrefix: 'bg', maxLength: TEXT_MAX, comparison: comparisonOptions(TEXT),
 }, {
@@ -93,9 +97,8 @@ function render(wasCta = false) {
   if (book) put($('bg-notebook-title'), book.heading);
   notebook.update(book);
   const challenge = screen.id === 'challenge' ? challengeModel(state, view) : null;
-  if (challenge) put($('bg-challenge-title'), challenge.title);
-  renderChallenge($('bg-challenge'), challenge,
-    (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: challenge.id, step, choice }));
+  if (challenge) challengeId = challenge.id;
+  challengeCard.update(challenge);
   const done = screen.id === 'complete' ? completeModel(state) : null;
   renderCompletionCard({ root: $('bg-complete'), heading: $('bg-complete-title'), body: $('bg-complete').querySelector('[data-bg-complete-body]') },
     done && { heading: done.heading, claims: done.claims, conclusion: [done.intro], link: done.link });

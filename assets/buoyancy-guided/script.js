@@ -268,7 +268,7 @@ export function screenFor(state) {
   if (phase === 'concept') return { id: 'concept', headingId: 'bg-concept-title', stepId: 'experiment', focusTargets: ['#bg-cta', '#bg-concept-title'] };
   if (phase === 'notebook') return { id: 'notebook', headingId: 'bg-notebook-title', stepId: 'notebook', focusTargets: ['#bg-cta', '#bg-notebook-title'] };
   if (phase === 'complete') return { id: 'complete', headingId: 'bg-complete-title', stepId: 'challenge', focusTargets: ['#bg-cta', '#bg-complete-title'] };
-  return { id: 'challenge', headingId: 'bg-challenge-title', stepId: 'challenge', focusTargets: ['[data-bg-option]', '#bg-cta', '#bg-challenge-title'] };
+  return { id: 'challenge', headingId: 'bg-challenge-title', stepId: 'challenge', focusTargets: ['[data-option]', '#bg-cta', '#bg-challenge-title'] };
 }
 
 /** The name at the top of the page: neutral until the concept, then the lab's full name. */

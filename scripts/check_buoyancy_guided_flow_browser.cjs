@@ -27,7 +27,7 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
 const click=async(p,name)=>{await p.getByRole('button',{name,exact:true}).click();await settle(p)};
 const txt=(p,sel)=>p.locator(sel).innerText();
 const info=p=>p.evaluate(()=>{const m=document.getElementById('main').dataset,a=document.activeElement;return {phase:m.phase,screen:m.screen,slots:Number(m.slots),liquid:m.liquid,tank:m.tankObject,
- active:a?{id:a.id,object:a.dataset.bgObject||null,action:a.dataset.bgAction||null,liquid:a.dataset.bgLiquid!==undefined?a.value:null,q:a.dataset.q||null,option:a.dataset.bgOption&&a.tagName==='BUTTON'&&a.classList.contains('bg-option')?a.dataset.bgOption:null,value:a.dataset.compare!==undefined?a.value:null}:null,
+ active:a?{id:a.id,object:a.dataset.bgObject||null,action:a.dataset.bgAction||null,liquid:a.dataset.bgLiquid!==undefined?a.value:null,q:a.dataset.q||null,option:a.dataset.option&&a.tagName==='BUTTON'&&a.classList.contains('sg-option')?a.dataset.option:null,value:a.dataset.compare!==undefined?a.value:null}:null,
  overflow:document.documentElement.scrollWidth-innerWidth,vw:innerWidth}});
 // what the announcer says, once its short delay has passed
 const said=async p=>{await p.waitForTimeout(120);return p.evaluate(()=>{const a=document.getElementById('bg-announcer');return {id:a.dataset.id||null,text:a.textContent,writes:Number(a.dataset.writes||0)}})};
@@ -272,11 +272,11 @@ async function walk(browser,{width,height,touch,tag}){
   else{assert.ok(g.coach.top>=g.steps.bottom-1&&g.stage.top>=g.coach.bottom-1&&g.side.top>=g.stage.bottom-1,'mobile: one column in reading order');assert.ok(g.stage.width>=g.vw-40)}
  });
  const KEY='bhcs-buoyancy-guided:v1';
- const attempts=id=>p.locator(`[data-bg-step="${id}"]`).getAttribute('data-attempts');
+ const attempts=id=>p.locator(`[data-challenge-step="${id}"]`).getAttribute('data-attempts');
  const saved=()=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)||'null'),KEY);
- const opt=v=>p.locator(`[data-bg-option="${v}"]`);
+ const opt=v=>p.locator(`[data-option="${v}"]`);
  const stepsNav=()=>p.evaluate(()=>[...document.querySelectorAll('#bg-steps li')].map(li=>li.getAttribute('aria-current')));
- const fbText=id=>p.locator(`[data-bg-step-feedback="${id}"]`).innerText();
+ const fbText=id=>p.locator(`[data-step-feedback="${id}"]`).innerText();
  const tabTo=async(pred,limit=30)=>{for(let i=0;i<limit;i++){await p.keyboard.press('Tab');const a=(await info(p)).active;if(a&&pred(a))return a}throw new Error('focus never reached the target')};
 
  await step('notebook: the concept hands over to "我的研究手冊" with the learner\'s own two experiments and three ways to finish',async()=>{
@@ -359,9 +359,9 @@ async function walk(browser,{width,height,touch,tag}){
   assert.equal(await txt(p,'#bg-challenge-title'),'挑戰 1／3');
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   assert.deepEqual(await coach(p),{main:'來挑戰看看。',sub:'你剛學到的，在新的情況下也成立嗎？',tip:'',visible:true});
-  assert.equal(await txt(p,'.bg-scenario'),'剛才在水中能停住的 100 g 方塊，現在放進食用油。');
-  assert.deepEqual(await p.locator('[data-bg-option]').allInnerTexts(),['浮起來','停在液體中','沉到底']);
-  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-bg-option]')].map(b=>b.tagName+':'+b.type)),['BUTTON:button','BUTTON:button','BUTTON:button']);
+  assert.equal(await txt(p,'#bg-challenge .sg-scenario'),'剛才在水中能停住的 100 g 方塊，現在放進食用油。');
+  assert.deepEqual(await p.locator('[data-option]').allInnerTexts(),['浮起來','停在液體中','沉到底']);
+  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-option]')].map(b=>b.tagName+':'+b.type)),['BUTTON:button','BUTTON:button','BUTTON:button']);
   assert.equal(await p.locator('#bg-challenge input[type=radio]').count(),0);
   assert.deepEqual(await cta(p),{label:'下一個挑戰',enabled:false});
   assert.equal(await attempts('c1-outcome'),'0');
@@ -385,9 +385,9 @@ async function walk(browser,{width,height,touch,tag}){
   await stage('challenge 1 hint',{concept:true});
   await opt('sink').click();await settle(p);
   assert.equal(await attempts('c1-outcome'),'3');
-  assert.equal(await p.locator('[data-bg-step="c1-outcome"]').getAttribute('data-solved'),'true');
+  assert.equal(await p.locator('[data-challenge-step="c1-outcome"]').getAttribute('data-solved'),'true');
   assert.equal(await fbText('c1-outcome'),'這個方塊的密度比食用油大，所以會沉到底。');
-  assert.equal(await p.locator('[data-bg-option]:not(:disabled)').count(),0,'a solved step locks');
+  assert.equal(await p.locator('[data-option]:not(:disabled)').count(),0,'a solved step locks');
   assert.deepEqual(await cta(p),{label:'下一個挑戰',enabled:true});
   assert.equal((await info(p)).active.id,'bg-cta','focus moves on to the button that just opened');
   assert.deepEqual(await coach(p),{main:'這題完成了。',sub:'可以往下走了。',tip:'',visible:true});
@@ -399,20 +399,20 @@ async function walk(browser,{width,height,touch,tag}){
   await click(p,'下一個挑戰');
   const r=await info(p);assert.deepEqual([r.phase,r.active.id],['challenge-2','bg-challenge-title']);
   assert.equal(await txt(p,'#bg-challenge-title'),'挑戰 2／3');
-  assert.equal(await txt(p,'.bg-scenario'),'一個 80 g、100 cm³ 的方塊放進水裡。');
-  assert.equal(await p.locator('[data-bg-step]').count(),1);
-  assert.equal(await p.locator('[data-bg-step="c2-brine"]').count(),0);
-  assert.deepEqual(await p.locator('[data-bg-step="c2-where"] [data-bg-option]').allInnerTexts(),['整顆在水面上','約 80% 在水面下','停在水中','沉到底']);
+  assert.equal(await txt(p,'#bg-challenge .sg-scenario'),'一個 80 g、100 cm³ 的方塊放進水裡。');
+  assert.equal(await p.locator('[data-challenge-step]').count(),1);
+  assert.equal(await p.locator('[data-challenge-step="c2-brine"]').count(),0);
+  assert.deepEqual(await p.locator('[data-challenge-step="c2-where"] [data-option]').allInnerTexts(),['整顆在水面上','約 80% 在水面下','停在水中','沉到底']);
   await opt('all-out').click();await settle(p);
   assert.equal(await fbText('c2-where'),'剛才哪個結果變得更明顯？');
-  assert.equal(await p.locator('[data-bg-step]').count(),1,'a try that does not settle it opens nothing');
+  assert.equal(await p.locator('[data-challenge-step]').count(),1,'a try that does not settle it opens nothing');
   await stage('challenge 2 step 1',{concept:true});
   await opt('under-80').click();await settle(p);
-  assert.equal(await p.locator('[data-bg-step]').count(),2);
+  assert.equal(await p.locator('[data-challenge-step]').count(),2);
   assert.equal(await fbText('c2-where'),'對，約 80% 在水面下，還有一部分露在水面上。');
   assert.equal((await info(p)).active.option,'more','focus goes to the step that just opened');
-  assert.equal(await p.locator('[data-bg-step="c2-where"] [data-bg-option]:not(:disabled)').count(),0);
-  assert.equal(await txt(p,'[data-bg-step="c2-brine"] .bg-step-question'),'如果換成濃鹽水，在液面下的比例會……');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"] [data-option]:not(:disabled)').count(),0);
+  assert.equal(await txt(p,'[data-challenge-step="c2-brine"] .sg-step-question'),'如果換成濃鹽水，在液面下的比例會……');
   assert.deepEqual(await cta(p),{label:'下一個挑戰',enabled:false});
   await opt('less').click();await settle(p);
   assert.equal(await fbText('c2-brine'),'濃鹽水的密度比水大，方塊浸入的比例會變小。');
@@ -423,15 +423,15 @@ async function walk(browser,{width,height,touch,tag}){
  await step('challenge 3: the long options wrap inside the page; nothing about "排開"',async()=>{
   await click(p,'下一個挑戰');
   assert.equal(await txt(p,'#bg-challenge-title'),'挑戰 3／3');
-  assert.equal(await txt(p,'.bg-scenario'),'同一張鋁箔，揉成小球會沉，折成小船卻能浮。');
-  assert.equal(await txt(p,'.bg-step-question'),'哪個說法最合理？');
-  const texts=await p.locator('[data-bg-option]').allInnerTexts();
+  assert.equal(await txt(p,'#bg-challenge .sg-scenario'),'同一張鋁箔，揉成小球會沉，折成小船卻能浮。');
+  assert.equal(await txt(p,'.sg-step-question'),'哪個說法最合理？');
+  const texts=await p.locator('[data-option]').allInnerTexts();
   assert.deepEqual(texts,['鋁箔折成船以後質量變小了。','折成船後，鋁箔和裡面的空氣一起占了更大的整體體積，同樣的質量分布在更大的體積中，所以整體平均密度變小。','水只會托住船形的東西。','東西攤得越開就越會浮。']);
   // Visual Pass V1: on a phone the long options wrap inside the card, stay readable and never push the page sideways
-  const optBox=await p.evaluate(()=>{const card=document.querySelector('[data-bg-step]').getBoundingClientRect();return [...document.querySelectorAll('[data-bg-option]')].map(b=>{const r=b.getBoundingClientRect(),cs=getComputedStyle(b);return {w:r.width,card:card.width,fits:b.scrollWidth<=b.clientWidth+1,align:cs.textAlign,wrap:cs.whiteSpace,font:parseFloat(cs.fontSize),lh:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize)}})});
+  const optBox=await p.evaluate(()=>{const card=document.querySelector('[data-challenge-step]').getBoundingClientRect();return [...document.querySelectorAll('[data-option]')].map(b=>{const r=b.getBoundingClientRect(),cs=getComputedStyle(b);return {w:r.width,card:card.width,fits:b.scrollWidth<=b.clientWidth+1,align:cs.textAlign,wrap:cs.whiteSpace,font:parseFloat(cs.fontSize),lh:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize)}})});
   for(const o of optBox){assert.ok(o.fits&&o.w>=o.card*0.85&&o.align==='left'&&o.wrap!=='nowrap'&&o.font>=15&&o.lh>=1.4,'challenge 3 option: '+JSON.stringify(o))}
   assert.ok((await info(p)).overflow<=0,'challenge 3: no sideways scroll');
-  const wrap=await p.evaluate(()=>[...document.querySelectorAll('[data-bg-option]')].map(b=>({over:b.scrollWidth-b.clientWidth,right:b.getBoundingClientRect().right,vw:innerWidth})));
+  const wrap=await p.evaluate(()=>[...document.querySelectorAll('[data-option]')].map(b=>({over:b.scrollWidth-b.clientWidth,right:b.getBoundingClientRect().right,vw:innerWidth})));
   for(const w of wrap){assert.ok(w.over<=1,`an option scrolls inside itself by ${w.over}`);assert.ok(w.right<=w.vw+0.5,'an option is wider than the screen')}
   assert.ok(!(await allText(p)).includes('排開'));
   await opt('boat-shape-only').click();await settle(p);
@@ -639,17 +639,17 @@ async function persistence(browser){
   const s=await open(browser,sizes[0]);const p=s.page;
   await p.goto(base+PAGE);await inject(p,serialize(play(...C2S1)));
   let r=await info(p);assert.equal(r.phase,'challenge-2');
-  assert.equal(await p.locator('[data-bg-step="c2-where"]').getAttribute('data-solved'),'true');
-  assert.equal(await p.locator('[data-bg-step="c2-where"] [data-bg-option]:not(:disabled)').count(),0);
-  assert.equal(await p.locator('[data-bg-step="c2-brine"] [data-bg-option]:not(:disabled)').count(),3);
-  assert.equal(await p.locator('[data-bg-step="c2-where"] [aria-pressed="true"]').getAttribute('data-bg-option'),'under-80');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"]').getAttribute('data-solved'),'true');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"] [data-option]:not(:disabled)').count(),0);
+  assert.equal(await p.locator('[data-challenge-step="c2-brine"] [data-option]:not(:disabled)').count(),3);
+  assert.equal(await p.locator('[data-challenge-step="c2-where"] [aria-pressed="true"]').getAttribute('data-option'),'under-80');
   await silent(p);
   const forged=JSON.parse(serialize(play(...C2S1)));
   forged.challenges['2']['c2-where']={choice:'all-out',attempts:1,correct:true,allCorrect:true};forged.phase='challenge-2';
   await inject(p,forged);
-  assert.equal(await p.locator('[data-bg-step="c2-where"]').getAttribute('data-solved'),'false','"correct" in the save is not believed');
-  assert.equal(await p.locator('[data-bg-step]').count(),1,'and the second step stays shut');
-  assert.equal(await p.locator('[data-bg-step="c2-where"]').getAttribute('data-attempts'),'1');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"]').getAttribute('data-solved'),'false','"correct" in the save is not believed');
+  assert.equal(await p.locator('[data-challenge-step]').count(),1,'and the second step stays shut');
+  assert.equal(await p.locator('[data-challenge-step="c2-where"]').getAttribute('data-attempts'),'1');
   clean(s);await s.ctx.close();
  });
  await check('save H: a save that claims the finish but whose compare is wrong lands on the compare, with nothing downstream',async()=>{
@@ -699,7 +699,7 @@ async function persistence(browser){
   assert.deepEqual(await track(p),[['notebook_complete',LAB]]);
   await inject(p,serialize(play(...C2S1)));
   assert.equal((await info(p)).phase,'challenge-2');assert.deepEqual(await track(p),[],'restoring a challenge sends nothing');
-  await p.locator('[data-bg-option="less"]').click();await settle(p);
+  await p.locator('[data-option="less"]').click();await settle(p);
   assert.deepEqual(await track(p),[],'an answer is not a milestone');
   await click(p,'下一個挑戰');
   assert.deepEqual(await track(p),[['challenge_complete',LAB]]);
