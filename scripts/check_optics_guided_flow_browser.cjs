@@ -67,6 +67,13 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal((await coach()).main,'把屏幕移到影像最清楚的位置。');
     assert.equal(await page.locator('.og-nav li[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,'')),'02動手做');
     assert.equal(await page.locator('#og-evidence').isHidden(),true,'no evidence card before the first record');
+    // layout regression (D1): the data, evidence and save/restart cards are one tight stack, in the right-hand column on a desktop
+    const stack=()=>page.evaluate(()=>{const box=id=>{const e=document.getElementById(id);return !e||e.hidden||!e.getClientRects().length?null:e.getBoundingClientRect()};
+     const d=box('og-data'),ev=box('og-evidence'),u=box('og-utility'),b=document.querySelector('.og-main').getBoundingClientRect(),w=document.querySelector('.og-main > .og-compare,.og-main > .og-notebook,.og-main > .og-challenge,.og-main > .og-bench-card'),wide=innerWidth>=900;
+     const left=[d,ev,u].filter(Boolean).map(r=>r.left);return {first:ev?'evidence':'utility',gapData:Math.round(((ev||u).top-d.bottom)*10)/10,gapEvidence:ev?Math.round((u.top-ev.bottom)*10)/10:null,aligned:Math.max(...left)-Math.min(...left)<2,
+      rightColumn:!wide||left.every(x=>x>b.left+b.width/2),present:{d:!!d,ev:!!ev,u:!!u}}});
+    const tight=async(withEvidence,label)=>{const g=await stack();assert.ok(g.present.d&&g.present.u&&g.present.ev===withEvidence,label+' cards present: '+JSON.stringify(g.present));assert.ok(g.gapData>=0&&g.gapData<=20,label+' data → next card gap: '+g.gapData);if(withEvidence)assert.ok(g.gapEvidence>=0&&g.gapEvidence<=20,label+' evidence → utility gap: '+g.gapEvidence);assert.ok(g.aligned&&g.rightColumn,label+' one column: '+JSON.stringify(g))};
+    await tight(false,'bench without records');
     // Coach text only changes on real teaching-message changes; the dedicated live region stays separate.
     await page.evaluate(()=>{window.__mut=0;new MutationObserver(m=>{window.__mut+=m.length}).observe(document.getElementById('og-coach-text'),{subtree:true,childList:true,characterData:true});window.__statusMut=0;new MutationObserver(m=>{window.__statusMut+=m.length}).observe(document.getElementById('og-status'),{subtree:true,attributes:true,attributeFilter:['aria-live']})});
     await press('ArrowLeft');assert.equal((await coach()).main,'試試看哪個位置比較清楚。');
@@ -160,7 +167,7 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     // --- notebook
     const step=()=>page.locator('.og-nav li[aria-current="step"]').innerText().then(t=>t.replace(/\s+/g,''));
     const NB=page.locator('#og-notebook');
-    assert.equal(await page.locator('#main').getAttribute('data-screen'),'notebook');assert.equal(await step(),'03研究手冊');
+    assert.equal(await page.locator('#main').getAttribute('data-screen'),'notebook');assert.equal(await step(),'03研究手冊');await tight(true,'notebook with three records');
     assert.match(await active(),/og-notebook-title/);assert.equal((await coach()).main,'回頭看看你的兩筆證據，用自己的話寫下你發現了什麼。');
     assert.deepEqual(await page.locator('#og-notebook tbody tr').evaluateAll(rows=>rows.map(r=>[...r.children].map(c=>c.textContent.trim()))),[['物距','30 cm','15 cm'],['焦距','10 cm'],['清楚像距',`${f(O1)} cm`,`${f(O2)} cm`],['影像大小','較小','較大']]);
     assert.equal(await page.locator('input[name="og-level"]:checked').getAttribute('value'),'A','Level A is the default');
@@ -235,7 +242,11 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await page.locator('#og-challenge [data-note]').isHidden(),true);
     await opt('因為形成的是實像，只是白紙放得不夠遠。').click();await opt('因為白紙會把光吸收掉，所以看不到影像。').click();await settle(page);
     await opt('因為字在放大鏡的焦距以內，形成的是虛像。眼睛看得到，但不能直接投到紙上。').click();await settle(page);
-    assert.equal(await page.locator('#og-challenge [data-note]').isVisible(),true);
+    assert.equal(await page.locator('#og-challenge [data-note]').isVisible(),true);await tight(true,'challenge 3');
+    // layout regression (D2): the note is a proper form field, not a sliver
+    await page.locator('#og-ch-note-input').focus();
+    const note=await page.evaluate(()=>{const box=document.querySelector('#og-challenge [data-note]'),t=box.querySelector('textarea'),l=box.querySelector('label'),cs=x=>getComputedStyle(x),tb=t.getBoundingClientRect(),bb=box.getBoundingClientRect();return {ratio:tb.width/bb.width,height:tb.height,minHeight:parseFloat(cs(t).minHeight),label:cs(l).display,weight:Number(cs(l).fontWeight),labelAbove:l.getBoundingClientRect().bottom<=tb.top+1,radius:parseFloat(cs(t).borderTopLeftRadius),outline:cs(t).outlineStyle,overflow:document.documentElement.scrollWidth-innerWidth}});
+    assert.ok(note.ratio>=0.9,'the note field uses the card width: '+note.ratio);assert.ok(note.height>=100&&note.minHeight>=100,'the note field has its own height: '+JSON.stringify(note));assert.equal(note.label,'block');assert.ok(note.weight>=600,'the note label is bold');assert.ok(note.labelAbove,'the label sits above the field');assert.ok(note.radius>=8,'the field keeps its rounded border');assert.notEqual(note.outline,'none','a focused note shows an outline');assert.ok(note.overflow<=0,'no sideways scroll');
     const noteSaved=()=>page.evaluate(()=>window.__opticsGuided.getState().challenges[3].note);
     await page.locator('#og-ch-note-input').fill('abc');await page.evaluate(()=>window.__opticsGuided.dispatch({type:'MOVE_CANDLE',position:5}));assert.equal(await page.locator('#og-ch-note-input').inputValue(),'abc','a redraw does not overwrite the note being typed');
     await page.locator('#og-ch-note-input').blur();assert.equal(await noteSaved(),'abc','leaving the note saves it');

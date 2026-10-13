@@ -99,6 +99,7 @@
 .og-card dt { color: var(--bh-ink-soft); } .og-card dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 .og-data dl { grid-template-columns: auto auto auto auto; justify-content: start; column-gap: 8px; align-items: baseline; }          /* the conditions right now, side by side */
 .og-data dd { font-size: 1.2rem; margin-right: 22px; }
+.og-sidebar-stack { display: contents; }           /* phone: the three cards flow in DOM order after the button; desktop: one right-hand stack */
 .og-evidence-card { background: var(--bh-ok-soft); border-color: #BFE0CC; box-shadow: none; }
 .og-evidence-card[hidden] { display: none; }
 .og-evidence-card .sg-card-title { font-size: .95rem; margin: 0 0 4px; color: var(--bh-ok); }
@@ -112,7 +113,7 @@
 .og-main > :is(.og-hero, .og-compare, .og-concept, .og-notebook, .og-challenge, .og-complete) { display: none; }
 .og-main[data-screen="welcome"] > .og-hero, .og-main[data-screen="compare"] > .og-compare, .og-main[data-screen="concept"] > .og-concept,
 .og-main[data-screen="notebook"] > .og-notebook, .og-main[data-screen="challenge"] > .og-challenge, .og-main[data-screen="complete"] > .og-complete { display: block; }
-.og-main[data-screen="welcome"] > :is(.og-coach, .og-bench-card, .og-status, .og-data, .og-evidence-card, .og-utility),
+.og-main[data-screen="welcome"] > :is(.og-coach, .og-bench-card, .og-status, .og-sidebar-stack),
 .og-main:is([data-screen="compare"], [data-screen="concept"], [data-screen="notebook"], [data-screen="challenge"], [data-screen="complete"]) > :is(.og-bench-card, .og-status),
 .og-main[data-screen="complete"] > .og-actions { display: none; }
 .og-hero { text-align: center; padding: 28px 20px 32px; }
@@ -160,9 +161,9 @@
 .og-notebook .sg-given { list-style: none; padding: 0; margin: 0 0 6px; } .og-notebook .sg-given li { margin: 0 0 2px; }
 .og-notebook [data-nudge] { margin: 8px 0 0; padding: 6px 10px; border-radius: 8px; background: #FFF6D6; color: #7A5B00; font-size: 14px; }
 .og-notebook [data-nudge]:empty, .og-notebook [data-nudge][hidden] { display: none; }
-.og-notebook .sg-field label, .og-note label { display: block; font-weight: 700; margin: 10px 0 4px; }
-.og-notebook textarea, .og-note textarea { width: 100%; min-height: 120px; padding: 10px 12px; border: 1px solid var(--bh-grid-strong); border-radius: 10px; font: inherit; line-height: 1.6; resize: vertical; background: #fff; color: var(--bh-ink); }
-.og-notebook textarea:focus-visible, .og-note textarea:focus-visible { outline: 3px solid var(--bh-orange); outline-offset: 2px; }
+.og-notebook .sg-field label, .og-challenge .sg-challenge-note label { display: block; font-weight: 700; margin: 10px 0 4px; }
+.og-notebook textarea, .og-challenge .sg-challenge-note textarea { width: 100%; min-height: 120px; padding: 10px 12px; border: 1px solid var(--bh-grid-strong); border-radius: 10px; font: inherit; line-height: 1.6; resize: vertical; background: #fff; color: var(--bh-ink); }
+.og-notebook textarea:focus-visible, .og-challenge .sg-challenge-note textarea:focus-visible { outline: 3px solid var(--bh-orange); outline-offset: 2px; }
 .og-notebook .sg-ideas { margin-top: 10px; font-size: 14px; color: var(--bh-ink-soft); } .og-notebook .sg-ideas ul { margin: 6px 0 0; padding-left: 1.2em; }
 .og-challenge .sg-challenge-step + .sg-challenge-step { padding-top: 14px; border-top: 1px dashed var(--bh-grid-strong); }
 .og-challenge .sg-scenario { margin: 0 0 12px; font-size: 1.05rem; line-height: 1.7; padding: 10px 14px; background: var(--bh-surface); border-radius: 10px; }
@@ -200,9 +201,7 @@
   .og-bench { height: 460px; }
   .og-coach { min-height: 0; }
   .og-coach p { font-size: 18px; }
-  .og-data { grid-column: 2; grid-row: 2; }
-  .og-evidence-card { grid-column: 2; grid-row: 3; }
-  .og-utility { grid-column: 2; grid-row: 4; }
+  .og-sidebar-stack { display: grid; grid-column: 2; grid-row: 2 / span 3; gap: 12px; align-self: start; align-content: start; }
   .og-status { grid-column: 1; grid-row: 3; }
   .og-actions { grid-column: 1; grid-row: 4; }
 }
