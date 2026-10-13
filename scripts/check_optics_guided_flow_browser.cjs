@@ -219,8 +219,8 @@ const check=async(name,fn)=>{const row={name};try{await fn()}catch(e){row.error=
     assert.equal(await cta().isDisabled(),false);await shot('11-challenge-3');await axeScan(page,label+' challenge 3');await cta().click();await settle(page);
     // --- complete
     assert.equal(await page.locator('#main').getAttribute('data-screen'),'complete');assert.equal(await page.locator('#og-complete-title').innerText(),'這一站完成了');
-    assert.deepEqual(await page.locator('#og-complete-summary p').allInnerTexts(),['物距變小時，清楚像距變大，影像也變大。','還不知道換別的焦距會不會一樣。']);
-    assert.equal(await page.locator('.og-link-button').getAttribute('href'),'./optics.html');assert.equal((await coach()).main,'這一站完成了。');
+    assert.deepEqual(await page.locator('#og-complete-summary .sg-complete-conclusion').allInnerTexts(),['物距變小時，清楚像距變大，影像也變大。','還不知道換別的焦距會不會一樣。']);
+    assert.equal(await page.locator('#og-complete a.sg-link').getAttribute('href'),'./optics.html');assert.equal((await coach()).main,'這一站完成了。');
     assert.equal(await step(),'04挑戰題');await noOverflow('complete');await shot('12-complete');await axeScan(page,label+' complete');
     await reload();assert.equal(await page.locator('#main').getAttribute('data-screen'),'complete','finished stays finished');
     // --- privacy and isolation: nothing typed leaves the page; the legacy lab's key is untouched; one key of our own

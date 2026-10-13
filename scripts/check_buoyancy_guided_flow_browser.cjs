@@ -445,13 +445,13 @@ async function walk(browser,{width,height,touch,tag}){
   await click(p,'看看我完成了什麼');
   const r=await info(p);assert.deepEqual([r.phase,r.screen,r.active.id],['complete','complete','bg-complete-title']);
   assert.equal(await txt(p,'#bg-complete-title'),'這一站完成了');
-  assert.equal(await txt(p,'.bg-complete-intro'),'你今天自己證明了：');
-  assert.deepEqual((await p.locator('.bg-claims li').allInnerTexts()).map(t=>t.replace(/^✓\s*/,'')),[
+  assert.equal(await txt(p,'.sg-complete-conclusion'),'你今天自己證明了：');
+  assert.deepEqual((await p.locator('.sg-claims li').allInnerTexts()).map(t=>t.replace(/^✓\s*/,'')),[
    '同一個方塊換成濃鹽水後，要增加更多內部配重，才會停在液體中。',
    '300 g 的木塊比 120 g 的石頭重，卻是木塊浮起、石頭沉底，所以不能只看總質量判斷浮沉。',
    '當物體和液體的密度相同時，物體會停在液體中；要判斷浮沉，要比較物體和液體的密度。']);
-  assert.equal(await p.locator('.bg-complete-link a').getAttribute('href'),'../buoyancy-density-lab.html');
-  assert.equal(await p.locator('.bg-complete-link a').innerText(),'自由探索／精確數值');
+  assert.equal(await p.locator('.sg-complete-link a').getAttribute('href'),'../buoyancy-density-lab.html');
+  assert.equal(await p.locator('.sg-complete-link a').innerText(),'自由探索／精確數值');
   assert.deepEqual(await cta(p),{label:'再做一次',enabled:true});
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   const a=await said(p);assert.deepEqual([a.id,a.text],['complete','這一站完成了。']);
@@ -467,7 +467,7 @@ async function walk(browser,{width,height,touch,tag}){
   const r=await info(p);assert.deepEqual([r.phase,r.screen],['complete','complete']);
   const a=await said(p);assert.deepEqual([a.id,a.text,a.writes],[null,'',0]);
   assert.deepEqual(await track(p),[],'restoring the finish sends no lab_complete, nor anything else');
-  assert.equal(await p.locator('.bg-claims li').count(),3);
+  assert.equal(await p.locator('.sg-claims li').count(),3);
   assert.deepEqual(await stepsNav(),[null,null,null,'step']);
   assert.equal(await txt(p,'#bg-heading'),'浮沉與密度');
   const live=await liveRegions(p);assert.deepEqual(live.attr,['bg-announcer']);

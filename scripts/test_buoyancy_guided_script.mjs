@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import { createInitialState, reduce, deriveView, PHASES } from '../assets/buoyancy-guided/engine.js';
 import * as S from '../assets/buoyancy-guided/script.js';
 import * as cards from '../assets/buoyancy-guided/cards.js';
-import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../assets/science-guided/components.js';
+import { createAnnouncer, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../assets/science-guided/components.js';
 import { CHALLENGES, HINT_AFTER_ATTEMPTS, TEXT_MAX } from '../assets/buoyancy-guided/challenges.js';
 import { BLOCK, blockMassG, blockOutcome } from '../assets/buoyancy-guided/model.js';
 
@@ -930,11 +930,13 @@ await test('cards: the finish draws its three claims and one link', () => {
   const dom = page();
   const doc = dom.window.document;
   const r = run(...TO_COMPLETE);
-  cards.renderCompletion(doc.getElementById('bg-complete'), S.completeModel(r.state));
-  assert.equal(doc.querySelectorAll('.bg-claims li').length, 3);
-  assert.equal(doc.querySelector('.bg-complete-link a').getAttribute('href'), '../buoyancy-density-lab.html');
+  const done = S.completeModel(r.state);
+  const els = { root: doc.getElementById('bg-complete'), heading: doc.getElementById('bg-complete-title'), body: doc.querySelector('[data-bg-complete-body]') };
+  renderCompletionCard(els, { heading: done.heading, claims: done.claims, conclusion: [done.intro], link: done.link });
+  assert.equal(doc.querySelectorAll('.sg-claims li').length, 3);
+  assert.equal(doc.querySelector('.sg-complete-link a').getAttribute('href'), '../buoyancy-density-lab.html');
   assert.equal(doc.getElementById('bg-complete').hidden, false);
-  cards.renderCompletion(doc.getElementById('bg-complete'), null);
+  renderCompletionCard(els, null);
   assert.equal(doc.getElementById('bg-complete').hidden, true);
   const live = [...doc.querySelectorAll('[aria-live], [role=status], [role=alert], output')].map((e) => e.id);
   assert.deepEqual(live, ['bg-announcer']);

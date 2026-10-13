@@ -6,7 +6,7 @@ import { clarityMessage } from './visual.js';
 import { MESSAGES, reduceCoach, screenFor, stepFor, ctaFor, evidenceList, compareCard, conceptModel, notebookModel, challengeModel, completeModel } from './script.js';
 import { createStore, restore } from './persist.js';
 import { analyticsFor, createTracker } from './analytics.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main'), cta = $('og-cta'), bench = $('og-bench');
@@ -203,14 +203,17 @@ function syncChallenge() {
 $('og-ch-note-input').addEventListener('input', (e) => { pending.note = e.target.value; queue(); });
 $('og-ch-note-input').addEventListener('blur', flush);
 
-function renderComplete() {
-  const m = completeModel(state);
-  $('og-complete-summary').replaceChildren(el('h3', {}, '你的發現'), el('div', { className: 'og-complete-lines' }, ...m.lines.map((t) => el('p', {}, t))));
+// Station adapter: completeModel keeps what the learner wrote; the claims stay empty because this station states no claim of its own.
+const COMPLETE_HEADING = '這一站完成了';
+const COMPLETE_LINK = { href: './optics.html', label: '自由探索／精確數值' };
+const completeEls = { root: $('og-complete'), heading: $('og-complete-title'), body: $('og-complete-summary') };
+function drawCompletion() {
+  renderCompletionCard(completeEls, { heading: COMPLETE_HEADING, claims: [], conclusion: completeModel(state).lines, link: COMPLETE_LINK });
 }
 
 // Station adapter: evidenceList keeps the station's wording and logic; this only reshapes it for the shared card.
 const EVIDENCE_TITLE = '已記錄的實驗';
-function renderRecords() {
+function drawEvidence() {
   const items = evidenceList(state.records).map((r) => ({ id: `trial-${r.trial}`, title: r.text, rows: r.rows, note: r.note }));
   renderEvidenceCard($('og-evidence'), { items }, { title: EVIDENCE_TITLE });
 }
@@ -236,9 +239,9 @@ function render(wasCta = false) {
   if (screen === 'concept') renderConcept();
   if (screen === 'notebook') syncNotebook();
   if (screen === 'challenge') syncChallenge();
-  if (screen === 'complete') renderComplete();
+  if (screen === 'complete') drawCompletion();
   renderDataCard($('og-data'), dataModel(state), { title: DATA_TITLE });
-  renderRecords();
+  drawEvidence();
   $('og-restart').hidden = !state.records[1];
   put($('og-save-note'), store.failed ? '這個瀏覽器無法保存進度；關閉頁面後會消失。' : state.records[1] ? (restored ? '已接續你上次做到的地方。進度只儲存在這台瀏覽器。' : '進度只儲存在這台瀏覽器。') : '');
 

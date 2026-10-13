@@ -14,9 +14,9 @@ import {
   compareModel, conceptModel, notebookModel, challengeModel, completeModel, announcementFor, invalidDropMessage, blockedMessage, massLabel,
 } from './script.js';
 import {
-  renderCoachExtras, renderCompare, renderConcept, createNotebook, renderChallenge, renderCompletion,
+  renderCoachExtras, renderCompare, renderConcept, createNotebook, renderChallenge,
 } from './cards.js';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../science-guided/components.js';
 
 const $ = (id) => document.getElementById(id);
 const main = $('main');
@@ -97,8 +97,8 @@ function render(wasCta = false) {
   renderChallenge($('bg-challenge'), challenge,
     (step, choice) => dispatch({ type: 'ANSWER_CHALLENGE', id: challenge.id, step, choice }));
   const done = screen.id === 'complete' ? completeModel(state) : null;
-  if (done) put($('bg-complete-title'), done.heading);
-  renderCompletion($('bg-complete'), done);
+  renderCompletionCard({ root: $('bg-complete'), heading: $('bg-complete-title'), body: $('bg-complete').querySelector('[data-bg-complete-body]') },
+    done && { heading: done.heading, claims: done.claims, conclusion: [done.intro], link: done.link });
   $('bg-storage-note').hidden = !store.failed;
 
   syncControls(bench, view);

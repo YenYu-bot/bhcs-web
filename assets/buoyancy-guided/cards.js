@@ -239,15 +239,3 @@ export function renderChallenge(root, model, onAnswer) {
     put(fb, s.feedback?.text ?? '');
   }
 }
-
-// ---- completion ------------------------------------------------------------------------------------------------------
-
-export function renderCompletion(root, model) {
-  root.hidden = !model;
-  if (!model) return;
-  rebuildIf(root.querySelector('[data-bg-complete-body]'), model, () => [
-    h('p', { class: 'bg-complete-intro', text: model.intro }),
-    h('ul', { class: 'bg-claims' }, ...model.claims.map((c) => h('li', {}, h('span', { class: 'bg-tick', 'aria-hidden': 'true', text: '✓' }), ' ', c))),
-    model.link ? h('p', { class: 'bg-complete-link' }, h('a', { class: 'bg-link', href: model.link.href, text: model.link.label })) : null,
-  ].filter(Boolean));
-}

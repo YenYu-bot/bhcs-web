@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard } from '../assets/science-guided/components.js';
+import { createActionBar, createAnnouncer, focusHandoff, renderStepNav, renderCoachCard, renderStatusBar, renderDataCard, renderEvidenceCard, renderCompletionCard } from '../assets/science-guided/components.js';
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -354,6 +354,52 @@ test('EvidenceCard writes nothing when the model is unchanged', async () => {
   assert.equal(seen.length, 0);
 });
 
+const COMPLETE_HTML = '<section id="c" hidden><h2 id="h"></h2><div id="b"></div></section>';
+const completeEls = (doc) => ({ root: doc.getElementById('c'), heading: doc.getElementById('h'), body: doc.getElementById('b') });
+const OPTICS_COMPLETE = { heading: 'Done', claims: [], conclusion: ['what I found', 'what I do not know'], link: { href: './optics.html', label: 'free' } };
+const BUOYANCY_COMPLETE = { heading: 'Done', claims: ['one', 'two', 'three'], conclusion: ['you proved:'], link: { href: '../x.html', label: 'free' } };
+
+test('CompletionCard draws heading, 0-3 claims, optional conclusion and optional link (Optics and Buoyancy fixtures)', () => {
+  const dom = new JSDOM(COMPLETE_HTML);
+  const doc = dom.window.document;
+  const els = completeEls(doc);
+  renderCompletionCard(els, null);
+  assert.equal(els.root.hidden, true);
+  renderCompletionCard(els, OPTICS_COMPLETE);
+  assert.equal(els.root.hidden, false);
+  assert.equal(els.heading.textContent, 'Done');
+  assert.equal(els.body.querySelectorAll('.sg-claims').length, 0, 'no claims list when there are no claims');
+  assert.deepEqual([...els.body.querySelectorAll('.sg-complete-conclusion')].map((e) => e.textContent), OPTICS_COMPLETE.conclusion);
+  assert.equal(els.body.querySelector('a').getAttribute('href'), './optics.html');
+  renderCompletionCard(els, BUOYANCY_COMPLETE);
+  assert.deepEqual([...els.body.querySelectorAll('.sg-claims li')].map((e) => e.textContent.replace(/^✓\s*/, '')), ['one', 'two', 'three']);
+  assert.ok([...els.body.querySelectorAll('.sg-tick')].every((e) => e.getAttribute('aria-hidden') === 'true'));
+  assert.equal(els.body.querySelector('.sg-complete-link a').getAttribute('href'), '../x.html');
+  renderCompletionCard(els, { heading: 'Bare', claims: ['only'] });
+  assert.equal(els.body.querySelectorAll('.sg-complete-conclusion, a').length, 0, 'conclusion and link are optional');
+  assert.equal(els.body.querySelectorAll('.sg-claims li').length, 1);
+  assert.equal(doc.querySelectorAll('[aria-live], [role=status]').length, 0);
+});
+
+test('CompletionCard refuses more than three claims instead of cutting them', () => {
+  const dom = new JSDOM(COMPLETE_HTML);
+  const els = completeEls(dom.window.document);
+  renderCompletionCard(els, { heading: 'x', claims: ['1', '2', '3'] });
+  assert.throws(() => renderCompletionCard(els, { heading: 'x', claims: ['1', '2', '3', '4'] }), RangeError);
+  assert.equal(els.body.querySelectorAll('.sg-claims li').length, 3, 'a refused model leaves the last good card alone');
+});
+
+test('CompletionCard writes nothing when the model is unchanged', async () => {
+  const dom = new JSDOM(COMPLETE_HTML);
+  const els = completeEls(dom.window.document);
+  renderCompletionCard(els, BUOYANCY_COMPLETE);
+  const seen = [];
+  new dom.window.MutationObserver((r) => seen.push(...r)).observe(els.root, { subtree: true, childList: true, attributes: true, characterData: true });
+  renderCompletionCard(els, BUOYANCY_COMPLETE);
+  await wait();
+  assert.equal(seen.length, 0);
+});
+
 test('both pilot stations use the shared interaction foundation', () => {
   const optics = fs.readFileSync(path.join(rootDir, 'assets/optics-guided/main.js'), 'utf8');
   const buoyancy = fs.readFileSync(path.join(rootDir, 'assets/buoyancy-guided/main.js'), 'utf8');
@@ -377,6 +423,11 @@ test('both pilot stations use the shared interaction foundation', () => {
   assert.match(optics, /renderStatusBar/);
   assert.match(optics, /renderDataCard/);
   assert.match(optics, /renderEvidenceCard/);
+  assert.match(optics, /renderCompletionCard/);
+  assert.match(buoyancy, /renderCompletionCard/);
+  assert.ok(!/export function renderCompletion\b/.test(cards), 'Buoyancy cards.js no longer owns renderCompletion');
+  assert.ok(!/function renderRecords|function renderComplete\b|og-complete-lines|og-records-wrap/.test(optics), 'Optics keeps no duplicate records/complete renderer');
+  assert.ok(!/class="og-link-button"/.test(opticsPage), 'the completion link is drawn by the shared module');
   assert.match(buoyancy, /renderEvidenceCard/);
   assert.ok(!/export function renderEvidence\b/.test(cards), 'Buoyancy cards.js no longer owns renderEvidence');
   assert.ok(!/id="og-records"|og-records-wrap/.test(opticsPage), 'Optics evidence is drawn by the shared module');

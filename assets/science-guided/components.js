@@ -228,3 +228,25 @@ export function renderEvidenceCard(root, model, { title } = {}) {
   ]);
   labelCard(root, title);
 }
+
+const MAX_CLAIMS = 3;
+
+/**
+ * Shared CompletionCard: the finish of a station. Heading, up to three claims the learner actually earned, an optional
+ * conclusion, and an optional way out. More than three claims is refused, never silently cut.
+ * els = { root, heading, body }; model = { heading, claims: string[], conclusion?: string[], link?: { href, label } } | null.
+ */
+export function renderCompletionCard(els, model) {
+  setHidden(els.root, !model);
+  if (!model) return;
+  if (model.claims.length > MAX_CLAIMS) throw new RangeError(`a completion card shows at most ${MAX_CLAIMS} claims, got ${model.claims.length}`);
+  if (els.heading && model.heading) putText(els.heading, model.heading);
+  const doc = els.body.ownerDocument;
+  rebuildIf(els.body, { claims: model.claims, conclusion: model.conclusion ?? [], link: model.link ?? null }, () => [
+    ...(model.conclusion ?? []).map((t) => node(doc, 'p', { class: 'sg-complete-conclusion', text: t })),
+    model.claims.length
+      ? node(doc, 'ul', { class: 'sg-claims' }, ...model.claims.map((c) => node(doc, 'li', { class: 'sg-claim' }, node(doc, 'span', { class: 'sg-tick', 'aria-hidden': 'true', text: '✓' }), ' ', c)))
+      : null,
+    model.link ? node(doc, 'p', { class: 'sg-complete-link' }, node(doc, 'a', { class: 'sg-link', href: model.link.href, text: model.link.label })) : null,
+  ]);
+}
