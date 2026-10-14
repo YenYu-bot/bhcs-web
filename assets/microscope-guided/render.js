@@ -16,6 +16,9 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 export const OVERVIEW_WU_PER_PX = 3.6;
 export const OVERVIEW_SIZE = Object.freeze({ width: 340, height: 220 });
 export const OVERVIEW_CENTER = Object.freeze({ x: OVERVIEW_SIZE.width / 2, y: OVERVIEW_SIZE.height / 2 });
+// The overview is a map, not a to-scale picture: markers are drawn this many times larger than their true size so they stay legible.
+// Their positions are exact.
+export const OVERVIEW_MARKER_BOOST = 2;
 export const SLIDE_PX = Object.freeze({ width: 200, height: 80 });
 export const EYEPIECE_SIZE = VIEW_CENTER.x * 2;
 
@@ -104,7 +107,7 @@ export function createMicroscopeView({ eyepieceRoot, overviewRoot, eyepieceLabel
       pair.eye.setAttribute('display', visible.has(f.id) ? 'inline' : 'none');
       pair.eye.setAttribute('data-visible', String(visible.has(f.id)));
       pair.eye.setAttribute('data-fully-inside', String(inside.has(f.id)));
-      pair.slide.setAttribute('transform', `translate(${n(f.wx / q)} ${n(-f.wy / q)}) scale(${n(f.radius / q)})`);
+      pair.slide.setAttribute('transform', `translate(${n(f.wx / q)} ${n(-f.wy / q)}) scale(${n((f.radius * OVERVIEW_MARKER_BOOST) / q)})`);
     }
     slide.setAttribute('transform', `translate(${n(oc.x + (STAGE_GAIN * stage.x) / q)} ${n(oc.y - (STAGE_GAIN * stage.y) / q)})`);
     ring.setAttribute('r', String(n(fieldRadiusWorld(objective) / q)));

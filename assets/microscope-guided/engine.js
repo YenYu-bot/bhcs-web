@@ -122,11 +122,14 @@ export function judgeDirection(records) {
   return h && h === v ? h : null;
 }
 
+/** Ids of the teaching markers that overlap the field in one Trial 2 record, recomputed from its objective and stage. */
+export const recordVisibleIds = (record) =>
+  visibleFeatures({ features: TEACHING_FEATURES, stage: record.stage, objective: record.objective }).map((f) => f.id);
+
 /** What the Trial 2 records show about the field and the number of marks, recomputed from objective + stage. */
 export function observeMagnification(records) {
   if (!records.low || !records.high) return null;
-  const seen = (r) => visibleFeatures({ features: TEACHING_FEATURES, stage: r.stage, objective: r.objective }).map((f) => f.id);
-  const lowIds = seen(records.low), highIds = seen(records.high);
+  const lowIds = recordVisibleIds(records.low), highIds = recordVisibleIds(records.high);
   const cmp = (a, b, lo, hi) => (a < b ? lo : a > b ? hi : 'same');
   return {
     lowIds, highIds,

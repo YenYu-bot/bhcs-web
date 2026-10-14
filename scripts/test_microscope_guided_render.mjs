@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {JSDOM} from 'jsdom';
 import * as M from '../assets/microscope-guided/model.js';
 import {reduce,createInitialState,deriveView} from '../assets/microscope-guided/engine.js';
-import {createMicroscopeView,OVERVIEW_WU_PER_PX,OVERVIEW_SIZE,OVERVIEW_CENTER} from '../assets/microscope-guided/render.js';
+import {createMicroscopeView,OVERVIEW_WU_PER_PX,OVERVIEW_SIZE,OVERVIEW_CENTER,OVERVIEW_MARKER_BOOST} from '../assets/microscope-guided/render.js';
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
 const near=(a,b,tol=1e-2,msg='')=>assert.ok(Math.abs(a-b)<=tol,`${msg} expected ${b}, got ${a}`);
 
@@ -108,6 +108,12 @@ test('overview: markers are fixed in slide coordinates and travel with the slide
  near(local[0].x,-120/OVERVIEW_WU_PER_PX);near(local[2].x,120/OVERVIEW_WU_PER_PX);
  // A marker's overview position stays exactly on the line to the axis that the eyepiece geometry predicts
  const g=parse(slideG(env));near(g.x+local[1].x,OVERVIEW_CENTER.x+M.STAGE_GAIN*40/OVERVIEW_WU_PER_PX);
+});
+test('overview markers are drawn larger than true size (a map, not a to-scale picture) but sit at their exact positions',()=>{
+ const env=mount();draw(env,high(4));
+ assert.equal(OVERVIEW_MARKER_BOOST,2);
+ const b=parse(slideF(env,'B')),a=parse(slideF(env,'A'));
+ near(b.s,M.MARKER_RADIUS_WU*OVERVIEW_MARKER_BOOST/OVERVIEW_WU_PER_PX);near(a.x,-120/OVERVIEW_WU_PER_PX);
 });
 test('overview FOV ring radii are 75 / 30 / 7.5 px',()=>{
  const env=mount();

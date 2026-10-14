@@ -180,6 +180,11 @@ test('a forged record cannot flip the verdict: judgement ignores everything but 
  const s=cmp2();const forged=structuredClone(s.records);forged.high.objective=4;
  const o=E.observeMagnification(forged);assert.equal(o.field,'same');assert.equal(o.count,'same');
 });
+test('recordVisibleIds recomputes the visible markers from objective + stage alone',()=>{
+ assert.deepEqual(E.recordVisibleIds({trial:'low',objective:4,stage:{x:0,y:0}}),['A','B','C']);
+ assert.deepEqual(E.recordVisibleIds({trial:'high',objective:40,stage:{x:0,y:0},visibleIds:['A','B','C']}),['B'],'a saved visibleIds field is never read');
+ assert.deepEqual(E.recordVisibleIds({trial:'low',objective:10,stage:{x:0,y:0}}),['A','B','C'],'10×: A and C only partly in the field, still visible');
+});
 test('reserved phases advance linearly: concept -> notebook -> challenges -> complete',()=>{
  const r=run(cmp2ok(),CONT,CONT,CONT,CONT,CONT,CONT);
  assert.deepEqual(r.transitions.map(t=>t.to).slice(-6),['concept','notebook','challenge-1','challenge-2','challenge-3','complete']);
