@@ -1,12 +1,13 @@
 // B3 browser gate: the drawn bench of the guided microscope page, checked by SVG/DOM geometry (not screenshots) at 390 / 768 / 1280.
 // Eyepiece and overview both visible and laid out as designed, 4× geometry sync, 10× partial clipping, 40× B only, the field-of-view
 // ring, one live region, axe, no external requests, no console errors.
-// Needs Playwright (NODE_PATH=/opt/node-tools/node_modules locally). Set MICROSCOPE_ARTIFACTS=dir to keep screenshots for review.
+// Needs Playwright (CI: NODE_PATH=/tmp/bhcs-composition/node_modules). Locally set PLAYWRIGHT_CHROMIUM_EXECUTABLE to reuse a browser.
+// Review artifacts (a screenshot of each representative state) go to microscope-view-artifacts/.
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {createServer,guardContext,axeScan,launchOptions}=require('./microscope_guided_test_support.cjs');
 const PAGE='/tools/science/microscope-guided.html';
-const OUT=process.env.MICROSCOPE_ARTIFACTS;
+const OUT=path.join(__dirname,'..','microscope-view-artifacts');
 
 const TO_TRIAL1=[{type:'START'},{type:'BEGIN'}];
 const TO_COMPARE1=[...TO_TRIAL1,{type:'SET_STAGE',x:75,y:0},{type:'RECORD'},{type:'SET_STAGE',x:0,y:75},{type:'RECORD'}];
@@ -20,7 +21,7 @@ const TO_CONCEPT=[...TO_COMPARE2,{type:'ANSWER_COMPARE',compare:'magnification',
 const near=(a,b,tol,msg)=>assert.ok(Math.abs(a-b)<=tol,`${msg}: expected ${b}, got ${a}`);
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 const jump=async(p,actions)=>{for(const a of actions){const r=await p.evaluate(a=>{const x=window.__mgTest.dispatch(a);return {accepted:x.accepted,reason:x.reason}},a);assert.equal(r.accepted,true,`${JSON.stringify(a)} -> ${r.reason}`)}await settle(p)};
-const shot=async(p,name)=>{if(OUT){fs.mkdirSync(OUT,{recursive:true});await p.screenshot({path:path.join(OUT,`${name}.png`),fullPage:true})}};
+const shot=async(p,name)=>{fs.mkdirSync(OUT,{recursive:true});await p.screenshot({path:path.join(OUT,`${name}.png`),fullPage:true})};
 
 // Everything measured from the page. Eyepiece units are client px / (svg width / 600); overview units are client px / (svg width / 340).
 const GEO=()=>{

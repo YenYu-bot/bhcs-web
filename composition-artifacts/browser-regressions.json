@@ -1,0 +1,66 @@
+[
+  {
+    "width": 390,
+    "specimen": "letter",
+    "drag": "CDP touch",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  },
+  {
+    "width": 390,
+    "specimen": "onion",
+    "drag": "CDP touch",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  },
+  {
+    "width": 390,
+    "specimen": "cheek",
+    "drag": "CDP touch",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  },
+  {
+    "width": 390,
+    "specimen": "elodea",
+    "drag": "CDP touch",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  },
+  {
+    "width": 1280,
+    "specimen": "letter",
+    "drag": "mouse",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  },
+  {
+    "width": 1280,
+    "specimen": "onion",
+    "drag": "mouse",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  },
+  {
+    "width": 1280,
+    "specimen": "cheek",
+    "drag": "mouse",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  },
+  {
+    "width": 1280,
+    "specimen": "elodea",
+    "drag": "mouse",
+    "outsideField": true,
+    "emptyRecord": true,
+    "recovered": true
+  }
+]

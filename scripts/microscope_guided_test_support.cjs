@@ -8,7 +8,14 @@ const HOOK='\nwindow.__mgTest = { dispatch, getState: () => state, view: () => d
 const ADAPTER='/assets/science-events.js';
 // The site adapter is replaced in every browser check, so a test never reaches the real analytics transport:
 // it records every call in window.__testScienceEvents and does nothing else.
-const ADAPTER_BODY='window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); };\n';
+//   spy     (default)  records every call
+//   throw              records, then raises on every call
+//   absent             defines nothing
+const ADAPTERS={
+ spy:'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); };\n',
+ throw:'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); throw new Error("adapter down"); };\n',
+ absent:'window.__testScienceEvents = [];\n',
+};
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp'};
 
 /** A static file server for the repository root. */
@@ -22,12 +29,12 @@ function createServer(){
 }
 
 /** Same-origin only; optionally serves main.js with the test hook appended. `external` collects every non-same-origin URL requested. */
-async function guardContext(ctx,base,{hook=false,external=[]}={}){
+async function guardContext(ctx,base,{hook=false,external=[],adapter='spy'}={}){
  await ctx.route('**/*',route=>{
   const url=route.request().url();
   if(url.startsWith(base)){
    const pathname=new URL(url).pathname;
-   if(pathname===ADAPTER)return route.fulfill({status:200,contentType:'text/javascript',body:ADAPTER_BODY});
+   if(pathname===ADAPTER)return route.fulfill({status:200,contentType:'text/javascript',body:ADAPTERS[adapter]});
    if(hook&&pathname===MAIN)return route.fulfill({status:200,contentType:'text/javascript',body:fs.readFileSync(path.join(root,MAIN),'utf8')+HOOK});
    return route.continue();
   }

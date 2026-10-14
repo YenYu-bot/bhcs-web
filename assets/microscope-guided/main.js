@@ -164,7 +164,7 @@ function render(wasCta = false) {
   const c = ctaFor(state);
   actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action.type } : null);
   const targets = screenChanged ? [...screen.arrival, ...screen.focusTargets] : screen.focusTargets;
-  focusHandoff({ root: document.body, active, ctaGone: wasCta && (!c || cta.hidden), targets });
+  focusHandoff({ root: document.body, active, ctaGone: wasCta && (!c || cta.hidden || screenChanged), targets });
 }
 
 function dispatch(action) {
