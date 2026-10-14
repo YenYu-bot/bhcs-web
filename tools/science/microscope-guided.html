@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>顯微鏡實驗（導引版原型）｜百宏文教</title>
+<meta name="description" content="親手移動玻片、更換物鏡，找出顯微鏡影像與視野的規律。導引版原型，尚未公開。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/science/microscope-guided.html">
+<link rel="icon" href="../../assets/favicon.png">
+<link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
+<link rel="stylesheet" href="../../assets/microscope-guided/microscope-guided.css">
+<script src="../../assets/science-events.js" defer></script>
+</head>
+<body class="microscope-guided" data-science-lab="microscope-guided">
+<a class="mg-skip" href="#main">跳到主要內容</a>
+<div class="mg-wrap">
+  <header><h1 class="mg-h1" id="mg-heading" tabindex="-1"></h1></header>
+  <main id="main" data-screen="welcome">
+    <nav class="mg-stepnav" id="mg-stepnav"><ol class="sg-steps mg-steps" id="mg-steps"></ol></nav>
+    <div class="mg-shell">
+      <section class="mg-card mg-coach" id="mg-coach">
+        <p class="mg-coach-name" id="mg-coach-name"></p>
+        <p class="mg-coach-main" id="mg-coach-main"></p>
+        <p class="mg-coach-sub" id="mg-coach-sub"></p>
+        <p class="mg-coach-tip" id="mg-coach-tip" hidden></p>
+      </section>
+      <div class="mg-stage" id="mg-stage">
+        <section class="mg-card" id="mg-welcome" aria-labelledby="mg-welcome-title">
+          <svg class="mg-welcome-art" viewBox="0 0 300 110" aria-hidden="true" focusable="false">
+            <circle cx="92" cy="55" r="46" fill="#f4f1e8" stroke="#16233A" stroke-width="4"/>
+            <path d="M 72 55 H 112 A 20 20 0 1 0 105 70" fill="none" stroke="#1f2a44" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="170" y="30" width="110" height="50" rx="4" fill="#eaf3f6" stroke="#7c8aa5" stroke-width="3"/>
+            <circle cx="225" cy="55" r="9" fill="#1d4ed8"/>
+          </svg>
+          <h2 id="mg-welcome-title" tabindex="-1"></h2>
+          <p id="mg-welcome-sub"></p>
+        </section>
+        <section class="mg-card" id="mg-bench-card" aria-label="虛擬顯微鏡實驗桌" hidden>
+          <div class="mg-bench" id="mg-bench">
+            <figure class="mg-eyepiece-fig">
+              <div class="mg-eyepiece-host" id="mg-eyepiece"></div>
+              <figcaption id="mg-eyepiece-cap"></figcaption>
+            </figure>
+            <div class="mg-stage-col">
+              <figure class="mg-overview-fig">
+                <div class="mg-overview-host" id="mg-overview"></div>
+                <figcaption id="mg-overview-cap"></figcaption>
+              </figure>
+              <div class="mg-dpad" id="mg-dpad" role="group">
+                <button type="button" class="mg-btn mg-dpad-up" data-mg-move="up"></button>
+                <button type="button" class="mg-btn mg-dpad-left" data-mg-move="left"></button>
+                <button type="button" class="mg-btn mg-dpad-home" data-mg-home></button>
+                <button type="button" class="mg-btn mg-dpad-right" data-mg-move="right"></button>
+                <button type="button" class="mg-btn mg-dpad-down" data-mg-move="down"></button>
+              </div>
+              <div class="mg-objectives" id="mg-objectives" role="group" hidden>
+                <button type="button" class="mg-btn mg-obj" data-mg-objective="4" aria-pressed="true"></button>
+                <button type="button" class="mg-btn mg-obj" data-mg-objective="40" aria-pressed="false"></button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="mg-card" id="mg-compare" aria-labelledby="mg-compare-title" hidden>
+          <h2 id="mg-compare-title" tabindex="-1"></h2>
+          <div data-mg-compare-body></div>
+        </section>
+        <section class="mg-card" id="mg-concept" aria-labelledby="mg-concept-title" hidden>
+          <h2 id="mg-concept-title" tabindex="-1"></h2>
+          <div data-mg-concept-body></div>
+        </section>
+        <section class="mg-card" id="mg-notebook" aria-labelledby="mg-notebook-title" hidden>
+          <h2 id="mg-notebook-title" tabindex="-1"></h2>
+          <div data-mg-notebook-body></div>
+        </section>
+        <section class="mg-card" id="mg-challenge" aria-labelledby="mg-challenge-title" hidden>
+          <h2 id="mg-challenge-title" tabindex="-1"></h2>
+          <div data-mg-challenge-body></div>
+        </section>
+        <section class="mg-card" id="mg-complete" aria-labelledby="mg-complete-title" hidden>
+          <h2 id="mg-complete-title" tabindex="-1"></h2>
+          <div data-mg-complete-body></div>
+        </section>
+        <div class="mg-status" id="mg-status" data-kind="neutral" hidden><span class="mg-status-icon" data-mg-status-icon aria-hidden="true"></span><span data-mg-status-text></span></div>
+        <div class="mg-actions"><button type="button" class="mg-cta" id="mg-cta" hidden></button></div>
+        <p class="mg-storage-note" id="mg-storage-note" hidden></p>
+      </div>
+      <aside class="mg-side" id="mg-side">
+        <section class="mg-card" id="mg-data" hidden></section>
+        <section class="mg-card" id="mg-evidence" hidden></section>
+      </aside>
+    </div>
+    <div class="sg-sr" id="mg-announcer" aria-live="polite" aria-atomic="true"></div>
+  </main>
+  <footer class="mg-footer">
+    <p class="mg-restart-row"><button type="button" class="mg-link-action" id="mg-restart" hidden></button></p>
+    <p class="mg-privacy" id="mg-privacy-note"></p>
+    <p class="mg-more"><a href="../microscope-lab.html">想自由探索？到完整版顯微鏡實驗</a></p>
+  </footer>
+</div>
+<script type="module" src="../../assets/microscope-guided/main.js"></script>
+</body>
+</html>
