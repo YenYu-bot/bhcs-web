@@ -4,7 +4,7 @@
 // of the records (see judgeDirection / judgeMagnification), so a saved state can never carry a forged "correct".
 import {
   OBJECTIVES, BASE_OBJECTIVE, TEACHING_FEATURES, LETTER_E,
-  clampStagePosition, specimenToScreen, distanceFromCenter, isFeatureVisible, visibleFeatures, fieldDiameterMm,
+  clampStagePosition, specimenToScreen, distanceFromCenter, isFeatureVisible, isFeatureFullyInside, visibleFeatures, fieldDiameterMm,
 } from './model.js';
 
 export const PHASES = Object.freeze([
@@ -68,6 +68,7 @@ export function deriveView(state) {
   return {
     features: cfg.features, positions, objective, stage,
     visibleIds: visibleFeatures({ features: cfg.features, stage, objective }).map((f) => f.id),
+    fullyInsideIds: cfg.features.filter((feature) => isFeatureFullyInside({ feature, stage, objective })).map((f) => f.id),
     target: { id: cfg.targetId, distance, centered: distance <= cfg.tolerance + 1e-9, visible: isFeatureVisible({ feature: targetFeature, stage, objective }) },
     locked: !MOVABLE.has(state.phase),
   };
@@ -84,14 +85,33 @@ const isDone = (state) => {
   return v.target.centered;
 };
 
-/** Relation between slide motion and image motion for one Trial 1 record, from raw inputs only. */
+/**
+ * Everything a Trial 1 record shows, recomputed from its source inputs (trial, objective, stageStart, stageEnd) and
+ * model.js. Any other field on a saved record (stageDelta, imageStart, imageEnd, imageDelta ...) is never read.
+ * Returns null when the inputs are not a valid Trial 1 record.
+ */
+export function deriveTrial1Observation(record) {
+  const cfg = record && (record.trial === 'horizontal' ? TRIAL_CONFIG['trial1-horizontal'] : record.trial === 'vertical' ? TRIAL_CONFIG['trial1-vertical'] : null);
+  const ok = (p) => p && isNumber(p.x) && isNumber(p.y);
+  if (!cfg || !OBJECTIVES.includes(record.objective) || !ok(record.stageStart) || !ok(record.stageEnd)) return null;
+  const feature = cfg.features[0], objective = record.objective;
+  const imageStart = specimenToScreen({ feature, stage: record.stageStart, objective });
+  const imageEnd = specimenToScreen({ feature, stage: record.stageEnd, objective });
+  return {
+    axis: cfg.axis,
+    stageDelta: { x: record.stageEnd.x - record.stageStart.x, y: record.stageEnd.y - record.stageStart.y },
+    imageStart, imageEnd, imageDelta: { x: imageEnd.x - imageStart.x, y: imageEnd.y - imageStart.y },
+  };
+}
+
+/** Relation between slide motion and image motion for one Trial 1 record, from the recomputed observation only. */
 export function recordRelation(record) {
-  if (!record) return null;
-  const axis = record.trial === 'horizontal' ? 'x' : record.trial === 'vertical' ? 'y' : null;
-  if (!axis) return null;
-  const slide = sign(record.stageDelta?.[axis]);
+  const o = deriveTrial1Observation(record);
+  if (!o) return null;
+  const axis = o.axis;
+  const slide = sign(o.stageDelta[axis]);
   // Screen y points down, the stage y points up: convert the image displacement to the same (right/up positive) sense.
-  const image = (axis === 'x' ? 1 : -1) * sign(record.imageDelta?.[axis]);
+  const image = (axis === 'x' ? 1 : -1) * sign(o.imageDelta[axis]);
   if (!slide || !image) return null;
   return slide * image < 0 ? 'opposite' : 'same';
 }
@@ -161,15 +181,8 @@ function record(ctx) {
   const st = ctx.state, phase = st.phase, cfg = configFor(phase);
   if (!cfg || !Object.values(COMPLETE_OF).includes(phase)) return reject(ctx, 'wrong-phase');
   if (cfg.trial === 'horizontal' || cfg.trial === 'vertical') {
-    const feature = cfg.features[0], objective = cfg.objective;
-    const stageStart = { ...cfg.startStage }, stageEnd = { ...st.stage };
-    const imageStart = specimenToScreen({ feature, stage: stageStart, objective }), imageEnd = specimenToScreen({ feature, stage: stageEnd, objective });
-    // Raw inputs only. No "opposite"/"same" label is stored: recordRelation() derives it on demand.
-    st.records[cfg.trial] = {
-      trial: cfg.trial, objective, stageStart, stageEnd,
-      stageDelta: { x: stageEnd.x - stageStart.x, y: stageEnd.y - stageStart.y },
-      imageStart, imageEnd, imageDelta: { x: imageEnd.x - imageStart.x, y: imageEnd.y - imageStart.y },
-    };
+    // Source inputs only. Slide/image displacements and the relation are derived by deriveTrial1Observation().
+    st.records[cfg.trial] = { trial: cfg.trial, objective: cfg.objective, stageStart: { ...cfg.startStage }, stageEnd: { ...st.stage } };
   } else {
     // Counts and field size are derived from objective + stage by observeMagnification(); nothing derived is stored.
     st.records[cfg.trial] = { trial: cfg.trial, objective: st.objective, stage: { ...st.stage } };

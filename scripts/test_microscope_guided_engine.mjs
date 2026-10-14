@@ -79,22 +79,41 @@ test('stage input is clamped to ±150 and bad input is rejected',()=>{
   const x=run(start(),bad);assert.equal(x.last.accepted,false);assert.equal(x.last.reason,'invalid');
  }
 });
-test('RECORD stores raw Trial 1 inputs only (no derived relation)',()=>{
+test('Trial 1 record stores source inputs only (no stageDelta, no image values, no relation)',()=>{
  const rec=run(h1().state,REC).state.records.horizontal;
- assert.deepEqual(Object.keys(rec).sort(),['imageDelta','imageEnd','imageStart','objective','stageDelta','stageEnd','stageStart','trial']);
- assert.deepEqual(rec.stageStart,{x:0,y:0});assert.deepEqual(rec.stageEnd,{x:75,y:0});assert.deepEqual(rec.stageDelta,{x:75,y:0});
- near(rec.imageStart.x,420);near(rec.imageEnd.x,300);near(rec.imageDelta.x,-120);near(rec.imageDelta.y,0);
- assert.ok(!/opposite|same|relation|correct/i.test(JSON.stringify(rec)));
+ assert.deepEqual(Object.keys(rec).sort(),['objective','stageEnd','stageStart','trial']);
+ assert.deepEqual(rec,{trial:'horizontal',objective:4,stageStart:{x:0,y:0},stageEnd:{x:75,y:0}});
  const rv=run(v1().state,REC).state.records.vertical;
- assert.deepEqual(rv.stageDelta,{x:0,y:75});near(rv.imageStart.y,180);near(rv.imageEnd.y,300);near(rv.imageDelta.y,120);
+ assert.deepEqual(rv,{trial:'vertical',objective:4,stageStart:{x:0,y:0},stageEnd:{x:0,y:75}});
+});
+test('deriveTrial1Observation recomputes slide and image displacement from the source inputs',()=>{
+ const h=E.deriveTrial1Observation(run(h1().state,REC).state.records.horizontal);
+ assert.deepEqual(h.stageDelta,{x:75,y:0});near(h.imageStart.x,420);near(h.imageEnd.x,300);near(h.imageDelta.x,-120);near(h.imageDelta.y,0);
+ const v=E.deriveTrial1Observation(run(v1().state,REC).state.records.vertical);
+ assert.deepEqual(v.stageDelta,{x:0,y:75});near(v.imageStart.y,180);near(v.imageEnd.y,300);near(v.imageDelta.y,120);
+ for(const bad of [null,undefined,{},{trial:'low'},{trial:'horizontal',objective:5,stageStart:{x:0,y:0},stageEnd:{x:1,y:0}},{trial:'horizontal',objective:4,stageStart:{x:0,y:0},stageEnd:{x:NaN,y:0}},{trial:'horizontal',objective:4,stageStart:{x:0,y:0}}])
+  assert.equal(E.deriveTrial1Observation(bad),null);
 });
 test('horizontal and vertical records both read "opposite" through the pure helper',()=>{
  const s=cmp1();assert.equal(E.recordRelation(s.records.horizontal),'opposite');assert.equal(E.recordRelation(s.records.vertical),'opposite');
  assert.equal(E.judgeDirection(s.records),'opposite');
- assert.equal(E.recordRelation({trial:'horizontal',stageDelta:{x:5,y:0},imageDelta:{x:5,y:0}}),'same');
- assert.equal(E.recordRelation({trial:'vertical',stageDelta:{x:0,y:5},imageDelta:{x:0,y:5}}),'opposite','slide up/image down is opposite although both numbers are positive');
- assert.equal(E.recordRelation({trial:'vertical',stageDelta:{x:0,y:0},imageDelta:{x:0,y:5}}),null);
+ // slide LEFT (-x) sends the image RIGHT: still opposite; the numbers have opposite signs
+ assert.equal(E.recordRelation({trial:'horizontal',objective:4,stageStart:{x:0,y:0},stageEnd:{x:-5,y:0}}),'opposite');
+ // vertical: slide up / image down is opposite although both numeric deltas are positive
+ assert.equal(E.recordRelation({trial:'vertical',objective:4,stageStart:{x:0,y:0},stageEnd:{x:0,y:5}}),'opposite');
+ assert.equal(E.recordRelation({trial:'vertical',objective:4,stageStart:{x:0,y:3},stageEnd:{x:0,y:3}}),null,'no movement -> no relation');
  assert.equal(E.judgeDirection({horizontal:null,vertical:null}),null);
+});
+test('forged Trial 1 derived fields cannot flip the verdict',()=>{
+ const s=cmp1(),forged=structuredClone(s.records);
+ for(const r of [forged.horizontal,forged.vertical]){
+  r.imageDelta={x:999,y:999};r.imageStart={x:0,y:0};r.imageEnd={x:999,y:999};r.stageDelta={x:-999,y:-999};r.relation='same';
+ }
+ assert.equal(E.recordRelation(forged.horizontal),'opposite');assert.equal(E.recordRelation(forged.vertical),'opposite');
+ assert.equal(E.judgeDirection(forged),'opposite');
+ assert.deepEqual(E.deriveTrial1Observation(forged.horizontal),E.deriveTrial1Observation(s.records.horizontal));
+ // and the compare gate follows the recomputed verdict, not the forged fields
+ assert.equal(E.compareView({...s,records:forged,compare:{direction:{relation:'opposite'},magnification:{field:null,count:null}}}).directionCorrect,true);
 });
 test('Trial 1 transitions: horizontal -> vertical -> compare-direction',()=>{
  const r=run(createInitialState(),{type:'START'},{type:'BEGIN'},set(75,0),REC,set(0,75),REC);
@@ -119,10 +138,10 @@ test('Compare answers are validated and phase-checked; Compare 1 and 2 are separ
 });
 test('Trial 2 low: 4×, B off-centre; centring B shows A, B and C and completes (tolerance 20 px)',()=>{
  const s=low0();assert.equal(s.phase,'trial2-low');assert.equal(s.objective,4);assert.deepEqual(s.stage,{x:100,y:0});
- assert.ok(!deriveView(s).visibleIds.includes('C'));
+ assert.ok(!deriveView(s).fullyInsideIds.includes('C'),'C is at most partly inside while B is off-centre');
  assert.equal(run(s,set(13,0)).state.phase,'trial2-low','|1.6*13| = 20.8 px is outside');
  const done=run(s,set(12,0));assert.equal(done.state.phase,'trial2-low-complete');
- assert.deepEqual(deriveView(done.state).visibleIds,['A','B','C']);
+ assert.deepEqual(deriveView(done.state).visibleIds,['A','B','C']);assert.deepEqual(deriveView(done.state).fullyInsideIds,['A','B','C']);
  assert.ok(E.TRIAL2_CENTER_TOLERANCE_PX*M.objectiveScale(40)<M.VIEW_RADIUS_PX,'B stays in the field after switching to 40×');
 });
 test('Trial 2 low: objective is locked; RECORD stores objective + stage only',()=>{

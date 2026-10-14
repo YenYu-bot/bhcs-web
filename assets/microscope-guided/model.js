@@ -83,11 +83,18 @@ export function distanceFromCenter({ feature, stage, objective }) {
   return Math.hypot(p.x - VIEW_CENTER.x, p.y - VIEW_CENTER.y);
 }
 
-/** A feature is visible when its centre lies inside the circular field of view. */
+/**
+ * A feature is visible when its marker circle overlaps the circular field of view:
+ *   distance(centre, view centre) <= VIEW_RADIUS_PX + radius * z      (radius defaults to 0)
+ * A marker that only partly enters the field is therefore visible; it does not vanish when its centre crosses the rim.
+ *
+ * RENDERER CONTRACT (B2): clip everything to the circular field and draw only the part of a partly-entered marker that
+ * lies inside the circle. Never hide a marker just because its centre is outside the field.
+ */
 export const isFeatureVisible = ({ feature, stage, objective }) =>
-  distanceFromCenter({ feature, stage, objective }) <= VIEW_RADIUS_PX + 1e-9;
+  distanceFromCenter({ feature, stage, objective }) <= VIEW_RADIUS_PX + (feature.radius ?? 0) * objectiveScale(objective) + 1e-9;
 
-/** True when the whole marker (centre plus radius scaled by z) lies inside the field. */
+/** True only when the whole marker (centre plus radius scaled by z) lies inside the field. Stricter than visible. */
 export const isFeatureFullyInside = ({ feature, stage, objective }) =>
   distanceFromCenter({ feature, stage, objective }) + (feature.radius ?? 0) * objectiveScale(objective) <= VIEW_RADIUS_PX + 1e-9;
 

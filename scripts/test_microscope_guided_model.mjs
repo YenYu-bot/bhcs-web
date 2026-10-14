@@ -82,10 +82,18 @@ test('teaching slide A/B/C sits at -120 / 0 / +120 wu',()=>{
 test('4×: A, B and C are all visible with the slide centred',()=>{
  assert.deepEqual(M.visibleFeatures({features:M.TEACHING_FEATURES,stage:{x:0,y:0},objective:4}).map(f=>f.id),['A','B','C']);
 });
-test('10×: with B centred only B is visible (A and C at 300 px are outside the 270 px field)',()=>{
- assert.deepEqual(M.visibleFeatures({features:M.TEACHING_FEATURES,stage:{x:0,y:0},objective:10}).map(f=>f.id),['B']);
+test('10×: with B centred A and C are only PARTLY visible (centre 300 px, marker 50 px, field 270 px)',()=>{
+ const args={features:M.TEACHING_FEATURES,stage:{x:0,y:0},objective:10};
+ assert.deepEqual(M.visibleFeatures(args).map(f=>f.id),['A','B','C']);
+ for(const id of ['A','C']){
+  const feature=M.TEACHING_FEATURES.find(f=>f.id===id);
+  near(M.distanceFromCenter({feature,stage:{x:0,y:0},objective:10}),300,`${id} centre distance`);
+  assert.ok(!M.isFeatureFullyInside({feature,stage:{x:0,y:0},objective:10}),`${id} is clipped`);
+  near(M.MARKER_RADIUS_WU*M.objectiveScale(10),50);
+ }
+ assert.ok(M.isFeatureFullyInside({feature:M.TEACHING_FEATURES[1],stage:{x:0,y:0},objective:10}));
 });
-test('40×: with B centred only B is visible and B is not clipped',()=>{
+test('40×: with B centred only B is visible and B is fully inside (not clipped)',()=>{
  const args={features:M.TEACHING_FEATURES,stage:{x:0,y:0},objective:40};
  assert.deepEqual(M.visibleFeatures(args).map(f=>f.id),['B']);
  const B=M.TEACHING_FEATURES.find(f=>f.id==='B');
@@ -93,12 +101,31 @@ test('40×: with B centred only B is visible and B is not clipped',()=>{
  assert.ok(M.isFeatureFullyInside({feature:B,stage:{x:0,y:0},objective:40}));
  assert.ok(M.MARKER_RADIUS_WU*M.objectiveScale(40)<M.VIEW_RADIUS_PX);
 });
-test('visibility is centre-in-field: a feature just inside / just outside the ring',()=>{
- const f=(wx)=>({...origin,wx});
- assert.ok(M.isFeatureVisible({feature:f(269.9),stage:{x:0,y:0},objective:4}));
- assert.ok(!M.isFeatureVisible({feature:f(270.1),stage:{x:0,y:0},objective:4}));
- assert.ok(M.isFeatureVisible({feature:f(26.9),stage:{x:0,y:0},objective:40}));
- assert.ok(!M.isFeatureVisible({feature:f(27.1),stage:{x:0,y:0},objective:40}));
+test('visibility A: centre inside the field -> visible',()=>{
+ assert.ok(M.isFeatureVisible({feature:{...origin,wx:100,radius:20},stage:{x:0,y:0},objective:4}));
+ assert.ok(M.isFeatureVisible({feature:{...origin,wx:269,radius:0},stage:{x:0,y:0},objective:4}));
+});
+test('visibility B: centre outside but marker edge overlaps the field -> visible',()=>{
+ const feature={...origin,wx:285,radius:20};   // centre 285 > 270, edge reaches 265
+ assert.ok(M.distanceFromCenter({feature,stage:{x:0,y:0},objective:4})>M.VIEW_RADIUS_PX);
+ assert.ok(M.isFeatureVisible({feature,stage:{x:0,y:0},objective:4}));
+ assert.ok(!M.isFeatureFullyInside({feature,stage:{x:0,y:0},objective:4}));
+});
+test('visibility C: centre beyond field radius + scaled marker radius -> not visible (scaled by z, boundary exact)',()=>{
+ const f=(wx)=>({...origin,wx,radius:20});
+ assert.ok(M.isFeatureVisible({feature:f(289.9),stage:{x:0,y:0},objective:4}));
+ assert.ok(!M.isFeatureVisible({feature:f(290.1),stage:{x:0,y:0},objective:4}));
+ // 10×: reach = 270 + 20*2.5 = 320 px = 128 wu
+ assert.ok(M.isFeatureVisible({feature:f(127.9),stage:{x:0,y:0},objective:10}));
+ assert.ok(!M.isFeatureVisible({feature:f(128.1),stage:{x:0,y:0},objective:10}));
+ // radius defaults to 0
+ assert.ok(!M.isFeatureVisible({feature:{id:'p',wx:270.1,wy:0},stage:{x:0,y:0},objective:4}));
+});
+test('visibility D: fullyInside is true only when the whole marker lies inside the field',()=>{
+ const f=(wx)=>({...origin,wx,radius:20});
+ assert.ok(M.isFeatureFullyInside({feature:f(249.9),stage:{x:0,y:0},objective:4}));
+ assert.ok(!M.isFeatureFullyInside({feature:f(250.1),stage:{x:0,y:0},objective:4}));
+ assert.ok(M.isFeatureFullyInside({feature:{...origin,wx:269,radius:0},stage:{x:0,y:0},objective:4}));
 });
 test('stage clamp keeps each axis in -150..150 and rejects non-finite input',()=>{
  assert.deepEqual(M.clampStagePosition({x:200,y:-200}),{x:150,y:-150});
