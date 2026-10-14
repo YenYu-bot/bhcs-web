@@ -142,7 +142,6 @@ test('Compare 2 model: objective changed, slide and position kept, three observe
  const part=run(c2(),ans('magnification','field','smaller')),q=S.compareModel(part).questions;
  assert.equal(q[0].feedback.kind,'success');assert.equal(q[1].feedback,undefined);assert.equal(S.ctaFor(part).enabled,false);
  const wrong=S.compareModel(run(c2(),ans('magnification','count','more'))).questions[1];assert.equal(wrong.feedback.kind,'hint');
- assert.equal(S.ctaFor(concept(()=>run(c2(),ans('magnification','field','smaller'),ans('magnification','count','fewer')))) ,null);
 });
 test('Compare 2 finishing enables the way to the concept',()=>{
  const done=run(c2(),ans('magnification','field','smaller'),ans('magnification','count','fewer'));
@@ -172,7 +171,8 @@ test('Formula: FN = 18 mm is the simulation\'s setting and every line comes from
 test('Concept is refused before its phase and when the evidence is missing',()=>{
  for(const s of [welcome(),h0(),c1(),low0(),c2()])assert.equal(S.conceptModel(s),null);
  assert.equal(S.conceptModel({...concept(),records:{...concept().records,high:null}}),null);
- assert.equal(S.compareModel(concept()),null);assert.equal(S.ctaFor(concept()),null);assert.match(S.TEXT.pending,/還在準備中/);
+ assert.equal(S.compareModel(concept()),null);
+ assert.deepEqual(S.ctaFor(concept()),{label:'整理我的研究手冊',action:{type:'CONTINUE'},enabled:true});
 });
 test('Screens, steps and focus targets',()=>{
  const id=(s)=>S.screenFor(s).id;
@@ -232,6 +232,128 @@ test('announcements: event-level ids, key events only',()=>{
  x=step(c1(),ans('direction','relation','opposite'),11);assert.match(x.msg.text,/這一題答對了，兩題都完成了/);
  x=step(run(c2(),ans('magnification','field','smaller'),ans('magnification','count','fewer')),CONT,12);assert.deepEqual(x.msg,{id:'concept-12',text:'概念整理'});
  assert.equal(S.announcementFor({result:{accepted:false},state:h0(),view:deriveView(h0())}),null);
+});
+
+// ---- B4: notebook, challenges, finish ------------------------------------------------------------------------------------
+const nb=(base=c2)=>run(concept(base),CONT);
+const SAVE=(fields)=>({type:'SAVE_CONCLUSION',fields});
+const nbA=()=>run(nb(),SAVE({level:'A',relationDirection:'left',relationRange:'smaller'}));
+const chA=(id,step,choice)=>({type:'ANSWER_CHALLENGE',id,step,choice});
+const ch1=()=>run(nbA(),CONT);
+const ch2=()=>run(ch1(),chA(1,'c1-direction','left-up'),CONT);
+const ch3=()=>run(ch2(),chA(2,'c2-view','only-b-larger'),chA(2,'c2-claim','smaller-field'),CONT);
+const fin=(note)=>run(ch3(),chA(3,'c3-strategy','low-recentre'),...(note?[{type:'SAVE_CHALLENGE_NOTE',id:3,text:note}]:[]),CONT);
+const mdl=(state)=>S.challengeModel(state,deriveView(state));
+
+test('B4 screens, steps and buttons: notebook is step 3, challenges and finish are step 4',()=>{
+ assert.deepEqual([nb(),ch1(),ch2(),ch3(),fin()].map(s=>S.screenFor(s).id),['notebook','challenge','challenge','challenge','complete']);
+ assert.deepEqual([concept(),nb(),ch1(),fin()].map(S.stepFor),['experiment','notebook','challenge','challenge']);
+ assert.deepEqual([nb(),ch1(),fin()].map(s=>S.screenFor(s).arrival[0]),['#mg-notebook-title','#mg-challenge-title','#mg-complete-title']);
+ assert.equal(S.ctaFor(nb()).label,'進入挑戰題');assert.equal(S.ctaFor(nb()).enabled,false);assert.equal(S.ctaFor(nbA()).enabled,true);
+ assert.deepEqual([ch1(),ch2(),ch3()].map(s=>S.ctaFor(s).label),['下一個挑戰','下一個挑戰','看看我完成了什麼']);
+ assert.equal(S.ctaFor(ch1()).enabled,false);assert.equal(S.ctaFor(run(ch1(),chA(1,'c1-direction','left-up'))).enabled,true);
+ assert.equal(S.ctaFor(fin()),null);
+ assert.deepEqual([nb(),ch1(),ch2(),ch3(),fin()].map(s=>coachOf(s).key),['notebook','challenge-1','challenge-2','challenge-3','complete']);
+});
+test('Notebook model: the evidence table is the direction comparison; the stems and given lines are the learner\'s own',()=>{
+ const m=S.notebookModel(nb());
+ assert.equal(m.heading,'我的研究手冊');assert.deepEqual(m.levels.map(l=>l.id),['A','B','C']);assert.equal(m.selectedLevel,null);
+ assert.deepEqual(m.evidenceSummary.independentVariable,{label:'移動方向',from:'水平',to:'垂直'});
+ assert.deepEqual(m.evidenceSummary.observedResponse.map(r=>[r.first,r.second]),[['向右 1.0 mm','向上 1.0 mm'],['向左 120 px','向下 120 px']]);
+ assert.deepEqual(m.levelA.given,['橫向實驗中，我把玻片向右 1.0 mm，視野中的 e 向左 120 px。','4× 時看到 3 個記號；40× 時看到 1 個記號。']);
+ assert.equal(m.levelA.stems[0].legend,'我把玻片往右移時，視野中的影像往……');assert.equal(m.levelA.stems[1].legend,'換成較高倍率後，看到的範圍變……');
+ assert.deepEqual(m.levelA.stems[0].options,[{value:'left',label:'左邊'},{value:'right',label:'右邊'},{value:'still',label:'不會動'}]);
+ assert.deepEqual(m.levelA.stems[1].options,[{value:'smaller',label:'變小'},{value:'larger',label:'變大'},{value:'same',label:'一樣'}]);
+ assert.equal(S.notebookModel(c2()),null);assert.equal(S.notebookModel(ch1()),null);
+});
+test('Notebook given lines and stem follow what the learner actually did (slide left -> a different stem and numbers)',()=>{
+ const base=()=>run(createInitialState(),{type:'START'},{type:'BEGIN'},set(75,0),REC,set(0,75),REC);
+ const left=run(base(),ans('direction','relation','opposite'),CONT,set(0,0),REC,{type:'SET_OBJECTIVE',objective:40},REC,ans('magnification','field','smaller'),ans('magnification','count','fewer'),CONT,CONT);
+ const tampered=structuredClone(left);tampered.records.horizontal.stageEnd={x:60,y:0};
+ const m=S.notebookModel(tampered);assert.equal(m.levelA.given[0],'橫向實驗中，我把玻片向右 0.8 mm，視野中的 e 向左 96 px。');
+ const leftward=structuredClone(left);leftward.records.horizontal.stageStart={x:0,y:0};leftward.records.horizontal.stageEnd={x:-60,y:0};
+ const l=S.notebookModel(leftward);assert.equal(l.levelA.stems[0].legend,'我把玻片往左移時，視野中的影像往……');assert.match(l.levelA.given[0],/玻片向左 0\.8 mm，視野中的 e 向右 96 px/);
+});
+test('Notebook: nudge only when both relations are chosen and wrong; ready note only when ready; ideas after a limitation is written',()=>{
+ assert.equal(S.notebookModel(nb()).levelA.nudge,null);
+ const half=S.notebookModel(run(nb(),SAVE({level:'A',relationDirection:'left'})));assert.equal(half.levelA.nudge,null);
+ const wrong=S.notebookModel(run(nb(),SAVE({level:'A',relationDirection:'right',relationRange:'smaller'})));
+ assert.equal(wrong.levelA.nudge,'再對照一下你的實驗紀錄。');assert.equal(wrong.readyNote,null);assert.equal(wrong.ready,false);
+ const ok=S.notebookModel(nbA());assert.equal(ok.levelA.nudge,null);assert.equal(ok.readyNote,'你的研究手冊已經整理好了。');assert.equal(ok.ready,true);
+ assert.equal(S.notebookModel(nb()).levelC.showIdeas,false);
+ const c=S.notebookModel(run(nb(),SAVE({level:'C',evidenceText:'我的觀察很多',limitationText:'還不夠多'})));assert.equal(c.levelC.showIdeas,true);assert.equal(c.ready,true);
+ assert.deepEqual(c.levelC.ideas,['只測過水平與垂直各一次。','倍率只比較 4× 和 40×。','使用的是教學記號，不是真實細胞。']);
+});
+test('Notebook B and C carry prompts and placeholders that do not hand over the answer',()=>{
+ const m=S.notebookModel(nb());
+ assert.equal(m.levelB.prompt,'用你的實驗紀錄，說明你發現的兩個規律。');assert.equal(m.levelB.placeholder,'我移動玻片時……；換成較高倍率後……');
+ assert.equal(m.levelC.q1.label,'你用哪些觀察支持這兩個結論？');assert.equal(m.levelC.q2.label,'這次實驗還有哪些事情不能只靠這些資料判斷？');
+ for(const t of [m.levelB.placeholder,m.levelB.help,m.levelC.help])for(const w of ['相反','顛倒','變小','變大'])assert.ok(!t.includes(w),`${t} / ${w}`);
+ const typed=S.notebookModel(run(nb(),SAVE({level:'B',freeText:'我的想法'})));assert.equal(typed.levelB.value,'我的想法');assert.equal(typed.selectedLevel,'B');
+});
+test('Challenge 1: scenario, one step, four options, no answer in the model',()=>{
+ const m=mdl(ch1());
+ assert.equal(m.id,1);assert.equal(m.title,'挑戰 1／3：把左上角的目標帶回中央');assert.equal(m.scenario,'視野中的目標現在在左上角。');assert.equal(m.count,3);
+ assert.equal(m.steps.length,1);assert.equal(m.steps[0].question,'要讓影像往右下回到中央，玻片應該往哪裡移？');
+ assert.deepEqual(m.steps[0].options.map(o=>o.label),['往右上','往左上','往右下','往左下']);
+ assert.ok(!/correct\w*[:"]\s*"?(left-up|true)|answerKey/i.test(JSON.stringify({...m,steps:m.steps.map(({correct,...x})=>x)})),'the model has no answer key (only the learner\'s solved flag)');
+ assert.equal(m.note,undefined);assert.equal(S.challengeModel(nb(),deriveView(nb())),null);
+});
+test('Challenge feedback: nothing, then a generic nudge, then from the second try the step\'s hint; a right answer says why',()=>{
+ const fb=(state)=>mdl(state).steps[0].feedback;
+ assert.equal(fb(ch1()),null);
+ const w1=run(ch1(),chA(1,'c1-direction','right-down'));assert.deepEqual(fb(w1),{kind:'nudge',text:'先想想你在方向實驗中，玻片和影像各往哪邊移。'});
+ const w2=run(w1,chA(1,'c1-direction','right-up'));assert.equal(fb(w2).kind,'hint');assert.match(fb(w2).text,/橫向和縱向紀錄/);
+ assert.ok(!fb(w2).text.includes('往左上'),'the hint never names the right button');
+ const ok=run(w2,chA(1,'c1-direction','left-up'));assert.deepEqual(fb(ok),{kind:'success',text:'玻片往左上移，影像就往右下移，目標回到中央。'});
+ assert.equal(mdl(ok).steps[0].correct,true);assert.equal(mdl(ok).allCorrect,true);assert.equal(mdl(ok).steps[0].attempts,3);
+});
+test('Challenge 2: two steps, the second unlocked by the first; no bench to operate',()=>{
+ const m=mdl(ch2());assert.equal(m.title,'挑戰 2／3：高倍下少了誰？');assert.equal(m.scenario,'4× 時你看得到 A、B、C，而且 B 在中央。現在換成 40×。');
+ assert.deepEqual(m.steps.map(s=>[s.id,s.unlocked]),[['c2-view',true],['c2-claim',false]]);
+ assert.equal(m.steps[0].question,'最可能看到什麼？');assert.equal(m.steps[1].question,'這個結果最支持哪個說法？');
+ assert.deepEqual(m.steps[0].options.map(o=>o.value),['all-larger','only-b-larger','all-smaller','more-marks']);
+ assert.deepEqual(m.steps[1].options.map(o=>o.value),['slide-moved','marks-shrunk','smaller-field','brighter']);
+ const opened=mdl(run(ch2(),chA(2,'c2-view','only-b-larger')));assert.deepEqual(opened.steps.map(s=>s.unlocked),[true,true]);assert.equal(opened.allCorrect,false);
+ assert.equal(S.ctaFor(run(ch2(),chA(2,'c2-view','only-b-larger'))).enabled,false);
+});
+test('Challenge 3: one required step; the optional note appears after it is solved and never gates the way on',()=>{
+ const m=mdl(ch3());assert.equal(m.title,'挑戰 3／3：高倍找不到目標怎麼辦？');assert.equal(m.scenario,'你在低倍看到目標，但換成高倍後，目標不見了。');
+ assert.equal(m.steps.length,1);assert.equal(m.steps[0].question,'下一步最合理怎麼做？');assert.equal(m.note,undefined);
+ assert.deepEqual(m.steps[0].options.map(o=>o.label),['留在高倍隨意大幅移動玻片','繼續提高倍率','回低倍找到目標並重新置中，再換高倍','只把照明調到最亮']);
+ const solved=run(ch3(),chA(3,'c3-strategy','low-recentre')),n=mdl(solved);
+ assert.deepEqual(n.note,{label:'用自己的話說說看：為什麼先回低倍並置中比較好？（可以不寫）',placeholder:'因為低倍時……',text:''});
+ assert.equal(S.ctaFor(solved).enabled,true,'a blank note does not block');
+ assert.equal(mdl(run(solved,{type:'SAVE_CHALLENGE_NOTE',id:3,text:'因為範圍小'})).note.text,'因為範圍小');
+ for(const t of strings(S.LATE_TEXT?.challenge?.items?.[3]??mdl(ch3())))assert.ok(!/微動|粗動/.test(t),'nothing about the focus wheels, which this lab never taught');
+});
+test('Completion: three claims of what the learner did, and the learner\'s own conclusion for the level they chose',()=>{
+ const a=S.completeModel(fin());assert.equal(a.heading,'這一站完成了');assert.equal(a.claims.length,3);
+ assert.deepEqual(a.claims,['我用橫向和縱向移動紀錄比較了玻片與影像的方向。','我比較了 4× 和 40× 的視野與可見記號。','我能用低倍先定位、置中，再進入高倍觀察。']);
+ assert.equal(a.conclusionIntro,'我的結論：');
+ assert.deepEqual(a.conclusion,['玻片往右移時，視野中的影像往左移；換成較高倍率後，看到的範圍變小。']);
+ assert.deepEqual(a.link,{href:'../microscope-lab.html',label:'自由探索／完整顯微鏡'});
+ const toFinish=(conclusionActions)=>run(concept(),CONT,...conclusionActions,CONT,chA(1,'c1-direction','left-up'),CONT,chA(2,'c2-view','only-b-larger'),chA(2,'c2-claim','smaller-field'),CONT,chA(3,'c3-strategy','low-recentre'),CONT);
+ assert.deepEqual(S.completeModel(toFinish([SAVE({level:'B',freeText:'我發現了兩件事'})])).conclusion,['我發現了兩件事']);
+ assert.deepEqual(S.completeModel(toFinish([SAVE({level:'C',evidenceText:'我的證據',limitationText:'我的限制'})])).conclusion,['我的證據','我的限制']);
+ assert.equal(S.completeModel(ch3()),null);
+});
+test('B4 announcements: relations, challenge feedback, transitions and the finish; typing says nothing',()=>{
+ const step=(s,a,seq)=>{const pv=deriveView(s),r=reduce(s,a);return {msg:S.announcementFor({result:r,prevState:s,prevView:pv,state:r.state,view:deriveView(r.state),action:a,seq}),state:r.state}};
+ assert.equal(step(nb(),SAVE({level:'B',freeText:'abcd'}),1).msg,null,'typing is silent');
+ assert.equal(step(nb(),SAVE({level:'A',relationDirection:'left'}),2).msg,null,'half-chosen is silent');
+ assert.deepEqual(step(run(nb(),SAVE({level:'A',relationDirection:'left'})),SAVE({relationRange:'smaller'}),3).msg,{id:'notebook-relations-3',text:'你的研究手冊已經整理好了。'});
+ assert.deepEqual(step(run(nb(),SAVE({level:'A',relationDirection:'right'})),SAVE({relationRange:'smaller'}),4).msg,{id:'notebook-relations-4',text:'再對照一下你的實驗紀錄。'});
+ assert.deepEqual(step(ch1(),chA(1,'c1-direction','right-up'),5).msg,{id:'challenge-answer-5',text:'先想想你在方向實驗中，玻片和影像各往哪邊移。'});
+ assert.match(step(ch1(),chA(1,'c1-direction','left-up'),6).msg.text,/玻片往左上移/);
+ assert.deepEqual(step(concept(),CONT,7).msg,{id:'notebook-7',text:'研究手冊'});
+ assert.deepEqual(step(nbA(),CONT,8).msg,{id:'challenge-8',text:'挑戰 1'});
+ assert.deepEqual(step(run(ch3(),chA(3,'c3-strategy','low-recentre')),CONT,9).msg,{id:'complete-9',text:'這一站完成了。'});
+ assert.equal(step(run(ch3(),chA(3,'c3-strategy','low-recentre')),{type:'SAVE_CHALLENGE_NOTE',id:3,text:'abc'},10).msg,null);
+});
+test('B4 leakage guard: the notebook placeholder and challenge hints never hand over the pattern, and Challenge 3 stays out of focus wheels',()=>{
+ const m=mdl(ch3());
+ for(const t of strings(S.notebookModel(nb()),k=>['levelA','evidenceSummary'].includes(k)).concat(strings(m)))assert.ok(!/微動|粗動/.test(t));
 });
 test('the script is a pure module: no DOM, storage, analytics or pointer code',()=>{
  const src=fs.readFileSync(fileURLToPath(new URL('../assets/microscope-guided/script.js',import.meta.url)),'utf8');

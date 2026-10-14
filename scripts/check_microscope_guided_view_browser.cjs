@@ -13,6 +13,8 @@ const TO_COMPARE1=[...TO_TRIAL1,{type:'SET_STAGE',x:75,y:0},{type:'RECORD'},{typ
 const TO_TRIAL2_LOW=[...TO_COMPARE1,{type:'ANSWER_COMPARE',compare:'direction',question:'relation',answer:'opposite'},{type:'CONTINUE'}];
 const TO_HIGH=[...TO_TRIAL2_LOW,{type:'SET_STAGE',x:0,y:0},{type:'RECORD'}];
 const TO_COMPARE2=[...TO_HIGH,{type:'SET_OBJECTIVE',objective:40},{type:'RECORD'}];
+const SAVE=(fields)=>({type:'SAVE_CONCLUSION',fields});
+const CH=(id,step,choice)=>({type:'ANSWER_CHALLENGE',id,step,choice});
 const TO_CONCEPT=[...TO_COMPARE2,{type:'ANSWER_COMPARE',compare:'magnification',question:'field',answer:'smaller'},{type:'ANSWER_COMPARE',compare:'magnification',question:'count',answer:'fewer'},{type:'CONTINUE'}];
 
 const near=(a,b,tol,msg)=>assert.ok(Math.abs(a-b)<=tol,`${msg}: expected ${b}, got ${a}`);
@@ -132,6 +134,38 @@ const hit=(p,id,x,y)=>p.evaluate(({id,x,y})=>{
    const o=await page.evaluate(()=>{const d=document.documentElement;return {over:d.scrollWidth>d.clientWidth,live:document.querySelectorAll('[aria-live]').length}});
    assert.equal(o.over,false,`${tag}: concept has no horizontal overflow`);assert.equal(o.live,1);
    ok(`${tag}: compare and concept screens pass axe, one live region, no overflow`);
+
+   // ---- notebook, challenges and the finish, reached by injected state (the click-through flow is a later stage) ----------
+   const scan=async(label,{panel,heading}={})=>{
+    await shot(page,`${width}-${label}`);await axeScan(page,`${width} ${label}`);
+    const m=await page.evaluate(()=>{const d=document.documentElement;return {over:d.scrollWidth>d.clientWidth,live:document.querySelectorAll('[aria-live]').length,
+     visible:[...document.querySelectorAll('main .mg-card')].filter(c=>!c.hidden).map(c=>c.id)}});
+    assert.equal(m.over,false,`${width} ${label}: no horizontal overflow`);assert.equal(m.live,1,`${width} ${label}: one live region`);
+    if(heading)assert.ok(m.visible.includes(heading),`${width} ${label}: ${heading} is the card on screen (${m.visible})`);
+    if(panel)assert.equal(await page.locator(`[data-panel="${panel}"]`).isVisible(),true,`${width} ${label}: panel ${panel} is shown`);
+   };
+   await jump(page,[{type:'CONTINUE'}]);                                               // notebook, level A opens by default
+   await scan('notebook-A',{heading:'mg-notebook',panel:'A'});
+   await jump(page,[SAVE({level:'C',evidenceText:'我的觀察',limitationText:'還不夠多'})]);
+   await scan('notebook-C',{heading:'mg-notebook',panel:'C'});
+   assert.equal(await page.locator('[data-ideas]').isVisible(),true,`${width}: the ideas appear once a limitation is written`);
+   await jump(page,[SAVE({level:'A',relationDirection:'left',relationRange:'smaller'}),{type:'CONTINUE'}]);
+   await scan('challenge-1',{heading:'mg-challenge'});
+   await jump(page,[CH(1,'c1-direction','right-up')]);await scan('challenge-1-wrong');
+   await jump(page,[CH(1,'c1-direction','left-up'),{type:'CONTINUE'}]);
+   await scan('challenge-2',{heading:'mg-challenge'});
+   await jump(page,[CH(2,'c2-view','only-b-larger')]);await scan('challenge-2-step2');
+   await jump(page,[CH(2,'c2-claim','smaller-field'),{type:'CONTINUE'}]);
+   await scan('challenge-3',{heading:'mg-challenge'});
+   await jump(page,[CH(3,'c3-strategy','low-recentre')]);
+   assert.equal(await page.locator('.sg-challenge-note').isVisible(),true,`${width}: the optional note opens after the step is solved`);
+   await scan('challenge-3-solved');
+   await jump(page,[{type:'CONTINUE'}]);
+   await scan('complete',{heading:'mg-complete'});
+   const claims=await page.locator('.sg-claim').count();assert.equal(claims,3,`${width}: three claims`);
+   assert.ok((await page.locator('.sg-complete-conclusion').allTextContents()).join('').includes('玻片往右移時'),`${width}: the learner's own conclusion is shown`);
+   assert.equal(await page.locator('.sg-link').getAttribute('href'),'../microscope-lab.html');
+   ok(`${tag}: notebook A and C, three challenges and the finish pass axe, one live region, no overflow`);
    await ctx.close();
   }
   // axe on the trial and compare 1 screens

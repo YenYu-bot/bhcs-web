@@ -6,12 +6,13 @@ import {
   OBJECTIVES, BASE_OBJECTIVE, TEACHING_FEATURES, LETTER_E,
   clampStagePosition, specimenToScreen, distanceFromCenter, isFeatureVisible, isFeatureFullyInside, visibleFeatures, fieldDiameterMm,
 } from './model.js';
+import { ATTEMPTS_MAX, challengeProgress, emptyChallenges, judgeChallenge, sanitizeConclusionFields, notebookReady, TEXT_MAX } from './challenges.js';
 
 export const PHASES = Object.freeze([
   'welcome', 'mission',
   'trial1-horizontal', 'trial1-horizontal-complete', 'trial1-vertical', 'trial1-vertical-complete', 'compare-direction',
   'trial2-low', 'trial2-low-complete', 'trial2-high', 'trial2-high-complete', 'compare-magnification',
-  // Reserved for later stages (no learner copy, no gates in B1): linear CONTINUE only.
+  // After the compare screens: the concept, the learner's notebook (gated), three text challenges (gated) and the finish.
   'concept', 'notebook', 'challenge-1', 'challenge-2', 'challenge-3', 'complete',
 ]);
 
@@ -50,6 +51,8 @@ export function createInitialState() {
     stage: { x: 0, y: 0 },
     records: { horizontal: null, vertical: null, low: null, high: null },
     compare: { direction: { relation: null }, magnification: { field: null, count: null } },
+    conclusion: { level: null, relationDirection: null, relationRange: null, freeText: '', evidenceText: '', limitationText: '' },
+    challenges: emptyChallenges(),
   };
 }
 
@@ -60,7 +63,13 @@ export const configFor = (phase) => TRIAL_CONFIG[CONFIG_OF_PHASE[phase]] ?? null
 /** Everything a renderer needs for the current phase; positions come from model.js. */
 export function deriveView(state) {
   const cfg = configFor(state.phase);
-  if (!cfg) return { features: [], positions: {}, visibleIds: [], target: null, locked: true };
+  if (!cfg) {
+    const idle = { features: [], positions: {}, visibleIds: [], target: null, locked: true };
+    const challenge = /^challenge-([123])$/.exec(state.phase);
+    if (state.phase === 'notebook') idle.notebook = { ready: notebookIsReady(state) };
+    if (challenge) idle.challenge = challengeProgress(Number(challenge[1]), state.challenges[Number(challenge[1])]);
+    return idle;
+  }
   const { stage, objective } = state;
   const positions = Object.fromEntries(cfg.features.map((feature) => [feature.id, specimenToScreen({ feature, stage, objective })]));
   const targetFeature = cfg.features.find((f) => f.id === cfg.targetId);
@@ -152,6 +161,20 @@ export function compareView(state) {
   return { direction, magnification, directionCorrect: all(direction), magnificationCorrect: all(magnification) };
 }
 
+/**
+ * What the learner's own records show, in the notebook's terms: which way the image went for the horizontal slide move
+ * (`left` | `right`) and what happened to the field (`smaller` | `same` | `larger`). Recomputed, never stored. null when unknown.
+ */
+export function expectedRelations(records) {
+  const h = deriveTrial1Observation(records.horizontal);
+  const image = h ? sign(h.imageDelta.x) : 0;
+  const m = judgeMagnification(records);
+  return { direction: image > 0 ? 'right' : image < 0 ? 'left' : null, range: m ? m.field : null };
+}
+export const notebookIsReady = (state) => notebookReady(state.conclusion, expectedRelations(state.records));
+/** Has the learner solved every required step of this challenge? Judged from the saved answers. */
+export const challengeSolved = (state, id) => challengeProgress(id, state.challenges[id]).allCorrect;
+
 // ---- reducer ---------------------------------------------------------------------------------------------------
 
 const NEXT = {
@@ -159,6 +182,27 @@ const NEXT = {
   'trial2-low-complete': 'trial2-high', 'trial2-high-complete': 'compare-magnification',
   concept: 'notebook', notebook: 'challenge-1', 'challenge-1': 'challenge-2', 'challenge-2': 'challenge-3', 'challenge-3': 'complete',
 };
+
+function answerChallenge(ctx, action) {
+  const st = ctx.state, here = /^challenge-([123])$/.exec(st.phase);
+  if (!here || Number(here[1]) !== action.id) return reject(ctx, 'wrong-phase');
+  const step = challengeProgress(action.id, st.challenges[action.id]).steps.find((x) => x.id === action.step);
+  if (!step) return reject(ctx, 'invalid');
+  if (!step.unlocked || step.correct) return reject(ctx, 'locked');       // a later step waits for the one before; a solved step takes no more tries
+  const correct = judgeChallenge(action.id, action.step, action.choice);
+  if (correct === null) return reject(ctx, 'invalid');
+  const attempts = Math.min(step.attempts + 1, ATTEMPTS_MAX);
+  st.challenges[action.id].steps[action.step] = { choice: action.choice, attempts, correct };
+  ctx.events.push({ type: 'challenge-answered', challengeId: action.id, step: action.step, correct, attempts });
+}
+
+function saveChallengeNote(ctx, action) {
+  const st = ctx.state;
+  if (st.phase !== 'challenge-3' || action.id !== 3) return reject(ctx, 'wrong-phase');
+  if (typeof action.text !== 'string') return reject(ctx, 'invalid');
+  if (!challengeProgress(3, st.challenges[3]).allCorrect) return reject(ctx, 'locked');
+  st.challenges[3].note = action.text.slice(0, TEXT_MAX);
+}
 
 function enter(ctx, phase) {
   const st = ctx.state, from = st.phase, cfg = TRIAL_CONFIG[phase];
@@ -222,11 +266,23 @@ export function reduce(prev, action) {
       else st.compare[action.compare][action.question] = action.answer;
       break;
     }
+    case 'SAVE_CONCLUSION': {
+      const clean = st.phase === 'notebook' ? sanitizeConclusionFields(action.fields) : null;
+      if (st.phase !== 'notebook') reject(ctx, 'wrong-phase');
+      else if (!clean) reject(ctx, 'invalid');
+      else Object.assign(st.conclusion, clean);
+      break;
+    }
+    case 'ANSWER_CHALLENGE': answerChallenge(ctx, action); break;
+    case 'SAVE_CHALLENGE_NOTE': saveChallengeNote(ctx, action); break;
     case 'CONTINUE':
       if (st.phase === 'compare-direction') { if (compareView(st).directionCorrect) enter(ctx, 'trial2-low'); else reject(ctx, 'locked'); }
       else if (st.phase === 'compare-magnification') { if (compareView(st).magnificationCorrect) enter(ctx, 'concept'); else reject(ctx, 'locked'); }
-      else if (['concept', 'notebook', 'challenge-1', 'challenge-2', 'challenge-3'].includes(st.phase)) enter(ctx, NEXT[st.phase]);
-      else reject(ctx, 'wrong-phase');
+      else if (st.phase === 'concept') enter(ctx, 'notebook');
+      else if (st.phase === 'notebook') { if (notebookIsReady(st)) enter(ctx, 'challenge-1'); else reject(ctx, 'locked'); }
+      else if (/^challenge-[123]$/.test(st.phase)) {
+        if (challengeProgress(Number(st.phase.slice(-1)), st.challenges[Number(st.phase.slice(-1))]).allCorrect) enter(ctx, NEXT[st.phase]); else reject(ctx, 'locked');
+      } else reject(ctx, 'wrong-phase');
       break;
     default: reject(ctx, 'unknown-action');
   }

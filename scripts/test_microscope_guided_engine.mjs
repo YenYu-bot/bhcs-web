@@ -185,10 +185,108 @@ test('recordVisibleIds recomputes the visible markers from objective + stage alo
  assert.deepEqual(E.recordVisibleIds({trial:'high',objective:40,stage:{x:0,y:0},visibleIds:['A','B','C']}),['B'],'a saved visibleIds field is never read');
  assert.deepEqual(E.recordVisibleIds({trial:'low',objective:10,stage:{x:0,y:0}}),['A','B','C'],'10×: A and C only partly in the field, still visible');
 });
-test('reserved phases advance linearly: concept -> notebook -> challenges -> complete',()=>{
- const r=run(cmp2ok(),CONT,CONT,CONT,CONT,CONT,CONT);
- assert.deepEqual(r.transitions.map(t=>t.to).slice(-6),['concept','notebook','challenge-1','challenge-2','challenge-3','complete']);
- assert.equal(run(r.state,CONT).last.accepted,false);
+const nb=()=>run(cmp2ok(),CONT,CONT).state;                                                          // notebook
+const SAVE=(fields)=>({type:'SAVE_CONCLUSION',fields});
+const nbA=()=>run(nb(),SAVE({level:'A',relationDirection:'left',relationRange:'smaller'})).state;      // ready with the learner's own records
+const ch=(id,step,choice)=>({type:'ANSWER_CHALLENGE',id,step,choice});
+const ch1=()=>run(nbA(),CONT).state;                                                                  // challenge-1
+const ch2=()=>run(ch1(),ch(1,'c1-direction','left-up'),CONT).state;
+const ch3=()=>run(ch2(),ch(2,'c2-view','only-b-larger'),ch(2,'c2-claim','smaller-field'),CONT).state;
+const done=()=>run(ch3(),ch(3,'c3-strategy','low-recentre'),CONT).state;
+
+test('B4: concept -> notebook needs nothing; the notebook starts empty and stores learner input only',()=>{
+ const r=run(cmp2ok(),CONT);assert.equal(r.state.phase,'concept');
+ const n=run(r.state,CONT);assert.equal(n.state.phase,'notebook');
+ assert.deepEqual(n.state.conclusion,{level:null,relationDirection:null,relationRange:null,freeText:'',evidenceText:'',limitationText:''});
+ assert.deepEqual(n.state.challenges,{1:{steps:{}},2:{steps:{}},3:{steps:{},note:''}});
+ assert.ok(!/ready|correct/i.test(Object.keys(n.state.conclusion).join()),'no ready or correct flag in the conclusion');
+});
+test('expectedRelations is recomputed from the records (slide right -> image left; field smaller)',()=>{
+ const s=nb();assert.deepEqual(E.expectedRelations(s.records),{direction:'left',range:'smaller'});
+ assert.deepEqual(E.expectedRelations({horizontal:null,vertical:null,low:null,high:null}),{direction:null,range:null});
+ const leftward=structuredClone(s.records);leftward.horizontal.stageEnd={x:-75,y:0};assert.equal(E.expectedRelations(leftward).direction,'right','slide left -> image right');
+ const forged=structuredClone(s.records);forged.horizontal.imageDelta={x:999,y:0};assert.equal(E.expectedRelations(forged).direction,'left','forged derived fields are not read');
+});
+test('Level A: ready only when both relations match the learner\'s own records',()=>{
+ assert.equal(E.notebookIsReady(nb()),false);
+ const wrongDir=run(nb(),SAVE({level:'A',relationDirection:'right',relationRange:'smaller'}));assert.equal(E.notebookIsReady(wrongDir.state),false);
+ const wrongRange=run(nb(),SAVE({level:'A',relationDirection:'left',relationRange:'larger'}));assert.equal(E.notebookIsReady(wrongRange.state),false);
+ assert.equal(E.notebookIsReady(nbA()),true);
+ assert.equal(E.notebookIsReady(run(nb(),SAVE({level:'A',relationDirection:'still',relationRange:'smaller'})).state),false);
+ assert.equal(deriveView(nbA()).notebook.ready,true);assert.equal(deriveView(nb()).notebook.ready,false);
+ assert.ok(!('expected' in deriveView(nbA()).notebook),'the view never carries the expected relations');
+});
+test('Level B and C: a few written characters are enough; no semantic judgement',()=>{
+ assert.equal(E.notebookIsReady(run(nb(),SAVE({level:'B',freeText:'   abc  '})).state),false,'3 non-space characters');
+ assert.equal(E.notebookIsReady(run(nb(),SAVE({level:'B',freeText:' a b c d '})).state),true);
+ assert.equal(E.notebookIsReady(run(nb(),SAVE({level:'C',evidenceText:'四個字就好'})).state),false,'needs both fields');
+ assert.equal(E.notebookIsReady(run(nb(),SAVE({level:'C',evidenceText:'四個字就好',limitationText:'  '})).state),false);
+ assert.equal(E.notebookIsReady(run(nb(),SAVE({level:'C',evidenceText:'四個字就好',limitationText:'也四個字'})).state),true);
+ assert.equal(E.notebookIsReady(run(nb(),SAVE({freeText:'abcdefgh'})).state),false,'text without a chosen level is not a notebook');
+});
+test('SAVE_CONCLUSION sanitises field by field: unknown or invalid fields are ignored, an action with nothing usable is refused',()=>{
+ const mixed=run(nb(),SAVE({level:'B',freeText:'x'.repeat(2000),bogus:1,relationRange:'huge',ready:true,correct:true}));
+ assert.equal(mixed.last.accepted,true);assert.equal(mixed.state.conclusion.freeText.length,1000);assert.equal(mixed.state.conclusion.level,'B');
+ assert.equal(mixed.state.conclusion.relationRange,null);assert.ok(!('bogus' in mixed.state.conclusion)&&!('ready' in mixed.state.conclusion));
+ for(const bad of [SAVE({}),SAVE({bogus:1}),SAVE({level:'Z'}),SAVE({freeText:5}),SAVE(null),SAVE([1]),{type:'SAVE_CONCLUSION'}]){
+  const r=run(nb(),bad);assert.equal(r.last.accepted,false,JSON.stringify(bad));assert.equal(r.last.reason,'invalid');
+ }
+ assert.equal(run(cmp2ok(),SAVE({level:'A'})).last.reason,'wrong-phase');
+ const cleared=run(nbA(),SAVE({relationDirection:null}));assert.equal(cleared.state.conclusion.relationDirection,null,'a relation can be cleared');
+});
+test('notebook -> challenge-1 is locked until the notebook is ready',()=>{
+ assert.equal(run(nb(),CONT).last.reason,'locked');assert.equal(run(run(nb(),SAVE({level:'B',freeText:'ab'})).state,CONT).last.accepted,false);
+ assert.equal(ch1().phase,'challenge-1');
+});
+test('Challenge 1: a wrong answer counts an attempt and stays; the right one solves it; a solved step takes no more tries',()=>{
+ const wrong=run(ch1(),ch(1,'c1-direction','right-down'));
+ assert.deepEqual(wrong.state.challenges[1].steps['c1-direction'],{choice:'right-down',attempts:1,correct:false});
+ assert.deepEqual(wrong.events.at(-1),{type:'challenge-answered',challengeId:1,step:'c1-direction',correct:false,attempts:1});
+ assert.equal(run(wrong.state,CONT).last.reason,'locked');
+ const again=run(wrong.state,ch(1,'c1-direction','right-up'));assert.equal(again.state.challenges[1].steps['c1-direction'].attempts,2);
+ const right=run(again.state,ch(1,'c1-direction','left-up'));
+ assert.deepEqual(right.state.challenges[1].steps['c1-direction'],{choice:'left-up',attempts:3,correct:true});
+ const more=run(right.state,ch(1,'c1-direction','right-up'));assert.equal(more.last.accepted,false);assert.equal(more.last.reason,'locked');assert.equal(more.state.challenges[1].steps['c1-direction'].attempts,3,'no extra attempt is counted');
+ assert.equal(run(right.state,CONT).state.phase,'challenge-2');
+});
+test('Challenge 2: step 2 stays locked until step 1 is solved',()=>{
+ const locked=run(ch2(),ch(2,'c2-claim','smaller-field'));assert.equal(locked.last.reason,'locked');assert.deepEqual(locked.state.challenges[2].steps,{});
+ const one=run(ch2(),ch(2,'c2-view','all-larger'));assert.equal(one.state.challenges[2].steps['c2-view'].correct,false);
+ assert.equal(run(one.state,ch(2,'c2-claim','smaller-field')).last.reason,'locked');
+ const solved=run(one.state,ch(2,'c2-view','only-b-larger'));assert.equal(solved.state.challenges[2].steps['c2-view'].correct,true);
+ assert.equal(run(solved.state,CONT).last.reason,'locked','one step of two is not enough');
+ const both=run(solved.state,ch(2,'c2-claim','brighter'),ch(2,'c2-claim','smaller-field'));assert.equal(both.state.challenges[2].steps['c2-claim'].attempts,2);
+ assert.equal(run(both.state,CONT).state.phase,'challenge-3');
+});
+test('Challenge 3: one required step; the optional note never gates anything',()=>{
+ const s=ch3();assert.equal(run(s,CONT).last.reason,'locked');
+ assert.equal(run(s,{type:'SAVE_CHALLENGE_NOTE',id:3,text:'因為低倍時'}).last.reason,'locked','the note opens after the step is solved');
+ const solved=run(s,ch(3,'c3-strategy','high-random'),ch(3,'c3-strategy','low-recentre'));assert.equal(solved.state.challenges[3].steps['c3-strategy'].attempts,2);
+ assert.equal(run(solved.state,CONT).state.phase,'complete','a missing note does not block the finish');
+ const noted=run(solved.state,{type:'SAVE_CHALLENGE_NOTE',id:3,text:'y'.repeat(3000)});assert.equal(noted.state.challenges[3].note.length,1000);
+ assert.equal(run(noted.state,CONT).state.phase,'complete');
+ assert.equal(run(solved.state,{type:'SAVE_CHALLENGE_NOTE',id:3,text:'a'}).state.challenges[3].note,'a');
+});
+test('challenge actions are validated and phase-checked',()=>{
+ assert.equal(run(ch1(),ch(2,'c2-view','only-b-larger')).last.reason,'wrong-phase');
+ assert.equal(run(nb(),ch(1,'c1-direction','left-up')).last.reason,'wrong-phase');
+ assert.equal(run(ch1(),ch(1,'nope','left-up')).last.reason,'invalid');
+ assert.equal(run(ch1(),ch(1,'c1-direction','nope')).last.reason,'invalid');
+ assert.equal(run(ch1(),ch(1,'c1-direction',7)).last.reason,'invalid');
+ assert.equal(run(ch1(),{type:'SAVE_CHALLENGE_NOTE',id:3,text:'x'}).last.reason,'wrong-phase');
+ assert.equal(run(ch3(),{type:'SAVE_CHALLENGE_NOTE',id:2,text:'x'}).last.reason,'wrong-phase');
+ assert.equal(run(ch3(),{type:'SAVE_CHALLENGE_NOTE',id:3,text:5}).last.reason,'invalid');
+ assert.equal(run(ch1(),ch(1,'c1-direction','left-up')).last.accepted,true);
+});
+test('the three challenges lead to the finish, which has no further step; view carries progress but no answer',()=>{
+ const s=done();assert.equal(s.phase,'complete');assert.equal(run(s,CONT).last.accepted,false);
+ const v=deriveView(ch2());assert.equal(v.challenge.steps[0].unlocked,true);assert.equal(v.challenge.steps[1].unlocked,false);assert.equal(v.challenge.allCorrect,false);
+ assert.ok(!/correctOption|answerKey|correct:\s*'/i.test(JSON.stringify(v)));
+ assert.equal(deriveView(done()).challenge,undefined);
+});
+test('the whole flow replays from JSON and never mutates a frozen state',()=>{
+ const s=deepFreeze(structuredClone(done()));assert.doesNotThrow(()=>reduce(s,CONT));
+ assert.deepEqual(JSON.parse(JSON.stringify(done())),done());
 });
 test('illegal actions are rejected and leave state untouched (same object, deep-equal)',()=>{
  const s=createInitialState(),frozen=deepFreeze(structuredClone(s));

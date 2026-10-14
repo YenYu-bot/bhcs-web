@@ -5,6 +5,10 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const root=path.resolve(__dirname,'..');
 const MAIN='/assets/microscope-guided/main.js';
 const HOOK='\nwindow.__mgTest = { dispatch, getState: () => state, view: () => deriveView(state) };\n';
+const ADAPTER='/assets/science-events.js';
+// The site adapter is replaced in every browser check, so a test never reaches the real analytics transport:
+// it records every call in window.__testScienceEvents and does nothing else.
+const ADAPTER_BODY='window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); };\n';
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp'};
 
 /** A static file server for the repository root. */
@@ -22,7 +26,9 @@ async function guardContext(ctx,base,{hook=false,external=[]}={}){
  await ctx.route('**/*',route=>{
   const url=route.request().url();
   if(url.startsWith(base)){
-   if(hook&&new URL(url).pathname===MAIN)return route.fulfill({status:200,contentType:'text/javascript',body:fs.readFileSync(path.join(root,MAIN),'utf8')+HOOK});
+   const pathname=new URL(url).pathname;
+   if(pathname===ADAPTER)return route.fulfill({status:200,contentType:'text/javascript',body:ADAPTER_BODY});
+   if(hook&&pathname===MAIN)return route.fulfill({status:200,contentType:'text/javascript',body:fs.readFileSync(path.join(root,MAIN),'utf8')+HOOK});
    return route.continue();
   }
   external.push(url);

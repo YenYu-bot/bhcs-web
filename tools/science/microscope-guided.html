@@ -10,6 +10,7 @@
 <link rel="icon" href="../../assets/favicon.png">
 <link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
 <link rel="stylesheet" href="../../assets/microscope-guided/microscope-guided.css">
+<script src="../../assets/science-events.js" defer></script>
 </head>
 <body class="microscope-guided" data-science-lab="microscope-guided">
 <a class="mg-skip" href="#main">跳到主要內容</a>
@@ -67,10 +68,22 @@
         <section class="mg-card" id="mg-concept" aria-labelledby="mg-concept-title" hidden>
           <h2 id="mg-concept-title" tabindex="-1"></h2>
           <div data-mg-concept-body></div>
-          <p class="mg-pending" id="mg-pending"></p>
+        </section>
+        <section class="mg-card" id="mg-notebook" aria-labelledby="mg-notebook-title" hidden>
+          <h2 id="mg-notebook-title" tabindex="-1"></h2>
+          <div data-mg-notebook-body></div>
+        </section>
+        <section class="mg-card" id="mg-challenge" aria-labelledby="mg-challenge-title" hidden>
+          <h2 id="mg-challenge-title" tabindex="-1"></h2>
+          <div data-mg-challenge-body></div>
+        </section>
+        <section class="mg-card" id="mg-complete" aria-labelledby="mg-complete-title" hidden>
+          <h2 id="mg-complete-title" tabindex="-1"></h2>
+          <div data-mg-complete-body></div>
         </section>
         <div class="mg-status" id="mg-status" data-kind="neutral" hidden><span class="mg-status-icon" data-mg-status-icon aria-hidden="true"></span><span data-mg-status-text></span></div>
         <div class="mg-actions"><button type="button" class="mg-cta" id="mg-cta" hidden></button></div>
+        <p class="mg-storage-note" id="mg-storage-note" hidden></p>
       </div>
       <aside class="mg-side" id="mg-side">
         <section class="mg-card" id="mg-data" hidden></section>
@@ -79,7 +92,11 @@
     </div>
     <div class="sg-sr" id="mg-announcer" aria-live="polite" aria-atomic="true"></div>
   </main>
-  <footer class="mg-footer"><p class="mg-more"><a href="../microscope-lab.html">想自由探索？到完整版顯微鏡實驗</a></p></footer>
+  <footer class="mg-footer">
+    <p class="mg-restart-row"><button type="button" class="mg-link-action" id="mg-restart" hidden></button></p>
+    <p class="mg-privacy" id="mg-privacy-note"></p>
+    <p class="mg-more"><a href="../microscope-lab.html">想自由探索？到完整版顯微鏡實驗</a></p>
+  </footer>
 </div>
 <script type="module" src="../../assets/microscope-guided/main.js"></script>
 </body>

@@ -38,12 +38,19 @@ test('nothing public links to it: no other page, catalog, sitemap or data file n
   assert.ok(!read('tools/microscope-lab.html').includes('microscope-guided'), 'the legacy lab does not link to the guided page');
 });
 
-test('page shape: hand-written, shared + own CSS only, module main, no CDN or external runtime, one h1, legacy link', () => {
+test('page shape: hand-written, shared + own CSS only, site adapter then module main, no CDN or external runtime, one h1, legacy link', () => {
   assert.ok(!html.includes('science-self-study') && !html.includes('lab-config'), 'not a builder-generated lab page');
   assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((m) => m[1]), ['../../assets/science-guided/science-guided.css', '../../assets/microscope-guided/microscope-guided.css']);
-  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]), ['../../assets/microscope-guided/main.js']);
+  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]), ['../../assets/science-events.js', '../../assets/microscope-guided/main.js']);
+  assert.ok(/<script src="\.\.\/\.\.\/assets\/science-events\.js" defer><\/script>/.test(html), 'the adapter is loaded as it is on the other labs');
   assert.ok(/<script type="module" src="\.\.\/\.\.\/assets\/microscope-guided\/main\.js"><\/script>/.test(html), 'main.js is a module');
+  assert.ok(html.indexOf('science-events.js') < html.indexOf('microscope-guided/main.js'), 'adapter first');
   assert.ok(!/<script>/.test(html), 'no inline script');
+  for (const id of ['mg-notebook', 'mg-challenge', 'mg-complete', 'mg-notebook-title', 'mg-challenge-title', 'mg-complete-title', 'mg-restart', 'mg-storage-note', 'mg-privacy-note']) assert.ok(html.includes(`id="${id}"`), `${id} is in the page`);
+  assert.ok(!html.includes('mg-pending') && !html.includes('匿名使用事件'), 'the privacy words come from the script, and the stage-3 placeholder is gone');
+  assert.ok(read(`${JS_DIR}/script.js`).includes('匿名使用事件不含研究手冊文字、作答內容或學生姓名。'));
+  assert.ok(read(`${JS_DIR}/analytics.js`).includes("LAB_ID = 'microscope-guided'"));
+  assert.ok(read(`${JS_DIR}/script.js`).includes("href: '../microscope-lab.html'"), 'the finish links to the full lab');
   assert.ok(!/researcher-lab|site\.js|<body[^>]*class="[^"]*researcher/.test(html), 'no legacy shell');
   assert.match(html, /<body class="microscope-guided" data-science-lab="microscope-guided">/);
   assert.equal((html.match(/<h1[ >]/g) ?? []).length, 1, 'one h1');
@@ -58,10 +65,16 @@ test('page shape: hand-written, shared + own CSS only, module main, no CDN or ex
   for (const f of jsFiles) for (const m of read(`${JS_DIR}/${f}`).matchAll(/from '(\.\.?\/[^']+)'/g)) assert.ok(fs.existsSync(path.join(root, JS_DIR, m[1])), `${f} imports ${m[1]}`);
 });
 
-test('no analytics, storage or network in this stage: a refresh starts over and nothing is sent', () => {
-  for (const f of jsFiles) assert.ok(!/localStorage|sessionStorage|indexedDB|bhcsScienceTrack|googletagmanager|gtag|dataLayer|sendBeacon|XMLHttpRequest|\bfetch\(/.test(code(read(`${JS_DIR}/${f}`))), f);
-  assert.ok(!html.includes('science-events.js') && !/bhcsScienceTrack/.test(html));
-  for (const f of ['persist.js', 'analytics.js', 'challenges.js']) assert.ok(!jsFiles.includes(f), `${f} belongs to a later stage`);
+test('analytics goes through the site adapter only; storage is persist.js alone; nothing reaches the network', () => {
+  assert.ok(!/googletagmanager|G-GHN2GDS2RQ|gtag\(|dataLayer|sendBeacon|<script>[^<]*[a-z]/i.test(html), 'no inline script and no GA in the page');
+  for (const f of jsFiles) assert.ok(!/googletagmanager|G-GHN2GDS2RQ|gtag|dataLayer|sendBeacon|XMLHttpRequest|\bfetch\(/.test(code(read(`${JS_DIR}/${f}`))), f);
+  const callers = jsFiles.filter((f) => /bhcsScienceTrack/.test(code(read(`${JS_DIR}/${f}`))));
+  assert.deepEqual(callers, ['analytics.js'], 'one file talks to the adapter');
+  assert.ok(!/bhcsScienceTrack|science_/.test(html));
+  const users = jsFiles.filter((f) => /localStorage|sessionStorage|indexedDB/.test(code(read(`${JS_DIR}/${f}`))));
+  assert.deepEqual(users, ['persist.js'], 'one file touches storage');
+  assert.ok(read(`${JS_DIR}/persist.js`).includes("STORAGE_KEY = 'bhcs-microscope-guided:v1'"));
+  assert.ok(!code(read(`${JS_DIR}/persist.js`)).includes('bhcsMicroscopeRecords'), 'the legacy key is never named');
 });
 
 test('no test controls ship: no debug hook, no query switches, no state injection in the page code', () => {
@@ -72,21 +85,25 @@ test('no test controls ship: no debug hook, no query switches, no state injectio
 });
 
 test('source boundaries: each file does the one job it was given', () => {
-  assert.deepEqual(jsFiles, ['engine.js', 'input.js', 'main.js', 'model.js', 'render.js', 'script.js']);
+  assert.deepEqual(jsFiles, ['analytics.js', 'challenges.js', 'engine.js', 'input.js', 'main.js', 'model.js', 'persist.js', 'render.js', 'script.js']);
   const src = Object.fromEntries(jsFiles.map((f) => [f, code(read(`${JS_DIR}/${f}`))]));
   const imports = (f) => [...src[f].matchAll(/from\s+'\.\/([a-z]+)\.js'/g)].map((m) => m[1]).sort();
   assert.deepEqual(imports('model.js'), []);
-  assert.deepEqual(imports('engine.js'), ['model']);
+  assert.deepEqual(imports('challenges.js'), []);
+  assert.deepEqual(imports('analytics.js'), []);
+  assert.deepEqual(imports('engine.js'), ['challenges', 'model']);
   assert.deepEqual(imports('render.js'), ['model']);
   assert.deepEqual(imports('input.js'), ['engine', 'model', 'render']);
-  assert.deepEqual(imports('script.js'), ['engine', 'model']);
-  assert.deepEqual(imports('main.js'), ['engine', 'input', 'render', 'script']);
+  assert.deepEqual(imports('persist.js'), ['challenges', 'engine', 'model']);
+  assert.deepEqual(imports('script.js'), ['engine', 'model'], 'script.js cannot ask the model for geometry beyond units, and never imports challenges or persist');
+  assert.deepEqual(imports('main.js'), ['analytics', 'challenges', 'engine', 'input', 'persist', 'render', 'script']);
   assert.ok(/from '\.\.\/science-guided\/components\.js'/.test(src['main.js']), 'the shared cards come from the shared layer');
-  for (const f of ['model.js', 'engine.js', 'input.js', 'render.js', 'script.js']) assert.ok(!/science-guided/.test(src[f]), `${f} does not reach into the shared layer`);
+  for (const f of jsFiles.filter((n) => n !== 'main.js')) assert.ok(!/science-guided/.test(src[f]), `${f} does not reach into the shared layer`);
   const cjk = /[㐀-鿿]/;
-  for (const f of ['model.js', 'engine.js', 'input.js', 'render.js', 'main.js']) assert.ok(!cjk.test(src[f]), `${f} holds no learner wording; only script.js does`);
+  for (const f of jsFiles.filter((n) => n !== 'script.js')) assert.ok(!cjk.test(src[f].replace(/（|）/g, '')), `${f} holds no learner wording; only script.js does`);
   assert.ok(cjk.test(src['script.js']));
-  for (const f of ['model.js', 'engine.js', 'script.js']) assert.ok(!/\bdocument\b|\bwindow\b|innerHTML/.test(src[f]), `${f} reaches no page`);
+  for (const f of ['model.js', 'engine.js', 'script.js', 'challenges.js', 'persist.js']) assert.ok(!/\bdocument\b|\bwindow\b|innerHTML/.test(src[f]), `${f} reaches no page`);
+  assert.ok(!/analytics/i.test(src['persist.js']) && !/analytics/i.test(src['script.js']) && !/analytics/i.test(src['engine.js']), 'only analytics.js and main.js know about usage events');
   assert.ok(!/innerHTML/.test(src['render.js'] + src['main.js'] + src['input.js']), 'no markup strings');
   assert.ok(!/specimenToScreen|stageDeltaForScreenFraction|fieldRadiusWorld/.test(src['main.js'] + src['script.js']), 'geometry stays in the model');
   assert.ok(!/addEventListener\(\s*'pointer/.test(src['main.js']), 'main.js has no pointer logic');
@@ -96,17 +113,17 @@ test('main.js: one announcer, one live region, the shared focus handoff, no copy
   const main = code(read(`${JS_DIR}/main.js`));
   assert.equal((main.match(/createAnnouncer\(/g) ?? []).length, 1);
   assert.ok(/focusHandoff\(/.test(main));
-  for (const name of ['createActionBar', 'renderStepNav', 'renderCoachCard', 'renderStatusBar', 'renderDataCard', 'renderEvidenceCard', 'renderCompareCard', 'renderConceptReveal']) {
+  for (const name of ['createActionBar', 'renderStepNav', 'renderCoachCard', 'renderStatusBar', 'renderDataCard', 'renderEvidenceCard', 'renderCompareCard', 'renderConceptReveal', 'renderCompletionCard', 'createNotebook', 'createChallengeCard']) {
     assert.ok(main.includes(name), `main.js uses the shared ${name}`);
   }
   assert.ok(!/GuidedLabShell|ExperimentBenchShell/.test(main));
   assert.ok(!/aria-live|setAttribute\('role'/.test(main), 'the page adds no second live region');
 });
 
-test('the global test chain runs the six microscope gates in order, before the math tests', () => {
+test('the global test chain runs the nine microscope gates in order, before the math tests', () => {
   const chain = JSON.parse(read('scripts/package.json')).scripts.test;
   let at = -1;
-  for (const n of ['model', 'engine', 'render', 'input', 'script', 'site']) {
+  for (const n of ['model', 'engine', 'render', 'input', 'script', 'site', 'challenges', 'persist', 'analytics']) {
     const g = `test_microscope_guided_${n}.mjs`;
     assert.ok(fs.existsSync(path.join(root, 'scripts', g)), `${g} exists`);
     const i = chain.indexOf(`node ${g}`);
@@ -114,7 +131,7 @@ test('the global test chain runs the six microscope gates in order, before the m
     at = i;
   }
   assert.ok(at < chain.indexOf('node test_math_drills.mjs'));
-  assert.equal((chain.match(/test_microscope_guided_/g) ?? []).length, 6, 'six, and each once');
+  assert.equal((chain.match(/test_microscope_guided_/g) ?? []).length, 9, 'nine, and each once');
 });
 
 console.log(`\nmicroscope-guided site: ${tests} tests passed`);

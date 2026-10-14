@@ -6,7 +6,7 @@
 // view. The pattern is for the learner to find in the Compare cards; the formal explanation lives in CONCEPT_TEXT and
 // conceptModel(), which refuses to answer before the concept phase.
 import { OBJECTIVES, FIELD_NUMBER_MM, STAGE_GAIN, WORLD_DIAMETER_4X, FOV_MM_AT_4X, VIEW_CENTER, fieldDiameterMm, objectiveScale } from './model.js';
-import { deriveTrial1Observation, observeMagnification, recordVisibleIds, compareView } from './engine.js';
+import { deriveTrial1Observation, observeMagnification, recordVisibleIds, compareView, notebookIsReady, challengeSolved } from './engine.js';
 
 const deepFreeze = (o) => {
   for (const v of Object.values(o)) if (v && typeof v === 'object') deepFreeze(v);
@@ -43,6 +43,11 @@ export const MESSAGES = deepFreeze({
   'compare-magnification': { main: '對照 4× 和 40× 兩次的紀錄。', sub: '同一片玻片、同樣的位置，換了物鏡以後看到什麼？' },
   'compare-magnification-done': { main: '你從自己的紀錄找到了關係。', sub: '下一步，把你的發現和正式的說法接起來。' },
   concept: { main: '現在把你的發現和正式的說法接起來。', sub: '每一張卡片旁邊，都是你自己的紀錄。' },
+  notebook: { main: '把你的發現整理進研究手冊。', sub: '選一種你喜歡的方式完成。' },
+  'challenge-1': { main: '用你學到的，解決新的情境。', sub: '想一想你剛才的實驗紀錄。' },
+  'challenge-2': { main: '再來一題：想像換物鏡會看到什麼。', sub: '這題不用操作，用你的紀錄想一想。' },
+  'challenge-3': { main: '最後一題：想一想實際使用時會遇到的情況。', sub: '選出最合理的下一步。' },
+  complete: { main: '你完成了這一站。', sub: '看看你今天做到了什麼。' },
 });
 
 export const TEXT = deepFreeze({
@@ -56,7 +61,9 @@ export const TEXT = deepFreeze({
     recordHorizontal: '記錄橫向結果', recordVertical: '記錄縱向結果', toTrial2: '繼續倍率實驗',
     recordLow: '記錄低倍結果', recordHigh: '記錄高倍結果', toConcept: '看看這代表什麼',
   },
-  pending: '這一站接下來的研究手冊與挑戰題還在準備中。',
+  storage: { saved: '進度只儲存在這台瀏覽器。', restored: '已接續你上次做到的地方。進度只儲存在這台瀏覽器。', failed: '這台裝置不能儲存進度。' },
+  restart: { label: '清除我的紀錄並重新開始', confirm: '清除這台瀏覽器上的紀錄並重新開始？' },
+  privacyNote: '匿名使用事件不含研究手冊文字、作答內容或學生姓名。',
   dataStates: { changed: '（剛換）' },
   controls: {
     group: '玻片微調', objectiveGroup: '物鏡倍率', objective: (o) => `${o}× 物鏡`,
@@ -79,6 +86,102 @@ export const TEXT = deepFreeze({
     record: { horizontal: '已記錄橫向結果', vertical: '已記錄縱向結果', low: '已記錄低倍結果', high: '已記錄高倍結果' },
     compareDone: '這一題答對了，兩題都完成了。', concept: '概念整理',
   },
+});
+
+/** Words for the notebook, the challenges and the finish: all after the concept, so the formal names are fair game here. */
+export const LATE_TEXT = deepFreeze({
+  cta: { notebook: '整理我的研究手冊', challenge: '進入挑戰題', nextChallenge: '下一個挑戰', finish: '看看我完成了什麼' },
+  notebook: {
+    title: '我的研究手冊',
+    evidenceHeading: '你的方向實驗',
+    levelsLegend: '選一種方式來完成',
+    levels: [
+      { id: 'A', title: '幫我整理', desc: '選出你剛才發現的關係。' },
+      { id: 'B', title: '我自己說', desc: '用自己的話寫下來。' },
+      { id: 'C', title: '我能提出證據', desc: '寫出你的證據，也想想哪裡不夠完整。' },
+    ],
+    levelA: {
+      directionOptions: [['left', '左邊'], ['right', '右邊'], ['still', '不會動']],
+      rangeLegend: '換成較高倍率後，看到的範圍變……',
+      rangeOptions: [['smaller', '變小'], ['larger', '變大'], ['same', '一樣']],
+      nudge: '再對照一下你的實驗紀錄。',
+      ready: '你的研究手冊已經整理好了。',
+    },
+    levelB: { prompt: '用你的實驗紀錄，說明你發現的兩個規律。', placeholder: '我移動玻片時……；換成較高倍率後……', help: '至少寫幾個字，就可以繼續。' },
+    levelC: {
+      q1: '你用哪些觀察支持這兩個結論？',
+      q2: '這次實驗還有哪些事情不能只靠這些資料判斷？',
+      help: '兩欄都至少寫幾個字，就可以繼續。',
+      ideasHeading: '想不到的話，可以對照看看：',
+      ideas: ['只測過水平與垂直各一次。', '倍率只比較 4× 和 40×。', '使用的是教學記號，不是真實細胞。'],
+    },
+    given: { magnification: (lowN, highN) => `4× 時看到 ${lowN} 個記號；40× 時看到 ${highN} 個記號。` },
+  },
+  challenge: {
+    titlePrefix: '挑戰 ', count: '／3',
+    items: {
+      1: {
+        title: '把左上角的目標帶回中央',
+        scenario: '視野中的目標現在在左上角。',
+        generic: '先想想你在方向實驗中，玻片和影像各往哪邊移。',
+        steps: {
+          'c1-direction': {
+            question: '要讓影像往右下回到中央，玻片應該往哪裡移？',
+            options: [['right-up', '往右上'], ['left-up', '往左上'], ['right-down', '往右下'], ['left-down', '往左下']],
+            success: '玻片往左上移，影像就往右下移，目標回到中央。',
+            hint: '回想你的橫向和縱向紀錄：玻片往一個方向移時，影像是往同一邊，還是往另一邊？左右和上下各想一次。',
+          },
+        },
+      },
+      2: {
+        title: '高倍下少了誰？',
+        scenario: '4× 時你看得到 A、B、C，而且 B 在中央。現在換成 40×。',
+        generic: '回頭看看你的 4× 和 40× 紀錄：視野直徑和看得到的記號各是多少？',
+        steps: {
+          'c2-view': {
+            question: '最可能看到什麼？',
+            options: [['all-larger', 'A、B、C 都還在，只是全部變大'], ['only-b-larger', '主要只看到 B，而且 B 看起來更大'], ['all-smaller', 'A、B、C 都還在，只是全部變小'], ['more-marks', '看到更多記號']],
+            success: '對，40× 時 B 還在中央，A、C 已經不在視野裡，B 看起來更大。',
+            hint: '你的紀錄裡，40× 的視野直徑只有 4× 的十分之一，而 A 和 C 離 B 很遠。',
+          },
+          'c2-claim': {
+            question: '這個結果最支持哪個說法？',
+            options: [['slide-moved', '換物鏡時玻片自己移動了'], ['marks-shrunk', 'A 和 C 在換物鏡時縮小不見了'], ['smaller-field', '倍率提高時，一次能看到的範圍較小'], ['brighter', '高倍的視野比較亮，所以看得比較清楚']],
+            success: '對，倍率提高時，一次能看到的範圍較小，所以離中央較遠的記號就看不到了。',
+            hint: '想想你的紀錄：玻片沒有移動，變的是物鏡倍率；視野直徑也跟著變了。',
+          },
+        },
+      },
+      3: {
+        title: '高倍找不到目標怎麼辦？',
+        scenario: '你在低倍看到目標，但換成高倍後，目標不見了。',
+        generic: '想想高倍時一次能看到的範圍有多大，目標為什麼會不見？',
+        steps: {
+          'c3-strategy': {
+            question: '下一步最合理怎麼做？',
+            options: [['high-random', '留在高倍隨意大幅移動玻片'], ['higher-mag', '繼續提高倍率'], ['low-recentre', '回低倍找到目標並重新置中，再換高倍'], ['brightest', '只把照明調到最亮']],
+            success: '先回低倍找到目標並置中，再換高倍，目標就不容易跑出視野。',
+            hint: '你的紀錄裡，40× 的視野直徑只有 4× 的十分之一。在這麼小的範圍裡找目標，哪個做法比較容易成功？',
+          },
+        },
+        note: { label: '用自己的話說說看：為什麼先回低倍並置中比較好？（可以不寫）', placeholder: '因為低倍時……' },
+      },
+    },
+  },
+  complete: {
+    heading: '這一站完成了',
+    claims: [
+      '我用橫向和縱向移動紀錄比較了玻片與影像的方向。',
+      '我比較了 4× 和 40× 的視野與可見記號。',
+      '我能用低倍先定位、置中，再進入高倍觀察。',
+    ],
+    link: { href: '../microscope-lab.html', label: '自由探索／完整顯微鏡' },
+    conclusionIntro: '我的結論：',
+    relationA: (slide, image, range) => `玻片往${slide}移時，視野中的影像往${image}移；換成較高倍率後，看到的範圍${range}。`,
+    range: { smaller: '變小', larger: '變大', same: '沒有改變' },
+    side: { left: '左', right: '右' },
+  },
+  announce: { complete: '這一站完成了。', notebook: '研究手冊', challenge: (n) => `挑戰 ${n}` },
 });
 
 const COMPARE1 = deepFreeze({
@@ -147,7 +250,10 @@ export function screenFor(state) {
   if (p === 'welcome' || p === 'mission') return { id: 'welcome', headingId: 'mg-welcome-title', arrival: ['#mg-welcome-title'], focusTargets: ['#mg-cta', '#mg-welcome-title'] };
   if (BENCH_PHASES.has(p)) return { id: 'bench', headingId: 'mg-heading', arrival: ['[data-role="stage-surface"]'], focusTargets: ['[data-role="stage-surface"]', '[data-mg-objective]', '#mg-cta', '#mg-heading'] };
   if (COMPARE_PHASES.has(p)) return { id: 'compare', headingId: 'mg-compare-title', arrival: ['#mg-compare-title'], focusTargets: ['[data-compare]', '#mg-cta', '#mg-compare-title'] };
-  return { id: 'concept', headingId: 'mg-concept-title', arrival: ['#mg-concept-title'], focusTargets: ['#mg-cta', '#mg-concept-title'] };
+  if (p === 'concept') return { id: 'concept', headingId: 'mg-concept-title', arrival: ['#mg-concept-title'], focusTargets: ['#mg-cta', '#mg-concept-title'] };
+  if (p === 'notebook') return { id: 'notebook', headingId: 'mg-notebook-title', arrival: ['#mg-notebook-title'], focusTargets: ['input[data-level]', '#mg-cta', '#mg-notebook-title'] };
+  if (p === 'complete') return { id: 'complete', headingId: 'mg-complete-title', arrival: ['#mg-complete-title'], focusTargets: ['#mg-cta', '#mg-complete-title'] };
+  return { id: 'challenge', headingId: 'mg-challenge-title', arrival: ['#mg-challenge-title'], focusTargets: ['button[data-option]', '#mg-cta', '#mg-challenge-title'] };
 }
 export const stepFor = (state) => (state.phase === 'welcome' || state.phase === 'mission' ? 'mission' : state.phase === 'notebook' ? 'notebook' : /^challenge-|^complete$/.test(state.phase) ? 'challenge' : 'experiment');
 export const stepNavModel = (state) => ({ steps: STEPS, currentStep: stepFor(state) });
@@ -170,7 +276,13 @@ export function ctaFor(state) {
     case 'trial2-high': case 'trial2-high-complete': return done(c.recordHigh, p.endsWith('complete'));
     case 'compare-direction': return { label: c.toTrial2, action: { type: 'CONTINUE' }, enabled: compareView(state).directionCorrect };
     case 'compare-magnification': return { label: c.toConcept, action: { type: 'CONTINUE' }, enabled: compareView(state).magnificationCorrect };
-    default: return null;   // the concept is where this prototype stops for now
+    case 'concept': return { label: LATE_TEXT.cta.notebook, action: { type: 'CONTINUE' }, enabled: true };
+    case 'notebook': return { label: LATE_TEXT.cta.challenge, action: { type: 'CONTINUE' }, enabled: notebookIsReady(state) };
+    case 'challenge-1': case 'challenge-2': case 'challenge-3': {
+      const solved = challengeSolved(state, Number(p.slice(-1)));
+      return { label: p === 'challenge-3' ? LATE_TEXT.cta.finish : LATE_TEXT.cta.nextChallenge, action: { type: 'CONTINUE' }, enabled: solved };
+    }
+    default: return null;   // the finish has nowhere further to go
   }
 }
 
@@ -216,7 +328,7 @@ function coachKeyFor(state, view) {
   if (p === 'compare-direction') return compareView(state).directionCorrect ? 'compare-direction-done' : p;
   if (p === 'compare-magnification') return compareView(state).magnificationCorrect ? 'compare-magnification-done' : p;
   if (p === 'trial2-high' && state.objective !== OBJECTIVES[0] && !view.target.visible) return 'trial2-high-lost';
-  return CONCEPT_PHASES.has(p) ? 'concept' : p;
+  return p;
 }
 
 /** previous coach (or null) and the context of an accepted action -> the coach for the new state. Pure. */
@@ -368,6 +480,105 @@ export function conceptModel(state) {
   };
 }
 
+// ---- notebook, challenges, finish ---------------------------------------------------------------------------------------
+
+const wroteAnything = (text) => typeof text === 'string' && text.trim().length > 0;
+const SLIDE_WORD = { x: (v) => (v >= 0 ? '右' : '左') };
+
+/** The table the notebook keeps beside the learner: the direction comparison (the multi-step idea is the less obvious one). */
+function directionTable(state) {
+  const h = trial1Facts(state.records.horizontal), t = trial1Facts(state.records.vertical);
+  if (!h || !t) return null;
+  return {
+    independentVariable: { label: '移動方向', from: '水平', to: '垂直' },
+    controlledVariables: [{ label: '物鏡', value: '都是 4×' }, { label: '觀察目標', value: '都是字母 e' }],
+    observedResponse: [{ label: '玻片位移', first: h.slide, second: t.slide }, { label: '視野中的 e', first: h.image, second: t.image }],
+  };
+}
+
+/** The notebook. Its `given` lines are the learner's own numbers; the stems name the direction the learner actually moved the slide. */
+export function notebookModel(state) {
+  if (state.phase !== 'notebook') return null;
+  const table = directionTable(state), o = observeMagnification(state.records), h = deriveTrial1Observation(state.records.horizontal);
+  if (!table || !o || !h) return null;
+  const N = LATE_TEXT.notebook, A = N.levelA, c = state.conclusion, hf = trial1Facts(state.records.horizontal);
+  const ready = notebookIsReady(state);
+  const slide = SLIDE_WORD.x(h.stageDelta.x);
+  const both = c.relationDirection !== null && c.relationRange !== null;
+  return {
+    heading: N.title,
+    evidenceHeading: N.evidenceHeading,
+    evidenceSummary: table,
+    levelsLegend: N.levelsLegend,
+    levels: N.levels.map((l) => ({ ...l })),
+    selectedLevel: c.level,
+    levelA: {
+      given: [`橫向實驗中，我把玻片${hf.slide}，視野中的 e ${hf.image}。`, N.given.magnification(o.lowIds.length, o.highIds.length)],
+      stems: [
+        { id: 'relationDirection', legend: `我把玻片往${slide}移時，視野中的影像往……`, options: A.directionOptions.map(([value, label]) => ({ value, label })), selectedValue: c.relationDirection },
+        { id: 'relationRange', legend: A.rangeLegend, options: A.rangeOptions.map(([value, label]) => ({ value, label })), selectedValue: c.relationRange },
+      ],
+      nudge: both && !ready ? A.nudge : null,
+    },
+    levelB: { prompt: N.levelB.prompt, placeholder: N.levelB.placeholder, help: N.levelB.help, value: c.freeText },
+    levelC: {
+      q1: { label: N.levelC.q1, value: c.evidenceText },
+      q2: { label: N.levelC.q2, value: c.limitationText },
+      help: N.levelC.help,
+      ideasHeading: N.levelC.ideasHeading,
+      ideas: [...N.levelC.ideas],
+      showIdeas: wroteAnything(c.limitationText),
+    },
+    ready,
+    readyNote: ready ? A.ready : null,
+  };
+}
+
+const HINT_FROM_ATTEMPT = 2;
+/** What a step says about the learner's tries so far: nothing, a confirmation, a generic nudge, or (from the second try) the step's hint. */
+function challengeFeedback(challengeId, stepId, { correct, attempts }) {
+  const item = LATE_TEXT.challenge.items[challengeId] ?? unknown('challenge', challengeId), step = item.steps[stepId] ?? unknown('challenge step', stepId);
+  if (correct) return { kind: 'success', text: step.success };
+  if (attempts < 1) return null;
+  return attempts < HINT_FROM_ATTEMPT ? { kind: 'nudge', text: item.generic } : { kind: 'hint', text: step.hint };
+}
+
+/** One challenge: its scenario, and each step with what the engine says about it (unlocked, choice, attempts, solved). No answer. */
+export function challengeModel(state, view) {
+  if (!view.challenge) return null;
+  const id = Number(state.phase.slice(-1)), C = LATE_TEXT.challenge, item = C.items[id];
+  const model = {
+    id,
+    title: `${C.titlePrefix}${id}${C.count}：${item.title}`,
+    scenario: item.scenario,
+    count: 3,
+    steps: view.challenge.steps.map((step) => ({
+      id: step.id,
+      question: item.steps[step.id].question,
+      options: item.steps[step.id].options.map(([value, label]) => ({ value, label })),
+      unlocked: step.unlocked,
+      choice: step.choice,
+      attempts: step.attempts,
+      correct: step.correct,
+      feedback: challengeFeedback(id, step.id, step),
+    })),
+    allCorrect: view.challenge.allCorrect,
+  };
+  if (item.note && view.challenge.allCorrect) model.note = { label: item.note.label, placeholder: item.note.placeholder, text: state.challenges[id].note ?? '' };
+  return model;
+}
+
+/** The finish: three claims about what the learner did, and the learner's own conclusion in the level they chose. */
+export function completeModel(state) {
+  if (state.phase !== 'complete') return null;
+  const C = LATE_TEXT.complete, c = state.conclusion, h = deriveTrial1Observation(state.records.horizontal);
+  let conclusion = [];
+  if (c.level === 'A' && h) conclusion = [C.relationA(SLIDE_WORD.x(h.stageDelta.x), C.side[c.relationDirection] ?? '', C.range[c.relationRange] ?? '')];
+  else if (c.level === 'B') conclusion = [c.freeText];
+  else if (c.level === 'C') conclusion = [c.evidenceText, c.limitationText];
+  return { heading: C.heading, claims: [...C.claims], conclusionIntro: conclusion.length ? C.conclusionIntro : null, conclusion, link: { ...C.link } };
+}
+
 // ---- labels for the bench, and what is announced ---------------------------------------------------------------------
 
 export function eyepieceLabel(state, view) {
@@ -391,7 +602,21 @@ export function announcementFor({ result, prevState, prevView, state, view, acti
     if (complete.phase === 'trial2-high') return say('seen', a.highSeen);
     return say('centered', state.phase.startsWith('trial1') ? a.centeredE : a.centeredB);
   }
+  const answered = result.events.find((e) => e.type === 'challenge-answered');
+  if (answered) {
+    const fb = challengeFeedback(answered.challengeId, answered.step, answered);
+    return say('challenge-answer', fb.text);
+  }
+  if (result.transitions.some((t) => t.to === 'complete')) return say('complete', LATE_TEXT.announce.complete);
+  const entered = result.transitions.map((t) => t.to).find((to) => /^challenge-[123]$/.test(to));
+  if (entered) return say('challenge', LATE_TEXT.announce.challenge(entered.slice(-1)));
+  if (result.transitions.some((t) => t.to === 'notebook')) return say('notebook', LATE_TEXT.announce.notebook);
   if (result.transitions.some((t) => t.to === 'concept')) return say('concept', a.concept);
+  if (action?.type === 'SAVE_CONCLUSION' && state.phase === 'notebook' && ('relationDirection' in action.fields || 'relationRange' in action.fields)) {
+    const c = state.conclusion;
+    if (c.relationDirection === null || c.relationRange === null) return null;
+    return say('notebook-relations', view.notebook.ready ? LATE_TEXT.notebook.levelA.ready : LATE_TEXT.notebook.levelA.nudge);
+  }
   if (action?.type === 'ANSWER_COMPARE') {
     const m = compareModel(state), q = m?.questions.find((x) => x.id === action.question);
     if (!q?.feedback) return null;
