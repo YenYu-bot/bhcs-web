@@ -180,6 +180,62 @@
   [data-abg-concept-body] > .sg-concept-card:nth-child(n+4) { grid-column: 1 / -1; }
 }
 
+/* notebook, challenges, finish (shared Notebook / ChallengeCard / CompletionCard markup) */
+.sg-notice { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid var(--abg-blue); border-radius: 0 8px 8px 0; background: var(--abg-blue-soft); }
+.sg-notice[data-kind="ok"] { border-color: var(--abg-ok); background: var(--abg-ok-soft); color: var(--abg-ok); font-weight: 600; }
+.sg-nb-evidence { margin: 0 0 16px; }
+.sg-levels { margin: 0 0 16px; padding: 0; border: 0; min-width: 0; }
+.sg-levels legend { padding: 0; margin: 0 0 8px; font-weight: 700; }
+.sg-level-pill { align-items: flex-start; flex: 1 1 100%; }
+.sg-level-pill > span { display: flex; flex-direction: column; gap: 2px; }
+.sg-level-desc { color: #4a5a68; font-size: .9rem; }
+.sg-panel { margin: 0 0 12px; padding: 14px 16px; border: 1px solid var(--abg-line); border-radius: 10px; background: #F9FBFD; }
+.sg-panel[hidden], .sg-ideas[hidden], .sg-challenge-note[hidden] { display: none; }
+.sg-panel .sg-question { margin: 12px 0; }
+.sg-given { margin: 0 0 12px; padding-left: 1.2em; }
+.sg-field { display: grid; gap: 6px; margin: 0 0 12px; }
+.sg-field label { font-weight: 700; }
+.sg-field textarea, .sg-challenge-note textarea { width: 100%; box-sizing: border-box; font: inherit; padding: 10px 12px; border: 2px solid var(--abg-line); border-radius: 10px; resize: vertical; min-height: 6em;
+  line-height: 1.6; background: #fff; color: var(--abg-ink); }
+.sg-help { margin: 0; color: var(--abg-ink-soft); font-size: .9rem; }
+.sg-ideas { margin: 0 0 12px; padding: 8px 12px; border-left: 4px solid #B9CBDB; background: #fff; color: var(--abg-ink-soft); font-size: .93rem; }
+.sg-ideas p { margin: 0 0 4px; font-weight: 700; }
+.sg-ideas ul { margin: 0; padding-left: 1.2em; }
+.sg-scenario { margin: 0 0 14px; padding: 10px 14px; border-radius: 10px; background: var(--abg-surface); font-size: 1.05rem; font-weight: 700; line-height: 1.7; }
+.sg-challenge-step { margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--abg-line); border-radius: 10px; background: #fff; }
+.sg-challenge-step[data-solved="true"] { border-color: #8CCBA6; background: #F7FCF9; }
+.sg-step-question { margin: 0 0 8px; font-weight: 700; }
+.sg-option-list { display: grid; gap: 8px; }
+.sg-option { min-height: var(--abg-hit-min); width: 100%; padding: 10px 16px; font: inherit; line-height: 1.6; text-align: left; white-space: normal; overflow-wrap: anywhere; border-radius: 10px;
+  border: 2px solid var(--abg-line); background: #fff; color: inherit; cursor: pointer; }
+.sg-option:hover:not(:disabled) { border-color: var(--abg-ink); background: var(--abg-surface); }
+.sg-option:focus-visible { outline: 3px solid var(--abg-orange); outline-offset: 2px; }
+.sg-option:disabled { cursor: not-allowed; color: #52607a; background: #F2F4F7; border-color: var(--abg-line-soft); }
+.sg-option[aria-pressed="true"] { border-color: var(--abg-ok); background: var(--abg-ok-soft); font-weight: 700; color: var(--abg-ink); }
+.sg-option[aria-pressed="true"]::before { content: "✓ " / ""; color: var(--abg-ok); font-weight: 700; }
+.sg-challenge-note { margin: 14px 0 0; display: grid; gap: 6px; }
+.sg-challenge-note label { font-weight: 700; }
+#abg-complete { border-top: 5px solid var(--abg-ok); }
+#abg-complete h2 { margin: 0 0 10px; font-size: 1.35rem; }
+.sg-complete-conclusion { margin: 0 0 10px; font-weight: 700; color: var(--abg-ok); overflow-wrap: anywhere; white-space: pre-wrap; }
+.sg-claims { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 10px; }
+.sg-claim { padding: 12px 14px; border: 1px solid #B9D9C4; border-radius: 10px; background: var(--abg-ok-soft); font-size: 1.04rem; font-weight: 600; line-height: 1.7; }
+.sg-tick { color: #2f7d4f; font-weight: 700; }
+
+@media (min-width: 768px) {
+  /* the three ways to write the notebook sit side by side, so the choice does not push the work below the fold */
+  .sg-levels .sg-options { flex-wrap: nowrap; }
+  .sg-level-pill { flex: 1 1 0; }
+}
+
+/* saving, restart and privacy */
+.abg-storage-note, .abg-privacy { margin: 8px 0 0; color: var(--abg-ink-soft); font-size: .9rem; }
+.abg-storage-note[hidden] { display: none; }
+.abg-restart-row { margin: 0 0 8px; }
+.abg-link-action { min-height: var(--abg-hit-min); padding: 6px 4px; font: inherit; font-size: .93rem; color: var(--abg-ink-soft); background: none; border: 0; text-decoration: underline; cursor: pointer; }
+.abg-link-action[hidden] { display: none; }
+.abg-privacy { margin: 0 0 6px; }
+
 /* inside the page card the drawing is narrower than on its own: keep the tray strip at least a full touch target */
 #abg-bench-host .abg-strip { min-width: 48px; min-height: 48px; }
 .abg-footer { margin: 16px 0 0; }
@@ -200,6 +256,9 @@
   .sg-compare-table tr[data-kind="changed"] { background: #FFF1E3; border-color: #F0C9A0; box-shadow: inset 4px 0 0 var(--abg-orange); }
   .sg-compare-table tr[data-kind="changed"] th { box-shadow: none; }
   .sg-pill { flex: 1 1 100%; }
+  /* the notebook's A / B / C answers stay on one row: three short options, each still a full touch target */
+  .sg-panel .sg-question .sg-pill { flex: 1 1 0; min-width: 0; justify-content: center; gap: 6px; padding-inline: 6px; white-space: nowrap; }
+  .sg-panel .sg-question .sg-pill input { width: 18px; height: 18px; }
   /* the bench card gives its three columns as much width as it can; the tube buttons keep one line */
   #abg-bench-card { padding: 12px 8px; }
   #abg-bench-host .abg-test { padding: 6px 4px; font-size: .88rem; }

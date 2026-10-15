@@ -6,9 +6,11 @@
 // no answer key in state either: every compare verdict is recomputed from the records, so a saved or forged state can
 // never carry a "correct" flag.
 //
-// B1 implements the lab up to the concept screen. The later phases are named so the order is fixed, but no action
-// reaches them yet: the notebook gate, the challenges and the finish arrive with B4.
-import { DEFAULT_LAYOUT, SAMPLE_IDS, deriveObservation, isIndicatorId, isSampleId } from './model.js';
+// After the concept come the notebook (B4), three text challenges and the finish. The notebook's Level A answer is judged
+// against a mapping rebuilt from the records (expectedNotebookMapping); a challenge step's verdict is judged again from its
+// choice every time it is read (challenges.js), so neither a "ready" nor a "correct" flag is ever trusted from state.
+import { DEFAULT_LAYOUT, KINDS, SAMPLE_IDS, deriveObservation, isIndicatorId, isSampleId } from './model.js';
+import { ATTEMPTS_MAX, TEXT_MAX, challengeProgress, emptyChallenges, judgeChallenge, notebookReady, sanitizeConclusionFields } from './challenges.js';
 
 export const PHASES = Object.freeze([
   'welcome', 'mission', 'trial1', 'compare1', 'trial2', 'compare2',
@@ -44,6 +46,8 @@ export function createInitialState() {
       c2: { distinguishability: null, unchangedSample: null },
     },
     conceptPart: null,
+    conclusion: { level: null, acidicSample: null, neutralSample: null, basicSample: null, freeText: '', evidenceText: '', limitationText: '' },
+    challenges: emptyChallenges(),
   };
 }
 
@@ -119,6 +123,33 @@ export function compareStatus(state) {
   return { c1: judge('c1', expectedCompare1(state)), c2: judge('c2', expectedCompare2(state)) };
 }
 
+/**
+ * Which cup shows each class's response pattern, rebuilt from both trials' records ({ acidic, neutral, basic } → sample
+ * letter). null until both trials are complete, or if the records do not give exactly one cup per class. This is what the
+ * notebook's Level A is checked against; it is never stored and never shown before the learner answers.
+ */
+export function expectedNotebookMapping(state) {
+  if (!recordSignatures(state)) return null;
+  const kindOf = (id) => {
+    const kinds = [TRIAL_INDICATOR.trial1, TRIAL_INDICATOR.trial2].map((ind) => observationFor(state, id, ind).kind);
+    return kinds[0] === kinds[1] ? kinds[0] : null;
+  };
+  const out = {};
+  for (const kind of KINDS) {
+    const cups = SAMPLE_IDS.filter((id) => kindOf(id) === kind);
+    if (cups.length !== 1) return null;
+    out[kind] = cups[0];
+  }
+  return out;
+}
+
+/** Is the notebook ready to move on? Recomputed every time; never stored. */
+export const notebookIsReady = (state) => notebookReady(state.conclusion, expectedNotebookMapping(state));
+
+const CHALLENGE_PHASE = /^challenge-([123])$/;
+/** The challenge the phase is on (1, 2 or 3), or null. */
+export const challengeIdOf = (phase) => (CHALLENGE_PHASE.test(phase) ? Number(phase.slice(-1)) : null);
+
 // ---- reducer ----------------------------------------------------------------------------------------------------------
 
 const reject = (ctx, reason) => { ctx.accepted = false; ctx.reason = reason; };
@@ -129,6 +160,37 @@ function enter(ctx, phase) {
   if (phase === 'concept') st.conceptPart = 'naming';
   ctx.transitions.push({ from, to: phase });
 }
+
+function saveConclusion(ctx, fields) {
+  const st = ctx.state;
+  if (st.phase !== 'notebook') return reject(ctx, 'wrong-phase');
+  const clean = sanitizeConclusionFields(fields);
+  if (!clean) return reject(ctx, 'invalid');
+  Object.assign(st.conclusion, clean);
+}
+
+function answerChallenge(ctx, action) {
+  const st = ctx.state, id = challengeIdOf(st.phase);
+  if (id === null || id !== action.id) return reject(ctx, 'wrong-phase');
+  const step = challengeProgress(id, st.challenges[id]).steps.find((x) => x.id === action.step);
+  if (!step) return reject(ctx, 'invalid');
+  if (!step.unlocked || step.correct) return reject(ctx, 'locked');       // a later step waits for the one before; a solved step takes no more tries
+  const correct = judgeChallenge(id, action.step, action.choice);
+  if (correct === null) return reject(ctx, 'invalid');
+  const attempts = Math.min(step.attempts + 1, ATTEMPTS_MAX);
+  st.challenges[id].steps[action.step] = { choice: action.choice, attempts, correct };
+  ctx.events.push({ type: 'challenge-answered', challengeId: id, step: action.step, correct, attempts });
+}
+
+function saveChallengeNote(ctx, action) {
+  const st = ctx.state;
+  if (st.phase !== 'challenge-3' || action.id !== 3) return reject(ctx, 'wrong-phase');
+  if (typeof action.text !== 'string') return reject(ctx, 'invalid');
+  if (!challengeProgress(3, st.challenges[3]).allCorrect) return reject(ctx, 'locked');
+  st.challenges[3].note = action.text.slice(0, TEXT_MAX);
+}
+
+const AFTER_CHALLENGE = { 'challenge-1': 'challenge-2', 'challenge-2': 'challenge-3', 'challenge-3': 'complete' };
 
 function dip(ctx, { sampleId, indicatorId }) {
   const st = ctx.state, wanted = TRIAL_INDICATOR[st.phase];
@@ -147,7 +209,11 @@ function cont(ctx) {
     case 'compare1': return compareStatus(st).c1.allCorrect ? enter(ctx, 'trial2') : reject(ctx, 'locked');
     case 'trial2': return trialComplete(st, TRIAL_INDICATOR.trial2) ? enter(ctx, 'compare2') : reject(ctx, 'locked');
     case 'compare2': return compareStatus(st).c2.allCorrect ? enter(ctx, 'concept') : reject(ctx, 'locked');
-    // concept → notebook and everything after it is B4. Until then nothing moves past the concept screen.
+    // The notebook opens only after the learner has asked for pH: the naming part alone does not move on.
+    case 'concept': return st.conceptPart === 'ph' ? enter(ctx, 'notebook') : reject(ctx, 'locked');
+    case 'notebook': return notebookIsReady(st) ? enter(ctx, 'challenge-1') : reject(ctx, 'locked');
+    case 'challenge-1': case 'challenge-2': case 'challenge-3':
+      return challengeProgress(challengeIdOf(st.phase), st.challenges[challengeIdOf(st.phase)]).allCorrect ? enter(ctx, AFTER_CHALLENGE[st.phase]) : reject(ctx, 'locked');
     default: return reject(ctx, 'wrong-phase');
   }
 }
@@ -176,6 +242,9 @@ export function reduce(prev, action) {
       else if (st.conceptPart !== 'naming') reject(ctx, 'already-revealed');
       else st.conceptPart = 'ph';
       break;
+    case 'SAVE_CONCLUSION': saveConclusion(ctx, action.fields); break;
+    case 'ANSWER_CHALLENGE': answerChallenge(ctx, action); break;
+    case 'SAVE_CHALLENGE_NOTE': saveChallengeNote(ctx, action); break;
     case 'CONTINUE': cont(ctx); break;
     default: reject(ctx, 'unknown-action');
   }

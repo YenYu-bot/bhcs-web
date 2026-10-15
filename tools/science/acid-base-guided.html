@@ -10,8 +10,9 @@
 <link rel="icon" href="../../assets/favicon.png">
 <link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
 <link rel="stylesheet" href="../../assets/acid-base-guided/acid-base-guided.css">
+<script src="../../assets/science-events.js" defer></script>
 </head>
-<body class="acid-base-guided">
+<body class="acid-base-guided" data-science-lab="acid-base-guided">
 <a class="abg-skip" href="#main">跳到主要內容</a>
 <div class="abg-wrap">
   <header><h1 class="abg-h1" id="abg-heading" tabindex="-1"></h1></header>
@@ -49,8 +50,21 @@
           <h2 id="abg-concept-title" tabindex="-1"></h2>
           <div data-abg-concept-body></div>
         </section>
+        <section class="abg-card" id="abg-notebook" aria-labelledby="abg-notebook-title" hidden>
+          <h2 id="abg-notebook-title" tabindex="-1"></h2>
+          <div data-abg-notebook-body></div>
+        </section>
+        <section class="abg-card" id="abg-challenge" aria-labelledby="abg-challenge-title" hidden>
+          <h2 id="abg-challenge-title" tabindex="-1"></h2>
+          <div data-abg-challenge-body></div>
+        </section>
+        <section class="abg-card" id="abg-complete" aria-labelledby="abg-complete-title" hidden>
+          <h2 id="abg-complete-title" tabindex="-1"></h2>
+          <div data-abg-complete-body></div>
+        </section>
         <div class="abg-status" id="abg-status" data-kind="neutral" hidden><span class="abg-status-icon" data-abg-status-icon aria-hidden="true"></span><span data-abg-status-text></span></div>
         <div class="abg-actions"><button type="button" class="abg-cta" id="abg-cta" hidden></button></div>
+        <p class="abg-storage-note" id="abg-storage-note" hidden></p>
       </div>
       <aside class="abg-side" id="abg-side" hidden>
         <section class="abg-card" id="abg-data" hidden></section>
@@ -60,6 +74,8 @@
     <div class="sg-sr" id="abg-announcer" aria-live="polite" aria-atomic="true"></div>
   </main>
   <footer class="abg-footer">
+    <p class="abg-restart-row"><button type="button" class="abg-link-action" id="abg-restart" hidden></button></p>
+    <p class="abg-privacy" id="abg-privacy-note"></p>
     <p class="abg-prototype-note" id="abg-prototype-note"></p>
   </footer>
 </div>

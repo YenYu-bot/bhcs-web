@@ -1,4 +1,4 @@
-// B3 gate (static): the guided acid–base prototype is a hand-written, unlisted page that leaves every existing contract
+// B3/B4 gate (static): the guided acid–base prototype is a hand-written, unlisted page that leaves every existing contract
 // alone. Run on its own: node scripts/test_acid_base_guided_site.mjs
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -41,15 +41,15 @@ test('the legacy lab and the prototype do not link to each other', () => {
   assert.ok(!html.includes('acid-base-indicator-lab'), 'the prototype does not link to the legacy lab yet');
 });
 
-test('page shape: hand-written; shared then station CSS; one module; no inline JS, CDN or external runtime; one h1, main and live region', () => {
+test('page shape: hand-written; shared then station CSS; the analytics adapter then the module; no inline JS or CDN; one h1, main and live region', () => {
   assert.ok(!html.includes('science-self-study') && !html.includes('lab-config'), 'not a builder-generated lab page');
   assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((m) => m[1]), ['../../assets/science-guided/science-guided.css', '../../assets/acid-base-guided/acid-base-guided.css']);
-  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]), ['../../assets/acid-base-guided/main.js']);
+  assert.deepEqual([...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]), ['../../assets/science-events.js', '../../assets/acid-base-guided/main.js']);
+  assert.match(html, /<script src="\.\.\/\.\.\/assets\/science-events\.js" defer><\/script>/);
   assert.match(html, /<script type="module" src="\.\.\/\.\.\/assets\/acid-base-guided\/main\.js"><\/script>/);
   assert.ok(!/<script>|<script type="text\/javascript">|\son[a-z]+="/.test(html), 'no inline script or handler');
-  assert.ok(!html.includes('science-events.js'), 'no analytics adapter in this stage');
   assert.ok(!/researcher-lab|site\.js/.test(html), 'no legacy shell');
-  assert.match(html, /<body class="acid-base-guided">/);
+  assert.match(html, /<body class="acid-base-guided" data-science-lab="acid-base-guided">/);
   assert.equal((html.match(/<h1[ >]/g) ?? []).length, 1);
   assert.equal((html.match(/<main[ >]/g) ?? []).length, 1);
   assert.equal((html.match(/aria-live=/g) ?? []).length, 1);
@@ -66,18 +66,39 @@ test('the title and description name nothing the learner should find out', () =>
   assert.doesNotMatch(html.replace(/<link rel="canonical"[^>]*>/, '').replace(/acid-base-guided/g, ''), /酸|鹼|中性|pH/, 'the static HTML holds no class name or pH (the URL aside)');
 });
 
-test('B3 only: no notebook, challenge or finish cards; no persistence, analytics or challenge modules', () => {
-  for (const id of ['abg-notebook', 'abg-challenge', 'abg-complete', 'abg-restart', 'abg-storage-note']) assert.ok(!html.includes(`id="${id}"`), `${id} is not in the page yet`);
-  assert.deepEqual(ownJs, ['engine.js', 'input.js', 'main.js', 'model.js', 'render.js', 'script.js']);
+test('B4 cards and footer: notebook, challenge, finish, storage note, restart and privacy note, each once', () => {
+  for (const id of ['abg-notebook', 'abg-notebook-title', 'abg-challenge', 'abg-challenge-title', 'abg-complete', 'abg-complete-title', 'abg-storage-note', 'abg-restart', 'abg-privacy-note']) {
+    assert.equal((html.match(new RegExp(`id="${id}"`, 'g')) ?? []).length, 1, id);
+  }
+  for (const attr of ['data-abg-notebook-body', 'data-abg-challenge-body', 'data-abg-complete-body']) assert.equal((html.match(new RegExp(attr, 'g')) ?? []).length, 1, attr);
+  assert.match(html, /<button type="button" class="abg-link-action" id="abg-restart" hidden><\/button>/);
+  assert.deepEqual(ownJs, ['analytics.js', 'challenges.js', 'engine.js', 'input.js', 'main.js', 'model.js', 'persist.js', 'render.js', 'script.js']);
 });
 
-test('no network, storage, analytics, test hook or debug switch in the shipped code', () => {
+test('no network, test hook or debug switch in the shipped code; only persist.js touches storage, only analytics.js the adapter', () => {
   for (const f of ownJs) {
     const src = code(read(`${DIR}/${f}`));
-    for (const bad of ['fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket', 'localStorage', 'sessionStorage', 'indexedDB', 'document.cookie', 'bhcsScienceTrack', '__abgTest', 'location.search', 'URLSearchParams', 'eval(', 'new Function']) {
+    for (const bad of ['fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket', 'gtag', 'dataLayer', 'sessionStorage', 'indexedDB', 'document.cookie', '__abgTest', 'location.search', 'URLSearchParams', 'eval(', 'new Function']) {
       assert.ok(!src.includes(bad), `${f} uses ${bad}`);
     }
+    if (f !== 'persist.js') assert.ok(!/localStorage|getItem|setItem|removeItem/.test(src), `${f} touches storage`);
+    if (f !== 'analytics.js') assert.ok(!src.includes('bhcsScienceTrack'), `${f} touches the analytics adapter`);
   }
+});
+
+test('responsibility boundaries: pure modules stay pure, the glue owns the DOM', () => {
+  for (const f of ['model.js', 'engine.js', 'challenges.js', 'persist.js', 'analytics.js', 'script.js']) {
+    const src = code(read(`${DIR}/${f}`));
+    assert.ok(!/document\.|querySelector|addEventListener/.test(src), `${f} touches the DOM`);
+  }
+  const imports = (f) => [...read(`${DIR}/${f}`).matchAll(/^import[^'"]*['"]([^'"]+)['"]/gm)].map((m) => m[1]);
+  assert.deepEqual(imports('challenges.js'), ['./model.js']);
+  assert.deepEqual(imports('analytics.js'), []);
+  assert.deepEqual(imports('persist.js').sort(), ['./challenges.js', './engine.js', './model.js']);
+  for (const f of ['challenges.js', 'persist.js', 'analytics.js', 'engine.js']) assert.ok(!/[\u4e00-\u9fff]/.test(code(read(`${DIR}/${f}`))), `${f} holds learner wording`);
+  const main = read(`${DIR}/main.js`);
+  for (const name of ['createStore', 'createTracker', 'analyticsFor', 'createNotebook', 'createChallengeCard', 'renderCompletionCard']) assert.ok(main.includes(name), `main uses ${name}`);
+  assert.match(main, /addEventListener\('pagehide'/); assert.match(main, /visibilitychange/);
 });
 
 test('imports stay inside the station and the shared layer', () => {
@@ -93,8 +114,8 @@ test('imports stay inside the station and the shared layer', () => {
   }
 });
 
-test('layering: B1 and B2 are present and never reach up into the page script or the glue', () => {
-  for (const f of ['model.js', 'engine.js', 'render.js', 'input.js']) {
+test('layering: the lower modules never reach up into the page script or the glue', () => {
+  for (const f of ['model.js', 'engine.js', 'render.js', 'input.js', 'challenges.js', 'persist.js', 'analytics.js']) {
     const src = read(`${DIR}/${f}`);
     assert.ok(!/from '\.\/(script|main)\.js'/.test(src), `${f} imports the page layer`);
     assert.ok(!src.includes('science-guided/components'), `${f} imports the shared cards`);
@@ -106,8 +127,10 @@ test('the browser checks for this station are local only: the workflow does not 
   const wf = read('.github/workflows/researcher-lab-check.yml');
   assert.ok(!wf.includes('acid_base') && !wf.includes('acid-base'), 'not wired into CI until B5');
   const pkg = JSON.parse(read('scripts/package.json')).scripts.test;
-  const order = ['model', 'engine', 'render', 'input', 'script', 'site'].map((n) => pkg.indexOf(`test_acid_base_guided_${n}.mjs`));
+  const names = ['model', 'engine', 'render', 'input', 'script', 'site', 'challenges', 'persist', 'analytics'];
+  const order = names.map((n) => pkg.indexOf(`test_acid_base_guided_${n}.mjs`));
   assert.ok(order.every((i, k) => i > 0 && (k === 0 || i > order[k - 1])), 'the station tests run in order');
+  for (const n of names) assert.equal(pkg.split(`test_acid_base_guided_${n}.mjs`).length, 2, `${n} runs once`);
   assert.ok(order.at(-1) < pkg.indexOf('test_math_drills.mjs'), 'before the math tests');
   assert.ok(!pkg.includes('check_acid_base'), 'browser checks are not part of npm test');
 });

@@ -1,9 +1,12 @@
-// B3 browser gate: the guided acid–base page (Pilot #4) from the welcome screen to the concept screen, in a real browser.
+// B3–B4 browser gate: the guided acid–base page (Pilot #4) from the welcome screen to the finish, in a real browser.
 // Needs Playwright (NODE_PATH pointing at a playwright install). Writes review screenshots to acid-base-flow-artifacts/.
-// B4 and B5 extend this same file to the notebook, challenges, saving and the finish.
 //
 // Desktop 1280: mouse drag, a button and the keyboard in Trial 1; wrong answers that keep each compare locked; Trial 2;
-// the concept naming, then the pH part. Phone 390: touch drag and taps through the same path.
+// the concept naming, then the pH part; the notebook (a wrong Level A mapping, then the right one); three challenges with
+// wrong tries, nudges and hints; the optional note; the finish. Reloads at Challenge 2 and on the finish, and (in a fresh
+// context) after one cup of Trial 1, restore the learner's place and send no milestone again. The saved progress holds no
+// derived field, and every analytics call is a fixed milestone name plus the lab id: 14 of them for the whole lab.
+// Phone 390: touch drag and taps through the same path to the finish.
 // At every step before the concept: no class of liquid and no pH in the visible text, the document title, any
 // aria-label / aria-description / title / alt / placeholder, or anything the live region has said; the concept body is
 // empty (not merely hidden); one live region; no sideways scroll; axe clean.
@@ -27,6 +30,29 @@ const dragPoints = async (p, id) => {
   const box = async (sel) => { const b = await p.locator(sel).boundingBox(); return { x: b.x + b.width / 2, y: b.y + b.height / 2 }; };
   return [await box('[data-role="strip"]'), await box(`[data-drop-sample="${id}"]`)];
 };
+const events = (p) => p.evaluate(() => window.__testScienceEvents.map((e) => [...e]));
+const reload = async (p) => { await p.reload(); await p.waitForFunction(() => document.getElementById('main').dataset.phase); await settle(p); };
+const option = async (p, value, { tap = false } = {}) => { const l = p.locator(`button[data-option="${value}"]:not([disabled])`); await l.scrollIntoViewIfNeeded(); if (tap) await l.tap(); else await l.click(); await settle(p); };
+const relation = async (p, q, value, { tap = false } = {}) => { const l = p.locator(`input[data-relation][data-q="${q}"][value="${value}"]`); await l.scrollIntoViewIfNeeded(); if (tap) await l.tap(); else await l.check(); await settle(p); };
+const stepFeedback = (p, step) => p.evaluate((s) => { const f = document.querySelector(`[data-step-feedback="${s}"]`); return f && !f.hidden ? { kind: f.dataset.kind, text: f.textContent } : null; }, step);
+const saved = (p) => p.evaluate(() => localStorage.getItem('bhcs-acid-base-guided:v1'));
+const FULL_EVENTS = ['lab_start', 'trial_recorded', 'trial_recorded', 'trial_recorded', 'compare_complete', 'trial_recorded', 'trial_recorded', 'trial_recorded',
+  'compare_complete', 'notebook_complete', 'challenge_complete', 'challenge_complete', 'challenge_complete', 'lab_complete'];
+const FORBIDDEN_SAVE_KEYS = ['result', 'resultColor', 'startColor', 'kind', 'ph10', 'correct', 'allCorrect', 'ready', 'expected', 'changed', 'observations'];
+/** Every key anywhere in a parsed save. */
+const keysOf = (v) => (v && typeof v === 'object' ? Object.entries(v).flatMap(([k, x]) => [Array.isArray(v) ? null : k, ...keysOf(x)]).filter(Boolean) : []);
+/** A milestone payload is exactly [name, lab id]; nothing a learner chose or wrote can appear in it. */
+function checkPayload(list, label) {
+  for (const args of list) {
+    assert.equal(args.length, 2, `${label}: ${JSON.stringify(args)}`);
+    assert.match(args[0], /^(lab_start|trial_recorded|compare_complete|notebook_complete|challenge_complete|lab_complete)$/);
+    assert.equal(args[1], 'acid-base-guided');
+  }
+  const text = JSON.stringify(list).replace(/"acid-base-guided"/g, '');
+  for (const bad of ['"A"', '"B"', '"C"', 'blue-litmus', 'red-litmus', 'acidic', 'basic', 'neutral', 'freeText', 'not-enough', 'litmus-pair', 'cannot-rule-out', '因為', '酚酞']) {
+    assert.ok(!text.includes(bad), `${label}: the payload carries ${bad}`);
+  }
+}
 const answer = async (p, q, value, { tap = false } = {}) => { const l = p.locator(`input[data-compare][data-q="${q}"][value="${value}"]`); await l.scrollIntoViewIfNeeded(); if (tap) await l.tap(); else await l.check(); await settle(p); };
 
 /** Everything a learner can read or hear before the concept, as one string per source. */
@@ -188,12 +214,207 @@ async function common(p, label) {
       assert.match(ind, /不能直接當成精密 pH 讀值/);
       assert.match(ind, /酚酞在部分弱鹼性的範圍仍可能保持無色/);
       assert.ok(!/紫甘藍/.test(await txt(p, 'body')));
-      assert.equal(await cta(p), null, 'nothing after the pH part in this stage');
+      assert.deepEqual(await cta(p), { label: '寫研究手冊', enabled: true });
       assert.match(await txt(p, '#abg-status'), /這一階段的觀察與整理已完成/);
       assert.ok((await p.evaluate(() => window.__abgSaid.at(-1))).includes('已顯示 pH'));
       await common(p, 'concept ph'); await shot(p, '1280-concept-ph');
-      ok('concept pH: 25 °C classification, the classification line kept apart from litmus, A/B/C pH from the model, indicators are not pH meters, no next step');
+      ok('concept pH: 25 °C classification, the classification line kept apart from litmus, A/B/C pH from the model, indicators are not pH meters, "寫研究手冊" next');
+      assert.deepEqual((await events(p)).map(([n]) => n), FULL_EVENTS.slice(0, 9), 'the pH reveal sends nothing');
+
+      // ---- notebook ----
+      await p.click('#abg-cta'); await settle(p);
+      assert.equal(await phase(p), 'notebook');
+      assert.equal(await focused(p), '#abg-notebook-title');
+      assert.equal(await txt(p, '#abg-notebook-title'), '我的研究手冊');
+      assert.equal(await p.evaluate(() => document.querySelector('input[data-level][value="A"]').checked), true, 'Level A is open on arrival');
+      assert.equal(await p.evaluate(() => window.__abgTest.getState().conclusion.level), 'A');
+      const nbTable = await p.evaluate(() => ({ heads: [...document.querySelectorAll('#abg-notebook thead th')].map((t) => t.innerText.trim()),
+        rows: [...document.querySelectorAll('#abg-notebook tbody tr')].map((r) => [...r.children].map((c) => c.innerText.trim())) }));
+      assert.deepEqual(nbTable.heads.slice(1), ['藍色石蕊', '紅色石蕊']);
+      assert.deepEqual(nbTable.rows.map((r) => r[0]), ['液體 A', '液體 B', '液體 C']);
+      assert.ok(!/酸|鹼|中性/.test(JSON.stringify(nbTable)), 'the evidence table names no class');
+      const truth = Object.fromEntries(['acidic', 'neutral', 'basic'].map((k) => [k, ['A', 'B', 'C'].find((id) => model.sampleKind(0, id) === k)]));
+      const wrongAcid = ['A', 'B', 'C'].find((id) => id !== truth.acidic);
+      assert.deepEqual(await cta(p), { label: '進入挑戰', enabled: false });
+      await relation(p, 'acidicSample', wrongAcid);
+      await relation(p, 'neutralSample', truth.neutral);
+      assert.equal(await p.locator('[data-nudge]').isHidden(), true, 'no nudge while a choice is missing');
+      await relation(p, 'basicSample', truth.basic);
+      assert.equal(await txt(p, '[data-nudge]'), '再對照兩張試紙的結果組合，不要只看其中一張。');
+      assert.deepEqual(await cta(p), { label: '進入挑戰', enabled: false });
+      await relation(p, 'acidicSample', truth.acidic);
+      assert.equal(await p.locator('[data-nudge]').isHidden(), true);
+      assert.equal(await txt(p, '[data-ready]'), '這份整理和你的六次測試紀錄一致。');
+      assert.deepEqual(await cta(p), { label: '進入挑戰', enabled: true });
+      await common(p, 'notebook A'); await shot(p, '1280-notebook-A');
+      assert.equal((await events(p)).length, 9, 'notebook choices send nothing');
+      ok(`notebook: Level A by default; the evidence table names no class; a wrong mapping is nudged and locked; the records' mapping (${truth.acidic}/${truth.neutral}/${truth.basic}) unlocks it`);
+
+      // ---- challenge 1 ----
+      await p.click('#abg-cta'); await settle(p);
+      assert.equal(await phase(p), 'challenge-1');
+      assert.equal(await focused(p), '#abg-challenge-title');
+      assert.equal(await txt(p, '#abg-challenge-title'), '挑戰 1／3：一杯新的液體');
+      assert.match(await txt(p, '#abg-challenge .sg-scenario'), /未知液體 X：藍色石蕊變紅色，紅色石蕊維持紅色。/);
+      assert.deepEqual(await p.evaluate(() => [...document.querySelectorAll('[data-challenge-step="c1-class"] button')].map((b) => b.textContent)), ['中性', '酸性', '目前證據仍不足', '鹼性']);
+      assert.deepEqual(await cta(p), { label: '下一題挑戰', enabled: false });
+      await option(p, 'neutral');
+      assert.deepEqual(await stepFeedback(p, 'c1-class'), { kind: 'nudge', text: '把兩張試紙的結果當成一組，對照你剛才整理的三種模式。' });
+      await option(p, 'basic');
+      assert.deepEqual(await stepFeedback(p, 'c1-class'), { kind: 'hint', text: '哪一類會讓藍色石蕊變紅，而紅色石蕊仍維持紅色？' });
+      assert.equal((await cta(p)).enabled, false);
+      await option(p, 'acidic');
+      assert.equal((await stepFeedback(p, 'c1-class')).kind, 'success');
+      assert.equal(await p.evaluate(() => [...document.querySelectorAll('[data-challenge-step="c1-class"] button')].every((b) => b.disabled)), true, 'a solved step is locked');
+      assert.deepEqual(await cta(p), { label: '下一題挑戰', enabled: true });
+      const said1 = await p.evaluate(() => window.__abgSaid.slice(-4));
+      assert.ok(said1.includes('挑戰 1。') && said1.some((t) => t.includes('把兩張試紙的結果當成一組')), `announced: ${said1.join(' | ')}`);
+      await common(p, 'challenge 1'); await shot(p, '1280-challenge-1');
+      assert.equal((await events(p)).length, 10, 'challenge answers send nothing');
+      ok('challenge 1: first wrong try → the generic nudge, second → the hint, right → success and the step locks; announced');
+
+      // ---- challenge 2, then reload (case B) ----
+      await p.click('#abg-cta'); await settle(p);
+      assert.equal(await phase(p), 'challenge-2');
+      assert.equal(await p.locator('[data-challenge-step]').count(), 1, 'step 2 is not shown before step 1 is solved');
+      const before = await events(p);
+      assert.deepEqual(before.map(([n]) => n), FULL_EVENTS.slice(0, 11));
+      checkPayload(before, 'before reload B');
+      const stateB = await p.evaluate(() => JSON.stringify(window.__abgTest.getState()));
+      await reload(p);
+      assert.equal(await phase(p), 'challenge-2');
+      assert.deepEqual(await events(p), [], 'a reload sends no milestone again');
+      assert.deepEqual(await p.evaluate(() => window.__abgSaid), [], 'a restore announces nothing');
+      const restoredB = await p.evaluate(() => window.__abgTest.getState());
+      assert.deepEqual(restoredB, JSON.parse(stateB), 'the restored state is the one left');
+      assert.equal(await txt(p, '#abg-storage-note'), '已接續這台瀏覽器先前的進度。');
+      assert.equal(await txt(p, '#abg-challenge-title'), '挑戰 2／3：只測一次夠不夠？');
+      assert.equal(await p.locator('#abg-restart').isVisible(), true);
+      ok('reload at Challenge 2 (case B): back on Challenge 2 with the notebook and Challenge 1 kept; no milestone and no announcement on restore');
+
+      await option(p, 'acidic');
+      assert.deepEqual(await stepFeedback(p, 'c2-enough'), { kind: 'nudge', text: '回想你的第一輪：只用藍色石蕊時，三杯能全部分開嗎？' });
+      assert.equal(await txt(p, '#abg-storage-note'), '進度已儲存在這台瀏覽器。', 'after the first new action the note says saved');
+      await option(p, 'not-enough');
+      assert.equal(await p.locator('[data-challenge-step]').count(), 2, 'step 2 unlocks once step 1 is solved');
+      assert.deepEqual(await p.evaluate(() => [...document.querySelectorAll('[data-challenge-step="c2-next"] button')].map((b) => b.textContent)), ['再重複一次藍色石蕊', '再用紅色石蕊測試', '看它是不是透明', '直接猜一類']);
+      assert.equal((await cta(p)).enabled, false);
+      await option(p, 'red-litmus');
+      assert.deepEqual(await cta(p), { label: '下一題挑戰', enabled: true });
+      await common(p, 'challenge 2'); await shot(p, '1280-challenge-2');
+      ok('challenge 2: one strip is not enough; the next step unlocks only after step 1; red litmus solves it');
+
+      // ---- challenge 3 ----
+      await p.click('#abg-cta'); await settle(p);
+      assert.equal(await phase(p), 'challenge-3');
+      assert.match(await txt(p, '#abg-challenge .sg-scenario'), /未知液體 Z 加入酚酞後仍然無色。有人說：「所以它一定不是鹼性。」/);
+      await option(p, 'never-basic');
+      assert.equal((await stepFeedback(p, 'c3-claim')).kind, 'nudge');
+      await option(p, 'cannot-rule-out-basic');
+      assert.deepEqual(await stepFeedback(p, 'c3-claim'), { kind: 'success', text: '對。不同指示劑有自己的變色範圍，酚酞無色不能排除所有鹼性液體。' });
+      assert.match(await txt(p, '[data-challenge-step="c3-next"]'), /品嚐看看/);
+      assert.equal(await p.locator('[data-note]').isHidden(), true, 'no note before the challenge is solved');
+      await option(p, 'litmus-pair');
+      assert.equal(await p.locator('[data-note]').isVisible(), true);
+      assert.match(await txt(p, '[data-note] label'), /為什麼酚酞無色還不能排除鹼性？（可以不寫）/);
+      assert.equal(await p.locator('[data-note] textarea').getAttribute('placeholder'), '因為酚酞……');
+      await p.locator('[data-note] textarea').fill('因為酚酞有自己的變色範圍');
+      assert.deepEqual(await cta(p), { label: '完成這一站', enabled: true });
+      await common(p, 'challenge 3'); await shot(p, '1280-challenge-3');
+      const saidNote = (await p.evaluate(() => window.__abgSaid.join(' | ')));
+      assert.ok(!saidNote.includes('因為酚酞有自己的變色範圍'), 'the note is never announced');
+      ok('challenge 3: phenolphthalein colourless does not rule out basic; the next test is the litmus pair; the optional note appears after solving');
+
+      // ---- complete ----
+      await p.click('#abg-cta'); await settle(p);
+      assert.equal(await phase(p), 'complete');
+      assert.equal(await p.evaluate(() => window.__abgTest.getState().challenges[3].note), '因為酚酞有自己的變色範圍', 'the note was flushed before moving on');
+      assert.equal(await focused(p), '#abg-complete-title');
+      assert.equal(await txt(p, '#abg-complete-title'), '這一站完成了');
+      assert.deepEqual(await p.evaluate(() => [...document.querySelectorAll('#abg-complete .sg-claim')].map((c) => c.textContent.replace(/^✓\s*/, ''))), [
+        '我用兩種石蕊比較了三杯未知液體的反應模式。', '我能根據兩次觀察，把代表樣品整理成酸性、中性、鹼性。', '我知道指示劑顏色提供的是範圍線索，不等於精密的 pH 讀值。']);
+      assert.equal(await txt(p, '#abg-complete .sg-complete-conclusion'), `我的紀錄中：液體 ${truth.acidic} 對應酸性，液體 ${truth.neutral} 對應中性，液體 ${truth.basic} 對應鹼性。`);
+      assert.equal(await cta(p), null, 'no next button on the finish');
+      assert.equal(await p.locator('#abg-complete a').count(), 0, 'no link from the finish (no legacy link)');
+      assert.equal(await p.locator('#abg-restart').isVisible(), true, 'restart stays available on the finish');
+      assert.equal(await p.evaluate(() => window.__abgSaid.at(-1)), '這一站完成了。');
+      await common(p, 'complete'); await shot(p, '1280-complete');
+      const afterB = await events(p);
+      checkPayload(afterB, 'after reload B');
+      assert.deepEqual([...before, ...afterB].map(([n]) => n), FULL_EVENTS, 'exactly 14 milestones, in order, across the reload');
+      ok('complete: heading, three claims, the Level A sentence from the records, no button, no link; 14 milestones in order, each [name, lab id] only');
+
+      // ---- what is saved ----
+      const raw = await saved(p);
+      const save = JSON.parse(raw);
+      const keys = keysOf(save);
+      for (const k of FORBIDDEN_SAVE_KEYS) assert.ok(!keys.includes(k), `the save holds a ${k} field`);
+      assert.ok(save.records.every((r) => Object.keys(r).sort().join() === 'indicatorId,sampleId'));
+      assert.deepEqual(Object.keys(save.conclusion).sort(), ['acidicSample', 'basicSample', 'evidenceText', 'freeText', 'level', 'limitationText', 'neutralSample']);
+      assert.ok(!/turns-|stays-|"ph"|pH/.test(raw.replace(/"conceptPart":"ph"/, '')), 'no observation, colour or pH value in the save');
+      assert.equal(await p.evaluate(() => Object.keys(localStorage).join()), 'bhcs-acid-base-guided:v1');
+      assert.equal(await p.evaluate(() => sessionStorage.length), 0);
+      ok('the save: records as { sampleId, indicatorId }, answers and the learner\'s words only; no result, colour, kind, pH, correct, ready or mapping');
+
+      // ---- reload on the finish (case C) ----
+      await reload(p);
+      assert.equal(await phase(p), 'complete');
+      assert.deepEqual(await events(p), [], 'no new lab_complete');
+      assert.equal(await txt(p, '#abg-complete-title'), '這一站完成了');
+      assert.equal(await txt(p, '#abg-storage-note'), '已接續這台瀏覽器先前的進度。');
+      await common(p, 'restored complete'); await shot(p, '1280-restored-complete');
+      ok('reload on the finish (case C): the finish again, with no milestone re-sent');
+
+      // ---- restart ----
+      p.once('dialog', (d) => d.dismiss());
+      await p.click('#abg-restart'); await settle(p);
+      assert.equal(await phase(p), 'complete', 'cancelling the confirm changes nothing');
+      assert.ok(await saved(p));
+      let message = null;
+      p.once('dialog', (d) => { message = d.message(); d.accept(); });
+      await Promise.all([p.waitForEvent('load'), p.click('#abg-restart')]);
+      await p.waitForFunction(() => document.getElementById('main').dataset.phase);
+      assert.equal(message, '要清除這一站儲存在本機的進度，從頭開始嗎？');
+      assert.equal(await phase(p), 'welcome');
+      assert.equal(await saved(p), null);
+      assert.equal(await p.locator('#abg-restart').isHidden(), true, 'no restart before the first record');
+      assert.deepEqual(await events(p), []);
+      ok('restart: confirm text; cancel keeps everything; accept clears the save and starts again at the welcome screen');
       await ctx.close();
+    }
+
+    // ---- reload after one cup (case A), and the adapter failing or missing --------------------------------------------
+    {
+      const { ctx, page: p } = await openPage(browser, base, { viewport: { width: 1280, height: 900 }, external, errors });
+      assert.equal(await p.locator('#abg-restart').isHidden(), true);
+      assert.equal(await p.locator('#abg-storage-note').isHidden(), true);
+      assert.equal(await txt(p, '#abg-privacy-note'), '研究手冊與作答只儲存在這台瀏覽器。匿名使用事件不包含研究手冊文字、作答內容或學生姓名。');
+      await p.click('#abg-cta'); await p.click('#abg-cta'); await settle(p);
+      assert.equal(await saved(p), null, 'nothing is saved before the first record');
+      await p.click('[data-dip-sample="B"]'); await settle(p);
+      assert.deepEqual((await events(p)).map(([n]) => n), ['lab_start', 'trial_recorded']);
+      assert.equal(await txt(p, '#abg-storage-note'), '進度已儲存在這台瀏覽器。');
+      assert.equal(await p.locator('#abg-restart').isVisible(), true);
+      await reload(p);
+      assert.equal(await phase(p), 'trial1');
+      assert.deepEqual(await p.evaluate(() => window.__abgTest.getState().records), [{ sampleId: 'B', indicatorId: 'blue-litmus' }]);
+      assert.equal(await p.locator('[data-dip-sample="B"]').isDisabled(), true, 'the tested cup stays tested');
+      assert.deepEqual(await events(p), [], 'no lab_start or trial_recorded again');
+      assert.deepEqual(await p.evaluate(() => window.__abgSaid), [], 'a restore announces nothing');
+      assert.equal(await txt(p, '#abg-storage-note'), '已接續這台瀏覽器先前的進度。');
+      await preConcept(p, 'restored trial1'); await common(p, 'restored trial1');
+      ok('reload after one cup (case A): back in Trial 1 with that cup recorded; nothing re-sent, nothing announced');
+      await ctx.close();
+      for (const adapter of ['throw', 'absent']) {
+        const { ctx: c2, page: q } = await openPage(browser, base, { viewport: { width: 1280, height: 900 }, adapter, external, errors });
+        await q.click('#abg-cta'); await q.click('#abg-cta');
+        for (const id of ['A', 'B', 'C']) { await q.click(`[data-dip-sample="${id}"]`); await settle(q); }
+        await q.click('#abg-cta'); await settle(q);
+        assert.equal(await q.evaluate(() => window.__abgTest.getState().phase), 'compare1', adapter);
+        assert.equal((await q.evaluate(() => window.__testScienceEvents.length)), adapter === 'throw' ? 4 : 0);
+        await c2.close();
+      }
+      ok('a throwing or missing analytics adapter never stops the lab');
     }
 
     // ---- phone 390, touch ----------------------------------------------------------------------------------------------
@@ -239,19 +460,66 @@ async function common(p, label) {
       assert.equal(await p.evaluate(() => window.__abgTest.getState().conceptPart), 'ph');
       await common(p, '390 concept ph'); await shot(p, '390-concept-ph');
       ok('phone: touch drag and taps through both trials and compares to the pH part; layout order, sizes ≥ 44 px, no sideways scroll, axe clean');
+
+      const fits = () => p.evaluate(() => [...document.querySelectorAll('#abg-column *')].filter((e) => e.offsetParent && e.getBoundingClientRect().right > document.documentElement.clientWidth + 1).map((e) => e.tagName + '.' + e.className));
+      await tapCta();
+      assert.equal(await phase(p), 'notebook');
+      const truth = Object.fromEntries(['acidic', 'neutral', 'basic'].map((k) => [k, ['A', 'B', 'C'].find((id) => model.sampleKind(0, id) === k)]));
+      for (const [q, k] of [['acidicSample', 'acidic'], ['neutralSample', 'neutral'], ['basicSample', 'basic']]) await relation(p, q, truth[k], { tap: true });
+      const nbPills = await p.evaluate(() => [...document.querySelectorAll('#abg-notebook .sg-pill')].filter((e) => e.offsetParent).map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; }));
+      assert.ok(nbPills.every(([w, h]) => w >= 44 && h >= 44), `notebook options ${JSON.stringify(nbPills)}`);
+      assert.deepEqual(await fits(), [], 'nothing in the notebook runs past the screen edge');
+      await common(p, '390 notebook'); await shot(p, '390-notebook');
+      // Level C: the two writing boxes are readable on a phone
+      await p.locator('input[data-level][value="C"]').tap(); await settle(p);
+      const boxes = await p.evaluate(() => [...document.querySelectorAll('#abg-notebook textarea')].filter((t) => t.offsetParent).map((t) => ({ w: Math.round(t.getBoundingClientRect().width), font: parseFloat(getComputedStyle(t).fontSize) })));
+      assert.equal(boxes.length, 2);
+      for (const b of boxes) assert.ok(b.w >= 280 && b.font >= 15, `textarea ${JSON.stringify(b)}`);
+      await p.locator('#abg-nb-evidence').fill('液體 B 兩張都變紅或維持紅');
+      await p.locator('#abg-nb-limit').fill('顏色不是精密的 pH 讀值');
+      await p.locator('#abg-nb-limit').blur(); await settle(p);
+      assert.equal(await p.locator('[data-ideas]').isVisible(), true, 'the ideas appear once a limitation is written');
+      assert.deepEqual(await fits(), []);
+      await tapCta();
+      assert.equal(await phase(p), 'challenge-1');
+      await option(p, 'acidic', { tap: true }); await tapCta();
+      await option(p, 'not-enough', { tap: true }); await option(p, 'red-litmus', { tap: true }); await tapCta();
+      await option(p, 'definitely-neutral', { tap: true }); await option(p, 'cannot-rule-out-basic', { tap: true }); await option(p, 'taste', { tap: true });
+      assert.equal((await stepFeedback(p, 'c3-next')).kind, 'nudge');
+      await option(p, 'litmus-pair', { tap: true });
+      const opts = await p.evaluate(() => [...document.querySelectorAll('#abg-challenge button[data-option]')].map((b) => { const r = b.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height), b.scrollWidth <= b.clientWidth + 1]; }));
+      assert.ok(opts.every(([w, h, fit]) => w >= 280 && h >= 44 && fit), `challenge options ${JSON.stringify(opts)}`);
+      assert.deepEqual(await fits(), []);
+      await common(p, '390 challenge 3'); await shot(p, '390-challenge-3');
+      await tapCta();
+      assert.equal(await phase(p), 'complete');
+      assert.deepEqual(await p.evaluate(() => [...document.querySelectorAll('#abg-complete .sg-complete-conclusion')].map((e) => e.textContent)), ['我在研究手冊裡寫下：', '液體 B 兩張都變紅或維持紅', '顏色不是精密的 pH 讀值']);
+      const claims = await p.evaluate(() => [...document.querySelectorAll('#abg-complete .sg-claim')].map((e) => e.scrollWidth <= e.clientWidth + 1 && e.getBoundingClientRect().right <= document.documentElement.clientWidth));
+      assert.deepEqual(claims, [true, true, true], 'the claims are not cut off');
+      const footer = await p.evaluate(() => ['abg-restart', 'abg-privacy-note'].map((id) => { const e = document.getElementById(id), r = e.getBoundingClientRect(); return [id, Math.round(r.height), r.right <= document.documentElement.clientWidth, parseFloat(getComputedStyle(e).fontSize)]; }));
+      for (const [id, h, inside, font] of footer) assert.ok(h >= 20 && inside && font >= 13, `${id} ${h} ${inside} ${font}`);
+      assert.ok(footer[0][1] >= 44, 'the restart button is a full touch target');
+      await common(p, '390 complete'); await shot(p, '390-complete');
+      const phoneEvents = await events(p);
+      checkPayload(phoneEvents, 'phone');
+      assert.deepEqual(phoneEvents.map(([n]) => n), FULL_EVENTS);
+      ok('phone: notebook (Level A taps, Level C writing boxes), three challenges by tap, the finish with the learner\'s Level C words; ≥ 44 px targets, nothing past the edge, axe clean, 14 milestones');
       await ctx.close();
     }
 
-    // ---- the page as shipped: no hook, nothing stored, nothing sent ------------------------------------------------------
+    // ---- the page as shipped: no hook; it saves after the first record and picks up after a reload ----------------------
     {
       const { ctx, page: p } = await openPage(browser, base, { viewport: { width: 1280, height: 900 }, hook: false, external, errors });
       const shipped = await p.evaluate(() => ({ hook: typeof window.__abgTest, local: localStorage.length, session: sessionStorage.length, track: typeof window.bhcsScienceTrack }));
-      assert.deepEqual(shipped, { hook: 'undefined', local: 0, session: 0, track: 'undefined' });
+      assert.deepEqual(shipped, { hook: 'undefined', local: 0, session: 0, track: 'function' });
+      const order = await p.evaluate(() => [...document.scripts].map((s) => s.getAttribute('src')));
+      assert.deepEqual(order, ['../../assets/science-events.js', '../../assets/acid-base-guided/main.js'], 'the adapter loads before the station');
       await p.click('#abg-cta'); await p.click('#abg-cta'); await p.click('[data-dip-sample="A"]'); await settle(p);
-      await p.reload(); await p.waitForFunction(() => !document.getElementById('abg-cta').hidden);
-      assert.equal(await p.evaluate(() => document.getElementById('main').dataset.phase), 'welcome', 'a reload starts again');
-      assert.equal(await p.evaluate(() => localStorage.length + sessionStorage.length), 0);
-      ok('as shipped: no test hook, no storage, no analytics adapter; a reload goes back to the welcome screen');
+      await reload(p);
+      assert.equal(await p.evaluate(() => document.getElementById('main').dataset.phase), 'trial1', 'a reload picks up where the learner was');
+      assert.equal(await p.evaluate(() => sessionStorage.length), 0);
+      assert.deepEqual(await p.evaluate(() => Object.keys(localStorage)), ['bhcs-acid-base-guided:v1']);
+      ok('as shipped: no test hook; the adapter loads first; progress is saved under one key and restored after a reload');
       await ctx.close();
     }
 
