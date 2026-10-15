@@ -3,3 +3,15 @@ __pycache__/
 *.pyc
 math-brand-artifacts/
 math-validation-artifacts/
+
+# Review screenshots written to the repo root by the browser gates (uploaded by CI, never committed)
+/buoyancy-flow-artifacts/
+/buoyancy-view-artifacts/
+/composition-artifacts/
+/microscope-flow-artifacts/
+/microscope-view-artifacts/
+/operation-artifacts/
+/optics-flow-artifacts/
+/optics-view-artifacts/
+/p4-vector-artifacts/
+/site-artifacts/
