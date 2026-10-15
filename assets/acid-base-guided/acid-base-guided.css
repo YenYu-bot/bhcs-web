@@ -1,0 +1,69 @@
+/* Guided unknown-liquid lab (Pilot #4). Station classes use abg-. B2: the bench only (tubes, tray, strips, used strips).
+   Tokens live on the bench itself until the page shell arrives in B3. */
+.abg-bench { --abg-hit-min: 48px; --abg-ink: #16233A; --abg-ink-soft: #43516B; --abg-line: #C9D2DE; --abg-surface: #F2F4F7;
+  --abg-glass: #7C8AA5; --abg-liquid: #DCEBF5; --abg-focus: #E8620C; --abg-drop: #2F6DA8;
+  color: var(--abg-ink); font: 16px/1.6 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; }
+@media (max-width: 767px) { .abg-bench { --abg-hit-min: 56px; } }
+.abg-bench *, .abg-bench *::before, .abg-bench *::after { box-sizing: border-box; }
+
+/* the drawing scales with its container; nothing in it is focusable */
+.abg-stage { position: relative; max-width: 720px; margin: 0 auto; }
+.abg-svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
+.abg-rack-base, .abg-rack-bar { fill: #B9C3D1; }
+.abg-rack-back { fill: #D5DCE6; }
+.abg-glass { fill: none; stroke: var(--abg-glass); stroke-width: 3; }
+.abg-rim { fill: #fff; stroke: var(--abg-glass); stroke-width: 2; }
+.abg-liquid { fill: var(--abg-liquid); }
+.abg-tube-label { font: 700 22px system-ui, sans-serif; fill: var(--abg-ink); }
+.abg-tray { fill: var(--abg-surface); stroke: var(--abg-line); stroke-width: 2; }
+
+/* drop zones: invisible until a strip is being dragged, the same for every tube */
+.abg-drop-zone { fill: transparent; stroke: none; }
+.abg-bench[data-dragging="true"] .abg-drop-zone { stroke: var(--abg-line); stroke-width: 2; stroke-dasharray: 6 6; }
+.abg-drop-zone[data-over="true"] { fill: rgba(47, 109, 168, .08); stroke: var(--abg-drop) !important; stroke-width: 3 !important; stroke-dasharray: none !important; }
+
+/* the strip in the tray: the only element that takes over touch gestures */
+.abg-strip { position: absolute; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.abg-strip-art { display: block; width: 100%; height: 100%; }
+.abg-strip-edge { fill: none; stroke: var(--abg-ink); stroke-width: 1.5; }
+.abg-strip-dipline { stroke: var(--abg-ink); stroke-width: 1; stroke-dasharray: 2 2; }
+.abg-strip[data-dragging="true"] { cursor: grabbing; filter: drop-shadow(0 4px 6px rgba(22, 35, 58, .25)); }
+.abg-bench[data-locked="true"] .abg-strip { cursor: not-allowed; opacity: .55; }
+@media (prefers-reduced-motion: no-preference) {
+  .abg-strip:not([data-dragging="true"]) { transition: transform 150ms ease-out; }
+}
+
+.abg-tray-hint { margin: 4px 0 12px; text-align: center; color: var(--abg-ink-soft); font-size: .95rem; }
+
+/* one column per tube: its test button and the strips used on it */
+.abg-samples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 720px; margin: 0 auto; }
+.abg-sample { min-width: 0; display: grid; gap: 8px; align-content: start; }
+.abg-test { min-height: var(--abg-hit-min); min-width: var(--abg-hit-min); width: 100%; padding: 8px 10px; border: 2px solid var(--abg-ink); border-radius: 10px;
+  background: #fff; color: var(--abg-ink); font: inherit; font-weight: 700; line-height: 1.3; cursor: pointer; }
+.abg-test:hover:not(:disabled) { background: var(--abg-surface); }
+.abg-test:focus-visible { outline: 3px solid var(--abg-focus); outline-offset: 2px; }
+.abg-test:disabled { cursor: default; border-color: var(--abg-line); color: var(--abg-ink-soft); background: var(--abg-surface); }
+.abg-used { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.abg-used-strip { min-width: 0; display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--abg-line); border-radius: 8px; background: #fff; }
+.abg-used-strip[hidden] { display: none; }
+.abg-used-art { flex: none; width: 20px; height: 48px; }
+.abg-used-text { min-width: 0; font-size: .9rem; line-height: 1.35; }
+.abg-used-name, .abg-used-result { display: block; white-space: nowrap; }
+.abg-used-name { color: var(--abg-ink-soft); }
+.abg-used-result { font-weight: 700; }
+@media (max-width: 767px) {
+  .abg-samples { gap: 8px; }
+  .abg-used-strip { padding: 4px 6px; gap: 6px; }
+  .abg-used-text { font-size: .85rem; }
+}
+
+/* forced colours: hue disappears, the pattern and the text carry the result */
+@media (forced-colors: active) {
+  .abg-color-fill { fill: Canvas; }
+  .abg-pattern-mark { stroke: CanvasText; fill: CanvasText; }
+  .abg-strip-edge, .abg-strip-dipline, .abg-glass, .abg-rim { stroke: CanvasText; }
+  .abg-liquid, .abg-tray, .abg-rack-base, .abg-rack-bar { fill: Canvas; stroke: CanvasText; }
+  .abg-tube-label { fill: CanvasText; }
+  .abg-drop-zone[data-over="true"] { stroke: Highlight !important; }
+  .abg-used-strip { border-color: CanvasText; }
+}
