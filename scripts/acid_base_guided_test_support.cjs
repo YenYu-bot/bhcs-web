@@ -135,4 +135,34 @@ async function touchDrag(page, from, to, steps = 8) {
   await settle(page);
 }
 
-module.exports = { createServer, openFixture, axeScan, settle, launchOptions, touchDrag, FIXTURE, root };
+// ---- the production page (B3) ---------------------------------------------------------------------------------------
+// The page ships no test hook. A check that needs to read the state gets one by having the browser context serve main.js
+// with one line appended (same module scope); nothing is added to the file on disk. Every write to the live region is
+// recorded from the first paint, so a check can read the whole announcement history.
+const PAGE = '/tools/science/acid-base-guided.html';
+const MAIN = '/assets/acid-base-guided/main.js';
+const HOOK = '\nwindow.__abgTest = { getState: () => state, dispatch };\n';
+const RECORD_ANNOUNCER = `window.__abgSaid = [];
+document.addEventListener('DOMContentLoaded', () => {
+  const live = document.getElementById('abg-announcer');
+  if (live) new MutationObserver(() => { if (live.textContent) window.__abgSaid.push(live.textContent); }).observe(live, { childList: true, characterData: true, subtree: true });
+});`;
+
+async function openPage(browser, base, { viewport, touch = false, hook = true, external = [], errors = [] }) {
+  const ctx = await browser.newContext({ viewport, hasTouch: touch, isMobile: touch });
+  await ctx.route('**/*', (route) => {
+    const url = route.request().url();
+    if (!url.startsWith(base)) { external.push(url); return route.abort(); }
+    if (hook && new URL(url).pathname === MAIN) return route.fulfill({ status: 200, contentType: 'text/javascript', body: fs.readFileSync(path.join(root, MAIN), 'utf8') + HOOK });
+    return route.continue();
+  });
+  await ctx.addInitScript(RECORD_ANNOUNCER);
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  await page.goto(base + PAGE);
+  await page.waitForFunction(() => document.getElementById('abg-cta') && !document.getElementById('abg-cta').hidden);
+  return { ctx, page };
+}
+
+module.exports = { createServer, openFixture, openPage, axeScan, settle, launchOptions, touchDrag, FIXTURE, PAGE, MAIN, root };
