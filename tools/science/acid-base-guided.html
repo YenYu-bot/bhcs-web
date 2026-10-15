@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>未知液體辨識（導引版原型）｜百宏文教</title>
+<meta name="description" content="用兩種試紙測試三杯未知透明液體，先比較觀察結果，再整理反應模式。導引版原型，尚未公開。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/science/acid-base-guided.html">
+<link rel="icon" href="../../assets/favicon.png">
+<link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
+<link rel="stylesheet" href="../../assets/acid-base-guided/acid-base-guided.css">
+</head>
+<body class="acid-base-guided">
+<a class="abg-skip" href="#main">跳到主要內容</a>
+<div class="abg-wrap">
+  <header><h1 class="abg-h1" id="abg-heading" tabindex="-1"></h1></header>
+  <main id="main" data-screen="welcome">
+    <nav class="abg-stepnav" id="abg-stepnav"><ol class="sg-steps abg-steps" id="abg-steps"></ol></nav>
+    <div class="abg-shell">
+      <section class="abg-card abg-coach" id="abg-coach" hidden>
+        <p class="abg-coach-name" id="abg-coach-name"></p>
+        <p class="abg-coach-main" id="abg-coach-main"></p>
+        <p class="abg-coach-sub" id="abg-coach-sub"></p>
+      </section>
+      <div class="abg-column" id="abg-column">
+        <section class="abg-card" id="abg-welcome" aria-labelledby="abg-welcome-title">
+          <svg class="abg-welcome-art" viewBox="0 0 300 120" aria-hidden="true" focusable="false">
+            <g fill="#DCEBF5" stroke="#7C8AA5" stroke-width="3">
+              <path d="M 66 14 V 84 A 16 16 0 0 0 98 84 V 14 Z"/>
+              <path d="M 134 14 V 84 A 16 16 0 0 0 166 84 V 14 Z"/>
+              <path d="M 202 14 V 84 A 16 16 0 0 0 234 84 V 14 Z"/>
+            </g>
+            <g font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#16233A" text-anchor="middle">
+              <text x="82" y="118">A</text><text x="150" y="118">B</text><text x="218" y="118">C</text>
+            </g>
+          </svg>
+          <h2 id="abg-welcome-title" tabindex="-1"></h2>
+          <p id="abg-welcome-sub"></p>
+        </section>
+        <section class="abg-card" id="abg-bench-card" hidden>
+          <div id="abg-bench-host"></div>
+        </section>
+        <section class="abg-card" id="abg-compare" aria-labelledby="abg-compare-title" hidden>
+          <h2 id="abg-compare-title" tabindex="-1"></h2>
+          <div data-abg-compare-body></div>
+        </section>
+        <section class="abg-card" id="abg-concept" aria-labelledby="abg-concept-title" hidden>
+          <h2 id="abg-concept-title" tabindex="-1"></h2>
+          <div data-abg-concept-body></div>
+        </section>
+        <div class="abg-status" id="abg-status" data-kind="neutral" hidden><span class="abg-status-icon" data-abg-status-icon aria-hidden="true"></span><span data-abg-status-text></span></div>
+        <div class="abg-actions"><button type="button" class="abg-cta" id="abg-cta" hidden></button></div>
+      </div>
+      <aside class="abg-side" id="abg-side" hidden>
+        <section class="abg-card" id="abg-data" hidden></section>
+        <section class="abg-card" id="abg-evidence" hidden></section>
+      </aside>
+    </div>
+    <div class="sg-sr" id="abg-announcer" aria-live="polite" aria-atomic="true"></div>
+  </main>
+  <footer class="abg-footer">
+    <p class="abg-prototype-note" id="abg-prototype-note"></p>
+  </footer>
+</div>
+<script type="module" src="../../assets/acid-base-guided/main.js"></script>
+</body>
+</html>

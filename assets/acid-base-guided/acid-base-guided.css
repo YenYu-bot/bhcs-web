@@ -1,5 +1,6 @@
-/* Guided unknown-liquid lab (Pilot #4). Station classes use abg-. B2: the bench only (tubes, tray, strips, used strips).
-   Tokens live on the bench itself until the page shell arrives in B3. */
+/* Guided unknown-liquid lab (Pilot #4). Station classes use abg-. The bench (B2) carries its own tokens so it also works
+   outside the page; the page shell (B3) follows below it. The shared components bring their own sg- classes, styled here
+   with this page's tokens, as on the other guided stations; science-guided.css keeps only the shared behaviour rules. */
 .abg-bench { --abg-hit-min: 48px; --abg-ink: #16233A; --abg-ink-soft: #43516B; --abg-line: #C9D2DE; --abg-surface: #F2F4F7;
   --abg-glass: #7C8AA5; --abg-liquid: #DCEBF5; --abg-focus: #E8620C; --abg-drop: #2F6DA8;
   color: var(--abg-ink); font: 16px/1.6 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; }
@@ -66,4 +67,144 @@
   .abg-tube-label { fill: CanvasText; }
   .abg-drop-zone[data-over="true"] { stroke: Highlight !important; }
   .abg-used-strip { border-color: CanvasText; }
+}
+
+/* ---- page shell (B3) ------------------------------------------------------------------------------------------------ */
+.acid-base-guided { --abg-hit-min: 48px; --abg-ink: #16233A; --abg-ink-soft: #43516B; --abg-line: #C9D2DE; --abg-line-soft: #DCE2EA; --abg-surface: #F2F4F7;
+  --abg-orange: #E8620C; --abg-orange-dark: #C24F06; --abg-ok: #1E7A4C; --abg-ok-soft: #E7F4EC; --abg-blue: #2F6DA8; --abg-blue-soft: #EAF2F9; --abg-radius: 12px;
+  margin: 0; background: #FCFCFA; color: var(--abg-ink); font: 16px/1.7 "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; }
+@media (max-width: 767px) { .acid-base-guided { --abg-hit-min: 56px; } }
+.acid-base-guided *, .acid-base-guided *::before, .acid-base-guided *::after { box-sizing: border-box; }
+.acid-base-guided :focus-visible { outline: 3px solid var(--abg-orange); outline-offset: 2px; }
+.abg-wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
+.abg-skip { position: absolute; left: -9999px; }
+.abg-skip:focus { left: 16px; top: 8px; background: #fff; padding: 8px 12px; z-index: 10; }
+.abg-h1 { margin: 0 0 12px; font-size: 1.25rem; line-height: 1.3; }
+.abg-card { background: #fff; border: 1px solid var(--abg-line); border-radius: var(--abg-radius); padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(22,35,58,.06), 0 8px 24px rgba(22,35,58,.05); }
+.abg-card[hidden], .abg-side[hidden], .abg-coach[hidden], .abg-status[hidden], .abg-cta[hidden] { display: none; }
+.abg-card h2 { margin: 0 0 12px; font-size: 1.2rem; line-height: 1.4; }
+
+/* step list */
+.abg-stepnav { margin: 0 0 12px; }
+.abg-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 5px; background: #fff; border: 1px solid var(--abg-line); border-radius: var(--abg-radius); }
+.sg-step { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 4px 6px; border-radius: 9px; color: var(--abg-ink-soft); font-size: .92rem; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+.sg-step-num { font-weight: 700; font-size: .72rem; }
+.sg-step.is-done { color: var(--abg-ok); }
+.sg-step.is-current { background: var(--abg-ok-soft); color: var(--abg-ok); box-shadow: inset 0 0 0 1px var(--abg-ok); }
+
+/* layout: the bench, compare or concept card is the main column; coach, data and evidence sit beside it on a wide screen */
+.abg-shell { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+.abg-column, .abg-side { min-width: 0; }
+.abg-side { display: grid; gap: 16px; }
+.abg-side .abg-card { margin-bottom: 0; }
+@media (min-width: 960px) {
+  .abg-shell { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); grid-template-areas: "column coach" "column side"; grid-template-rows: max-content 1fr; }
+  .abg-coach { grid-area: coach; }
+  .abg-column { grid-area: column; }
+  .abg-side { grid-area: side; }
+}
+.abg-coach { margin-bottom: 0; background: #FFFAF2; border-color: #E9D3B4; box-shadow: none; }
+.abg-coach-name { margin: 0 0 2px; font-size: .85rem; font-weight: 700; color: #8A5A1F; letter-spacing: .02em; }
+.abg-coach-main { margin: 0; font-size: 1.05rem; font-weight: 700; line-height: 1.55; }
+.abg-coach-sub { margin: 4px 0 0; font-size: .95rem; color: var(--abg-ink-soft); }
+.abg-coach-sub[hidden] { display: none; }
+
+/* welcome and mission */
+#abg-welcome { text-align: center; padding: 28px 20px 32px; max-width: 720px; margin-inline: auto; }
+#abg-welcome h2 { margin: 0 0 10px; font-size: 1.4rem; line-height: 1.55; }
+#abg-welcome p { margin: 0; color: var(--abg-ink-soft); }
+.abg-welcome-art { display: block; width: min(260px, 70%); height: auto; margin: 0 auto 16px; }
+#main[data-screen="welcome"] .abg-shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "column"; }
+#main[data-screen="welcome"] .abg-actions { display: flex; justify-content: center; }
+
+/* status and the main button */
+.abg-status { display: flex; gap: 10px; align-items: center; min-height: 3.2em; margin: 0 0 12px; padding: 8px 14px; border: 1px solid var(--abg-line); border-radius: var(--abg-radius); background: #fff; font-weight: 600; }
+.abg-status[data-kind="success"] { border-color: var(--abg-ok); background: var(--abg-ok-soft); color: var(--abg-ok); }
+.abg-status[data-kind="progress"] { border-color: #8FB6D6; background: var(--abg-blue-soft); }
+.abg-status-icon { font-weight: 700; min-width: 1.2em; text-align: center; }
+.abg-actions { margin: 12px 0; }
+.abg-actions:empty, .abg-actions:has(> .abg-cta[hidden]) { margin: 0; }
+.abg-cta { min-width: var(--abg-hit-min); min-height: var(--abg-hit-min); padding: 10px 24px; font: inherit; font-weight: 700; line-height: 1.35; border: 2px solid transparent; border-radius: 999px;
+  background: var(--abg-orange-dark); color: #fff; cursor: pointer; }
+.abg-cta:focus-visible { outline-color: var(--abg-ink); }
+.abg-cta:disabled { background: #D6DDE6; color: #4a5a68; cursor: not-allowed; }
+
+/* side cards (shared DataCard / EvidenceCard markup) */
+#abg-data { background: #F6F8FB; box-shadow: none; }
+#abg-evidence { background: #F1F9F4; border-color: #BFE0CC; box-shadow: none; }
+.sg-card-title { margin: 0 0 8px; font-size: 1rem; }
+#abg-evidence .sg-card-title { color: var(--abg-ok); }
+.sg-facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+.sg-facts dt { color: var(--abg-ink-soft); }
+.sg-facts dd { margin: 0; font-weight: 700; }
+.sg-evidence-item { margin: 0 0 10px; padding-bottom: 10px; border-bottom: 1px solid #CFE6D8; }
+.sg-evidence-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.sg-evidence-title { margin: 0 0 4px; font-size: .97rem; color: var(--abg-ok); }
+
+/* compare (shared CompareCard markup) */
+.sg-compare-table { width: 100%; border-collapse: collapse; margin: 0 0 8px; }
+.sg-compare-table th, .sg-compare-table td { padding: 8px 10px; border-bottom: 1px solid var(--abg-line-soft); text-align: left; vertical-align: top; }
+.sg-compare-table thead th { color: var(--abg-ink-soft); font-size: .9rem; }
+.sg-compare-table tbody th { font-weight: 600; color: var(--abg-ink-soft); }
+.sg-compare-table td { font-weight: 700; }
+.sg-compare-table tr[data-kind="changed"] th, .sg-compare-table tr[data-kind="changed"] td { background: #FFF1E3; color: #8F3A00; }
+.sg-compare-table tr[data-kind="changed"] th { box-shadow: inset 4px 0 0 var(--abg-orange); }
+.sg-compare-table tr[data-kind="controlled"] th, .sg-compare-table tr[data-kind="controlled"] td { color: var(--abg-ink-soft); font-weight: 500; }
+.sg-procedure { margin: 0 0 16px; color: var(--abg-ink-soft); font-size: .95rem; }
+.sg-question { margin: 18px 0 16px; padding: 0; border: 0; min-width: 0; }
+.sg-question legend { padding: 0; margin: 0 0 8px; font-weight: 700; }
+.sg-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.sg-pill { display: inline-flex; align-items: center; gap: 8px; min-width: var(--abg-hit-min); min-height: var(--abg-hit-min); padding: 8px 14px; font: inherit; line-height: 1.35; border-radius: 10px;
+  border: 2px solid var(--abg-line); background: #fff; color: inherit; cursor: pointer; }
+.sg-pill input { width: 20px; height: 20px; margin: 0; accent-color: var(--abg-ink); }
+.sg-pill:has(input:checked) { border-color: var(--abg-ink); background: var(--abg-surface); font-weight: 700; }
+.sg-pill:has(input:focus-visible) { outline: 3px solid var(--abg-orange); outline-offset: 2px; }
+.sg-pill:has(input:disabled) { cursor: default; }
+.sg-feedback { margin: 8px 0 0; padding: 8px 12px; border-left: 4px solid #D9A93A; border-radius: 0 8px 8px 0; background: #FFF8E6; color: var(--abg-ink-soft); }
+.sg-feedback[data-kind="success"] { border-color: var(--abg-ok); background: var(--abg-ok-soft); color: var(--abg-ok); font-weight: 600; }
+
+/* concept (shared ConceptReveal markup) */
+.sg-concept-card { margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--abg-line); border-left: 5px solid var(--abg-ink-soft); border-radius: 10px; background: #F9FBFD; }
+.sg-concept-card[data-concept-card="samples"] { border-left-style: dashed; background: #fff; }
+.sg-concept-card[data-concept-card="ph"] { border-left-color: var(--abg-blue); background: var(--abg-blue-soft); }
+.sg-concept-card[data-concept-card="indicator"] { border-left-color: #B7791F; background: #FFFBF2; }
+.sg-concept-title { margin: 0 0 6px; font-size: 1.08rem; }
+.sg-concept-card p { margin: 0 0 6px; }
+.sg-concept-evidence { margin: 8px 0 0; padding-left: 0; list-style: none; display: grid; gap: 6px; }
+.sg-concept-evidence:empty { display: none; }
+.sg-concept-evidence li { padding: 6px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--abg-line-soft); }
+.sg-line-label { font-weight: 700; color: var(--abg-ok); }
+@media (min-width: 768px) {
+  /* the three class cards side by side, the notes and the pH cards full width below them */
+  [data-abg-concept-body] { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 14px; }
+  [data-abg-concept-body] > .sg-concept-card:nth-child(n+4) { grid-column: 1 / -1; }
+}
+
+/* inside the page card the drawing is narrower than on its own: keep the tray strip at least a full touch target */
+#abg-bench-host .abg-strip { min-width: 48px; min-height: 48px; }
+.abg-footer { margin: 16px 0 0; }
+.abg-prototype-note { margin: 0; color: var(--abg-ink-soft); font-size: .9rem; }
+
+@media (max-width: 767px) {
+  .abg-steps { gap: 2px; padding: 4px; }
+  .sg-step { flex-direction: column; gap: 0; padding: 4px 2px; font-size: .78rem; white-space: normal; text-align: center; }
+  /* the evidence table becomes stacked cards on a phone: the row name on top, the two values side by side under it */
+  .sg-compare-table, .sg-compare-table tbody { display: block; }
+  .sg-compare-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .sg-compare-table tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 10px; padding: 8px 10px; margin: 0 0 8px; border: 1px solid var(--abg-line-soft); border-radius: 10px; }
+  .sg-compare-table th[scope="row"] { grid-column: 1 / -1; padding: 0; border: 0; }
+  .sg-compare-table td { padding: 0; border: 0; min-width: 0; overflow-wrap: anywhere; }
+  .sg-compare-table td[colspan] { grid-column: 1 / -1; }
+  .sg-compare-table td[data-label]::before { content: attr(data-label); display: block; font-size: .78rem; font-weight: 600; color: var(--abg-ink-soft); }
+  .sg-compare-table tr[data-kind="changed"] th, .sg-compare-table tr[data-kind="changed"] td { background: transparent; }
+  .sg-compare-table tr[data-kind="changed"] { background: #FFF1E3; border-color: #F0C9A0; box-shadow: inset 4px 0 0 var(--abg-orange); }
+  .sg-compare-table tr[data-kind="changed"] th { box-shadow: none; }
+  .sg-pill { flex: 1 1 100%; }
+  /* the bench card gives its three columns as much width as it can; the tube buttons keep one line */
+  #abg-bench-card { padding: 12px 8px; }
+  #abg-bench-host .abg-test { padding: 6px 4px; font-size: .88rem; }
+}
+@media (forced-colors: active) {
+  .abg-cta { border-color: ButtonText; }
+  .sg-step.is-current { outline: 2px solid Highlight; }
 }
