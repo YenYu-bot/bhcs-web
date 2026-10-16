@@ -280,7 +280,7 @@
 .sg-facts{display:grid;grid-template-columns:minmax(88px,.7fr) minmax(0,1fr);gap:6px 10px}
 .sg-facts dt{color:#607582;font-weight:750}
 .sg-facts dd{margin:0;font-weight:800;overflow-wrap:anywhere}
-.sg-facts dd[data-state="locked"]::after,.sg-facts dd[data-state="changed"]::after{
+.sg-state-tag{
   display:inline-block;
   margin-left:6px;
   padding:1px 6px;
@@ -290,8 +290,7 @@
   font-size:.7rem;
   vertical-align:middle;
 }
-.sg-facts dd[data-state="locked"]::after{content:"固定"}
-.sg-facts dd[data-state="changed"]::after{content:"這次改變";background:#e7f4ef;color:#276f67}
+.sg-facts dd[data-state="changed"] .sg-state-tag{background:#e7f4ef;color:#276f67}
 .sg-evidence-item+.sg-evidence-item{margin-top:12px;padding-top:12px;border-top:1px solid #e0e8ea}
 .sg-evidence-title{margin:0 0 6px;font-size:.95rem}
 .sg-compare-table{width:100%;border-collapse:collapse;table-layout:fixed}
