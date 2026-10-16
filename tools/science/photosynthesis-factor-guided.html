@@ -10,8 +10,9 @@
 <link rel="icon" href="../../assets/favicon.png">
 <link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
 <link rel="stylesheet" href="../../assets/photosynthesis-guided/photosynthesis-guided.css">
+<script src="../../assets/science-events.js" defer></script>
 </head>
-<body class="photosynthesis-factor-guided">
+<body class="photosynthesis-factor-guided" data-science-lab="photosynthesis-factor-guided">
 <a class="pfg-skip" href="#main">跳到主要內容</a>
 <div class="pfg-wrap">
   <header><h1 class="pfg-h1" id="pfg-heading" tabindex="-1"></h1></header>
@@ -53,11 +54,24 @@
           <h2 id="pfg-concept-title" tabindex="-1"></h2>
           <div data-pfg-concept-body></div>
         </section>
+        <section class="pfg-card" id="pfg-notebook" aria-labelledby="pfg-notebook-title" hidden>
+          <h2 id="pfg-notebook-title" tabindex="-1"></h2>
+          <div data-pfg-notebook-body></div>
+        </section>
+        <section class="pfg-card" id="pfg-challenge" aria-labelledby="pfg-challenge-title" hidden>
+          <h2 id="pfg-challenge-title" tabindex="-1"></h2>
+          <div data-pfg-challenge-body></div>
+        </section>
+        <section class="pfg-card" id="pfg-complete" aria-labelledby="pfg-complete-title" hidden>
+          <h2 id="pfg-complete-title" tabindex="-1"></h2>
+          <div data-pfg-complete-body></div>
+        </section>
         <div class="pfg-status" id="pfg-status" data-kind="neutral" hidden>
           <span class="pfg-status-icon" data-pfg-status-icon aria-hidden="true"></span>
           <span data-pfg-status-text></span>
         </div>
         <div class="pfg-actions"><button type="button" class="pfg-cta" id="pfg-cta" hidden></button></div>
+        <p class="pfg-storage-note" id="pfg-storage-note" hidden></p>
       </div>
       <aside class="pfg-side" id="pfg-side" hidden>
         <section class="pfg-card" id="pfg-data" hidden></section>
@@ -67,6 +81,8 @@
     <div class="sg-sr" id="pfg-announcer" aria-live="polite" aria-atomic="true"></div>
   </main>
   <footer class="pfg-footer">
+    <p class="pfg-restart-row"><button type="button" class="pfg-link-action" id="pfg-restart" hidden></button></p>
+    <p class="pfg-privacy" id="pfg-privacy-note"></p>
     <p class="pfg-prototype-note" id="pfg-prototype-note"></p>
   </footer>
 </div>
