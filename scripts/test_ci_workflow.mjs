@@ -25,6 +25,11 @@ function block(key) {
 }
 const count = (s, needle) => s.split(needle).length - 1;
 
+test('legacy standalone math workflow is removed so math runs only through CI Gate', () => {
+  assert.equal(fs.existsSync(path.join(root, '.github/workflows/math-fix-regressions.yml')), false,
+    'legacy math-fix-regressions.yml must stay deleted');
+});
+
 test('triggers: every pull request, pushes to main, and a manual run', () => {
   const on = block('on');
   assert.match(on, /\n {2}pull_request:\s*(\n|$)/, 'pull_request with no branch filter');
