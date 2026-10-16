@@ -60,6 +60,10 @@ const setText = (node, value) => {
 const setAttr = (node, name, value) => {
   if (node.getAttribute(name) !== String(value)) node.setAttribute(name, String(value));
 };
+const setHidden = (node, hidden) => {
+  if (hidden) node.setAttribute('hidden', '');
+  else node.removeAttribute('hidden');
+};
 
 function finiteIn(v, min, max) {
   return Number.isFinite(v) && v >= min && v <= max;
@@ -153,7 +157,7 @@ export function createPhotosynthesisBench(root, { text = BENCH_TEXT } = {}) {
       'data-bubble': i + 1,
       'aria-hidden': 'true',
     }, art);
-    b.hidden = true;
+    setHidden(b, true);
     bubbles.push(b);
   }
 
@@ -234,7 +238,7 @@ export function createPhotosynthesisBench(root, { text = BENCH_TEXT } = {}) {
 
     const bubbleCount = seen ? Math.max(0, Math.min(MAX_BUBBLES, Math.round(seen.rate))) : 0;
     bubbles.forEach((bubble, i) => {
-      bubble.hidden = i >= bubbleCount;
+      setHidden(bubble, i >= bubbleCount);
       setAttr(bubble, 'data-active', i < bubbleCount ? 'true' : 'false');
     });
     setAttr(bench, 'data-bubble-count', bubbleCount);
