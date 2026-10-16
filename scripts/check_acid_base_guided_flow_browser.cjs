@@ -217,8 +217,11 @@ async function common(p, label) {
       assert.match(ph, /這不代表真實石蕊只在 pH 7 才變色/);
       for (const id of ['A', 'B', 'C']) assert.match(ph, new RegExp(`液體 ${id}[：:]\\s*pH ${model.samplePh10(0, id) / 10}（`), `pH of ${id} from the model`);
       const ind = await txt(p, '[data-concept-card="indicator"]');
+      assert.match(ind, /再認識一種指示劑：酚酞/);
+      assert.match(ind, /酚酞也是常見的指示劑之一/);
+      assert.match(ind, /可能維持無色，也可能呈現粉紅色/);
       assert.match(ind, /不能直接當成精密 pH 讀值/);
-      assert.match(ind, /酚酞在部分弱鹼性的範圍仍可能保持無色/);
+      assert.doesNotMatch(ind, /弱鹼|不能排除所有鹼性|還不能排除鹼性/, 'the introduction must not pre-answer Challenge 3');
       assert.ok(!/紫甘藍/.test(await txt(p, 'body')));
       assert.deepEqual(await cta(p), { label: '寫研究手冊', enabled: true });
       assert.match(await txt(p, '#abg-status'), /這一階段的觀察與整理已完成/);
@@ -315,7 +318,7 @@ async function common(p, label) {
       // ---- challenge 3 ----
       await p.click('#abg-cta'); await settle(p);
       assert.equal(await phase(p), 'challenge-3');
-      assert.match(await txt(p, '#abg-challenge .sg-scenario'), /未知液體 Z 加入酚酞後仍然無色。有人說：「所以它一定不是鹼性。」/);
+      assert.match(await txt(p, '#abg-challenge .sg-scenario'), /剛才介紹的「酚酞」也是酸鹼指示劑。未知液體 Z 加入酚酞後仍然無色。有人說：「所以它一定不是鹼性。」/);
       await option(p, 'never-basic');
       assert.equal((await stepFeedback(p, 'c3-claim')).kind, 'nudge');
       await option(p, 'cannot-rule-out-basic');

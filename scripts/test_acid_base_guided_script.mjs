@@ -216,8 +216,10 @@ test('pH part: the 25 °C classification, the line kept apart from litmus, every
   assert.match(ph.body.join(''), /pH 7 是本站在 25°C 下用來整理酸性、中性、鹼性的分類界線；這不代表真實石蕊只在 pH 7 才變色。/);
   assert.deepEqual(ph.evidence.map((e) => [e.label, e.text]), SAMPLE_IDS.map((id) => [`液體 ${id}`, `pH ${samplePh10(0, id) / 10}（${{ acidic: '酸性', neutral: '中性', basic: '鹼性' }[sampleKind(0, id)]}）`]));
   const ind = m.cards.find((c) => c.id === 'indicator').body.join('');
+  assert.match(ind, /石蕊不是唯一的酸鹼指示劑。酚酞也是常見的指示劑之一/);
+  assert.match(ind, /可能維持無色，也可能呈現粉紅色/);
   assert.match(ind, /不同指示劑有不同的變色範圍。看到顏色只能提供有限的範圍資訊，不能直接當成精密 pH 讀值。/);
-  assert.match(ind, /酚酞在部分弱鹼性的範圍仍可能保持無色/);
+  assert.doesNotMatch(ind, /弱鹼|不能排除所有鹼性|還不能排除鹼性/, 'the concept introduces phenolphthalein without giving Challenge 3 away');
   const all = JSON.stringify(S.CONCEPT_TEXT) + JSON.stringify(m);
   assert.doesNotMatch(all, /酚酞無色[^，。]*(代表|表示|就是|一定)/, 'colourless phenolphthalein never stands for "acidic or neutral"');
   assert.doesNotMatch(all, /石蕊[^。]*在 ?pH ?7 ?(變色|切換|換色)(?!。)/, 'litmus is never said to switch at pH 7');
@@ -315,6 +317,7 @@ test('notebook Levels B and C: prompts, placeholder, help, and the ideas only af
   assert.equal(c0.levelC.ideas.length, 5);
   assert.doesNotMatch(JSON.stringify(c0.levelC.ideas), /紫甘藍/);
   assert.match(c0.levelC.ideas.join(), /範圍/); assert.match(c0.levelC.ideas.join(), /酚酞/); assert.match(c0.levelC.ideas.join(), /精密/);
+  assert.doesNotMatch(c0.levelC.ideas.join(), /酚酞維持無色.*不能排除所有鹼性/, 'Notebook ideas do not pre-answer Challenge 3');
   assert.equal(S.notebookModel(play([save({ level: 'C', limitationText: '  不 ' })], at.notebook()).state).levelC.showIdeas, false);
   assert.equal(S.notebookModel(play([save({ level: 'C', limitationText: '不是精密讀值' })], at.notebook()).state).levelC.showIdeas, true);
   assert.equal(S.notebookModel(play([save({ level: 'C', evidenceText: '液體B兩張都紅', limitationText: '不是精密讀值' })], at.notebook()).state).ready, true);
@@ -331,7 +334,7 @@ test('challenge wording: scenarios, questions and option labels; the correct opt
   assert.deepEqual(m2.steps.map((x) => [x.question, x.unlocked]), [['現在能確定它是哪一類嗎？', true], ['下一步最能直接補足這個分類問題的是？', false]]);
   assert.deepEqual(m2.steps[1].options.map((o) => o.label), ['再重複一次藍色石蕊', '再用紅色石蕊測試', '看它是不是透明', '直接猜一類']);
   const m3 = S.challengeModel(at['challenge-3']());
-  assert.equal(m3.scenario, '未知液體 Z 加入酚酞後仍然無色。有人說：「所以它一定不是鹼性。」');
+  assert.equal(m3.scenario, '剛才介紹的「酚酞」也是酸鹼指示劑。未知液體 Z 加入酚酞後仍然無色。有人說：「所以它一定不是鹼性。」');
   assert.deepEqual(m3.steps.map((x) => x.question), ['這個結論合理嗎？', '如果仍要判斷它屬於哪一類，下一步比較合理的是？']);
   assert.deepEqual(m3.steps[0].options.map((o) => o.label), ['一定不是鹼性', '還不能排除鹼性', '一定是酸性', '一定是中性']);
   assert.deepEqual(m3.steps[1].options.map((o) => o.label), ['品嚐看看', '只看原本液體的顏色', '再用紅、藍石蕊取得另一組證據', '不需要再測']);
