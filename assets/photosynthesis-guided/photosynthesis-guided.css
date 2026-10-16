@@ -1,0 +1,142 @@
+/* Science Lab 2.0 Pilot #5 — B2 bench-only styles.
+   The production page shell is intentionally out of scope until B3. */
+
+.pg-bench{
+  --pg-ink:#17324a;
+  --pg-muted:#5b7082;
+  --pg-line:#bfd2d9;
+  --pg-water:#bfeaf1;
+  --pg-green:#2f8f4e;
+  --pg-green-dark:#1f6f38;
+  --pg-gold:#d79b24;
+  display:grid;
+  gap:14px;
+  width:100%;
+  color:var(--pg-ink);
+}
+.pg-stage{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--pg-line);
+  border-radius:18px;
+  background:linear-gradient(180deg,#eef9fc 0%,#f9fcf7 72%,#f1eadf 72%,#f1eadf 100%);
+}
+.pg-scene{display:block;width:100%;height:auto;min-width:0}
+.pg-table{fill:#b8946d}
+.pg-lamp-head{fill:#495f72;stroke:#263e50;stroke-width:3}
+.pg-lamp-stand{fill:none;stroke:#495f72;stroke-width:7;stroke-linecap:round}
+.pg-light-beam{opacity:.24;transition:opacity .18s ease}
+.pg-light-beam[data-light="60"]{opacity:.52}
+.pg-light-beam[data-light="100"]{opacity:.84}
+.pg-tank-glass{fill:#effcff99;stroke:#5f91a5;stroke-width:4}
+.pg-water{fill:var(--pg-water);fill-opacity:.72}
+.pg-water-line{stroke:#5ca9b9;stroke-width:3}
+.pg-stem{fill:none;stroke:var(--pg-green-dark);stroke-width:8;stroke-linecap:round}
+.pg-leaf{fill:var(--pg-green);stroke:var(--pg-green-dark);stroke-width:2}
+.pg-plant-base{fill:#8b6d45}
+.pg-instrument{fill:#fff;stroke:#abc5cf;stroke-width:2}
+.pg-instrument-text,.pg-art-label{
+  fill:var(--pg-ink);
+  font:700 16px/1 system-ui,"Microsoft JhengHei",sans-serif;
+}
+.pg-bubble{
+  fill:#fff;
+  fill-opacity:.72;
+  stroke:#3d96ad;
+  stroke-width:1.5;
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:pg-bubble-float 1.8s ease-in-out infinite alternate;
+}
+.pg-bubble[hidden]{display:none}
+.pg-bubble:nth-of-type(3n){animation-delay:-.6s}
+.pg-bubble:nth-of-type(4n){animation-delay:-1.1s}
+@keyframes pg-bubble-float{
+  from{transform:translateY(2px) scale(.94)}
+  to{transform:translateY(-5px) scale(1.04)}
+}
+.pg-conditions{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.pg-condition{
+  min-width:0;
+  padding:10px 12px;
+  border:1px solid var(--pg-line);
+  border-radius:12px;
+  background:#fff;
+}
+.pg-condition-label{
+  display:block;
+  color:var(--pg-muted);
+  font-size:.82rem;
+  font-weight:700;
+}
+.pg-condition-value{
+  display:block;
+  margin-top:2px;
+  font-size:1rem;
+  overflow-wrap:anywhere;
+}
+.pg-light-controls{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.pg-light-button{
+  min-width:0;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:1px solid #9dbac4;
+  border-radius:12px;
+  background:#fff;
+  color:var(--pg-ink);
+  font:700 1rem/1.25 system-ui,"Microsoft JhengHei",sans-serif;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.pg-light-button:hover:not(:disabled){background:#f2f9f7;border-color:#6aa59d}
+.pg-light-button[data-selected="true"]{
+  background:#e6f4ef;
+  border-color:#2e887d;
+  box-shadow:inset 0 0 0 2px #2e887d;
+}
+.pg-light-button:focus-visible{outline:3px solid var(--pg-gold);outline-offset:3px}
+.pg-light-button:disabled{opacity:.48;cursor:not-allowed}
+.pg-light-button-value{font-variant-numeric:tabular-nums;color:#456477}
+.pg-observation{
+  min-height:48px;
+  margin:0;
+  display:flex;
+  align-items:center;
+  padding:11px 14px;
+  border-left:4px solid #4c99a7;
+  border-radius:10px;
+  background:#eef8fa;
+  font-weight:700;
+}
+@media(max-width:600px){
+  .pg-stage{border-radius:14px}
+  .pg-conditions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .pg-condition{padding:9px 10px}
+  .pg-light-controls{gap:8px}
+  .pg-light-button{
+    min-height:64px;
+    flex-direction:column;
+    gap:2px;
+    padding:8px 4px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .pg-light-beam{transition:none}
+  .pg-bubble{animation:none}
+}
+@media(forced-colors:active){
+  .pg-stage,.pg-condition,.pg-light-button,.pg-observation{forced-color-adjust:auto}
+  .pg-light-button[data-selected="true"]{outline:3px solid ButtonText;outline-offset:-5px;box-shadow:none}
+  .pg-bubble{fill:Canvas;stroke:CanvasText}
+}
