@@ -311,37 +311,70 @@ function drawWord(ctx, word, x0, base, u, mode, sx=1, k=8){
   }
 }
 
-/* ---------- Parsing uploaded / typed text ---------- */
+/* ---------- Parsing uploaded / typed text ----------
+   One line = one row of the source. A line may hold several pairs in either order
+   ("apple 蘋果  banana 香蕉" or "1. 雞；雞肉  chicken  21. 岩石  rock"): the order is taken
+   from whichever kind comes first on the line. Words joined by "/" (fly / flew) share one meaning. */
 const CJK = '\\u3400-\\u9fff\\uf900-\\ufaff';
-const TOKEN = new RegExp(`([A-Za-z][A-Za-z'’\\-]*(?: [A-Za-z][A-Za-z'’\\-]*)*\\.?)|([${CJK}][^A-Za-z]*)`, 'g');
+const TOKEN = new RegExp(`([A-Za-z][A-Za-z'’\\-]*(?: [A-Za-z][A-Za-z'’\\-]*)*[.!?]?)|([${CJK}][^A-Za-z#]*)|#(\\d+)#`, 'g');
 const POS = /\b(n|v|vt|vi|adj|adv|prep|conj|pron|art|aux|int|interj|phr|num|det|pl|abbr)\s*\./gi;
+const IPA = /\/[^\/\n㐀-鿿]*[ˈˌəæɪʊʌɔɑɛθðʃʒŋː][^\/\n㐀-鿿]*\//g;
+const HEADING = /\b(lesson|unit|chapter|part|review|test|quiz|book|week|no)\s*\.?\s*\d+\b/gi;
+function cleanZh(z){ return z.replace(/[\s\d.)(、,，;；:：\-~／\/]+$/,'').replace(/^[\s,，;；:：\-~／\/]+/,'').trim(); }
 function parseText(text){
   const entries = [], seen = new Set();
-  let last = null;
+  let prevLone = null;            // the single meaning-less group on the previous line (for "word" / "意思" on two lines)
+  const emit = (g) => {
+    for (const en of g.words){
+      const key = en.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key); entries.push({en, zh: g.zh || '', num: g.num, i: entries.length});
+    }
+  };
   for (let line of text.split(/\r?\n/)){
     line = line.replace(/\u00a0/g,' ').replace(/[\u2028\u3000]/g,' ').trim();
     if (!line) continue;
-    line = line.replace(/^(\(?\d+[.)、:：]?\)?|[•·●▪*])\s*/, '')
-               .replace(/\/[^\/\n]*\//g,' ').replace(/\[[^\]]*\]/g,' ')
-               .replace(POS,' ').replace(/[(（]\s*[)）]/g,' ');
-    let lineEntry = null, m;
+    line = line.replace(/^[•·●▪*]\s*/, '')
+               .replace(IPA,' ').replace(/\[[^\]]*\]/g,' ')
+               .replace(HEADING,' ').replace(POS,' ').replace(/[(（]\s*[)）]/g,' ')
+               .replace(/^\(?(\d{1,3})[.)、:：]?\)?\s+/, ' #$1# ')
+               .replace(/(^|\s)\(?(\d{1,3})[.)、]\)?(?=\s|$)/g, '$1#$2# ');
+    const seq = []; let m, lastEn = null, lastEnd = 0, num = null;
     TOKEN.lastIndex = 0;
     while ((m = TOKEN.exec(line))){
+      if (m[3]){ num = +m[3]; lastEn = null; continue; }
       if (m[1]){
-        let en = m[1].replace(/\.$/, '').trim();
+        const en = m[1].replace(/\.$/, '').trim();
         if (!en || /^(n|v|vt|vi|adj|adv|prep|conj|pron)$/i.test(en)) continue;
-        const key = en.toLowerCase();
-        if (seen.has(key)){ lineEntry = null; continue; }
-        seen.add(key); lineEntry = {en, zh:''}; entries.push(lineEntry); last = lineEntry;
+        if (lastEn && /^\s*[\/／]\s*$/.test(line.slice(lastEnd, m.index))) lastEn.words.push(en);
+        else { lastEn = {type:'en', words:[en], zh:'', num}; seq.push(lastEn); }
+        lastEnd = m.index + m[0].length;
       } else if (m[2]){
-        const zh = m[2].replace(/[\s\d.)(、,，;；:：\-~]+$/,'').replace(/^[\s,，;；:：\-~]+/,'').trim();
-        if (!zh) continue;
-        const target = lineEntry || last;
-        if (target && !target.zh) target.zh = zh;
+        const zh = cleanZh(m[2]);
+        lastEn = null;
+        if (zh) seq.push({type:'zh', zh});
       }
     }
+    const groups = seq.filter(t => t.type === 'en');
+    if (!groups.length){
+      const zh = seq.find(t => t.type === 'zh');
+      if (zh && prevLone && !prevLone.zh){ prevLone.zh = zh.zh; prevLone.words.forEach(w => { const e = entries.find(x => x.en === w); if (e && !e.zh) e.zh = zh.zh; }); }
+      prevLone = null; continue;
+    }
+    if (seq[0].type === 'zh'){
+      let pending = null;
+      for (const t of seq){ if (t.type === 'zh') pending = t.zh; else { t.zh = pending || ''; pending = null; } }
+    } else {
+      let cur = null;
+      for (const t of seq){ if (t.type === 'en') cur = t; else if (cur && !cur.zh) cur.zh = t.zh; }
+    }
+    groups.forEach(emit);
+    prevLone = (seq.length === 1) ? groups[0] : null;
   }
-  return entries;
+  // Numbered sheets laid out in columns (1–20 left, 21–40 right) come back in reading order by number.
+  if (entries.filter(e => e.num != null).length >= entries.length * .6)
+    entries.sort((a, b) => ((a.num ?? 1e9) - (b.num ?? 1e9)) || (a.i - b.i));
+  return entries.map(({en, zh}) => ({en, zh}));
 }
 
 /* ---------- File reading ---------- */
@@ -356,8 +389,23 @@ function loadScript(src){
 const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/';
 async function readDocx(buf){
   await loadScript(CDN+'mammoth/1.6.0/mammoth.browser.min.js');
-  const r = await window.mammoth.extractRawText({arrayBuffer: buf});
-  return r.value;
+  // Read via HTML so each table row stays on one line, with its cells kept apart.
+  const r = await window.mammoth.convertToHtml({arrayBuffer: buf});
+  const doc = new DOMParser().parseFromString(r.value, 'text/html');
+  const lines = [];
+  const walk = (el) => {
+    for (const n of el.children){
+      if (n.tagName === 'TABLE'){
+        for (const tr of n.querySelectorAll('tr')){
+          if (tr.closest('table') !== n) continue;
+          lines.push([...tr.children].map(td => td.textContent.replace(/\s+/g,' ').trim()).filter(Boolean).join('  '));
+        }
+      } else if (/^(P|H[1-6]|LI)$/.test(n.tagName)) lines.push(n.textContent);
+      else walk(n);
+    }
+  };
+  walk(doc.body);
+  return lines.join('\n');
 }
 async function readPdf(buf){
   await loadScript(CDN+'pdf.js/3.11.174/pdf.min.js');
