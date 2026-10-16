@@ -452,6 +452,12 @@
 .pfg-privacy{margin:0 0 6px}
 
 @media(min-width:761px){
+  main[data-screen="welcome"] .pfg-column,
+  main[data-screen="notebook"] .pfg-column{
+    grid-column:1/-1;
+    width:min(100%,900px);
+    justify-self:center;
+  }
   .sg-levels .sg-options{flex-wrap:nowrap}
   .sg-level-pill{flex:1 1 0}
 }
