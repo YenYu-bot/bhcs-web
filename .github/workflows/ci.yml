@@ -70,8 +70,6 @@ jobs:
   site:
     name: site
     runs-on: ubuntu-latest
-    env:
-      NODE_PATH: /tmp/bhcs-composition/node_modules
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,6 +84,8 @@ jobs:
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
       - name: Check public site pages and contact flows
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_site_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -98,8 +98,6 @@ jobs:
   science-layout:
     name: science-layout
     runs-on: ubuntu-latest
-    env:
-      NODE_PATH: /tmp/bhcs-composition/node_modules
     steps:
       - uses: actions/checkout@v4
         with:
@@ -114,6 +112,8 @@ jobs:
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
       - name: Check all welcome layouts and capture review images
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_researcher_composition.cjs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -126,8 +126,6 @@ jobs:
   science-stations:
     name: science-stations
     runs-on: ubuntu-latest
-    env:
-      NODE_PATH: /tmp/bhcs-composition/node_modules
     steps:
       - uses: actions/checkout@v4
         with:
@@ -142,8 +140,12 @@ jobs:
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
       - name: Check real microscope pointer input and navigation
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_researcher_browser.cjs
       - name: Check all station operations, records, and challenges
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_researcher_operations.cjs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -156,8 +158,6 @@ jobs:
   science-guided:
     name: science-guided
     runs-on: ubuntu-latest
-    env:
-      NODE_PATH: /tmp/bhcs-composition/node_modules
     steps:
       - uses: actions/checkout@v4
         with:
@@ -172,28 +172,52 @@ jobs:
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
       - name: Check guided optics input layer in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_optics_guided_input_browser.cjs
       - name: Check guided optics bench states and page layout in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_optics_guided_view_browser.cjs
       - name: Check the guided optics student flow (script, evidence, focus) in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_optics_guided_flow_browser.cjs
       - name: Check guided buoyancy input layer in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_buoyancy_guided_input_browser.cjs
       - name: Check guided buoyancy bench states and page layout in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_buoyancy_guided_view_browser.cjs
       - name: Check guided buoyancy full student flow in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_buoyancy_guided_flow_browser.cjs
       - name: Check guided microscope input layer in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_microscope_guided_input_browser.cjs
       - name: Check guided microscope bench states and page layout in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_microscope_guided_view_browser.cjs
       - name: Check guided microscope full student flow in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_microscope_guided_flow_browser.cjs
       - name: Check guided acid-base input layer in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_acid_base_guided_input_browser.cjs
       - name: Check guided acid-base bench states and page layout in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_acid_base_guided_view_browser.cjs
       - name: Check guided acid-base full student flow in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_acid_base_guided_flow_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -248,8 +272,6 @@ jobs:
   math-browser:
     name: math-browser
     runs-on: ubuntu-latest
-    env:
-      NODE_PATH: /tmp/bhcs-composition/node_modules
     steps:
       - uses: actions/checkout@v4
         with:
@@ -265,9 +287,12 @@ jobs:
           sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
       - name: Compare P1 math worksheets and print layouts
         env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
           MATH_BRAND_PDF: '1'
         run: node scripts/check_math_brand_browser.cjs
       - name: Capture P4 vectorcauchy worksheet versions
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_p4_vector_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()

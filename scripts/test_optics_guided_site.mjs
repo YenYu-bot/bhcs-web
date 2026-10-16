@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import cp from 'node:child_process';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import { ciWorkflow, ciJobs, CHROMIUM_INSTALL } from './ci_workflow_test_support.mjs';
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
@@ -37,13 +38,16 @@ test('no test controls ship: no debug hook and no query switches in the page cod
  }
 });
 
-test('workflow: the guided checks run after Chromium is installed and are not part of the 42-station harness',()=>{
- const wf=read('.github/workflows/researcher-lab-check.yml');
- const idx=n=>wf.indexOf(n);
- for(const c of ['check_optics_guided_input_browser.cjs','check_optics_guided_view_browser.cjs','check_optics_guided_flow_browser.cjs'])assert.ok(idx(c)>idx('playwright install --with-deps chromium'),c+' comes after the Chromium install');
- assert.ok(idx('git diff --exit-code')<idx('check_optics_guided_input_browser.cjs'),'builders and the idempotence check run first');
+test('workflow: the guided checks run in the guided job after its Chromium install, CI Gate also needs the build, and they are not part of the 42-station harness',()=>{
+ const jobs=ciJobs();
+ const job=jobs['science-guided'];
+ assert.ok(job,'the science-guided job exists');
+ const idx=n=>job.text.indexOf(n);
+ for(const c of ['check_optics_guided_input_browser.cjs','check_optics_guided_view_browser.cjs','check_optics_guided_flow_browser.cjs'])assert.ok(idx(c)>idx(CHROMIUM_INSTALL)&&idx(CHROMIUM_INSTALL)>=0,c+' comes after the Chromium install in the same job');
+ assert.ok(jobs.core.text.includes('git diff --exit-code'),'core runs the builders and the idempotence check');
+ assert.ok(['core','science-guided'].every(n=>jobs.gate.needs.includes(n)),'CI Gate needs both core and science-guided');
  for(const f of ['check_researcher_composition.cjs','check_researcher_operations.cjs','test_researcher_batch5.cjs'])assert.ok(!read('scripts/'+f).includes('optics-guided'),f+' does not know the prototype');
- assert.ok(wf.includes('optics-flow-review')&&wf.includes('optics-view-review'),'review images are uploaded');
+ assert.ok(job.text.includes('optics-flow-review')&&job.text.includes('optics-view-review'),'review images are uploaded');
 });
 
 console.log(`PASS optics guided site: ${tests} tests`);
