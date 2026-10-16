@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>光合作用條件實驗（導引版原型）｜百宏文教</title>
+<meta name="description" content="用兩組只改光照的水草實驗，比較相對產氧結果，整理不同條件下的變化。導引版原型，尚未公開。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/science/photosynthesis-factor-guided.html">
+<link rel="icon" href="../../assets/favicon.png">
+<link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
+<link rel="stylesheet" href="../../assets/photosynthesis-guided/photosynthesis-guided.css">
+</head>
+<body class="photosynthesis-factor-guided">
+<a class="pfg-skip" href="#main">跳到主要內容</a>
+<div class="pfg-wrap">
+  <header><h1 class="pfg-h1" id="pfg-heading" tabindex="-1"></h1></header>
+  <main id="main" data-screen="welcome">
+    <nav class="pfg-stepnav" id="pfg-stepnav"><ol class="sg-steps pfg-steps" id="pfg-steps"></ol></nav>
+    <div class="pfg-shell">
+      <section class="pfg-card pfg-coach" id="pfg-coach" hidden>
+        <p class="pfg-coach-name" id="pfg-coach-name"></p>
+        <p class="pfg-coach-main" id="pfg-coach-main"></p>
+        <p class="pfg-coach-sub" id="pfg-coach-sub"></p>
+      </section>
+      <div class="pfg-column">
+        <section class="pfg-card pfg-welcome" id="pfg-welcome" aria-labelledby="pfg-welcome-title">
+          <svg class="pfg-welcome-art" viewBox="0 0 360 150" aria-hidden="true" focusable="false">
+            <rect x="150" y="46" width="116" height="82" rx="10" fill="#D8F1F4" stroke="#5F91A5" stroke-width="4"/>
+            <path d="M208 119 C204 99 210 80 207 62 C205 51 208 43 214 35" fill="none" stroke="#1F6F38" stroke-width="8" stroke-linecap="round"/>
+            <g fill="#49A45E" stroke="#1F6F38" stroke-width="2">
+              <ellipse cx="191" cy="83" rx="17" ry="8" transform="rotate(-24 191 83)"/>
+              <ellipse cx="226" cy="68" rx="18" ry="8" transform="rotate(25 226 68)"/>
+              <ellipse cx="190" cy="101" rx="15" ry="7" transform="rotate(-16 190 101)"/>
+              <ellipse cx="229" cy="92" rx="15" ry="7" transform="rotate(18 229 92)"/>
+            </g>
+            <g fill="#fff" stroke="#3D96AD" stroke-width="2"><circle cx="223" cy="52" r="5"/><circle cx="240" cy="41" r="4"/><circle cx="252" cy="61" r="3"/></g>
+            <path d="M38 39 L111 58 L111 90 L38 109 Z" fill="#F4D788" opacity=".7"/>
+            <path d="M34 54 Q58 40 81 54 L75 75 Q58 82 41 73 Z" fill="#5A6C7D" stroke="#263E50" stroke-width="3"/>
+            <path d="M57 73 V128" stroke="#5A6C7D" stroke-width="7" stroke-linecap="round"/>
+          </svg>
+          <h2 id="pfg-welcome-title" tabindex="-1"></h2>
+          <p id="pfg-welcome-sub"></p>
+        </section>
+        <section class="pfg-card" id="pfg-bench-card" hidden>
+          <div id="pfg-bench-host"></div>
+        </section>
+        <section class="pfg-card" id="pfg-compare" aria-labelledby="pfg-compare-title" hidden>
+          <h2 id="pfg-compare-title" tabindex="-1"></h2>
+          <div data-pfg-compare-body></div>
+        </section>
+        <section class="pfg-card" id="pfg-concept" aria-labelledby="pfg-concept-title" hidden>
+          <h2 id="pfg-concept-title" tabindex="-1"></h2>
+          <div data-pfg-concept-body></div>
+        </section>
+        <div class="pfg-status" id="pfg-status" data-kind="neutral" hidden>
+          <span class="pfg-status-icon" data-pfg-status-icon aria-hidden="true"></span>
+          <span data-pfg-status-text></span>
+        </div>
+        <div class="pfg-actions"><button type="button" class="pfg-cta" id="pfg-cta" hidden></button></div>
+      </div>
+      <aside class="pfg-side" id="pfg-side" hidden>
+        <section class="pfg-card" id="pfg-data" hidden></section>
+        <section class="pfg-card" id="pfg-evidence" hidden></section>
+      </aside>
+    </div>
+    <div class="sg-sr" id="pfg-announcer" aria-live="polite" aria-atomic="true"></div>
+  </main>
+  <footer class="pfg-footer">
+    <p class="pfg-prototype-note" id="pfg-prototype-note"></p>
+  </footer>
+</div>
+<script type="module" src="../../assets/photosynthesis-guided/main.js"></script>
+</body>
+</html>
