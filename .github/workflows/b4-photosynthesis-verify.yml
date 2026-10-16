@@ -1,0 +1,37 @@
+name: B4 temporary photosynthesis browser verify
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: b4-photosynthesis-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --prefix scripts
+      - name: Install Chromium
+        run: |
+          npm install --prefix /tmp/bhcs-b4-browser playwright@1.58.2
+          /tmp/bhcs-b4-browser/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Run photosynthesis B4 full-flow browser gate
+        env:
+          NODE_PATH: /tmp/bhcs-b4-browser/node_modules
+        run: node scripts/check_photosynthesis_guided_flow_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: photosynthesis-b4-temporary-review
+          path: photosynthesis-flow-artifacts/
+          retention-days: 7
