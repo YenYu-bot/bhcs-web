@@ -180,7 +180,7 @@
   border:1px solid #cad8dc;
   border-radius:12px;
   background:#fff;
-  color:#667b89;
+  color:#536b79;
   font-size:.84rem;
   font-weight:750;
 }
@@ -196,7 +196,7 @@
   font-variant-numeric:tabular-nums;
   font-size:.76rem;
 }
-.pfg-steps .sg-step[aria-current="step"] .sg-step-num{background:#2f887d;color:#fff}
+.pfg-steps .sg-step[aria-current="step"] .sg-step-num{background:#1f665e;color:#fff}
 .pfg-step-label{min-width:0;overflow-wrap:anywhere}
 .pfg-shell{
   display:grid;
