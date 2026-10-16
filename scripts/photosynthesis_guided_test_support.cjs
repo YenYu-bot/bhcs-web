@@ -1,6 +1,6 @@
-// Browser-test support for Science Lab 2.0 Pilot #5 B3.
-// The production page ships no test hook. openPage() can serve main.js with one test-only line appended so the gate can
-// inspect state without changing any repository production file.
+// Browser-test support for Science Lab 2.0 Pilot #5 B3-B4.
+// Production ships no test hook. Tests may append one to main.js and replace science-events.js with a local spy,
+// so the browser gate never reaches an external analytics transport.
 const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
@@ -8,7 +8,13 @@ const http = require('node:http');
 const root = path.resolve(__dirname, '..');
 const PAGE = '/tools/science/photosynthesis-factor-guided.html';
 const MAIN = '/assets/photosynthesis-guided/main.js';
+const ADAPTER = '/assets/science-events.js';
 const HOOK = '\nwindow.__pfgTest = { getState: () => state, dispatch };\n';
+const ADAPTERS = {
+  spy: 'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); };\n',
+  throw: 'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); throw new Error("adapter down"); };\n',
+  absent: 'window.__testScienceEvents = [];\n',
+};
 const RECORD_ANNOUNCER = `
 window.__pfgSaid = [];
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,12 +49,21 @@ function createServer() {
   });
 }
 
-async function guardContext(ctx, base, external = []) {
+async function routePage(ctx, base, { hook = true, adapter = 'spy', external = [] } = {}) {
+  if (!Object.hasOwn(ADAPTERS, adapter)) throw new Error(`unknown adapter mode ${adapter}`);
   await ctx.route('**/*', (route) => {
     const url = route.request().url();
-    if (url.startsWith(base)) return route.continue();
-    external.push(url);
-    return route.abort();
+    if (!url.startsWith(base)) { external.push(url); return route.abort(); }
+    const pathname = new URL(url).pathname;
+    if (pathname === ADAPTER) return route.fulfill({
+      status: 200, contentType: 'text/javascript; charset=utf-8', body: ADAPTERS[adapter],
+    });
+    if (hook && pathname === MAIN) return route.fulfill({
+      status: 200,
+      contentType: 'text/javascript; charset=utf-8',
+      body: fs.readFileSync(path.join(root, MAIN), 'utf8') + HOOK,
+    });
+    return route.continue();
   });
 }
 
@@ -58,37 +73,27 @@ async function openPage(browser, base, {
   reducedMotion,
   forcedColors,
   hook = true,
+  adapter = 'spy',
   external = [],
   errors = [],
+  ctx: reuse = null,
 } = {}) {
-  const ctx = await browser.newContext({
+  const ctx = reuse ?? await browser.newContext({
     viewport,
     hasTouch: touch,
     isMobile: touch,
     ...(reducedMotion ? { reducedMotion } : {}),
     ...(forcedColors ? { forcedColors } : {}),
   });
-  await ctx.route('**/*', (route) => {
-    const url = route.request().url();
-    if (!url.startsWith(base)) { external.push(url); return route.abort(); }
-    if (hook && new URL(url).pathname === MAIN) {
-      return route.fulfill({
-        status: 200,
-        contentType: 'text/javascript; charset=utf-8',
-        body: fs.readFileSync(path.join(root, MAIN), 'utf8') + HOOK,
-      });
-    }
-    return route.continue();
-  });
-  await ctx.addInitScript(RECORD_ANNOUNCER);
+  if (!reuse) {
+    await routePage(ctx, base, { hook, adapter, external });
+    await ctx.addInitScript(RECORD_ANNOUNCER);
+  }
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
   await page.goto(base + PAGE);
-  await page.waitForFunction(() => {
-    const b = document.getElementById('pfg-cta');
-    return b && !b.hidden;
-  });
+  await page.waitForFunction(() => document.getElementById('main')?.dataset.phase);
   return { ctx, page };
 }
 
@@ -113,4 +118,4 @@ const launchOptions = () => (
     : {}
 );
 
-module.exports = { createServer, openPage, axeScan, settle, launchOptions, PAGE, MAIN, root };
+module.exports = { createServer, openPage, axeScan, settle, launchOptions, PAGE, MAIN, ADAPTER, root };

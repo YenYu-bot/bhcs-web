@@ -68,6 +68,20 @@ test('initial state contains only source / learner fields', () => {
       c1: { rateChange: null, claim: null },
       c2: { rateChange: null, reason: null },
     },
+    conclusion: {
+      level: null,
+      trial1Change: null,
+      trial2Change: null,
+      alwaysWorks: null,
+      freeText: '',
+      evidenceText: '',
+      limitationText: '',
+    },
+    challenges: {
+      1: { steps: {} },
+      2: { steps: {} },
+      3: { steps: {}, note: '' },
+    },
   });
   const json = JSON.stringify(s);
   for (const key of ['rate', 'oxygen', 'factors', 'limit', 'correct', 'expected', 'score']) {
@@ -200,7 +214,14 @@ test('formal concept is a separate phase after inference', () => {
   assert.deepEqual(ce.compare2, { rateChange: 'same', reason: 'other-condition-short' });
   assert.equal(ce.trial1LimitAfterIncrease, 'light');
   assert.equal(ce.trial2LimitAfterIncrease, 'co2');
-  refuse(r.state, CONT, 'wrong-phase');
+  assert.deepEqual(E.expectedNotebookRelations(r.state), {
+    trial1Change: 'increase',
+    trial2Change: 'same',
+    alwaysWorks: 'no',
+  });
+  const notebook = step(r.state, CONT);
+  assert.equal(notebook.accepted, true);
+  assert.equal(notebook.state.phase, 'notebook');
 });
 
 test('all four records contain only raw trial conditions; derived fields are not stored', () => {
@@ -280,6 +301,54 @@ test('full path reaches Concept exactly once and records four observation events
   ]);
   assert.equal(events.filter((e) => e.type === 'record-written').length, 4);
   assert.equal(new Set(events.map((e) => e.trialId)).size, 4);
+});
+
+test('B4 notebook and three challenges gate the path to Complete without stored answer keys', () => {
+  let s = run(atConcept(), CONT);
+  assert.equal(s.phase, 'notebook');
+  refuse(s, CONT, 'locked');
+  s = run(s, { type: 'SAVE_CONCLUSION', fields: {
+    level: 'A',
+    trial1Change: 'increase',
+    trial2Change: 'same',
+    alwaysWorks: 'yes',
+  } });
+  assert.equal(E.notebookIsReady(s), false);
+  refuse(s, CONT, 'locked');
+  s = run(s, { type: 'SAVE_CONCLUSION', fields: { alwaysWorks: 'no' } });
+  assert.equal(E.notebookIsReady(s), true);
+  s = run(s, CONT);
+  assert.equal(s.phase, 'challenge-1');
+
+  s = run(s, { type: 'ANSWER_CHALLENGE', id: 1, step: 'c1-next', choice: 'raise-light' });
+  assert.equal(s.challenges[1].steps['c1-next'].correct, false);
+  refuse(s, CONT, 'locked');
+  s = run(s, { type: 'ANSWER_CHALLENGE', id: 1, step: 'c1-next', choice: 'raise-co2' }, CONT);
+  assert.equal(s.phase, 'challenge-2');
+
+  s = run(s, { type: 'ANSWER_CHALLENGE', id: 2, step: 'c2-fair', choice: 'change-co2-only' }, CONT);
+  assert.equal(s.phase, 'challenge-3');
+  refuse(s, { type: 'SAVE_CHALLENGE_NOTE', id: 3, text: 'too soon' }, 'locked');
+  s = run(s, { type: 'ANSWER_CHALLENGE', id: 3, step: 'c3-claim', choice: 'cannot-say-always' });
+  s = run(s, { type: 'SAVE_CHALLENGE_NOTE', id: 3, text: '25°C 的速率比 40°C 高' });
+  s = run(s, CONT);
+  assert.equal(s.phase, 'complete');
+  refuse(s, CONT, 'wrong-phase');
+
+  const serialized = JSON.stringify(s);
+  for (const key of ['expected', 'ready']) assert.ok(!serialized.includes(`"${key}"`), key);
+});
+
+test('invalid notebook and challenge actions are refused and solved challenge steps lock', () => {
+  let s = run(atConcept(), CONT);
+  refuse(s, { type: 'SAVE_CONCLUSION', fields: { level: 'Q' } }, 'invalid');
+  refuse(s, { type: 'ANSWER_CHALLENGE', id: 1, step: 'c1-next', choice: 'raise-co2' }, 'wrong-phase');
+  s = run(s, { type: 'SAVE_CONCLUSION', fields: {
+    level: 'A', trial1Change: 'increase', trial2Change: 'same', alwaysWorks: 'no',
+  } }, CONT);
+  s = run(s, { type: 'ANSWER_CHALLENGE', id: 1, step: 'c1-next', choice: 'raise-co2' });
+  refuse(s, { type: 'ANSWER_CHALLENGE', id: 1, step: 'c1-next', choice: 'raise-co2' }, 'locked');
+  refuse(s, { type: 'ANSWER_CHALLENGE', id: 2, step: 'c2-fair', choice: 'change-co2-only' }, 'wrong-phase');
 });
 
 test('engine source has no learner wording, DOM, storage, analytics or network code', () => {

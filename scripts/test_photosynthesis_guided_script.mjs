@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
   createInitialState, reduce, compareStatus, observationFor,
 } from '../assets/photosynthesis-guided/engine.js';
 import {
   TEXT, STEPS, isPreConcept, screenFor, stepNavModel, welcomeModel, ctaFor, coachModel, statusModel,
-  dataModel, evidenceModel, benchModel, canSetLight, compareModel, conceptModel, announcementFor,
+  dataModel, evidenceModel, benchModel, canSetLight, compareModel, conceptModel, notebookModel,
+  challengeModel, completeModel, LATE_TEXT, announcementFor,
 } from '../assets/photosynthesis-guided/script.js';
 
 let passed = 0;
@@ -21,6 +23,7 @@ const viewBundle = (state) => ({
   screen: screenFor(state), steps: stepNavModel(state), welcome: welcomeModel(state), cta: ctaFor(state),
   coach: coachModel(state), status: statusModel(state), data: dataModel(state), evidence: evidenceModel(state),
   bench: benchModel(state), compare: compareModel(state), concept: conceptModel(state),
+  notebook: notebookModel(state), challenge: challengeModel(state), complete: completeModel(state),
 });
 const FORBIDDEN = /限制因子|最低條件|三項因子中的最低值|最低的一項/;
 const noLeak = (state, label) => {
@@ -30,7 +33,7 @@ const noLeak = (state, label) => {
   assert.equal(conceptModel(state), null, `${label}: concept model must not exist`);
 };
 
-test('shared five-step navigation keeps B3 in mission / experiment / findings only', () => {
+test('shared five-step navigation covers mission, experiment, findings, notebook and challenges', () => {
   assert.deepEqual(STEPS.map((x) => x.label), ['接任務', '動手做', '整理發現', '研究手冊', '挑戰題']);
   let s = createInitialState();
   assert.equal(stepNavModel(s).currentStep, 'mission');
@@ -178,7 +181,7 @@ test('Concept is the first view that names the limiting factor and ties it to bo
   [s] = act(s, { type: 'CONTINUE' }); [s] = act(s, { type: 'CONTINUE' });
   assert.equal(s.phase, 'concept');
   assert.equal(isPreConcept(s), false);
-  assert.equal(ctaFor(s), null);
+  assert.deepEqual(ctaFor(s), { label: TEXT.cta.toNotebook, action: { type: 'CONTINUE' }, enabled: true });
   const c = conceptModel(s);
   assert.match(c.heading, /限制因子/);
   const text = JSON.stringify(c);
@@ -208,9 +211,46 @@ test('accepted actions produce concise announcements; concept name is announced 
   assert.doesNotMatch(announcementFor({ result: r, state: s, action: { type: 'BEGIN' }, seq: 2 }).text, /限制因子/);
 });
 
-test('script stage contains no persistence or analytics behavior', () => {
-  assert.equal(Object.hasOwn(TEXT, 'storage'), false);
-  assert.equal(Object.hasOwn(TEXT, 'analytics'), false);
+test('B4 notebook, challenges and Complete expose only learner-facing view models', () => {
+  let s = throughCompare2();
+  [s] = act(s, { type: 'ANSWER_COMPARE', compare: 'c2', question: 'rateChange', answer: 'same' });
+  [s] = act(s, { type: 'ANSWER_COMPARE', compare: 'c2', question: 'reason', answer: 'other-condition-short' });
+  [s] = act(s, { type: 'CONTINUE' }); [s] = act(s, { type: 'CONTINUE' }); [s] = act(s, { type: 'CONTINUE' });
+  assert.equal(s.phase, 'notebook');
+  [s] = act(s, { type: 'SAVE_CONCLUSION', fields: {
+    level: 'A', trial1Change: 'increase', trial2Change: 'same', alwaysWorks: 'no',
+  } });
+  const book = notebookModel(s);
+  assert.equal(book.ready, true);
+  assert.match(JSON.stringify(book), /第一組/);
+  assert.doesNotMatch(JSON.stringify(book), /"expected"|answerKey/);
+  assert.equal(stepNavModel(s).currentStep, 'notebook');
+  assert.deepEqual(ctaFor(s), { label: LATE_TEXT.cta.challenge, action: { type: 'CONTINUE' }, enabled: true });
+
+  [s] = act(s, { type: 'CONTINUE' });
+  let challenge = challengeModel(s);
+  assert.equal(challenge.id, 1);
+  assert.equal(challenge.steps[0].options[0].value, 'raise-light');
+  assert.notEqual(challenge.steps[0].options[0].value, 'raise-co2');
+  [s] = act(s, { type: 'ANSWER_CHALLENGE', id: 1, step: 'c1-next', choice: 'raise-co2' });
+  challenge = challengeModel(s);
+  assert.equal(challenge.allCorrect, true);
+  [s] = act(s, { type: 'CONTINUE' });
+  [s] = act(s, { type: 'ANSWER_CHALLENGE', id: 2, step: 'c2-fair', choice: 'change-co2-only' });
+  [s] = act(s, { type: 'CONTINUE' });
+  [s] = act(s, { type: 'ANSWER_CHALLENGE', id: 3, step: 'c3-claim', choice: 'cannot-say-always' });
+  assert.ok(challengeModel(s).note);
+  [s] = act(s, { type: 'CONTINUE' });
+  assert.equal(s.phase, 'complete');
+  assert.equal(stepNavModel(s).currentStep, 'challenge');
+  const done = completeModel(s);
+  assert.match(done.heading, /完成/);
+  assert.equal(done.claims.length, 3);
+});
+
+test('script owns wording only and does not touch storage, analytics adapters or network APIs', () => {
+  const src = fs.readFileSync(new URL('../assets/photosynthesis-guided/script.js', import.meta.url), 'utf8');
+  for (const bad of ['localStorage', 'sessionStorage', 'bhcsScienceTrack', 'fetch(', 'XMLHttpRequest']) assert.ok(!src.includes(bad), bad);
 });
 
 console.log(`photosynthesis guided script: ${passed} tests passed`);
