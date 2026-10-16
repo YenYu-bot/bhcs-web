@@ -30,6 +30,11 @@ const dragPoints = async (p, id) => {
   const box = async (sel) => { const b = await p.locator(sel).boundingBox(); return { x: b.x + b.width / 2, y: b.y + b.height / 2 }; };
   return [await box('[data-role="strip"]'), await box(`[data-drop-sample="${id}"]`)];
 };
+// The shared announcer clears the live region and writes the text 40 ms later (so a screen reader hears a repeat). A check
+// that expects an announcement waits for it; a check that expects silence first lets that window pass.
+const heard = (p, text) => p.waitForFunction((t) => (window.__abgSaid ?? []).some((x) => x.includes(t)), text, { timeout: 3000 });
+const lastHeard = async (p, text) => { await p.waitForFunction((t) => (window.__abgSaid ?? []).at(-1)?.includes(t), text, { timeout: 3000 }); return p.evaluate(() => window.__abgSaid.at(-1)); };
+const quiet = (p) => p.waitForTimeout(200);
 const events = (p) => p.evaluate(() => window.__testScienceEvents.map((e) => [...e]));
 const reload = async (p) => { await p.reload(); await p.waitForFunction(() => document.getElementById('main').dataset.phase); await settle(p); };
 const option = async (p, value, { tap = false } = {}) => { const l = p.locator(`button[data-option="${value}"]:not([disabled])`); await l.scrollIntoViewIfNeeded(); if (tap) await l.tap(); else await l.click(); await settle(p); };
@@ -185,6 +190,7 @@ async function common(p, label) {
       await preConcept(p, 'compare2 answered');
       ok(`compare 2: 3×2 table from the records; the cup with both strips unchanged (${unchanged[0]}) is read from the table, not assumed`);
 
+      await quiet(p);
       const saidBefore = (await p.evaluate(() => window.__abgSaid.slice())).join(' | ');
       assert.ok(!FORBIDDEN.test(saidBefore), 'nothing named in any announcement before the concept');
       await p.click('#abg-cta'); await settle(p);
@@ -216,7 +222,7 @@ async function common(p, label) {
       assert.ok(!/紫甘藍/.test(await txt(p, 'body')));
       assert.deepEqual(await cta(p), { label: '寫研究手冊', enabled: true });
       assert.match(await txt(p, '#abg-status'), /這一階段的觀察與整理已完成/);
-      assert.ok((await p.evaluate(() => window.__abgSaid.at(-1))).includes('已顯示 pH'));
+      assert.ok((await lastHeard(p, '已顯示 pH')).includes('已顯示 pH'));
       await common(p, 'concept ph'); await shot(p, '1280-concept-ph');
       ok('concept pH: 25 °C classification, the classification line kept apart from litmus, A/B/C pH from the model, indicators are not pH meters, "寫研究手冊" next');
       assert.deepEqual((await events(p)).map(([n]) => n), FULL_EVENTS.slice(0, 9), 'the pH reveal sends nothing');
@@ -267,6 +273,7 @@ async function common(p, label) {
       assert.equal((await stepFeedback(p, 'c1-class')).kind, 'success');
       assert.equal(await p.evaluate(() => [...document.querySelectorAll('[data-challenge-step="c1-class"] button')].every((b) => b.disabled)), true, 'a solved step is locked');
       assert.deepEqual(await cta(p), { label: '下一題挑戰', enabled: true });
+      await heard(p, '對。藍色石蕊變紅');
       const said1 = await p.evaluate(() => window.__abgSaid.slice(-4));
       assert.ok(said1.includes('挑戰 1。') && said1.some((t) => t.includes('把兩張試紙的結果當成一組')), `announced: ${said1.join(' | ')}`);
       await common(p, 'challenge 1'); await shot(p, '1280-challenge-1');
@@ -284,6 +291,7 @@ async function common(p, label) {
       await reload(p);
       assert.equal(await phase(p), 'challenge-2');
       assert.deepEqual(await events(p), [], 'a reload sends no milestone again');
+      await quiet(p);
       assert.deepEqual(await p.evaluate(() => window.__abgSaid), [], 'a restore announces nothing');
       const restoredB = await p.evaluate(() => window.__abgTest.getState());
       assert.deepEqual(restoredB, JSON.parse(stateB), 'the restored state is the one left');
@@ -321,6 +329,7 @@ async function common(p, label) {
       await p.locator('[data-note] textarea').fill('因為酚酞有自己的變色範圍');
       assert.deepEqual(await cta(p), { label: '完成這一站', enabled: true });
       await common(p, 'challenge 3'); await shot(p, '1280-challenge-3');
+      await quiet(p);
       const saidNote = (await p.evaluate(() => window.__abgSaid.join(' | ')));
       assert.ok(!saidNote.includes('因為酚酞有自己的變色範圍'), 'the note is never announced');
       ok('challenge 3: phenolphthalein colourless does not rule out basic; the next test is the litmus pair; the optional note appears after solving');
@@ -337,7 +346,7 @@ async function common(p, label) {
       assert.equal(await cta(p), null, 'no next button on the finish');
       assert.equal(await p.locator('#abg-complete a').count(), 0, 'no link from the finish (no legacy link)');
       assert.equal(await p.locator('#abg-restart').isVisible(), true, 'restart stays available on the finish');
-      assert.equal(await p.evaluate(() => window.__abgSaid.at(-1)), '這一站完成了。');
+      assert.equal(await lastHeard(p, '這一站完成了。'), '這一站完成了。');
       await common(p, 'complete'); await shot(p, '1280-complete');
       const afterB = await events(p);
       checkPayload(afterB, 'after reload B');
@@ -400,6 +409,7 @@ async function common(p, label) {
       assert.deepEqual(await p.evaluate(() => window.__abgTest.getState().records), [{ sampleId: 'B', indicatorId: 'blue-litmus' }]);
       assert.equal(await p.locator('[data-dip-sample="B"]').isDisabled(), true, 'the tested cup stays tested');
       assert.deepEqual(await events(p), [], 'no lab_start or trial_recorded again');
+      await quiet(p);
       assert.deepEqual(await p.evaluate(() => window.__abgSaid), [], 'a restore announces nothing');
       assert.equal(await txt(p, '#abg-storage-note'), '已接續這台瀏覽器先前的進度。');
       await preConcept(p, 'restored trial1'); await common(p, 'restored trial1');
