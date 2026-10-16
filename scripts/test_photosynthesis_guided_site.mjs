@@ -112,6 +112,12 @@ test('layering: science/renderer/input do not reach into page, storage or analyt
   assert.ok(!/from '\.\/main\.js'/.test(read(`${DIR}/script.js`)), 'script does not import glue');
 });
 
+test('local B4 browser gate and its support file are syntactically valid', () => {
+  for (const file of ['scripts/check_photosynthesis_guided_flow_browser.cjs', 'scripts/photosynthesis_guided_test_support.cjs']) {
+    assert.doesNotThrow(() => cp.execFileSync(process.execPath, ['--check', path.join(root, file)], { cwd: root, stdio: 'pipe' }), file);
+  }
+});
+
 test('B5 browser wiring has not started; B4 unit/static tests run before math', () => {
   const wf = ciWorkflow();
   assert.ok(!wf.includes('check_photosynthesis_guided_'), 'photosynthesis browser gates stay local until B5');
