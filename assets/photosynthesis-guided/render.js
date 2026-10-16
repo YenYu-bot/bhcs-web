@@ -18,6 +18,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 export const BENCH_VIEWBOX = Object.freeze({ width: 640, height: 360 });
 export const LIGHT_LEVELS = Object.freeze([15, 60, 100]);
 export const MAX_BUBBLES = 20;
+let instanceCount = 0;
 
 export const BENCH_TEXT = Object.freeze({
   lightTitle: '光照',
@@ -92,6 +93,7 @@ function plantPath() {
 export function createPhotosynthesisBench(root, { text = BENCH_TEXT } = {}) {
   if (!root?.ownerDocument) throw new TypeError('root element is required');
   const doc = root.ownerDocument;
+  const uid = `pg-${++instanceCount}`;
   const bench = html(doc, 'section', { className: 'pg-bench', 'data-role': 'photosynthesis-bench' });
   const stage = html(doc, 'div', { className: 'pg-stage' }, bench);
   const art = svg(doc, 'svg', {
@@ -103,7 +105,7 @@ export function createPhotosynthesisBench(root, { text = BENCH_TEXT } = {}) {
   }, stage);
 
   const defs = svg(doc, 'defs', {}, art);
-  const glow = svg(doc, 'linearGradient', { id: 'pg-lamp-glow', x1: '0', x2: '1' }, defs);
+  const glow = svg(doc, 'linearGradient', { id: `${uid}-lamp-glow`, x1: '0', x2: '1' }, defs);
   svg(doc, 'stop', { offset: '0%', 'stop-color': '#fff0a6', 'stop-opacity': '0.9' }, glow);
   svg(doc, 'stop', { offset: '100%', 'stop-color': '#fff0a6', 'stop-opacity': '0' }, glow);
 
@@ -114,7 +116,7 @@ export function createPhotosynthesisBench(root, { text = BENCH_TEXT } = {}) {
   const beam = svg(doc, 'path', {
     d: 'M112 92 L275 158 L275 290 L112 148 Z',
     class: 'pg-light-beam',
-    fill: 'url(#pg-lamp-glow)',
+    fill: `url(#${uid}-lamp-glow)`,
     'data-role': 'beam',
   }, art);
   svg(doc, 'rect', { x: 58, y: 92, width: 55, height: 52, rx: 10, class: 'pg-lamp-head' }, art);
@@ -248,5 +250,5 @@ export function createPhotosynthesisBench(root, { text = BENCH_TEXT } = {}) {
     bench.remove();
   }
 
-  return { update, destroy, element: bench };
+  return { update, destroy, element: bench, uid };
 }
