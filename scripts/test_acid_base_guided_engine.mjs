@@ -1,7 +1,8 @@
-// B1 gate: acid–base guided lab state engine (Pilot #4). Pure reducer, no DOM.
+// B1/B4 gate: acid–base guided lab state engine (Pilot #4). Pure reducer, no DOM.
 import assert from 'node:assert/strict';
 import * as E from '../assets/acid-base-guided/engine.js';
-import { SAMPLE_IDS } from '../assets/acid-base-guided/model.js';
+import { SAMPLE_IDS, LAYOUTS } from '../assets/acid-base-guided/model.js';
+import { ATTEMPTS_MAX, TEXT_MAX, emptyChallenges } from '../assets/acid-base-guided/challenges.js';
 
 let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
@@ -43,6 +44,8 @@ test('phases are fixed in order, and the initial state holds only learner inputs
     phase: 'welcome', layout: 0, records: [],
     compare: { c1: { patternCount: null, evidenceSufficiency: null }, c2: { distinguishability: null, unchangedSample: null } },
     conceptPart: null,
+    conclusion: { level: null, acidicSample: null, neutralSample: null, basicSample: null, freeText: '', evidenceText: '', limitationText: '' },
+    challenges: emptyChallenges(),
   });
   assert.notEqual(E.createInitialState(), E.createInitialState(), 'a fresh object every time');
 });
@@ -176,12 +179,14 @@ test('REVEAL_PH: naming → ph once, only in concept; a second reveal is refused
   refuse(r.state, { type: 'REVEAL_PH' }, 'already-revealed');
 });
 
-test('B1 stops at concept: nothing reaches notebook, challenges or complete yet', () => {
-  const s = run(atConcept(), { type: 'REVEAL_PH' });
-  refuse(s, CONT, 'wrong-phase');
-  refuse(atConcept(), CONT, 'wrong-phase');
-  for (const t of ['SAVE_CONCLUSION', 'ANSWER_CHALLENGE', 'NEXT', undefined]) refuse(s, { type: t }, 'unknown-action');
-  refuse(s, null, 'unknown-action');
+test('concept → notebook: the naming part cannot CONTINUE; only after the pH reveal does the notebook open', () => {
+  refuse(atConcept(), CONT, 'locked');
+  const r = step(run(atConcept(), { type: 'REVEAL_PH' }), CONT);
+  assert.equal(r.accepted, true); assert.equal(r.state.phase, 'notebook');
+  assert.deepEqual(r.transitions, [{ from: 'concept', to: 'notebook' }]);
+  assert.deepEqual(r.events, []);
+  for (const t of ['NEXT', 'RESTORE', undefined]) refuse(r.state, { type: t }, 'unknown-action');
+  refuse(r.state, null, 'unknown-action');
 });
 
 test('full reducer path: welcome → … → concept (naming → ph), each phase entered exactly once', () => {
@@ -244,6 +249,183 @@ test('a source-only state (records as plain JSON) gives the same verdicts as the
   assert.deepEqual(E.expectedCompare1(rebuilt), E.expectedCompare1(live));
   assert.deepEqual(E.expectedCompare2(rebuilt), E.expectedCompare2(live));
   assert.deepEqual(E.observationsOf(rebuilt), E.observationsOf(live));
+});
+
+// ---- B4: notebook, challenges, complete -------------------------------------------------------------------------------
+
+const save = (fields) => ({ type: 'SAVE_CONCLUSION', fields });
+const pick = (id, step, choice) => ({ type: 'ANSWER_CHALLENGE', id, step, choice });
+const atNotebook = () => run(atConcept(), { type: 'REVEAL_PH' }, CONT);
+const RIGHT_A = { level: 'A', acidicSample: 'B', neutralSample: 'C', basicSample: 'A' };
+const atChallenge1 = () => run(atNotebook(), save(RIGHT_A), CONT);
+const atChallenge2 = () => run(atChallenge1(), pick(1, 'c1-class', 'acidic'), CONT);
+const atChallenge3 = () => run(atChallenge2(), pick(2, 'c2-enough', 'not-enough'), pick(2, 'c2-next', 'red-litmus'), CONT);
+const atComplete = () => run(atChallenge3(), pick(3, 'c3-claim', 'cannot-rule-out-basic'), pick(3, 'c3-next', 'litmus-pair'), CONT);
+
+test('SAVE_CONCLUSION: only in the notebook; fields are sanitized one by one; nothing usable is refused', () => {
+  for (const st of [atConcept(), run(atConcept(), { type: 'REVEAL_PH' }), atChallenge1(), atComplete()]) refuse(st, save({ level: 'A' }), 'wrong-phase');
+  const s = atNotebook();
+  for (const bad of [null, undefined, 'A', [], {}, { level: 'D' }, { acidicSample: 'D' }, { freeText: 7 }, { correct: true }, { ready: true }]) refuse(s, save(bad), 'invalid');
+  const r = step(s, save({ level: 'B', acidicSample: 'Q', freeText: 'x'.repeat(TEXT_MAX + 50), ready: true, expected: { acidic: 'B' } }));
+  assert.equal(r.accepted, true);
+  assert.equal(r.state.conclusion.level, 'B'); assert.equal(r.state.conclusion.acidicSample, null, 'the bad field alone is dropped');
+  assert.equal(r.state.conclusion.freeText.length, TEXT_MAX);
+  assert.deepEqual(Object.keys(r.state.conclusion).sort(), ['acidicSample', 'basicSample', 'evidenceText', 'freeText', 'level', 'limitationText', 'neutralSample']);
+  assert.deepEqual(r.events, []); assert.deepEqual(r.transitions, []);
+});
+
+test('the Level A mapping is rebuilt from the records and the layout, not written anywhere', () => {
+  assert.equal(E.expectedNotebookMapping(atTrial2()), null, 'nothing until both trials are complete');
+  assert.deepEqual(E.expectedNotebookMapping(atNotebook()), { acidic: 'B', neutral: 'C', basic: 'A' });
+  // the same answer follows the layout's own kinds (B acidic, C neutral, A basic in layout 0)
+  const L = LAYOUTS[atNotebook().layout];
+  for (const [kind, id] of Object.entries(E.expectedNotebookMapping(atNotebook()))) assert.equal(L[id], kind);
+  // forged derived fields on the records change nothing
+  const s = atNotebook();
+  const forged = { ...s, records: s.records.map((r) => ({ ...r, kind: 'basic', result: 'stays-blue', ph10: 110 })) };
+  assert.deepEqual(E.expectedNotebookMapping(forged), { acidic: 'B', neutral: 'C', basic: 'A' });
+  // a record set that does not give one cup per class gives no mapping
+  const missing = { ...s, records: s.records.slice(0, 5) };
+  assert.equal(E.expectedNotebookMapping(missing), null);
+});
+
+test('notebook gate, Level A: a wrong or partial mapping keeps CONTINUE locked; the right one opens Challenge 1', () => {
+  let s = atNotebook();
+  refuse(s, CONT, 'locked');
+  s = run(s, save({ level: 'A', acidicSample: 'A', neutralSample: 'A', basicSample: 'A' }));
+  assert.equal(E.notebookIsReady(s), false, 'all A is not ready');
+  refuse(s, CONT, 'locked');
+  s = run(s, save({ acidicSample: 'B', neutralSample: 'C', basicSample: 'C' }));
+  refuse(s, CONT, 'locked');                                          // two right, one wrong
+  s = run(s, save({ basicSample: 'A' }));
+  assert.equal(E.notebookIsReady(s), true);
+  const r = step(s, CONT);
+  assert.equal(r.state.phase, 'challenge-1'); assert.deepEqual(r.transitions, [{ from: 'notebook', to: 'challenge-1' }]);
+  // a stored "ready" flag counts for nothing
+  refuse({ ...atNotebook(), conclusion: { ...atNotebook().conclusion, level: 'A', ready: true } }, CONT, 'locked');
+});
+
+test('notebook gate, Levels B and C: a minimum written amount only (4 non-space characters); C needs both fields', () => {
+  let b = run(atNotebook(), save({ level: 'B', freeText: ' a b c ' }));
+  refuse(b, CONT, 'locked');
+  b = run(b, save({ freeText: '兩種試紙' }));
+  assert.equal(step(b, CONT).state.phase, 'challenge-1');
+  let c = run(atNotebook(), save({ level: 'C', evidenceText: '液體B兩張都紅' }));
+  refuse(c, CONT, 'locked');
+  c = run(c, save({ limitationText: '   ' }));
+  refuse(c, CONT, 'locked');
+  c = run(c, save({ limitationText: '不是精密pH' }));
+  assert.equal(step(c, CONT).state.phase, 'challenge-1');
+  // the right Level A answers do not help a learner who chose B
+  refuse(run(atNotebook(), save({ ...RIGHT_A, level: 'B' })), CONT, 'locked');
+});
+
+test('Challenge 1: a wrong answer counts a try; the right one solves and locks the step; the event carries no text', () => {
+  let s = atChallenge1();
+  refuse(s, CONT, 'locked');
+  let r = step(s, pick(1, 'c1-class', 'neutral'));
+  assert.deepEqual(r.events, [{ type: 'challenge-answered', challengeId: 1, step: 'c1-class', correct: false, attempts: 1 }]);
+  assert.deepEqual(r.state.challenges[1].steps['c1-class'], { choice: 'neutral', attempts: 1, correct: false });
+  refuse(r.state, CONT, 'locked');
+  r = step(r.state, pick(1, 'c1-class', 'not-enough'));
+  assert.equal(r.events[0].attempts, 2);
+  r = step(r.state, pick(1, 'c1-class', 'acidic'));
+  assert.deepEqual(r.events, [{ type: 'challenge-answered', challengeId: 1, step: 'c1-class', correct: true, attempts: 3 }]);
+  s = r.state;
+  refuse(s, pick(1, 'c1-class', 'basic'), 'locked');                  // a solved step takes no more tries
+  refuse(s, pick(1, 'c1-class', 'acidic'), 'locked');
+  const n = step(s, CONT);
+  assert.equal(n.state.phase, 'challenge-2'); assert.deepEqual(n.transitions, [{ from: 'challenge-1', to: 'challenge-2' }]);
+});
+
+test('ANSWER_CHALLENGE validation: its own challenge only, a known step, a listed option', () => {
+  const s = atChallenge1();
+  refuse(s, pick(2, 'c2-enough', 'not-enough'), 'wrong-phase');
+  refuse(s, pick('1', 'c1-class', 'acidic'), 'wrong-phase');
+  refuse(s, pick(1, 'c2-enough', 'not-enough'), 'invalid');
+  refuse(s, pick(1, 'constructor', 'acidic'), 'invalid');
+  for (const bad of ['sour', '', null, 3, 'constructor', 'toString']) refuse(s, pick(1, 'c1-class', bad), 'invalid');
+  refuse(atNotebook(), pick(1, 'c1-class', 'acidic'), 'wrong-phase');
+  refuse(atComplete(), pick(3, 'c3-claim', 'cannot-rule-out-basic'), 'wrong-phase');
+});
+
+test('Challenge 2: step 2 waits for step 1; both must be solved to move on', () => {
+  let s = atChallenge2();
+  refuse(s, pick(2, 'c2-next', 'red-litmus'), 'locked');
+  s = run(s, pick(2, 'c2-enough', 'basic'));
+  refuse(s, pick(2, 'c2-next', 'red-litmus'), 'locked', 'a wrong step 1 does not unlock step 2');
+  s = run(s, pick(2, 'c2-enough', 'not-enough'));
+  refuse(s, CONT, 'locked');
+  s = run(s, pick(2, 'c2-next', 'repeat-blue'));
+  refuse(s, CONT, 'locked');
+  s = run(s, pick(2, 'c2-next', 'red-litmus'));
+  assert.equal(step(s, CONT).state.phase, 'challenge-3');
+});
+
+test('Challenge 3: the phenolphthalein claim, then the next test; tasting is a wrong answer', () => {
+  let s = atChallenge3();
+  refuse(s, pick(3, 'c3-next', 'litmus-pair'), 'locked');
+  s = run(s, pick(3, 'c3-claim', 'never-basic'));
+  assert.equal(s.challenges[3].steps['c3-claim'].correct, false);
+  s = run(s, pick(3, 'c3-claim', 'cannot-rule-out-basic'));
+  const tasted = step(s, pick(3, 'c3-next', 'taste'));
+  assert.equal(tasted.events[0].correct, false);
+  refuse(tasted.state, CONT, 'locked');
+  s = run(tasted.state, pick(3, 'c3-next', 'litmus-pair'));
+  const r = step(s, CONT);
+  assert.equal(r.state.phase, 'complete'); assert.deepEqual(r.transitions, [{ from: 'challenge-3', to: 'complete' }]);
+});
+
+test('the Challenge 3 note: refused until the challenge is solved, a string only, clipped to TEXT_MAX', () => {
+  const note = (text) => ({ type: 'SAVE_CHALLENGE_NOTE', id: 3, text });
+  refuse(atChallenge3(), note('因為酚酞'), 'locked');
+  refuse(run(atChallenge3(), pick(3, 'c3-claim', 'cannot-rule-out-basic')), note('因為酚酞'), 'locked');
+  refuse(atChallenge2(), note('因為酚酞'), 'wrong-phase');
+  const solved = run(atChallenge3(), pick(3, 'c3-claim', 'cannot-rule-out-basic'), pick(3, 'c3-next', 'litmus-pair'));
+  refuse(solved, { type: 'SAVE_CHALLENGE_NOTE', id: 2, text: 'x' }, 'wrong-phase');
+  for (const bad of [null, 7, ['x'], { t: 'x' }]) refuse(solved, note(bad), 'invalid');
+  const r = step(solved, note('y'.repeat(TEXT_MAX + 10)));
+  assert.equal(r.state.challenges[3].note.length, TEXT_MAX);
+  assert.deepEqual(r.events, []); assert.deepEqual(r.transitions, []);
+  assert.equal(step(run(solved, note('')), CONT).state.phase, 'complete', 'the note never gates the finish');
+});
+
+test('complete is the end: no next transition, nothing more is accepted there', () => {
+  const s = atComplete();
+  refuse(s, CONT, 'wrong-phase');
+  refuse(s, { type: 'START' }, 'wrong-phase');
+  refuse(s, save({ freeText: 'more' }), 'wrong-phase');
+  refuse(s, { type: 'SAVE_CHALLENGE_NOTE', id: 3, text: 'x' }, 'wrong-phase');
+});
+
+test('a forged "correct" on a challenge step does not move anything: verdicts are judged from the choice', () => {
+  const s = atChallenge1();
+  const forged = { ...s, challenges: { ...s.challenges, 1: { steps: { 'c1-class': { choice: 'basic', attempts: 1, correct: true } } } } };
+  refuse(forged, CONT, 'locked');
+  const forged2 = { ...atChallenge2(), challenges: { ...s.challenges, 2: { steps: { 'c2-enough': { choice: 'acidic', attempts: 1, correct: true } } } } };
+  refuse(forged2, pick(2, 'c2-next', 'red-litmus'), 'locked');
+});
+
+test('attempts are capped at ATTEMPTS_MAX', () => {
+  const s = atChallenge1();
+  const near = { ...s, challenges: { ...s.challenges, 1: { steps: { 'c1-class': { choice: 'basic', attempts: ATTEMPTS_MAX, correct: false } } } } };
+  const r = step(near, pick(1, 'c1-class', 'neutral'));
+  assert.equal(r.state.challenges[1].steps['c1-class'].attempts, ATTEMPTS_MAX);
+});
+
+test('full late path: concept/ph → notebook → challenge-1 → 2 → 3 → complete, each entered once, deep-frozen throughout', () => {
+  let s = run(atConcept(), { type: 'REVEAL_PH' });
+  const seen = [];
+  for (const a of [CONT, save(RIGHT_A), CONT, pick(1, 'c1-class', 'acidic'), CONT, pick(2, 'c2-enough', 'not-enough'), pick(2, 'c2-next', 'red-litmus'), CONT,
+    pick(3, 'c3-claim', 'cannot-rule-out-basic'), pick(3, 'c3-next', 'litmus-pair'), CONT]) {
+    const r = step(s, a);
+    assert.equal(r.accepted, true, JSON.stringify(a));
+    seen.push(...r.transitions.map((t) => t.to));
+    s = r.state;
+  }
+  assert.deepEqual(seen, ['notebook', 'challenge-1', 'challenge-2', 'challenge-3', 'complete']);
+  const text = JSON.stringify(s);
+  for (const k of ['expected', 'ready', 'allCorrect', 'answerKey', 'ph10', '"kind"', '"result"']) assert.ok(!text.includes(k), `state carries ${k}`);
 });
 
 console.log(`acid-base-guided engine: ${tests} tests passed`);

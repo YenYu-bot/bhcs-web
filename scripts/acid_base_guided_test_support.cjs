@@ -1,5 +1,5 @@
-// Shared helpers for the guided acid–base browser checks (Pilot #4, B2).
-// There is no production page yet (B3). The checks mount the bench on a test-only fixture page that exists only in this
+// Shared helpers for the guided acid–base browser checks (Pilot #4, B2–B4).
+// The bench checks (B2) mount the bench on a test-only fixture page that exists only in this
 // server's memory: it wires the real engine, renderer and input together the way a page adapter would, and exposes a
 // test hook. Nothing is written to tools/ and no repository file carries the hook.
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http');
@@ -135,34 +135,53 @@ async function touchDrag(page, from, to, steps = 8) {
   await settle(page);
 }
 
-// ---- the production page (B3) ---------------------------------------------------------------------------------------
+// ---- the production page (B3–B4) ------------------------------------------------------------------------------------
 // The page ships no test hook. A check that needs to read the state gets one by having the browser context serve main.js
 // with one line appended (same module scope); nothing is added to the file on disk. Every write to the live region is
 // recorded from the first paint, so a check can read the whole announcement history.
 const PAGE = '/tools/science/acid-base-guided.html';
 const MAIN = '/assets/acid-base-guided/main.js';
 const HOOK = '\nwindow.__abgTest = { getState: () => state, dispatch };\n';
+// The site analytics adapter is replaced in every page check, so a test never reaches the real transport (it would load
+// gtag from Google). The stand-in records every call in window.__testScienceEvents and does nothing else.
+//   spy     (default)  records every call
+//   throw              records, then raises on every call
+//   absent             defines no adapter at all
+const ADAPTER = '/assets/science-events.js';
+const ADAPTERS = {
+  spy: 'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); };\n',
+  throw: 'window.__testScienceEvents = [];\nwindow.bhcsScienceTrack = (...args) => { window.__testScienceEvents.push(args); throw new Error("adapter down"); };\n',
+  absent: 'window.__testScienceEvents = [];\n',
+};
 const RECORD_ANNOUNCER = `window.__abgSaid = [];
 document.addEventListener('DOMContentLoaded', () => {
   const live = document.getElementById('abg-announcer');
   if (live) new MutationObserver(() => { if (live.textContent) window.__abgSaid.push(live.textContent); }).observe(live, { childList: true, characterData: true, subtree: true });
 });`;
 
-async function openPage(browser, base, { viewport, touch = false, hook = true, external = [], errors = [] }) {
-  const ctx = await browser.newContext({ viewport, hasTouch: touch, isMobile: touch });
-  await ctx.route('**/*', (route) => {
-    const url = route.request().url();
-    if (!url.startsWith(base)) { external.push(url); return route.abort(); }
-    if (hook && new URL(url).pathname === MAIN) return route.fulfill({ status: 200, contentType: 'text/javascript', body: fs.readFileSync(path.join(root, MAIN), 'utf8') + HOOK });
-    return route.continue();
-  });
-  await ctx.addInitScript(RECORD_ANNOUNCER);
+async function openPage(browser, base, { viewport, touch = false, hook = true, adapter = 'spy', external = [], errors = [], ctx: reuse = null }) {
+  const ctx = reuse ?? await browser.newContext({ viewport, hasTouch: touch, isMobile: touch });
+  if (!reuse) await routePage(ctx, base, { hook, adapter, external });
+  if (!reuse) await ctx.addInitScript(RECORD_ANNOUNCER);
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
   await page.goto(base + PAGE);
-  await page.waitForFunction(() => document.getElementById('abg-cta') && !document.getElementById('abg-cta').hidden);
+  await page.waitForFunction(() => document.getElementById('abg-cta') && document.getElementById('main').dataset.phase);
   return { ctx, page };
 }
 
-module.exports = { createServer, openFixture, openPage, axeScan, settle, launchOptions, touchDrag, FIXTURE, PAGE, MAIN, root };
+/** Same-origin only; main.js may get the test hook; the analytics adapter is always the stand-in. */
+async function routePage(ctx, base, { hook, adapter, external }) {
+  if (!Object.hasOwn(ADAPTERS, adapter)) throw new Error(`unknown adapter mode ${adapter}`);
+  await ctx.route('**/*', (route) => {
+    const url = route.request().url();
+    if (!url.startsWith(base)) { external.push(url); return route.abort(); }
+    const pathname = new URL(url).pathname;
+    if (pathname === ADAPTER) return route.fulfill({ status: 200, contentType: 'text/javascript', body: ADAPTERS[adapter] });
+    if (hook && pathname === MAIN) return route.fulfill({ status: 200, contentType: 'text/javascript', body: fs.readFileSync(path.join(root, MAIN), 'utf8') + HOOK });
+    return route.continue();
+  });
+}
+
+module.exports = { createServer, openFixture, openPage, axeScan, settle, launchOptions, touchDrag, FIXTURE, PAGE, MAIN, ADAPTER, root };
