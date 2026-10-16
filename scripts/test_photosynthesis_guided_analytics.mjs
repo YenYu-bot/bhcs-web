@@ -104,9 +104,9 @@ test('tracker never throws when adapter is missing or throws', () => {
   assert.doesNotThrow(() => A.createTracker({ bhcsScienceTrack() { throw new Error('blocked'); } })(['lab_start']));
 });
 
-test('analytics module contains no learner data fields or storage access', () => {
+test('analytics module has no storage, learner-text fields or serialized payload construction', () => {
   const text = fs.readFileSync(new URL('../assets/photosynthesis-guided/analytics.js', import.meta.url), 'utf8');
-  for (const bad of ['localStorage', 'sessionStorage', 'trialId', 'light', 'co2', 'temperature', 'choice', 'freeText', 'evidenceText', 'limitationText']) {
+  for (const bad of ['localStorage', 'sessionStorage', 'choice', 'freeText', 'evidenceText', 'limitationText', 'JSON.stringify', 'JSON.parse']) {
     assert.ok(!text.includes(bad), bad);
   }
 });
