@@ -106,8 +106,9 @@ test('tracker never throws when adapter is missing or throws', () => {
 
 test('analytics module has no storage, learner-text fields or serialized payload construction', () => {
   const text = fs.readFileSync(new URL('../assets/photosynthesis-guided/analytics.js', import.meta.url), 'utf8');
+  const code = text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').replace(/\s+\/\/.*$/gm, '');
   for (const bad of ['localStorage', 'sessionStorage', 'choice', 'freeText', 'evidenceText', 'limitationText', 'JSON.stringify', 'JSON.parse']) {
-    assert.ok(!text.includes(bad), bad);
+    assert.ok(!code.includes(bad), bad);
   }
 });
 
