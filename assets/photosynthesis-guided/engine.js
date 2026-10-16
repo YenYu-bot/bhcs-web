@@ -167,7 +167,7 @@ const reject = (ctx, reason) => {
 };
 
 function setConditions(st, condition) {
-  st.conditions = { ...condition };
+  st.conditions = condition === null ? null : { ...condition };
 }
 
 function enter(ctx, phase, condition = undefined) {
