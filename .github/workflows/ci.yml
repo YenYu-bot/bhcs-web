@@ -1,0 +1,367 @@
+# 全站 CI（第一階段：平行化，不略過任何測試）
+# 取代 researcher-lab-check.yml；內容與原本逐步相同，只是拆成可同時執行的工作。
+# 每個 PR、每次 main 更新都跑全部工作。合併門檻只看最後的「CI Gate」。
+name: CI
+
+on:
+  push:
+    branches: [main, codex/researcher-lab-redesign]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# PR 重推時取消同一 PR 的舊執行；main 每個 commit 各自一組，每次都完整跑完、留下紀錄。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: 22
+  PLAYWRIGHT_VERSION: 1.58.2
+
+jobs:
+  # 建置一致性、資源連結、單元測試、研究站 batch（無瀏覽器）
+  core:
+    name: core
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - run: node scripts/build_microscope.mjs
+      - run: node scripts/build_science.mjs
+      - run: node scripts/build_site.mjs
+      - run: python3 scripts/build_shell.py
+      - run: python3 scripts/build_resources.py
+      - run: node scripts/build_math_brand.mjs
+      - run: python3 scripts/build_sitemap.py
+      - run: git diff --exit-code
+      - run: python3 scripts/check_resources.py
+      - run: npm test --prefix scripts
+      - name: Reproduce P2 classification even when math tests fail
+        if: always()
+        run: |
+          if [ ! -f math-validation-artifacts/results.json ]; then
+            echo 'math validation 未產出成品，P2 分類略過'
+            exit 0
+          fi
+          node scripts/classify_math_drills.mjs
+          git diff --exit-code -- docs/p2-math-validation
+      - run: node scripts/check_science_integration.cjs
+      - run: node scripts/test_researcher_batch1.cjs
+      - run: node scripts/test_researcher_batch2.cjs
+      - run: node scripts/test_researcher_batch3.cjs
+      - run: node scripts/test_researcher_batch4.cjs
+      - run: node scripts/test_researcher_batch5.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p2-math-validation
+          path: math-validation-artifacts/
+          retention-days: 14
+
+  # 主站頁面與預約流程（真實 Chromium）
+  site:
+    name: site
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: /tmp/bhcs-composition/node_modules
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - name: Install Chromium
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Check public site pages and contact flows
+        run: node scripts/check_site_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-site-review
+          path: site-artifacts/
+          retention-days: 14
+
+  # 研究站：各站歡迎畫面構圖（最耗時的單一步驟，獨立一條）
+  science-layout:
+    name: science-layout
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: /tmp/bhcs-composition/node_modules
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - name: Install Chromium
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Check all welcome layouts and capture review images
+        run: node scripts/check_researcher_composition.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: researcher-composition-review
+          path: composition-artifacts/
+          retention-days: 14
+
+  # 研究站：顯微鏡指標操作、各站操作紀錄與挑戰
+  science-stations:
+    name: science-stations
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: /tmp/bhcs-composition/node_modules
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - name: Install Chromium
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Check real microscope pointer input and navigation
+        run: node scripts/check_researcher_browser.cjs
+      - name: Check all station operations, records, and challenges
+        run: node scripts/check_researcher_operations.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: researcher-operation-review
+          path: operation-artifacts/
+          retention-days: 14
+
+  # 引導式教材：光學、浮力、顯微鏡、酸鹼（真實 Chromium）
+  science-guided:
+    name: science-guided
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: /tmp/bhcs-composition/node_modules
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - name: Install Chromium
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Check guided optics input layer in a real browser
+        run: node scripts/check_optics_guided_input_browser.cjs
+      - name: Check guided optics bench states and page layout in a real browser
+        run: node scripts/check_optics_guided_view_browser.cjs
+      - name: Check the guided optics student flow (script, evidence, focus) in a real browser
+        run: node scripts/check_optics_guided_flow_browser.cjs
+      - name: Check guided buoyancy input layer in a real browser
+        run: node scripts/check_buoyancy_guided_input_browser.cjs
+      - name: Check guided buoyancy bench states and page layout in a real browser
+        run: node scripts/check_buoyancy_guided_view_browser.cjs
+      - name: Check guided buoyancy full student flow in a real browser
+        run: node scripts/check_buoyancy_guided_flow_browser.cjs
+      - name: Check guided microscope input layer in a real browser
+        run: node scripts/check_microscope_guided_input_browser.cjs
+      - name: Check guided microscope bench states and page layout in a real browser
+        run: node scripts/check_microscope_guided_view_browser.cjs
+      - name: Check guided microscope full student flow in a real browser
+        run: node scripts/check_microscope_guided_flow_browser.cjs
+      - name: Check guided acid-base input layer in a real browser
+        run: node scripts/check_acid_base_guided_input_browser.cjs
+      - name: Check guided acid-base bench states and page layout in a real browser
+        run: node scripts/check_acid_base_guided_view_browser.cjs
+      - name: Check guided acid-base full student flow in a real browser
+        run: node scripts/check_acid_base_guided_flow_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: optics-view-review
+          path: optics-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: optics-flow-review
+          path: optics-flow-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buoyancy-view-review
+          path: buoyancy-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buoyancy-flow-review
+          path: buoyancy-flow-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: microscope-view-review
+          path: microscope-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: microscope-flow-review
+          path: microscope-flow-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acid-base-view-review
+          path: acid-base-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acid-base-flow-review
+          path: acid-base-flow-artifacts/
+          retention-days: 14
+
+  # 數學練習卷畫面與列印版面（真實 Chromium）
+  math-browser:
+    name: math-browser
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: /tmp/bhcs-composition/node_modules
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - name: Install Chromium
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Compare P1 math worksheets and print layouts
+        env:
+          MATH_BRAND_PDF: '1'
+        run: node scripts/check_math_brand_browser.cjs
+      - name: Capture P4 vectorcauchy worksheet versions
+        run: node scripts/check_p4_vector_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-math-brand-review
+          path: math-brand-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p4-vector-review
+          path: p4-vector-artifacts/
+          retention-days: 14
+
+  # 數學回歸測試：scripts/math-regressions/ 的每個檔都會跑，依排序後的序號平均分到 4 條
+  math-regression:
+    name: math-regression (${{ matrix.shard }}/4)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --prefix scripts --ignore-scripts
+      - name: Run this shard's regression files
+        env:
+          SHARD: ${{ matrix.shard }}
+          TOTAL: 4
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find scripts/math-regressions -maxdepth 1 -name '*.mjs' ! -name helper.mjs | LC_ALL=C sort)
+          echo "共 ${#files[@]} 個回歸測試檔，本條為第 $SHARD 組（共 $TOTAL 組）"
+          echo "| 檔案 | 秒數 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          ran=0
+          for i in "${!files[@]}"; do
+            if (( i % TOTAL == SHARD )); then
+              start=$SECONDS
+              node "${files[$i]}"
+              echo "| ${files[$i]} | $((SECONDS - start)) |" >> "$GITHUB_STEP_SUMMARY"
+              ran=$((ran + 1))
+            fi
+          done
+          echo "本條執行 $ran 個檔"
+
+  # 數學出題引擎煙霧測試與 P3 多樣性棘輪
+  math-diversity:
+    name: math-diversity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --prefix scripts --ignore-scripts
+      - name: Smoke all published math drill engines
+        run: node scripts/math_local_check.mjs --all 40
+      - name: Enforce P3 diversity ratchet
+        env:
+          MATH_DIVERSITY_REPORT: math-validation-artifacts/diversity-current.json
+        run: |
+          node scripts/test_math_drills.mjs
+          node scripts/enforce_math_diversity.mjs
+      - name: Print P3 diversity failures
+        if: always()
+        run: node scripts/print_math_diversity_failures.cjs
+      - name: Upload math validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-validation-artifacts
+          path: |
+            math-validation-artifacts/diversity-current.json
+            math-validation-artifacts/results.json
+          if-no-files-found: warn
+
+  # 唯一的合併門檻：上面每一項都必須是 success（略過、取消、失敗都算不通過）
+  gate:
+    name: CI Gate
+    if: always()
+    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All required jobs succeeded
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"' | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "$RESULTS" | jq -e 'length == 8 and all(.[]; .result == "success")' > /dev/null
