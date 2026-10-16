@@ -123,16 +123,71 @@ test('layering: the lower modules never reach up into the page script or the glu
   assert.ok(!/from '\.\/main\.js'/.test(read(`${DIR}/script.js`)), 'the script does not import the glue');
 });
 
-test('the browser checks for this station are local only: the workflow does not run them yet', () => {
+/** The workflow's steps in order, each as its raw text (a step starts at a "      - " line). */
+function workflowSteps(wf) {
+  const steps = [];
+  for (const line of wf.split('\n')) {
+    if (/^ {6}- /.test(line)) steps.push(line);
+    else if (steps.length && /^ {8,}\S/.test(line)) steps[steps.length - 1] += `\n${line}`;
+  }
+  return steps;
+}
+
+test('CI runs the three browser checks for this station: once each, in order, after the build, the tests and the Chromium install', () => {
   const wf = read('.github/workflows/researcher-lab-check.yml');
-  assert.ok(!wf.includes('acid_base') && !wf.includes('acid-base'), 'not wired into CI until B5');
+  const steps = workflowSteps(wf);
+  const at = (pred, label) => { const i = steps.findIndex(pred); assert.ok(i >= 0, `missing step: ${label}`); return i; };
+  const GATES = [
+    ['input', 'Check guided acid-base input layer in a real browser'],
+    ['view', 'Check guided acid-base bench states and page layout in a real browser'],
+    ['flow', 'Check guided acid-base full student flow in a real browser'],
+  ];
+  assert.equal(steps.filter((st) => /acid[-_]base/.test(st) && !st.includes('upload-artifact')).length, 3, 'exactly three acid-base browser steps');
+  const idx = GATES.map(([kind, name]) => {
+    const script = `scripts/check_acid_base_guided_${kind}_browser.cjs`;
+    assert.equal(wf.split(script).length, 2, `${script} runs exactly once`);
+    const i = at((st) => st.includes(script), kind);
+    assert.equal(steps[i], `      - name: ${name}\n        env:\n          NODE_PATH: /tmp/bhcs-composition/node_modules\n        run: node ${script}`, `${kind} step text`);
+    return i;
+  });
+  assert.ok(idx[0] < idx[1] && idx[1] < idx[2], 'input → view → flow');
+  const after = [
+    at((st) => st.includes('Install Chromium for composition review'), 'Chromium install'),
+    at((st) => st.includes('build_sitemap.py'), 'builders'),
+    at((st) => st.includes('run: git diff --exit-code') && !st.includes('docs/'), 'git diff'),
+    at((st) => st.includes('check_resources.py'), 'resources'),
+    at((st) => st.includes('npm test --prefix scripts'), 'npm test'),
+    at((st) => st.includes('check_science_integration.cjs'), 'science integration'),
+    at((st) => st.includes('check_microscope_guided_flow_browser.cjs'), 'microscope full flow'),
+  ];
+  for (const i of after) assert.ok(i < idx[0], `the acid-base checks come after: ${steps[i].split('\n')[0].trim()}`);
+  assert.equal(wf.split('Install Chromium for composition review').length, 2, 'one shared Chromium install, no second one');
+  assert.equal((wf.match(/playwright install/g) ?? []).length, 1, 'no second Playwright install');
   const pkg = JSON.parse(read('scripts/package.json')).scripts.test;
   const names = ['model', 'engine', 'render', 'input', 'script', 'site', 'challenges', 'persist', 'analytics'];
   const order = names.map((n) => pkg.indexOf(`test_acid_base_guided_${n}.mjs`));
   assert.ok(order.every((i, k) => i > 0 && (k === 0 || i > order[k - 1])), 'the station tests run in order');
   for (const n of names) assert.equal(pkg.split(`test_acid_base_guided_${n}.mjs`).length, 2, `${n} runs once`);
   assert.ok(order.at(-1) < pkg.indexOf('test_math_drills.mjs'), 'before the math tests');
-  assert.ok(!pkg.includes('check_acid_base'), 'browser checks are not part of npm test');
+  assert.ok(!pkg.includes('check_acid_base'), 'browser checks stay workflow steps, not part of npm test');
+});
+
+test('CI keeps the view and flow screenshots for 14 days, next to the other guided stations\' uploads', () => {
+  const wf = read('.github/workflows/researcher-lab-check.yml');
+  const steps = workflowSteps(wf);
+  const upload = (name, dir) => {
+    const hits = steps.filter((st) => st.includes(`name: ${name}\n`) || st.endsWith(`name: ${name}`));
+    assert.equal(hits.length, 1, `${name} uploaded exactly once`);
+    assert.equal(hits[0], `      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: ${name}\n          path: ${dir}\n          retention-days: 14`, `${name} upload`);
+    return steps.indexOf(hits[0]);
+  };
+  const view = upload('acid-base-view-review', 'acid-base-view-artifacts/');
+  const flow = upload('acid-base-flow-review', 'acid-base-flow-artifacts/');
+  const microscope = steps.findIndex((st) => st.includes('name: microscope-flow-review'));
+  const site = steps.findIndex((st) => st.includes('name: public-site-review'));
+  assert.ok(microscope >= 0 && microscope < view && view < flow && flow < site, 'after the microscope uploads, before the public-site upload');
+  assert.ok(!steps.some((st) => st.includes('acid-base-input')), 'the input check makes no screenshots, so nothing is uploaded for it');
+  for (const dir of ['/acid-base-view-artifacts/', '/acid-base-flow-artifacts/']) assert.ok(read('.gitignore').split('\n').includes(dir), `${dir} is ignored`);
 });
 
 console.log(`acid-base-guided site: ${tests} tests passed`);
