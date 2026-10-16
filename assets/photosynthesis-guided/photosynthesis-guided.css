@@ -1,5 +1,4 @@
-/* Science Lab 2.0 Pilot #5 — B2 bench-only styles.
-   The production page shell is intentionally out of scope until B3. */
+/* Science Lab 2.0 Pilot #5 — B2 bench + B3 prototype page styles. */
 
 .pg-bench{
   --pg-ink:#17324a;
@@ -139,4 +138,234 @@
   .pg-stage,.pg-condition,.pg-light-button,.pg-observation{forced-color-adjust:auto}
   .pg-light-button[data-selected="true"]{outline:3px solid ButtonText;outline-offset:-5px;box-shadow:none}
   .pg-bubble{fill:Canvas;stroke:CanvasText}
+}
+
+
+/* B3 page shell ------------------------------------------------------------------------------------------------------ */
+.photosynthesis-factor-guided{
+  margin:0;
+  background:#f5f7f4;
+  color:#17324a;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+  line-height:1.65;
+}
+.photosynthesis-factor-guided *{box-sizing:border-box}
+.pfg-skip{
+  position:fixed;
+  z-index:100;
+  top:8px;
+  left:8px;
+  transform:translateY(-150%);
+  padding:9px 14px;
+  border-radius:10px;
+  background:#17324a;
+  color:#fff;
+  font-weight:800;
+}
+.pfg-skip:focus{transform:none}
+.pfg-wrap{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:24px 0 32px}
+.pfg-h1{margin:0 0 14px;font-size:clamp(1.45rem,2.4vw,2.05rem);line-height:1.25;letter-spacing:.01em}
+.pfg-stepnav{margin-bottom:14px}
+.pfg-steps{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:7px;
+}
+.pfg-steps .sg-step{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 10px;
+  border:1px solid #cad8dc;
+  border-radius:12px;
+  background:#fff;
+  color:#667b89;
+  font-size:.84rem;
+  font-weight:750;
+}
+.pfg-steps .sg-step[aria-current="step"]{border-color:#2f887d;background:#eaf6f2;color:#17324a}
+.pfg-steps .sg-step-num{
+  display:grid;
+  place-items:center;
+  flex:0 0 28px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#edf2f3;
+  font-variant-numeric:tabular-nums;
+  font-size:.76rem;
+}
+.pfg-steps .sg-step[aria-current="step"] .sg-step-num{background:#2f887d;color:#fff}
+.pfg-step-label{min-width:0;overflow-wrap:anywhere}
+.pfg-shell{
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(260px,.82fr);
+  gap:14px;
+  align-items:start;
+}
+.pfg-coach{grid-column:1/-1}
+.pfg-column{grid-column:1;min-width:0;display:grid;gap:12px}
+.pfg-side{grid-column:2;min-width:0;display:grid;gap:12px}
+.pfg-card{
+  min-width:0;
+  padding:18px;
+  border:1px solid #c9d8dc;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 8px 28px rgba(33,65,76,.06);
+}
+.pfg-coach{
+  position:relative;
+  padding:14px 18px 14px 76px;
+  border-color:#bad8d0;
+  background:#eef8f4;
+}
+.pfg-coach::before{
+  content:"余";
+  position:absolute;
+  left:18px;
+  top:15px;
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid #4f9387;
+  color:#2f6f66;
+  font-weight:900;
+}
+.pfg-coach p{margin:0}
+.pfg-coach-name{font-size:.78rem;font-weight:800;color:#52766f}
+.pfg-coach-main{font-size:1.04rem;font-weight:850;color:#17324a}
+.pfg-coach-sub{margin-top:2px!important;color:#536b79}
+.pfg-welcome{text-align:center;padding:24px 22px}
+.pfg-welcome-art{display:block;width:min(360px,92%);height:auto;margin:0 auto 10px}
+.pfg-welcome h2,.pfg-card>h2{margin:0 0 10px;font-size:clamp(1.18rem,2vw,1.48rem);line-height:1.4}
+.pfg-welcome p{max-width:720px;margin:0 auto;color:#536b79}
+.pfg-status{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  min-height:46px;
+  padding:10px 13px;
+  border-radius:12px;
+  border:1px solid #c8d7dc;
+  background:#f7fafb;
+  font-weight:750;
+}
+.pfg-status[data-kind="success"]{border-color:#a9d1b8;background:#eff8f2}
+.pfg-status[data-kind="progress"]{border-color:#bad7df;background:#f0f8fa}
+.pfg-status-icon{font-weight:900}
+.pfg-actions{display:flex;justify-content:flex-end}
+.pfg-cta{
+  min-height:48px;
+  max-width:100%;
+  padding:11px 20px;
+  border:0;
+  border-radius:12px;
+  background:#276f67;
+  color:#fff;
+  font:800 1rem/1.25 inherit;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.pfg-cta:hover:not(:disabled){background:#1f5e57}
+.pfg-cta:disabled{opacity:.46;cursor:not-allowed}
+.pfg-cta:focus-visible,.pfg-card input:focus-visible,.pfg-card button:focus-visible{outline:3px solid #d79b24;outline-offset:3px}
+.pfg-footer{padding:16px 4px 0;color:#617481;font-size:.86rem;text-align:center}
+.pfg-prototype-note{margin:0}
+#pfg-data .sg-card-title,#pfg-evidence .sg-card-title{margin:0 0 10px;font-size:1rem}
+.sg-facts{display:grid;grid-template-columns:minmax(88px,.7fr) minmax(0,1fr);gap:6px 10px}
+.sg-facts dt{color:#607582;font-weight:750}
+.sg-facts dd{margin:0;font-weight:800;overflow-wrap:anywhere}
+.sg-facts dd[data-state="locked"]::after,.sg-facts dd[data-state="changed"]::after{
+  display:inline-block;
+  margin-left:6px;
+  padding:1px 6px;
+  border-radius:999px;
+  background:#edf2f3;
+  color:#607582;
+  font-size:.7rem;
+  vertical-align:middle;
+}
+.sg-facts dd[data-state="locked"]::after{content:"固定"}
+.sg-facts dd[data-state="changed"]::after{content:"這次改變";background:#e7f4ef;color:#276f67}
+.sg-evidence-item+.sg-evidence-item{margin-top:12px;padding-top:12px;border-top:1px solid #e0e8ea}
+.sg-evidence-title{margin:0 0 6px;font-size:.95rem}
+.sg-compare-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.sg-compare-table th,.sg-compare-table td{padding:9px 8px;border-bottom:1px solid #dce5e7;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.sg-compare-table thead th{background:#f4f7f7;font-size:.88rem}
+.sg-compare-table tbody th{width:34%;font-size:.9rem}
+.sg-compare-table tr[data-kind="changed"] th::after,.sg-compare-table tr[data-kind="controlled"] th::after{
+  display:block;
+  margin-top:2px;
+  color:#647984;
+  font-size:.7rem;
+  font-weight:700;
+}
+.sg-procedure{margin:10px 0;padding:9px 11px;border-radius:10px;background:#edf7f4;font-weight:800}
+.sg-question{margin:16px 0 0;padding:14px;border:1px solid #d7e1e4;border-radius:14px}
+.sg-question legend{padding:0 5px;font-weight:850}
+.sg-options{display:grid;gap:8px;margin-top:8px}
+.sg-pill{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  min-height:46px;
+  padding:10px 11px;
+  border:1px solid #c9d7dc;
+  border-radius:11px;
+  background:#fff;
+  cursor:pointer;
+}
+.sg-pill:has(input:checked){border-color:#2f887d;background:#eaf6f2}
+.sg-pill:has(input:disabled){cursor:default}
+.sg-pill input{margin-top:.22em}
+.sg-feedback{margin:9px 0 0;padding:8px 10px;border-radius:9px;background:#fff6df;color:#6f5417}
+.sg-feedback[data-kind="success"]{background:#edf8f1;color:#245c39}
+.sg-concept-card,.sg-formula-card{
+  margin-top:12px;
+  padding:14px;
+  border:1px solid #d4e0e2;
+  border-radius:14px;
+  background:#fbfcfc;
+}
+.sg-concept-title{margin:0 0 8px;font-size:1.05rem}
+.sg-concept-card p{margin:6px 0}
+.sg-concept-evidence{margin:10px 0 0;padding-left:1.25rem}
+.sg-concept-evidence li+li{margin-top:6px}
+.sg-line-label{font-weight:850}
+.sg-formula{margin:8px 0;padding:10px;border-radius:10px;background:#eef8f4;font-weight:900;text-align:center}
+.sg-formula-lines{margin:8px 0;padding-left:1.25rem}
+.sg-formula-lines [data-emphasis="true"]{font-weight:850}
+.sg-line-note{display:block;color:#5f7380;font-size:.86rem}
+.sg-formula-note{margin:8px 0 0;color:#526a77}
+[hidden]{display:none!important}
+
+@media(max-width:760px){
+  .pfg-wrap{width:min(100% - 20px,1180px);padding-top:14px}
+  .pfg-steps{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+  .pfg-steps .sg-step{display:block;padding:6px 3px;text-align:center;font-size:.68rem;line-height:1.25}
+  .pfg-steps .sg-step-num{width:24px;height:24px;margin:0 auto 3px}
+  .pfg-shell{grid-template-columns:minmax(0,1fr)}
+  .pfg-coach,.pfg-column,.pfg-side{grid-column:1}
+  .pfg-card{padding:14px;border-radius:14px}
+  .pfg-coach{padding:12px 12px 12px 66px}
+  .pfg-coach::before{left:12px;top:12px}
+  .pfg-actions{justify-content:stretch}
+  .pfg-cta{width:100%;min-height:56px}
+  .sg-facts{grid-template-columns:minmax(76px,.72fr) minmax(0,1fr)}
+  .sg-compare-table th,.sg-compare-table td{padding:7px 5px;font-size:.8rem}
+  .sg-compare-table tbody th{width:35%}
+  .sg-pill{min-height:52px}
+}
+@media(max-width:420px){
+  .pfg-wrap{width:calc(100% - 16px)}
+  .pfg-welcome{padding:18px 12px}
+  .pfg-welcome-art{width:min(310px,100%)}
+  .pfg-card{padding:12px}
+  .pfg-coach{padding-left:62px}
+  .pfg-steps .sg-step-label{font-size:.64rem}
 }
