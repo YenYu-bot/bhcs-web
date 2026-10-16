@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ciWorkflow, ciJobs, CHROMIUM_INSTALL } from './ci_workflow_test_support.mjs';
 
 let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
@@ -33,7 +34,7 @@ test('nothing public links to it: no other page, catalog, sitemap or data file n
   assert.deepEqual(pages, [PAGE], 'no other HTML page contains the prototype\'s name');
   const everywhere = git('grep', '-l', 'buoyancy-guided').trim().split('\n').filter(Boolean);
   const allowed = [/^assets\/buoyancy-guided\//, /^tools\/science\/buoyancy-guided\.html$/, /^scripts\/(?:check|test)_buoyancy_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/buoyancy_guided_test_support\.cjs$/,
-    /^scripts\/package\.json$/, /^scripts\/test_science_guided_shared\.mjs$/, /^\.github\/workflows\/researcher-lab-check\.yml$/, /^docs\/.*buoyancy-guided.*\.md$/];
+    /^scripts\/package\.json$/, /^scripts\/test_science_guided_shared\.mjs$/, /^\.github\/workflows\/ci\.yml$/, /^docs\/.*buoyancy-guided.*\.md$/];
   assert.deepEqual(everywhere.filter((f) => !allowed.some((re) => re.test(f))), [], 'only the prototype\'s own files, tests, workflow and docs mention it');
   assert.ok(!read('tools/buoyancy-density-lab.html').includes('buoyancy-guided'), 'the legacy lab does not link back to the guided page');
 });
@@ -103,22 +104,25 @@ test('source boundaries: each file does the one job it was given', () => {
   assert.ok(!/outcomeIn|blockOutcome|objectOutcome|immersionFraction/.test(src['script.js'] + src['main.js'] + src['cards.js']), 'physics stays in the model and the engine');
 });
 
-test('workflow: the guided checks run after Chromium is installed, after the builders, and apart from the 42-station harness', () => {
-  const wf = read('.github/workflows/researcher-lab-check.yml');
-  const idx = (n) => wf.indexOf(n);
+test('workflow: the guided checks run in the guided job after its Chromium install, CI Gate also needs the build and unit tests, and they stay apart from the 42-station harness', () => {
+  const wf = ciWorkflow();
+  const jobs = ciJobs(wf);
+  const job = jobs['science-guided'];
+  assert.ok(job, 'the science-guided job exists');
+  const idx = (n) => job.text.indexOf(n);
   for (const c of ['check_buoyancy_guided_input_browser.cjs', 'check_buoyancy_guided_view_browser.cjs', 'check_buoyancy_guided_flow_browser.cjs']) {
-    assert.ok(idx(c) > idx('playwright install --with-deps chromium'), `${c} comes after the Chromium install`);
+    assert.ok(idx(c) > idx(CHROMIUM_INSTALL) && idx(CHROMIUM_INSTALL) >= 0, `${c} comes after the Chromium install in the same job`);
     assert.equal((wf.match(new RegExp(c.replace(/\./g, '\\.'), 'g')) ?? []).length, 1, `${c} runs once`);
   }
-  assert.ok(idx('git diff --exit-code') < idx('check_buoyancy_guided_input_browser.cjs'), 'builders and the idempotence check run first');
-  assert.ok(idx('npm test --prefix scripts') < idx('check_buoyancy_guided_input_browser.cjs'));
+  assert.ok(jobs.core.text.includes('git diff --exit-code') && jobs.core.text.includes('npm test --prefix scripts'), 'core runs the builders, the idempotence check and the unit tests');
+  assert.ok(['core', 'science-guided'].every((n) => jobs.gate.needs.includes(n)), 'CI Gate needs both core and science-guided');
   assert.ok(idx('check_buoyancy_guided_input_browser.cjs') < idx('check_buoyancy_guided_view_browser.cjs') && idx('check_buoyancy_guided_view_browser.cjs') < idx('check_buoyancy_guided_flow_browser.cjs'));
-  assert.ok(wf.includes('Check guided buoyancy full student flow in a real browser'));
+  assert.ok(job.text.includes('Check guided buoyancy full student flow in a real browser'));
   for (const f of ['check_researcher_composition.cjs', 'check_researcher_operations.cjs', 'test_researcher_batch5.cjs', 'test_researcher_batch1.cjs', 'check_researcher_browser.cjs']) {
     if (fs.existsSync(path.join(root, 'scripts', f))) assert.ok(!read(`scripts/${f}`).includes('buoyancy-guided'), `${f} does not know the prototype`);
   }
-  assert.ok(wf.includes('buoyancy-flow-review') && wf.includes('buoyancy-view-review'), 'review images are uploaded');
-  assert.ok(wf.includes('buoyancy-flow-artifacts/') && wf.includes('buoyancy-view-artifacts/'));
+  assert.ok(job.text.includes('buoyancy-flow-review') && job.text.includes('buoyancy-view-review'), 'review images are uploaded');
+  assert.ok(job.text.includes('buoyancy-flow-artifacts/') && job.text.includes('buoyancy-view-artifacts/'));
 });
 
 test('the global test chain runs all eight unit and static gates, before the math tests', () => {

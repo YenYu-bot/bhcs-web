@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ciWorkflow } from './ci_workflow_test_support.mjs';
 
 let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
@@ -104,7 +105,7 @@ test('layering: B1/B2 do not reach up into the learner script or page glue', () 
 });
 
 test('photosynthesis browser gates remain local until B5; unit/static tests are in npm test in order', () => {
-  const wf = read('.github/workflows/researcher-lab-check.yml');
+  const wf = ciWorkflow();
   assert.ok(!wf.includes('check_photosynthesis_guided_'), 'not wired into CI until B5');
   const pkg = JSON.parse(read('scripts/package.json')).scripts.test;
   const order = ['model', 'engine', 'render', 'input', 'script', 'site'].map((n) => pkg.indexOf(`test_photosynthesis_guided_${n}.mjs`));

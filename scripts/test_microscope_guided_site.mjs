@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ciWorkflow, ciJobs, CHROMIUM_INSTALL } from './ci_workflow_test_support.mjs';
 
 let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
@@ -120,24 +121,28 @@ test('main.js: one announcer, one live region, the shared focus handoff, no copy
   assert.ok(!/aria-live|setAttribute\('role'/.test(main), 'the page adds no second live region');
 });
 
-test('workflow: the three microscope browser gates run after Chromium is installed, after the builders and the other guided gates', () => {
-  const wf = read('.github/workflows/researcher-lab-check.yml');
-  const idx = (n) => wf.indexOf(n);
+test('workflow: the three microscope browser gates run in the guided job after its Chromium install and the other guided gates; CI Gate also needs the build and unit tests', () => {
+  const wf = ciWorkflow();
+  const jobs = ciJobs(wf);
+  const job = jobs['science-guided'];
+  assert.ok(job, 'the science-guided job exists');
+  const idx = (n) => job.text.indexOf(n);
   const gates = ['check_microscope_guided_input_browser.cjs', 'check_microscope_guided_view_browser.cjs', 'check_microscope_guided_flow_browser.cjs'];
   for (const c of gates) {
-    assert.ok(idx(c) > idx('playwright install --with-deps chromium'), `${c} comes after the Chromium install`);
+    assert.ok(idx(c) > idx(CHROMIUM_INSTALL) && idx(CHROMIUM_INSTALL) >= 0, `${c} comes after the Chromium install in the same job`);
     assert.equal((wf.match(new RegExp(c.replace(/\./g, '\\.'), 'g')) ?? []).length, 1, `${c} runs once`);
     assert.ok(idx(c) > idx('check_buoyancy_guided_flow_browser.cjs'), `${c} follows the buoyancy gates`);
-    assert.match(wf, new RegExp(`NODE_PATH: /tmp/bhcs-composition/node_modules\\n\\s+run: node scripts/${c.replace(/\./g, '\\.')}`));
+    assert.match(job.text, new RegExp(`NODE_PATH: /tmp/bhcs-composition/node_modules\\n\\s+run: node scripts/${c.replace(/\./g, '\\.')}`));
   }
-  assert.ok(idx('git diff --exit-code') < idx(gates[0]) && idx('npm test --prefix scripts') < idx(gates[0]), 'builders, idempotence and unit tests run first');
+  assert.ok(jobs.core.text.includes('git diff --exit-code') && jobs.core.text.includes('npm test --prefix scripts'), 'core runs the builders, idempotence and unit tests');
+  assert.ok(['core', 'science-guided'].every((n) => jobs.gate.needs.includes(n)), 'CI Gate needs both core and science-guided');
   assert.ok(idx(gates[0]) < idx(gates[1]) && idx(gates[1]) < idx(gates[2]), 'input, view, flow');
-  assert.ok(wf.includes('Check guided microscope full student flow in a real browser'));
+  assert.ok(job.text.includes('Check guided microscope full student flow in a real browser'));
   for (const f of ['check_researcher_composition.cjs', 'check_researcher_operations.cjs', 'test_researcher_batch5.cjs', 'test_researcher_batch1.cjs', 'check_researcher_browser.cjs']) {
     if (fs.existsSync(path.join(root, 'scripts', f))) assert.ok(!read(`scripts/${f}`).includes('microscope-guided'), `${f} does not know the prototype`);
   }
   for (const a of [['microscope-view-review', 'microscope-view-artifacts/'], ['microscope-flow-review', 'microscope-flow-artifacts/']]) {
-    assert.match(wf, new RegExp(`name: ${a[0]}\\n\\s+path: ${a[1]}\\n\\s+retention-days: 14`), `${a[0]} is uploaded for 14 days`);
+    assert.match(job.text, new RegExp(`name: ${a[0]}\\n\\s+path: ${a[1]}\\n\\s+retention-days: 14`), `${a[0]} is uploaded for 14 days`);
   }
   assert.equal((wf.match(/microscope_guided|microscope-view-review|microscope-flow-review/g) ?? []).length, 3 + 2, 'only the three steps and the two uploads were added');
   for (const f of gates) assert.ok(fs.existsSync(path.join(root, 'scripts', f)), f);

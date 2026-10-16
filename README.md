@@ -31,6 +31,8 @@ node scripts/check_science_integration.cjs
 
 產出納入 Git 後，再重跑建置應沒有差異。CI 另跑 researcher batch 1–5、真實 Chromium 全站及預約流程、研究站構圖、顯微鏡拖曳與全站操作。瀏覽器檢查需要 Playwright 與 Chromium，輸出截圖會上傳為 Actions artifacts。JSDOM 通過不等於真實畫面已驗收。
 
+CI 定義在 `.github/workflows/ci.yml`，每個 PR 與每次 main 更新都跑全部檢查，並拆成可同時執行的工作：`core`（建置一致性、資源連結、單元測試、研究站 batch）、`site`、`science-layout`、`science-stations`、`science-guided`、`math-browser`、`math-regression`（四組平行）、`math-diversity`。合併只看最後的 **CI Gate**：上述每一項都必須成功，略過或取消都算不通過。同一 PR 重推會取消舊的執行；main 的每個 commit 都會完整跑完。CI 結構本身由 `scripts/test_ci_workflow.mjs` 鎖住（列在 `npm test`），改 `ci.yml` 時要同步更新這支測試。
+
 ## 預約流程與資料
 
 目前採 LINE 預約，沒有啟用直接收件的後端。填寫資料後會另開百宏官方 LINE；家長必須在 LINE 按「傳送」，百宏才會收到。網站提供內容預覽、複製備援與清除按鈕。

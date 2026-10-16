@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ciWorkflow, ciJobs, CHROMIUM_INSTALL } from './ci_workflow_test_support.mjs';
 
 let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
@@ -123,26 +124,20 @@ test('layering: the lower modules never reach up into the page script or the glu
   assert.ok(!/from '\.\/main\.js'/.test(read(`${DIR}/script.js`)), 'the script does not import the glue');
 });
 
-/** The workflow's steps in order, each as its raw text (a step starts at a "      - " line). */
-function workflowSteps(wf) {
-  const steps = [];
-  for (const line of wf.split('\n')) {
-    if (/^ {6}- /.test(line)) steps.push(line);
-    else if (steps.length && /^ {8,}\S/.test(line)) steps[steps.length - 1] += `\n${line}`;
-  }
-  return steps;
-}
-
-test('CI runs the three browser checks for this station: once each, in order, after the build, the tests and the Chromium install', () => {
-  const wf = read('.github/workflows/researcher-lab-check.yml');
-  const steps = workflowSteps(wf);
-  const at = (pred, label) => { const i = steps.findIndex(pred); assert.ok(i >= 0, `missing step: ${label}`); return i; };
+test('CI runs the three browser checks for this station: once each, in order, in the guided job after its Chromium install and the microscope gates; CI Gate also needs the build and unit tests', () => {
+  const wf = ciWorkflow();
+  const jobs = ciJobs(wf);
+  const job = jobs['science-guided'];
+  assert.ok(job, 'the science-guided job exists');
+  const steps = job.steps;
+  const at = (pred, label) => { const i = steps.findIndex(pred); assert.ok(i >= 0, `missing step in science-guided: ${label}`); return i; };
   const GATES = [
     ['input', 'Check guided acid-base input layer in a real browser'],
     ['view', 'Check guided acid-base bench states and page layout in a real browser'],
     ['flow', 'Check guided acid-base full student flow in a real browser'],
   ];
-  assert.equal(steps.filter((st) => /acid[-_]base/.test(st) && !st.includes('upload-artifact')).length, 3, 'exactly three acid-base browser steps');
+  const allSteps = Object.values(jobs).flatMap((j) => j.steps);
+  assert.equal(allSteps.filter((st) => /acid[-_]base/.test(st) && !st.includes('upload-artifact')).length, 3, 'exactly three acid-base browser steps in the whole workflow');
   const idx = GATES.map(([kind, name]) => {
     const script = `scripts/check_acid_base_guided_${kind}_browser.cjs`;
     assert.equal(wf.split(script).length, 2, `${script} runs exactly once`);
@@ -151,18 +146,15 @@ test('CI runs the three browser checks for this station: once each, in order, af
     return i;
   });
   assert.ok(idx[0] < idx[1] && idx[1] < idx[2], 'input → view → flow');
-  const after = [
-    at((st) => st.includes('Install Chromium for composition review'), 'Chromium install'),
-    at((st) => st.includes('build_sitemap.py'), 'builders'),
-    at((st) => st.includes('run: git diff --exit-code') && !st.includes('docs/'), 'git diff'),
-    at((st) => st.includes('check_resources.py'), 'resources'),
-    at((st) => st.includes('npm test --prefix scripts'), 'npm test'),
-    at((st) => st.includes('check_science_integration.cjs'), 'science integration'),
-    at((st) => st.includes('check_microscope_guided_flow_browser.cjs'), 'microscope full flow'),
-  ];
-  for (const i of after) assert.ok(i < idx[0], `the acid-base checks come after: ${steps[i].split('\n')[0].trim()}`);
-  assert.equal(wf.split('Install Chromium for composition review').length, 2, 'one shared Chromium install, no second one');
-  assert.equal((wf.match(/playwright install/g) ?? []).length, 1, 'no second Playwright install');
+  for (const i of [at((st) => st.includes(CHROMIUM_INSTALL), 'Chromium install'), at((st) => st.includes('check_microscope_guided_flow_browser.cjs'), 'microscope full flow')]) {
+    assert.ok(i < idx[0], `the acid-base checks come after: ${steps[i].split('\n')[0].trim()}`);
+  }
+  assert.equal(job.text.split(CHROMIUM_INSTALL).length, 2, 'one Chromium install in the guided job');
+  const core = jobs.core.steps;
+  for (const [needle, label] of [['build_sitemap.py', 'builders'], ['run: git diff --exit-code', 'git diff'], ['check_resources.py', 'resources'], ['npm test --prefix scripts', 'npm test'], ['check_science_integration.cjs', 'science integration']]) {
+    assert.ok(core.some((st) => st.includes(needle)), `core runs ${label}`);
+  }
+  assert.ok(['core', 'science-guided'].every((n) => jobs.gate.needs.includes(n)), 'CI Gate needs both core and science-guided');
   const pkg = JSON.parse(read('scripts/package.json')).scripts.test;
   const names = ['model', 'engine', 'render', 'input', 'script', 'site', 'challenges', 'persist', 'analytics'];
   const order = names.map((n) => pkg.indexOf(`test_acid_base_guided_${n}.mjs`));
@@ -173,20 +165,21 @@ test('CI runs the three browser checks for this station: once each, in order, af
 });
 
 test('CI keeps the view and flow screenshots for 14 days, next to the other guided stations\' uploads', () => {
-  const wf = read('.github/workflows/researcher-lab-check.yml');
-  const steps = workflowSteps(wf);
+  const jobs = ciJobs();
+  const steps = jobs['science-guided'].steps;
+  const all = Object.values(jobs).flatMap((j) => j.steps);
   const upload = (name, dir) => {
-    const hits = steps.filter((st) => st.includes(`name: ${name}\n`) || st.endsWith(`name: ${name}`));
-    assert.equal(hits.length, 1, `${name} uploaded exactly once`);
-    assert.equal(hits[0], `      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: ${name}\n          path: ${dir}\n          retention-days: 14`, `${name} upload`);
-    return steps.indexOf(hits[0]);
+    assert.equal(all.filter((st) => st.includes(`name: ${name}\n`) || st.endsWith(`name: ${name}`)).length, 1, `${name} uploaded exactly once`);
+    const i = steps.findIndex((st) => st.includes(`name: ${name}\n`) || st.endsWith(`name: ${name}`));
+    assert.ok(i >= 0, `${name} is uploaded by the guided job`);
+    assert.equal(steps[i], `      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: ${name}\n          path: ${dir}\n          retention-days: 14`, `${name} upload`);
+    return i;
   };
   const view = upload('acid-base-view-review', 'acid-base-view-artifacts/');
   const flow = upload('acid-base-flow-review', 'acid-base-flow-artifacts/');
   const microscope = steps.findIndex((st) => st.includes('name: microscope-flow-review'));
-  const site = steps.findIndex((st) => st.includes('name: public-site-review'));
-  assert.ok(microscope >= 0 && microscope < view && view < flow && flow < site, 'after the microscope uploads, before the public-site upload');
-  assert.ok(!steps.some((st) => st.includes('acid-base-input')), 'the input check makes no screenshots, so nothing is uploaded for it');
+  assert.ok(microscope >= 0 && microscope < view && view < flow, 'after the microscope uploads, in the same job');
+  assert.ok(!all.some((st) => st.includes('acid-base-input')), 'the input check makes no screenshots, so nothing is uploaded for it');
   for (const dir of ['/acid-base-view-artifacts/', '/acid-base-flow-artifacts/']) assert.ok(read('.gitignore').split('\n').includes(dir), `${dir} is ignored`);
 });
 
