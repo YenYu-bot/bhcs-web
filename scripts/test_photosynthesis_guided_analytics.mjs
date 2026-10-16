@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import * as E from '../assets/photosynthesis-guided/engine.js';
 import * as A from '../assets/photosynthesis-guided/analytics.js';
 
@@ -104,7 +105,7 @@ test('tracker never throws when adapter is missing or throws', () => {
 });
 
 test('analytics module contains no learner data fields or storage access', () => {
-  const text = await import('node:fs').then((fs) => fs.readFileSync(new URL('../assets/photosynthesis-guided/analytics.js', import.meta.url), 'utf8'));
+  const text = fs.readFileSync(new URL('../assets/photosynthesis-guided/analytics.js', import.meta.url), 'utf8');
   for (const bad of ['localStorage', 'sessionStorage', 'trialId', 'light', 'co2', 'temperature', 'choice', 'freeText', 'evidenceText', 'limitationText']) {
     assert.ok(!text.includes(bad), bad);
   }
