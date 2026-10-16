@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>英文單字描寫練習卷產生器｜四線三格虛線習寫｜百宏文教機構</title>
+<meta name="description" content="免費英文單字描寫練習卷：上傳 Word、PDF 或直接輸入單字，自動排出四線三格虛線描寫字，每字可練 10 次，直接列印 A4 或下載 PDF。台中北屯百宏文教機構製作。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/english-tracing.html">
+<meta property="og:title" content="英文單字描寫練習卷產生器｜百宏文教">
+<meta property="og:description" content="上傳或輸入英文單字，自動產生四線三格虛線描寫練習卷，可列印 A4。">
+<meta property="og:url" content="https://www.bhcs.com.tw/tools/english-tracing.html">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: control column on the left, A4 page stack on a desk-coloured ground on the right; stacks on phones */
+:root{
+  --bg:#e9eef3; --panel:#ffffff; --ink:#1d2733; --muted:#5a6777; --rule:#d5dee8;
+  --guide:#9fb6cf; --red:#cc4038; --accent:#2c66ad; --accent-ink:#ffffff; --soft:#f3f6f9;
+  --latin:"Andika","Comic Sans MS",system-ui,sans-serif;
+  --cjk:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#11161c; --panel:#1a2129; --ink:#e4eaf1; --muted:#9aa7b6; --rule:#2c3642;
+  --guide:#4d6580; --red:#e2675f; --accent:#6fa2df; --accent-ink:#0d1520; --soft:#222b35; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11161c; --panel:#1a2129; --ink:#e4eaf1; --muted:#9aa7b6; --rule:#2c3642;
+  --guide:#4d6580; --red:#e2675f; --accent:#6fa2df; --accent-ink:#0d1520; --soft:#222b35; color-scheme:dark}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--cjk);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:20px}
+header.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mark{width:46px;height:34px;flex:none}
+h1{font-size:1.5rem;margin:0;font-weight:700;text-wrap:balance;letter-spacing:.02em}
+h1 small{display:block;font-size:.85rem;font-weight:400;color:var(--muted);letter-spacing:0}
+.main{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);padding:18px;display:grid;gap:18px;min-width:0}
+.sect{display:grid;gap:8px;min-width:0}
+.sect h2{font-size:.78rem;letter-spacing:.12em;color:var(--muted);margin:0;font-weight:500}
+.drop{border:1.5px dashed var(--guide);border-radius:8px;padding:16px;text-align:center;background:var(--soft);cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--accent)}
+.drop:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.drop strong{display:block;font-weight:500}
+.drop span{font-size:.82rem;color:var(--muted)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+textarea{width:100%;min-height:210px;resize:vertical;font:15px/1.7 var(--latin),var(--cjk);color:var(--ink);background:var(--soft);
+  border:1px solid var(--rule);border-radius:8px;padding:10px 12px;box-sizing:border-box}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.hint{font-size:.8rem;color:var(--muted);margin:0}
+.status{font-size:.85rem;margin:0;min-height:1.3em}
+.status.err{color:var(--red)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{display:grid;gap:4px;font-size:.85rem;color:var(--muted);min-width:0}
+label.f input,label.f select{font:inherit;font-size:.95rem;color:var(--ink);background:var(--soft);border:1px solid var(--rule);border-radius:7px;padding:7px 9px;width:100%;box-sizing:border-box;min-width:0}
+.checks{display:grid;gap:6px}
+.checks label{display:flex;align-items:center;gap:8px;font-size:.92rem;cursor:pointer}
+.checks input{width:17px;height:17px;accent-color:var(--accent)}
+.seg{display:flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.seg label{flex:1;text-align:center;cursor:pointer;font-size:.9rem;padding:7px 0;position:relative}
+.seg input{position:absolute;opacity:0}
+.seg label:has(input:checked){background:var(--accent);color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+button.primary{font:inherit;font-weight:700;font-size:1rem;background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:12px 16px;cursor:pointer}
+button.primary:disabled{opacity:.55;cursor:default}
+button.primary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.preview{min-width:0;display:grid;gap:12px}
+.pv-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pv-head h2{font-size:1rem;margin:0;font-weight:500}
+.pv-head span{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.pages{display:grid;gap:18px;justify-items:center}
+.pages canvas{width:100%;max-width:640px;height:auto;background:#fff;box-shadow:0 1px 2px rgba(20,30,45,.12),0 6px 22px rgba(20,30,45,.10);border-radius:2px}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.06em;background:var(--soft);border:1px solid var(--rule);color:var(--muted);border-radius:99px;padding:0 8px;margin-left:6px;vertical-align:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.back{font-size:.85rem;color:var(--accent);text-decoration:none;margin-left:auto}
+.back:hover{text-decoration:underline}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button.ghost{font:inherit;font-weight:700;font-size:1rem;background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:8px;padding:11px 16px;cursor:pointer}
+button.ghost:disabled{opacity:.55;cursor:default}
+#printArea{display:none}
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important;padding:0!important;margin:0}
+  .wrap{display:none!important}
+  #printArea{display:block}
+  #printArea img{display:block;width:210mm;height:297mm;break-after:page;page-break-after:always}
+  #printArea img:last-child{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 46 34" aria-hidden="true">
+      <line x1="2" y1="4" x2="44" y2="4" stroke="var(--guide)" stroke-width="1.4"/>
+      <line x1="2" y1="13" x2="44" y2="13" stroke="var(--guide)" stroke-width="1.4"/>
+      <line x1="2" y1="22" x2="44" y2="22" stroke="var(--red)" stroke-width="1.6"/>
+      <line x1="2" y1="31" x2="44" y2="31" stroke="var(--guide)" stroke-width="1.4"/>
+      <g fill="var(--ink)"><circle cx="12" cy="13.5" r="1.3"/><circle cx="9" cy="15.2" r="1.3"/><circle cx="7.6" cy="18.3" r="1.3"/><circle cx="9" cy="21" r="1.3"/><circle cx="12" cy="22" r="1.3"/><circle cx="15" cy="20.8" r="1.3"/><circle cx="16.4" cy="17.6" r="1.3"/><circle cx="15" cy="14.6" r="1.3"/><circle cx="16.6" cy="13" r="1.3"/><circle cx="16.6" cy="17.5" r="1.3"/><circle cx="16.6" cy="22" r="1.3"/></g>
+    </svg>
+    <h1>英文單字描寫練習卷<small>上傳或輸入單字，自動排出四線三格虛線描寫字</small></h1>
+    <a class="back" href="../ziyuan.html#res-english">← 回學習資源</a>
+  </header>
+
+  <div class="main">
+    <form class="panel" id="form" autocomplete="off">
+      <div class="sect">
+        <h2>1 ・ 匯入單字</h2>
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept=".docx,.pdf,.txt">
+          <strong>點這裡選檔，或把檔案拖進來</strong>
+          <span>支援 Word（.docx）、PDF、純文字</span>
+        </label>
+        <p class="status" id="status" role="status"></p>
+      </div>
+
+      <div class="sect">
+        <h2>2 ・ 確認單字清單 <span class="tag" id="sampleTag">範例</span></h2>
+        <textarea id="words" spellcheck="false" aria-label="單字清單">apple 蘋果
+banana 香蕉
+school 學校
+teacher 老師
+beautiful 美麗的
+take care of 照顧</textarea>
+        <p class="hint">一行一個單字或片語，後面可接中文意思。可以直接在這裡修改。</p>
+      </div>
+
+      <div class="sect">
+        <h2>3 ・ 版面設定</h2>
+        <div class="grid2">
+          <label class="f">描寫次數<input type="number" id="reps" min="1" max="30" value="10"></label>
+          <label class="f">每頁標題<input type="text" id="title" value="英文單字練習"></label>
+        </div>
+        <label class="f">機構名稱<input type="text" id="org" value="百宏文教機構"></label>
+        <div class="sect" style="gap:4px">
+          <span class="hint">字體大小（同 Word 字級，四線格總高＝字級高度）</span>
+          <div class="seg" role="radiogroup" aria-label="字體大小">
+            <label><input type="radio" name="size" id="size12" value="12">12 號</label>
+            <label><input type="radio" name="size" id="size14" value="14" checked>14 號</label>
+            <label><input type="radio" name="size" id="size18" value="18">18 號</label>
+            <label><input type="radio" name="size" id="size24" value="24">24 號</label>
+          </div>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="model" checked>開頭加一個實線示範字</label>
+          <label><input type="checkbox" id="showZh" checked>顯示中文意思</label>
+          <label><input type="checkbox" id="blank">每個單字後加一列空白自寫</label>
+        </div>
+      </div>
+
+      <div class="btns"><button type="button" class="primary" id="print">列印 A4</button><button type="button" class="ghost" id="dl">下載 PDF</button></div>
+      <p class="status" id="dlStatus" role="status"></p>
+    </form>
+
+    <section class="preview" aria-label="預覽">
+      <div class="pv-head"><h2>預覽（A4）</h2><span id="pvInfo"></span></div>
+      <div class="pages" id="pages"></div>
+    </section>
+  </div>
+</div>
+<div id="printArea" aria-hidden="true"></div>
+
+<script>
+/* ---------- Single-stroke manuscript font (ball-and-stick) ----------
+   Units: baseline y=0, x-height y=1, cap/ascender y=2, descender y=-1.
+   Commands: M x y (move) · L x y (line) · A cx cy rx ry a0 a1 (arc, degrees, y-up) · D x y (dot) */
+const G = {
+a:["A.5 .5 .5 .5 0 360","M1 1 L1 0"],
+b:["M0 2 L0 0","A.5 .5 .5 .5 0 360"],
+c:["A.5 .5 .5 .5 40 320"],
+d:["A.5 .5 .5 .5 0 360","M1 2 L1 0"],
+e:["M0 .5 L1 .5 A.5 .5 .5 .5 0 315"],
+f:["A.7 1.6 .35 .35 30 180 L.35 0","M0 1 L.8 1"],
+g:["A.5 .5 .5 .5 0 360","M1 1 L1 -.55 A.5 -.55 .5 .45 0 -165"],
+h:["M0 2 L0 0","M0 .55 A.45 .55 .45 .45 180 0 L.9 0"],
+i:["M0 1 L0 0","D0 1.5"],
+j:["M.5 1 L.5 -.55 A.15 -.55 .35 .45 0 -180","D.5 1.5"],
+k:["M0 2 L0 0","M.8 1 L0 .4","M.25 .59 L.85 0"],
+l:["M0 2 L0 0"],
+m:["M0 1 L0 0","M0 .6 A.35 .6 .35 .4 180 0 L.7 0","M.7 .6 A1.05 .6 .35 .4 180 0 L1.4 0"],
+n:["M0 1 L0 0","M0 .55 A.45 .55 .45 .45 180 0 L.9 0"],
+o:["A.5 .5 .5 .5 0 360"],
+p:["M0 1 L0 -1","A.5 .5 .5 .5 0 360"],
+q:["A.5 .5 .5 .5 0 360","M1 1 L1 -1"],
+r:["M0 1 L0 0","M0 .55 A.4 .55 .4 .45 180 40"],
+s:["A.42 .75 .38 .25 15 270","A.42 .25 .38 .25 90 -165"],
+t:["M.3 1.75 L.3 .2 A.6 .2 .3 .2 180 300","M0 1 L.75 1"],
+u:["M0 1 L0 .45 A.45 .45 .45 .45 180 360","M.9 1 L.9 0"],
+v:["M0 1 L.45 0 L.9 1"],
+w:["M0 1 L.35 0 L.7 1 L1.05 0 L1.4 1"],
+x:["M0 1 L.85 0","M.85 1 L0 0"],
+y:["M0 1 L.55 0","M1 1 L.1 -1"],
+z:["M0 1 L.85 1 L0 0 L.85 0"],
+A:["M0 0 L.7 2 L1.4 0","M.25 .7 L1.15 .7"],
+B:["M0 0 L0 2 L.6 2 A.6 1.5 .5 .5 90 -90 L0 1","M.6 1 L.7 1 A.7 .5 .5 .5 90 -90 L0 0"],
+C:["A.95 1 .95 1 45 315"],
+D:["M0 0 L0 2 L.5 2 A.5 1 .9 1 90 -90 L0 0"],
+E:["M1.1 2 L0 2 L0 0 L1.1 0","M0 1 L.9 1"],
+F:["M1.1 2 L0 2 L0 0","M0 1 L.9 1"],
+G:["A.95 1 .95 1 50 360","M1.2 1 L1.9 1"],
+H:["M0 0 L0 2","M1.3 0 L1.3 2","M0 1 L1.3 1"],
+I:["M.4 0 L.4 2","M0 2 L.8 2","M0 0 L.8 0"],
+J:["M1 2 L1 .5 A.5 .5 .5 .5 0 -180"],
+K:["M0 0 L0 2","M1.2 2 L0 .8","M.45 1.25 L1.25 0"],
+L:["M0 2 L0 0 L1 0"],
+M:["M0 0 L0 2 L.8 .6 L1.6 2 L1.6 0"],
+N:["M0 0 L0 2 L1.3 0 L1.3 2"],
+O:["A1 1 1 1 0 360"],
+P:["M0 0 L0 2 L.6 2 A.6 1.5 .5 .5 90 -90 L0 1"],
+Q:["A1 1 1 1 0 360","M1.25 .55 L1.95 -.1"],
+R:["M0 0 L0 2 L.6 2 A.6 1.5 .5 .5 90 -90 L0 1","M.55 1 L1.2 0"],
+S:["A.75 1.5 .7 .5 15 270","A.75 .5 .7 .5 90 -165"],
+T:["M0 2 L1.4 2","M.7 2 L.7 0"],
+U:["M0 2 L0 .65 A.65 .65 .65 .65 180 360 L1.3 2"],
+V:["M0 2 L.7 0 L1.4 2"],
+W:["M0 2 L.5 0 L1 2 L1.5 0 L2 2"],
+X:["M0 2 L1.3 0","M1.3 2 L0 0"],
+Y:["M0 2 L.65 1 L1.3 2","M.65 1 L.65 0"],
+Z:["M0 2 L1.3 2 L0 0 L1.3 0"],
+".":["D0 0"], ",":["M.06 .1 L-.06 -.3"], "'":["M0 2 L0 1.55"], "’":["M0 2 L0 1.55"],
+"-":["M0 .5 L.6 .5"], "!":["M0 2 L0 .55","D0 0"], "?":["A.4 1.6 .4 .4 160 -60 L.4 .95 L.4 .6","D.4 0"]
+};
+const SPACE = .8, TRACK = .45;
+
+const glyphCache = {};
+function glyph(ch){
+  if (glyphCache[ch]) return glyphCache[ch];
+  const src = G[ch]; if (!src) return null;
+  const polys = [], dots = [];
+  for (const s of src){
+    const toks = s.match(/[MLAD]|-?\d*\.?\d+/g); let i = 0, cur = null;
+    const num = () => parseFloat(toks[i++]);
+    while (i < toks.length){
+      const c = toks[i++];
+      if (c === 'M'){ cur = [[num(),num()]]; polys.push(cur); }
+      else if (c === 'L'){ cur.push([num(),num()]); }
+      else if (c === 'D'){ dots.push([num(),num()]); }
+      else if (c === 'A'){
+        const cx=num(), cy=num(), rx=num(), ry=num(), a0=num(), a1=num();
+        const n = Math.max(2, Math.ceil(Math.abs(a1-a0)/5));
+        const pts = [];
+        for (let k=0;k<=n;k++){ const a=(a0+(a1-a0)*k/n)*Math.PI/180; pts.push([cx+rx*Math.cos(a), cy+ry*Math.sin(a)]); }
+        if (!cur){ cur = pts; polys.push(cur); } else cur.push(...pts.slice(1).length && Math.hypot(cur[cur.length-1][0]-pts[0][0],cur[cur.length-1][1]-pts[0][1])<1e-6 ? pts.slice(1) : pts);
+      }
+    }
+  }
+  let minx=Infinity,maxx=-Infinity;
+  for (const p of polys) for (const [x] of p){ minx=Math.min(minx,x); maxx=Math.max(maxx,x); }
+  for (const [x] of dots){ minx=Math.min(minx,x); maxx=Math.max(maxx,x); }
+  return glyphCache[ch] = {polys, dots, minx, maxx};
+}
+function wordLayout(word){
+  const out = []; let x = 0;
+  for (const ch of word){
+    if (ch === ' '){ x += SPACE; continue; }
+    const g = glyph(ch); if (!g){ x += SPACE*.6; continue; }
+    out.push({g, dx: x - g.minx}); x += (g.maxx - g.minx) + TRACK;
+  }
+  return {items: out, width: Math.max(0, x - TRACK)};
+}
+/* split a polyline at sharp corners so every corner gets a dot */
+function splitCorners(p){
+  const segs = []; let cur = [p[0]];
+  for (let i=1;i<p.length;i++){
+    cur.push(p[i]);
+    if (i < p.length-1){
+      const a=[p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]], b=[p[i+1][0]-p[i][0],p[i+1][1]-p[i][1]];
+      const la=Math.hypot(...a), lb=Math.hypot(...b);
+      if (la && lb){ const cos=(a[0]*b[0]+a[1]*b[1])/(la*lb); if (cos < .82){ segs.push(cur); cur=[p[i]]; } }
+    }
+  }
+  segs.push(cur); return segs;
+}
+function dotsAlong(p, step){
+  let L = 0; const d=[0];
+  for (let i=1;i<p.length;i++){ L += Math.hypot(p[i][0]-p[i-1][0], p[i][1]-p[i-1][1]); d.push(L); }
+  if (L < 1e-6) return [p[0]];
+  const n = Math.max(1, Math.round(L/step)), out = []; let j = 1;
+  for (let k=0;k<=n;k++){
+    const t = L*k/n; while (j < p.length-1 && d[j] < t) j++;
+    const seg = d[j]-d[j-1] || 1, f = (t-d[j-1])/seg;
+    out.push([p[j-1][0]+(p[j][0]-p[j-1][0])*f, p[j-1][1]+(p[j][1]-p[j-1][1])*f]);
+  }
+  return out;
+}
+/* draw a word with baseline at (x0, base), u = px per unit band, sx = horizontal squeeze */
+function drawWord(ctx, word, x0, base, u, mode, sx=1, k=8){
+  const lay = wordLayout(word);
+  const X = x => x0 + x*u*sx, Y = y => base - y*u;
+  if (mode === 'solid'){
+    ctx.strokeStyle = '#1f2933'; ctx.fillStyle = '#1f2933';
+    ctx.lineWidth = Math.max(u*.085, k*.2); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const {g,dx} of lay.items){
+      for (const p of g.polys){ ctx.beginPath(); p.forEach(([x,y],k)=> k? ctx.lineTo(X(x+dx),Y(y)) : ctx.moveTo(X(x+dx),Y(y))); ctx.stroke(); }
+      for (const [x,y] of g.dots){ ctx.beginPath(); ctx.arc(X(x+dx),Y(y),Math.max(u*.075, k*.17),0,7); ctx.fill(); }
+    }
+  } else {
+    ctx.fillStyle = '#7d8794';
+    const r = Math.max(u*.045, k*.11), step = Math.max(.14, k*.42/u);
+    for (const {g,dx} of lay.items){
+      for (const p of g.polys){
+        const sp = p.map(([x,y]) => [(x+dx)*sx, y]);
+        for (const seg of splitCorners(sp)) for (const [x,y] of dotsAlong(seg, step)){
+          ctx.beginPath(); ctx.arc(x0 + x*u, Y(y), r, 0, 7); ctx.fill();
+        }
+      }
+      for (const [x,y] of g.dots){ ctx.beginPath(); ctx.arc(X(x+dx),Y(y),r*1.5,0,7); ctx.fill(); }
+    }
+  }
+}
+
+/* ---------- Parsing uploaded / typed text ---------- */
+const CJK = '\\u3400-\\u9fff\\uf900-\\ufaff';
+const TOKEN = new RegExp(`([A-Za-z][A-Za-z'’\\-]*(?: [A-Za-z][A-Za-z'’\\-]*)*\\.?)|([${CJK}][^A-Za-z]*)`, 'g');
+const POS = /\b(n|v|vt|vi|adj|adv|prep|conj|pron|art|aux|int|interj|phr|num|det|pl|abbr)\s*\./gi;
+function parseText(text){
+  const entries = [], seen = new Set();
+  let last = null;
+  for (let line of text.split(/\r?\n/)){
+    line = line.replace(/\u00a0/g,' ').replace(/[\u2028\u3000]/g,' ').trim();
+    if (!line) continue;
+    line = line.replace(/^(\(?\d+[.)、:：]?\)?|[•·●▪*])\s*/, '')
+               .replace(/\/[^\/\n]*\//g,' ').replace(/\[[^\]]*\]/g,' ')
+               .replace(POS,' ').replace(/[(（]\s*[)）]/g,' ');
+    let lineEntry = null, m;
+    TOKEN.lastIndex = 0;
+    while ((m = TOKEN.exec(line))){
+      if (m[1]){
+        let en = m[1].replace(/\.$/, '').trim();
+        if (!en || /^(n|v|vt|vi|adj|adv|prep|conj|pron)$/i.test(en)) continue;
+        const key = en.toLowerCase();
+        if (seen.has(key)){ lineEntry = null; continue; }
+        seen.add(key); lineEntry = {en, zh:''}; entries.push(lineEntry); last = lineEntry;
+      } else if (m[2]){
+        const zh = m[2].replace(/[\s\d.)(、,，;；:：\-~]+$/,'').replace(/^[\s,，;；:：\-~]+/,'').trim();
+        if (!zh) continue;
+        const target = lineEntry || last;
+        if (target && !target.zh) target.zh = zh;
+      }
+    }
+  }
+  return entries;
+}
+
+/* ---------- File reading ---------- */
+const libs = {};
+function loadScript(src){
+  return libs[src] ||= new Promise((ok, bad) => {
+    const s = document.createElement('script'); s.src = src; s.onload = ok;
+    s.onerror = () => { delete libs[src]; bad(new Error('程式庫載入失敗，請檢查網路後再試一次')); };
+    document.head.appendChild(s);
+  });
+}
+const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/';
+async function readDocx(buf){
+  await loadScript(CDN+'mammoth/1.6.0/mammoth.browser.min.js');
+  const r = await window.mammoth.extractRawText({arrayBuffer: buf});
+  return r.value;
+}
+async function readPdf(buf){
+  await loadScript(CDN+'pdf.js/3.11.174/pdf.min.js');
+  await loadScript(CDN+'pdf.js/3.11.174/pdf.worker.min.js');
+  const pdf = await window.pdfjsLib.getDocument({data: new Uint8Array(buf), isEvalSupported:false}).promise;
+  const lines = [];
+  for (let p=1;p<=pdf.numPages;p++){
+    const page = await pdf.getPage(p);
+    const tc = await page.getTextContent();
+    const rows = [];
+    for (const it of tc.items){
+      if (!it.str || !it.str.trim()) continue;
+      const x = it.transform[4], y = it.transform[5], h = Math.abs(it.transform[3]) || Math.abs(it.height) || 10;
+      let row = rows.find(r => Math.abs(r.y - y) < h*.45);
+      if (!row){ row = {y, h, items:[]}; rows.push(row); }
+      row.items.push({x, w: it.width, s: it.str});
+    }
+    rows.sort((a,b) => b.y - a.y);
+    for (const r of rows){
+      r.items.sort((a,b) => a.x - b.x);
+      let out = '', end = null;
+      for (const it of r.items){
+        if (end !== null){ const gap = it.x - end; out += gap > r.h*1.4 ? '\t' : gap > r.h*.12 ? ' ' : ''; }
+        out += it.s; end = it.x + it.w;
+      }
+      lines.push(out.replace(/\t/g,'  '));
+    }
+  }
+  return lines.join('\n');
+}
+
+/* ---------- Page layout & rendering ---------- */
+const $ = id => document.getElementById(id);
+const PT_MM = 25.4/72;   // 1 號(pt) = 0.3528 mm；四線格總高 = 一個字級
+const PAGE = {w:210, h:297, mx:14, mt:12, mb:14, head:22};
+
+function opts(){
+  return {
+    entries: parseText($('words').value),
+    reps: Math.min(30, Math.max(1, parseInt($('reps').value,10) || 10)),
+    title: $('title').value.trim(), org: $('org').value.trim(),
+    u: parseInt(document.querySelector('input[name=size]:checked').value,10)*PT_MM/3,
+    model: $('model').checked, showZh: $('showZh').checked, blank: $('blank').checked
+  };
+}
+
+function layout(o){
+  const W = PAGE.w - 2*PAGE.mx, u = o.u, rowH = 3*u, rowGap = Math.max(3.2, .75*u), labelH = 6.5, gapC = Math.max(1.4*u, 4), blockGap = 4.5;
+  const top = PAGE.mt + PAGE.head, bottom = PAGE.h - PAGE.mb;
+  const pages = []; let page = null, y = 0;
+  const newPage = () => { page = []; pages.push(page); y = top; };
+  newPage();
+  o.entries.forEach((e, idx) => {
+    const lay = wordLayout(e.en);
+    let w = lay.width*u, sx = 1;
+    if (w > W){ sx = W/w; w = W; }
+    const copies = []; if (o.model) copies.push('solid'); for (let i=0;i<o.reps;i++) copies.push('dot');
+    const perRow = Math.max(1, Math.floor((W + gapC)/(w + gapC)));
+    const rows = [];
+    for (let i=0;i<copies.length;i+=perRow) rows.push(copies.slice(i, i+perRow));
+    if (o.blank) rows.push([]);
+    const blockH = labelH + rows.length*rowH + (rows.length-1)*rowGap;
+    const avail = bottom - top;
+    if (y + blockH > bottom && (blockH <= avail || y + labelH + rowH > bottom) && y > top) newPage();
+    page.push({type:'label', y, n: idx+1, e});
+    y += labelH;
+    rows.forEach((r, ri) => {
+      if (y + rowH > bottom){ newPage(); page.push({type:'label', y, n: idx+1, e, cont:true}); y += labelH; }
+      page.push({type:'row', y, word: e.en, copies: r, w, sx, gapC});
+      y += rowH + (ri < rows.length-1 ? rowGap : 0);
+    });
+    y += blockGap;
+  });
+  return {pages, W, u};
+}
+
+function render(o, L, dpi){
+  const k = dpi/25.4, out = [];
+  const total = L.pages.length;
+  L.pages.forEach((items, pi) => {
+    const c = document.createElement('canvas');
+    c.width = Math.round(PAGE.w*k); c.height = Math.round(PAGE.h*k);
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,c.width,c.height);
+    const mm = v => v*k, mx = PAGE.mx;
+    // header
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#1d2733'; ctx.font = `700 ${mm(6)}px "Noto Sans TC", sans-serif`;
+    ctx.fillText(o.title || '英文單字練習', mm(mx), mm(PAGE.mt + 7));
+    if (o.org){ ctx.fillStyle = '#6a7684'; ctx.font = `400 ${mm(3.2)}px "Noto Sans TC", sans-serif`; ctx.fillText(o.org, mm(mx), mm(PAGE.mt + 13)); }
+    ctx.font = `400 ${mm(3.4)}px "Noto Sans TC", sans-serif`; ctx.fillStyle = '#3b4652';
+    const fields = [['班級',20],['姓名',32],['日期',24]];
+    let fx = PAGE.w - mx; ctx.strokeStyle = '#8a95a3'; ctx.lineWidth = mm(.2);
+    for (let i=fields.length-1;i>=0;i--){
+      const [t, lw] = fields[i]; fx -= lw; ctx.beginPath(); ctx.moveTo(mm(fx), mm(PAGE.mt+12.5)); ctx.lineTo(mm(fx+lw-2), mm(PAGE.mt+12.5)); ctx.stroke();
+      const tw = ctx.measureText(t).width/k; fx -= tw + 1.5; ctx.fillText(t, mm(fx), mm(PAGE.mt+12));
+      fx -= 3;
+    }
+    ctx.strokeStyle = '#1d2733'; ctx.lineWidth = mm(.35);
+    ctx.beginPath(); ctx.moveTo(mm(mx), mm(PAGE.mt+16.5)); ctx.lineTo(mm(PAGE.w-mx), mm(PAGE.mt+16.5)); ctx.stroke();
+    // body
+    for (const it of items){
+      if (it.type === 'label'){
+        const by = it.y + 4.6;
+        ctx.fillStyle = '#2c66ad'; ctx.font = `700 ${mm(3.6)}px "Andika", sans-serif`;
+        const num = `${it.n}.`; ctx.fillText(num, mm(mx), mm(by));
+        let x = mx + ctx.measureText(num).width/k + 2;
+        ctx.fillStyle = '#1d2733'; ctx.font = `700 ${mm(4)}px "Andika", sans-serif`;
+        ctx.fillText(it.e.en, mm(x), mm(by)); x += ctx.measureText(it.e.en).width/k + 3;
+        ctx.font = `400 ${mm(3.4)}px "Noto Sans TC", sans-serif`; ctx.fillStyle = '#5a6777';
+        const extra = (o.showZh && it.e.zh ? it.e.zh : '') + (it.cont ? '（續）' : '');
+        if (extra) ctx.fillText(extra, mm(x), mm(by));
+      } else {
+        const u = L.u, base = it.y + 2*u;
+        const line = (yy, col, lw) => { ctx.strokeStyle = col; ctx.lineWidth = mm(lw); ctx.beginPath(); ctx.moveTo(mm(mx), mm(yy)); ctx.lineTo(mm(PAGE.w-mx), mm(yy)); ctx.stroke(); };
+        line(base-2*u, '#a9bdd2', .22); line(base-u, '#a9bdd2', .22); line(base, '#d0473f', .28); line(base+u, '#a9bdd2', .22);
+        let x = mx;
+        for (const kind of it.copies){
+          drawWord(ctx, it.word, mm(x), mm(base), mm(u), kind, it.sx, k);
+          x += it.w + it.gapC;
+        }
+      }
+    }
+    // footer
+    ctx.fillStyle = '#8a95a3'; ctx.font = `400 ${mm(3)}px "Noto Sans TC", sans-serif`; ctx.textAlign = 'center';
+    ctx.fillText(`第 ${pi+1} / ${total} 頁`, mm(PAGE.w/2), mm(PAGE.h - 7)); ctx.textAlign = 'left';
+    out.push(c);
+  });
+  return out;
+}
+
+let timer = null, fontsReady = null;
+function ensureFonts(){
+  return fontsReady ||= Promise.all([
+    document.fonts.load('700 20px "Andika"'), document.fonts.load('400 20px "Noto Sans TC"'), document.fonts.load('700 20px "Noto Sans TC"')
+  ]).catch(()=>{});
+}
+async function refresh(){
+  await ensureFonts();
+  const o = opts(), L = layout(o);
+  const host = $('pages'); host.replaceChildren();
+  if (!o.entries.length){
+    $('pvInfo').textContent = '';
+    const p = document.createElement('p'); p.className = 'hint'; p.textContent = '左邊清單還沒有英文單字。上傳檔案或直接輸入後，練習卷會出現在這裡。';
+    host.append(p); $('dl').disabled = true; $('print').disabled = true; return;
+  }
+  $('dl').disabled = false; $('print').disabled = false;
+  render(o, L, 150).forEach((c, i) => { c.setAttribute('aria-label', `第 ${i+1} 頁`); host.append(c); });
+  $('pvInfo').textContent = `${o.entries.length} 個單字 · 每字 ${o.reps} 次 · 共 ${L.pages.length} 頁`;
+}
+function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, 250); }
+
+/* ---------- Events ---------- */
+function setStatus(id, msg, err){ const el = $(id); el.textContent = msg; el.classList.toggle('err', !!err); }
+async function handleFile(f){
+  if (!f) return;
+  const name = f.name.toLowerCase();
+  setStatus('status', `讀取「${f.name}」中…`);
+  try{
+    let text;
+    if (name.endsWith('.docx')) text = await readDocx(await f.arrayBuffer());
+    else if (name.endsWith('.pdf')) text = await readPdf(await f.arrayBuffer());
+    else if (name.endsWith('.txt')) text = await f.text();
+    else if (name.endsWith('.doc')) throw new Error('舊版 .doc 無法讀取，請在 Word 另存為 .docx 再上傳');
+    else throw new Error('只支援 .docx、.pdf、.txt 檔');
+    const entries = parseText(text);
+    if (!entries.length) throw new Error('檔案裡找不到英文單字。若是掃描成圖片的 PDF，請改用打字輸入');
+    $('words').value = entries.map(e => e.zh ? `${e.en} ${e.zh}` : e.en).join('\n');
+    $('sampleTag').hidden = true;
+    setStatus('status', `已從「${f.name}」讀到 ${entries.length} 個單字，請在下方確認。`);
+    refresh();
+  }catch(e){ setStatus('status', e.message || '讀取失敗', true); }
+}
+$('file').addEventListener('change', e => { handleFile(e.target.files[0]); e.target.value = ''; });
+const drop = $('drop');
+['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+$('words').addEventListener('input', () => { $('sampleTag').hidden = true; schedule(); });
+$('form').addEventListener('input', e => { if (e.target.id !== 'words') schedule(); });
+$('form').addEventListener('submit', e => e.preventDefault());
+
+function stamp(){ const d = new Date(); return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`; }
+async function hiRes(){ await ensureFonts(); const o = opts(), L = layout(o); return {pages: render(o, L, 300), n: L.pages.length}; }
+
+$('print').addEventListener('click', async () => {
+  const btn = $('print'); btn.disabled = true; setStatus('dlStatus', '準備列印中…');
+  try{
+    const {pages} = await hiRes();
+    const area = $('printArea'); area.replaceChildren();
+    const imgs = pages.map(c => { const im = new Image(); im.alt = ''; im.src = c.toDataURL('image/png'); area.append(im); return im; });
+    await Promise.all(imgs.map(im => im.decode().catch(()=>{})));
+    setStatus('dlStatus', '');
+    window.print();
+  }catch(e){ setStatus('dlStatus', '準備列印失敗：' + (e.message || e), true); }
+  finally{ btn.disabled = false; }
+});
+window.addEventListener('afterprint', () => $('printArea').replaceChildren());
+
+$('dl').addEventListener('click', async () => {
+  const btn = $('dl'); btn.disabled = true; setStatus('dlStatus', '產生 PDF 中…');
+  try{
+    await loadScript(CDN+'jspdf/2.5.1/jspdf.umd.min.js');
+    const {pages, n} = await hiRes();
+    const doc = new window.jspdf.jsPDF({unit:'mm', format:'a4', orientation:'portrait', compress:true});
+    pages.forEach((c, i) => { if (i) doc.addPage(); doc.addImage(c.toDataURL('image/jpeg', .93), 'JPEG', 0, 0, 210, 297, undefined, 'FAST'); });
+    doc.save(`單字描寫練習卷_${stamp()}.pdf`);
+    setStatus('dlStatus', `已下載 ${n} 頁 PDF。`);
+  }catch(e){ setStatus('dlStatus', '產生 PDF 失敗：' + (e.message || e), true); }
+  finally{ btn.disabled = false; }
+});
+
+refresh();
+</script>
+<script src="../assets/site.js?v=20261005-site-analytics-1" defer></script>
+</body>
+</html>
