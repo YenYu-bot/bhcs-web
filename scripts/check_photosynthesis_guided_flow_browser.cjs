@@ -270,7 +270,7 @@ async function reachConcept(p, { tap = false, wrongAnswers = false } = {}) {
       for (const key of FORBIDDEN_SAVE_KEYS) assert.ok(!keys.includes(key), `save contains ${key}`);
       assert.equal(save.records.length, 4);
       assert.ok(save.records.every((r) => Object.keys(r).sort().join() === 'co2,light,temperature,trialId'));
-      assert.deepEqual(Object.keys(localStorage), [SAVE_KEY]);
+      assert.deepEqual(await p.evaluate(() => Object.keys(localStorage)), [SAVE_KEY]);
       assert.equal(await p.evaluate(() => sessionStorage.length), 0);
       ok('Save: raw trial conditions + learner inputs only; no rate/factors/limit/correct/ready/expected');
 
