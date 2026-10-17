@@ -14,7 +14,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin']);
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man', teeth: 'tooth', feet: 'foot', mice: 'mouse' };
 function inList(word) {
@@ -314,7 +314,88 @@ function checkImperative(it, mode) {
   if (mode === 'be') { assert.deepEqual(a, m.neg ? ["Don't", 'be'] : ['Be']); assert.ok(text.includes(m.neg ? '(不要' : '(要'), 'cue'); }
 }
 
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative };
+
+// ---------- batch 3b rules ----------
+// articles: decided by the word right after each blank
+const AN_SOUND = { hour: 'an', honest: 'an', uniform: 'a', useful: 'a', university: 'a' };
+const soundArticle = (w) => AN_SOUND[w] ?? (/^[aeiou]/.test(w) ? 'an' : 'a');
+const THE_WORDS = new Set(['piano', 'violin', 'guitar', 'drums', 'park', 'zoo', 'library', 'supermarket', 'moon', 'sky', 'stars']);
+const NO_ARTICLE = new Set(['basketball', 'baseball', 'soccer', 'tennis', 'volleyball', 'badminton', 'breakfast', 'lunch', 'dinner', 'school', 'bed', 'bus', 'bicycle', 'train', 'music', 'science', 'art', 'history']);
+function checkArticle(it, mode) {
+  const parts = it.lines.flat();
+  parts.forEach((p, i) => {
+    if (typeof p === 'string') return;
+    const before = parts.slice(0, i).map((x) => (typeof x === 'string' ? x : x.a)).join('');
+    const next = (parts[i + 1] ?? '').trim().split(/\s+/)[0].replace(/[.,?]/g, '');
+    const start = before.trim() === '' || /[.?!]\s*$/.test(before);
+    let want;
+    if (THE_WORDS.has(next) && !/\b(a|an)$/.test(before.trim())) want = 'the';
+    else if (NO_ARTICLE.has(next)) want = '×';
+    else if (start && i > 0 && parts.slice(0, i).some((x) => typeof x !== 'string')) want = 'the'; // the same thing again, later in the item
+    else want = soundArticle(next);
+    if (start && want !== '×') want = cap1(want);
+    assert.equal(p.a, want, `${mode}: blank before "${next}" in ${it.lines.map(lineText).join(' ')}`);
+  });
+}
+const COUNTABLE = new Set(['books', 'eggs', 'apples', 'cookies', 'oranges', 'bananas', 'pencils', 'friends', 'students', 'birds', 'toys', 'people']);
+const UNCOUNTABLE = new Set(['milk', 'water', 'juice', 'tea', 'coffee', 'bread', 'rice', 'money', 'time', 'homework', 'sugar', 'soup']);
+function checkQuantity(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (m.kind !== 'price') assert.ok(COUNTABLE.has(m.noun) || UNCOUNTABLE.has(m.noun), `known noun ${m.noun}`);
+  assert.ok(m.kind === 'price' || new RegExp(`___ ${m.noun}\\b`).test(text), `the noun follows the blank: ${text}`);
+  const count = COUNTABLE.has(m.noun);
+  if (mode === 'some') assert.deepEqual(a, [/n't|\?/.test(text) ? 'any' : 'some'], text);
+  if (mode === 'many') assert.deepEqual(a, [m.kind === 'price' ? 'much' : count ? 'many' : 'much'], text);
+  if (mode === 'many' && !count && m.kind !== 'price') assert.ok(/n't|\?/.test(text), `much only in negatives and questions: ${text}`);
+  if (mode === 'few') { assert.deepEqual(a, [count ? 'few' : 'little'], text); assert.ok(text.includes(' a ___'), 'a few / a little'); }
+}
+const WH_BY_TYPE = { thing: ['What'], name: ['What'], person: ['Who'], place: ['Where'], age: ['How', 'old'], count: ['How', 'many'], date: ['When'], clock: ['What', 'time'],
+  reason: ['Why'], way: ['How'], owner: ['Whose'], price: ['How', 'much'], color: ['What', 'color'] };
+const REPLY_SHAPE = { thing: /— It's an? \w+\.$/, name: /— (My|His|Her) name is [A-Z][a-z]+\.$/, person: /— (He|She) is my \w+\.$/, place: /— (It's|They're) (on|in|under|behind) /,
+  age: /— (He|She) is \w+ years old\.$/, count: /— I have \w+\.$/, date: /birthday is in [A-Z][a-z]+\.$/, clock: /— (It's \w+ o'clock|At \w+)\.$/, reason: /— Because /,
+  way: /— (By \w+|On foot)\.$/, owner: /— It's [A-Z][a-z]+'s\.$/, price: /dollars\.$/, color: /— It's (red|blue|black|white|green|yellow)\.$/ };
+function checkWh(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (m.type !== 'make') {
+    assert.deepEqual(a, WH_BY_TYPE[m.type], `${m.type}: ${text}`);
+    assert.match(text, REPLY_SHAPE[m.type], `the reply asks for ${m.type}: ${text}`);
+    return;
+  }
+  const reply = text.split(' — ')[1];
+  const wh = /near the|went to the|going to the/.test(reply) ? 'Where' : /after school|on Sundays|on weekends|last \w+|ago/.test(reply) ? 'When' : /by bus|on foot|by bicycle/.test(reply) ? 'How' : 'What';
+  const helper = m.tense === 'past' ? 'did' : m.tense === 'prog' ? (isThirdSg(m.subj) ? 'is' : 'are') : isThirdSg(m.subj) ? 'does' : 'do';
+  assert.deepEqual(a, [wh, helper], `make: ${text}`);
+}
+const DAY_RE = /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/, MONTH_RE = /^(January|February|March|April|May|June|July|August|September|October|November|December)$/;
+function timePrep(t) {
+  if (DAY_RE.test(t) || /^[A-Z][a-z]+ \d+$/.test(t) || t === 'my birthday') return 'on';
+  if (MONTH_RE.test(t) || /^(spring|summer|autumn|winter)$/.test(t) || /^the (morning|afternoon|evening)$/.test(t) || /^\d{4}$/.test(t)) return 'in';
+  if (/o'clock$|thirty$/.test(t) || t === 'noon' || t === 'night') return 'at';
+  return null;
+}
+const CUE_PREP = { 裡面: 'in', 上面: 'on', 下面: 'under', 後面: 'behind', 旁邊: 'next to', 前面: 'in front of', 附近: 'near', 中間: 'between' };
+const PLACE_LEVEL = { in: 1, on: 1, under: 1, behind: 2, 'next to': 2, 'in front of': 2, near: 2, between: 3 };
+const PHRASE_PREP = { listen: 'to', wait: 'for', laugh: 'at', 'take care': 'of', agree: 'with', good: 'at', afraid: 'of', late: 'for', interested: 'in', kind: 'to', proud: 'of' };
+function checkPrep(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'time') {
+    const t = text.split('___ ')[1].replace(/\.$/, '');
+    assert.deepEqual(a, [timePrep(t)], `time "${t}": ${text}`);
+  }
+  if (mode === 'place') {
+    const cue = /\((.+)\)$/.exec(text)[1];
+    assert.deepEqual(a, CUE_PREP[cue].split(' '), `place (${cue}): ${text}`);
+    assert.equal(a.length, (text.match(/___/g) || []).length);
+    assert.ok(PLACE_LEVEL[CUE_PREP[cue]] <= Math.max(o.level, 1), `level ${o.level} allows ${CUE_PREP[cue]}`);
+    if (cue === '中間') assert.match(text, /___ (the|my) \w+ and (the|my) \w+\./);
+  }
+  if (mode === 'phrase') {
+    const want = m.head === 'look' ? (text.includes('(找)') ? 'for' : 'at') : PHRASE_PREP[m.head];
+    assert.deepEqual(a, [want], `phrase ${m.head}: ${text}`);
+  }
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep };
 
 // ---------- sheets to check ----------
 function* settings() {
@@ -356,7 +437,7 @@ test('every blank holds one word, and every English word is in the 2000-word lis
   for (const { t, o } of settings()) {
     if (o.count !== COUNT_MAX) continue;
     for (const it of buildSheet(t, o).sections.flatMap((s) => s.items)) {
-      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) assert.match(p.a, p.wide ? /^[A-Za-z' ]+$/ : /^[A-Za-z']+$/, `one word per blank: "${p.a}"`);
+      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) assert.match(p.a, p.wide ? /^[A-Za-z' ]+$/ : /^([A-Za-z']+|×)$/, `one word per blank (or × for no word): "${p.a}"`);
       const text = it.lines.map((l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('')).join(' ');
       for (const w of text.match(/[A-Za-z][A-Za-z']*/g)) if (!inList(w)) missing.set(w, text);
     }
