@@ -221,5 +221,5 @@ export const FUNCTION_WORDS = [
   'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
   'a', 'an', 'the', 'be', 'am', 'is', 'are', 'was', 'were', 'not', "isn't", "aren't", "wasn't", "weren't",
   'do', 'does', 'did', 'have', 'has', 'had', 'and', 'at', 'mr', 'ms', 'mrs',
-  'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
+  "let's", "it's", "they're", 'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
 ];

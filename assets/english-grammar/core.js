@@ -111,10 +111,13 @@ export function splitCount(count, modes) {
 export function buildSheet(topic, opts) {
   const o = { ...opts, modes: topic.modes.map((m) => m.id).filter((id) => opts.modes.includes(id)) };
   if (!topic.past) o.tense = 'P';
+  if (topic.zhRequired) o.zh = true; // the Chinese line is the only cue for these topics
   const rng = makeRng(o.seed);
   const seen = new Set();
   const sections = [];
-  for (const { mode, n } of splitCount(o.count, o.modes)) {
+  // Topics built from a fixed list of sentences say how many different ones each section can hold.
+  const plan = splitCount(o.count, o.modes).map(({ mode, n }) => ({ mode, n: Math.min(n, topic.capacity?.[mode] ?? Infinity) }));
+  for (const { mode, n } of plan) {
     if (!n) continue;
     const def = topic.modes.find((m) => m.id === mode);
     const items = [];
@@ -130,5 +133,5 @@ export function buildSheet(topic, opts) {
     }
     sections.push({ mode, title: def.instruction(o), items });
   }
-  return { code: encodeCode(topic, o), opts: o, sections };
+  return { code: encodeCode(topic, o), opts: o, sections, total: sections.reduce((a, s) => a + s.items.length, 0) };
 }

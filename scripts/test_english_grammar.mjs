@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildSheet, encodeCode, decodeCode, lineText, answersOf, COUNT_MIN, COUNT_MAX } from '../assets/english-grammar/core.js';
+import { buildSheet, encodeCode, decodeCode, lineText, answersOf, splitCount, COUNT_MIN, COUNT_MAX } from '../assets/english-grammar/core.js';
 import { TOPICS, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 import { NAMES, FUNCTION_WORDS, SUBJECTS } from '../assets/english-grammar/lexicon.js';
 
@@ -14,12 +14,13 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin']);
-const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man' };
+const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man', teeth: 'tooth', feet: 'foot', mice: 'mouse' };
 function inList(word) {
-  const w = word.toLowerCase();
+  const w = word.toLowerCase().replace(/'s$/, '');
   if (OK_WORDS.has(w)) return true;
+  if (w.endsWith('ves') && (LIST.has(w.slice(0, -3) + 'f') || LIST.has(w.slice(0, -3) + 'fe'))) return true;
   if (IRREGULAR_PLURAL[w] && LIST.has(IRREGULAR_PLURAL[w])) return true;
   if (w.endsWith('ies') && LIST.has(w.slice(0, -3) + 'y')) return true;
   if (w.endsWith('es') && LIST.has(w.slice(0, -2))) return true;
@@ -249,7 +250,71 @@ function checkPast(it, mode, o) {
   if (mode === 'full') { const r = expectedReply(m.subj); hint(text, m.alt); assert.deepEqual(a, [r, "didn't", cap1(r), pastOf(m.alt)]); }
   if (mode === 'wh') { hint(text, m.base); assert.deepEqual(a, ['did', pastOf(m.base)]); }
 }
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast };
+
+// ---------- batch 3a rules ----------
+const PRON = { I: ['I', 'me', 'my', 'mine'], you: ['you', 'you', 'your', 'yours'], he: ['he', 'him', 'his', 'his'], she: ['she', 'her', 'her', 'hers'], it: ['it', 'it', 'its', null], we: ['we', 'us', 'our', 'ours'], they: ['they', 'them', 'their', 'theirs'] };
+const PRON_ZH = { I: '我', you: '你', he: '他', she: '她', it: '牠', we: '我們', they: '他們' };
+const CASE = { subj: 0, obj: 1, poss: 2, mine: 3 };
+const firstIsBlank = (it) => typeof it.lines.at(-1)[0] !== 'string' || (it.lines.length === 1 && typeof it.lines[0][0] !== 'string');
+function checkPronoun(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  assert.equal(m.case, mode); assert.ok(!/\((I|you|he|she|it|we|they)\)/.test(text), `no English cue gives the answer away: ${text}`);
+  assert.ok(o.zh, 'Chinese line is always printed'); assert.ok(it.zh.includes(PRON_ZH[m.base]), `the Chinese names the person (${PRON_ZH[m.base]}): ${it.zh}`);
+  const w = PRON[m.base][CASE[mode]];
+  assert.ok(w, `${m.base} has a ${mode} form`);
+  const startsWithBlank = typeof it.lines[0][0] !== 'string';
+  assert.deepEqual(a, [startsWithBlank && w !== 'I' ? cap1(w) : w], `${mode} of ${m.base}: ${text}`);
+  if (mode === 'subj') {
+    if (m.vbase) assert.equal(m.verb, isThirdSg(m.base) ? s3(m.vbase) : m.vbase, `verb agrees with ${m.base}: ${text}`);
+    else assert.equal(m.verb, expectedBe(m.base, false), `be agrees with ${m.base}: ${text}`);
+    assert.ok(text.includes(` ${m.verb} `), 'the verb is in the sentence');
+  }
+}
+const O_ES = new Set(['potato', 'tomato', 'hero']);
+const IRR_PL = { child: 'children', man: 'men', woman: 'women', foot: 'feet', tooth: 'teeth', mouse: 'mice', sheep: 'sheep', fish: 'fish' };
+function pluralOf(n) {
+  if (IRR_PL[n]) return IRR_PL[n];
+  if (/(fe|f)$/.test(n) && ['knife', 'leaf', 'wolf', 'shelf', 'wife'].includes(n)) return n.replace(/fe?$/, 'ves');
+  if (/o$/.test(n)) return O_ES.has(n) ? n + 'es' : n + 's';
+  if (/(s|x|z|ch|sh)$/.test(n)) return n + 'es';
+  if (/[^aeiou]y$/.test(n)) return n.slice(0, -1) + 'ies';
+  return n + 's';
+}
+const PL_RULE = (n) => (IRR_PL[n] ? 'irr' : ['knife', 'leaf', 'wolf', 'shelf', 'wife'].includes(n) ? 'ves' : /[^aeiou]y$/.test(n) ? 'ies' : pluralOf(n) === n + 'es' ? 'es' : 's');
+function checkPlural(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const allowed = { 1: ['s'], 2: ['s', 'es', 'ies', 'ves'], 3: ['s', 'es', 'ies', 'ves', 'irr'] }[o.level];
+  assert.ok(allowed.includes(PL_RULE(m.noun)), `level ${o.level} allows ${m.noun}`);
+  if (mode === 'count') { assert.deepEqual(a, [pluralOf(m.noun)], text); assert.ok(text.includes(`(${m.noun})`), 'hint'); }
+  if (mode === 'change') { assert.deepEqual(a, ['are', pluralOf(m.noun)], text); assert.ok(new RegExp(`^(This|That) is an? ${m.noun}\\.`).test(text), `given singular: ${text}`); }
+}
+const DEM_PL = { this: false, that: false, these: true, those: true };
+const DEM_CUE = { this: '這個', that: '那個', these: '這些', those: '那些' };
+function checkThis(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const pl = DEM_PL[m.dem], be = pl ? 'are' : 'is';
+  if (o.level < 2 && mode !== 'change') assert.ok(!pl, 'level 1 is singular only');
+  if (mode === 'fill') { assert.deepEqual(a, [cap1(m.dem), be]); assert.ok(text.includes(`(${DEM_CUE[m.dem]})`), 'Chinese cue'); }
+  if (mode === 'q') { const yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), pl ? 'they' : 'it', yes ? be : pl ? "aren't" : "isn't"]); assert.ok(text.includes(` ${m.dem} `), 'question uses the word'); }
+  if (mode === 'change') assert.deepEqual(a, [cap1(m.dem), be, pl ? pluralOf(m.noun) : m.noun]);
+}
+const ADV_ZH = { always: '總是', usually: '通常', often: '常常', sometimes: '有時候', seldom: '很少', never: '從不' };
+function checkFreq(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (o.level < 2) assert.ok(m.adv !== 'seldom' && (mode !== 'verb' || !isThirdSg(m.subj)), `level 1: no seldom, no -s verbs: ${text}`);
+  if (mode !== 'place') assert.ok(text.includes(`(${ADV_ZH[m.adv]}／`), `Chinese cue: ${text}`); else assert.ok(text.includes(`(${m.adv})`), 'adverb given');
+  if (m.kind === 'verb') assert.deepEqual(a, [m.adv, isThirdSg(m.subj) ? s3(m.base) : m.base], `adverb before the verb: ${text}`);
+  else assert.deepEqual(a, [expectedBe(m.subj, false), m.adv], `adverb after be: ${text}`);
+}
+function checkImperative(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'do') assert.deepEqual(a, [m.lower ? m.base : cap1(m.base)]);
+  if (mode === 'dont') { assert.deepEqual(a, ["Don't", m.base]); assert.ok(text.includes('(不要'), 'cue says 不要'); }
+  if (mode === 'lets') { assert.deepEqual(a, ["Let's", m.base]); assert.ok(/\(我們.*吧\)/.test(text), 'cue says 我們…吧'); }
+  if (mode === 'be') { assert.deepEqual(a, m.neg ? ["Don't", 'be'] : ['Be']); assert.ok(text.includes(m.neg ? '(不要' : '(要'), 'cue'); }
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative };
 
 // ---------- sheets to check ----------
 function* settings() {
@@ -266,7 +331,10 @@ test('every sheet has the asked number of questions, all different, in the chose
   for (const { t, o } of settings()) {
     const sh = buildSheet(t, o);
     const items = sh.sections.flatMap((s) => s.items);
-    assert.equal(items.length, o.count, `${sh.code}: ${o.count} questions`);
+    assert.equal(items.length, sh.total, `${sh.code}: total matches the questions`);
+    if (!t.capacity) assert.equal(sh.total, o.count, `${sh.code}: ${o.count} questions`);
+    else for (const sec of sh.sections) assert.ok(sec.items.length <= (t.capacity[sec.mode] ?? Infinity), `${sh.code}: ${sec.mode} within its capacity`);
+    if (t.capacity) assert.equal(sh.total, splitCount(o.count, sh.opts.modes).reduce((a, x) => a + Math.min(x.n, t.capacity[x.mode] ?? Infinity), 0), `${sh.code}: only capped sections run short`);
     assert.deepEqual(sh.sections.map((s) => s.mode), t.modes.map((m) => m.id).filter((id) => o.modes.includes(id)), 'sections follow the mode order');
     const keys = items.map((it) => it.lines.map(lineText).join(' | ').toLowerCase());
     assert.equal(new Set(keys).size, keys.length, `${sh.code}: no repeated question`);
@@ -308,7 +376,7 @@ test('every question has a Chinese line with no leftovers', () => {
 });
 
 test('sheets spread over the word bank: varied subjects, verbs and time words, some sentences start with the time', () => {
-  for (const t of ALL_TOPICS) for (const level of [1, 2, 3]) {
+  for (const t of ALL_TOPICS.filter((x) => x.variety !== false)) for (const level of [1, 2, 3]) {
     let subjects = 0, worstSubject = 0, worstVerb = 0, times = 0, front = 0;
     const N = 30;
     for (let seed = 1; seed <= N; seed++) {
@@ -327,7 +395,7 @@ test('sheets spread over the word bank: varied subjects, verbs and time words, s
     assert.ok(worstSubject <= 4, `${where}: no subject more than 4 times on one sheet (got ${worstSubject})`);
     assert.ok(worstVerb <= 4, `${where}: no verb more than 4 times on one sheet (got ${worstVerb})`);
     assert.ok(times / N >= 4, `${where}: at least 4 different time words per sheet (got ${(times / N).toFixed(1)})`);
-    assert.ok(front > 0, `${where}: some sentences put the time word first`);
+    if (t.variety?.front !== false) assert.ok(front > 0, `${where}: some sentences put the time word first`);
   }
 });
 
