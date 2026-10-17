@@ -317,7 +317,7 @@ function checkImperative(it, mode) {
 
 // ---------- batch 3b rules ----------
 // articles: decided by the word right after each blank
-const AN_SOUND = { hour: 'an', honest: 'an', uniform: 'a', useful: 'a', university: 'a' };
+const AN_SOUND = { hour: 'an', honest: 'an', uniform: 'a', useful: 'a', university: 'a', unique: 'a', 'one-hour': 'a' };
 const soundArticle = (w) => AN_SOUND[w] ?? (/^[aeiou]/.test(w) ? 'an' : 'a');
 const THE_WORDS = new Set(['piano', 'violin', 'guitar', 'drums', 'park', 'zoo', 'library', 'supermarket', 'moon', 'sky', 'stars']);
 const NO_ARTICLE = new Set(['basketball', 'baseball', 'soccer', 'tennis', 'volleyball', 'badminton', 'breakfast', 'lunch', 'dinner', 'school', 'bed', 'bus', 'bicycle', 'train', 'music', 'science', 'art', 'history']);
@@ -337,6 +337,8 @@ function checkArticle(it, mode) {
     assert.equal(p.a, want, `${mode}: blank before "${next}" in ${it.lines.map(lineText).join(' ')}`);
   });
 }
+// every article sheet from level 2 on has some trap questions (letter and sound disagree)
+const TRAP_WORDS = new Set(['hour', 'honest', 'university', 'uniform', 'useful', 'unique', 'one-hour']);
 const COUNTABLE = new Set(['books', 'eggs', 'apples', 'cookies', 'oranges', 'bananas', 'pencils', 'friends', 'students', 'birds', 'toys', 'people']);
 const UNCOUNTABLE = new Set(['milk', 'water', 'juice', 'tea', 'coffee', 'bread', 'rice', 'money', 'time', 'homework', 'sugar', 'soup']);
 function checkQuantity(it, mode) {
@@ -493,6 +495,17 @@ test('the same sheet code always gives the same sheet, and the code round-trips'
     assert.equal(decodeCode(a.code.toLowerCase(), ALL_TOPICS).topic, t.id, 'case does not matter');
   }
   for (const bad of ['', 'BE-2M', 'XX-2M-3F-B1-20-1', 'BE-4M-3F-B1-20-1', 'BE-2M-0-B1-20-1', 'BE-2M-3F-B1-60-1', 'BE-2M-3F-B1-5-1']) assert.equal(decodeCode(bad, TOPICS), null, `rejects "${bad}"`);
+});
+
+test('article sheets from level 2 on include trap words (an hour, an honest…, a university, a uniform…)', () => {
+  const t = ALL_TOPICS.find((x) => x.id === 'article');
+  for (const level of [2, 3]) for (let seed = 1; seed <= 40; seed++) {
+    const sh = buildSheet(t, { level, tense: 'P', modes: t.defaultModes[level], abbr: 'F', zh: true, count: 20, seed });
+    const words = sh.sections.find((s) => s.mode === 'aan').items.map((it) => it.meta.word);
+    assert.ok(words.filter((w) => TRAP_WORDS.has(w)).length >= 2, `level ${level} seed ${seed}: at least two trap words (${words.join(', ')})`);
+  }
+  const sh1 = buildSheet(t, { level: 1, tense: 'P', modes: ['aan'], abbr: 'F', zh: true, count: 50, seed: 5 });
+  assert.ok(sh1.sections[0].items.every((it) => !TRAP_WORDS.has(it.meta.word)), 'level 1 goes by the first letter only');
 });
 
 test('whole-sentence translation: new sentences, whole and in the word list, and adding them leaves the fill-in part alone', () => {

@@ -32,7 +32,7 @@ const ADJ_NOUN = { old: ['book', 'watch', 'bag', 'album'], easy: ['question'], i
 const EXTRA = { boy: W('boy', '男孩', '個', 'person'), girl: W('girl', '女孩', '個', 'person') };
 const find = (en) => NOUNS.find((n) => n.en === en) ?? JOBS.find((n) => n.en === en) ?? EXTRA[en];
 // a / an by the first sound
-const SOUNDS_VOWEL = new Set(['hour', 'honest']), SOUNDS_YOU = new Set(['uniform', 'useful', 'university']);
+const SOUNDS_VOWEL = new Set(['hour', 'honest']), SOUNDS_YOU = new Set(['uniform', 'useful', 'university', 'unique', 'one-hour']);
 export const aOrAn = (w) => (SOUNDS_VOWEL.has(w) ? 'an' : SOUNDS_YOU.has(w) ? 'a' : /^[aeiou]/.test(w) ? 'an' : 'a');
 
 // Sentences around "a/an + noun"; {A} is the blank, {N} the noun (with its adjective).
@@ -50,14 +50,46 @@ function fill(tpl, p, word, n, z, m) {
   return tpl.replace('{S}', p?.en ?? '').replace(/\{(has|is)\}/, (_, v) => (p.en === 'I' ? VERBS[v][0] : p.pr === 'we' || p.pr === 'they' || p.pr === 'you' ? (v === 'is' ? 'are' : VERBS[v][0]) : VERBS[v][1]))
     .replace('{s}', p?.zh ?? '').replace('{m}', m).replace('{z}', z).replace('{N}', n);
 }
+// Trap questions (level 2 and up): the first LETTER and the first SOUND disagree, set beside look-alikes where they agree.
+//   [sentence with {A}, Chinese, the word right after the blank, who fits {S}: 'he' | 'she' | 'one' (any single person) | null]
+const TRAPS = [
+  // silent h → an
+  ['I waited for {A} hour.', '我等了一個小時。', 'hour'], ['The class is {A} hour long.', '這堂課有一個小時長。', 'hour'],
+  ['We have {A} hour for lunch.', '我們有一個小時吃午餐。', 'hour'], ['{S} is {A} honest boy.', '{s}是個誠實的男孩。', 'honest', 'he'],
+  ['{S} is {A} honest girl.', '{s}是個誠實的女孩。', 'honest', 'she'], ['Our teacher is {A} honest man.', '我們的老師是個誠實的人。', 'honest'],
+  // u / one that sounds like "you" / "won" → a
+  ['{S} is {A} university student.', '{s}是一位大學生。', 'university', 'one'], ['There is {A} university near my house.', '我家附近有一所大學。', 'university'],
+  ['Every student has {A} uniform.', '每個學生都有一件制服。', 'uniform'], ['My sister wears {A} uniform to school.', '我姊姊穿制服上學。', 'uniform'],
+  ['This is {A} useful dictionary.', '這是一本有用的字典。', 'useful'], ['That is {A} useful idea.', '那是一個有用的主意。', 'useful'],
+  ['This is {A} unique gift.', '這是一份獨特的禮物。', 'unique'], ['I have {A} one-hour piano lesson.', '我有一堂一小時的鋼琴課。', 'one-hour'],
+  // look-alikes where letter and sound agree
+  ['There is {A} hotel near the station.', '車站附近有一間旅館。', 'hotel'], ['My mother works in {A} hospital.', '我媽媽在一家醫院工作。', 'hospital'],
+  ['I can see {A} horse.', '我看得到一匹馬。', 'horse'], ['There is {A} huge tree in the park.', '公園裡有一棵巨大的樹。', 'huge'],
+  ['{S} has {A} uncle in the city.', '{s}有一個叔叔住在城市裡。', 'uncle', 'one'], ['That is {A} ugly bag.', '那是一個醜的袋子。', 'ugly'],
+  ['{S} is {A} unhappy child.', '{s}是個不快樂的孩子。', 'unhappy', 'one'], ['My father works in {A} office.', '我爸爸在一間辦公室工作。', 'office'],
+  ['We have {A} oven in the kitchen.', '我們廚房裡有一台烤箱。', 'oven'], ['There is {A} umbrella behind the door.', '門後面有一把雨傘。', 'umbrella'],
+];
+const isS = (p) => !['we', 'they', 'you', 'I'].includes(p.pr);
+const TRUE_TRAP = new Set(['hour', 'honest', 'university', 'uniform', 'useful', 'unique', 'one-hour']);
+function trap(rng, real) {
+  const [en, zh, word, who] = rng.fresh(TRAPS.filter((x) => TRUE_TRAP.has(x[2]) === real), (x) => x[0]);
+  const p = who ? pickPerson(rng, (x) => isS(x) && (who === 'one' || x.pr === who) && x.en !== 'Our teacher') : null;
+  const text = en.replace('{S}', p?.en ?? '');
+  const [l, r] = text.split('{A}');
+  const a = aOrAn(word);
+  return { lines: [[l, blank(l === '' ? cap(a) : a), r]], zh: p ? zhJoin(p.zh, zh.replace('{s}', '')) : zh, meta: { kind: 'aan', word, trap: true } };
+}
 function aan(rng, o) {
-  const adj = o.level >= 2 && rng.chance(0.4) ? rng.fresh(ADJ, (x) => x[0]) : null;
+  // From level 2 the questions take turns: two traps, one look-alike, two plain nouns, one adjective + noun in every six.
+  const kind = o.level >= 2 ? rng.fresh(['trap1', 'trap2', 'alike', 'plain1', 'plain2', 'adj'], (x) => 'aan-' + x) : 'plain';
+  if (kind.startsWith('trap')) return trap(rng, true);
+  if (kind === 'alike') return trap(rng, false);
+  const adj = kind === 'adj' ? rng.fresh(ADJ, (x) => x[0]) : null;
   let noun;
   if (adj) noun = find(rng.pick(ADJ_NOUN[adj[0]]));
   else noun = rng.fresh([...NOUNS, ...JOBS].filter((n) => n.lvl <= o.level), (n) => n.en);
   const tpls = FRAMES[noun.kind];
   const [en, zh] = rng.pick(tpls);
-  // jobs and "is a boy" need a single person; plural people take "are" which cannot have a/an
   // "is a/an …" needs one person (and a girl is a she); plural people take "are", which cannot have a/an
   const p = /\{S\}/.test(en) ? pickPerson(rng, (x) => (/\{is\}/.test(en) ? !['we', 'they', 'you'].includes(x.pr) && (noun.en !== 'girl' || x.pr === 'she') && (noun.en !== 'boy' || x.pr === 'he') && (noun.en !== 'girl' && noun.en !== 'boy' || x.pr !== 'I') : true)) : null;
   const n = adj ? `${adj[0]} ${noun.en}` : noun.en;
@@ -147,9 +179,9 @@ export default {
   variety: false, // fixed sentence frames; checked by its own rules, not by the subject/verb spread test
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
   defaultModes: { 1: ['aan'], 2: ['aan', 'the'], 3: ['aan', 'the', 'again'] },
-  levelHint: { 1: '依第一個字母判斷 a / an。', 2: '加入形容詞、hour / uniform 等特殊發音，以及 the 和不加冠詞的固定用法。', 3: '再加入「第一次提到用 a / an，再次提到用 the」。' },
+  levelHint: { 1: '依第一個字母判斷 a / an。', 2: '加入形容詞與陷阱題（an hour、an honest boy、a university、a uniform、a useful…），以及 the 和不加冠詞的固定用法。', 3: '再加入「第一次提到用 a / an，再次提到用 the」。' },
   grammarBox: (o) => ({ head: ['用法', '例子'], rows: [
-    ['子音開頭用 a', 'a book、a uniform'], ['母音開頭用 an', 'an apple、an hour'],
+    ['子音開頭用 a', o.level >= 2 ? 'a book、a university、a uniform' : 'a book、a cat'], ['母音開頭用 an', o.level >= 2 ? 'an apple、an hour、an honest boy' : 'an apple、an egg'],
     ...(o.level >= 2 ? [['樂器、獨一無二的東西用 the', 'play the piano、the moon'], ['球類、三餐、科目、by + 交通工具不加', 'play basketball、have lunch、by bus']] : []),
     ...(o.level >= 3 ? [['再次提到同一個東西用 the', 'I have a dog. The dog is cute.']] : []),
   ], note: 'a / an 看的是「發音」，不是字母：hour 的 h 不發音所以用 an，uniform 的 u 念 you 所以用 a。' }),
