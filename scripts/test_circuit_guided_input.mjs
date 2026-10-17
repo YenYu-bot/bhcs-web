@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import {JSDOM} from 'jsdom';
+import {createCircuitBench} from '../assets/circuit-guided/render.js';
+import {bindCircuitInput,INPUT_TERMINALS} from '../assets/circuit-guided/input.js';
+import {TERMINALS} from '../assets/circuit-guided/model.js';
+let n=0;const test=(name,fn)=>{fn();n++;console.log('PASS',name)},root=fileURLToPath(new URL('..',import.meta.url));
+const lamp={brightness:'off',bypassed:false},meter={state:'unavailable',text:'—'};
+function setup({locked=false,canConnect=()=>true,canDisconnect=()=>true,canToggleSwitch=()=>true}={}){
+const dom=new JSDOM('<!doctype html><body><main id="h"></main><button id="outside">x</button></body>',{pretendToBeVisual:true}),host=dom.window.document.getElementById('h'),bench=createCircuitBench(host),state={locked,switchClosed:false,wires:[]},log=[];
+const paint=()=>bench.update({locked:state.locked,switchClosed:state.switchClosed,wires:state.wires.map(w=>({...w})),status:'open',lamps:{L1:lamp,L2:lamp},ammeter:meter,voltmeter:meter});paint();
+const input=bindCircuitInput({root:bench.element,getLocked:()=>state.locked,getSwitchClosed:()=>state.switchClosed,canConnect,canDisconnect,canToggleSwitch,
+onConnect:(a,b)=>{log.push(['connect',a,b]);state.wires.push({from:a,to:b});paint()},
+onDisconnect:(a,b)=>{log.push(['disconnect',a,b]);const k=[a,b].sort().join('|');state.wires=state.wires.filter(w=>[w.from,w.to].sort().join('|')!==k);paint()},
+onToggleSwitch:v=>{log.push(['switch',v]);state.switchClosed=v;paint()}});
+const t=id=>host.querySelector('[data-terminal="'+id+'"]'),click=e=>e.dispatchEvent(new dom.window.MouseEvent('click',{bubbles:true,cancelable:true})),key=(e,k)=>{const x=new dom.window.KeyboardEvent('keydown',{key:k,bubbles:true,cancelable:true});e.dispatchEvent(x);return x};
+return{dom,host,bench,state,log,input,t,click,key,paint}}
+function pe(dom,type,target,{id=1,x=0,y=0,button=0}={}){const e=new dom.window.Event(type,{bubbles:true,cancelable:true});for(const [k,v]of Object.entries({pointerId:id,clientX:x,clientY:y,button}))Object.defineProperty(e,k,{value:v});target.dispatchEvent(e);return e}
+const box=(e,l,t,w=56,h=56)=>e.getBoundingClientRect=()=>({left:l,top:t,right:l+w,bottom:t+h,x:l,y:t,width:w,height:h});
+test('input terminal vocabulary matches model',()=>assert.deepEqual([...INPUT_TERMINALS],[...TERMINALS]));
+test('click pair sends one connection and clears selected state',()=>{const x=setup();x.click(x.t('bat+'));assert.equal(x.input.selectedTerminal(),'bat+');assert.equal(x.t('bat+').getAttribute('aria-pressed'),'true');x.click(x.t('sw.a'));assert.deepEqual(x.log,[['connect','bat+','sw.a']]);assert.equal(x.input.selectedTerminal(),null)});
+test('same endpoint and Escape cancel without sending',()=>{const x=setup();x.click(x.t('bat+'));x.click(x.t('bat+'));assert.deepEqual(x.log,[]);x.click(x.t('L1.a'));const e=x.key(x.t('L1.a'),'Escape');assert.equal(e.defaultPrevented,true);assert.equal(x.input.selectedTerminal(),null)});
+test('arrows Home End move focus only',()=>{const x=setup();x.t('bat+').focus();let e=x.key(x.t('bat+'),'ArrowRight');assert.equal(e.defaultPrevented,true);assert.equal(x.dom.window.document.activeElement,x.t('bat-'));x.key(x.t('bat-'),'End');assert.equal(x.dom.window.document.activeElement,x.t('V.-'));x.key(x.t('V.-'),'Home');assert.equal(x.dom.window.document.activeElement,x.t('bat+'));assert.deepEqual(x.log,[])});
+test('unrelated keys and controls are untouched',()=>{const x=setup(),o=x.dom.window.document.getElementById('outside');assert.equal(x.key(x.t('bat+'),'PageDown').defaultPrevented,false);assert.equal(x.key(o,'ArrowRight').defaultPrevented,false);assert.deepEqual(x.log,[])});
+test('caller connect gate is rechecked',()=>{let allow=false;const x=setup({canConnect:(a,b)=>allow&&a==='bat+'&&b==='sw.a'});x.click(x.t('bat+'));x.click(x.t('sw.a'));assert.deepEqual(x.log,[]);assert.equal(x.input.selectedTerminal(),'bat+');allow=true;x.click(x.t('sw.a'));assert.deepEqual(x.log,[['connect','bat+','sw.a']])});
+test('locked gate defeats forged re-enabled endpoints',()=>{const x=setup({locked:true});x.t('bat+').disabled=false;x.t('sw.a').disabled=false;x.click(x.t('bat+'));x.click(x.t('sw.a'));assert.deepEqual(x.log,[]);assert.equal(x.input.selectedTerminal(),null)});
+test('wire list removal has its own gate',()=>{let allow=false;const x=setup({canDisconnect:()=>allow});x.click(x.t('bat+'));x.click(x.t('sw.a'));let rm=x.host.querySelector('[data-remove-wire]');x.click(rm);assert.equal(x.state.wires.length,1);allow=true;rm=x.host.querySelector('[data-remove-wire]');x.click(rm);assert.equal(x.state.wires.length,0);assert.deepEqual(x.log,[['connect','bat+','sw.a'],['disconnect','bat+','sw.a']])});
+test('bench switch toggles source state through gate',()=>{const x=setup(),sw=x.host.querySelector('[data-switch-toggle]');x.click(sw);assert.deepEqual(x.log,[['switch',true]]);assert.equal(sw.getAttribute('aria-pressed'),'true');x.click(sw);assert.deepEqual(x.log,[['switch',true],['switch',false]])});
+test('forged switch click while locked is rejected',()=>{const x=setup({locked:true}),sw=x.host.querySelector('[data-switch-toggle]');sw.disabled=false;x.click(sw);assert.deepEqual(x.log,[])});
+test('drag connects endpoints and pointercancel clears preview',()=>{let x=setup(),a=x.t('bat+'),b=x.t('sw.a'),stage=x.host.querySelector('[data-role="stage"]');box(stage,0,0,720,480);box(a,42,62);box(b,152,62);pe(x.dom,'pointerdown',a,{x:70,y:90});pe(x.dom,'pointermove',a,{x:180,y:90});assert.equal(x.host.querySelector('[data-role="wire-preview"]').hasAttribute('hidden'),false);pe(x.dom,'pointerup',b,{x:180,y:90});assert.deepEqual(x.log,[['connect','bat+','sw.a']]);assert.equal(x.host.querySelectorAll('[data-dragging]').length,0);
+x=setup();a=x.t('bat+');stage=x.host.querySelector('[data-role="stage"]');box(stage,0,0,720,480);box(a,42,62);pe(x.dom,'pointerdown',a,{x:70,y:90});pe(x.dom,'pointermove',a,{x:110,y:120});pe(x.dom,'pointercancel',a,{x:110,y:120});assert.deepEqual(x.log,[]);assert.equal(x.host.querySelector('[data-role="wire-preview"]').hasAttribute('hidden'),true)});
+test('short pointer gesture remains a click path',()=>{const x=setup(),a=x.t('bat+'),stage=x.host.querySelector('[data-role="stage"]');box(stage,0,0,720,480);box(a,42,62);pe(x.dom,'pointerdown',a,{x:70,y:90});pe(x.dom,'pointermove',a,{x:72,y:91});pe(x.dom,'pointerup',a,{x:72,y:91});x.click(a);assert.equal(x.input.selectedTerminal(),'bat+')});
+test('destroy removes all input behaviour',()=>{const x=setup();x.input.destroy();x.click(x.t('bat+'));x.click(x.t('sw.a'));x.click(x.host.querySelector('[data-switch-toggle]'));assert.deepEqual(x.log,[])});
+test('input stays standalone with no science wording globals storage or network',()=>{const src=fs.readFileSync(root+'assets/circuit-guided/input.js','utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/^\s*\/\/.*$/gm,'');assert.ok(!/^\s*import\s/m.test(src));for(const w of['solveCircuit','structureGate','measurementGate','localStorage','sessionStorage','fetch(','XMLHttpRequest','bhcsScienceTrack','gtag','series','parallel','topology'])assert.ok(!src.includes(w),w);assert.ok(!/\bwindow\b|\bdocument\b/.test(src));assert.doesNotMatch(src,/[\u4e00-\u9fff]/)});
+console.log('circuit-guided input: '+n+' tests passed');
