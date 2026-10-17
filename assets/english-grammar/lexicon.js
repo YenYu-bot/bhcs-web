@@ -8,6 +8,7 @@
 //   reply   pronoun the other speaker uses in a short answer ("Is Amy ...? — Yes, she is."); null = not used in answers
 //   age     'adult' | 'young' | 'any'  (people only; decides which jobs fit)
 //   lvl     first level the subject appears at
+//   species (animals) dog | cat | bird | rabbit | duck — which activities fit
 //   tag     extra marks: 'pron' (pronoun), 'name', 'every', 'with-i' (X and I), 'with-you', 'uncount', 'irreg' (irregular plural)
 
 export const NAMES = {
@@ -50,12 +51,12 @@ export const SUBJECTS = [
   P('my friends', '我的朋友們', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
   P('our teachers', '我們的老師們', 'pl', 3, 'person', 'they', 2, { age: 'adult' }),
   // animals
-  P('the dog', '那隻狗', 'sg', 3, 'animal', 'it', 2),
-  P('my cat', '我的貓', 'sg', 3, 'animal', 'it', 2),
-  P('the bird', '那隻鳥', 'sg', 3, 'animal', 'it', 2),
-  P('the dogs', '那些狗', 'pl', 3, 'animal', 'they', 2),
-  P('the rabbits', '那些兔子', 'pl', 3, 'animal', 'they', 2),
-  P('the ducks', '那些鴨子', 'pl', 3, 'animal', 'they', 2),
+  P('the dog', '那隻狗', 'sg', 3, 'animal', 'it', 2, { species: 'dog' }),
+  P('my cat', '我的貓', 'sg', 3, 'animal', 'it', 2, { species: 'cat' }),
+  P('the bird', '那隻鳥', 'sg', 3, 'animal', 'it', 2, { species: 'bird' }),
+  P('the dogs', '那些狗', 'pl', 3, 'animal', 'they', 2, { species: 'dog' }),
+  P('the rabbits', '那些兔子', 'pl', 3, 'animal', 'they', 2, { species: 'rabbit' }),
+  P('the ducks', '那些鴨子', 'pl', 3, 'animal', 'they', 2, { species: 'duck' }),
   // things
   P('this book', '這本書', 'sg', 3, 'thing', 'it', 2),
   P('the box', '那個盒子', 'sg', 3, 'thing', 'it', 2),
@@ -213,4 +214,5 @@ export const FUNCTION_WORDS = [
   'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
   'a', 'an', 'the', 'be', 'am', 'is', 'are', 'was', 'were', 'not', "isn't", "aren't", "wasn't", "weren't",
   'do', 'does', 'did', 'have', 'has', 'had', 'and', 'at', 'mr', 'ms', 'mrs',
+  'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
 ];
