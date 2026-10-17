@@ -68,7 +68,12 @@ const MODES = [
         const v = third(s) ? VERBS[f.v].s : VERBS[f.v].base;
         return { lines: [[`${cap(s.en)} ${v}${phrase(f)} with `, blank(p.obj), `${hint(p)} ${t.en}.`]], zh: zhJoin(s.zh, t.zh, `和${p.zh}一起`, f.zh) + '。', meta: meta(p, 'obj') };
       }
-      if (form === 2) return { lines: [['This gift is for ', blank(p.obj), `${hint(p)}.`]], zh: `這份禮物是給${p.zh}的。`, meta: meta(p, 'obj') };
+      if (form === 2) {
+        // [sentence start, Chinese with # for the person, pronouns it does not suit]
+        const [en, zh] = rng.fresh([['This gift is for ', '這份禮物是給#的', []], ['Please wait for ', '請等#', ['you']], ['Look at ', '看#', ['you']], ['My mother made a cake for ', '我媽媽做了一個蛋糕給#', []], ['Do you know ', '你認識#嗎', ['you', 'I']]]
+          .filter((x) => !x[2].includes(p.base)), (x) => x[0]);
+        return { lines: [[en, blank(p.obj), `${hint(p)}${en.startsWith('Do ') ? '?' : '.'}`]], zh: zh.replace('#', p.zh) + (en.startsWith('Do ') ? '？' : '。'), meta: meta(p, 'obj') };
+      }
       if (p.base === 'you') return { lines: [['I want to talk to ', blank(p.obj), `${hint(p)}.`]], zh: '我想跟你說話。', meta: meta(p, 'obj') };
       return { lines: [['Can you help ', blank(p.obj), `${hint(p)}?`]], zh: `你可以幫忙${p.zh}嗎？`, meta: meta(p, 'obj') };
     },
@@ -101,10 +106,10 @@ const MODES = [
       if (p.base !== 'I' && rng.chance(0.4)) {
         return {
           lines: [[`${pl ? "Those aren't my" : "That isn't my"} ${pl ? n.pl : n.sg}. ${pl ? "They're" : "It's"} `, blank(p.mine), `${hint(p)}.`]],
-          zh: `那${pl ? '些' : ''}不是我的${n.zh}，是${zhPoss(p)}。`, meta: meta(p, 'mine'),
+          zh: `那${pl ? '些' : n.m}不是我的${n.zh}，是${zhPoss(p)}。`, meta: meta(p, 'mine'),
         };
       }
-      return { lines: [[`${pl ? 'These' : 'This'} ${pl ? n.pl : n.sg} ${pl ? 'are' : 'is'} `, blank(p.mine), `${hint(p)}.`]], zh: `這${pl ? '些' : ''}${n.zh}是${zhPoss(p)}。`, meta: meta(p, 'mine') };
+      return { lines: [[`${pl ? 'These' : 'This'} ${pl ? n.pl : n.sg} ${pl ? 'are' : 'is'} `, blank(p.mine), `${hint(p)}.`]], zh: `這${pl ? '些' : n.m}${n.zh}是${zhPoss(p)}。`, meta: meta(p, 'mine') };
     },
   },
 ];

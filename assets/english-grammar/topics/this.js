@@ -1,5 +1,5 @@
 // Topic: this / that / these / those.
-import { blank, cap } from '../core.js';
+import { blank, cap, zhJoin } from '../core.js';
 import { NOUNS, article } from '../nouns.js';
 
 const D = { this: { pl: false, near: true, zh: '這' }, that: { pl: false, near: false, zh: '那' }, these: { pl: true, near: true, zh: '這些' }, those: { pl: true, near: false, zh: '那些' } };
@@ -18,9 +18,9 @@ const MODES = [
       const pl = D[d].pl, be = pl ? 'are' : 'is';
       if (rng.chance(0.5)) {
         const [ow, owz] = rng.fresh(OWNERS, (x) => x[0]);
-        return { lines: [[blank(cap(d)), ' ', blank(be), ` ${ow} ${nounOf(n, pl)}. (${CUE[d]})`]], zh: `${D[d].zh}是${owz}${n.zh}。`, meta: meta(d, { pl }) };
+        return { lines: [[blank(cap(d)), ' ', blank(be), ` ${ow} ${nounOf(n, pl)}. (${CUE[d]})`]], zh: zhJoin(`${D[d].zh}是`, `${owz}${n.zh}`) + '。', meta: meta(d, { pl }) };
       }
-      return { lines: [[blank(cap(d)), ' ', blank(be), ` ${pl ? '' : article(n.sg) + ' '}${nounOf(n, pl)}. (${CUE[d]})`]], zh: `${D[d].zh}是${n.zh}。`, meta: meta(d, { pl }) };
+      return { lines: [[blank(cap(d)), ' ', blank(be), ` ${pl ? '' : article(n.sg) + ' '}${nounOf(n, pl)}. (${CUE[d]})`]], zh: `${D[d].zh}是${pl ? '' : '一' + n.m}${n.zh}。`, meta: meta(d, { pl }) };
     },
   },
   {
@@ -32,7 +32,7 @@ const MODES = [
       const [ow, owz] = rng.fresh(OWNERS.filter((x) => x[0] !== 'my'), (x) => x[0]);
       return {
         lines: [[blank(cap(be)), ` ${d} ${ow} ${nounOf(n, pl)}? — ${yes ? 'Yes' : 'No'}, `, blank(pr), ' ', blank(yes ? be : pl ? "aren't" : "isn't"), '.']],
-        zh: `${D[d].zh}是${owz}${n.zh}嗎？`, meta: meta(d, { pl, kind: 'q' }),
+        zh: zhJoin(`${D[d].zh}是`, `${owz}${n.zh}`) + '嗎？', meta: meta(d, { pl, kind: 'q' }),
       };
     },
   },
@@ -46,7 +46,7 @@ const MODES = [
       const given = `${cap(from)} ${D[from].pl ? 'are' : 'is'} ${ow} ${nounOf(n, D[from].pl)}.`;
       return {
         lines: [[given], ['→ ', blank(cap(to)), ' ', blank(D[to].pl ? 'are' : 'is'), ` ${ow} `, blank(nounOf(n, D[to].pl)), '.']],
-        zh: `${D[to].zh}是${owz}${n.zh}。`, meta: meta(to, { pl: D[to].pl, kind: 'change', noun: n.sg }),
+        zh: zhJoin(`${D[to].zh}是`, `${owz}${n.zh}`) + '。', meta: meta(to, { pl: D[to].pl, kind: 'change', noun: n.sg }),
       };
     },
   },

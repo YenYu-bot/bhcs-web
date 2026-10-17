@@ -11,11 +11,11 @@ const ADV = [['always', '總是'], ['usually', '通常'], ['often', '常常'], [
 const advFor = (o) => (o.level >= 2 ? ADV : ADV.filter((a) => a[0] !== 'seldom'));
 // Be predicates that make sense with "always / never": states people are in now and then.
 const BE_PREDS = PREDICATES.filter((p) => (p.type === 'adj' && p.dur === 'temp' && p.for.includes('person')) || (p.type === 'loc' && p.for.includes('person')));
-const meta = (s, adv, extra) => ({ subj: s.en, adv, ...extra });
+const meta = (s, adv, extra) => ({ subj: s.en, adv, cue: adv, ...extra });
 
 function subject(rng, o, exclude = () => false) {
   // Level 1 keeps to subjects that take the base verb (I, you, we, they, plural nouns)
-  return pickSubject(rng, actors(rng, o.level, { exclude: (s) => s.kind !== 'person' || exclude(s) || (o.level < 2 && third(s)) }));
+  return pickSubject(rng, actors(rng, Math.max(o.level, 2), { exclude: (s) => s.kind !== 'person' || exclude(s) || (o.level < 2 && third(s)) }));
 }
 
 const MODES = [
@@ -27,7 +27,7 @@ const MODES = [
       const [adv, az] = rng.fresh(advFor(o), (x) => x[0]);
       // an extra time only when it suits the activity ("on weekends", "after school")
       const tails = cuesFor(f, 'habit', s).filter((t) => ['on weekends', 'after school'].includes(t.en)).map((t) => [t.en, t.zh]);
-      const [tail, tz] = rng.chance(0.4) && tails.length ? rng.pick(tails) : ['', ''];
+      const [tail, tz] = rng.chance(0.25) && tails.length ? rng.pick(tails) : ['', ''];
       const v = third(s) ? VERBS[f.v].s : VERBS[f.v].base;
       return {
         lines: [[cap(s.en) + ' ', blank(adv), ' ', blank(v), `${phrase(f)}${tail ? ' ' + tail : ''}. (${az}／${f.v})`]],
@@ -72,6 +72,7 @@ export default {
   title: '頻率副詞',
   grade: 7,
   past: false,
+  variety: { front: false }, // the adverb sits inside the sentence, so nothing goes first
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
   defaultModes: { 1: ['verb'], 2: ['verb', 'be'], 3: ['verb', 'be', 'place'] },
   levelHint: { 1: '一般動詞句，主詞不用加 -s（I、you、we、they、複數名詞）。', 2: '加入第三人稱單數與 Be 動詞句、seldom。', 3: '再加入「把頻率副詞放進句子」。' },

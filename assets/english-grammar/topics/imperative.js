@@ -21,7 +21,7 @@ const LETS = [
   ['study', 'together', '一起讀書'], ['clean', 'the classroom', '打掃教室'], ['fly', 'a kite', '放風箏'], ['ride', 'our bicycles', '騎腳踏車'],
 ];
 const BE = [
-  ['quiet', '安靜', false], ['careful', '小心', false], ['kind', '友善', false], ['polite', '有禮貌', false], ['on time', '準時', false], ['nice', '友善', false],
+  ['quiet', '安靜', false], ['careful', '小心', false], ['kind', '友善', false], ['polite', '有禮貌', false], ['on time', '準時', false], ['nice', '親切', false],
   ['late', '遲到', true], ['afraid', '害怕', true], ['angry', '生氣', true], ['noisy', '吵鬧', true], ['sad', '難過', true], ['shy', '害羞', true],
 ];
 const meta = (kind, base, extra = {}) => ({ kind, base, ...extra });
@@ -57,7 +57,7 @@ const MODES = [
       const [adj, zh, neg] = rng.fresh(BE, (x) => x[0]);
       if (neg) return { lines: [[blank("Don't"), ' ', blank('be'), ` ${adj}. (不要${zh})`]], zh: `不要${zh}。`, meta: meta('be', 'be', { neg: true }) };
       const please = rng.chance(0.4);
-      return { lines: [[blank('Be'), ` ${adj}${please ? ', please' : ''}. (要${zh})`]], zh: `${please ? '請' : ''}要${zh}。`, meta: meta('be', 'be', { neg: false }) };
+      return { lines: [[blank('Be'), ` ${adj}${please ? ', please' : ''}. (要${zh})`]], zh: please ? `請${zh}。` : `要${zh}。`, meta: meta('be', 'be', { neg: false }) };
     },
   },
 ];

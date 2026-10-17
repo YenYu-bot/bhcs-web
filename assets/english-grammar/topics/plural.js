@@ -17,7 +17,12 @@ const PLACES = {
   animal: [['in the park', '公園裡'], ['in the garden', '花園裡'], ['at the zoo', '動物園裡']],
   person: [['in the park', '公園裡'], ['in the classroom', '教室裡'], ['at the station', '車站']],
 };
-const placeFor = (n) => (['city', 'country', 'library', 'zoo', 'class', 'party', 'day', 'story', 'family', 'bus', 'piano', 'tree', 'foot', 'tooth', 'wife'].includes(n.sg) ? null : PLACES[n.kind]);
+// Big or special things only go where they fit (no chairs in a box).
+const OWN_PLACES = {
+  desk: [['in the classroom', '教室裡']], chair: [['in the classroom', '教室裡'], ['in the kitchen', '廚房裡']],
+  flower: [['in the garden', '花園裡'], ['in the park', '公園裡']], dish: [['on the table', '桌子上'], ['in the kitchen', '廚房裡']], glass: [['on the table', '桌子上'], ['in the kitchen', '廚房裡']],
+};
+const placeFor = (n) => OWN_PLACES[n.sg] ?? (['city', 'country', 'library', 'zoo', 'class', 'party', 'day', 'story', 'family', 'bus', 'piano', 'tree', 'foot', 'tooth', 'wife'].includes(n.sg) ? null : PLACES[n.kind]);
 // Things a person can have several of.
 const HAVE = (n) => n.own || n.kind === 'food' || ['cat', 'dog', 'bird', 'fish'].includes(n.sg);
 const ABSTRACT = ['day', 'class', 'party', 'family', 'story', 'country', 'city'];

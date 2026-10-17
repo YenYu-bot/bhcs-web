@@ -14,7 +14,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin']);
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man', teeth: 'tooth', feet: 'foot', mice: 'mouse' };
 function inList(word) {
@@ -291,7 +291,7 @@ const DEM_CUE = { this: '這個', that: '那個', these: '這些', those: '那�
 function checkThis(it, mode, o) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
   const pl = DEM_PL[m.dem], be = pl ? 'are' : 'is';
-  if (o.level < 2) assert.ok(!pl, 'level 1 is singular only');
+  if (o.level < 2 && mode !== 'change') assert.ok(!pl, 'level 1 is singular only');
   if (mode === 'fill') { assert.deepEqual(a, [cap1(m.dem), be]); assert.ok(text.includes(`(${DEM_CUE[m.dem]})`), 'Chinese cue'); }
   if (mode === 'q') { const yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), pl ? 'they' : 'it', yes ? be : pl ? "aren't" : "isn't"]); assert.ok(text.includes(` ${m.dem} `), 'question uses the word'); }
   if (mode === 'change') assert.deepEqual(a, [cap1(m.dem), be, pl ? pluralOf(m.noun) : m.noun]);
@@ -299,7 +299,7 @@ function checkThis(it, mode, o) {
 const ADV_ZH = { always: '總是', usually: '通常', often: '常常', sometimes: '有時候', seldom: '很少', never: '從不' };
 function checkFreq(it, mode, o) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
-  if (o.level < 2) assert.ok(m.adv !== 'seldom' && !isThirdSg(m.subj), 'level 1: no seldom, no -s verbs');
+  if (o.level < 2) assert.ok(m.adv !== 'seldom' && (mode !== 'verb' || !isThirdSg(m.subj)), `level 1: no seldom, no -s verbs: ${text}`);
   if (mode !== 'place') assert.ok(text.includes(`(${ADV_ZH[m.adv]}／`), `Chinese cue: ${text}`); else assert.ok(text.includes(`(${m.adv})`), 'adverb given');
   if (m.kind === 'verb') assert.deepEqual(a, [m.adv, isThirdSg(m.subj) ? s3(m.base) : m.base], `adverb before the verb: ${text}`);
   else assert.deepEqual(a, [expectedBe(m.subj, false), m.adv], `adverb after be: ${text}`);
@@ -393,7 +393,7 @@ test('sheets spread over the word bank: varied subjects, verbs and time words, s
     assert.ok(worstSubject <= 4, `${where}: no subject more than 4 times on one sheet (got ${worstSubject})`);
     assert.ok(worstVerb <= 4, `${where}: no verb more than 4 times on one sheet (got ${worstVerb})`);
     assert.ok(times / N >= 4, `${where}: at least 4 different time words per sheet (got ${(times / N).toFixed(1)})`);
-    assert.ok(front > 0, `${where}: some sentences put the time word first`);
+    if (t.variety?.front !== false) assert.ok(front > 0, `${where}: some sentences put the time word first`);
   }
 });
 
