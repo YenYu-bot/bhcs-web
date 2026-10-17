@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>電路接線與電流（導引版原型）｜百宏文教</title>
+<meta name="description" content="親手接線、操作開關並移動電表，用五次量測比較不同接法下的電流與燈泡狀態。導引版原型，尚未公開。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/science/circuit-guided.html">
+<link rel="icon" href="../../assets/favicon.png">
+<link rel="stylesheet" href="../../assets/science-guided/science-guided.css">
+<link rel="stylesheet" href="../../assets/circuit-guided/circuit-guided.css">
+</head>
+<body class="circuit-guided" data-science-lab="circuit-guided">
+<a class="cgg-skip" href="#main">跳到主要內容</a>
+<div class="cgg-wrap">
+  <header><h1 class="cgg-h1" id="cgg-heading" tabindex="-1"></h1></header>
+  <main id="main" data-screen="welcome" data-phase="welcome">
+    <nav class="cgg-stepnav" id="cgg-stepnav"><ol class="sg-steps cgg-steps" id="cgg-steps"></ol></nav>
+    <div class="cgg-shell">
+      <section class="cgg-card cgg-coach" id="cgg-coach" hidden>
+        <p class="cgg-coach-name" id="cgg-coach-name"></p>
+        <p class="cgg-coach-main" id="cgg-coach-main"></p>
+        <p class="cgg-coach-sub" id="cgg-coach-sub"></p>
+      </section>
+
+      <div class="cgg-column" id="cgg-column">
+        <section class="cgg-card cgg-welcome" id="cgg-welcome" aria-labelledby="cgg-welcome-title">
+          <div class="cgg-welcome-art" aria-hidden="true">
+            <span class="cgg-welcome-battery">6 V</span>
+            <span class="cgg-welcome-wire"></span>
+            <span class="cgg-welcome-lamp">💡</span>
+            <span class="cgg-welcome-meter">A</span>
+          </div>
+          <h2 id="cgg-welcome-title" tabindex="-1"></h2>
+          <p id="cgg-welcome-sub"></p>
+        </section>
+
+        <section class="cgg-card cgg-bench-card" id="cgg-bench-card" hidden>
+          <div id="cgg-bench-host"></div>
+        </section>
+
+        <section class="cgg-card" id="cgg-compare" aria-labelledby="cgg-compare-title" hidden>
+          <h2 id="cgg-compare-title" tabindex="-1"></h2>
+          <div data-cgg-compare-body></div>
+        </section>
+
+        <section class="cgg-card" id="cgg-inference" aria-labelledby="cgg-inference-title" hidden>
+          <h2 id="cgg-inference-title" tabindex="-1"></h2>
+          <div class="cgg-inference-body" data-cgg-inference-body></div>
+        </section>
+
+        <section class="cgg-card" id="cgg-concept" aria-labelledby="cgg-concept-title" hidden>
+          <h2 id="cgg-concept-title" tabindex="-1"></h2>
+          <div data-cgg-concept-body></div>
+        </section>
+
+        <div class="cgg-status" id="cgg-status" data-kind="neutral" hidden>
+          <span class="cgg-status-icon" data-cgg-status-icon aria-hidden="true"></span>
+          <span data-cgg-status-text></span>
+        </div>
+
+        <div class="cgg-actions">
+          <button type="button" class="cgg-cta" id="cgg-cta" hidden></button>
+        </div>
+      </div>
+
+      <aside class="cgg-side" id="cgg-side" hidden>
+        <section class="cgg-card" id="cgg-data" hidden></section>
+        <section class="cgg-card" id="cgg-evidence" hidden></section>
+      </aside>
+    </div>
+
+    <div class="sg-sr" id="cgg-announcer" aria-live="polite" aria-atomic="true"></div>
+  </main>
+
+  <footer class="cgg-footer">
+    <p id="cgg-prototype-note"></p>
+  </footer>
+</div>
+<script type="module" src="../../assets/circuit-guided/main.js"></script>
+</body>
+</html>

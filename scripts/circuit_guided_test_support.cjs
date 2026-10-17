@@ -32,4 +32,23 @@ async function axeScan(page,label){const file=require.resolve('axe-core',{paths:
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 const launchOptions=()=>process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{};
 async function touchDrag(page,from,to,steps=8){const c=await page.context().newCDPSession(page);await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[from]});for(let i=1;i<=steps;i++)await c.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from.x+(to.x-from.x)*i/steps,y:from.y+(to.y-from.y)*i/steps}]});await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await settle(page)}
-module.exports={root,FIXTURE,createServer,openFixture,axeScan,settle,launchOptions,touchDrag};
+
+const PAGE='/tools/science/circuit-guided.html',MAIN='/assets/circuit-guided/main.js';
+const HOOK='\nwindow.__cggTest={getState:()=>state,dispatch};\n';
+async function openPage(browser,base,{viewport,touch=false,hook=true,reducedMotion,forcedColors,external=[],errors=[]}){
+  const ctx=await browser.newContext({viewport,hasTouch:touch,isMobile:touch,...(reducedMotion?{reducedMotion}:{}),...(forcedColors?{forcedColors}:{})});
+  await ctx.route('**/*',route=>{
+    const url=route.request().url();
+    if(!url.startsWith(base)){external.push(url);return route.abort()}
+    const pathname=new URL(url).pathname;
+    if(hook&&pathname===MAIN)return route.fulfill({status:200,contentType:'text/javascript; charset=utf-8',body:fs.readFileSync(path.join(root,MAIN),'utf8')+HOOK});
+    return route.continue();
+  });
+  const page=await ctx.newPage();
+  page.on('pageerror',e=>errors.push(String(e)));
+  page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+  await page.goto(base+PAGE);
+  await page.waitForFunction(()=>document.getElementById('main')?.dataset.phase);
+  return{ctx,page};
+}
+module.exports={root,FIXTURE,PAGE,MAIN,createServer,openFixture,openPage,axeScan,settle,launchOptions,touchDrag};
