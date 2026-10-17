@@ -63,6 +63,10 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
   assert.match(await text(p,'[data-feedback="totalChange"]'),/1\.0 A.*0\.5 A/);
   await answer(p,'totalChange','decrease',{tap});await answer(p,'claim','one-path-only',{tap});
   assert.equal(await p.locator('#cgg-cta').isEnabled(),true);
+  if(tap){
+    const sizes=await p.evaluate(()=>[...document.querySelectorAll('#cgg-compare .sg-pill')].filter(e=>e.offsetParent).map(e=>{const r=e.getBoundingClientRect();return[r.width,r.height]}));
+    assert.ok(sizes.length>=3&&sizes.every(([w,h])=>w>=56&&h>=56),'compare1 touch targets '+JSON.stringify(sizes));
+  }
   await preConcept(p,'compare1');if(shots)await shot(p,prefix+'compare1');
   await clickCta(p,{tap});assert.equal(await phase(p),'trial2-build');
 
@@ -87,6 +91,10 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
   assert.match(await text(p,'#cgg-compare'),/燈泡 2 那一路 1\.0 A/);
   await answer(p,'totalChange','increase',{tap});await answer(p,'branchRelation','sum',{tap});
   assert.equal(await p.locator('#cgg-cta').isEnabled(),true);
+  if(tap){
+    const sizes=await p.evaluate(()=>[...document.querySelectorAll('#cgg-compare .sg-pill')].filter(e=>e.offsetParent).map(e=>{const r=e.getBoundingClientRect();return[r.width,r.height]}));
+    assert.ok(sizes.length>=3&&sizes.every(([w,h])=>w>=56&&h>=56),'compare2 touch targets '+JSON.stringify(sizes));
+  }
   await preConcept(p,'compare2');if(shots)await shot(p,prefix+'compare2');
   await clickCta(p,{tap});assert.equal(await phase(p),'inference');
   assert.match(await text(p,'#cgg-inference'),/一定變小.*不成立/);
@@ -131,12 +139,10 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
       await runJourney(p,{tap:true,shots:true,prefix:'390-'});
       const facts=await p.evaluate(()=>({
         overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
-        pills:[...document.querySelectorAll('.sg-pill')].map(e=>{const r=e.getBoundingClientRect();return[r.width,r.height]}),
         conceptRight:document.getElementById('cgg-concept').getBoundingClientRect().right,
         viewport:document.documentElement.clientWidth,
       }));
       assert.ok(facts.overflow<=1);
-      assert.ok(facts.pills.every(([w,h])=>w>=56&&h>=56),JSON.stringify(facts.pills));
       assert.ok(facts.conceptRight<=facts.viewport+1);
       await common(p,'390 concept');
       ok('390: full flow by touch, answer targets ≥56px, no sideways scroll, Concept fits, axe clean');
