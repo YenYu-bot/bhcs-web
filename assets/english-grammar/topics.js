@@ -8,6 +8,6 @@ import there from './topics/there.js';
 import can from './topics/can.js';
 import past from './topics/past.js';
 
-export const TOPICS = [be];
-export const DRAFTS = [simple, progressive, there, can, past];
+export const TOPICS = [be, simple, progressive, there, can, past];
+export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
