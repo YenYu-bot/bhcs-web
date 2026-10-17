@@ -48,8 +48,21 @@ def links() -> list[dict[str, str]]:
     return rows
 
 
+def grammar_topic_keys() -> set[str]:
+    """English grammar topics: the modules imported by assets/english-grammar/topics.js, each with id: '<key>'."""
+    base = ROOT / "assets/english-grammar"
+    keys = set()
+    for rel in re.findall(r"from '\./(topics/[a-z0-9-]+\.js)'", (base / "topics.js").read_text(encoding="utf-8")):
+        match = re.search(r"export default \{\s*id: '([a-z0-9-]+)'", (base / rel).read_text(encoding="utf-8"))
+        if match:
+            keys.add(match.group(1))
+    return keys
+
+
 def topic_keys(target: Path) -> set[str] | None:
     """Topic keys of a drill engine: TOPICS=[[key,name],...] (g3–g9) or CONFIGS={key:config(),...} (g10–g11)."""
+    if target == ROOT / "tools/english-grammar.html":
+        return grammar_topic_keys()
     source = target.read_text(encoding="utf-8", errors="ignore")
     match = TOPICS_RE.search(source)
     if match:

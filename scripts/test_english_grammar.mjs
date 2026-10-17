@@ -192,13 +192,14 @@ test('the same sheet code always gives the same sheet, and the code round-trips'
   for (const bad of ['', 'BE-2M', 'XX-2M-3F-B1-20-1', 'BE-4M-3F-B1-20-1', 'BE-2M-0-B1-20-1', 'BE-2M-3F-B1-60-1', 'BE-2M-3F-B1-5-1']) assert.equal(decodeCode(bad, TOPICS), null, `rejects "${bad}"`);
 });
 
-test('the page is unlisted until reviewed and loads the engine as modules', () => {
+test('the page is public, loads the engine as modules, and every published topic is linked from the resources page', () => {
   const html = fs.readFileSync(path.join(root, 'tools/english-grammar.html'), 'utf8');
-  assert.match(html, /<meta name="robots" content="noindex">/);
+  assert.ok(!/<meta name="robots" content="noindex">/.test(html), 'indexable once reviewed');
   assert.match(html, /<link rel="canonical" href="https:\/\/www\.bhcs\.com\.tw\/tools\/english-grammar\.html">/);
   assert.ok(html.includes("from '../assets/english-grammar/core.js'") && html.includes("from '../assets/english-grammar/topics.js'"));
-  assert.ok(!fs.readFileSync(path.join(root, 'ziyuan.html'), 'utf8').includes('english-grammar'), 'not linked from the resources page yet');
-  assert.ok(!fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8').includes('english-grammar'), 'not in the sitemap');
+  const ziyuan = fs.readFileSync(path.join(root, 'ziyuan.html'), 'utf8');
+  for (const t of TOPICS) assert.ok(ziyuan.includes(`href="tools/english-grammar.html?topic=${t.id}"`), `${t.title} is linked from the resources page`);
+  assert.ok(fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8').includes('https://www.bhcs.com.tw/tools/english-grammar.html'), 'in the sitemap');
 });
 
 console.log(`english grammar: ${tests} tests passed`);
