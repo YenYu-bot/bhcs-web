@@ -12,6 +12,7 @@
 - `build_site.mjs` 同時更新主站資源版本；共用 CSS／JS 改動時更新該腳本的 `version`。
 - 學習資源頁的所有數字（總數、分類膠囊、各區塊與單元列計數、「顯示全部 N 項」）由 `build_resources.py` 依頁面實際連結計算：`.res-sec` 內 `.tpills` 的直接子連結與 `.science-category li` 內的連結各算一項，同一單元列有幾個按鈕就算幾項。`check_resources.py` 檢查本地 href 存在、`?topic=` 對得到引擎的 topic key，並列出重複 href 與同名不同 href。
 - 數學單檔工具保留自身的出題與列印版面；來源及驗收說明見 `scripts/README.md`。
+- 英文文法填空練習：頁面 `tools/english-grammar.html`，出題引擎在 `assets/english-grammar/`（`core.js` 共用、`lexicon.js` 詞庫、`topics/` 各主題、`topics.js` 列出已公開主題）。字表 `scripts/english-grammar/wordlist-2000.json` 來自百宏「英文單字 2000」。`scripts/test_english_grammar.mjs` 以獨立規則重算每題答案並檢查字彙範圍。新主題先只在本機或 PR 產生樣本卷審題，審過才加入 `topics.js`，並在學習資源頁加上 `?topic=<id>` 連結（`check_resources.py` 會核對 id）。
 - P1 數學螢幕配色由 `scripts/build_math_brand.mjs` 內嵌至 39 個單檔（88 個入口），不增加外部依賴；原始列印規則不改，教用答案統一品牌紅。後續 P2 或教材項目若刻意修改出題邏輯，須更新 `check_math_brand.cjs` 的 P1 基準與對應回歸測試，不能停用數學檢查。
 
 ## 建置與檢查
