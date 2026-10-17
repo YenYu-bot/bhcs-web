@@ -13,6 +13,6 @@ import demonstrative from './topics/this.js';
 import freq from './topics/freq.js';
 import imperative from './topics/imperative.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past];
-export const DRAFTS = [pronoun, plural, demonstrative, freq, imperative];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative];
+export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
