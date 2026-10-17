@@ -76,17 +76,33 @@ export const ABBR = [
   { id: 'B', name: '兩種都練' },
 ];
 export const COUNT_MIN = 10, COUNT_MAX = 50, COUNT_DEFAULT = 20;
+/** How many whole-sentence translation questions can be added at the end of a sheet. */
+export const TR_CHOICES = [0, 5, 10];
 
 /**
- * Sheet code, e.g. "BE-2M-3F-C1-20-48213": topic · level+tense · modes (hex bitmask) · abbreviation+Chinese · count · seed.
+ * The whole English sentence an item's Chinese line says, with the answers filled in and the cues removed.
+ * Dialogues ("Is it …? — Yes, it is.") give the question, which is what the Chinese line translates;
+ * rewrite items ("A. → B.") give the result.
+ */
+export function fullSentence(it) {
+  const text = (l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('');
+  const dialog = it.lines.some((l) => /(^|\s)— /.test(text(l)));
+  let s = dialog ? text(it.lines[0]).split(' — ')[0] : text(it.lines.at(-1)).replace(/^→\s*/, '');
+  s = s.replace(/\s*[(（][^)）]*[)）]/g, '').replace(/\s+/g, ' ').replace(/\s+([.?!,])/g, '$1').trim();
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/**
+ * Sheet code, e.g. "BE-2M-3F-C1-20-48213": topic · level+tense · modes (hex bitmask) · abbreviation+Chinese · count · seed,
+ * plus "-T5" when translation questions are added (older codes without it still work).
  * Entering the same code rebuilds the identical sheet.
  */
 export function encodeCode(topic, o) {
   const bits = topic.modes.reduce((b, m, i) => (o.modes.includes(m.id) ? b | (1 << i) : b), 0);
-  return [topic.code, `${o.level}${o.tense}`, bits.toString(16).toUpperCase(), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed].join('-');
+  return [topic.code, `${o.level}${o.tense}`, bits.toString(16).toUpperCase(), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed, ...(o.tr ? [`T${o.tr}`] : [])].join('-');
 }
 export function decodeCode(code, topics) {
-  const m = /^([A-Z]+)-([123])([PMD])-([0-9A-F]+)-([FCB])([01])-(\d+)-(\d+)$/.exec(String(code).trim().toUpperCase());
+  const m = /^([A-Z]+)-([123])([PMD])-([0-9A-F]+)-([FCB])([01])-(\d+)-(\d+)(?:-T(\d+))?$/.exec(String(code).trim().toUpperCase());
   if (!m) return null;
   const topic = topics.find((t) => t.code === m[1]);
   if (!topic) return null;
@@ -95,7 +111,9 @@ export function decodeCode(code, topics) {
   const count = Number(m[7]);
   if (!modes.length || count < COUNT_MIN || count > COUNT_MAX) return null;
   if (!topic.past && m[3] !== 'P') return null;
-  return { topic: topic.id, opts: { level: Number(m[2]), tense: m[3], modes, abbr: m[5], zh: m[6] === '1', count, seed: Number(m[8]) } };
+  const tr = Number(m[9] || 0);
+  if (!TR_CHOICES.includes(tr)) return null;
+  return { topic: topic.id, opts: { level: Number(m[2]), tense: m[3], modes, abbr: m[5], zh: m[6] === '1', count, seed: Number(m[8]), tr } };
 }
 
 /** Split `count` over the chosen modes, in the topic's mode order (earlier modes get the remainder). */
@@ -112,6 +130,7 @@ export function buildSheet(topic, opts) {
   const o = { ...opts, modes: topic.modes.map((m) => m.id).filter((id) => opts.modes.includes(id)) };
   if (!topic.past) o.tense = 'P';
   if (topic.zhRequired) o.zh = true; // the Chinese line is the only cue for these topics
+  o.tr = TR_CHOICES.includes(o.tr) ? o.tr : 0;
   const rng = makeRng(o.seed);
   const seen = new Set();
   const sections = [];
@@ -133,5 +152,23 @@ export function buildSheet(topic, opts) {
     }
     sections.push({ mode, title: def.instruction(o), items });
   }
-  return { code: encodeCode(topic, o), opts: o, sections, total: sections.reduce((a, s) => a + s.items.length, 0) };
+  // Translation questions come last, after every fill-in item is drawn, so adding them never changes the fill-in part.
+  // Each is a new sentence from the chosen modes: not one of the fill-in sentences, and no Chinese line twice.
+  let translation = null;
+  if (o.tr) {
+    const used = new Set(sections.flatMap((s) => s.items.map((it) => fullSentence(it).toLowerCase())));
+    const zhUsed = new Set(sections.flatMap((s) => s.items.map((it) => it.zh)));
+    const items = [];
+    for (let tries = 0; items.length < o.tr && tries < o.tr * 400; tries++) {
+      const mode = o.modes[items.length % o.modes.length];
+      const it = topic.generate(rng, o, mode);
+      if (!it) continue;
+      const en = fullSentence(it);
+      if (used.has(en.toLowerCase()) || zhUsed.has(it.zh)) continue;
+      used.add(en.toLowerCase()); zhUsed.add(it.zh);
+      items.push({ mode, zh: it.zh, en });
+    }
+    translation = { title: '整句翻譯：把中文句子翻成英文。', items };
+  }
+  return { code: encodeCode(topic, o), opts: o, sections, total: sections.reduce((a, s) => a + s.items.length, 0), translation };
 }

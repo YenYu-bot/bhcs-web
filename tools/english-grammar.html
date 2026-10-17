@@ -75,6 +75,11 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 .blank .a{visibility:hidden;color:var(--red);font-weight:700}
 .sheet.teacher .blank .a{visibility:visible}
 .zh{display:block;font-family:var(--zh);font-size:9.5pt;color:#6b7480;line-height:1.4;margin-top:.5mm}
+.zh-q{display:block;font-family:var(--zh);font-size:12pt}
+.wline{display:block;border-bottom:.3mm solid #1b1f24;min-height:9mm;padding-top:2mm;line-height:1.3}
+.wline .a{visibility:hidden;color:var(--red);font-weight:700}
+.sheet.teacher .wline .a{visibility:visible}
+.tr-note{font-weight:400;font-size:10pt;color:var(--red);margin-left:2mm}
 .teacher-tag{color:var(--red);font-weight:700;font-size:10pt;margin-left:3mm}
 
 @media print{
@@ -85,7 +90,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   .main{display:block}
   .preview{overflow:visible}
   .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}
-  .blank .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .blank .a,.wline .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
@@ -93,7 +98,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 <div class="wrap">
   <header class="top">
     <h1>英文文法填空練習</h1>
-    <p>選主題、等級與句型，每按一次產生一份新題目；學用版與教用版題目相同。</p>
+    <p>選主題、等級與句型，每按一次產生一份新題目；可在最後加入整句翻譯。學用版與教用版題目相同。</p>
     <a class="back" href="../ziyuan.html#res-english">← 回學習資源</a>
   </header>
   <div class="main">
@@ -112,6 +117,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
       <div class="grp" id="abbrGrp"><span class="t">否定句縮寫</span><select id="abbr" aria-label="否定句縮寫"></select></div>
       <div class="row2">
         <div class="grp"><span class="t">題數（10–50）</span><input type="number" id="count" min="10" max="50" step="1" value="20"></div>
+        <div class="grp"><span class="t">整句翻譯</span><select id="tr" aria-label="整句翻譯題數"></select></div>
         <div class="grp"><span class="t">顯示</span>
           <label class="opt"><input type="checkbox" id="zh">中文翻譯</label>
           <label class="opt"><input type="checkbox" id="box" checked>文法重點框</label>
@@ -132,7 +138,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   </div>
 </div>
 <script type="module">
-import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT } from '../assets/english-grammar/core.js';
+import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT, TR_CHOICES } from '../assets/english-grammar/core.js';
 import { TOPICS as PUBLIC, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 
 const $ = (id) => document.getElementById(id);
@@ -156,6 +162,7 @@ for (const g of [7, 8, 9]) {
 }
 for (const t of TENSES) $('tense').append(new Option(t.name, t.id));
 for (const a of ABBR) $('abbr').append(new Option(a.name, a.id));
+for (const n of TR_CHOICES) $('tr').append(new Option(n ? `加 ${n} 題` : '不加', String(n)));
 
 function buildModeBoxes() {
   $('modes').replaceChildren(...topic.modes.map((m) => {
@@ -175,12 +182,12 @@ function readOpts() {
   return {
     level, tense: topic.past ? $('tense').value : 'P',
     modes: topic.modes.map((m) => m.id).filter((id) => $('m-' + id).checked),
-    abbr: $('abbr').value, zh: !!topic.zhRequired || $('zh').checked, count, seed,
+    abbr: $('abbr').value, zh: !!topic.zhRequired || $('zh').checked, count, seed, tr: Number($('tr').value),
   };
 }
 function applyOpts(o) {
   $('lv' + o.level).checked = true;
-  $('tense').value = o.tense; $('abbr').value = o.abbr; $('zh').checked = o.zh; $('count').value = o.count;
+  $('tense').value = o.tense; $('abbr').value = o.abbr; $('zh').checked = o.zh; $('count').value = o.count; $('tr').value = String(o.tr || 0);
   for (const m of topic.modes) $('m-' + m.id).checked = o.modes.includes(m.id);
   $('levelHint').textContent = levelHint(o.level);
   seed = o.seed;
@@ -227,6 +234,12 @@ function render() {
     }
     html += '</ol></section>';
   });
+  if (sheet.translation?.items.length) {
+    const t = sheet.translation;
+    html += `<section class="sec tr"><h3>${NUM[sheet.sections.length]}、${esc(t.title)}${teacher ? '<span class="tr-note">（參考答案，意思正確即可）</span>' : ''}</h3><ol start="${n}">`;
+    for (const it of t.items) { html += `<li><span class="zh-q">${esc(it.zh)}</span><span class="wline"><span class="a">${esc(it.en)}</span></span></li>`; n++; }
+    html += '</ol></section>';
+  }
   const el = $('sheet');
   el.className = 'sheet' + (teacher ? ' teacher' : '');
   el.innerHTML = html;
