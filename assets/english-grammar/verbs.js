@@ -56,7 +56,8 @@ export const VERBS = {
 //   habit  fits "every day"      prog  fits "now" with -ing          able  fits "can ..."
 //   pastOk fits "yesterday"
 //   cues   { habit, past, pastprog }: only these time words for that use (meals and school days have their own times)
-const ANIMAL = { habit: ['every day', 'every morning'] };
+const ANIMAL = { habit: ['every day'] };
+const WEEKEND = { habit: ['every Sunday', 'on weekends'] };
 const F = (v, rest, zh, opts = {}) => ({ v, rest, zh, who: ['person'], habit: true, prog: true, able: false, pastOk: true, ...opts });
 export const FRAMES = [
   F('play', 'basketball', '打籃球', { able: true }),
@@ -86,20 +87,20 @@ export const FRAMES = [
   F('draw', 'pictures', '畫畫', { able: true }),
   F('buy', 'bread', '買麵包'),
   F('make', 'cakes', '做蛋糕', { able: true }),
-  F('fly', 'a kite', '放風箏', { able: true }),
+  F('fly', 'a kite', '放風箏', { able: true, cues: WEEKEND }),
   F('sit', 'under the tree', '坐在樹下', { habit: false }),
   F('teach', 'art', '教美術', { age: 'adult' }),
   F('drive', 'a car', '開車', { age: 'adult', able: true }),
-  F('catch', 'fish', '抓魚'),
+  F('catch', 'fish', '抓魚', { cues: WEEKEND }),
   F('get', 'up early', '早起', { prog: false, cues: { habit: ['every day', 'every morning'], past: ['yesterday', 'two days ago', 'last Sunday'] } }),
   F('have', 'lunch', '吃午餐', { cues: { habit: ['every day'], past: ['yesterday', 'two days ago', 'last Sunday'], pastprog: ['at this time yesterday'] } }),
-  F('see', 'a movie', '看電影', { prog: false }),
+  F('see', 'a movie', '看電影', { prog: false, cues: WEEKEND }),
   F('come', 'home late', '晚回家', { prog: false, cues: { past: ['yesterday', 'last night', 'last Sunday', 'two days ago'] } }),
-  F('visit', 'the museum', '參觀博物館'),
+  F('visit', 'the museum', '參觀博物館', { cues: WEEKEND }),
   F('help', 'the teacher', '幫忙老師'),
   F('shop', 'at the supermarket', '在超市購物'),
-  F('plant', 'trees', '種樹'),
-  F('climb', 'the mountain', '爬山'),
+  F('plant', 'trees', '種樹', { cues: WEEKEND }),
+  F('climb', 'the mountain', '爬山', { cues: WEEKEND }),
   F('skate', 'in the park', '在公園溜冰', { able: true }),
   F('cry', '', '哭', { habit: false }),
   F('sleep', '', '睡覺', { habit: false }),
