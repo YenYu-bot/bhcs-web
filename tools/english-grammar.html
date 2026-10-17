@@ -175,7 +175,7 @@ function readOpts() {
   return {
     level, tense: topic.past ? $('tense').value : 'P',
     modes: topic.modes.map((m) => m.id).filter((id) => $('m-' + id).checked),
-    abbr: $('abbr').value, zh: $('zh').checked, count, seed,
+    abbr: $('abbr').value, zh: !!topic.zhRequired || $('zh').checked, count, seed,
   };
 }
 function applyOpts(o) {
@@ -190,6 +190,8 @@ function selectTopic(id, keepTitle) {
   $('topic').value = topic.id;
   buildModeBoxes();
   $('tenseGrp').hidden = !topic.past;
+  $('zh').disabled = !!topic.zhRequired; // these topics give the cue in Chinese only
+  if (topic.zhRequired) $('zh').checked = true;
   $('abbrGrp').hidden = !topic.modes.some((m) => m.id === 'neg');
   if (!keepTitle) $('title').value = `英文文法練習：${topic.title}`;
 }

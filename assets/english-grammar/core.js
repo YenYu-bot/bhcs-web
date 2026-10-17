@@ -111,6 +111,7 @@ export function splitCount(count, modes) {
 export function buildSheet(topic, opts) {
   const o = { ...opts, modes: topic.modes.map((m) => m.id).filter((id) => opts.modes.includes(id)) };
   if (!topic.past) o.tense = 'P';
+  if (topic.zhRequired) o.zh = true; // the Chinese line is the only cue for these topics
   const rng = makeRng(o.seed);
   const seen = new Set();
   const sections = [];

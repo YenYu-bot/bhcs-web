@@ -253,11 +253,13 @@ function checkPast(it, mode, o) {
 
 // ---------- batch 3a rules ----------
 const PRON = { I: ['I', 'me', 'my', 'mine'], you: ['you', 'you', 'your', 'yours'], he: ['he', 'him', 'his', 'his'], she: ['she', 'her', 'her', 'hers'], it: ['it', 'it', 'its', null], we: ['we', 'us', 'our', 'ours'], they: ['they', 'them', 'their', 'theirs'] };
+const PRON_ZH = { I: '我', you: '你', he: '他', she: '她', it: '牠', we: '我們', they: '他們' };
 const CASE = { subj: 0, obj: 1, poss: 2, mine: 3 };
 const firstIsBlank = (it) => typeof it.lines.at(-1)[0] !== 'string' || (it.lines.length === 1 && typeof it.lines[0][0] !== 'string');
 function checkPronoun(it, mode, o) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
-  assert.equal(m.case, mode); assert.ok(text.includes(`(${m.base})`), `hint (${m.base}): ${text}`);
+  assert.equal(m.case, mode); assert.ok(!/\((I|you|he|she|it|we|they)\)/.test(text), `no English cue gives the answer away: ${text}`);
+  assert.ok(o.zh, 'Chinese line is always printed'); assert.ok(it.zh.includes(PRON_ZH[m.base]), `the Chinese names the person (${PRON_ZH[m.base]}): ${it.zh}`);
   const w = PRON[m.base][CASE[mode]];
   assert.ok(w, `${m.base} has a ${mode} form`);
   const startsWithBlank = typeof it.lines[0][0] !== 'string';

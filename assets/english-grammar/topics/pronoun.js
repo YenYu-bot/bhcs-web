@@ -18,7 +18,8 @@ const PRONOUNS = [
 ];
 const pickP = (rng, test = () => true) => rng.fresh(PRONOUNS.filter(test), (p) => p.base);
 const asSubject = (p) => ({ person: p.person, num: p.num, kind: p.kind, age: 'any', tags: ['pron'], en: p.subj, zh: p.zh });
-const hint = (p) => ` (${p.base})`;
+// No English cue: the Chinese line under each sentence tells which person, so the page always prints it.
+const hint = () => '';
 const zhPoss = (p) => p.zh + '的';
 const meta = (p, kase, extra = {}) => ({ base: p.base, case: kase, ...extra });
 
@@ -32,7 +33,7 @@ const S3 = (v) => (v === 'miss' ? 'misses' : v + 's');
 
 const MODES = [
   {
-    id: 'subj', name: '主格', instruction: () => '依括號提示，填入正確的主格代名詞。',
+    id: 'subj', name: '主格', instruction: () => '依中文，填入正確的主格代名詞。',
     gen(rng, o) {
       const p = pickP(rng); const s = asSubject(p);
       if (rng.chance(0.5)) {
@@ -49,7 +50,7 @@ const MODES = [
     },
   },
   {
-    id: 'obj', name: '受格', instruction: () => '依括號提示，填入正確的受格代名詞。',
+    id: 'obj', name: '受格', instruction: () => '依中文，填入正確的受格代名詞。',
     gen(rng, o) {
       const p = pickP(rng);
       const s = pickSubject(rng, actors(rng, 2, { exclude: (x) => x.kind !== 'person' || x.person !== 3 || x.tags.includes('group') }));
@@ -79,7 +80,7 @@ const MODES = [
     },
   },
   {
-    id: 'poss', name: '所有格', instruction: () => '依括號提示，填入正確的所有格。',
+    id: 'poss', name: '所有格', instruction: () => '依中文，填入正確的所有格。',
     gen(rng, o) {
       const p = pickP(rng);
       if (p.kind === 'animal') {
@@ -98,7 +99,7 @@ const MODES = [
     },
   },
   {
-    id: 'mine', name: '所有格代名詞', instruction: () => '依括號提示，填入正確的所有格代名詞（mine、yours…）。',
+    id: 'mine', name: '所有格代名詞', instruction: () => '依中文，填入正確的所有格代名詞（mine、yours…）。',
     gen(rng, o) {
       const p = pickP(rng, (x) => x.mine);
       const n = rng.fresh(OWN, (x) => x.sg);
@@ -120,6 +121,7 @@ export default {
   title: '人稱代名詞',
   grade: 7,
   past: false,
+  zhRequired: true,
   variety: false, // fixed sentence frames; checked by its own rules, not by the subject/verb spread test
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
   defaultModes: { 1: ['subj', 'obj'], 2: ['subj', 'obj', 'poss'], 3: ['subj', 'obj', 'poss', 'mine'] },
