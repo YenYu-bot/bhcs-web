@@ -2,18 +2,18 @@
 // Advanced sheets mix present-simple sentences into the fill section, told apart by "now" or "every day".
 import { blank } from '../core.js';
 import { VERBS, vform, phrase, cuesFor } from '../verbs.js';
-import { actors, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, zhAspect, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, timeFirst, mid, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, zhAspect, S0, cap } from '../vcommon.js';
 import { beForm, replyBe } from './be.js';
 
 const NEG = { is: "isn't", are: "aren't", was: "wasn't", were: "weren't" };
 const pickTense = (rng, o) => (o.tense === 'P' ? 'now' : o.tense === 'D' ? 'pastprog' : rng.chance(0.5) ? 'now' : 'pastprog');
 
 function draw(rng, o, { exclude = () => false } = {}) {
-  const s = rng.pick(actors(rng, o.level, { exclude }));
+  const s = pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.prog, 'ing');
   if (!f) return null;
   const use = pickTense(rng, o);
-  const t = rng.pick(cuesFor(f, use, s));
+  const t = rng.fresh(cuesFor(f, use, s), (x) => x.en);
   if (!t) return null;
   return { s, f, t, past: use === 'pastprog' };
 }
@@ -28,9 +28,9 @@ const MODES = [
     gen(rng, o) {
       if (o.level >= 3 && o.tense !== 'D' && rng.chance(0.35)) {
         // present simple, told apart from "now" by the time word
-        const s = rng.pick(actors(rng, o.level)); const f = s && pickFrame(rng, s, o.level, (x) => x.habit && x.prog);
+        const s = pickSubject(rng, actors(rng, o.level)); const f = s && pickFrame(rng, s, o.level, (x) => x.habit && x.prog);
         if (!f) return null;
-        const t = rng.pick(cuesFor(f, 'habit', s)); if (!t) return null;
+        const t = rng.fresh(cuesFor(f, 'habit', s), (x) => x.en); if (!t) return null;
         const ans = third(s) ? vform(f, 's') : VERBS[f.v].base;
         return { lines: [[S0(s) + ' ', blank(ans, true), ` (${f.v})${phrase(f)} ${t.en}.`]], zh: zhSent(s, t, f.zh, '。'), meta: { subj: s.en, base: f.v, cue: t.en, kind: 'mixed' } };
       }
@@ -38,7 +38,10 @@ const MODES = [
       const { s, f, t, past } = d;
       const be = beForm(s, past), ing = vform(f, 'ing');
       const parts = o.level >= 3 ? [blank(`${be} ${ing}`, true)] : [blank(be), ' ', blank(ing)];
-      return { lines: [[S0(s) + ' ', ...parts, ` (${f.v})${phrase(f)} ${t.en}.`]], zh: zhProg(d) + '。', meta: meta(d, { kind: o.level >= 3 ? 'mixed' : 'prog' }) };
+      const line = timeFirst(rng)
+        ? [`${cap(t.en)}, ${mid(s.en)} `, ...parts, ` (${f.v})${phrase(f)}.`]
+        : [S0(s) + ' ', ...parts, ` (${f.v})${phrase(f)} ${t.en}.`];
+      return { lines: [line], zh: zhProg(d) + '。', meta: meta(d, { kind: o.level >= 3 ? 'mixed' : 'prog' }) };
     },
   },
   {

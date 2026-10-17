@@ -2,13 +2,13 @@
 // Advanced sheets mix present-simple sentences into the fill section, told apart by the time word.
 import { blank } from '../core.js';
 import { VERBS, vform, phrase, cuesFor } from '../verbs.js';
-import { actors, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, timeFirst, mid, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
 
 function draw(rng, o, { exclude = () => false } = {}) {
-  const s = rng.pick(actors(rng, o.level, { exclude }));
+  const s = pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.pastOk, 'past');
   if (!f) return null;
-  const t = rng.pick(cuesFor(f, 'past', s));
+  const t = rng.fresh(cuesFor(f, 'past', s), (x) => x.en);
   return t ? { s, f, t } : null;
 }
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
@@ -20,14 +20,17 @@ const MODES = [
     instruction: (o) => (o.level >= 3 ? '依括號提示與時間，填入動詞的正確形式（過去式或現在式）。' : '依括號提示，填入動詞的過去式。'),
     gen(rng, o) {
       if (o.level >= 3 && rng.chance(0.35)) {
-        const s = rng.pick(actors(rng, o.level)); const f = s && pickFrame(rng, s, o.level, (x) => x.habit && x.pastOk);
+        const s = pickSubject(rng, actors(rng, o.level)); const f = s && pickFrame(rng, s, o.level, (x) => x.habit && x.pastOk);
         if (!f) return null;
-        const t = rng.pick(cuesFor(f, 'habit', s)); if (!t) return null;
+        const t = rng.fresh(cuesFor(f, 'habit', s), (x) => x.en); if (!t) return null;
         return { lines: [[S0(s) + ' ', blank(third(s) ? vform(f, 's') : VERBS[f.v].base), ` (${f.v})${phrase(f)} ${t.en}.`]], zh: zhSent(s, t, f.zh, '。'), meta: { subj: s.en, base: f.v, cue: t.en, kind: 'mixed' } };
       }
       const d = draw(rng, o); if (!d) return null;
       const { s, f, t } = d;
-      return { lines: [[S0(s) + ' ', blank(vform(f, 'past')), ` (${f.v})${phrase(f)} ${t.en}.`]], zh: zhSent(s, t, f.zh, '。'), meta: meta(d, { kind: o.level >= 3 ? 'mixed' : 'past' }) };
+      const line = timeFirst(rng)
+        ? [`${cap(t.en)}, ${mid(s.en)} `, blank(vform(f, 'past')), ` (${f.v})${phrase(f)}.`]
+        : [S0(s) + ' ', blank(vform(f, 'past')), ` (${f.v})${phrase(f)} ${t.en}.`];
+      return { lines: [line], zh: zhSent(s, t, f.zh, '。'), meta: meta(d, { kind: o.level >= 3 ? 'mixed' : 'past' }) };
     },
   },
   {

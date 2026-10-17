@@ -14,7 +14,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin']);
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man' };
 function inList(word) {
@@ -68,8 +68,8 @@ function expectedReply(subj) {
   if (l === 'i' || l === 'we' || / and i$/.test(l)) return 'you';
   if (/^you and /.test(l)) return 'we';
   if (isPlural(s)) return 'they';
-  if (MALE.has(s) || /^mr\./.test(l) || /\b(brother|father|uncle|boy)$/.test(l)) return 'he';
-  if (FEMALE.has(s) || /^ms\./.test(l) || /\b(sister|mother|aunt|girl)$/.test(l)) return 'she';
+  if (MALE.has(s) || /^mr\./.test(l) || /\b(brother|(grand)?father|uncle|boy)$/.test(l)) return 'he';
+  if (FEMALE.has(s) || /^ms\./.test(l) || /\b(sister|(grand)?mother|aunt|girl)$/.test(l)) return 'she';
   return 'it';
 }
 const NEG = { is: "isn't", are: "aren't", was: "wasn't", were: "weren't" };
@@ -89,7 +89,9 @@ function checkBe(item, mode, o) {
   const strOf = (l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('');
   const past = sheetTense(full, o);
   if (mode === 'fill') {
-    const [subj, b] = L[0];
+    const [lead, b] = L[0];
+    const subj = lead.replace(/^[A-Z][a-z]+(?: [a-z]+)*(?: [A-Z][a-z]+)?, /, '').trim();
+    if (lead.includes(', ')) assert.match(lead, /^(Now|Right now|This year|Yesterday|Yesterday morning|Last night|Last Sunday|Last weekend|Two days ago|Last year|Two years ago|Ten years ago), /, `time first: ${lead}`);
     assert.equal(b.a, expectedBe(subj, past), `fill: ${strOf(L[0])}`);
     assert.equal(L[0][2].startsWith(' (be)'), o.level < 3, 'hint only below advanced');
   } else if (mode === 'neg') {
@@ -131,7 +133,7 @@ function checkBe(item, mode, o) {
 
 
 // ---------- verb rules (independent of assets/english-grammar/verbs.js) ----------
-const IRREGULAR_PAST = { read: 'read', eat: 'ate', drink: 'drank', do: 'did', write: 'wrote', sing: 'sang', swim: 'swam', run: 'ran', ride: 'rode', take: 'took', go: 'went', sleep: 'slept', draw: 'drew', buy: 'bought', make: 'made', fly: 'flew', sit: 'sat', teach: 'taught', drive: 'drove', catch: 'caught', get: 'got', have: 'had', see: 'saw', come: 'came', speak: 'spoke' };
+const IRREGULAR_PAST = { feed: 'fed', wear: 'wore', bring: 'brought', meet: 'met', read: 'read', eat: 'ate', drink: 'drank', do: 'did', write: 'wrote', sing: 'sang', swim: 'swam', run: 'ran', ride: 'rode', take: 'took', go: 'went', sleep: 'slept', draw: 'drew', buy: 'bought', make: 'made', fly: 'flew', sit: 'sat', teach: 'taught', drive: 'drove', catch: 'caught', get: 'got', have: 'had', see: 'saw', come: 'came', speak: 'spoke' };
 const shortCVC = (b) => /^[^aeiou]*[aeiou][^aeiouwxy]$/.test(b);
 function s3(b) {
   if (b === 'have') return 'has';
@@ -152,19 +154,19 @@ function pastOf(b) {
   if (shortCVC(b)) return b + b.slice(-1) + 'ed';
   return b + 'ed';
 }
-const HABIT_CUES = /\b(every day|every morning|every Sunday|after school|on weekends)$/;
+const HABIT_CUES = /^(every day|every morning|every evening|every Sunday|every Saturday|after school|on weekends)$/i;
 const isThirdSg = (subj) => !/^(I|you)$/i.test(subj.trim()) && !isPlural(subj) && !/^you and /i.test(subj);
 const replyAux = (r) => (['he', 'she', 'it'].includes(r) ? 'does' : 'do');
 const cap1 = (w) => w.charAt(0).toUpperCase() + w.slice(1);
 const ans = (item) => answersOf(item);
-const usesTime = (text, cue) => assert.ok(cue === null || text.includes(cue), `time word "${cue}" is in: ${text}`);
+const usesTime = (text, cue) => assert.ok(cue === null || text.includes(cue) || text.startsWith(cue.charAt(0).toUpperCase() + cue.slice(1) + ', '), `time word "${cue}" is in: ${text}`);
 const hint = (text, base) => assert.ok(text.includes(`(${base})`) || text.includes(`／${base})`), `hint (${base}) shown: ${text}`);
 const abbrOk = (o, abbr, text) => {
   if (o.abbr === 'C') assert.ok(abbr, `contraction sheet: ${text}`);
   if (o.abbr === 'F') assert.ok(!abbr, `no-contraction sheet: ${text}`);
   if (o.abbr === 'B') assert.ok(text.includes(abbr ? '（縮寫）' : '（不縮寫）'), `both: marked: ${text}`);
 };
-const PASTPROG = /\b(at eight last night|at this time yesterday)\b/;
+const PASTPROG = /\b(at (eight|nine) last night|at this time yesterday|at seven yesterday morning)\b/i;
 
 function checkSimple(it, mode, o) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
@@ -181,7 +183,7 @@ function checkProgressive(it, mode, o) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
   usesTime(text, m.cue);
   const habit = HABIT_CUES.test(m.cue), past = PASTPROG.test(m.cue);
-  assert.ok(habit || past || /\b(now|right now)$/.test(m.cue), `progressive time word: ${m.cue}`);
+  assert.ok(habit || past || /^(now|right now|at the moment)$/i.test(m.cue), `progressive time word: ${m.cue}`);
   if (o.tense === 'P') assert.ok(!past, 'present-only sheet'); if (o.tense === 'D') assert.ok(past, 'past-only sheet');
   const be = expectedBe(m.subj, past);
   if (habit) assert.ok(mode === 'fill' && o.level >= 3 && o.tense !== 'D', 'present simple only mixes into advanced fill');
@@ -302,6 +304,30 @@ test('every question has a Chinese line with no leftovers', () => {
       assert.ok(!/undefined|null|NaN/.test(it.zh), `clean Chinese: ${it.zh}`);
       assert.match(it.zh, /[。？]$/, 'ends with punctuation');
     }
+  }
+});
+
+test('sheets spread over the word bank: varied subjects, verbs and time words, some sentences start with the time', () => {
+  for (const t of ALL_TOPICS) for (const level of [1, 2, 3]) {
+    let subjects = 0, worstSubject = 0, worstVerb = 0, times = 0, front = 0;
+    const N = 30;
+    for (let seed = 1; seed <= N; seed++) {
+      const sh = buildSheet(t, { level, tense: t.past ? 'M' : 'P', modes: t.defaultModes[level], abbr: 'F', zh: false, count: 20, seed });
+      const items = sh.sections.flatMap((sec) => sec.items);
+      const text = items.map((it) => it.lines.map(lineText).join(' '));
+      const subj = items.map((it, i) => it.meta?.subj ?? it.meta?.noun ?? text[i].replace(/^[A-Z][a-z]+(?: [a-z]+)*, /, '').split(' ___')[0]);
+      const verb = items.map((it) => it.meta?.base).filter(Boolean);
+      const cue = items.map((it, i) => it.meta?.cue ?? (text[i].match(/\b(now|right now|this year|yesterday morning|yesterday|last night|last Sunday|last weekend|two days ago|last year|two years ago|ten years ago)\b/i) || ['-'])[0].toLowerCase());
+      const most = (a) => (a.length ? Math.max(...Object.values(a.reduce((m, x) => ((m[x] = (m[x] || 0) + 1), m), {}))) : 0);
+      subjects += new Set(subj).size; worstSubject = Math.max(worstSubject, most(subj)); worstVerb = Math.max(worstVerb, most(verb));
+      times += new Set(cue).size; front += text.filter((x) => /^[A-Z][a-z]+(?: [a-z]+)*, /.test(x)).length;
+    }
+    const where = `${t.id} level ${level}`;
+    assert.ok(subjects / N >= 15, `${where}: about 15+ different subjects in 20 questions (got ${(subjects / N).toFixed(1)})`);
+    assert.ok(worstSubject <= 4, `${where}: no subject more than 4 times on one sheet (got ${worstSubject})`);
+    assert.ok(worstVerb <= 4, `${where}: no verb more than 4 times on one sheet (got ${worstVerb})`);
+    assert.ok(times / N >= 4, `${where}: at least 4 different time words per sheet (got ${(times / N).toFixed(1)})`);
+    assert.ok(front > 0, `${where}: some sentences put the time word first`);
   }
 });
 

@@ -1,5 +1,5 @@
 // Topic: Be verbs (am / is / are, was / were).
-import { blank, cap, zhJoin } from '../core.js';
+import { blank, cap, mid, zhJoin } from '../core.js';
 import { SUBJECTS, PREDICATES, TIMES, nameSubject, twoNamesSubject } from '../lexicon.js';
 
 export function beForm(s, past) {
@@ -16,6 +16,8 @@ const NEG = { is: "isn't", are: "aren't", was: "wasn't", were: "weren't" };
 
 function predicateFits(p, s) {
   if (!p.for.includes(s.kind)) return false;
+  if (s.tags.includes('group') && !(p.type === 'loc' || (p.type === 'adj' && p.dur === 'temp'))) return false;
+  if (s.tags.includes('has-job') && p.type === 'job') return false; // "Our teachers are cooks" makes no sense
   if (p.num && p.num !== s.num) return false;
   if (p.type === 'job' && s.age !== 'any' && p.age !== s.age) return false;
   if (p.type === 'rel' && p.age && s.age !== 'any' && p.age !== s.age) return false;
@@ -24,9 +26,9 @@ function predicateFits(p, s) {
 const predEn = (p, s) => (p.type === 'job' && s.num === 'pl' ? p.pl : p.en);
 
 function subjectPool(rng, level) {
-  const fixed = SUBJECTS.filter((s) => s.lvl <= level);
-  if (level < 2) return fixed;
-  return [...fixed, nameSubject(rng), nameSubject(rng), twoNamesSubject(rng)];
+  const pool = [...SUBJECTS.filter((s) => s.lvl <= level), nameSubject(rng), nameSubject(rng), nameSubject(rng)];
+  if (level >= 2) pool.push(twoNamesSubject(rng));
+  return pool;
 }
 
 /** Pick a tense for one question: 'pres' or 'past'. */
@@ -36,17 +38,17 @@ const pickTense = (rng, o) => (o.tense === 'P' ? 'pres' : o.tense === 'D' ? 'pas
 function pickTime(rng, o, tense, s, p) {
   const fits = TIMES.filter((t) => t.tense === tense && (s.kind === 'weather' ? t.weather : t.dur.includes(p.dur) && (!t.types || t.types.includes(p.type))));
   if (o.tense === 'P' && rng.chance(p.dur === 'perm' ? 0.75 : 0.4)) return null;
-  return fits.length ? rng.pick(fits) : null;
+  return fits.length ? rng.fresh(fits, (x) => x.en) : null;
 }
 
 /** One subject–predicate–time triple, or null when nothing fits. */
 function draw(rng, o, { needReply = false, kinds = null, types = null, exclude = () => false } = {}) {
   const pool = subjectPool(rng, o.level).filter((s) => (!needReply || s.reply) && (!kinds || kinds.includes(s.kind)) && !exclude(s));
-  const s = rng.pick(pool);
-  if (!s) return null;
+  if (!pool.length) return null;
+  const s = rng.fresh(pool, (x) => x.en);
   const preds = PREDICATES.filter((p) => predicateFits(p, s) && (!types || types.includes(p.type)));
   if (!preds.length) return null;
-  const p = rng.pick(preds);
+  const p = rng.fresh(preds, (x) => x.en);
   const tense = pickTense(rng, o);
   const t = pickTime(rng, o, tense, s, p);
   if (o.tense !== 'P' && !t) return null;
@@ -67,10 +69,12 @@ const MODES = [
       const d = draw(rng, o); if (!d) return null;
       const { s, p, t, past } = d;
       const hint = o.level >= 3 ? '' : ' (be)';
-      return {
-        lines: [[cap(s.en) + ' ', blank(beForm(s, past)), hint + tail(p, s, t) + '.']],
-        zh: zhLine(s, t, p.zh.pos, '。'),
-      };
+      const very = p.type === 'adj' && !['sick', 'late'].includes(p.en) && rng.chance(0.3) ? 'very ' : '';
+      const pe = ' ' + very + predEn(p, s);
+      const line = t && rng.chance(0.3)
+        ? [`${cap(t.en)}, ${mid(s.en)} `, blank(beForm(s, past)), hint + pe + '.']
+        : [cap(s.en) + ' ', blank(beForm(s, past)), hint + pe + (t ? ' ' + t.en : '') + '.'];
+      return { lines: [line], zh: zhLine(s, t, p.zh.pos, '。') };
     },
   },
   {
