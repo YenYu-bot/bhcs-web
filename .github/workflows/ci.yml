@@ -154,7 +154,7 @@ jobs:
           path: operation-artifacts/
           retention-days: 14
 
-  # 引導式教材：光學、浮力、顯微鏡、酸鹼（真實 Chromium）
+  # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）
   science-guided:
     name: science-guided
     runs-on: ubuntu-latest
@@ -219,6 +219,18 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_acid_base_guided_flow_browser.cjs
+      - name: Check guided photosynthesis input layer in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_photosynthesis_guided_input_browser.cjs
+      - name: Check guided photosynthesis bench states and page layout in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_photosynthesis_guided_view_browser.cjs
+      - name: Check guided photosynthesis full student flow in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_photosynthesis_guided_flow_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -266,6 +278,18 @@ jobs:
         with:
           name: acid-base-flow-review
           path: acid-base-flow-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: photosynthesis-view-review
+          path: photosynthesis-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: photosynthesis-flow-review
+          path: photosynthesis-flow-artifacts/
           retention-days: 14
 
   # 數學練習卷畫面與列印版面（真實 Chromium）
