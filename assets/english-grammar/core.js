@@ -24,8 +24,9 @@ export function makeRng(seed) {
   };
 }
 
-/** A blank: one word per blank, `a` = the answer printed on the teacher sheet. */
-export const blank = (a) => ({ blank: true, a });
+/** A blank: one word per blank, `a` = the answer printed on the teacher sheet.
+ *  A wide blank may hold a short phrase ("is playing") where the number of blanks would give the answer away. */
+export const blank = (a, wide = false) => (wide ? { blank: true, a, wide: true } : { blank: true, a });
 export const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /** Plain text of a line (blanks shown as ___), used to detect repeated questions. */

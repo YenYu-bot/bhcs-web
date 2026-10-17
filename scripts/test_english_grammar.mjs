@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildSheet, encodeCode, decodeCode, lineText, answersOf, COUNT_MIN, COUNT_MAX } from '../assets/english-grammar/core.js';
-import { TOPICS } from '../assets/english-grammar/topics.js';
+import { TOPICS, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 import { NAMES, FUNCTION_WORDS, SUBJECTS } from '../assets/english-grammar/lexicon.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -13,6 +13,8 @@ let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
+// irregular past forms back to their base (independent copy; the verb rules below use the same table)
+const PAST_BACK = { read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin']);
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man' };
 function inList(word) {
@@ -22,6 +24,12 @@ function inList(word) {
   if (w.endsWith('ies') && LIST.has(w.slice(0, -3) + 'y')) return true;
   if (w.endsWith('es') && LIST.has(w.slice(0, -2))) return true;
   if (w.endsWith('s') && LIST.has(w.slice(0, -1))) return true;
+  if (PAST_BACK[w] && LIST.has(PAST_BACK[w])) return true;
+  const stems = (stem) => [stem, stem + 'e', stem.replace(/(.)\1$/, '$1')];
+  if (w.endsWith('ying') && LIST.has(w.slice(0, -4) + 'ie')) return true;
+  if (w.endsWith('ing') && stems(w.slice(0, -3)).some((x) => LIST.has(x))) return true;
+  if (w.endsWith('ied') && LIST.has(w.slice(0, -3) + 'y')) return true;
+  if (w.endsWith('ed') && stems(w.slice(0, -2)).some((x) => LIST.has(x))) return true;
   return false;
 }
 
@@ -121,9 +129,129 @@ function checkBe(item, mode, o) {
   }
 }
 
+
+// ---------- verb rules (independent of assets/english-grammar/verbs.js) ----------
+const IRREGULAR_PAST = { read: 'read', eat: 'ate', drink: 'drank', do: 'did', write: 'wrote', sing: 'sang', swim: 'swam', run: 'ran', ride: 'rode', take: 'took', go: 'went', sleep: 'slept', draw: 'drew', buy: 'bought', make: 'made', fly: 'flew', sit: 'sat', teach: 'taught', drive: 'drove', catch: 'caught', get: 'got', have: 'had', see: 'saw', come: 'came', speak: 'spoke' };
+const shortCVC = (b) => /^[^aeiou]*[aeiou][^aeiouwxy]$/.test(b);
+function s3(b) {
+  if (b === 'have') return 'has';
+  if (/(s|x|z|ch|sh|o)$/.test(b)) return b + 'es';
+  if (/[^aeiou]y$/.test(b)) return b.slice(0, -1) + 'ies';
+  return b + 's';
+}
+function ing(b) {
+  if (/ie$/.test(b)) return b.slice(0, -2) + 'ying';
+  if (/[^e]e$/.test(b) && b !== 'see') return b.slice(0, -1) + 'ing';
+  if (shortCVC(b)) return b + b.slice(-1) + 'ing';
+  return b + 'ing';
+}
+function pastOf(b) {
+  if (IRREGULAR_PAST[b]) return IRREGULAR_PAST[b];
+  if (/e$/.test(b)) return b + 'd';
+  if (/[^aeiou]y$/.test(b)) return b.slice(0, -1) + 'ied';
+  if (shortCVC(b)) return b + b.slice(-1) + 'ed';
+  return b + 'ed';
+}
+const HABIT_CUES = /\b(every day|every morning|every Sunday|after school|on weekends)$/;
+const isThirdSg = (subj) => !/^(I|you)$/i.test(subj.trim()) && !isPlural(subj) && !/^you and /i.test(subj);
+const replyAux = (r) => (['he', 'she', 'it'].includes(r) ? 'does' : 'do');
+const cap1 = (w) => w.charAt(0).toUpperCase() + w.slice(1);
+const ans = (item) => answersOf(item);
+const usesTime = (text, cue) => assert.ok(cue === null || text.includes(cue), `time word "${cue}" is in: ${text}`);
+const hint = (text, base) => assert.ok(text.includes(`(${base})`) || text.includes(`／${base})`), `hint (${base}) shown: ${text}`);
+const abbrOk = (o, abbr, text) => {
+  if (o.abbr === 'C') assert.ok(abbr, `contraction sheet: ${text}`);
+  if (o.abbr === 'F') assert.ok(!abbr, `no-contraction sheet: ${text}`);
+  if (o.abbr === 'B') assert.ok(text.includes(abbr ? '（縮寫）' : '（不縮寫）'), `both: marked: ${text}`);
+};
+const PASTPROG = /\b(at eight last night|at this time yesterday)\b/;
+
+function checkSimple(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  usesTime(text, m.cue); assert.match(m.cue, HABIT_CUES, `habit time word: ${m.cue}`);
+  const third = isThirdSg(m.subj), aux = third ? 'does' : 'do';
+  if (mode === 'fill') { hint(text, m.base); assert.deepEqual(a, [third ? s3(m.base) : m.base]); }
+  if (mode === 'neg') { const ab = a.length === 2; abbrOk(o, ab, text); assert.deepEqual(a, ab ? [aux === 'does' ? "doesn't" : "don't", m.base] : [aux, 'not', m.base]); }
+  if (mode === 'q') assert.deepEqual(a, [cap1(aux), m.base]);
+  if (mode === 'short') { const r = expectedReply(m.subj), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(aux), r, yes ? replyAux(r) : replyAux(r) === 'does' ? "doesn't" : "don't"]); }
+  if (mode === 'full') { const r = expectedReply(m.subj); hint(text, m.alt); assert.deepEqual(a, [r, replyAux(r) === 'does' ? "doesn't" : "don't", cap1(r), replyAux(r) === 'does' ? s3(m.alt) : m.alt]); }
+  if (mode === 'wh') assert.deepEqual(a, [aux]);
+}
+function checkProgressive(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  usesTime(text, m.cue);
+  const habit = HABIT_CUES.test(m.cue), past = PASTPROG.test(m.cue);
+  assert.ok(habit || past || /\b(now|right now)$/.test(m.cue), `progressive time word: ${m.cue}`);
+  if (o.tense === 'P') assert.ok(!past, 'present-only sheet'); if (o.tense === 'D') assert.ok(past, 'past-only sheet');
+  const be = expectedBe(m.subj, past);
+  if (habit) assert.ok(mode === 'fill' && o.level >= 3 && o.tense !== 'D', 'present simple only mixes into advanced fill');
+  if (mode === 'fill') {
+    hint(text, m.base);
+    if (o.level >= 3) assert.deepEqual(a, [habit ? (isThirdSg(m.subj) ? s3(m.base) : m.base) : `${be} ${ing(m.base)}`]);
+    else assert.deepEqual(a, [be, ing(m.base)]);
+  }
+  if (mode === 'neg') { const ab = a.length === 1; abbrOk(o, ab, text); assert.deepEqual(a, ab ? [NEG[be]] : [be, 'not']); assert.ok(text.includes(ing(m.base)), 'keeps the -ing word'); }
+  if (mode === 'q') assert.deepEqual(a, [cap1(be)]);
+  if (mode === 'short') { const r = expectedReply(m.subj), rb = expectedBe(r, past), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), r, yes ? rb : NEG[rb]]); }
+  if (mode === 'full') { const r = expectedReply(m.subj), rb = expectedBe(r, past); hint(text, m.alt); assert.deepEqual(a, [r, NEG[rb], cap1(r), rb, ing(m.alt)]); }
+  if (mode === 'wh') assert.deepEqual(a, [be, 'doing']);
+}
+const thereBe = (np, past) => {
+  const pl = !/^(a|an) /.test(np) && (/s$/.test(np) || /\bpeople$/.test(np)) && !/^(some|a lot of) (milk|water|bread|juice)$/.test(np);
+  return past ? (pl ? 'were' : 'was') : pl ? 'are' : 'is';
+};
+function checkThere(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const past = PAST_CUES.test(text);
+  if (o.tense === 'M') assert.ok(m.cue, `mixed sheets give a time word: ${text}`);
+  if (o.tense === 'D') assert.ok(past, 'past-only'); if (o.tense === 'P') assert.ok(!past, 'present-only');
+  usesTime(text, m.cue);
+  const be = thereBe(m.noun, past);
+  if (/^some /.test(m.noun) && mode !== 'fill' && mode !== 'full') assert.ok(text.includes(m.noun.replace(/^some /, 'any ')), `some → any: ${text}`);
+  if (mode === 'fill') { assert.equal(text.includes('(be)'), o.level < 3); assert.deepEqual(a, [be]); }
+  if (mode === 'neg') { const ab = a.length === 1; abbrOk(o, ab, text); assert.deepEqual(a, ab ? [NEG[be]] : [be, 'not']); assert.ok(!/^(two|three|five) /.test(m.noun), 'no numbered nouns in negatives'); }
+  if (mode === 'q') assert.deepEqual(a, [cap1(be)]);
+  if (mode === 'short') { const yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), 'there', yes ? be : NEG[be]]); }
+  if (mode === 'full') assert.deepEqual(a, ['there', NEG[be], 'There', thereBe(m.second, past)]);
+  if (mode === 'wh') assert.deepEqual(a, [be]);
+}
+function checkCan(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  usesTime(text, m.cue);
+  const past = m.cue ? /\b(ago|last year)$/.test(m.cue) : false;
+  assert.equal(past, m.past, `tense follows the time word: ${text}`);
+  if (o.tense === 'M') assert.ok(m.cue, 'mixed sheets give a time word');
+  if (o.tense === 'P') assert.ok(!past); if (o.tense === 'D') assert.ok(past);
+  const md = past ? 'could' : 'can', neg = (ab) => (ab ? [past ? "couldn't" : "can't"] : past ? ['could', 'not'] : ['cannot']);
+  if (mode === 'fill') {
+    hint(text, m.base);
+    assert.ok(text.includes(m.neg ? '(不會／' : '(會／'), 'Chinese cue says 會 or 不會');
+    if (m.neg) { const ab = a.length === 2 && a[0].includes("'"); abbrOk(o, ab, text); assert.deepEqual(a, [...neg(ab), m.base]); }
+    else assert.deepEqual(a, [md, m.base]);
+  }
+  if (mode === 'neg') { const ab = a[0].includes("'"); abbrOk(o, ab, text); assert.deepEqual(a, neg(ab)); }
+  if (mode === 'q') assert.deepEqual(a, [cap1(md)]);
+  if (mode === 'short') { const r = expectedReply(m.subj), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(md), r, yes ? md : neg(true)[0]]); }
+  if (mode === 'full') { const r = expectedReply(m.subj); hint(text, m.alt); assert.deepEqual(a, [r, neg(true)[0], cap1(r), md, m.alt]); }
+}
+function checkPast(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  usesTime(text, m.cue);
+  const habit = HABIT_CUES.test(m.cue);
+  if (!habit) assert.match(m.cue, PAST_CUES, `past time word: ${m.cue}`);
+  if (habit) assert.ok(mode === 'fill' && o.level >= 3, 'present simple only mixes into advanced fill');
+  if (mode === 'fill') { hint(text, m.base); assert.deepEqual(a, [habit ? (isThirdSg(m.subj) ? s3(m.base) : m.base) : pastOf(m.base)]); }
+  if (mode === 'neg') { const ab = a.length === 2; abbrOk(o, ab, text); assert.deepEqual(a, ab ? ["didn't", m.base] : ['did', 'not', m.base]); }
+  if (mode === 'q') assert.deepEqual(a, ['Did', m.base]);
+  if (mode === 'short') { const r = expectedReply(m.subj), yes = text.includes('— Yes'); assert.deepEqual(a, ['Did', r, yes ? 'did' : "didn't"]); }
+  if (mode === 'full') { const r = expectedReply(m.subj); hint(text, m.alt); assert.deepEqual(a, [r, "didn't", cap1(r), pastOf(m.alt)]); }
+  if (mode === 'wh') { hint(text, m.base); assert.deepEqual(a, ['did', pastOf(m.base)]); }
+}
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast };
+
 // ---------- sheets to check ----------
 function* settings() {
-  for (const t of TOPICS) {
+  for (const t of ALL_TOPICS) {
     const modeSets = [...t.modes.map((m) => [m.id]), t.modes.map((m) => m.id)];
     for (const level of [1, 2, 3]) for (const tense of t.past ? ['P', 'M', 'D'] : ['P']) for (const abbr of ['F', 'C', 'B'])
       for (const modes of modeSets) for (const count of [COUNT_MIN, 20, COUNT_MAX]) for (const seed of [10001, 54321, 99999])
@@ -149,7 +277,7 @@ test('every answer is right by the independent rules (Be form, tense from the ti
   for (const { t, o } of settings()) {
     if (o.count !== COUNT_MAX) continue;
     const sh = buildSheet(t, o);
-    for (const sec of sh.sections) for (const it of sec.items) checkBe(it, sec.mode, sh.opts);
+    for (const sec of sh.sections) for (const it of sec.items) CHECKERS[t.id](it, sec.mode, sh.opts);
   }
 });
 
@@ -158,7 +286,7 @@ test('every blank holds one word, and every English word is in the 2000-word lis
   for (const { t, o } of settings()) {
     if (o.count !== COUNT_MAX) continue;
     for (const it of buildSheet(t, o).sections.flatMap((s) => s.items)) {
-      for (const a of answersOf(it)) assert.match(a, /^[A-Za-z']+$/, `one word per blank: "${a}"`);
+      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) assert.match(p.a, p.wide ? /^[A-Za-z' ]+$/ : /^[A-Za-z']+$/, `one word per blank: "${p.a}"`);
       const text = it.lines.map((l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('')).join(' ');
       for (const w of text.match(/[A-Za-z][A-Za-z']*/g)) if (!inList(w)) missing.set(w, text);
     }
@@ -178,16 +306,16 @@ test('every question has a Chinese line with no leftovers', () => {
 });
 
 test('the same sheet code always gives the same sheet, and the code round-trips', () => {
-  for (const t of TOPICS) {
+  for (const t of ALL_TOPICS) {
     const o = { level: 2, tense: t.past ? 'M' : 'P', modes: t.modes.map((m) => m.id), abbr: 'B', zh: true, count: 30, seed: 4242 };
     const a = buildSheet(t, o), b = buildSheet(t, o);
     assert.deepEqual(a, b, 'deterministic');
-    const back = decodeCode(a.code, TOPICS);
+    const back = decodeCode(a.code, ALL_TOPICS);
     assert.equal(back.topic, t.id);
     assert.deepEqual(back.opts, a.opts, 'decode(encode(x)) = x');
     assert.deepEqual(buildSheet(t, back.opts), a, 'rebuilt from the code');
     assert.equal(encodeCode(t, back.opts), a.code);
-    assert.equal(decodeCode(a.code.toLowerCase(), TOPICS).topic, t.id, 'case does not matter');
+    assert.equal(decodeCode(a.code.toLowerCase(), ALL_TOPICS).topic, t.id, 'case does not matter');
   }
   for (const bad of ['', 'BE-2M', 'XX-2M-3F-B1-20-1', 'BE-4M-3F-B1-20-1', 'BE-2M-0-B1-20-1', 'BE-2M-3F-B1-60-1', 'BE-2M-3F-B1-5-1']) assert.equal(decodeCode(bad, TOPICS), null, `rejects "${bad}"`);
 });

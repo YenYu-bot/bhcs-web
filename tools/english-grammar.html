@@ -71,6 +71,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 .ln{display:block}
 .ln+.ln{margin-top:.6mm}
 .blank{display:inline-block;min-width:20mm;border-bottom:.3mm solid #1b1f24;text-align:center;line-height:1.2;vertical-align:baseline;padding:0 1mm}
+.blank.wide{min-width:34mm}
 .blank .a{visibility:hidden;color:var(--red);font-weight:700}
 .sheet.teacher .blank .a{visibility:visible}
 .zh{display:block;font-family:var(--zh);font-size:9.5pt;color:#6b7480;line-height:1.4;margin-top:.5mm}
@@ -132,12 +133,14 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 </div>
 <script type="module">
 import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT } from '../assets/english-grammar/core.js';
-import { TOPICS } from '../assets/english-grammar/topics.js';
+import { TOPICS as PUBLIC, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 
 const $ = (id) => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const TOPICS = params.has('draft') ? ALL_TOPICS : PUBLIC;
 const GRADE = { 7: '七年級', 8: '八年級', 9: '九年級' };
 const NUM = ['一', '二', '三', '四', '五', '六', '七', '八'];
-const LEVEL_HINT = { 1: '主詞只用代名詞，以肯定句為主，括號附提示。', 2: '加入人名與名詞片語，肯定、否定、疑問混合。', 3: '加入易錯主詞（Ben and I、every student、不可數名詞），不給提示。' };
+const levelHint = (lv) => topic.levelHint?.[lv] ?? '';
 let topic = TOPICS[0], seed = newSeed(), sheet = null;
 
 function newSeed() { return 10000 + Math.floor(Math.random() * 90000); }
@@ -163,7 +166,7 @@ function buildModeBoxes() {
 }
 function setDefaults(level) {
   for (const m of topic.modes) $('m-' + m.id).checked = topic.defaultModes[level].includes(m.id);
-  $('levelHint').textContent = LEVEL_HINT[level];
+  $('levelHint').textContent = levelHint(level);
 }
 function readOpts() {
   const level = Number(document.querySelector('input[name=level]:checked').value);
@@ -179,7 +182,7 @@ function applyOpts(o) {
   $('lv' + o.level).checked = true;
   $('tense').value = o.tense; $('abbr').value = o.abbr; $('zh').checked = o.zh; $('count').value = o.count;
   for (const m of topic.modes) $('m-' + m.id).checked = o.modes.includes(m.id);
-  $('levelHint').textContent = LEVEL_HINT[o.level];
+  $('levelHint').textContent = levelHint(o.level);
   seed = o.seed;
 }
 function selectTopic(id, keepTitle) {
@@ -194,7 +197,7 @@ function selectTopic(id, keepTitle) {
 // ---------- worksheet ----------
 function part(p) {
   if (typeof p === 'string') return esc(p);
-  return `<span class="blank"><span class="a">${esc(p.a)}</span></span>`;
+  return `<span class="blank${p.wide ? ' wide' : ''}"><span class="a">${esc(p.a)}</span></span>`;
 }
 function render() {
   const o = readOpts();
@@ -243,7 +246,6 @@ $('restore').addEventListener('click', () => {
 $('form').addEventListener('submit', (e) => e.preventDefault());
 
 // ---------- start ----------
-const params = new URLSearchParams(location.search);
 const fromCode = params.get('code') && decodeCode(params.get('code'), TOPICS);
 if (fromCode) { selectTopic(fromCode.topic); applyOpts(fromCode.opts); }
 else { selectTopic(params.get('topic') || TOPICS[0].id); setDefaults(2); $('tense').value = 'P'; $('abbr').value = 'F'; $('count').value = COUNT_DEFAULT; }

@@ -174,6 +174,7 @@ export default {
   past: true,
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
   defaultModes: { 1: ['fill'], 2: ['fill', 'neg', 'q', 'short'], 3: ['fill', 'neg', 'q', 'short', 'full', 'wh'] },
+  levelHint: { 1: '主詞只用代名詞，以肯定句為主，括號附提示。', 2: '加入人名與名詞片語，肯定、否定、疑問混合。', 3: '加入易錯主詞（Ben and I、every student、不可數名詞），不給提示。' },
   grammarBox: (o) => {
     const rows = [['I', 'am', 'was'], ['he / she / it、單數名詞', 'is', 'was'], ['you / we / they、複數名詞', 'are', 'were']];
     return { head: ['主詞', '現在式', '過去式'], rows: o.tense === 'P' ? rows.map((r) => r.slice(0, 2)) : o.tense === 'D' ? rows.map((r) => [r[0], r[2]]) : rows,
