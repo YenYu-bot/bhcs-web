@@ -21,6 +21,22 @@
 
 若本文件與程式實際行為有衝突，以 `main` 的 model / engine / tests / browser gates 為最終來源。
 
+### As-built 與原始規格的已知差異
+
+以下差異是最終實作有意採用的行為，避免把開工前描述誤讀成 production contract：
+
+1. **觀察不做固定 3–4 秒等待。**  
+   原規格第 5.4 節提到用約 3–4 秒動畫代表同一段觀察時間；最終 Guided 版按下「開始觀察」後直接寫入 deterministic record，再以相對速率數字與對應泡泡數呈現結果。動畫只負責視覺提示，不是計時或資料來源；reduced motion 仍可完全關閉動畫。
+
+2. **鍵盤方向鍵只在當前 phase 允許的光照控制中移動。**  
+   最終 input layer 會先依 `canSetLight()` 與 disabled 狀態篩出 eligible buttons，再處理 Arrow / Home / End。固定觀察階段可能沒有可調值；Trial 1 higher 只有 60% 可用；Trial 2 high 只有 100% 可用。這比「任意切換弱／中／強」更能維持 Guided 單一變因契約。
+
+3. **Challenge 3 不另外插入新的酵素說明段落。**  
+   最終版以 25°C 約 19.2、40°C 約 5.0 的本站模型資料，要求學生否定「溫度越高一定越快」的全稱命題；模型限制與「不是所有植物的精密預測」已在 Concept／模型邊界說明。Challenge 不再額外宣告所有植物固定以 25°C 為最適溫，以免超出本站證據。
+
+4. **實作 phase 名稱採 `trial2-setup`。**  
+   原始流程圖寫 `trial2-low-co2-setup`；最終 engine 使用較短的 `trial2-setup`，教學意義不變。
+
 ---
 
 ## 1. 為什麼選這一站
