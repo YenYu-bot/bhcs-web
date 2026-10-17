@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ciWorkflow } from './ci_workflow_test_support.mjs';
+import { ciWorkflow, ciJobs, CHROMIUM_INSTALL } from './ci_workflow_test_support.mjs';
 
 let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
@@ -112,21 +112,71 @@ test('layering: science/renderer/input do not reach into page, storage or analyt
   assert.ok(!/from '\.\/main\.js'/.test(read(`${DIR}/script.js`)), 'script does not import glue');
 });
 
-test('local B4 browser gate and its support file are syntactically valid', () => {
-  for (const file of ['scripts/check_photosynthesis_guided_flow_browser.cjs', 'scripts/photosynthesis_guided_test_support.cjs']) {
+test('B5 local browser gates and support file are syntactically valid', () => {
+  for (const file of [
+    'scripts/check_photosynthesis_guided_input_browser.cjs',
+    'scripts/check_photosynthesis_guided_view_browser.cjs',
+    'scripts/check_photosynthesis_guided_flow_browser.cjs',
+    'scripts/photosynthesis_guided_test_support.cjs',
+  ]) {
     assert.doesNotThrow(() => cp.execFileSync(process.execPath, ['--check', path.join(root, file)], { cwd: root, stdio: 'pipe' }), file);
   }
 });
 
-test('B5 browser wiring has not started; B4 unit/static tests run before math', () => {
+test('B5 CI runs photosynthesis input → view → flow exactly once in science-guided after Chromium, with core also required by CI Gate', () => {
   const wf = ciWorkflow();
-  assert.ok(!wf.includes('check_photosynthesis_guided_'), 'photosynthesis browser gates stay local until B5');
+  const jobs = ciJobs(wf);
+  const job = jobs['science-guided'];
+  assert.ok(job, 'science-guided job exists');
+  const steps = job.steps;
+  const allSteps = Object.values(jobs).flatMap((j) => j.steps);
+  const at = (needle, label) => {
+    const i = steps.findIndex((st) => st.includes(needle));
+    assert.ok(i >= 0, `missing ${label}`);
+    return i;
+  };
+  const install = at(CHROMIUM_INSTALL, 'Chromium install');
+  const gates = [
+    ['check_photosynthesis_guided_input_browser.cjs', 'input'],
+    ['check_photosynthesis_guided_view_browser.cjs', 'view'],
+    ['check_photosynthesis_guided_flow_browser.cjs', 'flow'],
+  ];
+  const idx = gates.map(([script, label]) => {
+    assert.equal(wf.split(script).length, 2, `${label} gate runs exactly once`);
+    assert.equal(allSteps.filter((st) => st.includes(script)).length, 1, `${label} appears in one workflow step`);
+    return at(script, label);
+  });
+  assert.ok(install < idx[0] && idx[0] < idx[1] && idx[1] < idx[2], 'Chromium → input → view → flow');
+  for (const i of idx) assert.match(steps[i], /NODE_PATH: \/tmp\/bhcs-composition\/node_modules/);
+  assert.ok(jobs.core.text.includes('npm test --prefix scripts'), 'core runs unit/static tests');
+  assert.ok(['core', 'science-guided'].every((id) => jobs.gate.needs.includes(id)), 'CI Gate needs core and science-guided');
+});
+
+test('B5 uploads view and flow screenshots for 14 days; input has no screenshot artifact', () => {
+  const jobs = ciJobs();
+  const steps = jobs['science-guided'].steps;
+  const all = Object.values(jobs).flatMap((j) => j.steps);
+  const upload = (name, dir) => {
+    assert.equal(all.filter((st) => st.includes(`name: ${name}\n`) || st.endsWith(`name: ${name}`)).length, 1, `${name} uploaded once`);
+    const hit = steps.find((st) => st.includes(`name: ${name}\n`) || st.endsWith(`name: ${name}`));
+    assert.ok(hit, `${name} upload is in science-guided`);
+    assert.equal(hit, `      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: ${name}\n          path: ${dir}\n          retention-days: 14`);
+  };
+  upload('photosynthesis-view-review', 'photosynthesis-view-artifacts/');
+  upload('photosynthesis-flow-review', 'photosynthesis-flow-artifacts/');
+  assert.ok(!all.some((st) => st.includes('photosynthesis-input-review')), 'input gate makes no screenshot artifact');
+  for (const dir of ['/photosynthesis-view-artifacts/', '/photosynthesis-flow-artifacts/']) {
+    assert.ok(read('.gitignore').split('\n').includes(dir), `${dir} is ignored`);
+  }
+});
+
+test('B4 unit/static tests remain in dependency order before math; browser gates are CI-only', () => {
   const pkg = JSON.parse(read('scripts/package.json')).scripts.test;
   const names = ['model', 'engine', 'render', 'input', 'challenges', 'persist', 'analytics', 'script', 'site'];
   const order = names.map((n) => pkg.indexOf(`test_photosynthesis_guided_${n}.mjs`));
-  assert.ok(order.every((i, k) => i >= 0 && (k === 0 || i > order[k - 1])), 'B4 tests run in dependency order');
+  assert.ok(order.every((i, k) => i >= 0 && (k === 0 || i > order[k - 1])), 'station unit/static tests in dependency order');
   assert.ok(order.at(-1) < pkg.indexOf('test_math_drills.mjs'), 'before math');
-  assert.ok(!pkg.includes('check_photosynthesis'), 'browser gate is not part of npm test');
+  assert.ok(!pkg.includes('check_photosynthesis'), 'browser gates are not part of npm test');
 });
 
 console.log(`photosynthesis-guided site: ${tests} tests passed`);
