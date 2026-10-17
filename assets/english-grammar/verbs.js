@@ -62,18 +62,21 @@ export const VERBS = {
 //   at     places that may be added after the phrase: [english, chinese]
 const HOME = ['at home', '在家'], PARK = ['in the park', '在公園'], SCHOOL = ['at school', '在學校'], LIB = ['in the library', '在圖書館'];
 const KITCHEN = ['in the kitchen', '在廚房'], GYM = ['in the gym', '在體育館'], PLAYGROUND = ['on the playground', '在操場'], GARDEN = ['in the garden', '在花園'];
-const ANIMAL = { habit: ['every day'] };
-const WEEKEND = { habit: ['every Sunday', 'every Saturday', 'on weekends'] };
+// Outdoor and daytime things are not done at night, so their past-progressive times are daytime only.
+const DAY = ['at this time yesterday', 'at seven yesterday morning'];
+const ANIMAL = { habit: ['every day'], past: ['yesterday', 'last night', 'two days ago'] };
+const WEEKEND = { habit: ['every Sunday', 'every Saturday', 'on weekends'], pastprog: DAY };
+const OUT = { pastprog: DAY };
 const MEAL = (habit, past) => ({ habit, past, pastprog: ['at this time yesterday'] });
 const F = (v, rest, zh, opts = {}) => ({ v, rest, zh, who: ['person'], habit: true, prog: true, able: false, pastOk: true, ...opts });
 export const FRAMES = [
   // sports and games
-  F('play', 'basketball', '打籃球', { able: true, at: [PARK, SCHOOL, PLAYGROUND, GYM] }),
-  F('play', 'baseball', '打棒球', { able: true, at: [PARK, PLAYGROUND] }),
+  F('play', 'basketball', '打籃球', { able: true, cues: OUT, at: [PARK, SCHOOL, PLAYGROUND, GYM] }),
+  F('play', 'baseball', '打棒球', { able: true, cues: OUT, at: [PARK, PLAYGROUND] }),
   F('play', 'badminton', '打羽毛球', { able: true, at: [PARK, GYM] }),
   F('play', 'volleyball', '打排球', { able: true, at: [SCHOOL, GYM] }),
-  F('play', 'tennis', '打網球', { able: true, at: [PARK] }),
-  F('play', 'soccer', '踢足球', { able: true, at: [PLAYGROUND, PARK] }),
+  F('play', 'tennis', '打網球', { able: true, cues: OUT, at: [PARK] }),
+  F('play', 'soccer', '踢足球', { able: true, cues: OUT, at: [PLAYGROUND, PARK] }),
   F('play', 'computer games', '玩電腦遊戲', { at: [HOME] }),
   // music and art
   F('play', 'the piano', '彈鋼琴', { able: true, at: [HOME, SCHOOL] }),
@@ -84,7 +87,7 @@ export const FRAMES = [
   F('dance', '', '跳舞', { able: true, at: [SCHOOL, PARK] }),
   F('draw', 'pictures', '畫畫', { able: true, at: [HOME, SCHOOL, PARK] }),
   F('paint', 'pictures', '畫圖', { able: true, at: [HOME, SCHOOL] }),
-  F('take', 'pictures', '拍照', { able: true, at: [PARK, ['at the zoo', '在動物園']] }),
+  F('take', 'pictures', '拍照', { able: true, cues: OUT, at: [PARK, ['at the zoo', '在動物園']] }),
   // reading, writing, school
   F('read', 'the newspaper', '看報紙', { at: [HOME] }),
   F('read', 'story books', '看故事書', { at: [HOME, LIB] }),
@@ -139,14 +142,14 @@ export const FRAMES = [
   F('drink', 'tea', '喝茶', { age: 'adult' }),
   F('bring', 'lunch', '帶午餐', { age: 'young', prog: false, cues: { habit: ['every day'], past: ['yesterday', 'two days ago'] }, at: [] }),
   // going out
-  F('swim', '', '游泳', { able: true, at: [['in the pool', '在游泳池'], ['in the river', '在河裡'], ['at the beach', '在海邊']] }),
+  F('swim', '', '游泳', { able: true, cues: OUT, at: [['in the pool', '在游泳池'], ['in the river', '在河裡'], ['at the beach', '在海邊']] }),
   F('run', 'in the park', '在公園跑步'),
   F('jog', 'in the park', '在公園慢跑', { cues: { habit: ['every day', 'every morning', 'on weekends'] } }),
-  F('ride', 'a bicycle', '騎腳踏車', { able: true, at: [PARK] }),
+  F('ride', 'a bicycle', '騎腳踏車', { able: true, cues: OUT, at: [PARK] }),
   F('take', 'a walk', '散步', { at: [PARK] }),
   F('walk', 'the dog', '遛狗', { at: [PARK] }),
   F('fly', 'a kite', '放風箏', { able: true, cues: WEEKEND, at: [PARK, ['at the beach', '在海邊']] }),
-  F('skate', 'in the park', '在公園溜冰', { able: true }),
+  F('skate', 'in the park', '在公園溜冰', { able: true, cues: OUT }),
   F('climb', 'the mountain', '爬山', { cues: WEEKEND, able: true }),
   F('plant', 'trees', '種樹', { cues: WEEKEND, at: [GARDEN, PARK] }),
   F('plant', 'flowers', '種花', { cues: WEEKEND, at: [GARDEN] }),
@@ -160,12 +163,11 @@ export const FRAMES = [
   F('meet', 'friends', '和朋友見面', { at: [PARK, ['at the station', '在車站']], cues: WEEKEND }),
   F('call', 'friends', '打電話給朋友', { at: [HOME] }),
   F('travel', 'by train', '搭火車旅行', { cues: WEEKEND }),
-  F('collect', 'stamps', '收集郵票', { habit: true, prog: false, pastOk: false }),
   F('get', 'up early', '早起', { prog: false, cues: { habit: ['every day', 'every morning'], past: ['yesterday', 'two days ago', 'last Sunday'] } }),
   F('come', 'home late', '晚回家', { prog: false, cues: { past: ['yesterday', 'last night', 'last Sunday', 'two days ago'] } }),
-  F('help', 'the teacher', '幫忙老師', { at: [SCHOOL] }),
-  F('teach', 'art', '教美術', { age: 'adult', at: [SCHOOL] }),
-  F('teach', 'history', '教歷史', { age: 'adult', at: [SCHOOL] }),
+  F('help', 'the teacher', '幫忙老師', { age: 'young', cues: { habit: ['every day', 'after school'] }, at: [SCHOOL] }),
+  F('teach', 'art', '教美術', { age: 'adult', cues: { habit: ['every day'], past: ['yesterday', 'two days ago', 'three days ago', 'last month'] }, at: [SCHOOL] }),
+  F('teach', 'history', '教歷史', { age: 'adult', cues: { habit: ['every day'], past: ['yesterday', 'two days ago', 'three days ago', 'last month'] }, at: [SCHOOL] }),
   F('drive', 'a car', '開車', { age: 'adult', able: true }),
   F('drive', 'a taxi', '開計程車', { age: 'adult' }),
   F('wear', 'a hat', '戴帽子', { cues: { habit: ['every day', 'on weekends'] } }),
@@ -185,7 +187,7 @@ export const FRAMES = [
   F('jump', 'high', '跳得很高', { who: ['animal'], able: true, prog: false, habit: false, pastOk: false, species: ['dog', 'cat', 'rabbit'] }),
   F('climb', 'trees', '爬樹', { who: ['animal'], able: true, cues: ANIMAL, species: ['cat'] }),
   F('sing', '', '唱歌', { who: ['animal'], cues: ANIMAL, species: ['bird'] }),
-  F('fly', '', '飛', { who: ['animal'], able: true, cues: ANIMAL, species: ['bird'] }),
+  F('fly', '', '飛', { who: ['animal'], able: true, habit: false, cues: ANIMAL, species: ['bird'] }),
   F('play', 'with the ball', '玩球', { who: ['animal'], cues: ANIMAL, species: ['dog', 'cat'] }),
 ];
 
@@ -218,7 +220,8 @@ export const VTIMES = [
   { en: 'two years ago', zh: '兩年前', use: 'ablepast' },
   { en: 'last year', zh: '去年', use: 'ablepast' },
   { en: 'three years ago', zh: '三年前', use: 'ablepast' },
-  { en: 'this year', zh: '今年', use: 'able' },
+  { en: 'four years ago', zh: '四年前', use: 'ablepast' },
+  { en: 'ten years ago', zh: '十年前', use: 'ablepast' },
 ];
 
 export const vform = (f, key) => VERBS[f.v][key];

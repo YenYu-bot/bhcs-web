@@ -36,11 +36,11 @@ export function frameFits(f, s) {
  * A verb phrase for this subject, spread over the verbs on the sheet. About a third of the time a place is added
  * ("play basketball in the park"); the returned copy carries the longer phrase and its Chinese.
  */
-export function pickFrame(rng, s, level, test = () => true, form = null) {
+export function pickFrame(rng, s, level, test = () => true, form = null, places = true) {
   const list = FRAMES.filter((f) => frameFits(f, s) && test(f) && (!form || spellingOk(f, form, level)));
   if (!list.length) return null;
   const f = rng.fresh(list, (x) => x.v);
-  if (f.at?.length && rng.chance(0.35)) {
+  if (places && f.at?.length && rng.chance(0.35)) {
     const [en, zh] = rng.pick(f.at);
     return { ...f, rest: f.rest ? `${f.rest} ${en}` : en, zh: f.zh.startsWith('在') ? f.zh : zh + f.zh };
   }

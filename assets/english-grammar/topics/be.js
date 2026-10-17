@@ -17,6 +17,7 @@ const NEG = { is: "isn't", are: "aren't", was: "wasn't", were: "weren't" };
 function predicateFits(p, s) {
   if (!p.for.includes(s.kind)) return false;
   if (s.tags.includes('group') && !(p.type === 'loc' || (p.type === 'adj' && p.dur === 'temp'))) return false;
+  if (s.tags.includes('has-job') && p.type === 'job') return false; // "Our teachers are cooks" makes no sense
   if (p.num && p.num !== s.num) return false;
   if (p.type === 'job' && s.age !== 'any' && p.age !== s.age) return false;
   if (p.type === 'rel' && p.age && s.age !== 'any' && p.age !== s.age) return false;

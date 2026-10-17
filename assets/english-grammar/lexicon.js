@@ -39,7 +39,7 @@ export const SUBJECTS = [
   P('my mother', '我媽媽', 'sg', 3, 'person', 'she', 1, { age: 'adult' }),
   P('my grandfather', '我的爺爺', 'sg', 3, 'person', 'he', 1, { age: 'adult' }),
   P('my grandmother', '我的奶奶', 'sg', 3, 'person', 'she', 1, { age: 'adult' }),
-  P('my teacher', '我的老師', 'sg', 3, 'person', null, 1, { age: 'adult' }),
+  P('my teacher', '我的老師', 'sg', 3, 'person', null, 1, { age: 'adult', tags: ['has-job'] }),
   P('my classmate', '我的同學', 'sg', 3, 'person', null, 1, { age: 'young' }),
   P('my family', '我的家人', 'sg', 3, 'person', null, 1, { age: 'group', tags: ['group'] }),
   P('my parents', '我的父母', 'pl', 3, 'person', 'they', 1, { age: 'adult' }),
@@ -56,7 +56,7 @@ export const SUBJECTS = [
   P('the students', '學生們', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
   P('these girls', '這些女孩', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
   P('those boys', '那些男孩', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
-  P('our teachers', '我們的老師們', 'pl', 3, 'person', 'they', 2, { age: 'adult' }),
+  P('our teachers', '我們的老師們', 'pl', 3, 'person', 'they', 2, { age: 'adult', tags: ['has-job'] }),
   // animals
   P('the dog', '那隻狗', 'sg', 3, 'animal', 'it', 2, { species: 'dog' }),
   P('my cat', '我的貓', 'sg', 3, 'animal', 'it', 2, { species: 'cat' }),

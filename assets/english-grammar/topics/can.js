@@ -10,7 +10,7 @@ const negWords = (past, abbr) => (abbr ? [past ? "couldn't" : "can't"] : past ? 
 
 function draw(rng, o, { exclude = () => false } = {}) {
   const s = pickSubject(rng, actors(rng, o.level, { exclude }));
-  const f = s && pickFrame(rng, s, o.level, (x) => x.able);
+  const f = s && pickFrame(rng, s, o.level, (x) => x.able, null, false);
   if (!f) return null;
   const past = pickTense(rng, o);
   const pool = VTIMES.filter((t) => t.use === (past ? 'ablepast' : 'able'));
@@ -81,7 +81,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
       const { s, f, t, past } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.able && x.v !== f.v); if (!g) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.able && x.v !== f.v, null, false); if (!g) return null;
       return {
         lines: [[`${cap(modal(past))} ${s.en} ${f.v}${tail(f, t)}?`],
           ['— No, ', blank(s.reply), ' ', blank(negWords(past, true)[0]), '. ', blank(cap(s.reply)), ' ', blank(modal(past)), ' ', blank(g.v), ` (${g.v})${phrase(g)}.`]],
