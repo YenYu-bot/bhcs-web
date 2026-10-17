@@ -1,17 +1,17 @@
 // Topic: present simple (plays / does / doesn't).
 import { blank } from '../core.js';
 import { VERBS, vform, phrase, cuesFor } from '../verbs.js';
-import { actors, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, timeFirst, mid, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
 
 const present = (s, f) => (third(s) ? vform(f, 's') : VERBS[f.v].base);
 const aux = (s) => (third(s) ? 'does' : 'do');
 const NEG = { does: "doesn't", do: "don't" };
 
 function draw(rng, o, { exclude = () => false, form = 's' } = {}) {
-  const s = rng.pick(actors(rng, o.level, { exclude }));
+  const s = pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.habit, form);
   if (!f) return null;
-  const t = rng.pick(cuesFor(f, 'habit', s));
+  const t = rng.fresh(cuesFor(f, 'habit', s), (x) => x.en);
   return t ? { s, f, t } : null;
 }
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
@@ -23,7 +23,10 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o); if (!d) return null;
       const { s, f, t } = d;
-      return { lines: [[S0(s) + ' ', blank(present(s, f)), ` (${f.v})${phrase(f)} ${t.en}.`]], zh: zhSent(s, t, f.zh, '。'), meta: meta(d, { kind: 'verb' }) };
+      const line = timeFirst(rng)
+        ? [`${cap(t.en)}, ${mid(s.en)} `, blank(present(s, f)), ` (${f.v})${phrase(f)}.`]
+        : [S0(s) + ' ', blank(present(s, f)), ` (${f.v})${phrase(f)} ${t.en}.`];
+      return { lines: [line], zh: zhSent(s, t, f.zh, '。'), meta: meta(d, { kind: 'verb' }) };
     },
   },
   {

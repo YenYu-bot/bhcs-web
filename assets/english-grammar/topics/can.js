@@ -1,7 +1,7 @@
 // Topic: can / can't (with the past option, could / couldn't).
 import { blank } from '../core.js';
 import { VTIMES, phrase } from '../verbs.js';
-import { actors, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, timeFirst, mid, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
 
 const pickTense = (rng, o) => (o.tense === 'P' ? false : o.tense === 'D' ? true : rng.chance(0.5));
 const modal = (past) => (past ? 'could' : 'can');
@@ -9,7 +9,7 @@ const modal = (past) => (past ? 'could' : 'can');
 const negWords = (past, abbr) => (abbr ? [past ? "couldn't" : "can't"] : past ? ['could', 'not'] : ['cannot']);
 
 function draw(rng, o, { exclude = () => false } = {}) {
-  const s = rng.pick(actors(rng, o.level, { exclude }));
+  const s = pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.able);
   if (!f) return null;
   const past = pickTense(rng, o);
@@ -33,8 +33,9 @@ const MODES = [
       const words = neg ? negWords(past, abbr) : [modal(past)];
       const bl = [...words, f.v].flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));
       const mark = neg ? abbrMark(o, abbr) : '';
+      const front = t && timeFirst(rng);
       return {
-        lines: [[S0(s) + ' ', ...bl, `${tail(f, t)}. (${neg ? '不會' : '會'}／${f.v})${mark}`]],
+        lines: [front ? [`${cap(t.en)}, ${mid(s.en)} `, ...bl, `${phrase(f)}. (${neg ? '不會' : '會'}／${f.v})${mark}`] : [S0(s) + ' ', ...bl, `${tail(f, t)}. (${neg ? '不會' : '會'}／${f.v})${mark}`]],
         zh: zhCan(d, neg, '。'), meta: meta(d, { kind: 'fill', neg, abbr }),
       };
     },

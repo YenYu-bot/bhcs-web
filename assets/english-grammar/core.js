@@ -11,8 +11,19 @@ export function makeRng(seed) {
     t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
+  const used = new Map();
   return {
     next,
+    /** Pick among the items used least so far on this sheet (by key), so a sheet spreads over the whole word bank. */
+    fresh(arr, key = (x) => x) {
+      if (!arr.length) return undefined;
+      let min = Infinity;
+      for (const x of arr) min = Math.min(min, used.get(key(x)) || 0);
+      const pool = arr.filter((x) => (used.get(key(x)) || 0) === min);
+      const x = pool[Math.floor(next() * pool.length)];
+      used.set(key(x), min + 1);
+      return x;
+    },
     int: (n) => Math.floor(next() * n),
     pick: (arr) => arr[Math.floor(next() * arr.length)],
     chance: (p) => next() < p,
@@ -28,6 +39,8 @@ export function makeRng(seed) {
  *  A wide blank may hold a short phrase ("is playing") where the number of blanks would give the answer away. */
 export const blank = (a, wide = false) => (wide ? { blank: true, a, wide: true } : { blank: true, a });
 export const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+/** Lower-case a subject for the middle of a sentence (names and I keep their capital). */
+export const mid = (en) => (/^(I|Mr\.|Ms\.|[A-Z][a-z]+(?: and [A-Z][a-z]+)?)$/.test(en) || /^[A-Z][a-z]+ and /.test(en) ? en : en.charAt(0).toLowerCase() + en.slice(1));
 
 /** Plain text of a line (blanks shown as ___), used to detect repeated questions. */
 export function lineText(parts) {

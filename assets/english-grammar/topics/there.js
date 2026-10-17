@@ -58,11 +58,12 @@ const COUNT_ZH = { cats: ['隻', '貓'], books: ['本', '書'], chairs: ['張', 
 
 function draw(rng, o, test = () => true) {
   const ns = NOUNS.filter((n) => n.lvl <= o.level && test(n));
-  const n = rng.pick(ns); if (!n) return null;
-  const place = rng.pick(n.places);
+  if (!ns.length) return null;
+  const n = rng.fresh(ns, (x) => x.en);
+  const place = rng.fresh(n.places);
   const past = o.tense === 'P' ? false : o.tense === 'D' ? true : rng.chance(0.5);
   const needTime = o.tense !== 'P' || rng.chance(0.4);
-  const t = needTime ? rng.pick(TIMES.filter((x) => x.past === past)) : null;
+  const t = needTime ? rng.fresh(TIMES.filter((x) => x.past === past), (x) => x.en) : null;
   return { n, place, t, past };
 }
 const tail = (place, t) => ` ${place}${t ? ' ' + t.en : ''}`;
@@ -84,7 +85,10 @@ const MODES = [
       }
       const d = draw(rng, o); if (!d) return null;
       const hint = o.level >= 3 ? '' : ' (be)';
-      return { lines: [['There ', blank(be(d.n, d.past)), `${hint} ${d.n.en}${tail(d.place, d.t)}.`]], zh: zhThere(d, '有', '。'), meta: meta(d, { kind: 'fill' }) };
+      const line = d.t && rng.chance(0.3)
+        ? [`${cap(d.t.en)}, there `, blank(be(d.n, d.past)), `${hint} ${d.n.en}${tail(d.place, null)}.`]
+        : ['There ', blank(be(d.n, d.past)), `${hint} ${d.n.en}${tail(d.place, d.t)}.`];
+      return { lines: [line], zh: zhThere(d, '有', '。'), meta: meta(d, { kind: 'fill' }) };
     },
   },
   {

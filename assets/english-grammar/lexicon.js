@@ -12,8 +12,8 @@
 //   tag     extra marks: 'pron' (pronoun), 'name', 'every', 'with-i' (X and I), 'with-you', 'uncount', 'irreg' (irregular plural)
 
 export const NAMES = {
-  m: ['Tom', 'Ben', 'John', 'Peter', 'David', 'Eric', 'Mark', 'Tony', 'Jack', 'Sam'],
-  f: ['Amy', 'Mary', 'Lisa', 'Jenny', 'Sally', 'Linda', 'Judy', 'Kate', 'Emma', 'Helen'],
+  m: ['Tom', 'Ben', 'John', 'Peter', 'David', 'Eric', 'Mark', 'Tony', 'Jack', 'Sam', 'Andy', 'Kevin', 'Mike', 'Bill', 'Ken', 'Leo', 'Frank', 'Paul'],
+  f: ['Amy', 'Mary', 'Lisa', 'Jenny', 'Sally', 'Linda', 'Judy', 'Kate', 'Emma', 'Helen', 'Cindy', 'Grace', 'Nancy', 'Tina', 'Annie', 'Wendy', 'Lucy', 'Susan'],
 };
 
 const P = (en, zh, num, person, kind, reply, lvl, extra = {}) => ({ en, zh, num, person, kind, reply, lvl, age: 'any', tags: [], ...extra });
@@ -32,11 +32,20 @@ export const SUBJECTS = [
   P('they', '牠們', 'pl', 3, 'animal', 'they', 1, { tags: ['pron'] }),
   P('they', '它們', 'pl', 3, 'thing', 'they', 1, { tags: ['pron'] }),
 
+  // family and school (level 1)
+  P('my brother', '我的哥哥', 'sg', 3, 'person', 'he', 1, { age: 'young' }),
+  P('my sister', '我的姊姊', 'sg', 3, 'person', 'she', 1, { age: 'young' }),
+  P('my father', '我爸爸', 'sg', 3, 'person', 'he', 1, { age: 'adult' }),
+  P('my mother', '我媽媽', 'sg', 3, 'person', 'she', 1, { age: 'adult' }),
+  P('my grandfather', '我的爺爺', 'sg', 3, 'person', 'he', 1, { age: 'adult' }),
+  P('my grandmother', '我的奶奶', 'sg', 3, 'person', 'she', 1, { age: 'adult' }),
+  P('my teacher', '我的老師', 'sg', 3, 'person', null, 1, { age: 'adult' }),
+  P('my classmate', '我的同學', 'sg', 3, 'person', null, 1, { age: 'young' }),
+  P('my family', '我的家人', 'sg', 3, 'person', null, 1, { age: 'group', tags: ['group'] }),
+  P('my parents', '我的父母', 'pl', 3, 'person', 'they', 1, { age: 'adult' }),
+  P('my classmates', '我的同學們', 'pl', 3, 'person', 'they', 1, { age: 'young' }),
+  P('my friends', '我的朋友們', 'pl', 3, 'person', 'they', 1, { age: 'young' }),
   // people, singular (level 2)
-  P('my brother', '我的哥哥', 'sg', 3, 'person', 'he', 2, { age: 'young' }),
-  P('my sister', '我的姊姊', 'sg', 3, 'person', 'she', 2, { age: 'young' }),
-  P('my father', '我爸爸', 'sg', 3, 'person', 'he', 2, { age: 'adult' }),
-  P('my mother', '我媽媽', 'sg', 3, 'person', 'she', 2, { age: 'adult' }),
   P('his uncle', '他的叔叔', 'sg', 3, 'person', 'he', 2, { age: 'adult' }),
   P('her aunt', '她的阿姨', 'sg', 3, 'person', 'she', 2, { age: 'adult' }),
   P('Mr. Chen', '陳先生', 'sg', 3, 'person', 'he', 2, { age: 'adult', tags: ['name'] }),
@@ -44,11 +53,9 @@ export const SUBJECTS = [
   P('the boy', '那個男孩', 'sg', 3, 'person', 'he', 2, { age: 'young' }),
   P('the girl', '那個女孩', 'sg', 3, 'person', 'she', 2, { age: 'young' }),
   // people, plural
-  P('my parents', '我的父母', 'pl', 3, 'person', 'they', 2, { age: 'adult' }),
   P('the students', '學生們', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
   P('these girls', '這些女孩', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
   P('those boys', '那些男孩', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
-  P('my friends', '我的朋友們', 'pl', 3, 'person', 'they', 2, { age: 'young' }),
   P('our teachers', '我們的老師們', 'pl', 3, 'person', 'they', 2, { age: 'adult' }),
   // animals
   P('the dog', '那隻狗', 'sg', 3, 'animal', 'it', 2, { species: 'dog' }),
