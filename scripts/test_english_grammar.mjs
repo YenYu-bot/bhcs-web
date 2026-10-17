@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildSheet, encodeCode, decodeCode, lineText, answersOf, splitCount, COUNT_MIN, COUNT_MAX } from '../assets/english-grammar/core.js';
+import { buildSheet, encodeCode, decodeCode, lineText, answersOf, splitCount, fullSentence, COUNT_MIN, COUNT_MAX } from '../assets/english-grammar/core.js';
 import { TOPICS, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 import { NAMES, FUNCTION_WORDS, SUBJECTS } from '../assets/english-grammar/lexicon.js';
 
@@ -412,6 +412,42 @@ test('the same sheet code always gives the same sheet, and the code round-trips'
     assert.equal(decodeCode(a.code.toLowerCase(), ALL_TOPICS).topic, t.id, 'case does not matter');
   }
   for (const bad of ['', 'BE-2M', 'XX-2M-3F-B1-20-1', 'BE-4M-3F-B1-20-1', 'BE-2M-0-B1-20-1', 'BE-2M-3F-B1-60-1', 'BE-2M-3F-B1-5-1']) assert.equal(decodeCode(bad, TOPICS), null, `rejects "${bad}"`);
+});
+
+test('whole-sentence translation: new sentences, whole and in the word list, and adding them leaves the fill-in part alone', () => {
+  // fullSentence on hand-made items
+  const B = (a) => ({ a });
+  assert.equal(fullSentence({ lines: [[B('He'), ' ', B('always'), ' plays basketball. (總是／play)']] }), 'He always plays basketball.');
+  assert.equal(fullSentence({ lines: [['My father can carry the boxes now.'], ['→ My father ', B("can't"), ' carry the boxes now. （縮寫）']] }), "My father can't carry the boxes now.");
+  assert.equal(fullSentence({ lines: [[B('Is'), ' this your pen? — No, ', B('it'), ' ', B("isn't"), '.']] }), 'Is this your pen?');
+  assert.equal(fullSentence({ lines: [['Is Tom a nurse now?'], ['— No, ', B('he'), ' ', B("isn't"), '. He is a cook.']] }), 'Is Tom a nurse now?');
+  for (const t of ALL_TOPICS) for (const level of [1, 2, 3]) for (const tr of [5, 10]) for (const seed of [11, 12, 13]) {
+    const base = { level, tense: t.past ? 'M' : 'P', modes: t.defaultModes[level], abbr: 'B', zh: true, count: 20, seed };
+    const plain = buildSheet(t, base), sh = buildSheet(t, { ...base, tr });
+    const where = `${t.id} level ${level} tr ${tr} seed ${seed}`;
+    assert.deepEqual(sh.sections, plain.sections, `${where}: same fill-in questions with or without translation`);
+    assert.equal(plain.translation, null);
+    const items = sh.translation.items;
+    if (!t.capacity) assert.equal(items.length, tr, `${where}: ${tr} translation questions`);
+    else assert.ok(items.length >= Math.min(tr, 3), `${where}: some translation questions`);
+    if (sh.opts.modes.length > 1) assert.ok(new Set(items.map((x) => x.mode)).size > 1, `${where}: drawn from all the chosen modes`);
+    const fill = new Set(sh.sections.flatMap((s) => s.items.map((it) => fullSentence(it).toLowerCase())));
+    assert.equal(new Set(items.map((x) => x.en.toLowerCase())).size, items.length, `${where}: all different`);
+    assert.equal(new Set(items.map((x) => x.zh)).size, items.length, `${where}: no Chinese line twice`);
+    for (const x of items) {
+      assert.ok(!fill.has(x.en.toLowerCase()), `${where}: not a fill-in sentence: ${x.en}`);
+      assert.ok(sh.opts.modes.includes(x.mode), 'from the chosen modes');
+      assert.match(x.en, /^[A-Z][A-Za-z ,'.]*[A-Za-z][.?!]$/, `${where}: one whole sentence, no cue left: ${x.en}`);
+      for (const w of x.en.match(/[A-Za-z][A-Za-z']*/g)) assert.ok(inList(w), `${where}: "${w}" in the word list (${x.en})`);
+      assert.match(x.zh, /^[^(（]*\p{Script=Han}[^(（]*[。？！]$/u, `${where}: Chinese prompt: ${x.zh}`);
+      assert.ok(!/undefined|null|NaN|___|→|—/.test(x.en + x.zh), `${where}: clean: ${x.en} / ${x.zh}`);
+    }
+    const back = decodeCode(sh.code, ALL_TOPICS);
+    assert.ok(sh.code.endsWith(`-T${tr}`), 'code carries the translation count');
+    assert.deepEqual(back.opts, sh.opts); assert.deepEqual(buildSheet(t, back.opts), sh, `${where}: rebuilt from the code`);
+    assert.equal(decodeCode(plain.code, ALL_TOPICS).opts.tr, 0, 'older codes without -T still work');
+  }
+  assert.equal(decodeCode('BE-2P-1-F0-20-5-T7', ALL_TOPICS), null, 'only the offered counts');
 });
 
 test('the page is public, loads the engine as modules, and every published topic is linked from the resources page', () => {
