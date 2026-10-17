@@ -7,7 +7,12 @@ import progressive from './topics/progressive.js';
 import there from './topics/there.js';
 import can from './topics/can.js';
 import past from './topics/past.js';
+import pronoun from './topics/pronoun.js';
+import plural from './topics/plural.js';
+import demonstrative from './topics/this.js';
+import freq from './topics/freq.js';
+import imperative from './topics/imperative.js';
 
 export const TOPICS = [be, simple, progressive, there, can, past];
-export const DRAFTS = [];
+export const DRAFTS = [pronoun, plural, demonstrative, freq, imperative];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
