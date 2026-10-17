@@ -92,10 +92,10 @@ const MODES = [
       const form = rng.int(3);
       if (form === 0) {
         const [c, cz] = rng.fresh(COLORS, (x) => x[0]);
-        return { lines: [[blank(cap(p.poss)), `${hint(p)} ${noun} ${pl ? 'are' : 'is'} ${c}.`]], zh: `${zhPoss(p)}${n.zh}${cz}。`, meta: meta(p, 'poss', { verb: pl ? 'are' : 'is', pl }) };
+        return { lines: [[blank(cap(p.poss)), `${hint(p)} ${noun} ${pl ? 'are' : 'is'} ${c}.`]], zh: `${zhPoss(p)}${pl ? '那些' : ''}${n.zh}${cz}。`, meta: meta(p, 'poss', { verb: pl ? 'are' : 'is', pl }) };
       }
       if (form === 1) return { lines: [[`${pl ? 'These are' : 'This is'} `, blank(p.poss), `${hint(p)} ${noun}.`]], zh: `${pl ? '這些' : '這'}是${zhPoss(p)}${n.zh}。`, meta: meta(p, 'poss') };
-      return { lines: [['Do you like ', blank(p.poss), `${hint(p)} ${noun}?`]], zh: `你喜歡${zhPoss(p)}${n.zh}嗎？`, meta: meta(p, 'poss') };
+      return { lines: [['Do you like ', blank(p.poss), `${hint(p)} ${noun}?`]], zh: `你喜歡${zhPoss(p)}${pl ? '那些' : ''}${n.zh}嗎？`, meta: meta(p, 'poss') };
     },
   },
   {
