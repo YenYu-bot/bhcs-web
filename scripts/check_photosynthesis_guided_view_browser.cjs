@@ -32,7 +32,7 @@ async function benchFacts(p) {
   return p.evaluate(() => {
     const bench = document.querySelector('[data-role="photosynthesis-bench"]');
     const scene = document.querySelector('[data-role="scene"]');
-    const visible = [...document.querySelectorAll('.pg-bubble')].filter((b) => !b.hidden).length;
+    const visible = [...document.querySelectorAll('.pg-bubble')].filter((b) => !b.hasAttribute('hidden')).length;
     const buttons = [...document.querySelectorAll('[data-light-value]')].map((b) => ({
       value: Number(b.getAttribute('data-light-value')),
       disabled: b.disabled,
