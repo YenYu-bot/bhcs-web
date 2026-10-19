@@ -1,0 +1,30 @@
+name: Circuit B4-A temporary browser validation
+on:
+  pull_request:
+    paths:
+      - 'assets/circuit-guided/**'
+      - 'tools/science/circuit-guided.html'
+      - 'scripts/check_circuit_guided_flow_browser.cjs'
+      - '.github/workflows/circuit-b4a-temporary.yml'
+  workflow_dispatch:
+jobs:
+  notebook-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --prefix scripts
+      - run: npx --yes playwright@1.58.2 install --with-deps chromium
+      - run: sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Circuit full journey and Notebook desktop/touch/axe
+        env:
+          NODE_PATH: ${{ github.workspace }}/scripts/node_modules
+        run: node scripts/check_circuit_guided_flow_browser.cjs
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: circuit-b4a-notebook-review
+          path: circuit-flow-artifacts/
+          retention-days: 7
