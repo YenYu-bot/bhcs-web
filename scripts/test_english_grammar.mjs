@@ -14,10 +14,10 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send', forgot: 'forget', began: 'begin', said: 'say' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send', forgot: 'forget', began: 'begin', said: 'say', stole: 'steal', grew: 'grow', built: 'build', sold: 'sell', found: 'find' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin', 'taichung', 'taiwan']);
 // past participles that differ from the past form, back to the base
-const PP_BACK = { eaten: 'eat', drunk: 'drink', done: 'do', written: 'write', sung: 'sing', swum: 'swim', ridden: 'ride', taken: 'take', gone: 'go', drawn: 'draw', flown: 'fly', driven: 'drive', gotten: 'get', seen: 'see', worn: 'wear', spoken: 'speak', been: 'be', lent: 'lend', sent: 'send', kept: 'keep' };
+const PP_BACK = { built: 'build', grown: 'grow', broken: 'break', stolen: 'steal', sold: 'sell', found: 'find', heard: 'hear', felt: 'feel', eaten: 'eat', drunk: 'drink', done: 'do', written: 'write', sung: 'sing', swum: 'swim', ridden: 'ride', taken: 'take', gone: 'go', drawn: 'draw', flown: 'fly', driven: 'drive', gotten: 'get', seen: 'see', worn: 'wear', spoken: 'speak', been: 'be', lent: 'lend', sent: 'send', kept: 'keep' };
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man', teeth: 'tooth', feet: 'foot', mice: 'mouse' };
 function inList(word) {
   const w = word.toLowerCase().replace(/'s$/, '');
@@ -34,6 +34,9 @@ function inList(word) {
   if (w.endsWith('ing') && stems(w.slice(0, -3)).some((x) => LIST.has(x))) return true;
   if (w.endsWith('ied') && LIST.has(w.slice(0, -3) + 'y')) return true;
   if (w.endsWith('ed') && stems(w.slice(0, -2)).some((x) => LIST.has(x))) return true;
+  // adverbs made from listed adjectives: nicely, happily, terribly, comfortably
+  if (w.endsWith('ily') && LIST.has(w.slice(0, -3) + 'y')) return true;
+  if (w.endsWith('ly') && (LIST.has(w.slice(0, -2)) || LIST.has(w.slice(0, -2) + 'le'))) return true;
   // comparatives and superlatives: taller, nicer, happier, bigger / tallest, nicest, happiest, biggest
   if (w.endsWith('ier') && LIST.has(w.slice(0, -3) + 'y')) return true;
   if (w.endsWith('iest') && LIST.has(w.slice(0, -4) + 'y')) return true;
@@ -563,7 +566,90 @@ function checkExclaim(it, mode) {
   }
 }
 
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim };
+
+// ---------- batch 6 rules ----------
+const PP_EXTRA = { build: 'built', grow: 'grown', break: 'broken', steal: 'stolen', sell: 'sold', find: 'found', send: 'sent', tell: 'told', love: 'loved', invite: 'invited', water: 'watered', finish: 'finished' };
+const ppAny = (b) => PP_EXTRA[b] ?? ppOf(b);
+function checkPassive(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const past = /\b(yesterday|last week|last night|two days ago)\b/.test(text), fut = /\b(tomorrow|next week|tonight|this weekend)\b/.test(text);
+  assert.ok(!(past && fut), 'one time');
+  if (o.level === 1) assert.ok(!past && !fut && /ed$/.test(ppAny(m.base)), `level 1: present, regular: ${text}`);
+  const be = fut ? null : past ? (m.pl ? 'were' : 'was') : m.pl ? 'are' : 'is';
+  if (mode === 'fill') assert.deepEqual(a, fut ? ['will', 'be', ppAny(m.base)] : [be, ppAny(m.base)], text);
+  if (mode === 'change') { assert.deepEqual(a, [be, ppAny(m.base)], text); assert.match(it.lines[0][0], new RegExp(`\\b${m.obj.replace(/^the /, '')}\\b`), 'the object is in the active sentence'); }
+  if (mode === 'q') { const pr = m.pl ? 'it' : 'it'; assert.deepEqual(a, [cap1(be), ppAny(m.base), m.pl ? 'they' : 'it', m.yes ? be : NEG[be]], text); }
+  assert.match(text, / by (him|her|them|us|[a-z]+ [a-z]+|[A-Z][a-z]+|Mr\. Chen|Ms\. Lin)\b/, 'agent after by');
+  assert.ok(!/ by (he|she|they|we)\b/.test(text), 'object pronoun after by');
+}
+const PERSON_NOUNS = /\b(boy|girl|man|woman|men|women|teacher|student|doctor|singer)s?\b/;
+const relVerb = (base, plural) => (plural ? (base === 'be' ? 'are' : base) : base === 'be' ? 'is' : s3(base));
+function checkRelative(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const last = lineText(it.lines.at(-1));
+  const before = last.split('___')[0];
+  const noun = before.replace(/ (who|which) $/, ' ').trim().split(' ').pop();
+  const person = PERSON_NOUNS.test(noun);
+  const plural = /s$/.test(noun) || ['men', 'women'].includes(noun);
+  if (mode === 'verb') {
+    assert.deepEqual(a, [relVerb(m.base, plural)], `${noun} ${person ? 'who' : 'which'} + verb: ${text}`);
+    assert.ok(before.endsWith(`${person ? 'who' : 'which'} `), 'relative pronoun given');
+  } else {
+    assert.deepEqual(a, [person ? 'who' : 'which'], `${noun}: ${text}`);
+    const after = last.split('___')[1].trim().split(' ')[0];
+    assert.equal(after, relVerb(m.base, plural), `clause verb agrees with ${noun}: ${text}`);
+  }
+  if (mode === 'join') assert.match(it.lines[0][0], /[.?] (He|She|It|They) /, `two sentences given: ${it.lines[0][0]}`);
+}
+const TAG_NEG = { am: "aren't", is: "isn't", are: "aren't", was: "wasn't", were: "weren't", do: "don't", does: "doesn't", did: "didn't", can: "can't", will: "won't", has: "hasn't", have: "haven't" };
+function tagPron(subj) {
+  const l = subj.trim().toLowerCase();
+  if (l === 'i') return 'I';
+  if (l === 'we' || / and i$/.test(l)) return 'we';
+  if (/^you( and |$)/.test(l)) return 'you';
+  return expectedReply(subj);
+}
+function checkTag(it, mode) {
+  const m = it.meta, text = lineText(it.lines[0]), a = ans(it);
+  const stmt = text.split(', ___')[0];
+  const neg = /n't\b| not\b/.test(stmt);
+  if (mode === 'special') {
+    if (/^Let's/.test(stmt)) assert.deepEqual(a, ['shall', 'we']);
+    else if (/^I am /.test(stmt)) assert.deepEqual(a, ["aren't", 'I']);
+    else if (/^There (is|are|was|were)/.test(stmt)) assert.deepEqual(a, [TAG_NEG[/^There (\w+)/.exec(stmt)[1]], 'there']);
+    else assert.deepEqual(a, ['will', 'you'], `imperative: ${stmt}`);
+    return;
+  }
+  const rest = stmt.slice(m.subj.length).trim();
+  const first = rest.split(' ')[0];
+  let aux;
+  const second = rest.split(' ')[1] ?? '';
+  const perfect = /^(has|hasn't|have|haven't)$/.test(first) && (second === 'already' || /ed$/.test(second) || Object.values(PP_OF).includes(second) || Object.keys(PAST_BACK).includes(second));
+  if (/^(am|is|are|was|were|isn't|aren't|wasn't|weren't)$/.test(first)) aux = first.replace("n't", '');
+  else if (/^(can|can't|will|won't)$/.test(first) || perfect) aux = { "can't": 'can', "won't": 'will', "hasn't": 'has', "haven't": 'have' }[first] ?? first;
+  else if (/^(don't|doesn't|didn't)$/.test(first)) aux = first.replace("n't", '');
+  else aux = PAST_CUES.test(stmt) ? 'did' : isThirdSg(m.subj) ? 'does' : 'do';
+  if (first === 'am') assert.ok(!neg);
+  const tagAux = neg ? aux : TAG_NEG[aux];
+  assert.deepEqual(a, [tagAux, tagPron(m.subj)], `${stmt} → ${a.join(' ')}`);
+  if (mode === 'be') assert.ok(/^(am|is|are|was|were)$/.test(aux)); if (mode === 'do') assert.ok(/^d/.test(aux)); if (mode === 'modal') assert.ok(/^(can|will|has|have)$/.test(aux));
+}
+const LINKING = new Set(['look', 'sound', 'smell', 'taste', 'feel', 'get']);
+const BASE_AFTER = new Set(['make', 'let', 'have', 'help']), TO_AFTER = new Set(['ask', 'tell', 'want']);
+function checkSense(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'link') {
+    assert.ok(LINKING.has(m.verb));
+    const [x, y] = /\((\S+)／(\S+)\)/.exec(text).slice(1);
+    const adj = [x, y].find((w) => !/ly$/.test(w) && w !== 'well') ?? x;
+    assert.deepEqual(a, [adj], `adjective after ${m.verb}: ${text}`);
+    assert.ok(/ (looks?|sounds?|smells?|tastes?|feels?|gets?) ___/.test(text));
+  }
+  if (mode === 'sense') { const going = /\(正在／/.test(text); assert.deepEqual(a, [going ? ing(m.base) : m.base], text); assert.match(text, /\b(saw|sees?|heard|hears?|watch(ed|es)?|felt|feels?) (him|her|the children|the dog|someone|the birds|the house|my heart) ___/); }
+  if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim, passive: checkPassive, relative: checkRelative, tag: checkTag, sense: checkSense };
 
 // ---------- sheets to check ----------
 function* settings() {
