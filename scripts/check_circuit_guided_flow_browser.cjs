@@ -149,7 +149,7 @@ async function verifyNotebook(p,{tap=false,shots=false,prefix='' }={}){
 
 async function verifyChallenges(p,{shots=false,prefix=''}={}){
   await p.locator('#cgg-challenges-open').click();
-  const panel=p.locator('#cgg-challenges'),next=panel.locator('button').last();
+  const panel=p.locator('#cgg-challenges'),next=panel.locator(':scope > button');
   assert.match(await text(p,'#cgg-challenges h2'),/挑戰 1/);
   await next.click();assert.match(await text(p,'#cgg-challenges [role=status]'),/重新/);
   await panel.locator('input[value="restoreParallel"]').check();
@@ -158,7 +158,6 @@ async function verifyChallenges(p,{shots=false,prefix=''}={}){
   for(const [up,down]of slots){
     await next.click();
     assert.match(await text(p,'#cgg-challenges [role=status]'),/確認電流表/);
-    const remove=panel.locator('[data-remove-wire]').filter({has:panel.locator('span')});
     await panel.locator('[data-remove-wire]').evaluateAll((buttons,pair)=>{
       const key=[...pair].sort().join('|');const btn=buttons.find(b=>b.getAttribute('data-remove-wire')===key);if(!btn)throw Error('wire not found: '+key);btn.click();
     },[up,down]);
