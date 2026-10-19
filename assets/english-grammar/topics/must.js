@@ -32,7 +32,9 @@ const my = (d, p) => d.en.replace('my mother', p.en === 'I' ? 'my mother' : p.pr
   .replace('my homework', p.en === 'I' ? 'my homework' : p.pr === 'he' ? 'his homework' : p.pr === 'she' ? 'her homework' : p.pr === 'you' ? 'your homework' : p.pr === 'we' ? 'our homework' : 'their homework');
 const zhMy = (d, p) => d.zh.replace('我媽媽', p.en === 'I' ? '我媽媽' : p.pr === 'we' ? '我們的媽媽' : p.pr === 'you' ? '你媽媽' : p.pr === 'he' ? '他媽媽' : p.pr === 'she' ? '她媽媽' : '他們的媽媽');
 function duty(rng, test = () => true) {
-  const p = pickPerson(rng, test);
+  // singular and plural subjects take turns, so has to and have to come up about equally
+  const wantS3 = rng.fresh([true, false], (x) => 'subj-' + x);
+  const p = pickPerson(rng, (x) => test(x) && x.s3 === wantS3);
   const d = rng.fresh(DUTIES.filter((x) => fits(x, p)), (x) => x.en);
   return { p, d, en: my(d, p), zh: zhMy(d, p) };
 }

@@ -443,8 +443,9 @@ function checkCompare(it, mode, o) {
   assert.ok(text.includes(`(${m.base})`), 'base given');
   const isCmp = / than /.test(text);
   if (mode === 'er') assert.ok(isCmp, 'comparative sentence has than');
-  if (mode === 'est') assert.ok(!isCmp && / the ___/.test(text), 'superlative after the');
-  assert.deepEqual(a, (isCmp ? cmp : sup).split(' '), `${m.base}: ${text}`);
+  if (mode === 'est') assert.ok(!isCmp, 'superlative sentence has no than');
+  assert.deepEqual(a, (isCmp ? cmp : 'the ' + sup).split(' '), `${m.base}: ${text}`);
+  if (!isCmp) assert.ok(!/ the ___/.test(text), 'the is part of the answer, not given');
   if (/ much ___/.test(text)) assert.ok(isCmp, 'much only before a comparative');
 }
 const CONJ_ZH = { and: /和|又|也|，然後|煮晚餐，我媽媽/, but: /但是/, or: /還是|或/, so: /所以/, because: /因為/ };
@@ -589,6 +590,21 @@ test('article sheets from level 2 on include trap words (an hour, an honest…, 
   }
   const sh1 = buildSheet(t, { level: 1, tense: 'P', modes: ['aan'], abbr: 'F', zh: true, count: 50, seed: 5 });
   assert.ok(sh1.sections[0].items.every((it) => !TRAP_WORDS.has(it.meta.word)), 'level 1 goes by the first letter only');
+});
+
+test('comparison sheets from level 2 have more / most questions; have-to sheets balance has to and have to', () => {
+  const cmp = ALL_TOPICS.find((x) => x.id === 'compare'), must = ALL_TOPICS.find((x) => x.id === 'must');
+  for (let seed = 1; seed <= 30; seed++) {
+    for (const level of [2, 3]) {
+      const sh = buildSheet(cmp, { level, tense: 'P', modes: ['er', 'est'], abbr: 'F', zh: true, count: 20, seed });
+      for (const sec of sh.sections) assert.ok(sec.items.filter((it) => /^(more|most)$/.test(answersOf(it).find((w) => w !== 'the'))).length >= 2, `compare level ${level} seed ${seed} ${sec.mode}: at least two more / most questions in ten`);
+    }
+    for (const level of [1, 2, 3]) {
+      const sh = buildSheet(must, { level, tense: 'P', modes: ['have'], abbr: 'F', zh: true, count: 20, seed });
+      const has = sh.sections[0].items.filter((it) => answersOf(it)[0] === 'has').length;
+      assert.ok(has >= 8 && has <= 12, `must level ${level} seed ${seed}: has to and have to balanced (has to ×${has} in 20)`);
+    }
+  }
 });
 
 test('whole-sentence translation: new sentences, whole and in the word list, and adding them leaves the fill-in part alone', () => {

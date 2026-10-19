@@ -69,11 +69,15 @@ const twoBlanks = (form) => form.split(' ').flatMap((w, i) => (i ? [' ', blank(w
 const byLevel = (o, bases) => bases.filter((b) => RULES[o.level].includes(ADJ[b].rule));
 const tag = (set) => (set === 'person' ? 'person' : set.items[0][0]);
 
-/** A set that has an adjective at this level, then an adjective and two different items from it. */
-function draw(rng, o) {
-  const choices = [...SETS, 'person'].filter((s) => byLevel(o, s === 'person' ? PERSON_ADJS : s.adjs).length);
+// Spelling rules take turns so every sheet from level 2 has its share of more / most questions (two in six).
+const TURNS = { 1: ['er', 'er2', 'r'], 2: ['er', 'r', 'ier', 'dbl', 'more', 'more2'], 3: ['er', 'r', 'ier', 'dbl', 'more', 'more2', 'irr'] };
+const adjsOf = (s) => (s === 'person' ? PERSON_ADJS : s.adjs);
+/** A spelling rule for this turn, a set that has such an adjective, the adjective, and two different items from the set. */
+function draw(rng, o, mode) {
+  const rule = rng.fresh(TURNS[o.level], (x) => `rule-${mode}-${x}`).replace(/2$/, ''); // each section keeps its own turn
+  const choices = [...SETS, 'person'].filter((s) => adjsOf(s).some((b) => ADJ[b].rule === rule));
   const set = rng.fresh(choices, tag);
-  const bases = byLevel(o, set === 'person' ? PERSON_ADJS : set.adjs);
+  const bases = adjsOf(set).filter((b) => ADJ[b].rule === rule);
   const adj = ADJ[rng.fresh(bases, (b) => 'adj-' + b)];
   let items = set === 'person' ? PEOPLE : set.items;
   if (adj.base === 'pretty' && set === 'person') items = items.filter((x) => x[2] === 'f');
@@ -86,7 +90,7 @@ const MODES = [
   {
     id: 'er', name: '比較級', instruction: () => '依括號提示，填入形容詞的比較級。',
     gen(rng, o) {
-      const { adj, a, b } = draw(rng, o);
+      const { adj, a, b } = draw(rng, o, 'er');
       const much = o.level >= 2 && rng.chance(0.25) ? 'much ' : '';
       return {
         lines: [[`${cap(a[0])} is ${much}`, ...twoBlanks(adj.cmp), ` (${adj.base}) than ${b[0]}.`]],
@@ -95,9 +99,9 @@ const MODES = [
     },
   },
   {
-    id: 'est', name: '最高級', instruction: () => '依括號提示，填入形容詞的最高級（前面已經有 the）。',
+    id: 'est', name: '最高級', instruction: () => '依括號提示，填入 the + 形容詞的最高級（一個空格填一個字）。',
     gen(rng, o) {
-      const { set, adj, a } = draw(rng, o);
+      const { set, adj, a } = draw(rng, o, 'est');
       let g, gz, noun;
       if (set === 'person') {
         const [gr, grz, nouns] = rng.pick(PERSON_GROUPS[isAdult(a[0]) ? 'adult' : 'young']);
@@ -113,13 +117,13 @@ const MODES = [
       }
       const nz = { boy: '男孩', girl: '女孩', student: '學生', book: '書', animal: '動物', room: '房間', city: '城市', river: '河', mountain: '山' }[noun] ?? '';
       return {
-        lines: [[`${cap(a[0])} is the `, ...twoBlanks(adj.sup), ` (${adj.base})${noun ? ' ' + noun : ''} ${g}.`]],
+        lines: [[`${cap(a[0])} is `, ...twoBlanks('the ' + adj.sup), ` (${adj.base})${noun ? ' ' + noun : ''} ${g}.`]],
         zh: zhJoin(a[1], `是${gz}最${adj.zh}的${nz}`) + '。', meta: { kind: 'est', base: adj.base, rule: adj.rule },
       };
     },
   },
   {
-    id: 'mix', name: '比較級或最高級', instruction: () => '看句子裡有 than 還是 the，填入比較級或最高級。',
+    id: 'mix', name: '比較級或最高級', instruction: () => '看句子裡有沒有 than，填入比較級，或 the + 最高級（一個空格填一個字）。',
     gen(rng, o) {
       const which = rng.fresh(['er', 'est'], (x) => 'mix-' + x);
       const it = MODES.find((m) => m.id === which).gen(rng, o);
@@ -137,7 +141,7 @@ export default {
   variety: false, // fixed sentence frames; checked by its own rules, not by the subject/verb spread test
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
   defaultModes: { 1: ['er', 'est'], 2: ['er', 'est'], 3: ['er', 'est', 'mix'] },
-  levelHint: { 1: '只考直接加 -er / -est 與字尾 e 加 -r / -st。', 2: '加入去 y 加 -ier、重複字尾、more / most。', 3: '再加入 good / bad 的不規則變化，以及比較級最高級混合判斷。' },
+  levelHint: { 1: '只考直接加 -er / -est 與字尾 e 加 -r / -st。', 2: '加入去 y 加 -ier、重複字尾、more / most（每張卷子都有）。', 3: '再加入 good / bad 的不規則變化，以及比較級最高級混合判斷。' },
   grammarBox: (o) => ({ head: ['規則', '比較級', '最高級'], rows: [
     ['一般加 -er / -est', 'taller', 'the tallest'], ['字尾 e 加 -r / -st', 'nicer', 'the nicest'],
     ...(o.level >= 2 ? [['子音 + y：去 y 加 -ier / -iest', 'happier', 'the happiest'], ['短母音 + 子音：重複字尾', 'bigger', 'the biggest'], ['長的形容詞用 more / most', 'more beautiful', 'the most beautiful']] : []),
