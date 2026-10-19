@@ -55,12 +55,12 @@ test('static HTML does not reveal formal answers',()=>{
   assert.doesNotMatch(html.replace(/circuit-guided/g,''),forbidden);
 });
 
-test('B3 screens remain intact and B4-A adds Notebook only',()=>{
+test('B3 screens remain intact and B4-A/B challenge containers are explicit',()=>{
   for(const id of ['cgg-welcome','cgg-bench-card','cgg-compare','cgg-inference','cgg-concept','cgg-status','cgg-cta','cgg-data','cgg-evidence','cgg-announcer']){
     assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
   }
-  for(const id of ['cgg-notebook','cgg-notebook-open']) assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
-  for(const absent of ['cgg-challenge','cgg-complete','cgg-storage-note','cgg-restart']) assert.ok(!html.includes(`id="${absent}"`),absent);
+  for(const id of ['cgg-notebook','cgg-notebook-open','cgg-challenges','cgg-challenges-open']) assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
+  for(const absent of ['cgg-complete','cgg-storage-note','cgg-restart']) assert.ok(!html.includes(`id="${absent}"`),absent);
 });
 
 test('B1-B3 JS is retained with B4-A Notebook and no persistence, analytics, network or test hook',()=>{
