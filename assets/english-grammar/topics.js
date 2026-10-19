@@ -20,7 +20,11 @@ import future from './topics/future.js';
 import compare from './topics/compare.js';
 import conj from './topics/conj.js';
 import must from './topics/must.js';
+import perfect from './topics/perfect.js';
+import gerund from './topics/gerund.js';
+import give from './topics/give.js';
+import exclaim from './topics/exclaim.js';
 
 export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must];
-export const DRAFTS = [];
+export const DRAFTS = [perfect, gerund, give, exclaim];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];

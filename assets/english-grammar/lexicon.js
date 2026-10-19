@@ -254,6 +254,6 @@ export const FUNCTION_WORDS = [
   'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
   'a', 'an', 'the', 'be', 'am', 'is', 'are', 'was', 'were', 'not', "isn't", "aren't", "wasn't", "weren't",
   'do', 'does', 'did', 'have', 'has', 'had', 'and', 'at', 'mr', 'ms', 'mrs',
-  'much', "o'clock", 'going', 'better', 'best', 'worse', 'worst', "won't", 'must', "mustn't", 'than', // not in the 2000-word list as written: much is missing, o’clock is listed with a curly quote
+  'much', "o'clock", 'going', 'better', 'best', 'worse', 'worst', "won't", 'must', "mustn't", 'than', 'would', "haven't", "hasn't", // not in the 2000-word list as written: much is missing, o’clock is listed with a curly quote
   "let's", "it's", "they're", 'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
 ];

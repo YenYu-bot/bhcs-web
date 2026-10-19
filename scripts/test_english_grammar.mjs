@@ -14,8 +14,10 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin', 'taichung', 'taiwan']);
+// past participles that differ from the past form, back to the base
+const PP_BACK = { eaten: 'eat', drunk: 'drink', done: 'do', written: 'write', sung: 'sing', swum: 'swim', ridden: 'ride', taken: 'take', gone: 'go', drawn: 'draw', flown: 'fly', driven: 'drive', gotten: 'get', seen: 'see', worn: 'wear', spoken: 'speak', been: 'be', lent: 'lend', sent: 'send', kept: 'keep' };
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man', teeth: 'tooth', feet: 'foot', mice: 'mouse' };
 function inList(word) {
   const w = word.toLowerCase().replace(/'s$/, '');
@@ -26,6 +28,7 @@ function inList(word) {
   if (w.endsWith('es') && LIST.has(w.slice(0, -2))) return true;
   if (w.endsWith('s') && LIST.has(w.slice(0, -1))) return true;
   if (PAST_BACK[w] && LIST.has(PAST_BACK[w])) return true;
+  if (PP_BACK[w] && OK_WORDS.has(PP_BACK[w])) return true;
   const stems = (stem) => [stem, stem + 'e', stem.replace(/(.)\1$/, '$1')];
   if (w.endsWith('ying') && LIST.has(w.slice(0, -4) + 'ie')) return true;
   if (w.endsWith('ing') && stems(w.slice(0, -3)).some((x) => LIST.has(x))) return true;
@@ -488,7 +491,69 @@ function checkMust(it, mode) {
   assert.ok(!/\bmust to\b|\bmustn't to\b/.test(text.replace(/___/g, a.join(' '))), 'must takes no to');
 }
 
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust };
+
+// ---------- batch 5 rules ----------
+const PP_OF = { eat: 'eaten', drink: 'drunk', do: 'done', write: 'written', sing: 'sung', swim: 'swum', run: 'run', ride: 'ridden', take: 'taken', go: 'gone', draw: 'drawn', fly: 'flown', drive: 'driven', get: 'gotten', see: 'seen', come: 'come', wear: 'worn', speak: 'spoken' };
+const ppOf = (b) => PP_OF[b] ?? pastOf(b);
+const haveOf = (subj) => (isThirdSg(subj) ? 'has' : 'have');
+function checkPerfect(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const h = haveOf(m.subj), p = ppOf(m.base);
+  if (o.level === 1 && mode !== 'mix') assert.ok(!IRREGULAR_PAST[m.base] && !PP_OF[m.base], `level 1 regular only: ${m.base}`);
+  if (mode === 'fill') { assert.deepEqual(a, [h, p], text); assert.match(text, /\b(already|just|twice|three times|before|for (two years|three hours|a long time)|since (last year|2020|this morning))\b/); }
+  if (mode === 'neg') { assert.deepEqual(a, m.abbr ? [h + "n't", p] : [h, 'not', p], text); assert.match(text, / yet\./); }
+  if (mode === 'q') {
+    const r = expectedReply(m.subj), rh = ['he', 'she', 'it'].includes(r) ? 'has' : 'have';
+    assert.deepEqual(a, [cap1(h), p, r, m.yes ? rh : rh + "n't"], text);
+    assert.match(text, / ever ___| yet\?/);
+  }
+  if (mode === 'never') assert.deepEqual(a, [h, 'never', p], text);
+  if (mode === 'mix') {
+    const perfect = /\b(twice|three times|before|for (two years|three hours|a long time)|since (last year|2020|this morning))\.$/.test(text);
+    const past = /\b(yesterday|last night|last Sunday|last month|two days ago)\.$/.test(text);
+    assert.ok(perfect !== past, `exactly one kind of time word: ${text}`);
+    assert.deepEqual(a, [perfect ? `${h} ${p}` : pastOf(m.base)], text);
+  }
+}
+const TO_HEADS = new Set(['want', 'hope', 'plan', 'decide', 'need', 'learn', 'would like', 'try']);
+const ING_HEADS = new Set(['enjoy', 'finish', 'practice', 'keep', 'stop', 'give up']);
+function checkGerund(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const wantTo = TO_HEADS.has(m.head), wantIng = ING_HEADS.has(m.head) || ['go', 'before', 'after'].includes(m.head) || / (at|in|of|for|about) ___/.test(text);
+  assert.ok(wantTo !== wantIng, `head decides: ${m.head}`);
+  const form = wantTo ? `to ${m.base}` : ing(m.base);
+  assert.deepEqual(a, mode === 'mix' ? [form] : form.split(' '), `${m.head} + ${form}: ${text}`);
+  if (mode === 'to') assert.ok(wantTo); if (mode === 'ing') assert.ok(ING_HEADS.has(m.head));
+  if (m.head === 'go') assert.match(text, /\bgo(es)? ___ \((swim|shop|fish|hike|camp|skate|jog|dance)\)/);
+}
+const FOR_VERBS = new Set(['buy', 'make', 'cook', 'get', 'draw']), TO_VERBS = new Set(['give', 'send', 'show', 'lend', 'teach', 'tell', 'write', 'pass', 'bring']);
+function checkGive(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const prep = FOR_VERBS.has(m.verb) ? 'for' : TO_VERBS.has(m.verb) ? 'to' : assert.fail(`known verb ${m.verb}`);
+  if (mode === 'prep') assert.deepEqual(a, [prep], text);
+  if (mode === 'swap') {
+    const [given] = it.lines.map(lineText);
+    const long = / (to|for) /.test(given) === false; // given has person first → answer puts the thing first with to / for
+    assert.equal(long, m.long);
+    assert.deepEqual(a, long ? [m.thing, prep, m.rec] : [m.rec, m.thing], `${given} → ${text}`);
+  }
+  if (mode === 'it') { assert.deepEqual(a, [m.pron, prep, m.rec], text); assert.equal(m.pron, /\(some flowers\)$/.test(text) ? 'them' : 'it'); }
+}
+const ADVERB_HOW = /^(fast|well|hard|late|early)$/;
+function checkExclaim(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const last = it.lines.at(-1);
+  const afterBlanks = lineText(last).split('___').pop();
+  if (m.kind === 'how' || (m.kind === 'change' && !m.what)) { assert.deepEqual(a, ['How', m.adj], text); assert.match(afterBlanks, /^ [a-z].*!$/, 'clause follows'); }
+  else {
+    const noun = afterBlanks.trim().split(' ')[0].replace(/!$/, '');
+    assert.equal(noun, m.noun);
+    const plural = /s$/.test(noun) && noun !== 'bus' || noun === 'weather';
+    assert.deepEqual(a, plural ? ['What', m.adj] : ['What', soundArticle(m.adj), m.adj], text);
+  }
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim };
 
 // ---------- sheets to check ----------
 function* settings() {
@@ -510,7 +575,7 @@ test('every sheet has the asked number of questions, all different, in the chose
     else for (const sec of sh.sections) assert.ok(sec.items.length <= (t.capacity[sec.mode] ?? Infinity), `${sh.code}: ${sec.mode} within its capacity`);
     if (t.capacity) assert.equal(sh.total, splitCount(o.count, sh.opts.modes).reduce((a, x) => a + Math.min(x.n, t.capacity[x.mode] ?? Infinity), 0), `${sh.code}: only capped sections run short`);
     assert.deepEqual(sh.sections.map((s) => s.mode), t.modes.map((m) => m.id).filter((id) => o.modes.includes(id)), 'sections follow the mode order');
-    const keys = items.map((it) => it.lines.map(lineText).join(' | ').toLowerCase());
+    const keys = items.map((it) => it.lines.map(lineText).join(' | ').toLowerCase() + (t.zhRequired ? ' | ' + it.zh : ''));
     assert.equal(new Set(keys).size, keys.length, `${sh.code}: no repeated question`);
     n++;
   }
@@ -544,7 +609,7 @@ test('every question has a Chinese line with no leftovers', () => {
     for (const it of buildSheet(t, o).sections.flatMap((s) => s.items)) {
       assert.match(it.zh, /[一-鿿]/, 'has Chinese');
       assert.ok(!/undefined|null|NaN/.test(it.zh), `clean Chinese: ${it.zh}`);
-      assert.match(it.zh, /[。？]$/, 'ends with punctuation');
+      assert.match(it.zh, /[。？！]$/, 'ends with punctuation');
     }
   }
 });
@@ -637,7 +702,7 @@ test('whole-sentence translation: new sentences, whole and in the word list, and
     for (const x of items) {
       assert.ok(!fill.has(x.en.toLowerCase()), `${where}: not a fill-in sentence: ${x.en}`);
       assert.ok(sh.opts.modes.includes(x.mode), 'from the chosen modes');
-      assert.match(x.en, /^[A-Z][A-Za-z ,'.]*[A-Za-z][.?!]$/, `${where}: one whole sentence, no cue left: ${x.en}`);
+      assert.match(x.en, /^[A-Z][A-Za-z0-9 ,'.]*[A-Za-z0-9][.?!]$/, `${where}: one whole sentence, no cue left: ${x.en}`);
       for (const w of x.en.match(/[A-Za-z][A-Za-z']*/g)) assert.ok(inList(w), `${where}: "${w}" in the word list (${x.en})`);
       assert.match(x.zh, /^[^(（]*\p{Script=Han}[^(（]*[。？！]$/u, `${where}: Chinese prompt: ${x.zh}`);
       assert.ok(!/undefined|null|NaN|___|→|—/.test(x.en + x.zh), `${where}: clean: ${x.en} / ${x.zh}`);
