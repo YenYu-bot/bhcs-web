@@ -12,7 +12,7 @@ const text=(p,sel)=>p.locator(sel).innerText();
 async function leakText(p){return p.evaluate(()=>document.body.innerText+' '+[...document.querySelectorAll('[aria-label],[title]')].map(e=>(e.getAttribute('aria-label')||'')+' '+(e.getAttribute('title')||'')).join(' '))}
 async function preConcept(p,label){assert.notEqual(await phase(p),'concept',label);assert.doesNotMatch(await leakText(p),forbidden,label)}
 async function clickCta(p,{tap=false}={}){const b=p.locator('#cgg-cta');assert.equal(await b.isVisible(),true,'CTA visible');assert.equal(await b.isEnabled(),true,'CTA enabled');tap?await b.tap():await b.click();await settle(p)}
-async function toggle(p,{tap=false}={}){const b=p.locator('[data-switch-toggle]');tap?await b.tap():await b.click();await settle(p)}
+async function toggle(p,{tap=false}={}){const b=p.locator('#cgg-bench-card [data-switch-toggle]');tap?await b.tap():await b.click();await settle(p)}
 async function answer(p,q,v,{tap=false}={}){const x=p.locator(`[data-question="${q}"] input[value="${v}"]`);tap?await x.tap():await x.check();await settle(p)}
 async function setFixed(p,name){
   await p.evaluate(async(name)=>{
@@ -46,16 +46,16 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
   assert.equal(await p.locator('#cgg-cta').isEnabled(),false);
   assert.match(await text(p,'#cgg-status'),/閉合開關/);
   await toggle(p,{tap});
-  assert.equal(await text(p,'[data-role="ammeter-value"]'),'1.0 A');
-  assert.equal(await text(p,'[data-role="voltmeter-value"]'),'6.0 V');
+  assert.equal(await text(p,'#cgg-bench-card [data-role="ammeter-value"]'),'1.0 A');
+  assert.equal(await text(p,'#cgg-bench-card [data-role="voltmeter-value"]'),'6.0 V');
   assert.equal(await p.locator('#cgg-cta').isEnabled(),true);
   await preConcept(p,'baseline live'); if(shots)await shot(p,prefix+'baseline');
   await clickCta(p,{tap});assert.equal(await phase(p),'trial1-build');
 
   await setFixed(p,'trial1');assert.equal(await phase(p),'trial1-measure');await toggle(p,{tap});
-  assert.equal(await text(p,'[data-role="ammeter-value"]'),'0.5 A');
-  assert.equal(await text(p,'[data-role="voltmeter-value"]'),'3.0 V');
-  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-lamp] [data-role="lamp-state"]')].map(e=>e.textContent)),['較暗','較暗']);
+  assert.equal(await text(p,'#cgg-bench-card [data-role="ammeter-value"]'),'0.5 A');
+  assert.equal(await text(p,'#cgg-bench-card [data-role="voltmeter-value"]'),'3.0 V');
+  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('#cgg-bench-card [data-lamp] [data-role="lamp-state"]')].map(e=>e.textContent)),['較暗','較暗']);
   await preConcept(p,'one path live');if(shots)await shot(p,prefix+'one-path');
   await clickCta(p,{tap});assert.equal(await phase(p),'compare1');
   assert.match(await text(p,'#cgg-evidence'),/1\.0 A/);assert.match(await text(p,'#cgg-evidence'),/0\.5 A/);
@@ -71,18 +71,18 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
   await clickCta(p,{tap});assert.equal(await phase(p),'trial2-build');
 
   await setFixed(p,'trial2Total');assert.equal(await phase(p),'trial2-total');await toggle(p,{tap});
-  assert.equal(await text(p,'[data-role="ammeter-value"]'),'2.0 A');
-  assert.equal(await text(p,'[data-role="voltmeter-value"]'),'6.0 V');
-  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('[data-lamp] [data-role="lamp-state"]')].map(e=>e.textContent)),['基準亮度','基準亮度']);
+  assert.equal(await text(p,'#cgg-bench-card [data-role="ammeter-value"]'),'2.0 A');
+  assert.equal(await text(p,'#cgg-bench-card [data-role="voltmeter-value"]'),'6.0 V');
+  assert.deepEqual(await p.evaluate(()=>[...document.querySelectorAll('#cgg-bench-card [data-lamp] [data-role="lamp-state"]')].map(e=>e.textContent)),['基準亮度','基準亮度']);
   await clickCta(p,{tap});assert.equal(await phase(p),'trial2-branch1');
 
   await setFixed(p,'trial2L1');await toggle(p,{tap});
-  assert.equal(await text(p,'[data-role="ammeter-value"]'),'1.0 A');
+  assert.equal(await text(p,'#cgg-bench-card [data-role="ammeter-value"]'),'1.0 A');
   assert.match(await text(p,'#cgg-coach-main'),/燈泡 1/);
   await clickCta(p,{tap});assert.equal(await phase(p),'trial2-branch2');
 
   await setFixed(p,'trial2L2');await toggle(p,{tap});
-  assert.equal(await text(p,'[data-role="ammeter-value"]'),'1.0 A');
+  assert.equal(await text(p,'#cgg-bench-card [data-role="ammeter-value"]'),'1.0 A');
   assert.match(await text(p,'#cgg-coach-main'),/燈泡 2/);
   await preConcept(p,'branch2');if(shots)await shot(p,prefix+'branch2');
   await clickCta(p,{tap});assert.equal(await phase(p),'compare2');
