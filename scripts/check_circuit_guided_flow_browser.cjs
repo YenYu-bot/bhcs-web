@@ -111,6 +111,41 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
   if(shots)await shot(p,prefix+'concept');
 }
 
+
+async function verifyNotebook(p,{tap=false,shots=false,prefix='' }={}){
+  const open=p.locator('#cgg-notebook-open');
+  assert.equal(await open.isVisible(),true,'Notebook available at Concept');
+  tap?await open.tap():await open.click();
+  const panel=p.locator('#cgg-notebook');
+  assert.equal(await panel.isVisible(),true);
+  assert.match(await text(p,'#cgg-notebook h2'),/Level A/);
+  const choose=async(name,value)=>{
+    const input=p.locator('input[name="cgg-nb-'+name+'"][value="'+value+'"]');
+    tap?await input.tap():await input.check();
+  };
+  const next=p.locator('.cgg-notebook-next');
+  await next.click();assert.match(await text(p,'#cgg-notebook [role="status"]'),/重新檢查/);
+  await choose('baselineCurrent','1.0');
+  await choose('onePathChange','decrease');
+  await choose('twoPathChange','increase');
+  await choose('alwaysDecrease','true');
+  await next.click();assert.match(await text(p,'#cgg-notebook h2'),/Level A/,'wrong answer blocked');
+  await choose('alwaysDecrease','false');
+  await next.click();assert.match(await text(p,'#cgg-notebook h2'),/Level B/);
+  await next.click();assert.match(await text(p,'#cgg-notebook [role="status"]'),/完整的解釋/);
+  await p.getByRole('textbox',{name:'我的解釋'}).fill('兩種接法的電流路徑不同，因此同樣多一顆燈泡，總電流也不同。');
+  await next.click();assert.match(await text(p,'#cgg-notebook h2'),/Level C/);
+  assert.equal(await p.locator('#cgg-notebook-ideas li').count(),0,'ideas hidden before limitation');
+  await p.getByRole('textbox',{name:/請引用至少兩筆/}).fill('一顆燈是1.0 A，一條路兩顆燈是0.5 A，兩條路兩顆燈是2.0 A。');
+  assert.equal(await p.locator('#cgg-notebook-ideas li').count(),0,'ideas remain hidden');
+  await p.getByRole('textbox',{name:/本站模型和真實電路/}).fill('真實電池的內阻會改變量測電流，與理想模型不同。');
+  assert.equal(await p.locator('#cgg-notebook-ideas li').count(),6);
+  await next.click();assert.match(await text(p,'#cgg-notebook h2'),/Level done/);
+  assert.equal(await next.isHidden(),true);
+  if(shots)await shot(p,prefix+'notebook-done');
+  await common(p,prefix+'notebook');
+}
+
 (async()=>{
   const server=createServer();await new Promise(r=>server.listen(0,r));
   const base='http://localhost:'+server.address().port,browser=await chromium.launch(launchOptions());
@@ -123,6 +158,7 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
       await common(p,'1280 welcome');
       await runJourney(p,{shots:true,prefix:'1280-'});
       await common(p,'1280 concept');
+      await verifyNotebook(p,{shots:true,prefix:'1280-'});
       assert.equal(await p.evaluate(()=>localStorage.length),0);
       assert.equal(await p.evaluate(()=>sessionStorage.length),0);
       ok('1280: full Welcome → five measurements → two compares → inference → Concept; leakage blocked before Concept, axe clean');
@@ -145,6 +181,7 @@ async function runJourney(p,{tap=false,shots=false,prefix='' }={}){
       assert.ok(facts.overflow<=1);
       assert.ok(facts.conceptRight<=facts.viewport+1);
       await common(p,'390 concept');
+      await verifyNotebook(p,{tap:true,shots:true,prefix:'390-'});
       ok('390: full flow by touch, answer targets ≥56px, no sideways scroll, Concept fits, axe clean');
       await ctx.close();
     }
