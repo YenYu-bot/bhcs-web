@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {challengeBase,replayChallenge,challengeReadings,challengeOneStatus,challengeThreeEvidence,CHALLENGE_TWO_POSITIONS} from '../assets/circuit-guided/challenges.js';
+assert.equal(challengeOneStatus('restoreParallel').correct,true);
+assert.equal(challengeOneStatus('retainSeries').correct,false);
+const a=challengeBase(2),b=challengeBase(2);a.wires.pop();assert.notEqual(a.wires.length,b.wires.length,'base clones are independent');
+assert.equal(replayChallenge(2,[{type:'TOGGLE_SWITCH',value:true}]).valid,true);
+assert.equal(replayChallenge(2,[{type:'CONNECT',from:'bat+',to:'sw.a'}]).valid,false);
+assert.equal(replayChallenge(2,[{type:'DISCONNECT',from:'L1.a',to:'L2.a'}]).valid,false);
+assert.equal(replayChallenge(2,[{type:'NOPE'}]).valid,false);
+assert.equal(replayChallenge(3,[{type:'CONNECT',from:'X',to:'bat+'}]).valid,false);
+assert.equal(challengeThreeEvidence([]),null);
+const c=challengeReadings(3,[{type:'TOGGLE_SWITCH',value:true}]);assert.equal(c.valid,true);
+assert.equal(c.result.batteryCurrent.value,2);
+const evidence=challengeThreeEvidence([{type:'DISCONNECT',from:'sw.b',to:'L2.a'},{type:'TOGGLE_SWITCH',value:true}]);
+assert.ok(evidence,'remove L2 branch must yield evidence');assert.equal(evidence.totalCurrent,1);assert.equal(evidence.L1Current,1);
+assert.equal(CHALLENGE_TWO_POSITIONS.length,3);
+console.log('circuit-guided B4-B challenge core checks passed');
