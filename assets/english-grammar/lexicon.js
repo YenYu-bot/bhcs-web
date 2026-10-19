@@ -103,6 +103,39 @@ export function twoNamesSubject(rng) {
   return P(`${x} and ${y}`, `${x} 和 ${y}`, 'pl', 3, 'person', 'they', 2, { tags: ['name'], age: 'young' });
 }
 
+// Possessive subjects: "Tom's mother", joint "Tom and Amy's mother" (one mother, shared), separate "Tom's and Amy's mothers" (two).
+//   [noun, plural, Chinese, reply pronoun (null = gender unknown, so not used in short answers), kind, extra]
+const R = (sg, pl, zh, reply, kind = 'person', extra = {}) => ({ sg, pl, zh, reply, kind, ...extra });
+export const RELATIONS = [
+  R('mother', 'mothers', '媽媽', 'she', 'person', { age: 'adult' }), R('father', 'fathers', '爸爸', 'he', 'person', { age: 'adult' }),
+  R('sister', 'sisters', '姊姊', 'she', 'person', { age: 'young' }), R('brother', 'brothers', '哥哥', 'he', 'person', { age: 'young' }),
+  R('grandmother', 'grandmothers', '奶奶', 'she', 'person', { age: 'adult' }), R('grandfather', 'grandfathers', '爺爺', 'he', 'person', { age: 'adult' }),
+  R('uncle', 'uncles', '叔叔', 'he', 'person', { age: 'adult' }), R('aunt', 'aunts', '阿姨', 'she', 'person', { age: 'adult' }),
+  R('cousin', 'cousins', '表哥', null, 'person', { age: 'young' }), R('friend', 'friends', '朋友', null, 'person', { age: 'young' }),
+  R('teacher', 'teachers', '老師', null, 'person', { age: 'adult', tags: ['has-job'] }), R('classmate', 'classmates', '同學', null, 'person', { age: 'young' }),
+  R('dog', 'dogs', '狗', 'it', 'animal', { species: 'dog' }), R('cat', 'cats', '貓', 'it', 'animal', { species: 'cat' }),
+];
+const own = (rng, rel, en, zh, num) => P(en, zh, num, 3, rel.kind, num === 'pl' ? 'they' : rel.reply, 2, { tags: ['poss', ...(rel.tags ?? [])], age: rel.age ?? 'any', species: rel.species });
+/** "Tom's mother" */
+export function possessiveSubject(rng) {
+  const n = rng.pick([...NAMES.m, ...NAMES.f]), rel = rng.pick(RELATIONS);
+  return own(rng, rel, `${n}'s ${rel.sg}`, `${n} 的${rel.zh}`, 'sg');
+}
+/** Joint "Tom and Amy's mother" (one person they share) or separate "Tom's and Amy's mothers" (one each). */
+export function jointSubject(rng, separate) {
+  const a = rng.pick(NAMES.m), b = rng.pick(NAMES.f);
+  const [x, y] = rng.chance(0.5) ? [a, b] : [b, a];
+  const rel = rng.pick(RELATIONS.filter((r) => (separate ? r.kind === 'person' : ['mother', 'father', 'grandmother', 'grandfather', 'uncle', 'aunt', 'teacher', 'dog', 'cat'].includes(r.sg))));
+  if (separate) return own(rng, rel, `${x}'s and ${y}'s ${rel.pl}`, `${x} 的${rel.zh}和 ${y} 的${rel.zh}`, 'pl');
+  return own(rng, rel, `${x} and ${y}'s ${rel.sg}`, `${x} 和 ${y} 的${rel.zh}`, 'sg');
+}
+/** The name-based subjects added to every pool: three names, and from level 2 a name pair and possessives. */
+export function extraSubjects(rng, level) {
+  const out = [nameSubject(rng), nameSubject(rng), nameSubject(rng), possessiveSubject(rng)];
+  if (level >= 2) out.push(twoNamesSubject(rng), possessiveSubject(rng), jointSubject(rng, false), jointSubject(rng, true));
+  return out;
+}
+
 // Predicates after a Be verb.
 //   type   'adj' | 'job' | 'rel' | 'loc'
 //   for    which subject kinds it fits;  age  (jobs) which people;  num  'sg' | 'pl' | undefined (either)
@@ -221,6 +254,6 @@ export const FUNCTION_WORDS = [
   'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
   'a', 'an', 'the', 'be', 'am', 'is', 'are', 'was', 'were', 'not', "isn't", "aren't", "wasn't", "weren't",
   'do', 'does', 'did', 'have', 'has', 'had', 'and', 'at', 'mr', 'ms', 'mrs',
-  'much', "o'clock", // not in the 2000-word list as written: much is missing, o’clock is listed with a curly quote
+  'much', "o'clock", 'going', 'better', 'best', 'worse', 'worst', "won't", 'must', "mustn't", 'than', // not in the 2000-word list as written: much is missing, o’clock is listed with a curly quote
   "let's", "it's", "they're", 'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
 ];
