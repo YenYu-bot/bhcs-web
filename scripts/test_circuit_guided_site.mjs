@@ -64,7 +64,7 @@ test('B3 screens remain intact and B4-A adds Notebook only',()=>{
 });
 
 test('B1-B3 JS is retained with B4-A Notebook and no persistence, analytics, network or test hook',()=>{
-  assert.deepEqual(js,['challenges.js','engine.js','input.js','main.js','model.js','notebook-view.js','notebook.js','render.js','script.js']);
+  assert.deepEqual(js,['challenge-view.js','challenges.js','engine.js','input.js','main.js','model.js','notebook-view.js','notebook.js','render.js','script.js']);
   for(const f of js){
     const src=strip(read(DIR+'/'+f));
     for(const bad of ['localStorage','sessionStorage','indexedDB','document.cookie','bhcsScienceTrack','gtag','dataLayer','fetch(','XMLHttpRequest','sendBeacon','WebSocket','__cggTest','URLSearchParams','eval(','new Function']){
