@@ -103,7 +103,7 @@ export default {
   defaultModes: { 1: ['link'], 2: ['link', 'sense'], 3: ['link', 'sense', 'cause'] },
   levelHint: { 1: '連綴動詞後接形容詞（not 副詞）。', 2: '加入感官動詞 see / hear / watch / feel + 受詞 + 原形或 V-ing。', 3: '再加入使役動詞 make / let / have / help 與 ask / tell / want + 受詞 + to V。' },
   grammarBox: (o) => ({ head: ['動詞', '後面接', '例子'], rows: [
-    ['look、sound、smell、taste、feel、get、turn', '形容詞', 'The soup tastes good.（不是 well）'],
+    ['look、sound、smell、taste、feel、get', '形容詞', 'The soup tastes good.（不是 well）'],
     ...(o.level >= 2 ? [['see、hear、watch、feel + 受詞', '原形（全程）／V-ing（正在）', 'I saw him cross the street. / I saw him crossing the street.']] : []),
     ...(o.level >= 3 ? [['make、let、have、help + 受詞', '原形', 'My mother made me clean the room.'], ['ask、tell、want + 受詞', 'to + 原形', 'The teacher told us to be quiet.']] : []),
   ], note: '連綴動詞描述主詞的狀態，所以接形容詞；感官與使役動詞後面的受詞做動作，動詞用原形。' }),
