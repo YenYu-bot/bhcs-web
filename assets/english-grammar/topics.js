@@ -12,7 +12,11 @@ import plural from './topics/plural.js';
 import demonstrative from './topics/this.js';
 import freq from './topics/freq.js';
 import imperative from './topics/imperative.js';
+import article from './topics/article.js';
+import quantity from './topics/quantity.js';
+import wh from './topics/wh.js';
+import prep from './topics/prep.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep];
 export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];

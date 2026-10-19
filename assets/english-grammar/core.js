@@ -85,7 +85,7 @@ export const TR_CHOICES = [0, 5, 10];
  * rewrite items ("A. → B.") give the result.
  */
 export function fullSentence(it) {
-  const text = (l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('');
+  const text = (l) => l.map((p) => (typeof p === 'string' ? p : p.a === '×' ? '' : p.a)).join('');
   const dialog = it.lines.some((l) => /(^|\s)— /.test(text(l)));
   let s = dialog ? text(it.lines[0]).split(' — ')[0] : text(it.lines.at(-1)).replace(/^→\s*/, '');
   s = s.replace(/\s*[(（][^)）]*[)）]/g, '').replace(/\s+/g, ' ').replace(/\s+([.?!,])/g, '$1').trim();
