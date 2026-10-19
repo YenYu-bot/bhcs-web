@@ -15,7 +15,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
 const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break' };
-const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin']);
+const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin', 'taichung', 'taiwan']);
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man', teeth: 'tooth', feet: 'foot', mice: 'mouse' };
 function inList(word) {
   const w = word.toLowerCase().replace(/'s$/, '');
@@ -31,6 +31,11 @@ function inList(word) {
   if (w.endsWith('ing') && stems(w.slice(0, -3)).some((x) => LIST.has(x))) return true;
   if (w.endsWith('ied') && LIST.has(w.slice(0, -3) + 'y')) return true;
   if (w.endsWith('ed') && stems(w.slice(0, -2)).some((x) => LIST.has(x))) return true;
+  // comparatives and superlatives: taller, nicer, happier, bigger / tallest, nicest, happiest, biggest
+  if (w.endsWith('ier') && LIST.has(w.slice(0, -3) + 'y')) return true;
+  if (w.endsWith('iest') && LIST.has(w.slice(0, -4) + 'y')) return true;
+  if (w.endsWith('er') && stems(w.slice(0, -2)).some((x) => LIST.has(x))) return true;
+  if (w.endsWith('est') && stems(w.slice(0, -3)).some((x) => LIST.has(x))) return true;
   return false;
 }
 
@@ -397,7 +402,85 @@ function checkPrep(it, mode, o) {
   }
 }
 
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep };
+
+// ---------- batch 4 rules ----------
+const FUT_CUES = /\b(?:[Tt]omorrow( morning| evening)?|tonight|next (week|Sunday|Saturday)|this (weekend|afternoon|Saturday)|[Aa]fter school tomorrow|[Nn]ext (?:week|Sunday|Saturday)|[Tt]his (?:weekend|afternoon|Saturday)|[Tt]onight)\b/;
+function checkFuture(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  assert.match(text, FUT_CUES, `a future time word: ${text}`);
+  if (o.level === 1) assert.equal(m.form, 'will', 'level 1 is will only');
+  const be = expectedBe(m.subj, false);
+  if (mode === 'fill') assert.deepEqual(a, m.form === 'will' ? ['will', m.base] : [be, 'going', 'to', m.base], text);
+  if (mode === 'neg') {
+    if (m.form === 'will') assert.deepEqual(a, m.abbr ? ["won't", m.base] : ['will', 'not', m.base], text);
+    else assert.deepEqual(a, m.abbr ? [NEG[be], 'going', 'to', m.base] : [be, 'not', 'going', 'to', m.base], text);
+    if (m.abbr && m.form === 'going') assert.notEqual(be, 'am', 'am not has no contraction');
+  }
+  if (mode === 'q') assert.deepEqual(a, m.form === 'will' ? ['Will', m.base] : [cap1(be), 'going', 'to', m.base], text);
+  if (mode === 'short') {
+    const r = expectedReply(m.subj), rb = expectedBe(r, false);
+    const want = m.form === 'will' ? [r, m.yes ? 'will' : "won't"] : m.yes ? [r, rb] : rb === 'am' ? ["I'm", 'not'] : [r, NEG[rb]];
+    assert.deepEqual(a, want, text);
+    assert.ok(text.includes(m.yes ? '— Yes,' : '— No,'));
+  }
+}
+// comparative / superlative spelling by its own rules
+const IRR_CMP = { good: ['better', 'best'], bad: ['worse', 'worst'] };
+const LONG = new Set(['beautiful', 'interesting', 'difficult', 'important', 'popular', 'expensive', 'delicious', 'famous', 'useful', 'dangerous', 'comfortable', 'exciting']);
+function cmpForms(b) {
+  if (IRR_CMP[b]) return IRR_CMP[b];
+  if (LONG.has(b)) return [`more ${b}`, `most ${b}`];
+  if (/e$/.test(b)) return [b + 'r', b + 'st'];
+  if (/[^aeiou]y$/.test(b)) return [b.slice(0, -1) + 'ier', b.slice(0, -1) + 'iest'];
+  if (/^[^aeiou]*[aeiou][^aeiouwxy]$/.test(b)) return [b + b.at(-1) + 'er', b + b.at(-1) + 'est'];
+  return [b + 'er', b + 'est'];
+}
+const CMP_LEVEL = (b) => (IRR_CMP[b] ? 3 : LONG.has(b) || /[^aeiou]y$/.test(b) || /^[^aeiou]*[aeiou][^aeiouwxy]$/.test(b) ? 2 : 1);
+function checkCompare(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const [cmp, sup] = cmpForms(m.base);
+  assert.ok(CMP_LEVEL(m.base) <= o.level, `level ${o.level} allows ${m.base}`);
+  assert.ok(text.includes(`(${m.base})`), 'base given');
+  const isCmp = / than /.test(text);
+  if (mode === 'er') assert.ok(isCmp, 'comparative sentence has than');
+  if (mode === 'est') assert.ok(!isCmp && / the ___/.test(text), 'superlative after the');
+  assert.deepEqual(a, (isCmp ? cmp : sup).split(' '), `${m.base}: ${text}`);
+  if (/ much ___/.test(text)) assert.ok(isCmp, 'much only before a comparative');
+}
+const CONJ_ZH = { and: /和|又|也|，然後|煮晚餐，我媽媽/, but: /但是/, or: /還是|或/, so: /所以/, because: /因為/ };
+function checkConj(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  assert.deepEqual(a, [m.conj]);
+  assert.match(it.zh, CONJ_ZH[m.conj], `Chinese shows ${m.conj}: ${it.zh}`);
+  if (mode === 'abo') assert.ok(['and', 'but', 'or'].includes(m.conj));
+  if (mode === 'sb') assert.ok(['so', 'because'].includes(m.conj));
+  if (mode === 'swap') {
+    const [given, out] = it.lines.map((l) => lineText(l).toLowerCase());
+    if (m.conj === 'because') { assert.match(given, /, so /); const [c, r] = given.split(', so '); assert.equal(out, `→ ${r.replace(/\.$/, '')} ___ ${c}.`, `swapped clauses: ${given} / ${out}`); }
+    else { assert.match(given, / because /); const [r, c] = given.split(' because '); assert.equal(out, `→ ${c.replace(/\.$/, '')}, ___ ${r}.`, `swapped clauses: ${given} / ${out}`); }
+  }
+}
+function checkMust(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const have = m.s3 ? 'has' : 'have';
+  if (mode === 'have') { assert.deepEqual(a, [have, 'to']); assert.ok(it.zh.includes('必須')); }
+  if (mode === 'must') { assert.deepEqual(a, [m.neg ? "mustn't" : 'must']); assert.ok(it.zh.includes(m.neg ? '不可以' : '必須')); }
+  if (mode === 'neg') {
+    if (it.zh.includes('不必')) assert.deepEqual(a, [m.s3 ? "doesn't" : "don't", 'have', 'to'], text);
+    else { assert.ok(it.zh.includes('不可以'), it.zh); assert.deepEqual(a, ["mustn't"], text); }
+  }
+  if (mode === 'q') {
+    const aux = m.s3 ? 'does' : 'do', r = m.reply, rAux = r === 'I' ? 'do' : aux;
+    assert.deepEqual(a, [cap1(aux), 'have', 'to', r, m.yes ? rAux : rAux + "n't"], text);
+  }
+  if (mode === 'had') {
+    const past = /\b(yesterday|last night|last week)\b/.test(text);
+    assert.deepEqual(a, [past ? 'had' : have, 'to'], text);
+  }
+  assert.ok(!/\bmust to\b|\bmustn't to\b/.test(text.replace(/___/g, a.join(' '))), 'must takes no to');
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust };
 
 // ---------- sheets to check ----------
 function* settings() {
