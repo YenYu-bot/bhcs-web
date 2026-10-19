@@ -19,7 +19,7 @@ export function notebookEvidence(state){
     baseline,onePath,twoPath,
     onePathChange:onePath<baseline?'decrease':onePath>baseline?'increase':'same',
     twoPathChange:twoPath<baseline?'decrease':twoPath>baseline?'increase':'same',
-    alwaysDecrease:false,
+    alwaysDecrease:onePath<baseline&&twoPath<baseline,
   });
 }
 
