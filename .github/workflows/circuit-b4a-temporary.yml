@@ -16,11 +16,13 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --prefix scripts
-      - run: npx --yes playwright@1.58.2 install --with-deps chromium
+      - run: |
+          npm install --prefix /tmp/bhcs-composition playwright@1.58.2
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
       - run: sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
       - name: Circuit full journey and Notebook desktop/touch/axe
         env:
-          NODE_PATH: ${{ github.workspace }}/scripts/node_modules
+          NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_circuit_guided_flow_browser.cjs
       - if: always()
         uses: actions/upload-artifact@v4
