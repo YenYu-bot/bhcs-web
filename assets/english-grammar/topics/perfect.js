@@ -24,10 +24,13 @@ const PAST_CUES = [['yesterday', '昨天'], ['last night', '昨晚'], ['last Sun
 
 function draw(rng, o, use, endOnly = false) {
   const s = pickSubject(rng, actors(rng, o.level, { exclude: (x) => x.kind !== 'person' || x.tags.includes('every') }));
-  const f = s && pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!['for', 'since'].includes(use) || LASTING.has(x.v)), null, use !== 'for' && use !== 'since');
-  if (!f) return null;
+  if (!s) return null;
+  // the time word first: for / since only go with activities one keeps doing
   const cues = CUES.filter((c) => c.lvl <= o.level && (Array.isArray(use) ? use.includes(c.use) : c.use === use) && (!endOnly || c.pos === 'end'));
   const c = rng.fresh(cues, (x) => x.en); if (!c) return null;
+  const lasting = c.use === 'for' || c.use === 'since';
+  const f = pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!lasting || LASTING.has(x.v)), null, !lasting);
+  if (!f) return null;
   return { s, f, c };
 }
 const have = (s) => (third(s) ? 'has' : 'have');
