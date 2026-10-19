@@ -23,4 +23,16 @@ assert.equal(notebookBStatus('因為不同接線方式改變電流流通的路�
 assert.equal(notebookCStatus({counterexample:'兩次量測顯示不同的總電流'}).showIdeas,false);
 assert.equal(notebookCStatus({counterexample:'兩次量測顯示不同的總電流',limitation:'實際電池也具有自己的內部電阻'}).ready,true);
 assert.equal(LIMITATION_IDEAS.length,6);
-console.log('Circuit Guided Notebook B4-A core: 14 assertions passed');
+import fs from 'node:fs';
+const page=fs.readFileSync(new URL('../tools/science/circuit-guided.html',import.meta.url),'utf8');
+const glue=fs.readFileSync(new URL('../assets/circuit-guided/main.js',import.meta.url),'utf8');
+const view=fs.readFileSync(new URL('../assets/circuit-guided/notebook-view.js',import.meta.url),'utf8');
+assert.match(page,/id="cgg-notebook"/);
+assert.match(page,/id="cgg-notebook-open"/);
+assert.match(glue,/mountCircuitNotebook/);
+assert.match(glue,/state.phase !== 'concept'/);
+assert.match(view,/notebookAStatus\(getState\(\),learner.a\)/);
+assert.match(view,/notebookBStatus\(learner.b\)/);
+assert.match(view,/notebookCStatus\(learner.c\)/);
+assert.match(view,/notebookCStatus\(learner.c\).showIdeas/);
+console.log('Circuit Guided Notebook B4-A core and integration checks passed');
