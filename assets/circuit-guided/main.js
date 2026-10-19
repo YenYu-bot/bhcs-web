@@ -1,6 +1,7 @@
 // Page glue for Science Lab 2.0 Pilot #6 B3.
 // It owns state + DOM orchestration only. Science is model/engine, learner wording is script, bench visuals/input are B2.
 import { createInitialState, reduce } from './engine.js';
+import { mountChallenges } from './challenge-view.js';
 import { mountCircuitNotebook } from './notebook-view.js';
 import { MAX_WIRES } from './model.js';
 import { createCircuitBench } from './render.js';
@@ -54,7 +55,9 @@ const CARD_OF = {
 let state = createInitialState();
 let lastWhere = null;
 let seq = 0;
-const notebook = mountCircuitNotebook($('cgg-notebook'), () => state);
+const challenges = mountChallenges($('cgg-challenges'));
+const notebook = mountCircuitNotebook($('cgg-notebook'), () => state, {onComplete: () => { $('cgg-challenges-open').hidden = false; }});
+$('cgg-challenges-open').addEventListener('click', () => {challenges.show();$('cgg-challenges-open').hidden=true;});
 $('cgg-notebook-open').addEventListener('click', () => { notebook.show(); $('cgg-notebook-open').hidden = true; });
 
 const announcer = createAnnouncer($('cgg-announcer'));
@@ -162,7 +165,7 @@ function render(wasCta = false) {
   );
 
   $('cgg-notebook-open').hidden = state.phase !== 'concept' || !$('cgg-notebook').hidden;
-  if (state.phase !== 'concept') notebook.hide();
+  if (state.phase !== 'concept') { notebook.hide(); challenges.hide(); $('cgg-challenges-open').hidden = true; }
   const c = ctaFor(state);
   actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action.type } : null);
 
