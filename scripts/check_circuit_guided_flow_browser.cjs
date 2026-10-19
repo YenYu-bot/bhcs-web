@@ -151,13 +151,13 @@ async function verifyChallenges(p,{shots=false,prefix=''}={}){
   await p.locator('#cgg-challenges-open').click();
   const panel=p.locator('#cgg-challenges'),next=panel.locator(':scope > button');
   assert.match(await text(p,'#cgg-challenges h2'),/挑戰 1/);
-  await next.click();assert.match(await text(p,'#cgg-challenges [role=status]'),/重新/);
+  await next.click();assert.match(await text(p,'#cgg-challenges > p[role=status]'),/重新/);
   await panel.locator('input[value="restoreParallel"]').check();
   await next.click();assert.match(await text(p,'#cgg-challenges h2'),/挑戰 2/);
   const slots=[['sw.b','L1.a'],['L1.b','L2.a'],['L2.b','bat-']];
   for(const [up,down]of slots){
     await next.click();
-    assert.match(await text(p,'#cgg-challenges [role=status]'),/確認電流表/);
+    assert.match(await text(p,'#cgg-challenges > p[role=status]'),/確認電流表/);
     await panel.locator('[data-remove-wire]').evaluateAll((buttons,pair)=>{
       const key=[...pair].sort().join('|');const btn=buttons.find(b=>b.getAttribute('data-remove-wire')===key);if(!btn)throw Error('wire not found: '+key);btn.click();
     },[up,down]);
@@ -171,14 +171,14 @@ async function verifyChallenges(p,{shots=false,prefix=''}={}){
   }
   assert.match(await text(p,'#cgg-challenges'),/三次量測完成/);
   await next.click();assert.match(await text(p,'#cgg-challenges h2'),/挑戰 3/);
-  await next.click();assert.match(await text(p,'#cgg-challenges [role=status]'),/拆掉 L2/);
+  await next.click();assert.match(await text(p,'#cgg-challenges > p[role=status]'),/拆掉 L2/);
   await panel.locator('[data-remove-wire]').evaluateAll(buttons=>{
     const btn=buttons.find(b=>b.getAttribute('data-remove-wire')==='L2.a|sw.b');
     if(!btn)throw Error('L2 connection missing');btn.click();
   });
   await panel.locator('[data-switch-toggle]').click();
   await next.click();
-  assert.match(await text(p,'#cgg-challenges [role=status]'),/已完成三項挑戰/);
+  assert.match(await text(p,'#cgg-challenges > p[role=status]'),/已完成三項挑戰/);
   assert.equal(await next.isHidden(),true);
   if(shots)await shot(p,prefix+'challenges-complete');
   await common(p,prefix+'challenges');
