@@ -54,7 +54,9 @@ export function challengeThreeEvidence(actions=[]){
   if(!c.valid||c.state.switchClosed!==true||c.result?.status!=='normal')return null;
   const r=c.result;
   // Require only L1 conducting and L2 explicitly disconnected: a current reading alone is insufficient.
-  if(r.topology!=='single-L1'||r.lamps.L2.inCircuit||r.lamps.L2.bypassed)return null;
+  if(r.topology!=='single-L1'||r.lamps.L2.active)return null;
+  const baseL2=CHALLENGE_BASES[3].wires.filter(w=>w.from.startsWith('L2.')||w.to.startsWith('L2.'));
+  if(!baseL2.some(w=>!c.state.wires.some(x=>key(x.from,x.to)===key(w.from,w.to))))return null;
   if(Math.abs(r.batteryCurrent?.value-1)>1e-9 || Math.abs(r.lamps.L1.current?.value-1)>1e-9)return null;
   return {totalCurrent:r.batteryCurrent.value,L1Current:r.lamps.L1.current.value,
     brightness:r.lamps.L1.brightness};
