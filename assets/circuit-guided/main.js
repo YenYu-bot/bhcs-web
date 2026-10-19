@@ -1,6 +1,7 @@
 // Page glue for Science Lab 2.0 Pilot #6 B3.
 // It owns state + DOM orchestration only. Science is model/engine, learner wording is script, bench visuals/input are B2.
 import { createInitialState, reduce } from './engine.js';
+import { mountCircuitNotebook } from './notebook-view.js';
 import { MAX_WIRES } from './model.js';
 import { createCircuitBench } from './render.js';
 import { bindCircuitInput } from './input.js';
@@ -53,6 +54,8 @@ const CARD_OF = {
 let state = createInitialState();
 let lastWhere = null;
 let seq = 0;
+const notebook = mountCircuitNotebook($('cgg-notebook'), () => state);
+$('cgg-notebook-open').addEventListener('click', () => { notebook.show(); $('cgg-notebook-open').hidden = true; });
 
 const announcer = createAnnouncer($('cgg-announcer'));
 const actionBar = createActionBar(cta, {
@@ -158,6 +161,8 @@ function render(wasCta = false) {
     { labelSuffix: '：' },
   );
 
+  $('cgg-notebook-open').hidden = state.phase !== 'concept' || !$('cgg-notebook').hidden;
+  if (state.phase !== 'concept') notebook.hide();
   const c = ctaFor(state);
   actionBar.render(c ? { label: c.label, action: c.action, enabled: c.enabled, id: c.action.type } : null);
 
