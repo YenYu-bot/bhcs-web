@@ -36,7 +36,7 @@ export function notebookAStatus(state,answers){
     baselineCurrent:evidence.baseline.toFixed(1),
     onePathChange:evidence.onePathChange,
     twoPathChange:evidence.twoPathChange,
-    alwaysDecrease:String(evidence.onePath>=evidence.baseline&&evidence.twoPath>=evidence.baseline?false:evidence.alwaysDecrease),
+    alwaysDecrease:String(evidence.alwaysDecrease),
   }:null;
   const questions={};
   for(const [key,options] of Object.entries(NOTEBOOK_A_QUESTIONS)){
