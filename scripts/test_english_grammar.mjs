@@ -14,7 +14,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send', forgot: 'forget', began: 'begin', said: 'say' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin', 'taichung', 'taiwan']);
 // past participles that differ from the past form, back to the base
 const PP_BACK = { eaten: 'eat', drunk: 'drink', done: 'do', written: 'write', sung: 'sing', swum: 'swim', ridden: 'ride', taken: 'take', gone: 'go', drawn: 'draw', flown: 'fly', driven: 'drive', gotten: 'get', seen: 'see', worn: 'wear', spoken: 'speak', been: 'be', lent: 'lend', sent: 'send', kept: 'keep' };
@@ -515,10 +515,20 @@ function checkPerfect(it, mode, o) {
     assert.deepEqual(a, [perfect ? `${h} ${p}` : pastOf(m.base)], text);
   }
 }
-const TO_HEADS = new Set(['want', 'hope', 'plan', 'decide', 'need', 'learn', 'would like', 'try']);
-const ING_HEADS = new Set(['enjoy', 'finish', 'practice', 'keep', 'stop', 'give up']);
+const TO_HEADS = new Set(['want', 'hope', 'plan', 'decide', 'need', 'learn', 'would like']);
+const ING_HEADS = new Set(['enjoy', 'finish', 'practice', 'keep', 'avoid', 'give up']);
+// verbs that take both forms with different meanings: the Chinese cue decides
+const BOTH_CUE = { 停下來去: 'to', 停止: 'ing', 記得要: 'to', 記得曾經: 'ing', 忘了要: 'to', 忘了曾經: 'ing', 設法: 'to', 試試看: 'ing' };
 function checkGerund(it, mode) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'both') {
+    assert.ok(['stop', 'remember', 'forget', 'try'].includes(m.head), `a both-ways verb: ${m.head}`);
+    const cue = /\((.+?)／/.exec(text)[1];
+    assert.deepEqual(a, [BOTH_CUE[cue] === 'to' ? `to ${m.base}` : ing(m.base)], `${m.head} (${cue}): ${text}`);
+    assert.match(text.toLowerCase(), { stop: /\bstop/, remember: /\bremember/, forget: /\bforg[eo]t/, try: /\btr(y|ie)/ }[m.head], 'the verb is in the sentence');
+    return;
+  }
+  assert.ok(!['stop', 'remember', 'forget', 'try', 'start', 'like', 'love', 'begin'].includes(m.head), `no two-way verb in a fixed-answer section: ${m.head}`);
   const wantTo = TO_HEADS.has(m.head), wantIng = ING_HEADS.has(m.head) || ['go', 'before', 'after'].includes(m.head) || / (at|in|of|for|about) ___/.test(text);
   assert.ok(wantTo !== wantIng, `head decides: ${m.head}`);
   const form = wantTo ? `to ${m.base}` : ing(m.base);
