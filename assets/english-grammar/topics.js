@@ -17,6 +17,6 @@ import quantity from './topics/quantity.js';
 import wh from './topics/wh.js';
 import prep from './topics/prep.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative];
-export const DRAFTS = [article, quantity, wh, prep];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep];
+export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
