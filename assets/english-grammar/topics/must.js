@@ -5,9 +5,9 @@ import { pickPerson, verbFor, midOf } from '../people.js';
 // Duties: [verb phrase, Chinese]; 'school' ones are for students, so not for parents or the teacher.
 const D = (en, zh, who = 'any', when = null) => ({ en, zh, who, when });
 const DUTIES = [
-  D('do my homework', '寫功課', 'student'), D('get up early', '早起'), D('wear a uniform', '穿制服', 'student', ['every day', 'today', 'tomorrow']), D('clean the room', '打掃房間'), D('go to school', '上學', 'student'),
+  D('do my homework', '寫功課', 'student'), D('get up early', '早起'), D('wear a uniform', '穿制服', 'student', ['every day', 'today', 'tomorrow']), D('clean the room', '打掃房間'), D('go to school', '上學', 'student', ['every day', 'today', 'tomorrow', 'this week']),
   D('finish the work', '把工作做完', 'adult'), D('see a doctor', '去看醫生', 'any', ['today', 'tomorrow', 'now', 'this week']), D('stay at home', '待在家裡', 'any', ['today', 'tomorrow', 'now', 'this week']), D('wash the dishes', '洗碗'), D('take the bus', '搭公車'),
-  D('study hard', '用功讀書', 'student'), D('go to bed early', '早點睡'), D('wait for the bus', '等公車', 'any', ['today', 'every day', 'now']), D('help my mother', '幫我媽媽', 'student'), D('go to work', '去上班', 'adult'),
+  D('study hard', '用功讀書', 'student', ['every day', 'today', 'this week', 'tomorrow']), D('go to bed early', '早點睡'), D('wait for the bus', '等公車', 'any', ['today', 'every day', 'now']), D('help my mother', '幫我媽媽', 'student'), D('go to work', '去上班', 'adult', ['every day', 'today', 'tomorrow', 'this week']),
   D('cook dinner', '煮晚餐', 'adult'), D('walk the dog', '遛狗'), D('practice the piano', '練習鋼琴', 'student'), D('take the test', '考試', 'student', ['today', 'tomorrow', 'this week']), D('buy some food', '買一些食物', 'any', ['today', 'tomorrow', 'now']),
 ];
 // Rules: [verb phrase, Chinese]; must / mustn't come from signs and rules, so the subjects are you / we / students / people.
@@ -45,7 +45,7 @@ const MODES = [
     id: 'have', name: 'have to / has to', instruction: () => '依中文，填入 have to 或 has to（一個空格填一個字）。',
     gen(rng, o) {
       const { p, d, en, zh } = duty(rng);
-      const [w, wz] = rng.pick(whenFor(d, WHEN));
+      const [w, wz] = rng.fresh(whenFor(d, WHEN), (x) => 'when-' + x[0]);
       return { lines: [[`${p.en} `, blank(verbFor(p, ['have', 'has'])), ' ', blank('to'), ` ${en} ${w}.`]], zh: zhJoin(p.zh, wz, '必須', zh) + '。', meta: { kind: 'have', s3: p.s3 } };
     },
   },
@@ -65,7 +65,7 @@ const MODES = [
     gen(rng, o) {
       if (rng.fresh([true, false], (x) => 'neg-' + x)) {
         const { p, d, en, zh } = duty(rng);
-        const [w, wz] = rng.pick(whenFor(d, WHEN));
+        const [w, wz] = rng.fresh(whenFor(d, WHEN), (x) => 'when-' + x[0]);
         return { lines: [[`${p.en} `, blank(p.s3 ? "doesn't" : "don't"), ' ', blank('have'), ' ', blank('to'), ` ${en} ${w}.`]], zh: zhJoin(p.zh, wz, '不必', zh) + '。', meta: { kind: 'neg', need: false, s3: p.s3 } };
       }
       const [vp, zh] = rng.fresh(MUSTNT, (x) => x[0]);
@@ -83,7 +83,7 @@ const MODES = [
       const r = p.pr === 'you' ? 'I' : p.pr;
       const aux = p.s3 ? 'does' : 'do';
       const rAux = r === 'I' ? 'do' : aux;
-      const [w, wz] = rng.pick(whenFor(d, WHEN));
+      const [w, wz] = rng.fresh(whenFor(d, WHEN), (x) => 'when-' + x[0]);
       return {
         lines: [[blank(cap(aux)), ` ${midOf(p)} `, blank('have'), ' ', blank('to'), ` ${en} ${w}? — ${yes ? 'Yes' : 'No'}, `, blank(r), ' ', blank(yes ? rAux : rAux + "n't"), '.']],
         zh: zhJoin(p.zh, wz, '必須', zh) + '嗎？', meta: { kind: 'q', s3: p.s3, yes, reply: r },
@@ -95,7 +95,7 @@ const MODES = [
     gen(rng, o) {
       const { p, d, en, zh } = duty(rng);
       const past = rng.fresh([true, false], (x) => 'had-' + x);
-      const [w, wz] = rng.pick(past ? PAST : whenFor(d, WHEN).filter((x) => x[0] !== 'every day'));
+      const [w, wz] = rng.fresh(past ? PAST : whenFor(d, WHEN).filter((x) => x[0] !== 'every day'), (x) => 'when-' + x[0]);
       return { lines: [[`${p.en} `, blank(past ? 'had' : verbFor(p, ['have', 'has'])), ' ', blank('to'), ` ${en} ${w}.`]], zh: zhJoin(p.zh, wz, '必須', zh) + '。', meta: { kind: 'had', past, s3: p.s3 } };
     },
   },
