@@ -61,5 +61,34 @@ export function challengeThreeEvidence(actions=[]){
   return {totalCurrent:r.batteryCurrent.value,L1Current:r.lamps.L1.current.value,
     brightness:r.lamps.L1.brightness};
 }
-// Challenge 2 requires three structural ammeter positions; no numeric-only completion shortcut.
+// Identify which original one-path segment was replaced by the ammeter.
+// This checks wire topology, *not* whether the three equal current readings match.
 export const CHALLENGE_TWO_POSITIONS=Object.freeze(['before-L1','between-lamps','after-L2']);
+const slots=Object.freeze({
+  'before-L1':['sw.b','L1.a'],
+  'between-lamps':['L1.b','L2.a'],
+  'after-L2':['L2.b','bat-'],
+});
+function components(wires){
+  const parent=new Map();
+  const find=x=>{if(!parent.has(x))parent.set(x,x);const p=parent.get(x);if(p!==x)parent.set(x,find(p));return parent.get(x);};
+  for(const w of wires)parent.set(find(w.from),find(w.to));
+  return (a,b)=>find(a)===find(b);
+}
+export function challengeTwoPosition(actions=[]){
+  const c=challengeReadings(2,actions);
+  if(!c.valid||!c.state.switchClosed||c.result?.status!=='normal'
+    ||c.result.topology!=='one-path'||c.result.ammeter.reading?.value!==0.5)return null;
+  const base=CHALLENGE_BASES[2].wires;
+  const missing=base.filter(w=>!c.state.wires.some(x=>key(x.from,x.to)===key(w.from,w.to)));
+  if(missing.length!==1)return null;
+  const position=Object.keys(slots).find(k=>key(...slots[k])===key(missing[0].from,missing[0].to));
+  if(!position)return null;
+  // The two ammeter terminals must replace the precise electrical gap, in the positive direction.
+  const join=components(c.state.wires);
+  const [upstream,downstream]=slots[position];
+  if(!join(upstream,'A.+')||!join(downstream,'A.-'))return null;
+  if(join('A.+','A.-'))return null;
+  return {position,current:c.result.ammeter.reading.value,raw:{wires:c.state.wires.map(w=>({...w})),switchClosed:true}};
+}
+
