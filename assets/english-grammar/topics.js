@@ -21,6 +21,6 @@ import compare from './topics/compare.js';
 import conj from './topics/conj.js';
 import must from './topics/must.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep];
-export const DRAFTS = [future, compare, conj, must];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must];
+export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];

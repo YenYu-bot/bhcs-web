@@ -43,8 +43,13 @@ function inList(word) {
 const ALL_NAMES = [...NAMES.m, ...NAMES.f];
 const SUBJECT_STRINGS = [...new Set([...SUBJECTS.map((x) => x.en), 'that girl', 'that boy', 'that man', 'that woman', 'those girls', 'those boys', ...ALL_NAMES, ...ALL_NAMES.flatMap((a) => ALL_NAMES.map((b) => `${a} and ${b}`))])]
   .sort((a, b) => b.length - a.length);
+const NAME_ALT = ALL_NAMES.join('|');
+// possessive subjects: Tom's mother / Tom and Amy's mother / Tom's and Amy's mothers
+const POSS_RE = new RegExp(`^((?:(?:${NAME_ALT})'s and (?:${NAME_ALT})'s|(?:${NAME_ALT}) and (?:${NAME_ALT})'s|(?:${NAME_ALT})'s) [a-z]+)(?= |\\?)`);
 function subjectAt(text) {
   const t = text.replace(/^ /, '');
+  const poss = POSS_RE.exec(t);
+  if (poss) return poss[1];
   const hit = SUBJECT_STRINGS.find((x) => t.toLowerCase().startsWith(x.toLowerCase() + ' ') || t.toLowerCase().startsWith(x.toLowerCase() + '?'));
   assert.ok(hit, `subject found in "${text}"`);
   return t.slice(0, hit.length);
@@ -56,8 +61,10 @@ const PAST_CUES = /\b(yesterday|last|ago)\b/i;
 const PRESENT_CUES = /\b(now|this year)\b/i;
 function isPlural(subj) {
   const s = subj.trim().toLowerCase();
-  if (s.includes(' and ')) return true;
   const last = s.split(/\s+/).pop();
+  // "Tom and Amy's mother" is one person; "Tom's and Amy's mothers" are two: the owned noun decides
+  if (/'s [a-z]+$/.test(s)) return PLURAL_WORDS.has(last) || (/s$/.test(last) && !['bus', 'class'].includes(last));
+  if (s.includes(' and ')) return true;
   if (PLURAL_WORDS.has(last)) return true;
   if (/^(mr|ms)\./.test(s)) return false;
   return /s$/.test(last) && !['this', 'his', 'bus', 'class'].includes(last);

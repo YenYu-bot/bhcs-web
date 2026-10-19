@@ -1,6 +1,6 @@
 // Topic: Be verbs (am / is / are, was / were).
 import { blank, cap, mid, zhJoin } from '../core.js';
-import { SUBJECTS, PREDICATES, TIMES, nameSubject, twoNamesSubject } from '../lexicon.js';
+import { SUBJECTS, PREDICATES, TIMES, extraSubjects } from '../lexicon.js';
 
 export function beForm(s, past) {
   if (past) return s.num === 'pl' || s.person === 2 ? 'were' : 'was';
@@ -26,9 +26,7 @@ function predicateFits(p, s) {
 const predEn = (p, s) => (p.type === 'job' && s.num === 'pl' ? p.pl : p.en);
 
 function subjectPool(rng, level) {
-  const pool = [...SUBJECTS.filter((s) => s.lvl <= level), nameSubject(rng), nameSubject(rng), nameSubject(rng)];
-  if (level >= 2) pool.push(twoNamesSubject(rng));
-  return pool;
+  return [...SUBJECTS.filter((s) => s.lvl <= level), ...extraSubjects(rng, level)];
 }
 
 /** Pick a tense for one question: 'pres' or 'past'. */

@@ -40,7 +40,7 @@ export function makeRng(seed) {
 export const blank = (a, wide = false) => (wide ? { blank: true, a, wide: true } : { blank: true, a });
 export const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 /** Lower-case a subject for the middle of a sentence (names and I keep their capital). */
-export const mid = (en) => (/^(I|Mr\.|Ms\.|[A-Z][a-z]+(?: and [A-Z][a-z]+)?)$/.test(en) || /^[A-Z][a-z]+ and /.test(en) ? en : en.charAt(0).toLowerCase() + en.slice(1));
+export const mid = (en) => (/^(I|Mr\.|Ms\.)\b/.test(en) || /^[A-Z][a-z]+(?:'s|$| and )/.test(en) ? en : en.charAt(0).toLowerCase() + en.slice(1));
 
 /** Plain text of a line (blanks shown as ___), used to detect repeated questions. */
 export function lineText(parts) {

@@ -1,6 +1,6 @@
 // Helpers shared by the verb topics: subjects that do things, spelling-level filters and contractions.
 import { cap, mid, zhJoin } from './core.js';
-import { SUBJECTS, nameSubject, twoNamesSubject } from './lexicon.js';
+import { SUBJECTS, extraSubjects } from './lexicon.js';
 import { VERBS, FRAMES } from './verbs.js';
 
 export { cap, mid, zhJoin };
@@ -9,8 +9,7 @@ export { cap, mid, zhJoin };
 export function actors(rng, level, { exclude = () => false } = {}) {
   // "every student" reads oddly with most activities, so the verb topics leave it to the Be topic
   let pool = SUBJECTS.filter((s) => s.lvl <= level && (s.kind === 'person' || s.kind === 'animal') && !s.tags.includes('every'));
-  pool = [...pool, nameSubject(rng), nameSubject(rng), nameSubject(rng)];
-  if (level >= 2) pool.push(twoNamesSubject(rng));
+  pool = [...pool, ...extraSubjects(rng, level)];
   return pool.filter((s) => !exclude(s));
 }
 export const third = (s) => s.person === 3 && s.num === 'sg';
