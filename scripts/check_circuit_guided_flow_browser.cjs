@@ -198,6 +198,9 @@ async function verifyChallenges(p,{shots=false,prefix=''}={}){
       await common(p,'1280 concept');
       await verifyNotebook(p,{shots:true,prefix:'1280-'});
       await verifyChallenges(p,{shots:true,prefix:'1280-'});
+      assert.equal(await p.locator('#cgg-complete').isVisible(),true);
+      assert.equal(await p.locator('#cgg-complete-lessons li').count(),4);
+      assert.match(await text(p,'#cgg-complete'),/串聯/);
       await p.reload();
       await p.waitForFunction(()=>document.getElementById('main')?.dataset.phase==='concept');
       await p.locator('#cgg-notebook-open').click();
@@ -205,7 +208,13 @@ async function verifyChallenges(p,{shots=false,prefix=''}={}){
       await p.locator('#cgg-challenges-open').click();
       assert.match(await text(p,'#cgg-challenges h2'),/挑戰 3/);
       assert.equal(await p.locator('#cgg-challenges > button').isHidden(),true);
-      assert.equal(await p.evaluate(()=>localStorage.length),1);
+      assert.equal(await p.locator('#cgg-complete').isVisible(),true);
+      assert.equal(await p.locator('#cgg-complete-lessons li').count(),4);
+      await p.locator('#cgg-restart').click();
+      await p.waitForFunction(()=>document.getElementById('main')?.dataset.phase==='welcome');
+      assert.equal(await p.evaluate(()=>localStorage.length),0);
+      assert.equal(await p.locator('#cgg-complete').isHidden(),true);
+      assert.equal(await p.evaluate(()=>localStorage.length),0);
       assert.equal(await p.evaluate(()=>sessionStorage.length),0);
       ok('1280: full Welcome → five measurements → two compares → inference → Concept; leakage blocked before Concept, axe clean');
       await ctx.close();
@@ -229,6 +238,8 @@ async function verifyChallenges(p,{shots=false,prefix=''}={}){
       await common(p,'390 concept');
       await verifyNotebook(p,{tap:true,shots:true,prefix:'390-'});
       await verifyChallenges(p,{shots:true,prefix:'390-'});
+      assert.equal(await p.locator('#cgg-complete').isVisible(),true);
+      await common(p,'390 completion');
       ok('390: full flow by touch, answer targets ≥56px, no sideways scroll, Concept fits, axe clean');
       await ctx.close();
     }

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {createCircuitAnalytics,MILESTONES} from '../assets/circuit-guided/analytics.js';
+const calls=[];const a=createCircuitAnalytics((...args)=>calls.push(args));
+assert.equal(MILESTONES.length,6);
+assert.equal(a.emit('lab_start'),true);
+assert.equal(a.emit('lab_start'),false);
+assert.equal(a.emit('trial_recorded','baseline'),true);
+assert.equal(a.emit('trial_recorded','trial1'),true);
+assert.equal(a.emit('trial_recorded','trial1'),false);
+assert.equal(a.emit('some_private_event'),false);
+assert.deepEqual(calls,[['lab_start','circuit-guided'],['trial_recorded','circuit-guided'],['trial_recorded','circuit-guided']]);
+assert.equal(createCircuitAnalytics(()=>{throw Error('blocked')}).emit('lab_complete'),true);
+console.log('circuit-guided anonymous milestone tests passed');

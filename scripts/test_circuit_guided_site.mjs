@@ -59,15 +59,15 @@ test('B3 screens remain intact and B4-A/B challenge containers are explicit',()=
   for(const id of ['cgg-welcome','cgg-bench-card','cgg-compare','cgg-inference','cgg-concept','cgg-status','cgg-cta','cgg-data','cgg-evidence','cgg-announcer']){
     assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
   }
-  for(const id of ['cgg-notebook','cgg-notebook-open','cgg-challenges','cgg-challenges-open']) assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
-  for(const absent of ['cgg-complete','cgg-storage-note','cgg-restart']) assert.ok(!html.includes(`id="${absent}"`),absent);
+  for(const id of ['cgg-notebook','cgg-notebook-open','cgg-challenges','cgg-challenges-open','cgg-complete','cgg-restart']) assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,id);
+  for(const absent of ['cgg-storage-note']) assert.ok(!html.includes(`id="${absent}"`),absent);
 });
 
 test('B1-B4 core JS is retained with persistence isolated to storage adapter',()=>{
-  assert.deepEqual(js,['challenge-view.js','challenges.js','engine.js','input.js','main.js','model.js','notebook-view.js','notebook.js','persist.js','render.js','script.js','storage.js']);
+  assert.deepEqual(js,['analytics.js','challenge-view.js','challenges.js','engine.js','input.js','main.js','model.js','notebook-view.js','notebook.js','persist.js','render.js','script.js','storage.js']);
   for(const f of js){
     const src=strip(read(DIR+'/'+f));
-    for(const bad of [...(['main.js','storage.js'].includes(f)?[]:['localStorage']), 'sessionStorage','indexedDB','document.cookie','bhcsScienceTrack','gtag','dataLayer','fetch(','XMLHttpRequest','sendBeacon','WebSocket','__cggTest','URLSearchParams','eval(','new Function']){
+    for(const bad of [...(['main.js','storage.js'].includes(f)?[]:['localStorage']), 'sessionStorage','indexedDB','document.cookie',...((f==='main.js')?[]:['bhcsScienceTrack']),'gtag','dataLayer','fetch(','XMLHttpRequest','sendBeacon','WebSocket','__cggTest','URLSearchParams','eval(','new Function']){
       assert.ok(!src.includes(bad),f+' uses '+bad);
     }
   }
