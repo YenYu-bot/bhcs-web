@@ -74,5 +74,5 @@ export function mountChallenges(root,{onComplete=()=>{},onChange=()=>{}}={}){
     done=true;onChange();feedback.textContent='已完成三項挑戰：燈泡轉換電能，並不消耗同一路徑中的電流。';next.hidden=true;paint();
     onComplete({challenge2Records:records.map(r=>({...r,actions:structuredClone(r.actions)})),challenge3:{actions:structuredClone(actions),evidence}});
   });
-  return {show(){active=true;root.hidden=false;next.hidden=false;draw()},hide(){active=false;root.hidden=true;},snapshot(){return{stage,actions:structuredClone(actions),records:structuredClone(records),choice,done}},restore(value){if(!value)return;stage=value.stage;actions=structuredClone(value.actions);records=structuredClone(value.records);choice=value.choice;done=value.done;if(!root.hidden)draw();}};
+  return {show(){active=true;root.hidden=false;next.hidden=done;draw()},hide(){active=false;root.hidden=true;},snapshot(){return{stage,actions:structuredClone(actions),records:structuredClone(records),choice,done}},restore(value){if(!value)return;stage=value.stage;actions=structuredClone(value.actions);records=structuredClone(value.records);choice=value.choice;done=value.done;if(!root.hidden)draw();}};
 }
