@@ -76,8 +76,9 @@ export const ABBR = [
   { id: 'B', name: '兩種都練' },
 ];
 export const COUNT_MIN = 10, COUNT_MAX = 50, COUNT_DEFAULT = 20;
-/** How many whole-sentence translation questions can be added at the end of a sheet. */
-export const TR_CHOICES = [0, 5, 10];
+/** Whole-sentence translation: none, 5 or 10 added at the end of a sheet, or 'O' for a sheet of translation only (the question count then counts translations). */
+export const TR_CHOICES = [0, 5, 10, 'O'];
+export const TR_ONLY = 'O';
 
 /**
  * The whole English sentence an item's Chinese line says, with the answers filled in and the cues removed.
@@ -94,7 +95,7 @@ export function fullSentence(it) {
 
 /**
  * Sheet code, e.g. "BE-2M-3F-C1-20-48213": topic · level+tense · modes (hex bitmask) · abbreviation+Chinese · count · seed,
- * plus "-T5" when translation questions are added (older codes without it still work).
+ * plus "-T5" when translation questions are added, or "-TO" for a translation-only sheet (older codes without it still work).
  * Entering the same code rebuilds the identical sheet.
  */
 export function encodeCode(topic, o) {
@@ -102,7 +103,7 @@ export function encodeCode(topic, o) {
   return [topic.code, `${o.level}${o.tense}`, bits.toString(16).toUpperCase(), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed, ...(o.tr ? [`T${o.tr}`] : [])].join('-');
 }
 export function decodeCode(code, topics) {
-  const m = /^([A-Z]+)-([123])([PMD])-([0-9A-F]+)-([FCB])([01])-(\d+)-(\d+)(?:-T(\d+))?$/.exec(String(code).trim().toUpperCase());
+  const m = /^([A-Z]+)-([123])([PMD])-([0-9A-F]+)-([FCB])([01])-(\d+)-(\d+)(?:-T(\d+|O))?$/.exec(String(code).trim().toUpperCase());
   if (!m) return null;
   const topic = topics.find((t) => t.code === m[1]);
   if (!topic) return null;
@@ -111,7 +112,7 @@ export function decodeCode(code, topics) {
   const count = Number(m[7]);
   if (!modes.length || count < COUNT_MIN || count > COUNT_MAX) return null;
   if (!topic.past && m[3] !== 'P') return null;
-  const tr = Number(m[9] || 0);
+  const tr = m[9] === TR_ONLY ? TR_ONLY : Number(m[9] || 0);
   if (!TR_CHOICES.includes(tr)) return null;
   return { topic: topic.id, opts: { level: Number(m[2]), tense: m[3], modes, abbr: m[5], zh: m[6] === '1', count, seed: Number(m[8]), tr } };
 }
@@ -135,7 +136,8 @@ export function buildSheet(topic, opts) {
   const seen = new Set();
   const sections = [];
   // Topics built from a fixed list of sentences say how many different ones each section can hold.
-  const plan = splitCount(o.count, o.modes).map(({ mode, n }) => ({ mode, n: Math.min(n, topic.capacity?.[mode] ?? Infinity) }));
+  const trOnly = o.tr === TR_ONLY;
+  const plan = trOnly ? [] : splitCount(o.count, o.modes).map(({ mode, n }) => ({ mode, n: Math.min(n, topic.capacity?.[mode] ?? Infinity) }));
   for (const { mode, n } of plan) {
     if (!n) continue;
     const def = topic.modes.find((m) => m.id === mode);
@@ -162,7 +164,8 @@ export function buildSheet(topic, opts) {
     const items = [];
     // modes whose items are not whole sentences to translate (dialogue replies) are left out
     const trModes = o.modes.filter((m) => !topic.noTranslate?.includes(m));
-    for (let tries = 0; trModes.length && items.length < o.tr && tries < o.tr * 400; tries++) {
+    const want = trOnly ? o.count : o.tr;
+    for (let tries = 0; trModes.length && items.length < want && tries < want * 400; tries++) {
       const mode = trModes[items.length % trModes.length];
       const it = topic.generate(rng, o, mode);
       if (!it) continue;
@@ -173,5 +176,6 @@ export function buildSheet(topic, opts) {
     }
     translation = { title: '整句翻譯：把中文句子翻成英文。', items };
   }
-  return { code: encodeCode(topic, o), opts: o, sections, total: sections.reduce((a, s) => a + s.items.length, 0), translation };
+  const total = trOnly ? translation.items.length : sections.reduce((a, s) => a + s.items.length, 0);
+  return { code: encodeCode(topic, o), opts: o, sections, total, translation };
 }
