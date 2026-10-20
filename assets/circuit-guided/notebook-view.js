@@ -7,7 +7,7 @@ const questions=[
  ['alwaysDecrease','多接一顆燈一定讓總電流變小嗎？',[['true','對'],['false','不對']]],
 ];
 const elem=(tag,txt,cls)=>{const e=document.createElement(tag);if(txt!==undefined)e.textContent=txt;if(cls)e.className=cls;return e;};
-export function mountCircuitNotebook(root,getState){
+export function mountCircuitNotebook(root,getState,{onComplete=()=>{}}={}){
   const learner={level:'A',a:{},b:'',c:{counterexample:'',limitation:''}};
   const title=elem('h2','我的研究筆記：Level A');title.tabIndex=-1;
   const body=elem('div');const feedback=elem('p');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
@@ -44,7 +44,7 @@ export function mountCircuitNotebook(root,getState){
   next.addEventListener('click',()=>{
     if(learner.level==='A'){if(!notebookAStatus(getState(),learner.a).allCorrect){feedback.textContent='請重新檢查量測紀錄與四個答案。';return;}learner.level='B';}
     else if(learner.level==='B'){if(!notebookBStatus(learner.b).ready){feedback.textContent='請寫下完整的解釋。';return;}learner.level='C';}
-    else if(learner.level==='C'){if(!notebookCStatus(learner.c).ready){feedback.textContent='請完成量測反例與模型限制。';return;}learner.level='done';}
+    else if(learner.level==='C'){if(!notebookCStatus(learner.c).ready){feedback.textContent='請完成量測反例與模型限制。';return;}learner.level='done';onComplete(structuredClone(learner));}
     render();title.focus();
   });
   return {show:render,hide:()=>{root.hidden=true;},snapshot:()=>structuredClone(learner)};
