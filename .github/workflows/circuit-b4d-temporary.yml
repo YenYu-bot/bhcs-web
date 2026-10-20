@@ -1,0 +1,32 @@
+name: Circuit B4-D temporary completion validation
+on:
+  pull_request:
+    paths:
+      - 'assets/circuit-guided/**'
+      - 'tools/science/circuit-guided.html'
+      - 'scripts/check_circuit_guided_flow_browser.cjs'
+      - '.github/workflows/circuit-b4d-temporary.yml'
+  workflow_dispatch:
+jobs:
+  completion-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --prefix scripts
+      - run: |
+          npm install --prefix /tmp/bhcs-composition playwright@1.58.2
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+      - run: sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Full learner flow, completion, restore and restart
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_circuit_guided_flow_browser.cjs
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: circuit-b4d-completion-review
+          path: circuit-flow-artifacts/
+          retention-days: 7
