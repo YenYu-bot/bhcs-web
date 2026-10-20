@@ -1,5 +1,6 @@
 // Page glue for Science Lab 2.0 Pilot #6 B3.
 // It owns state + DOM orchestration only. Science is model/engine, learner wording is script, bench visuals/input are B2.
+import { createCircuitAnalytics } from './analytics.js';
 import { createCircuitStorage } from './storage.js';
 import { createInitialState, reduce } from './engine.js';
 import { mountChallenges } from './challenge-view.js';
@@ -53,6 +54,7 @@ const CARD_OF = {
   concept: 'cgg-concept',
 };
 
+const analytics=createCircuitAnalytics((milestone,station)=>{if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack(milestone,station);});
 const storage=createCircuitStorage((()=>{try{return window.localStorage}catch{return {getItem(){throw Error('unavailable')},setItem(){throw Error('unavailable')},removeItem(){throw Error('unavailable')}}}})());
 const loaded=storage.load();
 let state = loaded.data?.main ?? createInitialState();
@@ -68,15 +70,18 @@ const persist=()=>{
 };
 let lastWhere = null;
 let seq = 0;
-const challenges = mountChallenges($('cgg-challenges'),{onChange:()=>persist()});
-const notebook = mountCircuitNotebook($('cgg-notebook'), () => state, {onChange:()=>persist(),onComplete: () => { $('cgg-challenges-open').hidden = false; }});
+const showComplete=()=>{const c=$('cgg-complete');c.hidden=false;analytics.emit('lab_complete');};
+const challenges = mountChallenges($('cgg-challenges'),{onChange:()=>persist(),onComplete:()=>{analytics.emit('challenge_complete','3');persist();showComplete();}});
+const notebook = mountCircuitNotebook($('cgg-notebook'), () => state, {onChange:()=>persist(),onComplete: () => { $('cgg-challenges-open').hidden = false;analytics.emit('notebook_complete');persist(); }});
 $('cgg-challenges-open').addEventListener('click', () => {challenges.show();$('cgg-challenges-open').hidden=true;});
 $('cgg-notebook-open').addEventListener('click', () => { notebook.show(); $('cgg-notebook-open').hidden = true; });
 
 if(loaded.data?.notebook)notebook.restore(loaded.data.notebook);
 if(loaded.data?.challenge)challenges.restore(loaded.data.challenge);
+if(loaded.data?.challenge?.done)$('cgg-complete').hidden=false;
 if(state.phase==='concept'&&loaded.data?.notebook?.level==='done')$('cgg-challenges-open').hidden=false;
 statusNote.textContent=loaded.status==='restored'?'已恢復本機學習進度':loaded.status==='invalid'?'存檔內容無效，已使用新進度':loaded.status==='unavailable'?'無法讀取本機進度':'目前尚無儲存進度';
+$('cgg-restart').addEventListener('click',()=>{if(storage.clear())window.location.reload();else statusNote.textContent='無法清除本機進度，請檢查瀏覽器儲存設定。';});
 const announcer = createAnnouncer($('cgg-announcer'));
 const actionBar = createActionBar(cta, {
   onAction: (action) => dispatch(action),
@@ -200,6 +205,9 @@ function dispatch(action) {
   const result = reduce(state, action);
   if (!result.accepted) return result;
   state = result.state;
+  if(action.type==='START')analytics.emit('lab_start');
+  for(const event of result.events){if(event.type==='record-written')analytics.emit('trial_recorded',event.trialId)}
+  for(const transition of result.transitions){if(['trial2-build','inference'].includes(transition.to))analytics.emit('compare_complete',transition.to)}
   persist();
   announcer.say(announcementFor({ result, state, action, seq: ++seq }));
   render(wasCta);
