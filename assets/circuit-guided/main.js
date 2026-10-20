@@ -71,7 +71,8 @@ const persist=()=>{
 let lastWhere = null;
 let seq = 0;
 const showComplete=()=>{const c=$('cgg-complete');c.hidden=false;analytics.emit('lab_complete');};
-const challenges = mountChallenges($('cgg-challenges'),{onChange:()=>persist(),onComplete:()=>{analytics.emit('challenge_complete','3');persist();showComplete();}});
+let lastChallengeStage=loaded.data?.challenge?.stage??1;
+const challenges = mountChallenges($('cgg-challenges'),{onChange:()=>{const stage=challenges.snapshot().stage;if(stage>lastChallengeStage){if(stage>=2&&lastChallengeStage<2)analytics.emit('challenge_complete','1');if(stage>=3&&lastChallengeStage<3)analytics.emit('challenge_complete','2');lastChallengeStage=stage;}persist();},onComplete:()=>{analytics.emit('challenge_complete','3');persist();showComplete();}});
 const notebook = mountCircuitNotebook($('cgg-notebook'), () => state, {onChange:()=>persist(),onComplete: () => { $('cgg-challenges-open').hidden = false;analytics.emit('notebook_complete');persist(); }});
 $('cgg-challenges-open').addEventListener('click', () => {challenges.show();$('cgg-challenges-open').hidden=true;});
 $('cgg-notebook-open').addEventListener('click', () => { notebook.show(); $('cgg-notebook-open').hidden = true; });
