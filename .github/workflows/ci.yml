@@ -231,6 +231,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_photosynthesis_guided_flow_browser.cjs
+      - name: Check guided circuit full student flow, Notebook, Challenges, reload and restart
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_circuit_guided_flow_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -290,6 +294,12 @@ jobs:
         with:
           name: photosynthesis-flow-review
           path: photosynthesis-flow-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: circuit-flow-review
+          path: circuit-flow-artifacts/
           retention-days: 14
 
   # 數學練習卷畫面與列印版面（真實 Chromium）
