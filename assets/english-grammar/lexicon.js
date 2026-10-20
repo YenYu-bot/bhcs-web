@@ -254,6 +254,6 @@ export const FUNCTION_WORDS = [
   'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
   'a', 'an', 'the', 'be', 'am', 'is', 'are', 'was', 'were', 'not', "isn't", "aren't", "wasn't", "weren't",
   'do', 'does', 'did', 'have', 'has', 'had', 'and', 'at', 'mr', 'ms', 'mrs',
-  'much', "o'clock", 'going', 'better', 'best', 'worse', 'worst', "won't", 'must', "mustn't", 'than', 'would', "haven't", "hasn't", 'shall', 'someone', 'who', 'which', "let's", 'ones', 'others', 'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'yourselves', 'themselves', 'whose', 'why', 'how', 'what', 'where', 'when', 'if', // not in the 2000-word list as written: much is missing, o’clock is listed with a curly quote
+  'much', "o'clock", 'going', 'better', 'best', 'worse', 'worst', "won't", 'must', "mustn't", 'than', 'would', "haven't", "hasn't", 'shall', 'someone', 'who', 'which', "let's", 'ones', 'others', 'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'yourselves', 'themselves', 'whose', 'why', 'how', 'what', 'where', 'when', 'if', 'oh', 'nor', 'neither', 'either', // not in the 2000-word list as written: much is missing, o’clock is listed with a curly quote
   "let's", "it's", "they're", 'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
 ];

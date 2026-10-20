@@ -160,8 +160,10 @@ export function buildSheet(topic, opts) {
     const used = new Set(sections.flatMap((s) => s.items.map((it) => fullSentence(it).toLowerCase())));
     const zhUsed = new Set(sections.flatMap((s) => s.items.map((it) => it.zh)));
     const items = [];
-    for (let tries = 0; items.length < o.tr && tries < o.tr * 400; tries++) {
-      const mode = o.modes[items.length % o.modes.length];
+    // modes whose items are not whole sentences to translate (dialogue replies) are left out
+    const trModes = o.modes.filter((m) => !topic.noTranslate?.includes(m));
+    for (let tries = 0; trModes.length && items.length < o.tr && tries < o.tr * 400; tries++) {
+      const mode = trModes[items.length % trModes.length];
       const it = topic.generate(rng, o, mode);
       if (!it) continue;
       const en = fullSentence(it);
