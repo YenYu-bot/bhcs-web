@@ -18,10 +18,13 @@ const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', re
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin', 'taichung', 'taiwan']);
 // past participles that differ from the past form, back to the base
 const PP_BACK = { built: 'build', grown: 'grow', broken: 'break', stolen: 'steal', sold: 'sell', found: 'find', heard: 'hear', felt: 'feel', eaten: 'eat', drunk: 'drink', done: 'do', written: 'write', sung: 'sing', swum: 'swim', ridden: 'ride', taken: 'take', gone: 'go', drawn: 'draw', flown: 'fly', driven: 'drive', gotten: 'get', seen: 'see', worn: 'wear', spoken: 'speak', been: 'be', lent: 'lend', sent: 'send', kept: 'keep' };
+const ORDINALS = new Set(['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth', 'twentieth', 'thirtieth']);
 const IRREGULAR_PLURAL = { children: 'child', people: 'person', women: 'woman', men: 'man', teeth: 'tooth', feet: 'foot', mice: 'mouse' };
 function inList(word) {
-  const w = word.toLowerCase().replace(/'s$/, '');
+  const w = word.toLowerCase().replace(/'s?$/, '');
   if (OK_WORDS.has(w)) return true;
+  if (ORDINALS.has(w)) return true;
+  if (w.includes('-') && w.split('-').every((x) => OK_WORDS.has(x) || ORDINALS.has(x))) return true; // twenty-first, forty-five
   if (w.endsWith('ves') && (LIST.has(w.slice(0, -3) + 'f') || LIST.has(w.slice(0, -3) + 'fe'))) return true;
   if (IRREGULAR_PLURAL[w] && LIST.has(IRREGULAR_PLURAL[w])) return true;
   if (w.endsWith('ies') && LIST.has(w.slice(0, -3) + 'y')) return true;
@@ -750,7 +753,93 @@ function checkWhenIf(it, mode) {
   assert.ok(!/\b(If|When|Before|After|As soon as|if|when|before|after|as soon as) [A-Za-z ]+? will /.test(filled), `no will inside the clause: ${filled}`);
 }
 
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim, passive: checkPassive, relative: checkRelative, tag: checkTag, sense: checkSense, indef: checkIndef, reflexive: checkReflexive, indirect: checkIndirect, tooenough: checkTooEnough, whenif: checkWhenIf };
+
+// ---------- batch 8 rules ----------
+const ADV_OF = { slow: 'slowly', quick: 'quickly', careful: 'carefully', loud: 'loudly', quiet: 'quietly', polite: 'politely', beautiful: 'beautifully', happy: 'happily', easy: 'easily', angry: 'angrily', good: 'well', fast: 'fast', hard: 'hard', late: 'late', early: 'early' };
+const ADV_CMP = (adj) => (adj === 'good' ? 'better' : adj === 'late' ? 'later' : adj === 'early' ? 'earlier' : ['fast', 'hard'].includes(adj) ? adj + 'er' : `more ${ADV_OF[adj]}`);
+function checkAdverb(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (o.level === 1 && mode !== 'compare') assert.ok(!['happy', 'easy', 'angry', 'good'].includes(m.adj), `level 1 rules: ${m.adj}`); // happy / easy / angry and good wait for level 2; early / fast / hard / late are fine
+  if (mode === 'form') assert.deepEqual(a, [ADV_OF[m.adj]], text);
+  if (mode === 'choose') {
+    // the blank after "is a / an" takes the adjective, the one after the verb takes the adverb
+    const parts = it.lines[0]; const answers = [];
+    parts.forEach((p, i) => { if (typeof p === 'string') return; const before = parts.slice(0, i).map((x) => (typeof x === 'string' ? x : x.a)).join(''); answers.push(/ an? $/.test(before) ? m.adj : ADV_OF[m.adj]); });
+    assert.deepEqual(a, answers, text);
+  }
+  if (mode === 'compare') { assert.deepEqual(a, ADV_CMP(m.adj).split(' '), text); assert.match(text, / than [A-Za-z]/); }
+}
+function checkPossess(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 's') {
+    const owner = /\((.+?)\)/.exec(text)[1];
+    const last = owner.split(' ').pop();
+    const irregularPl = ['children', 'women', 'men', 'people'].includes(last);
+    const want = irregularPl || !/s$/.test(last) ? `${owner}'s` : `${owner}'`;
+    assert.deepEqual(a.map((x) => x.toLowerCase()), [want.toLowerCase()], text);
+  }
+  if (mode === 'of') { const [x, y] = /\((\w+)／(\w+)\)/.exec(text).slice(1); assert.equal(a[1], 'of'); assert.ok([x, y].includes(a[0]) && [x, y].includes(a[2]) && a[0] !== a[2]); assert.equal(a[0], m.part, `the part comes first: ${text}`); }
+  if (mode === 'joint') {
+    const plural = /^These are/.test(text);
+    assert.deepEqual(a, plural ? [`${m.a}'s`, 'and', `${m.b}'s`] : [m.a, 'and', `${m.b}'s`], `${plural ? 'separate' : 'shared'}: ${text}`);
+  }
+}
+const ORD_W = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth', 'twentieth'];
+const TENS = { 2: 'twenty', 3: 'thirty', 4: 'forty', 5: 'fifty' };
+const ordW = (n) => (n <= 20 ? ORD_W[n] : n % 10 === 0 ? TENS[n / 10].replace(/y$/, 'ieth') : `${TENS[Math.floor(n / 10)]}-${ORD_W[n % 10]}`);
+const ONES = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const cardW = (n) => (n < 20 ? ONES[n] : n % 10 === 0 ? TENS[n / 10] : `${TENS[Math.floor(n / 10)]}-${ONES[n % 10]}`);
+const MONTH_W = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+function checkNumbers(it, mode, o) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'ordinal') { const n = Number(/\((\d+)\)/.exec(text)[1]); assert.deepEqual(a, [ordW(n)], text); if (o.level === 1) assert.ok(n <= 12, `level 1 stays at 1–12: ${text}`); }
+  if (mode === 'date') { const [, mo, d] = /\((\d+)\/(\d+)\)/.exec(text); assert.deepEqual(a, ['on', MONTH_W[Number(mo) - 1], ordW(Number(d))], text); }
+  if (mode === 'time') {
+    const [, h, mi] = /\((\d+):(\d+)\)/.exec(text); const hh = Number(h), mm = Number(mi);
+    const want = mm === 0 ? [cardW(hh), "o'clock"] : mm < 10 ? [cardW(hh), 'oh', cardW(mm)] : [cardW(hh), cardW(mm)];
+    assert.deepEqual(a, want, text);
+  }
+}
+function checkLinkAdv(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'too') {
+    const second = text.split('. ')[1] ?? text;
+    const negative = /n't|not /.test(second), atEnd = /, ___\.$/.test(text);
+    assert.deepEqual(a, [atEnd ? (negative ? 'either' : 'too') : 'also'], text);
+  }
+  if (mode === 'so') {
+    const first = text.split(' — ')[0];
+    const negative = /n't|not /.test(first);
+    const plain = first.replace(/can't/g, 'can not').replace(/won't/g, 'will not').replace(/n't/g, ' not').replace(/\.$/, '');
+    const words = plain.split(' ');
+    let aux = null;
+    for (let i = 0; i < words.length && !aux; i++) {
+      const w = words[i].toLowerCase(), next = (words[i + 1] ?? '').toLowerCase();
+      if (/^(am|is|are|was|were|can|will|do|does|did)$/.test(w)) aux = w;
+      else if (/^(has|have)$/.test(w) && (/ed$/.test(next) || Object.values(PP_OF).includes(next) || next === 'not')) aux = w;
+    }
+    if (!aux) { const v = words[1].toLowerCase(); aux = /ed$/.test(v) || Object.keys(PAST_BACK).includes(v) ? 'did' : /s$/.test(v) && !/^(I|We|They|You|The)$/.test(words[0]) ? 'does' : 'do'; }
+    const subj = a[2];
+    const pluralSubj = /^(I|we|they|you|the girls)$/.test(subj);
+    let replyAux = { am: 'be', is: 'be', are: 'be', was: 'was', were: 'was', can: 'can', will: 'will', has: 'have', have: 'have', did: 'did', does: 'do', do: 'do' }[aux];
+    if (replyAux === 'be') replyAux = subj === 'I' ? 'am' : pluralSubj ? 'are' : 'is';
+    if (replyAux === 'was') replyAux = pluralSubj && subj !== 'I' ? 'were' : 'was';
+    if (replyAux === 'do') replyAux = pluralSubj ? 'do' : 'does';
+    if (replyAux === 'have') replyAux = pluralSubj ? 'have' : 'has';
+    assert.deepEqual(a.slice(0, 2), [negative ? 'Neither' : 'So', replyAux], `${first} → ${a.join(' ')}`);
+  }
+  if (mode === 'pair') {
+    const pairs = { both: 'and', either: 'or', neither: 'nor', 'not only': 'but also' };
+    const first = a.slice(0, m.a.split(' ').length).join(' ').toLowerCase();
+    assert.ok(pairs[first], `known pair word: ${first}`);
+    assert.equal(a.slice(m.a.split(' ').length).join(' '), pairs[first], `${first} … ${pairs[first]}: ${text}`);
+    const zh = it.zh;
+    const wantFirst = /都不|沒有.*也沒有/.test(zh) ? 'neither' : /不只/.test(zh) ? 'not only' : /或|選一樣|其中一個/.test(zh) ? 'either' : 'both';
+    assert.equal(first, wantFirst, `Chinese says ${wantFirst}: ${zh}`);
+  }
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim, passive: checkPassive, relative: checkRelative, tag: checkTag, sense: checkSense, indef: checkIndef, reflexive: checkReflexive, indirect: checkIndirect, tooenough: checkTooEnough, whenif: checkWhenIf, adverb: checkAdverb, possess: checkPossess, numbers: checkNumbers, linkadv: checkLinkAdv };
 
 // ---------- sheets to check ----------
 function* settings() {
@@ -792,7 +881,7 @@ test('every blank holds one word, and every English word is in the 2000-word lis
   for (const { t, o } of settings()) {
     if (o.count !== COUNT_MAX) continue;
     for (const it of buildSheet(t, o).sections.flatMap((s) => s.items)) {
-      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) assert.match(p.a, p.wide ? /^[A-Za-z' ]+$/ : /^([A-Za-z']+|×)$/, `one word per blank (or × for no word): "${p.a}"`);
+      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) assert.match(p.a, p.wide ? /^[A-Za-z' -]+$/ : /^([A-Za-z']+|×)$/, `one word per blank (or × for no word): "${p.a}"`);
       const text = it.lines.map((l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('')).join(' ');
       for (const w of text.match(/[A-Za-z][A-Za-z']*/g)) if (!inList(w)) missing.set(w, text);
     }
@@ -892,14 +981,14 @@ test('whole-sentence translation: new sentences, whole and in the word list, and
     const items = sh.translation.items;
     if (!t.capacity) assert.equal(items.length, tr, `${where}: ${tr} translation questions`);
     else assert.ok(items.length >= Math.min(tr, 3), `${where}: some translation questions`);
-    if (sh.opts.modes.length > 1) assert.ok(new Set(items.map((x) => x.mode)).size > 1, `${where}: drawn from all the chosen modes`);
+    if (sh.opts.modes.filter((m) => !t.noTranslate?.includes(m)).length > 1) assert.ok(new Set(items.map((x) => x.mode)).size > 1, `${where}: drawn from all the chosen modes`);
     const fill = new Set(sh.sections.flatMap((s) => s.items.map((it) => fullSentence(it).toLowerCase())));
     assert.equal(new Set(items.map((x) => x.en.toLowerCase())).size, items.length, `${where}: all different`);
     assert.equal(new Set(items.map((x) => x.zh)).size, items.length, `${where}: no Chinese line twice`);
     for (const x of items) {
       assert.ok(!fill.has(x.en.toLowerCase()), `${where}: not a fill-in sentence: ${x.en}`);
-      assert.ok(sh.opts.modes.includes(x.mode), 'from the chosen modes');
-      assert.match(x.en, /^[A-Z][A-Za-z0-9 ,'.:;?!]*[A-Za-z0-9][.?!]$/, `${where}: one whole sentence, no cue left: ${x.en}`);
+      assert.ok(sh.opts.modes.includes(x.mode) && !t.noTranslate?.includes(x.mode), 'from the chosen modes, none that are kept out');
+      assert.match(x.en, /^[A-Z][A-Za-z0-9 ,'.:;?!-]*[A-Za-z0-9][.?!]$/, `${where}: one whole sentence, no cue left: ${x.en}`);
       for (const w of x.en.match(/[A-Za-z][A-Za-z']*/g)) assert.ok(inList(w), `${where}: "${w}" in the word list (${x.en})`);
       assert.match(x.zh, /^[^(（]*\p{Script=Han}[^(（]*[。？！]$/u, `${where}: Chinese prompt: ${x.zh}`);
       assert.ok(!/undefined|null|NaN|___|→|—/.test(x.en + x.zh), `${where}: clean: ${x.en} / ${x.zh}`);

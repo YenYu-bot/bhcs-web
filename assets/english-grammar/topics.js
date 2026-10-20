@@ -33,7 +33,11 @@ import reflexive from './topics/reflexive.js';
 import indirect from './topics/indirect.js';
 import tooenough from './topics/tooenough.js';
 import whenif from './topics/whenif.js';
+import adverb from './topics/adverb.js';
+import possess from './topics/possess.js';
+import numbers from './topics/numbers.js';
+import linkadv from './topics/linkadv.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense, indef, reflexive, indirect, tooenough, whenif];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense, indef, reflexive, indirect, tooenough, whenif, adverb, possess, numbers, linkadv];
 export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
