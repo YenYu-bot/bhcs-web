@@ -34,6 +34,6 @@ import indirect from './topics/indirect.js';
 import tooenough from './topics/tooenough.js';
 import whenif from './topics/whenif.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense];
-export const DRAFTS = [indef, reflexive, indirect, tooenough, whenif];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense, indef, reflexive, indirect, tooenough, whenif];
+export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
