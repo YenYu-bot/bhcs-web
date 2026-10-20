@@ -24,3 +24,23 @@ const withDerived=clone(a);withDerived.main.records[0].correct=true;withDerived.
 const restored=restorePayload(withDerived);assert.ok(restored);assert.equal('correct' in restored.main.records[0],false);assert.equal('reading' in restored.main.records[0],false);
 assert.equal(validateMainSnapshot({...main,wires:[{from:'bad',to:'bat+'}]}),null);
 console.log('circuit guided B4-C persistence truth and validation checks passed');
+
+import {createCircuitStorage} from '../assets/circuit-guided/storage.js';
+const memory=new Map();
+const storage=createCircuitStorage({getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v),removeItem:k=>memory.delete(k)});
+assert.equal(storage.load().status,'empty');
+assert.equal(storage.save({main,notebook}).status,'saved');
+assert.equal(storage.load().status,'restored');
+assert.equal(storage.load().data.notebook.level,'done');
+const persisted=JSON.parse(memory.get(STORAGE_KEY));
+assert.equal('correct' in persisted.main.records[0],false);
+memory.set(STORAGE_KEY,JSON.stringify({version:1,main:{phase:'concept',records:[]}}));
+assert.equal(storage.load().status,'invalid');
+memory.set(STORAGE_KEY,'not json');
+assert.equal(storage.load().status,'unavailable');
+assert.equal(storage.clear(),true);
+const denied=createCircuitStorage({getItem:()=>{throw Error('denied')},setItem:()=>{throw Error('denied')},removeItem:()=>{throw Error('denied')}});
+assert.equal(denied.load().status,'unavailable');
+assert.equal(denied.save({main,notebook}).status,'unavailable');
+assert.equal(denied.clear(),false);
+console.log('browser storage adapter checks passed');
