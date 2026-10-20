@@ -28,7 +28,12 @@ import passive from './topics/passive.js';
 import relative from './topics/relative.js';
 import tag from './topics/tag.js';
 import sense from './topics/sense.js';
+import indef from './topics/indef.js';
+import reflexive from './topics/reflexive.js';
+import indirect from './topics/indirect.js';
+import tooenough from './topics/tooenough.js';
+import whenif from './topics/whenif.js';
 
 export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense];
-export const DRAFTS = [];
+export const DRAFTS = [indef, reflexive, indirect, tooenough, whenif];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
