@@ -110,7 +110,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   </header>
   <div class="main">
     <form class="panel" id="form" autocomplete="off">
-      <div class="grp"><span class="t">文法主題（可複選，建議 3–8 個）</span><div id="topics"></div><p class="hint" id="topicHint"></p></div>
+      <div class="grp"><span class="t">文法主題（可複選，也可全選）</span><div id="topics"><div class="gh"><span>全部主題</span><span><button type="button" class="ghost" data-all="all">全選</button> <button type="button" class="ghost" data-none="all">清除</button></span></div></div><p class="hint" id="topicHint"></p></div>
       <div class="grp"><span class="t">等級</span>
         <div class="seg" role="radiogroup" aria-label="等級">
           <label><input type="radio" name="level" id="lv1" value="1">初級</label>
@@ -152,7 +152,6 @@ const params = new URLSearchParams(location.search);
 const TOPICS = params.has('draft') ? ALL_TOPICS : PUBLIC;
 const GRADE = { 7: '七年級', 8: '八年級', 9: '九年級' };
 const NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十'];
-const MAX_TOPICS = 12;
 let seed = newSeed(), sheet = null;
 
 function newSeed() { return 10000 + Math.floor(Math.random() * 90000); }
@@ -171,7 +170,7 @@ for (const a of ABBR) $('abbr').append(new Option(a.name, a.id));
 for (const n of TR_CHOICES) $('tr').append(new Option(n === TR_ONLY ? '只出翻譯（題數同上）' : n ? `加 ${n} 題` : '不加', String(n)));
 $('topics').addEventListener('click', (e) => {
   const g = e.target.dataset.all ?? e.target.dataset.none; if (!g) return;
-  document.querySelectorAll(`#topics input[data-grade="${g}"]`).forEach((c) => { c.checked = !!e.target.dataset.all; });
+  document.querySelectorAll(g === 'all' ? '#topics input' : `#topics input[data-grade="${g}"]`).forEach((c) => { c.checked = !!e.target.dataset.all; });
   seed = newSeed(); render();
 });
 const picked = () => [...document.querySelectorAll('#topics input:checked')].map((c) => TOPICS.find((t) => t.id === c.value));
@@ -196,9 +195,9 @@ function part(p) {
 function render() {
   const o = readOpts(), topics = picked(), status = $('status');
   status.classList.remove('err');
-  $('topicHint').textContent = `已選 ${topics.length} 個主題`;
+  const per = topics.length ? Math.floor(o.count / topics.length) : 0;
+  $('topicHint').textContent = topics.length ? `已選 ${topics.length} 個主題，每個主題約 ${per} 題${per < 5 ? '（每個主題只用一種句型；想多練幾種句型請少選幾個主題或增加題數）' : ''}` : '';
   if (!topics.length) { status.textContent = '請至少勾選一個主題。'; status.classList.add('err'); $('sheet').innerHTML = ''; return; }
-  if (topics.length > MAX_TOPICS) { status.textContent = `最多 ${MAX_TOPICS} 個主題。`; status.classList.add('err'); return; }
   try { sheet = buildMixSheet(topics, o); }
   catch (e) { status.textContent = '這組設定出不了足夠的題目，請增加題數或換主題。'; status.classList.add('err'); return; }
   const zhOn = o.zh || topics.some((t) => t.zhRequired);
