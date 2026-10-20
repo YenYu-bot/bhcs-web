@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英文文法總複習混合卷產生器｜國中英文｜百宏文教機構</title>
+<meta name="description" content="國中英文文法總複習混合卷產生器：勾選多個文法主題，一份卷子混合出題，附教用版答案與整句翻譯，可直接列印 A4。台中北屯百宏文教機構製作。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/english-grammar-mix.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#eaeef3; --panel:#fff; --ink:#1d2733; --muted:#5a6777; --rule:#d5dee8; --soft:#f3f6f9;
+  --accent:#2c66ad; --accent-ink:#fff; --red:#c8352b;
+  --en:"Andika","Times New Roman",serif; --zh:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:15px;line-height:1.55}
+.wrap{max-width:1280px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));display:grid;gap:18px}
+header.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+header.top h1{margin:0;font-size:1.45rem}
+header.top p{margin:0;color:var(--muted);font-size:.9rem}
+.back{margin-left:auto;color:var(--accent);text-decoration:none;font-size:.9rem}
+.main{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;display:grid;gap:16px;position:sticky;top:12px}
+@media (max-width:900px){.panel{position:static}}
+.grp{display:grid;gap:7px}
+.grp>.t{font-size:.78rem;letter-spacing:.1em;color:var(--muted)}
+select,input[type=text],input[type=number]{font:inherit;color:var(--ink);background:var(--soft);border:1px solid var(--rule);border-radius:7px;padding:7px 9px;width:100%}
+.seg{display:flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.seg label{flex:1;text-align:center;cursor:pointer;padding:7px 0;font-size:.92rem;position:relative}
+.seg input{position:absolute;opacity:0}
+.seg label:has(input:checked){background:var(--accent);color:var(--accent-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.checks label,.opt{display:flex;align-items:center;gap:7px;font-size:.92rem;cursor:pointer}
+.checks input,.opt input{width:17px;height:17px;accent-color:var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font:inherit;font-weight:700;border-radius:8px;padding:10px 12px;cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-ink);border:0}
+button.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.codebox{display:grid;grid-template-columns:1fr auto;gap:8px}
+.codebox button{padding:7px 12px;font-weight:500}
+.hint{font-size:.8rem;color:var(--muted);margin:0}
+.status{font-size:.85rem;min-height:1.2em;margin:0}
+.status.err{color:var(--red)}
+.preview{min-width:0;overflow-x:auto}
+.panel{position:static}
+#topics{display:grid;gap:10px;max-height:300px;overflow:auto;border:1px solid var(--rule);border-radius:8px;padding:10px;background:var(--soft)}
+.tgroup{display:grid;gap:6px}
+.tgroup .gh{display:flex;align-items:center;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+.tgroup .gh button{font-weight:500;padding:2px 8px;font-size:.78rem}
+.tgroup .checks{grid-template-columns:1fr 1fr}
+.sec h3 .tp{color:var(--accent);margin-right:1.5mm}
+
+/* ---------- worksheet ---------- */
+.sheet{width:210mm;min-height:297mm;margin:0 auto;background:#fff;color:#1b1f24;padding:14mm 15mm 16mm;box-shadow:0 1px 3px rgba(20,30,45,.12),0 8px 24px rgba(20,30,45,.1)}
+.sh-head{display:grid;gap:2.5mm;border-bottom:.5mm solid #1b1f24;padding-bottom:2.5mm}
+.sh-head .titles{display:flex;justify-content:space-between;align-items:baseline;gap:6mm;flex-wrap:wrap}
+.sh-head h2{margin:0;font-size:17pt;font-weight:700}
+.sh-head .sub{font-size:9pt;color:#5d6773}
+.fields{display:flex;gap:6mm;font-size:10.5pt;white-space:nowrap;justify-content:flex-end}
+.fields span{display:inline-block;border-bottom:.3mm solid #8a95a3;min-width:22mm;margin-left:1.5mm}
+.fields span.wide{min-width:30mm}
+.gbox{margin:4mm 0 1mm;border:.3mm solid #b9c4d1;border-radius:1.5mm;padding:2.5mm 4mm;font-size:10pt;display:flex;gap:6mm;align-items:center;flex-wrap:wrap}
+.gbox table{border-collapse:collapse;font-family:var(--en),var(--zh)}
+.gbox th,.gbox td{border:.25mm solid #c9d2de;padding:.8mm 3mm;text-align:left}
+.gbox th{background:#f1f4f8;font-weight:500}
+.gbox p{margin:0;flex:1;min-width:50mm}
+.sec h3{font-size:11.5pt;margin:5mm 0 2mm;font-weight:700;break-after:avoid;page-break-after:avoid}
+.sec ol li:first-child{break-before:avoid}
+.sec ol{margin:0;padding-left:8mm;display:grid;gap:3.2mm}
+.sec li{font-family:var(--en),var(--zh);font-size:12.5pt;line-height:1.7;break-inside:avoid;padding-left:1mm}
+.sec li::marker{font-size:11pt;color:#3c4652}
+.ln{display:block}
+.ln+.ln{margin-top:.6mm}
+.blank{display:inline-block;min-width:20mm;border-bottom:.3mm solid #1b1f24;text-align:center;line-height:1.2;vertical-align:baseline;padding:0 1mm}
+.blank.wide{min-width:34mm}
+.blank .a{visibility:hidden;color:var(--red);font-weight:700}
+.sheet.teacher .blank .a{visibility:visible}
+.zh{display:block;font-family:var(--zh);font-size:9.5pt;color:#6b7480;line-height:1.4;margin-top:.5mm}
+.zh-q{display:block;font-family:var(--zh);font-size:12pt}
+.wline{display:block;border-bottom:.3mm solid #1b1f24;min-height:9mm;padding-top:2mm;line-height:1.3}
+.wline .a{visibility:hidden;color:var(--red);font-weight:700}
+.sheet.teacher .wline .a{visibility:visible}
+.tr-note{font-weight:400;font-size:10pt;color:var(--red);margin-left:2mm}
+.teacher-tag{color:var(--red);font-weight:700;font-size:10pt;margin-left:3mm}
+
+@media print{
+  @page{size:A4;margin:12mm 13mm 14mm}
+  html,body{background:#fff}
+  .wrap>header,.panel{display:none!important}
+  .wrap{padding:0;display:block;max-width:none}
+  .main{display:block}
+  .preview{overflow:visible}
+  .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}
+  .blank .a,.wline .a{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>英文文法總複習混合卷</h1>
+    <p>勾選幾個主題，一份卷子混合出題；每個主題各成一大題，題數平均分配。適合段考、會考前複習。</p>
+    <a class="back" href="../ziyuan.html#res-english">← 回學習資源</a>
+  </header>
+  <div class="main">
+    <form class="panel" id="form" autocomplete="off">
+      <div class="grp"><span class="t">文法主題（可複選，建議 3–8 個）</span><div id="topics"></div><p class="hint" id="topicHint"></p></div>
+      <div class="grp"><span class="t">等級</span>
+        <div class="seg" role="radiogroup" aria-label="等級">
+          <label><input type="radio" name="level" id="lv1" value="1">初級</label>
+          <label><input type="radio" name="level" id="lv2" value="2" checked>中級</label>
+          <label><input type="radio" name="level" id="lv3" value="3">進階</label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="grp"><span class="t">時態（有過去式的主題）</span><select id="tense" aria-label="時態"></select></div>
+        <div class="grp"><span class="t">否定句縮寫</span><select id="abbr" aria-label="否定句縮寫"></select></div>
+      </div>
+      <div class="row2">
+        <div class="grp"><span class="t">題數（10–50）</span><input type="number" id="count" min="10" max="50" step="1" value="30"></div>
+        <div class="grp"><span class="t">整句翻譯</span><select id="tr" aria-label="整句翻譯題數"></select></div>
+        <div class="grp"><span class="t">顯示</span>
+          <label class="opt"><input type="checkbox" id="zh">中文翻譯</label>
+        </div>
+      </div>
+      <div class="grp"><span class="t">標題與機構</span><input type="text" id="title" aria-label="標題" value="英文文法總複習"><input type="text" id="org" value="百宏文教機構" aria-label="機構名稱"></div>
+      <div class="seg" role="radiogroup" aria-label="版本">
+        <label><input type="radio" name="ver" id="verS" value="s" checked>學用版</label>
+        <label><input type="radio" name="ver" id="verT" value="t">教用版</label>
+      </div>
+      <div class="btns"><button type="button" class="ghost" id="new">換一份題目</button><button type="button" class="primary" id="print">列印 A4</button></div>
+      <div class="grp"><span class="t">卷號（輸入卷號可還原同一份題目）</span>
+        <div class="codebox"><input type="text" id="codeIn" aria-label="卷號" spellcheck="false"><button type="button" class="ghost" id="restore">還原</button></div>
+      </div>
+      <p class="status" id="status" role="status"></p>
+    </form>
+    <section class="preview" aria-label="練習卷預覽"><div class="sheet" id="sheet"></div></section>
+  </div>
+</div>
+<script type="module">
+import { buildMixSheet, decodeMixCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, TR_CHOICES, TR_ONLY } from '../assets/english-grammar/core.js';
+import { TOPICS as PUBLIC, ALL_TOPICS } from '../assets/english-grammar/topics.js';
+
+const $ = (id) => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const TOPICS = params.has('draft') ? ALL_TOPICS : PUBLIC;
+const GRADE = { 7: '七年級', 8: '八年級', 9: '九年級' };
+const NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十'];
+const MAX_TOPICS = 12;
+let seed = newSeed(), sheet = null;
+
+function newSeed() { return 10000 + Math.floor(Math.random() * 90000); }
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---------- controls ----------
+for (const g of [7, 8, 9]) {
+  const list = TOPICS.filter((t) => t.grade === g);
+  if (!list.length) continue;
+  const div = document.createElement('div'); div.className = 'tgroup';
+  div.innerHTML = `<div class="gh"><span>${GRADE[g]}</span><span><button type="button" class="ghost" data-all="${g}">全選</button> <button type="button" class="ghost" data-none="${g}">清除</button></span></div><div class="checks">${list.map((t) => `<label><input type="checkbox" data-grade="${g}" value="${t.id}">${esc(t.title)}</label>`).join('')}</div>`;
+  $('topics').append(div);
+}
+for (const t of TENSES) $('tense').append(new Option(t.name, t.id));
+for (const a of ABBR) $('abbr').append(new Option(a.name, a.id));
+for (const n of TR_CHOICES) $('tr').append(new Option(n === TR_ONLY ? '只出翻譯（題數同上）' : n ? `加 ${n} 題` : '不加', String(n)));
+$('topics').addEventListener('click', (e) => {
+  const g = e.target.dataset.all ?? e.target.dataset.none; if (!g) return;
+  document.querySelectorAll(`#topics input[data-grade="${g}"]`).forEach((c) => { c.checked = !!e.target.dataset.all; });
+  seed = newSeed(); render();
+});
+const picked = () => [...document.querySelectorAll('#topics input:checked')].map((c) => TOPICS.find((t) => t.id === c.value));
+function readOpts() {
+  const level = Number(document.querySelector('input[name=level]:checked').value);
+  let count = Math.round(Number($('count').value) || 30);
+  count = Math.min(COUNT_MAX, Math.max(COUNT_MIN, count));
+  return { level, tense: $('tense').value, abbr: $('abbr').value, zh: $('zh').checked, count, seed, tr: $('tr').value === TR_ONLY ? TR_ONLY : Number($('tr').value) };
+}
+function applyOpts(ids, o) {
+  document.querySelectorAll('#topics input').forEach((c) => { c.checked = ids.includes(c.value); });
+  $('lv' + o.level).checked = true;
+  $('tense').value = o.tense; $('abbr').value = o.abbr; $('zh').checked = o.zh; $('count').value = o.count; $('tr').value = String(o.tr || 0);
+  seed = o.seed;
+}
+
+// ---------- worksheet ----------
+function part(p) {
+  if (typeof p === 'string') return esc(p);
+  return `<span class="blank${p.wide ? ' wide' : ''}"><span class="a">${esc(p.a)}</span></span>`;
+}
+function render() {
+  const o = readOpts(), topics = picked(), status = $('status');
+  status.classList.remove('err');
+  $('topicHint').textContent = `已選 ${topics.length} 個主題`;
+  if (!topics.length) { status.textContent = '請至少勾選一個主題。'; status.classList.add('err'); $('sheet').innerHTML = ''; return; }
+  if (topics.length > MAX_TOPICS) { status.textContent = `最多 ${MAX_TOPICS} 個主題。`; status.classList.add('err'); return; }
+  try { sheet = buildMixSheet(topics, o); }
+  catch (e) { status.textContent = '這組設定出不了足夠的題目，請增加題數或換主題。'; status.classList.add('err'); return; }
+  const zhOn = o.zh || topics.some((t) => t.zhRequired);
+  status.textContent = sheet.total < o.count ? `這組主題最多出 ${sheet.total} 題，已全部列出。` : '';
+  const teacher = $('verT').checked;
+  const lv = LEVELS.find((l) => l.id === o.level).name;
+  let html = `<div class="sh-head"><div class="titles"><h2>${esc($('title').value || '英文文法總複習')}${teacher ? '<span class="teacher-tag">教用版</span>' : ''}</h2>
+    <div class="sub">${esc($('org').value)}　${lv}・${topics.map((t) => esc(t.title)).join('、')}　卷號 ${esc(sheet.code)}</div></div>
+    <div class="fields">班級<span></span>姓名<span class="wide"></span>日期<span></span></div></div>`;
+  let n = 1;
+  sheet.sections.forEach((sec, i) => {
+    html += `<section class="sec"><h3>${NUM[i]}、<span class="tp">【${esc(sec.topicTitle)}】</span>${esc(sec.title.slice(sec.topicTitle.length + 1))}</h3><ol start="${n}">`;
+    const showZh = o.zh || TOPICS.find((t) => t.id === sec.topic)?.zhRequired;
+    for (const it of sec.items) {
+      html += `<li>${it.lines.map((l) => `<span class="ln">${l.map(part).join('')}</span>`).join('')}${showZh ? `<span class="zh">${esc(it.zh)}</span>` : ''}</li>`;
+      n++;
+    }
+    html += '</ol></section>';
+  });
+  if (sheet.translation?.items.length) {
+    const t = sheet.translation;
+    html += `<section class="sec tr"><h3>${sheet.sections.length ? NUM[sheet.sections.length] + '、' : ''}${esc(t.title)}${teacher ? '<span class="tr-note">（參考答案，意思正確即可）</span>' : ''}</h3><ol start="${n}">`;
+    for (const it of t.items) { html += `<li><span class="zh-q">${esc(it.zh)}</span><span class="wline"><span class="a">${esc(it.en)}</span></span></li>`; n++; }
+    html += '</ol></section>';
+  }
+  const el = $('sheet');
+  el.className = 'sheet' + (teacher ? ' teacher' : '');
+  el.innerHTML = html;
+  $('codeIn').value = sheet.code;
+}
+
+// ---------- events ----------
+$('form').addEventListener('change', (e) => { if (e.target.id !== 'codeIn') { if (e.target.closest('#topics') || e.target.name === 'level') seed = newSeed(); render(); } });
+$('title').addEventListener('input', render); $('org').addEventListener('input', render);
+$('new').addEventListener('click', () => { seed = newSeed(); render(); });
+$('print').addEventListener('click', () => window.print());
+$('restore').addEventListener('click', () => {
+  const r = decodeMixCode($('codeIn').value, TOPICS);
+  if (!r) { $('status').textContent = '卷號格式不對，請照頁尾印的卷號輸入。'; $('status').classList.add('err'); return; }
+  applyOpts(r.topics, r.opts); render();
+});
+$('form').addEventListener('submit', (e) => e.preventDefault());
+
+// ---------- start ----------
+const fromCode = params.get('code') && decodeMixCode(params.get('code'), TOPICS);
+if (fromCode) applyOpts(fromCode.topics, fromCode.opts);
+else {
+  const start = (params.get('topics') || 'be,simple,progressive,past,there,can').split(',');
+  document.querySelectorAll('#topics input').forEach((c) => { c.checked = start.includes(c.value); });
+  $('tense').value = 'M'; $('abbr').value = 'F';
+}
+render();
+</script>
+<script src="../assets/site.js?v=20261005-site-analytics-1" defer></script>
+</body>
+</html>

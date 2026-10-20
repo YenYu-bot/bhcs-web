@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildSheet, encodeCode, decodeCode, lineText, answersOf, splitCount, fullSentence, COUNT_MIN, COUNT_MAX } from '../assets/english-grammar/core.js';
+import { buildSheet, encodeCode, decodeCode, lineText, answersOf, splitCount, fullSentence, buildMixSheet, decodeMixCode, COUNT_MIN, COUNT_MAX } from '../assets/english-grammar/core.js';
 import { TOPICS, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 import { NAMES, FUNCTION_WORDS, SUBJECTS } from '../assets/english-grammar/lexicon.js';
 
@@ -1021,6 +1021,37 @@ test('translation-only sheets: no fill-in part, the asked number of whole senten
   }
 });
 
+test('review sheets over several topics: shares add up, every section passes its topic\'s own rules, the code round-trips', () => {
+  const sets = [['be', 'simple', 'progressive', 'past', 'there', 'can'], ['perfect', 'passive', 'tag', 'relative', 'gerund'], ['article', 'quantity', 'prep', 'possess'], TOPICS.map((t) => t.id)];
+  for (const ids of sets) for (const level of [1, 2, 3]) for (const seed of [31, 32]) {
+    const topics = ids.map((id) => TOPICS.find((t) => t.id === id));
+    const o = { level, tense: 'M', abbr: 'B', zh: false, count: ids.length >= 12 ? 50 : 30, seed, tr: 5 };
+    const sh = buildMixSheet(topics, o);
+    const where = `mix ${ids.length} topics level ${level} seed ${seed}`;
+    const byTopic = {}; for (const s of sh.sections) byTopic[s.topic] = (byTopic[s.topic] || 0) + s.items.length;
+    const shares = splitCount(o.count, ids);
+    for (const { mode: id, n } of shares) { const t = TOPICS.find((x) => x.id === id); if (!t.capacity) assert.equal(byTopic[id], n, `${where}: ${id} gets its share`); else assert.ok(byTopic[id] <= n); }
+    assert.equal(sh.total, sh.sections.reduce((a, s) => a + s.items.length, 0));
+    for (const s of sh.sections) {
+      const t = TOPICS.find((x) => x.id === s.topic);
+      assert.ok(t.defaultModes[level].includes(s.mode), `${where}: ${s.topic} uses a default mode`);
+      for (const it of s.items) CHECKERS[s.topic](it, s.mode, s.opts);
+    }
+    assert.equal(sh.translation.items.length, 5, `${where}: five translations`);
+    assert.ok(new Set(sh.translation.items.map((x) => x.topic)).size >= Math.min(ids.length, 5), `${where}: translations spread over the topics`);
+    assert.deepEqual(buildMixSheet(topics, o), sh, 'deterministic');
+    const back = decodeMixCode(sh.code, TOPICS);
+    assert.deepEqual(back.topics, ids); assert.deepEqual(back.opts, sh.opts);
+    assert.deepEqual(buildMixSheet(back.topics.map((id) => TOPICS.find((t) => t.id === id)), back.opts), sh, 'rebuilt from the code');
+    // translation-only review sheet
+    const only = buildMixSheet(topics, { ...o, tr: 'O' });
+    assert.deepEqual(only.sections, []); assert.equal(only.translation.items.length, o.count, `${where}: translation-only has ${o.count}`); assert.ok(only.code.endsWith('-TO'));
+    assert.equal(new Set(only.translation.items.map((x) => x.zh)).size, o.count, 'no Chinese line twice');
+  }
+  assert.equal(decodeMixCode('MIX-2M-BE.BE-F1-30-5', TOPICS), null, 'a topic cannot repeat');
+  assert.equal(decodeMixCode('MIX-2M-BE.ZZZ-F1-30-5', TOPICS), null, 'unknown topic');
+});
+
 test('the page is public, loads the engine as modules, and every published topic is linked from the resources page', () => {
   const html = fs.readFileSync(path.join(root, 'tools/english-grammar.html'), 'utf8');
   assert.ok(!/<meta name="robots" content="noindex">/.test(html), 'indexable once reviewed');
@@ -1029,6 +1060,10 @@ test('the page is public, loads the engine as modules, and every published topic
   const ziyuan = fs.readFileSync(path.join(root, 'ziyuan.html'), 'utf8');
   for (const t of TOPICS) assert.ok(ziyuan.includes(`href="tools/english-grammar.html?topic=${t.id}"`), `${t.title} is linked from the resources page`);
   assert.ok(fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8').includes('https://www.bhcs.com.tw/tools/english-grammar.html'), 'in the sitemap');
+  const mix = fs.readFileSync(path.join(root, 'tools/english-grammar-mix.html'), 'utf8');
+  assert.ok(mix.includes("from '../assets/english-grammar/core.js'") && mix.includes('buildMixSheet'), 'the review page uses the shared engine');
+  assert.ok(ziyuan.includes('href="tools/english-grammar-mix.html"'), 'the review page is linked from the resources page');
+  assert.ok(fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8').includes('https://www.bhcs.com.tw/tools/english-grammar-mix.html'), 'review page in the sitemap');
 });
 
 console.log(`english grammar: ${tests} tests passed`);
