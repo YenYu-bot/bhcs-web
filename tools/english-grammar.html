@@ -98,7 +98,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 <div class="wrap">
   <header class="top">
     <h1>英文文法填空練習</h1>
-    <p>選主題、等級與句型，每按一次產生一份新題目；可在最後加入整句翻譯。學用版與教用版題目相同。</p>
+    <p>選主題、等級與句型，每按一次產生一份新題目；可在最後加入整句翻譯，或整張只出翻譯。學用版與教用版題目相同。</p>
     <a class="back" href="../ziyuan.html#res-english">← 回學習資源</a>
   </header>
   <div class="main">
@@ -138,7 +138,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   </div>
 </div>
 <script type="module">
-import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT, TR_CHOICES } from '../assets/english-grammar/core.js';
+import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT, TR_CHOICES, TR_ONLY } from '../assets/english-grammar/core.js';
 import { TOPICS as PUBLIC, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 
 const $ = (id) => document.getElementById(id);
@@ -162,7 +162,7 @@ for (const g of [7, 8, 9]) {
 }
 for (const t of TENSES) $('tense').append(new Option(t.name, t.id));
 for (const a of ABBR) $('abbr').append(new Option(a.name, a.id));
-for (const n of TR_CHOICES) $('tr').append(new Option(n ? `加 ${n} 題` : '不加', String(n)));
+for (const n of TR_CHOICES) $('tr').append(new Option(n === TR_ONLY ? '只出翻譯（題數同上）' : n ? `加 ${n} 題` : '不加', String(n)));
 
 function buildModeBoxes() {
   $('modes').replaceChildren(...topic.modes.map((m) => {
@@ -182,7 +182,7 @@ function readOpts() {
   return {
     level, tense: topic.past ? $('tense').value : 'P',
     modes: topic.modes.map((m) => m.id).filter((id) => $('m-' + id).checked),
-    abbr: $('abbr').value, zh: !!topic.zhRequired || $('zh').checked, count, seed, tr: Number($('tr').value),
+    abbr: $('abbr').value, zh: !!topic.zhRequired || $('zh').checked, count, seed, tr: $('tr').value === TR_ONLY ? TR_ONLY : Number($('tr').value),
   };
 }
 function applyOpts(o) {
@@ -215,11 +215,12 @@ function render() {
   try { sheet = buildSheet(topic, o); }
   catch (e) { status.textContent = '這組設定出不了足夠的題目，請減少題數或多勾幾種句型。'; status.classList.add('err'); return; }
   status.textContent = sheet.total < o.count ? `這組句型最多出 ${sheet.total} 題，已全部列出。` : ''; status.classList.remove('err');
+  if (sheet.total === 0) { status.textContent = '這組句型沒有可翻譯的句子，請換一種句型。'; status.classList.add('err'); }
   const teacher = $('verT').checked;
   const lv = LEVELS.find((l) => l.id === o.level).name;
   const tense = topic.past ? '・' + TENSES.find((t) => t.id === sheet.opts.tense).name : '';
   let html = `<div class="sh-head"><div class="titles"><h2>${esc($('title').value || topic.title)}${teacher ? '<span class="teacher-tag">教用版</span>' : ''}</h2>
-    <div class="sub">${esc($('org').value)}　${esc(topic.title)}・${lv}${tense}　卷號 ${esc(sheet.code)}</div></div>
+    <div class="sub">${esc($('org').value)}　${esc(topic.title)}・${lv}${tense}${sheet.opts.tr === TR_ONLY ? '・整句翻譯' : ''}　卷號 ${esc(sheet.code)}</div></div>
     <div class="fields">班級<span></span>姓名<span class="wide"></span>日期<span></span></div></div>`;
   if ($('box').checked && topic.grammarBox) {
     const g = topic.grammarBox(sheet.opts);
@@ -236,7 +237,7 @@ function render() {
   });
   if (sheet.translation?.items.length) {
     const t = sheet.translation;
-    html += `<section class="sec tr"><h3>${NUM[sheet.sections.length]}、${esc(t.title)}${teacher ? '<span class="tr-note">（參考答案，意思正確即可）</span>' : ''}</h3><ol start="${n}">`;
+    html += `<section class="sec tr"><h3>${sheet.sections.length ? NUM[sheet.sections.length] + '、' : ''}${esc(t.title)}${teacher ? '<span class="tr-note">（參考答案，意思正確即可）</span>' : ''}</h3><ol start="${n}">`;
     for (const it of t.items) { html += `<li><span class="zh-q">${esc(it.zh)}</span><span class="wline"><span class="a">${esc(it.en)}</span></span></li>`; n++; }
     html += '</ol></section>';
   }

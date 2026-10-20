@@ -1001,6 +1001,26 @@ test('whole-sentence translation: new sentences, whole and in the word list, and
   assert.equal(decodeCode('BE-2P-1-F0-20-5-T7', ALL_TOPICS), null, 'only the offered counts');
 });
 
+test('translation-only sheets: no fill-in part, the asked number of whole sentences, code ends in -TO', () => {
+  for (const t of ALL_TOPICS) for (const level of [1, 2, 3]) for (const seed of [21, 22]) {
+    const o = { level, tense: t.past ? 'M' : 'P', modes: t.defaultModes[level], abbr: 'B', zh: false, count: 20, seed, tr: 'O' };
+    const sh = buildSheet(t, o);
+    const where = `${t.id} level ${level} seed ${seed}`;
+    assert.deepEqual(sh.sections, [], `${where}: no fill-in sections`);
+    const items = sh.translation.items;
+    assert.equal(sh.total, items.length);
+    const trModes = o.modes.filter((m) => !t.noTranslate?.includes(m));
+    const cap = t.capacity ? trModes.reduce((a, m) => a + (t.capacity[m] ?? 50), 0) : Infinity;
+    assert.ok(items.length >= Math.min(20, cap, 10), `${where}: enough translation questions (${items.length})`);
+    if (!t.capacity) assert.equal(items.length, 20, `${where}: all 20`);
+    assert.equal(new Set(items.map((x) => x.zh)).size, items.length, `${where}: no Chinese line twice`);
+    for (const x of items) { for (const w of x.en.match(/[A-Za-z][A-Za-z']*/g)) assert.ok(inList(w), `${where}: "${w}" in the word list (${x.en})`); assert.ok(!/___|—|→/.test(x.en + x.zh), 'clean'); }
+    assert.ok(sh.code.endsWith('-TO'), sh.code);
+    const back = decodeCode(sh.code, ALL_TOPICS);
+    assert.deepEqual(back.opts, sh.opts); assert.deepEqual(buildSheet(t, back.opts), sh, `${where}: rebuilt from the code`);
+  }
+});
+
 test('the page is public, loads the engine as modules, and every published topic is linked from the resources page', () => {
   const html = fs.readFileSync(path.join(root, 'tools/english-grammar.html'), 'utf8');
   assert.ok(!/<meta name="robots" content="noindex">/.test(html), 'indexable once reviewed');
