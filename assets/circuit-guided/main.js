@@ -70,7 +70,20 @@ const persist=()=>{
 };
 let lastWhere = null;
 let seq = 0;
-const showComplete=()=>{const c=$('cgg-complete');c.hidden=false;analytics.emit('lab_complete');};
+const showComplete=({restoring=false}={})=>{
+  const c=$('cgg-complete');
+  const lessons=[
+    '多接一顆燈，總電流不一定變小。',
+    '串聯只有一條路；增加相同負載時，總電流可能下降。',
+    '並聯增加路徑後，總電流可能增加；總電流等於各路徑電流加起來。',
+    '燈泡轉換電能，不會把同一路徑中的電流「用掉」。'
+  ];
+  const list=$('cgg-complete-lessons');
+  list.replaceChildren(...lessons.map(line=>{const li=document.createElement('li');li.textContent=line;return li;}));
+  $('cgg-complete-caveat').textContent='本站採低電壓理想模型；真實電池、燈泡、導線與電表仍有額外因素。';
+  c.hidden=false;
+  if(!restoring)analytics.emit('lab_complete');
+};
 let lastChallengeStage=loaded.data?.challenge?.stage??1;
 const challenges = mountChallenges($('cgg-challenges'),{onChange:()=>{const stage=challenges.snapshot().stage;if(stage>lastChallengeStage){if(stage>=2&&lastChallengeStage<2)analytics.emit('challenge_complete','1');if(stage>=3&&lastChallengeStage<3)analytics.emit('challenge_complete','2');lastChallengeStage=stage;}persist();},onComplete:()=>{analytics.emit('challenge_complete','3');persist();showComplete();}});
 const notebook = mountCircuitNotebook($('cgg-notebook'), () => state, {onChange:()=>persist(),onComplete: () => { $('cgg-challenges-open').hidden = false;analytics.emit('notebook_complete');persist(); }});
@@ -79,7 +92,7 @@ $('cgg-notebook-open').addEventListener('click', () => { notebook.show(); $('cgg
 
 if(loaded.data?.notebook)notebook.restore(loaded.data.notebook);
 if(loaded.data?.challenge)challenges.restore(loaded.data.challenge);
-if(loaded.data?.challenge?.done)$('cgg-complete').hidden=false;
+if(loaded.data?.challenge?.done)showComplete({restoring:true});
 if(state.phase==='concept'&&loaded.data?.notebook?.level==='done')$('cgg-challenges-open').hidden=false;
 statusNote.textContent=loaded.status==='restored'?'已恢復本機學習進度':loaded.status==='invalid'?'存檔內容無效，已使用新進度':loaded.status==='unavailable'?'無法讀取本機進度':'目前尚無儲存進度';
 $('cgg-restart').addEventListener('click',()=>{if(storage.clear())window.location.reload();else statusNote.textContent='無法清除本機進度，請檢查瀏覽器儲存設定。';});
