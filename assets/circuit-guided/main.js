@@ -62,7 +62,7 @@ statusNote.id='cgg-storage-status';
 statusNote.setAttribute('role','status');
 $('cgg-prototype-note').after(statusNote);
 const persist=()=>{
-  const result=storage.save({main:state,notebook:notebook.snapshot(),challenge:challenges.snapshot()});
+  const result=storage.save({main:state,notebook:state.phase==='concept'?notebook.snapshot():null,challenge:state.phase==='concept'&&notebook.snapshot().level==='done'?challenges.snapshot():null});
   storageStatus=result.status;
   statusNote.textContent=storageStatus==='saved'?'本機已儲存學習進度':storageStatus==='unavailable'?'無法使用本機儲存，進度可能不會保留':'正在檢查學習進度';
 };
