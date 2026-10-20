@@ -70,7 +70,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
       const { s, f, t } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.habit && x.v !== f.v, 's'); if (!g) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.habit && x.v !== f.v && cuesFor(x, 'habit', s).some((c) => c.en === t.en), 's'); if (!g) return null;
       const r = { person: s.reply === 'we' ? 1 : 3, num: ['he', 'she', 'it'].includes(s.reply) ? 'sg' : 'pl' };
       const ra = aux(r);
       return {

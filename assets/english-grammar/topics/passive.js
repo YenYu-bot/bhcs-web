@@ -22,7 +22,7 @@ const DEEDS = [
   D('feed', 'the dog', '狗', false, '餵'), D('fix', 'the bicycle', '腳踏車', false, '修', 'any', 'once'), D('fix', 'the computer', '電腦', false, '修', 'adult', 'once'), D('use', 'the computer', '電腦', false, '使用'),
   D('open', 'the window', '窗戶', false, '打開'), D('close', 'the door', '門', false, '關上'), D('carry', 'the boxes', '箱子', true, '搬', 'any', 'once'), D('cook', 'dinner', '晚餐', false, '煮'),
   D('teach', 'science', '自然', false, '教', 'adult', 'state'), D('tell', 'the story', '這個故事', false, '說', 'any', 'once'), D('build', 'the house', '房子', false, '蓋', 'adult', 'once'), D('grow', 'the vegetables', '蔬菜', true, '種', 'adult', 'state'),
-  D('break', 'the window', '窗戶', false, '打破', 'any', 'once'), D('steal', 'the money', '錢', false, '偷走', 'any', 'once'), D('invite', 'the students', '學生們', true, '邀請', 'adult', 'once'), D('sell', 'the fruit', '水果', false, '賣', 'adult', 'state'),
+  D('break', 'the window', '窗戶', false, '打破', 'any', 'once'), D('invite', 'the students', '學生們', true, '邀請', 'adult', 'once'), D('sell', 'the fruit', '水果', false, '賣', 'adult', 'state'),
   D('love', 'the baby', '嬰兒', false, '疼愛', 'any', 'state'), D('find', 'the keys', '鑰匙', true, '找到', 'any', 'once'), D('finish', 'the work', '工作', false, '完成', 'adult', 'once'), D('send', 'the letters', '這些信', true, '寄出', 'any', 'once'),
   D('buy', 'the flowers', '花', true, '買', 'any', 'once'), D('take', 'the pictures', '這些照片', true, '拍', 'any', 'once'), D('see', 'the movie', '這部電影', false, '看', 'any', 'once'),
 ];

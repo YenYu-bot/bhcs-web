@@ -20,7 +20,7 @@ const MUSTNT = [
   ['touch the animals', '碰那些動物'], ['park here', '在這裡停車'], ['be late for class', '上課遲到'], ['use a dictionary during the test', '考試時用字典'], ['throw trash on the floor', '把垃圾丟在地上'],
 ];
 const RULE_SUBJECTS = [['You', '你'], ['We', '我們'], ['Students', '學生'], ['Drivers', '駕駛人'], ['Visitors', '訪客'], ['People', '大家']];
-const SUBJ_FOR = { 'wear a seat belt': ['You', 'We', 'Drivers'], 'stop at the red light': ['You', 'We', 'Drivers'], 'park here': ['You', 'Drivers', 'Visitors'], 'touch the animals': ['You', 'Visitors', 'Students'],
+const SUBJ_FOR = { 'be quiet in the library': ['You', 'We', 'Students', 'Visitors', 'People'], 'talk in the library': ['You', 'We', 'Students', 'Visitors', 'People'], 'be on time': ['You', 'We', 'Students', 'Visitors', 'People'], 'wear a seat belt': ['You', 'We', 'Drivers'], 'stop at the red light': ['You', 'We', 'Drivers'], 'park here': ['You', 'Drivers', 'Visitors'], 'touch the animals': ['You', 'Visitors', 'Students'],
   'listen to the teacher': ['You', 'We', 'Students'], 'be quiet in class': ['You', 'We', 'Students'], 'finish the test in an hour': ['You', 'We', 'Students'], 'keep the classroom clean': ['You', 'We', 'Students'],
   'use a dictionary during the test': ['You', 'We', 'Students'], 'be late for class': ['You', 'We', 'Students'], 'eat in the classroom': ['You', 'We', 'Students'], 'run in the hall': ['You', 'We', 'Students'],
   'wash your hands before dinner': ['You', 'We', 'Students'], 'look left and right before you cross the street': ['You', 'We'] };
