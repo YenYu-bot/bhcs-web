@@ -14,7 +14,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send', forgot: 'forget', began: 'begin', said: 'say', stole: 'steal', grew: 'grow', built: 'build', sold: 'sell', found: 'find' };
+const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send', forgot: 'forget', began: 'begin', said: 'say', stole: 'steal', grew: 'grow', built: 'build', sold: 'sell', found: 'find', won: 'win', left: 'leave' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin', 'taichung', 'taiwan']);
 // past participles that differ from the past form, back to the base
 const PP_BACK = { built: 'build', grown: 'grow', broken: 'break', stolen: 'steal', sold: 'sell', found: 'find', heard: 'hear', felt: 'feel', eaten: 'eat', drunk: 'drink', done: 'do', written: 'write', sung: 'sing', swum: 'swim', ridden: 'ride', taken: 'take', gone: 'go', drawn: 'draw', flown: 'fly', driven: 'drive', gotten: 'get', seen: 'see', worn: 'wear', spoken: 'speak', been: 'be', lent: 'lend', sent: 'send', kept: 'keep' };
@@ -152,7 +152,7 @@ function checkBe(item, mode, o) {
 
 
 // ---------- verb rules (independent of assets/english-grammar/verbs.js) ----------
-const IRREGULAR_PAST = { feed: 'fed', wear: 'wore', bring: 'brought', meet: 'met', read: 'read', eat: 'ate', drink: 'drank', do: 'did', write: 'wrote', sing: 'sang', swim: 'swam', run: 'ran', ride: 'rode', take: 'took', go: 'went', sleep: 'slept', draw: 'drew', buy: 'bought', make: 'made', fly: 'flew', sit: 'sat', teach: 'taught', drive: 'drove', catch: 'caught', get: 'got', have: 'had', see: 'saw', come: 'came', speak: 'spoke' };
+const IRREGULAR_PAST = { leave: 'left', say: 'said', win: 'won', break: 'broke', feed: 'fed', wear: 'wore', bring: 'brought', meet: 'met', read: 'read', eat: 'ate', drink: 'drank', do: 'did', write: 'wrote', sing: 'sang', swim: 'swam', run: 'ran', ride: 'rode', take: 'took', go: 'went', sleep: 'slept', draw: 'drew', buy: 'bought', make: 'made', fly: 'flew', sit: 'sat', teach: 'taught', drive: 'drove', catch: 'caught', get: 'got', have: 'had', see: 'saw', come: 'came', speak: 'spoke' };
 const shortCVC = (b) => /^[^aeiou]*[aeiou][^aeiouwxy]$/.test(b);
 function s3(b) {
   if (b === 'have') return 'has';
@@ -667,7 +667,90 @@ function checkSense(it, mode) {
   if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
 }
 
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim, passive: checkPassive, relative: checkRelative, tag: checkTag, sense: checkSense };
+
+// ---------- batch 7 rules ----------
+function checkIndef(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const after = text.split('___').pop().trim().split(' ')[0].replace(/[.,?;]$/, '');
+  if (mode === 'one') {
+    // singular after a / an / another / this / that (a new one); otherwise plural when the noun it stands for is plural
+    const singularSlot = /\b(a|an|another|this|that|there is|need|me) (\w+ )?___/.test(text) && !/\b(some|any) (\w+ )?___/.test(text);
+    const plural = !singularSlot && /\b(shoes|apples|books|cookies|pictures|flowers|questions|boxes|socks|cups)\b/.test(text);
+    assert.deepEqual(a, a.map(() => (plural ? 'ones' : 'one')), text);
+  } else {
+    const defined = /\b(two|three|four|five|ten|thirty|of the students|of my brothers)\b/i.test(text);
+    const pluralAfter = /^(are|like|take|say|stay)$/.test(after);
+    let want;
+    if (!defined) want = pluralAfter ? 'others' : 'another';
+    else if (pluralAfter) want = 'the others';
+    else want = /\bthree\b/.test(text) && !/another/.test(text) ? 'another' : 'the other';
+    assert.deepEqual(a, want.split(' '), `${want}: ${text}`);
+  }
+}
+const SELF_OF = { I: 'myself', you: 'yourself', he: 'himself', she: 'herself', it: 'itself', we: 'ourselves', they: 'themselves' };
+function checkReflexive(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'verb') {
+    const subj = m.subj; assert.ok(text.startsWith(subj + ' '), 'subject starts the sentence');
+    const key = /^I$/.test(subj) ? 'I' : /^you$/i.test(subj) ? 'you' : /^we$/i.test(subj) || / and i$/i.test(subj) ? 'we' : /^they$/i.test(subj) || isPlural(subj) ? 'they' : /^he$/i.test(subj) ? 'he' : /^she$/i.test(subj) ? 'she' : expectedReply(subj);
+    assert.deepEqual(a, [SELF_OF[key]], `${subj}: ${text}`);
+  } else {
+    const want = /kids/.test(text) ? 'yourselves' : SELF_OF[m.pr];
+    assert.deepEqual(a, [want], text);
+  }
+}
+function checkIndirect(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const q = m.q, head = /^→ ([A-Z][^?.]*?) (where|what|when|how|who|which|why|if|___)/.exec(lineText(it.lines[1]))?.[1] ?? '';
+  assert.ok(it.lines.map(lineText).join(' ').endsWith(/^(Do|Can|Could)/.test(head) ? '?' : '.'), `end punctuation follows "${head}": ${text}`);
+  // the indirect verb, from the direct question: does S V → Vs, did S V → V-ed / irregular, be stays (with its -ing verb), will / can / has stay with their verb;
+  // a question with no subject before the verb (Who broke…?) keeps the verb as it is
+  const direct = q.replace(/\?$/, '') + ' ';
+  const subj = m.subj;
+  const after = (aux) => { const mm = new RegExp(`\\b${aux} ${subj.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} ([a-z]+)`, 'i').exec(direct); return mm && mm[1]; };
+  let verb;
+  if (!subj) verb = /^(?:Who|Which bus) ([a-z]+)/.exec(direct)[1];
+  else if (after('does') || after('Does')) verb = s3(after('does') || after('Does'));
+  else if (after('did') || after('Did')) verb = pastOf(after('did') || after('Did'));
+  else if (after('do') || after('Do')) verb = after('do') || after('Do');
+  else {
+    const mm = new RegExp(`\\b(is|are|was|were|will|can|has) ${subj.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?: ([a-z]+))?`, 'i').exec(direct);
+    assert.ok(mm, `aux found in "${q}"`);
+    const aux = mm[1].toLowerCase(), next = mm[2];
+    verb = /^(will|can|has)$/.test(aux) || (next && /ing$/.test(next)) ? `${aux} ${next}` : aux;
+  }
+  if (mode === 'verb') assert.deepEqual(a, verb.split(' '), `${q} → ${verb}: ${text}`);
+  if (mode === 'order') { assert.deepEqual(a, [m.subj, verb], text); assert.ok(!/___ ___ (does|did) /.test(text)); }
+  if (mode === 'if') assert.deepEqual(a, ['if', m.subj, verb], text);
+  // the indirect part never keeps does / did
+  assert.ok(!/(know|wonder|tell me) (where|what|when|how|who|which|why|if)[^?.]* (does|did) /.test(text.replace(/___/g, a.join(' '))), 'no does / did in the indirect question');
+}
+function checkTooEnough(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'too') { assert.deepEqual(a, ['too', 'to']); assert.match(text, /___ [a-z]+ ___ [a-z]/); }
+  if (mode === 'so') { assert.deepEqual(a, ['so', 'that']); assert.match(text, /___ [a-z]+ ___ (I|we|he|she) can't /); }
+  if (mode === 'enough') {
+    const word = /\((\w+)／enough\)/.exec(text)[1];
+    const noun = /\b(have|has) ___/.test(text);
+    assert.deepEqual(a, noun ? ['enough', word] : [word, 'enough'], `${noun ? 'noun' : 'adjective'} ${word}: ${text}`);
+  }
+  if (mode === 'swap') { assert.match(it.lines[0][0], / too \w+ to /); assert.deepEqual(a, ['so', 'that', m.pr, "can't"]); }
+}
+const WIF_S3 = (subj) => isThirdSg(subj.replace(/^(If|When|Before|After|As soon as) /i, ''));
+function checkWhenIf(it, mode) {
+  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const clause = /(?:^|[.,] |\b)(If|When|Before|After|As soon as|if|when|before|after|as soon as) ([a-zA-Z ]+?) (___|will|[a-z]+)/.exec(text);
+  const cs = /(?:If|When|Before|After|As soon as|if|when|before|after|as soon as) ([A-Za-z]+(?: [a-z]+)?) ___/.exec(text);
+  const want = [];
+  if (mode === 'clause' || mode === 'mix') { const subj = cs[1]; want.push(m.base === 'be' ? 'is' : WIF_S3(subj) ? s3(m.base) : m.base); }
+  if (mode === 'main') want.push('will', m.base);
+  if (mode === 'mix') { const mainFirst = /^[A-Z][a-z ]* ___ \(/.test(text) && !/^(If|When|Before|After|As soon as)/.test(text); const w = `will ${m.mbase}`; if (mainFirst) want.unshift(w); else want.push(w); }
+  assert.deepEqual(a, want, text);
+  let i = 0; const filled = text.replace(/___/g, () => a[i++]);
+  assert.ok(!/\b(If|When|Before|After|As soon as|if|when|before|after|as soon as) [A-Za-z ]+? will /.test(filled), `no will inside the clause: ${filled}`);
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim, passive: checkPassive, relative: checkRelative, tag: checkTag, sense: checkSense, indef: checkIndef, reflexive: checkReflexive, indirect: checkIndirect, tooenough: checkTooEnough, whenif: checkWhenIf };
 
 // ---------- sheets to check ----------
 function* settings() {
@@ -816,7 +899,7 @@ test('whole-sentence translation: new sentences, whole and in the word list, and
     for (const x of items) {
       assert.ok(!fill.has(x.en.toLowerCase()), `${where}: not a fill-in sentence: ${x.en}`);
       assert.ok(sh.opts.modes.includes(x.mode), 'from the chosen modes');
-      assert.match(x.en, /^[A-Z][A-Za-z0-9 ,'.]*[A-Za-z0-9][.?!]$/, `${where}: one whole sentence, no cue left: ${x.en}`);
+      assert.match(x.en, /^[A-Z][A-Za-z0-9 ,'.:;?!]*[A-Za-z0-9][.?!]$/, `${where}: one whole sentence, no cue left: ${x.en}`);
       for (const w of x.en.match(/[A-Za-z][A-Za-z']*/g)) assert.ok(inList(w), `${where}: "${w}" in the word list (${x.en})`);
       assert.match(x.zh, /^[^(（]*\p{Script=Han}[^(（]*[。？！]$/u, `${where}: Chinese prompt: ${x.zh}`);
       assert.ok(!/undefined|null|NaN|___|→|—/.test(x.en + x.zh), `${where}: clean: ${x.en} / ${x.zh}`);
