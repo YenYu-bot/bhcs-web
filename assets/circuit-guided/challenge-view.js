@@ -5,7 +5,7 @@ import {MAX_WIRES} from './model.js';
 import {challengeOneStatus,CHALLENGE_ONE_OPTIONS,challengeBase,replayChallenge,challengeReadings,challengeTwoPosition,challengeThreeEvidence,CHALLENGE_TWO_POSITIONS} from './challenges.js';
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n};
 const key=(a,b)=>[a,b].sort().join('|');
-export function mountChallenges(root,{onComplete=()=>{}}={}){
+export function mountChallenges(root,{onComplete=()=>{},onChange=()=>{}}={}){
   let stage=1,actions=[],records=[],choice=null,done=false;
   const heading=el('h2','挑戰 1：電壓表接錯了'),prompt=el('p'),feedback=el('p');
   feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
@@ -13,7 +13,7 @@ export function mountChallenges(root,{onComplete=()=>{}}={}){
   next.type='button';root.append(heading,prompt,options,benchHost,feedback,controls,next);
   const bench=createCircuitBench(benchHost);let active=false;
   const raw=()=>replayChallenge(stage,actions);
-  const add=a=>{const candidate=replayChallenge(stage,[...actions,a]);if(!candidate.valid){feedback.textContent='這次接線不能使用，請檢查端點或導線。';return;}actions.push(a);paint();};
+  const add=a=>{const candidate=replayChallenge(stage,[...actions,a]);if(!candidate.valid){feedback.textContent='這次接線不能使用，請檢查端點或導線。';return;}actions.push(a);paint();onChange();};
   bindCircuitInput({
     root:bench.element,
     getLocked:()=>!active||stage===1||done,
@@ -43,13 +43,13 @@ export function mountChallenges(root,{onComplete=()=>{}}={}){
       prompt.textContent='小明把電壓表接在原本通往燈泡的導線缺口，燈不亮、電流表為 0 A。應該如何修正？';
       for(const [value,label]of Object.entries(CHALLENGE_ONE_OPTIONS)){
         const l=el('label'),input=el('input');input.type='radio';input.name='cgg-challenge-one';input.value=value;
-        input.checked=choice===value;input.addEventListener('change',()=>{choice=value});l.append(input,document.createTextNode(label));options.append(l);
+        input.checked=choice===value;input.addEventListener('change',()=>{choice=value;onChange();});l.append(input,document.createTextNode(label));options.append(l);
       }next.textContent='確認答案';
     }else if(stage===2){
       const idx=records.length;
       prompt.textContent=idx<3?'把電流表親自接在「'+({'before-L1':'燈泡 1 前','between-lamps':'兩顆燈泡中間','after-L2':'燈泡 2 後'}[CHALLENGE_TWO_POSITIONS[idx]])+'」，閉合開關，記錄讀值。':'三次量測完成：前、中、後都是 0.5 A。同一條路的電流有被燈泡用掉嗎？';
       next.textContent=idx===3?'完成挑戰 2':'記錄這次量測';
-      const list=el('ol');for(const rec of records)list.append(el('li',rec.position+'：'+rec.current.toFixed(1)+' A'));controls.append(list);
+      const list=el('ol');for(const rec of records)list.append(el('li',rec.position+'：'+challengeTwoPosition(rec.actions).current.toFixed(1)+' A'));controls.append(list);
       // Reset only learner deltas on each next measuring position.
     }else{
       prompt.textContent='從起始的兩條燈泡通路中親自拆除 L2 的必要導線，閉合開關，量測 L1 與電池總電流。';
@@ -60,19 +60,19 @@ export function mountChallenges(root,{onComplete=()=>{}}={}){
   next.addEventListener('click',()=>{
     if(stage===1){
       if(!challengeOneStatus(choice).correct){feedback.textContent='請重新想想電壓表應如何接在燈泡兩端。';return}
-      stage=2;actions=[];records=[];draw();return;
+      stage=2;actions=[];records=[];draw();onChange();return;
     }
     if(stage===2){
-      if(records.length===3){stage=3;actions=[];draw();return}
+      if(records.length===3){stage=3;actions=[];draw();onChange();return}
       const result=challengeTwoPosition(actions),wanted=CHALLENGE_TWO_POSITIONS[records.length];
       if(!result||result.position!==wanted){feedback.textContent='請確認電流表位於指定位置、正負極方向正確，而且開關已閉合。';return}
-      records.push({position:result.position,current:result.current,wires:result.raw.wires.map(w=>({...w})),switchClosed:true});
-      actions=[];draw();return;
+      records.push({position:result.position,actions:structuredClone(actions)});
+      actions=[];draw();onChange();return;
     }
     const evidence=challengeThreeEvidence(actions);
     if(!evidence){feedback.textContent='請實際拆掉 L2 通路的導線，確認 L1 和總電流皆為 1.0 A。';return}
-    done=true;feedback.textContent='已完成三項挑戰：燈泡轉換電能，並不消耗同一路徑中的電流。';next.hidden=true;paint();
-    onComplete({challenge2Records:records.map(r=>({...r,wires:r.wires.map(w=>({...w}))})),challenge3:{actions:structuredClone(actions),evidence}});
+    done=true;onChange();feedback.textContent='已完成三項挑戰：燈泡轉換電能，並不消耗同一路徑中的電流。';next.hidden=true;paint();
+    onComplete({challenge2Records:records.map(r=>({...r,actions:structuredClone(r.actions)})),challenge3:{actions:structuredClone(actions),evidence}});
   });
   return {show(){active=true;root.hidden=false;next.hidden=false;draw()},hide(){active=false;root.hidden=true;},snapshot(){return{stage,actions:structuredClone(actions),records:structuredClone(records),choice,done}}};
 }
