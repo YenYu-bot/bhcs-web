@@ -179,3 +179,58 @@ export function buildSheet(topic, opts) {
   const total = trOnly ? translation.items.length : sections.reduce((a, s) => a + s.items.length, 0);
   return { code: encodeCode(topic, o), opts: o, sections, total, translation };
 }
+
+// ---------- review sheets over several topics ----------
+export const MIX_CODE = 'MIX';
+/**
+ * Mix code, e.g. "MIX-2M-BE.SIM.PST-F1-20-48213-T5": level+tense · topic codes joined by "." · abbreviation+Chinese · count · seed · translation.
+ * Each topic's default modes for the level are used; a topic gets as many of them as its share of questions allows (one per five).
+ */
+export function encodeMixCode(topics, o) {
+  return [MIX_CODE, `${o.level}${o.tense}`, topics.map((t) => t.code).join('.'), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed, ...(o.tr ? [`T${o.tr}`] : [])].join('-');
+}
+export function decodeMixCode(code, topics) {
+  const m = new RegExp(`^${MIX_CODE}-([123])([PMD])-([A-Z.]+)-([FCB])([01])-(\\d+)-(\\d+)(?:-T(\\d+|O))?$`).exec(String(code).trim().toUpperCase());
+  if (!m) return null;
+  const picked = m[3].split('.').map((c) => topics.find((t) => t.code === c));
+  if (picked.some((t) => !t) || new Set(picked).size !== picked.length) return null;
+  const count = Number(m[6]), tr = m[8] === TR_ONLY ? TR_ONLY : Number(m[8] || 0);
+  if (count < COUNT_MIN || count > COUNT_MAX || !TR_CHOICES.includes(tr)) return null;
+  return { topics: picked.map((t) => t.id), opts: { level: Number(m[1]), tense: m[2], abbr: m[4], zh: m[5] === '1', count, seed: Number(m[7]), tr } };
+}
+/**
+ * One review sheet from several topics. Questions are split over the topics; each topic becomes one or more sections
+ * (its default modes at the level, one mode per five questions), built with the single-topic engine so every rule still holds.
+ * Returns { code, opts, sections:[{topic, mode, title, items}], total, translation }.
+ */
+export function buildMixSheet(topics, opts) {
+  const o = { ...opts, tr: TR_CHOICES.includes(opts.tr) ? opts.tr : 0 };
+  const trOnly = o.tr === TR_ONLY;
+  const sections = [];
+  const shares = splitCount(o.count, topics.map((t) => t.id));
+  const rng = makeRng(o.seed); // which of a topic's default modes this sheet uses
+  topics.forEach((t, i) => {
+    const n = shares[i].n;
+    if (!n || trOnly) return;
+    const def = t.defaultModes[o.level];
+    const k = Math.max(1, Math.min(def.length, Math.floor(n / 5)));
+    const chosen = new Set(); while (chosen.size < k) chosen.add(rng.fresh(def, (m) => t.id + m));
+    const modes = def.filter((m) => chosen.has(m));
+    const sub = buildSheet(t, { level: o.level, tense: o.tense, modes, abbr: o.abbr, zh: o.zh, count: n, seed: o.seed * 7 + i * 101, tr: 0 });
+    for (const s of sub.sections) sections.push({ topic: t.id, topicTitle: t.title, mode: s.mode, title: `${t.title}：${s.title}`, items: s.items, opts: sub.opts });
+  });
+  let translation = null;
+  if (o.tr) {
+    const want = trOnly ? o.count : o.tr;
+    const items = [];
+    const seenZh = new Set();
+    // round-robin over the topics, each topic drawing from its own translation-only sheet
+    const subs = topics.map((t, i) => buildSheet(t, { level: o.level, tense: o.tense, modes: t.defaultModes[o.level], abbr: o.abbr, zh: true, count: Math.min(COUNT_MAX, Math.max(COUNT_MIN, want)), seed: o.seed * 7 + i * 101 + 50, tr: TR_ONLY }).translation.items.map((x) => ({ ...x, topic: t.id })));
+    for (let round = 0; items.length < want && subs.some((s) => s.length); round++) {
+      for (const s of subs) { const x = s.shift(); if (x && !seenZh.has(x.zh) && items.length < want) { seenZh.add(x.zh); items.push(x); } }
+    }
+    translation = { title: '整句翻譯：把中文句子翻成英文。', items };
+  }
+  const total = trOnly ? translation.items.length : sections.reduce((a, s) => a + s.items.length, 0);
+  return { code: encodeMixCode(topics, o), opts: o, sections, total, translation };
+}
