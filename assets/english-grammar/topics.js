@@ -29,6 +29,6 @@ import relative from './topics/relative.js';
 import tag from './topics/tag.js';
 import sense from './topics/sense.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim];
-export const DRAFTS = [passive, relative, tag, sense];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense];
+export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
