@@ -14,11 +14,14 @@ const LINK = [
   L('The children', '孩子們', 'look', 'look', [['happy', '很開心'], ['tired', '很累'], ['hungry', '很餓']]), L('I', '我', 'feel', 'feel', [['tired', '很累'], ['happy', '很開心'], ['cold', '很冷'], ['nervous', '很緊張']]),
   L('The bed', '這張床', 'feel', 'feels', [['soft', '很軟'], ['comfortable', '很舒服'], ['hard', '很硬']]), L('The weather', '天氣', 'get', 'gets', [['cold', '變冷'], ['warm', '變暖']]),
   L('My grandfather', '我爺爺', 'get', 'gets', [['tired', '累了'], ['angry', '生氣了']]), L('The classroom', '教室', 'get', 'gets', [['quiet', '安靜下來'], ['noisy', '吵起來']]),
+  L('The room', '這個房間', 'look', 'looks', [['clean', '乾淨'], ['dirty', '髒'], ['comfortable', '舒服']]), L('This shirt', '這件襯衫', 'feel', 'feels', [['soft', '很軟'], ['comfortable', '很舒服'], ['warm', '很暖']]),
+  L('The milk', '牛奶', 'taste', 'tastes', [['good', '好喝'], ['bad', '難喝'], ['sweet', '甜']]), L('The baby', '那個嬰兒', 'look', 'looks', [['happy', '很開心'], ['tired', '很累'], ['hungry', '很餓']]),
+  L('His voice', '他的聲音', 'sound', 'sounds', [['loud', '很大聲'], ['nice', '好聽'], ['strange', '奇怪'], ['tired', '很累']]),
 ];
 // the adverb shown beside each adjective (real adverbs only; hard / hardly is the classic trap)
 const ADV = { good: 'well', delicious: 'deliciously', terrible: 'terribly', sweet: 'sweetly', nice: 'nicely', bad: 'badly', fresh: 'freshly', beautiful: 'beautifully', loud: 'loudly', strange: 'strangely', great: 'greatly',
   interesting: 'interestingly', expensive: 'expensively', tired: 'tiredly', happy: 'happily', sad: 'sadly', angry: 'angrily', hungry: 'hungrily', cold: 'coldly', nervous: 'nervously',
-  soft: 'softly', comfortable: 'comfortably', hard: 'hardly', warm: 'warmly', quiet: 'quietly', noisy: 'noisily' };
+  soft: 'softly', comfortable: 'comfortably', hard: 'hardly', warm: 'warmly', quiet: 'quietly', noisy: 'noisily', clean: 'cleanly', dirty: 'dirtily' };
 const TIME_LINK = [['today', '今天'], ['now', '現在'], ['', '']];
 const zhGet = (l, adj) => (l.verb === 'get' ? adj[1] : { taste: '嘗起來', smell: '聞起來', sound: '聽起來', look: '看起來', feel: `${l.subj === 'I' ? '覺得' : '摸起來'}` }[l.verb] + adj[1]);
 
@@ -46,6 +49,16 @@ const TASKS = [['clean the room', '打掃房間'], ['do the dishes', '洗碗'], 
 const OBJS = [['me', '我'], ['him', '他'], ['her', '她'], ['us', '我們'], ['them', '他們'], ['the children', '孩子們'], ['the students', '學生們']];
 const okObj = (p, o) => !((p.pr === 'I' && ['me', 'us'].includes(o)) || (p.pr === 'we' && ['us', 'me'].includes(o)) || (p.pr === 'he' && o === 'him') || (p.pr === 'she' && o === 'her') || (p.pr === 'they' && o === 'them'));
 
+// Which linking verb: the Chinese cue names the sense. Forms: [base, -s, past]
+const LINK_VERBS = { look: ['look', 'looks', 'looked', '看起來'], sound: ['sound', 'sounds', 'sounded', '聽起來'], smell: ['smell', 'smells', 'smelled', '聞起來'], taste: ['taste', 'tastes', 'tasted', '嘗起來'],
+  feel: ['feel', 'feels', 'felt', '摸起來'], get: ['get', 'gets', 'got', '變得'] };
+const linkCue = (l) => (l.verb === 'feel' && l.subj === 'I' ? '覺得' : LINK_VERBS[l.verb][3]);
+// linking verb + like + noun: [subject, Chinese, verb, noun, Chinese]
+const LIKE = [['That', '那', 'sound', 'a good idea', '一個好主意'], ['It', '天', 'look', 'rain', '要下雨'], ['She', '她', 'look', 'her mother', '她媽媽'], ['This', '這', 'taste', 'chicken', '雞肉'],
+  ['It', '這', 'smell', 'fish', '魚'], ['The music', '這音樂', 'sound', 'the sea', '海'], ['He', '他', 'look', 'a teacher', '老師'], ['This', '這', 'feel', 'a real one', '真的']];
+const PAST_LINK = [['yesterday', '昨天'], ['last night', '昨晚'], ['this morning', '今天早上']];
+const SENSE_CUE = { see: '看到', watch: '看著', hear: '聽到', feel: '感覺到' };
+
 const MODES = [
   {
     id: 'link', name: '連綴動詞 + 形容詞', instruction: () => '連綴動詞（look、sound、smell、taste、feel、get）後面接形容詞：從括號裡選出正確的字。',
@@ -55,6 +68,22 @@ const MODES = [
       const [t, tz] = ['look', 'feel', 'get'].includes(l.verb) ? rng.pick(TIME_LINK) : ['', ''];
       const pair = rng.chance(0.5) ? `${adj}／${ADV[adj]}` : `${ADV[adj]}／${adj}`;
       return { lines: [[`${l.subj} ${l.s3} `, blank(adj), `${t ? ' ' + t : ''}. (${pair})`]], zh: zhJoin(l.zh, tz, zhGet(l, [adj, az])) + '。', meta: { kind: 'link', verb: l.verb, adj } };
+    },
+  },
+  {
+    id: 'linkverb', name: '選對連綴動詞', instruction: () => '依括號裡的中文填入正確的連綴動詞（look、sound、smell、taste、feel、get），注意主詞與時態；「…像」要加 like。',
+    gen(rng, o) {
+      if (o.level >= 2 && rng.chance(0.3)) {
+        const [subj, sz, verb, noun, nz] = rng.fresh(LIKE, (x) => x[0] + x[3]);
+        const s3 = !['The music', 'That', 'It', 'This', 'She', 'He'].includes(subj) ? false : true;
+        return { lines: [[`${subj} `, blank(LINK_VERBS[verb][1]), ' ', blank('like'), ` ${noun}. (${LINK_VERBS[verb][3]}像)`]], zh: `${sz}${LINK_VERBS[verb][3]}像${nz}。`, meta: { kind: 'linkverb', verb, like: true, subj } };
+      }
+      const l = rng.fresh(LINK, (x) => 'lv-' + x.subj + x.verb);
+      const [adj, az] = rng.pick(l.adjs);
+      const past = o.level >= 2 && rng.chance(0.35);
+      const [t, tz] = past ? rng.pick(PAST_LINK) : ['', ''];
+      const form = past ? LINK_VERBS[l.verb][2] : l.s3;
+      return { lines: [[`${l.subj} `, blank(form), ` ${adj}${t ? ' ' + t : ''}. (${linkCue(l)})`]], zh: zhJoin(l.zh, tz, zhGet(l, [adj, az])) + '。', meta: { kind: 'linkverb', verb: l.verb, like: false, subj: l.subj, past } };
     },
   },
   {
@@ -72,6 +101,23 @@ const MODES = [
       return {
         lines: [[`${p.en} ${verb} ${sc.obj} `, blank(going ? ing.split(' ')[0] : b), `${rest}${t ? ' ' + t : ''}. (${CUE[going ? 'going' : 'whole']}／${b})`]],
         zh: zhJoin(p.zh, tz, `${vz}${sc.zh}${going ? (az.startsWith('在') ? '正' : '正在') : ''}${az}`) + '。', meta: { kind: 'sense', verb: v, base: b, going },
+      };
+    },
+  },
+  {
+    id: 'senseverb', name: '選對感官動詞', instruction: () => '依括號裡的中文填入正確的感官動詞（see、watch、hear、feel），注意主詞與時態。',
+    gen(rng, o) {
+      const sc = rng.fresh(SCENES, (x) => 'sv-' + x.obj);
+      const [v, vs, vp] = rng.fresh(SENSE.filter((x) => sc.senses.includes(x[0])), (x) => 'sv-' + x[0]);
+      const [base, ing, az] = rng.pick(sc.acts);
+      const going = rng.chance(0.5);
+      const p = pickPerson(rng, (x) => !(sc.obj === 'him' && x.pr === 'he') && !(sc.obj === 'her' && x.pr === 'she') && !(sc.obj === 'my heart' && x.en !== 'I'));
+      const past = rng.fresh([true, false], (x) => 'sv-past-' + x);
+      const [t, tz] = past ? rng.pick([['yesterday', '昨天'], ['last night', '昨晚'], ['this morning', '今天早上'], ['just now', '剛才']]) : ['', ''];
+      const act = going ? ing : base;
+      return {
+        lines: [[`${p.en} `, blank(past ? vp : verbFor(p, [v, vs])), ` ${sc.obj} ${act}${t ? ' ' + t : ''}. (${SENSE_CUE[v]})`]],
+        zh: zhJoin(p.zh, tz, `${SENSE_CUE[v]}${sc.zh}${going ? (az.startsWith('在') ? '正' : '正在') : ''}${az}`) + '。', meta: { kind: 'senseverb', verb: v, past, subj: p.en },
       };
     },
   },
@@ -100,11 +146,13 @@ export default {
   past: false,
   variety: false, // fixed sentence frames; checked by its own rules
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
-  defaultModes: { 1: ['link'], 2: ['link', 'sense'], 3: ['link', 'sense', 'cause'] },
-  levelHint: { 1: '連綴動詞後接形容詞（not 副詞）。', 2: '加入感官動詞 see / hear / watch / feel + 受詞 + 原形或 V-ing。', 3: '再加入使役動詞 make / let / have / help 與 ask / tell / want + 受詞 + to V。' },
+  capacity: { linkverb: LINK.reduce((a, l) => a + l.adjs.length, 0) + LIKE.length },
+  defaultModes: { 1: ['link', 'linkverb'], 2: ['link', 'linkverb', 'sense', 'senseverb'], 3: ['link', 'linkverb', 'sense', 'senseverb', 'cause'] },
+  levelHint: { 1: '連綴動詞：後面接形容詞，以及依中文選對動詞（look / sound / smell / taste / feel / get）。', 2: '加入感官動詞：後面接原形或 V-ing，以及依中文選對動詞（see / watch / hear / feel）；連綴動詞加入過去式與 look like。', 3: '再加入使役動詞 make / let / have / help 與 ask / tell / want + 受詞 + to V。' },
   grammarBox: (o) => ({ head: ['動詞', '後面接', '例子'], rows: [
-    ['look、sound、smell、taste、feel、get', '形容詞', 'The soup tastes good.（不是 well）'],
-    ...(o.level >= 2 ? [['see、hear、watch、feel + 受詞', '原形（全程）／V-ing（正在）', 'I saw him cross the street. / I saw him crossing the street.']] : []),
+    ['look 看起來、sound 聽起來、smell 聞起來、taste 嘗起來、feel 摸起來／覺得、get 變得', '形容詞', 'The soup tastes good.（不是 well）'],
+    ...(o.level >= 2 ? [['look / sound / smell / taste / feel + like', '名詞', 'It looks like rain. That sounds like a good idea.']] : []),
+    ...(o.level >= 2 ? [['see 看到、watch 看著、hear 聽到、feel 感覺到 + 受詞', '原形（全程）／V-ing（正在）', 'I saw him cross the street. / I saw him crossing the street.']] : []),
     ...(o.level >= 3 ? [['make、let、have、help + 受詞', '原形', 'My mother made me clean the room.'], ['ask、tell、want + 受詞', 'to + 原形', 'The teacher told us to be quiet.']] : []),
   ], note: '連綴動詞描述主詞的狀態，所以接形容詞；感官與使役動詞後面的受詞做動作，動詞用原形。' }),
   generate(rng, o, mode) { return MODES.find((m) => m.id === mode).gen(rng, o); },

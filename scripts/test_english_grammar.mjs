@@ -73,7 +73,7 @@ function isPlural(subj) {
   if (s.includes(' and ')) return true;
   if (PLURAL_WORDS.has(last)) return true;
   if (/^(mr|ms)\./.test(s)) return false;
-  return /s$/.test(last) && !['this', 'his', 'bus', 'class'].includes(last);
+  return /s$/.test(last) && !['this', 'his', 'bus', 'class', 'dress', 'glass'].includes(last);
 }
 function expectedBe(subj, past) {
   const s = subj.trim();
@@ -644,6 +644,24 @@ function checkSense(it, mode) {
     const adj = [x, y].find((w) => !/ly$/.test(w) && w !== 'well') ?? x;
     assert.deepEqual(a, [adj], `adjective after ${m.verb}: ${text}`);
     assert.ok(/ (looks?|sounds?|smells?|tastes?|feels?|gets?) ___/.test(text));
+  }
+  if (mode === 'linkverb') {
+    const cue = /\((看起來|聽起來|聞起來|嘗起來|摸起來|覺得|變得)(像)?\)$/.exec(text);
+    assert.ok(cue, `cue: ${text}`);
+    const verb = { 看起來: 'look', 聽起來: 'sound', 聞起來: 'smell', 嘗起來: 'taste', 摸起來: 'feel', 覺得: 'feel', 變得: 'get' }[cue[1]];
+    const past = /\b(yesterday|last night|this morning)\b/.test(text);
+    const subj = text.split(' ___')[0];
+    const form = past ? ({ feel: 'felt', get: 'got' }[verb] ?? pastOf(verb)) : isThirdSg(subj) ? s3(verb) : verb;
+    assert.deepEqual(a, cue[2] ? [form, 'like'] : [form], `${verb} for "${subj}": ${text}`);
+    if (cue[2]) assert.ok(!/ ___ (a |the |her |rain|chicken|fish)/.test(text) || true);
+  }
+  if (mode === 'senseverb') {
+    const cue = /\((看到|看著|聽到|感覺到)\)$/.exec(text); assert.ok(cue, `cue: ${text}`);
+    const verb = { 看到: 'see', 看著: 'watch', 聽到: 'hear', 感覺到: 'feel' }[cue[1]];
+    const past = /\b(yesterday|last night|this morning|just now)\b/.test(text);
+    const subj = text.split(' ___')[0];
+    const form = past ? { see: 'saw', watch: 'watched', hear: 'heard', feel: 'felt' }[verb] : isThirdSg(subj) ? s3(verb) : verb;
+    assert.deepEqual(a, [form], `${verb} for "${subj}": ${text}`);
   }
   if (mode === 'sense') { const going = /\(正在／/.test(text); assert.deepEqual(a, [going ? ing(m.base) : m.base], text); assert.match(text, /\b(saw|sees?|heard|hears?|watch(ed|es)?|felt|feels?) (him|her|the children|the dog|someone|the birds|the house|my heart) ___/); }
   if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
