@@ -53,7 +53,7 @@ const CARD_OF = {
   concept: 'cgg-concept',
 };
 
-const storage=createCircuitStorage(window.localStorage);
+const storage=createCircuitStorage((()=>{try{return window.localStorage}catch{return {getItem(){throw Error('unavailable')},setItem(){throw Error('unavailable')},removeItem(){throw Error('unavailable')}}}})());
 const loaded=storage.load();
 let state = loaded.data?.main ?? createInitialState();
 let storageStatus=loaded.status;
