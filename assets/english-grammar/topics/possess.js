@@ -11,11 +11,12 @@ const OWNERS = [
 ];
 const THINGS = [['bag', '袋子'], ['book', '書'], ['room', '房間'], ['bicycle', '腳踏車'], ['teacher', '老師'], ['house', '房子'], ['car', '車'], ['dog', '狗'], ['names', '名字'], ['classroom', '教室'], ['mother', '媽媽'], ['friend', '朋友'], ['toys', '玩具'], ['desks', '書桌']];
 const PLURAL_THINGS = new Set(['names', 'toys', 'desks']);
-const fitsThing = ([owner, , , rule], [thing]) => !(PLURAL_THINGS.has(thing) && rule === 's') && !(owner === 'the dog' && !['toys', 'house', 'friend', 'names'].includes(thing)) && !(thing === 'teacher' && /teacher/.test(owner)) && !(thing === 'dog' && owner === 'the dog') && !(thing === 'mother' && /father|sister|parents|the dog/.test(owner));
+const BIG = new Set(['car', 'house']);
+const fitsThing = ([owner, , , rule], [thing]) => !(PLURAL_THINGS.has(thing) && rule === 's') && !(BIG.has(thing) && rule !== 's' && owner !== 'my parents') && !(owner === 'the dog' && !['toys', 'house', 'friend', 'names'].includes(thing)) && !(thing === 'teacher' && /teacher/.test(owner)) && !(thing === 'dog' && owner === 'the dog') && !(thing === 'mother' && /father|sister|parents|the dog/.test(owner));
 // Of-phrases for things: [whole, Chinese, part, Chinese]
-// [whole, Chinese, part, Chinese, plural part?]
-const OF = [['room', '房間', 'door', '門'], ['house', '房子', 'roof', '屋頂'], ['book', '書', 'name', '書名'], ['table', '桌子', 'legs', '桌腳', true], ['story', '故事', 'end', '結局'],
-  ['mountain', '山', 'top', '山頂'], ['city', '城市', 'center', '市中心'], ['car', '車', 'color', '顏色'], ['box', '盒子', 'cover', '蓋子'], ['river', '河', 'water', '水'], ['class', '班級', 'leader', '班長'], ['movie', '電影', 'name', '片名']];
+// [whole, Chinese, part, Chinese, kind: 'thing' (something to look at) | 'fact' (something to know or ask)]
+const OF = [['room', '房間', 'door', '門', 'thing'], ['house', '房子', 'roof', '屋頂', 'thing'], ['book', '書', 'name', '書名', 'fact'], ['table', '桌子', 'legs', '桌腳', 'thing'], ['story', '故事', 'end', '結局', 'fact'],
+  ['mountain', '山', 'top', '山頂', 'thing'], ['city', '城市', 'center', '市中心', 'thing'], ['car', '車', 'color', '顏色', 'fact'], ['box', '盒子', 'cover', '蓋子', 'thing'], ['class', '班級', 'leader', '班長', 'fact'], ['movie', '電影', 'name', '片名', 'fact'], ['school', '學校', 'gate', '大門', 'thing']];
 const spaced = (s) => s.replace(/([A-Za-z'])([\u4e00-\u9fff，。？])/g, '$1 $2').replace(/([\u4e00-\u9fff，])([A-Za-z])/g, '$1 $2');
 const NEW_OK = new Set(['bag', 'book', 'room', 'bicycle', 'house', 'car', 'classroom', 'toys', 'desks']);
 const FRAMES = [['This is {P} {T}.', '這是{P}的{T}。'], ['Is that {P} {T}?', '那是{P}的{T}嗎？'], ['I like {P} {T}.', '我喜歡{P}的{T}。'], ['Where is {P} {T}?', '{P}的{T}在哪裡？'], ['{P} {T} is new.', '{P}的{T}是新的。']];
@@ -39,8 +40,8 @@ const MODES = [
   {
     id: 'of', name: '事物用 of', instruction: () => '事物的「…的」多用 of：依中文把兩個名詞和 of 依正確順序填入（一個空格填一個字）。',
     gen(rng) {
-      const [whole, wz, part, pz, pl] = rng.fresh(OF, (x) => x[0]);
-      const shapes = [['Look at the {X}.', '看看{Z}。'], ['Do you know the {X}?', '你知道{Z}嗎？'], ...(pl ? [] : [['The {X} is beautiful.', '{Z}很漂亮。'], ['What is the {X}?', '{Z}是什麼？']])];
+      const [whole, wz, part, pz, kind] = rng.fresh(OF, (x) => x[0]);
+      const shapes = kind === 'thing' ? [['Look at the {X}.', '看看{Z}。'], ['The {X} is beautiful.', '{Z}很漂亮。'], ['The {X} is very old.', '{Z}很舊。']] : [['Do you know the {X}?', '你知道{Z}嗎？'], ['What is the {X}?', '{Z}是什麼？'], ['I like the {X}.', '我喜歡{Z}。']];
       const [en, zh] = rng.pick(shapes);
       const [l, r] = en.split('{X}');
       return { lines: [[l, blank(part), ' ', blank('of'), ' the ', blank(whole), `${r} (${rng.chance(0.5) ? `${part}／${whole}` : `${whole}／${part}`})`]], zh: zh.replace('{Z}', `${wz}的${pz}`), meta: { kind: 'of', part, whole } };
@@ -67,7 +68,7 @@ export default {
   zhRequired: true, // shared vs separate ownership is told by the Chinese line
   variety: false, // fixed sentence frames; checked by its own rules
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
-  capacity: { of: OF.length * 4 },
+  capacity: { of: OF.length * 3 },
   defaultModes: { 1: ['s'], 2: ['s', 'of'], 3: ['s', 'of', 'joint'] },
   levelHint: { 1: "單數名詞加 's。", 2: "加入複數 s'，以及事物用 of。", 3: "再加入不規則複數 children's，以及共同所有與分別所有。" },
   grammarBox: (o) => ({ head: ['情況', '寫法', '例子'], rows: [

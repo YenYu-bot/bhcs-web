@@ -29,7 +29,9 @@ function draw(rng, o, use, endOnly = false) {
   const cues = CUES.filter((c) => c.lvl <= o.level && (Array.isArray(use) ? use.includes(c.use) : c.use === use) && (!endOnly || c.pos === 'end'));
   const c = rng.fresh(cues, (x) => x.en); if (!c) return null;
   const lasting = c.use === 'for' || c.use === 'since';
-  const f = pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!lasting || LASTING.has(x.v)), null, !lasting);
+  // ever / never ask about experiences, not daily meals
+  const experience = c.use === 'ever' || c.use === 'never';
+  const f = pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!lasting || LASTING.has(x.v)) && !(experience && /(breakfast|lunch|dinner)/.test(x.rest)), null, !lasting);
   if (!f) return null;
   return { s, f, c };
 }

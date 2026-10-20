@@ -164,7 +164,7 @@ export const FRAMES = [
   F('call', 'friends', '打電話給朋友', { at: [HOME] }),
   F('travel', 'by train', '搭火車旅行', { cues: WEEKEND }),
   F('get', 'up early', '早起', { prog: false, cues: { habit: ['every day', 'every morning'], past: ['yesterday', 'two days ago', 'last Sunday'] } }),
-  F('come', 'home late', '晚回家', { prog: false, cues: { past: ['yesterday', 'last night', 'last Sunday', 'two days ago'] } }),
+  F('come', 'home late', '晚回家', { prog: false, cues: { habit: ['every day', 'every evening', 'on weekends'], past: ['yesterday', 'last night', 'last Sunday', 'two days ago'] } }),
   F('help', 'the teacher', '幫忙老師', { age: 'young', cues: { habit: ['every day', 'after school'] }, at: [SCHOOL] }),
   F('teach', 'art', '教美術', { age: 'adult', cues: { habit: ['every day'], past: ['yesterday', 'two days ago', 'three days ago', 'last month'] }, at: [SCHOOL] }),
   F('teach', 'history', '教歷史', { age: 'adult', cues: { habit: ['every day'], past: ['yesterday', 'two days ago', 'three days ago', 'last month'] }, at: [SCHOOL] }),

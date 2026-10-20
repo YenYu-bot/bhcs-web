@@ -74,7 +74,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
       const { s, f, t } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.pastOk && x.v !== f.v, 'past'); if (!g) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.pastOk && x.v !== f.v && cuesFor(x, 'past', s).some((c) => c.en === t.en), 'past'); if (!g) return null;
       return {
         lines: [[`Did ${s.en} ${f.v}${phrase(f)} ${t.en}?`],
           ['— No, ', blank(s.reply), ' ', blank("didn't"), '. ', blank(cap(s.reply)), ' ', blank(vform(g, 'past')), ` (${g.v})${phrase(g)}.`]],

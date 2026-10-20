@@ -10,7 +10,9 @@ import { beForm } from './be.js';
 const ADV = [['always', '總是'], ['usually', '通常'], ['often', '常常'], ['sometimes', '有時候'], ['seldom', '很少'], ['never', '從不']];
 const advFor = (o) => (o.level >= 2 ? ADV : ADV.filter((a) => a[0] !== 'seldom'));
 // Be predicates that make sense with "always / never": states people are in now and then.
-const BE_PREDS = PREDICATES.filter((p) => (p.type === 'adj' && p.dur === 'temp' && p.for.includes('person')) || (p.type === 'loc' && p.for.includes('person')));
+const BE_PREDS = PREDICATES.filter((p) => (p.type === 'adj' && p.dur === 'temp' && p.for.includes('person')) || (p.type === 'loc' && p.for.includes('person') && !/hospital/.test(p.en)));
+// "always late" rather than "always 遲到了": the state, not the event
+const stateZh = (p) => p.zh.pos.replace(/^很/, '').replace(/了$/, '');
 const meta = (s, adv, extra) => ({ subj: s.en, adv, cue: adv, ...extra });
 
 function subject(rng, o, exclude = () => false) {
@@ -42,7 +44,7 @@ const MODES = [
       const p = rng.fresh(BE_PREDS, (x) => x.en);
       const [adv, az] = rng.fresh(advFor(o), (x) => x[0]);
       const be = beForm(s, false);
-      const z = p.zh.pos.replace(/^很/, '');
+      const z = stateZh(p);
       return {
         lines: [[cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}. (${az}／be)`]],
         zh: zhJoin(s.zh, az, p.type === 'loc' ? p.zh.pos : z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }),
@@ -56,7 +58,7 @@ const MODES = [
       if (rng.chance(0.5)) {
         const s = pickSubject(rng, actors(rng, Math.max(o.level, 2), { exclude: (x) => x.kind !== 'person' })); if (!s) return null;
         const p = rng.fresh(BE_PREDS, (x) => x.en); const be = beForm(s, false);
-        const z = p.type === 'loc' ? p.zh.pos : p.zh.pos.replace(/^很/, '');
+        const z = p.type === 'loc' ? p.zh.pos : stateZh(p);
         return { lines: [[`${cap(s.en)} ${be} ${p.en}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}.`]], zh: zhJoin(s.zh, az, z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }) };
       }
       const s = subject(rng, { ...o, level: Math.max(o.level, 2) }); if (!s) return null;

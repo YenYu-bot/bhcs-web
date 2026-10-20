@@ -87,7 +87,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
       const { s, f, t, past } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.prog && x.v !== f.v, 'ing'); if (!g) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.prog && x.v !== f.v && cuesFor(x, past ? 'pastprog' : 'now', s).some((c) => c.en === t.en), 'ing'); if (!g) return null;
       const be = beForm(s, past), rb = replyBe(s.reply, past);
       return {
         lines: [[`${cap(be)} ${s.en} ${vform(f, 'ing')}${phrase(f)} ${t.en}?`],

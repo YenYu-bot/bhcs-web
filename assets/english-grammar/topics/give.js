@@ -32,7 +32,7 @@ function draw(rng, o, exclude = []) {
   const th = THINGS[rng.pick(v.things)];
   const p = pickPerson(rng, (x) => !(x.pr === 'I' && v.base === 'teach') && x.en !== 'Our teacher' || v.base !== 'teach');
   let recs = RECEIVERS.filter(([r]) => !(p.pr === 'I' && ['me', 'us'].includes(r)) && !(p.pr === 'we' && ['us', 'me'].includes(r)) && !(p.pr === 'he' && r === 'him') && !(p.pr === 'she' && r === 'her') && !(p.pr === 'they' && r === 'them'));
-  if (v.base === 'teach') recs = recs.filter(([r]) => !['the teacher'].includes(r));
+  if (v.base === 'teach' || p.en === 'Our teacher') recs = recs.filter(([r]) => !['the teacher'].includes(r));
   const [rec, recZh] = rng.fresh(recs, (x) => x[0]);
   const past = o.level >= 2 ? rng.fresh([true, false], (x) => 'tense-' + x) : false;
   const [t, tz] = past ? rng.pick(TIMES) : ['', ''];
