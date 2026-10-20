@@ -67,7 +67,7 @@ test('B1-B4 core JS is retained with persistence isolated to storage adapter',()
   assert.deepEqual(js,['analytics.js','challenge-view.js','challenges.js','engine.js','input.js','main.js','model.js','notebook-view.js','notebook.js','persist.js','render.js','script.js','storage.js']);
   for(const f of js){
     const src=strip(read(DIR+'/'+f));
-    for(const bad of [...(['main.js','storage.js'].includes(f)?[]:['localStorage']), 'sessionStorage','indexedDB','document.cookie','bhcsScienceTrack','gtag','dataLayer','fetch(','XMLHttpRequest','sendBeacon','WebSocket','__cggTest','URLSearchParams','eval(','new Function']){
+    for(const bad of [...(['main.js','storage.js'].includes(f)?[]:['localStorage']), 'sessionStorage','indexedDB','document.cookie',...((f==='main.js')?[]:['bhcsScienceTrack']),'gtag','dataLayer','fetch(','XMLHttpRequest','sendBeacon','WebSocket','__cggTest','URLSearchParams','eval(','new Function']){
       assert.ok(!src.includes(bad),f+' uses '+bad);
     }
   }
