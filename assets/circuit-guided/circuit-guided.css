@@ -35,3 +35,11 @@
 .cgg-notebook fieldset{border:1px solid var(--cgg-border);border-radius:12px;margin:12px 0;padding:12px}.cgg-notebook legend{font-weight:750;padding:0 5px}.cgg-notebook fieldset label{display:block;padding:7px 0;cursor:pointer}.cgg-notebook textarea{box-sizing:border-box;display:block;width:100%;min-height:100px;font:inherit;padding:10px;margin:10px 0 18px;border:1px solid var(--cgg-border);border-radius:8px}.cgg-notebook textarea:focus-visible,.cgg-notebook input:focus-visible,.cgg-notebook button:focus-visible{outline:3px solid var(--cgg-page-ink);outline-offset:3px}.cgg-notebook-next{font:inherit;padding:12px 18px;border-radius:10px;cursor:pointer;border:2px solid var(--cgg-page-ink);background:#fff}.cgg-notebook [role=status]{min-height:1.5em}
 
 .cgg-challenges fieldset{margin:12px 0;padding:12px;border:1px solid var(--cgg-border);border-radius:12px}.cgg-challenges label{display:block;padding:10px}.cgg-challenges button{font:inherit;min-height:48px;padding:9px 16px;border-radius:10px;cursor:pointer}.cgg-challenges [role=status]{min-height:1.5em}.cgg-challenges button:focus-visible,.cgg-challenges input:focus-visible{outline:3px solid var(--cgg-page-ink);outline-offset:3px}
+
+/* Pilot #6 usability repair: terminal connection is explicit, crossings are insulated visual paths. */
+.cgg-equipment-bay{fill:#f3f6fa;stroke:#d3dce8;stroke-width:2;stroke-dasharray:6 6}
+.cgg-terminal[data-connected="false"] .cgg-terminal-dot{background:#f0f1f2;border-color:#738496}
+.cgg-terminal[data-connected="true"] .cgg-terminal-dot{background:#fff7df;border-color:#234c72}
+.cgg-wire{stroke-width:7;paint-order:stroke;filter:drop-shadow(0 0 1px #fffdf8)}
+.cgg-lamp[data-brightness="off"] .cgg-lamp-state{fill:#52647b}
+@media(forced-colors:active){.cgg-equipment-bay{fill:Canvas;stroke:CanvasText}.cgg-terminal[data-connected="false"] .cgg-terminal-dot{border-style:dashed}.cgg-terminal[data-connected="true"] .cgg-terminal-dot{border-style:solid}}
