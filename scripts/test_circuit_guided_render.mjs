@@ -60,4 +60,11 @@ test('spare L2 workspace is explicit, stable and activates only after learner co
  t.bench.update(view(raw('baseline',true)));
  assert.equal(bay.getAttribute('data-state'),'spare');
 });
+test('baseline L1 supply and return avoid spare L2 region and false L1.a connection',()=>{
+ const supply=R.wirePath('A.-','L1.a'),ret=R.wirePath('L1.b','bat-');
+ assert.match(supply,/350 240 L 350 90/);
+ assert.match(ret,/590 14 L 324 14 L 324 390/);
+ assert.doesNotMatch(ret,/440 90/);
+ assert.doesNotMatch(supply,/440 240|590 240/);
+});
 console.log('circuit-guided render: '+n+' tests passed');
