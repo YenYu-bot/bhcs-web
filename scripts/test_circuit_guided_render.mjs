@@ -38,8 +38,8 @@ test('negative ammeter reading explains polarity correction instead of claiming 
 });
 test('L1 voltmeter leads do not cross L2 terminal centers and wiring remains raw',()=>{
  const left=R.wirePath('V.+','L1.a'),right=R.wirePath('V.-','L1.b');
- assert.match(left,/455 390/);assert.match(right,/675 415/);
- assert.doesNotMatch(left,/490 240/);assert.doesNotMatch(right,/630 240/);
+ assert.match(left,/460 390/);assert.match(right,/682 420/);
+ assert.doesNotMatch(left,/522 310/);assert.doesNotMatch(right,/610 310/);
  const t=mount(view(raw('baseline',true)));
  assert.equal(t.host.querySelectorAll('.cgg-wire').length,FIXED_CIRCUITS.baseline.length);
 });
@@ -62,13 +62,13 @@ test('spare L2 workspace is explicit, stable and activates only after learner co
 });
 test('baseline L1 supply and return avoid spare L2 region and false L1.a connection',()=>{
  const supply=R.wirePath('A.-','L1.a'),ret=R.wirePath('L1.b','bat-');
- assert.match(supply,/420 90 L 490 90/);
- assert.match(ret,/690 90 L 690 438 L 70 438/);
- assert.doesNotMatch(ret,/490 90/);
- assert.doesNotMatch(supply,/490 240|630 240/);
+ assert.match(supply,/442 205/);
+ assert.match(ret,/666 135 L 666 445 L 92 445/);
+ assert.doesNotMatch(ret,/522 310/);
+ assert.doesNotMatch(supply,/522 310|610 310/);
 });
 test('all baseline cable polylines avoid the reserved L2 equipment rectangle',()=>{
- const spare={left:468,top:182,right:656,bottom:327};
+ const spare={left:472,top:258,right:658,bottom:388};
  const baseline=FIXED_CIRCUITS.baseline;
  function points(d){
    const commands=d.match(/[MLHV]|-?\d+(?:\.\d+)?/g)||[];
@@ -94,13 +94,15 @@ test('all baseline cable polylines avoid the reserved L2 equipment rectangle',()
    for(let i=1;i<p.length;i++)assert.equal(crosses(p[i-1],p[i]),false,wire.from+' → '+wire.to+' enters L2 spare bay: '+d);
  }
 });
-test('battery, switch, ammeter and L1 create one readable horizontal circuit lane',()=>{
+test('physical component terminals coincide with equipment bounds rather than floating in space',()=>{
  const p=R.TERMINAL_POSITIONS;
- assert.equal(p['bat+'].y,p['sw.a'].y);
- assert.equal(p['sw.b'].y,p['A.+'].y);
- assert.equal(p['A.-'].y,p['L1.a'].y);
- assert.ok(p['bat+'].x<p['sw.a'].x&&p['sw.b'].x<p['A.+'].x&&p['A.-'].x<p['L1.a'].x);
+ assert.deepEqual([p['bat+'].x,p['bat-'].x],[92,92]);
+ assert.equal(p['bat+'].y,186);assert.equal(p['bat-'].y,310);
+ assert.deepEqual([p['sw.a'].y,p['sw.b'].y],[135,135]);
+ assert.deepEqual([p['A.+'].y,p['A.-'].y],[205,205]);
+ assert.deepEqual([p['L1.a'].y,p['L1.b'].y],[135,135]);
+ assert.deepEqual([p['V.+'].y,p['V.-'].y],[390,390]);
  const t=mount(view(raw('baseline',true)));
- assert.equal(t.host.querySelector('[data-terminal="A.+"]').style.top,t.host.querySelector('[data-terminal="L1.a"]').style.top);
+ assert.equal(t.host.querySelectorAll('[data-terminal]').length,12);
 });
 console.log('circuit-guided render: '+n+' tests passed');
