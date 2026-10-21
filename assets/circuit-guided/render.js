@@ -26,7 +26,33 @@ const lamp=id=>{const x=m.lamps&&m.lamps[id];if(!x||!B.has(x.brightness))throw n
 const meter=(x,n)=>{if(!x||!MS.has(x.state)||typeof x.text!=='string')throw new RangeError(n);return{state:x.state,text:x.text}};
 return{locked:m.locked,switchClosed:m.switchClosed,status:m.status,wires:wires(m.wires),lamps:{L1:lamp('L1'),L2:lamp('L2')},ammeter:meter(m.ammeter,'A'),voltmeter:meter(m.voltmeter,'V')}}
 function pct(e,p){e.style.left=(p.x/BENCH_VIEWBOX.width*100).toFixed(4)+'%';e.style.top=(p.y/BENCH_VIEWBOX.height*100).toFixed(4)+'%'}
-function path(a,b){const p=TERMINAL_POSITIONS[a],q=TERMINAL_POSITIONS[b];return'M '+p.x+' '+p.y+' L '+q.x+' '+q.y}
+// Visual routing is presentation-only. A bend is not an electrical junction.
+// In particular, voltmeter-to-L1 wires must not pass through L2 terminals.
+export function wirePath(a,b){
+ const p=TERMINAL_POSITIONS[a],q=TERMINAL_POSITIONS[b];
+ if(!p||!q)throw new RangeError('unknown terminal');
+ const pair=[a,b].sort().join('|');
+ const explicit={
+  'L1.a|V.+':[['L1.a',365,90],[365,390],['V.+',440,390]],
+  'L1.b|V.-':[['L1.b',590,90],[665,90],[665,390],['V.-',590,390]],
+ };
+ // The left voltmeter lead uses a separate outer corridor instead of cutting across L2.
+ if(pair==='L1.a|V.+'){
+   const pts=a==='L1.a'?[[440,90],[365,90],[365,390],[440,390]]:[[440,390],[365,390],[365,90],[440,90]];
+   return 'M '+pts.map(v=>v.join(' ')).join(' L ');
+ }
+ if(pair==='L1.b|V.-'){
+   const pts=a==='L1.b'?[[590,90],[665,90],[665,390],[590,390]]:[[590,390],[665,390],[665,90],[590,90]];
+   return 'M '+pts.map(v=>v.join(' ')).join(' L ');
+ }
+ // Avoid diagonals passing across an unrelated lamp by taking an orthogonal route.
+ if(Math.abs(p.x-q.x)>60&&Math.abs(p.y-q.y)>60){
+   const midX=(p.x+q.x)/2;
+   return 'M '+p.x+' '+p.y+' H '+midX+' V '+q.y+' H '+q.x;
+ }
+ return 'M '+p.x+' '+p.y+' L '+q.x+' '+q.y;
+}
+function path(a,b){return wirePath(a,b)}
 export function createCircuitBench(root,{text=CIRCUIT_TEXT}={}){
 if(!root||!root.ownerDocument)throw new TypeError('root');const d=root.ownerDocument,uid='cgg-'+(++seq),bench=h(d,'section',{class:'cgg-bench','data-role':'circuit-bench'}),stage=h(d,'div',{class:'cgg-stage','data-role':'stage',role:'group'},bench),art=s(d,'svg',{class:'cgg-art',viewBox:'0 0 720 480',preserveAspectRatio:'none','aria-hidden':'true',focusable:'false'},stage),wireLayer=s(d,'g',{class:'cgg-wire-layer'},art),preview=s(d,'path',{class:'cgg-wire-preview','data-role':'wire-preview',d:'',hidden:'hidden'},wireLayer),comp=s(d,'g',{class:'cgg-components'},art);
 s(d,'line',{x1:70,y1:90,x2:70,y2:170,class:'cgg-component-line'},comp);s(d,'rect',{x:34,y:170,width:72,height:140,rx:16,class:'cgg-component cgg-battery'},comp);s(d,'line',{x1:70,y1:310,x2:70,y2:390,class:'cgg-component-line'},comp);s(d,'text',{x:70,y:232,class:'cgg-component-mark','text-anchor':'middle'},comp).textContent='6 V';s(d,'text',{x:70,y:264,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=text.component.battery;
