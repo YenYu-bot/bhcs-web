@@ -31,6 +31,11 @@ test('L2 unconnected baseline is clearly distinguished from an extinguished wire
  assert.equal(t.host.querySelector('[data-terminal="L1.a"]').dataset.connected,'true');
  assert.equal(t.host.querySelectorAll('[data-bay]').length,2);
 });
+test('negative ammeter reading explains polarity correction instead of claiming valid observation',()=>{
+ const t=mount(view(raw('baseline',true),false,{ammeter:{state:'ok',text:'-1.0 A'}}));
+ assert.match(t.host.querySelector('[data-role="status"]').textContent,/正負極接反/);
+ assert.match(t.host.querySelector('[data-role="status"]').textContent,/交換電流表兩端/);
+});
 test('L1 voltmeter leads do not cross L2 terminal centers and wiring remains raw',()=>{
  const left=R.wirePath('V.+','L1.a'),right=R.wirePath('V.-','L1.b');
  assert.match(left,/365 390/);assert.match(right,/665 390/);
