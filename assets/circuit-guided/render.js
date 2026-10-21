@@ -52,7 +52,7 @@ export function wirePath(a,b){
 }
 function path(a,b){return wirePath(a,b)}
 export function createCircuitBench(root,{text=CIRCUIT_TEXT}={}){
-if(!root||!root.ownerDocument)throw new TypeError('root');const d=root.ownerDocument,uid='cgg-'+(++seq),bench=h(d,'section',{class:'cgg-bench','data-role':'circuit-bench'}),stage=h(d,'div',{class:'cgg-stage','data-role':'stage',role:'group'},bench),art=s(d,'svg',{class:'cgg-art',viewBox:'0 0 720 480',preserveAspectRatio:'none','aria-hidden':'true',focusable:'false'},stage),wireLayer=s(d,'g',{class:'cgg-wire-layer'},art),preview=s(d,'path',{class:'cgg-wire-preview','data-role':'wire-preview',d:'',hidden:'hidden'},wireLayer),comp=s(d,'g',{class:'cgg-components'},art);
+if(!root||!root.ownerDocument)throw new TypeError('root');const d=root.ownerDocument,uid='cgg-'+(++seq),bench=h(d,'section',{class:'cgg-bench','data-role':'circuit-bench',tabindex:'0',role:'region','aria-label':'電路接線板，窄螢幕可使用左右方向鍵捲動查看'}),stage=h(d,'div',{class:'cgg-stage','data-role':'stage',role:'group'},bench),art=s(d,'svg',{class:'cgg-art',viewBox:'0 0 720 480',preserveAspectRatio:'none','aria-hidden':'true',focusable:'false'},stage),wireLayer=s(d,'g',{class:'cgg-wire-layer'},art),preview=s(d,'path',{class:'cgg-wire-preview','data-role':'wire-preview',d:'',hidden:'hidden'},wireLayer),comp=s(d,'g',{class:'cgg-components'},art);
 // Physical component bodies are attached directly to their electrical terminals.
 s(d,'rect',{x:36,y:186,width:112,height:124,rx:15,class:'cgg-component cgg-battery'},comp);
 s(d,'text',{x:92,y:241,class:'cgg-component-mark','text-anchor':'middle'},comp).textContent='6 V';
