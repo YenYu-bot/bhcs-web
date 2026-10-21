@@ -36,6 +36,17 @@ export function wirePath(a,b){
   'L1.a|V.+':[['L1.a',365,90],[365,390],['V.+',440,390]],
   'L1.b|V.-':[['L1.b',590,90],[665,90],[665,390],['V.-',590,390]],
  };
+ // Baseline's L1 return cable exits above the work area, then follows the
+ // left-side trunk. Never run across L1.a or through the unused L2 bay.
+ if(pair==='L1.b|bat-'){
+   const pts=a==='L1.b'?[[590,90],[590,14],[324,14],[324,390],[70,390]]:[[70,390],[324,390],[324,14],[590,14],[590,90]];
+   return 'M '+pts.map(v=>v.join(' ')).join(' L ');
+ }
+ // A to L1 travels by a dedicated left-hand cable corridor, not via L2.
+ if(pair==='A.-|L1.a'){
+   const pts=a==='A.-'?[[300,240],[350,240],[350,90],[440,90]]:[[440,90],[350,90],[350,240],[300,240]];
+   return 'M '+pts.map(v=>v.join(' ')).join(' L ');
+ }
  // The left voltmeter lead uses a separate outer corridor instead of cutting across L2.
  if(pair==='L1.a|V.+'){
    const pts=a==='L1.a'?[[440,90],[365,90],[365,390],[440,390]]:[[440,390],[365,390],[365,90],[440,90]];
