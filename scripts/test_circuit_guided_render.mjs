@@ -23,4 +23,20 @@ test('bad presentation models fail loudly',()=>{const dom=new JSDOM('<main id="h
 test('CSS locks desktop/mobile hit sizes and accessibility modes',()=>{const css=fs.readFileSync(root+'assets/circuit-guided/circuit-guided.css','utf8');assert.match(css,/\.cgg-terminal\{[^}]*width:48px[^}]*height:48px[^}]*touch-action:none/);assert.match(css,/@media\(max-width:600px\)[\s\S]*?\.cgg-terminal\{[^}]*width:56px[^}]*height:56px/);assert.match(css,/\.cgg-stage\{[^}]*touch-action:auto/);assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);assert.match(css,/@media\(forced-colors:active\)/);assert.match(css,/\.cgg-status\[data-unsafe="true"\][^}]*repeating-linear-gradient/)});
 test('renderer is standalone and has no formal-concept wording',()=>{const src=fs.readFileSync(root+'assets/circuit-guided/render.js','utf8');assert.ok(!/^\s*import\s/m.test(src));for(const w of['solveCircuit(','structureGate(','measurementGate(','localStorage','sessionStorage','bhcsScienceTrack','fetch('])assert.ok(!src.includes(w),w);assert.doesNotMatch(src,/串聯|並聯|等效電阻|歐姆定律/)});
 test('destroy removes the bench',()=>{const t=mount(view(raw('baseline')));t.bench.destroy();assert.equal(t.host.children.length,0)});
+
+test('L2 unconnected baseline is clearly distinguished from an extinguished wired lamp',()=>{
+ const t=mount(view(raw('baseline',true)));
+ assert.equal(t.host.querySelector('[data-lamp="L2"] [data-role="lamp-state"]').textContent,'未接線');
+ assert.equal(t.host.querySelector('[data-terminal="L2.a"]').dataset.connected,'false');
+ assert.equal(t.host.querySelector('[data-terminal="L1.a"]').dataset.connected,'true');
+ assert.equal(t.host.querySelectorAll('[data-bay]').length,2);
+});
+test('L1 voltmeter leads do not cross L2 terminal centers and wiring remains raw',()=>{
+ const left=R.wirePath('V.+','L1.a'),right=R.wirePath('V.-','L1.b');
+ assert.match(left,/365 390/);assert.match(right,/665 390/);
+ assert.doesNotMatch(left,/440 240/);assert.doesNotMatch(right,/590 240/);
+ const t=mount(view(raw('baseline',true)));
+ assert.equal(t.host.querySelectorAll('.cgg-wire').length,FIXED_CIRCUITS.baseline.length);
+});
+
 console.log('circuit-guided render: '+n+' tests passed');
