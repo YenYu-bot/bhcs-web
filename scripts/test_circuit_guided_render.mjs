@@ -67,4 +67,31 @@ test('baseline L1 supply and return avoid spare L2 region and false L1.a connect
  assert.doesNotMatch(ret,/440 90/);
  assert.doesNotMatch(supply,/440 240|590 240/);
 });
+test('all baseline cable polylines avoid the reserved L2 equipment rectangle',()=>{
+ const spare={left:393,top:182,right:641,bottom:327};
+ const baseline=FIXED_CIRCUITS.baseline;
+ function points(d){
+   const commands=d.match(/[MLHV]|-?\\d+(?:\\.\\d+)?/g)||[];
+   let x=0,y=0,i=0,out=[];
+   while(i<commands.length){
+     const c=commands[i++];
+     if(c==='M'||c==='L'){x=Number(commands[i++]);y=Number(commands[i++]);out.push([x,y]);}
+     else if(c==='H'){x=Number(commands[i++]);out.push([x,y]);}
+     else if(c==='V'){y=Number(commands[i++]);out.push([x,y]);}
+     else throw Error('unexpected wire route: '+d);
+   }
+   return out;
+ }
+ function crosses(a,b){
+   if(a[0]===b[0])return a[0]>spare.left&&a[0]<spare.right&&Math.max(Math.min(a[1],b[1]),spare.top)<Math.min(Math.max(a[1],b[1]),spare.bottom);
+   if(a[1]===b[1])return a[1]>spare.top&&a[1]<spare.bottom&&Math.max(Math.min(a[0],b[0]),spare.left)<Math.min(Math.max(a[0],b[0]),spare.right);
+   // Only baseline routes may use a straight diagonal when it stays outside the equipment bay.
+   for(let t=0;t<=100;t++){const x=a[0]+(b[0]-a[0])*t/100,y=a[1]+(b[1]-a[1])*t/100;if(x>spare.left&&x<spare.right&&y>spare.top&&y<spare.bottom)return true;}
+   return false;
+ }
+ for(const wire of baseline){
+   const d=R.wirePath(wire.from,wire.to),p=points(d);
+   for(let i=1;i<p.length;i++)assert.equal(crosses(p[i-1],p[i]),false,wire.from+' → '+wire.to+' enters L2 spare bay: '+d);
+ }
+});
 console.log('circuit-guided render: '+n+' tests passed');
