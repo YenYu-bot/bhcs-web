@@ -3,9 +3,9 @@ const S='http://www.w3.org/2000/svg';
 export const BENCH_VIEWBOX=Object.freeze({width:720,height:480});
 export const TERMINAL_IDS=Object.freeze(['bat+','bat-','sw.a','sw.b','L1.a','L1.b','L2.a','L2.b','A.+','A.-','V.+','V.-']);
 export const TERMINAL_POSITIONS=Object.freeze({
-'bat+':{x:70,y:90},'bat-':{x:70,y:390},'sw.a':{x:150,y:90},'sw.b':{x:260,y:90},
-'A.+':{x:320,y:90},'A.-':{x:420,y:90},'L1.a':{x:490,y:90},'L1.b':{x:630,y:90},
-'L2.a':{x:490,y:240},'L2.b':{x:630,y:240},'V.+':{x:320,y:390},'V.-':{x:420,y:390}});
+'bat+':{x:92,y:186},'bat-':{x:92,y:310},'sw.a':{x:206,y:135},'sw.b':{x:294,y:135},
+'A.+':{x:358,y:205},'A.-':{x:442,y:205},'L1.a':{x:522,y:135},'L1.b':{x:610,y:135},
+'L2.a':{x:522,y:310},'L2.b':{x:610,y:310},'V.+':{x:358,y:390},'V.-':{x:442,y:390}});
 const B=new Set(['off','very-low','low','reference','high']), ST=new Set(['normal','open','source-short','indeterminate']),
 MS=new Set(['ok','floating','ambiguous','source-short','unavailable','indeterminate']), TS=new Set(TERMINAL_IDS);
 export const CIRCUIT_TEXT=Object.freeze({
@@ -32,44 +32,53 @@ export function wirePath(a,b){
  const p=TERMINAL_POSITIONS[a],q=TERMINAL_POSITIONS[b];
  if(!p||!q)throw new RangeError('unknown terminal');
  const pair=[a,b].sort().join('|');
- const via=(points)=>'M '+points.map(v=>v.join(' ')).join(' L ');
- const route=(first,second,points)=>a===first?via(points):via([...points].reverse());
- // Main circuit: battery → switch → ammeter → L1 is one readable row.
- // The return follows the outer lower perimeter, never the spare L2 bay.
- if(pair==='L1.b|bat-')return route('L1.b','bat-',[[630,90],[690,90],[690,438],[70,438],[70,390]]);
- // Voltmeter is across L1; the leads occupy distinct external corridors.
- if(pair==='L1.a|V.+')return route('L1.a','V.+',[[490,90],[455,90],[455,390],[320,390]]);
- if(pair==='L1.b|V.-')return route('L1.b','V.-',[[630,90],[675,90],[675,415],[420,415],[420,390]]);
- if(Math.abs(p.x-q.x)>60&&Math.abs(p.y-q.y)>60){
-   const midX=(p.x+q.x)/2;
-   return 'M '+p.x+' '+p.y+' H '+midX+' V '+q.y+' H '+q.x;
+ const route=pts=>'M '+pts.map(z=>z.join(' ')).join(' L ');
+ if(pair==='L1.b|bat-'){
+   const v=[[610,135],[666,135],[666,445],[92,445],[92,310]];
+   return route(a==='L1.b'?v:[...v].reverse());
+ }
+ if(pair==='L1.a|V.+'){
+   const v=[[522,135],[490,135],[490,390],[358,390]];
+   return route(a==='L1.a'?v:[...v].reverse());
+ }
+ if(pair==='L1.b|V.-'){
+   const v=[[610,135],[682,135],[682,420],[442,420],[442,390]];
+   return route(a==='L1.b'?v:[...v].reverse());
+ }
+ if(Math.abs(p.x-q.x)>35&&Math.abs(p.y-q.y)>35){
+   return 'M '+p.x+' '+p.y+' H '+((p.x+q.x)/2)+' V '+q.y+' H '+q.x;
  }
  return 'M '+p.x+' '+p.y+' L '+q.x+' '+q.y;
 }
 function path(a,b){return wirePath(a,b)}
 export function createCircuitBench(root,{text=CIRCUIT_TEXT}={}){
 if(!root||!root.ownerDocument)throw new TypeError('root');const d=root.ownerDocument,uid='cgg-'+(++seq),bench=h(d,'section',{class:'cgg-bench','data-role':'circuit-bench'}),stage=h(d,'div',{class:'cgg-stage','data-role':'stage',role:'group'},bench),art=s(d,'svg',{class:'cgg-art',viewBox:'0 0 720 480',preserveAspectRatio:'none','aria-hidden':'true',focusable:'false'},stage),wireLayer=s(d,'g',{class:'cgg-wire-layer'},art),preview=s(d,'path',{class:'cgg-wire-preview','data-role':'wire-preview',d:'',hidden:'hidden'},wireLayer),comp=s(d,'g',{class:'cgg-components'},art);
-s(d,'line',{x1:70,y1:90,x2:70,y2:170,class:'cgg-component-line'},comp);s(d,'rect',{x:34,y:170,width:72,height:140,rx:16,class:'cgg-component cgg-battery'},comp);s(d,'line',{x1:70,y1:310,x2:70,y2:390,class:'cgg-component-line'},comp);s(d,'text',{x:70,y:232,class:'cgg-component-mark','text-anchor':'middle'},comp).textContent='6 V';s(d,'text',{x:70,y:264,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=text.component.battery;
-// Separate equipment bays help learners distinguish physical proximity from electrical connection.
-// L2 is visually parked as spare equipment until a learner wires its terminals.
-// Both lamp terminals remain in their stable positions to avoid moving targets mid-gesture.
+// Physical component bodies are attached directly to their electrical terminals.
+s(d,'rect',{x:36,y:186,width:112,height:124,rx:15,class:'cgg-component cgg-battery'},comp);
+s(d,'text',{x:92,y:241,class:'cgg-component-mark','text-anchor':'middle'},comp).textContent='6 V';
+s(d,'text',{x:92,y:270,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=text.component.battery;
 const spareBay=s(d,'g',{'data-role':'spare-lamp-bay','data-state':'spare'},comp);
-s(d,'rect',{x:468,y:182,width:188,height:145,rx:18,class:'cgg-equipment-bay','data-bay':'L2'},spareBay);
-const spareLabel=s(d,'text',{x:480,y:204,class:'cgg-bay-label'},spareBay);
-spareLabel.textContent='備用器材區';
-const spareHint=s(d,'text',{x:480,y:318,class:'cgg-bay-hint'},spareBay);
-spareHint.textContent='燈泡 2 尚未接入';
-s(d,'rect',{x:468,y:35,width:188,height:139,rx:18,class:'cgg-equipment-bay cgg-primary-bay','data-bay':'L1'},comp);
-const swLine=s(d,'line',{x1:150,y1:90,x2:240,y2:55,class:'cgg-component-line cgg-switch-line'},comp);
-function meterArt(x,y,mark,label,cls){s(d,'line',{x1:x-60,y1:y,x2:x-42,y2:y,class:'cgg-component-line'},comp);s(d,'line',{x1:x+42,y1:y,x2:x+60,y2:y,class:'cgg-component-line'},comp);s(d,'circle',{cx:x,cy:y,r:42,class:'cgg-component '+cls},comp);s(d,'text',{x:x,y:y+9,class:'cgg-meter-mark','text-anchor':'middle'},comp).textContent=mark;s(d,'text',{x:x,y:y+68,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=label}
-meterArt(370,90,'A',text.component.ammeter,'cgg-ammeter');meterArt(370,390,'V',text.component.voltmeter,'cgg-voltmeter');
+s(d,'rect',{x:472,y:258,width:186,height:130,rx:18,class:'cgg-equipment-bay','data-bay':'L2'},spareBay);
+const spareLabel=s(d,'text',{x:482,y:278,class:'cgg-bay-label'},spareBay);spareLabel.textContent='備用器材區';
+const spareHint=s(d,'text',{x:482,y:385,class:'cgg-bay-hint'},spareBay);spareHint.textContent='尚未接入電路';
+s(d,'rect',{x:478,y:73,width:186,height:133,rx:18,class:'cgg-equipment-bay cgg-primary-bay','data-bay':'L1'},comp);
+s(d,'rect',{x:206,y:108,width:88,height:54,rx:10,class:'cgg-component cgg-switch-body'},comp);
+const swLine=s(d,'line',{x1:206,y1:135,x2:281,y2:115,class:'cgg-component-line cgg-switch-line'},comp);
+s(d,'text',{x:250,y:188,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=text.component.switch;
+function meterArt(x,y,mark,label,cls){
+ s(d,'circle',{cx:x,cy:y,r:42,class:'cgg-component '+cls},comp);
+ s(d,'text',{x,y:y+9,class:'cgg-meter-mark','text-anchor':'middle'},comp).textContent=mark;
+ s(d,'text',{x,y:y+65,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=label;
+}
+meterArt(400,205,'A',text.component.ammeter,'cgg-ammeter');
+meterArt(400,390,'V',text.component.voltmeter,'cgg-voltmeter');
 const lamps={};function lamp(id,x,y){const g=s(d,'g',{class:'cgg-lamp','data-lamp':id},comp);s(d,'line',{x1:x-75,y1:y,x2:x-34,y2:y,class:'cgg-component-line'},g);s(d,'line',{x1:x+34,y1:y,x2:x+75,y2:y,class:'cgg-component-line'},g);const rays=s(d,'g',{class:'cgg-lamp-rays'},g);for(let i=0;i<8;i++){const a=i*Math.PI/4;s(d,'line',{x1:x+Math.cos(a)*40,y1:y+Math.sin(a)*40,x2:x+Math.cos(a)*56,y2:y+Math.sin(a)*56},rays)}s(d,'circle',{cx:x,cy:y,r:34,class:'cgg-bulb'},g);s(d,'path',{d:'M '+(x-15)+' '+(y-15)+' L '+(x+15)+' '+(y+15)+' M '+(x-15)+' '+(y+15)+' L '+(x+15)+' '+(y-15),class:'cgg-filament'},g);s(d,'text',{x:x,y:y+72,class:'cgg-component-label','text-anchor':'middle'},g).textContent=text.component[id];const badge=s(d,'text',{x:x,y:y+94,class:'cgg-lamp-state','text-anchor':'middle','data-role':'lamp-state'},g);lamps[id]={g,badge}}
-lamp('L1',560,90);lamp('L2',560,240);
+lamp('L1',566,135);lamp('L2',566,310);
 const terminals=new Map;for(const id of TERMINAL_IDS){const b=h(d,'button',{type:'button',class:'cgg-terminal','data-terminal':id,'aria-label':text.terminal[id],'aria-pressed':'false'},stage);pct(b,TERMINAL_POSITIONS[id]);const dot=h(d,'span',{class:'cgg-terminal-dot','aria-hidden':'true'},b);dot.textContent=id.endsWith('+')?'+':id.endsWith('-')?'−':'';terminals.set(id,b)}
-const sw=h(d,'button',{type:'button',class:'cgg-switch-button','data-switch-toggle':'true','aria-pressed':'false'},stage);sw.style.left='28.4722%';sw.style.top='31.2500%';
+const sw=h(d,'button',{type:'button',class:'cgg-switch-button','data-switch-toggle':'true','aria-pressed':'false'},stage);sw.style.left='34.7222%';sw.style.top='45.8333%';
 const reads=h(d,'div',{class:'cgg-readouts',role:'group','aria-label':'量測讀值'},bench);function card(role,title){const c=h(d,'div',{class:'cgg-meter-card','data-meter':role},reads);h(d,'span',{class:'cgg-meter-title',text:title},c);return{card:c,value:h(d,'strong',{class:'cgg-meter-value','data-role':role+'-value'},c),state:h(d,'span',{class:'cgg-meter-state','data-role':role+'-state'},c)}}const A=card('ammeter',text.component.ammeter),V=card('voltmeter',text.component.voltmeter),status=h(d,'p',{class:'cgg-status','data-role':'status',role:'status'},bench),box=h(d,'section',{class:'cgg-wire-box','aria-label':'目前導線'},bench);h(d,'div',{class:'cgg-wire-title',text:'目前導線'},box);const list=h(d,'ul',{class:'cgg-wire-list'},box),empty=h(d,'p',{class:'cgg-wire-empty',text:'尚未接上導線。'},box);root.appendChild(bench);
 const wp=new Map,wr=new Map;function sync(ws,locked){const want=new Set(ws.map(w=>w.key));const attached=new Set(ws.flatMap(w=>[w.from,w.to]));for(const [id,button] of terminals)attr(button,'data-connected',attached.has(id));for(const [k,n]of [...wp])if(!want.has(k)){n.remove();wp.delete(k)}for(const [k,n]of [...wr])if(!want.has(k)){n.remove();wr.delete(k)}for(const w of ws){let p=wp.get(w.key);if(!p){p=s(d,'path',{class:'cgg-wire','data-wire':w.key,d:path(w.from,w.to)},wireLayer);wireLayer.insertBefore(p,preview);wp.set(w.key,p)}let r=wr.get(w.key);if(!r){r=h(d,'li',{class:'cgg-wire-row','data-wire-row':w.key},list);const l=h(d,'span',{class:'cgg-wire-label'},r),rm=h(d,'button',{type:'button',class:'cgg-wire-remove','data-remove-wire':w.key,text:'移除'},r);r._c={l,rm};wr.set(w.key,r)}txt(r._c.l,text.terminal[w.from]+' — '+text.terminal[w.to]);attr(r._c.rm,'aria-label','移除 '+text.terminal[w.from]+' 到 '+text.terminal[w.to]+' 的導線');attr(r._c.rm,'data-from',w.from);attr(r._c.rm,'data-to',w.to);r._c.rm.disabled=locked}empty.hidden=ws.length!==0}
-function update(x){const m=model(x);attr(bench,'data-status',m.status);attr(bench,'data-locked',m.locked);for(const b of terminals.values())b.disabled=m.locked;sw.disabled=m.locked;attr(sw,'aria-pressed',m.switchClosed);txt(sw,m.switchClosed?'開關：閉合':'開關：斷開');attr(swLine,'x2',m.switchClosed?260:240);attr(swLine,'y2',m.switchClosed?90:55);sync(m.wires,m.locked);
+function update(x){const m=model(x);attr(bench,'data-status',m.status);attr(bench,'data-locked',m.locked);for(const b of terminals.values())b.disabled=m.locked;sw.disabled=m.locked;attr(sw,'aria-pressed',m.switchClosed);txt(sw,m.switchClosed?'開關：閉合':'開關：斷開');attr(swLine,'x2',m.switchClosed?294:281);attr(swLine,'y2',m.switchClosed?135:115);sync(m.wires,m.locked);
 const l2Connected=m.wires.some(w=>w.from.startsWith('L2.')||w.to.startsWith('L2.'));
 attr(spareBay,'data-state',l2Connected?'working':'spare');
 txt(spareLabel,l2Connected?'實驗器材區':'備用器材區');
