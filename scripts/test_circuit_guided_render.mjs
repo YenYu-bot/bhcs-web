@@ -105,4 +105,10 @@ test('physical component terminals coincide with equipment bounds rather than fl
  const t=mount(view(raw('baseline',true)));
  assert.equal(t.host.querySelectorAll('[data-terminal]').length,12);
 });
+test('scrollable bench is keyboard focusable and labelled for mobile accessibility',()=>{
+ const t=mount(view(raw('baseline')));
+ assert.equal(t.bench.element.getAttribute('tabindex'),'0');
+ assert.equal(t.bench.element.getAttribute('role'),'region');
+ assert.match(t.bench.element.getAttribute('aria-label'),/方向鍵/);
+});
 console.log('circuit-guided render: '+n+' tests passed');
