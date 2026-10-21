@@ -54,3 +54,12 @@
 .cgg-bench [data-role="spare-lamp-bay"][data-state="working"] .cgg-equipment-bay{fill:#fff9e9;stroke:#d1ae63;stroke-dasharray:none}
 .cgg-bench [data-role="spare-lamp-bay"][data-state="working"] .cgg-bay-label{fill:#815c23}
 @media(forced-colors:active){.cgg-bay-label,.cgg-bay-hint{fill:CanvasText}.cgg-bench [data-role="spare-lamp-bay"][data-state="spare"] .cgg-equipment-bay{stroke-dasharray:8 6}}
+
+/* Temporary mobile inspection mode: maintain 56px non-overlapping terminals.
+   Stage scrolls locally rather than letting page overflow. A later mobile-specific
+   layout will be needed if horizontal panning fails learner usability testing. */
+@media(max-width:767px){
+  .cgg-bench{min-width:0;overflow-x:auto;overscroll-behavior-inline:contain}
+  .cgg-bench .cgg-stage{width:600px;min-width:600px;max-width:none}
+  .cgg-bench .cgg-stage::after{content:"左右滑動查看完整接線板";position:absolute;bottom:5px;left:8px;font-size:11px;color:#52647b;pointer-events:none;background:#fffdf8e6;padding:2px 6px;border-radius:6px}
+}
