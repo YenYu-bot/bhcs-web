@@ -71,7 +71,7 @@ test('all baseline cable polylines avoid the reserved L2 equipment rectangle',()
  const spare={left:393,top:182,right:641,bottom:327};
  const baseline=FIXED_CIRCUITS.baseline;
  function points(d){
-   const commands=d.match(/[MLHV]|-?\\d+(?:\\.\\d+)?/g)||[];
+   const commands=d.match(/[MLHV]|-?\d+(?:\.\d+)?/g)||[];
    let x=0,y=0,i=0,out=[];
    while(i<commands.length){
      const c=commands[i++];
