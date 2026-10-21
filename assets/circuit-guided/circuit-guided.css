@@ -43,3 +43,14 @@
 .cgg-wire{stroke-width:7;paint-order:stroke;filter:drop-shadow(0 0 1px #fffdf8)}
 .cgg-lamp[data-brightness="off"] .cgg-lamp-state{fill:#52647b}
 @media(forced-colors:active){.cgg-equipment-bay{fill:Canvas;stroke:CanvasText}.cgg-terminal[data-connected="false"] .cgg-terminal-dot{border-style:dashed}.cgg-terminal[data-connected="true"] .cgg-terminal-dot{border-style:solid}}
+
+/* Pilot #6 learner-first physical workspace: parked L2 is unmistakably spare. */
+.cgg-bay-label{font-size:15px;font-weight:900;fill:#2c4e70}
+.cgg-bay-hint{font-size:13px;font-weight:750;fill:#53677e}
+.cgg-equipment-bay[data-bay="L2"]{fill:#edf0f3;stroke:#8797aa;stroke-width:2.5;stroke-dasharray:9 6}
+.cgg-primary-bay{fill:#fff9e9;stroke:#d1ae63;stroke-width:2;stroke-dasharray:none}
+.cgg-bench:has([data-role="spare-lamp-bay"][data-state="spare"]) [data-lamp="L2"] .cgg-bulb{fill:#d6dce4;stroke:#718096}
+.cgg-bench:has([data-role="spare-lamp-bay"][data-state="spare"]) [data-terminal^="L2."] .cgg-terminal-dot{border-style:dashed;border-color:#74869a;background:#edf0f3}
+.cgg-bench [data-role="spare-lamp-bay"][data-state="working"] .cgg-equipment-bay{fill:#fff9e9;stroke:#d1ae63;stroke-dasharray:none}
+.cgg-bench [data-role="spare-lamp-bay"][data-state="working"] .cgg-bay-label{fill:#815c23}
+@media(forced-colors:active){.cgg-bay-label,.cgg-bay-hint{fill:CanvasText}.cgg-bench [data-role="spare-lamp-bay"][data-state="spare"] .cgg-equipment-bay{stroke-dasharray:8 6}}
