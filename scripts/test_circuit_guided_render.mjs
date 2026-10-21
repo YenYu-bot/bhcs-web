@@ -44,4 +44,20 @@ test('L1 voltmeter leads do not cross L2 terminal centers and wiring remains raw
  assert.equal(t.host.querySelectorAll('.cgg-wire').length,FIXED_CIRCUITS.baseline.length);
 });
 
+test('spare L2 workspace is explicit, stable and activates only after learner connects L2',()=>{
+ const t=mount(view(raw('baseline',true)));
+ const bay=t.host.querySelector('[data-role="spare-lamp-bay"]');
+ assert.equal(bay.getAttribute('data-state'),'spare');
+ assert.match(bay.textContent,/備用器材區/);
+ assert.match(bay.textContent,/尚未接入/);
+ const terminal=t.host.querySelector('[data-terminal="L2.a"]');
+ const oldLeft=terminal.style.left,oldTop=terminal.style.top;
+ t.bench.update(view(raw('trial1',true)));
+ assert.equal(bay.getAttribute('data-state'),'working');
+ assert.match(bay.textContent,/實驗器材區/);
+ assert.equal(terminal.style.left,oldLeft);
+ assert.equal(terminal.style.top,oldTop);
+ t.bench.update(view(raw('baseline',true)));
+ assert.equal(bay.getAttribute('data-state'),'spare');
+});
 console.log('circuit-guided render: '+n+' tests passed');
