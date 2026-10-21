@@ -38,7 +38,7 @@ export function wirePath(a,b){
    return route(a==='L1.b'?v:[...v].reverse());
  }
  if(pair==='L1.a|V.+'){
-   const v=[[522,135],[490,135],[490,390],[358,390]];
+   const v=[[522,135],[460,135],[460,390],[358,390]];
    return route(a==='L1.a'?v:[...v].reverse());
  }
  if(pair==='L1.b|V.-'){
