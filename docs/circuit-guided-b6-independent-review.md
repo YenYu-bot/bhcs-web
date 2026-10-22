@@ -127,7 +127,7 @@ check_circuit_guided_flow_browser.cjs 的 setFixed() 以 window.__cggTest.dispat
 
 ## 8. 合併前後驗證更新：新 Head cd99585（2026-10-22）
 
-當前 #165 head：`cd99585471670d00637c21eca67c0b1c7609a36d`，提交說明將舊的獨立 Circuit 視覺 workflow 移除，改把 `check_circuit_guided_input_browser.cjs`、`check_circuit_guided_view_browser.cjs`、`check_circuit_guided_learner_browser.cjs`、`check_circuit_guided_flow_browser.cjs` 串入正式 `ci.yml` 的 `science-guided` job，並將 circuit flow/view/learner artifacts 保留 14 天。已在 PR 該 head 的 `ci.yml` 確認包含上述命令及 artifact 設定；**CI run 39753661608 尚在執行，因此不得判定新 head 全綠**。
+當前 #165 head：`cd99585471670d00637c21eca67c0b1c7609a36d`，提交說明將舊的獨立 Circuit 視覺 workflow 移除，改把 `check_circuit_guided_input_browser.cjs`、`check_circuit_guided_view_browser.cjs`、`check_circuit_guided_learner_browser.cjs`、`check_circuit_guided_flow_browser.cjs` 串入正式 `ci.yml` 的 `science-guided` job，並將 circuit flow/view/learner artifacts 保留 14 天。已在 PR 該 head 的 `ci.yml` 確認包含上述命令及 artifact 設定；**其後已確認：CI run 39753661608 completed/success，全部 12 個 jobs 均 success；但這只證明整合後的單一正式 CI，不可宣稱舊雙 workflow 條件已滿足**。
 
 **注意驗收契約差異**：先前 #165 曾明確要求「正式 CI 與獨立 Circuit 兩條 workflow 都在同一最新 head successful」。新 head 移除獨立 Circuit workflow，故**尚無法照舊規則宣稱兩條 workflow 同 SHA 全綠**；是否改以「正式 CI 的 `science-guided` 內全部 Circuit 測試與 `CI Gate` 完成 success」取代舊規則，應由使用者明確確認，不能由 B 線自行放寬。這是**流程／門檻變更待確認**，不是已證實的科學錯誤。
 
@@ -153,7 +153,7 @@ check_circuit_guided_flow_browser.cjs 的 setFixed() 以 window.__cggTest.dispat
 
 **此處是 Gate 契約變更，不是允許自行降低標準**：使用者原先要求「正式 CI 與獨立 Circuit 兩條 workflows 均在同 head success」才可通知全綠。由於原獨立 workflow 已移除，新 head 不可能依舊條件提供兩條跑次。建議新的工程等價 Gate：**同一 head 的正式 CI completed/success，且 `core`、`site`、`science-guided`、`CI Gate` 等必要 jobs 全數 success，`science-guided` 內四項 Circuit 瀏覽器測試確實成功且 screenshots artifacts 完整**。在使用者明確同意這項替代之前，**不可宣稱「符合原兩流程全綠門檻」**。
 
-當前新 Head 的正式 CI 連結：https://github.com/YenYu-bot/bhcs-web/actions/runs/39753661608 。須以實際完成狀態再判定，不得因程式編排正確就當作執行通過。
+當前新 Head 的正式 CI 連結：https://github.com/YenYu-bot/bhcs-web/actions/runs/39753661608 。已於後續查核確認 12/12 jobs completed/success，且 `science-guided` 的 Circuit input、view、learner、flow 四個 steps 皆 completed/success；屬工程測試結果，不能取代人工作業。
 
 ### 9.3 剩餘工作，不應再要求重修已解決項目
 
@@ -163,3 +163,17 @@ check_circuit_guided_flow_browser.cjs 的 setFixed() 以 window.__cggTest.dispat
 - 不移除 `noindex`、不將 prototype 列入公開教材目錄、不取代既有 Advanced Mode。
 - 只有使用者完成最後人工驗收並明確批准，才可對 #165 或 #166 採取 Ready／merge 動作。
 
+
+## 10. 截圖抽樣審查與新 CI 實績（head cd99585，2026-10-22）
+
+直接從正式 CI run `39753661608` 下載 artifacts 並目視檢查（不是使用者在手機上的真機試用）：
+
+- `circuit-learner-review`：artifact 12415926117，包含 1280 baseline、L2 一端接線、two-path，390 baseline、L2 一端接線、one-path、two-path、遠距 drag 中／完成。
+- `circuit-view-review`：artifact 12415163020，包含 1280/390 empty、baseline open/live、one-path、two-path、source-short。
+- `circuit-flow-review`：artifact 12415187653，屬完整教學流程測試產物；此次未逐張人工審閱全部 flow screenshots。
+
+**抽樣目視結果**：`1280-04-baseline.png` 中 L2 位於獨立備用托盤，未見主線路接進 L2；`390-05a-lamp2-one-end.png` 中 L2 有且僅有一端接入，清楚顯示「只接一端／接線中」；`390-05-one-path.png` 讀數 0.5 A／3.0 V、兩燈「較暗」；`390-06-two-path-total.png` 讀數 2.0 A／6.0 V、兩燈「基準亮度」；`1280-06-two-path-total.png` 顯示兩條獨立路徑。在這些抽樣畫面中，原先明確的「電壓表名稱壓到回線」問題已無明顯重現，且未見遮擋必要端子的重疊。這是**抽樣畫面審查，不代表所有連線組合或教學理解都已驗收**。
+
+**正式 CI 結果**：[run 39753661608](https://github.com/YenYu-bot/bhcs-web/actions/runs/39753661608) 為 completed/success，12/12 jobs success；`science-guided` 內 input／view／learner／flow 四步均 success，三套 Circuit artifacts 已上傳。原獨立 Circuit workflow 已移除，請遵守第 9.2 節的 Gate 差異及使用者核准要求。
+
+本次查詢時 #165 已 **Ready for review**，但 **仍 open、merged=false**；#166 維持 Draft。Ready 是工程審查流程狀態，不等於真實五位學生驗收完成，也不等於可以公開或合併。正式公開仍依 main 的五人 Gate 進行。
