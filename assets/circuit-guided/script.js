@@ -36,8 +36,8 @@ export const TEXT = deepFreeze({
     sub: '先不要背結論。你會自己接線、操作開關、移動電表，再用五次量測找答案。',
   },
   mission: {
-    title: '任務：只改接法，其他條件固定。',
-    sub: '電池固定 6 V，兩顆燈泡規格相同。先量一顆燈泡，再讓兩顆燈泡只有一條路，最後讓兩顆燈泡各自有通路。每一次都先接線、再閉合開關觀察。',
+    title: '任務：電池和燈泡規格固定，比較「燈泡數量」和「接法」。',
+    sub: '電池固定 6 V，兩顆燈泡規格相同。先量一顆燈泡，再讓兩顆燈泡只有一條路，最後讓兩顆燈泡各自有通路。每一次都先接線、再閉合開關觀察。注意：從一顆燈泡變成兩顆時，燈泡數量和接法會同時改變。',
   },
   cta: {
     start: '開始',
@@ -366,13 +366,14 @@ export function compareModel(state) {
     const one = observationFor(state, 'trial1');
     if (!one) return null;
     return {
-      independentVariable: { label: '接法', from: '一顆燈泡', to: '兩顆燈泡、只有一條路' },
+      independentVariable: { label: '燈泡數量與接法', from: '一顆燈泡', to: '兩顆燈泡、只有一條路' },
       controlledVariables: [{ label: '電池', value: '同一顆 6 V 電池' }, { label: '燈泡規格', value: '相同' }],
       observedResponse: [
         { label: '電池送出的電流', first: fmt(base.batteryCurrent, 'A'), second: fmt(one.batteryCurrent, 'A') },
         { label: '燈泡 1 的電壓', first: fmt(base.lamps.L1.voltage, 'V'), second: fmt(one.lamps.L1.voltage, 'V') },
         { label: '燈泡亮度', first: lampWord(base.lamps.L1.brightness), second: lampWord(one.lamps.L1.brightness) },
       ],
+      procedureNote: '這次同時改變了燈泡數量和接法，所以只能說明「這一種接法」的結果。',
       questions: COMPARE_TEXT.c1.map((q) => qModel(q, status)),
     };
   }
@@ -381,7 +382,7 @@ export function compareModel(state) {
   const l2 = observationFor(state, 'trial2-L2');
   if (!total || !l1 || !l2) return null;
   return {
-    independentVariable: { label: '接法', from: '一顆燈泡', to: '兩顆燈泡、各自有路' },
+    independentVariable: { label: '燈泡數量與接法', from: '一顆燈泡', to: '兩顆燈泡、各自有路' },
     controlledVariables: [{ label: '電池', value: '同一顆 6 V 電池' }, { label: '燈泡規格', value: '相同' }],
     observedResponse: [
       { label: '電池送出的電流', first: fmt(base.batteryCurrent, 'A'), second: fmt(total.batteryCurrent, 'A') },
@@ -405,7 +406,8 @@ export function inferenceModel(state) {
       `基準一顆燈泡：${fmt(b.batteryCurrent, 'A')}。`,
       `多一顆燈泡、但只有一條路：${fmt(one.batteryCurrent, 'A')}，比基準小。`,
       `多一顆燈泡、而且兩顆各自有路：${fmt(two.batteryCurrent, 'A')}，比基準大。`,
-      '所以「多接一顆燈泡，總電流一定變小」不成立；接法會改變結果。',
+      `只比較兩顆燈泡（燈泡數量相同、只改接法）：只有一條路 ${fmt(one.batteryCurrent, 'A')}，各自有路 ${fmt(two.batteryCurrent, 'A')}。`,
+      '所以「多接一顆燈泡，總電流一定變小」不成立；燈泡數量相同時，只改接法就會改變電流。',
     ],
   };
 }

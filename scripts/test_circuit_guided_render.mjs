@@ -79,6 +79,16 @@ test('teaching circuits: cables never run through other instruments, lamp labels
     for(const id of TERMINALS)if(id!==c.from&&id!==c.to){const t=L.terminals[id];assert.ok(Math.hypot(t.x-p[0],t.y-p[1])>=26,L.name+' '+name+' '+c.from+'→'+c.to+' passes terminal '+id)}
    }}}
 });
+test('lamp state separates not wired, one end only, wired but dark, and lit; lamp 2 tray follows the same three steps',()=>{
+ const st=(t,id)=>t.host.querySelector('[data-lamp="'+id+'"] [data-role="lamp-state"]').textContent,bay=t=>t.host.querySelector('[data-role="spare-lamp-bay"]');
+ const t=mount(view(raw('baseline',false)));assert.equal(st(t,'L2'),'未接線');assert.equal(bay(t).dataset.state,'spare');assert.equal(st(t,'L1'),'熄滅','both ends wired, switch open');
+ const oneEnd={wires:[...FIXED_CIRCUITS.baseline.map(w=>({...w})),{from:'L1.b',to:'L2.a'}],switchClosed:true};t.bench.update(view(oneEnd));
+ assert.equal(st(t,'L2'),'只接一端');assert.equal(bay(t).dataset.state,'partial');assert.match(bay(t).textContent,/還差一端/);assert.equal(st(t,'L1'),'基準亮度');
+ assert.match(t.host.querySelector('[data-role="stage"]').getAttribute('aria-label'),/燈泡 2 只接一端/);
+ t.bench.update(view(raw('trial1',false)));assert.equal(st(t,'L2'),'熄滅');assert.equal(bay(t).dataset.state,'working');
+ t.bench.update(view(raw('trial1',true)));assert.equal(st(t,'L2'),'較暗');
+ const lone=mount(view({wires:[{from:'L1.a',to:'bat+'}],switchClosed:true}));assert.equal(st(lone,'L1'),'只接一端');
+});
 test('baseline (lamp 1 only) cables keep out of the lamp 2 spare tray and the voltmeter gap',()=>{
  for(const L of LAYOUTS){const ob=R.benchObstacles(L);
   for(const c of routeAll(L,FIXED_CIRCUITS.baseline)){for(const p of c.pts)assert.ok(!inRect(ob.tray,p,4),L.name+' '+c.from+'→'+c.to+' enters spare tray');

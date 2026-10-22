@@ -14,7 +14,8 @@ MS=new Set(['ok','floating','ambiguous','source-short','unavailable','indetermin
 export const CIRCUIT_TEXT=Object.freeze({
 terminal:Object.freeze({'bat+':'電池正極','bat-':'電池負極','sw.a':'開關左端','sw.b':'開關右端','L1.a':'燈泡一左端','L1.b':'燈泡一右端','L2.a':'燈泡二左端','L2.b':'燈泡二右端','A.+':'電流表正端','A.-':'電流表負端','V.+':'電壓表正端','V.-':'電壓表負端'}),
 component:Object.freeze({battery:'6 V 電池',switch:'開關',L1:'燈泡 1',L2:'燈泡 2',ammeter:'電流表',voltmeter:'電壓表'}),
-body:Object.freeze({batteryName:'電池',batteryMark:'6 V',spare:'備用器材區',working:'實驗器材區',spareHint:'燈泡 2 尚未接入電路',workingHint:'燈泡 2 已接線'}),
+body:Object.freeze({batteryName:'電池',batteryMark:'6 V',spare:'備用器材區',partial:'燈泡 2 接線中：還差一端',working:'實驗器材區',spareHint:'燈泡 2 尚未接入電路',partialHint:'燈泡 2 只接了一端，還沒有形成通路',workingHint:'燈泡 2 兩端都已接線'}),
+lampEnds:Object.freeze({0:'未接線',1:'只接一端'}),
 brightness:Object.freeze({off:'熄滅','very-low':'很微弱',low:'較暗',reference:'基準亮度',high:'較亮'}),
 meterState:Object.freeze({ok:'',floating:'未接妥',ambiguous:'讀值不唯一','source-short':'安全警示',unavailable:'尚無讀值',indeterminate:'無法讀取'}),
 status:Object.freeze({normal:'電路已通電',open:'目前沒有完整通路','source-short':'安全警示：接法需調整',indeterminate:'目前接法無法取得穩定讀值'}),
@@ -256,12 +257,14 @@ function update(x,relayout=false){const m=model(x);last=x;lockedNow=m.locked;att
  for(const b of terminals.values())b.disabled=m.locked;sw.disabled=m.locked;attr(sw,'aria-pressed',m.switchClosed);txt(sw,m.switchClosed?'開關：閉合':'開關：斷開');
  const lv=m.switchClosed?parts.leverClosed:parts.leverOpen;attr(parts.lever,'x2',lv[0]);attr(parts.lever,'y2',lv[1]);
  sync(m.wires,m.locked);
- const used=id=>m.wires.some(w=>w.from.startsWith(id+'.')||w.to.startsWith(id+'.')),l2=used('L2');
- attr(parts.spareBay,'data-state',l2?'working':'spare');txt(parts.spareLabel,l2?text.body.working:text.body.spare);txt(parts.spareHint,l2?text.body.workingHint:text.body.spareHint);
- for(const id of['L1','L2']){const P=parts.lamps[id];attr(P.g,'data-brightness',m.lamps[id].brightness);attr(P.g,'data-bypassed',m.lamps[id].bypassed);attr(P.g,'data-wired',used(id));txt(P.badge,m.lamps[id].bypassed?'被導線繞過':(!used(id)?'未接線':text.brightness[m.lamps[id].brightness]))}
+ // How many of a lamp's two terminals carry a wire: 0 = not wired, 1 = one end only (no path yet), 2 = both ends.
+ const ends=id=>[id+'.a',id+'.b'].filter(t=>m.wires.some(w=>w.from===t||w.to===t)).length,e2=ends('L2'),tray=['spare','partial','working'][e2];
+ attr(parts.spareBay,'data-state',tray);txt(parts.spareLabel,text.body[tray]);txt(parts.spareHint,text.body[tray+'Hint']);
+ for(const id of['L1','L2']){const P=parts.lamps[id],n=ends(id);attr(P.g,'data-brightness',m.lamps[id].brightness);attr(P.g,'data-bypassed',m.lamps[id].bypassed);attr(P.g,'data-wired',n>0);attr(P.g,'data-ends',n);
+  txt(P.badge,n<2?text.lampEnds[n]:m.lamps[id].bypassed?'被導線繞過':text.brightness[m.lamps[id].brightness])}
  for(const [n,z,disp] of[[A,m.ammeter,parts.aDisplay],[V,m.voltmeter,parts.vDisplay]]){txt(n.value,z.text||'—');txt(n.state,text.meterState[z.state]);attr(n.card,'data-state',z.state);txt(disp,z.text||'—')}
  txt(status,m.status==='normal'&&/^-\s*/.test(m.ammeter.text)?'電流表正負極接反：請交換電流表兩端再記錄。':text.status[m.status]);attr(status,'data-unsafe',m.status==='source-short');
- attr(stage,'aria-label','電路實驗桌，'+(m.switchClosed?'開關閉合':'開關斷開')+'，電流表 '+(m.ammeter.text||'—')+'，電壓表 '+(m.voltmeter.text||'—')+'，燈泡 1 '+text.brightness[m.lamps.L1.brightness]+'，燈泡 2 '+(l2?text.brightness[m.lamps.L2.brightness]:'未接線'));
+ attr(stage,'aria-label','電路實驗桌，'+(m.switchClosed?'開關閉合':'開關斷開')+'，電流表 '+(m.ammeter.text||'—')+'，電壓表 '+(m.voltmeter.text||'—')+'，燈泡 1 '+parts.lamps.L1.badge.textContent+'，燈泡 2 '+parts.lamps.L2.badge.textContent);
  paintHint();
 }
 const pick=()=>{if(forced)return forced;const w=bench.getBoundingClientRect().width;return w>0&&w<PORTRAIT_BELOW?'portrait':'landscape'};

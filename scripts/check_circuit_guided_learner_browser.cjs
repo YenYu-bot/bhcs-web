@@ -75,8 +75,13 @@ async function journey(p,{mobile,label}){
   // One path through both lamps: lamp 1 return now goes through lamp 2.
   await toggle(p,tap);await removeWire(p,'L1.b','bat-',tap);
   await connect(p,'L1.b','L2.a',pick(0));
-  assert.equal(await p.locator(bench+'[data-role="spare-lamp-bay"]').getAttribute('data-state'),'working');
+  // Lamp 2 wired at one end only: not "wired but dark", and its tray says one end is still missing.
+  assert.equal(await p.locator(bench+'[data-lamp="L2"] [data-role="lamp-state"]').textContent(),'只接一端');
+  assert.equal(await p.locator(bench+'[data-role="spare-lamp-bay"]').getAttribute('data-state'),'partial');
+  await shot(p,label+'-05a-lamp2-one-end');
   await connect(p,'L2.b','bat-',pick(1));
+  assert.equal(await p.locator(bench+'[data-role="spare-lamp-bay"]').getAttribute('data-state'),'working');
+  assert.equal(await p.locator(bench+'[data-lamp="L2"] [data-role="lamp-state"]').textContent(),'熄滅','both ends wired, switch open');
   assert.equal(await phase(p),'trial1-measure');await toggle(p,tap);
   assert.equal(await read(p,'ammeter-value'),'0.5 A');assert.equal(await read(p,'voltmeter-value'),'3.0 V');
   await shot(p,label+'-05-one-path');
@@ -132,6 +137,23 @@ async function journey(p,{mobile,label}){
      assert.equal((await wires(page)).length,0,'swipe created no wire');
      await ctx.close()}
     ok('390: swiping on the bench background scrolls the page and creates no wire');
+    {const{ctx,page}=await openPage(browser,base,{viewport:{width:390,height:844},touch:true,hook:false,external,errors});
+     await page.locator('#cgg-cta').tap();await page.locator('#cgg-cta').tap();await settle(page);
+     // The two terminals furthest apart on the phone bench: ammeter − (top right) and lamp 2 left end (bottom tray).
+     await page.locator('#cgg-bench-card [data-role="stage"]').scrollIntoViewIfNeeded();
+     const st=await page.locator('#cgg-bench-card [data-role="stage"]').boundingBox(),vh=await page.evaluate(()=>innerHeight);
+     assert.ok(st.y>=0&&st.y+st.height<=vh+1,'whole phone bench fits on one screen ('+Math.round(st.height)+'px)');
+     const a=await T(page,'A.-').boundingBox(),b=await T(page,'L2.a').boundingBox();
+     for(const r of[a,b])assert.ok(r.x>=0&&r.x+r.width<=390+1,'far terminal within the screen width');
+     const from={x:a.x+a.width/2,y:a.y+a.height/2},to={x:b.x+b.width/2,y:b.y+b.height/2},c=await page.context().newCDPSession(page);
+     await c.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[from]});
+     for(let i=1;i<=12;i++)await c.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from.x+(to.x-from.x)*i/14,y:from.y+(to.y-from.y)*i/14}]});
+     await settle(page);assert.equal(await page.locator('#cgg-bench-card [data-role="wire-preview"]:not([hidden])').count(),1,'dashed preview follows the finger');
+     fs.mkdirSync(OUT,{recursive:true});await page.screenshot({path:path.join(OUT,'390-09-far-drag-in-progress.png')}); // page shot: an element shot would scroll and cancel the gesture
+     await c.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[to]});await c.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await settle(page);
+     assert.deepEqual(await wires(page),['A.-|L2.a']);await shot(page,'390-10-far-drag-done');
+     await ctx.close()}
+    ok('390: the whole bench fits one phone screen and a top-right to bottom-tray drag connects in one gesture');
     assert.deepEqual(errors,[],'console/page errors');assert.deepEqual(external,[],'external requests');ok('no external requests and no console errors');
     console.log('circuit-guided learner browser: '+checks+' checks passed; screenshots in '+path.relative(root,OUT)+'/');
   }finally{await browser.close();server.close()}
