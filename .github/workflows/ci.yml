@@ -231,6 +231,18 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_photosynthesis_guided_flow_browser.cjs
+      - name: Check guided circuit bench mouse, keyboard and touch input in a real browser
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_circuit_guided_input_browser.cjs
+      - name: Check guided circuit bench states and page layout at 1280 and 390
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_circuit_guided_view_browser.cjs
+      - name: Check a first-time learner wires every circuit stage by real mouse, keyboard and touch
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_circuit_guided_learner_browser.cjs
       - name: Check guided circuit full student flow, Notebook, Challenges, reload and restart
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -300,6 +312,18 @@ jobs:
         with:
           name: circuit-flow-review
           path: circuit-flow-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: circuit-view-review
+          path: circuit-view-artifacts/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: circuit-learner-review
+          path: circuit-learner-artifacts/
           retention-days: 14
 
   # 數學練習卷畫面與列印版面（真實 Chromium）

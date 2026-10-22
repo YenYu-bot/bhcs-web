@@ -1,5 +1,5 @@
 // Pilot #6 B2 local browser gate: real mouse, keyboard and touch on the in-memory circuit bench fixture.
-// Intentionally NOT wired into ci.yml until B5.
+// Runs in ci.yml science-guided.
 const {chromium}=require('playwright'),assert=require('node:assert/strict');
 const {createServer,openFixture,settle,launchOptions,touchDrag}=require('./circuit_guided_test_support.cjs');
 const t=(p,id)=>p.locator('[data-terminal="'+id+'"]'),sw=p=>p.locator('[data-switch-toggle]'),center=async l=>{await l.scrollIntoViewIfNeeded();const b=await l.boundingBox();return{x:b.x+b.width/2,y:b.y+b.height/2}};

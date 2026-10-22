@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { createInitialState } from '../assets/circuit-guided/engine.js';
 import { FIXED_CIRCUITS } from '../assets/circuit-guided/model.js';
@@ -159,4 +160,7 @@ test('announcements describe transitions and records but never inject Concept ea
   assert.match(a.text,/正式名稱/);
 });
 
+{const src=fs.readFileSync(new URL('../assets/circuit-guided/script.js',import.meta.url),'utf8');
+ assert.ok(!src.includes('只改接法，其他條件固定'),'mission must not claim only the connection changes');
+ assert.match(src,/燈泡數量.{0,6}接法/);assert.match(src,/燈泡數量相同、只改接法/);tests++;console.log('PASS wording separates number of lamps from connection and names the strict two-lamp comparison')}
 console.log('circuit-guided script: '+tests+' tests passed');
