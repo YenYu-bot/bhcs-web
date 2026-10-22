@@ -1,5 +1,13 @@
 # Circuit Guided Lab Pilot #6 / B6 — 可執行驗收矩陣（B 線）
 
+## 合併後正式基準（2026-10-22）
+
+工程驗收目標為 `main` 的 #165 merge SHA `9c9e2dd9950825f7589e54ea158022685cd0112f`；驗收站 `tools/science/circuit-guided.html` 保留 `noindex`。#165 在 PR head `cd99585` 的正式 CI 12/12 成功；合併後 main 的 [正式 CI](https://github.com/YenYu-bot/bhcs-web/actions/runs/39756995373) 要另行驗證。Claude 互動預覽已有負責人驗收紀錄，**五名首次使用學生 cohort 仍未完成**。本矩陣是工程與學科檢核附件，正式真人發布 Gate 一律依 `docs/circuit-guided-first-time-user-gate.md`，不得以 CI 或負責人預覽代替。
+
+**新版 CI 結構**：Circuit input、view、learner、flow 四組 Chromium 測試已整合至 `science-guided`，並產生 view／learner／flow 三種 artifacts；原暫時 `circuit-visual` workflow 已刪除。新版工程檢查核對正式 CI 全必要 jobs、CI Gate、四個 Circuit steps 及 artifacts，而不是要求已不存在的獨立 workflow。原有兩條 workflow 通知條件不可照舊宣稱成功。
+
+---
+
 > 狀態：驗收規格草案；2026-10-22。初版基準 #165 head 86f611e，追蹤至 `cd99585`；請以最新 Head 重新執行所有 Gate。  
 > 這是**待驗證的判定條件**，不是已通過報告。不得以自動化完成取代學生操作驗收。  
 > 詳見 docs/circuit-guided-b6-independent-review.md（科學與教學審查）。
@@ -90,11 +98,11 @@
 
 | ID | 必要條件 |
 |---|---|
-| GATE-01 | PR #165 最新 head SHA 與所有提交／預覽版本一致 |
+| GATE-01 | 測試／部署使用的 commit 與當時 `main` 的實際 SHA 一致；合併後工程基準先核對 `9c9e2dd9950825f7589e54ea158022685cd0112f` |
 | GATE-02 | 正式 CI 該 SHA 所有必要 jobs（尤其 core、site、science-guided、CI Gate）completed 且 conclusion=success |
-| GATE-03 | 原要求是同一最新 SHA 的獨立 `circuit-visual` workflow completed/success；因 #165 head `cd99585` 刪除臨時 workflow 並把 Circuit input/view/learner/flow 併入 `science-guided`，**新 Gate 等價替代規則必須由使用者明確同意**；在同意前不可宣稱符合原兩流程門檻 |
-| GATE-04 | 提供截圖 artifact、真實可操作驗收網址或單機啟動方式，驗收 UI 顯示 SHA；若只有截圖則不得進入人工通過 |
-| GATE-05 | 所有 P0/P1 問題已修正，桌機與手機學生操作驗收有證據，使用者明確同意才改 Ready，合併需另外同意 |
+| GATE-03 | **新版整合式工程驗收**：在 GATE-02 同一 SHA 的 `science-guided` job 內，Circuit input/view/learner/flow 四步全數 success，且 view/learner/flow 三項 artifacts 完整；已刪除的獨立 `circuit-visual` 不列為假成功。若調整原先雙流程監測通知規則，須另經使用者確認 |
+| GATE-04 | 具最新 SHA 的真實可操作教材或可重現預覽、CI artifacts；#165 PR 已記錄負責人於 `208f826` 預覽驗收，後續只改 CI/測試。**五名學生真人驗收仍是另一道發布門檻** |
+| GATE-05 | 教材已獲負責人核准合併 #165；但正式公開須依 main 的五名首次使用者 Gate 全部達標，且另經負責人同意；`noindex` 與私有教材目錄狀態保持 |
 
 基準更新：原審查 SHA 86f611e 的 GATE-02 / GATE-03 曾通過；2026-10-22 新 head 405526b0956e0e254e854ebe83d70da05500576b 的正式 CI（run 39745144998）與 Circuit（run 39745144972）亦 success。這些**不是對未來新 SHA 的預先核准**；Claude 每次新提交都必須再次核對同一當前 SHA。
 

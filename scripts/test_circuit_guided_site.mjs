@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import cp from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { ciWorkflow, ciJobs, CHROMIUM_INSTALL } from './ci_workflow_test_support.mjs';
 
 let tests=0;
 const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
@@ -113,4 +114,15 @@ test('legacy circuit page remains outside the B3 page shell',()=>{
   assert.ok(!legacy.includes('circuit-guided.html'));
 });
 
+test('CI runs circuit input → view → learner → flow once each in science-guided after Chromium, with screenshots kept 14 days',()=>{
+  const wf=ciWorkflow(),jobs=ciJobs(wf),steps=jobs['science-guided'].steps,all=Object.values(jobs).flatMap(j=>j.steps);
+  const at=(needle,label)=>{const i=steps.findIndex(st=>st.includes(needle));assert.ok(i>=0,'missing '+label);return i};
+  const install=at(CHROMIUM_INSTALL,'Chromium install');
+  const idx=['input','view','learner','flow'].map(k=>{const f='check_circuit_guided_'+k+'_browser.cjs';assert.equal(wf.split(f).length,2,k+' gate runs exactly once');assert.equal(all.filter(st=>st.includes(f)).length,1,k+' in one step');const i=at(f,k);assert.match(steps[i],/NODE_PATH: \/tmp\/bhcs-composition\/node_modules/);return i});
+  assert.ok(install<idx[0]&&idx[0]<idx[1]&&idx[1]<idx[2]&&idx[2]<idx[3],'Chromium → input → view → learner → flow');
+  for(const [name,dir] of [['circuit-view-review','circuit-view-artifacts/'],['circuit-learner-review','circuit-learner-artifacts/'],['circuit-flow-review','circuit-flow-artifacts/']])
+    assert.ok(wf.includes('name: '+name+'\n          path: '+dir+'\n          retention-days: 14'),name+' → '+dir+', 14 days');
+  assert.ok(jobs.gate.needs.includes('science-guided'),'CI Gate needs science-guided');
+  assert.equal(fs.existsSync(path.join(root,'.github/workflows/circuit165-visual-temporary.yml')),false,'temporary circuit workflow retired');
+});
 console.log('circuit-guided site: '+tests+' tests passed');

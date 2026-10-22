@@ -1,5 +1,16 @@
 # Pilot #6 / B6 — 獨立科學與教學設計審查
 
+## 合併後正式基準（2026-10-22）
+
+- **程式狀態**：[PR #165](https://github.com/YenYu-bot/bhcs-web/pull/165) 已合併至 `main`；merge SHA `9c9e2dd9950825f7589e54ea158022685cd0112f`，其 PR head 為 `cd99585471670d00637c21eca67c0b1c7609a36d`。
+- **工程證據**：PR head 的 [正式 CI 39753661608](https://github.com/YenYu-bot/bhcs-web/actions/runs/39753661608) 為 12/12 jobs success；`science-guided` 內 Circuit input、view、learner、flow 四段成功且三類 artifacts 已產生。**合併後 `main` 的 CI 必須另外核對，不能沿用 PR head 的綠燈**；[main 合併後 CI](https://github.com/YenYu-bot/bhcs-web/actions/runs/39756995373)。
+- **實際人工驗收**：#165 PR 說明記錄負責人已在 `208f826` 的 Claude 互動預覽完成驗收；該版本至 `cd99585` 之後僅調整 CI 與測試，不更動教材本體。這是「負責人預覽驗收」，**不是**五名首次使用者的正式可用性研究。
+- **發布保護**：`tools/science/circuit-guided.html` 在 `main` 仍有 `noindex`。未完成現有 [五名學生 Gate](https://github.com/YenYu-bot/bhcs-web/blob/main/docs/circuit-guided-first-time-user-gate.md) 及負責人另外批准前，不移除 `noindex`、不加入公開教材目錄、不取代 Advanced Mode。
+- **舊版缺陷**：EDU-01 變因敘述、EDU-02 L2 只接一端誤標，均在已合併的程式中修正且有回歸測試。以下較早章節保留**歷史審查過程**，不得當成 `main` 最新未修缺陷。
+- **新 CI 架構**：獨立 `circuit-visual` 暫時 workflow 已由正式 `science-guided` 內四個 Circuit steps 取代；工程覆蓋可依正式 CI、CI Gate、Circuit steps、artifacts 檢查。若未來恢復「兩流程同 SHA 才發通知」的舊提醒，需另行更新通知條件，**不能宣稱不存在的第二條 workflow 已通過**。
+
+---
+
 > 審查者：ChatGPT（B 線，負責教材科學、教學邏輯及驗收規格）；日期：2026-10-22。  
 > 初版審查基準：PR #165 head `86f611e915a6d92ebc0a721a44573c4fdfa98584`（歷史快照）；追蹤檢查至 `cd99585471670d00637c21eca67c0b1c7609a36d`，詳見第 9 節。  
 > 本文件由獨立分支維護，**不構成 PR #165 的人工驗收通過或合併許可**。
@@ -176,4 +187,4 @@ check_circuit_guided_flow_browser.cjs 的 setFixed() 以 window.__cggTest.dispat
 
 **正式 CI 結果**：[run 39753661608](https://github.com/YenYu-bot/bhcs-web/actions/runs/39753661608) 為 completed/success，12/12 jobs success；`science-guided` 內 input／view／learner／flow 四步均 success，三套 Circuit artifacts 已上傳。原獨立 Circuit workflow 已移除，請遵守第 9.2 節的 Gate 差異及使用者核准要求。
 
-本次查詢時 #165 已 **Ready for review**，但 **仍 open、merged=false**；#166 維持 Draft。Ready 是工程審查流程狀態，不等於真實五位學生驗收完成，也不等於可以公開或合併。正式公開仍依 main 的五人 Gate 進行。
+該次截圖審查當時 #165 尚在 Ready 階段；**2026-10-22 隨後已正式合併至 main**。合併的是工程變更，不等於真實五位學生研究完成或允許公開。正式公開仍依 main 的五人 Gate 執行。

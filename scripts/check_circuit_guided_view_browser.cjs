@@ -1,5 +1,5 @@
 // Pilot #6 B2 local browser gate: 1280/390 visual/accessibility review on the in-memory bench fixture.
-// Intentionally NOT wired into ci.yml until B5. Writes screenshots to circuit-view-artifacts/.
+// Runs in ci.yml science-guided. Writes screenshots to circuit-view-artifacts/.
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {root,createServer,openFixture,axeScan,settle,launchOptions}=require('./circuit_guided_test_support.cjs');
 const OUT=path.resolve(process.env.CIRCUIT_VIEW_OUTPUT||path.join(root,'circuit-view-artifacts'));
