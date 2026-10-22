@@ -111,3 +111,18 @@ check_circuit_guided_flow_browser.cjs 的 setFixed() 以 window.__cggTest.dispat
 **新版 CI 同 SHA 確認：** 正式 CI 12/12 completed/success（https://github.com/YenYu-bot/bhcs-web/actions/runs/39745144998）；Circuit 的 circuit-visual completed/success（https://github.com/YenYu-bot/bhcs-web/actions/runs/39745144972）。上述結果只適用於 405526b，不得替新提交預先背書。
 
 **開發建議**：Claude 此輪已改善原本的主要幾何及手機障礙；請優先處理尚未解決的 P1-EDU-01／02，避免重新導入橫捲或退回舊布局。#165 維持 Draft；本 B 線僅提出審查，不修改 A 線程式。
+
+## 8. 合併前後驗證更新：新 Head cd99585（2026-10-22）
+
+當前 #165 head：`cd99585471670d00637c21eca67c0b1c7609a36d`，提交說明將舊的獨立 Circuit 視覺 workflow 移除，改把 `check_circuit_guided_input_browser.cjs`、`check_circuit_guided_view_browser.cjs`、`check_circuit_guided_learner_browser.cjs`、`check_circuit_guided_flow_browser.cjs` 串入正式 `ci.yml` 的 `science-guided` job，並將 circuit flow/view/learner artifacts 保留 14 天。已在 PR 該 head 的 `ci.yml` 確認包含上述命令及 artifact 設定；**CI run 39753661608 尚在執行，因此不得判定新 head 全綠**。
+
+**注意驗收契約差異**：先前 #165 曾明確要求「正式 CI 與獨立 Circuit 兩條 workflow 都在同一最新 head successful」。新 head 移除獨立 Circuit workflow，故**尚無法照舊規則宣稱兩條 workflow 同 SHA 全綠**；是否改以「正式 CI 的 `science-guided` 內全部 Circuit 測試與 `CI Gate` 完成 success」取代舊規則，應由使用者明確確認，不能由 B 線自行放寬。這是**流程／門檻變更待確認**，不是已證實的科學錯誤。
+
+當 Claude 真正合併 #165 之後的 B 線查核：
+
+1. 取 PR merge commit SHA（不可只用 PR head SHA）及 main 最新 SHA，確認合併狀態及工作樹範圍。
+2. 讀 main 的正式 workflow / 測試項目，核對 circuit input/view/learner/flow 均仍有執行，`CI Gate` 依賴完整 job；檢查提交前後未意外讓 noindex／教材目錄公開。
+3. 實際驗證 main 的 CI 結果與 artifacts，不能只引用合併前 PR 綠燈。
+4. 對照 #161 已合併的 5 位學生首次使用者 Gate；#163 執行紀錄包仍是 Draft，不能把「未執行」當作「已通過」。
+5. 本 #166 文件審查在上述更新完成並得到使用者明確同意後，才轉 Ready／合併；文件合併不構成公開教材許可。
+
