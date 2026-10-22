@@ -5,6 +5,9 @@ on:
       - 'assets/circuit-guided/**'
       - 'scripts/check_circuit_guided_view_browser.cjs'
       - 'scripts/check_circuit_guided_flow_browser.cjs'
+      - 'scripts/check_circuit_guided_input_browser.cjs'
+      - 'scripts/check_circuit_guided_learner_browser.cjs'
+      - 'scripts/circuit_guided_test_support.cjs'
       - '.github/workflows/circuit165-visual-temporary.yml'
   workflow_dispatch:
 jobs:
@@ -24,6 +27,14 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_circuit_guided_view_browser.cjs
+      - name: Circuit bench mouse keyboard and touch input
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_circuit_guided_input_browser.cjs
+      - name: First-time learner builds every stage with real mouse keyboard and touch
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_circuit_guided_learner_browser.cjs
       - name: Full circuit guided learner journey
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -35,4 +46,5 @@ jobs:
           path: |
             circuit-view-artifacts/
             circuit-flow-artifacts/
+            circuit-learner-artifacts/
           retention-days: 7

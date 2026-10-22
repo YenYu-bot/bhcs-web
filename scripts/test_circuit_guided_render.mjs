@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {JSDOM} from 'jsdom';
-import {solveCircuit,TERMINALS,FIXED_CIRCUITS} from '../assets/circuit-guided/model.js';
+import {solveCircuit,TERMINALS,FIXED_CIRCUITS,CHALLENGE_BASES} from '../assets/circuit-guided/model.js';
 import * as R from '../assets/circuit-guided/render.js';
 let n=0;const test=(name,fn)=>{fn();n++;console.log('PASS',name)},root=fileURLToPath(new URL('..',import.meta.url));
 const fmt=(x,u)=>x===null?'—':x.value.toFixed(1)+' '+u;
@@ -36,14 +36,6 @@ test('negative ammeter reading explains polarity correction instead of claiming 
  assert.match(t.host.querySelector('[data-role="status"]').textContent,/正負極接反/);
  assert.match(t.host.querySelector('[data-role="status"]').textContent,/交換電流表兩端/);
 });
-test('L1 voltmeter leads do not cross L2 terminal centers and wiring remains raw',()=>{
- const left=R.wirePath('V.+','L1.a'),right=R.wirePath('V.-','L1.b');
- assert.match(left,/460 390/);assert.match(right,/682 420/);
- assert.doesNotMatch(left,/522 310/);assert.doesNotMatch(right,/610 310/);
- const t=mount(view(raw('baseline',true)));
- assert.equal(t.host.querySelectorAll('.cgg-wire').length,FIXED_CIRCUITS.baseline.length);
-});
-
 test('spare L2 workspace is explicit, stable and activates only after learner connects L2',()=>{
  const t=mount(view(raw('baseline',true)));
  const bay=t.host.querySelector('[data-role="spare-lamp-bay"]');
@@ -60,55 +52,82 @@ test('spare L2 workspace is explicit, stable and activates only after learner co
  t.bench.update(view(raw('baseline',true)));
  assert.equal(bay.getAttribute('data-state'),'spare');
 });
-test('baseline L1 supply and return avoid spare L2 region and false L1.a connection',()=>{
- const supply=R.wirePath('A.-','L1.a'),ret=R.wirePath('L1.b','bat-');
- assert.match(supply,/442 205/);
- assert.match(ret,/666 135 L 666 445 L 92 445/);
- assert.doesNotMatch(ret,/522 310/);
- assert.doesNotMatch(supply,/522 310|610 310/);
+const LAYOUTS=Object.values(R.BENCH_LAYOUTS);
+const ownRect=(L,id)=>{const o=R.terminalOwner(id),r=L[o];return id==='bat+'?r.cap:r};
+const onEdge=(r,p)=>{const inX=p.x>=r.x-1&&p.x<=r.x+r.w+1,inY=p.y>=r.y-1&&p.y<=r.y+r.h+1;return(inX&&inY)&&(Math.abs(p.x-r.x)<=1||Math.abs(p.x-r.x-r.w)<=1||Math.abs(p.y-r.y)<=1||Math.abs(p.y-r.y-r.h)<=1)};
+function routeAll(L,wires){const others=[];return wires.map(w=>{const r=R.routeWire(w.from,w.to,{layout:L.name,others});const o={from:w.from,to:w.to,pts:r.pts,d:r.d};others.push(o);return o})}
+const inRect=(r,[x,y],m=0)=>x>r.x-m&&x<r.x+r.w+m&&y>r.y-m&&y<r.y+r.h+m;
+const TEACHING={...FIXED_CIRCUITS,challenge2:CHALLENGE_BASES[2].wires,challenge3:CHALLENGE_BASES[3].wires};
+test('every terminal is attached to the edge of its own instrument in both layouts',()=>{
+ for(const L of LAYOUTS){assert.deepEqual(Object.keys(L.terminals).sort(),[...TERMINALS].sort());
+  for(const id of TERMINALS)assert.ok(onEdge(ownRect(L,id),L.terminals[id]),L.name+' '+id+' floats away from its body')}
+ assert.deepEqual(R.TERMINAL_POSITIONS['bat+'],{x:R.BENCH_LAYOUTS.landscape.terminals['bat+'].x,y:R.BENCH_LAYOUTS.landscape.terminals['bat+'].y});
 });
-test('all baseline cable polylines avoid the reserved L2 equipment rectangle',()=>{
- const spare={left:472,top:258,right:658,bottom:388};
- const baseline=FIXED_CIRCUITS.baseline;
- function points(d){
-   const commands=d.match(/[MLHV]|-?\d+(?:\.\d+)?/g)||[];
-   let x=0,y=0,i=0,out=[];
-   while(i<commands.length){
-     const c=commands[i++];
-     if(c==='M'||c==='L'){x=Number(commands[i++]);y=Number(commands[i++]);out.push([x,y]);}
-     else if(c==='H'){x=Number(commands[i++]);out.push([x,y]);}
-     else if(c==='V'){y=Number(commands[i++]);out.push([x,y]);}
-     else throw Error('unexpected wire route: '+d);
-   }
-   return out;
- }
- function crosses(a,b){
-   if(a[0]===b[0])return a[0]>spare.left&&a[0]<spare.right&&Math.max(Math.min(a[1],b[1]),spare.top)<Math.min(Math.max(a[1],b[1]),spare.bottom);
-   if(a[1]===b[1])return a[1]>spare.top&&a[1]<spare.bottom&&Math.max(Math.min(a[0],b[0]),spare.left)<Math.min(Math.max(a[0],b[0]),spare.right);
-   // Only baseline routes may use a straight diagonal when it stays outside the equipment bay.
-   for(let t=0;t<=100;t++){const x=a[0]+(b[0]-a[0])*t/100,y=a[1]+(b[1]-a[1])*t/100;if(x>spare.left&&x<spare.right&&y>spare.top&&y<spare.bottom)return true;}
-   return false;
- }
- for(const wire of baseline){
-   const d=R.wirePath(wire.from,wire.to),p=points(d);
-   for(let i=1;i<p.length;i++)assert.equal(crosses(p[i-1],p[i]),false,wire.from+' → '+wire.to+' enters L2 spare bay: '+d);
- }
+test('switch, lamp and meter terminals keep their left/right and polarity meaning on screen',()=>{
+ for(const L of LAYOUTS){const t=L.terminals;
+  for(const [a,b] of [['sw.a','sw.b'],['L1.a','L1.b'],['L2.a','L2.b'],['A.+','A.-'],['V.+','V.-']])assert.ok(t[a].x<t[b].x,L.name+' '+a+' left of '+b);
+  assert.ok(t['bat+'].y<t['bat-'].y,L.name+' battery + on top')}
 });
-test('physical component terminals coincide with equipment bounds rather than floating in space',()=>{
- const p=R.TERMINAL_POSITIONS;
- assert.deepEqual([p['bat+'].x,p['bat-'].x],[92,92]);
- assert.equal(p['bat+'].y,186);assert.equal(p['bat-'].y,310);
- assert.deepEqual([p['sw.a'].y,p['sw.b'].y],[135,135]);
- assert.deepEqual([p['A.+'].y,p['A.-'].y],[205,205]);
- assert.deepEqual([p['L1.a'].y,p['L1.b'].y],[135,135]);
- assert.deepEqual([p['V.+'].y,p['V.-'].y],[390,390]);
- const t=mount(view(raw('baseline',true)));
- assert.equal(t.host.querySelectorAll('[data-terminal]').length,12);
+test('teaching circuits: cables never run through other instruments, lamp labels or foreign terminals',()=>{
+ for(const L of LAYOUTS){const ob=R.benchObstacles(L);
+  for(const [name,ws] of Object.entries(TEACHING))for(const c of routeAll(L,ws)){
+   const own=new Set([R.terminalOwner(c.from),R.terminalOwner(c.to)]);
+   for(const p of c.pts){
+    assert.ok(p[0]>=4&&p[1]>=4&&p[0]<=L.width-4&&p[1]<=L.height-4,L.name+' '+name+' '+c.from+'→'+c.to+' leaves the bench');
+    for(const r of ob.bodies)if(!own.has(r.owner))assert.ok(!inRect(r,p,2),L.name+' '+name+' '+c.from+'→'+c.to+' crosses '+r.owner);
+    for(const r of ob.labels)if(r.owner==='L1'||r.owner==='L2')assert.ok(!inRect(r,p,0),L.name+' '+name+' '+c.from+'→'+c.to+' crosses '+r.owner+' label');
+    for(const id of TERMINALS)if(id!==c.from&&id!==c.to){const t=L.terminals[id];assert.ok(Math.hypot(t.x-p[0],t.y-p[1])>=26,L.name+' '+name+' '+c.from+'→'+c.to+' passes terminal '+id)}
+   }}}
 });
-test('scrollable bench is keyboard focusable and labelled for mobile accessibility',()=>{
+test('baseline (lamp 1 only) cables keep out of the lamp 2 spare tray and the voltmeter gap',()=>{
+ for(const L of LAYOUTS){const ob=R.benchObstacles(L);
+  for(const c of routeAll(L,FIXED_CIRCUITS.baseline)){for(const p of c.pts)assert.ok(!inRect(ob.tray,p,4),L.name+' '+c.from+'→'+c.to+' enters spare tray');
+   if(R.terminalOwner(c.from)!=='voltmeter'&&R.terminalOwner(c.to)!=='voltmeter')for(const p of c.pts)assert.ok(!inRect(ob.measure,p,0),L.name+' '+c.from+'→'+c.to+' runs through the voltmeter gap')}}
+});
+test('two cables never share the same track away from a common terminal',()=>{
+ for(const L of LAYOUTS)for(const [name,ws] of Object.entries(TEACHING)){const cs=routeAll(L,ws);
+  for(let i=0;i<cs.length;i++)for(let j=i+1;j<cs.length;j++){const shared=[cs[i].from,cs[i].to].filter(x=>x===cs[j].from||x===cs[j].to).map(id=>L.terminals[id]);
+   let run=0,worst=0;for(const p of cs[i].pts){const nearT=shared.some(t=>Math.hypot(t.x-p[0],t.y-p[1])<62);const close=!nearT&&cs[j].pts.some(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<9);run=close?run+1:0;worst=Math.max(worst,run)}
+   assert.ok(worst<4,L.name+' '+name+' '+cs[i].from+'→'+cs[i].to+' overlaps '+cs[j].from+'→'+cs[j].to)}}
+});
+test('touch/mouse hit targets never overlap at any width that uses each layout',()=>{
+ const check=(L,width,hit)=>{const k=width/L.width,t=Object.entries(L.terminals);
+  for(let i=0;i<t.length;i++)for(let j=i+1;j<t.length;j++){const dx=Math.abs(t[i][1].x-t[j][1].x)*k,dy=Math.abs(t[i][1].y-t[j][1].y)*k;assert.ok(dx>=hit-2||dy>=hit-2,L.name+'@'+width+' '+t[i][0]+'/'+t[j][0])}
+  const b=L.switch.button,bw=(hit===56?104:96)/2,bh=(hit===56?48:44)/2;for(const [id,p] of t){const dx=Math.abs(p.x-b[0])*k,dy=Math.abs(p.y-b[1])*k;assert.ok(dx>=bw+hit/2-2||dy>=bh+hit/2-2,L.name+'@'+width+' switch button covers '+id)}};
+ for(const w of[600,720,920])check(R.BENCH_LAYOUTS.landscape,w,48);
+ for(const w of[300,344,390,460])check(R.BENCH_LAYOUTS.portrait,w,56);
+ assert.equal(R.PORTRAIT_BELOW,600);
+});
+test('narrow benches render the portrait bench (no sideways scrolling) with the same twelve buttons',()=>{
+ const dom=new JSDOM('<main id="h"></main>',{pretendToBeVisual:true}),host=dom.window.document.getElementById('h'),b=R.createCircuitBench(host,{layout:'portrait'});b.update(view(raw('trial1',true)));
+ assert.equal(b.layout(),'portrait');assert.equal(host.querySelector('svg').getAttribute('viewBox'),'0 0 360 664');
+ assert.equal(host.querySelectorAll('[data-terminal]').length,12);
+ const L=R.BENCH_LAYOUTS.portrait,l2=host.querySelector('[data-terminal="L2.b"]');assert.equal(l2.style.left,(L.terminals['L2.b'].x/L.width*100).toFixed(4)+'%');
+ assert.equal(host.querySelectorAll('.cgg-wire').length,FIXED_CIRCUITS.trial1.length);
+ const css=fs.readFileSync(root+'assets/circuit-guided/circuit-guided.css','utf8');assert.doesNotMatch(css,/min-width:600px;max-width:none|overflow-x:auto/);
+});
+test('meters show their reading on the instrument and match the readout cards',()=>{
+ const t=mount(view(raw('trial1',true)));
+ assert.equal(t.host.querySelector('[data-role="ammeter-display"]').textContent,'0.5 A');assert.equal(t.host.querySelector('[data-role="voltmeter-display"]').textContent,'3.0 V');
+ assert.equal(t.host.querySelector('[data-role="ammeter-value"]').textContent,'0.5 A');
+});
+test('each cable has a matching colour chip in the wire list and colours stay put when another cable is removed',()=>{
+ const t=mount(view(raw('baseline',true))),col=k=>t.host.querySelector('[data-wire="'+k+'"]').getAttribute('data-colour'),chip=k=>t.host.querySelector('[data-wire-row="'+k+'"] .cgg-wire-swatch').getAttribute('data-colour');
+ const keep='L1.b|bat-',before=col(keep);assert.ok(before);assert.equal(new Set(FIXED_CIRCUITS.baseline.map(w=>col([w.from,w.to].sort().join('|')))).size,FIXED_CIRCUITS.baseline.length,'each cable has its own colour');
+ for(const w of FIXED_CIRCUITS.baseline){const k=[w.from,w.to].sort().join('|');assert.ok(R.CABLE_COLOURS.includes(col(k)));assert.equal(col(k),chip(k))}
+ const fewer={wires:FIXED_CIRCUITS.baseline.filter(w=>!(w.from==='bat+'&&w.to==='sw.a')).map(w=>({...w})),switchClosed:true};t.bench.update(view(fewer));
+ assert.equal(col(keep),before);assert.equal(t.host.querySelectorAll('.cgg-wire').length,FIXED_CIRCUITS.baseline.length-1);
+});
+test('wiring hint explains the click-pair method, names the chosen terminal and says when wiring is locked',()=>{
+ const t=mount(view({wires:[],switchClosed:false})),hint=t.host.querySelector('[data-role="wire-hint"]');
+ assert.match(hint.textContent,/先點一個端點/);assert.match(hint.textContent,/交叉的導線並沒有接在一起/);
+ t.bench.element.setAttribute('data-wire-start','bat+');t.bench.update(view({wires:[],switchClosed:false}));assert.match(hint.textContent,/已選「電池正極」/);
+ t.bench.element.removeAttribute('data-wire-start');t.bench.update(view({wires:[],switchClosed:false},true));assert.match(hint.textContent,/鎖定/);
+});
+test('bench region is labelled for keyboard users and is not a sideways scroll container',()=>{
  const t=mount(view(raw('baseline')));
- assert.equal(t.bench.element.getAttribute('tabindex'),'0');
  assert.equal(t.bench.element.getAttribute('role'),'region');
  assert.match(t.bench.element.getAttribute('aria-label'),/方向鍵/);
+ assert.equal(t.bench.element.hasAttribute('tabindex'),false);
 });
 console.log('circuit-guided render: '+n+' tests passed');
