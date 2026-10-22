@@ -1,8 +1,21 @@
 # Pilot #6 / B6 — 獨立科學與教學設計審查
 
 > 審查者：ChatGPT（B 線，負責教材科學、教學邏輯及驗收規格）；日期：2026-10-22。  
-> 被審查基準：PR #165，head SHA 86f611e915a6d92ebc0a721a44573c4fdfa98584。  
+> 初版審查基準：PR #165 head `86f611e915a6d92ebc0a721a44573c4fdfa98584`（歷史快照）；追蹤檢查至 `cd99585471670d00637c21eca67c0b1c7609a36d`，詳見第 9 節。  
 > 本文件由獨立分支維護，**不構成 PR #165 的人工驗收通過或合併許可**。
+
+## 最新追蹤摘要（2026-10-22）
+
+| 審查事項 | 最新 head `cd99585` 的判定 | 是否可視為人工驗收通過 |
+|---|---|---|
+| 一顆／兩顆燈泡的控制變因用語 | **程式已修**：明確標示「燈泡數量與接法」並加入兩顆燈泡只改接法的比較 | 否，需真人理解驗證 |
+| L2 未接線／只接一端／兩端接妥 | **程式已修**：依端點連接數顯示 spare/partial/working，另有單元測試 | 否，仍需畫面與真人驗證 |
+| 不靠測試 hook 接線 | 新版 `check_circuit_guided_learner_browser.cjs` 對 1280/390 以真實 UI 互動測試 | 否，仍需真實學生操作 |
+| 手機接線板與標籤 | 已改直式布局、改善線路及 L2 托盤文字的避讓 | 否，仍需 iOS／Android 真人驗證 |
+| 工作流程 | **已變更**：Circuit 瀏覽器測試併入正式 `science-guided`；原臨時 Circuit workflow 刪除 | 舊兩工作流程條件待使用者確認替代 Gate |
+| 發布 | `tools/science/circuit-guided.html` 保留 `noindex`，未允許公開 | 不可發布 |
+
+下文前六節描述的是初版缺陷的**歷史證據**；不要將其中「仍待處理」等字樣當作上述最新 head 的即時狀態。
 
 ## 1. 審查範圍、證據及結論
 
@@ -125,4 +138,28 @@ check_circuit_guided_flow_browser.cjs 的 setFixed() 以 window.__cggTest.dispat
 3. 實際驗證 main 的 CI 結果與 artifacts，不能只引用合併前 PR 綠燈。
 4. 對照 #161 已合併的 5 位學生首次使用者 Gate；#163 執行紀錄包仍是 Draft，不能把「未執行」當作「已通過」。
 5. 本 #166 文件審查在上述更新完成並得到使用者明確同意後，才轉 Ready／合併；文件合併不構成公開教材許可。
+
+
+## 9. 最終追蹤審查：Head cd99585（2026-10-22）
+
+### 9.1 原本兩項 P1 教學問題已獲得程式層修正
+
+1. **EDU-01 變因誤稱**：`assets/circuit-guided/script.js` 目前 Mission 指出基準一顆→兩顆時「燈泡數量和接法會同時改變」；比較表改標「燈泡數量與接法」，Inference 另加入**保持兩顆數量相同，只改接法**的對照。`scripts/test_circuit_guided_script.mjs` 亦新增文字防回歸斷言。舊版 P1 程式缺陷**關閉**；真人是否看懂仍待測。
+2. **EDU-02 L2 一端接線狀態**：新版 `render.js` 使用實際接線端點數 `ends('L2')`，0／1／2 對應 `spare`／`partial`／`working`，燈泡標籤亦可顯示「未接線」、「只接一端」、以及接妥後的熄滅或亮度。`test_circuit_guided_render.mjs` 有從一端→兩端、斷開→閉合的回歸測試。舊版 P1 程式缺陷**關閉**；真人是否能辨識仍待測。
+
+### 9.2 新 CI 架構與原門檻差異
+
+在 `cd99585`，`.github/workflows/ci.yml` 的正式 `science-guided` job 包含 Circuit input／view／learner／flow 四項真瀏覽器測試，同時上傳三套 Circuit 截圖 artifacts（view、learner、flow）；`CI Gate` 以 `science-guided` 等所有必要 jobs 為先決條件。臨時 `.github/workflows/circuit165-visual-temporary.yml` 已刪除。
+
+**此處是 Gate 契約變更，不是允許自行降低標準**：使用者原先要求「正式 CI 與獨立 Circuit 兩條 workflows 均在同 head success」才可通知全綠。由於原獨立 workflow 已移除，新 head 不可能依舊條件提供兩條跑次。建議新的工程等價 Gate：**同一 head 的正式 CI completed/success，且 `core`、`site`、`science-guided`、`CI Gate` 等必要 jobs 全數 success，`science-guided` 內四項 Circuit 瀏覽器測試確實成功且 screenshots artifacts 完整**。在使用者明確同意這項替代之前，**不可宣稱「符合原兩流程全綠門檻」**。
+
+當前新 Head 的正式 CI 連結：https://github.com/YenYu-bot/bhcs-web/actions/runs/39753661608 。須以實際完成狀態再判定，不得因程式編排正確就當作執行通過。
+
+### 9.3 剩餘工作，不應再要求重修已解決項目
+
+- 等最新 head 的完整 CI／Gate 結果並確認是否真的 merge；若未 merge 就繼續保持 Draft。
+- #166 僅是獨立審查文件；與已併入 main 的 `docs/circuit-guided-first-time-user-gate.md`（PR #161）一致，不重做相同的五人測試門檻。
+- 五位首次使用學生／iOS Safari／Android Chrome／桌機／鍵盤／讀屏／刷新與恢復的真人 Gate 尚未完成。#163 執行紀錄包仍為獨立 Draft，不能當作已合併或已測試。
+- 不移除 `noindex`、不將 prototype 列入公開教材目錄、不取代既有 Advanced Mode。
+- 只有使用者完成最後人工驗收並明確批准，才可對 #165 或 #166 採取 Ready／merge 動作。
 
