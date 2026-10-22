@@ -118,3 +118,13 @@
 ### 2026-10-22 新版註記
 
 PR #165 head 405526b 新增 **scripts/check_circuit_guided_learner_browser.cjs**，以 hook:false 的出貨頁面執行 1280 滑鼠／鍵盤／拖曳、390 點按／觸控拖曳，並將手機接線桌改成直式；新增 artifact 包含 circuit-learner-artifacts 的八種操作狀態。故 INPUT-01～07 已有較強的**自動化行為證據**，不能再說完全缺少真實端點操作測試；但尚未由使用者真人在裝置上完成驗收，請保持「人工：NOT RUN」。B 線保留 SCI-12 部分接線狀態、EDU-01 控制變因的審查重點。
+
+## 7. 與既有正式真人驗收 Gate 的關係（2026-10-22）
+
+本矩陣是**科學、教學語義、程式操作行為**的補充規格；真人研究及正式發布判定**一律以 main 已合併的** `docs/circuit-guided-first-time-user-gate.md`（PR #161）為準，不另發明第二套五人門檻。
+
+- main 的首次使用者 Gate：5 位未曾使用站點的學生，同一版 cohort；至少 4/5 無 I2 協助完成全程、每人 I1 ≤1；Q1–Q3 的規定最低分數、真實 iOS Safari / Android Chrome / 桌機覆蓋、鍵盤／讀屏抽查，以及刷新增載／重啟檢查均須通過。
+- PR #163 的 `docs/circuit-guided-usability-session-kit.md` 是現有的**待合併執行紀錄包**，不得在它仍是 Draft 時宣稱已併入 main，也不應把其中「NOT STARTED」當作已完成測試。
+- B 線矩陣的 SCI/EDU/INPUT/VIS 可作五人驗收的逐項追蹤附件；此處 PASS 不會取代上述真實學生 cohort、發布核准或手動驗收。
+- #165 合併後須先核對其 merge SHA、在 main 的最終教材與必要 CI，再把此矩陣的「待驗收」項對到 **main 的實際部署版本**。若 #165 尚未合併，僅檢查 PR head，不宣稱 main 已更新。
+- #166 是文件 PR；僅當內容對應目前 main、CI 完成且使用者同意時才可 Ready／合併。文件合併不代表教材可公開，保留 noindex / 不列入正式教材目錄。
