@@ -34,7 +34,7 @@ export function wirePath(a,b){
  const pair=[a,b].sort().join('|');
  const route=pts=>'M '+pts.map(z=>z.join(' ')).join(' L ');
  if(pair==='L1.b|bat-'){
-   const v=[[610,135],[666,135],[666,445],[92,445],[92,310]];
+   const v=[[610,135],[702,135],[702,458],[92,458],[92,310]];
    return route(a==='L1.b'?v:[...v].reverse());
  }
  if(pair==='L1.a|V.+'){
@@ -42,7 +42,7 @@ export function wirePath(a,b){
    return route(a==='L1.a'?v:[...v].reverse());
  }
  if(pair==='L1.b|V.-'){
-   const v=[[610,135],[682,135],[682,420],[442,420],[442,390]];
+   const v=[[610,135],[680,135],[680,430],[442,430],[442,390]];
    return route(a==='L1.b'?v:[...v].reverse());
  }
  if(Math.abs(p.x-q.x)>35&&Math.abs(p.y-q.y)>35){
@@ -58,10 +58,10 @@ s(d,'rect',{x:36,y:186,width:112,height:124,rx:15,class:'cgg-component cgg-batte
 s(d,'text',{x:92,y:241,class:'cgg-component-mark','text-anchor':'middle'},comp).textContent='6 V';
 s(d,'text',{x:92,y:270,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=text.component.battery;
 const spareBay=s(d,'g',{'data-role':'spare-lamp-bay','data-state':'spare'},comp);
-s(d,'rect',{x:472,y:258,width:186,height:130,rx:18,class:'cgg-equipment-bay','data-bay':'L2'},spareBay);
+s(d,'rect',{x:472,y:258,width:186,height:162,rx:18,class:'cgg-equipment-bay','data-bay':'L2'},spareBay);
 const spareLabel=s(d,'text',{x:482,y:278,class:'cgg-bay-label'},spareBay);spareLabel.textContent='備用器材區';
-const spareHint=s(d,'text',{x:482,y:385,class:'cgg-bay-hint'},spareBay);spareHint.textContent='尚未接入電路';
-s(d,'rect',{x:478,y:73,width:186,height:133,rx:18,class:'cgg-equipment-bay cgg-primary-bay','data-bay':'L1'},comp);
+
+s(d,'rect',{x:478,y:73,width:186,height:180,rx:18,class:'cgg-equipment-bay cgg-primary-bay','data-bay':'L1'},comp);
 s(d,'rect',{x:206,y:108,width:88,height:54,rx:10,class:'cgg-component cgg-switch-body'},comp);
 const swLine=s(d,'line',{x1:206,y1:135,x2:281,y2:115,class:'cgg-component-line cgg-switch-line'},comp);
 s(d,'text',{x:250,y:188,class:'cgg-component-label','text-anchor':'middle'},comp).textContent=text.component.switch;
@@ -82,6 +82,6 @@ function update(x){const m=model(x);attr(bench,'data-status',m.status);attr(benc
 const l2Connected=m.wires.some(w=>w.from.startsWith('L2.')||w.to.startsWith('L2.'));
 attr(spareBay,'data-state',l2Connected?'working':'spare');
 txt(spareLabel,l2Connected?'實驗器材區':'備用器材區');
-txt(spareHint,l2Connected?'燈泡 2 已接線':'燈泡 2 尚未接入');
+
 for(const id of ['L1','L2']){attr(lamps[id].g,'data-brightness',m.lamps[id].brightness);attr(lamps[id].g,'data-bypassed',m.lamps[id].bypassed);txt(lamps[id].badge,m.lamps[id].bypassed?'被導線繞過':(!m.wires.some(w=>w.from.startsWith(id+'.')||w.to.startsWith(id+'.'))?'未接線':text.brightness[m.lamps[id].brightness]))}for(const [n,z]of[[A,m.ammeter],[V,m.voltmeter]]){txt(n.value,z.text||'—');txt(n.state,text.meterState[z.state]);attr(n.card,'data-state',z.state)}txt(status,m.status==='normal'&&/^-\s*/.test(m.ammeter.text)?'電流表正負極接反：請交換電流表兩端再記錄。':text.status[m.status]);attr(status,'data-unsafe',m.status==='source-short');attr(stage,'aria-label','電路實驗桌，'+(m.switchClosed?'開關閉合':'開關斷開')+'，電流表 '+(m.ammeter.text||'—')+'，電壓表 '+(m.voltmeter.text||'—')+'，燈泡 1 '+text.brightness[m.lamps.L1.brightness]+'，燈泡 2 '+text.brightness[m.lamps.L2.brightness])}
 return{update,destroy(){bench.remove()},element:bench,stage,uid}}
