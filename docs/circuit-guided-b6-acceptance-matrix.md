@@ -136,3 +136,11 @@ PR #165 head 405526b 新增 **scripts/check_circuit_guided_learner_browser.cjs**
 - **真實輸入已有工程證據**：新增 learner Chromium script 在 hook:false 模式下逐步接線，包括桌機滑鼠／鍵盤、手機點按／觸控拖曳，且手機改為直式。仍需 5 位學生真人依 `docs/circuit-guided-first-time-user-gate.md` 完成測試。
 - **CI 架構改版**：`cd99585` 移除臨時 `circuit-visual` workflow，改放正式 `science-guided` 內四段 Circuit input/view/learner/flow 及三套 artifacts。新工程等價 Gate 建議為正式 CI 全部必要 jobs 與 CI Gate 成功＋Circuit 四段及 artifacts 完整，但**用戶同意前不得自行宣稱取代原本「兩條 workflow 同 head」的硬門檻**。
 - **部署與真人驗收**：保留 `noindex`／未列入教材公開目錄；在 main 對應 merge commit 或可驗證的 preview 環境測試，不可用舊 PR head 截圖充當新版本。
+
+## 9. CI 與截圖證據核對（head `cd99585`）
+
+- [正式 CI run 39753661608](https://github.com/YenYu-bot/bhcs-web/actions/runs/39753661608)：completed/success，12/12 jobs success，包含 `core`、`site`、`science-guided` 與 `CI Gate`。
+- `science-guided` 的 Circuit input／view／learner／flow 四個 steps 均 completed/success；`circuit-learner-review`（artifact 12415926117）、`circuit-view-review`（12415163020）、`circuit-flow-review`（12415187653）均已上傳。
+- B 線已直接抽樣檢視 1280 baseline/two-path 以及 390 baseline、L2 one-end、one-path、two-path、遠距 drag 畫面。畫面層原 P1-UX 重疊與 L2 狀態在抽樣畫面未再重現，**但 VIS/INPUT 真人欄一律保持 NOT RUN**。
+- **GATE-03 仍待決策**：原獨立 Circuit workflow 被移除，使用者尚未明確批准新的單工作流程等價 Gate。不可把上述單一 CI 成功稱為「符合原本兩工作流程的全綠通知條件」。
+- #165 已為 Ready for review，但截至本次查核 merged=false。不能將 Ready、CI success 或 #166 文件完整視為正式發布許可；`noindex`、五人 cohort 及最終人工作業要求保留。
