@@ -1,6 +1,6 @@
 # Circuit Guided Lab Pilot #6 / B6 — 可執行驗收矩陣（B 線）
 
-> 狀態：驗收規格草案；2026-10-22。基準為 #165 head 86f611e915a6d92ebc0a721a44573c4fdfa98584。  
+> 狀態：驗收規格草案；2026-10-22。初版基準 #165 head 86f611e，追蹤至 `cd99585`；請以最新 Head 重新執行所有 Gate。  
 > 這是**待驗證的判定條件**，不是已通過報告。不得以自動化完成取代學生操作驗收。  
 > 詳見 docs/circuit-guided-b6-independent-review.md（科學與教學審查）。
 
@@ -12,7 +12,7 @@
 - 科學 oracle 可獨立呼叫 solveCircuit 或閱讀模型單元測試，但不可用同一 solver 的值對照自己來宣告教學實測過關。
 - 每一案例保存：case ID、Head SHA、1280/390、瀏覽器操作步驟／紀錄、實際讀數或畫面、PASS／FAIL／NOT RUN、失敗截圖／console、修正 commit。
 - 嚴重程度：P0＝錯誤的物理結果、無短路警示、重大操作失效；P1＝讓學生形成錯誤接線概念、核心手機操作不可用、文字遮住必要線路、教材解釋誤導；P2＝不影響概念和操作的次要排版。
-- **放行門檻**：P0/P1 皆關閉，下面 SCI/EDU/INPUT 必要案例通過，手機與桌機人工作業確認，兩條 CI 必須在同一最新 SHA completed/success。未達成則保持 Draft。
+- **放行門檻**：P0/P1 皆關閉，下面 SCI/EDU/INPUT 必要案例通過，手機與桌機人工作業確認，遵守使用者指定的最新 CI 驗收契約；原始雙 workflow Gate 遇到 workflow 架構改版時，須取得使用者對等價替代條件的明確同意，不能自動放寬。未達成則保持 Draft。
 
 ## 1. 科學與狀態機驗收
 
@@ -92,7 +92,7 @@
 |---|---|
 | GATE-01 | PR #165 最新 head SHA 與所有提交／預覽版本一致 |
 | GATE-02 | 正式 CI 該 SHA 所有必要 jobs（尤其 core、site、science-guided、CI Gate）completed 且 conclusion=success |
-| GATE-03 | Circuit Chromium 該 SHA 的 circuit-visual completed 且 conclusion=success |
+| GATE-03 | 原要求是同一最新 SHA 的獨立 `circuit-visual` workflow completed/success；因 #165 head `cd99585` 刪除臨時 workflow 並把 Circuit input/view/learner/flow 併入 `science-guided`，**新 Gate 等價替代規則必須由使用者明確同意**；在同意前不可宣稱符合原兩流程門檻 |
 | GATE-04 | 提供截圖 artifact、真實可操作驗收網址或單機啟動方式，驗收 UI 顯示 SHA；若只有截圖則不得進入人工通過 |
 | GATE-05 | 所有 P0/P1 問題已修正，桌機與手機學生操作驗收有證據，使用者明確同意才改 Ready，合併需另外同意 |
 
@@ -117,7 +117,7 @@
 
 ### 2026-10-22 新版註記
 
-PR #165 head 405526b 新增 **scripts/check_circuit_guided_learner_browser.cjs**，以 hook:false 的出貨頁面執行 1280 滑鼠／鍵盤／拖曳、390 點按／觸控拖曳，並將手機接線桌改成直式；新增 artifact 包含 circuit-learner-artifacts 的八種操作狀態。故 INPUT-01～07 已有較強的**自動化行為證據**，不能再說完全缺少真實端點操作測試；但尚未由使用者真人在裝置上完成驗收，請保持「人工：NOT RUN」。B 線保留 SCI-12 部分接線狀態、EDU-01 控制變因的審查重點。
+PR #165 head 405526b 新增 **scripts/check_circuit_guided_learner_browser.cjs**，以 hook:false 的出貨頁面執行 1280 滑鼠／鍵盤／拖曳、390 點按／觸控拖曳，並將手機接線桌改成直式；新增 artifact 包含 circuit-learner-artifacts 的八種操作狀態。故 INPUT-01～07 已有較強的**自動化行為證據**，不能再說完全缺少真實端點操作測試；但尚未由使用者真人在裝置上完成驗收，請保持「人工：NOT RUN」。B 線原 SCI-12／EDU-01 的程式缺陷在 `208f826` 至 `cd99585` 已找到對應修正與回歸測試；仍須人工確認學生是否理解，不可將單元測試當作真人驗收通過。
 
 ## 7. 與既有正式真人驗收 Gate 的關係（2026-10-22）
 
@@ -128,3 +128,11 @@ PR #165 head 405526b 新增 **scripts/check_circuit_guided_learner_browser.cjs**
 - B 線矩陣的 SCI/EDU/INPUT/VIS 可作五人驗收的逐項追蹤附件；此處 PASS 不會取代上述真實學生 cohort、發布核准或手動驗收。
 - #165 合併後須先核對其 merge SHA、在 main 的最終教材與必要 CI，再把此矩陣的「待驗收」項對到 **main 的實際部署版本**。若 #165 尚未合併，僅檢查 PR head，不宣稱 main 已更新。
 - #166 是文件 PR；僅當內容對應目前 main、CI 完成且使用者同意時才可 Ready／合併。文件合併不代表教材可公開，保留 noindex / 不列入正式教材目錄。
+
+## 8. 新版 Gate 執行補充（#165 Head cd99585）
+
+- **EDU-01 已修，程式層確認**：Mission／Compare／Inference 區分基準到兩顆時同時改變「數量與接法」，而兩顆數量相同只改接法可嚴格比較；script 單元測試提供防回歸檢查。
+- **SCI-12 已修，程式層確認**：L2 端點 0／1／2 可見狀態不同，單元測試涵蓋未接線、只接一端、兩端接線但熄滅、通電較暗；真人辨識仍應列入觀察。
+- **真實輸入已有工程證據**：新增 learner Chromium script 在 hook:false 模式下逐步接線，包括桌機滑鼠／鍵盤、手機點按／觸控拖曳，且手機改為直式。仍需 5 位學生真人依 `docs/circuit-guided-first-time-user-gate.md` 完成測試。
+- **CI 架構改版**：`cd99585` 移除臨時 `circuit-visual` workflow，改放正式 `science-guided` 內四段 Circuit input/view/learner/flow 及三套 artifacts。新工程等價 Gate 建議為正式 CI 全部必要 jobs 與 CI Gate 成功＋Circuit 四段及 artifacts 完整，但**用戶同意前不得自行宣稱取代原本「兩條 workflow 同 head」的硬門檻**。
+- **部署與真人驗收**：保留 `noindex`／未列入教材公開目錄；在 main 對應 merge commit 或可驗證的 preview 環境測試，不可用舊 PR head 截圖充當新版本。
