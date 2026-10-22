@@ -21,13 +21,14 @@ async function connect(p,a,b,mode){
     // The hint names the chosen terminal so a learner knows the first tap registered.
     await p.waitForFunction(()=>/已選「/.test(document.querySelector('#cgg-bench-card [data-role="wire-hint"]').textContent),null,{timeout:2000}).catch(async e=>{throw new Error('tap on '+a+' did not select it: '+await p.locator(bench+'[data-role="wire-hint"]').textContent())});
     await T(p,b).tap()}
-  else if(mode==='drag'){await touchDrag(p,await center(T(p,a)),await center(T(p,b)),10);await p.waitForTimeout(450)} // a human pause; Chrome drops a tap that lands within a synthetic fling window
+  else if(mode==='drag'){await touchDrag(p,await center(T(p,a)),await center(T(p,b)),10);await p.waitForTimeout(800)} // a human pause: Chrome drops a synthetic tap that lands immediately after an injected touch gesture
   else if(mode==='mouse-drag'){const s=await center(T(p,a)),e=await center(T(p,b));await p.mouse.move(s.x,s.y);await p.mouse.down();await p.mouse.move(e.x,e.y,{steps:10});await p.mouse.up()}
   await settle(p);
   assert.equal((await wires(p)).length,before+1,mode+' '+a+'→'+b+' did not create a wire');
 }
 async function removeWire(p,a,b,tap){const k=[a,b].sort().join('|'),btn=p.locator(bench+'[data-remove-wire="'+k+'"]');tap?await btn.tap():await btn.click();await settle(p)}
-async function toggle(p,tap){const b=p.locator(bench+'[data-switch-toggle]');tap?await b.tap():await b.click();await settle(p)}
+async function toggle(p,tap){const b=p.locator(bench+'[data-switch-toggle]'),want=(await b.getAttribute('aria-pressed'))==='true'?'false':'true';tap?await b.tap():await b.click();await settle(p);
+  assert.equal(await b.getAttribute('aria-pressed'),want,'switch tap did not register');}
 async function cta(p,tap){const b=p.locator('#cgg-cta');assert.equal(await b.isEnabled(),true,'CTA enabled');tap?await b.tap():await b.click();await settle(p)}
 async function layoutFacts(p){return p.evaluate(()=>{const st=document.querySelector('#cgg-bench-card [data-role="stage"]').getBoundingClientRect();
   const terms=[...document.querySelectorAll('#cgg-bench-card [data-terminal]')].map(e=>{const r=e.getBoundingClientRect();return{id:e.dataset.terminal,l:r.left,r:r.right,t:r.top,b:r.bottom}});
