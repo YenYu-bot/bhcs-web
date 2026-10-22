@@ -93,3 +93,21 @@ check_circuit_guided_flow_browser.cjs 的 setFixed() 以 window.__cggTest.dispat
 - 使用者：最後人工操作驗收；同意後才由指定操作者改 Ready 或合併。
 - 每次新 head 都需以**同一 SHA** 重跑正式 CI（含 core、site、science-guided、CI Gate 等全部必要工作）及 Circuit circuit-visual，兩者完成且 success，並重新人工檢查桌機／手機。
 - 本文件的 P1 問題在未核對新畫面、未完成真實接線前，**一律保持 open，不可因舊 CI 全綠自行勾選完成**。
+
+## 7. 追蹤審查：新 Head 405526b（2026-10-22）
+
+**重要：本文件前六節審查的是 86f611e。以下依最新 head 405526b0956e0e254e854ebe83d70da05500576b 重新核對，不可把舊版問題直接延伸為新版失敗。**
+
+新版變更已檢查：render.js、input.js、CSS 及新增的 scripts/check_circuit_guided_learner_browser.cjs；重新看 1280/390 baseline Chromium 截圖（run 39745144972）。
+
+| 原問題 | 405526b 更新判斷 | 證據與剩餘 Gate |
+|---|---|---|
+| P1-UX-01：核心流程只有 setFixed hook | **自動化覆蓋已補強**：新 learner browser script 以 hook:false，在出貨頁面上使用滑鼠、鍵盤、手機點按及觸控拖曳自行建線，包含 unsafe、baseline、one-path、two-path、branch1/2；正式流程原先 setFixed 的限制不再是唯一測試證據 | CI / circuit-visual 同 SHA success；仍需使用者人工驗收，尤其真實手機 |
+| P1-UX-02：手機必須水平捲動 | **既有問題已由新直式布局改善**：390px 改用 portrait bench，12 端點設計為同畫面可見，無須左／右捲動；新 learner script 會檢查裝置寬度與端點可見性 | 自動化通過；真人操作舒適性及誤觸仍待驗收 |
+| P1-UX-03：V 名稱壓線與 L2 靠近主回路 | **在新版 baseline 截圖明顯改善**：電壓表已移至主燈泡下側、名稱不再壓底線；L2 獨立於備用托盤；導線有不同視覺通道和顏色 | 仍需真人檢視 one-path、two-path、錯線與所有 Challenge 狀態，不直接給人工 PASS |
+| P1-EDU-01：變因說明不精確 | **仍待處理**：這次 PR 變更未包含 script.js，原 wording「只改接法，其他條件固定」仍在 | 建議修教學敘述／比較表，再核對測試 |
+| P1-EDU-02：L2 只接一端被視為 working | **仍待處理**：新版 render.js 仍使用 used('L2') 判斷 spare/working、並決定顯示未接線或熄滅；只接一個端點仍不等於已形成完整通路 | 應設部分接線狀態；SCI-12 必須實際驗收 |
+
+**新版 CI 同 SHA 確認：** 正式 CI 12/12 completed/success（https://github.com/YenYu-bot/bhcs-web/actions/runs/39745144998）；Circuit 的 circuit-visual completed/success（https://github.com/YenYu-bot/bhcs-web/actions/runs/39745144972）。上述結果只適用於 405526b，不得替新提交預先背書。
+
+**開發建議**：Claude 此輪已改善原本的主要幾何及手機障礙；請優先處理尚未解決的 P1-EDU-01／02，避免重新導入橫捲或退回舊布局。#165 維持 Draft；本 B 線僅提出審查，不修改 A 線程式。
