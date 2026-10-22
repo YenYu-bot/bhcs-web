@@ -89,6 +89,10 @@ test('lamp state separates not wired, one end only, wired but dark, and lit; lam
  t.bench.update(view(raw('trial1',true)));assert.equal(st(t,'L2'),'較暗');
  const lone=mount(view({wires:[{from:'L1.a',to:'bat+'}],switchClosed:true}));assert.equal(st(lone,'L1'),'只接一端');
 });
+test('the cable that half-wires lamp 2 never cuts through the tray label',()=>{
+ for(const L of LAYOUTS){const lab=R.benchObstacles(L).labels.find(r=>r.owner==='L2'&&r.w>=150);assert.ok(lab,'tray label keep-out sized for longest wording');
+  const half=[...FIXED_CIRCUITS.baseline,{from:'L1.b',to:'L2.a'}];for(const c of routeAll(L,half))for(const p of c.pts)assert.ok(!inRect(lab,p,0),L.name+' '+c.from+'→'+c.to+' crosses the tray label')}
+});
 test('baseline (lamp 1 only) cables keep out of the lamp 2 spare tray and the voltmeter gap',()=>{
  for(const L of LAYOUTS){const ob=R.benchObstacles(L);
   for(const c of routeAll(L,FIXED_CIRCUITS.baseline)){for(const p of c.pts)assert.ok(!inRect(ob.tray,p,4),L.name+' '+c.from+'→'+c.to+' enters spare tray');

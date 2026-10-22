@@ -51,11 +51,11 @@ const PORTRAIT=layout({
  ammeter:{x:230,y:32,w:96,h:72},
  voltmeter:{x:192,y:304,w:96,h:72},
  L1:{x:190,y:176,w:100,h:48},
- L2:{x:130,y:520,w:100,h:48},
- tray:{x:16,y:452,w:328,h:198,label:[30,476]},
+ L2:{x:130,y:476,w:100,h:48},
+ tray:{x:16,y:444,w:328,h:212,label:[30,638]}, // label at the tray bottom: cables reach lamp 2 from above
  terminals:{'bat+':[48,196,'up','right'],'bat-':[48,332,'down','right','left'],'sw.a':[84,68,'left','down'],'sw.b':[164,68,'right','down'],
   'A.+':[230,68,'left','down'],'A.-':[326,68,'right','down'],'L1.a':[190,200,'up','left','down'],'L1.b':[290,200,'right','up','down'],
-  'L2.a':[130,544,'left','up'],'L2.b':[230,544,'right','up'],'V.+':[192,340,'left','down','up'],'V.-':[288,340,'right','down','up']}
+  'L2.a':[130,500,'left','up'],'L2.b':[230,500,'right','up'],'V.+':[192,340,'left','down','up'],'V.-':[288,340,'right','down','up']}
 });
 export const BENCH_LAYOUTS=Object.freeze({landscape:LANDSCAPE,portrait:PORTRAIT});
 export const BENCH_VIEWBOX=Object.freeze({width:LANDSCAPE.width,height:LANDSCAPE.height});
@@ -73,7 +73,8 @@ export function benchObstacles(L){
  for(const k of['L1','L2']){const c=lampCenter(L[k]);labels.push({owner:k,kind:'label',x:c.x-46,y:c.y+24,w:92,h:58})}
  labels.push({owner:'switch',kind:'label',x:L.switch.label[0]-26,y:L.switch.label[1]-18,w:52,h:22});
  labels.push({owner:'switch',kind:'label',x:L.switch.button[0]-54,y:L.switch.button[1]-24,w:108,h:48});
- labels.push({owner:'L2',kind:'label',x:L.tray.label[0]-4,y:L.tray.label[1]-18,w:96,h:24});
+ // Sized for the longest tray wording (燈泡 2 接線中：還差一端, 15px bold) so cables never cut through it.
+ labels.push({owner:'L2',kind:'label',x:L.tray.label[0]-6,y:L.tray.label[1]-18,w:200,h:26});
  const tray={owner:'L2',kind:'tray',x:L.tray.x,y:L.tray.y,w:L.tray.w,h:L.tray.h};
  // The gap between lamp 1 and the voltmeter is reserved for the voltmeter's own leads,
  // so the main return cable never looks like it runs "through" the measurement.
@@ -133,7 +134,7 @@ export function routeWire(a,b,{layout:Lname='landscape',others=[]}={}){
    if(best&&score>=best.score)break;
    if(x<8||y<8||x>L.width-8||y>L.height-8)score+=120;
    for(const r of bodies){const own=r.owner===oa||r.owner===ob;if(own?inside(r,x,y,-1):inside(r,x,y,8))score+=60}
-   for(const r of labels)if(inside(r,x,y,4))score+=25;
+   for(const r of labels)if(inside(r,x,y,4))score+=40;
    if(!useTray&&inside(tray,x,y,10))score+=60;
    if(!useMeasure&&inside(measure,x,y,0))score+=45;
    if(x<L.battery.x)score+=14;
