@@ -98,3 +98,8 @@
 .cgg-notebook fieldset{border:1px solid var(--cgg-border);border-radius:12px;margin:12px 0;padding:12px}.cgg-notebook legend{font-weight:750;padding:0 5px}.cgg-notebook fieldset label{display:block;padding:7px 0;cursor:pointer}.cgg-notebook textarea{box-sizing:border-box;display:block;width:100%;min-height:100px;font:inherit;padding:10px;margin:10px 0 18px;border:1px solid var(--cgg-border);border-radius:8px}.cgg-notebook textarea:focus-visible,.cgg-notebook input:focus-visible,.cgg-notebook button:focus-visible{outline:3px solid var(--cgg-page-ink);outline-offset:3px}.cgg-notebook-next{font:inherit;padding:12px 18px;border-radius:10px;cursor:pointer;border:2px solid var(--cgg-page-ink);background:#fff}.cgg-notebook [role=status]{min-height:1.5em}
 
 .cgg-challenges fieldset{margin:12px 0;padding:12px;border:1px solid var(--cgg-border);border-radius:12px}.cgg-challenges label{display:block;padding:10px}.cgg-challenges button{font:inherit;min-height:48px;padding:9px 16px;border-radius:10px;cursor:pointer}.cgg-challenges [role=status]{min-height:1.5em}.cgg-challenges button:focus-visible,.cgg-challenges input:focus-visible{outline:3px solid var(--cgg-page-ink);outline-offset:3px}
+
+/* Public Guided Lab navigation back to the free resources and science catalogue. */
+.cgg-public-nav{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 8px;font-size:.92rem}
+.cgg-public-nav a{color:var(--cgg-page-ink,#203247);text-underline-offset:3px}
+.cgg-public-nav a:focus-visible{outline:3px solid #9f3e0e;outline-offset:3px}

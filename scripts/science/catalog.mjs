@@ -36,3 +36,11 @@ export const firstMisconceptions={
  'photosynthesis-factor-lab.html':'增加光照不一定持續提高速率，另一個條件可能成為限制因子。',
  'genetics-simulation-lab.html':'25% 是每個子代的機率，不代表每四個子代一定有一個符合。'
 };
+
+// Owner-approved public Guided Lab, offered alongside the original simulator.
+export const guidedPublic = Object.freeze([Object.freeze({
+ file:'science/circuit-guided.html',title:'電路接線與電流實驗室',subject:'理化',grade:'國中',unit:'電與磁',
+ description:'親手接線、操作開關及電表，以五次量測比較不同接法的電流、電壓與燈泡亮度。',
+ prior:'開關與完整通路',goals:'電流表與電壓表接法、單一路徑與雙路徑電流比較',
+ minutes:'25–35',kind:'引導實驗',batch:3
+})]);
