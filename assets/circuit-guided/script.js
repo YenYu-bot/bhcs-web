@@ -30,7 +30,7 @@ export const TEXT = deepFreeze({
   benchLabel: '電路實驗桌',
   dataTitle: '現在的條件',
   evidenceTitle: '我的量測紀錄',
-  prototypeNote: '這是導引版原型，尚未公開。',
+  prototypeNote: '百宏文教免費互動教材｜請先自行完成接線與觀察，再查看概念整理。',
   welcome: {
     title: '同一顆電池，多接一顆燈泡，電池送出的總電流一定會變小嗎？',
     sub: '先不要背結論。你會自己接線、操作開關、移動電表，再用五次量測找答案。',

@@ -17,20 +17,31 @@ const js=fs.readdirSync(path.join(root,DIR)).filter(n=>n.endsWith('.js')).sort()
 const strip=(s)=>s.replace(/\/\*[\s\S]*?\*\//g,'').replace(/^\s*\/\/.*$/gm,'');
 const forbidden=/串聯|並聯|等效電阻|歐姆定律|I\s*=\s*V\s*\/\s*R|總電阻變大|總電阻變小|串聯電阻|並聯電阻|支路電流總和/i;
 
-test('visibility: B3 page is noindex, self-canonical and unlisted',()=>{
-  assert.match(html,/<meta name="robots" content="noindex">/);
+test('public launch: SEO, canonical, science index, resource directory and sitemap agree',()=>{
+  assert.match(html,/<meta name="robots" content="index,follow,max-image-preview:large">/);
+  assert.doesNotMatch(html,/<meta name="robots" content="noindex">/);
   assert.match(html,/<link rel="canonical" href="https:\/\/www\.bhcs\.com\.tw\/tools\/science\/circuit-guided\.html">/);
   assert.equal((html.match(/rel="canonical"/g)||[]).length,1);
-  for(const f of ['sitemap.xml','tools/science/index.html','ziyuan.html','guoxiao.html','guozhong.html','guozhong-lihua.html','index.html','scripts/science/catalog.mjs','scripts/science/batch2.mjs']){
-    assert.ok(!read(f).includes('circuit-guided'),f);
-  }
+  assert.doesNotMatch(html, /導引版原型|尚未公開/);
+  const sitemap=read('sitemap.xml'),index=read('tools/science/index.html'),resources=read('ziyuan.html');
+  assert.equal((sitemap.match(/<loc>https:\/\/www\.bhcs\.com\.tw\/tools\/science\/circuit-guided\.html<\/loc>/g)||[]).length,1);
+  assert.equal((index.match(/href="\.\.\/science\/circuit-guided\.html"/g)||[]).length,1);
+  assert.equal((resources.match(/href="tools\/science\/circuit-guided\.html"/g)||[]).length,1);
+  assert.match(read('scripts/science/catalog.mjs'),/file:'science\/circuit-guided\.html'/);
+  assert.match(index, /52 項教材/);
+  assert.match(resources, /全部 52 項自然教材/);
+  assert.match(resources, /國中自然 · 互動教材<span class="count">51 項/);
+  assert.match(resources, /理化 <small>34 項/);
+  assert.match(resources, /目前共 211 項/);
 });
 
-test('no other public HTML links to the prototype',()=>{
-  const pages=git('grep','-l','circuit-guided','--','*.html').trim().split('\n').filter(Boolean);
-  assert.deepEqual(pages,[PAGE]);
+test('public circuit lab is discoverable while the legacy circuit stays separate',()=>{
+  const pages=git('grep','-l','circuit-guided','--','*.html').trim().split('\n').filter(Boolean).sort();
+  assert.deepEqual(pages,[PAGE,'tools/science/index.html','ziyuan.html'].sort());
   assert.ok(!read('tools/circuit-lab.html').includes('circuit-guided'));
   assert.ok(!html.includes('circuit-lab.html'));
+  assert.match(html, /href="\.\.\/\.\.\/ziyuan\.html"/);
+  assert.match(html, /href="\.\/"/);
 });
 
 test('page is hand-written, local-only and has one live region',()=>{
