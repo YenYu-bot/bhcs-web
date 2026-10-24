@@ -7,6 +7,21 @@ const defaults=id=>Object.fromEntries(batch2.find(t=>t.id===id).controls.map(c=>
 const calc=(id,values={})=>calculate(id,{...defaults(id),...values});
 const close=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-7,`${actual} != ${expected}`);
 let tests=0;const test=(name,fn)=>{fn();tests++;console.log('PASS',name)};
+test('Enzyme pure-model contract: omitted history is fresh; supplied heat history is irreversible',()=>{
+ // calculate remains pure: runtime owns and supplies the same-sample history.
+ const fresh={temp:37,ph:7,enzyme:'amylase',conc:1};
+ close(calculate('enzyme',fresh).act,1);
+ const heated={...fresh,heatDenatured:true};
+ close(calculate('enzyme',heated).act,0);
+ assert.equal(calculate('enzyme',heated).den,true);
+ assert.match(describe('enzyme',heated,calculate('enzyme',heated)).explanation,/曾達 60°C/);
+ for(const temp of [0,37,59,60,80])for(const ph of [1,2,7,13]){
+  const state={...heated,temp,ph};close(calculate('enzyme',state).act,0);
+  assert.equal(calculate('enzyme',state).kind,'denatured');
+ }
+ assert.deepEqual(fresh,{temp:37,ph:7,enzyme:'amylase',conc:1});
+ close(calculate('enzyme',fresh).act,1); // No hidden global history in the pure function.
+});
 test('Optics: real / focus singularity / virtual / negative f',()=>{
  close(calc('optics').v,15);close(calc('optics').m,-.5);
  assert.equal(calc('optics',{u:10}).v,null);assert.equal(calc('optics',{u:10}).kind,'focus');

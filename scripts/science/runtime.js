@@ -3,6 +3,17 @@
  const $=id=>document.getElementById(id), conf=JSON.parse($('lab-config').textContent), storageKey='bhcs-science-v2-'+conf.id, noPrediction=!!conf.noPrediction;
  let current=null,mission=null,records=[],saveNotice='',moonExplore=false,hasObserved=false;
  let guideActive=false,guideMark=null;
+ // Only the enzyme lab owns sample history. Other labs retain their stateless model contract.
+ // Live samples are session-only; saved notebook rows are evidence, never restored as a live sample.
+ let enzymeSample=null,enzymeSampleNumber=0;
+ const enzymeSession=Date.now().toString(36);
+ function newEnzymeSample(){enzymeSample=null;}
+ function withEnzymeSample(s){
+  if(conf.id!=='enzyme')return s;
+  if(!enzymeSample||enzymeSample.enzyme!==s.enzyme)enzymeSample={enzyme:s.enzyme,heatDenatured:false,sampleId:enzymeSession+'-'+(++enzymeSampleNumber)};
+  enzymeSample.heatDenatured= enzymeSample.heatDenatured||s.temp>=60;
+  return {...s,heatDenatured:enzymeSample.heatDenatured,sampleId:enzymeSample.sampleId};
+ }
  const draftKey=storageKey+'-draft';try{$('explanation-input').value=localStorage.getItem(draftKey)||''}catch(_){}
  $('explanation-input').addEventListener('input',()=>{try{localStorage.setItem(draftKey,$('explanation-input').value.slice(0,1000))}catch(_){}});
  const send=action=>{if(typeof window.bhcsScienceTrack==='function')window.bhcsScienceTrack(action,conf.id)};
@@ -15,11 +26,12 @@
   const region=$('record-comparison');region.replaceChildren();region.append(node('h3','最近兩筆，放在一起比較'));
   if(records.length<2){region.append(node('p',records.length?(noPrediction?'已完成第一筆。只改一個條件，再操作並保存第二筆。':'已完成第一筆。只改一個條件，再預測、操作與保存第二筆。'):'保存兩筆觀察後，這裡會並排顯示證據。'));return}
   const [a,b]=records.slice(-2);if(a.settings&&b.settings){const keys=conf.controls.filter(c=>Object.hasOwn(a.settings,c.key)&&Object.hasOwn(b.settings,c.key)&&a.settings[c.key]!==b.settings[c.key]);const dif=node('p',keys.length===1?'這次只改了：':'比較提醒：'+(keys.length===0?'兩筆設定相同。':'同時改了 '+keys.length+' 個設定，不能直接歸因。'));dif.className='lab-diff';for(const ctl of keys){const format=v=>ctl.options?ctl.options.find(o=>o[0]===v)?.[1]||String(v):v+' '+ctl.unit;dif.append(node('strong',ctl.label+' '+format(a.settings[ctl.key])+' → '+format(b.settings[ctl.key])+'；'))}region.append(dif)}else region.append(node('p','舊紀錄沒有結構化條件，請展開原始條件自行比較。'));
+  if(conf.id==='enzyme')region.append(node('p',a.settings?.sampleId&&b.settings?.sampleId?(a.settings.sampleId===b.settings.sampleId?'同一份樣本：請同時比較加熱歷程。':'不同樣本：不是同一份酵素恢復活性。'):'舊紀錄沒有樣本歷程，不能判定是否為同一份樣本。'));
   const pair=node('div','');pair.className='comparison-pair';records.slice(-2).forEach((r,i)=>{const card=node('article','');card.append(node('h3','紀錄 '+(records.length-1+i)));for(const [label,value] of [['結果',r.result],['我的解釋',r.explanation]]){const p=node('p','');p.append(node('strong',label+'：'),document.createTextNode(value));card.append(p)}const details=node('details','');details.append(node('summary',noPrediction?'檢查實驗條件':'檢查條件與預測'),node('p',r.conditions));if(!noPrediction)details.append(node('p','預測：'+r.prediction));card.append(details);pair.append(card)});region.append(pair,node('p','先檢查兩筆是否只差一個條件，再說讀值如何改變；若同時改多個條件，還不能直接歸因。'));
  }
- function state(){const s={};for(const c of conf.controls){const el=$('ctl-'+c.key);if(c.options){if(!c.options.some(o=>o[0]===el.value))throw Error('Invalid option');s[c.key]=el.value}else {const n=Number(el.value);if(!Number.isFinite(n)||n<c.min||n>c.max)throw Error('Invalid number');s[c.key]=n}}return s}
+ function state(){const s={};for(const c of conf.controls){const el=$('ctl-'+c.key);if(c.options){if(!c.options.some(o=>o[0]===el.value))throw Error('Invalid option');s[c.key]=el.value}else {const n=Number(el.value);if(!Number.isFinite(n)||n<c.min||n>c.max)throw Error('Invalid number');s[c.key]=n}}return withEnzymeSample(s)}
  function activeKeys(mode){return conf.id==='electromagnetism'?({magnet:['mode','turns','current'],motor:['mode','turns','current','field','angle'],generator:['mode','turns','field','angle','rpm']})[mode]:conf.id==='pressure-fluid'?({water:['mode','depth','density'],gas:['mode','volume'],flow:['mode','density','ratio','speed']})[mode]:conf.id==='pulley-incline'?({fixed:['mode','load','h','loss'],movable:['mode','load','h','loss'],block:['mode','load','n','h','loss'],incline:['mode','load','h','len','loss']})[mode]:conf.id==='reflection-refraction'?({refraction:['mode','incident','media'],mirror:['mode','incident','dist']})[mode]:conf.id==='weather-systems'?({pressure:['mode','hemi','system'],front:['mode','front','phase']})[mode]:conf.id==='homeostasis'?({glucose:['mode','carb','exercise','insulin'],temp:['mode','env']})[mode]:conf.id==='spring-friction'?({spring:['mode','k','hang','limit'],block:['mode','mass','surface','pull']})[mode]:conf.id==='electric-power'?({fixedV:['mode','volt','ohm','time','water','loss'],fixedI:['mode','amp','ohm','time','water','loss']})[mode]:null}
- function conditions(s){const active=activeKeys(s.mode);return conf.controls.filter(c=>!active||active.includes(c.key)).map(c=>`${c.label}：${c.options?c.options.find(o=>o[0]===s[c.key])[1]:s[c.key]+' '+c.unit}`).join('；')}
+ function conditions(s){const active=activeKeys(s.mode);return conf.controls.filter(c=>!active||active.includes(c.key)).map(c=>`${c.label}：${c.options?c.options.find(o=>o[0]===s[c.key])[1]:s[c.key]+' '+c.unit}`).join('；')+(conf.id==='enzyme'?'；樣本：'+s.sampleId+'；加熱歷程：'+(s.heatDenatured?'曾達 60°C 以上，已變性':'未達 60°C'): '')}
  function labels(){
   const active=activeKeys($('ctl-mode')?.value);
   conf.controls.forEach(c=>{const el=$('ctl-'+c.key),inactive=!!(active&&!active.includes(c.key)),label=document.querySelector(`label[for="ctl-${c.key}"]`);el.disabled=inactive;el.hidden=inactive;if(label)label.hidden=inactive;if(!c.options)$('out-'+c.key).textContent=inactive?'本模式不使用':el.value+' '+c.unit})
@@ -63,8 +75,12 @@
  }
  if($('prediction'))$('prediction').addEventListener('change',()=>{if(current){const selected=$('prediction').value;invalidate('預測已變更，請重新操作。');$('prediction').value=selected}});
  $('run').addEventListener('click',run);
- $('reset').addEventListener('click',()=>{conf.controls.forEach(c=>$('ctl-'+c.key).value=c.value);mission=null;document.querySelectorAll('[data-mission]').forEach(b=>b.removeAttribute('aria-current'));$('mission-prompt').textContent='自由探索：先固定其他條件，只改一個變因。';invalidate('本輪已重新開始，既有紀錄保留。')});
- document.querySelectorAll('[data-mission]').forEach(b=>b.addEventListener('click',()=>{mission=Number(b.dataset.mission);const t=conf.tasks[mission];conf.controls.forEach(c=>$('ctl-'+c.key).value=Object.hasOwn(t.values,c.key)?t.values[c.key]:c.value);document.querySelectorAll('[data-mission]').forEach(x=>x.removeAttribute('aria-current'));b.setAttribute('aria-current','true');$('mission-prompt').textContent=t.prompt;invalidate(noPrediction?'已載入任務條件。直接操作並觀察變化。':'已載入任務條件。預測由你選，不會自動填答案。');if($('prediction'))$('prediction').focus();else $('run').focus()}));
+ if(conf.id==='enzyme'){
+  $('reset').textContent='換新樣本（恢復預設）';
+  const help=node('p','每次開啟以新樣本開始。調整溫度即作用於同一份樣本；曾達 60°C 後，降溫、改 pH 或酵素的量都不會恢復。換酵素、選新任務、重看引導或重新載入頁面會換新樣本；舊觀察紀錄保留，不能當作樣本還原。');help.id='enzyme-sample-help';help.className='subtle';$('control-fields').before(help);
+ }
+ $('reset').addEventListener('click',()=>{if(conf.id==='enzyme')newEnzymeSample();conf.controls.forEach(c=>$('ctl-'+c.key).value=c.value);mission=null;document.querySelectorAll('[data-mission]').forEach(b=>b.removeAttribute('aria-current'));$('mission-prompt').textContent='自由探索：先固定其他條件，只改一個變因。';invalidate(conf.id==='enzyme'?'已換新樣本並恢復預設條件，既有紀錄保留。':'本輪已重新開始，既有紀錄保留。')});
+ document.querySelectorAll('[data-mission]').forEach(b=>b.addEventListener('click',()=>{if(conf.id==='enzyme')newEnzymeSample();mission=Number(b.dataset.mission);const t=conf.tasks[mission];conf.controls.forEach(c=>$('ctl-'+c.key).value=Object.hasOwn(t.values,c.key)?t.values[c.key]:c.value);document.querySelectorAll('[data-mission]').forEach(x=>x.removeAttribute('aria-current'));b.setAttribute('aria-current','true');$('mission-prompt').textContent=t.prompt;invalidate(noPrediction?'已載入任務條件。直接操作並觀察變化。':'已載入任務條件。預測由你選，不會自動填答案。');if($('prediction'))$('prediction').focus();else $('run').focus()}));
  $('add-record').addEventListener('click',()=>{if(!current)return;const explanation=$('explanation-input').value.trim();if(explanation.length<2){status('請先寫下你觀察到的數據或關係，再加入紀錄。',true);$('explanation-input').focus();return}
   records.push({settings:{...current.s},conditions:conditions(current.s),prediction:noPrediction?'':conf.choices.find(c=>c[0]===current.prediction)[1],result:current.view.metrics.map(m=>m.join('：')).join('；'),explanation:explanation.slice(0,1000)});records=records.slice(-50);save();renderRecords();$('add-record').disabled=true;send('record');if(current.mission!==null)send('task_complete');status('已加入第'+records.length+'筆紀錄。請只改一個條件，再做一次比較。')});
  $('clear-records').addEventListener('click',()=>{if(!confirm('清除本頁在此瀏覽器的全部觀察紀錄？'))return;records=[];save();renderRecords();status('紀錄已清除。')});
@@ -93,13 +109,13 @@
   const clearMarks=()=>{document.querySelectorAll('.guide-focus,.guide-dim').forEach(n=>n.classList.remove('guide-focus','guide-dim'))};
   const btn=(txt,fn,cls='')=>{const b=node('button',txt);b.type='button';if(cls)b.className=cls;b.addEventListener('click',fn);return b};
   const render=()=>{box.replaceChildren();const st=guideSteps[gi];
-   if(!guideActive){const done=node('p','你已完成余老師的引導，現在可以自由練習：試試任務，或自己改條件觀察。');box.append(done,btn('重看引導',()=>startGuide(0),'guide-replay'));box.classList.add('guide-done');return}
+   if(!guideActive){const done=node('p','你已完成余老師的引導，現在可以自由練習：試試任務，或自己改條件觀察。');box.append(done,btn(conf.id==='enzyme'?'重看引導（換新樣本）':'重看引導',()=>startGuide(0),'guide-replay'));box.classList.add('guide-done');return}
    box.classList.remove('guide-done');box.append(node('strong',`余老師引導 ${gi+1}／${guideSteps.length}`),node('p',st.say));
    const todo=gPhase==='set'?`把「${labelOf(st.focus)}」調到 ${st.target}${unitOf(st.focus)?' '+unitOf(st.focus):''}。`:gPhase==='observe'?'按「開始觀察」看結果。':'';if(todo){const t=node('p',todo);t.className='guide-todo';box.append(t)}
    if(gPhase==='check'){const q=node('p',st.check.q);q.className='guide-question';const opts=node('div','');opts.className='guide-options';const fb=node('p','');fb.className='guide-feedback';
     st.check.options.forEach(([val,label])=>opts.append(btn(label,()=>{if(ok(st,val)){fb.textContent='答對了！'+(st.explain||'');opts.querySelectorAll('button').forEach(b=>b.disabled=true);box.append(gi+1<guideSteps.length?btn('下一步 →',()=>startGuide(gi+1),'primary'):btn('完成引導，開始自由練習 →',finishGuide,'primary'))}else fb.textContent='再看一次：'+(st.hint||'看右邊的讀值。')})));box.append(q,opts,fb)}
    box.append(btn('跳過引導，直接自由練習',finishGuide,'guide-skip'))};
-  function startGuide(i){gi=i;guideActive=true;const st=guideSteps[i];if(i>0||st.values){conf.controls.forEach(c=>$('ctl-'+c.key).value=st.values&&Object.hasOwn(st.values,c.key)?st.values[c.key]:c.value);invalidate('余老師引導：照著步驟操作。')}gPhase=st.focus?'set':'observe';render();guideMark();if(i>0&&box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'})}
+  function startGuide(i){if(conf.id==='enzyme'&&i===0)newEnzymeSample();gi=i;guideActive=true;const st=guideSteps[i];if(i>0||st.values){conf.controls.forEach(c=>$('ctl-'+c.key).value=st.values&&Object.hasOwn(st.values,c.key)?st.values[c.key]:c.value);invalidate('余老師引導：照著步驟操作。')}gPhase=st.focus?'set':'observe';render();guideMark();if(i>0&&box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'})}
   function finishGuide(){guideActive=false;gPhase='';clearMarks();try{localStorage.setItem(guideKey,'done')}catch(_){}render();status('引導完成，現在可以自由練習。')}
   conf.controls.forEach(c=>['input','change'].forEach(ev=>$('ctl-'+c.key).addEventListener(ev,()=>{if(!guideActive||gPhase!=='set')return;const st=guideSteps[gi];const v=$('ctl-'+c.key).value;if(c.key===st.focus&&(v===String(st.target)||(typeof st.target==='number'&&Number(v)===st.target))){gPhase='observe';render();guideMark()}})));
   $('run').addEventListener('click',()=>{if(guideActive&&gPhase==='observe'&&current){gPhase='check';render();guideMark()}});
