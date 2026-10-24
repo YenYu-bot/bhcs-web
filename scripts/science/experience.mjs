@@ -31,7 +31,7 @@ export function enhanceLessons(root,firstBatch,batch2){
   html=block(html,'science-experience-style',`<style>${css}</style>`,'</head>');
   // Only the enzyme lesson receives the illustrated presentation and mobile fallback.
   if(item.id==='enzyme'){
-   html=block(html,'enzyme-presentation-style','<meta name="color-scheme" content="only light"><link rel="stylesheet" href="../../assets/enzyme-cute.css?v=20261025-1">','</head>');
+   html=block(html,'enzyme-presentation-style','<meta name="color-scheme" content="only light"><link rel="stylesheet" href="../../assets/enzyme-cute.css?v=20261025-2">','</head>');
    html=block(html,'enzyme-presentation-script','<script src="../../assets/enzyme-cute.js?v=20261025-1" defer></script>','</body>');
   }
   const lesson=inquiry[item.id];if(!lesson)throw Error('Missing inquiry lesson '+item.id);

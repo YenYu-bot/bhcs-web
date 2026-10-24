@@ -51,10 +51,10 @@ body[data-science-lab="enzyme"] .researcher-promise b{color:#395744}
 body[data-science-lab="enzyme"] .researcher-guess{color:#59634d;border-color:#c9d6bd}
 body[data-science-lab="enzyme"] .researcher-kit span{display:inline-flex;align-items:center;gap:5px;border:1px solid #d8dfce;border-radius:9px;box-shadow:none;padding:4px 8px;font-size:.8rem}
 .cute-icon{display:inline-block;width:30px;height:30px;flex-shrink:0;vertical-align:middle;color:#56765b}
-body[data-science-lab="enzyme"] .cute-scene{min-height:300px;border:0;background:#e9eedf;overflow:hidden}
-body[data-science-lab="enzyme"] .cute-scene .room{position:absolute;inset:0;width:100%;height:100%;min-height:0;object-fit:cover;opacity:.7}
-body[data-science-lab="enzyme"] .cute-scene .doc{width:42%;height:65%;max-height:65%;left:auto;right:8%;bottom:10px;filter:drop-shadow(3px 5px 0 #ffffffa0)}
-body[data-science-lab="enzyme"] .cute-scene .researcher-bubble{border:1px solid #93ae8d;background:#fffef9;box-shadow:0 4px 0 #cdd9c7;color:#344e41;font-size:1rem;padding:12px;max-width:78%}
+body[data-science-lab="enzyme"] .cute-scene{border:0;background:#e9eedf;overflow:hidden}
+body[data-science-lab="enzyme"] .cute-scene .room{opacity:.7}
+body[data-science-lab="enzyme"] .cute-scene .doc{filter:drop-shadow(3px 5px 0 #ffffffa0)}
+body[data-science-lab="enzyme"] .cute-scene .researcher-bubble{border-color:#93ae8d;background:#fffef9;box-shadow:0 4px 0 #cdd9c7;color:#344e41}
 .cute-scene-label{position:absolute;left:14px;bottom:14px;max-width:50%;padding:5px 9px;background:#fffef9ed;color:#405645;border-radius:7px;font-size:.7rem;letter-spacing:.04em;transform:rotate(-3deg)}
 body[data-science-lab="enzyme"] .researcher-coach{background:#f1f5e9;border:1px solid #b7c8aa;box-shadow:none;grid-template-columns:70px 1fr;padding:10px 16px}
 body[data-science-lab="enzyme"] .researcher-coach img{width:64px;height:106px;object-fit:contain}
@@ -74,14 +74,14 @@ body[data-science-lab="enzyme"] .researcher-notebook-intro{background:#f4efe2;bo
 .cute-caption{font-size:.75rem;line-height:1.65;color:#53665f;margin:10px 0 0}
 .cute-guide{display:grid;grid-template-columns:85px minmax(0,1fr);gap:12px;align-items:center;margin:20px 0 4px;padding:12px 15px;background:#f7eee4;border:1px solid #e3cbbc;border-radius:18px;color:#344b4a}
 .cute-guide img{width:85px;height:140px;object-fit:contain}.cute-guide h3{font-size:1.05rem;line-height:1.5;margin:6px 0}.cute-guide p{font-size:.9rem;line-height:1.75;margin:0}.cute-start{max-width:650px;background:#fffef9}.cute-check{margin:0 0 20px;background:#f1f5e9;border-color:#c9d6bd}.cute-note{margin:0 0 20px}
+/* Keep the proven welcome geometry and dynamic speech-tail alignment. */
+@media(max-width:850px){
+ body[data-science-lab="enzyme"] .researcher-welcome{grid-template-columns:1fr}
+}
 @media(max-width:700px){
  body[data-science-lab="enzyme"] .panel{padding:16px;border-radius:18px}
  body[data-science-lab="enzyme"] .researcher-welcome{grid-template-columns:1fr}
  body[data-science-lab="enzyme"] .researcher-welcome-copy{padding:18px}
- body[data-science-lab="enzyme"] .cute-scene{order:0;min-height:200px;height:200px}
- body[data-science-lab="enzyme"] .cute-scene .doc{height:158px;max-height:158px;width:108px;right:12%}
- body[data-science-lab="enzyme"] .cute-scene .researcher-bubble{left:15px!important;top:18px!important;max-width:55%;font-size:.9rem}
- body[data-science-lab="enzyme"] .cute-scene .researcher-bubble:after,body[data-science-lab="enzyme"] .cute-scene .researcher-bubble:before{display:none}
  body[data-science-lab="enzyme"] .researcher-coach{grid-template-columns:52px minmax(0,1fr);gap:9px;padding:9px 12px}
  body[data-science-lab="enzyme"] .researcher-coach img{width:50px;height:92px}
  body[data-science-lab="enzyme"] .researcher-coach p{font-size:.9rem}
