@@ -51,7 +51,7 @@ test('denied storage does not lose in-session sample history or printable record
  const x=load({},true);x.set('temp',80);x.run();x.set('temp',37);assert.match(x.run(),/相對活性0%/);x.record();assert.match(x.$('storage-status').textContent,/不允許保存/);assert.match(x.$('print-records').textContent,/曾達 60°C/);x.close();
 });
 test('guide includes and completes same-sample cooling before changing enzyme; replay starts fresh',()=>{
- const x=load();const clickText=text=>{const b=[...x.d.querySelectorAll('.guide-box button')].find(b=>b.textContent===text);assert.ok(b,text);b.click()};
+ const x=load();const clickText=text=>{const b=[...x.d.querySelectorAll('.guide-box button')].find(b=>b.textContent===text);assert.ok(b,text);assert.equal(b.disabled,false,text+' must be enabled');b.click()};
  x.run();clickText('活性高');clickText('下一步 →');x.set('temp',0);x.run();clickText('活性低（可恢復）');clickText('下一步 →');x.set('temp',70);x.run();clickText('已變性');clickText('下一步 →');
  assert.equal(x.$('ctl-temp').value,'37');assert.match(x.run(),/相對活性0%/);clickText('仍已變性');clickText('下一步 →');x.set('enzyme','pepsin');x.run();clickText('活性低');clickText('完成引導，開始自由練習 →');clickText('重看引導（換新樣本）');assert.match(x.run(),/相對活性100%/);x.close();
 });
@@ -67,11 +67,46 @@ test('comparison distinguishes equal controls with changed sample or heat histor
  const legacy={conditions:'舊樣本原始條件',result:'100%',prediction:'',explanation:'既有證據',settings:{temp:37,ph:7,enzyme:'amylase',conc:1}};
  const y=load({'bhcs-science-v2-enzyme':JSON.stringify([legacy])});y.run();y.record();assert.match(y.$('record-comparison').textContent,/舊紀錄沒有樣本歷程/);assert.equal(y.rows()[0].conditions,legacy.conditions);y.close();
 });
-test('low-temperature guide feedback never promises recovery of an already heat-denatured sample',()=>{
- const x=load();const clickText=text=>{const b=[...x.d.querySelectorAll('.guide-box button')].find(b=>b.textContent===text);assert.ok(b,text);b.click()};
- x.run();clickText('活性高');clickText('下一步 →');x.set('temp',70);x.set('temp',0);assert.match(x.run(),/已變性/);clickText('已變性');
- const feedback=x.d.querySelector('.guide-box').textContent;
- assert.match(feedback,/答對了/);assert.match(feedback,/未曾高溫變性的樣本/);assert.match(feedback,/已高溫變性的同一份樣本則不會恢復/);assert.match(feedback,/換新樣本/);
- x.$('reset').click();x.set('temp',0);assert.match(x.run(),/沒有變性/);clickText('活性低（可恢復）');assert.match(x.d.querySelector('.guide-box').textContent,/答對了/);x.close();
+function guideClick(x,text){const b=[...x.d.querySelectorAll('.guide-box button')].find(b=>b.textContent===text);assert.ok(b,text);assert.equal(b.disabled,false,text+' must be enabled');b.click();return b}
+function toColdStep(x){x.run();guideClick(x,'活性高');guideClick(x,'下一步 →')}
+function toCoolingStep(x){toColdStep(x);x.set('temp',0);x.run();guideClick(x,'活性低（可恢復）');guideClick(x,'下一步 →');x.set('temp',70);x.run();guideClick(x,'已變性');guideClick(x,'下一步 →')}
+function noGuideAdvance(x){assert.equal([...x.d.querySelectorAll('.guide-box button')].some(b=>b.textContent==='下一步 →'||b.textContent==='完成引導，開始自由練習 →'),false);assert.doesNotMatch(x.$('guide-box').textContent,/答對了/)}
+test('low-temperature guide rejects denatured evidence and genuinely rearms after explicit new sample',()=>{
+ const x=load();toColdStep(x);x.set('temp',70);x.set('temp',0);assert.match(x.run(),/已變性/);
+ assert.match(x.$('guide-box').textContent,/這份樣本已變性/);assert.equal(x.d.querySelectorAll('.guide-options button').length,0);noGuideAdvance(x);
+ x.$('reset').click();x.set('temp',0);assert.match(x.run(),/相對活性5%/);assert.equal(x.d.querySelectorAll('.guide-options button:disabled').length,0);
+ guideClick(x,'活性低（可恢復）');assert.match(x.$('guide-box').textContent,/答對了.*未曾高溫變性的樣本/);
+ assert.match(x.$('guide-box').textContent,/已高溫變性的同一份樣本則不會恢復/);x.close();
+});
+test('guide target must remain satisfied, not merely have been visited once',()=>{
+ const x=load();toColdStep(x);x.set('temp',0);x.set('temp',37);assert.match(x.run(),/相對活性100%/);
+ assert.match(x.$('guide-box').textContent,/溫度 0°C/);assert.equal(x.d.querySelectorAll('.guide-options button').length,0);noGuideAdvance(x);
+ x.set('temp',0);x.run();guideClick(x,'活性低（可恢復）');assert.match(x.$('guide-box').textContent,/答對了/);x.close();
+});
+test('condition changes clear passed answer and stale Next; a new observation is mandatory',()=>{
+ const x=load();toColdStep(x);x.set('temp',0);x.run();guideClick(x,'活性低（可恢復）');
+ const oldNext=[...x.d.querySelectorAll('.guide-box button')].find(b=>b.textContent==='下一步 →');
+ x.$('reset').click();noGuideAdvance(x);oldNext.click();assert.match(x.$('guide-box').textContent,/引導 2／5/);
+ x.set('temp',0);assert.equal(x.d.querySelectorAll('.guide-options button').length,0);x.run();oldNext.click();assert.match(x.$('guide-box').textContent,/引導 2／5/);x.run();
+ const answer=[...x.d.querySelectorAll('.guide-options button')].find(b=>b.textContent==='活性低（可恢復）');assert.equal(answer.disabled,false);answer.click();assert.match(x.$('guide-box').textContent,/答對了/);x.close();
+});
+test('cooling evidence rejects replacement sample even when temperature matches',()=>{
+ const x=load();toCoolingStep(x);assert.match(x.run(),/相對活性0%/);guideClick(x,'仍已變性');
+ x.$('reset').click();assert.match(x.run(),/相對活性100%/);noGuideAdvance(x);assert.match(x.$('guide-box').textContent,/樣本已更換/);assert.doesNotMatch(x.$('guide-box').textContent,/undefined/);assert.equal(x.d.querySelectorAll('#control-fields .guide-focus').length,0);assert.equal(x.d.querySelectorAll('.guide-options button').length,0);
+ guideClick(x,'重新開始引導（換新樣本）');assert.match(x.$('guide-box').textContent,/引導 1／5/);assert.match(x.run(),/相對活性100%/);guideClick(x,'活性高');x.close();
+});
+test('guide enforces pH, enzyme and amount; task switching cannot retain old success',()=>{
+ const x=load();x.set('ph',2);x.run();assert.doesNotMatch(x.$('guide-box').textContent,/undefined/);assert.match(x.$('guide-box').textContent,/pH 7/);assert.ok(x.$('ctl-ph').classList.contains('guide-focus'));assert.equal(x.$('ctl-temp').classList.contains('guide-focus'),false);assert.equal(x.d.querySelectorAll('.guide-options button').length,0);noGuideAdvance(x);
+ x.set('ph',7);x.set('conc',0);x.run();assert.equal(x.d.querySelectorAll('.guide-options button').length,0);
+ x.set('conc',1);x.run();guideClick(x,'活性高');x.d.querySelector('[data-mission="1"]').click();noGuideAdvance(x);x.run();assert.equal(x.d.querySelectorAll('.guide-options button').length,0);
+ x.$('reset').click();x.run();guideClick(x,'活性高');x.close();
+});
+test('free observation cannot retain a stale guide answer or bypass re-observation',()=>{
+ const x=load();x.run();guideClick(x,'活性高');x.$('lab-explore').checked=true;x.$('lab-explore').dispatchEvent(new x.w.Event('change'));noGuideAdvance(x);
+ x.set('temp',0);x.set('temp',37);assert.equal(x.d.querySelectorAll('.guide-options button').length,0);
+ x.$('lab-explore').checked=false;x.$('lab-explore').dispatchEvent(new x.w.Event('change'));x.run();guideClick(x,'活性高');x.close();
+});
+test('repeated observation asks a new enabled question rather than retaining passed feedback',()=>{
+ const x=load();x.run();guideClick(x,'活性高');assert.match(x.$('guide-box').textContent,/答對了/);x.run();noGuideAdvance(x);assert.equal(x.d.querySelectorAll('.guide-options button:disabled').length,0);guideClick(x,'活性高');x.close();
 });
 console.log(`${passed} enzyme sample-history scenarios passed.`);
