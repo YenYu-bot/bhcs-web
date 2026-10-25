@@ -246,8 +246,38 @@ test('response signatures: the three kinds give three different [blue, red] patt
 
 // ---- legacy consistency ---------------------------------------------------------------------------------------------------
 
-test('legacy: blue and red litmus agree with the legacy lab at every ph10 0..140 (result and hex)', () => {
-  for (const p of ALL_PH10) { legacyAgrees('blue-litmus', p); legacyAgrees('red-litmus', p); }
+test('legacy: every ph10 0..140 respects either shared outer-range results or explicit paper-transition uncertainty', () => {
+  // The public legacy lab now represents an approximate pH 4.5–8.3 paper transition.
+  // This prototype retains its original classification teaching simplification; do not
+  // claim the two indicator models agree inside that band. Both contracts are checked.
+  let checked = 0;
+  for (const p of ALL_PH10) for (const id of ['blue-litmus', 'red-litmus']) {
+    checked++;
+    if (p < 45 || p > 83) { legacyAgrees(id, p); continue; }
+    const blue = id === 'blue-litmus', old = legacy.indicatorColor(LEGACY_TYPE[id], p / 10);
+    const original = blue ? '#365fbd' : '#d94949';
+    assert.equal(old.paper, true); assert.equal(old.transition, true);
+    assert.equal(old.hex, original, `${id} at ${p}: original-paper identity, not a colour prediction`);
+    // Independently retain the prototype's old result/color/changed contract at every
+    // transition input; new legacy uncertainty must not silently change this model.
+    const changed = blue ? p < 70 : p > 70;
+    const result = blue ? (changed ? 'turns-red' : 'stays-blue') : (changed ? 'turns-blue' : 'stays-red');
+    const color = blue ? (changed ? 'red' : 'blue') : (changed ? 'blue' : 'red');
+    assert.deepEqual(obs(id, p), { result, color, changed });
+    if (p === 70) {
+      assert.equal(old.uncertain, false);
+      assert.equal(old.name, blue ? '維持藍色（中性示意）' : '維持紅色（中性示意）');
+      assert.equal(M.COLOR_HEX[obs(id, p).color], old.hex);
+      assert.match(old.note, /不能只憑紙色推定恰好 pH 7/);
+    } else {
+      assert.equal(old.uncertain, true);
+      assert.equal(old.name, '過渡範圍，勿作精確判讀');
+      assert.match(old.note, /約 pH 4.5–8.3/);
+      assert.match(old.note, /斜線與原紙底色只標示紙種及判讀限制/);
+      assert.match(old.note, /不推定實際紙色/);
+    }
+  }
+  assert.equal(checked, 282, 'both papers at all 141 pH points, with no skipped transition inputs');
 });
 
 test('legacy: phenolphthalein agrees at every ph10 0..140, and at 81/82/83/99/100/101 by name', () => {
