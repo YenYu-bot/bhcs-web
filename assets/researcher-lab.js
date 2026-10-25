@@ -79,12 +79,12 @@ function installBenchRecords(){
  const box=document.createElement('div');box.className='researcher-save';
  box.innerHTML='<button type="button" class="researcher-primary researcher-bench-record">把這次觀察收進手冊</button><p class="researcher-save-status" role="status" aria-live="polite"></p><button type="button" class="researcher-notebook-link" data-open-notebook>查看研究手冊</button>';
  const save=q('.researcher-bench-record',box),message=q('.researcher-save-status',box);
- const sync=()=>{save.disabled=source.disabled;if(source.disabled)message.textContent='完成本輪操作後，就能保存觀察。';else if(!message.dataset.saved)message.textContent='觀察已準備好，可以收進手冊。';};
- save.addEventListener('click',()=>{const before=recordCount();source.click();if(recordCount()>before){message.dataset.saved='true';message.textContent='已收進第 '+recordCount()+' 筆觀察。只改一個條件，再做一次比較。';}updateNotebookReturn()});
+ const sync=()=>{save.disabled=source.disabled;if(source.dataset.recordSaveMessage){message.textContent=source.dataset.recordSaveMessage;return;}if(source.disabled)message.textContent='完成本輪操作後，就能保存觀察。';else if(!message.dataset.saved)message.textContent='觀察已準備好，可以收進手冊。';};
+ save.addEventListener('click',()=>{const before=recordCount();source.click();if(source.dataset.recordSaveMessage){sync();}else if(recordCount()>before){message.dataset.saved='true';message.textContent='已收進第 '+recordCount()+' 筆觀察。只改一個條件，再做一次比較。';}updateNotebookReturn()});
  q('[data-open-notebook]',box).addEventListener('click',()=>show('notebook'));
  const target=q('#sampleStatus',bench)||q('.labgrid > .panel',bench);
  if(target?.id==='sampleStatus')target.after(box);else (target||bench).append(box);
- new MutationObserver(()=>{delete message.dataset.saved;sync()}).observe(source,{attributes:true,attributeFilter:['disabled']});sync();
+ new MutationObserver(()=>{delete message.dataset.saved;sync()}).observe(source,{attributes:true,attributeFilter:['disabled','data-record-save-message','data-record-save-state']});sync();
 }
 function installNotebookUpdates(){
  const records=q('#records');if(!records)return;

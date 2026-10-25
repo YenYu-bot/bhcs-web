@@ -66,7 +66,15 @@ assert.ok(!dirVisible.textContent.includes('預測'),'directory final audit: vis
 const mini=fs.readFileSync(path.join(root,'tools/mini-lab/index.html'),'utf8');
 assert.ok(mini.includes('余老師'),'mini-lab final audit: 余老師 missing');
 assert.ok(!mini.includes('奇奇博士'),'mini-lab final audit: old guide name remains');
-for(const file of legacyAll.filter(file=>file!=='microscope-lab.html')){const html=fs.readFileSync(path.join(root,'tools',file),'utf8');assert.match(html,/function loadRecords\(\)\{try\{const saved=JSON\.parse[\s\S]*?Array\.isArray\(saved\)\?saved:\[\]/,file+' loadRecords must reject non-array storage')}
+for(const file of legacyAll){
+ const html=fs.readFileSync(path.join(root,'tools',file),'utf8');
+ if(['microscope-lab.html','acid-base-indicator-lab.html'].includes(file)){
+  // These pages validate once, then render session memory. Full boot/fault tests live in test_legacy_record_storage.cjs.
+  assert.match(html,/function readInitialRecords\(\)[\s\S]*?!Array\.isArray\(rows\)/,file+' initial read must reject non-array storage');
+  assert.match(html,/recordWritesAllowed=false;recordNotice/,file+' unreadable data must block writes, not become writable empty storage');
+  assert.match(html,/function loadRecords\(\)\{return recordRows\.slice\(\);\}/,file+' rendering must retain session records after failed writes');
+ }else assert.match(html,/function loadRecords\(\)\{try\{const saved=JSON\.parse[\s\S]*?Array\.isArray\(saved\)\?saved:\[\]/,file+' loadRecords must reject non-array storage');
+}
 const resourceHtml=fs.readFileSync(path.join(root,'ziyuan.html'),'utf8'),resourceDom=new JSDOM(resourceHtml,{runScripts:'dangerously'}),resourceDoc=resourceDom.window.document,resourceInput=resourceDoc.getElementById('resource-search');
 assert.ok(resourceInput,'resource search missing');const resourceLinks=resourceDoc.querySelectorAll('.res-sec .tpills>a,.science-category li>a'),declaredResourceTotal=Number(resourceDoc.querySelector('section.resource-finder p.lead')?.textContent.match(/目前共\s*(\d+)\s*項/)?.[1]);assert.ok(Number.isSafeInteger(declaredResourceTotal),'resource total declaration missing');assert.equal(resourceLinks.length,declaredResourceTotal,'resource total changed');assert.equal(resourceDoc.querySelectorAll('#res-hs-math .trow').length,4,'high-school four-book grouping changed');
 resourceInput.value='分數';resourceInput.dispatchEvent(new resourceDom.window.Event('input',{bubbles:true}));assert.ok(![...resourceDoc.querySelectorAll('.res-sec .tpills>a,.science-category li>a')].find(a=>a.textContent.includes('分數練習單')).classList.contains('resource-hidden'),'fraction search failed');
