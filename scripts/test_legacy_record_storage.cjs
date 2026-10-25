@@ -45,6 +45,16 @@ for(const c of configs){
   x.$('clearRecord').click();await Promise.resolve();assert.equal(x.rows().length,0);assert.match(x.d.querySelector('.researcher-save-status').textContent,/未能清除.*再出現/);
   await x.add();assert.equal(x.rows().length,1);assert.match(x.d.querySelector('.researcher-save-status').textContent,/尚未存妥/);x.state.setFail=false;await x.add();assert.equal(JSON.parse(x.state.raw).length,2);assert.ok(!x.state.raw.includes('old'));x.close();
  });
+ if(c[0]==='acid-base-indicator-lab')for(const fail of [false,'QuotaExceededError'])test(c[0]+' enhanced next-operation prompt preserves unsaved warnings fail='+fail,async()=>{
+  const x=load(c,{setFail:fail,enhanced:true});await x.add();await Promise.resolve();
+  const message=x.d.querySelector('.researcher-save-status');assert.match(message.textContent,fail?/尚未存妥/:/已儲存/);
+  x.$('acidVolume').value=60;x.$('acidVolume').dispatchEvent(new x.w.Event('input',{bubbles:true}));
+  await Promise.resolve();assert.equal(x.$('addRecord').disabled,true);assert.equal(x.d.querySelector('.researcher-bench-record').disabled,true);
+  assert.match(message.textContent,fail?/尚未存妥/:/完成本輪操作後，就能保存觀察/);
+  // Durable notebook notice must not be erased by the bench's operation prompt.
+  assert.match(x.message(),fail?/尚未存妥/:/已儲存/);assert.equal(x.rows().length,1);
+  x.state.setFail=false;await x.add();await Promise.resolve();assert.match(message.textContent,/已儲存/);assert.equal(JSON.parse(x.state.raw).length,2);x.close();
+ });
  test(c[0]+' empty initial storage normal add and reload preserve exact schema',async()=>{
   const x=load(c);await x.add();const rows=JSON.parse(x.state.raw);assert.equal(rows.length,1);assert.deepEqual(Object.keys(rows[0]).sort(),c[2].split(' ').sort());const reload=load(c,{raw:x.state.raw});assert.equal(reload.rows()[0].textContent,x.rows()[0].textContent);reload.close();x.close();
  });

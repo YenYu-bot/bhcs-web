@@ -13,7 +13,7 @@ function load(saved={},blocked=false){
  for(const [k,v] of Object.entries(saved))w.localStorage.setItem(k,v);
  if(blocked)Object.defineProperty(w,'localStorage',{get(){throw Error('storage denied')}});
  w.print=()=>{};w.confirm=()=>true;w.eval(source);
- return {w,d,$,errors,close(){assert.deepEqual(errors,[]);w.close()},set(k,v){$('ctl-'+k).value=v;$('ctl-'+k).dispatchEvent(new w.Event('input',{bubbles:true}))},run(){ $('run').click();return $('readouts').textContent},record(){ $('explanation-input').value='比較樣本活性數據';$('add-record').click()},rows(){return JSON.parse(w.localStorage.getItem('bhcs-science-v2-enzyme'))}};
+ return {w,d,$,errors,close(){assert.deepEqual(errors,[]);w.close()},set(k,v){$('ctl-'+k).value=v;$('ctl-'+k).dispatchEvent(new w.Event('input',{bubbles:true}));$('ctl-'+k).dispatchEvent(new w.Event('change',{bubbles:true}))},run(){ $('run').click();return $('readouts').textContent},record(){ $('explanation-input').value='比較樣本活性數據';$('add-record').click()},rows(){return JSON.parse(w.localStorage.getItem('bhcs-science-v2-enzyme'))}};
 }
 function test(name,fn){fn();passed++;console.log('PASS '+name)}
 test('same sample 80 -> 37 stays denatured; changing pH or concentration cannot repair it',()=>{
@@ -124,5 +124,33 @@ test('step five names only the selected enzyme and recovers after genuinely dena
  assert.doesNotMatch(x.$('guide-box').textContent,/這份胃蛋白酶樣本已變性/);assert.ok(x.$('ctl-enzyme').classList.contains('guide-focus'));
  x.set('enzyme','pepsin');assert.match(x.run(),/沒有變性/);guideClick(x,'活性低');
  guideClick(x,'完成引導，開始自由練習 →');assert.ok(x.$('guide-box').classList.contains('guide-done'));x.close();
+});
+test('guided explore survives drag release and repeated keyboard-style input/change without stale answers',()=>{
+ const x=load();x.run();guideClick(x,'活性高');
+ const oldNext=[...x.d.querySelectorAll('.guide-box button')].find(b=>b.textContent==='下一步 →');
+ x.$('lab-explore').checked=true;x.$('lab-explore').dispatchEvent(new x.w.Event('change'));noGuideAdvance(x);
+ const temp=x.$('ctl-temp');
+ // Range drag: several input events, followed by change on release.
+ for(const v of [38,40,45]){temp.value=v;temp.dispatchEvent(new x.w.Event('input',{bubbles:true}));assert.ok(x.$('readouts').textContent.length);}
+ const before=x.$('readouts').textContent;temp.dispatchEvent(new x.w.Event('change',{bubbles:true}));
+ assert.equal(x.$('lab-explore').checked,true);assert.equal(x.$('readouts').textContent,before);assert.match(x.$('status').textContent,/自由觀察中/);
+ assert.equal(x.$('add-record').disabled,true);noGuideAdvance(x);oldNext.click();assert.match(x.$('guide-box').textContent,/引導 1／5/);
+ // JSDOM does not implement native range-key defaults: explicitly reproduce
+ // browser keydown -> value/input/change -> keyup event order.
+ for(const v of [46,47,48]){temp.dispatchEvent(new x.w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));x.set('temp',v);temp.dispatchEvent(new x.w.KeyboardEvent('keyup',{key:'ArrowRight',bubbles:true}));assert.equal(x.$('lab-explore').checked,true);assert.ok(x.$('readouts').textContent.length);noGuideAdvance(x)}
+ x.set('temp',70);x.set('temp',37);assert.match(x.$('readouts').textContent,/相對活性0%/);assert.match(x.$('result-explanation').textContent,/曾達 60°C/);
+ x.$('lab-explore').checked=false;x.$('lab-explore').dispatchEvent(new x.w.Event('change'));assert.equal(x.$('readouts').textContent,'');noGuideAdvance(x);
+ x.$('reset').click();x.run();guideClick(x,'活性高');guideClick(x,'下一步 →');assert.match(x.$('guide-box').textContent,/引導 2／5/);x.close();
+});
+test('change-only fallback preserves explore but still invalidates formal observation and stale success',()=>{
+ const x=load();x.run();guideClick(x,'活性高');x.$('ctl-ph').value=6;x.$('ctl-ph').dispatchEvent(new x.w.Event('change',{bubbles:true}));
+ assert.equal(x.$('readouts').textContent,'');assert.equal(x.$('add-record').disabled,true);noGuideAdvance(x);
+ x.$('reset').click();x.run();x.$('lab-explore').checked=true;x.$('lab-explore').dispatchEvent(new x.w.Event('change'));
+ x.$('ctl-temp').value=70;x.$('ctl-temp').dispatchEvent(new x.w.Event('change',{bubbles:true}));assert.equal(x.$('lab-explore').checked,true);assert.match(x.$('readouts').textContent,/相對活性0%/);assert.match(x.$('result-explanation').textContent,/曾達 60°C/);noGuideAdvance(x);
+ x.set('temp',37);x.$('ctl-enzyme').value='pepsin';x.$('ctl-enzyme').dispatchEvent(new x.w.Event('change',{bubbles:true}));assert.equal(x.$('lab-explore').checked,true);assert.match(x.$('readouts').textContent,/沒有變性/);assert.match(x.$('result-explanation').textContent,/胃蛋白酶/);assert.match(x.$('guide-box').textContent,/酵素種類 唾液澱粉酶/);noGuideAdvance(x);x.close();
+});
+test('enzyme skip guide has a 44px CSS minimum in active and replayed guide',()=>{
+ const x=load();assert.equal(x.w.getComputedStyle(x.d.querySelector('.guide-skip')).minHeight,'44px');
+ guideClick(x,'跳過引導，直接自由練習');guideClick(x,'重看引導（換新樣本）');assert.equal(x.w.getComputedStyle(x.d.querySelector('.guide-skip')).minHeight,'44px');x.close();
 });
 console.log(`${passed} enzyme sample-history scenarios passed.`);
