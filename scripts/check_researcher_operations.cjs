@@ -30,7 +30,7 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
      const card=page.locator('[data-mission="'+id+'"]');assert.ok(await card.isVisible());await card.click();
      assert.equal(await page.locator('#specimen').inputValue(),specimen);assert.equal(await page.locator('#level').inputValue(),mode);assert.equal(await page.locator('#obj4').isChecked(),true);
      assert.equal(await page.locator('.mission[aria-pressed="true"]').count(),1);assert.equal(await card.getAttribute('aria-pressed'),'true');assert.equal(await page.locator('.mission.is-current').getAttribute('data-mission'),id);
-     assert.match(await page.locator('#missionText').textContent(),new RegExp(title));assert.ok(await page.locator('#labControls').isDisabled());assert.ok(await page.locator(save).isDisabled());
+     assert.match(await page.locator('#missionText').textContent(),new RegExp(title));assert.equal(await page.locator('#labControls').evaluate(el=>el.disabled),true,'task selection disables the fieldset');for(const ctl of await page.locator('#labControls input,#labControls button,#labControls select').all())assert.ok(await ctl.isDisabled(),'task controls inherit the disabled fieldset');assert.ok(await page.locator(save).isDisabled());
      const rect=await card.boundingBox();assert.ok(rect.height>=44&&rect.x>=0&&rect.x+rect.width<=width+2,'task card fits viewport and has a touch-sized target');
     }
     await screenshot('task-cards',page.locator('.researcher-taskbar').locator('..'));
