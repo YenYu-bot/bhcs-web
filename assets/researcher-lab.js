@@ -26,8 +26,10 @@ function welcome(){const s=document.createElement('section');s.className='resear
 function microscope(){document.body.classList.add('researcher-ui');header('science/','虛擬顯微鏡');const main=q('main');const old=[...main.children];old.forEach(x=>x.remove());
  const prep=welcome(),bench=document.createElement('section'),note=document.createElement('section'),check=document.createElement('section');bench.className='researcher-screen';bench.dataset.screen='bench';note.className='researcher-screen';note.dataset.screen='notebook';check.className='researcher-screen';check.dataset.screen='check';
  bench.append(coach('從 4× 物鏡開始。影像清楚之後，拖動下方玻片找出移動方向，再換高倍比較。','拖曳玻片時看上方視野；觀察完成後，可直接在控制區收進研究手冊。'));
- const exp=old.find(x=>x.id==='experiment'),spec=old.find(x=>x.id==='specimens'),obs=old.find(x=>x.id==='observe'),record=old.find(x=>x.id==='record'),quiz=old.find(x=>x.id==='quiz'),guide=old.find(x=>x.classList&&x.classList.contains('lesson-route')),teaching=old.find(x=>x.matches&&x.matches('[aria-label="教材使用指南"]'));
- if(exp)bench.append(exp);if(spec){const tb=document.createElement('div');tb.className='researcher-taskbar';qa('.mission',spec).forEach((m,i)=>{m.classList.toggle('is-current',i===0);m.addEventListener('click',()=>qa('.mission',spec).forEach(x=>x.classList.toggle('is-current',x===m)));tb.append(m)});bench.append(tb);const txt=q('#missionText',spec);if(txt)bench.append(txt)}if(obs)bench.append(obs);
+ const exp=old.find(x=>x.id==='experiment'),spec=old.find(x=>x.id==='specimens'),obs=old.find(x=>x.id==='observe'),record=old.find(x=>x.id==='record'),quiz=old.find(x=>x.id==='quiz'),guide=old.find(x=>x.classList&&x.classList.contains('lesson-route')),teaching=old.find(x=>x.matches&&x.matches('[aria-label="教材使用指南"]')),missions=old.find(x=>x.querySelector?.('.mission[data-mission]'));
+ // Keep the original task nodes and their preset listeners; they live beside #specimens.
+ if(missions){const buttons=qa('.mission',missions),tb=q('.missions',missions);if(tb){tb.classList.add('researcher-taskbar');tb.setAttribute('role','group');tb.setAttribute('aria-label','顯微鏡任務卡')}const select=chosen=>buttons.forEach(b=>{b.classList.toggle('is-current',b===chosen);b.setAttribute('aria-pressed',String(b===chosen))});select(null);buttons.forEach(b=>b.addEventListener('click',()=>select(b)));const txt=q('#missionText',missions);if(txt){txt.textContent='先選擇一張任務卡，或用目前的字母 e 玻片自由觀察。';txt.setAttribute('role','status');txt.setAttribute('aria-live','polite')}bench.append(missions)}
+ if(exp)bench.append(exp);if(obs)bench.append(obs);if(spec){const reference=document.createElement('details'),summary=document.createElement('summary');reference.className='card section';summary.textContent='標本對照｜三種細胞有什麼不同？';summary.style.cssText='min-height:44px;padding:10px 0;box-sizing:border-box;cursor:pointer';reference.append(summary,spec);bench.append(reference)}
 
  note.innerHTML='<div class="researcher-notebook-intro"><img class="notebook-doc" src="'+imgBase+'doc-notebook.png" alt="" width="76" height="120" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'notebook-sticker\',textContent:\'📒\'}))"><div><h2>余老師的研究手冊</h2><p>留下低倍、高倍各一筆，再用自己的話寫：「我改了什麼？我看到什麼變化？」</p></div></div>';if(record)note.append(record);if(guide)note.append(guide);if(quiz)check.append(quiz);if(teaching)check.append(teaching);
  main.append(prep,bench,note,check);nav([{id:'prepare',label:'① 接任務'},{id:'bench',label:'② 動手做'},{id:'notebook',label:'③ 研究手冊'},{id:'check',label:'④ 挑戰題'}]);installNotebookReturn(note);
@@ -160,7 +162,8 @@ alignWelcomeSpeech();
 (function(){
  const cfgEl=document.getElementById('lab-guide');if(!cfgEl)return;
  let cfg;try{cfg=JSON.parse(cfgEl.textContent)}catch(_){return}
- const steps=cfg.steps||[],runBtn=document.getElementById(cfg.run);if(!steps.length||!runBtn)return;
+ const microscope=location.pathname.endsWith('/microscope-lab.html');
+ const steps=(cfg.steps||[]).map((st,i)=>microscope?{...st,focus:{id:['obj4','obj10','obj10','obj4'][i],checked:true}}:st),runBtn=document.getElementById(cfg.run);if(!steps.length||!runBtn)return;
  const key='bhcs-legacy-guide-'+location.pathname.split('/').pop(),$=id=>document.getElementById(id);
  const panel=runBtn.closest('.panel,aside,section')||runBtn.parentNode;
  // 同一面板的控制項，再加上步驟中指名、但放在其他面板的控制項（例如顯微鏡的物鏡）
@@ -168,8 +171,12 @@ alignWelcomeSpeech();
  const controls=[...new Set([...panel.querySelectorAll('input,select'),...[...named].map(id=>document.getElementById(id)).filter(Boolean)])].filter(e=>e.id&&e.id!=='level'&&e.type!=='hidden');
  const initial=Object.fromEntries(controls.map(e=>[e.id,(e.type==='radio'||e.type==='checkbox')?e.checked:e.value]));
  const wrap=e=>e.closest('label,.field,.control')||e;
- const box=document.createElement('div');box.id='guide-box';box.className='guide-box';box.setAttribute('aria-live','polite');panel.insertBefore(box,panel.querySelector('h2,h3')?panel.querySelector('h2,h3').nextSibling:panel.firstChild);
- let gi=0,phase='',active=false,pollTimer=null;
+ const box=document.createElement('div');box.id='guide-box';box.className='guide-box'+(microscope?' microscope-guide':'');box.setAttribute('aria-live','polite');panel.insertBefore(box,panel.querySelector('h2,h3')?panel.querySelector('h2,h3').nextSibling:panel.firstChild);
+ let gi=0,phase='',active=false,pollTimer=null,revision=0;
+ // Microscope evidence belongs to a specific operation, not a cached answer string.
+ const evidence=()=>JSON.stringify([controls.map(e=>[e.id,e.type==='radio'||e.type==='checkbox'?e.checked:e.value]),$('level')?.value,$('scopeCover')?.hidden,($(steps[gi]?.read)||{}).textContent]);
+ const fresh=(stamp,snapshot)=>!microscope||(active&&phase==='check'&&revision===stamp&&focusOk(steps[gi])&&$('scopeCover')?.hidden&&evidence()===snapshot);
+ function invalidateMicroscope(){if(!microscope||!active)return;revision++;clearInterval(pollTimer);if(steps[gi].focus&&!focusOk(steps[gi])){phase='set';render();mark()}else toObserve()}
  const node=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!=null)n.textContent=txt;if(cls)n.className=cls;return n};
  const btn=(txt,fn,cls)=>{const b=node('button',txt,cls);b.type='button';b.addEventListener('click',fn);return b};
  const fire=e=>{e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))};
@@ -179,24 +186,25 @@ alignWelcomeSpeech();
  const clear=()=>document.querySelectorAll('[data-guide-focus],[data-guide-dim]').forEach(n=>{n.removeAttribute('data-guide-focus');n.removeAttribute('data-guide-dim')});
  const labelOf=id=>{const e=$(id);if(!e)return id;const l=document.querySelector('label[for="'+id+'"]');return (l?l.textContent:wrap(e).textContent||id).replace(/\s+/g,' ').trim().slice(0,20)};
  function render(){box.replaceChildren();
-  if(!active){box.classList.add('guide-done');box.append(node('p','你已完成余老師的引導，現在可以自由練習：試試任務，或自己改條件觀察。'),btn('重看引導',()=>start(0),'guide-replay'));return}
-  box.classList.remove('guide-done');const st=steps[gi];box.append(node('strong','余老師引導 '+(gi+1)+'／'+steps.length),node('p',st.say));
+  if(!active){box.classList.add('guide-done');box.append(node('p',microscope?'倍率與視野入門已結束。接著選上方任務卡，親手調焦、移動玻片與比較細胞，再留下兩筆觀察紀錄。':'你已完成余老師的引導，現在可以自由練習：試試任務，或自己改條件觀察。'),btn(microscope?'重看倍率與視野入門':'重看引導',()=>start(0),'guide-replay'));return}
+  box.classList.remove('guide-done');const st=steps[gi];box.append(node('strong',(microscope?'倍率與視野入門｜余老師引導 ':'余老師引導 ')+(gi+1)+'／'+steps.length),node('p',st.say));
   const todo=phase==='set'?(st.focus.checked!==undefined?'選擇「'+labelOf(st.focus.id)+'」。':'把「'+labelOf(st.focus.id)+'」調到 '+(st.focus.label||st.focus.value)+'。'):phase==='observe'?'按「'+runBtn.textContent.trim()+'」看結果。':phase==='wait'?'觀察中……':'';if(todo)box.append(node('p',todo,'guide-todo'));
-  if(phase==='check'){const opts=node('div',null,'guide-options'),fb=node('p','','guide-feedback'),now=($(st.read)||{}).textContent;
+  if(phase==='check'){const opts=node('div',null,'guide-options'),fb=node('p','','guide-feedback'),now=($(st.read)||{}).textContent,stamp=revision,snapshot=evidence();
    box.append(node('p',st.q,'guide-question'),opts,fb);
-   st.options.forEach(([val,label])=>opts.append(btn(label,()=>{if(String(now).trim()===val){fb.textContent='答對了！'+(st.explain||'');opts.querySelectorAll('button').forEach(b=>b.disabled=true);box.insertBefore(gi+1<steps.length?btn('下一步 →',()=>start(gi+1),'primary'):btn('完成引導，開始自由練習 →',finish,'primary'),box.querySelector('.guide-skip'))}else fb.textContent='再看一次：'+(st.hint||'看讀值。')})))}
+   st.options.forEach(([val,label])=>opts.append(btn(label,()=>{if(!fresh(stamp,snapshot)){invalidateMicroscope();return}if(String(now).trim()===val){fb.textContent='答對了！'+(st.explain||'');opts.querySelectorAll('button').forEach(b=>b.disabled=true);box.insertBefore(gi+1<steps.length?btn('下一步 →',()=>{if(!fresh(stamp,snapshot)){invalidateMicroscope();return}start(gi+1)},'primary'):btn(microscope?'完成入門，開始任務實驗 →':'完成引導，開始自由練習 →',()=>{if(!fresh(stamp,snapshot)){invalidateMicroscope();return}finish()},'primary'),box.querySelector('.guide-skip'))}else fb.textContent='再看一次：'+(st.hint||'看讀值。')})))}
   box.append(btn('跳過引導，直接自由練習',finish,'guide-skip'))}
- function start(i){gi=i;active=true;const st=steps[i];if(i>0||st.values){controls.forEach(e=>{if(e.type==='radio'){if(initial[e.id])setCtl(e.id,true)}else setCtl(e.id,initial[e.id])});Object.entries(st.values||{}).forEach(([k,v])=>setCtl(k,v))}
+ function start(i){if(microscope){revision++;clearInterval(pollTimer)}gi=i;active=true;const st=steps[i];if(microscope&&i===0)setCtl('obj4',true);if(i>0||st.values){if(!microscope)controls.forEach(e=>{if(e.type==='radio'){if(initial[e.id])setCtl(e.id,true)}else setCtl(e.id,initial[e.id])});Object.entries(st.values||{}).forEach(([k,v])=>setCtl(k,v))}
   if(st.focus&&!focusOk(st)){phase='set';render();mark()}else toObserve();if(i>0&&box.scrollIntoView)box.scrollIntoView({block:'nearest',behavior:'smooth'})}
- function finish(){active=false;phase='';clear();try{localStorage.setItem(key,'done')}catch(_){}render()}
- controls.forEach(e=>['input','change'].forEach(ev=>e.addEventListener(ev,()=>{if(active&&phase==='set'&&focusOk(steps[gi]))toObserve()})));
+ function finish(){if(microscope){revision++;clearInterval(pollTimer)}active=false;phase='';clear();try{localStorage.setItem(key,'done')}catch(_){}render()}
+ controls.forEach(e=>['input','change'].forEach(ev=>e.addEventListener(ev,()=>{if(microscope){invalidateMicroscope();return}if(active&&phase==='set'&&focusOk(steps[gi]))toObserve()})));
+ if(microscope){document.addEventListener('microscope-observation-change',invalidateMicroscope);$('level')?.addEventListener('change',invalidateMicroscope);$('reset')?.addEventListener('click',invalidateMicroscope);$('autofocus')?.addEventListener('click',invalidateMicroscope);document.querySelectorAll('.mission').forEach(b=>b.addEventListener('click',()=>{if(active)start(0)}));} 
  const runUsable=()=>!runBtn.disabled&&runBtn.offsetParent!==null&&getComputedStyle(runBtn).visibility!=='hidden';
  function waitRead(){phase='wait';render();mark();const st=steps[gi];let last=null,same=0,tries=0;clearInterval(pollTimer);
   pollTimer=setInterval(()=>{const t=(($(st.read)||{}).textContent||'').trim();tries++;if(t&&t!=='—'&&t===last)same++;else same=0;last=t;if(same>=2||tries>60){clearInterval(pollTimer);phase='check';render();mark()}},300)}
  // 主要按鈕用過後就隱藏或停用的頁面（例如顯微鏡），調好控制項就直接等讀值
  function toObserve(){if(runUsable()){phase='observe';render();mark()}else waitRead()}
- runBtn.addEventListener('click',()=>{if(active&&phase==='observe')waitRead()});
- if(!document.getElementById('science-guide-style'))document.head.insertAdjacentHTML('beforeend','<style id="science-guide-style">.guide-box{scroll-margin-top:110px;border:2px solid #d97b11;border-radius:12px;background:#fff8ee;padding:12px 14px;margin:0 0 14px}.guide-box strong{color:#b35c00}.guide-box p{margin:.35em 0}.guide-todo{font-weight:700}.guide-question{font-weight:700;margin-top:.6em}.guide-options{display:flex;flex-wrap:wrap;gap:8px;margin:.4em 0}.guide-options button{min-height:44px;padding:6px 14px;border:2px solid #436779;border-radius:10px;background:#fff;cursor:pointer}.guide-options button:disabled{opacity:.6}.guide-box>button{margin:.4em .4em 0 0;min-height:44px}.guide-box .guide-skip{background:none;border:0;color:#436779;text-decoration:underline;min-height:0;padding:4px 0}.guide-done{border-color:#087b78;background:#eefaf8}.guide-dim,[data-guide-dim]{opacity:.45}.guide-focus,[data-guide-focus]{outline:3px solid #d97b11;outline-offset:3px;border-radius:6px;animation:guidePulse 1.4s ease-in-out infinite}@keyframes guidePulse{50%{outline-color:rgba(217,123,17,.25)}}@media (prefers-reduced-motion:reduce){.guide-focus,[data-guide-focus]{animation:none}}</style>');
+ runBtn.addEventListener('click',()=>{if(!active)return;if(microscope){if(!focusOk(steps[gi])){invalidateMicroscope();return}revision++;waitRead()}else if(phase==='observe')waitRead()});
+ if(!document.getElementById('science-guide-style'))document.head.insertAdjacentHTML('beforeend','<style id="science-guide-style">.guide-box{scroll-margin-top:110px;border:2px solid #d97b11;border-radius:12px;background:#fff8ee;padding:12px 14px;margin:0 0 14px}.guide-box strong{color:#b35c00}.guide-box p{margin:.35em 0}.guide-todo{font-weight:700}.guide-question{font-weight:700;margin-top:.6em}.guide-options{display:flex;flex-wrap:wrap;gap:8px;margin:.4em 0}.guide-options button{min-height:44px;padding:6px 14px;border:2px solid #436779;border-radius:10px;background:#fff;cursor:pointer}.guide-options button:disabled{opacity:.6}.guide-box>button{margin:.4em .4em 0 0;min-height:44px}.guide-box .guide-skip{background:none;border:0;color:#436779;text-decoration:underline;min-height:0;padding:4px 0}.guide-box.microscope-guide .guide-skip{min-height:44px}.guide-done{border-color:#087b78;background:#eefaf8}.guide-dim,[data-guide-dim]{opacity:.45}.guide-focus,[data-guide-focus]{outline:3px solid #d97b11;outline-offset:3px;border-radius:6px;animation:guidePulse 1.4s ease-in-out infinite}@keyframes guidePulse{50%{outline-color:rgba(217,123,17,.25)}}@media (prefers-reduced-motion:reduce){.guide-focus,[data-guide-focus]{animation:none}}</style>');
  let seen=false;try{seen=localStorage.getItem(key)==='done'}catch(_){}
  if(seen){active=false;render()}else{active=true;gi=0;phase=steps[0].focus&&!focusOk(steps[0])?'set':'observe';render();mark()}
 })();
