@@ -109,4 +109,20 @@ test('free observation cannot retain a stale guide answer or bypass re-observati
 test('repeated observation asks a new enabled question rather than retaining passed feedback',()=>{
  const x=load();x.run();guideClick(x,'活性高');assert.match(x.$('guide-box').textContent,/答對了/);x.run();noGuideAdvance(x);assert.equal(x.d.querySelectorAll('.guide-options button:disabled').length,0);guideClick(x,'活性高');x.close();
 });
+test('step five names only the selected enzyme and recovers after genuinely denatured pepsin',()=>{
+ const x=load();toCoolingStep(x);x.run();guideClick(x,'仍已變性');guideClick(x,'下一步 →');
+ assert.equal(x.$('ctl-enzyme').value,'amylase');assert.match(x.$('guide-box').textContent,/引導 5／5/);
+ assert.doesNotMatch(x.$('guide-box').textContent,/這份胃蛋白酶樣本已變性/);
+ assert.match(x.$('guide-box').textContent,/請先設定：酵素種類 胃蛋白酶/);
+ assert.ok(x.$('ctl-enzyme').classList.contains('guide-focus'));
+ assert.equal(x.d.querySelectorAll('.guide-options button').length,0);
+ x.set('enzyme','pepsin');assert.match(x.run(),/沒有變性/);guideClick(x,'活性低');
+ x.set('temp',70);x.set('temp',37);assert.match(x.run(),/已變性/);
+ assert.match(x.$('guide-box').textContent,/這份胃蛋白酶樣本已變性/);noGuideAdvance(x);
+ assert.equal(x.d.querySelectorAll('.guide-options button').length,0);
+ x.$('reset').click();assert.equal(x.$('ctl-enzyme').value,'amylase');
+ assert.doesNotMatch(x.$('guide-box').textContent,/這份胃蛋白酶樣本已變性/);assert.ok(x.$('ctl-enzyme').classList.contains('guide-focus'));
+ x.set('enzyme','pepsin');assert.match(x.run(),/沒有變性/);guideClick(x,'活性低');
+ guideClick(x,'完成引導，開始自由練習 →');assert.ok(x.$('guide-box').classList.contains('guide-done'));x.close();
+});
 console.log(`${passed} enzyme sample-history scenarios passed.`);

@@ -1030,7 +1030,7 @@ function educationalScene(id,s,r){
    if(gi<=1&&s.heatDenatured)issue='這份樣本已變性，不能用來觀察可恢復的低溫活性。請按「換新樣本」，再依本步設定重新觀察。';
    if((gi===2||gi===3)&&(!guideSampleId||s.sampleId!==guideSampleId))issue='樣本已更換，不能當成前一步同一份樣本的證據。請重新開始引導，重做同樣本加熱與冷卻。';
    else if(gi===3&&!s.heatDenatured)issue='本步要觀察前一步已加熱變性的同一份樣本；請重新開始引導，完成加熱後再冷卻。';
-   if(gi===4&&s.heatDenatured)issue='這份胃蛋白酶樣本已變性。請換新樣本，再選胃蛋白酶、37°C、pH 7、酵素的量 1。';
+   if(gi===4&&s.enzyme==='pepsin'&&s.heatDenatured)issue='這份胃蛋白酶樣本已變性。請換新樣本，再選胃蛋白酶、37°C、pH 7、酵素的量 1。';
    const historyIssue=issue&&(!changed.length||!issue.startsWith('請先設定：'));
    return {ready:!issue,issue,s,expected,focus:historyIssue?null:changed[0]||null};
   };
