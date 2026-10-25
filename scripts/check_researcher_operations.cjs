@@ -65,6 +65,36 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
    await check.click();assert.match(await score.textContent(),/3[／/]3|3／3 題/,'correct answers are scored');
    const wrong=fields.first().locator('input:not([value="'+answers[0]+'"])').first();await wrong.check();assert.match(await score.textContent(),/重新檢查/);assert.equal(await page.locator('#quiz .feedback').first().textContent(),'','edited question drops stale feedback');
    await check.click();assert.match(await score.textContent(),/2[／/]3|2／3 題/);await screenshot('challenge');
+   if(item.id==='microscope'){
+    // Additive complete lesson, after every existing record/challenge assertion.
+    await page.locator('[data-to="bench"]').click();
+    const lesson=page.locator('#micro-learning'),action=text=>lesson.getByRole('button',{name:text,exact:true});
+    const phase=async n=>assert.equal(await lesson.getAttribute('data-learning-phase'),String(n));
+    const press=async text=>{const b=action(text);assert.equal(await b.isDisabled(),false);await b.focus();await page.keyboard.press('Enter');await settle(page);assert.equal(await lesson.locator('h2').evaluate(el=>document.activeElement===el),true,'explicit lesson action retains keyboard focus');};
+    await press('開始完整操作教學');await phase(1);assert.equal(await page.locator('#guide-box').isVisible(),false,'legacy guide is not competing');
+    await page.locator('#begin').click();await page.locator('#autofocus').click();await press('影像清楚，開始觀察方向');await phase(2);
+    assert.ok(await action('玻片與影像方向相反').isDisabled(),'answer needs actual movement');
+    await page.locator('#slide-center').click();assert.ok(await action('玻片與影像方向相反').isDisabled(),'centering is not direction evidence');
+    await page.locator('#slide-pad').focus();await page.keyboard.press('ArrowRight');assert.ok(await action('玻片與影像方向相反').isDisabled(),'one axis is insufficient');await page.keyboard.press('ArrowUp');
+    assert.equal(await page.locator('#slide-pad').evaluate(el=>document.activeElement===el),true,'passive progress does not steal focus');
+    await press('玻片與影像方向相同');await phase(2);assert.match(await lesson.textContent(),/再看一次/);
+    await press('玻片與影像方向相反');await press('準備洋蔥比較');await phase(3);
+    await page.locator('#begin').click();await page.locator('#autofocus').click();await press('記錄低倍證據');await phase(4);
+    assert.ok(await action('記錄高倍證據').isDisabled(),'student must choose high power');
+    await page.locator('#obj40').check();await page.locator('#light').focus();await page.keyboard.press('ArrowLeft');assert.ok(await action('記錄高倍證據').isDisabled(),'changed light cannot form matched evidence');
+    await press('恢復低倍紀錄的位置與照明');await press('記錄高倍證據');await phase(5);
+    const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('bhcsMicroscopeRecords')));
+    assert.equal(stored.length,2);assert.notEqual(stored[0].observation.id,stored[1].observation.id);
+    for(const row of stored){assert.equal(row.observation.assisted,true);assert.equal(row.observation.specimen,'onion');assert.ok(row.observation.clarity>=80)}
+    for(const k of ['sample','session','lesson','stageX','stageY','light','coarse'])assert.equal(stored[0].observation[k],stored[1].observation[k],k+' matches in retained snapshots');assert.equal(stored[0].observation.objective,4);assert.equal(stored[1].observation.objective,40);
+    assert.equal(await lesson.locator('.micro-learning-evidence article').count(),2);assert.match(await lesson.textContent(),/紀錄第 1 筆/);assert.match(await lesson.textContent(),/紀錄第 2 筆/);
+    await screenshot('full-learning-evidence',lesson);
+    await press('高倍看到的範圍較大');await phase(5);await press('高倍影像較大，看到的範圍較小');await phase(6);assert.match(await lesson.textContent(),/不代表已熟練真實顯微鏡/);
+    for(const b of await lesson.locator('button').all())assert.ok((await b.boundingBox()).height>=44,'lesson actions are touch-sized');
+    await screenshot('full-learning-complete',lesson);await press('離開教學，改自由練習');await phase('free');
+    await page.locator('[data-to="notebook"]').click();await page.locator('#clearRecord').click();assert.equal(await count(),0);
+    result.completeLearning=true;
+   }
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'no page horizontal overflow');assert.deepEqual(errors,[]);result.pass=true;
   }catch(e){result.pass=false;result.failure=e.message;result.errors=errors;await screenshot('failure').catch(()=>{})}
   results.push(result);fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(results,null,2));console.log(JSON.stringify(result));await page.close();
