@@ -1,0 +1,111 @@
+/* Enzyme free-observation control must also work without the enhanced shell. */
+body[data-science-lab="enzyme"] .observation label.coach{
+  display:flex;align-items:flex-start;gap:10px;box-sizing:border-box;
+  width:100%;max-width:100%;min-width:0;height:auto;min-height:44px;
+  margin:14px 0;padding:12px;white-space:normal;overflow-wrap:anywhere;
+  line-height:1.7;
+}
+body[data-science-lab="enzyme"] .observation label.coach input[type="checkbox"]{
+  flex:0 0 auto;width:20px;height:20px;min-height:0;margin:3px 0 0;
+}
+body[data-science-lab="enzyme"] .enzyme-diagram-zoom{display:none}
+@media(max-width:700px){
+ body[data-science-lab="enzyme"] .enzyme-diagram-zoom{display:inline-flex;align-items:center;min-height:44px;max-width:100%;margin:10px 0;white-space:normal}
+ body[data-science-lab="enzyme"] .observation .stage.is-zoomed{position:static;max-width:100%;max-height:none;overflow:auto;touch-action:pan-x pan-y}
+ body[data-science-lab="enzyme"] .observation .stage.is-zoomed svg{width:660px;min-width:660px;max-width:none;max-height:none;height:auto}
+}
+@media print{body[data-science-lab="enzyme"] .enzyme-diagram-zoom{display:none!important}}
+
+/* Enzyme illustrated workbook; the scientific diagram keeps its own colors. */
+:root{color-scheme:only light}
+body[data-science-lab="enzyme"]{--bh-ink:#243d4b;--bh-ink-soft:#4c6058;--bh-ink-faint:#607165;--bh-paper:#faf8ef;--bh-card:#fffef9;--bh-surface:#eef2e5;--bh-grid:#e4e7da;--bh-grid-strong:#c9d6bd;--bh-red:#ad4d3f;--bh-red-soft:#f7e7de;--bh-orange:#ad4d3f;--bh-orange-dark:#853d34;--bh-note:#f5f0df;--bh-note-line:#d9ceb5;--bh-radius:20px;--bh-radius-s:12px;--bh-serif:system-ui,"Microsoft JhengHei",sans-serif;--ink:#243d4b;--muted:#53665f;--accent:#476f5c;--bg:#faf8ef;--paper:#fffef9;--line:#d8dfce;--lab-ink:#243d4b;--lab-green-dark:#476f5c;--lab-line:#d8dfce;--lab-orange:#ad4d3f;--lab-orange-dark:#853d34;color:#243d4b;background-color:#faf8ef!important;background-image:linear-gradient(#8a9c8410 1px,transparent 1px),linear-gradient(90deg,#8a9c8410 1px,transparent 1px)!important;background-size:24px 24px!important;font-family:system-ui,"Microsoft JhengHei",sans-serif;line-height:1.75}
+body[data-science-lab="enzyme"] .shell{max-width:1160px}
+body[data-science-lab="enzyme"] .hero{background:#f2f3e7;border-bottom:1px solid #d8dfce;padding:22px 0}
+body[data-science-lab="enzyme"] .hero h1{font-size:clamp(1.8rem,4vw,2.6rem)}
+body[data-science-lab="enzyme"] .panel,body[data-science-lab="enzyme"] .lesson-route{background:#fffef9;border:1px solid #d8dfce;border-radius:22px;box-shadow:0 5px 0 #e9eadc;padding:22px}
+body[data-science-lab="enzyme"] h2,body[data-science-lab="enzyme"] h3{color:#243d4b}
+body[data-science-lab="enzyme"] .panel>h2:before{content:none}
+body[data-science-lab="enzyme"] .step, .cute-sticker{display:inline-block;background:#f5e5db;border:1px solid #e5c5b8;color:#794737;border-radius:7px;padding:3px 9px;font-size:.75rem;font-weight:750;letter-spacing:.05em}
+body[data-science-lab="enzyme"] button{border-radius:12px}
+body[data-science-lab="enzyme"] button.primary,body[data-science-lab="enzyme"] #run,body[data-science-lab="enzyme"] .researcher-primary{background:#ad4d3f;border:1px solid #853d34;color:#fff;box-shadow:0 3px 0 #853d34}
+body[data-science-lab="enzyme"] #add-record{background:#e4eee2;border:1px solid #8ba48a;color:#2e5140;box-shadow:0 3px 0 #cbd9c5}
+body[data-science-lab="enzyme"] input[type=range],body[data-science-lab="enzyme"] input[type=checkbox]{accent-color:#476f5c}
+body[data-science-lab="enzyme"] select,body[data-science-lab="enzyme"] textarea{background:#fff;color:#243d4b;border-color:#96ab9c}
+body[data-science-lab="enzyme"] .controls{background:#f5f6eb}
+body[data-science-lab="enzyme"] .controls label{color:#344e41;font-size:1rem}
+body[data-science-lab="enzyme"] .observation{display:block}
+body[data-science-lab="enzyme"] .observation .stage{position:static;background:#f8fbfc;border:1px solid #bacbd0;min-height:0;max-height:none;padding:8px;box-shadow:none}
+body[data-science-lab="enzyme"] .observation .stage svg{width:100%;height:auto;max-height:none}
+body[data-science-lab="enzyme"] .meter{background:#243d4b;border:1px solid #243d4b;color:white;box-shadow:none}
+body[data-science-lab="enzyme"] .meter strong{color:white}
+body[data-science-lab="enzyme"] .status{background:#eff4e9;color:#314c3d;border-color:#7f9c7c}
+body[data-science-lab="enzyme"] .status.warn{background:#fff0e7;color:#75432f;border-color:#b76d4b}
+body[data-science-lab="enzyme"] .researcher-header,body[data-science-lab="enzyme"] .researcher-nav{background:#fffef9;border:1px solid #d8dfce;box-shadow:0 3px 0 #e9eadc}
+body[data-science-lab="enzyme"] .researcher-nav button[aria-current=step]{background:#476f5c;color:#fff;box-shadow:none}
+body[data-science-lab="enzyme"] .researcher-welcome{grid-template-columns:minmax(0,1.25fr) minmax(0,.8fr);min-height:0;background:#fffef9;border:1px solid #d8dfce;box-shadow:0 5px 0 #e9eadc;border-radius:24px}
+body[data-science-lab="enzyme"] .researcher-welcome-copy{background:#fffef9;padding:28px}
+body[data-science-lab="enzyme"] .researcher-welcome-copy:after{display:none}
+body[data-science-lab="enzyme"] .researcher-welcome h2{font-size:clamp(1.8rem,3vw,2.5rem);color:#243d4b}
+body[data-science-lab="enzyme"] .researcher-promise{background:#eef2e5;border:1px solid #c9d6bd;border-left:4px solid #8ba48a;box-shadow:none;gap:3px;margin:12px 0}
+body[data-science-lab="enzyme"] .researcher-promise b{color:#395744}
+body[data-science-lab="enzyme"] .researcher-guess{color:#59634d;border-color:#c9d6bd}
+body[data-science-lab="enzyme"] .researcher-kit span{display:inline-flex;align-items:center;gap:5px;border:1px solid #d8dfce;border-radius:9px;box-shadow:none;padding:4px 8px;font-size:.8rem}
+.cute-icon{display:inline-block;width:30px;height:30px;flex-shrink:0;vertical-align:middle;color:#56765b}
+body[data-science-lab="enzyme"] .cute-scene{border:0;background:#e9eedf;overflow:hidden}
+body[data-science-lab="enzyme"] .cute-scene .room{opacity:.7}
+body[data-science-lab="enzyme"] .cute-scene .doc{filter:drop-shadow(3px 5px 0 #ffffffa0)}
+body[data-science-lab="enzyme"] .cute-scene .researcher-bubble{border-color:#93ae8d;background:#fffef9;box-shadow:0 4px 0 #cdd9c7;color:#344e41}
+body[data-science-lab="enzyme"] .researcher-coach{background:#f1f5e9;border:1px solid #b7c8aa;box-shadow:none;grid-template-columns:70px 1fr;padding:10px 16px}
+body[data-science-lab="enzyme"] .researcher-coach img{width:64px;height:106px;object-fit:contain}
+body[data-science-lab="enzyme"] .missions button{border:1px solid #c9d6bd;background:#f4f6eb;color:#395744;box-shadow:0 3px 0 #e3e9d9}
+body[data-science-lab="enzyme"] .researcher-notebook-intro{background:#f4efe2;border:1px solid #d9ceb5;border-left:4px solid #b97f69;box-shadow:none}
+.cute-concepts{margin:12px 0 16px;padding:12px;background:#f5f4e9;border:1px dashed #c6cdb6;border-radius:16px}
+.cute-section-label{display:flex;align-items:center;gap:6px;font-weight:750;font-size:.85rem;color:#45604a;margin-bottom:8px}
+.cute-section-label .cute-icon{width:24px;height:24px}
+.cute-concept-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cute-concept{margin:0;min-width:0;background:#edf3f2;border-radius:12px;padding:9px 6px;text-align:center}
+.cute-concept.warm{background:#e9f0df}.cute-concept.hot{background:#f7e7de}
+.cute-molecule{position:relative;height:76px;max-width:120px;margin:auto}
+.cute-enzyme{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:90px;height:66px;object-fit:contain;max-width:100%}
+.cute-substrate{position:absolute;width:28px;height:20px;object-fit:contain;top:0;left:calc(50% - 14px)}
+.warm .cute-substrate{top:12px}.hot .cute-substrate{left:auto;right:2px;top:0;transform:rotate(12deg)}
+.cute-concept b{display:block;font-size:.94rem;color:#243d4b;margin:7px 0 3px}.cute-concept p{margin:0;font-size:.8rem;line-height:1.65;color:#4c6058}
+.cute-caption{font-size:.75rem;line-height:1.65;color:#53665f;margin:10px 0 0}
+.cute-guide{display:grid;grid-template-columns:85px minmax(0,1fr);gap:12px;align-items:center;margin:20px 0 4px;padding:12px 15px;background:#f7eee4;border:1px solid #e3cbbc;border-radius:18px;color:#344b4a}
+.cute-guide img{width:85px;height:140px;object-fit:contain}.cute-guide h3{font-size:1.05rem;line-height:1.5;margin:6px 0}.cute-guide p{font-size:.9rem;line-height:1.75;margin:0}.cute-start{max-width:650px;background:#fffef9}.cute-check{margin:0 0 20px;background:#f1f5e9;border-color:#c9d6bd}.cute-note{margin:0 0 20px}
+/* Keep the proven welcome geometry and dynamic speech-tail alignment. */
+@media(max-width:850px){
+ body[data-science-lab="enzyme"] .researcher-welcome{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+ body[data-science-lab="enzyme"] .panel{padding:16px;border-radius:18px}
+ body[data-science-lab="enzyme"] .researcher-welcome{grid-template-columns:1fr}
+ body[data-science-lab="enzyme"] .researcher-welcome-copy{padding:18px}
+ body[data-science-lab="enzyme"] .researcher-coach{grid-template-columns:52px minmax(0,1fr);gap:9px;padding:9px 12px}
+ body[data-science-lab="enzyme"] .researcher-coach img{width:50px;height:92px}
+ body[data-science-lab="enzyme"] .researcher-coach p{font-size:.9rem}
+ .cute-concepts{padding:9px}.cute-concept-grid{gap:5px}.cute-concept{padding:7px 4px}.cute-concept b{font-size:.88rem}.cute-concept p{font-size:.78rem}.cute-molecule{height:65px}.cute-enzyme{height:56px;width:78px}.cute-substrate{width:23px;height:17px;left:calc(50% - 11.5px)}
+ .cute-guide{grid-template-columns:62px minmax(0,1fr);gap:9px;padding:12px}.cute-guide img{width:62px;height:110px}.cute-guide h3{font-size:1rem}.cute-guide p{font-size:.88rem}
+ /* Preserve accepted diagram zoom and independent, wrapping checkbox layout. */
+ body[data-science-lab="enzyme"] .observation .stage.is-zoomed svg{width:660px;min-width:660px;max-width:none}
+}
+@media print{
+ body[data-science-lab="enzyme"]{background:#fff!important;color:#000!important}
+ .cute-guide,.cute-concepts,.cute-scene,.cute-icon{display:none!important}
+ body[data-science-lab="enzyme"] .panel{background:#fff!important;box-shadow:none;border:0}
+ body[data-science-lab="enzyme"] .meter,body[data-science-lab="enzyme"] .meter strong{background:#fff!important;color:#000!important;border-color:#000!important;box-shadow:none}
+}
+
+/* Match legacy high-specificity paint rules without touching its runtime. */
+body[data-science-lab="enzyme"] .researcher-welcome{border-color:#c9d6bd!important}
+body[data-science-lab="enzyme"] .missions button{background:#f4f6eb!important}
+body[data-science-lab="enzyme"] .researcher-kit{display:flex}
+body[data-science-lab="enzyme"] .researcher-welcome h2{background:none;padding-bottom:0}
+body[data-science-lab="enzyme"] .researcher-coach{border-radius:18px}
+body[data-science-lab="enzyme"] #add-record:not(:disabled){background:#e4eee2!important;border-color:#8ba48a!important;color:#2e5140!important}
+@media print{body[data-science-lab="enzyme"] .researcher-kit{display:none}}
+/* Zoom is a screen affordance: always fit the scientific figure on paper. */
+@media print{
+ body[data-science-lab="enzyme"] .observation .stage.is-zoomed{overflow:visible;max-height:none}
+ body[data-science-lab="enzyme"] .observation .stage.is-zoomed svg{width:100%;min-width:0;max-width:100%;height:auto}
+}

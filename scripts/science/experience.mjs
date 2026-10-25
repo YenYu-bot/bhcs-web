@@ -29,6 +29,11 @@ export function enhanceLessons(root,firstBatch,batch2){
    '在「你的解釋」填入：我只改了＿＿，讀值從＿＿變成＿＿，所以＿＿。保存兩筆，再做三題檢核。'
   ],['#task-list','#experiment','#quiz'],predictionFree);
   html=block(html,'science-experience-style',`<style>${css}</style>`,'</head>');
+  // Only the enzyme lesson receives the illustrated presentation and mobile fallback.
+  if(item.id==='enzyme'){
+   html=block(html,'enzyme-presentation-style','<meta name="color-scheme" content="only light"><link rel="stylesheet" href="../../assets/enzyme-cute.css?v=20261025-3">','</head>');
+   html=block(html,'enzyme-presentation-script','<script src="../../assets/enzyme-cute.js?v=20261025-2" defer></script>','</body>');
+  }
   const lesson=inquiry[item.id];if(!lesson)throw Error('Missing inquiry lesson '+item.id);
   const study=`<details class="inquiry-guide" id="inquiry-guide"><summary>本課比較任務：固定什麼、只改什麼？</summary><dl>${lesson.slice(0,4).map((s,i)=>`<div><dt>${['保持不變','只改一個條件','記錄證據','完成標準'][i]}</dt><dd>${escape(s)}</dd></div>`).join('')}</dl><label for="study-note">用自己的話解釋（可選填，勿填姓名）</label><textarea id="study-note" rows="3" maxlength="1000" placeholder="我固定了＿＿，只改＿＿；觀察到＿＿，我的解釋是＿＿。"></textarea><details class="teacher-plan"><summary>教師帶領：15 分鐘比較活動</summary><ol><li>3 分鐘：讀「保持不變」與「只改一個條件」，${predictionFree?'確認這次要比較什麼。':'讓學生先說預測理由。'}</li><li>7 分鐘：完成兩筆觀察。${escape(lesson[4])}</li><li>5 分鐘：同學交換證據，以「完成標準」檢查解釋，再做頁面檢核。</li></ol><p>若學生仍卡住：先請他指著畫面讀出一個數值，再說另一組如何不同，不必一次背出全部術語。</p></details></details><fieldset class="study-checks"><legend>我的自學進度（自己確認，不代表測驗成績）</legend>${(predictionFree?['已完成第一筆觀察或說出目前看到什麼','已完成兩組比較','能引用證據解釋差異']:['已寫下預測或說出理由','已完成兩組比較','能引用證據解釋差異']).map((s,i)=>`<label><input type="checkbox" data-study-step="${i}">${s}</label>`).join('')}<p id="study-progress" role="status" aria-live="polite">已確認 0／3 項</p></fieldset><div class="study-storage"><span id="study-save-status">進度與筆記只儲存在這台瀏覽器。</span><button type="button" id="study-clear">清除自學進度與筆記</button></div>`;
   guide=guide.replace('</aside>',study+'</aside>');

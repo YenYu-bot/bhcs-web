@@ -553,7 +553,7 @@ export function diagram(id,s,r){
   const G=(x0,y0,w,h,xmin,xmax,f,col,label)=>{const pts=[];for(let i=0;i<=120;i++){const x=xmin+(xmax-xmin)*i/120;pts.push(num(x0+w*i/120,1)+','+num(y0-h*Math.min(1,f(x)),1))}return `<path d="M${pts.join(' L')}" fill="none" stroke="${col}" stroke-width="3"/>`};
   out+=line(60,200,290,200,ink)+line(60,200,60,70,ink)+text(60,60,'活性—溫度（pH '+s.ph+'）',13)+text(296,204,'°C',12)+G(60,200,230,120,0,80,T=>tfx(T)*pfx(s.ph,opt),'#d97b11');
   for(const T of [0,37,60,80])out+=`<text x="${num(60+230*T/80,1)}" y="216" font-size="11" text-anchor="middle">${T}</text>`;
-  out+=`<rect x="${num(60+230*48/80,1)}" y="70" width="${num(230*20/80,1)}" height="130" fill="#b54a5b" opacity="0.08"/>`+circle(num(60+230*s.temp/80,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b');
+  out+=circle(num(60+230*s.temp/80,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b');
   out+=line(360,200,630,200,ink)+line(360,200,360,70,ink)+text(360,60,'活性—pH（'+s.temp+'°C）',13)+text(636,204,'pH',12)+G(360,200,270,120,1,13,p=>tfx(s.temp)*pfx(p,7),'#2f6fb2')+G(360,200,270,120,1,13,p=>tfx(s.temp)*pfx(p,2),'#087b78');
   for(const p of [1,2,7,13])out+=`<text x="${num(360+270*(p-1)/12,1)}" y="216" font-size="11" text-anchor="middle">${p}</text>`;
   out+=circle(num(360+270*(s.ph-1)/12,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b')+text(520,86,'藍＝唾液澱粉酶',12)+text(520,102,'綠＝胃蛋白酶',12);
@@ -562,7 +562,7 @@ export function diagram(id,s,r){
   if(ENZ){if(!r.den)out+=`<g data-enzyme="normal">`+prop('prop-enzyme-normal',192,ey-44,116,84)+prop('prop-substrate',230,ey-50,40,26)+'</g>'+text(320,ey,'酵素（藍）與受質（黃）形狀吻合',13);else out+=`<g data-enzyme="denatured">`+prop('prop-enzyme-denatured',192,ey-46,116,90)+'</g>'+prop('prop-substrate',330,ey-58,40,26)+text(380,ey,'高溫變性：形狀改變，受質對不上',13)}
   else if(!r.den)out+=`<path data-enzyme="normal" d="M200,${ey-40} L300,${ey-40} L300,${ey+30} L200,${ey+30} L200,${ey} L230,${ey} L240,${ey-18} L260,${ey-18} L270,${ey} L200,${ey} Z" fill="#dce8f5" stroke="${ink}" stroke-width="2"/><path d="M232,${ey-2} L241,${ey-16} L259,${ey-16} L268,${ey-2} Z" fill="#f6c453" stroke="${ink}" stroke-width="2"/>`+text(320,ey,'酵素（藍）與受質（黃）形狀吻合',13);
   else out+=`<path data-enzyme="denatured" d="M200,${ey-40} Q260,${ey-70} 300,${ey-30} Q320,${ey+10} 290,${ey+30} Q240,${ey+50} 205,${ey+20} Q180,${ey} 200,${ey-40} Z" fill="#e4d6d8" stroke="${ink}" stroke-width="2"/><path d="M330,${ey-22} L339,${ey-36} L357,${ey-36} L366,${ey-22} Z" fill="#f6c453" stroke="${ink}" stroke-width="2"/>`+text(380,ey,'高溫變性：形狀改變，受質對不上',13);
-  out+=text(20,32,'相對活性 '+num(r.act*100,1)+'%'+(r.den?'（已變性）':''),16)+text(20,392,'紅點＝目前條件　淡紅區＝60°C 以上變性　曲線為教學模型',12);break;
+  out+=text(20,32,'相對活性 '+num(r.act*100,1)+'%'+(r.den?'（已變性）':''),16)+text(20,392,'紅點＝本份樣本；曲線＝新樣本參考（不代表冷卻恢復）',12);break;
  }
  case 'tides':{
   // 上：俯視圖（太陽在右、月球依月齡繞地球，海水沿地月方向拉長）；下：48 小時潮高曲線與目前時刻。
