@@ -9,4 +9,8 @@ const marker=/\/\/ microscope-drawing:start[\s\S]*?\/\/ microscope-drawing:end/;
 const block='// microscope-drawing:start\n'+code+'\n// microscope-drawing:end';
 if(marker.test(html))html=html.replace(marker,()=>block);
 else{const start=html.indexOf('function drawOnion()'),end=html.indexOf('function movementText()');if(start<0||end<start)throw Error('Missing microscope drawing anchors');html=html.slice(0,start)+block+'\n'+html.slice(end);}
+const learning=fs.readFileSync(path.join(root,'scripts/science/microscope-learning.js'),'utf8');
+const learningMarker=/\/\/ microscope-learning:start[\s\S]*?\/\/ microscope-learning:end/;
+if(!learningMarker.test(html))throw Error('Missing microscope learning anchors');
+html=html.replace(learningMarker,()=> '// microscope-learning:start\n'+learning+'\n// microscope-learning:end');
 fs.writeFileSync(file,html);console.log('Built calibrated microscope illustrations');

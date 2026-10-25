@@ -28,6 +28,7 @@ function microscope(){document.body.classList.add('researcher-ui');header('scien
  bench.append(coach('從 4× 物鏡開始。影像清楚之後，拖動下方玻片找出移動方向，再換高倍比較。','拖曳玻片時看上方視野；觀察完成後，可直接在控制區收進研究手冊。'));
  const exp=old.find(x=>x.id==='experiment'),spec=old.find(x=>x.id==='specimens'),obs=old.find(x=>x.id==='observe'),record=old.find(x=>x.id==='record'),quiz=old.find(x=>x.id==='quiz'),guide=old.find(x=>x.classList&&x.classList.contains('lesson-route')),teaching=old.find(x=>x.matches&&x.matches('[aria-label="教材使用指南"]')),missions=old.find(x=>x.querySelector?.('.mission[data-mission]'));
  // Keep the original task nodes and their preset listeners; they live beside #specimens.
+ const learning=old.find(x=>x.id==='micro-learning');if(learning)bench.append(learning);
  if(missions){const buttons=qa('.mission',missions),tb=q('.missions',missions);if(tb){tb.classList.add('researcher-taskbar');tb.setAttribute('role','group');tb.setAttribute('aria-label','顯微鏡任務卡')}const select=chosen=>buttons.forEach(b=>{b.classList.toggle('is-current',b===chosen);b.setAttribute('aria-pressed',String(b===chosen))});select(null);buttons.forEach(b=>b.addEventListener('click',()=>select(b)));const txt=q('#missionText',missions);if(txt){txt.textContent='先選擇一張任務卡，或用目前的字母 e 玻片自由觀察。';txt.setAttribute('role','status');txt.setAttribute('aria-live','polite')}bench.append(missions)}
  if(exp)bench.append(exp);if(obs)bench.append(obs);if(spec){const reference=document.createElement('details'),summary=document.createElement('summary');reference.className='card section';summary.textContent='標本對照｜三種細胞有什麼不同？';summary.style.cssText='min-height:44px;padding:10px 0;box-sizing:border-box;cursor:pointer';reference.append(summary,spec);bench.append(reference)}
 
@@ -206,6 +207,7 @@ alignWelcomeSpeech();
  function finish(){if(microscope){revision++;clearInterval(pollTimer)}active=false;phase='';clear();try{localStorage.setItem(key,'done')}catch(_){}render()}
  controls.forEach(e=>['input','change'].forEach(ev=>e.addEventListener(ev,()=>{if(microscope){invalidateMicroscope();return}if(active&&phase==='set'&&focusOk(steps[gi]))toObserve()})));
  if(microscope){document.addEventListener('microscope-observation-change',invalidateMicroscope);$('level')?.addEventListener('change',invalidateMicroscope);$('reset')?.addEventListener('click',invalidateMicroscope);$('autofocus')?.addEventListener('click',invalidateMicroscope);document.querySelectorAll('.mission').forEach(b=>b.addEventListener('click',()=>{if(active)start(0)}));} 
+ if(microscope)document.addEventListener('microscope-learning-mode',event=>{revision++;clearInterval(pollTimer);active=false;phase='';clear();box.hidden=event.detail?.active===true;if(!box.hidden)render();});
  const runUsable=()=>!runBtn.disabled&&runBtn.offsetParent!==null&&getComputedStyle(runBtn).visibility!=='hidden';
  function waitRead(){phase='wait';render();mark();const st=steps[gi];let last=null,same=0,tries=0;clearInterval(pollTimer);
   pollTimer=setInterval(()=>{const t=(($(st.read)||{}).textContent||'').trim();tries++;if(t&&t!=='—'&&t===last)same++;else same=0;last=t;if(same>=2||tries>60){clearInterval(pollTimer);phase='check';render();mark()}},300)}

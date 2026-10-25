@@ -190,7 +190,7 @@ runTests();syncControls();drawCurve();drawParticles();updateTransfer();renderRec
 <!-- science-events:start -->
 <script src="../assets/science-events.js" defer></script>
 <!-- science-events:end -->
-<script src="../assets/researcher-lab.js?v=f6def1b80e6d" defer></script>
+<script src="../assets/researcher-lab.js?v=2ea94c20b677" defer></script>
 <script type="application/json" id="lab-guide">{"run": "begin", "steps": [{"say": "先看預設：100 g 的冰，用 250 W 加熱到全部變成水蒸氣。", "read": "totalTimeValue", "q": "全程需要多久？", "options": [["20 分 38 秒", "20 分 38 秒"], ["10 分 19 秒", "10 分 19 秒"], ["41 分 15 秒", "41 分 15 秒"]], "hint": "看讀值「全程時間」。", "explain": "加熱曲線上有兩段平台：熔化與沸騰時溫度不變。"}, {"say": "只把質量加倍：200 g。", "values": {}, "focus": {"id": "mass", "value": "200", "label": "200 g"}, "read": "totalTimeValue", "q": "全程需要多久？", "options": [["20 分 38 秒", "20 分 38 秒"], ["10 分 19 秒", "10 分 19 秒"], ["41 分 15 秒", "41 分 15 秒"]], "hint": "質量加倍，需要的熱量呢？", "explain": "質量加倍，需要的熱量加倍，時間也加倍。"}, {"say": "質量回到 100 g，把功率加倍：500 W。", "values": {}, "focus": {"id": "power", "value": "500", "label": "500 W"}, "read": "totalTimeValue", "q": "全程需要多久？", "options": [["20 分 38 秒", "20 分 38 秒"], ["10 分 19 秒", "10 分 19 秒"], ["41 分 15 秒", "41 分 15 秒"]], "hint": "每秒供給的熱量加倍。", "explain": "功率加倍，同樣的熱量只要一半的時間。"}, {"say": "功率回到 250 W，改成冷卻（從水蒸氣冷卻成冰）。", "values": {}, "focus": {"id": "direction", "value": "cooling", "label": "冷卻"}, "read": "totalTimeValue", "q": "冷卻全程需要多久？", "options": [["20 分 38 秒", "20 分 38 秒"], ["10 分 19 秒", "10 分 19 秒"], ["41 分 15 秒", "41 分 15 秒"]], "hint": "放出的熱和加熱時吸收的熱相比？", "explain": "冷卻放出的熱和加熱吸收的熱一樣多，所以時間相同。"}]}</script>
 <!-- science-study-script:start -->
 <script>(() => {
