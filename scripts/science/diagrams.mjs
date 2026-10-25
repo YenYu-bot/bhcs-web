@@ -553,7 +553,7 @@ export function diagram(id,s,r){
   const G=(x0,y0,w,h,xmin,xmax,f,col,label)=>{const pts=[];for(let i=0;i<=120;i++){const x=xmin+(xmax-xmin)*i/120;pts.push(num(x0+w*i/120,1)+','+num(y0-h*Math.min(1,f(x)),1))}return `<path d="M${pts.join(' L')}" fill="none" stroke="${col}" stroke-width="3"/>`};
   out+=line(60,200,290,200,ink)+line(60,200,60,70,ink)+text(60,60,'活性—溫度（pH '+s.ph+'）',13)+text(296,204,'°C',12)+G(60,200,230,120,0,80,T=>tfx(T)*pfx(s.ph,opt),'#d97b11');
   for(const T of [0,37,60,80])out+=`<text x="${num(60+230*T/80,1)}" y="216" font-size="11" text-anchor="middle">${T}</text>`;
-  out+=`<rect x="${num(60+230*48/80,1)}" y="70" width="${num(230*20/80,1)}" height="130" fill="#b54a5b" opacity="0.08"/>`+circle(num(60+230*s.temp/80,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b');
+  out+=circle(num(60+230*s.temp/80,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b');
   out+=line(360,200,630,200,ink)+line(360,200,360,70,ink)+text(360,60,'活性—pH（'+s.temp+'°C）',13)+text(636,204,'pH',12)+G(360,200,270,120,1,13,p=>tfx(s.temp)*pfx(p,7),'#2f6fb2')+G(360,200,270,120,1,13,p=>tfx(s.temp)*pfx(p,2),'#087b78');
   for(const p of [1,2,7,13])out+=`<text x="${num(360+270*(p-1)/12,1)}" y="216" font-size="11" text-anchor="middle">${p}</text>`;
   out+=circle(num(360+270*(s.ph-1)/12,1),num(200-120*Math.min(1,r.tf*r.pf),1),6,'#b54a5b')+text(520,86,'藍＝唾液澱粉酶',12)+text(520,102,'綠＝胃蛋白酶',12);

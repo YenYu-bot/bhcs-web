@@ -11,6 +11,7 @@ async function check(enhanced){
  assert.equal(d.querySelectorAll('.cute-concepts').length,1);assert.equal(d.querySelectorAll('.cute-concept').length,3);
  assert.equal(d.querySelectorAll('.cute-key-lesson').length,1);assert.equal(d.querySelectorAll('.cute-check').length,1);
  assert.equal(d.querySelectorAll('.cute-start').length,enhanced?0:1);
+ assert.equal(d.querySelectorAll('.cute-scene-label').length,0,'remove obscured decorative label rather than covering teacher');
  const state=JSON.stringify(w.history.state),len=w.history.length,local=JSON.stringify({...w.localStorage}),session=JSON.stringify({...w.sessionStorage}),controls=[...d.querySelectorAll('input,select,textarea')].map(x=>[x.id,x.value,x.checked]);
  w.eval(fs.readFileSync(root+'/assets/enzyme-cute.js','utf8'));w.eval(fs.readFileSync(root+'/assets/enzyme-cute.js','utf8'));
  assert.equal(JSON.stringify(w.history.state),state);assert.equal(w.history.length,len);assert.equal(JSON.stringify({...w.localStorage}),local);assert.equal(JSON.stringify({...w.sessionStorage}),session);
@@ -22,12 +23,13 @@ async function check(enhanced){
  const zoom=d.querySelector('.enzyme-diagram-zoom'),stage=d.querySelector('#diagram');
  assert.equal(d.querySelectorAll('.researcher-zoom,.enzyme-diagram-zoom').length,1,'one zoom after repeated script evaluation');
  assert.equal(zoom.getAttribute('aria-controls'),'diagram');
+ const initialZoomLabel=zoom.textContent;assert.equal(initialZoomLabel,enhanced?'🔍 放大圖解':'放大圖解（可左右滑動）');
  assert.equal(w.getComputedStyle(d.querySelector('#lab-explore').parentElement).whiteSpace,'normal');
  assert.equal(w.getComputedStyle(d.querySelector('#lab-explore')).minHeight,'0');
  const beforeZoom=[...d.querySelectorAll('input,select,textarea')].map(x=>[x.id,x.value,x.checked]);
  for(let i=0;i<3;i++){
   zoom.click();assert(stage.classList.contains('is-zoomed'));assert.equal(zoom.getAttribute('aria-pressed'),'true');
-  zoom.click();assert(!stage.classList.contains('is-zoomed'));assert.equal(zoom.getAttribute('aria-pressed'),'false');
+  zoom.click();assert(!stage.classList.contains('is-zoomed'));assert.equal(zoom.getAttribute('aria-pressed'),'false');assert.equal(zoom.textContent,initialZoomLabel,'zoom label returns consistently to its owner-provided initial text');
  }
  assert.deepEqual([...d.querySelectorAll('input,select,textarea')].map(x=>[x.id,x.value,x.checked]),beforeZoom);
  assert(d.querySelector('script[src*="science-events.js"]'),'retain official analytics adapter');
@@ -40,6 +42,9 @@ async function check(enhanced){
  const set=(id,value)=>{d.getElementById(id).value=value;d.getElementById(id).dispatchEvent(new w.Event('input',{bubbles:true}))};
  set('ctl-temp',70);d.querySelector('#run').click();set('ctl-temp',37);d.querySelector('#run').click();assert(d.querySelector('#readouts').textContent.includes('相對活性0%'));
  d.querySelector('#reset').click();d.querySelector('#run').click();assert(d.querySelector('#readouts').textContent.includes('相對活性100%'));
+ assert.equal(d.querySelectorAll('#diagram rect[fill="#b54a5b"][opacity="0.08"]').length,0,'remove unexplained temperature band');
+ const spec=fs.readFileSync(root+'/docs/science-enzyme-spec.md','utf8');assert(spec.includes('test_enzyme_sample_history.cjs'));assert(spec.includes('test_enzyme_presentation.cjs'));
+ for(const f of fs.readdirSync(root+'/docs').filter(f=>/^science-.*-spec\.md$/.test(f)&&f!=='science-enzyme-spec.md'))assert(!fs.readFileSync(root+'/docs/'+f,'utf8').includes('test_enzyme_sample_history.cjs'),'enzyme tests apply only to enzyme spec');
  assert.deepEqual(errors,[]);console.log('PASS '+(enhanced?'enhanced':'fallback')+': illustrated lesson/teacher placement, 3 concepts, local assets, unique IDs, idempotence, no history/storage/control mutation, retained irreversible sample model, wrapping mobile control and single idempotent zoom');w.close();
 }
 (async()=>{await check(true);await check(false)})().catch(e=>{console.error(e);process.exitCode=1});

@@ -75,7 +75,7 @@ for(const t of batch2){
  const ordered=labHTML.replace(/(<section class="layout"[^>]*>)(<div class="panel observation">[\s\S]*?)(<div class="panel controls">[\s\S]*?)(<\/section><section id="records-section")/, '$1$3$2$4');
  if(ordered===labHTML)throw Error('Missing controls/observation layout anchor: '+t.id);
  write(labFile,ordered);
- write('docs/science-'+t.id+'-spec.md',`# ${t.title}\n\n${t.description}\n\n年段：${t.grade}（依各校版本調整）。建議${t.minutes}分鐘。\n\n## 學習目標\n\n${t.goals.map(x=>'- '+x).join('\n')}\n\n## 模型\n\n${t.formula}\n\n## 簡化限制\n\n${t.limits}\n\n## 引導任務\n\n${t.tasks.map(x=>'- '+x.title+'：'+x.prompt).join('\n')}\n\n## 驗收\n\n典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。實體裝置及教師試用另見 science-acceptance.md，不宣稱自動完成。\n\n來源：[${t.source[0]}](${t.source[1]})\n`);
+ write('docs/science-'+t.id+'-spec.md',`# ${t.title}\n\n${t.description}\n\n年段：${t.grade}（依各校版本調整）。建議${t.minutes}分鐘。\n\n## 學習目標\n\n${t.goals.map(x=>'- '+x).join('\n')}\n\n## 模型\n\n${t.formula}\n\n## 簡化限制\n\n${t.limits}\n\n## 引導任務\n\n${t.tasks.map(x=>'- '+x.title+'：'+x.prompt).join('\n')}\n\n## 驗收\n\n典型／邊界／零值由 scripts/test_science_models.mjs 驗證；頁面完整流程由 scripts/test_science_ui.cjs 驗證。${t.id==='enzyme'?'酵素樣本歷程與教學回饋由 scripts/test_enzyme_sample_history.cjs 驗證；酵素專用呈現與放大控制由 scripts/test_enzyme_presentation.cjs 驗證。':''}實體裝置及教師試用另見 science-acceptance.md，不宣稱自動完成。\n\n來源：[${t.source[0]}](${t.source[1]})\n`);
 }
 // Render subject cards while retaining all legacy direct URLs.
 const junior=all.filter(t=>t.subject!=='國小自然');

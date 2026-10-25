@@ -55,7 +55,6 @@ body[data-science-lab="enzyme"] .cute-scene{border:0;background:#e9eedf;overflow
 body[data-science-lab="enzyme"] .cute-scene .room{opacity:.7}
 body[data-science-lab="enzyme"] .cute-scene .doc{filter:drop-shadow(3px 5px 0 #ffffffa0)}
 body[data-science-lab="enzyme"] .cute-scene .researcher-bubble{border-color:#93ae8d;background:#fffef9;box-shadow:0 4px 0 #cdd9c7;color:#344e41}
-.cute-scene-label{position:absolute;left:14px;bottom:14px;max-width:50%;padding:5px 9px;background:#fffef9ed;color:#405645;border-radius:7px;font-size:.7rem;letter-spacing:.04em;transform:rotate(-3deg)}
 body[data-science-lab="enzyme"] .researcher-coach{background:#f1f5e9;border:1px solid #b7c8aa;box-shadow:none;grid-template-columns:70px 1fr;padding:10px 16px}
 body[data-science-lab="enzyme"] .researcher-coach img{width:64px;height:106px;object-fit:contain}
 body[data-science-lab="enzyme"] .missions button{border:1px solid #c9d6bd;background:#f4f6eb;color:#395744;box-shadow:0 3px 0 #e3e9d9}

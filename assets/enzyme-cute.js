@@ -10,7 +10,6 @@
   stage.after(button);
  }
  button.classList.add('enzyme-diagram-zoom');button.setAttribute('aria-controls','diagram');
- if(!stage.classList.contains('is-zoomed'))button.textContent='放大圖解（可左右滑動）';
 }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupEnzymeZoom,{once:true});else setupEnzymeZoom();
 })();
@@ -26,7 +25,7 @@
   const welcome=document.querySelector('.researcher-welcome');
   if(welcome){
    const kit=welcome.querySelector('.researcher-kit');if(kit)kit.innerHTML='<span>'+icon('tube')+'改變條件</span><span>'+icon('thermo')+'讀取觀察</span><span>'+icon('note')+'留下證據</span>';
-   const scene=welcome.querySelector('.researcher-scene');if(scene){scene.classList.add('cute-scene');const label=document.createElement('span');label.className='cute-scene-label';label.textContent='酵素觀察小記 · ENZYME STUDY';scene.append(label)}
+   const scene=welcome.querySelector('.researcher-scene');if(scene)scene.classList.add('cute-scene')
   }else{
    const hero=document.querySelector('.hero .shell');if(hero)hero.append(guide('cute-start','doc-point','今天，一起看懂酵素的變化。','先改一個條件，再看圖像與讀值。加熱之後，記得追蹤同一份樣本。'));
   }

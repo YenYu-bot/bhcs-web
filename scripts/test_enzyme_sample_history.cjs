@@ -55,4 +55,23 @@ test('guide includes and completes same-sample cooling before changing enzyme; r
  x.run();clickText('活性高');clickText('下一步 →');x.set('temp',0);x.run();clickText('活性低（可恢復）');clickText('下一步 →');x.set('temp',70);x.run();clickText('已變性');clickText('下一步 →');
  assert.equal(x.$('ctl-temp').value,'37');assert.match(x.run(),/相對活性0%/);clickText('仍已變性');clickText('下一步 →');x.set('enzyme','pepsin');x.run();clickText('活性低');clickText('完成引導，開始自由練習 →');clickText('重看引導（換新樣本）');assert.match(x.run(),/相對活性100%/);x.close();
 });
+test('comparison distinguishes equal controls with changed sample or heat history, without rewriting legacy evidence',()=>{
+ const x=load();x.run();x.record();x.set('temp',70);x.set('temp',37);x.run();x.record();
+ assert.match(x.$('record-comparison').textContent,/目前控制值相同，但樣本／加熱歷程不同/);
+ assert.doesNotMatch(x.$('record-comparison').textContent,/兩筆設定相同/);
+ assert.equal(x.rows()[0].settings.sampleId,x.rows()[1].settings.sampleId);
+ x.$('reset').click();x.run();x.record();assert.match(x.$('record-comparison').textContent,/目前控制值相同，但樣本／加熱歷程不同/);assert.match(x.$('record-comparison').textContent,/不同樣本/);
+ assert.match(x.$('current-conditions').textContent,/酵素種類：唾液澱粉酶/);assert.doesNotMatch(x.$('current-conditions').textContent,/換酵素（新樣本）：/);
+ assert.match(x.$('print-records').textContent,/酵素種類：/);assert.match(x.d.querySelector('label[for="ctl-enzyme"]').textContent,/換酵素（新樣本）/);
+ x.run();x.record();assert.match(x.$('record-comparison').textContent,/兩筆設定相同/);x.close();
+ const legacy={conditions:'舊樣本原始條件',result:'100%',prediction:'',explanation:'既有證據',settings:{temp:37,ph:7,enzyme:'amylase',conc:1}};
+ const y=load({'bhcs-science-v2-enzyme':JSON.stringify([legacy])});y.run();y.record();assert.match(y.$('record-comparison').textContent,/舊紀錄沒有樣本歷程/);assert.equal(y.rows()[0].conditions,legacy.conditions);y.close();
+});
+test('low-temperature guide feedback never promises recovery of an already heat-denatured sample',()=>{
+ const x=load();const clickText=text=>{const b=[...x.d.querySelectorAll('.guide-box button')].find(b=>b.textContent===text);assert.ok(b,text);b.click()};
+ x.run();clickText('活性高');clickText('下一步 →');x.set('temp',70);x.set('temp',0);assert.match(x.run(),/已變性/);clickText('已變性');
+ const feedback=x.d.querySelector('.guide-box').textContent;
+ assert.match(feedback,/答對了/);assert.match(feedback,/未曾高溫變性的樣本/);assert.match(feedback,/已高溫變性的同一份樣本則不會恢復/);assert.match(feedback,/換新樣本/);
+ x.$('reset').click();x.set('temp',0);assert.match(x.run(),/沒有變性/);clickText('活性低（可恢復）');assert.match(x.d.querySelector('.guide-box').textContent,/答對了/);x.close();
+});
 console.log(`${passed} enzyme sample-history scenarios passed.`);
