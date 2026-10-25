@@ -191,7 +191,7 @@ runTests();syncLabels();drawLab();sampleChanged();renderRecords();
 <!-- science-events:start -->
 <script src="../assets/science-events.js" defer></script>
 <!-- science-events:end -->
-<script src="../assets/researcher-lab.js?v=69ad1f6755eb" defer></script>
+<script src="../assets/researcher-lab.js?v=f6def1b80e6d" defer></script>
 <script type="application/json" id="lab-guide">{"run": "mix", "steps": [{"say": "先看預設：0.1 M 鹽酸 50 mL 加入 0.1 M 氫氧化鈉 40 mL。", "read": "classValue", "q": "混合後溶液是？", "options": [["酸性", "酸性"], ["中性", "中性"], ["鹼性", "鹼性"]], "hint": "比較 H⁺ 和 OH⁻ 誰比較多。", "explain": "H⁺ 比 OH⁻ 多，中和後仍是酸性。"}, {"say": "把氫氧化鈉加到 50 mL。", "values": {}, "focus": {"id": "baseVolume", "value": "50", "label": "50 mL"}, "read": "classValue", "q": "混合後溶液是？", "options": [["酸性", "酸性"], ["中性", "中性"], ["鹼性", "鹼性"]], "hint": "看讀值「剩餘」。", "explain": "H⁺ 和 OH⁻ 一樣多，恰好中和，pH＝7。"}, {"say": "再加到 60 mL。", "values": {}, "focus": {"id": "baseVolume", "value": "60", "label": "60 mL"}, "read": "classValue", "q": "混合後溶液是？", "options": [["酸性", "酸性"], ["中性", "中性"], ["鹼性", "鹼性"]], "hint": "OH⁻ 是不是變多了？", "explain": "OH⁻ 過量，溶液變成鹼性。"}, {"say": "同樣 60 mL，把指示劑換成酚酞。", "values": {"baseVolume": 60}, "focus": {"id": "indicator", "value": "phenolphthalein", "label": "酚酞"}, "read": "colorValue", "q": "酚酞變成什麼顏色？", "options": [["桃紅色", "桃紅色"], ["無色", "無色"], ["藍紫色", "藍紫色"]], "hint": "看讀值「顏色」。", "explain": "酚酞遇鹼變桃紅色，遇酸或中性是無色。"}]}</script>
 <!-- science-study-script:start -->
 <script>(() => {

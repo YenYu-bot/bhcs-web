@@ -163,7 +163,7 @@ function updateSlideBoard(){
  $('microCoach').replaceChildren();const title=document.createElement('strong'),hint=document.createElement('p');title.textContent=step[0];hint.textContent=step[1];$('microCoach').append(title,hint);
  if(started){const status=$('status'),wasOut=status.dataset.specimenOut==='true';status.dataset.specimenOut=String(!inView);if(!inView){status.className='status warn';status.innerHTML='<strong>試片已移出視野</strong>請將試片往反方向移動，或按「試片回中央」重新定位。';}else if(wasOut){status.className='status good';status.innerHTML='<strong>已重新找到試片</strong>請確認影像清晰，再繼續比較倍率或留下紀錄。';}}
 }
-function moveSlide(x,y){if(!started)return;els.stageX.value=String(Math.round(Math.max(-270,Math.min(270,x))));els.stageY.value=String(Math.round(Math.max(-270,Math.min(270,y))));slideMoved=slideMoved||+els.stageX.value!==0||+els.stageY.value!==0;updateOutputs();if(!slideFrame)slideFrame=(window.requestAnimationFrame||((fn)=>setTimeout(fn,16)))(()=>{slideFrame=0;drawScope()});}
+function moveSlide(x,y){if(!started)return;els.stageX.value=String(Math.round(Math.max(-270,Math.min(270,x))));els.stageY.value=String(Math.round(Math.max(-270,Math.min(270,y))));slideMoved=slideMoved||+els.stageX.value!==0||+els.stageY.value!==0;updateOutputs();if(!slideFrame)slideFrame=(window.requestAnimationFrame||((fn)=>setTimeout(fn,16)))(()=>{slideFrame=0;drawScope()});document.dispatchEvent(new Event('microscope-observation-change'));}
 function installSlideControls(){
  const pad=$('slide-pad');pad.addEventListener('pointerdown',e=>{if(!started||e.button!==0||slideDrag)return;e.preventDefault();slideDrag={id:e.pointerId,x:e.clientX,y:e.clientY,sx:+els.stageX.value,sy:+els.stageY.value,width:Math.max(1,pad.getBoundingClientRect().width)};pad.focus();try{pad.setPointerCapture(e.pointerId)}catch(_){}});
  pad.addEventListener('pointermove',e=>{if(!slideDrag||e.pointerId!==slideDrag.id)return;e.preventDefault();moveSlide(slideDrag.sx+(e.clientX-slideDrag.x)*540/slideDrag.width,slideDrag.sy-(e.clientY-slideDrag.y)*540/slideDrag.width)});
@@ -296,7 +296,7 @@ installSlideControls();runTests();renderRecords();updateOutputs();drawScope();
 <!-- science-events:start -->
 <script src="../assets/science-events.js" defer></script>
 <!-- science-events:end -->
-<script src="../assets/researcher-lab.js?v=69ad1f6755eb" defer></script>
+<script src="../assets/researcher-lab.js?v=f6def1b80e6d" defer></script>
 <script type="application/json" id="lab-guide">{"run": "begin", "steps": [{"say": "先看預設：低倍物鏡（4×）。", "read": "totalValue", "q": "總放大倍率是多少？", "options": [["40×", "40×"], ["100×", "100×"], ["400×", "400×"]], "hint": "總倍率＝目鏡×物鏡。", "explain": "目鏡 10× 乘物鏡 4×，總倍率 40×。"}, {"say": "換成 10× 物鏡。", "values": {}, "focus": {"id": "obj10", "checked": true}, "read": "totalValue", "q": "總放大倍率變成？", "options": [["40×", "40×"], ["100×", "100×"], ["400×", "400×"]], "hint": "看讀值「總倍率」。", "explain": "10×10＝100×。"}, {"say": "同樣 10× 物鏡，看看視野範圍。", "values": {"obj10": true}, "read": "fovValue", "q": "視野直徑是多少？", "options": [["1.8 mm", "1.8 mm"], ["4.5 mm", "4.5 mm"], ["0.45 mm", "0.45 mm"]], "hint": "看讀值「視野直徑」。", "explain": "倍率越高，看到的範圍越小：從 4.5 mm 變成 1.8 mm。"}, {"say": "回到 4× 物鏡，比較視野。", "values": {}, "focus": {"id": "obj4", "checked": true}, "read": "fovValue", "q": "視野直徑是多少？", "options": [["1.8 mm", "1.8 mm"], ["4.5 mm", "4.5 mm"], ["0.45 mm", "0.45 mm"]], "hint": "低倍時看到的範圍比較大還是小？", "explain": "低倍時視野比較大，所以找標本要先用低倍。"}]}</script>
 <!-- science-study-script:start -->
 <script>(() => {

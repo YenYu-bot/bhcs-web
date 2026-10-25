@@ -20,7 +20,28 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
   const source=item.shared?'#add-record':'#addRecord',save=item.shared?'#add-record':'.researcher-bench-record';
   const run=async()=>{await page.locator('#'+item.run).click();if(item.id==='genetics-simulation')await page.locator('#sample').click();if(item.id==='microscope')await page.locator('#autofocus').click();await page.waitForFunction(sel=>!document.querySelector(sel).disabled,source);await settle(page)};
   try{
-   await page.goto(base+'/'+item.file+'?noga=1');await page.locator('[data-start]').click();await run();
+   await page.goto(base+'/'+item.file+'?noga=1');await page.locator('[data-start]').click();
+   if(item.id==='microscope'){
+    assert.ok((await page.locator('#guide-box .guide-skip').boundingBox()).height>=44,'microscope intro skip target is touch-sized');
+    const cards=page.locator('.researcher-taskbar .mission');assert.equal(await cards.count(),4,'all microscope task cards survive enhancement');
+    assert.equal(await page.locator('.mission[aria-pressed="true"]').count(),0,'initial free observation does not falsely select an onion task');
+    assert.ok(await cards.first().evaluate(el=>!!(el.compareDocumentPosition(document.querySelector('#experiment'))&Node.DOCUMENT_POSITION_FOLLOWING)),'task cards precede experiment');
+    for(const [id,specimen,mode,title] of [['onion','onion','basic','任務一'],['compare','cheek','basic','任務二'],['chloroplast','elodea','basic','任務三'],['direction','letter','advanced','任務四']]){
+     const card=page.locator('[data-mission="'+id+'"]');assert.ok(await card.isVisible());await card.click();
+     assert.equal(await page.locator('#specimen').inputValue(),specimen);assert.equal(await page.locator('#level').inputValue(),mode);assert.equal(await page.locator('#obj4').isChecked(),true);
+     assert.equal(await page.locator('.mission[aria-pressed="true"]').count(),1);assert.equal(await card.getAttribute('aria-pressed'),'true');assert.equal(await page.locator('.mission.is-current').getAttribute('data-mission'),id);
+     assert.match(await page.locator('#missionText').textContent(),new RegExp(title));assert.equal(await page.locator('#labControls').evaluate(el=>el.disabled),true,'task selection disables the fieldset');for(const ctl of await page.locator('#labControls input,#labControls button,#labControls select').all())assert.ok(await ctl.isDisabled(),'task controls inherit the disabled fieldset');assert.ok(await page.locator(save).isDisabled());
+     const rect=await card.boundingBox();assert.ok(rect.height>=44&&rect.x>=0&&rect.x+rect.width<=width+2,'task card fits viewport and has a touch-sized target');
+    }
+    await screenshot('task-cards',page.locator('.researcher-taskbar').locator('..'));
+    const reference=page.locator('details:has(#specimens)');assert.equal(await reference.getAttribute('open'),null);assert.ok((await reference.locator('summary').boundingBox()).height>=44,'specimen reference toggle is touch-sized');await reference.locator('summary').click();assert.ok(await page.locator('#specimens').isVisible());assert.equal(await page.locator('#specimens .fact').count(),3);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'expanded specimen reference fits viewport');await screenshot('specimen-reference',reference);await reference.locator('summary').click();
+    await page.locator('#level').selectOption('basic');await page.locator('#begin').click();await page.locator('#guide-box .guide-options').waitFor();await page.locator('#guide-box .guide-options button').filter({hasText:/^40×$/}).click();
+    assert.ok(await page.locator('#guide-box button').filter({hasText:'下一步'}).isVisible());await page.locator('#slide-pad').focus();await page.keyboard.press('ArrowRight');
+    assert.equal(await page.locator('#guide-box .guide-options').count(),0,'real slide keyboard movement invalidates guide evidence');assert.equal(await page.locator('#guide-box button').filter({hasText:'下一步'}).count(),0);
+    await page.locator('#guide-box .guide-skip').click();await page.locator('#autofocus').click();await page.locator('#obj40').check();assert.equal(await page.locator('#totalValue').textContent(),'400×');await page.locator('#guide-box .guide-replay').click();assert.equal(await page.locator('#obj4').isChecked(),true,'replay restores actual low-power condition');
+    await page.locator('#reset').click();await page.locator('#level').selectOption('basic');
+   }
+   await run();
    assert.ok(await page.locator(save).isVisible(),'save action is present in the bench');assert.equal(await page.locator(save).isDisabled(),false);
    if(item.shared){const stage=page.locator('#diagram');result.diagram=await stage.evaluate(el=>({height:el.clientHeight,scrollHeight:el.scrollHeight}));assert.ok(result.diagram.scrollHeight<=result.diagram.height+3,'complete diagram has no nested vertical scroll');await stage.evaluate(el=>scrollTo(0,scrollY+el.getBoundingClientRect().top-86));await screenshot('diagram',stage);if(result.diagram.height>600){await stage.evaluate(el=>scrollTo(0,scrollY+el.getBoundingClientRect().bottom-innerHeight+24));await screenshot('diagram-end')}await page.locator('#explanation-input').fill('第一筆：依據圖像與數值記錄。')}
    else await screenshot('save',page.locator('.researcher-save'));
@@ -52,3 +73,4 @@ const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestA
  }}finally{await browser.close();server.close()}
  const failed=results.filter(r=>!r.pass);console.log(JSON.stringify({checked:results.length,failed:failed.length}));if(failed.length)process.exitCode=1;
 })().catch(e=>{console.error(e);server.close();process.exitCode=1});
+
