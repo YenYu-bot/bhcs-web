@@ -176,7 +176,15 @@ alignWelcomeSpeech();
  // Microscope evidence belongs to a specific operation, not a cached answer string.
  const evidence=()=>JSON.stringify([controls.map(e=>[e.id,e.type==='radio'||e.type==='checkbox'?e.checked:e.value]),$('level')?.value,$('scopeCover')?.hidden,($(steps[gi]?.read)||{}).textContent]);
  const fresh=(stamp,snapshot)=>!microscope||(active&&phase==='check'&&revision===stamp&&focusOk(steps[gi])&&$('scopeCover')?.hidden&&evidence()===snapshot);
- function invalidateMicroscope(){if(!microscope||!active)return;revision++;clearInterval(pollTimer);if(steps[gi].focus&&!focusOk(steps[gi])){phase='set';render();mark()}else toObserve()}
+ function invalidateMicroscope(){
+  if(!microscope||!active)return;
+  revision++;clearInterval(pollTimer);
+  // Keep evidence invalidation synchronous, but announce only a changed guide instruction.
+  // Pointer moves can arrive every frame while the same observe/set instruction remains valid.
+  if(steps[gi].focus&&!focusOk(steps[gi])){if(phase!=='set'){phase='set';render();mark()}return}
+  if(phase==='observe'&&runUsable())return;
+  toObserve();
+ }
  const node=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!=null)n.textContent=txt;if(cls)n.className=cls;return n};
  const btn=(txt,fn,cls)=>{const b=node('button',txt,cls);b.type='button';b.addEventListener('click',fn);return b};
  const fire=e=>{e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))};
