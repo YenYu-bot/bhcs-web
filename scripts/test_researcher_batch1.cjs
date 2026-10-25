@@ -15,7 +15,13 @@ must(micro.includes("ctx.lineWidth=4/(u*z)"),'letter-slide crosshair must keep a
 must(micro.includes("featureVisible(420*MICRO_UM_TO_WORLD,-160*MICRO_UM_TO_WORLD)"),'letter visibility must be derived from the current field');
 must(!micro.includes('預測')&&!micro.includes('id="prediction"')&&!micro.includes('els.prediction'),'prediction flow still present');
 must(micro.includes('function begin(){started=true')&&micro.includes('<strong>研究開始</strong>')&&micro.includes('先在低倍把影像調清楚'),'hands-on start flow missing');
-must(micro.includes("Array.isArray(v)?v:[]"),'record storage guard missing');
+// Storage is validated once; failed reads must lock writes instead of masquerading as empty data.
+// Full-page malformed/denied/quota/recovery scenarios run in test_legacy_record_storage.cjs.
+const initialRecordRead=micro.match(/function readInitialRecords\(\)[\s\S]*?(?=\nfunction loadRecords)/)?.[0]||'';
+must(/if\(!Array\.isArray\(rows\)/.test(initialRecordRead),'record initial array guard missing');
+must(/catch\(e\)\{recordWritesAllowed=false;recordNotice/.test(initialRecordRead),'unreadable record storage must block writes');
+must(/function saveRecords\(rows\)\{[\s\S]*?if\(!recordWritesAllowed\)return false;/.test(micro),'record write lock must be enforced');
+must(/function loadRecords\(\)\{return recordRows\.slice\(\);\}/.test(micro),'record reads must retain session memory after failed saves');
 must(css.includes('@media(max-width:700px)')&&css.includes('position:sticky'),'mobile sticky observation missing');
 must(css.includes('@media print'),'print rules missing');
 must(js.includes("data-screen='prepare'")||js.includes("dataset.screen='prepare'"),'four-screen flow missing');
