@@ -57,6 +57,13 @@
   @media print{ body{background:#fff} .panel{display:none} .sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none} .ans{-webkit-print-color-adjust:exact;print-color-adjust:exact} @page{size:A4;margin:12mm} }
 </style>
 
+<style id="g7-screen-equation-columns">
+/* Keep long equations inside the phone preview; printed A4 columns stay unchanged. */
+@media screen and (max-width:640px){
+  #out .grid.c2,#out .grid.c3{grid-template-columns:1fr}
+}
+</style>
+
 <!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
 <style id="bhcs-theme">
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
