@@ -47,6 +47,12 @@ async function scenePoint(page, source, action = 'slide') {
 }
 
 async function drag(page, cdp, kind, point, dx, dy, action = 'slide') {
+  // Persist the intended coordinate BEFORE input, including when pointerdown
+  // immediately fails. These observers never change events or model state.
+  await page.evaluate(({kind,point,dx,dy,action}) => {
+    const describe = el => el ? {tag:el.tagName,id:el.id,class:el.getAttribute('class'),action:el.closest('[data-action]')?.dataset.action,bodyHit:el.closest('[data-body-hit]')?.dataset.bodyHit,rect:el.getBoundingClientRect().toJSON()} : null;
+    window.__browserInputAudit.planned.push({kind,point,dx,dy,action,scene:document.querySelector('#scene').getBoundingClientRect().toJSON(),scroll:{x:scrollX,y:scrollY},viewport:{width:innerWidth,height:innerHeight,visual:visualViewport?{width:visualViewport.width,height:visualViewport.height,offsetLeft:visualViewport.offsetLeft,offsetTop:visualViewport.offsetTop,scale:visualViewport.scale}:null},hitStack:document.elementsFromPoint(point.x,point.y).slice(0,12).map(describe),controls:[...document.querySelectorAll('#scene [data-action]')].filter(el=>!el.hidden).map(describe)});
+  },{kind,point,dx,dy,action});
   if (kind === 'mouse') {
     await page.mouse.move(point.x, point.y);
     await page.mouse.down();
@@ -88,6 +94,21 @@ async function directionStart(page) {
   assert.equal((await diagnostics(page)).view, 'table');
 }
 
+async function overflowDiagnostics(page) {
+  return page.evaluate(() => {
+    const selector = el => {
+      if(el.id) return '#'+el.id;
+      const part = el.tagName.toLowerCase()+(el.getAttribute('class')?'.'+el.getAttribute('class').trim().split(/\s+/).join('.'):'');
+      return el.parentElement ? (el.parentElement.id?'#'+el.parentElement.id:el.parentElement.tagName.toLowerCase()+(el.parentElement.getAttribute('class')?'.'+el.parentElement.getAttribute('class').trim().split(/\s+/).join('.') : ''))+' > '+part : part;
+    };
+    const describe = el => {
+      const r=el.getBoundingClientRect(),style=getComputedStyle(el);
+      return {selector:selector(el),rect:r.toJSON(),scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,position:style.position,right:style.right,top:style.top,width:style.width,height:style.height,transform:style.transform,transformOrigin:style.transformOrigin,overflow:style.overflow,clipPath:style.clipPath,display:style.display,visibility:style.visibility,verticalAlign:style.verticalAlign,lineHeight:style.lineHeight,svgBBox:typeof el.getBBox==='function'?(()=>{try{const b=el.getBBox();return {x:b.x,y:b.y,width:b.width,height:b.height};}catch{return null;}})():null};
+    };
+    return {innerWidth,scrollWidth:document.documentElement.scrollWidth,scrollX,scrollY,readout:[...document.querySelectorAll('.readings,.readings > *')].map(describe),outside:[...document.querySelectorAll('body *')].filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&(r.right>innerWidth||r.left<0);}).map(describe).slice(0,200)};
+  });
+}
+
 async function test(name, width, touch, run) {
   const result = {name, width, input:touch?'CDP touch':'mouse', status:'running'};
   results.push(result); saveResults();
@@ -110,13 +131,17 @@ async function test(name, width, touch, run) {
     assert.equal((await diagnostics(page)).state.objective, 4);
     assert.equal(await page.locator('.workspace').getAttribute('data-view'), 'table');
     await page.evaluate(() => {
-      window.__browserInputAudit = {keyboard:0, fallback:0, views:0, trusted:{mouse:0,touch:0}, untrusted:0};
+      window.__browserInputAudit = {keyboard:0, fallback:0, views:0, trusted:{mouse:0,touch:0}, untrusted:0, planned:[], pointerdowns:[], touchstarts:[]};
       document.addEventListener('keydown', () => window.__browserInputAudit.keyboard++, true);
       document.addEventListener('click', event => {
         if(event.target.closest('[data-move]')) window.__browserInputAudit.fallback++;
         if(event.target.closest('button[data-view],#cameraReset,#primaryAction')) window.__browserInputAudit.views++;
       }, true);
+      document.addEventListener('touchstart', event => {
+        if(event.target.closest('#scene')) window.__browserInputAudit.touchstarts.push({trusted:event.isTrusted,target:event.target.tagName,id:event.target.id,class:event.target.getAttribute('class'),action:event.target.closest('[data-action]')?.dataset.action,bodyHit:event.target.closest('[data-body-hit]')?.dataset.bodyHit,touches:[...event.changedTouches].map(t=>({clientX:t.clientX,clientY:t.clientY,pageX:t.pageX,pageY:t.pageY,radiusX:t.radiusX,radiusY:t.radiusY}))});
+      }, {capture:true,passive:true});
       document.addEventListener('pointerdown', event => {
+        if(event.target.closest('#scene')) window.__browserInputAudit.pointerdowns.push({trusted:event.isTrusted,pointerType:event.pointerType,clientX:event.clientX,clientY:event.clientY,pageX:event.pageX,pageY:event.pageY,width:event.width,height:event.height,target:event.target.tagName,id:event.target.id,class:event.target.getAttribute('class'),action:event.target.closest('[data-action]')?.dataset.action,bodyHit:event.target.closest('[data-body-hit]')?.dataset.bodyHit,targetRect:event.target.getBoundingClientRect().toJSON()});
         if (!event.isTrusted) window.__browserInputAudit.untrusted++;
         else if(event.target.closest('#scene')) window.__browserInputAudit.trusted[event.pointerType]++;
       }, true);
@@ -135,12 +160,16 @@ async function test(name, width, touch, run) {
     assert.ok(scripts.length > 0);
     assert.ok(scripts.every(url => new URL(url).pathname.startsWith('/tools/microscope-3d/')), `no legacy researcher scripts injected: ${scripts.join(', ')}`);
     assert.equal(await page.locator('script[src*="researcher"],.researcher-screen,.researcher-taskbar').count(), 0);
-    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth+2), 'no horizontal page overflow');
+    result.overflow=await overflowDiagnostics(page);
+    assert.ok(result.overflow.scrollWidth <= result.overflow.innerWidth+2, 'no horizontal page overflow');
     await page.screenshot({path:path.join(output, `${name}.png`),timeout:10000});
     result.status='passed';
   } catch (error) {
     result.status='failed'; result.failure=error.stack;
     result.diagnostics=await diagnostics(page).catch(()=>null);
+    result.inputAudit=await page.evaluate(()=>window.__browserInputAudit).catch(()=>null);
+    result.overflow=await overflowDiagnostics(page).catch(()=>null);
+    console.error('FAILURE_DIAGNOSTICS '+JSON.stringify({name,inputAudit:result.inputAudit,overflow:result.overflow}));
     await page.screenshot({path:path.join(output, `${name}-failure.png`),fullPage:true,timeout:10000}).catch(()=>{});
     fs.writeFileSync(path.join(output, `${name}-failure.html`), await page.content().catch(()=>''));
   } finally {
