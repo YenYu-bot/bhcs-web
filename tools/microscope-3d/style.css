@@ -21,7 +21,7 @@ body:before{content:'';position:fixed;inset:0;pointer-events:none;background:url
 body{background-image:url('img/paper10.svg?v=21aed8cb2222'),url('img/paper-paint.svg?v=2efa40ab91ad')}body:before{display:none}.scene-paper{display:none}
 .readings{padding:0;height:78px;border:0;background:none;display:block}.note-paint{display:block;width:215px;height:78px;overflow:visible}.note-paint text{fill:#244F50}.readings>div,.readings>.note-title,.readings>.fold{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-.viewer{padding-bottom:0}.readings{top:300px;right:0;width:180px;height:65px}.note-paint{width:180px;height:65px}.drawing-note{margin-top:38px}
+.viewer{padding-bottom:0}.readings{top:300px;right:4px;width:180px;height:65px}.note-paint{width:180px;height:65px}.drawing-note{margin-top:38px}
 @media(max-width:600px) and (orientation:portrait){.viewer{padding-bottom:4px}.readings{top:calc(100vw - 88px);right:16px;width:160px;height:58px}.note-paint{width:160px;height:58px}}
 
 /* Lively paper edition: texture belongs to the3D wall/table, not UI or apparatus. */
