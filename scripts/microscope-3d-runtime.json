@@ -1,0 +1,166 @@
+{
+  "source_commit": "185c99467c03b40fb0bda04d0bfcfccb21914e07",
+  "index_metadata_addition": "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/microscope-3d/\">",
+  "files": [
+    {
+      "path": "app.js",
+      "sha256": "76a85f5d2fa031415948e1a75a8f9daa5be9687ff905ede3de95604c41b99f5f"
+    },
+    {
+      "path": "body-touch.js",
+      "sha256": "be706900959b4184f2374c80cdbaed20f9573ed535979203179d0e67027c4d88"
+    },
+    {
+      "path": "cell-course.js",
+      "sha256": "4386363dc95261c1c05c436d4a42c0427c1a57666cf254356a93bb9e2bf8f724"
+    },
+    {
+      "path": "cell-observation.js",
+      "sha256": "07abc8ce6c63726d5bb98aa495cfe88ac73e7719d3d3754afdadc09d79d9910e"
+    },
+    {
+      "path": "compound-pointer.js",
+      "sha256": "6fcf037ce6c189df60f3af44815a45ca46c6bb284fdf47c2f8b9d965bbb473d2"
+    },
+    {
+      "path": "course-ui.js",
+      "sha256": "e9efde9780bb9db5ddaa531a36c09e3fd34bf15502b7bc3114348ba12dfc61d3"
+    },
+    {
+      "path": "course.js",
+      "sha256": "4cfd5966f33110c6194f9edbf52816c39fe85fd8131f84d2886b98fbc254fd3a"
+    },
+    {
+      "path": "eyepiece.js",
+      "sha256": "480f7413db22ab6daa8dfd6833d85653cbe7506e77a7ab21ab665cab3dab4289"
+    },
+    {
+      "path": "fonts/NotoSansTC-OFL.txt",
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+    },
+    {
+      "path": "fonts/NotoSansTC-subset.woff",
+      "sha256": "7415ef63ce7821da807ef6052112a22de71b31f125529368c70fdcda4c81bb63"
+    },
+    {
+      "path": "fonts/ZenMaruGothic-OFL.txt",
+      "sha256": "2a20cf7ce1909d8ee1e949095d340f7d7656705f7c810a2d6faf56800ad0cb3d"
+    },
+    {
+      "path": "fonts/ZenMaruGothic-subset.woff",
+      "sha256": "cc68d69e93788a3b9dd8b5c82f0f87090a15dd2aaa8c1b53c056d71808458954"
+    },
+    {
+      "path": "illumination-ui.js",
+      "sha256": "fa0eb1b787077e8769117df253b02a400c568ccf2ffb5c4bf34d3edf9484962b"
+    },
+    {
+      "path": "illumination.js",
+      "sha256": "eab0f0e4c58b37f56d7b9284509aab757238d0f9d1a41707f02511b13410a8d1"
+    },
+    {
+      "path": "img/gold-paint.svg",
+      "sha256": "6e1367535f33917418110effa62761b606978de6123bd365fffca6f4a7f4e3f5"
+    },
+    {
+      "path": "img/paper-paint.svg",
+      "sha256": "2efa40ab91ad770bb7adf82d9e165d19d43fa6167fc901b03953b985bb3ab1af"
+    },
+    {
+      "path": "img/paper.svg",
+      "sha256": "0332c0f660467ba8a2d7fb79c759b9f05614c691c2edd523b0ffbcba12a584f7"
+    },
+    {
+      "path": "img/paper10.svg",
+      "sha256": "21aed8cb2222bce24a208aa2c326ad228d887388c0f2b766ba2a492fffc3d35b"
+    },
+    {
+      "path": "img/paper18.svg",
+      "sha256": "5ba739c182a097299674d72936523659d9ac7b4bf19c46bac64e7e86bc90dfe0"
+    },
+    {
+      "path": "img/teacher-arm-v2.webp",
+      "sha256": "e7d76942be6d0e1aba394861b7cf08e2e6a8e4ff7f7b92ffc7a3754d95434b5b"
+    },
+    {
+      "path": "img/teacher-body-v2.webp",
+      "sha256": "5c53f5f697011861dbd889b9a6f92ad4b6bafd79c23ca94fcfdb678e97f4603a"
+    },
+    {
+      "path": "img/teacher-body-v3.png",
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "index.html",
+      "sha256": "d9a98044874813d3cb48966747cbd0c14b5b706d6a7adc00b5da116161c05f53"
+    },
+    {
+      "path": "model.js",
+      "sha256": "c0113e367e43e413481b8bbe7cca142a5f5c23b05ba0fe83d9d8dd6caae717a5"
+    },
+    {
+      "path": "notebook-ui.js",
+      "sha256": "4d668ceabe2d8880b9fabfd375e913dd1fa64a35a752e0b985459f39c4c7ef0d"
+    },
+    {
+      "path": "notebook.js",
+      "sha256": "b3c8687e6e0a8cbb7dee6919eb257045c61e15e7ac8f1524b7265b0503dc59e8"
+    },
+    {
+      "path": "paper-render.js",
+      "sha256": "3b846e38025110bdc4025fceb487bd7c16bc29fa7948892969e600d5e9f28290"
+    },
+    {
+      "path": "pointer.js",
+      "sha256": "a94c29ca420d44e6d62ecf89ff35dba8e91188260184ed2f509e5805fa653240"
+    },
+    {
+      "path": "render-quality.js",
+      "sha256": "101f998be888cc00e117822e03a95944665c7fd9a7c2d2964d25364639e5f8cc"
+    },
+    {
+      "path": "scene.js",
+      "sha256": "7d29dd24a156626de50707089f92919f516675c26396714d58e2eae4804fc57e"
+    },
+    {
+      "path": "stereo-course.js",
+      "sha256": "c8ccde00d85e9b036b23fdee54aeba23b8e3b82e0f47b030065e82b1e4455d16"
+    },
+    {
+      "path": "stereo-eye.js",
+      "sha256": "d43d8a5ad91e6d2bad3c3f4b56430b9609d4863f2b97bf702e946f92ac712264"
+    },
+    {
+      "path": "stereo-model.js",
+      "sha256": "c92e0903f33e480c9895c79ce75921865509b9d3e4dc9abedbb548c731d37227"
+    },
+    {
+      "path": "stereo-scene.js",
+      "sha256": "4270d8d6a237fc6f3d2a7075abe365caed16812ca428e185df58bc73dac4da94"
+    },
+    {
+      "path": "style.css",
+      "sha256": "a6dfe9582712c71318c5a2aa9d4f877123b3fd3999e837222d142b9439d031b2"
+    },
+    {
+      "path": "vendor/Projector.js",
+      "sha256": "ddbf605d8845ebd1436bc174dcea0bc3f81aefb89137668b107f9d37463a41c1"
+    },
+    {
+      "path": "vendor/SVGRenderer.js",
+      "sha256": "5fcb9703432d0542083b68e420a19e25cf08b3733bc70385cd1b1b6bfb86e69c"
+    },
+    {
+      "path": "vendor/THREE-LICENSE.txt",
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+    },
+    {
+      "path": "vendor/three.core.js",
+      "sha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20"
+    },
+    {
+      "path": "vendor/three.module.js",
+      "sha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a"
+    }
+  ]
+}
