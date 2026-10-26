@@ -64,5 +64,39 @@
       "bytes": 6012,
       "sha256": "50abe542dcf18d0622e98cc1a536e075320e11cd6dcc9050a97ece23f5bb5b62"
     }
-  ]
+  ],
+  "runtime_revision": {
+    "id": "settled-input-and-reset-confirmation-v1",
+    "reviewed_from_commit": "d1844605546a82738f02d8b2e3b5c71e6800503d",
+    "scope": "Authorized PR179 review fix: final-position-only 400 ms keyboard/button observations, interruption cancellation, reset confirmation; no optics changes, merge or deployment.",
+    "replacements": [
+      {
+        "path": "assets/five-case.js",
+        "bytes": 5334,
+        "sha256": "b9e0fb367c190407ef7656fa01032158d5645d0eee69f4ffdaf4d2eb7fc72796",
+        "reason": "Allow the presentation adapter to discard an interrupted screen operation without crediting a search zone."
+      },
+      {
+        "path": "assets/pilot.js",
+        "bytes": 22757,
+        "sha256": "eeeb3662db460c803677ee5b365f07df1b42be035abce23fb866f7c64b7cd7ca",
+        "reason": "Wire the presentation settlement adapter and interruption guards, request reset confirmation, and version changed module imports."
+      }
+    ],
+    "additions": [
+      {
+        "path": "assets/screen-settlement.js",
+        "bytes": 1771,
+        "sha256": "6354b917ff760e713a2b017be6ead50a0201d3b3d3ecd5da1b2e7cec02e706e5",
+        "reason": "Presentation-only 400 ms burst boundary, held-key protection and generation-guarded cancellation."
+      }
+    ],
+    "index_replacements": [
+      {
+        "before": "src=\"./assets/pilot.js\"",
+        "after": "src=\"./assets/pilot.js?v=eeeb3662db46\"",
+        "reason": "Invalidate the browser entrypoint cache after the reviewed runtime change; reverse before prototype hash comparison."
+      }
+    ]
+  }
 }

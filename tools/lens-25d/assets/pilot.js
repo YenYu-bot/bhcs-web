@@ -1,9 +1,10 @@
 // Five-case presentation controller. Frozen model, input and visual mapping remain unchanged.
 import { compareRows } from './learning-summary.js';
 import { createLearningUI } from './learning-ui.js';
-import { createState, dispatchState, deriveView, CASES } from './five-case.js';
-import { createInputController, snapForWidth } from './optics-guided/input.js';
+import { createState, dispatchState, deriveView, CASES } from './five-case.js?v=b9e0fb367c19';
+import { createInputController, keyboardTarget, snapForWidth } from './optics-guided/input.js';
 import { visualParams, clarityMessage, xOf } from './optics-guided/visual.js';
+import { createScreenSettlement } from './screen-settlement.js?v=6354b917ff76';
 
 const $ = id => document.getElementById(id);
 const bench = $('bench');
@@ -18,11 +19,26 @@ $('result').innerHTML=`<svg viewBox="0 0 240 174" aria-label="光屏上的實際
 let state=createState(), ui={started:false,help:0};
 const put=(el,text)=>{if(el.textContent!==text)el.textContent=text;};
 const hit=$('screen-hit');
+let cancelPointers=()=>{};
+const screenSettlement=createScreenSettlement({getState:()=>state,dispatch});
 const learningUI=createLearningUI({getRecords:()=>state.records,onReturn:id=>{dispatch({type:'SELECT_CASE',id});focusTarget('screen-hit');}});
 const sizeText={smaller:'縮小',same:'等大',equal:'等大',larger:'放大'};
 const nameOf=id=>CASES.find(c=>c.id===id)?.label??id;
 $('case-cards').innerHTML=CASES.map(c=>`<button data-case="${c.id}" aria-pressed="false"><b>${c.label}</b><span>物距 ${c.u} cm</span><small class="case-badge"></small></button>`).join('');
-function dispatch(action){const before=state;const result=dispatchState(state,action);state=result.state;if(result.accepted){if(action.type==='RESET')learningUI.reset();if(action.type==='SELECT_CASE'||action.type==='RESET'||state.u!==before.u)ui={started:false,help:0};else if(action.type==='MOVE_SCREEN'&&state.s!==before.s)ui.started=true;}render();if(result.accepted&&['RECORD','CONFIRM_FOCAL','CONFIRM_VIRTUAL'].includes(action.type))focusTarget('evidence');return result;}
+function dispatch(action){
+ const before=state,result=dispatchState(state,action);state=result.state;
+ if(result.accepted){
+  const newCondition=['SELECT_CASE','RESET','EXIT_THROUGH'].includes(action.type);
+  if(newCondition||state.u!==before.u)screenSettlement.cancel();
+  if(newCondition)cancelPointers();
+  if(action.type==='RESET')learningUI.reset();
+  if(action.type==='SELECT_CASE'||action.type==='RESET'||state.u!==before.u)ui={started:false,help:0};
+  else if(action.type==='MOVE_SCREEN'&&state.s!==before.s)ui.started=true;
+ }
+ render();
+ if(result.accepted&&['RECORD','CONFIRM_FOCAL','CONFIRM_VIRTUAL'].includes(action.type))focusTarget('evidence');
+ return result;
+}
 function render(){
  const view=deriveView(state),p=visualParams(view),done=view.confirmed,x=xOf(view.s),locked=view.ranges.screen.locked;
  $('screen-art').innerHTML=`${base(x,'#f2d078')}<path d="M${x-4} 183v65h8v-65" fill="#dfc892" stroke="#345047" stroke-width="2"/><path d="M${x-25} 66l10 -7 49 8v132l-10 7Z" fill="#d6c897" stroke="#345047" stroke-width="2.3"/><path d="M${x-25} 66l49 8v132l-49 -8Z" fill="#fffce4" stroke="#345047" stroke-width="2.3"/><path d="M${x+24} 74l10 -7M${x+24} 206l10 -7" stroke="#345047" stroke-width="1.5"/><defs><clipPath id="bench-face-clip"><path d="M${x-23} 69l45 7v127l-45 -8Z"/></clipPath><filter id="bench-image-blur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="${p.blurSigma}"/><feComponentTransfer><feFuncR type="linear" slope="${p.contrast}" intercept="${(1-p.contrast)/2}"/><feFuncG type="linear" slope="${p.contrast}" intercept="${(1-p.contrast)/2}"/><feFuncB type="linear" slope="${p.contrast}" intercept="${(1-p.contrast)/2}"/></feComponentTransfer></filter></defs><g clip-path="url(#bench-face-clip)"><g opacity="${p.imageOpacity}" filter="url(#bench-image-blur)"><g transform="translate(${x} 138) skewY(9) scale(${p.image?.scaleX??0} ${p.image?.scaleY??0})">${candleArt}</g></g></g><path d="M${x-6} 221v13m6-13v13m6-13v13" stroke="#8e977d" stroke-width="2" stroke-linecap="round"/><rect x="${x-40}" y="25" width="80" height="29" rx="14" fill="${done?'#dceee1':'#f7df8d'}" stroke="#345047" stroke-width="1.5"/><text x="${x}" y="44" text-anchor="middle" font-size="12" font-weight="bold" fill="#345047">${locked?'▣ 觀察中':'↔ 拖動光屏'}</text>`;
@@ -79,11 +95,49 @@ $('look').addEventListener('click',()=>focusTarget('result'));
 const startMoving=()=>{if(deriveView(state).through)dispatch({type:'EXIT_THROUGH'});ui.started=true;render();focusTarget('screen-hit');};
 $('guide-start').addEventListener('click',startMoving);$('move-from-result').addEventListener('click',startMoving);
 $('guide-help').addEventListener('click',()=>{ui.help=ui.help?0:1;render();});
-const controller=createInputController({getState:()=>state,dispatch,getSnap:()=>snapForWidth(window.innerWidth),getRect:()=>bench.getBoundingClientRect(),isLocked:(kind)=>deriveView(state).ranges[kind].locked});controller.attach(hit,'screen');controller.attach(candleHit,'candle');
+// Only the presentation layer changes keyboard observation timing. Frozen input still
+// owns pointer movement/release/cancel and the frozen helper owns keyboard step/snap math.
+const pointers=new Map();
+for(const element of [hit,candleHit])element.addEventListener('pointerdown',e=>{
+ if((e.pointerType==='mouse'&&e.button!==0)||pointers.has(element))return;
+ screenSettlement.cancel();
+ pointers.set(element,e.pointerId);
+},true);
+hit.addEventListener('keydown',e=>{
+ if(e.altKey||e.ctrlKey||e.metaKey)return;
+ const target=keyboardTarget('screen',e.key,e.shiftKey,state.s,snapForWidth(window.innerWidth));
+ if(target===null||deriveView(state).ranges.screen.locked)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(!pointers.size)screenSettlement.keyDown(e.key,target);
+},true);
+window.addEventListener('keyup',e=>screenSettlement.keyUp(e.key));
+const controller=createInputController({getState:()=>state,dispatch,getSnap:()=>snapForWidth(window.innerWidth),getRect:()=>bench.getBoundingClientRect(),isLocked:(kind)=>deriveView(state).ranges[kind].locked});
+let detachScreen=controller.attach(hit,'screen'),detachCandle=controller.attach(candleHit,'candle');
+for(const element of [hit,candleHit])for(const name of ['pointerup','pointercancel','lostpointercapture'])element.addEventListener(name,e=>{if(pointers.get(element)===e.pointerId)pointers.delete(element);});
+cancelPointers=()=>{
+ if(!pointers.size)return;
+ // Detaching clears frozen input's private drag, so an old release cannot affect a new case.
+ detachScreen();detachCandle();
+ for(const [element,pointerId] of pointers){try{element.releasePointerCapture?.(pointerId);}catch(_){/* capture already gone */}}
+ pointers.clear();
+ detachScreen=controller.attach(hit,'screen');detachCandle=controller.attach(candleHit,'candle');
+};
+const cancelInteraction=()=>{screenSettlement.cancel();cancelPointers();};
+window.addEventListener('blur',cancelInteraction);
+window.addEventListener('pagehide',cancelInteraction);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelInteraction();});
 for(const [id,key] of [['object-near','ArrowRight'],['object-far','ArrowLeft']])$(id).addEventListener('click',()=>candleHit.dispatchEvent(new KeyboardEvent('keydown',{key,bubbles:true})));
-for(const [id,key] of [['left','ArrowLeft'],['right','ArrowRight']])$(id).addEventListener('click',()=>hit.dispatchEvent(new KeyboardEvent('keydown',{key,bubbles:true})));
+// Native keyboard activation of the arrow buttons can repeat too; keep it in
+// the same held-key guard without suppressing the button's accessible default action.
+for(const id of ['left','right'])$(id).addEventListener('keydown',e=>{
+ if((e.key==='Enter'||e.key===' ')&&!e.altKey&&!e.ctrlKey&&!e.metaKey&&!pointers.size)screenSettlement.hold(e.key);
+});
+for(const [id,key] of [['left','ArrowLeft'],['right','ArrowRight']])$(id).addEventListener('click',()=>{
+ if(pointers.size||$(id).disabled)return;
+ screenSettlement.button(keyboardTarget('screen',key,false,state.s,snapForWidth(window.innerWidth)));
+});
 $('record').addEventListener('click',()=>dispatch({type:'RECORD'}));
 $('special-action').addEventListener('click',()=>{const v=deriveView(state);if($('special-action').disabled)return;dispatch({type:v.lensState.imageType==='infinite'?'CONFIRM_FOCAL':v.through?'CONFIRM_VIRTUAL':'VIEW_THROUGH'});});
 $('case-cards').addEventListener('click',e=>{const b=e.target.closest('[data-case]');if(b)dispatch({type:'SELECT_CASE',id:b.dataset.case});});
-$('restart').addEventListener('click',()=>{dispatch({type:'RESET'});focusTarget('look');});
+$('restart').addEventListener('click',()=>{if(!window.confirm('確定全部重新開始？這會清除本頁所有觀察紀錄與作答。'))return;dispatch({type:'RESET'});focusTarget('look');});
 render();

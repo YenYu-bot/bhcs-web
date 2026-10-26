@@ -48,6 +48,7 @@ export function dispatchState(previous,action){
    if(typeof action.position!=='number'||!Number.isFinite(action.position))return fail('invalid-position');
    const s=Math.max(8,Math.min(40,action.position));if(s!==state.s){if(state.pendingScreenStart===null)state.pendingScreenStart=state.s;state.s=s;state.confirmed=false;state.through=false;}break;
   }
+  case 'CANCEL_SCREEN_OPERATION': state.pendingScreenStart=null;break;
   case 'SETTLE_SCREEN': {
    if(state.pendingScreenStart!==null&&state.pendingScreenStart!==state.s&&['infinite','virtual'].includes(view.lensState.imageType)){
     const zone=zoneOf(state.s);if(!state.search.zones.includes(zone))state.search.zones.push(zone);state.search.zones.sort((a,b)=>ZONES.indexOf(a)-ZONES.indexOf(b));

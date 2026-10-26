@@ -19,6 +19,43 @@ const q = (page,id) => page.locator(`[data-question="${id}"]`);
 const evidence = (page,index) => page.locator('#evidence-cards .record-card').nth(index);
 const model = (page,index) => page.locator('#model-comparison .model-card').nth(index);
 const history = page => page.locator('#evidence-history li').count();
+// Keep the acceptance timing independent of the application's implementation.
+// A final click/key release needs 400 ms of idle; held keys are never idle.
+const SCREEN_IDLE_MS = 400;
+const idle = page => page.waitForTimeout(SCREEN_IDLE_MS+100);
+async function zones(page,expected,message) {
+  const actual=await page.locator('#search-zones span').evaluateAll(items=>items.flatMap((el,i)=>el.classList.contains('visited')?[['near','middle','far'][i]]:[]));
+  assert.deepEqual(actual,expected,message);
+  assert.equal(await page.locator('#special-action').isEnabled(),expected.length===3,'special observation requires three settled zones');
+}
+async function expectIdleEndpoint(page,expected,message) {
+  await page.waitForTimeout(250);
+  await zones(page,[],message+' is not credited before 400 ms');
+  await page.waitForTimeout(250);
+  await zones(page,expected,message+' is credited after idle');
+}
+async function restart(page,accept) {
+  const pendingDialog=page.waitForEvent('dialog');
+  const clicking=page.locator('#restart').click();
+  const dialog=await pendingDialog;
+  assert.equal(dialog.type(),'confirm','reset asks for confirmation');
+  const message=dialog.message();
+  assert.match(message,/清除.*觀察紀錄.*作答/,'reset explains that both records and answers will be cleared');
+  if(accept)await dialog.accept();else await dialog.dismiss();
+  await clicking;await settle(page);
+  return message;
+}
+async function learningSnapshot(page) {
+  return page.evaluate(()=>({
+    u:document.querySelector('#object-position').textContent,s:document.querySelector('#position').textContent,
+    evidence:document.querySelector('#evidence-cards').innerHTML,history:document.querySelector('#evidence-history').innerHTML,
+    models:document.querySelector('#model-comparison').innerHTML,questions:document.querySelector('#learning-questions').innerHTML,
+    complete:{hidden:document.querySelector('#learning-complete').hidden,text:document.querySelector('#learning-complete').textContent},
+    badges:[...document.querySelectorAll('#case-cards .case-badge')].map(el=>el.textContent)
+  }));
+}
+async function pressKeys(page,keys) {for(const key of keys)await page.keyboard.press(key);}
+async function clickSteps(page,id,count) {for(let i=0;i<count;i++)await page.locator('#'+id).click();}
 async function select(page,id) { await page.locator(`[data-case="${id}"]`).click(); await settle(page); }
 async function snapshot(page) {
   return page.evaluate(() => {
@@ -100,13 +137,14 @@ async function run(name,width,touch,task) {
     await page.evaluate(()=>{
       window.__lensInputAudit={planned:[],pointers:[],keys:[]};
       document.addEventListener('pointerdown',e=>window.__lensInputAudit.pointers.push({trusted:e.isTrusted,type:e.pointerType,id:e.target.id,x:e.clientX,y:e.clientY,rect:e.target.getBoundingClientRect().toJSON()}),{capture:true,passive:true});
-      document.addEventListener('keydown',e=>window.__lensInputAudit.keys.push({trusted:e.isTrusted,key:e.key,id:e.target.id}),{capture:true,passive:true});
+      for(const type of ['keydown','keyup'])document.addEventListener(type,e=>window.__lensInputAudit.keys.push({trusted:e.isTrusted,type,key:e.key,repeat:e.repeat,id:e.target.id,time:performance.now()}),{capture:true,passive:true});
     });
     assert.equal(await page.evaluate(()=>innerWidth),width);
     await task(page,cdp,result);
     result.layout=await layout(page,width);result.snapshot=await snapshot(page);
     assert.ok(result.snapshot.audit.pointers.some(e=>e.trusted&&e.type===(touch?'touch':'mouse')&&['screen-hit','candle-hit'].includes(e.id)),'trusted physical control input');
     assert.ok(result.snapshot.audit.pointers.every(e=>e.trusted),'no synthetic pointer events');
+    assert.ok(result.snapshot.audit.keys.filter(e=>e.id==='screen-hit').every(e=>e.trusted),'screen buttons do not synthesize keyboard input');
     assert.deepEqual(errors,[],'no page errors');assert.deepEqual(consoleErrors,[],'no console errors');assert.deepEqual(external,[],'no external asset requests');assert.deepEqual(failed,[],'all assets loaded');
     assert.ok(scripts.length>0&&scripts.every(url=>new URL(url).pathname.startsWith('/tools/lens-25d/')),'no legacy script injection');
     assert.equal(await page.locator('script[src*="researcher"],.researcher-screen,.researcher-taskbar').count(),0);
@@ -153,6 +191,11 @@ async function run(name,width,touch,task) {
     assert.match(await evidence(page,4).textContent(),/非光屏/);
     await answer(page,'q2','different-causes');await answer(page,'q3','finite-not-proof');assert.ok(await page.locator('#learning-complete').isVisible());
     assert.match(await q(page,'q3').locator('.answer-feedback').textContent(),/110 cm/);
+    const beforeCanceledReset=await learningSnapshot(page);
+    result.resetConfirmation=await restart(page,false);
+    assert.deepEqual(await learningSnapshot(page),beforeCanceledReset,'canceling reset preserves every record, history entry, model, answer, and completion');
+    for(const id of ['q1','q2','q3'])assert.equal(await q(page,id).getAttribute('data-result'),'correct','reset cancel preserves correct answers');
+    assert.equal(await history(page),5);assert.ok(await page.locator('#learning-complete').isVisible());
     const records=await page.locator('#evidence-cards').textContent();
     await select(page,'outside2f');await dragTo(page,cdp,'mouse','candle-hit',29);
     assert.equal(await page.locator('#evidence-cards').textContent(),records,'live controls do not change recorded evidence');
@@ -165,7 +208,10 @@ async function run(name,width,touch,task) {
     assert.match(await page.locator('#physics-note').textContent(),/仍屬於實像/);assert.ok(await page.locator('#record').isDisabled());assert.ok(await page.locator('#special-action').isHidden());
     await dragTo(page,cdp,'mouse','screen-hit',40);assert.ok(await page.locator('#record').isDisabled());
     result.beforeReset=await snapshot(page);
-    await page.locator('#restart').click();assert.equal(await history(page),0);assert.equal(await number(page,'object-position'),30);assert.equal(await number(page,'position'),20);assert.equal(await page.locator('#case-cards .case-badge').filter({hasText:'尚未記錄'}).count(),5);assert.equal(await page.locator('[data-question][data-result="unanswered"]').count(),3);assert.equal(await q(page,'q1').locator('[data-answer]:disabled').count(),3);
+    await restart(page,true);assert.equal(await history(page),0);assert.equal(await number(page,'object-position'),30);assert.equal(await number(page,'position'),20);assert.equal(await page.locator('#case-cards .case-badge').filter({hasText:'尚未記錄'}).count(),5);assert.equal(await page.locator('[data-question][data-result="unanswered"]').count(),3);assert.equal(await q(page,'q1').locator('[data-answer]:disabled').count(),3);
+    assert.equal(await page.locator('#evidence-cards .return-case').count(),5,'confirmed reset clears all recorded observations');
+    assert.equal(await page.locator('#model-comparison .model-card').filter({hasText:'待觀察'}).count(),5,'confirmed reset clears model comparisons');
+    assert.equal(await page.locator('[data-answer][aria-pressed="true"]').count(),0,'confirmed reset clears selected answers');assert.ok(await page.locator('#learning-complete').isHidden());
   });
   for(const kind of ['mouse','touch'])await run(`phone-${kind}-centers-learning`,390,kind==='touch',async(page,cdp,result)=>{
     await dragTo(page,cdp,kind,'screen-hit',15);await page.locator('#record').click();
@@ -185,5 +231,101 @@ async function run(name,width,touch,task) {
       await page.waitForFunction(scroll=>scrollY>scroll+30,before.scroll);assert.equal(await number(page,'object-position'),before.u);assert.equal(await number(page,'position'),before.s);result.blankPanDelta=await page.evaluate(scroll=>scrollY-scroll,before.scroll);
     }
   });
-  assert.equal(results.length,3);assert.ok(results.every(r=>r.status==='passed'),`${results.filter(r=>r.status!=='passed').length}/3 browser scenarios failed`);console.log('PASS lens-25d: three real-browser scenarios');
+  await run('desktop-keyboard-idle-settlement',1280,false,async(page)=>{
+    await select(page,'focal');await page.locator('#screen-hit').click();await page.locator('#screen-hit').focus();
+    // One rapid burst crosses all three zones. Only its final far position counts.
+    await pressKeys(page,['PageDown','PageDown','PageUp','PageUp','PageUp','PageUp']);
+    assert.equal(await number(page,'position'),30);await zones(page,[],'keyboard movement itself is not a settled observation');
+    await expectIdleEndpoint(page,['far'],'rapid keyboard burst');assert.equal(await history(page),0);
+
+    await select(page,'inside');await page.locator('#screen-hit').focus();
+    await page.keyboard.down('PageDown');await page.keyboard.down('PageDown');
+    assert.equal(await number(page,'position'),10);
+    await idle(page);await zones(page,[],'a held/repeated movement key cannot settle after 400 ms');
+    await page.keyboard.down('PageUp');await page.keyboard.up('PageUp');
+    assert.equal(await number(page,'position'),15);
+    await idle(page);await zones(page,[],'releasing one key does not settle while another movement key remains held');
+    await page.keyboard.up('PageDown');await expectIdleEndpoint(page,['near'],'last movement-key release');
+
+    await select(page,'focal');await page.locator('#screen-hit').focus();
+    await pressKeys(page,['PageDown','PageUp']);assert.equal(await number(page,'position'),20);
+    await idle(page);await zones(page,[],'a keyboard burst returning to its origin earns no evidence');
+    const keys=await page.evaluate(()=>window.__lensInputAudit.keys);
+    assert.ok(keys.some(e=>e.trusted&&e.type==='keydown'&&e.repeat&&e.key==='PageDown'),'real browser repeated keydown exercised');
+    assert.ok(keys.some(e=>e.trusted&&e.type==='keyup'&&e.key==='PageDown'),'real browser key release exercised');
+  });
+  await run('desktop-button-idle-settlement',1280,false,async(page)=>{
+    await select(page,'focal');await page.locator('#screen-hit').click();
+    await clickSteps(page,'right',10);assert.equal(await number(page,'position'),30);
+    await zones(page,[],'rapid buttons do not credit transient positions');await expectIdleEndpoint(page,['far'],'right-button burst');
+    await clickSteps(page,'left',16);assert.equal(await number(page,'position'),14);
+    await page.waitForTimeout(250);await zones(page,['far'],'return burst does not credit intermediate middle zone');
+    await page.waitForTimeout(250);await zones(page,['near','far'],'only the final near endpoint is added');
+    await clickSteps(page,'right',6);assert.equal(await number(page,'position'),20);
+    await page.waitForTimeout(250);await zones(page,['near','far'],'third endpoint still requires idle');
+    await page.waitForTimeout(250);await zones(page,['near','middle','far'],'three distinct idle endpoints unlock observation');
+    await page.locator('#special-action').click();assert.equal(await history(page),1,'settled buttons support the real observation flow');
+
+    await select(page,'inside');await clickSteps(page,'left',1);await clickSteps(page,'right',1);
+    assert.equal(await number(page,'position'),20);await idle(page);await zones(page,[],'net-zero button burst earns no evidence');
+    await select(page,'focal');await page.locator('#screen-hit').focus();await page.keyboard.press('PageDown');
+    await clickSteps(page,'right',5);assert.equal(await number(page,'position'),20);
+    await idle(page);await zones(page,[],'keyboard-to-button burst retains its original position for net-zero detection');
+
+    // Native accessible button activation must obey the same held-key contract.
+    await select(page,'inside');await page.locator('#left').focus();
+    await page.keyboard.down('Enter');await page.keyboard.down('Enter');assert.equal(await number(page,'position'),18);
+    await idle(page);await zones(page,[],'holding Enter on a movement button is not idle');
+    await page.keyboard.up('Enter');await expectIdleEndpoint(page,['middle'],'button Enter release');
+    await select(page,'inside');await page.locator('#left').focus();await page.keyboard.down('Space');
+    await idle(page);assert.equal(await number(page,'position'),20,'native Space activates a button on release');await zones(page,[],'held Space earns no evidence');
+    await page.keyboard.up('Space');assert.equal(await number(page,'position'),19);await expectIdleEndpoint(page,['middle'],'button Space release');
+  });
+  await run('desktop-settlement-interruptions',1280,false,async(page,cdp,result)=>{
+    for(const next of ['focal','inside']){
+      await select(page,'focal');await page.locator('#screen-hit').click();await page.locator('#screen-hit').focus();await page.keyboard.press('PageDown');
+      await zones(page,[],'old case has an unsettled keyboard candidate');await select(page,next);
+      assert.equal(await number(page,'position'),20);await zones(page,[],'case selection clears prior observation');
+      // A new held operation overlaps the old timer's deadline. An obsolete
+      // callback must not settle this new operation, even on same-case selection.
+      await page.locator('#screen-hit').focus();await page.keyboard.down('PageDown');
+      await idle(page);await zones(page,[],`${next} selection cancels the old timer without settling a newer held key`);
+      await page.keyboard.up('PageDown');await expectIdleEndpoint(page,['near'],`${next} selection's new operation`);
+    }
+    await select(page,'inside');await page.locator('#screen-hit').focus();await page.keyboard.press('PageDown');
+    await page.locator('#object-far').click();assert.equal(await number(page,'object-position'),6);await zones(page,[],'actual u change clears pending search');
+    await page.locator('#screen-hit').focus();await page.keyboard.down('PageUp');assert.equal(await number(page,'position'),20);
+    await idle(page);await zones(page,[],'old u timer cannot settle a new held operation');
+    await page.keyboard.up('PageUp');await expectIdleEndpoint(page,['middle'],'new u operation uses its own origin');
+
+    await select(page,'focal');await page.locator('#screen-hit').focus();await page.keyboard.press('PageDown');
+    await restart(page,true);const reset=await learningSnapshot(page);
+    assert.equal(await number(page,'position'),20);assert.equal(await number(page,'object-position'),30);
+    await idle(page);assert.deepEqual(await learningSnapshot(page),reset,'accepted reset remains clean after the obsolete timer deadline');
+    assert.equal(await page.locator('#search-zones .visited').count(),0);assert.equal(await history(page),0);
+
+    // Pointer takeover abandons both the old timer and its burst origin.
+    // Hold the pointer beyond the old keyboard deadline, then test tap,
+    // out-and-back (net zero), and a changed release independently.
+    for(const finish of ['tap','return','far']){
+      await select(page,'focal');await page.locator('#screen-hit').scrollIntoViewIfNeeded();await page.locator('#screen-hit').focus();
+      await page.keyboard.press('PageDown');assert.equal(await number(page,'position'),15);
+      const r=await page.locator('#screen-hit').boundingBox(),bench=await page.locator('#bench').boundingBox();
+      const point={x:r.x+r.width/2,y:r.y+r.height/2};
+      assert.equal(await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id,point),'screen-hit','pointer takeover uses the hit-testable slider center');
+      await page.mouse.move(point.x,point.y);await page.mouse.down();
+      try{
+        if(finish!=='tap')await page.mouse.move(point.x+5*bench.width/88,point.y);
+        await idle(page);await zones(page,[],`${finish} pointer takeover cannot inherit keyboard idle credit while held`);
+        if(finish==='return')await page.mouse.move(point.x,point.y);
+        if(finish==='far')await page.mouse.move(point.x+15*bench.width/88,point.y);
+        await zones(page,[],'pointer movement itself does not settle');
+      }finally{await page.mouse.up();}
+      await settle(page);assert.equal(await number(page,'position'),finish==='far'?30:15);
+      await zones(page,finish==='far'?['far']:[],`${finish} pointer release credits only an actually changed pointer endpoint`);
+      await idle(page);await zones(page,finish==='far'?['far']:[],`${finish} has no delayed keyboard credit after pointer release`);
+    }
+    result.interruptions=['same case','different case','object distance','confirmed reset','pointer tap','pointer return to start','pointer changed release'];
+  });
+  assert.equal(results.length,6);assert.ok(results.every(r=>r.status==='passed'),`${results.filter(r=>r.status!=='passed').length}/6 browser scenarios failed`);console.log('PASS lens-25d: six real-browser scenarios');
 })().catch(error=>{console.error(error);fs.writeFileSync(path.join(output,'runner-error.txt'),error.stack||String(error));if(!browser){results.push({name:'browser-suite',status:'never-run',reason:error.message});save();}process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();if(server)await new Promise(resolve=>server.close(resolve));});

@@ -23,19 +23,36 @@ const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?
 assert.equal(manifest.source_commit,'05afe33bfd82d59a2b1da6d3f9618ecfb85e1556');
 assert.equal(manifest.baseline_commit,'141f47d9db2ca86ebbb542ab7a77db1c01c79a3e');
 assert.equal(manifest.files.length,12);
-assert.deepEqual(walk(runtime).map(p=>path.relative(runtime,p)).sort(),manifest.files.map(f=>f.path).sort(),'exact approved runtime files; no Site identity, QA or private artifacts');
+// This inventory is historical provenance, not a place to rebaseline changed runtime bytes.
+assert.equal(sha(JSON.stringify(manifest.files)),'b9353b319707b647a4bf1675f021eec71571b6ddf5aa1a71c92d2016e9674611','original 12-file prototype inventory remains unchanged');
+const revision=manifest.runtime_revision;
+assert.equal(revision.reviewed_from_commit,'d1844605546a82738f02d8b2e3b5c71e6800503d');
+assert.equal(revision.id,'settled-input-and-reset-confirmation-v1');
+assert.deepEqual(revision.replacements.map(f=>f.path).sort(),['assets/five-case.js','assets/pilot.js']);
+assert.deepEqual(revision.additions.map(f=>f.path),['assets/screen-settlement.js']);
+assert.equal(revision.index_replacements.length,1);
+const replacementByPath=new Map(revision.replacements.map(f=>[f.path,f]));
+const runtimeFiles=[...manifest.files,...revision.additions];
+assert.deepEqual(walk(runtime).map(p=>path.relative(runtime,p)).sort(),runtimeFiles.map(f=>f.path).sort(),'exact original files plus reviewed adapter; no Site identity, QA or private artifacts');
 assert.equal(manifest.index_metadata_before,'<meta name="robots" content="noindex,nofollow">');
 assert.equal(manifest.index_metadata_after,'<link rel="canonical" href="https://www.bhcs.com.tw/tools/lens-25d/">');
-for(const f of manifest.files){
+for(const f of runtimeFiles){
  let b=fs.readFileSync(path.join(runtime,f.path));
  if(f.path==='index.html'){
-  const s=b.toString();
+  let s=b.toString();
   assert.equal(s.split(manifest.index_metadata_after).length,2,'one canonical metadata substitution');
   assert.ok(!s.includes(manifest.index_metadata_before));
+  const cache=revision.index_replacements[0];
+  assert.equal(cache.before,'src="./assets/pilot.js"');
+  assert.equal(cache.after,`src="./assets/pilot.js?v=${sha(fs.readFileSync(path.join(runtime,'assets/pilot.js'))).slice(0,12)}"`);
+  assert.equal(s.split(cache.after).length,2,'one reviewed pilot cache substitution');
+  assert.ok(!s.includes(cache.before));
+  s=s.replace(cache.after,cache.before);
   b=Buffer.from(s.replace(manifest.index_metadata_after,manifest.index_metadata_before));
  }
- assert.equal(b.length,f.bytes,`source byte count: ${f.path}`);
- assert.equal(sha(b),f.sha256,`accepted source unchanged except exact index metadata: ${f.path}`);
+ const expected=replacementByPath.get(f.path)||f;
+ assert.equal(b.length,expected.bytes,`reviewed byte count: ${f.path}`);
+ assert.equal(sha(b),expected.sha256,`original source or explicit reviewed runtime exception: ${f.path}`);
 }
 assert.match(read('tools/science/optics-guided.html'),/<meta[^>]+name="robots"[^>]+content="noindex/);
 const entries=standalonePublic.filter(t=>t.file==='lens-25d/');
@@ -74,7 +91,7 @@ for(const p of walk(runtime)){
 // Frozen persist.js stays in the transfer, but must never enter the active import graph.
 const active=new Set(),visit=p=>{if(active.has(p))return;active.add(p);for(const dep of imports.get(p)||[])visit(dep);};
 visit(path.join(runtime,'assets/pilot.js'));
-assert.equal(active.size,9);
+assert.equal(active.size,10);
 assert.ok(!active.has(path.join(runtime,'assets/optics-guided/persist.js')));
 for(const p of active)assert.doesNotMatch(fs.readFileSync(p,'utf8'),/localStorage|sessionStorage|indexedDB|document\.cookie|fetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|serviceWorker|import\s*\(/,`no persistence/backend injection: ${p}`);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css'};
@@ -88,7 +105,7 @@ const server=http.createServer((req,res)=>{
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 try{
  const base=`http://127.0.0.1:${server.address().port}`;
- const checks=[{url:'/tools/lens-25d/',target:path.join(runtime,'index.html')},...manifest.files.map(f=>({url:'/tools/lens-25d/'+f.path,target:path.join(runtime,f.path)})),...refs];
+ const checks=[{url:'/tools/lens-25d/',target:path.join(runtime,'index.html')},...runtimeFiles.map(f=>({url:'/tools/lens-25d/'+f.path,target:path.join(runtime,f.path)})),...refs];
  for(const {url,target} of checks){const r=await fetch(base+url);assert.equal(r.status,200,url);assert.equal(r.headers.get('content-type'),mime[path.extname(target)]);assert.deepEqual(Buffer.from(await r.arrayBuffer()),fs.readFileSync(target));}
- console.log(`PASS lens integration: 12 source-pinned files, metadata-only exception, isolated discovery, 9 active modules without persistence, ${refs.length} relative references/cache keys, ${checks.length} local nested HTTP/MIME responses (not deployment or browser QA)`);
+ console.log(`PASS lens integration: original 12-file provenance retained, 2 reviewed replacements + 1 adapter, reversible index metadata/cache exceptions, isolated discovery, 10 active modules without persistence, ${refs.length} relative references/cache keys, ${checks.length} local nested HTTP/MIME responses (not deployment or browser QA)`);
 }finally{await new Promise(resolve=>server.close(resolve));}

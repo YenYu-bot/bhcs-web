@@ -3,6 +3,7 @@ import {createRequire} from 'node:module';
 import {createInputController,snapForWidth} from '../../tools/lens-25d/assets/optics-guided/input.js';
 const require=createRequire(import.meta.url),{JSDOM}=require('jsdom');
 import {CASES,createState,deriveView,dispatchState} from '../../tools/lens-25d/assets/five-case.js';
+import {createScreenSettlement,SCREEN_SETTLE_MS} from '../../tools/lens-25d/assets/screen-settlement.js';
 import {visualParams} from '../../tools/lens-25d/assets/optics-guided/visual.js';
 let n=0;const test=(name,fn)=>{fn();n++;console.log('PASS',name)};
 const act=(s,type,fields={})=>dispatchState(s,{type,...fields}).state;
@@ -67,5 +68,20 @@ test('alreadyRecordedSnapshot exposes exact repeated real/focal/virtual conditio
  let focal=act(search(select('focal')),'CONFIRM_FOCAL');focal=act(focal,'SELECT_CASE',{id:'focal'});focal=search(focal);assert(deriveView(focal).alreadyRecordedSnapshot);assert(!dispatchState(focal,{type:'CONFIRM_FOCAL'}).accepted);
  let virtual=act(search(select('inside')),'VIEW_THROUGH');virtual=act(virtual,'CONFIRM_VIRTUAL');virtual=act(virtual,'SELECT_CASE',{id:'inside'});virtual=search(virtual);assert(deriveView(virtual).alreadyRecordedSnapshot);assert(dispatchState(virtual,{type:'VIEW_THROUGH'}).accepted);virtual=act(virtual,'VIEW_THROUGH');assert(!dispatchState(virtual,{type:'CONFIRM_VIRTUAL'}).accepted);
  virtual=act(virtual,'MOVE_SCREEN',{position:39});assert(!deriveView(virtual).alreadyRecordedSnapshot);
+});
+test('presentation settlement coalesces a burst and ignores callbacks from canceled generations',()=>{
+ let state=select('focal'),clock=0,next=0;const timers=new Map(),callbacks=[];
+ const dispatch=a=>{state=dispatchState(state,a).state;};
+ const settle=createScreenSettlement({getState:()=>state,dispatch,setTimer:(fn,ms)=>{const id=++next;timers.set(id,{fn,at:clock+ms});callbacks.push(fn);return id;},clearTimer:id=>timers.delete(id)});
+ const advance=ms=>{clock+=ms;for(const [id,t] of timers)if(t.at<=clock){timers.delete(id);t.fn();}};
+ assert.equal(SCREEN_SETTLE_MS,400);
+ for(const [key,position] of [['PageDown',15],['PageUp',20],['PageUp',25],['PageUp',30]]){settle.keyDown(key,position);settle.keyUp(key);}
+ assert.deepEqual(state.search.zones,[]);advance(399);assert.deepEqual(state.search.zones,[]);advance(1);assert.deepEqual(state.search.zones,['far']);
+ state=select('focal');settle.cancel();settle.button(15);const old=callbacks.at(-1);settle.cancel();
+ state=select('focal');settle.button(15);old();assert.deepEqual(state.search.zones,[],'same u/s/origin does not revive an old generation');advance(400);assert.deepEqual(state.search.zones,['near']);
+ state=select('focal');settle.cancel();settle.keyDown('PageDown',15);advance(1000);assert.deepEqual(state.search.zones,[]);
+ settle.keyDown('PageUp',20);settle.keyUp('PageUp');advance(1000);assert.deepEqual(state.search.zones,[],'one released key is not the last held key');
+ settle.keyUp('PageDown');advance(400);assert.deepEqual(state.search.zones,[],'return to the pre-burst origin is not an observation');assert.equal(state.pendingScreenStart,null);
+ settle.button(15);settle.cancel();assert.equal(state.s,15);assert.equal(state.pendingScreenStart,null);dispatch({type:'MOVE_SCREEN',position:20});dispatch({type:'SETTLE_SCREEN'});assert.deepEqual(state.search.zones,['middle'],'pointer handoff gets a fresh origin instead of the canceled keyboard origin');
 });
 console.log(`${n} five-case pure-controller checks passed.`);
