@@ -1,0 +1,102 @@
+{
+  "source_commit": "05afe33bfd82d59a2b1da6d3f9618ecfb85e1556",
+  "baseline_commit": "141f47d9db2ca86ebbb542ab7a77db1c01c79a3e",
+  "index_metadata_before": "<meta name=\"robots\" content=\"noindex,nofollow\">",
+  "index_metadata_after": "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/lens-25d/\">",
+  "files": [
+    {
+      "path": "assets/five-case.js",
+      "bytes": 5263,
+      "sha256": "d2c3e8f1556e34749b79bbdc23b12663d84c87ecee1961231e0e9aeb707fbbfc"
+    },
+    {
+      "path": "assets/learning-summary.js",
+      "bytes": 7795,
+      "sha256": "d8f833737d46857882577aa3e97aa029a74e2cb8419e4d25f7cd94958d4246d2"
+    },
+    {
+      "path": "assets/learning-ui.js",
+      "bytes": 4628,
+      "sha256": "e92362ee4b2c859f9921069bb65291eb87548061acdaa5c1fb5c93f9289b5226"
+    },
+    {
+      "path": "assets/optics-guided/challenges.js",
+      "bytes": 6165,
+      "sha256": "7779b45b5ef74137a83ac926afbfd1f7e88abdab2cb92f765a0b9c463866bcc0"
+    },
+    {
+      "path": "assets/optics-guided/engine.js",
+      "bytes": 18820,
+      "sha256": "3ec3f749b1a6ba843bab69677f5c74f808132ab161dbcab27688b9ecee1ec5b9"
+    },
+    {
+      "path": "assets/optics-guided/input.js",
+      "bytes": 6709,
+      "sha256": "24c616303c41dee02784e52c8731c61052a8d01e0d85a37e9e7fb4cba05d2e3d"
+    },
+    {
+      "path": "assets/optics-guided/model.js",
+      "bytes": 3986,
+      "sha256": "280f78221410e05f02dfa1cc2a8c6592ec1905f9e9e4f463558ff74c7761fc90"
+    },
+    {
+      "path": "assets/optics-guided/persist.js",
+      "bytes": 6566,
+      "sha256": "e58a20fba97c3781959973b24f817089ba3e473ab3f5787e7876fd3980750a41"
+    },
+    {
+      "path": "assets/optics-guided/visual.js",
+      "bytes": 8062,
+      "sha256": "d388bdc2b2665b2a81c6169c3d7f6d383569fd8283000da80c44f88f7aa4a6c4"
+    },
+    {
+      "path": "assets/pilot.css",
+      "bytes": 14511,
+      "sha256": "a311b8793bb2f8c6482e3534aeeda7579ba17d12a0db67617cb10fe2a3acac38"
+    },
+    {
+      "path": "assets/pilot.js",
+      "bytes": 20001,
+      "sha256": "7eeab48e5c45a40e662f4a21c1fbe30e84e1fef253103ef7bf8edd0da1939a53"
+    },
+    {
+      "path": "index.html",
+      "bytes": 6012,
+      "sha256": "50abe542dcf18d0622e98cc1a536e075320e11cd6dcc9050a97ece23f5bb5b62"
+    }
+  ],
+  "runtime_revision": {
+    "id": "settled-input-and-reset-confirmation-v1",
+    "reviewed_from_commit": "d1844605546a82738f02d8b2e3b5c71e6800503d",
+    "scope": "Authorized PR179 review fix: final-position-only 400 ms keyboard/button observations, interruption cancellation, reset confirmation; no optics changes, merge or deployment.",
+    "replacements": [
+      {
+        "path": "assets/five-case.js",
+        "bytes": 5334,
+        "sha256": "b9e0fb367c190407ef7656fa01032158d5645d0eee69f4ffdaf4d2eb7fc72796",
+        "reason": "Allow the presentation adapter to discard an interrupted screen operation without crediting a search zone."
+      },
+      {
+        "path": "assets/pilot.js",
+        "bytes": 22757,
+        "sha256": "eeeb3662db460c803677ee5b365f07df1b42be035abce23fb866f7c64b7cd7ca",
+        "reason": "Wire the presentation settlement adapter and interruption guards, request reset confirmation, and version changed module imports."
+      }
+    ],
+    "additions": [
+      {
+        "path": "assets/screen-settlement.js",
+        "bytes": 1771,
+        "sha256": "6354b917ff760e713a2b017be6ead50a0201d3b3d3ecd5da1b2e7cec02e706e5",
+        "reason": "Presentation-only 400 ms burst boundary, held-key protection and generation-guarded cancellation."
+      }
+    ],
+    "index_replacements": [
+      {
+        "before": "src=\"./assets/pilot.js\"",
+        "after": "src=\"./assets/pilot.js?v=eeeb3662db46\"",
+        "reason": "Invalidate the browser entrypoint cache after the reviewed runtime change; reverse before prototype hash comparison."
+      }
+    ]
+  }
+}

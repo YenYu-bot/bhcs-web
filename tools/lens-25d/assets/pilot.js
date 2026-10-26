@@ -1,0 +1,143 @@
+// Five-case presentation controller. Frozen model, input and visual mapping remain unchanged.
+import { compareRows } from './learning-summary.js';
+import { createLearningUI } from './learning-ui.js';
+import { createState, dispatchState, deriveView, CASES } from './five-case.js?v=b9e0fb367c19';
+import { createInputController, keyboardTarget, snapForWidth } from './optics-guided/input.js';
+import { visualParams, clarityMessage, xOf } from './optics-guided/visual.js';
+import { createScreenSettlement } from './screen-settlement.js?v=6354b917ff76';
+
+const $ = id => document.getElementById(id);
+const bench = $('bench');
+const scrollBehavior = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+const candleArt = `<path d="M-7 3 Q-14 -6 0 -20 Q12 -7 7 3 Q0 10 -7 3" fill="#f8bc57" stroke="#345047" stroke-width="2.2"/><path d="M-2 1 Q-6 -4 0 -9 Q5 -3 2 2" fill="#ffedaa"/><path d="M0 8v7" stroke="#345047" stroke-width="2"/><path d="M-12 15 Q0 11 12 15 L12 64 Q0 69 -12 64Z" fill="#f2947f" stroke="#345047" stroke-width="2.4"/><path d="M-12 16 Q-6 21 -3 16 Q2 23 6 17 Q10 22 12 16" fill="none" stroke="#345047" stroke-width="1.8"/><path d="M-6 28v27" stroke="#ffd9bd" stroke-width="3" stroke-linecap="round"/>`;
+const base = (x,color) => `<ellipse cx="${x+4}" cy="272" rx="40" ry="9" fill="#314b3920"/><path d="M${x-27} 253l13 -9h43l-13 9v13h-43Z" fill="${color}" stroke="#345047" stroke-width="2"/><path d="M${x-27} 253h43l13 -9M${x+16} 253v13" fill="none" stroke="#345047" stroke-width="1.5"/>`;
+bench.innerHTML = `<svg viewBox="0 0 750 340" preserveAspectRatio="none" aria-hidden="true"><defs><pattern id="grain" width="35" height="21" patternUnits="userSpaceOnUse"><path d="M2 15h14m7-9h8" stroke="#a3b78a" stroke-width=".6" opacity=".24"/></pattern></defs><path d="M5 211L709 211 746 249v73H5Z" fill="#d3dfbc" stroke="#345047" stroke-width="2"/><path d="M5 211H709l37 38H5Z" fill="#e8edce"/><path d="M5 211H709l37 38H5Z" fill="url(#grain)"/><path d="M5 249h741M723 249v73" fill="none" stroke="#345047" stroke-width="2"/><path d="M34 277h676" stroke="#9aac8e" stroke-width="12" stroke-linecap="round"/><path d="M34 274h676" stroke="#f9f8df" stroke-width="3"/><g id="ticks"></g><line x1="25" x2="723" y1="138" y2="138" stroke="#90a292" stroke-dasharray="5 6" stroke-width="1.5"/><text x="712" y="129" text-anchor="end" font-size="11" fill="#81947e">光軸</text><g id="candle-art">${base(xOf(-30),'#efaa91')}<path d="M${xOf(-30)-4} 201v47h8v-47" fill="#d3bc89" stroke="#345047" stroke-width="2"/><g transform="translate(${xOf(-30)} 138)">${candleArt}</g><text x="${xOf(-30)}" y="84" text-anchor="middle" font-size="14" fill="#345047" font-weight="bold">物體</text><text x="${xOf(-30)}" y="103" text-anchor="middle" font-size="11" fill="#69816c">▣ 已固定</text></g><g>${base(xOf(0),'#a4cdb5')}<path d="M${xOf(0)-5} 193v55h10v-55" fill="#87b5a4" stroke="#345047" stroke-width="2"/><ellipse cx="${xOf(0)+5}" cy="138" rx="23" ry="63" fill="#90b9a3" stroke="#345047" stroke-width="2"/><ellipse cx="${xOf(0)}" cy="138" rx="22" ry="63" fill="#c7e7dc" fill-opacity=".86" stroke="#345047" stroke-width="2.4"/><path d="M${xOf(0)-7} 94Q${xOf(0)-23} 132 ${xOf(0)-7} 174" fill="none" stroke="#faffed" stroke-width="5" stroke-linecap="round"/><text x="${xOf(0)}" y="43" text-anchor="middle" font-size="14" fill="#345047" font-weight="bold">凸透鏡</text><text x="${xOf(0)}" y="62" text-anchor="middle" font-size="11" fill="#69816c">▣ 已固定</text></g><g id="screen-art"></g></svg><div id="screen-hit" class="screen-hit" role="slider" tabindex="0" aria-orientation="horizontal" aria-label="光屏，可左右拖動或使用方向鍵"></div>`;
+const candleHit=document.createElement('div');candleHit.id='candle-hit';candleHit.className='screen-hit candle-hit';candleHit.setAttribute('role','slider');candleHit.setAttribute('aria-orientation','horizontal');bench.append(candleHit);
+const ticks=$('ticks');
+for(let cm=0;cm<=40;cm+=5){ const x=xOf(cm);ticks.innerHTML+=`<path d="M${x} 285v${cm%10===0?9:5}" stroke="#526e56" stroke-width="1.2"/>${cm%10===0?`<text x="${x}" y="310" text-anchor="middle" font-size="11" fill="#526e56">${cm}</text>`:''}`; }
+$('result').innerHTML=`<svg viewBox="0 0 240 174" aria-label="光屏上的實際影像"><defs><filter id="projection-blur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur id="blur" stdDeviation="0"/><feComponentTransfer><feFuncR id="contrast-r" type="linear"/><feFuncG id="contrast-g" type="linear"/><feFuncB id="contrast-b" type="linear"/></feComponentTransfer></filter></defs><path d="M12 20v-8h8m200 0h8v8M12 154v8h8m200 0h8v-8" stroke="#afbfaa" stroke-width="1.2" fill="none"/><line x1="25" x2="215" y1="92" y2="92" stroke="#b7c5b2" stroke-dasharray="3 5"/><g id="projection" filter="url(#projection-blur)"><g id="image-art">${candleArt}</g></g><text x="120" y="152" text-anchor="middle" fill="#788c77" font-size="9">光屏正面 · 與桌上光屏同步</text></svg>`;
+let state=createState(), ui={started:false,help:0};
+const put=(el,text)=>{if(el.textContent!==text)el.textContent=text;};
+const hit=$('screen-hit');
+let cancelPointers=()=>{};
+const screenSettlement=createScreenSettlement({getState:()=>state,dispatch});
+const learningUI=createLearningUI({getRecords:()=>state.records,onReturn:id=>{dispatch({type:'SELECT_CASE',id});focusTarget('screen-hit');}});
+const sizeText={smaller:'縮小',same:'等大',equal:'等大',larger:'放大'};
+const nameOf=id=>CASES.find(c=>c.id===id)?.label??id;
+$('case-cards').innerHTML=CASES.map(c=>`<button data-case="${c.id}" aria-pressed="false"><b>${c.label}</b><span>物距 ${c.u} cm</span><small class="case-badge"></small></button>`).join('');
+function dispatch(action){
+ const before=state,result=dispatchState(state,action);state=result.state;
+ if(result.accepted){
+  const newCondition=['SELECT_CASE','RESET','EXIT_THROUGH'].includes(action.type);
+  if(newCondition||state.u!==before.u)screenSettlement.cancel();
+  if(newCondition)cancelPointers();
+  if(action.type==='RESET')learningUI.reset();
+  if(action.type==='SELECT_CASE'||action.type==='RESET'||state.u!==before.u)ui={started:false,help:0};
+  else if(action.type==='MOVE_SCREEN'&&state.s!==before.s)ui.started=true;
+ }
+ render();
+ if(result.accepted&&['RECORD','CONFIRM_FOCAL','CONFIRM_VIRTUAL'].includes(action.type))focusTarget('evidence');
+ return result;
+}
+function render(){
+ const view=deriveView(state),p=visualParams(view),done=view.confirmed,x=xOf(view.s),locked=view.ranges.screen.locked;
+ $('screen-art').innerHTML=`${base(x,'#f2d078')}<path d="M${x-4} 183v65h8v-65" fill="#dfc892" stroke="#345047" stroke-width="2"/><path d="M${x-25} 66l10 -7 49 8v132l-10 7Z" fill="#d6c897" stroke="#345047" stroke-width="2.3"/><path d="M${x-25} 66l49 8v132l-49 -8Z" fill="#fffce4" stroke="#345047" stroke-width="2.3"/><path d="M${x+24} 74l10 -7M${x+24} 206l10 -7" stroke="#345047" stroke-width="1.5"/><defs><clipPath id="bench-face-clip"><path d="M${x-23} 69l45 7v127l-45 -8Z"/></clipPath><filter id="bench-image-blur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="${p.blurSigma}"/><feComponentTransfer><feFuncR type="linear" slope="${p.contrast}" intercept="${(1-p.contrast)/2}"/><feFuncG type="linear" slope="${p.contrast}" intercept="${(1-p.contrast)/2}"/><feFuncB type="linear" slope="${p.contrast}" intercept="${(1-p.contrast)/2}"/></feComponentTransfer></filter></defs><g clip-path="url(#bench-face-clip)"><g opacity="${p.imageOpacity}" filter="url(#bench-image-blur)"><g transform="translate(${x} 138) skewY(9) scale(${p.image?.scaleX??0} ${p.image?.scaleY??0})">${candleArt}</g></g></g><path d="M${x-6} 221v13m6-13v13m6-13v13" stroke="#8e977d" stroke-width="2" stroke-linecap="round"/><rect x="${x-40}" y="25" width="80" height="29" rx="14" fill="${done?'#dceee1':'#f7df8d'}" stroke="#345047" stroke-width="1.5"/><text x="${x}" y="44" text-anchor="middle" font-size="12" font-weight="bold" fill="#345047">${locked?'▣ 觀察中':'↔ 拖動光屏'}</text>`;
+ hit.style.left=`${x/750*100}%`;hit.style.top='40%';hit.setAttribute('aria-valuenow',view.s);hit.setAttribute('aria-valuemin','8');hit.setAttribute('aria-valuemax','40');hit.setAttribute('aria-valuetext',`${view.s} 公分`);hit.setAttribute('aria-disabled',String(locked));hit.tabIndex=locked?-1:0;
+ const cx=xOf(-view.u),objectLocked=view.ranges.candle.locked;
+ $('candle-art').innerHTML=`${base(cx,'#efaa91')}<path d="M${cx-4} 201v47h8v-47" fill="#d3bc89" stroke="#345047" stroke-width="2"/><g transform="translate(${cx} 138)">${candleArt}</g><rect x="${cx-44}" y="61" width="88" height="29" rx="13" fill="${objectLocked?'#dceee1':'#f7df8d'}" stroke="#345047"/><text x="${cx}" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#345047">${objectLocked?'▣ 物體固定':'↔ 拖動物體'}</text>`;
+ candleHit.style.left=`${cx/750*100}%`;candleHit.style.top='46%';candleHit.tabIndex=objectLocked?-1:0;candleHit.setAttribute('aria-disabled',String(objectLocked));candleHit.setAttribute('aria-valuenow',view.u);candleHit.setAttribute('aria-valuemin','5');candleHit.setAttribute('aria-valuemax','35');candleHit.setAttribute('aria-label',`物體，距透鏡 ${view.u} 公分，${objectLocked?'已固定':'可用方向鍵左右移動'}`);
+ $('object-position').textContent=view.u;$('condition-u').textContent=`${view.u} cm`;
+ $('object-status').textContent='可調整 5–35 cm；改變物距後，請重新觀察';
+ $('object-near').disabled=view.u<=5;$('object-far').disabled=view.u>=35;
+ put($('mission-title'),`目前條件：${nameOf(view.caseId)}`);
+ put($('mission-copy'),'先選條件或移動物體，再移動光屏觀察。焦距保持 10 cm。');
+ $('position').textContent=view.s;bench.dataset.phase=view.phase;bench.dataset.clarity=String(p.clarity.level);bench.dataset.currentCase=view.caseId;
+ $('blur').setAttribute('stdDeviation',p.blurSigma);
+ for(const c of ['r','g','b']){$('contrast-'+c).setAttribute('slope',p.contrast);$('contrast-'+c).setAttribute('intercept',(1-p.contrast)/2);}
+ $('projection').setAttribute('opacity',p.imageOpacity);$('image-art').setAttribute('transform',p.image?`translate(120 92) scale(${p.image.scaleX} ${p.image.scaleY})`:'scale(0)');
+ // No virtual candle is ever painted on the screen. Through-lens observation is a separate panel.
+ const virtual=view.lensState.imageType==='virtual',infinite=view.lensState.imageType==='infinite',offbench=view.lensState.imageType==='real'&&!view.lensState.projectionWithinBench;
+ $('through-view').hidden=!view.through;$('result').hidden=view.through;
+ put($('observation-title'),view.through?'從透鏡後觀察':'光屏觀察窗');put($('observation-mode'),view.through?'非光屏影像':'正面看');
+ if(view.through){const m=view.lensState.magnification,vx=xOf(view.lensState.theoreticalV),w=Math.max(300,100*m),h=Math.max(240,100*m),y=25+20*m;$('through-art').innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="左為原物體參考，右為正立放大的虛像，同一比例縮放"><g opacity=".5" transform="translate(${w*.2} ${y})">${candleArt}</g><g transform="translate(${w*.7} ${y}) scale(${m} ${m})">${candleArt}</g></svg><p>左：原物體參考；右：正立虛像，放大 ${m.toFixed(2)} 倍。兩者同一比例縮放，以完整顯示。</p><p>虛像位於物體同側，距透鏡 ${Math.abs(view.lensState.theoreticalV).toFixed(1)} cm。</p>`;if(vx>=0&&vx<=750)bench.querySelector('svg').insertAdjacentHTML('beforeend',`<g id="virtual-marker" opacity=".45" aria-hidden="true"><g transform="translate(${vx} 138) scale(${m} ${m})">${candleArt}</g></g>`);}else $('through-art').replaceChildren();
+ const oldMarkers=bench.querySelectorAll('#virtual-marker');oldMarkers.forEach((el,i)=>{if(!view.through||i<oldMarkers.length-1)el.remove();});
+ put($('clarity'),view.through?'透鏡後看見正立、放大的虛像':infinite?'光屏上找不到清楚的影像':virtual?'光屏接不到虛像':offbench?'實像清楚位置超出本桌範圍':clarityMessage(view).text);$('clarity').dataset.level=String(p.clarity.level);
+ put($('observe-help'),offbench?'這是實像，但清楚位置超出光屏的 8–40 cm 範圍。':virtual||infinite?'移動光屏，分別在近、中、遠三區停下來觀察。':'比較輪廓，清楚時才記錄你實際找到的位置。');
+ put($('physics-note'),infinite?'模型說明：物體在焦點上，出射光線平行；不在有限距離形成清楚的屏幕像。不是虛像。':virtual?'模型說明：物體在焦距內，形成物體同側、正立放大的虛像，不能投射在光屏上。':offbench?'仍屬於實像；桌面範圍有限，不代表沒有實像。':'');
+ $('record').hidden=virtual||infinite;$('record').disabled=!view.recordEnabled;put($('record'),done?'✓ 目前條件已記錄':view.alreadyRecordedSnapshot?'相同條件與位置已有紀錄':view.recordEnabled?'記錄這個位置 ✎':'影像清楚後，就能記錄');
+ $('left').disabled=locked||view.s<=8;$('right').disabled=locked||view.s>=40;
+ $('search-zones').hidden=!(virtual||infinite);$('search-zones').innerHTML=['near','middle','far'].map((id,i)=>`<span class="${view.search.explored.includes(id)?'visited':''}">${view.search.explored.includes(id)?'✓':'○'} ${['近區 8–<17','中區 17–<29','遠區 29–40'][i]}</span>`).join('');
+ $('special-action').hidden=!(virtual||infinite);$('special-action').disabled=done||!view.search.complete||view.alreadyRecordedSnapshot&&(infinite||view.through);put($('special-action'),done?'✓ 目前條件已記錄':view.alreadyRecordedSnapshot&&(infinite||view.through)?'相同條件與位置已有紀錄':infinite?'記錄：三區都沒有清楚屏幕像':view.through?'確認觀察到正立放大的虛像':'從透鏡後觀察');
+ document.querySelectorAll('[data-case]').forEach(el=>{el.setAttribute('aria-pressed',String(el.dataset.case===view.caseId));put(el.querySelector('.case-badge'),state.records[el.dataset.case]?'✓ 有觀察紀錄':'尚未記錄');});
+ drawGuide(view,{virtual,infinite,offbench});drawEvidence();learningUI.update();
+}
+function drawGuide(view,{virtual,infinite,offbench}){
+ const negative=virtual||infinite;const step=view.confirmed?4:view.through||view.clarity.effectiveClarityLevel===1||negative&&view.search.complete?3:ui.started||view.search.explored.length?2:1;
+ $('guide').dataset.step=step;const cue=view.confirmed?'這個條件的觀察已記錄。可以換另一個條件比較。':view.alreadyRecordedSnapshot&&(view.clarity.effectiveClarityLevel===1||view.search.complete&&(infinite||view.through))?'相同條件與位置已有紀錄，不會重複新增。可以查看下方證據，或改變條件再觀察。':offbench?'這是超出桌面的實像，不能在本桌硬記成清楚。可以調整物距，或選另一個條件。':view.through?'現在看的是透鏡後的虛像，不是光屏。確認它的方向與大小，再記錄。':negative&&view.search.complete?(infinite?'你已在本桌三區停下觀察。記錄本次搜索結果；模型說明與搜索證據分開看。':'你已在本桌三區停下觀察。接著從透鏡後看。'):negative?'請移動光屏，在近、中、遠區各停下觀察；拖過不算停下。':view.recordEnabled?'輪廓清楚了。確認後，記錄這個實際位置。':ui.started?'慢慢移動光屏，比較輪廓。若又模糊，試著往回調整。':'先看目前影像，再慢慢移動光屏。你也可以改變物距。';
+ put($('guide-cue'),'余老師：'+cue);
+ document.querySelectorAll('[data-guide-step]').forEach(el=>{const active=Number(el.dataset.guideStep)===step;el.classList.toggle('current',active);if(active)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');});
+ put(document.querySelector('[data-guide-step="3"]'),negative?'③ 判讀觀察':'③ 確認清楚');
+ const target=view.confirmed||view.alreadyRecordedSnapshot&&(view.clarity.effectiveClarityLevel===1||view.search.complete&&(infinite||view.through))?'evidence':view.through||negative&&view.search.complete?'special-action':view.recordEnabled?'record':step===1?'result':'screen-hit';
+ for(const id of ['result','screen-hit','candle-hit','record','evidence','special-action'])$(id).classList.toggle('guide-target',id===target);
+ $('guide-start').hidden=step!==1;$('look').hidden=step!==1;$('move-from-result').hidden=false;put($('move-from-result'),view.through?'返回光屏，重新搜尋 ↑':'移動光屏 ↑');
+ $('guide-help').hidden=false;$('guide-help-text').hidden=!ui.help;$('guide-help').setAttribute('aria-expanded',String(!!ui.help));
+ if(ui.help)put($('guide-help-text'),negative?'三區只代表本桌 8–40 cm 的有限搜索，不是對所有距離的證明；成像性質由模擬模型說明。':ui.help===1?'改變物距後，要重新尋找清楚的光屏位置。':'左右按鈕可逐步調整；桌機 Shift＋方向鍵微調 0.5 cm，手機每步 1 cm。');
+ put($('guide-help'),ui.help?'收起提示':'需要提示？');
+}
+function drawEvidence(){
+ const validIds=new Set(compareRows(state.records).filter(row=>row.ready).map(row=>row.id));
+ $('evidence-cards').innerHTML=CASES.map(c=>{const r=validIds.has(c.id)?state.records[c.id]:null,focal=r?.imageType==='infinite',virtual=r?.imageType==='virtual';return `<article class="record-card"><h3>${c.label}</h3>${r?`<p>物距 ${r.u} cm · 焦距 ${r.f} cm</p><dl><div><dt>光屏實際位置</dt><dd>${r.evidenceKind==='screen'?`${r.observedScreenPosition} cm`:'不適用（未形成清楚屏幕像）'}</dd></div><div><dt>觀察方向／大小</dt><dd>${focal?'不適用（無有限影像）':`${r.imageOrientation==='inverted'?'倒立':'正立'}／${sizeText[r.imageSize]??r.imageSize}`}</dd></div><div><dt>觀察方式</dt><dd>${r.evidenceKind==='screen'?'光屏承接清楚影像':focal?'本桌近、中、遠三區搜索':'三區搜索後，從透鏡後觀察（非光屏）'}</dd></div></dl>${focal?'<p>三區都未找到清楚屏幕像。</p>':virtual?'<p>從透鏡後觀察：正立、放大的虛像。</p>':''}`:'<p>待觀察：尚無有效紀錄，請先完成觀察。</p><button class="return-case" data-return-case="'+c.id+'">前往觀察 →</button>'}</article>`}).join('');
+ $('evidence-history').innerHTML=(state.history??[]).map((r,i)=>`<li>第 ${i+1} 筆 · ${nameOf(r.caseId)} · 物距 ${r.u} cm · ${r.evidenceKind==='screen'?`光屏 ${r.observedScreenPosition} cm`:r.evidenceKind==='focal'?'焦點上：三區無清楚屏幕像':'透鏡後：正立放大虛像'}</li>`).join('');
+}
+const focusTarget=id=>{const el=$(id);el.focus({preventScroll:true});el.scrollIntoView({behavior:scrollBehavior(),block:'center'});};
+$('evidence-cards').addEventListener('click',e=>{const b=e.target.closest('[data-return-case]');if(b){dispatch({type:'SELECT_CASE',id:b.dataset.returnCase});focusTarget('screen-hit');}});
+$('look').addEventListener('click',()=>focusTarget('result'));
+const startMoving=()=>{if(deriveView(state).through)dispatch({type:'EXIT_THROUGH'});ui.started=true;render();focusTarget('screen-hit');};
+$('guide-start').addEventListener('click',startMoving);$('move-from-result').addEventListener('click',startMoving);
+$('guide-help').addEventListener('click',()=>{ui.help=ui.help?0:1;render();});
+// Only the presentation layer changes keyboard observation timing. Frozen input still
+// owns pointer movement/release/cancel and the frozen helper owns keyboard step/snap math.
+const pointers=new Map();
+for(const element of [hit,candleHit])element.addEventListener('pointerdown',e=>{
+ if((e.pointerType==='mouse'&&e.button!==0)||pointers.has(element))return;
+ screenSettlement.cancel();
+ pointers.set(element,e.pointerId);
+},true);
+hit.addEventListener('keydown',e=>{
+ if(e.altKey||e.ctrlKey||e.metaKey)return;
+ const target=keyboardTarget('screen',e.key,e.shiftKey,state.s,snapForWidth(window.innerWidth));
+ if(target===null||deriveView(state).ranges.screen.locked)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(!pointers.size)screenSettlement.keyDown(e.key,target);
+},true);
+window.addEventListener('keyup',e=>screenSettlement.keyUp(e.key));
+const controller=createInputController({getState:()=>state,dispatch,getSnap:()=>snapForWidth(window.innerWidth),getRect:()=>bench.getBoundingClientRect(),isLocked:(kind)=>deriveView(state).ranges[kind].locked});
+let detachScreen=controller.attach(hit,'screen'),detachCandle=controller.attach(candleHit,'candle');
+for(const element of [hit,candleHit])for(const name of ['pointerup','pointercancel','lostpointercapture'])element.addEventListener(name,e=>{if(pointers.get(element)===e.pointerId)pointers.delete(element);});
+cancelPointers=()=>{
+ if(!pointers.size)return;
+ // Detaching clears frozen input's private drag, so an old release cannot affect a new case.
+ detachScreen();detachCandle();
+ for(const [element,pointerId] of pointers){try{element.releasePointerCapture?.(pointerId);}catch(_){/* capture already gone */}}
+ pointers.clear();
+ detachScreen=controller.attach(hit,'screen');detachCandle=controller.attach(candleHit,'candle');
+};
+const cancelInteraction=()=>{screenSettlement.cancel();cancelPointers();};
+window.addEventListener('blur',cancelInteraction);
+window.addEventListener('pagehide',cancelInteraction);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelInteraction();});
+for(const [id,key] of [['object-near','ArrowRight'],['object-far','ArrowLeft']])$(id).addEventListener('click',()=>candleHit.dispatchEvent(new KeyboardEvent('keydown',{key,bubbles:true})));
+// Native keyboard activation of the arrow buttons can repeat too; keep it in
+// the same held-key guard without suppressing the button's accessible default action.
+for(const id of ['left','right'])$(id).addEventListener('keydown',e=>{
+ if((e.key==='Enter'||e.key===' ')&&!e.altKey&&!e.ctrlKey&&!e.metaKey&&!pointers.size)screenSettlement.hold(e.key);
+});
+for(const [id,key] of [['left','ArrowLeft'],['right','ArrowRight']])$(id).addEventListener('click',()=>{
+ if(pointers.size||$(id).disabled)return;
+ screenSettlement.button(keyboardTarget('screen',key,false,state.s,snapForWidth(window.innerWidth)));
+});
+$('record').addEventListener('click',()=>dispatch({type:'RECORD'}));
+$('special-action').addEventListener('click',()=>{const v=deriveView(state);if($('special-action').disabled)return;dispatch({type:v.lensState.imageType==='infinite'?'CONFIRM_FOCAL':v.through?'CONFIRM_VIRTUAL':'VIEW_THROUGH'});});
+$('case-cards').addEventListener('click',e=>{const b=e.target.closest('[data-case]');if(b)dispatch({type:'SELECT_CASE',id:b.dataset.case});});
+$('restart').addEventListener('click',()=>{if(!window.confirm('確定全部重新開始？這會清除本頁所有觀察紀錄與作答。'))return;dispatch({type:'RESET'});focusTarget('look');});
+render();
