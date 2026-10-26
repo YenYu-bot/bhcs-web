@@ -44,3 +44,11 @@ export const guidedPublic = Object.freeze([Object.freeze({
  prior:'開關與完整通路',goals:'電流表與電壓表接法、單一路徑與雙路徑電流比較',
  minutes:'25–35',kind:'引導實驗',batch:3
 })]);
+
+// Standalone applications are discoverable, but never receive the legacy research shell.
+export const standalonePublic = Object.freeze([Object.freeze({
+ file:'microscope-3d/',title:'3D顯微鏡操作與比較',subject:'生物',grade:'國中',unit:'觀察工具',
+ description:'在獨立3D實驗桌調焦、移動玻片與調整照明，比較複式與解剖顯微鏡。筆記僅存本頁記憶體，重新整理即消失，可匯出CSV。',
+ prior:'細胞、倍率與觀察方向',goals:'調焦、倍率比較、複式反向與解剖正立影像、照明限制',
+ minutes:'15–25',kind:'互動模擬'
+})]);
