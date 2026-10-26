@@ -133,4 +133,12 @@ test('standalone microscope browser gate is additive and runs in science-station
   assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('node test_microscope_3d_integration.mjs'));
 });
 
+test('G7 equation layout regression runs in the site gate without replacing the public-site check', () => {
+  const script = 'scripts/check_g7_equation_layout_browser.cjs';
+  assert.equal(count(wf, script), 1);
+  assert.ok(jobs.site.text.includes(`run: node ${script}`));
+  assert.ok(fs.existsSync(path.join(root, script)));
+  assert.ok(jobs.site.text.includes('run: node scripts/check_site_browser.cjs'));
+});
+
 console.log(`ci workflow: ${tests} tests passed`);
