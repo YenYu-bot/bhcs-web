@@ -147,6 +147,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_microscope_3d_browser.cjs
+      - name: Check standalone 2.5D lens five cases and learning flow
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_lens_25d_browser.cjs
       - name: Check all station operations, records, and challenges
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -162,6 +166,13 @@ jobs:
         with:
           name: microscope-3d-review
           path: microscope-3d-artifacts/
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lens-25d-review
+          path: lens-25d-artifacts/
           retention-days: 14
 
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）

@@ -51,4 +51,9 @@ export const standalonePublic = Object.freeze([Object.freeze({
  description:'在獨立3D實驗桌調焦、移動玻片與調整照明，比較複式與解剖顯微鏡。筆記僅存本頁記憶體，重新整理即消失，可匯出CSV。',
  prior:'細胞、倍率與觀察方向',goals:'調焦、倍率比較、複式反向與解剖正立影像、照明限制',
  minutes:'15–25',kind:'互動模擬'
+}),Object.freeze({
+ file:'lens-25d/',title:'凸透鏡五種成像實驗',subject:'理化',grade:'國中',unit:'光與成像',
+ description:'移動物體與光屏，記錄五種成像條件，再用實際證據完成模型比較與概念檢核。觀察與答案只保留在本頁記憶體，重新整理即消失。',
+ prior:'光的直進、凸透鏡與焦距',goals:'五種物距成像、有限光屏搜尋的限制、實際觀察與理論像距比較',
+ minutes:'20–30',kind:'互動模擬'
 })]);

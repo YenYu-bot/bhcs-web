@@ -1,0 +1,226 @@
+{
+  "baseline_commit": "141f47d9db2ca86ebbb542ab7a77db1c01c79a3e",
+  "purpose": "One-time PR isolation evidence, not a permanent freeze on legacy tools",
+  "files": [
+    {
+      "path": "assets/optics-guided/analytics.js",
+      "git_blob": "fe990157770dd9421b579cf2520519776c057300"
+    },
+    {
+      "path": "assets/optics-guided/challenges.js",
+      "git_blob": "7316acd16f6e9bb48ed0819a85d3be0d8e881e21"
+    },
+    {
+      "path": "assets/optics-guided/engine.js",
+      "git_blob": "8b02907e0c8851e1f7d75ea43af27fc0c01f68f9"
+    },
+    {
+      "path": "assets/optics-guided/input.css",
+      "git_blob": "f3363647779ec83f7fbb58249a410c1bafc57553"
+    },
+    {
+      "path": "assets/optics-guided/input.js",
+      "git_blob": "27ecb2e008baf3c13628455bf6fe6c758846b9ee"
+    },
+    {
+      "path": "assets/optics-guided/main.js",
+      "git_blob": "2b49d33677568ce2fe433c87f5748710dc52ae09"
+    },
+    {
+      "path": "assets/optics-guided/model.js",
+      "git_blob": "6cb3977dcdcf060bc48a9f0af397e779af8dfd62"
+    },
+    {
+      "path": "assets/optics-guided/optics-guided.css",
+      "git_blob": "632b0664888bc150ac5dab847798667d252f4441"
+    },
+    {
+      "path": "assets/optics-guided/package.json",
+      "git_blob": "089153bcb5adf57dc25f206a9dad3114c9cff80d"
+    },
+    {
+      "path": "assets/optics-guided/persist.js",
+      "git_blob": "cc2cc4a4902c11d8a52b83d8c94b0aedf90d9263"
+    },
+    {
+      "path": "assets/optics-guided/render.js",
+      "git_blob": "4739cba16f609ab8366273230a7f085b7e440d6a"
+    },
+    {
+      "path": "assets/optics-guided/script.js",
+      "git_blob": "3f1301086cb5732945358242476650d9f1a854b5"
+    },
+    {
+      "path": "assets/optics-guided/visual.js",
+      "git_blob": "49409daf772fb8e8685f073d36c88cbe314532f8"
+    },
+    {
+      "path": "tools/microscope-3d/app.js",
+      "git_blob": "211df4dcd812a8a7b06703b4bebcee0317c6c387"
+    },
+    {
+      "path": "tools/microscope-3d/body-touch.js",
+      "git_blob": "0701e54f6a6f4e354e982b7cd70e99c7d163f8ed"
+    },
+    {
+      "path": "tools/microscope-3d/cell-course.js",
+      "git_blob": "2c8c67a492f762172cccb8b934e04725301f456e"
+    },
+    {
+      "path": "tools/microscope-3d/cell-observation.js",
+      "git_blob": "94905b9c34e5b82727de6f96ed4e65a28017f2f0"
+    },
+    {
+      "path": "tools/microscope-3d/compound-pointer.js",
+      "git_blob": "d8f4c548b1b679367da84d3f39611c8ec982f494"
+    },
+    {
+      "path": "tools/microscope-3d/course-ui.js",
+      "git_blob": "232a1ad26165bfa5f609bc96c1d4e05564000ee8"
+    },
+    {
+      "path": "tools/microscope-3d/course.js",
+      "git_blob": "131e23e279dcfe01c4a1525695c822819b3fb0d4"
+    },
+    {
+      "path": "tools/microscope-3d/eyepiece.js",
+      "git_blob": "551a6f36b67f0cba0845db695589f3e69bac4a7f"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/NotoSansTC-OFL.txt",
+      "git_blob": "1c9f43281b8f216c5461fe9ac729afbade7724e4"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/NotoSansTC-subset.woff",
+      "git_blob": "4b9008f6edfb5f6bdf17c6ff5f0b9088542c800c"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/ZenMaruGothic-OFL.txt",
+      "git_blob": "7dc44f8017161dc4e1346b24cfd6e195c402633a"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/ZenMaruGothic-subset.woff",
+      "git_blob": "1091b236676364fd2f944b2c421211406469f7a7"
+    },
+    {
+      "path": "tools/microscope-3d/illumination-ui.js",
+      "git_blob": "4f05b0c062b2c1f3bb5222c1a23dce9e1e4ac0bd"
+    },
+    {
+      "path": "tools/microscope-3d/illumination.js",
+      "git_blob": "b0cd85f9ec55e394c6f4a04a35e0d480431cb0e8"
+    },
+    {
+      "path": "tools/microscope-3d/img/gold-paint.svg",
+      "git_blob": "32bf17edfc324c46e483fd763d2a70633467a899"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper-paint.svg",
+      "git_blob": "19b00a99fbb6fb0fd973f65090b5a99719c91275"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper.svg",
+      "git_blob": "ba4d34aba23d132b23441d47bbb8bac59c7f63c6"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper10.svg",
+      "git_blob": "a4371053b3d0ee89ac9bfbd054905a2af2cfa8b5"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper18.svg",
+      "git_blob": "32bfd7f1289364cdb463aa3466d4d3eaa9b29751"
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-arm-v2.webp",
+      "git_blob": "eaf970cff1ebb53f70eabe49045f6773a844f356"
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-body-v2.webp",
+      "git_blob": "e731a7a9a63a6e5bad6d22d4592871d50fe3eea4"
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-body-v3.png",
+      "git_blob": "0aaa1b8ff727b271b363e6ff5d3106dc098e38c1"
+    },
+    {
+      "path": "tools/microscope-3d/index.html",
+      "git_blob": "a9b7c4c2584753699348940cd50899c7cdf2a1a0"
+    },
+    {
+      "path": "tools/microscope-3d/model.js",
+      "git_blob": "58a0a312616edeabc8b836704d7657fb514ad9b3"
+    },
+    {
+      "path": "tools/microscope-3d/notebook-ui.js",
+      "git_blob": "bbebb0591a5b3972f8745444225d83d3b1ef832d"
+    },
+    {
+      "path": "tools/microscope-3d/notebook.js",
+      "git_blob": "5e7c879f0221e256ff45e5fddc65d8826d608ae0"
+    },
+    {
+      "path": "tools/microscope-3d/paper-render.js",
+      "git_blob": "02d0044eba35a9e62c21ec250a6fc9bccafe83b4"
+    },
+    {
+      "path": "tools/microscope-3d/pointer.js",
+      "git_blob": "dea93f97e1b6f0cff0769390cc248ae61c40a2b8"
+    },
+    {
+      "path": "tools/microscope-3d/render-quality.js",
+      "git_blob": "efcfff1686adc1350d28c6d5bc1913e269c4c1ff"
+    },
+    {
+      "path": "tools/microscope-3d/scene.js",
+      "git_blob": "a0604a59599507f6b35a481e115f7982b57e1f40"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-course.js",
+      "git_blob": "e98002ac39198911380cf8bc3fc67d1d93db347c"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-eye.js",
+      "git_blob": "9d3a56945476464d6079d446d6a549b029b88075"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-model.js",
+      "git_blob": "2dd965becbf30f8ad7d87e0c4b0f7a802a108ca6"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-scene.js",
+      "git_blob": "7b49aa22693faf16a76f722429354eedbc208def"
+    },
+    {
+      "path": "tools/microscope-3d/style.css",
+      "git_blob": "5fed15678c09a25f3172ac83f841a28927f74995"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/Projector.js",
+      "git_blob": "093a79ad7c7eafcb80ed0dcbbab7f51b5a2ab01c"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/SVGRenderer.js",
+      "git_blob": "23e902c9b32bff55fb485b2c7d10c1a1675234ea"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/THREE-LICENSE.txt",
+      "git_blob": "cf781430404b0ae0ba7d8dea3457a3515dd7c9b9"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/three.core.js",
+      "git_blob": "7dcd0fbcbc04b8d9a20ecb96c1ce344cb55150d5"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/three.module.js",
+      "git_blob": "477ca4dafa7af919a2b9818e01b5ae25198d4aa4"
+    },
+    {
+      "path": "tools/science/optics-guided.html",
+      "git_blob": "63c35309b779efd27822211ce9fab169d55b7ea5"
+    },
+    {
+      "path": "tools/science/optics.html",
+      "git_blob": "c0585802e75e93d8e2d7729a5b931cc9d900c1c8"
+    }
+  ]
+}
