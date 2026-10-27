@@ -56,4 +56,9 @@ export const standalonePublic = Object.freeze([Object.freeze({
  description:'移動物體與光屏，記錄五種成像條件，再用實際證據完成模型比較與概念檢核。觀察與答案只保留在本頁記憶體，重新整理即消失。',
  prior:'光的直進、凸透鏡與焦距',goals:'五種物距成像、有限光屏搜尋的限制、實際觀察與理論像距比較',
  minutes:'20–30',kind:'互動模擬'
+}),Object.freeze({
+ file:'buoyancy-lab/',title:'余老師的浮力量測站',subject:'理化',grade:'國中',unit:'浮力與排液量測',
+ description:'完成清水與濃鹽水兩輪量測，用重量差和排開液重比較浮力。手札僅存目前瀏覽器與網站；原型站紀錄不會自動移入官網。',
+ prior:'重量、質量與單位換算',goals:'量測順序、浮力與排液重比較、依原始證據修訂解釋',
+ minutes:'20–30',kind:'互動模擬'
 })]);

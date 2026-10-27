@@ -1,0 +1,57 @@
+{
+  "source_commit": "e53f18b5b3e6d2356574e8db8a9c1947fce6e4ff",
+  "baseline_commit": "01c3730aa0c332481eb6b68fdcaea5323e5e6533",
+  "index_metadata_added": "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/buoyancy-lab/\">",
+  "files": [
+    {
+      "path": "app.mjs",
+      "bytes": 25772,
+      "sha256": "236e968ef1732d4f796682aa3d9705e178b3c699cd4f1b4034ddb6f84b0dbf27"
+    },
+    {
+      "path": "bench.mjs",
+      "bytes": 7773,
+      "sha256": "0fba98623204a649269097bf89194c9b1f002ba438f0d026d2b369455796b8c2"
+    },
+    {
+      "path": "hold.mjs",
+      "bytes": 670,
+      "sha256": "a363354a268372e3c403937828694a6fb20478c783d378ee0922bab01f0c48d1"
+    },
+    {
+      "path": "img/teacher-body-v3.png",
+      "bytes": 941293,
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "img/teacher-body-v3.provenance.json",
+      "bytes": 367,
+      "sha256": "7d2009770d12f8755cecd94397f753c36c5538469c0b2cc1e2b118ebe8828afa"
+    },
+    {
+      "path": "index.html",
+      "bytes": 365,
+      "sha256": "05fe3c2b0e536c5d03be731059a0a29ed72a5d64280084a277c118468ed1b64a"
+    },
+    {
+      "path": "legacy-model.mjs",
+      "bytes": 9566,
+      "sha256": "03f198547e2c92b8452fa8de2479586697dc30c91ce8cb2ecc111423c5499dec"
+    },
+    {
+      "path": "model.mjs",
+      "bytes": 9562,
+      "sha256": "c4c6b5cfe613d259ef51de6cc8f5cd1ac186d1f33c90082af63a8c0750b8a8a8"
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 3094,
+      "sha256": "390dd957612d1a3e47c1f4b8763badd41918270b4b134ba322114c7039ee8496"
+    },
+    {
+      "path": "style.css",
+      "bytes": 9539,
+      "sha256": "aed43a643b505f34baceb0fb30e9567918056682fc7f76a94859d8a028f369fa"
+    }
+  ]
+}
