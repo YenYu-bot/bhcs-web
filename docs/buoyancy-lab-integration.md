@@ -67,3 +67,9 @@ This authorization is for a branch, Draft PR, tests and review only: no merge, d
 - A one-time full-checkout diff review found every existing tracked file outside the exact seven intended integration/generated files byte-identical to baseline, including all old buoyancy, lens and microscope runtime files and all builders.
 - Local runtime is Node 24; CI uses pinned Node 22. No local browser run was performed. The new browser checker passed syntax validation only; its real Chromium outcomes must be established by exact-head remote CI. Do not infer physical-device results.
 - Full `npm test --prefix scripts` completed successfully (exit 0), including all retained prior suites; its final math drill test passed 3,954/3,954 combinations across 102 topics (zero failures). Separate browser jobs and the dedicated math-regression/diversity CI jobs are still remote-CI gates, not covered by that local command.
+
+### Tracked-file CI correction
+
+The initial full local npm run occurred before adding the new files to Git. Although it exited 0, the old guided-page isolation test uses `git grep`, so it did not inspect the two then-untracked integration audit files. Exact-head CI correctly rejected those two references after publication. This was an incomplete local verification boundary, not a product/runtime defect.
+
+The correction permits only the exact integration document and boundary-test paths as audit references. All prior HTML/discovery/catalog/sitemap exclusions remain. An additional regression forbids a navigation link from the document, requires the boundary test's old noindex/sitemap-exclusion assertions, and checks every standalone text runtime asset cannot reference/import the unlisted guided prototype. No old or new runtime bytes change. The corrected complete npm verification must run with every deliverable tracked, after committing the correction; its result is reported with the corrected PR head.
