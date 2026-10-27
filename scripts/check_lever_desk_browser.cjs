@@ -50,7 +50,7 @@ async function run(name,width,touch,task,corrupt){
   if(!sessionStorage.getItem('fixture-installed')){for(const k of LEGACY)set.call(localStorage,k,'untouched:'+k);if(corrupt!==undefined)set.call(localStorage,KEY,corrupt);sessionStorage.setItem('fixture-installed','1');}
   window.__leverAudit={access:[],input:[]};
   for(const [name,original] of [['getItem',get],['setItem',set],['removeItem',remove],['clear',clear]])Storage.prototype[name]=function(...args){if(this===localStorage)window.__leverAudit.access.push({name,key:args[0]});return original.apply(this,args);};
-  for(const type of ['pointerdown','pointerup','pointercancel','click','keydown'])document.addEventListener(type,e=>window.__leverAudit.input.push({type,trusted:e.isTrusted,pointer:e.pointerType,detail:e.detail,key:e.key,repeat:e.repeat}),true);
+  for(const type of ['pointerdown','pointerup','pointercancel','click','keydown'])document.addEventListener(type,e=>window.__leverAudit.input.push({type,trusted:e.isTrusted,pointer:e.pointerType,detail:e.detail,key:e.key,repeat:e.repeat,targetId:e.target.id,weight:e.target.dataset?.weight,activeId:document.activeElement?.id}),true);
  },{KEY,LEGACY,corrupt});
  const page=await context.newPage(),errors=[],failed=[],external=[];page.setDefaultTimeout(15000);
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
@@ -66,7 +66,7 @@ async function run(name,width,touch,task,corrupt){
   assert.deepEqual(await page.evaluate(keys=>keys.map(k=>localStorage.getItem(k)),LEGACY),LEGACY.map(k=>'untouched:'+k));
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);assert.deepEqual(external,[]);
   await page.screenshot({path:path.join(output,name+'.png'),fullPage:true});result.status='passed';
- }catch(e){result.status='failed';result.failure=e.stack;await page.screenshot({path:path.join(output,name+'-failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(output,name+'-failure.html'),await page.content().catch(()=>''));}
+ }catch(e){result.status='failed';result.failure=e.stack;result.failureAudit=await page.evaluate(()=>({audit:window.__leverAudit,active:{id:document.activeElement?.id,weight:document.activeElement?.dataset?.weight},pickerHidden:document.querySelector('#picker')?.hidden})).catch(()=>null);await page.screenshot({path:path.join(output,name+'-failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(output,name+'-failure.html'),await page.content().catch(()=>''));}
  finally{Object.assign(result,{errors,failed,external});save();console.log(result.status.toUpperCase()+' '+name);await context.close();}
 }
 (async()=>{
@@ -112,9 +112,17 @@ async function run(name,width,touch,task,corrupt){
   const accesses=await page.evaluate(()=>window.__leverAudit.access);assert.equal(accesses.filter(a=>a.name!=='getItem').length,0,'corrupt reload produces zero writes/removes/clear');result.accesses=accesses;
  },'  { invalid original\n');
  await run('keyboard-repeat-cancel',1280,false,async page=>{
-  await page.locator('#primary').focus();await page.keyboard.press('Enter');await page.keyboard.press('Enter');assert.match(await page.locator('#step-label').innerText(),/步驟 B/);
-  await selectMove(page,'w3',20);await page.locator('#primary').focus();await page.keyboard.down('Enter');await page.keyboard.down('Enter');await page.keyboard.up('Enter');assert.equal((await experiment(page)).records.length,2);assert.match(await page.locator('#step-label').innerText(),/步驟 B/);
-  await page.keyboard.press('Enter');assert.match(await page.locator('#step-label').innerText(),/步驟 C/);
+  const assertPrimaryFocus=async()=>assert.equal(await page.evaluate(()=>document.activeElement===document.querySelector('#primary')),true,'keyboard action must target the live primary button');
+  const focusSettledPrimary=async restoredWeight=>{
+   // Placement intentionally restores focus to its weight on the next frame.
+   // Observe that lifecycle boundary before choosing a different keyboard target;
+   // do not race programmatic focus against the pending restoration callback.
+   if(restoredWeight)await page.waitForFunction(id=>document.activeElement?.dataset?.weight===id,restoredWeight);
+   await page.locator('#primary').focus();await assertPrimaryFocus();
+  };
+  await focusSettledPrimary();await page.keyboard.press('Enter');await assertPrimaryFocus();await page.keyboard.press('Enter');assert.match(await page.locator('#step-label').innerText(),/步驟 B/);
+  await selectMove(page,'w3',20);await focusSettledPrimary('w3');await page.keyboard.down('Enter');await assertPrimaryFocus();await page.keyboard.down('Enter');await page.keyboard.up('Enter');assert.equal((await experiment(page)).records.length,2);assert.match(await page.locator('#step-label').innerText(),/步驟 B/);
+  await assertPrimaryFocus();await page.keyboard.press('Enter');assert.match(await page.locator('#step-label').innerText(),/步驟 C/);
   const before=await raw(page);await page.locator('[data-select="w4"]').focus();await page.keyboard.press('Enter');await page.keyboard.press('ArrowRight');await page.keyboard.press('Escape');assert.equal(await raw(page),before);
   const audit=await page.evaluate(()=>window.__leverAudit.input);assert.ok(audit.some(e=>e.key==='Enter'&&e.repeat&&e.trusted));
  });
