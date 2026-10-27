@@ -61,4 +61,9 @@ export const standalonePublic = Object.freeze([Object.freeze({
  description:'完成清水與濃鹽水兩輪量測，用重量差和排開液重比較浮力。手札僅存目前瀏覽器與網站；原型站紀錄不會自動移入官網。',
  prior:'重量、質量與單位換算',goals:'量測順序、浮力與排液重比較、依原始證據修訂解釋',
  minutes:'20–30',kind:'互動模擬'
+}),Object.freeze({
+ file:'lever-desk/',title:'槓桿實驗桌',subject:'理化',grade:'國中',unit:'力矩與槓桿平衡',
+ description:'移動砝碼、比較力矩，把三次觀察留在自己的科學手札。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
+ prior:'力、距離與單位換算',goals:'力矩比較、槓桿平衡、依原始觀察比較與解釋',
+ minutes:'20–30',kind:'互動模擬'
 })]);
