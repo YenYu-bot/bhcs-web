@@ -34,9 +34,24 @@ test('nothing public links to it: no other page, catalog, sitemap or data file n
   assert.deepEqual(pages, [PAGE], 'no other HTML page contains the prototype\'s name');
   const everywhere = git('grep', '-l', 'buoyancy-guided').trim().split('\n').filter(Boolean);
   const allowed = [/^assets\/buoyancy-guided\//, /^tools\/science\/buoyancy-guided\.html$/, /^scripts\/(?:check|test)_buoyancy_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/buoyancy_guided_test_support\.cjs$/,
-    /^scripts\/package\.json$/, /^scripts\/test_science_guided_shared\.mjs$/, /^\.github\/workflows\/ci\.yml$/, /^docs\/.*buoyancy-guided.*\.md$/];
+    /^scripts\/package\.json$/, /^scripts\/test_science_guided_shared\.mjs$/, /^\.github\/workflows\/ci\.yml$/, /^docs\/.*buoyancy-guided.*\.md$/,
+    // Exact audit-only references for the separate standalone integration; not public discovery.
+    /^docs\/buoyancy-lab-integration\.md$/, /^scripts\/test_buoyancy_lab_integration\.mjs$/];
   assert.deepEqual(everywhere.filter((f) => !allowed.some((re) => re.test(f))), [], 'only the prototype\'s own files, tests, workflow and docs mention it');
   assert.ok(!read('tools/buoyancy-density-lab.html').includes('buoyancy-guided'), 'the legacy lab does not link back to the guided page');
+});
+
+test('standalone integration audit exceptions do not expose or import the guided prototype', () => {
+  const docs = read('docs/buoyancy-lab-integration.md');
+  assert.ok(docs.includes('`tools/science/buoyancy-guided.html`'), 'documentation records the protected route explicitly');
+  assert.doesNotMatch(docs, /(?:href\s*=\s*["'][^"']*|\]\([^)]*)buoyancy-guided/i, 'audit documentation is not a navigation link to the prototype');
+  const audit = read('scripts/test_buoyancy_lab_integration.mjs');
+  assert.ok(audit.includes("assert.match(read('tools/science/buoyancy-guided.html')"), 'standalone audit keeps the old noindex assertion');
+  assert.ok(audit.includes("assert.ok(!read('sitemap.xml').includes('/tools/science/buoyancy-guided.html'))"), 'standalone audit keeps old sitemap exclusion');
+  const walk = dir => fs.readdirSync(path.join(root, dir), {withFileTypes:true}).flatMap(e => e.isDirectory() ? walk(`${dir}/${e.name}`) : [`${dir}/${e.name}`]);
+  for (const file of walk('tools/buoyancy-lab').filter(f => /\.(?:html|mjs|css|json)$/.test(f))) {
+    assert.ok(!read(file).includes('buoyancy-guided'), `${file} cannot reference or import the unlisted prototype`);
+  }
 });
 
 test('page shape: hand-written, scoped CSS only, site adapter, no legacy shell, one h1, a privacy note', () => {
