@@ -28,4 +28,11 @@ async function waitForTouchClick(page,observation){
  const handle=await page.waitForFunction(observedTouchClick,observation,{polling:'raf'});
  try{return await handle.jsonValue();}finally{await handle.dispose();}
 }
-module.exports={observedTouchInput,waitForTouchInput,observedTouchClick,waitForTouchClick};
+// The release candidate schedules presentation during the native release event.
+// Wait one browser frame after observing that event, not for a desired UI value.
+function nextPresentationFrame(){return new Promise(resolve=>requestAnimationFrame(()=>resolve(true)));}
+async function waitForTouchPresentation(page){
+ const handle=await page.waitForFunction(nextPresentationFrame,undefined,{polling:'raf'});
+ await handle.dispose();
+}
+module.exports={observedTouchInput,waitForTouchInput,observedTouchClick,waitForTouchClick,nextPresentationFrame,waitForTouchPresentation};

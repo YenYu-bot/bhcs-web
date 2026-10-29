@@ -74,3 +74,13 @@ test('tap waiter stays pending until passive click delivery and propagates missi
  const missing=new Error('native click was not delivered before timeout');
  await assert.rejects(waitForTouchClick({async waitForFunction(){throw missing;}},clickRequest),error=>error===missing);
 });
+
+test('release presentation boundary observes exactly one browser frame and preserves timeout without reading model or DOM',async()=>{
+ const {nextPresentationFrame,waitForTouchPresentation}=require('./touch-delivery.cjs');let requested=0,callback,disposed=false;
+ const page={async waitForFunction(predicate,args,options){assert.equal(predicate,nextPresentationFrame);assert.equal(args,undefined);assert.deepEqual(options,{polling:'raf'});assert.equal('timeout' in options,false);
+  const pending=vm.runInNewContext(`(${predicate.toString()})()`,{requestAnimationFrame(fn){requested++;callback=fn;}});
+  assert.equal(requested,1);callback(123);assert.equal(await pending,true);return {async dispose(){disposed=true;}};
+ }};
+ await waitForTouchPresentation(page);assert.equal(requested,1);assert.equal(disposed,true);
+ const missing=new Error('presentation frame not delivered');await assert.rejects(waitForTouchPresentation({async waitForFunction(){throw missing;}}),e=>e===missing);
+});

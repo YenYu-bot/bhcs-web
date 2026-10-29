@@ -13,6 +13,16 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]);
 const manifest=JSON.parse(read('scripts/pulley-desk-runtime.json'));
+// The original accepted inventory remains immutable. A separately approved
+// app-only candidate delta is pinned alongside the exact accepted source copy.
+const repair=JSON.parse(read('scripts/pulley-desk-runtime-repair.json'));
+assert.equal(sha(read('scripts/pulley-desk-runtime-repair.json')),'e1f9a7a8f65fbea13016bfa5ddc5c181fbfdbbba811e7fcd6bd2702ed608a9d1','explicit repair inventory cannot drift');
+assert.equal(repair.accepted_baseline_commit,manifest.source_commit);
+assert.equal(sha(read('scripts/pulley-desk-runtime.json')),repair.accepted_public_inventory_sha256);
+assert.deepEqual(repair.changes.map(f=>f.path),['app.mjs']);
+assert.deepEqual(walk(path.join(root,'scripts/pulley-desk/accepted-release-baseline')).map(p=>path.basename(p)).sort(),['app.mjs']);
+const releaseTest=repair.lifecycle_test;
+assert.equal(sha(read(releaseTest.path).split(releaseTest.path_replacement[1]).join(releaseTest.path_replacement[0])),releaseTest.prototype_sha256,'candidate lifecycle test relocated by path only');
 const canonical='<link rel="canonical" href="https://www.bhcs.com.tw/tools/pulley-desk/">';
 assert.equal(manifest.source_commit,'be5ec67aa6ece6e47d8649c27c1286825959b77f');
 assert.equal(sha(fs.readFileSync(path.join(root,'docs/pulley-desk-spec-v1.0.md'))),'611edcef72df090cb0fc1e2337b20c507d0006c106d46fa58bebed1f43e71bd6','original specification stays unchanged');
@@ -35,6 +45,13 @@ for(const f of manifest.files){
   assert.equal(s.split(robotsAnchor).length,2,'one original metadata anchor');
   assert.doesNotMatch(s,/<meta name="robots"/,'only the exact prototype robots tag is removed');
   b=Buffer.from(s.replace(canonical,'').replace(robotsAnchor,robotsAnchor+robots));
+ }
+ const change=repair.changes.find(change=>change.path===f.path);
+ if(change){
+  assert.deepEqual(change.before,{bytes:f.bytes,sha256:f.sha256},`accepted baseline for ${f.path}`);
+  assert.equal(b.length,change.after.bytes,`candidate byte count ${f.path}`);
+  assert.equal(sha(b),change.after.sha256,`explicit candidate source ${f.path}`);
+  b=fs.readFileSync(path.join(root,change.accepted_copy));
  }
  assert.equal(b.length,f.bytes,`source byte count ${f.path}`);
  assert.equal(sha(b),f.sha256,`frozen accepted source ${f.path}`);
@@ -136,5 +153,5 @@ try{
  const base=`http://127.0.0.1:${server.address().port}`;
  const checks=[{url:'/tools/pulley-desk/',target:path.join(runtime,'index.html')},...manifest.files.map(f=>({url:'/tools/pulley-desk/'+f.path,target:path.join(runtime,f.path)})),...refs];
  for(const {url,target} of checks){const r=await fetch(base+url);assert.equal(r.status,200,url);assert.equal(r.headers.get('content-type'),mime[path.extname(target)]);assert.deepEqual(Buffer.from(await r.arrayBuffer()),fs.readFileSync(target));}
- console.log(`PASS pulley integration: frozen 10-file source, exact reversible canonical/robots metadata, approved teacher provenance, isolated discovery, unchanged storage keys and 8-job gate, ${refs.length} relative references, ${checks.length} local HTTP/MIME responses (not production or browser QA)`);
+ console.log(`PASS pulley integration: accepted 10-file baseline plus explicit app-only release candidate, exact reversible canonical/robots metadata, approved teacher provenance, isolated discovery, unchanged storage keys and 8-job gate, ${refs.length} relative references, ${checks.length} local HTTP/MIME responses (not production or browser QA)`);
 }finally{await new Promise(resolve=>server.close(resolve));}

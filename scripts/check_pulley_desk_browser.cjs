@@ -4,7 +4,7 @@
 // No app imports, synthetic input dispatch, model fixtures or state setters.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
-const {waitForTouchInput,waitForTouchClick}=require('./pulley-desk/touch-delivery.cjs');
+const {waitForTouchInput,waitForTouchClick,waitForTouchPresentation}=require('./pulley-desk/touch-delivery.cjs');
 const {runTouchDiagnosticMatrix}=require('./pulley-desk/touch-diagnostic.cjs');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.PULLEY_DESK_OUTPUT||'pulley-desk-artifacts');
 const KEY='bhcs.pulleyDesk.v1';
@@ -64,6 +64,7 @@ async function drag(page,cdp,device,rise,{cancel=false,reverse=false}={}){
   const releaseStart=await page.evaluate(()=>window.__pulleyAudit.input.length);
   await cdp.send('Input.dispatchTouchEvent',{type:cancel?'touchCancel':'touchEnd',touchPoints:[]});
   await waitForTouchInput(page,{since:releaseStart,type:cancel?'pointercancel':'pointerup',pointerId:touchPointerId});
+  await waitForTouchPresentation(page);
  }
  else{if(cancel)await page.keyboard.press('Escape');await page.mouse.up();}
  assert.equal(await height(page),cancel?before:preview,'commit or cancel height');
