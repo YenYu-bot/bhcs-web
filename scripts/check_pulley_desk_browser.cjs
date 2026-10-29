@@ -4,6 +4,7 @@
 // No app imports, synthetic input dispatch, model fixtures or state setters.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
+const {waitForTouchInput}=require('./pulley-desk/touch-delivery.cjs');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.PULLEY_DESK_OUTPUT||'pulley-desk-artifacts');
 const KEY='bhcs.pulleyDesk.v1';
 const OTHER_KEYS=['bhcs-science-v2-pulley','bhcs-science-v2-pulley-incline','bhcs-science-v2-lever-torque','bhcs-science-v2-buoyancy','bhcs-science-v2-microscope','bhcs-science-v2-lens','bhcs.leverDesk.v1','yu-buoyancy-prototype-v1.2-g10','yu-buoyancy-prototype-v1.1'];
@@ -34,9 +35,16 @@ async function drag(page,cdp,device,rise,{cancel=false,reverse=false}={}){
  const from={x:p.x+p.width/2,y:p.y+p.height/2},delta=(device==='fixed'?1:-1)*(reverse?-1:1)*rise*5*(device==='fixed'?1:2),to={x:from.x,y:from.y+delta};
  for(const point of [from,to])assert.ok(point.x>=0&&point.x<page.viewportSize().width&&point.y>=0&&point.y<page.viewportSize().height,'drag endpoint in current viewport');
  assert.equal(await page.evaluate(p=>document.elementFromPoint(p.x,p.y)?.closest('button')?.id,from),'rope-handle','native pointer hits the visible handle');
- if(cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...from,id:1}]});
+ let touchPointerId;const gestureStart=cdp?await page.evaluate(()=>window.__pulleyAudit.input.length):null;
+ if(cdp){
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...from,id:1}]});
+  touchPointerId=(await waitForTouchInput(page,{since:gestureStart,type:'pointerdown',point:from})).pointerId;
+ }
  else{await page.mouse.move(from.x,from.y);await page.mouse.down();}
  for(let i=1;i<=8;i++){const point={x:from.x,y:from.y+delta*i/8};if(cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{...point,id:1}]});else await page.mouse.move(point.x,point.y);}
+ // CDP command completion is not used as proof that the last touch sample
+ // has reached the document. Observe this gesture's actual endpoint first.
+ if(cdp)await waitForTouchInput(page,{since:gestureStart,type:'pointermove',pointerId:touchPointerId,point:to});
  const preview=reverse?before:Math.min(20,before+rise);assert.equal(await height(page),preview,'rendered drag preview');
  assert.equal(await raw(page),beforeRaw,'preview never writes evidence');
  assert.equal(await page.locator('#announcement').innerText(),beforeAnnouncement,'pointermove does not spam live announcements');
@@ -44,7 +52,11 @@ async function drag(page,cdp,device,rise,{cancel=false,reverse=false}={}){
  assert.ok(await page.locator('#guide-next').isDisabled(),'guide disabled during drag');
  assert.equal(await guide(page),'lift','preview must not advance guide');
  if(preview===20)assert.match(await page.locator('#guide-progress').innerText(),/預覽 20.*已提交仍為/);
- if(cdp)await cdp.send('Input.dispatchTouchEvent',{type:cancel?'touchCancel':'touchEnd',touchPoints:[]});
+ if(cdp){
+  const releaseStart=await page.evaluate(()=>window.__pulleyAudit.input.length);
+  await cdp.send('Input.dispatchTouchEvent',{type:cancel?'touchCancel':'touchEnd',touchPoints:[]});
+  await waitForTouchInput(page,{since:releaseStart,type:cancel?'pointercancel':'pointerup',pointerId:touchPointerId});
+ }
  else{if(cancel)await page.keyboard.press('Escape');await page.mouse.up();}
  assert.equal(await height(page),cancel?before:preview,'commit or cancel height');
  assert.equal(await raw(page),beforeRaw,'unsaved lift changes no persisted records');
@@ -65,7 +77,7 @@ async function run(name,width,touch,task,corrupt){
   if(!sessionStorage.getItem('pulley-fixture-installed')){for(const k of OTHER_KEYS)set.call(localStorage,k,'untouched:'+k);if(corrupt!==undefined)set.call(localStorage,KEY,corrupt);sessionStorage.setItem('pulley-fixture-installed','1');}
   window.__pulleyAudit={access:[],input:[]};
   for(const [name,original]of [['getItem',get],['setItem',set],['removeItem',remove],['clear',clear]])Storage.prototype[name]=function(...args){if(this===localStorage)window.__pulleyAudit.access.push({name,key:args[0]});return original.apply(this,args);};
-  for(const type of ['pointerdown','pointerup','pointercancel','click','keydown'])document.addEventListener(type,e=>window.__pulleyAudit.input.push({type,trusted:e.isTrusted,pointer:e.pointerType,detail:e.detail,key:e.key,repeat:e.repeat,targetId:e.target.closest?.('[id]')?.id,activeId:document.activeElement?.id}),true);
+  for(const type of ['pointerdown','pointermove','pointerup','pointercancel','click','keydown'])document.addEventListener(type,e=>window.__pulleyAudit.input.push({type,trusted:e.isTrusted,pointer:e.pointerType,pointerId:e.pointerId,clientX:e.clientX,clientY:e.clientY,targetButtonId:e.target.closest?.('button')?.id,detail:e.detail,key:e.key,repeat:e.repeat,targetId:e.target.closest?.('[id]')?.id,activeId:document.activeElement?.id}),true);
  },{KEY,OTHER_KEYS,corrupt});
  const page=await context.newPage(),errors=[],failed=[],external=[];page.setDefaultTimeout(15000);
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
