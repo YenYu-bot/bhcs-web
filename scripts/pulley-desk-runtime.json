@@ -1,0 +1,1022 @@
+{
+  "source_commit": "be5ec67aa6ece6e47d8649c27c1286825959b77f",
+  "baseline_commit": "17f95d50295c9c0ad634e9f71d8cf4bdceaea8d0",
+  "index_metadata_added": "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/pulley-desk/\">",
+  "index_metadata_removed": "<meta name=\"robots\" content=\"noindex,nofollow\">",
+  "index_metadata_removed_after": "<meta name=\"color-scheme\" content=\"light\">",
+  "files": [
+    {
+      "path": "app.mjs",
+      "bytes": 20448,
+      "sha256": "d8afa7796470ce62b87fbc9611c319a96adf8141ac773d3ab525d5e1c5db1731"
+    },
+    {
+      "path": "assets/teacher-body-v3.png",
+      "bytes": 941293,
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "assets/teacher-body-v3.provenance.json",
+      "bytes": 335,
+      "sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9"
+    },
+    {
+      "path": "bench.mjs",
+      "bytes": 4860,
+      "sha256": "655838ee197e5068c6ccfa97b3446f580752fab799df6e43c00bc697138f170b"
+    },
+    {
+      "path": "guide.mjs",
+      "bytes": 3108,
+      "sha256": "70cb9190a2fd2988c9b1628412326dd519680531f9e395680494bfcd31997124"
+    },
+    {
+      "path": "index.html",
+      "bytes": 9600,
+      "sha256": "4a7c869cd91da2cb07288adccb5de38beaa4337d185b72b58987be154762f32d"
+    },
+    {
+      "path": "input.mjs",
+      "bytes": 3524,
+      "sha256": "67f2a962fdcbb46e3eba50fe673fb32fcea964869a4babfd7d1176de6bf53b66"
+    },
+    {
+      "path": "model.mjs",
+      "bytes": 6892,
+      "sha256": "4a3da7f88de71a88e37b4829617ce726dc454baf2f262a864195f34afea7be68"
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 8264,
+      "sha256": "c19169da501f7345abce97647033081d5b8df084d9cf59c18b05b339c60a5f11"
+    },
+    {
+      "path": "style.css",
+      "bytes": 13004,
+      "sha256": "02e731423c967177719dad2cdf77d3ed8daf58171ac82577e9f2d7ea1b472856"
+    }
+  ],
+  "ported_tests": [
+    {
+      "source": "pulley-prototype/tests/dom.test.mjs",
+      "path": "dom.test.mjs",
+      "source_sha256": "1188269aeaff79efcc92aac5afd9cf84f9e0f4dd7f6fa18d5a2163820b32936b",
+      "replacements": [
+        [
+          "../dist/",
+          "../../tools/pulley-desk/"
+        ]
+      ]
+    },
+    {
+      "source": "pulley-prototype/tests/model.test.mjs",
+      "path": "model.test.mjs",
+      "source_sha256": "3269d2848cb63655a8fb505489742d5a8d39d52a109a5feea4ca03e0b8cb03ac",
+      "replacements": [
+        [
+          "../dist/",
+          "../../tools/pulley-desk/"
+        ]
+      ]
+    },
+    {
+      "source": "pulley-prototype/tests/storage.test.mjs",
+      "path": "storage.test.mjs",
+      "source_sha256": "fbbbe4a8760534a07391481664eba11ab7f932fdfebca162381c8c50084dfd76",
+      "replacements": [
+        [
+          "../dist/",
+          "../../tools/pulley-desk/"
+        ]
+      ]
+    },
+    {
+      "source": "pulley-audit/core-audit.mjs",
+      "path": "core-audit.test.mjs",
+      "source_sha256": "2476c63cdb3ebdbe5475efe26e01d213da1877d5b362821b4bc2a698376a096a",
+      "replacements": [
+        [
+          "../pulley-prototype/dist/",
+          "../../tools/pulley-desk/"
+        ]
+      ]
+    },
+    {
+      "source": "pulley-audit/dom-audit.mjs",
+      "path": "dom-audit.test.mjs",
+      "source_sha256": "2915d84d9b6e1e27a5afb52d47b2f93dcf4f6d3ced9be6a6f1dfe6caf046d35f",
+      "replacements": [
+        [
+          "'@INPUT_ROOT@/pulley-prototype/package.json'",
+          "new URL('../package.json',import.meta.url)"
+        ],
+        [
+          "../pulley-prototype/dist/",
+          "../../tools/pulley-desk/"
+        ],
+        [
+          "'@INPUT_ROOT@/pulley-prototype/dist/index.html'",
+          "new URL('../../tools/pulley-desk/index.html',import.meta.url)"
+        ]
+      ],
+      "normalized_source_sha256": "ffba805af48d63d7f8ff1e9684dd944ae44a1864b36c5ae0be59fdc070e9a739",
+      "normalization": "Replace the source checkout absolute parent path with @INPUT_ROOT@/ before verifying path-only relocations; original source hash is retained for offline audit."
+    },
+    {
+      "source": "pulley-audit/guide-harness.mjs",
+      "path": "guide-harness.mjs",
+      "source_sha256": "c8c4c1576a1c26310ff3b67cb68eb7c7d4c1f4861e28b0a4a1f7c1c687f41a72",
+      "replacements": [
+        [
+          "'@INPUT_ROOT@/pulley-prototype/package.json'",
+          "new URL('../package.json',import.meta.url)"
+        ],
+        [
+          "../pulley-prototype/dist/",
+          "../../tools/pulley-desk/"
+        ],
+        [
+          "'@INPUT_ROOT@/pulley-prototype/dist/index.html'",
+          "new URL('../../tools/pulley-desk/index.html',import.meta.url)"
+        ]
+      ],
+      "normalized_source_sha256": "036d7cdb188edf50313e6918b791aa72c0278ffdc40d5ce0554689142b9d2439",
+      "normalization": "Replace the source checkout absolute parent path with @INPUT_ROOT@/ before verifying path-only relocations; original source hash is retained for offline audit."
+    },
+    {
+      "source": "pulley-audit/guide-audit.mjs",
+      "path": "guide-audit.test.mjs",
+      "source_sha256": "71f475f8442e57227072395b478fda10fda7c64eac3336e7fbb93159831c0c75",
+      "replacements": [
+        [
+          "'@INPUT_ROOT@/pulley-prototype/dist/'+file",
+          "new URL('../../tools/pulley-desk/'+file,import.meta.url)"
+        ],
+        [
+          "'@INPUT_ROOT@/pulley-audit/guide-baseline/'+file",
+          "new URL('./guide-baseline/'+file,import.meta.url)"
+        ]
+      ],
+      "normalized_source_sha256": "b492e6814b76dd479e9601735f8c7dbfa31b43dc3ff7cc48dac4d9a809453386",
+      "normalization": "Replace the source checkout absolute parent path with @INPUT_ROOT@/ before verifying path-only relocations; original source hash is retained for offline audit."
+    },
+    {
+      "source": "pulley-audit/guide-baseline/bench.mjs",
+      "path": "guide-baseline/bench.mjs",
+      "source_sha256": "655838ee197e5068c6ccfa97b3446f580752fab799df6e43c00bc697138f170b",
+      "replacements": []
+    },
+    {
+      "source": "pulley-audit/guide-baseline/input.mjs",
+      "path": "guide-baseline/input.mjs",
+      "source_sha256": "67f2a962fdcbb46e3eba50fe673fb32fcea964869a4babfd7d1176de6bf53b66",
+      "replacements": []
+    },
+    {
+      "source": "pulley-audit/guide-baseline/model.mjs",
+      "path": "guide-baseline/model.mjs",
+      "source_sha256": "4a3da7f88de71a88e37b4829617ce726dc454baf2f262a864195f34afea7be68",
+      "replacements": []
+    },
+    {
+      "source": "pulley-audit/guide-baseline/storage.mjs",
+      "path": "guide-baseline/storage.mjs",
+      "source_sha256": "c19169da501f7345abce97647033081d5b8df084d9cf59c18b05b339c60a5f11",
+      "replacements": []
+    }
+  ],
+  "protected_files": [
+    {
+      "path": "assets/researcher-lab.css",
+      "sha256": "2d9be74ffd8183e71c63d31e4e45bac3e3256620e2b1dddd8a8594051407141e"
+    },
+    {
+      "path": "assets/researcher-lab.js",
+      "sha256": "f6def1b80e6dde6eb4022747f95b7b6f3c0915d61dfcd39e5efe4f6bd9588f59"
+    },
+    {
+      "path": "assets/science-events.js",
+      "sha256": "75e813b73ffbcadc8f76afeedc54848799f833e27c29abc46ebc37b9b3f0e769"
+    },
+    {
+      "path": "assets/science-guided/components.js",
+      "sha256": "e10391046fccd5fc30244b0f2d1c13397de02ef8c1a71871b843335f1560fc80"
+    },
+    {
+      "path": "assets/science-guided/science-guided.css",
+      "sha256": "da47a76f3260d014797449a443eeb008a9b70ad208fb9ec166e3e137e4da75cd"
+    },
+    {
+      "path": "assets/science-lab.js",
+      "sha256": "f0afca8d02453d428c1b207c58275658d1765058ab6de063dad730fbaed0fbfe"
+    },
+    {
+      "path": "assets/science/dynamics-cart.webp",
+      "sha256": "79cbded89cc6e0ab1b45aed90f63f4556a10f7a30454718bd8f8a8bf8603e051"
+    },
+    {
+      "path": "assets/science/icons/icon-acid-base.webp",
+      "sha256": "ee69198f1b3a00c601d6b61c8ed25ec3c36a03c0237daae5ca1f375c233013ce"
+    },
+    {
+      "path": "assets/science/icons/icon-atom-builder.webp",
+      "sha256": "110625eea081cc4912ff4c0fd51fce16fef81493555530d16e0e56c5b024620c"
+    },
+    {
+      "path": "assets/science/icons/icon-buoyancy.webp",
+      "sha256": "184c9dbe51df974fbad2bc9f81569df3650588b71423557fa315e4ca8ee0abcb"
+    },
+    {
+      "path": "assets/science/icons/icon-cell-division.webp",
+      "sha256": "eef133ff4fecdc9ee1f894733383c5484bda630c28f3e89ff459e5c168b14ed8"
+    },
+    {
+      "path": "assets/science/icons/icon-cell-electrolysis.webp",
+      "sha256": "3d8d9ad9a778f053a2205ac251ee0ae7703720f0f483b14f31d360d939f27e24"
+    },
+    {
+      "path": "assets/science/icons/icon-circuit.webp",
+      "sha256": "987f7a5123277e86cb4189e104c244cf4fcf4a0640c42e7017592f527967db2e"
+    },
+    {
+      "path": "assets/science/icons/icon-circulation.webp",
+      "sha256": "5363306842880f52d54d6dfb1f1a8350916c929c71e580408d51629b177f50f2"
+    },
+    {
+      "path": "assets/science/icons/icon-ecosystem.webp",
+      "sha256": "ac1c1b2546ef94768044557ca3192f737fa545e64df401c90ed08d0282165c9c"
+    },
+    {
+      "path": "assets/science/icons/icon-electric-power.webp",
+      "sha256": "9edeee2c31a3b832a6f5a76e33100a03d07657ad5265c065eeeeb897bafbe33d"
+    },
+    {
+      "path": "assets/science/icons/icon-electromagnet.webp",
+      "sha256": "0a37fd16eb4dd948b838db70c17aeb33cde7f3976711a429b3d7909819ce1a93"
+    },
+    {
+      "path": "assets/science/icons/icon-electrostatics.webp",
+      "sha256": "38fdfb6e21cfb9a8f5399bc9b5df33f8fb8fde290c4ea80790119574cac6ba38"
+    },
+    {
+      "path": "assets/science/icons/icon-energy.webp",
+      "sha256": "1237181a582a96b01df22f41e98a032262a9d8924e33d4d3ea32c4e5bada081c"
+    },
+    {
+      "path": "assets/science/icons/icon-enzyme.webp",
+      "sha256": "7dfcbf29f53e6f856c36a557b5dc7d0b4a179add103c40b0d7972504afc79cf4"
+    },
+    {
+      "path": "assets/science/icons/icon-equilibrium.webp",
+      "sha256": "5674283a46facb1475cae435edf11f5c32428c8d282282a4615caee07272db26"
+    },
+    {
+      "path": "assets/science/icons/icon-force.webp",
+      "sha256": "1ad96fa39dde9a58f64649baa6f07b82c4795bdcc8721629bcbddf9ddccf228f"
+    },
+    {
+      "path": "assets/science/icons/icon-genetics.webp",
+      "sha256": "624cdefab732487abcede905d4c56b3813bbcf16829d9f5af889273ed736b88f"
+    },
+    {
+      "path": "assets/science/icons/icon-heat.webp",
+      "sha256": "6763193ab581e4005e6ee4ea6a2831807fdc08aa35bb4e50370f586db4523623"
+    },
+    {
+      "path": "assets/science/icons/icon-homeostasis.webp",
+      "sha256": "e400ce8e49637410e716056fbeae6ce5fa09246a2926e53ef9b9045949438309"
+    },
+    {
+      "path": "assets/science/icons/icon-lever-torque.webp",
+      "sha256": "ad6a94eba33e407e24b8feeb96f9c08042b5f55acc054dd05574a04d8c6480ea"
+    },
+    {
+      "path": "assets/science/icons/icon-metal-activity.webp",
+      "sha256": "756e6d56e2ed35f90bfbe72249074365400b7fb795d2fd32afbbf3710c8f33ce"
+    },
+    {
+      "path": "assets/science/icons/icon-microscope.webp",
+      "sha256": "1dcc5e196152fc8a71359c00f7bcddafe0267dcf9d8ff1908124e5404563eb8c"
+    },
+    {
+      "path": "assets/science/icons/icon-moon.webp",
+      "sha256": "5cd56299f79c874e39c0b1c910635b324abc5aee935ea7d773de4a0c5c4ff974"
+    },
+    {
+      "path": "assets/science/icons/icon-motion-graphs.webp",
+      "sha256": "66e054faf36ea4491b13c54d6d51f4a4f340e543e613043992ad4cbe4c8ceebf"
+    },
+    {
+      "path": "assets/science/icons/icon-nerve-reflex.webp",
+      "sha256": "7170d0e197c20c3f6f0777b7016df29c518926ddf8334233eecaf0a8dd0686ba"
+    },
+    {
+      "path": "assets/science/icons/icon-neutralization.webp",
+      "sha256": "fa85168d216cabecde45d69db657033f9074bb75f40fe0d24fcabe4e4f299139"
+    },
+    {
+      "path": "assets/science/icons/icon-optics.webp",
+      "sha256": "99c92b43a26c23b95c67651ad64860dc8b785d047f7a66f5df2a67a7c52070fe"
+    },
+    {
+      "path": "assets/science/icons/icon-particle.webp",
+      "sha256": "14d7740e8932725ac5cf5557a98b815c813b9766cd6d2fa00eb6ac746cefa89f"
+    },
+    {
+      "path": "assets/science/icons/icon-photosynthesis.webp",
+      "sha256": "a61590e1deebdec17cf0e49fff6751d2300f66742f54b897312e65c59603d958"
+    },
+    {
+      "path": "assets/science/icons/icon-plant-exchange.webp",
+      "sha256": "6814036800fe85605af0721d1451d9d02371aeb7c5bcadc95c757ccdff0458e1"
+    },
+    {
+      "path": "assets/science/icons/icon-plate.webp",
+      "sha256": "82cf1fa1135720a2d2353aebefe2e7216615e4ce7f9db297677d075f94373fdf"
+    },
+    {
+      "path": "assets/science/icons/icon-pressure.webp",
+      "sha256": "e917c861060da519930c79199ea7cf2eab3d9012ee85dc88d8ca0cbb86879ff7"
+    },
+    {
+      "path": "assets/science/icons/icon-pulley-incline.webp",
+      "sha256": "397875d51d8cbc9eac8f109fe93b8c04ddeaa1d6856f746805c551b61fc64cd5"
+    },
+    {
+      "path": "assets/science/icons/icon-reaction-rate.webp",
+      "sha256": "7b33413f086b9174f582b1d57012536c6a5a6bb272d0d5d8de5680480fd3f950"
+    },
+    {
+      "path": "assets/science/icons/icon-reflection-refraction.webp",
+      "sha256": "fdb0efa767ab0578a2d32d75b70795e71ccc8e902334115c75b562653ee138bf"
+    },
+    {
+      "path": "assets/science/icons/icon-seasons.webp",
+      "sha256": "b2b082aee3b5b4b1ff733098abe2377546c4fbf336806f6a986bd51d2b124f12"
+    },
+    {
+      "path": "assets/science/icons/icon-solubility.webp",
+      "sha256": "508e93b873cf744cdb2c69ece902abe6c93080af1b9b2547359d52d873699f96"
+    },
+    {
+      "path": "assets/science/icons/icon-specific-heat.webp",
+      "sha256": "1929a19cbaf43cf79bc0c2c0b012f450078880ab1e74ad37297e7c7840916957"
+    },
+    {
+      "path": "assets/science/icons/icon-spring-friction.webp",
+      "sha256": "984292462204e37bbde6ce9a4e0fcec00a34e5daabc97b8b025e6794d460c1b5"
+    },
+    {
+      "path": "assets/science/icons/icon-stoichiometry.webp",
+      "sha256": "523325fb83c797c738a3665ff42edc232fbb490bf89763f1af9aede93fca8b34"
+    },
+    {
+      "path": "assets/science/icons/icon-tides.webp",
+      "sha256": "44b3bee153a42ed82c83a7154b0e617043c67c09d3f6da867d30029a5a774260"
+    },
+    {
+      "path": "assets/science/icons/icon-wave.webp",
+      "sha256": "1f7310469dde127faed7d714a6f9be9a578f1c90f6fc25ea2d9c038e7fc98dde"
+    },
+    {
+      "path": "assets/science/icons/icon-weather-systems.webp",
+      "sha256": "38c6fbec8039130a105d812fddff04902f5fa531e994ada627d73bcf49133c43"
+    },
+    {
+      "path": "assets/science/meadow-context.webp",
+      "sha256": "07ab5b2a2823803ccc96ebb31214bda1691104fb03d575587e966585b3546dda"
+    },
+    {
+      "path": "assets/science/moon-texture.webp",
+      "sha256": "96b3562dc7fed9625b38fa77d811befe7da990096e74258c2e58ec2f344b0401"
+    },
+    {
+      "path": "assets/science/pea-phenotypes.webp",
+      "sha256": "5d9675adcc95c1a5be987072b100d22bd9ccc6dd7f489063a76ea7516def8725"
+    },
+    {
+      "path": "assets/science/plant-context.webp",
+      "sha256": "59879073da5d99fd9481f757a3c74b48ed1c817b7a390fd3b6c9733e3e916be4"
+    },
+    {
+      "path": "assets/science/props/bg-chem-bench.webp",
+      "sha256": "53da102a8cabca1fa53e0f646fafa023f1f6f9252a55817db6f279cedc593e2c"
+    },
+    {
+      "path": "assets/science/props/bg-electric-bench.webp",
+      "sha256": "b85599175b3c254e3d72b84f5df9219ee200bbbe29a54e1ba105009038f0d0f2"
+    },
+    {
+      "path": "assets/science/props/bg-physics-bench.webp",
+      "sha256": "c75325f48418d00c5b75d301312b7e4ee872836d30af216d4bf9bf6c2cb8f5f5"
+    },
+    {
+      "path": "assets/science/props/item-atom-c.webp",
+      "sha256": "6e954a28700afd8ec782713278226bb04f749f11a17cbb765384e3082cd81881"
+    },
+    {
+      "path": "assets/science/props/item-atom-h.webp",
+      "sha256": "36637e0c4d3d365b6f8507d7516e54bfa70f7a74aebf8bdda8d3943916f3ce6b"
+    },
+    {
+      "path": "assets/science/props/item-atom-n.webp",
+      "sha256": "62463ec23c21216ed31e342a6d9f93dbc0671429184615daefbae3af08030bfe"
+    },
+    {
+      "path": "assets/science/props/item-atom-o.webp",
+      "sha256": "ba8fb1f1451b4b62af6e0c9a8351ddf75265c3d61fed9baca867ca5757d0e4fc"
+    },
+    {
+      "path": "assets/science/props/item-electron.webp",
+      "sha256": "2baf2e14c05ed5b6a1773d0687a2a36a22cbff8f57a6cccc6347aacfa80d3e9b"
+    },
+    {
+      "path": "assets/science/props/item-neutron.webp",
+      "sha256": "25220777139758236e31fd9cbc37b9599889744fc38d7aac38de5ec224c177bf"
+    },
+    {
+      "path": "assets/science/props/item-proton.webp",
+      "sha256": "25bfd3060e5b159cc7ff8267117c81c3eb1eb37492959ac96f3ba9e5cbe8b3bc"
+    },
+    {
+      "path": "assets/science/props/prop-bar-magnet.webp",
+      "sha256": "7b3d0d862f9b563517671e6e86d26b598c60ef4e362b3c5c0201150e233c2878"
+    },
+    {
+      "path": "assets/science/props/prop-battery.webp",
+      "sha256": "93d18ca3a8e7eeb600a825669a263b0b785eeb40cec00c1dfb3eabceb6408072"
+    },
+    {
+      "path": "assets/science/props/prop-beaker.webp",
+      "sha256": "de8ae679e361ca6b1dec2382d7c10b9e1567dc46c5f92eef1de3e035133b5f01"
+    },
+    {
+      "path": "assets/science/props/prop-brain.webp",
+      "sha256": "e812d6acbbcd11eb5fc4064d06a978259a7c912c1d9144a02a96070620fe97dd"
+    },
+    {
+      "path": "assets/science/props/prop-burette.webp",
+      "sha256": "30634d2b14b9f5364a52d76b6c1b65a889f120eea6d34bb17997b737a971bcc0"
+    },
+    {
+      "path": "assets/science/props/prop-candle.webp",
+      "sha256": "02a0fa1f60345528ca150d006a510bc8c7279bede66a1aa4017a879fbdcbd8be"
+    },
+    {
+      "path": "assets/science/props/prop-carbon-rod.webp",
+      "sha256": "0416e1d003920b664e2ba42363583e40f624b2d1d25c36bfacd4207bd62189d3"
+    },
+    {
+      "path": "assets/science/props/prop-cloud-layer.webp",
+      "sha256": "02661b2d5f15a4a4602fd85ccc49b2f4d5e72a83146cbad608b31e80a63ab272"
+    },
+    {
+      "path": "assets/science/props/prop-cloud-storm.webp",
+      "sha256": "c31c61dfef560eed3e044dfe8bfeeaa7fc8718b2320a3d17a0da3b3dbebabc9d"
+    },
+    {
+      "path": "assets/science/props/prop-cloud-white.webp",
+      "sha256": "20a2915ca88a75825e98596b134a3e979d8d156a016d5e50186c2f049d6307f5"
+    },
+    {
+      "path": "assets/science/props/prop-coil.webp",
+      "sha256": "9ce7e8a5dec63fba6e999bf47118282573ace11d6595cdb454ace70d05257360"
+    },
+    {
+      "path": "assets/science/props/prop-compass.webp",
+      "sha256": "b67a8fd3e3fe6afcc08452e6e5361b953b8b3dea69c45181a2aa6564ca464374"
+    },
+    {
+      "path": "assets/science/props/prop-convex-lens.webp",
+      "sha256": "f00360b7d70207de8bb5c9501595f2fff99e5cb53549d841e68bdbd1d18f37d5"
+    },
+    {
+      "path": "assets/science/props/prop-earth-globe.webp",
+      "sha256": "974cf725cc9c254f838e39695e4256652ea6eb51cc724e9eb1255ad0c4a682b1"
+    },
+    {
+      "path": "assets/science/props/prop-enzyme-denatured.webp",
+      "sha256": "312c7f04b57bc01af8a926b4317d11c021f9e57d78dda7c57605561268d9f724"
+    },
+    {
+      "path": "assets/science/props/prop-enzyme-normal.webp",
+      "sha256": "f98ff4d45f3c4654f402c083498c2c0fa9150211dd78f7dad50b4694fc319e13"
+    },
+    {
+      "path": "assets/science/props/prop-erlenmeyer.webp",
+      "sha256": "d45bfd08a2eb3220d2365908206e384069ad96606400a0628d581fcec9396cc9"
+    },
+    {
+      "path": "assets/science/props/prop-glass-block.webp",
+      "sha256": "024db4e99b843be48a4e6e684be38f002e6cb090a408f1b710173086d8062fb4"
+    },
+    {
+      "path": "assets/science/props/prop-glass-tank.webp",
+      "sha256": "87df7ca41126df5e87615c6545bead7b6174f64a345b941a54a65cefbfd4ef96"
+    },
+    {
+      "path": "assets/science/props/prop-hanging-weight.webp",
+      "sha256": "c2784ed714e85c6eb0b3b62ce5368b0f19248197554d4427061164e36b9e6c37"
+    },
+    {
+      "path": "assets/science/props/prop-hotplate.webp",
+      "sha256": "46e8b207798235e73319c598f137a75b7ff6121b5ffb08bba978a8ef736a6666"
+    },
+    {
+      "path": "assets/science/props/prop-kid-observer.webp",
+      "sha256": "0486a87e96143b26b55f7341bff4a7655bd56b8b8eb79fbe813c8537ee502dc8"
+    },
+    {
+      "path": "assets/science/props/prop-laser-pointer.webp",
+      "sha256": "5f0be292f9184f3b17dbc732917f9784b98d8c4c42e29f26268786f3df9d4a61"
+    },
+    {
+      "path": "assets/science/props/prop-lever-fulcrum.webp",
+      "sha256": "959fb61caccb60ad3a087b6495f12137eb08003fd1e14581268dbc13304de239"
+    },
+    {
+      "path": "assets/science/props/prop-lever-plank.webp",
+      "sha256": "c94c69eada13bd63ce9b2e7e3f672e7149bbfc4dd512e28f6aac24e0e4e8eb05"
+    },
+    {
+      "path": "assets/science/props/prop-light-bulb.webp",
+      "sha256": "53ae44c00ab200698ca014e72f928679cfcf42b18d8ad8838213cf63835096a2"
+    },
+    {
+      "path": "assets/science/props/prop-lung-left.webp",
+      "sha256": "4cd47ce7cc97b134bb8e889c1861b8c9d3990b54514bb65d5946a303463e455e"
+    },
+    {
+      "path": "assets/science/props/prop-lung-right.webp",
+      "sha256": "5220debcf1c04a20f0f810b37fc4b7376f571dc163335481fd0aa6ea9eb99079"
+    },
+    {
+      "path": "assets/science/props/prop-metal-block.webp",
+      "sha256": "6cf5535f87a2a65975672ee7e8a0771e550e7b88a2462b5ea6c4f59686364402"
+    },
+    {
+      "path": "assets/science/props/prop-metal-sphere.webp",
+      "sha256": "76c4b6572e73c2f3d3b3c20a1b81579b71635bd9f9b8b633ba8050457494c1a0"
+    },
+    {
+      "path": "assets/science/props/prop-moon.webp",
+      "sha256": "6d5bb6a6594544e3939726acb58894b103183120e8ae59581125334548f0310f"
+    },
+    {
+      "path": "assets/science/props/prop-plane-mirror.webp",
+      "sha256": "d3f6ff3225cbe0a9ff5d7c9b7b48248cc07c2c60122c07db093c000bc90e7967"
+    },
+    {
+      "path": "assets/science/props/prop-plastic-rod.webp",
+      "sha256": "0396dfdd287e446f84bd59c6391009e6c6171a25d9e349f9291cbcbe879a7fa7"
+    },
+    {
+      "path": "assets/science/props/prop-power-supply.webp",
+      "sha256": "06f7468324112308e45b063c903207197eeecb74332ca9c37984fbfd3b8c518e"
+    },
+    {
+      "path": "assets/science/props/prop-pulley-wheel.webp",
+      "sha256": "9b340dd34780706490d6ce9b4f090186b985172bd0fea80b51b5a5a27791c4c2"
+    },
+    {
+      "path": "assets/science/props/prop-ramp-wood.webp",
+      "sha256": "0eb0201c57b4ba34ebc7234dfb66da753f99c7423d66c889334b442e67777743"
+    },
+    {
+      "path": "assets/science/props/prop-retort-stand.webp",
+      "sha256": "965b06ff32212800dbc1fbfece01ce5f5a0e1c756912ab11a8064cfc76aa0d13"
+    },
+    {
+      "path": "assets/science/props/prop-salt-bridge.webp",
+      "sha256": "bd983dc857b2ee848add6e6deac82fbbc272786fbbeb5fdb0fe9f8a5c81d4e51"
+    },
+    {
+      "path": "assets/science/props/prop-screen.webp",
+      "sha256": "2bc5ed978e6ca23715bc0a24b4bfc7a0b0673b5c9dad80b157d974be75d33a2f"
+    },
+    {
+      "path": "assets/science/props/prop-spring-coil.webp",
+      "sha256": "8cc2fe46c4a016632366db8a665dd4e427d53a3637bd9f6f65b29f46c9d2d3d2"
+    },
+    {
+      "path": "assets/science/props/prop-spring-scale.webp",
+      "sha256": "d66dd1eccfee9166e16a3835f8188be1cc8eefa6cd8afbd0106d4c544adbea20"
+    },
+    {
+      "path": "assets/science/props/prop-stopwatch.webp",
+      "sha256": "2225421748c962c2babfd24d0cce14982aa9430fcdc61075519dec4556d6115d"
+    },
+    {
+      "path": "assets/science/props/prop-strip-copper-plate.webp",
+      "sha256": "ca8795c1b330ba10c94999f2df06c24c79fc01bb8b8d39810ecef2c9119b6f18"
+    },
+    {
+      "path": "assets/science/props/prop-strip-copper.webp",
+      "sha256": "c9d0add0d4facad63ad0e3a302d3f8c5367be99412e8bafc56ea1aec144dc5ef"
+    },
+    {
+      "path": "assets/science/props/prop-strip-iron.webp",
+      "sha256": "856d06f3c8d6ba08bdc25e49928cb2db7cc332de336728a786f7d0f2bb45b078"
+    },
+    {
+      "path": "assets/science/props/prop-strip-magnesium.webp",
+      "sha256": "3ec0885a17d4ca44c7fd33826ac5a8c900e167a6fdf4e3578c89d7d32a5db75c"
+    },
+    {
+      "path": "assets/science/props/prop-strip-silver.webp",
+      "sha256": "d16a59b5d31ae1383c7dc2902a48359b7ceecca7bf5cf5996f0ae9f24f877413"
+    },
+    {
+      "path": "assets/science/props/prop-strip-zinc-plate.webp",
+      "sha256": "4cca2321487798a4b698d4fd470ab60b873d8d293bab26e20c133085014e00db"
+    },
+    {
+      "path": "assets/science/props/prop-strip-zinc.webp",
+      "sha256": "984f0d3da898bf3e2b3c947feb024108b5a1714360d56076e0dd544e349b869a"
+    },
+    {
+      "path": "assets/science/props/prop-substrate.webp",
+      "sha256": "47e33fd1ee02259a79288337c80ffb5417066eb5d003170109445feb199b4360"
+    },
+    {
+      "path": "assets/science/props/prop-sun.webp",
+      "sha256": "eeb0fe6c18105037d91356d5c28db5f1a0770be13a9b497f5361afc849b9ee39"
+    },
+    {
+      "path": "assets/science/props/prop-switch-closed.webp",
+      "sha256": "45dbe22bad26e4ab1d7f3747e7c5cb9edb1f924ffd1ce6e74c323ec5609a688e"
+    },
+    {
+      "path": "assets/science/props/prop-switch-open.webp",
+      "sha256": "9ccbab92276db0a4daf56ee3a91e3119cdce7e28ebaffb7f8f1bb8b84013f3dd"
+    },
+    {
+      "path": "assets/science/props/prop-syringe.webp",
+      "sha256": "6f331601c53044fe45fbbc32078f9991cb088d427b88c9dddf8374bea6e671d6"
+    },
+    {
+      "path": "assets/science/props/prop-test-tube.webp",
+      "sha256": "72150c64c5c7b04fc48d84ba6924cc759379adff56c34cceb21c4306d09cf71b"
+    },
+    {
+      "path": "assets/science/props/prop-thermometer.webp",
+      "sha256": "1ad0864ac9232cf6b420a25a73be37cbbca0324bf6034ca4de12b9ded08c4be5"
+    },
+    {
+      "path": "assets/science/props/prop-toy-cart.webp",
+      "sha256": "2f8818df5383870bb8765be5aa52c142ee1be407f9fec46282309b76f0c86358"
+    },
+    {
+      "path": "assets/science/props/prop-track.webp",
+      "sha256": "f266eb6df2137f7434cb937dbf79d1249eb51171d9514ccde38931e3c4d4f6c7"
+    },
+    {
+      "path": "assets/science/props/prop-venturi-tube.webp",
+      "sha256": "c1495e43d82548f0e50e0750d7ed972ab1d52cdd6b02d68172b282e0dc723bbd"
+    },
+    {
+      "path": "assets/science/props/prop-wooden-block.webp",
+      "sha256": "4662530afa8eaf8f39ce07fca64b891bd9815519c5c24102367f3260e20731d3"
+    },
+    {
+      "path": "assets/science/props/prop-wooden-crate.webp",
+      "sha256": "0cb6f17d5e5fe4d8d51a44c5454e9568e562b2cef4acd3c7347ae49f980985ad"
+    },
+    {
+      "path": "assets/science/scenes/scene-biology.webp",
+      "sha256": "2eedb56b3311eb987721ec0431573fee8ea600e4bcdaf982e0fef17ecc0609ed"
+    },
+    {
+      "path": "assets/science/scenes/scene-chemistry.webp",
+      "sha256": "49b9e677eb63597e3174f6453ee4be3d09bb2bfb789c73f95bfd7546b2c62f86"
+    },
+    {
+      "path": "assets/science/scenes/scene-earth.webp",
+      "sha256": "ff324de3c05b493bafe2ee19c292799be67bfbf9fffff2cabe78a571d9b0290a"
+    },
+    {
+      "path": "assets/science/scenes/scene-physics.webp",
+      "sha256": "d2ecec24e109adc6ece964cd7ba0910e61b2f478fe8e62be9733832f5042a721"
+    },
+    {
+      "path": "docs/science-lever-torque-spec.md",
+      "sha256": "9ab26407ebdd57b5a112fed6fc5d134a983e1833934a47fef4f1f75e7b9558b4"
+    },
+    {
+      "path": "docs/science-pulley-incline-spec.md",
+      "sha256": "cf7d24663adaa4c88591df794d8369552ee45af302e2ae90e8e26611b963e16d"
+    },
+    {
+      "path": "scripts/science/batch2.mjs",
+      "sha256": "141fe5cb49f55e8048bf683d7abcdaac77004eff9600394711390c41704d5486"
+    },
+    {
+      "path": "scripts/science/models.mjs",
+      "sha256": "3da27a095a3102d129adaf8476503e9bc11793fa1ab226041bee0faf7d3a0c84"
+    },
+    {
+      "path": "scripts/science/runtime.js",
+      "sha256": "501fdeaaf490b96063d15af499a407b5c8780883608469d1547aea60758462d4"
+    },
+    {
+      "path": "tools/buoyancy-lab/app.mjs",
+      "sha256": "236e968ef1732d4f796682aa3d9705e178b3c699cd4f1b4034ddb6f84b0dbf27"
+    },
+    {
+      "path": "tools/buoyancy-lab/bench.mjs",
+      "sha256": "0fba98623204a649269097bf89194c9b1f002ba438f0d026d2b369455796b8c2"
+    },
+    {
+      "path": "tools/buoyancy-lab/hold.mjs",
+      "sha256": "a363354a268372e3c403937828694a6fb20478c783d378ee0922bab01f0c48d1"
+    },
+    {
+      "path": "tools/buoyancy-lab/img/teacher-body-v3.png",
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "tools/buoyancy-lab/img/teacher-body-v3.provenance.json",
+      "sha256": "7d2009770d12f8755cecd94397f753c36c5538469c0b2cc1e2b118ebe8828afa"
+    },
+    {
+      "path": "tools/buoyancy-lab/index.html",
+      "sha256": "e49acf7c913cf504fca399218db9575674eeef585f47b70e78e766cad679cab7"
+    },
+    {
+      "path": "tools/buoyancy-lab/legacy-model.mjs",
+      "sha256": "03f198547e2c92b8452fa8de2479586697dc30c91ce8cb2ecc111423c5499dec"
+    },
+    {
+      "path": "tools/buoyancy-lab/model.mjs",
+      "sha256": "c4c6b5cfe613d259ef51de6cc8f5cd1ac186d1f33c90082af63a8c0750b8a8a8"
+    },
+    {
+      "path": "tools/buoyancy-lab/storage.mjs",
+      "sha256": "390dd957612d1a3e47c1f4b8763badd41918270b4b134ba322114c7039ee8496"
+    },
+    {
+      "path": "tools/buoyancy-lab/style.css",
+      "sha256": "aed43a643b505f34baceb0fb30e9567918056682fc7f76a94859d8a028f369fa"
+    },
+    {
+      "path": "tools/lens-25d/assets/five-case.js",
+      "sha256": "b9e0fb367c190407ef7656fa01032158d5645d0eee69f4ffdaf4d2eb7fc72796"
+    },
+    {
+      "path": "tools/lens-25d/assets/learning-summary.js",
+      "sha256": "d8f833737d46857882577aa3e97aa029a74e2cb8419e4d25f7cd94958d4246d2"
+    },
+    {
+      "path": "tools/lens-25d/assets/learning-ui.js",
+      "sha256": "e92362ee4b2c859f9921069bb65291eb87548061acdaa5c1fb5c93f9289b5226"
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/challenges.js",
+      "sha256": "7779b45b5ef74137a83ac926afbfd1f7e88abdab2cb92f765a0b9c463866bcc0"
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/engine.js",
+      "sha256": "3ec3f749b1a6ba843bab69677f5c74f808132ab161dbcab27688b9ecee1ec5b9"
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/input.js",
+      "sha256": "24c616303c41dee02784e52c8731c61052a8d01e0d85a37e9e7fb4cba05d2e3d"
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/model.js",
+      "sha256": "280f78221410e05f02dfa1cc2a8c6592ec1905f9e9e4f463558ff74c7761fc90"
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/persist.js",
+      "sha256": "e58a20fba97c3781959973b24f817089ba3e473ab3f5787e7876fd3980750a41"
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/visual.js",
+      "sha256": "d388bdc2b2665b2a81c6169c3d7f6d383569fd8283000da80c44f88f7aa4a6c4"
+    },
+    {
+      "path": "tools/lens-25d/assets/pilot.css",
+      "sha256": "a311b8793bb2f8c6482e3534aeeda7579ba17d12a0db67617cb10fe2a3acac38"
+    },
+    {
+      "path": "tools/lens-25d/assets/pilot.js",
+      "sha256": "eeeb3662db460c803677ee5b365f07df1b42be035abce23fb866f7c64b7cd7ca"
+    },
+    {
+      "path": "tools/lens-25d/assets/screen-settlement.js",
+      "sha256": "6354b917ff760e713a2b017be6ead50a0201d3b3d3ecd5da1b2e7cec02e706e5"
+    },
+    {
+      "path": "tools/lens-25d/index.html",
+      "sha256": "1ea0369e0dd073351c237c9d5244617f6120d4a573bad367204e0c0e577630ad"
+    },
+    {
+      "path": "tools/lever-desk/app.mjs",
+      "sha256": "a85d87c6b1ca9f1165920ea1fa61d28142fe6f680e8a074488306d0c44f2a850"
+    },
+    {
+      "path": "tools/lever-desk/assets/teacher-body-v3.png",
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "tools/lever-desk/assets/teacher-body-v3.provenance.json",
+      "sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9"
+    },
+    {
+      "path": "tools/lever-desk/index.html",
+      "sha256": "78223c1eb3ec143b23999824e22da5a1a6031577af930a91a92e04652a8d7e75"
+    },
+    {
+      "path": "tools/lever-desk/input.mjs",
+      "sha256": "e198f7f111448bc9e6b93859e74e15f5fcce8a0d6f5a13c59f29c739275e4042"
+    },
+    {
+      "path": "tools/lever-desk/layout.mjs",
+      "sha256": "2a9078b4b8dd75a3ae868522552c31467869a2fc5e49214980f7e8a2bc5b93e0"
+    },
+    {
+      "path": "tools/lever-desk/model.mjs",
+      "sha256": "f83341dff7667a0f1db924b3d1aa9a25e03640d470b8e9662a0b22321e9df55d"
+    },
+    {
+      "path": "tools/lever-desk/state.mjs",
+      "sha256": "6cff0caf70e6b1e82ae35a719ebd01e214870b785d1f0e9910235697c8e6517c"
+    },
+    {
+      "path": "tools/lever-desk/storage.mjs",
+      "sha256": "31a91ca42705a3276142efb08cf691cf1aef2f8375a66f982be162e62925d101"
+    },
+    {
+      "path": "tools/lever-desk/style.css",
+      "sha256": "317b99de325d68adedfa6c2e03c62946f2a59d28cbdbc0a2046cc775da5c4dfc"
+    },
+    {
+      "path": "tools/microscope-3d/app.js",
+      "sha256": "92938014ba9d130c24a02af54b3c307d4aa777959c4daed9f07cf16a49e7eb55"
+    },
+    {
+      "path": "tools/microscope-3d/body-touch.js",
+      "sha256": "be706900959b4184f2374c80cdbaed20f9573ed535979203179d0e67027c4d88"
+    },
+    {
+      "path": "tools/microscope-3d/cell-course.js",
+      "sha256": "4386363dc95261c1c05c436d4a42c0427c1a57666cf254356a93bb9e2bf8f724"
+    },
+    {
+      "path": "tools/microscope-3d/cell-observation.js",
+      "sha256": "07abc8ce6c63726d5bb98aa495cfe88ac73e7719d3d3754afdadc09d79d9910e"
+    },
+    {
+      "path": "tools/microscope-3d/compound-pointer.js",
+      "sha256": "6fcf037ce6c189df60f3af44815a45ca46c6bb284fdf47c2f8b9d965bbb473d2"
+    },
+    {
+      "path": "tools/microscope-3d/course-ui.js",
+      "sha256": "e9efde9780bb9db5ddaa531a36c09e3fd34bf15502b7bc3114348ba12dfc61d3"
+    },
+    {
+      "path": "tools/microscope-3d/course.js",
+      "sha256": "4cfd5966f33110c6194f9edbf52816c39fe85fd8131f84d2886b98fbc254fd3a"
+    },
+    {
+      "path": "tools/microscope-3d/eyepiece.js",
+      "sha256": "480f7413db22ab6daa8dfd6833d85653cbe7506e77a7ab21ab665cab3dab4289"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/NotoSansTC-OFL.txt",
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/NotoSansTC-subset.woff",
+      "sha256": "7415ef63ce7821da807ef6052112a22de71b31f125529368c70fdcda4c81bb63"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/ZenMaruGothic-OFL.txt",
+      "sha256": "2a20cf7ce1909d8ee1e949095d340f7d7656705f7c810a2d6faf56800ad0cb3d"
+    },
+    {
+      "path": "tools/microscope-3d/fonts/ZenMaruGothic-subset.woff",
+      "sha256": "cc68d69e93788a3b9dd8b5c82f0f87090a15dd2aaa8c1b53c056d71808458954"
+    },
+    {
+      "path": "tools/microscope-3d/illumination-ui.js",
+      "sha256": "fa0eb1b787077e8769117df253b02a400c568ccf2ffb5c4bf34d3edf9484962b"
+    },
+    {
+      "path": "tools/microscope-3d/illumination.js",
+      "sha256": "eab0f0e4c58b37f56d7b9284509aab757238d0f9d1a41707f02511b13410a8d1"
+    },
+    {
+      "path": "tools/microscope-3d/img/gold-paint.svg",
+      "sha256": "6e1367535f33917418110effa62761b606978de6123bd365fffca6f4a7f4e3f5"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper-paint.svg",
+      "sha256": "2efa40ab91ad770bb7adf82d9e165d19d43fa6167fc901b03953b985bb3ab1af"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper.svg",
+      "sha256": "0332c0f660467ba8a2d7fb79c759b9f05614c691c2edd523b0ffbcba12a584f7"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper10.svg",
+      "sha256": "21aed8cb2222bce24a208aa2c326ad228d887388c0f2b766ba2a492fffc3d35b"
+    },
+    {
+      "path": "tools/microscope-3d/img/paper18.svg",
+      "sha256": "5ba739c182a097299674d72936523659d9ac7b4bf19c46bac64e7e86bc90dfe0"
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-arm-v2.webp",
+      "sha256": "e7d76942be6d0e1aba394861b7cf08e2e6a8e4ff7f7b92ffc7a3754d95434b5b"
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-body-v2.webp",
+      "sha256": "5c53f5f697011861dbd889b9a6f92ad4b6bafd79c23ca94fcfdb678e97f4603a"
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-body-v3.png",
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "tools/microscope-3d/index.html",
+      "sha256": "37199b1b32d0c72940adeef754865cd06293c623bb6d1ea5f84270f9a4b012ab"
+    },
+    {
+      "path": "tools/microscope-3d/model.js",
+      "sha256": "c0113e367e43e413481b8bbe7cca142a5f5c23b05ba0fe83d9d8dd6caae717a5"
+    },
+    {
+      "path": "tools/microscope-3d/notebook-ui.js",
+      "sha256": "4d668ceabe2d8880b9fabfd375e913dd1fa64a35a752e0b985459f39c4c7ef0d"
+    },
+    {
+      "path": "tools/microscope-3d/notebook.js",
+      "sha256": "b3c8687e6e0a8cbb7dee6919eb257045c61e15e7ac8f1524b7265b0503dc59e8"
+    },
+    {
+      "path": "tools/microscope-3d/paper-render.js",
+      "sha256": "3b846e38025110bdc4025fceb487bd7c16bc29fa7948892969e600d5e9f28290"
+    },
+    {
+      "path": "tools/microscope-3d/pointer.js",
+      "sha256": "a94c29ca420d44e6d62ecf89ff35dba8e91188260184ed2f509e5805fa653240"
+    },
+    {
+      "path": "tools/microscope-3d/render-quality.js",
+      "sha256": "101f998be888cc00e117822e03a95944665c7fd9a7c2d2964d25364639e5f8cc"
+    },
+    {
+      "path": "tools/microscope-3d/scene.js",
+      "sha256": "7d29dd24a156626de50707089f92919f516675c26396714d58e2eae4804fc57e"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-course.js",
+      "sha256": "c8ccde00d85e9b036b23fdee54aeba23b8e3b82e0f47b030065e82b1e4455d16"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-eye.js",
+      "sha256": "d43d8a5ad91e6d2bad3c3f4b56430b9609d4863f2b97bf702e946f92ac712264"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-model.js",
+      "sha256": "c92e0903f33e480c9895c79ce75921865509b9d3e4dc9abedbb548c731d37227"
+    },
+    {
+      "path": "tools/microscope-3d/stereo-scene.js",
+      "sha256": "4270d8d6a237fc6f3d2a7075abe365caed16812ca428e185df58bc73dac4da94"
+    },
+    {
+      "path": "tools/microscope-3d/style.css",
+      "sha256": "2022999258a4d331a1668e982da59bd0cb3ae75736d8d6665a6fed1c0ca74ee3"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/Projector.js",
+      "sha256": "ddbf605d8845ebd1436bc174dcea0bc3f81aefb89137668b107f9d37463a41c1"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/SVGRenderer.js",
+      "sha256": "5fcb9703432d0542083b68e420a19e25cf08b3733bc70385cd1b1b6bfb86e69c"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/THREE-LICENSE.txt",
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/three.core.js",
+      "sha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20"
+    },
+    {
+      "path": "tools/microscope-3d/vendor/three.module.js",
+      "sha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a"
+    },
+    {
+      "path": "tools/science/lever-torque.html",
+      "sha256": "fcbf02830b7de6540c4b1ed124c0614f3e9c5196411f2e712148bddc13a8e093"
+    },
+    {
+      "path": "tools/science/pulley-incline.html",
+      "sha256": "16fb1abbedd99fba533d6890a26751660e7a3a8f3cd13eb7b7cd9f2914736e73"
+    }
+  ]
+}

@@ -66,4 +66,9 @@ export const standalonePublic = Object.freeze([Object.freeze({
  description:'移動砝碼、比較力矩，把三次觀察留在自己的科學手札。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
  prior:'力、距離與單位換算',goals:'力矩比較、槓桿平衡、依原始觀察比較與解釋',
  minutes:'20–30',kind:'互動模擬'
+}),Object.freeze({
+ file:'pulley-desk/',title:'小小滑輪實驗桌',subject:'理化',grade:'國中',unit:'滑輪、拉力與功',
+ description:'拉動定滑輪與動滑輪，將同一個10 N重物提升20 cm，再用兩筆觀察比較力、距離與功。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
+ prior:'力、距離與單位換算',goals:'理想滑輪的力與距離交換、功的計算、依原始觀察比較與解釋',
+ minutes:'20–30',kind:'互動模擬'
 })]);
