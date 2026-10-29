@@ -4,8 +4,9 @@
 // No app imports, synthetic input dispatch, model fixtures or state setters.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
-const {waitForTouchInput,waitForTouchClick,waitForTouchPresentation}=require('./pulley-desk/touch-delivery.cjs');
-const {runTouchDiagnosticMatrix}=require('./pulley-desk/touch-diagnostic.cjs');
+const {waitForTouchInput,waitForTouchClick}=require('./pulley-desk/touch-delivery.cjs');
+const {runFastReleaseCharacterization}=require('./pulley-desk/fast-release-diagnostic.cjs');
+const {holdTouchEndpoint}=require('./pulley-desk/touch-gesture.cjs');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.PULLEY_DESK_OUTPUT||'pulley-desk-artifacts');
 const KEY='bhcs.pulleyDesk.v1';
 const OTHER_KEYS=['bhcs-science-v2-pulley','bhcs-science-v2-pulley-incline','bhcs-science-v2-lever-torque','bhcs-science-v2-buoyancy','bhcs-science-v2-microscope','bhcs-science-v2-lens','bhcs.leverDesk.v1','yu-buoyancy-prototype-v1.2-g10','yu-buoyancy-prototype-v1.1'];
@@ -53,6 +54,7 @@ async function drag(page,cdp,device,rise,{cancel=false,reverse=false}={}){
  // CDP command completion is not used as proof that the last touch sample
  // has reached the document. Observe this gesture's actual endpoint first.
  if(cdp)await waitForTouchInput(page,{since:gestureStart,type:'pointermove',pointerId:touchPointerId,point:to});
+ const stationaryEndpoint=cdp?await holdTouchEndpoint(cdp,to):null;
  const preview=reverse?before:Math.min(20,before+rise);assert.equal(await height(page),preview,'rendered drag preview');
  assert.equal(await raw(page),beforeRaw,'preview never writes evidence');
  assert.equal(await page.locator('#announcement').innerText(),beforeAnnouncement,'pointermove does not spam live announcements');
@@ -64,13 +66,12 @@ async function drag(page,cdp,device,rise,{cancel=false,reverse=false}={}){
   const releaseStart=await page.evaluate(()=>window.__pulleyAudit.input.length);
   await cdp.send('Input.dispatchTouchEvent',{type:cancel?'touchCancel':'touchEnd',touchPoints:[]});
   await waitForTouchInput(page,{since:releaseStart,type:cancel?'pointercancel':'pointerup',pointerId:touchPointerId});
-  await waitForTouchPresentation(page);
  }
  else{if(cancel)await page.keyboard.press('Escape');await page.mouse.up();}
  assert.equal(await height(page),cancel?before:preview,'commit or cancel height');
  assert.equal(await raw(page),beforeRaw,'unsaved lift changes no persisted records');
  if(cancel){assert.ok(await page.locator('#save-record').isDisabled());assert.equal(await guide(page),'lift');assert.match(await page.locator('#guide-progress').innerText(),new RegExp(`已提交 ${before}`));}
- return {from,to,before,preview,cancel,reverse};
+ return {from,to,before,preview,cancel,reverse,stationaryEndpoint};
 }
 async function fillWork(page,values=['2','2.0','2.00','2']){for(const [i,id]of ['fixed-input','fixed-output','movable-input','movable-output'].entries())await page.locator('#'+id).fill(values[i]);await page.locator('#work-form button[type="submit"]').click();}
 async function twoRoundsByButtons(page,cdp){
@@ -165,9 +166,7 @@ async function run(name,width,touch,task,corrupt){
   const audit=await assertOwnStorage(page);assert.ok(audit.input.some(e=>e.type==='keydown'&&e.repeat&&e.trusted),'trusted repeat reached runtime guard');assert.ok(audit.input.some(e=>e.key==='Escape'&&e.trusted),'native Escape cancellation exercised');
  });
  // Separate evidence only: diagnostics cannot change or replace acceptance.
- if(results.some(r=>r.name==='guided-pointer-390'&&r.status==='failed')){
-  try{await runTouchDiagnosticMatrix({browser,base,output,activate,drag});}
-  catch(error){fs.writeFileSync(path.join(output,'touch-diagnostic-error.txt'),error.stack||String(error));}
- }
+ try{await runFastReleaseCharacterization({browser,base,output});}
+ catch(error){fs.writeFileSync(path.join(output,'fast-release-diagnostic-error.txt'),error.stack||String(error));}
  assert.equal(results.length,9);assert.ok(results.every(r=>r.status==='passed'),`${results.filter(r=>r.status!=='passed').length}/9 pulley browser scenarios failed`);console.log('PASS pulley-desk: 9 real Chromium scenarios');
 })().catch(e=>{console.error(e);fs.writeFileSync(path.join(output,'runner-error.txt'),e.stack||String(e));if(!browser){results.push({name:'browser-suite',status:'never-run',reason:e.message});save();}process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();if(server)await new Promise(resolve=>server.close(resolve));});

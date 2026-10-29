@@ -1,6 +1,6 @@
 # Standalone pulley desk integration (Draft PR)
 
-**Current scope:** the initial accepted transfer is preserved below. A separately authorized app-only mobile release candidate is documented at the end; it is not yet a confirmed browser fix.
+**Current scope:** the accepted runtime has been restored exactly (apart from the original two route-metadata edits). The rejected app-only candidate is retained as history. Current touch acceptance models a stationary endpoint before release; native Chromium 145 CI and physical-mobile validation remain separate.
 
 ## Frozen source and metadata-only transfer
 
@@ -70,7 +70,9 @@ The next exact-head browser run confirmed all four fixed-pulley touch gestures a
 
 After a touch tap, the checker now requires a new trusted touch down/up sequence on the requested button followed by a new trusted touch click on that same button. The audit index excludes earlier taps, and down/up uses observed native pointer identity rather than assuming the browser pointer ID equals the CDP contact ID. It does not infer success from a desired record count or guide state. The original 121 browser assertion expressions are unchanged. A missing click must fail at the existing timeout: there is no replay, forced click, fixed sleep, application-state setter or frozen-runtime modification. Three supplemental regressions cover stale/untrusted/wrong-target input, ordered current-tap provenance and timeout propagation. Corrected exact-head remote CI must determine whether the expected click actually arrives; otherwise its expanded passive trace remains a diagnostic failure rather than a fabricated pass.
 
-## Bounded native-touch diagnostic (not acceptance)
+## Historical bounded native-touch diagnostic (not acceptance)
+
+This three-variant diagnostic describes earlier runs. Its source and unit checks remain available for history; the current checker instead always runs the app-free characterization described below.
 
 The subsequent browser run timed out after 15 seconds without a trusted Save click at all three mobile widths, despite observing the button's touch pointerdown/up and all four preceding fixed-pulley drags. This does not support the earlier simple late-click hypothesis. It locates the failure before the application Save click handler, but does not identify the suppression mechanism. Human prototype acceptance was desktop-only; no physical-mobile acceptance is asserted.
 
@@ -80,7 +82,9 @@ The shared-session taps match installed Playwright 1.58.2's omitted contact ID, 
 
 Passive probes record native event timestamps, pointer identity/primary flag, touch identifiers, capture events, event cancellation flags, button DOM identity/disabled mutations, scroll and visual-viewport metrics. A later animation-frame observation reads each event's final `defaultPrevented` flag after dispatch; it does not postpone input. The extra observations may affect timing, which is another limit of this experiment. Separate JSON records the first failing stage and final state. Diagnostic completion never turns an acceptance failure into success: the original nine scenario results, all 121 assertion expressions, and the final 9/9 fail-closed gate remain unchanged. A missing click still fails at the existing timeout. The experiment is bounded evidence gathering, not a product fix or mobile certification; any next change requires review of its exact-head evidence.
 
-## Authorized app-only mobile release candidate
+## Historical app-only mobile release candidate — reverted
+
+**Reverted by subsequent authorization.** The following describes the rejected candidate, not current runtime behavior. Its app hash and original delta remain in the historical repair inventory; no exception is active. Candidate-only lifecycle tests and the post-release frame waiter have been removed.
 
 The frozen transfer above describes the original desktop-accepted baseline. A later, explicitly authorized mobile interaction candidate changes **only `app.mjs`**. The accepted `scripts/pulley-desk-runtime.json` remains byte-identical, including the original app hash. Its exact original app is retained in `scripts/pulley-desk/accepted-release-baseline/app.mjs`. The separately pinned `scripts/pulley-desk-runtime-repair.json` lists original and candidate byte lengths/hashes; the integration gate verifies both, and every other runtime file retains its previous boundary. This is not a silent rebaseline. The accepted input module, physical model/formulas, storage/schema/key, guide content, bench geometry, HTML/CSS and teacher artwork remain unchanged.
 
@@ -93,3 +97,15 @@ Eight lifecycle tests exercise this contract, including the exact cancelled-targ
 The browser checker preserves the same native gestures, all 121 original assertion expressions, and the nine-scenario fail-closed gate. After observing the current touch pointerup/cancel, it now awaits exactly one browser animation frame before the existing strict release-state assertions. This is the candidate's explicit presentation boundary, not polling for a desired height/guide state. The original timeout stays fail-closed. Preview assertions remain unchanged. The bounded diagnostic remains separate from acceptance.
 
 This is a **repair candidate**, not a confirmed fix, release or physical-mobile certification. Local model/DOM checks cannot establish that Chromium delivers the subsequent native Save click. Exact-head CI must rerun the original failing native-input sequence; private-prototype revalidation and explicit merge/deployment approval remain separate.
+
+## Accepted runtime restored; stop-then-lift touch acceptance
+
+An external report using **Chromium 153 / Playwright 1.63** reproduced missing click/mousedown/mouseup after a fast 75px, eight-step CDP touch drag on a minimal page with only a `touch-action:none` handle and a remote button. It reported the same behavior for the accepted and candidate pulley runtimes at 360/390/412, and for a separate lever activity. Same-session/contact-ID changes did not solve it. Stationary endpoint samples for 50–200ms, or a slower drag, reportedly allowed the subsequent tap. These are **externally reported results**, not locally reproduced evidence or proof about pinned CI Chromium 145. A fling-related explanation remains a hypothesis; no internal browser trace or physical-phone verification was supplied.
+
+There is therefore insufficient evidence to retain the app-only candidate. `app.mjs` is restored to accepted SHA-256 `d8afa7796470ce62b87fbc9611c319a96adf8141ac773d3ab525d5e1c5db1731`. The original ten-file inventory is unchanged, and the integration test again checks the actual runtime bytes directly against it. `scripts/pulley-desk-runtime-repair.json` is explicitly historical/reverted with an empty active-change list; it cannot substitute candidate bytes into the frozen-source gate. The candidate-only eight lifecycle tests and post-release RAF helper/test are removed with the behavior they tested. All original developer tests, independent assertions, 121 browser assertion expressions, nine acceptance scenarios and required CI gates remain.
+
+The touch gesture now represents **stop, then lift**: after its actual final endpoint is observed, it emits five native CDP `touchMove` samples at the same coordinates and contact ID on 20ms monotonic deadlines, spanning approximately 100ms while the finger is still pressed. The existing strict preview/qualification/storage assertions then run before release. Cancellation still tests an unqualified target preview; committed movement, reverse no-op, snapshots and the guide sequence retain their exact assertions. Sampling timestamps are recorded with each drag. This is intentional gesture duration, **not a post-release wait, click retry, forced input or state substitution**. Release is followed by the existing passive native-event observation and exactly one original locator tap with its trusted-click gate. Mouse/keyboard flows are unchanged.
+
+`fast-release-characterization.json` is produced separately on every completed browser suite, not only when acceptance fails. Two fresh 390px contexts use an app-free inline HTML fixture: one fast-release 75px/eight-step drag and one stationary-endpoint counterpart, each followed by one native tap. The fixture loads no pulley, model, storage or application script; only passive test probes observe input. The artifact records the actual browser version, sampling trace and either observed click or no click within the existing timeout. Neither suppression nor delivery is a required diagnostic outcome. Diagnostic errors/outcomes never replace or alter the nine-scenario acceptance results, and the final gate remains fail-closed.
+
+Local model/unit checks cannot validate native gesture delivery. Exact-head Chromium 145 CI must establish whether this gesture shape works there; physical-phone acceptance is still required separately. The private hosted prototype was never updated with the rejected runtime candidate and remains the accepted version. No merge or deployment is implied.
