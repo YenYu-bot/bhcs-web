@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
-const {observedTouchInput,waitForTouchInput}=require('./touch-delivery.cjs');
+const {observedTouchInput,waitForTouchInput,observedTouchClick,waitForTouchClick}=require('./touch-delivery.cjs');
 const sample={type:'pointermove',trusted:true,pointer:'touch',pointerId:7,targetButtonId:'rope-handle',clientX:200.25,clientY:310.25};
 const requested={since:1,type:'pointermove',pointerId:7,point:{x:200.25,y:310.25}};
 const observe=(events,args=requested)=>vm.runInNewContext(`(${observedTouchInput.toString()})(args)`,{window:{__pulleyAudit:{input:events}},args});
@@ -39,4 +39,38 @@ test('waiter uses the event predicate, preserves timeout failure and never accep
  assert.equal(event.clientY,310.25);assert.throws(()=>assert.equal(18,20,'rendered drag preview'));
  const missing=new Error('native endpoint was not delivered before timeout');
  await assert.rejects(waitForTouchInput({async waitForFunction(){throw missing;}},requested),error=>error===missing);
+});
+
+const tapDown={type:'pointerdown',trusted:true,pointer:'touch',pointerId:7,targetButtonId:'guide-next'};
+const tapUp={...tapDown,type:'pointerup'},tapClick={...tapDown,type:'click'};
+const clickRequest={since:3,targetButtonId:'guide-next'};
+const observeClick=(events,args=clickRequest)=>vm.runInNewContext(`(${observedTouchClick.toString()})(args)`,{window:{__pulleyAudit:{input:events}},args});
+test('tap barrier rejects stale clicks, wrong target, untrusted input and mouse compatibility events',()=>{
+ const old=[tapDown,tapUp,tapClick];assert.equal(observeClick(old),false);
+ for(const patch of [{trusted:false},{pointer:'mouse'},{targetButtonId:'save-record'}])assert.equal(observeClick([...old,tapDown,tapUp,{...tapClick,...patch}]),false);
+ assert.equal(observeClick([...old,tapDown,tapUp,tapClick]).type,'click');
+ assert.equal(observeClick([...old,tapDown,tapUp,tapClick],{since:3,targetButtonId:''}),false);
+});
+test('tap barrier requires ordered current native down/up before click without equating native pointer ID to CDP contact ID',()=>{
+ const old=[tapDown,tapUp,tapClick];
+ assert.equal(observeClick([...old,tapClick]),false,'click alone has no fresh touch provenance');
+ assert.equal(observeClick([...old,tapDown,tapClick,tapUp]),false,'click must follow release');
+ assert.equal(observeClick([...old,tapDown,{...tapUp,pointerId:8},tapClick]),false,'another pointer release cannot complete this tap');
+ assert.equal(observeClick([...old,{...tapDown,trusted:false},tapUp,tapClick]),false);
+ assert.equal(observeClick([...old,tapDown,{...tapUp,targetButtonId:'other'},tapClick]),false);
+ assert.equal(observeClick([...old,tapDown,tapUp,tapClick]).pointerId,7,'observed native identity is not assumed to equal CDP contact 1');
+});
+test('tap waiter stays pending until passive click delivery and propagates missing-click timeout without forcing state',async()=>{
+ let disposed=false;
+ const page={async waitForFunction(predicate,args,options){
+  assert.equal(predicate,observedTouchClick);assert.deepEqual(options,{polling:'raf'});assert.equal('timeout' in options,false);
+  const events=[tapDown,tapUp,tapClick,tapDown,tapUp];
+  assert.equal(observeClick(events,args),false,'down/up is not native click delivery');
+  events.push(tapClick);const event=observeClick(events,args);assert.equal(event.type,'click');
+  return {async jsonValue(){return event;},async dispose(){disposed=true;}};
+ }};
+ assert.equal((await waitForTouchClick(page,clickRequest)).type,'click');assert.equal(disposed,true);
+ assert.throws(()=>assert.equal(0,1,'record count after delivered native click'),'delivery alone cannot certify application state');
+ const missing=new Error('native click was not delivered before timeout');
+ await assert.rejects(waitForTouchClick({async waitForFunction(){throw missing;}},clickRequest),error=>error===missing);
 });

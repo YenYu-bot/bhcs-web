@@ -4,7 +4,7 @@
 // No app imports, synthetic input dispatch, model fixtures or state setters.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
-const {waitForTouchInput}=require('./pulley-desk/touch-delivery.cjs');
+const {waitForTouchInput,waitForTouchClick}=require('./pulley-desk/touch-delivery.cjs');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.PULLEY_DESK_OUTPUT||'pulley-desk-artifacts');
 const KEY='bhcs.pulleyDesk.v1';
 const OTHER_KEYS=['bhcs-science-v2-pulley','bhcs-science-v2-pulley-incline','bhcs-science-v2-lever-torque','bhcs-science-v2-buoyancy','bhcs-science-v2-microscope','bhcs-science-v2-lens','bhcs.leverDesk.v1','yu-buoyancy-prototype-v1.2-g10','yu-buoyancy-prototype-v1.1'];
@@ -14,7 +14,14 @@ const raw=page=>page.evaluate(key=>localStorage.getItem(key),KEY);
 const records=async page=>JSON.parse(await raw(page))?.records||[];
 const height=async page=>Number(await page.locator('#height-value').innerText());
 const guide=page=>page.locator('#guide-next').getAttribute('data-key');
-async function activate(page,selector,cdp){assert.ok(await page.locator(selector).isEnabled(),selector+' enabled before native activation');if(cdp)await page.locator(selector).tap();else await page.locator(selector).click();}
+async function activate(page,selector,cdp){
+ assert.ok(await page.locator(selector).isEnabled(),selector+' enabled before native activation');
+ if(cdp){
+  const targetButtonId=await page.locator(selector).getAttribute('id'),since=await page.evaluate(()=>window.__pulleyAudit.input.length);
+  await page.locator(selector).tap();
+  await waitForTouchClick(page,{since,targetButtonId});
+ }else await page.locator(selector).click();
+}
 async function focus(page,selector){assert.ok(await page.locator(selector).isEnabled(),selector+' enabled before keyboard focus');await page.locator(selector).focus();assert.equal(await page.locator(selector).evaluate(e=>document.activeElement===e),true,selector+' owns keyboard focus');}
 async function geometry(page){
  const g=await page.evaluate(()=>{const rect=e=>e.getBoundingClientRect().toJSON(),bench=document.querySelector('#bench');return {width:innerWidth,scroll:document.documentElement.scrollWidth,bench:rect(bench),handle:rect(document.querySelector('#rope-handle')),targets:[...document.querySelectorAll('#guide-next,#rope-handle,#rise-one,#rise-five,#save-record,#switch-device,#start-fixed,#start-movable')].filter(e=>e.getClientRects().length).map(e=>({id:e.id,r:rect(e)})),readouts:[...document.querySelectorAll('.reading')].map(e=>({r:rect(e),scroll:e.scrollWidth,client:e.clientWidth})),guideTargets:document.querySelectorAll('.guide-target').length,guideStep:document.querySelector('#guide-step').textContent,currentSteps:[...document.querySelectorAll('.steps [aria-current="step"]')].map(e=>Number(e.querySelector('span').textContent))};});

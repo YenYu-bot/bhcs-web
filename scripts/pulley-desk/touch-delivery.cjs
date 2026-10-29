@@ -11,4 +11,21 @@ async function waitForTouchInput(page,observation){
  const handle=await page.waitForFunction(observedTouchInput,observation,{polling:'raf'});
  try{return await handle.jsonValue();}finally{await handle.dispose();}
 }
-module.exports={observedTouchInput,waitForTouchInput};
+// A completed tap command is not itself proof of native click delivery.
+// Associate a fresh trusted touch down/up on the requested button, then observe
+// its subsequent trusted touch click; do not invent a CDP contact/click ID rule.
+function observedTouchClick({since,targetButtonId}){
+ if(!targetButtonId)return false;
+ const events=(window.__pulleyAudit?.input||[]).slice(since);
+ const matches=event=>event.trusted===true&&event.pointer==='touch'&&event.targetButtonId===targetButtonId;
+ const down=events.findIndex(event=>event.type==='pointerdown'&&matches(event)&&Number.isFinite(event.pointerId));
+ if(down<0)return false;
+ const up=events.findIndex((event,index)=>index>down&&event.type==='pointerup'&&matches(event)&&event.pointerId===events[down].pointerId);
+ if(up<0)return false;
+ return events.slice(up+1).find(event=>event.type==='click'&&matches(event))||false;
+}
+async function waitForTouchClick(page,observation){
+ const handle=await page.waitForFunction(observedTouchClick,observation,{polling:'raf'});
+ try{return await handle.jsonValue();}finally{await handle.dispose();}
+}
+module.exports={observedTouchInput,waitForTouchInput,observedTouchClick,waitForTouchClick};
