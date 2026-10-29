@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "accepted_baseline_commit": "be5ec67aa6ece6e47d8649c27c1286825959b77f",
+  "accepted_public_inventory_sha256": "ff109ec9d11b4330bfc97007150148604e961c85c1c8495ae40700f8c822c1d2",
+  "private_candidate_manifest_sha256": "b9875a1d692a0965e89171339c12fa1ae2ea97d544e1bbd9c71e6abaac8a2093",
+  "status": "reverted; accepted runtime restored",
+  "active_changes": [],
+  "restored_app_sha256": "d8afa7796470ce62b87fbc9611c319a96adf8141ac773d3ab525d5e1c5db1731",
+  "historical_candidate_commit": "db292647f56ff3e15e0b4cc4757416715fa1a5f1",
+  "historical_changes": [
+    {
+      "path": "app.mjs",
+      "accepted_copy": "scripts/pulley-desk/accepted-release-baseline/app.mjs",
+      "before": {
+        "bytes": 20448,
+        "sha256": "d8afa7796470ce62b87fbc9611c319a96adf8141ac773d3ab525d5e1c5db1731"
+      },
+      "after": {
+        "bytes": 23006,
+        "sha256": "ceb7a9bf0c3f1c06809c7a557f69427a8b06c2a76d80e2162b24df8c15b430b4"
+      }
+    }
+  ],
+  "historical_lifecycle_test": {
+    "path": "scripts/pulley-desk/release-lifecycle.test.mjs",
+    "prototype_sha256": "5e3616cab27bf94879f6cd29b2e3d614bbf537cf21413950fc6b3264041170c7",
+    "path_replacement": [
+      "../dist/",
+      "../../tools/pulley-desk/"
+    ]
+  },
+  "reversion_reason": "No sufficient evidence for runtime change: external Chromium 153 report reproduced fast-release CDP click suppression on an app-free page and on both accepted and candidate runtimes. Chromium 145 and physical phones remain unverified. Restore accepted runtime and characterize gesture shape separately."
+}

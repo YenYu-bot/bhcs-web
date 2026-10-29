@@ -1,0 +1,17 @@
+import {uid} from './model.mjs';
+export function previewHeight({startH,startY,k,n,device},y){const sign=device==='fixed'?1:-1;return Math.min(20,Math.max(startH,startH+Math.round(sign*(y-startY)/(n*k))));}
+export function createInput({handle,win=window,getState,getScale,onBegin,onPreview,onCommit,onCancel,onStep,onNotice}){
+ let transaction=null;const held=new Set();
+ const snapshot=()=>{const run=getState();return run&&run.phase!=='recorded'&&run.h<20?run:null;};
+ const clearCapture=id=>{try{if(handle.hasPointerCapture?.(id))handle.releasePointerCapture(id);}catch{}};
+ function cancel(reason='cancel'){
+  if(!transaction)return false;const tx=transaction;transaction=null;clearCapture(tx.pointerId);onCancel(tx,reason);return true;
+ }
+ function down(e){if(e.button!==0||transaction)return;const run=snapshot();if(!run)return;e.preventDefault();const tx={runId:run.runId,device:run.device,startH:run.h,startY:e.clientY,k:getScale(),n:run.device==='fixed'?1:2,pointerId:e.pointerId,operationId:uid(),preview:run.h};transaction=tx;try{handle.setPointerCapture?.(e.pointerId);}catch{}onBegin(tx);}
+ function move(e){const tx=transaction;if(!tx||e.pointerId!==tx.pointerId)return;if(getState()?.runId!==tx.runId){cancel('stale');return;}e.preventDefault();tx.preview=previewHeight(tx,e.clientY);onPreview(tx);}
+ function up(e){const tx=transaction;if(!tx||e.pointerId!==tx.pointerId)return;e.preventDefault();move(e);if(transaction!==tx)return;transaction=null;clearCapture(tx.pointerId);if(getState()?.runId!==tx.runId){onCancel(tx,'stale');return;}onCommit(tx);}
+ function key(e){if(e.key==='Escape'){if(cancel('escape'))e.preventDefault();return;}if(e.target!==handle||!['ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();if(e.repeat||held.has(e.code||e.key))return;held.add(e.code||e.key);const run=snapshot();if(!run||transaction)return;const correct=run.device==='fixed'?'ArrowDown':'ArrowUp';if(e.key!==correct){onNotice('本輪只做提升；要重來請重新開始本輪。');return;}onStep(e.shiftKey?5:1,uid());}
+ const keyup=e=>held.delete(e.code||e.key),blur=()=>{held.clear();cancel('blur');},hidden=()=>{if(win.document.hidden)blur();},resize=()=>cancel('resize'),lost=e=>{if(transaction?.pointerId===e.pointerId)cancel('lostcapture');},cancelPointer=e=>{if(transaction?.pointerId===e.pointerId)cancel('pointercancel');};
+ handle.addEventListener('pointerdown',down);win.addEventListener('pointermove',move,{passive:false});win.addEventListener('pointerup',up);win.addEventListener('pointercancel',cancelPointer);handle.addEventListener('lostpointercapture',lost);win.addEventListener('keydown',key);win.addEventListener('keyup',keyup);win.addEventListener('blur',blur);win.addEventListener('pagehide',blur);win.addEventListener('resize',resize);win.addEventListener('orientationchange',resize);win.document.addEventListener('visibilitychange',hidden);
+ return {cancel,get transaction(){return transaction;},destroy(){cancel('destroy');handle.removeEventListener('pointerdown',down);win.removeEventListener('pointermove',move);win.removeEventListener('pointerup',up);win.removeEventListener('pointercancel',cancelPointer);handle.removeEventListener('lostpointercapture',lost);win.removeEventListener('keydown',key);win.removeEventListener('keyup',keyup);win.removeEventListener('blur',blur);win.removeEventListener('pagehide',blur);win.removeEventListener('resize',resize);win.removeEventListener('orientationchange',resize);win.document.removeEventListener('visibilitychange',hidden);}};
+}
