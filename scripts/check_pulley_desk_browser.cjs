@@ -5,6 +5,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
 const {waitForTouchInput,waitForTouchClick}=require('./pulley-desk/touch-delivery.cjs');
+const {runTouchDiagnosticMatrix}=require('./pulley-desk/touch-diagnostic.cjs');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.PULLEY_DESK_OUTPUT||'pulley-desk-artifacts');
 const KEY='bhcs.pulleyDesk.v1';
 const OTHER_KEYS=['bhcs-science-v2-pulley','bhcs-science-v2-pulley-incline','bhcs-science-v2-lever-torque','bhcs-science-v2-buoyancy','bhcs-science-v2-microscope','bhcs-science-v2-lens','bhcs.leverDesk.v1','yu-buoyancy-prototype-v1.2-g10','yu-buoyancy-prototype-v1.1'];
@@ -162,5 +163,10 @@ async function run(name,width,touch,task,corrupt){
   await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>document.activeElement.id),'fixed-input');await page.keyboard.type('2');await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.id),'fixed-output');await fillWork(page);await focus(page,'#guide-next');await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>document.activeElement.id),'explanation-text');await page.keyboard.type('Both ideal systems use equal work.');await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.id),'save-explanation');await page.keyboard.press('Enter');assert.equal(await guide(page),'done');
   const audit=await assertOwnStorage(page);assert.ok(audit.input.some(e=>e.type==='keydown'&&e.repeat&&e.trusted),'trusted repeat reached runtime guard');assert.ok(audit.input.some(e=>e.key==='Escape'&&e.trusted),'native Escape cancellation exercised');
  });
+ // Separate evidence only: diagnostics cannot change or replace acceptance.
+ if(results.some(r=>r.name==='guided-pointer-390'&&r.status==='failed')){
+  try{await runTouchDiagnosticMatrix({browser,base,output,activate,drag});}
+  catch(error){fs.writeFileSync(path.join(output,'touch-diagnostic-error.txt'),error.stack||String(error));}
+ }
  assert.equal(results.length,9);assert.ok(results.every(r=>r.status==='passed'),`${results.filter(r=>r.status!=='passed').length}/9 pulley browser scenarios failed`);console.log('PASS pulley-desk: 9 real Chromium scenarios');
 })().catch(e=>{console.error(e);fs.writeFileSync(path.join(output,'runner-error.txt'),e.stack||String(e));if(!browser){results.push({name:'browser-suite',status:'never-run',reason:e.message});save();}process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();if(server)await new Promise(resolve=>server.close(resolve));});
