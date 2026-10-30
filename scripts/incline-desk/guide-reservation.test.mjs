@@ -24,9 +24,16 @@ test('responsive reserves exactly cover actual moving, preview, committed and ca
 test('live and reserve typography share responsive rules and intrinsic, unclipped grid sizing',()=>{
  assert.match(html,/<div class="teacher-copy"><div class="guide-live"><p class="eyebrow">余老師帶你做<\/p><h2 id="guide-title">/);
  assert.equal((css.match(/\.teacher-copy :is\(\.guide-live,\.guide-reserve\)>p:not\(\.eyebrow\)/g)||[]).length,2);
- assert.match(css,/\.teacher-copy\{display:grid;grid-template-columns:minmax\(0,1fr\)\}/);
+ assert.match(css,/\.teacher-copy\{display:grid;grid-template-columns:minmax\(0,1fr\);overflow-anchor:none\}/);
  assert.match(css,/\.guide-live,\.guide-reserve\{grid-area:1\/1;min-width:0\}/);
  assert.match(css,/\.guide-reserve\{visibility:hidden;pointer-events:none;user-select:none\}/);
  const repair=css.slice(css.indexOf('/* Approved guide-height repair:'));
  assert.doesNotMatch(repair,/overflow\s*:|(?:min-|max-)?height\s*:|position\s*:|display:none|line-clamp/);
+});
+
+test('only the changing guidance subtree is excluded from native anchoring',()=>{
+ const declarations=[...css.replace(/\/\*[\s\S]*?\*\//g,'').matchAll(/([^{}]+)\{([^{}]*overflow-anchor\s*:[^{}]*)\}/g)];
+ assert.equal(declarations.length,1,'no global anchor suppression');
+ assert.equal(declarations[0][1].trim(),'.teacher-copy');
+ assert.match(declarations[0][2],/overflow-anchor:none/);
 });

@@ -75,6 +75,8 @@ async function enlargeGuideText(page){
  await page.addStyleTag({content});
  const actual=await page.locator('.guide-live').evaluate(e=>[...e.children].map(x=>parseFloat(getComputedStyle(x).fontSize)));
  assert.deepEqual(actual,baseline.map(x=>x*2),'all guidance fonts exactly doubled including reserve parity');
+ const reserves=await page.locator('.guide-reserve').evaluateAll(es=>es.map(e=>[...e.children].map(x=>parseFloat(getComputedStyle(x).fontSize))));
+ assert.equal(reserves.length,4);for(const fonts of reserves)assert.deepEqual(fonts,actual,'each invisible reserve has the same doubled computed fonts as the live guide');
  return {kind:'test-only guide text enlargement; not browser zoom or full-page text scaling',factor:2,baseline,actual};
 }
 async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false,inspectGuide=true}={}){
@@ -140,8 +142,10 @@ async function run(name,width,touch,task,corrupt){
   document.addEventListener('scroll',()=>frame('scroll-event'),true);
   for(const type of ['pointerdown','pointermove','pointerup','pointercancel','click','keydown','submit'])document.addEventListener(type,e=>window.__inclineAudit.input.push({type,trusted:e.isTrusted,pointer:e.pointerType,pointerId:e.pointerId,x:e.clientX,y:e.clientY,targetId:e.target.id||e.target.closest?.('[id]')?.id,key:e.key,repeat:e.repeat}),true);
  },{KEY,OTHER_KEYS,corrupt});
- const page=await context.newPage(),errors=[],failed=[],external=[];page.setDefaultTimeout(15000);page.on('dialog',d=>{if(d.type()==='beforeunload')return d.accept();errors.push('Unexpected dialog: '+d.type()+' '+d.message());return d.dismiss();});
- page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
+ const page=await context.newPage(),errors=[],failed=[],external=[],errorSamples=[];result.phase='scenario';result.errorTelemetry=[];
+ const observeError=(kind,message)=>{const entry={kind,message,phase:result.phase,hostObservedAt:new Date().toISOString()};result.errorTelemetry.push(entry);errorSamples.push(page.evaluate(()=>{const b=document.querySelector('#bench'),r=b?.getBoundingClientRect();return {sampledAt:performance.now(),viewport:{width:innerWidth,height:innerHeight,scrollY},bench:b?{clientWidth:b.clientWidth,clientHeight:b.clientHeight,rect:r.toJSON(),display:getComputedStyle(b).display}:null};}).then(sample=>{entry.geometry=sample;entry.timing='asynchronous observation after error event, not guaranteed exact emission geometry';},e=>{entry.sampleError=e.message;}));};
+ page.setDefaultTimeout(15000);page.on('dialog',d=>{if(d.type()==='beforeunload')return d.accept();errors.push('Unexpected dialog: '+d.type()+' '+d.message());return d.dismiss();});
+ page.on('pageerror',e=>{errors.push(e.message);observeError('pageerror',e.message);});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());observeError('console',m.text());}});page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
  await context.route('**/*',r=>{if(new URL(r.request().url()).origin!==base){external.push(r.request().url());return r.abort();}return r.continue();});
  try{
   await page.goto(base+'/tools/incline-desk/',{waitUntil:'networkidle'});await page.locator('#begin').waitFor();
@@ -151,9 +155,9 @@ async function run(name,width,touch,task,corrupt){
   result.geometry=await geometry(page);result.audit=await auditStorage(page);
   assert.deepEqual(await page.evaluate(keys=>keys.map(k=>window.__inclineRead(k)),OTHER_KEYS),OTHER_KEYS.map(k=>'untouched:'+k));
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);assert.deepEqual(external,[]);
-  await page.screenshot({path:path.join(output,name+'.png'),fullPage:true});result.status='passed';
- }catch(e){result.status='failed';result.failure=e.stack;result.failureAudit=await page.evaluate(()=>({geometry:{bench:document.querySelector('#bench')?.getBoundingClientRect().toJSON(),handle:document.querySelector('#handle')?.getBoundingClientRect().toJSON(),guide:document.querySelector('#guide-copy')?.getBoundingClientRect().toJSON()},audit:window.__inclineAudit,activeId:document.activeElement?.id,distance:document.querySelector('#distance')?.textContent,guide:document.querySelector('#guide-title')?.textContent,scrollY})).catch(()=>null);await page.screenshot({path:path.join(output,name+'-failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(output,name+'-failure.html'),await page.content().catch(()=>''));}
- finally{Object.assign(result,{errors,failed,external});save();console.log(result.status.toUpperCase()+' '+name);await context.close();}
+  result.phase='success-fullpage-screenshot';await page.screenshot({path:path.join(output,name+'.png'),fullPage:true});result.status='passed';
+ }catch(e){result.failurePhase=result.phase;result.status='failed';result.failure=e.stack;result.failureAudit=await page.evaluate(()=>({geometry:{bench:document.querySelector('#bench')?.getBoundingClientRect().toJSON(),handle:document.querySelector('#handle')?.getBoundingClientRect().toJSON(),guide:document.querySelector('#guide-copy')?.getBoundingClientRect().toJSON()},audit:window.__inclineAudit,activeId:document.activeElement?.id,distance:document.querySelector('#distance')?.textContent,guide:document.querySelector('#guide-title')?.textContent,scrollY})).catch(()=>null);result.phase='failure-fullpage-screenshot';await page.screenshot({path:path.join(output,name+'-failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(output,name+'-failure.html'),await page.content().catch(()=>''));}
+ finally{await Promise.all(errorSamples);Object.assign(result,{errors,failed,external});save();console.log(result.status.toUpperCase()+' '+name);await context.close();}
 }
 (async()=>{
  const mime={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.json':'application/json'};

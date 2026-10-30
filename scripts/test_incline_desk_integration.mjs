@@ -12,7 +12,7 @@ assert.equal(m.source_commit,'9a699657633ce1f888fe7274305b9870d4089eb9');assert.
 assert.deepEqual(walk(runtime).map(p=>path.relative(runtime,p)).sort(),m.files.map(f=>f.path).sort());
 // Accepted baseline remains immutable; only this explicitly approved presentation delta is reversible.
 const repairRaw=read('scripts/incline-desk-guide-repair.json'),repair=JSON.parse(repairRaw);
-assert.equal(sha(repairRaw),'a99bfa00615ddf7ee9e08525e9b7edb0bfd6eda8504df266f2ac8125f88024ee','bounded guide repair delta pinned');
+assert.equal(sha(repairRaw),'e51ee6aa81854d6b53c7bd68814510d299120d18af386ee60a069972a7c2da54','bounded guide repair delta pinned');
 assert.equal(repair.accepted_source_commit,m.source_commit);
 assert.deepEqual(repair.files.map(f=>f.path),['index.html','style.css']);
 const canonical='https://www.bhcs.com.tw/tools/incline-desk/',original='https://bhcs-incline-desk.several74727.chatgpt.site/',robots='<meta name="robots" content="noindex,nofollow">',anchor='<meta name="theme-color"';

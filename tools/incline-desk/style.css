@@ -27,6 +27,6 @@
 /* Approved guide-height repair: intrinsic, wrapping reserves; never clip text.
    Invisible copies share the live grid cell, so all gesture states fit at any
    width or text size without moving the apparatus or issuing scroll calls. */
-.teacher-copy{display:grid;grid-template-columns:minmax(0,1fr)}
+.teacher-copy{display:grid;grid-template-columns:minmax(0,1fr);overflow-anchor:none}
 .guide-live,.guide-reserve{grid-area:1/1;min-width:0}
 .guide-reserve{visibility:hidden;pointer-events:none;user-select:none}

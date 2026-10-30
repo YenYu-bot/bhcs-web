@@ -23,10 +23,11 @@
         ],
         [
           "",
-          "\n/* Approved guide-height repair: intrinsic, wrapping reserves; never clip text.\n   Invisible copies share the live grid cell, so all gesture states fit at any\n   width or text size without moving the apparatus or issuing scroll calls. */\n.teacher-copy{display:grid;grid-template-columns:minmax(0,1fr)}\n.guide-live,.guide-reserve{grid-area:1/1;min-width:0}\n.guide-reserve{visibility:hidden;pointer-events:none;user-select:none}\n"
+          "\n/* Approved guide-height repair: intrinsic, wrapping reserves; never clip text.\n   Invisible copies share the live grid cell, so all gesture states fit at any\n   width or text size without moving the apparatus or issuing scroll calls. */\n.teacher-copy{display:grid;grid-template-columns:minmax(0,1fr);overflow-anchor:none}\n.guide-live,.guide-reserve{grid-area:1/1;min-width:0}\n.guide-reserve{visibility:hidden;pointer-events:none;user-select:none}\n"
         ]
       ],
-      "sha256": "673a1037e143c717559be50b9f480d2e0fd9c63a84a644e339e9c479f36fe214"
+      "sha256": "bdeedc5c74b45e7d23a323030861c0a5519ba8c09aebb47a1598881733635570"
     }
-  ]
+  ],
+  "followup": "CI41028799247: reserved outer height held, but live guide body shrink98CSSpx coincided with scrollY decrease98 and viewport jump98 in guide-text200 cases. Exclude only dynamic teacher-copy subtree from native anchoring; no global scroll policy or programmatic scrolling. Internal browser anchor selection is inferred, not proven."
 }
