@@ -71,4 +71,9 @@ export const standalonePublic = Object.freeze([Object.freeze({
  description:'拉動定滑輪與動滑輪，將同一個10 N重物提升20 cm，再用兩筆觀察比較力、距離與功。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
  prior:'力、距離與單位換算',goals:'理想滑輪的力與距離交換、功的計算、依原始觀察比較與解釋',
  minutes:'20–30',kind:'互動模擬'
+}),Object.freeze({
+ file:'incline-desk/',title:'斜面搬運實驗桌',subject:'理化',grade:'國中',unit:'斜面、拉力與功',
+ description:'沿短坡與長坡搬運同一個10 N木箱，升高20 cm，用兩筆觀察比較沿坡距離、拉力與功。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
+ prior:'力、距離與單位換算',goals:'沿坡距離與垂直升高、理想斜面省力不省功、依原始觀察比較與解釋',
+ minutes:'20–30',kind:'互動模擬'
 })]);
