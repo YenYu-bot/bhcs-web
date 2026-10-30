@@ -1,0 +1,32 @@
+{
+  "id": "guide-height-stability-2026-10-30",
+  "accepted_source_commit": "9a699657633ce1f888fe7274305b9870d4089eb9",
+  "approval": "User approved bounded drag guidance height stability repair on 2026-10-30 08:39 UTC; physics, record format and test thresholds unchanged.",
+  "reason": "CI 41026977601 found actual23.25–24.25CSSpx long-ramp endpoint movement after redo.",
+  "files": [
+    {
+      "path": "index.html",
+      "replacements": [
+        [
+          "<div class=\"teacher-copy\"><p class=\"eyebrow\">余老師帶你做</p><h2 id=\"guide-title\">先看看這次的任務</h2><p id=\"guide-copy\"></p><p class=\"guide-note\" id=\"guide-note\"></p></div>",
+          "<div class=\"teacher-copy\"><div class=\"guide-live\"><p class=\"eyebrow\">余老師帶你做</p><h2 id=\"guide-title\">先看看這次的任務</h2><p id=\"guide-copy\"></p><p class=\"guide-note\" id=\"guide-note\"></p></div><div class=\"guide-reserve\" aria-hidden=\"true\" inert><p class=\"eyebrow\">余老師帶你做</p><h2>沿坡拉動，讓紅點到終點</h2><p>抓住木箱前方的拉動把手，沿坡往右上方拉。讓木箱上的標記到達終點旗，垂直升高 20 cm。</p><p class=\"guide-note\">可以分幾次拉。放手時固定夾會保持位置；也可用下方按鈕前進。</p></div><div class=\"guide-reserve\" aria-hidden=\"true\" inert><p class=\"eyebrow\">余老師帶你做</p><h2>換長坡，物重與升高都不變</h2><p>抓住木箱前方的拉動把手，沿坡往右上方拉。讓木箱上的標記到達終點旗，垂直升高 20 cm。</p><p class=\"guide-note\">可以分幾次拉。放手時固定夾會保持位置；也可用下方按鈕前進。</p></div><div class=\"guide-reserve\" aria-hidden=\"true\" inert><p class=\"eyebrow\">余老師帶你做</p><h2>放開把手，確認終點位置</h2><p>紅點已到終點旗。放開把手後，才能收下這筆觀察。</p><p class=\"guide-note\">如果取消拖曳，會回到剛才確定的位置。</p></div><div class=\"guide-reserve\" aria-hidden=\"true\" inert><p class=\"eyebrow\">余老師帶你做</p><h2>到達終點了，收下觀察</h2><p>看看沿坡距離、垂直升高和拉力，再收下這次觀察。</p><p class=\"guide-note\">完成讀值不會替你計算功，稍後換你動手算。</p></div></div>"
+        ]
+      ],
+      "sha256": "4da001d5541d0c1d497875a7b2a7f3345c95c774885be07374ef52bf891da9b1"
+    },
+    {
+      "path": "style.css",
+      "replacements": [
+        [
+          ".teacher-copy>p:not(.eyebrow)",
+          ".teacher-copy :is(.guide-live,.guide-reserve)>p:not(.eyebrow)"
+        ],
+        [
+          "",
+          "\n/* Approved guide-height repair: intrinsic, wrapping reserves; never clip text.\n   Invisible copies share the live grid cell, so all gesture states fit at any\n   width or text size without moving the apparatus or issuing scroll calls. */\n.teacher-copy{display:grid;grid-template-columns:minmax(0,1fr)}\n.guide-live,.guide-reserve{grid-area:1/1;min-width:0}\n.guide-reserve{visibility:hidden;pointer-events:none;user-select:none}\n"
+        ]
+      ],
+      "sha256": "673a1037e143c717559be50b9f480d2e0fd9c63a84a644e339e9c479f36fe214"
+    }
+  ]
+}

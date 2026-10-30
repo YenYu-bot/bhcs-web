@@ -46,7 +46,38 @@ async function stableApparatus(page,before,label){
  const observation=await page.evaluate(({frameIndex,scrollCallIndex})=>{const r=document.querySelector('#bench').getBoundingClientRect();return {samples:[...window.__inclineAudit.frames.slice(frameIndex),{label:'assertion-boundary',scrollY,bench:{x:r.x,y:r.y,width:r.width,height:r.height,documentY:r.y+scrollY}}],calls:window.__inclineAudit.scrollCalls.slice(scrollCallIndex)};},before);
  return assertViewportContinuity(before,observation.samples,observation.calls,label);
 }
-async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false}={}){
+async function guideLayout(page,label){
+ const g=await page.evaluate(()=>{
+  const rect=e=>e.getBoundingClientRect().toJSON(),copy=document.querySelector('.teacher-copy'),live=copy.querySelector('.guide-live');
+  const parts=[...live.querySelectorAll('#guide-title,#guide-copy,#guide-note')].map(e=>{const r=document.createRange();r.selectNodeContents(e);const st=getComputedStyle(e);return {id:e.id,text:e.textContent.trim(),rect:rect(e),textRects:[...r.getClientRects()].map(r=>r.toJSON()),font:parseFloat(st.fontSize),lineHeight:st.lineHeight,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,scrollHeight:e.scrollHeight,clientHeight:e.clientHeight,visibility:st.visibility,overflowX:st.overflowX,overflowY:st.overflowY};});
+  return {copy:rect(copy),live:rect(live),parts,reserves:[...copy.querySelectorAll('.guide-reserve')].map(e=>({ariaHidden:e.getAttribute('aria-hidden'),inert:e.inert,visibility:getComputedStyle(e).visibility,pointerEvents:getComputedStyle(e).pointerEvents,ids:e.querySelectorAll('[id]').length,text:[e.querySelector('h2'),e.querySelector('p:not(.eyebrow):not(.guide-note)'),e.querySelector('.guide-note')].map(x=>x.textContent.trim())}))};
+ });
+ assert.equal(g.parts.length,3,label+' has three live guide parts');assert.equal(g.reserves.length,4,label+' reserves all four gesture copies');
+ for(const r of g.reserves){assert.equal(r.ariaHidden,'true');assert.equal(r.inert,true);assert.equal(r.visibility,'hidden');assert.equal(r.pointerEvents,'none');assert.equal(r.ids,0,'reserve never duplicates live IDs');}
+ assert.ok(g.reserves.some(r=>JSON.stringify(r.text)===JSON.stringify(g.parts.map(p=>p.text))),label+' actual guide has matching reserve');
+ for(const p of g.parts){
+  assert.ok(p.text.length>0,label+' live text remains present');assert.equal(p.visibility,'visible');assert.ok(p.font>=12,label+' readable live font '+p.id);
+  assert.ok(p.rect.left>=g.live.left-1&&p.rect.right<=g.live.right+1&&p.rect.top>=g.live.top-1&&p.rect.bottom<=g.live.bottom+1,label+' live part fits intrinsic row '+p.id);
+  assert.ok(p.rect.left>=g.copy.left-1&&p.rect.right<=g.copy.right+1&&p.rect.top>=g.copy.top-1&&p.rect.bottom<=g.copy.bottom+1,label+' guide contains full live part '+p.id);
+  assert.ok(p.scrollWidth<=p.clientWidth+1&&p.scrollHeight<=p.clientHeight+1,label+' live text has no scroll clipping '+p.id);
+  assert.ok(!['hidden','clip'].includes(p.overflowX)&&!['hidden','clip'].includes(p.overflowY),label+' no clipping workaround');
+  for(const t of p.textRects)assert.ok(t.left>=p.rect.left-1&&t.right<=p.rect.right+1&&t.top>=p.rect.top-1&&t.bottom<=p.rect.bottom+1,label+' rendered glyph range fits '+p.id);
+ }
+ for(let i=1;i<g.parts.length;i++)assert.ok(g.parts[i].rect.top>=g.parts[i-1].rect.bottom-1,label+' live blocks do not overlap');
+ return {label,...g};
+}
+async function enlargeGuideText(page){
+ // Test-only typography environment: exactly twice each baseline live font,
+ // applied identically to live and reserve children. This is not browser zoom,
+ // not all-page text enlargement, and never changes lesson state or movement coordinates directly.
+ const baseline=await page.locator('.guide-live').evaluate(e=>[...e.children].map(x=>parseFloat(getComputedStyle(x).fontSize)));
+ const content=baseline.map((size,i)=>`.teacher-copy > :is(.guide-live,.guide-reserve) > :nth-child(${i+1}){font-size:${size*2}px!important}`).join('\n');
+ await page.addStyleTag({content});
+ const actual=await page.locator('.guide-live').evaluate(e=>[...e.children].map(x=>parseFloat(getComputedStyle(x).fontSize)));
+ assert.deepEqual(actual,baseline.map(x=>x*2),'all guidance fonts exactly doubled including reserve parity');
+ return {kind:'test-only guide text enlargement; not browser zoom or full-page text scaling',factor:2,baseline,actual};
+}
+async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false,inspectGuide=true}={}){
  await page.locator('#bench').scrollIntoViewIfNeeded();
  assert.ok(await page.locator('#handle').isEnabled());
  const before=await position(page),beforeRaw=await raw(page),beforeAnnounce=await page.locator('#announcer').innerText();
@@ -68,13 +99,15 @@ async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false}={}){
  assert.equal(await page.locator('#seal').isVisible(),false,'uncommitted preview has no seal action');
  assert.equal(await page.locator('#announcer').innerText(),beforeAnnounce,'movement does not flood live region');
  const movementContinuity=await stableApparatus(page,measured,'movement');
+ const previewGuide=inspectGuide?await guideLayout(page,'preview '+lengthCm+' cm ramp'):null;
  if(cdp){const release=await inputIndex(page);await cdp.send('Input.dispatchTouchEvent',{type:cancel?'touchCancel':'touchEnd',touchPoints:[]});await inputDelivered(page,{since:release,type:cancel?'pointercancel':'pointerup',pointerId});}
  else{if(cancel)await page.keyboard.press('Escape');await page.mouse.up();}
  assert.equal(await position(page),cancel?before:expected,'release commits, cancel restores');
  assert.equal(await raw(page),beforeRaw,'unsealed movement leaves storage untouched');
  const releaseContinuity=await stableApparatus(page,measured,'release');
  if(cancel)assert.equal(await page.locator('#seal').isVisible(),false,'cancelled endpoint cannot seal');
- return {before,expected,cancel,reverse,measured,hold,movementContinuity,releaseContinuity};
+ const releaseGuide=inspectGuide?await guideLayout(page,(cancel?'cancel':'commit')+' '+lengthCm+' cm ramp'):null;
+ return {before,expected,cancel,reverse,measured,hold,movementContinuity,releaseContinuity,previewGuide,releaseGuide};
 }
 async function submitWork(page,cdp,values=['2','2','2','2']){
  const radio=page.locator('label').filter({has:page.locator('[name="distance-choice"][value="slope"]')});
@@ -168,4 +201,19 @@ async function run(name,width,touch,task,corrupt){
   const audit=await auditStorage(page);assert.ok(audit.input.some(e=>e.trusted&&e.type==='keydown'&&e.repeat),'native repeat path covered');
  });
  assert.equal(results.length,9);assert.ok(results.every(r=>r.status==='passed'),`${results.filter(r=>r.status!=='passed').length}/9 incline browser scenarios failed`);console.log('PASS incline-desk: 9 real Chromium scenarios');
+ // Preserve the original nine-scenario fail-closed gate above. Add targeted
+ // guide-height stress cases; these never substitute for a failed original.
+ for(const variant of [{width:320,text200:false},{width:390,text200:true},{width:320,text200:true}])await run(`guide-stability-${variant.width}${variant.text200?'-guide-text200':''}`,variant.width,true,async(page,cdp,result)=>{
+  if(variant.text200)result.textEnlargement=await enlargeGuideText(page);
+  await activate(page,'#begin',cdp);result.guides=[await guideLayout(page,'short active')];result.drags=[];
+  result.drags.push(await drag(page,cdp,40,40,{cancel:true,inspectGuide:true}));
+  result.drags.push(await drag(page,cdp,40,10,{inspectGuide:true}));result.drags.push(await drag(page,cdp,40,30,{inspectGuide:true}));
+  await activate(page,'#seal',cdp);await saved(page);const first=(await snapshot(page)).records[0];
+  await activate(page,'#next',cdp);result.nextGeometry=await geometry(page,{visibleHandle:true});result.guides.push(await guideLayout(page,'long active'));
+  result.drags.push(await drag(page,cdp,80,10,{inspectGuide:true}));await activate(page,'#redo',cdp);result.redoGeometry=await geometry(page,{visibleHandle:true});assert.equal(await position(page),0);assert.deepEqual((await snapshot(page)).records,[first]);result.guides.push(await guideLayout(page,'long redone'));
+  result.drags.push(await drag(page,cdp,80,80,{cancel:true,inspectGuide:true}));result.drags.push(await drag(page,cdp,80,20,{inspectGuide:true}));result.drags.push(await drag(page,cdp,80,60,{inspectGuide:true}));
+  await activate(page,'#seal',cdp);await saved(page);const pair=await snapshot(page);assert.equal(pair.records.length,2);assert.deepEqual(pair.records[0],first);assert.equal(pair.records[1].lengthCm,80);assert.equal(pair.records[1].heightCm,20);
+  await page.locator('.teacher-card').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,result.name+'-guide.png')});
+ });
+ assert.equal(results.length,12);assert.ok(results.every(r=>r.status==='passed'),`${results.filter(r=>r.status!=='passed').length}/12 incline browser scenarios failed`);console.log('PASS incline-desk: original 9 plus 3 guide-height stress scenarios');
 })().catch(e=>{console.error(e);fs.writeFileSync(path.join(output,'runner-error.txt'),e.stack||String(e));if(!browser){results.push({name:'browser-suite',status:'never-run',reason:e.message});save();}process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();if(server)await new Promise(resolve=>server.close(resolve));});
