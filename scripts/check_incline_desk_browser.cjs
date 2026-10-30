@@ -3,6 +3,8 @@
 // installs passive probes only. No app imports, app hooks or state setters.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
+const {waitForStorageDelivery}=require('./incline-desk/storage-delivery.cjs');
+const writeBoundaries=new WeakMap();
 const {holdTouchEndpoint}=require('./pulley-desk/touch-gesture.cjs');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.INCLINE_DESK_OUTPUT||'incline-desk-artifacts');
 const KEY='bhcs.inclineDesk.v1';
@@ -19,6 +21,7 @@ async function inputDelivered(page,{since,type,pointerId,point,targetId}){
  return page.evaluate(({since,type,pointerId,point,targetId})=>window.__inclineAudit.input.slice(since).find(e=>e.trusted&&e.type===type&&e.pointer==='touch'&&(pointerId===undefined||e.pointerId===pointerId)&&(!point||(Math.abs(e.x-point.x)<.51&&Math.abs(e.y-point.y)<.51))&&(!targetId||e.targetId===targetId)),{since,type,pointerId,point,targetId});
 }
 async function activate(page,selector,cdp){
+ writeBoundaries.set(page,await page.evaluate(()=>window.__inclineAudit.locks.length));
  const target=page.locator(selector);assert.ok(await target.isEnabled(),selector+' enabled');
  if(!cdp){await target.click();return;}
  const id=await target.getAttribute('id'),since=await inputIndex(page);
@@ -27,7 +30,7 @@ async function activate(page,selector,cdp){
  const audit=await page.evaluate(({since,id})=>window.__inclineAudit.input.slice(since).filter(e=>e.targetId===id),{since,id});
  assert.equal(audit.filter(e=>e.type==='pointerdown').length,1,selector+' one down');assert.equal(audit.filter(e=>e.type==='click').length,1,selector+' one click');
 }
-async function saved(page){await page.waitForFunction(()=>document.querySelector('#save-status').textContent==='已存到此裝置');}
+async function saved(page){const write=await waitForStorageDelivery(page,{since:writeBoundaries.get(page),key:KEY,lock:'bhcs.inclineDesk.storage'});await page.waitForFunction(()=>document.querySelector('#save-status').textContent==='已存到此裝置');assert.equal(await raw(page),write.value,'persisted bytes are the completed native write for this action');}
 async function geometry(page,{visibleHandle=false}={}){
  const g=await page.evaluate(()=>{const rect=e=>e.getBoundingClientRect().toJSON(),bench=document.querySelector('#bench'),handle=document.querySelector('#handle');return {width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollY,bench:rect(bench),handle:rect(handle),focus:document.activeElement?.id,readouts:[...document.querySelectorAll('.reading')].map(e=>({scroll:e.scrollWidth,client:e.clientWidth})),targets:[...document.querySelectorAll('#handle,#begin,#seal,#redo,#next,#compare,#step-one,#step-five')].filter(e=>e.getClientRects().length).map(e=>({id:e.id,r:rect(e)}))};});
  assert.ok(g.scrollWidth<=g.width+1,`no horizontal overflow ${g.scrollWidth}/${g.width}`);
@@ -75,6 +78,7 @@ async function submitWork(page,cdp,values=['2','2','2','2']){
  for(let i=0;i<4;i++){const input=page.locator('#answer-'+i);if(cdp)await input.tap();else await input.click();await input.fill(values[i]);}
  // The submit button has no id; tap its native form target once, then observe
  // trusted submit rather than adding an id to the frozen application DOM.
+ writeBoundaries.set(page,await page.evaluate(()=>window.__inclineAudit.locks.length));
  const since=await inputIndex(page),submit=page.locator('#work-form button[type="submit"]');
  if(cdp)await submit.tap();else await submit.click();
  await page.waitForFunction(since=>window.__inclineAudit.input.slice(since).some(e=>e.type==='submit'&&e.trusted&&e.targetId==='work-form'),since);
@@ -87,8 +91,15 @@ async function run(name,width,touch,task,corrupt){
   const get=Storage.prototype.getItem,set=Storage.prototype.setItem,remove=Storage.prototype.removeItem,clear=Storage.prototype.clear;
   // Synthetic fixtures in an isolated browser context, before app startup only.
   if(!sessionStorage.getItem('incline-fixture-installed')){for(const k of OTHER_KEYS)set.call(localStorage,k,'untouched:'+k);if(corrupt!==undefined)set.call(localStorage,KEY,corrupt);sessionStorage.setItem('incline-fixture-installed','1');}
-  window.__inclineRead=k=>get.call(localStorage,k);window.__inclineAudit={access:[],input:[]};
-  for(const [name,original]of [['getItem',get],['setItem',set],['removeItem',remove],['clear',clear]])Storage.prototype[name]=function(...args){if(this===localStorage)window.__inclineAudit.access.push({name,key:args[0]});return original.apply(this,args);};
+  window.__inclineRead=k=>get.call(localStorage,k);window.__inclineAudit={access:[],input:[],locks:[],scrollCalls:[],frames:[]};
+  let activeLockRequest=null;
+  const request=navigator.locks.request.bind(navigator.locks);
+  navigator.locks.request=function(name,options,callback){const event={id:window.__inclineAudit.locks.length,name,status:'pending'};window.__inclineAudit.locks.push(event);const promise=request(name,options,function(lock){const previous=activeLockRequest;activeLockRequest=event.id;try{return callback(lock);}finally{activeLockRequest=previous;}});promise.then(()=>{event.status='resolved';},()=>{event.status='rejected';});return promise;};
+  for(const [name,original]of [['getItem',get],['setItem',set],['removeItem',remove],['clear',clear]])Storage.prototype[name]=function(...args){const event=this===localStorage?{name,key:args[0],requestId:activeLockRequest,completed:false,...(name==='setItem'?{value:args[1]}:{})}:null;if(event)window.__inclineAudit.access.push(event);const result=original.apply(this,args);if(event)event.completed=true;return result;};
+  const frame=label=>{const rect=id=>{const e=document.getElementById(id);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,documentY:r.y+scrollY};};window.__inclineAudit.frames.push({label,time:performance.now(),scrollY,bench:rect('bench'),handle:rect('handle'),guide:rect('guide-copy'),title:document.getElementById('guide-title')?.textContent});};
+  for(const [owner,names]of [[window,['scroll','scrollTo','scrollBy']],[Element.prototype,['scrollIntoView','scroll','scrollTo','scrollBy']]])for(const name of names){const original=owner[name];if(typeof original!=='function')continue;owner[name]=function(...args){window.__inclineAudit.scrollCalls.push({name,targetId:this.id||'window',time:performance.now(),args});return original.apply(this,args);};}
+  for(const type of ['pointerdown','pointermove','pointerup','pointercancel']){document.addEventListener(type,e=>{if(e.target.closest?.('#handle'))frame(type+':capture-before');},true);document.addEventListener(type,e=>{if(!e.target.closest?.('#handle'))return;frame(type+':bubble-after');requestAnimationFrame(()=>frame(type+':frame-after'));});}
+  document.addEventListener('scroll',()=>frame('scroll-event'),true);
   for(const type of ['pointerdown','pointermove','pointerup','pointercancel','click','keydown','submit'])document.addEventListener(type,e=>window.__inclineAudit.input.push({type,trusted:e.isTrusted,pointer:e.pointerType,pointerId:e.pointerId,x:e.clientX,y:e.clientY,targetId:e.target.id||e.target.closest?.('[id]')?.id,key:e.key,repeat:e.repeat}),true);
  },{KEY,OTHER_KEYS,corrupt});
  const page=await context.newPage(),errors=[],failed=[],external=[];page.setDefaultTimeout(15000);page.on('dialog',d=>{if(d.type()==='beforeunload')return d.accept();errors.push('Unexpected dialog: '+d.type()+' '+d.message());return d.dismiss();});
@@ -103,7 +114,7 @@ async function run(name,width,touch,task,corrupt){
   assert.deepEqual(await page.evaluate(keys=>keys.map(k=>window.__inclineRead(k)),OTHER_KEYS),OTHER_KEYS.map(k=>'untouched:'+k));
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);assert.deepEqual(external,[]);
   await page.screenshot({path:path.join(output,name+'.png'),fullPage:true});result.status='passed';
- }catch(e){result.status='failed';result.failure=e.stack;result.failureAudit=await page.evaluate(()=>({audit:window.__inclineAudit,activeId:document.activeElement?.id,distance:document.querySelector('#distance')?.textContent,guide:document.querySelector('#guide-title')?.textContent,scrollY})).catch(()=>null);await page.screenshot({path:path.join(output,name+'-failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(output,name+'-failure.html'),await page.content().catch(()=>''));}
+ }catch(e){result.status='failed';result.failure=e.stack;result.failureAudit=await page.evaluate(()=>({geometry:{bench:document.querySelector('#bench')?.getBoundingClientRect().toJSON(),handle:document.querySelector('#handle')?.getBoundingClientRect().toJSON(),guide:document.querySelector('#guide-copy')?.getBoundingClientRect().toJSON()},audit:window.__inclineAudit,activeId:document.activeElement?.id,distance:document.querySelector('#distance')?.textContent,guide:document.querySelector('#guide-title')?.textContent,scrollY})).catch(()=>null);await page.screenshot({path:path.join(output,name+'-failure.png'),fullPage:true}).catch(()=>{});fs.writeFileSync(path.join(output,name+'-failure.html'),await page.content().catch(()=>''));}
  finally{Object.assign(result,{errors,failed,external});save();console.log(result.status.toUpperCase()+' '+name);await context.close();}
 }
 (async()=>{
