@@ -52,3 +52,19 @@ The nine new Chromium scenarios cover mouse1280 and CDP touch360/390/412 full jo
 - Full `npm test --prefix scripts`: exit0, including all scientific/visibility suites and math3,954/3,954 combinations (102 topics); no candidate verification failures or exceptions.
 - Resource217 links, science integration138 HTML/2,000 references/127 sitemap URLs, and researcher batches1–5: passed.
 - New browser checker syntax and independent code review: passed. Real Chromium execution: **never run locally**; require exact-head CI, no claim of native-browser pass here.
+
+## Native CI boundary corrections and viewport evidence
+
+The first native run 41024359902 reached long-recorded UI but read only the earlier short-record write. The saved-status label could remain unchanged while the new asynchronous Web Lock was pending. Passive lock-request/write completion now establishes a fresh current-action persistence boundary before the unchanged record assertions. Run 41025813862 then passed desktop, keyboard and all four corrupt-storage scenarios, confirming that correction in native Chromium.
+
+The three touch scenarios stopped at the old absolute-scrollY equality. Failure-time geometry in run 41025813862 (head 0251a30) showed:
+
+- 360px: apparatus document top608.234375→560.984375; scroll608→561; viewport top0.234375→-0.015625.
+- 390/412px: document top583.734375→536.484375; scroll584→536; viewport top-0.265625→0.484375.
+- Guide body height73.5→49 at the endpoint render; no observed native programmatic scroll API calls. Across all 28 observed samples per touch scenario, apparatus x/size stayed fixed and maximum viewport shift was0.25/0.75/0.75 CSSpx.
+
+This is evidence of compensated layout consistent with browser scroll anchoring, not a browser-internals trace. The document and integer scroll offsets changed while the apparatus remained visually stationary. Full-page failure screenshots cancelled the gesture, so the pre-screenshot audit, not the later picture, establishes these numbers.
+
+Exactly two pointer-drag assertions are replaced: absolute scrollY equality during movement and after release. The replacement checks every observed native capture/bubble/frame/scroll sample and an assertion-boundary sample from the gesture baseline through release. Apparatus viewport x/y/width/height must remain within one CSS pixel (integer scrolling against fractional layout); document and scroll deltas must compensate within that same limit, and there must be zero programmatic scroll API calls during the gesture. Raw geometry remains in artifacts. This is the intended no-visible-jump contract, not permission for a 47px viewport movement. The separate keyboard scroll assertion and every other existing assertion remain unchanged. It is therefore **not** claimed that all original 99 assertion expressions are still verbatim.
+
+Six regression tests replay observed compensated geometry and reject actual47px movement, >1px shifts, intermediate jump-and-return, explicit programmatic scroll despite apparent compensation, horizontal/size changes, missing/nonfinite samples and release-only jumps. Runtime and 9/9 fail-closed requirement remain unchanged. Next exact-head native CI must establish complete touch journeys after this evidence-backed checker correction.

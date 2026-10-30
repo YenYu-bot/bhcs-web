@@ -5,6 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {chromium}=require('playwright');
 const {waitForStorageDelivery}=require('./incline-desk/storage-delivery.cjs');
 const writeBoundaries=new WeakMap();
+const {assertViewportContinuity}=require('./incline-desk/viewport-continuity.cjs');
 const {holdTouchEndpoint}=require('./pulley-desk/touch-gesture.cjs');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.INCLINE_DESK_OUTPUT||'incline-desk-artifacts');
 const KEY='bhcs.inclineDesk.v1';
@@ -41,12 +42,16 @@ async function geometry(page,{visibleHandle=false}={}){
  return g;
 }
 async function auditStorage(page){const a=await page.evaluate(()=>window.__inclineAudit);assert.ok(a.access.every(e=>e.key===KEY&&['getItem','setItem'].includes(e.name)),'runtime touches only its own key, no clear/remove');return a;}
+async function stableApparatus(page,before,label){
+ const observation=await page.evaluate(({frameIndex,scrollCallIndex})=>{const r=document.querySelector('#bench').getBoundingClientRect();return {samples:[...window.__inclineAudit.frames.slice(frameIndex),{label:'assertion-boundary',scrollY,bench:{x:r.x,y:r.y,width:r.width,height:r.height,documentY:r.y+scrollY}}],calls:window.__inclineAudit.scrollCalls.slice(scrollCallIndex)};},before);
+ return assertViewportContinuity(before,observation.samples,observation.calls,label);
+}
 async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false}={}){
  await page.locator('#bench').scrollIntoViewIfNeeded();
  assert.ok(await page.locator('#handle').isEnabled());
  const before=await position(page),beforeRaw=await raw(page),beforeAnnounce=await page.locator('#announcer').innerText();
  // Use actual rendered start/end flags, not application geometry or data-scale.
- const measured=await page.evaluate(()=>{const svg=document.querySelector('#scene'),flags=[...svg.querySelectorAll('path[fill="#edc87e"]')];const screen=p=>{const q=p.getPointAtLength(0),m=svg.getScreenCTM();return {x:m.a*q.x+m.c*q.y+m.e,y:m.b*q.x+m.d*q.y+m.f};};const r=document.querySelector('#handle').getBoundingClientRect();return {start:screen(flags[0]),end:screen(flags[1]),from:{x:r.x+r.width/2,y:r.y+r.height/2},scrollY};});
+ const measured=await page.evaluate(()=>{const svg=document.querySelector('#scene'),flags=[...svg.querySelectorAll('path[fill="#edc87e"]')];const screen=p=>{const q=p.getPointAtLength(0),m=svg.getScreenCTM();return {x:m.a*q.x+m.c*q.y+m.e,y:m.b*q.x+m.d*q.y+m.f};};const r=document.querySelector('#handle').getBoundingClientRect();const b=document.querySelector('#bench').getBoundingClientRect();return {start:screen(flags[0]),end:screen(flags[1]),from:{x:r.x+r.width/2,y:r.y+r.height/2},scrollY,bench:{x:b.x,y:b.y,width:b.width,height:b.height,documentY:b.y+scrollY},frameIndex:window.__inclineAudit.frames.length,scrollCallIndex:window.__inclineAudit.scrollCalls.length};});
  const {from,start,end}=measured,sign=reverse?-1:1,to={x:from.x+sign*amount/lengthCm*(end.x-start.x),y:from.y+sign*amount/lengthCm*(end.y-start.y)};
  assert.ok(end.x>start.x&&end.y<start.y,'flags describe upward-right ramp');
  for(const p of [from,to])assert.ok(p.x>=0&&p.x<page.viewportSize().width&&p.y>=0&&p.y<page.viewportSize().height,'native endpoints in viewport');
@@ -62,14 +67,14 @@ async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false}={}){
  assert.equal(await raw(page),beforeRaw,'preview cannot save evidence');
  assert.equal(await page.locator('#seal').isVisible(),false,'uncommitted preview has no seal action');
  assert.equal(await page.locator('#announcer').innerText(),beforeAnnounce,'movement does not flood live region');
- assert.equal(await page.evaluate(()=>scrollY),measured.scrollY,'movement does not auto-scroll');
+ const movementContinuity=await stableApparatus(page,measured,'movement');
  if(cdp){const release=await inputIndex(page);await cdp.send('Input.dispatchTouchEvent',{type:cancel?'touchCancel':'touchEnd',touchPoints:[]});await inputDelivered(page,{since:release,type:cancel?'pointercancel':'pointerup',pointerId});}
  else{if(cancel)await page.keyboard.press('Escape');await page.mouse.up();}
  assert.equal(await position(page),cancel?before:expected,'release commits, cancel restores');
  assert.equal(await raw(page),beforeRaw,'unsealed movement leaves storage untouched');
- assert.equal(await page.evaluate(()=>scrollY),measured.scrollY,'release does not auto-scroll');
+ const releaseContinuity=await stableApparatus(page,measured,'release');
  if(cancel)assert.equal(await page.locator('#seal').isVisible(),false,'cancelled endpoint cannot seal');
- return {before,expected,cancel,reverse,measured,hold};
+ return {before,expected,cancel,reverse,measured,hold,movementContinuity,releaseContinuity};
 }
 async function submitWork(page,cdp,values=['2','2','2','2']){
  const radio=page.locator('label').filter({has:page.locator('[name="distance-choice"][value="slope"]')});
