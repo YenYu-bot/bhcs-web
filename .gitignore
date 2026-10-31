@@ -31,3 +31,6 @@ math-validation-artifacts/
 /pulley-desk-artifacts/
 
 /incline-desk-artifacts/
+
+# Standalone friction efficiency browser evidence
+friction-efficiency-desk-artifacts/

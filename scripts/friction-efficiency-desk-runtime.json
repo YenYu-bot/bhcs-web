@@ -1,0 +1,101 @@
+{
+  "source_commit": "bf36ecfff5eaa2942813a057d4e8e05da86871f5",
+  "baseline_commit": "74b84c9536fac9ac26724de1909535bfc2d4ffdd",
+  "files": [
+    {
+      "path": "app.mjs",
+      "bytes": 20021,
+      "sha256": "9580e262ac6d80b48d8af9dc77ad1c1f90032ea5dd619c9f87db5938312086bb"
+    },
+    {
+      "path": "assets/teacher-body-v3.png",
+      "bytes": 941293,
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "assets/teacher-body-v3.provenance.json",
+      "bytes": 335,
+      "sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9"
+    },
+    {
+      "path": "bench.mjs",
+      "bytes": 3550,
+      "sha256": "fbd6f48eaf0a7fbb138f5f479366b8956eef81e6b8fcb882ed2f5ac168d8eab4"
+    },
+    {
+      "path": "engine.mjs",
+      "bytes": 8241,
+      "sha256": "08874b134b6e6a2c1ac27be01fb510964e7e8ccc41c1cd0dc434c12895a09e31"
+    },
+    {
+      "path": "index.html",
+      "bytes": 9794,
+      "sha256": "46504180ec0f695b8e5abe9a16fee1cea9eebebcefc5c7d0d9d26cb42341dfc6"
+    },
+    {
+      "path": "model.mjs",
+      "bytes": 8800,
+      "sha256": "d5ef075c01b0b5b152d90ea9c5a1e1bede50f365b1afd769b88a5621af637c84"
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 7442,
+      "sha256": "c67256622f2b5baf049f77815dfc25874b83969a71130a880e70cc0216e03e38"
+    },
+    {
+      "path": "style.css",
+      "bytes": 9389,
+      "sha256": "c6d2077f9e1a15c70b7d9a73d26bfdbefacc74700dcec19d62e5e01d4282b7ad"
+    }
+  ],
+  "metadata_replacement": [
+    "<meta name=\"robots\" content=\"noindex,nofollow\">",
+    "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/friction-efficiency-desk/\">"
+  ],
+  "ported_tests": [
+    {
+      "path": "geometry-style.test.mjs",
+      "source_sha256": "742dae9b48d4b3abc41931e72a9c14be3289710727746c018c95e8d2cf656b8c",
+      "replacements": [
+        [
+          "../dist/",
+          "../../tools/friction-efficiency-desk/"
+        ],
+        [
+          "readFileSync(new URL('index.html',base),'utf8')",
+          "readFileSync(new URL('index.html',base),'utf8').replace(\"<link rel=\\\"canonical\\\" href=\\\"https://www.bhcs.com.tw/tools/friction-efficiency-desk/\\\">\",\"<meta name=\\\"robots\\\" content=\\\"noindex,nofollow\\\">\")"
+        ]
+      ]
+    },
+    {
+      "path": "model-engine.test.mjs",
+      "source_sha256": "bd379c0732e6fe7ae4c2a8e42322e7435655082c143779b7a81caa239a1be102",
+      "replacements": [
+        [
+          "../dist/",
+          "../../tools/friction-efficiency-desk/"
+        ]
+      ]
+    },
+    {
+      "path": "storage.test.mjs",
+      "source_sha256": "66472cef8daab003498b131b5e705940bfa4e855bb5427247532d6817feeb014",
+      "replacements": [
+        [
+          "../dist/",
+          "../../tools/friction-efficiency-desk/"
+        ]
+      ]
+    },
+    {
+      "path": "ui.test.mjs",
+      "source_sha256": "e8c350953109b7bc8f1a7a2b26af081e01609e03a6e2a0ab8136e8be7992f6cc",
+      "replacements": [
+        [
+          "../dist/",
+          "../../tools/friction-efficiency-desk/"
+        ]
+      ]
+    }
+  ]
+}
