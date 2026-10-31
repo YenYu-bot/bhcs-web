@@ -8,6 +8,13 @@
       "approved_blob": "3844fdc039daa49f7a0f5bddba6ed0dde60959b7",
       "reason": "Correctness fix: topic-1 question text, figure side labels and answer key now share one AB/BC/AC assignment (63% of figures were swapped; 14% of answers contradicted the text).",
       "pull_request": 185
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "cf1c49418785f084366673d9cdb07abe5b68c2f1",
+      "approved_blob": "c51048d42a49ca0113b8f9bd7594a9eb67ae81b6",
+      "reason": "Finite question banks: count inputs are capped to the declared bank at the current level with a visible note, and any unit that still comes up short is reported in the on-page status.",
+      "pull_request": null
     }
   ]
 }
