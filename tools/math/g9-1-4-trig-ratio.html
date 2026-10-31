@@ -1562,7 +1562,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
       const cosVal = `${adjSide}/${hypSide}`;
       const tanVal = `${oppSide}/${adjSide}`;
 
-      const qText = `如下圖，在直角 △ABC 中，已知 ∠${vRight} ＝ 90°，<span class="overline">AB</span> ＝ ${isRightC ? hypSide : adjSide}，<span class="overline">BC</span> ＝ ${isRightC ? (targetAngle === "A" ? oppSide : adjSide) : hypSide}，<span class="overline">AC</span> ＝ ${isRightC ? (targetAngle === "A" ? adjSide : oppSide) : oppSide}。試求下列各比值，並以 sin ${targetAngle}、cos ${targetAngle}、tan ${targetAngle} 表示：<br>
+      // 依頂點固定三邊長，題幹、圖示與答案共用同一組邊長（修正圖文邊長對調）
+      const sideAB = isRightC ? hypSide : (targetAngle === "B" ? adjSide : oppSide);
+      const sideBC = isRightC ? (targetAngle === "A" ? oppSide : adjSide) : hypSide;
+      const sideAC = isRightC ? (targetAngle === "A" ? adjSide : oppSide) : (targetAngle === "B" ? oppSide : adjSide);
+
+      const qText = `如下圖，在直角 △ABC 中，已知 ∠${vRight} ＝ 90°，<span class="overline">AB</span> ＝ ${sideAB}，<span class="overline">BC</span> ＝ ${sideBC}，<span class="overline">AC</span> ＝ ${sideAC}。試求下列各比值，並以 sin ${targetAngle}、cos ${targetAngle}、tan ${targetAngle} 表示：<br>
       (1) (∠${targetAngle} 的對邊長) ÷ (斜邊長) ＝ ？<br>
       (2) (∠${targetAngle} 的鄰邊長) ÷ (斜邊長) ＝ ？<br>
       (3) (∠${targetAngle} 的對邊長) ÷ (∠${targetAngle} 的鄰邊長) ＝ ？`;
@@ -1571,8 +1576,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
         vRight, 
         isRightC ? "A" : "C", 
         isRightC ? "B" : "B", 
-        oppSide, 
-        adjSide, 
+        isRightC ? sideAC : sideAB, 
+        isRightC ? sideBC : sideAC, 
         hypSide, 
         isRightC ? "standard" : "tilted"
       );
