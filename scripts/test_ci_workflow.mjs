@@ -152,4 +152,15 @@ test('standalone incline browser gate is additive and fail-closed within science
   assert.ok(!jobs['science-stations'].text.includes('continue-on-error: true'));
 });
 
+test('standalone friction efficiency native gate is additive and fail closed', () => {
+  const script = 'scripts/check_friction_efficiency_desk_browser.cjs';
+  assert.equal(count(wf, script), 1);
+  assert.ok(jobs['science-stations'].text.includes(`run: node ${script}`));
+  assert.ok(fs.existsSync(path.join(root, script)));
+  assert.ok(wf.includes('name: friction-efficiency-desk-review\n          path: friction-efficiency-desk-artifacts/\n          retention-days: 14'));
+  assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('npm run test:friction-efficiency-desk'));
+  for (const old of ['incline','pulley','lever']) assert.ok(jobs['science-stations'].text.includes(`run: node scripts/check_${old}_desk_browser.cjs`));
+  assert.ok(!jobs['science-stations'].text.includes('continue-on-error: true'));
+});
+
 console.log(`ci workflow: ${tests} tests passed`);

@@ -1,0 +1,25 @@
+{
+  "accepted_source_commit": "bf36ecfff5eaa2942813a057d4e8e05da86871f5",
+  "authorization": "2026-10-31: bounded alignment correction approved; no model, input, storage or teaching changes",
+  "files": [
+    {
+      "path": "bench.mjs",
+      "before_sha256": "fbd6f48eaf0a7fbb138f5f479366b8956eef81e6b8fcb882ed2f5ac168d8eab4",
+      "sha256": "2be0aede9b70acba6a81cc40439756d948845a4ce6b5f015a8af7305c8abbe71",
+      "replacements": [
+        [
+          "x:start.x+(.8*t+.6*n)*k",
+          "x:start.x+(.8*t-.6*n)*k"
+        ]
+      ]
+    }
+  ],
+  "added_test": {
+    "path": "alignment.test.mjs",
+    "source_sha256": "295c5bd9fa2cbca2e4d9d4d8e8ccdeb11b4a4980073be7693012bd2a02c7c53d",
+    "replacement": [
+      "../dist/",
+      "../../tools/friction-efficiency-desk/"
+    ]
+  }
+}

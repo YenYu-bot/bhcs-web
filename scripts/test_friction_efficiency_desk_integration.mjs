@@ -1,0 +1,48 @@
+// Frozen accepted runtime, independent existing-file protection and additive integration.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import http from 'node:http';import {fileURLToPath} from 'node:url';import {execFileSync} from 'node:child_process';
+import {legacy,firstBatch,standalonePublic} from './science/catalog.mjs';import {ciJobs} from './ci_workflow_test_support.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),runtime=path.join(root,'tools/friction-efficiency-desk');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]);
+const manifestRaw=read('scripts/friction-efficiency-desk-runtime.json'),m=JSON.parse(manifestRaw);
+assert.equal(sha(manifestRaw),'e8b28b4abec111d3a843a8620d3cd44f2ba263a9337412ddb27cb2553957b017','accepted source and original tests are immutable');
+assert.equal(m.source_commit,'bf36ecfff5eaa2942813a057d4e8e05da86871f5');assert.equal(m.baseline_commit,'74b84c9536fac9ac26724de1909535bfc2d4ffdd');assert.equal(m.files.length,9);
+const repairRaw=read('scripts/friction-efficiency-desk-alignment-repair.json'),repair=JSON.parse(repairRaw);
+assert.equal(sha(repairRaw),'723588e9c987090e8efad9379896a432c5003e3b66154fa14f0cee0a443d04c4','explicit approved alignment correction pinned separately');
+assert.equal(repair.accepted_source_commit,m.source_commit);assert.deepEqual(repair.files.map(f=>f.path),['bench.mjs']);
+assert.equal(sha(read('scripts/friction-efficiency-desk/alignment.test.mjs').split(repair.added_test.replacement[1]).join(repair.added_test.replacement[0])),repair.added_test.source_sha256,'new independent emitted SVG alignment regression');
+const canonical='https://www.bhcs.com.tw/tools/friction-efficiency-desk/';
+assert.deepEqual(walk(runtime).map(p=>path.relative(runtime,p)).sort(),m.files.map(f=>f.path).sort());
+for(const f of m.files){let b=fs.readFileSync(path.join(runtime,f.path));const delta=repair.files.find(d=>d.path===f.path);if(delta){assert.equal(sha(b),delta.sha256,'approved alignment correction');let s=b.toString();for(const [before,after]of [...delta.replacements].reverse()){assert.equal(s.split(after).length,2);s=s.replace(after,before);}b=Buffer.from(s);assert.equal(sha(b),delta.before_sha256,'exact accepted bench reconstructed');}if(f.path==='index.html'){let s=b.toString();assert.equal(s.split(m.metadata_replacement[1]).length,2);assert(!s.includes(m.metadata_replacement[0]));b=Buffer.from(s.replace(m.metadata_replacement[1],m.metadata_replacement[0]));}assert.equal(b.length,f.bytes,f.path);assert.equal(sha(b),f.sha256,'accepted runtime '+f.path);}
+assert.equal(m.ported_tests.length,4);
+for(const f of m.ported_tests){let s=read('scripts/friction-efficiency-desk/'+f.path);for(const[a,b]of [...f.replacements].reverse())s=s.split(b).join(a);assert.equal(sha(s),f.source_sha256,'original test bodies retained '+f.path);}
+// Every pre-existing tools/assets blob is protected, including the released incline.
+// Git inventory avoids exposing unpublished station names in a new public manifest.
+let protectedCount=0;
+for(const line of execFileSync('git',['ls-tree','-r',m.baseline_commit,'--','tools','assets'],{cwd:root,encoding:'utf8'}).trim().split('\n')){
+ const match=/^([0-9]+) blob ([a-f0-9]{40})\t(.+)$/.exec(line);assert(match,'baseline regular blob');const[,mode,hash,file]=match;if(file==='tools/science/index.html')continue;
+ const b=fs.readFileSync(path.join(root,file)),actual=crypto.createHash('sha1').update(Buffer.from(`blob ${b.length}\0`)).update(b).digest('hex');assert.equal(actual,hash,'unchanged existing source '+file);protectedCount++;
+}
+assert(protectedCount>=639,'complete released tools/assets inventory');
+const img=fs.readFileSync(path.join(runtime,'assets/teacher-body-v3.png'));assert.equal(sha(img),'2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b');assert.deepEqual([img.readUInt32BE(16),img.readUInt32BE(20)],[948,1659]);
+assert.equal(standalonePublic.filter(t=>t.file==='friction-efficiency-desk/').length,1);assert.equal(standalonePublic.length,7);assert(!legacy.some(t=>t.file==='friction-efficiency-desk/'));assert(!firstBatch.includes('friction-efficiency-desk/'));
+const item=standalonePublic.find(t=>t.file==='friction-efficiency-desk/');assert.equal(item.subject,'理化');assert.equal(item.grade,'國中');assert.match(item.description,/私人原型站紀錄不會自動移入官網/);
+for(const[f,href]of [['ziyuan.html','tools/friction-efficiency-desk/'],['tools/science/index.html','../friction-efficiency-desk/']]){const s=read(f);assert.equal(s.split(`href="${href}"`).length,2);for(const old of ['incline-desk/','pulley-desk/','lever-desk/','buoyancy-lab/','lens-25d/','microscope-3d/'])assert(s.includes(old));}
+assert.match(read('tools/science/index.html'),/59 項教材/);assert.match(read('ziyuan.html'),/全部 59 項自然教材/);assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">58 項/);assert.match(read('ziyuan.html'),/理化 <small>40 項/);assert.match(read('ziyuan.html'),/目前共 218 項/);assert.equal(read('sitemap.xml').split('<loc>'+canonical+'</loc>').length,2);
+execFileSync(process.execPath,['--check','scripts/check_friction_efficiency_desk_browser.cjs'],{cwd:root});
+const jobs=ciJobs(),station=jobs['science-stations'];assert.match(station.text,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: node scripts\/check_friction_efficiency_desk_browser\.cjs/);assert.match(station.text,/name: friction-efficiency-desk-review\n\s+path: friction-efficiency-desk-artifacts\/\n\s+retention-days: 14/);
+for(const script of ['check_researcher_browser.cjs','check_microscope_3d_browser.cjs','check_lens_25d_browser.cjs','check_researcher_operations.cjs','check_buoyancy_lab_browser.cjs','check_lever_desk_browser.cjs','check_pulley_desk_browser.cjs','check_incline_desk_browser.cjs','check_friction_efficiency_desk_browser.cjs'])assert.equal(station.text.split(`run: node scripts/${script}`).length,2,script);
+assert(station.text.indexOf('playwright install --with-deps chromium')<station.text.indexOf('run: node scripts/check_friction_efficiency_desk_browser.cjs'));assert(!station.text.includes('continue-on-error: true'));
+assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity']);assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 8 and all(.[]; .result == "success")'));
+const commands=JSON.parse(read('scripts/package.json')).scripts;for(const name of ['friction-efficiency-desk','incline-desk','pulley-desk','lever-desk','buoyancy-lab','lens-25d'])assert(commands.test.includes('npm run test:'+name));assert.equal(commands['test:friction-efficiency-desk'],'node test_friction_efficiency_desk_integration.mjs && node --test friction-efficiency-desk/*.test.mjs');
+const index=read('tools/friction-efficiency-desk/index.html');assert.doesNotMatch(index,/noindex|researcher-lab|science-events|assets\/site\.js|data-science-lab|<iframe/);
+const refs=[];
+for(const p of walk(runtime)){const ext=path.extname(p);if(!['.html','.css','.mjs'].includes(ext))continue;const s=fs.readFileSync(p,'utf8');assert.doesNotMatch(s,/sessionStorage|indexedDB|document\.cookie|XMLHttpRequest|WebSocket|sendBeacon|serviceWorker/);let found=[];
+ if(ext==='.html')found.push(...[...s.matchAll(/(?:src|href)=["']([^"']+)/g)].map(m=>m[1]));if(ext==='.css')found.push(...[...s.matchAll(/url\(["']?([^\)"']+)/g)].map(m=>m[1]));if(ext==='.mjs')found.push(...[...s.matchAll(/(?:from\s*|import\s*\()["']([^"']+)/g)].map(m=>m[1]));
+ for(const ref of found){if(ref.startsWith('#')||ref===canonical)continue;assert(!/^(?:[a-z]+:|\/)/i.test(ref),ref);const u=new URL(ref,'http://localhost/'+path.relative(root,p)),target=path.resolve(root,u.pathname.slice(1));assert(target.startsWith(runtime+path.sep));assert(fs.statSync(target).isFile());refs.push({url:u.pathname,target});}}
+const storage=read('tools/friction-efficiency-desk/storage.mjs');assert(storage.includes('bhcs.frictionEfficiencyDesk.v1'));assert.doesNotMatch(storage,/\.clear\s*\(/);assert.match(storage,/removeItem\(STORAGE_KEY\)/);
+const mime={'.html':'text/html','.mjs':'text/javascript','.css':'text/css','.png':'image/png','.json':'application/json'};
+const server=http.createServer((req,res)=>{let p=path.resolve(root,new URL(req.url,'http://localhost').pathname.slice(1));if(p===runtime)p=path.join(p,'index.html');if(!p.startsWith(runtime+path.sep)||!fs.existsSync(p)||!fs.statSync(p).isFile()){res.writeHead(404).end();return;}res.setHeader('Content-Type',mime[path.extname(p)]);res.end(fs.readFileSync(p));});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+try{for(const{url,target}of [{url:'/tools/friction-efficiency-desk/',target:path.join(runtime,'index.html')},...m.files.map(f=>({url:'/tools/friction-efficiency-desk/'+f.path,target:path.join(runtime,f.path)})),...refs]){const response=await fetch(`http://127.0.0.1:${server.address().port}`+url);assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),mime[path.extname(target)]);assert.deepEqual(Buffer.from(await response.arrayBuffer()),fs.readFileSync(target));}}finally{await new Promise(r=>server.close(r));}
+console.log(`PASS friction integration: accepted9 runtime files, original73 tests reversibly ported, ${protectedCount} existing files unchanged, additive discovery/CI, local HTTP/MIME (not native browser certification)`);

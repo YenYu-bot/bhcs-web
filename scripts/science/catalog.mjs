@@ -76,4 +76,9 @@ export const standalonePublic = Object.freeze([Object.freeze({
  description:'沿短坡與長坡搬運同一個10 N木箱，升高20 cm，用兩筆觀察比較沿坡距離、拉力與功。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
  prior:'力、距離與單位換算',goals:'沿坡距離與垂直升高、理想斜面省力不省功、依原始觀察比較與解釋',
  minutes:'20–30',kind:'互動模擬'
+}),Object.freeze({
+ file:'friction-efficiency-desk/',title:'摩擦與機械效率實驗桌',subject:'理化',grade:'國中',unit:'摩擦、功與機械效率',
+ description:'用同一個10 N木箱與同一斜面，量取理想表面和指定粗面的拉力與距離，再比較輸入功、有效功和機械效率。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
+ prior:'力、距離、功與單位換算',goals:'公平比較、輸入功與有效功、摩擦轉為內能、依原始量測計算效率',
+ minutes:'15–20',kind:'互動模擬'
 })]);
