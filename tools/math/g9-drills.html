@@ -703,9 +703,46 @@ function righttriConfig(){
   return{expr:`一棵樹被颱風吹折，樹頂著地處與樹根相距 ${d} 公尺，折斷的上半段與地面成 54° 角，求原樹高（cos 54°＝0.6，tan 54°＝1.4，答案取到小數第一位）。`,answer:`${D(tot)} 公尺`,sig:`bd:${d}`,verify:()=>Math.abs(num(h)-d*tv)<0.06&&Math.abs(num(l)-d/cv)<0.06};
  });
 
+ // ⑤ 梯子、斜坡與折竹（2026-11-01 新增）
+ const SAMEH=[[5,[3,4]],[25,[7,24],[15,20]],[65,[16,63],[25,60],[33,56],[39,52]]];
+ const ladder=unit("ladder","梯子、斜坡與折竹","把情境畫成直角三角形：梯子、斜坡、繩子是斜邊；牆、旗桿是一股，地面是另一股。未知數設在邊上，用畢氏定理列方程式。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["ladder","foot","slope"]:L===1?["slide","slope","rope"]:["slide","rope","bamboo"]);
+  const [p,q,r]=pick(TRIP),k=rand(1,4),a=p*k,b=q*k,c=r*k;
+  const [obj,u]=c<=13?["梯子","公尺"]:["木棒","公分"];
+  if(kind==="ladder")return{expr:"一根長 "+c+" "+u+"的"+obj+"斜靠在鉛直的牆上，下端離牆 "+a+" "+u+"，上端離地面多高？",answer:b+" "+u,sig:"l:"+a+":"+c,verify:()=>a*a+b*b===c*c};
+  if(kind==="foot")return{expr:"一根"+obj+"斜靠在鉛直的牆上，上端離地面 "+b+" "+u+"，"+obj+"長 "+c+" "+u+"，下端離牆多遠？",answer:a+" "+u,sig:"f:"+b+":"+c,verify:()=>a*a+b*b===c*c};
+  if(kind==="slope")return{expr:"一段直線斜坡的水平距離是 "+b+" 公尺、斜坡長 "+c+" 公尺。求斜坡的鉛直高度，以及「鉛直高度：水平距離」的最簡整數比。",answer:"高度 "+a+" 公尺；"+p+"："+q,sig:"s:"+b+":"+c,verify:()=>a*a+b*b===c*c&&gcd(p,q)===1};
+  if(kind==="rope"){const h=pick([a,b]),d=h===a?b:a,m=c-h;if(h>30)return null;return{expr:"旗桿頂端垂下一條繩子，繩子比旗桿長 "+m+" 公尺。把繩子拉直，繩尾剛好碰到地面時，離旗桿底部 "+d+" 公尺。求旗桿的高。",answer:h+" 公尺",sig:"r:"+m+":"+d,verify:()=>h*h+d*d===(h+m)**2}}
+  if(kind==="bamboo"){const x=pick([a,b]),d=x===a?b:a,H=x+c;if(H>40)return null;return{expr:"一根高 "+H+" 尺的竹子被風吹折，竹梢碰到地面的地方離竹根 "+d+" 尺。求折斷處離地面多高。",answer:x+" 尺",sig:"b:"+H+":"+d,verify:()=>x*x+d*d===(H-x)**2}}
+  const g=pick(SAMEH),s=g[0]===65?1:g[0]===25?rand(1,3):rand(1,6),pairs=g.slice(1).flatMap(([u,v])=>[[u,v],[v,u]]).map(([u,v])=>[u*s,v*s]),P=shuffle(pairs).slice(0,2).sort((x,y)=>y[1]-x[1]),[x1,y1]=P[0],[x2,y2]=P[1],C=g[0]*s;
+  const [o2,u2]=C<=13?["梯子","公尺"]:["木棒","公分"];return{expr:"一根長 "+C+" "+u2+"的"+o2+"斜靠在牆上，下端離牆 "+x1+" "+u2+"。若上端沿著牆往下滑 "+(y1-y2)+" "+u2+"，下端會往外移動多少"+u2+"？",answer:(x2-x1)+" "+u2,sig:"sl:"+C+":"+x1+":"+x2,verify:()=>x1*x1+y1*y1===C*C&&x2*x2+y2*y2===C*C&&y1>y2}});
+ // ⑥ 立體表面的最短路徑（2026-11-01 新增）
+ const shortest=unit("shortest","立體表面的最短路徑","沿著表面爬行的最短路徑：把經過的面展開成一個平面，起點與終點連成線段，再用畢氏定理。長方體要比較不同的展開方式。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["cube","cyl","stairs"]:L===1?["cyl","box","stairs"]:["box","boxAll","wrap"]);
+  const routes=(x,y,z)=>[(x+y)**2+z*z,(x+z)**2+y*y,(y+z)**2+x*x];
+  if(kind==="cube"){const e=rand(2,20);return{expr:"一隻螞蟻在邊長 "+e+" 公分的正立方體表面爬行，從一個頂點爬到距離最遠的頂點，最短要爬多少公分？",answer:radS(5*e*e)+" 公分",sig:"c:"+e,verify:()=>Math.min(...routes(e,e,e))===5*e*e}}
+  if(kind==="cyl"){const [p,q,r]=pick(TRIP),k=rand(1,3),sw=Math.random()<.5,h=(sw?p:q)*k,half=(sw?q:p)*k;return{expr:"圓柱形罐子的高是 "+h+" 公分、底面圓周長是 "+(2*half)+" 公分。螞蟻從下底圓周上的 A 點沿側面爬到上底圓周上與 A 正相對（隔半圈）的 B 點，最短要爬多少公分？",answer:(r*k)+" 公分",sig:"y:"+h+":"+half,verify:()=>h*h+half*half===(r*k)**2}}
+  if(kind==="wrap"){const [p,q,r]=pick(TRIP),k=rand(1,4),n=pick([2,3]),sw=Math.random()<.5,h=(sw?p:q)*k,len=(sw?q:p)*k;if(len%n)return null;const C=len/n;return{expr:"圓柱的高是 "+h+" 公分、底面圓周長是 "+C+" 公分。一條細線從下底的 A 點出發，沿側面繞圓柱 "+n+" 圈，到達 A 正上方的 B 點，細線最短要多長？",answer:(r*k)+" 公分",sig:"w:"+h+":"+C+":"+n,verify:()=>h*h+(n*C)**2===(r*k)**2}}
+  if(kind==="stairs"){const [p,q,r]=pick(TRIP),k=rand(1,4),n=rand(3,6),sw=Math.random()<.5,w=(sw?p:q)*k,run=(sw?q:p)*k;if(run%n)return null;const st=run/n;if(st<3)return null;const rise=rand(1,st-1),dep=st-rise;return{expr:"一座有 "+n+" 階的樓梯，每階高 "+rise+" 公分、深 "+dep+" 公分，樓梯寬 "+w+" 公分。螞蟻從最下面一階的左端 A 點，沿著階面爬到最上面一階的右端 B 點，最短要爬多少公分？",answer:(r*k)+" 公分",sig:"st:"+n+":"+rise+":"+dep+":"+w,verify:()=>w*w+(n*(rise+dep))**2===(r*k)**2}}
+  const d=[rand(1,12),rand(1,12),rand(1,12)];if(new Set(d).size<3)return null;const [x,y,z]=d,R3=routes(x,y,z),m=Math.min(...R3);
+  if(kind==="box")return{expr:"長方體的長、寬、高分別是 "+x+"、"+y+"、"+z+" 公分。螞蟻沿表面從一個頂點爬到距離最遠的頂點，最短要爬多少公分？",answer:radS(m)+" 公分",sig:"x:"+d.join(","),verify:()=>{let best=Infinity;for(const [u,v,w] of [[x,y,z],[y,z,x],[z,x,y]])best=Math.min(best,(u+v)**2+w*w);return best===m}};
+  const lab=["（長＋寬）與高","（長＋高）與寬","（寬＋高）與長"];return{expr:"長方體的長、寬、高分別是 "+x+"、"+y+"、"+z+" 公分，螞蟻沿表面從一個頂點爬到距離最遠的頂點。分別求展開成「"+lab.join("」「")+"」兩股時的路徑長，並指出最短的一條。",answer:R3.map((v,i)=>radS(v)).join("、")+"；最短 "+radS(m),sig:"xa:"+d.join(","),verify:()=>R3[0]===(x+y)**2+z*z&&R3[1]===(x+z)**2+y*y&&R3[2]===(y+z)**2+x*x}});
+ // ⑦ 摺紙問題（2026-11-01 新增）
+ const fold=unit("fold","摺紙問題","摺疊前後的對應邊相等、對應角相等；設未知的線段為 x，摺疊後會出現一個直角三角形，用畢氏定理列方程式。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["tri","diagAE","diagED"]:L===1?["diagED","edge","tri"]:["edge","diagArea","triArea"]);
+  const fx=v=>fracHTML(v);
+  if(kind==="tri"||kind==="triArea"){const b=rand(4,20),a=rand(2,b-1),x=R(a*a+b*b,2*b),cd=sub(R(b),x);
+   if(kind==="tri")return{expr:"直角三角形 ABC 中 ∠C＝90°，BC＝"+a+"、AC＝"+b+"。把三角形摺疊使 A 點與 B 點重合，摺痕交 AC 於 D，求 AD 與 CD。",answer:"AD＝"+fx(x)+"，CD＝"+fx(cd),sig:"t:"+a+":"+b,verify:()=>eq(add(R(a*a),mul(cd,cd)),mul(x,x))};
+   const ar=mul(R(a,2),cd);return{expr:"直角三角形 ABC 中 ∠C＝90°，BC＝"+a+"、AC＝"+b+"。摺疊使 A 點與 B 點重合，摺痕交 AC 於 D，求 △BCD 的面積。",answer:fx(ar),sig:"ta:"+a+":"+b,verify:()=>eq(add(R(a*a),mul(cd,cd)),mul(x,x))&&eq(mul(R(2),ar),mul(R(a),cd))}}
+  if(kind==="edge"){const [p,q,r]=pick(TRIP),k=rand(1,3),sw=Math.random()<.5,AB=(sw?q:p)*k,BE=(sw?p:q)*k,AD=r*k,EC=AD-BE;if(EC>=AB)return null;const x=R(AB*AB-EC*EC,2*AB);
+   return{expr:"長方形 ABCD 中 AB＝"+AB+"、AD＝"+AD+"。沿 AF 摺疊（F 在 CD 上），使 D 點落在 BC 上的 E 點，求 BE 與 CF。",answer:"BE＝"+BE+"，CF＝"+fx(x),sig:"e:"+AB+":"+AD,verify:()=>AB*AB+BE*BE===AD*AD&&eq(add(mul(x,x),R(EC*EC)),mul(sub(R(AB),x),sub(R(AB),x)))}}
+  const q=rand(4,20),p=rand(2,q-1),ae=R(q*q-p*p,2*q),ed=sub(R(q),ae);
+  if(kind==="diagAE")return{expr:"長方形 ABCD 中 AB＝"+p+"、BC＝"+q+"。沿對角線 BD 摺疊，C 點落在 C′，BC′ 交 AD 於 E，求 AE。",answer:fx(ae),sig:"da:"+p+":"+q,verify:()=>eq(add(R(p*p),mul(ae,ae)),mul(ed,ed))};
+  if(kind==="diagED")return{expr:"長方形紙片 ABCD 中 AB＝"+p+"、AD＝"+q+"。沿 BD 摺疊，使 C 落在 C′，BC′ 與 AD 交於 E。說明 BE＝DE 的理由，並求 DE。",answer:"∠EBD＝∠CBD＝∠EDB（內錯角），所以 BE＝DE；DE＝"+fx(ed),sig:"de:"+p+":"+q,verify:()=>eq(add(R(p*p),mul(ae,ae)),mul(ed,ed))};
+  const ar=mul(R(p,2),ed);return{expr:"長方形 ABCD 中 AB＝"+p+"、BC＝"+q+"。沿對角線 BD 摺疊，C 點落在 C′，BC′ 交 AD 於 E，求重疊部分 △BED 的面積。",answer:fx(ar),sig:"ar:"+p+":"+q,verify:()=>eq(add(R(p*p),mul(ae,ae)),mul(ed,ed))&&eq(mul(R(2),ar),mul(R(p),ed))}});
  return{title:"直角三角形",symbol:"⊾",subtitle:"母子相似・畢氏定理的應用・特殊直角三角形・三角比",instruction:"根式化為最簡；三角比化為最簡分數；有給三角函數值的題目依題目的位數作答。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
-  levels:{basic:"基礎：母子相似求邊、畢氏三數、30°-60°-90° 與 45°-45°-90°、37°-53°-90°、由三邊寫三角比、仰角測高。",advanced:"進階：由兩段求高、根式第三邊、三邊成等差、m²−n² 造邊、等腰三角形面積、兩次仰角、由 sin 或 tan 求其他三角比、特別角求值、面積公式。",challenge:"挑戰：由兩股求高與分段、一股為質數的整數邊、45° 與 30° 合併的三角形、四邊形中的三角比、由比值反求三角比、兩次仰角測塔高、吹折的樹。"},
-  units:[altitude,pythagoras,special,trig],presets:{basic:{altitude:3,pythagoras:3,special:3,trig:3},advanced:{altitude:3,pythagoras:3,special:3,trig:3},challenge:{altitude:2,pythagoras:3,special:3,trig:4}}};
+  levels:{basic:"基礎：母子相似求邊、畢氏三數、30°-60°-90° 與 45°-45°-90°、37°-53°-90°、由三邊寫三角比、仰角測高；梯子與斜坡、正立方體與圓柱的最短路徑、摺紙求邊。",advanced:"進階：由兩段求高、根式第三邊、三邊成等差、m²−n² 造邊、等腰三角形面積、兩次仰角、由 sin 或 tan 求其他三角比、特別角求值、面積公式；梯子下滑、旗桿繩長、長方體最短路徑、長方形沿邊摺疊。",challenge:"挑戰：由兩股求高與分段、一股為質數的整數邊、45° 與 30° 合併的三角形、四邊形中的三角比、由比值反求三角比、兩次仰角測塔高、吹折的樹；折竹問題、比較長方體的三種展開、繞圓柱多圈、摺疊重疊部分的面積。"},
+  units:[altitude,pythagoras,special,trig,ladder,shortest,fold],presets:{basic:{altitude:3,pythagoras:3,special:3,trig:3,ladder:2,shortest:2,fold:2},advanced:{altitude:3,pythagoras:3,special:3,trig:3,ladder:2,shortest:2,fold:2},challenge:{altitude:2,pythagoras:3,special:3,trig:4,ladder:2,shortest:2,fold:2}}};
 }
 
 function circle1Config(){
@@ -1290,9 +1327,34 @@ function quartileConfig(){
   return{expr:`${t}共 ${n} 筆資料（單位：${u}），各組的累積相對次數為 ${P.map((p,i)=>`${name(i)}：${D(p)}%`).join("；")}。Q₁、Q₂、Q₃ 各在哪一組？`,answer:gA(ks,gs),sig:`g4:${st}:${c}`,verify:()=>P.every((p,i)=>near(num(p)*n/100,C[i]))&&gOK(ks,gs)};
  });
 
+ // ⑤ 平均數與中位數（2026-11-01 新增）
+ const fin=v=>mul(v,R(100)).d===1; // 最多兩位小數
+ const sumR=a=>a.reduce((s,x)=>add(s,x),R(0));
+ const meanmed=unit("meanmed","平均數與中位數","平均數會被極端值拉動，中位數只看位置、不受極端值影響；資料中有特別大或特別小的值時，中位數比較能代表大多數的資料。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["both","back","change"]:L===1?["outlier","back","change"]:["outlier","add","change"]);
+  const n=rand(7,11),sc=scene("integer",n),a=data(sc,n,.6),s=sortR(a),M=quartR(s,2),mean=div(sumR(a),R(n));
+  if(kind==="both"){if(!fin(mean))return null;return{expr:sc.t+"如下（單位："+sc.u+"）："+list(a)+"。求平均數與中位數。",answer:"平均數 "+D(mean)+" "+sc.u+"，中位數 "+D(M)+" "+sc.u,sig:"b:"+a.map(plain),verify:()=>near(num(mean),a.map(num).reduce((x,y)=>x+y,0)/n)&&near(num(M),quartF(a.map(num),2))}}
+  if(kind==="back"){const avg=R(Math.round(num(mean))),rest=a.slice(0,-1),x=sub(mul(avg,R(n)),sumR(rest));if(x.d!==1||num(x)<sc.lo-5||num(x)>sc.hi+5)return null;return{expr:sc.t+"的平均數是 "+D(avg)+" "+sc.u+"，其中 "+(n-1)+" 筆資料為 "+list(rest)+"，求另一筆資料，並求這 "+n+" 筆資料的中位數。",answer:"另一筆 "+D(x)+" "+sc.u+"；中位數 "+D(quartR(sortR([...rest,x]),2))+" "+sc.u,sig:"k:"+a.map(plain),verify:()=>near((rest.map(num).reduce((u,v)=>u+v,0)+num(x))/n,num(avg))&&near(num(quartR(sortR([...rest,x]),2)),quartF([...rest,x].map(num),2))}}
+  if(kind==="change"){const d=rand(2,30),up=L<2||Math.random()<.5,inc=R(d,n);if(!fin(inc))return null;const tgt=up?s[n-1]:s[0];
+   return{expr:sc.t+"如下（單位："+sc.u+"）："+list(a)+"。若把"+(up?"最大":"最小")+"的一筆資料 "+D(tgt)+" 改成 "+D(up?add(tgt,R(d)):sub(tgt,R(d)))+"，平均數會"+(up?"增加":"減少")+"多少？中位數會不會改變？",answer:"平均數"+(up?"增加 ":"減少 ")+D(inc)+" "+sc.u+"；中位數不變（仍是 "+D(M)+" "+sc.u+"）",sig:"c:"+up+":"+d+":"+a.map(plain),verify:()=>{const b=s.map(num);if(up)b[n-1]+=d;else b[0]-=d;return near(quartF(b,2),num(M))&&near(Math.abs(b.reduce((x,y)=>x+y,0)-s.map(num).reduce((x,y)=>x+y,0))/n,num(inc))}}}
+  if(kind==="add"){const m=n%2?n:n-1,b=a.slice(0,m),x=R(rand(sc.lo,sc.hi)),nm=quartR(sortR([...b,x]),2),om=quartR(sortR(b),2);return{expr:sc.t.replace(String(n),String(m))+"如下（單位："+sc.u+"）："+list(b)+"。再加入一筆資料 "+D(x)+" 後，中位數由多少變成多少？",answer:D(om)+" 變成 "+D(nm)+" "+sc.u,sig:"a:"+b.map(plain)+":"+plain(x),verify:()=>near(num(nm),quartF([...b,x].map(num),2))&&near(num(om),quartF(b.map(num),2))}}
+  // outlier：一群相近的資料加上一個極端值
+  const OUT=[["某公司 N 位員工的月薪","千元",28,42,180,260],["N 戶人家一個月的用電量","度",250,320,1200,1800],["N 位同學一週的上網時間","小時",6,14,60,80],["N 間房子的售價","百萬元",12,18,90,120]],[t,u,lo,hi,olo,ohi]=pick(OUT),m=rand(6,9),base=Array.from({length:m-1},()=>R(rand(lo,hi))),big=R(rand(olo,ohi)),all=shuffle([...base,big]),mn=div(sumR(all),R(m)),md=quartR(sortR(all),2);if(!fin(mn))return null;
+  return{expr:t.replace("N",m)+"如下（單位："+u+"）："+list(all)+"。(1) 求平均數與中位數 (2) 哪一個比較能代表大多數的資料？為什麼？",answer:"(1) 平均數 "+D(mn)+"，中位數 "+D(md)+" (2) 中位數，因為 "+D(big)+" 是極端值，會把平均數拉高",sig:"o:"+all.map(plain),verify:()=>near(num(mn),all.map(num).reduce((x,y)=>x+y,0)/m)&&near(num(md),quartF(all.map(num),2))&&num(mn)>num(md)}});
+ // ⑥ 合併資料的平均數（加權平均）（2026-11-01 新增）
+ const weighted=unit("weighted","合併資料的平均數","合併後的平均數＝總和÷總筆數＝（n₁×平均₁＋n₂×平均₂）÷（n₁＋n₂），不是兩個平均數直接相加除以 2；加權平均要乘上各自的權重。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["two","missing","weights"]:L===1?["three","missing","weights"]:["ratio","three","count"]);
+  const SUB=pick([["數學段考","分"],["英文小考","分"],["體適能測驗","分"],["跳繩比賽","下"]]);
+  if(kind==="two"){const n1=rand(15,35),n2=rand(15,35),m1=rand(55,90),m2=rand(55,90),T=R(n1*m1+n2*m2,n1+n2);if(!fin(T)||m1===m2)return null;return{expr:"甲班 "+n1+" 人的"+SUB[0]+"平均 "+m1+" "+SUB[1]+"，乙班 "+n2+" 人的平均 "+m2+" "+SUB[1]+"，求兩班合併的平均。",answer:D(T)+" "+SUB[1],sig:"t:"+[n1,n2,m1,m2],verify:()=>near(num(T)*(n1+n2),n1*m1+n2*m2)}}
+  if(kind==="missing"){const n1=rand(15,35),n2=rand(15,35),m1=rand(55,90),m2=rand(55,90),T=R(n1*m1+n2*m2,n1+n2);if(T.d!==1||m1===m2)return null;return{expr:"甲、乙兩班共 "+(n1+n2)+" 人，"+SUB[0]+"全體平均 "+D(T)+" "+SUB[1]+"。甲班 "+n1+" 人平均 "+m1+" "+SUB[1]+"，求乙班的平均。",answer:m2+" "+SUB[1],sig:"m:"+[n1,n2,m1,m2],verify:()=>num(T)*(n1+n2)-n1*m1===n2*m2}}
+  if(kind==="weights"){const w=pick([[30,70],[40,60],[20,30,50],[25,25,50],[20,40,40]]),sc=w.map(()=>rand(50,98)),T=R(w.reduce((s,x,i)=>s+x*sc[i],0),100),lab=w.length===2?["平時成績","段考成績"]:["平時成績","期中考","期末考"];if(!fin(T))return null;return{expr:"學期成績的計算方式是 "+lab.map((x,i)=>x+"占 "+w[i]+"%").join("、")+"。小明的"+lab.map((x,i)=>x+" "+sc[i]+" 分").join("、")+"，求他的學期成績。",answer:D(T)+" 分",sig:"w:"+w+":"+sc,verify:()=>near(num(T),w.reduce((s,x,i)=>s+x/100*sc[i],0))}}
+  if(kind==="three"){const n=[rand(10,30),rand(10,30),rand(10,30)],m=[rand(55,92),rand(55,92),rand(55,92)],N=n[0]+n[1]+n[2],T=R(n[0]*m[0]+n[1]*m[1]+n[2]*m[2],N);if(!fin(T))return null;return{expr:"三個班級的"+SUB[0]+"：甲班 "+n[0]+" 人平均 "+m[0]+"，乙班 "+n[1]+" 人平均 "+m[1]+"，丙班 "+n[2]+" 人平均 "+m[2]+"（單位："+SUB[1]+"）。求三班合併的平均。",answer:D(T)+" "+SUB[1],sig:"th:"+n+":"+m,verify:()=>near(num(T)*N,n.reduce((s,x,i)=>s+x*m[i],0))}}
+  if(kind==="ratio"){const a=rand(70,95),b=rand(55,a-4),c=rand(b+1,a-1),g=gcd(c-b,a-c);return{expr:"某班男生的"+SUB[0]+"平均 "+a+" "+SUB[1]+"、女生平均 "+b+" "+SUB[1]+"，全班平均 "+c+" "+SUB[1]+"。求男生人數：女生人數（最簡整數比）。",answer:((c-b)/g)+"："+((a-c)/g),sig:"r:"+[a,b,c],verify:()=>((c-b)/g)*a+((a-c)/g)*b===c*(((c-b)/g)+((a-c)/g))}}
+  const n1=rand(10,30),m1=rand(70,95),m2=rand(50,m1-5),M=rand(m2+1,m1-1),num2=n1*(m1-M);if(num2%(M-m2))return null;const n2=num2/(M-m2);if(n2<5||n2>60)return null;
+  return{expr:"甲班 "+n1+" 人的"+SUB[0]+"平均 "+m1+" "+SUB[1]+"，乙班平均 "+m2+" "+SUB[1]+"，兩班合併後平均 "+M+" "+SUB[1]+"。乙班有幾人？",answer:n2+" 人",sig:"n:"+[n1,m1,m2,M],verify:()=>n1*m1+n2*m2===M*(n1+n2)}});
  return{title:"中位數與四分位數",symbol:"Q",subtitle:"中位數的應用・未分組資料的四分位數・次數與累積次數分配表・分組資料的四分位數所在組",instruction:"四分位數：位置 n×k／4 不是整數時取下一個整數位置，是整數 m 時取第 m 與第 m＋1 筆的平均。比例化為最簡分數。",modes:["integer","decimal"],modeLabels:{integer:"整數資料",decimal:"小數資料"},mixed:false,answerLabel:"答：",
-  levels:{basic:"基礎：未排序資料求中位數、淘汰比例、中位數以下（含）與以上（含）的比例；已排序與未排序資料求 Q₁、Q₂、Q₃、Q₁～Q₃ 是第幾筆；次數分配表求 Q₁～Q₃、累積次數與中位數、累積次數表求 Q₁～Q₃；直方圖求 Q₁～Q₃ 所在組、Q₁ 或 Q₃ 所在組與組中點、由累積次數求所在組。",advanced:"進階：淘汰比例、中位數以下與以上的比例、由中位數反求 x；未排序資料的 Q₁～Q₃、第幾筆、較多筆資料的 Q₁ 與 Q₃；累積次數與中位數、累積次數表、表中缺一個次數；Q₁ 或 Q₃ 所在組與組中點、由累積次數求所在組、缺一組次數。",challenge:"挑戰：中位數以下與以上的比例、由中位數反求 x、加入一筆資料後的中位數；第幾筆、較多筆資料的 Q₁ 與 Q₃、由 Q₁ 或 Q₃ 反求 x；累積次數表、表中缺一個次數、兩組合併的 Q₁～Q₃；由累積次數求所在組、缺一組次數、由累積相對次數求所在組。"},
-  units:[median,raw,table,group],presets:{basic:{median:2,raw:2,table:2,group:2},advanced:{median:2,raw:2,table:2,group:2},challenge:{median:2,raw:2,table:2,group:2}}};
+  levels:{basic:"基礎：未排序資料求中位數、淘汰比例、中位數以下（含）與以上（含）的比例；已排序與未排序資料求 Q₁、Q₂、Q₃、Q₁～Q₃ 是第幾筆；次數分配表求 Q₁～Q₃、累積次數與中位數、累積次數表求 Q₁～Q₃；直方圖求 Q₁～Q₃ 所在組、Q₁ 或 Q₃ 所在組與組中點、由累積次數求所在組；平均數與中位數、由平均數反求缺值、改變極端值的影響、兩班合併的平均、加權成績。",advanced:"進階：淘汰比例、中位數以下與以上的比例、由中位數反求 x；未排序資料的 Q₁～Q₃、第幾筆、較多筆資料的 Q₁ 與 Q₃；累積次數與中位數、累積次數表、表中缺一個次數；Q₁ 或 Q₃ 所在組與組中點、由累積次數求所在組、缺一組次數；極端值與代表值的選擇、三班合併的平均。",challenge:"挑戰：中位數以下與以上的比例、由中位數反求 x、加入一筆資料後的中位數；第幾筆、較多筆資料的 Q₁ 與 Q₃、由 Q₁ 或 Q₃ 反求 x；累積次數表、表中缺一個次數、兩組合併的 Q₁～Q₃；由累積次數求所在組、缺一組次數、由累積相對次數求所在組；加入資料後的中位數、由平均數求男女人數比與人數。"},
+  units:[median,raw,table,group,meanmed,weighted],presets:{basic:{median:2,raw:2,table:2,group:2,meanmed:2,weighted:2},advanced:{median:2,raw:2,table:2,group:2,meanmed:2,weighted:2},challenge:{median:2,raw:2,table:2,group:2,meanmed:2,weighted:2}}};
 }
 
 function boxplotConfig(){
@@ -1386,9 +1448,33 @@ function boxplotConfig(){
   return{expr:`${img}${t}共 ${nn} 筆資料，五數綜合為 ${fiveS(v)}（單位：${u}）。若把${up?"最大的一筆資料改為 "+D(nv):"最小的一筆資料改為 "+D(nv)}（其餘不變），新的全距與四分位距各是多少？`,answer:`全距 ${D(nr)}，四分位距 ${D(iq)}（不變）`,sig:sig+`:${up}:${d}:${nn}`,verify:()=>{const xs=[];for(let q=0;q<4;q++)for(let j=0;j<3;j++)xs.push(num(v[q])+(num(v[q+1])-num(v[q]))*j/3);xs.push(num(v[4]));const ys=[...xs];if(up)ys[ys.length-1]=num(nv);else ys[0]=num(nv);const w0=fiveF(xs),w1=fiveF(ys);return near(w1[4]-w1[0],num(nr))&&near(w1[3]-w1[1],w0[3]-w0[1])}};
  });
 
+ // ⑤ 資料的平移與伸縮（2026-11-01 新增）
+ const transf=unit("transf","資料的平移與伸縮","每筆資料都加（減）c：五數綜合都加（減）c，全距、四分位距不變。每筆資料都乘 k（k＞0）：五數綜合、全距、四分位距都變成 k 倍。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["plus","times","minus"]:L===1?["lin","times","plus"]:["solve","temp","lin"]);
+  const SC=pick([["某班數學小考成績","分"],["一批零件的長度","毫米"],["選手的跳高成績","公分"],["某商品的單價","元"]]),v=G5(rand(10,60),rand(20,60)),vn=v.map(num),rg=vn[4]-vn[0],iq=vn[3]-vn[1],fs=a=>a.map((x,i)=>LAB[i]+"＝"+x).join("，");
+  if(kind==="plus"||kind==="minus"){const c=rand(2,15),s=kind==="plus"?c:-c,nv=vn.map(x=>x+s);return{expr:SC[0]+"的五數綜合為 "+fs(vn)+"（單位："+SC[1]+"）。若每筆資料都"+(s>0?"加 ":"減 ")+c+"，求新的 Q₁、Q₂、Q₃，以及新的全距與四分位距。",answer:"Q₁＝"+nv[1]+"，Q₂＝"+nv[2]+"，Q₃＝"+nv[3]+"；全距 "+rg+"，四分位距 "+iq+"（不變）",sig:kind+":"+vn+":"+c,verify:()=>nv[4]-nv[0]===rg&&nv[3]-nv[1]===iq}}
+  if(kind==="times"){const k=rand(2,5),nv=vn.map(x=>x*k);return{expr:SC[0]+"的五數綜合為 "+fs(vn)+"（單位："+SC[1]+"）。若每筆資料都乘 "+k+"，新的中位數、全距與四分位距各是多少？",answer:"中位數 "+nv[2]+"，全距 "+(k*rg)+"，四分位距 "+(k*iq),sig:"t:"+vn+":"+k,verify:()=>nv[4]-nv[0]===k*rg&&nv[3]-nv[1]===k*iq}}
+  if(kind==="lin"){const k=rand(2,4),c=rand(-20,30),nv=vn.map(x=>k*x+c);if(c===0)return null;return{expr:SC[0]+"的五數綜合為 "+fs(vn)+"（單位："+SC[1]+"）。若把每筆資料 x 換成 "+k+"x"+(c>0?"＋"+c:"−"+(-c))+"，求新的五數綜合與新的四分位距。",answer:fs(nv)+"；四分位距 "+(k*iq),sig:"l:"+vn+":"+k+":"+c,verify:()=>nv[3]-nv[1]===k*iq&&nv.every((x,i)=>!i||x>nv[i-1])}}
+  if(kind==="temp"){const w=G5(rand(1,4),rand(3,6)).map(x=>num(x)*5),F=w.map(x=>x*9/5+32);return{expr:"某地 40 天的最低氣溫（°C）五數綜合為 "+fs(w)+"。換算成華氏溫度的公式是 F＝(9／5)C＋32，求華氏溫度的五數綜合與四分位距。",answer:fs(F)+"；四分位距 "+(F[3]-F[1]),sig:"f:"+w,verify:()=>F.every((x,i)=>x===w[i]*9/5+32&&Number.isInteger(x))&&F[3]-F[1]===(w[3]-w[1])*9/5}}
+  const k=rand(2,4),c=rand(-20,30),nv=vn.map(x=>k*x+c);return{expr:SC[0]+"的最小值是 "+vn[0]+"、最大值是 "+vn[4]+"，中位數是 "+vn[2]+"。每筆資料都乘 k 再加 c（k＞0）後，最小值變成 "+nv[0]+"、最大值變成 "+nv[4]+"。求 k、c 與新的中位數。",answer:"k＝"+k+"，c＝"+c+"；中位數 "+nv[2],sig:"s:"+vn+":"+k+":"+c,verify:()=>(nv[4]-nv[0])/(vn[4]-vn[0])===k&&nv[0]-k*vn[0]===c}});
+ // ⑥ 由盒狀圖判斷敘述（2026-11-01 新增）
+ const judgeBox=unit("judgebox","由盒狀圖判斷敘述","先寫出兩組的五數綜合，再一句一句檢查：全距＝最大值−最小值、四分位距＝Q₃−Q₁；約一半的資料小於中位數、約 25% 小於 Q₁、約 75% 小於 Q₃。",["integer"],ctx=>{
+  const L=lv(ctx),SC=pick([["甲、乙兩班數學小考成績","分",30,60],["甲、乙兩隊隊員的身高","公分",150,40],["甲、乙兩家店的每日營業額","千元",20,50],["甲、乙兩品牌電池的使用時間","小時",10,40]]);
+  const A=G5(rand(SC[2],SC[2]+15),SC[3]),B=G5(rand(SC[2],SC[2]+15),SC[3]),a=A.map(num),b=B.map(num),nm=["甲","乙"],G=[a,b];
+  const pool=[];for(const [i,j] of [[0,1],[1,0]]){const x=G[i],y=G[j],X=nm[i],Y=nm[j];
+   pool.push([X+"的全距比"+Y+"大",x[4]-x[0]>y[4]-y[0]]);
+   pool.push([X+"的四分位距比"+Y+"大",x[3]-x[1]>y[3]-y[1]]);
+   pool.push([X+"的中位數比"+Y+"的 Q₃ 大",x[2]>y[3]]);
+   pool.push([X+"的最小值比"+Y+"的 Q₁ 小",x[0]<y[1]]);
+   const t=pick([[1,"約 25%"],[2,"約 50%"],[3,"約 75%"]]),pos=pick([1,2,3]);pool.push([X+"有"+t[1]+" 的資料小於 "+x[pos],pos===t[0]])}
+  const cnt=L===0?3:4,ch=shuffle(pool).slice(0,cnt);if(new Set(ch.map(c=>c[0])).size<cnt)return null;
+  const txt=nm.map((x,i)=>x+"："+G[i].map((v,k)=>LAB[k]+" "+v).join("、")).join("；"),img=L===0?box([["甲",A],["乙",B]],SC[1]):"";
+  const right=ch.map((c,i)=>c[1]?"("+"ABCD"[i]+")":"").filter(Boolean);
+  if(L===2)return{expr:SC[0]+"（單位："+SC[1]+"）的五數綜合如下——"+txt+"。下列 "+cnt+" 個敘述中，正確的有幾個？"+ch.map((c,i)=>"("+"ABCD"[i]+") "+c[0]).join("　"),answer:right.length+" 個"+(right.length?"："+right.join(""):""),sig:"c:"+a+":"+b+":"+ch.map(c=>c[0]).join("|"),verify:()=>ch.filter(c=>c[1]).length===right.length};
+  return{expr:img+SC[0]+"（單位："+SC[1]+"）的五數綜合如下——"+txt+"。下列敘述哪些正確？"+ch.map((c,i)=>"("+"ABCD"[i]+") "+c[0]).join("　"),answer:right.length?right.join(""):"都不正確",sig:"j:"+a+":"+b+":"+ch.map(c=>c[0]).join("|"),verify:()=>ch.every((c,i)=>c[1]===right.includes("("+"ABCD"[i]+")"))}});
  return{title:"盒狀圖、全距與四分位距",symbol:"⊏",subtitle:"五數綜合・全距與四分位距・兩組資料的比較・次數分配表・由五數綜合判讀",instruction:"全距＝最大值－最小值，四分位距＝Q₃－Q₁；四分位數依位置 n×k／4 取值。盒狀圖為示意，以題目給的數值為準。",modes:["integer","decimal"],modeLabels:{integer:"整數資料",decimal:"小數資料"},mixed:false,answerLabel:"答：",
-  levels:{basic:"基礎：已排序與未排序資料的五數綜合、全距與四分位距；兩組的全距與四分位距、比較分散程度、百分比判讀；次數表求全距與四分位距、五數綜合、累積次數表；由五數綜合求全距與四分位距、中間 50% 與百分比、由全距與四分位距反求。",advanced:"進階：未排序資料的五數綜合、全距與四分位距、較多筆資料；比較分散程度、百分比判讀、兩組統計量的差；五數綜合、累積次數表、表中缺一個次數；中間 50% 與百分比、反求最大值與 Q₁、由筆數估計介於兩數之間的筆數。",challenge:"挑戰：全距與四分位距、較多筆資料、由四分位距反求 x；百分比判讀、兩組統計量的差、兩組反求缺少的五數；累積次數表、表中缺一個次數、甲乙兩組比較四分位距；反求最大值與 Q₁、估計筆數、極端值改變後的全距與四分位距。"},
-  units:[fivenum,compare,table,read],presets:{basic:{fivenum:2,compare:2,table:2,read:2},advanced:{fivenum:2,compare:2,table:2,read:2},challenge:{fivenum:2,compare:2,table:2,read:2}}};
+  levels:{basic:"基礎：已排序與未排序資料的五數綜合、全距與四分位距；兩組的全距與四分位距、比較分散程度、百分比判讀；次數表求全距與四分位距、五數綜合、累積次數表；由五數綜合求全距與四分位距、中間 50% 與百分比、由全距與四分位距反求；每筆資料加減或乘一個數後的五數綜合、看盒狀圖判斷敘述。",advanced:"進階：未排序資料的五數綜合、全距與四分位距、較多筆資料；比較分散程度、百分比判讀、兩組統計量的差；五數綜合、累積次數表、表中缺一個次數；中間 50% 與百分比、反求最大值與 Q₁、由筆數估計介於兩數之間的筆數；x 換成 kx＋c 的五數綜合、四個敘述判斷。",challenge:"挑戰：全距與四分位距、較多筆資料、由四分位距反求 x；百分比判讀、兩組統計量的差、兩組反求缺少的五數；累積次數表、表中缺一個次數、甲乙兩組比較四分位距；反求最大值與 Q₁、估計筆數、極端值改變後的全距與四分位距；由最小值與最大值反求 k、c，攝氏換華氏、數出正確敘述的個數。"},
+  units:[fivenum,compare,table,read,transf,judgeBox],presets:{basic:{fivenum:2,compare:2,table:2,read:2,transf:2,judgebox:2},advanced:{fivenum:2,compare:2,table:2,read:2,transf:2,judgebox:2},challenge:{fivenum:2,compare:2,table:2,read:2,transf:2,judgebox:2}}};
 }
 
 function probabilityConfig(){
@@ -1465,9 +1551,48 @@ function probabilityConfig(){
   return{expr:`${intro}，求抽到「${x}或${y}」的機率。`,answer:fracHTML(p),sig:`p4:${x}:${y}`,verify:()=>okP(DECK,c=>fx(c)||fy(c),p)};
  });
 
+ // ⑤ 轉盤（2026-11-01 新增）
+ const pie=(angs,labs)=>{const W=150,H=130,cx=70,cy=62,r=52;let b="",t=90;angs.forEach((g,i)=>{const p1=[GEO.f(cx+r*Math.cos(t*Math.PI/180)),GEO.f(cy-r*Math.sin(t*Math.PI/180))],mid=t-g/2;b+=GEO.line([cx,cy],p1);b+=GEO.text([GEO.f(cx+r*.6*Math.cos(mid*Math.PI/180)),GEO.f(cy-r*.6*Math.sin(mid*Math.PI/180)+4)],labs[i],{s:10});t-=g});return GEO.svg(W,H,'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#16233A" stroke-width="1.4"/>'+b)};
+ const SCOL=["紅","黃","藍","綠","白"];
+ const angSet=k=>{for(let t=0;t<30;t++){const a=Array.from({length:k-1},()=>15*rand(2,10)),s=a.reduce((x,y)=>x+y,0);if(360-s>=30)return[...a,360-s]}return null};
+ const spinner=unit("spinner","轉盤的機率","轉盤指針停在每個位置的機會相等，所以停在某一區的機率＝該區的圓心角÷360°。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["one","not","ratio"]:L===1?["two","x","ratio"]:["x","back","compare"]);
+  const k=rand(3,4),cols=shuffle(SCOL).slice(0,k);
+  if(kind==="ratio"){const w=Array.from({length:k},()=>rand(1,6)),S=w.reduce((x,y)=>x+y,0);if(360%S)return null;const i=rand(0,k-1);return{expr:"一個轉盤分成 "+k+" 個扇形區："+cols.map(c=>c+"色").join("、")+"，圓心角的比依序是 "+w.join("：")+"。轉動一次，指針停在"+cols[i]+"色區的機率是多少？（指針不會停在分界線上）",answer:fracHTML(R(w[i],S)),sig:"r:"+w+":"+i,verify:()=>eq(R(360*w[i]/S,360),R(w[i],S))}}
+  const g=angSet(k);if(!g)return null;const img=pie(g,cols),txt=cols.map((c,i)=>c+"色 "+g[i]+"°").join("、");
+  if(kind==="one"){const i=rand(0,k-1);return{expr:img+"轉盤上各區的圓心角為 "+txt+"。轉動一次，指針停在"+cols[i]+"色區的機率是多少？（指針不會停在分界線上）",answer:fracHTML(R(g[i],360)),sig:"o:"+g+":"+i,verify:()=>g.reduce((x,y)=>x+y,0)===360}}
+  if(kind==="not"){const i=rand(0,k-1);return{expr:img+"轉盤上各區的圓心角為 "+txt+"。轉動一次，指針「不」停在"+cols[i]+"色區的機率是多少？",answer:fracHTML(R(360-g[i],360)),sig:"n:"+g+":"+i,verify:()=>eq(add(R(g[i],360),R(360-g[i],360)),R(1))}}
+  if(kind==="two"){const [i,j]=shuffle([...Array(k).keys()]).slice(0,2);return{expr:img+"轉盤上各區的圓心角為 "+txt+"。轉動一次，指針停在"+cols[i]+"色區或"+cols[j]+"色區的機率是多少？",answer:fracHTML(R(g[i]+g[j],360)),sig:"t:"+g+":"+i+":"+j,verify:()=>eq(add(R(g[i],360),R(g[j],360)),R(g[i]+g[j],360))}}
+  if(kind==="x"){const co=Array.from({length:k},()=>[rand(1,3),15*rand(-2,4)]),sa=co.reduce((s,c)=>s+c[0],0),sb=co.reduce((s,c)=>s+c[1],0);if((360-sb)%sa)return null;const x=(360-sb)/sa,gg=co.map(c=>c[0]*x+c[1]);if(gg.some(v=>v<20))return null;const i=rand(0,k-1),lin=c=>"("+(c[0]===1?"":c[0])+"x"+(c[1]>0?"＋"+c[1]:c[1]<0?"−"+(-c[1]):"")+")°";
+   return{expr:"一個轉盤分成"+k+"區，圓心角分別是"+cols.map((c,j)=>c+"色 "+lin(co[j])).join("、")+"。求 x，以及轉動一次指針停在"+cols[i]+"色區的機率。",answer:"x＝"+x+"；"+fracHTML(R(gg[i],360)),sig:"x:"+co.map(c=>c.join("_"))+":"+i,verify:()=>gg.reduce((s,v)=>s+v,0)===360}}
+  if(kind==="back"){const i=rand(0,k-1),p=R(g[i],360);if((360-g[i])%(k-1))return null;return{expr:"一個轉盤分成"+cols.map(c=>c+"色").join("、")+"區。轉動一次，指針停在"+cols[i]+"色區的機率是 "+fracHTML(p)+"，"+cols[i]+"色區的圓心角是幾度？若其他各區的圓心角相等，每一區是幾度？",answer:g[i]+"°；"+fracHTML(R(360-g[i],k-1))+"°",sig:"b:"+g[i]+":"+k+":"+i,verify:()=>eq(R(g[i],360),p)}}
+  const h=angSet(k);if(!h)return null;const i=rand(0,k-1);if(g[i]===h[i])return null;const better=g[i]>h[i]?"甲":"乙";return{expr:"甲轉盤各區的圓心角為 "+txt+"；乙轉盤各區的圓心角為 "+cols.map((c,j)=>c+"色 "+h[j]+"°").join("、")+"。各轉一次，哪一個轉盤停在"+cols[i]+"色區的機率比較大？兩個機率各是多少？",answer:better+"；甲 "+fracHTML(R(g[i],360))+"、乙 "+fracHTML(R(h[i],360)),sig:"c:"+g+":"+h+":"+i,verify:()=>(better==="甲")===(cmp(R(g[i],360),R(h[i],360))>0)}});
+ // ⑥ 實驗機率與估計（2026-11-01 新增）
+ const experiment=unit("experiment","實驗機率與估計","實驗機率＝事件發生的次數÷實驗的總次數；實驗次數越多，實驗機率越接近理論機率，所以可以用實驗結果估計袋中球數或池中魚數。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["coin","die","bag"]:L===1?["bag","fish","table"]:["fish","combine","fishBack"]);
+  if(kind==="coin"){const N=10*rand(5,50),h=rand(Math.floor(N*.4),Math.ceil(N*.6));return{expr:"小華丟一枚均勻的硬幣 "+N+" 次，出現正面 "+h+" 次。求正面的實驗機率，並寫出正面的理論機率。",answer:"實驗機率 "+fracHTML(R(h,N))+"；理論機率 "+fracHTML(R(1,2)),sig:"c:"+N+":"+h,verify:()=>eq(mul(R(h,N),R(N)),R(h))}}
+  if(kind==="die"){const N=6*rand(5,40),f=rand(1,6),c=rand(Math.floor(N/9),Math.ceil(N/4));return{expr:"擲一顆均勻的骰子 "+N+" 次，出現 "+f+" 點 "+c+" 次。求出現 "+f+" 點的實驗機率；依理論機率，"+N+" 次中大約會出現幾次？",answer:"實驗機率 "+fracHTML(R(c,N))+"；約 "+(N/6)+" 次",sig:"d:"+N+":"+f+":"+c,verify:()=>N%6===0&&eq(R(c,N),div(R(c),R(N)))}}
+  if(kind==="bag"){const T=pick([10,20,25,30,40,50]),red=rand(1,T-1),g=gcd(red,T),N=(T/g)*rand(4,20),a=N*red/T;return{expr:"袋中有紅球與白球共 "+T+" 顆。每次取出 1 顆記錄顏色後放回，共取 "+N+" 次，其中紅球出現 "+a+" 次。用實驗機率估計，袋中約有幾顆紅球？",answer:"約 "+red+" 顆",sig:"b:"+T+":"+N+":"+a,verify:()=>a*T===red*N}}
+  if(kind==="table"){const T=pick([20,30,40,50]),N1=50,a1=rand(10,40),N2=rand(2,6)*50,a2r=rand(2,T-2);if((N2*a2r)%T)return null;const a2=N2*a2r/T;return{expr:"袋中有黃球與藍球共 "+T+" 顆，每次取 1 顆記錄後放回。第一天取 "+N1+" 次，黃球 "+a1+" 次；第二天取 "+N2+" 次，黃球 "+a2+" 次。分別求兩天黃球的實驗機率；用次數較多的那一天估計，袋中約有幾顆黃球？",answer:"第一天 "+fracHTML(R(a1,N1))+"、第二天 "+fracHTML(R(a2,N2))+"；約 "+a2r+" 顆",sig:"tb:"+T+":"+a1+":"+N2+":"+a2,verify:()=>N2>N1&&a2*T===a2r*N2}}
+  if(kind==="combine"){const N1=10*rand(3,12),N2=10*rand(3,12),a1=rand(1,N1-1),a2=rand(1,N2-1),T=pick([12,20,24,30]);const p=R(a1+a2,N1+N2),est=mul(p,R(T));if(est.d!==1)return null;return{expr:"袋中有綠球與白球共 "+T+" 顆。甲取球（取後放回）"+N1+" 次，綠球 "+a1+" 次；乙取 "+N2+" 次，綠球 "+a2+" 次。把兩人的結果合併，求綠球的實驗機率，並估計袋中的綠球數。",answer:fracHTML(p)+"；約 "+est.n+" 顆",sig:"cb:"+[N1,a1,N2,a2,T],verify:()=>eq(div(R(a1+a2),R(N1+N2)),p)&&est.n*(N1+N2)===(a1+a2)*T}}
+  if(kind==="fish"){const m=10*rand(3,20),n=10*rand(3,15),k=rand(2,Math.min(n-1,25));if((m*n)%k)return null;const tot=m*n/k;if(tot<n||tot<m)return null;return{expr:"為了估計池塘中的魚數，先捉 "+m+" 條魚做記號後放回。幾天後再捉 "+n+" 條，其中有記號的有 "+k+" 條。估計池塘中約有幾條魚？",answer:"約 "+tot+" 條",sig:"f:"+m+":"+n+":"+k,verify:()=>eq(R(k,n),R(m,tot))}}
+  const tot=100*rand(3,30),n=10*rand(3,15),k=rand(2,Math.min(n-1,25));if((tot*k)%n)return null;const m=tot*k/n;return{expr:"池塘中約有 "+tot+" 條魚。先捉一些魚做記號後放回，幾天後再捉 "+n+" 條，其中有記號的有 "+k+" 條。估計當初做記號的魚約有幾條？",answer:"約 "+m+" 條",sig:"fb:"+tot+":"+n+":"+k,verify:()=>eq(R(k,n),R(m,tot))}});
+ // ⑦ 字母卡片（2026-11-01 新增）
+ const WORDS=["MATHEMATICS","PROBABILITY","STATISTICS","BANANA","COMMITTEE","MISSISSIPPI","GEOMETRY","ALGEBRA","TAIPEI","KAOHSIUNG","PINEAPPLE","CHOCOLATE","ELEPHANT","ASSESSMENT","BOOKKEEPER","TOMATO","CALCULATOR","DIAMETER","PARALLEL","EXPERIMENT"];
+ const VOW="AEIOU";
+ const letters=unit("letters","字母卡片","把單字的每個字母各寫在一張卡片上，相同的字母也要分開算；機率＝符合的卡片張數÷卡片總張數。母音是 A、E、I、O、U。",["integer"],ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["one","vowel","not"]:L===1?["or","most","vowel"]:["two","most","add"]);
+  const w=pick(WORDS),cs=w.split(""),n=cs.length,uniq=[...new Set(cs)],c=X=>cs.filter(ch=>ch===X).length,head="把單字「"+w+"」的每個字母各寫在一張卡片上（共 "+n+" 張），從中任意抽出一張，";
+  if(kind==="one"){const X=pick(uniq);return{expr:head+"抽到字母 "+X+" 的機率是多少？",answer:fracHTML(R(c(X),n)),sig:"o:"+w+":"+X,verify:()=>w.split(X).length-1===c(X)}}
+  if(kind==="not"){const X=pick(uniq);return{expr:head+"抽到的「不是」字母 "+X+" 的機率是多少？",answer:fracHTML(R(n-c(X),n)),sig:"n:"+w+":"+X,verify:()=>w.replaceAll(X,"").length===n-c(X)}}
+  if(kind==="vowel"){const v=cs.filter(ch=>VOW.includes(ch)).length;return{expr:head+"抽到母音（A、E、I、O、U）的機率是多少？抽到子音的機率是多少？",answer:fracHTML(R(v,n))+"；"+fracHTML(R(n-v,n)),sig:"v:"+w,verify:()=>w.replace(/[AEIOU]/g,"").length===n-v}}
+  if(kind==="or"){if(uniq.length<3)return null;const [X,Y]=shuffle(uniq).slice(0,2);return{expr:head+"抽到字母 "+X+" 或 "+Y+" 的機率是多少？",answer:fracHTML(R(c(X)+c(Y),n)),sig:"r:"+w+":"+[X,Y].sort(),verify:()=>w.replace(new RegExp("["+X+Y+"]","g"),"").length===n-c(X)-c(Y)}}
+  if(kind==="most"){const best=Math.max(...uniq.map(c)),tops=uniq.filter(X=>c(X)===best);if(best<2)return null;return{expr:head+"抽到哪一個字母的機率最大？機率是多少？",answer:tops.join("、")+"；"+fracHTML(R(best,n)),sig:"m:"+w,verify:()=>uniq.every(X=>c(X)<=best)&&tops.every(X=>w.split(X).length-1===best)}}
+  if(kind==="two"){const w2=pick(WORDS.filter(x=>x!==w)),all=(w+w2).split(""),X=pick([...new Set(all)]),k=all.filter(ch=>ch===X).length;return{expr:"把「"+w+"」和「"+w2+"」兩個單字的每個字母各寫在一張卡片上，全部放在一起（共 "+all.length+" 張），任意抽出一張，抽到字母 "+X+" 的機率是多少？",answer:fracHTML(R(k,all.length)),sig:"t:"+w+":"+w2+":"+X,verify:()=>(w+w2).split(X).length-1===k}}
+  const X=pick(uniq),m=rand(1,6),p=R(c(X)+m,n+m);return{expr:head+"抽到字母 "+X+" 的機率是多少？若再加入 "+m+" 張寫著 "+X+" 的卡片，機率變成多少？",answer:fracHTML(R(c(X),n))+"；"+fracHTML(p),sig:"a:"+w+":"+X+":"+m,verify:()=>eq(p,div(R(c(X)+m),R(n+m)))}});
  return{title:"認識機率",symbol:"P",subtitle:"袋中取球・整數籤筒與倍數・投擲一顆骰子・撲克牌",instruction:"機率＝該事件的結果數÷所有可能的結果數，答案化為最簡分數。",modes:["integer"],modeLabels:{integer:"最簡分數作答"},mixed:false,answerLabel:"答：",
-  levels:{basic:"基礎：兩色球、三色球與「不是」、放入球後的機率；兩個倍數、既是又是與都不是、質數與完全平方數；等於大於小於某點數、兩個倍數與大於等於、奇偶質合數與因數；花色與 A、人頭牌等、「不是」某種牌。",advanced:"進階：三色球與「不是」、放入球後的機率、由機率反求球數；既是又是與都不是、質數與完全平方數、任意範圍的倍數；兩個倍數與大於等於、奇偶質合數與因數、特殊骰子；人頭牌與數字牌、「不是」某種牌、取走四張後的機率。",challenge:"挑戰：放入球後的機率、由機率反求球數、要放入幾顆球；質數與完全平方數、任意範圍的倍數、「或」的倍數與個位數字；奇偶質合數與因數、特殊骰子、正多面體骰子；「不是」某種牌、取走四張後的機率、「或」事件。"},
-  units:[bag,numbers,dice,poker],presets:{basic:{bag:2,numbers:2,dice:2,poker:2},advanced:{bag:2,numbers:2,dice:2,poker:2},challenge:{bag:2,numbers:2,dice:2,poker:2}}};
+  levels:{basic:"基礎：兩色球、三色球與「不是」、放入球後的機率；兩個倍數、既是又是與都不是、質數與完全平方數；等於大於小於某點數、兩個倍數與大於等於、奇偶質合數與因數；花色與 A、人頭牌等、「不是」某種牌；轉盤的機率、硬幣與骰子的實驗機率、由實驗估計袋中球數、字母卡片。",advanced:"進階：三色球與「不是」、放入球後的機率、由機率反求球數；既是又是與都不是、質數與完全平方數、任意範圍的倍數；兩個倍數與大於等於、奇偶質合數與因數、特殊骰子；人頭牌與數字牌、「不是」某種牌、取走四張後的機率；兩區的轉盤、圓心角含 x、捉放法估計魚數、母音與兩個字母。",challenge:"挑戰：放入球後的機率、由機率反求球數、要放入幾顆球；質數與完全平方數、任意範圍的倍數、「或」的倍數與個位數字；奇偶質合數與因數、特殊骰子、正多面體骰子；「不是」某種牌、取走四張後的機率、「或」事件；兩個轉盤比較、由機率反求圓心角、合併實驗結果、兩個單字合併、加入卡片後的機率。"},
+  units:[bag,numbers,dice,poker,spinner,experiment,letters],presets:{basic:{bag:2,numbers:2,dice:2,poker:2,spinner:2,experiment:2,letters:2},advanced:{bag:2,numbers:2,dice:2,poker:2,spinner:2,experiment:2,letters:2},challenge:{bag:2,numbers:2,dice:2,poker:2,spinner:2,experiment:2,letters:2}}};
 }
 
 function treediagramConfig(){
