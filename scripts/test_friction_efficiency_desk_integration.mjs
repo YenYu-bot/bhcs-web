@@ -1,7 +1,7 @@
 // Frozen accepted runtime, independent existing-file protection and additive integration.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import http from 'node:http';import {fileURLToPath} from 'node:url';import {execFileSync} from 'node:child_process';
-import {legacy,firstBatch,standalonePublic} from './science/catalog.mjs';import {ciJobs} from './ci_workflow_test_support.mjs';
+import {checkExistingFiles} from './protected-existing-files.mjs';import {legacy,firstBatch,standalonePublic} from './science/catalog.mjs';import {ciJobs} from './ci_workflow_test_support.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),runtime=path.join(root,'tools/friction-efficiency-desk');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]);
@@ -19,11 +19,7 @@ assert.equal(m.ported_tests.length,4);
 for(const f of m.ported_tests){let s=read('scripts/friction-efficiency-desk/'+f.path);for(const[a,b]of [...f.replacements].reverse())s=s.split(b).join(a);assert.equal(sha(s),f.source_sha256,'original test bodies retained '+f.path);}
 // Every pre-existing tools/assets blob is protected, including the released incline.
 // Git inventory avoids exposing unpublished station names in a new public manifest.
-let protectedCount=0;
-for(const line of execFileSync('git',['ls-tree','-r',m.baseline_commit,'--','tools','assets'],{cwd:root,encoding:'utf8'}).trim().split('\n')){
- const match=/^([0-9]+) blob ([a-f0-9]{40})\t(.+)$/.exec(line);assert(match,'baseline regular blob');const[,mode,hash,file]=match;if(file==='tools/science/index.html')continue;
- const b=fs.readFileSync(path.join(root,file)),actual=crypto.createHash('sha1').update(Buffer.from(`blob ${b.length}\0`)).update(b).digest('hex');assert.equal(actual,hash,'unchanged existing source '+file);protectedCount++;
-}
+const {protectedCount}=checkExistingFiles({root,baselineCommit:m.baseline_commit,skip:['tools/science/index.html']});
 assert(protectedCount>=639,'complete released tools/assets inventory');
 const img=fs.readFileSync(path.join(runtime,'assets/teacher-body-v3.png'));assert.equal(sha(img),'2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b');assert.deepEqual([img.readUInt32BE(16),img.readUInt32BE(20)],[948,1659]);
 assert.equal(standalonePublic.filter(t=>t.file==='friction-efficiency-desk/').length,1);assert.equal(standalonePublic.length,7);assert(!legacy.some(t=>t.file==='friction-efficiency-desk/'));assert(!firstBatch.includes('friction-efficiency-desk/'));

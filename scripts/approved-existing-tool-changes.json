@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "purpose": "Explicit, reviewed changes to pre-existing tools/ and assets/ files after a station integration froze them. Each entry pins the exact baseline and replacement Git blobs; any other difference still fails.",
+  "changes": [
+    {
+      "path": "tools/math/g9-1-4-trig-ratio.html",
+      "baseline_blob": "18e223c8db81dca9228963715f94adc43c5c70ab",
+      "approved_blob": "3844fdc039daa49f7a0f5bddba6ed0dde60959b7",
+      "reason": "Correctness fix: topic-1 question text, figure side labels and answer key now share one AB/BC/AC assignment (63% of figures were swapped; 14% of answers contradicted the text).",
+      "pull_request": 185
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "cf1c49418785f084366673d9cdb07abe5b68c2f1",
+      "approved_blob": "c51048d42a49ca0113b8f9bd7594a9eb67ae81b6",
+      "reason": "Finite question banks: count inputs are capped to the declared bank at the current level with a visible note, and any unit that still comes up short is reported in the on-page status.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "6709fc2a4023ed5d75494cf27e46e85191f5ef3c",
+      "approved_blob": "35fdb6c7ed1a9d59c9a770e4ce331adda9181c5a",
+      "reason": "Curriculum alignment: six 國一 function units beyond the junior-high curriculum (quadratic, piecewise, replacement, composite, nested) are labelled 進階 and removed from the basic/advanced presets; level notes explain why.",
+      "pull_request": null
+    }
+  ]
+}
