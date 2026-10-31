@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["arithmetic","分數與小數四則運算"],["simplify","四則簡化計算"],["unknown","解未知數"],["time","時間的計算與化聚"],["gcd","最大公因數與最小公倍數"],["ratio","比、比例式與百分率"],["units","單位換算"],["area","周長與面積"],["circle","圓周長與圓面積"],["volume","體積與表面積"],["speed","速率"],["basecompare","基準量與比較量"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"arithmetic",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["arithmetic","分數與小數四則運算"],["simplify","四則簡化計算"],["unknown","解未知數"],["time","時間的計算與化聚"],["gcd","最大公因數與最小公倍數"],["ratio","比、比例式與百分率"],["units","單位換算"],["area","周長與面積"],["circle","圓周長與圓面積"],["volume","體積與表面積"],["speed","速率"],["basecompare","基準量與比較量"],["scale","放大、縮小與比例尺"],["pattern","規律與怎樣解題"],["charts","統計圖與可能性"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"arithmetic",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -711,7 +711,228 @@ function gcdConfig(){
 }
 
 /* 難度定義：基礎＝小數值與單一步驟；進階＝多步驟並加入分數、小數；挑戰＝多項、括號或綜合應用。各主題的數值範圍與題型差異另列於 CFG.levels。 */
-const CONFIGS={arithmetic:arithmeticConfig,ratio:ratioConfig,time:timeConfig,unknown:unknownConfig,simplify:simplifyConfig,gcd:gcdConfig,units:unitsConfig,area:areaConfig,circle:circleConfig,volume:volumeConfig,speed:speedConfig,basecompare:basecompareConfig},CFG=CONFIGS[TOPIC_KEY]();
+function scaleConfig(){
+ /* 放大、縮小與比例尺（2026-10-31，Claude）。108 課綱 S-6-1 放大與縮小、S-6-2 地圖比例尺。
+    題目一律由答案反推：先定比例尺與圖上距離，再算實際距離，題面數值都是整數或有限小數。
+    verify 走另一條算法（反向換算或改用公分重算）。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer"],gen});
+ const show=v=>v.d===1?String(v.n):decHTML(v);
+ const N0=[100,200,500,1000],N1=[200,500,1000,2000,5000,10000],NK=[100000,200000,250000,500000,1000000];
+ const ratio=n=>`1：${n}`;
+ // ① 放大與縮小
+ const enlarge=unit("enlarge","放大與縮小","放大或縮小時，每一邊都乘（或除以）相同的倍數；角度不會改變。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["up","down","angle"]):L===1?pick(["up","down","factor","angle"]):pick(["perimeter","chain","back","factor"]);
+  const shape=pick([["長方形","長","寬"],["平行四邊形","底","高"]]);
+  if(kind==="up"){const a=rand(2,15),b=rand(2,15),k=rand(2,L?6:4);if(a===b)return null;return{expr:`一個${shape[0]}的${shape[1]}是 ${a} 公分、${shape[2]}是 ${b} 公分，放大為 ${k} 倍後，${shape[1]}和${shape[2]}各是多少公分？`,answer:`${shape[1]} ${a*k} 公分，${shape[2]} ${b*k} 公分`,sig:`up:${shape[0]}:${a}:${b}:${k}`,verify:()=>(a*k)/k===a&&(b*k)%k===0}}
+  if(kind==="down"){const k=rand(2,5),a=rand(2,12),b=rand(2,12);if(a===b)return null;return{expr:`一個${shape[0]}的${shape[1]}是 ${a*k} 公分、${shape[2]}是 ${b*k} 公分，縮小為原來的 ${k} 分之 1 後，${shape[1]}和${shape[2]}各是多少公分？`,answer:`${shape[1]} ${a} 公分，${shape[2]} ${b} 公分`,sig:`down:${shape[0]}:${a}:${b}:${k}`,verify:()=>a*k/k===a&&b*k/k===b}}
+  if(kind==="angle"){const x=rand(30,80),y=rand(30,80),z=180-x-y,k=rand(2,6),up=Math.random()<.5;if(z<20)return null;const big=Math.max(x,y,z);return{expr:`一個三角形的三個角是 ${x}°、${y}°、${z}°，${up?`放大為 ${k} 倍`:`縮小為原來的 ${k} 分之 1`}後，最大的角是幾度？`,answer:`${big}°（角度不變）`,sig:`ang:${x}:${y}:${up?"u":"d"}${k}`,verify:()=>x+y+z===180&&big>=x&&big>=y&&big>=z}}
+  if(kind==="factor"){const a=rand(2,12),k=rand(2,L===2?9:6),sq=Math.random()<.5;return{expr:sq?`一個正方形的邊長是 ${a} 公分，放大後邊長變成 ${a*k} 公分，是放大為幾倍？`:`一張照片寬 ${a*k} 公分，縮小後寬變成 ${a} 公分，是縮小為原來的幾分之幾？`,answer:sq?`${k} 倍`:`${k} 分之 1`,sig:`fac:${sq?"s":"p"}:${a}:${k}`,verify:()=>(a*k)/a===k}}
+  if(kind==="perimeter"){const a=rand(3,15),b=rand(2,12),k=rand(2,6);if(a===b)return null;const p=2*(a+b)*k;return{expr:`一個長方形長 ${a} 公分、寬 ${b} 公分，放大為 ${k} 倍後，周長是多少公分？`,answer:`${p} 公分`,sig:`per:${a}:${b}:${k}`,verify:()=>2*(a*k+b*k)===p}}
+  if(kind==="chain"){const k1=rand(2,6),k2=rand(2,5),m=rand(2,9),a=m*k2;if(k1===k2)return null;const r=a*k1/k2;return{expr:`一條線段長 ${a} 公分，先放大為 ${k1} 倍，再縮小為原來的 ${k2} 分之 1，最後長多少公分？`,answer:`${r} 公分`,sig:`chain:${a}:${k1}:${k2}`,verify:()=>Number.isInteger(r)&&r*k2===a*k1}}
+  const a=rand(2,15),k=rand(2,8);return{expr:`一個三角形放大為 ${k} 倍後，底是 ${a*k} 公分，原來的底是多少公分？`,answer:`${a} 公分`,sig:`back:${a}:${k}`,verify:()=>a*k/k===a}});
+ // ② 比例尺的表示
+ const notation=unit("notation","比例尺的表示","比例尺 1：N 表示圖上 1 公分代表實際 N 公分；1 公尺＝100 公分，1 公里＝100000 公分。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["toM","toRatioM","toKm"]):L===1?pick(["toM","toKm","toRatioKm","toRatioM"]):pick(["multi","compare","toRatioKm","multiM"]);
+  if(kind==="toM"){const n=pick(L?N1:N0)*rand(1,9);return{expr:`比例尺 ${ratio(n)} 表示圖上 1 公分代表實際多少公尺？`,answer:`${show(R(n,100))} 公尺`,sig:`tm:${n}`,verify:()=>eq(mul(R(n,100),R(100)),R(n))}}
+  if(kind==="toKm"){const n=pick(NK);return{expr:`地圖的比例尺是 ${ratio(n)}，圖上 1 公分代表實際多少公里？`,answer:`${show(R(n,100000))} 公里`,sig:`tk:${n}`,verify:()=>eq(mul(R(n,100000),R(100000)),R(n))}}
+  if(kind==="toRatioM"){const m=pick([1,2,5,10,20,50])*rand(1,L?6:3);return{expr:`平面圖上 1 公分代表實際 ${m} 公尺，比例尺是多少？`,answer:ratio(m*100),sig:`rm:${m}`,verify:()=>m*100/100===m}}
+  if(kind==="toRatioKm"){const k=pick([1,2,3,4,5,8,10,20,25,50]);return{expr:`地圖上 1 公分代表實際 ${k} 公里，比例尺是多少？`,answer:ratio(k*100000),sig:`rk:${k}`,verify:()=>(k*100000)/100000===k}}
+  if(kind==="multi"){const c=rand(2,5),k=pick([1,2,3,4,5,10]),n=k*100000;return{expr:`地圖上 ${c} 公分代表實際 ${c*k} 公里，這張地圖的比例尺是多少？`,answer:ratio(n),sig:`mk:${c}:${k}`,verify:()=>c*n===c*k*100000}}
+  if(kind==="multiM"){const c=rand(2,6),m=pick([2,5,10,20,50]);return{expr:`校園平面圖上 ${c} 公分代表實際 ${c*m} 公尺，比例尺是多少？`,answer:ratio(m*100),sig:`mm:${c}:${m}`,verify:()=>c*m*100/c===m*100}}
+  const a=pick(NK),b=pick(NK.concat([50000,20000]));if(a===b)return null;const near=a<b?"甲":"乙";return{expr:`甲地圖的比例尺是 ${ratio(a)}，乙地圖的比例尺是 ${ratio(b)}。同樣兩地的距離，畫在哪一張地圖上比較長？`,answer:`${near}地圖`,sig:`cmp:${a}:${b}`,verify:()=>(near==="甲")===(100000/a>100000/b)}});
+ // ③ 圖上距離求實際距離
+ const toReal=unit("toreal","圖上距離求實際距離","實際距離＝圖上距離 × N（單位是公分），再換成公尺或公里。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["mapKm","planM","schoolM"]):L===1?pick(["mapKmDec","planMDec","mapM"]):pick(["twoSeg","mapKmDec","back"]);
+  if(kind==="mapKm"||kind==="mapKmDec"){const n=pick(NK),d=kind==="mapKm"?R(rand(2,12)):R(rand(1,9)*10+5,10),km=div(mul(d,R(n)),R(100000));return{expr:`在比例尺 ${ratio(n)} 的地圖上，兩地相距 ${show(d)} 公分，實際距離是多少公里？`,answer:`${show(km)} 公里`,sig:`mk:${n}:${plain(d)}`,verify:()=>eq(div(mul(km,R(100000)),R(n)),d)}}
+  if(kind==="planM"||kind==="planMDec"){const n=pick(N0),d=kind==="planM"?R(rand(2,15)):R(rand(2,15)*10+5,10),m=div(mul(d,R(n)),R(100));return{expr:`${n===100?"房屋平面圖的比例尺是 "+ratio(n)+"，客廳":"公園平面圖的比例尺是 "+ratio(n)+"，一條步道"}在圖上長 ${show(d)} 公分，實際長多少公尺？`,answer:`${show(m)} 公尺`,sig:`pm:${n}:${plain(d)}`,verify:()=>eq(div(mul(m,R(100)),R(n)),d)}}
+  if(kind==="schoolM"){const n=pick([1000,2000,5000]),d=rand(2,9),m=d*n/100;return{expr:`校園地圖的比例尺是 ${ratio(n)}，操場跑道在圖上長 ${d} 公分，實際長多少公尺？`,answer:`${m} 公尺`,sig:`sm:${n}:${d}`,verify:()=>m*100/n===d}}
+  if(kind==="mapM"){const n=pick([10000,20000,25000,50000]),d=rand(2,12),m=d*n/100;return{expr:`社區地圖的比例尺是 ${ratio(n)}，家到學校在圖上是 ${d} 公分，實際是多少公尺？`,answer:`${m} 公尺`,sig:`mm:${n}:${d}`,verify:()=>m*100/n===d}}
+  if(kind==="twoSeg"){const n=pick(NK),a=R(rand(1,6)*10+5,10),b=R(rand(2,8)),tot=div(mul(add(a,b),R(n)),R(100000));return{expr:`在比例尺 ${ratio(n)} 的地圖上，從家到車站 ${show(a)} 公分，車站到博物館 ${show(b)} 公分，實際總共是多少公里？`,answer:`${show(tot)} 公里`,sig:`two:${n}:${plain(a)}:${plain(b)}`,verify:()=>eq(add(div(mul(a,R(n)),R(100000)),div(mul(b,R(n)),R(100000))),tot)}}
+  const n=pick([200000,250000,500000]),d=R(rand(2,10)*10+5,10),m=div(mul(d,R(n)),R(100));return{expr:`在比例尺 ${ratio(n)} 的地圖上量得兩鎮相距 ${show(d)} 公分，實際相距多少公尺？`,answer:`${show(m)} 公尺`,sig:`bm:${n}:${plain(d)}`,verify:()=>eq(div(m,R(1000)),div(mul(d,R(n)),R(100000)))}});
+ // ④ 實際距離求圖上距離
+ const toMap=unit("tomap","實際距離求圖上距離","圖上距離＝實際距離（先化成公分）÷ N。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["km","m","model"]):L===1?pick(["kmDec","m","model"]):pick(["kmDec","fit","model2"]);
+  if(kind==="km"||kind==="kmDec"){const n=pick(NK),d=kind==="km"?R(rand(2,12)):R(rand(1,9)*10+5,10),km=div(mul(d,R(n)),R(100000));if(km.d!==1&&places(km)>1)return null;return{expr:`兩城市實際相距 ${show(km)} 公里，畫在比例尺 ${ratio(n)} 的地圖上是多少公分？`,answer:`${show(d)} 公分`,sig:`k:${n}:${plain(d)}`,verify:()=>eq(div(mul(km,R(100000)),R(n)),d)}}
+  if(kind==="m"){const n=pick(N1),d=rand(2,15),m=d*n/100;return{expr:`一條步道實際長 ${m} 公尺，畫在比例尺 ${ratio(n)} 的地圖上是多少公分？`,answer:`${d} 公分`,sig:`m:${n}:${d}`,verify:()=>m*100/n===d}}
+  if(kind==="model"){const n=pick([50,100,200,500]),d=rand(2,20),m=div(R(d*n),R(100));return{expr:`一棟大樓實際高 ${show(m)} 公尺，用比例尺 ${ratio(n)} 做成模型，模型高多少公分？`,answer:`${d} 公分`,sig:`mo:${n}:${d}`,verify:()=>eq(div(mul(m,R(100)),R(n)),R(d))}}
+  if(kind==="model2"){const n=pick([20,25,50,100]),w=rand(2,12),h=rand(2,12),mw=div(R(w*n),R(100)),mh=div(R(h*n),R(100));if(w===h)return null;return{expr:`一個長方形花圃實際長 ${show(mw)} 公尺、寬 ${show(mh)} 公尺，用比例尺 ${ratio(n)} 畫在紙上，長和寬各是多少公分？`,answer:`長 ${w} 公分，寬 ${h} 公分`,sig:`mo2:${n}:${w}:${h}`,verify:()=>eq(div(mul(mw,R(100)),R(n)),R(w))&&eq(div(mul(mh,R(100)),R(n)),R(h))}}
+  const n=pick(NK),paper=rand(15,28),t=rand(paper*10-40,paper*10+40),d=R(t,10),km=div(mul(d,R(n)),R(100000)),fits=t<=paper*10;if(places(km)>1)return null;return{expr:`兩地實際相距 ${show(km)} 公里，用比例尺 ${ratio(n)} 畫在長 ${paper} 公分的紙上，畫得下嗎？圖上距離是多少公分？`,answer:`${fits?"畫得下":"畫不下"}，圖上 ${show(d)} 公分`,sig:`fit:${n}:${paper}:${t}`,verify:()=>{const back=div(mul(km,R(100000)),R(n));return eq(back,d)&&fits===(back.n*1<=paper*back.d)}}});
+ // ⑤ 求比例尺
+ const findScale=unit("findscale","求比例尺","比例尺＝圖上距離：實際距離；先把實際距離化成公分，再化成 1：N。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["km","m","model"]):L===1?pick(["km","mDec","model","m"]):pick(["kmDec","mDec","area"]);
+  if(kind==="km"||kind==="kmDec"){const n=pick(NK),d=kind==="km"?rand(2,10):rand(1,9)*10+5,dd=kind==="km"?R(d):R(d,10),km=div(mul(dd,R(n)),R(100000));if(places(km)>1)return null;return{expr:`地圖上 ${show(dd)} 公分代表實際 ${show(km)} 公里，比例尺是多少？`,answer:ratio(n),sig:`k:${n}:${plain(dd)}`,verify:()=>eq(div(mul(km,R(100000)),dd),R(n))}}
+  if(kind==="m"||kind==="mDec"){const n=pick(N1),dd=kind==="m"?R(rand(2,12)):R(rand(2,12)*10+5,10),m=div(mul(dd,R(n)),R(100));return{expr:`公園導覽圖上 ${show(dd)} 公分代表實際 ${show(m)} 公尺，比例尺是多少？`,answer:ratio(n),sig:`m:${n}:${plain(dd)}`,verify:()=>eq(div(mul(m,R(100)),dd),R(n))}}
+  if(kind==="model"){const n=pick([10,20,50,100,200]),d=rand(3,25),m=div(R(d*n),R(100));return{expr:`一輛火車實際長 ${show(m)} 公尺，模型長 ${d} 公分，模型的比例尺是多少？`,answer:ratio(n),sig:`mo:${n}:${d}`,verify:()=>eq(div(mul(m,R(100)),R(d)),R(n))}}
+  const n=pick([100,200,500]),w=rand(2,9),h=rand(2,9),area=(w*n/100)*(h*n/100);if(w===h)return null;return{expr:`一塊長方形土地畫在平面圖上長 ${w} 公分、寬 ${h} 公分，實際長 ${w*n/100} 公尺，比例尺是多少？實際面積是多少平方公尺？`,answer:`${ratio(n)}，${area} 平方公尺`,sig:`ar:${n}:${w}:${h}`,verify:()=>area===w*h*n*n/10000}});
+ // ⑥ 比例尺綜合
+ const mixedUse=unit("scalemix","比例尺綜合應用","先算出實際長度，再求周長、面積或另一張地圖上的長度；面積要用實際的長和寬相乘。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["perimeter","side","twoMaps"]):L===1?pick(["perimeter","area","twoMaps","walk"]):pick(["area","twoMaps","walk","areaBack"]);
+  if(kind==="perimeter"){const n=pick(N0),a=rand(3,12),b=rand(2,10);if(a===b)return null;const p=2*(a+b)*n/100;return{expr:`比例尺 ${ratio(n)} 的平面圖上，長方形公園長 ${a} 公分、寬 ${b} 公分，公園實際周長是多少公尺？`,answer:`${p} 公尺`,sig:`p:${n}:${a}:${b}`,verify:()=>p===2*(a*n/100+b*n/100)}}
+  if(kind==="side"){const n=pick(N0),a=rand(2,15),m=a*n/100;return{expr:`比例尺 ${ratio(n)} 的平面圖上，${n===100?"正方形教室":"正方形廣場"}邊長 ${a} 公分，${n===100?"教室":"廣場"}實際邊長是多少公尺？`,answer:`${m} 公尺`,sig:`s:${n}:${a}`,verify:()=>m*100/n===a}}
+  if(kind==="twoMaps"){const n1=pick([100000,200000,250000]),k=L===0?2:pick([2,4,5]),n2=n1*k,d2=rand(2,8),d1=d2*k;return{expr:`兩地在比例尺 ${ratio(n1)} 的地圖上相距 ${d1} 公分，在比例尺 ${ratio(n2)} 的地圖上相距多少公分？`,answer:`${d2} 公分`,sig:`tm:${n1}:${k}:${d2}`,verify:()=>d1*n1===d2*n2}}
+  if(kind==="area"){const n=pick([100,200,500]),a=rand(2,9),b=rand(2,9);if(a===b)return null;const A=(a*n/100)*(b*n/100);return{expr:`比例尺 ${ratio(n)} 的平面圖上，長方形菜園長 ${a} 公分、寬 ${b} 公分，菜園實際面積是多少平方公尺？`,answer:`${A} 平方公尺`,sig:`a:${n}:${a}:${b}`,verify:()=>A*10000===a*b*n*n}}
+  if(kind==="walk"){const n=pick([10000,20000,25000,50000]),d=rand(2,9),v=pick([50,60,75,80,100]),m=d*n/100;if(m%v)return null;return{expr:`社區地圖的比例尺是 ${ratio(n)}，家到公園在圖上是 ${d} 公分。小明分速 ${v} 公尺，走到公園要幾分鐘？`,answer:`${m/v} 分鐘`,sig:`w:${n}:${d}:${v}`,verify:()=>(m/v)*v*100/n===d}}
+  const n=pick([100,200,500]),s=rand(2,12),side=s*n/100,A=side*side;return{expr:`一塊正方形空地實際面積是 ${A} 平方公尺，畫在比例尺 ${ratio(n)} 的平面圖上，邊長是多少公分？`,answer:`${s} 公分`,sig:`ab:${n}:${s}`,verify:()=>Math.sqrt(A)*100/n===s}});
+ return{title:"放大、縮小與比例尺",symbol:"⤢",subtitle:"放大與縮小・比例尺的表示・圖上距離與實際距離互求・求比例尺・綜合應用",instruction:"比例尺 1：N 表示圖上 1 公分代表實際 N 公分；先統一單位再計算，答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：整數倍放大縮小、角度不變；1：N 與「1 公分代表多少」互換；整數公分的圖上距離。",advanced:"進階：求放大倍數；公里與公尺的比例尺；圖上距離含 0.5 公分；模型比例尺；實際面積。",challenge:"挑戰：放大後的周長、先放大再縮小；比較兩張地圖；兩段路程、畫不畫得下；兩種比例尺互換、走路時間、由面積反求圖上邊長。"},
+  units:[enlarge,notation,toReal,toMap,findScale,mixedUse],presets:{basic:{enlarge:2,notation:2,toreal:3,tomap:3,findscale:2,scalemix:2},advanced:{enlarge:2,notation:2,toreal:3,tomap:3,findscale:2,scalemix:3},challenge:{enlarge:2,notation:2,toreal:2,tomap:2,findscale:3,scalemix:3}}};
+}
+
+function patternConfig(){
+ /* 規律與怎樣解題（2026-10-31，Claude）。108 課綱 R-6-1 數的計算規律、R-6-2～R-6-4 數量關係與列式解題、N-6-9。
+    數列、圖形排列、植樹、週期四種規律題，加上和差與平均兩種常見解題。題目由答案反推；verify 用另一條算法回算（逐項列舉、代回條件）。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer"],gen});
+ const W=["日","一","二","三","四","五","六"],COLORS=["紅","黃","藍","綠","白","紫"];
+ // ① 數列規律
+ const seq=unit("sequence","數列規律","每次增加（或減少）相同的數：第 n 個數＝第 1 個數＋（n−1）× 每次增加的數。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["nth","fill","which"]):L===1?pick(["nth","which","down","fill"]):pick(["gap","first","downWhich","nth"]);
+  const a=rand(1,L?30:12),d=rand(2,L?12:6),term=n=>a+(n-1)*d;
+  if(kind==="nth"){const n=rand(8,L===2?80:L?40:20);return{expr:`依規律排列：${[1,2,3,4].map(term).join("、")}、…，第 ${n} 個數是多少？`,answer:String(term(n)),sig:`nth:${a}:${d}:${n}`,verify:()=>{let x=a;for(let i=1;i<n;i++)x+=d;return x===term(n)}}}
+  if(kind==="fill"){const pos=rand(2,5),list=[1,2,3,4,5,6].map(i=>i===pos?"□":String(term(i)));return{expr:`依規律在 □ 中填入適當的數：${list.join("、")}`,answer:String(term(pos)),sig:`fill:${a}:${d}:${pos}`,verify:()=>term(pos)-term(pos-1)===d&&term(pos+1)-term(pos)===d}}
+  if(kind==="which"){const n=rand(6,L?40:20),x=term(n);return{expr:`依規律排列：${[1,2,3,4].map(term).join("、")}、…，${x} 是第幾個數？`,answer:`第 ${n} 個`,sig:`which:${a}:${d}:${n}`,verify:()=>(x-a)/d+1===n}}
+  if(kind==="down"){const n=rand(5,15),start=d*n+rand(1,20),t=i=>start-(i-1)*d;return{expr:`依規律排列：${[1,2,3,4].map(t).join("、")}、…，第 ${n} 個數是多少？`,answer:String(t(n)),sig:`down:${start}:${d}:${n}`,verify:()=>{let x=start;for(let i=1;i<n;i++)x-=d;return x===t(n)}}}
+  if(kind==="gap"){const m=rand(20,60),n=rand(5,m-5);return{expr:`依規律排列：${[1,2,3,4].map(term).join("、")}、…，第 ${m} 個數比第 ${n} 個數多多少？`,answer:String(term(m)-term(n)),sig:`gap:${a}:${d}:${m}:${n}`,verify:()=>(m-n)*d===term(m)-term(n)}}
+  if(kind==="first"){const X=rand(100,400),n=Math.floor((X-a)/d)+2;return{expr:`依規律排列：${[1,2,3,4].map(term).join("、")}、…，第幾個數開始超過 ${X}？`,answer:`第 ${n} 個`,sig:`first:${a}:${d}:${X}`,verify:()=>term(n)>X&&term(n-1)<=X}}
+  const n=rand(6,20),start=d*n+rand(5,30),t=i=>start-(i-1)*d,x=t(n);if(x<=0)return null;return{expr:`依規律排列：${[1,2,3,4].map(t).join("、")}、…，${x} 是第幾個數？`,answer:`第 ${n} 個`,sig:`dw:${start}:${d}:${n}`,verify:()=>(start-x)/d+1===n}});
+ // ② 圖形排列
+ const SH=[["正方形",3],["三角形",2],["正五邊形",4],["正六邊形",5]];
+ const sticks=unit("sticks","圖形排列","先看第 1 個用幾根，之後每多一個要再加幾根：總根數＝第 1 個的根數＋（個數−1）× 每次增加的根數。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["count","tables","countB"]):L===1?pick(["count","inverse","tables","tablesInv"]):pick(["left","tablesInv","inverse","longTable"]);
+  const [name,add1]=pick(L?SH:SH.slice(0,2)),first=add1+1,need=n=>first+(n-1)*add1;
+  if(kind==="count"||kind==="countB"){const n=rand(4,L?40:15);return{expr:kind==="count"?`用火柴棒排一排${name}，排 1 個要 ${first} 根，排 2 個要 ${need(2)} 根。排 ${n} 個要幾根？`:`用牙籤把${name}一個接一個排成一排，排 ${n} 個${name}共需要幾根牙籤？`,answer:`${need(n)} 根`,sig:`${kind}:${name}:${n}`,verify:()=>{let s=first;for(let i=2;i<=n;i++)s+=add1;return s===need(n)}}}
+  if(kind==="inverse"){const n=rand(6,L===2?60:30),t=need(n);return{expr:`用 ${t} 根火柴棒排成一排${name}（相鄰的${name}共用一邊），剛好用完，共排了幾個？`,answer:`${n} 個`,sig:`inv:${name}:${n}`,verify:()=>(t-first)/add1+1===n}}
+  if(kind==="tables"){const n=rand(3,L?20:12);return{expr:`方桌一張可坐 4 人，把 ${n} 張方桌併成一長排，最多可以坐幾人？`,answer:`${2*n+2} 人`,sig:`tab:${n}`,verify:()=>4+(n-1)*2===2*n+2}}
+  if(kind==="tablesInv"){const p=rand(12,60),n=Math.ceil((p-2)/2);return{expr:`方桌一張可坐 4 人，併成一長排後要讓 ${p} 人都坐得下，至少要併幾張？`,answer:`${n} 張`,sig:`tinv:${p}`,verify:()=>2*n+2>=p&&2*(n-1)+2<p}}
+  if(kind==="longTable"){const s=pick([6,8]),side=(s-2)/2,n=rand(3,15),seats=s+(n-1)*side*2;return{expr:`長桌一張可坐 ${s} 人（長邊各 ${side} 人、短邊各 1 人），把 ${n} 張長桌的短邊接起來併成一排，最多可以坐幾人？`,answer:`${seats} 人`,sig:`long:${s}:${n}`,verify:()=>seats===2*side*n+2}}
+  const t=rand(30,150),n=Math.floor((t-first)/add1)+1,left=t-need(n);if(n<2)return null;return{expr:`有 ${t} 根火柴棒，排成一排${name}（相鄰的${name}共用一邊），最多可以排幾個？還剩幾根？`,answer:`${n} 個，剩 ${left} 根`,sig:`left:${name}:${t}`,verify:()=>left>=0&&left<add1&&need(n)+left===t}});
+ // ③ 植樹問題
+ const trees=unit("trees","植樹問題","先算有幾個間隔（全長÷間隔）；兩端都種：棵數＝間隔數＋1；只種一端或圍成一圈：棵數＝間隔數；兩端都不種：棵數＝間隔數−1。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["both","one","ring","none"]):L===1?pick(["both","none","ring","lengthBack","gapBack"]):pick(["twoSides","ringBack","gapBack","lamps"]);
+  const g=pick([2,3,4,5,6,8,10,12,15,20]),k=rand(5,L?40:20),len=g*k;
+  if(kind==="both")return{expr:`一條長 ${len} 公尺的步道，在一邊每隔 ${g} 公尺種一棵樹，兩端都要種，共種幾棵？`,answer:`${k+1} 棵`,sig:`both:${g}:${k}`,verify:()=>len/g+1===k+1};
+  if(kind==="one")return{expr:`一條長 ${len} 公尺的圍牆邊，每隔 ${g} 公尺插一面旗子，起點插、終點不插，共插幾面？`,answer:`${k} 面`,sig:`one:${g}:${k}`,verify:()=>len/g===k};
+  if(kind==="none")return{expr:`兩棟大樓相距 ${len} 公尺，中間每隔 ${g} 公尺放一個花盆，兩端緊靠大樓處不放，共放幾個？`,answer:`${k-1} 個`,sig:`none:${g}:${k}`,verify:()=>len/g-1===k-1};
+  if(kind==="ring")return{expr:`圓形池塘一圈長 ${len} 公尺，沿著池塘每隔 ${g} 公尺種一棵樹，共種幾棵？`,answer:`${k} 棵`,sig:`ring:${g}:${k}`,verify:()=>len/g===k};
+  if(kind==="lengthBack")return{expr:`在一條路的一邊每隔 ${g} 公尺種一棵樹，兩端都種，共種了 ${k+1} 棵，這條路長多少公尺？`,answer:`${len} 公尺`,sig:`lb:${g}:${k}`,verify:()=>(k+1-1)*g===len};
+  if(kind==="gapBack")return{expr:`一條長 ${len} 公尺的路，一邊從頭到尾等距種樹，兩端都種，共種了 ${k+1} 棵，每兩棵相距多少公尺？`,answer:`${g} 公尺`,sig:`gb:${g}:${k}`,verify:()=>len/(k+1-1)===g};
+  if(kind==="twoSides")return{expr:`一條長 ${len} 公尺的馬路，兩邊都每隔 ${g} 公尺種一棵樹，兩端都種，共種幾棵？`,answer:`${2*(k+1)} 棵`,sig:`two:${g}:${k}`,verify:()=>2*(len/g+1)===2*(k+1)};
+  if(kind==="ringBack")return{expr:`沿著一圈 ${len} 公尺的跑道等距插旗，共插了 ${k} 面，每兩面相距多少公尺？`,answer:`${g} 公尺`,sig:`rb:${g}:${k}`,verify:()=>len/k===g};
+  const h=g*pick([2,3,4]),lampGap=h/g;if(len%h)return null;const lamps=len/h+1,treesN=k+1-lamps;return{expr:`一條長 ${len} 公尺的路，一邊每隔 ${h} 公尺立一盞路燈（兩端都立），兩盞路燈之間再每隔 ${g} 公尺種一棵樹（有路燈的地方不種），共種幾棵樹？`,answer:`${treesN} 棵`,sig:`lamp:${g}:${h}:${k}`,verify:()=>treesN===(len/h)*(lampGap-1)}});
+ // ④ 週期問題
+ const cycle=unit("cycle","週期問題","找出一組重複的長度，用「第幾個 ÷ 一組的個數」看餘數；餘 0 表示是一組的最後一個。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["week","color","weekBack"]):L===1?pick(["week","color","count","month"]):pick(["count","range","month","weekLong"]);
+  if(kind==="week"||kind==="weekLong"){const t=rand(0,6),n=kind==="week"?rand(8,L?60:30):rand(60,365);return{expr:`今天是星期${W[t]}，再過 ${n} 天是星期幾？`,answer:`星期${W[(t+n)%7]}`,sig:`w:${t}:${n}`,verify:()=>{let x=t;for(let i=0;i<n;i++)x=(x+1)%7;return W[x]===W[(t+n)%7]}}}
+  if(kind==="weekBack"){const t=rand(0,6),n=rand(8,30);return{expr:`今天是星期${W[t]}，${n} 天前是星期幾？`,answer:`星期${W[((t-n)%7+7)%7]}`,sig:`wb:${t}:${n}`,verify:()=>(((t-n)%7+7)%7+n)%7===t}}
+  const len=rand(3,L?5:4),pat=shuffle(COLORS).slice(0,len),patText=`「${pat.join("、")}」`;
+  if(kind==="color"){const n=rand(10,L?150:60);return{expr:`珠子依照${patText}的順序重複串成一條，第 ${n} 顆是什麼顏色？`,answer:`${pat[(n-1)%len]}色`,sig:`c:${pat.join("")}:${n}`,verify:()=>{const seqC=[];for(let i=0;i<n;i++)seqC.push(pat[i%len]);return seqC[n-1]===pat[(n-1)%len]}}}
+  if(kind==="count"){const n=rand(20,L===2?200:100),tgt=pick(pat),idx=pat.indexOf(tgt),cnt=Math.floor(n/len)+((n%len)>idx?1:0);return{expr:`珠子依照${patText}的順序重複串成一條，前 ${n} 顆中有幾顆${tgt}色？`,answer:`${cnt} 顆`,sig:`n:${pat.join("")}:${n}:${tgt}`,verify:()=>{let c=0;for(let i=0;i<n;i++)if(pat[i%len]===tgt)c++;return c===cnt}}}
+  if(kind==="range"){const a=rand(5,40),b=a+rand(15,60),tgt=pick(pat);let c=0;for(let i=a;i<=b;i++)if(pat[(i-1)%len]===tgt)c++;const f=n=>{const idx=pat.indexOf(tgt);return Math.floor(n/len)+((n%len)>idx?1:0)};return{expr:`燈泡依照${patText}的順序重複排列，從第 ${a} 個到第 ${b} 個（含頭尾）中有幾個${tgt}色燈泡？`,answer:`${c} 個`,sig:`r:${pat.join("")}:${a}:${b}:${tgt}`,verify:()=>f(b)-f(a-1)===c}}
+  const t=rand(0,6),day=rand(8,31);return{expr:`某個月的 1 日是星期${W[t]}，同一個月的 ${day} 日是星期幾？`,answer:`星期${W[(t+day-1)%7]}`,sig:`m:${t}:${day}`,verify:()=>(t+day-1-7*Math.floor((t+day-1)/7))===(t+day-1)%7}});
+ // ⑤ 和差問題
+ const sumdiff=unit("sumdiff","和差問題","大數＝（和＋差）÷2，小數＝（和−差）÷2；先畫線段圖找出「和」與「差」。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["nums","age","money"]):L===1?pick(["nums","rect","age","money"]):pick(["three","rect","times","moneyMove"]);
+  const small=rand(5,L?80:40),diff=rand(2,L?40:20),big=small+diff,S=small+big;
+  if(kind==="nums")return{expr:`兩數的和是 ${S}，差是 ${diff}，大數和小數各是多少？`,answer:`大數 ${big}，小數 ${small}`,sig:`n:${small}:${diff}`,verify:()=>big+small===S&&big-small===diff};
+  if(kind==="age"){const s=rand(3,15),d=rand(1,8);return{expr:`哥哥和弟弟的年齡和是 ${2*s+d} 歲，哥哥比弟弟大 ${d} 歲，弟弟幾歲？`,answer:`${s} 歲`,sig:`a:${s}:${d}`,verify:()=>s+(s+d)===2*s+d}}
+  if(kind==="money")return{expr:`姊姊和妹妹共有 ${S} 元，姊姊比妹妹多 ${diff} 元，姊姊有多少元？`,answer:`${big} 元`,sig:`m:${small}:${diff}`,verify:()=>(S+diff)/2===big};
+  if(kind==="rect"){const w=rand(3,30),d=rand(1,15),l=w+d,P=2*(l+w);return{expr:`一個長方形的周長是 ${P} 公分，長比寬多 ${d} 公分，長和寬各是多少公分？`,answer:`長 ${l} 公分，寬 ${w} 公分`,sig:`r:${w}:${d}`,verify:()=>(P/2+d)/2===l&&(P/2-d)/2===w}}
+  if(kind==="three"){const c=rand(10,60),b2=rand(3,20),a2=rand(3,20),b=c+b2,a=b+a2,T=a+b+c;return{expr:`甲、乙、丙三人共有 ${T} 元，甲比乙多 ${a2} 元，乙比丙多 ${b2} 元，丙有多少元？`,answer:`${c} 元`,sig:`t:${c}:${a2}:${b2}`,verify:()=>(T-(a2+b2)-b2)/3===c}}
+  if(kind==="times"){const s=rand(5,40),k=rand(2,5),r=rand(1,9),bg=k*s+r;return{expr:`兩數的和是 ${s+bg}，大數是小數的 ${k} 倍多 ${r}，小數是多少？`,answer:String(s),sig:`x:${s}:${k}:${r}`,verify:()=>(s+bg-r)/(k+1)===s}}
+  const give=rand(2,15),after=rand(20,80),x=after+give,y=after-give;if(y<=0)return null;return{expr:`甲、乙兩人共有 ${x+y} 元，甲給乙 ${give} 元後，兩人的錢一樣多。原來甲有多少元？`,answer:`${x} 元`,sig:`mv:${give}:${after}`,verify:()=>x-give===y+give&&x+y===2*after}});
+ // ⑥ 平均數問題
+ const average=unit("average","平均數問題","總數＝平均數×個數；平均數＝總數÷個數。缺一個數時，先用平均求總數，再減去已知的數。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["total","missing","mean"]):L===1?pick(["missing","newOne","mean","total"]):pick(["merge","target","newOne","remove"]);
+  if(kind==="total"){const n=rand(4,L?40:30),a=rand(30,95);return{expr:`${n} 位同學數學測驗的平均是 ${a} 分，全部同學的總分是多少分？`,answer:`${n*a} 分`,sig:`t:${n}:${a}`,verify:()=>(n*a)/n===a}}
+  if(kind==="mean"){const n=rand(3,6),a=rand(30,90),xs=Array.from({length:n},()=>a+rand(-12,12));const s=xs.reduce((p,q)=>p+q,0);if(s%n)return null;return{expr:`五年級各班募得的發票張數分別是 ${xs.join("、")} 張，平均每班募得幾張？`,answer:`${s/n} 張`,sig:`m:${xs.join(",")}`,verify:()=>xs.reduce((p,q)=>p+q,0)===s&&s/n*n===s}}
+  if(kind==="missing"){const n=rand(3,5),a=rand(70,90),known=Array.from({length:n},()=>a+rand(-10,10)),last=a*(n+1)-known.reduce((p,q)=>p+q,0);if(last<0||last>100)return null;return{expr:`小美前 ${n} 次測驗的成績是 ${known.join("、")} 分，${n+1} 次的平均是 ${a} 分，第 ${n+1} 次考了幾分？`,answer:`${last} 分`,sig:`x:${known.join(",")}:${a}`,verify:()=>(known.reduce((p,q)=>p+q,0)+last)/(n+1)===a}}
+  if(kind==="newOne"){const n=rand(4,20),a=rand(25,45),b=a+pick([1,-1])*rand(1,3),w=b*(n+1)-a*n;if(w<=0)return null;return{expr:`${n} 位同學的平均體重是 ${a} 公斤，又來了一位 ${w} 公斤的同學，現在平均體重是多少公斤？`,answer:`${b} 公斤`,sig:`nw:${n}:${a}:${w}`,verify:()=>(a*n+w)/(n+1)===b}}
+  if(kind==="merge"){const m=rand(8,20),f=rand(8,20),A=rand(60,95),c=rand(60,95),tot=m*A+f*c;if(tot%(m+f))return null;return{expr:`某班男生 ${m} 人平均 ${A} 分，女生 ${f} 人平均 ${c} 分，全班平均是多少分？`,answer:`${tot/(m+f)} 分`,sig:`mg:${m}:${f}:${A}:${c}`,verify:()=>(tot/(m+f))*(m+f)===m*A+f*c}}
+  if(kind==="target"){const n=rand(3,6),a=rand(70,88),up=rand(1,4),need=(a+up)*(n+1)-a*n;if(need>100)return null;return{expr:`小華前 ${n} 次測驗的平均是 ${a} 分，第 ${n+1} 次要考幾分，平均才會變成 ${a+up} 分？`,answer:`${need} 分`,sig:`tg:${n}:${a}:${up}`,verify:()=>(a*n+need)/(n+1)===a+up}}
+  const n=rand(5,12),a=rand(40,80),out=rand(20,100),b=(a*n-out)/(n-1);if(!Number.isInteger(b)||b<=0)return null;return{expr:`${n} 個數的平均是 ${a}，拿掉其中一個數 ${out} 後，剩下的數平均是多少？`,answer:String(b),sig:`rm:${n}:${a}:${out}`,verify:()=>b*(n-1)+out===a*n}});
+ return{title:"規律與怎樣解題",symbol:"⋯",subtitle:"數列規律・圖形排列・植樹問題・週期問題・和差問題・平均數問題",instruction:"先找出規律或畫線段圖，再列式計算，答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：等差數列第 n 個、填空；火柴棒與方桌；植樹四種情況；星期與顏色週期；兩數和差；平均與總數。",advanced:"進階：數字較大、遞減數列；反求個數、長度與間隔；顏色個數、月曆；長方形周長的和差；缺一次成績、多一人後的新平均。",challenge:"挑戰：兩項相差、第一次超過；剩下幾根；兩邊種樹與路燈間種樹；區間內的個數；三人和差、倍數加餘數、給錢後相等；兩組合併、目標平均、拿掉一數。"},
+  units:[seq,sticks,trees,cycle,sumdiff,average],presets:{basic:{sequence:3,sticks:2,trees:3,cycle:2,sumdiff:2,average:2},advanced:{sequence:2,sticks:2,trees:3,cycle:2,sumdiff:3,average:3},challenge:{sequence:2,sticks:2,trees:3,cycle:3,sumdiff:3,average:3}}};
+}
+
+function chartsConfig(){
+ /* 統計圖與可能性（2026-10-31，Claude）。108 課綱 D-5-1 折線圖、D-6-1 圓形圖、D-6-2 可能性。
+    圓形圖百分率取 5 的倍數，圓心角＝百分率×3.6 一定是整數；折線圖以 SVG 繪製並標出每一點的值；可能性題只判斷一定／可能／不可能與大小比較，不計算機率值。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer"],gen});
+ const CAT=["籃球","足球","躲避球","游泳","跑步","跳繩","桌球","羽球"],FRUIT=["蘋果","香蕉","芭樂","葡萄","西瓜","鳳梨"];
+ // ① 圓形圖：百分率與圓心角
+ const pieAngle=unit("pieangle","圓形圖的百分率與圓心角","整個圓是 100%，也是 360°；圓心角＝百分率 × 360°，1% 對應 3.6°。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["toAngle","toPct","quarter"]):L===1?pick(["toAngle","toPct","fraction","rest"]):pick(["rest3","sumAngle","diffAngle","fraction"]);
+  const p=L===0?pick([10,20,25,30,40,50,60,70,75,80]):5*rand(1,19),c=pick(CAT);
+  if(kind==="toAngle")return{expr:`圓形圖中，喜歡${c}的人占全部的 ${p}%，這一部分的圓心角是幾度？`,answer:`${p*18/5}°`,sig:`ta:${p}:${c}`,verify:()=>p*360===(p*18/5)*100};
+  if(kind==="toPct")return{expr:`圓形圖中，「${c}」這一部分的圓心角是 ${p*18/5}°，占全部的百分之幾？`,answer:`${p}%`,sig:`tp:${p}:${c}`,verify:()=>(p*18/5)*100===p*360};
+  if(kind==="quarter"){const k=pick([2,4,5,10]);return{expr:`圓形圖中，喜歡${c}的人占全部的 ${k} 分之 1，這一部分的圓心角是幾度？占全部的百分之幾？`,answer:`${360/k}°，${100/k}%`,sig:`q:${k}:${c}`,verify:()=>(360/k)*100===(100/k)*360}}
+  if(kind==="fraction"){const k=pick([3,4,5,6,8,9,10,12]),m=rand(1,k-1);if(gcd(m,k)!==1)return null;return{expr:`圓形圖中，某一部分占全部的 ${k} 分之 ${m}，這一部分的圓心角是幾度？`,answer:`${360*m/k}°`,sig:`f:${k}:${m}`,verify:()=>Number.isInteger(360*m/k)&&360*m/k*k===360*m}}
+  if(kind==="rest"){const q=5*rand(1,19-p/5);if(p+q>=100||q<=0)return null;return{expr:`圓形圖分成三部分：${c}占 ${p}%、${CAT[(CAT.indexOf(c)+1)%8]}占 ${q}%，其餘是「其他」。「其他」的圓心角是幾度？`,answer:`${(100-p-q)*18/5}°`,sig:`r:${p}:${q}`,verify:()=>(360*100-p*360-q*360)===((100-p-q)*18/5)*100}}
+  if(kind==="rest3"){const a=5*rand(2,8),b=5*rand(2,6);if(a+b>=90)return null;const r=100-a-b;return{expr:`圓形圖中，甲類的圓心角是 ${a*18/5}°，乙類占 ${b}%，其餘都是丙類。丙類占全部的百分之幾？`,answer:`${r}%`,sig:`r3:${a}:${b}`,verify:()=>a+b+r===100}}
+  if(kind==="sumAngle"){const a=5*rand(2,8),b=5*rand(2,8);if(a+b>=100||a===b)return null;return{expr:`圓形圖中，喜歡${c}的占 ${a}%，喜歡${CAT[(CAT.indexOf(c)+2)%8]}的占 ${b}%，這兩部分的圓心角合起來是幾度？`,answer:`${(a+b)*18/5}°`,sig:`sa:${a}:${b}`,verify:()=>(a*18+b*18)/5===(a+b)*18/5}}
+  const a=5*rand(4,12),b=5*rand(1,6);if(a<=b)return null;return{expr:`圓形圖中，甲類的圓心角比乙類大 ${(a-b)*18/5}°，乙類占 ${b}%，甲類占百分之幾？`,answer:`${a}%`,sig:`d:${a}:${b}`,verify:()=>((a-b)*18/5+b*18/5)*5===a*18}});
+ // ② 由圓形圖求數量
+ const pieCount=unit("piecount","由圓形圖求數量","部分的數量＝全部 × 百分率；全部＝部分 ÷ 百分率。圓心角先除以 360° 化成占全部的幾分之幾。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["part","pct","total"]):L===1?pick(["part","total","angle","pct"]):pick(["diff","angleTotal","twoParts","angle"]);
+  const c=pick(FRUIT),p=L===0?pick([10,20,25,40,50]):5*rand(1,18),T=20*rand(2,L?50:15),part=T*p/100;
+  if(kind==="part"){if(!Number.isInteger(part))return null;return{expr:`全校 ${T} 人票選最喜歡的水果，圓形圖中喜歡${c}的占 ${p}%，喜歡${c}的有幾人？`,answer:`${part} 人`,sig:`p:${T}:${p}:${c}`,verify:()=>part*100===T*p}}
+  if(kind==="pct"){if(!Number.isInteger(part))return null;return{expr:`全班 ${T} 人中有 ${part} 人最喜歡${c}，畫成圓形圖時，${c}占全部的百分之幾？`,answer:`${p}%`,sig:`c:${T}:${part}:${c}`,verify:()=>T*p===part*100}}
+  if(kind==="total"){if(!Number.isInteger(part)||part===0)return null;return{expr:`圓形圖中，喜歡${c}的有 ${part} 人，占全部的 ${p}%，全部共有幾人？`,answer:`${T} 人`,sig:`t:${part}:${p}:${c}`,verify:()=>part*100===T*p}}
+  if(kind==="angle"){const ang=pick([36,45,60,72,90,108,120,144,180]),n=T*ang/360;if(!Number.isInteger(n))return null;return{expr:`${T} 位同學的意見畫成圓形圖，「${c}」那一部分的圓心角是 ${ang}°，選${c}的有幾人？`,answer:`${n} 人`,sig:`a:${T}:${ang}:${c}`,verify:()=>n*360===ang*T}}
+  if(kind==="angleTotal"){const ang=pick([36,45,60,72,90,120]),n=rand(3,30),tot=n*360/ang;if(!Number.isInteger(tot))return null;return{expr:`圓形圖中，「${c}」那一部分的圓心角是 ${ang}°，代表 ${n} 人，全部共有幾人？`,answer:`${tot} 人`,sig:`at:${ang}:${n}:${c}`,verify:()=>tot*ang===n*360}}
+  if(kind==="diff"){const a=5*rand(4,10),b=5*rand(1,6);if(a<=b)return null;const d=T*(a-b)/100;if(!Number.isInteger(d))return null;return{expr:`${T} 人的調查畫成圓形圖，喜歡${c}的占 ${a}%，喜歡${FRUIT[(FRUIT.indexOf(c)+1)%6]}的占 ${b}%，兩者相差幾人？`,answer:`${d} 人`,sig:`d:${T}:${a}:${b}`,verify:()=>T*a-T*b===d*100}}
+  const a=5*rand(2,8),b=5*rand(2,8);if(a+b>=100)return null;const s=T*(a+b)/100;if(!Number.isInteger(s))return null;return{expr:`${T} 人的調查畫成圓形圖，喜歡${c}的占 ${a}%，喜歡${FRUIT[(FRUIT.indexOf(c)+2)%6]}的占 ${b}%，其他的有幾人？`,answer:`${T-s} 人`,sig:`tw:${T}:${a}:${b}`,verify:()=>T*100-(T*a+T*b)===(T-s)*100}});
+ // ③ 折線圖報讀
+ const chart=(labels,vals,unitName,title)=>{
+  const w=300,h=170,left=40,right=12,top=22,bottom=30,hi=Math.ceil(Math.max(...vals)/10)*10+10,lo=Math.max(0,Math.floor(Math.min(...vals)/10)*10-10),X=i=>left+i*(w-left-right)/(labels.length-1),Y=v=>top+(hi-v)*(h-top-bottom)/(hi-lo);
+  let g=`<svg class="fig" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="${title}折線圖"><text x="${w/2}" y="13" font-size="11" text-anchor="middle" fill="#16233A">${title}（${unitName}）</text>`;
+  for(let v=lo;v<=hi;v+=10)g+=`<line x1="${left}" y1="${Y(v)}" x2="${w-right}" y2="${Y(v)}" stroke="#C9D2DE" stroke-width="1"/><text x="${left-4}" y="${Y(v)+3}" font-size="9" text-anchor="end" fill="#43516B">${v}</text>`;
+  g+=`<polyline fill="none" stroke="#16233A" stroke-width="2" points="${vals.map((v,i)=>`${X(i)},${Y(v)}`).join(" ")}"/>`;
+  vals.forEach((v,i)=>{g+=`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="#C8352B"/><text x="${X(i)}" y="${Y(v)-6}" font-size="9" text-anchor="middle" fill="#16233A">${v}</text><text x="${X(i)}" y="${h-12}" font-size="9" text-anchor="middle" fill="#43516B">${labels[i]}</text>`});
+  return g+"</svg>";
+ };
+  const lineChart=unit("linechart","折線圖報讀","先找到橫軸的項目，再往上對到折線上的點讀值；變化量＝後面的值−前面的值，線段越陡變化越大。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["read","change","max"]):L===1?pick(["change","max","bigRise","total"]):pick(["bigRise","bigFall","avg","total"]);
+  const ctxs=[{title:"一週的氣溫",unit:"°C",labels:["一","二","三","四","五","六"].map(d=>"週"+d),lo:15,hi:35},{title:"每月存款",unit:"百元",labels:["1月","2月","3月","4月","5月","6月"],lo:10,hi:60},{title:"各年級借書數",unit:"本",labels:["一年級","二年級","三年級","四年級","五年級","六年級"],lo:20,hi:90}];
+  const cx=pick(ctxs),n=L===0?5:6,labels=cx.labels.slice(0,n),vals=Array.from({length:n},()=>rand(cx.lo,cx.hi));
+  if(new Set(vals).size<n)return null;
+  const fig=chart(labels,vals,cx.unit,cx.title),u=cx.unit==="°C"?"°C":cx.unit;
+  const i=rand(0,n-1),j=rand(0,n-1);
+  if(kind==="read")return{expr:`${fig}<br>看上面的折線圖，${labels[i]}是多少${u}？`,answer:`${vals[i]} ${u}`,sig:`rd:${vals.join(",")}:${i}`,verify:()=>vals[i]===vals[labels.indexOf(labels[i])]};
+  if(kind==="change"){if(i===j)return null;const a=Math.min(i,j),b=Math.max(i,j),d=vals[b]-vals[a];return{expr:`${fig}<br>看上面的折線圖，從${labels[a]}到${labels[b]}，${d>=0?"增加":"減少"}了多少${u}？`,answer:`${Math.abs(d)} ${u}`,sig:`ch:${vals.join(",")}:${a}:${b}`,verify:()=>vals[a]+d===vals[b]}}
+  if(kind==="max"){const hiI=vals.indexOf(Math.max(...vals)),loI=vals.indexOf(Math.min(...vals));return{expr:`${fig}<br>看上面的折線圖，最高和最低各是哪一個？相差多少${u}？`,answer:`最高${labels[hiI]}，最低${labels[loI]}，相差 ${vals[hiI]-vals[loI]} ${u}`,sig:`mx:${vals.join(",")}`,verify:()=>vals.every(v=>v<=vals[hiI]&&v>=vals[loI])}}
+  if(kind==="total"){const s=vals.reduce((p,q)=>p+q,0);return{expr:`${fig}<br>看上面的折線圖，${labels[0]}到${labels[n-1]}合計是多少${u}？`,answer:`${s} ${u}`,sig:`tt:${vals.join(",")}`,verify:()=>vals.reduce((p,q)=>q+p,0)===s}}
+  if(kind==="avg"){const s=vals.reduce((p,q)=>p+q,0);if(s%n)return null;return{expr:`${fig}<br>看上面的折線圖，平均每一項是多少${u}？`,answer:`${s/n} ${u}`,sig:`av:${vals.join(",")}`,verify:()=>s/n*n===vals.reduce((p,q)=>p+q,0)}}
+  const steps=vals.slice(1).map((v,k)=>v-vals[k]),fall=kind==="bigFall",best=fall?Math.min(...steps):Math.max(...steps);
+  if(fall?best>=0:best<=0)return null;if(steps.filter(s=>s===best).length>1)return null;const k=steps.indexOf(best);
+  return{expr:`${fig}<br>看上面的折線圖，相鄰兩項之間，哪一段${fall?"減少":"增加"}得最多？${fall?"減少":"增加"}了多少${u}？`,answer:`${labels[k]}到${labels[k+1]}，${Math.abs(best)} ${u}`,sig:`${fall?"bf":"br"}:${vals.join(",")}`,verify:()=>steps.every(s=>fall?s>=best:s<=best)&&vals[k+1]-vals[k]===best}});
+ // ④ 一定、可能、不可能
+ const COLORS=["紅","白","藍","黃","綠"];
+ const certainty=unit("certainty","一定、可能、不可能","所有可能的結果都符合就是「一定」；有些符合、有些不符合是「可能」；全部都不符合是「不可能」。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["bag","die","card"]):L===1?pick(["bag2","die2","card","spinner"]):pick(["bag2","card2","die2","spinner"]);
+  const word=(all,none)=>all?"一定":none?"不可能":"可能";
+  if(kind==="bag"||kind==="bag2"){const k=kind==="bag"?rand(1,2):rand(2,3),cs=shuffle(COLORS).slice(0,k),cnt=cs.map(()=>rand(1,9)),ask=pick(COLORS),inBag=cs.includes(ask),all=inBag&&k===1,none=!inBag;return{expr:`袋子裡有${cs.map((c,i)=>` ${cnt[i]} 顆${c}球`).join("、")}，從中摸出 1 顆，摸到${ask}球是一定、可能，還是不可能？`,answer:word(all,none),sig:`b:${cs.join("")}:${cnt.join(",")}:${ask}`,verify:()=>{const pool=cs.flatMap((c,i)=>Array(cnt[i]).fill(c));const hit=pool.filter(c=>c===ask).length;return word(hit===pool.length,hit===0)===word(all,none)}}}
+  if(kind==="die"||kind==="die2"){const rel=kind==="die"?pick(["大於","小於"]):pick(["大於","小於","是","不是"]),k=kind==="die"?rand(0,7):rand(0,7);const test=x=>rel==="大於"?x>k:rel==="小於"?x<k:rel==="是"?x===k:x!==k;if((rel==="是"||rel==="不是")&&(k<1||k>6))return null;const out=[1,2,3,4,5,6].map(test),all=out.every(Boolean),none=!out.some(Boolean);return{expr:`擲一顆骰子，出現的點數${rel} ${k} 是一定、可能，還是不可能？`,answer:word(all,none),sig:`d:${rel}:${k}`,verify:()=>{let c=0;for(let x=1;x<=6;x++)if(test(x))c++;return word(c===6,c===0)===word(all,none)}}}
+  if(kind==="card"||kind==="card2"){const n=rand(5,L?20:10),rel=kind==="card"?pick(["大於","小於"]):pick(["是偶數而且大於","小於或等於","是偶數而且小於"]),m=rand(0,n+2);const test=x=>rel==="大於"?x>m:rel==="小於"?x<m:rel==="小於或等於"?x<=m:x%2===0&&(rel==="是偶數而且大於"?x>m:x<m);const out=Array.from({length:n},(_,i)=>test(i+1)),all=out.every(Boolean),none=!out.some(Boolean);return{expr:`把 1～${n} 的數字卡各一張放進盒子，抽出 1 張，抽到的數${rel} ${m} 是一定、可能，還是不可能？`,answer:word(all,none),sig:`c:${n}:${rel}:${m}`,verify:()=>{let c=0;for(let x=1;x<=n;x++)if(test(x))c++;return word(c===n,c===0)===word(all,none)}}}
+  const parts=rand(4,8),cs=shuffle(COLORS).slice(0,rand(1,3)),ask=pick(COLORS),inIt=cs.includes(ask),all=inIt&&cs.length===1,none=!inIt;return{expr:`一個轉盤平分成 ${parts} 格，只塗了${cs.join("、")}${cs.length>1?"這幾種顏色":"一種顏色"}，轉動後指針停在${ask}色是一定、可能，還是不可能？`,answer:word(all,none),sig:`s:${parts}:${cs.join("")}:${ask}`,verify:()=>word(cs.every(c=>c===ask),!cs.includes(ask))===word(all,none)}});
+ // ⑤ 比較可能性的大小
+ const compare=unit("compare","比較可能性的大小","數一數每一種結果有幾個；個數越多，發生的可能性越大；個數相同，可能性一樣大。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["bag","die","spinner"]):L===1?pick(["bag3","die","cards","spinner"]):pick(["addBalls","dieTwo","cards","bag3"]);
+  if(kind==="bag"){const a=rand(1,12),b=rand(1,12),[c1,c2]=shuffle(COLORS).slice(0,2);const ans=a>b?`${c1}球`:a<b?`${c2}球`:"一樣大";return{expr:`袋子裡有 ${a} 顆${c1}球、${b} 顆${c2}球，摸出 1 顆，摸到哪一種顏色的可能性比較大？`,answer:ans,sig:`b:${a}:${b}:${c1}${c2}`,verify:()=>(a===b)===(ans==="一樣大")}}
+  if(kind==="bag3"){const cs=shuffle(COLORS).slice(0,3),n=cs.map(()=>rand(1,15)),mx=Math.max(...n),mn=Math.min(...n);if(n.filter(x=>x===mx).length>1||n.filter(x=>x===mn).length>1)return null;return{expr:`袋子裡有${cs.map((c,i)=>` ${n[i]} 顆${c}球`).join("、")}，摸出 1 顆，摸到哪一種顏色的可能性最大？哪一種最小？`,answer:`最大：${cs[n.indexOf(mx)]}球；最小：${cs[n.indexOf(mn)]}球`,sig:`b3:${n.join(",")}:${cs.join("")}`,verify:()=>n.every(x=>x<=mx&&x>=mn)}}
+  if(kind==="die"||kind==="dieTwo"){const evs=[["是偶數",x=>x%2===0],["是奇數",x=>x%2===1],["是 3 的倍數",x=>x%3===0]].concat([1,2,3,4,5].map(k=>[`大於 ${k}`,x=>x>k])).concat([2,3,4,5,6].map(k=>[`小於 ${k}`,x=>x<k]));const [e1,e2]=shuffle(evs).slice(0,2),c1=[1,2,3,4,5,6].filter(e1[1]).length,c2=[1,2,3,4,5,6].filter(e2[1]).length,ans=c1>c2?`點數${e1[0]}`:c1<c2?`點數${e2[0]}`:"一樣大";return{expr:`擲一顆骰子，「點數${e1[0]}」和「點數${e2[0]}」哪一個的可能性比較大？`,answer:ans,sig:`d:${e1[0]}:${e2[0]}`,verify:()=>(c1===c2)===(ans==="一樣大")}}
+  if(kind==="spinner"){const parts=pick([6,8,10,12]),a=rand(1,parts-2),b=rand(1,parts-a-1),[c1,c2]=shuffle(COLORS).slice(0,2),rest=parts-a-b;const ans=a>b?`${c1}色`:a<b?`${c2}色`:"一樣大";return{expr:`轉盤平分成 ${parts} 格，${a} 格塗${c1}色、${b} 格塗${c2}色，其餘 ${rest} 格是白色。指針停在${c1}色和${c2}色，哪一種的可能性比較大？`,answer:ans,sig:`s:${parts}:${a}:${b}:${c1}${c2}`,verify:()=>a+b+rest===parts&&(a===b)===(ans==="一樣大")}}
+  if(kind==="cards"){const n=rand(8,20),m=rand(2,n-2),big=n-m,small=m-1;const ans=big>small?`大於 ${m}`:big<small?`小於 ${m}`:"一樣大";return{expr:`1～${n} 的數字卡各一張，抽出 1 張，抽到「大於 ${m}」和「小於 ${m}」，哪一個的可能性比較大？`,answer:ans,sig:`c:${n}:${m}`,verify:()=>{let g=0,l=0;for(let x=1;x<=n;x++){if(x>m)g++;if(x<m)l++}return (g===l)===(ans==="一樣大")}}}
+  const r=rand(5,15),w=rand(1,r-1),[c1,c2]=shuffle(COLORS).slice(0,2);return{expr:`袋子裡有 ${r} 顆${c1}球、${w} 顆${c2}球，要讓摸到${c1}球和${c2}球的可能性一樣大，需要再放入幾顆${c2}球？`,answer:`${r-w} 顆`,sig:`add:${r}:${w}:${c1}${c2}`,verify:()=>w+(r-w)===r}});
+ return{title:"統計圖與可能性",symbol:"◔",subtitle:"圓形圖的百分率與圓心角・由圓形圖求數量・折線圖報讀・一定可能不可能・比較可能性",instruction:"圓形圖：全部是 100%，也是 360°。折線圖：先找橫軸項目再讀值。可能性：數一數符合的結果有幾個。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：常見百分率與圓心角互換；求部分、百分率與全部；讀折線圖的值與變化；袋中摸球、骰子、數字卡判斷一定可能不可能；兩種結果比大小。",advanced:"進階：任意 5% 倍數、幾分之幾、剩下的部分；由圓心角求人數；最大增加量、合計；條件較多的判斷與轉盤；三種顏色最大最小。",challenge:"挑戰：圓心角與百分率混合、兩部分合計與相差；最大減少量、平均；兩個條件同時成立；骰子兩事件比較、補球讓可能性相同。"},
+  units:[pieAngle,pieCount,lineChart,certainty,compare],presets:{basic:{pieangle:3,piecount:3,linechart:2,certainty:3,compare:3},advanced:{pieangle:3,piecount:3,linechart:3,certainty:3,compare:3},challenge:{pieangle:3,piecount:3,linechart:3,certainty:3,compare:3}}};
+}
+
+const CONFIGS={arithmetic:arithmeticConfig,ratio:ratioConfig,time:timeConfig,unknown:unknownConfig,simplify:simplifyConfig,gcd:gcdConfig,units:unitsConfig,area:areaConfig,circle:circleConfig,volume:volumeConfig,speed:speedConfig,basecompare:basecompareConfig,scale:scaleConfig,pattern:patternConfig,charts:chartsConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};

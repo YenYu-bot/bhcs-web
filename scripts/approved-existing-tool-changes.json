@@ -22,6 +22,20 @@
       "approved_blob": "35fdb6c7ed1a9d59c9a770e4ce331adda9181c5a",
       "reason": "Curriculum alignment: six 國一 function units beyond the junior-high curriculum (quadratic, piecewise, replacement, composite, nested) are labelled 進階 and removed from the basic/advanced presets; level notes explain why.",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "a73cecef4a3643f1e2295c80fd0da969c0643daf",
+      "approved_blob": "f7674e06e08eea460bf0b654754b26c1770540ae",
+      "reason": "New 國小高年級 topics (108 S-6-1/S-6-2, R-6, D-5-1/D-6-1/D-6-2): 放大縮小與比例尺, 規律與怎樣解題, 統計圖與可能性 — 17 units added to the engine; existing topics unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "917012dd1a25394e1024f7f300b8f970fe04ef85",
+      "approved_blob": "bff5a735115918fcf266705b7890d9fe6e807eff",
+      "reason": "Math hub lists the three new 國小高年級 topics (cards 112 -> 115).",
+      "pull_request": null
     }
   ]
 }
