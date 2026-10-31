@@ -227,9 +227,29 @@ function parallelConfig(){
   if(kind==="find"){const a=rand(20,70),b=rand(20,70);return{expr:`${zfig(a,b,[deg(a),"x",deg(a+b)])}L₁∥L₂，折線與 L₁ 的夾角為 ${deg(a)}、轉折處的角為 ${deg(a+b)}，求折線與 L₂ 的夾角 x。`,answer:deg(b),sig:`f:${a}:${b}`,verify:()=>(a+b)-a===b}}
   if(kind==="tri"){const A=rand(40,90),D=rand(30,80);if(A+D>=170)return null;return{expr:`△ADE 中，B 在 AD 上、C 在 AE 上，BC∥DE。若 ∠A＝${deg(A)}、∠D＝${deg(D)}，求 ∠ACB 與 ∠BCE。`,answer:`∠ACB＝${deg(180-A-D)}；∠BCE＝${deg(A+D)}`,sig:`t:${A}:${D}`,verify:()=>(180-A-D)+(A+D)===180}}
   const a1=rand(20,60),a2=rand(40,90),a3=rand(20,60),a4=a1+a3-a2;if(a4<=10||a4>=80)return null;return{expr:`L∥M，兩線之間有一條折線，開口向左的角依序為 ∠1＝${deg(a1)}、∠3＝${deg(a3)}，開口向右的角為 ∠2＝${deg(a2)} 與 ∠4，求 ∠4。`,answer:`${deg(a4)}（∠1＋∠3＝∠2＋∠4）`,sig:`tw:${a1}:${a2}:${a3}`,verify:()=>a1+a3===a2+a4}});
+ // ⑤ 兩平行線間的三角形面積（同底等高）（2026-11-01 新增）
+ const sameBase=unit("samebase","兩平行線間的三角形面積","兩平行線間的距離處處相等：頂點在同一條平行線上、底邊相同的三角形，高相同、面積相等。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["area","equal","base"]):L===1?pick(["equal","base","ratio","area"]):pick(["trap","trap2","ratio"]);
+  const h=rand(2,15),b=rand(3,20);
+  if(kind==="area"){if((b*h)%2)return null;return{expr:"L₁∥L₂，兩線相距 "+h+" 公分。B、C 在 L₂ 上，BC＝"+b+" 公分，A 在 L₁ 上，求 △ABC 的面積。",answer:(b*h/2)+" 平方公分",sig:"a:"+b+":"+h,verify:()=>b*h===2*(b*h/2)}}
+  if(kind==="equal"){const S=rand(6,80);return{expr:"L₁∥L₂，P、Q 都在 L₁ 上，B、C 在 L₂ 上。若 △PBC 的面積是 "+S+"，求 △QBC 的面積。",answer:String(S)+"（同底等高）",sig:"e:"+S,verify:()=>S===S}}
+  if(kind==="base"){const S=b*h/2;if(!Number.isInteger(S))return null;return{expr:"L₁∥L₂，兩線相距 "+h+"，A 在 L₁ 上，B、C 在 L₂ 上。若 △ABC 的面積是 "+S+"，求 BC。",answer:String(b),sig:"b:"+S+":"+h,verify:()=>2*S===b*h}}
+  if(kind==="ratio"){const m=rand(2,12),n=rand(2,12);if(m===n)return null;const S=rand(2,8)*(m+n);return{expr:"L₁∥L₂，A 在 L₁ 上，B、D、C 依序在 L₂ 上，BD：DC＝"+m+"："+n+"。若 △ABC 的面積是 "+S+"，求 △ABD 與 △ADC 的面積。",answer:"△ABD＝"+(S*m/(m+n))+"、△ADC＝"+(S*n/(m+n)),sig:"r:"+m+":"+n+":"+S,verify:()=>S*m/(m+n)+S*n/(m+n)===S}}
+  if(kind==="trap"){const T=rand(20,90),u=rand(4,T-4);return{expr:"梯形 ABCD 中 AD∥BC，對角線 AC、BD 交於 O。若 △ABC 的面積是 "+T+"、△OBC 的面積是 "+u+"，求 △ABO 與 △DCO 的面積。",answer:"△ABO＝△DCO＝"+(T-u),sig:"tp:"+T+":"+u,verify:()=>(T-u)+u===T}}
+  const T=rand(20,90),u=rand(4,T-4),w=rand(2,40);return{expr:"梯形 ABCD 中 AD∥BC，對角線交於 O。若 △DBC 的面積是 "+T+"、△OBC 的面積是 "+u+"、△AOD 的面積是 "+w+"，求 △ABD 的面積。",answer:String((T-u)+w)+"（△ABO＝△DCO＝"+(T-u)+"）",sig:"t2:"+T+":"+u+":"+w,verify:()=>(T-u)+w>0}});
+ // ⑥ 平行線與角平分線（2026-11-01 新增）
+ const parBis=unit("parbis","平行線與角平分線","兩平行線被截，同側內角互補，它們的平分線互相垂直；一個角的平分線與平行線相交，常會形成等腰三角形。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["sameSide","isoLen","isoAng"]):L===1?pick(["sameSide","isoLen","isoAng","alt"]):pick(["sameSide2","isoPerim","alt2"]);
+  if(kind==="sameSide"){const x=rand(20,70);return{expr:"L₁∥L₂，截線分別交 L₁、L₂ 於 A、B。∠A、∠B 為同側內角，它們的平分線交於 P。若 ∠PAB＝"+deg(x)+"，求 ∠PBA 與 ∠APB。",answer:"∠PBA＝"+deg(90-x)+"、∠APB＝90°",sig:"s:"+x,verify:()=>2*x+2*(90-x)===180}}
+  if(kind==="sameSide2"){const a=2*rand(20,70);return{expr:"L₁∥L₂，截線交 L₁、L₂ 於 A、B，同側內角中 ∠A＝"+deg(a)+"。兩個同側內角的平分線交於 P，求 ∠PBA 與 ∠APB；若 AP＝6、BP＝8，求 AB。",answer:"∠PBA＝"+deg((180-a)/2)+"、∠APB＝90°；AB＝10",sig:"s2:"+a,verify:()=>a/2+(180-a)/2+90===180}}
+  if(kind==="isoLen"){const s=rand(3,25);return{expr:"AD∥BC，∠ABC 的平分線交 AD 於 E。若 AB＝"+s+"，求 AE。",answer:s+"（∠AEB＝∠EBC＝∠ABE，△ABE 是等腰三角形）",sig:"il:"+s,verify:()=>s===s}}
+  if(kind==="isoAng"){const b=2*rand(15,80);return{expr:"AD∥BC，∠ABC＝"+deg(b)+"，BE 平分 ∠ABC 交 AD 於 E，求 ∠AEB 與 ∠A。",answer:"∠AEB＝"+deg(b/2)+"、∠A＝"+deg(180-b),sig:"ia:"+b,verify:()=>(180-b)+b/2+b/2===180}}
+  if(kind==="alt"){const a=2*rand(15,80);return{expr:"L₁∥L₂，截線交 L₁ 於 A、L₂ 於 B，一組內錯角是 "+deg(a)+"。分別作這兩個內錯角的平分線，兩條平分線的位置關係是什麼？平分線與截線的夾角各是幾度？",answer:"互相平行；都是 "+deg(a/2),sig:"al:"+a,verify:()=>a/2*2===a}}
+  if(kind==="alt2"){const a=2*rand(15,80),x=rand(3,12);return{expr:"AD∥BC，∠ABC 的平分線交 AD 於 E，∠ABC＝"+deg(a)+"。若 AB＝"+x+"、ED＝"+(x+2)+"，求 AD 與 ∠BED。",answer:"AD＝"+(2*x+2)+"；∠BED＝"+deg(180-a/2),sig:"a2:"+a+":"+x,verify:()=>x+(x+2)===2*x+2&&a/2+(180-a/2)===180}}
+  const s=rand(3,15),t=rand(s+1,s+12);return{expr:"平行四邊形 ABCD 中，∠ABC 的平分線交 AD 於 E。若 AB＝"+s+"、BC＝"+t+"，求 AE、ED 與平行四邊形的周長。",answer:"AE＝"+s+"、ED＝"+(t-s)+"；周長 "+(2*(s+t)),sig:"ip:"+s+":"+t,verify:()=>s+(t-s)===t}});
  return{title:"平行線與截角性質",symbol:"∥",subtitle:"同位角・內錯角・同側內角・平行線性質・平行的判別・折線角",instruction:"兩平行線被截：同位角相等、內錯角相等、同側內角互補；反過來成立就平行。圖中 ∠1～∠4 在上交點、∠5～∠8 在下交點，依左上、右上、左下、右下排列。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：找出同位角、內錯角、同側內角；已知一角求其他角；平行判別；單一轉折的折線角。",advanced:"進階：列式求 x（相等或互補）、截角組數、三線平行；平行線與三角形。",challenge:"挑戰：不平行時由角度判斷交點在哪一側、兩邊分別平行的角、垂直線的夾角、兩個轉折的折線、平行條件求 x。"},
-  units:[names,props,judge,zig],presets:{basic:{names:3,props:3,judge:3,zigzag:3},advanced:{names:3,props:3,judge:3,zigzag:3},challenge:{names:3,props:3,judge:3,zigzag:3}}};
+  levels:{basic:"基礎：找出同位角、內錯角、同側內角；已知一角求其他角；平行判別；單一轉折的折線角；同底等高三角形面積、平行線與角平分線。",advanced:"進階：列式求 x（相等或互補）、截角組數、三線平行；平行線與三角形；面積比、內錯角平分線。",challenge:"挑戰：不平行時由角度判斷交點在哪一側、兩邊分別平行的角、垂直線的夾角、兩個轉折的折線、平行條件求 x；梯形對角線分割面積、平行四邊形中的角平分線。"},
+  units:[names,props,judge,zig,sameBase,parBis],presets:{basic:{names:3,props:3,judge:3,zigzag:3,samebase:2,parbis:2},advanced:{names:3,props:3,judge:3,zigzag:3,samebase:2,parbis:2},challenge:{names:3,props:3,judge:3,zigzag:3,samebase:2,parbis:2}}};
 }
 
 function quadrilateralConfig(){
@@ -287,9 +307,44 @@ function quadrilateralConfig(){
   if(kind==="ratio"){const m=[rand(1,5),rand(1,5),rand(1,5)],h=[rand(1,5),rand(1,5),rand(1,5)],S=m.map((v,i)=>v*h[i]),g=S.reduce((x,y)=>gcd(x,y));return{expr:`三個梯形對應中線長的比為 ${m.join("：")}，對應高的比為 ${h.join("：")}，求面積比。`,answer:S.map(v=>v/g).join("："),sig:`r:${m.join(",")}:${h.join(",")}`,verify:()=>S.every((v,i)=>v===m[i]*h[i])}}
   // split：P、Q、R 四等分 AB，作平行線
   const a=2*rand(1,10),b=a+4*rand(1,6),d=(b-a)/4,sum=(a+d)+(a+2*d)+(a+3*d);return{expr:`梯形 ABCD 中 AD∥BC，P、Q、R 四等分腰 AB，過 P、Q、R 作底的平行線 PS、QT、RH。若 AD＝${a}、BC＝${b}，求 PS＋QT＋RH。`,answer:`${sum}`,sig:`sp:${a}:${b}`,verify:()=>sum===3*(a+b)/2}});
+ // ⑤ 平行四邊形的面積與兩組高（2026-11-01 新增）
+ const paraArea=unit("paraarea","平行四邊形的面積與高","平行四邊形面積＝底×高；同一個面積可用兩組底與高計算：AB×（AB 上的高）＝AD×（AD 上的高）。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["area","height","base"]):L===1?pick(["twoH","height","base"]):pick(["twoHx","diagTri","twoH"]);
+  const b=rand(4,20),h=rand(2,15),S=b*h;
+  if(kind==="area")return{expr:"平行四邊形 ABCD 的底 BC＝"+b+" 公分，BC 上的高是 "+h+" 公分，求面積。",answer:S+" 平方公分",sig:"a:"+b+":"+h,verify:()=>S/b===h};
+  if(kind==="height")return{expr:"平行四邊形 ABCD 的面積是 "+S+" 平方公分，BC＝"+b+" 公分，求 BC 上的高。",answer:h+" 公分",sig:"h:"+S+":"+b,verify:()=>b*h===S};
+  if(kind==="base")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，AB 上的高是 "+h+"，求 AB。",answer:String(b),sig:"b:"+S+":"+h,verify:()=>b*h===S};
+  const divC=()=>{const ds=[];for(let d=4;d<=30;d++)if(S%d===0&&d!==b&&h<=d)ds.push(d);/* 高不超過另一邊（h≤AD ⇔ AD 上的高≤AB） */return ds.length?pick(ds):null};
+  if(kind==="twoH"){const c=divC();if(!c)return null;return{expr:"平行四邊形 ABCD 中 AB＝"+b+"、AD＝"+c+"，AB 上的高是 "+h+"，求 AD 上的高。",answer:String(S/c),sig:"t:"+b+":"+c+":"+h,verify:()=>(S/c)*c===b*h&&h<=c&&S/c<=b}}
+  if(kind==="twoHx"){const c=divC();if(!c)return null;const h2=S/c;const P=2*(b+c);return{expr:"平行四邊形 ABCD 的周長是 "+P+"，AB 上的高是 "+h+"、AD 上的高是 "+h2+"，且 AB＝"+b+"。求 AD 與面積。",answer:"AD＝"+c+"；面積 "+S,sig:"tx:"+b+":"+c+":"+h,verify:()=>b*h===c*h2&&P/2-b===c&&h<=c&&h2<=b}}
+  if(S%4)return null;return{expr:"平行四邊形 ABCD 的面積是 "+S+"，對角線 AC、BD 交於 O，求 △ABC、△ABO 與 △AOD 的面積。",answer:"△ABC＝"+(S/2)+"、△ABO＝"+(S/4)+"、△AOD＝"+(S/4),sig:"d:"+S,verify:()=>S%4===0&&S/4*4===S}});
+ // ⑥ 四邊形的判別（2026-11-01 新增）
+ const QCASE=[["兩組對邊分別平行","平行四邊形"],["兩組對邊分別相等","平行四邊形"],["一組對邊平行且相等","平行四邊形"],["兩條對角線互相平分","平行四邊形"],["兩組對角分別相等","平行四邊形"],["四個邊都相等","菱形"],["對角線互相垂直平分","菱形"],["四個角都是直角","長方形"],["對角線互相平分且等長","長方形"],["四邊相等且有一個直角","正方形"],["對角線互相垂直平分且等長","正方形"],["只有一組對邊平行","梯形"],["兩組鄰邊分別相等（但不是菱形）","箏形"]];
+ const judgeQ=unit("quadjudge","四邊形的判別","先看邊（平行、相等），再看角與對角線（平分、垂直、等長）；條件越多，四邊形越特殊。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["cond","cond","coordPar"]):L===1?pick(["cond","coordPar","coordRect","fix"]):pick(["coordRhomb","coordSq","fix","coordRect"]);
+  if(kind==="cond"){const [c,ans]=pick(L===0?QCASE.slice(0,8):QCASE),name=pick(["ABCD","PQRS","EFGH","WXYZ"]);return{expr:"四邊形 "+name+" 中「"+c+"」，"+name+" 一定是哪一種四邊形？（選最特殊的一種）",answer:ans,sig:"c:"+c+":"+name,verify:()=>QCASE.some(q=>q[0]===c&&q[1]===ans)}}
+  if(kind==="fix"){const [c,ans]=pick(QCASE.filter(q=>q[1]==="平行四邊形")),add=pick([["再加上「一組鄰邊相等」","菱形"],["再加上「一個角是直角」","長方形"],["再加上「對角線互相垂直」","菱形"],["再加上「對角線等長」","長方形"]]);return{expr:"四邊形 ABCD 中「"+c+"」，"+add[0]+"，ABCD 一定是哪一種四邊形？",answer:add[1],sig:"f:"+c+":"+add[0],verify:()=>["菱形","長方形"].includes(add[1])}}
+  const x=rand(-6,6),y=rand(-6,6),u=[rand(1,6),rand(-5,5)],v=kind==="coordRect"||kind==="coordSq"?[-u[1],u[0]]:[rand(-5,5),rand(1,6)];if(u[0]*v[1]-u[1]*v[0]===0)return null;
+  let vv=v;if(kind==="coordRhomb"){const n2=u[0]**2+u[1]**2;const cands=[];for(let p=-7;p<=7;p++)for(let q=-7;q<=7;q++)if(p*p+q*q===n2&&p*u[1]!==q*u[0]&&p*u[0]+q*u[1]!==0)cands.push([p,q]);if(!cands.length)return null;vv=pick(cands)}
+  if(kind==="coordSq")vv=[-u[1],u[0]];if(kind==="coordRect"){const k=2;vv=[-u[1]*k,u[0]*k]}
+  const A=[x,y],B=[x+u[0],y+u[1]],D=[x+vv[0],y+vv[1]],C=[B[0]+vv[0],B[1]+vv[1]],P=p=>"（"+String(p[0]).replace("-","−")+"，"+String(p[1]).replace("-","−")+"）";
+  const dot=u[0]*vv[0]+u[1]*vv[1],eqLen=u[0]**2+u[1]**2===vv[0]**2+vv[1]**2,ans=dot===0&&eqLen?"正方形":dot===0?"長方形":eqLen?"菱形":"平行四邊形";
+  return{expr:"坐標平面上 A"+P(A)+"、B"+P(B)+"、C"+P(C)+"、D"+P(D)+"，四邊形 ABCD 是哪一種四邊形？（選最特殊的一種，並說明理由）",answer:ans+(ans==="平行四邊形"?"（兩組對邊分別平行且相等）":ans==="長方形"?"（平行四邊形且有一個直角）":ans==="菱形"?"（平行四邊形且四邊等長）":"（四邊等長且有一個直角）"),sig:"g:"+A.join(",")+":"+u.join(",")+":"+vv.join(","),verify:()=>(C[0]-D[0])===u[0]&&(C[1]-D[1])===u[1]&&(C[0]-B[0])===vv[0]}});
+ // ⑦ 平行四邊形的面積分割（2026-11-01 新增）
+ const paraSplit=unit("parasplit","平行四邊形的面積分割","對角線把平行四邊形分成面積相等的兩半，兩條對角線分成面積相等的四塊；平行四邊形內任一點與四頂點連線，相對兩塊面積和是總面積的一半。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["half","quarter","fromQuarter"]):L===1?pick(["anyPoint","quarter","mid","fromQuarter"]):pick(["anyPoint2","mid2","edgePoint"]);
+  const S=8*rand(2,20);
+  if(kind==="half")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，對角線 AC 把它分成兩個三角形，求 △ABC 的面積。",answer:String(S/2),sig:"h:"+S,verify:()=>S/2*2===S};
+  if(kind==="quarter")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，對角線 AC、BD 交於 O，求 △AOB 的面積。",answer:String(S/4),sig:"q:"+S,verify:()=>S/4*4===S};
+  if(kind==="fromQuarter"){const q=S/4;return{expr:"平行四邊形 ABCD 的對角線交於 O，△BOC 的面積是 "+q+"，求平行四邊形 ABCD 的面積。",answer:String(S),sig:"fq:"+q,verify:()=>q*4===S}}
+  if(kind==="anyPoint"){const a=rand(1,S/2-1);return{expr:"P 是平行四邊形 ABCD 內部的一點，平行四邊形面積是 "+S+"。若 △PAB 的面積是 "+a+"，求 △PCD 的面積。",answer:String(S/2-a),sig:"ap:"+S+":"+a,verify:()=>a+(S/2-a)===S/2}}
+  if(kind==="anyPoint2"){const a=rand(1,S/2-1),b=rand(1,S/2-1);return{expr:"P 是平行四邊形 ABCD 內部的一點，△PAB 的面積是 "+a+"、△PCD 的面積是 "+(S/2-a)+"、△PBC 的面積是 "+b+"，求 △PDA 的面積與平行四邊形的面積。",answer:"△PDA＝"+(S/2-b)+"；面積 "+S,sig:"a2:"+S+":"+a+":"+b,verify:()=>a+(S/2-a)+b+(S/2-b)===S}}
+  if(kind==="mid")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，M 是 BC 的中點，求 △ABM 的面積。",answer:String(S/4),sig:"m:"+S,verify:()=>S/2/2===S/4};
+  if(kind==="mid2")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，M 是 BC 的中點，N 是 CD 的中點，求 △AMN 的面積。",answer:String(S*3/8)+"（扣掉 △ABM、△MCN、△ADN）",sig:"m2:"+S,verify:()=>S-S/4-S/8-S/4===S*3/8};
+  const m=rand(1,5),n=rand(1,5),T=(m+n)*rand(2,10)*2;return{expr:"平行四邊形 ABCD 的面積是 "+T+"，E 在 BC 上且 BE：EC＝"+m+"："+n+"，求 △ABE 與 △AED 的面積。",answer:"△ABE＝"+(T*m/(m+n)/2)+"；△AED＝"+(T/2),sig:"ep:"+T+":"+m+":"+n,verify:()=>T*m/(m+n)/2+T*n/(m+n)/2+T/2===T}});
  return{title:"平行四邊形與特殊四邊形",symbol:"▱",subtitle:"平行四邊形的角與邊・對角線・第四頂點・菱形・箏形・長方形・正方形・梯形中線・等腰梯形",instruction:"平行四邊形對角相等、鄰角互補、對邊相等、對角線互相平分；菱形與箏形面積＝對角線乘積÷2；梯形面積＝中線×高。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：由一角求其他角、由外角求內角、周長、對角線長、第四頂點；菱形面積與邊長、長方形對角線；梯形中線、面積、等腰梯形的角。",advanced:"進階：角的倍數與差、角含 x；邊長倍數、對角線含 x；菱形由周長求對角線、菱形的角；由中線與差求上下底。",challenge:"挑戰：k∠A－m∠B、角的比、角平分線成等腰三角形；邊含 x、y、邊長比、三種第四頂點；箏形、正方形面積；等腰梯形的高、面積比、四等分腰的平行線和。"},
-  units:[pangle,pside,rhomb,trap],presets:{basic:{paraangle:3,paraside:3,rhombus:3,trapezoid:3},advanced:{paraangle:3,paraside:3,rhombus:3,trapezoid:3},challenge:{paraangle:3,paraside:3,rhombus:3,trapezoid:3}}};
+  levels:{basic:"基礎：由一角求其他角、由外角求內角、周長、對角線長、第四頂點；菱形面積與邊長、長方形對角線；梯形中線、面積、等腰梯形的角；平行四邊形面積與高、四邊形判別、對角線分割面積。",advanced:"進階：角的倍數與差、角含 x；邊長倍數、對角線含 x；菱形由周長求對角線、菱形的角；由中線與差求上下底；兩組底與高、坐標判別四邊形、任一點分割面積。",challenge:"挑戰：k∠A－m∠B、角的比、角平分線成等腰三角形；邊含 x、y、邊長比、三種第四頂點；箏形、正方形面積；等腰梯形的高、面積比、四等分腰的平行線和；由周長與兩高求邊、坐標判別菱形與正方形、中點與分點分割面積。"},
+  units:[pangle,pside,rhomb,trap,paraArea,judgeQ,paraSplit],presets:{basic:{paraangle:3,paraside:3,rhombus:3,trapezoid:3,paraarea:2,quadjudge:2,parasplit:2},advanced:{paraangle:3,paraside:3,rhombus:3,trapezoid:3,paraarea:2,quadjudge:2,parasplit:2},challenge:{paraangle:3,paraside:3,rhombus:3,trapezoid:3,paraarea:2,quadjudge:2,parasplit:2}}};
 }
 
 function geoseqConfig(){
@@ -491,9 +546,39 @@ function congruenceConfig(){
   if(kind==="kite"){const a=rand(30,70),c=rand(30,160-a);return{expr:`箏形 ABCD 中 AB＝AD、CB＝CD，連接 AC 得 △ABC≅△ADC（SSS）。若 ∠BAC＝${deg(a)}、∠BCA＝${deg(c)}，求 ∠B 與 ∠BAD。`,answer:`∠B＝${deg(180-a-c)}；∠BAD＝${deg(2*a)}`,sig:`k:${a}:${c}`,verify:()=>180-a-c>0&&2*a<180}}
   // ext：全等 + 外角
   const A=rand(40,90),B=rand(30,140-A);return{expr:`△ABC≅△DEF（A→D、B→E、C→F），∠D＝${deg(A)}、∠E＝${deg(B)}，延長 BC 到 G，求 ∠ACG。`,answer:deg(A+B),sig:`e:${A}:${B}`,verify:()=>180-(180-A-B)===A+B}});
+ // ④ 直角三角形的全等（RHS）（2026-11-01 新增）
+ const TRI8=[[3,4,5],[6,8,10],[5,12,13],[9,12,15],[8,15,17],[12,16,20],[7,24,25],[15,20,25]];
+ const rhs=unit("rhs","直角三角形的全等（RHS）","兩個直角三角形斜邊相等、一股也相等，就全等（RHS）；先用畢氏定理求出另一股，再找對應邊與對應角。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["side","angle","perim"]):L===1?pick(["side","angle","perim","which"]):pick(["kite","isoH","angle2"]);
+  const [a,b,c]=pick(TRI8),sw=Math.random()<.5,leg=sw?a:b,other=sw?b:a;
+  if(kind==="side")return{expr:"直角 △ABC 與直角 △DEF 中，∠C＝∠F＝90°，AB＝DE＝"+c+"、AC＝DF＝"+leg+"。兩個三角形是否全等？依據哪一個性質？EF 是多少？",answer:"全等（RHS）；EF＝"+other,sig:"s:"+c+":"+leg,verify:()=>leg*leg+other*other===c*c};
+  if(kind==="perim")return{expr:"直角 △ABC≅直角 △DEF（RHS），∠C＝∠F＝90°，斜邊 DE＝"+c+"、BC＝"+leg+"，求 △DEF 的周長與面積。",answer:"周長 "+(a+b+c)+"；面積 "+(a*b/2),sig:"p:"+c+":"+leg,verify:()=>leg*leg+other*other===c*c&&(a*b)%2===0};
+  if(kind==="angle"){const x=rand(20,70);return{expr:"直角 △ABC 與直角 △DEF 中，∠C＝∠F＝90°，AB＝DE、BC＝EF。若 ∠A＝"+deg(x)+"，求 ∠D 與 ∠E。",answer:"∠D＝"+deg(x)+"、∠E＝"+deg(90-x)+"（RHS 全等）",sig:"a:"+x,verify:()=>x+(90-x)+90===180}}
+  if(kind==="which"){const opts=shuffle([["斜邊與一股分別相等","RHS"],["兩股分別相等","SAS"],["一股與其對角分別相等","AAS"],["斜邊與一銳角分別相等","AAS"]]),k=rand(0,3);return{expr:"兩個直角三角形若「"+opts[k][0]+"」，可以用哪一個性質判別全等？（直角也算一個角）",answer:opts[k][1],sig:"w:"+opts[k][0],verify:()=>["RHS","SAS","AAS"].includes(opts[k][1])}}
+  if(kind==="kite")return{expr:"四邊形 ABCD 中，∠B＝∠D＝90°，AB＝AD＝"+leg+"，AC＝"+c+"。求 BC、CD 與四邊形 ABCD 的面積。",answer:"BC＝CD＝"+other+"（△ABC≅△ADC，RHS）；面積 "+(leg*other),sig:"k:"+c+":"+leg,verify:()=>leg*leg+other*other===c*c};
+  if(kind==="isoH")return{expr:"等腰三角形 ABC 中 AB＝AC＝"+c+"，AD⊥BC 於 D，AD＝"+leg+"。由 RHS 可知 △ABD≅△ACD，求 BD 與 BC。",answer:"BD＝"+other+"；BC＝"+(2*other),sig:"i:"+c+":"+leg,verify:()=>leg*leg+other*other===c*c};
+  const x=rand(15,75);return{expr:"直角 △ABC（∠B＝90°）與直角 △DCB（∠C＝90°）有共同邊 BC，且 AC＝DB。若 ∠ACB＝"+deg(x)+"，求 ∠DBC 與 ∠ABD。",answer:"∠DBC＝"+deg(x)+"；∠ABD＝"+deg(90-x),sig:"a2:"+x,verify:()=>x+(90-x)===90}});
+ // ⑤ 重疊或旋轉的全等三角形求角度（2026-11-01 新增）
+ const overlap=unit("overlap","重疊或旋轉的全等三角形","兩個全等三角形共用一個頂點時，對應角相等；相同的角各自減去重疊的部分，剩下的角也相等。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["rot","cross","rotSide"]):L===1?pick(["rot","rot2","cross","rotSide"]):pick(["rot2","square","rotExt"]);
+  if(kind==="rot"){const a=rand(40,110),b=rand(10,a-10);return{expr:"△ABC≅△ADE（A→A、B→D、C→E），且 D 在 ∠BAC 內部。若 ∠BAC＝"+deg(a)+"、∠DAC＝"+deg(b)+"，求 ∠BAD 與 ∠CAE。",answer:"∠BAD＝∠CAE＝"+deg(a-b),sig:"r:"+a+":"+b,verify:()=>(a-b)+b===a}}
+  if(kind==="rot2"){const a=rand(40,100),b=rand(10,a-10),g=2*(a-b)+b;if(g>=180)return null;return{expr:"△ABC≅△ADE（A→A、B→D、C→E），射線依序為 AB、AD、AC、AE。若 ∠BAE＝"+deg(g)+"、∠DAC＝"+deg(b)+"，求 ∠BAC。",answer:deg(a)+"（∠BAD＝∠CAE＝"+deg(a-b)+"）",sig:"r2:"+a+":"+b,verify:()=>2*(a-b)+b===g}}
+  if(kind==="rotSide"){const s=rand(4,20),t=rand(4,20),u=rand(Math.abs(s-t)+1,s+t-1);return{expr:"△ABC≅△ADE（A→A、B→D、C→E），AB＝"+s+"、AC＝"+t+"、BC＝"+u+"，求 AD、AE 與 DE。",answer:"AD＝"+s+"、AE＝"+t+"、DE＝"+u,sig:"rs:"+s+":"+t+":"+u,verify:()=>s+t>u&&s+u>t&&t+u>s}}
+  if(kind==="cross"){const x=rand(30,80),y=rand(30,140-x);return{expr:"AB 與 CD 交於 O，且 AO＝BO、CO＝DO，所以 △AOC≅△BOD（SAS）。若 ∠A＝"+deg(x)+"、∠C＝"+deg(y)+"，求 ∠B、∠D 與 ∠AOC。",answer:"∠B＝"+deg(x)+"、∠D＝"+deg(y)+"、∠AOC＝"+deg(180-x-y),sig:"c:"+x+":"+y,verify:()=>x+y+(180-x-y)===180}}
+  if(kind==="square"){const x=rand(15,75);return{expr:"正方形 ABCD 中，E 在 BC 上、F 在 CD 上，且 BE＝CF，AE 與 BF 交於 P，所以 △ABE≅△BCF。若 ∠BAE＝"+deg(x)+"，求 ∠ABF 與 ∠APB。",answer:"∠ABF＝"+deg(90-x)+"；∠APB＝90°",sig:"sq:"+x,verify:()=>x+(90-x)+90===180}}
+  const a=rand(30,80),r=rand(20,80);if(a+r>=170)return null;return{expr:"把 △ABC 繞 A 點旋轉 "+deg(r)+" 得到 △ADE（B→D、C→E）。若 ∠BAC＝"+deg(a)+"，求 ∠BAD、∠CAE 與 ∠BAE（D、E 在旋轉方向的同一側）。",answer:"∠BAD＝∠CAE＝"+deg(r)+"；∠BAE＝"+deg(a+r),sig:"re:"+a+":"+r,verify:()=>a+r<180}});
+ // ⑥ 全等與周長、面積（2026-11-01 新增）
+ const measure=unit("congmeasure","全等與周長、面積","全等三角形的對應邊相等，所以周長相等、面積相等，對應邊上的高也相等。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["perim","area","third"]):L===1?pick(["third","height","area","perimX"]):pick(["assemble","height","perimX"]);
+  if(kind==="perim"){const s=[rand(4,15),rand(4,15)],t=rand(Math.abs(s[0]-s[1])+1,s[0]+s[1]-1);return{expr:"△ABC≅△DEF，AB＝"+s[0]+"、BC＝"+s[1]+"、CA＝"+t+"，求 △DEF 的周長。",answer:String(s[0]+s[1]+t),sig:"p:"+s.join(",")+":"+t,verify:()=>s[0]+s[1]>t}}
+  if(kind==="third"){const s=[rand(4,15),rand(4,15)],t=rand(Math.abs(s[0]-s[1])+1,s[0]+s[1]-1),P=s[0]+s[1]+t;return{expr:"△ABC≅△DEF（A→D、B→E、C→F），△ABC 的周長是 "+P+"，DE＝"+s[0]+"、EF＝"+s[1]+"，求 AC。",answer:String(t),sig:"t:"+s.join(",")+":"+t,verify:()=>P-s[0]-s[1]===t}}
+  if(kind==="area"){const b=rand(4,20),h=rand(2,16);if((b*h)%2)return null;return{expr:"△ABC≅△DEF（A→D、B→E、C→F），BC＝"+b+"，A 到 BC 的距離是 "+h+"，求 △DEF 的面積與 D 到 EF 的距離。",answer:"面積 "+(b*h/2)+"；距離 "+h,sig:"a:"+b+":"+h,verify:()=>b*h/2*2===b*h}}
+  if(kind==="height"){const b=rand(4,20),h=rand(2,16),S=b*h/2;if(!Number.isInteger(S))return null;const c=rand(4,20),hc=2*S/c;if(!Number.isInteger(hc)||h>c)return null;return{expr:"△ABC≅△DEF（A→D、B→E、C→F），△ABC 的面積是 "+S+"。若 EF＝"+b+"、DE＝"+c+"，求 D 到 EF 的距離與 F 到 DE 的距離。",answer:h+"；"+hc,sig:"h:"+b+":"+h+":"+c,verify:()=>b*h===c*hc&&h<=c&&hc<=b}}
+  if(kind==="perimX"){const x=rand(2,9),p=rand(2,5),q=rand(1,9),a=p*x+q,b=rand(4,15),c=rand(Math.abs(a-b)+1,a+b-1);return{expr:"△ABC≅△DEF（A→D、B→E、C→F），AB＝"+p+"x＋"+q+"、DE＝"+a+"、BC＝"+b+"、DF＝"+c+"，求 x 與 △ABC 的周長。",answer:"x＝"+x+"；周長 "+(a+b+c),sig:"x:"+p+":"+q+":"+x+":"+b+":"+c,verify:()=>p*x+q===a&&a+b>c}}
+  const [a,b,c]=pick(TRI8),how=pick(["iso_a","iso_b","rect"]),P=how==="rect"?2*(a+b):how==="iso_a"?2*c+2*b:2*c+2*a,shape=how==="rect"?"長方形":"等腰三角形",along=how==="iso_a"?"長度 "+a+" 的股":how==="iso_b"?"長度 "+b+" 的股":"斜邊";return{expr:"兩個全等的直角三角形，兩股長 "+a+"、"+b+"，斜邊 "+c+"。沿著"+along+"把它們拼成一個"+shape+"（不重疊），求拼成圖形的周長。",answer:String(P),sig:"as:"+a+":"+b+":"+how,verify:()=>a*a+b*b===c*c}});
  return{title:"三角形的全等性質",symbol:"≅",subtitle:"對應邊與對應角・SSS／SAS／ASA／AAS／RHS 判別・SSA 與 AAA・利用全等求值",instruction:"△ABC≅△DEF 的順序就是對應關係；判別全等要看條件的位置（夾角、夾邊、對邊）。只需寫答案與依據的性質，不用寫證明。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：由全等求對應角與對應邊、看圖判斷全等性質、條件敘述判斷全等。",advanced:"進階：對應點順序打亂、列式求 x、y、全等三角形周長、條件清單判斷。",challenge:"挑戰：由三個含 x 的角列式、找出錯誤的對應敘述、SSA／AAA 等不一定全等的判斷、等腰三角形與圓的全等、全等與外角、箏形。"},
-  units:[corr,crit,apply],presets:{basic:{corresp:4,criterion:4,apply:4},advanced:{corresp:4,criterion:4,apply:4},challenge:{corresp:4,criterion:4,apply:4}}};
+  levels:{basic:"基礎：由全等求對應角與對應邊、看圖判斷全等性質、條件敘述判斷全等；RHS 求邊、重疊全等求角、全等的周長與面積。",advanced:"進階：對應點順序打亂、列式求 x、y、全等三角形周長、條件清單判斷；旋轉全等、全等求高、含 x 的對應邊。",challenge:"挑戰：由三個含 x 的角列式、找出錯誤的對應敘述、SSA／AAA 等不一定全等的判斷、等腰三角形與圓的全等、全等與外角、箏形；RHS 與箏形、正方形中的全等、拼圖周長。"},
+  units:[corr,crit,apply,rhs,overlap,measure],presets:{basic:{corresp:4,criterion:4,apply:4,rhs:2,overlap:2,congmeasure:2},advanced:{corresp:4,criterion:4,apply:4,rhs:2,overlap:2,congmeasure:2},challenge:{corresp:4,criterion:4,apply:4,rhs:2,overlap:2,congmeasure:2}}};
 }
 
 function bisectorsConfig(){
@@ -537,9 +622,40 @@ function bisectorsConfig(){
   if(kind==="ang"){const a=2*rand(15,70);return{expr:`△ABC 中，D 在 BC 上，DE⊥AB、DF⊥AC 且 DE＝DF。若 ∠BAC＝${deg(a)}，求 ∠ADE。`,answer:`${deg(90-a/2)}（AD 平分 ∠BAC）`,sig:`g:${a}`,verify:()=>a/2+(90-a/2)+90===180}}
   // ang2：直角三角形中 BD＝DE
   const a=2*rand(10,40);return{expr:`△ABC 中 ∠B＝90°，D 在 BC 上，DE⊥AC 於 E 且 BD＝DE。若 ∠BAC＝${deg(a)}，求 ∠ADB。`,answer:`${deg(90-a/2)}（AD 平分 ∠BAC）`,sig:`g2:${a}`,verify:()=>a/2+(90-a/2)===90}});
+ // ④ 等腰三角形的角度（2026-11-01 新增）
+ const isoAngle=unit("isoangle","等腰三角形的角度","等腰三角形兩底角相等：底角＝（180°－頂角）÷2；頂角平分線把頂角平分，並且垂直底邊。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["base","apex","half"]):L===1?pick(["extBase","extApex","xAngle","half"]):pick(["chain","chain2","extApex"]);
+  if(kind==="base"){const v=2*rand(10,80);return{expr:"等腰三角形 ABC 中 AB＝AC，頂角 ∠A＝"+deg(v)+"，求 ∠B 與 ∠C。",answer:"∠B＝∠C＝"+deg((180-v)/2),sig:"b:"+v,verify:()=>v+2*((180-v)/2)===180}}
+  if(kind==="apex"){const b=rand(20,85);return{expr:"等腰三角形 ABC 中 AB＝AC，底角 ∠B＝"+deg(b)+"，求頂角 ∠A。",answer:deg(180-2*b),sig:"a:"+b,verify:()=>2*b+(180-2*b)===180}}
+  if(kind==="half"){const v=2*rand(10,80);return{expr:"等腰三角形 ABC 中 AB＝AC，AD 平分頂角 ∠BAC 交 BC 於 D。若 ∠BAC＝"+deg(v)+"，求 ∠BAD、∠ADB 與 ∠B。",answer:"∠BAD＝"+deg(v/2)+"、∠ADB＝90°、∠B＝"+deg(90-v/2),sig:"h:"+v,verify:()=>v/2+90+(90-v/2)===180}}
+  if(kind==="extBase"){const b=rand(20,85);return{expr:"等腰三角形 ABC 中 AB＝AC，延長 BC 到 D。若 ∠ACD＝"+deg(180-b)+"，求 ∠A。",answer:deg(180-2*b),sig:"eb:"+b,verify:()=>(180-b)===(180-2*b)+b}}
+  if(kind==="extApex"){const v=2*rand(10,80);return{expr:"等腰三角形 ABC 中 AB＝AC，延長 BA 到 E。若 ∠CAE＝"+deg(180-v)+"，求 ∠B。",answer:deg((180-v)/2)+"（∠CAE＝∠B＋∠C）",sig:"ea:"+v,verify:()=>(180-v)===2*((180-v)/2)}}
+  if(kind==="xAngle"){const x=rand(5,30),p=rand(2,4),q=rand(0,20),b=p*x+q;if(b>=89||b<=10)return null;const r=rand(1,3),s=b-r*x;return{expr:"等腰三角形 ABC 中 AB＝AC，∠B＝("+p+"x＋"+q+")°、∠C＝("+(r===1?"":r)+"x"+(s>=0?"＋"+s:"−"+(-s))+")°，求 x 與 ∠A。",answer:"x＝"+x+"；∠A＝"+deg(180-2*b),sig:"x:"+p+":"+q+":"+r+":"+x,verify:()=>p*x+q===r*x+s}}
+  if(kind==="chain"){const a=rand(10,50),C=(180-a)/2;if(!Number.isInteger(C)||C-a<=0)return null;return{expr:"△ABC 中 AB＝AC，D 在 AC 上且 BD＝BC。若 ∠A＝"+deg(a)+"，求 ∠DBC 與 ∠ABD。",answer:"∠DBC＝"+deg(a)+"；∠ABD＝"+deg(C-a),sig:"c:"+a,verify:()=>(180-2*C)===a&&C-a+a===C}}
+  const a=rand(10,40);if(a*3>=180)return null;return{expr:"△ABC 中，D 在 AC 上，AD＝BD＝BC。若 ∠A＝"+deg(a)+"，求 ∠BDC 與 ∠ABC。",answer:"∠BDC＝"+deg(2*a)+"；∠ABC＝"+deg(180-a-2*a),sig:"c2:"+a,verify:()=>a+(180-a-2*a)+2*a===180&&2*a+2*a+(180-4*a)===180}});
+ // ⑤ 兩角平分線的夾角（2026-11-01 新增）
+ const bisAngle=unit("bisangle","兩角平分線的夾角","兩個內角平分線的夾角＝90°＋頂角的一半；一個內角與一個外角的平分線夾角＝另一角的一半。用三角形內角和推出，不要死背。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["inner","innerBack","twoAngles"]):L===1?pick(["inner","outer","innerBack","twoAngles"]):pick(["mixed","outer","mixedBack"]);
+  if(kind==="inner"){const a=2*rand(15,75);return{expr:"△ABC 中，∠B、∠C 的平分線交於 P。若 ∠A＝"+deg(a)+"，求 ∠BPC。",answer:deg(90+a/2),sig:"i:"+a,verify:()=>180-(180-a)/2===90+a/2}}
+  if(kind==="innerBack"){const a=2*rand(15,75);return{expr:"△ABC 中，∠B、∠C 的平分線交於 P。若 ∠BPC＝"+deg(90+a/2)+"，求 ∠A。",answer:deg(a),sig:"ib:"+a,verify:()=>2*((90+a/2)-90)===a}}
+  if(kind==="twoAngles"){const b=2*rand(15,60),c=2*rand(15,60);if(b+c>=170)return null;return{expr:"△ABC 中，∠B＝"+deg(b)+"、∠C＝"+deg(c)+"，∠B、∠C 的平分線交於 P，求 ∠PBC、∠PCB 與 ∠BPC。",answer:"∠PBC＝"+deg(b/2)+"、∠PCB＝"+deg(c/2)+"、∠BPC＝"+deg(180-b/2-c/2),sig:"t:"+b+":"+c,verify:()=>b/2+c/2+(180-b/2-c/2)===180}}
+  if(kind==="outer"){const a=2*rand(15,75);return{expr:"△ABC 中，∠B、∠C 的外角平分線交於 Q。若 ∠A＝"+deg(a)+"，求 ∠BQC。",answer:deg(90-a/2),sig:"o:"+a,verify:()=>180-(360-(180-a))/2===90-a/2}}
+  if(kind==="mixed"){const a=2*rand(15,75);return{expr:"△ABC 中，∠B 的平分線與 ∠C 的外角平分線交於 R。若 ∠A＝"+deg(a)+"，求 ∠BRC。",answer:deg(a/2),sig:"m:"+a,verify:()=>a/2*2===a}}
+  const a=2*rand(15,75);return{expr:"△ABC 中，∠B 的平分線與 ∠C 的外角平分線交於 R，∠BRC＝"+deg(a/2)+"。求 ∠A，並求 ∠B、∠C 的內角平分線夾角 ∠BPC。",answer:"∠A＝"+deg(a)+"；∠BPC＝"+deg(90+a/2),sig:"mb:"+a,verify:()=>(90+a/2)-90===a/2}});
+ // ⑥ 正三角形的高與面積（2026-11-01 新增）
+ const equi=unit("equilateral","正三角形的高與面積","邊長 a 的正三角形：高＝（√3／2）a，面積＝（√3／4）a²；高把底邊平分，形成 30°、60°、90° 的直角三角形。",ctx=>{
+  const L=lv(ctx),kind=L===0?pick(["height","area","perim"]):L===1?pick(["fromH","area","fromP","height"]):pick(["fromArea","fromH","inner"]);
+  const k=rand(1,25),a=2*k,root3=n=>n===1?"√3":n+"√3";
+  if(kind==="height")return{expr:"正三角形的邊長是 "+a+"，求它的高。",answer:root3(k),sig:"h:"+a,verify:()=>3*k*k+k*k===a*a};
+  if(kind==="area"){const s=a*a/4;return{expr:"正三角形的邊長是 "+a+"，求它的面積。",answer:root3(s),sig:"a:"+a,verify:()=>s*4===a*a}}
+  if(kind==="perim")return{expr:"正三角形 ABC 的高 AD＝"+root3(k)+"，求邊長與周長。",answer:"邊長 "+a+"；周長 "+(3*a),sig:"p:"+k,verify:()=>3*k*k+k*k===a*a};
+  if(kind==="fromH")return{expr:"正三角形的高是 "+root3(k)+"，求它的面積。",answer:root3(k*k),sig:"fh:"+k,verify:()=>(a*a/4)===k*k};
+  if(kind==="fromP"){const P=3*a;return{expr:"正三角形的周長是 "+P+"，求它的高與面積。",answer:"高 "+root3(k)+"；面積 "+root3(k*k),sig:"fp:"+P,verify:()=>P/3===2*k}}
+  if(kind==="fromArea")return{expr:"正三角形的面積是 "+root3(k*k)+"，求邊長與高。",answer:"邊長 "+a+"；高 "+root3(k),sig:"fa:"+k,verify:()=>(a*a/4)===k*k};
+  const m=rand(1,12);return{expr:"正三角形 ABC 的邊長是 "+(4*m)+"，D 是 BC 的中點，E 是 AD 的中點，求 BE。",answer:m===1?"√7":m+"√7",sig:"in:"+m,verify:()=>(2*m)**2+3*m*m===7*m*m}});
  return{title:"等腰三角形、中垂線與角平分線",symbol:"⊥",subtitle:"等腰三角形的高・周長・面積・中垂線性質・角平分線性質",instruction:"中垂線上的點到線段兩端點等距；角平分線上的點到角的兩邊等距；等腰三角形的頂角平分線垂直平分底邊。只需寫答案。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：等腰三角形的高與面積、由底邊與高求周長；中垂線上的點等距、列式求 x；角平分線上的點等距、由距離求面積。",advanced:"進階：一腰上的高、△PBC 周長、中垂線配合畢氏定理；由面積反求邊長。",challenge:"挑戰：腰含 x 的周長、對摺；中垂線上兩點的距離、BC−PB、中垂線與外角；面積比、直角三角形中的角平分線。"},
-  units:[iso,perp,ang],presets:{basic:{isosceles:4,perpbis:4,angbis:4},advanced:{isosceles:4,perpbis:4,angbis:4},challenge:{isosceles:4,perpbis:4,angbis:4}}};
+  levels:{basic:"基礎：等腰三角形的高與面積、由底邊與高求周長；中垂線上的點等距、列式求 x；角平分線上的點等距、由距離求面積；等腰三角形的底角與頂角、正三角形的高與面積。",advanced:"進階：一腰上的高、△PBC 周長、中垂線配合畢氏定理；由面積反求邊長；外角求頂角、兩角平分線夾角。",challenge:"挑戰：腰含 x 的周長、對摺；中垂線上兩點的距離、BC−PB、中垂線與外角；面積比、直角三角形中的角平分線；等腰三角形的連鎖角度、內外角平分線夾角、由面積求邊長。"},
+  units:[iso,perp,ang,isoAngle,bisAngle,equi],presets:{basic:{isosceles:4,perpbis:4,angbis:4,isoangle:2,bisangle:2,equilateral:2},advanced:{isosceles:4,perpbis:4,angbis:4,isoangle:2,bisangle:2,equilateral:2},challenge:{isosceles:4,perpbis:4,angbis:4,isoangle:2,bisangle:2,equilateral:2}}};
 }
 
 function triineqConfig(){
