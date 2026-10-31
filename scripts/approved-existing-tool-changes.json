@@ -50,6 +50,13 @@
       "approved_blob": "729d045686984d20de0322069c11adff3c37c1f5",
       "reason": "Math hub lists the new 高一 topic 直線方程式 (cards 115 -> 116).",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g8-drills.html",
+      "baseline_blob": "09ac986702362217d79b0e168b8a11bc2160eb54",
+      "approved_blob": "1daf358430571c87007176e198f46c153af27a73",
+      "reason": "Grade 8 geometry: 11 new question types across congruence, bisectors, parallel and quadrilateral; existing units unchanged.",
+      "pull_request": null
     }
   ]
 }
