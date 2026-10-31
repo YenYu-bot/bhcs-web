@@ -15,6 +15,13 @@
       "approved_blob": "c51048d42a49ca0113b8f9bd7594a9eb67ae81b6",
       "reason": "Finite question banks: count inputs are capped to the declared bank at the current level with a visible note, and any unit that still comes up short is reported in the on-page status.",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "6709fc2a4023ed5d75494cf27e46e85191f5ef3c",
+      "approved_blob": "35fdb6c7ed1a9d59c9a770e4ce331adda9181c5a",
+      "reason": "Curriculum alignment: six 國一 function units beyond the junior-high curriculum (quadratic, piecewise, replacement, composite, nested) are labelled 進階 and removed from the basic/advanced presets; level notes explain why.",
+      "pull_request": null
     }
   ]
 }
