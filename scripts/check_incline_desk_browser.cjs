@@ -88,11 +88,12 @@ function normalizedRGBA(value){
 async function handleFeedback(page,dragging,label){
  const state=await page.locator('#handle').evaluate(e=>({background:getComputedStyle(e).backgroundColor,dragging:e.classList.contains('is-dragging'),hovered:e.matches(':hover'),active:e.matches(':active'),disabled:e.disabled}));
  const expected=dragging?[232,217,155,68/255]:[205,226,191,34/255],actual=normalizedRGBA(state.background);
- assert.equal(state.dragging,dragging,label+' correct dragging class');
- for(let i=0;i<3;i++)assert.ok(Math.abs(actual[i]-expected[i])<=.01,label+' RGB channel '+i+' remains intended translucent feedback');
+ const diagnostic=' '+JSON.stringify({label,state,actual,expected});
+ assert.equal(state.dragging,dragging,label+' correct dragging class'+diagnostic);
+ for(let i=0;i<3;i++)assert.ok(Math.abs(actual[i]-expected[i])<=.01,label+' RGB channel '+i+' remains intended translucent feedback'+diagnostic);
  // CSSOM may round alpha to three decimals; 0.001 admits serialization only,
  // not the opaque generic button-hover color or a different 8-bit alpha.
- assert.ok(Math.abs(actual[3]-expected[3])<=.001,label+' alpha remains '+expected[3]);
+ assert.ok(Math.abs(actual[3]-expected[3])<=.001,label+' alpha remains '+expected[3]+diagnostic);
  return {label,...state,rgba:actual};
 }
 async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false,inspectGuide=true}={}){

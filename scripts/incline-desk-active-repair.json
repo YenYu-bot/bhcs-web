@@ -1,0 +1,26 @@
+{
+  "id": "authoritative-drag-colour-2026-10-31",
+  "accepted_source_commit": "9a699657633ce1f888fe7274305b9870d4089eb9",
+  "private_baseline_commit": "a5a473f8cee135bd95a7e0c3677721482b7640a3",
+  "reason": "CI41149114986: native reverse gesture release reached pointerup/click and classfalse, then colour assertion failed. Native active state is a CSS-supported inference, not directly captured. Remove native active aliases; no waits or weaker assertions.",
+  "files": [
+    {
+      "path": "style.css",
+      "before_sha256": "e8b1940436225948ca3a08c4c977328c0f96660d08d38b9e419cd7b06b7c3cd8",
+      "sha256": "b8da3a4aaeff575db40a842c20122e683f441451f14ee368aea9043c49af0c31",
+      "replacements": [
+        [
+          ".drag-handle:active,.drag-handle.is-dragging",
+          ".drag-handle.is-dragging"
+        ]
+      ],
+      "occurrences": 2
+    }
+  ],
+  "ported_test": {
+    "before_sha256": "add8129763c29e97f92d02d72b735ea9990d5d86831acad6fd9f1f22ea4ca5cf",
+    "sha256": "d09505c90698a7bf37fa67fe625268859d80feb8c54c786b0637f53a709e13a9",
+    "before": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport {readFileSync} from 'node:fs';\nconst css=readFileSync(new URL('../dist/style.css',import.meta.url),'utf8');\nconst rules=[...css.replace(/\\/\\*[\\s\\S]*?\\*\\//g,'').matchAll(/([^{}]+)\\{([^{}]*)\\}/g)].map(m=>({selector:m[1].trim(),body:m[2]}));\nconst last=selector=>rules.filter(r=>r.selector===selector).at(-1)?.body;\ntest('generic button hover explicitly excludes the handle on mouse, touch and hybrid devices',()=>{\n const hover=rules.filter(r=>r.selector.includes(':hover'));\n assert.equal(hover.length,1,'no separate hover selector can leave the handle highlighted');\n assert.equal(hover[0].selector,'button:hover:not(:disabled):not(.drag-handle)');\n assert.match(hover[0].body,/background:#e8f0dc/,'other buttons retain existing hover feedback');\n});\ntest('idle handle remains translucent and only pressed/active gesture gets the distinct drag colour',()=>{\n assert.match(last('.drag-handle'),/background:#cde2bf22/);\n assert.match(last('.drag-handle:active,.drag-handle.is-dragging'),/background:#e8d99b44/);\n assert.match(last('.drag-handle'),/border:1px dashed #618064/);\n assert.match(last('.drag-handle span'),/opacity:0/);\n});\ntest('keyboard focus and touch gesture CSS remain available independently of hover',()=>{\n const focus=rules.find(r=>r.selector.includes('button:focus-visible'));\n assert(focus);assert.match(focus.body,/outline:3px solid #be683c/);assert.match(focus.body,/outline-offset:4px/);\n assert(rules.filter(r=>r.selector==='.drag-handle').some(r=>/touch-action:none/.test(r.body)));\n});\n",
+    "after": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport {readFileSync} from 'node:fs';\nconst css=readFileSync(new URL('../dist/style.css',import.meta.url),'utf8');\nconst rules=[...css.replace(/\\/\\*[\\s\\S]*?\\*\\//g,'').matchAll(/([^{}]+)\\{([^{}]*)\\}/g)].map(m=>({selector:m[1].trim(),body:m[2]}));\nconst last=selector=>rules.filter(r=>r.selector===selector).at(-1)?.body;\ntest('generic button hover explicitly excludes the handle on mouse, touch and hybrid devices',()=>{\n const hover=rules.filter(r=>r.selector.includes(':hover'));\n assert.equal(hover.length,1,'no separate hover selector can leave the handle highlighted');\n assert.equal(hover[0].selector,'button:hover:not(:disabled):not(.drag-handle)');\n assert.match(hover[0].body,/background:#e8f0dc/,'other buttons retain existing hover feedback');\n});\ntest('idle handle remains translucent and only the authoritative dragging class gets the distinct drag colour',()=>{\n assert.match(last('.drag-handle'),/background:#cde2bf22/);\n assert.match(last('.drag-handle.is-dragging'),/background:#e8d99b44/);\n assert.match(last('.drag-handle'),/border:1px dashed #618064/);\n assert.match(last('.drag-handle span'),/opacity:0/);\n});\ntest('keyboard focus and touch gesture CSS remain available independently of hover',()=>{\n const focus=rules.find(r=>r.selector.includes('button:focus-visible'));\n assert(focus);assert.match(focus.body,/outline:3px solid #be683c/);assert.match(focus.body,/outline-offset:4px/);\n assert(rules.filter(r=>r.selector==='.drag-handle').some(r=>/touch-action:none/.test(r.body)));\n});\n\ntest('native active pseudo-state cannot independently retain drag fill or cursor after release',()=>{\n const handleRules=rules.filter(r=>r.selector.includes('.drag-handle'));\n assert(handleRules.every(r=>!r.selector.includes(':active')));\n assert.equal(handleRules.filter(r=>r.selector==='.drag-handle.is-dragging').length,2);\n assert.match(handleRules.find(r=>r.selector==='.drag-handle.is-dragging').body,/cursor:grabbing/);\n});\n"
+  }
+}
