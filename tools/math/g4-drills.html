@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小中年級數學 計算力練習出題器</title><meta name="description" content="國小中年級（三、四年級）數學計算力練習出題器：大數與位值、多位數的加減、多位數的乘除、四則混合計算與併式，一頁切換；可設定難度（基礎／進階／挑戰）與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:title" content="百宏文教｜國小中年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:type" content="website">
+<style>
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
+*{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
+.top{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,3vw,28px);color:#fff;background:var(--bhcs-green2);border-bottom:4px solid var(--bhcs-mint)}.topic-logo{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:10px;background:var(--bhcs-mint);color:var(--bhcs-green2);font:800 22px Georgia,"Times New Roman",serif}.top-title{min-width:0}.topic-pick{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;color:#c8e8df;white-space:nowrap}.topic-pick select{padding:4px 8px;border-radius:6px;border:1px solid var(--bhcs-mint);background:#fff;color:var(--bhcs-ink);max-width:46vw}.top h1{margin:0;font-size:clamp(17px,2.3vw,23px);line-height:1.25}.top p{margin:2px 0 0;color:#bed7cf;font-size:12px}.back{margin-left:auto;color:#fff;text-decoration:none;font-size:13px;font-weight:700;white-space:nowrap}.back:hover{text-decoration:underline}
+.panel{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--bhcs-line)}.panel-inner{width:min(1480px,100%);margin:auto;padding:10px clamp(10px,2vw,22px)}.groups{display:grid;grid-template-columns:1.05fr 1fr 1.55fr;gap:10px}.group{min-width:0;padding:9px 10px;border:1px solid #d7e1de;border-radius:8px;background:#fbfdfc}.group h2{margin:0 0 7px;color:var(--bhcs-green2);font-size:13px}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.field{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;white-space:nowrap}select{height:34px;padding:4px 7px;border:1px solid #9eb2ac;border-radius:6px;background:#fff;color:var(--bhcs-ink);font-weight:700}.level{height:34px;padding:5px 12px;border:1px solid #9eb2ac;border-radius:7px;color:var(--bhcs-green2);background:#fff;font-weight:800}.level[aria-pressed=true]{border-color:var(--bhcs-green);color:#fff;background:var(--bhcs-green)}.choice{display:flex;align-items:center;gap:5px;min-height:34px;padding:4px 8px;border:1px solid #ccd9d5;border-radius:6px;background:#fff;font-size:12.5px;font-weight:700}.choice:has(input:checked){border-color:#71bba5;background:var(--bhcs-soft)}.choice input{width:15px;height:15px;accent-color:var(--bhcs-green)}.difficulty-note{margin:6px 0 0;color:var(--bhcs-muted);font-size:11.5px;line-height:1.4}
+.unit-grid{display:grid;grid-template-columns:repeat(3,minmax(132px,1fr));gap:5px}.unit{display:grid;grid-template-columns:auto minmax(0,1fr) 42px;align-items:center;gap:5px;min-height:33px;padding:3px 5px;border:1px solid #d6e1de;border-radius:6px;background:#fff}.unit:has(.unit-check:checked){border-color:#83c5b2;background:var(--bhcs-soft)}.unit-check{width:15px;height:15px;accent-color:var(--bhcs-green)}.unit label{font-size:11.5px;font-weight:700;line-height:1.2;cursor:pointer}.count{width:42px;height:27px;padding:2px;border:1px solid #aebfba;border-radius:5px;text-align:center;font-size:12px;font-weight:800}.count:disabled{color:#98a6a2;background:#edf1f0;cursor:not-allowed}.quick{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}.quick span{font-size:11px;color:var(--bhcs-muted)}.quick button{padding:3px 7px;border:1px solid #9fb7b0;border-radius:5px;color:var(--bhcs-green2);background:#fff;font-size:11px;font-weight:700}
+.actions{display:flex;align-items:center;gap:8px;margin-top:9px}.status{margin-right:auto;color:var(--bhcs-muted);font-size:12px}.action{min-height:38px;padding:7px 16px;border:1px solid var(--bhcs-green);border-radius:7px;font-weight:800}.primary{color:#fff;background:var(--bhcs-green)}.secondary{color:var(--bhcs-green);background:#fff}.total{padding:5px 9px;border-radius:6px;color:var(--bhcs-green2);background:var(--bhcs-soft);font-size:12px;font-weight:800;white-space:nowrap}
+.preview{min-height:620px;padding:14px 8px 38px;overflow:auto}.sheet{width:210mm;min-height:297mm;margin:14px auto;padding:12mm;color:#111;background:#fff;box-shadow:0 9px 30px #263b351c}.head{border-bottom:2px solid var(--bhcs-green);padding-bottom:4px;margin-bottom:8px}.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:var(--bhcs-muted);line-height:1.3;margin:0 0 3px}.bhcs-brand b{color:var(--bhcs-green);font-weight:800;font-size:12px;letter-spacing:.5px}.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}.head h2{margin:0;font-size:20px}.head>span{display:block;margin-top:2px;font-size:14px}.sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:var(--bhcs-soft);padding:4px 10px;border-left:5px solid var(--bhcs-green);break-after:avoid;page-break-after:avoid}.tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}.grid{display:grid;gap:0 5mm}.grid.c2{grid-template-columns:repeat(2,1fr)}.grid.c3{grid-template-columns:repeat(3,1fr)}.grid.c4{grid-template-columns:repeat(4,1fr)}.prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}.q{font:15.5px/1.9 Georgia,"Times New Roman","Noto Serif TC",serif;display:flex;gap:4px;align-items:baseline;flex-wrap:wrap}.q .no{flex:none;color:#555;width:2em}.expr{min-width:0;overflow-wrap:anywhere}.expr svg.fig{display:block;margin:2px 0 4px;max-width:100%;height:auto}.work{font-size:14px;color:#333;margin-top:2mm;min-height:var(--work,16mm)}.work .ans{display:none;color:var(--bhcs-red);font-weight:700;font-size:15px;line-height:1.55}.teacher .work .ans{display:inline}.fr{display:inline-flex;flex-direction:column;text-align:center;align-items:center;vertical-align:middle;line-height:1;margin:0 .09em;font-size:.86em}.fr .n{min-width:1em;padding:0 .13em .08em;border-bottom:1px solid currentColor}.fr .d{padding:.08em .13em 0}.mixed{display:inline-flex;align-items:center;gap:.08em;white-space:nowrap}.note-answer{font:11px/1.25 "Microsoft JhengHei","Noto Sans TC",sans-serif;color:var(--bhcs-red)}sup{font-size:.72em}.grid.c4 .q{font-size:13px;line-height:1.75}.grid.c4 .q .no{width:1.7em}.grid.c4 .work{font-size:12.5px}.grid.c4 .work .ans{font-size:13px}.grid.c4 .prob{padding-top:2.5mm}.empty{width:min(720px,calc(100vw - 24px));margin:28px auto;padding:36px 20px;text-align:center;border:2px dashed #afc1bc;border-radius:10px;color:var(--bhcs-muted);background:#fff}.empty b{display:block;margin-bottom:4px;color:var(--bhcs-green2)}
+@media(max-width:1180px){.groups{grid-template-columns:1fr 1fr}.group.units{grid-column:1/-1}}@media(max-width:720px){.top{align-items:flex-start;flex-wrap:wrap}.topic-pick{margin-left:0;width:100%}.topic-pick select{max-width:none;flex:1}.top p{display:none}.back{font-size:11.5px}.groups{grid-template-columns:1fr}.group.units{grid-column:auto}.unit-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.status{width:100%;order:-1}.actions{flex-wrap:wrap}.action{flex:1}.total{margin-left:auto}.preview{padding-inline:4px}}@media(max-width:390px){.top{padding-inline:9px}.topic-logo{width:38px;height:38px}.top h1{font-size:15px}.back{font-size:10.5px}.panel-inner{padding-inline:7px}.group{padding:8px}.field{flex:1}.field select{flex:1;min-width:0}.unit-grid{grid-template-columns:1fr 1fr}.unit{grid-template-columns:auto minmax(0,1fr) 38px}.count{width:38px}.choice{padding-inline:6px}.level{flex:1;padding-inline:7px}.quick button{flex:1}.action{padding-inline:8px}}
+@page{size:A4 portrait;margin:8mm 8mm 9mm}@media print{body{background:#fff}.panel,.top,.no-print{display:none!important}.preview{padding:0;overflow:visible}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;zoom:1!important}html,body{font-size:10pt}.sec{-webkit-print-color-adjust:exact;print-color-adjust:exact}.prob:hover{background:transparent}}
+</style>
+
+<style id="bhcs-math-brand">
+/* P1: screen palette only; original print rules and worksheet geometry are preserved. */
+@media screen{
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #C8352B}
+.topic-logo{border-radius:6px}
+.topic-pick{color:#F2F4F7}
+.top p{color:#C9D2DE}
+.group{border:1px solid #F2F4F7;border-radius:6px;background:#FCFCFA}
+select{border:1px solid #43516B}
+.level{border:1px solid #43516B;border-radius:6px}
+.choice{border:1px solid #C9D2DE}
+.choice:has(input:checked){border-color:#16233A}
+.unit{border:1px solid #F2F4F7}
+.unit:has(.unit-check:checked){border-color:#C9D2DE}
+.count{border:1px solid #C9D2DE;border-radius:6px}
+.count:disabled{color:#43516B;background:#FCFCFA}
+.quick button{border:1px solid #43516B;border-radius:6px}
+.action{border-radius:6px}
+.sheet{box-shadow:0 9px 30px #16233A1c}
+.bhcs-brand i{color:#43516B}
+.tip{color:#43516B}
+.prob{border-bottom:1px dashed #C9D2DE}
+.empty{border:2px dashed #C9D2DE;border-radius:6px}
+svg [fill="#176b55" i]{fill:#16233A}
+svg [stroke="#176b55" i]{stroke:#16233A}
+svg [fill="#0f4f40" i]{fill:#16233A}
+svg [stroke="#0f4f40" i]{stroke:#16233A}
+svg [fill="#55cfad" i]{fill:#16233A}
+svg [stroke="#55cfad" i]{stroke:#16233A}
+svg [fill="#e8f5f0" i]{fill:#F2F4F7}
+svg [stroke="#e8f5f0" i]{stroke:#F2F4F7}
+svg [fill="#c8d4d1" i]{fill:#C9D2DE}
+svg [stroke="#c8d4d1" i]{stroke:#C9D2DE}
+svg [fill="#182d28" i]{fill:#16233A}
+svg [stroke="#182d28" i]{stroke:#16233A}
+svg [fill="#62736f" i]{fill:#43516B}
+svg [stroke="#62736f" i]{stroke:#43516B}
+svg [fill="#e8edef" i]{fill:#F2F4F7}
+svg [stroke="#e8edef" i]{stroke:#F2F4F7}
+svg [fill="#ae3f3f" i]{fill:#C8352B}
+svg [stroke="#ae3f3f" i]{stroke:#C8352B}
+svg [fill="#a66d00" i]{fill:#C8352B}
+svg [stroke="#a66d00" i]{stroke:#C8352B}
+svg [fill="#c8e8df" i]{fill:#F2F4F7}
+svg [stroke="#c8e8df" i]{stroke:#F2F4F7}
+svg [fill="#bed7cf" i]{fill:#C9D2DE}
+svg [stroke="#bed7cf" i]{stroke:#C9D2DE}
+svg [fill="#d7e1de" i]{fill:#F2F4F7}
+svg [stroke="#d7e1de" i]{stroke:#F2F4F7}
+svg [fill="#fbfdfc" i]{fill:#FCFCFA}
+svg [stroke="#fbfdfc" i]{stroke:#FCFCFA}
+svg [fill="#9eb2ac" i]{fill:#43516B}
+svg [stroke="#9eb2ac" i]{stroke:#43516B}
+svg [fill="#ccd9d5" i]{fill:#C9D2DE}
+svg [stroke="#ccd9d5" i]{stroke:#C9D2DE}
+svg [fill="#71bba5" i]{fill:#16233A}
+svg [stroke="#71bba5" i]{stroke:#16233A}
+svg [fill="#d6e1de" i]{fill:#F2F4F7}
+svg [stroke="#d6e1de" i]{stroke:#F2F4F7}
+svg [fill="#83c5b2" i]{fill:#C9D2DE}
+svg [stroke="#83c5b2" i]{stroke:#C9D2DE}
+svg [fill="#aebfba" i]{fill:#C9D2DE}
+svg [stroke="#aebfba" i]{stroke:#C9D2DE}
+svg [fill="#98a6a2" i]{fill:#43516B}
+svg [stroke="#98a6a2" i]{stroke:#43516B}
+svg [fill="#edf1f0" i]{fill:#FCFCFA}
+svg [stroke="#edf1f0" i]{stroke:#FCFCFA}
+svg [fill="#9fb7b0" i]{fill:#43516B}
+svg [stroke="#9fb7b0" i]{stroke:#43516B}
+svg [fill="#8a9793" i]{fill:#43516B}
+svg [stroke="#8a9793" i]{stroke:#43516B}
+svg [fill="#cdd5dc" i]{fill:#C9D2DE}
+svg [stroke="#cdd5dc" i]{stroke:#C9D2DE}
+svg [fill="#afc1bc" i]{fill:#C9D2DE}
+svg [stroke="#afc1bc" i]{stroke:#C9D2DE}
+svg [fill="#7C879B" i]{fill:#43516B}
+svg [stroke="#7C879B" i]{stroke:#43516B}
+
+html,body{background-color:var(--bhcs-bg)}
+button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--bhcs-green)}
+.top .logo,.top .topic-logo{color:#fff;background-color:var(--bhcs-green)}
+.top h1 b{color:#fff}
+header.no-print>div:first-child h1::before{color:#fff}
+header.no-print>div:first-child>div:first-child>div:first-child{color:#fff!important}
+:root body :is(#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]){background:#E8620C!important;color:#fff!important;border-color:#E8620C!important;box-shadow:none!important}
+:root body :is(#print,#btn-print-questions,#btn-print-answers,button[onclick^="printWorksheet("]){background:#fff!important;color:#16233A!important;border-color:#16233A!important;box-shadow:inset 0 0 0 1px #16233A!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C8352B}
+}
+.ans,.ans *,.answer,.note-answer,.sd,[id^="solution-"] ,[id^="solution-"] *,[id^="solution-box-"] ,[id^="solution-box-"] *{color:#C8352B!important}
+</style>
+</head>
+<body>
+<header class="top"><div class="topic-logo" id="topicLogo">∑</div><div class="top-title"><h1><span class="brandmark">百宏文教｜</span><span id="topicTitle">數學計算力練習</span> 出題器</h1><p id="subtitle"></p></div><label class="topic-pick">主題 <select id="topicSel"></select></label><a class="back" href="../../ziyuan.html">← 回百宏學習資源</a></header>
+<section class="panel"><div class="panel-inner"><div class="groups">
+<section class="group"><h2>版面</h2><div class="row"><label class="field">版本<select id="version"><option value="student">學用版</option><option value="teacher">教用版</option></select></label><label class="field">每列題數<select id="columns"><option value="2">2 題</option><option value="3" selected>3 題</option><option value="4">4 題</option></select></label><label class="field">作答空間<select id="space"><option value="small">小</option><option value="medium" selected>中</option><option value="large">大</option></select></label></div></section>
+<section class="group"><h2>難度與數的類型</h2><div class="row"><div class="row" role="group" aria-label="難度"><button class="level" data-level="basic" aria-pressed="false">基礎</button><button class="level" data-level="advanced" aria-pressed="true">進階</button><button class="level" data-level="challenge" aria-pressed="false">挑戰</button></div><span id="modeBoxes" class="row"></span></div><p class="difficulty-note" id="difficultyNote"></p></section>
+<section class="group units"><h2>單元與題數</h2><div class="unit-grid" id="unitGrid"></div><div class="quick"><span>快速預設：</span><button type="button" data-each="1">各 1 題</button><button type="button" data-each="2">各 2 題</button><button type="button" data-each="3">各 3 題</button><button type="button" data-each="0">全歸零</button></div></section>
+</div><div class="actions"><span class="status" id="status">設定完成後按「重新出題」。</span><span class="total" id="total"></span><button class="action primary" id="generate">重新出題</button><button class="action secondary" id="print">列印 / 存 PDF</button></div></div></section>
+<main class="preview"><div id="output"></div></main>
+<script>
+(()=>{"use strict";
+const TOPICS=[["bignum","大數與位值"],["addsub","多位數的加減"],["muldiv","多位數的乘除"],["mixed","四則混合計算與併式"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"bignum",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
+const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
+const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
+function places(a){let d=a.d,p2=0,p5=0;while(d%2===0){d/=2;p2++}while(d%5===0){d/=5;p5++}return d===1?Math.max(p2,p5):-1}
+function decHTML(a,fixed=null){const p=places(a);if(p<0)throw Error("非有限小數");const use=fixed===null?p:Math.max(fixed,p),scale=10**use,n=a.n*(scale/a.d),sign=n<0?"−":"",digits=String(Math.abs(n)).padStart(use+1,"0");if(!use)return sign+digits;let out=`${digits.slice(0,-use)}.${digits.slice(-use)}`;if(fixed===null)out=out.replace(/0+$/,"").replace(/\.$/,"");return sign+out}
+function fracHTML(a,{mixed=false,answer=false}={}){const sign=a.n<0?"−":"",n=Math.abs(a.n),w=Math.floor(n/a.d),rem=n%a.d;if(!rem)return sign+w;if(w&&mixed){const m=`<span class="mixed">${sign}${w}${fr(rem,a.d)}</span>`;return answer?`${m}<span class="note-answer">（即 ${sign}${fr(n,a.d)}）</span>`:m}return`${sign}${fr(n,a.d)}`}
+const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):String(a.n).replace("-","−");
+function numberFor(mode,level,max=30){if(mode==="integer"){const k=level==="basic"?2:level==="advanced"?10:25;return R(rand(level==="basic"?2:Math.max(2,Math.floor(max*k/5)),max*k))}if(mode==="fraction"){const ds=level==="basic"?[2,3,4,5,6]:[2,3,4,5,6,8,9,10,12,15,20],d=pick(ds);let n=rand(1,(level==="challenge"?3:2)*d-1);while(n%d===0)n=rand(1,3*d-1);return R(n,d)}const p=level==="basic"?1:pick(level==="advanced"?[1,2]:[1,2,3]),s=10**p;let n=rand(1,max*s);while(n%10===0)n=rand(1,max*s);return R(n,s)}
+const norm=s=>String(s).replace(/<[^>]*>/g,"").replace(/\s+/g,"").normalize("NFKC");
+const okResult=q=>q&&typeof q.expr==="string"&&typeof q.answer==="string"&&q.expr&&!/\b(?:NaN|undefined|Infinity)\b/.test(q.expr+q.answer)&&typeof q.verify==="function"&&q.verify()===true;
+const MODE_LABEL={integer:"整數",fraction:"分數",decimal:"小數"};
+
+
+/* 國小中年級（三、四年級）出題器（2026-11-01，Claude）。依 108 課綱 N-3、N-4 與康軒、南一、翰林三版本共同的單元。
+   所有題目都由答案反推或直接計算，verify 走另一條路線重算（減法用加回去、除法用 除數×商＋餘數、大數用逐位拆解）。 */
+const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+const fmt=n=>{const s=String(Math.abs(n));let o="";for(let i=0;i<s.length;i++){if(i&&(s.length-i)%3===0)o+=",";o+=s[i]}return(n<0?"−":"")+o};
+const digits=n=>{let lo=10**(n-1);return rand(lo,10*lo-1)};
+const withZeros=n=>{const s=String(digits(n)).split("");for(let i=1;i<s.length;i++)if(Math.random()<.3)s[i]="0";return Number(s.join(""))};
+const W4=[[1e12,"兆"],[1e8,"億"],[1e4,"萬"],[1,""]];
+const wan=n=>{let o="",r=n;for(const [v,u] of W4){const q=Math.floor(r/v);r-=q*v;if(q)o+=q+u}return o||"0"};
+const fromWan=s=>{let t=0;for(const m of s.matchAll(/(\d+)(兆|億|萬)?/g))t+=Number(m[1])*({兆:1e12,億:1e8,萬:1e4}[m[2]]||1);return t};
+const PL=["個","十","百","千","萬","十萬","百萬","千萬","億","十億","百億","千億","兆","十兆","百兆","千兆"];
+const OP=(a,o,b)=>a+" "+o+" "+b;
+
+function bignumConfig(){
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer"],lead:"答：",gen});
+ const len=L=>L===0?rand(6,9):L===1?rand(9,11):rand(11,13);
+ const place=unit("place","位值","從個位往左依序是個、十、百、千、萬、十萬、百萬、千萬、億……；每四位是一組：萬、億、兆。",ctx=>{
+  const L=lv(ctx),n=withZeros(len(L)),s=String(n),k=pick(["which","digit","value"]);
+  const cand=[...s].map((d,i)=>[d,s.length-1-i]).filter(([d])=>d!=="0"&&s.split(d).length===2);if(!cand.length)return null;const [d,p]=pick(cand),D=Number(d);
+  if(k==="which")return{expr:"在 "+fmt(n)+" 中，數字 "+d+" 在哪一位？代表多少？",answer:PL[p]+"位；"+fmt(D*10**p),sig:"w:"+n+":"+d,verify:()=>Math.floor(n/10**p)%10===D};
+  if(k==="digit")return{expr:fmt(n)+" 的"+PL[p]+"位數字是多少？代表多少？",answer:d+"；"+fmt(D*10**p),sig:"d:"+n+":"+p,verify:()=>Math.floor(n/10**p)%10===D};
+  return{expr:fmt(n)+" 中的數字 "+d+"，代表幾個"+PL[p]+"？也就是多少？",answer:d+" 個"+PL[p]+"；"+fmt(D*10**p),sig:"v:"+n+":"+d,verify:()=>Math.floor(n/10**p)%10===D}});
+ const write=unit("write","大數的讀寫","每四位一組，從右往左是「個」「萬」「億」「兆」；寫成數字時，沒有的位要補 0。",ctx=>{
+  const L=lv(ctx),n=withZeros(len(L)),w=wan(n),k=pick(["toNum","toWan","count"]);
+  if(k==="toNum")return{expr:"把「"+w+"」寫成數字。",answer:fmt(n),sig:"n:"+n,verify:()=>fromWan(w)===n};
+  if(k==="toWan")return{expr:"把 "+fmt(n)+" 寫成「□億□萬□」這種形式。",answer:w,sig:"w:"+n,verify:()=>fromWan(w)===n};
+  return{expr:"「"+w+"」寫成數字是幾位數？最高位是什麼位？",answer:String(n).length+" 位數；"+PL[String(n).length-1]+"位",sig:"c:"+n,verify:()=>10**(String(n).length-1)<=n};
+ });
+ const compare=unit("compare","大數的比大小","先比位數，位數多的大；位數相同就從最高位往右一位一位比。",ctx=>{
+  const L=lv(ctx),n=withZeros(len(L)),s=String(n).split(""),i=rand(1,s.length-1);s[i]=String((Number(s[i])+rand(1,9))%10);const m=Number(s.join(""));
+  const sym=n>m?"＞":n<m?"＜":"＝",k=pick(L===0?["dd","dw","ww"]:["dw","ww","dd"]);
+  const A=k==="ww"?wan(n):fmt(n),B=k==="dd"?fmt(m):wan(m);
+  return{expr:"在 ○ 裡填入 ＞、＜ 或 ＝："+A+" ○ "+B,answer:sym,sig:k+":"+n+":"+m,verify:()=>(sym==="＞")===(fromWan(wan(n))>Number(String(m)))&&(sym==="＜")===(fromWan(wan(n))<fromWan(wan(m)))}});
+ const tenfold=unit("tenfold","10 倍、100 倍與 ÷10","一個數的 10 倍，每個數字往左移一位；÷10 往右移一位。10 個一萬是十萬，10 個一千萬是一億。",ctx=>{
+  const L=lv(ctx),a=rand(1,99)*(L===0?1:L===1?10:1),ex=L===0?rand(4,6):L===1?rand(5,8):rand(7,10),n=a*10**ex,f=pick(L===0?[10,100]:[10,100,1000]),up=Math.random()<.5;
+  if(!up&&n%f)return null;const r=up?n*f:n/f;if(r>9e15)return null;
+  const k=pick(["wan","num","many"]);
+  if(k==="many"){if(!up)return null;return{expr:f+" 個 "+wan(n)+" 是多少？",answer:wan(r),sig:"m:"+n+":"+f,verify:()=>r/f===n}}
+  return{expr:(k==="wan"?wan(n):fmt(n))+(up?" 的 "+f+" 倍是多少？":" ÷ "+f+" 是多少？"),answer:k==="wan"?wan(r):fmt(r),sig:k+":"+n+":"+f+":"+up,verify:()=>up?r/f===n:r*f===n}});
+ const compose=unit("compose","大數的組成","「幾個億、幾個萬」就是把億、萬那一組的數字寫出來，其他位補 0。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["make","split","makeK"]:L===1?["make","split","makeK"]:["make","splitT","makeT"]);
+  if(k==="make"||k==="makeT"){const t=k==="makeT"?rand(1,99):0,y=rand(1,9999),w=rand(0,9999),o=rand(0,9999);if(L===0&&y>99)return null;const n=t*1e12+y*1e8+w*1e4+o;return{expr:"由 "+(t?t+" 個兆、":"")+y+" 個億、"+w+" 個萬和 "+o+" 個一組成的數是多少？",answer:fmt(n),sig:"mk:"+n,verify:()=>Math.floor(n/1e8)%1e4===y&&Math.floor(n/1e4)%1e4===w&&n%1e4===o}}
+  if(k==="makeK"){const y=rand(1,99),q=rand(1,9),w=rand(1,999);const n=y*1e8+q*1e7+w*1e4;return{expr:"由 "+y+" 個億、"+q+" 個千萬和 "+w+" 個萬組成的數是多少？",answer:fmt(n),sig:"mq:"+n,verify:()=>Math.floor(n/1e4)%1e4===q*1000+w}}
+  const t=k==="splitT"?rand(1,99):0,y=L===0?rand(1,99):rand(1,9999),w=rand(1,9999),n=t*1e12+y*1e8+w*1e4;return{expr:fmt(n)+" 是由"+(t?"幾個兆、":"")+"幾個億和幾個萬組成的？",answer:(t?t+" 個兆、":"")+y+" 個億和 "+w+" 個萬",sig:"s:"+n,verify:()=>t*1e12+y*1e8+w*1e4===n}});
+ return{title:"大數與位值",symbol:"億",subtitle:"位值・大數的讀寫・比大小・10 倍與 ÷10・大數的組成",instruction:"答案用數字寫，四位一組的大數可寫成「□億□萬□」的形式。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：六到九位數（萬到億）。",advanced:"進階：九到十一位數（到千億）。",challenge:"挑戰：十一到十三位數（到兆）、兆的組成。"},
+  units:[place,write,compare,tenfold,compose],presets:{basic:{place:3,write:3,compare:3,tenfold:3,compose:3},advanced:{place:3,write:3,compare:3,tenfold:3,compose:3},challenge:{place:3,write:3,compare:3,tenfold:3,compose:3}}};
+}
+
+function addsubConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const nd=L=>L===0?3:L===1?4:5;
+ const add=unit("add","多位數加法","直式由個位算起，滿十就向前一位進 1；連加可以先湊整十、整百。",ctx=>{
+  const L=lv(ctx),a=digits(nd(L)),b=digits(nd(L)-(L===2?1:0)),c=digits(3),k=pick(["two","three","word"]);
+  if(k==="two")return{expr:OP(fmt(a),"＋",fmt(b)),answer:fmt(a+b),sig:"t:"+a+":"+b,verify:()=>a+b-b===a};
+  if(k==="three")return{expr:fmt(a)+" ＋ "+fmt(b)+" ＋ "+fmt(c),answer:fmt(a+b+c),sig:"h:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a};
+  return{expr:"比 "+fmt(a)+" 多 "+fmt(b)+" 的數是多少？",answer:fmt(a+b),sig:"w:"+a+":"+b,verify:()=>a+b-a===b,lead:"答："}});
+ const sub=unit("sub","多位數減法","不夠減就向前一位借 1 當 10；遇到 0 要連續退位。減完可以用「差＋減數＝被減數」驗算。",ctx=>{
+  const L=lv(ctx),k=pick(["two","zero","word","check"]);
+  let a=k==="zero"?Number(String(rand(1,9))+"0".repeat(nd(L)-2)+rand(0,9)):digits(nd(L)),b=digits(nd(L)-(L===2?1:0));if(b>=a)[a,b]=[b+0,a];if(a===b)return null;
+  if(k==="word")return{expr:fmt(a)+" 比 "+fmt(b)+" 多多少？",answer:fmt(a-b),sig:"w:"+a+":"+b,verify:()=>a-b+b===a,lead:"答："};
+  if(k==="check")return{expr:OP(fmt(a),"−",fmt(b))+"（並用加法驗算）",answer:fmt(a-b)+"；驗算："+fmt(a-b)+" ＋ "+fmt(b)+" ＝ "+fmt(a),sig:"c:"+a+":"+b,verify:()=>a-b+b===a};
+  return{expr:OP(fmt(a),"−",fmt(b)),answer:fmt(a-b),sig:k+":"+a+":"+b,verify:()=>a-b+b===a}});
+ const mix=unit("mix","加減混合","只有加和減時，由左往右依序計算；有括號先算括號裡面。",ctx=>{
+  const L=lv(ctx),d=nd(L),a=digits(d),b=digits(d-1),c=digits(d-1),k=pick(L===0?["pm","mp","mm"]:["pm","mm","par"]);
+  if(k==="pm"){const v=a+b-c;return{expr:fmt(a)+" ＋ "+fmt(b)+" − "+fmt(c),answer:fmt(v),sig:"pm:"+a+":"+b+":"+c,verify:()=>v+c-b===a}}
+  if(k==="mp"){if(a<b)return null;const v=a-b+c;return{expr:fmt(a)+" − "+fmt(b)+" ＋ "+fmt(c),answer:fmt(v),sig:"mp:"+a+":"+b+":"+c,verify:()=>v-c+b===a}}
+  if(k==="mm"){const v=a-b-c;if(v<0)return null;return{expr:fmt(a)+" − "+fmt(b)+" − "+fmt(c),answer:fmt(v),sig:"mm:"+a+":"+b+":"+c,verify:()=>v+c+b===a}}
+  const v=a-(b-c);if(b<c)return null;return{expr:fmt(a)+" − ("+fmt(b)+" − "+fmt(c)+")",answer:fmt(v),sig:"pr:"+a+":"+b+":"+c,verify:()=>v===a-b+c}});
+ const box=unit("box","用 □ 表示未知數","加減互為逆運算：□＋a＝b，□＝b−a；a−□＝b，□＝a−b；□−a＝b，□＝b＋a。",ctx=>{
+  const L=lv(ctx),d=nd(L),x=digits(d),a=digits(d-1),k=pick(["pa","ma","am"]);
+  if(k==="pa")return{expr:"□ ＋ "+fmt(a)+" ＝ "+fmt(x+a)+"，□ ＝ ？",answer:fmt(x),sig:"pa:"+x+":"+a,verify:()=>x+a-a===x};
+  if(k==="ma")return{expr:"□ − "+fmt(a)+" ＝ "+fmt(x),answer:fmt(x+a),sig:"ma:"+x+":"+a,verify:()=>x+a-a===x};
+  return{expr:fmt(x+a)+" − □ ＝ "+fmt(x),answer:fmt(a),sig:"am:"+x+":"+a,verify:()=>x+a-a===x}},"□＝");
+ const T=[["圖書館原有 A 本書，又買進 B 本，後來借出 C 本，還剩幾本？","本",(a,b,c)=>a+b-c],["某商店上午賣出 A 元，下午比上午少賣 B 元，這天共賣出多少元？","元",(a,b)=>a+a-b],["工廠第一天生產 A 個零件，第二天生產 B 個，兩天共生產多少個？","個",(a,b)=>a+b],["小明的存款有 A 元，買了一台 B 元的腳踏車後，還剩多少元？","元",(a,b)=>a-b],["一場音樂會賣出 A 張票，其中大人票 B 張，兒童票有幾張？","張",(a,b)=>a-b],["果園今年收成 A 公斤，去年比今年多 B 公斤，兩年共收成多少公斤？","公斤",(a,b)=>a+a+b],["學校有男生 A 人、女生 B 人，參加運動會的有 C 人，沒有參加的有幾人？","人",(a,b,c)=>a+b-c]];
+ const word=unit("word","加減應用題","先找出題目要問什麼，再判斷要加還是減；兩步驟的題目可以列成一個算式。",ctx=>{
+  const L=lv(ctx),[t,u,fn]=pick(L===0?T.slice(2,5):T),d=nd(L),a=digits(d),b=digits(d-1),c=digits(d-1),v=fn(a,b,c);if(v<=0||b>=a)return null;
+  return{expr:t.replace("A",fmt(a)).replace("B",fmt(b)).replace("C",fmt(c)),answer:fmt(v)+" "+u,sig:t.slice(0,6)+":"+a+":"+b+":"+c,verify:()=>Number.isInteger(v)&&v>0,lead:"答："}},"答：");
+ return{title:"多位數的加減",symbol:"±",subtitle:"多位數加法・減法・加減混合・用 □ 表示未知數・應用題",instruction:"可以用直式計算；做完用逆運算驗算。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：三位數的加減。",advanced:"進階：四位數的加減、連續退位、括號。",challenge:"挑戰：五位數與四位數的加減、兩步驟應用題。"},
+  units:[add,sub,mix,box,word],presets:{basic:{add:4,sub:4,mix:3,box:3,word:2},advanced:{add:3,sub:4,mix:3,box:3,word:3},challenge:{add:3,sub:3,mix:3,box:3,word:4}}};
+}
+
+function muldivConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const mul=unit("mul","整數乘法","直式乘法：先用乘數的個位去乘，再用十位去乘（積的末位對齊十位），最後相加；末尾有 0 可以先不管 0，最後再補上。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["31","21","41"]:L===1?["22","32","zero"]:["33","32z","zero"]);
+  const sz={31:[3,1],21:[2,1],41:[4,1],22:[2,2],32:[3,2],33:[3,3]}[k];
+  if(k==="zero"||k==="32z"){const a=digits(L===1?2:3)*10**rand(1,2),b=digits(rand(1,2))*10;return{expr:OP(fmt(a),"×",fmt(b)),answer:fmt(a*b),sig:k+":"+a+":"+b,verify:()=>a*b/b===a}}
+  const a=digits(sz[0]),b=digits(sz[1]);if(b===1)return null;const form=pick(["op","times","box"]);
+  if(form==="times")return{expr:fmt(a)+" 的 "+fmt(b)+" 倍是多少？",answer:fmt(a*b),sig:"t"+k+":"+a+":"+b,verify:()=>a*b/b===a,lead:"答："};
+  if(form==="box")return{expr:"□ ÷ "+fmt(b)+" ＝ "+fmt(a)+"，□ ＝ ？",answer:fmt(a*b),sig:"b"+k+":"+a+":"+b,verify:()=>a*b/b===a,lead:"□＝"};
+  return{expr:OP(fmt(a),"×",fmt(b)),answer:fmt(a*b),sig:k+":"+a+":"+b,verify:()=>(a*b)%b===0&&a*b/b===a}});
+ const div=unit("div","整數除法","由被除數的最高位開始除；商的位置要對齊；餘數一定比除數小。可以用「除數×商＋餘數＝被除數」驗算。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["31","21","31r"]:L===1?["32","42","32r"]:["42","52","zero"]);
+  if(k==="zero"){const q=rand(2,99),dv=rand(2,9)*10**rand(1,2),A=q*dv;return{expr:OP(fmt(A),"÷",fmt(dv)),answer:fmt(q),sig:"z:"+A+":"+dv,verify:()=>dv*q===A}}
+  const dvd=k.startsWith("3")?(k==="31"||k==="31r"?3:3):k.startsWith("4")?4:k.startsWith("5")?5:2,dvs=k[1]==="1"?rand(2,9):rand(11,L===2?98:49),rem=(k.endsWith("r")||Math.random()<.5)?rand(1,dvs-1):0;
+  const lo=Math.ceil((10**(dvd-1)-rem)/dvs),hi=Math.floor((10**dvd-1-rem)/dvs);if(lo>hi)return null;const q=rand(lo,hi),A=q*dvs+rem;
+  const ans=rem?"商 "+fmt(q)+"，餘 "+rem:fmt(q),ver=()=>Math.floor(A/dvs)===q&&A%dvs===rem&&dvs*q+rem===A,form=pick(["op","text","check"]);
+  if(form==="text")return{expr:fmt(A)+" 除以 "+fmt(dvs)+"，商和餘數各是多少？",answer:rem?"商 "+fmt(q)+"，餘 "+rem:"商 "+fmt(q)+"，沒有餘數（整除）",sig:"t"+k+":"+A+":"+dvs,verify:ver,lead:"答："};
+  if(form==="check")return{expr:OP(fmt(A),"÷",fmt(dvs))+"（並寫出驗算式）",answer:ans+"；驗算："+fmt(dvs)+" × "+fmt(q)+(rem?" ＋ "+rem:"")+" ＝ "+fmt(A),sig:"c"+k+":"+A+":"+dvs,verify:ver};
+  return{expr:OP(fmt(A),"÷",fmt(dvs)),answer:ans,sig:k+":"+A+":"+dvs,verify:ver}});
+ const check=unit("check","被除數、除數與驗算","被除數＝除數×商＋餘數；除數＝（被除數−餘數）÷商。",ctx=>{
+  const L=lv(ctx),dvs=L===0?rand(3,9):rand(12,L===1?49:99),q=rand(L===0?12:15,L===0?99:L===1?99:300),rem=rand(1,dvs-1),A=dvs*q+rem,k=pick(["box","dividend","divisor"]);
+  if(k==="box")return{expr:"□ ÷ "+dvs+" ＝ "+q+" … "+rem+"，□ ＝ ？",answer:fmt(A),sig:"b:"+dvs+":"+q+":"+rem,verify:()=>Math.floor(A/dvs)===q&&A%dvs===rem,lead:"□＝"};
+  if(k==="dividend")return{expr:"一個數除以 "+dvs+"，商是 "+q+"，餘數是 "+rem+"，這個數是多少？",answer:fmt(A),sig:"d:"+dvs+":"+q+":"+rem,verify:()=>Math.floor(A/dvs)===q&&A%dvs===rem};
+  if(rem>=dvs)return null;return{expr:fmt(A)+" 除以一個數，商是 "+q+"，餘數是 "+rem+"，這個數（除數）是多少？",answer:String(dvs),sig:"v:"+A+":"+q+":"+rem,verify:()=>(A-rem)/q===dvs&&rem<dvs}},"答：");
+ const W=[["每箱裝 A 瓶果汁，B 箱共有幾瓶？","瓶","m"],["一張票 A 元，買 B 張要多少元？","元","m"],["A 顆糖平分給 B 個小朋友，每人分到幾顆？還剩幾顆？","顆","d"],["A 人去郊遊，每輛遊覽車最多坐 B 人，至少要幾輛車？","輛","c"],["一捆緞帶長 A 公分，每 B 公分剪成一段，最多可以剪成幾段？","段","f"],["A 本書要裝箱，每箱裝 B 本，至少需要幾個箱子？","個","c"]];
+ const word=unit("word","乘除應用題","「每…共…」用乘法；「平分」「每幾個一組」用除法。有餘數時要想一想：剩下的還要不要再算一份（至少要幾輛車要進 1，最多剪幾段要捨去）。",ctx=>{
+  const L=lv(ctx),[t,u,op]=pick(W);let a,b,ans,ver;
+  if(op==="m"){a=rand(12,L===0?60:99);b=rand(L===0?3:12,L===0?9:L===1?60:250);ans=fmt(a*b)+" "+u;ver=()=>a*b/a===b}
+  else{b=L===0?rand(3,9):rand(12,48);const q=rand(5,L===2?250:60),r=rand(op==="d"?0:1,b-1);a=b*q+r;if(op==="d")ans="每人 "+q+" 顆，剩 "+r+" 顆";else if(op==="c")ans=(q+1)+" "+u;else ans=q+" "+u;ver=()=>Math.floor(a/b)===q&&a%b===r&&(op==="d"||r>0)}
+  return{expr:t.replace("A",fmt(a)).replace("B",fmt(b)),answer:ans,sig:t.slice(0,6)+":"+a+":"+b,verify:ver}},"答：");
+ return{title:"多位數的乘除",symbol:"×÷",subtitle:"整數乘法・整數除法（有餘數）・被除數與驗算・乘除應用題",instruction:"用直式計算；除法有餘數時寫「商…，餘…」，並用「除數×商＋餘數＝被除數」驗算。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：二、三、四位數乘一位數；二、三位數除以一位數。",advanced:"進階：二位數乘二位數、三位數乘二位數；三、四位數除以二位數。",challenge:"挑戰：三位數乘三位數、末尾有 0 的乘除；五位數除以二位數。"},
+  units:[mul,div,check,word],presets:{basic:{mul:4,div:4,check:3,word:3},advanced:{mul:4,div:4,check:3,word:3},challenge:{mul:4,div:4,check:3,word:3}}};
+}
+
+function mixedConfig(){
+ // 四位以上的數在題目上加千分位逗號；計算與 verify 都用原始數字
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen:ctx=>{const q=gen(ctx);if(q)q.expr=q.expr.replace(/\d{4,}/g,m=>fmt(Number(m)));return q}});
+ const S=(...p)=>p.join(" ");
+ const ev=s=>{const t=s.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/＋/g,"+").replace(/[（(]/g,"(").replace(/[）)]/g,")");if(!/^[0-9+\-*/() ]+$/.test(t))throw Error("bad");return Function("return "+t)()};
+ const order=unit("order","先乘除，後加減","沒有括號時，先算乘、除，再算加、減；同一級的運算由左往右算。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["a+bc","a-b/c","ab-c"]:L===1?["a+bc","ab-c/d","a-b/c+d"]:["ab+cd","a-b/c*d","ab-c/d"]);
+  const sm=()=>rand(2,L===0?9:15),big=()=>rand(L===0?20:100,L===0?99:999);let s,v;
+  if(k==="a+bc"){s=S(big(),"＋",sm(),"×",sm())}
+  else if(k==="ab-c"){const a=sm(),b=rand(10,40),c=rand(1,a*b-1);s=S(a,"×",b,"−",c)}
+  else if(k==="a-b/c"){const c=sm(),q=rand(2,30),b=c*q,a=rand(q+1,q+300);s=S(a,"−",b,"÷",c)}
+  else if(k==="ab-c/d"){const a=sm(),b=rand(10,50),d=sm(),q=rand(2,a*b-1),c=d*q;s=S(a,"×",b,"−",c,"÷",d)}
+  else if(k==="a-b/c+d"){const c=sm(),q=rand(2,40),b=c*q,a=rand(q+1,q+400);s=S(a,"−",b,"÷",c,"＋",big())}
+  else if(k==="ab+cd"){s=S(sm(),"×",rand(10,60),"＋",sm(),"×",rand(10,60))}
+  else if(k==="a-b/c*d"){const c=sm(),q=rand(2,20),d=sm(),b=c*q,a=rand(q*d+1,q*d+500);s=S(a,"−",b,"÷",c,"×",d)}
+  else{const a=sm(),b=rand(20,80),d=sm(),q=rand(2,a*b-1),c=d*q;s=S(a,"×",b,"−",c,"÷",d)}
+  v=ev(s);if(!Number.isInteger(v)||v<0)return null;return{expr:s,answer:fmt(v),sig:"o:"+s,verify:()=>v===stepEval(s)}});
+ const paren=unit("paren","有括號的計算","先算括號裡面，再算括號外面；括號外面也要先乘除、後加減。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["(a+b)c","a(b-c)","(a-b)/c"]:L===1?["(a+b)c","a/(b-c)","(a-b)/c+d"]:["a-(b+c)d","(a+b)/(c-d)","a(b-c)+e"]);
+  const sm=()=>rand(2,9);let s;
+  if(k==="(a+b)c")s=S("(",rand(10,80),"＋",rand(10,80),")","×",sm());
+  else if(k==="a(b-c)"){const b=rand(20,90),c=rand(1,b-1);s=S(sm(),"×","(",b,"−",c,")")}
+  else if(k==="(a-b)/c"){const c=sm(),q=rand(2,30),b=rand(10,90),a=b+c*q;s=S("(",a,"−",b,")","÷",c)}
+  else if(k==="a/(b-c)"){const d=sm(),c=rand(10,60),b=c+d,a=d*rand(5,60);s=S(a,"÷","(",b,"−",c,")")}
+  else if(k==="(a-b)/c+d"){const c=sm(),q=rand(2,30),b=rand(10,90),a=b+c*q;s=S("(",a,"−",b,")","÷",c,"＋",rand(10,99))}
+  else if(k==="a-(b+c)d"){const b=rand(5,30),c=rand(5,30),d=sm(),a=rand((b+c)*d,(b+c)*d+400);s=S(a,"−","(",b,"＋",c,")","×",d)}
+  else if(k==="(a+b)/(c-d)"){const e=sm(),d=rand(5,40),c=d+e,t=e*rand(5,50),a=rand(1,t-1),b=t-a;s=S("(",a,"＋",b,")","÷","(",c,"−",d,")")}
+  else{const b=rand(20,90),c=rand(1,b-1);s=S(sm(),"×","(",b,"−",c,")","＋",rand(10,200))}
+  const v=ev(s);if(!Number.isInteger(v)||v<0)return null;return{expr:s.replace(/\( /g,"(").replace(/ \)/g,")"),answer:fmt(v),sig:"p:"+s,verify:()=>v===stepEval(s)}});
+ const easy=unit("easy","簡便計算","湊整十、整百：25×4＝100、125×8＝1000；a−b−c＝a−(b＋c)；a÷b÷c＝a÷(b×c)；加 99 就是加 100 再減 1。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["x4","near","subsub"]:L===1?["x4","x8","subsub","divdiv"]:["x8","divdiv","near","dist"]);let s,way;
+  if(k==="x4"){const m=rand(11,99);s=pick([S(25,"×",m,"×",4),S(4,"×",m,"×",25),S(25,"×",4*m)]);way=m*100}
+  else if(k==="x8"){const m=rand(3,99);s=pick([S(125,"×",m,"×",8),S(8,"×",m,"×",125)]);way=m*1000}
+  else if(k==="near"){const a=rand(100,9999),n=pick([99,98,199,999,101,201]),plus=Math.random()<.5;if(!plus&&a<=n)return null;s=S(a,plus?"＋":"−",n);way=plus?a+n:a-n}
+  else if(k==="subsub"){const t=pick([100,200,300,500,1000]),b=rand(1,t-1),c=t-b,a=rand(t+1,t+5000);s=S(a,"−",b,"−",c);way=a-t}
+  else if(k==="divdiv"){const [b,c]=pick([[25,4],[4,25],[125,8],[5,2],[2,50],[25,8]]),q=rand(2,60),a=q*b*c;s=S(a,"÷",b,"÷",c);way=q}
+  else{const [p,q]=pick([[99,1],[98,2],[97,3],[101,-1]]),m=rand(12,99);s=S(m,"×",p,q>0?"＋":"−",m,"×",Math.abs(q));way=m*100}
+  const v=ev(s);return{expr:s,answer:fmt(v),sig:"e:"+s,verify:()=>v===way&&v===stepEval(s)}});
+ const T=[["一枝筆 A 元，買 B 枝，付 C 元，應找回多少元？",(a,b)=>[a*b+rand(1,99),`C−A×B`],(a,b,c)=>c-a*b,"元"],["每盒蛋糕 A 個，買了 B 盒，平分給 C 個班級，每班分到幾個？",null,(a,b,c)=>a*b/c,"個"],["小明每天存 A 元，存了 B 天後，又得到 C 元紅包，他共有多少元？",null,(a,b,c)=>a*b+c,"元"],["一本故事書 A 元，一本字典比故事書貴 B 元，買 C 本字典要多少元？",null,(a,b,c)=>(a+b)*c,"元"],["A 個橘子，每 B 個裝一袋，裝好的袋子平均分給 C 個人，每人分到幾袋？",null,(a,b,c)=>a/b/c,"袋"]];
+ const combine=unit("combine","列併式解應用題","把兩個步驟寫成一個算式（併式），要先算的部分記得加括號或放在乘除的位置。",ctx=>{
+  const L=lv(ctx),i=rand(0,L===0?2:4),[t,,fn,u]=T[i];let a,b,c,f;
+  if(i===0){a=rand(5,L===0?30:80);b=rand(2,9);c=Math.ceil(a*b/100)*100+pick([0,100]);if(c<=a*b)return null;f=`${c} − ${a} × ${b}`}
+  else if(i===1){c=rand(2,L===0?6:12);b=rand(2,9);const per=rand(2,15);if((per*c)%b)return null;a=per*c/b;if(!Number.isInteger(a)||a<2)return null;f=`${a} × ${b} ÷ ${c}`}
+  else if(i===2){a=rand(5,50);b=rand(5,30);c=rand(50,500);f=`${a} × ${b} ＋ ${c}`}
+  else if(i===3){a=rand(50,300);b=rand(10,100);c=rand(2,9);f=`(${a} ＋ ${b}) × ${c}`}
+  else{b=rand(3,12);c=rand(2,8);a=b*c*rand(2,20);f=`${a} ÷ ${b} ÷ ${c}`}
+  const v=fn(a,b,c);if(!Number.isInteger(v)||v<=0)return null;
+  return{expr:t.replace("A",a).replace("B",b).replace("C",c)+"（先列成一個併式再計算）",answer:f.replace(/\( /g,"(")+" ＝ "+fmt(v)+"，答："+fmt(v)+" "+u,sig:"c"+i+":"+a+":"+b+":"+c,verify:()=>stepEval(f)===v}},"列式：");
+ const box=unit("box","兩步驟的 □","先把 □ 和它旁邊的數看成一個整體，倒回去一步一步算。",ctx=>{
+  const L=lv(ctx),x=rand(2,L===0?20:60),a=rand(2,9),b=rand(2,L===0?50:300),k=pick(L===0?["ax+b","ax-b","x/a+b"]:["ax+b","ax-b","(x+b)a","x/a-b"]);let s,r;
+  if(k==="ax+b"){r=a*x+b;s="□ × "+a+" ＋ "+b+" ＝ "+r}
+  else if(k==="ax-b"){r=a*x-b;if(r<=0)return null;s=a+" × □ − "+b+" ＝ "+r}
+  else if(k==="(x+b)a"){r=(x+b)*a;s="(□ ＋ "+b+") × "+a+" ＝ "+fmt(r)}
+  else if(k==="x/a+b"){const X=x*a;r=x+b;s="□ ÷ "+a+" ＋ "+b+" ＝ "+r;return{expr:s,answer:fmt(X),sig:k+":"+X+":"+a+":"+b,verify:()=>X/a+b===r}}
+  else{const X=x*a;r=x-b;if(r<=0)return null;s="□ ÷ "+a+" − "+b+" ＝ "+r;return{expr:s,answer:fmt(X),sig:k+":"+X+":"+a+":"+b,verify:()=>X/a-b===r}}
+  return{expr:s,answer:fmt(x),sig:k+":"+x+":"+a+":"+b,verify:()=>stepEval(s.split("＝")[0].replace("□",String(x)))===r}},"□＝");
+ return{title:"四則混合計算與併式",symbol:"＋×",subtitle:"先乘除後加減・括號・簡便計算・列併式・兩步驟的 □",instruction:"先決定計算的順序再算；應用題要列成一個併式。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：三個數的混合計算、一層括號、湊整百的簡便計算、一步驟的併式。",advanced:"進階：四個數的混合計算、括號後再加減、連除與湊整千。",challenge:"挑戰：兩組乘法相加、括號相除、分配律的簡便計算、兩步驟應用題與 □。"},
+  units:[order,paren,easy,combine,box],presets:{basic:{order:4,paren:4,easy:3,combine:2,box:2},advanced:{order:4,paren:4,easy:3,combine:3,box:3},challenge:{order:3,paren:4,easy:3,combine:3,box:3}}};
+}
+
+/* verify 用：自己寫的四則運算（先乘除後加減、括號），不用 Function，和出題的 ev 不同路線 */
+function stepEval(src){const t=src.replace(/[，,]/g,"").match(/\d+|[＋−×÷()（）]/g);let i=0;
+ const num=()=>{const x=t[i++];if(x==="("||x==="（"){const v=expr();i++;return v}return Number(x)};
+ const term=()=>{let v=num();while(t[i]==="×"||t[i]==="÷"){const o=t[i++],w=num();v=o==="×"?v*w:v/w}return v};
+ const expr=()=>{let v=term();while(t[i]==="＋"||t[i]==="−"){const o=t[i++],w=term();v=o==="＋"?v+w:v-w}return v};
+ return expr()}
+
+const CONFIGS={bignum:bignumConfig,addsub:addsubConfig,muldiv:muldivConfig,mixed:mixedConfig},CFG=CONFIGS[TOPIC_KEY]();
+let state={level:"advanced",groups:[],paper:null,mixed:true};
+function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
+globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
+if(typeof document==="undefined")return;
+function build(){const sel=$("topicSel");TOPICS.forEach(([k,n])=>{const o=document.createElement("option");o.value=k;o.textContent=n;if(k===TOPIC_KEY)o.selected=true;sel.appendChild(o)});sel.addEventListener("change",()=>{location.search="?topic="+sel.value});$("topicTitle").textContent=CFG.title;$("topicLogo").textContent=CFG.symbol||"∑";document.title="百宏文教｜"+CFG.title+" 出題器";const can=document.querySelector('link[rel="canonical"]');if(can)can.href="https://www.bhcs.com.tw/tools/math/g4-drills.html?topic="+TOPIC_KEY;$("subtitle").textContent=CFG.subtitle;$("difficultyNote").textContent=CFG.levels.advanced;const mb=$("modeBoxes");CFG.modes.forEach(m=>{const label=document.createElement("label");label.className="choice";label.innerHTML=`<input type="checkbox" data-mode="${m}" checked>${(CFG.modeLabels||MODE_LABEL)[m]}`;mb.appendChild(label)});if(CFG.mixed){const label=document.createElement("label");label.className="choice";label.innerHTML='<input id="mixedNumber" type="checkbox" checked>可用帶分數';mb.appendChild(label)}const grid=$("unitGrid");CFG.units.forEach(u=>{const box=document.createElement("div");box.className="unit";box.innerHTML=`<input class="unit-check" id="unit-${u.id}" type="checkbox" data-unit="${u.id}"><label for="unit-${u.id}">${u.name}</label><input class="count" type="number" min="1" max="40" value="1" data-count="${u.id}" aria-label="${u.name}題數">`;grid.appendChild(box)});grid.addEventListener("change",e=>{if(e.target.matches(".unit-check"))grid.querySelector(`[data-count='${e.target.dataset.unit}']`).disabled=!e.target.checked;markChanged();updateTotal()});grid.addEventListener("input",e=>{if(e.target.matches(".count")){e.target.value=Math.max(1,Math.min(40,Number(e.target.value)||1));markChanged();updateTotal()}});applyPreset("advanced")}
+const selectedModes=()=>[...document.querySelectorAll("[data-mode]:checked")].map(x=>x.dataset.mode),selectedUnits=()=>CFG.units.flatMap(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);return c.checked?[{...u,count:Math.max(1,Math.min(40,Number(n.value)||1))}]:[]});
+function applyPreset(level){state.level=level;const p=CFG.presets[level];CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`),v=p[u.id]||0;c.checked=v>0;n.disabled=!c.checked;n.value=v||1});document.querySelectorAll(".level").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.level===level)));$("difficultyNote").textContent=CFG.levels[level];updateTotal();markChanged()}
+function setEach(v){CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);c.checked=v>0;n.disabled=!c.checked;if(v)n.value=v});updateTotal();markChanged()}
+function updateTotal(){$("total").textContent=`共 ${selectedUnits().reduce((s,u)=>s+u.count,0)} 題`}function markChanged(){$("status").textContent="設定已變更，按「重新出題」套用。"}
+function generate(){const modes=selectedModes(),chosen=selectedUnits();if(!modes.length){$("status").textContent="請至少勾選一種數的類型。";return}if(!chosen.length){state.groups=[];state.paper=null;render();$("status").textContent="請至少勾選一個單元。";return}state.mixed=CFG.mixed&&$("mixedNumber")?.checked;const seen=new Set,skipped=[];state.groups=[];for(const unit of chosen){const allowed=modes.filter(m=>unit.modes.includes(m));if(!allowed.length){skipped.push(unit.name);continue}const ctx={level:state.level,modes:allowed,mixed:state.mixed},questions=[];for(let i=0;i<unit.count;i++){const q=safeQuestion(unit,ctx,seen);if(q)questions.push(q)}if(questions.length)state.groups.push({unit,questions})}state.paper={level:state.level,modes:[...modes],total:state.groups.reduce((s,g)=>s+g.questions.length,0)};render();$("status").textContent=`已產生 ${state.paper.total} 題，逐題驗證完成${skipped.length?`；數型不適用而略過：${skipped.join("、")}`:""}。`}
+function render(){const out=$("output");out.innerHTML="";if(!state.paper||!state.groups.length){out.innerHTML='<div class="empty"><b>尚未產生練習卷</b>請選擇數型與單元後按「重新出題」。</div>';return}const teacher=$("version").value==="teacher",cols=$("columns").value,work={small:"10mm",medium:"16mm",large:"26mm"}[$("space").value],sheet=document.createElement("div");sheet.className=`sheet ${teacher?"teacher":"student"}`;sheet.style.setProperty("--work",work);sheet.innerHTML=`<div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>${CFG.title} 計算力練習（${{basic:"基礎",advanced:"進階",challenge:"挑戰"}[state.paper.level]}）</h2><span>班級：______　姓名：__________　日期：___／___　作答時間：___分___秒</span></div><p class="tip">${CFG.instruction}</p>`;let no=1;state.groups.forEach(g=>{const sec=document.createElement("section");sec.innerHTML=`<div class="sec">${g.unit.name}</div><p class="tip">${g.unit.tip}</p><div class="grid c${cols}"></div>`;const grid=sec.querySelector(".grid");g.questions.forEach(q=>{const item=document.createElement("div");item.className="prob";item.innerHTML=`<div class="q"><span class="no">(${no++})</span><span class="expr">${q.expr}</span></div><div class="work">${q.lead||g.unit.lead||"原式＝"}<span class="ans">${q.answer}</span></div>`;grid.appendChild(item)});sheet.appendChild(sec)});out.appendChild(sheet);fit()}
+function fit(){if(matchMedia("print").matches)return;const sheet=document.querySelector(".sheet");if(sheet)sheet.style.zoom=Math.min(1,Math.max(.42,(innerWidth-16)/794))}
+build();document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.level)));document.querySelectorAll("[data-mode],#mixedNumber").forEach(c=>c.addEventListener("change",markChanged));document.querySelectorAll("[data-each]").forEach(b=>b.addEventListener("click",()=>setEach(Number(b.dataset.each))));$("generate").addEventListener("click",generate);$("print").addEventListener("click",()=>state.paper&&print());["version","columns","space"].forEach(id=>$(id).addEventListener("change",render));addEventListener("resize",fit);addEventListener("beforeprint",()=>{const s=document.querySelector(".sheet");if(s)s.style.zoom=1});addEventListener("afterprint",fit);generate();
+})();
+</script>
+</body>
+</html>

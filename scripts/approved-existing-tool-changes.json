@@ -64,6 +64,13 @@
       "approved_blob": "378d514af9fd167258df8b4c7e6c5f23f0fd8561",
       "reason": "Grade 9: 10 new question types across righttri, quartile, boxplot and probability; existing units unchanged.",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "729d045686984d20de0322069c11adff3c37c1f5",
+      "approved_blob": "16f789f0e83df4f8e2a6cba96793a2d9642d4fb9",
+      "reason": "Math hub: section 國小三年級 becomes 國小中年級 and lists the four new g4-drills topics (cards 116 -> 120).",
+      "pull_request": null
     }
   ]
 }
