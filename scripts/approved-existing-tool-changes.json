@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "purpose": "Explicit, reviewed changes to pre-existing tools/ and assets/ files after a station integration froze them. Each entry pins the exact baseline and replacement Git blobs; any other difference still fails.",
+  "changes": [
+    {
+      "path": "tools/math/g9-1-4-trig-ratio.html",
+      "baseline_blob": "18e223c8db81dca9228963715f94adc43c5c70ab",
+      "approved_blob": "3844fdc039daa49f7a0f5bddba6ed0dde60959b7",
+      "reason": "Correctness fix: topic-1 question text, figure side labels and answer key now share one AB/BC/AC assignment (63% of figures were swapped; 14% of answers contradicted the text).",
+      "pull_request": 185
+    }
+  ]
+}

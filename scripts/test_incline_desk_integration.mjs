@@ -41,8 +41,11 @@ for(const f of m.protected_files)assert.equal(sha(fs.readFileSync(path.join(root
 // Protect every pre-existing tools/assets blob, including unpublished stations,
 // without listing their names in a new public cross-reference inventory.
 const baselineEntries=execFileSync('git',['ls-tree','-r',m.baseline_commit,'--','tools','assets'],{cwd:root,encoding:'utf8'}).trim().split('\n');
-let protectedExisting=0;
-for(const line of baselineEntries){const match=/^([0-9]+) blob ([a-f0-9]{40})\t(.+)$/.exec(line);assert(match,'regular baseline blob');const [,mode,hash,file]=match;if(file==='tools/science/index.html')continue;const b=fs.readFileSync(path.join(root,file));const actual=crypto.createHash('sha1').update(Buffer.from(`blob ${b.length}\0`)).update(b).digest('hex');assert.equal(actual,hash,`unchanged existing source ${file}`);protectedExisting++;}
+// Later reviewed fixes to pre-existing files are listed with exact before/after blobs.
+const approvedChanges=new Map(JSON.parse(read('scripts/approved-existing-tool-changes.json')).changes.map(c=>[c.path,c]));
+let protectedExisting=0,approvedApplied=0;
+for(const line of baselineEntries){const match=/^([0-9]+) blob ([a-f0-9]{40})\t(.+)$/.exec(line);assert(match,'regular baseline blob');const [,mode,hash,file]=match;if(file==='tools/science/index.html')continue;const b=fs.readFileSync(path.join(root,file));const actual=crypto.createHash('sha1').update(Buffer.from(`blob ${b.length}\0`)).update(b).digest('hex');const approved=approvedChanges.get(file);if(approved){assert.equal(hash,approved.baseline_blob,`approved change baseline ${file}`);assert.equal(actual,approved.approved_blob,`approved change content ${file}`);approvedApplied++;}else assert.equal(actual,hash,`unchanged existing source ${file}`);protectedExisting++;}
+assert.equal(approvedApplied,approvedChanges.size,'every approved change targets a protected baseline file');
 assert(protectedExisting>=629,'complete existing tools/assets baseline inventory');
 const img=fs.readFileSync(path.join(runtime,'assets/teacher-body-v3.png'));assert.equal(sha(img),'2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b');assert.deepEqual([img.readUInt32BE(16),img.readUInt32BE(20)],[948,1659]);
 assert.equal(standalonePublic.filter(t=>t.file==='incline-desk/').length,1);assert.equal(standalonePublic.length,7);assert(!legacy.some(t=>t.file==='incline-desk/'));assert(!firstBatch.includes('incline-desk/'));
