@@ -141,4 +141,15 @@ test('G7 equation layout regression runs in the site gate without replacing the 
   assert.ok(jobs.site.text.includes('run: node scripts/check_site_browser.cjs'));
 });
 
+test('standalone incline browser gate is additive and fail-closed within science-stations', () => {
+  const script = 'scripts/check_incline_desk_browser.cjs';
+  assert.equal(count(wf, script), 1);
+  assert.ok(jobs['science-stations'].text.includes(`run: node ${script}`));
+  assert.ok(fs.existsSync(path.join(root, script)));
+  assert.ok(wf.includes('name: incline-desk-review\n          path: incline-desk-artifacts/\n          retention-days: 14'));
+  assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('npm run test:incline-desk'));
+  assert.ok(jobs['science-stations'].text.includes('run: node scripts/check_pulley_desk_browser.cjs'));
+  assert.ok(!jobs['science-stations'].text.includes('continue-on-error: true'));
+});
+
 console.log(`ci workflow: ${tests} tests passed`);

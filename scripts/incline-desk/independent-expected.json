@@ -1,0 +1,856 @@
+[
+  {
+    "lengthCm": 40,
+    "sCm": 0,
+    "hQuarterCm": 0,
+    "forceHalfN": 10,
+    "workHalfNcm": 0
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 1,
+    "hQuarterCm": 2,
+    "forceHalfN": 10,
+    "workHalfNcm": 10
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 2,
+    "hQuarterCm": 4,
+    "forceHalfN": 10,
+    "workHalfNcm": 20
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 3,
+    "hQuarterCm": 6,
+    "forceHalfN": 10,
+    "workHalfNcm": 30
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 4,
+    "hQuarterCm": 8,
+    "forceHalfN": 10,
+    "workHalfNcm": 40
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 5,
+    "hQuarterCm": 10,
+    "forceHalfN": 10,
+    "workHalfNcm": 50
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 6,
+    "hQuarterCm": 12,
+    "forceHalfN": 10,
+    "workHalfNcm": 60
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 7,
+    "hQuarterCm": 14,
+    "forceHalfN": 10,
+    "workHalfNcm": 70
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 8,
+    "hQuarterCm": 16,
+    "forceHalfN": 10,
+    "workHalfNcm": 80
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 9,
+    "hQuarterCm": 18,
+    "forceHalfN": 10,
+    "workHalfNcm": 90
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 10,
+    "hQuarterCm": 20,
+    "forceHalfN": 10,
+    "workHalfNcm": 100
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 11,
+    "hQuarterCm": 22,
+    "forceHalfN": 10,
+    "workHalfNcm": 110
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 12,
+    "hQuarterCm": 24,
+    "forceHalfN": 10,
+    "workHalfNcm": 120
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 13,
+    "hQuarterCm": 26,
+    "forceHalfN": 10,
+    "workHalfNcm": 130
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 14,
+    "hQuarterCm": 28,
+    "forceHalfN": 10,
+    "workHalfNcm": 140
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 15,
+    "hQuarterCm": 30,
+    "forceHalfN": 10,
+    "workHalfNcm": 150
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 16,
+    "hQuarterCm": 32,
+    "forceHalfN": 10,
+    "workHalfNcm": 160
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 17,
+    "hQuarterCm": 34,
+    "forceHalfN": 10,
+    "workHalfNcm": 170
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 18,
+    "hQuarterCm": 36,
+    "forceHalfN": 10,
+    "workHalfNcm": 180
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 19,
+    "hQuarterCm": 38,
+    "forceHalfN": 10,
+    "workHalfNcm": 190
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 20,
+    "hQuarterCm": 40,
+    "forceHalfN": 10,
+    "workHalfNcm": 200
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 21,
+    "hQuarterCm": 42,
+    "forceHalfN": 10,
+    "workHalfNcm": 210
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 22,
+    "hQuarterCm": 44,
+    "forceHalfN": 10,
+    "workHalfNcm": 220
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 23,
+    "hQuarterCm": 46,
+    "forceHalfN": 10,
+    "workHalfNcm": 230
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 24,
+    "hQuarterCm": 48,
+    "forceHalfN": 10,
+    "workHalfNcm": 240
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 25,
+    "hQuarterCm": 50,
+    "forceHalfN": 10,
+    "workHalfNcm": 250
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 26,
+    "hQuarterCm": 52,
+    "forceHalfN": 10,
+    "workHalfNcm": 260
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 27,
+    "hQuarterCm": 54,
+    "forceHalfN": 10,
+    "workHalfNcm": 270
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 28,
+    "hQuarterCm": 56,
+    "forceHalfN": 10,
+    "workHalfNcm": 280
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 29,
+    "hQuarterCm": 58,
+    "forceHalfN": 10,
+    "workHalfNcm": 290
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 30,
+    "hQuarterCm": 60,
+    "forceHalfN": 10,
+    "workHalfNcm": 300
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 31,
+    "hQuarterCm": 62,
+    "forceHalfN": 10,
+    "workHalfNcm": 310
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 32,
+    "hQuarterCm": 64,
+    "forceHalfN": 10,
+    "workHalfNcm": 320
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 33,
+    "hQuarterCm": 66,
+    "forceHalfN": 10,
+    "workHalfNcm": 330
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 34,
+    "hQuarterCm": 68,
+    "forceHalfN": 10,
+    "workHalfNcm": 340
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 35,
+    "hQuarterCm": 70,
+    "forceHalfN": 10,
+    "workHalfNcm": 350
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 36,
+    "hQuarterCm": 72,
+    "forceHalfN": 10,
+    "workHalfNcm": 360
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 37,
+    "hQuarterCm": 74,
+    "forceHalfN": 10,
+    "workHalfNcm": 370
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 38,
+    "hQuarterCm": 76,
+    "forceHalfN": 10,
+    "workHalfNcm": 380
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 39,
+    "hQuarterCm": 78,
+    "forceHalfN": 10,
+    "workHalfNcm": 390
+  },
+  {
+    "lengthCm": 40,
+    "sCm": 40,
+    "hQuarterCm": 80,
+    "forceHalfN": 10,
+    "workHalfNcm": 400
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 0,
+    "hQuarterCm": 0,
+    "forceHalfN": 5,
+    "workHalfNcm": 0
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 1,
+    "hQuarterCm": 1,
+    "forceHalfN": 5,
+    "workHalfNcm": 5
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 2,
+    "hQuarterCm": 2,
+    "forceHalfN": 5,
+    "workHalfNcm": 10
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 3,
+    "hQuarterCm": 3,
+    "forceHalfN": 5,
+    "workHalfNcm": 15
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 4,
+    "hQuarterCm": 4,
+    "forceHalfN": 5,
+    "workHalfNcm": 20
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 5,
+    "hQuarterCm": 5,
+    "forceHalfN": 5,
+    "workHalfNcm": 25
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 6,
+    "hQuarterCm": 6,
+    "forceHalfN": 5,
+    "workHalfNcm": 30
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 7,
+    "hQuarterCm": 7,
+    "forceHalfN": 5,
+    "workHalfNcm": 35
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 8,
+    "hQuarterCm": 8,
+    "forceHalfN": 5,
+    "workHalfNcm": 40
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 9,
+    "hQuarterCm": 9,
+    "forceHalfN": 5,
+    "workHalfNcm": 45
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 10,
+    "hQuarterCm": 10,
+    "forceHalfN": 5,
+    "workHalfNcm": 50
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 11,
+    "hQuarterCm": 11,
+    "forceHalfN": 5,
+    "workHalfNcm": 55
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 12,
+    "hQuarterCm": 12,
+    "forceHalfN": 5,
+    "workHalfNcm": 60
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 13,
+    "hQuarterCm": 13,
+    "forceHalfN": 5,
+    "workHalfNcm": 65
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 14,
+    "hQuarterCm": 14,
+    "forceHalfN": 5,
+    "workHalfNcm": 70
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 15,
+    "hQuarterCm": 15,
+    "forceHalfN": 5,
+    "workHalfNcm": 75
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 16,
+    "hQuarterCm": 16,
+    "forceHalfN": 5,
+    "workHalfNcm": 80
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 17,
+    "hQuarterCm": 17,
+    "forceHalfN": 5,
+    "workHalfNcm": 85
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 18,
+    "hQuarterCm": 18,
+    "forceHalfN": 5,
+    "workHalfNcm": 90
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 19,
+    "hQuarterCm": 19,
+    "forceHalfN": 5,
+    "workHalfNcm": 95
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 20,
+    "hQuarterCm": 20,
+    "forceHalfN": 5,
+    "workHalfNcm": 100
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 21,
+    "hQuarterCm": 21,
+    "forceHalfN": 5,
+    "workHalfNcm": 105
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 22,
+    "hQuarterCm": 22,
+    "forceHalfN": 5,
+    "workHalfNcm": 110
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 23,
+    "hQuarterCm": 23,
+    "forceHalfN": 5,
+    "workHalfNcm": 115
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 24,
+    "hQuarterCm": 24,
+    "forceHalfN": 5,
+    "workHalfNcm": 120
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 25,
+    "hQuarterCm": 25,
+    "forceHalfN": 5,
+    "workHalfNcm": 125
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 26,
+    "hQuarterCm": 26,
+    "forceHalfN": 5,
+    "workHalfNcm": 130
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 27,
+    "hQuarterCm": 27,
+    "forceHalfN": 5,
+    "workHalfNcm": 135
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 28,
+    "hQuarterCm": 28,
+    "forceHalfN": 5,
+    "workHalfNcm": 140
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 29,
+    "hQuarterCm": 29,
+    "forceHalfN": 5,
+    "workHalfNcm": 145
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 30,
+    "hQuarterCm": 30,
+    "forceHalfN": 5,
+    "workHalfNcm": 150
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 31,
+    "hQuarterCm": 31,
+    "forceHalfN": 5,
+    "workHalfNcm": 155
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 32,
+    "hQuarterCm": 32,
+    "forceHalfN": 5,
+    "workHalfNcm": 160
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 33,
+    "hQuarterCm": 33,
+    "forceHalfN": 5,
+    "workHalfNcm": 165
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 34,
+    "hQuarterCm": 34,
+    "forceHalfN": 5,
+    "workHalfNcm": 170
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 35,
+    "hQuarterCm": 35,
+    "forceHalfN": 5,
+    "workHalfNcm": 175
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 36,
+    "hQuarterCm": 36,
+    "forceHalfN": 5,
+    "workHalfNcm": 180
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 37,
+    "hQuarterCm": 37,
+    "forceHalfN": 5,
+    "workHalfNcm": 185
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 38,
+    "hQuarterCm": 38,
+    "forceHalfN": 5,
+    "workHalfNcm": 190
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 39,
+    "hQuarterCm": 39,
+    "forceHalfN": 5,
+    "workHalfNcm": 195
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 40,
+    "hQuarterCm": 40,
+    "forceHalfN": 5,
+    "workHalfNcm": 200
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 41,
+    "hQuarterCm": 41,
+    "forceHalfN": 5,
+    "workHalfNcm": 205
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 42,
+    "hQuarterCm": 42,
+    "forceHalfN": 5,
+    "workHalfNcm": 210
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 43,
+    "hQuarterCm": 43,
+    "forceHalfN": 5,
+    "workHalfNcm": 215
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 44,
+    "hQuarterCm": 44,
+    "forceHalfN": 5,
+    "workHalfNcm": 220
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 45,
+    "hQuarterCm": 45,
+    "forceHalfN": 5,
+    "workHalfNcm": 225
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 46,
+    "hQuarterCm": 46,
+    "forceHalfN": 5,
+    "workHalfNcm": 230
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 47,
+    "hQuarterCm": 47,
+    "forceHalfN": 5,
+    "workHalfNcm": 235
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 48,
+    "hQuarterCm": 48,
+    "forceHalfN": 5,
+    "workHalfNcm": 240
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 49,
+    "hQuarterCm": 49,
+    "forceHalfN": 5,
+    "workHalfNcm": 245
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 50,
+    "hQuarterCm": 50,
+    "forceHalfN": 5,
+    "workHalfNcm": 250
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 51,
+    "hQuarterCm": 51,
+    "forceHalfN": 5,
+    "workHalfNcm": 255
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 52,
+    "hQuarterCm": 52,
+    "forceHalfN": 5,
+    "workHalfNcm": 260
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 53,
+    "hQuarterCm": 53,
+    "forceHalfN": 5,
+    "workHalfNcm": 265
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 54,
+    "hQuarterCm": 54,
+    "forceHalfN": 5,
+    "workHalfNcm": 270
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 55,
+    "hQuarterCm": 55,
+    "forceHalfN": 5,
+    "workHalfNcm": 275
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 56,
+    "hQuarterCm": 56,
+    "forceHalfN": 5,
+    "workHalfNcm": 280
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 57,
+    "hQuarterCm": 57,
+    "forceHalfN": 5,
+    "workHalfNcm": 285
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 58,
+    "hQuarterCm": 58,
+    "forceHalfN": 5,
+    "workHalfNcm": 290
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 59,
+    "hQuarterCm": 59,
+    "forceHalfN": 5,
+    "workHalfNcm": 295
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 60,
+    "hQuarterCm": 60,
+    "forceHalfN": 5,
+    "workHalfNcm": 300
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 61,
+    "hQuarterCm": 61,
+    "forceHalfN": 5,
+    "workHalfNcm": 305
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 62,
+    "hQuarterCm": 62,
+    "forceHalfN": 5,
+    "workHalfNcm": 310
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 63,
+    "hQuarterCm": 63,
+    "forceHalfN": 5,
+    "workHalfNcm": 315
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 64,
+    "hQuarterCm": 64,
+    "forceHalfN": 5,
+    "workHalfNcm": 320
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 65,
+    "hQuarterCm": 65,
+    "forceHalfN": 5,
+    "workHalfNcm": 325
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 66,
+    "hQuarterCm": 66,
+    "forceHalfN": 5,
+    "workHalfNcm": 330
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 67,
+    "hQuarterCm": 67,
+    "forceHalfN": 5,
+    "workHalfNcm": 335
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 68,
+    "hQuarterCm": 68,
+    "forceHalfN": 5,
+    "workHalfNcm": 340
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 69,
+    "hQuarterCm": 69,
+    "forceHalfN": 5,
+    "workHalfNcm": 345
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 70,
+    "hQuarterCm": 70,
+    "forceHalfN": 5,
+    "workHalfNcm": 350
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 71,
+    "hQuarterCm": 71,
+    "forceHalfN": 5,
+    "workHalfNcm": 355
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 72,
+    "hQuarterCm": 72,
+    "forceHalfN": 5,
+    "workHalfNcm": 360
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 73,
+    "hQuarterCm": 73,
+    "forceHalfN": 5,
+    "workHalfNcm": 365
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 74,
+    "hQuarterCm": 74,
+    "forceHalfN": 5,
+    "workHalfNcm": 370
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 75,
+    "hQuarterCm": 75,
+    "forceHalfN": 5,
+    "workHalfNcm": 375
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 76,
+    "hQuarterCm": 76,
+    "forceHalfN": 5,
+    "workHalfNcm": 380
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 77,
+    "hQuarterCm": 77,
+    "forceHalfN": 5,
+    "workHalfNcm": 385
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 78,
+    "hQuarterCm": 78,
+    "forceHalfN": 5,
+    "workHalfNcm": 390
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 79,
+    "hQuarterCm": 79,
+    "forceHalfN": 5,
+    "workHalfNcm": 395
+  },
+  {
+    "lengthCm": 80,
+    "sCm": 80,
+    "hQuarterCm": 80,
+    "forceHalfN": 5,
+    "workHalfNcm": 400
+  }
+]

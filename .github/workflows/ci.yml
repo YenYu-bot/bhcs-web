@@ -167,6 +167,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_pulley_desk_browser.cjs
+      - name: Check standalone incline guide, native input and storage boundaries
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_incline_desk_browser.cjs
       - name: Check all station operations, records, and challenges
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -210,6 +214,13 @@ jobs:
         with:
           name: pulley-desk-review
           path: pulley-desk-artifacts/
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: incline-desk-review
+          path: incline-desk-artifacts/
           retention-days: 14
 
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）

@@ -1,0 +1,20 @@
+{
+  "id": "handle-hover-2026-10-31",
+  "accepted_source_commit": "9a699657633ce1f888fe7274305b9870d4089eb9",
+  "private_source_commit": "a5a473f8cee135bd95a7e0c3677721482b7640a3",
+  "authorization": "User reported phone colour failing to return to idle; explicitly approved public reset+handle-colour Draft PR update on2026-10-31 at00:07UTC; no merge/deploy.",
+  "files": [
+    {
+      "path": "style.css",
+      "before_sha256": "bdeedc5c74b45e7d23a323030861c0a5519ba8c09aebb47a1598881733635570",
+      "sha256": "e8b1940436225948ca3a08c4c977328c0f96660d08d38b9e419cd7b06b7c3cd8",
+      "replacements": [
+        [
+          "button:hover:not(:disabled){",
+          "button:hover:not(:disabled):not(.drag-handle){"
+        ]
+      ]
+    }
+  ],
+  "ported_test_sha256": "add8129763c29e97f92d02d72b735ea9990d5d86831acad6fd9f1f22ea4ca5cf"
+}
