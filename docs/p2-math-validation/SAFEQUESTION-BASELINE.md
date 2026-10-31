@@ -107,13 +107,13 @@
 
 | 項目 | 結果 |
 |---|---:|
-| topic / 組合 | 106 / 4059 |
-| safeQuestion 抽樣 / 成功取題 | 811800 / 811800 |
-| 通過 / 失敗 | 4059 / 0 |
-| 候選 gen / null | 912498 / 76365 |
+| topic / 組合 | 106 / 4089 |
+| safeQuestion 抽樣 / 成功取題 | 817800 / 817800 |
+| 通過 / 失敗 | 4089 / 0 |
+| 候選 gen / null | 920944 / 78811 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 4059 / 0 |
-| 高拒絕率 unit（非阻擋） | 40 |
+| 完成單卷 / 單卷耗盡 | 4089 / 0 |
+| 高拒絕率 unit（非阻擋） | 42 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -151,6 +151,8 @@
 | similar / `area` | 51.0% | 1 |
 | similar / `measure` | 76.3% | 1 |
 | circle1 / `sector` | 59.0% | 1 |
+| quartile / `weighted` | 64.5% | 3 |
+| probability / `experiment` | 66.6% | 1 |
 | absolute / `error` | 66.6% | 3 |
 | linecircle / `tangent` | 52.7% | 1 |
 | series / `powersums` | 62.7% | 1 |
