@@ -48,7 +48,17 @@ const brandPalette=hex=>{const h=hex.slice(1),[r,g,b]=[0,2,4].map(i=>parseInt(h.
 // The approved G7 phone-only reflow is exact-match allowlisted. Every other byte,
 // including all math scripts and print declarations, still uses the original P1 comparison.
 const g7ScreenStyle='\n<style id="g7-screen-equation-columns">\n/* Keep long equations inside the phone preview; printed A4 columns stay unchanged. */\n@media screen and (max-width:640px){\n  #out .grid.c2,#out .grid.c3{grid-template-columns:1fr}\n}\n</style>\n';
-const comparable=(file,s)=>{if(file==='tools/math/g7-linear-equation.html')s=s.replace(g7ScreenStyle,'');s=strip(s);return p2EngineFiles.has(file)?s.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,block=>block.includes('globalThis.__BHCS_TEST__')?'<script data-p2-engine></script>':block):s};
+// Approved correctness fix (2026-10-31): g9-1-4-trig-ratio topic 1 side labels.
+// Question text, figure and answer key now share one AB/BC/AC assignment. Each pair is
+// [fixed, original]; the fix is reversed before the frozen P1 comparison, so every other
+// byte (markup, print/layout rules, other generators) must still equal the baseline.
+const trigRatioFile='tools/math/g9-1-4-trig-ratio.html';
+const trigRatioFix=[
+ ['      // 依頂點固定三邊長，題幹、圖示與答案共用同一組邊長（修正圖文邊長對調）\n      const sideAB = isRightC ? hypSide : (targetAngle === "B" ? adjSide : oppSide);\n      const sideBC = isRightC ? (targetAngle === "A" ? oppSide : adjSide) : hypSide;\n      const sideAC = isRightC ? (targetAngle === "A" ? adjSide : oppSide) : (targetAngle === "B" ? oppSide : adjSide);\n\n      const qText = `如下圖，在直角 △ABC 中，已知 ∠${vRight} ＝ 90°，<span class="overline">AB</span> ＝ ${sideAB}，<span class="overline">BC</span> ＝ ${sideBC}，<span class="overline">AC</span> ＝ ${sideAC}。',
+  '      const qText = `如下圖，在直角 △ABC 中，已知 ∠${vRight} ＝ 90°，<span class="overline">AB</span> ＝ ${isRightC ? hypSide : adjSide}，<span class="overline">BC</span> ＝ ${isRightC ? (targetAngle === "A" ? oppSide : adjSide) : hypSide}，<span class="overline">AC</span> ＝ ${isRightC ? (targetAngle === "A" ? adjSide : oppSide) : oppSide}。'],
+ ['        isRightC ? sideAC : sideAB, \n        isRightC ? sideBC : sideAC, \n','        oppSide, \n        adjSide, \n']
+];
+const comparable=(file,s)=>{if(file==='tools/math/g7-linear-equation.html')s=s.replace(g7ScreenStyle,'');if(file===trigRatioFile)for(const [fixed,original] of trigRatioFix)s=s.replace(fixed,original);s=strip(s);return p2EngineFiles.has(file)?s.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,block=>block.includes('globalThis.__BHCS_TEST__')?'<script data-p2-engine></script>':block):s};
 for(const [name,[topic,label,prefix='本頁內容已併入']] of Object.entries(g9bLegacyLinks)){
  const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
  assert.equal((s.match(/<!-- g9b-legacy-link-start -->/g)||[]).length,1,file+' link missing/duplicated');
@@ -89,6 +99,7 @@ for(const [name,[topic,label]] of Object.entries(g7LegacyLinks)){
 }
 for(const [name,[topic,label]] of Object.entries(legacyLinks)){
  const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
+ if(file===trigRatioFile)for(const [fixed] of trigRatioFix)assert.equal(s.split(fixed).length,2,file+' approved side-label fix missing or duplicated');
  assert.equal((s.match(/<!-- g9-legacy-link-start -->/g)||[]).length,1,file+' link missing/duplicated');
  assert.equal((s.match(/<!-- g9-legacy-link-end -->/g)||[]).length,1,file+' link end missing/duplicated');
  assert.ok(s.includes(`href="g9-drills.html?topic=${topic}" style="text-decoration:underline">${label} → `),file+' incorrect link');

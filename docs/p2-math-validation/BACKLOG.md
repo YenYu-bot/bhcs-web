@@ -16,7 +16,7 @@
 | 反函數浮點消去誤差 | g11 loggraphs/inverse | 改獨立驗證方法，保留原題目 |
 | 統計數值範圍與 verify 上限衝突 | g11 standarddev/deviationsum | 先確認既有條件來源，不逕自提高 10,000 上限 |
 | gen 回傳 null／內容篩選衝突 | CLASSIFICATION.md 第③類完整清單 | 先按原因再拆 PR，不能把所有 null 當作同一錯誤 |
-| 國三圖文邊長對調 | g9-1-4-trig-ratio.html（P1 既有記錄，不屬於 52-topic 統計） | 獨立 PR 校正題幹、圖示與角的對應，再做真實畫面及列印驗收 |
+| ~~國三圖文邊長對調~~（2026-10-31 已修正） | g9-1-4-trig-ratio.html（P1 既有記錄，不屬於 52-topic 統計） | 實測 2,000 題：圖示邊長對調 63%，∠A＝90°、求∠C 的題目（14%）題幹與答案矛盾。題幹、圖示、答案改用同一組 AB／BC／AC；`check_math_brand.cjs` 只核可這兩段修改；`scripts/math-regressions/trig-ratio-side-labels.mjs` 防回歸 |
 
 ## P1 之後：有限題庫題數上限 UX（本輪不修）
 
