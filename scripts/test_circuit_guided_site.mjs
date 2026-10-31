@@ -32,7 +32,7 @@ test('public launch: SEO, canonical, science index, resource directory and sitem
   assert.match(resources, /全部 59 項自然教材/);
   assert.match(resources, /國中自然 · 互動教材<span class="count">58 項/);
   assert.match(resources, /理化 <small>40 項/);
-  assert.match(resources, /目前共 221 項/);
+  assert.match(resources, /目前共 222 項/);
 });
 
 test('public circuit lab is discoverable while the legacy circuit stays separate',()=>{
