@@ -71,6 +71,13 @@
       "approved_blob": "16f789f0e83df4f8e2a6cba96793a2d9642d4fb9",
       "reason": "Math hub: section 國小三年級 becomes 國小中年級 and lists the four new g4-drills topics (cards 116 -> 120).",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "16f789f0e83df4f8e2a6cba96793a2d9642d4fb9",
+      "approved_blob": "717a2cc1e500fc971aa7a14f2d07be2aae77aef4",
+      "reason": "Math hub lists three more g4-drills topics: fraction, decimal, estimate (cards 120 -> 123).",
+      "pull_request": null
     }
   ]
 }

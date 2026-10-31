@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小中年級數學 計算力練習出題器</title><meta name="description" content="國小中年級（三、四年級）數學計算力練習出題器：大數與位值、多位數的加減、多位數的乘除、四則混合計算與併式，一頁切換；可設定難度（基礎／進階／挑戰）與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:title" content="百宏文教｜國小中年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:type" content="website">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小中年級數學 計算力練習出題器</title><meta name="description" content="國小中年級（三、四年級）數學計算力練習出題器：大數與位值、多位數的加減、多位數的乘除、四則混合計算與併式、分數、小數、概數與估算，一頁切換；可設定難度（基礎／進階／挑戰）與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:title" content="百宏文教｜國小中年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:type" content="website">
 <style>
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
 *{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
@@ -116,7 +116,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["bignum","大數與位值"],["addsub","多位數的加減"],["muldiv","多位數的乘除"],["mixed","四則混合計算與併式"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"bignum",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["bignum","大數與位值"],["addsub","多位數的加減"],["muldiv","多位數的乘除"],["mixed","四則混合計算與併式"],["fraction","分數（中年級）"],["decimal","小數（中年級）"],["estimate","概數與估算"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"bignum",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -315,7 +315,138 @@ function stepEval(src){const t=src.replace(/[，,]/g,"").match(/\d+|[＋−×÷(
  const expr=()=>{let v=term();while(t[i]==="＋"||t[i]==="−"){const o=t[i++],w=term();v=o==="＋"?v+w:v-w}return v};
  return expr()}
 
-const CONFIGS={bignum:bignumConfig,addsub:addsubConfig,muldiv:muldivConfig,mixed:mixedConfig},CFG=CONFIGS[TOPIC_KEY]();
+/* 第二批（2026-11-01，Claude）：分數、小數、概數。中年級的分數答案不要求約分（約分是五年級），所以用不約分的 F() 顯示；
+   小數一律用「百分之一」為單位的整數計算，避免浮點誤差。 */
+const F=(n,d)=>fr(n,d),MX=(n,d)=>{const w=Math.floor(n/d),r=n%d;return r?(w?w+F(r,d):F(r,d)):String(w)};
+const DH=v=>decHTML(R(v,100));
+function fractionConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const den=L=>L===0?rand(2,10):L===1?rand(3,12):rand(4,20);
+ const meaning=unit("meaning","分數的意義","把一個整體平分成 d 份，其中的 n 份就是 n／d；n／d 是 n 個 1／d。一盒的幾分之幾，就是先平分再取幾份。",ctx=>{
+  const L=lv(ctx),d=den(L),n=rand(1,d-1),k=pick(L===0?["part","units","count"]:["count","units","part2"]);
+  if(k==="part")return{expr:"把一條緞帶平分成 "+d+" 段，取其中的 "+n+" 段，是全長的幾分之幾？",answer:F(n,d),sig:"p:"+n+":"+d,verify:()=>n<d};
+  if(k==="units"){const m=L===0?n:rand(d+1,3*d);if(m<2)return null;return{expr:F(m,d)+" 是幾個 "+F(1,d)+"？",answer:m+" 個",sig:"u:"+m+":"+d,verify:()=>m*1===m}}
+  if(k==="part2"){const e=rand(2,6),T=d*e;return{expr:"一盒巧克力有 "+T+" 顆，平分成 "+d+" 份，"+n+" 份是幾顆？是一盒的幾分之幾？",answer:(n*e)+" 顆；"+F(n,d),sig:"q:"+T+":"+d+":"+n,verify:()=>T/d*n===n*e}}
+  const e=rand(2,L===0?5:12),T=d*e;return{expr:T+" 個蘋果的 "+F(n,d)+" 是幾個？",answer:(n*e)+" 個",sig:"c:"+T+":"+n+":"+d,verify:()=>(T*n)%d===0&&T*n/d===n*e}},"答：");
+ const compare=unit("compare","分數的比大小","分母相同，分子大的比較大；分子相同，分母小的比較大（每一份比較大）。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["sameD","sameN","one"]:["sameD","sameN","mixed"]);let A,B,a,b;
+  if(k==="sameD"){const d=den(L)+1;a=rand(1,L===0?d-1:2*d);b=rand(1,L===0?d-1:2*d);if(a===b)return null;A=F(a,d);B=F(b,d);a=a/d;b=b/d}
+  else if(k==="sameN"){const n=rand(1,L===0?5:9),p=rand(n+1,n+10),q=rand(n+1,n+10);if(p===q)return null;A=F(n,p);B=F(n,q);a=n/p;b=n/q}
+  else if(k==="one"){const d=den(L)+1,n=rand(1,2*d);if(n===d)return null;A=F(n,d);B="1";a=n/d;b=1}
+  else{const d=den(L)+1,w=rand(1,4),r=rand(1,d-1),m=w*d+r+pick([-1,1,0]);if(m<=0)return null;A=MX(w*d+r,d);B=F(m,d);a=(w*d+r)/d;b=m/d}
+  const sym=a>b?"＞":a<b?"＜":"＝",f=pick(["fill","which","order"]);
+  if(f==="which"){if(sym==="＝")return null;return{expr:A+" 和 "+B+" 哪一個比較大？",answer:a>b?A:B,sig:"w"+k+":"+A+":"+B,verify:()=>Math.max(a,b)===(a>b?a:b)}}
+  if(f==="order"&&k==="sameD"){const d=Number(A.match(/class="d">(\d+)/)[1]),xs=shuffle([...new Set([Math.round(a*d),Math.round(b*d),rand(1,2*d)])]);if(xs.length<3)return null;const so=[...xs].sort((x,y)=>x-y);return{expr:"把 "+xs.map(x=>F(x,d)).join("、")+" 由小到大排列。",answer:so.map(x=>F(x,d)).join(" ＜ "),sig:"o:"+xs+":"+d,verify:()=>so.every((x,i)=>!i||x>so[i-1])}}
+  return{expr:"在 ○ 裡填入 ＞、＜ 或 ＝："+A+" ○ "+B,answer:sym,sig:k+":"+A+":"+B,verify:()=>(sym==="＝")===(Math.abs(a-b)<1e-12)}},"答：");
+ const convert=unit("convert","假分數與帶分數","假分數化帶分數：分子÷分母，商是整數部分、餘數是新分子；帶分數化假分數：整數×分母＋分子。",ctx=>{
+  const L=lv(ctx),d=den(L),w=rand(1,L===0?5:L===1?9:20),r=rand(1,d-1),n=w*d+r,k=pick(["toMixed","toImp","int"]);
+  if(k==="toMixed")return{expr:"把 "+F(n,d)+" 化成帶分數。",answer:MX(n,d),sig:"m:"+n+":"+d,verify:()=>Math.floor(n/d)===w&&n%d===r};
+  if(k==="toImp")return{expr:"把 "+w+F(r,d)+" 化成假分數。",answer:F(n,d),sig:"i:"+n+":"+d,verify:()=>w*d+r===n};
+  return{expr:"把 "+w+" 化成分母是 "+d+" 的假分數。",answer:F(w*d,d),sig:"t:"+w+":"+d,verify:()=>(w*d)/d===w}},"答：");
+ const addsub=unit("addsub","同分母分數的加減","分母相同時，分母不變，分子相加減；帶分數可以整數和分數分開算，不夠減就從整數借 1（＝ d／d）。",ctx=>{
+  const L=lv(ctx),d=den(L)+1,k=pick(L===0?["add","sub","oneSub"]:L===1?["add","sub","mixAdd","oneSub"]:["mixAdd","mixSub","intSub"]);
+  if(k==="add"){const a=rand(1,d-1),b=rand(1,d-1),t=a+b;return{expr:F(a,d)+" ＋ "+F(b,d),answer:t<d?F(t,d):t===d?F(t,d)+"＝1":F(t,d)+"＝"+MX(t,d),sig:"a:"+a+":"+b+":"+d,verify:()=>t-b===a}}
+  if(k==="sub"){const a=rand(2,d-1),b=rand(1,a-1);return{expr:F(a,d)+" − "+F(b,d),answer:F(a-b,d),sig:"s:"+a+":"+b+":"+d,verify:()=>a-b+b===a}}
+  if(k==="oneSub"){const b=rand(1,d-1);return{expr:"1 − "+F(b,d),answer:F(d-b,d),sig:"o:"+b+":"+d,verify:()=>d-b+b===d}}
+  if(k==="mixAdd"){const w1=rand(1,6),w2=rand(1,6),a=rand(1,d-1),b=rand(1,d-1),t=(w1+w2)*d+a+b;return{expr:w1+F(a,d)+" ＋ "+w2+F(b,d),answer:MX(t,d),sig:"ma:"+[w1,a,w2,b,d],verify:()=>(w1*d+a)+(w2*d+b)===t}}
+  if(k==="mixSub"){const w1=rand(3,9),w2=rand(1,w1-1),a=rand(1,d-1),b=rand(1,d-1),t=(w1*d+a)-(w2*d+b);if(t<=0)return null;return{expr:w1+F(a,d)+" − "+w2+F(b,d),answer:MX(t,d),sig:"ms:"+[w1,a,w2,b,d],verify:()=>t+(w2*d+b)===w1*d+a}}
+  const W=rand(2,9),b=rand(1,d-1),w2=rand(0,W-1),t=W*d-(w2*d+b);return{expr:W+" − "+(w2?w2:"")+F(b,d),answer:MX(t,d),sig:"is:"+[W,w2,b,d],verify:()=>t+w2*d+b===W*d}});
+ const times=unit("times","分數的整數倍","n／d 的 k 倍＝（n×k）／d：分母不變，分子乘 k；結果大於 1 可以化成帶分數。",ctx=>{
+  const L=lv(ctx),d=den(L)+1,n=rand(1,d-1),k=rand(2,L===0?5:9),f=pick(L===0?["op","word","times"]:["op","word","mixed"]);
+  if(f==="mixed"){const w=rand(1,4),m=w*d+n,t=m*k;return{expr:w+F(n,d)+" × "+k,answer:MX(t,d),sig:"x:"+[w,n,d,k],verify:()=>(w*d+n)*k===t}}
+  const t=n*k,ans=t>d&&t%d?F(t,d)+"＝"+MX(t,d):t%d===0?F(t,d)+"＝"+t/d:F(t,d);
+  if(f==="word")return{expr:"每杯果汁 "+F(n,d)+" 公升，"+k+" 杯共有幾公升？",answer:ans+" 公升",sig:"w:"+[n,d,k],verify:()=>n*k===t,lead:"答："};
+  if(f==="times")return{expr:F(n,d)+" 的 "+k+" 倍是多少？",answer:ans,sig:"t:"+[n,d,k],verify:()=>n*k===t,lead:"答："};
+  return{expr:F(n,d)+" × "+k,answer:ans,sig:"o:"+[n,d,k],verify:()=>n*k===t}});
+ return{title:"分數（中年級）",symbol:"½",subtitle:"分數的意義・比大小・假分數與帶分數・同分母加減・整數倍",instruction:"分數答案不必約分；大於 1 的答案可寫成帶分數。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：分母 2～10 的真分數、同分母加減、整體的幾分之幾。",advanced:"進階：假分數、帶分數的加法、分數的整數倍。",challenge:"挑戰：帶分數的加減與借位、整數減帶分數、帶分數的整數倍。"},
+  units:[meaning,compare,convert,addsub,times],presets:{basic:{meaning:3,compare:3,convert:3,addsub:4,times:2},advanced:{meaning:3,compare:3,convert:3,addsub:4,times:3},challenge:{meaning:2,compare:3,convert:3,addsub:5,times:3}}};
+}
+
+function decimalConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const PN=["百分位","十分位","個位","十位","百位"];
+ const val=L=>L===0?rand(1,99)*10:rand(101,L===1?9999:99999); // 以 0.01 為單位
+ const place=unit("place","小數的位值","小數點右邊第一位是十分位（0.1），第二位是百分位（0.01）；10 個 0.01 是 0.1，10 個 0.1 是 1。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["which","make","count"]:["which","make","count","count2"]);
+  if(k==="make"){const a=rand(0,L===0?9:99),b=rand(0,9),c=L===0?0:rand(0,9),v=a*100+b*10+c;if(!b&&!c)return null;return{expr:a+" 個 1、"+b+" 個 0.1"+(c?"和 "+c+" 個 0.01":"")+"合起來是多少？",answer:DH(v),sig:"m:"+v,verify:()=>Math.round(v)===a*100+b*10+c}}
+  const v=val(L)+(L===0?0:0);
+  if(k==="count"){const t=L===0?Math.round(v/10):v;return{expr:DH(v)+" 是幾個 "+(L===0?"0.1":"0.01")+"？",answer:t+" 個",sig:"c:"+v,verify:()=>(L===0?t*10:t)===v}}
+  if(k==="count2")return{expr:DH(v)+" 是幾個 0.01？也是幾個 0.1 再加幾個 0.01？",answer:v+" 個 0.01；"+Math.floor(v/10)+" 個 0.1 和 "+v%10+" 個 0.01",sig:"c2:"+v,verify:()=>Math.floor(v/10)*10+v%10===v};
+  const s=String(v).padStart(3,"0"),cand=[...s].map((ch,i)=>[ch,s.length-1-i]).filter(([ch,p])=>ch!=="0"&&p<=4&&s.split(ch).length===2&&(L>0||p>=1));if(!cand.length)return null;const [ch,p]=pick(cand),D=Number(ch);
+  return{expr:"在 "+DH(v)+" 中，數字 "+ch+" 在哪一位？代表多少？",answer:PN[p]+"；"+DH(D*10**p),sig:"w:"+v+":"+ch,verify:()=>Math.floor(v/10**p)%10===D}},"答：");
+ const compare=unit("compare","小數的比大小","先比整數部分，再從十分位、百分位依序比；位數不同時，後面補 0 再比（0.7＝0.70）。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["near","int","swap"]:["near","len","swap"]);let a,b;
+  if(k==="near"){a=val(L);b=a+pick([-1,1])*(L===0?10*rand(1,3):rand(1,9))}
+  else if(k==="int"){a=rand(1,9)*10+rand(1,9)*100;b=rand(1,9)*10+rand(0,9)*100}
+  else if(k==="len"){a=rand(1,99)*10;b=a+pick([-1,1])*rand(1,9)}
+  else{a=val(L);const s=String(a).padStart(3,"0").split(""),i=rand(0,s.length-2);[s[i],s[i+1]]=[s[i+1],s[i]];b=Number(s.join(""))}
+  if(b<=0||b===a)return null;const sym=a>b?"＞":a<b?"＜":"＝";
+  const f=pick(["fill","which","order"]);
+  if(f==="which")return{expr:DH(a)+" 和 "+DH(b)+" 哪一個比較大？",answer:DH(Math.max(a,b)),sig:"w"+k+":"+a+":"+b,verify:()=>Math.max(a,b)>=a&&Math.max(a,b)>=b};
+  if(f==="order"){const c=a+pick([-1,1])*rand(1,L===0?3:15)*(L===0?10:1),xs=shuffle([a,b,c]);if(new Set(xs).size<3||c<=0)return null;const so=[...xs].sort((x,y)=>x-y);return{expr:"把 "+xs.map(DH).join("、")+" 由小到大排列。",answer:so.map(DH).join(" ＜ "),sig:"o"+k+":"+xs,verify:()=>so[0]<so[1]&&so[1]<so[2]}}
+  return{expr:"在 ○ 裡填入 ＞、＜ 或 ＝："+DH(a)+" ○ "+DH(b),answer:sym,sig:k+":"+a+":"+b,verify:()=>(sym==="＞")===(a>b)&&(sym==="＜")===(a<b)}},"答：");
+ const convert=unit("convert","分數與小數","十分之幾就是零點幾：7／10＝0.7；百分之幾就是零點零幾：23／100＝0.23；1.6＝16／10。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["f10","d10","w10"]:["f100","d100","w100","f10"]);
+  if(k==="f10"){const n=rand(1,L===0?9:39);return{expr:"把 "+F(n,10)+" 寫成小數。",answer:DH(n*10),sig:"f10:"+n,verify:()=>n*10/100===n/10}}
+  if(k==="d10"){const n=rand(1,9);return{expr:"把 "+DH(n*10)+" 寫成分母是 10 的分數。",answer:F(n,10),sig:"d10:"+n,verify:()=>n*10===n*10}}
+  if(k==="w10"){const w=rand(1,9),n=rand(1,9);return{expr:"把 "+w+F(n,10)+" 寫成小數。",answer:DH(w*100+n*10),sig:"w10:"+w+":"+n,verify:()=>w*100+n*10===(w*10+n)*10}}
+  if(k==="f100"){const n=rand(1,L===1?99:499);if(n%10===0)return null;return{expr:"把 "+F(n,100)+" 寫成小數。",answer:DH(n),sig:"f100:"+n,verify:()=>n===n}}
+  if(k==="d100"){const n=rand(1,99);if(n%10===0)return null;return{expr:"把 "+DH(n)+" 寫成分母是 100 的分數。",answer:F(n,100),sig:"d100:"+n,verify:()=>n<100}}
+  const w=rand(1,9),n=rand(1,99);if(n%10===0)return null;return{expr:"把 "+w+F(n,100)+" 寫成小數。",answer:DH(w*100+n),sig:"w100:"+w+":"+n,verify:()=>w*100+n===w*100+n}},"答：");
+ const addsub=unit("addsub","小數的加減","直式計算時小數點要對齊；位數不同可以在後面補 0。整數也可以看成小數點在個位後面（5＝5.00）。",ctx=>{
+  const L=lv(ctx),a=val(L),b=val(L),k=pick(L===0?["add","sub","word"]:["add","sub","intSub","word"]);
+  if(k==="add")return{expr:DH(a)+" ＋ "+DH(b),answer:DH(a+b),sig:"a:"+a+":"+b,verify:()=>a+b-b===a};
+  if(k==="sub"){const [x,y]=a>b?[a,b]:[b,a];if(x===y)return null;return{expr:DH(x)+" − "+DH(y),answer:DH(x-y),sig:"s:"+x+":"+y,verify:()=>x-y+y===x}}
+  if(k==="intSub"){const W=(Math.floor(b/100)+rand(1,5))*100;return{expr:W/100+" − "+DH(b),answer:DH(W-b),sig:"i:"+W+":"+b,verify:()=>W-b+b===W}}
+  const [x,y]=a>b?[a,b]:[b,a];if(x===y)return null;const t=pick([["一條繩子長 A 公尺，剪下 B 公尺後，還剩幾公尺？",x-y,"公尺"],["小華身高 A 公尺，比哥哥矮 B 公尺，哥哥身高幾公尺？",x+y,"公尺"],["一桶水有 A 公升，又倒入 B 公升，現在有幾公升？",x+y,"公升"]]);
+  if(t[0].includes("身高")&&(x>200||y>60))return null;return{expr:t[0].replace("A",DH(x)).replace("B",DH(y)),answer:DH(t[1])+" "+t[2],sig:"w"+t[0].slice(0,3)+":"+x+":"+y,verify:()=>t[1]===x+y||t[1]===x-y,lead:"答："}});
+ const times=unit("times","小數乘以整數","先當作整數相乘，再看被乘數有幾位小數，積就從右邊數幾位點上小數點（末尾的 0 可以去掉）。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["one","one","word"]:L===1?["one","two","word"]:["two","two2","word"]),m=rand(2,L===0?9:L===1?9:25);
+  let a=k==="one"?rand(1,L===0?9:99)*10:k==="two2"?pick([25,125,75,250,375]):rand(101,999);if(a%100===0)return null;const t=a*m;
+  if(k==="word")return{expr:"一枝鉛筆長 "+DH(a)+" 公分，"+m+" 枝排成一列共長幾公分？",answer:DH(t)+" 公分",sig:"w:"+a+":"+m,verify:()=>t/m===a,lead:"答："};
+  const f=pick(L===2?["op","times","box"]:["op","times","many"]);
+  if(f==="box")return{expr:"□ ÷ "+m+" ＝ "+DH(a)+"，□ ＝ ？",answer:DH(t),sig:"b"+k+":"+a+":"+m,verify:()=>t/m===a,lead:"□＝"};
+  if(f==="times")return{expr:DH(a)+" 的 "+m+" 倍是多少？",answer:DH(t),sig:"t"+k+":"+a+":"+m,verify:()=>t/m===a,lead:"答："};
+  if(f==="many")return{expr:m+" 個 "+DH(a)+" 合起來是多少？",answer:DH(t),sig:"m"+k+":"+a+":"+m,verify:()=>t/m===a,lead:"答："};
+  return{expr:DH(a)+" × "+m,answer:DH(t),sig:k+":"+a+":"+m,verify:()=>t/m===a&&R(t,100).d<=100}});
+ return{title:"小數（中年級）",symbol:"0.1",subtitle:"小數的位值・比大小・分數與小數・小數的加減・小數乘以整數",instruction:"小數的答案末尾的 0 可以省略；直式計算要對齊小數點。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：一位小數（十分位）。",advanced:"進階：二位小數（百分位）、整數減小數。",challenge:"挑戰：較大的二位小數、二位小數乘以二位整數。"},
+  units:[place,compare,convert,addsub,times],presets:{basic:{place:3,compare:3,convert:3,addsub:4,times:2},advanced:{place:3,compare:3,convert:3,addsub:4,times:3},challenge:{place:2,compare:3,convert:3,addsub:4,times:4}}};
+}
+
+function estimateConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const PU=[[10,"十位"],[100,"百位"],[1000,"千位"],[10000,"萬位"]],M={half:"四捨五入法",down:"無條件捨去法",up:"無條件進入法"};
+ const rnd=(n,u,m)=>m==="down"?Math.floor(n/u)*u:m==="up"?Math.ceil(n/u)*u:Math.floor((n+u/2)/u)*u;
+ const round=unit("round","取概數","四捨五入法看下一位：0～4 捨去、5～9 進 1；無條件捨去法把後面全部變 0；無條件進入法只要後面不是 0 就進 1。",ctx=>{
+  const L=lv(ctx),[u,un]=pick(PU.slice(0,L===0?2:4)),n=rand(u*2,u*(L===0?99:L===1?999:9999))+rand(1,u-1),m=pick(L===0?["half","half","down"]:["half","down","up"]),r=rnd(n,u,m),f=pick(["one","all"]);
+  if(f==="all"&&L>0){const rs=["half","down","up"].map(x=>fmt(rnd(n,u,x)));return{expr:"把 "+fmt(n)+" 分別用四捨五入法、無條件捨去法、無條件進入法取概數到"+un+"。",answer:rs.join("、"),sig:"a:"+n+":"+u,verify:()=>rnd(n,u,"down")<=n&&rnd(n,u,"up")>=n}}
+  return{expr:"用"+M[m]+"把 "+fmt(n)+" 取概數到"+un+"。",answer:fmt(r),sig:"o:"+n+":"+u+":"+m,verify:()=>r%u===0&&Math.abs(r-n)<u&&(m!=="half"||Math.abs(r-n)<=u/2)}},"答：");
+ const range=unit("range","概數的範圍","四捨五入到百位是 3500 的整數：最小 3450、最大 3549；無條件捨去到千位是 7000：7000～7999；無條件進入到千位是 7000：6001～7000。",ctx=>{
+  const L=lv(ctx),[u,un]=pick(PU.slice(L===0?1:1,L===0?3:4)),c=rand(2,L===0?99:999)*u,m=pick(L===0?["half","half","down"]:["half","down","up"]);
+  const lo=m==="half"?c-u/2:m==="down"?c:c-u+1,hi=m==="half"?c+u/2-1:m==="down"?c+u-1:c,f=pick(["both","count"]);
+  if(f==="count"&&L>0)return{expr:"一個整數用"+M[m]+"取概數到"+un+"是 "+fmt(c)+"，這樣的整數共有幾個？",answer:fmt(hi-lo+1)+" 個",sig:"c:"+c+":"+u+":"+m,verify:()=>rnd(lo,u,m)===c&&rnd(hi,u,m)===c&&rnd(lo-1,u,m)!==c&&rnd(hi+1,u,m)!==c};
+  return{expr:"一個整數用"+M[m]+"取概數到"+un+"是 "+fmt(c)+"，這個整數最小是多少？最大是多少？",answer:"最小 "+fmt(lo)+"，最大 "+fmt(hi),sig:"b:"+c+":"+u+":"+m,verify:()=>rnd(lo,u,m)===c&&rnd(hi,u,m)===c&&rnd(lo-1,u,m)!==c&&rnd(hi+1,u,m)!==c}},"答：");
+ const est=unit("est","先取概數再估算","先把每個數取概數到題目指定的位，再計算；估算的結果寫「約」。",ctx=>{
+  const L=lv(ctx),k=pick(L===0?["add","sub","addsub"]:["add","sub","mul"]),u=L===0?100:L===1?pick([100,1000]):1000,un=u===100?"百位":"千位";
+  if(k==="mul"){const a=rand(11,99),b=rand(11,99),ra=rnd(a,10,"half"),rb=rnd(b,10,"half");return{expr:"用四捨五入法把兩個數都取概數到十位，估算 "+a+" × "+b+" 大約是多少。",answer:"約 "+fmt(ra*rb)+"（"+ra+" × "+rb+"）",sig:"m:"+a+":"+b,verify:()=>ra%10===0&&rb%10===0&&Math.abs(ra-a)<=5}}
+  const a=rand(u*2,u*99)+rand(1,u-1),b=rand(u,u*60)+rand(1,u-1),c=rand(u,u*30)+rand(1,u-1),ra=rnd(a,u,"half"),rb=rnd(b,u,"half"),rc=rnd(c,u,"half");
+  if(k==="add")return{expr:"用四捨五入法把每個數取概數到"+un+"，估算 "+fmt(a)+" ＋ "+fmt(b)+" 大約是多少。",answer:"約 "+fmt(ra+rb),sig:"a:"+a+":"+b,verify:()=>ra%u===0&&rb%u===0};
+  if(k==="sub"){if(ra<=rb)return null;return{expr:"用四捨五入法把每個數取概數到"+un+"，估算 "+fmt(a)+" − "+fmt(b)+" 大約是多少。",answer:"約 "+fmt(ra-rb),sig:"s:"+a+":"+b,verify:()=>ra%u===0&&rb%u===0}}
+  if(ra+rb<=rc)return null;return{expr:"用四捨五入法把每個數取概數到"+un+"，估算 "+fmt(a)+" ＋ "+fmt(b)+" − "+fmt(c)+" 大約是多少。",answer:"約 "+fmt(ra+rb-rc),sig:"as:"+a+":"+b+":"+c,verify:()=>ra%u===0&&rc%u===0}},"答：");
+ const ITEMS=[["書包",380,1200],["球鞋",650,1800],["外套",590,1500],["文具組",120,450],["故事書",180,420],["水壺",210,560]];
+ const life=unit("life","生活中的估算","想知道錢夠不夠：用無條件進入法估「最多花多少」；想知道至少有多少：用無條件捨去法。",ctx=>{
+  const L=lv(ctx),n=L===0?2:3,its=shuffle(ITEMS).slice(0,n).map(([nm,lo,hi])=>[nm,rand(lo,hi)]),sum=its.reduce((s,x)=>s+x[1],0),up=its.reduce((s,x)=>s+rnd(x[1],100,"up"),0),k=pick(["enough","enough","range"]);
+  if(k==="range"&&L>0){const dn=its.reduce((s,x)=>s+rnd(x[1],100,"down"),0);return{expr:"媽媽要買"+its.map(x=>x[0]+" "+fmt(x[1])+" 元").join("、")+"。用無條件捨去法和無條件進入法取概數到百位，估算總價大約在多少元到多少元之間？",answer:fmt(dn)+" 元到 "+fmt(up)+" 元之間",sig:"r:"+its.map(x=>x[1]),verify:()=>dn<=sum&&sum<=up}}
+  const dn=its.reduce((s,x)=>s+rnd(x[1],100,"down"),0),ok=Math.random()<.5,money=ok?up+pick([0,100,200,300]):rand(dn/100,up/100-1)*100;if(!ok&&money<dn)return null;const surely=sum<=money;
+  return{expr:"小明帶 "+fmt(money)+" 元，想買"+its.map(x=>x[0]+" "+fmt(x[1])+" 元").join("、")+"。用無條件進入法取概數到百位估算，錢一定夠嗎？",answer:ok?"一定夠（估算最多約 "+fmt(up)+" 元）":"不一定夠（估算最多約 "+fmt(up)+" 元，超過 "+fmt(money)+" 元）",sig:"e:"+money+":"+its.map(x=>x[1]),verify:()=>up>=sum&&(!ok||surely)&&(ok===(up<=money))&&money>=dn}},"答：");
+ return{title:"概數與估算",symbol:"≈",subtitle:"取概數・概數的範圍・先取概數再估算・生活中的估算",instruction:"注意題目要求的取法（四捨五入、無條件捨去、無條件進入）和要取到哪一位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：取到十位、百位，以四捨五入為主。",advanced:"進階：取到千位、萬位，三種取法、概數的範圍與個數。",challenge:"挑戰：較大的數、乘法估算、估算總價的範圍。"},
+  units:[round,range,est,life],presets:{basic:{round:4,range:3,est:3,life:2},advanced:{round:4,range:3,est:3,life:3},challenge:{round:3,range:4,est:4,life:3}}};
+}
+
+const CONFIGS={bignum:bignumConfig,addsub:addsubConfig,muldiv:muldivConfig,mixed:mixedConfig,fraction:fractionConfig,decimal:decimalConfig,estimate:estimateConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
