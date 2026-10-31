@@ -2746,7 +2746,7 @@ function functionConfig(){
   (m)=>{const a=rnz(m),b=rv(m),y0=b,y1=add(a,b);return{q:`設 f(x)＝${L(a,b,m)}，求 f(0)、f(1)，並求 f(1)−f(0)。`,a:`f(0)＝${sh(y0,m)}，f(1)＝${sh(y1,m)}，f(1)−f(0)＝${sh(a,m)}`,vals:[y0,y1,a],chk:()=>near(fv(y1)-fv(y0),fv(a))}},
   (m)=>{const a=rnz(m),b=rv(m),d=ri(2,9),v=mul(a,d);return one(`設 f(x)＝${L(a,b,m)}。當 x 的值增加 ${d.n} 時，f(x) 的值增加多少？（減少以負數表示）`,v,m,()=>near((fv(a)*(3+d.n)+fv(b))-(fv(a)*3+fv(b)),fv(v)))}]);
 
- const quadraticValue=mkUnit("quadraticValue","二次函數值","先算 x²，再乘係數；負數平方後為正。",[
+ const quadraticValue=mkUnit("quadraticValue","二次函數值（進階）","先算 x²，再乘係數；負數平方後為正。",[
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rv(m,6),x=rv(m,4),y=eQ(a,b,c,x);return one(`設 f(x)＝${Q(a,b,c,m)}，求 f(${sh(x,m)})。`,y,m,()=>near(fv(a)*fv(x)**2+fv(b)*fv(x)+fv(c),fv(y)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rv(m,6),x=rv(m,4),y=eQ(a,b,c,x);return one(`二次函數 y＝${Q(a,b,c,m)}，當 x＝${sh(x,m)} 時，y 的值為多少？`,y,m,()=>near(fv(a)*fv(x)**2+fv(b)*fv(x)+fv(c),fv(y)))},
   (m)=>{const a=rnz(m,4),b=rnz(m,5),c=rv(m,6),x=rnz(m,4),y=eQ(a,b,c,x),w=eQ(a,b,c,R(-x.n,x.d));return{q:`設 f(x)＝${Q(a,b,c,m)}，求 f(${sh(x,m)}) 與 f(${sh(R(-x.n,x.d),m)})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(y)-fv(w),2*fv(b)*fv(x))}},
@@ -2767,7 +2767,7 @@ function functionConfig(){
   (m)=>{const a=rnz(m),b=rv(m),x=ri(-4,4),z=ri(-4,4),p=rand(2,4),q=rand(2,4);if(eq(x,z))return null;const v=sub(mul(R(p),eL(a,b,x)),mul(R(q),eL(a,b,z)));return one(`設 f(x)＝${L(a,b,m)}，求 ${p}f(${sh(x,m)})−${q}f(${sh(z,m)})。`,v,m,()=>near(p*(fv(a)*x.n+fv(b))-q*(fv(a)*z.n+fv(b)),fv(v)))},
   (m)=>{const a=rnz(m),b=rv(m),x=ri(-5,5),z=ri(-5,5),fz=eL(a,b,z);if(fz.n===0||eq(x,z))return null;const v=div(eL(a,b,x),fz);if(m==="decimal"&&!term10(v))return null;return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})÷f(${sh(z,m)})。`,v,m,()=>near((fv(a)*x.n+fv(b))/(fv(a)*z.n+fv(b)),fv(v)))}]);
 
- const piecewise=mkUnit("piecewise","分段函數","先看 x 屬於哪一段，再代入那一段的式子；端點看等號在哪一段。",[
+ const piecewise=mkUnit("piecewise","分段函數（進階）","先看 x 屬於哪一段，再代入那一段的式子；端點看等號在哪一段。",[
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,4),d=rv(m,5),x=ri(-4,-1),z=ri(1,4),y=eL(a,b,x),w=eL(c,d,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${L(c,d,m)}，x≧0`])}，求 f(${sh(x,m)}) 與 f(${z.n})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*x.n+fv(b),fv(y))&&near(fv(c)*z.n+fv(d),fv(w))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,3),d=rv(m,4),x=ri(-4,-1),z=ri(1,4),y=eL(a,b,x),w=eQ(c,R(0),d,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${Q(c,R(0),d,m)}，x≧0`])}，求 f(${sh(x,m)}) 與 f(${z.n})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*x.n+fv(b),fv(y))&&near(fv(c)*z.n**2+fv(d),fv(w))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,3),d=rv(m,4),x=ri(-4,-1),z=ri(0,4),v=add(eL(a,b,x),eQ(c,R(0),d,z));return one(`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${Q(c,R(0),d,m)}，x≧0`])}，求 f(${sh(x,m)})＋f(${z.n})。`,v,m,()=>near(fv(a)*x.n+fv(b)+fv(c)*z.n**2+fv(d),fv(v)))},
@@ -2789,21 +2789,21 @@ function functionConfig(){
   (m)=>{const a=rnz(m,5),b=rv(m,5),x1=ri(-3,3),p=rand(1,4),q=rand(-4,-1),dv=mul(a,R(p-q)),y1=eL(a,b,x1);return{q:`設 f(x)＝ax＋b，且 f(${p})−f(${sh(R(q),m)})＝${sh(dv,m)}、f(${sh(x1,m)})＝${sh(y1,m)}，求 a、b。`,a:ab(a,b,m),vals:[a,b],chk:()=>near((fv(a)*p+fv(b))-(fv(a)*q+fv(b)),fv(dv))&&near(fv(a)*x1.n+fv(b),fv(y1))}},
   (m)=>{const a=rnz(m,5),b=rv(m,5),x1=ri(1,4),x2=ri(-4,-1),S=add(eL(a,b,x1),eL(a,b,x2)),D=sub(eL(a,b,x1),eL(a,b,x2));return{q:`設 f(x)＝ax＋b，且 f(${x1.n})＋f(${sh(x2,m)})＝${sh(S,m)}、f(${x1.n})−f(${sh(x2,m)})＝${sh(D,m)}，求 a、b。`,a:ab(a,b,m),vals:[a,b],chk:()=>near(fv(a)*(x1.n-x2.n),fv(D))&&near(fv(a)*(x1.n+x2.n)+2*fv(b),fv(S))}}]);
 
- const quadraticCoeff=mkUnit("quadraticCoeff","反求二次函數係數","把已知的函數值代入，得到 a、b 的聯立方程式。",[
+ const quadraticCoeff=mkUnit("quadraticCoeff","反求二次函數係數（進階）","把已知的函數值代入，得到 a、b 的聯立方程式。",[
   (m)=>{const p=rnz(m,3),a=rnz(m,4),b=rv(m,5),[x1,x2]=shuffle([-2,-1,1,2,3]).slice(0,2).map(v=>R(v)),y1=eQ(p,a,b,x1),y2=eQ(p,a,b,x2);return{q:`設 f(x)＝${term(p,"x<sup>2</sup>",m,true)}＋ax＋b，且 f(${sh(x1,m)})＝${sh(y1,m)}、f(${sh(x2,m)})＝${sh(y2,m)}，求 a、b。`,a:ab(a,b,m),vals:[a,b],chk:()=>[[x1,y1],[x2,y2]].every(([x,y])=>near(fv(p)*x.n**2+fv(a)*x.n+fv(b),fv(y)))}},
   (m)=>{const p=rnz(m,3),a=rnz(m,4),b=rv(m,5),x2=ri(1,3),y2=eQ(p,a,b,x2);return{q:`設 f(x)＝${term(p,"x<sup>2</sup>",m,true)}＋ax＋b，且 f(0)＝${sh(b,m)}、f(${x2.n})＝${sh(y2,m)}，求 a、b。`,a:ab(a,b,m),vals:[a,b],chk:()=>near(fv(p)*x2.n**2+fv(a)*x2.n+fv(b),fv(y2))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),x1=ri(1,2),x2=ri(3,4),y1=eQ(a,R(0),b,x1),y2=eQ(a,R(0),b,x2);return{q:`設 f(x)＝ax<sup>2</sup>＋b，且 f(${x1.n})＝${sh(y1,m)}、f(${x2.n})＝${sh(y2,m)}，求 a、b。`,a:ab(a,b,m),vals:[a,b],chk:()=>near(fv(a)*x1.n**2+fv(b),fv(y1))&&near(fv(a)*x2.n**2+fv(b),fv(y2))}},
   (m)=>{const a=rnz(m,4),b=rnz(m,5),y1=add(a,b),y2=sub(a,b);return{q:`設 f(x)＝ax<sup>2</sup>＋bx，且 f(1)＝${sh(y1,m)}、f(−1)＝${sh(y2,m)}，求 a、b。`,a:ab(a,b,m),vals:[a,b],chk:()=>near(fv(a)+fv(b),fv(y1))&&near(fv(a)-fv(b),fv(y2))}},
   (m)=>{const p=rnz(m,3),a=rnz(m,4),b=rv(m,5),y1=eQ(p,a,b,R(1)),y2=eQ(p,a,b,R(-1)),x3=ri(2,3),y3=eQ(p,a,b,x3);return{q:`設 f(x)＝${term(p,"x<sup>2</sup>",m,true)}＋ax＋b，且 f(1)＝${sh(y1,m)}、f(−1)＝${sh(y2,m)}，求 a、b 與 f(${x3.n})。`,a:`${ab(a,b,m)}，f(${x3.n})＝${sh(y3,m)}`,vals:[a,b,y3],chk:()=>near(fv(p)+fv(a)+fv(b),fv(y1))&&near(fv(p)-fv(a)+fv(b),fv(y2))&&near(fv(p)*x3.n**2+fv(a)*x3.n+fv(b),fv(y3))}}]);
 
- const replaceFunction=mkUnit("replaceFunction","函數替換","令括號內的式子等於要求的值，解出 x 再代入另一邊。",[
+ const replaceFunction=mkUnit("replaceFunction","函數替換（進階）","令括號內的式子等於要求的值，解出 x 再代入另一邊。",[
   (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,5),t=rand(-3,4),v=eL(a,b,R(t+s));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝f(x＋${s})，求 g(${t})。`,v,m,()=>near(fv(a)*(t+s)+fv(b),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),k=rand(2,4),t=rand(-3,4),v=eL(a,b,R(k*t));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝f(${k}x)，求 g(${t})。`,v,m,()=>near(fv(a)*k*t+fv(b),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,4),k=rand(2,3),o=rand(-4,3),t=rand(-2,4),x=t+s,v=eL(a,b,R(k*x+o));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x−${s})＝f(${k}x${o<0?`−${-o}`:o?`＋${o}`:""})，求 g(${t})。`,v,m,()=>near(fv(a)*(k*(t+s)+o)+fv(b),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),p=rand(2,3),c=rand(-5,5),t=rand(-3,4),v=add(mul(R(p),eL(a,b,R(t))),R(c));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝${p}f(x)${c<0?`−${-c}`:c?`＋${c}`:""}，求 g(${t})。`,v,m,()=>near(p*(fv(a)*t+fv(b))+c,fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,5),t=rand(-4,6),v=add(mul(a,R(t-s)),b);return one(`已知 f(x＋${s})＝${L(a,b,m)}，求 f(${t})。`,v,m,()=>near(fv(a)*(t-s)+fv(b),fv(v)))}]);
 
- const composite=mkUnit("composite","複合函數","f(g(x)) 由內往外算：先求 g(x)，再把結果代入 f。",[
+ const composite=mkUnit("composite","複合函數（進階）","f(g(x)) 由內往外算：先求 g(x)，再把結果代入 f。",[
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),x=ri(-3,4),v=eL(a,b,eL(c,d,x));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 f(g(${sh(x,m)}))。`,v,m,()=>near(fv(a)*(fv(c)*x.n+fv(d))+fv(b),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),x=ri(-3,4),v=eL(c,d,eL(a,b,x));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 g(f(${sh(x,m)}))。`,v,m,()=>near(fv(c)*(fv(a)*x.n+fv(b))+fv(d),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),x=ri(-3,4),p=eL(a,b,eL(c,d,x)),q=eL(c,d,eL(a,b,x));return{q:`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 f(g(${sh(x,m)})) 與 g(f(${sh(x,m)}))。`,a:`${sh(p,m)}、${sh(q,m)}`,vals:[p,q],chk:()=>near(fv(a)*(fv(c)*x.n+fv(d))+fv(b),fv(p))&&near(fv(c)*(fv(a)*x.n+fv(b))+fv(d),fv(q))}},
@@ -2817,7 +2817,7 @@ function functionConfig(){
   (m)=>{const a=rnz(m,4),b=rv(m,5),n=rand(3,6);let s=R(0);for(let i=1;i<=n;i++)s=add(s,eL(a,b,R(2*i-1)));return one(`設 f(x)＝${L(a,b,m)}，求 f(1)＋f(3)＋f(5)＋⋯＋f(${2*n-1})。`,s,m,()=>near(fv(a)*n*n+n*fv(b),fv(s)))},
   (m)=>{const a=rnz(m,3),c=rv(m,4),n=rand(4,6);let s=R(0);for(let i=1;i<=n;i++)s=add(s,eQ(a,R(0),c,R(i)));return one(`設 f(x)＝${Q(a,R(0),c,m)}，求 f(1)＋f(2)＋⋯＋f(${n})。`,s,m,()=>near(fv(a)*n*(n+1)*(2*n+1)/6+n*fv(c),fv(s)))}]);
 
- const nested=mkUnit("nested","巢狀函數值","f(f(x)) 先算裡面的 f(x)，再把結果當成新的 x 代入一次。",[
+ const nested=mkUnit("nested","巢狀函數值（進階）","f(f(x)) 先算裡面的 f(x)，再把結果當成新的 x 代入一次。",[
   (m)=>{const a=rnz(m,3),b=rv(m,4),x=ri(-3,3),v=eL(a,b,eL(a,b,x));return one(`設 f(x)＝${L(a,b,m)}，求 f(f(${sh(x,m)}))。`,v,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(x.n)),fv(v))})},
   (m)=>{const a=rnz(m,3),b=rv(m,4),x=ri(-2,2),v=eL(a,b,eL(a,b,eL(a,b,x)));return one(`設 f(x)＝${L(a,b,m)}，求 f(f(f(${sh(x,m)})))。`,v,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(g(x.n))),fv(v))})},
   (m)=>{const a=rnz(m,3),b=rv(m,4),x=ri(-3,3),y=eL(a,b,x),v=eL(a,b,y);return{q:`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)}) 與 f(f(${sh(x,m)}))。`,a:`${sh(y,m)}、${sh(v,m)}`,vals:[y,v],chk:()=>near(fv(a)*fv(y)+fv(b),fv(v))}},
@@ -2825,9 +2825,9 @@ function functionConfig(){
   (m)=>{const a=rnz(m,3),b=rv(m,4),k=rv(m,4),t=eL(a,b,eL(a,b,k));if(mul(a,a).n===0)return null;return one(`設 f(x)＝${L(a,b,m)}。若 f(f(k))＝${sh(t,m)}，求 k。`,k,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(fv(k))),fv(t))})}]);
 
  return{title:"函數",symbol:"f(x)",subtitle:"一次・二次・常數函數值・綜合運算・分段函數・反求輸入與係數・函數替換・複合・總和・巢狀",instruction:"代入負數時先加括號，並寫出必要的過程。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
-  levels:{basic:"基礎：直接代入求一次、二次、常數函數值與簡單運算；由兩個函數值反求一次函數。",advanced:"進階：兩個函數值、函數值的差與倍數、兩式相等反求、f(0) 與 f(k) 反求係數、複合的兩種順序。",challenge:"挑戰：函數值的增量、f(x＋1)−f(x)、分段端點與巢狀分段、f(k)＋f(k＋1)、和差反求、f(x＋s) 替換、g(f(g(x)))、f(f(k)) 反求。"},
+  levels:{basic:"基礎：直接代入求一次、常數函數值與簡單運算；由兩個函數值反求一次函數。標「進階」的單元預設不選：二次函數是國三下課程，分段、替換、複合、巢狀函數不在國中課綱，需要時再自行勾選。",advanced:"進階：兩個函數值、函數值的差與倍數、兩式相等反求、f(0) 與 f(k) 反求一次函數係數、連續函數值總和。標「進階」的單元預設不選：二次函數是國三下課程，分段、替換、複合、巢狀函數不在國中課綱，需要時再自行勾選。",challenge:"挑戰（含標「進階」的超出國中課綱單元）：函數值的增量、f(x＋1)−f(x)、分段端點與巢狀分段、f(k)＋f(k＋1)、和差反求、f(x＋s) 替換、g(f(g(x)))、f(f(k)) 反求。"},
   units:[linearValue,quadraticValue,constantValue,combinedValue,piecewise,solveInput,linearCoeff,quadraticCoeff,replaceFunction,composite,sumValues,nested],
-  presets:{basic:{linearValue:4,quadraticValue:3,constantValue:2,combinedValue:3,solveInput:2,linearCoeff:2},advanced:{linearValue:2,quadraticValue:2,combinedValue:2,piecewise:2,solveInput:2,linearCoeff:2,quadraticCoeff:2,composite:2,sumValues:2,nested:1},challenge:{combinedValue:2,piecewise:2,solveInput:2,linearCoeff:2,quadraticCoeff:2,replaceFunction:3,composite:2,sumValues:2,nested:2}}};
+  presets:{basic:{linearValue:5,constantValue:3,combinedValue:4,solveInput:2,linearCoeff:2},advanced:{linearValue:3,combinedValue:4,solveInput:4,linearCoeff:4,sumValues:4},challenge:{combinedValue:2,piecewise:2,solveInput:2,linearCoeff:2,quadraticCoeff:2,replaceFunction:3,composite:2,sumValues:2,nested:2}}};
 }
 
 const CONFIGS={signed:signedConfig,exponent:exponentConfig,scinot:scinotConfig,factors:factorsConfig,linear:linearConfig,simultaneous:simultaneousConfig,inequality:inequalityConfig,ratio:ratioConfig,function:functionConfig,numberline:numberlineConfig,coordinate:coordinateConfig,lineeq:lineeqConfig,statistics:statisticsConfig},CFG=CONFIGS[TOPIC_KEY]();

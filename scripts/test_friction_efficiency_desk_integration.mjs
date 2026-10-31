@@ -1,7 +1,7 @@
 // Frozen accepted runtime, independent existing-file protection and additive integration.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import http from 'node:http';import {fileURLToPath} from 'node:url';import {execFileSync} from 'node:child_process';
-import {legacy,firstBatch,standalonePublic} from './science/catalog.mjs';import {ciJobs} from './ci_workflow_test_support.mjs';
+import {checkExistingFiles} from './protected-existing-files.mjs';import {legacy,firstBatch,standalonePublic} from './science/catalog.mjs';import {ciJobs} from './ci_workflow_test_support.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),runtime=path.join(root,'tools/friction-efficiency-desk');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]);
@@ -19,17 +19,13 @@ assert.equal(m.ported_tests.length,4);
 for(const f of m.ported_tests){let s=read('scripts/friction-efficiency-desk/'+f.path);for(const[a,b]of [...f.replacements].reverse())s=s.split(b).join(a);assert.equal(sha(s),f.source_sha256,'original test bodies retained '+f.path);}
 // Every pre-existing tools/assets blob is protected, including the released incline.
 // Git inventory avoids exposing unpublished station names in a new public manifest.
-let protectedCount=0;
-for(const line of execFileSync('git',['ls-tree','-r',m.baseline_commit,'--','tools','assets'],{cwd:root,encoding:'utf8'}).trim().split('\n')){
- const match=/^([0-9]+) blob ([a-f0-9]{40})\t(.+)$/.exec(line);assert(match,'baseline regular blob');const[,mode,hash,file]=match;if(file==='tools/science/index.html')continue;
- const b=fs.readFileSync(path.join(root,file)),actual=crypto.createHash('sha1').update(Buffer.from(`blob ${b.length}\0`)).update(b).digest('hex');assert.equal(actual,hash,'unchanged existing source '+file);protectedCount++;
-}
+const {protectedCount}=checkExistingFiles({root,baselineCommit:m.baseline_commit,skip:['tools/science/index.html']});
 assert(protectedCount>=639,'complete released tools/assets inventory');
 const img=fs.readFileSync(path.join(runtime,'assets/teacher-body-v3.png'));assert.equal(sha(img),'2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b');assert.deepEqual([img.readUInt32BE(16),img.readUInt32BE(20)],[948,1659]);
 assert.equal(standalonePublic.filter(t=>t.file==='friction-efficiency-desk/').length,1);assert.equal(standalonePublic.length,7);assert(!legacy.some(t=>t.file==='friction-efficiency-desk/'));assert(!firstBatch.includes('friction-efficiency-desk/'));
 const item=standalonePublic.find(t=>t.file==='friction-efficiency-desk/');assert.equal(item.subject,'理化');assert.equal(item.grade,'國中');assert.match(item.description,/私人原型站紀錄不會自動移入官網/);
 for(const[f,href]of [['ziyuan.html','tools/friction-efficiency-desk/'],['tools/science/index.html','../friction-efficiency-desk/']]){const s=read(f);assert.equal(s.split(`href="${href}"`).length,2);for(const old of ['incline-desk/','pulley-desk/','lever-desk/','buoyancy-lab/','lens-25d/','microscope-3d/'])assert(s.includes(old));}
-assert.match(read('tools/science/index.html'),/59 項教材/);assert.match(read('ziyuan.html'),/全部 59 項自然教材/);assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">58 項/);assert.match(read('ziyuan.html'),/理化 <small>40 項/);assert.match(read('ziyuan.html'),/目前共 218 項/);assert.equal(read('sitemap.xml').split('<loc>'+canonical+'</loc>').length,2);
+assert.match(read('tools/science/index.html'),/59 項教材/);assert.match(read('ziyuan.html'),/全部 59 項自然教材/);assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">58 項/);assert.match(read('ziyuan.html'),/理化 <small>40 項/);assert.match(read('ziyuan.html'),/目前共 222 項/);assert.equal(read('sitemap.xml').split('<loc>'+canonical+'</loc>').length,2);
 execFileSync(process.execPath,['--check','scripts/check_friction_efficiency_desk_browser.cjs'],{cwd:root});
 const jobs=ciJobs(),station=jobs['science-stations'];assert.match(station.text,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: node scripts\/check_friction_efficiency_desk_browser\.cjs/);assert.match(station.text,/name: friction-efficiency-desk-review\n\s+path: friction-efficiency-desk-artifacts\/\n\s+retention-days: 14/);
 for(const script of ['check_researcher_browser.cjs','check_microscope_3d_browser.cjs','check_lens_25d_browser.cjs','check_researcher_operations.cjs','check_buoyancy_lab_browser.cjs','check_lever_desk_browser.cjs','check_pulley_desk_browser.cjs','check_incline_desk_browser.cjs','check_friction_efficiency_desk_browser.cjs'])assert.equal(station.text.split(`run: node scripts/${script}`).length,2,script);
