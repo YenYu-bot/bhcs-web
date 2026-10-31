@@ -36,6 +36,20 @@
       "approved_blob": "bff5a735115918fcf266705b7890d9fe6e807eff",
       "reason": "Math hub lists the three new 國小高年級 topics (cards 112 -> 115).",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "c51048d42a49ca0113b8f9bd7594a9eb67ae81b6",
+      "approved_blob": "ec32f41a16a7b9d68dbc4156521d0f04092a71fa",
+      "reason": "New 高一 topic 直線方程式 (108 數A第一冊, common to all three textbook editions): slope, point-slope/slope-intercept, two-point/intercept, general form, parallel/perpendicular, intersections, point-line distance.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "bff5a735115918fcf266705b7890d9fe6e807eff",
+      "approved_blob": "729d045686984d20de0322069c11adff3c37c1f5",
+      "reason": "Math hub lists the new 高一 topic 直線方程式 (cards 115 -> 116).",
+      "pull_request": null
     }
   ]
 }
