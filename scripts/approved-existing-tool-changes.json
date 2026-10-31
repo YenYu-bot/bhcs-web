@@ -57,6 +57,13 @@
       "approved_blob": "1daf358430571c87007176e198f46c153af27a73",
       "reason": "Grade 8 geometry: 11 new question types across congruence, bisectors, parallel and quadrilateral; existing units unchanged.",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-drills.html",
+      "baseline_blob": "cb6214e06fc5ca4b007e23d60698f2cc35118e11",
+      "approved_blob": "378d514af9fd167258df8b4c7e6c5f23f0fd8561",
+      "reason": "Grade 9: 10 new question types across righttri, quartile, boxplot and probability; existing units unchanged.",
+      "pull_request": null
     }
   ]
 }
