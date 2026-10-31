@@ -79,10 +79,27 @@ async function enlargeGuideText(page){
  assert.equal(reserves.length,4);for(const fonts of reserves)assert.deepEqual(fonts,actual,'each invisible reserve has the same doubled computed fonts as the live guide');
  return {kind:'test-only guide text enlargement; not browser zoom or full-page text scaling',factor:2,baseline,actual};
 }
+function normalizedRGBA(value){
+ const match=/^rgba?\(([^)]+)\)$/i.exec(value.trim());assert.ok(match,'recognized computed RGB color: '+value);
+ const parts=match[1].trim().split(/[\s,/]+/);assert.ok(parts.length===3||parts.length===4,'computed RGB channels');
+ const channel=(v,alpha=false)=>{const n=parseFloat(v);assert.ok(Number.isFinite(n),'finite computed color channel');return v.endsWith('%')?n*(alpha ? 0.01 : 2.55):n;};
+ return [...parts.slice(0,3).map(v=>channel(v)),parts.length===4?channel(parts[3],true):1];
+}
+async function handleFeedback(page,dragging,label){
+ const state=await page.locator('#handle').evaluate(e=>({background:getComputedStyle(e).backgroundColor,dragging:e.classList.contains('is-dragging'),hovered:e.matches(':hover'),active:e.matches(':active'),disabled:e.disabled}));
+ const expected=dragging?[232,217,155,68/255]:[205,226,191,34/255],actual=normalizedRGBA(state.background);
+ assert.equal(state.dragging,dragging,label+' correct dragging class');
+ for(let i=0;i<3;i++)assert.ok(Math.abs(actual[i]-expected[i])<=.01,label+' RGB channel '+i+' remains intended translucent feedback');
+ // CSSOM may round alpha to three decimals; 0.001 admits serialization only,
+ // not the opaque generic button-hover color or a different 8-bit alpha.
+ assert.ok(Math.abs(actual[3]-expected[3])<=.001,label+' alpha remains '+expected[3]);
+ return {label,...state,rgba:actual};
+}
 async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false,inspectGuide=true}={}){
  await page.locator('#bench').scrollIntoViewIfNeeded();
  assert.ok(await page.locator('#handle').isEnabled());
  const before=await position(page),beforeRaw=await raw(page),beforeAnnounce=await page.locator('#announcer').innerText();
+ const initialFeedback=await handleFeedback(page,false,'before gesture');let hoverFeedback=null;
  // Use actual rendered start/end flags, not application geometry or data-scale.
  const measured=await page.evaluate(()=>{const svg=document.querySelector('#scene'),flags=[...svg.querySelectorAll('path[fill="#edc87e"]')];const screen=p=>{const q=p.getPointAtLength(0),m=svg.getScreenCTM();return {x:m.a*q.x+m.c*q.y+m.e,y:m.b*q.x+m.d*q.y+m.f};};const r=document.querySelector('#handle').getBoundingClientRect();const b=document.querySelector('#bench').getBoundingClientRect();return {start:screen(flags[0]),end:screen(flags[1]),from:{x:r.x+r.width/2,y:r.y+r.height/2},scrollY,bench:{x:b.x,y:b.y,width:b.width,height:b.height,documentY:b.y+scrollY},frameIndex:window.__inclineAudit.frames.length,scrollCallIndex:window.__inclineAudit.scrollCalls.length};});
  const {from,start,end}=measured,sign=reverse?-1:1,to={x:from.x+sign*amount/lengthCm*(end.x-start.x),y:from.y+sign*amount/lengthCm*(end.y-start.y)};
@@ -91,7 +108,7 @@ async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false,inspect
  assert.equal(await page.evaluate(p=>document.elementFromPoint(p.x,p.y)?.closest('button')?.id,from),'handle');
  const since=await inputIndex(page);let pointerId;
  if(cdp){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...from,id:1}]});pointerId=(await inputDelivered(page,{since,type:'pointerdown',point:from,targetId:'handle'})).pointerId;}
- else{await page.mouse.move(from.x,from.y);await page.mouse.down();}
+ else{await page.mouse.move(from.x,from.y);hoverFeedback=await handleFeedback(page,false,'native mouse hover before press');assert.equal(hoverFeedback.hovered,true,'native pointer actually hovers the idle handle');await page.mouse.down();}
  for(let i=1;i<=8;i++){const point={x:from.x+(to.x-from.x)*i/8,y:from.y+(to.y-from.y)*i/8};if(cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{...point,id:1}]});else await page.mouse.move(point.x,point.y);}
  if(cdp)await inputDelivered(page,{since,type:'pointermove',pointerId,point:to});
  const hold=cdp?await holdTouchEndpoint(cdp,to):null;
@@ -102,6 +119,7 @@ async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false,inspect
  assert.equal(await page.locator('#announcer').innerText(),beforeAnnounce,'movement does not flood live region');
  const movementContinuity=await stableApparatus(page,measured,'movement');
  const previewGuide=inspectGuide?await guideLayout(page,'preview '+lengthCm+' cm ramp'):null;
+ const activeFeedback=await handleFeedback(page,true,'active drag preview');
  if(cdp){const release=await inputIndex(page);await cdp.send('Input.dispatchTouchEvent',{type:cancel?'touchCancel':'touchEnd',touchPoints:[]});await inputDelivered(page,{since:release,type:cancel?'pointercancel':'pointerup',pointerId});}
  else{if(cancel)await page.keyboard.press('Escape');await page.mouse.up();}
  assert.equal(await position(page),cancel?before:expected,'release commits, cancel restores');
@@ -109,7 +127,9 @@ async function drag(page,cdp,lengthCm,amount,{cancel=false,reverse=false,inspect
  const releaseContinuity=await stableApparatus(page,measured,'release');
  if(cancel)assert.equal(await page.locator('#seal').isVisible(),false,'cancelled endpoint cannot seal');
  const releaseGuide=inspectGuide?await guideLayout(page,(cancel?'cancel':'commit')+' '+lengthCm+' cm ramp'):null;
- return {before,expected,cancel,reverse,measured,hold,movementContinuity,releaseContinuity,previewGuide,releaseGuide};
+ const releasedFeedback=await handleFeedback(page,false,cancel?'cancelled gesture':'released gesture');
+ if(!cdp&&!cancel&&!reverse)assert.equal(releasedFeedback.hovered,true,'retained native mouse pointer still hovers released handle');
+ return {before,expected,cancel,reverse,measured,hold,movementContinuity,releaseContinuity,previewGuide,releaseGuide,initialFeedback,hoverFeedback,activeFeedback,releasedFeedback};
 }
 async function submitWork(page,cdp,values=['2','2','2','2']){
  const radio=page.locator('label').filter({has:page.locator('[name="distance-choice"][value="slope"]')});
@@ -122,6 +142,68 @@ async function submitWork(page,cdp,values=['2','2','2','2']){
  const since=await inputIndex(page),submit=page.locator('#work-form button[type="submit"]');
  if(cdp)await submit.tap();else await submit.click();
  await page.waitForFunction(since=>window.__inclineAudit.input.slice(since).some(e=>e.type==='submit'&&e.trusted&&e.targetId==='work-form'),since);
+}
+async function verifyCompletedReset(page,cdp){
+ // All observations belong to this fresh test context. Test the real reset UI;
+ // never clear or inject storage after lesson startup.
+ const beforeReload=await snapshot(page),preReloadAudit=await auditStorage(page);
+ await page.reload({waitUntil:'networkidle'});
+ assert.deepEqual(await snapshot(page),beforeReload,'completed data survives before reset-entry test');
+ assert.equal(await page.locator('#new-experiment').isVisible(),true,'top reset entry is visible after completed reload');
+ assert.equal(await page.locator('#completion-reset').isVisible(),true,'completion reset entry restores with completed state');
+ assert.equal(await page.locator('#new-experiment').evaluate(e=>e.closest('details')),null,'top entry is outside folded record management');
+ assert.match(await page.locator('#new-experiment').innerText(),/重置實驗/);
+ assert.match(await page.locator('#completion-reset').innerText(),/重置並再做一次/);
+ assert.equal(await page.locator('#new-experiment').evaluate(e=>!!e.closest('.intro')),true,'top reset sits in introductory actions');
+ for(const [button,note] of [['#new-experiment','reset-entry-note'],['#completion-reset','completion-reset-note']]){assert.equal(await page.locator(button).getAttribute('aria-describedby'),note);assert.equal(await page.locator('#'+note).isVisible(),true);assert.match(await page.locator('#'+note).innerText(),/清除本站紀錄/);const r=await page.locator(button).boundingBox();assert.ok(r&&r.width>=44&&r.height>=44,'reset entry has usable target size');}
+ const preservedRaw=await raw(page),preservedSnapshot=await snapshot(page);
+ const writeCount=()=>page.evaluate(()=>window.__inclineAudit.access.filter(e=>e.name!=='getItem').length);
+ const originalWriteCount=await writeCount(),cancellations=[];
+ async function assertCancelled(launcher,label){
+  await page.locator('#reset-dialog').waitFor({state:'hidden'});
+  assert.equal(await page.evaluate(()=>document.activeElement?.id),launcher.slice(1),label+' focus returns to actual launcher');
+  assert.equal(await raw(page),preservedRaw,label+' raw bytes unchanged');
+  assert.deepEqual(await snapshot(page),preservedSnapshot,label+' saved snapshot unchanged');
+  assert.equal(await writeCount(),originalWriteCount,label+' issues zero storage writes/removals');
+  assert.equal(await page.locator('#records .record').count(),2,label+' current observation cards preserved');
+  assert.equal(await page.locator('#completion').isVisible(),true,label+' current completion preserved');
+  cancellations.push({launcher,label,writes:await writeCount()});
+ }
+ async function cancelButton(stage){
+  const target=page.locator(`#reset-stage-${stage} [data-close-reset]`),since=await inputIndex(page);
+  if(cdp)await target.tap();else await target.click();
+  if(cdp){
+   const targetId='reset-stage-'+stage;
+   await page.waitForFunction(({since,targetId})=>{const a=window.__inclineAudit.input.slice(since);const down=a.findIndex(e=>e.trusted&&e.pointer==='touch'&&e.type==='pointerdown'&&e.targetId===targetId);if(down<0)return false;const up=a.findIndex((e,i)=>i>down&&e.trusted&&e.pointer==='touch'&&e.type==='pointerup'&&e.targetId===targetId&&e.pointerId===a[down].pointerId);return up>=0&&a.some((e,i)=>i>up&&e.trusted&&e.pointer==='touch'&&e.type==='click'&&e.targetId===targetId);},{since,targetId});
+  }
+ }
+ for(const launcher of ['#new-experiment','#completion-reset']){
+  await activate(page,launcher,cdp);assert.equal(await page.locator('#reset-stage-one').isVisible(),true);
+  await cancelButton('one');await assertCancelled(launcher,'first-stage cancel');
+  await activate(page,launcher,cdp);await activate(page,'#reset-continue',cdp);
+  assert.equal(await page.locator('#reset-ack').isChecked(),false,'each opening begins unacknowledged');
+  assert.equal(await page.locator('#reset-confirm').isDisabled(),true,'unchecked final confirmation stays disabled');
+  await cancelButton('two');await assertCancelled(launcher,'second-stage cancel');
+  await activate(page,launcher,cdp);await page.keyboard.press('Escape');await assertCancelled(launcher,'first-stage native Escape');
+  await activate(page,launcher,cdp);await activate(page,'#reset-continue',cdp);await page.keyboard.press('Escape');await assertCancelled(launcher,'second-stage native Escape');
+ }
+ await activate(page,'#completion-reset',cdp);await activate(page,'#reset-continue',cdp);
+ assert.equal(await page.locator('#reset-confirm').isDisabled(),true);
+ await activate(page,'#reset-ack',cdp);assert.equal(await page.locator('#reset-ack').isChecked(),true);
+ await activate(page,'#reset-confirm',cdp);await page.locator('#reset-dialog').waitFor({state:'hidden'});await saved(page);
+ const empty=await snapshot(page);assert.deepEqual(empty.records,[]);assert.equal(empty.pair,null);assert.equal(empty.answers,null);
+ assert.equal(await page.locator('#begin').isVisible(),true);assert.equal(await page.locator('#completion').isVisible(),false);
+ const begin=await page.locator('#begin').evaluate(e=>{const r=e.getBoundingClientRect();return {active:document.activeElement===e,x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:innerWidth,height:innerHeight};});
+ assert.equal(begin.active,true,'successful confirmed reset focuses start action');
+ assert.ok(begin.x>=0&&begin.right<=begin.width&&begin.y>=0&&begin.bottom<=begin.height,'successful confirmed reset returns start action into viewport');
+ const resetAudit=await auditStorage(page);await page.reload({waitUntil:'networkidle'});
+ assert.deepEqual(await snapshot(page),empty,'cleared snapshot persists across reload');
+ assert.equal(await page.locator('#records .record').count(),0);assert.equal(await page.locator('#begin').isVisible(),true);
+ assert.equal((await auditStorage(page)).access.filter(e=>e.name!=='getItem').length,0,'empty-snapshot hydration writes nothing');
+ await activate(page,'#begin',cdp);await activate(page,'#step-one',cdp);assert.equal(await position(page),1,'fresh short round can move after reset and reload');
+ assert.match(await page.locator('#ramp-title').innerText(),/短坡/);assert.equal(await page.locator('#seal').isVisible(),false);
+ assert.deepEqual(await snapshot(page),empty,'unsealed new movement cannot replace cleared snapshot');
+ return {preReloadAudit,cancellations,begin,resetAudit,afterReloadAudit:await auditStorage(page)};
 }
 async function run(name,width,touch,task,corrupt){
  const result={name,width,touch,status:'running'};results.push(result);save();
@@ -186,6 +268,7 @@ async function run(name,width,touch,task,corrupt){
   result.completedAudit=await auditStorage(page);await page.reload({waitUntil:'networkidle'});assert.deepEqual(await snapshot(page),complete);assert.equal(await page.locator('#completion').isVisible(),true);
   await page.locator('#answer-0').fill('1');assert.equal(await page.locator('#completion').isHidden(),true);await page.locator('#answer-0').fill('2');assert.equal(await page.locator('#completion').isHidden(),true,'editing back cannot restore unchecked qualification');await submitWork(page,cdp);await saved(page);assert.equal(await page.locator('#completion').isVisible(),true,'rechecked correct answers plus existing revision show accepted completion panel');assert.equal((await snapshot(page)).answers.revisions.length,1,'rechecking does not invent an explanation revision');assert.deepEqual((await snapshot(page)).records,savedRecords);
   const native=[...result.beforeReloadAudit.input,...result.completedAudit.input];assert.ok(native.some(e=>e.trusted&&e.type==='pointerdown'&&e.pointer===(cdp?'touch':'mouse')));if(cdp)assert.ok(native.some(e=>e.trusted&&e.type==='pointercancel'),'native touch cancellation delivered');
+  result.completedReset=await verifyCompletedReset(page,cdp);
  });
  for(const width of [1280,360,390,412])await run(`corrupt-zero-write-${width}`,width,width!==1280,async(page,cdp,result)=>{
   const corrupt='  { invalid incline original\n';assert.equal(await raw(page),corrupt);assert.equal(await page.locator('#storage-alert').isVisible(),true);assert.equal((await auditStorage(page)).access.filter(a=>a.name!=='getItem').length,0);
