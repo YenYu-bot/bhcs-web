@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小中年級數學 計算力練習出題器</title><meta name="description" content="國小中年級（三、四年級）數學計算力練習出題器：大數與位值、多位數的加減、多位數的乘除、四則混合計算與併式、分數、小數、概數與估算，一頁切換；可設定難度（基礎／進階／挑戰）與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:title" content="百宏文教｜國小中年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:type" content="website">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小中年級數學 計算力練習出題器</title><meta name="description" content="國小中年級（三、四年級）數學計算力練習出題器：大數與位值、多位數的加減、多位數的乘除、四則混合計算與併式、分數、小數、概數與估算、量與時間、周長與面積、角與三角形，十個主題一頁切換；可設定難度（基礎／進階／挑戰）與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:title" content="百宏文教｜國小中年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g4-drills.html"><meta property="og:type" content="website">
 <style>
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
 *{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
@@ -116,7 +116,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["bignum","大數與位值"],["addsub","多位數的加減"],["muldiv","多位數的乘除"],["mixed","四則混合計算與併式"],["fraction","分數（中年級）"],["decimal","小數（中年級）"],["estimate","概數與估算"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"bignum",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["bignum","大數與位值"],["addsub","多位數的加減"],["muldiv","多位數的乘除"],["mixed","四則混合計算與併式"],["fraction","分數（中年級）"],["decimal","小數（中年級）"],["estimate","概數與估算"],["measure","量與時間"],["perimeter","周長與面積（中年級）"],["angle","角與三角形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"bignum",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -446,7 +446,122 @@ function estimateConfig(){
   units:[round,range,est,life],presets:{basic:{round:4,range:3,est:3,life:2},advanced:{round:4,range:3,est:3,life:3},challenge:{round:3,range:4,est:4,life:3}}};
 }
 
-const CONFIGS={bignum:bignumConfig,addsub:addsubConfig,muldiv:muldivConfig,mixed:mixedConfig,fraction:fractionConfig,decimal:decimalConfig,estimate:estimateConfig},CFG=CONFIGS[TOPIC_KEY]();
+/* 第三批（2026-11-01，Claude）：量與時間、周長與面積、角與三角形。複名數一律換成最小單位的整數計算再換回來。 */
+function measureConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const Q=[["公里","公尺",1000],["公尺","公分",100],["公分","毫米",10],["公斤","公克",1000],["公升","毫升",1000]];
+ const two=(v,[B,S,k])=>{const a=Math.floor(v/k),b=v%k;return(a?a+" "+B:"")+(a&&b?" ":"")+(b||!a?b+" "+S:"")};
+ const convert=unit("convert","長度、重量與容量的換算","1 公里＝1000 公尺、1 公尺＝100 公分、1 公分＝10 毫米、1 公斤＝1000 公克、1 公升＝1000 毫升。大單位換小單位用乘的，小單位換大單位用除的。",ctx=>{
+  const L=lv(ctx),q=pick(L===0?Q.slice(1):Q),[B,S,k]=q,a=rand(1,L===0?9:L===1?30:99),b=rand(1,k-1),v=a*k+b,f=pick(L===0?["toS","toBS","bigOnly"]:["toS","toBS","bigOnly","zero"]);
+  if(f==="toS")return{expr:a+" "+B+" "+b+" "+S+" ＝ （　　）"+S,answer:fmt(v)+" "+S,sig:"s:"+B+":"+v,verify:()=>Math.floor(v/k)===a&&v%k===b};
+  if(f==="toBS")return{expr:fmt(v)+" "+S+" ＝ （　）"+B+"（　）"+S,answer:a+" "+B+" "+b+" "+S,sig:"b:"+B+":"+v,verify:()=>a*k+b===v};
+  if(f==="zero"){if(k<100)return null;const z=rand(1,Math.min(9,k/10-1)),w=a*k+z;return{expr:a+" "+B+" "+z+" "+S+" ＝ （　　）"+S,answer:fmt(w)+" "+S,sig:"z:"+B+":"+w,verify:()=>w-a*k===z}}
+  return{expr:a+" "+B+" ＝ （　　）"+S,answer:fmt(a*k)+" "+S,sig:"o:"+B+":"+a,verify:()=>a*k/k===a}},"答：");
+ const calc=unit("calc","複名數的加減","同單位對齊相加減：小單位滿進位數就向大單位進 1；不夠減就向大單位借 1（＝1000 公克、100 公分……）。",ctx=>{
+  const L=lv(ctx),q=pick(Q.slice(1)),[B,S,k]=q,x=rand(1,L===0?9:40)*k+rand(1,k-1),y=rand(1,L===0?5:20)*k+rand(1,k-1),f=pick(L===0?["add","sub","word"]:["add","sub","word","multi"]);
+  if(f==="add")return{expr:two(x,q)+" ＋ "+two(y,q),answer:two(x+y,q),sig:"a:"+B+":"+x+":"+y,verify:()=>x+y-y===x};
+  if(f==="sub"){const [m,n]=x>y?[x,y]:[y,x];if(m===n)return null;return{expr:two(m,q)+" − "+two(n,q),answer:two(m-n,q),sig:"s:"+B+":"+m+":"+n,verify:()=>m-n+n===m}}
+  if(f==="multi"){const t=rand(2,6),s=x*t;return{expr:two(x,q)+" × "+t,answer:two(s,q),sig:"m:"+B+":"+x+":"+t,verify:()=>s/t===x}}
+  const [m,n]=x>y?[x,y]:[y,x];if(m===n)return null;const W={公尺:["一條繩子長 X，剪下 Y，還剩多少？","−"],公分:["一枝鉛筆長 X，用掉 Y，還剩多長？","−"],毫米:["一個零件長 X，另一個長 Y，兩個接起來共多長？","＋"],公克:["一袋米重 X，另一袋重 Y，兩袋共重多少？","＋"],毫升:["一瓶水有 X，倒出 Y，還剩多少？","−"]}[S];
+  const v=W[1]==="＋"?m+n:m-n;return{expr:W[0].replace("X",two(m,q)).replace("Y",two(n,q)),answer:two(v,q),sig:"w:"+S+":"+m+":"+n,verify:()=>W[1]==="＋"?v-n===m:v+n===m,lead:"答："}});
+ const hm=t=>{const h=Math.floor(t/60),m=t%60;return h+" 時"+(m?" "+m+" 分":"")};
+ const clock12=t=>{const h=Math.floor(t/60),m=t%60,ap=h<12?"上午":h===12?"中午":"下午",hh=h<=12?h:h-12;return ap+" "+hh+" 時"+(m?" "+m+" 分":"")};
+ const timeconv=unit("timeconv","時間的換算與 24 時制","1 日＝24 時、1 時＝60 分、1 分＝60 秒。24 時制：下午幾時就加 12（下午 3 時＝15 時）。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["hm","ms","to24"]:["hm","ms","to24","from24","dh"]);
+  if(f==="hm"){const h=rand(1,L===0?5:12),m=rand(1,59),t=h*60+m,dir=Math.random()<.5;return dir?{expr:h+" 時 "+m+" 分 ＝ （　　）分",answer:t+" 分",sig:"hm:"+t,verify:()=>Math.floor(t/60)===h}:{expr:t+" 分 ＝ （　）時（　）分",answer:h+" 時 "+m+" 分",sig:"mh:"+t,verify:()=>h*60+m===t}}
+  if(f==="ms"){const m=rand(1,L===0?9:30),s=rand(1,59),t=m*60+s,dir=Math.random()<.5;return dir?{expr:m+" 分 "+s+" 秒 ＝ （　　）秒",answer:t+" 秒",sig:"ms:"+t,verify:()=>t%60===s}:{expr:t+" 秒 ＝ （　）分（　）秒",answer:m+" 分 "+s+" 秒",sig:"sm:"+t,verify:()=>m*60+s===t}}
+  if(f==="dh"){const d=rand(1,6),h=rand(1,23),t=d*24+h;return{expr:t+" 時 ＝ （　）日（　）時",answer:d+" 日 "+h+" 時",sig:"dh:"+t,verify:()=>d*24+h===t}}
+  const t=rand(13*60,23*60+59);const h=Math.floor(t/60),m=t%60;
+  if(f==="to24")return{expr:"把「"+clock12(t)+"」用 24 時制表示。",answer:h+" 時"+(m?" "+m+" 分":"")+"（"+h+":"+String(m).padStart(2,"0")+"）",sig:"t24:"+t,verify:()=>h>=13&&h-12===Number(clock12(t).match(/下午 (\d+)/)[1])};
+  return{expr:"24 時制的 "+h+":"+String(m).padStart(2,"0")+" 是下午幾時幾分？",answer:clock12(t),sig:"f24:"+t,verify:()=>Number(clock12(t).match(/下午 (\d+)/)[1])+12===h}},"答：");
+ const elapsed=unit("elapsed","經過的時間","算經過多久：結束時刻－開始時刻，分不夠減就向時借 1 時（＝60 分）；跨過中午可以先換成 24 時制。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["dur","end","start"]:["dur","end","start","span"]);
+  const s=rand(L===0?7:6,L===0?10:11)*60+rand(0,11)*5,d=rand(L===0?20:35,L===0?180:400),e=s+d;if(e>=22*60)return null;
+  const dh=hm(d).replace(" 時"," 小時").replace("0 小時 ","");
+  if(f==="dur")return{expr:"從"+clock12(s)+"到"+clock12(e)+"，經過了多少時間？",answer:dh,sig:"d:"+s+":"+e,verify:()=>e-s===d};
+  if(f==="end")return{expr:"電影從"+clock12(s)+"開始，播放 "+dh+"，幾時幾分結束？",answer:clock12(e),sig:"e:"+s+":"+d,verify:()=>s+d===e};
+  if(f==="start")return{expr:"小華在"+clock12(e)+"到達動物園，路上花了 "+dh+"，他幾時幾分出發？",answer:clock12(s),sig:"st:"+e+":"+d,verify:()=>e-d===s};
+  const h1=rand(8,10),m1=rand(10,55),h2=rand(1,4),m2=rand(0,m1-1),A=h1*60+m1,B=(h2+12)*60+m2,D=B-A;return{expr:"從上午 "+h1+" 時 "+m1+" 分到下午 "+h2+" 時"+(m2?" "+m2+" 分":"")+"，經過了幾小時幾分？",answer:hm(D).replace(" 時"," 小時"),sig:"sp:"+A+":"+B,verify:()=>Math.floor(D/60)*60+D%60===B-A&&D%60===60+m2-m1}},"答：");
+ return{title:"量與時間",symbol:"㎏",subtitle:"長度、重量、容量的換算・複名數的加減・時間的換算與 24 時制・經過的時間",instruction:"先統一單位再計算；答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：公尺與公分、公斤與公克、公升與毫升的換算；時、分、秒的換算；上午的經過時間。",advanced:"進階：公里、複名數的進退位、24 時制、日與時。",challenge:"挑戰：複名數乘以整數、跨中午的經過時間。"},
+  units:[convert,calc,timeconv,elapsed],presets:{basic:{convert:4,calc:3,timeconv:4,elapsed:3},advanced:{convert:3,calc:4,timeconv:4,elapsed:3},challenge:{convert:3,calc:4,timeconv:3,elapsed:4}}};
+}
+
+function perimeterConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const U=["公分","公尺"];
+ const perim=unit("perim","長方形與正方形的周長","長方形周長＝（長＋寬）×2；正方形周長＝邊長×4。反過來：長＋寬＝周長÷2。",ctx=>{
+  const L=lv(ctx),u=pick(U),f=pick(L===0?["rect","sq","sqBack"]:["rect","rectBack","sqBack","sq"]),l=rand(3,L===0?30:99),w=rand(2,l-1),s=rand(2,L===0?30:150);
+  if(f==="rect")return{expr:"長方形的長 "+l+" "+u+"、寬 "+w+" "+u+"，周長是多少"+u+"？",answer:(2*(l+w))+" "+u,sig:"r:"+l+":"+w+u,verify:()=>2*l+2*w===2*(l+w)};
+  if(f==="sq")return{expr:"正方形的邊長 "+s+" "+u+"，周長是多少"+u+"？",answer:(4*s)+" "+u,sig:"s:"+s+u,verify:()=>s+s+s+s===4*s};
+  if(f==="sqBack")return{expr:"一個正方形的周長是 "+(4*s)+" "+u+"，邊長是多少"+u+"？",answer:s+" "+u,sig:"sb:"+s+u,verify:()=>4*s/4===s};
+  return{expr:"長方形的周長是 "+(2*(l+w))+" "+u+"，長是 "+l+" "+u+"，寬是多少"+u+"？",answer:w+" "+u,sig:"rb:"+l+":"+w+u,verify:()=>2*(l+w)/2-l===w}},"答：");
+ const area=unit("area","長方形與正方形的面積","長方形面積＝長×寬；正方形面積＝邊長×邊長。已知面積和長，寬＝面積÷長。",ctx=>{
+  const L=lv(ctx),u=pick(U),f=pick(L===0?["rect","sq","back"]:["rect","back","sqBack","both"]),l=rand(3,L===0?20:60),w=rand(2,l-1),s=rand(2,L===0?15:40);
+  if(f==="rect")return{expr:"長方形的長 "+l+" "+u+"、寬 "+w+" "+u+"，面積是多少平方"+u+"？",answer:(l*w)+" 平方"+u,sig:"r:"+l+":"+w+u,verify:()=>l*w/w===l};
+  if(f==="sq")return{expr:"正方形的邊長 "+s+" "+u+"，面積是多少平方"+u+"？",answer:(s*s)+" 平方"+u,sig:"s:"+s+u,verify:()=>s*s/s===s};
+  if(f==="sqBack")return{expr:"一個正方形的面積是 "+(s*s)+" 平方"+u+"，邊長是多少"+u+"？周長是多少"+u+"？",answer:"邊長 "+s+" "+u+"，周長 "+(4*s)+" "+u,sig:"sb:"+s+u,verify:()=>s*s===s**2};
+  if(f==="both")return{expr:"長方形的周長是 "+(2*(l+w))+" "+u+"，長是 "+l+" "+u+"，面積是多少平方"+u+"？",answer:(l*w)+" 平方"+u,sig:"bo:"+l+":"+w+u,verify:()=>(2*(l+w)/2-l)*l===l*w};
+  return{expr:"長方形的面積是 "+(l*w)+" 平方"+u+"，長是 "+l+" "+u+"，寬是多少"+u+"？",answer:w+" "+u,sig:"b:"+l+":"+w+u,verify:()=>l*w/l===w}},"答：");
+ const lshape=unit("lshape","複合圖形的面積與周長","L 形可以切成兩個長方形相加，或用大長方形減去缺的角；從角落剪掉一塊時，周長和原來的大長方形一樣。",ctx=>{
+  const L=lv(ctx),a=rand(8,L===0?20:40),b=rand(6,a-1),c=rand(2,a-3),d=rand(2,b-3),u=pick(U),f=pick(L===0?["area","area2","perim"]:["area","perim","both"]);
+  const fig=(()=>{const W=150,H=110,s=Math.min((W-30)/a,(H-30)/b),x0=15,y0=15,X=v=>GEO_f(x0+v*s),Y=v=>GEO_f(y0+v*s),pts=[[0,0],[a-c,0],[a-c,d],[a,d],[a,b],[0,b]];return'<svg class="fig" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="示意圖"><polygon points="'+pts.map(p=>X(p[0])+","+Y(p[1])).join(" ")+'" fill="none" stroke="#16233A" stroke-width="1.4"/><text x="'+X(a/2)+'" y="'+(Y(b)+12)+'" font-size="10" text-anchor="middle">'+a+'</text><text x="'+(X(0)-4)+'" y="'+Y(b/2)+'" font-size="10" text-anchor="end">'+b+'</text><text x="'+X(a-c/2)+'" y="'+(Y(d)+11)+'" font-size="10" text-anchor="middle">'+c+'</text><text x="'+(X(a-c)+3)+'" y="'+(Y(d/2)+4)+'" font-size="10" text-anchor="start">'+d+'</text></svg>'})();
+  const A=a*b-c*d,P=2*(a+b);
+  if(f==="area")return{expr:fig+"一塊長方形紙長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角剪去一個長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形。剩下的面積是多少平方"+u+"？",answer:A+" 平方"+u,sig:"a:"+[a,b,c,d]+u,verify:()=>(a-c)*b+c*(b-d)===A};
+  if(f==="area2")return{expr:"一個 L 形花圃可以分成兩個長方形：一個長 "+a+" "+u+"、寬 "+(b-d)+" "+u+"，另一個長 "+(a-c)+" "+u+"、寬 "+d+" "+u+"。花圃的面積是多少平方"+u+"？",answer:A+" 平方"+u,sig:"a2:"+[a,b,c,d]+u,verify:()=>a*(b-d)+(a-c)*d===A};
+  if(f==="perim")return{expr:fig+"一塊長方形紙長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角剪去一個長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形。剩下圖形的周長是多少"+u+"？",answer:P+" "+u,sig:"p:"+[a,b,c,d]+u,verify:()=>b+a+(b-d)+c+d+(a-c)===P};
+  return{expr:fig+"長方形長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角剪去長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形。剩下圖形的面積和周長各是多少？",answer:"面積 "+A+" 平方"+u+"，周長 "+P+" "+u,sig:"b:"+[a,b,c,d]+u,verify:()=>(a-c)*b+c*(b-d)===A&&b+a+(b-d)+c+d+(a-c)===P}},"答：");
+ const sqm=unit("sqm","平方公尺與平方公分","1 平方公尺是邊長 1 公尺（100 公分）的正方形，所以 1 平方公尺＝100×100＝10000 平方公分。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["toCm","toM","mix"]:["toCm","mix","rect","tile"]);
+  if(f==="toCm"){const m=rand(1,L===0?9:99);return{expr:m+" 平方公尺 ＝ （　　）平方公分",answer:fmt(m*10000)+" 平方公分",sig:"c:"+m,verify:()=>m*100*100===m*10000}}
+  if(f==="toM"){const m=rand(1,30);return{expr:fmt(m*10000)+" 平方公分 ＝ （　）平方公尺",answer:m+" 平方公尺",sig:"m:"+m,verify:()=>m*10000/10000===m}}
+  if(f==="mix"){const m=rand(1,20),c=rand(1,9999),v=m*10000+c;return{expr:fmt(v)+" 平方公分 ＝ （　）平方公尺（　）平方公分",answer:m+" 平方公尺 "+fmt(c)+" 平方公分",sig:"x:"+v,verify:()=>Math.floor(v/10000)===m&&v%10000===c}}
+  if(f==="rect"){const l=rand(2,9),w=rand(1,l),cm=rand(1,9)*10;return{expr:"長方形的長 "+l+" 公尺、寬 "+w+" 公尺 "+cm+" 公分，面積是多少平方公分？",answer:fmt(l*100*(w*100+cm))+" 平方公分",sig:"r:"+l+":"+w+":"+cm,verify:()=>l*100*(w*100+cm)===(l*100)*(w*100)+l*100*cm}}
+  const t=pick([20,25,50]),l=rand(1,6),w=rand(1,5),n=(l*100/t)*(w*100/t);return{expr:"用邊長 "+t+" 公分的正方形地磚，鋪滿長 "+l+" 公尺、寬 "+w+" 公尺的長方形地面，需要幾塊地磚？",answer:n+" 塊",sig:"t:"+t+":"+l+":"+w,verify:()=>n*t*t===l*w*10000}},"答：");
+ return{title:"周長與面積（中年級）",symbol:"□",subtitle:"長方形與正方形的周長・面積・複合圖形・平方公尺與平方公分",instruction:"周長的單位是公分、公尺；面積的單位是平方公分、平方公尺。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：由長和寬求周長與面積、由正方形周長求邊長、平方公尺換平方公分。",advanced:"進階：由周長或面積反求邊長、L 形的面積與周長、複名數的面積。",challenge:"挑戰：較大的數、面積與周長一起求、鋪地磚。"},
+  units:[perim,area,lshape,sqm],presets:{basic:{perim:4,area:4,lshape:3,sqm:3},advanced:{perim:3,area:4,lshape:4,sqm:3},challenge:{perim:3,area:4,lshape:4,sqm:4}}};
+}
+
+function angleConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const D=v=>v+"°";
+ const basic=unit("rightangle","直角、平角與周角","1 直角＝90°，2 個直角是 1 平角＝180°，4 個直角是 1 周角＝360°。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["nRight","name","sub"]:["nRight","sub","mixed","howmany"]);
+  if(f==="nRight"){const n=rand(1,L===0?4:8);return{expr:n+" 個直角是幾度？",answer:D(90*n),sig:"n:"+n,verify:()=>90*n/90===n}}
+  if(f==="name"){const [t,v]=pick([["1 個平角",180],["1 個周角",360],["半個直角",45],["1 個直角",90]]);return{expr:t+"是幾度？",answer:D(v),sig:"nm:"+t,verify:()=>v%45===0}}
+  if(f==="sub"){const [t,v]=pick([["1 個直角",90],["1 個平角",180],["1 個周角",360]]),x=rand(5,v-5);return{expr:t+"比 "+D(x)+" 大幾度？",answer:D(v-x),sig:"s:"+v+":"+x,verify:()=>v-x+x===v}}
+  if(f==="mixed"){const p=rand(1,3),r=rand(1,3),x=rand(1,89);return{expr:p+" 個平角加上 "+r+" 個直角再加 "+D(x)+"，是幾度？",answer:D(180*p+90*r+x),sig:"m:"+p+":"+r+":"+x,verify:()=>180*p+90*r+x===90*(2*p+r)+x}}
+  const v=pick([180,270,360,450,540,720]);return{expr:D(v)+" 是幾個直角？",answer:v/90+" 個",sig:"h:"+v,verify:()=>v%90===0}},"答：");
+ const calc=unit("calc","角度的計算","拼成直角：兩角和 90°；在一直線上：兩角和 180°；繞一點一圈：所有角和 360°。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["right","line","add"]:["line","round","line3","sub"]);
+  if(f==="right"){const a=rand(5,85);return{expr:"兩個角拼成一個直角，其中一個是 "+D(a)+"，另一個是幾度？",answer:D(90-a),sig:"r:"+a,verify:()=>a+(90-a)===90}}
+  if(f==="line"){const a=rand(5,175);return{expr:"∠1 和 ∠2 拼在一條直線上（合成一個平角），∠1＝"+D(a)+"，∠2 是幾度？",answer:D(180-a),sig:"l:"+a,verify:()=>a+(180-a)===180}}
+  if(f==="add"){const a=rand(10,80),b=rand(10,80);return{expr:D(a)+" ＋ "+D(b),answer:D(a+b),sig:"a:"+a+":"+b,verify:()=>a+b-b===a,lead:"原式＝"}}
+  if(f==="sub"){const a=rand(100,350),b=rand(10,a-10);return{expr:D(a)+" − "+D(b),answer:D(a-b),sig:"s:"+a+":"+b,verify:()=>a-b+b===a,lead:"原式＝"}}
+  if(f==="line3"){const a=rand(20,80),b=rand(20,150-a);return{expr:"三個角拼在一條直線上，其中兩個是 "+D(a)+" 和 "+D(b)+"，第三個角是幾度？",answer:D(180-a-b),sig:"l3:"+a+":"+b,verify:()=>a+b+(180-a-b)===180}}
+  const a=rand(40,150),b=rand(40,150),c=rand(30,330-a-b);if(360-a-b-c<10)return null;return{expr:"四個角繞著一點拼成一個周角，其中三個是 "+D(a)+"、"+D(b)+"、"+D(c)+"，第四個角是幾度？",answer:D(360-a-b-c),sig:"o:"+[a,b,c],verify:()=>a+b+c+(360-a-b-c)===360}},"答：");
+ const clock=unit("clock","時鐘上的角度","鐘面一圈 360° 分成 12 大格，每大格 30°；分針每分鐘轉 6°，每小時轉一圈；整點時，時針與分針的夾角＝30°×相隔的大格數。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["hour","minMove","grid"]:["hour","minMove","hourMove","grid"]);
+  if(f==="hour"){const h=rand(1,11),g=Math.min(h,12-h);return{expr:"整點 "+h+" 時，時針和分針所夾的較小角是幾度？",answer:D(30*g),sig:"h:"+h,verify:()=>30*g<=180}}
+  if(f==="minMove"){const m=rand(1,L===0?12:59)*(L===0?5:1);if(m>=60)return null;return{expr:"分針走了 "+m+" 分鐘，轉了幾度？",answer:D(6*m),sig:"m:"+m,verify:()=>6*m/6===m}}
+  if(f==="grid"){const a=rand(1,11),b=rand(1,12);if(a===b)return null;const g=(b-a+12)%12;return{expr:"分針從 "+a+" 順時針轉到 "+b+"，轉了幾度？",answer:D(30*g),sig:"g:"+a+":"+b,verify:()=>((a+g-1)%12)+1===b}}
+  const h=rand(1,6);return{expr:"時針走了 "+h+" 小時，轉了幾度？",answer:D(30*h),sig:"hm:"+h,verify:()=>360/12*h===30*h}},"答：");
+ const tri=unit("triangle","三角形的分類","依角分：三個角都小於 90° 是銳角三角形，有一個直角是直角三角形，有一個角大於 90° 是鈍角三角形。依邊分：三邊相等是正三角形，兩邊相等是等腰三角形。",ctx=>{
+  const L=lv(ctx),f=pick(L===2?["byAngle","bySide","perim"]:["byAngle","bySide","which"]);
+  if(f==="perim"){const a=rand(3,30),g=pick(["iso","eq","isoBack"]);if(g==="eq")return{expr:"一個正三角形的周長是 "+(3*a)+" 公分，每一邊長幾公分？",answer:a+" 公分",sig:"pe:"+a,verify:()=>3*a/3===a};const b=rand(Math.max(1,a-8),2*a-1);if(b===a)return null;
+   if(g==="iso")return{expr:"等腰三角形的兩腰各長 "+a+" 公分，底邊長 "+b+" 公分，周長是幾公分？",answer:(2*a+b)+" 公分",sig:"pi:"+a+":"+b,verify:()=>a+a+b===2*a+b};
+   return{expr:"等腰三角形的周長是 "+(2*a+b)+" 公分，底邊長 "+b+" 公分，每一腰長幾公分？",answer:a+" 公分",sig:"pb:"+a+":"+b,verify:()=>(2*a+b-b)/2===a}}
+  if(f==="byAngle"){const t=pick(["銳角","直角","鈍角"]);let a,b,c;if(t==="直角"){a=90;b=rand(10,80);c=90-b}else if(t==="鈍角"){a=rand(91,160);b=rand(5,180-a-5);c=180-a-b}else{a=rand(50,89);b=rand(91-a,89);c=180-a-b}const xs=shuffle([a,b,c]);return{expr:"三角形的三個角是 "+xs.map(D).join("、")+"，它是什麼三角形（依角分類）？",answer:t+"三角形",sig:"a:"+xs,verify:()=>xs.reduce((s,x)=>s+x,0)===180&&(t==="直角")===xs.includes(90)&&(t==="鈍角")===xs.some(x=>x>90)}}
+  if(f==="bySide"){const t=pick(["正","等腰","不等邊"]);let s;const a=rand(3,20);if(t==="正")s=[a,a,a];else if(t==="等腰"){const b=rand(Math.max(1,a-5),2*a-1);if(b===a)return null;s=[a,a,b]}else{const b=rand(a+1,a+10),c=rand(b+1,a+b-1);if(c===b)return null;s=[a,b,c]}const xs=shuffle(s);return{expr:"三角形的三邊長是 "+xs.join("、")+" 公分，它是什麼三角形（依邊分類）？",answer:t==="不等邊"?"不是正三角形也不是等腰三角形（三邊都不相等）":t+"三角形",sig:"s:"+xs,verify:()=>{const u=new Set(xs).size;return(t==="正")===(u===1)&&(t==="等腰")===(u===2)}}}
+  const qs=[["正三角形的每一個角是幾度？","60°"],["等腰直角三角形的兩個銳角各是幾度？","45°"],["一個三角形最多可以有幾個直角？","1 個"],["一個三角形最多可以有幾個鈍角？","1 個"],["一個三角形至少有幾個銳角？","2 個"]],q=pick(qs);return{expr:q[0],answer:q[1],sig:"w:"+q[0],verify:()=>qs.includes(q)}},"答：");
+ return{title:"角與三角形",symbol:"∠",subtitle:"直角、平角與周角・角度的計算・時鐘上的角度・三角形的分類",instruction:"角度的答案要寫「°」。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：直角、平角、周角的度數，拼成直角或平角，整點的夾角，三角形分類。",advanced:"進階：周角的計算、三個角拼成平角、分針與時針轉動的角度。",challenge:"挑戰：較複雜的角度組合、依邊和依角同時分類。"},
+  units:[basic,calc,clock,tri],presets:{basic:{rightangle:4,calc:4,clock:3,triangle:3},advanced:{rightangle:3,calc:4,clock:4,triangle:3},challenge:{rightangle:3,calc:4,clock:4,triangle:3}}};
+}
+const GEO_f=v=>Math.round(v*10)/10;
+
+const CONFIGS={bignum:bignumConfig,addsub:addsubConfig,muldiv:muldivConfig,mixed:mixedConfig,fraction:fractionConfig,decimal:decimalConfig,estimate:estimateConfig,measure:measureConfig,perimeter:perimeterConfig,angle:angleConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
