@@ -78,6 +78,13 @@
       "approved_blob": "717a2cc1e500fc971aa7a14f2d07be2aae77aef4",
       "reason": "Math hub lists three more g4-drills topics: fraction, decimal, estimate (cards 120 -> 123).",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "717a2cc1e500fc971aa7a14f2d07be2aae77aef4",
+      "approved_blob": "de4f2921d314cd2f83115572f0439b953b318d84",
+      "reason": "Math hub lists the last three g4-drills topics: measure, perimeter, angle (cards 123 -> 126).",
+      "pull_request": null
     }
   ]
 }
