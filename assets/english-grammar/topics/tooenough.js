@@ -1,14 +1,18 @@
 // Topic: too … to, … enough to, so … that.
 import { blank, zhJoin } from '../core.js';
 
-// [subject, Chinese, adjective, Chinese, what cannot be done (base form), Chinese, pronoun for so…that]
+// [subject, Chinese, adjective, Chinese, what cannot be done (base form; # marks where the object goes), Chinese, pronoun for so…that, object]
 const T = (s, sz, adj, az, act, actz, pr, obj = '') => ({ s, sz, adj, az, act, actz, pr, obj });
 const TOO = [
   T('The box', '這個箱子', 'heavy', '重', 'carry', '搬', 'I', 'it'), T('The tea', '這杯茶', 'hot', '燙', 'drink', '喝', 'I', 'it'), T('The boy', '那個男孩', 'young', '小', 'drive a car', '開車', 'he'),
   T('The question', '這個問題', 'difficult', '難', 'answer', '回答', 'we', 'it'), T('My grandfather', '我爺爺', 'old', '老', 'climb the mountain', '爬山', 'he'), T('The shoes', '這雙鞋', 'small', '小', 'wear', '穿', 'I', 'them'),
-  T('Tom', 'Tom', 'tired', '累', 'do his homework', '寫功課', 'he'), T('The water', '水', 'cold', '冷', 'swim in', '游泳', 'we', ''), T('The bag', '這個袋子', 'expensive', '貴', 'buy', '買', 'I', 'it'),
+  T('Tom', 'Tom', 'tired', '累', 'do his homework', '寫功課', 'he'), T('The water', '水', 'cold', '冷', 'swim in', '游泳', 'we', 'it'), T('The bag', '這個袋子', 'expensive', '貴', 'buy', '買', 'I', 'it'),
   T('The baby', '那個嬰兒', 'small', '小', 'walk', '走路', 'she'), T('The soup', '這道湯', 'hot', '燙', 'eat', '吃', 'I', 'it'), T('Amy', 'Amy', 'busy', '忙', 'go to the party', '去派對', 'she'),
-  T('The room', '這個房間', 'dark', '暗', 'read in', '看書', 'I', ''), T('The movie', '這部電影', 'long', '長', 'watch tonight', '今晚看完', 'we', 'it'),
+  T('The room', '這個房間', 'dark', '暗', 'read in', '在裡面看書', 'I', 'it'), T('The movie', '這部電影', 'long', '長', 'watch # tonight', '今晚看完', 'we', 'it'),
+  T('The bed', '這張床', 'heavy', '重', 'move', '搬動', 'we', 'it'), T('The coffee', '這杯咖啡', 'strong', '濃', 'drink', '喝', 'I', 'it'),
+  T('The river', '這條河', 'dangerous', '危險', 'swim in', '游泳', 'we', 'it'), T('The book', '這本書', 'difficult', '難', 'read', '讀', 'I', 'it'),
+  T('The bus', '這班公車', 'full', '擠', 'get on', '上車', 'we', 'it'),
+  T('Ben', 'Ben', 'sick', '不舒服', 'go to school', '上學', 'he'), T('My sister', '我妹妹', 'young', '小', 'ride a bicycle', '騎腳踏車', 'she'),
 ];
 // … enough to: [subject, Chinese, adjective or noun, Chinese, action, Chinese, is noun?]
 const E = (s, sz, word, wz, act, actz, noun = false, verb = 'is') => ({ s, sz, word, wz, act, actz, noun, verb });
@@ -19,6 +23,10 @@ const ENOUGH = [
   E('They', '他們', 'food', '食物', 'feed all the people', '餵飽所有人', true, 'have'), E('She', '她', 'chairs', '椅子', 'seat all the children', '讓所有孩子坐', true, 'has'), E('The cake', '這個蛋糕', 'big', '大', 'feed ten people', '給十個人吃'),
 ];
 const AM = (s) => (s === 'I' ? 'am' : ['We', 'They', 'The shoes'].includes(s) ? 'are' : 'is');
+/** The action without the object (too … to) or with it (so … that). */
+const actOf = (t, obj) => (t.act.includes('#') ? t.act.replace('#', obj ? t.obj : '').replace(/\s+/g, ' ').trim() : t.act + (obj && t.obj ? ' ' + t.obj : ''));
+const PR_ZH = { I: '我', we: '我們', he: '他', she: '她' };
+const soZh = (t) => zhJoin(t.sz, `太${t.az}了，${PR_ZH[t.pr]}沒辦法${t.actz}`) + '。';
 const CANT = (pr) => ({ I: "I can\'t", we: "we can\'t", he: "he can\'t", she: "she can\'t" }[pr]);
 
 const MODES = [
@@ -26,7 +34,7 @@ const MODES = [
     id: 'too', name: 'too … to', instruction: () => '填入 too 和 to，表示「太…而不能…」。',
     gen(rng) {
       const t = rng.fresh(TOO, (x) => x.s + x.adj);
-      return { lines: [[`${t.s} ${AM(t.s)} `, blank('too'), ` ${t.adj} `, blank('to'), ` ${t.act}.`]], zh: zhJoin(t.sz, `太${t.az}了，沒辦法${t.actz}`) + '。', meta: { kind: 'too', adj: t.adj } };
+      return { lines: [[`${t.s} ${AM(t.s)} `, blank('too'), ` ${t.adj} `, blank('to'), ` ${actOf(t, false)}.`]], zh: zhJoin(t.sz, `太${t.az}了，沒辦法${t.actz}`) + '。', meta: { kind: 'too', adj: t.adj } };
     },
   },
   {
@@ -41,7 +49,7 @@ const MODES = [
     id: 'so', name: 'so … that', instruction: () => '填入 so 和 that，表示「如此…以致於…」。',
     gen(rng) {
       const t = rng.fresh(TOO, (x) => 'so-' + x.s + x.adj);
-      return { lines: [[`${t.s} ${AM(t.s)} `, blank('so'), ` ${t.adj} `, blank('that'), ` ${CANT(t.pr)} ${t.act}${t.obj ? ' ' + t.obj : ''}.`]], zh: zhJoin(t.sz, `太${t.az}了，${t.pr === 'I' ? '我' : t.pr === 'we' ? '我們' : t.pr === 'he' ? '他' : '她'}沒辦法${t.actz}`) + '。', meta: { kind: 'so', adj: t.adj } };
+      return { lines: [[`${t.s} ${AM(t.s)} `, blank('so'), ` ${t.adj} `, blank('that'), ` ${CANT(t.pr)} ${actOf(t, true)}.`]], zh: soZh(t), meta: { kind: 'so', adj: t.adj } };
     },
   },
   {
@@ -50,8 +58,8 @@ const MODES = [
       const t = rng.fresh(TOO, (x) => 'sw-' + x.s + x.adj);
       const [pr, cant] = CANT(t.pr).split(' ');
       return {
-        lines: [[`${t.s} ${AM(t.s)} too ${t.adj} to ${t.act}.`], [`→ ${t.s} ${AM(t.s)} `, blank('so'), ` ${t.adj} `, blank('that'), ' ', blank(pr), ' ', blank(cant), ` ${t.act}${t.obj ? ' ' + t.obj : ''}.`]],
-        zh: zhJoin(t.sz, `太${t.az}了，沒辦法${t.actz}`) + '。', meta: { kind: 'swap', adj: t.adj, pr },
+        lines: [[`${t.s} ${AM(t.s)} too ${t.adj} to ${actOf(t, false)}.`], [`→ ${t.s} ${AM(t.s)} `, blank('so'), ` ${t.adj} `, blank('that'), ' ', blank(pr), ' ', blank(cant), ` ${actOf(t, true)}.`]],
+        zh: soZh(t), meta: { kind: 'swap', adj: t.adj, pr }, // the Chinese names who cannot, as the result sentence does
       };
     },
   },

@@ -45,7 +45,10 @@ function draw(rng, o, exclude = []) {
   else if (/^(his|her) /.test(rec) && ['he', 'she'].includes(p.pr)) { recPhrase = rec.replace(/^(his|her) /, OWN[0] + ' '); recZ = recZh.replace(/^[他她]/, OWN[1]); }
   return { v, th, p, rec: recPhrase, recZh: recZ, verb, t, tz, past };
 }
-const zhLine = (d) => zhJoin(d.p.zh, d.tz, ZH[d.v.base](d.recZh, d.th[1])) + '。';
+const zhLine = (d, th = d.th) => zhJoin(d.p.zh, d.tz, ZH[d.v.base](d.recZh, th[1])) + '。';
+/** "it" points back to something known: the card, the money (那張卡片、那筆錢), not a card. */
+const known = (th) => th[0] === 'dinner' ? ['the dinner', '那頓晚餐', 'it'] : [th[0].replace(/^a glass of /, 'the ').replace(/^(a|an|some) /, 'the '),
+  th[1].replace(/^一些錢/, '那筆錢').replace(/^一杯果汁/, '那杯果汁').replace(/^一些/, '那些').replace(/^一/, '那'), th[2]];
 
 const MODES = [
   {
@@ -72,8 +75,8 @@ const MODES = [
     id: 'it', name: '受詞是代名詞', instruction: () => '受詞是 it / them 時只能放在動詞後面：依中文完成句子（物在前，加 to 或 for）。',
     gen(rng, o) {
       const d = draw(rng, o, ['teach', 'tell']);
-      const pron = d.th[2];
-      return { lines: [[`${d.p.en} ${d.verb} `, blank(pron), ' ', blank(RULE(d.v)), ' ', blank(d.rec, true), `${d.t ? ' ' + d.t : ''}. (${d.th[0]})`]], zh: zhLine(d), meta: { kind: 'it', verb: d.v.base, pron, rec: d.rec } };
+      const pron = d.th[2], th = known(d.th);
+      return { lines: [[`${d.p.en} ${d.verb} `, blank(pron), ' ', blank(RULE(d.v)), ' ', blank(d.rec, true), `${d.t ? ' ' + d.t : ''}. (${th[0]})`]], zh: zhLine(d, th), meta: { kind: 'it', verb: d.v.base, pron, rec: d.rec } };
     },
   },
 ];

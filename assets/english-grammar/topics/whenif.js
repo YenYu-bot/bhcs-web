@@ -36,8 +36,10 @@ const PAIRS = [
 const s3 = (p) => ['he', 'she', 'it', 'Tom', 'the movie', 'the class', 'the rain', 'the bus', 'the weather', 'my mother', 'the bell', 'the store'].includes(p.cs);
 const clauseVerb = (p) => (p.cv === 'be' ? 'is' : s3(p) ? p.cvs : p.cv);
 const zhClause = (p) => `${p.csz}${p.crz}`;
-const zhMain = (p) => `${p.msz}${p.mv === 'be' ? '會' : '會'}${p.mrz}`;
-const zhAll = (p) => (p.conj === 'If' ? zhJoin('如果', zhClause(p)) + `，${zhMain(p)}。` : p.conj === 'When' ? `${zhClause(p)}的時候，${zhMain(p)}。` : p.conj === 'Before' ? `${zhClause(p)}之前，${zhMain(p)}。` : p.conj === 'After' ? `${zhClause(p)}之後，${zhMain(p)}。` : `${p.csz}一${p.crz}，${p.msz}就${p.mrz}。`);
+// The second subject is left out in Chinese when it is the same person: 「他們打掃完房間之後，會看電影」.
+const mainSubj = (p) => (p.msz === p.csz ? '' : p.msz);
+const zhMain = (p) => zhJoin(mainSubj(p), `會${p.mrz}`);
+const zhAll = (p) => (p.conj === 'If' ? zhJoin('如果', zhClause(p)) + `，${zhMain(p)}。` : p.conj === 'When' ? `${zhClause(p)}的時候，${zhMain(p)}。` : p.conj === 'Before' ? `${zhClause(p)}之前，${zhMain(p)}。` : p.conj === 'After' ? `${zhClause(p)}之後，${zhMain(p)}。` : `${p.csz}一${p.crz}，${zhJoin(mainSubj(p), '就' + p.mrz)}。`);
 const first = (rng) => rng.chance(0.5); // clause first or main clause first
 
 const MODES = [

@@ -93,6 +93,21 @@ test('no sentence that reads two ways or contains itself', () => {
   });
 });
 
+// Cases a reviewer struck out, one per topic, so they stay fixed.
+test('per-topic cases stay fixed', () => {
+  none('a moment in progress (opening the window)', (x) => /\b(am|is|are|was|were)( not|n't)? (opening|closing)\b/.test(x.text));
+  none('plural food with "is"', (x) => /\bThe noodles is\b/.test(x.text));
+  none('a song or movie "looked at" or "mine"', (x) => /\b(Look at the (song|movie)s?|The (song|movie)s? (which|who) .* (is|are) mine)\b/.test(x.text));
+  none('a girl who is my mother', (x) => /Who is that (girl|boy)\?.*\b(mother|father|aunt|uncle|teacher)\b/.test(x.text));
+  none('so … that without the object (read in.)', (x) => /can't \w+ in\./.test(x.text));
+  none('"it" before the noun it stands for', (x) => /\b\w+ed it because the \w+ was\b/.test(x.text));
+  none('很快跑 instead of 跑得很快', (x) => /很快(跑|走路|游泳|開車)/.test(x.it.zh));
+  none('the same subject twice in a Chinese if / when sentence', (x) => x.topic === 'whenif' && (() => { const m = /^(?:如果)?\s*([^，]{1,8}?)(?:[^，]*)，\s*\1(會|就)/.exec(x.it.zh); return !!m; })());
+  none('a shared father or mother', (x) => /共同的(爸爸|媽媽)/.test(x.it.zh));
+  none('school out at night or up at noon', (x) => /School ends at (one|two|six|seven|eight|nine|ten|eleven|twelve)\b|I get up at (nine|ten|eleven|twelve|one|two|three|four)\b/.test(x.text));
+  none('seasons and months out of order', (x) => /\b(Winter|January|December) is (hotter|warmer)\b|\b(Summer|July|August) is (colder|cooler)\b/.test(x.text));
+});
+
 test('one sheet never repeats a sentence, even with other blanks', () => {
   const bad = [];
   for (const { topic, level, seed, sh } of SHEETS) {

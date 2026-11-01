@@ -24,6 +24,9 @@ const BE = [
   ['quiet', '安靜', false], ['careful', '小心', false], ['kind', '友善', false], ['polite', '有禮貌', false], ['on time', '準時', false], ['nice', '親切', false],
   ['late', '遲到', true], ['afraid', '害怕', true], ['angry', '生氣', true], ['noisy', '吵鬧', true], ['sad', '難過', true], ['shy', '害羞', true],
 ];
+// "看電影" is see or watch a movie: both are right.
+const ALT = { 'see a movie': 'watch' };
+const key = (v, rest, capital = false) => { const c = (w) => (capital ? cap(w) : w); return ALT[`${v} ${rest}`] ? `${c(v)}／${c(ALT[`${v} ${rest}`])}` : c(v); };
 const meta = (kind, base, extra = {}) => ({ kind, base, ...extra });
 
 const MODES = [
@@ -32,23 +35,23 @@ const MODES = [
     gen(rng) {
       const [v, rest, zh] = rng.fresh(DO, (x) => x[0] + x[1]);
       const style = rng.int(3);
-      if (style === 0) return { lines: [['Please ', blank(v), ` ${rest}. (${zh})`]], zh: `請${zh}。`, meta: meta('do', v, { lower: true }) };
-      if (style === 1) return { lines: [[blank(cap(v)), ` ${rest}, please. (${zh})`]], zh: `請${zh}。`, meta: meta('do', v) };
-      return { lines: [[blank(cap(v)), ` ${rest}. (${zh})`]], zh: `${zh}。`, meta: meta('do', v) };
+      if (style === 0) return { lines: [['Please ', blank(key(v, rest)), ` ${rest}. (${zh})`]], zh: `請${zh}。`, meta: meta('do', v, { lower: true }) };
+      if (style === 1) return { lines: [[blank(key(v, rest, true)), ` ${rest}, please. (${zh})`]], zh: `請${zh}。`, meta: meta('do', v) };
+      return { lines: [[blank(key(v, rest, true)), ` ${rest}. (${zh})`]], zh: `${zh}。`, meta: meta('do', v) };
     },
   },
   {
     id: 'dont', name: '否定祈使句', instruction: () => "依括號裡的中文，用 Don't 寫出否定祈使句。",
     gen(rng) {
       const [v, rest, zh] = rng.fresh(DONT, (x) => x[0] + x[1]);
-      return { lines: [[blank("Don't"), ' ', blank(v), ` ${rest}. (不要${zh})`]], zh: `不要${zh}。`, meta: meta('dont', v) };
+      return { lines: [[blank("Don't"), ' ', blank(key(v, rest)), ` ${rest}. (不要${zh})`]], zh: `不要${zh}。`, meta: meta('dont', v) };
     },
   },
   {
     id: 'lets', name: "Let's", instruction: () => "依括號裡的中文，用 Let's 提出建議。",
     gen(rng) {
       const [v, rest, zh] = rng.fresh(LETS, (x) => x[0] + x[1]);
-      return { lines: [[blank("Let's"), ' ', blank(v), ` ${rest}. (我們${zh}吧)`]], zh: `我們${zh}吧。`, meta: meta('lets', v) };
+      return { lines: [[blank("Let's"), ' ', blank(key(v, rest)), ` ${rest}. (我們${zh}吧)`]], zh: `我們${zh}吧。`, meta: meta('lets', v) };
     },
   },
   {

@@ -341,7 +341,9 @@ function checkFreq(it, mode, o) {
   else assert.deepEqual(a, [expectedBe(m.subj, false), m.adv], `adverb after be: ${text}`);
 }
 function checkImperative(it, mode) {
-  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const m = it.meta, text = it.lines.map(lineText).join(' '), all = ans(it);
+  if (all.some((x) => x.includes('／'))) assert.match(text, /a movie/, `only see／watch a movie has two answers: ${text}`);
+  const a = all.map((x) => x.split('／')[0]);
   if (mode === 'do') assert.deepEqual(a, [m.lower ? m.base : cap1(m.base)]);
   if (mode === 'dont') { assert.deepEqual(a, ["Don't", m.base]); assert.ok(text.includes('(不要'), 'cue says 不要'); }
   if (mode === 'lets') { assert.deepEqual(a, ["Let's", m.base]); assert.ok(/\(我們.*吧\)/.test(text), 'cue says 我們…吧'); }
@@ -572,14 +574,16 @@ function checkGive(it, mode) {
     assert.equal(long, m.long);
     assert.deepEqual(a, long ? [m.thing, prep, m.rec] : [m.rec, m.thing], `${given} → ${text}`);
   }
-  if (mode === 'it') { assert.deepEqual(a, [m.pron, prep, m.rec], text); assert.equal(m.pron, /\(some flowers\)$/.test(text) ? 'them' : 'it'); }
+  if (mode === 'it') { assert.deepEqual(a, [m.pron, prep, m.rec], text); assert.equal(m.pron, /\(the flowers\)$/.test(text) ? 'them' : 'it'); assert.match(text, /\(the [a-z ]+\)$/, 'it points back to something known'); }
 }
 const ADVERB_HOW = /^(fast|well|hard|late|early)$/;
 function checkExclaim(it, mode) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
   const last = it.lines.at(-1);
   const afterBlanks = lineText(last).split('___').pop();
-  if (m.kind === 'how' || (m.kind === 'change' && !m.what)) { assert.deepEqual(a, ['How', m.adj], text); assert.match(afterBlanks, /^ [a-z].*!$/, 'clause follows'); }
+  const hint = /!\s*\(([a-z]+)\)$/.exec(text);
+  if (m.kind === 'what' || m.kind === 'how') assert.equal(hint?.[1], m.adj, `English hint gives the word: ${text}`);
+  if (m.kind === 'how' || (m.kind === 'change' && !m.what)) { assert.deepEqual(a, ['How', m.adj], text); assert.match(afterBlanks, /^ [a-z].*!( \([a-z]+\))?$/, 'clause follows'); }
   else {
     const noun = afterBlanks.trim().split(' ')[0].replace(/!$/, '');
     assert.equal(noun, m.noun);
@@ -617,7 +621,7 @@ function checkRelative(it, mode) {
     assert.deepEqual(a, [relVerb(m.base, plural)], `${noun} ${person ? 'who' : 'which'} + verb: ${text}`);
     assert.ok(before.endsWith(`${person ? 'who' : 'which'} `), 'relative pronoun given');
   } else {
-    assert.deepEqual(a, [person ? 'who' : 'which'], `${noun}: ${text}`);
+    assert.deepEqual(a, [`${person ? 'who' : 'which'}／that`], `${noun}: ${text}`);
     const after = last.split('___')[1].trim().split(' ')[0];
     assert.equal(after, relVerb(m.base, plural), `clause verb agrees with ${noun}: ${text}`);
   }
@@ -686,7 +690,7 @@ function checkSense(it, mode) {
     assert.deepEqual(a, [form], `${verb} for "${subj}": ${text}`);
   }
   if (mode === 'sense') { const going = /\(正在／/.test(text); assert.deepEqual(a, [going ? ing(m.base) : m.base], text); assert.match(text, /\b(saw|sees?|heard|hears?|watch(ed|es)?|felt|feels?) (him|her|the children|the dog|someone|the birds|the house|my heart) ___/); }
-  if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
+  if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [m.verb === 'help' ? `${m.base}／to ${m.base}` : BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
 }
 
 
@@ -723,7 +727,7 @@ function checkReflexive(it, mode) {
 }
 function checkIndirect(it, mode) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
-  const q = m.q, head = /^→ ([A-Z][^?.]*?) (where|what|when|how|who|which|why|if|___)/.exec(lineText(it.lines[1]))?.[1] ?? '';
+  const q = m.q, head = /^→ ([A-Z][^?.]*?) (where|what|when|how|who|which|why|if|whether|___)/.exec(lineText(it.lines[1]))?.[1] ?? '';
   assert.ok(it.lines.map(lineText).join(' ').endsWith(/^(Do|Can|Could)/.test(head) ? '?' : '.'), `end punctuation follows "${head}": ${text}`);
   // the indirect verb, from the direct question: does S V → Vs, did S V → V-ed / irregular, be stays (with its -ing verb), will / can / has stay with their verb;
   // a question with no subject before the verb (Who broke…?) keeps the verb as it is
@@ -743,7 +747,7 @@ function checkIndirect(it, mode) {
   }
   if (mode === 'verb') assert.deepEqual(a, verb.split(' '), `${q} → ${verb}: ${text}`);
   if (mode === 'order') { assert.deepEqual(a, [m.subj, verb], text); assert.ok(!/___ ___ (does|did) /.test(text)); }
-  if (mode === 'if') assert.deepEqual(a, ['if', m.subj, verb], text);
+  if (mode === 'if') assert.deepEqual(a, ['if／whether', m.subj, verb], text);
   // the indirect part never keeps does / did
   assert.ok(!/(know|wonder|tell me) (where|what|when|how|who|which|why|if)[^?.]* (does|did) /.test(text.replace(/___/g, a.join(' '))), 'no does / did in the indirect question');
 }

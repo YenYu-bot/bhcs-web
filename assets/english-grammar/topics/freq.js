@@ -8,11 +8,26 @@ import { actors, pickSubject, pickFrame, third } from '../vcommon.js';
 import { beForm } from './be.js';
 
 const ADV = [['always', '總是'], ['usually', '通常'], ['often', '常常'], ['sometimes', '有時候'], ['seldom', '很少'], ['never', '從不']];
-const advFor = (o) => (o.level >= 2 ? ADV : ADV.filter((a) => a[0] !== 'seldom'));
+const advFor = (o, f = null) => (o.level >= 2 ? ADV : ADV.filter((a) => a[0] !== 'seldom'))
+  .filter((a) => !(f && a[0] === 'never' && /\b(breakfast|lunch|dinner)\b/.test(f.rest || ''))); // "never has dinner"
 // Be predicates that make sense with "always / never": states people are in now and then.
-const BE_PREDS = PREDICATES.filter((p) => (p.type === 'adj' && p.dur === 'temp' && p.for.includes('person')) || (p.type === 'loc' && p.for.includes('person') && !/hospital/.test(p.en)));
+const BE_PREDS = PREDICATES.filter((p) => (p.type === 'adj' && p.dur === 'temp' && p.for.includes('person') && p.en !== 'ready') || (p.type === 'loc' && p.for.includes('person') && !/hospital/.test(p.en)));
+// When the state comes and goes: "Tom is always hungry after school", not "Tom is always hungry" with nothing to go on.
+//   Feelings take one of these every time; places sometimes; "always right" needs none.
+const BE_WHEN = {
+  hungry: [['after school', '放學後'], ['in the morning', '早上']], tired: [['after school', '放學後'], ['on Mondays', '星期一']], busy: [['on Mondays', '星期一'], ['on weekends', '週末']],
+  sick: [['in winter', '冬天']], angry: [['in the morning', '早上']], happy: [['on weekends', '週末'], ['on Fridays', '星期五']], sad: [['on Mondays', '星期一']],
+  late: [['for school', '上學']], thirsty: [['after the game', '比賽後'], ['after school', '放學後']], sleepy: [['in class', '上課時'], ['after lunch', '午餐後']],
+  'at home': [['on Sundays', '星期天'], ['in the evening', '晚上']], 'in the library': [['after school', '放學後']], 'in the park': [['on weekends', '週末']],
+  'at the zoo': [['on weekends', '週末']], 'at the beach': [['in summer', '夏天']], 'in the kitchen': [['in the evening', '晚上']],
+};
+function beWhen(rng, p) {
+  const w = BE_WHEN[p.en];
+  return w && (p.type !== 'loc' || rng.chance(0.5)) ? rng.pick(w) : ['', ''];
+}
 // "always late" rather than "always 遲到了": the state, not the event
-const stateZh = (p) => p.zh.pos.replace(/^很/, '').replace(/了$/, '');
+//   and 很 stays except after 從不 / 很少 ("通常很累", "從不難過")
+const stateZh = (p, adv) => p.zh.pos.replace(/了$/, '').replace(/^很/, ['never', 'seldom'].includes(adv) ? '' : '很');
 const meta = (s, adv, extra) => ({ subj: s.en, adv, cue: adv, ...extra });
 
 function subject(rng, o, exclude = () => false) {
@@ -26,7 +41,7 @@ const MODES = [
     gen(rng, o) {
       const s = subject(rng, o); if (!s) return null;
       const f = pickFrame(rng, s, o.level, (x) => x.habit); if (!f) return null;
-      const [adv, az] = rng.fresh(advFor(o), (x) => x[0]);
+      const [adv, az] = rng.fresh(advFor(o, f), (x) => x[0]);
       // an extra time only when it suits the activity ("on weekends", "after school")
       const tails = cuesFor(f, 'habit', s).filter((t) => ['on weekends', 'after school'].includes(t.en)).map((t) => [t.en, t.zh]);
       const [tail, tz] = rng.chance(0.25) && tails.length ? rng.pick(tails) : ['', ''];
@@ -44,10 +59,10 @@ const MODES = [
       const p = rng.fresh(BE_PREDS, (x) => x.en);
       const [adv, az] = rng.fresh(advFor(o), (x) => x[0]);
       const be = beForm(s, false);
-      const z = stateZh(p);
+      const z = stateZh(p, adv), [w, wz] = beWhen(rng, p);
       return {
-        lines: [[cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}. (${az}／be)`]],
-        zh: zhJoin(s.zh, az, p.type === 'loc' ? p.zh.pos : z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }),
+        lines: [[cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}${w ? ' ' + w : ''}. (${az}／be)`]],
+        zh: zhJoin(s.zh, wz, az, p.type === 'loc' ? p.zh.pos : z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }),
       };
     },
   },
@@ -58,11 +73,11 @@ const MODES = [
       if (rng.chance(0.5)) {
         const s = pickSubject(rng, actors(rng, Math.max(o.level, 2), { exclude: (x) => x.kind !== 'person' })); if (!s) return null;
         const p = rng.fresh(BE_PREDS, (x) => x.en); const be = beForm(s, false);
-        const z = p.type === 'loc' ? p.zh.pos : stateZh(p);
-        return { lines: [[`${cap(s.en)} ${be} ${p.en}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}.`]], zh: zhJoin(s.zh, az, z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }) };
+        const z = p.type === 'loc' ? p.zh.pos : stateZh(p, adv), [w, wz] = beWhen(rng, p), wt = w ? ' ' + w : '';
+        return { lines: [[`${cap(s.en)} ${be} ${p.en}${wt}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}${wt}.`]], zh: zhJoin(s.zh, wz, az, z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }) };
       }
       const s = subject(rng, { ...o, level: Math.max(o.level, 2) }); if (!s) return null;
-      const f = pickFrame(rng, s, o.level, (x) => x.habit); if (!f) return null;
+      const f = pickFrame(rng, s, o.level, (x) => x.habit); if (!f || !advFor(o, f).some((a) => a[0] === adv)) return null;
       const v = third(s) ? VERBS[f.v].s : VERBS[f.v].base;
       return { lines: [[`${cap(s.en)} ${v}${phrase(f)}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(adv), ' ', blank(v), `${phrase(f)}.`]], zh: zhJoin(s.zh, az, f.zh) + '。', meta: meta(s, adv, { kind: 'verb', base: f.v, verb: v }) };
     },

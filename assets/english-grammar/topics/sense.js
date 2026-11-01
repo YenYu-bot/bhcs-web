@@ -12,16 +12,16 @@ const LINK = [
   L('The music', '這音樂', 'sound', 'sounds', [['nice', '好聽'], ['beautiful', '優美'], ['loud', '很大聲'], ['strange', '奇怪']]), L('Your idea', '你的主意', 'sound', 'sounds', [['great', '很棒'], ['good', '不錯'], ['interesting', '有趣'], ['strange', '奇怪']]),
   L('Your dress', '你的洋裝', 'look', 'looks', [['beautiful', '漂亮'], ['nice', '好看'], ['expensive', '很貴']]), L('Tom', 'Tom', 'look', 'looks', [['tired', '很累'], ['happy', '很開心'], ['sad', '很難過'], ['angry', '很生氣']]),
   L('The children', '孩子們', 'look', 'look', [['happy', '很開心'], ['tired', '很累'], ['hungry', '很餓']]), L('I', '我', 'feel', 'feel', [['tired', '很累'], ['happy', '很開心'], ['cold', '很冷'], ['nervous', '很緊張']]),
-  L('The bed', '這張床', 'feel', 'feels', [['soft', '很軟'], ['comfortable', '很舒服'], ['hard', '很硬']]), L('The weather', '天氣', 'get', 'gets', [['cold', '變冷'], ['warm', '變暖']]),
+  L('The bed', '這張床', 'feel', 'feels', [['soft', '很軟'], ['comfortable', '很舒服']]), L('The weather', '天氣', 'get', 'gets', [['cold', '變冷'], ['warm', '變暖']]),
   L('My grandfather', '我爺爺', 'get', 'gets', [['tired', '累了'], ['angry', '生氣了']]), L('The classroom', '教室', 'get', 'gets', [['quiet', '安靜下來'], ['noisy', '吵起來']]),
   L('The room', '這個房間', 'look', 'looks', [['clean', '乾淨'], ['dirty', '髒'], ['comfortable', '舒服']]), L('This shirt', '這件襯衫', 'feel', 'feels', [['soft', '很軟'], ['comfortable', '很舒服'], ['warm', '很暖']]),
   L('The milk', '牛奶', 'taste', 'tastes', [['good', '好喝'], ['bad', '難喝'], ['sweet', '甜']]), L('The baby', '那個嬰兒', 'look', 'looks', [['happy', '很開心'], ['tired', '很累'], ['hungry', '很餓']]),
   L('His voice', '他的聲音', 'sound', 'sounds', [['loud', '很大聲'], ['nice', '好聽'], ['strange', '奇怪'], ['tired', '很累']]),
 ];
-// the adverb shown beside each adjective (real adverbs only; hard / hardly is the classic trap)
+// the adverb shown beside each adjective (real adverbs only; hard / hardly differ in meaning, so hard is left out)
 const ADV = { good: 'well', delicious: 'deliciously', terrible: 'terribly', sweet: 'sweetly', nice: 'nicely', bad: 'badly', fresh: 'freshly', beautiful: 'beautifully', loud: 'loudly', strange: 'strangely', great: 'greatly',
   interesting: 'interestingly', expensive: 'expensively', tired: 'tiredly', happy: 'happily', sad: 'sadly', angry: 'angrily', hungry: 'hungrily', cold: 'coldly', nervous: 'nervously',
-  soft: 'softly', comfortable: 'comfortably', hard: 'hardly', warm: 'warmly', quiet: 'quietly', noisy: 'noisily', clean: 'cleanly', dirty: 'dirtily' };
+  soft: 'softly', comfortable: 'comfortably', warm: 'warmly', quiet: 'quietly', noisy: 'noisily', clean: 'cleanly', dirty: 'dirtily' };
 const TIME_LINK = [['today', '今天'], ['now', '現在'], ['', '']];
 const zhGet = (l, adj) => (l.verb === 'get' ? adj[1] : { taste: '嘗起來', smell: '聞起來', sound: '聽起來', look: '看起來', feel: `${l.subj === 'I' ? '覺得' : '摸起來'}` }[l.verb] + adj[1]);
 
@@ -46,6 +46,11 @@ const C = (base, s3, past, zh, takes) => ({ base, s3, past, zh, takes });
 const CAUSE = [C('make', 'makes', 'made', '叫', 'base'), C('let', 'lets', 'let', '讓', 'base'), C('have', 'has', 'had', '叫', 'base'), C('ask', 'asks', 'asked', '要求', 'to'), C('tell', 'tells', 'told', '叫', 'to'), C('want', 'wants', 'wanted', '要', 'to'), C('help', 'helps', 'helped', '幫', 'base')];
 const TASKS = [['clean the room', '打掃房間'], ['do the dishes', '洗碗'], ['wait outside', '在外面等'], ['stay at home', '待在家裡'], ['finish the homework', '把功課做完'], ['be quiet', '安靜'], ['go to bed early', '早點睡'],
   ['carry the boxes', '搬箱子'], ['close the window', '關窗戶'], ['turn off the television', '關電視'], ['study hard', '用功讀書'], ['wash the car', '洗車']];
+// let gives permission, so it goes with things one wants to do; chores are made / had / told
+const LET_TASKS = [['watch television', '看電視'], ['play outside', '在外面玩'], ['go to the park', '去公園'], ['use the computer', '用電腦'], ['stay up late', '晚睡'], ['eat the cake', '吃蛋糕']];
+// help goes with work one can share
+const HELP_TASKS = ['clean the room', 'do the dishes', 'finish the homework', 'carry the boxes', 'close the window', 'wash the car'];
+const CAUSE_PAST = [['yesterday', '昨天'], ['last night', '昨晚'], ['last Sunday', '上星期天']];
 const OBJS = [['me', '我'], ['him', '他'], ['her', '她'], ['us', '我們'], ['them', '他們'], ['the children', '孩子們'], ['the students', '學生們']];
 const okObj = (p, o) => !((p.pr === 'I' && ['me', 'us'].includes(o)) || (p.pr === 'we' && ['us', 'me'].includes(o)) || (p.pr === 'he' && o === 'him') || (p.pr === 'she' && o === 'her') || (p.pr === 'they' && o === 'them'));
 
@@ -65,7 +70,7 @@ const MODES = [
     gen(rng, o) {
       const l = rng.fresh(LINK, (x) => x.subj + x.verb);
       const [adj, az] = rng.fresh(l.adjs, (x) => 'adj-' + x[0]);
-      const [t, tz] = ['look', 'feel', 'get'].includes(l.verb) ? rng.pick(TIME_LINK) : ['', ''];
+      const [t, tz] = ['look', 'feel'].includes(l.verb) ? rng.pick(TIME_LINK) : ['', '']; // "gets noisy now" reads oddly
       const pair = rng.chance(0.5) ? `${adj}／${ADV[adj]}` : `${ADV[adj]}／${adj}`;
       return { lines: [[`${l.subj} ${l.s3} `, blank(adj), `${t ? ' ' + t : ''}. (${pair})`]], zh: zhJoin(l.zh, tz, zhGet(l, [adj, az])) + '。', meta: { kind: 'link', verb: l.verb, adj } };
     },
@@ -122,18 +127,19 @@ const MODES = [
     },
   },
   {
-    id: 'cause', name: '使役動詞與 ask / tell / want', instruction: () => 'make、let、have、help 後面接原形動詞；ask、tell、want 後面接 to + 原形。依括號提示填入（空格可填一個或兩個字）。',
+    id: 'cause', name: '使役動詞與 ask / tell / want', instruction: () => 'make、let、have 後面接原形動詞；ask、tell、want 後面接 to + 原形；help 兩種都可以。依括號提示填入（空格可填一個或兩個字）。',
     gen(rng, o) {
       const c = rng.fresh(CAUSE, (x) => x.base);
-      const [task, tz] = rng.fresh(TASKS, (x) => x[0]);
+      const [task, tz] = rng.fresh(c.base === 'let' ? LET_TASKS : c.base === 'help' ? TASKS.filter(([x]) => HELP_TASKS.includes(x)) : TASKS, (x) => x[0]);
       const p = pickPerson(rng);
       const [ob, oz] = rng.pick(OBJS.filter(([x]) => okObj(p, x)));
       const past = o.level >= 2 && rng.chance(0.4);
       const verb = past ? c.past : verbFor(p, [c.base, c.s3]);
+      const [t, tzz] = past ? rng.pick(CAUSE_PAST) : ['', ''];
       const b = task.split(' ')[0], rest = task.slice(b.length);
-      const ans = c.takes === 'to' ? `to ${b}` : b;
+      const ans = c.base === 'help' ? `${b}／to ${b}` : c.takes === 'to' ? `to ${b}` : b; // help takes both
       const zhV = c.base === 'help' ? `幫${oz}${tz}` : c.base === 'let' ? `讓${oz}${tz}` : c.base === 'want' ? `要${oz}${tz}` : c.base === 'ask' ? `要求${oz}${tz}` : `叫${oz}${tz}`;
-      return { lines: [[`${p.en} ${verb} ${ob} `, blank(ans, true), `${rest}. (${b})`]], zh: zhJoin(p.zh, past ? '那時' : '', zhV) + '。', meta: { kind: 'cause', verb: c.base, base: b, takes: c.takes } };
+      return { lines: [[`${p.en} ${verb} ${ob} `, blank(ans, true), `${rest}${t ? ' ' + t : ''}. (${b})`]], zh: zhJoin(p.zh, tzz, zhV) + '。', meta: { kind: 'cause', verb: c.base, base: b, takes: c.takes } };
     },
   },
 ];

@@ -8,10 +8,12 @@ import { beForm, replyBe } from './be.js';
 const NEG = { is: "isn't", are: "aren't", was: "wasn't", were: "weren't" };
 const pickTense = (rng, o) => (o.tense === 'P' ? 'now' : o.tense === 'D' ? 'pastprog' : rng.chance(0.5) ? 'now' : 'pastprog');
 
+const MOMENT = new Set(['open', 'close', 'arrive', 'leave', 'break', 'lose', 'find']);
 function draw(rng, o, { exclude = () => false, ask = false, test = () => true } = {}) {
   // ask: a question to the listener ("your" subjects, you, and "Are we …?")
   const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
-  const f = s && pickFrame(rng, s, o.level, (x) => x.prog && test(x), 'ing');
+  // open / close happen in a moment: "were opening the window at this time yesterday" is left out
+  const f = s && pickFrame(rng, s, o.level, (x) => x.prog && !MOMENT.has(x.v) && test(x), 'ing');
   if (!f) return null;
   const use = pickTense(rng, o);
   const t = rng.fresh(cuesFor(f, use, s), (x) => x.en);
@@ -88,7 +90,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') || s.person === 1 || s.reply === 'I', ask: true }); if (!d) return null;
       const { s, f, t, past } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.prog && x.v !== f.v && cuesFor(x, past ? 'pastprog' : 'now', s).some((c) => c.en === t.en), 'ing'); if (!g) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.prog && !MOMENT.has(x.v) && x.v !== f.v && cuesFor(x, past ? 'pastprog' : 'now', s).some((c) => c.en === t.en), 'ing'); if (!g) return null;
       const be = beForm(s, past), rb = replyBe(s.reply, past);
       return {
         lines: [[`${cap(be)} ${s.en} ${vform(f, 'ing')}${phrase(f)} ${t.en}?`],
