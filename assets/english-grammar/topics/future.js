@@ -1,7 +1,7 @@
 // Topic: future — will + V and be going to + V, with negatives, questions and short answers.
 import { blank } from '../core.js';
 import { VERBS, phrase } from '../verbs.js';
-import { actors, pickSubject, pickFrame, timeFirst, mid, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, pickFrame, timeFirst, mid, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap, asked, askActors, pickAsked, replyKey, mealFits } from '../vcommon.js';
 import { beForm, replyBe } from './be.js';
 
 const TIMES = [
@@ -13,11 +13,14 @@ const TIMES = [
 const formFor = (rng, o) => (o.level === 1 ? 'will' : rng.fresh(['will', 'going'], (x) => 'form-' + x));
 const HINT = { will: 'will', going: 'be going to' };
 
-function draw(rng, o) {
-  const s = pickSubject(rng, actors(rng, o.level, { exclude: (x) => x.kind !== 'person' || x.tags.includes('every') }));
+function draw(rng, o, { ask = false } = {}) {
+  const exclude = (x) => x.kind !== 'person' || x.tags.includes('every');
+  // ask: a question put to the listener — "your" subjects, the listener, and the speaker ("Will we …?")
+  const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.habit && !x.age); // plans: things anyone might do
   if (!f) return null;
-  const t = rng.fresh(TIMES.filter((x) => !(x.en.includes('school') && s.age === 'adult')), (x) => x.en);
+  const t = rng.fresh(TIMES.filter((x) => !(x.en.includes('school') && s.age === 'adult') && mealFits(`${f.v} ${f.rest || ''}`, x.en)), (x) => x.en);
+  if (!t) return null;
   return { s, f, t, form: formFor(rng, o) };
 }
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, form: d.form, ...extra });
@@ -63,21 +66,21 @@ const MODES = [
       const d = draw(rng, o); if (!d) return null;
       const { s, f, t, form } = d;
       const given = form === 'will' ? `${S0(s)} will ${f.v}${phrase(f)} ${t.en}.` : `${S0(s)} ${beForm(s, false)} going to ${f.v}${phrase(f)} ${t.en}.`;
-      const bl = form === 'will' ? [blank('Will'), ` ${mid(s.en)} `, blank(f.v)] : [blank(cap(beForm(s, false))), ` ${mid(s.en)} `, blank('going'), ' ', blank('to'), ' ', blank(f.v)];
-      return { lines: [[given], ['→ ', ...bl, `${phrase(f)} ${t.en}?`]], zh: zhSent(s, t, ZH[form] + f.zh, '嗎？'), meta: meta(d, { kind: 'q' }) };
+      const a = asked(s); // 改疑問句: I → you, my → your
+      const bl = form === 'will' ? [blank('Will'), ` ${mid(a.en)} `, blank(f.v)] : [blank(cap(beForm(a, false))), ` ${mid(a.en)} `, blank('going'), ' ', blank('to'), ' ', blank(f.v)];
+      return { lines: [[given], ['→ ', ...bl, `${phrase(f)} ${t.en}?`]], zh: zhSent(a, t, ZH[form] + f.zh, '嗎？'), meta: meta(d, { kind: 'q', asked: a.en }) };
     },
   },
   {
     id: 'short', name: '簡答', instruction: () => '依提示完成簡答（否定請用縮寫）。',
     gen(rng, o) {
-      const d = draw(rng, o); if (!d) return null;
+      const d = draw(rng, o, { ask: true }); if (!d) return null;
       const { s, f, t, form } = d;
-      if (!s.reply) return null;
       const yes = rng.chance(0.5);
       const r = s.reply;
       const q = form === 'will' ? `Will ${mid(s.en)} ${f.v}${phrase(f)} ${t.en}?` : `${cap(beForm(s, false))} ${mid(s.en)} going to ${f.v}${phrase(f)} ${t.en}?`;
       const aux = form === 'will' ? (yes ? 'will' : "won't") : (yes ? replyBe(r, false) : { am: "I'm not", is: "isn't", are: "aren't" }[replyBe(r, false)]);
-      const bl = aux === "I'm not" ? [blank("I'm"), ' ', blank('not')] : [blank(r), ' ', blank(aux)];
+      const bl = aux === "I'm not" ? [blank("I'm"), ' ', blank('not')] : [blank(replyKey(s)), ' ', blank(aux)];
       return { lines: [[`${q} — ${yes ? 'Yes' : 'No'}, `, ...bl, '.']], zh: zhSent(s, t, ZH[form] + f.zh, '嗎？'), meta: meta(d, { kind: 'short', yes }) };
     },
   },

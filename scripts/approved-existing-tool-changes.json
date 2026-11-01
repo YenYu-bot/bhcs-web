@@ -127,6 +127,153 @@
       "approved_blob": "dede24c471fe8ccc04fe35914e61646174894d5a",
       "reason": "Math hub lists the new g8 topic 尺規作圖 (cards 137 -> 138).",
       "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/core.js",
+      "baseline_blob": "096bf83e357344a8e62f6bd450e5ce0b176756bc",
+      "approved_blob": "dfa372b8f06a35395192285f445d9c52d4a0a434",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: core.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/lexicon.js",
+      "baseline_blob": "fdad1e95158505853c79eb4372b199af8b453d48",
+      "approved_blob": "42f9ef179e5b74e3384877903308e6be46176f92",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: lexicon.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/people.js",
+      "baseline_blob": "f6148f47311f57c1d059533a076f58a24adee6d3",
+      "approved_blob": "6e8f4f350137b135fc89d785505f2697b6d47fe2",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: people.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/adverb.js",
+      "baseline_blob": "6f23dd2bcb265bfc1a2de79cb411b21bfc82ac33",
+      "approved_blob": "4778311b968a4b78966f4f45b6d1899b0edc5bdf",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: adverb.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/be.js",
+      "baseline_blob": "95e0f06ff0f5161b6616bd5ee5d71a6ba6986055",
+      "approved_blob": "42a367664b69ff5bc56fa625733976cfd20f8246",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: be.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/can.js",
+      "baseline_blob": "b8304989ea03230aabfed86d15f71a621e90522f",
+      "approved_blob": "1e4a9e7f95a3ab02fa21d56baa23aa9b04d52c80",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: can.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/future.js",
+      "baseline_blob": "ab7bb8836bcd58a6c4b78072d7382f6b2a88fd76",
+      "approved_blob": "809752726b4025a73ddd83e3f27409d930b86aa6",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: future.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/gerund.js",
+      "baseline_blob": "6e47d693e5858a3008a84390fce336b41e4aba5d",
+      "approved_blob": "5a23c815fb68a92001b2f18d532661c8ef028e40",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: gerund.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/give.js",
+      "baseline_blob": "27ec37bde95683f682f111dc5d153ef378ec770f",
+      "approved_blob": "7a5a390adbc8b9f12ce5673cd5cf5e0573b1a3b5",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: give.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/must.js",
+      "baseline_blob": "5c691472ef1df4e429bc0adbd322d4706b74c5f5",
+      "approved_blob": "7c33ed0df41a0a7cba30b6568e6948d0436a0a3a",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: must.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/passive.js",
+      "baseline_blob": "7c1e1f64365b03175913f418a6540e94f734d54d",
+      "approved_blob": "a6bceaa23c3e5098650e36dd1efeecfedb941d9f",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: passive.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/past.js",
+      "baseline_blob": "178372a4ad143e9331d5b1f37b1fe9069fb60e4a",
+      "approved_blob": "082f4361ade44d393a4b7de9d91dcef7ad6747d2",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: past.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/perfect.js",
+      "baseline_blob": "ffb66ba24e1ab598eb2c9db4363410a121351c85",
+      "approved_blob": "615be7eac92570fba5dcf22dfff2f10a890c9b71",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: perfect.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/progressive.js",
+      "baseline_blob": "3fac29664788be020ad2c9e4f5dff3b4eeac037e",
+      "approved_blob": "73c7e702952775cbe9d7ae2d217c226c9d768542",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: progressive.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/quantity.js",
+      "baseline_blob": "de8534b041084d6c0bc183220de7101a4894170c",
+      "approved_blob": "981db8ad834a4b6449ba3be0b74307d339509708",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: quantity.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/simple.js",
+      "baseline_blob": "fcff7f996d27e3e9e5b499154d1485f4c6f5d535",
+      "approved_blob": "872ee7607841e94580f2713b862fbbd5e66d32bd",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: simple.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/tag.js",
+      "baseline_blob": "9afaa87041b3901b73dd8746e04517a7836737d4",
+      "approved_blob": "0dd3b1d629f7382c9cafef563f006a5496967161",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: tag.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/there.js",
+      "baseline_blob": "cd03a3f632a3887f0c8bb96b8cc62cbc55cff877",
+      "approved_blob": "5393e6de1df1924bfbd297d6a0b1bf4173c96df8",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: there.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/wh.js",
+      "baseline_blob": "540f1d87264699e49c317968f2b3647f42fe12f4",
+      "approved_blob": "f45fc39fe30685ffa3740d56ac157be248619efe",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: wh.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/vcommon.js",
+      "baseline_blob": "f440b29ba6f935f7c8446a5bcc142d8f2670aea5",
+      "approved_blob": "62477c5ff1e078232d9a88b365722f403cb48c13",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: vcommon.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/verbs.js",
+      "baseline_blob": "7b3fb4962e95ac974b3e4333130eda8f9467f6a9",
+      "approved_blob": "61ed4263a2cee7436504d1c559a6d515a85a44dd",
+      "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: verbs.js",
+      "pull_request": null
     }
   ]
 }

@@ -2,7 +2,7 @@
 // and (level 3) telling it from the past simple by the time word.
 import { blank, cap } from '../core.js';
 import { VERBS, phrase, vform } from '../verbs.js';
-import { actors, pickSubject, pickFrame, mid, third, wantAbbr, abbrMark, negInstruction, zhSent, S0 } from '../vcommon.js';
+import { actors, pickSubject, pickFrame, mid, third, wantAbbr, abbrMark, negInstruction, zhSent, S0, askActors, pickAsked, replyKey, mealFits } from '../vcommon.js';
 
 // Past participles that differ from the past form; every other verb uses its past form.
 export const PP = { eat: 'eaten', drink: 'drunk', do: 'done', write: 'written', sing: 'sung', swim: 'swum', run: 'run', ride: 'ridden', take: 'taken', go: 'gone', draw: 'drawn',
@@ -19,19 +19,33 @@ const CUES = [
   { en: 'since last year', zh: '從去年到現在', use: 'since', pos: 'end', lvl: 3 }, { en: 'since 2020', zh: '從 2020 年到現在', use: 'since', pos: 'end', lvl: 3 }, { en: 'since this morning', zh: '從今天早上到現在', use: 'since', pos: 'end', lvl: 3 },
 ];
 // Activities you keep doing (for / since) are a smaller set than things you have done.
-const LASTING = new Set(['play', 'study', 'learn', 'teach', 'practice', 'collect', 'sleep', 'use', 'read', 'watch', 'sit', 'wear', 'feed', 'walk', 'jog']);
-const PAST_CUES = [['yesterday', '昨天'], ['last night', '昨晚'], ['last Sunday', '上星期天'], ['two days ago', '兩天前'], ['last month', '上個月']];
+// (2026-11-01) Habits one keeps up: no "has jogged in the park for three hours", no "has slept since this morning".
+const LASTING = new Set(['play', 'study', 'learn', 'teach', 'practice', 'collect', 'use', 'wear']);
+const PAST_CUES = [['yesterday', '昨天'], ['last night', '昨晚'], ['last Sunday', '上星期天'], ['two days ago', '兩天前'], ['last Saturday', '上星期六']];
+// ever / never / twice / three times / before ask about experiences — things one may or may not have done in one's life.
+// Daily routines ("has had dinner three times", "has never closed the door", "Has she ever slept?") are left out.
+const EXPERIENCE = new Set(['play basketball', 'play baseball', 'play badminton', 'play volleyball', 'play tennis', 'play soccer', 'play the piano', 'play the violin',
+  'play the guitar', 'learn art', 'write letters', 'visit the museum', 'visit the zoo', 'watch baseball games', 'make cakes', 'bake bread', 'bake cookies',
+  'ride a bicycle', 'fly a kite', 'skate in the park', 'climb mountains', 'plant trees', 'travel by train', 'swim ']);
+const isExperience = (f) => EXPERIENCE.has(`${f.v} ${f.rest || ''}`);
+// yet asks whether a task is done: "Has Lucy hurried to school yet?" asks nothing.
+const NOT_TASK = new Set(['hurry', 'smile', 'cry', 'sleep', 'jog', 'walk', 'run', 'dance', 'skate', 'swim', 'listen', 'stop', 'shop', 'use', 'move', 'jump', 'enjoy', 'travel', 'play', 'go', 'take', 'sing', 'fly', 'ride', 'climb']);
+// Chinese 過 goes right after the verb: 打過籃球, 游過泳, 去過動物園 — not 打籃球過.
+const GUO = { '游泳': '游過泳', '溜冰': '溜過冰', '在公園溜冰': '在公園溜過冰', '跳舞': '跳過舞', '去動物園玩': '去過動物園', '參觀博物館': '參觀過博物館', '搭火車旅行': '搭過火車去旅行', '看棒球比賽': '看過棒球比賽' };
+export const zhGuo = (zh) => GUO[zh] ?? zh.charAt(0) + '過' + zh.slice(1);
 
-function draw(rng, o, use, endOnly = false) {
-  const s = pickSubject(rng, actors(rng, o.level, { exclude: (x) => x.kind !== 'person' || x.tags.includes('every') }));
+function draw(rng, o, use, endOnly = false, ask = false) {
+  const exclude = (x) => x.kind !== 'person' || x.tags.includes('every');
+  const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
   if (!s) return null;
   // the time word first: for / since only go with activities one keeps doing
   const cues = CUES.filter((c) => c.lvl <= o.level && (Array.isArray(use) ? use.includes(c.use) : c.use === use) && (!endOnly || c.pos === 'end'));
   const c = rng.fresh(cues, (x) => x.en); if (!c) return null;
   const lasting = c.use === 'for' || c.use === 'since';
   // ever / never ask about experiences, not daily meals
-  const experience = c.use === 'ever' || c.use === 'never';
-  const f = pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!lasting || LASTING.has(x.v)) && !(experience && /(breakfast|lunch|dinner)/.test(x.rest)), null, !lasting);
+  const experience = c.use === 'ever' || c.use === 'never' || c.en === 'twice' || c.en === 'three times' || c.en === 'before';
+  const task = c.use === 'yet' || c.en === 'already' || c.en === 'just';
+  const f = pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!lasting || LASTING.has(x.v)) && (!experience || isExperience(x)) && (!task || !NOT_TASK.has(x.v)), null, !lasting && !experience);
   if (!f) return null;
   return { s, f, c };
 }
@@ -40,10 +54,11 @@ const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.c?.en, ...extra 
 const zhDone = (d, neg) => {
   const { s, f, c } = d;
   if (c.use === 'yet') return zhSent(s, null, neg ? `還沒${f.zh}` : `${f.zh}了嗎`, neg ? '。' : '？');
-  if (c.use === 'never') return zhSent(s, null, `從來沒有${f.zh}過`, '。');
-  if (c.use === 'ever') return zhSent(s, null, `曾經${f.zh}過嗎`, '？');
+  if (c.use === 'never') return zhSent(s, null, `從來沒有${zhGuo(f.zh)}`, '。');
+  if (c.use === 'ever') return zhSent(s, null, `曾經${zhGuo(f.zh)}嗎`, '？');
   if (c.use === 'for' || c.use === 'since') return zhSent(s, null, `${c.zh.startsWith('從') ? c.zh : ''}${neg ? '沒有' : '一直'}${f.zh}${c.zh.startsWith('從') ? '' : c.zh}`, '。');
-  if (c.en === 'before') return zhSent(s, null, `以前${f.zh}過`, '。');
+  if (c.en === 'before') return zhSent(s, null, `以前${zhGuo(f.zh)}`, '。');
+  if (c.en === 'twice' || c.en === 'three times') return zhSent(s, null, `${zhGuo(f.zh).replace(/過/, '過' + c.zh)}`, '。');
   if (c.pos === 'end') return zhSent(s, null, `已經${f.zh}${c.zh}了`, '。');
   return zhSent(s, null, `${c.zh}${f.zh}了`, '。');
 };
@@ -76,14 +91,13 @@ const MODES = [
   {
     id: 'q', name: '疑問句與簡答', instruction: () => '用 Have / Has 完成問句（yet 或 ever），並依提示簡答（否定請用縮寫）。',
     gen(rng, o) {
-      const d = draw(rng, o, o.level >= 2 ? ['yet', 'ever'] : 'yet'); if (!d) return null;
+      const d = draw(rng, o, o.level >= 2 ? ['yet', 'ever'] : 'yet', false, true); if (!d) return null;
       const { s, f, c } = d;
-      if (!s.reply) return null;
       const yes = rng.chance(0.5), h = have(s), r = s.reply, rh = r === 'I' || r === 'you' || r === 'we' || r === 'they' ? 'have' : 'has';
       const q = c.use === 'ever'
         ? [blank(cap(h)), ` ${mid(s.en)} ever `, blank(pp(f.v)), ` (${f.v})${phrase(f)}?`]
         : [blank(cap(h)), ` ${mid(s.en)} `, blank(pp(f.v)), ` (${f.v})${phrase(f)} yet?`];
-      return { lines: [[...q, ` — ${yes ? 'Yes' : 'No'}, `, blank(r), ' ', blank(yes ? rh : rh + "n't"), '.']], zh: zhDone(d, false), meta: meta(d, { kind: 'q', yes }) };
+      return { lines: [[...q, ` — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? rh : rh + "n't"), '.']], zh: zhDone(d, false), meta: meta(d, { kind: 'q', yes }) };
     },
   },
   {
@@ -104,7 +118,7 @@ const MODES = [
       }
       const s = pickSubject(rng, actors(rng, o.level, { exclude: (x) => x.kind !== 'person' || x.tags.includes('every') }));
       const f = s && pickFrame(rng, s, o.level, (x) => x.pastOk); if (!f) return null;
-      const [t, tz] = rng.fresh(PAST_CUES, (x) => x[0]);
+      const [t, tz] = rng.fresh(PAST_CUES.filter((x) => mealFits(`${f.v}${phrase(f)}`, x[0])), (x) => x[0]);
       return { lines: [[S0(s) + ' ', blank(vform(f, 'past'), true), ` (${f.v})${phrase(f)} ${t}.`]], zh: zhSent(s, { zh: tz }, f.zh, '。'), meta: { subj: s.en, base: f.v, cue: t, kind: 'mix', perfect: false } };
     },
   },

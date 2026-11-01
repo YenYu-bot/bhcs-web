@@ -1,6 +1,6 @@
 // Topic: Be verbs (am / is / are, was / were).
 import { blank, cap, mid, zhJoin } from '../core.js';
-import { SUBJECTS, PREDICATES, TIMES, extraSubjects } from '../lexicon.js';
+import { SUBJECTS, PREDICATES, TIMES, extraSubjects, asked, SELF, pickAsked, replyKey } from '../lexicon.js';
 
 export function beForm(s, past) {
   if (past) return s.num === 'pl' || s.person === 2 ? 'were' : 'was';
@@ -19,6 +19,7 @@ function predicateFits(p, s) {
   if (s.tags.includes('group') && !(p.type === 'loc' || (p.type === 'adj' && p.dur === 'temp'))) return false;
   if (s.tags.includes('has-job') && p.type === 'job') return false; // "Our teachers are cooks" makes no sense
   if (p.num && p.num !== s.num) return false;
+  if (/bag$/.test(s.en) && /bag$/.test(p.en)) return false; // "My bag is in my bag"
   if (p.type === 'job' && s.age !== 'any' && p.age !== s.age) return false;
   if (p.type === 'rel' && p.age && s.age !== 'any' && p.age !== s.age) return false;
   return true;
@@ -34,25 +35,34 @@ const pickTense = (rng, o) => (o.tense === 'P' ? 'pres' : o.tense === 'D' ? 'pas
 
 /** Pick a time word; in present-only sheets it is optional. */
 function pickTime(rng, o, tense, s, p) {
-  const fits = TIMES.filter((t) => t.tense === tense && (s.kind === 'weather' ? t.weather : t.dur.includes(p.dur) && (!t.types || t.types.includes(p.type))));
+  const nowOk = p.now && (s.age === p.now || s.age === 'any'); // "He is a cook now", "She is tall now" (a child); never "short now"
+  const fits = TIMES.filter((t) => !(p.en === 'right' && /now/.test(t.en)) && t.tense === tense && (s.kind === 'weather' ? t.weather : (t.dur.includes(p.dur) || (t.en === 'now' && nowOk)) && !(tense === 'past' && p.past === false) && (!t.types || t.types.includes(p.type))));
   if (o.tense === 'P' && rng.chance(p.dur === 'perm' ? 0.75 : 0.4)) return null;
   return fits.length ? rng.fresh(fits, (x) => x.en) : null;
 }
 
 /** One subject–predicate–time triple, or null when nothing fits. */
-function draw(rng, o, { needReply = false, kinds = null, types = null, exclude = () => false } = {}) {
-  const pool = subjectPool(rng, o.level).filter((s) => (!needReply || s.reply) && (!kinds || kinds.includes(s.kind)) && !exclude(s));
+function draw(rng, o, { needReply = false, kinds = null, types = null, exclude = () => false, ask = false, self = false } = {}) {
+  // ask: a question put to the listener — "my" subjects become "your", and (with self) the speaker may ask about himself
+  let pool = subjectPool(rng, o.level);
+  if (ask) pool = [...new Map([...pool.map(asked), ...(self ? SELF.filter((x) => x.lvl <= o.level) : [])].map((x) => [x.en, x])).values()];
+  pool = pool.filter((s) => (!needReply || s.reply) && (!kinds || kinds.includes(s.kind)) && !exclude(s));
   if (!pool.length) return null;
-  const s = rng.fresh(pool, (x) => x.en);
-  const preds = PREDICATES.filter((p) => predicateFits(p, s) && (!types || types.includes(p.type)));
+  const s = ask ? pickAsked(rng, pool) : rng.fresh(pool, (x) => x.en);
+  const preds = PREDICATES.filter((p) => predicateFits(p, s) && (!types || types.includes(p.type)) && (!s.tags.includes('self') || p.self));
   if (!preds.length) return null;
   const p = rng.fresh(preds, (x) => x.en);
-  const tense = pickTense(rng, o);
+  const tense = s.tags.includes('self') && p.self === 'pres' ? (o.tense === 'D' ? null : 'pres') : pickTense(rng, o); // "Am I right?" is asked now
+  if (!tense) return null;
   const t = pickTime(rng, o, tense, s, p);
   if (o.tense !== 'P' && !t) return null;
   return { s, p, t, past: tense === 'past' };
 }
 
+/** A bare "you" meaning 你們 reads as one person without the Chinese line, so replies are only asked of "you and Tom". */
+/** In a question to the listener the speaker's bag is "your bag"; the answer keeps "my". */
+const askPred = (p) => (p.en === 'in my bag' ? { ...p, en: 'in your bag', zh: { pos: '在你的袋子裡', neg: '不在你的袋子裡', q: '在你的袋子裡' }, where: '你的袋子裡' } : p);
+const plainYouPl = (s) => s.en === 'you' && s.num === 'pl';
 const tail = (p, s, t) => ` ${predEn(p, s)}${t ? ' ' + t.en : ''}`;
 const zhLine = (s, t, z, end) => (s.kind === 'weather' ? zhJoin(t?.zh, s.zh, z) : zhJoin(s.zh, t?.zh, z)) + end;
 
@@ -98,10 +108,10 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') }); if (!d) return null;
       const { s, p, t, past } = d;
-      const be = beForm(s, past);
+      const a = asked(s); // 改疑問句: I → you, my → your
       return {
-        lines: [[`${cap(s.en)} ${be}${tail(p, s, t)}.`], ['→ ', blank(cap(be)), ` ${s.en}${tail(p, s, t)}?`]],
-        zh: zhLine(s, t, p.zh.q, '嗎？'),
+        lines: [[`${cap(s.en)} ${beForm(s, past)}${tail(p, s, t)}.`], ['→ ', blank(cap(beForm(a, past))), ` ${a.en}${tail(askPred(p), a, t)}?`]],
+        zh: zhLine(a, t, askPred(p).zh.q, '嗎？'),
       };
     },
   },
@@ -109,15 +119,14 @@ const MODES = [
     id: 'short', name: '簡答',
     instruction: () => '填入 Be 動詞，並完成簡答（否定簡答請用縮寫）。',
     gen(rng, o) {
-      const d = draw(rng, o, { needReply: true }); if (!d) return null;
+      const d = draw(rng, o, { needReply: true, ask: true, self: true, exclude: plainYouPl }); if (!d) return null;
       const { s, p, t, past } = d;
-      if (s.person === 1 && p.dur === 'perm') return null; // "Was I a writer?" is not a question anyone asks
       const be = beForm(s, past), rb = replyBe(s.reply, past), yes = rng.chance(0.5);
-      const ans = yes ? [blank(s.reply), ' ', blank(rb)] : [blank(s.reply), ' ', blank(NEG[rb] || rb)];
+      const ans = yes ? [blank(replyKey(s)), ' ', blank(rb)] : [blank(replyKey(s)), ' ', blank(NEG[rb] || rb)];
       if (!yes && rb === 'am') return null;
       return {
-        lines: [[blank(cap(be)), ` ${s.en}${tail(p, s, t)}? — ${yes ? 'Yes' : 'No'}, `, ...ans, '.']],
-        zh: zhLine(s, t, p.zh.q, '嗎？'),
+        lines: [[blank(cap(be)), ` ${s.en}${tail(askPred(p), s, t)}? — ${yes ? 'Yes' : 'No'}, `, ...ans, '.']],
+        zh: zhLine(s, t, askPred(p).zh.q, '嗎？'),
       };
     },
   },
@@ -125,7 +134,7 @@ const MODES = [
     id: 'full', name: '詳答',
     instruction: () => '依問句回答：先簡答（否定請用縮寫），再寫出正確的情況。',
     gen(rng, o) {
-      const d = draw(rng, o, { needReply: true, kinds: ['person', 'animal', 'thing', 'food', 'drink'], types: ['loc', 'job'], exclude: (s) => s.person === 1 }); if (!d) return null;
+      const d = draw(rng, o, { needReply: true, ask: true, exclude: (x) => x.person === 1 || plainYouPl(x), kinds: ['person', 'animal', 'thing', 'food', 'drink'], types: ['loc', 'job'] }); if (!d) return null;
       const { s, p, t, past } = d;
       const alts = PREDICATES.filter((x) => x.type === p.type && x !== p && predicateFits(x, s));
       if (!alts.length) return null;
@@ -133,10 +142,10 @@ const MODES = [
       const be = beForm(s, past), rb = replyBe(s.reply, past);
       return {
         lines: [
-          [`${cap(be)} ${s.en}${tail(p, s, t)}?`],
+          [`${cap(be)} ${s.en}${tail(askPred(p), s, t)}?`],
           ['— No, ', blank(s.reply), ' ', blank(NEG[rb]), '. ', blank(cap(s.reply)), ' ', blank(rb), ` ${predEn(q, s)}.`],
         ],
-        zh: zhLine(s, t, p.zh.q, '嗎？'),
+        zh: zhLine(s, t, askPred(p).zh.q, '嗎？'),
       };
     },
   },
@@ -155,8 +164,8 @@ const MODES = [
         return { lines: [['Who ', blank(who[2] === 'pl' ? 'are' : 'is'), ` ${who[0]}? — ${cap(who[3])}.`]], zh: `${who[1]}是誰？` };
       }
       const d = draw(rng, o, kind === 'where'
-        ? { kinds: ['person', 'animal', 'thing', 'food', 'drink'], types: ['loc'] }
-        : { kinds: ['person'], types: ['job'], exclude: (s) => s.person !== 3 });
+        ? { ask: true, kinds: ['person', 'animal', 'thing', 'food', 'drink'], types: ['loc'], exclude: (s) => s.person === 1 }
+        : { ask: true, kinds: ['person'], types: ['job'], exclude: (s) => s.person === 1 || (s.person === 2 && s.age === 'young') });
       if (!d) return null;
       const { s, p, t, past } = d;
       const be = beForm(s, past);

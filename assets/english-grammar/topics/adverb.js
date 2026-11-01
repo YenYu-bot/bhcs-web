@@ -1,6 +1,7 @@
 // Topic: adverbs — forming them (slow → slowly, happy → happily, good → well, fast → fast), adjective or adverb, and comparing adverbs.
 import { blank, cap, zhJoin } from '../core.js';
 import { pickPerson, verbFor, midOf } from '../people.js';
+import { mealFits } from '../vcommon.js';
 
 // [adjective, adverb, Chinese (adverb), spelling rule, comparative of the adverb, verb phrases it goes with [base, -s, past, rest, Chinese]]
 const A = (adj, adv, zh, rule, cmp, acts) => ({ adj, adv, zh, rule, cmp, acts });
@@ -36,7 +37,7 @@ function draw(rng, o, test = () => true) {
   const act = rng.pick(a.acts);
   const p = pickPerson(rng);
   const past = o.level >= 2 && rng.chance(0.4);
-  const [t, tz] = past ? rng.pick(TIMES) : ['', ''];
+  const [t, tz] = past ? rng.pick(TIMES.filter((x) => mealFits(act[3], x[0]))) : ['', ''];
   const verb = past ? act[2] : verbFor(p, [act[0], act[1]]);
   return { a, act, p, past, t, tz, verb };
 }
