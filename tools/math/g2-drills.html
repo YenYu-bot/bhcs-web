@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜國小低年級數學 計算力練習出題器</title><meta name="description" content="國小低年級（一、二年級）數學計算力練習出題器：1000 以內的數、加法、減法、加減應用與 □，一頁切換；可設定難度（基礎／進階／挑戰）與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g2-drills.html"><meta property="og:title" content="百宏文教｜國小低年級數學 計算力練習出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g2-drills.html"><meta property="og:type" content="website">
+<style>
+:root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
+*{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
+.top{display:flex;align-items:center;gap:12px;padding:10px clamp(12px,3vw,28px);color:#fff;background:var(--bhcs-green2);border-bottom:4px solid var(--bhcs-mint)}.topic-logo{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:10px;background:var(--bhcs-mint);color:var(--bhcs-green2);font:800 22px Georgia,"Times New Roman",serif}.top-title{min-width:0}.topic-pick{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;color:#c8e8df;white-space:nowrap}.topic-pick select{padding:4px 8px;border-radius:6px;border:1px solid var(--bhcs-mint);background:#fff;color:var(--bhcs-ink);max-width:46vw}.top h1{margin:0;font-size:clamp(17px,2.3vw,23px);line-height:1.25}.top p{margin:2px 0 0;color:#bed7cf;font-size:12px}.back{margin-left:auto;color:#fff;text-decoration:none;font-size:13px;font-weight:700;white-space:nowrap}.back:hover{text-decoration:underline}
+.panel{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--bhcs-line)}.panel-inner{width:min(1480px,100%);margin:auto;padding:10px clamp(10px,2vw,22px)}.groups{display:grid;grid-template-columns:1.05fr 1fr 1.55fr;gap:10px}.group{min-width:0;padding:9px 10px;border:1px solid #d7e1de;border-radius:8px;background:#fbfdfc}.group h2{margin:0 0 7px;color:var(--bhcs-green2);font-size:13px}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.field{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;white-space:nowrap}select{height:34px;padding:4px 7px;border:1px solid #9eb2ac;border-radius:6px;background:#fff;color:var(--bhcs-ink);font-weight:700}.level{height:34px;padding:5px 12px;border:1px solid #9eb2ac;border-radius:7px;color:var(--bhcs-green2);background:#fff;font-weight:800}.level[aria-pressed=true]{border-color:var(--bhcs-green);color:#fff;background:var(--bhcs-green)}.choice{display:flex;align-items:center;gap:5px;min-height:34px;padding:4px 8px;border:1px solid #ccd9d5;border-radius:6px;background:#fff;font-size:12.5px;font-weight:700}.choice:has(input:checked){border-color:#71bba5;background:var(--bhcs-soft)}.choice input{width:15px;height:15px;accent-color:var(--bhcs-green)}.difficulty-note{margin:6px 0 0;color:var(--bhcs-muted);font-size:11.5px;line-height:1.4}
+.unit-grid{display:grid;grid-template-columns:repeat(3,minmax(132px,1fr));gap:5px}.unit{display:grid;grid-template-columns:auto minmax(0,1fr) 42px;align-items:center;gap:5px;min-height:33px;padding:3px 5px;border:1px solid #d6e1de;border-radius:6px;background:#fff}.unit:has(.unit-check:checked){border-color:#83c5b2;background:var(--bhcs-soft)}.unit-check{width:15px;height:15px;accent-color:var(--bhcs-green)}.unit label{font-size:11.5px;font-weight:700;line-height:1.2;cursor:pointer}.count{width:42px;height:27px;padding:2px;border:1px solid #aebfba;border-radius:5px;text-align:center;font-size:12px;font-weight:800}.count:disabled{color:#98a6a2;background:#edf1f0;cursor:not-allowed}.quick{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}.quick span{font-size:11px;color:var(--bhcs-muted)}.quick button{padding:3px 7px;border:1px solid #9fb7b0;border-radius:5px;color:var(--bhcs-green2);background:#fff;font-size:11px;font-weight:700}
+.actions{display:flex;align-items:center;gap:8px;margin-top:9px}.status{margin-right:auto;color:var(--bhcs-muted);font-size:12px}.action{min-height:38px;padding:7px 16px;border:1px solid var(--bhcs-green);border-radius:7px;font-weight:800}.primary{color:#fff;background:var(--bhcs-green)}.secondary{color:var(--bhcs-green);background:#fff}.total{padding:5px 9px;border-radius:6px;color:var(--bhcs-green2);background:var(--bhcs-soft);font-size:12px;font-weight:800;white-space:nowrap}
+.preview{min-height:620px;padding:14px 8px 38px;overflow:auto}.sheet{width:210mm;min-height:297mm;margin:14px auto;padding:12mm;color:#111;background:#fff;box-shadow:0 9px 30px #263b351c}.head{border-bottom:2px solid var(--bhcs-green);padding-bottom:4px;margin-bottom:8px}.bhcs-brand{display:flex;align-items:baseline;gap:8px;font-size:11px;color:var(--bhcs-muted);line-height:1.3;margin:0 0 3px}.bhcs-brand b{color:var(--bhcs-green);font-weight:800;font-size:12px;letter-spacing:.5px}.bhcs-brand i{font-style:normal;margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#8a9793}.head h2{margin:0;font-size:20px}.head>span{display:block;margin-top:2px;font-size:14px}.sec{margin:12px 0 4px;font-size:16px;font-weight:700;background:var(--bhcs-soft);padding:4px 10px;border-left:5px solid var(--bhcs-green);break-after:avoid;page-break-after:avoid}.tip{font-size:12.5px;color:#456;margin:0 0 6px 2px;line-height:1.5}.grid{display:grid;gap:0 5mm}.grid.c2{grid-template-columns:repeat(2,1fr)}.grid.c3{grid-template-columns:repeat(3,1fr)}.grid.c4{grid-template-columns:repeat(4,1fr)}.prob{break-inside:avoid;page-break-inside:avoid;padding:3mm 0 2mm;border-bottom:1px dashed #cdd5dc}.q{font:15.5px/1.9 Georgia,"Times New Roman","Noto Serif TC",serif;display:flex;gap:4px;align-items:baseline;flex-wrap:wrap}.q .no{flex:none;color:#555;width:2em}.expr{min-width:0;overflow-wrap:anywhere}.expr svg.fig{display:block;margin:2px 0 4px;max-width:100%;height:auto}.work{font-size:14px;color:#333;margin-top:2mm;min-height:var(--work,16mm)}.work .ans{display:none;color:var(--bhcs-red);font-weight:700;font-size:15px;line-height:1.55}.teacher .work .ans{display:inline}.fr{display:inline-flex;flex-direction:column;text-align:center;align-items:center;vertical-align:middle;line-height:1;margin:0 .09em;font-size:.86em}.fr .n{min-width:1em;padding:0 .13em .08em;border-bottom:1px solid currentColor}.fr .d{padding:.08em .13em 0}.mixed{display:inline-flex;align-items:center;gap:.08em;white-space:nowrap}.note-answer{font:11px/1.25 "Microsoft JhengHei","Noto Sans TC",sans-serif;color:var(--bhcs-red)}sup{font-size:.72em}.grid.c4 .q{font-size:13px;line-height:1.75}.grid.c4 .q .no{width:1.7em}.grid.c4 .work{font-size:12.5px}.grid.c4 .work .ans{font-size:13px}.grid.c4 .prob{padding-top:2.5mm}.empty{width:min(720px,calc(100vw - 24px));margin:28px auto;padding:36px 20px;text-align:center;border:2px dashed #afc1bc;border-radius:10px;color:var(--bhcs-muted);background:#fff}.empty b{display:block;margin-bottom:4px;color:var(--bhcs-green2)}
+@media(max-width:1180px){.groups{grid-template-columns:1fr 1fr}.group.units{grid-column:1/-1}}@media(max-width:720px){.top{align-items:flex-start;flex-wrap:wrap}.topic-pick{margin-left:0;width:100%}.topic-pick select{max-width:none;flex:1}.top p{display:none}.back{font-size:11.5px}.groups{grid-template-columns:1fr}.group.units{grid-column:auto}.unit-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.status{width:100%;order:-1}.actions{flex-wrap:wrap}.action{flex:1}.total{margin-left:auto}.preview{padding-inline:4px}}@media(max-width:390px){.top{padding-inline:9px}.topic-logo{width:38px;height:38px}.top h1{font-size:15px}.back{font-size:10.5px}.panel-inner{padding-inline:7px}.group{padding:8px}.field{flex:1}.field select{flex:1;min-width:0}.unit-grid{grid-template-columns:1fr 1fr}.unit{grid-template-columns:auto minmax(0,1fr) 38px}.count{width:38px}.choice{padding-inline:6px}.level{flex:1;padding-inline:7px}.quick button{flex:1}.action{padding-inline:8px}}
+@page{size:A4 portrait;margin:8mm 8mm 9mm}@media print{body{background:#fff}.panel,.top,.no-print{display:none!important}.preview{padding:0;overflow:visible}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;zoom:1!important}html,body{font-size:10pt}.sec{-webkit-print-color-adjust:exact;print-color-adjust:exact}.prob:hover{background:transparent}}
+</style>
+
+<style id="bhcs-math-brand">
+/* P1: screen palette only; original print rules and worksheet geometry are preserved. */
+@media screen{
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+:root{--bhcs-green:#16233A;--bhcs-green2:#0D1626;--bhcs-mint:#C8352B;--bhcs-soft:#F2F4F7;--bhcs-line:#C9D2DE;--bhcs-ink:#16233A;--bhcs-muted:#43516B;--bhcs-bg:#FCFCFA;--bhcs-red:#C8352B}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #C8352B}
+.topic-logo{border-radius:6px}
+.topic-pick{color:#F2F4F7}
+.top p{color:#C9D2DE}
+.group{border:1px solid #F2F4F7;border-radius:6px;background:#FCFCFA}
+select{border:1px solid #43516B}
+.level{border:1px solid #43516B;border-radius:6px}
+.choice{border:1px solid #C9D2DE}
+.choice:has(input:checked){border-color:#16233A}
+.unit{border:1px solid #F2F4F7}
+.unit:has(.unit-check:checked){border-color:#C9D2DE}
+.count{border:1px solid #C9D2DE;border-radius:6px}
+.count:disabled{color:#43516B;background:#FCFCFA}
+.quick button{border:1px solid #43516B;border-radius:6px}
+.action{border-radius:6px}
+.sheet{box-shadow:0 9px 30px #16233A1c}
+.bhcs-brand i{color:#43516B}
+.tip{color:#43516B}
+.prob{border-bottom:1px dashed #C9D2DE}
+.empty{border:2px dashed #C9D2DE;border-radius:6px}
+svg [fill="#176b55" i]{fill:#16233A}
+svg [stroke="#176b55" i]{stroke:#16233A}
+svg [fill="#0f4f40" i]{fill:#16233A}
+svg [stroke="#0f4f40" i]{stroke:#16233A}
+svg [fill="#55cfad" i]{fill:#16233A}
+svg [stroke="#55cfad" i]{stroke:#16233A}
+svg [fill="#e8f5f0" i]{fill:#F2F4F7}
+svg [stroke="#e8f5f0" i]{stroke:#F2F4F7}
+svg [fill="#c8d4d1" i]{fill:#C9D2DE}
+svg [stroke="#c8d4d1" i]{stroke:#C9D2DE}
+svg [fill="#182d28" i]{fill:#16233A}
+svg [stroke="#182d28" i]{stroke:#16233A}
+svg [fill="#62736f" i]{fill:#43516B}
+svg [stroke="#62736f" i]{stroke:#43516B}
+svg [fill="#e8edef" i]{fill:#F2F4F7}
+svg [stroke="#e8edef" i]{stroke:#F2F4F7}
+svg [fill="#ae3f3f" i]{fill:#C8352B}
+svg [stroke="#ae3f3f" i]{stroke:#C8352B}
+svg [fill="#a66d00" i]{fill:#C8352B}
+svg [stroke="#a66d00" i]{stroke:#C8352B}
+svg [fill="#c8e8df" i]{fill:#F2F4F7}
+svg [stroke="#c8e8df" i]{stroke:#F2F4F7}
+svg [fill="#bed7cf" i]{fill:#C9D2DE}
+svg [stroke="#bed7cf" i]{stroke:#C9D2DE}
+svg [fill="#d7e1de" i]{fill:#F2F4F7}
+svg [stroke="#d7e1de" i]{stroke:#F2F4F7}
+svg [fill="#fbfdfc" i]{fill:#FCFCFA}
+svg [stroke="#fbfdfc" i]{stroke:#FCFCFA}
+svg [fill="#9eb2ac" i]{fill:#43516B}
+svg [stroke="#9eb2ac" i]{stroke:#43516B}
+svg [fill="#ccd9d5" i]{fill:#C9D2DE}
+svg [stroke="#ccd9d5" i]{stroke:#C9D2DE}
+svg [fill="#71bba5" i]{fill:#16233A}
+svg [stroke="#71bba5" i]{stroke:#16233A}
+svg [fill="#d6e1de" i]{fill:#F2F4F7}
+svg [stroke="#d6e1de" i]{stroke:#F2F4F7}
+svg [fill="#83c5b2" i]{fill:#C9D2DE}
+svg [stroke="#83c5b2" i]{stroke:#C9D2DE}
+svg [fill="#aebfba" i]{fill:#C9D2DE}
+svg [stroke="#aebfba" i]{stroke:#C9D2DE}
+svg [fill="#98a6a2" i]{fill:#43516B}
+svg [stroke="#98a6a2" i]{stroke:#43516B}
+svg [fill="#edf1f0" i]{fill:#FCFCFA}
+svg [stroke="#edf1f0" i]{stroke:#FCFCFA}
+svg [fill="#9fb7b0" i]{fill:#43516B}
+svg [stroke="#9fb7b0" i]{stroke:#43516B}
+svg [fill="#8a9793" i]{fill:#43516B}
+svg [stroke="#8a9793" i]{stroke:#43516B}
+svg [fill="#cdd5dc" i]{fill:#C9D2DE}
+svg [stroke="#cdd5dc" i]{stroke:#C9D2DE}
+svg [fill="#afc1bc" i]{fill:#C9D2DE}
+svg [stroke="#afc1bc" i]{stroke:#C9D2DE}
+
+html,body{background-color:var(--bhcs-bg)}
+button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--bhcs-green)}
+.top .logo,.top .topic-logo{color:#fff;background-color:var(--bhcs-green)}
+.top h1 b{color:#fff}
+header.no-print>div:first-child h1::before{color:#fff}
+header.no-print>div:first-child>div:first-child>div:first-child{color:#fff!important}
+:root body :is(#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]){background:#E8620C!important;color:#fff!important;border-color:#E8620C!important;box-shadow:none!important}
+:root body :is(#print,#btn-print-questions,#btn-print-answers,button[onclick^="printWorksheet("]){background:#fff!important;color:#16233A!important;border-color:#16233A!important;box-shadow:inset 0 0 0 1px #16233A!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C8352B}
+}
+.ans,.ans *,.answer,.note-answer,.sd,[id^="solution-"] ,[id^="solution-"] *,[id^="solution-box-"] ,[id^="solution-box-"] *{color:#C8352B!important}
+</style>
+</head>
+<body>
+<header class="top"><div class="topic-logo" id="topicLogo">∑</div><div class="top-title"><h1><span class="brandmark">百宏文教｜</span><span id="topicTitle">數學計算力練習</span> 出題器</h1><p id="subtitle"></p></div><label class="topic-pick">主題 <select id="topicSel"></select></label><a class="back" href="../../ziyuan.html">← 回百宏學習資源</a></header>
+<section class="panel"><div class="panel-inner"><div class="groups">
+<section class="group"><h2>版面</h2><div class="row"><label class="field">版本<select id="version"><option value="student">學用版</option><option value="teacher">教用版</option></select></label><label class="field">每列題數<select id="columns"><option value="2">2 題</option><option value="3" selected>3 題</option><option value="4">4 題</option></select></label><label class="field">作答空間<select id="space"><option value="small">小</option><option value="medium" selected>中</option><option value="large">大</option></select></label></div></section>
+<section class="group"><h2>難度與數的類型</h2><div class="row"><div class="row" role="group" aria-label="難度"><button class="level" data-level="basic" aria-pressed="false">基礎</button><button class="level" data-level="advanced" aria-pressed="true">進階</button><button class="level" data-level="challenge" aria-pressed="false">挑戰</button></div><span id="modeBoxes" class="row"></span></div><p class="difficulty-note" id="difficultyNote"></p></section>
+<section class="group units"><h2>單元與題數</h2><div class="unit-grid" id="unitGrid"></div><div class="quick"><span>快速預設：</span><button type="button" data-each="1">各 1 題</button><button type="button" data-each="2">各 2 題</button><button type="button" data-each="3">各 3 題</button><button type="button" data-each="0">全歸零</button></div></section>
+</div><div class="actions"><span class="status" id="status">設定完成後按「重新出題」。</span><span class="total" id="total"></span><button class="action primary" id="generate">重新出題</button><button class="action secondary" id="print">列印 / 存 PDF</button></div></div></section>
+<main class="preview"><div id="output"></div></main>
+<script>
+(()=>{"use strict";
+const TOPICS=[["numbers","1000 以內的數"],["add","加法（低年級）"],["sub","減法（低年級）"],["word","加減應用與 □"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"numbers",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
+const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
+const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
+function places(a){let d=a.d,p2=0,p5=0;while(d%2===0){d/=2;p2++}while(d%5===0){d/=5;p5++}return d===1?Math.max(p2,p5):-1}
+function decHTML(a,fixed=null){const p=places(a);if(p<0)throw Error("非有限小數");const use=fixed===null?p:Math.max(fixed,p),scale=10**use,n=a.n*(scale/a.d),sign=n<0?"−":"",digits=String(Math.abs(n)).padStart(use+1,"0");if(!use)return sign+digits;let out=`${digits.slice(0,-use)}.${digits.slice(-use)}`;if(fixed===null)out=out.replace(/0+$/,"").replace(/\.$/,"");return sign+out}
+function fracHTML(a,{mixed=false,answer=false}={}){const sign=a.n<0?"−":"",n=Math.abs(a.n),w=Math.floor(n/a.d),rem=n%a.d;if(!rem)return sign+w;if(w&&mixed){const m=`<span class="mixed">${sign}${w}${fr(rem,a.d)}</span>`;return answer?`${m}<span class="note-answer">（即 ${sign}${fr(n,a.d)}）</span>`:m}return`${sign}${fr(n,a.d)}`}
+const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):String(a.n).replace("-","−");
+function numberFor(mode,level,max=30){if(mode==="integer"){const k=level==="basic"?2:level==="advanced"?10:25;return R(rand(level==="basic"?2:Math.max(2,Math.floor(max*k/5)),max*k))}if(mode==="fraction"){const ds=level==="basic"?[2,3,4,5,6]:[2,3,4,5,6,8,9,10,12,15,20],d=pick(ds);let n=rand(1,(level==="challenge"?3:2)*d-1);while(n%d===0)n=rand(1,3*d-1);return R(n,d)}const p=level==="basic"?1:pick(level==="advanced"?[1,2]:[1,2,3]),s=10**p;let n=rand(1,max*s);while(n%10===0)n=rand(1,max*s);return R(n,s)}
+const norm=s=>String(s).replace(/<[^>]*>/g,"").replace(/\s+/g,"").normalize("NFKC");
+const okResult=q=>q&&typeof q.expr==="string"&&typeof q.answer==="string"&&q.expr&&!/\b(?:NaN|undefined|Infinity)\b/.test(q.expr+q.answer)&&typeof q.verify==="function"&&q.verify()===true;
+const MODE_LABEL={integer:"整數",fraction:"分數",decimal:"小數"};
+
+
+/* 國小低年級（一、二年級）出題器（2026-11-01，Claude）。依 108 課綱 N-1、N-2、S-1、S-2、D-1 與康軒、南一、翰林三版本共同的單元。
+   難度：基礎＝一年級、進階＝二上、挑戰＝二下。所有答案由出題數字直接算出，verify 走逆運算或逐一計數。 */
+const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+const fmt=n=>String(n);
+const top=L=>L===0?100:1000;
+
+function numbersConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const order=unit("order","數數與數的順序","往後數一個多 1，往前數一個少 1；2 個 2 個數、5 個 5 個數、10 個 10 個數，每次多一樣多。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["next","prev","between"]:["next","skip","between","skipBack"]);
+  if(f==="next"){const n=rand(1,top(L)-2);return{expr:fmt(n)+" 的後面一個數是多少？",answer:fmt(n+1),sig:"n:"+n,verify:()=>n+1-1===n}}
+  if(f==="prev"){const n=rand(2,top(L)-1);return{expr:fmt(n)+" 的前面一個數是多少？",answer:fmt(n-1),sig:"p:"+n,verify:()=>n-1+1===n}}
+  if(f==="between"){const n=rand(1,top(L)-3);return{expr:fmt(n)+" 和 "+fmt(n+2)+" 中間的數是多少？",answer:fmt(n+1),sig:"b:"+n,verify:()=>n<n+1&&n+1<n+2}}
+  const step=pick(L===1?[2,5,10]:[2,5,10,100]),start=step*rand(1,L===1?8:9)+(step===100?0:rand(0,step===2?1:0)),k=4,seq=Array.from({length:k+1},(_,i)=>start+i*step);
+  if(seq.at(-1)>=1000)return null;const back=f==="skipBack",show=back?[...seq].reverse():seq,miss=rand(1,k);
+  return{expr:(back?"倒著":"")+step+" 個 "+step+" 個數，填入空格："+show.map((v,i)=>i===miss?"（　）":fmt(v)).join("、"),answer:fmt(show[miss]),sig:f+":"+start+":"+step+":"+miss,verify:()=>show.every((v,i)=>!i||Math.abs(v-show[i-1])===step)}},"答：");
+ const place=unit("place","位值：百、十、個","十個一是一個十，十個十是一個百。一個數可以拆成幾個百、幾個十和幾個一。",ctx=>{
+  const L=lv(ctx),n=L===0?rand(11,99):rand(101,999),h=Math.floor(n/100),t=Math.floor(n/10)%10,o=n%10,f=pick(["split","make","digit"]);
+  if(f==="split")return{expr:fmt(n)+" 是幾個"+(h?"百、幾個":"")+"十和幾個一？",answer:(h?h+" 個百、":"")+t+" 個十和 "+o+" 個一",sig:"s:"+n,verify:()=>h*100+t*10+o===n};
+  if(f==="make")return{expr:(h?h+" 個百、":"")+t+" 個十和 "+o+" 個一合起來是多少？",answer:fmt(n),sig:"m:"+n,verify:()=>h*100+t*10+o===n};
+  const p=pick(h?[["百",h,100],["十",t,10],["個",o,1]]:[["十",t,10],["個",o,1]]);return{expr:fmt(n)+" 的"+p[0]+"位數字是多少？代表多少？",answer:p[1]+"；"+(p[1]*p[2]),sig:"d:"+n+":"+p[0],verify:()=>Math.floor(n/p[2])%10===p[1]}},"答：");
+ const compare=unit("compare","比大小","先比位數；位數一樣，從最大的位（百位、十位）開始比。",ctx=>{
+  const L=lv(ctx),a=rand(L===0?1:10,top(L)-1),b=a+pick([-1,1])*rand(1,L===0?9:L===1?30:99),f=pick(["fill","big","order"]);if(b<1||b>=top(L)||a===b)return null;
+  if(f==="fill"){const s=a>b?"＞":"＜";return{expr:"在 ○ 裡填入 ＞ 或 ＜："+a+" ○ "+b,answer:s,sig:"f:"+a+":"+b,verify:()=>(s==="＞")===(a>b)}}
+  if(f==="big"){const sm=Math.random()<.5;return{expr:a+" 和 "+b+" 哪一個比較"+(sm?"小":"大")+"？",answer:fmt(sm?Math.min(a,b):Math.max(a,b)),sig:"b:"+a+":"+b+":"+sm,verify:()=>Math.min(a,b)<Math.max(a,b)}}
+  const c=rand(1,top(L)-1),xs=[a,b,c];if(new Set(xs).size<3)return null;const so=[...xs].sort((x,y)=>x-y);return{expr:"把 "+xs.join("、")+" 由小排到大。",answer:so.join(" ＜ "),sig:"o:"+xs,verify:()=>so[0]<so[1]&&so[1]<so[2]}},"答：");
+ const odd=unit("oddeven","單數與雙數","2 個 2 個數剛好數完的是雙數，多 1 個的是單數；看個位：0、2、4、6、8 是雙數，1、3、5、7、9 是單數。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["which","which","count"]:["which","count","list"]);
+  if(f==="which"){const n=rand(1,top(L)-1),ev=n%2===0;return{expr:fmt(n)+" 是單數還是雙數？",answer:ev?"雙數":"單數",sig:"w:"+n,verify:()=>(n%2===0)===ev}}
+  if(f==="count"){const a=rand(1,L===0?20:80),b=a+rand(5,L===0?10:20),ev=Math.random()<.5,c=Array.from({length:b-a+1},(_,i)=>a+i).filter(x=>(x%2===0)===ev).length;return{expr:"從 "+a+" 到 "+b+"（包含 "+a+" 和 "+b+"），共有幾個"+(ev?"雙數":"單數")+"？",answer:c+" 個",sig:"c:"+a+":"+b+":"+ev,verify:()=>c===Math.floor((b-(ev?0:1))/2)-Math.floor((a-1-(ev?0:1))/2)}}
+  const a=rand(10,90),ev=Math.random()<.5,xs=Array.from({length:10},(_,i)=>a+i).filter(x=>(x%2===0)===ev);return{expr:"寫出 "+a+" 到 "+(a+9)+" 之間所有的"+(ev?"雙數":"單數")+"。",answer:xs.join("、"),sig:"l:"+a+":"+ev,verify:()=>xs.length===5}},"答：");
+ return{title:"1000 以內的數",symbol:"123",subtitle:"數數與數的順序・位值・比大小・單數與雙數",instruction:"仔細看清楚題目問的是哪一位、要往前數還是往後數。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：100 以內的數（一年級）。",advanced:"進階：1000 以內的數、2、5、10 個一數（二上）。",challenge:"挑戰：1000 以內、100 個一數、倒著數（二下）。"},
+  units:[order,place,compare,odd],presets:{basic:{order:4,place:4,compare:4,oddeven:3},advanced:{order:4,place:4,compare:4,oddeven:3},challenge:{order:4,place:4,compare:4,oddeven:3}}};
+}
+
+const NAMES=["小明","小美","阿志","小華","妹妹","哥哥"],THINGS=[["顆","彈珠"],["枝","鉛筆"],["張","貼紙"],["個","積木"],["張","卡片"],["顆","糖果"]];
+function addConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const pair=L=>{for(let t=0;t<40;t++){const a=L===0?rand(1,9):L===1?rand(10,89):rand(100,899),b=L===0?rand(1,9):L===1?rand(2,89):rand(10,899),max=L===0?18:L===1?99:999;if(a+b<=max)return[a,b]}return[3,4]};
+ const basic=unit("add","加法計算","加法可以把大的數放前面再往後數；個位相加滿十，就向十位進 1。",ctx=>{
+  const L=lv(ctx),[a,b]=pair(L),f=pick(["op","sum","more"]);
+  if(f==="sum")return{expr:a+" 和 "+b+" 合起來是多少？",answer:fmt(a+b),sig:"s:"+a+":"+b,verify:()=>a+b-b===a,lead:"答："};
+  if(f==="more")return{expr:"比 "+a+" 多 "+b+" 的數是多少？",answer:fmt(a+b),sig:"m:"+a+":"+b,verify:()=>a+b-a===b,lead:"答："};
+  return{expr:a+" ＋ "+b,answer:fmt(a+b),sig:"o:"+a+":"+b,verify:()=>a+b-b===a}});
+ const carry=unit("carry","進位加法","個位相加超過 10 要進位：在十位上加 1；十位相加超過 10 要向百位進 1。也可以先湊十：8＋5＝8＋2＋3。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["op","ten","box"]:["op","vert","ten"]);let a,b;
+  if(L===0){a=rand(2,9);b=rand(11-a,9)}else if(L===1){a=rand(11,79);const o=rand(10-a%10,9);b=rand(1,8-Math.floor(a/10))*10+o;if(a%10===0)return null}else{a=rand(101,799);b=rand(10,899-a+100);if(a+b>999||(a%10+b%10<10&&Math.floor(a/10)%10+Math.floor(b/10)%10<10))return null}
+  const s=a+b;if(L>0&&a%10+b%10<10&&L===1)return null;
+  if(f==="ten"){if(L===0){const need=10-a;return{expr:a+" ＋ "+b+" ＝ "+a+" ＋ "+need+" ＋ （　）＝ （　）",answer:(b-need)+"；"+s,sig:"t:"+a+":"+b,verify:()=>a+need===10&&10+(b-need)===s}}return{expr:a+" ＋ （　）＝ "+s,answer:fmt(b),sig:"t:"+a+":"+b,verify:()=>s-a===b,lead:"答："}}
+  if(f==="box")return{expr:"（　）＋ "+b+" ＝ "+s,answer:fmt(a),sig:"x:"+a+":"+b,verify:()=>s-b===a,lead:"答："};
+  if(f==="vert")return{expr:a+" ＋ "+b+"（用直式算，並寫出進位）",answer:fmt(s),sig:"v:"+a+":"+b,verify:()=>s-b===a};
+  return{expr:a+" ＋ "+b,answer:fmt(s),sig:"o:"+a+":"+b,verify:()=>s-b===a}});
+ const multi=unit("multi","連加","三個數相加，由左往右算；也可以先把湊成 10 的兩個數加起來。",ctx=>{
+  const L=lv(ctx),f=pick(["three","ten","word"]),m=L===0?9:L===1?40:300;
+  if(f==="ten"){const a=rand(1,9),b=10-a,c=rand(1,L===0?9:m);return{expr:a+" ＋ "+c+" ＋ "+b,answer:fmt(a+b+c),sig:"t:"+a+":"+c,verify:()=>a+b===10}}
+  const a=rand(1,m),b=rand(1,m),c=rand(1,m);if(L===0&&a+b+c>20||a+b+c>999)return null;
+  if(f==="word"){const [u,t]=pick(THINGS),n=pick(NAMES);return{expr:n+"有 "+a+" "+u+t+"，媽媽給他 "+b+" "+u+"，爸爸又給他 "+c+" "+u+"，現在有幾"+u+"？",answer:(a+b+c)+" "+u,sig:"w:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a,lead:"答："}}
+  return{expr:a+" ＋ "+b+" ＋ "+c,answer:fmt(a+b+c),sig:"h:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a}});
+ return{title:"加法（低年級）",symbol:"＋",subtitle:"加法計算・進位加法・連加",instruction:"可以用數線、湊十或直式計算；應用題要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：20 以內的加法，進位用湊十（一年級）。",advanced:"進階：二位數的加法，個位進位（二上）。",challenge:"挑戰：三位數的加法，連續進位（二下）。"},
+  units:[basic,carry,multi],presets:{basic:{add:6,carry:6,multi:4},advanced:{add:5,carry:6,multi:4},challenge:{add:5,carry:6,multi:4}}};
+}
+
+function subConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const basic=unit("sub","減法計算","減法是拿走、比較相差多少；做完可以用「答案＋減數＝被減數」檢查。",ctx=>{
+  const L=lv(ctx),a=L===0?rand(2,18):L===1?rand(20,99):rand(200,999),b=rand(1,a-1),f=pick(["op","less","diff"]);if(L===0&&a>10&&a-b<10&&a%10<b%10)return null;
+  if(f==="less")return{expr:"比 "+a+" 少 "+b+" 的數是多少？",answer:fmt(a-b),sig:"l:"+a+":"+b,verify:()=>a-b+b===a,lead:"答："};
+  if(f==="diff")return{expr:a+" 和 "+b+" 相差多少？",answer:fmt(a-b),sig:"d:"+a+":"+b,verify:()=>a-b+b===a,lead:"答："};
+  return{expr:a+" − "+b,answer:fmt(a-b),sig:"o:"+a+":"+b,verify:()=>a-b+b===a}});
+ const borrow=unit("borrow","退位減法","個位不夠減，就向十位借 1 個十（＝10 個一）；遇到十位是 0，要先向百位借。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["op","break","box"]:L===1?["op","vert","box"]:["op","vert","zero"]);let a,b;
+  if(L===0){a=rand(11,18);b=rand(a-9,9);if(b<=a%10)return null}else if(L===1){a=rand(21,99);b=rand(11,a-1);if(b%10<=a%10)return null}else{a=f==="zero"?rand(1,9)*100+rand(0,9):rand(200,999);b=rand(11,a-1);if(b%10<=a%10&&f!=="zero")return null;if(f==="zero"&&b%10<=a%10)return null}
+  const d=a-b;
+  if(f==="break")return{expr:a+" − "+b+"：先算 10 − "+b+" ＝ （　），再加 "+(a-10)+"，答案是（　）",answer:(10-b)+"；"+d,sig:"k:"+a+":"+b,verify:()=>10-b+(a-10)===d};
+  if(f==="box")return{expr:a+" − （　）＝ "+d,answer:fmt(b),sig:"x:"+a+":"+b,verify:()=>a-d===b,lead:"答："};
+  if(f==="vert")return{expr:a+" − "+b+"（用直式算，並寫出退位）",answer:fmt(d),sig:"v:"+a+":"+b,verify:()=>d+b===a};
+  if(f==="zero")return{expr:a+" − "+b+"（十位是 0，要連續退位）",answer:fmt(d),sig:"z:"+a+":"+b,verify:()=>d+b===a&&Math.floor(a/10)%10===0};
+  return{expr:a+" − "+b,answer:fmt(d),sig:"o:"+a+":"+b,verify:()=>d+b===a}});
+ const mix=unit("mix","加減混合","加減混在一起時由左往右算；連減可以先把兩個減數加起來再減。",ctx=>{
+  const L=lv(ctx),m=L===0?10:L===1?60:400,f=pick(["pm","mm","mp"]),a=rand(L===0?5:20,L===0?18:L===1?99:999),b=rand(1,m),c=rand(1,m);let v;
+  if(f==="pm"){v=a+b-c;if(a+b>(L===0?20:L===1?99:999))return null;return v<0?null:{expr:a+" ＋ "+b+" − "+c,answer:fmt(v),sig:"pm:"+a+":"+b+":"+c,verify:()=>v+c-b===a}}
+  if(f==="mm"){v=a-b-c;return v<0?null:{expr:a+" − "+b+" − "+c,answer:fmt(v),sig:"mm:"+a+":"+b+":"+c,verify:()=>v+c+b===a}}
+  if(a-b<0||a-b+c>(L===0?20:L===1?99:999))return null;v=a-b+c;return{expr:a+" − "+b+" ＋ "+c,answer:fmt(v),sig:"mp:"+a+":"+b+":"+c,verify:()=>v-c+b===a}});
+ return{title:"減法（低年級）",symbol:"−",subtitle:"減法計算・退位減法・加減混合",instruction:"減完用加法檢查；應用題要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：20 以內的減法，退位用拆十（一年級）。",advanced:"進階：二位數的減法，個位退位（二上）。",challenge:"挑戰：三位數的減法，十位是 0 的連續退位（二下）。"},
+  units:[basic,borrow,mix],presets:{basic:{sub:6,borrow:6,mix:4},advanced:{sub:5,borrow:6,mix:4},challenge:{sub:5,borrow:6,mix:4}}};
+}
+
+function wordConfig(){
+ const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
+ const big=L=>L===0?rand(5,18):L===1?rand(20,99):rand(100,900);
+ const story=unit("story","加減應用題","「合起來、又來了、共有」用加法；「拿走、用掉、還剩」用減法。先圈出題目問什麼。",ctx=>{
+  const L=lv(ctx),[u,t]=pick(THINGS),n=pick(NAMES),a=big(L),b=rand(1,L===0?Math.min(9,a-1):Math.floor(a*0.8)),f=pick(["join","take","total","left"]);
+  if(f==="join"){if(L===0&&a+b>20)return null;return{expr:n+"有 "+a+" "+u+t+"，又買了 "+b+" "+u+"，現在有幾"+u+"？",answer:(a+b)+" "+u,sig:"j:"+a+":"+b+t,verify:()=>a+b-b===a}}
+  if(f==="take")return{expr:n+"有 "+a+" "+u+t+"，送給同學 "+b+" "+u+"，還剩幾"+u+"？",answer:(a-b)+" "+u,sig:"t:"+a+":"+b+t,verify:()=>a-b+b===a};
+  if(f==="total"){if(L===0&&a+b>20)return null;return{expr:"盒子裡有紅色的"+t+" "+a+" "+u+"、藍色的"+t+" "+b+" "+u+"，一共有幾"+u+"？",answer:(a+b)+" "+u,sig:"o:"+a+":"+b+t,verify:()=>a+b-a===b}}
+  return{expr:"盒子裡有 "+a+" "+u+t+"，紅色的有 "+b+" "+u+"，其他是藍色的。藍色的有幾"+u+"？",answer:(a-b)+" "+u,sig:"l:"+a+":"+b+t,verify:()=>a-b+b===a}},"答：");
+ const cmp=unit("comparemore","比多比少","「誰比誰多幾個」用大的減小的；「比 a 多 b」是 a＋b，「比 a 少 b」是 a−b。",ctx=>{
+  const L=lv(ctx),[u,t]=pick(THINGS),[p,q]=shuffle(NAMES).slice(0,2),a=big(L),b=rand(1,L===0?Math.min(9,a-1):Math.floor(a*.8)),f=pick(["diff","more","less","back"]);
+  if(f==="diff"){const c=a-b;return{expr:p+"有 "+a+" "+u+t+"，"+q+"有 "+c+" "+u+"。"+p+"比"+q+"多幾"+u+"？",answer:b+" "+u,sig:"d:"+a+":"+c+t,verify:()=>a-c===b}}
+  if(f==="more"){if(L===0&&a+b>20||a+b>999)return null;return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+"多 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:(a+b)+" "+u,sig:"m:"+a+":"+b+t,verify:()=>a+b-a===b}}
+  if(f==="less")return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+"少 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:(a-b)+" "+u,sig:"s:"+a+":"+b+t,verify:()=>a-b+b===a};
+  return{expr:p+"有 "+a+" "+u+t+"，比"+q+"多 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:(a-b)+" "+u,sig:"k:"+a+":"+b+t,verify:()=>a-b+b===a}},"答：");
+ const box=unit("box","用 □ 表示未知數","□＋a＝b，□＝b−a；a−□＝b，□＝a−b；□−a＝b，□＝b＋a。可以把答案放回算式檢查。",ctx=>{
+  const L=lv(ctx),x=L===0?rand(1,9):L===1?rand(10,60):rand(100,500),a=L===0?rand(1,9):L===1?rand(5,39):rand(20,400),f=pick(L===0?["pa","ap","am"]:["pa","ap","am","ma"]);
+  if(f==="pa")return{expr:"□ ＋ "+a+" ＝ "+(x+a),answer:fmt(x),sig:"pa:"+x+":"+a,verify:()=>x+a-a===x};
+  if(f==="ap")return{expr:a+" ＋ □ ＝ "+(x+a),answer:fmt(x),sig:"ap:"+x+":"+a,verify:()=>a+x-a===x};
+  if(f==="am")return{expr:(x+a)+" − □ ＝ "+a,answer:fmt(x),sig:"am:"+x+":"+a,verify:()=>x+a-x===a};
+  return{expr:"□ − "+a+" ＝ "+x,answer:fmt(x+a),sig:"ma:"+x+":"+a,verify:()=>x+a-a===x}},"□＝");
+ const two=unit("twostep","兩步驟的應用題","先算第一步，再用第一步的答案算第二步；也可以列成一個算式。",ctx=>{
+  const L=lv(ctx),[u,t]=pick(THINGS),n=pick(NAMES),a=big(L)+(L===0?2:0),b=rand(1,Math.max(1,Math.floor(a/3))),c=rand(1,Math.max(1,Math.floor(a/3))),f=pick(["mm","pm","mp"]);let v,s;
+  if(f==="mm"){v=a-b-c;s=n+"有 "+a+" "+u+t+"，給弟弟 "+b+" "+u+"，又給妹妹 "+c+" "+u+"，還剩幾"+u+"？"}
+  else if(f==="pm"){v=a+b-c;if(L===0&&a+b>20)return null;s=n+"有 "+a+" "+u+t+"，媽媽又給他 "+b+" "+u+"，他用掉 "+c+" "+u+"，還剩幾"+u+"？"}
+  else{v=a-b+c;s="架子上有 "+a+" "+u+t+"，拿走 "+b+" "+u+"，又放上 "+c+" "+u+"，現在有幾"+u+"？"}
+  if(v<0)return null;return{expr:s,answer:v+" "+u,sig:f+":"+a+":"+b+":"+c+t,verify:()=>f==="mm"?v+b+c===a:f==="pm"?v+c-b===a:v-c+b===a}},"答：");
+ return{title:"加減應用與 □",symbol:"□",subtitle:"加減應用題・比多比少・用 □ 表示未知數・兩步驟的應用題",instruction:"先讀懂題目，再決定用加法還是減法；答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：20 以內的應用題（一年級）。",advanced:"進階：100 以內的應用題與 □（二上）。",challenge:"挑戰：1000 以內的應用題、兩步驟（二下）。"},
+  units:[story,cmp,box,two],presets:{basic:{story:4,comparemore:3,box:4,twostep:2},advanced:{story:4,comparemore:4,box:4,twostep:3},challenge:{story:3,comparemore:4,box:4,twostep:4}}};
+}
+
+const CONFIGS={numbers:numbersConfig,add:addConfig,sub:subConfig,word:wordConfig},CFG=CONFIGS[TOPIC_KEY]();
+let state={level:"advanced",groups:[],paper:null,mixed:true};
+function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
+globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
+if(typeof document==="undefined")return;
+function build(){const sel=$("topicSel");TOPICS.forEach(([k,n])=>{const o=document.createElement("option");o.value=k;o.textContent=n;if(k===TOPIC_KEY)o.selected=true;sel.appendChild(o)});sel.addEventListener("change",()=>{location.search="?topic="+sel.value});$("topicTitle").textContent=CFG.title;$("topicLogo").textContent=CFG.symbol||"∑";document.title="百宏文教｜"+CFG.title+" 出題器";const can=document.querySelector('link[rel="canonical"]');if(can)can.href="https://www.bhcs.com.tw/tools/math/g2-drills.html?topic="+TOPIC_KEY;$("subtitle").textContent=CFG.subtitle;$("difficultyNote").textContent=CFG.levels.advanced;const mb=$("modeBoxes");CFG.modes.forEach(m=>{const label=document.createElement("label");label.className="choice";label.innerHTML=`<input type="checkbox" data-mode="${m}" checked>${(CFG.modeLabels||MODE_LABEL)[m]}`;mb.appendChild(label)});if(CFG.mixed){const label=document.createElement("label");label.className="choice";label.innerHTML='<input id="mixedNumber" type="checkbox" checked>可用帶分數';mb.appendChild(label)}const grid=$("unitGrid");CFG.units.forEach(u=>{const box=document.createElement("div");box.className="unit";box.innerHTML=`<input class="unit-check" id="unit-${u.id}" type="checkbox" data-unit="${u.id}"><label for="unit-${u.id}">${u.name}</label><input class="count" type="number" min="1" max="40" value="1" data-count="${u.id}" aria-label="${u.name}題數">`;grid.appendChild(box)});grid.addEventListener("change",e=>{if(e.target.matches(".unit-check"))grid.querySelector(`[data-count='${e.target.dataset.unit}']`).disabled=!e.target.checked;markChanged();updateTotal()});grid.addEventListener("input",e=>{if(e.target.matches(".count")){e.target.value=Math.max(1,Math.min(40,Number(e.target.value)||1));markChanged();updateTotal()}});applyPreset("advanced")}
+const selectedModes=()=>[...document.querySelectorAll("[data-mode]:checked")].map(x=>x.dataset.mode),selectedUnits=()=>CFG.units.flatMap(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);return c.checked?[{...u,count:Math.max(1,Math.min(40,Number(n.value)||1))}]:[]});
+function applyPreset(level){state.level=level;const p=CFG.presets[level];CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`),v=p[u.id]||0;c.checked=v>0;n.disabled=!c.checked;n.value=v||1});document.querySelectorAll(".level").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.level===level)));$("difficultyNote").textContent=CFG.levels[level];updateTotal();markChanged()}
+function setEach(v){CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);c.checked=v>0;n.disabled=!c.checked;if(v)n.value=v});updateTotal();markChanged()}
+function updateTotal(){$("total").textContent=`共 ${selectedUnits().reduce((s,u)=>s+u.count,0)} 題`}function markChanged(){$("status").textContent="設定已變更，按「重新出題」套用。"}
+function generate(){const modes=selectedModes(),chosen=selectedUnits();if(!modes.length){$("status").textContent="請至少勾選一種數的類型。";return}if(!chosen.length){state.groups=[];state.paper=null;render();$("status").textContent="請至少勾選一個單元。";return}state.mixed=CFG.mixed&&$("mixedNumber")?.checked;const seen=new Set,skipped=[];state.groups=[];for(const unit of chosen){const allowed=modes.filter(m=>unit.modes.includes(m));if(!allowed.length){skipped.push(unit.name);continue}const ctx={level:state.level,modes:allowed,mixed:state.mixed},questions=[];for(let i=0;i<unit.count;i++){const q=safeQuestion(unit,ctx,seen);if(q)questions.push(q)}if(questions.length)state.groups.push({unit,questions})}state.paper={level:state.level,modes:[...modes],total:state.groups.reduce((s,g)=>s+g.questions.length,0)};render();$("status").textContent=`已產生 ${state.paper.total} 題，逐題驗證完成${skipped.length?`；數型不適用而略過：${skipped.join("、")}`:""}。`}
+function render(){const out=$("output");out.innerHTML="";if(!state.paper||!state.groups.length){out.innerHTML='<div class="empty"><b>尚未產生練習卷</b>請選擇數型與單元後按「重新出題」。</div>';return}const teacher=$("version").value==="teacher",cols=$("columns").value,work={small:"10mm",medium:"16mm",large:"26mm"}[$("space").value],sheet=document.createElement("div");sheet.className=`sheet ${teacher?"teacher":"student"}`;sheet.style.setProperty("--work",work);sheet.innerHTML=`<div class="head"><div class="bhcs-brand"><b>百宏文教機構</b><span>數學計算力練習 · 徹底反覆計算系列</span><i>www.bhcs.com.tw</i></div><h2>${CFG.title} 計算力練習（${{basic:"基礎",advanced:"進階",challenge:"挑戰"}[state.paper.level]}）</h2><span>班級：______　姓名：__________　日期：___／___　作答時間：___分___秒</span></div><p class="tip">${CFG.instruction}</p>`;let no=1;state.groups.forEach(g=>{const sec=document.createElement("section");sec.innerHTML=`<div class="sec">${g.unit.name}</div><p class="tip">${g.unit.tip}</p><div class="grid c${cols}"></div>`;const grid=sec.querySelector(".grid");g.questions.forEach(q=>{const item=document.createElement("div");item.className="prob";item.innerHTML=`<div class="q"><span class="no">(${no++})</span><span class="expr">${q.expr}</span></div><div class="work">${q.lead||g.unit.lead||"原式＝"}<span class="ans">${q.answer}</span></div>`;grid.appendChild(item)});sheet.appendChild(sec)});out.appendChild(sheet);fit()}
+function fit(){if(matchMedia("print").matches)return;const sheet=document.querySelector(".sheet");if(sheet)sheet.style.zoom=Math.min(1,Math.max(.42,(innerWidth-16)/794))}
+build();document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.level)));document.querySelectorAll("[data-mode],#mixedNumber").forEach(c=>c.addEventListener("change",markChanged));document.querySelectorAll("[data-each]").forEach(b=>b.addEventListener("click",()=>setEach(Number(b.dataset.each))));$("generate").addEventListener("click",generate);$("print").addEventListener("click",()=>state.paper&&print());["version","columns","space"].forEach(id=>$(id).addEventListener("change",render));addEventListener("resize",fit);addEventListener("beforeprint",()=>{const s=document.querySelector(".sheet");if(s)s.style.zoom=1});addEventListener("afterprint",fit);generate();
+})();
+</script>
+</body>
+</html>

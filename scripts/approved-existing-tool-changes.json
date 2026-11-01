@@ -85,6 +85,13 @@
       "approved_blob": "de4f2921d314cd2f83115572f0439b953b318d84",
       "reason": "Math hub lists the last three g4-drills topics: measure, perimeter, angle (cards 123 -> 126).",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "de4f2921d314cd2f83115572f0439b953b318d84",
+      "approved_blob": "ed72d85d9fcb1cc1844893566686cc0a18f3e0a9",
+      "reason": "Math hub gains a 國小低年級 section with the four g2-drills topics (cards 126 -> 130); intro range now starts at 國小一年級.",
+      "pull_request": null
     }
   ]
 }
