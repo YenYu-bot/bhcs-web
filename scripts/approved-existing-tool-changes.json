@@ -99,6 +99,20 @@
       "approved_blob": "19c25d2cdcbf7940b6e44cd29975758775dbda76",
       "reason": "Math hub lists five more g2-drills topics: multiply, money, time, length, shapes (cards 130 -> 135).",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "35fdb6c7ed1a9d59c9a770e4ce331adda9181c5a",
+      "approved_blob": "9aa29172c6489a0f999ee8a0958ffb7d8d32b80f",
+      "reason": "Grade 7: new topics 線對稱圖形 and 立體圖形與三視圖; existing topics unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "19c25d2cdcbf7940b6e44cd29975758775dbda76",
+      "approved_blob": "d357ce31f369106180edc4a56d0c11a6be0b4183",
+      "reason": "Math hub lists the two new g7 topics (cards 135 -> 137).",
+      "pull_request": null
     }
   ]
 }
