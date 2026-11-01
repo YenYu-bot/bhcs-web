@@ -113,6 +113,20 @@
       "approved_blob": "d357ce31f369106180edc4a56d0c11a6be0b4183",
       "reason": "Math hub lists the two new g7 topics (cards 135 -> 137).",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g8-drills.html",
+      "baseline_blob": "1daf358430571c87007176e198f46c153af27a73",
+      "approved_blob": "04bb737fc6cbff5d1ae025e54aa92ece06b1fb66",
+      "reason": "Grade 8: new topic 尺規作圖 (reading constructions, values after constructing, justification); existing topics unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "d357ce31f369106180edc4a56d0c11a6be0b4183",
+      "approved_blob": "dede24c471fe8ccc04fe35914e61646174894d5a",
+      "reason": "Math hub lists the new g8 topic 尺規作圖 (cards 137 -> 138).",
+      "pull_request": null
     }
   ]
 }

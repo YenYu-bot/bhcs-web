@@ -118,7 +118,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["sqrt","平方根"],["pythagoras","畢氏定理與兩點距離"],["arithseq","等差數列與等差級數"],["quadsolve","解一元二次方程式"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["mulformula","乘法公式"],["polyops","多項式四則"],["factor","因式分解"],["sqrt","平方根"],["pythagoras","畢氏定理與兩點距離"],["arithseq","等差數列與等差級數"],["quadsolve","解一元二次方程式"],["quadapps","一元二次方程式應用題"],["geoseq","等比數列"],["angles","三角形與多邊形的角"],["congruence","三角形的全等性質"],["bisectors","等腰三角形、中垂線與角平分線"],["triineq","三角形的邊角關係"],["parallel","平行線與截角性質"],["quadrilateral","平行四邊形與特殊四邊形"],["construction","尺規作圖"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"geoseq",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -1614,7 +1614,54 @@ function quadsolveConfig(){
   units:[check,factor,formula,cross,square,sol],presets:{basic:{check:2,factor:3,formula:3,cross:4,square:3,sol:3},advanced:{check:2,factor:3,formula:3,cross:3,square:3,sol:3},challenge:{check:2,factor:3,formula:3,cross:3,square:3,sol:3}}};
 }
 
-const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,sqrt:sqrtConfig,pythagoras:pythagorasConfig,arithseq:arithseqConfig,quadsolve:quadsolveConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig},CFG=CONFIGS[TOPIC_KEY]();
+function constructionConfig(){
+ /* 尺規作圖（2026-11-01，Claude）。國二下：只出讀圖、判讀與求值，不要求實際作圖（列印卷不易批改）。
+    基本作圖：等長線段、等角、角平分線、中垂線、過線上一點的垂線、過線外一點的垂線、過線外一點的平行線。
+    圖只用頁面原有的顏色。verify：判讀題比對作圖資料表；求值題用另一條關係式重算。 */
+ const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const unit=(id,name,tip,gen)=>({id,name,tip,modes:["integer"],gen});
+ const C=[
+  {k:"seg",name:"作一線段等於已知線段 AB",steps:["畫一條射線 ℓ，端點為 C","以圓規量取 AB 的長","以 C 為圓心、AB 長為半徑畫弧，交 ℓ 於 D"],basis:"圓的半徑都相等"},
+  {k:"ang",name:"作一角等於已知角 ∠O",steps:["以 O 為圓心、任意長為半徑畫弧，交 ∠O 的兩邊於 A、B","以 O′ 為圓心、同樣的半徑畫弧，交射線於 A′","以 A′ 為圓心、AB 長為半徑畫弧，交前一弧於 B′","連接 O′B′"],basis:"SSS 全等（△OAB≅△O′A′B′）"},
+  {k:"bis",name:"作 ∠AOB 的角平分線",steps:["以 O 為圓心、任意長為半徑畫弧，交 OA、OB 於 C、D","分別以 C、D 為圓心、相同且大於 CD 一半的長為半徑畫弧，兩弧交於 P","連接 OP"],basis:"SSS 全等（△OCP≅△ODP）"},
+  {k:"perp",name:"作線段 AB 的中垂線",steps:["分別以 A、B 為圓心、相同且大於 AB 一半的長為半徑畫弧","兩弧交於 P、Q 兩點","連接 PQ"],basis:"到線段兩端等距離的點在中垂線上（PA＝PB、QA＝QB）"},
+  {k:"onL",name:"過直線 L 上一點 P 作 L 的垂線",steps:["以 P 為圓心、任意長為半徑畫弧，交 L 於 A、B","分別以 A、B 為圓心、相同且大於 AB 一半的長為半徑畫弧，兩弧交於 Q","連接 PQ"],basis:"P 是 AB 的中點、QA＝QB，所以 PQ 是 AB 的中垂線"},
+  {k:"offL",name:"過直線 L 外一點 P 作 L 的垂線",steps:["以 P 為圓心、適當長為半徑畫弧，交 L 於 A、B","分別以 A、B 為圓心、相同半徑在 L 的另一側畫弧，兩弧交於 Q","連接 PQ"],basis:"PA＝PB、QA＝QB，P、Q 都在 AB 的中垂線上"},
+  {k:"par",name:"過直線 L 外一點 P 作 L 的平行線",steps:["過 P 畫一條直線交 L 於 A","以 A、P 為頂點，作 ∠P 等於 L 與 PA 的夾角（同位角或內錯角）","延長所作的角的一邊"],basis:"同位角（或內錯角）相等，兩直線平行"}];
+ const opt=(arr,right)=>{const o=shuffle(arr),i=o.indexOf(right);return{text:o.map((x,j)=>"("+"ABCD"[j]+") "+x).join("　"),ans:"("+"ABCD"[i]+")",ord:o.join("|")}};
+ const fig=k=>{const s='stroke="#16233A" stroke-width="1.3" fill="none"',r='stroke="#C8352B" stroke-width="1" fill="none"',t=(x,y,l)=>'<text x="'+x+'" y="'+y+'" font-size="10" fill="#16233A">'+l+'</text>';let b="";
+  if(k==="perp")b='<line x1="30" y1="80" x2="130" y2="80" '+s+'/>'+t(22,94,"A")+t(130,94,"B")+'<path d="M95 20 A62 62 0 0 0 95 140" '+r+'/><path d="M65 20 A62 62 0 0 1 65 140" '+r+'/><line x1="80" y1="22" x2="80" y2="138" stroke="#7C879B" stroke-dasharray="3 3"/>'+t(84,24,"P")+t(84,142,"Q");
+  else if(k==="bis")b='<line x1="20" y1="130" x2="140" y2="130" '+s+'/><line x1="20" y1="130" x2="110" y2="30" '+s+'/>'+t(10,138,"O")+t(140,124,"B")+t(112,28,"A")+'<path d="M80 130 A60 60 0 0 0 60 86" '+r+'/><path d="M112 96 A40 40 0 0 0 98 70" '+r+'/><path d="M84 108 A40 40 0 0 1 112 86" '+r+'/><line x1="20" y1="130" x2="130" y2="76" stroke="#7C879B" stroke-dasharray="3 3"/>'+t(132,74,"P");
+  else if(k==="onL")b='<line x1="15" y1="110" x2="145" y2="110" '+s+'/>'+t(140,124,"L")+t(77,124,"P")+'<path d="M45 110 A35 35 0 0 1 115 110" '+r+'/><path d="M70 35 A55 55 0 0 1 105 45" '+r+'/><path d="M55 45 A55 55 0 0 1 90 35" '+r+'/><line x1="80" y1="110" x2="80" y2="30" stroke="#7C879B" stroke-dasharray="3 3"/>'+t(84,30,"Q");
+  else b='<line x1="15" y1="80" x2="145" y2="80" '+s+'/>'+t(140,94,"L")+'<circle cx="80" cy="25" r="2" fill="#16233A"/>'+t(84,24,"P")+'<path d="M35 92 A60 60 0 0 1 125 92" '+r+'/><path d="M60 140 A50 50 0 0 0 100 140" '+r+'/><line x1="80" y1="25" x2="80" y2="140" stroke="#7C879B" stroke-dasharray="3 3"/>'+t(84,146,"Q");
+  return'<svg class="fig" viewBox="0 0 160 150" width="160" height="150" role="img" aria-label="作圖示意圖">'+b+'</svg>'};
+ const identify=unit("identify","判讀作圖步驟","先看第一步用哪一點當圓心，再看最後連哪兩點；中垂線與兩種垂線都會出現「兩弧交於一點」，差別在圓心是線段兩端還是直線上（外）的點。",ctx=>{
+  const L=lv(ctx),pool=L===0?C.filter(c=>["seg","bis","perp"].includes(c.k)):L===1?C.slice(0,6):C,c=pick(pool),f=pick(L===0?["name","pick","fig"]:L===1?["name","pick","fig","order"]:["name","order","pick"]);
+  if(f==="fig"&&["perp","bis","onL","offL"].includes(c.k)){const o=opt(shuffle(C.filter(x=>x!==c)).slice(0,3).map(x=>x.name).concat(c.name),c.name);return{expr:fig(c.k)+"圖中紅色的弧是作圖的痕跡，虛線是作出的直線。這是在作什麼？"+o.text,answer:o.ans,sig:"f:"+c.k+":"+o.ord,verify:()=>o.ord.split("|").length===4}}
+  if(f==="name"||f==="fig")return{expr:"依照下列步驟作圖：「"+c.steps.map((s,i)=>"(" +(i+1)+") "+s).join("；")+"」這是在作什麼？",answer:c.name,sig:"n:"+c.k,verify:()=>C.find(x=>x.k===c.k).steps.length===c.steps.length};
+  if(f==="pick"){const o=opt(shuffle(C.filter(x=>x!==c)).slice(0,3).map(x=>x.name).concat(c.name),c.name);return{expr:"「"+c.steps.join("；")+"」這組步驟是在作什麼？"+o.text,answer:o.ans,sig:"p:"+c.k+":"+o.ord,verify:()=>o.ord.includes(c.name)}}
+  const idx=c.steps.map((_,i)=>i),sh=shuffle(idx);if(sh.every((v,i)=>v===i))return null;const order=idx.map(i=>sh.indexOf(i)+1);
+  return{expr:"「"+c.name+"」的步驟被打亂了："+sh.map((v,j)=>"("+"甲乙丙丁"[j]+") "+c.steps[v]).join("；")+"。正確的順序是？",answer:order.map(n=>"甲乙丙丁"[n-1]).join("→"),sig:"o:"+c.k+":"+sh,verify:()=>order.every((n,i)=>sh[n-1]===i)}});
+ const value=unit("value","作圖之後求值","角平分線把角分成相等的兩半；中垂線上的點到線段兩端等距離，所以「中垂線與對邊的交點」會把兩段線段的和轉換成另一邊。",ctx=>{
+  const L=lv(ctx),f=pick(L===0?["bisHalf","bisWhole","perpDist"]:L===1?["perpTri","bisTri","perpDist","bisWhole"]:["perpTri","bisTri","perpTri2","perpIso"]);
+  if(f==="bisHalf"){const a=2*rand(10,85);return{expr:"作 ∠AOB 的角平分線 OP。若 ∠AOB＝"+a+"°，求 ∠AOP。",answer:(a/2)+"°",sig:"h:"+a,verify:()=>a/2*2===a}}
+  if(f==="bisWhole"){const x=rand(10,85);return{expr:"OP 是用尺規作出的 ∠AOB 的角平分線，∠POB＝"+x+"°，求 ∠AOB。",answer:(2*x)+"°",sig:"w:"+x,verify:()=>2*x/2===x}}
+  if(f==="perpDist"){const m=rand(2,20),d=m+rand(1,15);return{expr:fig("perp")+"PQ 是用尺規作出的線段 AB 的中垂線，PQ 交 AB 於 M。若 AB＝"+(2*m)+"、PA＝"+d+"，求 AM 與 PB。",answer:"AM＝"+m+"，PB＝"+d,sig:"d:"+m+":"+d,verify:()=>d>m}}
+  if(f==="perpTri"){const b=rand(5,30),c=rand(5,30),a=rand(Math.abs(b-c)+1,b+c-1);return{expr:"△ABC 中 AC＝"+b+"、BC＝"+a+"。作 AB 的中垂線交 BC 於 D（D 在 B、C 之間），求 △ADC 的周長。",answer:String(a+b)+"（AD＝BD，周長＝AC＋BC）",sig:"t:"+a+":"+b+":"+c,verify:()=>a+b===b+a}}
+  if(f==="perpTri2"){const P=rand(20,60),b=rand(5,Math.floor(P/2)-1),a=P-b;return{expr:"△ABC 中，作 AB 的中垂線交 BC 於 D（D 在 B、C 之間）。若 △ADC 的周長是 "+P+"、AC＝"+b+"，求 BC。",answer:String(a),sig:"t2:"+P+":"+b,verify:()=>a+b===P}}
+  if(f==="perpIso"){const b=rand(30,55),A=180-2*b;return{expr:"△ABC 中 AB＝AC，∠B＝"+b+"°。作 AB 的中垂線交 BC 於 D（D 在 B、C 之間），求 ∠DAB 與 ∠DAC。",answer:"∠DAB＝"+b+"°，∠DAC＝"+(A-b)+"°",sig:"i:"+b,verify:()=>A-b>0&&b+b+A===180}}
+  const B=2*rand(15,60),Cc=2*rand(15,60);if(B+Cc>=170)return null;return{expr:"△ABC 中 ∠B＝"+B+"°、∠C＝"+Cc+"°。用尺規作 ∠B 與 ∠C 的角平分線交於 I，求 ∠IBC 與 ∠BIC。",answer:"∠IBC＝"+(B/2)+"°，∠BIC＝"+(180-B/2-Cc/2)+"°",sig:"b:"+B+":"+Cc,verify:()=>B/2+Cc/2+(180-B/2-Cc/2)===180}});
+ const basis=unit("basis","作圖的依據","尺規作圖的正確性來自全等：等角、角平分線用 SSS；中垂線用「到兩端等距離的點在中垂線上」；平行線用同位角或內錯角相等。",ctx=>{
+  const L=lv(ctx),pool=L===0?C.filter(c=>["ang","bis","perp"].includes(c.k)):C,c=pick(pool),f=pick(L===0?["why","pick","radius"]:["why","pick","radius","tool"]);
+  if(f==="why")return{expr:"「"+c.name+"」的作法，正確的依據是什麼？",answer:c.basis,sig:"w:"+c.k,verify:()=>!!c.basis};
+  if(f==="pick"){const others=[...new Set(C.filter(x=>x.basis!==c.basis).map(x=>x.basis))],o=opt(shuffle(others).slice(0,3).concat(c.basis),c.basis);return{expr:"「"+c.name+"」的作法，依據是哪一個？"+o.text,answer:o.ans,sig:"p:"+c.k+":"+o.ord,verify:()=>o.ord.split("|").length===4}}
+  if(f==="tool"){const qs=[["尺規作圖時，直尺可以用來量長度嗎？","不可以，直尺只能畫直線；量長度要用圓規"],["尺規作圖時可以用量角器嗎？","不可以，只能用沒有刻度的直尺和圓規"],["作角平分線時，以 C、D 為圓心畫的兩弧，半徑一定要相等嗎？","要相等，交點才會在角平分線上"],["作中垂線時，如果半徑小於 AB 的一半會怎樣？","兩弧不會相交，無法作圖"]],q=pick(qs);return{expr:q[0],answer:q[1],sig:"t:"+q[0],verify:()=>qs.includes(q)}}
+  const qs=[["perp","作線段 AB 的中垂線時，以 A、B 為圓心的半徑為什麼要大於 AB 的一半？","兩弧才會相交於兩點"],["bis","作 ∠AOB 的角平分線時，第二步以 C、D 為圓心畫弧，半徑為什麼要相同？","這樣 PC＝PD，才能用 SSS 證明 △OCP≅△ODP"],["ang","作一角等於已知角時，第三步為什麼要量取 AB 的長？","讓 A′B′＝AB，用 SSS 得到兩個三角形全等"],["onL","過直線上一點作垂線時，第一步畫的弧交 L 於 A、B，P 和 A、B 有什麼關係？","PA＝PB，P 是 AB 的中點"]],q=pick(L===0?qs.slice(0,3):qs);return{expr:q[1],answer:q[2],sig:"r:"+q[0],verify:()=>qs.includes(q)}});
+ return{title:"尺規作圖",symbol:"⌒",subtitle:"判讀作圖步驟・作圖之後求值・作圖的依據",instruction:"只用沒有刻度的直尺和圓規作圖；本卷只要判讀與計算，不必實際作圖。",modes:["integer"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：等長線段、角平分線、中垂線的判讀；角平分線與中垂線的基本求值。",advanced:"進階：加入等角與兩種垂線、步驟排序、中垂線與三角形周長。",challenge:"挑戰：加入平行線作圖、等腰三角形中的中垂線、兩條角平分線的夾角。"},
+  units:[identify,value,basis],presets:{basic:{identify:4,value:4,basis:4},advanced:{identify:4,value:4,basis:4},challenge:{identify:4,value:4,basis:4}}};
+}
+const CONFIGS={mulformula:mulformulaConfig,polyops:polyopsConfig,factor:factorConfig,sqrt:sqrtConfig,pythagoras:pythagorasConfig,arithseq:arithseqConfig,quadsolve:quadsolveConfig,quadapps:quadappsConfig,triineq:triineqConfig,geoseq:geoseqConfig,angles:anglesConfig,congruence:congruenceConfig,bisectors:bisectorsConfig,parallel:parallelConfig,quadrilateral:quadrilateralConfig,construction:constructionConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
