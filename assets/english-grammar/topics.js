@@ -37,7 +37,15 @@ import adverb from './topics/adverb.js';
 import possess from './topics/possess.js';
 import numbers from './topics/numbers.js';
 import linkadv from './topics/linkadv.js';
+import usedto from './topics/usedto.js';
+import asas from './topics/asas.js';
+import spend from './topics/spend.js';
+import itto from './topics/itto.js';
+import whto from './topics/whto.js';
+import that from './topics/that.js';
+import partadj from './topics/partadj.js';
+import partnoun from './topics/partnoun.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense, indef, reflexive, indirect, tooenough, whenif, adverb, possess, numbers, linkadv];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense, indef, reflexive, indirect, tooenough, whenif, adverb, possess, numbers, linkadv, usedto, asas, spend, itto, whto, that, partadj, partnoun];
 export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
