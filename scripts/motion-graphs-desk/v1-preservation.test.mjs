@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import fs from './accepted-file-reader.mjs';import crypto from 'node:crypto';
+import test from 'node:test';import assert from 'node:assert/strict';import fs from './accepted-v1-repaired-reader.mjs';import crypto from 'node:crypto';
 const manifest=JSON.parse(fs.readFileSync(new URL('./accepted-v1-manifest.json',import.meta.url),'utf8'));
 const navigation='<nav id="course-navigation" class="steps" aria-label="選擇課程"><span>入門：量測與自己作圖</span><a href="v2/">進階：x–t、v–t 與折返判讀 →</a></nav>\n';
 test('accepted v1 all runtime bytes preserved with only exact reversible navigation block',()=>{assert.equal(manifest.sourceSHA,'7a40cede3f7e7400a95686612363977639a89706');for(const f of manifest.files){let b=fs.readFileSync(new URL('../../tools/motion-graphs-desk/'+f.path,import.meta.url));if(f.path==='index.html'){const s=b.toString();assert.equal(s.split(navigation).length,2);b=Buffer.from(s.replace(navigation,''));}assert.equal(b.length,f.bytes,f.path);assert.equal(crypto.createHash('sha256').update(b).digest('hex'),f.sha256,f.path);}});

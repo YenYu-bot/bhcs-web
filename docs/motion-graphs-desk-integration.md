@@ -6,7 +6,7 @@
 - 本次最新 main 基準：`621c27cbeea791b4f37bd6f43189fe6894a0510c`（包含既有進階數學更新）。不得退回先前自然站基準。
 - 已驗收私人來源：`3f3cfd0b74776af4b2ddf50ab34d3bf89440b1e9`。入門 v1 原始來源 `7a40cede3f7e7400a95686612363977639a89706` 的唯一既有例外為通往 v2 的入口導覽，另有原始 manifest 回歸保護。
 - `tools/motion-graphs-desk/` 提供入門量測／學生自行作圖，`v2/` 提供五案例、四層、十九題的 x–t／v–t 判讀。
-- 18 個 runtime 檔案完整保留；**官網只替換兩頁 robots noindex 為各自 canonical**。`scripts/motion-graphs-desk-runtime.json` 釘住 accepted bytes，integration guard 逆轉 metadata 後逐檔驗證。模型、輸入、教學、字型、儲存與 reset 不改。
+- 18 個 runtime 的 accepted 基準完整保留；**除兩頁 robots noindex 轉 canonical 外，另有下述使用者授權的三檔呈現修正**。`scripts/motion-graphs-desk-runtime.json` 釘住 accepted bytes，integration guard 逆轉 metadata 後逐檔驗證。物理模型、答案、輸入語義、儲存與 reset 不改；呈現例外逐檔釘於獨立 repair manifest。
 - Canonical：`https://www.bhcs.com.tw/tools/motion-graphs-desk/` 與 `https://www.bhcs.com.tw/tools/motion-graphs-desk/v2/`。
 - 教師 PNG 沿用已驗收 canonical 圖（SHA-256 `2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b`），原 provenance 同檔保留，未另造教師形象。
 
@@ -32,19 +32,33 @@
 
 ### 新 native checker 的設計範圍（不是已執行結果）
 
-共 21 個 fail-closed scenarios（20 個驗收案與 1 個明列視覺診斷案）：
+共 21 個 fail-closed scenarios（原20 個驗收案與1 個端點案，修後全部保留並加強v1間距門檻）：
 
 1. 入門與進階各五個完整流程：1280px mouse、1280px keyboard、360／390／412px CDP touch，共十案。進階每案皆完成全部十九題，不只首頁或模型 setter。
 2. 兩版 clock 暫停、背景凍結、回前景仍暫停與重載，共兩案；完整流程另含原生回放／暫停／專用 step／退出，持久化證據不變。
 3. 入門損壞資料、進階未來版本的原文備份及保護重置，共兩案。
 4. 進階 read fault、write fault/retry、無 Web Locks 空資料、無 Web Locks 既有資料、雙頁 storage conflict，共五案。
 5. 進階 320px 正負速度端點、x–t／v–t 及引導文字 200% 放大，共一案。
-6. 入門 320px 端點 t0／t8 的 bbox／截圖診斷，共一案；360px 等完整流程亦保存兩端診斷。
+6. 入門 320px 端點 t0／t8 的 bbox／截圖與嚴格間距回歸，共一案；360px 等完整流程亦保存兩端證據。
 
-圖像驗證包含原生 SVG screen CTM 與實際 HTML hit center、44px 目標、14px 圖字、220px 資料區、v2 刻度與圈不交疊、拖曳 capture/bubble/rAF 的連續 viewport 穩定、取消與透明釋放；故障／缺少樣本／中途跳動的負例另有 helper tests。v1 舊版刻度與圈交疊只記錄診斷，未聲稱該項 spacing 已驗收；若執行後發現可讀性問題應另回報，不改 accepted。
+圖像驗證包含原生 SVG screen CTM 與實際 HTML hit center、44px 目標、14px 圖字、220px 資料區、兩版刻度與圈不交疊、拖曳 capture/bubble/rAF 的連續 viewport 穩定、取消與透明釋放；故障／缺少樣本／中途跳動的負例另有 helper tests。首輪 v1 的只診斷模式已揭露實際交疊；受限修正後，兩版皆強制要求44px圈不交疊數值刻度，v1另包含所有軸標題，並要求至少220px資料區，不以重命名或忽略診斷通過。
 
 CDP touch 是瀏覽器原生合成輸入，非實體手機；guide-only 字體 200% 不是完整 browser zoom。獨立強制 lostpointercapture、實體 pen、多指、讀屏器、Safari/Firefox，以及全部中斷組合仍須依實際執行證據標示，不能把 Node tests 或自然釋放產生的 lostcapture 冒稱全面裝置測試。
 
-### 待首輪 CI 畫面確認：v1 端點文字
+### 首輪 CI 已確認與獲授權修正：v1 端點文字
 
-原始 v1 的 t=0／t=8 把手與刻度留白，來源座標推導有可能相交，但目前沒有本次官網 native 實測證據。checker 會保存 320／360px 端點真實 bbox／截圖，**不把此診斷稱為 v1 標籤間距通過**。這是 Draft 視覺風險待辦，parent 須審閱首輪 artifacts 後判定；若確定可讀性缺陷，另外提出受限修正並取得授權。不得為使 CI 綠燈移除原驗證，亦不偷偷更改已驗收 runtime。
+首輪 d918df1 / run41290081737 的320／360px真實bbox與截圖證實v1端點圈覆蓋刻度；不是只有來源推導。使用者於2026-11-01 09:46:09 UTC同意只修繪圖時間邊界與標籤留白，同步私人版與Draft #203，不涉及合併或部署。
+
+## 受限呈現修正與測試修正
+
+`scripts/motion-graphs-desk-runtime.json`、原始 `ported-tests.json` 與兩個 accepted來源SHA不變；新增 `scripts/motion-graphs-desk-repair.json` 釘住精確前後hash及可逆替換。
+
+- `v2/app.mjs`：只將dense迴圈 `i<=Math.floor(end*20+1e-8)` 改為 `i/20<=end`，最後仍補exactend。不放寬renderer的t≤觀測上限。原式在合法resume時間0.15+0.3造成0.45超前1ULP，throw使rAF未再排程。81個20Hz界線上下1ULP、五案例兩圖和真Clock150ms分割回歸保護；舊epsilon負例必失敗。
+- `geometry.mjs`：只改v1圖的留白與一致forward/inverse mapping；固定物理域不變，軌道render與mapping完全不變。PLOT700×670，資料x104..640、y120..480，時間0..8、位置0..6；刻度與軸標另外留白；最高位置的圈與上方標題亦保留間距（追加40 SVG單位呈現平移，軸域與yscale不變）。right640保留舊260px SVG的44px圈不裁切門檻，沒有把舊門檻升高來掩蓋失敗。
+- `style.css`：只追加≤400px的 `main#main` 與其 `#plot-panel` padding規則，v2無id main不匹配；最差16px scrollbar仍有288px SVG、220.53px資料區。
+- 原11個geometry tests與原UI pointer測試全部保留，各獨立期待坐標按新mapping明列可逆test-delta，不刪斷言；v1 bytes-preservation單一測試改用專用逆讀adapter，驗證修正可還原舊bytes。其餘UI測試仍讀**實際修後app**，不以adapter隱藏修正。
+- Native harness：A1.R改答後精確保留兩個無父層兄弟、撤銷其餘17；框外拖點在實際資料域外但viewport內；keyboard回放使用既有Escape暫停；關閉Playwright focus emulation後必須取得trusted hidden事件，才能測背景凍結。保留clock/raw/幾何/錯誤零容忍門檻。
+
+修後native21案及私人視覺驗收須看新exact-head結果；本地Node或來源審查本身不代表原生觸控／畫面通過。
+
+私人版修正來源於2026-11-01 09:58 UTC由parent發布為 `748c686a2b4d830c7107985562bac299a7cce10f`，與本候選三檔修正及managed QA hash相同；原始accepted `3f3cfd0b` 基準與獨立repair鏈不重新定義。官網仍為Draft，尚待新exact-head CI及另行合併／部署授權。

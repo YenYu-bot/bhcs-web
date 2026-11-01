@@ -46,7 +46,7 @@ function harness(initial=new Map(),{noLocks=false,failures={}}={}){
  const input=(id,value)=>{$(id).value=value;$(id).dispatchEvent(new w.Event('input',{bubbles:true}));};
  const change=(id,value)=>{$(id).value=value;$(id).dispatchEvent(new w.Event('change',{bubbles:true}));};
  const submit=id=>$(id).dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
- const pointer=(id,type,values={})=>{const e=new w.Event(type,{bubbles:true,cancelable:true});for(const[k,v]of Object.entries({pointerId:1,isPrimary:true,button:0,clientX:140,clientY:310,...values}))Object.defineProperty(e,k,{value:v});$(id).dispatchEvent(e);};
+ const pointer=(id,type,values={})=>{const e=new w.Event(type,{bubbles:true,cancelable:true});for(const[k,v]of Object.entries({pointerId:1,isPrimary:true,button:0,clientX:171,clientY:420,...values}))Object.defineProperty(e,k,{value:v});$(id).dispatchEvent(e);};
  const choose=t=>$('time-selector').querySelector(`[data-time="${t}"]`).click();
  async function settle(){await tick();await tick();assert.deepEqual(errors,[]);}
  async function collect(){click('begin');for(let t=0;t<9;t++){if(t)click('step');input('reading',String(observed[t]));submit('reading-form');await settle();assert.equal($('records-body').children.length,t+1);}click('to-plot');assert.equal($('plot-panel').hidden,false);}
@@ -109,22 +109,22 @@ test('observation clock pauses without catching up hidden wall time and resume a
 });
 test('plot drag previews only; cancellation keeps bytes, valid up commits once and late lost capture cannot undo',async()=>{
  const h=harness();try{await h.collect();h.choose(0);h.change('plot-value','1');h.click('plot-place');await h.settle();const raw=h.map.get(STORAGE_KEY);
-  h.pointer('plot-handle','pointerdown',{clientX:80,clientY:310});h.pointer('plot-handle','pointermove',{clientX:80,clientY:260});assert.equal(h.$('plot-handle').classList.contains('is-dragging'),true);assert.equal(h.map.get(STORAGE_KEY),raw);h.pointer('plot-handle','pointercancel');assert.equal(h.$('plot-handle').classList.contains('is-dragging'),false);assert.match(h.$('plot-handle').getAttribute('aria-label'),/位置 1 公尺/);assert.equal(h.map.get(STORAGE_KEY),raw);
-  h.pointer('plot-handle','pointerdown',{clientX:80,clientY:310});h.pointer('plot-handle','pointermove',{clientX:80,clientY:260});h.pointer('plot-handle','pointerup',{clientX:80,clientY:260});await h.settle();const changed=h.map.get(STORAGE_KEY);assert.equal(JSON.parse(changed).plot.slots[0].positionM,2);h.pointer('plot-handle','lostpointercapture');await h.settle();assert.equal(h.map.get(STORAGE_KEY),changed);
-  h.pointer('plot-handle','pointerdown',{clientX:80,clientY:260});h.pointer('plot-handle','pointermove',{clientX:80,clientY:210});h.pointer('plot-handle','pointerup',{clientX:800,clientY:210});await h.settle();assert.equal(h.map.get(STORAGE_KEY),changed);
+  h.pointer('plot-handle','pointerdown',{clientX:114,clientY:420});h.pointer('plot-handle','pointermove',{clientX:114,clientY:360});assert.equal(h.$('plot-handle').classList.contains('is-dragging'),true);assert.equal(h.map.get(STORAGE_KEY),raw);h.pointer('plot-handle','pointercancel');assert.equal(h.$('plot-handle').classList.contains('is-dragging'),false);assert.match(h.$('plot-handle').getAttribute('aria-label'),/位置 1 公尺/);assert.equal(h.map.get(STORAGE_KEY),raw);
+  h.pointer('plot-handle','pointerdown',{clientX:114,clientY:420});h.pointer('plot-handle','pointermove',{clientX:114,clientY:360});h.pointer('plot-handle','pointerup',{clientX:114,clientY:360});await h.settle();const changed=h.map.get(STORAGE_KEY);assert.equal(JSON.parse(changed).plot.slots[0].positionM,2);h.pointer('plot-handle','lostpointercapture');await h.settle();assert.equal(h.map.get(STORAGE_KEY),changed);
+  h.pointer('plot-handle','pointerdown',{clientX:114,clientY:360});h.pointer('plot-handle','pointermove',{clientX:114,clientY:300});h.pointer('plot-handle','pointerup',{clientX:800,clientY:300});await h.settle();assert.equal(h.map.get(STORAGE_KEY),changed);
  }finally{h.close();}
 });
 test('direct graph tap chooses selected time only; midpoint ties upward, out-of-frame or canceled tap does not submit',async()=>{
- const h=harness();try{await h.collect();h.choose(4);h.pointer('plot-svg','pointerdown',{clientX:350,clientY:235});h.pointer('plot-svg','pointerup',{clientX:350,clientY:235});await h.settle();let raw=h.map.get(STORAGE_KEY);assert.equal(JSON.parse(raw).plot.slots[4].positionM,3);
-  h.pointer('plot-svg','pointerdown',{clientX:350,clientY:210});h.pointer('plot-svg','pointercancel');h.pointer('plot-svg','pointerup',{clientX:350,clientY:210});await h.settle();assert.equal(h.map.get(STORAGE_KEY),raw);
-  h.pointer('plot-svg','pointerdown',{clientX:800,clientY:210});h.pointer('plot-svg','pointerup',{clientX:800,clientY:210});await h.settle();assert.equal(h.map.get(STORAGE_KEY),raw);
+ const h=harness();try{await h.collect();h.choose(4);h.pointer('plot-svg','pointerdown',{clientX:372,clientY:330});h.pointer('plot-svg','pointerup',{clientX:372,clientY:330});await h.settle();let raw=h.map.get(STORAGE_KEY);assert.equal(JSON.parse(raw).plot.slots[4].positionM,3);
+  h.pointer('plot-svg','pointerdown',{clientX:372,clientY:300});h.pointer('plot-svg','pointercancel');h.pointer('plot-svg','pointerup',{clientX:372,clientY:300});await h.settle();assert.equal(h.map.get(STORAGE_KEY),raw);
+  h.pointer('plot-svg','pointerdown',{clientX:800,clientY:300});h.pointer('plot-svg','pointerup',{clientX:800,clientY:300});await h.settle();assert.equal(h.map.get(STORAGE_KEY),raw);
  }finally{h.close();}
 });
 test('opening reset after successful clear resets dialog return value so Escape restores new launcher',async()=>{
  const h=harness();try{h.click('begin');h.input('reading','1');h.submit('reading-form');await h.settle();h.openReset();h.stageTwo();h.ack();h.click('reset-confirm');await h.settle();h.openReset();h.escapeDialog();assert.equal(h.$('reset-dialog').open,false);assert.equal(h.d.activeElement.id,'reset-top');}finally{h.close();}
 });
 test('switching away and back cancels pending graph tap rather than resurrecting old transaction',async()=>{
- const h=harness();try{await h.collect();h.choose(0);const raw=h.map.get(STORAGE_KEY);h.pointer('plot-svg','pointerdown',{clientX:70,clientY:310});h.choose(1);h.choose(0);h.pointer('plot-svg','pointerup',{clientX:70,clientY:310});await h.settle();assert.equal(h.map.get(STORAGE_KEY),raw);}finally{h.close();}
+ const h=harness();try{await h.collect();h.choose(0);const raw=h.map.get(STORAGE_KEY);h.pointer('plot-svg','pointerdown',{clientX:104,clientY:420});h.choose(1);h.choose(0);h.pointer('plot-svg','pointerup',{clientX:104,clientY:420});await h.settle();assert.equal(h.map.get(STORAGE_KEY),raw);}finally{h.close();}
 });
 test('external storage change immediately revokes saved label and stale page cannot overwrite reset',async()=>{
  const h=harness();try{h.click('begin');h.input('reading','1');h.submit('reading-form');await h.settle();assert.match(h.$('save-status').textContent,/已存此裝置/);const old=h.map.get(STORAGE_KEY);h.map.delete(STORAGE_KEY);
