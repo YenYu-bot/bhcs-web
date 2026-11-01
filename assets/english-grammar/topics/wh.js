@@ -24,7 +24,10 @@ const BASIC = [
     return q(['What'], ` is ${d}?`, `It's ${/^[aeiou]/.test(n) ? 'an' : 'a'} ${n}.`, `${dz}是什麼？`, { type: 'thing', reply: n }); },
   (rng) => { const g = rng.pick(['he', 'she']); const name = rng.pick(NAMES[g === 'he' ? 'm' : 'f']); const [o, oz] = rng.pick([['your', '你'], [g === 'he' ? 'his' : 'her', g === 'he' ? '他' : '她']]);
     return q(['What'], ` is ${o} name?`, `${o === 'your' ? 'My' : cap(o)} name is ${name}.`, `${oz}叫什麼名字？`, { type: 'name' }); },
-  (rng) => { const g = rng.pick(['he', 'she']); const [w, wz] = rng.pick(WHO[g]); const [r, rz] = rng.fresh(RELS[g], (x) => x[0]);
+  (rng) => { const g = rng.pick(['he', 'she']); const [w, wz] = rng.pick(WHO[g]);
+    // a girl is a sister or classmate, a woman a mother, aunt or teacher
+    const young = ['boy', 'girl'].includes(w), fits = (x) => (young ? ['brother', 'sister', 'cousin', 'classmate', 'friend'] : ['father', 'mother', 'uncle', 'aunt', 'teacher', 'cousin', 'friend']).includes(x[0]);
+    const [r, rz] = rng.fresh(RELS[g].filter(fits), (x) => x[0]);
     return q(['Who'], ` is that ${w}?`, `${HE_SHE[g]} is my ${r}.`, `那個${wz}是誰？`, { type: 'person' }); },
   (rng) => { const [n, z, m] = rng.fresh(THINGS, (x) => x[0]); const [o, oz] = rng.pick(OWNERS); const [p] = rng.pick(PLACES.filter((x) => !(o === 'your' && x[0] === 'in your bag')));
     return q(['Where'], ` is ${o} ${n}?`, `It's ${p}.`, `${o === 'the' ? '那' + m : oz}${z}在哪裡？`, { type: 'place' }); },

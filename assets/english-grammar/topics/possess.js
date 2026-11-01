@@ -52,7 +52,10 @@ const MODES = [
     gen(rng) {
       const a = rng.pick(NAMES.m), b = rng.pick(NAMES.f);
       const shared = rng.fresh([true, false], (x) => 'joint-' + x);
-      const item = rng.fresh([['mother', '媽媽', 'mothers'], ['father', '爸爸', 'fathers'], ['teacher', '老師', 'teachers'], ['room', '房間', 'rooms'], ['dog', '狗', 'dogs'], ['bicycle', '腳踏車', 'bicycles'], ['school', '學校', 'schools']], (x) => 'j-' + x[0]);
+      // shared: things two people can own together (a room, a dog), not 共同的爸爸; separate: each has one
+      const items = shared ? [['room', '房間'], ['dog', '狗'], ['cat', '貓'], ['house', '房子'], ['car', '車'], ['teacher', '老師'], ['computer', '電腦']]
+        : [['mother', '媽媽', 'mothers'], ['father', '爸爸', 'fathers'], ['room', '房間', 'rooms'], ['bicycle', '腳踏車', 'bicycles'], ['school', '學校', 'schools'], ['bag', '袋子', 'bags']];
+      const item = rng.fresh(items, (x) => `j-${shared}-${x[0]}`);
       if (shared) return { lines: [[`This is `, blank(a), ' ', blank('and'), ' ', blank(`${b}'s`), ` ${item[0]}.`]], zh: `這是 ${a} 和 ${b} 共同的${item[1]}。`, meta: { kind: 'joint', shared: true, a, b } };
       return { lines: [[`These are `, blank(`${a}'s`), ' ', blank('and'), ' ', blank(`${b}'s`), ` ${item[2]}.`]], zh: `這些是 ${a} 的${item[1]}和 ${b} 的${item[1]}。`, meta: { kind: 'joint', shared: false, a, b } };
     },

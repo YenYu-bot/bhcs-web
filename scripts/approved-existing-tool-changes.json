@@ -274,6 +274,139 @@
       "approved_blob": "61ed4263a2cee7436504d1c559a6d515a85a44dd",
       "reason": "English grammar PR1: questions ask the listener, meaning checks, no repeated sentences: verbs.js",
       "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/core.js",
+      "baseline_blob": "dfa372b8f06a35395192285f445d9c52d4a0a434",
+      "approved_blob": "ead568d3fa8a38e5f564db91bb4edefc7a46e4d2",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: core.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/adverb.js",
+      "baseline_blob": "4778311b968a4b78966f4f45b6d1899b0edc5bdf",
+      "approved_blob": "d86af28ccbc1e65eef11cda1387745b865a15d20",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: adverb.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/compare.js",
+      "baseline_blob": "b42ac9e69a042a23aaa05210f4ac83da99d629f6",
+      "approved_blob": "5b8c73da9538ab4f3933deab052f8eebdc7064aa",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: compare.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/conj.js",
+      "baseline_blob": "2bee570b1b17e001dc6973abaf8623762e82b7c0",
+      "approved_blob": "1dd293df269ece3efe1843186c5d4d468d783e41",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: conj.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/exclaim.js",
+      "baseline_blob": "8d2fbfecb6d815545e6adb04eb53ceec5e48af63",
+      "approved_blob": "60b287239df0f358e976d2e19ee640709130c853",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: exclaim.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/freq.js",
+      "baseline_blob": "604f102d981fb41a672cbc55ae3f995e30ddafe5",
+      "approved_blob": "5918bbe0de229fc19b6ac0b610355e4c64070935",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: freq.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/future.js",
+      "baseline_blob": "809752726b4025a73ddd83e3f27409d930b86aa6",
+      "approved_blob": "7ec26625e86a002281a342b036e75348df992c2c",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: future.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/give.js",
+      "baseline_blob": "7a5a390adbc8b9f12ce5673cd5cf5e0573b1a3b5",
+      "approved_blob": "1be8a672c6cb4596af9f58008c8b3e2a95280a34",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: give.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/imperative.js",
+      "baseline_blob": "26a3546e6e5ace23ebfe4e7c5496a19a1c267c00",
+      "approved_blob": "eeabb89e2de0d010dc0d9ef29dbb3999e8573363",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: imperative.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/indef.js",
+      "baseline_blob": "b49aef1d08bb72da84fd99887555eaac10899e54",
+      "approved_blob": "967f34c20a757081574c6acb2cb1890bf1628306",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: indef.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/indirect.js",
+      "baseline_blob": "3b765779f5e8c2874d9bd8c58c804059f2c02757",
+      "approved_blob": "0fbeae3e619a215e029e190dce916aca989897dc",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: indirect.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/numbers.js",
+      "baseline_blob": "1e60cd23c994b93d2e1dc81cbe29970b7675b0fc",
+      "approved_blob": "d6dc21f31ca543dda03cf2032e5a21495a85d974",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: numbers.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/possess.js",
+      "baseline_blob": "55155343ae4f5542db5f1b9856e32131c1686421",
+      "approved_blob": "28bd34d6494621cfd5936fef01a72c4fa5832136",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: possess.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/progressive.js",
+      "baseline_blob": "73c7e702952775cbe9d7ae2d217c226c9d768542",
+      "approved_blob": "d5b64f93ef383d503f5cdb599e30575e88d24360",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: progressive.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/relative.js",
+      "baseline_blob": "42f477ba51fffe7e500c3aa0c1ba0e1cf7aa2a6b",
+      "approved_blob": "e89249382fe1a3d39e5dcbce2ddf4561919dbdae",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: relative.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/sense.js",
+      "baseline_blob": "4fe422d05d6d23e4fdb935142fd451d345e325fe",
+      "approved_blob": "0964a42b136ddfd27bb4ab89845ad3fd1b412326",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: sense.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/tooenough.js",
+      "baseline_blob": "86dadecac79e6092bb859447ac9fc12404801b97",
+      "approved_blob": "cc27c7487846d4ce00ad5a633c6615e22a9bdbcc",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: tooenough.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/wh.js",
+      "baseline_blob": "f45fc39fe30685ffa3740d56ac157be248619efe",
+      "approved_blob": "91e1848867fd2f0d43e67e4812a643253b1d246b",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: wh.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/whenif.js",
+      "baseline_blob": "0abb6a9c01f014f5156b7e53d81e6b6138e23f5d",
+      "approved_blob": "20c89b8b9d3ee442ed46ddb88f25610fb2b9cf1c",
+      "reason": "English grammar PR2: per-topic meaning fixes from the review: whenif.js",
+      "pull_request": null
     }
   ]
 }

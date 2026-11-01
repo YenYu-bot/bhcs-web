@@ -13,11 +13,11 @@ const TIMES = [
 const formFor = (rng, o) => (o.level === 1 ? 'will' : rng.fresh(['will', 'going'], (x) => 'form-' + x));
 const HINT = { will: 'will', going: 'be going to' };
 
-function draw(rng, o, { ask = false } = {}) {
+function draw(rng, o, { ask = false, test = () => true } = {}) {
   const exclude = (x) => x.kind !== 'person' || x.tags.includes('every');
   // ask: a question put to the listener — "your" subjects, the listener, and the speaker ("Will we …?")
   const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
-  const f = s && pickFrame(rng, s, o.level, (x) => x.habit && !x.age); // plans: things anyone might do
+  const f = s && pickFrame(rng, s, o.level, (x) => x.habit && !x.age && test(x)); // plans: things anyone might do
   if (!f) return null;
   const t = rng.fresh(TIMES.filter((x) => !(x.en.includes('school') && s.age === 'adult') && mealFits(`${f.v} ${f.rest || ''}`, x.en)), (x) => x.en);
   if (!t) return null;
@@ -45,7 +45,8 @@ const MODES = [
   {
     id: 'neg', name: '否定句', instruction: (o) => negInstruction(o),
     gen(rng, o) {
-      const d = draw(rng, o); if (!d) return null;
+      // "won't have lunch tomorrow" says more than it means: meals are not denied
+      const d = draw(rng, o, { test: (x) => !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '') }); if (!d) return null;
       const { s, f, t, form } = d;
       const abbr = wantAbbr(rng, o);
       const given = form === 'will' ? `${S0(s)} will ${f.v}${phrase(f)} ${t.en}.` : `${S0(s)} ${beForm(s, false)} going to ${f.v}${phrase(f)} ${t.en}.`;
