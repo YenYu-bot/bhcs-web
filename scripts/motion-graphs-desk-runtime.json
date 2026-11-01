@@ -1,0 +1,167 @@
+{
+  "source_commit": "3f3cfd0b74776af4b2ddf50ab34d3bf89440b1e9",
+  "v1_accepted_commit": "7a40cede3f7e7400a95686612363977639a89706",
+  "baseline_commit": "621c27cbeea791b4f37bd6f43189fe6894a0510c",
+  "files": [
+    {
+      "path": "app.mjs",
+      "bytes": 20175,
+      "sha256": "e08f5f060a5354883f0fb20761b65ea75db58480f5964545747040062126d5a0"
+    },
+    {
+      "path": "assets/teacher-body-v3.png",
+      "bytes": 941293,
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "assets/teacher-body-v3.provenance.json",
+      "bytes": 335,
+      "sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9"
+    },
+    {
+      "path": "clock.mjs",
+      "bytes": 2126,
+      "sha256": "c35585819e986376f2828de0a7ce93b17a5f9706fa6ded110e09b721c48c0387"
+    },
+    {
+      "path": "engine.mjs",
+      "bytes": 11899,
+      "sha256": "deb611bb15c70d4883e8989706559c1feff979a181711b914e9dcf319356e7ec"
+    },
+    {
+      "path": "geometry.mjs",
+      "bytes": 7922,
+      "sha256": "915415899b6795f16f72447562bbd61545315cfe7eb5121f25539a814631a91c"
+    },
+    {
+      "path": "index.html",
+      "bytes": 10649,
+      "sha256": "2dbf28621bf1feccf9d6af9e1443dddcf83552afc60abf6a23df5a499746fd9e"
+    },
+    {
+      "path": "model.mjs",
+      "bytes": 8677,
+      "sha256": "734cd95f7bf8ff52d44a1a264537bdbb8eeb377d4f7b01baed10df72c12680df"
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 8922,
+      "sha256": "fb6079e9242a242c0ac193126af83d05e7867108a8c44752b98136183789d220"
+    },
+    {
+      "path": "style.css",
+      "bytes": 7007,
+      "sha256": "20b7ac2005087f208336eaefb47519fc3dc3de45423ad3a101f7300900eb8197"
+    },
+    {
+      "path": "v2/app.mjs",
+      "bytes": 24182,
+      "sha256": "429035cf78835ce011a38a3a98efb13bb6d4673b5be5cec77a9e4c5430da0b10"
+    },
+    {
+      "path": "v2/engine.mjs",
+      "bytes": 11853,
+      "sha256": "9d9246e68c867fdb0ac800f200bf99cbc6b806d4b6ac2a06dae8e35698e2b6ed"
+    },
+    {
+      "path": "v2/geometry.mjs",
+      "bytes": 9225,
+      "sha256": "41629b9dadadeff393998a603d77f070a5a13305c1ce50fcf56470578bfe1910"
+    },
+    {
+      "path": "v2/index.html",
+      "bytes": 8159,
+      "sha256": "653ebce0d62bfe0f4d3c01593d34d1f6c8e651513c2aca00722619c3952937b8"
+    },
+    {
+      "path": "v2/lesson-copy.mjs",
+      "bytes": 8868,
+      "sha256": "748bf0625de9e22ee56c54c002d493644a50f5c397581a5e9744643ab80f2f7d"
+    },
+    {
+      "path": "v2/model.mjs",
+      "bytes": 27868,
+      "sha256": "7521f7b8be1069fc297d576ebd1c66f72613661e7bdee2d96eae03e90625323d"
+    },
+    {
+      "path": "v2/storage.mjs",
+      "bytes": 9063,
+      "sha256": "4ab23ed48d5f96b2856c860da5415de262b620bb494e06d6611e93e9f3d82080"
+    },
+    {
+      "path": "v2/style.css",
+      "bytes": 3252,
+      "sha256": "7b5845cf9b07cfee5a5f85bf6d7424ba8500a88a5d6e42c4628c043980de27fe"
+    }
+  ],
+  "metadata_replacements": [
+    {
+      "path": "index.html",
+      "before": "<meta name=\"robots\" content=\"noindex,nofollow\">",
+      "after": "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/motion-graphs-desk/\">"
+    },
+    {
+      "path": "v2/index.html",
+      "before": "<meta name=\"robots\" content=\"noindex,nofollow\">",
+      "after": "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/motion-graphs-desk/v2/\">"
+    }
+  ],
+  "source_tests": [
+    {
+      "path": "clock.test.mjs",
+      "source_sha256": "bc3def78f3119d5b3d832201ef7f0313a80a2b1b614574655437f5520fe2ca1e"
+    },
+    {
+      "path": "geometry.test.mjs",
+      "source_sha256": "79d926d4a028307210289785370667f55918f20a39998e125edcd13e7c117bb4"
+    },
+    {
+      "path": "model-engine.test.mjs",
+      "source_sha256": "4dcd97ef588277073c6adfa2d34a4f167b69b7f111d882120d843b23727e8e2b"
+    },
+    {
+      "path": "storage.test.mjs",
+      "source_sha256": "2c5e947945918194c08c7998541097c96a36602632dcf6163ac6f33afc3a0d7d"
+    },
+    {
+      "path": "ui-static.test.mjs",
+      "source_sha256": "181d9f7e0c97c99e2afeb4fe80bfea2a7f19e9c365cb3bdd194894d7d1c541f5"
+    },
+    {
+      "path": "ui.test.mjs",
+      "source_sha256": "4c7ffbd9c07bfeeaf0c7bbd94276be85d17b2d518f0690c7ea4969f01cd13797"
+    },
+    {
+      "path": "v1-preservation.test.mjs",
+      "source_sha256": "75a07c52f084d10dcd279380270689afeab55e4c4b208a86ed217111517c3dd4"
+    },
+    {
+      "path": "v2-copy.test.mjs",
+      "source_sha256": "636d134cf2170d4f18c95e7056c4e7125ab059237355bef69369702f338218bf"
+    },
+    {
+      "path": "v2-fixtures.mjs",
+      "source_sha256": "527ccb9ef626cb15237d77c4fff58b64c6dc955cd75c753d199388fa75c41367"
+    },
+    {
+      "path": "v2-geometry.test.mjs",
+      "source_sha256": "8a4cff0448a0d8eefaf3be0cd76a0225391781ff36ffeddd38daa71ade570807"
+    },
+    {
+      "path": "v2-model-engine.test.mjs",
+      "source_sha256": "1389c182483a6ea31fbeb8a692aaad55f5236c6319a4cf27741195f77bd993f1"
+    },
+    {
+      "path": "v2-storage.test.mjs",
+      "source_sha256": "4f7e72f6c6e981ad6049901efef2ece0946387c239258cfba16a220d615d8aee"
+    },
+    {
+      "path": "v2-ui-static.test.mjs",
+      "source_sha256": "85a6573ac6bb4dc8955620b944a43ceabb9f5f5f91e58ea800f8d035c97fcc7d"
+    },
+    {
+      "path": "v2-ui.test.mjs",
+      "source_sha256": "37faccc6ad0fab59aa08b35d591fe351a93f22352ef1f063b16e471d0916ed93"
+    }
+  ]
+}

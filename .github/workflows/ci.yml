@@ -175,6 +175,12 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_friction_efficiency_desk_browser.cjs
+      - name: Install virtual display for native motion background lifecycle
+        run: sudo apt-get install -y xvfb xauth
+      - name: Check accepted motion graphs native input, course evidence and storage boundaries
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs
       - name: Check all station operations, records, and challenges
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -232,6 +238,13 @@ jobs:
         with:
           name: friction-efficiency-desk-review
           path: friction-efficiency-desk-artifacts/
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: motion-graphs-desk-review
+          path: motion-graphs-desk-artifacts/
           retention-days: 14
 
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）

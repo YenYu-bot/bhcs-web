@@ -163,4 +163,19 @@ test('standalone friction efficiency native gate is additive and fail closed', (
   assert.ok(!jobs['science-stations'].text.includes('continue-on-error: true'));
 });
 
+
+
+
+test('motion graphs native gate retains all station checks and mandatory artifacts', () => {
+ const station=jobs['science-stations'].text;
+ assert.equal(count(station,'run: sudo apt-get install -y xvfb xauth'),1);
+ assert.ok(station.indexOf('run: sudo apt-get install -y xvfb xauth')<station.indexOf('run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs'));
+ assert.equal(count(station,'run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs'),1);
+ assert.ok(station.indexOf('playwright install --with-deps chromium')<station.indexOf('run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs'));
+ assert.ok(station.includes('name: motion-graphs-desk-review\n          path: motion-graphs-desk-artifacts/\n          retention-days: 14'));
+ assert.ok(!station.includes('continue-on-error: true'));
+ for(const old of ['incline_desk','pulley_desk','lever_desk','friction_efficiency_desk'])assert.equal(count(station,`run: node scripts/check_${old}_browser.cjs`),1);
+ assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:motion-graphs-desk'));
+});
+
 console.log(`ci workflow: ${tests} tests passed`);
