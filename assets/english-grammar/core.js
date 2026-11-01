@@ -133,7 +133,7 @@ export function buildSheet(topic, opts) {
   if (topic.zhRequired) o.zh = true; // the Chinese line is the only cue for these topics
   o.tr = TR_CHOICES.includes(o.tr) ? o.tr : 0;
   const rng = makeRng(o.seed);
-  const seen = new Set();
+  const seen = new Set(), sentences = new Set();
   const sections = [];
   // Topics built from a fixed list of sentences say how many different ones each section can hold.
   const trOnly = o.tr === TR_ONLY;
@@ -150,7 +150,12 @@ export function buildSheet(topic, opts) {
       // Two questions are the same when the student sees the same thing: the English with blanks, plus the Chinese where it is the cue.
       const key = it.lines.map(lineText).join(' | ').toLowerCase() + (topic.zhRequired ? ' | ' + it.zh : '');
       if (seen.has(key)) continue;
+      // Nor should one sentence come back with other blanks: the first answer would give the second away.
+      // Fixed-list sections may run short of new sentences, so this gives way after many tries rather than fail.
+      const whole = fullSentence(it).toLowerCase();
+      if (sentences.has(whole) && tries < n * 200) continue;
       seen.add(key);
+      sentences.add(whole);
       items.push(it);
     }
     sections.push({ mode, title: def.instruction(o), items });

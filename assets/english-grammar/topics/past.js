@@ -2,17 +2,17 @@
 // Advanced sheets mix present-simple sentences into the fill section, told apart by the time word.
 import { blank } from '../core.js';
 import { VERBS, vform, phrase, cuesFor } from '../verbs.js';
-import { actors, pickSubject, timeFirst, mid, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, timeFirst, mid, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap, asked, askActors, pickAsked, replyKey } from '../vcommon.js';
 
-function draw(rng, o, { exclude = () => false } = {}) {
-  const s = pickSubject(rng, actors(rng, o.level, { exclude }));
+function draw(rng, o, { exclude = () => false, ask = false } = {}) {
+  // ask: a question to the listener ("your" subjects, you, and "Did we …?")
+  const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.pastOk, 'past');
   if (!f) return null;
   const t = rng.fresh(cuesFor(f, 'past', s), (x) => x.en);
   return t ? { s, f, t } : null;
 }
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
-const noFirst = (s) => s.person === 1 || (s.person === 2 && s.num === 'sg') || s.tags.includes('every');
 
 const MODES = [
   {
@@ -49,22 +49,23 @@ const MODES = [
   {
     id: 'q', name: '疑問句', instruction: () => '改成疑問句。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: noFirst }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') }); if (!d) return null;
       const { s, f, t } = d;
+      const a = asked(s); // 改疑問句: I → you, my → your
       return {
-        lines: [[`${S0(s)} ${vform(f, 'past')}${phrase(f)} ${t.en}.`], ['→ ', blank('Did'), ` ${s.en} `, blank(f.v), `${phrase(f)} ${t.en}?`]],
-        zh: zhSent(s, t, '有' + f.zh, '嗎？'), meta: meta(d, { kind: 'q' }),
+        lines: [[`${S0(s)} ${vform(f, 'past')}${phrase(f)} ${t.en}.`], ['→ ', blank('Did'), ` ${mid(a.en)} `, blank(f.v), `${phrase(f)} ${t.en}?`]],
+        zh: zhSent(a, t, '有' + f.zh, '嗎？'), meta: meta(d, { kind: 'q', asked: a.en }),
       };
     },
   },
   {
     id: 'short', name: '簡答', instruction: () => '填入 Did，並完成簡答（否定簡答請用縮寫）。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t } = d;
       const yes = rng.chance(0.5);
       return {
-        lines: [[blank('Did'), ` ${s.en} ${f.v}${phrase(f)} ${t.en}? — ${yes ? 'Yes' : 'No'}, `, blank(s.reply), ' ', blank(yes ? 'did' : "didn't"), '.']],
+        lines: [[blank('Did'), ` ${s.en} ${f.v}${phrase(f)} ${t.en}? — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? 'did' : "didn't"), '.']],
         zh: zhSent(s, t, '有' + f.zh, '嗎？'), meta: meta(d, { kind: 'reply' }),
       };
     },
@@ -72,7 +73,7 @@ const MODES = [
   {
     id: 'full', name: '詳答', instruction: () => '依問句回答：先簡答（否定請用縮寫），再依括號提示寫出做了什麼。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') || s.person === 1, ask: true }); if (!d) return null;
       const { s, f, t } = d;
       const g = pickFrame(rng, s, o.level, (x) => x.pastOk && x.v !== f.v && cuesFor(x, 'past', s).some((c) => c.en === t.en), 'past'); if (!g) return null;
       return {
@@ -85,7 +86,7 @@ const MODES = [
   {
     id: 'wh', name: '疑問詞問句', instruction: () => '填入 did，並寫出括號裡動詞的過去式。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => s.person !== 3 || !s.reply || s.tags.includes('every') }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.person === 1 || s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t } = d;
       return {
         lines: [['What ', blank('did'), ` ${s.en} do ${t.en}? — ${cap(s.reply)} `, blank(vform(f, 'past')), ` (${f.v})${phrase(f)}.`]],

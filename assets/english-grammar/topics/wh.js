@@ -2,7 +2,7 @@
 // question word + do / does / did / is (level 3). The answer after "—" decides the word, and the number of blanks tells one word from two.
 import { blank, cap, zhJoin } from '../core.js';
 import { NAMES } from '../lexicon.js';
-import { pickPerson, midOf } from '../people.js';
+import { pickAskedPerson, midOf } from '../people.js';
 
 const THINGS = [['book', '書', '本'], ['pen', '筆', '枝'], ['bag', '袋子', '個'], ['watch', '手錶', '支'], ['umbrella', '雨傘', '把'], ['cup', '杯子', '個'],
   ['hat', '帽子', '頂'], ['jacket', '夾克', '件'], ['dictionary', '字典', '本'], ['ball', '球', '顆'], ['box', '盒子', '個'], ['key', '鑰匙', '把']];
@@ -74,14 +74,14 @@ const ASK = [
   { wh: 'What', t: 'prog', vp: 'doing now', zh: '現在正在做什麼', ans: (p) => `${p.reply} ${p.be} ${['reading a book', 'playing the piano', 'cooking dinner', 'washing the dishes'][p.k % 4]}.` },
   { wh: 'Where', t: 'prog', vp: 'going', zh: '要去哪裡', ans: (p) => `${p.reply} ${p.be} going to the ${['park', 'supermarket', 'station'][p.k % 3]}.` },
 ];
-const REPLY = { I: 'You', you: 'I', we: 'You', they: 'They', he: 'He', she: 'She' };
 function make(rng) {
   const a = rng.fresh(ASK, (x) => x.wh + x.vp);
-  const p = pickPerson(rng, (x) => x.pr !== 'I' && x.pr !== 'we');
+  // "my father" is asked as "your father"; "we" only where the speaker would ask about the group (plans, schedule)
+  const p = pickAskedPerson(rng, (x) => x.pr !== 'we' || ['going', 'play basketball'].includes(a.vp));
   const subj = midOf(p);
   const helper = a.t === 'past' ? 'did' : a.t === 'prog' ? (p.s3 ? 'is' : 'are') : p.s3 ? 'does' : 'do';
-  const reply = REPLY[p.pr];
-  const info = { reply, s3: a.t === 'pres' && reply !== 'I' && reply !== 'You' && reply !== 'They', be: reply === 'I' ? 'am' : ['You', 'They'].includes(reply) ? 'are' : 'is', k: rng.int(12) };
+  const reply = p.rp === 'I' ? 'I' : cap(p.rp);
+  const info = { reply, s3: a.t === 'pres' && ['He', 'She'].includes(reply), be: reply === 'I' ? 'am' : ['He', 'She'].includes(reply) ? 'is' : 'are', k: rng.int(12) };
   const zhQ = zhJoin(p.zh, a.zh) + '？';
   return { lines: [[blank(a.wh), ' ', blank(helper), ` ${subj} ${a.vp}? — ${a.ans(info)}`]], zh: zhQ, meta: { type: 'make', wh: a.wh, tense: a.t, s3: p.s3, subj } };
 }

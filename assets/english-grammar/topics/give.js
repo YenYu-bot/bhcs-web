@@ -1,6 +1,7 @@
 // Topic: verbs with two objects — give Amy a book = give a book TO Amy; buy Amy a book = buy a book FOR Amy.
 import { blank, cap, zhJoin } from '../core.js';
 import { pickPerson, verbFor, midOf } from '../people.js';
+import { mealFits } from '../vcommon.js';
 
 // [base, past, Chinese, preposition when the thing comes first, things that go with it]
 const V = (base, past, zh, prep, things) => ({ base, past, zh, prep, things });
@@ -35,7 +36,7 @@ function draw(rng, o, exclude = []) {
   if (v.base === 'teach' || p.en === 'Our teacher') recs = recs.filter(([r]) => !['the teacher'].includes(r));
   const [rec, recZh] = rng.fresh(recs, (x) => x[0]);
   const past = o.level >= 2 ? rng.fresh([true, false], (x) => 'tense-' + x) : false;
-  const [t, tz] = past ? rng.pick(TIMES) : ['', ''];
+  const [t, tz] = past ? rng.pick(TIMES.filter((x) => mealFits(th[0], x[0]))) : ['', ''];
   const verb = past ? v.past : verbFor(p, [v.base, v.base.endsWith('ch') || v.base.endsWith('ss') ? v.base + 'es' : v.base + 's']);
   // "my mother" follows the subject (his mother, their mother); "his sister" / "her friend" take the subject's gender when it has one
   const OWN = { he: ['his', '他'], she: ['her', '她'], they: ['their', '他們的'], we: ['our', '我們的'], you: ['your', '你'], I: ['my', '我'] }[p.pr];

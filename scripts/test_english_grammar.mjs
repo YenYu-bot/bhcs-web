@@ -50,7 +50,7 @@ function inList(word) {
 
 // Subject strings are only used to find where the subject ends in a sentence; the answers are still re-derived below.
 const ALL_NAMES = [...NAMES.m, ...NAMES.f];
-const SUBJECT_STRINGS = [...new Set([...SUBJECTS.map((x) => x.en), 'that girl', 'that boy', 'that man', 'that woman', 'those girls', 'those boys', ...ALL_NAMES, ...ALL_NAMES.flatMap((a) => ALL_NAMES.map((b) => `${a} and ${b}`))])]
+const SUBJECT_STRINGS = [...new Set([...SUBJECTS.map((x) => x.en), ...SUBJECTS.map((x) => askedSubject(x.en)), 'that girl', 'that boy', 'that man', 'that woman', 'those girls', 'those boys', ...ALL_NAMES, ...ALL_NAMES.flatMap((a) => ALL_NAMES.map((b) => `${a} and ${b}`))])]
   .sort((a, b) => b.length - a.length);
 const NAME_ALT = ALL_NAMES.join('|');
 // possessive subjects: Tom's mother / Tom and Amy's mother / Tom's and Amy's mothers
@@ -85,9 +85,20 @@ function expectedBe(subj, past) {
   return (/^you\b/i.test(s) || isPlural(s)) ? 'are' : 'is';
 }
 const MALE = new Set([...NAMES.m, 'he']), FEMALE = new Set([...NAMES.f, 'she']);
+// 改疑問句 (independent of lexicon.asked): the speaker talks to the listener, so I / we → you, my / our → your, X and I → you and X.
+function askedSubject(subj) {
+  const s = subj.trim();
+  if (s === 'I' || s === 'we' || s === 'We') return 'you';
+  const m = /^(.+) and I$/.exec(s);
+  if (m) return 'you and ' + m[1].replace(/^[Mm]y /, 'your ');
+  return s.replace(/^([Mm]y|[Oo]ur) /, 'your ');
+}
 function expectedReply(subj) {
   const s = subj.trim(), l = s.toLowerCase();
-  if (l === 'i' || l === 'we' || / and i$/.test(l)) return 'you';
+  if (l === 'i') return 'you';
+  if (l === 'you') return 'I'; // the textbook reading of "Are you …?" is one listener
+  if (l === 'we' || / and i$/.test(l)) return 'we／you'; // a "we" question may be answered by someone in the group or not
+
   if (/^you and /.test(l)) return 'we';
   if (isPlural(s)) return 'they';
   if (MALE.has(s) || /^mr\./.test(l) || /\b(brother|(grand)?father|uncle|boy)$/.test(l)) return 'he';
@@ -130,8 +141,10 @@ function checkBe(item, mode, o) {
     assert.ok(!/^every /i.test(m[1]), 'no "every" in negatives');
   } else if (mode === 'q') {
     const m = /^(.+?) (am|is|are|was|were) /.exec(L[0][0]);
-    assert.equal(L[1][1].a, m[2].charAt(0).toUpperCase() + m[2].slice(1), `q: ${strOf(L[1])}`);
     assert.equal(m[2], expectedBe(m[1], past));
+    const qs = askedSubject(m[1]);
+    assert.ok(L[1][2].toLowerCase().startsWith(` ${qs.toLowerCase()} `), `q: the question asks the listener (${m[1]} → ${qs}): ${strOf(L[1])}`);
+    assert.equal(L[1][1].a, (b => b.charAt(0).toUpperCase() + b.slice(1))(expectedBe(qs, past)), `q: ${strOf(L[1])}`);
   } else if (mode === 'short' || mode === 'full') {
     let subj, be;
     if (mode === 'short') { be = L[0][0].a; subj = subjectAt(L[0][1]); }
@@ -141,10 +154,10 @@ function checkBe(item, mode, o) {
     const ans = (mode === 'short' ? L[0] : L[1]).filter((p) => typeof p !== 'string').map((p) => p.a).slice(mode === 'short' ? 1 : 0);
     const reply = expectedReply(subj);
     assert.equal(ans[0], reply, `${mode} reply pronoun: ${strOf(L.at(-1))}`);
-    const rb = expectedBe(reply === 'you' ? 'you' : reply === 'we' ? 'we' : reply === 'they' ? 'they' : 'he', past);
+    const rb = expectedBe(reply === 'I' ? 'I' : reply === 'you' ? 'you' : /^we/.test(reply) ? 'we' : reply === 'they' ? 'they' : 'he', past);
     const no = full.includes('— No') || (mode === 'full');
     assert.equal(ans[1], no ? NEG[rb] : rb, `${mode} reply verb: ${strOf(L.at(-1))}`);
-    if (mode === 'full') { assert.equal(ans[2], reply.charAt(0).toUpperCase() + reply.slice(1)); assert.equal(ans[3], rb); }
+    if (mode === 'full') { assert.equal(ans[2], reply.split('／').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('／')); assert.equal(ans[3], rb); }
   } else if (mode === 'wh') {
     const m = /^(Where|What|Who) $/.exec(L[0][0]);
     assert.ok(m, `wh: ${strOf(L[0])}`);
@@ -215,8 +228,8 @@ function checkProgressive(it, mode, o) {
     else assert.deepEqual(a, [be, ing(m.base)]);
   }
   if (mode === 'neg') { const ab = a.length === 1; abbrOk(o, ab, text); assert.deepEqual(a, ab ? [NEG[be]] : [be, 'not']); assert.ok(text.includes(ing(m.base)), 'keeps the -ing word'); }
-  if (mode === 'q') assert.deepEqual(a, [cap1(be)]);
-  if (mode === 'short') { const r = expectedReply(m.subj), rb = expectedBe(r, past), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), r, yes ? rb : NEG[rb]]); }
+  if (mode === 'q') { const qs = askedSubject(m.subj); assert.ok(text.toLowerCase().includes(` ${qs.toLowerCase()} ${ing(m.base)}`), `q asks the listener: ${text}`); assert.deepEqual(a, [cap1(expectedBe(qs, past))]); }
+  if (mode === 'short') { const r = expectedReply(m.subj), rb = expectedBe(r.split('／')[0], past), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), r, yes ? rb : NEG[rb]]); }
   if (mode === 'full') { const r = expectedReply(m.subj), rb = expectedBe(r, past); hint(text, m.alt); assert.deepEqual(a, [r, NEG[rb], cap1(r), rb, ing(m.alt)]); }
   if (mode === 'wh') assert.deepEqual(a, [be, 'doing']);
 }
@@ -432,9 +445,13 @@ function checkFuture(it, mode, o) {
     else assert.deepEqual(a, m.abbr ? [NEG[be], 'going', 'to', m.base] : [be, 'not', 'going', 'to', m.base], text);
     if (m.abbr && m.form === 'going') assert.notEqual(be, 'am', 'am not has no contraction');
   }
-  if (mode === 'q') assert.deepEqual(a, m.form === 'will' ? ['Will', m.base] : [cap1(be), 'going', 'to', m.base], text);
+  if (mode === 'q') {
+    const qs = askedSubject(m.subj), qbe = expectedBe(qs, false);
+    assert.ok(new RegExp(`→ (Will|Am|Is|Are|___) ${qs.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} `, 'i').test(text.replace(/___ /, '___ ')) || text.toLowerCase().includes(` ${qs.toLowerCase()} `), `q asks the listener (${m.subj} → ${qs}): ${text}`);
+    assert.deepEqual(a, m.form === 'will' ? ['Will', m.base] : [cap1(qbe), 'going', 'to', m.base], text);
+  }
   if (mode === 'short') {
-    const r = expectedReply(m.subj), rb = expectedBe(r, false);
+    const r = expectedReply(m.subj), rb = expectedBe(r.split('／')[0], false);
     const want = m.form === 'will' ? [r, m.yes ? 'will' : "won't"] : m.yes ? [r, rb] : rb === 'am' ? ["I'm", 'not'] : [r, NEG[rb]];
     assert.deepEqual(a, want, text);
     assert.ok(text.includes(m.yes ? '— Yes,' : '— No,'));
@@ -487,7 +504,9 @@ function checkMust(it, mode) {
     else { assert.ok(it.zh.includes('不可以'), it.zh); assert.deepEqual(a, ["mustn't"], text); }
   }
   if (mode === 'q') {
-    const aux = m.s3 ? 'does' : 'do', r = m.reply, rAux = r === 'I' ? 'do' : aux;
+    const subj = /^___ (.+?) ___ ___ /.exec(text)[1];
+    assert.ok(!/^(My|Our|my|our) |^I$/.test(subj), `questions ask the listener, not about "my": ${text}`);
+    const r = subj === 'you' ? 'I' : subj === 'we' ? 'we／you' : m.reply, aux = m.s3 ? 'does' : 'do', rAux = /^(I|we|you)/.test(r) ? 'do' : aux;
     assert.deepEqual(a, [cap1(aux), 'have', 'to', r, m.yes ? rAux : rAux + "n't"], text);
   }
   if (mode === 'had') {
@@ -516,7 +535,7 @@ function checkPerfect(it, mode, o) {
   if (mode === 'never') assert.deepEqual(a, [h, 'never', p], text);
   if (mode === 'mix') {
     const perfect = /\b(twice|three times|before|for (two years|three hours|a long time)|since (last year|2020|this morning))\.$/.test(text);
-    const past = /\b(yesterday|last night|last Sunday|last month|two days ago)\.$/.test(text);
+    const past = /\b(yesterday|last night|last Sunday|last Saturday|two days ago)\.$/.test(text);
     assert.ok(perfect !== past, `exactly one kind of time word: ${text}`);
     assert.deepEqual(a, [perfect ? `${h} ${p}` : pastOf(m.base)], text);
   }
@@ -620,7 +639,7 @@ function checkTag(it, mode) {
     if (/^Let's/.test(stmt)) assert.deepEqual(a, ['shall', 'we']);
     else if (/^I am /.test(stmt)) assert.deepEqual(a, ["aren't", 'I']);
     else if (/^There (is|are|was|were)/.test(stmt)) assert.deepEqual(a, [TAG_NEG[/^There (\w+)/.exec(stmt)[1]], 'there']);
-    else assert.deepEqual(a, ['will', 'you'], `imperative: ${stmt}`);
+    else assert.deepEqual(a, [/^Don't/.test(stmt) ? 'will' : "will／won't", 'you'], `imperative: ${stmt}`);
     return;
   }
   const rest = stmt.slice(m.subj.length).trim();
@@ -881,7 +900,7 @@ test('every blank holds one word, and every English word is in the 2000-word lis
   for (const { t, o } of settings()) {
     if (o.count !== COUNT_MAX) continue;
     for (const it of buildSheet(t, o).sections.flatMap((s) => s.items)) {
-      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) assert.match(p.a, p.wide ? /^[A-Za-z' -]+$/ : /^([A-Za-z']+|×)$/, `one word per blank (or × for no word): "${p.a}"`);
+      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) for (const alt of p.a.split('／')) assert.match(alt, p.wide ? /^[A-Za-z' -]+$/ : /^([A-Za-z']+|×)$/, `one word per blank (or × for no word; ／ between accepted answers): "${p.a}"`);
       const text = it.lines.map((l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('')).join(' ');
       for (const w of text.match(/[A-Za-z][A-Za-z']*/g)) if (!inList(w)) missing.set(w, text);
     }

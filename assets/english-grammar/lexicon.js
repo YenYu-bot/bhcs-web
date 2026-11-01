@@ -20,8 +20,8 @@ const P = (en, zh, num, person, kind, reply, lvl, extra = {}) => ({ en, zh, num,
 
 export const SUBJECTS = [
   // pronouns (level 1)
-  P('I', '我', 'sg', 1, 'person', 'you', 1, { tags: ['pron'] }),
-  P('you', '你', 'sg', 2, 'person', null, 1, { tags: ['pron'] }),
+  P('I', '我', 'sg', 1, 'person', 'you', 1, { tags: ['pron'], age: 'young' }),
+  P('you', '你', 'sg', 2, 'person', 'I', 1, { tags: ['pron'], age: 'young' }),
   P('he', '他', 'sg', 3, 'person', 'he', 1, { tags: ['pron'] }),
   P('she', '她', 'sg', 3, 'person', 'she', 1, { tags: ['pron'] }),
   P('it', '牠', 'sg', 3, 'animal', 'it', 1, { tags: ['pron'] }),
@@ -140,10 +140,13 @@ export function extraSubjects(rng, level) {
 //   type   'adj' | 'job' | 'rel' | 'loc'
 //   for    which subject kinds it fits;  age  (jobs) which people;  num  'sg' | 'pl' | undefined (either)
 //   dur    'temp' (true at one time: hungry, at home) | 'perm' (lasting: tall, a doctor)
+//   now    (perm only) which people may take "now": 'young' (tall, strong: children grow) | 'adult' (jobs change); others never — "short now" makes no sense
+//   past   false: a lasting trait of a thing is not dated ("these pencils were small last year")
+//   self   a question the speaker asks about himself ("Am I late?", "Are we ready?", "Am I right?")
 //   zh     { pos: affirmative, neg: negative, q: the bit before 嗎 }
 const A = (en, forKinds, dur, pos, neg, q, extra = {}) => ({ type: 'adj', en, for: forKinds, dur, zh: { pos, neg, q }, ...extra });
 const L = (en, forKinds, where) => ({ type: 'loc', en, for: forKinds, dur: 'temp', zh: { pos: `在${where}`, neg: `不在${where}`, q: `在${where}` }, where });
-const J = (sg, pl, zh, age) => ({ type: 'job', en: sg, pl, for: ['person'], age, dur: 'perm', zh: { pos: `是${zh}`, neg: `不是${zh}`, q: `是${zh}` }, job: zh });
+const J = (sg, pl, zh, age) => ({ type: 'job', en: sg, pl, for: ['person'], age, dur: 'perm', now: 'adult', zh: { pos: `是${zh}`, neg: `不是${zh}`, q: `是${zh}` }, job: zh });
 
 export const PREDICATES = [
   // people, true at one time
@@ -154,11 +157,13 @@ export const PREDICATES = [
   A('angry', ['person'], 'temp', '很生氣', '沒有生氣', '生氣'),
   A('happy', ['person'], 'temp', '很開心', '不開心', '開心'),
   A('sad', ['person'], 'temp', '很難過', '不難過', '難過'),
-  A('late', ['person'], 'temp', '遲到了', '沒有遲到', '遲到了'),
+  A('late', ['person'], 'temp', '遲到了', '沒有遲到', '遲到了', { self: 'pres' }),
+  A('ready', ['person'], 'temp', '準備好了', '還沒準備好', '準備好了', { self: 'pres' }),
+  A('right', ['person'], 'temp', '是對的', '不對', '對', { self: 'pres' }),
   A('thirsty', ['person', 'animal'], 'temp', '很渴', '不渴', '渴'),
   A('sleepy', ['person'], 'temp', '很睏', '不睏', '睏'),
   // people, lasting
-  A('tall', ['person'], 'perm', '很高', '不高', '高'),
+  A('tall', ['person'], 'perm', '很高', '不高', '高', { now: 'young' }),
   A('short', ['person'], 'perm', '很矮', '不矮', '矮'),
   A('kind', ['person'], 'perm', '很親切', '不親切', '親切'),
   A('friendly', ['person', 'animal'], 'perm', '很友善', '不友善', '友善'),
@@ -166,18 +171,18 @@ export const PREDICATES = [
   A('smart', ['person', 'animal'], 'perm', '很聰明', '不聰明', '聰明'),
   A('lazy', ['person'], 'perm', '很懶惰', '不懶惰', '懶惰'),
   A('careful', ['person'], 'perm', '很細心', '不細心', '細心'),
-  A('strong', ['person'], 'perm', '很強壯', '不強壯', '強壯'),
+  A('strong', ['person'], 'perm', '很強壯', '不強壯', '強壯', { now: 'young' }),
   // animals
   A('cute', ['animal'], 'perm', '很可愛', '不可愛', '可愛'),
   A('fat', ['animal'], 'perm', '很胖', '不胖', '胖'),
   // things and food
-  A('new', ['thing'], 'perm', '很新', '不新', '新'),
-  A('old', ['thing'], 'perm', '很舊', '不舊', '舊'),
-  A('big', ['thing', 'animal'], 'perm', '很大', '不大', '大'),
-  A('small', ['thing', 'animal'], 'perm', '很小', '不小', '小'),
-  A('cheap', ['thing'], 'perm', '很便宜', '不便宜', '便宜'),
-  A('expensive', ['thing'], 'perm', '很貴', '不貴', '貴'),
-  A('heavy', ['thing'], 'perm', '很重', '不重', '重'),
+  A('new', ['thing'], 'perm', '很新', '不新', '新', { past: false }),
+  A('old', ['thing'], 'perm', '很舊', '不舊', '舊', { past: false }),
+  A('big', ['thing', 'animal'], 'perm', '很大', '不大', '大', { past: false }),
+  A('small', ['thing', 'animal'], 'perm', '很小', '不小', '小', { past: false }),
+  A('cheap', ['thing'], 'perm', '很便宜', '不便宜', '便宜', { past: false }),
+  A('expensive', ['thing'], 'perm', '很貴', '不貴', '貴', { past: false }),
+  A('heavy', ['thing'], 'perm', '很重', '不重', '重', { past: false }),
   A('clean', ['thing'], 'temp', '很乾淨', '不乾淨', '乾淨'),
   A('dirty', ['thing'], 'temp', '很髒', '不髒', '髒'),
   A('delicious', ['food'], 'temp', '很好吃', '不好吃', '好吃'),
@@ -234,9 +239,8 @@ export const PREDICATES = [
 // Time words. Every sheet that mixes tenses puts one of these in every question, so the tense has one answer.
 //   tense 'pres' | 'past'     dur  which predicates it suits     types  only these predicate types     weather  also suits weather
 export const TIMES = [
-  { en: 'now', zh: '現在', tense: 'pres', dur: ['temp', 'perm'], weather: true },
+  { en: 'now', zh: '現在', tense: 'pres', dur: ['temp'], weather: true },
   { en: 'right now', zh: '現在', tense: 'pres', dur: ['temp'], weather: true },
-  { en: 'this year', zh: '今年', tense: 'pres', dur: ['perm'], types: ['job'] },
   { en: 'yesterday', zh: '昨天', tense: 'past', dur: ['temp'], weather: true },
   { en: 'last night', zh: '昨晚', tense: 'past', dur: ['temp'], weather: true },
   { en: 'yesterday morning', zh: '昨天早上', tense: 'past', dur: ['temp'], weather: true },
@@ -255,5 +259,42 @@ export const FUNCTION_WORDS = [
   'a', 'an', 'the', 'be', 'am', 'is', 'are', 'was', 'were', 'not', "isn't", "aren't", "wasn't", "weren't",
   'do', 'does', 'did', 'have', 'has', 'had', 'and', 'at', 'mr', 'ms', 'mrs',
   'much', "o'clock", 'going', 'better', 'best', 'worse', 'worst', "won't", 'must', "mustn't", 'than', 'would', "haven't", "hasn't", 'shall', 'someone', 'who', 'which', "let's", 'ones', 'others', 'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'yourselves', 'themselves', 'whose', 'why', 'how', 'what', 'where', 'when', 'if', 'oh', 'nor', 'neither', 'either', // not in the 2000-word list as written: much is missing, o’clock is listed with a curly quote
-  "let's", "it's", "they're", 'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
+  "let's", "it's", "they're", "i'm", "we're", "you're", 'doing', "don't", "doesn't", "didn't", 'could', "can't", 'cannot', "couldn't",
 ];
+
+// ---- Questions: who asks whom (2026-11-01) ----
+// In a question the speaker talks to the listener, so the statement's "my brother" becomes "your brother", "I" becomes
+// "you" and "Ben and I" becomes "you and Ben" (the textbook rule for 改疑問句). Questions about the speaker ("Am I late?",
+// "Can we swim here?") are asked as they are; a "we" question may be answered "we" or "you", and the key lists both.
+const swapZh = (zh) => zh.replace(/^我們的/, '你們的').replace(/^我的/, '你的').replace(/^我/, '你');
+export function asked(s) {
+  if (s.en === 'I') return { ...s, en: 'you', zh: '你', person: 2, num: 'sg', reply: 'I', tags: [...s.tags, 'asked'] };
+  if (s.en === 'we') return { ...s, en: 'you', zh: '你們', person: 2, num: 'pl', reply: 'we', tags: [...s.tags, 'asked'] };
+  let m = /^(.+) and I$/.exec(s.en);
+  if (m) {
+    const other = m[1].replace(/^my /, 'your '), zo = s.zh.replace(/和我$/, '').replace(/^我的?/, '你').trim();
+    return { ...s, en: `you and ${other}`, zh: `你和${/^[A-Za-z]/.test(zo) ? ' ' : ''}${zo}`, person: 2, num: 'pl', reply: 'we', tags: [...s.tags, 'asked'] };
+  }
+  if (/^(my|our) /.test(s.en)) return { ...s, en: s.en.replace(/^(my|our) /, 'your '), zh: swapZh(s.zh), tags: [...s.tags, 'asked'] };
+  return s;
+}
+/** Person and number, e.g. "1sg"; a sheet's questions are spread over all six. */
+export const personNum = (s) => `${s.person}${s.num}`;
+/** Speaker-side subjects for questions about the speaker; "we" is answered "we" or "you". */
+export const SELF = [
+  P('I', '我', 'sg', 1, 'person', 'you', 1, { tags: ['pron', 'self'], age: 'young' }),
+  P('we', '我們', 'pl', 1, 'person', 'we', 1, { tags: ['pron', 'self'], age: 'young', replyAlt: 'you' }),
+  P('Ben and I', 'Ben 和我', 'pl', 1, 'person', 'we', 3, { tags: ['self', 'with-i'], age: 'young', replyAlt: 'you' }),
+];
+/** Pick a question subject: first a person–number not used much on this sheet, then a subject of that kind. */
+export function pickAsked(rng, pool) {
+  if (!pool.length) return null;
+  const keys = [...new Set(pool.map(personNum))];
+  const k = rng.fresh(keys, (x) => 'pn:' + x);
+  return rng.fresh(pool.filter((s) => personNum(s) === k), (x) => x.en);
+}
+/** The reply pronoun as the key prints it: "we／you" when both are right. */
+export const replyKey = (s, capital = false) => {
+  const c = (w) => (capital ? w.charAt(0).toUpperCase() + w.slice(1) : w);
+  return s.replyAlt ? `${c(s.reply)}／${c(s.replyAlt)}` : c(s.reply);
+};

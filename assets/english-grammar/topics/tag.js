@@ -47,8 +47,9 @@ const MODES = [
       const s = pick(rng, people(rng, o.level, { animals: true }));
       const past = o.level >= 2 && rng.chance(0.35);
       const f = pickFrame(rng, s, o.level, (x) => (past ? x.pastOk : x.habit)); if (!f) return null;
-      const t = rng.fresh(cuesFor(f, past ? 'past' : 'habit', s), (x) => x.en); if (!t) return null;
       const neg = polarity(rng, o);
+      // "They don't play every day" reads as "not every day", so negative statements take no every- cue
+      const t = rng.fresh(cuesFor(f, past ? 'past' : 'habit', s).filter((x) => !(neg && /^every\b/.test(x.en))), (x) => x.en); if (!t) return null;
       const aux = past ? 'did' : third(s) ? 'does' : 'do', pr = tagPronoun(s);
       const v = neg ? f.v : past ? vform(f, 'past') : third(s) ? vform(f, 's') : f.v;
       const stmt = neg ? `${cap(s.en)} ${NEG[aux]} ${v}${phrase(f)} ${t.en}` : `${cap(s.en)} ${v}${phrase(f)} ${t.en}`;
@@ -76,7 +77,7 @@ const MODES = [
     gen(rng, o) {
       const kind = rng.fresh(['lets', 'imp', 'am', 'there'], (x) => 'sp-' + x);
       if (kind === 'lets') { const [en, zh] = rng.fresh([['go to the park', '去公園'], ['have lunch', '吃午餐'], ['play basketball', '打籃球'], ['see a movie', '看電影'], ['clean the room', '打掃房間'], ['take a walk', '散步']], (x) => x[0]); return item(`Let's ${en}`, 'shall', 'we', `我們${zh}吧，好嗎？`, { kind: 'lets' }); }
-      if (kind === 'imp') { const [en, zh] = rng.fresh([['Open the door', '把門打開'], ['Close the window', '把窗戶關上'], ['Sit down', '坐下'], ['Be quiet', '安靜'], ["Don't be late", '不要遲到'], ['Pass me the salt', '把鹽遞給我'], ['Turn off the light', '關燈']], (x) => x[0]); return item(en, 'will', 'you', `${zh}，好嗎？`, { kind: 'imp' }); }
+      if (kind === 'imp') { const [en, zh] = rng.fresh([['Open the door', '把門打開'], ['Close the window', '把窗戶關上'], ['Sit down', '坐下'], ['Be quiet', '安靜'], ["Don't be late", '不要遲到'], ['Pass me the salt', '把鹽遞給我'], ['Turn off the light', '關燈']], (x) => x[0]); return item(en, /^Don't/.test(en) ? 'will' : "will／won't", 'you', `${zh}，好嗎？`, { kind: 'imp' }); }
       if (kind === 'am') { const [en, zh] = rng.fresh([['right', '是對的'], ['late', '遲到了'], ['your friend', '是你的朋友'], ['in the picture', '在照片裡'], ['a good student', '是好學生'], ['taller than you', '比你高']], (x) => x[0]); return item(`I am ${en}`, "aren't", 'I', `我${zh}，對吧？`, { kind: 'am' }); }
       const [en, zh, be] = rng.fresh([['There is a cat under the table', '桌子下面有一隻貓', 'is'], ['There are two eggs in the box', '盒子裡有兩顆蛋', 'are'], ['There was a party last night', '昨晚有派對', 'was'], ['There were many people in the park', '公園裡有很多人', 'were'], ['There is some milk in the glass', '杯子裡有一些牛奶', 'is'], ['There are three books on the desk', '書桌上有三本書', 'are']], (x) => x[0]);
       return item(en, NEG[be], 'there', `${zh}，對吧？`, { kind: 'there', aux: be });
