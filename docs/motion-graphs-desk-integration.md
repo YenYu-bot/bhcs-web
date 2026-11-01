@@ -76,3 +76,11 @@ Draft修正head `6fc5e8f108b4880d5a97757333cb9c9a8b587462` 之後，main已為 `
 Playwright預設headless採獨立headless-shell，而不是一般headed Chromium（[官方瀏覽器說明](https://playwright.dev/docs/browsers)）；Chromium headless delegate的ActivateContents只聚焦目標widget，與本輪未出現頁籤hidden的證據一致（[Chromium來源](https://chromium.googlesource.com/chromium/src/+/HEAD/headless/lib/browser/headless_web_contents_impl.cc)，此HEAD來源是架構佐證而非CI exact-build實測）。
 
 只將兩clock案指定到獨立headed Chromium，CI透過Ubuntu標準套件xvfb/xauth與xvfb-run提供顯示；另外19案繼續原headless-shell。背景案先真切頁籤做trusted hidden→visible的preflight，失敗仍fail、不skip；再執行原來的真hidden、clock停止、原始紀錄不變、回前景不追時／不自動播放門檻。所有DOM事件均由瀏覽器產生，不合成visibilitychange、不覆寫document.hidden，也不使用凍結生命週期代替背景。每案標示browserMode，另存background-environment.json。產品18檔、私人站與accepted／repair manifests完全不變；修後headed結果仍須由新exact-head CI證實，本地Node測試不冒稱瀏覽器通過。
+
+### 原 CDP session 的 capture 解除與快速前置探針
+
+`5cf03d7`／run41298111583仍是19／21，兩背景案在preflight失敗；這次已有真window blur/focus但仍無hidden，不能只憑blur判定兩頁是不同視窗。精確Chromium145.0.7632.6的[EmulationHandler](https://raw.githubusercontent.com/chromium/chromium/145.0.7632.6/content/browser/devtools/protocol/emulation_handler.cc)在904–916行為每個CDP session持有focus capture（stay_hidden=false）；新session原本就是false，因此送false不能解除Playwright原session的capture。renderer共用FocusController可以被關閉，解釋blur恢復但visible仍不變的觀察。此因果由精確版本來源及artifact共同支持，原session修正成功仍須新native證據。
+
+`browser-background.cjs`只對已pin Playwright1.58.2的in-process測試框架，經`page._connection.toImpl(page).delegate._mainFrameSession._client`取得原client；先驗版本、映射、owner、非空session及target/context身份，才在原session送focus=false。不patch已安裝套件、不接觸產品state或DOM visibility。peer明列newWindow:false並比較兩target的native windowId；此項是新增拓撲保證，不把未量測的舊拓撲當既定根因。
+
+新快速probe在全部21案例之前，以同一pair／原session解除／trusted hidden→visible helper驗證環境；失敗立即寫`background-preflight.json`的session/window/visibility診斷並fail，成功才繼續全部19headless＋2headed案例。各clock仍重做preflight及原嚴格clock/raw/回前景檢驗。內部框架API受版本與結構fail-closed保護，升級Playwright必須重新審查；沒有寬鬆fallback、synthetic事件或僅blur替代hidden。
