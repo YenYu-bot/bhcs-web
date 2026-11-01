@@ -4,7 +4,7 @@
 // "She is short now", or the same sentence twice on one sheet. Each rule names the problem it guards against.
 import assert from 'node:assert/strict';
 import { buildSheet, fullSentence } from '../assets/english-grammar/core.js';
-import { TOPICS } from '../assets/english-grammar/topics.js';
+import { ALL_TOPICS as TOPICS } from '../assets/english-grammar/topics.js'; // drafts too, so new topics are checked before they go public
 
 let tests = 0;
 const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };

@@ -407,6 +407,13 @@
       "approved_blob": "20c89b8b9d3ee442ed46ddb88f25610fb2b9cf1c",
       "reason": "English grammar PR2: per-topic meaning fixes from the review: whenif.js",
       "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics.js",
+      "baseline_blob": "2f4c25bf9058a4a276720c4bff987a29a62f28f0",
+      "approved_blob": "0941017dfd854e0a246a48fe51f6bd1095fd79cf",
+      "reason": "English grammar PR4: eight new topics registered as drafts: topics.js",
+      "pull_request": null
     }
   ]
 }
