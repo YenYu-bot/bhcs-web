@@ -30,22 +30,22 @@ const meta = (kind, extra) => ({ kind, ...extra });
 
 const MODES = [
   {
-    id: 'what', name: 'What + 名詞', instruction: () => '依中文填入 What、a / an（複數和不可數名詞不加）和形容詞，完成感嘆句。',
+    id: 'what', name: 'What + 名詞', instruction: () => '依中文和括號裡的形容詞，填入 What、a / an（複數和不可數名詞不加）和形容詞，完成感嘆句。',
     gen(rng, o) {
       const n = rng.fresh(NOUNS.filter((x) => o.level >= 2 || !x.plural), (x) => x.en);
       const adj = rng.pick(n.adjs);
       const art = n.plural ? null : aOrAn(adj);
       const bl = art ? [blank('What'), ' ', blank(art), ' ', blank(adj)] : [blank('What'), ' ', blank(adj)];
       const tail = o.level >= 3 && rng.chance(0.3) ? (n.plural ? (n.en === 'weather' ? ' it is' : ' they are') : ' it is') : '';
-      return { lines: [[...bl, ` ${n.en}${tail}!`]], zh: `好${ADJ_ZH[adj]}的${n.zh}啊！`, meta: meta('what', { adj, noun: n.en, plural: n.plural }) };
+      return { lines: [[...bl, ` ${n.en}${tail}! (${adj})`]], zh: `好${ADJ_ZH[adj]}的${n.zh}啊！`, meta: meta('what', { adj, noun: n.en, plural: n.plural }) };
     },
   },
   {
-    id: 'how', name: 'How + 形容詞／副詞', instruction: () => '依中文填入 How 和形容詞或副詞，完成感嘆句。',
+    id: 'how', name: 'How + 形容詞／副詞', instruction: () => '依中文和括號裡的字，填入 How 和形容詞或副詞，完成感嘆句。',
     gen(rng, o) {
       const [adj, rest, zh] = rng.fresh(HOW, (x) => x[0] + x[1]);
       const adv = ['fast', 'well', 'hard', 'late', 'early'].includes(adj) && !/ (is|are)( today)?$/.test(rest);
-      return { lines: [[blank('How'), ' ', blank(adj), ` ${rest}!`]], zh: `${zh}！`, meta: meta('how', { adj, adv }) };
+      return { lines: [[blank('How'), ' ', blank(adj), ` ${rest}! (${adj})`]], zh: `${zh}！`, meta: meta('how', { adj, adv }) };
     },
   },
   {

@@ -14,7 +14,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const LIST = new Set(JSON.parse(fs.readFileSync(path.join(root, 'scripts/english-grammar/wordlist-2000.json'), 'utf8')).map((w) => w.w.toLowerCase()));
 // irregular past forms back to their base (independent copy; the verb rules below use the same table)
-const PAST_BACK = { fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send', forgot: 'forget', began: 'begin', said: 'say', stole: 'steal', grew: 'grow', built: 'build', sold: 'sell', found: 'find', won: 'win', left: 'leave' };
+const PAST_BACK = { spent: 'spend', paid: 'pay', fed: 'feed', wore: 'wear', brought: 'bring', met: 'meet', read: 'read', ate: 'eat', drank: 'drink', did: 'do', wrote: 'write', sang: 'sing', swam: 'swim', ran: 'run', rode: 'ride', took: 'take', went: 'go', slept: 'sleep', drew: 'draw', bought: 'buy', made: 'make', flew: 'fly', sat: 'sit', taught: 'teach', drove: 'drive', caught: 'catch', got: 'get', had: 'have', saw: 'see', came: 'come', spoke: 'speak', told: 'tell', broke: 'break', gave: 'give', lent: 'lend', sent: 'send', forgot: 'forget', began: 'begin', said: 'say', stole: 'steal', grew: 'grow', built: 'build', sold: 'sell', found: 'find', won: 'win', left: 'leave' };
 const OK_WORDS = new Set([...LIST, ...FUNCTION_WORDS, ...NAMES.m.map((n) => n.toLowerCase()), ...NAMES.f.map((n) => n.toLowerCase()), 'chen', 'lin', 'taichung', 'taiwan']);
 // past participles that differ from the past form, back to the base
 const PP_BACK = { built: 'build', grown: 'grow', broken: 'break', stolen: 'steal', sold: 'sell', found: 'find', heard: 'hear', felt: 'feel', eaten: 'eat', drunk: 'drink', done: 'do', written: 'write', sung: 'sing', swum: 'swim', ridden: 'ride', taken: 'take', gone: 'go', drawn: 'draw', flown: 'fly', driven: 'drive', gotten: 'get', seen: 'see', worn: 'wear', spoken: 'speak', been: 'be', lent: 'lend', sent: 'send', kept: 'keep' };
@@ -50,7 +50,7 @@ function inList(word) {
 
 // Subject strings are only used to find where the subject ends in a sentence; the answers are still re-derived below.
 const ALL_NAMES = [...NAMES.m, ...NAMES.f];
-const SUBJECT_STRINGS = [...new Set([...SUBJECTS.map((x) => x.en), 'that girl', 'that boy', 'that man', 'that woman', 'those girls', 'those boys', ...ALL_NAMES, ...ALL_NAMES.flatMap((a) => ALL_NAMES.map((b) => `${a} and ${b}`))])]
+const SUBJECT_STRINGS = [...new Set([...SUBJECTS.map((x) => x.en), ...SUBJECTS.map((x) => askedSubject(x.en)), 'that girl', 'that boy', 'that man', 'that woman', 'those girls', 'those boys', ...ALL_NAMES, ...ALL_NAMES.flatMap((a) => ALL_NAMES.map((b) => `${a} and ${b}`))])]
   .sort((a, b) => b.length - a.length);
 const NAME_ALT = ALL_NAMES.join('|');
 // possessive subjects: Tom's mother / Tom and Amy's mother / Tom's and Amy's mothers
@@ -85,9 +85,20 @@ function expectedBe(subj, past) {
   return (/^you\b/i.test(s) || isPlural(s)) ? 'are' : 'is';
 }
 const MALE = new Set([...NAMES.m, 'he']), FEMALE = new Set([...NAMES.f, 'she']);
+// 改疑問句 (independent of lexicon.asked): the speaker talks to the listener, so I / we → you, my / our → your, X and I → you and X.
+function askedSubject(subj) {
+  const s = subj.trim();
+  if (s === 'I' || s === 'we' || s === 'We') return 'you';
+  const m = /^(.+) and I$/.exec(s);
+  if (m) return 'you and ' + m[1].replace(/^[Mm]y /, 'your ');
+  return s.replace(/^([Mm]y|[Oo]ur) /, 'your ');
+}
 function expectedReply(subj) {
   const s = subj.trim(), l = s.toLowerCase();
-  if (l === 'i' || l === 'we' || / and i$/.test(l)) return 'you';
+  if (l === 'i') return 'you';
+  if (l === 'you') return 'I'; // the textbook reading of "Are you …?" is one listener
+  if (l === 'we' || / and i$/.test(l)) return 'we／you'; // a "we" question may be answered by someone in the group or not
+
   if (/^you and /.test(l)) return 'we';
   if (isPlural(s)) return 'they';
   if (MALE.has(s) || /^mr\./.test(l) || /\b(brother|(grand)?father|uncle|boy)$/.test(l)) return 'he';
@@ -130,8 +141,10 @@ function checkBe(item, mode, o) {
     assert.ok(!/^every /i.test(m[1]), 'no "every" in negatives');
   } else if (mode === 'q') {
     const m = /^(.+?) (am|is|are|was|were) /.exec(L[0][0]);
-    assert.equal(L[1][1].a, m[2].charAt(0).toUpperCase() + m[2].slice(1), `q: ${strOf(L[1])}`);
     assert.equal(m[2], expectedBe(m[1], past));
+    const qs = askedSubject(m[1]);
+    assert.ok(L[1][2].toLowerCase().startsWith(` ${qs.toLowerCase()} `), `q: the question asks the listener (${m[1]} → ${qs}): ${strOf(L[1])}`);
+    assert.equal(L[1][1].a, (b => b.charAt(0).toUpperCase() + b.slice(1))(expectedBe(qs, past)), `q: ${strOf(L[1])}`);
   } else if (mode === 'short' || mode === 'full') {
     let subj, be;
     if (mode === 'short') { be = L[0][0].a; subj = subjectAt(L[0][1]); }
@@ -141,10 +154,10 @@ function checkBe(item, mode, o) {
     const ans = (mode === 'short' ? L[0] : L[1]).filter((p) => typeof p !== 'string').map((p) => p.a).slice(mode === 'short' ? 1 : 0);
     const reply = expectedReply(subj);
     assert.equal(ans[0], reply, `${mode} reply pronoun: ${strOf(L.at(-1))}`);
-    const rb = expectedBe(reply === 'you' ? 'you' : reply === 'we' ? 'we' : reply === 'they' ? 'they' : 'he', past);
+    const rb = expectedBe(reply === 'I' ? 'I' : reply === 'you' ? 'you' : /^we/.test(reply) ? 'we' : reply === 'they' ? 'they' : 'he', past);
     const no = full.includes('— No') || (mode === 'full');
     assert.equal(ans[1], no ? NEG[rb] : rb, `${mode} reply verb: ${strOf(L.at(-1))}`);
-    if (mode === 'full') { assert.equal(ans[2], reply.charAt(0).toUpperCase() + reply.slice(1)); assert.equal(ans[3], rb); }
+    if (mode === 'full') { assert.equal(ans[2], reply.split('／').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('／')); assert.equal(ans[3], rb); }
   } else if (mode === 'wh') {
     const m = /^(Where|What|Who) $/.exec(L[0][0]);
     assert.ok(m, `wh: ${strOf(L[0])}`);
@@ -215,8 +228,8 @@ function checkProgressive(it, mode, o) {
     else assert.deepEqual(a, [be, ing(m.base)]);
   }
   if (mode === 'neg') { const ab = a.length === 1; abbrOk(o, ab, text); assert.deepEqual(a, ab ? [NEG[be]] : [be, 'not']); assert.ok(text.includes(ing(m.base)), 'keeps the -ing word'); }
-  if (mode === 'q') assert.deepEqual(a, [cap1(be)]);
-  if (mode === 'short') { const r = expectedReply(m.subj), rb = expectedBe(r, past), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), r, yes ? rb : NEG[rb]]); }
+  if (mode === 'q') { const qs = askedSubject(m.subj); assert.ok(text.toLowerCase().includes(` ${qs.toLowerCase()} ${ing(m.base)}`), `q asks the listener: ${text}`); assert.deepEqual(a, [cap1(expectedBe(qs, past))]); }
+  if (mode === 'short') { const r = expectedReply(m.subj), rb = expectedBe(r.split('／')[0], past), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(be), r, yes ? rb : NEG[rb]]); }
   if (mode === 'full') { const r = expectedReply(m.subj), rb = expectedBe(r, past); hint(text, m.alt); assert.deepEqual(a, [r, NEG[rb], cap1(r), rb, ing(m.alt)]); }
   if (mode === 'wh') assert.deepEqual(a, [be, 'doing']);
 }
@@ -328,7 +341,9 @@ function checkFreq(it, mode, o) {
   else assert.deepEqual(a, [expectedBe(m.subj, false), m.adv], `adverb after be: ${text}`);
 }
 function checkImperative(it, mode) {
-  const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
+  const m = it.meta, text = it.lines.map(lineText).join(' '), all = ans(it);
+  if (all.some((x) => x.includes('／'))) assert.match(text, /a movie/, `only see／watch a movie has two answers: ${text}`);
+  const a = all.map((x) => x.split('／')[0]);
   if (mode === 'do') assert.deepEqual(a, [m.lower ? m.base : cap1(m.base)]);
   if (mode === 'dont') { assert.deepEqual(a, ["Don't", m.base]); assert.ok(text.includes('(不要'), 'cue says 不要'); }
   if (mode === 'lets') { assert.deepEqual(a, ["Let's", m.base]); assert.ok(/\(我們.*吧\)/.test(text), 'cue says 我們…吧'); }
@@ -432,9 +447,13 @@ function checkFuture(it, mode, o) {
     else assert.deepEqual(a, m.abbr ? [NEG[be], 'going', 'to', m.base] : [be, 'not', 'going', 'to', m.base], text);
     if (m.abbr && m.form === 'going') assert.notEqual(be, 'am', 'am not has no contraction');
   }
-  if (mode === 'q') assert.deepEqual(a, m.form === 'will' ? ['Will', m.base] : [cap1(be), 'going', 'to', m.base], text);
+  if (mode === 'q') {
+    const qs = askedSubject(m.subj), qbe = expectedBe(qs, false);
+    assert.ok(new RegExp(`→ (Will|Am|Is|Are|___) ${qs.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} `, 'i').test(text.replace(/___ /, '___ ')) || text.toLowerCase().includes(` ${qs.toLowerCase()} `), `q asks the listener (${m.subj} → ${qs}): ${text}`);
+    assert.deepEqual(a, m.form === 'will' ? ['Will', m.base] : [cap1(qbe), 'going', 'to', m.base], text);
+  }
   if (mode === 'short') {
-    const r = expectedReply(m.subj), rb = expectedBe(r, false);
+    const r = expectedReply(m.subj), rb = expectedBe(r.split('／')[0], false);
     const want = m.form === 'will' ? [r, m.yes ? 'will' : "won't"] : m.yes ? [r, rb] : rb === 'am' ? ["I'm", 'not'] : [r, NEG[rb]];
     assert.deepEqual(a, want, text);
     assert.ok(text.includes(m.yes ? '— Yes,' : '— No,'));
@@ -487,7 +506,9 @@ function checkMust(it, mode) {
     else { assert.ok(it.zh.includes('不可以'), it.zh); assert.deepEqual(a, ["mustn't"], text); }
   }
   if (mode === 'q') {
-    const aux = m.s3 ? 'does' : 'do', r = m.reply, rAux = r === 'I' ? 'do' : aux;
+    const subj = /^___ (.+?) ___ ___ /.exec(text)[1];
+    assert.ok(!/^(My|Our|my|our) |^I$/.test(subj), `questions ask the listener, not about "my": ${text}`);
+    const r = subj === 'you' ? 'I' : subj === 'we' ? 'we／you' : m.reply, aux = m.s3 ? 'does' : 'do', rAux = /^(I|we|you)/.test(r) ? 'do' : aux;
     assert.deepEqual(a, [cap1(aux), 'have', 'to', r, m.yes ? rAux : rAux + "n't"], text);
   }
   if (mode === 'had') {
@@ -516,7 +537,7 @@ function checkPerfect(it, mode, o) {
   if (mode === 'never') assert.deepEqual(a, [h, 'never', p], text);
   if (mode === 'mix') {
     const perfect = /\b(twice|three times|before|for (two years|three hours|a long time)|since (last year|2020|this morning))\.$/.test(text);
-    const past = /\b(yesterday|last night|last Sunday|last month|two days ago)\.$/.test(text);
+    const past = /\b(yesterday|last night|last Sunday|last Saturday|two days ago)\.$/.test(text);
     assert.ok(perfect !== past, `exactly one kind of time word: ${text}`);
     assert.deepEqual(a, [perfect ? `${h} ${p}` : pastOf(m.base)], text);
   }
@@ -553,14 +574,16 @@ function checkGive(it, mode) {
     assert.equal(long, m.long);
     assert.deepEqual(a, long ? [m.thing, prep, m.rec] : [m.rec, m.thing], `${given} → ${text}`);
   }
-  if (mode === 'it') { assert.deepEqual(a, [m.pron, prep, m.rec], text); assert.equal(m.pron, /\(some flowers\)$/.test(text) ? 'them' : 'it'); }
+  if (mode === 'it') { assert.deepEqual(a, [m.pron, prep, m.rec], text); assert.equal(m.pron, /\(the flowers\)$/.test(text) ? 'them' : 'it'); assert.match(text, /\(the [a-z ]+\)$/, 'it points back to something known'); }
 }
 const ADVERB_HOW = /^(fast|well|hard|late|early)$/;
 function checkExclaim(it, mode) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
   const last = it.lines.at(-1);
   const afterBlanks = lineText(last).split('___').pop();
-  if (m.kind === 'how' || (m.kind === 'change' && !m.what)) { assert.deepEqual(a, ['How', m.adj], text); assert.match(afterBlanks, /^ [a-z].*!$/, 'clause follows'); }
+  const hint = /!\s*\(([a-z]+)\)$/.exec(text);
+  if (m.kind === 'what' || m.kind === 'how') assert.equal(hint?.[1], m.adj, `English hint gives the word: ${text}`);
+  if (m.kind === 'how' || (m.kind === 'change' && !m.what)) { assert.deepEqual(a, ['How', m.adj], text); assert.match(afterBlanks, /^ [a-z].*!( \([a-z]+\))?$/, 'clause follows'); }
   else {
     const noun = afterBlanks.trim().split(' ')[0].replace(/!$/, '');
     assert.equal(noun, m.noun);
@@ -598,7 +621,7 @@ function checkRelative(it, mode) {
     assert.deepEqual(a, [relVerb(m.base, plural)], `${noun} ${person ? 'who' : 'which'} + verb: ${text}`);
     assert.ok(before.endsWith(`${person ? 'who' : 'which'} `), 'relative pronoun given');
   } else {
-    assert.deepEqual(a, [person ? 'who' : 'which'], `${noun}: ${text}`);
+    assert.deepEqual(a, [`${person ? 'who' : 'which'}／that`], `${noun}: ${text}`);
     const after = last.split('___')[1].trim().split(' ')[0];
     assert.equal(after, relVerb(m.base, plural), `clause verb agrees with ${noun}: ${text}`);
   }
@@ -620,7 +643,7 @@ function checkTag(it, mode) {
     if (/^Let's/.test(stmt)) assert.deepEqual(a, ['shall', 'we']);
     else if (/^I am /.test(stmt)) assert.deepEqual(a, ["aren't", 'I']);
     else if (/^There (is|are|was|were)/.test(stmt)) assert.deepEqual(a, [TAG_NEG[/^There (\w+)/.exec(stmt)[1]], 'there']);
-    else assert.deepEqual(a, ['will', 'you'], `imperative: ${stmt}`);
+    else assert.deepEqual(a, [/^Don't/.test(stmt) ? 'will' : "will／won't", 'you'], `imperative: ${stmt}`);
     return;
   }
   const rest = stmt.slice(m.subj.length).trim();
@@ -667,7 +690,7 @@ function checkSense(it, mode) {
     assert.deepEqual(a, [form], `${verb} for "${subj}": ${text}`);
   }
   if (mode === 'sense') { const going = /\(正在／/.test(text); assert.deepEqual(a, [going ? ing(m.base) : m.base], text); assert.match(text, /\b(saw|sees?|heard|hears?|watch(ed|es)?|felt|feels?) (him|her|the children|the dog|someone|the birds|the house|my heart) ___/); }
-  if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
+  if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [m.verb === 'help' ? `${m.base}／to ${m.base}` : BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
 }
 
 
@@ -704,7 +727,7 @@ function checkReflexive(it, mode) {
 }
 function checkIndirect(it, mode) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
-  const q = m.q, head = /^→ ([A-Z][^?.]*?) (where|what|when|how|who|which|why|if|___)/.exec(lineText(it.lines[1]))?.[1] ?? '';
+  const q = m.q, head = /^→ ([A-Z][^?.]*?) (where|what|when|how|who|which|why|if|whether|___)/.exec(lineText(it.lines[1]))?.[1] ?? '';
   assert.ok(it.lines.map(lineText).join(' ').endsWith(/^(Do|Can|Could)/.test(head) ? '?' : '.'), `end punctuation follows "${head}": ${text}`);
   // the indirect verb, from the direct question: does S V → Vs, did S V → V-ed / irregular, be stays (with its -ing verb), will / can / has stay with their verb;
   // a question with no subject before the verb (Who broke…?) keeps the verb as it is
@@ -724,7 +747,7 @@ function checkIndirect(it, mode) {
   }
   if (mode === 'verb') assert.deepEqual(a, verb.split(' '), `${q} → ${verb}: ${text}`);
   if (mode === 'order') { assert.deepEqual(a, [m.subj, verb], text); assert.ok(!/___ ___ (does|did) /.test(text)); }
-  if (mode === 'if') assert.deepEqual(a, ['if', m.subj, verb], text);
+  if (mode === 'if') assert.deepEqual(a, ['if／whether', m.subj, verb], text);
   // the indirect part never keeps does / did
   assert.ok(!/(know|wonder|tell me) (where|what|when|how|who|which|why|if)[^?.]* (does|did) /.test(text.replace(/___/g, a.join(' '))), 'no does / did in the indirect question');
 }
@@ -839,7 +862,119 @@ function checkLinkAdv(it, mode) {
   }
 }
 
-const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim, passive: checkPassive, relative: checkRelative, tag: checkTag, sense: checkSense, indef: checkIndef, reflexive: checkReflexive, indirect: checkIndirect, tooenough: checkTooEnough, whenif: checkWhenIf, adverb: checkAdverb, possess: checkPossess, numbers: checkNumbers, linkadv: checkLinkAdv };
+
+// ---------- batch 8 rules (2026-11 new topics) ----------
+const hintOf = (text) => /\(([a-z]+)\)/.exec(text)?.[1];
+function checkUsedTo(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'fill') { assert.deepEqual(a, ['used', 'to', hintOf(text)], text); assert.match(it.zh, /以前|小時候/); }
+  if (mode === 'negq') {
+    if (/^___ /.test(text)) { assert.deepEqual(a, ['Did', 'use', 'to'], text); assert.match(text, /— (Yes, \w+ did|No, \w+ didn't)\.$/); }
+    else assert.deepEqual(a, ["didn't", 'use', 'to'], text);
+  }
+  if (mode === 'vs') {
+    const base = hintOf(text);
+    if (/\b(am|is|are) used to ___/.test(text)) { assert.deepEqual(a, [ing(base)], text); assert.match(it.zh, /習慣/); }
+    else { assert.match(text, / used to ___/); assert.deepEqual(a, [base], text); assert.match(it.zh, /以前/); }
+  }
+}
+const CMP_OF = (b) => cmpForms(b)[0];
+function checkAsAs(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'as') { assert.deepEqual(a, ['as', 'as']); assert.match(it.zh, /一樣/); }
+  if (mode === 'not') { assert.deepEqual(a, ['not', 'as', 'as']); assert.match(it.zh, /沒有.*那麼/); }
+  if (mode === 'swap') {
+    const [given, out] = it.lines.map(lineText);
+    const m = /^(.+?) is (.+?) than (.+)\.$/.exec(given);
+    const base = a.slice(2, -1).join(' ');
+    assert.equal(m[2], CMP_OF(base), `comparative of ${base}: ${given}`);
+    assert.deepEqual([a[0], a[1], a.at(-1)], ['not', 'as', 'as']);
+    assert.ok(out.startsWith(`→ ${m[3].charAt(0).toUpperCase() + m[3].slice(1)} is`) && out.endsWith(` ${m[1].charAt(0).toLowerCase() + m[1].slice(1)}.`) || out.endsWith(` ${m[1]}.`), `the two swap places: ${given} / ${out}`);
+  }
+}
+const SPEND = { spend: ['spend', 'spends', 'spent'], take: ['take', 'takes', 'took'], cost: ['cost', 'costs', 'cost'], pay: ['pay', 'pays', 'paid'] };
+function checkSpend(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'choose') {
+    // the pattern decides the verb: It ___ … to V / 人 ___ 時間 V-ing / 物 ___ (人) 錢 / 人 ___ 錢 for 物
+    const verb = /^It ___ .* to [a-z]/.test(text) ? 'take' : / ___ [a-z ]+ for the /.test(text) ? 'pay' : /dollars/.test(text) ? 'cost' : 'spend';
+    const past = /\b(yesterday|last \w+)\b/.test(text);
+    const subj = text.split(' ___')[0];
+    const forms = SPEND[verb];
+    const want = past ? forms[2] : verb === 'take' || verb === 'cost' && !/^The shoes/.test(subj) ? forms[1] : verb === 'cost' ? forms[0] : isThirdSg(subj) ? forms[1] : forms[0];
+    if (verb === 'pay' || (verb === 'cost' && / ___ (me|you|him|her|us|them|[A-Z][a-z]+|my \w+|the \w+|our \w+) [a-z]+ (hundred|thousand)/.test(text))) assert.equal(a[0], forms[2], `buying is past: ${text}`);
+    else assert.equal(a[0], want, text);
+    if (verb === 'spend') assert.match(text, / ___ [a-z ]+ [a-z]+ing\b/, 'spend + time + V-ing');
+  }
+  if (mode === 'swap') {
+    const [given] = it.lines.map(lineText);
+    if (/ spent /.test(given)) { assert.equal(a[0], 'took'); assert.equal(a[2], 'to'); const v = /spent [a-z ]+? ([a-z]+)ing\b/.exec(given)[1]; assert.ok([v, v + 'e', v.replace(/(.)\1$/, '$1')].includes(a[3]), `${a[3]} from ${given}`); }
+    else { assert.match(given, / cost /); assert.deepEqual(a, ['paid', 'for']); }
+  }
+}
+function checkItTo(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'fill') assert.deepEqual(a, ['It', 'to']);
+  if (mode === 'swap') { const v = /^To ([a-z]+) /.exec(lineText(it.lines[0]))[1]; assert.deepEqual(a, ['It', 'to', v]); }
+  if (mode === 'forof') {
+    const adj = /^It (?:is|was) ([a-z]+) ___/.exec(text)[1];
+    const person = new Set(['kind', 'nice', 'smart', 'careless', 'polite']);
+    assert.deepEqual(a, [person.has(adj) && /^It was/.test(text) ? 'of' : 'for'], text);
+    if (a[0] === 'for') assert.ok(!['kind', 'smart', 'careless', 'polite'].includes(adj), `for + ${adj}`);
+  }
+}
+const WH_ZH = { what: /什麼/, how: /怎麼/, where: /哪裡/, when: /什麼時候/, which: /哪一/, who: /誰/ };
+function checkWhTo(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  assert.ok(WH_ZH[a[0]], `question word ${a[0]}`); assert.match(it.zh, WH_ZH[a[0]], `${a[0]} matches the Chinese: ${it.zh}`);
+  assert.equal(a[1], 'to');
+  if (mode === 'swap') { const m = / (what|how|where|when|who) \w+ should ([a-z]+)/.exec(lineText(it.lines[0])); assert.deepEqual(a, [m[1], 'to', m[2]]); }
+}
+function checkThat(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  if (mode === 'head') {
+    const subj = text.split(' ___')[0];
+    const VZ = { think: '認為', know: '知道', hope: '希望', believe: '相信', sure: '確定', heard: '聽說' };
+    const verb = Object.keys(VZ).find((k) => it.zh.includes(VZ[k]));
+    const want = verb === 'sure' ? [subj === 'I' ? 'am' : subj === 'We' ? 'are' : 'is', 'sure'] : verb === 'heard' ? ['heard'] : [/^(I|We)$/.test(subj) ? verb : s3(verb)];
+    assert.deepEqual(a, want, text); assert.match(text, / that [a-z]|that [A-Z]/);
+  }
+  if (mode === 'join') { assert.deepEqual(a, ['that']); const [given, out] = it.lines.map(lineText); const clause = given.split('. I ')[0]; assert.ok(out.toLowerCase().includes(`___ ${clause.toLowerCase()}.`), `${given} → ${out}`); }
+  if (mode === 'neg') {
+    const given = lineText(it.lines[0]);
+    const m = /^I think (.+?) (isn't|won't|can't|doesn't|don't) ([a-z]+)/.exec(given);
+    const want = { "isn't": 'is', "won't": 'will', "can't": 'can', "doesn't": s3(m[3]), "don't": m[3] }[m[2]];
+    assert.deepEqual(a, ["don't", 'think', want], given); assert.match(it.zh, /^我不認為/);
+  }
+}
+function checkPartAdj(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  const PERSON = /^(I|We|The students|The children|My parents|[A-Z][a-z]+) (was|were)\b/;
+  if (mode === 'pick') {
+    const [x, y] = /\((\w+)／(\w+)\)/.exec(text).slice(1);
+    const want = [x, y].find((w) => (PERSON.test(text) ? /ed$/ : /ing$/).test(w));
+    assert.deepEqual(a, [want], text);
+  }
+  if (mode === 'both') { assert.ok(/ing$/.test(a[0]) && /ed$/.test(a[1]), text); const base = hintOf(text); assert.deepEqual(a, [ing(base), pastOf(base)], `same verb ${base}: ${a}`); }
+  if (mode === 'prep') {
+    const adj = / (\w+ed) ___/.exec(text)[1];
+    const PREP = { interested: 'in', excited: 'about', surprised: 'at／by', worried: 'about', satisfied: 'with', frightened: 'of' };
+    assert.deepEqual(a, [PREP[adj]], text);
+  }
+}
+function checkPartNoun(it, mode) {
+  const text = it.lines.map(lineText).join(' '), a = ans(it);
+  const base = hintOf(text);
+  // after the people nouns the participle is active (V-ing); after things it is passive (past participle)
+  const active = /^The (boy|girl|man|woman|students|children) ___/.test(text);
+  if (mode === 'ing' || (mode === 'mix' && active)) assert.deepEqual(a, [ing(base)], text);
+  else assert.deepEqual(a, [ppAny(base)], text);
+  const head = /^The (\w+)/.exec(text)[1], plural = /s$/.test(head) || ['children', 'men', 'women'].includes(head);
+  const verb = /\) [^.]*? (is|are|was)\b/.exec(text)?.[1];
+  if (verb && verb !== 'was') assert.equal(verb, plural ? 'are' : 'is', `main verb agrees with ${head}: ${text}`);
+}
+
+const CHECKERS = { be: (it, mode, o) => checkBe(it, mode, o), simple: checkSimple, progressive: checkProgressive, there: checkThere, can: checkCan, past: checkPast, pronoun: checkPronoun, plural: checkPlural, this: checkThis, freq: checkFreq, imperative: checkImperative, article: checkArticle, quantity: checkQuantity, wh: checkWh, prep: checkPrep, future: checkFuture, compare: checkCompare, conj: checkConj, must: checkMust, perfect: checkPerfect, gerund: checkGerund, give: checkGive, exclaim: checkExclaim, passive: checkPassive, relative: checkRelative, tag: checkTag, sense: checkSense, indef: checkIndef, reflexive: checkReflexive, indirect: checkIndirect, tooenough: checkTooEnough, whenif: checkWhenIf, adverb: checkAdverb, possess: checkPossess, numbers: checkNumbers, linkadv: checkLinkAdv, usedto: checkUsedTo, asas: checkAsAs, spend: checkSpend, itto: checkItTo, whto: checkWhTo, that: checkThat, partadj: checkPartAdj, partnoun: checkPartNoun };
 
 // ---------- sheets to check ----------
 function* settings() {
@@ -881,7 +1016,7 @@ test('every blank holds one word, and every English word is in the 2000-word lis
   for (const { t, o } of settings()) {
     if (o.count !== COUNT_MAX) continue;
     for (const it of buildSheet(t, o).sections.flatMap((s) => s.items)) {
-      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) assert.match(p.a, p.wide ? /^[A-Za-z' -]+$/ : /^([A-Za-z']+|×)$/, `one word per blank (or × for no word): "${p.a}"`);
+      for (const p of it.lines.flat().filter((x) => typeof x !== 'string')) for (const alt of p.a.split('／')) assert.match(alt, p.wide ? /^[A-Za-z' -]+$/ : /^([A-Za-z']+|×)$/, `one word per blank (or × for no word; ／ between accepted answers): "${p.a}"`);
       const text = it.lines.map((l) => l.map((p) => (typeof p === 'string' ? p : p.a)).join('')).join(' ');
       for (const w of text.match(/[A-Za-z][A-Za-z']*/g)) if (!inList(w)) missing.set(w, text);
     }

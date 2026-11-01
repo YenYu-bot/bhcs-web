@@ -1,13 +1,13 @@
 // Topic: have to / has to / must — obligation, with don't have to (no need) against mustn't (not allowed).
 import { blank, cap, zhJoin } from '../core.js';
-import { pickPerson, verbFor, midOf } from '../people.js';
+import { pickPerson, verbFor, midOf, pickAskedPerson, rpKey } from '../people.js';
 
 // Duties: [verb phrase, Chinese]; 'school' ones are for students, so not for parents or the teacher.
 const D = (en, zh, who = 'any', when = null) => ({ en, zh, who, when });
 const DUTIES = [
   D('do my homework', '寫功課', 'student'), D('get up early', '早起'), D('wear a uniform', '穿制服', 'student', ['every day', 'today', 'tomorrow']), D('clean the room', '打掃房間'), D('go to school', '上學', 'student', ['every day', 'today', 'tomorrow', 'this week']),
   D('finish the work', '把工作做完', 'adult'), D('see a doctor', '去看醫生', 'any', ['today', 'tomorrow', 'now', 'this week']), D('stay at home', '待在家裡', 'any', ['today', 'tomorrow', 'now', 'this week']), D('wash the dishes', '洗碗'), D('take the bus', '搭公車'),
-  D('study hard', '用功讀書', 'student', ['every day', 'today', 'this week', 'tomorrow']), D('go to bed early', '早點睡'), D('wait for the bus', '等公車', 'any', ['today', 'every day', 'now']), D('help my mother', '幫我媽媽', 'student'), D('go to work', '去上班', 'adult', ['every day', 'today', 'tomorrow', 'this week']),
+  D('study hard', '用功讀書', 'student', ['every day', 'today', 'this week', 'tomorrow']), D('go to bed early', '早點睡', 'any', ['every day', 'today', 'tomorrow', 'this week']), D('wait for the bus', '等公車', 'any', ['today', 'every day', 'now']), D('help my mother', '幫我媽媽', 'student'), D('go to work', '去上班', 'adult', ['every day', 'today', 'tomorrow', 'this week']),
   D('cook dinner', '煮晚餐', 'adult'), D('walk the dog', '遛狗'), D('practice the piano', '練習鋼琴', 'student'), D('take the test', '考試', 'student', ['today', 'tomorrow', 'this week']), D('buy some food', '買一些食物', 'any', ['today', 'tomorrow', 'now']),
 ];
 // Rules: [verb phrase, Chinese]; must / mustn't come from signs and rules, so the subjects are you / we / students / people.
@@ -20,7 +20,7 @@ const MUSTNT = [
   ['touch the animals', '碰那些動物'], ['park here', '在這裡停車'], ['be late for class', '上課遲到'], ['use a dictionary during the test', '考試時用字典'], ['throw trash on the floor', '把垃圾丟在地上'],
 ];
 const RULE_SUBJECTS = [['You', '你'], ['We', '我們'], ['Students', '學生'], ['Drivers', '駕駛人'], ['Visitors', '訪客'], ['People', '大家']];
-const SUBJ_FOR = { 'be quiet in the library': ['You', 'We', 'Students', 'Visitors', 'People'], 'talk in the library': ['You', 'We', 'Students', 'Visitors', 'People'], 'be on time': ['You', 'We', 'Students', 'Visitors', 'People'], 'wear a seat belt': ['You', 'We', 'Drivers'], 'stop at the red light': ['You', 'We', 'Drivers'], 'park here': ['You', 'Drivers', 'Visitors'], 'touch the animals': ['You', 'Visitors', 'Students'],
+const SUBJ_FOR = { 'throw trash on the floor': ['You', 'We', 'Students', 'Visitors', 'People'], 'be quiet in the library': ['You', 'We', 'Students', 'Visitors', 'People'], 'talk in the library': ['You', 'We', 'Students', 'Visitors', 'People'], 'be on time': ['You', 'We', 'Students', 'Visitors', 'People'], 'wear a seat belt': ['You', 'We', 'Drivers'], 'stop at the red light': ['You', 'We', 'Drivers'], 'park here': ['You', 'Drivers', 'Visitors'], 'touch the animals': ['You', 'Visitors', 'Students'],
   'listen to the teacher': ['You', 'We', 'Students'], 'be quiet in class': ['You', 'We', 'Students'], 'finish the test in an hour': ['You', 'We', 'Students'], 'keep the classroom clean': ['You', 'We', 'Students'],
   'use a dictionary during the test': ['You', 'We', 'Students'], 'be late for class': ['You', 'We', 'Students'], 'eat in the classroom': ['You', 'We', 'Students'], 'run in the hall': ['You', 'We', 'Students'],
   'wash your hands before dinner': ['You', 'We', 'Students'], 'look left and right before you cross the street': ['You', 'We'] };
@@ -28,13 +28,13 @@ const ownWord = (s) => ({ You: 'your', We: 'our' }[s] ?? 'their');
 const ruleText = (vp, s) => vp.replace('your', ownWord(s)).replace('before you cross', s === 'We' ? 'before we cross' : 'before you cross');
 
 const fits = (d, p) => (d.who === 'any') || (d.who === 'student' ? !['My father', 'My mother', 'My parents', 'Our teacher'].includes(p.en) : ['My father', 'My mother', 'My parents', 'Our teacher', 'He', 'She'].includes(p.en));
-const my = (d, p) => d.en.replace('my mother', p.en === 'I' ? 'my mother' : p.pr === 'he' ? 'his mother' : p.pr === 'she' ? 'her mother' : p.pr === 'you' ? 'your mother' : p.pr === 'we' ? 'our mother' : 'their mother')
+const my = (d, p) => d.en.replace('my mother', p.en === 'I' ? 'my mother' : p.pr === 'he' ? 'his mother' : p.pr === 'she' ? 'her mother' : p.pr === 'you' ? 'your mother' : p.pr === 'we' ? 'our mother' : 'their mothers')
   .replace('my homework', p.en === 'I' ? 'my homework' : p.pr === 'he' ? 'his homework' : p.pr === 'she' ? 'her homework' : p.pr === 'you' ? 'your homework' : p.pr === 'we' ? 'our homework' : 'their homework');
-const zhMy = (d, p) => d.zh.replace('我媽媽', p.en === 'I' ? '我媽媽' : p.pr === 'we' ? '我們的媽媽' : p.pr === 'you' ? '你媽媽' : p.pr === 'he' ? '他媽媽' : p.pr === 'she' ? '她媽媽' : '他們的媽媽');
-function duty(rng, test = () => true) {
-  // singular and plural subjects take turns, so has to and have to come up about equally
+const zhMy = (d, p) => d.zh.replace('我媽媽', p.en === 'I' ? '我媽媽' : p.pr === 'we' ? '我們的媽媽' : p.pr === 'you' ? '你媽媽' : p.pr === 'he' ? '他媽媽' : p.pr === 'she' ? '她媽媽' : '他們各自的媽媽');
+function duty(rng, test = () => true, ask = false) {
+  // singular and plural subjects take turns, so has to and have to come up about equally; questions spread over 1st, 2nd and 3rd person
   const wantS3 = rng.fresh([true, false], (x) => 'subj-' + x);
-  const p = pickPerson(rng, (x) => test(x) && x.s3 === wantS3);
+  const p = ask ? pickAskedPerson(rng, (x) => test(x)) : pickPerson(rng, (x) => test(x) && x.s3 === wantS3);
   const d = rng.fresh(DUTIES.filter((x) => fits(x, p)), (x) => x.en);
   return { p, d, en: my(d, p), zh: zhMy(d, p) };
 }
@@ -67,7 +67,9 @@ const MODES = [
     gen(rng, o) {
       if (rng.fresh([true, false], (x) => 'neg-' + x)) {
         const { p, d, en, zh } = duty(rng);
-        const [w, wz] = rng.fresh(whenFor(d, WHEN), (x) => 'when-' + x[0]);
+        // "doesn't have to … every day" means 不必每天都; the negative keeps to one day
+        const [w, wz] = rng.fresh(whenFor(d, WHEN).filter((x) => x[0] !== 'every day'), (x) => 'when-' + x[0]) ?? [];
+        if (!w) return null;
         return { lines: [[`${p.en} `, blank(p.s3 ? "doesn't" : "don't"), ' ', blank('have'), ' ', blank('to'), ` ${en} ${w}.`]], zh: zhJoin(p.zh, wz, '不必', zh) + '。', meta: { kind: 'neg', need: false, s3: p.s3 } };
       }
       const [vp, zh] = rng.fresh(MUSTNT, (x) => x[0]);
@@ -80,14 +82,14 @@ const MODES = [
   {
     id: 'q', name: '疑問句與簡答', instruction: () => '用 Do / Does … have to 完成問句與簡答。',
     gen(rng, o) {
-      const { p, d, en, zh } = duty(rng, (x) => x.pr !== 'I' && x.pr !== 'we');
+      const { p, d, en, zh } = duty(rng, () => true, true);
       const yes = rng.chance(0.5);
-      const r = p.pr === 'you' ? 'I' : p.pr;
+      const r = p.rp;
       const aux = p.s3 ? 'does' : 'do';
-      const rAux = r === 'I' ? 'do' : aux;
+      const rAux = ['I', 'we', 'you'].includes(r) ? 'do' : aux;
       const [w, wz] = rng.fresh(whenFor(d, WHEN), (x) => 'when-' + x[0]);
       return {
-        lines: [[blank(cap(aux)), ` ${midOf(p)} `, blank('have'), ' ', blank('to'), ` ${en} ${w}? — ${yes ? 'Yes' : 'No'}, `, blank(r), ' ', blank(yes ? rAux : rAux + "n't"), '.']],
+        lines: [[blank(cap(aux)), ` ${midOf(p)} `, blank('have'), ' ', blank('to'), ` ${en} ${w}? — ${yes ? 'Yes' : 'No'}, `, blank(rpKey(p)), ' ', blank(yes ? rAux : rAux + "n't"), '.']],
         zh: zhJoin(p.zh, wz, '必須', zh) + '嗎？', meta: { kind: 'q', s3: p.s3, yes, reply: r },
       };
     },

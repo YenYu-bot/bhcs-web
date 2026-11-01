@@ -32,7 +32,7 @@ const PAIRS = [
   ['I was tired', 'I went to bed early', '我很早就睡了，因為我很累。', '我很累，所以很早就睡了。'], ['it rained', 'we stayed at home', '我們待在家裡，因為下雨了。', '下雨了，所以我們待在家裡。'],
   ['he was late', 'he ran to school', '他跑去學校，因為他遲到了。', '他遲到了，所以跑去學校。'], ['she was hungry', 'she ate two sandwiches', '她吃了兩個三明治，因為她很餓。', '她很餓，所以吃了兩個三明治。'],
   ['the test was easy', 'all the students passed', '所有學生都過了，因為考試很簡單。', '考試很簡單，所以所有學生都過了。'], ['I had no money', "I didn't buy the book", '我沒買那本書，因為我沒有錢。', '我沒有錢，所以沒買那本書。'],
-  ['the room was dirty', 'we cleaned it', '我們打掃了房間，因為它很髒。', '房間很髒，所以我們把它打掃了。'], ['my mother was busy', 'I cooked dinner', '我煮了晚餐，因為我媽媽很忙。', '我媽媽很忙，所以我煮了晚餐。'],
+  ['the store was closed', "we couldn't buy any food", '我們買不到食物，因為商店關了。', '商店關了，所以我們買不到食物。'], ['my mother was busy', 'I cooked dinner', '我煮了晚餐，因為我媽媽很忙。', '我媽媽很忙，所以我煮了晚餐。'],
   ['it was hot', 'they went swimming', '他們去游泳，因為天氣很熱。', '天氣很熱，所以他們去游泳。'], ['Tom was sick', "he didn't go to school", 'Tom 沒去上學，因為他生病了。', 'Tom 生病了，所以沒去上學。'],
   ['the weather was nice', 'we had a picnic', '我們去野餐，因為天氣很好。', '天氣很好，所以我們去野餐。'], ['I missed the bus', 'I was late for school', '我上學遲到了，因為我錯過了公車。', '我錯過了公車，所以上學遲到了。'],
 ];

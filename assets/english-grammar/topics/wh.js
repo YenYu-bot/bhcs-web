@@ -2,7 +2,7 @@
 // question word + do / does / did / is (level 3). The answer after "—" decides the word, and the number of blanks tells one word from two.
 import { blank, cap, zhJoin } from '../core.js';
 import { NAMES } from '../lexicon.js';
-import { pickPerson, midOf } from '../people.js';
+import { pickAskedPerson, midOf } from '../people.js';
 
 const THINGS = [['book', '書', '本'], ['pen', '筆', '枝'], ['bag', '袋子', '個'], ['watch', '手錶', '支'], ['umbrella', '雨傘', '把'], ['cup', '杯子', '個'],
   ['hat', '帽子', '頂'], ['jacket', '夾克', '件'], ['dictionary', '字典', '本'], ['ball', '球', '顆'], ['box', '盒子', '個'], ['key', '鑰匙', '把']];
@@ -24,7 +24,10 @@ const BASIC = [
     return q(['What'], ` is ${d}?`, `It's ${/^[aeiou]/.test(n) ? 'an' : 'a'} ${n}.`, `${dz}是什麼？`, { type: 'thing', reply: n }); },
   (rng) => { const g = rng.pick(['he', 'she']); const name = rng.pick(NAMES[g === 'he' ? 'm' : 'f']); const [o, oz] = rng.pick([['your', '你'], [g === 'he' ? 'his' : 'her', g === 'he' ? '他' : '她']]);
     return q(['What'], ` is ${o} name?`, `${o === 'your' ? 'My' : cap(o)} name is ${name}.`, `${oz}叫什麼名字？`, { type: 'name' }); },
-  (rng) => { const g = rng.pick(['he', 'she']); const [w, wz] = rng.pick(WHO[g]); const [r, rz] = rng.fresh(RELS[g], (x) => x[0]);
+  (rng) => { const g = rng.pick(['he', 'she']); const [w, wz] = rng.pick(WHO[g]);
+    // a girl is a sister or classmate, a woman a mother, aunt or teacher
+    const young = ['boy', 'girl'].includes(w), fits = (x) => (young ? ['brother', 'sister', 'cousin', 'classmate', 'friend'] : ['father', 'mother', 'uncle', 'aunt', 'teacher', 'cousin', 'friend']).includes(x[0]);
+    const [r, rz] = rng.fresh(RELS[g].filter(fits), (x) => x[0]);
     return q(['Who'], ` is that ${w}?`, `${HE_SHE[g]} is my ${r}.`, `那個${wz}是誰？`, { type: 'person' }); },
   (rng) => { const [n, z, m] = rng.fresh(THINGS, (x) => x[0]); const [o, oz] = rng.pick(OWNERS); const [p] = rng.pick(PLACES.filter((x) => !(o === 'your' && x[0] === 'in your bag')));
     return q(['Where'], ` is ${o} ${n}?`, `It's ${p}.`, `${o === 'the' ? '那' + m : oz}${z}在哪裡？`, { type: 'place' }); },
@@ -74,14 +77,14 @@ const ASK = [
   { wh: 'What', t: 'prog', vp: 'doing now', zh: '現在正在做什麼', ans: (p) => `${p.reply} ${p.be} ${['reading a book', 'playing the piano', 'cooking dinner', 'washing the dishes'][p.k % 4]}.` },
   { wh: 'Where', t: 'prog', vp: 'going', zh: '要去哪裡', ans: (p) => `${p.reply} ${p.be} going to the ${['park', 'supermarket', 'station'][p.k % 3]}.` },
 ];
-const REPLY = { I: 'You', you: 'I', we: 'You', they: 'They', he: 'He', she: 'She' };
 function make(rng) {
   const a = rng.fresh(ASK, (x) => x.wh + x.vp);
-  const p = pickPerson(rng, (x) => x.pr !== 'I' && x.pr !== 'we');
+  // "my father" is asked as "your father"; "we" only where the speaker would ask about the group (plans, schedule)
+  const p = pickAskedPerson(rng, (x) => x.pr !== 'we' || ['going', 'play basketball'].includes(a.vp));
   const subj = midOf(p);
   const helper = a.t === 'past' ? 'did' : a.t === 'prog' ? (p.s3 ? 'is' : 'are') : p.s3 ? 'does' : 'do';
-  const reply = REPLY[p.pr];
-  const info = { reply, s3: a.t === 'pres' && reply !== 'I' && reply !== 'You' && reply !== 'They', be: reply === 'I' ? 'am' : ['You', 'They'].includes(reply) ? 'are' : 'is', k: rng.int(12) };
+  const reply = p.rp === 'I' ? 'I' : cap(p.rp);
+  const info = { reply, s3: a.t === 'pres' && ['He', 'She'].includes(reply), be: reply === 'I' ? 'am' : ['He', 'She'].includes(reply) ? 'is' : 'are', k: rng.int(12) };
   const zhQ = zhJoin(p.zh, a.zh) + '？';
   return { lines: [[blank(a.wh), ' ', blank(helper), ` ${subj} ${a.vp}? — ${a.ans(info)}`]], zh: zhQ, meta: { type: 'make', wh: a.wh, tense: a.t, s3: p.s3, subj } };
 }

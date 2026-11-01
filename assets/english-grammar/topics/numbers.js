@@ -23,6 +23,12 @@ const bd = (n) => (n >= 10 && n < 20 ? n : n);
 // Clock times: [hour, minute, words, Chinese]
 const CLOCK = [[7, 30, 'seven thirty', '七點三十分'], [8, 15, 'eight fifteen', '八點十五分'], [6, 45, 'six forty-five', '六點四十五分'], [9, 20, 'nine twenty', '九點二十分'], [12, 0, "twelve o'clock", '十二點整'],
   [3, 10, 'three ten', '三點十分'], [10, 50, 'ten fifty', '十點五十分'], [5, 5, 'five oh five', '五點五分'], [11, 40, 'eleven forty', '十一點四十分'], [4, 25, 'four twenty-five', '四點二十五分'], [2, 35, 'two thirty-five', '兩點三十五分'], [1, 55, 'one fifty-five', '一點五十五分']];
+CLOCK.push([4, 30, 'four thirty', '四點三十分'], [5, 0, "five o'clock", '五點整'], [3, 45, 'three forty-five', '三點四十五分'], [7, 0, "seven o'clock", '七點整'],
+  [6, 30, 'six thirty', '六點三十分'], [8, 40, 'eight forty', '八點四十分'], [9, 5, 'nine oh five', '九點五分'], [10, 15, 'ten fifteen', '十點十五分'], [1, 30, 'one thirty', '一點三十分']);
+// a time that fits the event: up at 5–8, school out at 3–5
+const TIME_HEADS = [['It is', '現在是'], ['The movie starts at', '電影在'], ['School ends at', '放學時間是'], ['I get up at', '我在'], ['The train leaves at', '火車在']];
+const FITS = { 'I get up at': (x) => x >= 5 && x <= 8, 'School ends at': (x) => x >= 3 && x <= 5 };
+const headsAt = (h) => TIME_HEADS.filter((x) => !FITS[x[0]] || FITS[x[0]](h));
 const pad = (m) => String(m).padStart(2, '0');
 
 const MODES = [
@@ -45,7 +51,9 @@ const MODES = [
     gen(rng, o) {
       const m = rng.fresh(MONTHS, (x) => 'd-' + x[0]);
       const day = rng.fresh(o.level >= 2 ? [1, 2, 3, 4, 5, 8, 10, 12, 15, 20, 21, 22, 23, 25, 28, 30, 31] : [1, 2, 3, 4, 5, 8, 10, 12, 15, 20], (x) => 'day-' + x);
-      const event = rng.pick([['My birthday is', '我的生日在'], ['The party is', '派對在'], ['The test is', '考試在'], ['School starts', '開學日在'], ['The game is', '比賽在'], ['Her birthday is', '她的生日在']]);
+      // school starts in February or September (Taiwan)
+      const event = rng.pick([['My birthday is', '我的生日在'], ['The party is', '派對在'], ['The test is', '考試在'], ['School starts', '開學日在'], ['The game is', '比賽在'], ['Her birthday is', '她的生日在']]
+        .filter((e) => e[0] !== 'School starts' || ['February', 'September'].includes(m[0])));
       const word = ordinal(day);
       return { lines: [[`${event[0]} `, blank('on'), ' ', blank(m[0]), ' ', blank(word, word.includes('-')), ` (${MONTHS.indexOf(m) + 1}/${day}).`]], zh: `${event[1]}${m[1]}${zhNum(day)}日。`, meta: { kind: 'date', month: m[0], day } };
     },
@@ -54,7 +62,7 @@ const MODES = [
     id: 'time', name: '時間', instruction: () => "把時間寫成英文（例如 7:30 → seven thirty，12:00 → twelve o'clock）。",
     gen(rng) {
       const [h, mi, words, zh] = rng.fresh(CLOCK, (x) => x[2]);
-      const head = rng.pick([['It is', '現在是'], ['The movie starts at', '電影在'], ['School ends at', '放學時間是'], ['I get up at', '我在'], ['The train leaves at', '火車在']]);
+      const head = rng.pick(headsAt(h));
       const tail = { 'It is': '', 'The movie starts at': '開始', 'School ends at': '', 'I get up at': '起床', 'The train leaves at': '出發' }[head[0]];
       const parts = words.split(' ');
       return { lines: [[`${head[0]} `, ...parts.flatMap((w, i) => (i ? [' ', blank(w, w.includes('-'))] : [blank(w, w.includes('-'))])), ` (${h}:${pad(mi)}).`]], zh: `${head[1]}${zh}${tail}。`, meta: { kind: 'time', h, mi } };
@@ -70,7 +78,7 @@ export default {
   past: false,
   variety: false, // fixed sentence frames; checked by its own rules
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
-  capacity: { ordinal: 80, time: CLOCK.length * 5 },
+  capacity: { ordinal: 80, time: CLOCK.reduce((n, c) => n + headsAt(c[0]).length, 0) },
   defaultModes: { 1: ['ordinal'], 2: ['ordinal', 'date'], 3: ['ordinal', 'date', 'time'] },
   levelHint: { 1: '1 到 10 的序數。', 2: '加入 11 到 20、30 的序數與日期寫法。', 3: '再加入 21、22、25 等複合序數與時間寫法。' },
   grammarBox: (o) => ({ head: ['數字', '序數'], rows: [

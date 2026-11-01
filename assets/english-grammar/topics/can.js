@@ -1,18 +1,23 @@
 // Topic: can / can't (with the past option, could / couldn't).
 import { blank } from '../core.js';
 import { VTIMES, phrase } from '../verbs.js';
-import { actors, pickSubject, timeFirst, mid, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, timeFirst, mid, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap, asked, askActors, pickAsked, replyKey } from '../vcommon.js';
 
 const pickTense = (rng, o) => (o.tense === 'P' ? false : o.tense === 'D' ? true : rng.chance(0.5));
 const modal = (past) => (past ? 'could' : 'can');
 /** Negative forms: contracted is one word; uncontracted is "cannot" (one word) or "could not" (two). */
 const negWords = (past, abbr) => (abbr ? [past ? "couldn't" : "can't"] : past ? ['could', 'not'] : ['cannot']);
 
-function draw(rng, o, { exclude = () => false } = {}) {
-  const s = pickSubject(rng, actors(rng, o.level, { exclude }));
-  const f = s && pickFrame(rng, s, o.level, (x) => x.able, null, false);
-  if (!f) return null;
+// (2026-11-01) can here means ability (會). A phrase with a place or a particular thing reads as permission
+// ("Can Jenny skate in the park now?" = 可以), and lifting boxes is strength, not a skill.
+const NOT_SKILL = new Set(['skate in the park', 'fix the bicycle', 'fix the computer', 'carry the boxes', 'use the computer', 'take pictures']);
+function draw(rng, o, { exclude = () => false, ask = false } = {}) {
+  const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
   const past = pickTense(rng, o);
+  // what an animal could do years ago it still can; "my family could …" is not one person's skill
+  if (s && past && (s.kind === 'animal' || s.tags.includes('group'))) return null;
+  const f = s && pickFrame(rng, s, o.level, (x) => x.able && !NOT_SKILL.has(`${x.v} ${x.rest || ''}`.trim()), null, false);
+  if (!f) return null;
   const pool = VTIMES.filter((t) => t.use === (past ? 'ablepast' : 'able'));
   const t = o.tense === 'P' && rng.chance(0.6) ? null : rng.pick(pool);
   return { s, f, t, past };
@@ -20,7 +25,6 @@ function draw(rng, o, { exclude = () => false } = {}) {
 const tail = (f, t) => `${phrase(f)}${t ? ' ' + t.en : ''}`;
 const zhCan = (d, neg, end) => zhSent(d.s, d.t, (neg ? '不會' : '會') + d.f.zh, end);
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t?.en ?? null, past: d.past, ...extra });
-const noFirst = (s) => s.person === 1 || (s.person === 2 && s.num === 'sg') || s.tags.includes('every');
 
 const MODES = [
   {
@@ -56,22 +60,23 @@ const MODES = [
   {
     id: 'q', name: '疑問句', instruction: () => '改成疑問句。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: noFirst }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') }); if (!d) return null;
       const { s, f, t, past } = d;
+      const a = asked(s); // 改疑問句: I → you, my → your
       return {
-        lines: [[`${S0(s)} ${modal(past)} ${f.v}${tail(f, t)}.`], ['→ ', blank(cap(modal(past))), ` ${s.en} ${f.v}${tail(f, t)}?`]],
-        zh: zhCan(d, false, '嗎？'), meta: meta(d, { kind: 'q' }),
+        lines: [[`${S0(s)} ${modal(past)} ${f.v}${tail(f, t)}.`], ['→ ', blank(cap(modal(past))), ` ${mid(a.en)} ${f.v}${tail(f, t)}?`]],
+        zh: zhCan({ ...d, s: a }, false, '嗎？'), meta: meta(d, { kind: 'q', asked: a.en }),
       };
     },
   },
   {
     id: 'short', name: '簡答', instruction: () => '填入 Can 或 Could，並完成簡答（否定簡答請用縮寫）。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t, past } = d;
       const yes = rng.chance(0.5);
       return {
-        lines: [[blank(cap(modal(past))), ` ${s.en} ${f.v}${tail(f, t)}? — ${yes ? 'Yes' : 'No'}, `, blank(s.reply), ' ', blank(yes ? modal(past) : negWords(past, true)[0]), '.']],
+        lines: [[blank(cap(modal(past))), ` ${s.en} ${f.v}${tail(f, t)}? — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? modal(past) : negWords(past, true)[0]), '.']],
         zh: zhCan(d, false, '嗎？'), meta: meta(d, { kind: 'reply' }),
       };
     },
@@ -79,9 +84,9 @@ const MODES = [
   {
     id: 'full', name: '詳答', instruction: () => '依問句回答：先簡答（否定請用縮寫），再依括號提示寫出會做的事。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') || s.person === 1, ask: true }); if (!d) return null;
       const { s, f, t, past } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.able && x.v !== f.v, null, false); if (!g) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.able && x.v !== f.v && !NOT_SKILL.has(`${x.v} ${x.rest || ''}`.trim()), null, false); if (!g) return null;
       return {
         lines: [[`${cap(modal(past))} ${s.en} ${f.v}${tail(f, t)}?`],
           ['— No, ', blank(s.reply), ' ', blank(negWords(past, true)[0]), '. ', blank(cap(s.reply)), ' ', blank(modal(past)), ' ', blank(g.v), ` (${g.v})${phrase(g)}.`]],

@@ -37,7 +37,7 @@ const NOUNS = [
 ];
 const PLACE_ZH = {
   'under the table': '桌子下面', 'in the garden': '花園裡', 'on the sofa': '沙發上', 'in the box': '盒子裡', 'in the park': '公園裡',
-  'on the desk': '書桌上', 'in my bag': '我的袋子裡', 'under the bed': '床底下', 'in the classroom': '教室裡', 'on the table': '桌子上',
+  'on the desk': '書桌上', 'in my bag': '我的袋子裡', 'in your bag': '你的袋子裡', 'under the bed': '床底下', 'in the classroom': '教室裡', 'on the table': '桌子上',
   'in the refrigerator': '冰箱裡', 'in the tree': '樹上', 'near the school': '學校附近', 'in front of the station': '車站前面',
   'near the park': '公園附近', 'in the kitchen': '廚房裡', 'in the library': '圖書館裡', 'at the station': '車站', 'at the zoo': '動物園',
   'in the museum': '博物館裡', 'in the bottle': '瓶子裡', 'in the glass': '杯子裡',
@@ -66,6 +66,8 @@ function draw(rng, o, test = () => true) {
   const t = needTime ? rng.fresh(TIMES.filter((x) => x.past === past), (x) => x.en) : null;
   return { n, place, t, past };
 }
+const askPl = (place) => (place === 'in my bag' ? 'in your bag' : place);
+const asked = (d) => ({ ...d, place: askPl(d.place) });
 const tail = (place, t) => ` ${place}${t ? ' ' + t.en : ''}`;
 const zhThere = (d, verb, end, noun = d.n.zh) => zhJoin(d.t?.zh, PLACE_ZH[d.place], verb, noun) + end;
 const meta = (d, extra) => ({ noun: d.n.en, cue: d.t?.en ?? null, ...extra });
@@ -107,10 +109,10 @@ const MODES = [
     id: 'q', name: '疑問句', instruction: () => '改成疑問句（some 要改成 any）。',
     gen(rng, o) {
       const d = draw(rng, o, (n) => n.neg); if (!d) return null;
-      const b = be(d.n, d.past);
+      const b = be(d.n, d.past), a = asked(d);
       return {
-        lines: [[`There ${b} ${d.n.en}${tail(d.place, d.t)}.`], ['→ ', blank(cap(b)), ` there ${anyOf(d.n)}${tail(d.place, d.t)}?`]],
-        zh: zhThere(d, '有', '嗎？', bare(d.n)), meta: meta(d, { kind: 'q' }),
+        lines: [[`There ${b} ${d.n.en}${tail(d.place, d.t)}.`], ['→ ', blank(cap(b)), ` there ${anyOf(d.n)}${tail(a.place, d.t)}?`]],
+        zh: zhThere(a, '有', '嗎？', bare(d.n)), meta: meta(d, { kind: 'q' }),
       };
     },
   },
@@ -120,8 +122,8 @@ const MODES = [
       const d = draw(rng, o, (n) => n.neg); if (!d) return null;
       const b = be(d.n, d.past), yes = rng.chance(0.5);
       return {
-        lines: [[blank(cap(b)), ` there ${anyOf(d.n)}${tail(d.place, d.t)}? — ${yes ? 'Yes' : 'No'}, `, blank('there'), ' ', blank(yes ? b : NEG[b]), '.']],
-        zh: zhThere(d, '有', '嗎？', bare(d.n)), meta: meta(d, { kind: 'reply' }),
+        lines: [[blank(cap(b)), ` there ${anyOf(d.n)}${tail(askPl(d.place), d.t)}? — ${yes ? 'Yes' : 'No'}, `, blank('there'), ' ', blank(yes ? b : NEG[b]), '.']],
+        zh: zhThere(asked(d), '有', '嗎？', bare(d.n)), meta: meta(d, { kind: 'reply' }),
       };
     },
   },
@@ -129,12 +131,13 @@ const MODES = [
     id: 'full', name: '詳答', instruction: () => '依問句回答：先簡答（否定請用縮寫），再寫出那裡有什麼。',
     gen(rng, o) {
       const d = draw(rng, o, (n) => n.neg && n.num === 'sg'); if (!d) return null;
-      const others = NOUNS.filter((x) => x !== d.n && x.lvl <= o.level && x.places.includes(d.place));
+      const head = (x) => x.en.split(' ').pop().replace(/s$/, '');
+      const others = NOUNS.filter((x) => head(x) !== head(d.n) && bare(x) !== bare(d.n) && x.lvl <= o.level && x.places.includes(d.place));
       if (!others.length) return null;
       const m = rng.pick(others), b = be(d.n, d.past), b2 = be(m, d.past);
       return {
-        lines: [[`${cap(b)} there ${d.n.en}${tail(d.place, d.t)}?`], ['— No, ', blank('there'), ' ', blank(NEG[b]), '. ', blank('There'), ' ', blank(b2), ` ${m.en}${tail(d.place, null)}.`]],
-        zh: zhThere(d, '有', '嗎？'), meta: meta(d, { kind: 'full', second: m.en }),
+        lines: [[`${cap(b)} there ${d.n.en}${tail(askPl(d.place), d.t)}?`], ['— No, ', blank('there'), ' ', blank(NEG[b]), '. ', blank('There'), ' ', blank(b2), ` ${m.en}${tail(d.place, null)}.`]],
+        zh: zhThere(asked(d), '有', '嗎？'), meta: meta(d, { kind: 'full', second: m.en }),
       };
     },
   },
@@ -142,10 +145,10 @@ const MODES = [
     id: 'wh', name: 'How many 問句', instruction: () => '填入正確的 Be 動詞。',
     gen(rng, o) {
       const d = draw(rng, o, (n) => n.count); if (!d) return null;
-      const num = d.n.en.split(' ')[0];
+      const num = d.n.en.split(' ')[0], pl = askPl(d.place);
       return {
-        lines: [[`How many ${d.n.count} `, blank(be(d.n, d.past)), ` there${tail(d.place, d.t)}? — ${cap(num)}.`]],
-        zh: zhJoin(d.t?.zh, PLACE_ZH[d.place], `有幾${COUNT_ZH[d.n.count].join('')}`) + '？', meta: meta(d, { kind: 'wh' }),
+        lines: [[`How many ${d.n.count} `, blank(be(d.n, d.past)), ` there${tail(pl, d.t)}? — ${cap(num)}.`]],
+        zh: zhJoin(d.t?.zh, PLACE_ZH[pl], `有幾${COUNT_ZH[d.n.count].join('')}`) + '？', meta: meta(d, { kind: 'wh' }),
       };
     },
   },

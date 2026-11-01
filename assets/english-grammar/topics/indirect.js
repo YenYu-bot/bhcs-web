@@ -16,9 +16,11 @@ const YN = [
   ['Does he like dogs?', 'he', 'likes', ' dogs', '他喜不喜歡狗'], ['Did she go home?', 'she', 'went', ' home', '她有沒有回家'], ['Is Tom at home?', 'Tom', 'is', ' at home', 'Tom 在不在家'],
   ['Are they coming to the party?', 'they', 'are coming', ' to the party', '他們會不會來派對'], ['Can you swim?', 'you', 'can swim', '', '你會不會游泳'], ['Will it rain tomorrow?', 'it', 'will rain', ' tomorrow', '明天會不會下雨'],
   ['Does the store open on Sundays?', 'the store', 'opens', ' on Sundays', '商店星期天有沒有開'], ['Did they win the game?', 'they', 'won', ' the game', '他們有沒有贏比賽'], ['Is this seat free?', 'this seat', 'is', ' free', '這個位子是不是空的'],
-  ['Has he finished his homework?', 'he', 'has finished', ' his homework', '他功課寫完了沒'], ['Was the movie good?', 'the movie', 'was', ' good', '電影好不好看'], ['Do you have a pen?', 'you', 'have', ' a pen', '你有沒有筆'],
+  ['Has he finished his homework?', 'he', 'has finished', ' his homework', '他功課寫完了沒'], ['Was the movie good?', 'the movie', 'was', ' good', '電影好不好看'], ['Does Tom have a pen?', 'Tom', 'has', ' a pen', 'Tom 有沒有筆'],
 ];
 const HEADS = [['Do you know', '你知道'], ['I don\'t know', '我不知道'], ['Can you tell me', '你可以告訴我'], ['I wonder', '我想知道'], ['Could you tell me', '你可以告訴我'], ['No one knows', '沒有人知道']];
+// A question about "you" is not put back to you ("Do you know where you bought it?"): only I-heads then.
+const headsFor = (subj) => (subj === 'you' ? HEADS.filter(([h]) => /^I /.test(h)) : HEADS);
 const isQ = (h) => /^(Do|Can|Could)/.test(h);
 const end = (h) => (isQ(h) ? '?' : '.');
 const zhEnd = (h) => (isQ(h) ? '嗎？' : '。');
@@ -28,7 +30,7 @@ const MODES = [
     id: 'verb', name: '疑問詞問句的動詞', instruction: () => '把直接問句改成間接問句：疑問詞後面用「主詞 + 動詞」，依括號提示填入動詞的正確形式。',
     gen(rng) {
       const [q, wh, subj, verb, rest, zh] = rng.fresh(WH, (x) => x[0]);
-      const [h, hz] = rng.fresh(HEADS, (x) => x[0]);
+      const [h, hz] = rng.fresh(headsFor(subj), (x) => x[0]);
       const base = /^(will|has) /.test(verb) ? verb.split(' ')[1] : verb === 'is' || verb === 'are' || verb === 'was' ? 'be' : { lives: 'live', starts: 'start', wants: 'want', left: 'leave', bought: 'buy', costs: 'cost', goes: 'go', said: 'say', broke: 'break', opens: 'open' }[verb];
       const words = verb.split(' ').flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));
       return { lines: [[q], [`→ ${h} ${wh}${subj ? ' ' + subj : ''} `, ...words, ` (${base})${rest}${end(h)}`]], zh: zhJoin(hz, zh) + zhEnd(h), meta: { kind: 'verb', verb, q, subj } };
@@ -38,16 +40,16 @@ const MODES = [
     id: 'order', name: '主詞與動詞的順序', instruction: () => '把直接問句改成間接問句：疑問詞後面先寫主詞，再寫動詞（照抄或改成正確形式）。',
     gen(rng) {
       const [q, wh, subj, verb, rest, zh] = rng.fresh(WH.filter((x) => x[2]), (x) => 'o-' + x[0]);
-      const [h, hz] = rng.fresh(HEADS, (x) => 'o-' + x[0]);
+      const [h, hz] = rng.fresh(headsFor(subj), (x) => 'o-' + x[0]);
       return { lines: [[q], [`→ ${h} ${wh} `, blank(subj, true), ' ', blank(verb, true), `${rest}${end(h)}`]], zh: zhJoin(hz, zh) + zhEnd(h), meta: { kind: 'order', subj, verb, q } };
     },
   },
   {
-    id: 'if', name: 'if 引導的間接問句', instruction: () => '沒有疑問詞的問句改成間接問句時用 if（是否）：填入 if，以及主詞和動詞。',
+    id: 'if', name: 'if 引導的間接問句', instruction: () => '沒有疑問詞的問句改成間接問句時用 if 或 whether（是否）：填入 if（或 whether），以及主詞和動詞。',
     gen(rng) {
       const [q, subj, verb, rest, zh] = rng.fresh(YN, (x) => x[0]);
-      const [h, hz] = rng.fresh(HEADS, (x) => 'i-' + x[0]);
-      return { lines: [[q], [`→ ${h} `, blank('if'), ' ', blank(subj, true), ' ', blank(verb, true), `${rest}${end(h)}`]], zh: zhJoin(hz, zh) + zhEnd(h), meta: { kind: 'if', subj, verb, q } };
+      const [h, hz] = rng.fresh(headsFor(subj), (x) => 'i-' + x[0]);
+      return { lines: [[q], [`→ ${h} `, blank('if／whether'), ' ', blank(subj, true), ' ', blank(verb, true), `${rest}${end(h)}`]], zh: zhJoin(hz, zh) + zhEnd(h), meta: { kind: 'if', subj, verb, q } };
     },
   },
 ];

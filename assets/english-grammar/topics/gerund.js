@@ -1,7 +1,7 @@
 // Topic: to V or V-ing after a verb (want to go / enjoy going), after a preposition (good at swimming), and go + V-ing.
 import { blank, cap, zhJoin } from '../core.js';
 import { VERBS, FRAMES, phrase } from '../verbs.js';
-import { actors, pickSubject, frameFits, third } from '../vcommon.js';
+import { actors, pickSubject, frameFits, third, mealFits } from '../vcommon.js';
 
 // Verbs and what follows them. s3 is the -s form, past the past form (level 3 mixes tenses in by the time word).
 //   acts: which activities (frame verbs) make sense after it; pastOk: whether it reads well in the past tense
@@ -53,7 +53,7 @@ function sentence(rng, o, takes, wide = false) {
   const h = rng.fresh(heads, (x) => x.base);
   const f = act(rng, s, h.acts); if (!f) return null;
   const tense = o.level >= 3 && h.pastOk && rng.chance(0.3) ? 'past' : 'pres';
-  const [t, tz] = tense === 'past' ? rng.pick(PAST_CUE) : ['', ''];
+  const [t, tz] = tense === 'past' ? rng.pick(PAST_CUE.filter((x) => mealFits(`${f.v}${phrase(f)}`, x[0]))) : ['', ''];
   const vp = takes === 'to' ? `to ${f.v}` : VERBS[f.v].ing;
   const bl = wide ? [blank(vp, true)] : takes === 'to' ? [blank('to'), ' ', blank(f.v)] : [blank(VERBS[f.v].ing)];
   return {

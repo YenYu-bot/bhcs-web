@@ -1,7 +1,7 @@
 // Topic: quantity words — some / any, many / much, a few / a little.
 //   some in statements, any in negatives and questions; many / few with countable nouns, much / little with uncountable ones.
 import { blank, cap, zhJoin } from '../core.js';
-import { pickPerson, verbFor, midOf } from '../people.js';
+import { pickPerson, pickAskedPerson, verbFor, midOf } from '../people.js';
 
 // [word as used, Chinese, measure word (countable only), places, can be "had"]
 const C = (en, zh, m, places, have = false) => ({ en, zh, m, places, have, count: true });
@@ -19,7 +19,7 @@ const NOUNS = [
   U('time', '時間', [], true), U('homework', '功課', [], true), U('sugar', '糖', ['in the box', 'in the cup']), U('soup', '湯', ['in the bowl']),
 ];
 const PLACE_ZH = {
-  'on the desk': '書桌上', 'in my bag': '我的袋子裡', 'on the shelf': '架子上', 'in the refrigerator': '冰箱裡', 'in the box': '盒子裡', 'on the table': '桌子上',
+  'on the desk': '書桌上', 'in my bag': '我的袋子裡', 'in your bag': '你的袋子裡', 'on the shelf': '架子上', 'in the refrigerator': '冰箱裡', 'in the box': '盒子裡', 'on the table': '桌子上',
   'in the classroom': '教室裡', 'in the library': '圖書館裡', 'in the park': '公園裡', 'in the tree': '樹上', 'at the station': '車站', 'in the museum': '博物館裡',
   'in the bottle': '瓶子裡', 'in the glass': '杯子裡', 'in the cup': '杯子裡', 'in the bowl': '碗裡',
 };
@@ -37,12 +37,12 @@ const item = (l, ans, r, zh, meta) => ({ lines: [[l, blank(ans), r]], zh, meta }
 function shape(rng, n, form, word) {
   const usePlace = n.places.length && (!n.have || rng.chance(0.5));
   if (usePlace) {
-    const pl = rng.pick(n.places), pz = PLACE_ZH[pl];
+    const pick = rng.pick(n.places), pl = form === 'q' && pick === 'in my bag' ? 'in your bag' : pick, pz = PLACE_ZH[pl];
     const zhQ = { s: `${pz}有${word.zh}${n.zh}。`, n: `${pz}沒有${word.zhNeg ?? ''}${n.zh}。`, q: `${pz}有${word.zhQ ?? ''}${n.zh}嗎？` }[form];
     if (form === 'q') return [`${there(n, 'q')} `, ` ${n.en} ${pl}?`, zhQ];
     return [`${there(n, form)} `, ` ${n.en} ${pl}.`, zhQ];
   }
-  const p = pickPerson(rng);
+  const p = form === 'q' ? pickAskedPerson(rng) : pickPerson(rng);
   if (form === 's') return [`${p.en} ${has(p)} `, ` ${n.en}.`, zhJoin(p.zh, `有${word.zh}${n.zh}`) + '。'];
   if (form === 'n') return [`${p.en} ${doesnt(p)} have `, ` ${n.en}.`, zhJoin(p.zh, `沒有${word.zhNeg ?? ''}${n.zh}`) + '。'];
   return [`${doo(p)} ${midOf(p)} have `, ` ${n.en}?`, zhJoin(p.zh, `有${word.zhQ ?? ''}${n.zh}`) + '嗎？'];
@@ -68,7 +68,7 @@ const MODES = [
       const n = pickNoun(rng, () => true);
       const ans = n.count ? 'many' : 'much';
       if (n.places.length && rng.chance(0.5)) {
-        const pl = rng.pick(n.places);
+        const pl = rng.pick(n.places.map((x) => (x === 'in my bag' ? 'in your bag' : x)));
         return item('How ', ans, ` ${n.en} ${n.count ? 'are' : 'is'} there ${pl}?`, `${PLACE_ZH[pl]}有${n.count ? '幾' + n.m : '多少'}${n.zh}？`, { kind: 'many', noun: n.en, form: 'how' });
       }
       // "much" only in negatives and questions; "many" also in statements

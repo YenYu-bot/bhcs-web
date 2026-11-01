@@ -62,3 +62,9 @@ CDP touch 是瀏覽器原生合成輸入，非實體手機；guide-only 字體 2
 修後native21案及私人視覺驗收須看新exact-head結果；本地Node或來源審查本身不代表原生觸控／畫面通過。
 
 私人版修正來源於2026-11-01 09:58 UTC由parent發布為 `748c686a2b4d830c7107985562bac299a7cce10f`，與本候選三檔修正及managed QA hash相同；原始accepted `3f3cfd0b` 基準與獨立repair鏈不重新定義。官網仍為Draft，尚待新exact-head CI及另行合併／部署授權。
+
+## 同步已合併英文更新（整合基準，不改產品）
+
+Draft修正head `6fc5e8f108b4880d5a97757333cb9c9a8b587462` 之後，main已為 `5089a4d7cb0844354cbb2d60e2aa1f35fa7e7947`，包含既有英文PR #200／#201／#202。以兩parent merge保留所有英文來源及新八主題，不重寫英文內容；package同時保留英文語意與motion測試。教材總數為253、英文48、自然60。
+
+原accepted manifest及其621c27c歷史基準保持不變。`motion-graphs-desk-integration-base.json`另記新舊整合基準；guard仍驗原650路徑及main既有核准鏈中的35英文變更，另嚴格驗最新main的658既有tools/assets路徑（只排除生成的science入口）無任何例外。新增八英文主題亦納入保護；motion18runtime與修正hash完全不變。全部builders及full npm須對此合併候選重新執行，不能沿用合併前通過結果。

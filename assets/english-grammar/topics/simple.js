@@ -1,21 +1,21 @@
 // Topic: present simple (plays / does / doesn't).
 import { blank } from '../core.js';
 import { VERBS, vform, phrase, cuesFor } from '../verbs.js';
-import { actors, pickSubject, timeFirst, mid, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap } from '../vcommon.js';
+import { actors, pickSubject, timeFirst, mid, third, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap, asked, askActors, pickAsked, replyKey } from '../vcommon.js';
 
 const present = (s, f) => (third(s) ? vform(f, 's') : VERBS[f.v].base);
 const aux = (s) => (third(s) ? 'does' : 'do');
 const NEG = { does: "doesn't", do: "don't" };
 
-function draw(rng, o, { exclude = () => false, form = 's' } = {}) {
-  const s = pickSubject(rng, actors(rng, o.level, { exclude }));
+function draw(rng, o, { exclude = () => false, form = 's', ask = false, neg = false } = {}) {
+  // ask: a question to the listener ("your" subjects, you, and "Do we …?"); neg: no "every …" — "doesn't … every day" means 不是每天都
+  const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.habit, form);
   if (!f) return null;
-  const t = rng.fresh(cuesFor(f, 'habit', s), (x) => x.en);
+  const t = rng.fresh(cuesFor(f, 'habit', s).filter((x) => !neg || !/^every\b/.test(x.en)), (x) => x.en);
   return t ? { s, f, t } : null;
 }
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
-const noFirst = (s) => s.person === 1 || (s.person === 2 && s.num === 'sg') || s.tags.includes('every');
 
 const MODES = [
   {
@@ -32,7 +32,7 @@ const MODES = [
   {
     id: 'neg', name: '否定句', instruction: (o) => negInstruction(o),
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every'), neg: true }); if (!d) return null;
       const { s, f, t } = d;
       const abbr = wantAbbr(rng, o), a = aux(s);
       const bl = abbr ? [blank(NEG[a]), ' ', blank(f.v)] : [blank(a), ' ', blank('not'), ' ', blank(f.v)];
@@ -45,22 +45,23 @@ const MODES = [
   {
     id: 'q', name: '疑問句', instruction: () => '改成疑問句。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: noFirst }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') }); if (!d) return null;
       const { s, f, t } = d;
+      const a = asked(s); // 改疑問句: I → you, my → your
       return {
-        lines: [[`${S0(s)} ${present(s, f)}${phrase(f)} ${t.en}.`], ['→ ', blank(cap(aux(s))), ` ${s.en} `, blank(f.v), `${phrase(f)} ${t.en}?`]],
-        zh: zhSent(s, t, f.zh, '嗎？'), meta: meta(d, { kind: 'aux' }),
+        lines: [[`${S0(s)} ${present(s, f)}${phrase(f)} ${t.en}.`], ['→ ', blank(cap(aux(a))), ` ${mid(a.en)} `, blank(f.v), `${phrase(f)} ${t.en}?`]],
+        zh: zhSent(a, t, f.zh, '嗎？'), meta: meta(d, { kind: 'aux', asked: a.en }),
       };
     },
   },
   {
     id: 'short', name: '簡答', instruction: () => '填入 Do 或 Does，並完成簡答（否定簡答請用縮寫）。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t } = d;
-      const yes = rng.chance(0.5), ra = aux({ person: s.reply === 'we' || s.reply === 'you' ? 1 : 3, num: ['he', 'she', 'it'].includes(s.reply) ? 'sg' : 'pl' });
+      const yes = rng.chance(0.5), ra = aux({ person: ['I', 'we', 'you'].includes(s.reply) ? 1 : 3, num: ['he', 'she', 'it'].includes(s.reply) ? 'sg' : 'pl' });
       return {
-        lines: [[blank(cap(aux(s))), ` ${s.en} ${f.v}${phrase(f)} ${t.en}? — ${yes ? 'Yes' : 'No'}, `, blank(s.reply), ' ', blank(yes ? ra : NEG[ra]), '.']],
+        lines: [[blank(cap(aux(s))), ` ${s.en} ${f.v}${phrase(f)} ${t.en}? — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? ra : NEG[ra]), '.']],
         zh: zhSent(s, t, f.zh, '嗎？'), meta: meta(d, { kind: 'reply' }),
       };
     },
@@ -68,10 +69,10 @@ const MODES = [
   {
     id: 'full', name: '詳答', instruction: () => '依問句回答：先簡答（否定請用縮寫），再依括號提示寫出正確的情況。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => noFirst(s) || !s.reply }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') || s.person === 1, ask: true }); if (!d) return null;
       const { s, f, t } = d;
       const g = pickFrame(rng, s, o.level, (x) => x.habit && x.v !== f.v && cuesFor(x, 'habit', s).some((c) => c.en === t.en), 's'); if (!g) return null;
-      const r = { person: s.reply === 'we' ? 1 : 3, num: ['he', 'she', 'it'].includes(s.reply) ? 'sg' : 'pl' };
+      const r = { person: ['I', 'we'].includes(s.reply) ? 1 : 3, num: ['he', 'she', 'it', 'I'].includes(s.reply) ? 'sg' : 'pl' };
       const ra = aux(r);
       return {
         lines: [[`${cap(aux(s))} ${s.en} ${f.v}${phrase(f)} ${t.en}?`],
@@ -83,9 +84,9 @@ const MODES = [
   {
     id: 'wh', name: '疑問詞問句', instruction: () => '填入 do 或 does。',
     gen(rng, o) {
-      const d = draw(rng, o, { exclude: (s) => s.person === 1 || s.person === 2 || !s.reply || s.tags.includes('every') }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.person === 1 || s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t } = d;
-      const r = { person: 3, num: s.num };
+      const r = { person: ['I', 'we'].includes(s.reply) ? 1 : 3, num: ['he', 'she', 'it', 'I'].includes(s.reply) ? 'sg' : 'pl' };
       return {
         lines: [['What ', blank(aux(s)), ` ${s.en} do ${t.en}? — ${cap(s.reply)} ${present(r, f)}${phrase(f)}.`]],
         zh: zhSent(s, t, '做什麼', '？'), meta: meta(d, { kind: 'wh' }),

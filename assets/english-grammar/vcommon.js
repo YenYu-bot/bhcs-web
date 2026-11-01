@@ -1,6 +1,6 @@
 // Helpers shared by the verb topics: subjects that do things, spelling-level filters and contractions.
 import { cap, mid, zhJoin } from './core.js';
-import { SUBJECTS, extraSubjects } from './lexicon.js';
+import { SUBJECTS, extraSubjects, asked, SELF, pickAsked, replyKey } from './lexicon.js';
 import { VERBS, FRAMES } from './verbs.js';
 
 export { cap, mid, zhJoin };
@@ -64,3 +64,25 @@ export const S0 = (s) => cap(s.en);
 
 /** 正在 / 沒有在 before a verb phrase; a phrase that already starts with 在 keeps one 在. */
 export const zhAspect = (prefix, vp) => (vp.startsWith('在') ? prefix.replace(/在$/, '') + vp : prefix + vp);
+
+// ---- Questions to the listener (2026-11-01) ----
+export { asked, pickAsked, replyKey };
+/**
+ * Subjects for a question put to the listener: the actors with "my" turned into "your" and "I" into "you", plus (when
+ * `self` allows it for this verb phrase) the speaker asking about himself ("Can we swim here?"). A bare "you" meaning
+ * 你們 is left out where a reply pronoun is asked, since without the Chinese line it reads as one person.
+ */
+export function askActors(rng, level, { exclude = () => false, self = null, reply = false } = {}) {
+  // self: true = the speaker may ask about I and we; 'we' = only about we ("Do we …?" reads well, "Do I …?" does not)
+  const pool = [...actors(rng, level).map(asked), ...(self ? SELF.filter((x) => x.lvl <= level && (self === true || x.en === 'we')) : [])];
+  const uniq = [...new Map(pool.map((x) => [x.en + '|' + x.num, x])).values()];
+  return uniq.filter((s) => !exclude(s) && (!reply || (s.reply && !(s.en === 'you' && s.num === 'pl'))));
+}
+/** Meals go with their own times: no "lunch tonight", no "breakfast this evening", no "dinner this morning". */
+export function mealFits(text, time) {
+  const t = time || '';
+  if (/\bbreakfast\b/.test(text)) return !/(evening|night|tonight|afternoon|after school)/.test(t);
+  if (/\blunch\b/.test(text)) return !/(morning|evening|night|tonight)/.test(t);
+  if (/\bdinner\b/.test(text)) return !/(morning|afternoon)/.test(t) || /after school/.test(t);
+  return true;
+}

@@ -1,6 +1,7 @@
 // Topic: adverbs — forming them (slow → slowly, happy → happily, good → well, fast → fast), adjective or adverb, and comparing adverbs.
 import { blank, cap, zhJoin } from '../core.js';
 import { pickPerson, verbFor, midOf } from '../people.js';
+import { mealFits } from '../vcommon.js';
 
 // [adjective, adverb, Chinese (adverb), spelling rule, comparative of the adverb, verb phrases it goes with [base, -s, past, rest, Chinese]]
 const A = (adj, adv, zh, rule, cmp, acts) => ({ adj, adv, zh, rule, cmp, acts });
@@ -24,11 +25,21 @@ const ADVS = [
 const RULES = { 1: ['ly', 'same'], 2: ['ly', 'ily', 'same', 'irr'], 3: ['ly', 'ily', 'same', 'irr'] };
 const pool = (o) => ADVS.filter((a) => RULES[o.level].includes(a.rule));
 // nouns for "a careful driver": adjective → person noun
-const DOER = { slow: null, quick: ['runner', '跑者'], careful: ['driver', '司機'], loud: ['singer', '歌手'], quiet: ['student', '學生'], polite: ['boy', '男孩'], beautiful: ['dancer', '舞者'], happy: ['child', '孩子'],
+const DOER = { slow: null, quick: null, // "a fast runner", not "a quick runner"
+  careful: ['driver', '司機'], loud: ['singer', '歌手'], quiet: ['student', '學生'], polite: ['child', '孩子', ['speak', 'speaks', '說話']], beautiful: ['dancer', '舞者'], happy: ['child', '孩子'],
   easy: null, angry: null, good: ['cook', '廚師'], fast: ['runner', '跑者'], hard: ['worker', '工作者'], late: null, early: null };
 const DOER_VERB = { walker: ['walk', 'walks', '走路'], runner: ['run', 'runs', '跑'], driver: ['drive', 'drives', '開車'], singer: ['sing', 'sings', '唱歌'], student: ['study', 'studies', '讀書'], boy: ['speak', 'speaks', '說話'],
   dancer: ['dance', 'dances', '跳舞'], child: ['play', 'plays', '玩'], cook: ['cook', 'cooks', '煮飯'], worker: ['work', 'works', '工作'] };
 const ADJ_ZH = { slow: '慢', quick: '快', careful: '小心', loud: '大聲', quiet: '安靜', polite: '有禮貌', beautiful: '優美', happy: '快樂', good: '很棒', fast: '快', hard: '努力' };
+// Chinese says how well or fast something is done with 得: 跑得很快、唱得很好、走得很慢 (not 很快跑).
+//   DE: the 得 phrase for these adverbs; DE_VERB: the verb as it stands before 得 (開車開得很快).
+const DE = { fast: '很快', quick: '很快', slow: '很慢', good: '很好', loud: '很大聲', beautiful: '很優美' };
+const DE_VERB = { 走路: '走', 跑: '跑', 開車: '開車開', 游泳: '游', 說話: '說', 吃: '吃', 唱歌: '唱', 煮飯: '煮', 跳舞: '跳', 工作: '工作', 讀書: '讀書讀', 練習: '練習', 聽: '聽', 寫字: '寫字寫', 講話: '講' };
+const CORE = (a) => (a.rule === 'irr' ? '好' : a.zh.replace(/地$/, '').replace(/^很/, ''));
+/** "跑得很快" where Chinese uses 得, else "慢慢地走路" / "很會唱歌". */
+const zhManner = (a, vz) => (DE[a.adj] && DE_VERB[vz] ? `${DE_VERB[vz]}得${DE[a.adj]}` : a.zh + vz);
+/** "跑得比 Tom 快", or "跟老師說話比 Tony 有禮貌" when the verb has an object. */
+const zhCompare = (a, vz, other) => zhJoin(DE_VERB[vz] ? `${DE_VERB[vz]}得比` : `${vz}比`, other, CORE(a));
 const TIMES = [['yesterday', '昨天'], ['last night', '昨晚'], ['this morning', '今天早上']];
 
 function draw(rng, o, test = () => true) {
@@ -36,7 +47,7 @@ function draw(rng, o, test = () => true) {
   const act = rng.pick(a.acts);
   const p = pickPerson(rng);
   const past = o.level >= 2 && rng.chance(0.4);
-  const [t, tz] = past ? rng.pick(TIMES) : ['', ''];
+  const [t, tz] = past ? rng.pick(TIMES.filter((x) => mealFits(act[3], x[0]) && !(act[0] === 'come home' && x[0] === 'this morning'))) : ['', ''];
   const verb = past ? act[2] : verbFor(p, [act[0], act[1]]);
   return { a, act, p, past, t, tz, verb };
 }
@@ -47,7 +58,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o);
       const { a, act, p, t, tz, verb } = d;
-      return { lines: [[`${p.en} ${verb}${act[3]} `, blank(a.adv), `${t ? ' ' + t : ''}. (${a.adj})`]], zh: zhJoin(p.zh, tz, a.zh + act[4]) + '。', meta: { kind: 'form', adj: a.adj, subj: p.en } };
+      return { lines: [[`${p.en} ${verb}${act[3]} `, blank(a.adv), `${t ? ' ' + t : ''}. (${a.adj})`]], zh: zhJoin(p.zh, tz, zhManner(a, act[4])) + '。', meta: { kind: 'form', adj: a.adj, subj: p.en } };
     },
   },
   {
@@ -55,14 +66,14 @@ const MODES = [
     gen(rng, o) {
       const a = rng.fresh(pool(o).filter((x) => DOER[x.adj]), (x) => 'c-' + x.adj);
       const [noun, nz] = DOER[a.adj];
-      const [vb, vs, vz] = DOER_VERB[noun];
+      const [vb, vs, vz] = DOER[a.adj][2] ?? DOER_VERB[noun]; // a happy child plays, a polite child speaks
       const p = pickPerson(rng, (x) => x.s3 && !['Our teacher', 'My classmate', 'The students'].includes(x.en));
       const first = rng.chance(0.5);
       const art = /^[aeiou]/.test(a.adj) ? 'an' : 'a';
       const line = first
         ? [`${p.en} is ${art} `, blank(a.adj), ` ${noun}. ${p.pr === 'she' ? 'She' : 'He'} ${vs} `, blank(a.adv), `. (${a.adj})`]
         : [`${p.en} ${vs} `, blank(a.adv), `. ${p.pr === 'she' ? 'She' : 'He'} is ${art} `, blank(a.adj), ` ${noun}. (${a.adj})`];
-      return { lines: [line], zh: zhJoin(p.zh, `是個${ADJ_ZH[a.adj]}的${nz}，${p.pr === 'she' ? '她' : '他'}${a.zh}${vz}`) + '。', meta: { kind: 'choose', adj: a.adj, first } };
+      return { lines: [line], zh: zhJoin(p.zh, `是個${ADJ_ZH[a.adj]}的${nz}，${p.pr === 'she' ? '她' : '他'}${zhManner(a, vz)}`) + '。', meta: { kind: 'choose', adj: a.adj, first } };
     },
   },
   {
@@ -75,7 +86,7 @@ const MODES = [
       const objZh = other.zh;
       const bl = a.cmp.split(' ').flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));
       const vb = past ? act[2] : verbFor(p, [act[0], act[1]]);
-      return { lines: [[`${p.en} ${vb}${act[3]} `, ...bl, ` (${a.adj}) than ${obj}.`]], zh: zhJoin(p.zh, act[4], '比', objZh, a.rule === 'irr' ? '好' : a.zh.replace(/地$/, '').replace(/^很/, '')) + '。', meta: { kind: 'compare', adj: a.adj } };
+      return { lines: [[`${p.en} ${vb}${act[3]} `, ...bl, ` (${a.adj}) than ${obj}.`]], zh: zhJoin(p.zh, zhCompare(a, act[4], objZh)) + '。', meta: { kind: 'compare', adj: a.adj } };
     },
   },
 ];
