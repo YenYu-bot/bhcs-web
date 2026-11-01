@@ -411,8 +411,8 @@
     {
       "path": "assets/english-grammar/topics.js",
       "baseline_blob": "2f4c25bf9058a4a276720c4bff987a29a62f28f0",
-      "approved_blob": "0941017dfd854e0a246a48fe51f6bd1095fd79cf",
-      "reason": "English grammar PR4: eight new topics registered as drafts: topics.js",
+      "approved_blob": "133b75f16fa61a8cf311b85f602d6f3baa8c73e3",
+      "reason": "English grammar PR4: eight new topics (used to, as … as, spend, It … to V, wh + to V, that, participles) made public after sample review",
       "pull_request": null
     }
   ]

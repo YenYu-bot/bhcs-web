@@ -46,7 +46,6 @@ import that from './topics/that.js';
 import partadj from './topics/partadj.js';
 import partnoun from './topics/partnoun.js';
 
-export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense, indef, reflexive, indirect, tooenough, whenif, adverb, possess, numbers, linkadv];
-// 2026-11: eight new 國中 topics, waiting for the sample sheets to be reviewed
-export const DRAFTS = [usedto, asas, spend, itto, whto, that, partadj, partnoun];
+export const TOPICS = [be, simple, progressive, there, can, past, pronoun, plural, demonstrative, freq, imperative, article, quantity, wh, prep, future, compare, conj, must, perfect, gerund, give, exclaim, passive, relative, tag, sense, indef, reflexive, indirect, tooenough, whenif, adverb, possess, numbers, linkadv, usedto, asas, spend, itto, whto, that, partadj, partnoun];
+export const DRAFTS = [];
 export const ALL_TOPICS = [...TOPICS, ...DRAFTS];
