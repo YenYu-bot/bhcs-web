@@ -81,4 +81,9 @@ export const standalonePublic = Object.freeze([Object.freeze({
  description:'用同一個10 N木箱與同一斜面，量取理想表面和指定粗面的拉力與距離，再比較輸入功、有效功和機械效率。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
  prior:'力、距離、功與單位換算',goals:'公平比較、輸入功與有效功、摩擦轉為內能、依原始量測計算效率',
  minutes:'15–20',kind:'互動模擬'
+}),Object.freeze({
+ file:'motion-graphs-desk/',title:'小車運動圖實驗桌',subject:'理化',grade:'國中',unit:'位置、速度與運動圖',
+ description:'先觀察小車、讀位置並自己作圖，再以五個案例判讀 x–t、v–t 圖、等加速度、折返及位移與路程。入門與進階紀錄分開保存在目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
+ prior:'位置、時間、正負數與座標圖',goals:'圖的斜率與方向、速度與加速度符號、折返、帶正負號面積與路程',
+ minutes:'30–45',kind:'互動模擬'
 })]);
