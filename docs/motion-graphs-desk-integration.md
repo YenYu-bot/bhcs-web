@@ -68,3 +68,11 @@ CDP touch 是瀏覽器原生合成輸入，非實體手機；guide-only 字體 2
 Draft修正head `6fc5e8f108b4880d5a97757333cb9c9a8b587462` 之後，main已為 `5089a4d7cb0844354cbb2d60e2aa1f35fa7e7947`，包含既有英文PR #200／#201／#202。以兩parent merge保留所有英文來源及新八主題，不重寫英文內容；package同時保留英文語意與motion測試。教材總數為253、英文48、自然60。
 
 原accepted manifest及其621c27c歷史基準保持不變。`motion-graphs-desk-integration-base.json`另記新舊整合基準；guard仍驗原650路徑及main既有核准鏈中的35英文變更，另嚴格驗最新main的658既有tools/assets路徑（只排除生成的science入口）無任何例外。新增八英文主題亦納入保護；motion18runtime與修正hash完全不變。全部builders及full npm須對此合併候選重新執行，不能沿用合併前通過結果。
+
+## 第二輪 CI 的背景測試環境修正
+
+`7ac02bf`／run41296424633：21案中19案通過，包含全部10個兩版完整mouse／keyboard／touch流程、幾何與儲存案。僅兩背景clock案等不到真正hidden；artifact沒有visibilitychange、始終visible/focused，clock正常走到1／4秒且errors為空。這證明測試未建立背景情境，不能據此宣稱產品背景契約通過或失效。
+
+Playwright預設headless採獨立headless-shell，而不是一般headed Chromium（[官方瀏覽器說明](https://playwright.dev/docs/browsers)）；Chromium headless delegate的ActivateContents只聚焦目標widget，與本輪未出現頁籤hidden的證據一致（[Chromium來源](https://chromium.googlesource.com/chromium/src/+/HEAD/headless/lib/browser/headless_web_contents_impl.cc)，此HEAD來源是架構佐證而非CI exact-build實測）。
+
+只將兩clock案指定到獨立headed Chromium，CI透過Ubuntu標準套件xvfb/xauth與xvfb-run提供顯示；另外19案繼續原headless-shell。背景案先真切頁籤做trusted hidden→visible的preflight，失敗仍fail、不skip；再執行原來的真hidden、clock停止、原始紀錄不變、回前景不追時／不自動播放門檻。所有DOM事件均由瀏覽器產生，不合成visibilitychange、不覆寫document.hidden，也不使用凍結生命週期代替背景。每案標示browserMode，另存background-environment.json。產品18檔、私人站與accepted／repair manifests完全不變；修後headed結果仍須由新exact-head CI證實，本地Node測試不冒稱瀏覽器通過。

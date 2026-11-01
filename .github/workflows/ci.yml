@@ -175,10 +175,12 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_friction_efficiency_desk_browser.cjs
+      - name: Install virtual display for native motion background lifecycle
+        run: sudo apt-get install -y xvfb xauth
       - name: Check accepted motion graphs native input, course evidence and storage boundaries
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_motion_graphs_desk_browser.cjs
+        run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs
       - name: Check all station operations, records, and challenges
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
