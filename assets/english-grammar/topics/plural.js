@@ -20,7 +20,7 @@ const PLACES = {
 // Big or special things only go where they fit (no chairs in a box).
 const OWN_PLACES = {
   desk: [['in the classroom', '教室裡']], chair: [['in the classroom', '教室裡'], ['in the kitchen', '廚房裡']],
-  flower: [['in the garden', '花園裡'], ['in the park', '公園裡']], dish: [['on the table', '桌子上'], ['in the kitchen', '廚房裡']], glass: [['on the table', '桌子上'], ['in the kitchen', '廚房裡']],
+  flower: [['in the garden', '花園裡'], ['in the park', '公園裡']], knife: [['in the kitchen', '廚房裡']], dish: [['on the table', '桌子上'], ['in the kitchen', '廚房裡']], glass: [['on the table', '桌子上'], ['in the kitchen', '廚房裡']],
 };
 const placeFor = (n) => OWN_PLACES[n.sg] ?? (['city', 'country', 'library', 'zoo', 'class', 'party', 'day', 'story', 'family', 'bus', 'piano', 'tree', 'foot', 'tooth', 'wife'].includes(n.sg) ? null : PLACES[n.kind]);
 // Things a person can have several of.
@@ -74,7 +74,7 @@ const MODES = [
   {
     id: 'change', name: '單數改複數', instruction: () => '把句子改成複數，填入 Be 動詞與名詞的複數形。',
     gen(rng, o) {
-      const n = pickNoun(rng, o, (x) => !ABSTRACT.includes(x.sg) && x.sg !== 'wife'); if (!n) return null;
+      const n = pickNoun(rng, o, (x) => !ABSTRACT.includes(x.sg) && !['wife', 'zoo', 'library'].includes(x.sg)); if (!n) return null; // not "Those are zoos"
       const far = rng.chance(0.5);
       const [d1, d2, z] = far ? ['That', 'Those', '那些'] : ['This', 'These', '這些'];
       return {

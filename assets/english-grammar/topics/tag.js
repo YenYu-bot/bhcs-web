@@ -31,7 +31,7 @@ const MODES = [
       const s = pick(rng, people(rng, o.level, { animals: true }));
       const preds = PREDICATES.filter((p) => p.for.includes(s.kind) && (!p.num || p.num === s.num) && !(p.type === 'job' && (s.kind !== 'person' || (p.age && s.age !== 'any' && p.age !== s.age))) && !(s.tags.includes('has-job') && p.type === 'job'));
       const p = rng.fresh(preds, (x) => x.en);
-      const past = o.level >= 2 && rng.chance(0.3);
+      const past = o.level >= 2 && p.dur !== 'perm' && rng.chance(0.3); // "weren't short": height does not change
       const neg = polarity(rng, o);
       const be = beForm(s, past), pr = tagPronoun(s);
       if (neg && be === 'am') return null; // "I'm not … , am I?" is left out
@@ -62,7 +62,8 @@ const MODES = [
     gen(rng, o) {
       const s = pick(rng, people(rng, o.level));
       const which = rng.fresh(['can', 'will', 'have'], (x) => 'modal-' + x);
-      const f = pickFrame(rng, s, o.level, (x) => (which === 'can' ? x.able : which === 'have' ? x.pastOk : x.habit)); if (!f) return null;
+      // "has already come home late" / "have already slept" mean nothing
+      const f = pickFrame(rng, s, o.level, (x) => (which === 'can' ? x.able : which === 'have' ? x.pastOk && !/early|late/.test(x.rest || '') && !['sleep', 'smile', 'cry', 'hurry'].includes(x.v) : x.habit)); if (!f) return null;
       const neg = polarity(rng, o);
       const pr = tagPronoun(s);
       let aux, stmt, zh;

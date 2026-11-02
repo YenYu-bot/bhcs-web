@@ -16,7 +16,7 @@ const CUES = [
   { en: 'twice', zh: '兩次', use: 'done', pos: 'end', lvl: 1 }, { en: 'three times', zh: '三次', use: 'done', pos: 'end', lvl: 1 }, { en: 'before', zh: '以前', use: 'done', pos: 'end', lvl: 2 },
   { en: 'yet', zh: '還', use: 'yet', pos: 'end', lvl: 1 }, { en: 'ever', zh: '曾經', use: 'ever', pos: 'mid', lvl: 1 }, { en: 'never', zh: '從來沒有', use: 'never', pos: 'mid', lvl: 1 },
   { en: 'for two years', zh: '兩年了', use: 'for', pos: 'end', lvl: 3 }, { en: 'for three hours', zh: '三個小時了', use: 'for', pos: 'end', lvl: 3 }, { en: 'for a long time', zh: '很久了', use: 'for', pos: 'end', lvl: 3 },
-  { en: 'since last year', zh: '從去年到現在', use: 'since', pos: 'end', lvl: 3 }, { en: 'since 2020', zh: '從 2020 年到現在', use: 'since', pos: 'end', lvl: 3 }, { en: 'since this morning', zh: '從今天早上到現在', use: 'since', pos: 'end', lvl: 3 },
+  { en: 'since last year', zh: '從去年到現在', use: 'since', pos: 'end', lvl: 3 }, { en: 'since 2020', zh: '從 2020 年到現在', use: 'since', pos: 'end', lvl: 3 },
 ];
 // Activities you keep doing (for / since) are a smaller set than things you have done.
 // (2026-11-01) Habits one keeps up: no "has jogged in the park for three hours", no "has slept since this morning".
@@ -110,7 +110,7 @@ const MODES = [
     },
   },
   {
-    id: 'mix', name: '現在完成式或過去式', instruction: () => '看時間詞判斷：已經、曾經、for / since 用現在完成式，yesterday、ago 用過去式（空格可填一個或兩個字）。',
+    id: 'mix', name: '現在完成式或過去式', instruction: () => '看時間詞判斷：已經、曾經、次數（twice…）、for / since 用現在完成式，yesterday、ago 用過去式（空格可填一個或兩個字）。',
     gen(rng, o) {
       if (rng.fresh([true, false], (x) => 'mix-' + x)) {
         const d = draw(rng, o, ['done', 'for', 'since'], true); if (!d) return null;

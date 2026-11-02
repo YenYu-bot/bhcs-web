@@ -65,8 +65,8 @@ const KITCHEN = ['in the kitchen', '在廚房'], GYM = ['in the gym', '在體育
 // Outdoor and daytime things are not done at night, so their past-progressive times are daytime only.
 const DAY = ['at this time yesterday', 'at seven yesterday morning'];
 const ANIMAL = { habit: ['every day'], past: ['yesterday', 'last night', 'two days ago'] };
-const WEEKEND = { habit: ['every Sunday', 'every Saturday', 'on weekends'], pastprog: DAY };
-const OUT = { pastprog: DAY };
+const WEEKEND = { habit: ['every Sunday', 'every Saturday', 'on weekends'], past: ['last Sunday', 'last Saturday', 'two days ago'], pastprog: DAY }; // not "visited the museum last night"
+const OUT = { past: ['yesterday', 'last Sunday', 'two days ago', 'last weekend'], pastprog: DAY }; // outdoors in the daytime, not "last night"
 const MEAL = (habit, past) => ({ habit, past, pastprog: ['at this time yesterday'] });
 const F = (v, rest, zh, opts = {}) => ({ v, rest, zh, who: ['person'], habit: true, prog: true, able: false, pastOk: true, ...opts });
 export const FRAMES = [
@@ -98,7 +98,7 @@ export const FRAMES = [
   F('study', 'science', '讀自然', { at: [HOME, LIB] }),
   F('study', 'art', '學美術', { at: [SCHOOL] }),
   F('learn', 'art', '學美術', { at: [SCHOOL] }),
-  F('borrow', 'books', '借書', { at: [LIB], cues: WEEKEND }),
+  F('borrow', 'books', '借書', { at: [['from the library', '從圖書館']], cues: WEEKEND }),
   F('use', 'the computer', '用電腦', { able: true, at: [HOME, LIB] }),
   F('go', 'to school', '上學', { prog: false, age: 'young', cues: { habit: ['every day', 'every morning'], past: ['yesterday', 'two days ago'] } }),
   F('walk', 'to school', '走路上學', { age: 'young', cues: { habit: ['every day', 'every morning'], past: ['yesterday', 'two days ago'], pastprog: ['at this time yesterday'] } }),
@@ -133,7 +133,7 @@ export const FRAMES = [
   F('feed', 'the fish', '餵魚', { cues: { habit: ['every day', 'every morning'] } }),
   F('brush', 'the dog', '幫狗梳毛', { cues: WEEKEND }),
   // meals and drinks
-  F('eat', 'breakfast', '吃早餐', { cues: MEAL(['every day', 'every morning'], ['yesterday', 'two days ago']), at: [HOME, SCHOOL] }),
+  F('eat', 'breakfast', '吃早餐', { cues: MEAL(['every day', 'every morning'], ['yesterday', 'two days ago']), at: [HOME] }),
   F('have', 'lunch', '吃午餐', { cues: MEAL(['every day'], ['yesterday', 'two days ago', 'last Sunday']), at: [SCHOOL, HOME] }),
   F('have', 'dinner', '吃晚餐', { cues: { habit: ['every day'], past: ['yesterday', 'last night', 'last Sunday'], pastprog: ['at eight last night'] }, at: [HOME, ['at the restaurant', '在餐廳']] }),
   F('eat', 'apples', '吃蘋果', { cues: { habit: ['every day', 'every morning'] } }),
@@ -164,7 +164,7 @@ export const FRAMES = [
   F('call', 'friends', '打電話給朋友', { at: [HOME] }),
   F('travel', 'by train', '搭火車旅行', { cues: WEEKEND }),
   F('get', 'up early', '早起', { prog: false, cues: { habit: ['every day', 'every morning'], past: ['yesterday', 'two days ago', 'last Sunday'] } }),
-  F('come', 'home late', '晚回家', { prog: false, cues: { habit: ['every day', 'every evening', 'on weekends'], past: ['yesterday', 'last night', 'last Sunday', 'two days ago'] } }),
+  F('come', 'home late', '很晚回家', { prog: false, cues: { habit: ['every day', 'on weekends'], past: ['yesterday', 'last night', 'last Sunday', 'two days ago'] } }),
   F('help', 'the teacher', '幫忙老師', { age: 'young', cues: { habit: ['every day', 'after school'] }, at: [SCHOOL] }),
   F('teach', 'art', '教美術', { age: 'adult', cues: { habit: ['every day'], past: ['yesterday', 'two days ago', 'three days ago', 'last month'] }, at: [SCHOOL] }),
   F('teach', 'history', '教歷史', { age: 'adult', cues: { habit: ['every day'], past: ['yesterday', 'two days ago', 'three days ago', 'last month'] }, at: [SCHOOL] }),
@@ -173,7 +173,7 @@ export const FRAMES = [
   F('wear', 'a hat', '戴帽子', { cues: { habit: ['every day', 'on weekends'] } }),
   F('wear', 'a uniform', '穿制服', { age: 'young', cues: { habit: ['every day'], past: ['yesterday', 'two days ago'] } }),
   F('sit', 'under the tree', '坐在樹下', { habit: false }),
-  F('enjoy', 'the music', '享受音樂', { habit: false, prog: false, cues: { past: ['last night', 'last Sunday', 'last weekend'] } }),
+  F('enjoy', 'the music', '喜歡那場音樂會的音樂', { habit: false, prog: false, cues: { past: ['last night', 'last Sunday', 'last weekend'] } }),
   F('plan', 'a party', '計畫派對', { habit: false }),
   F('cry', '', '哭', { habit: false }),
   F('smile', '', '微笑', { habit: false }),

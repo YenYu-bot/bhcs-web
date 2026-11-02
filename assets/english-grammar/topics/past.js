@@ -15,7 +15,7 @@ function draw(rng, o, { exclude = () => false, ask = false } = {}) {
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
 
 // a real activity to answer with (not sleep, smile, cry or hurry), not about getting up early or late, not the same object
-const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
+const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry', 'drink', 'eat'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
 const MODES = [
   {
     id: 'fill', name: '肯定句填空',

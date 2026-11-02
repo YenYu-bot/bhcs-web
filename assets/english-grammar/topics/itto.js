@@ -6,7 +6,7 @@ const ACTS = [
   ['learn a new language', '學一種新的語言', ['important', 'useful', 'difficult', 'interesting', 'fun']],
   ['swim in the river', '在河裡游泳', ['dangerous']], ['play with fire', '玩火', ['dangerous']], ['cross the street here', '在這裡過馬路', ['dangerous']],
   ['get up early', '早起', ['important', 'difficult', 'good']], ['eat vegetables', '吃蔬菜', ['important', 'good']], ['help others', '幫助別人', ['important', 'good', 'nice']],
-  ['read books', '讀書', ['important', 'interesting', 'fun', 'useful']], ['ride a bicycle', '騎腳踏車', ['easy', 'fun', 'interesting']], ['fly a kite', '放風箏', ['easy', 'fun']],
+  ['read books', '看書', ['important', 'interesting', 'fun', 'useful']], ['ride a bicycle', '騎腳踏車', ['easy', 'fun', 'interesting']], ['fly a kite', '放風箏', ['easy', 'fun']],
   ['make a sandwich', '做三明治', ['easy']], ['finish the work in an hour', '一小時內完成這份工作', ['difficult', 'impossible']], ['climb the mountain', '爬那座山', ['difficult', 'dangerous', 'fun']],
   ['answer the question', '回答這個問題', ['easy', 'difficult']], ['keep the room clean', '保持房間乾淨', ['important', 'difficult']], ['say sorry', '說對不起', ['difficult', 'important']],
   ['take a walk after dinner', '晚餐後散步', ['good', 'nice']], ['use the computer', '使用電腦', ['easy']], ['play basketball with friends', '和朋友打籃球', ['fun']],

@@ -35,7 +35,7 @@ const S = (items, adjs, groups, zh = {}) => ({ items, adjs, groups, zh: { old: '
 const F = (items, cmp, sup) => ({ items, cmp, sup, fact: true, adjs: [...new Set([...cmp.map((c) => c[0]), ...sup.map((x) => x[1])])] });
 const SETS = [
   S([['this book', '這本書'], ['that book', '那本書'], ['the red book', '那本紅色的書'], ['this story book', '這本故事書']],
-    ['interesting', 'useful', 'cheap', 'expensive', 'old', 'new', 'heavy', 'light', 'good', 'bad', 'popular', 'difficult', 'easy', 'thin'], [['in the shop', '店裡', 'book'], ['of the three', '三本裡', ''], ['in the library', '圖書館裡', 'book']]),
+    ['interesting', 'useful', 'cheap', 'expensive', 'old', 'new', 'heavy', 'light', 'good', 'bad', 'popular', 'difficult', 'easy', 'thin'], [['in the shop', '店裡', 'book'], ['of the three', '三本裡', ''], ['in the library', '圖書館裡', 'book']], { thin: '薄' }),
   S([['the red car', '那輛紅色的車'], ['the blue car', '那輛藍色的車'], ['this car', '這輛車'], ["my uncle's car", '我叔叔的車']],
     ['fast', 'slow', 'expensive', 'cheap', 'big', 'small', 'old', 'new', 'safe', 'comfortable', 'good', 'clean', 'dirty'], [['in the shop', '店裡', 'car'], ['of the three', '三輛裡', '']]),
   S([['the blue dress', '那件藍色的洋裝'], ['this dress', '這件洋裝'], ['the white dress', '那件白色的洋裝'], ['that dress', '那件洋裝']],
@@ -117,6 +117,7 @@ function draw(rng, o, mode) {
   }
   let items = set === 'person' ? PEOPLE.filter((p) => PERSON_ADJS[ageOf(p)].includes(adj.base)) : set.items;
   if (adj.base === 'pretty' && set === 'person') items = items.filter((x) => x[2] === 'f');
+  if (mode === 'est') items = items.filter((x) => x[0] !== 'Taichung'); // "Taichung is the most famous city in Taiwan" is not true
   const a = rng.fresh(items, (x) => 'it-' + x[0]);
   const b = rng.pick(items.filter((x) => x[0] !== a[0] && (set !== 'person' || ageOf(x) === ageOf(a))));
   return { set, adj, a, b };
@@ -146,7 +147,6 @@ const MODES = [
       } else {
         [g, gz, noun] = rng.pick(set.groups);
         if (noun && rng.chance(0.4)) noun = '';
-        if (a[0] === 'Taichung' && g === 'in the country') g = 'in Taiwan', gz = '台灣';
       }
       const nz = { boy: '男孩', girl: '女孩', student: '學生', book: '書', animal: '動物', room: '房間', city: '城市', river: '河', mountain: '山', car: '車', dress: '洋裝', jacket: '夾克', chair: '椅子', season: '季節', month: '月份' }[noun] ?? '';
       return {

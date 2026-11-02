@@ -14,7 +14,7 @@ const SETS = [
   S([['this movie', '這部電影'], ['that movie', '那部電影']], ['long', 'funny', 'exciting', 'popular', 'sad', 'interesting'], { long: '長' }),
   S([['the red car', '那輛紅色的車'], ['the blue car', '那輛藍色的車'], ['this car', '這輛車']], ['fast', 'big', 'expensive', 'new', 'old', 'safe', 'comfortable'], { old: '舊' }),
   S([['this river', '這條河'], ['that river', '那條河']], ['long', 'wide', 'clean', 'dangerous', 'famous'], { long: '長' }),
-  S([['this city', '這個城市'], ['that city', '那個城市'], ['Taichung', '台中']], ['big', 'busy', 'famous', 'clean', 'hot', 'beautiful']),
+  S([['this city', '這個城市'], ['that city', '那個城市'], ['the old city', '那座古城']], ['big', 'busy', 'famous', 'clean', 'hot', 'beautiful']),
 ];
 const PERSON_ADJS = ['tall', 'short', 'old', 'young', 'strong', 'smart', 'kind', 'busy', 'thin', 'funny', 'popular', 'healthy'];
 const PEOPLE = [...NAMES.m.slice(0, 8).map((n) => [n, n]), ...NAMES.f.slice(0, 8).map((n) => [n, n]), ['my brother', '我哥哥'], ['my sister', '我姊姊'], ['that boy', '那個男孩'], ['this girl', '這個女孩']];

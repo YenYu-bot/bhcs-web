@@ -59,6 +59,8 @@ for (const b of BOOKS) for (const [, en, , zh] of b.words) for (const m of zh.sp
   const s = OWNERS.get(m) ?? new Set(); s.add(en.toLowerCase()); OWNERS.set(m, s);
 }
 const WORDS = new Set(BOOKS.flatMap((b) => b.words.map((r) => r[1].toLowerCase())));
+const WORDS_BY_LEN = new Map();
+for (const x of WORDS) WORDS_BY_LEN.set(x.length, [...(WORDS_BY_LEN.get(x.length) ?? []), x]);
 const POSES = new Map();
 for (const b of BOOKS) for (const [, en, pos] of b.words) for (const p of pos.split(';').filter(Boolean)) { const s = POSES.get(en.toLowerCase()) ?? new Set(); s.add(p); POSES.set(en.toLowerCase(), s); }
 
@@ -88,7 +90,8 @@ function check(book, sh) {
       shown.forEach((c, i) => c === '_' || assert.equal(c, it.en[i]));
       assert.equal(it.a, it.en); assert.equal(it.hint, w.zh);
       const re = new RegExp('^' + shown.map((c) => (c === '_' ? '[a-z]' : c.toLowerCase())).join('') + '$');
-      assert.deepEqual([...WORDS].filter((x) => re.test(x)), [it.en.toLowerCase()], `${it.q}: only ${it.en} fits`);
+      assert.deepEqual((WORDS_BY_LEN.get(it.en.length) ?? []).filter((x) => re.test(x)), [it.en.toLowerCase()], `${it.q}: only ${it.en} fits`);
+      assert.ok(!['forgot', 'got', 'ate', 'saw', 'went', 'came', 'took', 'made', 'wrote', 'felt', 'left'].some((x) => x !== it.en && re.test(x)), `${it.q}: no past form fits`);
     }
     if (mode === 'pos') { assert.ok(POS_CHOICES.includes(it.a)); assert.equal(it.a, w.pos); assert.equal(POSES.get(it.en.toLowerCase()).size, 1, `${it.en} has one part of speech in every list`); }
     if (mode === 'scramble') {

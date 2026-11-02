@@ -13,7 +13,8 @@ const THINGS = [['bag', '袋子'], ['book', '書'], ['room', '房間'], ['bicycl
 const PLURAL_THINGS = new Set(['names', 'toys', 'desks']);
 const BIG = new Set(['car', 'house']);
 // grown-ups do not own toys
-const fitsThing = ([owner, , , rule], [thing]) => !(thing === 'toys' && /teacher|parent|mother|father|uncle|aunt/.test(owner)) && !(PLURAL_THINGS.has(thing) && rule === 's') && !(BIG.has(thing) && rule !== 's' && owner !== 'my parents') && !(owner === 'the dog' && !['toys', 'house', 'friend', 'names'].includes(thing)) && !(thing === 'teacher' && /teacher/.test(owner)) && !(thing === 'dog' && owner === 'the dog') && !(thing === 'mother' && /father|sister|parents|the dog/.test(owner));
+// several owners (the students') do not share one bicycle or bag
+const fitsThing = ([owner, , , rule], [thing]) => !(rule === "s'" && ['bicycle', 'bag', 'book', 'car'].includes(thing)) && !(thing === 'toys' && /teacher|parent|mother|father|uncle|aunt/.test(owner)) && !(PLURAL_THINGS.has(thing) && rule === 's') && !(BIG.has(thing) && rule !== 's' && owner !== 'my parents') && !(owner === 'the dog' && !['toys', 'house', 'friend', 'names'].includes(thing)) && !(thing === 'teacher' && /teacher/.test(owner)) && !(thing === 'dog' && owner === 'the dog') && !(thing === 'mother' && /father|sister|parents|the dog/.test(owner));
 // Of-phrases for things: [whole, Chinese, part, Chinese]
 // [whole, Chinese, part, Chinese, kind: 'thing' (something to look at) | 'fact' (something to know or ask)]
 const OF = [['room', '房間', 'door', '門', 'thing'], ['house', '房子', 'roof', '屋頂', 'thing'], ['book', '書', 'name', '書名', 'fact'], ['table', '桌子', 'legs', '桌腳', 'thing'], ['story', '故事', 'end', '結局', 'fact'],
@@ -43,7 +44,7 @@ const MODES = [
     gen(rng) {
       const [whole, wz, part, pz, kind] = rng.fresh(OF, (x) => x[0]);
       const shapes = kind === 'thing' ? [['Look at the {X}.', '看看{Z}。'], ['The {X} is beautiful.', '{Z}很漂亮。'], ['The {X} is very old.', '{Z}很舊。']] : [['Do you know the {X}?', '你知道{Z}嗎？'], ['What is the {X}?', '{Z}是什麼？'], ['I like the {X}.', '我喜歡{Z}。']];
-      const [en0, zh] = rng.pick(shapes);
+      const [en0, zh] = rng.pick(shapes.filter(([e]) => !(whole === 'mountain' && /old/.test(e)))); // a mountaintop is not "very old"
       const en = /s$/.test(part) ? en0.replace('{X} is', '{X} are') : en0; // The legs of the table are …
       const [l, r] = en.split('{X}');
       // 書名 / 山頂 / 桌腳 already say whose: not 書的書名

@@ -88,7 +88,7 @@ function aan(rng, o) {
   let noun;
   if (adj) noun = find(rng.pick(ADJ_NOUN[adj[0]]));
   else noun = rng.fresh([...NOUNS, ...JOBS].filter((n) => n.lvl <= o.level), (n) => n.en);
-  const tpls = FRAMES[noun.kind];
+  const tpls = FRAMES[noun.kind].filter(([e]) => !(noun.en === 'box' && /in the box/.test(e))); // not "a box in the box"
   const [en, zh] = rng.pick(tpls);
   // "is a/an …" needs one person (and a girl is a she); plural people take "are", which cannot have a/an
   const p = /\{S\}/.test(en) ? pickPerson(rng, (x) => (/\{is\}/.test(en) ? !['we', 'they', 'you'].includes(x.pr) && (noun.en !== 'girl' || x.pr === 'she') && (noun.en !== 'boy' || x.pr === 'he') && (noun.en !== 'girl' && noun.en !== 'boy' || x.pr !== 'I') : true)) : null;

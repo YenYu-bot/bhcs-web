@@ -14,10 +14,10 @@ const MONTHS = [['January', '一月'], ['February', '二月'], ['March', '三月
 const ORD = [
   ['Today is my {N} birthday.', '今天是我{N}歲生日。', [10, 11, 12, 13, 14, 15, 16]], ['He came {N} in the race.', '他在比賽中得第{N}名。', [1, 2, 3, 4, 5, 6]],
   ['{M} is the {N} month of the year.', '{M}是一年的第{N}個月。', 'month'], ['She lives on the {N} floor.', '她住在{N}樓。', [2, 3, 4, 5, 6, 7, 8, 9, 10, 12]],
-  ['This is my {N} time in Taichung.', '這是我第{N}次來台中。', [1, 2, 3, 4, 5]], ['Friday is the {N} day of the school week.', '星期五是上學週的第{N}天。', [5]],
+  ['This is my {N} time at the zoo.', '這是我第{N}次來動物園。', [1, 2, 3, 4, 5]], ['Friday is the {N} day of the school week.', '星期五是上學週的第{N}天。', [5]],
   ['Turn right at the {N} corner.', '在第{N}個轉角右轉。', [1, 2, 3]], ['It is her {N} day at the new school.', '這是她在新學校的第{N}天。', [1, 2, 3]],
   ['We sat in the {N} row.', '我們坐在第{N}排。', [1, 2, 3, 4, 5, 6, 7, 8]], ['This is the {N} lesson.', '這是第{N}課。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
-  ['I am in the {N} grade.', '我讀{N}年級。', [1, 2, 3, 4, 5, 6, 7, 8, 9]], ['The {N} question is hard.', '第{N}題很難。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 20]], ['Amy was {N} in the class on the test.', 'Amy 這次考試考全班第{N}名。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
+  ['I am in the {N} grade.', '我讀{N}年級。', [1, 2, 3, 4, 5, 6, 7, 8, 9]], ['The {N} question is hard.', '第{N}題很難。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 20]], ['Amy came in {N} in her class on the test.', 'Amy 這次考試考全班第{N}名。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
 ];
 const bd = (n) => (n >= 10 && n < 20 ? n : n);
 // Clock times: [hour, minute, words, Chinese]

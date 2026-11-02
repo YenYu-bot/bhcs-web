@@ -63,7 +63,7 @@ function draw(rng, o, test = () => true) {
   const place = rng.fresh(n.places);
   const past = o.tense === 'P' ? false : o.tense === 'D' ? true : rng.chance(0.5);
   const needTime = o.tense !== 'P' || rng.chance(0.4);
-  const t = needTime ? rng.fresh(TIMES.filter((x) => x.past === past), (x) => x.en) : null;
+  const t = needTime ? rng.fresh(TIMES.filter((x) => x.past === past && !(/zoo|museum|park/.test(place) && /night/.test(x.en))), (x) => x.en) : null; // closed at night
   return { n, place, t, past };
 }
 const askPl = (place) => (place === 'in my bag' ? 'in your bag' : place);
@@ -80,7 +80,8 @@ const MODES = [
       if (o.level >= 3 && rng.chance(0.3)) {
         // two nouns: the Be verb agrees with the nearer one
         const d = draw(rng, o, (n) => n.num !== 'u'); if (!d) return null;
-        const others = NOUNS.filter((x) => x !== d.n && x.lvl <= o.level && x.num !== 'u' && x.places.includes(d.place) && isPl(x) !== isPl(d.n));
+        const hd = (x) => x.en.split(' ').pop().replace(/s$/, ''); // not "a dog and two dogs"
+        const others = NOUNS.filter((x) => x !== d.n && hd(x) !== hd(d.n) && x.lvl <= o.level && x.num !== 'u' && x.places.includes(d.place) && isPl(x) !== isPl(d.n));
         if (!others.length) return null;
         const m = rng.pick(others);
         return { lines: [['There ', blank(be(d.n, d.past)), ` ${d.n.en} and ${m.en}${tail(d.place, d.t)}.`]], zh: zhThere(d, '有', '。', `${d.n.zh}和${m.zh}`), meta: meta(d, { kind: 'two', second: m.en }) };

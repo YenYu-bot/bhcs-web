@@ -36,7 +36,7 @@ const pickTense = (rng, o) => (o.tense === 'P' ? 'pres' : o.tense === 'D' ? 'pas
 /** Pick a time word; in present-only sheets it is optional. */
 function pickTime(rng, o, tense, s, p) {
   const nowOk = p.now && (s.age === p.now || s.age === 'any'); // "He is a cook now", "She is tall now" (a child); never "short now"
-  const fits = TIMES.filter((t) => !(p.en === 'right' && /now/.test(t.en)) && t.tense === tense && (s.kind === 'weather' ? t.weather : (t.dur.includes(p.dur) || (t.en === 'now' && nowOk)) && !(tense === 'past' && p.past === false) && (!t.types || t.types.includes(p.type))));
+  const fits = TIMES.filter((t) => !(p.en === 'right' && /now/.test(t.en)) && !(/zoo|museum|beach|park/.test(p.en) && /night|evening/.test(t.en)) && t.tense === tense && (s.kind === 'weather' ? t.weather : (t.dur.includes(p.dur) || (t.en === 'now' && nowOk)) && !(tense === 'past' && p.past === false) && (!t.types || t.types.includes(p.type))));
   if (o.tense === 'P' && rng.chance(p.dur === 'perm' ? 0.75 : 0.4)) return null;
   return fits.length ? rng.fresh(fits, (x) => x.en) : null;
 }
@@ -136,7 +136,9 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { needReply: true, ask: true, exclude: (x) => x.person === 1 || plainYouPl(x), kinds: ['person', 'animal', 'thing', 'food', 'drink'], types: ['loc', 'job'] }); if (!d) return null;
       const { s, p, t, past } = d;
-      const alts = PREDICATES.filter((x) => x.type === p.type && x !== p && predicateFits(x, s));
+      // the other place must not hold the first one (the refrigerator is in the kitchen)
+      const INSIDE = { 'in the refrigerator': 'in the kitchen', 'in the kitchen': 'in the refrigerator' };
+      const alts = PREDICATES.filter((x) => x.type === p.type && x !== p && INSIDE[p.en] !== x.en && predicateFits(x, s));
       if (!alts.length) return null;
       const q = rng.pick(alts);
       const be = beForm(s, past), rb = replyBe(s.reply, past);

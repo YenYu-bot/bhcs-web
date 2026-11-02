@@ -56,7 +56,7 @@ const MODES = [
         const n = rng.fresh(NOUNS.filter((x) => !['weather', 'day'].includes(x.en) && (o.level >= 2 || !x.plural)), (x) => 'c-' + x.en); // 這個一天 is not Chinese
         const adj = rng.pick(n.adjs);
         const subj = n.plural ? `These ${n.en} are` : `This is`;
-        const given = n.plural ? `These ${n.en} are very ${adj}.` : `This is a very ${adj} ${n.en}.`;
+        const given = n.plural ? `These are very ${adj} ${n.en}.` : `This is a very ${adj} ${n.en}.`; // a noun after the adjective → What
         const art = n.plural ? null : aOrAn(adj);
         const bl = art ? [blank('What'), ' ', blank(art), ' ', blank(adj), ` ${n.en}!`] : [blank('What'), ' ', blank(adj), ` ${n.en}!`];
         return { lines: [[given], ['→ ', ...bl]], zh: `${n.plural ? '這些' : '這'}${n.m}${n.zh}真${ADJ_ZH[adj]}！`, meta: meta('change', { adj, noun: n.en, plural: n.plural, what: true }) };
