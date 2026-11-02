@@ -35,7 +35,7 @@ const BASIC = [
     return q(['Where'], ` are the ${n}?`, `They're ${p}.`, `那些${z}在哪裡？`, { type: 'place' }); },
   (rng) => { const g = rng.pick(['he', 'she']); const [r, rz] = rng.fresh(RELS[g].filter((x) => !['teacher', 'father', 'mother', 'uncle', 'aunt'].includes(x[0])), (x) => x[0]); const [nm] = rng.pick(NUM.slice(4));
     return q(['How', 'old'], ` is your ${r}?`, `${HE_SHE[g]} is ${nm} years old.`, `你的${rz}幾歲？`, { type: 'age' }); },
-  (rng) => { const [n, z, m] = rng.fresh(THINGS_PL, (x) => x[0]); const [nm] = rng.pick(NUM);
+  (rng) => { const [n, z, m] = rng.fresh(THINGS_PL.filter((x) => x[0] !== 'shoes'), (x) => x[0]); const [nm] = rng.pick(NUM); // shoes come in pairs (幾雙)
     return q(['How', 'many'], ` ${n} do you have?`, `I have ${nm}.`, `你有幾${m}${z}？`, { type: 'count' }); },
 ];
 const MORE = [
@@ -43,7 +43,8 @@ const MORE = [
     return q(['When'], ` is ${o} birthday?`, `${ro} birthday is in ${m}.`, `${oz}生日是什麼時候？`, { type: 'date' }); },
   (rng) => { const [nm] = rng.pick(NUM.slice(4)); return rng.chance(0.5)
     ? q(['What', 'time'], ' is it?', `It's ${nm} o'clock.`, '現在幾點？', { type: 'clock' })
-    : q(['What', 'time'], ` do you ${rng.pick(['get up', 'go to bed', 'have dinner', 'go to school'])}?`, `At ${nm}.`, '', { type: 'clock' }); },
+    : (() => { const [act, hours] = rng.pick([['get up', ['six', 'seven']], ['go to bed', ['nine', 'ten', 'eleven']], ['have dinner', ['six', 'seven']], ['go to school', ['seven']]]); // a time that fits
+      return q(['What', 'time'], ` do you ${act}?`, `At ${rng.pick(hours)}.`, '', { type: 'clock' }); })(); },
   (rng) => { const [adj, az, why] = rng.fresh([['happy', '開心', 'today is my birthday'], ['sad', '難過', 'my dog is sick'], ['tired', '累', 'I worked all day'], ['hungry', '餓', "I didn't have breakfast"], ['late', '遲到', 'I missed the bus'], ['angry', '生氣', 'my brother broke my cup']], (x) => x[0]);
     return q(['Why'], ` are you ${adj}?`, `Because ${why}.`, `你為什麼${az}？`, { type: 'reason' }); },
   (rng) => { const [w, wz] = rng.pick([['By bus.', '搭公車'], ['On foot.', '走路'], ['By bicycle.', '騎腳踏車'], ['By train.', '搭火車']]); const [o, oz] = rng.pick([['you', '你'], ['your sister', '你姊姊'], ['they', '他們']]);

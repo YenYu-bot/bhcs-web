@@ -40,7 +40,7 @@ const MODES = [
     gen(rng) { const [en, ans, zh] = rng.fresh(TOO, (x) => x[0]); const [l, r] = en.split('#'); return { lines: [[l, blank(ans), r]], zh, meta: { kind: 'too', ans } }; },
   },
   {
-    id: 'so', name: 'So do I / Neither do I', instruction: () => '用 So 或 Neither + 助動詞 + 主詞回答「我也是／我也不是」。',
+    id: 'so', name: 'So do I / Neither do I', instruction: () => '用 So 或 Neither + 助動詞 + 主詞回答「…也是／…也不是」。',
     gen(rng) {
       const [first, subj, aux, so, zh] = rng.fresh(SO, (x) => x[0]);
       return { lines: [[`${first} — `, blank(so), ' ', blank(aux), ' ', blank(subj, subj.includes(' ')), '.']], zh, meta: { kind: 'so', so, aux, subj } };

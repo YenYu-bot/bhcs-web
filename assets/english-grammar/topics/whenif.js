@@ -10,7 +10,7 @@ const PAIRS = [
   P('If', '如果', 'Tom', 'Tom', 'get', 'gets', ' up late', '晚起', 'he', '他', 'miss', ' the bus', '錯過公車'),
   P('If', '如果', 'it', '', 'be', 'is', ' sunny this weekend', '這個週末天氣好', 'we', '我們', 'go', ' to the beach', '去海邊'),
   P('If', '如果', 'they', '他們', 'win', 'wins', ' the game', '贏了比賽', 'they', '他們', 'be', ' very happy', '很開心'),
-  P('If', '如果', 'I', '我', 'see', 'sees', ' Amy', '看到 Amy', 'I', '我', 'tell', ' her the news', '告訴她這個消息'),
+  { ...P('If', '如果', 'I', '我', 'see', 'sees', ' Amy', '看到 Amy', 'I', '我', 'tell', ' her the news', '告訴她這個消息'), clauseFirst: true }, // her = Amy: Amy must come first
   P('If', '如果', 'you', '你', 'eat', 'eats', ' too much', '吃太多', 'you', '你', 'get', ' fat', '變胖'),
   P('When', '當', 'he', '他', 'come', 'comes', ' home', '回家', 'I', '我', 'call', ' you', '打電話給你'),
   P('When', '當', 'the movie', '電影', 'end', 'ends', '', '結束', 'we', '我們', 'go', ' home', '回家'),
@@ -26,7 +26,7 @@ const PAIRS = [
   P('When', '當', 'my mother', '我媽媽', 'come', 'comes', ' back', '回來', 'we', '我們', 'have', ' dinner', '吃晚餐'),
   P('If', '如果', 'you', '你', 'need', 'needs', ' help', '需要幫忙', 'I', '我', 'help', ' you', '幫你'),
   P('If', '如果', 'he', '他', 'practice', 'practices', ' every day', '每天練習', 'he', '他', 'play', ' the piano well', '把鋼琴彈好'),
-  P('When', '當', 'the children', '孩子們', 'see', 'sees', ' the dog', '看到那隻狗', 'they', '他們', 'be', ' happy', '很開心'),
+  { ...P('When', '當', 'the children', '孩子們', 'see', 'sees', ' the dog', '看到那隻狗', 'they', '他們', 'be', ' happy', '很開心'), clauseFirst: true },
   P('When', '當', 'it', '', 'get', 'gets', ' dark', '天黑', 'we', '我們', 'go', ' back', '回去'),
   P('Before', '在…之前', 'she', '她', 'leave', 'leaves', '', '離開', 'she', '她', 'call', ' us', '打電話給我們'),
   P('After', '在…之後', 'they', '他們', 'clean', 'cleans', ' the room', '打掃完房間', 'they', '他們', 'watch', ' a movie', '看電影'),
@@ -44,11 +44,11 @@ const first = (rng) => rng.chance(0.5); // clause first or main clause first
 
 const MODES = [
   {
-    id: 'clause', name: '子句用現在式', instruction: () => 'if / when / before / after 引導的子句，用現在式表示未來：依括號提示填入正確形式。',
+    id: 'clause', name: '子句用現在式', instruction: () => 'if / when / before / after / as soon as 引導的子句，用現在式表示未來：依括號提示填入正確形式。',
     gen(rng) {
       const p = rng.fresh(PAIRS, (x) => x.conj + x.cs + x.cv);
       const cv = clauseVerb(p);
-      const line = first(rng)
+      const line = (p.clauseFirst || first(rng))
         ? [`${p.conj} ${p.cs} `, blank(cv), ` (${p.cv})${p.cr}, ${p.ms} will ${p.mv}${p.mr}.`]
         : [`${cap(p.ms)} will ${p.mv}${p.mr} ${p.conj.toLowerCase()} ${p.cs} `, blank(cv), ` (${p.cv})${p.cr}.`];
       return { lines: [line], zh: zhAll(p), meta: { kind: 'clause', base: p.cv, cs: p.cs } };
@@ -59,7 +59,7 @@ const MODES = [
     gen(rng) {
       const p = rng.fresh(PAIRS, (x) => 'm-' + x.conj + x.cs + x.cv);
       const cv = clauseVerb(p);
-      const line = first(rng)
+      const line = (p.clauseFirst || first(rng))
         ? [`${p.conj} ${p.cs} ${cv}${p.cr}, ${p.ms} `, blank('will'), ' ', blank(p.mv), ` (${p.mv})${p.mr}.`]
         : [`${cap(p.ms)} `, blank('will'), ' ', blank(p.mv), ` (${p.mv})${p.mr} ${p.conj.toLowerCase()} ${p.cs} ${cv}${p.cr}.`];
       return { lines: [line], zh: zhAll(p), meta: { kind: 'main', base: p.mv } };
@@ -70,7 +70,7 @@ const MODES = [
     gen(rng) {
       const p = rng.fresh(PAIRS, (x) => 'x-' + x.conj + x.cs + x.cv);
       const cv = clauseVerb(p);
-      const line = first(rng)
+      const line = (p.clauseFirst || first(rng))
         ? [`${p.conj} ${p.cs} `, blank(cv, true), ` (${p.cv})${p.cr}, ${p.ms} `, blank(`will ${p.mv}`, true), ` (${p.mv})${p.mr}.`]
         : [`${cap(p.ms)} `, blank(`will ${p.mv}`, true), ` (${p.mv})${p.mr} ${p.conj.toLowerCase()} ${p.cs} `, blank(cv, true), ` (${p.cv})${p.cr}.`];
       return { lines: [line], zh: zhAll(p), meta: { kind: 'mix', base: p.cv, mbase: p.mv, cs: p.cs } };

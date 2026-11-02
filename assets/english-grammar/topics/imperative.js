@@ -25,7 +25,8 @@ const BE = [
   ['late', '遲到', true], ['afraid', '害怕', true], ['angry', '生氣', true], ['noisy', '吵鬧', true], ['sad', '難過', true], ['shy', '害羞', true],
 ];
 // "看電影" is see or watch a movie: both are right.
-const ALT = { 'see a movie': 'watch' };
+// where the Chinese allows two verbs, both are right
+const ALT = { 'see a movie': 'watch', 'have lunch': 'eat', 'take your umbrella': 'bring', 'drink some water': 'have', 'make a cake': 'bake' };
 const key = (v, rest, capital = false) => { const c = (w) => (capital ? cap(w) : w); return ALT[`${v} ${rest}`] ? `${c(v)}／${c(ALT[`${v} ${rest}`])}` : c(v); };
 const meta = (kind, base, extra = {}) => ({ kind, base, ...extra });
 

@@ -7,7 +7,7 @@ const TOO = [
   T('The box', '這個箱子', 'heavy', '重', 'carry', '搬', 'I', 'it'), T('The tea', '這杯茶', 'hot', '燙', 'drink', '喝', 'I', 'it'), T('The boy', '那個男孩', 'young', '小', 'drive a car', '開車', 'he'),
   T('The question', '這個問題', 'difficult', '難', 'answer', '回答', 'we', 'it'), T('My grandfather', '我爺爺', 'old', '老', 'climb the mountain', '爬山', 'he'), T('The shoes', '這雙鞋', 'small', '小', 'wear', '穿', 'I', 'them'),
   T('Tom', 'Tom', 'tired', '累', 'do his homework', '寫功課', 'he'), T('The water', '水', 'cold', '冷', 'swim in', '游泳', 'we', 'it'), T('The bag', '這個袋子', 'expensive', '貴', 'buy', '買', 'I', 'it'),
-  T('The baby', '那個嬰兒', 'small', '小', 'walk', '走路', 'she'), T('The soup', '這道湯', 'hot', '燙', 'eat', '吃', 'I', 'it'), T('Amy', 'Amy', 'busy', '忙', 'go to the party', '去派對', 'she'),
+  T('The baby', '那個嬰兒', 'young', '小', 'walk', '走路', 'she'), T('The soup', '這道湯', 'hot', '燙', 'eat', '吃', 'I', 'it'), T('Amy', 'Amy', 'busy', '忙', 'go to the party', '去派對', 'she'),
   T('The room', '這個房間', 'dark', '暗', 'read in', '在裡面看書', 'I', 'it'), T('The movie', '這部電影', 'long', '長', 'watch # tonight', '今晚看完', 'we', 'it'),
   T('The bed', '這張床', 'heavy', '重', 'move', '搬動', 'we', 'it'), T('The coffee', '這杯咖啡', 'strong', '濃', 'drink', '喝', 'I', 'it'),
   T('The river', '這條河', 'dangerous', '危險', 'swim in', '游泳', 'we', 'it'), T('The book', '這本書', 'difficult', '難', 'read', '讀', 'I', 'it'),
@@ -72,6 +72,7 @@ export default {
   grade: 9,
   past: false,
   variety: false, // fixed sentence lists; checked by their own rules
+  zhRequired: true, // so … that: who cannot (I / we / he) is told by the Chinese line
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
   capacity: { too: TOO.length, enough: ENOUGH.length, so: TOO.length, swap: TOO.length },
   defaultModes: { 1: ['too', 'enough'], 2: ['too', 'enough', 'so'], 3: ['too', 'enough', 'so', 'swap'] },

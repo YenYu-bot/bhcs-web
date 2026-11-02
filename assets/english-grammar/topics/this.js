@@ -5,6 +5,8 @@ import { NOUNS, article } from '../nouns.js';
 const D = { this: { pl: false, near: true, zh: '這' }, that: { pl: false, near: false, zh: '那' }, these: { pl: true, near: true, zh: '這些' }, those: { pl: true, near: false, zh: '那些' } };
 const CUE = { this: '這個', that: '那個', these: '這些', those: '那些' };
 const OWNERS = [['my', '我的'], ['your', '你的'], ['his', '他的'], ['her', '她的'], ["Tom's", 'Tom 的'], ["Amy's", 'Amy 的'], ['our', '我們的']];
+// a boy does not own dresses; one hat or cup is not "ours"
+const ownersFor = (n, pl, list = OWNERS) => list.filter(([o]) => !(/dress|skirt/.test(n.sg) && ["his", "Tom's"].includes(o)) && !(o === 'our' && !pl));
 const THINGS = NOUNS.filter((n) => (n.own || n.kind === 'food') && n.rule !== 'irr');
 const pickD = (rng, o) => rng.fresh(o.level >= 2 ? ['this', 'that', 'these', 'those'] : ['this', 'that'], (x) => x);
 const nounOf = (n, pl) => (pl ? n.pl : n.sg);
@@ -17,7 +19,7 @@ const MODES = [
       const d = pickD(rng, o), n = rng.fresh(THINGS, (x) => x.sg);
       const pl = D[d].pl, be = pl ? 'are' : 'is';
       if (rng.chance(0.5)) {
-        const [ow, owz] = rng.fresh(OWNERS, (x) => x[0]);
+        const [ow, owz] = rng.fresh(ownersFor(n, pl), (x) => x[0]);
         return { lines: [[blank(cap(d)), ' ', blank(be), ` ${ow} ${nounOf(n, pl)}. (${CUE[d]})`]], zh: zhJoin(`${D[d].zh}是`, `${owz}${n.zh}`) + '。', meta: meta(d, { pl }) };
       }
       return { lines: [[blank(cap(d)), ' ', blank(be), ` ${pl ? '' : article(n.sg) + ' '}${nounOf(n, pl)}. (${CUE[d]})`]], zh: `${D[d].zh}是${pl ? '' : '一' + n.m}${n.zh}。`, meta: meta(d, { pl }) };
@@ -29,7 +31,7 @@ const MODES = [
       const d = pickD(rng, o), n = rng.fresh(THINGS, (x) => x.sg);
       const pl = D[d].pl, be = pl ? 'are' : 'is', yes = rng.chance(0.5);
       const pr = pl ? 'they' : 'it';
-      const [ow, owz] = rng.fresh(OWNERS.filter((x) => x[0] !== 'my'), (x) => x[0]);
+      const [ow, owz] = rng.fresh(ownersFor(n, pl, OWNERS.filter((x) => x[0] !== 'my')), (x) => x[0]);
       return {
         lines: [[blank(cap(be)), ` ${d} ${ow} ${nounOf(n, pl)}? — ${yes ? 'Yes' : 'No'}, `, blank(pr), ' ', blank(yes ? be : pl ? "aren't" : "isn't"), '.']],
         zh: zhJoin(`${D[d].zh}是`, `${owz}${n.zh}`) + '嗎？', meta: meta(d, { pl, kind: 'q' }),
@@ -42,7 +44,7 @@ const MODES = [
       const toPl = rng.chance(0.5), near = rng.chance(0.5), n = rng.fresh(THINGS, (x) => x.sg);
       const from = near ? (toPl ? 'this' : 'these') : (toPl ? 'that' : 'those');
       const to = near ? (toPl ? 'these' : 'this') : (toPl ? 'those' : 'that');
-      const [ow, owz] = rng.fresh(OWNERS, (x) => x[0]);
+      const [ow, owz] = rng.fresh(ownersFor(n, false), (x) => x[0]);
       const given = `${cap(from)} ${D[from].pl ? 'are' : 'is'} ${ow} ${nounOf(n, D[from].pl)}.`;
       return {
         lines: [[given], ['→ ', blank(cap(to)), ' ', blank(D[to].pl ? 'are' : 'is'), ` ${ow} `, blank(nounOf(n, D[to].pl)), '.']],

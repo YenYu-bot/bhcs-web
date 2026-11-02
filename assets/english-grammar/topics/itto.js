@@ -9,7 +9,7 @@ const ACTS = [
   ['read books', '讀書', ['important', 'interesting', 'fun', 'useful']], ['ride a bicycle', '騎腳踏車', ['easy', 'fun', 'interesting']], ['fly a kite', '放風箏', ['easy', 'fun']],
   ['make a sandwich', '做三明治', ['easy']], ['finish the work in an hour', '一小時內完成這份工作', ['difficult', 'impossible']], ['climb the mountain', '爬那座山', ['difficult', 'dangerous', 'fun']],
   ['answer the question', '回答這個問題', ['easy', 'difficult']], ['keep the room clean', '保持房間乾淨', ['important', 'difficult']], ['say sorry', '說對不起', ['difficult', 'important']],
-  ['take a walk after dinner', '晚餐後散步', ['good', 'nice']], ['use the computer', '使用電腦', ['easy', 'useful']], ['play basketball with friends', '和朋友打籃球', ['fun', 'interesting']],
+  ['take a walk after dinner', '晚餐後散步', ['good', 'nice']], ['use the computer', '使用電腦', ['easy']], ['play basketball with friends', '和朋友打籃球', ['fun']],
 ];
 const ADJ_ZH = { important: '很重要', useful: '很有用', difficult: '很難', interesting: '很有趣', fun: '很好玩', dangerous: '很危險', good: '很好', nice: '很好', easy: '很簡單', impossible: '不可能' };
 // It is + adjective + of + person: the adjective says what the person is like
@@ -61,7 +61,7 @@ export default {
   past: false,
   variety: false, // checked by its own rules
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
-  capacity: { fill: 40, swap: 40, forof: 40 },
+  capacity: { fill: 30, swap: 30, forof: 40 },
   defaultModes: { 1: ['fill'], 2: ['fill', 'swap'], 3: ['fill', 'swap', 'forof'] },
   levelHint: { 1: 'It is + 形容詞 + to V。', 2: '加入 To V 開頭改寫成 It 開頭。', 3: '再加入 for + 人 與 of + 人 的分辨。' },
   grammarBox: (o) => ({ head: ['句型', '例子'], rows: [

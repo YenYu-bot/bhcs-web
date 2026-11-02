@@ -87,7 +87,8 @@ const MODES = [
         return { lines: [['The dog is playing with ', blank(p.poss), `${hint(p)} toy.`]], zh: '那隻狗正在玩牠的玩具。', meta: meta(p, 'poss') };
       }
       const n = rng.fresh(OWN, (x) => x.sg);
-      const pl = rng.chance(0.4);
+      // several owners have several things: not "our cup" or "their hat"
+      const pl = ['we', 'they', 'our', 'their'].includes(p.poss) || /^(our|their)$/.test(p.poss) ? true : rng.chance(0.4);
       const noun = pl ? n.pl : n.sg;
       const form = rng.int(3);
       if (form === 0) {

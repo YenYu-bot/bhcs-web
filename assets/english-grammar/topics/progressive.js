@@ -23,6 +23,8 @@ function draw(rng, o, { exclude = () => false, ask = false, test = () => true } 
 const zhProg = (d, neg) => zhSent(d.s, d.t, zhAspect(neg ? '沒有在' : '正在', d.f.zh), '');
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
 
+// a real activity to answer with (not sleep, smile, cry or hurry), not about getting up early or late, not the same object
+const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
 const MODES = [
   {
     id: 'fill', name: '肯定句填空',
@@ -90,7 +92,8 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') || s.person === 1 || s.reply === 'I', ask: true }); if (!d) return null;
       const { s, f, t, past } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.prog && !MOMENT.has(x.v) && x.v !== f.v && cuesFor(x, past ? 'pastprog' : 'now', s).some((c) => c.en === t.en), 'ing'); if (!g) return null;
+      if (!answerable(f, {})) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.prog && !MOMENT.has(x.v) && x.v !== f.v && answerable(x, f) && cuesFor(x, past ? 'pastprog' : 'now', s).some((c) => c.en === t.en), 'ing'); if (!g) return null;
       const be = beForm(s, past), rb = replyBe(s.reply, past);
       return {
         lines: [[`${cap(be)} ${s.en} ${vform(f, 'ing')}${phrase(f)} ${t.en}?`],
@@ -103,7 +106,7 @@ const MODES = [
     id: 'wh', name: '疑問詞問句', instruction: () => '填入 Be 動詞與 doing。',
     gen(rng, o) {
       // "What is she doing? — She is smiling." answers nothing; the reply is an activity
-      const d = draw(rng, o, { exclude: (s) => s.person === 1 || s.tags.includes('every'), ask: true, test: (x) => !['smile', 'cry', 'hurry'].includes(x.v) }); if (!d) return null;
+      const d = draw(rng, o, { exclude: (s) => s.person === 1 || s.tags.includes('every'), ask: true, test: (x) => !['smile', 'cry', 'hurry', 'wear'].includes(x.v) }); if (!d) return null;
       const { s, f, t, past } = d;
       const be = beForm(s, past);
       return {

@@ -105,6 +105,14 @@ test('per-topic cases stay fixed', () => {
   none('the same subject twice in a Chinese if / when sentence', (x) => x.topic === 'whenif' && (() => { const m = /^(?:如果)?\s*([^，]{1,8}?)(?:[^，]*)，\s*\1(會|就)/.exec(x.it.zh); return !!m; })());
   none('a shared father or mother', (x) => /共同的(爸爸|媽媽)/.test(x.it.zh));
   none('school out at night or up at noon', (x) => /School ends at (one|two|six|seven|eight|nine|ten|eleven|twelve)\b|I get up at (nine|ten|eleven|twelve|one|two|three|four)\b/.test(x.text));
+  // acceptance review (2026-11-02)
+  none('"You was"', (x) => /\b(You|We|They) was\b/.test(x.text));
+  none('a day the month does not have', (x) => /February (thirtieth|thirty-first)|(April|June|September|November) thirty-first/.test(x.text));
+  none('a boy or girl called Mr. / Ms.', (x) => /^The (boy|girl|student)s? .* is (Mr|Ms)\./.test(x.text));
+  none('a time that does not fit (dinner at eleven)', (x) => /have dinner\? — At (eleven|twelve|one|two|three|four|five|nine|ten)\b/.test(x.text));
+  none('repeated or broken Chinese', (x) => /了了|正在坐在|正在站在|得比賽贏|這個一天|共同的(爸爸|媽媽)|慢慢。/.test(x.it.zh));
+  none('his / her not matching the subject', (x) => /^(John|Tom|Ben|Peter|My father|My brother|He) is proud of her daughter/.test(x.text));
+  none('the legs … is', (x) => /\blegs of the \w+ is\b/.test(x.text));
   none('seasons and months out of order', (x) => /\b(Winter|January|December) is (hotter|warmer)\b|\b(Summer|July|August) is (colder|cooler)\b/.test(x.text));
 });
 

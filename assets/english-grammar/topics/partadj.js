@@ -29,7 +29,7 @@ const MODES = [
       const p = rng.fresh(PAIRS, (x) => x.base);
       if (rng.fresh([true, false], (x) => 'pk-' + x)) {
         const [th, thz] = rng.pick(p.things);
-        return { lines: [[`${cap(th)} is very `, blank(p.ing), `. (${choice(rng, p.ing, p.ed)})`]], zh: zhJoin(thz, p.zhIng) + '。', meta: { kind: 'pick', thing: true, base: p.base } };
+        return { lines: [[`${cap(th)} is very `, blank(p.ing), `. (${choice(rng, p.ing, p.ed)})`]], zh: zhJoin(thz, p.zhIng.replace(/^令人/, '很令人')) + '。', meta: { kind: 'pick', thing: true, base: p.base } };
       }
       const [who, wz, be] = rng.pick(PEOPLE);
       return { lines: [[`${who} ${be} very `, blank(p.ed), `. (${choice(rng, p.ing, p.ed)})`]], zh: zhJoin(wz, '那時', p.zhEd) + '。', meta: { kind: 'pick', thing: false, base: p.base } };

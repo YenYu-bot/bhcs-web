@@ -1,5 +1,6 @@
 // Topic: passive voice — The room is cleaned by Tom. / The letter was written by Amy. / The work will be done tomorrow.
 import { blank, cap, zhJoin } from '../core.js';
+import { mealFits } from '../vcommon.js';
 import { PP } from './perfect.js';
 import { VERBS } from '../verbs.js';
 import { pickPerson, verbFor, midOf, askedPerson } from '../people.js';
@@ -27,7 +28,7 @@ const DEEDS = [
   D('buy', 'the flowers', '花', true, '買', 'any', 'once'), D('take', 'the pictures', '這些照片', true, '拍', 'any', 'once'), D('see', 'the movie', '這部電影', false, '看', 'any', 'once'),
 ];
 const TIMES = {
-  pres: [['every day', '每天'], ['every week', '每星期'], ['every morning', '每天早上'], ['on weekends', '週末']],
+  pres: [['every day', '每天'], ['every evening', '每天晚上'], ['every morning', '每天早上'], ['on weekends', '週末']], // daily chores are not "every week"
   past: [['yesterday', '昨天'], ['last week', '上星期'], ['last night', '昨晚'], ['two days ago', '兩天前']],
   fut: [['tomorrow', '明天'], ['next week', '下星期'], ['tonight', '今晚'], ['this weekend', '這個週末']],
 };
@@ -41,9 +42,12 @@ const byZh = (p, zh, tense = 'pres', d = {}) => (d.bei ? zhJoin('被', p.zh, zh)
 function draw(rng, o, tenses) {
   const tense = rng.fresh(tenses, (x) => 'tense-' + x);
   // present: habits and states; past / future: habits and one-off deeds
-  const d = rng.fresh(DEEDS.filter((x) => (o.level >= 2 || regular(x.v)) && (tense === 'pres' ? x.when !== 'once' : x.when !== 'state')), (x) => x.v + x.obj);
+  // nobody plans to break a window tomorrow: bei deeds are past only
+  const d = rng.fresh(DEEDS.filter((x) => (o.level >= 2 || regular(x.v)) && (tense === 'pres' ? x.when !== 'once' : true) && !(x.bei && tense !== 'past')), (x) => x.v + x.obj);
   const p = pickPerson(rng, (x) => agentFits(d, x) && x.pr !== 'I' && x.pr !== 'you');
-  const [t, tz] = d.when === 'state' ? ['', ''] : rng.fresh(TIMES[tense], (x) => 'time-' + x[0]);
+  // a state still needs its time word when tenses are mixed (are／were grown); meals keep to their time of day
+  const STATE = { pres: ['every year', '每年'], past: ['last year', '去年'], fut: ['next year', '明年'] };
+  const [t, tz] = d.when === 'state' ? STATE[tense] : rng.fresh(TIMES[tense].filter((x) => mealFits(d.obj, x[0])), (x) => 'time-' + x[0]);
   return { tense, d, p, t, tz };
 }
 const tail = (t) => (t ? ' ' + t : '');

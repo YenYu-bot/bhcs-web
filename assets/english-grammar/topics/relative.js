@@ -60,7 +60,8 @@ function draw(rng, o) {
   const n = rng.fresh(NOUNS, (x) => x.sg);
   const pl = o.level >= 2 && rng.chance(0.4);
   const c = rng.fresh(clausesFor(n), key);
-  const mains = MAIN.filter((m) => m[2] === n.kind && (m[3] === 'any' || m[3] === (pl ? 'pl' : 'sg')) && (!m[4] || n.g === m[4] || (n.g === 'any' && !/student/.test(n.sg))) && (!m[5] || m[5].includes(n.sg)));
+  // Mr. Chen / Ms. Lin are grown-ups: not the boy, the girl or the student
+  const mains = MAIN.filter((m) => m[2] === n.kind && (m[3] === 'any' || m[3] === (pl ? 'pl' : 'sg')) && (!m[4] || ((n.g === m[4] || n.g === 'any') && !/student|boy|girl/.test(n.sg))) && (!m[5] || m[5].includes(n.sg)));
   const [tpl, zhT] = rng.pick(mains);
   const np = pl ? n.pl : n.sg;
   const zhNP = `${c.zh}${pl ? '那些' : '那' + n.m}${n.zh}`;

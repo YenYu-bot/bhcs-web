@@ -5,7 +5,7 @@ import { pickPerson, verbFor, midOf, pickAskedPerson, rpKey } from '../people.js
 // Duties: [verb phrase, Chinese]; 'school' ones are for students, so not for parents or the teacher.
 const D = (en, zh, who = 'any', when = null) => ({ en, zh, who, when });
 const DUTIES = [
-  D('do my homework', '寫功課', 'student'), D('get up early', '早起'), D('wear a uniform', '穿制服', 'student', ['every day', 'today', 'tomorrow']), D('clean the room', '打掃房間'), D('go to school', '上學', 'student', ['every day', 'today', 'tomorrow', 'this week']),
+  D('do my homework', '寫功課', 'student'), D('get up early', '早起', 'any', ['every day', 'tomorrow', 'this week']), D('wear a uniform', '穿制服', 'student', ['every day', 'today', 'tomorrow']), D('clean the room', '打掃房間'), D('go to school', '上學', 'student', ['every day', 'today', 'tomorrow', 'this week']),
   D('finish the work', '把工作做完', 'adult'), D('see a doctor', '去看醫生', 'any', ['today', 'tomorrow', 'now', 'this week']), D('stay at home', '待在家裡', 'any', ['today', 'tomorrow', 'now', 'this week']), D('wash the dishes', '洗碗'), D('take the bus', '搭公車'),
   D('study hard', '用功讀書', 'student', ['every day', 'today', 'this week', 'tomorrow']), D('go to bed early', '早點睡', 'any', ['every day', 'today', 'tomorrow', 'this week']), D('wait for the bus', '等公車', 'any', ['today', 'every day', 'now']), D('help my mother', '幫我媽媽', 'student'), D('go to work', '去上班', 'adult', ['every day', 'today', 'tomorrow', 'this week']),
   D('cook dinner', '煮晚餐', 'adult'), D('walk the dog', '遛狗'), D('practice the piano', '練習鋼琴', 'student'), D('take the test', '考試', 'student', ['today', 'tomorrow', 'this week']), D('buy some food', '買一些食物', 'any', ['today', 'tomorrow', 'now']),

@@ -43,6 +43,9 @@ test('word data is word, part of speech and short Chinese only: no example sente
       assert.match(en, /^[-A-Za-z(][A-Za-z .'’()\-?!,…]*$/, `${b.id} English entry: ${en}`);
       assert.ok(en.split(' ').length <= 6, `${b.id} entry is a word or phrase, not a sentence: ${en}`);
       assert.ok(CJK.test(zh), `${b.id} ${en}: Chinese meaning`);
+      assert.equal(zh, zh.trim(), `${b.id} ${en}: no stray spaces`); assert.ok(!/[\u4e00-\u9fff] [\u4e00-\u9fff]|； /.test(zh), `${b.id} ${en}: spacing ${zh}`);
+      assert.equal((zh.match(/（/g) || []).length, (zh.match(/）/g) || []).length, `${b.id} ${en}: brackets ${zh}`);
+      assert.ok(!/例句|補充|簡寫/.test(zh), `${b.id} ${en}: handout note ${zh}`);
       assert.ok(zh.length <= 30 && !/[A-Za-z]{3,}/.test(zh), `${b.id} ${en}: Chinese has no notes or examples: ${zh}`);
       assert.ok(!/[匌嬏嬍蠲嬎匍嬾孀嬱驔匵嬋騆匊匑嬇]/.test(zh), `${b.id} ${en}: no mis-decoded characters: ${zh}`);
       if (pos) assert.match(pos, /^((n|v|adj|adv|prep|conj|pron|int|interj|aux|art|det|num|phr|abbr)\.;?)+$/, `${b.id} ${en}: part of speech ${pos}`);
@@ -55,6 +58,7 @@ const OWNERS = new Map();
 for (const b of BOOKS) for (const [, en, , zh] of b.words) for (const m of zh.split(/[；;]/).map((s) => s.trim()).filter(Boolean)) {
   const s = OWNERS.get(m) ?? new Set(); s.add(en.toLowerCase()); OWNERS.set(m, s);
 }
+const WORDS = new Set(BOOKS.flatMap((b) => b.words.map((r) => r[1].toLowerCase())));
 const POSES = new Map();
 for (const b of BOOKS) for (const [, en, pos] of b.words) for (const p of pos.split(';').filter(Boolean)) { const s = POSES.get(en.toLowerCase()) ?? new Set(); s.add(p); POSES.set(en.toLowerCase(), s); }
 
@@ -83,6 +87,8 @@ function check(book, sh) {
       assert.ok(shown.some((c) => c === '_'), 'at least one letter hidden');
       shown.forEach((c, i) => c === '_' || assert.equal(c, it.en[i]));
       assert.equal(it.a, it.en); assert.equal(it.hint, w.zh);
+      const re = new RegExp('^' + shown.map((c) => (c === '_' ? '[a-z]' : c.toLowerCase())).join('') + '$');
+      assert.deepEqual([...WORDS].filter((x) => re.test(x)), [it.en.toLowerCase()], `${it.q}: only ${it.en} fits`);
     }
     if (mode === 'pos') { assert.ok(POS_CHOICES.includes(it.a)); assert.equal(it.a, w.pos); assert.equal(POSES.get(it.en.toLowerCase()).size, 1, `${it.en} has one part of speech in every list`); }
     if (mode === 'scramble') {

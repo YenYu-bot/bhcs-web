@@ -70,7 +70,10 @@ function place(rng, o) {
   if (o.level >= 3 && rng.chance(0.25)) {
     const two = spots.filter((s) => SMALL.includes(s) || ['the tree', 'the door', 'the house', 'the school'].includes(s));
     if (two.length >= 2) {
-      const a = rng.pick(two), b = rng.pick(two.filter((x) => x !== a));
+      // two places of the same size: not "between the house and the bed"
+      const BIG = ['the tree', 'the door', 'the house', 'the school'];
+      const a = rng.pick(two), b = rng.pick(two.filter((x) => x !== a && BIG.includes(x) === BIG.includes(a)));
+      if (!b) return place(rng, o);
       const [az, bz] = [SPOTS.find((s) => s[0] === a)[1], SPOTS.find((s) => s[0] === b)[1]];
       return { lines: [[`${it} ${be} `, blank('between'), ` ${a} and ${b}. (中間)`]], zh: `${iz}在${az}和${bz}中間。`, meta: { kind: 'place', prep: 'between', cue: '中間' } };
     }
@@ -105,7 +108,8 @@ const PHRASES = [
 function phrase(rng, o) {
   const [v, prep, objs, zt, cue] = rng.fresh(PHRASES, (x) => (Array.isArray(x[0]) ? x[0][0] : x[0]) + x[1]);
   const [ob, oz] = rng.pick(objs);
-  const p = pickPerson(rng, (x) => !(ob === 'me' && x.pr === 'I') && !(ob === 'you' && x.pr === 'you') && !(ob === 'her' && x.pr === 'she') && !(ob === 'him' && x.pr === 'he'));
+  // "his son" / "her daughter" follow the subject's gender
+  const p = pickPerson(rng, (x) => !(ob === 'me' && x.pr === 'I') && !(ob === 'you' && x.pr === 'you') && !(ob === 'her' && x.pr === 'she') && !(ob === 'him' && x.pr === 'he') && !(/^his /.test(ob) && x.pr !== 'he') && !(/^her /.test(ob) && x.pr !== 'she'));
   let head;
   if (Array.isArray(v)) head = `${p.en} ${verbFor(p, v)}`;
   else head = `${p.en} ${p.en === 'I' ? 'am' : ['we', 'they', 'you'].includes(p.pr) ? 'are' : 'is'} ${v}`;

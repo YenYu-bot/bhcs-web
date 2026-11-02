@@ -8,7 +8,7 @@ const NOUNS = [
   N('day', '一天', '個', ['nice', 'beautiful', 'hot', 'cold', 'busy', 'long']), N('girl', '女孩', '個', ['pretty', 'smart', 'kind', 'tall', 'lovely', 'shy']),
   N('boy', '男孩', '個', ['tall', 'smart', 'kind', 'lazy', 'strong', 'lucky']), N('dog', '狗', '隻', ['cute', 'big', 'smart', 'lazy', 'friendly']),
   N('cat', '貓', '隻', ['cute', 'fat', 'lazy', 'lovely']), N('house', '房子', '間', ['big', 'beautiful', 'old', 'clean', 'expensive']),
-  N('car', '車', '輛', ['fast', 'new', 'expensive', 'beautiful', 'old']), N('movie', '電影', '部', ['good', 'interesting', 'long', 'sad', 'funny', 'exciting']),
+  N('car', '車', '輛', ['fast', 'nice', 'expensive', 'beautiful', 'old']), N('movie', '電影', '部', ['good', 'interesting', 'long', 'sad', 'funny', 'exciting']),
   N('idea', '主意', '個', ['good', 'great', 'interesting', 'strange']), N('story', '故事', '個', ['interesting', 'sad', 'funny', 'strange', 'long']),
   N('cake', '蛋糕', '個', ['big', 'delicious', 'beautiful', 'sweet']), N('question', '問題', '個', ['good', 'easy', 'difficult', 'interesting', 'strange']),
   N('teacher', '老師', '位', ['kind', 'good', 'funny', 'busy']), N('umbrella', '雨傘', '把', ['old', 'big', 'beautiful', 'useful']),
@@ -36,7 +36,7 @@ const MODES = [
       const adj = rng.pick(n.adjs);
       const art = n.plural ? null : aOrAn(adj);
       const bl = art ? [blank('What'), ' ', blank(art), ' ', blank(adj)] : [blank('What'), ' ', blank(adj)];
-      const tail = o.level >= 3 && rng.chance(0.3) ? (n.plural ? (n.en === 'weather' ? ' it is' : ' they are') : ' it is') : '';
+      const tail = o.level >= 3 && rng.chance(0.3) ? (n.plural ? (n.en === 'weather' ? ' it is' : ' they are') : n.en === 'boy' ? ' he is' : n.en === 'girl' ? ' she is' : ' it is') : ''; // a boy is "he"
       return { lines: [[...bl, ` ${n.en}${tail}! (${adj})`]], zh: `好${ADJ_ZH[adj]}的${n.zh}啊！`, meta: meta('what', { adj, noun: n.en, plural: n.plural }) };
     },
   },
@@ -53,7 +53,7 @@ const MODES = [
     gen(rng, o) {
       const useWhat = rng.fresh([true, false], (x) => 'change-' + x);
       if (useWhat) {
-        const n = rng.fresh(NOUNS.filter((x) => x.en !== 'weather' && (o.level >= 2 || !x.plural)), (x) => 'c-' + x.en);
+        const n = rng.fresh(NOUNS.filter((x) => !['weather', 'day'].includes(x.en) && (o.level >= 2 || !x.plural)), (x) => 'c-' + x.en); // 這個一天 is not Chinese
         const adj = rng.pick(n.adjs);
         const subj = n.plural ? `These ${n.en} are` : `This is`;
         const given = n.plural ? `These ${n.en} are very ${adj}.` : `This is a very ${adj} ${n.en}.`;

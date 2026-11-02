@@ -122,7 +122,9 @@ const FITS = { 'go to {A} bed': ['every day', 'at night'], 'look at {A} moon': [
 function setPhrase(rng, o) {
   const [ph, pz, ans, rule] = rng.fresh(SET, (x) => x[0]);
   const p = pickPerson(rng, (x) => (ph.includes('school') ? x.en !== 'Our teacher' : true) && (ph.includes('work') ? ['My father', 'My mother', 'My parents', 'Our teacher'].includes(x.en) : true));
-  const whens = WHEN.filter((w) => (FITS[ph] ? FITS[ph].includes(w[0]) : !['at night', 'in the morning'].includes(w[0])));
+  // "after school" only for students (people.js persons: the family's grown-ups and the teacher are not)
+  const grown = /father|mother|parents|teacher/i.test(p.en);
+  const whens = WHEN.filter((w) => (FITS[ph] ? FITS[ph].includes(w[0]) : !['at night', 'in the morning'].includes(w[0])) && !(grown && w[0] === 'after school'));
   const [w, wz] = rng.pick(whens);
   const verb = ph.split(' ')[0];
   const forms = { play: ['play', 'plays'], have: ['have', 'has'], go: ['go', 'goes'], look: ['look', 'looks'], listen: ['listen', 'listens'], study: ['study', 'studies'], learn: ['learn', 'learns'] }[verb];

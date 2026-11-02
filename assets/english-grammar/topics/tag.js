@@ -16,7 +16,7 @@ export function tagPronoun(s) {
   return s.reply;
 }
 function people(rng, level, { animals = false } = {}) {
-  return [...SUBJECTS.filter((s) => s.lvl <= level && (s.kind === 'person' || (animals && s.kind === 'animal')) && !s.tags.includes('every') && !s.tags.includes('group')), ...extraSubjects(rng, level)]
+  return [...SUBJECTS.filter((s) => s.lvl <= level && (s.kind === 'person' || (animals && s.kind === 'animal')) && !s.tags.includes('every') && !s.tags.includes('group') && !(s.en === 'they' && s.kind === 'animal')), ...extraSubjects(rng, level)]
     .filter((s) => tagPronoun(s));
 }
 const pick = (rng, pool) => rng.fresh(pool, (x) => x.en);

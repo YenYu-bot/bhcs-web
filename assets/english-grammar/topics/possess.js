@@ -12,11 +12,12 @@ const OWNERS = [
 const THINGS = [['bag', '袋子'], ['book', '書'], ['room', '房間'], ['bicycle', '腳踏車'], ['teacher', '老師'], ['house', '房子'], ['car', '車'], ['dog', '狗'], ['names', '名字'], ['classroom', '教室'], ['mother', '媽媽'], ['friend', '朋友'], ['toys', '玩具'], ['desks', '書桌']];
 const PLURAL_THINGS = new Set(['names', 'toys', 'desks']);
 const BIG = new Set(['car', 'house']);
-const fitsThing = ([owner, , , rule], [thing]) => !(PLURAL_THINGS.has(thing) && rule === 's') && !(BIG.has(thing) && rule !== 's' && owner !== 'my parents') && !(owner === 'the dog' && !['toys', 'house', 'friend', 'names'].includes(thing)) && !(thing === 'teacher' && /teacher/.test(owner)) && !(thing === 'dog' && owner === 'the dog') && !(thing === 'mother' && /father|sister|parents|the dog/.test(owner));
+// grown-ups do not own toys
+const fitsThing = ([owner, , , rule], [thing]) => !(thing === 'toys' && /teacher|parent|mother|father|uncle|aunt/.test(owner)) && !(PLURAL_THINGS.has(thing) && rule === 's') && !(BIG.has(thing) && rule !== 's' && owner !== 'my parents') && !(owner === 'the dog' && !['toys', 'house', 'friend', 'names'].includes(thing)) && !(thing === 'teacher' && /teacher/.test(owner)) && !(thing === 'dog' && owner === 'the dog') && !(thing === 'mother' && /father|sister|parents|the dog/.test(owner));
 // Of-phrases for things: [whole, Chinese, part, Chinese]
 // [whole, Chinese, part, Chinese, kind: 'thing' (something to look at) | 'fact' (something to know or ask)]
 const OF = [['room', '房間', 'door', '門', 'thing'], ['house', '房子', 'roof', '屋頂', 'thing'], ['book', '書', 'name', '書名', 'fact'], ['table', '桌子', 'legs', '桌腳', 'thing'], ['story', '故事', 'end', '結局', 'fact'],
-  ['mountain', '山', 'top', '山頂', 'thing'], ['city', '城市', 'center', '市中心', 'thing'], ['car', '車', 'color', '顏色', 'fact'], ['box', '盒子', 'cover', '蓋子', 'thing'], ['class', '班級', 'leader', '班長', 'fact'], ['movie', '電影', 'name', '片名', 'fact'], ['school', '學校', 'gate', '大門', 'thing']];
+  ['mountain', '山', 'top', '山頂', 'thing'], ['city', '城市', 'center', '市中心', 'thing'], ['car', '車', 'color', '顏色', 'fact'], ['box', '盒子', 'cover', '蓋子', 'thing'], ['school', '學校', 'gate', '大門', 'thing'], ['movie', '電影', 'name', '片名', 'fact'], ['school', '學校', 'gate', '大門', 'thing']];
 const spaced = (s) => s.replace(/([A-Za-z'])([\u4e00-\u9fff，。？])/g, '$1 $2').replace(/([\u4e00-\u9fff，])([A-Za-z])/g, '$1 $2');
 const NEW_OK = new Set(['bag', 'book', 'room', 'bicycle', 'house', 'car', 'classroom', 'toys', 'desks']);
 const FRAMES = [['This is {P} {T}.', '這是{P}的{T}。'], ['Is that {P} {T}?', '那是{P}的{T}嗎？'], ['I like {P} {T}.', '我喜歡{P}的{T}。'], ['Where is {P} {T}?', '{P}的{T}在哪裡？'], ['{P} {T} is new.', '{P}的{T}是新的。']];
@@ -42,9 +43,12 @@ const MODES = [
     gen(rng) {
       const [whole, wz, part, pz, kind] = rng.fresh(OF, (x) => x[0]);
       const shapes = kind === 'thing' ? [['Look at the {X}.', '看看{Z}。'], ['The {X} is beautiful.', '{Z}很漂亮。'], ['The {X} is very old.', '{Z}很舊。']] : [['Do you know the {X}?', '你知道{Z}嗎？'], ['What is the {X}?', '{Z}是什麼？'], ['I like the {X}.', '我喜歡{Z}。']];
-      const [en, zh] = rng.pick(shapes);
+      const [en0, zh] = rng.pick(shapes);
+      const en = /s$/.test(part) ? en0.replace('{X} is', '{X} are') : en0; // The legs of the table are …
       const [l, r] = en.split('{X}');
-      return { lines: [[l, blank(part), ' ', blank('of'), ' the ', blank(whole), `${r} (${rng.chance(0.5) ? `${part}／${whole}` : `${whole}／${part}`})`]], zh: zh.replace('{Z}', `${wz}的${pz}`), meta: { kind: 'of', part, whole } };
+      // 書名 / 山頂 / 桌腳 already say whose: not 書的書名
+      const Z = [...wz.replace(/子$/, '')].some((c) => pz.includes(c)) ? pz : `${wz}的${pz}`;
+      return { lines: [[l, blank(part), ' ', blank('of'), ' the ', blank(whole), `${r} (${rng.chance(0.5) ? `${part}／${whole}` : `${whole}／${part}`})`]], zh: zh.replace('{Z}', Z), meta: { kind: 'of', part, whole } };
     },
   },
   {

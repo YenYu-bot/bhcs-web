@@ -89,6 +89,7 @@ export default {
   past: false,
   variety: false, // fixed sentence frames; checked by its own rules
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
+  noTranslate: ['it'], // "lent it to us" cannot be told from 借那本書給我們
   defaultModes: { 1: ['prep'], 2: ['prep', 'swap'], 3: ['prep', 'swap', 'it'] },
   levelHint: { 1: 'give、send、show、tell、teach、lend、pass、bring、write 用 to；buy、make 用 for。現在式。', 2: '加入 cook、get、draw，以及過去式和兩種句型互換。', 3: '再加入受詞是 it / them 的句子。' },
   grammarBox: (o) => ({ head: ['句型', '例子'], rows: [

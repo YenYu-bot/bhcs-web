@@ -18,6 +18,9 @@ const word = ([unit, en, pos, zh, forms]) => ({ unit, en, pos, zh, forms });
 const isWord = (w) => /^[A-Za-z]+$/.test(w.en); // one plain word: no spaces, hyphens, capitals rule out names below
 const meanings = (zh) => zh.split(/[；;]/).map((s) => s.trim()).filter(Boolean);
 const POS_ONE = (p) => POS_CHOICES.includes(p); // a single part of speech
+// Common 國中 words that are just as often another part of speech than the one a list gives (all: adj./pron.,
+// ring: n./v.); 詞性題 leaves them out because a student's other answer would also be right.
+const OFTEN_OTHER_POS = new Set(['all', 'south', 'north', 'east', 'west', 'ring', 'mail', 'level', 'hurt', 'past', 'back', 'well', 'like', 'right', 'light', 'fine', 'kind', 'close', 'last', 'fast', 'hard', 'late', 'early', 'free', 'open', 'clean', 'dry', 'wet', 'empty', 'present', 'plan', 'call', 'dream', 'rain', 'snow', 'work', 'play', 'walk', 'swim', 'cook', 'drink', 'rest', 'visit', 'help', 'love', 'hope', 'wish', 'sleep', 'talk', 'smile', 'train', 'watch', 'face', 'hand', 'show', 'water', 'paint', 'shop', 'turn', 'fly', 'line', 'order', 'park', 'phone', 'film', 'check', 'change', 'answer', 'question', 'film', 'study', 'test', 'use', 'fight', 'kick', 'push', 'pull', 'jump', 'run', 'ride', 'race', 'drop', 'film', 'stop', 'move', 'need', 'care', 'mind', 'cause', 'crowd', 'sound', 'taste', 'smell', 'touch', 'look', 'step', 'stay', 'own', 'top', 'middle', 'inside', 'outside', 'round', 'over', 'up', 'down', 'off', 'since', 'before', 'after', 'until', 'some', 'any', 'each', 'both', 'either', 'neither', 'this', 'that', 'these', 'those', 'what', 'which', 'one', 'first', 'second', 'third', 'next', 'enough', 'more', 'most', 'much', 'many', 'few', 'little', 'less', 'only', 'even', 'still', 'just', 'too', 'so', 'as']);
 /** Every part of speech any list gives a word ("hurt" v. in one book, adj. in another): 詞性題 only asks words with one. */
 let POS_OF = null;
 function posOf(en) {
@@ -34,6 +37,8 @@ function posOf(en) {
  * Chinese meanings that belong to one English entry only, across every list we hold:
  * a 中翻英 question whose Chinese fits two English words ("快樂的" happy / glad) has no single answer, so it is left out.
  */
+let ALL_WORDS = null;
+const allWords = () => (ALL_WORDS ??= new Set(allBooks().flatMap((b) => b.words.map((r) => r[1].toLowerCase()))));
 let ZH_OWNERS = null;
 function zhOwners() {
   if (ZH_OWNERS) return ZH_OWNERS;
@@ -92,11 +97,19 @@ export const MODES = [
   {
     id: 'missing', name: '缺字母', instruction: '依中文意思，補上缺少的字母。',
     test: (w) => isWord(w) && w.en.length >= 4,
-    make: (rng, w) => { const h = lettersHidden(rng, w.en); return { q: h.shown, hint: w.zh, a: w.en, hidden: h.hidden }; },
+    make: (rng, w) => {
+      // no other word we hold may fit the shown letters (f _ _ t is foot and feet): hide fewer letters until it is one word
+      for (let t = 0; t < 8; t++) {
+        const h = lettersHidden(rng, w.en);
+        const re = new RegExp('^' + h.shown.split(' ').map((c) => (c === '_' ? '[a-z]' : c.toLowerCase())).join('') + '$');
+        if (![...allWords()].some((x) => x !== w.en.toLowerCase() && re.test(x))) return { q: h.shown, hint: w.zh, a: w.en, hidden: h.hidden };
+      }
+      return null;
+    },
   },
   {
     id: 'pos', name: '詞性', instruction: `寫出單字的詞性（${POS_CHOICES.join('、')}）。`,
-    test: (w) => isWord(w) && POS_ONE(w.pos) && posOf(w.en).size === 1,
+    test: (w) => isWord(w) && POS_ONE(w.pos) && posOf(w.en).size === 1 && !OFTEN_OTHER_POS.has(w.en.toLowerCase()),
     make: (rng, w) => ({ q: w.en, hint: '', a: w.pos }),
   },
   {
