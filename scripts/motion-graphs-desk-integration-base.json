@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "original_integration_base": "621c27cbeea791b4f37bd6f43189fe6894a0510c",
+  "current_integration_base": "5089a4d7cb0844354cbb2d60e2aa1f35fa7e7947",
+  "motion_parent": "6fc5e8f108b4880d5a97757333cb9c9a8b587462",
+  "protected_existing_count": 658,
+  "approved_changes_from_current_base": 0,
+  "reason": "Incorporate already merged English PRs #200/#201/#202 without changing any English source. Original accepted motion runtime and repair manifests remain immutable. Protect all latest-main tools/assets except generated tools/science/index.html; retain prior-base approved blob chain separately."
+}

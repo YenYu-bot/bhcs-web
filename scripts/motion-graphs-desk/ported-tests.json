@@ -1,0 +1,223 @@
+{
+  "sourceCommit": "3f3cfd0b74776af4b2ddf50ab34d3bf89440b1e9",
+  "files": [
+    {
+      "path": "clock.test.mjs",
+      "source_sha256": "bc3def78f3119d5b3d832201ef7f0313a80a2b1b614574655437f5520fe2ca1e",
+      "ported_sha256": "368e434a90c76bad9ea7204124bcb78cfb8f56261ffe889a6cd541de9fb12ee2",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 2
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "geometry.test.mjs",
+      "source_sha256": "79d926d4a028307210289785370667f55918f20a39998e125edcd13e7c117bb4",
+      "ported_sha256": "ec14a8092b31391f91db5d2d1f6fce54e0ed22e4a762a262024235960b864a29",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "model-engine.test.mjs",
+      "source_sha256": "4dcd97ef588277073c6adfa2d34a4f167b69b7f111d882120d843b23727e8e2b",
+      "ported_sha256": "d40c59c6b3a8a9990d80314379965da53b10fcf422dc3a8852325a7cd30aba3e",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 2
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "storage.test.mjs",
+      "source_sha256": "2c5e947945918194c08c7998541097c96a36602632dcf6163ac6f33afc3a0d7d",
+      "ported_sha256": "feeeac6de6db7df88c4674e3791ef2e2683d7f8c9ee27d2afdc12d175b66a7fa",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 2
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "ui-static.test.mjs",
+      "source_sha256": "181d9f7e0c97c99e2afeb4fe80bfea2a7f19e9c365cb3bdd194894d7d1c541f5",
+      "ported_sha256": "4d49c0d6b48336ee50187a7214214dfc22cde5d946d877e198da13ad22594f13",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        },
+        {
+          "from": "import fs from 'node:fs'",
+          "to": "import fs from './accepted-file-reader.mjs'",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "ui.test.mjs",
+      "source_sha256": "4c7ffbd9c07bfeeaf0c7bbd94276be85d17b2d518f0690c7ea4969f01cd13797",
+      "ported_sha256": "8689243e39c1b614bfc3539d408cf00eb1dd66a00462ba4658f54d14bfc20242",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 7
+        },
+        {
+          "from": "import {readFile} from 'node:fs/promises'",
+          "to": "import {readFile} from './accepted-file-reader.mjs'",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v1-preservation.test.mjs",
+      "source_sha256": "75a07c52f084d10dcd279380270689afeab55e4c4b208a86ed217111517c3dd4",
+      "ported_sha256": "72576c057e076cb3601e86858236e06b4d2d01d89afdb92cfc20290ccf88841b",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        },
+        {
+          "from": "../docs/accepted-v1-manifest.json",
+          "to": "./accepted-v1-manifest.json",
+          "count": 1
+        },
+        {
+          "from": "import fs from 'node:fs'",
+          "to": "import fs from './accepted-file-reader.mjs'",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v2-copy.test.mjs",
+      "source_sha256": "636d134cf2170d4f18c95e7056c4e7125ab059237355bef69369702f338218bf",
+      "ported_sha256": "b2c9a23a1dae887930f2421a6a15cd99d32b0ad36aad35e6ada9d6a9955f62c5",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v2-fixtures.mjs",
+      "source_sha256": "527ccb9ef626cb15237d77c4fff58b64c6dc955cd75c753d199388fa75c41367",
+      "ported_sha256": "3c1ded31c0a9537e607acb40e99ef6292dcdd3a2a83a66b4373777870a9bdada",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v2-geometry.test.mjs",
+      "source_sha256": "8a4cff0448a0d8eefaf3be0cd76a0225391781ff36ffeddd38daa71ade570807",
+      "ported_sha256": "32d758e44c9cfaed2aaa98a7d3178c4907b2d3c57c40cac279c19ed3f7ca69e1",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v2-model-engine.test.mjs",
+      "source_sha256": "1389c182483a6ea31fbeb8a692aaad55f5236c6319a4cf27741195f77bd993f1",
+      "ported_sha256": "313c6d35dbc1b1fbec0b28688fb4119747d470bcd72a7f7d1131509b16f62ead",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 3
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v2-storage.test.mjs",
+      "source_sha256": "4f7e72f6c6e981ad6049901efef2ece0946387c239258cfba16a220d615d8aee",
+      "ported_sha256": "80d26c4a776c97ed5c74864f6451328ad38a8eb52e41c544a38cc4d1061fc3cd",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v2-ui-static.test.mjs",
+      "source_sha256": "85a6573ac6bb4dc8955620b944a43ceabb9f5f5f91e58ea800f8d035c97fcc7d",
+      "ported_sha256": "b281120863a96d7c6678a24398c268a61651b6d4a85ad5c1bc1fe34b6e733b07",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 1
+        },
+        {
+          "from": "import fs from 'node:fs'",
+          "to": "import fs from './accepted-file-reader.mjs'",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "v2-ui.test.mjs",
+      "source_sha256": "37faccc6ad0fab59aa08b35d591fe351a93f22352ef1f063b16e471d0916ed93",
+      "ported_sha256": "5aa1ba3b0505289eb0f928824063fbb07e9268743f9292b25c779b2ce99eab33",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/motion-graphs-desk/",
+          "count": 8
+        },
+        {
+          "from": "import {readFile} from 'node:fs/promises'",
+          "to": "import {readFile} from './accepted-file-reader.mjs'",
+          "count": 1
+        }
+      ],
+      "inverse_exact": true
+    }
+  ],
+  "baselineManifest": {
+    "path": "accepted-v1-manifest.json",
+    "source_sha256": "e9d7dccf17b776fb07a200e32aae3f705bbd1cf641a8b239e7c2ee7849cfb422"
+  },
+  "helperExceptions": "accepted-file-reader.mjs only reverses the two exact production canonical tags to accepted private robots tags when reading their exact runtime index.html URLs; all other bytes and reads unchanged.",
+  "helper_sha256": "97e76c8da212eaaf3cd44b53634300e30893f4cd9c17c03215b7db61d6634223"
+}

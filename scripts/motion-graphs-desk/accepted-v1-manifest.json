@@ -1,0 +1,55 @@
+{
+  "sourceSHA": "7a40cede3f7e7400a95686612363977639a89706",
+  "files": [
+    {
+      "path": "app.mjs",
+      "sha256": "e08f5f060a5354883f0fb20761b65ea75db58480f5964545747040062126d5a0",
+      "bytes": 20175
+    },
+    {
+      "path": "assets/teacher-body-v3.png",
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b",
+      "bytes": 941293
+    },
+    {
+      "path": "assets/teacher-body-v3.provenance.json",
+      "sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9",
+      "bytes": 335
+    },
+    {
+      "path": "clock.mjs",
+      "sha256": "c35585819e986376f2828de0a7ce93b17a5f9706fa6ded110e09b721c48c0387",
+      "bytes": 2126
+    },
+    {
+      "path": "engine.mjs",
+      "sha256": "deb611bb15c70d4883e8989706559c1feff979a181711b914e9dcf319356e7ec",
+      "bytes": 11899
+    },
+    {
+      "path": "geometry.mjs",
+      "sha256": "915415899b6795f16f72447562bbd61545315cfe7eb5121f25539a814631a91c",
+      "bytes": 7922
+    },
+    {
+      "path": "index.html",
+      "sha256": "cd797b8019e3000ce26fe1eeb2ecc621f15c19c65601b4f0795111bbe8afca05",
+      "bytes": 10471
+    },
+    {
+      "path": "model.mjs",
+      "sha256": "734cd95f7bf8ff52d44a1a264537bdbb8eeb377d4f7b01baed10df72c12680df",
+      "bytes": 8677
+    },
+    {
+      "path": "storage.mjs",
+      "sha256": "fb6079e9242a242c0ac193126af83d05e7867108a8c44752b98136183789d220",
+      "bytes": 8922
+    },
+    {
+      "path": "style.css",
+      "sha256": "20b7ac2005087f208336eaefb47519fc3dc3de45423ad3a101f7300900eb8197",
+      "bytes": 7007
+    }
+  ]
+}
