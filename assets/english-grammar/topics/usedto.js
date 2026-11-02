@@ -2,7 +2,7 @@
 //   Tom used to play basketball after school.   Did Tom use to …? / Tom didn't use to …   Tom is used to getting up early.
 import { blank, cap, mid, zhJoin } from '../core.js';
 import { VERBS, phrase } from '../verbs.js';
-import { actors, pickSubject, pickFrame } from '../vcommon.js';
+import { actors, pickSubject, pickFrame, asked } from '../vcommon.js';
 import { beForm } from './be.js';
 
 // When the habit was: these keep "used to" about the past and give the Chinese its 以前 / 小時候.
@@ -35,13 +35,13 @@ const MODES = [
       const [w, wz] = whenFor(rng, s);
       const front = w && rng.chance(0.5);
       const line = front
-        ? [`${cap(w)}, ${s.en} `, blank('used'), ' ', blank('to'), ' ', blank(f.v), ` (${f.v})${phrase(f)}.`]
+        ? [`${cap(w.replace(/^when (I|you|he|she|we|they) (was|were)/, (m0, x, be) => `when ${mid(s.en)} ${be}`))}, ${pron(s)} `, blank('used'), ' ', blank('to'), ' ', blank(f.v), ` (${f.v})${phrase(f)}.`]
         : [`${cap(s.en)} `, blank('used'), ' ', blank('to'), ' ', blank(f.v), ` (${f.v})${phrase(f)}${w ? ' ' + w : ''}.`];
       return { lines: [line], zh: zhJoin(s.zh, wz, '常常' + f.zh) + '。', meta: meta(s, f, { kind: 'fill' }) };
     },
   },
   {
-    id: 'negq', name: '否定與疑問', instruction: () => "否定句用 didn't use to，疑問句用 Did … use to（use 不加 d）：依括號提示填入。",
+    id: 'negq', name: '否定與疑問', instruction: () => "否定句用 didn't use to，疑問句用 Did … use to（use 不加 d）：填入空格（疑問句裡 my 改成 your）。",
     gen(rng, o) {
       const s = pickSubject(rng, people(rng, o, (x) => x.en === 'I')); if (!s) return null;
       const f = pickFrame(rng, s, o.level, habit); if (!f) return null;
@@ -49,10 +49,11 @@ const MODES = [
         return { lines: [[`${cap(s.en)} `, blank("didn't"), ' ', blank('use'), ' ', blank('to'), ` ${f.v}${phrase(f)}.`]], zh: zhJoin(s.zh, '以前不常' + f.zh) + '。', meta: meta(s, f, { kind: 'neg' }) };
       }
       if (s.person === 1) return null; // "Did we use to …?" asks what the speaker knows
-      const yes = rng.chance(0.5), pr = s.en === 'you' ? 'I' : s.tags.includes('with-you') ? 'we' : pron(s); // "you and Tom" answer "we"
+      const a = asked(s); // a question to the listener: "my sister" becomes "your sister"
+      const yes = rng.chance(0.5), pr = a.en === 'you' ? 'I' : a.tags.includes('with-you') ? 'we' : pron(a); // "you and Tom" answer "we"
       return {
-        lines: [[blank('Did'), ` ${mid(s.en)} `, blank('use'), ' ', blank('to'), ` ${f.v}${phrase(f)}? — ${yes ? 'Yes' : 'No'}, ${pr} ${yes ? 'did' : "didn't"}.`]],
-        zh: zhJoin(s.zh, '以前常常' + f.zh) + '嗎？', meta: meta(s, f, { kind: 'q' }),
+        lines: [[blank('Did'), ` ${mid(a.en)} `, blank('use'), ' ', blank('to'), ` ${f.v}${phrase(f)}? — ${yes ? 'Yes' : 'No'}, ${pr} ${yes ? 'did' : "didn't"}.`]],
+        zh: zhJoin(a.zh, '以前常常' + f.zh) + '嗎？', meta: meta(a, f, { kind: 'q' }),
       };
     },
   },

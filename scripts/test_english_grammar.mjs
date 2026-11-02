@@ -342,7 +342,7 @@ function checkFreq(it, mode, o) {
 }
 function checkImperative(it, mode) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), all = ans(it);
-  if (all.some((x) => x.includes('／'))) assert.match(text, /a movie/, `only see／watch a movie has two answers: ${text}`);
+  if (all.some((x) => x.includes('／'))) assert.match(text, /a movie|lunch|your umbrella|some water|a cake/, `two answers only where the Chinese allows both: ${text}`);
   const a = all.map((x) => x.split('／')[0]);
   if (mode === 'do') assert.deepEqual(a, [m.lower ? m.base : cap1(m.base)]);
   if (mode === 'dont') { assert.deepEqual(a, ["Don't", m.base]); assert.ok(text.includes('(不要'), 'cue says 不要'); }
@@ -598,7 +598,7 @@ const PP_EXTRA = { build: 'built', grow: 'grown', break: 'broken', steal: 'stole
 const ppAny = (b) => PP_EXTRA[b] ?? ppOf(b);
 function checkPassive(it, mode, o) {
   const m = it.meta, text = it.lines.map(lineText).join(' '), a = ans(it);
-  const past = /\b(yesterday|last week|last night|two days ago)\b/.test(text), fut = /\b(tomorrow|next week|tonight|this weekend)\b/.test(text);
+  const past = /\b(yesterday|last week|last night|two days ago|last year)\b/.test(text), fut = /\b(tomorrow|next week|tonight|this weekend|next year)\b/.test(text);
   assert.ok(!(past && fut), 'one time');
   if (o.level === 1) assert.ok(!past && !fut && /ed$/.test(ppAny(m.base)), `level 1: present, regular: ${text}`);
   const be = fut ? null : past ? (m.pl ? 'were' : 'was') : m.pl ? 'are' : 'is';
@@ -689,7 +689,7 @@ function checkSense(it, mode) {
     const form = past ? { see: 'saw', watch: 'watched', hear: 'heard', feel: 'felt' }[verb] : isThirdSg(subj) ? s3(verb) : verb;
     assert.deepEqual(a, [form], `${verb} for "${subj}": ${text}`);
   }
-  if (mode === 'sense') { const going = /\(正在／/.test(text); assert.deepEqual(a, [going ? ing(m.base) : m.base], text); assert.match(text, /\b(saw|sees?|heard|hears?|watch(ed|es)?|felt|feels?) (him|her|the children|the dog|someone|the birds|the house|my heart) ___/); }
+  if (mode === 'sense') { const going = /\(正在／/.test(text); assert.deepEqual(a, [going ? ing(m.base) : m.base], text); assert.match(text, /\b(saw|sees?|heard|hears?|watch(ed|es)?|felt|feels?) (him|her|the children|the dog|the cat|someone|the birds|the house|my heart) ___/); }
   if (mode === 'cause') { assert.ok(BASE_AFTER.has(m.verb) !== TO_AFTER.has(m.verb)); assert.deepEqual(a, [m.verb === 'help' ? `${m.base}／to ${m.base}` : BASE_AFTER.has(m.verb) ? m.base : `to ${m.base}`], text); }
 }
 
@@ -898,7 +898,7 @@ function checkSpend(it, mode) {
   if (mode === 'choose') {
     // the pattern decides the verb: It ___ … to V / 人 ___ 時間 V-ing / 物 ___ (人) 錢 / 人 ___ 錢 for 物
     const verb = /^It ___ .* to [a-z]/.test(text) ? 'take' : / ___ [a-z ]+ for the /.test(text) ? 'pay' : /dollars/.test(text) ? 'cost' : 'spend';
-    const past = /\b(yesterday|last \w+)\b/.test(text);
+    const past = /\b(yesterday|last \w+|this morning)\b/.test(text);
     const subj = text.split(' ___')[0];
     const forms = SPEND[verb];
     const want = past ? forms[2] : verb === 'take' || verb === 'cost' && !/^The shoes/.test(subj) ? forms[1] : verb === 'cost' ? forms[0] : isThirdSg(subj) ? forms[1] : forms[0];

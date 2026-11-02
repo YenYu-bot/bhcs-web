@@ -23,7 +23,9 @@ const ADV = { good: 'well', delicious: 'deliciously', terrible: 'terribly', swee
   interesting: 'interestingly', expensive: 'expensively', tired: 'tiredly', happy: 'happily', sad: 'sadly', angry: 'angrily', hungry: 'hungrily', cold: 'coldly', nervous: 'nervously',
   soft: 'softly', comfortable: 'comfortably', warm: 'warmly', quiet: 'quietly', noisy: 'noisily', clean: 'cleanly', dirty: 'dirtily' };
 const TIME_LINK = [['today', '今天'], ['now', '現在'], ['', '']];
-const zhGet = (l, adj) => (l.verb === 'get' ? adj[1] : { taste: '嘗起來', smell: '聞起來', sound: '聽起來', look: '看起來', feel: `${l.subj === 'I' ? '覺得' : '摸起來'}` }[l.verb] + adj[1]);
+// get now is a habit: 我爺爺很容易累 / 教室會安靜下來 / 天氣變冷; in the past it happened: 累了
+const zhGetVerb = (l, z, past) => (past ? z : l.subj === 'The weather' ? z : l.subj === 'The classroom' ? '會' + z : '很容易' + z.replace(/了$/, ''));
+const zhGet = (l, adj, past = false) => (l.verb === 'get' ? zhGetVerb(l, adj[1], past) : { taste: '嘗起來', smell: '聞起來', sound: '聽起來', look: '看起來', feel: `${l.subj === 'I' ? '覺得' : '摸起來'}` }[l.verb] + adj[1]);
 
 // ---------- sense verbs: V (the whole thing) or V-ing (in progress) ----------
 const SENSE = [['see', 'sees', 'saw', '看到'], ['hear', 'hears', 'heard', '聽到'], ['watch', 'watches', 'watched', '看著'], ['feel', 'feels', 'felt', '感覺到']];
@@ -33,7 +35,8 @@ const SCENES = [
   S('him', '他', [['play basketball', 'playing basketball', '打籃球'], ['cross the street', 'crossing the street', '過馬路'], ['dance', 'dancing', '跳舞'], ['leave the house', 'leaving the house', '離開房子']], ['see', 'watch']),
   S('her', '她', [['sing a song', 'singing a song', '唱歌'], ['cry', 'crying', '哭'], ['laugh', 'laughing', '笑'], ['call your name', 'calling your name', '叫你的名字']], ['hear', 'see']),
   S('the children', '孩子們', [['play in the park', 'playing in the park', '在公園玩'], ['sing', 'singing', '唱歌'], ['run to school', 'running to school', '跑去學校']], ['see', 'watch', 'hear']),
-  S('the dog', '那隻狗', [['run across the road', 'running across the road', '跑過馬路'], ['bark', 'barking', '叫'], ['eat the cake', 'eating the cake', '吃蛋糕']], ['see', 'watch', 'hear']),
+  // one hears a dog bark, not eat a cake
+  S('the dog', '那隻狗', [['bark', 'barking', '叫']], ['hear']), S('the cat', '那隻貓', [['run across the road', 'running across the road', '跑過馬路'], ['eat the cake', 'eating the cake', '吃蛋糕']], ['see', 'watch']),
   S('someone', '有人', [['knock on the door', 'knocking on the door', '敲門'], ['open the door', 'opening the door', '開門'], ['come in', 'coming in', '進來']], ['hear', 'see']),
   S('the birds', '鳥', [['sing in the tree', 'singing in the tree', '在樹上唱歌'], ['fly away', 'flying away', '飛走']], ['hear', 'see', 'watch']),
   S('the house', '房子', [['shake', 'shaking', '搖晃']], ['feel']), S('my heart', '我的心', [['beat fast', 'beating fast', '跳得很快']], ['feel']),
@@ -88,7 +91,7 @@ const MODES = [
       const past = o.level >= 2 && rng.chance(0.35);
       const [t, tz] = past ? rng.pick(PAST_LINK) : ['', ''];
       const form = past ? LINK_VERBS[l.verb][2] : l.s3;
-      return { lines: [[`${l.subj} `, blank(form), ` ${adj}${t ? ' ' + t : ''}. (${linkCue(l)})`]], zh: zhJoin(l.zh, tz, zhGet(l, [adj, az])) + '。', meta: { kind: 'linkverb', verb: l.verb, like: false, subj: l.subj, past } };
+      return { lines: [[`${l.subj} `, blank(form), ` ${adj}${t ? ' ' + t : ''}. (${linkCue(l)})`]], zh: zhJoin(l.zh, tz, zhGet(l, [adj, az], past)) + '。', meta: { kind: 'linkverb', verb: l.verb, like: false, subj: l.subj, past } };
     },
   },
   {
@@ -105,7 +108,7 @@ const MODES = [
       const b = base.split(' ')[0], rest = base.slice(b.length);
       return {
         lines: [[`${p.en} ${verb} ${sc.obj} `, blank(going ? ing.split(' ')[0] : b), `${rest}${t ? ' ' + t : ''}. (${CUE[going ? 'going' : 'whole']}／${b})`]],
-        zh: zhJoin(p.zh, tz, `${vz}${sc.zh}${going ? (az.startsWith('在') ? '正' : '正在') : ''}${az}`) + '。', meta: { kind: 'sense', verb: v, base: b, going },
+        zh: zhJoin(p.zh, tz, `${vz}${sc.zh}${going ? (az.startsWith('在') ? '正' : /得/.test(az) ? '' : '正在') : ''}${az}`) + '。', meta: { kind: 'sense', verb: v, base: b, going },
       };
     },
   },
@@ -122,7 +125,7 @@ const MODES = [
       const act = going ? ing : base;
       return {
         lines: [[`${p.en} `, blank(past ? vp : verbFor(p, [v, vs])), ` ${sc.obj} ${act}${t ? ' ' + t : ''}. (${SENSE_CUE[v]})`]],
-        zh: zhJoin(p.zh, tz, `${SENSE_CUE[v]}${sc.zh}${going ? (az.startsWith('在') ? '正' : '正在') : ''}${az}`) + '。', meta: { kind: 'senseverb', verb: v, past, subj: p.en },
+        zh: zhJoin(p.zh, tz, `${SENSE_CUE[v]}${sc.zh}${going ? (az.startsWith('在') ? '正' : /得/.test(az) ? '' : '正在') : ''}${az}`) + '。', meta: { kind: 'senseverb', verb: v, past, subj: p.en },
       };
     },
   },

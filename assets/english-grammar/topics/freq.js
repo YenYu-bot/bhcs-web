@@ -21,10 +21,14 @@ const BE_WHEN = {
   'at home': [['on Sundays', '星期天'], ['in the evening', '晚上']], 'in the library': [['after school', '放學後']], 'in the park': [['on weekends', '週末']],
   'at the zoo': [['on weekends', '週末']], 'at the beach': [['in summer', '夏天']], 'in the kitchen': [['in the evening', '晚上']],
 };
-function beWhen(rng, p) {
-  const w = BE_WHEN[p.en];
+function beWhen(rng, p, s) {
+  // grown-ups are not "late for school" or "in the library after school": for work / after work
+  const grown = s && s.age !== 'young';
+  const w = BE_WHEN[p.en]?.map(([e, z]) => (grown ? [e.replace('for school', 'for work').replace('after school', 'after work'), z.replace('上學', '上班').replace('放學後', '下班後')] : [e, z]));
   return w && (p.type !== 'loc' || rng.chance(0.5)) ? rng.pick(w) : ['', ''];
 }
+// "seldom happy on weekends" says the opposite of what one means: feelings that come with a good time take always…sometimes
+const advFits = (adv, p) => !(['happy'].includes(p.en) && ['seldom', 'never'].includes(adv));
 // "always late" rather than "always 遲到了": the state, not the event
 //   and 很 stays except after 從不 / 很少 ("通常很累", "從不難過")
 const stateZh = (p, adv) => p.zh.pos.replace(/了$/, '').replace(/^很/, ['never', 'seldom'].includes(adv) ? '' : '很');
@@ -40,7 +44,7 @@ const MODES = [
     id: 'verb', name: '一般動詞句', instruction: () => '依括號裡的中文與動詞，把頻率副詞和動詞依正確順序填入。',
     gen(rng, o) {
       const s = subject(rng, o); if (!s) return null;
-      const f = pickFrame(rng, s, o.level, (x) => x.habit); if (!f) return null;
+      const f = pickFrame(rng, s, o.level, (x) => x.habit && !(x.v === 'go' && /school/.test(x.rest || ''))); if (!f) return null; // students go to school every day
       const [adv, az] = rng.fresh(advFor(o, f), (x) => x[0]);
       // an extra time only when it suits the activity ("on weekends", "after school")
       const tails = cuesFor(f, 'habit', s).filter((t) => ['on weekends', 'after school'].includes(t.en)).map((t) => [t.en, t.zh]);
@@ -56,10 +60,10 @@ const MODES = [
     id: 'be', name: 'Be 動詞句', instruction: () => '依括號裡的中文，把 Be 動詞和頻率副詞依正確順序填入。',
     gen(rng, o) {
       const s = pickSubject(rng, actors(rng, Math.max(o.level, 2), { exclude: (x) => x.kind !== 'person' })); if (!s) return null;
-      const p = rng.fresh(BE_PREDS, (x) => x.en);
       const [adv, az] = rng.fresh(advFor(o), (x) => x[0]);
+      const p = rng.fresh(BE_PREDS.filter((x) => advFits(adv, x)), (x) => x.en);
       const be = beForm(s, false);
-      const z = stateZh(p, adv), [w, wz] = beWhen(rng, p);
+      const z = stateZh(p, adv), [w, wz] = beWhen(rng, p, s);
       return {
         lines: [[cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}${w ? ' ' + w : ''}. (${az}／be)`]],
         zh: zhJoin(s.zh, wz, az, p.type === 'loc' ? p.zh.pos : z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }),
@@ -72,12 +76,12 @@ const MODES = [
       const [adv, az] = rng.fresh(advFor(o), (x) => x[0]);
       if (rng.chance(0.5)) {
         const s = pickSubject(rng, actors(rng, Math.max(o.level, 2), { exclude: (x) => x.kind !== 'person' })); if (!s) return null;
-        const p = rng.fresh(BE_PREDS, (x) => x.en); const be = beForm(s, false);
-        const z = p.type === 'loc' ? p.zh.pos : stateZh(p, adv), [w, wz] = beWhen(rng, p), wt = w ? ' ' + w : '';
+        const p = rng.fresh(BE_PREDS.filter((x) => advFits(adv, x)), (x) => x.en); const be = beForm(s, false);
+        const z = p.type === 'loc' ? p.zh.pos : stateZh(p, adv), [w, wz] = beWhen(rng, p, s), wt = w ? ' ' + w : '';
         return { lines: [[`${cap(s.en)} ${be} ${p.en}${wt}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}${wt}.`]], zh: zhJoin(s.zh, wz, az, z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }) };
       }
       const s = subject(rng, { ...o, level: Math.max(o.level, 2) }); if (!s) return null;
-      const f = pickFrame(rng, s, o.level, (x) => x.habit); if (!f || !advFor(o, f).some((a) => a[0] === adv)) return null;
+      const f = pickFrame(rng, s, o.level, (x) => x.habit && !(x.v === 'go' && /school/.test(x.rest || ''))); if (!f || !advFor(o, f).some((a) => a[0] === adv)) return null;
       const v = third(s) ? VERBS[f.v].s : VERBS[f.v].base;
       return { lines: [[`${cap(s.en)} ${v}${phrase(f)}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(adv), ' ', blank(v), `${phrase(f)}.`]], zh: zhJoin(s.zh, az, f.zh) + '。', meta: meta(s, adv, { kind: 'verb', base: f.v, verb: v }) };
     },

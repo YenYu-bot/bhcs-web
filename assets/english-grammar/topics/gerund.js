@@ -6,6 +6,9 @@ import { actors, pickSubject, frameFits, third, mealFits } from '../vcommon.js';
 // Verbs and what follows them. s3 is the -s form, past the past form (level 3 mixes tenses in by the time word).
 //   acts: which activities (frame verbs) make sense after it; pastOk: whether it reads well in the past tense
 //   either: takes both forms with the same meaning (start, like, love, begin) — kept out of the fixed-answer sections, shown in the grammar box
+// finish + doing: 洗完衣服 / 打掃完房間 (完 after the verb), not 完成洗衣服
+const TWO = /^(打掃|練習|整理|準備|使用|修理|學習|參觀|拜訪|收拾|清洗|觀看)/;
+const finished = (zh) => { if (/^幫/.test(zh)) return zh.replace(/(梳|洗|餵)/, '$1完'); const n = TWO.test(zh) ? 2 : 1; return zh.slice(0, n) + '完' + zh.slice(n); }; // 幫狗梳完毛
 const V = (base, s3, past, zh, takes, acts, pastOk = true, either = false) => ({ base, s3, past, zh, takes, acts, pastOk, either });
 const SKILLS = ['play', 'swim', 'dance', 'sing', 'draw', 'paint', 'cook', 'bake', 'ride', 'skate', 'drive', 'fix', 'use', 'make', 'write', 'read', 'speak', 'teach'];
 const OUTINGS = ['visit', 'travel', 'see', 'climb', 'go', 'take', 'meet', 'shop', 'fly', 'catch', 'swim', 'ride', 'play'];
@@ -52,13 +55,15 @@ function sentence(rng, o, takes, wide = false) {
   const heads = HEADS.filter((h) => h.takes === takes && !h.either);
   const h = rng.fresh(heads, (x) => x.base);
   const f = act(rng, s, h.acts); if (!f) return null;
-  const tense = o.level >= 3 && h.pastOk && rng.chance(0.3) ? 'past' : 'pres';
-  const [t, tz] = tense === 'past' ? rng.pick(PAST_CUE.filter((x) => mealFits(`${f.v}${phrase(f)}`, x[0]))) : ['', ''];
+  // giving something up happens once: always past, with a time word
+  const tense = h.base === 'give up' ? 'past' : o.level >= 3 && h.pastOk && rng.chance(0.3) ? 'past' : 'pres';
+  const cues = h.base === 'give up' ? [['last year', '去年'], ['last month', '上個月']] : PAST_CUE;
+  const [t, tz] = tense === 'past' ? rng.pick(cues.filter((x) => mealFits(`${f.v}${phrase(f)}`, x[0]))) : ['', ''];
   const vp = takes === 'to' ? `to ${f.v}` : VERBS[f.v].ing;
   const bl = wide ? [blank(vp, true)] : takes === 'to' ? [blank('to'), ' ', blank(f.v)] : [blank(VERBS[f.v].ing)];
   return {
     lines: [[`${cap(s.en)} ${headForm(h, s, tense)} `, ...bl, ` (${f.v})${phrase(f)}${t ? ' ' + t : ''}.`]],
-    zh: zhJoin(s.zh, tz, h.zh + f.zh) + '。', meta: { subj: s.en, head: h.base, base: f.v, takes, tense },
+    zh: zhJoin(s.zh, tz, h.base === 'finish' ? finished(f.zh) : h.zh + f.zh) + '。', meta: { subj: s.en, head: h.base, base: f.v, takes, tense },
   };
 }
 

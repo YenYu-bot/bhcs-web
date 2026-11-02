@@ -33,7 +33,7 @@ const MODES = [
     id: 'fill', name: '肯定句填空',
     instruction: (o) => (o.level === 1 ? '依括號提示，用 will 填入未來式。' : '依括號提示，用 will 或 be going to 填入未來式（一個空格填一個字）。'),
     gen(rng, o) {
-      const d = draw(rng, o); if (!d) return null;
+      const d = draw(rng, o, { test: (x) => !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '') }); if (!d) return null; // "Will you have lunch?" asks nothing
       const { s, f, t, form } = d;
       const bl = form === 'will' ? [blank('will'), ' ', blank(f.v)] : goingBlanks(s, f.v);
       const line = timeFirst(rng)
@@ -75,7 +75,7 @@ const MODES = [
   {
     id: 'short', name: '簡答', instruction: () => '依提示完成簡答（否定請用縮寫）。',
     gen(rng, o) {
-      const d = draw(rng, o, { ask: true }); if (!d) return null;
+      const d = draw(rng, o, { ask: true, test: (x) => !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '') }); if (!d) return null;
       const { s, f, t, form } = d;
       const yes = rng.chance(0.5);
       const r = s.reply;

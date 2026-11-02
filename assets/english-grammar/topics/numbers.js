@@ -14,10 +14,10 @@ const MONTHS = [['January', '一月'], ['February', '二月'], ['March', '三月
 const ORD = [
   ['Today is my {N} birthday.', '今天是我{N}歲生日。', [10, 11, 12, 13, 14, 15, 16]], ['He came {N} in the race.', '他在比賽中得第{N}名。', [1, 2, 3, 4, 5, 6]],
   ['{M} is the {N} month of the year.', '{M}是一年的第{N}個月。', 'month'], ['She lives on the {N} floor.', '她住在{N}樓。', [2, 3, 4, 5, 6, 7, 8, 9, 10, 12]],
-  ['This is my {N} time in Taichung.', '這是我第{N}次來台中。', [1, 2, 3, 4, 5]], ['Sunday is the {N} day of the week.', '星期天是一週的第{N}天。', [1]],
+  ['This is my {N} time in Taichung.', '這是我第{N}次來台中。', [1, 2, 3, 4, 5]], ['Friday is the {N} day of the school week.', '星期五是上學週的第{N}天。', [5]],
   ['Turn right at the {N} corner.', '在第{N}個轉角右轉。', [1, 2, 3]], ['It is her {N} day at the new school.', '這是她在新學校的第{N}天。', [1, 2, 3]],
   ['We sat in the {N} row.', '我們坐在第{N}排。', [1, 2, 3, 4, 5, 6, 7, 8]], ['This is the {N} lesson.', '這是第{N}課。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
-  ['I am in the {N} grade.', '我讀{N}年級。', [1, 2, 3, 4, 5, 6, 7, 8, 9]], ['The {N} question is hard.', '第{N}題很難。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 20]], ['Amy finished {N} in the test.', 'Amy 考第{N}名。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
+  ['I am in the {N} grade.', '我讀{N}年級。', [1, 2, 3, 4, 5, 6, 7, 8, 9]], ['The {N} question is hard.', '第{N}題很難。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 20]], ['Amy was {N} in the class on the test.', 'Amy 這次考試考全班第{N}名。', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
 ];
 const bd = (n) => (n >= 10 && n < 20 ? n : n);
 // Clock times: [hour, minute, words, Chinese]
@@ -50,7 +50,9 @@ const MODES = [
     id: 'date', name: '日期', instruction: () => '把日期寫成英文：on + 月份 + 序數（例如 5/5 → on May fifth）。',
     gen(rng, o) {
       const m = rng.fresh(MONTHS, (x) => 'd-' + x[0]);
-      const day = rng.fresh(o.level >= 2 ? [1, 2, 3, 4, 5, 8, 10, 12, 15, 20, 21, 22, 23, 25, 28, 30, 31] : [1, 2, 3, 4, 5, 8, 10, 12, 15, 20], (x) => 'day-' + x);
+      // a day the month has: no February 30 or 31, no April 31
+      const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][MONTHS.indexOf(m)];
+      const day = rng.fresh((o.level >= 2 ? [1, 2, 3, 4, 5, 8, 10, 12, 15, 20, 21, 22, 23, 25, 28, 30, 31] : [1, 2, 3, 4, 5, 8, 10, 12, 15, 20]).filter((x) => x <= days), (x) => 'day-' + x);
       // school starts in February or September (Taiwan)
       const event = rng.pick([['My birthday is', '我的生日在'], ['The party is', '派對在'], ['The test is', '考試在'], ['School starts', '開學日在'], ['The game is', '比賽在'], ['Her birthday is', '她的生日在']]
         .filter((e) => e[0] !== 'School starts' || ['February', 'September'].includes(m[0])));

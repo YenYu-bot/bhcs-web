@@ -10,8 +10,10 @@ const ACTS = [
   ['swim', 'swimming', 'in the river', '在河裡游泳'], ['dance', 'dancing', 'with Amy', '和 Amy 跳舞'], ['wear', 'wearing', 'a red hat', '戴紅帽子'], ['ride', 'riding', 'a bicycle', '騎腳踏車'],
 ];
 // The rest of the sentence: [singular, plural, Chinese]
-const MAIN = [['is my friend.', 'are my friends.', '是我的朋友'], ['is from Taichung.', 'are from Taichung.', '來自台中'], ['is my cousin.', 'are my classmates.', ['是我的表親', '是我的同學']]];
-const mainZh = (m, pl) => (Array.isArray(m[2]) ? m[2][pl ? 1 : 0] : m[2]);
+const MAIN = [['is my friend.', 'are my friends.', '是我的朋友'], ['is from Taichung.', 'are from Taichung.', '來自台中'], ['is my cousin.', 'are my classmates.', ['是我的表{C}', '是我的同學']]];
+const mainZh = (m, pl, nz = '') => (Array.isArray(m[2]) ? m[2][pl ? 1 : 0] : m[2]).replace('{C}', /女/.test(nz) ? '姊' : '哥'); // 表姊 / 表哥
+// several people ride bicycles, not one: the object turns plural after a plural noun
+const plObj = (rest, pl) => (pl ? rest.replace(/^a (bicycle|book|red hat)$/, (m0, x) => (x === 'red hat' ? 'red hats' : x + 's')) : rest);
 // Things done to: [noun, Chinese, verb base, past participle, rest, Chinese of the phrase, the rest of the sentence, Chinese]
 const DONE = [
   ['the cake', '蛋糕', 'make', 'made', 'by my mother', '我媽媽做的', 'is delicious', '很好吃'], ['the window', '窗戶', 'break', 'broken', 'by the boys', '那些男孩打破的', 'is still not fixed', '還沒修好'],
@@ -32,7 +34,7 @@ const MODES = [
       const [n, nz, pl] = rng.fresh(WHO, (x) => x[0]);
       const [b, ing, rest, az] = rng.fresh(ACTS, (x) => x[0]);
       const m = rng.pick(MAIN), [sg, plm] = m;
-      return { lines: [[`${cap(n)} `, blank(ing), ` (${b}) ${rest} ${pl ? plm : sg}`]], zh: zhJoin(`${az}的${nz}`, mainZh(m, pl)) + '。', meta: { kind: 'ing', base: b, form: ing } };
+      return { lines: [[`${cap(n)} `, blank(ing), ` (${b}) ${plObj(rest, pl)} ${pl ? plm : sg}`]], zh: zhJoin(`${az}的${nz}`, mainZh(m, pl, nz)) + '。', meta: { kind: 'ing', base: b, form: ing } };
     },
   },
   {

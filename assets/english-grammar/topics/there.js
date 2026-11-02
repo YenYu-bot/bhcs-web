@@ -132,7 +132,8 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, (n) => n.neg && n.num === 'sg'); if (!d) return null;
       const head = (x) => x.en.split(' ').pop().replace(/s$/, '');
-      const others = NOUNS.filter((x) => head(x) !== head(d.n) && bare(x) !== bare(d.n) && x.lvl <= o.level && x.places.includes(d.place));
+      const who = (x) => /people|students/.test(x.en); // a computer is answered with a thing, not with students
+      const others = NOUNS.filter((x) => head(x) !== head(d.n) && bare(x) !== bare(d.n) && who(x) === who(d.n) && x.lvl <= o.level && x.places.includes(d.place));
       if (!others.length) return null;
       const m = rng.pick(others), b = be(d.n, d.past), b2 = be(m, d.past);
       return {

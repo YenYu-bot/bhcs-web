@@ -8,7 +8,8 @@ export { cap, mid, zhJoin };
 /** People and animals up to the level; single names from level 1, two names from level 2. */
 export function actors(rng, level, { exclude = () => false } = {}) {
   // "every student" reads oddly with most activities, so the verb topics leave it to the Be topic
-  let pool = SUBJECTS.filter((s) => s.lvl <= level && (s.kind === 'person' || s.kind === 'animal') && !s.tags.includes('every'));
+  // the bare animal "they" reads as people in English (They swam ｜牠們…), so verb topics leave it out
+  let pool = SUBJECTS.filter((s) => s.lvl <= level && (s.kind === 'person' || s.kind === 'animal') && !s.tags.includes('every') && !(s.en === 'they' && s.kind === 'animal'));
   pool = [...pool, ...extraSubjects(rng, level)];
   return pool.filter((s) => !exclude(s));
 }
@@ -63,7 +64,12 @@ export const zhSent = (s, t, vp, end) => zhJoin(s.zh, t?.zh, vp) + end;
 export const S0 = (s) => cap(s.en);
 
 /** 正在 / 沒有在 before a verb phrase; a phrase that already starts with 在 keeps one 在. */
-export const zhAspect = (prefix, vp) => (vp.startsWith('在') ? prefix.replace(/在$/, '') + vp : prefix + vp);
+// 正在 + vp; a posture or something worn is a state: 坐在樹下 / 穿著制服, not 正在坐在 / 正在穿 (putting it on)
+export const zhAspect = (prefix, vp) => {
+  if (/^(坐在|站在|躺在|住在)/.test(vp)) return prefix.replace(/正?在$/, '') + vp;
+  if (/^(穿|戴)/.test(vp)) return prefix.replace(/正?在$/, '') + vp.replace(/^(穿|戴)/, prefix.includes('沒') ? '$1' : '$1著');
+  return vp.startsWith('在') ? prefix.replace(/在$/, '') + vp : prefix + vp;
+};
 
 // ---- Questions to the listener (2026-11-01) ----
 export { asked, pickAsked, replyKey };

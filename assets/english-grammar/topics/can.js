@@ -26,6 +26,8 @@ const tail = (f, t) => `${phrase(f)}${t ? ' ' + t.en : ''}`;
 const zhCan = (d, neg, end) => zhSent(d.s, d.t, (neg ? '不會' : '會') + d.f.zh, end);
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t?.en ?? null, past: d.past, ...extra });
 
+// a real activity to answer with (not sleep, smile, cry or hurry), not about getting up early or late, not the same object
+const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
 const MODES = [
   {
     id: 'fill', name: '依中文填空', instruction: (o) => `依括號裡的中文與動詞填空${o.abbr === 'F' ? '（否定不用縮寫）' : o.abbr === 'C' ? '（否定請用縮寫）' : '；括號寫「縮寫」的請用縮寫'}。`,
@@ -86,7 +88,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') || s.person === 1, ask: true }); if (!d) return null;
       const { s, f, t, past } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.able && x.v !== f.v && !NOT_SKILL.has(`${x.v} ${x.rest || ''}`.trim()), null, false); if (!g) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.able && x.v !== f.v && answerable(x, f) && !['paint', 'draw'].every((v) => [x.v, f.v].includes(v)) && !NOT_SKILL.has(`${x.v} ${x.rest || ''}`.trim()), null, false); if (!g) return null;
       return {
         lines: [[`${cap(modal(past))} ${s.en} ${f.v}${tail(f, t)}?`],
           ['— No, ', blank(s.reply), ' ', blank(negWords(past, true)[0]), '. ', blank(cap(s.reply)), ' ', blank(modal(past)), ' ', blank(g.v), ` (${g.v})${phrase(g)}.`]],

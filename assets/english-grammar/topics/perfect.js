@@ -20,7 +20,7 @@ const CUES = [
 ];
 // Activities you keep doing (for / since) are a smaller set than things you have done.
 // (2026-11-01) Habits one keeps up: no "has jogged in the park for three hours", no "has slept since this morning".
-const LASTING = new Set(['play', 'study', 'learn', 'teach', 'practice', 'collect', 'use', 'wear']);
+const LASTING = new Set(['play', 'study', 'learn', 'teach', 'practice', 'collect', 'use']); // not wear: "have worn a uniform for three hours"
 const PAST_CUES = [['yesterday', '昨天'], ['last night', '昨晚'], ['last Sunday', '上星期天'], ['two days ago', '兩天前'], ['last Saturday', '上星期六']];
 // ever / never / twice / three times / before ask about experiences — things one may or may not have done in one's life.
 // Daily routines ("has had dinner three times", "has never closed the door", "Has she ever slept?") are left out.
@@ -29,7 +29,7 @@ const EXPERIENCE = new Set(['play basketball', 'play baseball', 'play badminton'
   'ride a bicycle', 'fly a kite', 'skate in the park', 'climb mountains', 'plant trees', 'travel by train', 'swim ']);
 const isExperience = (f) => EXPERIENCE.has(`${f.v} ${f.rest || ''}`);
 // yet asks whether a task is done: "Has Lucy hurried to school yet?" asks nothing.
-const NOT_TASK = new Set(['hurry', 'smile', 'cry', 'sleep', 'jog', 'walk', 'run', 'dance', 'skate', 'swim', 'listen', 'stop', 'shop', 'use', 'move', 'jump', 'enjoy', 'travel', 'play', 'go', 'take', 'sing', 'fly', 'ride', 'climb']);
+const NOT_TASK = new Set(['drive', 'learn', 'study', 'hurry', 'smile', 'cry', 'sleep', 'jog', 'walk', 'run', 'dance', 'skate', 'swim', 'listen', 'stop', 'shop', 'use', 'move', 'jump', 'enjoy', 'travel', 'play', 'go', 'take', 'sing', 'fly', 'ride', 'climb']);
 // Chinese 過 goes right after the verb: 打過籃球, 游過泳, 去過動物園 — not 打籃球過.
 const GUO = { '游泳': '游過泳', '溜冰': '溜過冰', '在公園溜冰': '在公園溜過冰', '跳舞': '跳過舞', '去動物園玩': '去過動物園', '參觀博物館': '參觀過博物館', '搭火車旅行': '搭過火車去旅行', '看棒球比賽': '看過棒球比賽' };
 export const zhGuo = (zh) => GUO[zh] ?? zh.charAt(0) + '過' + zh.slice(1);
@@ -45,7 +45,7 @@ function draw(rng, o, use, endOnly = false, ask = false) {
   // ever / never ask about experiences, not daily meals
   const experience = c.use === 'ever' || c.use === 'never' || c.en === 'twice' || c.en === 'three times' || c.en === 'before';
   const task = c.use === 'yet' || c.en === 'already' || c.en === 'just';
-  const f = pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!lasting || LASTING.has(x.v)) && (!experience || isExperience(x)) && (!task || !NOT_TASK.has(x.v)), null, !lasting && !experience);
+  const f = pickFrame(rng, s, o.level, (x) => x.pastOk && (o.level >= 2 || !irregular(x.v)) && (!lasting || LASTING.has(x.v)) && (!experience || isExperience(x)) && (!task || !NOT_TASK.has(x.v)) && !/early|late/.test(x.rest || ''), null, !lasting && !experience); // "have already come home late"
   if (!f) return null;
   return { s, f, c };
 }
@@ -56,7 +56,8 @@ const zhDone = (d, neg) => {
   if (c.use === 'yet') return zhSent(s, null, neg ? `還沒${f.zh}` : `${f.zh}了嗎`, neg ? '。' : '？');
   if (c.use === 'never') return zhSent(s, null, `從來沒有${zhGuo(f.zh)}`, '。');
   if (c.use === 'ever') return zhSent(s, null, `曾經${zhGuo(f.zh)}嗎`, '？');
-  if (c.use === 'for' || c.use === 'since') return zhSent(s, null, `${c.zh.startsWith('從') ? c.zh : ''}${neg ? '沒有' : '一直'}${f.zh}${c.zh.startsWith('從') ? '' : c.zh}`, '。');
+  // 用電腦已經兩年了 / 從去年開始一直學美術
+  if (c.use === 'for' || c.use === 'since') return zhSent(s, null, c.zh.startsWith('從') ? `${c.zh}${neg ? '沒有' : '一直'}${f.zh}` : `${neg ? '已經' + c.zh.replace(/了$/, '') + '沒有' + f.zh : f.zh + '已經' + c.zh.replace(/了$/, '')}了`, '。');
   if (c.en === 'before') return zhSent(s, null, `以前${zhGuo(f.zh)}`, '。');
   if (c.en === 'twice' || c.en === 'three times') return zhSent(s, null, `${zhGuo(f.zh).replace(/過/, '過' + c.zh)}`, '。');
   if (c.pos === 'end') return zhSent(s, null, `已經${f.zh}${c.zh}了`, '。');

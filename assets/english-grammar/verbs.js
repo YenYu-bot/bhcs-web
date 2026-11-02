@@ -226,7 +226,7 @@ export const VTIMES = [
 export const vform = (f, key) => VERBS[f.v][key];
 export const phrase = (f) => (f.rest ? ' ' + f.rest : '');
 
-/** Time words for this phrase and use; "after school" is for students, not grown-ups. */
+/** Time words for this phrase and use; "after school" is for students only (not grown-ups, not a name whose age we don't know). */
 export function cuesFor(f, use, s) {
-  return VTIMES.filter((t) => t.use === use && (!f.cues?.[use] || f.cues[use].includes(t.en)) && !(t.en === 'after school' && s?.age === 'adult'));
+  return VTIMES.filter((t) => t.use === use && (!f.cues?.[use] || f.cues[use].includes(t.en)) && !(t.en === 'after school' && s && s.age !== 'young'));
 }

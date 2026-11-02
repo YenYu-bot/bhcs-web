@@ -14,6 +14,8 @@ function draw(rng, o, { exclude = () => false, ask = false } = {}) {
 }
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
 
+// a real activity to answer with (not sleep, smile, cry or hurry), not about getting up early or late, not the same object
+const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
 const MODES = [
   {
     id: 'fill', name: '肯定句填空',
@@ -75,7 +77,8 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') || s.person === 1, ask: true }); if (!d) return null;
       const { s, f, t } = d;
-      const g = pickFrame(rng, s, o.level, (x) => x.pastOk && x.v !== f.v && cuesFor(x, 'past', s).some((c) => c.en === t.en), 'past'); if (!g) return null;
+      if (!answerable(f, {})) return null;
+      const g = pickFrame(rng, s, o.level, (x) => x.pastOk && x.v !== f.v && answerable(x, f) && cuesFor(x, 'past', s).some((c) => c.en === t.en), 'past'); if (!g) return null;
       return {
         lines: [[`Did ${s.en} ${f.v}${phrase(f)} ${t.en}?`],
           ['— No, ', blank(s.reply), ' ', blank("didn't"), '. ', blank(cap(s.reply)), ' ', blank(vform(g, 'past')), ` (${g.v})${phrase(g)}.`]],
@@ -88,6 +91,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.person === 1 || s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t } = d;
+      if (!answerable(f, {})) return null; // "What did you do? — We slept."
       return {
         lines: [['What ', blank('did'), ` ${s.en} do ${t.en}? — ${cap(s.reply)} `, blank(vform(f, 'past')), ` (${f.v})${phrase(f)}.`]],
         zh: zhSent(s, t, '做了什麼', '？'), meta: meta(d, { kind: 'wh' }),

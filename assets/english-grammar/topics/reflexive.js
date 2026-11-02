@@ -4,9 +4,9 @@ import { pickPerson, verbFor } from '../people.js';
 
 const SELF = { I: 'myself', you: 'yourself', he: 'himself', she: 'herself', it: 'itself', we: 'ourselves', they: 'themselves' };
 // Verbs whose object points back to the subject: [base, -s, past, rest after the pronoun, Chinese with {s} for the reflexive]
-const V = (base, s3, past, rest, zh) => ({ base, s3, past, rest, zh });
+const V = (base, s3, past, rest, zh, onlyPast = false) => ({ base, s3, past, rest, zh, onlyPast }); // onlyPast: one event (cut myself), not a habit
 const ACTS = [
-  V('hurt', 'hurts', 'hurt', ' playing basketball', '打籃球時弄傷了{s}'), V('cut', 'cuts', 'cut', ' when cooking', '煮飯時切到了{s}'), V('enjoy', 'enjoys', 'enjoyed', ' at the party', '在派對上玩得很開心'),
+  V('hurt', 'hurts', 'hurt', ' playing basketball', '打籃球時弄傷了{s}', true), V('cut', 'cuts', 'cut', ' when cooking', '煮飯時切到了{s}', true), V('enjoy', 'enjoys', 'enjoyed', ' at the party', '在派對上玩得很開心'),
   V('introduce', 'introduces', 'introduced', ' to the class', '向全班介紹{s}'), V('teach', 'teaches', 'taught', ' to swim', '自學游泳'), V('look at', 'looks at', 'looked at', ' in the mirror', '看著鏡子裡的{s}'),
   V('talk to', 'talks to', 'talked to', '', '自言自語'), V('take care of', 'takes care of', 'took care of', '', '照顧{s}'), V('be proud of', 'is proud of', 'was proud of', '', '以{s}為榮'),
   V('dress', 'dresses', 'dressed', ' every morning', '每天早上自己穿衣服'), V('make', 'makes', 'made', ' a cup of tea', '給{s}泡了一杯茶'), V('buy', 'buys', 'bought', ' a new bag', '給{s}買了一個新袋子'),
@@ -14,10 +14,10 @@ const ACTS = [
 // Fixed expressions: [sentence with #, pronoun key, Chinese]
 const FIXED = [
   ['Help # to the cake.', 'you', '請自己拿蛋糕吃。'], ['I did my homework by #.', 'I', '我自己一個人做功課。'], ['She lives by # in Taichung.', 'she', '她一個人住在台中。'],
-  ['Enjoy #, kids!', 'they', '孩子們，玩得開心點！'], ['The cat washed #.', 'it', '那隻貓自己洗了洗臉。'], ['We built the house #.', 'we', '我們自己蓋了這間房子。'],
+  ['Enjoy #, kids!', 'they', '孩子們，玩得開心點！'], ['We built the house #.', 'we', '我們自己蓋了這間房子。'],
   ['He fixed the bicycle #.', 'he', '他自己修了腳踏車。'], ['Did you make this cake #?', 'you', '這個蛋糕是你自己做的嗎？'], ['The children went to school by #.', 'they', '孩子們自己去上學。'],
   ['My grandmother painted the picture #.', 'she', '我奶奶自己畫了這幅畫。'], ['Please make # at home.', 'you', '請不要拘束，當自己家。'], ['The door opened by #.', 'it', '門自己開了。'],
-  ['We enjoyed # at the beach.', 'we', '我們在海邊玩得很開心。'], ['I looked at # in the mirror.', 'I', '我看著鏡子裡的自己。'], ['Tom and Amy cooked dinner #.', 'they', 'Tom 和 Amy 自己煮了晚餐。'],
+  ['We enjoyed # at the beach.', 'we', '我們在海邊玩得很開心。'], ['Tom and Amy cooked dinner #.', 'they', 'Tom 和 Amy 自己煮了晚餐。'],
 ];
 const two = (ans) => [blank(ans)];
 
@@ -29,14 +29,14 @@ const MODES = [
       // every person takes a turn, so myself / yourself / ourselves come up as often as himself / herself
       const pr = rng.fresh(['I', 'you', 'he', 'she', 'we', 'they'], (x) => 'pr-' + x);
       const p = pickPerson(rng, (x) => x.pr === pr && !['Our teacher', 'My classmate'].includes(x.en)); // himself / herself must be clear from the subject
-      const past = o.level >= 2 ? rng.fresh([true, false], (x) => 'past-' + x) : false;
-      const verb = past ? v.past : v.base === 'be proud of' ? (p.en === 'I' ? 'am proud of' : ['we', 'they', 'you'].includes(p.pr) ? 'are proud of' : 'is proud of') : verbFor(p, [v.base, v.s3]);
+      const past = v.onlyPast || (o.level >= 2 ? rng.fresh([true, false], (x) => 'past-' + x) : false);
+      const verb = past ? (v.base === 'be proud of' && !['I', 'he', 'she'].includes(p.pr) ? 'were proud of' : v.past) : v.base === 'be proud of' ? (p.en === 'I' ? 'am proud of' : ['we', 'they', 'you'].includes(p.pr) ? 'are proud of' : 'is proud of') : verbFor(p, [v.base, v.s3]);
       const self = SELF[p.pr === 'you' ? 'you' : p.pr];
       return { lines: [[`${p.en} ${verb} `, blank(self), `${v.rest}.`]], zh: zhJoin(p.zh, v.zh.replace('{s}', '自己')) + '。', meta: { kind: 'verb', subj: p.en, pr: p.pr } };
     },
   },
   {
-    id: 'fixed', name: 'by oneself 與固定用法', instruction: () => '填入反身代名詞：by oneself（獨自）、enjoy oneself（玩得開心）、help oneself（自己拿）。',
+    id: 'fixed', name: 'by oneself 與固定用法', instruction: () => '填入反身代名詞：by oneself（獨自）、enjoy oneself（玩得開心）、help oneself（自己拿）、make oneself at home 等固定用法與常見句子。',
     gen(rng) {
       const [en, key, zh] = rng.fresh(FIXED, (x) => x[0]);
       const [l, r] = en.split('#');

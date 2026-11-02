@@ -38,7 +38,9 @@ function sentence(rng, verb, past) {
   const p = person(rng);
   if (verb === 'spend' || verb === 'take') {
     const [vp, ing, zh, time, timeZh] = rng.fresh(TASKS, (x) => verb + x[0]);
-    const [t, tz] = rng.pick(whenFor(time, past));
+    // present only for routines (it takes me twenty minutes to walk to school); a one-off task is past
+    if (!past && !/do my homework|walk to school|cook dinner|clean the house/.test(vp)) return null;
+    const [t, tz] = rng.pick(vp === 'walk to school' && past ? [['yesterday', '昨天'], ['this morning', '今天早上']] : whenFor(time, past));
     const tail = t ? ' ' + t : '';
     if (t === 'every day' && /the (book|cake|picture|letter|song|work)|the house|the bicycle|the car/.test(vp)) return null; // one-off tasks are not every day
     const hua = past ? '花了' : '要花';
@@ -48,7 +50,7 @@ function sentence(rng, verb, past) {
   const [th, thz, price, priceZh] = rng.fresh(THINGS, (x) => verb + x[0]);
   // a price now has no buyer ("The bag costs …"); buying happened, so cost me / paid are past
   if (verb === 'cost' && !past) return { l: `${cap(th)} `, v: th === 'the shoes' ? 'cost' : 'costs', r: ` ${price}.`, zh: `${thz}要${priceZh}。`, p };
-  const [pt, ptz] = rng.pick([['', ''], ...WHEN.past]);
+  const [pt, ptz] = rng.pick(WHEN.past); // a time word, so cost (past) cannot be read as costs
   const ptail = pt ? ' ' + pt : '';
   if (verb === 'cost') return { l: `${cap(th)} `, v: 'cost', r: ` ${objOf(p)} ${price}${ptail}.`, zh: zhJoin(p.zh, ptz, `買${thz}花了${priceZh}`) + '。', p };
   return { l: `${p.en} `, v: 'paid', r: ` ${price} for ${th}${ptail}.`, zh: zhJoin(p.zh, ptz, `買${thz}付了${priceZh}`) + '。', p };
@@ -65,7 +67,7 @@ const MODES = [
     },
   },
   {
-    id: 'swap', name: '句型互換', instruction: () => '改寫句子，意思不變：spend 與 It takes 互換，cost 與 pay 互換（一個空格填一個字）。',
+    id: 'swap', name: '句型互換', instruction: () => '改寫句子，意思不變：spend 與 It takes 互換，cost 與 pay 互換（一個空格填一個字，人的空格照原句寫，可能是兩個字）。',
     gen(rng, o) {
       const which = rng.fresh(['time', 'money'], (x) => 'sw-' + x);
       const p = person(rng);

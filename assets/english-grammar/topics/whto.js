@@ -3,7 +3,7 @@ import { blank } from '../core.js';
 
 // [question word, V phrase, Chinese (要…), subject pronoun for the "should" form is filled in later]
 const WH = [
-  ['what', 'do', '要做什麼'], ['what', 'say', '要說什麼'], ['what', 'buy for my mother', '要買什麼給我媽媽'], ['what', 'wear to the party', '要穿什麼去派對'], ['what', 'eat for lunch', '午餐要吃什麼'],
+  ['what', 'do', '要做什麼'], ['what', 'say', '要說什麼'], ['what', 'buy for Mother\'s Day', '母親節要買什麼'], ['what', 'wear to the party', '要穿什麼去派對'], ['what', 'eat for lunch', '午餐要吃什麼'],
   ['how', 'get to the station', '怎麼去車站'], ['how', 'use the computer', '怎麼用電腦'], ['how', 'make a cake', '怎麼做蛋糕'], ['how', 'ride a bicycle', '怎麼騎腳踏車'], ['how', 'spell the word', '怎麼拼這個字'], ['how', 'swim', '怎麼游泳'],
   ['where', 'go this weekend', '這個週末要去哪裡'], ['where', 'put the box', '要把箱子放在哪裡'], ['where', 'buy the tickets', '要去哪裡買票'], ['where', 'wait for the bus', '要在哪裡等公車'], ['where', 'sit', '要坐在哪裡'],
   ['when', 'leave', '什麼時候要離開'], ['when', 'start the party', '什麼時候要開始派對'], ['when', 'call him', '什麼時候要打電話給他'],
@@ -12,7 +12,8 @@ const WH = [
 ];
 // heads: [English, Chinese before, Chinese after, question?]
 const HEADS = [["I don't know", '我不知道', '', false], ['Can you tell me', '你可以告訴我', '嗎', true], ['She asked me', '她問我', '', false], ["We aren't sure", '我們不確定', '', false], ['Please show me', '請教我', '', false]];
-const fits = (h, w) => !(h[0] === 'Please show me' && w[0] !== 'how') && !(h[0] === 'Can you tell me' && ['say', 'do'].includes(w[1]));
+// "We aren't sure how to swim" is odd: swimming is something one is shown
+const fits = (h, w) => !(h[0] === 'Please show me' && w[0] !== 'how') && !(h[0] === 'Can you tell me' && ['say', 'do'].includes(w[1])) && !(w[1] === 'swim' && h[0] !== 'Please show me');
 // "which bus to take": the noun sits between which and to
 const split = (w) => (w[0] === 'which' ? [`which ${w[1].split(' to ')[0]}`, w[1].split(' to ')[1]] : [w[0], w[1]]);
 const SUBJ = { "I don't know": 'I', 'Can you tell me': 'I', 'She asked me': 'she', "We aren't sure": 'we', 'Please show me': 'I' };
@@ -32,7 +33,7 @@ const MODES = [
     id: 'swap', name: '改寫成疑問詞 + to V', instruction: () => '把「疑問詞 + 主詞 + should + V」改寫成「疑問詞 + to V」（一個空格填一個字）。',
     gen(rng) {
       const w = rng.fresh(WH.filter((x) => x[0] !== 'which'), (x) => 'sw-' + x[0] + x[1]);
-      const h = rng.pick(HEADS.filter((x) => fits(x, w) && x[0] !== 'Please show me'));
+      const h = rng.pick(HEADS.filter((x) => fits(x, w) && x[0] !== 'Please show me')); if (!h) return null;
       const [b, ...rest] = w[1].split(' ');
       const subj = SUBJ[h[0]];
       const end = h[3] ? '?' : '.';
