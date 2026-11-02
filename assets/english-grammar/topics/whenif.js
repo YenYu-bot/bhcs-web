@@ -7,7 +7,7 @@ const PAIRS = [
   P('If', '如果', 'it', '', 'rain', 'rains', ' tomorrow', '明天下雨', 'we', '我們', 'stay', ' at home', '待在家裡'),
   P('If', '如果', 'you', '你', 'study', 'studies', ' hard', '用功讀書', 'you', '你', 'pass', ' the test', '通過考試'),
   P('If', '如果', 'she', '她', 'have', 'has', ' time', '有時間', 'she', '她', 'help', ' us', '幫我們'),
-  P('If', '如果', 'Tom', 'Tom', 'get', 'gets', ' up late', '晚起', 'he', '他', 'miss', ' the bus', '錯過公車'),
+  { ...P('If', '如果', 'Tom', 'Tom', 'get', 'gets', ' up late', '晚起', 'he', '他', 'miss', ' the bus', '錯過公車'), clauseFirst: true }, // he = Tom
   P('If', '如果', 'it', '', 'be', 'is', ' sunny this weekend', '這個週末天氣好', 'we', '我們', 'go', ' to the beach', '去海邊'),
   P('If', '如果', 'they', '他們', 'win', 'wins', ' the game', '贏了比賽', 'they', '他們', 'be', ' very happy', '很開心'),
   { ...P('If', '如果', 'I', '我', 'see', 'sees', ' Amy', '看到 Amy', 'I', '我', 'tell', ' her the news', '告訴她這個消息'), clauseFirst: true }, // her = Amy: Amy must come first

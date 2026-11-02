@@ -19,7 +19,8 @@ function draw(rng, o, { ask = false, test = () => true } = {}) {
   const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
   const f = s && pickFrame(rng, s, o.level, (x) => x.habit && !x.age && test(x)); // plans: things anyone might do
   if (!f) return null;
-  const t = rng.fresh(TIMES.filter((x) => !(x.en.includes('school') && s.age === 'adult') && mealFits(`${f.v} ${f.rest || ''}`, x.en)), (x) => x.en);
+  // zoos and museums close at night
+  const t = rng.fresh(TIMES.filter((x) => !(x.en.includes('school') && s.age === 'adult') && mealFits(`${f.v} ${f.rest || ''}`, x.en) && !(x.en === 'tonight' && /zoo|museum|park|mountain|beach|shop|supermarket/.test(f.rest || ''))), (x) => x.en);
   if (!t) return null;
   return { s, f, t, form: formFor(rng, o) };
 }

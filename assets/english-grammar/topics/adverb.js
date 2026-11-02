@@ -11,7 +11,7 @@ const ADVS = [
   A('careful', 'carefully', '小心地', 'ly', 'more carefully', [['drive', 'drives', 'drove', '', '開車'], ['listen', 'listens', 'listened', '', '聽'], ['read', 'reads', 'read', ' the letter', '讀信'], ['cross', 'crosses', 'crossed', ' the street', '過馬路']]),
   A('loud', 'loudly', '大聲地', 'ly', 'more loudly', [['speak', 'speaks', 'spoke', '', '說話'], ['sing', 'sings', 'sang', '', '唱歌'], ['laugh', 'laughs', 'laughed', '', '笑'], ['talk', 'talks', 'talked', '', '講話']]),
   A('quiet', 'quietly', '安靜地', 'ly', 'more quietly', [['sit', 'sits', 'sat', ' in the corner', '坐在角落'], ['close', 'closes', 'closed', ' the door', '關門'], ['read', 'reads', 'read', '', '看書']]),
-  A('polite', 'politely', '有禮貌地', 'ly', 'more politely', [['speak', 'speaks', 'spoke', ' to the teacher', '跟老師說話'], ['answer', 'answers', 'answered', '', '回答'], ['ask', 'asks', 'asked', ' for help', '請求幫忙']]),
+  A('polite', 'politely', '有禮貌地', 'ly', 'more politely', [['speak', 'speaks', 'spoke', ' to the teacher', '跟老師說話'], ['answer', 'answers', 'answered', ' the teacher', '回答老師'], ['ask', 'asks', 'asked', ' for help', '請求幫忙']]),
   A('beautiful', 'beautifully', '優美地', 'ly', 'more beautifully', [['sing', 'sings', 'sang', '', '唱歌'], ['dance', 'dances', 'danced', '', '跳舞'], ['write', 'writes', 'wrote', '', '寫字'], ['play', 'plays', 'played', ' the piano', '彈鋼琴']]),
   A('happy', 'happily', '開心地', 'ily', 'more happily', [['sing', 'sings', 'sang', '', '唱歌'], ['smile', 'smiles', 'smiled', '', '微笑'], ['play', 'plays', 'played', ' in the park', '在公園玩'], ['dance', 'dances', 'danced', '', '跳舞']]),
   A('easy', 'easily', '輕鬆地', 'ily', 'more easily', [['win', 'wins', 'won', ' the game', '贏得比賽'], ['pass', 'passes', 'passed', ' the test', '通過考試'], ['answer', 'answers', 'answered', ' the question', '回答問題'], ['carry', 'carries', 'carried', ' the box', '搬箱子']]),
@@ -77,7 +77,9 @@ const MODES = [
       const line = first
         ? [`${p.en} is ${art} `, blank(a.adj), ` ${noun}. ${p.pr === 'she' ? 'She' : 'He'} ${vs} `, blank(a.adv), `. (${a.adj})`]
         : [`${p.en} ${vs} `, blank(a.adv), `. ${p.pr === 'she' ? 'She' : 'He'} is ${art} `, blank(a.adj), ` ${noun}. (${a.adj})`];
-      return { lines: [line], zh: zhJoin(p.zh, `是個${DOER_ZH[a.adj] ?? ADJ_ZH[a.adj] + '的' + nz}，${p.pr === 'she' ? '她' : '他'}${zhManner(a, vz)}`) + '。', meta: { kind: 'choose', adj: a.adj, first } };
+      // the Chinese follows the English order
+      const isA = `是個${DOER_ZH[a.adj] ?? ADJ_ZH[a.adj] + '的' + nz}`, does = zhManner(a, vz), pz = p.pr === 'she' ? '她' : '他';
+      return { lines: [line], zh: (first ? zhJoin(p.zh, `${isA}，${pz}${does}`) : zhJoin(p.zh, `${does}，${pz}${isA}`)) + '。', meta: { kind: 'choose', adj: a.adj, first } };
     },
   },
   {
@@ -86,7 +88,7 @@ const MODES = [
       const d = draw(rng, { ...o, level: Math.max(o.level, 2) });
       const { a, act, p, verb, past } = d;
       // "We cooked better than my father": our father, so a my- person only against I
-      const other = pickPerson(rng, (x) => x.en !== p.en && x.pr !== 'I' && x.pr !== 'we' && !/^(He|She|They|You)$/.test(x.en) && !(/^My /.test(x.en) && p.pr !== 'I'));
+      const other = pickPerson(rng, (x) => x.en !== p.en && x.pr !== 'I' && x.pr !== 'we' && x.en !== 'The students' && !/^(He|She|They|You)$/.test(x.en) && !(/^My /.test(x.en) && p.pr !== 'I'));
       const obj = midOf(other);
       const objZh = other.zh;
       const bl = a.cmp.split(' ').flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));

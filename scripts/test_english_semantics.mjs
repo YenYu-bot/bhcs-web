@@ -113,6 +113,15 @@ test('per-topic cases stay fixed', () => {
   none('repeated or broken Chinese', (x) => /了了|正在坐在|正在站在|得比賽贏|這個一天|共同的(爸爸|媽媽)|慢慢。/.test(x.it.zh));
   none('his / her not matching the subject', (x) => /^(John|Tom|Ben|Peter|My father|My brother|He) is proud of her daughter/.test(x.text));
   none('the legs … is', (x) => /\blegs of the \w+ is\b/.test(x.text));
+  // second review (2026-11-02)
+  none('the same noun twice (a dog and two dogs)', (x) => /\ban? (\w+) and (two|three|four|five|six|some) \1s\b/.test(x.text));
+  none('a box in the box', (x) => /\ba box in the box\b/.test(x.text));
+  none('"already … late / slept"', (x) => /already (come|came) home late|have already slept|has already slept/.test(x.text));
+  none('a lasting trait in the past tag (were not short)', (x) => x.topic === 'tag' && /\b(was|were)(n't)? (short|tall)\b/.test(x.text));
+  none('the zoo or museum at night', (x) => /(zoo|museum)[^.?]* (tonight|last night)\b/.test(x.text));
+  none('borrow in the library', (x) => /borrow\w* books in the library/.test(x.text));
+  none('two people "wearing a hat" right then', (x) => (/\b(we|they|\w+s|and \w+) (were|are) wearing a (hat|uniform)\b/i.test(x.text) || /\b(Were|Are) (we|they|[\w ]+s|\w+ and \w+) wearing a (hat|uniform)\b/.test(x.text))); // "have to wear a uniform" is fine
+  none('He … if Tom', (x) => /^He [^.]* if Tom\b/.test(x.text));
   none('seasons and months out of order', (x) => /\b(Winter|January|December) is (hotter|warmer)\b|\b(Summer|July|August) is (colder|cooler)\b/.test(x.text));
 });
 

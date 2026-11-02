@@ -32,7 +32,7 @@ const MODES = [
       const past = v.onlyPast || (o.level >= 2 ? rng.fresh([true, false], (x) => 'past-' + x) : false);
       const verb = past ? (v.base === 'be proud of' && !['I', 'he', 'she'].includes(p.pr) ? 'were proud of' : v.past) : v.base === 'be proud of' ? (p.en === 'I' ? 'am proud of' : ['we', 'they', 'you'].includes(p.pr) ? 'are proud of' : 'is proud of') : verbFor(p, [v.base, v.s3]);
       const self = SELF[p.pr === 'you' ? 'you' : p.pr];
-      return { lines: [[`${p.en} ${verb} `, blank(self), `${v.rest}.`]], zh: zhJoin(p.zh, v.zh.replace('{s}', '自己')) + '。', meta: { kind: 'verb', subj: p.en, pr: p.pr } };
+      return { lines: [[`${p.en} ${verb} `, blank(self), `${v.rest}.`]], zh: zhJoin(p.zh, (past ? v.zh : v.zh.replace(/了/g, '')).replace('{s}', '自己')) + '。', meta: { kind: 'verb', subj: p.en, pr: p.pr } }; // 買了 only in the past
     },
   },
   {

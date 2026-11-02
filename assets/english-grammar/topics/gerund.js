@@ -19,7 +19,7 @@ const HEADS = [
   V('decide', 'decides', 'decided', '決定', 'to', [...OUTINGS, ...CHORES, 'learn', 'get', 'walk', 'stay']), V('need', 'needs', 'needed', '需要', 'to', [...CHORES, 'get', 'go', 'take', 'sleep', 'use', 'call', 'borrow']),
   V('learn', 'learns', 'learned', '學', 'to', SKILLS), V('would like', 'would like', 'would like', '想要', 'to', [...OUTINGS, ...SKILLS, 'eat', 'drink', 'watch', 'listen', 'buy'], false),
   V('start', 'starts', 'started', '開始', 'to', [...SKILLS, 'clean', 'study', 'read', 'watch', 'walk', 'jog', 'cry', 'smile'], true, true),
-  V('enjoy', 'enjoys', 'enjoyed', '喜歡', 'ing', [...OUTINGS, ...SKILLS, 'watch', 'listen', 'jog', 'walk', 'eat', 'sit']),
+  V('enjoy', 'enjoys', 'enjoyed', '喜歡', 'ing', [...OUTINGS, ...SKILLS, 'watch', 'listen', 'jog', 'walk', 'eat', 'sit'], false), // 昨晚喜歡… is not Chinese: present only
   V('finish', 'finishes', 'finished', '完成', 'ing', [...CHORES, 'eat', 'watch', 'use']), V('practice', 'practices', 'practiced', '練習', 'ing', SKILLS),
   V('keep', 'keeps', 'kept', '一直', 'ing', ['play', 'read', 'study', 'practice', 'sing', 'dance', 'run', 'walk', 'jog', 'draw', 'watch', 'write', 'swim', 'use', 'cry', 'smile', 'talk', 'wait']),
   V('avoid', 'avoids', 'avoided', '避免', 'ing', ['eat', 'drink', 'use', 'go', 'run', 'watch', 'play', 'buy', 'swim', 'drive', 'climb']),
@@ -34,7 +34,7 @@ const PREPS = [
   ['talks about', 'v', ['travel', 'visit', 'buy', 'go', 'see', 'learn', 'study', 'play', 'climb', 'move']], ['thinks about', 'v', ['travel', 'visit', 'buy', 'learn', 'study', 'move', 'go', 'see']], ['is excited about', 'be', [...OUTINGS, 'learn', 'play', 'watch']],
 ];
 const PREP_ZH = { 'is good at': (zh) => `很擅長${zh}`, 'is interested in': (zh) => `對${zh}有興趣`, 'is afraid of': (zh) => `害怕${zh}`, 'is tired of': (zh) => `厭倦了${zh}`,
-  'thanks you for': (zh) => `謝謝你${zh}`, 'talks about': (zh) => `談到${zh}`, 'thinks about': (zh) => `想到${zh}`, 'is excited about': (zh) => `對${zh}很興奮` };
+  'thanks you for': (zh) => `謝謝你${zh}`, 'talks about': (zh) => `談到${zh}`, 'thinks about': (zh) => `考慮${zh}`, 'is excited about': (zh) => `對${zh}很興奮` };
 const BEFORE_AFTER = [['before', '…之前'], ['after', '…之後']];
 const GO = [['swimming', '游泳', 'swim'], ['shopping', '購物', 'shop'], ['fishing', '釣魚', 'fish'], ['hiking', '健行', 'hike'], ['camping', '露營', 'camp'], ['skating', '溜冰', 'skate'], ['jogging', '慢跑', 'jog'], ['dancing', '跳舞', 'dance']];
 const GO_WHEN = [['on weekends', '週末'], ['every Sunday', '每個星期天'], ['after school', '放學後'], ['in summer', '夏天'], ['with my family', '和家人']];
@@ -56,8 +56,8 @@ function sentence(rng, o, takes, wide = false) {
   const h = rng.fresh(heads, (x) => x.base);
   const f = act(rng, s, h.acts); if (!f) return null;
   // giving something up happens once: always past, with a time word
-  const tense = h.base === 'give up' ? 'past' : o.level >= 3 && h.pastOk && rng.chance(0.3) ? 'past' : 'pres';
-  const cues = h.base === 'give up' ? [['last year', '去年'], ['last month', '上個月']] : PAST_CUE;
+  const tense = ['give up', 'finish'].includes(h.base) ? 'past' : o.level >= 3 && h.pastOk && rng.chance(0.3) ? 'past' : 'pres';
+  const cues = h.base === 'give up' ? [['last year', '去年'], ['last month', '上個月']] : PAST_CUE; // finish: one job done, also past
   const [t, tz] = tense === 'past' ? rng.pick(cues.filter((x) => mealFits(`${f.v}${phrase(f)}`, x[0]))) : ['', ''];
   const vp = takes === 'to' ? `to ${f.v}` : VERBS[f.v].ing;
   const bl = wide ? [blank(vp, true)] : takes === 'to' ? [blank('to'), ' ', blank(f.v)] : [blank(VERBS[f.v].ing)];

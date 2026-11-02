@@ -13,7 +13,8 @@ function draw(rng, o, { exclude = () => false, ask = false, test = () => true } 
   // ask: a question to the listener ("your" subjects, you, and "Are we …?")
   const s = ask ? pickAsked(rng, askActors(rng, o.level, { exclude, self: 'we', reply: true })) : pickSubject(rng, actors(rng, o.level, { exclude }));
   // open / close happen in a moment: "were opening the window at this time yesterday" is left out
-  const f = s && pickFrame(rng, s, o.level, (x) => x.prog && !MOMENT.has(x.v) && test(x), 'ing');
+  // smiling or crying is not something one asks about at a clock time
+  const f = s && pickFrame(rng, s, o.level, (x) => x.prog && !MOMENT.has(x.v) && !['smile', 'cry', 'hurry'].includes(x.v) && test(x), 'ing');
   if (!f) return null;
   const use = pickTense(rng, o);
   const t = rng.fresh(cuesFor(f, use, s), (x) => x.en);
@@ -24,7 +25,7 @@ const zhProg = (d, neg) => zhSent(d.s, d.t, zhAspect(neg ? '沒有在' : '正在
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t.en, ...extra });
 
 // a real activity to answer with (not sleep, smile, cry or hurry), not about getting up early or late, not the same object
-const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
+const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry', 'drink', 'eat'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
 const MODES = [
   {
     id: 'fill', name: '肯定句填空',

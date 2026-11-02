@@ -13,7 +13,7 @@ const LINK = [
   L('Your dress', '你的洋裝', 'look', 'looks', [['beautiful', '漂亮'], ['nice', '好看'], ['expensive', '很貴']]), L('Tom', 'Tom', 'look', 'looks', [['tired', '很累'], ['happy', '很開心'], ['sad', '很難過'], ['angry', '很生氣']]),
   L('The children', '孩子們', 'look', 'look', [['happy', '很開心'], ['tired', '很累'], ['hungry', '很餓']]), L('I', '我', 'feel', 'feel', [['tired', '很累'], ['happy', '很開心'], ['cold', '很冷'], ['nervous', '很緊張']]),
   L('The bed', '這張床', 'feel', 'feels', [['soft', '很軟'], ['comfortable', '很舒服']]), L('The weather', '天氣', 'get', 'gets', [['cold', '變冷'], ['warm', '變暖']]),
-  L('My grandfather', '我爺爺', 'get', 'gets', [['tired', '累了'], ['angry', '生氣了']]), L('The classroom', '教室', 'get', 'gets', [['quiet', '安靜下來'], ['noisy', '吵起來']]),
+  L('The classroom', '教室', 'get', 'gets', [['quiet', '安靜下來'], ['noisy', '吵起來']]),
   L('The room', '這個房間', 'look', 'looks', [['clean', '乾淨'], ['dirty', '髒'], ['comfortable', '舒服']]), L('This shirt', '這件襯衫', 'feel', 'feels', [['soft', '很軟'], ['comfortable', '很舒服'], ['warm', '很暖']]),
   L('The milk', '牛奶', 'taste', 'tastes', [['good', '好喝'], ['bad', '難喝'], ['sweet', '甜']]), L('The baby', '那個嬰兒', 'look', 'looks', [['happy', '很開心'], ['tired', '很累'], ['hungry', '很餓']]),
   L('His voice', '他的聲音', 'sound', 'sounds', [['loud', '很大聲'], ['nice', '好聽'], ['strange', '奇怪'], ['tired', '很累']]),

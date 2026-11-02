@@ -22,7 +22,7 @@ const OTHER = [
   ['Some students like science, and # like history.', 'others', '有些學生喜歡自然，有些喜歡歷史。'], ['There are thirty students in my class. Some are boys, and # are girls.', 'the others', '我們班有三十個學生。有些是男生，其餘的是女生。'],
   ['I don\'t like this shirt. Please show me # one.', 'another', '我不喜歡這件襯衫，請給我看另一件。'], ['Tom has two dogs. One is big, and # is small.', 'the other', 'Tom 有兩隻狗。一隻大，另一隻小。'],
   ['Some people like summer; # like winter.', 'others', '有些人喜歡夏天，有些人喜歡冬天。'], ['There are five apples. Two are red, and # are green.', 'the others', '有五個蘋果。兩個是紅的，其餘的是綠的。'],
-  ['One of my brothers is a doctor, and # is a teacher.', 'the other', '我的兩個哥哥，一個是醫生，另一個是老師。'], ['I have four cups. One is broken, and # are fine.', 'the others', '我有四個杯子。一個破了，其餘的都好好的。'],
+  ['I have two brothers. One is a doctor, and # is a teacher.', 'the other', '我有兩個哥哥，一個是醫生，另一個是老師。'], ['I have four cups. One is broken, and # are fine.', 'the others', '我有四個杯子。一個破了，其餘的都好好的。'],
   ['Would you like # cup of tea?', 'another', '你要再來一杯茶嗎？'], ['Some of the students walk to school, and # take the bus.', 'the others', '這些學生有些走路上學，其餘的搭公車。'],
   ['Some birds fly south in winter, and # stay here.', 'others', '有些鳥冬天往南飛，有些留在這裡。'], ['He finished his sandwich and asked for #.', 'another', '他吃完三明治，又要了一個。'],
   ['There are two girls in the room. One is singing, and # is reading.', 'the other', '房間裡有兩個女孩。一個在唱歌，另一個在看書。'], ['I have ten cards. Three are blue, and # are red.', 'the others', '我有十張卡片。三張是藍的，其餘的是紅的。'],

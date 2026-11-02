@@ -30,6 +30,7 @@ export function frameFits(f, s) {
   if (f.age === 'young' && !(s.age === 'young' || s.age === 'any')) return false;
   if (s.tags.includes('group') && !(FAMILY_VERBS.has(f.v) && f.habit && !f.age)) return false; // "my family" only does family things
   if (f.species && s.species && !f.species.includes(s.species)) return false;
+  if (s.num === 'pl' && /^a (hat|uniform)$/.test(f.rest || '')) return false; // two people do not wear "a hat"
   return true;
 }
 /**
@@ -37,7 +38,9 @@ export function frameFits(f, s) {
  * ("play basketball in the park"); the returned copy carries the longer phrase and its Chinese.
  */
 export function pickFrame(rng, s, level, test = () => true, form = null, places = true) {
-  const list = FRAMES.filter((f) => frameFits(f, s) && test(f) && (!form || spellingOk(f, form, level)));
+  // asking about "we" only makes sense for plans and shared activities, not "Do we have lunch?" or "Will we wear a hat?"
+  const selfOk = (f) => !(s.tags?.includes('self') && (/\b(breakfast|lunch|dinner)\b/.test(f.rest || '') || ['wear', 'sleep', 'smile', 'cry', 'hurry', 'drink', 'eat'].includes(f.v)));
+  const list = FRAMES.filter((f) => frameFits(f, s) && selfOk(f) && test(f) && (!form || spellingOk(f, form, level)));
   if (!list.length) return null;
   const f = rng.fresh(list, (x) => x.v);
   if (places && f.at?.length && rng.chance(0.35)) {

@@ -11,8 +11,9 @@ const WHEN = [['', '以前'], ['when he was young', '小時候'], ['', '以前']
 const habit = (x) => x.habit && !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '') && !['sleep', 'smile', 'cry', 'hurry', 'close', 'open'].includes(x.v);
 const people = (rng, o, exclude = () => false) => actors(rng, o.level, { exclude: (s) => s.kind !== 'person' || s.tags.includes('every') || s.tags.includes('group') || exclude(s) });
 /** "when he was young" agrees with the subject; plural subjects and I / you take "when they were young" etc. */
-function whenFor(rng, s) {
-  const [w, wz] = rng.pick(WHEN);
+function whenFor(rng, s, f = {}) {
+  // a child did not drive a taxi: grown-up habits take 以前, not 小時候
+  const [w, wz] = f.age === 'adult' ? ['', '以前'] : rng.pick(WHEN);
   if (!w) return [w, wz];
   // one person was "a child"; several were "young"
   const p = pron(s), be = ['I', 'he', 'she'].includes(p) ? 'was' : 'were';
@@ -32,7 +33,7 @@ const MODES = [
     gen(rng, o) {
       const s = pickSubject(rng, people(rng, o)); if (!s) return null;
       const f = pickFrame(rng, s, o.level, habit); if (!f) return null;
-      const [w, wz] = whenFor(rng, s);
+      const [w, wz] = whenFor(rng, s, f);
       const front = w && rng.chance(0.5);
       const line = front
         ? [`${cap(w.replace(/^when (I|you|he|she|we|they) (was|were)/, (m0, x, be) => `when ${mid(s.en)} ${be}`))}, ${pron(s)} `, blank('used'), ' ', blank('to'), ' ', blank(f.v), ` (${f.v})${phrase(f)}.`]

@@ -20,7 +20,7 @@ const meanings = (zh) => zh.split(/[；;]/).map((s) => s.trim()).filter(Boolean)
 const POS_ONE = (p) => POS_CHOICES.includes(p); // a single part of speech
 // Common 國中 words that are just as often another part of speech than the one a list gives (all: adj./pron.,
 // ring: n./v.); 詞性題 leaves them out because a student's other answer would also be right.
-const OFTEN_OTHER_POS = new Set(['all', 'south', 'north', 'east', 'west', 'ring', 'mail', 'level', 'hurt', 'past', 'back', 'well', 'like', 'right', 'light', 'fine', 'kind', 'close', 'last', 'fast', 'hard', 'late', 'early', 'free', 'open', 'clean', 'dry', 'wet', 'empty', 'present', 'plan', 'call', 'dream', 'rain', 'snow', 'work', 'play', 'walk', 'swim', 'cook', 'drink', 'rest', 'visit', 'help', 'love', 'hope', 'wish', 'sleep', 'talk', 'smile', 'train', 'watch', 'face', 'hand', 'show', 'water', 'paint', 'shop', 'turn', 'fly', 'line', 'order', 'park', 'phone', 'film', 'check', 'change', 'answer', 'question', 'film', 'study', 'test', 'use', 'fight', 'kick', 'push', 'pull', 'jump', 'run', 'ride', 'race', 'drop', 'film', 'stop', 'move', 'need', 'care', 'mind', 'cause', 'crowd', 'sound', 'taste', 'smell', 'touch', 'look', 'step', 'stay', 'own', 'top', 'middle', 'inside', 'outside', 'round', 'over', 'up', 'down', 'off', 'since', 'before', 'after', 'until', 'some', 'any', 'each', 'both', 'either', 'neither', 'this', 'that', 'these', 'those', 'what', 'which', 'one', 'first', 'second', 'third', 'next', 'enough', 'more', 'most', 'much', 'many', 'few', 'little', 'less', 'only', 'even', 'still', 'just', 'too', 'so', 'as']);
+const OFTEN_OTHER_POS = new Set(['lock', 'tap', 'joke', 'wash', 'finish', 'lead', 'all', 'south', 'north', 'east', 'west', 'ring', 'mail', 'level', 'hurt', 'past', 'back', 'well', 'like', 'right', 'light', 'fine', 'kind', 'close', 'last', 'fast', 'hard', 'late', 'early', 'free', 'open', 'clean', 'dry', 'wet', 'empty', 'present', 'plan', 'call', 'dream', 'rain', 'snow', 'work', 'play', 'walk', 'swim', 'cook', 'drink', 'rest', 'visit', 'help', 'love', 'hope', 'wish', 'sleep', 'talk', 'smile', 'train', 'watch', 'face', 'hand', 'show', 'water', 'paint', 'shop', 'turn', 'fly', 'line', 'order', 'park', 'phone', 'film', 'check', 'change', 'answer', 'question', 'film', 'study', 'test', 'use', 'fight', 'kick', 'push', 'pull', 'jump', 'run', 'ride', 'race', 'drop', 'film', 'stop', 'move', 'need', 'care', 'mind', 'cause', 'crowd', 'sound', 'taste', 'smell', 'touch', 'look', 'step', 'stay', 'own', 'top', 'middle', 'inside', 'outside', 'round', 'over', 'up', 'down', 'off', 'since', 'before', 'after', 'until', 'some', 'any', 'each', 'both', 'either', 'neither', 'this', 'that', 'these', 'those', 'what', 'which', 'one', 'first', 'second', 'third', 'next', 'enough', 'more', 'most', 'much', 'many', 'few', 'little', 'less', 'only', 'even', 'still', 'just', 'too', 'so', 'as']);
 /** Every part of speech any list gives a word ("hurt" v. in one book, adj. in another): 詞性題 only asks words with one. */
 let POS_OF = null;
 function posOf(en) {
@@ -38,7 +38,11 @@ function posOf(en) {
  * a 中翻英 question whose Chinese fits two English words ("快樂的" happy / glad) has no single answer, so it is left out.
  */
 let ALL_WORDS = null;
-const allWords = () => (ALL_WORDS ??= new Set(allBooks().flatMap((b) => b.words.map((r) => r[1].toLowerCase()))));
+// every word we hold, with its regular forms and the irregular past forms (forgot fits f o r g _ _ as well as forget)
+const IRREGULAR = ['forgot', 'got', 'ate', 'saw', 'went', 'came', 'took', 'gave', 'made', 'said', 'told', 'sold', 'bought', 'brought', 'thought', 'taught', 'caught', 'found', 'felt', 'kept', 'left', 'lost', 'met', 'paid', 'sent', 'slept', 'spent', 'stood', 'wrote', 'rode', 'drove', 'flew', 'grew', 'knew', 'threw', 'drew', 'wore', 'broke', 'spoke', 'stole', 'woke', 'chose', 'began', 'drank', 'sang', 'swam', 'ran', 'sat', 'won', 'hit', 'cut', 'put', 'read', 'heard', 'held', 'built', 'lent', 'meant', 'fell', 'fed', 'led', 'hid', 'shook', 'became', 'forgave', 'understood'];
+const allWords = () => (ALL_WORDS ??= new Set([...allBooks().flatMap((b) => b.words.flatMap((r) => { const w = r[1].toLowerCase(); return [w, w + 's', w + 'es', w + 'ed', w + 'd', w + 'ing', ...String(r[4] || '').toLowerCase().split(/[ ,]+/).filter(Boolean)]; })), ...IRREGULAR]));
+let BY_LEN = null;
+const wordsOfLength = () => { if (!BY_LEN) { BY_LEN = new Map(); for (const x of allWords()) BY_LEN.set(x.length, [...(BY_LEN.get(x.length) ?? []), x]); } return BY_LEN; };
 let ZH_OWNERS = null;
 function zhOwners() {
   if (ZH_OWNERS) return ZH_OWNERS;
@@ -102,7 +106,7 @@ export const MODES = [
       for (let t = 0; t < 8; t++) {
         const h = lettersHidden(rng, w.en);
         const re = new RegExp('^' + h.shown.split(' ').map((c) => (c === '_' ? '[a-z]' : c.toLowerCase())).join('') + '$');
-        if (![...allWords()].some((x) => x !== w.en.toLowerCase() && re.test(x))) return { q: h.shown, hint: w.zh, a: w.en, hidden: h.hidden };
+        if (!(wordsOfLength().get(w.en.length) ?? []).some((x) => x !== w.en.toLowerCase() && re.test(x))) return { q: h.shown, hint: w.zh, a: w.en, hidden: h.hidden };
       }
       return null;
     },

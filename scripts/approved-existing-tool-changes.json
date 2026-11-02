@@ -687,6 +687,230 @@
       "approved_blob": "c86c670abd969d6e22fbc2b8083e2a073705db10",
       "reason": "English acceptance review fixes (2026-11-02): core.js",
       "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/adverb.js",
+      "baseline_blob": "7979be01e336a187c497d69102d7cee03ccaea41",
+      "approved_blob": "b3abc9bd3243c4cde35906cf9c4ffd6c60a43064",
+      "reason": "English second review fixes (2026-11-02): adverb.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/article.js",
+      "baseline_blob": "16b935ff6882120f0c458acda5beaaeada069ed9",
+      "approved_blob": "5ef2998c2ff08340d190835c82ec9a0cc25e3f35",
+      "reason": "English second review fixes (2026-11-02): article.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/asas.js",
+      "baseline_blob": "040f70ce23b78c3963338c72150c501c26c72a35",
+      "approved_blob": "f2984069528a8a11a4f3e65248950f29c8d9a247",
+      "reason": "English second review fixes (2026-11-02): asas.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/be.js",
+      "baseline_blob": "42a367664b69ff5bc56fa625733976cfd20f8246",
+      "approved_blob": "d54c485f38c8c6b81d320ea143d17115b6a17197",
+      "reason": "English second review fixes (2026-11-02): be.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/can.js",
+      "baseline_blob": "038fed607c6a0119aa726f2d0d84e345a2b56b81",
+      "approved_blob": "bd49a31c0929a52f8668210d633f02ad0ddf4ede",
+      "reason": "English second review fixes (2026-11-02): can.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/compare.js",
+      "baseline_blob": "d3d5a9db5221035a639d0edaf712480688585391",
+      "approved_blob": "31cd958633948ced596b6fdd285c59c502e74912",
+      "reason": "English second review fixes (2026-11-02): compare.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/conj.js",
+      "baseline_blob": "1dd293df269ece3efe1843186c5d4d468d783e41",
+      "approved_blob": "9396f9efeecd7a4beb7931853fe2ade910e9c7b6",
+      "reason": "English second review fixes (2026-11-02): conj.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/exclaim.js",
+      "baseline_blob": "12d651881a5499ebced78860117d72a4e2e1dcc9",
+      "approved_blob": "643f08335a0689d651ebab8d74eef6f0e112b1e5",
+      "reason": "English second review fixes (2026-11-02): exclaim.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/freq.js",
+      "baseline_blob": "2a66a92198dbf6ee572453ceb3468b0f6e7b4fc3",
+      "approved_blob": "ded50f338ee7f5bc7adb38b40c45141a1d868487",
+      "reason": "English second review fixes (2026-11-02): freq.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/future.js",
+      "baseline_blob": "f3c24e402fa6497ffb2381ebe176c669686ee106",
+      "approved_blob": "3b6e35c0039fa0546ad19efd6a0f0dbf6c93b3b9",
+      "reason": "English second review fixes (2026-11-02): future.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/gerund.js",
+      "baseline_blob": "fa7af84e5d671edaed68e31859f39c77f6b3bfe3",
+      "approved_blob": "9c3937ba6f20d81026365f57112ffee25f4ba918",
+      "reason": "English second review fixes (2026-11-02): gerund.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/indef.js",
+      "baseline_blob": "967f34c20a757081574c6acb2cb1890bf1628306",
+      "approved_blob": "620ee9e267f820c2ec58d5138535cb862f6c5b59",
+      "reason": "English second review fixes (2026-11-02): indef.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/itto.js",
+      "baseline_blob": "795378b539c79d42cf9156ea302a7d9044c84f2e",
+      "approved_blob": "7d4fa824314d9584e0b9e8e73b86ac5ad61ce2ab",
+      "reason": "English second review fixes (2026-11-02): itto.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/must.js",
+      "baseline_blob": "830416614278804e15d400684105fcb9754c6d0b",
+      "approved_blob": "e190abc3fb39ad1a2a5fdd050cc9ea10fcaec25f",
+      "reason": "English second review fixes (2026-11-02): must.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/numbers.js",
+      "baseline_blob": "700e1372913a942a1d733ddbce2c299dd94df3d9",
+      "approved_blob": "7f15176eeb0038b7b601615a6e2c6ebdf60e109a",
+      "reason": "English second review fixes (2026-11-02): numbers.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/partnoun.js",
+      "baseline_blob": "2857b9f7a394eaddd4b799cbf28b76640437534e",
+      "approved_blob": "8f04881565cac2d4858bdfacbf504dd6b6e1e215",
+      "reason": "English second review fixes (2026-11-02): partnoun.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/passive.js",
+      "baseline_blob": "88cbea8dce7ca6a2c07681a3340d5454da24ec8c",
+      "approved_blob": "8697679d27a9d761344740f054542e8ed7d719af",
+      "reason": "English second review fixes (2026-11-02): passive.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/past.js",
+      "baseline_blob": "dd57576d8654fe97c75c5d7f64281f206bfcb615",
+      "approved_blob": "47d3c128ab290b57bd38423f293cc461b8372cd0",
+      "reason": "English second review fixes (2026-11-02): past.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/perfect.js",
+      "baseline_blob": "9d309443ba27573fa5e4dfb1d7f5722a2ec15e54",
+      "approved_blob": "93512e65d62b0bf5564ab90207a0c9581e604088",
+      "reason": "English second review fixes (2026-11-02): perfect.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/plural.js",
+      "baseline_blob": "7b98afe74d8fefd1a854cb2ce5099702d9f6a559",
+      "approved_blob": "4c1417f6359d18c44ac8ea0cfd9e8ed3b6f73b96",
+      "reason": "English second review fixes (2026-11-02): plural.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/possess.js",
+      "baseline_blob": "e7a7d6ec0d72f5640451b4b91095f2ee6525c0a1",
+      "approved_blob": "6da8d303d7a2482982719dfa9be917c9edeb84f4",
+      "reason": "English second review fixes (2026-11-02): possess.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/prep.js",
+      "baseline_blob": "7c89f0f57642a4cb3ec40d47ea462d181188b7b6",
+      "approved_blob": "fb6f6458886910491e20833441445a3251151fa4",
+      "reason": "English second review fixes (2026-11-02): prep.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/progressive.js",
+      "baseline_blob": "37609d15aaca55d78226fdf793bf8f22bab851ab",
+      "approved_blob": "6813f77bb3891ef2f4654b5fd0a20bfb6ddb1756",
+      "reason": "English second review fixes (2026-11-02): progressive.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/reflexive.js",
+      "baseline_blob": "774123a36fb0edf5ad90ef2223319fe57f0f6606",
+      "approved_blob": "e931a6fde5f593cfbd9d35096d252a96f1c5a5c0",
+      "reason": "English second review fixes (2026-11-02): reflexive.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/sense.js",
+      "baseline_blob": "c6253a88ba6457e0c9c433da58e84a7210ca1815",
+      "approved_blob": "a783c1dc720899c8df8337863edc995c60201525",
+      "reason": "English second review fixes (2026-11-02): sense.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/tag.js",
+      "baseline_blob": "124ea42f02ea68758ecd2a1df56abd9745b8d41a",
+      "approved_blob": "bc779e0e65126ed8b547b5c358a03f47f7d9ea1b",
+      "reason": "English second review fixes (2026-11-02): tag.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/there.js",
+      "baseline_blob": "b12bacff8c693e108da1d7d66dfc2a70a08330c3",
+      "approved_blob": "29439ceda7f8d3d44bccf93c652364c4a7af6ce2",
+      "reason": "English second review fixes (2026-11-02): there.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/usedto.js",
+      "baseline_blob": "004674647ff71476f999c3ea5c226b53f51c4cc7",
+      "approved_blob": "4ee6d7c311e9c704ab17057a278c8836f190a37b",
+      "reason": "English second review fixes (2026-11-02): usedto.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/whenif.js",
+      "baseline_blob": "ebc9ccfabcc67f9ed425982e11e8e820815643c2",
+      "approved_blob": "bfc3a64cc63aebc697d9bfd926ec5b3abe885f14",
+      "reason": "English second review fixes (2026-11-02): whenif.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/vcommon.js",
+      "baseline_blob": "cc515105d207575eaf695d254407d64f61aca78a",
+      "approved_blob": "c2fc083f6821a27c63e8cdfce3205466ff6e9399",
+      "reason": "English second review fixes (2026-11-02): vcommon.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/verbs.js",
+      "baseline_blob": "78499547fe56eb41fa4f7008709693b157053943",
+      "approved_blob": "1f29310a0af6b1b45b5a96086208d34349405fd8",
+      "reason": "English second review fixes (2026-11-02): verbs.js",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-vocab/core.js",
+      "baseline_blob": "c86c670abd969d6e22fbc2b8083e2a073705db10",
+      "approved_blob": "5077deb1541dd675a86ca49f66170c1185b4818e",
+      "reason": "English second review fixes (2026-11-02): core.js",
+      "pull_request": null
     }
   ]
 }

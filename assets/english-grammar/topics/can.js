@@ -27,7 +27,7 @@ const zhCan = (d, neg, end) => zhSent(d.s, d.t, (neg ? '不會' : '會') + d.f.z
 const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t?.en ?? null, past: d.past, ...extra });
 
 // a real activity to answer with (not sleep, smile, cry or hurry), not about getting up early or late, not the same object
-const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
+const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry', 'drink', 'eat'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
 const MODES = [
   {
     id: 'fill', name: '依中文填空', instruction: (o) => `依括號裡的中文與動詞填空${o.abbr === 'F' ? '（否定不用縮寫）' : o.abbr === 'C' ? '（否定請用縮寫）' : '；括號寫「縮寫」的請用縮寫'}。`,

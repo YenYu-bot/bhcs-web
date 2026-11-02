@@ -43,11 +43,12 @@ function draw(rng, o, tenses) {
   const tense = rng.fresh(tenses, (x) => 'tense-' + x);
   // present: habits and states; past / future: habits and one-off deeds
   // nobody plans to break a window tomorrow: bei deeds are past only
-  const d = rng.fresh(DEEDS.filter((x) => (o.level >= 2 || regular(x.v)) && (tense === 'pres' ? x.when !== 'once' : true) && !(x.bei && tense !== 'past')), (x) => x.v + x.obj);
+  const d = rng.fresh(DEEDS.filter((x) => (o.level >= 2 || regular(x.v)) && (tense === 'pres' ? x.when !== 'once' : true) && !((x.bei || x.v === 'find') && tense === 'fut')), (x) => x.v + x.obj); // nobody plans to find the keys tomorrow
   const p = pickPerson(rng, (x) => agentFits(d, x) && x.pr !== 'I' && x.pr !== 'you');
   // a state still needs its time word when tenses are mixed (are／were grown); meals keep to their time of day
   const STATE = { pres: ['every year', '每年'], past: ['last year', '去年'], fut: ['next year', '明年'] };
-  const [t, tz] = d.when === 'state' ? STATE[tense] : rng.fresh(TIMES[tense].filter((x) => mealFits(d.obj, x[0])), (x) => 'time-' + x[0]);
+  // a house takes a year, not a night
+  const [t, tz] = d.when === 'state' || d.v === 'build' ? STATE[tense] : rng.fresh(TIMES[tense].filter((x) => mealFits(d.obj, x[0])), (x) => 'time-' + x[0]);
   return { tense, d, p, t, tz };
 }
 const tail = (t) => (t ? ' ' + t : '');

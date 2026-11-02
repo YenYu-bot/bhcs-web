@@ -93,8 +93,8 @@ function place(rng, o) {
 const PHRASES = [
   [['listen', 'listens'], 'to', [['music', '音樂'], ['the teacher', '老師'], ['the radio', '收音機']], '聽{o}'],
   [['look', 'looks'], 'at', [['the picture', '那張圖'], ['the sky', '天空'], ['the map', '地圖']], '看{o}', '看'],
-  [['look', 'looks'], 'for', [['my key', '我的鑰匙'], ['his dog', '他的狗'], ['her pen', '她的筆']], '在找{o}', '找'],
-  [['wait', 'waits'], 'for', [['the bus', '公車'], ['me', '我'], ['my friend', '我的朋友']], '在等{o}'],
+  [['look', 'looks'], 'for', [['my key', '我的鑰匙'], ['his dog', '他的狗'], ['her pen', '她的筆']], '常常找{o}', '找'], // present tense: a habit, not 在找
+  [['wait', 'waits'], 'for', [['the bus', '公車'], ['me', '我'], ['my friend', '我的朋友']], '常常等{o}'],
   [['laugh', 'laughs'], 'at', [['me', '我'], ['him', '他'], ['the new student', '新同學']], '嘲笑{o}'],
   [['take care', 'takes care'], 'of', [['the baby', '嬰兒'], ['the dog', '狗'], ['my grandmother', '我奶奶']], '照顧{o}'],
   [['agree', 'agrees'], 'with', [['me', '我'], ['you', '你'], ['her', '她']], '同意{o}'],

@@ -44,7 +44,7 @@ const MODES = [
     id: 'verb', name: '一般動詞句', instruction: () => '依括號裡的中文與動詞，把頻率副詞和動詞依正確順序填入。',
     gen(rng, o) {
       const s = subject(rng, o); if (!s) return null;
-      const f = pickFrame(rng, s, o.level, (x) => x.habit && !(x.v === 'go' && /school/.test(x.rest || ''))); if (!f) return null; // students go to school every day
+      const f = pickFrame(rng, s, o.level, (x) => x.habit && !(x.v === 'go' && /school/.test(x.rest || '')) && !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '')); if (!f) return null; // students go to school every day
       const [adv, az] = rng.fresh(advFor(o, f), (x) => x[0]);
       // an extra time only when it suits the activity ("on weekends", "after school")
       const tails = cuesFor(f, 'habit', s).filter((t) => ['on weekends', 'after school'].includes(t.en)).map((t) => [t.en, t.zh]);
@@ -81,7 +81,7 @@ const MODES = [
         return { lines: [[`${cap(s.en)} ${be} ${p.en}${wt}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(be), ' ', blank(adv), ` ${p.en}${wt}.`]], zh: zhJoin(s.zh, wz, az, z) + '。', meta: meta(s, adv, { kind: 'be', verb: be }) };
       }
       const s = subject(rng, { ...o, level: Math.max(o.level, 2) }); if (!s) return null;
-      const f = pickFrame(rng, s, o.level, (x) => x.habit && !(x.v === 'go' && /school/.test(x.rest || ''))); if (!f || !advFor(o, f).some((a) => a[0] === adv)) return null;
+      const f = pickFrame(rng, s, o.level, (x) => x.habit && !(x.v === 'go' && /school/.test(x.rest || '')) && !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '')); if (!f || !advFor(o, f).some((a) => a[0] === adv)) return null;
       const v = third(s) ? VERBS[f.v].s : VERBS[f.v].base;
       return { lines: [[`${cap(s.en)} ${v}${phrase(f)}. (${adv})`], ['→ ' + cap(s.en) + ' ', blank(adv), ' ', blank(v), `${phrase(f)}.`]], zh: zhJoin(s.zh, az, f.zh) + '。', meta: meta(s, adv, { kind: 'verb', base: f.v, verb: v }) };
     },
