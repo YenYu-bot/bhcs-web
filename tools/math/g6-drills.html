@@ -817,26 +817,45 @@ function patternConfig(){
   for(let k=1;k<=3;k++){const [segs,w]=shapeRow(name,k,x,base);body+=segs.map(([a,b])=>pLine(a,b)).join("")+pLbl(x+w/2,base+16,`第 ${k} 個`);x+=w+26;}
   return pSvg(x,base+28,body);
  }
- // 方桌（每邊 1 人）或長桌（長邊 side 人、短邊 1 人）併成一排：第 1、2、3 種情形
- function tablesFig(side=1){
-  const u=18,tw=u*side,th=u,seat=(cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="4.2" fill="#F2F4F7" stroke="#43516B" stroke-width="1.4"/>`;
-  let x=16,body="";const y=22;
+ // 桌子併成一排：每張桌子長 cols 格、寬 rows 格，每格一人；長邊（上下）各 cols 人、兩端各 rows 人。畫出 1、2、3 張的情形
+ function tablesFig(cols=1,rows=1){
+  const u=18,tw=u*cols,th=u*rows,seat=(cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="4.2" fill="#F2F4F7" stroke="#43516B" stroke-width="1.4"/>`;
+  let x=16,body="";const y=14;
   for(let k=1;k<=3;k++){
    for(let i=0;i<k;i++)body+=`<rect x="${x+i*tw}" y="${y}" width="${tw}" height="${th}" fill="#F2F4F7" stroke="#16233A" stroke-width="1.8"/>`;
-   for(let i=0;i<k*side;i++){const cx=x+u/2+i*u;body+=seat(cx,y-8)+seat(cx,y+th+8);}
-   body+=seat(x-8,y+th/2)+seat(x+k*tw+8,y+th/2);
+   for(let i=0;i<k*cols;i++){const cx=x+u/2+i*u;body+=seat(cx,y-8)+seat(cx,y+th+8);}
+   for(let j=0;j<rows;j++){const cy=y+u/2+j*u;body+=seat(x-8,cy)+seat(x+k*tw+8,cy);}
    body+=pLbl(x+k*tw/2,y+th+30,`${k} 張`);x+=k*tw+34;
   }
   return pSvg(x,y+th+40,body);
  }
+ // 桌子的種類：[名稱, 一張坐幾人的說明, cols, rows]；seats(n)=2×cols×n+2×rows
+ const TABLES=[
+  ["方桌","方桌一張可坐 4 人（每邊 1 人）",1,1,""],
+  ["長桌","長桌一張可坐 6 人（長邊各 2 人、短邊各 1 人）",2,1,"的短邊接起來"],
+  ["長桌","長桌一張可坐 8 人（長邊各 3 人、短邊各 1 人）",3,1,"的短邊接起來"],
+  ["長桌","長桌一張可坐 6 人（長邊各 2 人、短邊各 1 人）",1,2,"的長邊靠在一起"],
+  ["長桌","長桌一張可坐 8 人（長邊各 3 人、短邊各 1 人）",1,3,"的長邊靠在一起"],
+ ];
+ const seatsOf=(c,r,n)=>2*c*n+2*r;
+ const SCENE=["班上開同樂會","餐廳要接待一個團體","社區辦尾牙","學校開家長座談會","圖書館舉辦讀書會"];
+ function tableQ(L){
+  const sub=L===0?pick(["count","count","countLong"]):L===1?pick(["count","inv","countLong","apart"]):pick(["inv","countLong","invLong","apart","fewer"]);
+  const T=sub==="count"||(L===0&&sub!=="countLong")?TABLES[0]:sub==="countLong"||sub==="invLong"?pick(TABLES.slice(1,L?5:3)):pick(L===2?TABLES:TABLES.slice(0,3));
+  const [nm,desc,c,r,J]=T,per=2*c+2*r,fig=tablesFig(c,r),sc=pick(SCENE);
+  if(sub==="count"||sub==="countLong"){const n=rand(3,L?20:10),p=seatsOf(c,r,n);return{expr:`${fig}${sc}，${desc}。把 ${n} 張${nm}${J}併成一長排，最多可以坐幾人？`,answer:`${p} 人`,sig:`tab:${c}:${r}:${n}`,verify:()=>{let x=per;for(let i=1;i<n;i++)x+=2*c;return x===p}}}
+  if(sub==="inv"||sub==="invLong"){const p=rand(per+6,70),n=Math.ceil((p-2*r)/(2*c));return{expr:`${fig}${sc}，${desc}。把${nm}${J}併成一長排，要讓 ${p} 人都坐得下，至少要幾張${nm}？`,answer:`${n} 張`,sig:`tinv:${c}:${r}:${p}`,verify:()=>seatsOf(c,r,n)>=p&&seatsOf(c,r,n-1)<p}}
+  const n=rand(4,L===2?18:10),d=per*n-seatsOf(c,r,n);
+  if(sub==="apart")return{expr:`${fig}${sc}，${desc}。${n} 張${nm}分開擺放時，比把它們${J}併成一長排可以多坐幾人？`,answer:`${d} 人`,sig:`apart:${c}:${r}:${n}`,verify:()=>d===(n-1)*2*r};
+  const m=rand(3,8)*2,need=Math.ceil((m*per-2*r)/(2*c));
+  return{expr:`${fig}${sc}，${desc}。原本 ${m} 張${nm}分開擺放剛好坐滿；如果改成把${nm}${J}併成一長排，要讓同樣多的人都坐得下，至少要幾張${nm}？`,answer:`${need} 張`,sig:`fewer:${c}:${r}:${m}`,verify:()=>seatsOf(c,r,need)>=m*per&&seatsOf(c,r,need-1)<m*per};
+ }
  const sticks=unit("sticks","圖形排列","先看第 1 個用幾根，之後每多一個要再加幾根：總根數＝第 1 個的根數＋（個數−1）× 每次增加的根數。",ctx=>{
-  const L=lv(ctx),kind=L===0?pick(["count","tables","countB"]):L===1?pick(["count","inverse","tables","tablesInv"]):pick(["left","tablesInv","inverse","longTable"]);
+  const L=lv(ctx),kind=L===0?pick(["count","tables","countB"]):L===1?pick(["count","inverse","tables","tables"]):pick(["left","tables","inverse","tables"]);
   const [name,add1]=pick(L?SH:SH.slice(0,2)),first=add1+1,need=n=>first+(n-1)*add1;
   if(kind==="count"||kind==="countB"){const n=rand(4,L?40:15);return{expr:sticksFig(name)+(kind==="count"?`用火柴棒排一排${name}，排 1 個要 ${first} 根，排 2 個要 ${need(2)} 根。排 ${n} 個要幾根？`:`用牙籤把${name}一個接一個排成一排，排 ${n} 個${name}共需要幾根牙籤？`),answer:`${need(n)} 根`,sig:`${kind}:${name}:${n}`,verify:()=>{let s=first;for(let i=2;i<=n;i++)s+=add1;return s===need(n)}}}
   if(kind==="inverse"){const n=rand(6,L===2?60:30),t=need(n);return{expr:`${sticksFig(name)}用 ${t} 根火柴棒排成一排${name}（相鄰的${name}共用一邊），剛好用完，共排了幾個？`,answer:`${n} 個`,sig:`inv:${name}:${n}`,verify:()=>(t-first)/add1+1===n}}
-  if(kind==="tables"){const n=rand(3,L?20:12);return{expr:`${tablesFig()}方桌一張可坐 4 人，把 ${n} 張方桌併成一長排，最多可以坐幾人？`,answer:`${2*n+2} 人`,sig:`tab:${n}`,verify:()=>4+(n-1)*2===2*n+2}}
-  if(kind==="tablesInv"){const p=rand(12,60),n=Math.ceil((p-2)/2);return{expr:`${tablesFig()}方桌一張可坐 4 人，併成一長排後要讓 ${p} 人都坐得下，至少要併幾張？`,answer:`${n} 張`,sig:`tinv:${p}`,verify:()=>2*n+2>=p&&2*(n-1)+2<p}}
-  if(kind==="longTable"){const s=pick([6,8]),side=(s-2)/2,n=rand(3,15),seats=s+(n-1)*side*2;return{expr:`${tablesFig(side)}長桌一張可坐 ${s} 人（長邊各 ${side} 人、短邊各 1 人），把 ${n} 張長桌的短邊接起來併成一排，最多可以坐幾人？`,answer:`${seats} 人`,sig:`long:${s}:${n}`,verify:()=>seats===2*side*n+2}}
+  if(kind==="tables")return tableQ(L);
   const t=rand(30,150),n=Math.floor((t-first)/add1)+1,left=t-need(n);if(n<2)return null;return{expr:`${sticksFig(name)}有 ${t} 根火柴棒，排成一排${name}（相鄰的${name}共用一邊），最多可以排幾個？還剩幾根？`,answer:`${n} 個，剩 ${left} 根`,sig:`left:${name}:${t}`,verify:()=>left>=0&&left<add1&&need(n)+left===t}});
  // ③ 植樹問題
  const trees=unit("trees","植樹問題","先算有幾個間隔（全長÷間隔）；兩端都種：棵數＝間隔數＋1；只種一端或圍成一圈：棵數＝間隔數；兩端都不種：棵數＝間隔數−1。",ctx=>{
@@ -883,7 +902,7 @@ function patternConfig(){
   if(kind==="target"){const n=rand(3,6),a=rand(70,88),up=rand(1,4),need=(a+up)*(n+1)-a*n;if(need>100)return null;return{expr:`小華前 ${n} 次測驗的平均是 ${a} 分，第 ${n+1} 次要考幾分，平均才會變成 ${a+up} 分？`,answer:`${need} 分`,sig:`tg:${n}:${a}:${up}`,verify:()=>(a*n+need)/(n+1)===a+up}}
   const n=rand(5,12),a=rand(40,80),out=rand(20,100),b=(a*n-out)/(n-1);if(!Number.isInteger(b)||b<=0)return null;return{expr:`${n} 個數的平均是 ${a}，拿掉其中一個數 ${out} 後，剩下的數平均是多少？`,answer:String(b),sig:`rm:${n}:${a}:${out}`,verify:()=>b*(n-1)+out===a*n}});
  return{title:"規律與怎樣解題",symbol:"⋯",subtitle:"數列規律・圖形排列・植樹問題・週期問題・和差問題・平均數問題",instruction:"先找出規律或畫線段圖，再列式計算，答案要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：等差數列第 n 個、填空；火柴棒與方桌；植樹四種情況；星期與顏色週期；兩數和差；平均與總數。",advanced:"進階：數字較大、遞減數列；反求個數、長度與間隔；顏色個數、月曆；長方形周長的和差；缺一次成績、多一人後的新平均。",challenge:"挑戰：兩項相差、第一次超過；剩下幾根；兩邊種樹與路燈間種樹；區間內的個數；三人和差、倍數加餘數、給錢後相等；兩組合併、目標平均、拿掉一數。"},
+  levels:{basic:"基礎：等差數列第 n 個、填空；火柴棒、方桌與長桌併排；植樹四種情況；星期與顏色週期；兩數和差；平均與總數。",advanced:"進階：數字較大、遞減數列；反求個數、長度與間隔；顏色個數、月曆；長方形周長的和差；缺一次成績、多一人後的新平均。",challenge:"挑戰：兩項相差、第一次超過；剩下幾根；兩邊種樹與路燈間種樹；區間內的個數；三人和差、倍數加餘數、給錢後相等；兩組合併、目標平均、拿掉一數。"},
   units:[seq,sticks,trees,cycle,sumdiff,average],presets:{basic:{sequence:3,sticks:2,trees:3,cycle:2,sumdiff:2,average:2},advanced:{sequence:2,sticks:2,trees:3,cycle:2,sumdiff:3,average:3},challenge:{sequence:2,sticks:2,trees:3,cycle:3,sumdiff:3,average:3}}};
 }
 
