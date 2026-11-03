@@ -10,9 +10,13 @@ const targets={permutations:['adjacent','separated'],probability:['dice','balls'
 const html=fs.readFileSync(new URL('../../tools/math/g11-drills.html',import.meta.url),'utf8');
 const baseline=execFileSync('git',['show','7c98d30f4b95ce588d3f43804c962cd608dfcbe0:tools/math/g11-drills.html'],{encoding:'utf8'});
 const before=topicSources(baseline),after=topicSources(html);
-assert.deepEqual([...changedTopicSources(baseline,html)].sort(),Object.keys(targets).sort());
+// Topics later changed by approved fixes (2026-11-03 answer-error review): their whole config bodies are masked too.
+const later=['anglesum','bayes','commonlog','conditionalprob','correlation','counting','doublehalf','generalpolar','line3d','loggraphs','matrixapps','plane3d','righttrig','sequences','series','sincosarea','spaceconcept','spacecross','spaceinner','spacevector','standarddev','trigblend','vectorcauchy'];
+// P4-C targets whose other units were also changed later (minus sign, improper fractions): skip their unchanged-unit replay
+const laterTargets=['probability','sector','trigtransform'];
+assert.deepEqual([...changedTopicSources(baseline,html)].sort(),[...Object.keys(targets),...later].sort());
 // Everything outside the five approved config function bodies must be byte-identical.
-let restBefore=baseline,restAfter=html;for(const topic of Object.keys(targets)){restBefore=restBefore.replace(before.get(topic),'[TARGET]');restAfter=restAfter.replace(after.get(topic),'[TARGET]');}assert.equal(restAfter,restBefore,'shared helpers / UI / CSS / SVG changed');
+let restBefore=baseline,restAfter=html;for(const topic of [...Object.keys(targets),...later]){restBefore=restBefore.replace(before.get(topic),'[TARGET]');restAfter=restAfter.replace(after.get(topic),'[TARGET]');}assert.equal(restAfter,restBefore,'shared helpers / UI / CSS / SVG changed');
 // Parse each original unit(...) call through its matching closing parenthesis.
 for(const [topic,ids]of Object.entries(targets))for(const id of ids){
  const src=before.get(topic),m=[...src.matchAll(/\bunit\("([a-z]+)"/g)].find(m=>m[1]===id);assert.ok(m);
@@ -79,7 +83,7 @@ for(const [topic,ids]of Object.entries(targets))for(const id of ids){
 assert.equal(Object.keys(samples).length,19,'all new kinds must have accepted samples');
 
 let unchangedUnits=0;
-for(const [topic,src]of before){
+for(const [topic,src]of before){if(later.includes(topic)||laterTargets.includes(topic))continue; // changed on purpose later; their own fixes are checked by sampling
  const old=replayAPI(baseline,topic,5813),now=replayAPI(html,topic,5813);
  for(const o of old.CFG.units){if(targets[topic]?.includes(o.id))continue;
   const u=now.CFG.units.find(x=>x.id===o.id);assert.ok(u);

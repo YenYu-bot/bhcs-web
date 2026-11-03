@@ -110,10 +110,10 @@
 | topic / 組合 | 128 / 4359 |
 | safeQuestion 抽樣 / 成功取題 | 871800 / 871800 |
 | 通過 / 失敗 | 4359 / 0 |
-| 候選 gen / null | 978177 / 82044 |
+| 候選 gen / null | 976083 / 82089 |
 | 候選 verify false / 例外 | 0 / 0 |
 | 完成單卷 / 單卷耗盡 | 4359 / 0 |
-| 高拒絕率 unit（非阻擋） | 45 |
+| 高拒絕率 unit（非阻擋） | 43 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -131,18 +131,17 @@
 | simplify / `bracket` | 52.6% | 3 |
 | unknown / `same` | 51.0% | 1 |
 | units / `compare` | 81.6% | 6 |
-| speed / `average` | 81.6% | 2 |
+| speed / `average` | 81.6% | 5 |
 | speed / `meet` | 73.0% | 2 |
-| charts / `linechart` | 50.1% | 1 |
 | numberline / `mark` | 81.4% | 6 |
 | statistics / `mean` | 72.6% | 5 |
 | statistics / `mode` | 54.2% | 1 |
 | statistics / `change` | 71.4% | 3 |
 | statistics / `missing` | 61.6% | 1 |
+| polyops / `monoDivide` | 51.2% | 1 |
 | sqrt / `divideRadicals` | 64.9% | 2 |
 | sqrt / `rationalize` | 71.9% | 3 |
 | geoseq / `gmean` | 65.4% | 3 |
-| angles / `equation` | 70.5% | 1 |
 | parallelratio / `parallelSeg` | 74.1% | 2 |
 | parallelratio / `twoStep` | 52.7% | 2 |
 | parallelratio / `threeLines` | 61.7% | 2 |
@@ -155,19 +154,18 @@
 | similar / `measure` | 76.3% | 1 |
 | circle1 / `sector` | 59.0% | 1 |
 | quartile / `weighted` | 64.5% | 3 |
-| probability / `experiment` | 66.6% | 1 |
+| probability / `experiment` | 59.5% | 1 |
 | absolute / `error` | 66.6% | 3 |
 | linecircle / `tangent` | 52.7% | 1 |
 | series / `powersums` | 62.7% | 1 |
 | series / `interest` | 59.9% | 1 |
 | standarddev / `spread` | 58.4% | 2 |
 | correlation / `twoslopes` | 57.7% | 3 |
-| correlation / `application` | 55.6% | 3 |
+| correlation / `application` | 67.1% | 3 |
 | trigtransform / `model` | 51.5% | 2 |
 | planevector / `lincomb` | 66.7% | 3 |
-| bayes / `bayestwo` | 52.3% | 1 |
+| bayes / `totaltwo` | 71.8% | 3 |
 | bayes / `medicalnegative` | 51.7% | 2 |
-| matrixapps / `multistate` | 75.2% | 3 |
 | matrixapps / `population` | 58.8% | 1 |
 
 全部組合的實際拒絕率留在 JSON 與 CSV。警示只供後續調範圍參考，不阻擋合併。

@@ -160,13 +160,13 @@ function numbersConfig(){
   const L=lv(ctx),f=pick(L===0?["which","which","count"]:["which","count","list"]);
   if(f==="which"){const n=rand(1,top(L)-1),ev=n%2===0;return{expr:fmt(n)+" 是單數還是雙數？",answer:ev?"雙數":"單數",sig:"w:"+n,verify:()=>(n%2===0)===ev}}
   if(f==="count"){const a=rand(1,L===0?20:80),b=a+rand(5,L===0?10:20),ev=Math.random()<.5,c=Array.from({length:b-a+1},(_,i)=>a+i).filter(x=>(x%2===0)===ev).length;return{expr:"從 "+a+" 到 "+b+"（包含 "+a+" 和 "+b+"），共有幾個"+(ev?"雙數":"單數")+"？",answer:c+" 個",sig:"c:"+a+":"+b+":"+ev,verify:()=>c===Math.floor((b-(ev?0:1))/2)-Math.floor((a-1-(ev?0:1))/2)}}
-  const a=rand(10,90),ev=Math.random()<.5,xs=Array.from({length:10},(_,i)=>a+i).filter(x=>(x%2===0)===ev);return{expr:"寫出 "+a+" 到 "+(a+9)+" 之間所有的"+(ev?"雙數":"單數")+"。",answer:xs.join("、"),sig:"l:"+a+":"+ev,verify:()=>xs.length===5}},"答：");
+  const a=rand(10,90),ev=Math.random()<.5,xs=Array.from({length:10},(_,i)=>a+i).filter(x=>(x%2===0)===ev);return{expr:"寫出從 "+a+" 到 "+(a+9)+"（包含 "+a+" 和 "+(a+9)+"）所有的"+(ev?"雙數":"單數")+"。",answer:xs.join("、"),sig:"l:"+a+":"+ev,verify:()=>xs.length===5}},"答：");
  return{title:"1000 以內的數",symbol:"123",subtitle:"數數與數的順序・位值・比大小・單數與雙數",instruction:"仔細看清楚題目問的是哪一位、要往前數還是往後數。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：100 以內的數（一年級）。",advanced:"進階：1000 以內的數、2、5、10 個一數（二上）。",challenge:"挑戰：1000 以內、100 個一數、倒著數（二下）。"},
   units:[order,place,compare,odd],presets:{basic:{order:4,place:4,compare:4,oddeven:3},advanced:{order:4,place:4,compare:4,oddeven:3},challenge:{order:4,place:4,compare:4,oddeven:3}}};
 }
 
-const NAMES=["小明","小美","阿志","小華","妹妹","哥哥"],THINGS=[["顆","彈珠"],["枝","鉛筆"],["張","貼紙"],["個","積木"],["張","卡片"],["顆","糖果"]];
+const NAMES=["小明","小美","阿志","小華","妹妹","哥哥"],ta=n=>["小美","妹妹","姊姊"].includes(n)?"她":"他",THINGS=[["顆","彈珠"],["枝","鉛筆"],["張","貼紙"],["個","積木"],["張","卡片"],["顆","糖果"]];
 function addConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const pair=L=>{for(let t=0;t<40;t++){const a=L===0?rand(1,9):L===1?rand(10,89):rand(100,899),b=L===0?rand(1,9):L===1?rand(2,89):rand(10,899),max=L===0?18:L===1?99:999;if(a+b<=max)return[a,b]}return[3,4]};
@@ -187,7 +187,7 @@ function addConfig(){
   const L=lv(ctx),f=pick(["three","ten","word"]),m=L===0?9:L===1?40:300;
   if(f==="ten"){const a=rand(1,9),b=10-a,c=rand(1,L===0?9:m);return{expr:a+" ＋ "+c+" ＋ "+b,answer:fmt(a+b+c),sig:"t:"+a+":"+c,verify:()=>a+b===10}}
   const a=rand(1,m),b=rand(1,m),c=rand(1,m);if(L===0&&a+b+c>20||a+b+c>999)return null;
-  if(f==="word"){const [u,t]=pick(THINGS),n=pick(NAMES);return{expr:n+"有 "+a+" "+u+t+"，媽媽給他 "+b+" "+u+"，爸爸又給他 "+c+" "+u+"，現在有幾"+u+"？",answer:(a+b+c)+" "+u,sig:"w:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a,lead:"答："}}
+  if(f==="word"){const [u,t]=pick(THINGS),n=pick(NAMES);return{expr:n+"有 "+a+" "+u+t+"，媽媽給"+ta(n)+" "+b+" "+u+"，爸爸又給"+ta(n)+" "+c+" "+u+"，現在有幾"+u+"？",answer:(a+b+c)+" "+u,sig:"w:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a,lead:"答："}}
   return{expr:a+" ＋ "+b+" ＋ "+c,answer:fmt(a+b+c),sig:"h:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a}});
  return{title:"加法（低年級）",symbol:"＋",subtitle:"加法計算・進位加法・連加",instruction:"可以用數線、湊十或直式計算；應用題要寫單位。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：20 以內的加法，進位用湊十（一年級）。",advanced:"進階：二位數的加法，個位進位（二上）。",challenge:"挑戰：三位數的加法，連續進位（二下）。"},
@@ -243,8 +243,8 @@ function wordConfig(){
   return{expr:"□ − "+a+" ＝ "+x,answer:fmt(x+a),sig:"ma:"+x+":"+a,verify:()=>x+a-a===x}},"□＝");
  const two=unit("twostep","兩步驟的應用題","先算第一步，再用第一步的答案算第二步；也可以列成一個算式。",ctx=>{
   const L=lv(ctx),[u,t]=pick(THINGS),n=pick(NAMES),a=big(L)+(L===0?2:0),b=rand(1,Math.max(1,Math.floor(a/3))),c=rand(1,Math.max(1,Math.floor(a/3))),f=pick(["mm","pm","mp"]);let v,s;
-  if(f==="mm"){v=a-b-c;s=n+"有 "+a+" "+u+t+"，給弟弟 "+b+" "+u+"，又給妹妹 "+c+" "+u+"，還剩幾"+u+"？"}
-  else if(f==="pm"){v=a+b-c;if(L===0&&a+b>20)return null;s=n+"有 "+a+" "+u+t+"，媽媽又給他 "+b+" "+u+"，他用掉 "+c+" "+u+"，還剩幾"+u+"？"}
+  if(f==="mm"){v=a-b-c;const [r1,r2]=shuffle(["弟弟","妹妹","哥哥","姊姊","同學","小明","小美"].filter(x=>x!==n)).slice(0,2);s=n+"有 "+a+" "+u+t+"，給"+r1+" "+b+" "+u+"，又給"+r2+" "+c+" "+u+"，還剩幾"+u+"？"}
+  else if(f==="pm"){v=a+b-c;if(L===0&&a+b>20)return null;s=n+"有 "+a+" "+u+t+"，媽媽又給"+ta(n)+" "+b+" "+u+"，"+ta(n)+"用掉 "+c+" "+u+"，還剩幾"+u+"？"}
   else{v=a-b+c;s="架子上有 "+a+" "+u+t+"，拿走 "+b+" "+u+"，又放上 "+c+" "+u+"，現在有幾"+u+"？"}
   if(v<0)return null;return{expr:s,answer:v+" "+u,sig:f+":"+a+":"+b+":"+c+t,verify:()=>f==="mm"?v+b+c===a:f==="pm"?v+c-b===a:v-c+b===a}},"答：");
  return{title:"加減應用與 □",symbol:"□",subtitle:"加減應用題・比多比少・用 □ 表示未知數・兩步驟的應用題",instruction:"先讀懂題目，再決定用加法還是減法；答案要寫單位。",modes:["integer"],mixed:false,
@@ -288,11 +288,11 @@ function multiplyConfig(){
 
 function moneyConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
- const C0=[50,10,5,1],C1=[500,100,50,10,5,1],C2=[1000,500,100,50,10,5,1],coins=L=>L===0?C0:L===1?C1:C2,nm=v=>v+" 元"+(v>=100?"鈔票":"硬幣");
+ const C0=[50,10,5,1],C1=[500,100,50,10,5,1],C2=[1000,500,100,50,10,5,1],coins=L=>L===0?C0:L===1?C1:C2,nm=v=>v+" 元"+(v>=100?"鈔票":"硬幣"),qn=(v,k)=>k+(v>=100?" 張 ":" 個 ")+v+" 元";
  const count=unit("count","數錢","先數大的錢，再數小的錢：例如 50、60、70、75、76。",ctx=>{
   const L=lv(ctx),cs=coins(L),pickC=shuffle(cs).slice(0,L===0?3:4).sort((x,y)=>y-x),n=pickC.map(()=>rand(1,L===0?4:3)),tot=pickC.reduce((s,v,i)=>s+v*n[i],0);if(L===0&&tot>100)return null;
-  const f=pick(["total","toTen","need"]),txt="有 "+pickC.map((v,i)=>n[i]+" 個 "+v+" 元").join("、");
-  if(f==="toTen"){const tc=cs.filter(v=>v>=10&&v<=100),k=tc.map(()=>rand(0,3)),T=tc.reduce((s,v,i)=>s+v*k[i],0);if(!T||T>500)return null;return{expr:"有 "+tc.map((v,i)=>k[i]+" 個 "+v+" 元").filter((x,i)=>k[i]).join("、")+"，全部換成 10 元硬幣，可以換幾個？",answer:(T/10)+" 個",sig:"t:"+tc+":"+k,verify:()=>T%10===0&&T/10*10===T}}
+  const f=pick(["total","toTen","need"]),txt="有 "+pickC.map((v,i)=>qn(v,n[i])).join("、");
+  if(f==="toTen"){const tc=cs.filter(v=>v>=10&&v<=100),k=tc.map(()=>rand(0,3)),T=tc.reduce((s,v,i)=>s+v*k[i],0);if(!T||T>500)return null;return{expr:"有 "+tc.map((v,i)=>qn(v,k[i])).filter((x,i)=>k[i]).join("、")+"，全部換成 10 元硬幣，可以換幾個？",answer:(T/10)+" 個",sig:"t:"+tc+":"+k,verify:()=>T%10===0&&T/10*10===T}}
   if(f==="need"){const goal=Math.ceil((tot+1)/100)*100;return{expr:txt+"，還要再多幾元才有 "+goal+" 元？",answer:(goal-tot)+" 元",sig:"n:"+pickC+":"+n,verify:()=>goal-tot>0}}
   return{expr:txt+"，一共是幾元？",answer:tot+" 元",sig:"c:"+pickC+":"+n,verify:()=>tot===n.reduce((s,k,i)=>s+k*pickC[i],0)}},"答：");
  const change=unit("change","付錢與找錢","找回的錢＝付的錢－東西的價錢。可以從價錢往上數到付的錢。",ctx=>{
@@ -302,14 +302,14 @@ function moneyConfig(){
  const fewest=unit("fewest","最少的錢幣","要用最少張（個），就先用最大的錢，剩下的再用比較小的錢。",ctx=>{
   const L=lv(ctx),cs=coins(L),amt=rand(L===0?16:120,L===0?99:L===1?999:2999);const use=[];let r=amt;for(const v of cs){const k=Math.floor(r/v);if(k)use.push([v,k]);r-=k*v}
   const f=pick(["each","count","no50"]);
-  if(f==="count")return{expr:"要剛好付 "+amt+" 元，最少要用幾個錢幣"+(L>0?"和鈔票":"")+"？",answer:use.reduce((s,[,k])=>s+k,0)+" 個",sig:"c:"+amt+":"+L,verify:()=>use.reduce((s,[v,k])=>s+v*k,0)===amt};
-  if(f==="no50"){const cs2=cs.filter(v=>v!==50),u2=[];let r2=amt;for(const v of cs2){const k=Math.floor(r2/v);if(k)u2.push([v,k]);r2-=k*v}return{expr:"沒有 50 元硬幣，要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾個？",answer:u2.map(([v,k])=>k+" 個 "+v+" 元").join("、"),sig:"n:"+amt+":"+L,verify:()=>u2.reduce((s,[v,k])=>s+v*k,0)===amt}}
-  return{expr:"要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾個？",answer:use.map(([v,k])=>k+" 個 "+v+" 元").join("、"),sig:"f:"+amt+":"+L,verify:()=>use.reduce((s,[v,k])=>s+v*k,0)===amt}},"答：");
+  if(f==="count"){const nb=use.reduce((s,[v,k])=>s+(v>=100?k:0),0),nc=use.reduce((s,[v,k])=>s+(v<100?k:0),0);return{expr:"要剛好付 "+amt+" 元，最少要用"+(L>0?"幾張鈔票和幾個硬幣":"幾個錢幣")+"？",answer:L>0?nb+" 張鈔票、"+nc+" 個硬幣":nc+" 個",sig:"c:"+amt+":"+L,verify:()=>use.reduce((s,[v,k])=>s+v*k,0)===amt&&nb+nc===use.reduce((s,[,k])=>s+k,0)}}
+  if(f==="no50"){const cs2=cs.filter(v=>v!==50),u2=[];let r2=amt;for(const v of cs2){const k=Math.floor(r2/v);if(k)u2.push([v,k]);r2-=k*v}return{expr:"沒有 50 元硬幣，要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾"+(L>0?"張（個）":"個")+"？",answer:u2.map(([v,k])=>qn(v,k)).join("、"),sig:"n:"+amt+":"+L,verify:()=>u2.reduce((s,[v,k])=>s+v*k,0)===amt}}
+  return{expr:"要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾"+(L>0?"張（個）":"個")+"？",answer:use.map(([v,k])=>qn(v,k)).join("、"),sig:"f:"+amt+":"+L,verify:()=>use.reduce((s,[v,k])=>s+v*k,0)===amt}},"答：");
  const enough=unit("enough","錢夠不夠","先算出有多少錢，再和價錢比：比價錢多或一樣就夠，不夠時差多少用減法。",ctx=>{
   const L=lv(ctx),cs=coins(L),pc=shuffle(cs).slice(0,2).sort((x,y)=>y-x),n=pc.map(()=>rand(1,4)),have=pc[0]*n[0]+pc[1]*n[1],price=have+pick([-1,1])*rand(1,L===0?20:150);if(price<=0)return null;const ok=have>=price;
-  if(L===2&&Math.random()<.4){const p2=Math.floor(price/2);if(p2<1)return null;const ok2=have>=2*p2;return{expr:"小明有 "+pc.map((v,i)=>n[i]+" 個 "+v+" 元").join("、")+"，想買 2 個一樣的玩具，每個 "+p2+" 元，錢夠不夠？"+"差多少或剩多少？",answer:ok2?"夠，剩 "+(have-2*p2)+" 元":"不夠，還差 "+(2*p2-have)+" 元",sig:"e2:"+pc+":"+n+":"+p2,verify:()=>ok2===(have>=p2*2)}}
-  if(Math.random()<.3&&!ok)return{expr:"小明有 "+pc.map((v,i)=>n[i]+" 個 "+v+" 元").join("、")+"，想買 "+price+" 元的玩具，還要再存幾元？",answer:(price-have)+" 元",sig:"s:"+pc+":"+n+":"+price,verify:()=>price-have>0};
-  return{expr:"小明有 "+pc.map((v,i)=>n[i]+" 個 "+v+" 元").join("、")+"，想買 "+price+" 元的玩具，錢夠不夠？"+(ok?"買了以後剩幾元？":"還差幾元？"),answer:ok?"夠，剩 "+(have-price)+" 元":"不夠，還差 "+(price-have)+" 元",sig:"e:"+pc+":"+n+":"+price,verify:()=>ok===(have>=price)}},"答：");
+  if(L===2&&Math.random()<.4){const p2=Math.floor(price/2);if(p2<1)return null;const ok2=have>=2*p2;return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 2 個一樣的玩具，每個 "+p2+" 元，錢夠不夠？"+"差多少或剩多少？",answer:ok2?"夠，剩 "+(have-2*p2)+" 元":"不夠，還差 "+(2*p2-have)+" 元",sig:"e2:"+pc+":"+n+":"+p2,verify:()=>ok2===(have>=p2*2)}}
+  if(Math.random()<.3&&!ok)return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 "+price+" 元的玩具，還要再存幾元？",answer:(price-have)+" 元",sig:"s:"+pc+":"+n+":"+price,verify:()=>price-have>0};
+  return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 "+price+" 元的玩具，錢夠不夠？"+(ok?"買了以後剩幾元？":"還差幾元？"),answer:ok?"夠，剩 "+(have-price)+" 元":"不夠，還差 "+(price-have)+" 元",sig:"e:"+pc+":"+n+":"+price,verify:()=>ok===(have>=price)}},"答：");
  return{title:"錢幣",symbol:"元",subtitle:"數錢・付錢與找錢・最少的錢幣・錢夠不夠",instruction:"答案要寫「元」。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：1、5、10、50 元，100 元以內（一年級）。",advanced:"進階：加入 100、500 元，1000 元以內（二上）。",challenge:"挑戰：加入 1000 元鈔票、兩樣東西一起買（二下）。"},
   units:[count,change,fewest,enough],presets:{basic:{count:4,change:3,fewest:3,enough:3},advanced:{count:3,change:4,fewest:3,enough:3},challenge:{count:3,change:4,fewest:3,enough:3}}};

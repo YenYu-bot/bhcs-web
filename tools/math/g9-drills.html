@@ -126,7 +126,8 @@ const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d
 function places(a){let d=a.d,p2=0,p5=0;while(d%2===0){d/=2;p2++}while(d%5===0){d/=5;p5++}return d===1?Math.max(p2,p5):-1}
 function decHTML(a,fixed=null){const p=places(a);if(p<0)throw Error("非有限小數");const use=fixed===null?p:Math.max(fixed,p),scale=10**use,n=a.n*(scale/a.d),sign=n<0?"−":"",digits=String(Math.abs(n)).padStart(use+1,"0");if(!use)return sign+digits;let out=`${digits.slice(0,-use)}.${digits.slice(-use)}`;if(fixed===null)out=out.replace(/0+$/,"").replace(/\.$/,"");return sign+out}
 function fracHTML(a,{mixed=false,answer=false}={}){const sign=a.n<0?"−":"",n=Math.abs(a.n),w=Math.floor(n/a.d),rem=n%a.d;if(!rem)return sign+w;if(w&&mixed){const m=`<span class="mixed">${sign}${w}${fr(rem,a.d)}</span>`;return answer?`${m}<span class="note-answer">（即 ${sign}${fr(n,a.d)}）</span>`:m}return`${sign}${fr(n,a.d)}`}
-const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):String(a.n).replace("-","−");
+// integer mode only prints whole numbers as integers: a half (10.5) or a third is shown as a decimal or fraction, never as its numerator
+const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):a.d!==1?(places(a)>=0?decHTML(a):fracHTML(a,opt)):String(a.n).replace("-","−");
 function numberFor(mode,level,max=30){if(mode==="integer"){const k=level==="basic"?2:level==="advanced"?10:25;return R(rand(level==="basic"?2:Math.max(2,Math.floor(max*k/5)),max*k))}if(mode==="fraction"){const ds=level==="basic"?[2,3,4,5,6]:[2,3,4,5,6,8,9,10,12,15,20],d=pick(ds);let n=rand(1,(level==="challenge"?3:2)*d-1);while(n%d===0)n=rand(1,3*d-1);return R(n,d)}const p=level==="basic"?1:pick(level==="advanced"?[1,2]:[1,2,3]),s=10**p;let n=rand(1,max*s);while(n%10===0)n=rand(1,max*s);return R(n,s)}
 const norm=s=>String(s).replace(/<[^>]*>/g,"").replace(/\s+/g,"").normalize("NFKC");
 const okResult=q=>q&&typeof q.expr==="string"&&typeof q.answer==="string"&&q.expr&&!/\b(?:NaN|undefined|Infinity)\b/.test(q.expr+q.answer)&&typeof q.verify==="function"&&q.verify()===true;
@@ -200,8 +201,8 @@ function ratio3Config(){
    const[p,q,r]=triple(7),xyz=simp([R(q),R(r),R(p)]);// pxy=qyz ⇒ px=qz ⇒ x:z=q:p；qyz=rzx ⇒ qy=rx ⇒ x:y=q:r ⇒ x:y:z=q:r:p
    const w1=[rand(1,3),rand(1,3),rand(1,3)],w2=[rand(1,3),rand(1,3),rand(1,3)],num=dotp(w1,xyz),den=dotp(w2,xyz),v=R(num,den);
    return{expr:`設 xyz≠0，且 ${cf(p)}xy＝${cf(q)}yz＝${cf(r)}zx，求 x：y：z，並求（${lin(w1,["x","y","z"])}）：（${lin(w2,["x","y","z"])}）的比值。`,answer:`x：y：z＝${ratioStr(xyz)}；比值 ${S(v)}`,sig:`pr:${p}${q}${r}:${w1}:${w2}`,verify:()=>{const[x,y,z]=xyz;return p*x*y===q*y*z&&q*y*z===r*z*x&&eq(R(dotp(w1,[x,y,z]),dotp(w2,[x,y,z])),v)}}}
-  const[p,q,r]=triple(6),L2=p*q*r/g3(p*q,q*r,r*p),xyz=simp([R(1,p),R(1,q),R(1,r)]),w=[[1,1,0],[0,1,1],[1,0,2]],parts=w.map(c=>dotp(c,xyz)),g=parts.reduce((x,y)=>gcd(x,y)),ans=parts.map(v=>v/g);
-  return{expr:`若 ${cf(p)}x＝${cf(q)}y＝${cf(r)}z 且 xyz≠0，求（x＋y）：（y＋z）：（z＋2x）。`,answer:ratioStr(ans),sig:`eq:${p}${q}${r}`,verify:()=>{const[x,y,z]=xyz;return p*x===q*y&&q*y===r*z&&ans.every((v,i)=>v*parts[0]===ans[0]*parts[i])}};
+  const[p,q,r]=triple(6),L2=p*q*r/g3(p*q,q*r,r*p),xyz=simp([R(1,p),R(1,q),R(1,r)]),w=[[1,1,0],[0,1,1],[2,0,1]]/* x＋y、y＋z、z＋2x 的 x,y,z 係數 */,parts=w.map(c=>dotp(c,xyz)),g=parts.reduce((x,y)=>gcd(x,y)),ans=parts.map(v=>v/g);
+  return{expr:`若 ${cf(p)}x＝${cf(q)}y＝${cf(r)}z 且 xyz≠0，求（x＋y）：（y＋z）：（z＋2x）。`,answer:ratioStr(ans),sig:`eq:${p}${q}${r}`,verify:()=>{const[x,y,z]=xyz,txt=[x+y,y+z,z+2*x];return p*x===q*y&&q*y===r*z&&ans.every((v,i)=>v*txt[0]===ans[0]*txt[i])}};
  });
 
  // ② 連比求值
@@ -342,7 +343,7 @@ function parallelratioConfig(){
   if(kind==="two"){const a=rand(2,6),b=rand(1,6),c=rand(1,6),ae=R(rand(2,9)),bc=R(rand(6,20)),ab=a+b+c,aq=div(mul(ae,R(a+b)),R(a)),pq=div(mul(bc,R(a+b)),R(ab));if(mode==="integer"&&(aq.d!==1||pq.d!==1))return null;if(mode==="fraction"&&aq.d===1&&pq.d===1)return null;
    const D=onSeg(A,B,a/ab),E=onSeg(A,C,a/ab),Pp=onSeg(A,B,(a+b)/ab),Q=onSeg(A,C,(a+b)/ab);
    return{expr:`${fig({A,B,C,D,E,P:Pp,Q},[["A","B"],["B","C"],["C","A"],["D","E"],["P","Q"]],[["D","E",1],["P","Q",1],["B","C",1]])}如圖，△ABC 中 DE∥PQ∥BC，AD＝${a}、DP＝${b}、PB＝${c}、AE＝${S(ae)}、BC＝${S(bc)}，求 AQ 與 PQ。`,answer:`AQ＝${S(aq)}，PQ＝${S(pq)}`,sig:`t:${a}:${b}:${c}:${pl(ae)}:${pl(bc)}`,verify:()=>eq(mul(aq,R(a)),mul(ae,R(a+b)))&&eq(mul(pq,R(ab)),mul(bc,R(a+b)))}}
-  if(kind==="perimeter"){for(let i=0;i<80;i++){const x=rand(2,9),k=rand(2,4),ae=k*x,bc=k*x,ad=rand(4,20),ce=rand(2,12);if((ad*ce)%ae)continue;const bd=ad*ce/ae;if(bd<=x||bd-x>9)continue;const de=R(ad*bc,ad+bd);if(de.d!==1)continue;const per=ad+ae+de.n;
+  if(kind==="perimeter"){for(let i=0;i<80;i++){const x=rand(2,9),k=rand(2,4),ae=k*x,bc=k*x,ad=rand(4,20),ce=rand(2,12);if((ad*ce)%ae)continue;const bd=ad*ce/ae;if(bd<=x||bd-x>9)continue;const de=R(ad*bc,ad+bd);if(de.d!==1)continue;const per=ad+ae+de.n,AB=ad+bd,AC=ae+ce;if(!(AB<AC+bc&&AC<AB+bc&&bc<AB+AC)||!(ad<ae+de.n&&ae<ad+de.n&&de.n<ad+ae))continue; /* △ABC、△ADE 都要滿足嚴格三角不等式 */
     return{expr:`${base(ad/(ad+bd))}如圖，△ABC 中 DE∥BC，AD＝${ad}、BD＝x＋${bd-x}、AE＝BC＝${k}x、CE＝${ce}，求 x 與 △ADE 的周長。`,answer:`x＝${x}；周長 ${per}`,sig:`p:${x}:${k}:${ad}:${bd}:${ce}`,verify:()=>ad*ce===bd*ae&&de.n*(ad+bd)===ad*bc&&per===ad+ae+de.n}}return null}
   if(kind==="trapezoid"){const m=rand(1,5),n=rand(1,5),ad=rand(2,8),bc=ad+rand(2,10),ef=R(n*ad+m*bc,m+n);if(mode==="integer"&&ef.d!==1)return null;if(gcd(m,n)>1)return null;
    const Bp=[0,0],Cp=[bc*12,0],Ap=[30,90],Dp=[30+ad*12,90],Ep=onSeg(Ap,Bp,m/(m+n)),Fp=onSeg(Dp,Cp,m/(m+n));
@@ -502,15 +503,15 @@ function similarConfig(){
   const L=lv(ctx),kind=pick(L===0?["tri","quad"]:L===1?["quad","coef","pent"]:["coef","pent","order"]);
   if(kind==="tri"){let A,B;do{A=rand(30,100);B=rand(30,100)}while(A+B>=160||A===B);const C=180-A-B,names=pick([["D","E","F"],["P","Q","R"]]),i=rand(0,2);
    return{expr:`已知 △ABC∼△${names.join("")}（依對應順序），∠A＝${A}°、∠B＝${B}°，求 ∠${names[i]}。`,answer:`∠${names[i]}＝${[A,B,C][i]}°`,sig:`t:${A}:${B}:${i}`,verify:()=>A+B+C===180}}
-  if(kind==="quad"){let r;do{r=[rand(1,6),rand(1,6),rand(1,6),rand(1,6)]}while(360%(r[0]+r[1]+r[2]+r[3])||new Set(r).size<3);const u=360/(r[0]+r[1]+r[2]+r[3]),i=rand(0,3),j=(i+rand(1,3))%4;
-   return{expr:`四邊形 ABCD 與四邊形 A′B′C′D′ 相似（依對應順序），且 ∠A′：∠B′：∠C′：∠D′＝${r.join("：")}，求 ∠${"ABCD"[i]} 與 ∠${"ABCD"[j]}。`,answer:`∠${"ABCD"[i]}＝${r[i]*u}°，∠${"ABCD"[j]}＝${r[j]*u}°`,sig:`q:${r}:${i}:${j}`,verify:()=>r.reduce((s,x)=>s+x*u,0)===360}}
+  if(kind==="quad"){let r;do{r=[rand(1,6),rand(1,6),rand(1,6),rand(1,6)]}while(360%(r[0]+r[1]+r[2]+r[3])||new Set(r).size<3||r.some(x=>x*360>=180*(r[0]+r[1]+r[2]+r[3])));const u=360/(r[0]+r[1]+r[2]+r[3]),i=rand(0,3),j=(i+rand(1,3))%4;
+   return{expr:`四邊形 ABCD 與四邊形 A′B′C′D′ 相似（依對應順序），且 ∠A′：∠B′：∠C′：∠D′＝${r.join("：")}，求 ∠${"ABCD"[i]} 與 ∠${"ABCD"[j]}。`,answer:`∠${"ABCD"[i]}＝${r[i]*u}°，∠${"ABCD"[j]}＝${r[j]*u}°`,sig:`q:${r}:${i}:${j}`,verify:()=>r.reduce((s,x)=>s+x*u,0)===360&&r.every(x=>x*u>0&&x*u<180)}}
   if(kind==="coef"){for(let i=0;i<40;i++){let A,B;do{A=rand(30,100);B=rand(30,100)}while(A+B>=160||A===B);const C=180-A-B,p=rand(2,3),q=rand(2,3),g1=gcd(p*A,q*B),r2=rand(2,3),s=rand(2,3),g2=gcd(r2*B,s*C);if(p*A/g1>24||q*B/g1>24||r2*B/g2>24||s*C/g2>24)continue;
     return{expr:`△ABC∼△EFD（A 對應 E、B 對應 F、C 對應 D），${p}∠A：${q}∠B＝${p*A/g1}：${q*B/g1}，${r2}∠B：${s}∠C＝${r2*B/g2}：${s*C/g2}，求 ∠D、∠E、∠F。`,answer:`∠D＝${C}°、∠E＝${A}°、∠F＝${B}°`,sig:`c:${A}:${B}:${p}${q}${r2}${s}`,verify:()=>p*A*(q*B/g1)===q*B*(p*A/g1)&&r2*B*(s*C/g2)===s*C*(r2*B/g2)&&A+B+C===180}}return null}
   if(kind==="pent"){for(let i=0;i<60;i++){const r=[rand(1,5),rand(1,5),rand(1,5)],g=gcd(r[1],rand(1,5)),r3=[r[2],rand(1,5)],T=rand(90,160);const uSum=540-T;// ∠P:∠Q:∠R=r, ∠R:∠S=r3, ∠T 已知
      const wP=r[0]*r3[0],wQ=r[1]*r3[0],wR=r[2]*r3[0],wS=r[2]*r3[1],tot=wP+wQ+wR+wS;if(uSum%tot||r3[0]===r3[1]&&Math.random()<.7)continue;const u=uSum/tot,ang=[wP*u,wQ*u,wR*u,wS*u,T];if(ang.some(x=>x<20||x>170))continue;const i2=rand(0,3);
      return{expr:`五邊形 ABCDE∼五邊形 PQRST（依對應順序），∠P：∠Q：∠R＝${r.join("：")}，∠R：∠S＝${r3.join("：")}，∠T＝${T}°，求 ∠${"ABCDE"[i2]}。`,answer:`∠${"ABCDE"[i2]}＝${ang[i2]}°`,sig:`p:${r}:${r3}:${T}:${i2}`,verify:()=>ang.reduce((s,x)=>s+x,0)===540&&ang[0]*r[1]===ang[1]*r[0]&&ang[2]*r3[1]===ang[3]*r3[0]}}return null}
-  let A,B,C;do{A=rand(40,130);B=rand(40,130);C=rand(40,130)}while(A+B+C>=340||new Set([A,B,C]).size<3);const Dg=360-A-B-C;
-  return{expr:`四邊形 ABCD∼四邊形 A′B′C′D′，且 ∠D′ 是 ∠D 的對應角。若 ∠A＝${A}°、∠B＝${B}°、∠C＝${C}°，求 ∠D′。`,answer:`∠D′＝${Dg}°`,sig:`d:${A}:${B}:${C}`,verify:()=>A+B+C+Dg===360&&Dg>0};
+  let A,B,C;do{A=rand(40,130);B=rand(40,130);C=rand(40,130)}while(A+B+C>=340||A+B+C<=180||new Set([A,B,C]).size<3);const Dg=360-A-B-C;
+  return{expr:`四邊形 ABCD∼四邊形 A′B′C′D′，且 ∠D′ 是 ∠D 的對應角。若 ∠A＝${A}°、∠B＝${B}°、∠C＝${C}°，求 ∠D′。`,answer:`∠D′＝${Dg}°`,sig:`d:${A}:${B}:${C}`,verify:()=>A+B+C+Dg===360&&Dg>0&&Dg<180};
  });
 
  // ④ 相似三角形的判別
@@ -541,7 +542,7 @@ function similarConfig(){
    const bd=rand(1,9),k=rand(2,4),bc=bd*k,ba=bd*k*k,ad=ba-bd,ac=R(rand(ba-bc+1,ba+bc-1)),cd=div(mul(ac,R(bc)),R(ba));if(ba>60||!ok(cd)||bc<2)return null;const acv=ac.n,cosB=(ba*ba+bc*bc-acv*acv)/(2*ba*bc);if(Math.abs(cosB)>=.999)return null;const B=[0,0],A=[ba,0],C=[bc*cosB,bc*Math.sqrt(1-cosB*cosB)],Dp=onSeg(B,A,bd/ba);
    return{expr:`${fig({A,B,C,D:Dp},[["A","B"],["B","C"],["C","A"],["C","D"]],[],[["C","B","D","1"],["A","B","C","1"]])}如圖，△ABC 中 D 在 AB 上，∠BCD＝∠A（圖中標 1）。若 AD＝${ad}、BD＝${bd}、AC＝${S(ac)}，求 BC 與 CD。`,answer:`BC＝${bc}，CD＝${S(cd)}`,sig:`c:${bd}:${k}:${pl(ac)}`,verify:()=>bc*bc===bd*ba&&eq(mul(cd,R(ba)),mul(ac,R(bc)))}}
   if(kind==="bisector"){// AQ 為角平分線，PB⊥AB、QC⊥AC ⇒ △ABP∼△ACQ
-   const pb=rand(2,6),k=rand(2,4),qc=pb*k,ap=R(rand(3,15),mode==="fraction"?pick([2,3,4]):1),aq=mul(ap,R(k)),pq=sub(aq,ap);if(!ok(pq))return null;
+   const pb=rand(2,6),k=rand(2,4),qc=pb*k,dn=mode==="fraction"?pick([2,3,4]):1,ap=R(dn===1?rand(pb+1,15):rand(pb*dn+1,(pb+6)*dn),dn),aq=mul(ap,R(k)),pq=sub(aq,ap);if(!ok(pq)||cmp(ap,R(pb))<=0)return null;/* AP 是直角△ABP 的斜邊，必須 AP＞PB */
    return{expr:`AQ 是 ∠BAC 的角平分線，P 在 AQ 上，且 PB⊥AB、QC⊥AC。若 PB＝${pb}、QC＝${qc}、AP＝${S(ap)}，求 PQ。`,answer:`PQ＝${S(pq)}`,sig:`b:${pb}:${k}:${pl(ap)}`,verify:()=>eq(mul(add(ap,pq),R(pb)),mul(ap,R(qc)))}}
   if(kind==="parallelogram"){// ▱ABCD，E 在 AD 上，BE 交 AC 於 F ⇒ AF：FC＝AE：BC
    const m=rand(1,5),n=rand(1,5),ac=R(rand(5,20)),af=div(mul(ac,R(m)),R(2*m+n));if(gcd(m,n)>1||m===n&&Math.random()<.5||!ok(af))return null;// AE:ED=m:n ⇒ AE:BC=m:(m+n)
@@ -693,10 +694,10 @@ function righttriConfig(){
    const [p,q,r]=pick(TRIP),ask=Math.random()<.5;return ask?{expr:`△ABC 中 ∠C＝90°，且 BC＝${S(R(p,r))}AB，求 tan A 與 sin A。`,answer:`tan A＝${S(R(p,q))}，sin A＝${S(R(p,r))}`,sig:`ra:${p}${q}`,verify:()=>p*p+q*q===r*r}:{expr:`△ABC 中 ∠C＝90°，且 (1＋cos A)／cos A＝${S(R(r+q,q))}，求 cos A、tan A 與 sin B。`,answer:`cos A＝${S(R(q,r))}，tan A＝${S(R(p,q))}，sin B＝${S(R(q,r))}`,sig:`rc:${p}${q}`,verify:()=>eq(div(add(R(1),R(q,r)),R(q,r)),R(r+q,q))&&p*p+q*q===r*r}}
   // 小數模式：三角測量，題目給三角函數值
   const dec=(v,d)=>decHTML(R(Math.round(v*10**d),10**d));
-  if(kind==="measure"){const ang=pick([23,28,32,35,40,50]),tv={23:0.4245,28:0.5317,32:0.6249,35:0.7002,40:0.8391,50:1.1918}[ang],d=rand(5,30)*10,h=R(Math.round(d*tv*100),100),hs=D(h);
-   return{expr:`在離塔底 ${d} 公尺的地面處，測得塔頂的仰角為 ${ang}°，求塔高（tan ${ang}°＝${tv}）。`,answer:`${hs} 公尺`,sig:`me:${ang}:${d}`,verify:()=>Math.abs(num(h)-d*tv)<0.006}}
-  if(kind==="area"){const b=rand(5,15),c=rand(5,15),ang=pick([47,30,53,60]),sv={47:0.8,30:0.5,53:0.8,60:0.866}[ang],area=R(Math.round(b*c*sv*100/2),100);
-   return{expr:`△ABC 中 AB＝${c}、BC＝${b}、∠B＝${ang}°，求 △ABC 的面積（sin ${ang}°＝${sv}）。`,answer:D(area),sig:`ar:${b}:${c}:${ang}`,verify:()=>Math.abs(num(area)-b*c*sv/2)<0.006}}
+  if(kind==="measure"){const ang=pick([23,28,32,35,40,50]),tv={23:0.4245,28:0.5317,32:0.6249,35:0.7002,40:0.8391,50:1.1918}[ang],d=rand(5,30)*10,h=R(Math.floor(((d/10)*Math.round(tv*10000)+5)/10),100),hs=D(h);/* 整數運算四捨五入，避免 55.185 被浮點算成 55.18 */
+   return{expr:`在離塔底 ${d} 公尺的地面處，測得塔頂的仰角為 ${ang}°，求塔高（tan ${ang}°＝${tv}，答案四捨五入到小數點後第二位）。`,answer:`${hs} 公尺`,sig:`me:${ang}:${d}`,verify:()=>Math.abs(num(h)-d*tv)<0.006}}
+  if(kind==="area"){const b=rand(5,15),c=rand(5,15),ang=pick([47,30,53,60]),sv={47:0.7314,30:0.5,53:0.8,60:0.866}[ang],area=R(Math.floor((b*c*Math.round(sv*10000)+100)/200),100);
+   return{expr:`△ABC 中 AB＝${c}、BC＝${b}、∠B＝${ang}°，求 △ABC 的面積（sin ${ang}°＝${sv}，答案四捨五入到小數點後第二位）。`,answer:D(area),sig:`ar:${b}:${c}:${ang}`,verify:()=>Math.abs(num(area)-b*c*sv/2)<0.006}}
   if(kind==="two"){const d=rand(3,12)*10,t=pick([0.3,0.4,0.5]),h=R(Math.round(d*t/(1-t)*100),100);// tan θ＝t，再前進 d 到仰角 45°：h/(x+d)=t，h=x ⇒ h＝dt/(1−t)
    return{expr:`從地面 M 處測得塔頂 A 的仰角為 θ，向塔前進 ${d} 公尺到 N 處，再測得仰角為 45°，求塔高（tan θ＝${t}）。`,answer:`${D(h)} 公尺`,sig:`tw:${d}:${t}`,verify:()=>Math.abs(num(h)/(num(h)+d)-t)<0.001}}
   const d=rand(5,15),cv=0.6,tv=1.4,h=R(Math.round(d*tv*10),10),l=R(Math.round(d/cv*10),10),tot=add(h,l);// 樹折：地面 d，與地面成 54°
@@ -801,9 +802,9 @@ function circle1Config(){
    return{expr:`${img}如圖，正方形的邊長為 ${s}，內有一個與四邊相切的圓，求正方形內圓外部分的面積。`,answer:form(a),sig:`in:${s}`,verify:()=>Math.abs(val(a)-(s*s-Math.PI*r*r))<1e-9}}
   if(kind==="rectSector"){const w=rand(5,12),h=rand(3,w-1),r=h,a={rat:R(w*h),pi:R(-r*r,4)};const img=GEO.svg(W,H,`<rect x="30" y="35" width="${w*12}" height="${h*12}" fill="none" stroke="#16233A" stroke-width="1.5"/>`+arcPath(30,35+h*12,h*12,0,90)+T([26,35+h*12+12],"A",{i:true}));
    return{expr:`${img}如圖，長方形長 ${w} 公分、寬 ${h} 公分，圖中的扇形以 A 為圓心、寬為半徑，求長方形內扇形外的斜線部分面積。`,answer:`${form(a)} 平方公分`,sig:`rs:${w}:${h}`,verify:()=>Math.abs(val(a)-(w*h-Math.PI*r*r/4))<1e-9}}
-  const s=rand(2,12),a={pi:R(s*s,2),rat:R(-s*s)},per={pi:R(s)};// 正方形內以兩個相鄰頂點為圓心、邊長為半徑的兩個四分之一圓，夾出的葉形
-  const img=GEO.svg(W,H,`<rect x="40" y="20" width="120" height="120" fill="none" stroke="#16233A" stroke-width="1.5"/>`+arcPath(40,140,120,0,90)+arcPath(160,140,120,90,180)+T([32,150],"B",{i:true})+T([168,150],"C",{i:true})+T([32,18],"A",{i:true})+T([168,18],"D",{i:true}));
-  return{expr:`${img}如圖，正方形 ABCD 的邊長為 ${s}，分別以 B、C 為圓心、邊長為半徑畫四分之一圓，求兩弧夾出的斜線區域的面積與周長。`,answer:`面積 ${form(a)}；周長 ${form(per)}`,sig:`qt:${s}`,verify:()=>Math.abs(val(a)-(Math.PI*s*s/2-s*s))<1e-9&&Math.abs(val(per)-Math.PI*s)<1e-9};
+  const s=rand(2,12),a={pi:R(s*s,2),rat:R(-s*s)},per={pi:R(s)};// 正方形內以兩個相對頂點 B、D 為圓心、邊長為半徑的兩個四分之一圓，夾出的葉形（面積 πs²/2−s²，周長＝兩段四分之一圓弧＝πs）
+  const img=GEO.svg(W,H,`<rect x="40" y="20" width="120" height="120" fill="none" stroke="#16233A" stroke-width="1.5"/>`+arcPath(40,140,120,0,90)+arcPath(160,20,120,180,270)+T([32,150],"B",{i:true})+T([168,150],"C",{i:true})+T([32,18],"A",{i:true})+T([168,18],"D",{i:true}));
+  return{expr:`${img}如圖，正方形 ABCD 的邊長為 ${s}，分別以 B、D 為圓心、邊長為半徑畫四分之一圓，求兩弧夾出的斜線區域的面積與周長。`,answer:`面積 ${form(a)}；周長 ${form(per)}`,sig:`qt:${s}`,verify:()=>Math.abs(val(a)-(Math.PI*s*s/2-s*s))<1e-9&&Math.abs(val(per)-Math.PI*s)<1e-9};
  });
 
  // ③ 點、線與圓的位置
@@ -857,7 +858,8 @@ function circle1Config(){
  // ⑥ 弦心距
  const chord=unit("chord","弦心距","過圓心且垂直弦的線段平分此弦：(弦／2)²＋弦心距²＝半徑²；同圓中弦愈長，弦心距愈短。",["integer"],ctx=>{
   const L=lv(ctx),mode=pick(ctx.modes),kind=pick(L===0?["dist","radius","chordLen"]:L===1?["twoChords","parallel","ringTangent"]:["parallel","bisect","shortLong"]);
-  const trip=()=>{const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),k=rand(1,3);return[p*k,q*k,r*k]};
+  // 基礎用較小的數（半徑 ≦ 30），進階、挑戰才放大倍數
+  const trip=()=>L===0?pick([[3,4,5],[6,8,10],[9,12,15],[12,16,20],[15,20,25],[18,24,30],[5,12,13],[10,24,26],[8,15,17],[7,24,25],[20,21,29]]):(()=>{const[p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]),k=rand(1,3);return[p*k,q*k,r*k]})();
   const chordFig=(half,d,r)=>{const s=55/r,cx=100,cy=80,y=cy-d*s,x=half*s;return GEO.svg(W,H,circ(cx,cy,55)+Ln([cx-x,y],[cx+x,y])+Ln([cx,cy],[cx,y])+GEO.right([cx,y],[cx,cy],[cx+x,y])+Dt([cx,cy])+Dt([cx,y])+T([cx,cy+14],"O",{i:true})+T([cx-x-9,y+4],"A",{i:true})+T([cx+x+9,y+4],"B",{i:true})+T([cx+9,y-4],"M",{i:true}))};
   if(kind==="dist"){const[a,b,c]=trip(),half=Math.random()<.5?a:b,dd=half===a?b:a;return{expr:`${chordFig(half,dd,c)}如圖，圓 O 的半徑是 ${c} 公分，弦 AB 長 ${2*half} 公分，OM⊥AB，求弦心距 OM。`,answer:`OM＝${dd} 公分`,sig:`d:${half}:${c}`,verify:()=>half*half+dd*dd===c*c}}
   if(kind==="radius"){const[a,b,c]=trip(),half=Math.random()<.5?a:b,dd=half===a?b:a;return{expr:`${chordFig(half,dd,c)}如圖，直線 AB 與圓 O 交於 A、B 兩點，圓心 O 到 AB 的距離 OM＝${dd}，AB＝${2*half}，求圓 O 的半徑。`,answer:`${c}`,sig:`r:${half}:${dd}`,verify:()=>half*half+dd*dd===c*c}}
@@ -955,7 +957,7 @@ return{expr:`${cfig(pts,[["A","B"],["A","C"],["C","D"],[[cx,cy],"D"]])}如圖，
   if(kind==="exterior"){const A=rand(40,130),pts={A:120,B:200,C:300,D:40},E=GEO.ext(pt(200),pt(300),35);return{expr:`${cfig(pts,[["A","B"],["B","C"],["C","D"],["D","A"],["C",E]],GEO.text([E[0]+6,E[1]+4],"E",{i:true,s:11}),false)}如圖，ABCD 為圓內接四邊形，E 在 BC 的延長線上。若 ∠A＝${A}°，求 ∠BCD 與外角 ∠DCE。`,answer:`∠BCD＝${180-A}°，∠DCE＝${A}°`,sig:`ex:${A}`,verify:()=>(180-A)+A===180}}
   if(kind==="arcs"){for(let i=0;i<40;i++){const A=rand(40,120),ad=rand(20,120),bc=rand(20,120),bcd=2*A,cd=bcd-bc,ab=360-ad-bc-cd;if(cd<=0||ab<=0)continue;const C=180-A,D=(ab+bc)/2,Bg=(cd+ad)/2;if(D%1)continue;
     const pts={A:180+ab/2*0,B:0,C:0,D:0};pts.A=90;pts.B=90-ab;pts.C=90-ab-bc;pts.D=90-ab-bc-cd;return{expr:`${cfig(pts,[["A","B"],["B","C"],["C","D"],["D","A"]],"",false)}如圖，ABCD 為圓內接四邊形，∠A＝${A}°，弧 AD＝${ad}°、弧 BC＝${bc}°，求 ∠C、∠D 與弧 AB 的度數。`,answer:`∠C＝${C}°，∠D＝${D}°，弧 AB＝${ab}°`,sig:`ar:${A}:${ad}:${bc}`,verify:()=>ab+bc+cd+ad===360&&C===(ab+ad)/2&&D+Bg===180}}return null}
-  if(kind==="twoExt"){const P=rand(20,60),Q=rand(20,60),A=(180-P-Q)/2;if(A%1||A<=0)return null;const C=180-A;return{expr:`ABCD 為圓內接四邊形，直線 AB 與直線 DC 交於 P，直線 AD 與直線 BC 交於 Q（P、Q 在四邊形外）。若 ∠P＝${P}°、∠Q＝${Q}°，求 ∠A 與 ∠C 的度數。`,answer:`∠A＝${A}°，∠C＝${C}°`,sig:`te:${P}:${Q}`,verify:()=>{const adc=180-A-P,abc=180-A-Q;return adc+abc===180&&C===180-A}}}
+  if(kind==="twoExt"){const P=rand(20,60),Q=rand(20,60),A=(180-P-Q)/2;if(A%1||A<=0)return null;const C=180-A;return{expr:`ABCD 為圓內接四邊形，直線 AB 與直線 DC 交於 P，直線 AD 與直線 BC 交於 Q，且 B 在 A、P 之間，D 在 A、Q 之間（P、Q 在四邊形外）。若 ∠P＝${P}°、∠Q＝${Q}°，求 ∠A 與 ∠C 的度數。`,answer:`∠A＝${A}°，∠C＝${C}°`,sig:`te:${P}:${Q}`,verify:()=>{const adc=180-A-P,abc=180-A-Q;return adc+abc===180&&C===180-A}}}
   const P=rand(20,120),acb=(180-P)/2,adb=180-acb;if(acb%1)return null;
   return{expr:`直線 PA 和直線 PB 切圓 O 於 A、B 兩點，∠P＝${P}°。C 在優弧 AB 上、D 在劣弧 AB 上，求 ∠ACB 與 ∠ADB。`,answer:`∠ACB＝${acb}°，∠ADB＝${adb}°`,sig:`tp:${P}`,verify:()=>{const aob=180-P;return acb===aob/2&&adb===(360-aob)/2}};
  });
@@ -1291,9 +1293,9 @@ function quartileConfig(){
  });
 
  // ③ 次數分配表
- const TAB=[["擲一顆骰子","點數","點",1,6],["某班同學的家庭人口數","人數","人",3,8],["同學投籃 10 次的命中球數","命中球數","球",0,8],["同學一週的運動天數","天數","天",0,7],["小考 10 題的答對題數","答對題數","題",4,10]];
+ const TAB=[["擲一顆骰子","點數","點",1,6,true],["某班同學的家庭人口數","人數","人",3,8],["同學投籃 10 次的命中球數","命中球數","球",0,8],["同學一週的運動天數","天數","天",0,7],["小考 10 題的答對題數","答對題數","題",4,10]];
  const table=unit("table","次數與累積次數分配表","由累積次數找出第 m 筆落在哪個數值：累積次數第一次大於或等於 m 的那一列。",["integer"],ctx=>{
-  const f=form(ctx),L=lv(ctx),[t,col,u,lo,hi]=pick(TAB),vals=Array.from({length:hi-lo+1},(_,i)=>lo+i).slice(0,rand(5,7)),cnt=()=>vals.map(()=>rand(L?0:1,4+3*L)),expand=c=>c.flatMap((k,i)=>Array(k).fill(vals[i])),cum=c=>c.reduce((s,k)=>(s.push((s.at(-1)||0)+k),s),[]);
+  const f=form(ctx),L=lv(ctx),[t,col,u,lo,hi,full]=pick(TAB),vals=Array.from({length:hi-lo+1},(_,i)=>lo+i).slice(0,full?hi-lo+1:rand(5,7)),cnt=()=>vals.map(()=>rand(L?0:1,4+3*L)),expand=c=>c.flatMap((k,i)=>Array(k).fill(vals[i])),cum=c=>c.reduce((s,k)=>(s.push((s.at(-1)||0)+k),s),[]);
   const byCum=(c,k)=>{const n=c.reduce((s,x)=>s+x,0),q=qpos(n,k),C=cum(c),at=m=>vals[C.findIndex(x=>x>=m)];return q.int?R(at(q.m)+at(q.m+1),2):R(at(q.m))};
   const chk=(c,ks,v)=>{const e=expand(c);return ks.every((k,i)=>near(num(v[i]),quartF(e,k)))};
   if(f===4){const c1=cnt(),c2=cnt(),c=c1.map((x,i)=>x+c2[i]),n=c.reduce((s,x)=>s+x,0);if(n<8)return null;const v=[1,2,3].map(k=>byCum(c,k));
@@ -1307,11 +1309,13 @@ function quartileConfig(){
  });
 
  // ④ 分組資料：四分位數所在組
- const GRP=[["某校學生的體重","公斤",30,10],["某班學生的身高","公分",130,10],["學生的數學測驗成績","分",30,10],["學生一分鐘仰臥起坐次數","次",15,5],["商店每日的營業額","萬元",10,5],["學生每週上網時數","小時",0,5]];
+ // 第 5 欄 true：次數中間多、兩端少（身高體重的分布），組界也收在國中生合理的範圍
+ const GRP=[["某校學生的體重","公斤",35,5,true],["某班學生的身高","公分",140,5,true],["學生的數學測驗成績","分",30,10],["學生一分鐘仰臥起坐次數","次",15,5],["商店每日的營業額","萬元",10,5],["學生每週上網時數","小時",0,5]];
  const group=unit("group","分組資料的四分位數所在組","組界「a～b」表示 a 以上、未滿 b；用累積次數找出第 m 筆資料所在的組。",["integer"],ctx=>{
-  const f=form(ctx),L=lv(ctx),[t,u,st,w]=pick(GRP),k=rand(5,7),edges=Array.from({length:k+1},(_,i)=>st+i*w),name=i=>`${edges[i]}～${edges[i+1]}`;
-  let c=Array.from({length:k},()=>rand(1,8+6*L));
-  if(f===4){const n=pick([20,25,40,50,100]);const cuts=new Set;while(cuts.size<k-1)cuts.add(rand(1,n-1));const cs=[0,...[...cuts].sort((x,y)=>x-y),n];c=cs.slice(1).map((x,i)=>x-cs[i])}
+  const f=form(ctx),L=lv(ctx),[t,u,st,w,bell]=pick(GRP),k=rand(5,7),edges=Array.from({length:k+1},(_,i)=>st+i*w),name=i=>`${edges[i]}～${edges[i+1]}`;
+  const bw=i=>bell?1-Math.abs(i-(k-1)/2)/((k+1)/2):1; // 鐘形權重：中間 1，兩端約 1／4～1／3
+  let c=Array.from({length:k},(_,i)=>rand(1,Math.max(2,Math.round((8+6*L)*bw(i)))));
+  if(f===4){const n=pick([20,25,40,50,100]);if(bell){const wt=Array.from({length:k},(_,i)=>bw(i)*(.6+.8*Math.random())),sw=wt.reduce((a,b)=>a+b),raw=wt.map(x=>1+x/sw*(n-k)),fl=raw.map(Math.floor);let left=n-fl.reduce((a,b)=>a+b);raw.map((x,i)=>[x-fl[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{if(left>0){fl[i]++;left--}});c=fl}else{const cuts=new Set;while(cuts.size<k-1)cuts.add(rand(1,n-1));const cs=[0,...[...cuts].sort((x,y)=>x-y),n];c=cs.slice(1).map((x,i)=>x-cs[i])}}
   const n=c.reduce((s,x)=>s+x,0),C=c.reduce((s,x)=>(s.push((s.at(-1)||0)+x),s),[]);
   const gOf=kk=>{const q=qpos(n,kk),g=m=>C.findIndex(x=>x>=m);if(q.int&&g(q.m)!==g(q.m+1))return -1;return g(q.m)};
   const expand=()=>c.flatMap((x,i)=>Array(x).fill(i));
@@ -1418,10 +1422,10 @@ function boxplotConfig(){
  });
 
  // ③ 次數分配表
- const TAB=[["擲一顆骰子","點數","點",1,1,6],["某班同學的家庭人口數","人數","人",2,1,7],["同學投籃 10 次的命中球數","命中球數","球",0,1,9],["英語小考成績","成績","分",40,10,7],["作文模擬考","級分","級分",0,1,7],["女生的體重","體重","公斤",42,1,9]];
+ const TAB=[["擲一顆骰子","點數","點",1,1,6,true],["某班同學的家庭人口數","人數","人",2,1,7],["同學投籃 10 次的命中球數","命中球數","球",0,1,9],["英語小考成績","成績","分",40,10,7],["作文模擬考","級分","級分",0,1,7],["女生的體重","體重","公斤",42,1,9]];
  const tbl=(head,rows)=>`<table style="border-collapse:collapse;margin:3px 0;font-size:.92em"><tr>${head.map(h=>`<td style="border:1px solid #7C879B;padding:1px 6px;text-align:center">${h}</td>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td style="border:1px solid #7C879B;padding:1px 6px;text-align:center">${c}</td>`).join("")}</tr>`).join("")}</table>`;
  const table=unit("table","次數分配表的全距與四分位距","全距看有出現（次數不為 0）的最大值與最小值；Q₁、Q₃ 用累積次數找位置。",["integer"],ctx=>{
-  const f=form(ctx),L=lv(ctx),[t,col,u,st,step,len]=pick(TAB),hd=col===u?col:col+"（"+u+"）",vals=Array.from({length:len},(_,i)=>st+i*step).slice(0,rand(5,len)),cnt=()=>vals.map((_,i)=>rand(i===0||i===vals.length-1?1:L?0:1,3+3*L)),exp=c=>c.flatMap((k,i)=>Array(k).fill(vals[i])),C=c=>c.reduce((s,k)=>(s.push((s.at(-1)||0)+k),s),[]);
+  const f=form(ctx),L=lv(ctx),[t,col,u,st,step,len,full]=pick(TAB),hd=col===u?col:col+"（"+u+"）",vals=Array.from({length:len},(_,i)=>st+i*step).slice(0,full?len:rand(5,len)),cnt=()=>vals.map((_,i)=>rand(i===0||i===vals.length-1?1:L?0:1,3+3*L)),exp=c=>c.flatMap((k,i)=>Array(k).fill(vals[i])),C=c=>c.reduce((s,k)=>(s.push((s.at(-1)||0)+k),s),[]);
   const q=(c,k)=>{const n=c.reduce((s,x)=>s+x,0),p=qpos(n,k),cc=C(c),at=m=>vals[cc.findIndex(x=>x>=m)];return p.int?R(at(p.m)+at(p.m+1),2):R(at(p.m))};
   const RI=c=>{const lo=vals[c.findIndex(x=>x>0)],hi=vals[c.length-1-[...c].reverse().findIndex(x=>x>0)];return[R(hi-lo),sub(q(c,3),q(c,1))]};
   const RIF=c=>{const w=fiveF(exp(c));return[w[4]-w[0],w[3]-w[1]]};
@@ -1455,7 +1459,7 @@ function boxplotConfig(){
   if(kind==="plus"||kind==="minus"){const c=rand(2,15),s=kind==="plus"?c:-c,nv=vn.map(x=>x+s);return{expr:SC[0]+"的五數綜合為 "+fs(vn)+"（單位："+SC[1]+"）。若每筆資料都"+(s>0?"加 ":"減 ")+c+"，求新的 Q₁、Q₂、Q₃，以及新的全距與四分位距。",answer:"Q₁＝"+nv[1]+"，Q₂＝"+nv[2]+"，Q₃＝"+nv[3]+"；全距 "+rg+"，四分位距 "+iq+"（不變）",sig:kind+":"+vn+":"+c,verify:()=>nv[4]-nv[0]===rg&&nv[3]-nv[1]===iq}}
   if(kind==="times"){const k=rand(2,5),nv=vn.map(x=>x*k);return{expr:SC[0]+"的五數綜合為 "+fs(vn)+"（單位："+SC[1]+"）。若每筆資料都乘 "+k+"，新的中位數、全距與四分位距各是多少？",answer:"中位數 "+nv[2]+"，全距 "+(k*rg)+"，四分位距 "+(k*iq),sig:"t:"+vn+":"+k,verify:()=>nv[4]-nv[0]===k*rg&&nv[3]-nv[1]===k*iq}}
   if(kind==="lin"){const k=rand(2,4),c=rand(-20,30),nv=vn.map(x=>k*x+c);if(c===0)return null;return{expr:SC[0]+"的五數綜合為 "+fs(vn)+"（單位："+SC[1]+"）。若把每筆資料 x 換成 "+k+"x"+(c>0?"＋"+c:"−"+(-c))+"，求新的五數綜合與新的四分位距。",answer:fs(nv)+"；四分位距 "+(k*iq),sig:"l:"+vn+":"+k+":"+c,verify:()=>nv[3]-nv[1]===k*iq&&nv.every((x,i)=>!i||x>nv[i-1])}}
-  if(kind==="temp"){const w=G5(rand(1,4),rand(3,6)).map(x=>num(x)*5),F=w.map(x=>x*9/5+32);return{expr:"某地 40 天的最低氣溫（°C）五數綜合為 "+fs(w)+"。換算成華氏溫度的公式是 F＝(9／5)C＋32，求華氏溫度的五數綜合與四分位距。",answer:fs(F)+"；四分位距 "+(F[3]-F[1]),sig:"f:"+w,verify:()=>F.every((x,i)=>x===w[i]*9/5+32&&Number.isInteger(x))&&F[3]-F[1]===(w[3]-w[1])*9/5}}
+  if(kind==="temp"){let g;do g=[0,0,0,0].map(()=>pick([5,10]));while(g.reduce((a,b)=>a+b)>30);const w=[5*rand(1,(35-g.reduce((a,b)=>a+b))/5)];g.forEach(x=>w.push(w.at(-1)+x));if(w[0]<5||w[4]>35)return null;const F=w.map(x=>x*9/5+32);/* 最低氣溫限 5～35 °C，且都是 5 的倍數讓華氏為整數 */return{expr:"某地 40 天的最低氣溫（°C）五數綜合為 "+fs(w)+"。換算成華氏溫度的公式是 F＝(9／5)C＋32，求華氏溫度的五數綜合與四分位距。",answer:fs(F)+"；四分位距 "+(F[3]-F[1]),sig:"f:"+w,verify:()=>F.every((x,i)=>x===w[i]*9/5+32&&Number.isInteger(x))&&F[3]-F[1]===(w[3]-w[1])*9/5&&w[0]>=5&&w[4]<=35}}
   const k=rand(2,4),c=rand(-20,30),nv=vn.map(x=>k*x+c);return{expr:SC[0]+"的最小值是 "+vn[0]+"、最大值是 "+vn[4]+"，中位數是 "+vn[2]+"。每筆資料都乘 k 再加 c（k＞0）後，最小值變成 "+nv[0]+"、最大值變成 "+nv[4]+"。求 k、c 與新的中位數。",answer:"k＝"+k+"，c＝"+c+"；中位數 "+nv[2],sig:"s:"+vn+":"+k+":"+c,verify:()=>(nv[4]-nv[0])/(vn[4]-vn[0])===k&&nv[0]-k*vn[0]===c}});
  // ⑥ 由盒狀圖判斷敘述（2026-11-01 新增）
  const judgeBox=unit("judgebox","由盒狀圖判斷敘述","先寫出兩組的五數綜合，再一句一句檢查：全距＝最大值−最小值、四分位距＝Q₃−Q₁；約一半的資料小於中位數、約 25% 小於 Q₁、約 75% 小於 Q₃。",["integer"],ctx=>{
@@ -1575,8 +1579,8 @@ function probabilityConfig(){
   if(kind==="bag"){const T=pick([10,20,25,30,40,50]),red=rand(1,T-1),g=gcd(red,T),N=(T/g)*rand(4,20),a=N*red/T;return{expr:"袋中有紅球與白球共 "+T+" 顆。每次取出 1 顆記錄顏色後放回，共取 "+N+" 次，其中紅球出現 "+a+" 次。用實驗機率估計，袋中約有幾顆紅球？",answer:"約 "+red+" 顆",sig:"b:"+T+":"+N+":"+a,verify:()=>a*T===red*N}}
   if(kind==="table"){const T=pick([20,30,40,50]),N1=50,a1=rand(10,40),N2=rand(2,6)*50,a2r=rand(2,T-2);if((N2*a2r)%T)return null;const a2=N2*a2r/T;return{expr:"袋中有黃球與藍球共 "+T+" 顆，每次取 1 顆記錄後放回。第一天取 "+N1+" 次，黃球 "+a1+" 次；第二天取 "+N2+" 次，黃球 "+a2+" 次。分別求兩天黃球的實驗機率；用次數較多的那一天估計，袋中約有幾顆黃球？",answer:"第一天 "+fracHTML(R(a1,N1))+"、第二天 "+fracHTML(R(a2,N2))+"；約 "+a2r+" 顆",sig:"tb:"+T+":"+a1+":"+N2+":"+a2,verify:()=>N2>N1&&a2*T===a2r*N2}}
   if(kind==="combine"){const N1=10*rand(3,12),N2=10*rand(3,12),a1=rand(1,N1-1),a2=rand(1,N2-1),T=pick([12,20,24,30]);const p=R(a1+a2,N1+N2),est=mul(p,R(T));if(est.d!==1)return null;return{expr:"袋中有綠球與白球共 "+T+" 顆。甲取球（取後放回）"+N1+" 次，綠球 "+a1+" 次；乙取 "+N2+" 次，綠球 "+a2+" 次。把兩人的結果合併，求綠球的實驗機率，並估計袋中的綠球數。",answer:fracHTML(p)+"；約 "+est.n+" 顆",sig:"cb:"+[N1,a1,N2,a2,T],verify:()=>eq(div(R(a1+a2),R(N1+N2)),p)&&est.n*(N1+N2)===(a1+a2)*T}}
-  if(kind==="fish"){const m=10*rand(3,20),n=10*rand(3,15),k=rand(2,Math.min(n-1,25));if((m*n)%k)return null;const tot=m*n/k;if(tot<n||tot<m)return null;return{expr:"為了估計池塘中的魚數，先捉 "+m+" 條魚做記號後放回。幾天後再捉 "+n+" 條，其中有記號的有 "+k+" 條。估計池塘中約有幾條魚？",answer:"約 "+tot+" 條",sig:"f:"+m+":"+n+":"+k,verify:()=>eq(R(k,n),R(m,tot))}}
-  const tot=100*rand(3,30),n=10*rand(3,15),k=rand(2,Math.min(n-1,25));if((tot*k)%n)return null;const m=tot*k/n;return{expr:"池塘中約有 "+tot+" 條魚。先捉一些魚做記號後放回，幾天後再捉 "+n+" 條，其中有記號的有 "+k+" 條。估計當初做記號的魚約有幾條？",answer:"約 "+m+" 條",sig:"fb:"+tot+":"+n+":"+k,verify:()=>eq(R(k,n),R(m,tot))}});
+  if(kind==="fish"){const m=10*rand(3,20),n=10*rand(3,15),k=rand(2,Math.min(25,Math.floor(n/5)));if((m*n)%k||5*k>n)return null;/* 有記號的比例 k／n ≦ 20% */const tot=m*n/k;if(tot<n||tot<m)return null;return{expr:"為了估計池塘中的魚數，先捉 "+m+" 條魚做記號後放回。幾天後再捉 "+n+" 條，其中有記號的有 "+k+" 條。估計池塘中約有幾條魚？",answer:"約 "+tot+" 條",sig:"f:"+m+":"+n+":"+k,verify:()=>eq(R(k,n),R(m,tot))&&5*k<=n}}
+  const tot=100*rand(3,30),n=10*rand(3,15),k=rand(2,Math.min(25,Math.floor(n/5)));if((tot*k)%n||5*k>n)return null;const m=tot*k/n;return{expr:"池塘中約有 "+tot+" 條魚。先捉一些魚做記號後放回，幾天後再捉 "+n+" 條，其中有記號的有 "+k+" 條。估計當初做記號的魚約有幾條？",answer:"約 "+m+" 條",sig:"fb:"+tot+":"+n+":"+k,verify:()=>eq(R(k,n),R(m,tot))&&5*k<=n}});
  // ⑦ 字母卡片（2026-11-01 新增）
  const WORDS=["MATHEMATICS","PROBABILITY","STATISTICS","BANANA","COMMITTEE","MISSISSIPPI","GEOMETRY","ALGEBRA","TAIPEI","KAOHSIUNG","PINEAPPLE","CHOCOLATE","ELEPHANT","ASSESSMENT","BOOKKEEPER","TOMATO","CALCULATOR","DIAMETER","PARALLEL","EXPERIMENT"];
  const VOW="AEIOU";
@@ -1727,7 +1731,8 @@ function solidConfig(){
   if(f===0){const exact=pick([true,false]);let a,b,c,d2;if(exact){const q=pick(QUAD),k=rand(1,L?3:2);[a,b,c]=shuffle(q.slice(0,3)).map(x=>x*k);d2=(q[3]*k)**2}else{a=rand(2,12);b=rand(2,12);c=rand(2,12);d2=a*a+b*b+c*c}
    return{expr:`一個長方體的長、寬、高分別為 ${a}、${b}、${c} 公分，求它的空間對角線長。`,answer:`${rad(1,d2)} 公分`,sig:`d0:${a}:${b}:${c}`,verify:()=>near(dist3([0,0,0],[a,b,c]),radV(1,d2))}}
   if(f===1){const a=rand(2,15),rev=pick([false,true]);return rev?{expr:`一個正方體的空間對角線長為 ${rad(a,3)} 公分，求此正方體的邊長與體積。`,answer:`邊長 ${a} 公分，體積 ${a**3} 立方公分`,sig:`d1r:${a}`,verify:()=>near(dist3([0,0,0],[a,a,a]),a*Math.sqrt(3))}:{expr:`一個正方體的邊長為 ${a} 公分，求它的空間對角線長。`,answer:`${rad(a,3)} 公分`,sig:`d1:${a}`,verify:()=>near(dist3([0,0,0],[a,a,a]),radV(a,3))}}
-  if(f===2){const q=pick(QUAD),k=rand(1,2),[x,y,z]=shuffle(q.slice(0,3)).map(v=>v*k),d=q[3]*k,item=pick(["雨傘","球棒","教鞭","掃把"]),ask=pick(["長","寬","高"]),giv={長:x,寬:y,高:z},others=["長","寬","高"].filter(t=>t!==ask);
+  if(f===2){const[item,dlo,dhi]=pick([["鉛筆",14,20],["筷子",20,27],["直尺",15,32],["雨傘",50,100],["球棒",60,110],["教鞭",45,100],["掃把",90,130]]),cand=QUAD.flatMap(q=>Array.from({length:12},(_,i)=>[q,i+1])).filter(([q,k])=>q[3]*k>=dlo&&q[3]*k<=dhi);if(!cand.length)return null;/* 物品長度要合理 */
+   const[q,k]=pick(cand),[x,y,z]=shuffle(q.slice(0,3)).map(v=>v*k),d=q[3]*k,ask=pick(["長","寬","高"]),giv={長:x,寬:y,高:z},others=["長","寬","高"].filter(t=>t!==ask);
    return{expr:`一支長 ${d} 公分的${item}恰好可以沿空間對角線斜放進一個長方體箱子。已知箱子的${others[0]}為 ${giv[others[0]]} 公分、${others[1]}為 ${giv[others[1]]} 公分，求箱子的${ask}。`,answer:`${giv[ask]} 公分`,sig:`d2:${x}:${y}:${z}:${ask}`,verify:()=>near(dist3([0,0,0],[x,y,z]),d)}}
   if(f===3){const a=rand(2,12),b=rand(2,12),c=rand(2,12);return{expr:`一個長方體的底面長 ${a} 公分、寬 ${b} 公分，高 ${c} 公分，求 (1) 底面的對角線長 (2) 空間對角線長。`,answer:`(1) ${rad(1,a*a+b*b)} 公分 (2) ${rad(1,a*a+b*b+c*c)} 公分`,sig:`d3:${a}:${b}:${c}`,verify:()=>near(dist3([0,0,0],[a,b,0]),radV(1,a*a+b*b))&&near(dist3([0,0,0],[a,b,c]),radV(1,a*a+b*b+c*c))}}
   const q=pick(QUAD),k=rand(1,3),[p,r,s]=q.slice(0,3),d=q[3]*k;
@@ -1758,7 +1763,7 @@ function solidConfig(){
   if(f===1){const r=rand(1,12),h=rand(2,15);return{expr:`${CYL()}的底面直徑為 ${2*r} 公分、高為 ${h} 公分，求它的側面積與體積。`,answer:`側面積 ${pi(2*r*h)} 平方公分，體積 ${pi(r*r*h)} 立方公分`,sig:`y1:${r}:${h}`,verify:()=>near(P*(2*r)*h,2*r*h*P)&&near(P*(2*r/2)**2*h,r*r*h*P)}}
   if(f===2){const r=rand(1,12),h=rand(2,15);return{expr:`${pick(["一個無蓋的圓柱形水桶","一個無蓋的圓柱形筆筒","一個無蓋的圓柱形花盆"])}，底面半徑 ${r} 公分、高 ${h} 公分，求它的容積（視為體積）與外表面積（底面＋側面）。`,answer:`體積 ${pi(r*r*h)} 立方公分，表面積 ${pi(r*r+2*r*h)} 平方公分`,sig:`y2:${r}:${h}`,verify:()=>near(P*r*r+2*P*r*h,(r*r+2*r*h)*P)}}
   if(f===3){const R2=rand(3,12),r=rand(1,R2-1),h=rand(2,15),V=(R2*R2-r*r)*h,S=2*(R2*R2-r*r)+2*R2*h+2*r*h;
-   return{expr:`${pick(["一段中空的圓柱形水管","一個中空的圓柱形套筒","一段中空的圓柱形鐵管"])}，外半徑 ${R2} 公分、內半徑 ${r} 公分、長 ${h} 公分，求水管本身的體積與表面積（含內、外側面與兩端的環形）。`,answer:`體積 ${pi(V)} 立方公分，表面積 ${pi(S)} 平方公分`,sig:`y3:${R2}:${r}:${h}`,verify:()=>near(P*R2*R2*h-P*r*r*h,V*P)&&near(2*(P*R2*R2-P*r*r)+2*P*R2*h+2*P*r*h,S*P)}}
+   const obj=pick([["一段中空的圓柱形水管","水管"],["一個中空的圓柱形套筒","套筒"],["一段中空的圓柱形鐵管","鐵管"]]);return{expr:`${obj[0]}，外半徑 ${R2} 公分、內半徑 ${r} 公分、長 ${h} 公分，求${obj[1]}本身的體積與表面積（含內、外側面與兩端的環形）。`,answer:`體積 ${pi(V)} 立方公分，表面積 ${pi(S)} 平方公分`,sig:`y3:${R2}:${r}:${h}`,verify:()=>near(P*R2*R2*h-P*r*r*h,V*P)&&near(2*(P*R2*R2-P*r*r)+2*P*R2*h+2*P*r*h,S*P)}}
   const R2=rand(3,12),r=rand(1,R2-1),H=rand(4,15),D=rand(2,H-1),V=R2*R2*H-r*r*D,S=2*R2*R2+2*R2*H+2*r*D;
   return{expr:`一個無蓋的圓柱形容器，外半徑 ${R2} 公分、外高 ${H} 公分；內部挖空成半徑 ${r} 公分、深 ${D} 公分的圓柱（開口在上方）。求容器本體的體積與表面積（外底、外側、頂端環形、內側、內底）。`,answer:`體積 ${pi(V)} 立方公分，表面積 ${pi(S)} 平方公分`,sig:`y4:${R2}:${r}:${H}:${D}`,verify:()=>near(P*R2*R2*H-P*r*r*D,V*P)&&near(P*R2*R2+2*P*R2*H+(P*R2*R2-P*r*r)+2*P*r*D+P*r*r,S*P)};
  });

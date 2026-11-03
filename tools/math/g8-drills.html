@@ -125,7 +125,8 @@ const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d
 function places(a){let d=a.d,p2=0,p5=0;while(d%2===0){d/=2;p2++}while(d%5===0){d/=5;p5++}return d===1?Math.max(p2,p5):-1}
 function decHTML(a,fixed=null){const p=places(a);if(p<0)throw Error("非有限小數");const use=fixed===null?p:Math.max(fixed,p),scale=10**use,n=a.n*(scale/a.d),sign=n<0?"−":"",digits=String(Math.abs(n)).padStart(use+1,"0");if(!use)return sign+digits;let out=`${digits.slice(0,-use)}.${digits.slice(-use)}`;if(fixed===null)out=out.replace(/0+$/,"").replace(/\.$/,"");return sign+out}
 function fracHTML(a,{mixed=false,answer=false}={}){const sign=a.n<0?"−":"",n=Math.abs(a.n),w=Math.floor(n/a.d),rem=n%a.d;if(!rem)return sign+w;if(w&&mixed){const m=`<span class="mixed">${sign}${w}${fr(rem,a.d)}</span>`;return answer?`${m}<span class="note-answer">（即 ${sign}${fr(n,a.d)}）</span>`:m}return`${sign}${fr(n,a.d)}`}
-const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):String(a.n).replace("-","−");
+// integer mode only prints whole numbers as integers: a half (10.5) or a third is shown as a decimal or fraction, never as its numerator
+const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):a.d!==1?(places(a)>=0?decHTML(a):fracHTML(a,opt)):String(a.n).replace("-","−");
 function numberFor(mode,level,max=30){if(mode==="integer"){const k=level==="basic"?2:level==="advanced"?10:25;return R(rand(level==="basic"?2:Math.max(2,Math.floor(max*k/5)),max*k))}if(mode==="fraction"){const ds=level==="basic"?[2,3,4,5,6]:[2,3,4,5,6,8,9,10,12,15,20],d=pick(ds);let n=rand(1,(level==="challenge"?3:2)*d-1);while(n%d===0)n=rand(1,3*d-1);return R(n,d)}const p=level==="basic"?1:pick(level==="advanced"?[1,2]:[1,2,3]),s=10**p;let n=rand(1,max*s);while(n%10===0)n=rand(1,max*s);return R(n,s)}
 const norm=s=>String(s).replace(/<[^>]*>/g,"").replace(/\s+/g,"").normalize("NFKC");
 const okResult=q=>q&&typeof q.expr==="string"&&typeof q.answer==="string"&&q.expr&&!/\b(?:NaN|undefined|Infinity)\b/.test(q.expr+q.answer)&&typeof q.verify==="function"&&q.verify()===true;
@@ -241,7 +242,10 @@ function parallelConfig(){
  const parBis=unit("parbis","平行線與角平分線","兩平行線被截，同側內角互補，它們的平分線互相垂直；一個角的平分線與平行線相交，常會形成等腰三角形。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["sameSide","isoLen","isoAng"]):L===1?pick(["sameSide","isoLen","isoAng","alt"]):pick(["sameSide2","isoPerim","alt2"]);
   if(kind==="sameSide"){const x=rand(20,70);return{expr:"L₁∥L₂，截線分別交 L₁、L₂ 於 A、B。∠A、∠B 為同側內角，它們的平分線交於 P。若 ∠PAB＝"+deg(x)+"，求 ∠PBA 與 ∠APB。",answer:"∠PBA＝"+deg(90-x)+"、∠APB＝90°",sig:"s:"+x,verify:()=>2*x+2*(90-x)===180}}
-  if(kind==="sameSide2"){const a=2*rand(20,70);return{expr:"L₁∥L₂，截線交 L₁、L₂ 於 A、B，同側內角中 ∠A＝"+deg(a)+"。兩個同側內角的平分線交於 P，求 ∠PBA 與 ∠APB；若 AP＝6、BP＝8，求 AB。",answer:"∠PBA＝"+deg((180-a)/2)+"、∠APB＝90°；AB＝10",sig:"s2:"+a,verify:()=>a/2+(180-a)/2+90===180}}
+  if(kind==="sameSide2"){
+   // 角度與邊長不同時給：給了 ∠A，AP：BP 就被 tan(∠A/2) 決定，任意的 6、8 會和角度矛盾。所以「給角求角」與「給兩段長求 AB」分成兩種問法
+   if(Math.random()<.5){const a=2*rand(20,70);return{expr:"L₁∥L₂，截線交 L₁、L₂ 於 A、B，同側內角中 ∠A＝"+deg(a)+"。兩個同側內角的平分線交於 P，求 ∠PAB、∠PBA 與 ∠APB。",answer:"∠PAB＝"+deg(a/2)+"、∠PBA＝"+deg((180-a)/2)+"、∠APB＝90°",sig:"s2:"+a,verify:()=>a/2+(180-a)/2+90===180}}
+   const [p,q,r]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]),k=rand(1,p>5?1:3),sw=Math.random()<.5,AP=k*(sw?q:p),BP=k*(sw?p:q),AB=k*r;return{expr:"L₁∥L₂，截線交 L₁、L₂ 於 A、B。∠A、∠B 為同側內角，它們的平分線交於 P。若 AP＝"+AP+"、BP＝"+BP+"，求 ∠APB 與 AB。",answer:"∠APB＝90°（∠PAB＋∠PBA＝180°÷2＝90°）；AB＝"+AB,sig:"s3:"+AP+":"+BP,verify:()=>AP*AP+BP*BP===AB*AB}}
   if(kind==="isoLen"){const s=rand(3,25);return{expr:"AD∥BC，∠ABC 的平分線交 AD 於 E。若 AB＝"+s+"，求 AE。",answer:s+"（∠AEB＝∠EBC＝∠ABE，△ABE 是等腰三角形）",sig:"il:"+s,verify:()=>s===s}}
   if(kind==="isoAng"){const b=2*rand(15,80);return{expr:"AD∥BC，∠ABC＝"+deg(b)+"，BE 平分 ∠ABC 交 AD 於 E，求 ∠AEB 與 ∠A。",answer:"∠AEB＝"+deg(b/2)+"、∠A＝"+deg(180-b),sig:"ia:"+b,verify:()=>(180-b)+b/2+b/2===180}}
   if(kind==="alt"){const a=2*rand(15,80);return{expr:"L₁∥L₂，截線交 L₁ 於 A、L₂ 於 B，一組內錯角是 "+deg(a)+"。分別作這兩個內錯角的平分線，兩條平分線的位置關係是什麼？平分線與截線的夾角各是幾度？",answer:"互相平行；都是 "+deg(a/2),sig:"al:"+a,verify:()=>a/2*2===a}}
@@ -384,7 +388,7 @@ function geoseqConfig(){
   const r=pick(RS[mode]),n=8,a=pickA(r,n,mode),s=seq(a,r,n);
   if(kind==="adj"||kind==="adj2"){const k=rand(2,6);return{expr:`等比數列中 a${k}＝${S(s[k-1])}、a${k+1}＝${S(s[k])}，求公比 r 與首項 a₁。`,answer:`r＝${S(r)}；a₁＝${S(a)}`,sig:`ad:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(div(s[k],s[k-1]),r)&&eq(div(s[k-1],pow(r,k-1)),a)}}
   if(kind==="a1r"){const k=rand(3,6);return{expr:`等比數列首項 a₁＝${S(a)}，第 ${k} 項 a${k}＝${S(s[k-1])}，公比為${r.n>0?"正":"負"}數，求公比 r。`,answer:`r＝${S(r)}`,sig:`ar:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(mul(a,pow(r,k-1)),s[k-1])}}
-  if(kind==="gap"){const k=rand(1,3),g=pick([1,3]),m=k+g+1;if(m>n)return null;return{expr:`等比數列中 a${k}＝${S(s[k-1])}、a${m}＝${S(s[m-1])}，求公比 r 與首項 a₁。`,answer:`r＝${S(r)}；a₁＝${S(a)}`,sig:`gp:${plain(a)}:${plain(r)}:${k}:${m}`,verify:()=>eq(div(s[m-1],s[k-1]),pow(r,m-k))}}
+  if(kind==="gap"){const k=rand(1,3),g=pick([2,4]),m=k+g+1;/* 相隔奇數項（3 或 5），公比只有一個；相隔偶數項的正負兩解由 gap2 處理 */if(m>n)return null;return{expr:`等比數列中 a${k}＝${S(s[k-1])}、a${m}＝${S(s[m-1])}，求公比 r 與首項 a₁。`,answer:`r＝${S(r)}；a₁＝${S(a)}`,sig:`gp:${plain(a)}:${plain(r)}:${k}:${m}`,verify:()=>(m-k)%2===1&&eq(div(s[m-1],s[k-1]),pow(r,m-k))}}
   if(kind==="gap2"){const k=rand(1,3),m=k+2;const r2=mul(r,R(-1)),a2=div(s[k-1],pow(r2,k-1));return{expr:`等比數列中 a${k}＝${S(s[k-1])}、a${m}＝${S(s[m-1])}，求公比 r 與首項 a₁（寫出所有可能）。`,answer:`r＝${S(r)}、a₁＝${S(a)}；或 r＝${S(r2)}、a₁＝${S(a2)}`,sig:`g2:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(pow(r,2),pow(r2,2))&&eq(mul(a2,pow(r2,m-1)),s[m-1])}}
   // find：a₂＋a₃ 型
   const k=rand(2,5);return{expr:`等比數列中 a${k}＝${S(s[k-1])}、公比 r＝${S(r)}，求 a${k+2}－a₁。`,answer:S(sub(s[k+1],a)),sig:`f:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(sub(mul(s[k-1],pow(r,2)),div(s[k-1],pow(r,k-1))),sub(s[k+1],a))}});
@@ -395,7 +399,7 @@ function geoseqConfig(){
   if(kind==="pm")return{expr:`求 ${S(a)} 與 ${S(c)} 的等比中項。`,answer:`${S(B)} 或 ${S(mul(B,R(-1)))}（b²＝${S(mul(a,c))}）`,sig:`pm:${plain(a)}:${plain(c)}`,verify:()=>eq(mul(B,B),mul(a,c))};
   if(kind==="check"){const ok=Math.random()<.5,m=ok?b:add(b,R(1));return{expr:`${S(a)}，${S(m)}，${S(c)} 三數是否成等比數列？`,answer:ok?`是（${P(m)}²＝${P(a)}×${P(c)}）`:`不是（${P(m)}²≠${P(a)}×${P(c)}）`,sig:`ck:${plain(a)}:${plain(m)}:${plain(c)}`,verify:()=>ok===eq(mul(m,m),mul(a,c))}}
   if(kind==="find"){return{expr:`若 ${S(a)}，x，${S(c)} 成等比數列，求 x。`,answer:`x＝${S(B)} 或 ${S(mul(B,R(-1)))}`,sig:`fd:${plain(a)}:${plain(c)}`,verify:()=>eq(mul(B,B),mul(a,c))}}
-  if(kind==="none"){const a2=R(rand(2,9)),c2=R(-rand(2,9));return{expr:`${S(a2)} 與 ${S(c2)} 有沒有等比中項？說明原因。`,answer:`沒有（${S(a2)}×${S(c2)}＝${S(mul(a2,c2))}＜0，沒有數的平方是負數）`,sig:`nn:${a2.n}:${c2.n}`,verify:()=>mul(a2,c2).n<0}}
+  if(kind==="none"){const a2=R(rand(2,9)),c2=R(-rand(2,9));return{expr:`${S(a2)} 與 ${S(c2)} 有沒有等比中項？說明原因。`,answer:`沒有（${S(a2)}×${P(c2)}＝${S(mul(a2,c2))}＜0，沒有數的平方是負數）`,sig:`nn:${a2.n}:${c2.n}`,verify:()=>mul(a2,c2).n<0}}
   // sign：三數成等比，且中間項為負
   const xneg=a.n>0?mul(B,R(-1)):B;return{expr:`${S(a)}，x，${S(c)} 成等比數列，且此數列的公比為負數，求 x。`,answer:`x＝${S(xneg)}`,sig:`sg:${plain(a)}:${plain(c)}`,verify:()=>eq(mul(xneg,xneg),mul(a,c))&&div(xneg,a).n<0}});
  const app=unit("apply","等比數列的應用","每次變成前一次的固定倍數（細菌分裂、對摺、每年固定比例增減），就是等比數列：第 n 次的量＝原量×rⁿ。",(ctx,mode)=>{
@@ -479,10 +483,10 @@ function anglesConfig(){
  // ⑤ 列方程式求角度
  const eqn=unit("equation","列方程式求角度","把未知角用 x 表示，利用內角和、外角定理或互補關係列式。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["tri3","supp","ext"]):L===1?pick(["tri3","quad","ext"]):pick(["poly","iso","ext2"]);
-  const lin=(a,b)=>`${a===1?"":a}x${b>0?"＋"+b:b<0?"−"+(-b):""}`;
+  const lin=(a,b)=>b?`(${a===1?"":a}x${b>0?"＋"+b:"−"+(-b)})`:`${a===1?"":a}x`;/* 有常數項就加括號：(x＋13)° */
   if(kind==="tri3"){const x=rand(10,40),cs=[[1,rand(0,30)],[2,rand(-20,20)],[L?3:1,rand(-20,20)]],vals=cs.map(([a,b])=>a*x+b),rest=180-vals[0]-vals[1];if(rest<10)return null;const a3=cs[2][0],b3=rest-a3*x;const all=[vals[0],vals[1],a3*x+b3];if(all.some(v=>v<5))return null;return{expr:`三角形三個內角分別為 ${lin(...cs[0])}°、${lin(...cs[1])}°、${lin(a3,b3)}°，求 x 與最大的內角。`,answer:`x＝${x}；最大角 ${deg(Math.max(...all))}`,sig:`t3:${x}:${cs.map(c=>c.join("_")).join(",")}:${b3}`,verify:()=>all.reduce((s,v)=>s+v,0)===180}}
   if(kind==="supp"){const x=rand(10,50),a=rand(1,3),b=rand(-10,30),c=180-(a*x+b)-x;if(c<=0)return null;return{expr:`兩角互補，一角為 ${lin(a,b)}°，另一角為 (x＋${c})°，求 x。`,answer:`x＝${(180-b-c)/(a+1)}`,sig:`sp:${a}:${b}:${c}`,verify:()=>Number.isInteger((180-b-c)/(a+1))&&(a*x+b)+(x+c)===180}}
-  if(kind==="ext"||kind==="ext2"){const x=rand(10,40),A=[1,rand(0,20)],B=[kind==="ext2"?2:1,rand(-10,20)],e=[kind==="ext2"?3:2,0];const eb=A[0]*x+A[1]+B[0]*x+B[1]-e[0]*x;if(kind==="ext2"&&(A[0]+B[0]===e[0]))return null;const vA=A[0]*x+A[1],vB=B[0]*x+B[1];if(vA+vB>=170||vA<5||vB<5)return null;return{expr:`△ABC 的外角 ∠ACD＝(${lin(e[0],eb)})°，兩個內對角 ∠A＝${lin(...A)}°、∠B＝${lin(...B)}°，求 x。`,answer:`x＝${x}`,sig:`ex:${kind}:${x}:${A.join("_")}:${B.join("_")}`,verify:()=>vA+vB===e[0]*x+eb}}
+  if(kind==="ext"||kind==="ext2"){const x=rand(10,40),A=[1,rand(0,20)],B=[kind==="ext2"?2:1,rand(-10,20)],e=[A[0]+B[0]+pick([-1,1]),0];/* 外角的 x 係數不能等於兩內對角係數和，否則方程式兩邊恆等、解不出 x */const eb=A[0]*x+A[1]+B[0]*x+B[1]-e[0]*x;if(A[0]+B[0]===e[0])return null;const vA=A[0]*x+A[1],vB=B[0]*x+B[1];if(vA+vB>=170||vA<5||vB<5)return null;return{expr:`△ABC 的外角 ∠ACD＝${lin(e[0],eb)}°，兩個內對角 ∠A＝${lin(...A)}°、∠B＝${lin(...B)}°，求 x。`,answer:`x＝${x}`,sig:`ex:${kind}:${x}:${A.join("_")}:${B.join("_")}`,verify:()=>vA+vB===e[0]*x+eb&&A[0]+B[0]!==e[0]}}
   if(kind==="quad"){const x=rand(20,50),cs=[[1,0],[2,0],[1,rand(10,40)]],s=cs.reduce((t,[a,b])=>t+a*x+b,0),d=360-s;if(d<40||d>170)return null;return{expr:`四邊形四個內角分別為 x°、2x°、${lin(...cs[2])}°、${d}°，求 x。`,answer:`x＝${x}`,sig:`qd:${x}:${cs[2][1]}:${d}`,verify:()=>s+d===360}}
   if(kind==="iso"){const x=rand(10,30),top=[1,rand(0,40)],vt=x+top[1],nb=(180-vt)/2-2*x;if(!Number.isInteger(nb))return null;const base=[2,nb],VB=2*x+nb;if(VB<=0||vt<=0)return null;return{expr:`等腰三角形頂角為 ${lin(...top)}°，底角為 ${lin(...base)}°，求 x 與各角。`,answer:`x＝${x}；頂角 ${deg(vt)}、底角 ${deg(VB)}`,sig:`is:${x}:${top[1]}:${base[1]}`,verify:()=>vt+2*VB===180}}
   const n=rand(4,6),ks=Array.from({length:n},()=>rand(1,5)),tot=ks.reduce((t,k)=>t+k,0);if(360%tot)return null;const x=360/tot;if(ks.some(k=>k*x>=180))return null;return{expr:`一個 ${n} 邊形的一組外角依序為 ${ks.map(k=>(k===1?"":k)+"x°").join("、")}，求 x 與最大的內角。`,answer:`x＝${x}；最大內角 ${deg(180-Math.min(...ks)*x)}`,sig:`pl:${ks.join(",")}`,verify:()=>ks.reduce((t,k)=>t+k*x,0)===360}});
@@ -896,7 +900,7 @@ function quadappsConfig(){
   // price：定價每降 d 元，多 e 人購買
   for(let t=0;t<60;t++){const P0=pick([60,80,100,120]),N0=pick([80,100,120,150]),d=pick([5,10]),e=pick([10,20,25]),k0=rand(1,Math.floor(P0/d)-2),M=(P0-d*k0)*(N0+e*k0),a=d*e,b=-(P0*e-d*N0),c=M-P0*N0,rs=roots(a,b,c);if(!rs)continue;
    const ok=rs.filter(x=>x.d===1&&x.n>=0&&P0-d*x.n>0);let floor=null;if(ok.length===2&&!eq(ok[0],ok[1]))floor=P0-d*ok[0].n;
-   const q=build({expr:`一個吊飾賣 ${P0} 元時有 ${N0} 人購買，每降價 ${d} 元就多 ${e} 人購買${floor?`；店家規定定價不得低於 ${floor} 元`:""}。定價多少元時總收入為 ${M} 元？`,def:`降價 x 次（每次 ${d} 元）`,a,b,c,valid:x=>x.d===1&&x.n>=0&&P0-d*x.n>0&&(!floor||P0-d*x.n>=floor),story:x=>eq(mul(sub(R(P0),mul(R(d),x)),add(R(N0),mul(R(e),x))),R(M)),reason:x=>floor&&x.d===1&&x.n>=0?`定價 ${P0-d*x.n} 元低於下限`:x.d!==1?"降價次數必須是整數":x.n<0?"降價次數不能是負數":"定價不是正數",final:x=>`定價 ${S(sub(R(P0),mul(R(d),x)))} 元`,sig:`pr:${P0}:${N0}:${d}:${e}:${k0}`});if(q)return q}return null;
+   const q=build({expr:`一個吊飾賣 ${P0} 元時有 ${N0} 人購買，每降價 ${d} 元就多 ${e} 人購買（每次降價固定 ${d} 元）${floor?`；店家規定定價不得低於 ${floor} 元`:""}。定價多少元時總收入為 ${M} 元？`,def:`降價 x 次（每次 ${d} 元）`,a,b,c,valid:x=>x.d===1&&x.n>=0&&P0-d*x.n>0&&(!floor||P0-d*x.n>=floor),story:x=>eq(mul(sub(R(P0),mul(R(d),x)),add(R(N0),mul(R(e),x))),R(M)),reason:x=>floor&&x.d===1&&x.n>=0?`定價 ${P0-d*x.n} 元低於下限`:x.d!==1?"降價次數必須是整數":x.n<0?"降價次數不能是負數":"定價不是正數",final:x=>`定價 ${S(sub(R(P0),mul(R(d),x)))} 元`,sig:`pr:${P0}:${N0}:${d}:${e}:${k0}`});if(q)return q}return null;
  });
 
  // ⑥ 直角三角形
@@ -907,8 +911,12 @@ function quadappsConfig(){
    if(kind==="difflegs")return build({expr:`直角三角形的斜邊長為 ${c} 公分，兩股的差為 ${b-a} 公分，求兩股長。`,def:"較短的股為 x 公分",a:2,b:2*(b-a),c:(b-a)**2-c*c,valid:x=>cmp(x,R(0))>0,story:x=>eq(add(mul(x,x),mul(add(x,R(b-a)),add(x,R(b-a)))),R(c*c)),reason:()=>"邊長必須為正",final:x=>`${S(x)} 公分、${S(add(x,R(b-a)))} 公分`,sig:`dl:${a}:${b}`});
    return build({expr:`直角三角形的斜邊長為 ${c}，兩股長的和為 ${a+b}，求兩股長。`,def:"較短的股為 x（較長的股 "+(a+b)+"−x）",a:2,b:-2*(a+b),c:(a+b)**2-c*c,valid:x=>cmp(x,R(0))>0&&cmp(x,sub(R(a+b),x))<0,story:x=>eq(add(mul(x,x),mul(sub(R(a+b),x),sub(R(a+b),x))),R(c*c)),reason:()=>"x 設為較短的股，這個根是較長的股",final:x=>`${S(x)}、${S(sub(R(a+b),x))}`,sig:`sl:${a}:${b}`})}
   if(kind==="consec"){const k=rand(1,15),w=k===1?"連續整數":k===2?"連續偶數":`依序相差 ${k} 的整數`;return build({expr:`一個直角三角形的三邊長是${w}，求三邊長。`,def:`中間的邊為 x（三邊 x−${k}、x、x＋${k}）`,a:1,b:-4*k,c:0,valid:x=>cmp(sub(x,R(k)),R(0))>0,story:x=>eq(add(mul(sub(x,R(k)),sub(x,R(k))),mul(x,x)),mul(add(x,R(k)),add(x,R(k)))),reason:()=>`最短邊 x−${k} 必須為正`,final:x=>`${S(sub(x,R(k)))}、${S(x)}、${S(add(x,R(k)))}`,sig:`cn:${k}`})}
-  if(kind==="planes"){const [p,q,r]=pick(TR),s=pick([20,50,100]),t=rand(1,3),a=p*s,b=q*s,c=r*s,D=c*t,d=b-a;
-   return build({expr:`甲、乙兩架飛機同時從同地起飛，甲向北、乙向東直飛，甲每小時比乙快 ${d} 公里。起飛 ${t} 小時後兩機相距 ${D} 公里，兩機每小時各飛多少公里？`,def:"乙每小時飛 x 公里",a:2,b:2*d,c:d*d-c*c,valid:x=>cmp(x,R(0))>0,story:x=>eq(add(mul(mul(R(t),x),mul(R(t),x)),mul(mul(R(t),add(x,R(d))),mul(R(t),add(x,R(d))))),R(D*D)),reason:()=>"速率必須為正",final:x=>`甲 ${S(add(x,R(d)))} 公里、乙 ${S(x)} 公里`,sig:`pn:${a}:${b}:${t}`})}
+  if(kind==="planes"){
+   // 依交通工具決定合理的時速範圍，再找使兩個速率都落在範圍內的倍數 s（飛機 500～950、汽車 40～110、機車 30～80、自行車 10～30 公里／小時）
+   const VE=[{n:"架飛機",s:"機",go:"起飛",dir:"直飛",v:"飛",lo:500,hi:950,step:10},{n:"輛汽車",s:"車",go:"出發",dir:"行駛",v:"行駛",lo:40,hi:110,step:1},{n:"輛機車",s:"車",go:"出發",dir:"行駛",v:"行駛",lo:30,hi:80,step:1},{n:"輛自行車",s:"車",go:"出發",dir:"騎",v:"騎",lo:10,hi:30,step:1}];
+   for(let tt=0;tt<20;tt++){const V=pick(VE),[p,q,r]=pick(TR),s0=[];for(let s=Math.ceil(V.lo/p);s*q<=V.hi;s++)if(s%V.step===0)s0.push(s);if(!s0.length)continue;
+    const s=pick(s0),t=rand(1,3),a=p*s,b=q*s,c=r*s,D=c*t,d=b-a;
+    return build({expr:`甲、乙兩${V.n}同時從同地${V.go}，甲向北、乙向東${V.dir}，甲每小時比乙快 ${d} 公里。${V.go} ${t} 小時後兩${V.s}相距 ${D} 公里，兩${V.s}每小時各${V.v}多少公里？`,def:`乙每小時${V.v} x 公里`,a:2,b:2*d,c:d*d-c*c,valid:x=>cmp(x,R(0))>0,story:x=>eq(add(mul(mul(R(t),x),mul(R(t),x)),mul(mul(R(t),add(x,R(d))),mul(R(t),add(x,R(d))))),R(D*D)),reason:()=>"速率必須為正",final:x=>`甲每小時 ${S(add(x,R(d)))} 公里、乙每小時 ${S(x)} 公里`,sig:`pn:${V.n}:${a}:${b}:${t}`})}return null}
   // equi：正三角形邊長 x，一邊加 p、一邊加 q、第三邊減 r 成直角三角形
   for(let t=0;t<80;t++){const x0=rand(3,30),p=rand(2,12),q=rand(1,p-1),v=(x0+p)**2-(x0+q)**2,s=isq(v);if(s<1||s>=x0)continue;const r=x0-s;
    const q2=build({expr:`一個正三角形的一邊增加 ${p} 公分、另一邊增加 ${q} 公分、第三邊減少 ${r} 公分後，成為一個直角三角形。原正三角形的邊長是多少？`,def:"原邊長為 x 公分",a:1,b:2*q-2*r-2*p,c:r*r+q*q-p*p,valid:x=>cmp(sub(x,R(r)),R(0))>0,story:x=>eq(add(mul(sub(x,R(r)),sub(x,R(r))),mul(add(x,R(q)),add(x,R(q)))),mul(add(x,R(p)),add(x,R(p)))),reason:()=>`減少後的邊 x−${r} 必須為正`,final:x=>`${S(x)} 公分`,sig:`eq:${x0}:${p}:${q}`});if(q2)return q2}return null;
@@ -957,35 +965,37 @@ function mulformulaConfig(){
  const one=(q,v,mode,chk)=>mode==="decimal"&&!term10(v)?null:({q,a:sh(v,mode),chk});
  const cen=(mode,large)=>{if(mode==="integer"){const c=large?pick([50,100,200,500,1000]):pick([10,20,30,40,50,100]),d=rand(1,Math.min(large?19:9,c-1));return[R(c),R(d)]}if(mode==="fraction"){const c=R(rand(3,large?30:12)),den=pick([2,3,4,5]);return[c,R(rand(1,den-1),den)]}return[R(rand(2,large?40:15)),R(rand(1,9),10)]};
  const dn=(a,mode)=>sh(a,mode,mode==="fraction");
+ // 底數要加次方時：分數（含帶分數）與負數先加括號，否則「10½²」會被讀成 10＋(½)²
+ const dq=(a,mode)=>{const s=dn(a,mode);return(a.n<0||(mode==="fraction"&&a.d!==1))?`(${s})`:s};
 
  const nearProduct=mkUnit("nearProduct","中心數乘積","兩數以中間的整數為中心對稱時，(c＋d)(c−d)＝c²−d²。",[
   m=>{const[c,d]=cen(m,false),v=sub(mul(c,c),mul(d,d));return one(`${dn(add(c,d),m)} × ${dn(sub(c,d),m)}＝`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d)),fv(v)))},
   m=>{const[c,d]=cen(m,true),v=sub(mul(c,c),mul(d,d));return one(`計算 ${dn(sub(c,d),m)} × ${dn(add(c,d),m)} 的值。`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d)),fv(v)))},
   m=>{const[c,d]=cen(m,false),v=sub(mul(c,c),mul(d,d));return one(`用平方差公式計算 ${dn(add(c,d),m)} × ${dn(sub(c,d),m)}，先寫成 (c＋d)(c−d) 的形式。`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d)),fv(v)))},
-  m=>{const[c,d]=cen(m,true),v=R(-(d.n*d.n),d.d*d.d);return one(`${dn(add(c,d),m)} × ${dn(sub(c,d),m)} − ${dn(c,m)}<sup>2</sup>＝`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d))-fv(c)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),v=R(-(d.n*d.n),d.d*d.d);return one(`${dn(add(c,d),m)} × ${dn(sub(c,d),m)} − ${dq(c,m)}<sup>2</sup>＝`,v,m,()=>near((fv(c)+fv(d))*(fv(c)-fv(d))-fv(c)**2,fv(v)))},
   m=>{const c=R(pick([10,20,30])),d=R(rand(1,3)),v=sub(mul(mul(c,c),mul(c,c)),mul(mul(d,d),mul(d,d)));return one(`${c.n+d.n} × ${c.n-d.n} × (${c.n}<sup>2</sup> ＋ ${d.n}<sup>2</sup>)＝`,v,m,()=>near((c.n+d.n)*(c.n-d.n)*(c.n**2+d.n**2),fv(v)))}],"原式＝");
 
  const differenceValue=mkUnit("differenceValue","平方差求值","a²−b²＝(a＋b)(a−b)，先算和與差再相乘。",[
-  m=>{const[c,d]=cen(m,false),u=add(c,d),w=sub(c,d),v=sub(mul(u,u),mul(w,w));return one(`${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))},
-  m=>{const u=m==="integer"?R(rand(50,999)):m==="fraction"?add(R(rand(10,99)),R(1,2)):R(rand(100,999),10),w=sub(u,R(1)),v=add(u,w);return one(`計算 ${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup> 的值（兩數相差 1）。`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))},
-  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=sub(mul(w,w),mul(u,u));return one(`求 ${dn(w,m)}<sup>2</sup> − ${dn(u,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(w)**2-fv(u)**2,fv(v)))},
-  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=sub(u,w);return one(`(${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>) ÷ ${dn(add(u,w),m)}＝`,v,m,()=>near((fv(u)**2-fv(w)**2)/(fv(u)+fv(w)),fv(v)))},
-  m=>{const[c,d]=cen(m,false),u=add(c,d),w=sub(c,d),e=sub(u,w),v=sub(sub(mul(u,u),mul(w,w)),mul(e,e));return one(`${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup> − ${dn(e,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2-fv(w)**2-fv(e)**2,fv(v)))}],"原式＝");
+  m=>{const[c,d]=cen(m,false),u=add(c,d),w=sub(c,d),v=sub(mul(u,u),mul(w,w));return one(`${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))},
+  m=>{const u=m==="integer"?R(rand(50,999)):m==="fraction"?add(R(rand(10,99)),R(1,2)):R(rand(100,999),10),w=sub(u,R(1)),v=add(u,w);return one(`計算 ${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup> 的值（兩數相差 1）。`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=sub(mul(w,w),mul(u,u));return one(`求 ${dq(w,m)}<sup>2</sup> − ${dq(u,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(w)**2-fv(u)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=sub(u,w);return one(`(${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup>) ÷ ${dn(add(u,w),m)}＝`,v,m,()=>near((fv(u)**2-fv(w)**2)/(fv(u)+fv(w)),fv(v)))},
+  m=>{const[c,d]=cen(m,false),u=add(c,d),w=sub(c,d),e=sub(u,w),v=sub(sub(mul(u,u),mul(w,w)),mul(e,e));return one(`${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup> − ${dq(e,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2-fv(w)**2-fv(e)**2,fv(v)))}],"原式＝");
 
  const nb=(m,plus,large)=>{const[c,d]=cen(m,large);return[c,d,plus?add(c,d):sub(c,d)]};
- const sumNumber=mkUnit("sumNumber","和平方速算","(a＋b)²＝a²＋2ab＋b²，把數拆成整十、整百再加上一個小數。",[
-  m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`${dn(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,true,true),v=mul(n,n);return one(`計算 ${dn(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`利用 (${dn(c,m)}＋${dn(d,m)})<sup>2</sup> 計算 ${dn(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)+fv(d))**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,true,true),v=sub(mul(n,n),mul(c,c));return one(`${dn(n,m)}<sup>2</sup> − ${dn(c,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2-fv(c)**2,fv(v)))},
-  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=mul(R(4),mul(c,d));return one(`${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>（用和平方與差平方公式分別展開）＝`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))}],"原式＝");
+ const sumNumber=mkUnit("sumNumber","和平方速算","(a＋b)²＝a²＋2ab＋b²，把數拆成整十、整百再加上較小的數。",[
+  m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`${dq(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,true,true),v=mul(n,n);return one(`計算 ${dq(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`利用 (${dn(c,m)}＋${dn(d,m)})<sup>2</sup> 計算 ${dq(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)+fv(d))**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,true,true),v=sub(mul(n,n),mul(c,c));return one(`${dq(n,m)}<sup>2</sup> − ${dq(c,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2-fv(c)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=mul(R(4),mul(c,d));return one(`${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup>（用和平方與差平方公式分別展開）＝`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))}],"原式＝");
 
- const differenceNumber=mkUnit("differenceNumber","差平方速算","(a−b)²＝a²−2ab＋b²，把數寫成整十、整百減去一個小數。",[
-  m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`${dn(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,false,true),v=mul(n,n);return one(`計算 ${dn(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`利用 (${dn(c,m)}−${dn(d,m)})<sup>2</sup> 計算 ${dn(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)-fv(d))**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,false,true),v=sub(mul(c,c),mul(n,n));return one(`${dn(c,m)}<sup>2</sup> − ${dn(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(c)**2-fv(n)**2,fv(v)))},
-  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=add(mul(u,u),mul(w,w));return one(`${dn(u,m)}<sup>2</sup> ＋ ${dn(w,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2+fv(w)**2,fv(v)))}],"原式＝");
+ const differenceNumber=mkUnit("differenceNumber","差平方速算","(a−b)²＝a²−2ab＋b²，把數寫成整十、整百減去較小的數。",[
+  m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`${dq(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,false,true),v=mul(n,n);return one(`計算 ${dq(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`利用 (${dn(c,m)}−${dn(d,m)})<sup>2</sup> 計算 ${dq(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)-fv(d))**2,fv(v)))},
+  m=>{const[c,d,n]=nb(m,false,true),v=sub(mul(c,c),mul(n,n));return one(`${dq(c,m)}<sup>2</sup> − ${dq(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(c)**2-fv(n)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=add(mul(u,u),mul(w,w));return one(`${dq(u,m)}<sup>2</sup> ＋ ${dq(w,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2+fv(w)**2,fv(v)))}],"原式＝");
 
  const A1=(m,b1,b2,mx)=>[M(pos(m,mx),b1),M(pos(m,mx),b2)];
  const conj=(a,b)=>[pa(a,b),pa(a,pn(b))];
@@ -1019,16 +1029,16 @@ function mulformulaConfig(){
 
  const pn2=(m,max)=>{const a=m==="integer"?R(rand(5,max)):m==="fraction"?add(R(rand(2,max>20?15:6)),R(rand(1,3),4)):R(rand(11,max*10),10);return a};
  const sumRecognize=mkUnit("sumRecognize","和平方辨識","看出 a²＋2ab＋b² 的形式，直接寫成 (a＋b)²。",[
-  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> ＋ ${dn(mid,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
-  m=>{const a=pn2(m,40),b=pn2(m,20),v=mul(add(a,b),add(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> ＋ 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
-  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`先整理成完全平方式再求值：${dn(b,m)}<sup>2</sup> ＋ ${dn(a,m)}<sup>2</sup> ＋ ${dn(mid,m)}`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
+  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> ＋ ${dn(mid,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
+  m=>{const a=pn2(m,40),b=pn2(m,20),v=mul(add(a,b),add(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> ＋ 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
+  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`先整理成完全平方式再求值：${dq(b,m)}<sup>2</sup> ＋ ${dq(a,m)}<sup>2</sup> ＋ ${dn(mid,m)}`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
   m=>{const a=R(rand(1,9)),b=R(rand(1,9)),s=add(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(s.n**2-2*p.n,fv(v)))},
   m=>{const a=R(rand(1,12)),b=R(rand(1,12)),s=add(a,b),p=mul(a,b),v=mul(sub(a,b),sub(a,b));return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 (a−b)<sup>2</sup>。`,v,m,()=>near(s.n**2-4*p.n,fv(v)))}],"");
 
  const differenceRecognize=mkUnit("differenceRecognize","差平方辨識","看出 a²−2ab＋b² 的形式，直接寫成 (a−b)²。",[
-  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> − ${dn(mid,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
-  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const v=mul(sub(a,b),sub(a,b));return one(`求值：${dn(a,m)}<sup>2</sup> − 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dn(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
-  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dn(b,m)}<sup>2</sup> ＋ ${dn(a,m)}<sup>2</sup> − ${dn(mid,m)}`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
+  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> − ${dn(mid,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
+  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const v=mul(sub(a,b),sub(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> − 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
+  m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dq(b,m)}<sup>2</sup> ＋ ${dq(a,m)}<sup>2</sup> − ${dn(mid,m)}`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
   m=>{const a=R(rand(3,12)),b=R(rand(1,9)),s=sub(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));return one(`已知 a−b＝${sh(s,m)}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(fv(s)**2+2*p.n,fv(v)))},
   m=>{const a=R(rand(3,15)),b=R(rand(1,12)),s=add(a,b),d=sub(a,b),v=mul(a,b);return one(`已知 a＋b＝${s.n}、a−b＝${sh(d,m)}，求 ab。`,v,m,()=>near((s.n**2-fv(d)**2)/4,fv(v)))}],"");
 
@@ -1040,11 +1050,11 @@ function mulformulaConfig(){
   m=>{const[a,b]=A1(m,X,Y,8),[p,q]=conj(a,b);return expandSq("化簡：",[{s:1,f:[p,q]},sqPart(q,-1)],m)}],"原式＝");
 
  const comprehensive=mkUnit("comprehensive","綜合計算","把算式整理成公式的形式再計算；可以先看出中心數或 a、b。",[
-  m=>{const[c,d]=cen(m,true),u=sub(c,d),w=add(c,d),v=mul(c,c);return one(`${dn(u,m)} × ${dn(w,m)} ＋ ${dn(d,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)*fv(w)+fv(d)**2,fv(v)))},
-  m=>{const[c,d]=cen(m,true),u=sub(c,d),w=add(c,d),v=mul(d,d);return one(`${dn(c,m)}<sup>2</sup> − ${dn(u,m)} × ${dn(w,m)}＝`,v,m,()=>near(fv(c)**2-fv(u)*fv(w),fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=sub(c,d),w=add(c,d),v=mul(c,c);return one(`${dn(u,m)} × ${dn(w,m)} ＋ ${dq(d,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)*fv(w)+fv(d)**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=sub(c,d),w=add(c,d),v=mul(d,d);return one(`${dq(c,m)}<sup>2</sup> − ${dn(u,m)} × ${dn(w,m)}＝`,v,m,()=>near(fv(c)**2-fv(u)*fv(w),fv(v)))},
   m=>{const[c,d]=cen(m,false),v=add(mul(c,c),mul(d,d));return one(`(${dn(c,m)} ＋ ${dn(d,m)})<sup>2</sup> − 2 × ${dn(c,m)} × ${dn(d,m)}＝`,v,m,()=>near((fv(c)+fv(d))**2-2*fv(c)*fv(d),fv(v)))},
-  m=>{const u=pn2(m,30),w=sub(R(pick([50,100])),u),v=mul(add(u,w),add(u,w));if(fv(w)<=0)return null;return one(`${dn(u,m)}<sup>2</sup> ＋ 2 × ${dn(u,m)} × ${dn(w,m)} ＋ ${dn(w,m)}<sup>2</sup>＝`,v,m,()=>near((fv(u)+fv(w))**2,fv(v)))},
-  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=add(u,w);return one(`(${dn(u,m)}<sup>2</sup> − ${dn(w,m)}<sup>2</sup>) ÷ (${dn(u,m)} − ${dn(w,m)})＝`,v,m,()=>near((fv(u)**2-fv(w)**2)/(fv(u)-fv(w)),fv(v)))}],"原式＝");
+  m=>{const u=pn2(m,30),w=sub(R(pick([50,100])),u),v=mul(add(u,w),add(u,w));if(fv(w)<=0)return null;return one(`${dq(u,m)}<sup>2</sup> ＋ 2 × ${dn(u,m)} × ${dn(w,m)} ＋ ${dq(w,m)}<sup>2</sup>＝`,v,m,()=>near((fv(u)+fv(w))**2,fv(v)))},
+  m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=add(u,w);return one(`(${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup>) ÷ (${dn(u,m)} − ${dn(w,m)})＝`,v,m,()=>near((fv(u)**2-fv(w)**2)/(fv(u)-fv(w)),fv(v)))}],"原式＝");
 
  return{title:"乘法公式",symbol:"(a±b)²",subtitle:"中心數乘積・平方差求值・和差平方速算・三個公式的展開・三項式平方・完全平方辨識・連鎖化簡・綜合計算",instruction:"利用平方差、和平方、差平方公式計算或展開。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"原式＝",
   levels:{basic:"基礎：以整十整百為中心的速算、直接套三個公式展開 (ax±b)、(ax±by)。",advanced:"進階：大數速算、明寫公式的計算、交換順序與負號在前的展開、三項式平方、a＋b 與 ab 求 a²＋b²。",challenge:"挑戰：速算後再加減、含 x² 的展開、公式相減的化簡、(x±1)(x²＋1)(x⁴＋1) 連鎖、由和差求 ab。"},
@@ -1072,6 +1082,10 @@ function polyopsConfig(){
  const term=(c,e,mode,first)=>{if(c.n===0)return"";const neg=c.n<0,a=R(Math.abs(c.n),c.d),v=e?`x${e===1?"":`<sup>${e}</sup>`}`:"",mag=(a.n===a.d&&e)?"":sh(a,mode);return(first?(neg?"−":""):` ${neg?"−":"＋"} `)+mag+v};
  const H=(p,mode)=>{p=trim(p);let s="";for(let e=p.length-1;e>=0;e--)s+=term(p[e],e,mode,!s);return s||"0"},W=(p,mode)=>`(${H(p,mode)})`,MH=(c,e,mode)=>term(c,e,mode,true);
  const nzr=(mode,d)=>{const r=rp(mode,d,4,.65);return isZ(r)?[cf(mode,4)]:r};
+ // 括號前的係數：1 不寫、−1 只寫負號
+ const kh=(k,mode)=>k.n===k.d?"":k.n===-k.d?"−":sh(k,mode);
+ // 長除法的除式：常數項不為 0（除以 x、x² 只是把次數減一，不必用長除法）
+ const monD=(mode,d,max=5)=>{const p=mon(mode,d,max);if(p[0].n===0)p[0]=cf(mode,Math.min(max,5));return p};
  const polyAns=(q,p,mode,f)=>({q,a:H(p,mode),chk:()=>XS.every(x=>near(f(x),ev(p,x)))});
  const divAns=(q,dvd,dvs,Q,Rm,mode)=>({q,a:`商：${H(Q,mode)}；餘式：${H(Rm,mode)}`,chk:()=>(isZ(Rm)||deg(Rm)<deg(dvs))&&XS.every(x=>near(ev(dvd,x),ev(dvs,x)*ev(Q,x)+ev(Rm,x)))});
  const mkUnit=(id,name,tip,kinds,label)=>({id,name,tip,modes:["integer","fraction","decimal"],answerLabel:label,gen:ctx=>{
@@ -1103,11 +1117,11 @@ function polyopsConfig(){
   m=>{const b=rp(m,2),c=rp(m,2);return polyAns(`某多項式減去 ${W(b,m)} 得 ${H(c,m)}，求此多項式。`,addP(b,c),m,x=>ev(b,x)+ev(c,x))}],"");
 
  const nested=mkUnit("nested","多層括號化簡","由內往外去括號：先小括號、再中括號、最後大括號，每層注意前面的負號。",[
-  m=>{const a=rp(m,1,5),b=rp(m,1,5),c=rp(m,1,5),k=pc(m,3);return polyAns(`化簡：${W(a,m)} − ${sh(k,m)}[${H(b,m)} − ${W(c,m)}]`,subP(a,scP(subP(b,c),k)),m,x=>ev(a,x)-fv(k)*(ev(b,x)-ev(c,x)))},
-  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,2,5),k=pc(m,3);return polyAns(`化簡：${W(a,m)} − ${sh(k,m)}[${H(b,m)} − ${W(c,m)}]`,subP(a,scP(subP(b,c),k)),m,x=>ev(a,x)-fv(k)*(ev(b,x)-ev(c,x)))},
+  m=>{const a=rp(m,1,5),b=rp(m,1,5),c=rp(m,1,5),k=pc(m,3);return polyAns(`化簡：${W(a,m)} − ${kh(k,m)}[${H(b,m)} − ${W(c,m)}]`,subP(a,scP(subP(b,c),k)),m,x=>ev(a,x)-fv(k)*(ev(b,x)-ev(c,x)))},
+  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,2,5),k=pc(m,3);return polyAns(`化簡：${W(a,m)} − ${kh(k,m)}[${H(b,m)} − ${W(c,m)}]`,subP(a,scP(subP(b,c),k)),m,x=>ev(a,x)-fv(k)*(ev(b,x)-ev(c,x)))},
   m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,1,5),d=rp(m,1,5);return polyAns(`化簡：${H(a,m)} − [${H(b,m)} − (${H(c,m)} − ${W(d,m)})]`,subP(a,subP(b,subP(c,d))),m,x=>ev(a,x)-(ev(b,x)-(ev(c,x)-ev(d,x))))},
-  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,2,5),k1=pc(m,3),k2=pc(m,3),k3=pc(m,3);return polyAns(`化簡：${sh(k1,m)}${W(a,m)} − ${sh(k2,m)}[${H(b,m)} − ${sh(k3,m)}${W(c,m)}]`,subP(scP(a,k1),scP(subP(b,scP(c,k3)),k2)),m,x=>fv(k1)*ev(a,x)-fv(k2)*(ev(b,x)-fv(k3)*ev(c,x)))},
-  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,1,5),d=rp(m,1,5),k=pc(m,3);return polyAns(`化簡：${sh(k,m)}{${H(a,m)} − [${H(b,m)} − (${H(c,m)} − ${W(d,m)})]}`,scP(subP(a,subP(b,subP(c,d))),k),m,x=>fv(k)*(ev(a,x)-(ev(b,x)-(ev(c,x)-ev(d,x)))))}],"原式＝");
+  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,2,5),k1=pc(m,3),k2=pc(m,3),k3=pc(m,3);return polyAns(`化簡：${kh(k1,m)}${W(a,m)} − ${kh(k2,m)}[${H(b,m)} − ${kh(k3,m)}${W(c,m)}]`,subP(scP(a,k1),scP(subP(b,scP(c,k3)),k2)),m,x=>fv(k1)*ev(a,x)-fv(k2)*(ev(b,x)-fv(k3)*ev(c,x)))},
+  m=>{const a=rp(m,2,5),b=rp(m,2,5),c=rp(m,1,5),d=rp(m,1,5),k=pc(m,3);return polyAns(`化簡：${kh(k,m)}{${H(a,m)} − [${H(b,m)} − (${H(c,m)} − ${W(d,m)})]}`,scP(subP(a,subP(b,subP(c,d))),k),m,x=>fv(k)*(ev(a,x)-(ev(b,x)-(ev(c,x)-ev(d,x)))))}],"原式＝");
 
  const P=(c,e,m)=>`(${MH(c,e,m)})`;
  const monoMultiply=mkUnit("monoMultiply","單項式乘法","係數相乘、次數相加：axᵐ·bxⁿ＝abxᵐ⁺ⁿ；(axᵐ)²＝a²x²ᵐ。",[
@@ -1118,17 +1132,17 @@ function polyopsConfig(){
   m=>{const a=cf(m,4),e=rand(1,3),b=cf(m,5),f=rand(1,3);return polyAns(`計算：${P(a,e,m)}<sup>3</sup> × ${P(b,f,m)}`,mono(mul(mul(mul(a,a),a),b),3*e+f),m,x=>(fv(a)*x**e)**3*fv(b)*x**f)}],"原式＝");
 
  const polyTimesMono=mkUnit("polyTimesMono","多項式乘單項式","用分配律把單項式乘進括號內的每一項。",[
-  m=>{const p=rp(m,2,6),c=cf(m,6);return polyAns(`展開：${sh(c,m)}${W(p,m)}`,scP(p,c),m,x=>fv(c)*ev(p,x))},
+  m=>{const p=rp(m,2,6),c=cf(m,6);return polyAns(`展開：${kh(c,m)}${W(p,m)}`,scP(p,c),m,x=>fv(c)*ev(p,x))},
   m=>{const p=rp(m,2,6),c=cf(m,6),e=rand(1,2);return polyAns(`展開：${P(c,e,m)}${W(p,m)}`,mulP(mono(c,e),p),m,x=>fv(c)*x**e*ev(p,x))},
   m=>{const p=rp(m,3,6),c=cf(m,6),e=rand(1,3);return polyAns(`展開：${W(p,m)}${P(c,e,m)}`,mulP(mono(c,e),p),m,x=>fv(c)*x**e*ev(p,x))},
   m=>{const p=rp(m,2,5),q=rp(m,2,5),c=cf(m,5),d=pc(m,5),e=rand(1,2),f=rand(1,2);return polyAns(`化簡：${P(c,e,m)}${W(p,m)} − ${P(d,f,m)}${W(q,m)}`,subP(mulP(mono(c,e),p),mulP(mono(d,f),q)),m,x=>fv(c)*x**e*ev(p,x)-fv(d)*x**f*ev(q,x))},
-  m=>{const p=rp(m,2,5),q=rp(m,2,5),c=cf(m,5);return polyAns(`化簡：x${W(p,m)} ＋ ${sh(c,m)}${W(q,m)}`,addP(mulP(mono(R(1),1),p),scP(q,c)),m,x=>x*ev(p,x)+fv(c)*ev(q,x))}],"原式＝");
+  m=>{const p=rp(m,2,5),q=rp(m,2,5),c=cf(m,5);return polyAns(`化簡：x${W(p,m)} ${c.n<0?"−":"＋"} ${kh(R(Math.abs(c.n),c.d),m)}${W(q,m)}`,addP(mulP(mono(R(1),1),p),scP(q,c)),m,x=>x*ev(p,x)+fv(c)*ev(q,x))}],"原式＝");
 
  const binomialMultiply=mkUnit("binomialMultiply","兩多項式相乘","兩個一次式相乘：每一項都要乘到，共四項再合併。",[
   m=>{const a=[cf(m,9),R(1)],b=[cf(m,9),R(1)];return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
   m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1);return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
-  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),k=cf(m,5);return polyAns(`展開：${sh(k,m)}${W(a,m)}${W(b,m)}`,scP(mulP(a,b),k),m,x=>fv(k)*ev(a,x)*ev(b,x))},
-  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),c=cf(m,6);return polyAns(`化簡：${W(a,m)}${W(b,m)} ＋ ${MH(c,2,m)}`,addP(mulP(a,b),mono(c,2)),m,x=>ev(a,x)*ev(b,x)+fv(c)*x*x)},
+  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),k=cf(m,5);return polyAns(`展開：${kh(k,m)}${W(a,m)}${W(b,m)}`,scP(mulP(a,b),k),m,x=>fv(k)*ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),c=cf(m,6);return polyAns(`化簡：${W(a,m)}${W(b,m)}${term(c,2,m,false)}`,addP(mulP(a,b),mono(c,2)),m,x=>ev(a,x)*ev(b,x)+fv(c)*x*x)},
   m=>{const a=rp(m,1,4,1),b=rp(m,1,4,1),c=rp(m,1,4,1);return polyAns(`展開：${W(a,m)}${W(b,m)}${W(c,m)}`,mulP(mulP(a,b),c),m,x=>ev(a,x)*ev(b,x)*ev(c,x))}],"原式＝");
 
  const polyMultiply=mkUnit("polyMultiply","多項式乘法進階","用直式或分配律，把每一項乘開後依次數對齊合併；缺項補 0。",[
@@ -1142,8 +1156,8 @@ function polyopsConfig(){
   m=>{const d=cf(m,6),q=cf(m,6),de=rand(1,3),qe=rand(1,3);return polyAns(`計算：${P(mul(d,q),de+qe,m)} ÷ ${P(d,de,m)}`,mono(q,qe),m,x=>fv(mul(d,q))*x**(de+qe)/(fv(d)*x**de))},
   m=>{const d=cf(m,9),q=cf(m,9),de=rand(2,4),qe=rand(1,5);return polyAns(`計算：${P(mul(d,q),de+qe,m)} ÷ ${P(d,de,m)}`,mono(q,qe),m,x=>fv(mul(d,q))*x**(de+qe)/(fv(d)*x**de))},
   m=>{const d1=cf(m,4),d2=cf(m,4),q=cf(m,5),e1=rand(1,2),e2=rand(1,2),qe=rand(1,3),N=mul(mul(d1,d2),q);return polyAns(`計算：${P(N,e1+e2+qe,m)} ÷ ${P(d1,e1,m)} ÷ ${P(d2,e2,m)}`,mono(q,qe),m,x=>fv(N)*x**(e1+e2+qe)/(fv(d1)*x**e1)/(fv(d2)*x**e2))},
-  m=>{const a=cf(m,5),b=cf(m,5),c=cf(m,4),e1=rand(2,4),e2=rand(2,4),e3=rand(1,3),q=div(mul(a,b),c);if(m==="decimal"&&!term10ok(q))return null;return polyAns(`計算：${P(a,e1,m)}${P(b,e2,m)} ÷ ${P(c,e3,m)}`,mono(q,e1+e2-e3),m,x=>fv(a)*x**e1*fv(b)*x**e2/(fv(c)*x**e3))},
-  m=>{const a=cf(m,5),b=cf(m,4),e=rand(2,3),f=rand(1,2*e-1),q=div(mul(a,a),b);if(m==="decimal"&&!term10ok(q))return null;return polyAns(`計算：${P(a,e,m)}<sup>2</sup> ÷ ${P(b,f,m)}`,mono(q,2*e-f),m,x=>(fv(a)*x**e)**2/(fv(b)*x**f))}],"原式＝");
+  m=>{const a=cf(m,5),b=cf(m,5),c=cf(m,4),e1=rand(2,4),e2=rand(2,4),e3=rand(1,3),q=div(mul(a,b),c);if(m==="decimal"&&!(term10ok(q)&&places(q)<=2))return null;return polyAns(`計算：${P(a,e1,m)}${P(b,e2,m)} ÷ ${P(c,e3,m)}`,mono(q,e1+e2-e3),m,x=>fv(a)*x**e1*fv(b)*x**e2/(fv(c)*x**e3))},
+  m=>{const a=cf(m,5),b=cf(m,4),e=rand(2,3),f=rand(1,2*e-1),q=div(mul(a,a),b);if(m==="decimal"&&!(term10ok(q)&&places(q)<=2))return null;return polyAns(`計算：${P(a,e,m)}<sup>2</sup> ÷ ${P(b,f,m)}`,mono(q,2*e-f),m,x=>(fv(a)*x**e)**2/(fv(b)*x**f))}],"原式＝");
  function term10ok(a){let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1}
 
  const polyDivideMono=mkUnit("polyDivideMono","多項式除以單項式","每一項分別除以單項式；次數比除式低的項留作餘式。",[
@@ -1154,17 +1168,17 @@ function polyopsConfig(){
   m=>{const e=rand(1,2),c=cf(m,5),Q=rp(m,2,5,.85),dvs=mono(c,e),Rm=nzr(m,e-1),dvd=addP(mulP(dvs,Q),Rm);return polyAns(`某多項式除以 ${MH(c,e,m)}，得到商式 ${H(Q,m)}、餘式 ${H(Rm,m)}，求此多項式。`,dvd,m,x=>fv(c)*x**e*ev(Q,x)+ev(Rm,x))}],"");
 
  const longDivision=mkUnit("longDivision","多項式長除法","用長除法：每次用除式的最高次項去除被除式的最高次項，乘回去相減，直到餘式次數小於除式。",[
-  m=>{const dvs=mon(m,1),Q=rp(m,1,5,.85),dvd=mulP(dvs,Q);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,[Z()],m)},
-  m=>{const dvs=mon(m,1),Q=rp(m,2,5,.85),Rm=nzr(m,0),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
+  m=>{const dvs=monD(m,1),Q=rp(m,1,5,.85),dvd=mulP(dvs,Q);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,[Z()],m)},
+  m=>{const dvs=monD(m,1),Q=rp(m,2,5,.85),Rm=nzr(m,0),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
   m=>{const dvs=rp(m,1,4,1),Q=rp(m,2,4,.85),Rm=Math.random()<.5?[Z()]:nzr(m,0),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
-  m=>{const dvs=mon(m,2,4),Q=rp(m,pick([1,2]),4,.85),Rm=nzr(m,1),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
+  m=>{const dvs=monD(m,2,4),Q=rp(m,pick([1,2]),4,.85),Rm=nzr(m,1),dvd=addP(mulP(dvs,Q),Rm);return divAns(`求商與餘式：${W(dvd,m)} ÷ ${W(dvs,m)}`,dvd,dvs,Q,Rm,m)},
   m=>{if(m!=="integer")return null;const a=R(rand(-4,4)),Q=rp(m,2,5,.85),dvs=[R(-a.n),R(1)],full=mulP(dvs,Q),known=[Z()].concat(full.slice(1)),k=full[0];if(k.n===0)return null;return{q:`若 ${H(known,m)} ＋ k 能被 ${W(dvs,m)} 整除，求 k 的值與商式。`,a:`k＝${sh(k,m)}；商：${H(Q,m)}`,chk:()=>near(ev(known,a.n)+fv(k),0)&&XS.every(x=>near(ev(known,x)+fv(k),ev(dvs,x)*ev(Q,x)))}}],"");
 
  const defs=(A,B,C,m)=>`<div style="font-size:90%;margin-bottom:2px">設 A＝${H(A,m)}，B＝${H(B,m)}${C?`，C＝${H(C,m)}`:""}</div>`;
  const definedOps=mkUnit("definedOps","代入 A、B、C 運算","把 A、B、C 代表的多項式加上括號代入，再去括號合併。",[
   m=>{const A=rp(m,2,4),B=rp(m,2,4);return polyAns(`${defs(A,B,null,m)}求 A＋B。`,addP(A,B),m,x=>ev(A,x)+ev(B,x))},
-  m=>{const A=rp(m,2,4),B=rp(m,2,4),u=rand(2,4),v=rand(1,3);return polyAns(`${defs(A,B,null,m)}求 ${u}A − ${v}B。`,subP(scP(A,R(u)),scP(B,R(v))),m,x=>u*ev(A,x)-v*ev(B,x))},
-  m=>{const A=rp(m,2,4),B=rp(m,2,4),C=rp(m,2,4),u=rand(2,4),v=rand(1,3),w=rand(1,3);return polyAns(`${defs(A,B,C,m)}求 ${u}A − ${v}B ＋ ${w}C。`,addP(subP(scP(A,R(u)),scP(B,R(v))),scP(C,R(w))),m,x=>u*ev(A,x)-v*ev(B,x)+w*ev(C,x))},
+  m=>{const A=rp(m,2,4),B=rp(m,2,4),u=rand(2,4),v=rand(1,3);return polyAns(`${defs(A,B,null,m)}求 ${u}A − ${v===1?"":v}B。`,subP(scP(A,R(u)),scP(B,R(v))),m,x=>u*ev(A,x)-v*ev(B,x))},
+  m=>{const A=rp(m,2,4),B=rp(m,2,4),C=rp(m,2,4),u=rand(2,4),v=rand(1,3),w=rand(1,3);return polyAns(`${defs(A,B,C,m)}求 ${u}A − ${v===1?"":v}B ＋ ${w===1?"":w}C。`,addP(subP(scP(A,R(u)),scP(B,R(v))),scP(C,R(w))),m,x=>u*ev(A,x)-v*ev(B,x)+w*ev(C,x))},
   m=>{const A=rp(m,1,4,1),B=rp(m,2,4);return polyAns(`${defs(A,B,null,m)}求 AB。`,mulP(A,B),m,x=>ev(A,x)*ev(B,x))},
   m=>{const A=rp(m,1,4,1),B=rp(m,1,4,1),C=rp(m,2,4);return polyAns(`${defs(A,B,C,m)}求 AB − C。`,subP(mulP(A,B),C),m,x=>ev(A,x)*ev(B,x)-ev(C,x))}],"");
 
@@ -1192,18 +1206,18 @@ const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}
     const frac=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,decimal=a=>(a.n/a.d).toFixed(6).replace(/0+$/," ").trim().replace(/\.$/,""),showR=(a,mode,absolute=false)=>{let q=absolute?absR(a):a;if(q.d===1)return String(q.n).replace("-","−");if(mode==="decimal")return decimal(q).replace("-","−");return`${q.n<0?"−":""}${frac(Math.abs(q.n),q.d)}`};
     const P=terms=>{let m=new Map;for(const t of terms){if(isZero(t.c))continue;let k=`${t.x||0},${t.y||0}`,old=m.get(k);m.set(k,old?add(old,t.c):t.c)}return[...m].map(([k,c])=>{let[x,y]=k.split(",").map(Number);return{c,x,y}}).filter(t=>!isZero(t.c))},mono=(c,x=0,y=0)=>P([{c,x,y}]),addP=(a,b)=>P([...a,...b]),scaleP=(p,k)=>P(p.map(t=>({c:mul(t.c,k),x:t.x,y:t.y}))),mulP=(a,b)=>P(a.flatMap(s=>b.map(t=>({c:mul(s.c,t.c),x:s.x+t.x,y:s.y+t.y})))),productP=ps=>ps.reduce(mulP,mono(R(1))),linearX=(a,b)=>P([{c:R(a),x:1,y:0},{c:R(b),x:0,y:0}]),linearXY=(a,b,c)=>P([{c:R(a),x:1,y:0},{c:R(b),x:0,y:1},{c:R(c),x:0,y:0}]);
     const sorted=p=>[...p].sort((a,b)=>(b.x+b.y)-(a.x+a.y)||b.x-a.x||b.y-a.y),varsHTML=t=>`${t.x?`x${t.x>1?`<sup>${t.x}</sup>`:""}`:""}${t.y?`y${t.y>1?`<sup>${t.y}</sup>`:""}`:""}`;
-    function polyHTML(p,mode){let out="";sorted(p).forEach((t,i)=>{let negative=t.c.n<0,a=absR(t.c),vars=varsHTML(t),coef=vars&&isOne(a)?"":showR(a,mode);out+=i?(negative?" − ":" + "):(negative?"−":"");out+=coef+vars});return out||"0"}
+    function polyHTML(p,mode){let out="";sorted(p).forEach((t,i)=>{let negative=t.c.n<0,a=absR(t.c),vars=varsHTML(t),coef=vars&&isOne(a)?"":showR(a,mode);out+=i?(negative?" − ":" ＋ "):(negative?"−":"");out+=coef+vars});return out||"0"}
     const wrapP=(p,mode)=>p.length>1?`(${polyHTML(p,mode)})`:polyHTML(p,mode),factorHTML=(p,mode,power=1)=>`${wrapP(p,mode)}${power>1?`<sup>${power}</sup>`:""}`;
     function productHTML(k,factors,mode){let sign=k.n<0?"−":"",a=absR(k),parts=[];if(!isOne(a)||!factors.length)parts.push(showR(a,mode));for(const f of factors)parts.push(factorHTML(f.poly,mode,f.power||1));return sign+parts.join("")}
     const equalP=(a,b)=>{a=P(a);b=P(b);if(a.length!==b.length)return false;let m=new Map(a.map(t=>[`${t.x},${t.y}`,t.c]));return b.every(t=>{let q=m.get(`${t.x},${t.y}`);return q&&eqR(q,t.c)})},evalP=(p,x,y=R(0))=>p.reduce((s,t)=>{let z=t.c;for(let i=0;i<t.x;i++)z=mul(z,x);for(let i=0;i<t.y;i++)z=mul(z,y);return add(s,z)},R(0));
     const primitiveLinear=(max=8)=>{let a,b;do{a=rand(1,max);b=rand(1,max)*(Math.random()<.5?-1:1)}while(gcd(a,b)!==1);return{a,b,p:linearX(a,b)}},nonzero=(max=8)=>rand(1,max)*(Math.random()<.5?-1:1),levelMax=()=>LEVEL==="foundation"?5:LEVEL==="standard"?8:12;
     function scaleFor(mode){let k;if(mode==="integer")k=R(pick([1,1,1,2,3,4]));else if(mode==="fraction")k=pick([R(1,2),R(2,3),R(3,4),R(4,5),R(5,2),R(7,4)]);else k=pick([R(1,5),R(1,4),R(2,5),R(1,2),R(3,5),R(3,4),R(6,5),R(3,2),R(5,2)]);if((LEVEL==="challenge"||LEVEL==="mixed")&&Math.random()<.18)k=neg(k);return k}
-    const scaledExpression=(k,inner,mode)=>isOne(k)?inner:k.n===-k.d?`−[${inner}]`:`${showR(k,mode)}[${inner}]`,termSeqHTML=(terms,mode)=>{let out="";terms.forEach((t,i)=>{let negv=t.c.n<0,a=absR(t.c),vars=varsHTML(t),coef=vars&&isOne(a)?"":showR(a,mode);out+=i?(negv?" − ":" + "):(negv?"−":"");out+=coef+vars});return out};
+    const scaledExpression=(k,inner,mode)=>isOne(k)?inner:k.n===-k.d?`−[${inner}]`:`${showR(k,mode)}[${inner}]`,termSeqHTML=(terms,mode)=>{let out="";terms.forEach((t,i)=>{let negv=t.c.n<0,a=absR(t.c),vars=varsHTML(t),coef=vars&&isOne(a)?"":showR(a,mode);out+=i?(negv?" − ":" ＋ "):(negv?"−":"");out+=coef+vars});return out};
     const q=(type,html,answer,long=false,raw={})=>({type,html,answer,long,raw}),makeFactored=(type,factors,k,mode,long=false,display=null)=>{let expanded=scaleP(productP(factors.flatMap(f=>Array.from({length:f.power||1},()=>f.poly))),k),html=display||polyHTML(expanded,mode);return q(type,`因式分解：${html}`,productHTML(k,factors,mode),long,{expanded,factors,k})};
     const generators={
       factorCheck(mode){let lim=levelMax(),L=primitiveLinear(lim),Q=primitiveLinear(lim),k=scaleFor(mode),yes=Math.random()<.58,base=scaleP(mulP(L.p,Q.p),k),poly=yes?base:addP(base,mono(k)),root=R(-L.b,L.a),remainder=evalP(poly,root);return q("因式判定",`判斷 ${factorHTML(L.p,mode)} 是否為 ${polyHTML(poly,mode)} 的因式。`,yes?`是，商為 ${productHTML(k,[{poly:Q.p}],mode)}`:"否",true,{check:{poly,candidate:L.p,root,yes,remainder}})},
       commonMonomial(mode){let lim=levelMax(),L=primitiveLinear(lim),m=LEVEL==="foundation"?1:rand(1,LEVEL==="challenge"?3:2),k=scaleFor(mode);return makeFactored("提公因式",[{poly:mono(R(1),m),power:1},{poly:L.p}],k,mode)},
-      commonBracket(mode){let lim=levelMax(),F=linearX(1,nonzero(lim)),A=primitiveLinear(lim),c;do c=nonzero(lim);while(gcd(A.a,A.b+c)!==1||A.b+c===0);let k=scaleFor(mode),B=linearX(A.a,A.b+c),inner=`${wrapP(A.p,mode)}${wrapP(F,mode)} ${c<0?"−":"+"} ${Math.abs(c)===1?"":Math.abs(c)}${wrapP(F,mode)}`,display=scaledExpression(k,inner,mode);return makeFactored("共同括號",[{poly:F},{poly:B}],k,mode,true,display)},
+      commonBracket(mode){let lim=levelMax(),F=linearX(1,nonzero(lim)),A=primitiveLinear(lim),c;do c=nonzero(lim);while(gcd(A.a,A.b+c)!==1||A.b+c===0);let k=scaleFor(mode),B=linearX(A.a,A.b+c),inner=`${wrapP(A.p,mode)}${wrapP(F,mode)} ${c<0?"−":"＋"} ${Math.abs(c)===1?"":Math.abs(c)}${wrapP(F,mode)}`,display=scaledExpression(k,inner,mode);return makeFactored("共同括號",[{poly:F},{poly:B}],k,mode,true,display)},
       grouping(mode){let lim=levelMax(),A=primitiveLinear(lim),B=primitiveLinear(lim),k=scaleFor(mode),terms=[{c:mul(k,R(A.a*B.a)),x:2,y:0},{c:mul(k,R(A.a*B.b)),x:1,y:0},{c:mul(k,R(A.b*B.a)),x:1,y:0},{c:mul(k,R(A.b*B.b)),x:0,y:0}],display=termSeqHTML(terms,mode);return makeFactored("分組分解",[{poly:A.p},{poly:B.p}],k,mode,true,display)},
       squareSum(mode){let L=primitiveLinear(levelMax()),Lplus=L.b<0?linearX(L.a,Math.abs(L.b)):L.p,k=scaleFor(mode);return makeFactored("和的平方",[{poly:Lplus,power:2}],k,mode)},
       squareDiff(mode){let L=primitiveLinear(levelMax()),Lminus=L.b>0?linearX(L.a,-L.b):L.p,k=scaleFor(mode);return makeFactored("差的平方",[{poly:Lminus,power:2}],k,mode)},
@@ -1211,7 +1225,7 @@ const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}
       monicTrinomial(mode){let lim=levelMax(),r,s;do{r=nonzero(lim);s=nonzero(lim)}while(r===s||r===-s);let k=scaleFor(mode);return makeFactored("首一二次三項式",[{poly:linearX(1,r)},{poly:linearX(1,s)}],k,mode)},
       nonmonicTrinomial(mode){let lim=levelMax(),A,B;do{A=primitiveLinear(lim);B=primitiveLinear(lim)}while(A.a*B.a===1||A.a*B.b+A.b*B.a===0);let k=scaleFor(mode);return makeFactored("非首一二次三項式",[{poly:A.p},{poly:B.p}],k,mode)},
       gcfThen(mode){let lim=levelMax(),m=rand(1,LEVEL==="challenge"?3:2),k=scaleFor(mode);if(Math.random()<.5){let L=primitiveLinear(lim);return makeFactored("先提再套公式",[{poly:mono(R(1),m)},{poly:L.p,power:2}],k,mode,true)}let a=rand(1,lim),b=rand(1,lim),g=gcd(a,b);a/=g;b/=g;return makeFactored("先提再套公式",[{poly:mono(R(1),m)},{poly:linearX(a,b)},{poly:linearX(a,-b)}],k,mode,true)},
-      substitution(mode){let lim=levelMax(),p=nonzero(Math.min(lim,6)),r,s;do{r=nonzero(lim);s=nonzero(lim)}while(r===s||r===-s||p+r===0||p+s===0);let U=linearX(1,p),sum=r+s,prod=r*s,k=scaleFor(mode),inner=`${factorHTML(U,mode,2)} ${sum<0?"−":"+"} ${Math.abs(sum)===1?"":Math.abs(sum)}${wrapP(U,mode)} ${prod<0?"−":"+"} ${Math.abs(prod)}`,display=scaledExpression(k,inner,mode),F1=linearX(1,p+r),F2=linearX(1,p+s);return makeFactored("代換型",[{poly:F1},{poly:F2}],k,mode,true,display)},
+      substitution(mode){let lim=levelMax(),p=nonzero(Math.min(lim,6)),r,s;do{r=nonzero(lim);s=nonzero(lim)}while(r===s||r===-s||p+r===0||p+s===0);let U=linearX(1,p),sum=r+s,prod=r*s,k=scaleFor(mode),inner=`${factorHTML(U,mode,2)} ${sum<0?"−":"＋"} ${Math.abs(sum)===1?"":Math.abs(sum)}${wrapP(U,mode)} ${prod<0?"−":"＋"} ${Math.abs(prod)}`,display=scaledExpression(k,inner,mode),F1=linearX(1,p+r),F2=linearX(1,p+s);return makeFactored("代換型",[{poly:F1},{poly:F2}],k,mode,true,display)},
       completing(mode){let A=rand(2,LEVEL==="challenge"?10:7),maxB=Math.max(1,Math.floor(Math.sqrt(4*A-1))),B=rand(1,maxB),k=scaleFor(mode),Q1=P([{c:R(1),x:2,y:0},{c:R(B),x:1,y:0},{c:R(A),x:0,y:0}]),Q2=P([{c:R(1),x:2,y:0},{c:R(-B),x:1,y:0},{c:R(A),x:0,y:0}]);return makeFactored("配方法",[{poly:Q1},{poly:Q2}],k,mode,true)},
       splitTerms(mode){let b=nonzero(4),c=rand(Math.floor(b*b/4)+1,10),d=rand(1,9),k=scaleFor(mode),Q1=P([{c:R(1),x:2,y:0},{c:R(b),x:1,y:0},{c:R(c),x:0,y:0}]),Q2=P([{c:R(1),x:2,y:0},{c:R(d),x:0,y:0}]);return makeFactored("分項拆項",[{poly:Q1},{poly:Q2}],k,mode,true)},
       multivariable(mode){let lim=Math.min(levelMax(),7),a,b,c,d,e,f;do{a=rand(1,lim);b=nonzero(lim);c=nonzero(lim);d=rand(1,lim);e=nonzero(lim);f=nonzero(lim)}while(gcd(gcd(a,b),c)!==1||gcd(gcd(d,e),f)!==1||a*e+b*d===0||a*f+c*d===0||b*f+c*e===0);let A=linearXY(a,b,c),B=linearXY(d,e,f),k=scaleFor(mode);return makeFactored("二元雙十字",[{poly:A},{poly:B}],k,mode,true)}
@@ -1219,8 +1233,8 @@ const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}
  const fv=a=>a.n/a.d,near=(u,v)=>Math.abs(u-v)<1e-7*Math.max(1,Math.abs(v)),PTS=[[1.37,-0.61],[-2.13,0.83]];
  const pev=(p,x,y)=>p.reduce((s,t)=>s+fv(t.c)*Math.pow(x,t.x)*Math.pow(y,t.y),0);
  const facChk=(expanded,k,factors)=>()=>PTS.every(([x,y])=>near(pev(expanded,x,y),fv(k)*factors.reduce((m,f)=>m*Math.pow(pev(f.poly,x,y),f.power||1),1)));
- const revHTML=(p,mode)=>{let out="";[...sorted(p)].reverse().forEach((t,i)=>{let negv=t.c.n<0,a=absR(t.c),vars=varsHTML(t),coef=vars&&isOne(a)?"":showR(a,mode);out+=i?(negv?" − ":" + "):(negv?"−":"");out+=coef+vars});return out||"0"};
- const NAMES={factorCheck:["因式／倍式判定","用餘式定理：把使因式為 0 的 x 代入，值為 0 就是因式；商用長除法求。"],commonMonomial:["提出單項公因式","找出各項係數的公因數與共同的最低次方，一起提出。"],commonBracket:["提出共同括號","把相同的括號看成一個整體提出。"],grouping:["分組分解","四項式兩兩分組，各組提公因式後再提出共同括號。"],squareSum:["和的完全平方","a²＋2ab＋b²＝(a＋b)²。"],squareDiff:["差的完全平方","a²−2ab＋b²＝(a−b)²。"],differenceSquares:["平方差公式","a²−b²＝(a＋b)(a−b)。"],monicTrinomial:["首一二次三項式","x²＋(a＋b)x＋ab＝(x＋a)(x＋b)：找兩數相乘為常數項、相加為一次項係數。"],nonmonicTrinomial:["非首一二次三項式","用十字交乘：首項與末項分別拆成兩數相乘，交叉相乘相加等於中間項。"],gcfThen:["先提公因式再分解","先提出公因式，括號內再用公式或十字交乘分解到不能再分解為止。"],substitution:["代換型分解","把重複出現的括號設為 u，分解後再代回。"],completing:["配方法分解","加減同一個平方項湊成完全平方，再用平方差公式。"],splitTerms:["分項拆項分解","把某一項拆開，使式子能分組或湊成公式。"],multivariable:["二元雙十字交乘","x、y 與常數三組分別十字交乘，三個交叉和都要吻合。"]};
+ const revHTML=(p,mode)=>{let out="";[...sorted(p)].reverse().forEach((t,i)=>{let negv=t.c.n<0,a=absR(t.c),vars=varsHTML(t),coef=vars&&isOne(a)?"":showR(a,mode);out+=i?(negv?" − ":" ＋ "):(negv?"−":"");out+=coef+vars});return out||"0"};
+ const NAMES={factorCheck:["因式／倍式判定","用長除法（或直式除法）相除：餘式為 0 就是因式，商就是另一個因式；也可以把除式與商乘回去，檢查是否等於原式。"],commonMonomial:["提出單項公因式","找出各項係數的公因數與共同的最低次方，一起提出。"],commonBracket:["提出共同括號","把相同的括號看成一個整體提出。"],grouping:["分組分解","四項式兩兩分組，各組提公因式後再提出共同括號。"],squareSum:["和的完全平方","a²＋2ab＋b²＝(a＋b)²。"],squareDiff:["差的完全平方","a²−2ab＋b²＝(a−b)²。"],differenceSquares:["平方差公式","a²−b²＝(a＋b)(a−b)。"],monicTrinomial:["首一二次三項式","x²＋(a＋b)x＋ab＝(x＋a)(x＋b)：找兩數相乘為常數項、相加為一次項係數。"],nonmonicTrinomial:["非首一二次三項式","用十字交乘：首項與末項分別拆成兩數相乘，交叉相乘相加等於中間項。"],gcfThen:["先提公因式再分解","先提出公因式，括號內再用公式或十字交乘分解到不能再分解為止。"],substitution:["代換型分解","把重複出現的括號設為 u，分解後再代回。"],completing:["配方法分解","加減同一個平方項湊成完全平方，再用平方差公式。"],splitTerms:["分項拆項分解","把某一項拆開，使式子能分組或湊成公式。"],multivariable:["二元雙十字交乘","x、y 與常數三組分別十字交乘，三個交叉和都要吻合。"]};
  const unit=id=>({id,name:NAMES[id][0],tip:NAMES[id][1],modes:["integer","fraction","decimal"],gen:ctx=>{
   LEVEL=ctx.level==="challenge"?"challenge":ctx.level==="advanced"?"standard":"foundation";const mode=ctx.modes[0],L=ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
   let q;try{q=generators[id](mode)}catch(e){return null}if(!q)return null;
@@ -1305,7 +1319,7 @@ function sqrtConfig(){
   m=>{const a=rand(2,7),b=pick([2,3,5,6,7]),c=rand(2,7),d=pick([2,3,5,6,7]);if(a*a*b===c*c*d)return null;const big=a*a*b>c*c*d;return{q:`比較 ${a}${rt(b)} 與 ${c}${rt(d)} 的大小。`,a:big?`${a}${rt(b)}＞${c}${rt(d)}（${rt(a*a*b)}＞${rt(c*c*d)}）`:`${a}${rt(b)}＜${c}${rt(d)}（${rt(a*a*b)}＜${rt(c*c*d)}）`,chk:()=>(a*sr(b)>c*sr(d))===big}}],"");
 
  const notation=mkUnit("notation","根式簡記","數字與根式相乘，係數相乘，根號照寫：a×b√d＝ab√d；係數可以移進根號：a√b＝√(a²b)。",[
-  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);return ans(`化簡：(${sh(a,m)}) × ${Eh(Q(b,d),m)}`,Q(mul(a,b),d),m,()=>fv(a)*fv(b)*sr(d))},
+  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);return ans(`化簡：(${sh(a,m)}) × ${b.n<0?P(Q(b,d),m):Eh(Q(b,d),m)}`,Q(mul(a,b),d),m,()=>fv(a)*fv(b)*sr(d))},
   m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);return ans(`化簡：${P(Q(a,d),m)} × (${sh(b,m)})`,Q(mul(a,b),d),m,()=>fv(a)*sr(d)*fv(b))},
   m=>{const a=sv(m,6),b=sv(m,6),c=sv(m,6),d=sf(10);return ans(`化簡：(${sh(a,m)}) × ${P(Q(b,d),m)} × (${sh(c,m)})`,Q(mul(mul(a,b),c),d),m,()=>fv(a)*fv(b)*sr(d)*fv(c))},
   m=>{const a=sv(m,8),b=sv(m,6),d=sf(10),v=div(a,b);return ans(`化簡：${P(Q(a,d),m)} ÷ (${sh(b,m)})`,Q(v,d),m,()=>fv(a)*sr(d)/fv(b))},
@@ -1451,7 +1465,7 @@ function pythagorasConfig(){
   m=>{const a=neg(val(m,12,true)),b=neg(val(m,12,true));if(eq(a,b))return null;return one(`數線上兩點 A、B 的坐標分別是 ${sh(a,m)} 與 ${sh(b,m)}，求兩點的距離。`,sh(abs(sub(a,b)),m),()=>near(Math.abs(fv(a)-fv(b)),fv(abs(sub(a,b)))))},
   m=>{const a=val(m,9),d=val(m,9,true);return one(`數線上與 A(${sh(a,m)}) 距離 ${sh(d,m)} 的點的坐標是多少？`,`${sh(sub(a,d),m)} 或 ${sh(add(a,d),m)}`,()=>near(Math.abs(fv(add(a,d))-fv(a)),fv(d))&&near(Math.abs(fv(sub(a,d))-fv(a)),fv(d)))},
   m=>{const a=val(m,12),b=val(m,12);if(eq(a,b))return null;const M=mul(add(a,b),R(1,2));if(m==="decimal"&&!term10(M))return null;return one(`數線上 A(${sh(a,m)})、B(${sh(b,m)})，求 AB 的中點坐標與 AB 的長。`,`中點 ${sh(M,m)}，AB＝${sh(abs(sub(a,b)),m)}`,()=>near((fv(a)+fv(b))/2,fv(M)))},
-  m=>{const a=val(m,9),b=add(a,R(rand(3,15))),p=rand(1,4),q=rand(1,4),P=add(a,mul(sub(b,a),R(p,p+q)));if(m==="decimal"&&!term10(P))return null;return one(`數線上 A(${sh(a,m)})、B(${sh(b,m)})，P 在 AB 上且 AP：PB＝${p}：${q}，求 P 的坐標。`,sh(P,m),()=>near((fv(P)-fv(a))*q,(fv(b)-fv(P))*p))}],"");
+  m=>{const a=val(m,9),b=add(a,R(rand(3,15))),p=rand(1,4),q=rand(1,4);if(p===q||gcd(p,q)>1)return null;const P=add(a,mul(sub(b,a),R(p,p+q)));if(m==="decimal"&&!term10(P))return null;return one(`數線上 A(${sh(a,m)})、B(${sh(b,m)})，P 在 AB 上且 AP：PB＝${p}：${q}，求 P 的坐標。`,sh(P,m),()=>near((fv(P)-fv(a))*q,(fv(b)-fv(P))*p))}],"");
 
  const axisDistance=mkUnit("axisDistance","水平／垂直距離","兩點的 y 坐標相同時距離＝|x₁−x₂|；x 坐標相同時距離＝|y₁−y₂|。",[
   m=>{const x=val(m,8),y=val(m,8),d=val(m,10,true),x2=add(x,d);return one(`${pt("A",x,y,m)}、${pt("B",x2,y,m)}，求 AB。`,`AB＝${sh(d,m)}`,()=>near(hy(fv(x2)-fv(x),0),fv(d)))},
@@ -1503,6 +1517,7 @@ function arithseqConfig(){
  const fv=a=>a.n/a.d,near=(u,v)=>Math.abs(u-v)<1e-7*Math.max(1,Math.abs(v)),neg=a=>R(-a.n,a.d);
  const term10=a=>{let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
  const sh=(a,mode)=>{const s=numHTML(R(Math.abs(a.n),a.d),a.d===1?"integer":mode==="decimal"?"decimal":"fraction",{mixed:false});return(a.n<0?"−":"")+s};
+ const pq=(a,mode)=>a.n<0?`(${sh(a,mode)})`:sh(a,mode); // 接在運算符號後的負數加括號
  const num=(mode,lo,hi)=>{if(mode==="integer")return R(rand(lo,hi));if(mode==="fraction"){const d=pick([2,3,4]);return R(rand(lo*d,hi*d),d)}return R(rand(lo*10,hi*10),10)};
  const dif=(mode)=>{let d;do d=num(mode,-8,9);while(d.n===0);return d};
  const seq=(a,d,n)=>Array.from({length:n},(_,i)=>add(a,mul(d,R(i))));
@@ -1522,7 +1537,7 @@ function arithseqConfig(){
   m=>{const a=num(m,-20,30),d=dif(m),s=seq(a,d,5);return{q:`求等差數列 ${s.map(v=>sh(v,m)).join("，")}，… 的公差與第 6 項。`,a:`公差 ${sh(d,m)}，第 6 項 ${sh(add(s[4],d),m)}`,chk:()=>near(fv(s[4])+fv(s[1])-fv(s[0]),fv(add(s[4],d)))}},
   m=>{const a=num(m,-10,20),d=dif(m),s=seq(a,d,4);return{q:`若 ${sh(s[0],m)}，x，${sh(s[2],m)}，y 成等差數列，求 x 與 y。`,a:`x＝${sh(s[1],m)}，y＝${sh(s[3],m)}`,chk:()=>near(2*fv(s[1]),fv(s[0])+fv(s[2]))&&near(fv(s[3])-fv(s[2]),fv(s[2])-fv(s[1]))}},
   m=>{const p=R(rand(-9,9)||3),q=R(rand(-20,20));return{q:`數列的第 n 項為 ${sub_("n")}＝${lin(p,q)}，它是不是等差數列？若是，寫出首項與公差。`,a:`是，首項 ${sh(add(p,q),m)}，公差 ${sh(p,m)}`,chk:()=>{const v=n=>fv(p)*n+fv(q);return near(v(3)-v(2),v(2)-v(1))&&near(v(1),fv(add(p,q)))}}},
-  m=>{const c=rand(1,5),e=rand(-9,9),s=[1,2,3,4].map(n=>n*n+c*n+e);return{q:`數列的第 n 項為 ${sub_("n")}＝n<sup>2</sup> ＋ ${c===1?"":c}n ${e<0?"−":"＋"} ${Math.abs(e)}，寫出前四項，並判斷它是不是等差數列。`,a:`${s.join("、")}；不是（相鄰兩項的差不固定）`,chk:()=>s[1]-s[0]!==s[2]-s[1]}}],"");
+  m=>{const c=rand(1,5),e=rand(-9,9),s=[1,2,3,4].map(n=>n*n+c*n+e);return{q:`數列的第 n 項為 ${sub_("n")}＝n<sup>2</sup> ＋ ${c===1?"":c}n${e?` ${e<0?"−":"＋"} ${Math.abs(e)}`:""}，寫出前四項，並判斷它是不是等差數列。`,a:`${s.join("、")}；不是（相鄰兩項的差不固定）`,chk:()=>s[1]-s[0]!==s[2]-s[1]}}],"");
  const term=mkUnit("term","指定項與一般項","aₙ＝a₁＋(n−1)d；由兩項求 d 時，d＝(aₘ−aₖ)÷(m−k)。",[
   m=>{const a=num(m,-30,40),d=dif(m),n=rand(10,35),an=add(a,mul(d,R(n-1)));return{q:`等差數列首項 ${sub_(1)}＝${sh(a,m)}，公差 d＝${sh(d,m)}，求第 ${n} 項。`,a:`${sub_(n)}＝${sh(an,m)}`,chk:()=>{let x=fv(a);for(let i=1;i<n;i++)x+=fv(d);return near(x,fv(an))}}},
   m=>{const a=R(rand(-30,40)),d=R(rand(-9,9)||4);return{q:`等差數列首項 ${sub_(1)}＝${sh(a,m)}，公差 d＝${sh(d,m)}，求第 n 項 ${sub_("n")}（以 n 表示）。`,a:`${sub_("n")}＝${lin(d,sub(a,d))}`,chk:()=>[1,2,5].every(n=>near(fv(a)+(n-1)*fv(d),fv(d)*n+fv(sub(a,d))))}},
@@ -1533,10 +1548,12 @@ function arithseqConfig(){
   m=>{let a=num(m,-50,70),c=num(m,-50,70),b=div(add(a,c),R(2));if(m==="decimal"&&!term10(b))return null;return{q:`求 ${sh(a,m)} 與 ${sh(c,m)} 的等差中項。`,a:sh(b,m),chk:()=>near(fv(b)-fv(a),fv(c)-fv(b))}},
   m=>{const a=num(m,-20,20),d=dif(m),c=add(a,mul(d,R(2)));return{q:`已知 ${sh(a,m)}、x、${sh(c,m)} 成等差數列，求 x。`,a:`x＝${sh(add(a,d),m)}`,chk:()=>near(2*fv(add(a,d)),fv(a)+fv(c))}},
   m=>{const a=num(m,-20,20),d=dif(m),s=seq(a,d,5);return{q:`在 ${sh(s[0],m)} 與 ${sh(s[4],m)} 之間插入三個數，使這五個數成等差數列，求插入的三個數。`,a:s.slice(1,4).map(v=>sh(v,m)).join("、"),chk:()=>near(fv(s[2])*2,fv(s[0])+fv(s[4]))&&near(fv(s[1])*2,fv(s[0])+fv(s[2]))}},
-  m=>{const c=[rand(-5,5),rand(-6,6),rand(-5,5),rand(-6,6)];if((c[0]+c[2])%2)c[2]++;if((c[1]+c[3])%2)c[3]++;const E=(p,q)=>lin(R(p),R(0),"x").replace(/^0$/,"")+(q?` ${q<0?"−":"＋"} ${Math.abs(q)===1?"":Math.abs(q)}y`:"");const M=E((c[0]+c[2])/2,(c[1]+c[3])/2);return{q:`求 ${E(c[0],c[1])||"0"} 與 ${E(c[2],c[3])||"0"} 的等差中項。`,a:M||"0",chk:()=>{const x=1.3,y=-0.7,v=(p,q)=>p*x+q*y;return near(2*v((c[0]+c[2])/2,(c[1]+c[3])/2),v(c[0],c[1])+v(c[2],c[3]))}}},
-  m=>{const p=rand(1,4),x=rand(-6,9),q=rand(1,8),A=[p,-q],B=[p+rand(1,3),0];const C=[2*B[0]-A[0],0];const k=2*B[1]-A[1];const exprs=[`${p===1?"":p}x − ${q}`,`${B[0]===1?"":B[0]}x`,`${C[0]===1?"":C[0]===-1?"−":C[0]}x ${k<0?"−":"＋"} ${Math.abs(k)}`];if(C[0]===0)return null;return{q:`若 ${exprs.join("、")} 依序成等差數列，而且第三項是 ${C[0]*x+k}，求 x 與這三項。`,a:`x＝${x}；${p*x-q}、${B[0]*x}、${C[0]*x+k}`,chk:()=>2*B[0]*x===(p*x-q)+(C[0]*x+k)}}],"");
+  m=>{const c=[rand(-5,5),rand(-6,6),rand(-5,5),rand(-6,6)];if((c[0]+c[2])%2)c[2]++;if((c[1]+c[3])%2)c[3]++;const E=(p,q)=>{let t=p?`${p===1?"":p===-1?"−":p<0?"−"+(-p):p}x`:"";if(q){const g=Math.abs(q)===1?"":Math.abs(q);t+=t?` ${q<0?"−":"＋"} ${g}y`:`${q<0?"−":""}${g}y`}return t};const M=E((c[0]+c[2])/2,(c[1]+c[3])/2);return{q:`求 ${E(c[0],c[1])||"0"} 與 ${E(c[2],c[3])||"0"} 的等差中項。`,a:M||"0",chk:()=>{const x=1.3,y=-0.7,v=(p,q)=>p*x+q*y;return near(2*v((c[0]+c[2])/2,(c[1]+c[3])/2),v(c[0],c[1])+v(c[2],c[3]))}}},
+  // 三個一次式依序成等差：中間項的 x 係數不等於兩端係數的平均，2b＝a＋c 才能解出 x（否則對每個 x 都成立，條件沒有用）
+  m=>{const x=rand(-6,9),a1=rand(1,5),a2=rand(1,6),a3=rand(1,6);if(2*a2===a1+a3)return null;const b1=rand(-9,9),b2=rand(-9,9),b3=2*(a2*x+b2)-a1*x-b1-a3*x;if(Math.abs(b3)>20)return null;const T=[a1*x+b1,a2*x+b2,a3*x+b3];if(T[0]===T[1])return null;
+   const lx=(a,b)=>`${a===1?"":a}x${b?` ${b<0?"−":"＋"} ${Math.abs(b)}`:""}`;return{q:`若 ${lx(a1,b1)}、${lx(a2,b2)}、${lx(a3,b3)} 依序成等差數列，求 x 與這三項。`,a:`x＝${x}；${T.join("、")}`,chk:()=>(2*a2-a1-a3)*x===b1+b3-2*b2&&T[1]-T[0]===T[2]-T[1]}}],"");
  const sum=mkUnit("sum","等差級數求和","Sₙ＝n(a₁＋aₙ)÷2＝n[2a₁＋(n−1)d]÷2；先算出項數 n。",[
-  m=>{const a=num(m,-25,30),d=dif(m),n=rand(7,18),an=add(a,mul(d,R(n-1))),S=div(mul(R(n),add(a,an)),R(2));if(m==="decimal"&&!term10(S))return null;return{q:`求等差級數的和：${sh(a,m)} ＋ ${sh(add(a,d),m)} ＋ ${sh(add(a,mul(d,R(2))),m)} ＋ ⋯ ＋ ${sh(an,m)}`,a:sh(S,m),chk:()=>{let s=0,x=fv(a);for(let i=0;i<n;i++){s+=x;x+=fv(d)}return near(s,fv(S))}}},
+  m=>{const a=num(m,-25,30),d=dif(m),n=rand(7,18),an=add(a,mul(d,R(n-1))),S=div(mul(R(n),add(a,an)),R(2));if(m==="decimal"&&!term10(S))return null;return{q:`求等差級數的和：${sh(a,m)} ＋ ${pq(add(a,d),m)} ＋ ${pq(add(a,mul(d,R(2))),m)} ＋ ⋯ ＋ ${pq(an,m)}`,a:sh(S,m),chk:()=>{let s=0,x=fv(a);for(let i=0;i<n;i++){s+=x;x+=fv(d)}return near(s,fv(S))}}},
   m=>{const a=num(m,-25,30),d=dif(m),n=rand(8,30),S=div(mul(R(n),add(mul(a,R(2)),mul(d,R(n-1)))),R(2));if(m==="decimal"&&!term10(S))return null;return{q:`等差級數首項 ${sh(a,m)}、公差 ${sh(d,m)}，求前 ${n} 項的和。`,a:`S<sub>${n}</sub>＝${sh(S,m)}`,chk:()=>{let s=0,x=fv(a);for(let i=0;i<n;i++){s+=x;x+=fv(d)}return near(s,fv(S))}}},
   m=>{const a=num(m,-25,30),an=num(m,-25,60),n=rand(6,30),S=div(mul(R(n),add(a,an)),R(2));if(m==="decimal"&&!term10(S))return null;return{q:`等差級數共 ${n} 項，首項 ${sh(a,m)}、末項 ${sh(an,m)}，求總和。`,a:sh(S,m),chk:()=>{const d=(fv(an)-fv(a))/(n-1);let s=0,x=fv(a);for(let i=0;i<n;i++){s+=x;x+=d}return near(s,fv(S))}}},
   m=>{const k=pick([1,3,5,7]),n=rand(10,50),S=n*n;return{q:`求 1 ＋ 3 ＋ 5 ＋ ⋯ ＋ ${2*n-1} 的值。`,a:String(S),chk:()=>{let s=0;for(let i=1;i<=2*n-1;i+=2)s+=i;return s===S}}},
@@ -1545,7 +1562,7 @@ function arithseqConfig(){
   m=>{const n=pick([7,9,11,13,15,25]),mi=Math.floor(n/2)+1,v=rand(-18,25),S=n*v;return{q:`等差數列共 ${n} 項，第 ${mi} 項是 ${v}，求這 ${n} 項的和。`,a:String(S),chk:()=>{const d=1.7,a1=v-(mi-1)*d;let s=0;for(let i=0;i<n;i++)s+=a1+i*d;return near(s,S)}}},
   m=>{const k=pick([-5,-4,-3,3,4,5,8]),a=rand(3,12),d=pick([3,4,5,10]),n=rand(5,8),parts=[],sm=Array.from({length:n},(_,i)=>a+i*d);sm.forEach(x=>parts.push(`${x}×(${k<0?"−"+(-k):k})`));const T=k*sm.reduce((s,x)=>s+x,0);return{q:`利用分配律求值：${parts.join(" ＋ ")}`,a:String(T),chk:()=>sm.reduce((s,x)=>s+x*k,0)===T}},
   m=>{const c=rand(2,9),a=rand(18,32),d=-pick([2,3,4]),n=pick([6,8,10]),terms=Array.from({length:n},(_,i)=>a+i*d),T=terms.reduce((s,x)=>s+x+c,0);return{q:`求值：${terms.slice(0,3).map(x=>`(${x}＋${c})`).join(" ＋ ")} ＋ ⋯ ＋ (${terms[n-1]}＋${c})（共 ${n} 項）`,a:String(T),chk:()=>terms.reduce((s,x)=>s+(x+c),0)===T}},
-  m=>{const k=rand(3,9),N=rand(60,300),cnt=Math.floor(N/k),S=k*cnt*(cnt+1)/2;return{q:`求 1 到 ${N} 之間所有 ${k} 的倍數的和。`,a:String(S),chk:()=>{let s=0;for(let i=k;i<=N;i+=k)s+=i;return s===S}}},
+  m=>{const k=rand(3,9),N=rand(60,300),cnt=Math.floor(N/k),S=k*cnt*(cnt+1)/2;return{q:`求從 1 到 ${N}（包含 ${N}）所有 ${k} 的倍數的和。`,a:String(S),chk:()=>{let s=0;for(let i=k;i<=N;i+=k)s+=i;return s===S}}},
   m=>{const n=rand(10,40),S=n*(n+1)/2,T=S-(n%2?0:0);const e=Array.from({length:n},(_,i)=>(i%2?-1:1)*(i+1)).reduce((s,x)=>s+x,0);return{q:`求 1 − 2 ＋ 3 − 4 ＋ ⋯ ${n%2?"＋":"−"} ${n} 的值。`,a:String(e),chk:()=>{let s=0;for(let i=1;i<=n;i++)s+=i%2?i:-i;return s===e}}}],"");
  return{title:"等差數列與等差級數",symbol:"aₙ",subtitle:"規律填空・公差判斷・指定項與一般項・等差中項・級數求和・級數巧算",instruction:"寫出必要的過程；一般項以 n 表示。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
   levels:{basic:"基礎：規律填空、判斷等差與公差、求指定項與一般項、等差中項、級數求和、中間項與分配律巧算。",advanced:"進階：寫出前五項、補首項、由兩項求首項與公差、第幾項、插入三數、代數式的中項、末項求和、分離常數。",challenge:"挑戰：代數式與分數的規律、由一般項判斷等差、非等差數列、開始為負的項、三式成等差求 x、奇數和、由和求項數、倍數和與正負相間。"},
@@ -1575,9 +1592,9 @@ function quadsolveConfig(){
  const two=(lo=-9,hi=9)=>{let r1,r2;do{r1=rand(lo,hi);r2=rand(lo,hi)}while(r1===r2);return[r1,r2]};
  const check=mkUnit("check","解的檢驗","把數代入方程式，左右兩邊相等才是解；知道一個解時，可以代入求未知係數。",[
   ()=>{const[r1,r2]=two(-6,6),b=-(r1+r2),c=r1*r2,cands=shuffle([...new Set([r1,r2,r1+pick([-1,1]),r2+pick([-2,2])])]);return{q:`下列哪些數是 ${Qh(1,b,c)} 的解？${cands.map(x=>`x＝${x}`).join("、")}`,a:[r1,r2].filter(x=>cands.includes(x)).map(x=>`x＝${x}`).join("、"),chk:()=>[r1,r2].every(x=>x*x+b*x+c===0)&&cands.filter(x=>x*x+b*x+c===0).length===2}},
-  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`已知 x＝${r1} 是 x<sup>2</sup> ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x ＋ k＝0 的一個解，求 k。`,a:`k＝${c}`,chk:()=>r1*r1+b*r1+c===0}},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`已知 x＝${r1} 是 x<sup>2</sup>${b?` ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x`:""} ＋ k＝0 的一個解，求 k。`,a:`k＝${c}`,chk:()=>r1*r1+b*r1+c===0}},
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`已知 x＝${r1} 是 ${Qh(1,b,c)} 的一個解，求另一個解。`,a:`x＝${r2}`,chk:()=>r2*r2+b*r2+c===0}},
-  ()=>{const a=rand(1,4),[r1,r2]=two(-5,5),b=-a*(r1+r2),c=a*r1*r2;return{q:`已知 x＝${r1} 是 ${a===1?"":a}x<sup>2</sup> ＋ kx ${c<0?"−":"＋"} ${Math.abs(c)}＝0 的一個解，求 k 與另一個解。`,a:`k＝${b}，另一解 x＝${r2}`,chk:()=>a*r1*r1+b*r1+c===0&&a*r2*r2+b*r2+c===0}},
+  ()=>{const a=rand(1,4),[r1,r2]=two(-5,5),b=-a*(r1+r2),c=a*r1*r2;if(!r1||!r2)return null;/* 根為 0 時常數項是 0：x＝0 對任何 k 都是解，k 求不出來 */return{q:`已知 x＝${r1} 是 ${a===1?"":a}x<sup>2</sup> ＋ kx ${c<0?"−":"＋"} ${Math.abs(c)}＝0 的一個解，求 k 與另一個解。`,a:`k＝${b}，另一解 x＝${r2}`,chk:()=>a*r1*r1+b*r1+c===0&&a*r2*r2+b*r2+c===0}},
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`寫出一個以 ${r1} 與 ${r2} 為解、x<sup>2</sup> 項係數為 1 的一元二次方程式。`,a:Qh(1,b,c),chk:()=>[r1,r2].every(x=>x*x+b*x+c===0)}}],"");
  const factor=mkUnit("factor","提公因式與分組","移項使一邊為 0，提出公因式後令每個因式等於 0；不可把兩邊的未知式直接約掉。",[
   ()=>{const a=pick([1,2,3,5]),b=nz(-14,14);return solveQ(`解方程式：${Qh(a,b,0)}`,a,b,0)},
@@ -1594,7 +1611,7 @@ function quadsolveConfig(){
  const cross=mkUnit("cross","十字交乘","x²＋bx＋c：找兩數相乘為 c、相加為 b；非首一時用十字交乘；先整理成一般式。",[
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：${Qh(1,b,c)}`,1,b,c)},
   ()=>{const p=rand(2,5),q=nz(-7,7),s=rand(1,4),t=nz(-7,7);if(gcd(p,Math.abs(q))>1||gcd(s,Math.abs(t))>1)return null;const A=p*s,B=p*t+q*s,C=q*t;return solveQ(`解方程式：${Qh(A,B,C)}`,A,B,C)},
-  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x<sup>2</sup> ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x＝${-c}`,1,b,c)},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x<sup>2</sup>${b?` ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x`:""}＝${-c}`,1,b,c)},
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x(${L(1,b)})＝${-c}`,1,b,c)},
   ()=>{const p=nz(-6,6),q=nz(-6,6),k=nz(-12,12),B=p+q,C=p*q-k,D=B*B-4*C;if(D<0||!Number.isInteger(Math.sqrt(D)))return null;return solveQ(`解方程式：(${L(1,p)})(${L(1,q)})＝${k}`,1,B,C)}],"");
  const square=mkUnit("square","開平方法與配方法","(x＋p)²＝q（q≧0）⇒ x＋p＝±√q；x²＋bx＋c＝0 可配成 (x＋b/2)²＝(b/2)²−c。",[
@@ -1625,8 +1642,8 @@ function constructionConfig(){
   {k:"ang",name:"作一角等於已知角 ∠O",steps:["以 O 為圓心、任意長為半徑畫弧，交 ∠O 的兩邊於 A、B","以 O′ 為圓心、同樣的半徑畫弧，交射線於 A′","以 A′ 為圓心、AB 長為半徑畫弧，交前一弧於 B′","連接 O′B′"],basis:"SSS 全等（△OAB≅△O′A′B′）"},
   {k:"bis",name:"作 ∠AOB 的角平分線",steps:["以 O 為圓心、任意長為半徑畫弧，交 OA、OB 於 C、D","分別以 C、D 為圓心、相同且大於 CD 一半的長為半徑畫弧，兩弧交於 P","連接 OP"],basis:"SSS 全等（△OCP≅△ODP）"},
   {k:"perp",name:"作線段 AB 的中垂線",steps:["分別以 A、B 為圓心、相同且大於 AB 一半的長為半徑畫弧","兩弧交於 P、Q 兩點","連接 PQ"],basis:"到線段兩端等距離的點在中垂線上（PA＝PB、QA＝QB）"},
-  {k:"onL",name:"過直線 L 上一點 P 作 L 的垂線",steps:["以 P 為圓心、任意長為半徑畫弧，交 L 於 A、B","分別以 A、B 為圓心、相同且大於 AB 一半的長為半徑畫弧，兩弧交於 Q","連接 PQ"],basis:"P 是 AB 的中點、QA＝QB，所以 PQ 是 AB 的中垂線"},
-  {k:"offL",name:"過直線 L 外一點 P 作 L 的垂線",steps:["以 P 為圓心、適當長為半徑畫弧，交 L 於 A、B","分別以 A、B 為圓心、相同半徑在 L 的另一側畫弧，兩弧交於 Q","連接 PQ"],basis:"PA＝PB、QA＝QB，P、Q 都在 AB 的中垂線上"},
+  {k:"onL",name:"過直線 L 上一點 P 作 L 的垂線",steps:["在直線 L 上取一點 P，以 P 為圓心、任意長為半徑畫弧，交 L 於 A、B 兩點","分別以 A、B 為圓心、相同且大於 AB 一半的長為半徑畫弧，兩弧交於 Q","連接 PQ"],basis:"P 是 AB 的中點、QA＝QB，所以 PQ 是 AB 的中垂線"},
+  {k:"offL",name:"過直線 L 外一點 P 作 L 的垂線",steps:["在直線 L 外取一點 P，以 P 為圓心、適當長為半徑畫弧，交 L 於 A、B 兩點","分別以 A、B 為圓心、相同半徑在 L 的另一側畫弧，兩弧交於 Q","連接 PQ"],basis:"PA＝PB、QA＝QB，P、Q 都在 AB 的中垂線上"},
   {k:"par",name:"過直線 L 外一點 P 作 L 的平行線",steps:["過 P 畫一條直線交 L 於 A","以 A、P 為頂點，作 ∠P 等於 L 與 PA 的夾角（同位角或內錯角）","延長所作的角的一邊"],basis:"同位角（或內錯角）相等，兩直線平行"}];
  const opt=(arr,right)=>{const o=shuffle(arr),i=o.indexOf(right);return{text:o.map((x,j)=>"("+"ABCD"[j]+") "+x).join("　"),ans:"("+"ABCD"[i]+")",ord:o.join("|")}};
  const fig=k=>{const s='stroke="#16233A" stroke-width="1.3" fill="none"',r='stroke="#C8352B" stroke-width="1" fill="none"',t=(x,y,l)=>'<text x="'+x+'" y="'+y+'" font-size="10" fill="#16233A">'+l+'</text>';let b="";

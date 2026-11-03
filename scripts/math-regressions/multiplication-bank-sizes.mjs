@@ -4,11 +4,11 @@ import {load} from './helper.mjs';
 const api=load('g10','multiplication');
 const cubeFactor=api.CFG.units.find(unit=>unit.id==='cubefactor');
 const chain=api.CFG.units.find(unit=>unit.id==='chain');
-assert.equal(cubeFactor.bankSize,8);
+assert.equal(cubeFactor.bankSize,6);
 
 for(const level of ['basic','advanced','challenge']){
  assert.equal(chain.bankSize({level,modes:['integer'],mixed:false}),level==='challenge'?10:9);
- for(const [unit,expected] of [[cubeFactor,8],[chain,level==='challenge'?10:9]]){
+ for(const [unit,expected] of [[cubeFactor,6],[chain,level==='challenge'?10:9]]){
   const seen=new Set();
   for(let i=0;i<5000;i++){
    const q=unit.gen({level,modes:['integer'],mixed:false});
@@ -19,4 +19,4 @@ for(const level of ['basic','advanced','challenge']){
   assert.equal(seen.size,expected,`${unit.id}/${level}`);
  }
 }
-console.log(JSON.stringify({test:'multiplication-bank-sizes',cubeFactor:8,chain:{basic:9,advanced:9,challenge:10},passed:true}));
+console.log(JSON.stringify({test:'multiplication-bank-sizes',cubeFactor:6,chain:{basic:9,advanced:9,challenge:10},passed:true}));

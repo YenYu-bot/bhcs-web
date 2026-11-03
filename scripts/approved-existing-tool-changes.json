@@ -932,6 +932,62 @@
       "approved_blob": "400719f943203118c1c405cee062662ba4ddd902",
       "reason": "User requested direct replacement of the old reaction-rate URL on 2026-11-03: accepted marble/HCl lesson with read-only original-data backup; all unrelated stations unchanged.",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "ec32f41a16a7b9d68dbc4156521d0f04092a71fa",
+      "approved_blob": "e065c83d7e83995907e176e2461e8b99e9d30c16",
+      "reason": "Math drill fixes from the 2026-11-03 review: g10-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g11-drills.html",
+      "baseline_blob": "e2fc468cee30683131c77cb81c18ee7e3ca67b0e",
+      "approved_blob": "33306f493f6609da53dfce0f4eaac86c38f919e1",
+      "reason": "Math drill fixes from the 2026-11-03 review: g11-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g2-drills.html",
+      "baseline_blob": "30e228dfc9ac011af64a35392f78e58581caa211",
+      "approved_blob": "f009b856e596fd678af7e1631f01c0c2b8d7fc5c",
+      "reason": "Math drill fixes from the 2026-11-03 review: g2-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g4-drills.html",
+      "baseline_blob": "184172380f143d7895fd4c76b931a47631650382",
+      "approved_blob": "ca46446573a3fdb8179efe8bfff6b5f0def9ff4a",
+      "reason": "Math drill fixes from the 2026-11-03 review: g4-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "e5068cc199e630d53483bbb6e71b2ec60fee1663",
+      "approved_blob": "a290180a1b8caf3394333ba67591228d7c4fb5eb",
+      "reason": "Math drill fixes from the 2026-11-03 review: g6-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "9aa29172c6489a0f999ee8a0958ffb7d8d32b80f",
+      "approved_blob": "18e226627e73ccb436eea0278d6a1d89016ff327",
+      "reason": "Math drill fixes from the 2026-11-03 review: g7-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g8-drills.html",
+      "baseline_blob": "04bb737fc6cbff5d1ae025e54aa92ece06b1fb66",
+      "approved_blob": "354b267bb8b4e4768f273308d6134a3168391bd1",
+      "reason": "Math drill fixes from the 2026-11-03 review: g8-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-drills.html",
+      "baseline_blob": "378d514af9fd167258df8b4c7e6c5f23f0fd8561",
+      "approved_blob": "e02df02849cce36c543a55d356495b9a6989a0a1",
+      "reason": "Math drill fixes from the 2026-11-03 review: g9-drills.html",
+      "pull_request": null
     }
   ]
 }

@@ -462,8 +462,10 @@ function measureConfig(){
   if(f==="add")return{expr:two(x,q)+" ＋ "+two(y,q),answer:two(x+y,q),sig:"a:"+B+":"+x+":"+y,verify:()=>x+y-y===x};
   if(f==="sub"){const [m,n]=x>y?[x,y]:[y,x];if(m===n)return null;return{expr:two(m,q)+" − "+two(n,q),answer:two(m-n,q),sig:"s:"+B+":"+m+":"+n,verify:()=>m-n+n===m}}
   if(f==="multi"){const t=rand(2,6),s=x*t;return{expr:two(x,q)+" × "+t,answer:two(s,q),sig:"m:"+B+":"+x+":"+t,verify:()=>s/t===x}}
-  const [m,n]=x>y?[x,y]:[y,x];if(m===n)return null;const W={公尺:["一條繩子長 X，剪下 Y，還剩多少？","−"],公分:["一枝鉛筆長 X，用掉 Y，還剩多長？","−"],毫米:["一個零件長 X，另一個長 Y，兩個接起來共多長？","＋"],公克:["一袋米重 X，另一袋重 Y，兩袋共重多少？","＋"],毫升:["一瓶水有 X，倒出 Y，還剩多少？","−"]}[S];
-  const v=W[1]==="＋"?m+n:m-n;return{expr:W[0].replace("X",two(m,q)).replace("Y",two(n,q)),answer:two(v,q),sig:"w:"+S+":"+m+":"+n,verify:()=>W[1]==="＋"?v-n===m:v+n===m,lead:"答："}});
+  /* 情境要配合單位與大小：鉛筆用公分、毫米且不超過 19 公分；繩子用公尺、公分……（W[2]＝大單位的上限） */
+  const W=pick({公尺:[["一條繩子長 X，剪下 Y，還剩多少？","−",40]],公分:[["一枝鉛筆長 X，用掉 Y，還剩多長？","−",19],["一個零件長 X，另一個長 Y，兩個接起來共多長？","＋",15]],公斤:[["一袋米重 X，另一袋重 Y，兩袋共重多少？","＋",30]],公升:[["一桶水有 X，倒出 Y，還剩多少？","−",20]]}[B]),hi=Math.min(W[2],L===0?9:40);
+  const x2=rand(1,hi)*k+rand(1,k-1),y2=rand(1,hi)*k+rand(1,k-1),[m,n]=x2>y2?[x2,y2]:[y2,x2];if(m===n)return null;
+  const v=W[1]==="＋"?m+n:m-n;return{expr:W[0].replace("X",two(m,q)).replace("Y",two(n,q)),answer:two(v,q),sig:"w:"+W[0].slice(0,4)+":"+S+":"+m+":"+n,verify:()=>W[1]==="＋"?v-n===m:v+n===m,lead:"答："}});
  const hm=t=>{const h=Math.floor(t/60),m=t%60;return h+" 時"+(m?" "+m+" 分":"")};
  const clock12=t=>{const h=Math.floor(t/60),m=t%60,ap=h<12?"上午":h===12?"中午":"下午",hh=h<=12?h:h-12;return ap+" "+hh+" 時"+(m?" "+m+" 分":"")};
  const timeconv=unit("timeconv","時間的換算與 24 時制","1 日＝24 時、1 時＝60 分、1 分＝60 秒。24 時制：下午幾時就加 12（下午 3 時＝15 時）。",ctx=>{
@@ -476,7 +478,8 @@ function measureConfig(){
   return{expr:"24 時制的 "+h+":"+String(m).padStart(2,"0")+" 是下午幾時幾分？",answer:clock12(t),sig:"f24:"+t,verify:()=>Number(clock12(t).match(/下午 (\d+)/)[1])+12===h}},"答：");
  const elapsed=unit("elapsed","經過的時間","算經過多久：結束時刻－開始時刻，分不夠減就向時借 1 時（＝60 分）；跨過中午可以先換成 24 時制。",ctx=>{
   const L=lv(ctx),f=pick(L===0?["dur","end","start"]:["dur","end","start","span"]);
-  const s=rand(L===0?7:6,L===0?10:11)*60+rand(0,11)*5,d=rand(L===0?20:35,L===0?180:400),e=s+d;if(e>=22*60)return null;
+  /* 情境的時間長度要合理：電影 80 分～3 小時，去動物園的路程 20 分～2 小時 */
+  const s=rand(L===0?7:6,L===0?10:11)*60+rand(0,11)*5,d=f==="end"?rand(80,180):f==="start"?rand(20,120):rand(L===0?20:35,L===0?180:400),e=s+d;if(e>=22*60)return null;
   const dh=hm(d).replace(" 時"," 小時").replace("0 小時 ","");
   if(f==="dur")return{expr:"從"+clock12(s)+"到"+clock12(e)+"，經過了多少時間？",answer:dh,sig:"d:"+s+":"+e,verify:()=>e-s===d};
   if(f==="end")return{expr:"電影從"+clock12(s)+"開始，播放 "+dh+"，幾時幾分結束？",answer:clock12(e),sig:"e:"+s+":"+d,verify:()=>s+d===e};
@@ -504,20 +507,20 @@ function perimeterConfig(){
   if(f==="both")return{expr:"長方形的周長是 "+(2*(l+w))+" "+u+"，長是 "+l+" "+u+"，面積是多少平方"+u+"？",answer:(l*w)+" 平方"+u,sig:"bo:"+l+":"+w+u,verify:()=>(2*(l+w)/2-l)*l===l*w};
   return{expr:"長方形的面積是 "+(l*w)+" 平方"+u+"，長是 "+l+" "+u+"，寬是多少"+u+"？",answer:w+" "+u,sig:"b:"+l+":"+w+u,verify:()=>l*w/l===w}},"答：");
  const lshape=unit("lshape","複合圖形的面積與周長","L 形可以切成兩個長方形相加，或用大長方形減去缺的角；從角落剪掉一塊時，周長和原來的大長方形一樣。",ctx=>{
-  const L=lv(ctx),a=rand(8,L===0?20:40),b=rand(6,a-1),c=rand(2,a-3),d=rand(2,b-3),u=pick(U),f=pick(L===0?["area","area2","perim"]:["area","perim","both"]);
+  const L=lv(ctx),a=rand(8,L===0?20:40),b=rand(6,a-1),c=rand(2,a-3),d=rand(2,Math.min(b-3,c)),u=pick(U),f=pick(L===0?["area","area2","perim"]:["area","perim","both"]);
   const fig=(()=>{const W=150,H=110,s=Math.min((W-30)/a,(H-30)/b),x0=15,y0=15,X=v=>GEO_f(x0+v*s),Y=v=>GEO_f(y0+v*s),pts=[[0,0],[a-c,0],[a-c,d],[a,d],[a,b],[0,b]];return'<svg class="fig" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="示意圖"><polygon points="'+pts.map(p=>X(p[0])+","+Y(p[1])).join(" ")+'" fill="none" stroke="#16233A" stroke-width="1.4"/><text x="'+X(a/2)+'" y="'+(Y(b)+12)+'" font-size="10" text-anchor="middle">'+a+'</text><text x="'+(X(0)-4)+'" y="'+Y(b/2)+'" font-size="10" text-anchor="end">'+b+'</text><text x="'+X(a-c/2)+'" y="'+(Y(d)+11)+'" font-size="10" text-anchor="middle">'+c+'</text><text x="'+(X(a-c)+3)+'" y="'+(Y(d/2)+4)+'" font-size="10" text-anchor="start">'+d+'</text></svg>'})();
-  const A=a*b-c*d,P=2*(a+b);
-  if(f==="area")return{expr:fig+"一塊長方形紙長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角剪去一個長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形。剩下的面積是多少平方"+u+"？",answer:A+" 平方"+u,sig:"a:"+[a,b,c,d]+u,verify:()=>(a-c)*b+c*(b-d)===A};
-  if(f==="area2")return{expr:"一個 L 形花圃可以分成兩個長方形：一個長 "+a+" "+u+"、寬 "+(b-d)+" "+u+"，另一個長 "+(a-c)+" "+u+"、寬 "+d+" "+u+"。花圃的面積是多少平方"+u+"？",answer:A+" 平方"+u,sig:"a2:"+[a,b,c,d]+u,verify:()=>a*(b-d)+(a-c)*d===A};
-  if(f==="perim")return{expr:fig+"一塊長方形紙長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角剪去一個長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形。剩下圖形的周長是多少"+u+"？",answer:P+" "+u,sig:"p:"+[a,b,c,d]+u,verify:()=>b+a+(b-d)+c+d+(a-c)===P};
+  const A=a*b-c*d,P=2*(a+b),cm=u==="公分",[ob,cut,rest]=cm?["一塊長方形紙","剪去","剩下的"]:["一塊長方形空地","圍出","做花圃，剩下的空地"],r1=[a,b-d].sort((x,y)=>y-x),r2=[a-c,d].sort((x,y)=>y-x);
+  if(f==="area")return{expr:fig+ob+"長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角"+cut+"一個長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形"+(cm?"。剩下的":rest)+"面積是多少平方"+u+"？",answer:A+" 平方"+u,sig:"a:"+[a,b,c,d]+u,verify:()=>(a-c)*b+c*(b-d)===A};
+  if(f==="area2")return{expr:"一"+(cm?"張 L 形色紙":"個 L 形花圃")+"可以分成兩個長方形：一個長 "+r1[0]+" "+u+"、寬 "+r1[1]+" "+u+"，另一個長 "+r2[0]+" "+u+"、寬 "+r2[1]+" "+u+"。"+(cm?"色紙":"花圃")+"的面積是多少平方"+u+"？",answer:A+" 平方"+u,sig:"a2:"+[a,b,c,d]+u,verify:()=>a*(b-d)+(a-c)*d===A};
+  if(f==="perim")return{expr:fig+ob+"長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角"+cut+"一個長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形"+(cm?"。剩下圖形":rest)+"的周長是多少"+u+"？",answer:P+" "+u,sig:"p:"+[a,b,c,d]+u,verify:()=>b+a+(b-d)+c+d+(a-c)===P};
   return{expr:fig+"長方形長 "+a+" "+u+"、寬 "+b+" "+u+"，從右上角剪去長 "+c+" "+u+"、寬 "+d+" "+u+"的長方形。剩下圖形的面積和周長各是多少？",answer:"面積 "+A+" 平方"+u+"，周長 "+P+" "+u,sig:"b:"+[a,b,c,d]+u,verify:()=>(a-c)*b+c*(b-d)===A&&b+a+(b-d)+c+d+(a-c)===P}},"答：");
  const sqm=unit("sqm","平方公尺與平方公分","1 平方公尺是邊長 1 公尺（100 公分）的正方形，所以 1 平方公尺＝100×100＝10000 平方公分。",ctx=>{
   const L=lv(ctx),f=pick(L===0?["toCm","toM","mix"]:["toCm","mix","rect","tile"]);
   if(f==="toCm"){const m=rand(1,L===0?9:99);return{expr:m+" 平方公尺 ＝ （　　）平方公分",answer:fmt(m*10000)+" 平方公分",sig:"c:"+m,verify:()=>m*100*100===m*10000}}
   if(f==="toM"){const m=rand(1,30);return{expr:fmt(m*10000)+" 平方公分 ＝ （　）平方公尺",answer:m+" 平方公尺",sig:"m:"+m,verify:()=>m*10000/10000===m}}
   if(f==="mix"){const m=rand(1,20),c=rand(1,9999),v=m*10000+c;return{expr:fmt(v)+" 平方公分 ＝ （　）平方公尺（　）平方公分",answer:m+" 平方公尺 "+fmt(c)+" 平方公分",sig:"x:"+v,verify:()=>Math.floor(v/10000)===m&&v%10000===c}}
-  if(f==="rect"){const l=rand(2,9),w=rand(1,l),cm=rand(1,9)*10;return{expr:"長方形的長 "+l+" 公尺、寬 "+w+" 公尺 "+cm+" 公分，面積是多少平方公分？",answer:fmt(l*100*(w*100+cm))+" 平方公分",sig:"r:"+l+":"+w+":"+cm,verify:()=>l*100*(w*100+cm)===(l*100)*(w*100)+l*100*cm}}
-  const t=pick([20,25,50]),l=rand(1,6),w=rand(1,5),n=(l*100/t)*(w*100/t);return{expr:"用邊長 "+t+" 公分的正方形地磚，鋪滿長 "+l+" 公尺、寬 "+w+" 公尺的長方形地面，需要幾塊地磚？",answer:n+" 塊",sig:"t:"+t+":"+l+":"+w,verify:()=>n*t*t===l*w*10000}},"答：");
+  if(f==="rect"){const l=rand(2,9),w=rand(1,l-1),cm=rand(1,9)*10;return{expr:"長方形的長 "+l+" 公尺、寬 "+w+" 公尺 "+cm+" 公分，面積是多少平方公分？",answer:fmt(l*100*(w*100+cm))+" 平方公分",sig:"r:"+l+":"+w+":"+cm,verify:()=>l*100*(w*100+cm)===(l*100)*(w*100)+l*100*cm}}
+  const t=pick([20,25,50]),l=rand(1,6),w=rand(1,l),n=(l*100/t)*(w*100/t);return{expr:"用邊長 "+t+" 公分的正方形地磚，鋪滿長 "+l+" 公尺、寬 "+w+" 公尺的長方形地面，需要幾塊地磚？",answer:n+" 塊",sig:"t:"+t+":"+l+":"+w,verify:()=>n*t*t===l*w*10000}},"答：");
  return{title:"周長與面積（中年級）",symbol:"□",subtitle:"長方形與正方形的周長・面積・複合圖形・平方公尺與平方公分",instruction:"周長的單位是公分、公尺；面積的單位是平方公分、平方公尺。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：由長和寬求周長與面積、由正方形周長求邊長、平方公尺換平方公分。",advanced:"進階：由周長或面積反求邊長、L 形的面積與周長、複名數的面積。",challenge:"挑戰：較大的數、面積與周長一起求、鋪地磚。"},
   units:[perim,area,lshape,sqm],presets:{basic:{perim:4,area:4,lshape:3,sqm:3},advanced:{perim:3,area:4,lshape:4,sqm:3},challenge:{perim:3,area:4,lshape:4,sqm:4}}};
@@ -528,11 +531,11 @@ function angleConfig(){
  const D=v=>v+"°";
  const basic=unit("rightangle","直角、平角與周角","1 直角＝90°，2 個直角是 1 平角＝180°，4 個直角是 1 周角＝360°。",ctx=>{
   const L=lv(ctx),f=pick(L===0?["nRight","name","sub"]:["nRight","sub","mixed","howmany"]);
-  if(f==="nRight"){const n=rand(1,L===0?4:8);return{expr:n+" 個直角是幾度？",answer:D(90*n),sig:"n:"+n,verify:()=>90*n/90===n}}
+  if(f==="nRight"){const n=rand(1,4);return{expr:n+" 個直角是幾度？",answer:D(90*n),sig:"n:"+n,verify:()=>90*n/90===n}}
   if(f==="name"){const [t,v]=pick([["1 個平角",180],["1 個周角",360],["半個直角",45],["1 個直角",90]]);return{expr:t+"是幾度？",answer:D(v),sig:"nm:"+t,verify:()=>v%45===0}}
   if(f==="sub"){const [t,v]=pick([["1 個直角",90],["1 個平角",180],["1 個周角",360]]),x=rand(5,v-5);return{expr:t+"比 "+D(x)+" 大幾度？",answer:D(v-x),sig:"s:"+v+":"+x,verify:()=>v-x+x===v}}
-  if(f==="mixed"){const p=rand(1,3),r=rand(1,3),x=rand(1,89);return{expr:p+" 個平角加上 "+r+" 個直角再加 "+D(x)+"，是幾度？",answer:D(180*p+90*r+x),sig:"m:"+p+":"+r+":"+x,verify:()=>180*p+90*r+x===90*(2*p+r)+x}}
-  const v=pick([180,270,360,450,540,720]);return{expr:D(v)+" 是幾個直角？",answer:v/90+" 個",sig:"h:"+v,verify:()=>v%90===0}},"答：");
+  if(f==="mixed"){const [p,r]=pick([[1,0],[1,1],[0,1],[0,2],[0,3]]),x=rand(1,Math.min(89,359-180*p-90*r));return{expr:[p?p+" 個平角":"",r?r+" 個直角":""].filter(Boolean).join("加上 ")+"再加 "+D(x)+"，是幾度？",answer:D(180*p+90*r+x),sig:"m:"+p+":"+r+":"+x,verify:()=>180*p+90*r+x===90*(2*p+r)+x}}
+  const v=pick([90,180,270,360]);return{expr:D(v)+" 是幾個直角？",answer:v/90+" 個",sig:"h:"+v,verify:()=>v%90===0}},"答：");
  const calc=unit("calc","角度的計算","拼成直角：兩角和 90°；在一直線上：兩角和 180°；繞一點一圈：所有角和 360°。",ctx=>{
   const L=lv(ctx),f=pick(L===0?["right","line","add"]:["line","round","line3","sub"]);
   if(f==="right"){const a=rand(5,85);return{expr:"兩個角拼成一個直角，其中一個是 "+D(a)+"，另一個是幾度？",answer:D(90-a),sig:"r:"+a,verify:()=>a+(90-a)===90}}
