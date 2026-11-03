@@ -1,8 +1,10 @@
-// Real Chromium evidence for every welcome composition; screenshots need human review.
+// Real Chromium evidence for every shared-shell welcome; screenshots need human review.
+// Reaction is a labeled historical fixture; the current native app has its own browser checker.
 const {chromium}=require('playwright');
 const fs=require('node:fs');
 const path=require('node:path');
 const http=require('node:http');
+const {readLegacySciencePageRequest,LEGACY_SCIENCE_FIXTURE}=require('./science-page.cjs');
 const root=path.resolve(__dirname,'..');
 const output=path.resolve(process.env.COMPOSITION_OUTPUT||'composition-artifacts');
 const legacy=['microscope','photosynthesis-factor','genetics-simulation','force-motion','circuit','particle-reaction','acid-base-indicator','heat-phase','buoyancy-density','plate-earthquake'].map(x=>'tools/'+x+'-lab.html');
@@ -13,6 +15,10 @@ const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
  let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
  if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return}
+ try{
+  const historical=readLegacySciencePageRequest(url);
+  if(historical!==null){res.setHeader('Content-Type','text/html');res.setHeader('X-BHCS-Historical-Fixture',LEGACY_SCIENCE_FIXTURE.id);res.end(historical);return}
+ }catch(error){res.writeHead(error.statusCode||500).end();return}
  try{if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file))}catch{res.writeHead(404).end()}
 });
 (async()=>{
@@ -22,16 +28,18 @@ const server=http.createServer((req,res)=>{
  const browser=await chromium.launch();
  const results=[];
  const viewports=(process.env.COMPOSITION_VIEWPORTS|| (process.env.COMPOSITION_WIDTHS?process.env.COMPOSITION_WIDTHS.split(',').map(w=>w+'x'+(w==='390'?844:800)).join(','):'390x844,768x800,1280x800,1366x768,1366x650,1024x600')).split(',').map(v=>{const [width,height]=v.split('x').map(Number);return {width,height}});
- fs.writeFileSync(path.join(output,'environment.json'),JSON.stringify({browser:await browser.version(),node:process.version,viewports},null,2));
+ fs.writeFileSync(path.join(output,'environment.json'),JSON.stringify({browser:await browser.version(),node:process.version,viewports,historicalFixtures:[LEGACY_SCIENCE_FIXTURE],currentReactionChecker:'check_marble_acid_desk_browser.cjs'},null,2));
  try{
   for(const {width,height} of viewports){
    const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1,reducedMotion:'reduce'});
    // Keep this static-site check deterministic and offline.
    await context.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
    for(const file of pages){
+    const historical=file===LEGACY_SCIENCE_FIXTURE.publicPath;
     const page=await context.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
-    await page.goto(base+'/'+file+'?noga=1',{waitUntil:'networkidle'});
+    const response=await page.goto(base+'/'+file+'?noga=1'+(historical?'&legacyFixture='+LEGACY_SCIENCE_FIXTURE.id:''),{waitUntil:'networkidle'});
+    if(historical&&response.headers()['x-bhcs-historical-fixture']!==LEGACY_SCIENCE_FIXTURE.id)throw Error('Historical scenario did not load the pinned reaction fixture');
     await page.locator('.researcher-scene').waitFor();
     await page.evaluate(()=>document.fonts.ready);
     await page.locator('.researcher-bubble.is-aligned').waitFor();
@@ -83,11 +91,11 @@ const server=http.createServer((req,res)=>{
      await page.evaluate(()=>{const b=document.querySelector('.researcher-bubble');['width','height','overflow'].forEach(p=>b.style.removeProperty(p))});
      await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
     }
-    const id=width+'x'+height+'-'+file.replace(/^tools\//,'').replaceAll('/','-').replace('.html','');
+    const id=width+'x'+height+'-'+file.replace(/^tools\//,'').replaceAll('/','-').replace('.html','')+(historical?'-historical-fixture':'');
     await page.screenshot({path:path.join(output,id+'-viewport.png')});
     await page.locator('.researcher-welcome').screenshot({path:path.join(output,id+'.png')});
     await page.locator('.researcher-scene').screenshot({path:path.join(output,id+'-scene.png')});
-    results.push({file,width,height,...checks,errors,pass:checks.aboveCharacter&&checks.equipmentClear&&checks.startInFirstScreen&&checks.feetInFirstScreen&&checks.tailAligned&&checks.shortTail&&checks.scienceOrientation&&checks.loaded&&checks.overflow<=2&&checks.bubbleInside&&checks.textFits&&checks.characterInside&&!checks.faceCovered&&!errors.length});
+    results.push({file,width,height,coverage:historical?'historical shared-shell fixture':'current public page',...(historical?{fixture:LEGACY_SCIENCE_FIXTURE}:{}),...checks,errors,pass:checks.aboveCharacter&&checks.equipmentClear&&checks.startInFirstScreen&&checks.feetInFirstScreen&&checks.tailAligned&&checks.shortTail&&checks.scienceOrientation&&checks.loaded&&checks.overflow<=2&&checks.bubbleInside&&checks.textFits&&checks.characterInside&&!checks.faceCovered&&!errors.length});
     await page.close();
    }
    await context.close();

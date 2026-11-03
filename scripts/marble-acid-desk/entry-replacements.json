@@ -1,0 +1,54 @@
+[
+  {
+    "before": "<meta name=\"robots\" content=\"noindex,nofollow\">",
+    "after": "<meta name=\"description\" content=\"同質量大理石配固定過量稀鹽酸，比較大塊與小塊的定性氣泡、模擬二氧化碳體積及反應曲線。紀錄只存在目前瀏覽器與網站，私人原型站紀錄不會自動移入官網。\"><link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/science/reaction-rate.html\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:title\" content=\"大理石與鹽酸 · 反應速率實驗桌\"><meta property=\"og:description\" content=\"同質量大理石配固定過量稀鹽酸，比較大塊與小塊的定性氣泡、模擬二氧化碳體積及反應曲線。紀錄只存在目前瀏覽器與網站，私人原型站紀錄不會自動移入官網。\"><meta property=\"og:url\" content=\"https://www.bhcs.com.tw/tools/science/reaction-rate.html\">"
+  },
+  {
+    "before": "<a class=\"brand\" href=\"#\">",
+    "after": "<a class=\"brand\" href=\"../../ziyuan.html\">"
+  },
+  {
+    "before": "小小研究員 · 私人實驗桌",
+    "after": "小小研究員 · 大理石實驗桌"
+  },
+  {
+    "before": "百宏文教 · 小小研究員私人原型　／　操作、觀察，再用證據說話。",
+    "after": "百宏文教 · 小小研究員　／　操作、觀察，再用證據說話。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。"
+  },
+  {
+    "before": "href=\"style.css\"",
+    "after": "href=\"reaction-rate-desk/style.css\""
+  },
+  {
+    "before": "src=\"assets/teacher-concept.png\"",
+    "after": "src=\"reaction-rate-desk/assets/teacher-concept.png\""
+  },
+  {
+    "before": "src=\"assets/material-lump.png\"",
+    "after": "src=\"reaction-rate-desk/assets/material-lump.png\""
+  },
+  {
+    "before": "src=\"assets/material-granule.png\"",
+    "after": "src=\"reaction-rate-desk/assets/material-granule.png\""
+  },
+  {
+    "before": "src=\"assets/material-powder.png\"",
+    "after": "src=\"reaction-rate-desk/assets/material-powder.png\""
+  },
+  {
+    "before": "src=\"assets/reagent-bottle.png\"",
+    "after": "src=\"reaction-rate-desk/assets/reagent-bottle.png\""
+  },
+  {
+    "before": "src=\"app.mjs\"",
+    "after": "src=\"reaction-rate-desk/app.mjs\""
+  },
+  {
+    "before": "</main>",
+    "after": "<details id=\"public-legacy-data\" class=\"limitations\" hidden><summary>舊官網課程紀錄：只讀備份</summary><p>先前的虛構反應課程與這次大理石數據不同。舊紀錄、草稿與學習筆記留在本瀏覽器，不會混入新比較；重置新實驗不會刪除它們。</p><p id=\"public-legacy-status\" role=\"status\"></p><button type=\"button\" id=\"public-legacy-export\">下載舊官網課程原文備份</button></details></main>"
+  },
+  {
+    "before": "</body>",
+    "after": "<script type=\"module\" src=\"reaction-rate-desk/public-legacy-export.mjs\"></script></body>"
+  }
+]

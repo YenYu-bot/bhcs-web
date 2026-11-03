@@ -1,0 +1,12 @@
+export class Clock {
+ constructor({onTick=()=>{},onStop=()=>{},requestFrame=cb=>requestAnimationFrame(cb),cancelFrame=id=>cancelAnimationFrame(id),now=()=>performance.now()}={}){this.onTick=onTick;this.onStop=onStop;this.raf=requestFrame;this.caf=cancelFrame;this.now=now;this.speed=5;this.time=0;this.end=0;this.running=false;this.generation=0;this.pending=null;this.pauseAt20=true;this.pausedAt20=false;}
+ reset(end,{time=0,pauseAt20=true}={}){if(!Number.isFinite(end)||end<=0||!Number.isFinite(time)||time<0||time>end)throw new TypeError('無效的播放範圍');this.pause('reset',false);this.end=end;this.time=time;this.pauseAt20=!!pauseAt20;this.pausedAt20=time>=20;this.onTick(this.time);return this;}
+ play(){if(this.running||this.time>=this.end)return false;this.running=true;this.anchor=this.now();this.origin=this.time;const generation=++this.generation;const tick=stamp=>{if(!this.running||generation!==this.generation)return;this.pending=null;this.advance(stamp);if(this.running&&generation===this.generation)this.pending=this.raf(tick);};this.pending=this.raf(tick);return true;}
+ advance(stamp){if(!this.running)return;if(!Number.isFinite(stamp)||stamp<this.anchor)return;let target=Math.min(this.end,this.origin+(stamp-this.anchor)*this.speed/1000);let reason='';if(this.pauseAt20&&!this.pausedAt20&&this.time<20&&target>=20&&this.end>20){target=20;this.pausedAt20=true;reason='checkpoint';}else if(target>=this.end)reason='finished';this.time=Math.max(this.time,target);this.onTick(this.time);if(reason)this.pause(reason,false);}
+ pause(reason='paused',sample=true){if(sample&&this.running)this.advance(this.now());const was=this.running;this.running=false;this.generation++;if(this.pending!==null)this.caf(this.pending);this.pending=null;if(was)this.onStop(reason,this.time);return this.time;}
+ setSpeed(speed){if(![1,5,20].includes(speed))throw new TypeError('無效的播放倍率');const was=this.running;if(was)this.advance(this.now());const resume=was&&this.running;this.pause('speed',false);this.speed=speed;if(resume)this.play();}
+ step(seconds=5){if(!Number.isFinite(seconds)||seconds<0)throw new TypeError('無效步進');this.pause('step',false);return this.jumpTo(Math.min(this.end,this.time+seconds),'step');}
+ jumpTo(t,reason='jump'){if(!Number.isFinite(t)||t<0||t>this.end)throw new TypeError('無效的模型時間');this.pause(reason,false);this.time=t;if(t>=20)this.pausedAt20=true;this.onTick(t);this.onStop(t===this.end?'finished':reason,t);return t;}
+ finish(){return this.jumpTo(this.end,'jump');}
+ destroy(){this.pause('destroy',false);}
+}

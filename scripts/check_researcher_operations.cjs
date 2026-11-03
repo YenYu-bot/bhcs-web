@@ -1,26 +1,39 @@
-// Real browser flow for all 42 stations. No direct calls into model functions.
+// Real browser flow for 41 current stations and the frozen historical reaction shared shell.
+// The new public reaction app is covered separately by check_marble_acid_desk_browser.cjs.
 const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),output=path.resolve(process.env.OPERATIONS_OUTPUT||'operation-artifacts');
+const {readLegacySciencePageRequest,LEGACY_SCIENCE_FIXTURE}=require('./science-page.cjs');
 const legacy=[['microscope','begin'],['photosynthesis-factor','start'],['genetics-simulation','cross'],['force-motion','step'],['circuit','verify'],['particle-reaction','react'],['acid-base-indicator','mix'],['heat-phase','begin'],['buoyancy-density','drop'],['plate-earthquake','begin']].map(([id,run])=>({id,file:'tools/'+id+'-lab.html',run}));
 const shared=['optics','wave-sound','electromagnetism','pressure-fluid','energy','solubility','moon-eclipse','seasons','plant-exchange','ecosystem','motion-graphs','lever-torque','pulley-incline','reaction-rate','reflection-refraction','atom-builder','stoichiometry','weather-systems','circulation','nerve-reflex','homeostasis','spring-friction','electric-power','electrostatics','equilibrium','metal-activity','cell-electrolysis','specific-heat','neutralization','cell-division','enzyme','tides'].map(id=>({id,file:'tools/science/'+id+'.html',run:'run',shared:true}));
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg'};
-const server=http.createServer((req,res)=>{const file=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return}try{res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file))}catch{res.writeHead(404).end()}});
+const server=http.createServer((req,res)=>{
+ const url=new URL(req.url,'http://localhost'),file=path.resolve(root,'.'+url.pathname);
+ if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return}
+ try{
+  const historical=readLegacySciencePageRequest(url);
+  if(historical!==null){res.setHeader('Content-Type','text/html');res.setHeader('X-BHCS-Historical-Fixture',LEGACY_SCIENCE_FIXTURE.id);res.end(historical);return}
+ }catch(error){res.writeHead(error.statusCode||500).end();return}
+ try{res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file))}catch{res.writeHead(404).end()}
+});
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 (async()=>{
  fs.mkdirSync(output,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch(),results=[];
- fs.writeFileSync(path.join(output,'environment.json'),JSON.stringify({browser:browser.version(),node:process.version},null,2));
+ fs.writeFileSync(path.join(output,'environment.json'),JSON.stringify({browser:browser.version(),node:process.version,historicalFixtures:[LEGACY_SCIENCE_FIXTURE],currentReactionChecker:'check_marble_acid_desk_browser.cjs'},null,2));
  try{for(const width of (process.env.OPERATIONS_WIDTHS||'390,1280').split(',').map(Number)){
  const context=await browser.newContext({viewport:{width,height:800},reducedMotion:'reduce'});
  await context.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
  for(const item of [...legacy,...shared]){
-  const page=await context.newPage(),errors=[],result={id:item.id,width};page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
-  const screenshot=async(name,locator)=>{await settle(page);if(locator)await locator.screenshot({path:path.join(output,`${width}-${item.id}-${name}.png`)});else await page.screenshot({path:path.join(output,`${width}-${item.id}-${name}.png`)})};
+  const historical=item.file===LEGACY_SCIENCE_FIXTURE.publicPath,artifactId=item.id+(historical?'-historical-fixture':'');
+  const page=await context.newPage(),errors=[],result={id:item.id,width,coverage:historical?'historical shared-shell fixture':'current public page',...(historical?{fixture:LEGACY_SCIENCE_FIXTURE}:{} )};page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+  const screenshot=async(name,locator)=>{await settle(page);if(locator)await locator.screenshot({path:path.join(output,`${width}-${artifactId}-${name}.png`)});else await page.screenshot({path:path.join(output,`${width}-${artifactId}-${name}.png`)})};
   const count=()=>page.locator('#records tr:not(:has([colspan]))').count();
   const source=item.shared?'#add-record':'#addRecord',save=item.shared?'#add-record':'.researcher-bench-record';
   const run=async()=>{await page.locator('#'+item.run).click();if(item.id==='genetics-simulation')await page.locator('#sample').click();if(item.id==='microscope')await page.locator('#autofocus').click();await page.waitForFunction(sel=>!document.querySelector(sel).disabled,source);await settle(page)};
   try{
-   await page.goto(base+'/'+item.file+'?noga=1');await page.locator('[data-start]').click();
+   const response=await page.goto(base+'/'+item.file+'?noga=1'+(historical?'&legacyFixture='+LEGACY_SCIENCE_FIXTURE.id:''));
+   if(historical)assert.equal(response.headers()['x-bhcs-historical-fixture'],LEGACY_SCIENCE_FIXTURE.id,'historical scenario must load the pinned fixture');
+   await page.locator('[data-start]').click();
    if(item.id==='microscope'){
     assert.ok((await page.locator('#guide-box .guide-skip').boundingBox()).height>=44,'microscope intro skip target is touch-sized');
     const cards=page.locator('.researcher-taskbar .mission');assert.equal(await cards.count(),4,'all microscope task cards survive enhancement');

@@ -1,9 +1,11 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),vm=require('node:vm');
 const {JSDOM,VirtualConsole}=require('jsdom');const axe=require('axe-core');
-const root=path.resolve(__dirname,'..');const {readSciencePage}=require('./science-page.cjs');
+const root=path.resolve(__dirname,'..');const {readSciencePage,readLegacySciencePage,LEGACY_SCIENCE_FIXTURE}=require('./science-page.cjs');
 function load(file,{saved=null,blocked=false}={}){
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
- const dom=new JSDOM(readSciencePage(file),{runScripts:'dangerously',url:'https://www.bhcs.com.tw/'+file+'?noga=1',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){w.print=()=>{};w.confirm=()=>true;if(saved)Object.entries(saved).forEach(([k,v])=>w.localStorage.setItem(k,v));if(blocked)Object.defineProperty(w,'localStorage',{get(){throw new Error('Storage blocked')}})}});
+ // The replaced reaction page remains an explicit historical shared-shell regression.
+ const html=file===LEGACY_SCIENCE_FIXTURE.publicPath?readLegacySciencePage(file):readSciencePage(file);
+ const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://www.bhcs.com.tw/'+file+'?noga=1',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){w.print=()=>{};w.confirm=()=>true;if(saved)Object.entries(saved).forEach(([k,v])=>w.localStorage.setItem(k,v));if(blocked)Object.defineProperty(w,'localStorage',{get(){throw new Error('Storage blocked')}})}});
  return {dom,errors};
 }
 function structural(d,file){
@@ -61,7 +63,7 @@ function structural(d,file){
   for(const option of [{saved:{['bhcs-science-v2-'+conf.id]:saved}},{saved:{['bhcs-science-v2-'+conf.id]:'{broken'}},{saved:{['bhcs-science-v2-'+conf.id]:JSON.stringify([{conditions:'<img src=x onerror=alert(1)>',result:'safe',prediction:'safe',explanation:'safe'}])}},{blocked:true}]){
    const {dom:other,errors:otherErrors}=load(file,option),od=other.window.document;if(!conf.noPrediction)od.getElementById('prediction').value=conf.choices[0][0];od.getElementById('run').click();assert.equal(od.getElementById('add-record').disabled,false);assert.equal(od.getElementById('records').querySelectorAll('img').length,0);assert.deepEqual(otherErrors,[]);other.window.close();
   }
-  console.log('PASS',conf.id,'core flow, tasks, quiz, storage, a11y');
+  console.log('PASS',conf.id,file===LEGACY_SCIENCE_FIXTURE.publicPath?'HISTORICAL FIXTURE '+LEGACY_SCIENCE_FIXTURE.sourceCommit:'current page','core flow, tasks, quiz, storage, a11y');
  }
  const {dom,errors}=load('tools/science/index.html'),d=dom.window.document;structural(d,'tools/science/index.html');
  const declaredResources=JSON.parse(d.querySelector('script[type="application/ld+json"]').textContent).hasPart;

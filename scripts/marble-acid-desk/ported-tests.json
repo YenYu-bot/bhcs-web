@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "source_commit": "071894387020793ca010ff99ad361c7d6ed9396f",
+  "description": "The 43 marble tests exercise the integrated live course at the original public URL. The 84 legacy tests exercise only the preserved historical fixture, not the marble course or old public station. Fixture files are test-only and never copied to tools/. Original test assertions are retained byte-for-byte after reversing import/dependency adaptations.",
+  "groups": [
+    {
+      "scope": "integrated-marble-course",
+      "test_files": 4,
+      "test_count": 43
+    },
+    {
+      "scope": "historical-fixture-only",
+      "test_files": 4,
+      "fixture_files": 8,
+      "test_count": 84
+    }
+  ],
+  "total_tests": 127,
+  "files": [
+    {
+      "path": "core.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 29,
+      "source_bytes": 10650,
+      "source_sha256": "ba6cdde4b35ad00956c0497a58f623ae47ac31eb3fd1d165fe984adca228f235",
+      "ported_bytes": 10650,
+      "ported_sha256": "ba6cdde4b35ad00956c0497a58f623ae47ac31eb3fd1d165fe984adca228f235",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/app.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 26604,
+      "source_sha256": "a38a6d09cea5238737dd8633493e7097d071dee8b01f6b37c579cfbe1ecc3040",
+      "ported_bytes": 26604,
+      "ported_sha256": "a38a6d09cea5238737dd8633493e7097d071dee8b01f6b37c579cfbe1ecc3040",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/clock.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 2580,
+      "source_sha256": "f80826da027e039403dca60b2a77246f9632f3b77e6c59b3b5ad198877c814e2",
+      "ported_bytes": 2580,
+      "ported_sha256": "f80826da027e039403dca60b2a77246f9632f3b77e6c59b3b5ad198877c814e2",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/engine.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 10010,
+      "source_sha256": "59250ddf766586bc18df74d484db2998b8beee57114e7779e0112bd16ba5f165",
+      "ported_bytes": 10010,
+      "ported_sha256": "59250ddf766586bc18df74d484db2998b8beee57114e7779e0112bd16ba5f165",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/index.html",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 13887,
+      "source_sha256": "4d4a94deded83e939cbf95b8a572f3b5b4d6e359a95f3716219e1b63b2c45337",
+      "ported_bytes": 13887,
+      "ported_sha256": "4d4a94deded83e939cbf95b8a572f3b5b4d6e359a95f3716219e1b63b2c45337",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/model.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 2149,
+      "source_sha256": "8b4f6932ba3badce13d5c688bacc065c50f21d75c01d81f02f816e0323036bbe",
+      "ported_bytes": 2149,
+      "ported_sha256": "8b4f6932ba3badce13d5c688bacc065c50f21d75c01d81f02f816e0323036bbe",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/scene.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 10035,
+      "source_sha256": "e3734fe8a87cf25103dc53c62290b53a806d2fd4891ab053e23ee1347d603be6",
+      "ported_bytes": 10035,
+      "ported_sha256": "e3734fe8a87cf25103dc53c62290b53a806d2fd4891ab053e23ee1347d603be6",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/storage.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 9256,
+      "source_sha256": "d34928e085b70da549291aebc8fd7c8170358e8fe2a8439a93b01d4835b14aa9",
+      "ported_bytes": 9256,
+      "ported_sha256": "d34928e085b70da549291aebc8fd7c8170358e8fe2a8439a93b01d4835b14aa9",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "legacy-fixture/style.css",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 36919,
+      "source_sha256": "0f479323f3fe184eaa7991ec25b5f21951c6848ef73f76a61e3feaeacd3dd010",
+      "ported_bytes": 36919,
+      "ported_sha256": "0f479323f3fe184eaa7991ec25b5f21951c6848ef73f76a61e3feaeacd3dd010",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "marble-core.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 12,
+      "source_bytes": 6665,
+      "source_sha256": "5f048417f392a67a40277f3bcceaa0132c4023204123e8f344c212ffc13f65f5",
+      "ported_bytes": 6727,
+      "ported_sha256": "68e1c6dd5a47f494b7b72604ee0dc04ce2f8e50a7327944bc729d20ea3c673e6",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/science/reaction-rate-desk/",
+          "count": 2,
+          "reason": "Use the integrated module directory from the repository test directory."
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "marble-scene.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 6,
+      "source_bytes": 6329,
+      "source_sha256": "f171b271429b109080179fe877f8a465e11b54ed44a2cd7c12a00bff1401e8d1",
+      "ported_bytes": 6391,
+      "ported_sha256": "f894ecd18f47cdd3ee9204f51bc1108aed2fd9ea91c77d38d170f3ae5c0f3389",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/science/reaction-rate-desk/",
+          "count": 2,
+          "reason": "Use the integrated module directory from the repository test directory."
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "marble-storage.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 19,
+      "source_bytes": 12060,
+      "source_sha256": "4c78f934952414e3fdd7e8d0a9f36f3f6f18605b9aedbb4e595936a6cf147608",
+      "ported_bytes": 12122,
+      "ported_sha256": "d5afd56d457537487fcd8d3a11e966be8213175e969099750ec6073bda24cc97",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/science/reaction-rate-desk/",
+          "count": 2,
+          "reason": "Use the integrated module directory from the repository test directory."
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "marble-ui.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 6,
+      "source_bytes": 8253,
+      "source_sha256": "e71626a32070a7b4b3a438fd17783916a510fec493a282c22ada8f5593ca9e4e",
+      "ported_bytes": 8172,
+      "ported_sha256": "7b4711084e220903ef3def414e3bdc9d98c0559eb0a7326824779152ae47a6e9",
+      "replacements": [
+        {
+          "from": "../dist/",
+          "to": "../../tools/science/reaction-rate-desk/",
+          "count": 1,
+          "reason": "Use the integrated module directory from the repository test directory."
+        },
+        {
+          "from": "new URL('index.html',root)",
+          "to": "new URL('../reaction-rate.html',root)",
+          "count": 1,
+          "reason": "Load the live replacement entry at the original public URL; module imports remain relative to their dedicated module directory."
+        },
+        {
+          "from": "const req=createRequire(import.meta.url);let JSDOM;try{({JSDOM}=req('jsdom'));}catch{({JSDOM}=req('/workspace/scratch/b8c077f34fc1/bhcs-remediation-enzyme/work/scripts/node_modules/jsdom'));}",
+          "to": "const req=createRequire(import.meta.url);const {JSDOM}=req('jsdom');",
+          "count": 1,
+          "reason": "Resolve the pinned scripts devDependency; remove the source machine-specific fallback. This removed literal is provenance only, never an executable import."
+        }
+      ],
+      "inverse_exact": true
+    },
+    {
+      "path": "scene.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 13,
+      "source_bytes": 8571,
+      "source_sha256": "2bca5bc45cd7c451c745c1cf79fbb2bfeff5bf3c11c5e39d3579a20eefbccf2a",
+      "ported_bytes": 8571,
+      "ported_sha256": "2bca5bc45cd7c451c745c1cf79fbb2bfeff5bf3c11c5e39d3579a20eefbccf2a",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "storage.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 16,
+      "source_bytes": 9641,
+      "source_sha256": "5d831b0bb9651c5c177597d7f8af06f6dadd05d54b838ba7b28b2521ae9a1904",
+      "ported_bytes": 9641,
+      "ported_sha256": "5d831b0bb9651c5c177597d7f8af06f6dadd05d54b838ba7b28b2521ae9a1904",
+      "replacements": [],
+      "inverse_exact": true
+    },
+    {
+      "path": "ui.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 26,
+      "source_bytes": 23949,
+      "source_sha256": "7bb5f9bbed690b41f03f64dcd492a857830f47ab560dc8419f9e47dc8a8676ae",
+      "ported_bytes": 23826,
+      "ported_sha256": "c754e699ec61541018e63e1363f2ad260f822d790989c07a4ce8ebc99222e0bf",
+      "replacements": [
+        {
+          "from": "const req=createRequire(import.meta.url);let JSDOM;try{({JSDOM}=req('jsdom'));}catch{({JSDOM}=req('/workspace/scratch/b8c077f34fc1/bhcs-remediation-enzyme/work/scripts/node_modules/jsdom'));}",
+          "to": "const req=createRequire(import.meta.url);const {JSDOM}=req('jsdom');",
+          "count": 1,
+          "reason": "Resolve the pinned scripts devDependency; remove the source machine-specific fallback. This removed literal is provenance only, never an executable import."
+        }
+      ],
+      "inverse_exact": true
+    }
+  ]
+}

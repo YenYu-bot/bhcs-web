@@ -1,0 +1,9 @@
+{
+  "id": "reaction-rate-77adcbba",
+  "scope": "historical shared researcher UI, not the current public product",
+  "sourceCommit": "77adcbba9a7473477c0b04c2f5a64bf9b94fa552",
+  "publicPath": "tools/science/reaction-rate.html",
+  "fixturePath": "scripts/marble-acid-desk/legacy-public-reaction-rate.html",
+  "sourceBlob": "59885a1364806e808c2a008c1b28dab368c49397",
+  "sha256": "a80004be88a6d244fe1afb7338751070fc9168bf80a8241b3ce7424f8b9f9a76"
+}

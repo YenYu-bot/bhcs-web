@@ -181,6 +181,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs
+      - name: Check marble acid native input, gas evidence and storage boundaries
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: xvfb-run -a node scripts/check_marble_acid_desk_browser.cjs
       - name: Check all station operations, records, and challenges
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -245,6 +249,13 @@ jobs:
         with:
           name: motion-graphs-desk-review
           path: motion-graphs-desk-artifacts/
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: marble-acid-desk-review
+          path: marble-acid-desk-artifacts/
           retention-days: 14
 
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）

@@ -1,0 +1,309 @@
+{
+  "schema_version": 1,
+  "source_commit": "071894387020793ca010ff99ad361c7d6ed9396f",
+  "baseline_commit": "77adcbba9a7473477c0b04c2f5a64bf9b94fa552",
+  "current_integration_base": "98a61df53396ddca2c7bf8ba401a8fd5450a9cd0",
+  "integration_base_provenance": {
+    "original_integration_base": "77adcbba9a7473477c0b04c2f5a64bf9b94fa552",
+    "current_integration_base": "98a61df53396ddca2c7bf8ba401a8fd5450a9cd0",
+    "reason": "Preserve the authorized Grade 6 figure updates merged to main in PR #207 and then PR #208 while retaining the original marble integration and historical fixture baseline.",
+    "runtime_changes": [
+      {
+        "path": "tools/math/g6-drills.html",
+        "original_blob": "f7674e06e08eea460bf0b654754b26c1770540ae",
+        "current_blob": "e5068cc199e630d53483bbb6e71b2ec60fee1663"
+      }
+    ],
+    "main_updates": [
+      {
+        "pull_request": 207,
+        "from_commit": "77adcbba9a7473477c0b04c2f5a64bf9b94fa552",
+        "to_commit": "57080d3d7568b452c6dfed3226051d5206464588",
+        "path": "tools/math/g6-drills.html",
+        "from_blob": "f7674e06e08eea460bf0b654754b26c1770540ae",
+        "to_blob": "c26673281b3d5c07b4bb04b11b580baf24fb433f"
+      },
+      {
+        "pull_request": 208,
+        "from_commit": "57080d3d7568b452c6dfed3226051d5206464588",
+        "to_commit": "98a61df53396ddca2c7bf8ba401a8fd5450a9cd0",
+        "path": "tools/math/g6-drills.html",
+        "from_blob": "c26673281b3d5c07b4bb04b11b580baf24fb433f",
+        "to_blob": "e5068cc199e630d53483bbb6e71b2ec60fee1663"
+      }
+    ]
+  },
+  "integration_mode": "replace-existing-public-url",
+  "public_entry": "tools/science/reaction-rate.html",
+  "module_directory": "tools/science/reaction-rate-desk",
+  "canonical": "https://www.bhcs.com.tw/tools/science/reaction-rate.html",
+  "source_runtime_file_count": 17,
+  "files": [
+    {
+      "path": "app.mjs",
+      "integrated_path": "tools/science/reaction-rate-desk/app.mjs",
+      "bytes": 24392,
+      "sha256": "ce9bbdc037186a240f3a130d41f654dc6c340fe9e5db444d4d9f237951ea64fa"
+    },
+    {
+      "path": "assets/lab-room.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/lab-room.png",
+      "bytes": 1136740,
+      "sha256": "668301e8733e21ac2e4e50bf6de2a33c09536d242ee683519ddf0cb06ca5eb22"
+    },
+    {
+      "path": "assets/material-granule.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/material-granule.png",
+      "bytes": 256558,
+      "sha256": "8f5fe334195dc09a3103facbf8e0df0ad3748e27364dd3a940e704acb54080e7"
+    },
+    {
+      "path": "assets/material-lump.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/material-lump.png",
+      "bytes": 284656,
+      "sha256": "f33efc91b0206cc8761d600a277d41e8172e7a879a2491eaaba96a3a63051776"
+    },
+    {
+      "path": "assets/material-powder.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/material-powder.png",
+      "bytes": 245277,
+      "sha256": "d55fd253a5215eac73d8dfbaf7f84862e8b4ebb09d3b8127c45ef7d707a28a99"
+    },
+    {
+      "path": "assets/reagent-bottle.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/reagent-bottle.png",
+      "bytes": 496726,
+      "sha256": "7071430d108fba5d7fc44ae39f79eee97c06e8d5954854c803f30e087d2e55be"
+    },
+    {
+      "path": "assets/teacher-body-v3.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/teacher-body-v3.png",
+      "bytes": 941293,
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b"
+    },
+    {
+      "path": "assets/teacher-body-v3.provenance.json",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/teacher-body-v3.provenance.json",
+      "bytes": 335,
+      "sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9"
+    },
+    {
+      "path": "assets/teacher-concept.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/teacher-concept.png",
+      "bytes": 2321859,
+      "sha256": "362e9c6852ec397f73c1d95f1c4efa17ec93dc9d0584640fdb76fd25d429c3df"
+    },
+    {
+      "path": "assets/wood-table.png",
+      "integrated_path": "tools/science/reaction-rate-desk/assets/wood-table.png",
+      "bytes": 359693,
+      "sha256": "890a533828d0d0cee223b66f403e22f2a0f613687b648a0f3da58127274182d8"
+    },
+    {
+      "path": "clock.mjs",
+      "integrated_path": "tools/science/reaction-rate-desk/clock.mjs",
+      "bytes": 2580,
+      "sha256": "f80826da027e039403dca60b2a77246f9632f3b77e6c59b3b5ad198877c814e2"
+    },
+    {
+      "path": "engine.mjs",
+      "integrated_path": "tools/science/reaction-rate-desk/engine.mjs",
+      "bytes": 10049,
+      "sha256": "77a456dc1f4020fffbe72b5857626914b84ecafb557ef51774f4e23d84b22ed5"
+    },
+    {
+      "path": "index.html",
+      "integrated_path": "tools/science/reaction-rate.html",
+      "bytes": 13468,
+      "sha256": "436236269f8946421a2a8c8ec924a0a4b9ab47e17d7d0f4463d1f9ee58790d31"
+    },
+    {
+      "path": "model.mjs",
+      "integrated_path": "tools/science/reaction-rate-desk/model.mjs",
+      "bytes": 2255,
+      "sha256": "308352655046dba028665b15ec5f65cde56726074313c73ee26a3a75f6d364de"
+    },
+    {
+      "path": "scene.mjs",
+      "integrated_path": "tools/science/reaction-rate-desk/scene.mjs",
+      "bytes": 9504,
+      "sha256": "766231ce732c17fb7e993ba984a993e0da99fa1440834be4bf8a027989a18683"
+    },
+    {
+      "path": "storage.mjs",
+      "integrated_path": "tools/science/reaction-rate-desk/storage.mjs",
+      "bytes": 9252,
+      "sha256": "1d5e243566e8569f5077e312a44430848f526a0737be3adf91abaa9811d32f36"
+    },
+    {
+      "path": "style.css",
+      "integrated_path": "tools/science/reaction-rate-desk/style.css",
+      "bytes": 37576,
+      "sha256": "cf5b1c28f0bb7b5b539a3834fb3e19bdea05a11523490b80a90a1c65e4d72228"
+    }
+  ],
+  "unused_source_files_retained": [
+    "assets/teacher-body-v3.png",
+    "assets/teacher-body-v3.provenance.json"
+  ],
+  "source_tests": [
+    {
+      "path": "core.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 29,
+      "source_bytes": 10650,
+      "source_sha256": "ba6cdde4b35ad00956c0497a58f623ae47ac31eb3fd1d165fe984adca228f235"
+    },
+    {
+      "path": "legacy-fixture/app.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 26604,
+      "source_sha256": "a38a6d09cea5238737dd8633493e7097d071dee8b01f6b37c579cfbe1ecc3040"
+    },
+    {
+      "path": "legacy-fixture/clock.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 2580,
+      "source_sha256": "f80826da027e039403dca60b2a77246f9632f3b77e6c59b3b5ad198877c814e2"
+    },
+    {
+      "path": "legacy-fixture/engine.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 10010,
+      "source_sha256": "59250ddf766586bc18df74d484db2998b8beee57114e7779e0112bd16ba5f165"
+    },
+    {
+      "path": "legacy-fixture/index.html",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 13887,
+      "source_sha256": "4d4a94deded83e939cbf95b8a572f3b5b4d6e359a95f3716219e1b63b2c45337"
+    },
+    {
+      "path": "legacy-fixture/model.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 2149,
+      "source_sha256": "8b4f6932ba3badce13d5c688bacc065c50f21d75c01d81f02f816e0323036bbe"
+    },
+    {
+      "path": "legacy-fixture/scene.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 10035,
+      "source_sha256": "e3734fe8a87cf25103dc53c62290b53a806d2fd4891ab053e23ee1347d603be6"
+    },
+    {
+      "path": "legacy-fixture/storage.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 9256,
+      "source_sha256": "d34928e085b70da549291aebc8fd7c8170358e8fe2a8439a93b01d4835b14aa9"
+    },
+    {
+      "path": "legacy-fixture/style.css",
+      "scope": "historical-fixture-only",
+      "test_count": 0,
+      "source_bytes": 36919,
+      "source_sha256": "0f479323f3fe184eaa7991ec25b5f21951c6848ef73f76a61e3feaeacd3dd010"
+    },
+    {
+      "path": "marble-core.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 12,
+      "source_bytes": 6665,
+      "source_sha256": "5f048417f392a67a40277f3bcceaa0132c4023204123e8f344c212ffc13f65f5"
+    },
+    {
+      "path": "marble-scene.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 6,
+      "source_bytes": 6329,
+      "source_sha256": "f171b271429b109080179fe877f8a465e11b54ed44a2cd7c12a00bff1401e8d1"
+    },
+    {
+      "path": "marble-storage.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 19,
+      "source_bytes": 12060,
+      "source_sha256": "4c78f934952414e3fdd7e8d0a9f36f3f6f18605b9aedbb4e595936a6cf147608"
+    },
+    {
+      "path": "marble-ui.test.mjs",
+      "scope": "integrated-marble-course",
+      "test_count": 6,
+      "source_bytes": 8253,
+      "source_sha256": "e71626a32070a7b4b3a438fd17783916a510fec493a282c22ada8f5593ca9e4e"
+    },
+    {
+      "path": "scene.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 13,
+      "source_bytes": 8571,
+      "source_sha256": "2bca5bc45cd7c451c745c1cf79fbb2bfeff5bf3c11c5e39d3579a20eefbccf2a"
+    },
+    {
+      "path": "storage.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 16,
+      "source_bytes": 9641,
+      "source_sha256": "5d831b0bb9651c5c177597d7f8af06f6dadd05d54b838ba7b28b2521ae9a1904"
+    },
+    {
+      "path": "ui.test.mjs",
+      "scope": "historical-fixture-only",
+      "test_count": 26,
+      "source_bytes": 23949,
+      "source_sha256": "7bb5f9bbed690b41f03f64dcd492a857830f47ab560dc8419f9e47dc8a8676ae"
+    }
+  ],
+  "ported_tests": {
+    "path": "scripts/marble-acid-desk/ported-tests.json",
+    "bytes": 9587,
+    "sha256": "6b3a6e5a0d9f356a35d4f29fc1d62f81ef551af822dae702155050f112238f11"
+  },
+  "accepted_entry": {
+    "path": "scripts/marble-acid-desk/accepted-index.html",
+    "bytes": 13468,
+    "sha256": "436236269f8946421a2a8c8ec924a0a4b9ab47e17d7d0f4463d1f9ee58790d31"
+  },
+  "entry_replacements": {
+    "path": "scripts/marble-acid-desk/entry-replacements.json",
+    "bytes": 2955,
+    "sha256": "e7a042780482f2c488a344c2bff6dff1e23268d4a8e9d7b3021fcdd5789cf927"
+  },
+  "builder": {
+    "path": "scripts/build_marble_replacement.mjs",
+    "bytes": 2476,
+    "sha256": "ab92ec40ddc1e746fae6f5d32b60e8ba8d99bfded5db4cee9bee4876cf5bc653"
+  },
+  "integration_files": [
+    {
+      "path": "tools/science/reaction-rate-desk/public-legacy-export.mjs",
+      "bytes": 2268,
+      "sha256": "5ba7ad0d246eafdf8b5998552561b966521dc4ad6c0286a1aba3eff2c64c0043"
+    }
+  ],
+  "protected_baseline": {
+    "inventory_source": "git ls-tree -r current_integration_base -- tools assets",
+    "total_blobs": 682,
+    "exact_unchanged_blobs": 680,
+    "generated_index_exception": "tools/science/index.html",
+    "authorized_replacement": "tools/science/reaction-rate.html",
+    "original_entry_blob": "59885a1364806e808c2a008c1b28dab368c49397",
+    "note": "Existing paths are read from Git at test time rather than publishing an inventory of unpublished stations. Every other tools/ and assets/ blob must exactly match current_integration_base; baseline_commit remains the original source for the historical public-entry fixture and approval-chain checks."
+  },
+  "directory_variant": {
+    "path": "assets/researcher-marble-directory.js",
+    "bytes": 49081,
+    "sha256": "422929b3d43bd64935ad9fa1591a1f73c6b981c3dc4ba1bf72f320715d419b84",
+    "source_path": "assets/researcher-lab.js",
+    "source_sha256": "f6def1b80e6dde6eb4022747f95b7b6f3c0915d61dfcd39e5efe4f6bd9588f59",
+    "before": "一次只改濃度、溫度、顆粒大小或催化劑，比較反應快慢和最後的產物量。",
+    "after": "固定大理石總質量與過量稀鹽酸，只改粒徑，觀察氣泡並用二氧化碳體積曲線比較速率與總量。",
+    "count": 1
+  }
+}
