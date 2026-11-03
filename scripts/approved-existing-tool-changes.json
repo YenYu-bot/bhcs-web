@@ -918,6 +918,13 @@
       "approved_blob": "c26673281b3d5c07b4bb04b11b580baf24fb433f",
       "reason": "Grade 6 規律: 圖形排列 questions show the first three figures (sticks, square and long tables): g6-drills.html",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "c26673281b3d5c07b4bb04b11b580baf24fb433f",
+      "approved_blob": "e5068cc199e630d53483bbb6e71b2ec60fee1663",
+      "reason": "Grade 6 規律: table questions vary the table kind (square, long by short or long side), scene and question (count, how many tables, apart vs joined): g6-drills.html",
+      "pull_request": null
     }
   ]
 }
