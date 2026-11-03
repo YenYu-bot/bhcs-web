@@ -925,6 +925,13 @@
       "approved_blob": "e5068cc199e630d53483bbb6e71b2ec60fee1663",
       "reason": "Grade 6 規律: table questions vary the table kind (square, long by short or long side), scene and question (count, how many tables, apart vs joined): g6-drills.html",
       "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate.html",
+      "baseline_blob": "59885a1364806e808c2a008c1b28dab368c49397",
+      "approved_blob": "400719f943203118c1c405cee062662ba4ddd902",
+      "reason": "User requested direct replacement of the old reaction-rate URL on 2026-11-03: accepted marble/HCl lesson with read-only original-data backup; all unrelated stations unchanged.",
+      "pull_request": null
     }
   ]
 }

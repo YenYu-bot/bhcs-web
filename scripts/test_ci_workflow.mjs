@@ -178,4 +178,15 @@ test('motion graphs native gate retains all station checks and mandatory artifac
  assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:motion-graphs-desk'));
 });
 
+
+
+// Marble is additive within the existing required station job.
+test('marble native browser is required with inherited Chromium and Xvfb, artifacts always retained', () => {
+  const t=jobs['science-stations'].text;
+  assert.equal(count(t,'run: xvfb-run -a node scripts/check_marble_acid_desk_browser.cjs'),1);
+  assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: xvfb-run -a node scripts\/check_marble_acid_desk_browser\.cjs/);
+  assert.ok(t.includes('name: marble-acid-desk-review\n          path: marble-acid-desk-artifacts/\n          retention-days: 14'));
+  assert.ok(!t.includes('continue-on-error: true'));
+});
+
 console.log(`ci workflow: ${tests} tests passed`);
