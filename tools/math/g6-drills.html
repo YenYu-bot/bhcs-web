@@ -93,6 +93,8 @@ svg [fill="#afc1bc" i]{fill:#C9D2DE}
 svg [stroke="#afc1bc" i]{stroke:#C9D2DE}
 svg [fill="#7C879B" i]{fill:#43516B}
 svg [stroke="#7C879B" i]{stroke:#43516B}
+svg [fill="#F2F4F7" i]{fill:#FCFCFA}
+svg [stroke="#F2F4F7" i]{stroke:#FCFCFA}
 
 html,body{background-color:var(--bhcs-bg)}
 button,input,select,.topic-logo,.logo,.total,.badge{border-radius:6px}
@@ -798,15 +800,44 @@ function patternConfig(){
   const n=rand(6,20),start=d*n+rand(5,30),t=i=>start-(i-1)*d,x=t(n);if(x<=0)return null;return{expr:`依規律排列：${[1,2,3,4].map(t).join("、")}、…，${x} 是第幾個數？`,answer:`第 ${n} 個`,sig:`dw:${start}:${d}:${n}`,verify:()=>(start-x)/d+1===n}});
  // ② 圖形排列
  const SH=[["正方形",3],["三角形",2],["正五邊形",4],["正六邊形",5]];
+ // 示意圖：畫出第 1、2、3 個（不畫題目要問的那一個），讓學生數出「第 1 個幾根、每多一個加幾根」。
+ const pSvg=(w,h,body)=>`<svg class="fig" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="示意圖"><text x="${w-4}" y="${h-3}" font-size="9" fill="#7C879B" text-anchor="end">示意圖</text>${body}</svg>`;
+ const pLbl=(x,y,t)=>`<text x="${x}" y="${y}" font-size="11" fill="#43516B" text-anchor="middle" font-family="Noto Sans TC,sans-serif">${t}</text>`;
+ const pLine=(a,b)=>`<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke="#16233A" stroke-width="2.2" stroke-linecap="round"/>`;
+ // 一排 k 個圖形的邊（相鄰共用一邊），每條邊畫一根；回傳 [線段, 寬度]
+ function shapeRow(name,k,x0,base){
+  const s=18,segs=[],add=(a,b)=>segs.push([[x0+a[0],base+a[1]],[x0+b[0],base+b[1]]]);
+  if(name==="正方形"){for(let i=0;i<=k;i++)add([i*s,-s],[i*s,0]);for(let i=0;i<k;i++){add([i*s,-s],[(i+1)*s,-s]);add([i*s,0],[(i+1)*s,0]);}return[segs,k*s];}
+  if(name==="三角形"){const h=s*0.87;for(let i=0;i<k;i++){const up=i%2===0,x=i*s/2;if(up){add([x,0],[x+s/2,-h]);add([x,0],[x+s,0]);if(i===k-1)add([x+s/2,-h],[x+s,0]);}else{add([x,-h],[x+s/2,0]);add([x,-h],[x+s,-h]);if(i===k-1)add([x+s/2,0],[x+s,-h]);}}return[segs,(k+1)*s/2];}
+  if(name==="正五邊形"){/* 房子形：下、左右、兩條屋頂；相鄰共用直邊 */const r=s*0.55;for(let i=0;i<=k;i++)add([i*s,-s],[i*s,0]);for(let i=0;i<k;i++){add([i*s,0],[(i+1)*s,0]);add([i*s,-s],[i*s+s/2,-s-r]);add([i*s+s/2,-s-r],[(i+1)*s,-s]);}return[segs,k*s];}
+  /* 正六邊形：尖頂朝上，相鄰共用直邊 */const w=s,hh=s*0.58;for(let i=0;i<=k;i++)add([i*w,-hh-hh/2],[i*w,-hh/2]);for(let i=0;i<k;i++){const x=i*w;add([x,-hh-hh/2],[x+w/2,-2*hh]);add([x+w/2,-2*hh],[x+w,-hh-hh/2]);add([x,-hh/2],[x+w/2,0]);add([x+w/2,0],[x+w,-hh/2]);}return[segs,k*w];
+ }
+ function sticksFig(name){
+  let x=12,body="";const base=name==="正六邊形"?44:name==="正五邊形"?44:38;
+  for(let k=1;k<=3;k++){const [segs,w]=shapeRow(name,k,x,base);body+=segs.map(([a,b])=>pLine(a,b)).join("")+pLbl(x+w/2,base+16,`第 ${k} 個`);x+=w+26;}
+  return pSvg(x,base+28,body);
+ }
+ // 方桌（每邊 1 人）或長桌（長邊 side 人、短邊 1 人）併成一排：第 1、2、3 種情形
+ function tablesFig(side=1){
+  const u=18,tw=u*side,th=u,seat=(cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="4.2" fill="#F2F4F7" stroke="#43516B" stroke-width="1.4"/>`;
+  let x=16,body="";const y=22;
+  for(let k=1;k<=3;k++){
+   for(let i=0;i<k;i++)body+=`<rect x="${x+i*tw}" y="${y}" width="${tw}" height="${th}" fill="#F2F4F7" stroke="#16233A" stroke-width="1.8"/>`;
+   for(let i=0;i<k*side;i++){const cx=x+u/2+i*u;body+=seat(cx,y-8)+seat(cx,y+th+8);}
+   body+=seat(x-8,y+th/2)+seat(x+k*tw+8,y+th/2);
+   body+=pLbl(x+k*tw/2,y+th+30,`${k} 張`);x+=k*tw+34;
+  }
+  return pSvg(x,y+th+40,body);
+ }
  const sticks=unit("sticks","圖形排列","先看第 1 個用幾根，之後每多一個要再加幾根：總根數＝第 1 個的根數＋（個數−1）× 每次增加的根數。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["count","tables","countB"]):L===1?pick(["count","inverse","tables","tablesInv"]):pick(["left","tablesInv","inverse","longTable"]);
   const [name,add1]=pick(L?SH:SH.slice(0,2)),first=add1+1,need=n=>first+(n-1)*add1;
-  if(kind==="count"||kind==="countB"){const n=rand(4,L?40:15);return{expr:kind==="count"?`用火柴棒排一排${name}，排 1 個要 ${first} 根，排 2 個要 ${need(2)} 根。排 ${n} 個要幾根？`:`用牙籤把${name}一個接一個排成一排，排 ${n} 個${name}共需要幾根牙籤？`,answer:`${need(n)} 根`,sig:`${kind}:${name}:${n}`,verify:()=>{let s=first;for(let i=2;i<=n;i++)s+=add1;return s===need(n)}}}
-  if(kind==="inverse"){const n=rand(6,L===2?60:30),t=need(n);return{expr:`用 ${t} 根火柴棒排成一排${name}（相鄰的${name}共用一邊），剛好用完，共排了幾個？`,answer:`${n} 個`,sig:`inv:${name}:${n}`,verify:()=>(t-first)/add1+1===n}}
-  if(kind==="tables"){const n=rand(3,L?20:12);return{expr:`方桌一張可坐 4 人，把 ${n} 張方桌併成一長排，最多可以坐幾人？`,answer:`${2*n+2} 人`,sig:`tab:${n}`,verify:()=>4+(n-1)*2===2*n+2}}
-  if(kind==="tablesInv"){const p=rand(12,60),n=Math.ceil((p-2)/2);return{expr:`方桌一張可坐 4 人，併成一長排後要讓 ${p} 人都坐得下，至少要併幾張？`,answer:`${n} 張`,sig:`tinv:${p}`,verify:()=>2*n+2>=p&&2*(n-1)+2<p}}
-  if(kind==="longTable"){const s=pick([6,8]),side=(s-2)/2,n=rand(3,15),seats=s+(n-1)*side*2;return{expr:`長桌一張可坐 ${s} 人（長邊各 ${side} 人、短邊各 1 人），把 ${n} 張長桌的短邊接起來併成一排，最多可以坐幾人？`,answer:`${seats} 人`,sig:`long:${s}:${n}`,verify:()=>seats===2*side*n+2}}
-  const t=rand(30,150),n=Math.floor((t-first)/add1)+1,left=t-need(n);if(n<2)return null;return{expr:`有 ${t} 根火柴棒，排成一排${name}（相鄰的${name}共用一邊），最多可以排幾個？還剩幾根？`,answer:`${n} 個，剩 ${left} 根`,sig:`left:${name}:${t}`,verify:()=>left>=0&&left<add1&&need(n)+left===t}});
+  if(kind==="count"||kind==="countB"){const n=rand(4,L?40:15);return{expr:sticksFig(name)+(kind==="count"?`用火柴棒排一排${name}，排 1 個要 ${first} 根，排 2 個要 ${need(2)} 根。排 ${n} 個要幾根？`:`用牙籤把${name}一個接一個排成一排，排 ${n} 個${name}共需要幾根牙籤？`),answer:`${need(n)} 根`,sig:`${kind}:${name}:${n}`,verify:()=>{let s=first;for(let i=2;i<=n;i++)s+=add1;return s===need(n)}}}
+  if(kind==="inverse"){const n=rand(6,L===2?60:30),t=need(n);return{expr:`${sticksFig(name)}用 ${t} 根火柴棒排成一排${name}（相鄰的${name}共用一邊），剛好用完，共排了幾個？`,answer:`${n} 個`,sig:`inv:${name}:${n}`,verify:()=>(t-first)/add1+1===n}}
+  if(kind==="tables"){const n=rand(3,L?20:12);return{expr:`${tablesFig()}方桌一張可坐 4 人，把 ${n} 張方桌併成一長排，最多可以坐幾人？`,answer:`${2*n+2} 人`,sig:`tab:${n}`,verify:()=>4+(n-1)*2===2*n+2}}
+  if(kind==="tablesInv"){const p=rand(12,60),n=Math.ceil((p-2)/2);return{expr:`${tablesFig()}方桌一張可坐 4 人，併成一長排後要讓 ${p} 人都坐得下，至少要併幾張？`,answer:`${n} 張`,sig:`tinv:${p}`,verify:()=>2*n+2>=p&&2*(n-1)+2<p}}
+  if(kind==="longTable"){const s=pick([6,8]),side=(s-2)/2,n=rand(3,15),seats=s+(n-1)*side*2;return{expr:`${tablesFig(side)}長桌一張可坐 ${s} 人（長邊各 ${side} 人、短邊各 1 人），把 ${n} 張長桌的短邊接起來併成一排，最多可以坐幾人？`,answer:`${seats} 人`,sig:`long:${s}:${n}`,verify:()=>seats===2*side*n+2}}
+  const t=rand(30,150),n=Math.floor((t-first)/add1)+1,left=t-need(n);if(n<2)return null;return{expr:`${sticksFig(name)}有 ${t} 根火柴棒，排成一排${name}（相鄰的${name}共用一邊），最多可以排幾個？還剩幾根？`,answer:`${n} 個，剩 ${left} 根`,sig:`left:${name}:${t}`,verify:()=>left>=0&&left<add1&&need(n)+left===t}});
  // ③ 植樹問題
  const trees=unit("trees","植樹問題","先算有幾個間隔（全長÷間隔）；兩端都種：棵數＝間隔數＋1；只種一端或圍成一圈：棵數＝間隔數；兩端都不種：棵數＝間隔數−1。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["both","one","ring","none"]):L===1?pick(["both","none","ring","lengthBack","gapBack"]):pick(["twoSides","ringBack","gapBack","lamps"]);

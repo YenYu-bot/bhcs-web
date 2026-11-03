@@ -911,6 +911,13 @@
       "approved_blob": "5077deb1541dd675a86ca49f66170c1185b4818e",
       "reason": "English second review fixes (2026-11-02): core.js",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "f7674e06e08eea460bf0b654754b26c1770540ae",
+      "approved_blob": "c26673281b3d5c07b4bb04b11b580baf24fb433f",
+      "reason": "Grade 6 規律: 圖形排列 questions show the first three figures (sticks, square and long tables): g6-drills.html",
+      "pull_request": null
     }
   ]
 }
