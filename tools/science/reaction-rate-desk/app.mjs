@@ -6,7 +6,7 @@ import {renderVessel,renderGraph} from './scene.mjs';
 const $=id=>document.getElementById(id), $$=q=>[...document.querySelectorAll(q)];
 const names={lump:'大塊',granule:'小塊',powder:'細粉'},factors={size:'大理石粒徑'};
 const fmt=n=>Number(n.toFixed(2)).toLocaleString('zh-TW',{maximumFractionDigits:2});
-let engine=new Engine(),settings={...BASELINE},mode='guided',selectedMaterial=null,assisted=false,playback=null,playbackRole=null,playbackMode='guided',method='play',replay=false,endsShown=false,savePromise=Promise.resolve(),driver,lastSaved='',pendingChange=null,changeLauncher=null,resetLauncher=null,drag=null,loading=true,suppressMaterialClick=false,nextSample=null;
+let engine=new Engine(),settings={...BASELINE},mode='guided',selectedMaterial=null,assisted=false,playback=null,playbackRole=null,playbackMode='guided',method='play',replay=false,endsShown=false,savePromise=Promise.resolve(),driver,lastSaved='',pendingChange=null,changeLauncher=null,resetLauncher=null,drag=null,loading=true,suppressMaterialClick=null,nextSample=null;
 const clock=new Clock({onTick:t=>{if(playback&&!replay&&engine.active&&!engine.active.sealed)engine.observe(t,method);renderMotion();},onStop:(why)=>{if(why==='checkpoint')say(playbackRole==='baseline'?'基準停在20模型秒。看看注射筒，再繼續；不必先回答。':'兩組一起停在20模型秒。比較注射筒，再繼續；不必先回答。');if(why==='hidden'||why==='blur')say('已暫停。回來後由你決定何時繼續，不補算離開的時間。');renderMotion();}});
 function say(text){$('run-status').textContent=text;}
 function conditions(s){return `${names[s.size]}大理石 0.20 g · 稀鹽酸 50 mL / 1.0 M · 25°C`;}
@@ -58,13 +58,52 @@ function closeReset(){$('reset-dialog').close();resetLauncher?.focus({preventScr
 $('desk-action').onclick=()=>{const action=$('desk-action').dataset.action;if(action==='seal')$('seal').click();else if(action==='pause')$('pause').click();else if(action==='prepare'){resetPlayback();say('點材料架上的一份材料，直接準備 B；再按開始比較。');document.querySelector('[data-size=granule]').focus({preventScroll:true});}else begin();};
 $('begin').onclick=begin;$('pause').onclick=()=>{clock.pause();say('已暫停，大理石與氣體體積保留在這一刻。');renderMotion();};$('step').onclick=()=>{method='step';clock.step(5);};$('finish').onclick=()=>{method='jump';clock.finish();say('已直接查看模型終點。此卡將註明含跳至終點觀察。');};$('speed').onchange=e=>{clock.setSpeed(+e.target.value);renderMotion();};$('stop20').onchange=e=>{clock.pauseAt20=e.target.checked;};
 $('seal').onclick=()=>safe(()=>{const r=engine.seal();clock.pause('sealed',false);if(classify(r.settings).baseline){const prepared=nextSample;nextSample=null;resetPlayback();settings={...(prepared?.settings||BASELINE)};assisted=prepared?.assisted||false;renderSettings();}say(classify(r.settings).baseline?'基準已留下。現在換一份B樣本，由你選第一個改法。':'B比較已留下；不用等A播完，就能看兩張卡。');renderMotion();renderAllEvidence();persist();});
-$$('[data-size]').forEach(b=>{b.onclick=()=>{if(suppressMaterialClick){suppressMaterialClick=false;return;}requestChange(()=>{settings={...settings,size:b.dataset.size};selectedMaterial=null;assisted=false;},b);};b.addEventListener('pointerdown',e=>{if(e.button!==0||!e.isPrimary||drag)return;drag={id:e.pointerId,size:b.dataset.size,x:e.clientX,y:e.clientY,moved:false,button:b};b.setPointerCapture(e.pointerId);});b.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>7)drag.moved=true;if(drag.moved){b.classList.add('is-dragging');const r=$('drop-zone').getBoundingClientRect();$('drop-zone').classList.toggle('drop-over',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);}});b.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;const d=drag;drag=null;if(d.moved){suppressMaterialClick=true;setTimeout(()=>{suppressMaterialClick=false;},0);}b.classList.remove('is-dragging');const over=$('drop-zone').classList.contains('drop-over');$('drop-zone').classList.remove('drop-over');if(d.moved&&over)requestChange(()=>{settings={...settings,size:d.size};selectedMaterial=null;assisted=false;},b);});for(const type of ['pointercancel','lostpointercapture'])b.addEventListener(type,()=>{if(drag?.button===b){drag=null;b.classList.remove('is-dragging');$('drop-zone').classList.remove('drop-over');}});});
+function cancelMaterialDrag(){
+ if(!drag)return;
+ // Keep the canceled gesture until its compatibility click or the next pointerdown.
+ // A timeout can expire before a delayed pointerup/click, especially on touch devices.
+ suppressMaterialClick={button:drag.button,id:drag.id};
+ drag.button.classList.remove('is-dragging');drag=null;
+ $('drop-zone').classList.remove('drop-over');
+}
+$$('[data-size]').forEach(b=>{
+ b.onclick=e=>{
+  const pointerClick=e.detail>0||!!e.pointerType;
+  if(pointerClick&&suppressMaterialClick?.button===b&&
+    (e.pointerId===undefined||e.pointerId===suppressMaterialClick.id)){
+   suppressMaterialClick=null;return;
+  }
+  requestChange(()=>{settings={...settings,size:b.dataset.size};selectedMaterial=null;assisted=false;},b);
+ };
+ b.addEventListener('pointerdown',e=>{
+  if(e.button!==0||!e.isPrimary||drag)return;
+  suppressMaterialClick=null;
+  drag={id:e.pointerId,size:b.dataset.size,x:e.clientX,y:e.clientY,moved:false,button:b};
+  b.setPointerCapture(e.pointerId);
+ });
+ b.addEventListener('pointermove',e=>{
+  if(!drag||drag.id!==e.pointerId)return;
+  if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>7)drag.moved=true;
+  if(drag.moved){b.classList.add('is-dragging');const r=$('drop-zone').getBoundingClientRect();$('drop-zone').classList.toggle('drop-over',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);}
+ });
+ b.addEventListener('pointerup',e=>{
+  if(!drag||drag.id!==e.pointerId)return;
+  const d=drag;drag=null;
+  if(d.moved)suppressMaterialClick={button:b,id:d.id};
+  b.classList.remove('is-dragging');
+  const over=$('drop-zone').classList.contains('drop-over');$('drop-zone').classList.remove('drop-over');
+  if(d.moved&&over)requestChange(()=>{settings={...settings,size:d.size};selectedMaterial=null;assisted=false;},b);
+ });
+ for(const type of ['pointercancel','lostpointercapture'])b.addEventListener(type,e=>{
+  if(drag?.button===b&&drag.id===e.pointerId)cancelMaterialDrag();
+ });
+});
 $('place-material').onclick=()=>{if(!selectedMaterial)return;const size=selectedMaterial;requestChange(()=>{settings={...settings,size};selectedMaterial=null;assisted=false;});};$('guided').onclick=()=>requestChange(()=>{mode='guided';settings={...settings};});$('free').onclick=()=>requestChange(()=>{mode='free';});$('new-baseline').onclick=()=>requestChange(()=>{settings={...BASELINE};assisted=false;});$('repeat').onclick=()=>requestChange(()=>{settings={...settings};});$('help-toggle').onclick=()=>{const open=$('help').hidden;$('help').hidden=!open;$('help-toggle').setAttribute('aria-expanded',String(open));};$('demo').onclick=()=>requestChange(()=>{settings={size:'granule'};assisted=true;say('示範協助：只把大塊換同質量小塊。仍由你開跑和判讀，卡片標示協助。');});
 $('change-cancel').onclick=()=>{pendingChange=null;$('change-dialog').close();renderSettings();changeLauncher?.focus({preventScroll:true});};$('change-confirm').onclick=()=>{const fn=pendingChange;pendingChange=null;$('change-dialog').close();if(fn){resetPlayback();fn();renderSettings();renderMotion();say('已換新樣本，舊研究卡保留。請按開始。');}changeLauncher?.focus({preventScroll:true});};$('change-dialog').addEventListener('cancel',()=>{pendingChange=null;renderSettings();queueMicrotask(()=>changeLauncher?.focus({preventScroll:true}));});
 $('evidence-time').onchange=e=>answer('evidenceTime',e.target.value?+e.target.value:null);$$('[name=faster]').forEach(e=>e.onchange=()=>answer('faster',e.value));$$('[name=final]').forEach(e=>e.onchange=()=>answer('final',e.value));$('factor').onchange=e=>answer('factor',e.target.value||null);$('direction').onchange=e=>answer('direction',e.target.value||null);document.querySelector('[name=controls]').onchange=e=>answer('controls',e.target.checked?'fixed-conditions':null);$('show-ends').onclick=()=>{endsShown=true;renderAnswers();};$$('[data-check]').forEach(b=>b.onclick=()=>safe(()=>{if(b.dataset.check==='final'&&!endsShown){$('feedback-final').textContent='先把兩張卡的終點並列，看看證據再核對。';return;}engine.check(b.dataset.check);renderAnswers();guide();persist();}));
 $('export').onclick=exportData;$('export-complete').onclick=exportData;$('reset-export').onclick=exportData;$('raw-backup').onclick=()=>{const raw=driver.backupRaw();if(raw!==null)download('反應速率原始資料備份.json',raw);};$('reset-open').onclick=e=>openReset(e.currentTarget);$('reset-complete').onclick=e=>openReset(e.currentTarget);$('reset-next').onclick=()=>{$('reset-stage1').hidden=true;$('reset-stage2').hidden=false;$('reset-ack').focus();};$('reset-ack').onchange=e=>{$('reset-confirm').disabled=!e.target.checked;};$('reset-cancel').onclick=closeReset;$('reset-dialog').addEventListener('cancel',()=>queueMicrotask(()=>resetLauncher?.focus({preventScroll:true})));$('reset-confirm').onclick=async()=>{if(!$('reset-ack').checked)return;$('reset-confirm').disabled=true;const result=await driver.clear();if(!result.ok){$('reset-error').textContent=result.message||driver.status.message||'未清除，原紀錄保留。';$('reset-confirm').disabled=false;return;}engine=new Engine();lastSaved='';nextSample=null;settings={...BASELINE};mode='guided';assisted=false;endsShown=false;resetPlayback();renderAllEvidence();$('reset-dialog').close();$('desk-action').focus({preventScroll:true});$('bench').scrollIntoView({block:'start'});say('本站已重置。先跑一份新基準。');};$('retry-save').onclick=()=>persist();$('comparison-range').onchange=()=>renderAnswers();
 document.querySelector('.research-drawer').addEventListener('toggle',e=>{if(e.currentTarget.open)renderMotion();});
-window.addEventListener('storage',e=>{if(driver?.handleExternalChange(e)){lastSaved='';renderSave();}});document.addEventListener('visibilitychange',()=>{if(document.hidden)clock.pause('hidden');});window.addEventListener('blur',()=>clock.pause('blur'));window.addEventListener('resize',()=>{if(drag){drag.button.classList.remove('is-dragging');drag=null;$('drop-zone').classList.remove('drop-over');}renderMotion();renderAnswers();});window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(drag){drag.button.classList.remove('is-dragging');drag=null;$('drop-zone').classList.remove('drop-over');}clock.pause();}});
+window.addEventListener('storage',e=>{if(driver?.handleExternalChange(e)){lastSaved='';renderSave();}});document.addEventListener('visibilitychange',()=>{if(document.hidden)clock.pause('hidden');});window.addEventListener('blur',()=>clock.pause('blur'));window.addEventListener('resize',()=>{cancelMaterialDrag();renderMotion();renderAnswers();});window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelMaterialDrag();clock.pause();}});
 let storage;try{storage=window.localStorage;}catch{storage={getItem(){throw new Error('無法讀取裝置儲存');},setItem(){throw new Error('無法寫入裝置儲存');},removeItem(){throw new Error('無法清除裝置儲存');}};}
 driver=createStorageDriver({storage,locks:navigator.locks,validate:p=>Engine.restore(p).snapshot(),onStatus:()=>{if(!loading)renderSave();}});const loaded=await driver.load();if(loaded.ok&&loaded.payload){engine=Engine.restore(loaded.payload);lastSaved=JSON.stringify(engine.snapshot());}loading=false;renderSettings();renderMotion();renderAllEvidence();if(engine.baseline())say('已恢復研究卡。選新樣本開始，或回看你留下的證據；不用重做已保存的基準。');
 

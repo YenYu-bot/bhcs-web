@@ -43,6 +43,43 @@ assert.deepEqual(walk(runtime).map(p=>path.relative(root,p)).sort(),[...m.files.
 for(const pin of [m.accepted_entry,m.entry_replacements,m.ported_tests,m.builder,m.directory_variant,...m.integration_files]){
  const b=bytes(pin.path);assert.equal(b.length,pin.bytes,pin.path);assert.equal(sha(b),pin.sha256,pin.path);
 }
+// Keep the accepted 17-file baseline immutable; only these explicitly authorized repairs may reverse to it.
+const repairRaw=read('scripts/marble-acid-desk-repair.json'),repair=JSON.parse(repairRaw);
+assert.equal(sha(repairRaw),'81fac8943c2df22a53c4c2aad955b66d6bb2bd0fdd7b2f6545723fe40d34b97b','bounded Escape/mobile-text repair manifest is pinned separately');
+assert.equal(repair.schema_version,1);assert.equal(repair.accepted_source_commit,m.source_commit);
+assert.equal(repair.accepted_runtime_manifest_sha256,sha(manifestRaw));
+assert.deepEqual(repair.files.map(f=>f.path),['app.mjs','style.css']);
+for(const delta of repair.files){
+ const source=m.files.find(f=>f.path===delta.path);assert(source);
+ assert.equal(delta.before_bytes,source.bytes);assert.equal(delta.before_sha256,source.sha256);
+ assert.notEqual(delta.after_sha256,delta.before_sha256);
+ for(const r of delta.replacements){assert.equal(r.count,1);assert(r.before.length>0);assert.notEqual(r.before,r.after);}
+}
+function reverseAuthorizedRepair(value,file){
+ const delta=repair.files.find(f=>f.path===file);if(!delta)return value;
+ assert.equal(value.length,delta.after_bytes,'repaired size '+file);assert.equal(sha(value),delta.after_sha256,'exact authorized repair '+file);
+ let original=value.toString();
+ for(const {before,after,count}of [...delta.replacements].reverse()){
+  assert.equal(occurrences(original,after),count,'unique reverse repair '+file);original=original.split(after).join(before);
+ }
+ assert.equal(Buffer.byteLength(original),delta.before_bytes);assert.equal(sha(original),delta.before_sha256,'accepted pre-repair source '+file);
+ let rebuilt=original;
+ for(const {before,after,count}of delta.replacements){assert.equal(occurrences(rebuilt,before),count,'unique forward repair '+file);rebuilt=rebuilt.split(before).join(after);}
+ assert.equal(rebuilt,value.toString(),'repair is exactly reversible in both directions '+file);
+ return Buffer.from(original);
+}
+assert.deepEqual(repair.added_tests.map(t=>[t.path,t.case_count]),[['scripts/marble-acid-desk/escape-repair.test.mjs',11],['scripts/marble-acid-desk/mobile-coach-layout.test.mjs',1]]);
+for(const pin of repair.added_tests){assert.equal(bytes(pin.path).length,pin.bytes);assert.equal(sha(bytes(pin.path)),pin.sha256,'new regression test '+pin.path);}
+const originalUITest=read('scripts/marble-acid-desk/marble-ui.test.mjs'),helperPrefix=originalUITest.slice(0,originalUITest.indexOf('\ntest('))+'\n';
+const newEscape=repair.added_tests[0],escapePrefix='// Additional authorized cancellation regression tests; the original six marble UI cases remain unchanged in marble-ui.test.mjs.\n'+helperPrefix;
+assert.equal(sha(helperPrefix),newEscape.helper_prefix_sha256);
+assert.equal(newEscape.accepted_source_sha256,m.source_tests.find(t=>t.path==='marble-ui.test.mjs').source_sha256);
+assert(read(newEscape.path).startsWith(escapePrefix));
+assert.equal(sha(read(newEscape.path).slice(escapePrefix.length)),newEscape.appended_source_sha256,'new Escape tests contain only the original helpers and appended cases');
+const newLayout=repair.added_tests[1];let layoutSource=read(newLayout.path);
+for(const {from,to,count}of [...newLayout.replacements].reverse()){assert.equal(occurrences(layoutSource,to),count);layoutSource=layoutSource.split(to).join(from);}
+assert.equal(sha(layoutSource),newLayout.source_sha256,'mobile CSS regression is a path-only port');
+assert.deepEqual(repair.original_ported_tests_unchanged,{path:m.ported_tests.path,sha256:m.ported_tests.sha256,original_test_count:127,live_course_test_count:43,historical_fixture_test_count:84});
 const replacements=JSON.parse(read(m.entry_replacements.path));assert.equal(replacements.length,13);
 let restoredEntry=entry;
 for(const {before,after} of [...replacements].reverse()){
@@ -51,7 +88,7 @@ for(const {before,after} of [...replacements].reverse()){
 }
 assert.equal(restoredEntry,read(m.accepted_entry.path),'all accepted index bytes retained beneath explicit metadata/navigation/reference/backup-control changes');
 for(const f of m.files){
- const b=f.path==='index.html'?Buffer.from(restoredEntry):bytes(f.integrated_path);
+ const b=reverseAuthorizedRepair(f.path==='index.html'?Buffer.from(restoredEntry):bytes(f.integrated_path),f.path);
  assert.equal(b.length,f.bytes,'source bytes '+f.path);assert.equal(sha(b),f.sha256,'accepted runtime '+f.path);
 }
 // The directory gets a narrowly derived script; all shared/lesson scripts stay unchanged.
@@ -229,4 +266,4 @@ try{
  }
  for(const route of ['/tools/marble-acid-desk/','/tools/science/reaction-rate-desk/','/tools/science/reaction-rate-desk/index.html'])assert.equal((await fetch(`http://127.0.0.1:${server.address().port}`+route)).status,404,'no second lesson entry');
 }finally{await new Promise(r=>server.close(r));}
-console.log('PASS marble replacement: original URL renders accepted17 files via pinned13 entry adaptations;43 live-course +84 historical-fixture tests reversibly retained;680 other tools/assets exact; unchanged60/59/41/254 discovery with one proven directory-only derivative; all HTTP bytes/MIME. Local contracts only, not production/device certification.');
+console.log('PASS marble replacement: original URL renders accepted17 files via pinned13 entry adaptations and separately reversible app/style repairs;43 live-course +84 historical-fixture tests reversibly retained;680 other tools/assets exact; unchanged60/59/41/254 discovery with one proven directory-only derivative; all HTTP bytes/MIME. Local contracts only, not production/device certification.');

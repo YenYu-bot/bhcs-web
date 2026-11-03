@@ -1,4 +1,4 @@
-const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.resolve(__dirname,'..');const {readSciencePage,readLegacySciencePage,LEGACY_SCIENCE_FIXTURE}=require('./science-page.cjs');
 const pages=[
@@ -45,6 +45,7 @@ for(const file of legacyAll){
  assert.equal(d.getElementById('prediction'),null,file+' final audit: prediction control exists');
  assert.ok(d.querySelector('link[href^="../assets/researcher-lab.css?v="]'),file+' final audit: versioned researcher css missing');
  assert.ok(d.querySelector('script[src^="../assets/researcher-lab.js?v="]'),file+' final audit: researcher js missing');
+ assert.ok(!html.includes('researcher-marble-directory.js'),file+' final audit: directory-only derivative must not load in a lesson');
  const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),file+' final audit: visible prediction wording remains');
 }
@@ -55,13 +56,19 @@ for(const id of sharedAll){
  assert.equal(d.getElementById('prediction'),null,id+' final audit: prediction control exists');
  assert.ok(d.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),id+' final audit: versioned researcher css missing');
  assert.ok(d.querySelector('script[src^="../../assets/researcher-lab.js?v="]'),id+' final audit: researcher js missing');
+ assert.ok(!html.includes('researcher-marble-directory.js'),id+' final audit: directory-only derivative must not load in a lesson');
  const visible=d.body.cloneNode(true);visible.querySelectorAll('script,style').forEach(n=>n.remove());
  assert.ok(!visible.textContent.includes('預測'),id+' final audit: visible prediction wording remains');
  assert.ok(!html.includes('預測'),id+' final audit: inactive prediction program strings remain');
 }
 const directory=fs.readFileSync(path.join(root,'tools/science/index.html'),'utf8'),dirDom=new JSDOM(directory).window.document;
 assert.ok(dirDom.querySelector('link[href^="../../assets/researcher-lab.css?v="]'),'directory final audit: versioned researcher css missing');
-assert.ok(dirDom.querySelector('script[src^="../../assets/researcher-lab.js?v="]'),'directory final audit: researcher js missing');
+// The directory alone uses the single-mission derivative verified byte-for-byte in batch 1.
+const directoryJS=fs.readFileSync(path.join(root,'assets/researcher-marble-directory.js'),'utf8');
+const directoryHash=crypto.createHash('sha256').update(directoryJS).digest('hex').slice(0,12);
+assert.equal(dirDom.querySelectorAll('script[src="../../assets/researcher-marble-directory.js?v='+directoryHash+'"]').length,1,'directory final audit: unique hash-versioned researcher derivative missing');
+assert.equal(dirDom.querySelectorAll('script[src*="researcher-marble-directory.js"]').length,1,'directory final audit: no extra derivative script versions');
+assert.equal(dirDom.querySelectorAll('script[src*="researcher-lab.js"]').length,0,'directory final audit: original and derived shells must not both execute');
 const dirVisible=dirDom.body.cloneNode(true);dirVisible.querySelectorAll('script,style').forEach(n=>n.remove());
 assert.ok(!dirVisible.textContent.includes('預測'),'directory final audit: visible prediction wording remains');
 const mini=fs.readFileSync(path.join(root,'tools/mini-lab/index.html'),'utf8');

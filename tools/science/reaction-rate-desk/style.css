@@ -24,3 +24,55 @@ body{background:#f6f0e4;background-image:radial-gradient(#d8c8aa38 .7px,transpar
 @media(max-width:700px){.lab-wall{height:65px}.stage-area{height:515px}.stage-area:before{top:210px}.bench{height:415px}.bench-main,.has-baseline .bench-main,.free-first .bench-main{top:115px;height:300px}.vessels,.vessel-card{height:300px}.vessel-card svg{height:300px!important}.vessel-heading{top:0}.vessel-heading h3{font-size:11px;padding:1px 8px}.materials,.has-baseline .materials,.free-first .materials{top:20px;height:95px}.material-list,.has-baseline .material-list,.free-first .material-list{height:78px}.material img{height:49px}.material b{font-size:10px}.catalyst img{max-height:72px}.catalyst small{font-size:9px;min-height:23px}.control-deck{min-height:132px}.model-note{font-size:10px}#run-status{font-size:12px}.desk-clock>span,.desk-clock>small{font-size:10px}}
 #vessel-a,#vessel-b{position:relative}.catalyst-note{position:absolute;right:0;top:55px;max-width:30%;padding:4px 6px;background:#fff3dce8;border:1px solid #bda276;border-radius:4px;font-size:12px;line-height:1.45;color:#655039;text-align:center}.lab-wall h2{font-size:27px;letter-spacing:3px;padding-inline:28px}.lab-wall{height:86px}@media(max-width:700px){.lab-wall{height:62px}.lab-wall h2{font-size:20px}.catalyst-note{font-size:10px;top:48px;padding:3px;max-width:28%}}
 .acid-reagent{grid-column:2;text-align:center;align-self:end;position:relative;margin-bottom:4px}.acid-visual{position:relative;width:90px;margin:0 auto}.acid-visual img{width:100%;height:170px;object-fit:contain;display:block}.acid-visual b{position:absolute;top:52%;left:18%;right:18%;font-size:12px;line-height:1.3;color:#55432b}.acid-reagent small{display:block;background:#fff2dce8;border:1px solid #b99b6d;border-radius:4px;font-size:10px;padding:4px;line-height:1.5}@media(max-width:700px){.acid-visual{width:42px}.acid-visual img{height:80px}.acid-visual b{font-size:7px}.acid-reagent small{font-size:8px;padding:2px}.acid-reagent{margin-bottom:0}}
+
+/* Let enlarged coach text grow above the fixed mobile experiment scene. */
+@media(max-width:700px){
+  .stage-area{
+    height:auto;
+    min-height:515px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:minmax(100px,auto) 415px;
+  }
+  .stage-area:before{
+    position:relative;
+    inset:auto;
+    grid-area:2 / 1;
+    margin-top:110px;
+    z-index:0;
+  }
+  .coach{
+    position:relative;
+    inset:auto;
+    grid-area:1 / 1;
+    height:auto;
+    min-height:100px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 65% 12px;
+    grid-template-rows:1fr auto;
+    row-gap:3px;
+    align-items:start;
+    padding:6px 0 2px;
+  }
+  .coach>div:not(.coach-name):not(#baseline-keepsake){
+    position:static;
+    grid-column:2;
+    grid-row:1;
+    width:auto;
+  }
+  .coach button{
+    position:static;
+    grid-column:2;
+    grid-row:2;
+    justify-self:end;
+    margin-top:0;
+  }
+  .coach img{grid-area:auto}
+  .coach #baseline-keepsake{grid-area:auto;top:100%}
+  .bench{
+    position:relative;
+    inset:auto;
+    grid-area:2 / 1;
+    height:415px;
+  }
+}
