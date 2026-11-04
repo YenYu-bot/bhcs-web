@@ -1,0 +1,4 @@
+export const INITIAL={temperature:20,water:100,solute:50};
+export const STEPS=[{temperature:20,water:100,solute:50},{temperature:60,water:100,solute:50},{temperature:20,water:100,solute:50},{temperature:20,water:120,solute:50},{temperature:20,water:200,solute:50}];
+export function calculate({temperature,water,solute}) { const solubility=20+0.5*temperature; const capacity=solubility*water/100; const dissolved=Math.min(solute,capacity); const solid=Math.max(0,solute-dissolved); const solution=water+dissolved; return {solubility,capacity,dissolved,solid,solution,total:water+solute,concentration:100*dissolved/solution,saturated:solute>=capacity-1e-9}; }
+export function isValidState(s){return !!s&&Number.isFinite(s.temperature)&&s.temperature>=0&&s.temperature<=80&&Number.isFinite(s.water)&&s.water>=50&&s.water<=300&&Number.isFinite(s.solute)&&s.solute>=0&&s.solute<=150;}

@@ -221,8 +221,8 @@ assert.match(station.text,/name: marble-acid-desk-review\n\s+path: marble-acid-d
 assert(station.steps.some(s=>s.startsWith('      - uses: actions/upload-artifact@v4')&&s.includes('name: marble-acid-desk-review')),'browser evidence upload is a real YAML step');
 assert(!station.text.includes('continue-on-error: true'));
 for(const name of ['researcher_browser','microscope_3d_browser','lens_25d_browser','researcher_operations','buoyancy_lab_browser','lever_desk_browser','pulley_desk_browser','incline_desk_browser','friction_efficiency_desk_browser','motion_graphs_desk_browser','marble_acid_desk_browser'])assert.equal(occurrences(station.text,`node scripts/check_${name}.cjs`),1,'existing browser gate retained');
-assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat']);
-assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 9 and all(.[]; .result == "success")'));
+assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat','solubility']);
+assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 10 and all(.[]; .result == "success")'));
 
 // Only accepted runtime and the narrowly scoped bridge are checked here; source docs/private hosting files are not copied.
 const runtimePaths=[m.public_entry,...walk(runtime).map(p=>path.relative(root,p))];
