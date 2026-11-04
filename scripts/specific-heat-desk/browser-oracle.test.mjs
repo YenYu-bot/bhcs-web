@@ -64,3 +64,25 @@ test('snapshot reopens native save drawer after reload; failed cases aggregate w
  assert.match(text,/assert\.ok\(results\.every\(r=>r\.status==='passed'\)/);
  assert.match(text,/async\(p,r\)=>\{assert\.ok\(completeFixture,'only a native completed run may supply reload fixtures'\)/);
 });
+test('natural completion rejects rounded60 while still running and every nonterminal scene',()=>{
+ const old=global.document;
+ const nodes={'#time':{textContent:'60.0'},'#action':{textContent:'收下這組比較'},'#step':{disabled:true},'#finish':{disabled:true},'#heat-watch':{textContent:'供熱已停止'}};
+ let arrows=0;global.document={querySelector:s=>nodes[s],querySelectorAll:()=>Array(arrows)};
+ try{assert.equal(H.finishedObservation(),true);assert.equal((59.95).toFixed(1),nodes['#time'].textContent);nodes['#action'].textContent='暫停觀察';nodes['#heat-watch'].textContent='正在供熱';assert.equal(H.finishedObservation(),false);nodes['#action'].textContent='收下這組比較';nodes['#heat-watch'].textContent='供熱已停止';
+ for(const [selector,key,value]of [['#time','textContent','59.9'],['#step','disabled',false],['#finish','disabled',false],['#heat-watch','textContent','已暫停供熱']]){const original=nodes[selector][key];nodes[selector][key]=value;assert.equal(H.finishedObservation(),false);nodes[selector][key]=original;}arrows=3;assert.equal(H.finishedObservation(),false);
+ }finally{global.document=old;}
+});
+test('failure telemetry precedes screenshots; lifecycle distinguishes window blur from element blur',()=>{
+ const checker=fs.readFileSync(new URL('../check_specific_heat_desk_browser.cjs',import.meta.url),'utf8'),support=fs.readFileSync(new URL('./browser-support.cjs',import.meta.url),'utf8');
+ assert.match(checker,/r\.failureEvidence=await H\.failureEvidence\(p\)\.catch\(e=>\(\{unavailable:String\(e\)\}\)\);await p\.screenshot/);
+ assert.match(checker,/waitForFunction\(H\.finishedObservation,null,\{timeout:45000\}\)/);
+ assert.ok(support.includes("target:e.target===window?'window':e.target===document?'document'"));
+ assert.match(support,/qa:window\.__heatQA,scene:/);
+});
+test('RAF diagnostics preserve native scheduling, cancellation, receiver, arguments and callback result',()=>{
+ const oldWindow=global.window,oldPerformance=global.performance,receiver={name:'native callback receiver'},calls=[],callbacks=new Map();let id=0,now=100.25;
+ const host={__heatQA:{},requestAnimationFrame:function(cb,...rest){assert.equal(this,host);if(typeof cb!=='function')throw new TypeError('native callback required');callbacks.set(++id,cb);calls.push(['request',id,...rest]);return id;},cancelAnimationFrame:function(key,...rest){assert.equal(this,host);callbacks.delete(key);calls.push(['cancel',key,...rest]);return 'native-cancel-result';}};
+ global.window=host;global.performance={now:()=>now};
+ try{H.installFrameTelemetry();let count=0;const key=host.requestAnimationFrame(function(...args){count++;assert.equal(this,receiver);assert.deepEqual(args,[100,'native extra']);return 'callback-result';},'native request extra');assert.equal(key,1);assert.equal(count,0);now=100.4;assert.equal(callbacks.get(key).call(receiver,100,'native extra'),'callback-result');assert.equal(count,1);assert.deepEqual(host.__heatQA.frames[0],{requestAt:100.25,id:1,callbacks:1,callbackAt:100.4,timestamp:100});const cancelled=host.requestAnimationFrame(()=>assert.fail('cancelled callback ran'));assert.equal(host.cancelAnimationFrame(cancelled,'cancel extra'),'native-cancel-result');assert.equal(callbacks.has(cancelled),false);assert.equal(host.__heatQA.frames[1].callbacks,0);assert.deepEqual(calls,[['request',1,'native request extra'],['request',2],['cancel',2,'cancel extra']]);assert.throws(()=>host.requestAnimationFrame(null),/native callback required/);const error=new Error('original callback throw'),throws=host.requestAnimationFrame(()=>{throw error;});assert.throws(()=>callbacks.get(throws).call(receiver,101),e=>e===error);
+ }finally{global.window=oldWindow;global.performance=oldPerformance;}
+});
