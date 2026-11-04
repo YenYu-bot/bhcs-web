@@ -16,6 +16,7 @@ const SESSION_KEY = 'bhcs-researcher-screen:/tools/science/solubility.html';
 const sentinel = key => 'untouched 原文\n' + key + ' {"value":null,"space":"  "}';
 const OUT = path.resolve(process.env.SOLUBILITY_OUTPUT || 'solubility-desk-artifacts');
 const results = [];
+const dialogClosures = new WeakMap();
 let browser, server, origin, nativeFixture;
 fs.mkdirSync(OUT, {recursive: true});
 const report = () => fs.writeFileSync(path.join(OUT, 'results.json'), JSON.stringify(results, null, 2));
@@ -43,7 +44,12 @@ async function install(context, fault = {}) {
       if (get.call(session, sessionKey) === null) set.call(session, sessionKey, value(sessionKey));
       set.call(session, 'solubility-browser-fixture', '1');
     }
-    const qa = window.__solubilityQA = {access: [], input: [], storage: []};
+    const qa = window.__solubilityQA = {access: [], input: [], storage: [], closedDialogs: 0};
+    // Native dialog.close queues its close event after open becomes false.
+    // Count only after all close listeners have run, without changing app state.
+    document.addEventListener('close', event => {
+      if (event.target.id === 'reset-dialog') setTimeout(() => { qa.closedDialogs++; }, 0);
+    }, true);
     // Original reads inspect storage bytes without defeating faults in app reads.
     window.__solubilityRead = k => get.call(local, k);
     window.__solubilitySessionRead = k => get.call(session, k);
@@ -189,11 +195,14 @@ async function guided(page, run) {
   assert.match(await text(page, '.record-card'), /33\.3%/);
 }
 async function dialogOpen(page, mode) {
+  dialogClosures.set(page, await page.evaluate(() => window.__solubilityQA.closedDialogs));
   await action(page, '#reset-top', mode);
   assert.equal(await page.locator('#reset-dialog').isVisible(), true);
   assert.equal(await page.locator('#clear-records').isChecked(), false);
 }
-async function dialogClose(page) { await page.waitForFunction(() => !document.querySelector('#reset-dialog').open); }
+async function dialogClose(page) {
+  await page.waitForFunction(before => !document.querySelector('#reset-dialog').open && window.__solubilityQA.closedDialogs > before, dialogClosures.get(page));
+}
 async function resets(page, run) {
   await action(page, '#next-step', run.mode);
   await action(page, '#record', run.mode);
