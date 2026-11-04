@@ -46,3 +46,21 @@ test('hidden lifecycle observations use interval polling, never background-throt
  const text=fs.readFileSync(new URL('../check_specific_heat_desk_browser.cjs',import.meta.url),'utf8');
  for(const condition of ['e.trusted&&e.hidden','e.trusted&&!e.hidden'])assert.ok(text.includes(condition+'),floor,{polling:50}'),condition);
 });
+test('download activation failure remains original error when the concurrent waiter later rejects',async()=>{
+ let rejectWait;const pending=new Promise((resolve,reject)=>{rejectWait=reject;});
+ const page={waitForEvent:name=>{assert.equal(name,'download');return pending;},locator:()=>({isVisible:async()=>false})};
+ await assert.rejects(H.download(page,'#export','mouse'),/native action target visible/);
+ rejectWait(new Error('context closed after original activation failure'));
+ // Node's test runner would report an unhandled rejection without Promise.all's handler.
+ await new Promise(resolve=>setImmediate(resolve));
+});
+test('snapshot reopens native save drawer after reload; failed cases aggregate without skipping final gates',()=>{
+ const text=fs.readFileSync(new URL('../check_specific_heat_desk_browser.cjs',import.meta.url),'utf8');
+ assert.match(text,/async function snapshot\(p,mode\)\{await drawers\(p,mode\);return JSON\.parse\(await H\.download/);
+ const run=text.slice(text.indexOf('async function run('),text.indexOf('async function hidden('));
+ assert.match(run,/catch\(e\)\{r\.status='failed';r\.error=e\.stack;/);
+ assert.doesNotMatch(run,/throw e/);
+ assert.match(text,/assert\.equal\(results\.length,28/);
+ assert.match(text,/assert\.ok\(results\.every\(r=>r\.status==='passed'\)/);
+ assert.match(text,/async\(p,r\)=>\{assert\.ok\(completeFixture,'only a native completed run may supply reload fixtures'\)/);
+});
