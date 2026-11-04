@@ -2,6 +2,7 @@
 // the CI Gate's fail-closed check, and that nothing the old serial workflows ran has gone missing.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ciWorkflow, ciJobs } from './ci_workflow_test_support.mjs';
@@ -12,7 +13,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const wf = ciWorkflow();
 const jobs = ciJobs(wf);
-const REQUIRED = ['core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity'];
+const REQUIRED = ['core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity', 'specific-heat'];
 
 /** Top-level block of the workflow (e.g. "on", "concurrency") as raw text. */
 function block(key) {
@@ -45,7 +46,7 @@ test('concurrency: a PR re-push cancels its own older run; main runs are grouped
   assert.ok(!c.includes('github.ref'), 'not grouped by branch: a third push to main would drop the queued second run');
 });
 
-test('the eight required jobs exist and CI Gate needs exactly them', () => {
+test('the nine required jobs exist and CI Gate needs exactly them', () => {
   for (const id of REQUIRED) assert.ok(jobs[id], `job ${id}`);
   assert.ok(jobs.gate, 'gate job');
   assert.deepEqual([...jobs.gate.needs].sort(), [...REQUIRED].sort(), 'CI Gate needs every required job and nothing else');
@@ -187,6 +188,35 @@ test('marble native browser is required with inherited Chromium and Xvfb, artifa
   assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: xvfb-run -a node scripts\/check_marble_acid_desk_browser\.cjs/);
   assert.ok(t.includes('name: marble-acid-desk-review\n          path: marble-acid-desk-artifacts/\n          retention-days: 14'));
   assert.ok(!t.includes('continue-on-error: true'));
+});
+
+test('specific heat runs in its own mandatory job without removing old station checks',()=>{
+ const t=jobs['specific-heat'].text;
+ const script='run: xvfb-run -a node scripts/check_specific_heat_desk_browser.cjs';
+ assert.equal(count(wf,script),1);assert.ok(t.includes(script));
+ assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
+ assert.ok(t.includes('playwright install --with-deps chromium'));
+ assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji xvfb xauth'));
+ assert.ok(t.includes('fetch-depth: 0'));
+ assert.match(t,/uses: actions\/upload-artifact@v4\n        if: always\(\)/);
+ assert.ok(t.includes('name: specific-heat-desk-review\n          path: specific-heat-desk-artifacts/\n          retention-days: 14'));
+ assert.ok(!t.includes('continue-on-error:'));assert.ok(!t.includes('needs:'));
+ assert.equal(count(jobs['science-stations'].text,'run: xvfb-run -a node scripts/check_marble_acid_desk_browser.cjs'),1);
+ assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:specific-heat-desk'));
+});
+
+test('actual CI Gate jq rejects every unsuccessful or missing required job',()=>{
+ const expression=jobs.gate.text.match(/jq -e '([^']+)'/)[1];
+ const baseline=Object.fromEntries(REQUIRED.map(id=>[id,{result:'success'}]));
+ const run=payload=>spawnSync('jq',['-e',expression],{input:JSON.stringify(payload),encoding:'utf8'});
+ assert.equal(run(baseline).status,0);
+ for(const id of REQUIRED){
+  for(const result of ['failure','cancelled','skipped','pending']){
+   const r=run({...baseline,[id]:{result}});assert.equal(r.status,1,`${id}: ${result}`);
+  }
+  const missing={...baseline};delete missing[id];assert.equal(run(missing).status,1,`${id}: missing`);
+ }
+ assert.equal(run({...baseline,unexpected:{result:'success'}}).status,1);
 });
 
 console.log(`ci workflow: ${tests} tests passed`);

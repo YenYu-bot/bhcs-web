@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "source_commit": "bd9ebea7806624dde160edc87346fbc475aea838",
+  "purpose": "Bounded first rAF timestamp can precede performance.now at explicit play; skip that frame without heat or rebasing, retain all later negative/long-gap pauses.",
+  "files": [
+    {
+      "path": "clock.mjs",
+      "before_sha256": "e3da4032219be1d63cf7f15d05cd22c199da1918ca6c17d89bef022fc26dc751",
+      "after_sha256": "04e062de9691df7a7272b1a06a3819af0caf71bc33f859a9b97243ad92de889c",
+      "replacements": [
+        {
+          "before": "disposed=false,visible=true;",
+          "after": "disposed=false,visible=true,firstFrame=false;",
+          "count": 1
+        },
+        {
+          "before": "handle=null;const elapsed=t-last;if(!Number.isFinite(elapsed)||elapsed<0||elapsed>maxGapMs)",
+          "after": "handle=null;const initial=firstFrame;firstFrame=false;const elapsed=t-last;if(initial&&Number.isFinite(elapsed)&&elapsed<0){const callbackElapsed=now()-last;if(Number.isFinite(callbackElapsed)&&callbackElapsed>=0&&callbackElapsed<=maxGapMs&&-elapsed<=maxGapMs){schedule(g);return;}}if(!Number.isFinite(elapsed)||elapsed<0||elapsed>maxGapMs)",
+          "count": 1
+        },
+        {
+          "before": "playing=true;last=now();schedule(++generation);",
+          "after": "playing=true;last=now();firstFrame=true;schedule(++generation);",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

@@ -61,9 +61,9 @@ for(const script of ['check_researcher_browser.cjs','check_microscope_3d_browser
  assert.equal(station.text.split(`run: node scripts/${script}`).length,2,`exactly one additive browser step ${script}`);
 }
 assert.ok(station.text.indexOf('playwright install --with-deps chromium')<station.text.indexOf('run: node scripts/check_buoyancy_lab_browser.cjs'));
-assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity']);
+assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat']);
 assert.match(jobs.gate.text,/if: always\(\)/);
-assert.ok(jobs.gate.text.includes('length == 8 and all(.[]; .result == "success")'),'unchanged fail-closed aggregate gate');
+assert.ok(jobs.gate.text.includes('length == 9 and all(.[]; .result == "success")'),'unchanged fail-closed aggregate gate');
 const commands=JSON.parse(read('scripts/package.json')).scripts;
 assert.ok(commands.test.includes('npm run test:buoyancy-lab'));
 assert.ok(commands['test:buoyancy-lab'].includes('node test_buoyancy_lab_integration.mjs'));
@@ -110,5 +110,5 @@ try{
  const base=`http://127.0.0.1:${server.address().port}`;
  const checks=[{url:'/tools/buoyancy-lab/',target:path.join(runtime,'index.html')},...manifest.files.map(f=>({url:'/tools/buoyancy-lab/'+f.path,target:path.join(runtime,f.path)})),...refs];
  for(const {url,target} of checks){const r=await fetch(base+url);assert.equal(r.status,200,url);assert.equal(r.headers.get('content-type'),mime[path.extname(target)]);assert.deepEqual(Buffer.from(await r.arrayBuffer()),fs.readFileSync(target));}
- console.log(`PASS buoyancy integration: frozen 10-file source, exact reversible canonical metadata, approved teacher provenance, isolated discovery, unchanged storage keys and 8-job gate, ${refs.length} relative references, ${checks.length} local HTTP/MIME responses (not production or browser QA)`);
+ console.log(`PASS buoyancy integration: frozen 10-file source, exact reversible canonical metadata, approved teacher provenance, isolated discovery, unchanged storage keys and 9-job gate, ${refs.length} relative references, ${checks.length} local HTTP/MIME responses (not production or browser QA)`);
 }finally{await new Promise(resolve=>server.close(resolve));}

@@ -258,6 +258,35 @@ jobs:
           path: marble-acid-desk-artifacts/
           retention-days: 14
 
+
+  # 新比熱原生驗收獨立並行；全部 28 案及 CI Gate 仍為必要門檻。
+  specific-heat:
+    name: specific-heat
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - name: Install Chromium, CJK fonts and Xvfb
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji xvfb xauth
+      - name: Check specific heat native input, heating and storage boundaries
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: xvfb-run -a node scripts/check_specific_heat_desk_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: specific-heat-desk-review
+          path: specific-heat-desk-artifacts/
+          retention-days: 14
+
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）
   science-guided:
     name: science-guided
@@ -543,7 +572,7 @@ jobs:
   gate:
     name: CI Gate
     if: always()
-    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity]
+    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity, specific-heat]
     runs-on: ubuntu-latest
     steps:
       - name: All required jobs succeeded
@@ -551,4 +580,4 @@ jobs:
           RESULTS: ${{ toJSON(needs) }}
         run: |
           echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"' | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "$RESULTS" | jq -e 'length == 8 and all(.[]; .result == "success")' > /dev/null
+          echo "$RESULTS" | jq -e 'length == 9 and all(.[]; .result == "success")' > /dev/null
