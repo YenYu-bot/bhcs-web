@@ -189,4 +189,6 @@ test('marble native browser is required with inherited Chromium and Xvfb, artifa
   assert.ok(!t.includes('continue-on-error: true'));
 });
 
+test('specific heat unlisted draft native gate is additive and required',()=>{const t=jobs['science-stations'].text;assert.equal(count(t,'run: xvfb-run -a node scripts/check_specific_heat_desk_browser.cjs'),1);assert.ok(t.includes('name: specific-heat-desk-review\n          path: specific-heat-desk-artifacts/\n          retention-days: 14'));assert.ok(!t.includes('continue-on-error: true'));assert.equal(count(t,'run: xvfb-run -a node scripts/check_marble_acid_desk_browser.cjs'),1);assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:specific-heat-desk'));});
+
 console.log(`ci workflow: ${tests} tests passed`);

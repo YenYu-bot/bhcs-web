@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "source_commit": "bd9ebea7806624dde160edc87346fbc475aea838",
+  "integration_base": "f7fbb9ec89df02148cae3b077c937a1bedf1952f",
+  "route": "tools/specific-heat-desk/",
+  "mode": "unlisted-independent-draft",
+  "files": [
+    {
+      "path": "app.mjs",
+      "bytes": 20620,
+      "sha256": "4c663340183807779d201752bc95e6bca99dfed53f1e4de9c5153f0c1edac69d",
+      "integrated_sha256": "02d98a1cfa71c136a6066e7c3dcec84d39e145c815c20e23de4973c7f6be5094",
+      "replacements": [
+        {
+          "before": "$('action').scrollIntoView({block:'center',behavior:'auto'});",
+          "after": "$('heat-watch').scrollIntoView({block:'start',behavior:'auto'});",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "assets/lab-room.png",
+      "bytes": 1136740,
+      "sha256": "668301e8733e21ac2e4e50bf6de2a33c09536d242ee683519ddf0cb06ca5eb22",
+      "integrated_sha256": "668301e8733e21ac2e4e50bf6de2a33c09536d242ee683519ddf0cb06ca5eb22",
+      "replacements": []
+    },
+    {
+      "path": "assets/teacher-body-v3.png",
+      "bytes": 941293,
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b",
+      "integrated_sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b",
+      "replacements": []
+    },
+    {
+      "path": "assets/teacher-body-v3.provenance.json",
+      "bytes": 335,
+      "sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9",
+      "integrated_sha256": "341f4cc5edf7615d2f52552782ca9199371c8180fbf24dab7153c548805876e9",
+      "replacements": []
+    },
+    {
+      "path": "assets/wood-table.png",
+      "bytes": 359693,
+      "sha256": "890a533828d0d0cee223b66f403e22f2a0f613687b648a0f3da58127274182d8",
+      "integrated_sha256": "890a533828d0d0cee223b66f403e22f2a0f613687b648a0f3da58127274182d8",
+      "replacements": []
+    },
+    {
+      "path": "clock.mjs",
+      "bytes": 1530,
+      "sha256": "e3da4032219be1d63cf7f15d05cd22c199da1918ca6c17d89bef022fc26dc751",
+      "integrated_sha256": "e3da4032219be1d63cf7f15d05cd22c199da1918ca6c17d89bef022fc26dc751",
+      "replacements": []
+    },
+    {
+      "path": "engine.mjs",
+      "bytes": 10751,
+      "sha256": "2631a899b155429d10dd02e3f2f8545679491660e280a6004d26df1faa49092f",
+      "integrated_sha256": "2631a899b155429d10dd02e3f2f8545679491660e280a6004d26df1faa49092f",
+      "replacements": []
+    },
+    {
+      "path": "index.html",
+      "bytes": 6636,
+      "sha256": "af75cb2c487ceb9a9a7ce859531c11cd7c4ad74efe816f2363f24dfa7999344c",
+      "integrated_sha256": "db805b884066d252f51346d332eb80738c9883e87b4602b33f964d967b8aa513",
+      "replacements": [
+        {
+          "before": "https://bhcs-specific-heat-desk.several74727.chatgpt.site/",
+          "after": "https://www.bhcs.com.tw/tools/specific-heat-desk/",
+          "count": 1
+        },
+        {
+          "before": "此私人頁與官網使用不同儲存空間，不會自動同步。未封存輪不保存。",
+          "after": "本站紀錄只保留在目前瀏覽器與網站；私人原型紀錄不會自動移入官網，舊版比熱實驗紀錄也不會混入。未封存輪不保存。",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "model.mjs",
+      "bytes": 1207,
+      "sha256": "8a0d4c5390c83cf0f103cd221b7bc2d9e143f98b59b7d06fdd5e86894f8cb21b",
+      "integrated_sha256": "8a0d4c5390c83cf0f103cd221b7bc2d9e143f98b59b7d06fdd5e86894f8cb21b",
+      "replacements": []
+    },
+    {
+      "path": "scene.mjs",
+      "bytes": 12564,
+      "sha256": "2ed567567549822d2883c02244d622411023fd1abfe37d2764fa7a4f11a26d90",
+      "integrated_sha256": "2ed567567549822d2883c02244d622411023fd1abfe37d2764fa7a4f11a26d90",
+      "replacements": []
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 9219,
+      "sha256": "421b691cf5d94032e467af812cb84d8b79bb58334b68ebcbf58563822589dbb4",
+      "integrated_sha256": "421b691cf5d94032e467af812cb84d8b79bb58334b68ebcbf58563822589dbb4",
+      "replacements": []
+    },
+    {
+      "path": "style.css",
+      "bytes": 14293,
+      "sha256": "892761b5279770ebddc4b7d27f80c94bcc8f77ff6f5396ee3fbaf655598e35ca",
+      "integrated_sha256": "892761b5279770ebddc4b7d27f80c94bcc8f77ff6f5396ee3fbaf655598e35ca",
+      "replacements": []
+    }
+  ],
+  "tests": [
+    {
+      "path": "core.test.mjs",
+      "source_sha256": "90786a2d895a20369c6e68bda817385952375247f5d9616b051a4275b0bfb741",
+      "integrated_sha256": "19e396ac7a3dba5dca6944d9f5f90812011f992135add2d1541979ef497bc0c2"
+    },
+    {
+      "path": "scene.test.mjs",
+      "source_sha256": "2b61beaea445155a7984062988be3f1df5649dfa3c39b7c8d9d5717e2de2fa99",
+      "integrated_sha256": "5b43a7ea64c83cbeaa74743d668381544b267e89c66e85c26f499a9aaebb8f69"
+    },
+    {
+      "path": "second-round-ui.test.mjs",
+      "source_sha256": "883c50667b4ce76e9b3a2a484b6cef38cf9cc37c1ac5247e7a305d2e201c8887",
+      "integrated_sha256": "11e45d7b43e6bd011298fe24708476bb2ad579643124e9ac0e3ba98ad0d6b5b9"
+    },
+    {
+      "path": "storage.test.mjs",
+      "source_sha256": "a79e27899682b9b24e057553f275179082e4c0b38068072243cb011d38df2855",
+      "integrated_sha256": "56eb62c3856a9cb42856277cff7487ab0fa3cda17a39d4a75dc39d7ae34a5bf6"
+    },
+    {
+      "path": "ui.test.mjs",
+      "source_sha256": "10200ab2d31e20433c1e93b917c8c27321cef7ec0a7e19e35527a0e5fdc33c65",
+      "integrated_sha256": "0288ec6cd733743f473a7333f2aecab2f753036a6c1275d6218f25339e266178"
+    }
+  ],
+  "repair_reason": "Authorized short-screen usability repair: align the heat observation window top, rather than centering the action below it. Focus remains preventScroll. No physical, clock, engine or persistence change.",
+  "publication_changes": "Canonical and truthful origin storage disclosure only; noindex/nofollow retained for unlisted draft; legacy route remains untouched."
+}
