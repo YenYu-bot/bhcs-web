@@ -12,3 +12,18 @@ header{padding-top:8px;padding-bottom:8px}.intro{margin:4px 0 12px}.intro .eyebr
 @media(max-width:700px){.heat-unit{padding:5px;max-width:250px}.heat-units{gap:6px}.heat-status{flex-wrap:wrap;font-size:15px;gap:4px}.heat-status small{width:100%}.heat-apparatus{height:72px}.watch-sample{width:53px;left:0}.heater-plate{width:58px}.heat-feed{left:6px}.heat-apparatus>strong{font-size:21px;margin-left:54px;margin-right:12px}.watch-thermometer{right:0;width:8px}.heat-unit>b{font-size:13px}.watch-power{font-size:12px}.controls>div:nth-of-type(2){margin-top:5px}}
 @media(min-width:701px){.heat-units{display:none}.heat-status{margin-bottom:2px}.controls>#paired-readings{position:static;width:auto;height:auto;clip-path:none;overflow:visible}}
 @media(max-width:380px){.heat-apparatus>strong{font-size:18px;margin-left:45px;margin-right:9px}.watch-sample{width:44px}.heater-plate{width:48px}.heat-feed{left:0}.heat-apparatus>strong small{font-size:12px}}
+/* Keep enlarged labels inside real controls; wrap samples rather than clip text. */
+@media(max-width:700px){
+ .materials button{flex:1 1 8em;min-width:0;min-height:56px;grid-template-columns:40px minmax(0,1fr);overflow-wrap:anywhere}
+ .materials button b{min-width:0}
+ .heat-units{flex-wrap:wrap;align-items:stretch}
+ .heat-unit{font-size:13px;flex:1 1 9em;max-width:none;min-width:0;overflow-wrap:anywhere}
+ .heat-apparatus{display:flex;justify-content:center;align-items:end;height:auto;min-height:104px;padding:62px 0 0}
+ .watch-sample{left:calc(50% - 27px);width:54px}
+ .heater-plate{left:calc(50% - 30px);top:53px;bottom:auto;width:60px}
+ .heat-feed{left:calc(50% - 21px);top:20px;bottom:auto}
+ .watch-thermometer{right:3px;top:3px}
+ .heat-apparatus>strong{margin:0;font-size:21px;line-height:1.3;white-space:normal}
+ .heat-apparatus>strong small{font-size:14px}
+ .watch-power{overflow-wrap:anywhere}
+}
