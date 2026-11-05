@@ -31,12 +31,12 @@ for(const topic of ['multiplication','exponent']){
   d.querySelector('button[data-level="advanced"]').click();
   const box=d.querySelector('#unit-cubefactor');if(!box.checked){box.checked=true;box.dispatchEvent(new dom.window.Event('change',{bubbles:true}));}
   const n=input('cubefactor');n.value='40';n.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
-  assert.equal(n.value,'8','typing above the bank clamps to the bank size');
+  assert.equal(n.value,'6','typing above the bank clamps to the bank size');
   d.querySelector('#generate').click();
   assert.doesNotMatch(d.querySelector('#status').textContent,/題目不足/,'a capped request is fully produced');
   // Bypass the cap to prove a shortfall is reported on the page, not only in the console.
   n.max='40';n.value='12';d.querySelector('#generate').click();
-  assert.match(d.querySelector('#status').textContent,/題目不足（已出／要求）：立方和差因式分解 8／12/);
+  assert.match(d.querySelector('#status').textContent,/題目不足（已出／要求）：立方和差因式分解 6／12/);
  }
  dom.window.close();
 }

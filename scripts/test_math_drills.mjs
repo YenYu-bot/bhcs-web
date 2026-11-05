@@ -6,7 +6,7 @@ import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {JSDOM, VirtualConsole} from 'jsdom';
 import {auditCombination, seedFor, checkHarnessContract} from './math_test_harness.mjs';
-import {singleFormExemptions, singleFormKey, singleFormPolicy} from './math-diversity-policy.mjs';
+import {singleFormExemptions, singleFormKey, singleFormPolicy, acceptedDiversityRegressions} from './math-diversity-policy.mjs';
 import {evaluateDiversityRatchet} from './math-diversity-ratchet.mjs';
 import {assertMathDrillCoverage} from './math_drill_discovery.mjs';
 
@@ -162,7 +162,7 @@ if (diversity) {
   if (diversityGate) {
     const baselinePath = path.join(root,'docs/math-diversity/baseline-20260922.json');
     const baseline = JSON.parse(fs.readFileSync(baselinePath,'utf8'));
-    const {changedUnits,newUnits,failures}=evaluateDiversityRatchet({baseline,current:diversity,exemptions:singleFormExemptions});
+    const {changedUnits,newUnits,failures}=evaluateDiversityRatchet({baseline,current:diversity,exemptions:singleFormExemptions,accepted:acceptedDiversityRegressions});
     diversity.ratchet={baseline:'docs/math-diversity/baseline-20260922.json',changedUnits,newUnits,failures};
     console.log(JSON.stringify({diversityRatchet:true,changedUnits:changedUnits.length,newUnits:newUnits.length,failures:failures.length}));
     if (failures.length) process.exitCode=1;

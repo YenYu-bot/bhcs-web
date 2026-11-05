@@ -7,7 +7,7 @@ const pow=(base,exponent)=>base**exponent;
 const frac=(n,d)=>d===1?String(n):`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`;
 const monomial=(coefficient,x,y)=>{
  const has=x||y;
- const coefficientText=has&&coefficient.n===coefficient.d?'':frac(coefficient.n,coefficient.d);
+ const coefficientText=has&&coefficient.n===coefficient.d?'':(coefficient.n<0?'−':'')+frac(Math.abs(coefficient.n),coefficient.d); // the page prints a real minus sign in front of the fraction
  const term=(name,exponent)=>!exponent?'':exponent===1?name:`${name}<sup>${String(exponent).replace('-','−')}</sup>`;
  return coefficientText+term('x',x)+term('y',y)||'1';
 };

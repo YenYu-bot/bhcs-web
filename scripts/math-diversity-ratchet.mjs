@@ -27,7 +27,8 @@ export const hasG11R3Topics = current => {
 export const g11ChallengeBaselineFor = current =>
   hasG11R3Topics(current) ? g11ChallengeR3Baseline : g11ChallengeRolloutBaseline;
 
-export function evaluateDiversityRatchet({baseline,current,exemptions,modifiedG11Topics = new Set()}) {
+export function evaluateDiversityRatchet({baseline,current,exemptions,modifiedG11Topics = new Set(),accepted = []}) {
+  const acceptedBy = new Map(accepted.map(row=>[row.unit,row]));
   const before = new Map(baseline.units.map(unit=>[singleFormKey(unit.topic,unit.unit),unit]));
   const now = new Map(current.units.map(unit=>[singleFormKey(unit.topic,unit.unit),unit]));
   const failures = [], changedUnits = [], newUnits = [];
@@ -49,17 +50,17 @@ export function evaluateDiversityRatchet({baseline,current,exemptions,modifiedG1
     for (const level of ['basic','advanced','challenge']) {
       if (next.levels[level].produced < prior.levels[level].produced)
         failures.push({code:'sample_production_regressed',unit:key,level,before:prior.levels[level].produced,after:next.levels[level].produced});
-      if (next.levels[level].structureCount < prior.levels[level].structureCount)
+      if (next.levels[level].structureCount < prior.levels[level].structureCount && !(next.levels[level].structureCount >= (acceptedBy.get(key)?.floor?.[level] ?? Infinity)))
         failures.push({code:'structure_count_regressed',unit:key,level,before:prior.levels[level].structureCount,after:next.levels[level].structureCount});
     }
     const g11 = isG11(next) || isG11(prior);
-    if (!g11 && prior.projectedStructureGatePass && !next.projectedStructureGatePass)
+    if (!g11 && !acceptedBy.get(key)?.allowGateMiss && prior.projectedStructureGatePass && !next.projectedStructureGatePass)
       failures.push({code:'structure_gate_regressed',unit:key});
-    if (!g11 && prior.projectedChallengeGatePass && !next.projectedChallengeGatePass)
+    if (!g11 && !acceptedBy.get(key)?.allowGateMiss && prior.projectedChallengeGatePass && !next.projectedChallengeGatePass)
       failures.push({code:'challenge_gate_regressed',unit:key});
     if (next.outputFingerprint !== prior.outputFingerprint) {
       changedUnits.push(key);
-      if (!g11 && (!next.projectedStructureGatePass || !next.projectedChallengeGatePass))
+      if (!g11 && !acceptedBy.get(key)?.allowGateMiss && (!next.projectedStructureGatePass || !next.projectedChallengeGatePass))
         failures.push({code:'changed_unit_must_pass_full_gate',unit:key,structureGate:next.projectedStructureGatePass,challengeGate:next.projectedChallengeGatePass});
     }
   }

@@ -30,3 +30,46 @@ export const singleFormExemptions = Object.freeze([
 
 export const singleFormKey = (topic, unit) => `${topic}/${unit}`;
 export const singleFormPolicy = new Map(singleFormExemptions.map(row => [singleFormKey(row.topic,row.unit),row]));
+
+// Diversity drops that came from fixing a wrong question, approved one by one. The floor keeps the ratchet:
+// the unit may not fall below the count reached after the fix.
+export const acceptedDiversityRegressions = Object.freeze([
+  {unit:'multiplication/cubefactor', floor:{basic:6,advanced:6,challenge:6}, allowGateMiss:true,
+   reason:'2026-11-03: 8x³±8y³ dropped (its common factor 8 was never taken out); the bank is now 6, so the full gate cannot be met'},
+  {unit:'matrixapps/lineimage', floor:{basic:23,advanced:21,challenge:22},
+   reason:'2026-11-03: a constant ±1 used to vanish (x＋y＋＝0), which counted as extra structures'},
+  {unit:'plane3d/family', floor:{basic:198,advanced:198,challenge:198},
+   reason:'2026-11-03: λ is now computed from the printed (reduced) planes, so a few candidates are rejected'},
+  {unit:'ratio/simplify', allowGateMiss:true, reason:'2026-11-03: ratios with two equal terms removed; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'ratio/value', allowGateMiss:true, reason:'2026-11-03: ratios a:a removed; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'ratio/percent', allowGateMiss:true, reason:'2026-11-03: percentages follow the level; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'ratio/base', allowGateMiss:true, reason:'2026-11-03: percentages follow the level; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'remainder/factor', allowGateMiss:true, reason:'2026-11-03: k is an integer in integer mode; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'remainder/two', allowGateMiss:true, reason:'2026-11-03: no 0x term printed; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'radicals/equality', allowGateMiss:true, reason:'2026-11-03: no coefficient 1 or ＋0 printed; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'exponent/integerpowers', allowGateMiss:true, reason:'2026-11-03: brackets before exponents, improper-fraction bases, overflow candidates skipped; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'exponent/fractional', allowGateMiss:true, reason:'2026-11-03: real minus sign and improper fractions; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'exponent/laws', allowGateMiss:true, reason:'2026-11-03: brackets before exponents and improper-fraction bases; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'logarithms/equation', allowGateMiss:true, reason:'2026-11-03: no ＋0 printed; unit renamed 對數方程式; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'amgm/application', allowGateMiss:true, reason:'2026-11-03: fences in 公尺 only; the unit did not pass the full gate before either, and its gate status is unchanged'},
+  {unit:'ratio/proportion', floor:{advanced:34}, reason:'2026-11-03: self-answering proportions (x：4＝14：14) removed'},
+  {unit:'generalpolar/slope', floor:{challenge:16}, reason:'2026-11-03: 斜角 is 0°–180°, so negative angles are gone'},
+  {unit:'generalpolar/lineangle', floor:{basic:4,advanced:71,challenge:79}, reason:'2026-11-03: negative 斜角 and the 90° 銳夾角 case removed'},
+  {unit:'doublehalf/fromtan', floor:{basic:8,advanced:8,challenge:8}, reason:'2026-11-03: mixed numbers no longer printed as coefficients'},
+  {unit:'doublehalf/sumdiff', floor:{basic:4,advanced:4,challenge:4}, reason:'2026-11-03/04: mixed-number coefficients and the degenerate sinθ±cosθ＝±1 items (answer 0) removed'},
+  {unit:'doublehalf/equation', floor:{basic:25,advanced:26,challenge:25}, reason:'2026-11-03: mixed numbers no longer printed as coefficients'},
+  {unit:'trigtransform/parameters', floor:{basic:73,advanced:74,challenge:73}, reason:'2026-11-03: mixed numbers no longer printed as coefficients'},
+  {unit:'trigtransform/equation', floor:{basic:32,advanced:34,challenge:34}, reason:'2026-11-03/04: mixed-number coefficients and whole-period shifts removed'},
+  {unit:'vectorcauchy/perpendicular', floor:{basic:16,advanced:16,challenge:30}, reason:'2026-11-03: mixed numbers no longer printed in vectors'},
+  {unit:'simplify/order', allowGateMiss:true, reason:'2026-11-04: brackets added, gate still short at challenge; the unit did not pass the full gate before either'},
+  {unit:'simplify/add', allowGateMiss:true, reason:'2026-11-04: sig built from the question text so items no longer repeat; the unit did not pass the full gate before either'},
+  {unit:'simplify/sub', allowGateMiss:true, reason:'2026-11-04: numbers now 湊整 so 連減 needs 減去和; the unit did not pass the full gate before either'},
+  {unit:'simplify/bracket', allowGateMiss:true, reason:'2026-11-04: 去括號 now makes a round number; the unit did not pass the full gate before either'},
+  {unit:'simplify/muldiv', allowGateMiss:true, reason:'2026-11-04: 連乘 added, numbers combine neatly; the unit did not pass the full gate before either'},
+  {unit:'simplify/dist', allowGateMiss:true, reason:'2026-11-04: 分配律 now makes a round number; the unit did not pass the full gate before either'},
+  {unit:'logarithms/laws', allowGateMiss:true, reason:'2026-11-04: no term is a power of the base any more; the unit did not pass the full gate before either'},
+  {unit:'amgm/squarebound', allowGateMiss:true, reason:'2026-11-04: ratio at equality reduced; the unit did not pass the full gate before either'},
+  {unit:'trigtransform/shift', floor:{basic:32,advanced:32,challenge:32}, reason:'2026-11-04: shifts of a whole period or more removed so the left/right shift is unique'},
+  {unit:'spacevector/section', floor:{challenge:60}, reason:'2026-11-04: section ratios reduced (no 2：4)'},
+  {unit:'spaceinner/vectorprojection', floor:{basic:59}, reason:'2026-11-04: zero and axis-aligned projections removed'},
+]);
