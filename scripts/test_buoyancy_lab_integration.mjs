@@ -61,9 +61,9 @@ for(const script of ['check_researcher_browser.cjs','check_microscope_3d_browser
  assert.equal(station.text.split(`run: node scripts/${script}`).length,2,`exactly one additive browser step ${script}`);
 }
 assert.ok(station.text.indexOf('playwright install --with-deps chromium')<station.text.indexOf('run: node scripts/check_buoyancy_lab_browser.cjs'));
-assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat']);
+assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat','solubility']);
 assert.match(jobs.gate.text,/if: always\(\)/);
-assert.ok(jobs.gate.text.includes('length == 9 and all(.[]; .result == "success")'),'unchanged fail-closed aggregate gate');
+assert.ok(jobs.gate.text.includes('length == 10 and all(.[]; .result == "success")'),'unchanged fail-closed aggregate gate');
 const commands=JSON.parse(read('scripts/package.json')).scripts;
 assert.ok(commands.test.includes('npm run test:buoyancy-lab'));
 assert.ok(commands['test:buoyancy-lab'].includes('node test_buoyancy_lab_integration.mjs'));

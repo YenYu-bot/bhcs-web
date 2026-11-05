@@ -1,0 +1,5 @@
+import assert from 'node:assert/strict';
+import {calculate, STEPS, isValidState} from '../../tools/solubility-desk/model.mjs';
+const expected=[[30,20,23.076923076923077,true],[50,0,33.333333333333336,true],[30,20,23.076923076923077,true],[36,14,23.076923076923077,true],[50,0,20,false]];
+STEPS.forEach((s,i)=>{const m=calculate(s);assert.equal(m.dissolved,expected[i][0]);assert.equal(m.solid,expected[i][1]);assert.ok(Math.abs(m.concentration-expected[i][2])<1e-9);assert.equal(m.saturated,expected[i][3]);});
+let count=0;for(let temperature=0;temperature<=80;temperature++)for(let water=50;water<=300;water+=5)for(let solute=0;solute<=150;solute+=5){const s={temperature,water,solute},m=calculate(s);assert.ok(isValidState(s));assert.ok(m.dissolved>=0&&m.solid>=0);assert.equal(m.dissolved+m.solid,solute);assert.equal(m.solution+m.solid,water+solute);assert.ok(m.dissolved<=m.capacity+1e-9);assert.ok(m.concentration>=0&&m.concentration<100);count++;}console.log(`PASS: 5 teaching steps and ${count} model/mass-conservation states.`);

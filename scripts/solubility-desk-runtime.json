@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "source_commit": "7fde9da751162134f103c8a68f7987ca0585b41f",
+  "integration_base": "61eebcb86b43e1423c3bd1f7831502902fed124b",
+  "route": "tools/solubility-desk/",
+  "mode": "unlisted-independent-draft",
+  "files": [
+    {
+      "path": "app.mjs",
+      "bytes": 16057,
+      "sha256": "45f05bec2e018e38b0bf55274e26bc298545553bce305730532b57341475e9b2",
+      "integrated_sha256": "45f05bec2e018e38b0bf55274e26bc298545553bce305730532b57341475e9b2",
+      "replacements": []
+    },
+    {
+      "path": "assets/lab-room.png",
+      "bytes": 1136740,
+      "sha256": "668301e8733e21ac2e4e50bf6de2a33c09536d242ee683519ddf0cb06ca5eb22",
+      "integrated_sha256": "668301e8733e21ac2e4e50bf6de2a33c09536d242ee683519ddf0cb06ca5eb22",
+      "replacements": []
+    },
+    {
+      "path": "assets/teacher-body-v3.png",
+      "bytes": 941293,
+      "sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b",
+      "integrated_sha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b",
+      "replacements": []
+    },
+    {
+      "path": "assets/wood-table.png",
+      "bytes": 359693,
+      "sha256": "890a533828d0d0cee223b66f403e22f2a0f613687b648a0f3da58127274182d8",
+      "integrated_sha256": "890a533828d0d0cee223b66f403e22f2a0f613687b648a0f3da58127274182d8",
+      "replacements": []
+    },
+    {
+      "path": "format.mjs",
+      "bytes": 288,
+      "sha256": "45272dc43e05bb870953f457a948560813c07a0184ebaae543812c99a49c11d9",
+      "integrated_sha256": "45272dc43e05bb870953f457a948560813c07a0184ebaae543812c99a49c11d9",
+      "replacements": []
+    },
+    {
+      "path": "index.html",
+      "bytes": 16718,
+      "sha256": "a6e4f0ce460b723eae62f096a7f7a242f794a7a84fe7d71bff1c52d2c131c41a",
+      "integrated_sha256": "72f65694bf358559ad85fbee6a4975bef562495399282d81d16cd3f8a6b1e2e4",
+      "replacements": [
+        {
+          "before": "<title>",
+          "after": "<meta name=\"robots\" content=\"noindex,nofollow\">\n<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/solubility-desk/\">\n<title>",
+          "count": 1
+        },
+        {
+          "before": "教學溶質 A · 私人試作版",
+          "after": "教學溶質 A · 獨立試用版",
+          "count": 1
+        },
+        {
+          "before": "<section class=\"discovery\"",
+          "after": "<p class=\"local-note\">這是尚未列入教材目錄的獨立試用頁，並非私人頁面。私人原型與舊版溶解度站的紀錄不會自動移入此頁。</p>\n<section class=\"discovery\"",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "model.mjs",
+      "bytes": 880,
+      "sha256": "0043b2b48ca23d87e826de18273f1234f5461120e4e7311e9811d2de4f3ea1ce",
+      "integrated_sha256": "0043b2b48ca23d87e826de18273f1234f5461120e4e7311e9811d2de4f3ea1ce",
+      "replacements": []
+    },
+    {
+      "path": "storage.mjs",
+      "bytes": 4430,
+      "sha256": "4f8ea270f8c0d06993f85914ce70a3b81ec33f730f5000953df40c3b80c4c1f0",
+      "integrated_sha256": "4f8ea270f8c0d06993f85914ce70a3b81ec33f730f5000953df40c3b80c4c1f0",
+      "replacements": []
+    },
+    {
+      "path": "style.css",
+      "bytes": 22669,
+      "sha256": "9fb581a94cc0ed28440bacf594c8fb9e7b7c8bceda310a5dc76ab1c0a1199982",
+      "integrated_sha256": "9fb581a94cc0ed28440bacf594c8fb9e7b7c8bceda310a5dc76ab1c0a1199982",
+      "replacements": []
+    }
+  ],
+  "tests": [
+    {
+      "path": "format.test.mjs",
+      "source_sha256": "42ab116432c0634b0af467bff906e5e5735a17a26b32766a0a21046ebc1eb1a0",
+      "integrated_sha256": "743963960c32c83c4ce45a52ac3cb85702bf1ef66bed31f20e5af5e83e9665d2"
+    },
+    {
+      "path": "model.test.mjs",
+      "source_sha256": "9b8209890eb284f5139e1fd73e3b53e18b662c885d217903e64b1e7372d69cd4",
+      "integrated_sha256": "f8eab6958e8dc3b3d07af153434260a4d6d6be338d0caba0f8ee6d97f51f9943"
+    },
+    {
+      "path": "storage.test.mjs",
+      "source_sha256": "ff8b79be4dbb4a59fd039aeda1fbd5fd2c59fa05dafa018428debe1ab001e4e7",
+      "integrated_sha256": "81355db9f0e21ff8a674f04bb9f47ffa20bcbcd94c6e0172e46f609b2f53bc50"
+    }
+  ]
+}
