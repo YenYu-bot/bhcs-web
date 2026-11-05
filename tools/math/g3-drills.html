@@ -167,9 +167,14 @@ function timestablesConfig(){
  // ⑤ 乘除混合連算
  const mixed=unit("mixed","乘除混合連算","由左往右依序算，先算出前面的結果再算後面。",ctx=>{
   const T=tables(ctx),L=lv(ctx);
-  if(L===0||Math.random()<.5){const a=pick(T),b=rand(2,9),c=L===0?pick([a,b].filter(v=>v>1)):pick(T),p=a*b;if(p%c)return null;const v=p/c;if(L===2&&v>99)return null;
+  if(Math.random()<.5){const a=pick(T),b=rand(2,9),p=a*b;
+   // 不出「a × b ÷ a」「a ÷ d × d」這種乘了又除回同一個數的退化題；基礎級在九九範圍內找別的除數（商 2～9），
+   // 找不到就重抽（另一半的「a ÷ d × c」一定出得來，只勾一段時也不會用完）。
+   const D9=[2,3,4,5,6,7,8,9],cand=(a,b)=>D9.filter(x=>x!==a&&x!==b&&a*b%x===0&&a*b/x>=2&&a*b/x<=9);
+   let c;if(L===0){const cs=cand(a,b);if(!cs.length)return null;c=pick(cs)}else{c=pick(T.length>2?T:[2,3,4,5,6,7,8,9]);if(c===a||c===b)return null}
+   if(p%c)return null;const v=p/c;if(L===2&&v>99)return null;
    return{expr:`${a} × ${b} ÷ ${c}＝`,answer:String(v),sig:`x:${a}:${b}:${c}`,verify:()=>addUp(c,v)===addUp(a,b)}}
-  const d=pick(T),q=rand(2,9),a=d*q,c=L===2?rand(2,12):pick(T),v=q*c;if(v>99&&L<2)return null;
+  const d=pick(T),q=rand(2,9),a=d*q,c=L===2?rand(2,12):pick(T.length>2?T:[2,3,4,5,6,7,8,9]),v=q*c;if(c===d||v>99&&L<2)return null;
   return{expr:`${a} ÷ ${d} × ${c}＝`,answer:String(v),sig:`y:${a}:${d}:${c}`,verify:()=>addUp(d,q)===a&&addUp(c,q)===v};
  });
  // ⑥ 二位數×一位數心算

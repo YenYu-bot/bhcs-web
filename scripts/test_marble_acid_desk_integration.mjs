@@ -139,6 +139,11 @@ for(const p of ['marble-ui.test.mjs','ui.test.mjs']){
 }
 assert.equal(JSON.parse(read('scripts/package.json')).devDependencies.jsdom,'26.1.0');
 
+// Files changed after this desk was integrated are accepted only through the approved blob chain
+// (scripts/approved-existing-tool-changes.json), the same gate every later tools/assets change must pass.
+const approvedChanges=JSON.parse(read('scripts/approved-existing-tool-changes.json')).changes;
+const approvedReach=(path,from)=>{let at=from;for(let step;(step=approvedChanges.find(c=>c.path===path&&c.baseline_blob===at));)at=step.approved_blob;return at;};
+const laterApproved=new Set();
 // The original integration baseline is not rewritten when authorized main advances.
 assert.deepEqual(m.integration_base_provenance.runtime_changes,[{path:'tools/math/g6-drills.html',original_blob:'f7674e06e08eea460bf0b654754b26c1770540ae',current_blob:'e5068cc199e630d53483bbb6e71b2ec60fee1663'}]);
 assert.deepEqual(m.integration_base_provenance.main_updates,[
@@ -156,7 +161,7 @@ assert.deepEqual(baselineChanges,m.integration_base_provenance.runtime_changes.m
 for(const f of m.integration_base_provenance.runtime_changes){
  assert.equal(execFileSync('git',['rev-parse',`${m.baseline_commit}:${f.path}`],{cwd:root,encoding:'utf8'}).trim(),f.original_blob);
  assert.equal(execFileSync('git',['rev-parse',`${m.current_integration_base}:${f.path}`],{cwd:root,encoding:'utf8'}).trim(),f.current_blob);
- assert.equal(blob(bytes(f.path)),f.current_blob,'preserve the exact current-main G6 figures');
+ const now=blob(bytes(f.path));assert.ok(now===f.current_blob||now===approvedReach(f.path,f.current_blob),'preserve the exact current-main G6 figures or an approved later change');
 }
 // Existing paths come from Git, not a new public list of unpublished station routes.
 const baseline=execFileSync('git',['ls-tree','-r',m.current_integration_base,'--','tools','assets'],{cwd:root,encoding:'utf8'}).trim().split('\n');
@@ -165,13 +170,13 @@ for(const line of baseline){
  const match=/^\d+ blob ([0-9a-f]{40})\t(.+)$/.exec(line);assert(match);const [,expected,p]=match;
  if(p==='tools/science/index.html')continue;
  if(p===m.public_entry){assert.equal(expected,m.protected_baseline.original_entry_blob);continue;}
- assert.equal(blob(bytes(p)),expected,'unchanged existing tools/assets blob');protectedCount++;
+ const now=blob(bytes(p));if(now!==expected){assert.equal(now,approvedReach(p,expected),'unchanged existing tools/assets blob (or an approved later change)');laterApproved.add(p);}protectedCount++;
 }
 assert.equal(protectedCount,680,'all other current-main tools, math, English and shared assets remain exact');
 const previous=checkExistingFiles({root,baselineCommit:m.baseline_commit,skip:['tools/science/index.html']});
-assert.deepEqual(previous,{protectedCount:681,approved:2},'original baseline permits only the authorized G6 update and exact old-entry replacement');
+assert.deepEqual(previous,{protectedCount:681,approved:2+[...laterApproved].filter(p=>p!=='tools/math/g6-drills.html').length},'original baseline permits only the authorized G6 update, exact old-entry replacement and approved later changes');
 const current=checkExistingFiles({root,baselineCommit:m.current_integration_base,skip:['tools/science/index.html']});
-assert.deepEqual(current,{protectedCount:681,approved:1},'only the exact authorized old entry differs from current main');
+assert.deepEqual(current,{protectedCount:681,approved:1+laterApproved.size},'only the exact authorized old entry and approved later changes differ from current main');
 for(const line of execFileSync('git',['ls-tree','-r',m.current_integration_base,'--','scripts/science'],{cwd:root,encoding:'utf8'}).trim().split('\n')){
  const match=/^\d+ blob ([0-9a-f]{40})\t(.+)$/.exec(line);assert(match);assert.equal(blob(bytes(match[2])),match[1],'shared science engines/catalog unchanged');
 }

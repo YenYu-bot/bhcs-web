@@ -17,7 +17,7 @@ assert.equal(current.size, revised.summary.combinations, 'classification must co
 
 function finiteEvidence(r) {
   if (r.link === 'g10-drills.html?topic=multiplication' && r.mode === 'integer') {
-    if (r.unit === 'cubefactor') return {size: 8, proof: 'a,b 各 2 種，正負 2 種：2×2×2'};
+    if (r.unit === 'cubefactor') return {size: 6, proof: '係數 (1,1)(1,2)(2,1) 3 組（不出 (2,2)，免提公因數），正負 2 種：3×2'};
     if (r.unit === 'chain') return {size: r.level === 'challenge' ? 10 : 9,
       proof: 'a,b 各 1～3；挑戰另有 1 個長式'};
   }

@@ -127,7 +127,8 @@ const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d
 function places(a){let d=a.d,p2=0,p5=0;while(d%2===0){d/=2;p2++}while(d%5===0){d/=5;p5++}return d===1?Math.max(p2,p5):-1}
 function decHTML(a,fixed=null){const p=places(a);if(p<0)throw Error("非有限小數");const use=fixed===null?p:Math.max(fixed,p),scale=10**use,n=a.n*(scale/a.d),sign=n<0?"−":"",digits=String(Math.abs(n)).padStart(use+1,"0");if(!use)return sign+digits;let out=`${digits.slice(0,-use)}.${digits.slice(-use)}`;if(fixed===null)out=out.replace(/0+$/,"").replace(/\.$/,"");return sign+out}
 function fracHTML(a,{mixed=false,answer=false}={}){const sign=a.n<0?"−":"",n=Math.abs(a.n),w=Math.floor(n/a.d),rem=n%a.d;if(!rem)return sign+w;if(w&&mixed){const m=`<span class="mixed">${sign}${w}${fr(rem,a.d)}</span>`;return answer?`${m}<span class="note-answer">（即 ${sign}${fr(n,a.d)}）</span>`:m}return`${sign}${fr(n,a.d)}`}
-const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):String(a.n).replace("-","−");
+// integer mode only prints whole numbers as integers: a half (10.5) or a third is shown as a decimal or fraction, never as its numerator
+const numHTML=(a,mode,opt={})=>mode==="decimal"?decHTML(a):mode==="fraction"?fracHTML(a,opt):a.d!==1?(places(a)>=0?decHTML(a):fracHTML(a,opt)):String(a.n).replace("-","−");
 function numberFor(mode,level,max=30){if(mode==="integer"){const k=level==="basic"?2:level==="advanced"?10:25;return R(rand(level==="basic"?2:Math.max(2,Math.floor(max*k/5)),max*k))}if(mode==="fraction"){const ds=level==="basic"?[2,3,4,5,6]:[2,3,4,5,6,8,9,10,12,15,20],d=pick(ds);let n=rand(1,(level==="challenge"?3:2)*d-1);while(n%d===0)n=rand(1,3*d-1);return R(n,d)}const p=level==="basic"?1:pick(level==="advanced"?[1,2]:[1,2,3]),s=10**p;let n=rand(1,max*s);while(n%10===0)n=rand(1,max*s);return R(n,s)}
 const norm=s=>String(s).replace(/<[^>]*>/g,"").replace(/\s+/g,"").normalize("NFKC");
 const okResult=q=>q&&typeof q.expr==="string"&&typeof q.answer==="string"&&q.expr&&!/\b(?:NaN|undefined|Infinity)\b/.test(q.expr+q.answer)&&typeof q.verify==="function"&&q.verify()===true;
@@ -200,8 +201,8 @@ function numberlineConfig(){
   const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["basic","none","zero"]):L===1?pick(["basic","shift","plus"]):pick(["shift","plus","both"]);
   const k=abs(val(mode,L,L===0?15:9));
   if(kind==="basic")return{expr:`｜x｜＝${S(k,mode,ctx)}，求 x。`,answer:`x＝${S(k,mode,ctx)} 或 ${S(neg(k),mode,ctx)}`,sig:`b:${plain(k)}`,verify:()=>eq(abs(neg(k)),k)};
-  if(kind==="none")return{expr:`｜x｜＝${S(neg(k),mode,ctx)}，x 有幾個？`,answer:`沒有這樣的 x（絕對值不會是負數）`,sig:`nn:${plain(k)}`,verify:()=>cmp(neg(k),R(0))<0};
-  if(kind==="zero"){const c=val("integer",0,9);return{expr:`｜x−${P(c,"integer",ctx)}｜＝0，求 x。`,answer:`x＝${S(c,"integer",ctx)}`,sig:`z:${plain(c)}`,verify:()=>eq(abs(sub(c,c)),R(0))}}
+  if(kind==="none")return{expr:`｜x｜＝${S(neg(k),mode,ctx)}，x 有幾個？`,answer:`0 個（沒有這樣的 x，絕對值不會是負數）`,sig:`nn:${plain(k)}`,verify:()=>cmp(neg(k),R(0))<0};
+  if(kind==="zero"){const c=val(mode,L,9);return{expr:`｜x−${P(c,mode,ctx)}｜＝0，求 x。`,answer:`x＝${S(c,mode,ctx)}`,sig:`z:${plain(c)}`,verify:()=>eq(abs(sub(c,c)),R(0))}}
   if(kind==="shift"){const c=val(mode==="integer"?"integer":mode,L,6),x1=add(c,k),x2=sub(c,k);return{expr:`｜x−${P(c,mode,ctx)}｜＝${S(k,mode,ctx)}，求 x。`,answer:`x＝${S(x1,mode,ctx)} 或 ${S(x2,mode,ctx)}`,sig:`sh:${plain(c)}:${plain(k)}`,verify:()=>eq(abs(sub(x1,c)),k)&&eq(abs(sub(x2,c)),k)}}
   if(kind==="plus"){const c=abs(val("integer",0,9)),t=add(k,c);return{expr:`｜x｜＋${S(c,"integer",ctx)}＝${S(t,mode,ctx)}，求 x。`,answer:`x＝${S(k,mode,ctx)} 或 ${S(neg(k),mode,ctx)}`,sig:`p:${plain(c)}:${plain(k)}`,verify:()=>eq(add(abs(neg(k)),c),t)}}
   // both：｜a｜＝p、｜b｜＝q 且 a＞b，求 a＋b 的所有可能
@@ -211,7 +212,7 @@ function numberlineConfig(){
  const count=unit("count","滿足絕對值條件的整數","｜x｜＜k 表示 x 到原點的距離小於 k：在 −k 與 k 之間；個數要數到 0，別忘了正負兩邊。",ctx=>{
   const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["lt","le","neg","pos"]):L===1?pick(["lt","le",mode==="integer"?"ring":"frac"]):pick([mode==="integer"?"combo":"frac","ring","list"]);
   const enumerate=f=>{const r=[];for(let i=-60;i<=60;i++)if(f(i))r.push(i);return r};
-  const kk=mode==="integer"||kind==="lt"||kind==="le"||kind==="neg"||kind==="pos"||kind==="combo"?R(rand(2,L===0?15:25)):abs(val(mode,L,8));if(kk.n===0)return null;const k=kk.n/kk.d;
+  const kk=mode==="integer"||kind==="combo"?R(rand(2,L===0?15:25)):abs(val(mode,L,L===0?12:8));if(kk.n/kk.d<1)return null;if(kk.n===0)return null;const k=kk.n/kk.d;
   if(kind==="lt"){const r=enumerate(i=>Math.abs(i)<k);return{expr:`滿足 ｜x｜＜${S(kk,mode,ctx)} 的整數 x 有幾個？`,answer:`${r.length} 個`,sig:`lt:${plain(kk)}`,verify:()=>r.length===2*Math.ceil(k)-1}}
   if(kind==="le"){const r=enumerate(i=>Math.abs(i)<=k);return{expr:`滿足 ｜x｜≦${S(kk,mode,ctx)} 的整數 x 有幾個？`,answer:`${r.length} 個`,sig:`le:${plain(kk)}`,verify:()=>r.length===2*Math.floor(k)+1}}
   if(kind==="neg"){const r=enumerate(i=>Math.abs(i)<=k&&i<0);if(r.length>10)return null;return{expr:`滿足 ｜x｜≦${S(kk,mode,ctx)} 的負整數 x 有哪些？`,answer:r.join("、").replace(/-/g,"−"),sig:`ng:${plain(kk)}`,verify:()=>r.length===Math.floor(k)}}
@@ -219,11 +220,15 @@ function numberlineConfig(){
   if(kind==="frac"){const r=enumerate(i=>Math.abs(i)<k);if(kk.d===1)return null;return{expr:`滿足 ｜x｜＜${S(kk,mode,ctx)} 的整數 x 有幾個？最大的是多少？`,answer:`${r.length} 個；最大的是 ${Math.max(...r)}`,sig:`fr:${plain(kk)}`,verify:()=>r.length===2*Math.floor(k)+1}}
   if(kind==="combo"){const m=rand(-k+1,k-1),r=enumerate(i=>Math.abs(i)<k&&i>m);return{expr:`滿足 ｜x｜＜${kk.n} 且 x＞${String(m).replace("-","−")} 的整數 x 有幾個？`,answer:`${r.length} 個`,sig:`cb:${kk.n}:${m}`,verify:()=>r.length===(k-1)-m}}
   if(kind==="ring"){const lo=rand(1,4),hi=lo+rand(2,5),r=enumerate(i=>Math.abs(i)>lo&&Math.abs(i)<=hi);return{expr:`滿足 ${lo}＜｜x｜≦${hi} 的整數 x 有幾個？`,answer:`${r.length} 個（${r.join("、").replace(/-/g,"−")}）`,sig:`rg:${lo}:${hi}`,verify:()=>r.length===2*(hi-lo)}}
-  const r=enumerate(i=>Math.abs(i)<k);if(r.length>11)return null;return{expr:`寫出所有滿足 ｜x｜＜${S(kk,mode,ctx)} 的整數，並求它們的和。`,answer:`${r.join("、").replace(/-/g,"−")}；和為 0`,sig:`ls:${plain(kk)}`,verify:()=>r.reduce((s,x)=>s+x,0)===0}});
+  // 只寫 ｜x｜＜k 時整數左右對稱、和永遠是 0，加上 x≧m 的條件讓和要真的算
+  const top=Math.ceil(k)-1;if(top<2)return null;const m=rand(-top+1,0),r=enumerate(i=>Math.abs(i)<k&&i>=m);if(r.length>11)return null;const tot=r.reduce((s,x)=>s+x,0);
+  return{expr:`寫出所有滿足 ｜x｜＜${S(kk,mode,ctx)} 且 x≧${String(m).replace("-","−")} 的整數，並求它們的和。`,answer:`${r.join("、").replace(/-/g,"−")}；和為 ${String(tot).replace("-","−")}`,sig:`ls:${plain(kk)}:${m}`,verify:()=>r.length===top-m+1&&tot===(m+top)*(top-m+1)/2}});
  // ⑦ 含絕對值的四則運算
  const arith=unit("absarith","含絕對值的四則運算","先算絕對值符號裡面，再取絕對值；絕對值符號和括號一樣要優先計算。",ctx=>{
   const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["add","sub","mul"]):L===1?pick(["add","sub","div","mix"]):pick(["mix","inner","nested"]);
-  const a=val(mode,L,L===0?12:9),b=val(mode,L,L===0?12:9),c=val(mode==="decimal"?"integer":mode,L,6);const A=abs(a),B=abs(b);
+  // 運算元避開 ±1（val 會把 0 換成 ±1，出現 ｜1｜＋｜1｜ 這種退化題），兩個運算元也不要相同
+  const v1=(m,mx)=>{let v;do v=val(m,L,mx);while(eq(abs(v),R(1)));return v};
+  const a=v1(mode,L===0?12:9),b=v1(mode,L===0?12:9),c=v1(mode==="decimal"?"integer":mode,6);if(eq(a,b))return null;const A=abs(a),B=abs(b);
   if(kind==="add"){const v=add(A,B);return{expr:`｜${S(a,mode,ctx)}｜＋｜${S(b,mode,ctx)}｜`,answer:S(v,mode,ctx),sig:`ad:${plain(a)}:${plain(b)}`,verify:()=>eq(sub(v,B),A)}}
   if(kind==="sub"){const v=sub(A,B);return{expr:`｜${S(a,mode,ctx)}｜−｜${S(b,mode,ctx)}｜`,answer:S(v,mode,ctx),sig:`sb:${plain(a)}:${plain(b)}`,verify:()=>eq(add(v,B),A)}}
   if(kind==="mul"){const v=mul(neg(A),B);return{expr:`−｜${S(a,mode,ctx)}｜×｜${S(b,mode,ctx)}｜`,answer:S(v,mode,ctx),sig:`mu:${plain(a)}:${plain(b)}`,verify:()=>eq(div(v,B),neg(A))}}
@@ -281,7 +286,7 @@ function coordinateConfig(){
   if(kind==="given")return{expr:`若點 (a, b) 在${qName(given)}，則點 (${f[0]}, ${f[1]}) 在第幾象限？`,answer:qName(qk),sig:`gv:${given}:${f[0]}${f[1]}`,verify:()=>{const t=f[2]([sa*2,sb*7]);return (t[0]>0?(t[1]>0?1:4):(t[1]>0?2:3))===qk}};
   if(kind==="absz"){const x=nz(()=>R(rand(-6,6))),k=nz(()=>R(rand(-6,6))),m=pick([1,2,3]),y=add(mul(R(m),x),k);if(y.n===0)return null;const kS=k.n>0?`＋${k.n}`:`−${-k.n}`;return{expr:`滿足 ｜x${x.n>0?"−"+x.n:"＋"+(-x.n)}｜＋｜${m===1?"":m}x−y${kS}｜＝0 的點 (x, y) 在第幾象限？`,answer:`${Q(x,y)}（x＝${x.n}，y＝${y.n}）`.replace(/-/g,"−"),sig:`az:${x.n}:${k.n}:${m}`,verify:()=>eq(sub(add(mul(R(m),x),k),y),R(0))}}
   // shift：A(a−p, b+q) 在第二象限 ⇒ B(b+r, a−s) 在第幾象限（取可判定的位移）
-  const g=pick([1,2,3,4]),p=rand(1,5),q=rand(1,5),aRange=g===1||g===4?`a＞${p}`:`a＜${p}`,bRange=g===1||g===2?`b＞${-q}`:`b＜${-q}`;
+  const g=pick([1,2,3,4]),p=rand(1,5),q=rand(1,5),aRange=g===1||g===4?`a＞${p}`:`a＜${p}`,bRange=g===1||g===2?`b＞−${q}`:`b＜−${q}`;
   // 由範圍推 B 的符號：b+r 與 a−s
   const r=g===1||g===2?q+rand(0,3):-(q+rand(1,3)),s=g===1||g===4?p-rand(1,3):p+rand(0,3);const bx=g===1||g===2?(r-q>=0?1:0):(r-q<=0?-1:0),by=g===1||g===4?(p-s>=0?1:0):(p-s<=0?-1:0);if(!bx||!by)return null;const qk2=bx>0?(by>0?1:4):(by>0?2:3);
   const f2=(v,n)=>n===0?v:n>0?`${v}＋${n}`:`${v}−${-n}`;
@@ -407,7 +412,7 @@ function lineeqConfig(){
   const L=lv(ctx),kind=L===0?pick(["yab","yab","check"]):L===1?pick(["yab","given","collinear"]):pick(["given","param","typhoon"]);
   const m=nz(()=>CUR==="fraction"&&Math.random()<.5?R(pick([-1,1])*rand(1,5),2):I(-4,4)),k=I(-6,6),xs=shuffle([-4,-3,-2,-1,0,1,2,3,4]).slice(0,2).map(v=>R(v)),P=xs.map(x=>[x,add(mul(m,x),k)]);if(P.some(p=>p[1].d!==1))return null;
   if(kind==="yab")return{expr:`求通過 ${pt(...P[0])}、${pt(...P[1])} 兩點的直線方程式。`,answer:yform(m,k),sig:`y:${plain(m)}:${plain(k)}:${xs.map(plain).join(",")}`,verify:()=>P.every(p=>eq(add(mul(m,p[0]),k),p[1]))&&eq(div(sub(P[1][1],P[0][1]),sub(P[1][0],P[0][0])),m)};
-  if(kind==="check"){const xsC=shuffle([-5,-4,-3,-2,-1,0,1,2,3,4,5]).slice(0,3).map(v=>R(v)),cand=xsC.map(x=>[x,add(add(mul(m,x),k),R(pick([0,0,1,-1])))]),ok=cand.map((p,i)=>eq(p[1],add(mul(m,p[0]),k))?"ABC"[i]:"").filter(Boolean);return{expr:`直線 L 通過 ${pt(...P[0])}、${pt(...P[1])} 兩點。下列哪些點在 L 上？A${pt(...cand[0])}、B${pt(...cand[1])}、C${pt(...cand[2])}`,answer:`L：${yform(m,k)}；在 L 上：${ok.length?ok.join("、"):"都不在"}`,sig:`ck:${plain(m)}:${plain(k)}:${cand.map(p=>plain(p[0])+plain(p[1])).join(";")}`,verify:()=>ok.every(l=>{const p=cand["ABC".indexOf(l)];return eq(sub(p[1],k),mul(m,p[0]))})}}
+  if(kind==="check"){const xsC=shuffle([-5,-4,-3,-2,-1,0,1,2,3,4,5].filter(v=>!xs.some(x=>x.n===v))).slice(0,3).map(v=>R(v)),cand=xsC.map(x=>[x,add(add(mul(m,x),k),R(pick([0,0,1,-1])))]),ok=cand.map((p,i)=>eq(p[1],add(mul(m,p[0]),k))?"ABC"[i]:"").filter(Boolean);return{expr:`直線 L 通過 ${pt(...P[0])}、${pt(...P[1])} 兩點。下列哪些點在 L 上？A${pt(...cand[0])}、B${pt(...cand[1])}、C${pt(...cand[2])}`,answer:`L：${yform(m,k)}；在 L 上：${ok.length?ok.join("、"):"都不在"}`,sig:`ck:${plain(m)}:${plain(k)}:${cand.map(p=>plain(p[0])+plain(p[1])).join(";")}`,verify:()=>ok.every(l=>{const p=cand["ABC".indexOf(l)];return eq(sub(p[1],k),mul(m,p[0]))})}}
   if(kind==="collinear"){const x3=I(-6,6);if(xs.some(x=>eq(x,x3)))return null;const y3=add(mul(m,x3),k),sh=rand(-9,9);return{expr:`若 A${pt(...P[0])}、B${pt(...P[1])}、C(${S(x3)}, k${sh?(sh>0?"＋"+sh:"−"+(-sh)):""}) 三點共線，求 k。`,answer:`k＝${S(sub(y3,R(sh)))}`,sig:`cl:${plain(m)}:${plain(k)}:${plain(x3)}:${sh}`,verify:()=>eq(mul(sub(add(sub(y3,R(sh)),R(sh)),P[0][1]),sub(P[1][0],P[0][0])),mul(sub(P[1][1],P[0][1]),sub(x3,P[0][0])))}}
   if(kind==="given"){ // ax＋by＋1＝0 通過兩點；取整數 a、b 使兩點都成立
    const A=nz(()=>I(-5,5)),B=nz(()=>I(-5,5)),Q=[];for(let x=-6;x<=6&&Q.length<2;x++){const r=R(-1).n-A.n*x;if(r%B.n===0){const y=r/B.n;if(Math.abs(y)<=9)Q.push([R(x),R(y)])}}if(Q.length<2)return null;const pts=shuffle(Q);return{expr:`已知方程式 ax＋by＋1＝0 的直線通過 ${pt(...pts[0])}、${pt(...pts[1])} 兩點，求 a、b 的值與直線方程式。`,answer:`a＝${S(A)}、b＝${S(B)}；${zero(A,B,R(-1))}`,sig:`gv:${A.n}:${B.n}:${pts.map(p=>p[0].n).join(",")}`,verify:()=>pts.every(p=>eq(add(lhs(A,B,p[0],p[1]),R(1)),R(0)))}}
@@ -424,7 +429,7 @@ function lineeqConfig(){
   if(kind==="yform"){const m=div(neg(q),p);return{expr:`方程式 ${yform(m,q)} 的圖形與 x 軸交於 P、與 y 軸交於 Q，求 P、Q 的坐標與 △POQ 的面積。`,answer:`P${pt(p,R(0))}、Q${pt(R(0),q)}；面積 ${S(ar)}`,sig:`y:${p.n}:${q.n}`,verify:()=>eq(add(mul(m,p),q),R(0))&&eq(mul(ar,R(2)),abs(mul(p,q)))}}
   if(kind==="area")return{expr:`直線 ${std(a,b,c)} 與兩軸所圍成的三角形面積是多少？`,answer:`${S(ar)}（交點 ${pt(p,R(0))}、${pt(R(0),q)}）`,sig:`a:${p.n}:${q.n}`,verify:()=>eq(mul(ar,R(2)),abs(mul(div(c,a),div(c,b))))};
   if(kind==="twopt"){const t=nz(()=>I(-3,3)),x1=mul(p,sub(R(1),t)),y1=mul(q,t),t2=add(t,R(pick([1,-1]))),x2=mul(p,sub(R(1),t2)),y2=mul(q,t2);return{expr:`直線通過 ${pt(x1,y1)} 與 ${pt(x2,y2)} 兩點，與 x 軸交於 A、y 軸交於 B，求 A、B 坐標與 △AOB 的面積。`,answer:`A${pt(p,R(0))}、B${pt(R(0),q)}；面積 ${S(ar)}`,sig:`t:${p.n}:${q.n}:${t.n}`,verify:()=>eq(lhs(a,b,x1,y1),c)&&eq(lhs(a,b,x2,y2),c)}}
-  if(kind==="findA"){const k=R(Math.abs(q.n)),aa=R(rand(1,6)),xi=div(k,aa),A2=mul(R(1,2),mul(xi,k));return{expr:`設 a＞0，直線 ax＋${k.n}y＝${k.n} 與兩軸所圍成的三角形面積為 ${S(A2)}，求 a。`.replace("＋1y","＋y"),answer:`a＝${aa.n}`,sig:`fa:${k.n}:${aa.n}`,verify:()=>eq(mul(R(1,2),mul(div(k,aa),R(1))),div(A2,k))}}
+  if(kind==="findA"){const k=R(Math.abs(q.n)),aa=R(rand(1,6)),xi=div(k,aa),yi=div(k,k),A2=mul(R(1,2),mul(xi,yi));/* x 截距 k/a、y 截距 k/k＝1 */return{expr:`設 a＞0，直線 ax＋${k.n}y＝${k.n} 與兩軸所圍成的三角形面積為 ${S(A2)}，求 a。`.replace("＋1y","＋y"),answer:`a＝${aa.n}`,sig:`fa:${k.n}:${aa.n}`,verify:()=>eq(div(mul(k,R(1,2)),aa),A2)&&eq(mul(div(k,aa),aa),k)}}
   // inline：直線上某點到 y 軸距離已知，求到 x 軸距離（講義範例 24）
   const d=R(rand(1,4)*Math.abs(p.n)),x=p.n>0?d:neg(d),y=div(sub(c,mul(a,x)),b);if(y.n===0)return null;return{expr:`直線 L：${std(a,b,c)} 上有一點 A，A 在${x.n>0?(y.n>0?"第一":"第四"):(y.n>0?"第二":"第三")}象限且與 y 軸的距離為 ${S(d)}，則 A 與 x 軸的距離是多少？`,answer:`${S(abs(y))}（A${pt(x,y)}）`,sig:`il:${p.n}:${q.n}:${d.n}`,verify:()=>eq(lhs(a,b,x,y),c)}},["integer"]);
  // ⑥ 兩直線的交點
@@ -510,7 +515,7 @@ function statisticsConfig(){
  const mode_=unit("mode","眾數","次數最多的數就是眾數；可能不只一個，每個數都一樣多次時就沒有眾數。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["one","table","word"]):L===1?pick(["one","two","table"]):pick(["two","none","compare"]);
   if(kind==="one"||kind==="two"||kind==="word"){const n=rand(7,13),a=Array.from({length:n},()=>rand(1,L===0?8:12)),mo=modes(a);if(kind==="two"?mo.length!==2:mo.length!==1)return null;const c=a.filter(x=>x===mo[0]).length;
-   if(kind==="word")return{expr:`某班 ${n} 位同學的鞋號（取最後兩碼）：${list(a.map(x=>x+20))}，眾數是多少？`,answer:`${mo[0]+20}（出現 ${c} 次）`,sig:`ow:${a.join(",")}`,verify:()=>a.filter(x=>x===mo[0]).length===Math.max(...a.map(y=>a.filter(z=>z===y).length))};
+   if(kind==="word")return{expr:`某班 ${n} 位同學的鞋號（單位：公分）：${list(a.map(x=>x+20))}，眾數是多少？`,answer:`${mo[0]+20} 公分（出現 ${c} 次）`,sig:`ow:${a.join(",")}`,verify:()=>a.filter(x=>x===mo[0]).length===Math.max(...a.map(y=>a.filter(z=>z===y).length))};
    return{expr:`求資料的眾數：${list(a)}`,answer:`${mo.join(" 和 ")}（${mo.length>1?"各":""}出現 ${c} 次）`,sig:`o:${a.join(",")}`,verify:()=>mo.every(m=>a.filter(x=>x===m).length===c)&&a.every(y=>a.filter(z=>z===y).length<=c)}}
   if(kind==="table"){const vals=shuffle([1,2,3,4,5,6,7,8]).slice(0,5).sort((a,b)=>a-b),c=vals.map(()=>rand(1,9));const mx=Math.max(...c);if(c.filter(x=>x===mx).length>1)return null;const mo=vals[c.indexOf(mx)];return{expr:`由次數分配表找出眾數。${table(["數值","次數"],vals.map((v,i)=>[v,c[i]]))}`,answer:`${mo}（次數 ${mx}）`,sig:`ot:${vals.join(",")}:${c.join(",")}`,verify:()=>c.every(x=>x<=c[vals.indexOf(mo)])}}
   if(kind==="none"){const vals=shuffle([2,3,4,5,6,7,8,9,10,11,12]).slice(0,rand(3,5)),k=rand(1,3),a=shuffle(vals.flatMap(v=>Array(k).fill(v)));return{expr:`求資料的眾數：${list(a)}`,answer:`沒有眾數（每個數都出現 ${k} 次）`,sig:`on:${a.join(",")}`,verify:()=>new Set(vals.map(v=>a.filter(x=>x===v).length)).size===1}}
@@ -518,20 +523,20 @@ function statisticsConfig(){
   const n=rand(7,11),a=Array.from({length:n},()=>rand(1,10)),mo=modes(a);if(mo.length!==1)return null;const m=R(sum(a),n),md=median(a);if(!(m.d===1||m.d===2||m.d===5||m.d===10))return null;
   return{expr:`資料：${list(a)}。求平均數、中位數與眾數。`,answer:`平均數 ${D(m)}；中位數 ${D(md)}；眾數 ${mo[0]}`,sig:`oc:${a.join(",")}`,verify:()=>eq(mul(m,R(n)),R(sum(a)))}},["integer"]);
  // ⑤ 讀圖
- const THEMES=[["一週借書量","本",["週一","週二","週三","週四","週五"]],["各班回收量","公斤",["甲","乙","丙","丁","戊"]],["每月雨量","毫米",["1月","2月","3月","4月","5月","6月"]],["各類社團人數","人",["籃球","美術","音樂","科學","桌球"]]];
+ const THEMES=[["一週借書量","本",["週一","週二","週三","週四","週五"],"每天"],["各班回收量","公斤",["甲","乙","丙","丁","戊"],"每班"],["每月雨量","毫米",["1月","2月","3月","4月","5月","6月"],"每月"],["各類社團人數","人",["籃球","美術","音樂","科學","桌球"],"每個社團"]];
  const read=unit("chart","長條圖與折線圖","先看縱軸一格代表多少；比較增減時看相鄰兩點的差。",ctx=>{
   const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["max","diff","total"]):L===1?pick(["diff","total","avg"]):pick(["avg","change","ratio"]);
-  const [title,u,labels]=pick(THEMES),step=pick(L===0?[2,5]:[5,10]),vals=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,labels.length).map(v=>step*v);const type=kind==="change"||(L>0&&Math.random()<.5)?"line":"bar",fig=chart(labels,vals,step,type,u);
+  const [title,u,labels,per]=pick(THEMES),step=pick(L===0?[2,5]:[5,10]),vals=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,labels.length).map(v=>step*v);const type=kind==="change"||(L>0&&Math.random()<.5)?"line":"bar",fig=chart(labels,vals,step,type,u);
   const iMax=vals.indexOf(Math.max(...vals)),iMin=vals.indexOf(Math.min(...vals));
   if(kind==="max")return{expr:`${fig}依${title}的${type==="bar"?"長條圖":"折線圖"}，最多的是哪一項？最少的是哪一項？`,answer:`最多：${labels[iMax]}（${vals[iMax]} ${u}）；最少：${labels[iMin]}（${vals[iMin]} ${u}）`,sig:`cx:${vals.join(",")}`,verify:()=>vals.every(v=>v<=vals[iMax]&&v>=vals[iMin])};
   if(kind==="diff"){const [i,j]=shuffle([...labels.keys()]).slice(0,2);return{expr:`${fig}依${title}的圖，${labels[i]}比${labels[j]}多（或少）多少${u}？`,answer:`${vals[i]>vals[j]?"多":"少"} ${Math.abs(vals[i]-vals[j])} ${u}`,sig:`cd:${vals.join(",")}:${i}:${j}`,verify:()=>vals[i]-vals[j]===(vals[i]>vals[j]?1:-1)*Math.abs(vals[i]-vals[j])}}
   if(kind==="total")return{expr:`${fig}依${title}的圖，全部合計是多少${u}？`,answer:`${sum(vals)} ${u}`,sig:`ct:${vals.join(",")}`,verify:()=>sum([...vals].reverse())===sum(vals)};
-  if(kind==="avg"){const m=R(sum(vals),vals.length);if(mode==="integer"&&m.d!==1)return null;if(!finiteDecOk(m))return null;return{expr:`${fig}依${title}的圖，平均每一項是多少${u}？`,answer:`${D(m)} ${u}`,sig:`ca:${vals.join(",")}`,verify:()=>eq(mul(m,R(vals.length)),R(sum(vals)))}}
+  if(kind==="avg"){const m=R(sum(vals),vals.length);if(mode==="integer"&&m.d!==1)return null;if(!finiteDecOk(m))return null;return{expr:`${fig}依${title}的圖，平均${per}是多少${u}？`,answer:`${D(m)} ${u}`,sig:`ca:${vals.join(",")}`,verify:()=>eq(mul(m,R(vals.length)),R(sum(vals)))}}
   if(kind==="change"){const d=vals.slice(1).map((v,i)=>v-vals[i]),k=d.indexOf(Math.max(...d));if(d[k]<=0||d.filter(x=>x===d[k]).length>1)return null;return{expr:`${fig}依${title}的折線圖，哪兩個相鄰項目之間增加最多？增加多少${u}？`,answer:`${labels[k]}到${labels[k+1]}，增加 ${d[k]} ${u}`,sig:`cc:${vals.join(",")}`,verify:()=>vals[k+1]-vals[k]===Math.max(...d)}}
   const i=iMax,j=iMin,r=R(vals[i],vals[j]);return{expr:`${fig}依${title}的圖，最多的一項是最少的一項的幾倍？`,answer:`${r.d===1?r.n:numHTML(r,"fraction",{mixed:true})} 倍（${vals[i]}÷${vals[j]}）`,sig:`cr:${vals.join(",")}`,verify:()=>eq(mul(r,R(vals[j])),R(vals[i]))}});
  const finiteDecOk=v=>v.d===1||v.d===2||v.d===4||v.d===5||v.d===10;
  // ⑥ 加入或刪去一筆資料
- const change=unit("change","加入或刪去一筆資料","新平均＝（原總和＋加入的數）÷（筆數＋1）；中位數要重新排序後再找中間。",ctx=>{
+ const change=unit("change","加入或刪去一筆資料","原總和＝平均數×筆數。加入資料：新平均＝（原總和＋加入的數）÷（新的筆數）；刪去資料：新平均＝（原總和－刪去的數）÷（新的筆數）。加入兩筆就加兩個數、筆數＋2。中位數要重新排序後再找中間。",ctx=>{
   const L=lv(ctx),mode=pick(ctx.modes),kind=L===0?pick(["addMean","delMean","same"]):L===1?pick(["addMean","delMean","addMedian"]):pick(["addMedian","delMedian","addBoth"]);
   const n=rand(5,9),m=meanFor(mode,n,20,80);if(!m)return null;const a=makeData(n,m,10,99);if(!a)return null;const T=sum(a);
   if(kind==="same"&&m.d!==1){const x=rand(10,99),y=rand(10,99),nm=R(T+x+y,n+2);if(!finiteDecOk(nm))return null;return{expr:`${n} 筆資料的平均數是 ${D(m)}，再加入兩筆 ${x} 和 ${y}，新的平均數是多少？`,answer:D(nm),sig:`c2:${n}:${plain(m)}:${x}:${y}`,verify:()=>eq(mul(nm,R(n+2)),add(mul(m,R(n)),R(x+y)))}}
@@ -772,9 +777,9 @@ function exponentConfig(){
   if(kind==="mul"){const m=rand(2,L===0?6:9),n=rand(2,L===0?5:8);return{expr:`${pw(b,m)} × ${pw(b,n)}＝`,answer:withVal(b,m+n),sig:`m:${b}:${m}:${n}`,verify:()=>bp(b,m)*bp(b,n)===bp(b,m+n)}}
   if(kind==="div"){const n=rand(2,L===0?5:8),m=n+rand(1,L===0?4:7);return{expr:`${pw(b,m)} ÷ ${pw(b,n)}＝`,answer:withVal(b,m-n),sig:`d:${b}:${m}:${n}`,verify:()=>bp(b,m)/bp(b,n)===bp(b,m-n)}}
   if(kind==="mul3"){const m=rand(2,6),n=rand(2,6),k=rand(1,5);return{expr:`${pw(b,m)} × ${pw(b,n)} × ${pw(b,k)}＝`,answer:withVal(b,m+n+k),sig:`t:${b}:${m}:${n}:${k}`,verify:()=>bp(b,m)*bp(b,n)*bp(b,k)===bp(b,m+n+k)}}
-  if(kind==="mixed"){const m=rand(3,9),n=rand(2,6),k=rand(1,m+n-1);return{expr:`${pw(b,m)} × ${pw(b,n)} ÷ ${pw(b,k)}＝`,answer:withVal(b,m+n-k),sig:`x:${b}:${m}:${n}:${k}`,verify:()=>bp(b,m)*bp(b,n)/bp(b,k)===bp(b,m+n-k)}}
+  if(kind==="mixed"){const m=rand(3,9),n=rand(2,6),k=rand(1,m+n-1);if(k===m||k===n)return null; /* 除以其中一個因數＝直接約掉，不必用指數律 */return{expr:`${pw(b,m)} × ${pw(b,n)} ÷ ${pw(b,k)}＝`,answer:withVal(b,m+n-k),sig:`x:${b}:${m}:${n}:${k}`,verify:()=>bp(b,m)*bp(b,n)/bp(b,k)===bp(b,m+n-k)}}
   if(kind==="negBase"){const m=rand(2,6),n=rand(2,5),e=m+n,v=(e%2?-1n:1n)*bp(b,e);return{expr:`${pn(negS(b),m)} × ${pn(negS(b),n)}＝`,answer:`${pn(negS(b),e)}＝${v}`,sig:`nb:${b}:${m}:${n}`,verify:()=>Number(v)===Math.pow(-b,m)*Math.pow(-b,n)}}
-  const m=rand(3,9),n=rand(2,8);return{expr:`若 x≠0，${pw("x",m)} × ${pw("x",n)} ÷ ${pw("x",Math.min(m,n))}＝`,answer:pw("x",m+n-Math.min(m,n)),sig:`l:${m}:${n}`,verify:()=>{const x=3;return Math.abs(Math.pow(x,m)*Math.pow(x,n)/Math.pow(x,Math.min(m,n))-Math.pow(x,m+n-Math.min(m,n)))<1e-6}};
+  const m=rand(3,9),n=rand(2,8),k=rand(1,m+n-1);if(k===m||k===n)return null; /* 舊版除以 x 的較小次方，等於直接約掉一個因數 */return{expr:`若 x≠0，${pw("x",m)} × ${pw("x",n)} ÷ ${pw("x",k)}＝`,answer:pw("x",m+n-k),sig:`l:${m}:${n}:${k}`,verify:()=>{const x=3;return Math.abs(Math.pow(x,m)*Math.pow(x,n)/Math.pow(x,k)-Math.pow(x,m+n-k))<1e-6}};
  });
 
  const sameExp=unit("sameExp","同指數的乘除","aⁿ × bⁿ＝(ab)ⁿ；aⁿ ÷ bⁿ＝(a÷b)ⁿ。",["integer","fraction"],ctx=>{
@@ -783,7 +788,7 @@ function exponentConfig(){
   if(kind==="expand"){const[a,c]=pick([[2,3],[2,5],[3,5],[3,4],[2,7],[5,7]]),n=rand(2,5);return{expr:`把 (${a} × ${c})${sup(n)} 寫成兩個乘方的乘積，並求值。`,answer:`${pw(a,n)} × ${pw(c,n)}＝${bp(a*c,n)}`,sig:`ex:${a}:${c}:${n}`,verify:()=>bp(a,n)*bp(c,n)===bp(a*c,n)}}
   if(kind==="fracMul"){const[a,b]=pick([[2,3],[3,4],[3,5],[2,5],[5,6],[4,7]]),n=rand(2,4),v=R(a**n,b**n);return{expr:`${pn(fr(a,b),n)} × ${pn(fr(b,a),n)} × ${pn(fr(a,b),n)}＝`,answer:S(v),sig:`fx:${a}:${b}:${n}`,verify:()=>Math.abs(Math.pow(a/b,n)-v.n/v.d)<1e-9}}
   if(kind==="fracPow"){const[a,b]=pick([[2,3],[3,4],[3,5],[2,5],[5,6],[4,7]]),n=rand(2,4),v=R(a**n*b**n,a**n*b**n);return{expr:`${pn(fr(a,b),n)} × ${pn(fr(b,a),n)}＝`,answer:"1",sig:`f1:${a}:${b}:${n}`,verify:()=>Math.abs(Math.pow(a/b,n)*Math.pow(b/a,n)-1)<1e-9}}
-  if(kind==="mul"){const[a,b]=pick([[2,5],[4,25],[8,125],[2,3],[3,4],[4,5],[5,6],[2,50],[4,2.5]]);if(!Number.isInteger(b))return null;return{expr:`${pw(a,e)} × ${pw(b,e)}＝`,answer:withVal(a*b,e),sig:`m:${a}:${b}:${e}`,verify:()=>bp(a,e)*bp(b,e)===bp(a*b,e)}}
+  if(kind==="mul"){const[a,b]=pick([[2,5],[4,25],[8,125],[2,3],[3,4],[4,5],[5,6],[2,50]]);return{expr:`${pw(a,e)} × ${pw(b,e)}＝`,answer:withVal(a*b,e),sig:`m:${a}:${b}:${e}`,verify:()=>bp(a,e)*bp(b,e)===bp(a*b,e)}}
   if(kind==="div"){const[a,b]=pick([[12,4],[18,6],[15,5],[21,7],[24,8],[30,6],[36,9],[14,7]]);return{expr:`${pw(a,e)} ÷ ${pw(b,e)}＝`,answer:withVal(a/b,e),sig:`d:${a}:${b}:${e}`,verify:()=>bp(a,e)/bp(b,e)===bp(a/b,e)}}
   if(kind==="decimal"){const d=pick([[25,4,100],[125,8,1000],[5,2,10],[2,5,10],[4,25,100],[8,125,1000]]),[a,b]=d,n=rand(2,6);return{expr:`${pw(a,n)} × ${pw(b,n)}＝`,answer:withVal(d[2],n),sig:`dc:${a}:${b}:${n}`,verify:()=>bp(a,n)*bp(b,n)===bp(d[2],n)}}
   if(kind==="frac"){const[a,b]=pick([[2,3],[3,4],[3,5],[2,5],[4,3],[5,2]]),n=rand(2,4),v=R(a**n,b**n);return{expr:`${pw(a,n)} ÷ ${pw(b,n)}＝`,answer:`${pn(fr(a,b),n)}＝${S(v)}`,sig:`fr:${a}:${b}:${n}`,verify:()=>Math.abs(Math.pow(a/b,n)-v.n/v.d)<1e-9}}
@@ -814,9 +819,9 @@ function exponentConfig(){
   const kind=pick(L===0?["mdc","ten","mm"]:L===1?["mdc","dm","ten"]:["mdm","dm","box"]);
   if(kind==="ten"){const n=rand(3,9);return{expr:`${pw(2,n)} × ${pw(5,n)}＝${pw(10,"□")}，求 □。`,answer:`□＝${n}`,sig:`t:${n}`,verify:()=>bp(2,n)*bp(5,n)===bp(10,n)}}
   if(kind==="mm"){const[a,pa]=P(),[b,pb]=P(),m=rand(2,4),n=rand(2,3);return{expr:`${pw(a,m)} × ${pw(b,n)}＝`,answer:withVal(base,pa*m+pb*n),sig:`mm:${a}:${m}:${b}:${n}`,verify:()=>bp(a,m)*bp(b,n)===bp(base,pa*m+pb*n)}}
-  if(kind==="mdc"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(2,4),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc));if(k<1)return null;return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)}＝`,answer:withVal(base,e-pc*k),sig:`mdc:${a}:${m}:${b}:${n}:${c}:${k}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)===bp(base,e-pc*k)}}
-  if(kind==="dm"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(3,5),k=rand(1,Math.floor((pa*m-1)/pb)),n=rand(1,3);if(k<1)return null;return{expr:`${pw(a,m)} ÷ ${pw(b,k)} × ${pw(c,n)}＝`,answer:withVal(base,pa*m-pb*k+pc*n),sig:`dm:${a}:${m}:${b}:${k}:${c}:${n}`,verify:()=>bp(a,m)/bp(b,k)*bp(c,n)===bp(base,pa*m-pb*k+pc*n)}}
-  if(kind==="mdm"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),[d,pd]=P(),m=rand(2,3),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc)),q=rand(1,2);if(k<1)return null;return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)} × ${pw(d,q)}＝`,answer:withVal(base,e-pc*k+pd*q),sig:`mdm:${a}:${m}:${b}:${n}:${c}:${k}:${d}:${q}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)*bp(d,q)===bp(base,e-pc*k+pd*q)}}
+  if(kind==="mdc"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(2,4),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc));if(k<1)return null;if(c===a&&k===m||c===b&&k===n)return null; /* 除掉相同的乘方＝直接約掉 */return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)}＝`,answer:withVal(base,e-pc*k),sig:`mdc:${a}:${m}:${b}:${n}:${c}:${k}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)===bp(base,e-pc*k)}}
+  if(kind==="dm"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(3,5),k=rand(1,Math.floor((pa*m-1)/pb)),n=rand(1,3);if(k<1)return null;if(b===c&&k===n)return null;return{expr:`${pw(a,m)} ÷ ${pw(b,k)} × ${pw(c,n)}＝`,answer:withVal(base,pa*m-pb*k+pc*n),sig:`dm:${a}:${m}:${b}:${k}:${c}:${n}`,verify:()=>bp(a,m)/bp(b,k)*bp(c,n)===bp(base,pa*m-pb*k+pc*n)}}
+  if(kind==="mdm"){const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),[d,pd]=P(),m=rand(2,3),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc)),q=rand(1,2);if(k<1)return null;if(c===a&&k===m||c===b&&k===n||c===d&&k===q)return null;return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)} × ${pw(d,q)}＝`,answer:withVal(base,e-pc*k+pd*q),sig:`mdm:${a}:${m}:${b}:${n}:${c}:${k}:${d}:${q}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)*bp(d,q)===bp(base,e-pc*k+pd*q)}}
   const[a,pa]=P(),[b,pb]=P(),[c,pc]=P(),m=rand(2,4),n=rand(2,3),e=pa*m+pb*n,k=rand(1,Math.floor((e-1)/pc));if(k<1)return null;return{expr:`${pw(a,m)} × ${pw(b,n)} ÷ ${pw(c,k)}＝${pw(base,"□")}，求 □。`,answer:`□＝${e-pc*k}`,sig:`box:${a}:${m}:${b}:${n}:${c}:${k}`,verify:()=>bp(a,m)*bp(b,n)/bp(c,k)===bp(base,e-pc*k)};
  });
 
@@ -936,6 +941,7 @@ function cnBig(d,k){ // d(1~9 或 兩位) × 10^k 的口語：五千萬、四百
 
 /* ---------- 各單元 ---------- */
 const NOTE='（結果須整理成 a×10<sup>n</sup>，1≦|a|＜10）';
+const sj=(...ps)=>{const o=[],bare=h=>h.replace(/<\/?b>/g,'');for(const p of ps){if(o.length&&bare(o[o.length-1])===bare(p)){o[o.length-1]=p;continue}o.push(p)}return o.join('＝')};
 const GEN={
   rep:{name:'表示法',tip:'把數寫成 a×10ⁿ，1≦|a|＜10、n 為整數。比 1 大的數：小數點向左移幾位，n 就是幾；比 1 小的數：小數點向右移幾位，n 就是負幾。若 a 不在範圍內，把 a 的小數點左移 k 位，指數就加 k；右移 k 位，指數就減 k。',
     make(){ const x=rSci(); const kind=pick(D===1?['big','small','dec','form','frac']:D===2?['big','small','dec','form','frac']:['big','small','form','form','frac','mulform']);
@@ -976,15 +982,16 @@ const GEN={
       let st='('+cs[0]; ops.forEach((op,i)=>st+=(op==='+'?'＋':'−')+cs[i+1]); st+=')×'+p10(p);
       const mid=`${coef(v,p)}×${p10(p)}`; const fin=sci(v);
       return {q:q+'＝？',a:`${st}＝${mid===fin?'<b>'+fin+'</b>':mid+'＝<b>'+fin+'</b>'}`,len:16+(k-2)*8}; }},
+  /* sj：連等式中和前一段相同的步驟不重寫（4×10⁻⁵＝4×10⁻⁵） */
   muldiv:{name:'乘除運算',tip:'用指數律：(a×10ᵐ)×(b×10ⁿ)＝ab×10ᵐ⁺ⁿ；(a×10ᵐ)÷(b×10ⁿ)＝(a÷b)×10ᵐ⁻ⁿ，算完再整理成 c×10ᵖ，1≦|c|＜10。',
     make(){ const op=coin()?'*':'/'; const sigA=D===1?rnd(1,2):rnd(2,3), sigB=D===1?1:rnd(1,2);
       if(op==='*'){ const a=rSci(sigA), b=rSci(sigB); if(D===3&&coin(.3)){ // 三個因數或含普通數
-          const c=coin()?S(rnd(2,9)*10,0):rSci(1); const v=mul(mul(a,b),c); return {q:`${sciWrap(a)}×${sciWrap(b)}×${c.e===1?plain(c):sciWrap(c)}＝？`,a:`${a.m*b.m*c.m}×${p10(a.e+b.e+c.e)}＝<b>${sci(v)}</b>`,len:28}; }
+          const c=coin()?S(rnd(2,9)*10,0):rSci(1); const v=mul(mul(a,b),c); return {q:`${sciWrap(a)}×${sciWrap(b)}×${c.e===1?plain(c):sciWrap(c)}＝？`,a:sj(`${a.m*b.m*c.m}×${p10(a.e+b.e+c.e)}`,`<b>${sci(v)}</b>`),len:28}; }
         const v=mul(a,b); const {a:aa,ad:ada,n:na}=norm(a), {a:ab,ad:adb,n:nb}=norm(b); const prod=S(aa*ab,-(ada+adb));
-        return {q:`${sciWrap(a)}×${sciWrap(b)}＝？`,a:`${decStr(prod.m*Math.pow(10,Math.max(0,prod.e+ada+adb)),Math.max(0,ada+adb))}×${p10(na+nb)}＝<b>${sci(v)}</b>`,len:20}; }
+        return {q:`${sciWrap(a)}×${sciWrap(b)}＝？`,a:sj(`${decStr(prod.m*Math.pow(10,Math.max(0,prod.e+ada+adb)),Math.max(0,ada+adb))}×${p10(na+nb)}`,`<b>${sci(v)}</b>`),len:20}; }
       // 除法：先決定商與除數，被除數 = 商×除數
       for(let t=0;t<50;t++){ const b=rSci(sigB), qv=rSci(D===1?1:rnd(1,2)); if(Math.abs(b.m)===1||Math.abs(qv.m)===1) continue; const a=mul(qv,b); if(digits(a.m)>5) continue; const {a:aa,ad:ada,n:na}=norm(a), {a:ab,ad:adb,n:nb}=norm(b);
-        const qm=div({m:aa,e:-ada},{m:ab,e:-adb}); const v=div(a,b); return {q:`${sciWrap(a)}÷${sciWrap(b)}＝？`,a:`${fr(decStr(aa,ada),decStr(ab,adb))}×${p10(na-nb)}＝${decStr(qm.m,Math.max(0,-qm.e))+(qm.e>0?'0'.repeat(qm.e):'')}×${p10(na-nb)}＝<b>${sci(v)}</b>`,len:20}; }
+        const qm=div({m:aa,e:-ada},{m:ab,e:-adb}); const v=div(a,b); return {q:`${sciWrap(a)}÷${sciWrap(b)}＝？`,a:sj(`${fr(decStr(aa,ada),decStr(ab,adb))}×${p10(na-nb)}`,`${decStr(qm.m,Math.max(0,-qm.e))+(qm.e>0?'0'.repeat(qm.e):'')}×${p10(na-nb)}`,`<b>${sci(v)}</b>`),len:20}; }
       return this.make(); }},
   mix:{name:'綜合練習',tip:'混合各種形式：普通數與科學記號相乘、分數形式、未整理的 a×10ⁿ，先各自化成科學記號再運算。',
     make(){ const kind=pick(['plainmul','fracmul','formmul','addsub','muldiv','rep']);
@@ -1094,7 +1101,7 @@ const GEN={
   sd:{name:'短除法',tip:'( A，B，C ) 表示最大公因數，〔A，B，C〕表示最小公倍數。求最大公因數：用所有數共同的質因數去除，除到沒有共同質因數為止，除數相乘。求最小公倍數：只要有兩個以上的數有共同質因數就繼續除，除到每兩個數都互質，再把所有除數和最後一列全部相乘。',
     make(){ const k=D===1?pick([2,2,3]):D===2?pick([2,3,3]):pick([3,3,4]); const nums=makeSet(k,MAXN()); const mode=coin()?'gcd':'lcm'; const t=sdTable(nums,mode);
       const q=(mode==='gcd'?wrapG(list(nums)):wrapL(list(nums)))+'＝？';
-      const a=(ctxShowTable?t.html:'')+`<span class="steps">${mode==='gcd'?wrapG(list(nums)):wrapL(list(nums))}＝${t.prod}＝<b>${t.val}</b></span>`;
+      const a=(ctxShowTable?t.html:'')+`<span class="steps">${mode==='gcd'?wrapG(list(nums)):wrapL(list(nums))}＝${t.prod===String(t.val)?'':t.prod+'＝'}<b>${t.val}</b></span>`;
       return {q,a,len:nums.length*4}; }},
   sdapp:{name:'短除法應用',tip:'先求括號內的值，再用求得的結果和其他數繼續求。例如〔(42，84)，315〕：先求 (42，84)＝42，再求〔42，315〕＝630。',
     make(){ const nums=makeSet(3,MAXN()); const [a,b,c]=nums; const form=pick(D===3?['lg','gl','ll','gg','lgr','glr']:['lg','gl','ll','gg']);
@@ -1119,7 +1126,7 @@ const GEN={
         const sa=showA?fmtFac(A):String(a), sb=showB?fmtFac(B):String(b);
         const val=mode==='gcd'?gcd2(a,b):lcm2(a,b);
         const q=(mode==='gcd'?wrapG:wrapL)(sa+'<span>，</span>'+sb)+'＝？';
-        const stepA=showA?'':`${a}＝${fmtFac(A)}；`; const a_=`<span class="steps">${stepA}${(mode==='gcd'?wrapG:wrapL)(fmtFac(A)+'，'+fmtFac(B))}＝<b>${fac(val)}</b>（＝${val}）</span>`;
+        const stepA=showA?'':`${a}＝${fmtFac(A)}；`; const a_=`<span class="steps">${stepA}${(mode==='gcd'?wrapG:wrapL)(fmtFac(A)+'，'+fmtFac(B))}＝<b>${fac(val)}</b>${fac(val)===String(val)?'':`（＝${val}）`}</span>`;
         return {q,a:a_,len:16}; }
       return {q:wrapG('280，2<sup>4</sup>×7×11')+'＝？',a:'<b>2<sup>3</sup>×7</b>',len:16}; }},
   stdapp:{name:'標準分解式應用',tip:'各數以連乘積給出時，不要真的乘開，先把每個數化成標準分解式再求，答案也用標準分解式表示。',
@@ -1128,7 +1135,7 @@ const GEN={
       for(let t=0;t<100;t++){ const A=mkProd(), B=mkProd(); const a=A.reduce((x,y)=>x*y,1), b=B.reduce((x,y)=>x*y,1); if(gcd2(a,b)<2||a===b) continue;
         const useStd=coin(.4); const sb=useStd?fac(b):B.join('×'); const mode=coin()?'gcd':'lcm'; const val=mode==='gcd'?gcd2(a,b):lcm2(a,b);
         const q=(mode==='gcd'?wrapG:wrapL)(A.join('×')+'<span>，</span>'+sb)+'＝？';
-        const a_=`<span class="steps">${A.join('×')}＝${fac(a)}；${useStd?'':B.join('×')+'＝'+fac(b)+'；'}所求＝<b>${fac(val)}</b>${val<1e7?`（＝${val}）`:''}</span>`;
+        const a_=`<span class="steps">${A.join('×')}＝${fac(a)}；${useStd?'':B.join('×')+'＝'+fac(b)+'；'}所求＝<b>${fac(val)}</b>${val<1e7&&fac(val)!==String(val)?`（＝${val}）`:''}</span>`;
         return {q,a:a_,len:20}; }
       return {q:wrapG('7×50，4×6×5')+'＝？',a:'<b>2×5</b>',len:20}; }},
   mix:{name:'綜合練習',tip:'混合各種題型：巢狀括號、最大公因數與最小公倍數的和、商，以及需要輾轉相除的大數。',
@@ -1158,7 +1165,7 @@ const GEN={
  GEN.euclid.make=function(){const kind=pick(D===1?['plain','words','apply']:D===2?['plain','words','apply']:['plain','three','apply']);const base=GEN.__euclidPlain.call(GEN.euclid);if(kind==='plain')return base;
   const nums=(base.q.replace(/<[^>]+>/g,'').match(/\d+/g)||[]).map(Number),g=nums.reduce((x,y)=>{while(y){[x,y]=[y,x%y]}return x});
   if(kind==='words')return{q:`用輾轉相除法求 ${nums[0]} 與 ${nums[1]} 的最大公因數。`,a:base.a,len:14,verify:()=>G(nums[0],nums[1])===g};
-  if(kind==='apply'){const item=pick([['兩條繩子長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分'],['兩塊布長','公尺','裁成一樣長的布條且不剩，每條最長幾公尺？','公尺'],['兩袋糖果各有','顆','平分給最多的小朋友且不剩，最多幾人？','人']]);return{q:`${item[0]} ${nums[0]} ${item[1]}與 ${nums[1]} ${item[1]}，${item[2]}`,a:base.a.replace(/<b>(\d+)<\/b>/,`<b>$1</b> ${item[3]}`),len:18,verify:()=>G(nums[0],nums[1])===g}}
+  if(kind==='apply'){/* 情境要配得上數字大小：五位數不出「兩袋糖果各有 23161 顆」，改用電線、緞帶長（公分）或水量（毫升） */const big=Math.max(nums[0],nums[1]);const item=pick([['兩條繩子長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分',999],['兩塊布長','公尺','裁成一樣長的布條且不剩，每條最長幾公尺？','公尺',300],['兩袋糖果各有','顆','平分給最多的小朋友且不剩，最多幾人？','人',999],['兩捆電線長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分',1e9],['兩桶水各有','毫升','分裝成容量相同的瓶裝水且不剩，每瓶最多裝幾毫升？','毫升',1e9],['兩卷緞帶長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分',1e9]].filter(t=>big<=t[4]));return{q:`${item[0]} ${nums[0]} ${item[1]}與 ${nums[1]} ${item[1]}，${item[2]}`,a:base.a.replace(/<b>(\d+)<\/b>/,`<b>$1</b> ${item[3]}`),len:18,verify:()=>G(nums[0],nums[1])===g}}
   const c=g*rnd(2,9);const st=[];let x=Math.max(nums[0],nums[1]),y=Math.min(nums[0],nums[1]);while(y){st.push(`${x}÷${y}＝${Math.floor(x/y)}…${x%y}`);[x,y]=[y,x%y]}
   return{q:wrapG(list([nums[0],nums[1],c]))+'＝？',a:`<span class="steps">先求 ${wrapG(list([nums[0],nums[1]]))}：${st.join('，')}，得 ${g}；再求 ${wrapG(list([g,c]))}＝<b>${GCD(g,c)}</b></span>`,len:16,verify:()=>[nums[0],nums[1],c].reduce(G)===GCD(g,c)}};
  const U=[["sd","短除法"],["sdapp","短除法應用"],["euclid","輾轉相除法"],["std","標準分解式"],["stdapp","標準分解式應用"],["mix","綜合練習"]].map(([k,n])=>unit(k,n,GEN[k].tip));
@@ -1175,6 +1182,7 @@ function linearConfig(){
  const unit=(id,name,tip,cat)=>({id,name,tip,modes:["integer","fraction","decimal"],answerLabel:cat==="s"?"原式＝":"",gen:ctx=>{
   D=ctx.level==="challenge"?3:ctx.level==="advanced"?2:1;TYPES=[ctx.modes[0]==="integer"?"int":ctx.modes[0]==="fraction"?"frac":"dec"];
   let it;try{it=GEN[id].make()}catch(e){return null}if(!it)return null;
+  if(cat==="s"&&it.e&&ev(it.e,it.env||{}).a.isZero())return null; // 化簡後 x 消失就不是「x 的一次式」，重出
   const q=(it.given?`<div style="font-size:90%;margin-bottom:2px">${it.given}</div>`:"")+it.q.replace(/<span style="margin:0 .15em">＝<\/span>？$/,"＝");
   return{expr:q,answer:it.a,sig:(it.given||"")+it.q.replace(/<[^>]+>/g,""),verify:()=>check(it)};
  }});
@@ -1320,12 +1328,13 @@ const GEN={
    let lhs,rhs;
    switch(kind){
     case 'xa': lhs=Ln(lin(1,b)); rhs=N(x0.add(b)); if(coin(.4)) [lhs,rhs]=[rhs,lhs]; break;
-    case 'ax': lhs=Ln(lin(a,0)); rhs=N(a.mul(x0)); if(coin(.3)) [lhs,rhs]=[rhs,lhs]; break;
+    case 'ax': { const aa=Math.abs(a.n)===1?new F(sgn()*rnd(2,9)):a; lhs=Ln(lin(aa,0)); rhs=N(aa.mul(x0)); if(coin(.3)) [lhs,rhs]=[rhs,lhs]; break; } // a＝±1 時題目就是「x＝k」
     case 'xdk': lhs={t:'Q',n:Ln(lin(1,0)),k}; rhs=N(x0.div(k)); break;                              // x÷k=?
-    case 'kdx': { const xx=new F(rnd(2,9)*sgn()); const kk=xx.mul(new F(rnd(2,9))); lhs={t:'R',a:kk,n:Ln(lin(1,0))}; rhs=N(kk.div(xx)); return {q:`${render(lhs)}<span style="margin:0 .15em">＝</span>${render(rhs)}`,a:`<b>${V()}＝${numStr(xx)}</b>`,len:8,lhs,rhs,x:xx}; }
+    /* x 不放在分母（k÷x 不是一元一次方程式）：改出 x÷(−k)＝q 與 (ax)÷k＝q */
+    case 'kdx': { const kk=new F(-rnd(2,9)); const q=new F(rnz(-9,9)); lhs={t:'M',l:Ln(lin(1,0)),k:kk,op:'/'}; rhs=N(q); break; }
     case 'axb': lhs=Ln(lin(a,b)); rhs=N(a.mul(x0).add(b)); break;
     case 'a-bx': lhs=S(T(1,N(b)),T(-1,Ln(lin(a.abs(),0)))); rhs=N(b.sub(a.abs().mul(x0))); break;
-    case 'kdax': { const xx=new F(rnd(2,9)*sgn()); const aa=new F(rnz(2,9)); const q=new F(rnd(2,9)); const kk=aa.mul(xx).mul(q); lhs={t:'R',a:kk,n:Ln(lin(aa,0))}; rhs=N(q); return {q:`${render(lhs)}<span style="margin:0 .15em">＝</span>${render(rhs)}`,a:`<b>${V()}＝${numStr(xx)}</b>`,len:9,lhs,rhs,x:xx}; }
+    case 'kdax': { const kk=new F(rnd(2,9)), t=new F(rnz(-9,9)), aa=new F(rnd(2,9)*sgn()); if(Math.abs(aa.n)===kk.n) return this.make(); lhs={t:'M',l:Ln(lin(aa,0)),k:kk,op:'/'}; rhs=N(aa.mul(t)); break; }
     case 'revx': lhs=N(b); rhs=S(T(-1,Ln(lin(1,0))),T(1,N(b.add(x0)))); break; }
    const E=ladd(ev(lhs),lscale(ev(rhs),-1)); return {q:`${render(lhs)}<span style="margin:0 .15em">＝</span>${render(rhs)}`,a:solveStr(E),len:9,lhs,rhs,E}; }},
  e2:{name:'解方程式',cat:'一元一次方程式',tip:'移項：把含 x 的項移到一邊、常數移到另一邊；化簡兩邊；再用等量公理求 x。解出後代回原式驗算。',
@@ -1336,7 +1345,7 @@ const GEN={
   make(){ const type=T_(); const dec=type==='dec'; const x0=x0For(type==='frac'?'int':type);
    const term=()=>{ const L=rLin('int',{aInt:true,bInt:true,noZeroB:true,max:7}); const kk=type==='int'?smallInt(D===1?5:7):coef(type,{max:5}); return T(coin(.8)?1:-1,K(kk,Ln(L))); };
    const kind=pick(D===1?['kL=c','kL-L=c']:['kL=c','kL-L=c','kL-kL=L','L-kL=kL','a-kL=c']); let lhs,rhs;
-   switch(kind){ case 'kL=c': lhs=S(term()); rhs=N(0); break; case 'kL-L=c': lhs=S(term(),T(sgn(),Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:6})))); rhs=N(0); break;
+   switch(kind){ case 'kL=c': { let t=term(); while(t.s===1&&t.n.k.eq(1)) t=term(); lhs=S(t); rhs=N(0); break; } /* 係數 1 時只剩一個無意義的括號 */ case 'kL-L=c': lhs=S(term(),T(sgn(),Ln(rLin('int',{aInt:true,bInt:true,noZeroB:true,max:6})))); rhs=N(0); break;
      case 'kL-kL=L': lhs=S(term(),term()); rhs=Ln(rLin('int',{aInt:true,bInt:true,max:5})); break; case 'L-kL=kL': lhs=S(T(1,Ln(rLin('int',{aInt:true,bInt:true,max:6}))),term()); rhs=S(term()); break;
      case 'a-kL=c': lhs=S(T(1,N(rnd(2,20))),term()); rhs=N(0); break; }
    const E0=ladd(ev(lhs),lscale(ev(rhs),-1)); if(E0.a.isZero()) return this.make(); const r=eqWith(lhs,rhs,x0,dec); return {q:r.q,a:solveStr(r.E,dec),len:18,lhs:r.lhs,rhs:r.rhs,E:r.E}; }},
@@ -1497,11 +1506,14 @@ const GEN={
      const e1=eqStr([T(1,'lin',L1)],[T(1,'lin',lin(0,0,lval(L1,x0,y0)))]), e2=eqStr([T(1,'lin',L2s)],[T(1,'lin',lin(0,0,lval(L2s,x0,y0)))]);
      return {q:sys(e1,e2),a:solStr(x0,y0)+`　（兩式相加得 ${V(VX)}${s>0?'＋':'−'}${V(VY)}＝${numStr(x0.add(y0.mul(s)))}，相減得 ${V(VX)}${s>0?'−':'＋'}${V(VY)}＝${numStr(x0.sub(y0.mul(s)))}）`,len:14}; }
    // diff：eq2 = a x + b y，eq1 = eq2 + t(px+qy)，t 是 10 的倍數
-   const a=rnz(11,79), b=rnz(11,79); const p=rnz(1,4), q=rnz(1,4); const t=pick(D===3?[50,100,150]:[10,20,50]); const L2=lin(a,b,0), L1=lin(a+t*p,b+t*q,0); if(!indep(L1,L2)) return this.make();
+   // 係數上限依難度（基礎 50 以內、進階 99、挑戰 199）；p、q 先約掉公因數，說明裡的「化簡成」才是最簡
+   let p=rnd(1,4), q=rnd(1,4); const g=gcd(p,q); p/=g; q/=g; const t=pick(D===3?[50,100]:D===2?[10,20]:[10]), cap=D===1?49:D===2?99:199, hi=cap-t*Math.max(p,q); if(hi<15) return this.make();
+   const a=rnd(11,hi), b=rnd(11,hi); const L2=lin(a,b,0), L1=lin(a+t*p,b+t*q,0); if(!indep(L1,L2)) return this.make();
    const e1=eqStr([T(1,'lin',L1)],[T(1,'lin',lin(0,0,lval(L1,x0,y0)))]), e2=eqStr([T(1,'lin',L2)],[T(1,'lin',lin(0,0,lval(L2,x0,y0)))]);
    return {q:sys(e1,e2),a:solStr(x0,y0)+`　（兩式相減得 ${linStr(lin(t*p,t*q,0))}＝${numStr(lval(lin(t*p,t*q,0),x0,y0))}，化簡成 ${linStr(lin(p,q,0))}＝${numStr(lval(lin(p,q,0),x0,y0))}）`,len:14}; }},
  chain:{name:'A式＝B式＝C式',tip:'由 A＝B＝C 可以拆成兩個方程式（A＝B 與 B＝C，或 A＝B 與 A＝C），再用代入或加減消去法解。',
-  make(){ const [x0,y0]=sol(); const useFrac=TYPES.includes('frac')&&coin(.5);
+  make(){ let [x0,y0]=sol(); const useFrac=TYPES.includes('frac')&&coin(.5);
+   if(useFrac&&!(x0.isInt()&&y0.isInt())) [x0,y0]=[new F(rnz(-9,9)),new F(rnz(-9,9))]; // 分子裡的常數要是整數（不出現 −2x＋5y−68/5 這種分子）
    const mk=()=>{ const L=lin(coin(.7)?cI(5):0,coin(.7)?cI(5):0,rnz(-9,9)); if(nterms(L)<2) return mk(); return L; };
    let A=mk(),B=mk(),C=mk(); if(!indep(ladd(A,lscale(B,-1)),ladd(B,lscale(C,-1)))) return this.make();
    if(useFrac){ const ds=[pick([2,3,4,5,10]),pick([2,3,4,5,8]),pick([2,3,4,6,8])]; // (A)/d1 = (B)/d2 = (C)/d3，令共同值 v
@@ -1522,7 +1534,7 @@ const GEN={
  mix:{name:'綜合練習',tip:'混合各種形式：含括號、未化簡的標準式（如 2x＋6y−6＝0）、分數、小數與特殊型，先移項化簡成標準式再選擇適當的方法。',
   make(){ const kind=pick(['grp','grp','unsimp','sub','elim','fracdec','chain','special','subst']); if(GEN[kind]&&kind!=='mix') return GEN[kind].make();
    const [x0,y0]=sol(); const dec=false;
-   if(kind==='grp'){ const mk=()=>{ const k=cI(4); const inner=lin(coin(.8)?1:0,coin(.8)?1:0,rnz(-6,6)); if(nterms(inner)<2) return mk(); const lhs=[T(1,'grp',inner,{k}),T(sgn(),'lin',lin(coin()?cI(4):0,coin()?cI(4):0,0))]; const L=sideEval(lhs); if(L.x.isZero()||L.y.isZero()) return mk(); const rhs=coin()?[T(1,'lin',lin(0,0,lval(L,x0,y0)))]:balance(lhs,[T(1,'lin',lin(cI(4),coin()?cI(4):0,0))],x0,y0); return {L:ladd(L,lscale(sideEval(rhs),-1)),eq:eqStr(lhs,rhs)}; };
+   if(kind==='grp'){ const mk=()=>{ const k=cI(4); const inner=lin(coin(.8)?1:0,coin(.8)?1:0,rnz(-6,6)); if(nterms(inner)<2) return mk(); const second=lin(coin()?cI(4):0,coin()?cI(4):0,0); if(second.x.isZero()&&second.y.isZero()) return mk(); /* 否則印出「−0」 */ const lhs=[T(1,'grp',inner,{k}),T(sgn(),'lin',second)]; const L=sideEval(lhs); if(L.x.isZero()||L.y.isZero()) return mk(); const rhs=coin()?[T(1,'lin',lin(0,0,lval(L,x0,y0)))]:balance(lhs,[T(1,'lin',lin(cI(4),coin()?cI(4):0,0))],x0,y0); return {L:ladd(L,lscale(sideEval(rhs),-1)),eq:eqStr(lhs,rhs)}; };
      const a=mk(),b=mk(); if(!indep(a.L,b.L)) return this.make(); return {q:sys(a.eq,b.eq),a:solStr(x0,y0),len:16}; }
    // unsimp: 2x+y−7=2、2x+6y−6=0
    const mk=()=>{ const L=lin(cI(6),cI(6),0); const c=lval(L,x0,y0); const k=rnz(-9,9); const lhs=[T(1,'lin',lin(L.x,L.y,-k))]; const rhs=[T(1,'lin',lin(0,0,c.sub(k)))]; return {L,eq:eqStr(lhs,rhs)}; };
@@ -1991,7 +2003,7 @@ function genAbs(){
     }else{
       r=pickRel();
       const st=style(.6);
-      if(st==='frac'){a=fracC();b=fracC();k=fracC();if(chance(.5))[a,b]=[b,a]} // |1/2 − x/3| ≧ 1/5
+      if(st==='frac'){a=fracC();b=fracC();k=fracC();if(k.sign<0)k=k.neg();if(chance(.5))[a,b]=[b,a]} // 右邊要正數：｜…｜ 不會小於負數 // |1/2 − x/3| ≧ 1/5
       else if(st==='dec'){a=dc(-19,19);b=dc(-49,49);k=dc(1,49);dec=true}
       else{a=new F(nz(-6,6));b=new F(nz(-12,12));k=new F(ri(1,15));if(chance(.5))extra=nz(-6,6);else den=pick([2,3,4])}
     }
@@ -2119,9 +2131,12 @@ function num(f,o={}){
 }
 const V=n=>`<var>${n}</var>`;
 const X=V('x'),Y=V('y'),Zv=V('z');
+const redR=(m,n)=>{let g=gcd(Math.abs(m),Math.abs(n));if(n<0)g=-g;return g===1?'':EQ+ratio(num(m/g),num(n/g))}; // 比化成最簡整數比（後項為正）再寫比值
+const rCo=(k,v=V('r'))=>{const f=F.of(k);return(f.eq(1)?'':f.eq(-1)?MINUS:num(f))+v}; // 係數 1、−1 不寫出：r、−r（不寫 1r）
 const CL='<span style="margin:0 4px;font-weight:600">:</span>', EQ='<span style="margin:0 4px">=</span>';
-const ratio=(...p)=>p.join(CL);
+const ratio=(...p)=>p.map(x=>String(x).startsWith(MINUS)?'('+x+')':x).join(CL); // 比的一項是負數時加括號：38r:(−11r)、(2x−7):(−27)
 const join=s=>s.join('，');
+const eqJoin=(...ps)=>{const o=[],bare=h=>h.replace(/<\/?b>/g,'');for(const p of ps){if(o.length&&bare(o[o.length-1])===bare(p)){if(p!==bare(p))o[o.length-1]=p;continue}o.push(p)}return o.join(EQ)}; // 連等式中和前一步相同的一段不重寫
 const SUP2='<sup>2</sup>';
 
 // 式子（一次式）顯示：{c:F,dec,body:null|'x'|{br:Expr}|{fr:Expr,den}}
@@ -2168,7 +2183,7 @@ function ratioValueSteps(a,b,o={}){ // 回傳 {steps:[], v:F}
   const s=[];
   const v=a.div(b);
   const isI=a.isInt()&&b.isInt();
-  if(isI){ s.push(`${num(a,{paren:true})}÷${num(b,{paren:true})}${EQ}${frHTML(num(a,{abs:true}),num(b,{abs:true}))}`.replace(EQ+frHTML(num(a,{abs:true}),num(b,{abs:true})),(a.n<0)!==(b.n<0)?EQ+MINUS+frHTML(num(a,{abs:true}),num(b,{abs:true})):EQ+frHTML(num(a,{abs:true}),num(b,{abs:true})))); }
+  if(isI){ s.push(`${num(a,{paren:true})}÷${num(b,{paren:true})}`); const f=((a.n<0)!==(b.n<0)?MINUS:'')+frHTML(num(a,{abs:true}),num(b,{abs:true})); if(f!==num(v))s.push(f); } // 已是最簡分數就不重寫一次
   else{
     s.push(`${num(a,{dec:true,mixed:true,paren:true})}÷${num(b,{dec:true,mixed:true,paren:true})}`);
     s.push(`${num(a,{paren:true})}÷${num(b,{paren:true})}`);
@@ -2177,34 +2192,34 @@ function ratioValueSteps(a,b,o={}){ // 回傳 {steps:[], v:F}
     s.push(negv?`${MINUS}(${inner})`:inner);
   }
   s.push('<b>'+num(v)+'</b>');
-  return{steps:s,v,html:s.join(EQ)};
+  return{steps:s,v,html:eqJoin(...s)};
 }
 
 // ================= 單元 1：比與比值 =================
-const UNITS_T=[{big:'kg',small:'g',k:1000},{big:'m',small:'cm',k:100},{big:'km',small:'m',k:1000},{big:'分',small:'秒',k:60},{big:'時',small:'分',k:60},{big:'L',small:'mL',k:1000}];
+const UNITS_T=[{big:'kg',small:'g',k:1000},{big:'m',small:'cm',k:100},{big:'km',small:'m',k:1000},{big:'分',small:'秒',k:60,bn:'分鐘'},{big:'時',small:'分',k:60,bn:'小時',sn:'分鐘'},{big:'L',small:'mL',k:1000}];
 function genRatioValue(){
   const lvl=CFG.lvl;
   return retry(()=>{
     const withUnit=chance(lvl===1?.4:.5);
     let a,b,html,pre='';
     if(withUnit){
-      const u=pick(UNITS_T);
+      const u=pick(UNITS_T),BN=u.bn||u.big,SN=u.sn||u.small; // 顯示用：時間寫「5 分鐘：23 秒」「7 小時：40 分鐘」
       const st=style(.6);
       // 大單位量：小數或分數；小單位量：整數
       let bigV, bigHTML;
-      if(st==='frac'&&u.k!==60&&lvl>=2){bigV=new F(ri(1,3)*4+pick([1,2,3]),4);bigHTML=num(bigV,{mixed:true})+u.big}
-      else if(st==='frac'&&u.k===60){const d=pick([2,3,4,5,6]);bigV=new F(ri(1,5)*d+ri(1,d-1),d);bigHTML=num(bigV,{mixed:true})+u.big}
-      else if(lvl===3&&chance(.5)&&['m','分','時'].includes(u.big)){const w=ri(1,5),r=ri(1,u.k===60?59:99);bigV=new F(w*u.k+r,u.k);bigHTML=`${w}${u.big}${r}${u.small}`}
-      else if(u.k===60){bigV=new F(ri(2,12));bigHTML=num(bigV)+u.big}
-      else{const k=lvl===1?10:100;let n;do{n=ri(1,k*5)}while(n%k===0&&chance(.7));bigV=new F(n,k);bigHTML=num(bigV,{dec:true})+u.big}
+      if(st==='frac'&&u.k!==60&&lvl>=2){bigV=new F(ri(1,3)*4+pick([1,2,3]),4);bigHTML=num(bigV,{mixed:true})+BN}
+      else if(st==='frac'&&u.k===60){const d=pick([2,3,4,5,6]);bigV=new F(ri(1,5)*d+ri(1,d-1),d);bigHTML=num(bigV,{mixed:true})+BN}
+      else if(lvl===3&&chance(.5)&&['m','分','時'].includes(u.big)){const w=ri(1,5),r=ri(1,u.k===60?59:99);bigV=new F(w*u.k+r,u.k);bigHTML=`${w}${BN}${r}${SN}`}
+      else if(u.k===60){bigV=new F(ri(2,12));bigHTML=num(bigV)+BN}
+      else{const k=lvl===1?10:100;let n;do{n=ri(1,k*5)}while(n%k===0&&chance(.7));bigV=new F(n,k);bigHTML=num(bigV,{dec:true})+BN}
       let smallV=ri(1,u.k===60?59:99)*(lvl===1?10:1); if(u.k===60)smallV=ri(5,59); if(u.k===100&&lvl===1)smallV=ri(1,9)*10; if(u.k===1000)smallV=ri(1,9)*(lvl===1?100:50);
       const bigInSmall=bigV.mul(u.k);
       if(!bigInSmall.isInt())return null;
-      const big={v:bigInSmall,h:bigHTML}, small={v:new F(smallV),h:smallV+u.small};
+      const big={v:bigInSmall,h:bigHTML}, small={v:new F(smallV),h:smallV+SN};
       const first=chance(.5)?big:small, second=first===big?small:big;
       a=first.v;b=second.v;
       html=ratio(first.h,second.h)+EQ+'？';
-      pre=`${bigHTML}${EQ}${num(bigInSmall)}${u.small}，`;
+      pre=`${bigHTML}${EQ}${num(bigInSmall)}${SN}，`;
     }else{
       const st1=style(.7),st2=style(.7);
       const mk=st=>{let v=posNum(st,{max:lvl===1?12:30,dec2:lvl===3});if(lvl>=2&&chance(.4))v=v.neg();return v};
@@ -2328,8 +2343,9 @@ function genPropX(){
     const x0=Q.div(P);
     if(lb.at(x0).isZero()||ld.at(x0).isZero())return null;
     if(Math.abs(x0.n)>200||x0.d>30)return null;
-    const html=ratio(render(A),render(B))+EQ+ratio(render(C),render(D));
-    const s=[];
+    const html=ratio(render(A),render(B))+EQ+ratio(render(C),render(D)); // 負數項由 ratio() 加括號：(2x−7):(−27)
+    const s=[],eqs=[];
+    const step=(pre,e)=>{if(eqs.length&&eqs[eqs.length-1]===e)return;eqs.push(e);s.push(pre+e)}; // 和上一步相同的等式不再寫一次
     const side=(e1,e2)=>{ // 顯示 e1·e2
       const isC=e=>e.length===1&&e[0].body===null;
       const one=e=>e.length===1&&e[0].body===null&&e[0].c.eq(1);
@@ -2341,14 +2357,16 @@ function genPropX(){
       return w(e1)+w(e2);
     };
     const dec=[A,B,C,D].some(e=>e.some(t=>t.dec));
-    s.push('外項乘積＝內項乘積：'+side(A,D)+EQ+side(B,C));
+    step('外項乘積＝內項乘積：',side(A,D)+EQ+side(B,C));
     const lhs=new L(la.p.mul(ld.q).add(la.q.mul(ld.p)),la.q.mul(ld.q)), rhs=new L(lb.p.mul(lc.q).add(lb.q.mul(lc.p)),lb.q.mul(lc.q));
-    s.push(renderL(lhs,dec)+EQ+renderL(rhs,dec));
+    step('',renderL(lhs,dec)+EQ+renderL(rhs,dec));
     const M=denLcm(lhs.p,lhs.q,rhs.p,rhs.q);
-    let l2=lhs,r2=rhs; if(M>1){l2=lhs.scale(M);r2=rhs.scale(M);s.push('同乘以 '+M+'：'+renderL(l2)+EQ+renderL(r2))}
-    const PP=l2.p.sub(r2.p),QQ=r2.q.sub(l2.q);
-    const st2=renderL(new L(PP,0))+EQ+num(QQ); if(s[s.length-1]!==st2)s.push(st2);
-    s.push('<b>'+X+EQ+num(x0)+'</b>');
+    let l2=lhs,r2=rhs; if(M>1){l2=lhs.scale(M);r2=rhs.scale(M);step('同乘以 '+M+'：',renderL(l2)+EQ+renderL(r2))}
+    // x 只在右邊且係數為正時留在右邊寫成「49x=588」，不寫「−49x=−588」；其餘把 x 移到左邊
+    const keepR=l2.p.isZero()&&r2.p.sign>0;
+    const PP=keepR?r2.p:l2.p.sub(r2.p),QQ=keepR?l2.q.sub(r2.q):r2.q.sub(l2.q);
+    if(!PP.eq(1)&&!(keepR&&r2.q.isZero()))step('',renderL(new L(PP,0))+EQ+num(QQ)); // 「588=49x」之後直接 x=12
+    const fin=X+EQ+num(x0); if(eqs[eqs.length-1]===fin&&s[s.length-1]===fin)s.pop(); s.push('<b>'+fin+'</b>');
     return{html,ans:join(s),v:x0,_ck:()=>la.at(x0).mul(ld.at(x0)).eq(lb.at(x0).mul(lc.at(x0)))&&!lb.at(x0).isZero()&&!ld.at(x0).isZero()};
   });
 }
@@ -2376,6 +2394,7 @@ function genPropValue(){
         do{p=nz(-5,lvl===1?5:9);q=nz(-5,9);r=nz(-5,9);s=nz(-5,9);if(lvl===1){p=ri(1,5);q=ri(1,5);r=ri(1,5);s=nz(-5,5)} if(chance(.2)){r=0;s=1} if(chance(.15)){q=0} ({m,n}=ratioOfLinear(a,b,p,q,r,s))}while(n===0||m===0||p===r&&q===s);
         const g=gcd(m,n);
         const q1=ratio(exprXY(p,q),r===0?Y:exprXY(r,s));
+        if(sub.includes(q1))return null; // 兩小題不可相同
         sub.push(q1);
         const mm=(p*a)+'r'.replace('r',V('r'))+(q*b>=0?'+':MINUS)+Math.abs(q*b)+V('r');
         const sa=`${q1}${EQ}${ratio(exprXY(p,q).replace(X,'·').replace(Y,'·'),'')}`; // unused
@@ -2392,8 +2411,9 @@ function genPropValue(){
         const sq=(c,v)=>(c===1?'':c)+v+SUP2;
         const e=(c1,c2)=>'('+sq(c1,X)+`<span style="margin:0 .15em">${c2<0?MINUS:'+'}</span>`+sq(Math.abs(c2),Y)+')';
         const q1=ratio(e(p,q),e(r,s));
+        if(sub.includes(q1))return null;
         sub.push(q1);
-        const st=`${q1}${EQ}${ratio(`(${p*a*a}${V('r')}${SUP2}${q<0?'<span style="margin:0 .15em">'+MINUS+'</span>':'<span style="margin:0 .15em">+</span>'}${Math.abs(q)*b*b}${V('r')}${SUP2})`,`(${r*a*a}${V('r')}${SUP2}${s<0?'<span style="margin:0 .15em">'+MINUS+'</span>':'<span style="margin:0 .15em">+</span>'}${Math.abs(s)*b*b}${V('r')}${SUP2})`)}${EQ}${ratio(num(m),num(n))}，比值為 <b>${num(new F(m,n))}</b>`;
+        const st=`${q1}${EQ}${ratio(`(${rCo(p*a*a)}${SUP2}${q<0?'<span style="margin:0 .15em">'+MINUS+'</span>':'<span style="margin:0 .15em">+</span>'}${rCo(Math.abs(q)*b*b)}${SUP2})`,`(${rCo(r*a*a)}${SUP2}${s<0?'<span style="margin:0 .15em">'+MINUS+'</span>':'<span style="margin:0 .15em">+</span>'}${rCo(Math.abs(s)*b*b)}${SUP2})`)}${EQ}${ratio(num(m),num(n))}，比值為 <b>${num(new F(m,n))}</b>`;
         steps.push(st);const Xv=a*1.5,Yv=b*1.5;CKS.push(()=>Math.abs((p*Xv*Xv+q*Yv*Yv)/(r*Xv*Xv+s*Yv*Yv)-m/n)<1e-9);
       }
     }
@@ -2418,13 +2438,13 @@ function genEqValue(){
     const rc=k=>(k===1?'':k===-1?MINUS:num(k))+V('r');
     s.push(`令 ${X}${EQ}${rc(rx)}、${Y}${EQ}${rc(ry)}`);
     const sub=[];
-    const sub1=`${ratio(X,Y)}${EQ}？`;
+    const sub1=`${ratio(X,Y)} 的比值？`; // 答案給的是比值，題目就問比值
     sub.push(sub1);
-    s.push(`① ${ratio(X,Y)} 的比值為 <b>${num(new F(rx,ry))}</b>`);
+    s.push(`${lvl>=2?'① ':''}${ratio(X,Y)} 的比值為 <b>${num(new F(rx,ry))}</b>`); // 只問一小題時不編號
     if(lvl>=2){
       let p,q,r,t,m,n;do{p=nz(-5,9);q=nz(-5,9);r=nz(-5,9);t=nz(-5,9);m=p*rx+q*ry;n=r*rx+t*ry}while(m===0||n===0);
       sub.push(ratio(exprXY(p,q),exprXY(r,t))+' 的比值？');
-      s.push(`② ${ratio(exprXY(p,q),exprXY(r,t))}${EQ}${ratio(`(${rc(p*rx)}<span style="margin:0 .15em">${q*ry<0?MINUS:'+'}</span>${rc(Math.abs(q*ry))})`,`(${rc(r*rx)}<span style="margin:0 .15em">${t*ry<0?MINUS:'+'}</span>${rc(Math.abs(t*ry))})`)}${EQ}${ratio(rc(m),rc(n))}${EQ}${ratio(num(m),num(n))}，比值為 <b>${num(new F(m,n))}</b>`);
+      s.push(`② ${ratio(exprXY(p,q),exprXY(r,t))}${EQ}${ratio(`(${rc(p*rx)}<span style="margin:0 .15em">${q*ry<0?MINUS:'+'}</span>${rc(Math.abs(q*ry))})`,`(${rc(r*rx)}<span style="margin:0 .15em">${t*ry<0?MINUS:'+'}</span>${rc(Math.abs(t*ry))})`)}${EQ}${ratio(rc(m),rc(n))}${EQ}${ratio(num(m),num(n))}${redR(m,n)}，比值為 <b>${num(new F(m,n))}</b>`);
     }
     const html=`已知 ${X}、${Y} 均不為 0，且 ${eq}，求：`+sub.map((x,i)=>`<span style="display:block;padding-left:1.2em">${sub.length>1?'①②'[i]+' ':''}${x}</span>`).join('');
     return{html,ans:join(s),_ck:()=>{const Xv=rx*1.5,Yv=ry*1.5;return Math.abs((a*Xv+b*Yv)-(c*Xv+d*Yv))<1e-9}};
@@ -2441,19 +2461,19 @@ function genRatioEq(){
     const s=[];
     let cond;
     if(lvl===1){cond=`${ratio(X,Y)}${EQ}${ratio(a,b)}`}
-    else if(lvl===2){const k1=ri(1,3),k2=ri(1,3);if(k1===1&&k2===1||chance(.3))cond=`${ratio(X,Y)}${EQ}${ratio(a,b)}`;else{const [ra,rb]=[k1*a,k2*b];const g=gcd(ra,rb);cond=`${ratio(renderXY(k1,0),renderXY(0,k2))}${EQ}${ratio(ra/g,rb/g)}`;s.push(`${ratio(k1===1?X:k1+X,k2===1?Y:k2+Y)}${EQ}${ratio(ra/g,rb/g)}，${X}${EQ}${ra/g}${V('r')}÷${k1}、${Y}${EQ}${rb/g}${V('r')}÷${k2}，即 ${ratio(X,Y)}${EQ}${ratio(a,b)}`)}}
+    else if(lvl===2){const k1=ri(1,3);let k2;do k2=ri(1,3);while(k2===k1&&k1!==1); /* 兩項係數相同（3x：3y）等於沒有係數，不出 */if(k1===1&&k2===1||chance(.3))cond=`${ratio(X,Y)}${EQ}${ratio(a,b)}`;else{const [ra,rb]=[k1*a,k2*b];const g=gcd(ra,rb);cond=`${ratio(renderXY(k1,0),renderXY(0,k2))}${EQ}${ratio(ra/g,rb/g)}`;s.push(`${ratio(k1===1?X:k1+X,k2===1?Y:k2+Y)}${EQ}${ratio(ra/g,rb/g)}，兩項各除以係數：`+eqJoin(ratio(X,Y),ratio(num(new F(ra/g,k1)),num(new F(rb/g,k2))),ratio(a,b)))}}
     else{ // (x+y):(x−y)=p:q → x:y=(p+q):(p−q)
       if(a<b)return null;
       const p=a+b,q=a-b,g=gcd(p,q);
       if(q===0)return null;
       cond=`${ratio('('+renderXY(1,1)+')','('+renderXY(1,-1)+')')}${EQ}${ratio(num(p/g),num(q/g))}`;
-      s.push(`${num(p/g)}(${renderXY(1,-1)})${EQ}${num(q/g)}(${renderXY(1,1)})，${renderXY(p/g,-p/g)}${EQ}${renderXY(q/g,q/g)}，${renderXY(p/g-q/g,0)}${EQ}${renderXY(0,p/g+q/g)}，${ratio(X,Y)}${EQ}${ratio(a,b)}`);
+      s.push(`${p/g===1?'':num(p/g)}(${renderXY(1,-1)})${EQ}${q/g===1?'':num(q/g)}(${renderXY(1,1)})，${renderXY(p/g,-p/g)}${EQ}${renderXY(q/g,q/g)}，${renderXY(p/g-q/g,0)}${EQ}${renderXY(0,p/g+q/g)}，${ratio(X,Y)}${EQ}${ratio(a,b)}`);
     }
     // 方程式 cx+dy=e
     let c,d;do{c=nz(-6,9);d=nz(-6,9)}while(c*a+d*b===0);
     const e=(c*a+d*b)*r;
     const eq=renderXY(c,d)+EQ+num(e);
-    s.push(`令 ${X}${EQ}${a===1?'':a}${V('r')}、${Y}${EQ}${b===1?'':b}${V('r')}，代入 ${eq}：${num(c*a)}${V('r')}<span style="margin:0 .15em">${d*b<0?MINUS:'+'}</span>${Math.abs(d*b)}${V('r')}${EQ}${num(e)}，${num(c*a+d*b)}${V('r')}${EQ}${num(e)}，${V('r')}${EQ}${r}`);
+    s.push(`令 ${X}${EQ}${a===1?'':a}${V('r')}、${Y}${EQ}${b===1?'':b}${V('r')}，代入 ${eq}：${rCo(c*a)}<span style="margin:0 .15em">${d*b<0?MINUS:'+'}</span>${rCo(Math.abs(d*b))}${EQ}${num(e)}，${rCo(c*a+d*b)}${EQ}${num(e)}${c*a+d*b===1?'':`，${V('r')}${EQ}${r}`}`);
     const askAll=lvl===1||chance(.3);
     if(!askAll)s.push(`${X}${EQ}${x}，${Y}${EQ}${y}`);
     let ask;
@@ -2494,8 +2514,8 @@ function genChain(){
       const fx=new F(p,ka),fy=new F(q,kb),fz=new F(rr,kc);
       const res=simpRatio([fx,fy,fz]);
       const html=`已知 ${ratio(ka+v1,kb+v2,kc+v3)}${EQ}${ratio(p,q,rr)}，求 ${ratio(v1,v2,v3)}${EQ}？`;
-      const s=[`${ka}${v1}${EQ}${p}${V('r')}，${v1}${EQ}${num(fx)}${V('r')}；${kb}${v2}${EQ}${q}${V('r')}，${v2}${EQ}${num(fy)}${V('r')}；${kc}${v3}${EQ}${rr}${V('r')}，${v3}${EQ}${num(fz)}${V('r')}`,
-        `${ratio(v1,v2,v3)}${EQ}${ratio(num(fx),num(fy),num(fz))}${EQ}<b>${ratio(...res)}</b>`];
+      const s=[`${ka}${v1}${EQ}${p}${V('r')}，${v1}${EQ}${rCo(fx)}；${kb}${v2}${EQ}${q}${V('r')}，${v2}${EQ}${rCo(fy)}；${kc}${v3}${EQ}${rr}${V('r')}，${v3}${EQ}${rCo(fz)}`,
+        eqJoin(ratio(v1,v2,v3),ratio(num(fx),num(fy),num(fz)),`<b>${ratio(...res)}</b>`)];
       return{html,ans:join(s),_ck:()=>Math.abs(ka*res[0]/(kb*res[1])-p/q)<1e-9&&Math.abs(kb*res[1]/(kc*res[2])-q/rr)<1e-9};
     }
     // 兩個比合併
@@ -2526,8 +2546,9 @@ function genChainProp(){
     const st=style(lvl===1?.2:.6);
     // 已知比 a:b:c，另一邊 p:x:y（p 對應 a）
     let base=ratioTerms(st,3,{max:lvl===1?9:15});
-    if(base[0].eq(base[1])||base[1].eq(base[2]))return null;
+    if(base[0].eq(base[1])||base[1].eq(base[2])||base[0].eq(base[2]))return null; // 兩項相同（14：2：14）時 x、y 一看即知
     const k=chance(.5)?new F(ri(2,6)):new F(ri(1,9),pick([2,3,4,5]));
+    if(k.eq(1))return null; // 倍數為 1：已知項與原比的項相同，答案就是原比的數（如 2：7：6＝x：y：6）
     const other=base.map(f=>f.mul(k));
     const idxKnown=ri(0,2); // other 中哪一個已知
     const unk=[0,1,2].filter(i=>i!==idxKnown);
@@ -2543,7 +2564,7 @@ function genChainProp(){
     for(const [j,name] of [[unk[0],X],[unk[1],Y]]){
       // sb[idxKnown]:sb[j] = kn:name → sb[idxKnown]·name = sb[j]·kn
       const val_=other[j];
-      s.push(`${ratio(sb[idxKnown],sb[j])}${EQ}${ratio(ratioNum(kn),name)}，${sb[idxKnown]}${name}${EQ}${sb[j]}×${ratioNum(kn,{paren:true})}${EQ}${num(new F(sb[j]).mul(kn))}，${name}${EQ}<b>${num(val_)}</b>`);
+      s.push(`${ratio(sb[idxKnown],sb[j])}${EQ}${ratio(ratioNum(kn),name)}，${sb[idxKnown]===1?'':sb[idxKnown]}${name}${EQ}${sb[j]}×${ratioNum(kn,{paren:true})}${EQ}${num(new F(sb[j]).mul(kn))}，${name}${EQ}<b>${num(val_)}</b>`);
     }
     return{html,ans:join(s),_sum:other[unk[0]].add(other[unk[1]]),_ck:()=>{const fv=f=>f.n/f.d;return [0,1,2].every(i=>Math.abs(fv(other[i])/fv(base[i])-fv(other[idxKnown])/fv(base[idxKnown]))<1e-9)}};
   });
@@ -2567,7 +2588,7 @@ function genChainApp(){
       const [a,b,c]=abc();
       const html=`設 ${v1}、${v2}、${v3} 均不為 0，且 ${a}${v1}${EQ}${b}${v2}${EQ}${c}${v3}，求 ${ratio(v1,v2,v3)}${EQ}？`;
       const r=simpRatio([new F(1,a),new F(1,b),new F(1,c)]);
-      const s=[`令 ${a}${v1}${EQ}${b}${v2}${EQ}${c}${v3}${EQ}${V('r')}，則 ${v1}${EQ}${frHTML(V('r'),a)}、${v2}${EQ}${frHTML(V('r'),b)}、${v3}${EQ}${frHTML(V('r'),c)}`,`${ratio(v1,v2,v3)}${EQ}${ratio(frHTML(1,a),frHTML(1,b),frHTML(1,c))}${EQ}${ratio(b*c,a*c,a*b)}${EQ}<b>${ratio(...r)}</b>`];
+      const s=[`令 ${a}${v1}${EQ}${b}${v2}${EQ}${c}${v3}${EQ}${V('r')}，則 ${v1}${EQ}${frHTML(V('r'),a)}、${v2}${EQ}${frHTML(V('r'),b)}、${v3}${EQ}${frHTML(V('r'),c)}`,eqJoin(ratio(v1,v2,v3),ratio(frHTML(1,a),frHTML(1,b),frHTML(1,c)),ratio(b*c,a*c,a*b),`<b>${ratio(...r)}</b>`)];
       return{html,ans:join(s),_ck:()=>a*r[0]===b*r[1]&&b*r[1]===c*r[2]};
     }
     if(kind==='twoEq'){ // 5x=4z, 3y=2z → x:y:z
@@ -2589,7 +2610,7 @@ function genChainApp(){
       const res=mergeShared(s1[0],s1[1],s2[0],s2[1]);
       const Lm=lcm(s1[1],s2[0]);
       const html=`設 ${ratio((k1===1?'':k1)+v1,(k2===1?'':k2)+v2)}${EQ}${ratio(p,q)}，${ratio((k3===1?'':k3)+v2,(k4===1?'':k4)+v3)}${EQ}${ratio(u,w)}，求 ${ratio(v1,v2,v3)}${EQ}？`;
-      const s=[`${ratio(v1,v2)}${EQ}${ratio(num(fa),num(fb))}${EQ}${ratio(...s1)}`,`${ratio(v2,v3)}${EQ}${ratio(num(fb2),num(fc))}${EQ}${ratio(...s2)}`,alignTable(v1,v2,v3,s1[0],s1[1],s2[0],s2[1],[s1[0]*Lm/s1[1],Lm,s2[1]*Lm/s2[0]],[v2])+`∴ ${ratio(v1,v2,v3)}${EQ}<b>${ratio(...res)}</b>`];
+      const s=[eqJoin(ratio(v1,v2),ratio(num(fa),num(fb)),ratio(...s1)),eqJoin(ratio(v2,v3),ratio(num(fb2),num(fc)),ratio(...s2)),alignTable(v1,v2,v3,s1[0],s1[1],s2[0],s2[1],[s1[0]*Lm/s1[1],Lm,s2[1]*Lm/s2[0]],[v2])+`∴ ${ratio(v1,v2,v3)}${EQ}<b>${ratio(...res)}</b>`];
       return{html,ans:join(s),_ck:()=>Math.abs(k1*res[0]/(k2*res[1])-p/q)<1e-9&&Math.abs(k3*res[1]/(k4*res[2])-u/w)<1e-9};
     }
     if(kind==='prod'){ // 5ab=3bc=8ac → a:b:c=3:8:5（x:y:z = 係數 yz:zx:xy）
@@ -2644,12 +2665,12 @@ function genChainValue(){
     let p,q,t,K;do{p=nz(-3,4);q=nz(-3,4);t=nz(-3,4);if(lvl===1){p=pick([1,1,2]);q=pick([1,1,2,3]);t=pick([1,1,2])}K=(p*a+q*b+t*c)*r}while(p*a+q*b+t*c<=0);
     const lhs3=[[p,v1],[q,v2],[t,v3]].map(([co,v],i)=>(i?`<span style="margin:0 .15em">${co<0?MINUS:'+'}</span>`:(co<0?MINUS:''))+(Math.abs(co)===1?'':Math.abs(co))+v).join('');
     const eq=`${lhs3}${EQ}${K}`;
-    s.push(`令 ${v1}${EQ}${a===1?'':a}${V('r')}、${v2}${EQ}${b===1?'':b}${V('r')}、${v3}${EQ}${c===1?'':c}${V('r')}，代入 ${eq}：${num(p*a)}${V('r')}<span style="margin:0 .15em">${q*b<0?MINUS:'+'}</span>${Math.abs(q*b)}${V('r')}<span style="margin:0 .15em">${t*c<0?MINUS:'+'}</span>${Math.abs(t*c)}${V('r')}${EQ}${K}，${p*a+q*b+t*c}${V('r')}${EQ}${K}，${V('r')}${EQ}${r}`);
+    s.push(`令 ${v1}${EQ}${a===1?'':a}${V('r')}、${v2}${EQ}${b===1?'':b}${V('r')}、${v3}${EQ}${c===1?'':c}${V('r')}，代入 ${eq}：${rCo(p*a)}<span style="margin:0 .15em">${q*b<0?MINUS:'+'}</span>${rCo(Math.abs(q*b))}<span style="margin:0 .15em">${t*c<0?MINUS:'+'}</span>${rCo(Math.abs(t*c))}${EQ}${K}，${rCo(p*a+q*b+t*c)}${EQ}${K}${p*a+q*b+t*c===1?'':`，${V('r')}${EQ}${r}`}`);
     const vals=[a*r,b*r,c*r];
     let ask;
     const askKind=lvl===1?pick(['all','one']):lvl===2?pick(['all','one','sum']):pick(['sum','exprRatio','one']);
     if(askKind==='all'){ask=`則 ${v1}${EQ}？，${v2}${EQ}？，${v3}${EQ}？`;s.push(`<b>${v1}${EQ}${vals[0]}，${v2}${EQ}${vals[1]}，${v3}${EQ}${vals[2]}</b>`)}
-    else if(askKind==='one'){const i=ri(0,2);ask=`則 ${[v1,v2,v3][i]}${EQ}？`;s.push(`<b>${[v1,v2,v3][i]}${EQ}${[a,b,c][i]}${V('r')}${EQ}${vals[i]}</b>`)}
+    else if(askKind==='one'){const i=ri(0,2);ask=`則 ${[v1,v2,v3][i]}${EQ}？`;s.push(`<b>${[v1,v2,v3][i]}${EQ}${rCo([a,b,c][i])}${EQ}${vals[i]}</b>`)}
     else if(askKind==='sum'){const [u,w,z]=[pick([1,1,2]),pick([1,2,3]),pick([1,1,2])];const e=[[u,v1],[w,v2],[z,v3]].map(([co,v],i)=>(i?'<span style="margin:0 .15em">+</span>':'')+(co===1?'':co)+v).join('');ask=`則 ${e}${EQ}？`;s.push(`${e}${EQ}${u*vals[0]}+${w*vals[1]}+${z*vals[2]}${EQ}<b>${u*vals[0]+w*vals[1]+z*vals[2]}</b>`)}
     else{ // (a+2):(b−2):(c+3)
       const [d1,d2,d3]=[nz(-9,9),nz(-9,9),nz(-9,9)];const m=[vals[0]+d1,vals[1]+d2,vals[2]+d3];if(m.some(v=>v<=0))return null;
@@ -2673,7 +2694,7 @@ function genExprValue(){ // a=2b，b=3c，求 3b²/(2a²+bc)
     const numV=k1*b*b, denV=k2*a*a+k3*b*c;
     const sq=(k,v)=>(k===1?'':k)+v+SUP2;
     const html=`設 ${v1}、${v2}、${v3} 均不為 0，且 ${v1}${EQ}${m}${v2}，${v2}${EQ}${n}${v3}，求 ${frHTML(sq(k1,v2),sq(k2,v1)+'<span style="margin:0 .15em">+</span>'+(k3===1?'':k3)+v2+v3,true)}${EQ}？`;
-    const _ck=()=>{const R=1.7,C=R,B=n*R,A=m*B;return Math.abs(k1*B*B/(k2*A*A+k3*B*C)-numV/denV)<1e-9};const s=[`令 ${v3}${EQ}${V('r')}，則 ${v2}${EQ}${b}${V('r')}、${v1}${EQ}${a}${V('r')}`,`原式${EQ}${frHTML(`${k1}×(${b}${V('r')})${SUP2}`,`${k2}×(${a}${V('r')})${SUP2}+${k3}×${b}${V('r')}×${V('r')}`,true)}${EQ}${frHTML(numV+V('r')+SUP2,(k2*a*a)+V('r')+SUP2+'+'+(k3*b)+V('r')+SUP2,true)}${EQ}${frHTML(numV+V('r')+SUP2,denV+V('r')+SUP2,true)}${EQ}<b>${num(new F(numV,denV))}</b>`];
+    const _ck=()=>{const R=1.7,C=R,B=n*R,A=m*B;return Math.abs(k1*B*B/(k2*A*A+k3*B*C)-numV/denV)<1e-9};const s=[`令 ${v3}${EQ}${V('r')}，則 ${v2}${EQ}${b}${V('r')}、${v1}${EQ}${a}${V('r')}`,`原式${EQ}${frHTML(`${k1===1?'':k1+'×'}(${b}${V('r')})${SUP2}`,`${k2===1?'':k2+'×'}(${a}${V('r')})${SUP2}+${k3===1?'':k3+'×'}${b}${V('r')}×${V('r')}`,true)}${EQ}${frHTML(numV+V('r')+SUP2,(k2*a*a)+V('r')+SUP2+'+'+(k3*b)+V('r')+SUP2,true)}${EQ}${frHTML(numV+V('r')+SUP2,denV+V('r')+SUP2,true)}${EQ}<b>${num(new F(numV,denV))}</b>`];
     return{html,ans:join(s),_ck};
   });
 }
@@ -2684,7 +2705,7 @@ function genChainRatioValue(){ // x:y:z=2:5:7 → (x+3y−z):(3x−y+z) 比值
     const e=(cs)=>'('+cs.map(([co,v],i)=>(i?`<span style="margin:0 .15em">${co<0?MINUS:'+'}</span>`:(co<0?MINUS:''))+(Math.abs(co)===1?'':Math.abs(co))+v).join('')+')';
     const E1=e([[p,X],[q,Y],[t,Zv]]),E2=e([[u,X],[w,Y],[z,Zv]]);
     const html=`若 ${ratio(X,Y,Zv)}${EQ}${ratio(a,b,c)}，則 ${ratio(E1,E2)} 的比值${EQ}？`;
-    const s=[`令 ${X}${EQ}${a}${V('r')}、${Y}${EQ}${b}${V('r')}、${Zv}${EQ}${c}${V('r')}`,`${ratio(E1,E2)}${EQ}${ratio(num(m)+V('r'),num(n)+V('r'))}${EQ}${ratio(num(m),num(n))}，比值為 <b>${num(new F(m,n))}</b>`];
+    const s=[`令 ${X}${EQ}${rCo(a)}、${Y}${EQ}${rCo(b)}、${Zv}${EQ}${rCo(c)}`,`${ratio(E1,E2)}${EQ}${ratio(rCo(m),rCo(n))}${EQ}${ratio(num(m),num(n))}${redR(m,n)}，比值為 <b>${num(new F(m,n))}</b>`];
     return{html,ans:join(s),_ck:()=>{const R=2.5;return Math.abs((p*a*R+q*b*R+t*c*R)/(u*a*R+w*b*R+z*c*R)-m/n)<1e-9}};
   });
 }
@@ -2729,6 +2750,7 @@ function functionConfig(){
  const eL=(a,b,x)=>add(mul(a,x),b),eQ=(a,b,c,x)=>add(add(mul(a,mul(x,x)),mul(b,x)),c);
  const rnz=(mode,max=6)=>{if(mode==="integer")return R(pick([-1,1])*rand(1,max));if(mode==="fraction"){let n,d;do{n=pick([-1,1])*rand(1,max);d=pick([2,3,4,5])}while(Math.abs(n)%d===0);return R(n,d)}let n;do n=pick([-1,1])*rand(2,max*10);while(n%10===0);return R(n,10)};
  const rv=(mode,max=6)=>Math.random()<.15?R(0):rnz(mode,max),ri=(a,b)=>R(rand(a,b));
+ const mn=v=>String(v).replace("-","−");
  const term10=a=>{let d=a.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1};
  const okAll=(mode,vs)=>mode!=="decimal"||vs.every(term10);
  const cases=rows=>`<span style="display:inline-flex;align-items:center;gap:2px;vertical-align:middle"><span style="font-size:2.4em;font-weight:200;line-height:.9;font-family:'Times New Roman',serif;transform:scaleX(.7)">{</span><span style="display:flex;flex-direction:column;gap:1px">${rows.map(r=>`<span style="white-space:nowrap">${r}</span>`).join("")}</span></span>`;
@@ -2737,21 +2759,22 @@ function functionConfig(){
   const r=k(mode,Lv);if(!r)return null;const vals=r.vals||[];if(!okAll(mode,vals))return null;
   return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<[^>]+>/g,""),verify:r.chk};
  }});
+ const idF=(a,b)=>b.n===0&&a.n===a.d; // f(x)＝x：函數值就是代入的數，題目等於把答案寫出來
  const one=(q,v,mode,chk)=>({q,a:sh(v,mode),vals:[v],chk});
 
  const linearValue=mkUnit("linearValue","一次函數值","把 x 的值代入 f(x)；代入負數時先加括號。",[
-  (m)=>{const a=rnz(m),b=rv(m),x=rv(m,5),y=eL(a,b,x);return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})。`,y,m,()=>near(fv(a)*fv(x)+fv(b),fv(y)))},
-  (m)=>{const a=rnz(m),b=rv(m),x=rv(m,5),y=eL(a,b,x);return one(`一次函數 y＝${L(a,b,m)}，當 x＝${sh(x,m)} 時，y 的值為多少？`,y,m,()=>near(fv(a)*fv(x)+fv(b),fv(y)))},
-  (m)=>{const a=rnz(m),b=rv(m),x=rv(m,5),z=rv(m,5);if(eq(x,z))return null;const y=eL(a,b,x),w=eL(a,b,z);return{q:`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)}) 與 f(${sh(z,m)})。`,a:`f(${sh(x,m)})＝${sh(y,m)}，f(${sh(z,m)})＝${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*fv(x)+fv(b),fv(y))&&near(fv(a)*fv(z)+fv(b),fv(w))}},
-  (m)=>{const a=rnz(m),b=rv(m),y0=b,y1=add(a,b);return{q:`設 f(x)＝${L(a,b,m)}，求 f(0)、f(1)，並求 f(1)−f(0)。`,a:`f(0)＝${sh(y0,m)}，f(1)＝${sh(y1,m)}，f(1)−f(0)＝${sh(a,m)}`,vals:[y0,y1,a],chk:()=>near(fv(y1)-fv(y0),fv(a))}},
-  (m)=>{const a=rnz(m),b=rv(m),d=ri(2,9),v=mul(a,d);return one(`設 f(x)＝${L(a,b,m)}。當 x 的值增加 ${d.n} 時，f(x) 的值增加多少？（減少以負數表示）`,v,m,()=>near((fv(a)*(3+d.n)+fv(b))-(fv(a)*3+fv(b)),fv(v)))}]);
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=rv(m,5),y=eL(a,b,x);return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})。`,y,m,()=>near(fv(a)*fv(x)+fv(b),fv(y)))},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=rv(m,5),y=eL(a,b,x);return one(`一次函數 y＝${L(a,b,m)}，當 x＝${sh(x,m)} 時，y 的值為多少？`,y,m,()=>near(fv(a)*fv(x)+fv(b),fv(y)))},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=rv(m,5),z=rv(m,5);if(eq(x,z))return null;const y=eL(a,b,x),w=eL(a,b,z);return{q:`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)}) 與 f(${sh(z,m)})。`,a:`f(${sh(x,m)})＝${sh(y,m)}，f(${sh(z,m)})＝${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*fv(x)+fv(b),fv(y))&&near(fv(a)*fv(z)+fv(b),fv(w))}},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const y0=b,y1=add(a,b);return{q:`設 f(x)＝${L(a,b,m)}，求 f(0)、f(1)，並求 f(1)−f(0)。`,a:`f(0)＝${sh(y0,m)}，f(1)＝${sh(y1,m)}，f(1)−f(0)＝${sh(a,m)}`,vals:[y0,y1,a],chk:()=>near(fv(y1)-fv(y0),fv(a))}},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const d=ri(2,9),v=mul(a,d);return one(`設 f(x)＝${L(a,b,m)}。當 x 的值增加 ${d.n} 時，f(x) 的值增加多少？（減少以負數表示）`,v,m,()=>near((fv(a)*(3+d.n)+fv(b))-(fv(a)*3+fv(b)),fv(v)))}]);
 
  const quadraticValue=mkUnit("quadraticValue","二次函數值（進階）","先算 x²，再乘係數；負數平方後為正。",[
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rv(m,6),x=rv(m,4),y=eQ(a,b,c,x);return one(`設 f(x)＝${Q(a,b,c,m)}，求 f(${sh(x,m)})。`,y,m,()=>near(fv(a)*fv(x)**2+fv(b)*fv(x)+fv(c),fv(y)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rv(m,6),x=rv(m,4),y=eQ(a,b,c,x);return one(`二次函數 y＝${Q(a,b,c,m)}，當 x＝${sh(x,m)} 時，y 的值為多少？`,y,m,()=>near(fv(a)*fv(x)**2+fv(b)*fv(x)+fv(c),fv(y)))},
   (m)=>{const a=rnz(m,4),b=rnz(m,5),c=rv(m,6),x=rnz(m,4),y=eQ(a,b,c,x),w=eQ(a,b,c,R(-x.n,x.d));return{q:`設 f(x)＝${Q(a,b,c,m)}，求 f(${sh(x,m)}) 與 f(${sh(R(-x.n,x.d),m)})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(y)-fv(w),2*fv(b)*fv(x))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rv(m,6),x=rv(m,3),z=rv(m,3);if(eq(x,z))return null;const s=add(eQ(a,b,c,x),eQ(a,b,c,z));return one(`設 f(x)＝${Q(a,b,c,m)}，求 f(${sh(x,m)})＋f(${sh(z,m)})。`,s,m,()=>near([x,z].reduce((t,u)=>t+fv(a)*fv(u)**2+fv(b)*fv(u)+fv(c),0),fv(s)))},
-  (m)=>{const a=rnz(m,4),b=rv(m,5),c=rv(m,6),x=ri(-4,4),d=sub(eQ(a,b,c,add(x,R(1))),eQ(a,b,c,x));return one(`設 f(x)＝${Q(a,b,c,m)}，求 f(${x.n+1})−f(${sh(x,m)})。`,d,m,()=>near(fv(a)*(2*x.n+1)+fv(b),fv(d)))}]);
+  (m)=>{const a=rnz(m,4),b=rv(m,5),c=rv(m,6),x=ri(-4,4),d=sub(eQ(a,b,c,add(x,R(1))),eQ(a,b,c,x));return one(`設 f(x)＝${Q(a,b,c,m)}，求 f(${mn(x.n+1)})−f(${sh(x,m)})。`,d,m,()=>near(fv(a)*(2*x.n+1)+fv(b),fv(d)))}]);
 
  const constantValue=mkUnit("constantValue","常數函數","常數函數 f(x)＝k 不論 x 是多少，函數值都是 k。",[
   (m)=>{const k=rnz(m,9),p=ri(-50,99);return one(`設 f(x)＝${sh(k,m)}，求 f(${sh(p,m)})。`,k,m,()=>near(fv(k),fv(k)))},
@@ -2761,17 +2784,17 @@ function functionConfig(){
   (m)=>{const k=rnz(m,9),n=rand(5,30),v=mul(k,R(n));return one(`設 f(x)＝${sh(k,m)}，求 f(1)＋f(2)＋f(3)＋⋯＋f(${n})。`,v,m,()=>near(n*fv(k),fv(v)))}]);
 
  const combinedValue=mkUnit("combinedValue","函數值綜合運算","先分別求出每個函數值，再做加減乘除。",[
-  (m)=>{const a=rnz(m),b=rv(m),x=ri(-4,-1),z=ri(1,5),v=add(eL(a,b,x),eL(a,b,z));return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})＋f(${z.n})。`,v,m,()=>near(fv(a)*(x.n+z.n)+2*fv(b),fv(v)))},
-  (m)=>{const a=rnz(m),b=rv(m),x=ri(-4,-1),z=ri(1,5),v=sub(eL(a,b,x),eL(a,b,z));return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})−f(${z.n})。`,v,m,()=>near(fv(a)*(x.n-z.n),fv(v)))},
-  (m)=>{const a=rnz(m),b=rv(m),x=ri(-4,-1),z=ri(1,5),v=mul(eL(a,b,x),eL(a,b,z));return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})×f(${z.n})。`,v,m,()=>near((fv(a)*x.n+fv(b))*(fv(a)*z.n+fv(b)),fv(v)))},
-  (m)=>{const a=rnz(m),b=rv(m),x=ri(-4,4),z=ri(-4,4),p=rand(2,4),q=rand(2,4);if(eq(x,z))return null;const v=sub(mul(R(p),eL(a,b,x)),mul(R(q),eL(a,b,z)));return one(`設 f(x)＝${L(a,b,m)}，求 ${p}f(${sh(x,m)})−${q}f(${sh(z,m)})。`,v,m,()=>near(p*(fv(a)*x.n+fv(b))-q*(fv(a)*z.n+fv(b)),fv(v)))},
-  (m)=>{const a=rnz(m),b=rv(m),x=ri(-5,5),z=ri(-5,5),fz=eL(a,b,z);if(fz.n===0||eq(x,z))return null;const v=div(eL(a,b,x),fz);if(m==="decimal"&&!term10(v))return null;return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})÷f(${sh(z,m)})。`,v,m,()=>near((fv(a)*x.n+fv(b))/(fv(a)*z.n+fv(b)),fv(v)))}]);
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=ri(-4,-1),z=ri(1,5),v=add(eL(a,b,x),eL(a,b,z));return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})＋f(${z.n})。`,v,m,()=>near(fv(a)*(x.n+z.n)+2*fv(b),fv(v)))},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=ri(-4,-1),z=ri(1,5),v=sub(eL(a,b,x),eL(a,b,z));return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})−f(${z.n})。`,v,m,()=>near(fv(a)*(x.n-z.n),fv(v)))},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=ri(-4,-1),z=ri(1,5),v=mul(eL(a,b,x),eL(a,b,z));return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})×f(${z.n})。`,v,m,()=>near((fv(a)*x.n+fv(b))*(fv(a)*z.n+fv(b)),fv(v)))},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=ri(-4,4),z=ri(-4,4),p=rand(2,4),q=rand(2,4);if(eq(x,z))return null;const v=sub(mul(R(p),eL(a,b,x)),mul(R(q),eL(a,b,z)));return one(`設 f(x)＝${L(a,b,m)}，求 ${p}f(${sh(x,m)})−${q}f(${sh(z,m)})。`,v,m,()=>near(p*(fv(a)*x.n+fv(b))-q*(fv(a)*z.n+fv(b)),fv(v)))},
+  (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=ri(-5,5),z=ri(-5,5),fz=eL(a,b,z);if(fz.n===0||eq(x,z))return null;const v=div(eL(a,b,x),fz);if(m==="decimal"&&!term10(v))return null;return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})÷f(${sh(z,m)})。`,v,m,()=>near((fv(a)*x.n+fv(b))/(fv(a)*z.n+fv(b)),fv(v)))}]);
 
  const piecewise=mkUnit("piecewise","分段函數（進階）","先看 x 屬於哪一段，再代入那一段的式子；端點看等號在哪一段。",[
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,4),d=rv(m,5),x=ri(-4,-1),z=ri(1,4),y=eL(a,b,x),w=eL(c,d,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${L(c,d,m)}，x≧0`])}，求 f(${sh(x,m)}) 與 f(${z.n})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*x.n+fv(b),fv(y))&&near(fv(c)*z.n+fv(d),fv(w))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,3),d=rv(m,4),x=ri(-4,-1),z=ri(1,4),y=eL(a,b,x),w=eQ(c,R(0),d,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${Q(c,R(0),d,m)}，x≧0`])}，求 f(${sh(x,m)}) 與 f(${z.n})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*x.n+fv(b),fv(y))&&near(fv(c)*z.n**2+fv(d),fv(w))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,3),d=rv(m,4),x=ri(-4,-1),z=ri(0,4),v=add(eL(a,b,x),eQ(c,R(0),d,z));return one(`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${Q(c,R(0),d,m)}，x≧0`])}，求 f(${sh(x,m)})＋f(${z.n})。`,v,m,()=>near(fv(a)*x.n+fv(b)+fv(c)*z.n**2+fv(d),fv(v)))},
-  (m)=>{const t=rand(-3,3),a=rnz(m,4),b=rv(m,5),c=rnz(m,4),d=rv(m,5),T=R(t),y=eL(c,d,T),z=R(t-rand(1,3)),w=eL(a,b,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜${t}`,`${L(c,d,m)}，x≧${t}`])}，求 f(${sh(T,m)}) 與 f(${sh(z,m)})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(c)*t+fv(d),fv(y))&&near(fv(a)*z.n+fv(b),fv(w))}},
+  (m)=>{const t=rand(-3,3),a=rnz(m,4),b=rv(m,5),c=rnz(m,4),d=rv(m,5),T=R(t),y=eL(c,d,T),z=R(t-rand(1,3)),w=eL(a,b,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜${mn(t)}`,`${L(c,d,m)}，x≧${mn(t)}`])}，求 f(${sh(T,m)}) 與 f(${sh(z,m)})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(c)*t+fv(d),fv(y))&&near(fv(a)*z.n+fv(b),fv(w))}},
   (m)=>{const a=ri(1,3),b=ri(1,5),c=ri(-3,-1),d=ri(-4,4),x=ri(-4,-1),in1=eL(a,b,x);const f=u=>u.n<0?eL(a,b,u):eL(c,d,u),v=f(in1);return one(`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${L(c,d,m)}，x≧0`])}，求 f(f(${sh(x,m)}))。`,v,m,()=>{const g=u=>u<0?fv(a)*u+fv(b):fv(c)*u+fv(d);return near(g(g(x.n)),fv(v))})}]);
 
  const solveInput=mkUnit("solveInput","由函數值反求輸入","令 f(k) 等於已知值，列出一元一次方程式解 k。",[
@@ -2797,11 +2820,11 @@ function functionConfig(){
   (m)=>{const p=rnz(m,3),a=rnz(m,4),b=rv(m,5),y1=eQ(p,a,b,R(1)),y2=eQ(p,a,b,R(-1)),x3=ri(2,3),y3=eQ(p,a,b,x3);return{q:`設 f(x)＝${term(p,"x<sup>2</sup>",m,true)}＋ax＋b，且 f(1)＝${sh(y1,m)}、f(−1)＝${sh(y2,m)}，求 a、b 與 f(${x3.n})。`,a:`${ab(a,b,m)}，f(${x3.n})＝${sh(y3,m)}`,vals:[a,b,y3],chk:()=>near(fv(p)+fv(a)+fv(b),fv(y1))&&near(fv(p)-fv(a)+fv(b),fv(y2))&&near(fv(p)*x3.n**2+fv(a)*x3.n+fv(b),fv(y3))}}]);
 
  const replaceFunction=mkUnit("replaceFunction","函數替換（進階）","令括號內的式子等於要求的值，解出 x 再代入另一邊。",[
-  (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,5),t=rand(-3,4),v=eL(a,b,R(t+s));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝f(x＋${s})，求 g(${t})。`,v,m,()=>near(fv(a)*(t+s)+fv(b),fv(v)))},
-  (m)=>{const a=rnz(m,4),b=rv(m,5),k=rand(2,4),t=rand(-3,4),v=eL(a,b,R(k*t));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝f(${k}x)，求 g(${t})。`,v,m,()=>near(fv(a)*k*t+fv(b),fv(v)))},
-  (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,4),k=rand(2,3),o=rand(-4,3),t=rand(-2,4),x=t+s,v=eL(a,b,R(k*x+o));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x−${s})＝f(${k}x${o<0?`−${-o}`:o?`＋${o}`:""})，求 g(${t})。`,v,m,()=>near(fv(a)*(k*(t+s)+o)+fv(b),fv(v)))},
-  (m)=>{const a=rnz(m,4),b=rv(m,5),p=rand(2,3),c=rand(-5,5),t=rand(-3,4),v=add(mul(R(p),eL(a,b,R(t))),R(c));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝${p}f(x)${c<0?`−${-c}`:c?`＋${c}`:""}，求 g(${t})。`,v,m,()=>near(p*(fv(a)*t+fv(b))+c,fv(v)))},
-  (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,5),t=rand(-4,6),v=add(mul(a,R(t-s)),b);return one(`已知 f(x＋${s})＝${L(a,b,m)}，求 f(${t})。`,v,m,()=>near(fv(a)*(t-s)+fv(b),fv(v)))}]);
+  (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,5),t=rand(-3,4),v=eL(a,b,R(t+s));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝f(x＋${s})，求 g(${mn(t)})。`,v,m,()=>near(fv(a)*(t+s)+fv(b),fv(v)))},
+  (m)=>{const a=rnz(m,4),b=rv(m,5),k=rand(2,4),t=rand(-3,4),v=eL(a,b,R(k*t));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝f(${k}x)，求 g(${mn(t)})。`,v,m,()=>near(fv(a)*k*t+fv(b),fv(v)))},
+  (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,4),k=rand(2,3),o=rand(-4,3),t=rand(-2,4),x=t+s,v=eL(a,b,R(k*x+o));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x−${s})＝f(${k}x${o<0?`−${-o}`:o?`＋${o}`:""})，求 g(${mn(t)})。`,v,m,()=>near(fv(a)*(k*(t+s)+o)+fv(b),fv(v)))},
+  (m)=>{const a=rnz(m,4),b=rv(m,5),p=rand(2,3),c=rand(-5,5),t=rand(-3,4),v=add(mul(R(p),eL(a,b,R(t))),R(c));return one(`已知 f(x)＝${L(a,b,m)}，且 g(x)＝${p}f(x)${c<0?`−${-c}`:c?`＋${c}`:""}，求 g(${mn(t)})。`,v,m,()=>near(p*(fv(a)*t+fv(b))+c,fv(v)))},
+  (m)=>{const a=rnz(m,4),b=rv(m,5),s=rand(1,5),t=rand(-4,6),v=add(mul(a,R(t-s)),b);return one(`已知 f(x＋${s})＝${L(a,b,m)}，求 f(${mn(t)})。`,v,m,()=>near(fv(a)*(t-s)+fv(b),fv(v)))}]);
 
  const composite=mkUnit("composite","複合函數（進階）","f(g(x)) 由內往外算：先求 g(x)，再把結果代入 f。",[
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),x=ri(-3,4),v=eL(a,b,eL(c,d,x));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 f(g(${sh(x,m)}))。`,v,m,()=>near(fv(a)*(fv(c)*x.n+fv(d))+fv(b),fv(v)))},
@@ -2810,19 +2833,20 @@ function functionConfig(){
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,3),d=rv(m,4),x=ri(-3,3),v=eQ(c,R(0),d,eL(a,b,x));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${Q(c,R(0),d,m)}，求 g(f(${sh(x,m)}))。`,v,m,()=>near(fv(c)*(fv(a)*x.n+fv(b))**2+fv(d),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),k=rv(m,4),t=eL(a,b,eL(c,d,k));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}。若 f(g(k))＝${sh(t,m)}，求 k。`,k,m,()=>near(fv(a)*(fv(c)*fv(k)+fv(d))+fv(b),fv(t)))}]);
 
- const sumValues=mkUnit("sumValues","連續函數值總和","一次函數的連續函數值成等差，可用「首項＋末項」×項數÷2，或把 a 與 b 分開加。",[
+ const sumValues=mkUnit("sumValues","連續函數值總和","一次函數 ax＋b 的連續函數值成等差，可用「首項＋末項」×項數÷2，或把 a 與 b 分開加；二次函數 ax²＋c 則把 a×(1²＋2²＋⋯＋n²) 與 n 個 c 分開加。",[
+  /* 項數 ≦ 4 時全部寫出，真的有省略的項才用「⋯」。 */
   (m)=>{const a=rnz(m,4),b=rv(m,5),n=rand(4,8);let s=R(0);for(let i=1;i<=n;i++)s=add(s,eL(a,b,R(i)));return one(`設 f(x)＝${L(a,b,m)}，求 f(1)＋f(2)＋⋯＋f(${n})。`,s,m,()=>near(fv(a)*n*(n+1)/2+n*fv(b),fv(s)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),p=rand(-5,3),n=rand(4,8),e=p+n-1;let s=R(0);for(let i=p;i<=e;i++)s=add(s,eL(a,b,R(i)));return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(R(p),m)})＋f(${sh(R(p+1),m)})＋⋯＋f(${sh(R(e),m)})。`,s,m,()=>near(fv(a)*(p+e)*n/2+n*fv(b),fv(s)))},
   (m)=>{const a=rnz(m,4),b=rv(m,5),n=rand(3,8),s=mul(b,R(2*n+1));return one(`設 f(x)＝${L(a,b,m)}，求 f(−${n})＋f(−${n-1})＋⋯＋f(${n-1})＋f(${n})。`,s,m,()=>near((2*n+1)*fv(b),fv(s)))},
-  (m)=>{const a=rnz(m,4),b=rv(m,5),n=rand(3,6);let s=R(0);for(let i=1;i<=n;i++)s=add(s,eL(a,b,R(2*i-1)));return one(`設 f(x)＝${L(a,b,m)}，求 f(1)＋f(3)＋f(5)＋⋯＋f(${2*n-1})。`,s,m,()=>near(fv(a)*n*n+n*fv(b),fv(s)))},
+  (m)=>{const a=rnz(m,4),b=rv(m,5),n=rand(3,6);let s=R(0);for(let i=1;i<=n;i++)s=add(s,eL(a,b,R(2*i-1)));const odd=Array.from({length:n},(_,i)=>`f(${2*i+1})`),list=n<=4?odd.join("＋"):`${odd.slice(0,3).join("＋")}＋⋯＋${odd[n-1]}`;return one(`設 f(x)＝${L(a,b,m)}，求 ${list}。`,s,m,()=>near(fv(a)*n*n+n*fv(b),fv(s)))},
   (m)=>{const a=rnz(m,3),c=rv(m,4),n=rand(4,6);let s=R(0);for(let i=1;i<=n;i++)s=add(s,eQ(a,R(0),c,R(i)));return one(`設 f(x)＝${Q(a,R(0),c,m)}，求 f(1)＋f(2)＋⋯＋f(${n})。`,s,m,()=>near(fv(a)*n*(n+1)*(2*n+1)/6+n*fv(c),fv(s)))}]);
 
  const nested=mkUnit("nested","巢狀函數值（進階）","f(f(x)) 先算裡面的 f(x)，再把結果當成新的 x 代入一次。",[
-  (m)=>{const a=rnz(m,3),b=rv(m,4),x=ri(-3,3),v=eL(a,b,eL(a,b,x));return one(`設 f(x)＝${L(a,b,m)}，求 f(f(${sh(x,m)}))。`,v,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(x.n)),fv(v))})},
-  (m)=>{const a=rnz(m,3),b=rv(m,4),x=ri(-2,2),v=eL(a,b,eL(a,b,eL(a,b,x)));return one(`設 f(x)＝${L(a,b,m)}，求 f(f(f(${sh(x,m)})))。`,v,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(g(x.n))),fv(v))})},
-  (m)=>{const a=rnz(m,3),b=rv(m,4),x=ri(-3,3),y=eL(a,b,x),v=eL(a,b,y);return{q:`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)}) 與 f(f(${sh(x,m)}))。`,a:`${sh(y,m)}、${sh(v,m)}`,vals:[y,v],chk:()=>near(fv(a)*fv(y)+fv(b),fv(v))}},
-  (m)=>{const a=rnz(m,3),b=rv(m,4),c=rnz(m,3),d=rv(m,4),x=ri(-2,2),v=eL(c,d,eL(a,b,eL(c,d,x)));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 g(f(g(${sh(x,m)})))。`,v,m,()=>{const f=u=>fv(a)*u+fv(b),g=u=>fv(c)*u+fv(d);return near(g(f(g(x.n))),fv(v))})},
-  (m)=>{const a=rnz(m,3),b=rv(m,4),k=rv(m,4),t=eL(a,b,eL(a,b,k));if(mul(a,a).n===0)return null;return one(`設 f(x)＝${L(a,b,m)}。若 f(f(k))＝${sh(t,m)}，求 k。`,k,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(fv(k))),fv(t))})}]);
+  (m)=>{const a=rnz(m,3),b=rv(m,4);if(idF(a,b))return null;const x=ri(-3,3),v=eL(a,b,eL(a,b,x));return one(`設 f(x)＝${L(a,b,m)}，求 f(f(${sh(x,m)}))。`,v,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(x.n)),fv(v))})},
+  (m)=>{const a=rnz(m,3),b=rv(m,4);if(idF(a,b))return null;const x=ri(-2,2),v=eL(a,b,eL(a,b,eL(a,b,x)));return one(`設 f(x)＝${L(a,b,m)}，求 f(f(f(${sh(x,m)})))。`,v,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(g(x.n))),fv(v))})},
+  (m)=>{const a=rnz(m,3),b=rv(m,4);if(idF(a,b))return null;const x=ri(-3,3),y=eL(a,b,x),v=eL(a,b,y);return{q:`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)}) 與 f(f(${sh(x,m)}))。`,a:`${sh(y,m)}、${sh(v,m)}`,vals:[y,v],chk:()=>near(fv(a)*fv(y)+fv(b),fv(v))}},
+  (m)=>{const a=rnz(m,3),b=rv(m,4);if(idF(a,b))return null;const c=rnz(m,3),d=rv(m,4),x=ri(-2,2),v=eL(c,d,eL(a,b,eL(c,d,x)));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 g(f(g(${sh(x,m)})))。`,v,m,()=>{const f=u=>fv(a)*u+fv(b),g=u=>fv(c)*u+fv(d);return near(g(f(g(x.n))),fv(v))})},
+  (m)=>{const a=rnz(m,3),b=rv(m,4);if(idF(a,b))return null;const k=rv(m,4),t=eL(a,b,eL(a,b,k));if(mul(a,a).n===0)return null;return one(`設 f(x)＝${L(a,b,m)}。若 f(f(k))＝${sh(t,m)}，求 k。`,k,m,()=>{const g=u=>fv(a)*u+fv(b);return near(g(g(fv(k))),fv(t))})}]);
 
  return{title:"函數",symbol:"f(x)",subtitle:"一次・二次・常數函數值・綜合運算・分段函數・反求輸入與係數・函數替換・複合・總和・巢狀",instruction:"代入負數時先加括號，並寫出必要的過程。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
   levels:{basic:"基礎：直接代入求一次、常數函數值與簡單運算；由兩個函數值反求一次函數。標「進階」的單元預設不選：二次函數是國三下課程，分段、替換、複合、巢狀函數不在國中課綱，需要時再自行勾選。",advanced:"進階：兩個函數值、函數值的差與倍數、兩式相等反求、f(0) 與 f(k) 反求一次函數係數、連續函數值總和。標「進階」的單元預設不選：二次函數是國三下課程，分段、替換、複合、巢狀函數不在國中課綱，需要時再自行勾選。",challenge:"挑戰（含標「進階」的超出國中課綱單元）：函數值的增量、f(x＋1)−f(x)、分段端點與巢狀分段、f(k)＋f(k＋1)、和差反求、f(x＋s) 替換、g(f(g(x)))、f(f(k)) 反求。"},
@@ -2914,7 +2938,9 @@ function viewsConfig(){
   return{expr:topFig(h)+"這是一堆積木的俯視圖，格子裡的數字是疊的個數。一共有幾個積木？",answer:S+" 個",sig:"t:"+h,verify:()=>h.flat().reduce((s,x)=>s+x,0)===S}});
  const views=unit("views","前視圖與右視圖","前視圖：每一直行取最高的；右視圖：每一橫列取最高的（由前到後對應由左到右）。看不到的積木被前面高的擋住。",ctx=>{
   const L=lv(ctx),[r,c]=size(L),h=hmap(r,c,L===0?3:4,L===2),F=front(h),Rv=right(h),f=pick(L===0?["front","right","both"]:["front","right","both","which"]);if(F.every(x=>!x))return null;
-  if(f==="which"){const opts=shuffle([F,Rv,[...F].reverse()].map(v=>v.join(","))),uniq=new Set(opts);if(uniq.size<3)return null;const i=opts.indexOf(F.join(","));return{expr:topFig(h)+"這是一堆積木的俯視圖。下列哪一個是前視圖由左到右各行的高度？"+opts.map((o,j)=>"("+"ABC"[j]+") "+o.split(",").join("、")).join("　"),answer:"("+"ABC"[i]+")",sig:"w:"+h,verify:()=>F.every((v,j)=>v===Math.max(...h.map(row=>row[j])))}}
+  if(f==="which"){/* 錯誤選項和正解一樣有 c 個數（不能因為個數不同而一眼看出）：左右顛倒、只看最前面一列、只看最後面一列、每行取最矮的；正方形時再加右視圖 */
+   const fk=F.join(","),wrong=[...new Set([[...F].reverse(),h[r-1].slice(),h[0].slice(),h[0].map((_,j)=>Math.min(...h.map(row=>row[j]))),...(r===c?[Rv]:[])].map(v=>v.join(",")))].filter(v=>v!==fk);if(wrong.length<2)return null;
+   const opts=shuffle([fk,...shuffle(wrong).slice(0,2)]);if(opts.some(o=>o.split(",").length!==c))return null;const i=opts.indexOf(F.join(","));return{expr:topFig(h)+"這是一堆積木的俯視圖。下列哪一個是前視圖由左到右各行的高度？"+opts.map((o,j)=>"("+"ABC"[j]+") "+o.split(",").join("、")).join("　"),answer:"("+"ABC"[i]+")",sig:"w:"+h,verify:()=>F.every((v,j)=>v===Math.max(...h.map(row=>row[j])))}}
   const fs=F.join("、"),rs=Rv.join("、");
   if(f==="front")return{expr:topFig(h)+"這是一堆積木的俯視圖。寫出前視圖由左到右每一行的高度。",answer:fs+"；"+viewFig(F,"前視圖"),sig:"f:"+h,verify:()=>F.every((v,j)=>h.every(row=>row[j]<=v)&&h.some(row=>row[j]===v))};
   if(f==="right")return{expr:topFig(h)+"這是一堆積木的俯視圖。寫出右視圖由左到右每一行的高度（左邊是最前面的一列）。",answer:rs+"；"+viewFig(Rv,"右視圖"),sig:"r:"+h,verify:()=>Rv.every((v,i)=>h[r-1-i].every(x=>x<=v)&&h[r-1-i].includes(v))};

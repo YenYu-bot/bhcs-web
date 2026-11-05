@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {seedFor} from './math_test_harness.mjs';
-import {singleFormExemptions} from './math-diversity-policy.mjs';
+import {singleFormExemptions, acceptedDiversityRegressions} from './math-diversity-policy.mjs';
 import {evaluateDiversityRatchet, g11ChallengeBaselineFor, g11ChallengeFullThreshold, hasG11R3Topics} from './math-diversity-ratchet.mjs';
 import {changedG11Topics} from './math-g11-topic-changes.mjs';
 
@@ -128,7 +128,8 @@ const {changedUnits, newUnits, failures} = evaluateDiversityRatchet({
   baseline,
   current,
   exemptions: singleFormExemptions,
-  modifiedG11Topics: changedG11Topics(root)
+  modifiedG11Topics: changedG11Topics(root),
+  accepted: acceptedDiversityRegressions
 });
 current.g11P4Backlog = (current.topics || []).filter(isG11)
   .map(topic => ({

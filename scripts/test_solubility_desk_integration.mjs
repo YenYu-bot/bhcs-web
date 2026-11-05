@@ -24,11 +24,14 @@ for(const f of m.files){
  assert.equal(b.length,f.bytes);assert.equal(sha(b),f.sha256,'accepted source '+f.path);
 }
 for(const t of m.tests){const b=read('scripts/solubility-desk/'+t.path);assert.equal(sha(b),t.integrated_sha256);assert.equal(sha(b.toString().replaceAll('../../tools/solubility-desk/','../dist/')),t.source_sha256,'accepted test '+t.path);}
+const approvedChanges=JSON.parse(read('scripts/approved-existing-tool-changes.json').toString()).changes,approvedReach=(p,from)=>{let at=from;for(let s;(s=approvedChanges.find(c=>c.path===p&&c.baseline_blob===at));)at=s.approved_blob;return at;};/* later tools/assets edits pass only through the approved blob chain */
 const tree=execFileSync('git',['ls-tree','-r',m.integration_base,'--','tools','assets'],{cwd:root,encoding:'utf8'}).trim().split('\n');
 let protectedCount=0;
-for(const row of tree){const match=row.match(/^(\d+) blob ([a-f0-9]+)\t(.+)$/);if(!match)continue;const [,mode,id,p]=match;assert.equal(blob(read(p)),id,'preexisting asset '+p);assert.equal(mode,'100644');protectedCount++;}
+for(const row of tree){const match=row.match(/^(\d+) blob ([a-f0-9]+)\t(.+)$/);if(!match)continue;const [,mode,id,p]=match;{const now=blob(read(p));assert.ok(now===id||now===approvedReach(p,id),'preexisting asset '+p);}assert.equal(mode,'100644');protectedCount++;}
 assert(protectedCount>650);
-for(const p of ['scripts/science/catalog.mjs','scripts/build_science.mjs','scripts/build_marble_replacement.mjs','scripts/build_sitemap.py','scripts/science/models.mjs','scripts/science/runtime.js','tools/science/solubility.html','tools/science/index.html','ziyuan.html','sitemap.xml'])assert.equal(blob(read(p)),execFileSync('git',['rev-parse',m.integration_base+':'+p],{cwd:root,encoding:'utf8'}).trim(),'no discovery/legacy replacement '+p);
+for(const p of ['scripts/science/catalog.mjs','scripts/build_science.mjs','scripts/build_marble_replacement.mjs','scripts/build_sitemap.py','scripts/science/models.mjs','scripts/science/runtime.js','tools/science/solubility.html','tools/science/index.html','ziyuan.html'])assert.equal(blob(read(p)),execFileSync('git',['rev-parse',m.integration_base+':'+p],{cwd:root,encoding:'utf8'}).trim(),'no discovery/legacy replacement '+p);
+// sitemap.xml: lastmod dates move when other pages change; the desk must not add or remove a URL
+{const locs=x=>[...String(x).matchAll(/<loc>([^<]+)<\/loc>/g)].map(r=>r[1]);assert.deepEqual(locs(read('sitemap.xml')),locs(execFileSync('git',['show',m.integration_base+':sitemap.xml'],{cwd:root,encoding:'utf8'})),'no discovery/legacy replacement sitemap.xml');}
 const html=read(dir+'index.html').toString(),doc=new JSDOM(html).window.document;
 assert.equal(doc.querySelector('link[rel=canonical]').href,'https://www.bhcs.com.tw/tools/solubility-desk/');
 assert.equal(doc.querySelector('meta[name=robots]').content,'noindex,nofollow');

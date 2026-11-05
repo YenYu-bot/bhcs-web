@@ -18,6 +18,12 @@ assert.ok(result.failures.some(row=>row.code==='structure_count_regressed'));
 result=evaluateDiversityRatchet({baseline,current:{units:[unit({outputFingerprint:'changed',projectedChallengeGatePass:false})],topics:[]},exemptions:[]});
 assert.deepEqual(result.changedUnits,['demo/u']);
 assert.ok(result.failures.some(row=>row.code==='changed_unit_must_pass_full_gate'));
+// An approved drop (a fixed wrong question) passes down to its floor, and no further.
+const dropped=unit({outputFingerprint:'changed',projectedChallengeGatePass:false,levels:{basic:{produced:200,structureCount:2},advanced:{produced:200,structureCount:3},challenge:{produced:200,structureCount:3}}});
+const accepted=[{unit:'demo/u',floor:{basic:2,advanced:3,challenge:3},allowGateMiss:true,reason:'fixture'}];
+assert.deepEqual(evaluateDiversityRatchet({baseline,current:{units:[dropped],topics:[]},exemptions:[],accepted}).failures,[]);
+result=evaluateDiversityRatchet({baseline,current:{units:[dropped],topics:[]},exemptions:[],accepted:[{...accepted[0],floor:{basic:3,advanced:3,challenge:3},allowGateMiss:false}]});
+assert.deepEqual(result.failures.map(row=>row.code).sort(),['challenge_gate_regressed','changed_unit_must_pass_full_gate','structure_count_regressed']);
 
 result=evaluateDiversityRatchet({baseline,current:{units:[unit(),unit({topic:'new',unit:'n',singleForm:true})],topics:[]},exemptions:[{topic:'new',unit:'n'}]});
 assert.deepEqual(result.newUnits,['new/n']);
