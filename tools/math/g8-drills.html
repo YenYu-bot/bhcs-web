@@ -131,6 +131,8 @@ function numberFor(mode,level,max=30){if(mode==="integer"){const k=level==="basi
 const norm=s=>String(s).replace(/<[^>]*>/g,"").replace(/\s+/g,"").normalize("NFKC");
 const okResult=q=>q&&typeof q.expr==="string"&&typeof q.answer==="string"&&q.expr&&!/\b(?:NaN|undefined|Infinity)\b/.test(q.expr+q.answer)&&typeof q.verify==="function"&&q.verify()===true;
 const MODE_LABEL={integer:"整數",fraction:"分數",decimal:"小數"};
+// 一次式 px＋q 的顯示：係數 1 不寫、常數 0 不寫、負號用全形「−」（避免「1x」「＋0」「-60」）
+const linx=(p,q,v="x")=>{const t=p===0?"":(p===1?"":p===-1?"−":String(p).replace("-","−"))+v;if(!q)return t||"0";const c=String(Math.abs(q));return t?t+(q>0?"＋":"−")+c:(q<0?"−":"")+c};
 
 /* 幾何繪圖共用函式庫（2026-09-24，Claude）。g8 各幾何主題共用，之後 P5 國三重做也沿用。
    原則：圖形依真實角度與比例計算頂點（不會出現「標 30° 卻畫成鈍角」），標示用純文字（SVG 內不放 HTML）。
@@ -196,7 +198,7 @@ function parallelConfig(){
   const th=rand(40,140);if(th===90)return null;
   if(kind==="which"){const type=pick(["corr","alt","same"]),cands=[1,2,3,4,5,6,7,8].filter(k=>partner(k,type)),k=pick(cands),tn={corr:"同位角",alt:"內錯角",same:"同側內角"}[type];return{expr:`${transFig(th,nums)}直線 L 截 L₁、L₂，∠${k} 的${tn}是哪一個角？`,answer:`∠${partner(k,type)}`,sig:`w:${type}:${k}:${th}`,verify:()=>partner(partner(k,type),type)===k}}
   if(kind==="type"){const type=pick(["corr","alt","same"]),p=pick(NAMES[type]),tn={corr:"同位角",alt:"內錯角",same:"同側內角"}[type];return{expr:`${transFig(th,nums)}∠${p[0]} 和 ∠${p[1]} 是哪一種角（同位角、內錯角或同側內角）？`,answer:tn,sig:`t:${p.join("")}:${th}`,verify:()=>partner(p[0],type)===p[1]}}
-  if(kind==="count")return{expr:`兩直線被一條截線所截，共形成幾組同位角、幾組內錯角、幾組同側內角？`,answer:`4 組同位角、2 組內錯角、2 組同側內角`,sig:`c:${th}`,verify:()=>NAMES.corr.length===4&&NAMES.alt.length===2&&NAMES.same.length===2};
+  if(kind==="count")return{expr:`兩直線被一條截線所截，共形成幾組同位角、幾組內錯角、幾組同側內角？`,answer:`4 組同位角、2 組內錯角、2 組同側內角`,sig:"c",verify:()=>NAMES.corr.length===4&&NAMES.alt.length===2&&NAMES.same.length===2};
   // nonpar：講義範例 2，L₁、L₂ 不平行，已知 ∠4、∠7 求其他角
   const a4=rand(50,120),a7=rand(40,130);if(Math.abs(a4-(180-a7))<5||a4===90)return null;const a={4:a4,1:a4,2:180-a4,3:180-a4,7:a7,6:a7,5:180-a7,8:180-a7},side=a[4]+a[6]<180?"右":"左";
   return{expr:`直線 L 截 L₁、L₂（L₁、L₂ 不平行），∠4＝${deg(a4)}、∠7＝${deg(a7)}。求 ∠1、∠2、∠5、∠6，並判斷 L₁、L₂ 會交在截線的左方還是右方。`,answer:`∠1＝${deg(a[1])}、∠2＝${deg(a[2])}、∠5＝${deg(a[5])}、∠6＝${deg(a[6])}；交在${side}方（∠4＋∠6＝${deg(a[4]+a[6])}${a[4]+a[6]<180?"＜":"＞"}180°）`,sig:`np:${a4}:${a7}`,verify:()=>a[1]+a[2]===180&&a[5]+a[6]===180}});
@@ -206,7 +208,7 @@ function parallelConfig(){
   if(kind==="one"){const k=rand(1,8),m=pick([1,2,3,4,5,6,7,8].filter(x=>x!==k));return{expr:`${transFig(th,{[k]:deg(A[k])})}L₁∥L₂，∠${k}＝${deg(A[k])}，求 ∠${m}。`,answer:deg(A[m]),sig:`o:${th}:${k}:${m}`,verify:()=>A[1]+A[2]===180&&A[m]===eight(th)[m]}}
   if(kind==="all"){const k=rand(1,8);return{expr:`${transFig(th,{...nums,[k]:deg(A[k])})}L₁∥L₂，已知 ∠${k}＝${deg(A[k])}，求其餘七個角。`.replace(`${k}</text>`,`${k}</text>`),answer:[1,2,3,4,5,6,7,8].filter(x=>x!==k).map(x=>`∠${x}＝${deg(A[x])}`).join("、"),sig:`a:${th}:${k}`,verify:()=>A[3]===A[6]&&A[3]+A[5]===180}}
   if(kind==="same"){const p=pick(NAMES.same),a=A[p[0]];return{expr:`L₁∥L₂，∠${p[0]} 與 ∠${p[1]} 是同側內角，∠${p[0]}＝${deg(a)}，求 ∠${p[1]}。`,answer:deg(180-a),sig:`s:${th}:${p.join("")}`,verify:()=>A[p[0]]+A[p[1]]===180}}
-  const lin=(p,q)=>`${p}x${q>=0?"＋"+q:"−"+(-q)}`;
+  const lin=linx;
   if(kind==="eqx"){const type=pick(["corr","alt"]),x=rand(5,30),p1=rand(2,6),p2=p1+rand(1,4),q1=rand(10,60),v=p1*x+q1,q2=v-p2*x;if(v<=10||v>=170)return null;const pr=pick(NAMES[type]);return{expr:`AB∥CD，∠${pr[0]} 與 ∠${pr[1]} 是${type==="corr"?"同位角":"內錯角"}。若 ∠${pr[0]}＝(${lin(p1,q1)})°、∠${pr[1]}＝(${lin(p2,q2)})°，求兩角的度數。`,answer:`都是 ${deg(v)}（x＝${x}）`,sig:`e:${type}:${x}:${p1}:${p2}:${q1}`,verify:()=>p1*x+q1===p2*x+q2}}
   if(kind==="supx"){const x=rand(5,20),p1=rand(2,6),p2=rand(2,7),q1=rand(10,40),v1=p1*x+q1,v2=180-v1,q2=v2-p2*x;if(v1<=10||v2<=10)return null;const pr=pick(NAMES.same);return{expr:`AB∥CD，∠${pr[0]} 與 ∠${pr[1]} 是同側內角。若 ∠${pr[0]}＝(${lin(p1,q1)})°、∠${pr[1]}＝(${lin(p2,q2)})°，求兩角的度數。`,answer:`∠${pr[0]}＝${deg(v1)}、∠${pr[1]}＝${deg(v2)}（x＝${x}）`,sig:`u:${x}:${p1}:${p2}:${q1}`,verify:()=>v1+(p2*x+q2)===180}}
   // sides：角的兩邊分別平行
@@ -216,9 +218,9 @@ function parallelConfig(){
   const a=rand(40,140);if(a===90)return null;const ok=Math.random()<.5,b=ok?a:a+pick([-3,-2,2,3,5]);
   if(kind==="corr"||kind==="alt"){const p=pick(NAMES[kind]);return{expr:`直線 L 截 L₁、L₂，∠${p[0]} 與 ∠${p[1]} 是${kind==="corr"?"同位角":"內錯角"}，∠${p[0]}＝${deg(a)}、∠${p[1]}＝${deg(b)}。L₁ 與 L₂ 是否平行？`,answer:ok?`平行（${kind==="corr"?"同位角":"內錯角"}相等）`:`不平行`,sig:`${kind}:${a}:${b}:${p.join("")}`,verify:()=>ok===(a===b)}}
   if(kind==="same"){const p=pick(NAMES.same),c=ok?180-a:180-a+pick([-4,4]);return{expr:`直線 L 截 L₁、L₂，∠${p[0]} 與 ∠${p[1]} 是同側內角，∠${p[0]}＝${deg(a)}、∠${p[1]}＝${deg(c)}。L₁ 與 L₂ 是否平行？`,answer:ok?"平行（同側內角互補）":`不平行（${deg(a)}＋${deg(c)}≠180°）`,sig:`s:${a}:${c}`,verify:()=>ok===(a+c===180)}}
-  if(kind==="three"){const k=pick(["同位角相等","內錯角相等"]);return{expr:`平面上三條直線 L、M、N，若 L∥M、M∥N，L 與 N 的關係是什麼？若另有直線 P 垂直 L，P 與 N 的關係是什麼？`,answer:`L∥N；P⊥N`,sig:`th:${a}`,verify:()=>true}}
+  if(kind==="three"){const k=pick(["同位角相等","內錯角相等"]);return{expr:`平面上三條直線 L、M、N，若 L∥M、M∥N，L 與 N 的關係是什麼？若另有直線 P 垂直 L，P 與 N 的關係是什麼？`,answer:`L∥N；P⊥N`,sig:"th",verify:()=>true}}
   if(kind==="perp"){const a1=rand(20,70);return{expr:`L₁⊥L₂、L₃⊥L₄，L₁ 與 L₃ 的夾角 ∠1＝${deg(a1)}，求 L₂ 與 L₄ 所夾的銳角 ∠2。`,answer:deg(a1),sig:`pp:${a1}`,verify:()=>a1<90}}
-  const x=rand(5,25),p=rand(2,5),q=rand(10,60),v=p*x+q;if(v>=170)return null;const r=rand(2,6),s2=180-v-r*x;return{expr:`直線 L 截 L₁、L₂，同側內角為 (${p}x＋${q})° 與 (${r}x＋${s2})°。當 x 為多少時 L₁∥L₂？`.replace("＋-","−"),answer:`x＝${x}`,sig:`x:${x}:${p}:${q}:${r}`,verify:()=>p*x+q+r*x+s2===180}});
+  const x=rand(5,25),p=rand(2,5),q=rand(10,60),v=p*x+q;if(v>=170)return null;const r=rand(2,6),s2=180-v-r*x;return{expr:`直線 L 截 L₁、L₂，同側內角為 (${linx(p,q)})° 與 (${linx(r,s2)})°。當 x 為多少時 L₁∥L₂？`,answer:`x＝${x}`,sig:`x:${x}:${p}:${q}:${r}`,verify:()=>p*x+q+r*x+s2===180}});
  const zig=unit("zigzag","折線與平行線","L₁∥L₂ 之間的折線：開口向左的角度和＝開口向右的角度和（只有一個轉折點時 ∠3＝∠1＋∠2）。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["one","findA","find"]):L===1?pick(["one","find","tri"]):pick(["two","find","tri"]);
   const zfig=(a,b,labels)=>{const Hh=90,A=[0,Hh],B=[0,0],ta=-a*D2R,tb=b*D2R,det=Math.cos(ta)*(-Math.sin(tb))-(-Math.cos(tb))*Math.sin(ta),s=((0-A[0])*(-Math.sin(tb))-(-Math.cos(tb))*(0-A[1]))/det,P=[A[0]+s*Math.cos(ta),A[1]+s*Math.sin(ta)],T=G.fit([[-40,Hh],[P[0]+40,Hh],[-40,0],[P[0]+40,0],P],200,120,16),a1=T(A),b1=T(B),p=T(P),l1=[T([-40,Hh]),T([P[0]+40,Hh])],l2=[T([-40,0]),T([P[0]+40,0])];
@@ -227,7 +229,7 @@ function parallelConfig(){
   if(kind==="findA"){const a=rand(20,70),b=rand(20,70);return{expr:`${zfig(a,b,["x",deg(b),deg(a+b)])}L₁∥L₂，轉折處的角為 ${deg(a+b)}、折線與 L₂ 的夾角為 ${deg(b)}，求折線與 L₁ 的夾角 x。`,answer:deg(a),sig:`fa:${a}:${b}`,verify:()=>(a+b)-b===a}}
   if(kind==="find"){const a=rand(20,70),b=rand(20,70);return{expr:`${zfig(a,b,[deg(a),"x",deg(a+b)])}L₁∥L₂，折線與 L₁ 的夾角為 ${deg(a)}、轉折處的角為 ${deg(a+b)}，求折線與 L₂ 的夾角 x。`,answer:deg(b),sig:`f:${a}:${b}`,verify:()=>(a+b)-a===b}}
   if(kind==="tri"){const A=rand(40,90),D=rand(30,80);if(A+D>=170)return null;return{expr:`△ADE 中，B 在 AD 上、C 在 AE 上，BC∥DE。若 ∠A＝${deg(A)}、∠D＝${deg(D)}，求 ∠ACB 與 ∠BCE。`,answer:`∠ACB＝${deg(180-A-D)}；∠BCE＝${deg(A+D)}`,sig:`t:${A}:${D}`,verify:()=>(180-A-D)+(A+D)===180}}
-  const a1=rand(20,60),a2=rand(40,90),a3=rand(20,60),a4=a1+a3-a2;if(a4<=10||a4>=80)return null;return{expr:`L∥M，兩線之間有一條折線，開口向左的角依序為 ∠1＝${deg(a1)}、∠3＝${deg(a3)}，開口向右的角為 ∠2＝${deg(a2)} 與 ∠4，求 ∠4。`,answer:`${deg(a4)}（∠1＋∠3＝∠2＋∠4）`,sig:`tw:${a1}:${a2}:${a3}`,verify:()=>a1+a3===a2+a4}});
+  /* 先取 ∠4 再推出 ∠2（原本先取 ∠2，∠4 常落在範圍外而幾乎出不了題） */const a1=rand(20,60),a3=rand(20,60),a4=rand(15,75),a2=a1+a3-a4;if(a2<20||a2>=150)return null;return{expr:`L∥M，兩線之間有一條折線，開口向左的角依序為 ∠1＝${deg(a1)}、∠3＝${deg(a3)}，開口向右的角為 ∠2＝${deg(a2)} 與 ∠4，求 ∠4。`,answer:`${deg(a4)}（∠1＋∠3＝∠2＋∠4）`,sig:`tw:${a1}:${a2}:${a3}`,verify:()=>a1+a3===a2+a4}});
  // ⑤ 兩平行線間的三角形面積（同底等高）（2026-11-01 新增）
  const sameBase=unit("samebase","兩平行線間的三角形面積","兩平行線間的距離處處相等：頂點在同一條平行線上、底邊相同的三角形，高相同、面積相等。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["area","equal","base"]):L===1?pick(["equal","base","ratio","area"]):pick(["trap","trap2","ratio"]);
@@ -235,9 +237,10 @@ function parallelConfig(){
   if(kind==="area"){if((b*h)%2)return null;return{expr:"L₁∥L₂，兩線相距 "+h+" 公分。B、C 在 L₂ 上，BC＝"+b+" 公分，A 在 L₁ 上，求 △ABC 的面積。",answer:(b*h/2)+" 平方公分",sig:"a:"+b+":"+h,verify:()=>b*h===2*(b*h/2)}}
   if(kind==="equal"){const S=rand(6,80);return{expr:"L₁∥L₂，P、Q 都在 L₁ 上，B、C 在 L₂ 上。若 △PBC 的面積是 "+S+"，求 △QBC 的面積。",answer:String(S)+"（同底等高）",sig:"e:"+S,verify:()=>S===S}}
   if(kind==="base"){const S=b*h/2;if(!Number.isInteger(S))return null;return{expr:"L₁∥L₂，兩線相距 "+h+"，A 在 L₁ 上，B、C 在 L₂ 上。若 △ABC 的面積是 "+S+"，求 BC。",answer:String(b),sig:"b:"+S+":"+h,verify:()=>2*S===b*h}}
-  if(kind==="ratio"){const m=rand(2,12),n=rand(2,12);if(m===n)return null;const S=rand(2,8)*(m+n);return{expr:"L₁∥L₂，A 在 L₁ 上，B、D、C 依序在 L₂ 上，BD：DC＝"+m+"："+n+"。若 △ABC 的面積是 "+S+"，求 △ABD 與 △ADC 的面積。",answer:"△ABD＝"+(S*m/(m+n))+"、△ADC＝"+(S*n/(m+n)),sig:"r:"+m+":"+n+":"+S,verify:()=>S*m/(m+n)+S*n/(m+n)===S}}
+  if(kind==="ratio"){const m=rand(2,12),n=rand(2,12);if(m===n||gcd(m,n)!==1)return null;const S=rand(2,8)*(m+n);return{expr:"L₁∥L₂，A 在 L₁ 上，B、D、C 依序在 L₂ 上，BD：DC＝"+m+"："+n+"。若 △ABC 的面積是 "+S+"，求 △ABD 與 △ADC 的面積。",answer:"△ABD＝"+(S*m/(m+n))+"、△ADC＝"+(S*n/(m+n)),sig:"r:"+m+":"+n+":"+S,verify:()=>S*m/(m+n)+S*n/(m+n)===S}}
   if(kind==="trap"){const T=rand(20,90),u=rand(4,T-4);return{expr:"梯形 ABCD 中 AD∥BC，對角線 AC、BD 交於 O。若 △ABC 的面積是 "+T+"、△OBC 的面積是 "+u+"，求 △ABO 與 △DCO 的面積。",answer:"△ABO＝△DCO＝"+(T-u),sig:"tp:"+T+":"+u,verify:()=>(T-u)+u===T}}
-  const T=rand(20,90),u=rand(4,T-4),w=rand(2,40);return{expr:"梯形 ABCD 中 AD∥BC，對角線交於 O。若 △DBC 的面積是 "+T+"、△OBC 的面積是 "+u+"、△AOD 的面積是 "+w+"，求 △ABD 的面積。",answer:String((T-u)+w)+"（△ABO＝△DCO＝"+(T-u)+"）",sig:"t2:"+T+":"+u+":"+w,verify:()=>(T-u)+w>0}});
+  /* trap2：三塊面積由梯形本身決定（AD：BC＝a：b ⇒ △AOD：△ABO：△OBC＝a²：ab：b²），不能各自亂取，否則 △ABO²≠△AOD×△OBC */
+  const a=rand(1,4),bb=rand(a+1,6);if(gcd(a,bb)!==1)return null;const t=rand(1,5),w=a*a*t,m2=a*bb*t,u=bb*bb*t,T=u+m2;return{expr:"梯形 ABCD 中 AD∥BC，對角線交於 O。若 △DBC 的面積是 "+T+"、△OBC 的面積是 "+u+"、△AOD 的面積是 "+w+"，求 △ABD 的面積。",answer:String((T-u)+w)+"（△ABO＝△DCO＝"+(T-u)+"）",sig:"t2:"+T+":"+u+":"+w,verify:()=>(T-u)*(T-u)===u*w&&(T-u)+w===a*(a+bb)*t}});
  // ⑥ 平行線與角平分線（2026-11-01 新增）
  const parBis=unit("parbis","平行線與角平分線","兩平行線被截，同側內角互補，它們的平分線互相垂直；一個角的平分線與平行線相交，常會形成等腰三角形。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["sameSide","isoLen","isoAng"]):L===1?pick(["sameSide","isoLen","isoAng","alt"]):pick(["sameSide2","isoPerim","alt2"]);
@@ -273,10 +276,10 @@ function quadrilateralConfig(){
   if(kind==="ext")return{expr:`平行四邊形 ABCD 的一個外角是 ${deg(a)}，求四個內角的度數。`,answer:`兩個 ${deg(180-a)}、兩個 ${deg(a)}`,sig:`e:${a}`,verify:()=>(180-a)+a===180};
   if(kind==="times"){const k=pick([2,3,4,5]);if(180%(k+1))return null;const B=180/(k+1);return{expr:`平行四邊形 ABCD 中，∠A 是 ∠B 的 ${k} 倍，求 ∠C。`,answer:deg(k*B),sig:`t:${k}`,verify:()=>k*B+B===180}}
   if(kind==="more"){const d=2*rand(5,60),A=(180+d)/2;if(A>=175)return null;return{expr:`平行四邊形 ABCD 中，∠A 比 ∠B 大 ${deg(d)}，求 ∠D。`,answer:deg(180-A),sig:`m:${d}`,verify:()=>A-(180-A)===d}}
-  const lin=(p,q)=>`${p}x${q>=0?"＋"+q:"−"+(-q)}`;
+  const lin=linx;
   if(kind==="x"){const x=rand(10,30),p=rand(3,7),r=rand(1,p-1),q=rand(-20,20),v=p*x+q,s=v-r*x;if(v<=20||v>=160)return null;return{expr:`平行四邊形 ABCD 中，∠A＝(${lin(p,q)})°、∠C＝(${lin(r,s)})°，求 ∠B。`,answer:`${deg(180-v)}（x＝${x}，∠A＝${deg(v)}）`,sig:`x:${x}:${p}:${r}:${q}`,verify:()=>p*x+q===r*x+s}}
-  if(kind==="lin"){const k=pick([2,3,4]),m=pick([2,3,4,5]),B=rand(20,80),A=180-B,c=k*A-m*B;return{expr:`平行四邊形 ABCD 中，${k}∠A－${m}∠B＝${deg(c)}，求 ∠C 與 ∠D。`,answer:`∠C＝${deg(A)}、∠D＝${deg(B)}`,sig:`l:${k}:${m}:${B}`,verify:()=>k*A-m*B===c&&A+B===180}}
-  if(kind==="ratio"){const p=rand(1,5),q=rand(1,5);if(p===q||180%(p+q))return null;const u=180/(p+q);return{expr:`平行四邊形 ABCD 中，∠A：∠B＝${p}：${q}，求四個內角。`,answer:`∠A＝∠C＝${deg(p*u)}、∠B＝∠D＝${deg(q*u)}`,sig:`r:${p}:${q}`,verify:()=>p*u+q*u===180}}
+  if(kind==="lin"){const k=pick([2,3,4]),m=pick([2,3,4,5]),B=rand(20,80),A=180-B,c=k*A-m*B;if(c<=0)return null;return{expr:`平行四邊形 ABCD 中，${k}∠A－${m}∠B＝${deg(c)}，求 ∠C 與 ∠D。`,answer:`∠C＝${deg(A)}、∠D＝${deg(B)}`,sig:`l:${k}:${m}:${B}`,verify:()=>k*A-m*B===c&&A+B===180}}
+  if(kind==="ratio"){const p=rand(1,5),q=rand(1,5);if(p===q||gcd(p,q)!==1||180%(p+q))return null;const u=180/(p+q);return{expr:`平行四邊形 ABCD 中，∠A：∠B＝${p}：${q}，求四個內角。`,answer:`∠A＝∠C＝${deg(p*u)}、∠B＝∠D＝${deg(q*u)}`,sig:`r:${p}:${q}`,verify:()=>p*u+q*u===180}}
   // bis：BE 平分 ∠ABC 交 AD 於 E
   const C=2*rand(30,80),half=C/2,AB=rand(5,15),AD=AB+rand(2,10);return{expr:`平行四邊形 ABCD 中，∠ABC＝${deg(C)}，BE 平分 ∠ABC 交 AD 於 E。若 AB＝${AB}、AD＝${AD}，求 ∠AEB 與 ED。`,answer:`∠AEB＝${deg(half)}；ED＝${AD-AB}（△ABE 為等腰，AE＝AB）`,sig:`b:${C}:${AB}:${AD}`,verify:()=>half===C/2&&AD-AB>0}});
  const pside=unit("paraside","平行四邊形的邊與對角線","平行四邊形兩組對邊相等，周長÷2＝兩鄰邊和；兩對角線互相平分；第四頂點 D＝A＋C－B。",ctx=>{
@@ -285,7 +288,7 @@ function quadrilateralConfig(){
   if(kind==="diag"){const o=rand(3,20),p=rand(3,20);return{expr:`平行四邊形 ABCD 的兩對角線交於 O，OA＝${o}、OB＝${p}，求 AC 與 BD。`,answer:`AC＝${2*o}、BD＝${2*p}`,sig:`d:${o}:${p}`,verify:()=>2*o===o+o}}
   if(kind==="vertex"){const A=[rand(-4,4),rand(-4,4)],B=[rand(-4,4),rand(-4,4)],C=[rand(-4,4),rand(-4,4)],D=[A[0]+C[0]-B[0],A[1]+C[1]-B[1]];if((B[0]-A[0])*(C[1]-A[1])-(C[0]-A[0])*(B[1]-A[1])===0)return null;const pt=p=>`(${p.join(", ")})`.replace(/-/g,"−");return{expr:`坐標平面上 A${pt(A)}、B${pt(B)}、C${pt(C)}，找一點 D 使 ABCD 為平行四邊形（依序連接），求 D 的坐標。`,answer:`D${pt(D)}`,sig:`v:${[...A,...B,...C].join(",")}`,verify:()=>A[0]+C[0]===B[0]+D[0]&&A[1]+C[1]===B[1]+D[1]}}
   if(kind==="times"){const b=rand(10,30),k=pick([2,3]),m=rand(5,20),a=k*b-m;if(a<=0)return null;return{expr:`平行四邊形 ABCD 的周長為 ${2*(a+b)} 公分，AB 比 BC 的 ${k} 倍少 ${m} 公分，求 AB 與 BC。`,answer:`AB＝${a}、BC＝${b}`,sig:`t:${b}:${k}:${m}`,verify:()=>a+b===(2*(a+b))/2&&a===k*b-m}}
-  if(kind==="diagx"){const x=rand(1,8),p=rand(2,6),q=rand(1,10),r=p+rand(1,3),s=p*x+q-r*x,oa=p*x+q;return{expr:`平行四邊形 ABCD 的兩對角線交於 O，OA＝${p}x＋${q}、OC＝${r}x${s>=0?"＋"+s:"−"+(-s)}，求 AC。`,answer:`${2*oa}（x＝${x}）`,sig:`dx:${x}:${p}:${q}:${r}`,verify:()=>p*x+q===r*x+s}}
+  if(kind==="diagx"){const x=rand(1,8),p=rand(2,6),q=rand(1,10),r=p+rand(1,3),s=p*x+q-r*x,oa=p*x+q;return{expr:`平行四邊形 ABCD 的兩對角線交於 O，OA＝${p}x＋${q}、OC＝${linx(r,s)}，求 AC。`,answer:`${2*oa}（x＝${x}）`,sig:`dx:${x}:${p}:${q}:${r}`,verify:()=>p*x+q===r*x+s}}
   if(kind==="ratio"){const u=rand(2,6),p=rand(2,5),q=p+rand(1,3),AB=p*u,AD=q*u;return{expr:`平行四邊形 ABCD 中，${q}AB＝${p}AD，且 AB 與 AD 相差 ${AD-AB}，求周長。`,answer:`${2*(AB+AD)}（AB＝${AB}、AD＝${AD}）`,sig:`r:${u}:${p}:${q}`,verify:()=>q*AB===p*AD&&AD-AB===(q-p)*u}}
   if(kind==="vertex2"){const A=[rand(-4,4),rand(-4,4)],B=[rand(-4,4),rand(-4,4)],C=[rand(-4,4),rand(-4,4)];if((B[0]-A[0])*(C[1]-A[1])-(C[0]-A[0])*(B[1]-A[1])===0)return null;const Ds=[[A[0]+C[0]-B[0],A[1]+C[1]-B[1]],[A[0]+B[0]-C[0],A[1]+B[1]-C[1]],[B[0]+C[0]-A[0],B[1]+C[1]-A[1]]],pt=p=>`(${p.join(", ")})`.replace(/-/g,"−");return{expr:`坐標平面上 A${pt(A)}、B${pt(B)}、C${pt(C)} 三點和第四點 D 構成平行四邊形（不限頂點順序），D 可能在哪些位置？`,answer:Ds.map(pt).join("、"),sig:`v2:${[...A,...B,...C].join(",")}`,verify:()=>Ds.length===3}}
   // xy：邊長含 x、y
@@ -308,7 +311,7 @@ function quadrilateralConfig(){
   if(kind==="base"){const d=2*rand(1,8),m=d/2+rand(1,15);return{expr:`梯形的下底比上底長 ${d} 公分，中線長 ${m} 公分，求上底與下底。`,answer:`上底 ${m-d/2}；下底 ${m+d/2}`,sig:`b:${d}:${m}`,verify:()=>(m-d/2+m+d/2)/2===m}}
   if(kind==="midarea"){const h=rand(2,10),a=h,b=2*h,S=(a+b)*h/2;if(S%1)return null;return{expr:`梯形的上底和高相等，下底是高的 2 倍，面積為 ${S} 平方公分，求中線長。`,answer:`${(a+b)/2}`,sig:`ma:${h}`,verify:()=>(a+b)/2*h===S}}
   if(kind==="isoh"){const [p,q,r]=pick(TRI),top=rand(2,12),bot=top+2*p;return{expr:`等腰梯形的上底 ${top}、下底 ${bot}、腰長 ${r}，求高與面積。`,answer:`高 ${q}；面積 ${(top+bot)*q/2}`,sig:`ih:${p}:${q}:${top}`,verify:()=>p*p+q*q===r*r&&((top+bot)*q)%2===0}}
-  if(kind==="ratio"){const m=[rand(1,5),rand(1,5),rand(1,5)],h=[rand(1,5),rand(1,5),rand(1,5)],S=m.map((v,i)=>v*h[i]),g=S.reduce((x,y)=>gcd(x,y));return{expr:`三個梯形對應中線長的比為 ${m.join("：")}，對應高的比為 ${h.join("：")}，求面積比。`,answer:S.map(v=>v/g).join("："),sig:`r:${m.join(",")}:${h.join(",")}`,verify:()=>S.every((v,i)=>v===m[i]*h[i])}}
+  if(kind==="ratio"){const m=[rand(1,5),rand(1,5),rand(1,5)],h=[rand(1,5),rand(1,5),rand(1,5)],S=m.map((v,i)=>v*h[i]),g=S.reduce((x,y)=>gcd(x,y));if(m.reduce((x,y)=>gcd(x,y))!==1||h.reduce((x,y)=>gcd(x,y))!==1)return null;return{expr:`三個梯形對應中線長的比為 ${m.join("：")}，對應高的比為 ${h.join("：")}，求面積比。`,answer:S.map(v=>v/g).join("："),sig:`r:${m.join(",")}:${h.join(",")}`,verify:()=>S.every((v,i)=>v===m[i]*h[i])}}
   // split：P、Q、R 四等分 AB，作平行線
   const a=2*rand(1,10),b=a+4*rand(1,6),d=(b-a)/4,sum=(a+d)+(a+2*d)+(a+3*d);return{expr:`梯形 ABCD 中 AD∥BC，P、Q、R 四等分腰 AB，過 P、Q、R 作底的平行線 PS、QT、RH。若 AD＝${a}、BC＝${b}，求 PS＋QT＋RH。`,answer:`${sum}`,sig:`sp:${a}:${b}`,verify:()=>sum===3*(a+b)/2}});
  // ⑤ 平行四邊形的面積與兩組高（2026-11-01 新增）
@@ -318,9 +321,9 @@ function quadrilateralConfig(){
   if(kind==="area")return{expr:"平行四邊形 ABCD 的底 BC＝"+b+" 公分，BC 上的高是 "+h+" 公分，求面積。",answer:S+" 平方公分",sig:"a:"+b+":"+h,verify:()=>S/b===h};
   if(kind==="height")return{expr:"平行四邊形 ABCD 的面積是 "+S+" 平方公分，BC＝"+b+" 公分，求 BC 上的高。",answer:h+" 公分",sig:"h:"+S+":"+b,verify:()=>b*h===S};
   if(kind==="base")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，AB 上的高是 "+h+"，求 AB。",answer:String(b),sig:"b:"+S+":"+h,verify:()=>b*h===S};
-  const divC=()=>{const ds=[];for(let d=4;d<=30;d++)if(S%d===0&&d!==b&&h<=d)ds.push(d);/* 高不超過另一邊（h≤AD ⇔ AD 上的高≤AB） */return ds.length?pick(ds):null};
-  if(kind==="twoH"){const c=divC();if(!c)return null;return{expr:"平行四邊形 ABCD 中 AB＝"+b+"、AD＝"+c+"，AB 上的高是 "+h+"，求 AD 上的高。",answer:String(S/c),sig:"t:"+b+":"+c+":"+h,verify:()=>(S/c)*c===b*h&&h<=c&&S/c<=b}}
-  if(kind==="twoHx"){const c=divC();if(!c)return null;const h2=S/c;const P=2*(b+c);return{expr:"平行四邊形 ABCD 的周長是 "+P+"，AB 上的高是 "+h+"、AD 上的高是 "+h2+"，且 AB＝"+b+"。求 AD 與面積。",answer:"AD＝"+c+"；面積 "+S,sig:"tx:"+b+":"+c+":"+h,verify:()=>b*h===c*h2&&P/2-b===c&&h<=c&&h2<=b}}
+  const divC=()=>{const ds=[];for(let d=4;d<=30;d++)if(S%d===0&&d!==b&&h<d)ds.push(d);/* 高必須小於另一邊（h＜AD ⇔ AD 上的高＜AB）；h＝AD 就變成長方形 */return ds.length?pick(ds):null};
+  if(kind==="twoH"){const c=divC();if(!c)return null;return{expr:"平行四邊形 ABCD 中 AB＝"+b+"、AD＝"+c+"，AB 上的高是 "+h+"，求 AD 上的高。",answer:String(S/c),sig:"t:"+b+":"+c+":"+h,verify:()=>(S/c)*c===b*h&&h<c&&S/c<b}}
+  if(kind==="twoHx"){const c=divC();if(!c)return null;const h2=S/c;const P=2*(b+c);return{expr:"平行四邊形 ABCD 的周長是 "+P+"，AB 上的高是 "+h+"、AD 上的高是 "+h2+"，且 AB＝"+b+"。求 AD 與面積。",answer:"AD＝"+c+"；面積 "+S,sig:"tx:"+b+":"+c+":"+h,verify:()=>b*h===c*h2&&P/2-b===c&&h<c&&h2<b}}
   if(S%4)return null;return{expr:"平行四邊形 ABCD 的面積是 "+S+"，對角線 AC、BD 交於 O，求 △ABC、△ABO 與 △AOD 的面積。",answer:"△ABC＝"+(S/2)+"、△ABO＝"+(S/4)+"、△AOD＝"+(S/4),sig:"d:"+S,verify:()=>S%4===0&&S/4*4===S}});
  // ⑥ 四邊形的判別（2026-11-01 新增）
  const QCASE=[["兩組對邊分別平行","平行四邊形"],["兩組對邊分別相等","平行四邊形"],["一組對邊平行且相等","平行四邊形"],["兩條對角線互相平分","平行四邊形"],["兩組對角分別相等","平行四邊形"],["四個邊都相等","菱形"],["對角線互相垂直平分","菱形"],["四個角都是直角","長方形"],["對角線互相平分且等長","長方形"],["四邊相等且有一個直角","正方形"],["對角線互相垂直平分且等長","正方形"],["只有一組對邊平行","梯形"],["兩組鄰邊分別相等（但不是菱形）","箏形"]];
@@ -345,7 +348,7 @@ function quadrilateralConfig(){
   if(kind==="anyPoint2"){const a=rand(1,S/2-1),b=rand(1,S/2-1);return{expr:"P 是平行四邊形 ABCD 內部的一點，△PAB 的面積是 "+a+"、△PCD 的面積是 "+(S/2-a)+"、△PBC 的面積是 "+b+"，求 △PDA 的面積與平行四邊形的面積。",answer:"△PDA＝"+(S/2-b)+"；面積 "+S,sig:"a2:"+S+":"+a+":"+b,verify:()=>a+(S/2-a)+b+(S/2-b)===S}}
   if(kind==="mid")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，M 是 BC 的中點，求 △ABM 的面積。",answer:String(S/4),sig:"m:"+S,verify:()=>S/2/2===S/4};
   if(kind==="mid2")return{expr:"平行四邊形 ABCD 的面積是 "+S+"，M 是 BC 的中點，N 是 CD 的中點，求 △AMN 的面積。",answer:String(S*3/8)+"（扣掉 △ABM、△MCN、△ADN）",sig:"m2:"+S,verify:()=>S-S/4-S/8-S/4===S*3/8};
-  const m=rand(1,5),n=rand(1,5),T=(m+n)*rand(2,10)*2;return{expr:"平行四邊形 ABCD 的面積是 "+T+"，E 在 BC 上且 BE：EC＝"+m+"："+n+"，求 △ABE 與 △AED 的面積。",answer:"△ABE＝"+(T*m/(m+n)/2)+"；△AED＝"+(T/2),sig:"ep:"+T+":"+m+":"+n,verify:()=>T*m/(m+n)/2+T*n/(m+n)/2+T/2===T}});
+  const m=rand(1,5),n=rand(1,5);if(m===n||gcd(m,n)!==1)return null;const T=(m+n)*rand(2,10)*2;return{expr:"平行四邊形 ABCD 的面積是 "+T+"，E 在 BC 上且 BE：EC＝"+m+"："+n+"，求 △ABE 與 △AED 的面積。",answer:"△ABE＝"+(T*m/(m+n)/2)+"；△AED＝"+(T/2),sig:"ep:"+T+":"+m+":"+n,verify:()=>T*m/(m+n)/2+T*n/(m+n)/2+T/2===T}});
  return{title:"平行四邊形與特殊四邊形",symbol:"▱",subtitle:"平行四邊形的角與邊・對角線・第四頂點・菱形・箏形・長方形・正方形・梯形中線・等腰梯形",instruction:"平行四邊形對角相等、鄰角互補、對邊相等、對角線互相平分；菱形與箏形面積＝對角線乘積÷2；梯形面積＝中線×高。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：由一角求其他角、由外角求內角、周長、對角線長、第四頂點；菱形面積與邊長、長方形對角線；梯形中線、面積、等腰梯形的角；平行四邊形面積與高、四邊形判別、對角線分割面積。",advanced:"進階：角的倍數與差、角含 x；邊長倍數、對角線含 x；菱形由周長求對角線、菱形的角；由中線與差求上下底；兩組底與高、坐標判別四邊形、任一點分割面積。",challenge:"挑戰：k∠A－m∠B、角的比、角平分線成等腰三角形；邊含 x、y、邊長比、三種第四頂點；箏形、正方形面積；等腰梯形的高、面積比、四等分腰的平行線和；由周長與兩高求邊、坐標判別菱形與正方形、中點與分點分割面積。"},
   units:[pangle,pside,rhomb,trap,paraArea,judgeQ,paraSplit],presets:{basic:{paraangle:3,paraside:3,rhombus:3,trapezoid:3,paraarea:2,quadjudge:2,parasplit:2},advanced:{paraangle:3,paraside:3,rhombus:3,trapezoid:3,paraarea:2,quadjudge:2,parasplit:2},challenge:{paraangle:3,paraside:3,rhombus:3,trapezoid:3,paraarea:2,quadjudge:2,parasplit:2}}};
@@ -356,6 +359,7 @@ function geoseqConfig(){
     判斷題答「是等比數列，公比 r＝…」或「不是等比數列」，一般項 aₙ＝a₁×rⁿ⁻¹。公比限 ±2、±3、½、⅓、−½、−⅓，n≤8；
     等比中項一定寫出正負兩個答案。不含等比級數求和。verify 用遞推逐項乘公比，與公式 a₁·rⁿ⁻¹ 互驗。 */
  const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0;
+ const sb=k=>String(k).replace(/\d/g,d=>"₀₁₂₃₄₅₆₇₈₉"[d]); // 足碼一律用下標數字（a₆，不是 a6）
  let CUR="integer";
  const S=v=>numHTML(v,v.d===1?"integer":"fraction",{mixed:false});
  const P=v=>v.n<0?`(${S(v)})`:S(v);
@@ -380,18 +384,18 @@ function geoseqConfig(){
   if(kind==="given")return{expr:`等比數列首項 a₁＝${S(a)}，公比 r＝${S(r)}，求第 ${n} 項的值。`,answer:S(an),sig:`g:${plain(a)}:${plain(r)}:${n}`,verify:()=>eq(an,mul(a,pow(r,n-1)))};
   if(kind==="list")return{expr:`等比數列 ${s.slice(0,3).map(S).join("，")}，……，求第 ${n} 項。`,answer:S(an),sig:`l:${plain(a)}:${plain(r)}:${n}`,verify:()=>eq(an,mul(s[0],pow(div(s[1],s[0]),n-1)))};
   if(kind==="next")return{expr:`在空格填入適當的數，使它成為等比數列：${s.slice(0,4).map((v,i)=>i===3?"＿":S(v)).join("，")}，＿`,answer:`${S(s[3])}，${S(mul(s[3],r))}`,sig:`nx:${plain(a)}:${plain(r)}`,verify:()=>eq(div(s[3],s[2]),r)};
-  if(kind==="general"){const ex=`${S(a)}×${P(r)}ⁿ⁻¹`;return{expr:`等比數列首項 a₁＝${S(a)}，公比 r＝${S(r)}，求此數列的第 n 項 aₙ（以 n 表示），並求 a₅。`,answer:`aₙ＝${ex}；a₅＝${S(mul(a,pow(r,4)))}`,sig:`ge:${plain(a)}:${plain(r)}`,verify:()=>eq(seq(a,r,5)[4],mul(a,pow(r,4)))}}
+  if(kind==="general"){/* 公比是分數或負數一律加括號；首項 1 不寫「1×」、−1 只寫負號 */const rb=r.d!==1||r.n<0?`(${S(r)})`:S(r),ex=(a.n===1&&a.d===1?"":a.n===-1&&a.d===1?"−":`${S(a)}×`)+`${rb}ⁿ⁻¹`;return{expr:`等比數列首項 a₁＝${S(a)}，公比 r＝${S(r)}，求此數列的第 n 項 aₙ（以 n 表示），並求 a₅。`,answer:`aₙ＝${ex}；a₅＝${S(mul(a,pow(r,4)))}`,sig:`ge:${plain(a)}:${plain(r)}`,verify:()=>eq(seq(a,r,5)[4],mul(a,pow(r,4)))}}
   // whichterm：某值是第幾項
   return{expr:`等比數列 ${s.slice(0,3).map(S).join("，")}，……，${S(an)} 是第幾項？`,answer:`第 ${n} 項`,sig:`w:${plain(a)}:${plain(r)}:${n}`,verify:()=>eq(s[n-1],an)&&s.findIndex(v=>eq(v,an))===n-1}});
  const two=unit("twoterms","已知兩項求首項與公比","aₘ÷aₖ＝rᵐ⁻ᵏ：先用兩項相除求公比，再往回除得首項；相隔偶數項時公比可能有正負兩個答案。",(ctx,mode)=>{
   const L=lv(ctx),kind=L===0?pick(["adj","a1r","adj2"]):L===1?pick(["gap","a1r","adj"]):pick(["gap2","gap","find"]);
   const r=pick(RS[mode]),n=8,a=pickA(r,n,mode),s=seq(a,r,n);
-  if(kind==="adj"||kind==="adj2"){const k=rand(2,6);return{expr:`等比數列中 a${k}＝${S(s[k-1])}、a${k+1}＝${S(s[k])}，求公比 r 與首項 a₁。`,answer:`r＝${S(r)}；a₁＝${S(a)}`,sig:`ad:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(div(s[k],s[k-1]),r)&&eq(div(s[k-1],pow(r,k-1)),a)}}
-  if(kind==="a1r"){const k=rand(3,6);return{expr:`等比數列首項 a₁＝${S(a)}，第 ${k} 項 a${k}＝${S(s[k-1])}，公比為${r.n>0?"正":"負"}數，求公比 r。`,answer:`r＝${S(r)}`,sig:`ar:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(mul(a,pow(r,k-1)),s[k-1])}}
-  if(kind==="gap"){const k=rand(1,3),g=pick([2,4]),m=k+g+1;/* 相隔奇數項（3 或 5），公比只有一個；相隔偶數項的正負兩解由 gap2 處理 */if(m>n)return null;return{expr:`等比數列中 a${k}＝${S(s[k-1])}、a${m}＝${S(s[m-1])}，求公比 r 與首項 a₁。`,answer:`r＝${S(r)}；a₁＝${S(a)}`,sig:`gp:${plain(a)}:${plain(r)}:${k}:${m}`,verify:()=>(m-k)%2===1&&eq(div(s[m-1],s[k-1]),pow(r,m-k))}}
-  if(kind==="gap2"){const k=rand(1,3),m=k+2;const r2=mul(r,R(-1)),a2=div(s[k-1],pow(r2,k-1));return{expr:`等比數列中 a${k}＝${S(s[k-1])}、a${m}＝${S(s[m-1])}，求公比 r 與首項 a₁（寫出所有可能）。`,answer:`r＝${S(r)}、a₁＝${S(a)}；或 r＝${S(r2)}、a₁＝${S(a2)}`,sig:`g2:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(pow(r,2),pow(r2,2))&&eq(mul(a2,pow(r2,m-1)),s[m-1])}}
+  if(kind==="adj"||kind==="adj2"){const k=rand(2,6);return{expr:`等比數列中 a${sb(k)}＝${S(s[k-1])}、a${sb(k+1)}＝${S(s[k])}，求公比 r 與首項 a₁。`,answer:`r＝${S(r)}；a₁＝${S(a)}`,sig:`ad:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(div(s[k],s[k-1]),r)&&eq(div(s[k-1],pow(r,k-1)),a)}}
+  if(kind==="a1r"){const k=rand(3,6);return{expr:`等比數列首項 a₁＝${S(a)}，第 ${k} 項 a${sb(k)}＝${S(s[k-1])}，公比為${r.n>0?"正":"負"}數，求公比 r。`,answer:`r＝${S(r)}`,sig:`ar:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(mul(a,pow(r,k-1)),s[k-1])}}
+  if(kind==="gap"){/* k≥2：k＝1 會「已知 a₁ 又求 a₁」 */const k=rand(2,3),g=pick([2,4]),m=k+g+1;/* 相隔奇數項（3 或 5），公比只有一個；相隔偶數項的正負兩解由 gap2 處理 */if(m>n)return null;return{expr:`等比數列中 a${sb(k)}＝${S(s[k-1])}、a${sb(m)}＝${S(s[m-1])}，求公比 r 與首項 a₁。`,answer:`r＝${S(r)}；a₁＝${S(a)}`,sig:`gp:${plain(a)}:${plain(r)}:${k}:${m}`,verify:()=>(m-k)%2===1&&eq(div(s[m-1],s[k-1]),pow(r,m-k))}}
+  if(kind==="gap2"){const k=rand(2,4),m=k+2;const r2=mul(r,R(-1)),a2=div(s[k-1],pow(r2,k-1));return{expr:`等比數列中 a${sb(k)}＝${S(s[k-1])}、a${sb(m)}＝${S(s[m-1])}，求公比 r 與首項 a₁（寫出所有可能）。`,answer:`r＝${S(r)}、a₁＝${S(a)}；或 r＝${S(r2)}、a₁＝${S(a2)}`,sig:`g2:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(pow(r,2),pow(r2,2))&&eq(mul(a2,pow(r2,m-1)),s[m-1])}}
   // find：a₂＋a₃ 型
-  const k=rand(2,5);return{expr:`等比數列中 a${k}＝${S(s[k-1])}、公比 r＝${S(r)}，求 a${k+2}－a₁。`,answer:S(sub(s[k+1],a)),sig:`f:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(sub(mul(s[k-1],pow(r,2)),div(s[k-1],pow(r,k-1))),sub(s[k+1],a))}});
+  const k=rand(2,5);return{expr:`等比數列中 a${sb(k)}＝${S(s[k-1])}、公比 r＝${S(r)}，求 a${sb(k+2)}－a₁。`,answer:S(sub(s[k+1],a)),sig:`f:${plain(a)}:${plain(r)}:${k}`,verify:()=>eq(sub(mul(s[k-1],pow(r,2)),div(s[k-1],pow(r,k-1))),sub(s[k+1],a))}});
  const mean=unit("gmean","等比中項","a、b、c 成等比數列時 b²＝ac，所以 b＝±√(ac)；a、c 同號才有等比中項，而且有正負兩個。",(ctx,mode)=>{
   const L=lv(ctx),kind=L===0?pick(["pm","pm","check"]):L===1?pick(["pm","find","check"]):pick(["find","none","sign"]);
   const b=R(pick([1,-1])*rand(2,12)),k=pick(mode==="integer"?[R(2),R(3),R(4)]:[R(2),R(3),R(1,2),R(3,2)]),a=div(b,k),c=mul(b,k);if(mode==="integer"&&(a.d!==1||c.d!==1))return null;const B=abs2(b);
@@ -417,6 +421,7 @@ function geoseqConfig(){
 
 
 function anglesConfig(){
+ const rn=n=>n===3?"正三角形":n===4?"正方形":`正 ${n} 邊形`; // 正 3 邊形、正 4 邊形 改用一般稱呼
  /* M16 三角形與多邊形的角（2026-09-24，Claude）。題型取自百宏國二下講義 3-1（對頂角、補角、餘角；三角形內角與外角、外角定理、
     等腰三角形頂角底角、兩內角平分線交角；四邊形與 n 邊形內角和、外角和；正多邊形內角外角、求邊數、鋪地磚）。
     角度一律為整數度；圖依真實角度計算頂點（GEO.triByAngles），圖上標示與題目數值一致。只提供整數模式。 */
@@ -439,7 +444,7 @@ function anglesConfig(){
    const fig=G.svg(W,110,G.line(C,A)+G.line(D,B)+G.arc(o,A,B,"1",{r:12,lr:8})+G.arc(o,B,C,"2",{r:17,lr:8})+G.arc(o,C,D,"3",{r:12,lr:8})+G.text([o[0]+9,o[1]+20],"O",{i:true}));
    return{expr:`${fig}兩直線相交於 O，∠1＝${deg(a)}，求 ∠2 與 ∠3。`,answer:`∠2＝${deg(180-a)}（鄰角互補）；∠3＝${deg(a)}（對頂角）`,sig:`x:${a}`,verify:()=>a+(180-a)===180}}
   if(kind==="both"){const a=rand(10,80);return{expr:`一個角是 ${deg(a)}，它的餘角與補角各是幾度？補角比餘角大多少？`,answer:`餘角 ${deg(90-a)}、補角 ${deg(180-a)}；相差 ${deg(90)}`,sig:`b:${a}`,verify:()=>(180-a)-(90-a)===90}}
-  if(kind==="ratio"){const p=rand(1,7),q=rand(1,7);if(p===q||180%(p+q))return null;const u=180/(p+q);return{expr:`兩角互補，且兩角的度數比為 ${p}：${q}，求兩角。`,answer:`${deg(p*u)}、${deg(q*u)}`,sig:`r:${p}:${q}`,verify:()=>p*u+q*u===180&&p*u*q===q*u*p}}
+  if(kind==="ratio"){const p=rand(1,7),q=rand(1,7);if(p===q||gcd(p,q)!==1||180%(p+q))return null;const u=180/(p+q);return{expr:`兩角互補，且兩角的度數比為 ${p}：${q}，求兩角。`,answer:`${deg(p*u)}、${deg(q*u)}`,sig:`r:${p}:${q}`,verify:()=>p*u+q*u===180&&p*u*q===q*u*p}}
   if(kind==="times"){const k=rand(2,5),x=(180*1-90*k)/(1-k);if(!Number.isInteger(x)||x<=0||x>=90)return null;return{expr:`一個角的補角是它的餘角的 ${k} 倍，求這個角。`,answer:deg(x),sig:`t:${k}`,verify:()=>180-x===k*(90-x)}}
   // both3：三直線交於一點，已知兩角求第三角
   const a=rand(20,90),b=rand(20,90),c=180-a-b;if(c<15)return null;return{expr:`三條直線交於一點 O，形成六個角，其中相鄰的三個角為 ∠1＝${deg(a)}、∠2＝${deg(b)}、∠3，求 ∠3 與 ∠1 的對頂角。`,answer:`∠3＝${deg(c)}；∠1 的對頂角＝${deg(a)}`,sig:`t3:${a}:${b}`,verify:()=>a+b+c===180}});
@@ -450,7 +455,7 @@ function anglesConfig(){
   if(kind==="right"){const A=rand(15,75);return{expr:`直角三角形中，一個銳角是 ${deg(A)}，另一個銳角是幾度？`,answer:deg(90-A),sig:`rt:${A}`,verify:()=>A+(90-A)+90===180}}
   if(kind==="ext"){const A=rand(30,100),B=rand(25,150-A),C=180-A-B;if(C<20)return null;return{expr:`${triFig(A,B,{A:deg(A),B:deg(B)},"x")}如圖，延長 BC 到 D，∠A＝${deg(A)}、∠B＝${deg(B)}，求外角 ∠ACD（x）。`,answer:deg(A+B),sig:`ex:${A}:${B}`,verify:()=>A+B===180-C}}
   if(kind==="extFind"){const A=rand(30,100),B=rand(25,150-A),C=180-A-B;if(C<20)return null;return{expr:`${triFig(A,B,{A:"?",B:deg(B)},deg(A+B))}如圖，∠B＝${deg(B)}，外角 ∠ACD＝${deg(A+B)}，求 ∠A。`,answer:deg(A),sig:`ef:${A}:${B}`,verify:()=>(A+B)-B===A}}
-  if(kind==="ratio"){const p=rand(1,6),q=rand(1,6),r=rand(1,6);if(180%(p+q+r))return null;const u=180/(p+q+r);if([p,q,r].some(x=>x*u<10))return null;return{expr:`三角形三個內角的比為 ${p}：${q}：${r}，求三個內角，並判斷它是銳角、直角還是鈍角三角形。`,answer:`${[p,q,r].map(x=>deg(x*u)).join("、")}；${Math.max(p,q,r)*u>90?"鈍角":Math.max(p,q,r)*u===90?"直角":"銳角"}三角形`,sig:`ra:${p}:${q}:${r}`,verify:()=>(p+q+r)*u===180}}
+  if(kind==="ratio"){const p=rand(1,6),q=rand(1,6),r=rand(1,6);/* 比要最簡（不出 6：6：6、6：2：2） */if(gcd(gcd(p,q),r)!==1||180%(p+q+r))return null;const u=180/(p+q+r);if([p,q,r].some(x=>x*u<10))return null;return{expr:`三角形三個內角的比為 ${p}：${q}：${r}，求三個內角，並判斷它是銳角、直角還是鈍角三角形。`,answer:`${[p,q,r].map(x=>deg(x*u)).join("、")}；${Math.max(p,q,r)*u>90?"鈍角":Math.max(p,q,r)*u===90?"直角":"銳角"}三角形`,sig:`ra:${p}:${q}:${r}`,verify:()=>(p+q+r)*u===180}}
   if(kind==="iso"){const top=pick([true,false]);if(top){const T=2*rand(10,80);const b=(180-T)/2;return{expr:`等腰三角形的頂角是 ${deg(T)}，求一個底角。`,answer:deg(b),sig:`it:${T}`,verify:()=>T+2*b===180}}const b=rand(20,85);return{expr:`等腰三角形的一個底角是 ${deg(b)}，求頂角與頂角的外角。`,answer:`頂角 ${deg(180-2*b)}；頂角的外角 ${deg(2*b)}`,sig:`ib:${b}`,verify:()=>180-2*b+2*b===180}}
   if(kind==="bisect"){const A=rand(20,140);return{expr:`△ABC 中，∠A＝${deg(A)}，∠B 與 ∠C 的角平分線交於 I，求 ∠BIC。`,answer:`${deg(90+A/2)}（∠BIC＝90°＋½∠A）`.replace(".5°",".5°"),sig:`bi:${A}`,verify:()=>{const B=(180-A)/2;return 180-B/1===90+A/2}}}
   // star：五角星形五個尖角和 180°；給四個求第五個
@@ -471,15 +476,15 @@ function anglesConfig(){
  const reg=unit("regular","正多邊形的內角與外角","正 n 邊形每個外角＝360°÷n，每個內角＝180°－外角；用外角求邊數最快。",ctx=>{
   const L=lv(ctx),divs=[3,4,5,6,8,9,10,12,15,18,20,24,30,36,40,45,60],kind=L===0?pick(["both","ext","fig","isum"]):L===1?pick(["fromExt","fromInt","both"]):pick(["tile","ratio","fromInt","diff"]);
   const n=pick(divs),e=360/n,i=180-e;
-  if(kind==="both")return{expr:`正 ${n} 邊形的每一個內角與外角各是幾度？`,answer:`內角 ${deg(i)}；外角 ${deg(e)}`,sig:`b:${n}`,verify:()=>(n-2)*180/n===i};
-  if(kind==="isum")return{expr:`正 ${n} 邊形的內角和是幾度？每一個內角是幾度？`,answer:`內角和 ${deg((n-2)*180)}；每個內角 ${deg(i)}`,sig:`is:${n}`,verify:()=>(n-2)*180/n===i};
-  if(kind==="ext")return{expr:`正 ${n} 邊形的每一個外角是幾度？`,answer:deg(e),sig:`e:${n}`,verify:()=>e*n===360};
-  if(kind==="fig"){const m=pick([5,6,8,9,10,12]),q=G.regular(m),T=G.fit(q,W,H),p=q.map(T);return{expr:`${G.svg(W,H,G.poly(p)+G.arc(p[0],p[1],p[m-1],"x",{r:14}))}圖為正 ${m} 邊形，求 x。`,answer:deg(180-360/m),sig:`f:${m}`,verify:()=>(m-2)*180/m===180-360/m}}
-  if(kind==="fromExt")return{expr:`一個正多邊形的每一個外角是 ${deg(e)}，它是正幾邊形？`,answer:`正 ${n} 邊形`,sig:`fe:${n}`,verify:()=>360/e===n};
-  if(kind==="fromInt")return{expr:`一個正多邊形的每一個內角是 ${deg(i)}，它是正幾邊形？`,answer:`正 ${n} 邊形（外角 ${deg(e)}）`,sig:`fi:${n}`,verify:()=>(n-2)*180===i*n};
-  if(kind==="diff"){const d=i-e;if(d<=0)return null;return{expr:`一個正多邊形的每一個內角比外角大 ${deg(d)}，它是正幾邊形？`,answer:`正 ${n} 邊形（外角 ${deg(e)}、內角 ${deg(i)}）`,sig:`df:${n}`,verify:()=>(180-d)/2===e&&360/e===n}}
-  if(kind==="ratio"){const k=pick([1,2,3,4,5,8,9,11,14,17]),e2=180/(k+1),n2=360/e2;if(!Number.isInteger(n2))return null;return{expr:`一個正多邊形的每一個內角是外角的 ${k} 倍，它是正幾邊形？`,answer:`正 ${n2} 邊形（外角 ${deg(e2)}）`,sig:`ra:${k}`,verify:()=>(180-e2)===k*e2&&n2*e2===360}}
-  const m=pick([3,4,5,6,8,9,10,12,15,18]),ii=180-360/m,ok=Number.isInteger(360/ii)&&360%ii===0;return{expr:`只用同一種正 ${m} 邊形的地磚，能不能鋪滿地面而不留空隙？說明理由。`,answer:`${ok?"可以":"不行"}（每個內角 ${deg(ii)}，${ok?`${360/ii} 個剛好湊成 360°`:"360° 不是它的整數倍"}）`,sig:`tl:${m}`,verify:()=>ok===[3,4,6].includes(m)}});
+  if(kind==="both")return{expr:`${rn(n)}的每一個內角與外角各是幾度？`,answer:`內角 ${deg(i)}；外角 ${deg(e)}`,sig:`b:${n}`,verify:()=>(n-2)*180/n===i};
+  if(kind==="isum")return{expr:`${rn(n)}的內角和是幾度？每一個內角是幾度？`,answer:`內角和 ${deg((n-2)*180)}；每個內角 ${deg(i)}`,sig:`is:${n}`,verify:()=>(n-2)*180/n===i};
+  if(kind==="ext")return{expr:`${rn(n)}的每一個外角是幾度？`,answer:deg(e),sig:`e:${n}`,verify:()=>e*n===360};
+  if(kind==="fig"){const m=pick([5,6,8,9,10,12]),q=G.regular(m),T=G.fit(q,W,H),p=q.map(T);return{expr:`${G.svg(W,H,G.poly(p)+G.arc(p[0],p[1],p[m-1],"x",{r:14}))}圖為${rn(m)}，求 x。`,answer:deg(180-360/m),sig:`f:${m}`,verify:()=>(m-2)*180/m===180-360/m}}
+  if(kind==="fromExt")return{expr:`一個正多邊形的每一個外角是 ${deg(e)}，它是正幾邊形？`,answer:`${rn(n)}`,sig:`fe:${n}`,verify:()=>360/e===n};
+  if(kind==="fromInt")return{expr:`一個正多邊形的每一個內角是 ${deg(i)}，它是正幾邊形？`,answer:`${rn(n)}（外角 ${deg(e)}）`,sig:`fi:${n}`,verify:()=>(n-2)*180===i*n};
+  if(kind==="diff"){const d=i-e;if(d<=0)return null;return{expr:`一個正多邊形的每一個內角比外角大 ${deg(d)}，它是正幾邊形？`,answer:`${rn(n)}（外角 ${deg(e)}、內角 ${deg(i)}）`,sig:`df:${n}`,verify:()=>(180-d)/2===e&&360/e===n}}
+  if(kind==="ratio"){const k=pick([1,2,3,4,5,8,9,11,14,17]),e2=180/(k+1),n2=360/e2;if(!Number.isInteger(n2))return null;return{expr:`一個正多邊形的每一個內角${k===1?"與外角相等":`是外角的 ${k} 倍`}，它是正幾邊形？`,answer:`${rn(n2)}（外角 ${deg(e2)}）`,sig:`ra:${k}`,verify:()=>(180-e2)===k*e2&&n2*e2===360}}
+  const m=pick([3,4,5,6,8,9,10,12,15,18]),ii=180-360/m,ok=Number.isInteger(360/ii)&&360%ii===0;return{expr:`只用同一種${rn(m)}的地磚，能不能鋪滿地面而不留空隙？說明理由。`,answer:`${ok?"可以":"不行"}（每個內角 ${deg(ii)}，${ok?`${360/ii} 個剛好湊成 360°`:"360° 不是它的整數倍"}）`,sig:`tl:${m}`,verify:()=>ok===[3,4,6].includes(m)}});
  // ⑤ 列方程式求角度
  const eqn=unit("equation","列方程式求角度","把未知角用 x 表示，利用內角和、外角定理或互補關係列式。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["tri3","supp","ext"]):L===1?pick(["tri3","quad","ext"]):pick(["poly","iso","ext2"]);
@@ -522,9 +527,9 @@ function congruenceConfig(){
   if(kind==="which"){const v=pick(["A","B","C"]),e=pick(["AB","BC","CA"]);return{expr:`已知 △ABC≅△${other}，對應點依序為 ${mapStr("ABC",other)}。∠${v} 的對應角是哪一個？${e} 的對應邊是哪一個？`,answer:`∠${map[v]}；${map[e[0]]}${map[e[1]]}`,sig:`w:${other}:${v}:${e}`,verify:()=>inv[map[v]]===v}}
   if(kind==="xy"||kind==="perim"){const x=rand(2,9),a=rand(2,4),b=rand(-3,8),AB=a*x+b;if(AB<3)return null;const y=rand(2,9),AC=rand(8,20),BC=rand(Math.abs(AB-AC)+1,AB+AC-1),c2=AC-y;if(c2<1)return null;
    const eAB=map.A+map.B,eAC=map.A+map.C;
-   if(kind==="xy")return{expr:`已知 △ABC≅△${other}（${mapStr("ABC",other)}），AB＝${a}x${b>=0?"＋"+b:"−"+(-b)}、${eAB}＝${AB}、AC＝${AC}、${eAC}＝y＋${c2}，求 x、y。`,answer:`x＝${x}、y＝${y}`,sig:`xy:${other}:${a}:${b}:${x}:${AC}:${c2}`,verify:()=>a*x+b===AB&&y+c2===AC};
+   if(kind==="xy")return{expr:`已知 △ABC≅△${other}（${mapStr("ABC",other)}），AB＝${linx(a,b)}、${eAB}＝${AB}、AC＝${AC}、${eAC}＝y＋${c2}，求 x、y。`,answer:`x＝${x}、y＝${y}`,sig:`xy:${other}:${a}:${b}:${x}:${AC}:${c2}`,verify:()=>a*x+b===AB&&y+c2===AC};
    return{expr:`已知 △ABC≅△${other}（${mapStr("ABC",other)}），AB＝${AB}、BC＝${BC}、${eAC}＝${AC}，求 △${other} 的周長。`,answer:`${AB+BC+AC}`,sig:`p:${other}:${AB}:${BC}:${AC}`,verify:()=>AB+BC>AC&&AB+AC>BC}}
-  if(kind==="eqx"){for(let t=0;t<40;t++){const x=rand(3,15),cs=[[rand(2,6),rand(-15,20)],[rand(2,7),rand(-20,20)],[rand(1,4),rand(-10,30)]],v=cs.map(([p,q])=>p*x+q);if(v.some(z=>z<15)||v[0]+v[1]+v[2]===180)continue;const vB=v[0],vC=180-v[0]-v[2],vD=v[2];if(vC<15)continue;const q1=vC-cs[1][0]*x;const lin=(p,q)=>`${p}x${q>=0?"＋"+q:"−"+(-q)}`;
+  if(kind==="eqx"){for(let t=0;t<40;t++){const x=rand(3,15),cs=[[rand(2,6),rand(-15,20)],[rand(2,7),rand(-20,20)],[rand(1,4),rand(-10,30)]],v=cs.map(([p,q])=>p*x+q);if(v.some(z=>z<15)||v[0]+v[1]+v[2]===180)continue;const vB=v[0],vC=180-v[0]-v[2],vD=v[2];if(vC<15)continue;const q1=vC-cs[1][0]*x;const lin=linx;
     return{expr:`若 △ABC≅△DEF（A→D、B→E、C→F），且 ∠B＝(${lin(...cs[0])})°、∠F＝(${lin(cs[1][0],q1)})°、∠D＝(${lin(...cs[2])})°，求 x 與 ∠A。`,answer:`x＝${x}；∠A＝${deg(vD)}`,sig:`e:${x}:${cs.map(c=>c.join("_")).join(",")}`,verify:()=>vB+vD+(cs[1][0]*x+q1)===180}}return null}
   // wrong：哪個敘述錯誤
   const pairs=[[`∠A＝∠${map.A}`,true],[`∠C＝∠${map.C}`,true],[`AB＝${map.A}${map.B}`,true],[`BC＝${map.B}${map.C}`,true],[`AB＝${map.A}${map.C}`,false],[`∠B＝∠${map.C}`,false]],opts=shuffle([...shuffle(pairs.filter(p=>p[1])).slice(0,3),pick(pairs.filter(p=>!p[1]))]),i=opts.findIndex(o=>!o[1]);
@@ -608,11 +613,11 @@ function bisectorsConfig(){
  const perp=unit("perpbis","中垂線的性質","線段中垂線上的任一點到線段兩端點等距離；反過來，到兩端點等距離的點在中垂線上。",ctx=>{
   const L=lv(ctx),kind=L===0?pick(["eq","x","perim"]):L===1?pick(["x","perim","pyth"]):pick(["pyth2","diff","angle"]);
   if(kind==="eq"){const d=rand(3,20);return{expr:`直線 L 是 AB 的垂直平分線，P 在 L 上，PA＝${d}，求 PB。`,answer:`${d}`,sig:`e:${d}`,verify:()=>d===d}}
-  if(kind==="x"){const x=rand(2,12),a=rand(2,5),b=rand(0,10),c=a+rand(1,3),d=a*x+b-c*x;return{expr:`L 是 AB 的垂直平分線，P 在 L 上，PA＝${a}x＋${b}、PB＝${c}x${d>=0?"＋"+d:"−"+(-d)}，求 x 與 PA。`,answer:`x＝${x}；PA＝${a*x+b}`,sig:`x:${a}:${b}:${c}:${x}`,verify:()=>a*x+b===c*x+d}}
+  if(kind==="x"){const x=rand(2,12),a=rand(2,5),b=rand(0,10),c=a+rand(1,3),d=a*x+b-c*x;return{expr:`L 是 AB 的垂直平分線，P 在 L 上，PA＝${linx(a,b)}、PB＝${linx(c,d)}，求 x 與 PA。`,answer:`x＝${x}；PA＝${a*x+b}`,sig:`x:${a}:${b}:${c}:${x}`,verify:()=>a*x+b===c*x+d}}
   if(kind==="perim"){const AC=rand(8,20),BC=rand(3,AC-1);return{expr:`△ABC 中，AB 的中垂線 L 交 AC 於 P。若 AC＝${AC}、BC＝${BC}，求 △PBC 的周長。`,answer:`${AC+BC}（PB＝PA，所以 PB＋PC＝AC）`,sig:`p:${AC}:${BC}`,verify:()=>AC+BC>0}}
   if(kind==="pyth"){const [a,b,c]=pick(TRIPLES);return{expr:`L 是 AB 的垂直平分線，交 AB 於 M，P 在 L 上。若 AB＝${2*a}、PA＝${c}，求 PM。`,answer:`${b}`,sig:`py:${a}:${c}`,verify:()=>a*a+b*b===c*c}}
   if(kind==="pyth2"){const t=pick(TRIPLES.filter(t=>t[0]===t[0])),[a,b,c]=t,t2=TRIPLES.find(u=>u[0]===a&&u!==t)||TRIPLES.find(u=>u[1]===a&&u!==t);if(!t2)return null;const b2=t2[0]===a?t2[1]:t2[0],c2=t2[2];if(b2===b)return null;return{expr:`L 是 AB 的垂直平分線，交 AB 於 M，P、Q 都在 L 上且在 AB 同側。若 AB＝${2*a}、PA＝${c}、QA＝${c2}，求 PQ。`,answer:`${Math.abs(b2-b)}（PM＝${b}、QM＝${b2}）`,sig:`p2:${a}:${b}:${b2}`,verify:()=>a*a+b*b===c*c&&a*a+b2*b2===c2*c2}}
-  if(kind==="diff"){const AC=rand(8,20),PC=rand(2,AC-2),PB=AC-PC,BC=rand(Math.abs(PB-PC)+1,AC-1);if(BC<=Math.abs(PB-PC))return null;return{expr:`△ABC 中，AB 的中垂線交 AC 於 P。若 BC＝${BC}、AC＝${AC}、PC＝${PC}，求 BC−PB。`,answer:`${BC-(AC-PC)}（PB＝PA＝AC−PC＝${AC-PC}）`,sig:`d:${AC}:${PC}:${BC}`,verify:()=>AC-PC>0}}
+  if(kind==="diff"){const AC=rand(8,20),PC=rand(2,AC-2),PB=AC-PC,lo=Math.max(Math.abs(PB-PC),PB)+1;/* BC＞PB，答案才不會是 0 或負數 */if(lo>AC-1)return null;const BC=rand(lo,AC-1);return{expr:`△ABC 中，AB 的中垂線交 AC 於 P。若 BC＝${BC}、AC＝${AC}、PC＝${PC}，求 BC−PB。`,answer:`${BC-(AC-PC)}（PB＝PA＝AC−PC＝${AC-PC}）`,sig:`d:${AC}:${PC}:${BC}`,verify:()=>AC-PC>0&&BC>AC-PC&&BC<AC}}
   // angle：中垂線與等腰三角形角度
   const q=2*rand(20,70),p=rand(10,(180-q)/2-5);return{expr:`L 是 AB 的垂直平分線，交 AB 於 M，P、Q 在 L 上（Q 比 P 離 AB 遠）。若 ∠AQB＝${deg(q)}、∠APM＝${deg(p+q/2)}，求 ∠QAP。`,answer:`${deg(p)}（∠AQM＝${deg(q/2)}，∠APM 是 △AQP 的外角）`,sig:`an:${q}:${p}`,verify:()=>(p+q/2)-q/2===p}});
  // ③ 角平分線性質
@@ -634,7 +639,7 @@ function bisectorsConfig(){
   if(kind==="half"){const v=2*rand(10,80);return{expr:"等腰三角形 ABC 中 AB＝AC，AD 平分頂角 ∠BAC 交 BC 於 D。若 ∠BAC＝"+deg(v)+"，求 ∠BAD、∠ADB 與 ∠B。",answer:"∠BAD＝"+deg(v/2)+"、∠ADB＝90°、∠B＝"+deg(90-v/2),sig:"h:"+v,verify:()=>v/2+90+(90-v/2)===180}}
   if(kind==="extBase"){const b=rand(20,85);return{expr:"等腰三角形 ABC 中 AB＝AC，延長 BC 到 D。若 ∠ACD＝"+deg(180-b)+"，求 ∠A。",answer:deg(180-2*b),sig:"eb:"+b,verify:()=>(180-b)===(180-2*b)+b}}
   if(kind==="extApex"){const v=2*rand(10,80);return{expr:"等腰三角形 ABC 中 AB＝AC，延長 BA 到 E。若 ∠CAE＝"+deg(180-v)+"，求 ∠B。",answer:deg((180-v)/2)+"（∠CAE＝∠B＋∠C）",sig:"ea:"+v,verify:()=>(180-v)===2*((180-v)/2)}}
-  if(kind==="xAngle"){const x=rand(5,30),p=rand(2,4),q=rand(0,20),b=p*x+q;if(b>=89||b<=10)return null;const r=rand(1,3),s=b-r*x;return{expr:"等腰三角形 ABC 中 AB＝AC，∠B＝("+p+"x＋"+q+")°、∠C＝("+(r===1?"":r)+"x"+(s>=0?"＋"+s:"−"+(-s))+")°，求 x 與 ∠A。",answer:"x＝"+x+"；∠A＝"+deg(180-2*b),sig:"x:"+p+":"+q+":"+r+":"+x,verify:()=>p*x+q===r*x+s}}
+  if(kind==="xAngle"){const x=rand(5,30),p=rand(2,4),q=rand(0,20),b=p*x+q;if(b>=89||b<=10)return null;const r=rand(1,3),s=b-r*x;if(r===p)return null;/* r＝p 時兩式相同，x 求不出來 */const ag=(u,v)=>v?"("+linx(u,v)+")°":linx(u,0)+"°";return{expr:"等腰三角形 ABC 中 AB＝AC，∠B＝"+ag(p,q)+"、∠C＝"+ag(r,s)+"，求 x 與 ∠A。",answer:"x＝"+x+"；∠A＝"+deg(180-2*b),sig:"x:"+p+":"+q+":"+r+":"+x,verify:()=>p*x+q===r*x+s}}
   if(kind==="chain"){const a=rand(10,50),C=(180-a)/2;if(!Number.isInteger(C)||C-a<=0)return null;return{expr:"△ABC 中 AB＝AC，D 在 AC 上且 BD＝BC。若 ∠A＝"+deg(a)+"，求 ∠DBC 與 ∠ABD。",answer:"∠DBC＝"+deg(a)+"；∠ABD＝"+deg(C-a),sig:"c:"+a,verify:()=>(180-2*C)===a&&C-a+a===C}}
   const a=rand(10,40);if(a*3>=180)return null;return{expr:"△ABC 中，D 在 AC 上，AD＝BD＝BC。若 ∠A＝"+deg(a)+"，求 ∠BDC 與 ∠ABC。",answer:"∠BDC＝"+deg(2*a)+"；∠ABC＝"+deg(180-a-2*a),sig:"c2:"+a,verify:()=>a+(180-a-2*a)+2*a===180&&2*a+2*a+(180-4*a)===180}});
  // ⑤ 兩角平分線的夾角（2026-11-01 新增）
@@ -743,7 +748,7 @@ function triineqConfig(){
   // isoexpr：三邊為 x 的一次式，其中兩邊相等
   for(let t=0;t<60;t++){const E=[[pick([-1,1,2,3]),rand(-3,9)],[pick([1,2,3,4]),rand(-3,6)],[pick([1,2,3,4,-1]),rand(-3,9)]];if(E.some(e=>!e[0]))continue;
    const val=(e,x)=>add(mul(R(e[0]),x),R(e[1])),sols=[];let bad=false;
-   for(const [i,j] of [[0,1],[1,2],[0,2]]){const dc=E[i][0]-E[j][0];if(!dc){if(E[i][1]===E[j][1])bad=true;continue}const x=R(E[j][1]-E[i][1],dc);if(x.d!==1)continue;const s=E.map(e=>val(e,x));if(s.every(v=>v.n>0)&&triR(...s)&&!sols.some(y=>eq(y,x)))sols.push(x)}
+   for(const [i,j] of [[0,1],[1,2],[0,2]]){const dc=E[i][0]-E[j][0];if(!dc){if(E[i][1]===E[j][1])bad=true;continue}const x=R(E[j][1]-E[i][1],dc);if(x.d!==1||x.n<1)continue;/* x＝0 不自然 */const s=E.map(e=>val(e,x));if(s.every(v=>v.n>0)&&triR(...s)&&!sols.some(y=>eq(y,x)))sols.push(x)}
    if(bad||!sols.length)continue;const fx=e=>`${e[0]===1?"":e[0]===-1?"−":e[0]}x${e[1]?(e[1]>0?"＋":"−")+Math.abs(e[1]):""}`,show=e=>e[0]<0?`${e[1]}−${Math.abs(e[0])===1?"":Math.abs(e[0])}x`:fx(e),ex=E.map(show);
    if(E.some(e=>e[0]<0&&e[1]<=0))continue;
    return{expr:`設 ${ex.join("、")} 可作為一個等腰三角形的三邊長，求 x。`,answer:`x＝${sols.map(S).join(" 或 ")}（${sols.map(x=>`三邊 ${E.map(e=>S(val(e,x))).join("、")}`).join("；")}）`,sig:`ie:${JSON.stringify(E)}`,verify:()=>sols.every(x=>{const s=E.map(e=>val(e,x));return triR(...s)&&(eq(s[0],s[1])||eq(s[1],s[2])||eq(s[0],s[2]))})}}
@@ -770,7 +775,7 @@ function triineqConfig(){
   // isorange：等腰 AB＝AC，底角＝(px＋q)°，比較 BC 與 AB 求 x 範圍
   const p=pick([1,2,3,4,5]),q=rand(-10,20),big=Math.random()<.5;// big：BC＞AB ⇔ 頂角＞底角 ⇔ 底角＜60°
   const lo=big?R(0-q,p):R(60-q,p),hi=big?R(60-q,p):R(90-q,p);if(cmp(hi,R(0))<=0)return null;const lo2=lo;
-  return{expr:`△ABC 中 AB＝AC，∠B＝(${p===1?"":p}x${q?(q>0?"＋":"−")+Math.abs(q):""})°。若 BC ${big?"＞":"＜"} AB，求 x 的範圍。`,answer:`${rng(lo2,hi)}（∠B ${big?"介於 0° 與 60° 之間":"介於 60° 與 90° 之間"}）`,sig:`iso:${p}:${q}:${big}`,verify:()=>{const test=x=>{const b=p*x+q;if(b<=0||b>=90)return false;const A=180-2*b,sa=Math.sin(A*Math.PI/180),sb=Math.sin(b*Math.PI/180);return big?sa>sb:sa<sb};const l=H(lo2),h=H(hi);return test(l+.01)&&test(h-.01)&&!test(l-.01)&&!test(h+.01)}};
+  return{expr:`△ABC 中 AB＝AC，∠B＝${q?`(${linx(p,q)})`:linx(p,0)}°。若 BC ${big?"＞":"＜"} AB，求 x 的範圍。`,answer:`${rng(lo2,hi)}（∠B ${big?"介於 0° 與 60° 之間":"介於 60° 與 90° 之間"}）`,sig:`iso:${p}:${q}:${big}`,verify:()=>{const test=x=>{const b=p*x+q;if(b<=0||b>=90)return false;const A=180-2*b,sa=Math.sin(A*Math.PI/180),sb=Math.sin(b*Math.PI/180);return big?sa>sb:sa<sb};const l=H(lo2),h=H(hi);return test(l+.01)&&test(h-.01)&&!test(l-.01)&&!test(h+.01)}};
   function H(v){return v.n/v.d}
  });
 
@@ -830,7 +835,7 @@ function quadappsConfig(){
   if(kind==="square"){for(let t=0;t<40;t++){const x0=rand(2,12),a=rand(1,8),b=rand(1,8),num2=(x0+a)*(x0+b);if(num2%(x0*x0))continue;const k=num2/(x0*x0);if(k<2)continue;
     return build({expr:`把一個正方形的一邊增長 ${a} 公尺、另一邊增長 ${b} 公尺，得到的長方形面積是原正方形面積的 ${k} 倍，求原正方形的邊長。`,def:"原正方形邊長為 x 公尺",a:k-1,b:-(a+b),c:-a*b,
      valid:x=>cmp(x,R(0))>0,story:x=>eq(mul(add(x,R(a)),add(x,R(b))),mul(R(k),mul(x,x))),reason:()=>"邊長必須為正",final:x=>`${S(x)} 公尺`,sig:`sq:${x0}:${a}:${b}`})}return null}
-  if(kind==="walk"){const l=rand(4,20),m=rand(4,l),x0=rand(1,5),A=(l+2*x0)*(m+2*x0);
+  if(kind==="walk"){const l=rand(5,20),m=rand(4,l-1),x0=rand(1,5),A=(l+2*x0)*(m+2*x0);/* m＜l：長寬相等就不是「長方形」 */
    return build({expr:`一塊長方形土地面積為 ${A} 平方公尺，中間開闢長 ${l} 公尺、寬 ${m} 公尺的長方形花圃，四周鋪設等寬的走道，求走道寬。`,def:"走道寬為 x 公尺",a:4,b:2*(l+m),c:l*m-A,
     valid:x=>cmp(x,R(0))>0,story:x=>eq(mul(add(R(l),mul(R(2),x)),add(R(m),mul(R(2),x))),R(A)),reason:()=>"寬度必須為正",final:x=>`${S(x)} 公尺`,sig:`wk:${l}:${m}:${x0}`})}
   if(kind==="trap"){const x0=rand(4,16),a=rand(1,4),b=rand(1,5);if((2*x0-a)*(x0+b)%2)return null;const A=(2*x0-a)*(x0+b)/2;
@@ -860,16 +865,16 @@ function quadappsConfig(){
  // ③ 路寬問題
  const road=unit("road","路寬問題","道路可以移到邊上（變形法）：剩下的面積＝(長−直路總寬)×(寬−橫路總寬)；周圍加路時長、寬各加 2x。",ctx=>{
   const L=lv(ctx),kind=pick(L===0?["cross1","cross","outside"]:L===1?["cross","outside","frame"]:["frame","inside","cross"]);
-  if(kind==="cross1"||kind==="cross"){const n=kind==="cross1"?1:rand(1,3),m=kind==="cross1"?1:rand(1,2);if(kind==="cross"&&n===1&&m===1)return null;const x0=rand(1,4),Lg=rand(n*x0+5,40),W=rand(m*x0+4,Math.min(Lg,30)),A=(Lg-n*x0)*(W-m*x0);
+  if(kind==="cross1"||kind==="cross"){const n=kind==="cross1"?1:rand(1,3),m=kind==="cross1"?1:rand(1,2);if(kind==="cross"&&n===1&&m===1)return null;const x0=rand(1,4),Lg=rand(n*x0+5,40),W=rand(m*x0+4,Math.min(Lg,30)),A=(Lg-n*x0)*(W-m*x0);if(W>=Lg)return null;
    return build({expr:kind==="cross1"?`長 ${Lg} 公尺、寬 ${W} 公尺的矩形草地，中間開闢一條直路與一條橫路（路寬相等且與邊平行），剩下草地面積是 ${A} 平方公尺，求路寬。`:`長 ${Lg} 公尺、寬 ${W} 公尺的矩形草地，開闢 ${n} 條與寬平行、${m} 條與長平行的等寬道路，剩下草地面積是 ${A} 平方公尺，求路寬。`,
     def:"路寬為 x 公尺",a:n*m,b:-(Lg*m+W*n),c:Lg*W-A,valid:x=>cmp(x,R(0))>0&&cmp(sub(R(Lg),mul(R(n),x)),R(0))>0&&cmp(sub(R(W),mul(R(m),x)),R(0))>0,story:x=>eq(mul(sub(R(Lg),mul(R(n),x)),sub(R(W),mul(R(m),x))),R(A)),
     reason:x=>`路寬 ${S(x)} 會使剩下的長或寬不是正數`,final:x=>`${S(x)} 公尺`,sig:`${kind}:${Lg}:${W}:${n}:${m}:${x0}`})}
-  if(kind==="frame"){const r=rand(1,3),c=rand(2,4),x0=rand(1,2),Lg=rand((c+1)*x0+c*3,40),W=rand((r+1)*x0+r*3,Math.min(Lg,30)),A=(Lg-(c+1)*x0)*(W-(r+1)*x0);if(A<=0)return null;
+  if(kind==="frame"){const r=rand(1,3),c=rand(2,4),x0=rand(1,2),Lg=rand((c+1)*x0+c*3,40),W=rand((r+1)*x0+r*3,Math.min(Lg,30)),A=(Lg-(c+1)*x0)*(W-(r+1)*x0);if(A<=0||W>=Lg)return null;
    return build({expr:`長 ${Lg} 公寸、寬 ${W} 公寸的布告欄，在周圍與內部釘上等寬的木條，分成 ${r} 列 ${c} 行共 ${r*c} 塊專欄區。若各專欄區面積總和為 ${A} 平方公寸，求木條寬度。`,def:"木條寬為 x 公寸",a:(c+1)*(r+1),b:-(Lg*(r+1)+W*(c+1)),c:Lg*W-A,
     valid:x=>cmp(x,R(0))>0&&cmp(sub(R(Lg),mul(R(c+1),x)),R(0))>0&&cmp(sub(R(W),mul(R(r+1),x)),R(0))>0,story:x=>eq(mul(sub(R(Lg),mul(R(c+1),x)),sub(R(W),mul(R(r+1),x))),R(A)),reason:x=>`寬度 ${S(x)} 會使專欄區的長或寬不是正數`,final:x=>`${S(x)} 公寸`,sig:`fr:${Lg}:${W}:${r}:${c}:${x0}`})}
-  if(kind==="inside"){const x0=rand(1,5),Lg=rand(2*x0+3,40),W=rand(2*x0+3,Math.min(Lg,30)),A=(Lg-2*x0)*(W-2*x0);
+  if(kind==="inside"){const x0=rand(1,5),Lg=rand(2*x0+3,40),W=rand(2*x0+3,Math.min(Lg,30)),A=(Lg-2*x0)*(W-2*x0);if(W>=Lg)return null;
    return build({expr:`長 ${Lg} 公尺、寬 ${W} 公尺的長方形空地，沿內側四周留出等寬的步道，中間花圃面積為 ${A} 平方公尺，求步道寬。`,def:"步道寬為 x 公尺",a:4,b:-2*(Lg+W),c:Lg*W-A,valid:x=>cmp(x,R(0))>0&&cmp(sub(R(W),mul(R(2),x)),R(0))>0,story:x=>eq(mul(sub(R(Lg),mul(R(2),x)),sub(R(W),mul(R(2),x))),R(A)),reason:x=>`寬度 ${S(x)} 超過寬的一半，花圃不存在`,final:x=>`${S(x)} 公尺`,sig:`in:${Lg}:${W}:${x0}`})}
-  for(let t=0;t<60;t++){const Lg=pick([100,120,150,200,250,300,400]),W=pick([50,80,100,120,150,200,300].filter(v=>v<=Lg)),x0=rand(1,20),inc=4*x0*x0+2*(Lg+W)*x0;if((100*inc)%(Lg*W))continue;const p=100*inc/(Lg*W);if(p<1||p>60)continue;
+  for(let t=0;t<60;t++){const Lg=pick([100,120,150,200,250,300,400]),W=pick([50,80,100,120,150,200,300].filter(v=>v<Lg)),x0=rand(1,20),inc=4*x0*x0+2*(Lg+W)*x0;if((100*inc)%(Lg*W))continue;const p=100*inc/(Lg*W);if(p<1||p>60)continue;
    return build({expr:`長方形公園長 ${Lg} 公尺、寬 ${W} 公尺，在其四周外側鋪一條等寬的馬路，增加的面積為公園面積的 ${p}％，求馬路寬。`,def:"馬路寬為 x 公尺",a:4,b:2*(Lg+W),c:-inc,valid:x=>cmp(x,R(0))>0,story:x=>eq(sub(mul(add(R(Lg),mul(R(2),x)),add(R(W),mul(R(2),x))),R(Lg*W)),R(p*Lg*W,100)),reason:()=>"寬度必須為正",final:x=>`${S(x)} 公尺`,sig:`os:${Lg}:${W}:${x0}`})}return null;
  });
 
@@ -983,17 +988,19 @@ function mulformulaConfig(){
   m=>{const[c,d]=cen(m,false),u=add(c,d),w=sub(c,d),e=sub(u,w),v=sub(sub(mul(u,u),mul(w,w)),mul(e,e));return one(`${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup> − ${dq(e,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2-fv(w)**2-fv(e)**2,fv(v)))}],"原式＝");
 
  const nb=(m,plus,large)=>{const[c,d]=cen(m,large);return[c,d,plus?add(c,d):sub(c,d)]};
+ // 「利用 (c±d)² 計算 n²」的拆法要自然：d 只能是 c 的一小部分（整數 d≤c/2、差平方 d≤c/4；分數、小數 d≤½、差平方 d＜½），否則會出「利用 (10−9)² 計算 1²」
+ const nbS=(m,plus)=>{const[c,d,n]=nb(m,plus,false),lim=m==="integer"?R(Math.floor(c.n/(plus?2:4))):R(1,2);if(cmp(d,lim)>0||(!plus&&m!=="integer"&&eq(d,lim)))return null;return[c,d,n]};
  const sumNumber=mkUnit("sumNumber","和平方速算","(a＋b)²＝a²＋2ab＋b²，把數拆成整十、整百再加上較小的數。",[
   m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`${dq(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
   m=>{const[c,d,n]=nb(m,true,true),v=mul(n,n);return one(`計算 ${dq(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,true,false),v=mul(n,n);return one(`利用 (${dn(c,m)}＋${dn(d,m)})<sup>2</sup> 計算 ${dq(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)+fv(d))**2,fv(v)))},
+  m=>{const t=nbS(m,true);if(!t)return null;const[c,d,n]=t,v=mul(n,n);return one(`利用 (${dn(c,m)}＋${dn(d,m)})<sup>2</sup> 計算 ${dq(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)+fv(d))**2,fv(v)))},
   m=>{const[c,d,n]=nb(m,true,true),v=sub(mul(n,n),mul(c,c));return one(`${dq(n,m)}<sup>2</sup> − ${dq(c,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2-fv(c)**2,fv(v)))},
   m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=mul(R(4),mul(c,d));return one(`${dq(u,m)}<sup>2</sup> − ${dq(w,m)}<sup>2</sup>（用和平方與差平方公式分別展開）＝`,v,m,()=>near(fv(u)**2-fv(w)**2,fv(v)))}],"原式＝");
 
  const differenceNumber=mkUnit("differenceNumber","差平方速算","(a−b)²＝a²−2ab＋b²，把數寫成整十、整百減去較小的數。",[
   m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`${dq(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(n)**2,fv(v)))},
   m=>{const[c,d,n]=nb(m,false,true),v=mul(n,n);return one(`計算 ${dq(n,m)}<sup>2</sup> 的值。`,v,m,()=>near(fv(n)**2,fv(v)))},
-  m=>{const[c,d,n]=nb(m,false,false),v=mul(n,n);return one(`利用 (${dn(c,m)}−${dn(d,m)})<sup>2</sup> 計算 ${dq(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)-fv(d))**2,fv(v)))},
+  m=>{const t=nbS(m,false);if(!t)return null;const[c,d,n]=t,v=mul(n,n);return one(`利用 (${dn(c,m)}−${dn(d,m)})<sup>2</sup> 計算 ${dq(n,m)}<sup>2</sup>。`,v,m,()=>near((fv(c)-fv(d))**2,fv(v)))},
   m=>{const[c,d,n]=nb(m,false,true),v=sub(mul(c,c),mul(n,n));return one(`${dq(c,m)}<sup>2</sup> − ${dq(n,m)}<sup>2</sup>＝`,v,m,()=>near(fv(c)**2-fv(n)**2,fv(v)))},
   m=>{const[c,d]=cen(m,true),u=add(c,d),w=sub(c,d),v=add(mul(u,u),mul(w,w));return one(`${dq(u,m)}<sup>2</sup> ＋ ${dq(w,m)}<sup>2</sup>＝`,v,m,()=>near(fv(u)**2+fv(w)**2,fv(v)))}],"原式＝");
 
@@ -1002,7 +1009,8 @@ function mulformulaConfig(){
  const conjugateExpand=mkUnit("conjugateExpand","平方差展開","(A＋B)(A−B)＝A²−B²。",[
   m=>{const[a,b]=A1(m,X,C0,5),[p,q]=conj(a,b);return expandQ("展開：",[{s:1,f:[p,q]}],m)},
   m=>{const[a,b]=A1(m,X,Y,5),[p,q]=conj(a,b);return expandQ("展開：",[{s:1,f:[p,q]}],m)},
-  m=>{const[a,b]=A1(m,X,Y,6);return expandQ("展開：",[{s:1,f:[pa(b,a),pa(pn(b),a)]}],m)},
+  // 交換順序：題目照原順序印出（fac/norm 會重新排序，所以題目文字自己組），例如 (3y ＋ 2x)(−3y ＋ 2x)、(3y ＋ 2x)(2x − 3y)
+  m=>{const[a,b]=A1(m,X,Y,6),r=expandQ("展開：",[{s:1,f:[pa(b,a),pa(pn(b),a)]}],m),f2=Math.random()<.5?[...pn(b),...a]:[...a,...pn(b)];r.q=`展開：(${rend([...b,...a],m)})(${rend(f2,m)})`;return r},
   m=>{const[a,b]=A1(m,X2,Y,5),[p,q]=conj(a,b);return expandQ("展開：",[{s:1,f:[p,q]}],m)},
   m=>{const a=M(R(1),X),b=M(pos(m,5),C0),c=M(pos(m,5),C0);if(eq(b[0].c,c[0].c))return null;const[p,q]=conj(a,b),[r,s]=conj(a,c);return expandQ("化簡：",[{s:1,f:[p,q]},{s:-1,f:[r,s]}],m)}],"原式＝");
 
@@ -1029,18 +1037,18 @@ function mulformulaConfig(){
 
  const pn2=(m,max)=>{const a=m==="integer"?R(rand(5,max)):m==="fraction"?add(R(rand(2,max>20?15:6)),R(rand(1,3),4)):R(rand(11,max*10),10);return a};
  const sumRecognize=mkUnit("sumRecognize","和平方辨識","看出 a²＋2ab＋b² 的形式，直接寫成 (a＋b)²。",[
-  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> ＋ ${dn(mid,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
-  m=>{const a=pn2(m,40),b=pn2(m,20),v=mul(add(a,b),add(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> ＋ 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
-  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));return one(`先整理成完全平方式再求值：${dq(b,m)}<sup>2</sup> ＋ ${dq(a,m)}<sup>2</sup> ＋ ${dn(mid,m)}`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
-  m=>{const a=R(rand(1,9)),b=R(rand(1,9)),s=add(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(s.n**2-2*p.n,fv(v)))},
-  m=>{const a=R(rand(1,12)),b=R(rand(1,12)),s=add(a,b),p=mul(a,b),v=mul(sub(a,b),sub(a,b));return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 (a−b)<sup>2</sup>。`,v,m,()=>near(s.n**2-4*p.n,fv(v)))}],"");
+  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));if(eq(a,b))return null;return one(`求值：${dq(a,m)}<sup>2</sup> ＋ ${dn(mid,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
+  m=>{const a=pn2(m,40),b=pn2(m,20),v=mul(add(a,b),add(a,b));if(eq(a,b))return null;return one(`求值：${dq(a,m)}<sup>2</sup> ＋ 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2+2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
+  m=>{const a=pn2(m,40),b=pn2(m,20),mid=mul(R(2),mul(a,b)),v=mul(add(a,b),add(a,b));if(eq(a,b))return null;return one(`先整理成完全平方式再求值：${dq(b,m)}<sup>2</sup> ＋ ${dq(a,m)}<sup>2</sup> ＋ ${dn(mid,m)}`,v,m,()=>near(fv(a)**2+fv(mid)+fv(b)**2,fv(v)))},
+  m=>{const a=R(rand(1,9)),b=R(rand(1,9)),s=add(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));if(eq(a,b))return null;return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(s.n**2-2*p.n,fv(v)))},
+  m=>{const a=R(rand(1,12)),b=R(rand(1,12)),s=add(a,b),p=mul(a,b),v=mul(sub(a,b),sub(a,b));if(eq(a,b))return null;return one(`已知 a＋b＝${s.n}、ab＝${p.n}，求 (a−b)<sup>2</sup>。`,v,m,()=>near(s.n**2-4*p.n,fv(v)))}],"");
 
  const differenceRecognize=mkUnit("differenceRecognize","差平方辨識","看出 a²−2ab＋b² 的形式，直接寫成 (a−b)²。",[
   m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> − ${dn(mid,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
   m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const v=mul(sub(a,b),sub(a,b));return one(`求值：${dq(a,m)}<sup>2</sup> − 2 × ${dn(a,m)} × ${dn(b,m)} ＋ ${dq(b,m)}<sup>2</sup>`,v,m,()=>near(fv(a)**2-2*fv(a)*fv(b)+fv(b)**2,fv(v)))},
   m=>{let a=pn2(m,50),b=pn2(m,20);if(fv(a)<=fv(b))a=add(a,b);const mid=mul(R(2),mul(a,b)),v=mul(sub(a,b),sub(a,b));return one(`求值：${dq(b,m)}<sup>2</sup> ＋ ${dq(a,m)}<sup>2</sup> − ${dn(mid,m)}`,v,m,()=>near(fv(a)**2-fv(mid)+fv(b)**2,fv(v)))},
-  m=>{const a=R(rand(3,12)),b=R(rand(1,9)),s=sub(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));return one(`已知 a−b＝${sh(s,m)}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(fv(s)**2+2*p.n,fv(v)))},
-  m=>{const a=R(rand(3,15)),b=R(rand(1,12)),s=add(a,b),d=sub(a,b),v=mul(a,b);return one(`已知 a＋b＝${s.n}、a−b＝${sh(d,m)}，求 ab。`,v,m,()=>near((s.n**2-fv(d)**2)/4,fv(v)))}],"");
+  m=>{const a=R(rand(3,12)),b=R(rand(1,9)),s=sub(a,b),p=mul(a,b),v=add(mul(a,a),mul(b,b));if(eq(a,b))return null;return one(`已知 a−b＝${sh(s,m)}、ab＝${p.n}，求 a<sup>2</sup>＋b<sup>2</sup>。`,v,m,()=>near(fv(s)**2+2*p.n,fv(v)))},
+  m=>{const a=R(rand(3,15)),b=R(rand(1,12)),s=add(a,b),d=sub(a,b),v=mul(a,b);if(eq(a,b))return null;return one(`已知 a＋b＝${s.n}、a−b＝${sh(d,m)}，求 ab。`,v,m,()=>near((s.n**2-fv(d)**2)/4,fv(v)))}],"");
 
  const formulaChain=mkUnit("formulaChain","公式連鎖化簡","先用平方差公式合併兩個因式，得到的結果再和下一個因式套公式。",[
   m=>{const a=M(R(1),X),b=M(m==='integer'?R(rand(1,12)):pos(m,5),C0),[p,q]=conj(a,b),s=pa(pm(a,a),pm(b,b));return expandQ("化簡：",[{s:1,f:[p,q,s]}],m)},
@@ -1093,7 +1101,7 @@ function polyopsConfig(){
   return{expr:r.q,answer:r.a,sig:`${id}:`+r.q.replace(/<[^>]+>/g,""),verify:r.chk};
  }});
 
- const rawTerms=(mode,d)=>{const ex=[];for(let e=0;e<=d;e++)ex.push(e,e);shuffle(ex);const ts=ex.map(e=>({c:cf(mode,7),e}));let raw="";ts.forEach(t=>raw+=term(t.c,t.e,mode,!raw));const ans=Array(d+1).fill(0).map(Z);ts.forEach(t=>ans[t.e]=add(ans[t.e],t.c));return{raw,ts,ans:trim(ans)}};
+ const rawTerms=(mode,d)=>{let ex=[];for(let e=0;e<=d;e++)ex.push(e,e);ex=shuffle(ex);/* shuffle 回傳新陣列，要接回來，否則同類項永遠相鄰 */const ts=ex.map(e=>({c:cf(mode,7),e}));let raw="";ts.forEach(t=>raw+=term(t.c,t.e,mode,!raw));const ans=Array(d+1).fill(0).map(Z);ts.forEach(t=>ans[t.e]=add(ans[t.e],t.c));return{raw,ts,ans:trim(ans)}};
  const tsev=(ts,x)=>ts.reduce((s,t)=>s+fv(t.c)*Math.pow(x,t.e),0);
  const combine=mkUnit("combine","合併同類項","次數相同的項才是同類項，把係數相加減，由高次排到低次。",[
   m=>{const{raw,ts,ans}=rawTerms(m,1);return polyAns(`化簡：${raw}`,ans,m,x=>tsev(ts,x))},
@@ -1139,8 +1147,8 @@ function polyopsConfig(){
   m=>{const p=rp(m,2,5),q=rp(m,2,5),c=cf(m,5);return polyAns(`化簡：x${W(p,m)} ${c.n<0?"−":"＋"} ${kh(R(Math.abs(c.n),c.d),m)}${W(q,m)}`,addP(mulP(mono(R(1),1),p),scP(q,c)),m,x=>x*ev(p,x)+fv(c)*ev(q,x))}],"原式＝");
 
  const binomialMultiply=mkUnit("binomialMultiply","兩多項式相乘","兩個一次式相乘：每一項都要乘到，共四項再合併。",[
-  m=>{const a=[cf(m,9),R(1)],b=[cf(m,9),R(1)];return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
-  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1);return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=[cf(m,9),R(1)],b=[cf(m,9),R(1)];if(eq(a[0],b[0]))return null;/* 兩因式相同應寫成平方，屬乘法公式 */return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
+  m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1);if(eq(a[0],b[0])&&eq(a[1],b[1]))return null;return polyAns(`展開：${W(a,m)}${W(b,m)}`,mulP(a,b),m,x=>ev(a,x)*ev(b,x))},
   m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),k=cf(m,5);return polyAns(`展開：${kh(k,m)}${W(a,m)}${W(b,m)}`,scP(mulP(a,b),k),m,x=>fv(k)*ev(a,x)*ev(b,x))},
   m=>{const a=rp(m,1,7,1),b=rp(m,1,7,1),c=cf(m,6);return polyAns(`化簡：${W(a,m)}${W(b,m)}${term(c,2,m,false)}`,addP(mulP(a,b),mono(c,2)),m,x=>ev(a,x)*ev(b,x)+fv(c)*x*x)},
   m=>{const a=rp(m,1,4,1),b=rp(m,1,4,1),c=rp(m,1,4,1);return polyAns(`展開：${W(a,m)}${W(b,m)}${W(c,m)}`,mulP(mulP(a,b),c),m,x=>ev(a,x)*ev(b,x)*ev(c,x))}],"原式＝");
@@ -1213,12 +1221,12 @@ const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}
     const primitiveLinear=(max=8)=>{let a,b;do{a=rand(1,max);b=rand(1,max)*(Math.random()<.5?-1:1)}while(gcd(a,b)!==1);return{a,b,p:linearX(a,b)}},nonzero=(max=8)=>rand(1,max)*(Math.random()<.5?-1:1),levelMax=()=>LEVEL==="foundation"?5:LEVEL==="standard"?8:12;
     function scaleFor(mode){let k;if(mode==="integer")k=R(pick([1,1,1,2,3,4]));else if(mode==="fraction")k=pick([R(1,2),R(2,3),R(3,4),R(4,5),R(5,2),R(7,4)]);else k=pick([R(1,5),R(1,4),R(2,5),R(1,2),R(3,5),R(3,4),R(6,5),R(3,2),R(5,2)]);if((LEVEL==="challenge"||LEVEL==="mixed")&&Math.random()<.18)k=neg(k);return k}
     const scaledExpression=(k,inner,mode)=>isOne(k)?inner:k.n===-k.d?`−[${inner}]`:`${showR(k,mode)}[${inner}]`,termSeqHTML=(terms,mode)=>{let out="";terms.forEach((t,i)=>{let negv=t.c.n<0,a=absR(t.c),vars=varsHTML(t),coef=vars&&isOne(a)?"":showR(a,mode);out+=i?(negv?" − ":" ＋ "):(negv?"−":"");out+=coef+vars});return out};
-    const q=(type,html,answer,long=false,raw={})=>({type,html,answer,long,raw}),makeFactored=(type,factors,k,mode,long=false,display=null)=>{let expanded=scaleP(productP(factors.flatMap(f=>Array.from({length:f.power||1},()=>f.poly))),k),html=display||polyHTML(expanded,mode);return q(type,`因式分解：${html}`,productHTML(k,factors,mode),long,{expanded,factors,k})};
+    const q=(type,html,answer,long=false,raw={})=>({type,html,answer,long,raw}),makeFactored=(type,factors,k,mode,long=false,display=null)=>{/* 相同的因式合併成次方：寫 (5x − 1)²，不寫 (5x − 1)(5x − 1) */factors=factors.reduce((acc,f)=>{const g=acc.find(h=>equalP(h.poly,f.poly));if(g)g.power=(g.power||1)+(f.power||1);else acc.push({...f});return acc},[]);let expanded=scaleP(productP(factors.flatMap(f=>Array.from({length:f.power||1},()=>f.poly))),k),html=display||polyHTML(expanded,mode);return q(type,`因式分解：${html}`,productHTML(k,factors,mode),long,{expanded,factors,k})};
     const generators={
       factorCheck(mode){let lim=levelMax(),L=primitiveLinear(lim),Q=primitiveLinear(lim),k=scaleFor(mode),yes=Math.random()<.58,base=scaleP(mulP(L.p,Q.p),k),poly=yes?base:addP(base,mono(k)),root=R(-L.b,L.a),remainder=evalP(poly,root);return q("因式判定",`判斷 ${factorHTML(L.p,mode)} 是否為 ${polyHTML(poly,mode)} 的因式。`,yes?`是，商為 ${productHTML(k,[{poly:Q.p}],mode)}`:"否",true,{check:{poly,candidate:L.p,root,yes,remainder}})},
       commonMonomial(mode){let lim=levelMax(),L=primitiveLinear(lim),m=LEVEL==="foundation"?1:rand(1,LEVEL==="challenge"?3:2),k=scaleFor(mode);return makeFactored("提公因式",[{poly:mono(R(1),m),power:1},{poly:L.p}],k,mode)},
       commonBracket(mode){let lim=levelMax(),F=linearX(1,nonzero(lim)),A=primitiveLinear(lim),c;do c=nonzero(lim);while(gcd(A.a,A.b+c)!==1||A.b+c===0);let k=scaleFor(mode),B=linearX(A.a,A.b+c),inner=`${wrapP(A.p,mode)}${wrapP(F,mode)} ${c<0?"−":"＋"} ${Math.abs(c)===1?"":Math.abs(c)}${wrapP(F,mode)}`,display=scaledExpression(k,inner,mode);return makeFactored("共同括號",[{poly:F},{poly:B}],k,mode,true,display)},
-      grouping(mode){let lim=levelMax(),A=primitiveLinear(lim),B=primitiveLinear(lim),k=scaleFor(mode),terms=[{c:mul(k,R(A.a*B.a)),x:2,y:0},{c:mul(k,R(A.a*B.b)),x:1,y:0},{c:mul(k,R(A.b*B.a)),x:1,y:0},{c:mul(k,R(A.b*B.b)),x:0,y:0}],display=termSeqHTML(terms,mode);return makeFactored("分組分解",[{poly:A.p},{poly:B.p}],k,mode,true,display)},
+      grouping(mode){let lim=levelMax(),A=primitiveLinear(lim),B=primitiveLinear(lim);/* 中間兩項互相抵消（如 −84x ＋ 84x）就不是分組題 */if(A.a*B.b+A.b*B.a===0)return null;let k=scaleFor(mode),terms=[{c:mul(k,R(A.a*B.a)),x:2,y:0},{c:mul(k,R(A.a*B.b)),x:1,y:0},{c:mul(k,R(A.b*B.a)),x:1,y:0},{c:mul(k,R(A.b*B.b)),x:0,y:0}],display=termSeqHTML(terms,mode);return makeFactored("分組分解",[{poly:A.p},{poly:B.p}],k,mode,true,display)},
       squareSum(mode){let L=primitiveLinear(levelMax()),Lplus=L.b<0?linearX(L.a,Math.abs(L.b)):L.p,k=scaleFor(mode);return makeFactored("和的平方",[{poly:Lplus,power:2}],k,mode)},
       squareDiff(mode){let L=primitiveLinear(levelMax()),Lminus=L.b>0?linearX(L.a,-L.b):L.p,k=scaleFor(mode);return makeFactored("差的平方",[{poly:Lminus,power:2}],k,mode)},
       differenceSquares(mode){let lim=levelMax(),a=rand(1,lim),b=rand(1,lim),g=gcd(a,b);a/=g;b/=g;let k=scaleFor(mode),P1=linearX(a,b),P2=linearX(a,-b);return makeFactored("平方差",[{poly:P1},{poly:P2}],k,mode)},
@@ -1244,7 +1252,7 @@ const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}
    return{expr:q.html,answer:q.answer,sig:"fc0:"+q.html,verify:()=>(Math.abs(fv(evalP(c.poly,c.root)))<1e-12)===c.yes}}
   const{expanded,factors,k}=q.raw,chk=facChk(expanded,k,factors),kind=pick([[0,1],[0,1],[0,1,2]][L]);
   if(kind===1&&expanded.length>1&&q.html==="因式分解："+polyHTML(expanded,mode))return{expr:"因式分解："+revHTML(expanded,mode),answer:q.answer,sig:"r:"+q.html,verify:chk};
-  if(kind===2){const flat=factors.flatMap(f=>Array.from({length:f.power||1},()=>f.poly)).filter(p=>p.length>1);if(flat.length>=2){const gv=flat[0],rest=[];let removed=false;factors.forEach(f=>{const n=f.power||1;if(!removed&&f.poly===gv){removed=true;if(n>1)rest.push({poly:f.poly,power:n-1})}else rest.push(f)});
+  if(kind===2){const flat=factors.flatMap(f=>Array.from({length:f.power||1},()=>f.poly)).filter(p=>p.length>1);/* 完全平方只有一種因式，「已知 (ax＋b) 求另一因式」答案就是題目給的因式，不出 */if(flat.length>=2&&!flat.every(p=>equalP(p,flat[0]))){const gv=flat[0],rest=[];let removed=false;factors.forEach(f=>{const n=f.power||1;if(!removed&&f.poly===gv){removed=true;if(n>1)rest.push({poly:f.poly,power:n-1})}else rest.push(f)});
    return{expr:`已知 ${factorHTML(gv,mode)} 是 ${polyHTML(expanded,mode)} 的一個因式，求另一個因式（寫成乘積的形式）。`,answer:productHTML(k,rest,mode),sig:"o:"+q.html,verify:()=>PTS.every(([x,y])=>near(pev(expanded,x,y),pev(gv,x,y)*fv(k)*rest.reduce((m,f)=>m*Math.pow(pev(f.poly,x,y),f.power||1),1)))}}}
   return{expr:q.html,answer:q.answer,sig:"f:"+q.html,verify:chk};
  }});
@@ -1318,11 +1326,13 @@ function sqrtConfig(){
   m=>{let n;do n=rand(2,99);while(Number.isInteger(sr(n)));const lo=Math.floor(sr(n));return{q:`設 ${rt(n)} 的整數部分為 a、小數部分為 b，求 a 與 b。`,a:`a＝${lo}，b＝${rt(n)} − ${lo}`,chk:()=>lo<sr(n)&&sr(n)-lo<1}},
   m=>{const a=rand(2,7),b=pick([2,3,5,6,7]),c=rand(2,7),d=pick([2,3,5,6,7]);if(a*a*b===c*c*d)return null;const big=a*a*b>c*c*d;return{q:`比較 ${a}${rt(b)} 與 ${c}${rt(d)} 的大小。`,a:big?`${a}${rt(b)}＞${c}${rt(d)}（${rt(a*a*b)}＞${rt(c*c*d)}）`:`${a}${rt(b)}＜${c}${rt(d)}（${rt(a*a*b)}＜${rt(c*c*d)}）`,chk:()=>(a*sr(b)>c*sr(d))===big}}],"");
 
+ // 乘數 ±1 不出（「× (1)」沒有意義）；只有負數才加括號
+ const one1=a=>Math.abs(a.n)===a.d,bk=(a,m)=>a.n<0?`(${sh(a,m)})`:sh(a,m),rk=(a,d,m)=>a.n<0?P(Q(a,d),m):Eh(Q(a,d),m);
  const notation=mkUnit("notation","根式簡記","數字與根式相乘，係數相乘，根號照寫：a×b√d＝ab√d；係數可以移進根號：a√b＝√(a²b)。",[
-  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);return ans(`化簡：(${sh(a,m)}) × ${b.n<0?P(Q(b,d),m):Eh(Q(b,d),m)}`,Q(mul(a,b),d),m,()=>fv(a)*fv(b)*sr(d))},
-  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);return ans(`化簡：${P(Q(a,d),m)} × (${sh(b,m)})`,Q(mul(a,b),d),m,()=>fv(a)*sr(d)*fv(b))},
-  m=>{const a=sv(m,6),b=sv(m,6),c=sv(m,6),d=sf(10);return ans(`化簡：(${sh(a,m)}) × ${P(Q(b,d),m)} × (${sh(c,m)})`,Q(mul(mul(a,b),c),d),m,()=>fv(a)*fv(b)*sr(d)*fv(c))},
-  m=>{const a=sv(m,8),b=sv(m,6),d=sf(10),v=div(a,b);return ans(`化簡：${P(Q(a,d),m)} ÷ (${sh(b,m)})`,Q(v,d),m,()=>fv(a)*sr(d)/fv(b))},
+  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);if(one1(a))return null;return ans(`化簡：${bk(a,m)} × ${b.n<0?P(Q(b,d),m):Eh(Q(b,d),m)}`,Q(mul(a,b),d),m,()=>fv(a)*fv(b)*sr(d))},
+  m=>{const a=sv(m,8),b=sv(m,8),d=sf(10);if(one1(b))return null;return ans(`化簡：${rk(a,d,m)} × ${bk(b,m)}`,Q(mul(a,b),d),m,()=>fv(a)*sr(d)*fv(b))},
+  m=>{const a=sv(m,6),b=sv(m,6),c=sv(m,6),d=sf(10);if(one1(a)||one1(c))return null;return ans(`化簡：${bk(a,m)} × ${rk(b,d,m)} × ${bk(c,m)}`,Q(mul(mul(a,b),c),d),m,()=>fv(a)*fv(b)*sr(d)*fv(c))},
+  m=>{const a=sv(m,8),b=sv(m,6),d=sf(10),v=div(a,b);if(one1(b))return null;return ans(`化簡：${rk(a,d,m)} ÷ ${bk(b,m)}`,Q(v,d),m,()=>fv(a)*sr(d)/fv(b))},
   m=>{const a=rand(2,9),b=sf(10);return{q:`把 ${a}${rt(b)} 寫成 √n 的形式。`,a:rt(a*a*b),chk:()=>near(a*sr(b),sr(a*a*b))}}],"原式＝");
 
  const multiplyRadicals=mkUnit("multiplyRadicals","根式乘法","√a×√b＝√(ab)；係數與係數相乘，根號與根號相乘，最後化成最簡根式。",[
@@ -1352,7 +1362,7 @@ function sqrtConfig(){
   m=>{const d=sf(10),{raw,items,f}=likeTerms(m,4,[d]);return ans(`化簡：${raw}`,En(items),m,f)},
   m=>{const d1=sf(6),d2=pick([2,3,5,6,7].filter(x=>x!==d1)),{raw,items,f}=likeTerms(m,4,[d1,d2]);return ans(`化簡：${raw}`,En(items),m,f)},
   m=>{const d=sf(10),{raw,items,f}=likeTerms(m,3,[d]),c=sv(m,9);return ans(`化簡：${raw} ${c.n<0?"−":"＋"} ${sh(R(Math.abs(c.n),c.d),m)}`,Ea(items,Q(c)),m,()=>f()+fv(c))},
-  m=>{const d1=sf(6),d2=pick([2,3,5,6,7].filter(x=>x!==d1)),a=pv(m,5),b=pv(m,5),c=pv(m,5),k=rand(2,4),A=Q(a,d1*k*k),B=Q(b,d2),C=Q(c,d1);return ans(`化簡：${Eh(A,m)} − (${Eh(B,m)} − ${Eh(C,m)})`,Ea(A,Eneg(B),C),m,()=>Ev(A)-(Ev(B)-Ev(C)))}],"原式＝");
+  m=>{const d1=sf(6),d2=pick([2,3,5,6,7].filter(x=>x!==d1)),a=pv(m,5),b=pv(m,5),c=pv(m,5),k=rand(2,4),A=Q(a,d1*k*k),B=Q(b,d2),C=Q(c,d1);/* 第一項故意印成未化簡的根式（Eh 會自動化簡，所以自己組） */return ans(`化簡：${a.n===a.d?"":sh(a,m)}${rt(d1*k*k)} − (${Eh(B,m)} − ${Eh(C,m)})`,Ea(A,Eneg(B),C),m,()=>Ev(A)-(Ev(B)-Ev(C)))}],"原式＝");
 
  const two=(m)=>{const a=pv(m,6),b=pv(m,6),x=sf(8),y=pick(SF.slice(0,8).filter(v=>v!==x));return[Q(a,x),Q(b,y)]};
  const conjugate=mkUnit("conjugate","共軛根式與根式平方","(a＋b)(a−b)＝a²−b²；(a±b)²＝a²±2ab＋b²，根式平方後變成有理數。",[
@@ -1377,11 +1387,11 @@ function sqrtConfig(){
   m=>{const x=sf(8),y=pick(SF.slice(0,8).filter(v=>v!==x)),X=Ea(Q(R(1),x),Q(R(1),y)),Y=Ea(Q(R(1),x),Q(R(-1),y));return{q:`設 a＝${rt(x)} ＋ ${rt(y)}、b＝${rt(x)} − ${rt(y)}，求 a<sup>2</sup>＋b<sup>2</sup> 與 ab。`,a:`a<sup>2</sup>＋b<sup>2</sup>＝${Eh(Ea(Em(X,X),Em(Y,Y)),m)}，ab＝${Eh(Em(X,Y),m)}`,chk:()=>near((sr(x)+sr(y))**2+(sr(x)-sr(y))**2,2*(x+y))&&near((sr(x)+sr(y))*(sr(x)-sr(y)),x-y)}},
   m=>{const x=sf(8),y=pick(SF.slice(0,8).filter(v=>v!==x)),X=Ea(Q(R(1),x),Q(R(1),y)),Y=Ea(Q(R(1),x),Q(R(-1),y)),S=Ea(Em(X,Einv(Y)),Em(Y,Einv(X)));return ans(`化簡：${fr2(`${rt(x)} ＋ ${rt(y)}`,`${rt(x)} − ${rt(y)}`)} ＋ ${fr2(`${rt(x)} − ${rt(y)}`,`${rt(x)} ＋ ${rt(y)}`)}`,S,m,()=>(sr(x)+sr(y))/(sr(x)-sr(y))+(sr(x)-sr(y))/(sr(x)+sr(y)))}],"原式＝");
 
- const tel=(i,st)=>fr2("1",`${rt(i)} ＋ ${rt(i+st)}`);
+ const tel=(i,st)=>fr2("1",`${i===1?"1":rt(i)} ＋ ${rt(i+st)}`); // √1 直接寫 1
  const telescoping=mkUnit("telescoping","連鎖有理化","每一項有理化後是 √(n＋1)−√n，相加時中間的項互相抵消。",[
   m=>{const N=pick([3,4,5,6,7,8,9,10]),parts=[];for(let i=1;i<=N;i++)parts.push(tel(i,1));return ans(`化簡：${parts.length>4?parts.slice(0,2).join(" ＋ ")+" ＋ ⋯ ＋ "+parts[parts.length-1]:parts.join(" ＋ ")}`,Ea(Q(R(1),N+1),Q(R(-1))),m,()=>{let s=0;for(let i=1;i<=N;i++)s+=1/(sr(i)+sr(i+1));return s})},
   m=>{const s0=rand(2,6),N=s0+rand(3,10),parts=[];for(let i=s0;i<=N;i++)parts.push(tel(i,1));return ans(`求 ${parts.slice(0,2).join(" ＋ ")} ＋ ⋯ ＋ ${parts[parts.length-1]} 的值。`,Ea(Q(R(1),N+1),Q(R(-1),s0)),m,()=>{let s=0;for(let i=s0;i<=N;i++)s+=1/(sr(i)+sr(i+1));return s})},
-  m=>{const c=pv(m,5),N=pick([3,4,5,6,7,8,9,10]);return ans(`化簡：${sh(c,m)}（${tel(1,1)} ＋ ${tel(2,1)} ＋ ⋯ ＋ ${tel(N,1)}）`,Es(Ea(Q(R(1),N+1),Q(R(-1))),c),m,()=>{let s=0;for(let i=1;i<=N;i++)s+=1/(sr(i)+sr(i+1));return fv(c)*s})},
+  m=>{const c=pv(m,5),N=pick([3,4,5,6,7,8,9,10]);if(c.n===c.d)return null;/* 係數 1 不印 */return ans(`化簡：${sh(c,m)}（${tel(1,1)} ＋ ${tel(2,1)} ＋ ⋯ ＋ ${tel(N,1)}）`,Es(Ea(Q(R(1),N+1),Q(R(-1))),c),m,()=>{let s=0;for(let i=1;i<=N;i++)s+=1/(sr(i)+sr(i+1));return fv(c)*s})},
   m=>{const N=pick([5,7,9,11,13,15,17,19,23]);return ans(`化簡（每項分母兩個根號內的數相差 2）：${tel(1,2)} ＋ ${tel(3,2)} ＋ ⋯ ＋ ${tel(N,2)}`,Es(Ea(Q(R(1),N+2),Q(R(-1))),R(1,2)),m,()=>{let s=0;for(let i=1;i<=N;i+=2)s+=1/(sr(i)+sr(i+2));return s})},
   m=>{const k=rand(2,9),N=(k+1)*(k+1)-1;return{q:`若 ${tel(1,1)} ＋ ${tel(2,1)} ＋ ⋯ ＋ ${fr2("1",`${rt("n")} ＋ ${rt("n＋1")}`)}＝${k}，求 n。`,a:`n＝${N}`,chk:()=>{let s=0;for(let i=1;i<=N;i++)s+=1/(sr(i)+sr(i+1));return near(s,k)}}}],"原式＝");
 
@@ -1594,14 +1604,14 @@ function quadsolveConfig(){
   ()=>{const[r1,r2]=two(-6,6),b=-(r1+r2),c=r1*r2,cands=shuffle([...new Set([r1,r2,r1+pick([-1,1]),r2+pick([-2,2])])]);return{q:`下列哪些數是 ${Qh(1,b,c)} 的解？${cands.map(x=>`x＝${x}`).join("、")}`,a:[r1,r2].filter(x=>cands.includes(x)).map(x=>`x＝${x}`).join("、"),chk:()=>[r1,r2].every(x=>x*x+b*x+c===0)&&cands.filter(x=>x*x+b*x+c===0).length===2}},
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`已知 x＝${r1} 是 x<sup>2</sup>${b?` ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x`:""} ＋ k＝0 的一個解，求 k。`,a:`k＝${c}`,chk:()=>r1*r1+b*r1+c===0}},
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`已知 x＝${r1} 是 ${Qh(1,b,c)} 的一個解，求另一個解。`,a:`x＝${r2}`,chk:()=>r2*r2+b*r2+c===0}},
-  ()=>{const a=rand(1,4),[r1,r2]=two(-5,5),b=-a*(r1+r2),c=a*r1*r2;if(!r1||!r2)return null;/* 根為 0 時常數項是 0：x＝0 對任何 k 都是解，k 求不出來 */return{q:`已知 x＝${r1} 是 ${a===1?"":a}x<sup>2</sup> ＋ kx ${c<0?"−":"＋"} ${Math.abs(c)}＝0 的一個解，求 k 與另一個解。`,a:`k＝${b}，另一解 x＝${r2}`,chk:()=>a*r1*r1+b*r1+c===0&&a*r2*r2+b*r2+c===0}},
+  ()=>{const a=rand(1,4),[r1,r2]=two(-5,5),b=-a*(r1+r2),c=a*r1*r2;if(!r1||!r2||!b)return null;/* r2＝−r1 時 k＝0，題目退化 *//* 根為 0 時常數項是 0：x＝0 對任何 k 都是解，k 求不出來 */return{q:`已知 x＝${r1} 是 ${a===1?"":a}x<sup>2</sup> ＋ kx ${c<0?"−":"＋"} ${Math.abs(c)}＝0 的一個解，求 k 與另一個解。`,a:`k＝${b}，另一解 x＝${r2}`,chk:()=>a*r1*r1+b*r1+c===0&&a*r2*r2+b*r2+c===0}},
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return{q:`寫出一個以 ${r1} 與 ${r2} 為解、x<sup>2</sup> 項係數為 1 的一元二次方程式。`,a:Qh(1,b,c),chk:()=>[r1,r2].every(x=>x*x+b*x+c===0)}}],"");
  const factor=mkUnit("factor","提公因式與分組","移項使一邊為 0，提出公因式後令每個因式等於 0；不可把兩邊的未知式直接約掉。",[
   ()=>{const a=pick([1,2,3,5]),b=nz(-14,14);return solveQ(`解方程式：${Qh(a,b,0)}`,a,b,0)},
-  ()=>{const a=pick([1,2,3,4]),b=nz(-14,14);return solveQ(`解方程式：${a===1?"":a}x<sup>2</sup>＝${b===1?"":b===-1?"−":b}x`,a,-b,0)},
-  ()=>{const p=nz(-6,6),c=rand(2,4),d=rand(-5,5),f=rand(-5,5);if(d===f)return null;const A=c-1,B=(d-f)+A*p,C=p*(d-f);return solveQ(`解方程式：(${L(1,p)})(${L(c,d)})＝(${L(1,p)})(${L(1,f)})`,A,B,C)},
+  ()=>{const a=pick([1,2,3,4]),b=nz(-14,14);return solveQ(`解方程式：${a===1?"":a}x<sup>2</sup>＝${b===1?"":b===-1?"−":String(b).replace("-","−")}x`,a,-b,0)},
+  ()=>{const p=nz(-6,6),c=rand(2,4),d=rand(-5,5),f=rand(-5,5);if(d===f||d===c*p||f===p)return null;/* (4x − 4)、(x − 1) 是 (x − 1) 的倍數：題目退化成重根 */const A=c-1,B=(d-f)+A*p,C=p*(d-f);/* 因式是單項式（d 或 f 為 0）時寫 4x(x − 2)、x(x − 2)，不寫 (x − 2)(4x) */const pr=(u,v)=>v?`(${L(1,p)})(${L(u,v)})`:`${L(u,0)}(${L(1,p)})`;return solveQ(`解方程式：${pr(c,d)}＝${pr(1,f)}`,A,B,C)},
   ()=>{const m=rand(2,9),n=rand(2,9);if(m===n)return null;return solveQ(`解方程式：x<sup>2</sup> − ${m}x − ${n}x ＋ ${m*n}＝0`,1,-(m+n),m*n)},
-  ()=>{const p=nz(-6,6),k=nz(-6,6);if(p===k)return null;return solveQ(`解方程式：x(${L(1,p)})＝${k<0?`(${k})`:k}(${L(1,p)})`,1,p-k,-k*p)}],"");
+  ()=>{const p=nz(-6,6),k=nz(-6,6);if(p===k)return null;return solveQ(`解方程式：x(${L(1,p)})＝${k===1?"":k===-1?"−":String(k).replace("-","−")}(${L(1,p)})`,1,p-k,-k*p)}],"");
  const formula=mkUnit("formula","乘法公式","a²−b²＝(a＋b)(a−b)；a²±2ab＋b²＝(a±b)²，完全平方式的方程式有重根。",[
   ()=>{const a=rand(1,6),b=rand(1,9);return solveQ(`解方程式：${Qh(a*a,0,-b*b)}`,a*a,0,-b*b)},
   ()=>{const k=nz(-9,9);return solveQ(`解方程式：${Qh(1,2*k,k*k)}`,1,2*k,k*k)},
@@ -1611,8 +1621,8 @@ function quadsolveConfig(){
  const cross=mkUnit("cross","十字交乘","x²＋bx＋c：找兩數相乘為 c、相加為 b；非首一時用十字交乘；先整理成一般式。",[
   ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：${Qh(1,b,c)}`,1,b,c)},
   ()=>{const p=rand(2,5),q=nz(-7,7),s=rand(1,4),t=nz(-7,7);if(gcd(p,Math.abs(q))>1||gcd(s,Math.abs(t))>1)return null;const A=p*s,B=p*t+q*s,C=q*t;return solveQ(`解方程式：${Qh(A,B,C)}`,A,B,C)},
-  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x<sup>2</sup>${b?` ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x`:""}＝${-c}`,1,b,c)},
-  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x(${L(1,b)})＝${-c}`,1,b,c)},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;return solveQ(`解方程式：x<sup>2</sup>${b?` ${b<0?"−":"＋"} ${Math.abs(b)===1?"":Math.abs(b)}x`:""}＝${String(-c).replace("-","−")}`,1,b,c)},
+  ()=>{const[r1,r2]=two(),b=-(r1+r2),c=r1*r2;if(!b)return null;/* b＝0 會印成 x(x)＝9 */return solveQ(`解方程式：x(${L(1,b)})＝${String(-c).replace("-","−")}`,1,b,c)},
   ()=>{const p=nz(-6,6),q=nz(-6,6),k=nz(-12,12),B=p+q,C=p*q-k,D=B*B-4*C;if(D<0||!Number.isInteger(Math.sqrt(D)))return null;return solveQ(`解方程式：(${L(1,p)})(${L(1,q)})＝${k}`,1,B,C)}],"");
  const square=mkUnit("square","開平方法與配方法","(x＋p)²＝q（q≧0）⇒ x＋p＝±√q；x²＋bx＋c＝0 可配成 (x＋b/2)²＝(b/2)²−c。",[
   ()=>{const p=nz(-9,9),q=rand(1,9);return solveQ(`解方程式：(${L(1,p)})<sup>2</sup>＝${q*q}`,1,2*p,p*p-q*q)},
@@ -1664,14 +1674,18 @@ function constructionConfig(){
   if(f==="bisHalf"){const a=2*rand(10,85);return{expr:"作 ∠AOB 的角平分線 OP。若 ∠AOB＝"+a+"°，求 ∠AOP。",answer:(a/2)+"°",sig:"h:"+a,verify:()=>a/2*2===a}}
   if(f==="bisWhole"){const x=rand(10,85);return{expr:"OP 是用尺規作出的 ∠AOB 的角平分線，∠POB＝"+x+"°，求 ∠AOB。",answer:(2*x)+"°",sig:"w:"+x,verify:()=>2*x/2===x}}
   if(f==="perpDist"){const m=rand(2,20),d=m+rand(1,15);return{expr:fig("perp")+"PQ 是用尺規作出的線段 AB 的中垂線，PQ 交 AB 於 M。若 AB＝"+(2*m)+"、PA＝"+d+"，求 AM 與 PB。",answer:"AM＝"+m+"，PB＝"+d,sig:"d:"+m+":"+d,verify:()=>d>m}}
-  if(f==="perpTri"){const b=rand(5,30),c=rand(5,30),a=rand(Math.abs(b-c)+1,b+c-1);return{expr:"△ABC 中 AC＝"+b+"、BC＝"+a+"。作 AB 的中垂線交 BC 於 D（D 在 B、C 之間），求 △ADC 的周長。",answer:String(a+b)+"（AD＝BD，周長＝AC＋BC）",sig:"t:"+a+":"+b+":"+c,verify:()=>a+b===b+a}}
+  if(f==="perpTri"){/* D 在 B、C 之間 ⇔ AC＜BC（BD＝AD，AC＜AD＋DC＝BC），所以 BC 一定比 AC 長 */const b=rand(5,28),a=rand(b+1,Math.min(b+20,40));return{expr:"△ABC 中 AC＝"+b+"、BC＝"+a+"。作 AB 的中垂線交 BC 於 D（D 在 B、C 之間），求 △ADC 的周長。",answer:String(a+b)+"（AD＝BD，周長＝AC＋BC）",sig:"t:"+a+":"+b,verify:()=>b<a&&a+b===b+a}}
   if(f==="perpTri2"){const P=rand(20,60),b=rand(5,Math.floor(P/2)-1),a=P-b;return{expr:"△ABC 中，作 AB 的中垂線交 BC 於 D（D 在 B、C 之間）。若 △ADC 的周長是 "+P+"、AC＝"+b+"，求 BC。",answer:String(a),sig:"t2:"+P+":"+b,verify:()=>a+b===P}}
   if(f==="perpIso"){const b=rand(30,55),A=180-2*b;return{expr:"△ABC 中 AB＝AC，∠B＝"+b+"°。作 AB 的中垂線交 BC 於 D（D 在 B、C 之間），求 ∠DAB 與 ∠DAC。",answer:"∠DAB＝"+b+"°，∠DAC＝"+(A-b)+"°",sig:"i:"+b,verify:()=>A-b>0&&b+b+A===180}}
   const B=2*rand(15,60),Cc=2*rand(15,60);if(B+Cc>=170)return null;return{expr:"△ABC 中 ∠B＝"+B+"°、∠C＝"+Cc+"°。用尺規作 ∠B 與 ∠C 的角平分線交於 I，求 ∠IBC 與 ∠BIC。",answer:"∠IBC＝"+(B/2)+"°，∠BIC＝"+(180-B/2-Cc/2)+"°",sig:"b:"+B+":"+Cc,verify:()=>B/2+Cc/2+(180-B/2-Cc/2)===180}});
  const basis=unit("basis","作圖的依據","尺規作圖的正確性來自全等：等角、角平分線用 SSS；中垂線用「到兩端等距離的點在中垂線上」；平行線用同位角或內錯角相等。",ctx=>{
   const L=lv(ctx),pool=L===0?C.filter(c=>["ang","bis","perp"].includes(c.k)):C,c=pick(pool),f=pick(L===0?["why","pick","radius"]:["why","pick","radius","tool"]);
   if(f==="why")return{expr:"「"+c.name+"」的作法，正確的依據是什麼？",answer:c.basis,sig:"w:"+c.k,verify:()=>!!c.basis};
-  if(f==="pick"){const others=[...new Set(C.filter(x=>x.basis!==c.basis).map(x=>x.basis))],o=opt(shuffle(others).slice(0,3).concat(c.basis),c.basis);return{expr:"「"+c.name+"」的作法，依據是哪一個？"+o.text,answer:o.ans,sig:"p:"+c.k+":"+o.ord,verify:()=>o.ord.split("|").length===4}}
+  if(f==="pick"){/* 誘答只取「對這個作圖說不通」的理由：原本從其他作圖的依據抽，常同時有兩三個都對（中垂線三種寫法、兩個 SSS）。
+     各作圖類別（半徑／SSS／中垂線／平行）只從下列不成立的理由中抽三個 */
+   const PAR="同位角（或內錯角）相等，兩直線平行",PB="到線段兩端等距離的點在中垂線上",VA="對頂角相等",AAA="AAA 全等",SUM="三角形內角和為 180°",
+    WRONG={seg:["SSS 全等",PAR,VA,SUM],ang:[PAR,VA,AAA,SUM],bis:[PAR,VA,AAA,SUM],perp:[PAR,VA,AAA,SUM],onL:[PAR,VA,AAA,SUM],offL:[PAR,VA,AAA,SUM],par:[VA,AAA,SUM,PB]},
+    others=WRONG[c.k],o=opt(shuffle(others).slice(0,3).concat(c.basis),c.basis);return{expr:"「"+c.name+"」的作法，依據是哪一個？"+o.text,answer:o.ans,sig:"p:"+c.k+":"+o.ord,verify:()=>o.ord.split("|").length===4&&new Set(o.ord.split("|")).size===4&&!WRONG[c.k].includes(c.basis)}}
   if(f==="tool"){const qs=[["尺規作圖時，直尺可以用來量長度嗎？","不可以，直尺只能畫直線；量長度要用圓規"],["尺規作圖時可以用量角器嗎？","不可以，只能用沒有刻度的直尺和圓規"],["作角平分線時，以 C、D 為圓心畫的兩弧，半徑一定要相等嗎？","要相等，交點才會在角平分線上"],["作中垂線時，如果半徑小於 AB 的一半會怎樣？","兩弧不會相交，無法作圖"]],q=pick(qs);return{expr:q[0],answer:q[1],sig:"t:"+q[0],verify:()=>qs.includes(q)}}
   const qs=[["perp","作線段 AB 的中垂線時，以 A、B 為圓心的半徑為什麼要大於 AB 的一半？","兩弧才會相交於兩點"],["bis","作 ∠AOB 的角平分線時，第二步以 C、D 為圓心畫弧，半徑為什麼要相同？","這樣 PC＝PD，才能用 SSS 證明 △OCP≅△ODP"],["ang","作一角等於已知角時，第三步為什麼要量取 AB 的長？","讓 A′B′＝AB，用 SSS 得到兩個三角形全等"],["onL","過直線上一點作垂線時，第一步畫的弧交 L 於 A、B，P 和 A、B 有什麼關係？","PA＝PB，P 是 AB 的中點"]],q=pick(L===0?qs.slice(0,3):qs);return{expr:q[1],answer:q[2],sig:"r:"+q[0],verify:()=>qs.includes(q)}});
  return{title:"尺規作圖",symbol:"⌒",subtitle:"判讀作圖步驟・作圖之後求值・作圖的依據",instruction:"只用沒有刻度的直尺和圓規作圖；本卷只要判讀與計算，不必實際作圖。",modes:["integer"],mixed:false,answerLabel:"答：",

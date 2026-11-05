@@ -148,8 +148,10 @@ function numbersConfig(){
   return{expr:(back?"倒著":"")+step+" 個 "+step+" 個數，填入空格："+show.map((v,i)=>i===miss?"（　）":fmt(v)).join("、"),answer:fmt(show[miss]),sig:f+":"+start+":"+step+":"+miss,verify:()=>show.every((v,i)=>!i||Math.abs(v-show[i-1])===step)}},"答：");
  const place=unit("place","位值：百、十、個","十個一是一個十，十個十是一個百。一個數可以拆成幾個百、幾個十和幾個一。",ctx=>{
   const L=lv(ctx),n=L===0?rand(11,99):rand(101,999),h=Math.floor(n/100),t=Math.floor(n/10)%10,o=n%10,f=pick(["split","make","digit"]);
-  if(f==="split")return{expr:fmt(n)+" 是幾個"+(h?"百、幾個":"")+"十和幾個一？",answer:(h?h+" 個百、":"")+t+" 個十和 "+o+" 個一",sig:"s:"+n,verify:()=>h*100+t*10+o===n};
-  if(f==="make")return{expr:(h?h+" 個百、":"")+t+" 個十和 "+o+" 個一合起來是多少？",answer:fmt(n),sig:"m:"+n,verify:()=>h*100+t*10+o===n};
+  // 合／拆只列出不是 0 的位（不印「0 個十」「0 個一」）
+  const ps=[[h,"百"],[t,"十"],[o,"一"]].filter(([k])=>k),join=xs=>xs.length<2?xs.join(""):xs.slice(0,-1).join("、")+"和"+(/^\d/.test(xs.at(-1))?" ":"")+xs.at(-1);
+  if(f==="split")return{expr:fmt(n)+" 是"+join(ps.map(([,u])=>"幾個"+u))+"？",answer:join(ps.map(([k,u])=>k+" 個"+u)),sig:"s:"+n,verify:()=>ps.reduce((s,[k,u])=>s+k*{百:100,十:10,一:1}[u],0)===n};
+  if(f==="make")return{expr:join(ps.map(([k,u])=>k+" 個"+u))+(ps.length>1?"合起來":"")+"是多少？",answer:fmt(n),sig:"m:"+n,verify:()=>ps.reduce((s,[k,u])=>s+k*{百:100,十:10,一:1}[u],0)===n};
   const p=pick(h?[["百",h,100],["十",t,10],["個",o,1]]:[["十",t,10],["個",o,1]]);return{expr:fmt(n)+" 的"+p[0]+"位數字是多少？代表多少？",answer:p[1]+"；"+(p[1]*p[2]),sig:"d:"+n+":"+p[0],verify:()=>Math.floor(n/p[2])%10===p[1]}},"答：");
  const compare=unit("compare","比大小","先比位數；位數一樣，從最大的位（百位、十位）開始比。",ctx=>{
   const L=lv(ctx),a=rand(L===0?1:10,top(L)-1),b=a+pick([-1,1])*rand(1,L===0?9:L===1?30:99),f=pick(["fill","big","order"]);if(b<1||b>=top(L)||a===b)return null;
@@ -212,6 +214,8 @@ function subConfig(){
   return{expr:a+" − "+b,answer:fmt(d),sig:"o:"+a+":"+b,verify:()=>d+b===a}});
  const mix=unit("mix","加減混合","加減混在一起時由左往右算；連減可以先把兩個減數加起來再減。",ctx=>{
   const L=lv(ctx),m=L===0?10:L===1?60:400,f=pick(["pm","mm","mp"]),a=rand(L===0?5:20,L===0?18:L===1?99:999),b=rand(1,m),c=rand(1,m);let v;
+  // 避免退化題：加了又減同一個數（5 ＋ 7 − 7、10 − 7 ＋ 7）、先減成 0（10 − 10 ＋ 9）、a ＋ b − a
+  if(a===b||(f!=="mm"&&b===c)||(f==="pm"&&a===c))return null;
   if(f==="pm"){v=a+b-c;if(a+b>(L===0?20:L===1?99:999))return null;return v<0?null:{expr:a+" ＋ "+b+" − "+c,answer:fmt(v),sig:"pm:"+a+":"+b+":"+c,verify:()=>v+c-b===a}}
   if(f==="mm"){v=a-b-c;return v<0?null:{expr:a+" − "+b+" − "+c,answer:fmt(v),sig:"mm:"+a+":"+b+":"+c,verify:()=>v+c+b===a}}
   if(a-b<0||a-b+c>(L===0?20:L===1?99:999))return null;v=a-b+c;return{expr:a+" − "+b+" ＋ "+c,answer:fmt(v),sig:"mp:"+a+":"+b+":"+c,verify:()=>v-c+b===a}});
@@ -292,7 +296,8 @@ function moneyConfig(){
  const count=unit("count","數錢","先數大的錢，再數小的錢：例如 50、60、70、75、76。",ctx=>{
   const L=lv(ctx),cs=coins(L),pickC=shuffle(cs).slice(0,L===0?3:4).sort((x,y)=>y-x),n=pickC.map(()=>rand(1,L===0?4:3)),tot=pickC.reduce((s,v,i)=>s+v*n[i],0);if(L===0&&tot>100)return null;
   const f=pick(["total","toTen","need"]),txt="有 "+pickC.map((v,i)=>qn(v,n[i])).join("、");
-  if(f==="toTen"){const tc=cs.filter(v=>v>=10&&v<=100),k=tc.map(()=>rand(0,3)),T=tc.reduce((s,v,i)=>s+v*k[i],0);if(!T||T>500)return null;return{expr:"有 "+tc.map((v,i)=>qn(v,k[i])).filter((x,i)=>k[i]).join("、")+"，全部換成 10 元硬幣，可以換幾個？",answer:(T/10)+" 個",sig:"t:"+tc+":"+k,verify:()=>T%10===0&&T/10*10===T}}
+  if(f==="toTen"){// 換錢：手上一定要有比目標錢幣大的錢（不出「3 個 10 元換成 10 元」）；進階以上也可換成 50 元
+   const tg=L===0?10:pick([10,10,50]),tc=cs.filter(v=>v>=tg&&v<=100),k=tc.map(()=>rand(0,3)),T=tc.reduce((s,v,i)=>s+v*k[i],0);if(!T||T>500||!tc.some((v,i)=>v>tg&&k[i]))return null;return{expr:"有 "+tc.map((v,i)=>qn(v,k[i])).filter((x,i)=>k[i]).join("、")+"，全部換成 "+nm(tg)+"，可以換幾個？",answer:(T/tg)+" 個",sig:"t:"+tg+":"+tc+":"+k,verify:()=>T%tg===0&&tc.reduce((s,v,i)=>s+(v/tg)*k[i],0)===T/tg&&tc.some((v,i)=>v>tg&&k[i])}}
   if(f==="need"){const goal=Math.ceil((tot+1)/100)*100;return{expr:txt+"，還要再多幾元才有 "+goal+" 元？",answer:(goal-tot)+" 元",sig:"n:"+pickC+":"+n,verify:()=>goal-tot>0}}
   return{expr:txt+"，一共是幾元？",answer:tot+" 元",sig:"c:"+pickC+":"+n,verify:()=>tot===n.reduce((s,k,i)=>s+k*pickC[i],0)}},"答：");
  const change=unit("change","付錢與找錢","找回的錢＝付的錢－東西的價錢。可以從價錢往上數到付的錢。",ctx=>{
@@ -306,8 +311,10 @@ function moneyConfig(){
   if(f==="no50"){const cs2=cs.filter(v=>v!==50),u2=[];let r2=amt;for(const v of cs2){const k=Math.floor(r2/v);if(k)u2.push([v,k]);r2-=k*v}return{expr:"沒有 50 元硬幣，要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾"+(L>0?"張（個）":"個")+"？",answer:u2.map(([v,k])=>qn(v,k)).join("、"),sig:"n:"+amt+":"+L,verify:()=>u2.reduce((s,[v,k])=>s+v*k,0)===amt}}
   return{expr:"要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾"+(L>0?"張（個）":"個")+"？",answer:use.map(([v,k])=>qn(v,k)).join("、"),sig:"f:"+amt+":"+L,verify:()=>use.reduce((s,[v,k])=>s+v*k,0)===amt}},"答：");
  const enough=unit("enough","錢夠不夠","先算出有多少錢，再和價錢比：比價錢多或一樣就夠，不夠時差多少用減法。",ctx=>{
-  const L=lv(ctx),cs=coins(L),pc=shuffle(cs).slice(0,2).sort((x,y)=>y-x),n=pc.map(()=>rand(1,4)),have=pc[0]*n[0]+pc[1]*n[1],price=have+pick([-1,1])*rand(1,L===0?20:150);if(price<=0)return null;const ok=have>=price;
-  if(L===2&&Math.random()<.4){const p2=Math.floor(price/2);if(p2<1)return null;const ok2=have>=2*p2;return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 2 個一樣的玩具，每個 "+p2+" 元，錢夠不夠？"+"差多少或剩多少？",answer:ok2?"夠，剩 "+(have-2*p2)+" 元":"不夠，還差 "+(2*p2-have)+" 元",sig:"e2:"+pc+":"+n+":"+p2,verify:()=>ok2===(have>=p2*2)}}
+  const L=lv(ctx),cs=coins(L),pc=shuffle(cs).slice(0,2).sort((x,y)=>y-x),n=pc.map(()=>rand(1,4)),have=pc[0]*n[0]+pc[1]*n[1],price=have+pick([-1,1])*rand(1,L===0?20:150);
+  // 合理性：手上至少 20 元、東西至少 10 元，價錢和手上的錢差不超過一半（不出「有 6 元想買 72 元」「想買 3 元的玩具」）
+  if(have<20||price<10||Math.abs(price-have)>have/2)return null;const ok=have>=price;
+  if(L===2&&Math.random()<.4){const p2=Math.floor(price/2);if(p2<10||Math.abs(2*p2-have)>have/2)return null;const ok2=have>=2*p2;return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 2 個一樣的玩具，每個 "+p2+" 元，錢夠不夠？"+"差多少或剩多少？",answer:ok2?"夠，剩 "+(have-2*p2)+" 元":"不夠，還差 "+(2*p2-have)+" 元",sig:"e2:"+pc+":"+n+":"+p2,verify:()=>ok2===(have>=p2*2)}}
   if(Math.random()<.3&&!ok)return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 "+price+" 元的玩具，還要再存幾元？",answer:(price-have)+" 元",sig:"s:"+pc+":"+n+":"+price,verify:()=>price-have>0};
   return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 "+price+" 元的玩具，錢夠不夠？"+(ok?"買了以後剩幾元？":"還差幾元？"),answer:ok?"夠，剩 "+(have-price)+" 元":"不夠，還差 "+(price-have)+" 元",sig:"e:"+pc+":"+n+":"+price,verify:()=>ok===(have>=price)}},"答：");
  return{title:"錢幣",symbol:"元",subtitle:"數錢・付錢與找錢・最少的錢幣・錢夠不夠",instruction:"答案要寫「元」。",modes:["integer"],mixed:false,
@@ -348,7 +355,7 @@ function timeConfig(){
   const mo=rand(1,12),d=rand(1,ML[mo-1]),k=pick(L===1?[7]:[7,10,14]);let M=mo,D=d+k;if(D>ML[mo-1]){D-=ML[mo-1];M=mo%12+1}if(L===1&&M!==mo)return null;
   return{expr:mo+" 月 "+d+" 日的 "+k+" 天後是幾月幾日？",answer:M+" 月 "+D+" 日",sig:"dt:"+mo+":"+d+":"+k,verify:()=>(M===mo?D-d:ML[mo-1]-d+D)===k}},"答：");
  const units=unit("units","時間的單位","1 天＝24 小時，1 小時＝60 分。2 小時就是 60＋60＝120 分。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["hm","dh","hmix"]:["hm","mh","dh","hmix"]);
+  const L=lv(ctx),f=pick(L===0?["hm","dh","hmix","half"]:["hm","mh","dh","hmix"]);
   if(f==="hm"){const h=rand(1,10);return{expr:h+" 小時是幾分？",answer:(60*h)+" 分",sig:"hm:"+h,verify:()=>60*h/60===h}}
   if(f==="half")return{expr:"半小時是幾分？1 小時又 30 分是幾分？",answer:"30 分；90 分",sig:"hf",verify:()=>60/2===30};
   if(f==="dh"){const d=rand(1,7);return{expr:d+" 天是幾小時？",answer:(24*d)+" 小時",sig:"dh:"+d,verify:()=>24*d/24===d}}
@@ -410,9 +417,9 @@ function shapesConfig(){
  const Q=[["4 個邊一樣長，4 個角都是直角","正方形"],["對邊一樣長，4 個角都是直角，但 4 個邊不是都一樣長","長方形"],["3 個邊、3 個角","三角形"],["沒有邊也沒有角，圓圓的","圓形"],["5 個邊、5 個角","五邊形"],["6 個邊、6 個角","六邊形"]];
  const identify=unit("identify","認識圖形","正方形：4 邊一樣長、4 個直角；長方形：對邊一樣長、4 個直角；圓形沒有邊也沒有角。",ctx=>{
   const L=lv(ctx),f=pick(L===2?["desc","right","side"]:["desc","yesno","side"]);
-  if(f==="right"){const a=rand(1,6),b=rand(1,6),c=rand(0,4);return{expr:a+" 個長方形、"+b+" 個正方形和 "+c+" 個圓形，一共有幾個直角？",answer:(4*(a+b))+" 個",sig:"rt:"+a+":"+b+":"+c,verify:()=>4*a+4*b+0*c===4*(a+b)}}
+  if(f==="right"){const a=rand(1,6),b=rand(1,6),c=rand(0,4);return{expr:a+" 個長方形"+(c?"、"+b+" 個正方形和 "+c+" 個圓形":"和 "+b+" 個正方形")+"，一共有幾個直角？",answer:(4*(a+b))+" 個",sig:"rt:"+a+":"+b+":"+c,verify:()=>4*a+4*b+0*c===4*(a+b)}}
   if(f==="desc"){const [d,a]=pick(Q);return{expr:"「"+d+"」是什麼圖形？",answer:a,sig:"d:"+d,verify:()=>Q.some(q=>q[1]===a)}}
-  if(f==="yesno"){const cases=[["正方形是不是長方形的一種？（4 個角都是直角）","是"],["三角形有沒有可能有 4 個角？","沒有"],["長方形的 4 個邊是不是一定一樣長？","不一定"],["圓形有幾個角？","0 個"],["正方形的 4 個角是不是都是直角？","是"]],[q,a]=pick(cases);return{expr:q,answer:a,sig:"y:"+q,verify:()=>cases.some(c=>c[1]===a)}}
+  if(f==="yesno"){const cases=[["三角形有沒有可能有 4 個角？","沒有"],["長方形的 4 個邊是不是一定一樣長？","不一定"],["圓形有幾個角？","0 個"],["正方形的 4 個角是不是都是直角？","是"]],[q,a]=pick(cases);return{expr:q,answer:a,sig:"y:"+q,verify:()=>cases.some(c=>c[1]===a)}}
   const l=rand(3,15),w=rand(2,l-1),sq=Math.random()<.5;return sq?{expr:"正方形的一邊長 "+l+" 公分，其他三邊各長幾公分？",answer:l+" 公分",sig:"sq:"+l,verify:()=>l>0}:{expr:"長方形的長邊是 "+l+" 公分、短邊是 "+w+" 公分，它的 4 個邊各長幾公分？",answer:l+"、"+w+"、"+l+"、"+w+" 公分",sig:"re:"+l+":"+w,verify:()=>l>w}},"答：");
  const edge=unit("edgesum","圖形的邊長合起來","把每一個邊的長度都加起來；正方形 4 邊一樣長，長方形對邊一樣長。",ctx=>{
   const L=lv(ctx),f=pick(L===0?["tri","sq","rect"]:["tri","rect","sq","back"]);

@@ -171,7 +171,9 @@ function bignumConfig(){
  const compose=unit("compose","大數的組成","「幾個億、幾個萬」就是把億、萬那一組的數字寫出來，其他位補 0。",ctx=>{
   const L=lv(ctx),k=pick(L===0?["make","split","makeK"]:L===1?["make","split","makeK"]:["make","splitT","makeT"]);
   if(k==="make"||k==="makeT"){const t=k==="makeT"?rand(1,99):0,y=rand(1,9999),w=rand(0,9999),o=rand(0,9999);if(L===0&&y>99)return null;const n=t*1e12+y*1e8+w*1e4+o;return{expr:"由 "+(t?t+" 個兆、":"")+y+" 個億、"+w+" 個萬和 "+o+" 個一組成的數是多少？",answer:fmt(n),sig:"mk:"+n,verify:()=>Math.floor(n/1e8)%1e4===y&&Math.floor(n/1e4)%1e4===w&&n%1e4===o}}
-  if(k==="makeK"){const y=rand(1,99),q=rand(1,9),w=rand(1,999);const n=y*1e8+q*1e7+w*1e4;return{expr:"由 "+y+" 個億、"+q+" 個千萬和 "+w+" 個萬組成的數是多少？",answer:fmt(n),sig:"mq:"+n,verify:()=>Math.floor(n/1e4)%1e4===q*1000+w}}
+  if(k==="makeK"){// 億以下的位各給一個數字（不出「1 個千萬和 957 個萬」這種位互相重疊的組成）
+   const y=rand(1,99),ps=shuffle([[1e7,"千萬"],[1e6,"百萬"],[1e5,"十萬"],[1e4,"萬"]]).slice(0,2).sort((p,q)=>q[0]-p[0]),ds=ps.map(()=>rand(1,9));const n=y*1e8+ps.reduce((s,[v],i)=>s+ds[i]*v,0);
+   return{expr:"由 "+y+" 個億、"+ds[0]+" 個"+ps[0][1]+"和 "+ds[1]+" 個"+ps[1][1]+"組成的數是多少？",answer:fmt(n),sig:"mq:"+n,verify:()=>Math.floor(n/1e8)===y&&ps.every(([v],i)=>Math.floor(n/v)%10===ds[i])&&String(n).replace(/0/g,"").length===String(y).replace(/0/g,"").length+2}}
   const t=k==="splitT"?rand(1,99):0,y=L===0?rand(1,99):rand(1,9999),w=rand(1,9999),n=t*1e12+y*1e8+w*1e4;return{expr:fmt(n)+" 是由"+(t?"幾個兆、":"")+"幾個億和幾個萬組成的？",answer:(t?t+" 個兆、":"")+y+" 個億和 "+w+" 個萬",sig:"s:"+n,verify:()=>t*1e12+y*1e8+w*1e4===n}});
  return{title:"大數與位值",symbol:"億",subtitle:"位值・大數的讀寫・比大小・10 倍與 ÷10・大數的組成",instruction:"答案用數字寫，四位一組的大數可寫成「□億□萬□」的形式。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：六到九位數（萬到億）。",advanced:"進階：九到十一位數（到千億）。",challenge:"挑戰：十一到十三位數（到兆）、兆的組成。"},
@@ -203,9 +205,16 @@ function addsubConfig(){
   if(k==="pa")return{expr:"□ ＋ "+fmt(a)+" ＝ "+fmt(x+a)+"，□ ＝ ？",answer:fmt(x),sig:"pa:"+x+":"+a,verify:()=>x+a-a===x};
   if(k==="ma")return{expr:"□ − "+fmt(a)+" ＝ "+fmt(x),answer:fmt(x+a),sig:"ma:"+x+":"+a,verify:()=>x+a-a===x};
   return{expr:fmt(x+a)+" − □ ＝ "+fmt(x),answer:fmt(a),sig:"am:"+x+":"+a,verify:()=>x+a-a===x}},"□＝");
- const T=[["圖書館原有 A 本書，又買進 B 本，後來借出 C 本，還剩幾本？","本",(a,b,c)=>a+b-c],["某商店上午賣出 A 元，下午比上午少賣 B 元，這天共賣出多少元？","元",(a,b)=>a+a-b],["工廠第一天生產 A 個零件，第二天生產 B 個，兩天共生產多少個？","個",(a,b)=>a+b],["小明的存款有 A 元，買了一台 B 元的腳踏車後，還剩多少元？","元",(a,b)=>a-b],["一場音樂會賣出 A 張票，其中大人票 B 張，兒童票有幾張？","張",(a,b)=>a-b],["果園今年收成 A 公斤，去年比今年多 B 公斤，兩年共收成多少公斤？","公斤",(a,b)=>a+a+b],["學校有男生 A 人、女生 B 人，參加運動會的有 C 人，沒有參加的有幾人？","人",(a,b,c)=>a+b-c]];
+ const T=[["圖書館原有 A 本書，又買進 B 本，後來借出 C 本，還剩幾本？","本",(a,b,c)=>a+b-c],["某商店上午賣出 A 元，下午比上午少賣 B 元，這天共賣出多少元？","元",(a,b)=>a+a-b],["工廠第一天生產 A 個零件，第二天生產 B 個，兩天共生產多少個？","個",(a,b)=>a+b],["小明的存款有 A 元，買了一台 B 元的腳踏車後，還剩多少元？","元",(a,b)=>a-b,
+   // 合理性：腳踏車 2,000～8,000 元；基礎級（三位數）改買書包。題目的位數階梯放在較大的數（存款）上。
+   L=>{const b=L===0?rand(150,600):rand(2000,8000);return[L===0?rand(b+50,999):L===1?rand(b+100,9999):rand(10000,99999),b,0]},L=>L===0?"小明的存款有 A 元，買了一個 B 元的書包後，還剩多少元？":null],
+  ["一場音樂會賣出 A 張票，其中大人票 B 張，兒童票有幾張？","張",(a,b)=>a-b,L=>{const a=digits(nd(L));return[a,rand(Math.ceil(a*.3),Math.floor(a*.7)),0]}],
+  ["果園今年收成 A 公斤，去年比今年多 B 公斤，兩年共收成多少公斤？","公斤",(a,b)=>a+a+b],
+  ["學校有男生 A 人、女生 B 人，參加運動會的有 C 人，沒有參加的有幾人？","人",(a,b,c)=>a+b-c,
+   // 合理性：男女人數相近；挑戰級的五位數改成「全市的國小」
+   L=>{const [lo,hi]=L===2?[10000,40000]:[400,999],a=rand(lo,hi),b=rand(lo,hi);return[a,b,rand(Math.ceil((a+b)*.5),a+b-1)]},L=>L===2?"全市的國小有男生 A 人、女生 B 人，參加路跑活動的有 C 人，沒有參加的有幾人？":null]];
  const word=unit("word","加減應用題","先找出題目要問什麼，再判斷要加還是減；兩步驟的題目可以列成一個算式。",ctx=>{
-  const L=lv(ctx),[t,u,fn]=pick(L===0?T.slice(2,5):T),d=nd(L),a=digits(d),b=digits(d-1),c=digits(d-1),v=fn(a,b,c);if(v<=0||b>=a)return null;
+  const L=lv(ctx),[t0,u,fn,rng,txt]=pick(L===0?T.slice(2,5):T),t=(txt&&txt(L))||t0,d=nd(L),[a,b,c]=rng?rng(L):[digits(d),digits(d-1),digits(d-1)],v=fn(a,b,c);if(v<=0||!rng&&b>=a)return null;
   return{expr:t.replace("A",fmt(a)).replace("B",fmt(b)).replace("C",fmt(c)),answer:fmt(v)+" "+u,sig:t.slice(0,6)+":"+a+":"+b+":"+c,verify:()=>Number.isInteger(v)&&v>0,lead:"答："}},"答：");
  return{title:"多位數的加減",symbol:"±",subtitle:"多位數加法・減法・加減混合・用 □ 表示未知數・應用題",instruction:"可以用直式計算；做完用逆運算驗算。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：三位數的加減。",advanced:"進階：四位數的加減、連續退位、括號。",challenge:"挑戰：五位數與四位數的加減、兩步驟應用題。"},
@@ -238,9 +247,11 @@ function muldivConfig(){
   if(rem>=dvs)return null;return{expr:fmt(A)+" 除以一個數，商是 "+q+"，餘數是 "+rem+"，這個數（除數）是多少？",answer:String(dvs),sig:"v:"+A+":"+q+":"+rem,verify:()=>(A-rem)/q===dvs&&rem<dvs}},"答：");
  const W=[["每箱裝 A 瓶果汁，B 箱共有幾瓶？","瓶","m"],["一張票 A 元，買 B 張要多少元？","元","m"],["A 顆糖平分給 B 個小朋友，每人分到幾顆？還剩幾顆？","顆","d"],["A 人去郊遊，每輛遊覽車最多坐 B 人，至少要幾輛車？","輛","c"],["一捆緞帶長 A 公分，每 B 公分剪成一段，最多可以剪成幾段？","段","f"],["A 本書要裝箱，每箱裝 B 本，至少需要幾個箱子？","個","c"]];
  const word=unit("word","乘除應用題","「每…共…」用乘法；「平分」「每幾個一組」用除法。有餘數時要想一想：剩下的還要不要再算一份（至少要幾輛車要進 1，最多剪幾段要捨去）。",ctx=>{
-  const L=lv(ctx),[t,u,op]=pick(W);let a,b,ans,ver;
+  const L=lv(ctx),wi=rand(0,W.length-1),bus=wi===3;let [t,u,op]=W[wi],a,b,ans,ver;
+  // 合理性：遊覽車每輛 40～45 人；基礎級（除數一位數）改成小船
+  if(bus&&L===0){t="A 人去划船，每艘小船最多坐 B 人，至少要幾艘船？";u="艘"}
   if(op==="m"){a=rand(12,L===0?60:99);b=rand(L===0?3:12,L===0?9:L===1?60:250);ans=fmt(a*b)+" "+u;ver=()=>a*b/a===b}
-  else{b=L===0?rand(3,9):rand(12,48);const q=rand(5,L===2?250:60),r=rand(op==="d"?0:1,b-1);a=b*q+r;if(op==="d")ans="每人 "+q+" 顆，剩 "+r+" 顆";else if(op==="c")ans=(q+1)+" "+u;else ans=q+" "+u;ver=()=>Math.floor(a/b)===q&&a%b===r&&(op==="d"||r>0)}
+  else{b=bus?(L===0?rand(4,8):rand(40,45)):L===0?rand(3,9):rand(12,48);const q=rand(5,L===2?250:60),r=rand(op==="d"?0:1,b-1);a=b*q+r;if(op==="d")ans="每人 "+q+" 顆，剩 "+r+" 顆";else if(op==="c")ans=(q+1)+" "+u;else ans=q+" "+u;ver=()=>Math.floor(a/b)===q&&a%b===r&&(op==="d"||r>0)}
   return{expr:t.replace("A",fmt(a)).replace("B",fmt(b)),answer:ans,sig:t.slice(0,6)+":"+a+":"+b,verify:ver}},"答：");
  return{title:"多位數的乘除",symbol:"×÷",subtitle:"整數乘法・整數除法（有餘數）・被除數與驗算・乘除應用題",instruction:"用直式計算；除法有餘數時寫「商…，餘…」，並用「除數×商＋餘數＝被除數」驗算。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：二、三、四位數乘一位數；二、三位數除以一位數。",advanced:"進階：二位數乘二位數、三位數乘二位數；三、四位數除以二位數。",challenge:"挑戰：三位數乘三位數、末尾有 0 的乘除；五位數除以二位數。"},
@@ -289,7 +300,7 @@ function mixedConfig(){
  const combine=unit("combine","列併式解應用題","把兩個步驟寫成一個算式（併式），要先算的部分記得加括號或放在乘除的位置。",ctx=>{
   const L=lv(ctx),i=rand(0,L===0?2:4),[t,,fn,u]=T[i];let a,b,c,f;
   if(i===0){a=rand(5,L===0?30:80);b=rand(2,9);c=Math.ceil(a*b/100)*100+pick([0,100]);if(c<=a*b)return null;f=`${c} − ${a} × ${b}`}
-  else if(i===1){c=rand(2,L===0?6:12);b=rand(2,9);const per=rand(2,15);if((per*c)%b)return null;a=per*c/b;if(!Number.isInteger(a)||a<2)return null;f=`${a} × ${b} ÷ ${c}`}
+  else if(i===1){c=rand(2,L===0?6:12);b=rand(2,9);if(b===c)return null;const per=rand(2,15);if((per*c)%b)return null;a=per*c/b;if(!Number.isInteger(a)||a<2)return null;f=`${a} × ${b} ÷ ${c}`}
   else if(i===2){a=rand(5,50);b=rand(5,30);c=rand(50,500);f=`${a} × ${b} ＋ ${c}`}
   else if(i===3){a=rand(50,300);b=rand(10,100);c=rand(2,9);f=`(${a} ＋ ${b}) × ${c}`}
   else{b=rand(3,12);c=rand(2,8);a=b*c*rand(2,20);f=`${a} ÷ ${b} ÷ ${c}`}
@@ -369,10 +380,13 @@ function decimalConfig(){
  const val=L=>L===0?rand(1,99)*10:rand(101,L===1?9999:99999); // 以 0.01 為單位
  const place=unit("place","小數的位值","小數點右邊第一位是十分位（0.1），第二位是百分位（0.01）；10 個 0.01 是 0.1，10 個 0.1 是 1。",ctx=>{
   const L=lv(ctx),k=pick(L===0?["which","make","count"]:["which","make","count","count2"]);
-  if(k==="make"){const a=rand(0,L===0?9:99),b=rand(0,9),c=L===0?0:rand(0,9),v=a*100+b*10+c;if(!b&&!c)return null;return{expr:a+" 個 1、"+b+" 個 0.1"+(c?"和 "+c+" 個 0.01":"")+"合起來是多少？",answer:DH(v),sig:"m:"+v,verify:()=>Math.round(v)===a*100+b*10+c}}
-  const v=val(L)+(L===0?0:0);
+  if(k==="make"){const a=rand(0,L===0?9:99),b=rand(0,9),c=L===0?0:rand(0,9),v=a*100+b*10+c;if(!b&&!c)return null;
+   // 只列出不是 0 的部分（不印「0 個 1」「0 個 0.1」）
+   const ps=[[a,"1"],[b,"0.1"],[c,"0.01"]].filter(([k])=>k).map(([k,u])=>k+" 個 "+u),txt=ps.length<2?ps[0]:ps.slice(0,-1).join("、")+" 和 "+ps.at(-1);
+   return{expr:txt+" 合起來是多少？",answer:DH(v),sig:"m:"+v,verify:()=>Math.round(v)===a*100+b*10+c}}
+  let v=val(L);if(v%100===0)return null; // 不出整數（「在 4 中，數字 4 在哪一位？」）
   if(k==="count"){const t=L===0?Math.round(v/10):v;return{expr:DH(v)+" 是幾個 "+(L===0?"0.1":"0.01")+"？",answer:t+" 個",sig:"c:"+v,verify:()=>(L===0?t*10:t)===v}}
-  if(k==="count2")return{expr:DH(v)+" 是幾個 0.01？也是幾個 0.1 再加幾個 0.01？",answer:v+" 個 0.01；"+Math.floor(v/10)+" 個 0.1 和 "+v%10+" 個 0.01",sig:"c2:"+v,verify:()=>Math.floor(v/10)*10+v%10===v};
+  if(k==="count2")return{expr:DH(v)+" 是幾個 0.01？也是幾個 0.1 再加幾個 0.01？",answer:v+" 個 0.01；"+Math.floor(v/10)+" 個 0.1"+(v%10?" 和 "+v%10+" 個 0.01":""),sig:"c2:"+v,verify:()=>Math.floor(v/10)*10+v%10===v};
   const s=String(v).padStart(3,"0"),cand=[...s].map((ch,i)=>[ch,s.length-1-i]).filter(([ch,p])=>ch!=="0"&&p<=4&&s.split(ch).length===2&&(L>0||p>=1));if(!cand.length)return null;const [ch,p]=pick(cand),D=Number(ch);
   return{expr:"在 "+DH(v)+" 中，數字 "+ch+" 在哪一位？代表多少？",answer:PN[p]+"；"+DH(D*10**p),sig:"w:"+v+":"+ch,verify:()=>Math.floor(v/10**p)%10===D}},"答：");
  const compare=unit("compare","小數的比大小","先比整數部分，再從十分位、百分位依序比；位數不同時，後面補 0 再比（0.7＝0.70）。",ctx=>{
