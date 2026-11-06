@@ -111,6 +111,13 @@ test('browser jobs install Chromium before their checks; every browser check get
   }
 });
 
+test('site Chromium setup has a bounded fail-closed timeout', () => {
+  const t = jobs.site.text;
+  assert.match(t, /- name: Install Chromium\n        timeout-minutes: 10\n        run: \|/);
+  assert.ok(!t.includes('continue-on-error:'), 'setup failure cannot be ignored');
+  assert.ok(jobs.gate.needs.includes('site'), 'site remains a required gate dependency');
+});
+
 test('math regression: four shards cover every regression file exactly once', () => {
   const t = jobs['math-regression'].text;
   assert.match(t, /\n {6}fail-fast: false\n/, 'one failing shard does not hide the others');
