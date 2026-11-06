@@ -1,0 +1,11 @@
+{
+  "source_commit": "10598e94b905bdc81c2087cd791ec28c909cce1c",
+  "sha256": {
+    "tools/science/specific-heat.html": "272de73017529464c3bec7cebd35577cc6d2d28a16c038108dcb2a25bb5a97ee",
+    "tools/science/solubility.html": "45353625713d78b43c4a5d0ad8fe0483d62e7205ed70808584235618979d9381",
+    "tools/science/metal-activity.html": "6368e459ae86834ec0225c898ce088bf7a1942030822e6309c6d93ea09f3a22b"
+  },
+  "resource_inline_script_sha256": [
+    "ad6d31bd03feb06ba9c3316f1ce5499a9842db81145b8e74919b4ca84948a8c7"
+  ]
+}

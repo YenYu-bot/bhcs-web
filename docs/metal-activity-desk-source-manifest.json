@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "acceptedSourceCommit": "ffd20ffb02d67f48084acaed66785eb0336905c2",
+  "officialUrl": "https://www.bhcs.com.tw/tools/metal-activity-desk/",
+  "sourceRuntimeDirectory": "dist",
+  "targetRuntimeDirectory": "tools/metal-activity-desk",
+  "indexTransformations": [
+    {
+      "from": "觀察並比較三杯證據。私人探究試用。",
+      "to": "觀察並比較三杯證據。",
+      "occurrences": 1
+    },
+    {
+      "from": "<link rel=\"stylesheet\" href=\"style.css\">",
+      "to": "<link rel=\"canonical\" href=\"https://www.bhcs.com.tw/tools/metal-activity-desk/\">\n<link rel=\"stylesheet\" href=\"style.css\">",
+      "occurrences": 1
+    },
+    {
+      "from": "<span class=\"trial\">探究試用版</span>",
+      "to": "<span class=\"trial\">證據探究版</span>",
+      "occurrences": 1
+    },
+    {
+      "from": "<main inert>",
+      "to": "<main inert>\n<nav class=\"official-metal-navigation\" aria-label=\"自然教材導覽\"><a href=\"../science/metal-activity.html\">舊版自由探索：含鎂、銀等更多金屬</a><a href=\"../science/\">自然教材總覽</a><a href=\"../../ziyuan.html#res-science\">教學資源</a></nav>\n<p class=\"official-metal-storage-note\">私人原型紀錄不會自動移入官網，新舊版紀錄分開保存。</p>",
+      "occurrences": 1
+    },
+    {
+      "from": "這是探究互動試用。",
+      "to": "這是金屬活性證據探究教材。",
+      "occurrences": 1
+    },
+    {
+      "from": "百宏金屬活性與置換反應 · 私人探究試用版",
+      "to": "百宏金屬活性與置換反應 · 證據探究版",
+      "occurrences": 1
+    },
+    {
+      "from": "</head>",
+      "to": "<style id=\"official-metal-navigation-style\">\n.official-metal-navigation{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;max-width:1180px;margin:1rem auto;padding:0 1rem;line-height:1.7}\n.official-metal-navigation a{color:#285b47;text-underline-offset:.2em;overflow-wrap:anywhere}\n.official-metal-storage-note{max-width:1180px;margin:.6rem auto;padding:0 1rem;color:#526357;font-size:.9rem;line-height:1.7;overflow-wrap:anywhere}\n</style>\n</head>",
+      "occurrences": 1
+    }
+  ],
+  "runtime": [
+    {
+      "source": "dist/acid-ui.mjs",
+      "target": "tools/metal-activity-desk/acid-ui.mjs",
+      "sourceSha256": "83e3fae740d15db8e16aa5403873c9f92f725736e90e7efd8402fa981776c88c",
+      "targetSha256": "83e3fae740d15db8e16aa5403873c9f92f725736e90e7efd8402fa981776c88c",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/acid.mjs",
+      "target": "tools/metal-activity-desk/acid.mjs",
+      "sourceSha256": "0c0e960a848b18ad2a7b24161eebf33b19e634c4ba3239d608278ee81b68c21a",
+      "targetSha256": "0c0e960a848b18ad2a7b24161eebf33b19e634c4ba3239d608278ee81b68c21a",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/app.mjs",
+      "target": "tools/metal-activity-desk/app.mjs",
+      "sourceSha256": "e71783cf69016367b602a5ad9d936d25ae2ba6d3e56df15ff60fe191a5ce201e",
+      "targetSha256": "e71783cf69016367b602a5ad9d936d25ae2ba6d3e56df15ff60fe191a5ce201e",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/assets/lab-room.png",
+      "target": "tools/metal-activity-desk/assets/lab-room.png",
+      "sourceSha256": "668301e8733e21ac2e4e50bf6de2a33c09536d242ee683519ddf0cb06ca5eb22",
+      "targetSha256": "668301e8733e21ac2e4e50bf6de2a33c09536d242ee683519ddf0cb06ca5eb22",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/assets/teacher-body-v3.png",
+      "target": "tools/metal-activity-desk/assets/teacher-body-v3.png",
+      "sourceSha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b",
+      "targetSha256": "2851a4bdd0a6523fad5db15c8a197c17ac191bd70000c051513b5e317589f23b",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/assets/wood-table.png",
+      "target": "tools/metal-activity-desk/assets/wood-table.png",
+      "sourceSha256": "890a533828d0d0cee223b66f403e22f2a0f613687b648a0f3da58127274182d8",
+      "targetSha256": "890a533828d0d0cee223b66f403e22f2a0f613687b648a0f3da58127274182d8",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/electron-view.mjs",
+      "target": "tools/metal-activity-desk/electron-view.mjs",
+      "sourceSha256": "14f3f2e72266b3b1fa4d313f1873f3e76e5ce94d695d377ad43427e7ecd3f583",
+      "targetSha256": "14f3f2e72266b3b1fa4d313f1873f3e76e5ce94d695d377ad43427e7ecd3f583",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/electron.css",
+      "target": "tools/metal-activity-desk/electron.css",
+      "sourceSha256": "09bce94e226c333908f01d42c1d2cb35bdd36171e3bd18061ec1d41a203a49d7",
+      "targetSha256": "09bce94e226c333908f01d42c1d2cb35bdd36171e3bd18061ec1d41a203a49d7",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/guidance.mjs",
+      "target": "tools/metal-activity-desk/guidance.mjs",
+      "sourceSha256": "73cc198b5af752b0948a23896c4f6193ae78b192a5ade54918962928afecab0a",
+      "targetSha256": "73cc198b5af752b0948a23896c4f6193ae78b192a5ade54918962928afecab0a",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/hydrogen-view.mjs",
+      "target": "tools/metal-activity-desk/hydrogen-view.mjs",
+      "sourceSha256": "17d4eb2bb4dca3906a03a0c58202904ecd34e06f897dba6e82ccee8aee36b643",
+      "targetSha256": "17d4eb2bb4dca3906a03a0c58202904ecd34e06f897dba6e82ccee8aee36b643",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/index.html",
+      "target": "tools/metal-activity-desk/index.html",
+      "sourceSha256": "66eb215954bf2562d929dd3ecd2fa9ba109ce673027db13cbdf6b775ac777313",
+      "targetSha256": "00a353483b986b1fb690b1c828456af96d969dc2b5342efc21348f1c0c1c9db6",
+      "transformation": "indexTransformations"
+    },
+    {
+      "source": "dist/inquiry.mjs",
+      "target": "tools/metal-activity-desk/inquiry.mjs",
+      "sourceSha256": "80e2b0778ca80772502897d20377be67f4783644b919b60bac69320a5216f9ca",
+      "targetSha256": "80e2b0778ca80772502897d20377be67f4783644b919b60bac69320a5216f9ca",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/model.mjs",
+      "target": "tools/metal-activity-desk/model.mjs",
+      "sourceSha256": "18feaa441faf19b9e1cd51e1eb0ea75bb4cd91b1adff81c226eb058e646544a0",
+      "targetSha256": "18feaa441faf19b9e1cd51e1eb0ea75bb4cd91b1adff81c226eb058e646544a0",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/review-ui.mjs",
+      "target": "tools/metal-activity-desk/review-ui.mjs",
+      "sourceSha256": "e403a36d9b3a7f76b6d8eee14c3910211d1fd487ada9cf63b8003f45199ae715",
+      "targetSha256": "e403a36d9b3a7f76b6d8eee14c3910211d1fd487ada9cf63b8003f45199ae715",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/review.css",
+      "target": "tools/metal-activity-desk/review.css",
+      "sourceSha256": "12c2dd084a9c72d4347db674e8e0ee6bdd957cf37630b9bdfd1c5a0aada46b7b",
+      "targetSha256": "12c2dd084a9c72d4347db674e8e0ee6bdd957cf37630b9bdfd1c5a0aada46b7b",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/review.mjs",
+      "target": "tools/metal-activity-desk/review.mjs",
+      "sourceSha256": "6cd9f4be171458d8e05e124ea5340638b528cbe51e47f13a11bbf09b8acc14b1",
+      "targetSha256": "6cd9f4be171458d8e05e124ea5340638b528cbe51e47f13a11bbf09b8acc14b1",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/session-lock.mjs",
+      "target": "tools/metal-activity-desk/session-lock.mjs",
+      "sourceSha256": "3caf186bdf098056ff7af434b95d3c0d8073d225fe31aa01053396a58d73ecab",
+      "targetSha256": "3caf186bdf098056ff7af434b95d3c0d8073d225fe31aa01053396a58d73ecab",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/session.mjs",
+      "target": "tools/metal-activity-desk/session.mjs",
+      "sourceSha256": "a8430ffb0125a8162c43c86b1362ae303dce52a1a3a9920a41383e8fe1378975",
+      "targetSha256": "a8430ffb0125a8162c43c86b1362ae303dce52a1a3a9920a41383e8fe1378975",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/storage.mjs",
+      "target": "tools/metal-activity-desk/storage.mjs",
+      "sourceSha256": "36e02cb8346a96e9fe21eb723ee01b5967c1e9b781d494fb082192685bdc1e28",
+      "targetSha256": "36e02cb8346a96e9fe21eb723ee01b5967c1e9b781d494fb082192685bdc1e28",
+      "transformation": "identity"
+    },
+    {
+      "source": "dist/style.css",
+      "target": "tools/metal-activity-desk/style.css",
+      "sourceSha256": "4b69110a19384f363c5da51caa3ea71c08a6ad62e7cb6f424395d4602467dbfc",
+      "targetSha256": "4b69110a19384f363c5da51caa3ea71c08a6ad62e7cb6f424395d4602467dbfc",
+      "transformation": "identity"
+    }
+  ],
+  "tests": [
+    {
+      "source": "tests/acid.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/acid.test.mjs",
+      "sourceSha256": "fcfc6554624a451940da3e037d930c18908f5a0dcd864e98413d41fb86053561",
+      "targetSha256": "58bdf2dd4e374a5c9381241e673bfb1f4a3de8e84edea52402ab9db710dd722d",
+      "pathReplacements": 2
+    },
+    {
+      "source": "tests/content.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/content.test.mjs",
+      "sourceSha256": "271e18bedf81cb4a15c7a5a79066637339999e6006322c3545846aec0d4a429f",
+      "targetSha256": "8e2916bf491a46ef6bba35ab7f87ccffbb090f9552f015d89802dc7f3fda70ba",
+      "pathReplacements": 2
+    },
+    {
+      "source": "tests/electron-view.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/electron-view.test.mjs",
+      "sourceSha256": "cc52b5b32412ce225d33880d4c7645c7b2e3ea03f7ec1336f52c1c9a22bb71db",
+      "targetSha256": "fc9ed13bdd704e9fb5368742d503871c85f80177129bb7f93a6d2fe16760be72",
+      "pathReplacements": 4
+    },
+    {
+      "source": "tests/guidance.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/guidance.test.mjs",
+      "sourceSha256": "5f2cc8a0ee91098f534a357c84f78e22161cdd0cc93b292773c546f1e3cc4b9f",
+      "targetSha256": "856c57d7e442d7f4ba31877d5aeb57865651f8da51a047f2fa09444c55fcc0da",
+      "pathReplacements": 2
+    },
+    {
+      "source": "tests/hydrogen-view.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/hydrogen-view.test.mjs",
+      "sourceSha256": "e87317ad5d69b3adb4b62064bd836649ef81c8b6c5cdd6c6e74b478a7a0225eb",
+      "targetSha256": "7b75942a3a61f4fb9c19667a8bb942a0e5371f6be94a48fa7060eb6b3ac91f60",
+      "pathReplacements": 1
+    },
+    {
+      "source": "tests/inquiry.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/inquiry.test.mjs",
+      "sourceSha256": "88e5f0cf9bc22a9c981f7fb6a4334e49d068ad10fa19f764476f4a63b92ee6fb",
+      "targetSha256": "f5b274431012c9cf831f9143891608a4e2c26f08297fc189fc494c0ea3defab7",
+      "pathReplacements": 2
+    },
+    {
+      "source": "tests/inspect-focus.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/inspect-focus.test.mjs",
+      "sourceSha256": "6fa06242c88e4a087325df81934b646312a87d2ded9d14decc902fc98ff032d4",
+      "targetSha256": "242dc23fb90681213d86f6616166332db2b9350becf41fc02a7363cfc3df8b7b",
+      "pathReplacements": 1
+    },
+    {
+      "source": "tests/model.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/model.test.mjs",
+      "sourceSha256": "0d006cdca6c5e5c123dea8391b5d4f5a9abf419aee6ddc00f01ac7ae1157071e",
+      "targetSha256": "c6967bdc36cf35425fade2306196e93361257e2717215c6004a0afccca0fbe30",
+      "pathReplacements": 1
+    },
+    {
+      "source": "tests/review-ui.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/review-ui.test.mjs",
+      "sourceSha256": "6f3626408862ca9b96f9158c4fad322885d1699ba1a44dbbcfcc12d71bee7c11",
+      "targetSha256": "d3ac5919aca7a925f0f0e66e87f14978d786073856f154df345e9b4d5cf8f726",
+      "pathReplacements": 4
+    },
+    {
+      "source": "tests/review.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/review.test.mjs",
+      "sourceSha256": "90004b26b159af84c0ba0c8aeb128b5b25c344d399ed6f73b1197cad897d106f",
+      "targetSha256": "70f27a6bda8d73b506643c68870221af9f537d38439a5fdef8ef0bd53f700aa9",
+      "pathReplacements": 3
+    },
+    {
+      "source": "tests/session-lock.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/session-lock.test.mjs",
+      "sourceSha256": "83fce329e8521e58e3d871b0698a40da5150e0b86197fa2ba67d9f4baa22c0c4",
+      "targetSha256": "e7b926f57791218e343d8cc935e696b24f194c6a78cced09c369f2f2bb8b968d",
+      "pathReplacements": 1
+    },
+    {
+      "source": "tests/session-storage.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/session-storage.test.mjs",
+      "sourceSha256": "2a66c127d9d48c52d71fc2114fbf9a9f25c75620b483757af44e97f17ee80033",
+      "targetSha256": "42df0ca5f1eb0d4bb379824ec44e09d50a57bcb628044692a8d03b3a7cd35209",
+      "pathReplacements": 6
+    },
+    {
+      "source": "tests/session.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/session.test.mjs",
+      "sourceSha256": "6bf2c32aaed57e54d7b3aee35af30571cb63209703ab3e8123942daf8b1a111f",
+      "targetSha256": "6f3f461cebea04e8160fafa6ad5bd30a2d8660ca3970c86e1a158df2583c054b",
+      "pathReplacements": 4
+    },
+    {
+      "source": "tests/storage.test.mjs",
+      "target": "scripts/tests-metal-activity-desk/storage.test.mjs",
+      "sourceSha256": "0a469f7447c07e9a6d978e9bdd6bf76c5730a3946b3a291d9218e546c39f189b",
+      "targetSha256": "81f75c152e083d4537ad52e83219a8dda485607dfd7166fa1183d98bf0dca563",
+      "pathReplacements": 1
+    }
+  ],
+  "testTransformation": {
+    "from": "../dist/",
+    "to": "../../tools/metal-activity-desk/"
+  }
+}

@@ -13,7 +13,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const wf = ciWorkflow();
 const jobs = ciJobs(wf);
-const REQUIRED = ['core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity', 'specific-heat', 'solubility'];
+const REQUIRED = ['core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity', 'specific-heat', 'solubility', 'metal-activity'];
 
 /** Top-level block of the workflow (e.g. "on", "concurrency") as raw text. */
 function block(key) {
@@ -46,7 +46,7 @@ test('concurrency: a PR re-push cancels its own older run; main runs are grouped
   assert.ok(!c.includes('github.ref'), 'not grouped by branch: a third push to main would drop the queued second run');
 });
 
-test('the ten required jobs exist and CI Gate needs exactly them', () => {
+test('the eleven required jobs exist and CI Gate needs exactly them', () => {
   for (const id of REQUIRED) assert.ok(jobs[id], `job ${id}`);
   assert.ok(jobs.gate, 'gate job');
   assert.deepEqual([...jobs.gate.needs].sort(), [...REQUIRED].sort(), 'CI Gate needs every required job and nothing else');
@@ -218,6 +218,31 @@ test('solubility is an additive fail-closed browser job with retained artifacts'
  assert.ok(t.indexOf('playwright install --with-deps chromium')<t.indexOf(script));
  assert.ok(!t.includes('continue-on-error:'));assert.ok(!t.includes('needs:'));
  assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:solubility-desk'));
+});
+
+test('metal activity is an additional required browser job, preserving every earlier gate',()=>{
+ const t=jobs['metal-activity'].text,script='run: node scripts/check_metal_activity_desk_browser.cjs';
+ assert.equal(count(wf,script),1); assert.ok(t.includes(script));
+ assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
+ assert.ok(t.includes('playwright install --with-deps chromium'));
+ assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji'));
+ assert.ok(t.includes('fetch-depth: 0'));
+ assert.ok(t.includes('name: metal-activity-desk-review\n          path: metal-activity-desk-artifacts/\n          retention-days: 14'));
+ assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: node scripts\/check_metal_activity_desk_browser\.cjs/);
+ assert.match(t,/uses: actions\/upload-artifact@v4\n        if: always\(\)/);
+ assert.ok(t.indexOf('playwright install --with-deps chromium')<t.indexOf(script));
+ assert.ok(!t.includes('continue-on-error:')); assert.ok(!t.includes('needs:'));
+ assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:metal-activity-desk'));
+ assert.ok(fs.existsSync(path.join(root,'scripts/check_metal_activity_desk_browser.cjs')));
+});
+
+test('three desk entry navigation browser check is additive to the site gate',()=>{
+ const t=jobs.site.text,script='run: node scripts/check_science_desk_entries_browser.cjs';
+ assert.equal(count(wf,script),1); assert.ok(t.includes(script));
+ assert.ok(t.includes('run: node scripts/check_site_browser.cjs'));
+ assert.ok(t.includes('name: science-desk-entries-review\n          path: science-desk-entries-artifacts/\n          retention-days: 14'));
+ assert.ok(!t.includes('continue-on-error:'));
+ assert.ok(fs.existsSync(path.join(root,'scripts/check_science_desk_entries_browser.cjs')));
 });
 
 test('actual CI Gate jq rejects every unsuccessful or missing required job',()=>{
