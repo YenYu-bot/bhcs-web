@@ -8,8 +8,9 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {JSDOM} from 'jsdom';
+import {publicDeskDiscoveryReach} from './public_desk_entry_contract.mjs';
 import {checkExistingFiles} from './protected-existing-files.mjs';
-import {legacy, guidedPublic, standalonePublic, firstBatch} from './science/catalog.mjs';
+import {legacy, guidedPublic, standalonePublic, completedDeskPublic, firstBatch} from './science/catalog.mjs';
 import {batch2} from './science/batch2.mjs';
 import {buildMarbleReplacement, buildMarbleDirectory, publicReactionDescriptor} from './build_marble_replacement.mjs';
 import {ciJobs} from './ci_workflow_test_support.mjs';
@@ -178,7 +179,7 @@ assert.deepEqual(previous,{protectedCount:681,approved:2+[...laterApproved].filt
 const current=checkExistingFiles({root,baselineCommit:m.current_integration_base,skip:['tools/science/index.html']});
 assert.deepEqual(current,{protectedCount:681,approved:1+laterApproved.size},'only the exact authorized old entry and approved later changes differ from current main');
 for(const line of execFileSync('git',['ls-tree','-r',m.current_integration_base,'--','scripts/science'],{cwd:root,encoding:'utf8'}).trim().split('\n')){
- const match=/^\d+ blob ([0-9a-f]{40})\t(.+)$/.exec(line);assert(match);assert.equal(blob(bytes(match[2])),match[1],'shared science engines/catalog unchanged');
+ const match=/^\d+ blob ([0-9a-f]{40})\t(.+)$/.exec(line);assert(match);assert.equal(blob(bytes(match[2])),publicDeskDiscoveryReach(match[2],match[1]),'shared science engines unchanged except exact approved three-desk catalog addition');
 }
 const oldEntry=execFileSync('git',['show',`${m.baseline_commit}:${m.public_entry}`],{cwd:root});
 assert.equal(blob(oldEntry),'59885a1364806e808c2a008c1b28dab368c49397');
@@ -192,17 +193,17 @@ assert.match(oldFixture.scope,/historical.*not the current public product/);
 assert.equal(standalonePublic.length,8);assert(!standalonePublic.some(t=>/marble|reaction-rate/.test(t.file)));
 assert(!legacy.some(t=>/marble|reaction-rate/.test(t.file)));assert(!firstBatch.some(f=>/marble|reaction-rate/.test(f)));
 assert.equal(batch2.filter(t=>t.id==='reaction-rate').length,1);
-const all=[...legacy.flatMap(t=>t.file==='circuit-lab.html'?[t,...guidedPublic]:[t]),...standalonePublic,...batch2.map(t=>({...publicReactionDescriptor(t),file:'science/'+t.id+'.html',kind:'探究實驗',batch:2}))];
-assert.equal(all.length,60);assert.equal(all.filter(t=>t.grade==='國中').length,59);assert.equal(all.filter(t=>t.subject==='理化').length,41);
+const all=[...legacy.flatMap(t=>t.file==='circuit-lab.html'?[t,...guidedPublic]:[t]),...standalonePublic,...completedDeskPublic,...batch2.map(t=>({...publicReactionDescriptor(t),file:'science/'+t.id+'.html',kind:'探究實驗',batch:2}))];
+assert.equal(all.length,63);assert.equal(all.filter(t=>t.grade==='國中').length,62);assert.equal(all.filter(t=>t.subject==='理化').length,44);
 const item=all.find(t=>t.file==='science/reaction-rate.html');assert.match(item.title,/大理石/);assert.match(item.description,/未經實驗校準/);assert.match(item.description,/私人原型站紀錄不會自動移入官網/);
 for(const [p,href]of [['ziyuan.html','tools/science/reaction-rate.html'],['tools/science/index.html','../science/reaction-rate.html']]){
  const s=read(p);assert.equal(occurrences(s,`href="${href}"`),1,'one card at the original URL');assert.doesNotMatch(s,/href=["'][^"']*(?:marble-acid-desk|reaction-rate-desk)\//);
  for(const old of standalonePublic)assert(s.includes(old.file));
 }
-assert.match(read('tools/science/index.html'),/60 項教材/);assert.match(read('ziyuan.html'),/全部 60 項自然教材/);
-assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">59 項/);assert.match(read('ziyuan.html'),/理化 <small>41 項/);assert.match(read('ziyuan.html'),/目前共 254 項/);
+assert.match(read('tools/science/index.html'),/63 項教材/);assert.match(read('ziyuan.html'),/全部 63 項自然教材/);
+assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">62 項/);assert.match(read('ziyuan.html'),/理化 <small>44 項/);assert.match(read('ziyuan.html'),/目前共 257 項/);
 const resourceDOM=new JSDOM(read('ziyuan.html'));
-try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,254);}finally{resourceDOM.window.close();}
+try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,257);}finally{resourceDOM.window.close();}
 assert.equal(occurrences(read('sitemap.xml'),`<loc>${m.canonical}</loc>`),1);assert.doesNotMatch(read('sitemap.xml'),/marble-acid-desk|reaction-rate-desk/);
 const documentDOM=new JSDOM(entry);const doc=documentDOM.window.document;
 assert.equal(doc.querySelectorAll('link[rel="canonical"]').length,1);assert.equal(doc.querySelector('link[rel="canonical"]').href,m.canonical);
@@ -226,8 +227,8 @@ assert.match(station.text,/name: marble-acid-desk-review\n\s+path: marble-acid-d
 assert(station.steps.some(s=>s.startsWith('      - uses: actions/upload-artifact@v4')&&s.includes('name: marble-acid-desk-review')),'browser evidence upload is a real YAML step');
 assert(!station.text.includes('continue-on-error: true'));
 for(const name of ['researcher_browser','microscope_3d_browser','lens_25d_browser','researcher_operations','buoyancy_lab_browser','lever_desk_browser','pulley_desk_browser','incline_desk_browser','friction_efficiency_desk_browser','motion_graphs_desk_browser','marble_acid_desk_browser'])assert.equal(occurrences(station.text,`node scripts/check_${name}.cjs`),1,'existing browser gate retained');
-assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat','solubility']);
-assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 10 and all(.[]; .result == "success")'));
+assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat','solubility','metal-activity']);
+assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 11 and all(.[]; .result == "success")'));
 
 // Only accepted runtime and the narrowly scoped bridge are checked here; source docs/private hosting files are not copied.
 const runtimePaths=[m.public_entry,...walk(runtime).map(p=>path.relative(root,p))];
@@ -271,4 +272,4 @@ try{
  }
  for(const route of ['/tools/marble-acid-desk/','/tools/science/reaction-rate-desk/','/tools/science/reaction-rate-desk/index.html'])assert.equal((await fetch(`http://127.0.0.1:${server.address().port}`+route)).status,404,'no second lesson entry');
 }finally{await new Promise(r=>server.close(r));}
-console.log('PASS marble replacement: original URL renders accepted17 files via pinned13 entry adaptations and separately reversible app/style repairs;43 live-course +84 historical-fixture tests reversibly retained;680 other tools/assets exact; unchanged60/59/41/254 discovery with one proven directory-only derivative; all HTTP bytes/MIME. Local contracts only, not production/device certification.');
+console.log('PASS marble replacement: original URL renders accepted17 files via pinned13 entry adaptations and separately reversible app/style repairs;43 live-course +84 historical-fixture tests reversibly retained;680 other tools/assets exact; 63/62/44/257 discovery with only three approved new desks with one proven directory-only derivative; all HTTP bytes/MIME. Local contracts only, not production/device certification.');

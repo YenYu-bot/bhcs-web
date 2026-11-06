@@ -71,11 +71,11 @@ for(const [file,href] of [['ziyuan.html','tools/pulley-desk/'],['tools/science/i
  const s=read(file);assert.equal(s.split(`href="${href}"`).length,2,`${file}: unique new discovery link`);
  for(const keep of ['pulley-incline.html','lever-desk/','lever-torque.html','buoyancy-density-lab.html','buoyancy-lab/','microscope-3d/','lens-25d/'])assert.ok(s.includes(keep),`${file}: existing discovery ${keep}`);
 }
-assert.match(read('tools/science/index.html'),/60 項教材/);
-assert.match(read('ziyuan.html'),/全部 60 項自然教材/);
-assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">59 項/);
-assert.match(read('ziyuan.html'),/理化 <small>41 項/);
-assert.match(read('ziyuan.html'),/目前共 254 項/);
+assert.match(read('tools/science/index.html'),/63 項教材/);
+assert.match(read('ziyuan.html'),/全部 63 項自然教材/);
+assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">62 項/);
+assert.match(read('ziyuan.html'),/理化 <small>44 項/);
+assert.match(read('ziyuan.html'),/目前共 257 項/);
 assert.equal(standalonePublic.length,8);
 assert.match(entries[0].description,/私人原型站紀錄不會自動移入官網/);
 assert.equal((read('sitemap.xml').match(/<loc>https:\/\/www\.bhcs\.com\.tw\/tools\/pulley-desk\/<\/loc>/g)||[]).length,1);
@@ -86,9 +86,9 @@ for(const script of ['check_researcher_browser.cjs','check_microscope_3d_browser
  assert.equal(station.text.split(`run: node scripts/${script}`).length,2,`exactly one additive browser step ${script}`);
 }
 assert.ok(station.text.indexOf('playwright install --with-deps chromium')<station.text.indexOf('run: node scripts/check_pulley_desk_browser.cjs'));
-assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat','solubility']);
+assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat','solubility','metal-activity']);
 assert.match(jobs.gate.text,/if: always\(\)/);
-assert.ok(jobs.gate.text.includes('length == 10 and all(.[]; .result == "success")'),'unchanged fail-closed aggregate gate');
+assert.ok(jobs.gate.text.includes('length == 11 and all(.[]; .result == "success")'),'unchanged fail-closed aggregate gate');
 const commands=JSON.parse(read('scripts/package.json')).scripts;
 assert.ok(commands.test.includes('npm run test:pulley-desk'));
 assert.ok(commands['test:pulley-desk'].includes('node test_pulley_desk_integration.mjs'));

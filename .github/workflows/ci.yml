@@ -79,6 +79,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -87,6 +88,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_g7_equation_layout_browser.cjs
+      - name: Check science desk entries, search and old/new navigation
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_science_desk_entries_browser.cjs
       - name: Check public site pages and contact flows
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -96,6 +101,13 @@ jobs:
         with:
           name: public-site-review
           path: site-artifacts/
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: science-desk-entries-review
+          path: science-desk-entries-artifacts/
           retention-days: 14
 
   # 研究站：各站歡迎畫面構圖（最耗時的單一步驟，獨立一條）
@@ -111,6 +123,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -139,6 +152,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -176,6 +190,7 @@ jobs:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_friction_efficiency_desk_browser.cjs
       - name: Install virtual display for native motion background lifecycle
+        timeout-minutes: 10
         run: sudo apt-get install -y xvfb xauth
       - name: Check accepted motion graphs native input, course evidence and storage boundaries
         env:
@@ -272,6 +287,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium, CJK fonts and Xvfb
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -300,6 +316,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium and CJK fonts
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -315,6 +332,36 @@ jobs:
           path: solubility-desk-artifacts/
           retention-days: 14
 
+  # 金屬實驗桌：完整原生流程、保存與分頁隔離，不能略過。
+  metal-activity:
+    name: metal-activity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --prefix scripts
+      - name: Install Chromium and CJK fonts
+        timeout-minutes: 10
+        run: |
+          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
+          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - run: npm run test:metal-activity-desk --prefix scripts
+      - name: Check metal activity evidence, native interaction and data boundaries
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_metal_activity_desk_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: metal-activity-desk-review
+          path: metal-activity-desk-artifacts/
+          retention-days: 14
+
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）
   science-guided:
     name: science-guided
@@ -328,6 +375,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -500,6 +548,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -600,7 +649,7 @@ jobs:
   gate:
     name: CI Gate
     if: always()
-    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity, specific-heat, solubility]
+    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity, specific-heat, solubility, metal-activity]
     runs-on: ubuntu-latest
     steps:
       - name: All required jobs succeeded
@@ -608,4 +657,4 @@ jobs:
           RESULTS: ${{ toJSON(needs) }}
         run: |
           echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"' | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "$RESULTS" | jq -e 'length == 10 and all(.[]; .result == "success")' > /dev/null
+          echo "$RESULTS" | jq -e 'length == 11 and all(.[]; .result == "success")' > /dev/null

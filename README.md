@@ -33,7 +33,7 @@ node scripts/check_science_integration.cjs
 
 產出納入 Git 後，再重跑建置應沒有差異。CI 另跑 researcher batch 1–5、真實 Chromium 全站及預約流程、研究站構圖、顯微鏡拖曳與全站操作。瀏覽器檢查需要 Playwright 與 Chromium，輸出截圖會上傳為 Actions artifacts。JSDOM 通過不等於真實畫面已驗收。
 
-CI 定義在 `.github/workflows/ci.yml`，每個 PR 與每次 main 更新都跑全部檢查，並拆成可同時執行的工作：`core`（建置一致性、資源連結、單元測試、研究站 batch）、`site`、`science-layout`、`science-stations`、`science-guided`、`math-browser`、`math-regression`（四組平行）、`math-diversity`，以及 `specific-heat` 與 `solubility` 獨立實驗桌瀏覽器驗收。合併只看最後的 **CI Gate**：上述每一項都必須成功，略過或取消都算不通過。同一 PR 重推會取消舊的執行；main 的每個 commit 都會完整跑完。CI 結構本身由 `scripts/test_ci_workflow.mjs` 鎖住（列在 `npm test`），改 `ci.yml` 時要同步更新這支測試。
+CI 定義在 `.github/workflows/ci.yml`，每個 PR 與每次 main 更新都跑全部檢查，並拆成可同時執行的工作：`core`（建置一致性、資源連結、單元測試、研究站 batch）、`site`、`science-layout`、`science-stations`、`science-guided`、`math-browser`、`math-regression`（四組平行）、`math-diversity`，以及 `specific-heat`、`solubility`、`metal-activity` 獨立實驗桌瀏覽器驗收（共 11 類必要工作）。合併只看最後的 **CI Gate**：上述每一項都必須成功，略過或取消都算不通過。同一 PR 重推會取消舊的執行；main 的每個 commit 都會完整跑完。CI 結構本身由 `scripts/test_ci_workflow.mjs` 鎖住（列在 `npm test`），改 `ci.yml` 時要同步更新這支測試。
 
 ## 預約流程與資料
 
@@ -54,3 +54,7 @@ Internal traffic exclusion: open any main-site page once with `?noga=1`. This pe
 Legacy tool pages under `tools/` that are not part of the science station set also load `assets/site.js` for privacy-aware GA page views only (no `science_*` events); `build_site.mjs` keeps their `site.js` cache version in sync.
 
 Conversion events (`cta_trial`, `cta_line`, `cta_phone`, `cta_map`, `trial_form_start`, `trial_line_open`, `trial_copy`) carry only the fixed `page_group` and `cta_location` categories. Conversion events never include form field values or free text.
+
+## 已完成自然實驗桌入口
+
+比熱、溶解度與金屬置換實驗桌和舊版自由探究在自然總覽及資源頁依主題並列；新舊頁面互相連結。自然總覽為 63 項，資源頁共 257 個有效入口。舊版功能與紀錄不會轉移或刪除。移植來源、驗證範圍與限制見 `docs/science-desk-entry-integration.md`。

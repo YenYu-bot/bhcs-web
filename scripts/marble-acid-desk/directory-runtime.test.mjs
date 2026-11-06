@@ -5,7 +5,7 @@ test('directory runtime shows new marble mission once without old catalyst contr
  const current=directory(read('assets/researcher-marble-directory.js')),previous=directory(read('assets/researcher-lab.js'));
  try{
   const cards=dom=>[...dom.window.document.querySelectorAll('.resource')].map(c=>({href:c.querySelector('a.open').getAttribute('href'),title:c.querySelector('h2,h3').textContent,mission:c.querySelector('.mission-line')?.textContent??''}));
-  const a=cards(current),b=cards(previous);assert.equal(a.length,60);const matches=a.filter(x=>x.href==='../science/reaction-rate.html');assert.equal(matches.length,1);assert.match(matches[0].mission,/固定大理石總質量/);assert.doesNotMatch(matches[0].mission,/催化劑|只改濃度/);
+  const a=cards(current),b=cards(previous);assert.equal(a.length,63);const matches=a.filter(x=>x.href==='../science/reaction-rate.html');assert.equal(matches.length,1);assert.match(matches[0].mission,/固定大理石總質量/);assert.doesNotMatch(matches[0].mission,/催化劑|只改濃度/);
   assert.deepEqual(a.filter(x=>!x.href.endsWith('/reaction-rate.html')),b.filter(x=>!x.href.endsWith('/reaction-rate.html')));
  }finally{current.window.close();previous.window.close();}
 });

@@ -4,7 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {JSDOM} from 'jsdom';
 import crypto from 'node:crypto';
-import {legacy,guidedPublic,standalonePublic,firstBatch,firstMisconceptions} from './science/catalog.mjs';
+import {legacy,guidedPublic,standalonePublic,completedDeskPublic,firstBatch,firstMisconceptions} from './science/catalog.mjs';
 import {batch2} from './science/batch2.mjs';
 import {enhanceLessons} from './science/experience.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -14,7 +14,7 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const write=(p,s)=>{fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),s)};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const style=read('scripts/science/style.css');
-const all=[...legacy.flatMap(t=>t.file==='circuit-lab.html'?[t,...guidedPublic]:[t]),...standalonePublic,...batch2.map(t=>({...publicReactionDescriptor(t),file:'science/'+t.id+'.html',kind:'探究實驗',batch:2}))];
+const all=[...legacy.flatMap(t=>t.file==='circuit-lab.html'?[t,...guidedPublic]:[t]),...standalonePublic,...batch2.flatMap(t=>{const desk=completedDeskPublic.find(d=>d.id===t.id);const old={...publicReactionDescriptor(t),file:'science/'+t.id+'.html',kind:'探究實驗',batch:2};return desk?[{...old,description:'舊版自由探究：'+old.description+' 可自行調整條件；引導實驗桌另有分步任務，兩版紀錄分開保存。'},desk]:[old]})];
 const inlineJS=p=>read(p).replace(/^export /gm,'');
 const scienceCode=(predictionFree=false)=>{let runtime=read('scripts/science/runtime.js');if(predictionFree)runtime=runtime.replaceAll('預測','事前判斷');return [inlineJS('scripts/science/models.mjs'),inlineJS('scripts/science/diagrams.mjs'),runtime].join('\n')};
 const meta=(title,description,url)=>`<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}｜百宏文教</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${url}"><meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}｜百宏文教"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${url}"><meta property="og:image" content="https://www.bhcs.com.tw/assets/og-science.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="百宏文教小小研究員虛擬實驗室：顯微鏡、電路、透鏡與地球儀"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="../../assets/favicon.png"><style>${style}</style>`;
@@ -83,7 +83,7 @@ for(const t of batch2){
 const junior=all.filter(t=>t.subject!=='國小自然');
 const groups=['生物','理化','地科'].map(subject=>{
  const items=junior.filter(t=>t.subject===subject);
- return `<article class="science-category"><h4>${subject} <small>${items.length} 項</small></h4><p><a href="tools/science/?subject=${subject}">依單元查看${subject}教材 →</a></p><ul>${items.map(t=>`<li><a href="tools/${t.file}">${esc(t.title)}</a>${t.batch===2?' <span class="science-new">新探究</span>':t.batch===3?' <span class="science-new">引導實驗</span>':''}</li>`).join('')}</ul></article>`;
+ return `<article class="science-category"><h4>${subject} <small>${items.length} 項</small></h4><p><a href="tools/science/?subject=${subject}">依單元查看${subject}教材 →</a></p><ul>${items.map(t=>`<li><a href="tools/${t.file}">${esc(t.title)}</a>${completedDeskPublic.some(d=>d.file===t.file)?' <span class="science-new">引導實驗桌</span>':t.batch===2?' <span class="science-new">新探究</span>':t.batch===3?' <span class="science-new">引導實驗</span>':''}${completedDeskPublic.some(d=>d.file===t.file||'science/'+d.id+'.html'===t.file)?'<p class="subtle">'+esc(t.description)+'</p>':''}</li>`).join('')}</ul></article>`;
 }).join('');
 let resourceSection=read('ziyuan.html');
 resourceSection=resourceSection.replace(/<section class="res-sec" id="res-science">[\s\S]*?<\/section>/,`<section class="res-sec" id="res-science"><h3>國中自然 · 互動教材<span class="count">${junior.length} 項</span></h3><p class="lead">依生物、理化與地科分類。新一批探究教材採任務、操作、紀錄與檢核流程；原有演示工具持續保留。</p><div class="science-categories">${groups}</div></section>`);
@@ -116,3 +116,10 @@ enhanceLessons(root,firstBatch,batch2);
 // Explicit replacement is applied after legacy generation; shared engines stay byte-identical.
 buildMarbleReplacement(root);
 buildMarbleDirectory(root);
+
+
+// Keep version navigation outside main: the researcher runtime moves unknown main children
+// into the initially hidden challenge screen. This body sibling stays available in every step.
+for(const desk of completedDeskPublic){
+ replaceBlock('tools/science/'+desk.id+'.html','completed-desk-nav',`<nav aria-label="同單元實驗版本" style="padding:16px;display:flex;flex-wrap:wrap;gap:12px"><a href="../${desk.file}">${esc(desk.title)}：引導實驗 →</a><a href="./">自然實驗總覽</a><a href="../../ziyuan.html#res-science">全部學習資源</a><span>此頁保留舊版自由探究；兩版紀錄分開保存。</span></nav>`,`<footer class="foot">`);
+}

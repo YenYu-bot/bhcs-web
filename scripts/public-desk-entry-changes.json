@@ -1,0 +1,23 @@
+{
+  "baseline_commit": "10598e94b905bdc81c2087cd791ec28c909cce1c",
+  "changes": [
+    {
+      "path": "scripts/build_science.mjs",
+      "before_blob": "2c37647d63f490a6b5f635b7d2fc284a259b1e51",
+      "after_blob": "2595533450ac0e517c19cd7448e1722fa3b5b7a9",
+      "reason": "Publish three completed desks adjacent to retained legacy topics; keep builder-owned version navigation outside main so all four researcher screens expose it."
+    },
+    {
+      "path": "scripts/science/catalog.mjs",
+      "before_blob": "41cfa243f5048ed3e931a71f527ca2641d007c16",
+      "after_blob": "399e40481123b3c3c7a51cc9ef74a1d8f592616b",
+      "reason": "Publish three completed desks adjacent to their retained legacy topics; add reciprocal navigation through builder source."
+    },
+    {
+      "path": "ziyuan.html",
+      "before_blob": "1bf0a6c7d0ce0edde5909e82901c34d173377516",
+      "after_blob": "71145130e4a5bb9a66d7e7031e572c1c3d38c27a",
+      "reason": "Publish three completed desks adjacent to their retained legacy topics; add reciprocal navigation through builder source."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#faf7ef"><title>金屬放進藍色溶液，會發生什麼？｜余老師的自然實驗室</title>
+<meta name="description" content="百宏金屬活性與置換反應。選擇鋅、鐵或銅，放入新鮮硫酸銅溶液，觀察並比較三杯證據。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/metal-activity-desk/">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="electron.css"><link rel="stylesheet" href="review.css">
+<style id="official-metal-navigation-style">
+.official-metal-navigation{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;max-width:1180px;margin:1rem auto;padding:0 1rem;line-height:1.7}
+.official-metal-navigation a{color:#285b47;text-underline-offset:.2em;overflow-wrap:anywhere}
+.official-metal-storage-note{max-width:1180px;margin:.6rem auto;padding:0 1rem;color:#526357;font-size:.9rem;line-height:1.7;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<div id="session-banner" class="session-banner" role="status"><p id="session-message">正在讀取這台裝置的紀錄…</p><button id="session-retry" hidden>關閉另一分頁後，在此接續</button></div>
+<a class="skip-link" href="#desk">跳到實驗桌</a>
+<header><a href="#desk" class="brand">余老師的自然實驗室<span>百宏教學工具</span></a><div class="header-actions"><span class="trial">證據探究版</span><button id="reset-open" class="quiet" disabled>重新開始</button></div></header>
+<main inert>
+<nav class="official-metal-navigation" aria-label="自然教材導覽"><a href="../science/metal-activity.html">舊版自由探索：含鎂、銀等更多金屬</a><a href="../science/">自然教材總覽</a><a href="../../ziyuan.html#res-science">教學資源</a></nav>
+<p class="official-metal-storage-note">私人原型紀錄不會自動移入官網，新舊版紀錄分開保存。</p>
+<section class="intro"><p class="eyebrow">金屬活性與置換反應</p><h1>金屬放進藍色溶液，<br class="mobile-br">會發生什麼？</h1><p>先動手，再找證據。不用先猜答案。</p></section>
+<section class="desk" id="desk" aria-label="金屬置換實驗桌" tabindex="-1">
+<aside class="coach"><img src="assets/teacher-body-v3.png" alt="余老師" width="948" height="1659"><div class="speech"><strong>余老師</strong><p id="coach-text">先選一片金屬，再放進第一杯。注意看金屬表面和溶液顏色。</p><button class="hint-btn" id="hint">觀察哪裡？</button></div></aside>
+<div class="materials" role="group" aria-label="金屬材料架"><div class="shelf-title"><span class="step-number">1</span><strong>選一片乾淨的金屬</strong><span class="tiny">點選即可，也可以拖放</span></div><div class="material-buttons">
+<button type="button" class="material" data-metal="Zn" aria-pressed="false" aria-label="選擇鋅 Zn"><span class="metal-sample zinc" aria-hidden="true"></span><span><b>鋅</b><small>Zn</small></span></button>
+<button type="button" class="material" data-metal="Fe" aria-pressed="false" aria-label="選擇鐵 Fe"><span class="metal-sample iron" aria-hidden="true"></span><span><b>鐵</b><small>Fe</small></span></button>
+<button type="button" class="material" data-metal="Cu" aria-pressed="false" aria-label="選擇銅 Cu"><span class="metal-sample copper" aria-hidden="true"></span><span><b>銅</b><small>Cu</small></span></button></div><p id="selection" role="status">三杯都裝有新鮮的硫酸銅溶液。</p></div>
+<div class="benches" id="benches"></div>
+<div class="desk-footer"><div><span class="step-number">2</span><strong>放入 → 看變化 → 留下證據</strong><p id="progress-text">已完成 0 / 3 杯</p></div><button id="compare-btn" class="primary" disabled>用證據接著查下去 <span aria-hidden="true">↓</span></button></div>
+</section>
+<p class="model-note">動畫與顏色是定性示意，不代表實際反應時間、快慢或析出量。</p>
+<p id="notice" role="status" class="notice"></p>
+<section id="journey" class="journey" aria-labelledby="journey-title" tabindex="-1" hidden>
+<div class="journey-heading"><span class="chapter">接下來，換你決定怎麼查</span><h2 id="journey-title">鋅和鐵，還缺哪一杯證據？</h2><p>做過的杯子都留下了。現在可以選金屬、選溶液，補做你想比較的實驗。</p></div>
+<div class="question-note"><img src="assets/teacher-body-v3.png" alt="" width="948" height="1659"><div><strong>余老師</strong><p id="journey-coach">鋅和鐵都能讓銅析出，可是它們彼此呢？你可以選一杯新的組合來查。</p></div></div>
+<div id="material-rack" class="material-rack" tabindex="-1" aria-label="重新選金屬與溶液"><p id="new-trial-note" class="new-trial-note" hidden></p><div class="new-materials"><fieldset><legend>① 選乾淨的新金屬片</legend><div class="choice-row" id="extra-metals"><button data-extra-metal="Zn" aria-pressed="false">鋅 <small>Zn</small></button><button data-extra-metal="Fe" aria-pressed="false">鐵 <small>Fe</small></button><button data-extra-metal="Cu" aria-pressed="false">銅 <small>Cu</small></button></div></fieldset><fieldset><legend>② 選一杯新鮮溶液</legend><div class="choice-row solutions" id="extra-solutions"><button data-solution="CuSO4" aria-pressed="false"><span class="bottle blue" aria-hidden="true"></span>硫酸銅<small>CuSO₄ · 藍色</small></button><button data-solution="FeSO4" aria-pressed="false"><span class="bottle pale" aria-hidden="true"></span>硫酸亞鐵<small>FeSO₄ · 淡綠色</small></button><button data-solution="ZnSO4" aria-pressed="false"><span class="bottle clear" aria-hidden="true"></span>硫酸鋅<small>ZnSO₄ · 無色</small></button></div></fieldset></div>
+<p id="extra-selection" role="status" class="selection-note">請選 ① 金屬與 ② 溶液，兩項都選好才能開始。</p><button id="go-to-cup" class="quiet go-to-cup" hidden></button></div>
+<div id="extra-benches" class="extra-benches"></div>
+<p class="new-cup-note">每次重做都用乾淨的新金屬片與新溶液。完成的杯子會收進紀錄，不會被下一杯蓋掉。</p>
+</section>
+<section id="evidence" class="evidence" aria-labelledby="evidence-title" tabindex="-1"><div class="section-heading"><div><p class="eyebrow">把看到的，留在桌上</p><h2 id="evidence-title">我的觀察紀錄</h2></div><span id="record-count" class="record-count">0 杯已留存</span></div><p id="evidence-help" class="evidence-help">每完成一杯就會留存。可以放大看看，也可以選一杯當作支持關係的證據。</p><div id="cards"></div>
+<div id="comparison" tabindex="-1" hidden><div class="section-heading"><div><p class="eyebrow">讓證據說話</p><h3>把金屬之間的關係接起來</h3></div></div><p class="connection-instruction">先選一張紀錄，再點它能支持的關係。桌機也可以把紀錄拖到關係卡上；不需要先猜答案。</p><p id="selected-evidence" role="status" class="selected-evidence">先從上方選一張觀察紀錄。</p><div id="relations" class="relations evidence-relations"></div><p id="connection-feedback" role="status" class="connection-feedback"></p><div id="chain" hidden></div><div class="gap-note" id="gap-note"></div><button id="back-to-lab" class="quiet">回實驗桌，補一杯證據 ↑</button></div></section>
+<section class="chapter-entry"><div><p class="eyebrow">下一段 · 從現象到原因</p><h2>如果換成稀鹽酸呢？</h2><p>把氫放進比較，再放大看看電子去了哪裡。前面的紀錄都留著。</p></div><button id="next-chapter" class="primary" disabled>接著試稀鹽酸 ↓</button></section>
+<section id="acid-chapter" class="acid-chapter" tabindex="-1" aria-labelledby="acid-title" hidden>
+<div class="journey-heading"><span class="chapter">再帶一種比較基準進來</span><h2 id="acid-title">氫，放在哪裡？</h2><p>氫不是金屬，卻能幫我們比較金屬的反應。</p></div>
+<div class="question-note"><img src="assets/teacher-body-v3.png" alt="" width="948" height="1659"><div><strong>余老師</strong><p id="acid-coach"></p></div></div>
+<p id="acid-conditions" class="conditions"></p><div id="acid-cups" class="acid-cups"></div>
+<div class="acid-motion"><p>氣泡只是「有產氣」的定性示意。兩杯共用同一套畫法，不表示實際氣泡一樣多或一樣快；不能用它排序鋅和鐵。</p><div id="acid-animation"></div></div>
+<details class="acid-notebook"><summary>查看本段所有紀錄 <span id="acid-record-count"></span></summary><div id="acid-records"></div></details>
+<div id="acid-board" class="acid-board" tabindex="-1"><p class="eyebrow">每一條線，都標清楚從哪裡來</p><h3>把氫接進已有的關係</h3><p id="acid-selected" role="status" class="selected-evidence"></p><div class="acid-evidence-grid"><section id="prior-link" class="acid-pair"></section><div id="acid-links"></div><section id="hydrogen-reference" class="acid-pair supplied-reference"></section></div><p id="acid-feedback" role="status" class="connection-feedback"></p><div id="hydrogen-chain" class="chain" hidden></div></div>
+<section class="electron-section" aria-labelledby="electron-title"><p class="eyebrow">回到鋅與硫酸銅</p><h2 id="electron-title">紅棕色的銅，怎麼出現的？</h2><p id="electron-source"></p><button id="electron-open" class="primary">放大看電子轉移 ↓</button><div id="electron-work" tabindex="-1" hidden><div id="electron-tabs" class="electron-tabs" role="group" aria-label="選擇電子轉移示意階段"></div><div id="electron-scene"></div><p class="model-note">這是表面附近反應的簡化模型，不是真實粒子影片。沒有外接導線，也不是電子先游到整杯溶液中；氧化與還原是同一反應的兩部分。</p></div></section>
+<p class="acid-safety">真實操作須由老師指導、戴護目鏡。氫氣易燃：遠離火焰，不密封正在產氣的容器。本頁不安排點火試驗。</p>
+</section>
+<section class="chapter-entry review-entry"><div><p class="eyebrow">最後，讓自己的紀錄說話</p><h2>我能怎麼解釋這些現象？</h2><p>選自己的紀錄，再檢查解釋是否有根據。不是先猜答案，也不會代填你沒做過的觀察。</p></div><button id="review-open" class="primary">用我的紀錄解釋 ↓</button></section>
+<section id="review-chapter" class="review-chapter" tabindex="-1" aria-labelledby="review-title" hidden><div class="review-heading"><div><p class="eyebrow">整理觀察，不急著下結論</p><h2 id="review-title">用我的紀錄解釋</h2></div><span id="review-progress" class="record-count"></span></div><div class="question-note"><img src="assets/teacher-body-v3.png" alt="" width="948" height="1659"><div><strong>余老師</strong><p>先挑你做過的紀錄。看看它能支持什麼，又有哪些話，還需要別的證據。</p></div></div><div id="review-tabs" class="review-tabs" role="group" aria-label="選擇要解釋的問題"></div><article id="review-panel" class="review-panel"></article><div id="review-complete" class="review-complete" hidden></div></section>
+<details class="model-details"><summary>模型、保存與實驗安全</summary><div class="details-body"><p>這是金屬活性證據探究教材。先比較鋅、鐵、銅與硫酸銅，再自由選擇新鮮硫酸亞鐵或硫酸鋅等組合，收集足夠證據後才連出這三種金屬的活性關係。未知金屬與其他金屬暫不包含。</p><p>鋅和鐵能置換出銅；鐵在此形成 Fe²⁺。鋅也能置換 FeSO₄ 中的鐵，表面呈灰色至灰黑色析出物。FeSO₄ 很淡的綠色不一定容易看出，不能只憑顏色判斷；新鮮溶液也避免把空氣氧化的影響混進比較。Fe 放入 ZnSO₄，模型中無淨置換。未見變化本身不足以單獨確定兩種金屬的先後。實際現象會受濃度、表面狀況、溫度等影響。</p><p>稀鹽酸段落把「看到氣泡」與「依模型判定氫氣」分開；銅沒有明顯氣泡不能獨自證明排序，因此氫與銅的關係另標為參考知識。電子轉移圖是同一次反應的成對失、得電子，不是粒子實況影片。</p><p id="save-note">紀錄只保存在目前裝置的瀏覽器，不上傳。重新整理後可接續；未播完的動畫會暫停，等你繼續。同一瀏覽器只允許一個分頁編輯，以免互相蓋掉紀錄。解釋的選擇、引用紀錄與確認結果也會保存；更新舊版後，請重新整理其他舊分頁。</p><p>真實實驗請在老師指導下戴好護目鏡，不接觸或飲用溶液，並依規定回收含金屬離子的廢液。</p></div></details>
+<footer>百宏金屬活性與置換反應 · 證據探究版<br><small>教室、木桌與余老師素材沿用百宏比熱實驗桌</small></footer>
+</main>
+<dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">重新準備實驗桌？</h2><p id="reset-text">將清除三杯與這次的觀察紀錄，重新裝入新鮮溶液。</p><div class="dialog-actions"><button id="reset-cancel" autofocus>保留紀錄</button><button id="reset-confirm" class="primary">清除並重新開始</button></div></dialog>
+<dialog id="inspect-dialog" class="inspect-dialog" aria-labelledby="inspect-title"><div class="inspect-header"><h2 id="inspect-title">近看這杯</h2><button id="inspect-close" aria-label="關閉近看">關閉</button></div><div class="view-tabs" role="group" aria-label="比較反應前後"><button id="view-before" aria-pressed="false">剛放入時</button><button id="view-after" aria-pressed="true">觀察之後</button></div><div id="inspect-vessel"></div><p id="inspect-observation"></p><p class="model-note">前後對照是定性示意，比例、時間與析出量不作比較。</p></dialog>
+<div id="live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<script type="module" src="app.mjs"></script>
+</body></html>

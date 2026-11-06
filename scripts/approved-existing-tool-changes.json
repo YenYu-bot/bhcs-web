@@ -995,6 +995,76 @@
       "approved_blob": "cf9982026d701fa97eaec704ca532d99a024e542",
       "reason": "Math drill fixes from the 2026-11-03/04 reviews: g9-drills.html",
       "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "269276222e4ead299f775b281686a41be8e4c6a1",
+      "approved_blob": "efd3e2b0b15d0321ae62f5f745ce70a7d1327bb6",
+      "reason": "Three completed science desks: add exact, source-generated topic navigation or public-entry metadata only; preserve old experiments, storage and all runtime assets.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/metal-activity.html",
+      "baseline_blob": "f6345c82991441354325fe9394191a437ddfbd26",
+      "approved_blob": "8ac3f9ebc77eb8ef8cedca7e1f2f54a2539a07a5",
+      "reason": "Three completed science desks: add exact, source-generated topic navigation or public-entry metadata only; preserve old experiments, storage and all runtime assets.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/solubility.html",
+      "baseline_blob": "dc5fcbe617504aea9a7cf948680833dbb42e6aa0",
+      "approved_blob": "8941e18afa6d96f3ff73669e08d383c5d70cd1c5",
+      "reason": "Three completed science desks: add exact, source-generated topic navigation or public-entry metadata only; preserve old experiments, storage and all runtime assets.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/specific-heat.html",
+      "baseline_blob": "5c3c0a465a94590c4656be091cdf60f3c0cbc960",
+      "approved_blob": "8a4a39dfcdb8d3f131b0abe161ff71aa27c74bbd",
+      "reason": "Three completed science desks: add exact, source-generated topic navigation or public-entry metadata only; preserve old experiments, storage and all runtime assets.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/solubility-desk/index.html",
+      "baseline_blob": "9a6c8cf3f9eef10f1abebd0ad4a8bf05a84ee3f2",
+      "approved_blob": "351466ca5717525458fa95e68e70a68dafee7b78",
+      "reason": "Three completed science desks: add exact, source-generated topic navigation or public-entry metadata only; preserve old experiments, storage and all runtime assets.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/specific-heat-desk/index.html",
+      "baseline_blob": "5ec3005ec07e02ba2d8712d8d0390f253cb31391",
+      "approved_blob": "905097891faadb39ea025b9eff65c0c32c979d36",
+      "reason": "Three completed science desks: add exact, source-generated topic navigation or public-entry metadata only; preserve old experiments, storage and all runtime assets.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/specific-heat.html",
+      "baseline_blob": "8a4a39dfcdb8d3f131b0abe161ff71aa27c74bbd",
+      "approved_blob": "212e1e5d5a936d29148e50443e8a256ea1634249",
+      "reason": "PR 214 CI fix: move only the marked version-navigation block outside main, preventing researcher runtime from hiding it inside the challenge screen. All original lesson bytes and runtime remain unchanged.",
+      "pull_request": 214
+    },
+    {
+      "path": "tools/science/solubility.html",
+      "baseline_blob": "8941e18afa6d96f3ff73669e08d383c5d70cd1c5",
+      "approved_blob": "a45901e3b20e5b08c447af69015aa0e5c8fb544b",
+      "reason": "PR 214 CI fix: move only the marked version-navigation block outside main, preventing researcher runtime from hiding it inside the challenge screen. All original lesson bytes and runtime remain unchanged.",
+      "pull_request": 214
+    },
+    {
+      "path": "tools/science/metal-activity.html",
+      "baseline_blob": "8ac3f9ebc77eb8ef8cedca7e1f2f54a2539a07a5",
+      "approved_blob": "ebb63f2e35e9fa198ed1073d55eb646ea2d35e36",
+      "reason": "PR 214 CI fix: move only the marked version-navigation block outside main, preventing researcher runtime from hiding it inside the challenge screen. All original lesson bytes and runtime remain unchanged.",
+      "pull_request": 214
+    },
+    {
+      "path": "tools/solubility-desk/index.html",
+      "baseline_blob": "351466ca5717525458fa95e68e70a68dafee7b78",
+      "approved_blob": "853d3886471405fc8eb9bee5970dd78fff13b909",
+      "reason": "PR 214 public listing: replace only two outdated unlisted/trial copy strings with listed independent desk and guided desk labels. Preserve original source manifest and reverse both exact copy edits before provenance checks.",
+      "pull_request": 214
     }
   ]
 }

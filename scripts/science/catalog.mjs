@@ -87,3 +87,10 @@ export const standalonePublic = Object.freeze([Object.freeze({
  prior:'位置、時間、正負數與座標圖',goals:'圖的斜率與方向、速度與加速度符號、折返、帶正負號面積與路程',
  minutes:'30–45',kind:'互動模擬'
 })]);
+
+// Completed guided desks sit beside their original exploration topic in both directories.
+export const completedDeskPublic=Object.freeze([
+ {id:'specific-heat',file:'specific-heat-desk/',title:'比熱實驗桌：水和鐵，誰升溫快？',subject:'理化',grade:'國中',unit:'熱量與比熱',minutes:'20–30',kind:'引導實驗桌',description:'依序比較水與鐵、再只改鐵的質量，用兩組封存證據分清熱量與溫升。舊版自由探究仍可使用，兩版紀錄分開保存。'},
+ {id:'solubility',file:'solubility-desk/',title:'溶解度實驗桌',subject:'理化',grade:'國中',unit:'物質與溶液',minutes:'20–30',kind:'引導實驗桌',description:'跟著引導操作、觀察溶解與析出，留下證據判讀溶解度。舊版濃度與溶解度自由探究仍可使用，兩版紀錄分開保存。'},
+ {id:'metal-activity',file:'metal-activity-desk/',title:'金屬活動性實驗桌',subject:'理化',grade:'國中',unit:'氧化還原',minutes:'20–30',kind:'引導實驗桌',description:'依序比較金屬置換反應，以觀察證據判讀活動性。舊版含鎂、銀選項的氧化還原自由探究仍可使用，兩版紀錄分開保存。'}
+].map(Object.freeze));
