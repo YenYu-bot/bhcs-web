@@ -37,7 +37,9 @@ const html=read(dir+'index.html').toString(),doc=new JSDOM(html).window.document
 assert.equal(doc.querySelector('link[rel=canonical]').href,'https://www.bhcs.com.tw/tools/solubility-desk/');
 assert.equal(doc.querySelector('meta[name=robots]'),null);
 assert.match(html,/私人原型與舊版溶解度站的紀錄不會自動移入此頁/);
-assert.match(html,/並非私人頁面/);assert(!html.includes('私人試作版'));
+assert.equal(doc.querySelector('main > .local-note').textContent,'這是教材目錄中的獨立實驗桌。私人原型與舊版溶解度站的紀錄不會自動移入此頁。');
+assert.equal(doc.querySelector('footer > span:last-child').textContent,'教學溶質 A · 引導實驗桌');
+assert(!html.includes('私人試作版'));
 for(const el of doc.querySelectorAll('[src],link[href]')){const href=el.getAttribute('src')||el.getAttribute('href');if(!href||/^https?:/.test(href))continue;assert(fs.existsSync(path.resolve(root,dir,href)),'local asset '+href);}
 const css=read(dir+'style.css').toString();for(const [,href] of css.matchAll(/url\(['"]?([^)'" ]+)/g))assert(fs.existsSync(path.resolve(root,dir,href)),'CSS asset '+href);
 for(const name of ['teacher-body-v3.png','wood-table.png','lab-room.png'])assert.equal(sha(read(dir+'assets/'+name)),sha(read('tools/specific-heat-desk/assets/'+name)),'canonical brand asset '+name);

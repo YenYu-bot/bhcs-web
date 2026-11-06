@@ -5,6 +5,7 @@ assert.equal(directory.querySelectorAll('.resource').length,63);
 const baseline=JSON.parse(read('scripts/public-desk-legacy-baseline.json'));
 assert.equal(baseline.source_commit,'10598e94b905bdc81c2087cd791ec28c909cce1c');
 for(const t of completedDeskPublic){
+ for(const outdated of ['尚未列入教材目錄','獨立試用版'])assert(!read(`tools/${t.file}index.html`).includes(outdated),'public desk must not retain outdated listing copy '+t.id);
  const oldFile=`tools/science/${t.id}.html`,newFile=`tools/${t.file}index.html`;
  const old=directory.querySelector(`a[href="../science/${t.id}.html"]`)?.closest('.resource');const next=old?.nextElementSibling;
  assert(next?.querySelector(`a[href="../${t.file}"]`),'adjacent topic pair '+t.id);assert.match(old.textContent,/舊版自由探究/);assert.match(next.textContent,/引導實驗桌/);

@@ -9,7 +9,7 @@ The legacy metal experiment keeps magnesium and silver. All three older experime
 ## Source preservation
 
 - The metal runtime is an exact reversible port of accepted source `ffd20ffb02d67f48084acaed66785eb0336905c2`: 20 runtime files and 14 original tests. Only index metadata/navigation/copy and test import paths change. See the separate metal source manifest.
-- Specific heat and solubility runtime manifests are unchanged. Their integration checks reverse only the explicit navigation and robots changes before checking all original hashes.
+- Specific heat and solubility runtime manifests are unchanged. Their integration checks reverse only the explicit navigation, robots and two public-entry copy changes before checking all original hashes. The solubility page no longer claims to be an unlisted trial after it is linked from the catalog.
 - Six existing HTML files have exact before/after blobs added to the existing protected-file approval chain: directory, three legacy pages, and two desk indexes. All other tools/assets remain protected. The three changed discovery sources have a separate exact manifest because the tools/assets approval mechanism does not allow source/root-page paths.
 - The resource page's executable inline scripts are independently pinned to the original main SHA256 values. Counts and new resource markup do not permit a change to search behavior.
 - `build_science.mjs` owns generated legacy navigation and both catalogs. `build_resources.py` derives counts. `build_sitemap.py` remains unchanged and adds only the three newly indexable desk URLs.

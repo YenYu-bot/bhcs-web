@@ -1058,6 +1058,13 @@
       "approved_blob": "ebb63f2e35e9fa198ed1073d55eb646ea2d35e36",
       "reason": "PR 214 CI fix: move only the marked version-navigation block outside main, preventing researcher runtime from hiding it inside the challenge screen. All original lesson bytes and runtime remain unchanged.",
       "pull_request": 214
+    },
+    {
+      "path": "tools/solubility-desk/index.html",
+      "baseline_blob": "351466ca5717525458fa95e68e70a68dafee7b78",
+      "approved_blob": "853d3886471405fc8eb9bee5970dd78fff13b909",
+      "reason": "PR 214 public listing: replace only two outdated unlisted/trial copy strings with listed independent desk and guided desk labels. Preserve original source manifest and reverse both exact copy edits before provenance checks.",
+      "pull_request": 214
     }
   ]
 }
