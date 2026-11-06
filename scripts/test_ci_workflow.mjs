@@ -111,11 +111,23 @@ test('browser jobs install Chromium before their checks; every browser check get
   }
 });
 
-test('site Chromium setup has a bounded fail-closed timeout', () => {
-  const t = jobs.site.text;
-  assert.match(t, /- name: Install Chromium\n        timeout-minutes: 10\n        run: \|/);
-  assert.ok(!t.includes('continue-on-error:'), 'setup failure cannot be ignored');
-  assert.ok(jobs.gate.needs.includes('site'), 'site remains a required gate dependency');
+test('all browser install steps have bounded fail-closed timeouts', () => {
+  const expected = {'site': 1, 'science-layout': 1, 'science-stations': 2, 'specific-heat': 1,
+    'solubility': 1, 'metal-activity': 1, 'science-guided': 1, 'math-browser': 1};
+  let total = 0;
+  for (const [id, expectedCount] of Object.entries(expected)) {
+    const t = jobs[id].text;
+    const installs = [...t.matchAll(/^      - name: Install (?:Chromium[^\n]*|virtual display[^\n]*)\n[\s\S]*?(?=^      - |$(?![\s\S]))/gm)].map(m => m[0]);
+    assert.equal(installs.length, expectedCount, id + ' retains every browser setup step');
+    for (const install of installs) {
+      assert.match(install, /^      - name: [^\n]+\n        timeout-minutes: 10\n        run: /);
+      assert.ok(!/^        if:|continue-on-error:/m.test(install), id + ' setup cannot be skipped or ignored');
+    }
+    assert.ok(!t.includes('continue-on-error:'), id + ' setup failure cannot be ignored');
+    assert.ok(jobs.gate.needs.includes(id), id + ' remains a required gate dependency');
+    total += installs.length;
+  }
+  assert.equal(total, 9, 'eight Chromium installs and one additional virtual display install');
 });
 
 test('math regression: four shards cover every regression file exactly once', () => {

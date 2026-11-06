@@ -123,6 +123,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -151,6 +152,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -188,6 +190,7 @@ jobs:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_friction_efficiency_desk_browser.cjs
       - name: Install virtual display for native motion background lifecycle
+        timeout-minutes: 10
         run: sudo apt-get install -y xvfb xauth
       - name: Check accepted motion graphs native input, course evidence and storage boundaries
         env:
@@ -284,6 +287,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium, CJK fonts and Xvfb
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -312,6 +316,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium and CJK fonts
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -340,6 +345,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium and CJK fonts
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -369,6 +375,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
@@ -541,6 +548,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
       - name: Install Chromium
+        timeout-minutes: 10
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
