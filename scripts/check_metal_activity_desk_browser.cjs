@@ -20,7 +20,7 @@ const sentinel = Object.fromEntries(oldKeys.map((key,i)=>[key,JSON.stringify({se
 // sessionStorage['bhcs-researcher-screen:'+path]. This key is per-tab, not localStorage.
 const oldSessionSentinel = {'bhcs-researcher-screen:/tools/science/metal-activity.html':'notebook'};
 const diagnostics = new WeakMap();
-const results = []; let browser;
+const results = [], skipLinkChecks = []; let browser;
 async function seedOldSession(page){await page.evaluate(values=>{for(const [key,value]of Object.entries(values))sessionStorage.setItem(key,value);},oldSessionSentinel);}
 async function finishContext(context){
  // Wait for resource failures/console events before declaring this scenario clean.
@@ -74,6 +74,52 @@ async function open(width=1165,seed={},fault,reducedMotion='reduce'){
  return {context,page,errors};
 }
 async function snap(page,name){await page.screenshot({path:path.join(out,name+'.png'),fullPage:true});}
+// A fullPage image can paint an off-viewport fixed element into the long canvas.
+// Independently measure the real viewport; never hide/alter the link for screenshots.
+async function skipGeometry(page,width,phase){
+ const measured=await page.evaluate(()=>{
+  const link=document.querySelector('.skip-link'),r=link.getBoundingClientRect(),active=document.activeElement;
+  const rect={left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};
+  const hits=[];
+  for(let y=1;y<innerHeight;y+=25)for(let x=1;x<innerWidth;x+=25){
+   const hit=document.elementFromPoint(x,y);if(hit===link||link.contains(hit))hits.push({x,y});
+  }
+  return {rect,viewport:{width:innerWidth,height:innerHeight},scrollY,
+   activeElement:{tag:active?.tagName,id:active?.id,className:active?.className},
+   focused:active===link,href:link.getAttribute('href'),hitPoints:hits};
+ });
+ skipLinkChecks.push({width,phase,...measured});return measured;
+}
+function assertSkipOutside(measured){
+ assert.equal(measured.focused,false,'Unfocused journey must not focus the skip link');
+ assert.ok(measured.rect.bottom<=0,'Unfocused skip link must be completely above the real viewport');
+ assert.deepEqual(measured.hitPoints,[],'Unfocused skip link must not intercept content anywhere in the viewport');
+}
+async function verifySkipAndCapture(page,width){
+ // Preserve the real post-review focus/scroll for both images and log before asserting.
+ const before=await skipGeometry(page,width,'before-journey-screenshot');
+ assertSkipOutside(before);
+ await page.screenshot({path:path.join(out,`journey-${width}-viewport.png`),fullPage:false});
+ await snap(page,`journey-${width}`);
+ const after=await skipGeometry(page,width,'after-fullpage-screenshot');assertSkipOutside(after);
+ assert.deepEqual(after.activeElement,before.activeElement,'Taking a screenshot must not change focus');
+ // Native anchor activation must expose the skip link on focus and move to #desk.
+ await page.locator('.skip-link').focus();
+ const focused=await skipGeometry(page,width,'skip-focused');
+ assert.equal(focused.focused,true);assert.equal(focused.href,'#desk');
+ assert.ok(focused.rect.top>=0&&focused.rect.bottom<=focused.viewport.height
+  &&focused.rect.left>=0&&focused.rect.right<=focused.viewport.width,'Focused skip link is wholly visible');
+ assert.ok(focused.hitPoints.length>0,'Focused skip link can receive pointer interaction');
+ await page.screenshot({path:path.join(out,`skip-focused-${width}-viewport.png`),fullPage:false});
+ await page.keyboard.press('Enter');
+ await page.waitForFunction(()=>{
+  const desk=document.querySelector('#desk'),r=desk.getBoundingClientRect();
+  return document.activeElement===desk&&location.hash==='#desk'&&r.top>=-1&&r.top<innerHeight&&r.bottom>0;
+ });
+ const activated=await skipGeometry(page,width,'skip-activated');assertSkipOutside(activated);
+ assert.equal(activated.activeElement.id,'desk','Skip link lands focus on the experiment desk');
+ await page.screenshot({path:path.join(out,`skip-target-${width}-viewport.png`),fullPage:false});
+}
 async function noOverflow(page){assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1),'No horizontal viewport overflow');}
 async function base(page,metal,index,keyboard=false){await click(page,`[data-metal="${metal}"]`,keyboard);await click(page,`[data-place="${index}"]`,keyboard);await page.locator(`[data-reset="${index}"]`).waitFor();}
 async function extra(page,metal,solution,index){await click(page,`[data-extra-metal="${metal}"]`);await click(page,`[data-solution="${solution}"]`);await click(page,`[data-extra-place="${index}"]`);await page.locator(`[data-extra-fresh="${index}"]`).waitFor();}
@@ -125,7 +171,7 @@ async function journey(width){
  await click(page,'#electron-open',true);for(const step of ['0','1','2']){await acid(page,'electron-step',step,true);assert.equal(await page.locator(`[data-acid-action="electron-step"][data-value="${step}"]`).getAttribute('aria-pressed'),'true');}
  await acid(page,'electron-track','zinc',true);assert.equal(await page.locator('[data-acid-action="electron-track"][data-value="zinc"]').getAttribute('aria-pressed'),'true');await acid(page,'electron-track','copper');assert.equal(await page.locator('[data-acid-action="electron-track"][data-value="copper"]').getAttribute('aria-pressed'),'true');await acid(page,'electron-track','copper');assert.equal(await page.locator('[data-acid-action="electron-track"][data-value="copper"]').getAttribute('aria-pressed'),'false');
  assert.equal((await state(page)).lesson.electronStep,2);
- await review(page);await noOverflow(page);await snap(page,`journey-${width}`);
+ await review(page);await noOverflow(page);await verifySkipAndCapture(page,width);
  const full=await state(page);assert.equal(full.records.length,5);assert.equal(full.lesson.records.length,3);await oldUnchanged(page);
  await page.reload();await editable(page);await textHas(page,'#review-progress',/3 \/ 3/);assert.equal((await state(page)).lesson.electronStep,2);
  await click(page,'#reset-open');await click(page,'#reset-cancel',true);assert.equal((await state(page)).records.length,5);
@@ -211,10 +257,10 @@ async function persistence(full){
  try{
   browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE}:{})});
   const full=await journey(1165);await journey(390);await journey(320);await animationAndMouse();await persistence(full);
-  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({passed:true,browser:await browser.version(),limits:'Real Chromium desktop and CSS viewport simulation; not physical phones, real touch hardware, Safari or assistive technology.',results},null,2));
+  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({passed:true,browser:await browser.version(),limits:'Real Chromium desktop and CSS viewport simulation; not physical phones, real touch hardware, Safari or assistive technology.',results,skipLinkChecks},null,2));
   console.log(`Metal activity desk: ${results.length} Chromium scenario groups passed.`);
  }catch(error){
   let index=0;for(const context of browser?.contexts()||[])for(const page of context.pages()){try{await snap(page,`failure-${index++}`);}catch{}}
-  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({passed:false,results,error:error.stack},null,2));throw error;}
+  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({passed:false,results,skipLinkChecks,error:error.stack},null,2));throw error;}
  finally{await browser?.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});

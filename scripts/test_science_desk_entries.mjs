@@ -18,3 +18,22 @@ console.log('PASS 63 entries, adjacent topic pairs, reciprocal links, legacy byt
 
 const inline=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>crypto.createHash('sha256').update(m[2]).digest('hex'));
 assert.deepEqual(inline,baseline.resource_inline_script_sha256,'resource search/runtime scripts remain byte-identical to main');
+
+// Execute the actual researcher shell: main children are redistributed into four screens.
+// A static link check alone cannot detect navigation hidden in the challenge screen.
+for(const t of completedDeskPublic){
+ const dom=new JSDOM(read(`tools/science/${t.id}.html`),{url:`https://www.bhcs.com.tw/tools/science/${t.id}.html?noga=1&nofonts=1`,runScripts:'outside-only'});
+ const {window:w}=dom,d=w.document;w.scrollTo=()=>{};w.matchMedia=()=>({matches:true});w.requestAnimationFrame=callback=>(callback(),1);
+ const css=d.createElement('style');css.textContent=read('assets/researcher-lab.css');d.head.append(css);
+ w.eval(read('assets/researcher-lab.js'));
+ const link=d.querySelector(`a[href="../${t.file}"]`),nav=link.closest('nav');
+ assert.equal(nav.parentElement,d.body,'navigation must remain outside transformed main');
+ for(const screen of ['prepare','bench','notebook','check']){
+  d.querySelector(`.researcher-nav button[data-to="${screen}"]`).click();
+  assert.equal(d.querySelector('.researcher-screen.is-active').dataset.screen,screen);
+  assert(!nav.closest('.researcher-screen,[hidden],[aria-hidden="true"]'),t.id+' '+screen+' navigation has no hidden ancestor');
+  for(let el=link;el;el=el.parentElement){const style=w.getComputedStyle(el);assert.notEqual(style.display,'none');assert.notEqual(style.visibility,'hidden');}
+ }
+ dom.window.close();
+}
+console.log('PASS actual researcher shell keeps version navigation visible through all four screens');

@@ -4,8 +4,8 @@
     {
       "path": "scripts/build_science.mjs",
       "before_blob": "2c37647d63f490a6b5f635b7d2fc284a259b1e51",
-      "after_blob": "f27083c08c7242736d5519ba83140a50ae258717",
-      "reason": "Publish three completed desks adjacent to their retained legacy topics; add reciprocal navigation through builder source."
+      "after_blob": "2595533450ac0e517c19cd7448e1722fa3b5b7a9",
+      "reason": "Publish three completed desks adjacent to retained legacy topics; keep builder-owned version navigation outside main so all four researcher screens expose it."
     },
     {
       "path": "scripts/science/catalog.mjs",

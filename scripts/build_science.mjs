@@ -118,7 +118,8 @@ buildMarbleReplacement(root);
 buildMarbleDirectory(root);
 
 
-// Add only navigation after lesson enhancement; never change legacy engines or stored data.
+// Keep version navigation outside main: the researcher runtime moves unknown main children
+// into the initially hidden challenge screen. This body sibling stays available in every step.
 for(const desk of completedDeskPublic){
- replaceBlock('tools/science/'+desk.id+'.html','completed-desk-nav',`<nav aria-label="同單元實驗版本" style="padding:16px;display:flex;flex-wrap:wrap;gap:12px"><a href="../${desk.file}">${esc(desk.title)}：引導實驗 →</a><a href="./">自然實驗總覽</a><a href="../../ziyuan.html#res-science">全部學習資源</a><span>此頁保留舊版自由探究；兩版紀錄分開保存。</span></nav>`,`</main>`);
+ replaceBlock('tools/science/'+desk.id+'.html','completed-desk-nav',`<nav aria-label="同單元實驗版本" style="padding:16px;display:flex;flex-wrap:wrap;gap:12px"><a href="../${desk.file}">${esc(desk.title)}：引導實驗 →</a><a href="./">自然實驗總覽</a><a href="../../ziyuan.html#res-science">全部學習資源</a><span>此頁保留舊版自由探究；兩版紀錄分開保存。</span></nav>`,`<footer class="foot">`);
 }
