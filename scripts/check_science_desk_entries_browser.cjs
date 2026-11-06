@@ -23,7 +23,9 @@ const server=http.createServer((req,res)=>{
   for(const width of [390,1280]){
    const context=await browser.newContext({viewport:{width,height:900}});
    await context.route('**/*',route=>route.request().url().startsWith(origin)?route.continue():route.abort());
-   await context.addInitScript(()=>localStorage.setItem('bhcs_noga','1'));
+   await context.addInitScript(testOrigin=>{
+    if(location.origin===testOrigin)localStorage.setItem('bhcs_noga','1');
+   },origin);
    const errors=[],events=[];let stage='initialization',topic='none';
    context.on('page',p=>{
     events.push({event:'page-created',url:p.url()});
