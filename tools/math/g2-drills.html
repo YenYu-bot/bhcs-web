@@ -138,89 +138,154 @@ const top=L=>L===0?100:1000;
 
 function numbersConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
- const order=unit("order","數數與數的順序","往後數一個多 1，往前數一個少 1；2 個 2 個數、5 個 5 個數、10 個 10 個數，每次多一樣多。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["next","prev","between"]:["next","skip","between","skipBack"]);
-  if(f==="next"){const n=rand(1,top(L)-2);return{expr:fmt(n)+" 的後面一個數是多少？",answer:fmt(n+1),sig:"n:"+n,verify:()=>n+1-1===n}}
-  if(f==="prev"){const n=rand(2,top(L)-1);return{expr:fmt(n)+" 的前面一個數是多少？",answer:fmt(n-1),sig:"p:"+n,verify:()=>n-1+1===n}}
-  if(f==="between"){const n=rand(1,top(L)-3);return{expr:fmt(n)+" 和 "+fmt(n+2)+" 中間的數是多少？",answer:fmt(n+1),sig:"b:"+n,verify:()=>n<n+1&&n+1<n+2}}
-  const step=pick(L===1?[2,5,10]:[2,5,10,100]),start=step*rand(1,L===1?8:9)+(step===100?0:rand(0,step===2?1:0)),k=4,seq=Array.from({length:k+1},(_,i)=>start+i*step);
-  if(seq.at(-1)>=1000)return null;const back=f==="skipBack",show=back?[...seq].reverse():seq,miss=rand(1,k);
+ const order=unit("order","數數與數的順序","往後數一個多 1，往前數一個少 1；2 個 2 個數、5 個 5 個數、10 個 10 個數，每次多一樣多；數過整百（399、400、401）要換到下一個百。",ctx=>{
+  // 基礎：100 以內的前後數、往後數幾個；進階：三位數的前後數與 2、5、10 個一數；挑戰：跨過整百的數數、倒著數、100 個一數、多 10／少 100
+  const L=lv(ctx),f=pick([["next","prev","between","countOn"],["next","prev","between","skip"],["cross","skip","skipBack","place10"]][L]),lo=L===0?1:101,hi=L===0?99:998;
+  if(f==="next"){const n=rand(lo,hi-1);return{expr:fmt(n)+" 的後面一個數是多少？",answer:fmt(n+1),sig:"n:"+n,verify:()=>n+1-1===n}}
+  if(f==="prev"){const n=rand(lo+1,hi);return{expr:fmt(n)+" 的前面一個數是多少？",answer:fmt(n-1),sig:"p:"+n,verify:()=>n-1+1===n}}
+  if(f==="between"){const n=rand(lo,hi-2);return{expr:fmt(n)+" 和 "+fmt(n+2)+" 中間的數是多少？",answer:fmt(n+1),sig:"b:"+n,verify:()=>n<n+1&&n+1<n+2}}
+  if(f==="countOn"){const n=rand(2,90),k=rand(2,5),back=Math.random()<.4;if(back&&n-k<1)return null;const v=back?n-k:n+k;return{expr:"從 "+n+" 開始往"+(back?"前":"後")+"數 "+k+" 個，是多少？",answer:fmt(v),sig:"co:"+n+":"+k+":"+back,verify:()=>Array.from({length:k},(_,i)=>back?n-i-1:n+i+1).at(-1)===v}}
+  if(f==="cross"){const H=100*rand(1,9),g=pick(["n","p","b"]);
+   if(g==="n"){const n=H+(H<900&&Math.random()<.3?100:0)-1;return{expr:fmt(n)+" 的後面一個數是多少？",answer:fmt(n+1),sig:"cn:"+n,verify:()=>(n+1)%100===0}}
+   if(g==="p"){const n=H+(Math.random()<.3?100:0);return{expr:fmt(n)+" 的前面一個數是多少？",answer:fmt(n-1),sig:"cp:"+n,verify:()=>n%100===0&&(n-1)%100===99}}
+   const n=H-1;return{expr:fmt(n)+" 和 "+fmt(n+2)+" 中間的數是多少？",answer:fmt(n+1),sig:"cb:"+n,verify:()=>(n+1)%100===0}}
+  if(f==="place10"){const d=pick([10,100]),up=Math.random()<.5;let n;
+   if(d===10)n=up?100*rand(1,8)+90+rand(0,9):100*rand(2,9)+rand(0,9);else n=up?rand(101,899):rand(201,999);
+   const v=up?n+d:n-d;return{expr:"比 "+fmt(n)+(up?" 多 ":" 少 ")+d+" 的數是多少？",answer:fmt(v),sig:"pt:"+n+":"+d+":"+up,verify:()=>Math.abs(v-n)===d&&(d===100?v%100===n%100:Math.floor(v/100)!==Math.floor(n/100))}}
+  // 跳數：進階從 100 到 990 之間任意起點；挑戰一定跨過整百（或 100 個一數）
+  const step=L===1?pick([2,5,10]):pick([2,5,10,10,100]),k=4;let start;
+  if(L===1){start=step*rand(Math.ceil(100/step),Math.floor((990-k*step)/step))+(step===2?rand(0,1):0)}
+  else if(step===100)start=100*rand(1,5)+pick([0,0,rand(1,9)*10,rand(1,99)]);
+  else{const H=100*rand(2,9),j=rand(1,3);start=H-step*j+(step===2?rand(0,1):0)}
+  const seq=Array.from({length:k+1},(_,i)=>start+i*step);if(seq[0]<100||seq.at(-1)>=1000)return null;
+  const back=f==="skipBack",show=back?[...seq].reverse():seq,miss=rand(1,k);
   return{expr:(back?"倒著":"")+step+" 個 "+step+" 個數，填入空格："+show.map((v,i)=>i===miss?"（　）":fmt(v)).join("、"),answer:fmt(show[miss]),sig:f+":"+start+":"+step+":"+miss,verify:()=>show.every((v,i)=>!i||Math.abs(v-show[i-1])===step)}},"答：");
  const place=unit("place","位值：百、十、個","十個一是一個十，十個十是一個百。一個數可以拆成幾個百、幾個十和幾個一。",ctx=>{
-  const L=lv(ctx),n=L===0?rand(11,99):rand(101,999),h=Math.floor(n/100),t=Math.floor(n/10)%10,o=n%10,f=pick(["split","make","digit"]);
+  const L=lv(ctx),f=pick(L===2?["tens","howMany","expand","make0"]:["split","make","digit"]);
+  // 挑戰：幾個十（13 個十＝130、240 是幾個十）、展開式、有 0 的位且順序打亂的合成
+  if(f==="tens"){const k=rand(11,99);return{expr:k+" 個十是多少？",answer:fmt(10*k),sig:"te:"+k,verify:()=>Array(k).fill(10).reduce((s,x)=>s+x,0)===10*k}}
+  if(f==="howMany"){if(Math.random()<.12){const u=pick([["百",100],["十",10]]);return{expr:"1000 是幾個"+u[0]+"？",answer:(1000/u[1])+" 個"+u[0],sig:"hk:"+u[0],verify:()=>1000%u[1]===0}}const k=rand(11,99);return{expr:fmt(10*k)+" 是幾個十？",answer:k+" 個十",sig:"hm:"+k,verify:()=>Math.floor(10*k/100)*10+Math.floor(10*k/10)%10===k}}
+  if(f==="expand"){const h=rand(1,9),t=rand(1,9),o=rand(1,9),ps=[100*h,10*t,o],m=rand(0,2),n=100*h+10*t+o;return{expr:fmt(n)+" ＝ "+ps.map((v,i)=>i===m?"（　）":fmt(v)).join(" ＋ "),answer:fmt(ps[m]),sig:"ex:"+n+":"+m,verify:()=>n-ps.filter((_,i)=>i!==m).reduce((s,v)=>s+v,0)===ps[m]}}
+  if(f==="make0"){const h=rand(1,9),z=rand(0,1),d=rand(1,9),n=100*h+(z?10*d:d),ps=shuffle([[h,"百"],[d,z?"十":"一"]]);return{expr:ps[0][0]+" 個"+ps[0][1]+"和 "+ps[1][0]+" 個"+ps[1][1]+"合起來是多少？",answer:fmt(n),sig:"m0:"+n+":"+ps[0][1],verify:()=>ps.reduce((s,[k,u])=>s+k*{百:100,十:10,一:1}[u],0)===n&&String(n).includes("0")}}
+  const n=L===0?rand(11,99):rand(101,999),h=Math.floor(n/100),t=Math.floor(n/10)%10,o=n%10;
   // 合／拆只列出不是 0 的位（不印「0 個十」「0 個一」）
   const ps=[[h,"百"],[t,"十"],[o,"一"]].filter(([k])=>k),join=xs=>xs.length<2?xs.join(""):xs.slice(0,-1).join("、")+"和"+(/^\d/.test(xs.at(-1))?" ":"")+xs.at(-1);
   if(f==="split")return{expr:fmt(n)+" 是"+join(ps.map(([,u])=>"幾個"+u))+"？",answer:join(ps.map(([k,u])=>k+" 個"+u)),sig:"s:"+n,verify:()=>ps.reduce((s,[k,u])=>s+k*{百:100,十:10,一:1}[u],0)===n};
   if(f==="make")return{expr:join(ps.map(([k,u])=>k+" 個"+u))+(ps.length>1?"合起來":"")+"是多少？",answer:fmt(n),sig:"m:"+n,verify:()=>ps.reduce((s,[k,u])=>s+k*{百:100,十:10,一:1}[u],0)===n};
   const p=pick(h?[["百",h,100],["十",t,10],["個",o,1]]:[["十",t,10],["個",o,1]]);return{expr:fmt(n)+" 的"+p[0]+"位數字是多少？代表多少？",answer:p[1]+"；"+(p[1]*p[2]),sig:"d:"+n+":"+p[0],verify:()=>Math.floor(n/p[2])%10===p[1]}},"答：");
  const compare=unit("compare","比大小","先比位數；位數一樣，從最大的位（百位、十位）開始比。",ctx=>{
-  const L=lv(ctx),a=rand(L===0?1:10,top(L)-1),b=a+pick([-1,1])*rand(1,L===0?9:L===1?30:99),f=pick(["fill","big","order"]);if(b<1||b>=top(L)||a===b)return null;
+  const L=lv(ctx),f=pick(L===2?["close","order4","boxDigit"]:["fill","big","order"]);
+  // 挑戰：數字互換或跨位數的「陷阱」比較、四個數由大到小、□ 裡可以填哪些數字
+  if(f==="close"){let a,b;if(Math.random()<.7){const h=rand(1,9),x=rand(0,9),y=rand(0,9);if(x===y)return null;a=100*h+10*x+y;b=100*h+10*y+x}else{a=rand(90,99);b=rand(100,109)}if(Math.random()<.5)[a,b]=[b,a];const s=a>b?"＞":"＜";return{expr:"在 ○ 裡填入 ＞ 或 ＜："+a+" ○ "+b,answer:s,sig:"cl:"+a+":"+b,verify:()=>(s==="＞")===(String(a).length!==String(b).length?String(a).length>String(b).length:String(a)>String(b))}}
+  if(f==="order4"){const ds=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,3),ps=[];for(const i of [0,1,2])for(const j of [0,1,2])for(const k of [0,1,2])if(i!==j&&j!==k&&i!==k&&ds[i])ps.push(100*ds[i]+10*ds[j]+ds[k]);if(ps.length<4)return null;const xs=shuffle(ps).slice(0,4),so=[...xs].sort((x,y)=>y-x);return{expr:"把 "+xs.join("、")+" 由大排到小。",answer:so.join(" ＞ "),sig:"o4:"+xs,verify:()=>so.every((v,i)=>!i||so[i-1]>v)&&so.length===4}}
+  if(f==="boxDigit"){const h=rand(1,9),t=rand(1,8),o=rand(0,9),o2=rand(0,9),A=100*h+10*t+o,lt=Math.random()<.5,ok=[];for(let d=0;d<=9;d++){const B=100*h+10*d+o2;if(lt?B<A:B>A)ok.push(d)}if(!ok.length||ok.length>8)return null;
+   return{expr:h+"□"+o2+" "+(lt?"＜":"＞")+" "+A+"，□ 裡可以填哪些數字？",answer:ok.join("、"),sig:"bd:"+h+":"+o2+":"+A+":"+lt,verify:()=>ok.every(d=>lt?(d<t||d===t&&o2<o):(d>t||d===t&&o2>o))&&ok.length===[...Array(10).keys()].filter(d=>lt?(d<t||d===t&&o2<o):(d>t||d===t&&o2>o)).length}}
+  // 基礎：100 以內差 9 以內；進階：三位數、同一個百，差 30 以內
+  const a=L===0?rand(1,99):rand(101,998),b=a+pick([-1,1])*rand(1,L===0?9:30);if(b<1||b>=top(L)||a===b||L===1&&Math.floor(a/100)!==Math.floor(b/100))return null;
   if(f==="fill"){const s=a>b?"＞":"＜";return{expr:"在 ○ 裡填入 ＞ 或 ＜："+a+" ○ "+b,answer:s,sig:"f:"+a+":"+b,verify:()=>(s==="＞")===(a>b)}}
   if(f==="big"){const sm=Math.random()<.5;return{expr:a+" 和 "+b+" 哪一個比較"+(sm?"小":"大")+"？",answer:fmt(sm?Math.min(a,b):Math.max(a,b)),sig:"b:"+a+":"+b+":"+sm,verify:()=>Math.min(a,b)<Math.max(a,b)}}
-  const c=rand(1,top(L)-1),xs=[a,b,c];if(new Set(xs).size<3)return null;const so=[...xs].sort((x,y)=>x-y);return{expr:"把 "+xs.join("、")+" 由小排到大。",answer:so.join(" ＜ "),sig:"o:"+xs,verify:()=>so[0]<so[1]&&so[1]<so[2]}},"答：");
+  const c=L===1?Math.floor(a/100)*100+rand(0,99):rand(1,99),xs=[a,b,c];if(new Set(xs).size<3)return null;const so=[...xs].sort((x,y)=>x-y);return{expr:"把 "+xs.join("、")+" 由小排到大。",answer:so.join(" ＜ "),sig:"o:"+xs,verify:()=>so[0]<so[1]&&so[1]<so[2]}},"答：");
  const odd=unit("oddeven","單數與雙數","2 個 2 個數剛好數完的是雙數，多 1 個的是單數；看個位：0、2、4、6、8 是雙數，1、3、5、7、9 是單數。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["which","which","count"]:["which","count","list"]);
-  if(f==="which"){const n=rand(1,top(L)-1),ev=n%2===0;return{expr:fmt(n)+" 是單數還是雙數？",answer:ev?"雙數":"單數",sig:"w:"+n,verify:()=>(n%2===0)===ev}}
-  if(f==="count"){const a=rand(1,L===0?20:80),b=a+rand(5,L===0?10:20),ev=Math.random()<.5,c=Array.from({length:b-a+1},(_,i)=>a+i).filter(x=>(x%2===0)===ev).length;return{expr:"從 "+a+" 到 "+b+"（包含 "+a+" 和 "+b+"），共有幾個"+(ev?"雙數":"單數")+"？",answer:c+" 個",sig:"c:"+a+":"+b+":"+ev,verify:()=>c===Math.floor((b-(ev?0:1))/2)-Math.floor((a-1-(ev?0:1))/2)}}
-  const a=rand(10,90),ev=Math.random()<.5,xs=Array.from({length:10},(_,i)=>a+i).filter(x=>(x%2===0)===ev);return{expr:"寫出從 "+a+" 到 "+(a+9)+"（包含 "+a+" 和 "+(a+9)+"）所有的"+(ev?"雙數":"單數")+"。",answer:xs.join("、"),sig:"l:"+a+":"+ev,verify:()=>xs.length===5}},"答：");
+  // 基礎：判斷、數一列數裡的雙數；進階：三位數判斷、一段範圍的個數、寫出全部；挑戰：圈出、比 n 大的最小單數、數字卡排出的雙數
+  const L=lv(ctx),f=pick([["which","which","seq"],["which","count","list"],["circle","nextOdd","cards"]][L]);
+  if(f==="which"){const n=L===0?rand(1,99):rand(100,999),ev=n%2===0;return{expr:fmt(n)+" 是單數還是雙數？",answer:ev?"雙數":"單數",sig:"w:"+n,verify:()=>(n%2===0)===ev}}
+  if(f==="seq"){const a=rand(1,90),k=rand(5,7),ev=Math.random()<.5,xs=Array.from({length:k},(_,i)=>a+i),c=xs.filter(x=>(x%2===0)===ev).length;return{expr:xs.join("、")+" 這些數中，有幾個"+(ev?"雙數":"單數")+"？",answer:c+" 個",sig:"q:"+a+":"+k+":"+ev,verify:()=>c===(k%2===0?k/2:(((a%2===0)===ev)?(k+1)/2:(k-1)/2))}}
+  if(f==="circle"){const xs=Array.from({length:5},()=>rand(100,999));if(new Set(xs).size<5)return null;const ev=Math.random()<.5,hit=xs.filter(x=>(x%2===0)===ev);if(hit.length<1||hit.length>4)return null;return{expr:"圈出"+(ev?"雙數":"單數")+"："+xs.join("、"),answer:hit.join("、"),sig:"ci:"+xs+":"+ev,verify:()=>hit.every(x=>[0,2,4,6,8].includes(x%10)===ev)}}
+  if(f==="nextOdd"){const n=rand(10,998),ev=Math.random()<.5,up=Math.random()<.6;let v=up?n+1:n-1;while((v%2===0)!==ev)v+=up?1:-1;return{expr:"比 "+fmt(n)+(up?" 大的最小":" 小的最大")+(ev?"雙數":"單數")+"是多少？",answer:fmt(v),sig:"no:"+n+":"+ev+":"+up,verify:()=>(up?v>n:v<n)&&Math.abs(v-n)<=2&&(v%2===0)===ev&&(Math.abs(v-n)===1||(n%2===0)===ev)}}
+  if(f==="cards"){const ds=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,3).sort((x,y)=>x-y);if(ds.every(d=>d%2)||ds.every(d=>d%2===0))return null;const ev=Math.random()<.5,ps=[];for(const i of [0,1,2])for(const j of [0,1,2])for(const k of [0,1,2])if(i!==j&&j!==k&&i!==k)ps.push(100*ds[i]+10*ds[j]+ds[k]);const hit=ps.filter(x=>(x%2===0)===ev).sort((x,y)=>x-y);
+   return{expr:"用數字卡 "+ds.join("、")+" 各一張排成三位數，排得出來的"+(ev?"雙數":"單數")+"有哪些？",answer:hit.join("、"),sig:"cd:"+ds+":"+ev,verify:()=>hit.length===2*ds.filter(d=>(d%2===0)===ev).length}}
+  if(f==="count"){const a=rand(100,960),b=a+rand(10,20),ev=Math.random()<.5,c=Array.from({length:b-a+1},(_,i)=>a+i).filter(x=>(x%2===0)===ev).length;return{expr:"從 "+a+" 到 "+b+"（包含 "+a+" 和 "+b+"），共有幾個"+(ev?"雙數":"單數")+"？",answer:c+" 個",sig:"c:"+a+":"+b+":"+ev,verify:()=>c===Math.floor((b-(ev?0:1))/2)-Math.floor((a-1-(ev?0:1))/2)}}
+  const a=rand(100,990),ev=Math.random()<.5,xs=Array.from({length:10},(_,i)=>a+i).filter(x=>(x%2===0)===ev);return{expr:"寫出從 "+a+" 到 "+(a+9)+"（包含 "+a+" 和 "+(a+9)+"）所有的"+(ev?"雙數":"單數")+"。",answer:xs.join("、"),sig:"l:"+a+":"+ev,verify:()=>xs.length===5}},"答：");
  return{title:"1000 以內的數",symbol:"123",subtitle:"數數與數的順序・位值・比大小・單數與雙數",instruction:"仔細看清楚題目問的是哪一位、要往前數還是往後數。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：100 以內的數（一年級）。",advanced:"進階：1000 以內的數、2、5、10 個一數（二上）。",challenge:"挑戰：1000 以內、100 個一數、倒著數（二下）。"},
+  levels:{basic:"基礎：100 以內的數：前後數、往後數幾個、二位數的位值與比大小、單雙數（一年級）。",advanced:"進階：三位數的前後數、2／5／10 個一數、百十一的拆合、同一個百裡比大小（二上）。",challenge:"挑戰：跨過整百的數數與倒著數、幾個十與展開式、數字互換的比大小與 □ 填數、數字卡排單雙數（二下）。"},
   units:[order,place,compare,odd],presets:{basic:{order:4,place:4,compare:4,oddeven:3},advanced:{order:4,place:4,compare:4,oddeven:3},challenge:{order:4,place:4,compare:4,oddeven:3}}};
 }
 
 const NAMES=["小明","小美","阿志","小華","妹妹","哥哥"],ta=n=>["小美","妹妹","姊姊"].includes(n)?"她":"他",THINGS=[["顆","彈珠"],["枝","鉛筆"],["張","貼紙"],["個","積木"],["張","卡片"],["顆","糖果"]];
 function addConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
- const pair=L=>{for(let t=0;t<40;t++){const a=L===0?rand(1,9):L===1?rand(10,89):rand(100,899),b=L===0?rand(1,9):L===1?rand(2,89):rand(10,899),max=L===0?18:L===1?99:999;if(a+b<=max)return[a,b]}return[3,4]};
- const basic=unit("add","加法計算","加法可以把大的數放前面再往後數；個位相加滿十，就向十位進 1。",ctx=>{
-  const L=lv(ctx),[a,b]=pair(L),f=pick(["op","sum","more"]);
+ // 不進位的一組數（進位的題目都放在「進位加法」）：每一位相加都不滿 10
+ const noCarry=(a,b)=>{while(a||b){if(a%10+b%10>=10)return false;a=Math.floor(a/10);b=Math.floor(b/10)}return true};
+ // 挑戰：三位數＋三位數，每一位都不是 0（不出 400＋400、500＋40 這類整百題）
+ const pair=L=>{for(let t=0;t<60;t++){const a=L===0?rand(2,15):L===1?rand(10,89):rand(111,799),b=L===0?rand(2,9):L===1?rand(2,89):rand(111,799),max=L===0?20:L===1?99:999;if(L===2&&/0/.test(String(a)+b))continue;if(a+b<=max&&noCarry(a,b))return[a,b]}return null};
+ const basic=unit("add","加法計算","加法可以把大的數放前面再往後數；整十、整百相加，只要算幾個十、幾個百：30＋40 是 3 個十加 4 個十。",ctx=>{
+  // 基礎：20 以內不進位、交換律；進階：二位數不進位、幾十加幾十；挑戰：三位數＋三位數不進位、□ 反求（前、後）、比 a 多 b
+  const L=lv(ctx),f=pick([["op","sum","more","comm"],["op","tens","more","sum"],["op","front","fill","more"]][L]),p=pair(L);if(!p)return null;const [a,b]=p;
+  if(f==="front")return{expr:"（　）＋ "+b+" ＝ "+(a+b),answer:fmt(a),sig:"fr:"+a+":"+b,verify:()=>a+b-b===a&&noCarry(a,b),lead:"答："};
+  if(f==="comm"){const x=rand(2,9),y=rand(2,9);if(x===y)return null;return{expr:x+" ＋ "+y+" ＝ "+y+" ＋ （　）",answer:fmt(x),sig:"cm:"+x+":"+y,verify:()=>x+y===y+x&&x+y-y===x,lead:"答："}}
+  if(f==="tens"){const x=rand(1,8),y=rand(1,9-x),g=Math.random()<.3;const A=10*x,B=g?10*y+rand(1,9):10*y;return{expr:A+" ＋ "+B,answer:fmt(A+B),sig:"tn:"+A+":"+B,verify:()=>A+B-B===A&&noCarry(A,B)}}
+  if(f==="hund"){const x=rand(1,8),y=rand(1,9-x),g=pick([0,0,1,2]),A=100*x,B=g===0?100*y:g===1?10*rand(1,9)+100*y:10*rand(1,9);return{expr:A+" ＋ "+B,answer:fmt(A+B),sig:"hd:"+A+":"+B,verify:()=>A+B-B===A}}
+  if(f==="fill")return{expr:a+" ＋ （　）＝ "+(a+b),answer:fmt(b),sig:"fl:"+a+":"+b,verify:()=>a+b-a===b,lead:"答："};
   if(f==="sum")return{expr:a+" 和 "+b+" 合起來是多少？",answer:fmt(a+b),sig:"s:"+a+":"+b,verify:()=>a+b-b===a,lead:"答："};
   if(f==="more")return{expr:"比 "+a+" 多 "+b+" 的數是多少？",answer:fmt(a+b),sig:"m:"+a+":"+b,verify:()=>a+b-a===b,lead:"答："};
   return{expr:a+" ＋ "+b,answer:fmt(a+b),sig:"o:"+a+":"+b,verify:()=>a+b-b===a}});
  const carry=unit("carry","進位加法","個位相加超過 10 要進位：在十位上加 1；十位相加超過 10 要向百位進 1。也可以先湊十：8＋5＝8＋2＋3。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["op","ten","box"]:["op","vert","ten"]);let a,b;
-  if(L===0){a=rand(2,9);b=rand(11-a,9)}else if(L===1){a=rand(11,79);const o=rand(10-a%10,9);b=rand(1,8-Math.floor(a/10))*10+o;if(a%10===0)return null}else{a=rand(101,799);b=rand(10,899-a+100);if(a+b>999||(a%10+b%10<10&&Math.floor(a/10)%10+Math.floor(b/10)%10<10))return null}
+  // 基礎：湊十；進階：二位數個位進位、直式、直式填空；挑戰：三位數連續進位（個位、十位都進位）、直式填空、□ 反求（最多 1/4）
+  const L=lv(ctx),f=pick([["op","ten","box"],["op","vert","ten","missing"],["op","vert","missing","op","vert","missing","ten","op"]][L]);let a,b;
+  if(L===0){a=rand(2,9);b=rand(11-a,9)}else if(L===1){a=rand(11,79);const o=rand(10-a%10,9);b=rand(1,8-Math.floor(a/10))*10+o;if(a%10===0)return null}else{a=rand(101,799);b=rand(10,899-a+100);if(a+b>999||a%10+b%10<10||Math.floor(a/10)%10+Math.floor(b/10)%10+1<10)return null}
   const s=a+b;if(L>0&&a%10+b%10<10&&L===1)return null;
+  if(f==="missing"){// 直式填空：被加數的某一位（不是最高位）挖空
+   const ds=String(a).split(""),i=rand(L===2?1:0,ds.length-1);if(L===1&&i===0&&ds.length<2)return null;const d=ds[i];ds[i]="□";return{expr:ds.join("")+" ＋ "+b+" ＝ "+s+"，□ 是多少？",answer:d,sig:"ms:"+a+":"+b+":"+i,verify:()=>Number(String(a).split("").map((c,j)=>j===i?"0":c).join(""))+Number(d)*10**(String(a).length-1-i)+b===s,lead:"答："}}
   if(f==="ten"){if(L===0){const need=10-a;return{expr:a+" ＋ "+b+" ＝ "+a+" ＋ "+need+" ＋ （　）＝ （　）",answer:(b-need)+"；"+s,sig:"t:"+a+":"+b,verify:()=>a+need===10&&10+(b-need)===s}}return{expr:a+" ＋ （　）＝ "+s,answer:fmt(b),sig:"t:"+a+":"+b,verify:()=>s-a===b,lead:"答："}}
   if(f==="box")return{expr:"（　）＋ "+b+" ＝ "+s,answer:fmt(a),sig:"x:"+a+":"+b,verify:()=>s-b===a,lead:"答："};
   if(f==="vert")return{expr:a+" ＋ "+b+"（用直式算，並寫出進位）",answer:fmt(s),sig:"v:"+a+":"+b,verify:()=>s-b===a};
   return{expr:a+" ＋ "+b,answer:fmt(s),sig:"o:"+a+":"+b,verify:()=>s-b===a}});
  const multi=unit("multi","連加","三個數相加，由左往右算；也可以先把湊成 10 的兩個數加起來。",ctx=>{
-  const L=lv(ctx),f=pick(["three","ten","word"]),m=L===0?9:L===1?40:300;
-  if(f==="ten"){const a=rand(1,9),b=10-a,c=rand(1,L===0?9:m);return{expr:a+" ＋ "+c+" ＋ "+b,answer:fmt(a+b+c),sig:"t:"+a+":"+c,verify:()=>a+b===10}}
-  const a=rand(1,m),b=rand(1,m),c=rand(1,m);if(L===0&&a+b+c>20||a+b+c>999)return null;
+  // 基礎：20 以內三數連加、湊十；進階：二位數連加、湊整十（27＋15＋13）；挑戰：三個二、三位數連加（要進位、沒有湊十的捷徑）、湊整百
+  const L=lv(ctx),f=pick([["three","ten","word"],["three","ten","word"],["hard","ten","word","hard"]][L]),m=L===0?9:L===1?40:300;
+  if(f==="ten"){if(L===0){const a=rand(1,9),b=10-a,c=rand(1,9);return{expr:a+" ＋ "+c+" ＋ "+b,answer:fmt(a+b+c),sig:"t:"+a+":"+c,verify:()=>a+b===10}}
+   const T=L===1?10*rand(2,6):100*rand(1,5),a=rand(T===10?1:Math.ceil(T/10),T-(T===10?1:Math.ceil(T/10))),b=T-a,c=L===1?rand(11,40):rand(101,399);if(a%10===0||a+b+c>999)return null;return{expr:a+" ＋ "+c+" ＋ "+b,answer:fmt(a+b+c),sig:"t"+L+":"+a+":"+c+":"+b,verify:()=>(a+b)%(L===1?10:100)===0&&a+b+c-c===T}}
+  if(f==="hard"){const a=rand(100,399),b=rand(100,399),c=rand(20,199),xs=[a,b,c];if(a+b+c>999||xs.some((x,i)=>xs.some((y,j)=>i<j&&(x+y)%10===0))||(a%10+b%10+c%10)<10)return null;return{expr:a+" ＋ "+b+" ＋ "+c,answer:fmt(a+b+c),sig:"hd:"+xs,verify:()=>a+b+c-c-b===a}}
+  const a=rand(L===2?50:1,m),b=rand(L===2?50:1,m),c=rand(L===2?20:1,m);if(L===0&&a+b+c>20||a+b+c>999)return null;
   if(f==="word"){const [u,t]=pick(THINGS),n=pick(NAMES);return{expr:n+"有 "+a+" "+u+t+"，媽媽給"+ta(n)+" "+b+" "+u+"，爸爸又給"+ta(n)+" "+c+" "+u+"，現在有幾"+u+"？",answer:(a+b+c)+" "+u,sig:"w:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a,lead:"答："}}
   return{expr:a+" ＋ "+b+" ＋ "+c,answer:fmt(a+b+c),sig:"h:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a}});
  return{title:"加法（低年級）",symbol:"＋",subtitle:"加法計算・進位加法・連加",instruction:"可以用數線、湊十或直式計算；應用題要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：20 以內的加法，進位用湊十（一年級）。",advanced:"進階：二位數的加法，個位進位（二上）。",challenge:"挑戰：三位數的加法，連續進位（二下）。"},
+  levels:{basic:"基礎：20 以內的加法、交換加數的位置，進位用湊十（一年級）。",advanced:"進階：二位數的加法、幾十加幾十、個位進位與直式填空、湊整十連加（二上）。",challenge:"挑戰：三位數加三位數、個位十位都進位、直式填空、□ 反求、三個數連加（二下）。"},
   units:[basic,carry,multi],presets:{basic:{add:6,carry:6,multi:4},advanced:{add:5,carry:6,multi:4},challenge:{add:5,carry:6,multi:4}}};
 }
 
 function subConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const basic=unit("sub","減法計算","減法是拿走、比較相差多少；做完可以用「答案＋減數＝被減數」檢查。",ctx=>{
-  const L=lv(ctx),a=L===0?rand(2,18):L===1?rand(20,99):rand(200,999),b=rand(1,a-1),f=pick(["op","less","diff"]);if(L===0&&a>10&&a-b<10&&a%10<b%10)return null;
+  // 退位的題目都放在「退位減法」；這裡只出每一位都夠減的題目。基礎：20 以內；進階：二位數、幾十減幾十；挑戰：三位數減三位數（每一位都不是 0）、□ 反求（前、後）、用加法驗算
+  const L=lv(ctx),f=pick([["op","less","diff"],["op","tens","less","diff"],["op","front","box","check"]][L]),a=L===0?rand(3,19):L===1?rand(20,99):rand(222,999),b=rand(L===0?2:L===1?2:111,a-1);
+  if(L===2&&/0/.test(String(a)+b))return null;
+  const noBorrow=(x,y)=>{while(y){if(x%10<y%10)return false;x=Math.floor(x/10);y=Math.floor(y/10)}return true};
+  if(f==="front"){if(!noBorrow(a,b))return null;return{expr:"（　）− "+b+" ＝ "+(a-b),answer:fmt(a),sig:"fr:"+a+":"+b,verify:()=>a-b+b===a&&noBorrow(a,b),lead:"答："}}
+  if(f==="tens"){const x=rand(2,9),y=rand(1,x-1),g=Math.random()<.3,A=g?10*x+rand(1,9):10*x,B=10*y;return{expr:A+" − "+B,answer:fmt(A-B),sig:"tn:"+A+":"+B,verify:()=>A-B+B===A}}
+  if(f==="hund"){const x=rand(2,9),y=rand(1,x-1),g=pick([0,0,1,2]),A=g===0?100*x:g===1?100*x+10*rand(1,9):100*x+10*rand(1,9),B=g===2?10*rand(1,Math.floor(A/10)%10||1):100*y;if(B>=A||!noBorrow(A,B))return null;return{expr:A+" − "+B,answer:fmt(A-B),sig:"hd:"+A+":"+B,verify:()=>A-B+B===A}}
+  if(f==="check"){if(a-b<10||!noBorrow(a,b))return null;return{expr:a+" − "+b+"（並用加法驗算）",answer:fmt(a-b)+"；驗算："+(a-b)+" ＋ "+b+" ＝ "+a,sig:"ck:"+a+":"+b,verify:()=>a-b+b===a&&noBorrow(a,b)}}
+  if(!noBorrow(a,b)||a===b)return null;
+  if(f==="box")return{expr:a+" − （　）＝ "+(a-b),answer:fmt(b),sig:"bx:"+a+":"+b,verify:()=>a-(a-b)===b,lead:"答："};
   if(f==="less")return{expr:"比 "+a+" 少 "+b+" 的數是多少？",answer:fmt(a-b),sig:"l:"+a+":"+b,verify:()=>a-b+b===a,lead:"答："};
   if(f==="diff")return{expr:a+" 和 "+b+" 相差多少？",answer:fmt(a-b),sig:"d:"+a+":"+b,verify:()=>a-b+b===a,lead:"答："};
   return{expr:a+" − "+b,answer:fmt(a-b),sig:"o:"+a+":"+b,verify:()=>a-b+b===a}});
  const borrow=unit("borrow","退位減法","個位不夠減，就向十位借 1 個十（＝10 個一）；遇到十位是 0，要先向百位借。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["op","break","box"]:L===1?["op","vert","box"]:["op","vert","zero"]);let a,b;
-  if(L===0){a=rand(11,18);b=rand(a-9,9);if(b<=a%10)return null}else if(L===1){a=rand(21,99);b=rand(11,a-1);if(b%10<=a%10)return null}else{a=f==="zero"?rand(1,9)*100+rand(0,9):rand(200,999);b=rand(11,a-1);if(b%10<=a%10&&f!=="zero")return null;if(f==="zero"&&b%10<=a%10)return null}
+  // 基礎：拆十；進階：二位數個位退位、直式、直式填空；挑戰：三位數個位十位都退位（十位不是 0／十位是 0）、直式
+  const L=lv(ctx),f=pick(L===0?["op","break","box"]:L===1?["op","vert","box","missing"]:["double","vert","zero","double"]);let a,b;
+  if(L===0){a=rand(11,18);b=rand(a-9,9);if(b<=a%10)return null}else if(L===1){a=rand(21,99);b=rand(11,a-1);if(b%10<=a%10)return null}
+  else if(f==="double"){a=rand(200,999);b=rand(100,a-1);const at=Math.floor(a/10)%10,bt=Math.floor(b/10)%10;if(at===0||b%10<=a%10||bt<at)return null}
+  else{a=f==="zero"?rand(2,9)*100+rand(0,9):rand(200,999);b=rand(11,a-1);if(b%10<=a%10)return null}
   const d=a-b;
+  if(f==="double")return{expr:a+" − "+b,answer:fmt(d),sig:"db:"+a+":"+b,verify:()=>d+b===a&&a%10<b%10&&Math.floor(a/10)%10-1<Math.floor(b/10)%10};
+  if(f==="missing"){const ds=String(a).split(""),i=rand(0,1),dg=ds[i];ds[i]="□";return{expr:ds.join("")+" − "+b+" ＝ "+d+"，□ 是多少？",answer:dg,sig:"ms:"+a+":"+b+":"+i,verify:()=>String(d+b)[i]===dg&&String(d+b).length===ds.length,lead:"答："}}
   if(f==="break")return{expr:a+" − "+b+"：先算 10 − "+b+" ＝ （　），再加 "+(a-10)+"，答案是（　）",answer:(10-b)+"；"+d,sig:"k:"+a+":"+b,verify:()=>10-b+(a-10)===d};
   if(f==="box")return{expr:a+" − （　）＝ "+d,answer:fmt(b),sig:"x:"+a+":"+b,verify:()=>a-d===b,lead:"答："};
   if(f==="vert")return{expr:a+" − "+b+"（用直式算，並寫出退位）",answer:fmt(d),sig:"v:"+a+":"+b,verify:()=>d+b===a};
   if(f==="zero")return{expr:a+" − "+b+"（十位是 0，要連續退位）",answer:fmt(d),sig:"z:"+a+":"+b,verify:()=>d+b===a&&Math.floor(a/10)%10===0};
   return{expr:a+" − "+b,answer:fmt(d),sig:"o:"+a+":"+b,verify:()=>d+b===a}});
  const mix=unit("mix","加減混合","加減混在一起時由左往右算；連減可以先把兩個減數加起來再減。",ctx=>{
-  const L=lv(ctx),m=L===0?10:L===1?60:400,f=pick(["pm","mm","mp"]),a=rand(L===0?5:20,L===0?18:L===1?99:999),b=rand(1,m),c=rand(1,m);let v;
+  // 基礎：20 以內三個數；進階：100 以內三個數；挑戰：1000 以內，加上四個數的加減混合
+  const L=lv(ctx),m=L===0?10:L===1?60:400,f=pick(L===2?["pm","mm","mp","four","four"]:["pm","mm","mp"]),a=rand(L===0?5:20,L===0?18:L===1?99:999),b=rand(L===2?11:1,m),c=rand(L===2?11:1,m);let v;
+  if(f==="four"){const d=rand(11,m),o=pick(["pmm","mpm","mmp"]),s=[1,o[0]==="p"?1:-1,o[1]==="p"?1:-1,o[2]==="p"?1:-1],xs=[a,b,c,d];let r=0,ok=true;xs.forEach((x,i)=>{r+=s[i]*x;if(r<0||r>999)ok=false});if(!ok||new Set(xs).size<4)return null;
+   const ex=a+" "+[b,c,d].map((x,i)=>(s[i+1]>0?"＋ ":"− ")+x).join(" ");return{expr:ex,answer:fmt(r),sig:"4:"+o+":"+xs,verify:()=>r===a+(s[1]*b)+(s[2]*c)+(s[3]*d)}}
   // 避免退化題：加了又減同一個數（5 ＋ 7 − 7、10 − 7 ＋ 7）、先減成 0（10 − 10 ＋ 9）、a ＋ b − a
   if(a===b||(f!=="mm"&&b===c)||(f==="pm"&&a===c))return null;
   if(f==="pm"){v=a+b-c;if(a+b>(L===0?20:L===1?99:999))return null;return v<0?null:{expr:a+" ＋ "+b+" − "+c,answer:fmt(v),sig:"pm:"+a+":"+b+":"+c,verify:()=>v+c-b===a}}
   if(f==="mm"){v=a-b-c;return v<0?null:{expr:a+" − "+b+" − "+c,answer:fmt(v),sig:"mm:"+a+":"+b+":"+c,verify:()=>v+c+b===a}}
   if(a-b<0||a-b+c>(L===0?20:L===1?99:999))return null;v=a-b+c;return{expr:a+" − "+b+" ＋ "+c,answer:fmt(v),sig:"mp:"+a+":"+b+":"+c,verify:()=>v-c+b===a}});
  return{title:"減法（低年級）",symbol:"−",subtitle:"減法計算・退位減法・加減混合",instruction:"減完用加法檢查；應用題要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：20 以內的減法，退位用拆十（一年級）。",advanced:"進階：二位數的減法，個位退位（二上）。",challenge:"挑戰：三位數的減法，十位是 0 的連續退位（二下）。"},
+  levels:{basic:"基礎：20 以內的減法，退位用拆十（一年級）。",advanced:"進階：二位數的減法、幾十減幾十、個位退位與直式填空（二上）。",challenge:"挑戰：三位數減三位數、□ 反求、個位十位都退位（含十位是 0）、用加法驗算、四個數的加減混合（二下）。"},
   units:[basic,borrow,mix],presets:{basic:{sub:6,borrow:6,mix:4},advanced:{sub:5,borrow:6,mix:4},challenge:{sub:5,borrow:6,mix:4}}};
 }
 
@@ -228,31 +293,53 @@ function wordConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const big=L=>L===0?rand(5,18):L===1?rand(20,99):rand(100,900);
  const story=unit("story","加減應用題","「合起來、又來了、共有」用加法；「拿走、用掉、還剩」用減法。先圈出題目問什麼。",ctx=>{
-  const L=lv(ctx),[u,t]=pick(THINGS),n=pick(NAMES),a=big(L),b=rand(1,L===0?Math.min(9,a-1):Math.floor(a*0.8)),f=pick(["join","take","total","left"]);
-  if(f==="join"){if(L===0&&a+b>20)return null;return{expr:n+"有 "+a+" "+u+t+"，又買了 "+b+" "+u+"，現在有幾"+u+"？",answer:(a+b)+" "+u,sig:"j:"+a+":"+b+t,verify:()=>a+b-b===a}}
-  if(f==="take")return{expr:n+"有 "+a+" "+u+t+"，送給同學 "+b+" "+u+"，還剩幾"+u+"？",answer:(a-b)+" "+u,sig:"t:"+a+":"+b+t,verify:()=>a-b+b===a};
-  if(f==="total"){if(L===0&&a+b>20)return null;return{expr:"盒子裡有紅色的"+t+" "+a+" "+u+"、藍色的"+t+" "+b+" "+u+"，一共有幾"+u+"？",answer:(a+b)+" "+u,sig:"o:"+a+":"+b+t,verify:()=>a+b-a===b}}
-  return{expr:"盒子裡有 "+a+" "+u+t+"，紅色的有 "+b+" "+u+"，其他是藍色的。藍色的有幾"+u+"？",answer:(a-b)+" "+u,sig:"l:"+a+":"+b+t,verify:()=>a-b+b===a}},"答：");
+  // 基礎：20 以內的一步驟；進階：100 以內，加入反求（原有多少、送出多少、放進多少）；挑戰：1000 以內的反求、一題兩問（共幾個、多幾個）
+  const L=lv(ctx),[u,t]=pick(THINGS),n=pick(NAMES),a=big(L),b=rand(L===0?1:L===1?5:20,L===0?Math.min(9,a-1):Math.floor(a*0.8)),f=pick([["join","take","total","left"],["take","total","orig","subtr","addend"],["orig","subtr","addend","twoQ"]][L]),A=(e,v)=>e+" ＝ "+v+"，答："+v+" "+u,mx=L===0?20:L===1?99:999;
+  if(f==="join"){if(a+b>mx)return null;return{expr:n+"有 "+a+" "+u+t+"，又買了 "+b+" "+u+"，現在有幾"+u+"？",answer:A(a+" ＋ "+b,a+b),sig:"j:"+a+":"+b+t,verify:()=>a+b-b===a}}
+  if(f==="take")return{expr:n+"有 "+a+" "+u+t+"，送給同學 "+b+" "+u+"，還剩幾"+u+"？",answer:A(a+" − "+b,a-b),sig:"t:"+a+":"+b+t,verify:()=>a-b+b===a};
+  if(f==="total"){if(a+b>mx)return null;return{expr:"盒子裡有紅色的"+t+" "+a+" "+u+"、藍色的"+t+" "+b+" "+u+"，一共有幾"+u+"？",answer:A(a+" ＋ "+b,a+b),sig:"o:"+a+":"+b+t,verify:()=>a+b-a===b}}
+  if(f==="left")return{expr:"盒子裡有 "+a+" "+u+t+"，紅色的有 "+b+" "+u+"，其他是藍色的。藍色的有幾"+u+"？",answer:A(a+" − "+b,a-b),sig:"l:"+a+":"+b+t,verify:()=>a-b+b===a};
+  const r=a-b;// 反求：a＝原有、b＝變化量、r＝結果
+  if(f==="orig")return{expr:n+"有一些"+t+"，送給同學 "+b+" "+u+"後，還剩 "+r+" "+u+"。"+n+"原來有幾"+u+"？",answer:A(r+" ＋ "+b,a),sig:"or:"+a+":"+b+t,verify:()=>a-b===r&&r+b===a};
+  if(f==="subtr"){if(Math.random()<.35){// 公車人數要合理（不超過 60 人）
+    const P=rand(20,60),off=rand(3,P-5),rem=P-off;return{expr:"公車上原有 "+P+" 人，到站後下車一些人，車上剩 "+rem+" 人。下車幾人？",answer:P+" − "+rem+" ＝ "+off+"，答："+off+" 人",sig:"bus:"+P+":"+off,verify:()=>rem+off===P&&P-rem===off}}
+   return{expr:n+"有 "+a+" "+u+t+"，送給同學一些後，還剩 "+r+" "+u+"。送給同學幾"+u+"？",answer:A(a+" − "+r,b),sig:"su:"+a+":"+b+t,verify:()=>a-r===b&&r+b===a}}
+  if(f==="addend"){const s=a+b;if(s>mx)return null;return{expr:"盒子裡原有 "+a+" "+u+t+"，媽媽又放進一些，現在有 "+s+" "+u+"。媽媽放進幾"+u+"？",answer:A(s+" − "+a,b),sig:"ad:"+a+":"+b+t,verify:()=>s-a===b&&a+b===s}}
+  const s=a+b;if(s>mx||r<1)return null;return{expr:"盒子裡有紅色的"+t+" "+a+" "+u+"、藍色的"+t+" "+b+" "+u+"。一共有幾"+u+"？紅色的比藍色的多幾"+u+"？",answer:a+" ＋ "+b+" ＝ "+s+"，"+a+" − "+b+" ＝ "+r+"，答：一共 "+s+" "+u+"，紅色多 "+r+" "+u,sig:"2q:"+a+":"+b+t,verify:()=>s-b===a&&r+b===a}},"列式：");
  const cmp=unit("comparemore","比多比少","「誰比誰多幾個」用大的減小的；「比 a 多 b」是 a＋b，「比 a 少 b」是 a−b。",ctx=>{
-  const L=lv(ctx),[u,t]=pick(THINGS),[p,q]=shuffle(NAMES).slice(0,2),a=big(L),b=rand(1,L===0?Math.min(9,a-1):Math.floor(a*.8)),f=pick(["diff","more","less","back"]);
-  if(f==="diff"){const c=a-b;return{expr:p+"有 "+a+" "+u+t+"，"+q+"有 "+c+" "+u+"。"+p+"比"+q+"多幾"+u+"？",answer:b+" "+u,sig:"d:"+a+":"+c+t,verify:()=>a-c===b}}
-  if(f==="more"){if(L===0&&a+b>20||a+b>999)return null;return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+"多 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:(a+b)+" "+u,sig:"m:"+a+":"+b+t,verify:()=>a+b-a===b}}
-  if(f==="less")return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+"少 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:(a-b)+" "+u,sig:"s:"+a+":"+b+t,verify:()=>a-b+b===a};
-  return{expr:p+"有 "+a+" "+u+t+"，比"+q+"多 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:(a-b)+" "+u,sig:"k:"+a+":"+b+t,verify:()=>a-b+b===a}},"答：");
+  // 基礎：誰比誰多、比 a 多 b、比 a 少 b；進階：加入「多幾／少幾」兩種問法和反向題（A 比 B 多 b，B 有幾）；挑戰：兩種反向題、比多比少後再求兩人合起來
+  const L=lv(ctx),[u,t]=pick(THINGS),[p,q]=shuffle(NAMES).slice(0,2),a=big(L),b=rand(L===0?1:L===1?3:12,L===0?Math.min(9,a-1):Math.floor(a*.8)),f=pick([["diff","more","less"],["diff","more","less","back"],["back","backLess","sum2","diff"]][L]),A=(e,v)=>e+" ＝ "+v+"，答："+v+" "+u,mx=L===0?20:L===1?99:999;
+  if(f==="diff"){const c=a-b,lessQ=L>0&&Math.random()<.5;return{expr:p+"有 "+a+" "+u+t+"，"+q+"有 "+c+" "+u+"。"+(lessQ?q+"比"+p+"少幾":p+"比"+q+"多幾")+u+"？",answer:A(a+" − "+c,b),sig:"d:"+a+":"+c+t+lessQ,verify:()=>a-c===b}}
+  if(f==="more"){if(a+b>mx)return null;return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+"多 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:A(a+" ＋ "+b,a+b),sig:"m:"+a+":"+b+t,verify:()=>a+b-a===b}}
+  if(f==="less")return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+"少 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:A(a+" − "+b,a-b),sig:"s:"+a+":"+b+t,verify:()=>a-b+b===a};
+  if(f==="backLess"){if(a+b>mx)return null;return{expr:p+"有 "+a+" "+u+t+"，比"+q+"少 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:A(a+" ＋ "+b,a+b),sig:"kl:"+a+":"+b+t,verify:()=>a+b-b===a}}
+  if(f==="sum2"){const more=Math.random()<.5,c=more?a+b:a-b,s=a+c;if(s>mx||c<1)return null;return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+(more?"多 ":"少 ")+b+" "+u+"。兩人一共有幾"+u+"？",answer:a+(more?" ＋ ":" − ")+b+" ＝ "+c+"，"+a+" ＋ "+c+" ＝ "+s+"，答："+s+" "+u,sig:"s2:"+a+":"+b+":"+more+t,verify:()=>s-a===c&&Math.abs(c-a)===b}}
+  return{expr:p+"有 "+a+" "+u+t+"，比"+q+"多 "+b+" "+u+"。"+q+"有幾"+u+"？",answer:A(a+" − "+b,a-b),sig:"k:"+a+":"+b+t,verify:()=>a-b+b===a}},"列式：");
  const box=unit("box","用 □ 表示未知數","□＋a＝b，□＝b−a；a−□＝b，□＝a−b；□−a＝b，□＝b＋a。可以把答案放回算式檢查。",ctx=>{
-  const L=lv(ctx),x=L===0?rand(1,9):L===1?rand(10,60):rand(100,500),a=L===0?rand(1,9):L===1?rand(5,39):rand(20,400),f=pick(L===0?["pa","ap","am"]:["pa","ap","am","ma"]);
+  // 基礎：20 以內的 □ 算式；進階：100 以內，加入 □−a＝b 與「把應用題用 □ 列式」；挑戰：1000 以內，以 □ 列式的應用題為主
+  const L=lv(ctx),x=L===0?rand(1,9):L===1?rand(10,60):rand(100,500),a=L===0?rand(1,9):L===1?rand(5,39):rand(20,400),f=pick([["pa","ap","am"],["pa","am","ma","story"],["am","ma","story","story"]][L]);
+  if(f==="story"){const [u,t]=pick(THINGS),n=pick(NAMES),g=pick(["orig-","orig+","take","put"]);let s,eq,ans,unitW=u;
+   // x＝未知數（□），a＝已知的變化量
+   if(g==="orig-"){const bus=Math.random()<.4&&x+a<=60;unitW=bus?"人":u;s=bus?"公車上原有一些人，到站下車 "+a+" 人後，車上還有 "+x+" 人。":n+"有一些"+t+"，送給同學 "+a+" "+u+"後，還剩 "+x+" "+u+"。";eq="□ − "+a+" ＝ "+x;ans=x+a;s+=bus?"原來有幾人？":n+"原來有幾"+u+"？"}
+   else if(g==="orig+"){s=n+"有一些"+t+"，媽媽又給"+ta(n)+" "+a+" "+u+"，現在有 "+(x+a)+" "+u+"。"+n+"原來有幾"+u+"？";eq="□ ＋ "+a+" ＝ "+(x+a);ans=x}
+   else if(g==="take"){s=n+"有 "+(x+a)+" "+u+t+"，送給同學一些後，還剩 "+a+" "+u+"。送給同學幾"+u+"？";eq=(x+a)+" − □ ＝ "+a;ans=x}
+   else{s="盒子裡有 "+a+" "+u+t+"，又放進一些，現在有 "+(x+a)+" "+u+"。放進幾"+u+"？";eq=a+" ＋ □ ＝ "+(x+a);ans=x}
+   return{expr:s+"用 □ 列出算式，並算出答案。",answer:eq+"，□ ＝ "+ans+"，答："+ans+" "+unitW,sig:"st:"+g+":"+x+":"+a+t,verify:()=>{const [l,r]=eq.split(" ＝ "),f2=l.replace("□",String(ans)).split(" ");return(f2[1]==="＋"?Number(f2[0])+Number(f2[2]):Number(f2[0])-Number(f2[2]))===Number(r)},lead:"列式："}}
   if(f==="pa")return{expr:"□ ＋ "+a+" ＝ "+(x+a),answer:fmt(x),sig:"pa:"+x+":"+a,verify:()=>x+a-a===x};
   if(f==="ap")return{expr:a+" ＋ □ ＝ "+(x+a),answer:fmt(x),sig:"ap:"+x+":"+a,verify:()=>a+x-a===x};
   if(f==="am")return{expr:(x+a)+" − □ ＝ "+a,answer:fmt(x),sig:"am:"+x+":"+a,verify:()=>x+a-x===a};
   return{expr:"□ − "+a+" ＝ "+x,answer:fmt(x+a),sig:"ma:"+x+":"+a,verify:()=>x+a-a===x}},"□＝");
  const two=unit("twostep","兩步驟的應用題","先算第一步，再用第一步的答案算第二步；也可以列成一個算式。",ctx=>{
-  const L=lv(ctx),[u,t]=pick(THINGS),n=pick(NAMES),a=big(L)+(L===0?2:0),b=rand(1,Math.max(1,Math.floor(a/3))),c=rand(1,Math.max(1,Math.floor(a/3))),f=pick(["mm","pm","mp"]);let v,s;
+  // 基礎：20 以內連減、加減；進階：100 以內；挑戰：先比多比少再合起來、買兩樣東西找錢、1000 以內的連減與加減
+  const L=lv(ctx),[u,t]=pick(THINGS),n=pick(NAMES),a=big(L)+(L===0?2:0),b=rand(1,Math.max(1,Math.floor(a/3))),c=rand(1,Math.max(1,Math.floor(a/3))),f=pick(L===2?["cmpSum","change","mm","pm"]:["mm","pm","mp"]);let v,s;
+  if(f==="cmpSum"){const [p,q]=shuffle(NAMES.filter(x=>x!==n)).slice(0,2),d=rand(12,Math.max(13,Math.floor(a/2))),more=Math.random()<.5,c2=more?a+d:a-d,tot=a+c2;if(c2<1||tot>999)return null;return{expr:p+"有 "+a+" "+u+t+"，"+q+"比"+p+(more?"多 ":"少 ")+d+" "+u+"，兩人一共有幾"+u+"？",answer:a+(more?" ＋ ":" − ")+d+" ＝ "+c2+"，"+a+" ＋ "+c2+" ＝ "+tot+"，答："+tot+" "+u,sig:"cs:"+a+":"+d+":"+more+t,verify:()=>tot-c2===a&&Math.abs(c2-a)===d}}
+  if(f==="change"){const big2=Math.random()<.4,pay=big2?500:100,p1=big2?rand(110,260):rand(15,48),p2=big2?rand(105,230):rand(12,45),ch=pay-p1-p2,[it1,it2]=shuffle(["一本筆記本","一盒彩色筆","一個鉛筆盒","一瓶水","一個便當","一本故事書"]).slice(0,2);if(ch<1||p1===p2)return null;return{expr:n+"買"+it1+" "+p1+" 元和"+it2+" "+p2+" 元，付了 "+pay+" 元，要找回幾元？",answer:pay+" − "+p1+" − "+p2+" ＝ "+ch+"，答："+ch+" 元",sig:"ch:"+p1+":"+p2+":"+pay,verify:()=>ch+p1+p2===pay}}
   if(f==="mm"){v=a-b-c;const [r1,r2]=shuffle(["弟弟","妹妹","哥哥","姊姊","同學","小明","小美"].filter(x=>x!==n)).slice(0,2);s=n+"有 "+a+" "+u+t+"，給"+r1+" "+b+" "+u+"，又給"+r2+" "+c+" "+u+"，還剩幾"+u+"？"}
   else if(f==="pm"){v=a+b-c;if(L===0&&a+b>20)return null;s=n+"有 "+a+" "+u+t+"，媽媽又給"+ta(n)+" "+b+" "+u+"，"+ta(n)+"用掉 "+c+" "+u+"，還剩幾"+u+"？"}
   else{v=a-b+c;s="架子上有 "+a+" "+u+t+"，拿走 "+b+" "+u+"，又放上 "+c+" "+u+"，現在有幾"+u+"？"}
-  if(v<0)return null;return{expr:s,answer:v+" "+u,sig:f+":"+a+":"+b+":"+c+t,verify:()=>f==="mm"?v+b+c===a:f==="pm"?v+c-b===a:v-c+b===a}},"答：");
+  if(v<0||b===c&&f!=="mm")return null;return{expr:s,answer:a+(f==="pm"?" ＋ ":" − ")+b+(f==="mp"?" ＋ ":" − ")+c+" ＝ "+v+"，答："+v+" "+u,sig:f+":"+a+":"+b+":"+c+t,verify:()=>f==="mm"?v+b+c===a:f==="pm"?v+c-b===a:v-c+b===a}},"列式：");
  return{title:"加減應用與 □",symbol:"□",subtitle:"加減應用題・比多比少・用 □ 表示未知數・兩步驟的應用題",instruction:"先讀懂題目，再決定用加法還是減法；答案要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：20 以內的應用題（一年級）。",advanced:"進階：100 以內的應用題與 □（二上）。",challenge:"挑戰：1000 以內的應用題、兩步驟（二下）。"},
+  levels:{basic:"基礎：20 以內的一步驟應用題與 □ 算式（一年級）。",advanced:"進階：100 以內，加入反求（原有多少、送出多少）、多幾／少幾的反向題、用 □ 列式（二上）。",challenge:"挑戰：1000 以內的反求與用 □ 列式、一題兩問、先比多比少再合起來、買兩樣東西找錢（二下）。"},
   units:[story,cmp,box,two],presets:{basic:{story:4,comparemore:3,box:4,twostep:2},advanced:{story:4,comparemore:4,box:4,twostep:3},challenge:{story:3,comparemore:4,box:4,twostep:4}}};
 }
 
@@ -262,31 +349,51 @@ function multiplyConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const fac=L=>pick(L===0?[2,5,10]:L===1?[2,3,4,5,8,10]:[2,3,4,5,6,7,8,9]),cnt=L=>rand(L===2?0:1,9);
  const groups=unit("groups","幾個一數與乘法算式","每份一樣多時可以用乘法：每份的數量 × 份數。例如每盤 4 顆、3 盤，寫成 4 × 3 ＝ 12。",ctx=>{
-  const L=lv(ctx),a=fac(L),b=Math.max(1,cnt(L)),[u,t,box]=pick([["顆","糖果","盤"],["枝","鉛筆","盒"],["個","餅乾","袋"],["張","卡片","包"],["顆","彈珠","罐"]]);
-  if(L===2&&Math.random()<.4){const c=rand(1,a-1);return{expr:"每"+box+"有 "+a+" "+u+t+"，"+b+" "+box+"再加上 "+c+" "+u+"，一共有幾"+u+"？",answer:a+" × "+b+" ＋ "+c+" ＝ "+(a*b+c)+"，答："+(a*b+c)+" "+u,sig:"gc:"+a+":"+b+":"+c+t,verify:()=>a*b+c-c===a*b}}
+  // 基礎：2、5、10 的「每份幾個、幾份」與「幾個幾」；進階：3、4、8 也加入，再加上乘加；挑戰：3～9，乘加、乘減、兩種包裝合起來（a×b＋c×d）
+  const L=lv(ctx),a=L===2?rand(3,9):fac(L),b=rand(L===0?2:3,9),[u,t,box]=pick([["顆","糖果","盤"],["枝","鉛筆","盒"],["片","餅乾","袋"],["張","卡片","包"],["顆","彈珠","罐"]]),f=pick([["g","jige"],["g","jige","plus"],["plus","minus","two"]][L]);
+  if(f==="two"){const box2=box==="盒"?"袋":"盒",c=rand(2,9),d=rand(2,6);if(c===a||a*b+c*d>100)return null;return{expr:"每"+box+"有 "+a+" "+u+t+"，買了 "+b+" "+box+"；每"+box2+"有 "+c+" "+u+"，又買了 "+d+" "+box2+"，一共有幾"+u+"？",answer:a+" × "+b+" ＋ "+c+" × "+d+" ＝ "+(a*b)+" ＋ "+(c*d)+" ＝ "+(a*b+c*d)+"，答："+(a*b+c*d)+" "+u,sig:"tw:"+a+":"+b+":"+c+":"+d+t,verify:()=>Array(b).fill(a).concat(Array(d).fill(c)).reduce((s,x)=>s+x,0)===a*b+c*d}}
+  if(f==="jige")return{expr:b+" 個 "+a+" 合起來是多少？用乘法算式表示。",answer:a+" × "+b+" ＝ "+(a*b),sig:"jg:"+a+":"+b,verify:()=>Array(b).fill(a).reduce((s,x)=>s+x,0)===a*b};
+  if(f==="plus"){const c=rand(1,a-1);if(a<3)return null;return{expr:"每"+box+"有 "+a+" "+u+t+"，"+b+" "+box+"再加上 "+c+" "+u+"，一共有幾"+u+"？",answer:a+" × "+b+" ＋ "+c+" ＝ "+(a*b+c)+"，答："+(a*b+c)+" "+u,sig:"gc:"+a+":"+b+":"+c+t,verify:()=>a*b+c-c===a*b}}
+  if(f==="minus"){const c=rand(2,a*b-2);if(c===a||a<3)return null;return{expr:"每"+box+"有 "+a+" "+u+t+"，買了 "+b+" "+box+"，用掉 "+c+" "+u+"，還剩幾"+u+"？",answer:a+" × "+b+" − "+c+" ＝ "+(a*b-c)+"，答："+(a*b-c)+" "+u,sig:"gm:"+a+":"+b+":"+c+t,verify:()=>Array(b).fill(a).reduce((s,x)=>s+x,0)-c===a*b-c&&a*b-c>0}}
   return{expr:"每"+box+"有 "+a+" "+u+t+"，"+b+" "+box+"一共有幾"+u+"？列成乘法算式。",answer:a+" × "+b+" ＝ "+(a*b)+"，答："+(a*b)+" "+u,sig:"g:"+a+":"+b+t,verify:()=>Array(b).fill(a).reduce((s,x)=>s+x,0)===a*b}},"列式：");
  const repeat=unit("repeat","連加與乘法","同一個數連加幾次，就是這個數乘以幾：5＋5＋5＋5＝5×4。",ctx=>{
-  const L=lv(ctx),a=fac(L),b=rand(2,9),f=pick(L===2?["toMul","plus1","minus1"]:["toMul","toAdd","value"]);
+  // 基礎：連加 ↔ 乘法、a × b 表示幾個幾（最多 6 個加數）；進階：最多 6 個加數，加入「再多一個」；挑戰：多一個／少一個、a×b＋a×c 合併
+  const L=lv(ctx),a=fac(L),b=rand(2,L===0?6:L===1?6:9),f=pick([["toMul","toAdd","value","read"],["toMul","value","plus1"],["plus1","minus1","combine"]][L]);
+  if(f==="combine"){const x=rand(2,6),y=rand(2,9-x);return{expr:a+" × "+x+" ＋ "+a+" × "+y+" ＝ "+a+" × （　）＝ （　）",answer:(x+y)+"；"+(a*(x+y)),sig:"cb:"+a+":"+x+":"+y,verify:()=>a*x+a*y===a*(x+y)}}
+  if(f==="plus1"&&b>8)return null;
+  if(f==="read")return{expr:a+" × "+b+" 表示幾個幾？用連加算出答案。",answer:b+" 個 "+a+"；"+Array(b).fill(a).join(" ＋ ")+" ＝ "+(a*b),sig:"rd:"+a+":"+b,verify:()=>Array(b).fill(a).reduce((s,x)=>s+x,0)===a*b};
   if(f==="plus1")return{expr:a+" × "+b+" ＋ "+a+" ＝ "+a+" × （　）＝ （　）",answer:(b+1)+"；"+(a*(b+1)),sig:"p1:"+a+":"+b,verify:()=>a*b+a===a*(b+1)};
   if(f==="minus1")return{expr:a+" × "+b+" − "+a+" ＝ "+a+" × （　）＝ （　）",answer:(b-1)+"；"+(a*(b-1)),sig:"m1:"+a+":"+b,verify:()=>a*b-a===a*(b-1)};
   if(f==="toAdd")return{expr:"把 "+a+" × "+b+" 寫成連加的算式，並算出答案。",answer:Array(b).fill(a).join(" ＋ ")+" ＝ "+(a*b),sig:"a:"+a+":"+b,verify:()=>Array(b).fill(a).reduce((s,x)=>s+x,0)===a*b};
   if(f==="value")return{expr:Array(b).fill(a).join(" ＋ ")+" ＝ "+a+" × （　）＝ （　）",answer:b+"；"+(a*b),sig:"v:"+a+":"+b,verify:()=>Array(b).fill(a).reduce((s,x)=>s+x,0)===a*b};
   return{expr:"把 "+Array(b).fill(a).join(" ＋ ")+" 寫成乘法算式。",answer:a+" × "+b+" ＝ "+(a*b),sig:"m:"+a+":"+b,verify:()=>Array(b).fill(a).reduce((s,x)=>s+x,0)===a*b}},"答：");
  const times=unit("times","幾的幾倍","a 的 b 倍就是 b 個 a，算式是 a × b。",ctx=>{
-  const L=lv(ctx),a=fac(L),b=Math.max(1,cnt(L)),f=pick(L===2?["times","back","compare"]:["times","times2","compare"]);
+  // 基礎：幾的幾倍、同一個數乘以不同的數比大小；進階：倍的應用、（　）的幾倍是多少；挑戰：反推、倍數再比較多幾、交換或不同算式比大小（會出現 ＝）
+  const L=lv(ctx),a=fac(L),b=Math.random()<.08?1:rand(2,9),f=pick([["times","times2","compare"],["times2","back","compare"],["back","timesDiff","commute"]][L]);if(b===1&&f!=="times")return null;
+  if(f==="timesDiff"){const [u,t]=pick([["張","貼紙"],["顆","彈珠"],["本","書"]]);return{expr:"弟弟有 "+a+" "+u+t+"，哥哥的"+t+"是弟弟的 "+b+" 倍。哥哥比弟弟多幾"+u+"？",answer:a+" × "+b+" ＝ "+(a*b)+"，"+(a*b)+" − "+a+" ＝ "+(a*b-a)+"，答："+(a*b-a)+" "+u,sig:"td:"+a+":"+b+t,verify:()=>a*(b-1)===a*b-a}}
+  if(f==="commute"){const g=pick(["swap","eqp","neq"]);let x,y,p,q;
+   if(g==="swap"){x=rand(2,9);y=rand(2,9);if(x===y)return null;p=y;q=x}
+   else if(g==="eqp"){// 積相同、因數不同的兩個乘法算式
+    [[x,y],[p,q]]=shuffle(pick([[[2,6],[3,4]],[[2,8],[4,4]],[[2,9],[3,6]],[[3,8],[4,6]],[[4,9],[6,6]],[[2,4],[1,8]],[[2,3],[1,6]]].filter(e=>e.flat().every(v=>v>=2)))).map(e=>Math.random()<.5?e:[e[1],e[0]])}
+   else{x=rand(2,9);y=rand(2,9);p=rand(2,9);q=rand(2,9);if(x*y===p*q||Math.abs(x*y-p*q)>6)return null}
+   const s=x*y>p*q?"＞":x*y<p*q?"＜":"＝";return{expr:"在 ○ 裡填入 ＞、＜ 或 ＝："+x+" × "+y+" ○ "+p+" × "+q,answer:s,sig:"cm:"+x+":"+y+":"+p+":"+q,verify:()=>(s==="＝")===(Array(y).fill(x).reduce((t,v)=>t+v,0)===Array(q).fill(p).reduce((t,v)=>t+v,0))}}
   if(f==="times")return{expr:a+" 的 "+b+" 倍是多少？",answer:a+" × "+b+" ＝ "+(a*b),sig:"t:"+a+":"+b,verify:()=>a*b===b*a};
   if(f==="times2"){const [u,t]=pick([["本","書"],["個","積木"],["顆","彈珠"]]);return{expr:"弟弟有 "+a+" "+u+t+"，哥哥的"+t+"是弟弟的 "+b+" 倍，哥哥有幾"+u+"？",answer:a+" × "+b+" ＝ "+(a*b)+"，答："+(a*b)+" "+u,sig:"t2:"+a+":"+b+t,verify:()=>a*b/b===a}}
   if(f==="back"){if(!b)return null;return{expr:"（　）的 "+b+" 倍是 "+(a*b)+"。",answer:fmt(a),sig:"b:"+a+":"+b,verify:()=>a*b/b===a}}
   const c=Math.max(1,cnt(L));if(c===b)return null;return{expr:"在 ○ 裡填入 ＞、＜ 或 ＝："+a+" × "+b+" ○ "+a+" × "+c,answer:b>c?"＞":"＜",sig:"c:"+a+":"+b+":"+c,verify:()=>(a*b>a*c)===(b>c)}},"答：");
  const dots=unit("dots","看圖列乘法算式","一排一排排好的東西：每排的個數 × 排數，就是全部的個數。",ctx=>{
   const L=lv(ctx),c=fac(L)===10?rand(2,9):rand(2,L===0?5:9),r=rand(2,L===0?5:6),W=Math.max(120,c*18+20),H=r*18+16;let b="";for(let i=0;i<r;i++)for(let j=0;j<c;j++)b+='<circle cx="'+(16+j*18)+'" cy="'+(14+i*18)+'" r="6" fill="'+INK+'"/>';
-  const f=pick(L===2?["row","take","col"]:["row","total","col"]);
+  // 基礎：每排幾個、幾排、共幾個；進階：直著看（每行幾個、幾行）、橫看直看各列一個算式；挑戰：拿走一排、再加一排、兩種看法
+  const f=pick([["row","total","col"],["col","both","total"],["take","both","addRow"]][L]);
+  if(f==="both"&&r===c)return null;
+  if(f==="both")return{expr:SVG(W,H,b)+"橫著看和直著看，各寫出一個乘法算式，算出一共有幾個圓點。",answer:c+" × "+r+" ＝ "+(c*r)+"；"+r+" × "+c+" ＝ "+(r*c),sig:"bo:"+r+":"+c,verify:()=>Array(r).fill(c).reduce((s,x)=>s+x,0)===Array(c).fill(r).reduce((s,x)=>s+x,0)};
+  if(f==="addRow")return{expr:SVG(W,H,b)+"如果再排上一排一樣多的圓點，一共有幾個？用乘法算式算。",answer:c+" × "+(r+1)+" ＝ "+(c*(r+1)),sig:"ar:"+r+":"+c,verify:()=>c*r+c===c*(r+1)};
   if(f==="take")return{expr:SVG(W,H,b)+"圖中的圓點，拿走一整排以後，還剩幾個？用乘法算式算。",answer:c+" × "+(r-1)+" ＝ "+(c*(r-1)),sig:"k:"+r+":"+c,verify:()=>c*r-c===c*(r-1)};
   if(f==="col")return{expr:SVG(W,H,b)+"圖中每一直行有 "+r+" 個，有幾直行？用乘法算式算出全部有幾個。",answer:c+" 行；"+r+" × "+c+" ＝ "+(r*c),sig:"c:"+r+":"+c,verify:()=>r*c===c*r};
   if(f==="total")return{expr:SVG(W,H,b)+"圖中一共有幾個圓點？",answer:(c*r)+" 個（"+c+" × "+r+"）",sig:"t:"+r+":"+c,verify:()=>Array(r).fill(c).reduce((s,x)=>s+x,0)===c*r};
   return{expr:SVG(W,H,b)+"圖中每一橫排有幾個？有幾排？用乘法算式表示。",answer:"每排 "+c+" 個、"+r+" 排；"+c+" × "+r+" ＝ "+(c*r),sig:"r:"+r+":"+c,verify:()=>c*r===r*c}},"答：");
  return{title:"乘法的意義",symbol:"×",subtitle:"幾個一數與乘法算式・連加與乘法・幾的幾倍・看圖列乘法算式",instruction:"乘法算式寫成「每份的數量 × 份數」。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：2、5、10 的乘法（二上）。",advanced:"進階：2、3、4、5、8、10 的乘法。",challenge:"挑戰：2 到 9 的乘法、幾的幾倍反推。"},
+  levels:{basic:"基礎：2、5、10 的乘法：幾個幾、連加寫成乘法、幾的幾倍、看圖列式（二上）。",advanced:"進階：2、3、4、5、8、10 的乘法，加入乘加、「再多一個」、（　）的幾倍、橫看直看兩種算式。",challenge:"挑戰：2 到 9 的乘法：乘加與乘減、多一個少一個與合併、倍數再比多少、積相同的算式比大小（二下）。"},
   units:[groups,repeat,times,dots],presets:{basic:{groups:3,repeat:3,times:3,dots:3},advanced:{groups:3,repeat:3,times:3,dots:3},challenge:{groups:3,repeat:3,times:3,dots:3}}};
 }
 
@@ -294,31 +401,43 @@ function moneyConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const C0=[50,10,5,1],C1=[500,100,50,10,5,1],C2=[1000,500,100,50,10,5,1],coins=L=>L===0?C0:L===1?C1:C2,nm=v=>v+" 元"+(v>=100?"鈔票":"硬幣"),qn=(v,k)=>k+(v>=100?" 張 ":" 個 ")+v+" 元";
  const count=unit("count","數錢","先數大的錢，再數小的錢：例如 50、60、70、75、76。",ctx=>{
-  const L=lv(ctx),cs=coins(L),pickC=shuffle(cs).slice(0,L===0?3:4).sort((x,y)=>y-x),n=pickC.map(()=>rand(1,L===0?4:3)),tot=pickC.reduce((s,v,i)=>s+v*n[i],0);if(L===0&&tot>100)return null;
-  const f=pick(["total","toTen","need"]),txt="有 "+pickC.map((v,i)=>qn(v,n[i])).join("、");
+  // 基礎：100 元以內數錢、換成 10 元；進階：1000 元以內（500 元最多一張），加上還差多少到整百；挑戰：加入 1000 元，反求某一種錢有幾個
+  const L=lv(ctx),cs=coins(L),pickC=shuffle(cs).slice(0,L===0?3:4).sort((x,y)=>y-x),n=pickC.map(v=>v===500&&L===1?1:rand(1,L===0?4:3)),tot=pickC.reduce((s,v,i)=>s+v*n[i],0);if(L===0&&tot>100||L===1&&tot>999)return null;
+  const f=pick([["total","total","toTen"],["total","toTen","need"],["total","need","missing","missing"]][L]),txt="有 "+pickC.map((v,i)=>qn(v,n[i])).join("、");
+  if(f==="missing"){const cs3=pickC.slice(0,3),k=cs3.map(()=>rand(1,4)),j=rand(1,2);k[j]=rand(2,9);const T=cs3.reduce((s,v,i)=>s+v*k[i],0),known=cs3.map((v,i)=>i===j?"一些 "+v+" 元"+(v>=100?"鈔票":"硬幣"):qn(v,k[i]));return{expr:"有 "+known.join("、")+"，一共是 "+T+" 元。"+cs3[j]+" 元"+(cs3[j]>=100?"鈔票有幾張":"硬幣有幾個")+"？",answer:k[j]+(cs3[j]>=100?" 張":" 個"),sig:"ms:"+cs3+":"+k+":"+j,verify:()=>(T-cs3.reduce((s,v,i)=>i===j?s:s+v*k[i],0))/cs3[j]===k[j]}}
   if(f==="toTen"){// 換錢：手上一定要有比目標錢幣大的錢（不出「3 個 10 元換成 10 元」）；進階以上也可換成 50 元
    const tg=L===0?10:pick([10,10,50]),tc=cs.filter(v=>v>=tg&&v<=100),k=tc.map(()=>rand(0,3)),T=tc.reduce((s,v,i)=>s+v*k[i],0);if(!T||T>500||!tc.some((v,i)=>v>tg&&k[i]))return null;return{expr:"有 "+tc.map((v,i)=>qn(v,k[i])).filter((x,i)=>k[i]).join("、")+"，全部換成 "+nm(tg)+"，可以換幾個？",answer:(T/tg)+" 個",sig:"t:"+tg+":"+tc+":"+k,verify:()=>T%tg===0&&tc.reduce((s,v,i)=>s+(v/tg)*k[i],0)===T/tg&&tc.some((v,i)=>v>tg&&k[i])}}
   if(f==="need"){const goal=Math.ceil((tot+1)/100)*100;return{expr:txt+"，還要再多幾元才有 "+goal+" 元？",answer:(goal-tot)+" 元",sig:"n:"+pickC+":"+n,verify:()=>goal-tot>0}}
   return{expr:txt+"，一共是幾元？",answer:tot+" 元",sig:"c:"+pickC+":"+n,verify:()=>tot===n.reduce((s,k,i)=>s+k*pickC[i],0)}},"答：");
  const change=unit("change","付錢與找錢","找回的錢＝付的錢－東西的價錢。可以從價錢往上數到付的錢。",ctx=>{
-  const L=lv(ctx),[t,lo,hi]=pick(L===0?[["一枝鉛筆",5,45],["一塊橡皮擦",8,30],["一包餅乾",15,49]]:L===1?[["一本故事書",120,380],["一個水壺",150,450],["一盒色筆",60,95]]:[["一雙球鞋",450,980],["一個書包",380,880],["一件外套",520,990]]),p=rand(lo,hi),pay=L===0?50:L===1?(p<100?100:500):1000,f=pick(["change","two"]);
-  if(f==="two"&&L>0){const q=rand(lo,hi);if(p+q>pay)return null;return{expr:"買"+t+" "+p+" 元和另一件 "+q+" 元的東西，付了 "+pay+" 元，要找回幾元？",answer:(pay-p-q)+" 元",sig:"t:"+p+":"+q+":"+pay,verify:()=>pay-p-q+q+p===pay}}
+  // 基礎：付 50 元找錢；進階：付 100、500 元，兩樣東西一起買；挑戰：付好幾張鈔票、買 2 個一樣的、兩樣東西付 1000 元
+  const L=lv(ctx),[t,lo,hi]=pick(L===0?[["一枝鉛筆",5,45],["一塊橡皮擦",8,30],["一包餅乾",15,49]]:L===1?[["一本故事書",120,380],["一個水壺",150,450],["一盒色筆",60,95]]:[["一雙球鞋",450,980],["一個書包",380,880],["一件外套",520,990]]),p=rand(lo,hi),pay=L===0?50:L===1?(p<100?100:500):1000,f=pick([["change"],["change","two"],["multiBill","twoSame","two"]][L]);
+  if(f==="multiBill"){const v=pick([100,500]),pp=v===500?rand(520,1480):rand(150,780),k=Math.ceil(pp/v),P=k*v;if(P===pp||k<2)return null;return{expr:t+" "+fmt(pp)+" 元，付了 "+k+" 張 "+v+" 元鈔票，要找回幾元？",answer:(P-pp)+" 元",sig:"mb:"+t+pp+":"+v,verify:()=>P-pp>0&&P-pp<v&&(P-pp)+pp===k*v}}
+  if(f==="twoSame"){const [it,u]=pick([["水壺","個"],["故事書","本"],["鉛筆盒","個"],["玩具車","輛"]]),x=rand(150,480);return{expr:"一"+u+it+" "+x+" 元，買 2 "+u+"，付了 1000 元，要找回幾元？",answer:(1000-2*x)+" 元",sig:"ts:"+it+x,verify:()=>1000-x-x===1000-2*x&&2*x<1000}}
+  if(f==="two"){const q=rand(lo,hi);if(p+q>pay)return null;return{expr:"買"+t+" "+p+" 元和另一件 "+q+" 元的東西，付了 "+pay+" 元，要找回幾元？",answer:(pay-p-q)+" 元",sig:"t:"+p+":"+q+":"+pay,verify:()=>pay-p-q+q+p===pay}}
   if(p>pay)return null;return{expr:t+" "+p+" 元，付了"+(pay<100?"一個 "+pay+" 元硬幣":"一張 "+pay+" 元鈔票")+"，要找回幾元？",answer:(pay-p)+" 元",sig:"c:"+t+p+":"+pay,verify:()=>pay-p+p===pay}},"答：");
  const fewest=unit("fewest","最少的錢幣","要用最少張（個），就先用最大的錢，剩下的再用比較小的錢。",ctx=>{
   const L=lv(ctx),cs=coins(L),amt=rand(L===0?16:120,L===0?99:L===1?999:2999);const use=[];let r=amt;for(const v of cs){const k=Math.floor(r/v);if(k)use.push([v,k]);r-=k*v}
-  const f=pick(["each","count","no50"]);
+  // 基礎：100 元以內用最少的硬幣（含沒有 50 元時）；進階：加入鈔票；挑戰：先算找回多少，再用最少的錢找
+  const f=pick([["each","count","no50"],["each","count","no50"],["each","no50","payBack"]][L]);
+  if(f==="payBack"){const price=rand(105,985),c=1000-price,u3=[];let r3=c;for(const v of cs.filter(v=>v<1000)){const k=Math.floor(r3/v);if(k)u3.push([v,k]);r3-=k*v}if(price%100===0)return null;
+   return{expr:"買一個 "+price+" 元的東西，付了 1000 元。找回的錢要用最少的鈔票和硬幣，各要幾張（個）？",answer:"找回 "+c+" 元："+u3.map(([v,k])=>qn(v,k)).join("、"),sig:"pb:"+price,verify:()=>u3.reduce((s,[v,k])=>s+v*k,0)+price===1000&&u3.every(([v,k])=>v===500||k*v<{100:500,50:100,10:50,5:10,1:5}[v])}}
   if(f==="count"){const nb=use.reduce((s,[v,k])=>s+(v>=100?k:0),0),nc=use.reduce((s,[v,k])=>s+(v<100?k:0),0);return{expr:"要剛好付 "+amt+" 元，最少要用"+(L>0?"幾張鈔票和幾個硬幣":"幾個錢幣")+"？",answer:L>0?nb+" 張鈔票、"+nc+" 個硬幣":nc+" 個",sig:"c:"+amt+":"+L,verify:()=>use.reduce((s,[v,k])=>s+v*k,0)===amt&&nb+nc===use.reduce((s,[,k])=>s+k,0)}}
   if(f==="no50"){const cs2=cs.filter(v=>v!==50),u2=[];let r2=amt;for(const v of cs2){const k=Math.floor(r2/v);if(k)u2.push([v,k]);r2-=k*v}return{expr:"沒有 50 元硬幣，要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾"+(L>0?"張（個）":"個")+"？",answer:u2.map(([v,k])=>qn(v,k)).join("、"),sig:"n:"+amt+":"+L,verify:()=>u2.reduce((s,[v,k])=>s+v*k,0)===amt}}
   return{expr:"要剛好付 "+amt+" 元，用最少的錢幣"+(L>0?"和鈔票":"")+"，各要幾"+(L>0?"張（個）":"個")+"？",answer:use.map(([v,k])=>qn(v,k)).join("、"),sig:"f:"+amt+":"+L,verify:()=>use.reduce((s,[v,k])=>s+v*k,0)===amt}},"答：");
  const enough=unit("enough","錢夠不夠","先算出有多少錢，再和價錢比：比價錢多或一樣就夠，不夠時差多少用減法。",ctx=>{
-  const L=lv(ctx),cs=coins(L),pc=shuffle(cs).slice(0,2).sort((x,y)=>y-x),n=pc.map(()=>rand(1,4)),have=pc[0]*n[0]+pc[1]*n[1],price=have+pick([-1,1])*rand(1,L===0?20:150);
+  const L=lv(ctx),cs=coins(L),pc=shuffle(cs).slice(0,2).sort((x,y)=>y-x),n=pc.map(v=>v===500&&L===1?1:rand(1,4)),have=pc[0]*n[0]+pc[1]*n[1],price=have+pick([-1,1])*rand(1,L===0?20:150);
   // 合理性：手上至少 20 元、東西至少 10 元，價錢和手上的錢差不超過一半（不出「有 6 元想買 72 元」「想買 3 元的玩具」）
   if(have<20||price<10||Math.abs(price-have)>have/2)return null;const ok=have>=price;
-  if(L===2&&Math.random()<.4){const p2=Math.floor(price/2);if(p2<10||Math.abs(2*p2-have)>have/2)return null;const ok2=have>=2*p2;return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 2 個一樣的玩具，每個 "+p2+" 元，錢夠不夠？"+"差多少或剩多少？",answer:ok2?"夠，剩 "+(have-2*p2)+" 元":"不夠，還差 "+(2*p2-have)+" 元",sig:"e2:"+pc+":"+n+":"+p2,verify:()=>ok2===(have>=p2*2)}}
-  if(Math.random()<.3&&!ok)return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 "+price+" 元的玩具，還要再存幾元？",answer:(price-have)+" 元",sig:"s:"+pc+":"+n+":"+price,verify:()=>price-have>0};
+  if(L===0&&Math.max(have,price)>100||L===1&&Math.max(have,price)>999)return null;// 基礎 100 元以內、進階 1000 元以內
+  // 基礎：100 元以內夠不夠、剩或差多少、還要再存幾元；進階：1000 元以內；挑戰：買 2 個一樣的東西
+  const f=pick([["enough","save"],["enough","save"],["two","two","save","enough"]][L]);
+  if(f==="save"&&ok)return null;
+  if(f==="two"){const p2=Math.floor(price/2);if(p2<10||Math.abs(2*p2-have)>have/2)return null;const ok2=have>=2*p2;return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 2 個一樣的玩具，每個 "+p2+" 元，錢夠不夠？"+"差多少或剩多少？",answer:ok2?"夠，剩 "+(have-2*p2)+" 元":"不夠，還差 "+(2*p2-have)+" 元",sig:"e2:"+pc+":"+n+":"+p2,verify:()=>ok2===(have>=p2*2)}}
+  if(f==="save")return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 "+price+" 元的玩具，還要再存幾元？",answer:(price-have)+" 元",sig:"s:"+pc+":"+n+":"+price,verify:()=>price-have>0};
   return{expr:"小明有 "+pc.map((v,i)=>qn(v,n[i])).join("、")+"，想買 "+price+" 元的玩具，錢夠不夠？"+(ok?"買了以後剩幾元？":"還差幾元？"),answer:ok?"夠，剩 "+(have-price)+" 元":"不夠，還差 "+(price-have)+" 元",sig:"e:"+pc+":"+n+":"+price,verify:()=>ok===(have>=price)}},"答：");
  return{title:"錢幣",symbol:"元",subtitle:"數錢・付錢與找錢・最少的錢幣・錢夠不夠",instruction:"答案要寫「元」。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：1、5、10、50 元，100 元以內（一年級）。",advanced:"進階：加入 100、500 元，1000 元以內（二上）。",challenge:"挑戰：加入 1000 元鈔票、兩樣東西一起買（二下）。"},
+  levels:{basic:"基礎：1、5、10、50 元，100 元以內：數錢、換錢、付 50 元找錢、最少的硬幣（一年級）。",advanced:"進階：加入 100、500 元，1000 元以內：還差多少到整百、兩樣一起買、沒有 50 元時、還要存幾元（二上）。",challenge:"挑戰：加入 1000 元：反求某種錢有幾個、付好幾張鈔票、買 2 個一樣的、找回的錢用最少的鈔票硬幣（二下）。"},
   units:[count,change,fewest,enough],presets:{basic:{count:4,change:3,fewest:3,enough:3},advanced:{count:3,change:4,fewest:3,enough:3},challenge:{count:3,change:4,fewest:3,enough:3}}};
 }
 
@@ -333,36 +452,54 @@ function timeConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const T=(h,m)=>h+" 時"+(m?" "+m+" 分":"");
  const read=unit("read","看鐘面讀時刻","短針（時針）指幾就是幾時；長針（分針）指 12 是整點、指 6 是 30 分，每走一大格是 5 分。",ctx=>{
-  const L=lv(ctx),h=rand(1,12),m=L===0?pick([0,0,30]):L===1?5*rand(0,11):rand(0,59),f=pick(L===0?["read","afterH","half"]:["read","read","after"]);
+  // 基礎：整點、半點，再過幾小時；進階：5 分一格的幾時幾分，再過幾小時、再過幾分；挑戰：任意分鐘，再過幾分、幾分鐘以前（倒推）
+  const L=lv(ctx),h=rand(1,12),m=L===0?pick([0,0,30]):L===1?5*rand(0,11):rand(0,59),f=pick([["read","afterH","half"],["read","after","afterH"],["read","after","before"]][L]);
+  if(f==="before"){const d=rand(5,40),t=(h*60+m-d+720)%720,H=Math.floor(t/60)||12,M=t%60;return{expr:clockFace(h,m)+"鐘面上的時刻，"+d+" 分鐘以前是幾時幾分？",answer:T(H,M),sig:"bf:"+h+":"+m+":"+d,verify:()=>(((h%12)*60+m)-((H%12)*60+M)+720)%720===d}}
   if(f==="afterH"){const d=rand(1,5),H=(h+d-1)%12+1;return{expr:clockFace(h,m)+"鐘面上的時刻再過 "+d+" 小時是幾時"+(m?"幾分":"")+"？",answer:T(H,m),sig:"ah:"+h+":"+m+":"+d,verify:()=>(H-h+12)%12===d%12}}
   if(f==="half"&&m!==30)return null;
   if(f==="after"){const d=L===1?5*rand(1,6):rand(5,40),t=(h*60+m+d)%720,H=Math.floor(t/60)||12,M=t%60;return{expr:clockFace(h,m)+"鐘面上的時刻再過 "+d+" 分鐘是幾時幾分？",answer:T(H,M),sig:"a:"+h+":"+m+":"+d,verify:()=>((H%12)*60+M-((h%12)*60+m)+720)%720===d}}
   return{expr:clockFace(h,m)+"鐘面上是幾時"+(m?"幾分":"")+"？",answer:T(h,m),sig:"r:"+h+":"+m+":"+f,verify:()=>h>=1&&h<=12&&m>=0&&m<60}},"答：");
  const elapsed=unit("elapsed","經過的時間","從開始到結束經過多久：整點可以直接相減；分鐘不夠減就借 1 小時（60 分）。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["hours","before","end"]:L===1?["hm","end","hours"]:["noon","hm","end"]);
-  if(f==="before"){const a=rand(5,12),d=rand(1,a-1);return{expr:"現在是 "+a+" 時，"+d+" 小時前是幾時？",answer:(a-d)+" 時",sig:"bf:"+a+":"+d,verify:()=>a-d+d===a}}
+  // 基礎：整點經過幾小時、幾小時前、幾時做完；進階：5 分一格的幾小時幾分、有分鐘的幾時做完與幾小時前；挑戰：分鐘不夠減要借 1 小時、跨中午、由結束時刻倒推開始時刻
+  const L=lv(ctx),f=pick([["hours","before","end"],["hm","end","before"],["noon","borrow","startBack"]][L]),HM=d=>(Math.floor(d/60)?Math.floor(d/60)+" 小時"+(d%60?" ":""):"")+(d%60?d%60+" 分":"");
+  if(f==="before"){const a=rand(5,12),d=rand(1,a-1),m=L===0?0:5*rand(1,11);return{expr:"現在是 "+T(a,m)+"，"+d+" 小時前是幾時"+(m?"幾分":"")+"？",answer:T(a-d,m),sig:"bf:"+a+":"+d+":"+m,verify:()=>a-d+d===a}}
+  if(f==="borrow"){const a=rand(1,9),m1=5*rand(5,11),b=a+rand(1,2),m2=5*rand(0,Math.floor(m1/5)-1),s=a*60+m1,e=b*60+m2,d=e-s;if(b>12||d<=0)return null;return{expr:"從 "+T(a,m1)+"到 "+T(b,m2)+"，經過了幾小時幾分？",answer:HM(d),sig:"bw:"+s+":"+e,verify:()=>m2<m1&&(b-a-1)*60+(60+m2-m1)===d}}
+  if(f==="startBack"){const e=rand(3,11)*60+5*rand(0,11),d=rand(1,2)*60+5*rand(1,11),s=e-d;if(s<60)return null;return{expr:"弟弟做功課做了 "+HM(d)+"，"+T(Math.floor(e/60),e%60)+"做完，他幾時幾分開始做功課？",answer:T(Math.floor(s/60),s%60),sig:"sb:"+e+":"+d,verify:()=>s+d===e}}
+  if(f==="noon"){const a=rand(9,11),b=rand(1,4),m1=5*rand(0,11),m2=5*rand(0,11),s=a*60+m1,e=(b+12)*60+m2,d=e-s;return{expr:"從上午 "+T(a,m1)+"到下午 "+T(b,m2)+"，經過了幾小時"+(d%60?"幾分":"")+"？",answer:HM(d),sig:"n:"+s+":"+e,verify:()=>(12-a)*60-m1+b*60+m2===d}}
   if(f==="hours"){const a=rand(1,8),d=rand(1,4);return{expr:"從 "+a+" 時到 "+(a+d)+" 時，經過了幾小時？",answer:d+" 小時",sig:"h:"+a+":"+d,verify:()=>a+d-a===d}}
   if(f==="end"){const a=rand(7,15),m=L===0?0:pick([0,15,30]),d=rand(1,3),e=a+d;return{expr:"從 "+T(a>12?a-12:a,m)+"開始做功課，做了 "+d+" 小時，幾時"+(m?"幾分":"")+"做完？",answer:T(e>12?e-12:e,m),sig:"e:"+a+":"+m+":"+d,verify:()=>e-a===d}}
   if(f==="hm"){const a=rand(1,8),m1=5*rand(0,6),dm=5*rand(1,11),d=rand(0,3)*60+dm,s=a*60+m1,e=s+d;if(Math.floor(e/60)>12)return null;return{expr:"從 "+T(a,m1)+"到 "+T(Math.floor(e/60),e%60)+"，經過了幾小時幾分？",answer:(Math.floor(d/60)?Math.floor(d/60)+" 小時 ":"")+d%60+" 分",sig:"m:"+s+":"+d,verify:()=>e-s===d}}
-  const a=rand(9,11),b=rand(1,4);return{expr:"從上午 "+a+" 時到下午 "+b+" 時，經過了幾小時？",answer:(12-a+b)+" 小時",sig:"n:"+a+":"+b,verify:()=>(b+12)-a===12-a+b}},"答：");
+  return null},"答：");
  const WK=["日","一","二","三","四","五","六"],ML=[31,28,31,30,31,30,31,31,30,31,30,31];
  const cal=unit("calendar","星期與月曆","一星期有 7 天，7 天後又是同一個星期幾。大月 31 天（1、3、5、7、8、10、12 月），小月 30 天，2 月是 28 或 29 天。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["wkAfter","wkBefore","days"]:L===1?["wkAfter","date","days"]:["date","wkAfter","monthDays"]);
-  if(f==="wkAfter"){const w=rand(0,6),d=rand(1,L===0?6:30);return{expr:"今天是星期"+WK[w]+"，再過 "+d+" 天是星期幾？",answer:"星期"+WK[(w+d)%7],sig:"a:"+w+":"+d,verify:()=>(w+d-((w+d)%7))%7===0}}
+  // 基礎：6 天以內的星期幾、幾個星期是幾天；進階：14 天以內、7 天後的日期（同一個月）、幾天是幾個星期；挑戰：跨月份的日期、「幾個星期又幾天」以後、大月小月
+  // 挑戰的「大月小月」改成兩步驟：已知某日是星期幾，求同一個月另一天是星期幾（要先算相差幾天）
+  const L=lv(ctx),f=pick([["wkAfter","wkBefore","days"],["wkAfter","date","daysBack"],["date","wkWeeks","dateWk"]][L]);
+  if(f==="dateWk"){const mo=rand(1,12),d1=rand(1,15),d2=rand(d1+8,Math.min(ML[mo-1],d1+27)),w=rand(0,6),back=Math.random()<.35,[x,y]=back?[d2,d1]:[d1,d2],wy=back?(w-(d2-d1)%7+7)%7:(w+d2-d1)%7;return{expr:mo+" 月 "+x+" 日是星期"+WK[w]+"，"+mo+" 月 "+y+" 日是星期幾？",answer:"星期"+WK[wy],sig:"dw:"+mo+":"+x+":"+y+":"+w,verify:()=>((back?wy+(d2-d1):w+(d2-d1))-(back?w:wy))%7===0}}
+  if(f==="daysBack"){const w=rand(2,8);return{expr:(7*w)+" 天是幾個星期？",answer:w+" 個星期",sig:"db:"+w,verify:()=>Array(w).fill(7).reduce((s,x)=>s+x,0)===7*w}}
+  if(f==="wkWeeks"){const w=rand(0,6),k=rand(1,4),r=rand(1,6),d=7*k+r;return{expr:"今天是星期"+WK[w]+"，再過 "+k+" 個星期又 "+r+" 天是星期幾？",answer:"星期"+WK[(w+r)%7],sig:"ww:"+w+":"+k+":"+r,verify:()=>(w+d)%7===(w+r)%7}}
+  if(f==="wkAfter"){const w=rand(0,6),d=rand(L===0?1:7,L===0?6:14);return{expr:"今天是星期"+WK[w]+"，再過 "+d+" 天是星期幾？",answer:"星期"+WK[(w+d)%7],sig:"a:"+w+":"+d,verify:()=>(w+d-((w+d)%7))%7===0}}
   if(f==="wkBefore"){const w=rand(0,6),d=rand(1,6);return{expr:"今天是星期"+WK[w]+"，"+d+" 天前是星期幾？",answer:"星期"+WK[(w-d+7)%7],sig:"b:"+w+":"+d,verify:()=>((w-d+7)%7+d)%7===w}}
   if(f==="days"){const w=rand(1,L===0?3:8);return{expr:w+" 個星期是幾天？",answer:(7*w)+" 天",sig:"d:"+w,verify:()=>7*w/7===w}}
   if(f==="monthDays"){const mo=rand(1,12);if(mo===2)return null;return{expr:mo+" 月有幾天？是大月還是小月？",answer:ML[mo-1]+" 天；"+(ML[mo-1]===31?"大月":"小月"),sig:"md:"+mo,verify:()=>[1,3,5,7,8,10,12].includes(mo)===(ML[mo-1]===31)}}
-  const mo=rand(1,12),d=rand(1,ML[mo-1]),k=pick(L===1?[7]:[7,10,14]);let M=mo,D=d+k;if(D>ML[mo-1]){D-=ML[mo-1];M=mo%12+1}if(L===1&&M!==mo)return null;
+  // 進階：7 天後、同一個月；挑戰：一定要跨到下個月（要用到大月小月）
+  const mo=rand(1,12),d=L===1?rand(1,ML[mo-1]):rand(ML[mo-1]-12,ML[mo-1]),k=L===1?7:pick([8,9,10,12,14,15,20]);let M=mo,D=d+k;if(D>ML[mo-1]){D-=ML[mo-1];M=mo%12+1}if(L===1&&M!==mo)return null;if(L===2&&M===mo)return null;
   return{expr:mo+" 月 "+d+" 日的 "+k+" 天後是幾月幾日？",answer:M+" 月 "+D+" 日",sig:"dt:"+mo+":"+d+":"+k,verify:()=>(M===mo?D-d:ML[mo-1]-d+D)===k}},"答：");
- const units=unit("units","時間的單位","1 天＝24 小時，1 小時＝60 分。2 小時就是 60＋60＝120 分。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["hm","dh","hmix","half"]:["hm","mh","dh","hmix"]);
-  if(f==="hm"){const h=rand(1,10);return{expr:h+" 小時是幾分？",answer:(60*h)+" 分",sig:"hm:"+h,verify:()=>60*h/60===h}}
-  if(f==="half")return{expr:"半小時是幾分？1 小時又 30 分是幾分？",answer:"30 分；90 分",sig:"hf",verify:()=>60/2===30};
-  if(f==="dh"){const d=rand(1,7);return{expr:d+" 天是幾小時？",answer:(24*d)+" 小時",sig:"dh:"+d,verify:()=>24*d/24===d}}
-  if(f==="mh"){const h=rand(1,4),m=rand(1,59),t=60*h+m;return{expr:t+" 分是幾小時幾分？",answer:h+" 小時 "+m+" 分",sig:"mh:"+t,verify:()=>60*h+m===t}}
-  const h=rand(1,L===0?3:4),m=5*rand(1,11);return{expr:h+" 小時 "+m+" 分是幾分？",answer:(60*h+m)+" 分",sig:"hx:"+h+":"+m,verify:()=>(60*h+m-m)/60===h}},"答：");
+ const units=unit("units","時間的單位","1 小時＝60 分。2 小時就是 60＋60＝120 分；90 分＝60 分＋30 分＝1 小時 30 分。（挑戰：1 天＝24 小時）",ctx=>{
+  // 基礎（低年級）：只有「時、分」與 1 小時＝60 分：幾小時是幾分（3 小時以內）、半小時、整十分的幾小時幾分。
+  // 進階：幾分是幾小時幾分（180 分以內，要一個 60 一個 60 數）；挑戰：300 分以內、時間相加要進位、1 天＝24 小時（日與時是三年級的內容，只放在挑戰）。
+  // 進階不再出「幾小時是幾分」這種比基礎容易的題：改成反向換算（幾分→幾小時幾分）與「換成同單位再比較」。
+  const L=lv(ctx),f=pick([["hm","half","hmix"],["mh","mh","cmpT","more"],["mh","addT","dh"]][L]);
+  if(f==="more"){const h=rand(1,2),m=5*rand(1,11);return{expr:h+" 小時比 "+m+" 分多幾分？",answer:(60*h-m)+" 分",sig:"mo:"+h+":"+m,verify:()=>60*h-m+m===60*h&&60*h>m}}
+  if(f==="cmpT"){const h=rand(1,2),m=5*rand(1,11),d=5*rand(1,4)*(Math.random()<.5?1:-1),t=60*h+m+d;if(t<=60||t%60===0)return null;const a=60*h+m,big=a>t?h+" 小時 "+m+" 分":t+" 分";return{expr:h+" 小時 "+m+" 分和 "+t+" 分，哪一個比較久？久幾分？",answer:big+"；久 "+Math.abs(d)+" 分",sig:"ct:"+h+":"+m+":"+t,verify:()=>Math.abs((60*h+m)-t)===Math.abs(d)&&(a>t)===(d<0)}}
+  if(f==="addT"){const h=rand(1,2),m1=5*rand(5,11),m2=5*rand(2,11),t=60*h+m1+m2;if(m1+m2<60)return null;return{expr:h+" 小時 "+m1+" 分 ＋ "+m2+" 分 ＝ 幾小時幾分？",answer:Math.floor(t/60)+" 小時"+(t%60?" "+t%60+" 分":""),sig:"at:"+h+":"+m1+":"+m2,verify:()=>Math.floor(t/60)===h+1&&t%60===m1+m2-60}}
+  if(f==="half"){const g=rand(0,2);if(g===0)return{expr:"半小時是幾分？",answer:"30 分",sig:"hf0",verify:()=>60/2===30};const h=g;return{expr:h+" 小時又半小時是幾分？",answer:(60*h+30)+" 分",sig:"hf"+h,verify:()=>(60*h+30-30)/60===h}}
+  if(f==="hm"){const h=rand(1,3);return{expr:h+" 小時是幾分？",answer:(60*h)+" 分",sig:"hm:"+h,verify:()=>60*h/60===h}}
+  if(f==="dh"){const d=rand(1,3),back=Math.random()<.4;return back?{expr:(24*d)+" 小時是幾天？",answer:d+" 天",sig:"hd:"+d,verify:()=>24*d/24===d}:{expr:d+" 天是幾小時？",answer:(24*d)+" 小時",sig:"dh:"+d,verify:()=>24*d/24===d}}
+  if(f==="mh"){const h=rand(1,L===1?2:4),m=L===1?5*rand(1,11):rand(1,59),t=60*h+m;if(t>(L===1?180:300))return null;return{expr:t+" 分是幾小時幾分？",answer:h+" 小時 "+m+" 分",sig:"mh:"+t,verify:()=>60*h+m===t}}
+  const h=rand(1,2),m=rand(1,59);return{expr:h+" 小時 "+m+" 分是幾分？",answer:(60*h+m)+" 分",sig:"hx:"+h+":"+m,verify:()=>(60*h+m-m)/60===h}},"答：");
  return{title:"時間與日期",symbol:"時",subtitle:"看鐘面讀時刻・經過的時間・星期與月曆・時間的單位",instruction:"看清楚長針和短針；答案要寫「時、分、小時、天」。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：整點、半點、經過幾小時、星期（一年級）。",advanced:"進階：幾時幾分（5 分一格）、經過幾小時幾分、月曆（二上）。",challenge:"挑戰：任意分鐘、跨中午、跨月份的日期（二下）。"},
+  levels:{basic:"基礎：整點、半點、經過幾小時、6 天以內的星期、1 小時＝60 分（一、二年級）。",advanced:"進階：幾時幾分（5 分一格）、經過幾小時幾分、14 天以內的星期與 7 天後的日期、180 分以內換成幾小時幾分（二上、二下）。",challenge:"挑戰：任意分鐘、幾分鐘以前、分鐘要借位與跨中午、倒推開始時刻、跨月份的日期、時間相加進位、1 天＝24 小時。"},
   units:[read,elapsed,cal,units],presets:{basic:{read:4,elapsed:3,calendar:3,units:3},advanced:{read:4,elapsed:3,calendar:3,units:3},challenge:{read:4,elapsed:3,calendar:3,units:3}}};
 }
 
@@ -370,31 +507,54 @@ function lengthConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const ruler=(a,b)=>{const W=Math.max(150,b*12+30),x=v=>15+v*12;let s='<rect x="'+x(a)+'" y="8" width="'+((b-a)*12)+'" height="10" fill="none" stroke="#C8352B" stroke-width="2"/><line x1="'+x(0)+'" y1="26" x2="'+x(b+1)+'" y2="26" stroke="'+INK+'"/>';for(let i=0;i<=b+1;i++)s+='<line x1="'+x(i)+'" y1="26" x2="'+x(i)+'" y2="'+(i%5?32:35)+'" stroke="'+INK+'"/><text x="'+x(i)+'" y="46" font-size="8" text-anchor="middle" fill="'+INK+'">'+i+'</text>';return SVG(W,54,s)};
  const read=unit("ruler","用尺量長度","從 0 開始量，看另一端對齊幾就是幾公分；沒有從 0 開始時，長度＝後面的刻度－前面的刻度。",ctx=>{
-  const L=lv(ctx),a=L===0?0:rand(1,6),b=a+rand(2,L===0?15:9),f=pick(L===0?["fig","text","cmp0"]:["fig","text","text2"]);
+  // 基礎：從 0 開始量；進階：不從 0 開始量，和另一個從 0 量的比；挑戰：兩條都不從 0 開始的紙條比長短、比尺長的東西量兩次
+  const L=lv(ctx),a=L===0?0:rand(1,6),b=a+rand(2,L===0?15:9),f=pick([["fig","text","cmp0"],["fig","text","text2"],["fig2","twice","cmpMix"]][L]);
+  if(f==="fig2"){const a1=rand(1,6),b1=a1+rand(3,9),a2=rand(1,6),b2=a2+rand(3,9),l1=b1-a1,l2=b2-a2;if(l1===l2||a1===a2)return null;const B=Math.max(b1,b2),xx=v=>15+v*12;let s='';[[a1,b1,"甲"],[a2,b2,"乙"]].forEach(([p,q,nm],i)=>{s+='<rect x="'+xx(p)+'" y="'+(6+i*14)+'" width="'+((q-p)*12)+'" height="9" fill="none" stroke="#C8352B" stroke-width="2"/><text x="'+(xx(p)-3)+'" y="'+(14+i*14)+'" font-size="9" text-anchor="end" fill="'+INK+'">'+nm+'</text>'});const y0=38;s+='<line x1="'+xx(0)+'" y1="'+y0+'" x2="'+xx(B+1)+'" y2="'+y0+'" stroke="'+INK+'"/>';for(let i=0;i<=B+1;i++)s+='<line x1="'+xx(i)+'" y1="'+y0+'" x2="'+xx(i)+'" y2="'+(y0+(i%5?6:9))+'" stroke="'+INK+'"/><text x="'+xx(i)+'" y="'+(y0+20)+'" font-size="8" text-anchor="middle" fill="'+INK+'">'+i+'</text>';
+   return{expr:SVG(Math.max(150,(B+1)*12+30),66,s)+"甲、乙兩條紙條放在同一把尺上（一小格是 1 公分），哪一條比較長？長幾公分？",answer:(l1>l2?"甲":"乙")+"，長 "+Math.abs(l1-l2)+" 公分",sig:"f2:"+[a1,b1,a2,b2],verify:()=>Math.abs((b1-a1)-(b2-a2))>0}}
+  if(f==="twice"){const p=rand(10,15),q=rand(2,12),s0=Math.random()<.5?0:rand(1,3);return{expr:"一條緞帶比尺長，量了兩次：第一次從 0 量到 "+p+"，第二次從 "+s0+" 量到 "+(s0+q)+"。緞帶全長幾公分？",answer:(p+q)+" 公分",sig:"tw:"+p+":"+q+":"+s0,verify:()=>p+(s0+q-s0)===p+q}}
+  if(f==="cmpMix"){const a1=rand(2,8),b1=a1+rand(5,12),c=rand(5,15),l=b1-a1;if(l===c)return null;return{expr:"鉛筆放在尺上從 "+a1+" 量到 "+b1+"，蠟筆從 0 量到 "+c+"。哪一枝比較長？長幾公分？",answer:(l>c?"鉛筆":"蠟筆")+"，長 "+Math.abs(l-c)+" 公分",sig:"cm:"+a1+":"+b1+":"+c,verify:()=>Math.abs((b1-a1)-c)>0}}
   if(f==="cmp0"){const c=rand(2,15);if(c===b)return null;return{expr:"鉛筆從尺的 0 量到 "+b+"，蠟筆從 0 量到 "+c+"。哪一枝比較長？長幾公分？",answer:(b>c?"鉛筆":"蠟筆")+"，長 "+Math.abs(b-c)+" 公分",sig:"c0:"+b+":"+c,verify:()=>Math.abs(b-c)>0}}
   if(f==="text")return{expr:"把一枝鉛筆放在尺上，一端對齊 "+a+"，另一端對齊 "+b+"，鉛筆長幾公分？",answer:(b-a)+" 公分",sig:"t:"+a+":"+b,verify:()=>b-a>0};
-  if(f==="text2"){const c=rand(1,b-a-1);return{expr:"鉛筆放在尺上從 "+a+" 量到 "+b+"，橡皮擦從 0 量到 "+c+"。鉛筆比橡皮擦長幾公分？",answer:(b-a-c)+" 公分",sig:"t2:"+a+":"+b+":"+c,verify:()=>b-a-c>0}}
+  if(f==="text2"){if(b-a<4)return null;const c=rand(2,b-a-1);return{expr:"鉛筆放在尺上從 "+a+" 量到 "+b+"，橡皮擦從 0 量到 "+c+"。鉛筆比橡皮擦長幾公分？",answer:(b-a-c)+" 公分",sig:"t2:"+a+":"+b+":"+c,verify:()=>b-a-c>0}}
   return{expr:ruler(a,b)+"圖中紅色的紙條長幾公分？（一小格是 1 公分）",answer:(b-a)+" 公分",sig:"f:"+a+":"+b,verify:()=>b-a>0}},"答：");
  const convert=unit("convert","公尺與公分","1 公尺＝100 公分。2 公尺 35 公分＝235 公分；408 公分＝4 公尺 8 公分。",ctx=>{
-  const L=lv(ctx),m=rand(1,L===1?5:9),c=rand(1,99),v=100*m+c,f=pick(L===2?["toCm","toM","fromM"]:["toCm","toM","whole"]);
-  if(f==="fromM")return{expr:m+" 公尺 − "+c+" 公分 ＝ （　）公分",answer:(100*m-c)+" 公分",sig:"fm:"+m+":"+c,verify:()=>100*m-c+c===100*m};
+  // 基礎：1 公尺＝100 公分（整公尺互換）；進階：幾公尺幾公分 ↔ 公分、選單位；挑戰：公分是一位數的「0 陷阱」（3 公尺 5 公分＝305 公分）、整公尺減公分
+  const L=lv(ctx),m=rand(1,L===0?10:L===1?5:9),c=L===2?rand(1,9):rand(11,99),v=100*m+c,f=pick([["whole","m100","revW","cmpW"],["toCm","toM","choose"],["toCm","toM","fromM"]][L]);
+  if(f==="cmpW"){const y=pick([100*m,100*m+10*rand(1,9),100*m-10*rand(1,9)]);if(y<=0||y>1000)return null;const s=100*m>y?"＞":100*m<y?"＜":"＝";return{expr:"在 ○ 裡填入 ＞、＜ 或 ＝："+m+" 公尺 ○ "+y+" 公分",answer:s,sig:"cw:"+m+":"+y,verify:()=>(s==="＝")===(m*100===y)&&(s==="＞")===(m*100>y)}}
+  if(f==="revW")return{expr:"（　）公尺 ＝ "+(100*m)+" 公分",answer:m+" 公尺",sig:"rw:"+m,verify:()=>100*m/100===m};
+  if(f==="m100")return{expr:(100*m)+" 公分 ＝ （　）公尺",answer:m+" 公尺",sig:"h:"+m,verify:()=>100*m/100===m};
+  if(f==="choose"){const P=[["教室的長大約是 8","公尺"],["一枝鉛筆長約 15","公分"],["門的高大約是 2","公尺"],["橡皮擦長約 4","公分"],["國語課本的長約 26","公分"],["游泳池長約 25","公尺"],["手掌長約 14","公分"],["籃球場長約 28","公尺"],["一層樓高約 3","公尺"],["筷子長約 20","公分"],["學校的跑道一圈約 200","公尺"],["鉛筆盒長約 21","公分"]],[q,a]=pick(P);return{expr:"在（　）裡填入「公尺」或「公分」："+q+"（　）。",answer:a,sig:"ch:"+q,verify:()=>P.some(p=>p[0]===q&&p[1]===a)}}
+  if(f==="fromM"){const cc=rand(11,99);return{expr:m+" 公尺 − "+cc+" 公分 ＝ （　）公分",answer:(100*m-cc)+" 公分",sig:"fm:"+m+":"+cc,verify:()=>100*m-cc+cc===100*m}}
   if(f==="toCm")return{expr:m+" 公尺 "+c+" 公分 ＝ （　）公分",answer:v+" 公分",sig:"c:"+v,verify:()=>Math.floor(v/100)===m&&v%100===c};
   if(f==="toM")return{expr:v+" 公分 ＝ （　）公尺（　）公分",answer:m+" 公尺 "+c+" 公分",sig:"m:"+v,verify:()=>100*m+c===v};
   return{expr:m+" 公尺 ＝ （　）公分",answer:(100*m)+" 公分",sig:"w:"+m,verify:()=>100*m/100===m}},"答：");
  const calc=unit("calc","長度的加減","單位要一樣才能相加減；公尺和公分混在一起時，先都換成公分再算。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["add","sub","word"]:["add","sub","word","mix"]),a=rand(L===0?5:20,L===0?60:300),b=rand(2,L===0?30:150);
+  // 基礎：100 公分以內；進階：三位數公分、公尺公分加公分；挑戰：公尺公分的加減要進位或借位，答案寫成幾公尺幾公分
+  const L=lv(ctx),f=pick([["add","sub","word"],["add","sub","word","mix"],["mAdd","mSub","word2"]][L]),a=rand(L===0?5:20,L===0?60:300),b=rand(2,L===0?30:150);
+  const MC=v=>(Math.floor(v/100)?Math.floor(v/100)+" 公尺"+(v%100?" ":""):"")+(v%100?v%100+" 公分":"");
+  if(f==="mAdd"){const m1=rand(1,4),c1=rand(15,95),m2=rand(1,3),c2=rand(15,95),x=100*m1+c1,y=100*m2+c2;if(c1+c2<100||c1%10===0&&c2%10===0)return null;return{expr:MC(x)+" ＋ "+MC(y)+" ＝ （　）公尺（　）公分",answer:MC(x+y),sig:"ma:"+x+":"+y,verify:()=>Math.floor((x+y)/100)===m1+m2+1&&(x+y)%100===c1+c2-100}}
+  if(f==="mSub"){const whole=Math.random()<.4,m1=rand(2,6),c1=whole?0:rand(5,60),m2=rand(1,m1-1),c2=rand(c1+5,95),x=100*m1+c1,y=100*m2+c2;return{expr:MC(x)+" − "+MC(y)+" ＝ （　）公尺（　）公分",answer:MC(x-y),sig:"ms:"+x+":"+y,verify:()=>(m1-1-m2)*100+(100+c1-c2)===x-y}}
+  if(f==="word2"){const g=pick(["tall","join","cut"]);let s,v,x,y;
+   if(g==="tall"){x=100+rand(15,45);y=rand(8,30);v=x+y;s="小明身高 "+MC(x)+"，爸爸比小明高 "+y+" 公分。爸爸身高幾公尺幾公分？"}
+   else if(g==="join"){x=100*rand(1,3)+rand(30,90);y=rand(40,95);v=x+y;s="兩段繩子，一段長 "+MC(x)+"，另一段長 "+y+" 公分，接起來（不計打結）一共長幾公尺幾公分？"}
+   else{x=100*rand(2,5);y=100*rand(0,1)+rand(15,85);v=x-y;s="一捲緞帶長 "+MC(x)+"，用掉 "+MC(y)+"，還剩幾公尺幾公分？"}
+   if(v<=0||Math.floor(v/100)===0)return null;return{expr:s,answer:MC(v),sig:"w2:"+g+":"+x+":"+y,verify:()=>g==="cut"?v+y===x:v-y===x}}
   if(f==="add")return{expr:a+" 公分 ＋ "+b+" 公分",answer:(a+b)+" 公分",sig:"a:"+a+":"+b,verify:()=>a+b-b===a,lead:"原式＝"};
   if(f==="sub"){if(a<=b)return null;return{expr:a+" 公分 − "+b+" 公分",answer:(a-b)+" 公分",sig:"s:"+a+":"+b,verify:()=>a-b+b===a,lead:"原式＝"}}
   if(f==="mix"){const m=rand(1,3),c=rand(1,99),x=rand(10,90),v=100*m+c+x;return{expr:m+" 公尺 "+c+" 公分 ＋ "+x+" 公分 ＝ （　）公分",answer:v+" 公分",sig:"x:"+m+":"+c+":"+x,verify:()=>v-x===100*m+c}}
   if(a<=b)return null;return{expr:"一條繩子長 "+a+" 公分，剪掉 "+b+" 公分，還剩幾公分？",answer:(a-b)+" 公分",sig:"w:"+a+":"+b,verify:()=>a-b+b===a}},"答：");
  const cmp=unit("compare","長度的比較","單位不同時先換成同一個單位再比：1 公尺 5 公分＝105 公分。",ctx=>{
-  const L=lv(ctx),a=rand(L===0?10:101,L===0?99:499),b=a+pick([-1,1])*rand(1,L===0?9:60),f=pick(L===0?["fill","long","short"]:["mixed","long","fill"]);if(b<=0||b===a)return null;
-  const S=v=>L===0||v<100?v+" 公分":Math.floor(v/100)+" 公尺 "+(v%100?v%100+" 公分":"");
+  // 基礎：100 公分以內；進階：公尺公分和公分比；挑戰：公分是一位數的陷阱（1 公尺 5 公分 ○ 150 公分，會有 ＝）、三個長度由長到短
+  const L=lv(ctx),f=pick([["fill","long","short"],["mixed","long","fill"],["trap","order3","trap","mixed"]][L]);
+  const S=v=>L===0||v<100?v+" 公分":Math.floor(v/100)+" 公尺"+(v%100?" "+v%100+" 公分":"");
+  if(f==="trap"){const m=rand(1,3),c=rand(1,9),x=100*m+c,y=pick([100*m+10*c,100*m+c,100*m+10+c,100*m+c+rand(1,9)*10]),s=x>y?"＞":x<y?"＜":"＝";return{expr:"在 ○ 裡填入 ＞、＜ 或 ＝："+S(x)+" ○ "+y+" 公分",answer:s,sig:"tp:"+x+":"+y,verify:()=>(s==="＝")===(m*100+c===y)&&(s==="＞")===(m*100+c>y)}}
+  if(f==="order3"){const m=rand(1,3),x=rand(1,9),vs=shuffle([100*m+10*x,100*m+x,100*m+11*x]);if(x===0)return null;const fmts=vs.map((v,i)=>i===0?v+" 公分":S(v)),ord=vs.map((v,i)=>[v,fmts[i]]).sort((p,q)=>q[0]-p[0]);return{expr:"把 "+fmts.join("、")+" 由長到短排列。",answer:ord.map(p=>p[1]).join(" ＞ "),sig:"o3:"+vs,verify:()=>ord[0][0]>ord[1][0]&&ord[1][0]>ord[2][0]}}
+  const a=rand(L===0?10:101,L===0?99:499),b=a+pick([-1,1])*rand(1,L===0?9:60);if(b<=0||b===a||L===0&&b>99)return null;
   if(f==="fill")return{expr:"在 ○ 裡填入 ＞ 或 ＜："+a+" 公分 ○ "+b+" 公分",answer:a>b?"＞":"＜",sig:"f:"+a+":"+b,verify:()=>(a>b)===(a-b>0)};
   if(f==="mixed")return{expr:"在 ○ 裡填入 ＞ 或 ＜："+S(a)+" ○ "+b+" 公分",answer:a>b?"＞":"＜",sig:"m:"+a+":"+b,verify:()=>(a>b)===(a-b>0)};
   const long=f==="long";return{expr:"甲繩長 "+S(a)+"，乙繩長 "+S(b)+"，哪一條比較"+(long?"長":"短")+"？差幾公分？",answer:((a>b)===long?"甲":"乙")+"，差 "+Math.abs(a-b)+" 公分",sig:"l:"+a+":"+b+":"+long,verify:()=>Math.abs(a-b)>0}},"答：");
  return{title:"長度",symbol:"cm",subtitle:"用尺量長度・公尺與公分・長度的加減・長度的比較",instruction:"答案要寫單位「公分」或「公尺」。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：從 0 開始量、100 公分以內的加減與比較（一、二上）。",advanced:"進階：不從 0 開始量、公尺與公分的換算（二下）。",challenge:"挑戰：公尺與公分混合的加減與比較。"},
+  levels:{basic:"基礎：從 0 開始量、100 公分以內的加減與比較、1 公尺＝100 公分（一、二年級）。",advanced:"進階：不從 0 開始量、幾公尺幾公分與公分的換算、選單位、三位數公分的加減與比較（二下）。",challenge:"挑戰：兩條都不從 0 開始的比較、量兩次、公分是一位數的換算陷阱、公尺公分的進位與借位、三個長度排列。"},
   units:[read,convert,calc,cmp],presets:{basic:{ruler:4,convert:3,calc:3,compare:3},advanced:{ruler:3,convert:4,calc:3,compare:3},challenge:{ruler:3,convert:3,calc:4,compare:3}}};
 }
 
@@ -402,33 +562,49 @@ function shapesConfig(){
  const unit=(id,name,tip,gen,lead)=>({id,name,tip,modes:["integer"],lead,gen});
  const SH=[["三角形",3],["正方形",4],["長方形",4],["五邊形",5],["六邊形",6]];
  const sides=unit("sides","邊和角","幾個邊的圖形就有幾個角：三角形 3 個邊、3 個角；四邊形 4 個邊、4 個角。",ctx=>{
-  const L=lv(ctx),f=pick(L===2?["diff","sum","name"]:["one","sum","name"]),[n,k]=pick(SH);
+  // 基礎：三角形、正方形、長方形的邊和角，3 個以內連加；進階：五邊形、六邊形，由邊數說出名稱、角數比較；挑戰：由角數推邊數、反求個數、三種圖形的角合起來
+  const L=lv(ctx),f=pick([["one","sum"],["name","sum","diff"],["a2s","back","sum3"]][L]),SHL=L===0?SH.slice(0,3):SH,[n,k]=pick(SHL);
+  if(f==="a2s"){const [n2,k2]=pick(SH.filter(s=>s[0]!=="長方形"&&s[0]!=="正方形")),ang=Math.random()<.5;return{expr:"一個圖形有 "+k2+" 個"+(ang?"角":"邊")+"，它有幾個"+(ang?"邊":"角")+"？是什麼圖形？",answer:k2+" 個"+(ang?"邊":"角")+"；"+n2,sig:"as:"+k2+":"+ang,verify:()=>SH.find(s=>s[0]===n2)[1]===k2}}
+  if(f==="back"){const [x,y]=shuffle(SH).slice(0,2),cx=rand(1,4),cy=rand(1,4);if(x[1]===y[1])return null;const tot=x[1]*cx+y[1]*cy;return{expr:cx+" 個"+x[0]+"和幾個"+y[0]+"，一共有 "+tot+" 個角？",answer:cy+" 個"+y[0],sig:"bk:"+x[0]+y[0]+":"+cx+":"+cy,verify:()=>(tot-x[1]*cx)%y[1]===0&&(tot-x[1]*cx)/y[1]===cy}}
+  if(f==="sum3"){const ts=shuffle(SH.filter(s=>s[0]!=="長方形")).slice(0,3),c=ts.map(()=>rand(1,3)),tot=ts.reduce((s,t,i)=>s+t[1]*c[i],0);return{expr:ts.map((t,i)=>c[i]+" 個"+t[0]).join("、").replace(/、([^、]*)$/,"和 $1")+"，一共有幾個角？",answer:tot+" 個",sig:"s3:"+ts.map(t=>t[0])+":"+c,verify:()=>tot===c.reduce((s,x,i)=>s+Array(x).fill(ts[i][1]).reduce((a,b)=>a+b,0),0)}}
   if(f==="diff"){const [x,y]=shuffle(SH.filter(q=>q[0]!=="長方形")).slice(0,2);if(x[1]===y[1])return null;const [p,q]=x[1]>y[1]?[x,y]:[y,x];return{expr:p[0]+"比"+q[0]+"多幾個角？",answer:(p[1]-q[1])+" 個",sig:"df:"+p[0]+q[0],verify:()=>p[1]>q[1]}}
   if(f==="one")return{expr:n+"有幾個邊？幾個角？",answer:k+" 個邊、"+k+" 個角",sig:"o:"+n,verify:()=>k>=3};
   if(f==="name"){const [n2,k2]=pick(SH.filter(s=>s[0]!=="長方形"&&s[0]!=="正方形"));return{expr:"一個圖形有 "+k2+" 個邊和 "+k2+" 個角，它是幾邊形？",answer:k2===3?"三角形":n2,sig:"n:"+k2,verify:()=>SH.some(s=>s[1]===k2)}}
-  const pick2=shuffle(SH).slice(0,2),c=[rand(1,4),rand(1,4)],tot=pick2[0][1]*c[0]+pick2[1][1]*c[1];return{expr:c[0]+" 個"+pick2[0][0]+"和 "+c[1]+" 個"+pick2[1][0]+"，一共有幾個角？",answer:tot+" 個",sig:"s:"+pick2.map(s=>s[0])+":"+c,verify:()=>tot===c[0]*pick2[0][1]+c[1]*pick2[1][1]}},"答：");
+  const pick2=shuffle(SHL).slice(0,2),c=[rand(1,L===0?3:4),rand(1,L===0?3:4)],tot=pick2[0][1]*c[0]+pick2[1][1]*c[1];return{expr:c[0]+" 個"+pick2[0][0]+"和 "+c[1]+" 個"+pick2[1][0]+"，一共有幾個角？",answer:tot+" 個",sig:"s:"+pick2.map(s=>s[0])+":"+c,verify:()=>tot===c[0]*pick2[0][1]+c[1]*pick2[1][1]}},"答：");
  const draw=(kind,x,y)=>kind==="三角形"?'<polygon points="'+x+','+(y+22)+' '+(x+13)+','+y+' '+(x+26)+','+(y+22)+'" fill="none" stroke="'+INK+'" stroke-width="1.4"/>':kind==="正方形"?'<rect x="'+(x+2)+'" y="'+y+'" width="22" height="22" fill="none" stroke="'+INK+'" stroke-width="1.4"/>':kind==="長方形"?'<rect x="'+x+'" y="'+(y+5)+'" width="28" height="14" fill="none" stroke="'+INK+'" stroke-width="1.4"/>':'<circle cx="'+(x+13)+'" cy="'+(y+11)+'" r="11" fill="none" stroke="'+INK+'" stroke-width="1.4"/>';
  const count=unit("count","數一數圖形","一種一種數，數過的打勾，才不會重複或漏掉。",ctx=>{
   const L=lv(ctx),K=L===0?["三角形","正方形","圓形"]:["三角形","正方形","長方形","圓形"],n=L===0?8:L===1?12:15,items=Array.from({length:n},()=>pick(K)),target=pick(K),c=items.filter(x=>x===target).length,cols=L===0?4:5;
-  let b="";items.forEach((k,i)=>{b+=draw(k,10+(i%cols)*38,8+Math.floor(i/cols)*32)});const img=SVG(cols*38+12,Math.ceil(n/cols)*32+10,b),f=pick(L===2?["one","more","total"]:["one","one","more"]);
+  let b="";items.forEach((k,i)=>{b+=draw(k,10+(i%cols)*38,8+Math.floor(i/cols)*32)});const img=SVG(cols*38+12,Math.ceil(n/cols)*32+10,b),f=pick([["one","one","more"],["one","more","more"],["more","total","most"]][L]);
+  // 挑戰：三種圖形中哪一種最多（不能有一樣多的）
+  if(f==="most"){const cs=K.map(k=>[k,items.filter(x=>x===k).length]).sort((p,q)=>q[1]-p[1]);if(cs[0][1]===cs[1][1]||cs.at(-1)[1]===cs.at(-2)[1])return null;return{expr:img+"圖中哪一種圖形最多？比最少的那一種多幾個？",answer:cs[0][0]+"；多 "+(cs[0][1]-cs.at(-1)[1])+" 個",sig:"mo:"+items.join(""),verify:()=>cs.every(([,c])=>c<=cs[0][1])&&cs.at(-1)[1]<cs[0][1]&&cs.at(-1)[1]<=cs[cs.length-2][1]&&cs.at(-1)[1]!==cs.at(-2)[1]}}
   if(f==="more"){const t2=pick(K.filter(k=>k!==target)),c2=items.filter(x=>x===t2).length;if(c===c2)return null;return{expr:img+"圖中"+target+"和"+t2+"哪一種比較多？多幾個？",answer:(c>c2?target:t2)+"，多 "+Math.abs(c-c2)+" 個",sig:"m:"+items.join("")+target+t2,verify:()=>items.length===n}}
   if(f==="total"){const sidesOf={三角形:3,正方形:4,長方形:4,圓形:0},tot=items.reduce((s,k)=>s+sidesOf[k],0);return{expr:img+"圖中所有的三角形、正方形和長方形，一共有幾個角？（圓形沒有角）",answer:tot+" 個",sig:"t:"+items.join(""),verify:()=>tot===items.filter(k=>k==="三角形").length*3+items.filter(k=>k==="正方形"||k==="長方形").length*4}}
   return{expr:img+"圖中有幾個"+target+"？",answer:c+" 個",sig:"o:"+items.join("")+target,verify:()=>items.reduce((s,k)=>s+(k===target?1:0),0)===c}},"答：");
  const Q=[["4 個邊一樣長，4 個角都是直角","正方形"],["對邊一樣長，4 個角都是直角，但 4 個邊不是都一樣長","長方形"],["3 個邊、3 個角","三角形"],["沒有邊也沒有角，圓圓的","圓形"],["5 個邊、5 個角","五邊形"],["6 個邊、6 個角","六邊形"]];
  const identify=unit("identify","認識圖形","正方形：4 邊一樣長、4 個直角；長方形：對邊一樣長、4 個直角；圓形沒有邊也沒有角。",ctx=>{
-  const L=lv(ctx),f=pick(L===2?["desc","right","side"]:["desc","yesno","side"]);
+  // 基礎：三角形、正方形、圓形的特徵；進階：加入長方形、五邊形、六邊形、邊長；挑戰：數直角、由長邊比短邊長多少反推（直角題最多 1/3）
+  const L=lv(ctx),f=pick([["desc","yesno","sqSide","sqSide"],["desc","yesno","side"],["right","side","sideBack"]][L]);
+  if(f==="sqSide"){if(Math.random()<.5){const l=rand(3,20);return{expr:"長方形的一個長邊是 "+l+" 公分，另一個長邊是幾公分？",answer:l+" 公分",sig:"rl:"+l,verify:()=>l>0}}const l=rand(2,20);return{expr:"正方形的一邊長 "+l+" 公分，其他三邊各長幾公分？",answer:l+" 公分",sig:"sq:"+l,verify:()=>l>0}}
+  if(f==="sideBack"){const w=rand(2,12),d=rand(1,9),l=w+d;return{expr:"長方形的長邊是 "+l+" 公分，比短邊長 "+d+" 公分。短邊長幾公分？4 個邊各長幾公分？",answer:w+" 公分；"+l+"、"+w+"、"+l+"、"+w+" 公分",sig:"sb:"+l+":"+d,verify:()=>w+d===l&&l>w}}
+  if(f==="desc"&&L===0){const Q0=Q.filter(q=>["正方形","三角形","圓形"].includes(q[1])),[d,a]=pick(Q0);return{expr:"「"+d+"」是什麼圖形？",answer:a,sig:"d:"+d,verify:()=>Q0.some(q=>q[1]===a)}}
   if(f==="right"){const a=rand(1,6),b=rand(1,6),c=rand(0,4);return{expr:a+" 個長方形"+(c?"、"+b+" 個正方形和 "+c+" 個圓形":"和 "+b+" 個正方形")+"，一共有幾個直角？",answer:(4*(a+b))+" 個",sig:"rt:"+a+":"+b+":"+c,verify:()=>4*a+4*b+0*c===4*(a+b)}}
   if(f==="desc"){const [d,a]=pick(Q);return{expr:"「"+d+"」是什麼圖形？",answer:a,sig:"d:"+d,verify:()=>Q.some(q=>q[1]===a)}}
   if(f==="yesno"){const cases=[["三角形有沒有可能有 4 個角？","沒有"],["長方形的 4 個邊是不是一定一樣長？","不一定"],["圓形有幾個角？","0 個"],["正方形的 4 個角是不是都是直角？","是"]],[q,a]=pick(cases);return{expr:q,answer:a,sig:"y:"+q,verify:()=>cases.some(c=>c[1]===a)}}
   const l=rand(3,15),w=rand(2,l-1),sq=Math.random()<.5;return sq?{expr:"正方形的一邊長 "+l+" 公分，其他三邊各長幾公分？",answer:l+" 公分",sig:"sq:"+l,verify:()=>l>0}:{expr:"長方形的長邊是 "+l+" 公分、短邊是 "+w+" 公分，它的 4 個邊各長幾公分？",answer:l+"、"+w+"、"+l+"、"+w+" 公分",sig:"re:"+l+":"+w,verify:()=>l>w}},"答：");
  const edge=unit("edgesum","圖形的邊長合起來","把每一個邊的長度都加起來；正方形 4 邊一樣長，長方形對邊一樣長。",ctx=>{
-  const L=lv(ctx),f=pick(L===0?["tri","sq","rect"]:["tri","rect","sq","back"]);
+  // 基礎：邊長 9 公分以內直接相加；進階：較長的邊、正方形由合起來的長度反推一邊（九九以內）；挑戰：長方形與三角形反推、兩個正方形拼成長方形
+  // 挑戰不再重複進階的「正方形反推一邊」，改成「和長方形一樣長的正方形」（先加再反推，兩步驟）
+  const L=lv(ctx),f=pick([["tri","sq","rect"],["tri","rect","sq","back"],["rectBack","triBack","twoSq","sqRect"]][L]);
+  if(f==="sqRect"){const l=rand(4,15),w=rand(2,l-2);if((l+w)%2)return null;const P=2*(l+w),a=P/4;return{expr:"長方形的長邊 "+l+" 公分、短邊 "+w+" 公分。用一樣長的鐵絲圍成一個正方形，正方形的一邊長幾公分？",answer:a+" 公分",sig:"sr:"+l+":"+w,verify:()=>a+a+a+a===l+w+l+w&&Number.isInteger(a)}}
+  if(f==="rectBack"){const w=rand(2,9),l=rand(w+1,w+12),P=2*(l+w);return{expr:"長方形 4 個邊合起來是 "+P+" 公分，長邊是 "+l+" 公分，短邊是幾公分？",answer:w+" 公分",sig:"rb:"+l+":"+w,verify:()=>(P-l-l)===w+w}}
+  if(f==="triBack"){const a=rand(4,15),b=rand(4,15),c=rand(Math.abs(a-b)+1,a+b-1),P=a+b+c;return{expr:"三角形三個邊合起來是 "+P+" 公分，其中兩個邊是 "+a+" 公分和 "+b+" 公分，第三個邊是幾公分？",answer:c+" 公分",sig:"tb:"+a+":"+b+":"+c,verify:()=>P-a-b===c&&a+b>c&&a+c>b&&b+c>a}}
+  if(f==="twoSq"){const a=rand(2,9);return{expr:"兩個邊長 "+a+" 公分的正方形並排拼成一個長方形，這個長方形 4 個邊合起來是幾公分？",answer:(6*a)+" 公分",sig:"2s:"+a,verify:()=>(a+a)+a+(a+a)+a===6*a}}
   if(f==="tri"){const a=rand(2,L===0?9:20),b=rand(2,L===0?9:20),c=rand(Math.abs(a-b)+1,a+b-1);return{expr:"三角形的三個邊長是 "+a+"、"+b+"、"+c+" 公分，三個邊合起來是幾公分？",answer:(a+b+c)+" 公分",sig:"t:"+a+":"+b+":"+c,verify:()=>a+b>c&&a+b+c-c===a+b}}
   if(f==="sq"){const a=rand(2,L===0?9:25);return{expr:"正方形的一邊長 "+a+" 公分，4 個邊合起來是幾公分？",answer:(4*a)+" 公分",sig:"s:"+a,verify:()=>a+a+a+a===4*a}}
   if(f==="rect"){const l=rand(3,L===0?9:30),w=rand(2,l-1);return{expr:"長方形的長邊 "+l+" 公分、短邊 "+w+" 公分，4 個邊合起來是幾公分？",answer:(2*l+2*w)+" 公分",sig:"r:"+l+":"+w,verify:()=>l+w+l+w===2*(l+w)}}
-  const a=rand(2,25);return{expr:"正方形 4 個邊合起來是 "+(4*a)+" 公分，一個邊長幾公分？",answer:a+" 公分",sig:"b:"+a,verify:()=>4*a/4===a}},"答：");
+  const a=rand(2,9);return{expr:"正方形 4 個邊合起來是 "+(4*a)+" 公分，一個邊長幾公分？",answer:a+" 公分",sig:"b:"+a,verify:()=>4*a/4===a}},"答：");
  return{title:"平面圖形",symbol:"△",subtitle:"邊和角・數一數圖形・認識圖形・圖形的邊長合起來",instruction:"仔細看圖、一個一個數；長度的答案要寫「公分」。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：三角形、正方形、圓形，數圖形與邊角（一年級）。",advanced:"進階：加入長方形與多邊形、邊長合起來（二年級）。",challenge:"挑戰：比較兩種圖形的個數、算全部的角、由邊長合起來反推。"},
+  levels:{basic:"基礎：三角形、正方形、長方形、圓形的邊和角，數圖形，邊長直接相加（一年級）。",advanced:"進階：加入五邊形、六邊形，比較兩種圖形的個數、邊長，正方形由合起來的長度反推一邊（二年級）。",challenge:"挑戰：由角數推邊數、反求圖形個數、全部的角與最多的圖形、長方形與三角形的邊長反推、兩個正方形拼成長方形、長方形改圍成正方形。"},
   units:[sides,count,identify,edge],presets:{basic:{sides:3,count:3,identify:3,edgesum:3},advanced:{sides:3,count:3,identify:3,edgesum:3},challenge:{sides:3,count:3,identify:3,edgesum:3}}};
 }
 

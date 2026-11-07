@@ -10,10 +10,10 @@ const targets={permutations:['adjacent','separated'],probability:['dice','balls'
 const html=fs.readFileSync(new URL('../../tools/math/g11-drills.html',import.meta.url),'utf8');
 const baseline=execFileSync('git',['show','7c98d30f4b95ce588d3f43804c962cd608dfcbe0:tools/math/g11-drills.html'],{encoding:'utf8'});
 const before=topicSources(baseline),after=topicSources(html);
-// Topics later changed by approved fixes (2026-11-03 answer-error review): their whole config bodies are masked too.
-const later=['anglesum','bayes','combinations','commonlog','conditionalprob','correlation','counting','doublehalf','expequations','generalpolar','line3d','loggraphs','matrixapps','matrixops','plane3d','planevector','righttrig','sequences','series','sincosarea','spaceconcept','spacecross','spaceinner','spacevector','standarddev','trigblend','vectorcauchy'];
+// Topics later changed by approved fixes (2026-11-03 answer-error review, 2026-11 phase 2 level ladders): their whole config bodies are masked too.
+const later=['anglesum','bayes','combinations','commonlog','conditionalprob','correlation','counting','determinant','doublehalf','expequations','expfunctions','generalpolar','line3d','loggraphs','matrixapps','matrixops','plane3d','planevector','righttrig','sequences','series','sincosarea','spaceconcept','spacecross','spaceinner','spacevector','standarddev','trigblend','vectorcauchy'];
 // P4-C targets whose other units were also changed later (minus sign, improper fractions): skip their unchanged-unit replay
-const laterTargets=['permutations','probability','sector','trigtransform'];
+const laterTargets=['permutations','probability','radians','sector','trigtransform'];
 assert.deepEqual([...changedTopicSources(baseline,html)].sort(),[...Object.keys(targets),...later].sort());
 // Everything outside the five approved config function bodies must be byte-identical.
 let restBefore=baseline,restAfter=html;for(const topic of [...Object.keys(targets),...later]){restBefore=restBefore.replace(before.get(topic),'[TARGET]');restAfter=restAfter.replace(after.get(topic),'[TARGET]');}assert.equal(restAfter,restBefore,'shared helpers / UI / CSS / SVG changed');
@@ -80,7 +80,8 @@ for(const [topic,ids]of Object.entries(targets))for(const id of ids){
  }
  console.log(JSON.stringify({unit:`${topic}/${id}`,gate:gateRows.at(-1),passed:true}));
 }
-assert.equal(Object.keys(samples).length,19,'all new kinds must have accepted samples');
+// phase 2 (2026-11) 新增 dice/none、dice/bothAtMost、cone/lateralFromAngle（擴大題庫並分出進階兩步驟題），共 22 種。
+assert.equal(Object.keys(samples).length,22,'all new kinds must have accepted samples');
 
 let unchangedUnits=0;
 for(const [topic,src]of before){if(later.includes(topic)||laterTargets.includes(topic))continue; // changed on purpose later; their own fixes are checked by sampling

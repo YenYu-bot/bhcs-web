@@ -1065,6 +1065,69 @@
       "approved_blob": "853d3886471405fc8eb9bee5970dd78fff13b909",
       "reason": "PR 214 public listing: replace only two outdated unlisted/trial copy strings with listed independent desk and guided desk labels. Preserve original source manifest and reverse both exact copy edits before provenance checks.",
       "pull_request": 214
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "3e67f8adddcd4003680c09ea2bbac9d3eb739dbe",
+      "approved_blob": "3ad24618c65890a1c1fbb085775392476167a5d4",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g10-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g11-drills.html",
+      "baseline_blob": "bf16184552eb6ffc3bedfa0df017ad63cd4ccd1c",
+      "approved_blob": "c124259482508d866c6028e9af07f9dbcc3aae16",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g11-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g2-drills.html",
+      "baseline_blob": "1dc3d16aa83b5f876a62eb1528882dc91b76b305",
+      "approved_blob": "274a3a25ce7540be823f6e51ebe760b87351f936",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g2-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g3-drills.html",
+      "baseline_blob": "d3a0165f0c014f1882aa610ae2f3bce180683d3f",
+      "approved_blob": "48d180eec4c6a278907417e496acc2751f728bc1",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g3-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g4-drills.html",
+      "baseline_blob": "76f3dbe586be6952b98e3fc711e8834bfc589022",
+      "approved_blob": "67fe0f56bb2a044f2e54dd85790812000f9f7bea",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g4-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "0d778b0417be841ad725ce2864f789764512a11c",
+      "approved_blob": "6f46fdbb1b05cbcd052674ae6303f3e0bd34c8dc",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g6-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "3dd43c6bb569d064573db291f2c0f7108080e8e6",
+      "approved_blob": "e45ad03c042cebd6c861ade96a4bdfb444d3ca27",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g7-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g8-drills.html",
+      "baseline_blob": "3a72fe07a0a2c509230521f0fdda80dd22bd5836",
+      "approved_blob": "d2035151335ef8581a22609cac67c944b877d731",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g8-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-drills.html",
+      "baseline_blob": "cf9982026d701fa97eaec704ca532d99a024e542",
+      "approved_blob": "b7569458cd4fd7a7d0265e80fe6e9d12916b795b",
+      "reason": "Math drills phase 2 (level ladders, number caps, modes): g9-drills.html",
+      "pull_request": null
     }
   ]
 }

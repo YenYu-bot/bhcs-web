@@ -15,19 +15,19 @@
   "newFailuresOutsideLegacy": 0,
   "revised": {
     "topics": 128,
-    "combinations": 4359,
-    "passed": 4359,
+    "combinations": 4101,
+    "passed": 4101,
     "failed": 0,
-    "safeQuestionCalls": 871800,
-    "samplingProduced": 871800,
-    "candidateGenCalls": 981829,
-    "candidateNulls": 87463,
+    "safeQuestionCalls": 820200,
+    "samplingProduced": 820200,
+    "candidateGenCalls": 966621,
+    "candidateNulls": 135583,
     "candidateVerifyFalse": 0,
     "candidateExceptions": 0,
-    "efficiencyWarningUnits": 45,
-    "efficiencyWarningCombinations": 99,
+    "efficiencyWarningUnits": 101,
+    "efficiencyWarningCombinations": 160,
     "declaredBankCombinations": 8,
-    "paperCompleted": 4359,
+    "paperCompleted": 4101,
     "paperExhausted": 0
   }
 }

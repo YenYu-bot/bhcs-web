@@ -107,13 +107,13 @@
 
 | 項目 | 結果 |
 |---|---:|
-| topic / 組合 | 128 / 4359 |
-| safeQuestion 抽樣 / 成功取題 | 871800 / 871800 |
-| 通過 / 失敗 | 4359 / 0 |
-| 候選 gen / null | 981829 / 87463 |
+| topic / 組合 | 128 / 4101 |
+| safeQuestion 抽樣 / 成功取題 | 820200 / 820200 |
+| 通過 / 失敗 | 4101 / 0 |
+| 候選 gen / null | 966621 / 135583 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 4359 / 0 |
-| 高拒絕率 unit（非阻擋） | 45 |
+| 完成單卷 / 單卷耗盡 | 4101 / 0 |
+| 高拒絕率 unit（非阻擋） | 101 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -124,51 +124,107 @@
 
 | topic / unit | 最高 null 拒絕率 | 超過 50% 的難度×mode 組數 |
 |---|---:|---:|
-| sub / `borrow` | 57.3% | 2 |
-| money / `count` | 61.4% | 1 |
-| money / `change` | 51.1% | 1 |
-| arithmetic / `mul` | 54.9% | 1 |
-| unknown / `same` | 51.0% | 1 |
-| units / `compare` | 81.6% | 6 |
-| speed / `average` | 81.6% | 5 |
-| speed / `meet` | 73.0% | 2 |
-| numberline / `mark` | 81.4% | 6 |
-| statistics / `mean` | 72.6% | 5 |
-| statistics / `mode` | 54.2% | 1 |
+| add / `carry` | 78.4% | 1 |
+| sub / `sub` | 77.2% | 1 |
+| sub / `borrow` | 69.3% | 2 |
+| money / `count` | 58.1% | 1 |
+| money / `enough` | 70.9% | 2 |
+| timestables / `tables` | 57.8% | 1 |
+| estimate / `est` | 51.5% | 1 |
+| measure / `elapsed` | 60.0% | 3 |
+| gcd / `factored` | 59.0% | 1 |
+| units / `length` | 59.3% | 1 |
+| units / `weight` | 63.2% | 1 |
+| units / `capacity` | 58.5% | 1 |
+| units / `volume` | 58.1% | 1 |
+| units / `compare` | 78.8% | 4 |
+| area / `parallelogram` | 53.9% | 2 |
+| area / `triangle` | 59.0% | 2 |
+| circle / `sector` | 60.1% | 1 |
+| speed / `findt` | 66.6% | 1 |
+| speed / `average` | 86.3% | 4 |
+| speed / `meet` | 73.0% | 1 |
+| pattern / `average` | 62.2% | 1 |
+| factors / `sd` | 60.1% | 1 |
+| function / `composite` | 78.9% | 3 |
+| function / `nested` | 76.8% | 1 |
+| numberline / `mark` | 83.4% | 5 |
+| lineeq / `online` | 84.0% | 1 |
+| lineeq / `hvline` | 69.7% | 3 |
+| lineeq / `graph` | 77.4% | 2 |
+| lineeq / `twopoint` | 50.7% | 1 |
+| statistics / `mean` | 67.8% | 3 |
+| statistics / `mode` | 79.0% | 1 |
 | statistics / `change` | 71.4% | 3 |
 | statistics / `missing` | 61.6% | 1 |
-| polyops / `monoDivide` | 51.2% | 1 |
-| sqrt / `divideRadicals` | 64.9% | 2 |
-| sqrt / `rationalize` | 71.9% | 3 |
-| geoseq / `gmean` | 65.4% | 3 |
-| parallelratio / `parallelSeg` | 74.1% | 2 |
-| parallelratio / `twoStep` | 52.7% | 2 |
-| parallelratio / `threeLines` | 61.7% | 2 |
-| parallelratio / `judge` | 56.1% | 2 |
-| parallelratio / `midsegment` | 50.7% | 1 |
-| parallelratio / `midpoint` | 59.1% | 4 |
-| similar / `sides` | 54.2% | 1 |
-| similar / `aa` | 77.2% | 4 |
+| polyops / `monoDivide` | 71.1% | 1 |
+| sqrt / `divideRadicals` | 65.0% | 1 |
+| pythagoras / `hypotenuse` | 61.1% | 3 |
+| geoseq / `gmean` | 70.0% | 3 |
+| angles / `equation` | 60.0% | 1 |
+| parallelratio / `parallelSeg` | 77.4% | 2 |
+| parallelratio / `twoStep` | 57.0% | 2 |
+| parallelratio / `threeLines` | 69.2% | 1 |
+| parallelratio / `judge` | 81.1% | 1 |
+| parallelratio / `midsegment` | 57.1% | 1 |
+| parallelratio / `midpoint` | 53.2% | 1 |
+| similar / `sides` | 55.5% | 1 |
+| similar / `aa` | 80.6% | 4 |
 | similar / `area` | 51.0% | 1 |
-| similar / `measure` | 76.3% | 1 |
-| circle1 / `sector` | 59.0% | 1 |
-| quartile / `weighted` | 64.5% | 3 |
-| probability / `experiment` | 59.5% | 1 |
-| radicals / `simplify` | 55.7% | 2 |
-| absolute / `error` | 66.6% | 3 |
-| linecircle / `tangent` | 52.7% | 1 |
-| series / `powersums` | 62.7% | 1 |
-| series / `interest` | 59.9% | 1 |
-| standarddev / `spread` | 58.4% | 2 |
-| correlation / `twoslopes` | 57.7% | 3 |
-| correlation / `application` | 69.7% | 3 |
-| trigtransform / `shift` | 67.6% | 2 |
-| trigtransform / `model` | 51.5% | 2 |
-| planevector / `lincomb` | 66.7% | 3 |
-| bayes / `totaltwo` | 71.8% | 3 |
-| bayes / `medicalnegative` | 51.7% | 2 |
-| bayes / `factoryorigin` | 51.0% | 1 |
-| matrixapps / `population` | 58.8% | 1 |
+| similar / `measure` | 62.0% | 2 |
+| righttri / `ladder` | 59.4% | 1 |
+| circle1 / `sector` | 65.1% | 2 |
+| circle2 / `cyclic` | 58.8% | 1 |
+| quartile / `meanmed` | 67.5% | 2 |
+| quartile / `weighted` | 53.2% | 1 |
+| remainder / `factor` | 60.9% | 2 |
+| remainder / `two` | 50.5% | 1 |
+| radicals / `simplify` | 54.9% | 1 |
+| radicals / `nested` | 72.3% | 2 |
+| exponent / `fractional` | 51.0% | 1 |
+| exponent / `algebra` | 50.8% | 1 |
+| exponent / `equation` | 82.2% | 1 |
+| logarithms / `laws` | 64.8% | 1 |
+| absolute / `error` | 74.8% | 3 |
+| amgm / `means` | 68.7% | 1 |
+| point / `motion` | 57.6% | 1 |
+| linecircle / `tangent` | 66.9% | 1 |
+| sequences / `geometricterm` | 52.5% | 1 |
+| series / `arithinverse` | 60.6% | 1 |
+| standarddev / `spread` | 66.9% | 2 |
+| standarddev / `rawstats` | 59.3% | 1 |
+| standarddev / `zcompare` | 56.4% | 1 |
+| standarddev / `correctmean` | 51.3% | 1 |
+| standarddev / `groupmean` | 68.3% | 3 |
+| correlation / `line` | 54.6% | 1 |
+| correlation / `application` | 76.5% | 3 |
+| probability / `linearity` | 76.8% | 2 |
+| righttrig / `projection` | 77.0% | 1 |
+| generalpolar / `cart2polar` | 71.9% | 1 |
+| generalpolar / `polarapplication` | 52.7% | 1 |
+| sincosarea / `heron` | 75.5% | 1 |
+| sincosarea / `median` | 85.8% | 3 |
+| sincosarea / `bisector` | 70.5% | 1 |
+| sector / `cone` | 67.2% | 1 |
+| trigtransform / `shift` | 76.8% | 2 |
+| expfunctions / `equation` | 69.6% | 1 |
+| expequations / `linear` | 56.5% | 2 |
+| expequations / `quadratic` | 61.4% | 2 |
+| commonlog / `laws` | 84.7% | 2 |
+| loggraphs / `graph` | 58.2% | 1 |
+| vectorcauchy / `perpendicular` | 86.5% | 4 |
+| spacecross / `det2` | 57.3% | 1 |
+| spacecross / `commonnormal` | 53.8% | 2 |
+| plane3d / `perpparameter` | 72.3% | 2 |
+| plane3d / `foot` | 58.1% | 1 |
+| plane3d / `reflection` | 72.0% | 1 |
+| line3d / `lineplane` | 67.1% | 1 |
+| conditionalprob / `solveunion` | 60.7% | 2 |
+| conditionalprob / `missingtable` | 58.0% | 1 |
+| conditionalprob / `binomial` | 64.2% | 1 |
+| bayes / `bayestwo` | 65.1% | 1 |
+| bayes / `predictive` | 77.7% | 1 |
+| matrixops / `singular` | 64.0% | 1 |
 
 全部組合的實際拒絕率留在 JSON 與 CSV。警示只供後續調範圍參考，不阻擋合併。
 

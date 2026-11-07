@@ -140,33 +140,63 @@ function timestablesConfig(){
  const addUp=(a,n)=>{let s=0;for(let i=0;i<n;i++)s+=a;return s}; // verify 用連加，不用乘法
  const blank="□";
  // ① 九九乘法
- const mult=unit("tables","九九乘法","背熟九九乘法表；兩個數也可能交換位置出現。",ctx=>{
-  const a=pick(tables(ctx)),b=rand(1,9),swap=Math.random()<(lv(ctx)===2?.5:.3),[x,y]=swap?[b,a]:[a,b],p=x*y;
+ const mult=unit("tables","九九乘法","背熟九九乘法表；兩個數也可能交換位置出現。0 乘以任何數都是 0。連乘由左往右算。",ctx=>{
+  // 基礎：2～5 段的九九，偶爾出 0 的乘法；進階：2～9 段交換位置，一半是「幾十 × 一位數」（7 × 40，用九九再補 0）；
+  // 挑戰：不再出單一的九九，改成三個數連乘（積 100 以內）與「積相同的兩個算式」（4 × 6 ＝ 3 × □，先算積再反想）
+  const L=lv(ctx),a=pick(tables(ctx));
+  if(L===0&&Math.random()<.1){const z=Math.random()<.5;return{expr:z?`0 × ${a}＝`:`${a} × 0＝`,answer:"0",sig:`z:${a}:${z}`,verify:()=>addUp(0,a)===0}}
+  // 進階的單一九九只出「兩個乘數都是 6～9」（6～9 段的難記組合），不出 ×1，也不會和基礎（2～5 段）同一題；勾選的段都 ≤5 時只出幾十 × 一位數
+  if(L===1){const big=tables(ctx).filter(t=>t>=6);if(big.length&&Math.random()<.4){const x=pick(big),y=rand(6,9),[u,v]=Math.random()<.5?[x,y]:[y,x],p=u*v;return{expr:`${u} × ${v}＝`,answer:String(p),sig:`m:${u}:${v}`,verify:()=>addUp(u,v)===p&&addUp(v,u)===p}}}
+  if(L===1){const b=rand(2,9),t=10*b,front=Math.random()<.5,p=a*t;return{expr:front?`${t} × ${a}＝`:`${a} × ${t}＝`,answer:String(p),sig:`tn:${a}:${t}:${front}`,verify:()=>addUp(t,a)===p&&addUp(a,b)*10===p}}
+  if(L===2){if(Math.random()<.5){const b=rand(2,5),c=rand(2,9),p=a*b*c;if(p>99)return null;return{expr:`${a} × ${b} × ${c}＝`,answer:String(p),sig:`t3:${a}:${b}:${c}`,verify:()=>addUp(addUp(a,b),c)===p}}
+   const b=rand(2,9),p=a*b,cs=[2,3,4,5,6,7,8,9].filter(x=>x!==a&&x!==b&&p%x===0&&p/x>=2&&p/x<=9);if(!cs.length)return null;const c=pick(cs),d=p/c,front=Math.random()<.5;
+   return{expr:front?`${a} × ${b}＝${blank} × ${c}`:`${a} × ${b}＝${c} × ${blank}`,answer:String(d),sig:`eq:${a}:${b}:${c}:${front}`,verify:()=>addUp(c,d)===addUp(a,b)}}
+  const b=rand(1,9),swap=Math.random()<(L===2?.5:.3),[x,y]=swap?[b,a]:[a,b],p=x*y;
   return{expr:`${x} × ${y}＝`,answer:String(p),sig:`m:${x}:${y}`,verify:()=>addUp(x,y)===p&&addUp(y,x)===p};
  });
  mult.maxCount=40; // 基礎級只有 2～5 段；嚴格去重的單卷以 40 題為上限。
  // ② 乘法填空
  const fill=unit("fill","乘法填空","想「幾乘以幾會等於這個數」；空格也可能出現在前面。",ctx=>{
-  const a=pick(tables(ctx)),b=rand(1,9),p=a*b,front=Math.random()<(lv(ctx)>=1?.5:.3);
-  if(lv(ctx)===2&&Math.random()<.3){return{expr:`${p}＝${front?blank:a} × ${front?a:blank}`,answer:String(b),sig:`fe:${a}:${b}:${front}`,verify:()=>addUp(a,b)===p}}
+  // 基礎：2～5 段的 □ × a＝積；進階：6～9 段（勾選的段都 ≤5 時乘數 6～9），空格在前或後；
+  // 挑戰：不出單純填空，改成積寫在左邊（24＝□ × 4）和兩步的「a × □ ＋ c＝n」「a × □ − c＝n」（先把加減的部分還原）
+  const L=lv(ctx),T=tables(ctx),big=T.filter(t=>t>=6),a=pick(L===1&&big.length?big:T),b=L===1&&!big.length?rand(6,9):rand(L>=1?2:1,9),p=a*b,front=Math.random()<(L>=1?.5:.3);
+  if(L===2){const g=rand(0,2);if(g===0)return{expr:`${p}＝${front?blank:a} × ${front?a:blank}`,answer:String(b),sig:`fe:${a}:${b}:${front}`,verify:()=>addUp(a,b)===p};
+   const c=rand(1,9),plus=g===1,n=plus?p+c:p-c;if(n<=0)return null;return{expr:`${a} × ${blank} ${plus?"＋":"−"} ${c}＝${n}`,answer:String(b),sig:`f2:${a}:${b}:${c}:${plus}`,verify:()=>(plus?n-c:n+c)%a===0&&(plus?n-c:n+c)/a===b}}
   return{expr:front?`${blank} × ${a}＝${p}`:`${a} × ${blank}＝${p}`,answer:String(b),sig:`f:${a}:${b}:${front}`,verify:()=>addUp(a,b)===p&&p%a===0&&p/a===b};
  });
  // ③ 除法（整除）
  const divide=unit("div","除法（九九範圍）","除法是乘法的反向：想「幾乘以除數等於被除數」。",ctx=>{
-  const a=pick(tables(ctx)),b=rand(1,9),p=a*b;
-  if(lv(ctx)===2&&Math.random()<.4){const byA=Math.random()<.5;return{expr:byA?`${p} ÷ ${blank}＝${b}`:`${blank} ÷ ${a}＝${b}`,answer:String(byA?a:p),sig:`dm:${a}:${b}:${byA}`,verify:()=>addUp(a,b)===p}}
-  const byB=Math.random()<(lv(ctx)>=1?.5:.3),d=byB?b:a,q=byB?a:b;if(d===1)return null;
-  return{expr:`${p} ÷ ${d}＝`,answer:String(q),sig:`d:${p}:${d}`,verify:()=>addUp(d,q)===p&&p%d===0};
+  // 基礎：除數 2～5（勾選的段）、商 1～9，另有 a÷a、a÷1、0÷a；進階：除數 6～9 的九九除法，和「二位數 ÷ 一位數」不必借位的心算（48 ÷ 4＝12，每一位都用九九）；
+  // 挑戰：不出直接的除法，改成反求除數或被除數（p ÷ □＝b、□ ÷ a＝b）與「商相等的算式」（36 ÷ 4＝3 × □）
+  const L=lv(ctx),T=tables(ctx),a=pick(T),b=rand(1,9),p=a*b;
+  if(L===0&&Math.random()<.2){const g=rand(1,2),[x,y,q]=g===1?[a,1,a]:[0,a,0];return{expr:`${x} ÷ ${y}＝`,answer:String(q),sig:`s:${x}:${y}`,verify:()=>addUp(y,q)===x}}// a÷a 由一般題（商 1）出
+  if(L===2){if(Math.random()<.55){const bb=rand(2,9),pp=a*bb,byA=Math.random()<.5;return{expr:byA?`${pp} ÷ ${blank}＝${bb}`:`${blank} ÷ ${a}＝${bb}`,answer:String(byA?a:pp),sig:`dm:${a}:${bb}:${byA}`,verify:()=>addUp(a,bb)===pp}}
+   const q=pick([4,6,8,9]),cs=[2,3,4].filter(c=>q%c===0&&q/c>=2),c=pick(cs),e=q/c,n=a*q,front=Math.random()<.5;
+   return{expr:front?`${n} ÷ ${a}＝${c} × ${blank}`:`${n} ÷ ${a}＝${blank} × ${c}`,answer:String(e),sig:`de:${a}:${q}:${c}:${front}`,verify:()=>addUp(a,addUp(c,e))===n}}
+  if(L===1){const big=T.filter(t=>t>=6);if(big.length&&Math.random()<.5){const d=pick(big),q=rand(2,9),n=d*q;return{expr:`${n} ÷ ${d}＝`,answer:String(q),sig:`d:${n}:${d}`,verify:()=>addUp(d,q)===n}}
+   const d=rand(2,4),t=rand(1,Math.floor(9/d)),u=rand(1,Math.floor(9/d)),q=10*t+u,n=d*q;return{expr:`${n} ÷ ${d}＝`,answer:String(q),sig:`d2:${n}:${d}`,verify:()=>addUp(d,q)===n&&Math.floor(n/10)===d*t&&n%10===d*u}}
+  if(a===1)return null;
+  return{expr:`${p} ÷ ${a}＝`,answer:String(b),sig:`d:${p}:${a}`,verify:()=>addUp(a,b)===p&&p%a===0};
  });
  divide.maxCount=40; // 基礎級嚴格去重時 60 題會耗盡。
  // ④ 有餘數的除法
  const remainder=unit("rem","有餘數的除法","商是「不超過被除數的最大倍數」，餘數一定比除數小。",ctx=>{
-  const d=pick(tables(ctx)),qMax=lv(ctx)===2?Math.floor(99/d):9,q=rand(1,qMax),r=rand(1,d-1),a=d*q+r;if(a>99)return null;
+  // 基礎：除數 2～5（勾選的段）、商 1～9；進階：除數 6～9、商 2～9（不和基礎同題）；挑戰：商是二位數（10 以上），或下面的反求
+  const L=lv(ctx),T=tables(ctx),big=T.filter(t=>t>=6),d=pick(L===1&&big.length?big:T),q=L===2?rand(10,Math.max(10,Math.floor(99/d))):rand(L===1?(big.length?2:6):1,9),r=rand(1,d-1),a=d*q+r;if(a>99)return null;
+  // 挑戰另外有反求：被除數（□ ÷ d＝q…r）和「餘數最大是幾、這時被除數是多少」
+  if(lv(ctx)===2&&Math.random()<.35){const q2=rand(2,9),r2=rand(1,d-1),a2=d*q2+r2;if(Math.random()<.6)return{expr:`${blank} ÷ ${d}＝${q2} … ${r2}`,answer:String(a2),sig:`rb:${d}:${q2}:${r2}`,verify:()=>addUp(d,q2)+r2===a2&&r2<d};
+   if(d<3)return null;return{expr:`${blank} ÷ ${d}＝${q2} … ${blank}，餘數最大是幾？被除數是多少？`,answer:`${d-1}；${d*q2+d-1}`,sig:`rm:${d}:${q2}`,verify:()=>addUp(d,q2)+d-1<addUp(d,q2+1)}}
   return{expr:`${a} ÷ ${d}＝`,answer:`${q} … ${r}`,sig:`r:${a}:${d}`,verify:()=>addUp(d,q)+r===a&&r<d&&r>0&&addUp(d,q+1)>a};
  });
  // ⑤ 乘除混合連算
  const mixed=unit("mixed","乘除混合連算","由左往右依序算，先算出前面的結果再算後面。",ctx=>{
   const T=tables(ctx),L=lv(ctx);
+  // 挑戰：四個數三步連算（乘、除、乘／除、乘、除），每一步都在九九範圍內，答案 2～99
+  if(L===2){const D9=[2,3,4,5,6,7,8,9];
+   if(Math.random()<.5){const a=pick(T),b=rand(2,9),p=a*b,cs=D9.filter(x=>x!==a&&x!==b&&p%x===0);if(!cs.length)return null;const c=pick(cs),q=p/c,e=rand(2,9);if(q<2||e===c||q*e>99)return null;const v=q*e;
+    return{expr:`${a} × ${b} ÷ ${c} × ${e}＝`,answer:String(v),sig:`x4:${a}:${b}:${c}:${e}`,verify:()=>addUp(c,q)===addUp(a,b)&&addUp(q,e)===v}}
+   const d=pick(T),q=rand(2,9),a=d*q,c=rand(2,9),m=q*c,es=D9.filter(x=>x!==c&&x!==d&&m%x===0&&m/x>=2);if(c===d||!es.length)return null;const e=pick(es),v=m/e;
+   return{expr:`${a} ÷ ${d} × ${c} ÷ ${e}＝`,answer:String(v),sig:`y4:${a}:${d}:${c}:${e}`,verify:()=>addUp(d,q)===a&&addUp(e,v)===addUp(q,c)}}
   if(Math.random()<.5){const a=pick(T),b=rand(2,9),p=a*b;
    // 不出「a × b ÷ a」「a ÷ d × d」這種乘了又除回同一個數的退化題；基礎級在九九範圍內找別的除數（商 2～9），
    // 找不到就重抽（另一半的「a ÷ d × c」一定出得來，只勾一段時也不會用完）。
@@ -179,12 +209,17 @@ function timestablesConfig(){
  });
  // ⑥ 二位數×一位數心算
  const twoDigit=unit("twodigit","二位數 × 一位數心算","把二位數拆成「幾十」和「幾」分別乘，再相加。",ctx=>{
-  const L=lv(ctx),b=pick(tables(ctx));let a;for(let t=0;t<40;t++){a=rand(11,99);const ones=a%10,tens=Math.floor(a/10);if(L===0&&(ones*b>=10||tens*b>=10||ones===0))continue;if(L===1&&(ones*b<10||ones===0))continue;if(L===2&&(ones*b<10||tens*b<10))continue;break}
-  const p=a*b;return{expr:`${a} × ${b}＝`,answer:String(p),sig:`t:${a}:${b}`,verify:()=>Math.floor(a/10)*10*b+(a%10)*b===p&&addUp(a,b)===p};
+  // 基礎：都不進位；進階：只有個位進位（十位乘出來不滿 10，不和挑戰重疊）；挑戰：個位、十位都進位
+  const L=lv(ctx),b=pick(tables(ctx));let a,ok=false;
+  if(L===0){const m=Math.floor(9/b);if(!m)return null;a=10*rand(1,m)+rand(0,m);ok=true}// 基礎直接造：十位、個位乘出來都不滿 10（含 10、20 這類整十）
+  else for(let t=0;t<40;t++){a=rand(11,99);const ones=a%10,tens=Math.floor(a/10);if(L===0&&(ones*b>=10||tens*b>=10||ones===0))continue;if(L===1&&(ones*b<10||ones===0||tens*b>=10))continue;if(L===2&&(ones*b<10||tens*b<10))continue;ok=true;break}if(!ok)return null;
+  const p=a*b;return{expr:`${a} × ${b}＝`,answer:String(p),sig:`t:${a}:${b}`,verify:()=>Math.floor(a/10)*10*b+(a%10)*b===p&&addUp(a,b)===p&&(L>0||(a%10)*b<10&&Math.floor(a/10)*b<10)};
  });
+ // 基礎級（都不進位）是有限題庫：每段 b 有 m×(m＋1) 題（m＝9÷b 的整數部分；2～5 段共 40 題）；進階、挑戰不設上限。
+ twoDigit.bankSize=ctx=>lv(ctx)===0?tables(ctx).reduce((s,b)=>{const m=Math.floor(9/b);return s+m*(m+1)},0)||null:null;
  return{title:"九九乘法與乘除心算",symbol:"×",subtitle:"九九乘法・乘法填空・整除與有餘數的除法・乘除連算・二位數×一位數",instruction:"計時作答，直接把答案寫在等號後面；做完記下用時和答對題數。",modes:["integer"],mixed:false,answerLabel:"",header:"用時：___分___秒　答對：___題",sigRepeat:2,
   extraControl:{id:"tables",label:"指定乘數",options:[2,3,4,5,6,7,8,9]},
-  levels:{basic:"基礎：2～5 段（未指定乘數時）、整除、無進位的二位數乘法。",advanced:"進階：2～9 段、空格在前的填空、有餘數除法、有進位的二位數乘法。",challenge:"挑戰：交換順序、反求除數或被除數、商為二位數的有餘數除法、連算與大數心算。"},
+  levels:{basic:"基礎：2～5 段（未指定乘數時）、0 的乘法、整除與 0、1 的除法、乘除後再除（不回到原數）、無進位的二位數乘法。",advanced:"進階：6～9 段的九九（交換位置）、幾十 × 一位數、6～9 段的填空與除法、二位數 ÷ 一位數心算（48 ÷ 4）、除數 6～9 的有餘數除法、乘除連算、只有個位進位的二位數乘法。",challenge:"挑戰：三個數連乘、積相同的算式（4 × 6＝3 × □）、兩步填空（3 × □ ＋ 4＝31）、反求除數或被除數、商相等的算式（36 ÷ 4＝3 × □）、商為二位數的有餘數除法、有餘數的反求與餘數最大、四個數的乘除連算、個位十位都進位的心算。"},
   units:[mult,fill,divide,remainder,mixed,twoDigit],
   presets:{basic:{tables:30,fill:10,div:10,rem:5,twodigit:5},advanced:{tables:20,fill:10,div:10,rem:10,mixed:5,twodigit:10},challenge:{tables:15,fill:10,div:10,rem:10,mixed:10,twodigit:15}}};
 }
