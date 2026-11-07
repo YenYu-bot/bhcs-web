@@ -31,11 +31,20 @@ for(const id of ['fractional','laws','algebra']){
    let expected;
    if(style==='s')expected=pow(rational(parts[3]),Number(parts[4])+Number(parts[5])-Number(parts[6]));
    else if(style==='p')expected=pow(rational(parts[3]),Number(parts[4])*Number(parts[5])-Number(parts[6]));
+   else if(style==='x')expected=pow(rational(parts[3]),Number(parts[4])*Number(parts[5])+Number(parts[6])-Number(parts[7])*Number(parts[8])); // phase 2: (a^m)^n·a^p÷(a^q)^r
    else expected=pow(rational(parts[4]),Number(parts[5]));
    const rendered=mathText(q.answer).split('＝').at(-1);
    close(value(rendered),expected);
   }
-  if(id==='algebra'){
+  if(id==='algebra'&&parts[0]==='algebra2'){
+   // round 3b: advanced/challenge are (c·x^a1·y^b1)^p1 ÷ (c·x^a2·y^b2)^p2 — coefficient c^(p1−p2)
+   const c=parts[3].split('/').map(Number),[a1,b1,p1,a2,b2,p2]=parts.slice(4).map(Number),k=p1-p2;
+   const [n,d]=k>=0?[c[0]**k,c[1]**k]:[c[1]**-k,c[0]**-k],sign=d<0?-1:1;
+   const divisor=(x,y)=>{while(y){[x,y]=[y,x%y]}return Math.abs(x)||1};
+   const coefficient={n:sign*n,d:sign*d};const g=divisor(coefficient.n,coefficient.d);coefficient.n/=g;coefficient.d/=g;
+   assert.equal(q.answer,monomial(coefficient,a1*p1-a2*p2,b1*p1-b2*p2));
+  }
+  else if(id==='algebra'){
    const c=parts[2].split('/').map(Number),a=Number(parts[3]),b=Number(parts[4]),p=Number(parts[5]),qExp=Number(parts[6]),rExp=Number(parts[7]);
    const coefficient={n:c[0]**(p-1),d:c[1]**(p-1)};
    const divisor=(x,y)=>{while(y){[x,y]=[y,x%y]}return Math.abs(x)||1};

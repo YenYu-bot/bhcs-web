@@ -42,7 +42,8 @@ for(const [kind,samples] of Object.entries(sampleKinds))assert.equal(samples.len
 for(const [kind,outcomes] of Object.entries(ssaOutcomes))assert.deepEqual([...outcomes].sort(),[0,1,2],`${kind} must cover no/one/two solutions`);
 assert.deepEqual([...degreeAngles].sort((a,b)=>a-b),[60,90,120]);
 for(let i=0;i<20000&&retained.size;i++)for(const unit of [ambiguous,cosineAngle]){
- const q=api.safeQuestion(unit,{level:'advanced',modes:['integer'],mixed:false},new Set()),expected=q&&retained.get(q.sig);
+ // round 3 (2026-11-07): the retained "list ∠B" SSA items now belong to basic only (advanced asks for the solution count).
+ const q=api.safeQuestion(unit,{level:unit===ambiguous?'basic':'advanced',modes:['integer'],mixed:false},new Set()),expected=q&&retained.get(q.sig);
  if(!expected)continue;
  assert.equal(mathText(q.expr),expected.expr,`${q.sig} retained prompt`);
  assert.equal(mathText(q.answer),expected.answer,`${q.sig} retained answer`);

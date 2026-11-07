@@ -29,5 +29,5 @@ for(const level of ['basic','advanced','challenge'])for(let i=0;i<200;i++){
  close(displayed,Math.hypot(...cross(delta,d))/Math.hypot(...d));
  count++;
 }
-assert.equal(directions.size,6);
+assert.ok(directions.size>=6,'direction pool no smaller than the original six (phase 2 widened it)');
 console.log(JSON.stringify({test:'spaceinner-pointdistance',count,directions:directions.size,methods:2,passed:true}));

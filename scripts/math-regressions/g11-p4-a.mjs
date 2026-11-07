@@ -55,7 +55,8 @@ for(const [topic,ids]of Object.entries(targets))for(const id of ids){
   rows.push({topic,unit:id,level,mode,formal:'40/40 × 20 seeds',stress:'80/80 × 20 seeds'});
  }
 }
-assert.equal(Object.keys(samples).length,17,'all new kinds must have accepted samples');
+// phase 2 (2026-11) 新增 p4tr:both、p4tr:mixC 兩種進階／挑戰題型，共 19 種。
+assert.equal(Object.keys(samples).length,19,'all new kinds must have accepted samples');
 const result={passed:true,replays,papers,questions,rows,samples};
 if(process.env.P4_A_REPORT)fs.writeFileSync(process.env.P4_A_REPORT,JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({test:'g11-p4-a',passed:true,replays,papers,questions,newKinds:Object.keys(samples).length}));

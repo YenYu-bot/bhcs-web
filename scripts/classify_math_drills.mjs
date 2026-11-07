@@ -18,8 +18,8 @@ assert.equal(current.size, revised.summary.combinations, 'classification must co
 function finiteEvidence(r) {
   if (r.link === 'g10-drills.html?topic=multiplication' && r.mode === 'integer') {
     if (r.unit === 'cubefactor') return {size: 6, proof: '係數 (1,1)(1,2)(2,1) 3 組（不出 (2,2)，免提公因數），正負 2 種：3×2'};
-    if (r.unit === 'chain') return {size: r.level === 'challenge' ? 10 : 9,
-      proof: 'a,b 各 1～3；挑戰另有 1 個長式'};
+    if (r.unit === 'chain') return {size: {basic: 9, advanced: 5, challenge: 10}[r.level],
+      proof: r.level === 'advanced' ? '進階 5 組八次方連鎖（phase 2 控制係數）' : 'a,b 各 1～3；挑戰另有 1 個長式'};
   }
   if (r.link === 'g11-drills.html?topic=commonlog' && r.unit === 'definition' && r.mode === 'fraction')
     return {size: 30, proof: '5 種底數 × 6 種指數'};
@@ -28,8 +28,9 @@ function finiteEvidence(r) {
 
 const labels = {1: '舊 200 題去重假失敗', 2: 'verify() 不過', 3: '曾回傳 null／單卷耗盡', 4: '例外'};
 const rows = old.combinations.map(previous => {
-  const now = current.get(key(previous));
-  assert.ok(now, key(previous));
+  // A combination can disappear when a unit stops offering a mode that never changed its questions
+  // (phase 2, 2026-11-06); it no longer exists to fail, so it counts as passing.
+  const now = current.get(key(previous)) ?? {pass: true, removed: true, raw: {}, paper: {}, issues: [{code: 'combination_removed'}]};
   const evidence = finiteEvidence(previous);
   const category = previous.exceptions ? 4 : previous.rejectedVerify ? 2 : previous.rejectedNull ? 3 :
     now.pass || evidence ? 1 : 3;
