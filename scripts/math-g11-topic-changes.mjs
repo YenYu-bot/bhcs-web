@@ -4,7 +4,7 @@ import path from 'node:path';
 import {parseExpressionAt} from 'acorn';
 
 const enginePath = 'tools/math/g11-drills.html';
-const git = (...args) => execFileSync('git', args, {encoding: 'utf8'}).trimEnd();
+const git = (...args) => execFileSync('git', args, {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024}).trimEnd(); // g11 engine is > 1 MiB
 
 export function topicSources(html) {
   const config = html.match(/\bconst CONFIGS=\{([^}]+)\}/s);

@@ -1457,8 +1457,8 @@ const GEN={
         const a_=`<span class="steps">${A.join('×')}＝${fac(a)}；${useStd?'':B.join('×')+'＝'+fac(b)+'；'}所求＝<b>${fac(val)}</b>${val<1e7&&fac(val)!==String(val)?`（＝${val}）`:''}</span>`;
         return {q,a:a_,len:20}; }
       return {q:wrapG('7×50，4×6×5')+'＝？',a:'<b>2×5</b>',len:20}; }},
-  mix:{name:'綜合練習',tip:'混合各種題型：巢狀括號、最大公因數與最小公倍數的和、商，以及需要輾轉相除的大數。',
-    make(){ const kind=pick(D===1?['sum','quot','bus','sd','sdapp','std']:D===2?['sum','quot','prodRule','bus','sdapp','std','euclid']:['nested2','prodRule','bus3','euclid','std','stdapp','sum','quot']);
+  mix:{name:'綜合練習',tip:'混合各種題型：巢狀括號、最大公因數與最小公倍數的和、商，以及（挑戰才有，補充）需要輾轉相除的大數。',
+    make(){ const kind=pick(D===1?['sum','quot','bus','sd','sdapp','std']:D===2?['sum','quot','prodRule','bus','sdapp','std']:/* 輾轉相除法是補充：綜合練習只在挑戰混入 */['nested2','prodRule','bus3','euclid','std','stdapp','sum','quot']);
       if(GEN[kind]) return GEN[kind].make();
       if(kind==='prodRule'){ const nums=makeSet(2,D===3?MAXN():150), [a,b]=nums, g=gcd2(a,b), l=lcm2(a,b); if(g===a||g===b) return null;
         return {q:`兩個正整數的最大公因數是 ${g}，最小公倍數是 ${l}，其中一數是 ${a}，求另一數。`,a:`兩數的乘積＝最大公因數×最小公倍數，另一數＝${g}×${l}÷${a}＝<b>${b}</b>`,len:22,verify:()=>G(a,b)===g&&Lm(a,b)===l}; }
@@ -1499,10 +1499,10 @@ const GEN={
   if(kind==='apply'){/* 情境要配得上數字大小：五位數不出「兩袋糖果各有 23161 顆」，改用電線、緞帶長（公分）或水量（毫升） */const big=Math.max(nums[0],nums[1]);const item=pick([['兩條繩子長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分',999],['兩塊布長','公尺','裁成一樣長的布條且不剩，每條最長幾公尺？','公尺',300],['兩袋糖果各有','顆','平分給最多的小朋友且不剩，最多幾人？','人',999],['兩捆電線長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分',1e9],['兩桶水各有','毫升','分裝成容量相同的瓶裝水且不剩，每瓶最多裝幾毫升？','毫升',1e9],['兩卷緞帶長','公分','剪成等長的小段且不剩，每段最長幾公分？','公分',1e9]].filter(t=>big<=t[4]));return{q:`${item[0]} ${nums[0]} ${item[1]}與 ${nums[1]} ${item[1]}，${item[2]}`,a:base.a.replace(/<b>(\d+)<\/b>/,`<b>$1</b> ${item[3]}`),len:18,verify:()=>G(nums[0],nums[1])===g}}
   const c=g*rnd(2,9);const st=[];let x=Math.max(nums[0],nums[1]),y=Math.min(nums[0],nums[1]);while(y){st.push(`${x}÷${y}＝${Math.floor(x/y)}…${x%y}`);[x,y]=[y,x%y]}
   return{q:wrapG(list([nums[0],nums[1],c]))+'＝？',a:`<span class="steps">先求 ${wrapG(list([nums[0],nums[1]]))}：${st.join('，')}，得 ${g}；再求 ${wrapG(list([g,c]))}＝<b>${GCD(g,c)}</b></span>`,len:16,verify:()=>[nums[0],nums[1],c].reduce(G)===GCD(g,c)}};
- const U=[["sd","短除法"],["sdapp","短除法應用"],["euclid","輾轉相除法"],["std","標準分解式"],["stdapp","標準分解式應用"],["mix","綜合練習"]].map(([k,n])=>unit(k,n,GEN[k].tip));
- return{title:"因數與倍數",symbol:"( )",subtitle:"短除法・短除法應用・輾轉相除法・標準分解式・標準分解式應用・綜合練習",instruction:"( ) 表示最大公因數，〔 〕表示最小公倍數。求下列各題：",modes:["integer"],mixed:false,answerLabel:"",
-  levels:{basic:"基礎：兩數、100 以內的短除法；判斷互質、寫出所有公因數；一層括號先求；小的輾轉相除；寫出所有正因數；兩因數的連乘積；公倍數應用。",advanced:"進階：三數、300 以內；公因數個數；括號在後的寫法；四位數的輾轉相除與應用；由標準分解式求因數個數；三因數連乘積；由最大公因數與最小公倍數反求另一數。",challenge:"挑戰：三到四數、1000 以內，質因數含 11、13；同時求最大公因數與最小公倍數；兩組括號；五位數與三數的輾轉相除；完全平方數、由分解式反求另一數；最小公倍數÷最大公因數；三個週期的應用。"},
-  units:U,presets:{basic:{sd:5,sdapp:2,euclid:2,std:2,stdapp:2},advanced:{sd:4,sdapp:3,euclid:2,std:2,stdapp:2,mix:3},challenge:{sd:3,sdapp:3,euclid:2,std:3,stdapp:3,mix:4}}};
+ const U=[["sd","短除法"],["sdapp","短除法應用"],["euclid","輾轉相除法（補充）"],["std","標準分解式"],["stdapp","標準分解式應用"],["mix","綜合練習"]].map(([k,n])=>unit(k,n,GEN[k].tip));
+ return{title:"因數與倍數",symbol:"( )",subtitle:"短除法・短除法應用・輾轉相除法（補充）・標準分解式・標準分解式應用・綜合練習",instruction:"( ) 表示最大公因數，〔 〕表示最小公倍數。求下列各題：",modes:["integer"],mixed:false,answerLabel:"",
+  levels:{basic:"基礎：兩數、100 以內的短除法；判斷互質、寫出所有公因數；一層括號先求；寫出所有正因數；兩因數的連乘積；公倍數應用。",advanced:"進階：三數、300 以內；公因數個數；括號在後的寫法；由標準分解式求因數個數；三因數連乘積；由最大公因數與最小公倍數反求另一數。",challenge:"挑戰：三到四數、1000 以內，質因數含 11、13；同時求最大公因數與最小公倍數；兩組括號；（補充）輾轉相除法：大數、三數與應用；完全平方數、由分解式反求另一數；最小公倍數÷最大公因數；三個週期的應用。"},
+  units:U,presets:{basic:{sd:5,sdapp:3,std:3,stdapp:2},advanced:{sd:4,sdapp:3,std:3,stdapp:3,mix:3},challenge:{sd:3,sdapp:3,euclid:2,std:3,stdapp:3,mix:4}}};
 }
 
 function linearConfig(){
@@ -2008,7 +2008,7 @@ const GEN={
    if(!indep(ladd(A,lscale(B,-1)),ladd(B,lscale(C,-1)))) return null;
    const v=new F(rnz(-9,9)); const adj=L=>lin(L.x,L.y,L.k.add(v.sub(lval(L,x0,y0)))); A=adj(A); B=adj(B); C=adj(C);
    return {q:`<span style="white-space:nowrap;padding-top:.3em">${linStr(A)}<span style="margin:0 .15em">＝</span>${linStr(B)}<span style="margin:0 .15em">＝</span>${linStr(C)}</span>`,a:solStr(x0,y0),len:18,chk:()=>{const nv=L=>L.x.val()*x0.val()+L.y.val()*y0.val()+L.k.val();return Math.abs(nv(A)-nv(B))<1e-9&&Math.abs(nv(B)-nv(C))<1e-9}}; }},
- subst:{name:'替代法',tip:'把重複出現的部分（如 x＋y、x−y、xy）看成新的未知數 a、b，先解出 a、b，再解出 x、y。',
+ subst:{name:'替代法',tip:'把重複出現的部分（如 x＋y、x−y、xy）看成新的未知數 a、b，先解出 a、b，再解出 x、y。挑戰的倒數型（1/(x＋y) 等）是補充。',
   make(){ const kind=pick(D===3?['sum-diff','xy-y','x+2,y-1']:['comb']);
    // 基礎：2(x＋y)＋3(x−y)＝7；進階：(x＋y)/2＋(x−y)/3＝…；挑戰：倒數型 1/(x＋y)（補充）
    if(kind==='comb'){ const form=pick(['sd','shift']), s=rnz(-4,4), t=rnz(-4,4), ds=D===2?[pick([2,3,4]),pick([2,3,5,6])]:null; if(ds&&ds[0]===ds[1]) return null; let u,v,x0,y0,d1,d2;
@@ -2042,7 +2042,7 @@ const GEN={
  /* 數型：分數型與小數型只開分數／小數；特殊係數、替代法只用整數；A＝B＝C 開整數與分數（分子型） */
  const U=[["sub","代入消去法"],["elim","加減消去法"],["fracdec","分數型與小數型",["fraction","decimal"]],["special","特殊係數型",["integer"]],["chain","A式＝B式＝C式",["integer","fraction"]],["subst","替代法",["integer"]],["mix","綜合練習"]].map(([k,n,m])=>unit(k,n,GEN[k].tip,m));
  return{title:"二元一次聯立方程式",symbol:"{",subtitle:"代入消去法・加減消去法・分數型與小數型・特殊係數型・A＝B＝C・替代法・綜合練習",instruction:"求下列各聯立方程式的解。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"",
-  levels:{basic:"基礎：一式已是 y＝… 或 x＝ky、判斷是不是解；加減消去只需乘一次；分數係數與 x/3＋y/4；一位小數；交錯係數在 50 以內；A＝B＝常數；2(x＋y)＋3(x−y)＝7 的替代法。",advanced:"進階：係數為 1 的標準式、正整數解；一般標準式；(x−1)/6＝6−y、(x＋y)/3＝2 與混合型；係數到 99；三個式子的 A＝B＝C；分數型的替代法；含括號與未化簡的標準式。",challenge:"挑戰：整數係數但解為分數、由解反求係數；兩式都要乘、未化簡的一般式；(x＋1)/2＋(y−1)/3＝1、小數乘括號；係數到 199、不解出 x、y 求 x＋y 與 x−y；k(x＋a)＝m(y＋b)＝x＋y＋c；倒數型替代法。"},
+  levels:{basic:"基礎：一式已是 y＝… 或 x＝ky、判斷是不是解；加減消去只需乘一次；分數係數與 x/3＋y/4；一位小數；交錯係數在 50 以內；A＝B＝常數；2(x＋y)＋3(x−y)＝7 的替代法。",advanced:"進階：係數為 1 的標準式、正整數解；一般標準式；(x−1)/6＝6−y、(x＋y)/3＝2 與混合型；係數到 99；三個式子的 A＝B＝C；分數型的替代法；含括號與未化簡的標準式。",challenge:"挑戰：整數係數但解為分數、由解反求係數；兩式都要乘、未化簡的一般式；(x＋1)/2＋(y−1)/3＝1、小數乘括號；係數到 199、不解出 x、y 求 x＋y 與 x−y；k(x＋a)＝m(y＋b)＝x＋y＋c；（補充）倒數型替代法 1/(x＋y)。"},
   units:U,presets:{basic:{sub:4,elim:4,fracdec:2,special:1},advanced:{sub:3,elim:3,fracdec:3,special:2,chain:2,subst:2,mix:2},challenge:{elim:3,fracdec:3,special:2,chain:2,subst:2,mix:4}}};
 }
 
@@ -2596,12 +2596,12 @@ function genAbs(){
   });
 }
 function genMixed(){
-  const st=CFG.types[0], g=pick(st==='int'?[genBasic,genBracket,genCombined,genAbs]:st==='frac'?[genBasic,genBracket,genFrac,genCombined,genAbs]:[genBasic,genBracket,genDec,genCombined,genAbs]);   // 分數型只在分數模式、小數型只在小數模式
+  const st=CFG.types[0], ab=CFG.lvl===3?[genAbs]:[], g=pick(st==='int'?[genBasic,genBracket,genCombined,...ab]:st==='frac'?[genBasic,genBracket,genFrac,genCombined,...ab]:[genBasic,genBracket,genDec,genCombined,...ab]);   // 分數型只在分數模式、小數型只在小數模式；絕對值不等式是補充（高一），只在挑戰混入
   const q=g(); if(g===genAbs){q.line=false} return q;
 }
 
 
- const NAMES={basic:'基本型（不等式性質）',bracket:'括號型',frac:'分數型',dec:'小數型（分數、小數混合）',comb:'合併形式（a＜b＜c、聯立）',gdraw:'圖示法：畫數線',gread:'圖示法：讀數線',sgraph:'解不等式並圖示',abs:'絕對值不等式',mixed:'綜合練習'};
+ const NAMES={basic:'基本型（不等式性質）',bracket:'括號型',frac:'分數型',dec:'小數型（分數、小數混合）',comb:'合併形式（a＜b＜c、聯立）',gdraw:'圖示法：畫數線',gread:'圖示法：讀數線',sgraph:'解不等式並圖示',abs:'絕對值不等式（補充，高一）',mixed:'綜合練習'};
  const GENS={basic:genBasic,bracket:genBracket,frac:genFrac,dec:genDec,comb:genCombined,gdraw:genGraphDraw,gread:genGraphRead,sgraph:genSolveGraph,abs:genAbs,mixed:genMixed};
  const INST={basic:'解下列各一元一次不等式。',bracket:'解下列各一元一次不等式。',frac:'解下列各一元一次不等式。',dec:'解下列各一元一次不等式。',comb:'解下列各一元一次不等式。',gdraw:'在數線上圖示不等式的範圍。',gread:'依數線上的圖示寫出 x 的範圍。',sgraph:'解不等式，並在數線上標示解的範圍。',abs:'解絕對值不等式，並在數線上表示。',mixed:'解下列各不等式。'};
  const TIPS={basic:'兩邊同加減一數不等號方向不變；同乘除正數不變，同乘除負數要變向。',bracket:'先去括號（注意負號變號），再移項、化簡。',frac:'兩邊同乘以分母的最小公倍數去分母，注意每一項都要乘。',dec:'兩邊同乘以 10、100 化成整數係數，或先化成分數。',comb:'a＜b＜c 拆成 a＜b 與 b＜c 兩個不等式分別解，再取共同範圍；聯立也是取交集。',gdraw:'空心圓表示不含端點（＜、＞），實心圓表示含端點（≦、≧），再往解的方向畫粗線。',gread:'先看圓是空心或實心，再看粗線的方向與範圍。',sgraph:'先解出範圍，再照圖示法畫在數線上。',abs:'｜ax＋b｜＜k ⇔ −k＜ax＋b＜k；｜ax＋b｜＞k ⇔ ax＋b＞k 或 ax＋b＜−k。',mixed:'混合各種題型，先判斷類型再選方法。'};
@@ -2632,9 +2632,9 @@ function genMixed(){
  }});
  /* 數型：分數型只開「分數」、小數型只開「小數」（題型本身就是那種數）；其他單元三種數型都會改變題目裡的數 */
  const U=['basic','bracket','frac','dec','comb','gdraw','gread','sgraph','abs','mixed'].map(id=>unit(id,id==='frac'?['fraction']:id==='dec'?['decimal']:null));
- return{title:"一元一次不等式",symbol:"＜",subtitle:"基本型・括號型・分數型・小數型・合併形式・畫數線・讀數線・解並圖示・絕對值不等式・綜合",instruction:"解下列各不等式；需要圖示的題目把解的範圍畫在數線上。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"",
-  levels:{basic:"基礎：不等式性質填空、ax＋b 與常數比較、一組括號、分數型兩種、小數型一種、a＜b＜c 與簡單聯立、單邊範圍的數線、｜ax＋b｜≦k；解為整數。",advanced:"進階：兩邊都有 x、檢驗是不是解、兩組括號、四種分數型、括號與小數混合、括號的合併形式與範圍內的整數、兩端點的數線與反向寫法、絕對值四種不等號；解可為 1/2、1/3。",challenge:"挑戰：最大／最小整數解與正整數解個數、三組括號含分數常數、複雜分數型、分數與小數混合的括號、分數的合併形式、「或」的兩段範圍與文字敘述、數線範圍內的整數個數、分數係數與含常數項、分母的絕對值；解的分母到 6。"},
-  units:U,presets:{basic:{basic:6,bracket:3,frac:2,gdraw:2,gread:2,abs:2},advanced:{basic:3,bracket:3,frac:3,dec:2,comb:2,gdraw:2,gread:2,sgraph:2,abs:2},challenge:{bracket:2,frac:3,dec:3,comb:3,sgraph:2,abs:3,mixed:3}}};
+ return{title:"一元一次不等式",symbol:"＜",subtitle:"基本型・括號型・分數型・小數型・合併形式・畫數線・讀數線・解並圖示・絕對值不等式（補充）・綜合",instruction:"解下列各不等式；需要圖示的題目把解的範圍畫在數線上。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"",
+  levels:{basic:"基礎：不等式性質填空、ax＋b 與常數比較、一組括號、分數型兩種、小數型一種、a＜b＜c 與簡單聯立、單邊範圍的數線；解為整數。",advanced:"進階：兩邊都有 x、檢驗是不是解、兩組括號、四種分數型、括號與小數混合、括號的合併形式與範圍內的整數、兩端點的數線與反向寫法、解不等式並圖示；解可為 1/2、1/3。",challenge:"挑戰：最大／最小整數解與正整數解個數、三組括號含分數常數、複雜分數型、分數與小數混合的括號、分數的合併形式、「或」的兩段範圍與文字敘述、數線範圍內的整數個數；（補充，高一）絕對值不等式：分數係數、含常數項、分母；解的分母到 6。"},
+  units:U,presets:{basic:{basic:6,bracket:4,frac:3,gdraw:2,gread:2},advanced:{basic:3,bracket:3,frac:3,dec:3,comb:3,gdraw:2,gread:2,sgraph:2},challenge:{bracket:2,frac:3,dec:3,comb:3,sgraph:2,abs:3,mixed:3}}};
 }
 
 function ratioConfig(){
@@ -3446,7 +3446,7 @@ function functionConfig(){
   (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=ri(-4,4),z=ri(-4,4),p=rand(2,4),q=rand(2,4);if(eq(x,z))return null;const v=sub(mul(R(p),eL(a,b,x)),mul(R(q),eL(a,b,z)));return one(`設 f(x)＝${L(a,b,m)}，求 ${p}f(${sh(x,m)})−${q}f(${sh(z,m)})。`,v,m,()=>near(p*(fv(a)*x.n+fv(b))-q*(fv(a)*z.n+fv(b)),fv(v)))},
   (m)=>{const a=rnz(m),b=rv(m);if(idF(a,b))return null;const x=ri(-5,5),z=ri(-5,5),fz=eL(a,b,z);if(fz.n===0||eq(x,z))return null;const v=div(eL(a,b,x),fz);if(m==="decimal"&&!term10(v))return null;return one(`設 f(x)＝${L(a,b,m)}，求 f(${sh(x,m)})÷f(${sh(z,m)})。`,v,m,()=>near((fv(a)*x.n+fv(b))/(fv(a)*z.n+fv(b)),fv(v)))}]);
 
- const piecewise=mkUnit("piecewise","分段函數（進階）","先看 x 屬於哪一段，再代入那一段的式子；端點看等號在哪一段。",[
+ const piecewise=mkUnit("piecewise","分段函數（補充）","先看 x 屬於哪一段，再代入那一段的式子；端點看等號在哪一段。",[
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,4),d=rv(m,5),x=ri(-4,-1),z=ri(1,4),y=eL(a,b,x),w=eL(c,d,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${L(c,d,m)}，x≧0`])}，求 f(${sh(x,m)}) 與 f(${z.n})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*x.n+fv(b),fv(y))&&near(fv(c)*z.n+fv(d),fv(w))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,3),d=rv(m,4),x=ri(-4,-1),z=ri(1,4),y=eL(a,b,x),w=eQ(c,R(0),d,z);return{q:`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${Q(c,R(0),d,m)}，x≧0`])}，求 f(${sh(x,m)}) 與 f(${z.n})。`,a:`${sh(y,m)}、${sh(w,m)}`,vals:[y,w],chk:()=>near(fv(a)*x.n+fv(b),fv(y))&&near(fv(c)*z.n**2+fv(d),fv(w))}},
   (m)=>{const a=rnz(m,4),b=rv(m,5),c=rnz(m,3),d=rv(m,4),x=ri(-4,-1),z=ri(0,4),v=add(eL(a,b,x),eQ(c,R(0),d,z));return one(`設 f(x)＝${cases([`${L(a,b,m)}，x＜0`,`${Q(c,R(0),d,m)}，x≧0`])}，求 f(${sh(x,m)})＋f(${z.n})。`,v,m,()=>near(fv(a)*x.n+fv(b)+fv(c)*z.n**2+fv(d),fv(v)))},
@@ -3484,7 +3484,7 @@ function functionConfig(){
   // 挑戰：f(kx＋o)＝ax＋b，求 f(t)——先解 kx＋o＝t 得 x，再代入
   (m)=>{const a=rnz(m,4),b=rv(m,5),k=rand(2,3),o=rand(-5,5),x=rand(-3,4),t=k*x+o,v=eL(a,b,R(x));return one(`已知 f(${k}x${o<0?`−${-o}`:o?`＋${o}`:""})＝${L(a,b,m)}，求 f(${mn(t)})。`,v,m,()=>near(fv(a)*((t-o)/k)+fv(b),fv(v)))}],[[0,1],[3,4],[2,5]]);
 
- const composite=mkUnit("composite","複合函數（進階）","f(g(x)) 由內往外算：先求 g(x)，再把結果代入 f。",[
+ const composite=mkUnit("composite","複合函數（補充）","f(g(x)) 由內往外算：先求 g(x)，再把結果代入 f。",[
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),x=ri(-3,4),v=eL(a,b,eL(c,d,x));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 f(g(${sh(x,m)}))。`,v,m,()=>near(fv(a)*(fv(c)*x.n+fv(d))+fv(b),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),x=ri(-3,4),v=eL(c,d,eL(a,b,x));return one(`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 g(f(${sh(x,m)}))。`,v,m,()=>near(fv(c)*(fv(a)*x.n+fv(b))+fv(d),fv(v)))},
   (m)=>{const a=rnz(m,4),b=rv(m,4),c=rnz(m,4),d=rv(m,4),x=ri(-3,4),p=eL(a,b,eL(c,d,x)),q=eL(c,d,eL(a,b,x));return{q:`設 f(x)＝${L(a,b,m)}，g(x)＝${L(c,d,m)}，求 f(g(${sh(x,m)})) 與 g(f(${sh(x,m)}))。`,a:`${sh(p,m)}、${sh(q,m)}`,vals:[p,q],chk:()=>near(fv(a)*(fv(c)*x.n+fv(d))+fv(b),fv(p))&&near(fv(c)*(fv(a)*x.n+fv(b))+fv(d),fv(q))}},
@@ -3510,8 +3510,8 @@ function functionConfig(){
   // 挑戰：把 f(f(x)) 化簡成一次式
   (m)=>{const a=rnz(m,3),b=rnz(m,4);if(idF(a,b))return null;const A=mul(a,a),B=add(mul(a,b),b);return{q:`設 f(x)＝${L(a,b,m)}，把 f(f(x)) 化簡成 ax＋b 的形式。`,a:`f(f(x))＝${term(a,`(${L(a,b,m)})`,m,true)}${term(b,"",m,false)}＝${L(A,B,m)}`,vals:[A,B],chk:()=>[1.5,-2.5].every(u=>near(fv(a)*(fv(a)*u+fv(b))+fv(b),fv(A)*u+fv(B)))}}],[[2,0],[1,3],[4,5]]);   // 基礎：f(x) 與 f(f(x))、f(f(x))；進階：三層、g(f(g(x)))；挑戰：反求 k、化簡 f(f(x))
 
- return{title:"函數",symbol:"f(x)",subtitle:"一次・二次・常數函數值・綜合運算・分段函數・反求輸入與係數・函數替換・複合・總和・巢狀",instruction:"代入負數時先加括號，並寫出必要的過程。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
-  levels:{basic:"基礎：直接代入求一次、常數函數值與簡單運算；由兩個函數值反求一次函數。標「進階」的單元預設不選：二次函數是國三下課程，分段、替換、複合、巢狀函數不在國中課綱，需要時再自行勾選。",advanced:"進階：兩個函數值、函數值的差與倍數、兩式相等反求、f(0) 與 f(k) 反求一次函數係數、連續函數值總和。標「進階」的單元預設不選：二次函數是國三下課程，分段、替換、複合、巢狀函數不在國中課綱，需要時再自行勾選。",challenge:"挑戰（含標「進階」的超出國中課綱單元）：函數值的增量、常數項未知先求 k、常數函數的條件與反求、f(x＋1)−f(x)、二次函數的常數項或二次項係數未知先求再代入、分段端點與巢狀分段、f(k)＋f(k＋1)、和差反求、g(x−s)＝f(kx＋o) 與 f(kx＋o) 替換、由總和反求常數項、化簡 f(f(x))、f(f(k)) 反求；小數答案最多兩位。"},
+ return{title:"函數",symbol:"f(x)",subtitle:"一次・二次・常數函數值・綜合運算・分段函數（補充）・反求輸入與係數・函數替換・複合（補充）・總和・巢狀",instruction:"代入負數時先加括號，並寫出必要的過程。",modes:["integer","fraction","decimal"],mixed:false,answerLabel:"答：",
+  levels:{basic:"基礎：直接代入求一次、常數函數值與簡單運算；由兩個函數值反求一次函數。標「進階」的單元預設不選：二次函數是國三下課程，替換、巢狀函數需要時再自行勾選；標「補充」的分段函數、複合函數不在國中課綱，只放在挑戰。",advanced:"進階：兩個函數值、函數值的差與倍數、兩式相等反求、f(0) 與 f(k) 反求一次函數係數、連續函數值總和。標「進階」的單元預設不選：二次函數是國三下課程，替換、巢狀函數需要時再自行勾選；標「補充」的分段函數、複合函數不在國中課綱，只放在挑戰。",challenge:"挑戰（含標「進階」與「補充」的單元）：函數值的增量、常數項未知先求 k、常數函數的條件與反求、f(x＋1)−f(x)、二次函數的常數項或二次項係數未知先求再代入、（補充）分段函數的端點與巢狀分段、（補充）複合函數 f(g(x)) 與 f(g(k)) 反求、f(k)＋f(k＋1)、和差反求、g(x−s)＝f(kx＋o) 與 f(kx＋o) 替換、由總和反求常數項、化簡 f(f(x))、f(f(k)) 反求；小數答案最多兩位。"},
   units:[linearValue,quadraticValue,constantValue,combinedValue,piecewise,solveInput,linearCoeff,quadraticCoeff,replaceFunction,composite,sumValues,nested],
   presets:{basic:{linearValue:5,constantValue:3,combinedValue:4,solveInput:2,linearCoeff:2},advanced:{linearValue:3,combinedValue:4,solveInput:4,linearCoeff:4,sumValues:4},challenge:{combinedValue:2,piecewise:2,solveInput:2,linearCoeff:2,quadraticCoeff:2,replaceFunction:3,composite:2,sumValues:2,nested:2}}};
 }
@@ -3649,7 +3649,9 @@ let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
 if(typeof document==="undefined")return;
-function build(){const sel=$("topicSel");TOPICS.forEach(([k,n])=>{const o=document.createElement("option");o.value=k;o.textContent=n;if(k===TOPIC_KEY)o.selected=true;sel.appendChild(o)});sel.addEventListener("change",()=>{location.search="?topic="+sel.value});$("topicTitle").textContent=CFG.title;$("topicLogo").textContent=CFG.symbol||"∑";document.title="百宏文教｜"+CFG.title+" 出題器";const can=document.querySelector('link[rel="canonical"]');if(can)can.href="https://www.bhcs.com.tw/tools/math/g7-drills.html?topic="+TOPIC_KEY;$("subtitle").textContent=CFG.subtitle;$("difficultyNote").textContent=CFG.levels.advanced;const mb=$("modeBoxes");CFG.modes.forEach(m=>{const label=document.createElement("label");label.className="choice";label.innerHTML=`<input type="checkbox" data-mode="${m}" checked>${(CFG.modeLabels||MODE_LABEL)[m]}`;mb.appendChild(label)});if(CFG.mixed){const label=document.createElement("label");label.className="choice";label.innerHTML='<input id="mixedNumber" type="checkbox" checked>可用帶分數';mb.appendChild(label)}const grid=$("unitGrid");CFG.units.forEach(u=>{const box=document.createElement("div");box.className="unit";box.innerHTML=`<input class="unit-check" id="unit-${u.id}" type="checkbox" data-unit="${u.id}"><label for="unit-${u.id}">${u.name}</label><input class="count" type="number" min="1" max="40" value="1" data-count="${u.id}" aria-label="${u.name}題數">`;grid.appendChild(box)});grid.addEventListener("change",e=>{if(e.target.matches(".unit-check"))grid.querySelector(`[data-count='${e.target.dataset.unit}']`).disabled=!e.target.checked;markChanged();updateTotal()});grid.addEventListener("input",e=>{if(e.target.matches(".count")){e.target.value=Math.max(1,Math.min(40,Number(e.target.value)||1));markChanged();updateTotal()}});applyPreset("advanced")}
+function renderPageNav(sel,nav,here){/* phase 3：選單依課綱冊次分組，可跨檔連到同一冊的主題（網址不變） */sel.innerHTML=nav.map(([g,items])=>`<optgroup label="${g}">`+items.map(([h,t])=>`<option value="${h}"${h===here?" selected":""}>${t}</option>`).join("")+"</optgroup>").join("");sel.onchange=()=>{location.href=sel.value}}
+/* 函數是國二下內容：程式留在本檔、網址不變，但選單顯示國二頁的主題 */const NAV_G7=[["國一",[["g7-drills.html?topic=signed","正負數四則運算"],["g7-drills.html?topic=exponent","指數律"],["g7-drills.html?topic=scinot","科學記號"],["g7-drills.html?topic=factors","因數與倍數"],["g7-drills.html?topic=linear","一元一次式與方程式"],["g7-drills.html?topic=simultaneous","二元一次聯立方程式"],["g7-drills.html?topic=inequality","一元一次不等式"],["g7-drills.html?topic=ratio","比例"],["g7-drills.html?topic=numberline","數線與絕對值"],["g7-drills.html?topic=coordinate","直角坐標"],["g7-drills.html?topic=lineeq","二元一次方程式的圖形"],["g7-drills.html?topic=statistics","統計圖表與資料分析"],["g7-drills.html?topic=symmetry","線對稱圖形"],["g7-drills.html?topic=views","立體圖形與三視圖"]]]],NAV_G8=[["國二",[["g8-drills.html?topic=mulformula","乘法公式"],["g8-drills.html?topic=polyops","多項式四則"],["g8-drills.html?topic=factor","因式分解"],["g8-drills.html?topic=sqrt","平方根"],["g8-drills.html?topic=pythagoras","畢氏定理與兩點距離"],["g8-drills.html?topic=arithseq","等差數列與等差級數"],["g8-drills.html?topic=quadsolve","解一元二次方程式"],["g8-drills.html?topic=quadapps","一元二次方程式應用題"],["g8-drills.html?topic=geoseq","等比數列"],["g7-drills.html?topic=function","函數"],["g8-drills.html?topic=angles","三角形與多邊形的角"],["g8-drills.html?topic=congruence","三角形的全等性質"],["g8-drills.html?topic=bisectors","等腰三角形、中垂線與角平分線"],["g8-drills.html?topic=triineq","三角形的邊角關係"],["g8-drills.html?topic=parallel","平行線與截角性質"],["g8-drills.html?topic=quadrilateral","平行四邊形與特殊四邊形"],["g8-drills.html?topic=construction","尺規作圖"]]]];
+function build(){const sel=$("topicSel");renderPageNav(sel,TOPIC_KEY==="function"?NAV_G8:NAV_G7,"g7-drills.html?topic="+TOPIC_KEY);$("topicTitle").textContent=CFG.title;$("topicLogo").textContent=CFG.symbol||"∑";document.title="百宏文教｜"+CFG.title+" 出題器";const can=document.querySelector('link[rel="canonical"]');if(can)can.href="https://www.bhcs.com.tw/tools/math/g7-drills.html?topic="+TOPIC_KEY;$("subtitle").textContent=CFG.subtitle;$("difficultyNote").textContent=CFG.levels.advanced;const mb=$("modeBoxes");CFG.modes.forEach(m=>{const label=document.createElement("label");label.className="choice";label.innerHTML=`<input type="checkbox" data-mode="${m}" checked>${(CFG.modeLabels||MODE_LABEL)[m]}`;mb.appendChild(label)});if(CFG.mixed){const label=document.createElement("label");label.className="choice";label.innerHTML='<input id="mixedNumber" type="checkbox" checked>可用帶分數';mb.appendChild(label)}const grid=$("unitGrid");CFG.units.forEach(u=>{const box=document.createElement("div");box.className="unit";box.innerHTML=`<input class="unit-check" id="unit-${u.id}" type="checkbox" data-unit="${u.id}"><label for="unit-${u.id}">${u.name}</label><input class="count" type="number" min="1" max="40" value="1" data-count="${u.id}" aria-label="${u.name}題數">`;grid.appendChild(box)});grid.addEventListener("change",e=>{if(e.target.matches(".unit-check"))grid.querySelector(`[data-count='${e.target.dataset.unit}']`).disabled=!e.target.checked;markChanged();updateTotal()});grid.addEventListener("input",e=>{if(e.target.matches(".count")){e.target.value=Math.max(1,Math.min(40,Number(e.target.value)||1));markChanged();updateTotal()}});applyPreset("advanced")}
 const selectedModes=()=>[...document.querySelectorAll("[data-mode]:checked")].map(x=>x.dataset.mode),selectedUnits=()=>CFG.units.flatMap(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);return c.checked?[{...u,count:Math.max(1,Math.min(40,Number(n.value)||1))}]:[]});
 function applyPreset(level){state.level=level;const p=CFG.presets[level];CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`),v=p[u.id]||0;c.checked=v>0;n.disabled=!c.checked;n.value=v||1});document.querySelectorAll(".level").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.level===level)));$("difficultyNote").textContent=CFG.levels[level];updateTotal();markChanged()}
 function setEach(v){CFG.units.forEach(u=>{const c=document.querySelector(`[data-unit='${u.id}']`),n=document.querySelector(`[data-count='${u.id}']`);c.checked=v>0;n.disabled=!c.checked;if(v)n.value=v});updateTotal();markChanged()}
