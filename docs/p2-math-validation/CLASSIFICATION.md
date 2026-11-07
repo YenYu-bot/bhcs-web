@@ -110,7 +110,7 @@
 | topic / 組合 | 128 / 4101 |
 | safeQuestion 抽樣 / 成功取題 | 820200 / 820200 |
 | 通過 / 失敗 | 4101 / 0 |
-| 候選 gen / null | 966621 / 135583 |
+| 候選 gen / null | 967012 / 135974 |
 | 候選 verify false / 例外 | 0 / 0 |
 | 完成單卷 / 單卷耗盡 | 4101 / 0 |
 | 高拒絕率 unit（非阻擋） | 101 |
@@ -140,14 +140,12 @@
 | units / `compare` | 78.8% | 4 |
 | area / `parallelogram` | 53.9% | 2 |
 | area / `triangle` | 59.0% | 2 |
-| circle / `sector` | 60.1% | 1 |
+| circle / `sector` | 60.6% | 2 |
 | speed / `findt` | 66.6% | 1 |
 | speed / `average` | 86.3% | 4 |
 | speed / `meet` | 73.0% | 1 |
 | pattern / `average` | 62.2% | 1 |
 | factors / `sd` | 60.1% | 1 |
-| function / `composite` | 78.9% | 3 |
-| function / `nested` | 76.8% | 1 |
 | numberline / `mark` | 83.4% | 5 |
 | lineeq / `online` | 84.0% | 1 |
 | lineeq / `hvline` | 69.7% | 3 |
@@ -161,6 +159,8 @@
 | sqrt / `divideRadicals` | 65.0% | 1 |
 | pythagoras / `hypotenuse` | 61.1% | 3 |
 | geoseq / `gmean` | 70.0% | 3 |
+| function / `composite` | 78.9% | 3 |
+| function / `nested` | 76.8% | 1 |
 | angles / `equation` | 60.0% | 1 |
 | parallelratio / `parallelSeg` | 77.4% | 2 |
 | parallelratio / `twoStep` | 57.0% | 2 |

@@ -1128,6 +1128,48 @@
       "approved_blob": "b7569458cd4fd7a7d0265e80fe6e9d12916b795b",
       "reason": "Math drills phase 2 (level ladders, number caps, modes): g9-drills.html",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "3ad24618c65890a1c1fbb085775392476167a5d4",
+      "approved_blob": "20bce3539454eb72f82d4211bf28ee9886a7d65e",
+      "reason": "Math drills phase 3 (curriculum placement, 補充, 國中先修): g10-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g11-drills.html",
+      "baseline_blob": "c124259482508d866c6028e9af07f9dbcc3aae16",
+      "approved_blob": "9e68d5ebe9fdb5e5a5f10cf0d831e12ce9526c16",
+      "reason": "Math drills phase 3 (curriculum placement, 補充, 國中先修): g11-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "6f46fdbb1b05cbcd052674ae6303f3e0bd34c8dc",
+      "approved_blob": "bc6536de5bfded0d3540a53b05a0425885338913",
+      "reason": "Math drills phase 3 (curriculum placement, 補充, 國中先修): g6-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "e45ad03c042cebd6c861ade96a4bdfb444d3ca27",
+      "approved_blob": "054e618c123bbbdbaa1719027eabe668d0524967",
+      "reason": "Math drills phase 3 (curriculum placement, 補充, 國中先修): g7-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g8-drills.html",
+      "baseline_blob": "d2035151335ef8581a22609cac67c944b877d731",
+      "approved_blob": "a1037b2b38e827c5858e25bbeb3ed2ce3fab84e7",
+      "reason": "Math drills phase 3 (curriculum placement, 補充, 國中先修): g8-drills.html",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "dede24c471fe8ccc04fe35914e61646174894d5a",
+      "approved_blob": "12751945bed7b1a8247eef1cf57eb6109b7aefa5",
+      "reason": "Math drills phase 3 (curriculum placement, 補充, 國中先修): index.html",
+      "pull_request": null
     }
   ]
 }
