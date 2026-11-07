@@ -27,7 +27,7 @@ assert.equal(topicSources(after).get('vectorcauchy'),original);
 assert.deepEqual([...changedTopicSources(before,after)],['planevector','determinant']);
 assert.deepEqual([...changedTopicSources(before,before.replace('vectorcauchy:{}','vectorcauchy:{modes:[]}'))],[]);
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'bhcs-g11-topic-'));
-const git=(...args)=>execFileSync('git',['-C',root,...args],{stdio:'pipe'});
+const git=(...args)=>execFileSync('git',['-C',root,...args],{stdio:'pipe',maxBuffer:64*1024*1024});
 try{
   git('init');
   git('config','user.name','BHCS test');
