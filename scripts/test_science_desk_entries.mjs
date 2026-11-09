@@ -17,8 +17,12 @@ for(const id of ['optics','buoyancy','microscope','acid-base','photosynthesis-fa
 assert(doc('tools/science/metal-activity.html').querySelector('option[value="mg"]'));assert(doc('tools/science/metal-activity.html').querySelector('option[value="ag"]'));
 console.log('PASS 63 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
 
-const inline=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>crypto.createHash('sha256').update(m[2]).digest('hex'));
-assert.deepEqual(inline,baseline.resource_inline_script_sha256,'resource search/runtime scripts remain byte-identical to main');
+const inlineSources=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>m[2]);
+// Reverse only the approved vocabulary category metadata before checking the old hashes.
+const vocabularyMeta=",'res-hs-english':['高中','quiz']";
+assert.equal(inlineSources.reduce((n,s)=>n+s.split(vocabularyMeta).length-1,0),1,'exactly one approved vocabulary filter entry');
+const inline=inlineSources.map(s=>crypto.createHash('sha256').update(s.replace(vocabularyMeta,'')).digest('hex'));
+assert.deepEqual(inline,baseline.resource_inline_script_sha256,'resource search/runtime scripts remain byte-identical after reversing only vocabulary metadata');
 
 // Execute the actual researcher shell: main children are redistributed into four screens.
 // A static link check alone cannot detect navigation hidden in the challenge screen.
