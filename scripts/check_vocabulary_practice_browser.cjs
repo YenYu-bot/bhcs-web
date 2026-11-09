@@ -49,7 +49,13 @@ for i,p in enumerate(pages):
  for e in words:
   a=e.attrib
   assert float(a['xMin'])>=8 and float(a['xMax'])<=w-8 and float(a['yMin'])>=8 and float(a['yMax'])<=h-8, ('Clipped text',i+1,e.text,a)
- texts.append(norm(' '.join(''.join(e.itertext()) for e in words)))
+ # Poppler's flow/block order is not reading order: columns from the preceding
+ # options row may otherwise be inserted between split portions of the next
+ # stem. Preserve every extracted word, ordering physical lines by y then x.
+ lines=sorted(p.findall('.//{*}line'),key=lambda line:(float(line.attrib['yMin']),float(line.attrib['xMin'])))
+ ordered=[word for line in lines for word in sorted(line.findall('{*}word'),key=lambda word:float(word.attrib['xMin']))]
+ assert len(ordered)==len(words), 'Line ordering must preserve every PDF word'
+ texts.append(norm(' '.join(''.join(e.itertext()) for e in ordered)))
 placements=[]
 for q in qs:
  # A question is whole only if its entire stem and all four labeled options are
