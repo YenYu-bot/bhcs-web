@@ -201,9 +201,9 @@ for(const [p,href]of [['ziyuan.html','tools/science/reaction-rate.html'],['tools
  for(const old of standalonePublic)assert(s.includes(old.file));
 }
 assert.match(read('tools/science/index.html'),/63 項教材/);assert.match(read('ziyuan.html'),/全部 63 項自然教材/);
-assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">62 項/);assert.match(read('ziyuan.html'),/理化 <small>44 項/);assert.match(read('ziyuan.html'),/目前共 257 項/);
+assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">62 項/);assert.match(read('ziyuan.html'),/理化 <small>44 項/);assert.match(read('ziyuan.html'),/目前共 258 項/);
 const resourceDOM=new JSDOM(read('ziyuan.html'));
-try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,257);}finally{resourceDOM.window.close();}
+try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,258);}finally{resourceDOM.window.close();}
 assert.equal(occurrences(read('sitemap.xml'),`<loc>${m.canonical}</loc>`),1);assert.doesNotMatch(read('sitemap.xml'),/marble-acid-desk|reaction-rate-desk/);
 const documentDOM=new JSDOM(entry);const doc=documentDOM.window.document;
 assert.equal(doc.querySelectorAll('link[rel="canonical"]').length,1);assert.equal(doc.querySelector('link[rel="canonical"]').href,m.canonical);
@@ -272,4 +272,4 @@ try{
  }
  for(const route of ['/tools/marble-acid-desk/','/tools/science/reaction-rate-desk/','/tools/science/reaction-rate-desk/index.html'])assert.equal((await fetch(`http://127.0.0.1:${server.address().port}`+route)).status,404,'no second lesson entry');
 }finally{await new Promise(r=>server.close(r));}
-console.log('PASS marble replacement: original URL renders accepted17 files via pinned13 entry adaptations and separately reversible app/style repairs;43 live-course +84 historical-fixture tests reversibly retained;680 other tools/assets exact; 63/62/44/257 discovery with only three approved new desks with one proven directory-only derivative; all HTTP bytes/MIME. Local contracts only, not production/device certification.');
+console.log('PASS marble replacement: original URL renders accepted17 files via pinned13 entry adaptations and separately reversible app/style repairs;43 live-course +84 historical-fixture tests reversibly retained;680 other tools/assets exact; 63/62/44/258 discovery with only three approved new desks with one proven directory-only derivative; all HTTP bytes/MIME. Local contracts only, not production/device certification.');
