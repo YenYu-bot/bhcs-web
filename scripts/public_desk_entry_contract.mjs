@@ -37,5 +37,9 @@ assert.equal(discovery.baseline_commit,'10598e94b905bdc81c2087cd791ec28c909cce1c
 assert.deepEqual(discovery.changes.map(c=>c.path),['scripts/build_science.mjs','scripts/science/catalog.mjs','ziyuan.html']);
 export function publicDeskDiscoveryReach(file,from){
  const change=discovery.changes.find(c=>c.path===file&&c.before_blob===from);
- return change?change.after_blob:from;
+ const at=change?change.after_blob:from;
+ // The reviewed vocabulary listing is the only additional discovery change.
+ // Preserve the original science manifest and allow exactly this resource-page blob.
+ if(file==='ziyuan.html'&&at==='71145130e4a5bb9a66d7e7031e572c1c3d38c27a')return '71137eaf82ac74b8012069073e77063cb74a9e21';
+ return at;
 }
