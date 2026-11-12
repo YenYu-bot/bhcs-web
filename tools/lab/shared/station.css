@@ -1,0 +1,83 @@
+/* 新版實驗桌共用版面：左邊實驗桌、右邊任務／余老師／操作（各站共用） */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 360px;height:calc(100vh - 64px);height:calc(100dvh - 64px);min-height:620px}
+.scene-area{position:relative;overflow:hidden;background:linear-gradient(#F6EBDA 0 55%,#EFCB9B 55%)}
+.scene-wrap{position:absolute;inset:0}
+#scene{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+
+.readouts{position:absolute;z-index:2;top:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px}
+.reading{width:230px;background:rgba(255,255,255,.94);border-radius:18px;padding:8px 16px 10px;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"label label" "num unit" "formula formula";column-gap:6px;box-shadow:var(--shadow)}
+.reading.right{grid-template-columns:1fr auto;grid-template-areas:"label label" "unit num" "formula formula";text-align:right}
+.reading.right .reading-unit{justify-self:end}
+.reading-label{grid-area:label;font-size:14px;font-weight:800;color:var(--ink-2)}
+.reading-num{grid-area:num;font-size:34px;line-height:1.15;color:var(--blue);display:inline-block}
+.reading-unit{grid-area:unit;align-self:end;padding-bottom:6px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.reading-formula{grid-area:formula;font-size:13px;color:var(--ink-2);min-height:20px;font-variant-numeric:tabular-nums}
+.reading-num.tick{animation:tick .4s var(--spring)}
+@keyframes tick{40%{transform:scale(1.18)}}
+.sign{font-size:52px;color:var(--red);min-width:44px;text-align:center;transition:color .3s}
+.sign.eq{color:var(--mint)}
+
+.panel{display:flex;flex-direction:column;gap:12px;padding:16px;background:var(--paper);border-left:2px solid var(--line);overflow-y:auto}
+.teacher{align-items:flex-end}
+.teacher-pic{width:96px;height:168px}
+.teacher .bubble{margin:0 0 30px;flex:1;max-width:none;font-size:18px}
+
+.dock{background:#fff;border-radius:22px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+.dock-label{display:block;font-size:13px;font-weight:800;color:var(--ink-2);margin-bottom:6px}
+.dock-label small{font-weight:600}
+.tray{display:flex;gap:6px;min-height:56px;align-items:center;flex-wrap:wrap}
+.tray-weight{width:36px;height:56px;border:0;border-radius:10px;padding:0;background:transparent url(../../../assets/science/props/prop-hanging-weight.webp) center/contain no-repeat;touch-action:none;transition:transform .15s}
+.tray-weight:hover{transform:translateY(-3px)}
+.tray-weight[aria-pressed=true]{outline:3px dashed var(--red);outline-offset:2px}
+.tray-empty{font-size:14px;color:var(--ink-2)}
+.picker-btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.picker-btns button{padding:0 6px;font-size:14px}
+.picker-btns button:disabled{opacity:.4;cursor:not-allowed}
+.dock .btn-main{width:100%}
+
+.evidence{box-shadow:none;border:2px solid var(--line)}
+
+/* 研究手冊表 */
+.notes-tip{margin-top:0;color:var(--ink-2)}
+.notes-scroll{max-height:50vh;overflow:auto;background:#fff;border-radius:14px}
+.notes-table{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric:tabular-nums}
+.notes-table th,.notes-table td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+.notes-table th{font-size:13px;color:var(--ink-2);position:sticky;top:0;background:#fff}
+.notes-table .ok{color:var(--mint);font-weight:800}
+.notes-table .tip{color:var(--red);font-weight:800}
+.notes-empty{padding:16px;color:var(--ink-2)}
+.finish-kicker{margin:0;font-size:13px;font-weight:800;letter-spacing:.12em;color:var(--red);text-align:center}
+#finish-title{text-align:center}
+.finish-rule{background:var(--mint);color:#fff;border-radius:16px;padding:14px 16px;font-size:18px;font-weight:900;line-height:1.5}
+.finish-list{padding-left:20px}
+.finish-list li{font-variant-numeric:tabular-nums}
+
+@media (max-width:1180px){
+  .lab-brand{display:none}
+  .lab-steps li{padding:0 9px;font-size:13px}
+  .stage{grid-template-columns:minmax(0,1fr) 320px}
+  .reading{width:190px}
+  .reading-num{font-size:28px}
+}
+/* 直立平板與手機：由上而下排列，實驗桌仍在第一屏 */
+@media (max-width:860px){
+  .lab-bar{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 12px;gap:8px}
+  .lab-title{font-size:19px}
+  .lab-steps{order:3;width:100%;overflow-x:auto;margin:0;padding-bottom:2px}
+  .lab-bar-actions{margin-left:auto}
+  .stage{display:block;height:auto;min-height:0}
+  .scene-area{display:flex;flex-direction:column}
+  .readouts{position:static;transform:none;padding:10px 10px 0;gap:6px;justify-content:space-between}
+  .reading{width:auto;flex:1;padding:6px 10px 8px}
+  .reading-num{font-size:24px}
+  .reading-formula{font-size:12px}
+  .sign{font-size:32px;min-width:24px}
+  .scene-wrap{position:relative;inset:auto;height:clamp(200px,58vw,440px)}
+  .panel{border-left:0;overflow:visible;padding:0 12px 24px;gap:12px}
+  .task{margin-top:10px}
+  .task-title{font-size:17px}
+  .teacher{margin-top:0}
+  .teacher-pic{width:62px;height:108px}
+  .teacher .bubble{margin:0 0 14px;font-size:16px;padding:10px 14px}
+  .teacher .bubble .next{min-height:40px}
+}

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFF8EC">
+<title>滑輪實驗桌（新版試用）｜百宏文教</title>
+<meta name="description" content="親手拉繩子，用定滑輪和動滑輪把同一個木箱升高 20 cm，比較拉力、拉繩距離和功。">
+<link rel="stylesheet" href="../shared/lab.css">
+<link rel="stylesheet" href="../shared/station.css">
+<link rel="stylesheet" href="./pulley.css">
+</head>
+<body class="lab">
+<header class="lab-bar">
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">滑輪實驗桌</h1>
+  <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
+  <div class="lab-bar-actions">
+    <button type="button" class="btn-ghost" id="why">為什麼？</button>
+    <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="scene-area">
+    <div class="readouts p-readouts" aria-label="讀值">
+      <div class="reading"><span class="reading-label">彈簧秤拉力</span><span class="reading-num num" id="r-force">10</span><span class="reading-unit">N</span><span class="reading-formula" id="r-force-note"></span></div>
+      <div class="reading"><span class="reading-label">木箱升高</span><span class="reading-num num" id="r-height">0</span><span class="reading-unit">cm</span><span class="reading-formula">目標 20 cm</span></div>
+      <div class="reading"><span class="reading-label">繩子拉了</span><span class="reading-num num" id="r-rope">0</span><span class="reading-unit">cm</span><span class="reading-formula" id="r-rope-note"></span></div>
+    </div>
+    <div class="scene-wrap">
+      <svg id="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="group" aria-label="滑輪實驗桌：同一個 10 N 木箱，用滑輪把它升高 20 公分">
+        <image href="../../../assets/science/props/bg-physics-bench.webp" x="-877" y="-768" width="2755" height="1668" preserveAspectRatio="none" aria-hidden="true"/>
+        <g id="rig"></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="任務、余老師與操作">
+    <section class="task" id="task" aria-live="polite">
+      <span class="task-kicker" id="task-kicker"></span>
+      <h2 class="task-title" id="task-title"></h2>
+      <p class="task-goal" id="task-goal"></p>
+      <div class="task-row"><button type="button" id="task-reset">重來這一步</button><button type="button" class="go" id="task-go" hidden></button><button type="button" class="clear" id="clear-records">清空紀錄</button></div>
+    </section>
+
+    <div class="teacher" id="teacher">
+      <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
+      <div class="bubble" id="bubble"></div>
+    </div>
+
+    <section class="dock" id="dock-pull" aria-label="拉繩子">
+      <span class="dock-label">拉繩子 <small>拖曳黃色把手，或按下面的按鈕</small></span>
+      <div class="picker-btns two">
+        <button type="button" class="btn-soft" id="pull-1">拉 1 cm</button>
+        <button type="button" class="btn-soft" id="pull-5">拉 5 cm</button>
+      </div>
+      <button type="button" class="btn-main" id="save">收下這次觀察</button>
+    </section>
+
+    <section class="dock" id="dock-calc" aria-label="算一算功" hidden>
+      <span class="dock-label">功 ＝ 拉力 × 繩子拉的距離（距離換成 m）</span>
+      <label class="calc-row" for="calc-fixed"><span class="calc-name"><b>定滑輪</b><span class="calc-eq" id="eq-fixed"></span></span><input id="calc-fixed" inputmode="decimal" autocomplete="off" aria-describedby="eq-fixed"><span>J</span></label>
+      <label class="calc-row" for="calc-movable"><span class="calc-name"><b>動滑輪</b><span class="calc-eq" id="eq-movable"></span></span><input id="calc-movable" inputmode="decimal" autocomplete="off" aria-describedby="eq-movable"><span>J</span></label>
+      <button type="button" class="btn-main" id="check">核對我的答案</button>
+    </section>
+
+    <section class="dock" id="dock-quiz" aria-label="說說看" hidden>
+      <span class="dock-label">哪一句話說得對？</span>
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+    <section class="evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-head"><h2 id="evidence-title">我的證據</h2><span><span id="ev-count">0</span> 張</span></div>
+      <p class="evidence-empty" id="ev-empty">把木箱升到 20 cm 後按「收下這次觀察」，卡片會飛到這裡。</p>
+      <ol class="chips" id="chips"></ol>
+    </section>
+  </aside>
+</main>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+<dialog id="why-dialog" aria-labelledby="why-title">
+  <h2 id="why-title">滑輪為什麼會省力？</h2>
+  <p><b>定滑輪</b>只改變拉的方向：往下拉，木箱往上走，拉力等於木箱的重量。</p>
+  <p><b>動滑輪</b>跟著木箱一起上升，木箱由兩段繩子一起拉住，所以拉力只要一半；但木箱升高 1 cm，兩段繩子都要縮短 1 cm，你得拉 2 cm。</p>
+  <p><b>功 ＝ 力 × 距離。</b>省了力，就要多拉距離，兩種做的功一樣多：省力不省功。</p>
+  <ul>
+    <li>木箱重 10 N（g＝10 N/kg），目標升高 20 cm。</li>
+    <li>理想模型：沒有摩擦，滑輪和繩子不計重量。</li>
+  </ul>
+  <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
+</dialog>
+
+<dialog id="notes-dialog" aria-labelledby="notes-title">
+  <h2 id="notes-title">研究手冊</h2>
+  <p class="notes-tip">兩種滑輪各收一張，就能比較拉力、拉繩距離和功。</p>
+  <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>裝置</th><th>拉力</th><th>木箱升高</th><th>繩子拉了</th></tr></thead><tbody id="notes-body"></tbody></table></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
+    <button type="button" class="btn-main" data-close>關閉</button>
+  </div>
+</dialog>
+
+<dialog id="finish-dialog" aria-labelledby="finish-title">
+  <p class="finish-kicker">滑輪實驗桌 · 全部完成</p>
+  <h2 id="finish-title">你發現了「省力不省功」！</h2>
+  <div class="stars" id="stars" aria-label="完成 4 個任務"></div>
+  <div class="finish-rule">動滑輪拉力減半，但繩子要拉兩倍長；兩種做的功都是 2 J。</div>
+  <ul class="finish-list" id="finish-list"></ul>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" data-close>再玩一次</button>
+    <a class="btn-main" href="../lever/">去槓桿實驗桌</a>
+  </div>
+</dialog>
+
+<script type="module" src="./pulley.js"></script>
+</body>
+</html>

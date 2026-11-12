@@ -444,11 +444,15 @@ $('#save').addEventListener('click', keep);
 $('#task-reset').addEventListener('click', () => goStep(S.step));
 $('#why').addEventListener('click', () => $('#why-dialog').showModal());
 $('#open-notes').addEventListener('click', openNotes);
-$('#reset-all').addEventListener('click', () => {
-  if (!confirm('確定要清除這一站的全部紀錄，從頭開始嗎？')) return;
+function clearAll() {
+  if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
   db.clear(); S = fresh(); selected = null; foundShown = null; lastNote = null; teacher.last = '';
-  $('#notes-dialog').close(); render();
-});
+  document.querySelectorAll('dialog[open]').forEach(d => d.close());
+  beamSpring.set(0, true); render();
+  if (narrow.matches) scrollTo({ top: 0, behavior: 'auto' });
+}
+$('#reset-all').addEventListener('click', clearAll);
+$('#clear-records').addEventListener('click', clearAll);
 document.querySelectorAll('dialog [data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && selected && !document.querySelector('dialog[open]')) select(null); });
 svg.addEventListener('pointerdown', e => { if (e.target === svg || e.target.tagName === 'image' && !e.target.closest('.w-hit')) { if (selected) select(null); } });

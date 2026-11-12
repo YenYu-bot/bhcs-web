@@ -11,6 +11,7 @@
   --spring:cubic-bezier(.34,1.56,.64,1);
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;height:100%}
 body.lab{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
 .lab button{font-family:inherit;color:inherit;cursor:pointer}
@@ -51,7 +52,9 @@ body.lab{background:var(--paper);color:var(--ink);font-family:var(--font);font-s
 .task-title{margin:0;font-size:19px;font-weight:900;line-height:1.4}
 .task-goal{margin:0;font-size:14px;line-height:1.5;opacity:.9}
 .task-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.task-row button{min-height:40px;padding:0 14px;border-radius:999px;border:2px solid rgba(255,248,236,.5);background:transparent;color:var(--paper)!important;font-size:14px;font-weight:800}
+.task-row button{min-height:44px;padding:0 14px;border-radius:999px;border:2px solid rgba(255,248,236,.5);background:transparent;color:var(--paper)!important;font-size:14px;font-weight:800}
+.task-row button.clear{margin-left:auto;border-style:dashed;opacity:.85}
+.task-row button.clear:hover{border-color:#F2A39C;color:#F2A39C!important;opacity:1}
 .task-row button.go{background:var(--paper);color:var(--ink)!important;border-color:var(--paper)}
 .task-state{font-size:13px;font-weight:800;color:#9FE0C6}
 
