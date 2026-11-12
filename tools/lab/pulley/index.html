@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#FFF8EC">
 <title>滑輪實驗桌（新版試用）｜百宏文教</title>
-<meta name="description" content="親手拉繩子，用定滑輪和動滑輪把同一個木箱升高 20 cm，比較拉力、拉繩距離和功。">
+<meta name="description" content="親手拉繩子，用定滑輪、動滑輪和滑輪組把同一個木箱升高 20 cm，比較拉力、拉繩距離、施力方向和功。">
 <link rel="stylesheet" href="../shared/lab.css">
 <link rel="stylesheet" href="../shared/station.css">
 <link rel="stylesheet" href="./pulley.css">
@@ -17,7 +17,7 @@
   <h1 class="lab-title">滑輪實驗桌</h1>
   <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
   <div class="lab-bar-actions">
-    <button type="button" class="btn-ghost" id="why">為什麼？</button>
+    <button type="button" class="btn-ghost" id="why">滑輪的功能</button>
     <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
   </div>
 </header>
@@ -51,10 +51,17 @@
     </div>
 
     <section class="dock" id="dock-pull" aria-label="拉繩子">
+      <div class="combo-pick" id="combo-pick" hidden>
+        <span class="dock-label">選一種滑輪組</span>
+        <div class="picker-btns two">
+          <button type="button" class="btn-soft" id="pick-combo2" aria-pressed="false">一定一動</button>
+          <button type="button" class="btn-soft" id="pick-combo4" aria-pressed="false">二定二動</button>
+        </div>
+      </div>
       <span class="dock-label">拉繩子 <small>拖曳黃色把手，或按下面的按鈕</small></span>
       <div class="picker-btns two">
-        <button type="button" class="btn-soft" id="pull-1">拉 1 cm</button>
-        <button type="button" class="btn-soft" id="pull-5">拉 5 cm</button>
+        <button type="button" class="btn-soft" id="pull-1">木箱升 1 cm</button>
+        <button type="button" class="btn-soft" id="pull-5">木箱升 5 cm</button>
       </div>
       <button type="button" class="btn-main" id="save">收下這次觀察</button>
     </section>
@@ -63,11 +70,12 @@
       <span class="dock-label">功 ＝ 拉力 × 繩子拉的距離（距離換成 m）</span>
       <label class="calc-row" for="calc-fixed"><span class="calc-name"><b>定滑輪</b><span class="calc-eq" id="eq-fixed"></span></span><input id="calc-fixed" inputmode="decimal" autocomplete="off" aria-describedby="eq-fixed"><span>J</span></label>
       <label class="calc-row" for="calc-movable"><span class="calc-name"><b>動滑輪</b><span class="calc-eq" id="eq-movable"></span></span><input id="calc-movable" inputmode="decimal" autocomplete="off" aria-describedby="eq-movable"><span>J</span></label>
+      <label class="calc-row" for="calc-combo4"><span class="calc-name"><b>二定二動</b><span class="calc-eq" id="eq-combo4"></span></span><input id="calc-combo4" inputmode="decimal" autocomplete="off" aria-describedby="eq-combo4"><span>J</span></label>
       <button type="button" class="btn-main" id="check">核對我的答案</button>
     </section>
 
     <section class="dock" id="dock-quiz" aria-label="說說看" hidden>
-      <span class="dock-label">哪一句話說得對？</span>
+      <span class="dock-label" id="quiz-q"></span>
       <div class="quiz" id="quiz"></div>
     </section>
 
@@ -82,20 +90,26 @@
 <p class="sr-only" id="live" role="status" aria-live="polite"></p>
 
 <dialog id="why-dialog" aria-labelledby="why-title">
-  <h2 id="why-title">滑輪為什麼會省力？</h2>
-  <p><b>定滑輪</b>只改變拉的方向：往下拉，木箱往上走，拉力等於木箱的重量。</p>
-  <p><b>動滑輪</b>跟著木箱一起上升，木箱由兩段繩子一起拉住，所以拉力只要一半；但木箱升高 1 cm，兩段繩子都要縮短 1 cm，你得拉 2 cm。</p>
-  <p><b>功 ＝ 力 × 距離。</b>省了力，就要多拉距離，兩種做的功一樣多：省力不省功。</p>
-  <ul>
-    <li>木箱重 10 N（g＝10 N/kg），目標升高 20 cm。</li>
-    <li>理想模型：沒有摩擦，滑輪和繩子不計重量。</li>
-  </ul>
+  <h2 id="why-title">滑輪的功能</h2>
+  <div class="fn-scroll"><table class="fn-table">
+    <thead><tr><th></th><th>定滑輪</th><th>動滑輪</th><th>滑輪組</th></tr></thead>
+    <tbody>
+      <tr><th>長什麼樣</th><td>輪軸固定在支架上，不跟著動</td><td>輪子跟著重物一起上下</td><td>定滑輪＋動滑輪組合起來</td></tr>
+      <tr><th>省力嗎</th><td><b>不省力</b>：拉力＝重量</td><td><b>省一半</b>：拉力＝重量 ÷ 2</td><td><b>更省力</b>：拉力＝重量 ÷ 繩子段數</td></tr>
+      <tr><th>改變施力方向</th><td><b>可以</b>：往下拉，重物往上</td><td><b>不行</b>：要往上拉</td><td><b>可以</b>：最後一段從定滑輪往下拉</td></tr>
+      <tr><th>繩子要拉多長</th><td>和重物升高一樣</td><td>重物升高的 2 倍</td><td>重物升高 × 繩子段數</td></tr>
+      <tr><th>做的功</th><td colspan="3"><b>都一樣</b>：省了力就要多拉距離，功不變（省力不省功）</td></tr>
+      <tr><th>生活例子</th><td>旗桿頂端的滑輪：往下拉，旗子往上升</td><td>很少單獨使用，常和定滑輪組成滑輪組</td><td>起重機吊重物</td></tr>
+    </tbody>
+  </table></div>
+  <p class="fn-tip"><b>怎麼數繩子段數？</b>只數「拉住下方動滑輪」的繩子。一定一動有 2 段、二定二動有 4 段。</p>
+  <p class="fn-tip">這裡用理想模型：沒有摩擦，滑輪和繩子不計重量；木箱重 10 N（g＝10 N/kg），目標升高 20 cm。</p>
   <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
 </dialog>
 
 <dialog id="notes-dialog" aria-labelledby="notes-title">
   <h2 id="notes-title">研究手冊</h2>
-  <p class="notes-tip">兩種滑輪各收一張，就能比較拉力、拉繩距離和功。</p>
+  <p class="notes-tip">每種滑輪各收一張，就能比較拉力、拉繩距離和功。</p>
   <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>裝置</th><th>拉力</th><th>木箱升高</th><th>繩子拉了</th></tr></thead><tbody id="notes-body"></tbody></table></div>
   <div class="dialog-actions">
     <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
@@ -106,8 +120,8 @@
 <dialog id="finish-dialog" aria-labelledby="finish-title">
   <p class="finish-kicker">滑輪實驗桌 · 全部完成</p>
   <h2 id="finish-title">你發現了「省力不省功」！</h2>
-  <div class="stars" id="stars" aria-label="完成 4 個任務"></div>
-  <div class="finish-rule">動滑輪拉力減半，但繩子要拉兩倍長；兩種做的功都是 2 J。</div>
+  <div class="stars" id="stars" aria-label="完成 5 個任務"></div>
+  <div class="finish-rule">拉住動滑輪的繩子越多段，拉力越小，但繩子要拉越長；每一種做的功都是 2 J。</div>
   <ul class="finish-list" id="finish-list"></ul>
   <div class="dialog-actions">
     <button type="button" class="btn-soft" data-close>再玩一次</button>
