@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFF8EC">
+<title>槓桿實驗桌（新版試用）｜百宏文教</title>
+<meta name="description" content="動手掛砝碼，看槓桿往哪邊倒，找出讓兩邊平衡的規律。">
+<link rel="stylesheet" href="../shared/lab.css">
+<link rel="stylesheet" href="./lever.css">
+</head>
+<body class="lab">
+<header class="lab-bar">
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">槓桿實驗桌</h1>
+  <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
+  <div class="lab-bar-actions">
+    <button type="button" class="btn-ghost" id="why">為什麼？</button>
+    <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="scene-area">
+    <div class="readouts" aria-label="兩側力矩">
+      <div class="reading"><span class="reading-label">左邊力矩</span><span class="reading-num num" id="left-num">0</span><span class="reading-unit">N·cm</span><span class="reading-formula" id="left-formula"></span></div>
+      <span class="sign num" id="sign" aria-hidden="true">=</span>
+      <div class="reading right"><span class="reading-label">右邊力矩</span><span class="reading-num num" id="right-num">0</span><span class="reading-unit">N·cm</span><span class="reading-formula" id="right-formula"></span></div>
+    </div>
+    <div class="scene-wrap">
+      <svg id="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="group" aria-label="槓桿實驗桌：木板中央是支點，左右各有 10 個掛點，每格 5 公分">
+        <image href="../../../assets/science/props/bg-physics-bench.webp" x="-877" y="-768" width="2755" height="1668" preserveAspectRatio="none" aria-hidden="true"/>
+        <g aria-hidden="true">
+          <rect x="400" y="500" width="200" height="26" rx="8" fill="#C48E4C" stroke="#23304A" stroke-width="4"/>
+          <rect x="475" y="290" width="50" height="214" fill="#D9A867" stroke="#23304A" stroke-width="4"/>
+          <image href="../../../assets/science/props/prop-lever-fulcrum.webp" x="436" y="199" width="128" height="97"/>
+        </g>
+        <g id="beam"></g>
+        <g id="hang"></g>
+        <g id="ghost" aria-hidden="true" pointer-events="none"></g>
+        <g id="drag" aria-hidden="true" pointer-events="none"></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="余老師與操作">
+    <div class="teacher" id="teacher">
+      <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
+      <div class="bubble" id="bubble"></div>
+    </div>
+
+    <section class="dock" aria-label="操作">
+      <div class="tray-box">
+        <span class="dock-label">砝碼盤 <small>每個 5 N，拖到木板上</small></span>
+        <div class="tray" id="tray"></div>
+      </div>
+      <div class="picker" id="picker">
+        <span class="dock-label" id="pick-label">點一個砝碼來移動</span>
+        <div class="picker-btns">
+          <button type="button" class="btn-soft" id="move-left">◀ 5 cm</button>
+          <button type="button" class="btn-soft" id="move-right">5 cm ▶</button>
+          <button type="button" class="btn-soft" id="to-tray">放回盤子</button>
+        </div>
+      </div>
+      <button type="button" class="btn-main" id="save">收下這次觀察</button>
+    </section>
+
+    <section class="evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-head"><h2 id="evidence-title">我的證據</h2><span><span id="ev-count">0</span> 張</span></div>
+      <p class="evidence-empty" id="ev-empty">做出結果後按「收下這次觀察」，卡片會飛到這裡。</p>
+      <ol class="chips" id="chips"></ol>
+    </section>
+  </aside>
+</main>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+<dialog id="why-dialog" aria-labelledby="why-title">
+  <h2 id="why-title">為什麼會平衡？</h2>
+  <p><b>力矩 ＝ 力 × 力臂。</b>力臂是支點到掛點的距離。左右兩邊的力矩一樣大，槓桿就不會開始轉動。</p>
+  <ul>
+    <li>每個砝碼 0.5 kg，重 5 N（g＝10 N/kg）。</li>
+    <li>掛點每格 5 cm，兩邊各 50 cm；同一個掛點最多掛 4 個。</li>
+    <li>這是理想模型：支點在正中間、木板不計重量、砝碼垂直往下拉。</li>
+    <li>木板傾斜只表示「放開時一開始會往哪邊轉」，不是真的停下來的角度。</li>
+  </ul>
+  <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
+</dialog>
+
+<dialog id="notes-dialog" aria-labelledby="notes-title">
+  <h2 id="notes-title">研究手冊</h2>
+  <p class="notes-tip">每一張都是你親手收下的證據。比較兩張，看看只改了什麼、力矩怎麼跟著變。</p>
+  <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>步驟</th><th>左邊</th><th>右邊</th><th>結果</th></tr></thead><tbody id="notes-body"></tbody></table></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
+    <button type="button" class="btn-main" data-close>關閉</button>
+  </div>
+</dialog>
+
+<dialog id="finish-dialog" aria-labelledby="finish-title">
+  <p class="finish-kicker">槓桿實驗桌 · 全部完成</p>
+  <h2 id="finish-title">你找到槓桿平衡的規律了！</h2>
+  <div class="stars" id="stars" aria-label="完成 4 個任務中的 4 個"></div>
+  <div class="finish-rule">左邊「力 × 力臂」＝ 右邊「力 × 力臂」，槓桿就平衡。</div>
+  <ul class="finish-list" id="finish-list"></ul>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" data-close>繼續自由探索</button>
+    <a class="btn-main" href="../../science/">回研究站</a>
+  </div>
+</dialog>
+
+<script type="module" src="./lever.js"></script>
+</body>
+</html>
