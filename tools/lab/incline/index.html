@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#FFF8EC">
 <title>斜面實驗桌（新版試用）｜百宏文教</title>
-<meta name="description" content="沿著短斜面、長斜面和粗糙斜面把同一個木箱拉上去，比較拉力、移動距離、功和機械效率。">
+<meta name="description" content="沿著不同長度、高度的斜面把同一個木箱拉上去，比較怎樣最省力、功有沒有改變，以及摩擦的影響。">
 <link rel="stylesheet" href="../shared/lab.css">
 <link rel="stylesheet" href="../shared/station.css">
 <link rel="stylesheet" href="./incline.css">
@@ -35,6 +35,10 @@
         <g id="rig"></g>
       </svg>
     </div>
+    <section class="cmp-board" id="cmp-board" aria-labelledby="cmp-title" hidden>
+      <h2 id="cmp-title">比較表：拉力（N）<small>量過的組合會填進來</small></h2>
+      <div class="grid-wrap"><table class="cmp-grid" id="cmp-grid"></table></div>
+    </section>
   </div>
 
   <aside class="panel" aria-label="任務、余老師與操作">
@@ -57,6 +61,12 @@
           <button type="button" class="btn-soft" id="pick-ideal" aria-pressed="false">光滑坡面</button>
           <button type="button" class="btn-soft" id="pick-rough" aria-pressed="false">粗糙坡面</button>
         </div>
+      </div>
+      <div class="cmp-pick" id="cmp-pick" hidden>
+        <span class="dock-label">斜面長度（cm）</span>
+        <div class="seg" id="pick-L"></div>
+        <span class="dock-label">斜面高度（cm）</span>
+        <div class="seg" id="pick-H"></div>
       </div>
       <span class="dock-label">拉木箱 <small>沿著斜面拖曳黃色把手，或按下面的按鈕</small></span>
       <div class="picker-btns two">
@@ -98,15 +108,16 @@
     </tbody>
   </table></div>
   <p class="fn-tip"><b>理想斜面的拉力 ＝ 重量 × 高 ÷ 斜面長。</b>同樣高度，斜面越長、坡度越緩，越省力。</p>
-  <p class="fn-tip"><b>真實的斜面有摩擦。</b>拉力要多出一部分克服摩擦，這部分的功會變成熱。<b>機械效率 ＝ 有效功 ÷ 輸入功 × 100%</b>，一定小於 100%。</p>
+  <p class="fn-tip"><b>斜面的長度和高度怎麼影響拉力？</b>高度一樣時，斜面越長越省力；長度一樣時，斜面越高越費力。拉力 ＝ 重量 × 高 ÷ 長。</p>
+  <p class="fn-tip"><b>真實的斜面有摩擦。</b>拉力要比理想斜面大一些，多出來的力用來克服摩擦。</p>
   <p class="fn-tip">生活例子：無障礙坡道、搬家用的斜板、山路繞著山腰盤旋。</p>
-  <p class="fn-tip">模型說明：木箱重 10 N（g＝10 N/kg），沿斜面等速慢慢拉；短、長斜面不計摩擦。摩擦實驗用另一個坡長 100 cm、高 60 cm 的斜面。</p>
+  <p class="fn-tip">模型說明：木箱重 10 N（g＝10 N/kg），沿斜面等速慢慢拉；短、長斜面不計摩擦。「比一比」的各種長度、高度也用同一個理想公式；摩擦實驗用另一個坡長 100 cm、高 60 cm 的斜面。</p>
   <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
 </dialog>
 
 <dialog id="notes-dialog" aria-labelledby="notes-title">
   <h2 id="notes-title">研究手冊</h2>
-  <p class="notes-tip">每種斜面各收一張，就能比較拉力、距離、功和效率。</p>
+  <p class="notes-tip">每種斜面各收一張，就能比較拉力、距離和功。</p>
   <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>斜面</th><th>拉力</th><th>沿坡距離</th><th>木箱升高</th></tr></thead><tbody id="notes-body"></tbody></table></div>
   <div class="dialog-actions">
     <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
@@ -118,7 +129,7 @@
   <p class="finish-kicker">斜面實驗桌 · 全部完成</p>
   <h2 id="finish-title">你把斜面弄懂了！</h2>
   <div class="stars" id="stars" aria-label="完成 6 個任務"></div>
-  <div class="finish-rule">斜面越長越省力，但要走更遠，功不變；有摩擦時，多做的功變成熱，機械效率小於 100%。</div>
+  <div class="finish-rule">同樣高度，斜面越長越省力，但要走更遠，功不變。拉力 ＝ 重量 × 高 ÷ 長。</div>
   <ul class="finish-list" id="finish-list"></ul>
   <div class="dialog-actions">
     <button type="button" class="btn-soft" data-close>再玩一次</button>
