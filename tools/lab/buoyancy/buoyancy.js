@@ -33,7 +33,7 @@ const TASK = {
   water: { title: '把鋁塊慢慢放進清水', goal: '往下拖曳黃色把手（或按「往下放」），一格一格放進溢流杯，直到完全浸沒。溢出的水會流進天平上的杯子。',
     intro: '把鋁塊慢慢放進清水，看彈簧秤怎麼變！',
     found: ['浸得越多，讀數越小：水把鋁塊往上推。', '空氣中 1.35 N → 完全浸沒 0.85 N'] },
-  arch: { title: '算一算：浮力和排開的水，哪個大？', goal: '浮力 ＝ 空氣中重 − 水中讀數。排開的水重：看天平上的水有幾 g，100 g 重 1 N。',
+  arch: { title: '算一算：浮力和排開的水，哪個大？', goal: '浮力 ＝ 空氣中重 − 水中讀數。排開的水重：看天平上的水有幾 g。1 公斤重 ＝ 10 N，所以 100 g 重 1 N。',
     intro: '天平上的水，就是鋁塊排開的水。浮力和它的重量會一樣嗎？',
     found: ['浮力 ＝ 排開的水重！這就是阿基米德原理。', '1.35 − 0.85 ＝ 0.5 N；50 g 的水重 0.5 N'] },
   brine: { title: '換成濃鹽水再做一次', goal: '同一個鋁塊放進濃鹽水（密度 1.2 g/cm³），完全浸沒後收下觀察，和清水比一比。',
@@ -62,7 +62,7 @@ const QUIZ = [
 ];
 const CALC = [
   { id: 'buoy', name: '浮力', eq: '空氣中 1.35 N − 水中 0.85 N', answer: 0.5, unit: 'N' },
-  { id: 'disp', name: '排開的水重', eq: '天平上的水 50 g（100 g 重 1 N）', answer: 0.5, unit: 'N' }
+  { id: 'disp', name: '排開的水重', eq: '天平上的水 50 g（1 公斤重＝10 N）', answer: 0.5, unit: 'N' }
 ];
 
 /* ---------- 狀態 ---------- */
@@ -271,7 +271,7 @@ function renderReadouts() {
   const m = measure(fluidNow(), Math.round(liveP()));
   setReading(1, '彈簧秤讀數', m.force, 'N', `空氣中 ${W_AIR} N`);
   setReading(2, '排開的液體', m.vol, 'cm³', '鋁塊體積 50 cm³');
-  setReading(3, '杯中液體', m.mass, 'g', `${FNAME[fluidNow()]}，天平已去皮`);
+  setReading(3, '杯中液體', m.mass, 'g', `重 ${r3(m.mass / 100)} N，天平已去皮`);
 }
 
 /* ---------- 余老師 ---------- */
@@ -372,7 +372,7 @@ function check() {
   let msg;
   if (Number.isNaN(v)) msg = `先在「${w.name}」那一格填數字。`;
   else if (w.id === 'buoy') msg = Math.abs(v - 2.2) < 1e-9 ? '浮力是兩個讀數「相減」，不是相加。' : (Math.abs(v - 0.85) < 1e-9 || Math.abs(v - 1.35) < 1e-9) ? '浮力是讀數少掉的部分：1.35 − 0.85 ＝ ？' : '浮力 ＝ 空氣中 1.35 N − 水中 0.85 N。';
-  else msg = Math.abs(v - 50) < 1e-9 ? '50 是質量（g）。換成重量：100 g 重 1 N，50 g 重多少 N？' : Math.abs(v - 0.05) < 1e-9 ? '0.05 是 kg，還要乘 g＝10 N/kg。' : '100 g 的水重 1 N，50 g 的水重多少 N？';
+  else msg = Math.abs(v - 50) < 1e-9 ? '50 是質量（g）。換成重量：1 公斤重 ＝ 10 N，也就是 100 g 重 1 N。50 g 重多少 N？' : Math.abs(v - 0.05) < 1e-9 ? '0.05 是 kg。1 公斤重 ＝ 10 N，所以還要乘 10。' : '100 g 的水重 1 N，50 g 的水重多少 N？';
   oops(msg);
 }
 
