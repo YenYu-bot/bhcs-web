@@ -17,7 +17,7 @@
 .sign{font-size:52px;color:var(--red);min-width:44px;text-align:center;transition:color .3s}
 .sign.eq{color:var(--mint)}
 
-.panel{display:flex;flex-direction:column;gap:14px;padding:16px;background:var(--paper);border-left:2px solid var(--line);overflow-y:auto}
+.panel{display:flex;flex-direction:column;gap:12px;padding:16px;background:var(--paper);border-left:2px solid var(--line);overflow-y:auto}
 .teacher{align-items:flex-end}
 .teacher-pic{width:96px;height:168px}
 .teacher .bubble{margin:0 0 30px;flex:1;max-width:none;font-size:18px}
@@ -57,6 +57,10 @@
 .w-ring{opacity:0;transition:opacity .15s}
 .w-hit:focus-visible .w-ring,.w-hit.sel .w-ring{opacity:1}
 .w-hit.lifted{opacity:.25}
+.w-hit.cue .w-ring{opacity:1;stroke:#E0A21B;stroke-dasharray:none;animation:wcue 1.2s ease-in-out infinite}
+@keyframes wcue{50%{stroke-width:8;opacity:.55}}
+.cue-hook{transform-box:fill-box;transform-origin:center;animation:hookcue 1.2s ease-in-out infinite}
+@keyframes hookcue{50%{transform:scale(1.45);opacity:.5}}
 .beam-hit{cursor:copy}
 body.dragging,body.dragging *{cursor:grabbing!important}
 
@@ -82,7 +86,9 @@ body.dragging,body.dragging *{cursor:grabbing!important}
   .sign{font-size:32px;min-width:24px}
   .scene-wrap{position:relative;inset:auto;height:clamp(200px,58vw,440px)}
   .panel{border-left:0;overflow:visible;padding:0 12px 24px;gap:12px}
-  .teacher{margin-top:-8px}
+  .task{margin-top:10px}
+  .task-title{font-size:17px}
+  .teacher{margin-top:0}
   .teacher-pic{width:62px;height:108px}
   .teacher .bubble{margin:0 0 14px;font-size:16px;padding:10px 14px}
   .teacher .bubble .next{min-height:40px}

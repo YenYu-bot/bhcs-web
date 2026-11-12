@@ -44,7 +44,13 @@
     </div>
   </div>
 
-  <aside class="panel" aria-label="余老師與操作">
+  <aside class="panel" aria-label="任務、余老師與操作">
+    <section class="task" id="task" aria-live="polite">
+      <span class="task-kicker" id="task-kicker">任務 1 / 5</span>
+      <h2 class="task-title" id="task-title"></h2>
+      <p class="task-goal" id="task-goal"></p>
+      <div class="task-row"><button type="button" id="task-reset">重來這一步</button><button type="button" class="go" id="task-go" hidden></button></div>
+    </section>
     <div class="teacher" id="teacher">
       <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
       <div class="bubble" id="bubble"></div>
