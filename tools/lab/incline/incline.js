@@ -1,17 +1,21 @@
 // 斜面實驗桌（新版試用）
-// 短／長斜面沿用 tools/incline-desk/model.mjs；有摩擦的斜面沿用 tools/friction-efficiency-desk/model.mjs。不另寫模型。
+// 短／長斜面沿用 tools/incline-desk/model.mjs；有摩擦的斜面沿用 tools/friction-efficiency-desk/model.mjs；
+// 「比一比」的其他長度、高度用 ideal-model.mjs（已與上述兩個模型逐公分比對一致）。
 import { derive as rampDerive, RAMPS } from '../../incline-desk/model.mjs';
 import { derive as frictionDerive, PARAMETERS as FP } from '../../friction-efficiency-desk/model.mjs';
+import { idealIncline, LENGTHS, HEIGHTS } from './ideal-model.mjs';
 import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
-const db = store('bhcs.lab.incline.v1');
-const SHORT = { short: '短斜面', long: '長斜面', ideal: '光滑坡面', rough: '粗糙坡面' };
+const db = store('bhcs.lab.incline.v2');
+const SHORT = { short: '短斜面', long: '長斜面', ideal: '光滑坡面', rough: '粗糙坡面', cmp: '比一比' };
+const cmpName = r => `長 ${r.L}／高 ${r.H}`;
 const WEIGHT = 10;
 
 /* ---------- 模型（只讀正式站模型） ---------- */
 function run(dev, s) {
+  if (dev === 'cmp') return idealIncline(S.cmp.L, S.cmp.H, s);
   if (dev === 'short' || dev === 'long') {
     const d = rampDerive(dev, s);
     return { force: d.forceHalfN / 2, s, h: d.hQuarterCm / 4, L: d.lengthCm, H: d.heightCm, friction: 0 };
@@ -19,18 +23,18 @@ function run(dev, s) {
   const d = frictionDerive(dev, s);
   return { force: d.forceN, s, h: d.hCm, L: d.lengthCm, H: d.heightCm, friction: d.frictionN };
 }
-const lengthOf = dev => dev === 'short' || dev === 'long' ? RAMPS[dev].lengthCm : FP.lengthCm;
+const lengthOf = dev => dev === 'cmp' ? S.cmp.L : dev === 'short' || dev === 'long' ? RAMPS[dev].lengthCm : FP.lengthCm;
 
 const STEPS = [
   { id: 'short', label: '短斜面' },
   { id: 'long', label: '長斜面' },
+  { id: 'compare', label: '比一比' },
   { id: 'calc', label: '算一算功' },
   { id: 'friction', label: '有摩擦' },
-  { id: 'eff', label: '機械效率' },
   { id: 'quiz', label: '說說看' }
 ];
-const NEXT = { short: 'long', long: 'calc', calc: 'friction', friction: 'eff', eff: 'quiz' };
-const PULL = new Set(['short', 'long', 'friction']);
+const NEXT = { short: 'long', long: 'compare', compare: 'calc', calc: 'friction', friction: 'quiz' };
+const PULL = new Set(['short', 'long', 'compare', 'friction']);
 const TASK = {
   short: { title: '短斜面：把木箱拉到坡頂', goal: '坡長 40 cm、高 20 cm。沿著斜面拖曳黃色把手（或按「往上拉」），木箱到坡頂後收下觀察。',
     intro: '直接提起木箱要 10 N。沿著斜面拉，要多少力？',
@@ -38,18 +42,18 @@ const TASK = {
   long: { title: '長斜面：同樣高 20 cm，坡更長', goal: '坡長 80 cm、高度一樣 20 cm。把同一個木箱拉到坡頂，比較拉力和距離。',
     intro: '坡變長、變緩了。你猜拉力會變大還是變小？',
     found: ['斜面越長越省力，但要走更遠。', '拉力 2.5 N，沿坡走 80 cm'] },
+  compare: { title: '比一比：長度和高度怎麼影響拉力？', goal: '選斜面長度和高度，往上拉一點就能讀到拉力，按「收下這次觀察」填進比較表。至少量 3 種：要有「高度一樣、長度不同」和「長度一樣、高度不同」。',
+    intro: '換換看斜面的長度和高度，拉力會怎麼變？',
+    found: ['高度一樣，斜面越長越省力；長度一樣，斜面越高越費力。', '拉力 ＝ 重量 × 高 ÷ 長'] },
   calc: { title: '算一算：三種方法各做了多少功？', goal: '功 ＝ 力 × 沿著力的方向移動的距離。距離先換成 m，答案用焦耳（J）。',
     intro: '直接提起、短斜面、長斜面，三種方法的功會一樣嗎？',
     found: ['三種都是 2 J！斜面省力，但不省功。', '10 × 0.20 ＝ 5 × 0.40 ＝ 2.5 × 0.80 ＝ 2 J'] },
   friction: { title: '真實的斜面有摩擦', goal: '同一個坡（長 100 cm、高 60 cm），分別用「光滑坡面」和「粗糙坡面」把木箱拉到坡頂，各收一張。',
     intro: '先拉光滑坡面，再換粗糙坡面。拉力會一樣嗎？',
-    found: ['有摩擦時要多用力：粗糙坡面要 8 N，比光滑的 6 N 多了 2 N。', '多出來的 2 N 用來克服摩擦力'] },
-  eff: { title: '機械效率：輸入的功有多少真的用上？', goal: '有效功＝木箱重 × 升高；輸入功＝拉力 × 沿坡距離。機械效率＝有效功 ÷ 輸入功 × 100%。',
-    intro: '看實驗桌上的長條圖：粗糙坡面多做的功，跑去哪裡了？',
-    found: ['粗糙坡面的機械效率是 75%：8 J 裡只有 6 J 用來把木箱抬高，2 J 變成熱。', '6 J ÷ 8 J × 100% ＝ 75%'] },
+    found: ['有摩擦時要多用力：粗糙坡面要 8 N，比光滑的 6 N 多了 2 N。', '多出來的 2 N 用來克服摩擦力；坡面越光滑越省力'] },
   quiz: { title: '說說看：用證據回答', goal: '三題都答對就完成。答錯沒關係，余老師會說明原因。',
     intro: '最後三題！想想你收下的證據。',
-    found: ['你把斜面弄懂了！', '省力不省功；有摩擦時效率小於 100%'] }
+    found: ['你把斜面弄懂了！', '同樣高度，斜面越長越省力，但功不變'] }
 };
 const QUIZ = [
   { q: '要把同一個木箱推上同樣高的平台，哪一種斜面最省力？', options: [
@@ -60,29 +64,25 @@ const QUIZ = [
     { text: '變少了，因為比較省力。', why: '省力，但要多走距離。2.5 N × 0.80 m 還是 2 J。' },
     { text: '一樣，因為要走更遠的距離。', ok: true },
     { text: '變多了，因為走得比較遠。', why: '不計摩擦時，力變小、距離變長，兩者相乘還是 2 J。' }] },
-  { q: '粗糙坡面的機械效率是 75%，這代表什麼？', options: [
-    { text: '拉力只要原本的 75%。', why: '剛好相反，粗糙坡面的拉力比光滑坡面大（8 N 比 6 N）。' },
-    { text: '木箱只升高到 75% 的高度。', why: '木箱一樣到坡頂、升高 60 cm。效率說的是功被用上了多少。' },
-    { text: '輸入的功只有 75% 用來把木箱抬高，其他變成熱。', ok: true }] }
+  { q: '斜面長度不變，把平台加高，拉同一個木箱的拉力會怎樣？', options: [
+    { text: '變小，因為斜面變陡了。', why: '斜面變陡反而比較費力。看比較表：長 50 cm 時，高 10、20、30 cm 的拉力是 2、4、6 N。' },
+    { text: '不變，因為斜面長度一樣。', why: '拉力 ＝ 重量 × 高 ÷ 長，高度變大，拉力也跟著變大。' },
+    { text: '變大，拉力 ＝ 重量 × 高 ÷ 長。', ok: true }] }
 ];
 const CALC = {
   calc: { head: '功 ＝ 力 × 距離（距離換成 m）', rows: [
     { id: 'lift', name: '直接提起', eq: () => '10 N × 往上 20 cm', need: [], answer: 2, unit: 'J', F: 10, cm: 20 },
     { id: 'short', name: '短斜面', eq: () => '5 N × 沿坡 40 cm', need: ['short'], answer: 2, unit: 'J', F: 5, cm: 40 },
-    { id: 'long', name: '長斜面', eq: () => '2.5 N × 沿坡 80 cm', need: ['long'], answer: 2, unit: 'J', F: 2.5, cm: 80 }] },
-  eff: { head: '用粗糙坡面的證據算算看', rows: [
-    { id: 'useful', name: '有效功', eq: () => '木箱重 10 N × 升高 60 cm', need: ['rough'], answer: 6, unit: 'J', F: 10, cm: 60 },
-    { id: 'input', name: '輸入功', eq: () => '拉力 8 N × 沿坡 100 cm', need: ['rough'], answer: 8, unit: 'J', F: 8, cm: 100 },
-    { id: 'eff', name: '機械效率', eq: () => '有效功 ÷ 輸入功 × 100%', need: ['rough', 'ideal'], answer: 75, unit: '%' }] }
+    { id: 'long', name: '長斜面', eq: () => '2.5 N × 沿坡 80 cm', need: ['long'], answer: 2, unit: 'J', F: 2.5, cm: 80 }] }
 };
 
 /* ---------- 狀態 ---------- */
-const DEVICES = ['short', 'long', 'ideal', 'rough'];
-const fresh = () => ({ v: 1, step: 'short', surface: 'ideal', s: 0, saved: false, records: [], done: [], calc: {}, quiz: { i: 0, pick: null } });
+const DEVICES = ['short', 'long', 'ideal', 'rough', 'cmp'];
+const fresh = () => ({ v: 2, step: 'short', surface: 'ideal', cmp: { L: 50, H: 20 }, s: 0, saved: false, records: [], done: [], calc: {}, quiz: { i: 0, pick: null } });
 function loadState() {
   const s = db.load();
   try {
-    if (!s || s.v !== 1 || !STEPS.some(x => x.id === s.step) || !['ideal', 'rough'].includes(s.surface) || !Number.isInteger(s.s) || s.s < 0) throw 0;
+    if (!s || s.v !== 2 || !s.cmp || !LENGTHS.includes(s.cmp.L) || !HEIGHTS.includes(s.cmp.H) || !STEPS.some(x => x.id === s.step) || !['ideal', 'rough'].includes(s.surface) || !Number.isInteger(s.s) || s.s < 0) throw 0;
     if (!Array.isArray(s.records) || !Array.isArray(s.done) || !s.calc || !s.quiz || !Number.isInteger(s.quiz.i)) throw 0;
     if (!s.records.every(r => DEVICES.includes(r.device))) throw 0;
     return s;
@@ -90,9 +90,11 @@ function loadState() {
 }
 let S = loadState(), shownS = S.s, foundShown = null, lastNote = null, dragging = null, warnedDown = false;
 const save = () => db.save(S);
-const device = () => S.step === 'friction' ? S.surface : (S.step === 'short' || S.step === 'long') ? S.step : S.step === 'calc' ? 'long' : 'rough';
+const device = () => S.step === 'friction' ? S.surface : S.step === 'compare' ? 'cmp' : (S.step === 'short' || S.step === 'long') ? S.step : S.step === 'calc' ? 'long' : 'rough';
 const liveS = () => PULL.has(S.step) ? shownS : lengthOf(device());
 const hasRec = d => S.records.some(r => r.device === d);
+const cmpRecs = () => S.records.filter(r => r.device === 'cmp');
+const hasCmp = (L, H) => cmpRecs().some(r => r.L === L && r.H === H);
 const rec = d => S.records.find(r => r.device === d);
 
 const svg = $('#scene'), rig = $('#rig');
@@ -106,7 +108,8 @@ const GEO = {
   short: { sc: 8, x0: 330, y0: 470 },
   long: { sc: 8, x0: 170, y0: 470 },
   ideal: { sc: 4.4, x0: 240, y0: 500 },
-  rough: { sc: 4.4, x0: 240, y0: 500 }
+  rough: { sc: 4.4, x0: 240, y0: 500 },
+  cmp: { sc: 6, x0: 160, y0: 470 }
 };
 function geo(dev) {
   const r = run(dev, 0), g = GEO[dev], L = r.L * g.sc, H = r.H * g.sc, base = Math.sqrt(L * L - H * H);
@@ -115,7 +118,7 @@ function geo(dev) {
   return { ...g, L, H, base, th, u, nrm, B, T, Lcm: r.L, Hcm: r.H };
 }
 const add = (p, v, k = 1) => [p[0] + v[0] * k, p[1] + v[1] * k];
-const boxD = (G, s) => BOX / 2 + (s / G.Lcm) * (G.L - BOX);
+const boxD = (G, s) => s * G.sc;   // 木箱底部中心正好在沿坡 s 的位置，高度與模型一致
 
 /* ---------- 場景 ---------- */
 function defs() {
@@ -153,7 +156,7 @@ function draw() {
   el('path', { d: `M ${rx - 8} ${hy} l -12 -7 v 14 z`, fill: '#C8372D' }, rig);
   // 木箱
   const d = boxD(G, s), foot = add(G.B, G.u, d), c = add(foot, G.nrm, BOX / 2), deg = -G.th * 180 / Math.PI;
-  el('line', { x1: foot[0], y1: foot[1], x2: rx - 8, y2: hy, stroke: '#C8372D', 'stroke-width': 2, 'stroke-dasharray': '6 6', opacity: 0.6 }, rig);
+  el('line', { x1: foot[0], y1: hy, x2: rx - 8, y2: hy, stroke: '#C8372D', 'stroke-width': 2, 'stroke-dasharray': '6 6', opacity: 0.6 }, rig);
   const bg = el('g', { transform: `translate(${c[0].toFixed(1)} ${c[1].toFixed(1)}) rotate(${deg.toFixed(2)})` }, rig);
   el('image', { href: P + 'prop-wooden-crate.webp', x: -BOX / 2, y: -BOX / 2, width: BOX, height: BOX }, bg);
   el('rect', { x: -24, y: -12, width: 48, height: 24, rx: 12, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 2 }, bg);
@@ -183,32 +186,15 @@ function draw() {
     hg.classList.add('cue');
     const lt = add(hand, G.nrm, 44); txt(rig, lt[0], lt[1], '沿斜面往上拉', { 'font-size': 16, 'font-weight': 900, fill: '#C8372D' });
   }
-  // 機械效率長條圖
-  if (S.step === 'eff' || (S.step === 'friction' && hasRec('ideal') && hasRec('rough'))) drawEnergy();
   bindHandle(hg, dev, G);
   if (hadFocus) hg.focus({ preventScroll: true });
 }
-function drawEnergy() {
-  const x = 130, y = 70, k = 34;  // 每 J 34 單位
-  const g = el('g', {}, rig);
-  el('rect', { x: x - 16, y: y - 30, width: 8 * k + 150, height: 132, rx: 16, fill: 'rgba(255,255,255,.94)', stroke: '#E5DAC6', 'stroke-width': 2 }, g);
-  txt(g, x + 40, y - 8, '輸入的功跑去哪裡？', { 'font-size': 15, 'text-anchor': 'start', fill: '#23304A' });
-  const bar = (yy, label, parts) => {
-    txt(g, x + 30, yy + 21, label, { 'font-size': 14, 'text-anchor': 'end' });
-    let xx = x + 40;
-    for (const [v, color, t] of parts) { el('rect', { x: xx, y: yy, width: v * k, height: 30, fill: color, stroke: '#23304A', 'stroke-width': 2 }, g); txt(g, xx + v * k / 2, yy + 21, t, { 'font-size': 13, fill: '#FFFFFF' }); xx += v * k; }
-    txt(g, xx + 26, yy + 21, `${parts.reduce((a, p) => a + p[0], 0)} J`, { 'font-size': 15 });
-  };
-  bar(y + 8, '光滑', [[6, '#2F6FB0', '抬高木箱 6 J']]);
-  bar(y + 50, '粗糙', [[6, '#2F6FB0', '抬高木箱 6 J'], [2, '#C8372D', '熱 2 J']]);
-}
-
 /* ---------- 拉動 ---------- */
 function toSvg(e) { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); }
 function sFromPointer(G, p) {
-  const origin = add(add(G.B, G.nrm, BOX / 2), G.u, BOX / 2 + LEAD);
+  const origin = add(add(G.B, G.nrm, BOX / 2), G.u, BOX / 2 + LEAD);  // s = 0 時把手的位置
   const along = (p.x - origin[0]) * G.u[0] + (p.y - origin[1]) * G.u[1];
-  return (along - BOX / 2) / (G.L - BOX) * G.Lcm;
+  return along / G.sc;
 }
 const canPull = () => PULL.has(S.step) && !S.saved;
 function bindHandle(node, dev, G) {
@@ -264,12 +250,18 @@ function tick(id, v) { const n = $(id); if (prev[id] !== undefined && prev[id] !
 function renderReadouts() {
   const dev = device(), r = run(dev, Math.min(lengthOf(dev), Math.round(liveS())));
   tick('#r-force', r.force); tick('#r-rope', r.s); tick('#r-height', r.h);
-  $('#r-force-note').textContent = dev === 'rough' ? `克服摩擦多 ${r.friction} N` : dev === 'ideal' ? '光滑：不計摩擦' : `直接提起要 ${WEIGHT} N`;
+  $('#r-force-note').textContent = dev === 'cmp' ? `10 N × ${r.H} ÷ ${r.L}` : dev === 'rough' ? `克服摩擦多 ${r.friction} N` : dev === 'ideal' ? '光滑：不計摩擦' : `直接提起要 ${WEIGHT} N`;
   $('#r-rope-note').textContent = `斜面長 ${r.L} cm`;
   $('#r-height-note').textContent = `坡頂高 ${r.H} cm`;
 }
 
 /* ---------- 余老師 ---------- */
+function cmpHint() {
+  const rs = cmpRecs(), sameH = rs.some(a => rs.some(b => a.H === b.H && a.L !== b.L)), sameL = rs.some(a => rs.some(b => a.L === b.L && a.H !== b.H));
+  if (!sameH) return '再量一個「高度一樣、長度不同」的斜面，比比看拉力。';
+  if (!sameL) return '再量一個「長度一樣、高度不同」的斜面，比比看拉力。';
+  return rs.length < 3 ? '再多量一種組合。' : '比較表裡看出規律了嗎？';
+}
 function oops(t) { teacher.last = ''; teacher.say(t, { pose: 'think', tone: 'oops' }); lastNote = t; }
 function talk() {
   if (lastNote) return;
@@ -282,10 +274,16 @@ function talk() {
   if (PULL.has(step)) {
     const dev = device(), L = lengthOf(dev), r = run(dev, Math.min(L, S.s));
     if (S.saved) {
+      if (step === 'compare') { teacher.say(done ? '比較表看出規律了！可以按「下一步」，也可以再多量幾種。' : '收下了！' + cmpHint() + '（上面選新的長度或高度）', { pose: 'thumb' }); return; }
       if (step === 'friction' && !done) {
         const other = S.surface === 'ideal' ? 'rough' : 'ideal';
         teacher.say(`收下了！再換「${SHORT[other]}」，拉力會一樣嗎？`, { pose: 'thumb', action: { label: `換${SHORT[other]} →`, run: () => pickSurface(other) } });
       } else teacher.say(done ? '這一步完成了，按任務卡的「下一步」繼續。' : '已經收下了！', { pose: 'thumb' });
+      return;
+    }
+    if (step === 'compare') {
+      if (S.s === 0) teacher.say(cmpRecs().length ? cmpHint() : task.intro, { pose: 'point' });
+      else teacher.say(`長 ${r.L} cm、高 ${r.H} cm：拉力 ${r.force} N。收下這次觀察，填進比較表。`, { pose: 'wow' });
       return;
     }
     if (S.s >= L) teacher.say(`到坡頂了！拉力 ${r.force} N，沿坡走了 ${L} cm，木箱升高 ${r.H} cm。收下這次觀察。`, { pose: 'cheer' });
@@ -293,7 +291,7 @@ function talk() {
     else teacher.say(`沿坡拉了 ${S.s} cm，木箱升高 ${r.h} cm。拉力一直是 ${r.force} N，繼續拉！`, { pose: 'point' });
     return;
   }
-  if (step === 'calc' || step === 'eff') {
+  if (step === 'calc') {
     const need = [...new Set(CALC[step].rows.flatMap(x => x.need))].filter(d => !hasRec(d));
     if (need.length) { teacher.say(`還少「${need.map(d => SHORT[d]).join('」「')}」的證據，先回去收下來。`, { pose: 'think' }); return; }
     teacher.say(done ? '算對了！按任務卡的「下一步」繼續。' : task.intro, { pose: done ? 'thumb' : 'notebook' }); return;
@@ -311,18 +309,41 @@ function renderTask() {
   if (done && S.step === 'quiz') { go.hidden = false; go.textContent = '看成果 →'; go.onclick = openFinish; }
   else if (done) { go.hidden = false; go.textContent = '下一步 →'; go.onclick = () => goStep(NEXT[S.step]); }
   else go.hidden = true;
-  const pullStep = PULL.has(S.step), calcStep = S.step === 'calc' || S.step === 'eff';
+  const pullStep = PULL.has(S.step), calcStep = S.step === 'calc';
   $('#dock-pull').hidden = !pullStep; $('#dock-calc').hidden = !calcStep; $('#dock-quiz').hidden = S.step !== 'quiz';
   $('#surface-pick').hidden = S.step !== 'friction';
+  $('#cmp-pick').hidden = S.step !== 'compare';
+  $('#cmp-board').hidden = S.step !== 'compare';
+  if (S.step === 'compare') renderCompare();
   for (const id of ['ideal', 'rough']) {
     const b = $('#pick-' + id); b.setAttribute('aria-pressed', String(S.surface === id));
     b.textContent = SHORT[id] + (hasRec(id) ? ' ✓' : '');
   }
   const L = lengthOf(device());
   $('#pull-1').disabled = $('#pull-5').disabled = !canPull() || S.s >= L;
-  $('#save').classList.toggle('cue', pullStep && S.s >= L && !S.saved);
+  $('#save').classList.toggle('cue', pullStep && !S.saved && (S.step === 'compare' ? S.s > 0 : S.s >= L));
   if (calcStep) renderCalc();
   if (S.step === 'quiz') renderQuiz();
+}
+function renderCompare() {
+  const seg = (box, list, cur, unit, set) => {
+    box.className = 'seg' + (list.length === 3 ? ' three' : '');
+    box.replaceChildren(...list.map(v => { const b = document.createElement('button'); b.type = 'button'; b.textContent = String(v); b.setAttribute('aria-label', `${v} ${unit}`); b.setAttribute('aria-pressed', String(v === cur)); b.addEventListener('click', () => set(v)); return b; }));
+  };
+  seg($('#pick-L'), LENGTHS, S.cmp.L, 'cm', v => pickCmp(v, S.cmp.H));
+  seg($('#pick-H'), HEIGHTS, S.cmp.H, 'cm', v => pickCmp(S.cmp.L, v));
+  const g = $('#cmp-grid');
+  const head = '<thead><tr><th>高＼長</th>' + LENGTHS.map(L => `<th>${L} cm</th>`).join('') + '</tr></thead>';
+  const body = HEIGHTS.map(H => `<tr><th>${H} cm</th>` + LENGTHS.map(L => {
+    const got = hasCmp(L, H), now = L === S.cmp.L && H === S.cmp.H;
+    return `<td class="${got ? 'got' : ''}${now ? ' now' : ''}">${got ? idealIncline(L, H, L).force : '？'}</td>`;
+  }).join('') + '</tr>').join('');
+  g.innerHTML = head + '<tbody>' + body + '</tbody>';
+  g.setAttribute('aria-label', `比較表，已量 ${cmpRecs().length} 種組合`);
+}
+function pickCmp(L, H) {
+  S.step = 'compare'; S.cmp = { L, H }; S.s = 0; S.saved = false; shownS = 0; foundShown = null; lastNote = null; warnedDown = false;
+  save(); teacher.last = ''; render();
 }
 function pickSurface(id) {
   S.step = 'friction'; S.surface = id; S.s = 0; S.saved = false; shownS = 0; foundShown = null; lastNote = null; warnedDown = false;
@@ -366,7 +387,6 @@ function check() {
   const w = cfg.rows.find(r => !res[r.id]), v = num($('#calc-' + w.id).value);
   let msg;
   if (Number.isNaN(v)) msg = `先在「${w.name}」那一格填數字。`;
-  else if (w.unit === '%') msg = Math.abs(v - 0.75) < 1e-9 ? '0.75 要再乘 100%，寫成百分比。' : Math.abs(v - 8 / 6 * 100) < 0.5 ? '倒過來了：效率是「有效功 ÷ 輸入功」，小的除以大的。' : '機械效率 ＝ 有效功 6 J ÷ 輸入功 8 J × 100%。';
   else if (Math.abs(v - w.F * w.cm) < 1e-9) msg = `${w.name}：${v} 是 N·cm。把 ${w.cm} cm 換成 ${(w.cm / 100).toFixed(2)} m 再乘。`;
   else msg = `${w.name}：${w.F} N × ${(w.cm / 100).toFixed(2)} m ＝ ？`;
   oops(msg);
@@ -400,7 +420,7 @@ function renderEvidence() {
   if (chips.dataset.key === key) return; chips.dataset.key = key;
   chips.replaceChildren(...want.map(r => {
     const li = document.createElement('li'); li.className = 'chip';
-    li.innerHTML = `<small>#${r.n} ${SHORT[r.device]}</small><b>${r.force} N ｜ 沿坡 ${r.s} cm</b><span class="res ok">升高 ${r.h} cm</span>`;
+    li.innerHTML = r.device === 'cmp' ? `<small>#${r.n} 比一比</small><b>${cmpName(r)}</b><span class="res ok">拉力 ${r.force} N</span>` : `<small>#${r.n} ${SHORT[r.device]}</small><b>${r.force} N ｜ 沿坡 ${r.s} cm</b><span class="res ok">升高 ${r.h} cm</span>`;
     return li;
   }));
 }
@@ -408,16 +428,23 @@ function keep() {
   if (!PULL.has(S.step)) return;
   const dev = device(), L = lengthOf(dev);
   if (S.saved) { blocked(); return; }
-  if (S.s < L) { oops(`先把木箱拉到坡頂再收下（現在 ${S.s} / ${L} cm）。`); return; }
+  if (S.step === 'compare') {
+    if (S.s === 0) { oops('先往上拉一點，讀到拉力再收下。'); return; }
+    if (hasCmp(S.cmp.L, S.cmp.H)) { oops('這個組合已經量過了，換一種長度或高度。'); return; }
+  } else if (S.s < L) { oops(`先把木箱拉到坡頂再收下（現在 ${S.s} / ${L} cm）。`); return; }
   if (S.records.length >= 50) { oops('手冊滿 50 張了，清空紀錄才能再收。'); return; }
   const r = run(dev, L);
-  S.records.push({ n: S.records.length + 1, device: dev, force: r.force, s: L, h: r.H, at: new Date().toISOString() });
+  const entry = { n: S.records.length + 1, device: dev, force: r.force, s: L, h: r.H, at: new Date().toISOString() };
+  if (dev === 'cmp') { entry.L = r.L; entry.H = r.H; }
+  S.records.push(entry);
   S.saved = true; lastNote = null;
-  const stepDone = S.step === 'friction' ? hasRec('ideal') && hasRec('rough') : true;
+  const rs = cmpRecs();
+  const cmpDone = rs.length >= 3 && rs.some(a => rs.some(b => a.H === b.H && a.L !== b.L)) && rs.some(a => rs.some(b => a.L === b.L && a.H !== b.H));
+  const stepDone = S.step === 'friction' ? hasRec('ideal') && hasRec('rough') : S.step === 'compare' ? cmpDone : true;
   if (stepDone && !S.done.includes(S.step)) { S.done.push(S.step); foundShown = S.step; }
   save();
   const target = isVisible($('#evidence')) ? $('#evidence') : $('#note-count');
-  fly($('#save'), target, `${SHORT[dev]} ${r.force} N`).then(() => { renderEvidence(); bump($('#note-count')); });
+  fly($('#save'), target, `${dev === 'cmp' ? cmpName(r) : SHORT[dev]} ${r.force} N`).then(() => { renderEvidence(); bump($('#note-count')); });
   render();
 }
 const isVisible = n => { const r = n.getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; };
@@ -427,13 +454,14 @@ function goStep(id) {
   S.step = id; foundShown = null; lastNote = null; warnedDown = false;
   if (PULL.has(id)) { S.s = 0; S.saved = false; }
   if (id === 'friction') S.surface = hasRec('ideal') && !hasRec('rough') ? 'rough' : 'ideal';
+  if (id === 'compare' && hasCmp(S.cmp.L, S.cmp.H)) { const next = HEIGHTS.flatMap(H => LENGTHS.map(L => ({ L, H }))).find(c => !hasCmp(c.L, c.H)); if (next) S.cmp = next; }
   if (id === 'quiz' && !S.done.includes('quiz')) S.quiz = { i: 0, pick: null };
   calcBuilt = null; shownS = S.s; save(); teacher.last = ''; render();
   if (narrow.matches) scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' });
 }
 function resetStep() {
   if (S.step === 'friction') { pickSurface(S.surface); return; }
-  if (S.step === 'calc' || S.step === 'eff') CALC[S.step].rows.forEach(r => delete S.calc[r.id]);
+  if (S.step === 'calc') CALC.calc.rows.forEach(r => delete S.calc[r.id]);
   if (S.step === 'quiz') S.quiz = { i: 0, pick: null };
   goStep(S.step);
 }
@@ -442,7 +470,7 @@ function resetStep() {
 function openNotes() {
   const body = $('#notes-body'); body.replaceChildren();
   if (!S.records.length) { const tr = document.createElement('tr'); tr.innerHTML = '<td colspan="5" class="notes-empty">還沒有證據。</td>'; body.append(tr); }
-  for (const r of S.records) { const tr = document.createElement('tr'); tr.innerHTML = `<td>${r.n}</td><td>${SHORT[r.device]}</td><td><b>${r.force} N</b></td><td>${r.s} cm</td><td>${r.h} cm</td>`; body.append(tr); }
+  for (const r of S.records) { const tr = document.createElement('tr'); tr.innerHTML = `<td>${r.n}</td><td>${r.device === 'cmp' ? cmpName(r) : SHORT[r.device]}</td><td><b>${r.force} N</b></td><td>${r.s} cm</td><td>${r.h} cm</td>`; body.append(tr); }
   $('#notes-dialog').showModal();
 }
 const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" fill="#F4C04E" stroke="#23304A" stroke-width="1.2" stroke-linejoin="round"/></svg>';
@@ -450,8 +478,8 @@ function openFinish() {
   const got = STEPS.filter(s => S.done.includes(s.id)).length;
   $('#stars').innerHTML = STEPS.map(s => S.done.includes(s.id) ? STAR : STAR.replace('<svg', '<svg class="off"')).join('');
   $('#stars').setAttribute('aria-label', `完成 ${STEPS.length} 個任務中的 ${got} 個`);
-  const line = d => { const r = rec(d); return r && `<li><b>${SHORT[d]}</b>：拉力 ${r.force} N，沿坡 ${r.s} cm → 輸入功 ${r.force * r.s / 100} J</li>`; };
-  $('#finish-list').innerHTML = ['short', 'long', 'ideal', 'rough'].map(line).filter(Boolean).join('') + '<li><b>粗糙坡面的機械效率</b>：6 J ÷ 8 J × 100% ＝ 75%</li>';
+  const line = d => { const r = rec(d); return r && (d === 'ideal' || d === 'rough' ? `<li><b>${SHORT[d]}</b>：拉力 ${r.force} N</li>` : `<li><b>${SHORT[d]}</b>：拉力 ${r.force} N，沿坡 ${r.s} cm → 功 ${r.force * r.s / 100} J</li>`); };
+  $('#finish-list').innerHTML = ['short', 'long', 'ideal', 'rough'].map(line).filter(Boolean).join('') + (cmpRecs().length ? `<li><b>比一比</b>：量了 ${cmpRecs().length} 種長度與高度的組合</li>` : '');
   $('#finish-dialog').showModal();
 }
 function clearAll() {
@@ -466,8 +494,8 @@ const narrow = matchMedia('(max-width: 860px)');
 function fitScene() {
   const d = device();
   const vb = narrow.matches
-    ? { short: '120 140 740 380', long: '110 170 900 360', ideal: '110 50 790 490', rough: '110 50 790 490' }[d]
-    : { short: '150 140 770 410', long: '50 140 965 410', ideal: '100 30 820 520', rough: '100 30 820 520' }[d];
+    ? { short: '120 140 740 380', long: '110 170 900 360', ideal: '110 50 790 490', rough: '110 50 790 490', cmp: '100 110 900 400' }[d]
+    : { short: '150 140 770 410', long: '50 140 965 410', ideal: '100 30 820 520', rough: '100 30 820 520', cmp: '60 100 960 430' }[d];
   svg.setAttribute('viewBox', vb);
 }
 narrow.addEventListener?.('change', () => render());
