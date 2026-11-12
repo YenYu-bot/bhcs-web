@@ -1170,6 +1170,13 @@
       "approved_blob": "12751945bed7b1a8247eef1cf57eb6109b7aefa5",
       "reason": "Math drills phase 3 (curriculum placement, 補充, 國中先修): index.html",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g11-drills.html",
+      "baseline_blob": "9e68d5ebe9fdb5e5a5f10cf0d831e12ce9526c16",
+      "approved_blob": "3b3bbb64f98e18f90836e0ba1960798227fe2442",
+      "reason": "Permutations 相異物分配: memoize the brute-force enumeration per (n, boxes, style) so verification no longer re-enumerates up to 65,536 assignments on every call; generated questions and answers are byte-identical (900-sample comparison), CI 15 s audit timeout no longer hit.",
+      "pull_request": null
     }
   ]
 }
