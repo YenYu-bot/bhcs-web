@@ -1,6 +1,6 @@
 /* 槓桿實驗桌（新版試用）版面：左邊實驗桌、右邊余老師與操作 */
 .stage{display:grid;grid-template-columns:minmax(0,1fr) 360px;height:calc(100vh - 64px);height:calc(100dvh - 64px);min-height:620px}
-.scene-area{position:relative;overflow:hidden;background:#F3E4CC}
+.scene-area{position:relative;overflow:hidden;background:linear-gradient(#F6EBDA 0 55%,#EFCB9B 55%)}
 .scene-wrap{position:absolute;inset:0}
 #scene{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
 
