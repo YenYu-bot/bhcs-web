@@ -2362,10 +2362,13 @@ function permutationsConfig(){
   return{expr:c?`將 ${ball(a,"紅球")}、${ball(b,"藍球")}、${ball(c,"白球")}排成一列，共有幾種不同排法？`:`將 ${ball(a,"紅球")}與 ${ball(b,"藍球")}排成一列，共有幾種不同排法？`,answer:show(ans),sig:`rep:${a}:${b}:${c}`,verify:()=>ans===fact(n)/(fact(a)*fact(b)*fact(c))};
  });
 
+ /* 分配題的窮舉驗證很耗時：同一組（件數、箱數、條件）只窮舉一次，之後沿用結果。仍是逐一列舉全部放法的獨立驗證。 */
+ const distBrute=new Map();
  const distribution=unit("distribution","相異物分配","每件相異物各自選箱子；若每箱至少一件，用全部扣掉有空箱的情形（排容原理）。",ctx=>{
   const opts={basic:[["free",2],["free",3],["fixed",2],["fixed",3]],advanced:[["onto",2],["avoid",3],["avoid",4],["free",4]],challenge:[["onto",3],["onto",3],["onto",4],["oneempty",3]]}[ctx.level],[style,boxes]=pick(opts),n=rand(boxes+1,ctx.level==="basic"?7:8);
   const T=pick([["件相異物品","個有名稱的箱子","個箱子","放入","箱子"],["封不同的信","個不同的郵筒","個郵筒","投入","郵筒"],["位同學","個不同的社團","個社團","加入","社團"],["顆不同的球","個不同的盒子","個盒子","放入","盒子"]]);
-  const brute=()=>{let t=0;for(let m=0;m<boxes**n;m++){const cnt=Array(boxes).fill(0);let x=m,first=-1;for(let i=0;i<n;i++){const b=x%boxes;if(!i)first=b;cnt[b]++;x=Math.floor(x/boxes)}const empty=cnt.filter(c=>!c).length;if(style==="free"||style==="onto"&&!empty||style==="fixed"&&first===0||style==="avoid"&&!cnt[0]||style==="oneempty"&&empty===1)t++}return t};
+  const bruteKey=`${n}:${boxes}:${style}`;
+  const brute=()=>{if(distBrute.has(bruteKey))return distBrute.get(bruteKey);let t=0;for(let m=0;m<boxes**n;m++){const cnt=Array(boxes).fill(0);let x=m,first=-1;for(let i=0;i<n;i++){const b=x%boxes;if(!i)first=b;cnt[b]++;x=Math.floor(x/boxes)}const empty=cnt.filter(c=>!c).length;if(style==="free"||style==="onto"&&!empty||style==="fixed"&&first===0||style==="avoid"&&!cnt[0]||style==="oneempty"&&empty===1)t++}distBrute.set(bruteKey,t);return t};
   let ans=style==="fixed"?boxes**(n-1):style==="avoid"?(boxes-1)**n:style==="oneempty"?boxes*(2**n-2):boxes**n;if(style==="onto"){ans=0;for(let i=0;i<=boxes;i++)ans+=(i%2?-1:1)*C(boxes,i)*(boxes-i)**n}if(ans>10000)return null;
   const u=T[0].slice(0,1),condition=style==="free"?`允許有${T[4]}是空的`:style==="onto"?`每${T[2]}至少一${u}`:style==="fixed"?`其中指定的一${u}一定${T[3]}第一${T[2]}，其餘不限`:style==="avoid"?`都不${T[3]}第一${T[2]}`:`恰有一${T[2]}是空的`;
   return{expr:`將 ${n} ${T[0]}全部${T[3]} ${boxes} ${T[1]}（每${T[0].slice(0,1)}只能${T[3]}一處），${condition}，共有幾種方法？`,answer:show(ans),sig:`dist:${n}:${boxes}:${style}:${T[0]}`,verify:()=>ans===brute()};
