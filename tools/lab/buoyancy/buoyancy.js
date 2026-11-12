@@ -1,7 +1,7 @@
 // 浮力實驗桌（新版試用）
-// 彈簧秤讀數與排開液體沿用 tools/buoyancy-lab/model.mjs；浮沉判斷沿用 assets/buoyancy-guided/model.js。不另寫模型。
+// 彈簧秤讀數與排開液體沿用 tools/buoyancy-lab/model.mjs；密封盒浮沉用 ./float-model.mjs（液體密度同一來源）。
 import { reading, FLUIDS } from '../../buoyancy-lab/model.mjs';
-import { blockOutcome, blockMassG, BLOCK, LIQUIDS } from '../../../assets/buoyancy-guided/model.js';
+import { blockOutcome, blockMassG, BLOCK, LIQUIDS } from './float-model.mjs';
 import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
 
 const NS = 'http://www.w3.org/2000/svg';
