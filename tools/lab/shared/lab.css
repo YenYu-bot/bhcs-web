@@ -11,6 +11,7 @@
   --spring:cubic-bezier(.34,1.56,.64,1);
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;height:100%}
 body.lab{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
 .lab button{font-family:inherit;color:inherit;cursor:pointer}

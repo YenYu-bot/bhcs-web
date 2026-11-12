@@ -1,0 +1,34 @@
+/* 滑輪實驗桌（新版試用） */
+.p-readouts .reading{width:180px}
+.p-readouts .reading-num{font-size:30px}
+.picker-btns.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.handle{cursor:ns-resize;outline:none}
+.handle:focus-visible .handle-ring{stroke:var(--blue);stroke-width:6}
+.handle.cue .handle-ring{animation:hcue 1.2s ease-in-out infinite}
+@keyframes hcue{50%{stroke-width:9;opacity:.6}}
+.target-line{animation:tline 1.4s ease-in-out infinite}
+@keyframes tline{50%{opacity:.35}}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 84px auto;align-items:center;gap:8px;font-size:15px}
+.calc-name{display:flex;flex-direction:column;gap:2px;min-width:0}
+.calc-name b{font-size:16px}
+.calc-eq{font-size:14px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.calc-row > span:last-child{font-weight:800}
+.calc-row input{height:44px;border-radius:12px;border:2px solid var(--line);padding:0 10px;font:inherit;font-size:18px;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;width:100%;min-width:0}
+.calc-row input:focus{border-color:var(--blue);outline:none}
+.calc-row input.ok{border-color:var(--mint);background:#E3F3EC}
+.calc-row input.bad{border-color:var(--red);background:#FBE9E7}
+.quiz{display:flex;flex-direction:column;gap:8px}
+.quiz button{min-height:52px;text-align:left;padding:10px 14px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-size:15px;font-weight:700;line-height:1.45}
+.quiz button:hover{border-color:var(--ink)}
+.quiz button.ok{border-color:var(--mint);background:#E3F3EC}
+.quiz button.bad{border-color:var(--red);background:#FBE9E7}
+@media (max-width:1180px){.p-readouts .reading{width:150px}.p-readouts .reading-num{font-size:26px}}
+@media (max-width:860px){.p-readouts .reading{width:auto}.p-readouts .reading-num{font-size:22px}.p-readouts .reading-label{font-size:12px}}
+/* 滑輪需要較高的空間：讀值放在實驗桌上方，不疊在畫面上 */
+.scene-area .p-readouts{position:relative;left:auto;top:auto;transform:none;justify-content:center;padding:14px 12px 0;z-index:2}
+.scene-area .scene-wrap{top:104px}
+@media (max-width:860px){
+  .scene-area .p-readouts{padding:10px 10px 0}
+  .scene-area .scene-wrap{top:auto;height:clamp(330px,100vw,560px)}
+}
+@media (max-width:860px){.p-readouts .reading-formula{display:none}}
