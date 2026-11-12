@@ -1,0 +1,89 @@
+/* 百宏小小研究員・新版實驗桌共用樣式（試用版）
+   規範：器材是主角、一次一句、直接操作、每下都有反應、證據一鍵收下、一個余老師一套樣式 */
+:root{
+  --paper:#FFF8EC; --paper-2:#F6EAD6; --line:#E5DAC6;
+  --ink:#23304A; --ink-2:#5A6478;
+  --red:#C8372D; --red-dk:#9E2A22;
+  --mint:#2E7D63; --mint-dk:#1F5A46;
+  --blue:#2F6FB0; --wood:#E7B67A;
+  --radius:20px; --shadow:0 4px 0 rgba(35,48,74,.12);
+  --font:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",system-ui,sans-serif;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body.lab{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+.lab button{font-family:inherit;color:inherit;cursor:pointer}
+.lab :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;font-weight:900}
+
+/* 上方列 */
+.lab-bar{height:64px;display:flex;align-items:center;gap:16px;padding:0 20px;background:rgba(255,248,236,.96);border-bottom:2px solid var(--line);position:relative;z-index:5}
+.lab-brand{font-size:14px;font-weight:800;color:var(--red);text-decoration:none;white-space:nowrap}
+.lab-title{margin:0;font-size:22px;font-weight:900;white-space:nowrap}
+.lab-steps{list-style:none;margin:0 auto;padding:0;display:flex;gap:6px}
+.lab-steps li{height:36px;padding:0 13px;border-radius:999px;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;border:2px dashed #C9BDA8;color:var(--ink-2);white-space:nowrap;transition:background .3s,color .3s}
+.lab-steps li.now{border:2px solid var(--ink);color:var(--ink);background:#fff}
+.lab-steps li.done{border:2px solid var(--mint);background:var(--mint);color:#fff}
+.lab-bar-actions{display:flex;gap:8px}
+.btn-ghost,.btn-dark,.btn-main,.btn-soft{border-radius:999px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;transition:transform .12s,box-shadow .12s}
+.btn-ghost{padding:0 16px;border:2px solid var(--ink);background:#fff;font-size:15px}
+.btn-dark{padding:0 14px 0 16px;border:0;background:var(--ink);color:var(--paper)!important;font-size:15px}
+.btn-main{text-decoration:none;padding:0 26px;min-height:54px;border:0;background:var(--red);color:#fff!important;font-size:18px;box-shadow:0 4px 0 var(--red-dk)}
+.btn-main:active{transform:translateY(3px);box-shadow:0 1px 0 var(--red-dk)}
+.btn-main:disabled{background:#D9CFC0;box-shadow:none;cursor:not-allowed}
+.btn-soft{padding:0 14px;border:2px solid var(--line);background:var(--paper);font-size:15px}
+.btn-soft:hover{border-color:var(--ink)}
+.badge{min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:var(--red);color:#fff;font-size:13px;font-weight:900;display:inline-flex;align-items:center;justify-content:center}
+.badge.bump{animation:bump .5s var(--spring)}
+@keyframes bump{40%{transform:scale(1.5)}}
+
+/* 余老師 */
+.teacher{display:flex;align-items:flex-end;gap:6px;pointer-events:none}
+.teacher-pic{width:150px;height:262px;flex:none;background:center bottom/contain no-repeat;transition:opacity .2s}
+.teacher-pic[data-pose=point]{background-image:url(../../mini-lab/img/doc-point.png)}
+.teacher-pic[data-pose=think]{background-image:url(../../mini-lab/img/doc-think.png)}
+.teacher-pic[data-pose=wow]{background-image:url(../../mini-lab/img/doc-wow.png)}
+.teacher-pic[data-pose=cheer]{background-image:url(../../mini-lab/img/doc-cheer.png)}
+.teacher-pic[data-pose=notebook]{background-image:url(../../mini-lab/img/doc-notebook.png)}
+.teacher-pic[data-pose=wave]{background-image:url(../../mini-lab/img/doc-wave.png)}
+.teacher-pic{animation:bob 2.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.bubble{pointer-events:auto;margin:0 0 180px;max-width:330px;background:#fff;border:3px solid var(--ink);border-radius:22px 22px 22px 6px;padding:14px 18px;font-size:19px;font-weight:800;line-height:1.45;box-shadow:0 4px 0 rgba(35,48,74,.18)}
+.bubble.say-in{animation:sayin .35s var(--spring)}
+@keyframes sayin{from{transform:scale(.85) translateY(8px);opacity:.3}}
+.bubble.found{background:var(--mint);border-color:var(--mint-dk);color:#fff;box-shadow:0 5px 0 var(--mint-dk)}
+.bubble.oops{border-color:var(--red)}
+.bubble .tag{display:block;font-size:12px;letter-spacing:.12em;opacity:.85;margin-bottom:4px}
+.bubble .eq{display:block;font-size:17px;margin-top:6px;font-variant-numeric:tabular-nums}
+.bubble .next{margin-top:10px;min-height:44px;padding:0 18px;border-radius:999px;border:0;background:#fff;color:var(--mint-dk);font-size:16px;font-weight:900}
+
+/* 證據 */
+.evidence{background:rgba(255,255,255,.95);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.evidence-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.evidence-head h2{margin:0;font-size:16px}
+.evidence-head span{font-size:13px;color:var(--ink-2)}
+.evidence-empty{margin:8px 0 0;font-size:14px;color:var(--ink-2)}
+.chips{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.chip{background:var(--paper);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:1px;animation:chipin .45s var(--spring) both}
+.chip b{font-size:15px;font-variant-numeric:tabular-nums}
+.chip small{font-size:12px;color:var(--ink-2)}
+.chip .res{font-size:13px;font-weight:800;color:var(--red)}
+.chip .res.ok{color:var(--mint)}
+@keyframes chipin{from{transform:translateY(-30px) rotate(-6deg);opacity:0}}
+.fly{position:fixed;z-index:50;pointer-events:none;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px 12px;font-weight:900;font-size:15px;box-shadow:0 6px 16px rgba(35,48,74,.25)}
+
+/* 對話框 */
+.lab dialog{border:0;border-radius:24px;padding:24px 26px;max-width:min(560px,92vw);color:var(--ink);background:var(--paper);box-shadow:0 20px 60px rgba(35,48,74,.35)}
+.lab dialog::backdrop{background:rgba(35,48,74,.45)}
+.lab dialog h2{margin:0 0 10px;font-size:22px}
+.lab dialog p,.lab dialog li{font-size:16px;line-height:1.7}
+.dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.stars{display:flex;gap:6px;justify-content:center;margin:6px 0 10px}
+.stars svg{width:52px;height:52px}
+.stars svg.off path{fill:#E5DAC6}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
