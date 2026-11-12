@@ -36,14 +36,25 @@ export class Teacher {
   }
 }
 
-/** 任務進度膠囊 */
-export function renderSteps(list, steps, nowId, doneIds) {
+/** 任務進度膠囊；給 onPick 時每一步都可以點來切換 */
+export function renderSteps(list, steps, nowId, doneIds, onPick) {
   list.replaceChildren(...steps.map((s, i) => {
     const li = document.createElement('li');
     const done = doneIds.has(s.id);
     li.className = done ? 'done' : (s.id === nowId ? 'now' : '');
-    li.textContent = (done ? '✓ ' : (i + 1) + ' ') + s.label;
-    if (s.id === nowId) li.setAttribute('aria-current', 'step');
+    if (s.id === nowId) li.classList.add('now');
+    const label = (done ? '✓ ' : (i + 1) + ' ') + s.label;
+    if (onPick) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = label;
+      b.setAttribute('aria-label', `第 ${i + 1} 步：${s.label}${done ? '（已完成）' : ''}`);
+      if (s.id === nowId) b.setAttribute('aria-current', 'step');
+      b.addEventListener('click', () => onPick(s.id));
+      li.append(b);
+    } else {
+      li.textContent = label;
+      if (s.id === nowId) li.setAttribute('aria-current', 'step');
+    }
     return li;
   }));
 }

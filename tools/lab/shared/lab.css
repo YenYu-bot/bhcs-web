@@ -26,18 +26,34 @@ body.lab{background:var(--paper);color:var(--ink);font-family:var(--font);font-s
 .lab-steps li{height:36px;padding:0 13px;border-radius:999px;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;border:2px dashed #C9BDA8;color:var(--ink-2);white-space:nowrap;transition:background .3s,color .3s}
 .lab-steps li.now{border:2px solid var(--ink);color:var(--ink);background:#fff}
 .lab-steps li.done{border:2px solid var(--mint);background:var(--mint);color:#fff}
+.lab-steps li.done.now{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--ink)}
+.lab-steps li button{all:unset;cursor:pointer;height:100%;display:flex;align-items:center}
+.lab-steps li:has(button:focus-visible){outline:3px solid var(--blue);outline-offset:2px}
+.lab-steps li:hover{border-style:solid}
 .lab-bar-actions{display:flex;gap:8px}
 .btn-ghost,.btn-dark,.btn-main,.btn-soft{border-radius:999px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;transition:transform .12s,box-shadow .12s}
 .btn-ghost{padding:0 16px;border:2px solid var(--ink);background:#fff;font-size:15px}
 .btn-dark{padding:0 14px 0 16px;border:0;background:var(--ink);color:var(--paper)!important;font-size:15px}
 .btn-main{text-decoration:none;padding:0 26px;min-height:54px;border:0;background:var(--red);color:#fff!important;font-size:18px;box-shadow:0 4px 0 var(--red-dk)}
 .btn-main:active{transform:translateY(3px);box-shadow:0 1px 0 var(--red-dk)}
+.btn-main.cue{animation:cuebtn 1.4s ease-in-out infinite}
+@keyframes cuebtn{0%,100%{transform:none;box-shadow:0 4px 0 var(--red-dk)}50%{transform:translateY(-3px) scale(1.03);box-shadow:0 7px 0 var(--red-dk),0 0 0 6px rgba(200,55,45,.18)}}
 .btn-main:disabled{background:#D9CFC0;box-shadow:none;cursor:not-allowed}
 .btn-soft{padding:0 14px;border:2px solid var(--line);background:var(--paper);font-size:15px}
 .btn-soft:hover{border-color:var(--ink)}
 .badge{min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:var(--red);color:#fff;font-size:13px;font-weight:900;display:inline-flex;align-items:center;justify-content:center}
 .badge.bump{animation:bump .5s var(--spring)}
 @keyframes bump{40%{transform:scale(1.5)}}
+
+/* 任務卡：要做的事一直留在畫面上 */
+.task{background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:14px 16px 12px;display:flex;flex-direction:column;gap:6px}
+.task-kicker{font-size:12px;font-weight:800;letter-spacing:.12em;color:#F2A39C}
+.task-title{margin:0;font-size:19px;font-weight:900;line-height:1.4}
+.task-goal{margin:0;font-size:14px;line-height:1.5;opacity:.9}
+.task-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.task-row button{min-height:40px;padding:0 14px;border-radius:999px;border:2px solid rgba(255,248,236,.5);background:transparent;color:var(--paper)!important;font-size:14px;font-weight:800}
+.task-row button.go{background:var(--paper);color:var(--ink)!important;border-color:var(--paper)}
+.task-state{font-size:13px;font-weight:800;color:#9FE0C6}
 
 /* 余老師 */
 .teacher{display:flex;align-items:flex-end;gap:6px;pointer-events:none}
@@ -47,6 +63,7 @@ body.lab{background:var(--paper);color:var(--ink);font-family:var(--font);font-s
 .teacher-pic[data-pose=wow]{background-image:url(../../mini-lab/img/doc-wow.png)}
 .teacher-pic[data-pose=cheer]{background-image:url(../../mini-lab/img/doc-cheer.png)}
 .teacher-pic[data-pose=notebook]{background-image:url(../../mini-lab/img/doc-notebook.png)}
+.teacher-pic[data-pose=thumb]{background-image:url(../../mini-lab/img/doc-thumb.png)}
 .teacher-pic[data-pose=wave]{background-image:url(../../mini-lab/img/doc-wave.png)}
 .teacher-pic{animation:bob 2.8s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-6px)}}
@@ -84,6 +101,8 @@ body.lab{background:var(--paper);color:var(--ink);font-family:var(--font);font-s
 .stars svg{width:52px;height:52px}
 .stars svg.off path{fill:#E5DAC6}
 
+.tray-weight.cue{animation:cuetray 1.2s ease-in-out infinite}
+@keyframes cuetray{50%{transform:translateY(-6px)}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }

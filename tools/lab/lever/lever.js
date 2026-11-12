@@ -23,19 +23,60 @@ const START = {
   C: () => ({ ...initialLayout(), w3: 20 }),
   challenge: () => ({ ...initialLayout(), w1: -15, w2: -15, w3: null })
 };
+const sideRacks = (l, sign) => racks(l).filter(r => sign < 0 ? r.x < 0 : r.x > 0);
+const sideIs = (l, sign, x, n) => { const rs = sideRacks(l, sign); return rs.length === 1 && rs[0].x === x && rs[0].ids.length === n; };
+const countAt = (l, x) => (racks(l).find(r => r.x === x) || { ids: [] }).ids.length;
+const turnText = net => net === 0 ? '平衡了。' : net > 0 ? '往左倒了。' : '往右倒了。';
+
 const TASK = {
-  A: { intro: '現在兩邊平衡嗎？比較上面的力矩，再按「收下這次觀察」。',
-       reach: '兩邊力矩一樣大，木板沒有倒。把這個結果收下來！',
+  A: { title: '先觀察：現在兩邊平衡嗎？',
+       goal: '這一步不用動砝碼。比較上面兩個力矩，按「收下這次觀察」。',
+       intro: '左右兩邊的力矩都是 200，木板沒有倒。把這個結果收下來！',
+       hint: () => '這一步先不用動砝碼，按任務卡的「重來這一步」回到原本的樣子。',
+       cue: () => ({ hooks: [], weights: [], tray: false }),
        found: ['兩邊力矩一樣大，槓桿就平衡。', '10 N × 20 cm ＝ 5 N × 40 cm'] },
-  B: { intro: '把右邊的砝碼移到 20 cm。猜猜看，會往哪邊倒？',
+  B: { title: '把右邊的砝碼移到 20 cm',
+       goal: '左邊不動。把右邊那個砝碼從 40 cm 拖到 20 cm（或點它，再按 ◀）。',
+       intro: '猜猜看，砝碼移近支點以後，木板會往哪邊倒？動手試試！',
        reach: '往左倒了！右邊的力矩變小了。收下這次觀察。',
+       hint: l => {
+         if (!sideIs(l, -1, -20, 2)) return '左邊要保持 20 cm 掛 2 個。按「重來這一步」可以回到起點。';
+         const R = sideRacks(l, 1), n = R.reduce((k, r) => k + r.ids.length, 0);
+         if (n !== 1) return n === 0 ? '右邊要掛 1 個砝碼。' : '右邊只要 1 個砝碼，多的放回盤子。';
+         return R[0].x > 20 ? `再往支點移：現在在 ${R[0].x} cm，目標是 20 cm。` : `移過頭了：現在在 ${R[0].x} cm，往外移到 20 cm。`;
+       },
+       cue: l => ({ hooks: [20], weights: sideRacks(l, 1).flatMap(r => r.ids), tray: false }),
        found: ['力臂減半，力矩也減半，左邊比較大。', '200 ＞ 5 N × 20 cm ＝ 100'] },
-  C: { intro: '砝碼留在右邊 20 cm，再掛一個上去，會怎樣？',
+  C: { title: '在右邊 20 cm 再掛一個砝碼',
+       goal: '左邊不動。從砝碼盤拿 1 個砝碼，掛到右邊 20 cm，讓那裡有 2 個。',
+       intro: '砝碼變兩個，木板會怎樣？從盤子拿一個掛上去看看。',
        reach: '又平衡了！收下這次觀察。',
+       hint: l => {
+         if (!sideIs(l, -1, -20, 2)) return '左邊要保持 20 cm 掛 2 個。按「重來這一步」可以回到起點。';
+         const stray = sideRacks(l, 1).find(r => r.x !== 20);
+         if (stray) return `右邊 ${stray.x} cm 的砝碼要移到 20 cm。`;
+         const n = countAt(l, 20);
+         return n < 2 ? '從砝碼盤再拿 1 個，掛到右邊 20 cm。' : '右邊 20 cm 只要 2 個，多的放回盤子。';
+       },
+       cue: l => { const stray = sideRacks(l, 1).filter(r => r.x !== 20).flatMap(r => r.ids); return { hooks: [20], weights: stray, tray: !stray.length && countAt(l, 20) < 2 }; },
        found: ['力變兩倍、力臂減半，力矩不變。', '10 N × 20 cm ＝ 10 N × 20 cm'] },
-  explore: { intro: '自由試試看！任何掛法都能收下來比較。準備好就去挑戰。' },
-  challenge: { intro: '左邊 10 N 掛在 15 cm。只用一個砝碼，掛在哪裡會平衡？',
+  explore: { title: '自由探索',
+       goal: '用你自己的掛法試試看，任何結果都可以收下來比較。準備好就去挑戰。',
+       intro: '換你當科學家！掛哪裡都可以，結果都能收進手冊。',
+       cue: () => ({ hooks: [], weights: [], tray: false }) },
+  challenge: { title: '挑戰：只用 1 個砝碼讓它平衡',
+       goal: '左邊是 10 N 掛在 15 cm（150 N·cm）。從盤子拿 1 個砝碼掛到右邊，找出平衡的位置。',
+       intro: '左邊 10 N 掛在 15 cm。你的 1 個砝碼要掛在右邊哪裡？',
        reach: '就是這裡！收下證據，完成挑戰。',
+       hint: l => {
+         if (!sideIs(l, -1, -15, 2)) return '左邊要保持 15 cm 掛 2 個。按「重來這一步」可以回到起點。';
+         const R = sideRacks(l, 1), n = R.reduce((k, r) => k + r.ids.length, 0);
+         if (n === 0) return '從砝碼盤拿 1 個，掛到右邊。';
+         if (n > 1) return '只能用 1 個砝碼，多的放回盤子。';
+         const m = 5 * R[0].x;
+         return m > 150 ? `右邊 ${m} 比 150 大，往支點移近一點。` : `右邊 ${m} 比 150 小，往外移一點。`;
+       },
+       cue: l => ({ hooks: [], weights: [], tray: sideRacks(l, 1).length === 0 }),
        found: ['挑戰成功！', '10 N × 15 cm ＝ 5 N × 30 cm'] }
 };
 const NEXT = { A: 'B', B: 'C', C: 'explore', explore: 'challenge' };
@@ -63,6 +104,7 @@ const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS,
 
 const beamSpring = new Spring(a => { angle = a; placeHang(); }, { k: 90, c: 7 });
 let angle = 0;
+let gCue = null;
 
 /* ---------- 木板 ---------- */
 function buildBeam() {
@@ -78,6 +120,7 @@ function buildBeam() {
   }
   const lab = (x, s) => { const t = el('text', { x, y: 140, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: '#23304A' }, gBeam); t.textContent = s; };
   lab(PX - 230, '左邊'); lab(PX + 230, '右邊');
+  gCue = el('g', { 'pointer-events': 'none' }, gBeam);
   const hit = el('rect', { x: 90, y: 120, width: 820, height: 130, fill: 'transparent', class: 'beam-hit' }, gBeam);
   hit.addEventListener('click', e => { if (!selected || dragState) return; dropAt(snap(toSvg(e))); });
   hit.addEventListener('pointermove', e => { if (selected && !dragState) showGhost(snap(toSvg(e))); });
@@ -258,33 +301,46 @@ function renderReadouts(t) {
 
 /* ---------- 余老師 ---------- */
 function oops(text) { teacher.last = ''; teacher.say(text, { pose: 'think', tone: 'oops' }); lastNote = text; }
+const isGoal = () => S.step !== 'explore' && qualifies(S.layout) === S.step;
+const atStartNow = () => !!START[S.step] && signature(S.layout) === signature(START[S.step]());
 function talk(t) {
   if (lastNote) return;
-  const step = S.step, task = TASK[step];
+  const step = S.step, task = TASK[step], done = S.done.includes(step);
   if (foundShown) {
-    if (foundShown === 'challenge') {
-      teacher.say(task.found[0], { pose: 'cheer', tone: 'found', tag: '發現時刻', eq: task.found[1], action: { label: '看成果 →', run: openFinish } });
-    } else {
-      const f = TASK[foundShown].found;
-      teacher.say(f[0], { pose: 'cheer', tone: 'found', tag: '發現時刻', eq: f[1], action: { label: '下一步 →', run: () => goStep(NEXT[foundShown]) } });
-    }
+    const f = TASK[foundShown].found;
+    const action = foundShown === 'challenge' ? { label: '看成果 →', run: openFinish } : { label: '下一步 →', run: () => goStep(NEXT[foundShown]) };
+    teacher.say(f[0], { pose: 'cheer', tone: 'found', tag: '發現時刻', eq: f[1], action });
     return;
   }
-  const atStart = START[step] && signature(S.layout) === signature(START[step]());
-  const goal = qualifies(S.layout) === step;
   if (step === 'explore') {
-    const go = { label: '開始挑戰 →', run: () => goStep('challenge') };
-    if (S._exploreFresh) { teacher.say(task.intro, { pose: 'wave', action: go }); return; }
-    const txt = t.net === 0 ? '平衡了！兩邊力矩一樣大。' : t.net > 0 ? '往左倒：左邊的力矩比較大。' : '往右倒：右邊的力矩比較大。';
-    teacher.say(txt, { pose: t.net === 0 ? 'cheer' : 'think', action: go }); return;
-  } else if (goal && !S.done.includes(step) && !(step === 'A' && atStart)) {
-    teacher.say(task.reach, { pose: t.net === 0 ? 'cheer' : 'wow' }); return;
-  } else if (atStart) {
-    teacher.say(task.intro, { pose: 'point' }); return;
+    if (S._exploreFresh) teacher.say(task.intro, { pose: 'wave' });
+    else teacher.say(turnText(t.net) + (t.net === 0 ? '兩邊力矩一樣大。' : t.net > 0 ? '左邊的力矩比較大。' : '右邊的力矩比較大。'), { pose: t.net === 0 ? 'cheer' : 'think' });
+    return;
   }
-  if (t.net === 0) teacher.say('平衡了！兩邊力矩一樣大。', { pose: 'cheer' });
-  else if (t.net > 0) teacher.say('往左倒：左邊的力矩比較大。', { pose: 'think' });
-  else teacher.say('往右倒：右邊的力矩比較大。', { pose: 'think' });
+  if (isGoal() && !done) { teacher.say(step === 'A' ? task.intro : task.reach, { pose: t.net === 0 ? 'cheer' : 'wow' }); return; }
+  if (isGoal() && done) { teacher.say('這一步已經完成了，按任務卡的「下一步」繼續。', { pose: 'thumb' }); return; }
+  if (atStartNow()) { teacher.say(task.intro, { pose: 'point' }); return; }
+  teacher.say((step === 'A' ? '' : turnText(t.net)) + task.hint(S.layout), { pose: 'think' });
+}
+
+function renderTask() {
+  const i = STEPS.findIndex(x => x.id === S.step), task = TASK[S.step], done = S.done.includes(S.step);
+  $('#task-kicker').textContent = `任務 ${i + 1} / ${STEPS.length}${done ? '　✓ 已完成' : ''}`;
+  $('#task-title').textContent = task.title;
+  $('#task-goal').textContent = task.goal;
+  $('#task-reset').hidden = !START[S.step];
+  const go = $('#task-go');
+  if (S.step === 'explore') { go.hidden = false; go.textContent = '開始挑戰 →'; go.onclick = () => goStep('challenge'); }
+  else if (done && S.step === 'challenge') { go.hidden = false; go.textContent = '看成果 →'; go.onclick = openFinish; }
+  else if (done) { go.hidden = false; go.textContent = '下一步 →'; go.onclick = () => goStep(NEXT[S.step]); }
+  else go.hidden = true;
+  // 提示：目標掛點、該動的砝碼、盤子、收下按鈕
+  const cue = (!done && !isGoal()) ? task.cue(S.layout) : { hooks: [], weights: [], tray: false };
+  gCue.replaceChildren();
+  for (const x of cue.hooks) el('circle', { class: 'cue-hook', cx: PX + x * U, cy: 192, r: 16, fill: 'rgba(244,192,78,.35)', stroke: '#E0A21B', 'stroke-width': 4 }, gCue);
+  gHang.querySelectorAll('.w-hit').forEach(w => w.classList.toggle('cue', cue.weights.includes(w.dataset.id) && S.layout[w.dataset.id] !== (cue.hooks[0] ?? null)));
+  document.querySelectorAll('#tray .tray-weight').forEach((b, k) => b.classList.toggle('cue', cue.tray && k === 0));
+  $('#save').classList.toggle('cue', !done && isGoal());
 }
 
 /* ---------- 證據 ---------- */
@@ -328,6 +384,7 @@ function goStep(id) {
   if (START[id]) S.layout = START[id]();
   S._exploreFresh = id === 'explore';
   save(); teacher.last = ''; render();
+  if (narrow.matches) scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' });
 }
 
 /* ---------- 對話框 ---------- */
@@ -367,8 +424,8 @@ narrow.addEventListener?.('change', fitScene);
 
 function render(withTalk = true) {
   const t = calculate(S.layout);
-  renderSteps($('#steps'), STEPS, S.step, new Set(S.done));
-  buildHang(); buildTray(); renderReadouts(t); renderEvidence();
+  renderSteps($('#steps'), STEPS, S.step, new Set(S.done), id => goStep(id));
+  buildHang(); buildTray(); renderReadouts(t); renderEvidence(); renderTask();
   const sel = selected ? S.layout[selected] : undefined;
   $('#pick-label').textContent = selected ? `砝碼 ${selected.slice(1)}：${placeName(sel)}` : '點一個砝碼來移動';
   $('#move-left').textContent = sel === null ? '放到左邊' : '◀ 5 cm';
@@ -384,6 +441,7 @@ $('#move-left').addEventListener('click', () => nudge(-1));
 $('#move-right').addEventListener('click', () => nudge(1));
 $('#to-tray').addEventListener('click', () => dropAt(null));
 $('#save').addEventListener('click', keep);
+$('#task-reset').addEventListener('click', () => goStep(S.step));
 $('#why').addEventListener('click', () => $('#why-dialog').showModal());
 $('#open-notes').addEventListener('click', openNotes);
 $('#reset-all').addEventListener('click', () => {
@@ -398,4 +456,3 @@ svg.addEventListener('pointerdown', e => { if (e.target === svg || e.target.tagN
 fitScene(); buildBeam();
 beamSpring.set((() => { const n = calculate(S.layout).net; return n > 0 ? -TIP : n < 0 ? TIP : 0; })(), true);
 render();
-void reduceMotion;
