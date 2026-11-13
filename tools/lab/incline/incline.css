@@ -65,3 +65,6 @@
 .cmp-grid th,.cmp-grid td{padding:5px 3px}
 @media (max-width:1180px){.cmp-board{width:290px}}
 @media (max-width:860px){.cmp-board{position:static;width:auto;margin:8px 10px 0;box-shadow:none;border:2px solid var(--line)}}
+
+.scene-area{--chip-top:auto;--chip-bottom:24px}
+@media (max-width:860px){.scene-area{--chip-mtop:auto;--chip-mbottom:6px}}
