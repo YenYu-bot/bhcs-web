@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFF8EC">
+<title>金屬活性實驗桌（新版試用）｜百宏文教</title>
+<meta name="description" content="把鋅片、鐵片、銅片放進硫酸銅、硫酸亞鐵與稀鹽酸，觀察析出物與氣泡，用證據排出金屬的活性大小。">
+<link rel="stylesheet" href="../shared/lab.css">
+<link rel="stylesheet" href="../shared/station.css">
+<link rel="stylesheet" href="./metal.css">
+</head>
+<body class="lab">
+<header class="lab-bar">
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">金屬活性實驗桌</h1>
+  <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
+  <div class="lab-bar-actions">
+    <button type="button" class="btn-ghost" id="why">活性是什麼？</button>
+    <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="scene-area">
+    <div class="readouts p-readouts" aria-label="讀值">
+      <div class="reading"><span class="reading-label" id="l-1"></span><span class="reading-num num" id="r-1">0</span><span class="reading-unit" id="u-1"></span><span class="reading-formula" id="n-1"></span></div>
+      <div class="reading"><span class="reading-label" id="l-2"></span><span class="reading-num num" id="r-2">0</span><span class="reading-unit" id="u-2"></span><span class="reading-formula" id="n-2"></span></div>
+      <div class="reading"><span class="reading-label" id="l-3"></span><span class="reading-num num" id="r-3">0</span><span class="reading-unit" id="u-3"></span><span class="reading-formula" id="n-3"></span></div>
+    </div>
+    <section class="graph-board rank-board" id="rank-board" aria-labelledby="rank-title">
+      <h2 id="rank-title">活性比較板<small>用自己的證據排出來</small></h2>
+      <ul class="rank-list" id="rank-list"></ul>
+      <p class="rank-chain" id="rank-chain"></p>
+    </section>
+    <div class="scene-wrap">
+      
+      <svg id="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="group" aria-label="金屬活性實驗桌：金屬片掛在架子上，下方燒杯裝著溶液">
+        <image href="../../../assets/science/props/bg-physics-bench.webp" x="-877" y="-768" width="2755" height="1668" preserveAspectRatio="none" aria-hidden="true"/>
+        <g id="rig"></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="任務、余老師與操作">
+    <section class="task" id="task" aria-live="polite">
+      <span class="task-kicker" id="task-kicker"></span>
+      <h2 class="task-title" id="task-title"></h2>
+      <p class="task-goal" id="task-goal"></p>
+      <div class="task-row"><button type="button" id="task-reset">重來這一步</button><button type="button" class="go" id="task-go" hidden></button><button type="button" class="clear" id="clear-records">清空紀錄</button></div>
+    </section>
+
+    <div class="teacher" id="teacher">
+      <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
+      <div class="bubble" id="bubble"></div>
+    </div>
+
+    <section class="dock" id="dock-pull" aria-label="操作">
+      <div id="ctl-box">
+        <span class="dock-label">放入金屬片 <small>按架上的金屬片，或下面的按鈕</small></span>
+        <div class="picker-btns" id="metal-btns"></div>
+      </div>
+      <button type="button" class="btn-main" id="save">收下這次觀察</button>
+    </section>
+
+    <section class="dock" id="dock-order" aria-label="排一排" hidden>
+      <span class="dock-label" id="order-head">從活性最大的開始，依序按金屬</span>
+      <div class="picker-btns" id="order-btns"></div>
+      <ol class="order-pick" id="order-pick"></ol>
+      <div class="picker-btns two"><button type="button" class="btn-soft" id="order-clear">重排</button><button type="button" class="btn-main" id="check">核對</button></div>
+    </section>
+
+    <section class="dock" id="dock-quiz" aria-label="說說看" hidden>
+      <span class="dock-label" id="quiz-q"></span>
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+    <section class="evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-head"><h2 id="evidence-title">我的證據</h2><span><span id="ev-count">0</span> 張</span></div>
+      <p class="evidence-empty" id="ev-empty">做出結果後按「收下這次觀察」，卡片會飛到這裡。</p>
+      <ol class="chips" id="chips"></ol>
+    </section>
+  </aside>
+</main>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+<dialog id="why-dialog" aria-labelledby="why-title">
+  <h2 id="why-title">活性是什麼？</h2>
+  <p><b>金屬的活性</b>：金屬失去電子、變成離子的難易程度。活性越大，越容易反應。</p>
+  <p><b>置換反應</b>：活性大的金屬放進活性小的金屬的鹽類溶液中，會把那種金屬置換出來。例如鋅片放進硫酸銅：<b>Zn ＋ Cu²⁺ → Zn²⁺ ＋ Cu</b>，鋅表面析出紅棕色的銅，溶液的藍色變淡。</p>
+  <p><b>和酸反應</b>：活性比氫大的金屬放進稀鹽酸會產生氫氣（冒氣泡），例如 Zn ＋ 2H⁺ → Zn²⁺ ＋ H₂；銅不會。</p>
+  <ul>
+    <li>本實驗條件：室溫、乾淨金屬、新鮮溶液；忽略溶氧與雜質等副反應。</li>
+    <li>「沒有變化」也是紀錄，但單靠一杯沒變化，不能比出兩種不同金屬的先後；要找直接比較的證據。</li>
+    <li>只看到氣泡，不能鑑定是什麼氣體；本課依已知材料與反應判斷是氫氣。冒泡多寡也不拿來排鋅和鐵的先後。</li>
+    <li>「氫排在銅前面」是本課提供的參考資料，不是只靠銅沒有冒泡就能證明。</li>
+  </ul>
+  <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
+</dialog>
+
+<dialog id="notes-dialog" aria-labelledby="notes-title">
+  <h2 id="notes-title">研究手冊</h2>
+  <p class="notes-tip">每一杯都是一次觀察。有變化、沒變化都要記下來。</p>
+  <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>金屬</th><th>溶液</th><th>觀察</th><th>說明</th></tr></thead><tbody id="notes-body"></tbody></table></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
+    <button type="button" class="btn-main" data-close>關閉</button>
+  </div>
+</dialog>
+
+<dialog id="finish-dialog" aria-labelledby="finish-title">
+  <p class="finish-kicker">金屬活性實驗桌 · 全部完成</p>
+  <h2 id="finish-title">你排出金屬的活性了！</h2>
+  <div class="stars" id="stars" aria-label="完成 5 個任務"></div>
+  <div class="finish-rule">活性：鋅 ＞ 鐵 ＞（氫）＞ 銅。活性大的金屬能把活性小的金屬從鹽類溶液中置換出來。</div>
+  <ul class="finish-list" id="finish-list"></ul>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" data-close>再玩一次</button>
+    <a class="btn-main" href="../solubility/">去溶解度實驗桌</a>
+  </div>
+</dialog>
+
+<script type="module" src="./metal.js"></script>
+</body>
+</html>
