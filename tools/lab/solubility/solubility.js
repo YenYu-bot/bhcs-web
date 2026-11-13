@@ -97,7 +97,7 @@ const IN = { l: BK.x + 18, r: BK.x + BK.w - 18, b: PLATE - 24 };   // 杯內底�
 const PER_G = 0.9;                                                  // 每 g 水的液面高度
 const TH = { x: 652 };
 const T_MAX = 80;
-const DOTS = (() => { let a = 7; const r = () => (a = (a * 16807) % 2147483647) / 2147483647; return Array.from({ length: 140 }, () => [r(), r()]); })();   // 結晶位置（示意）
+const DOTS = (() => { let a = 7; const r = () => (a = (a * 16807) % 2147483647) / 2147483647; return Array.from({ length: 260 }, () => [r(), r()]); })();   // 結晶位置（示意）
 const SPOON = { x: 810, y: 250 }, CUP = { x: 810, y: 250 };
 function draw() {
   const T = shownT, m = model(Math.round(T)), top = IN.b - S.water * PER_G;
@@ -113,8 +113,8 @@ function draw() {
   // 杯底固體：白色結晶堆，高度和質量成正比
   if (m.solid > 1e-9) {
     const l = IN.l + 3, r = IN.r - 3, h = 6 + m.solid * 2.4, cx = (l + r) / 2;
-    el('path', { d: `M ${l} ${IN.b} L ${l} ${IN.b - h * 0.55} Q ${cx} ${IN.b - h * 1.45} ${r} ${IN.b - h * 0.55} L ${r} ${IN.b} Z`, fill: '#FFFFFF', stroke: '#7A6A96', 'stroke-width': 2 }, rig);
-    const nC = Math.round(m.solid * 3);
+    el('path', { d: `M ${l} ${IN.b} L ${l} ${IN.b - h * 0.55} Q ${cx} ${IN.b - h * 1.45} ${r} ${IN.b - h * 0.55} L ${r} ${IN.b} Z`, fill: 'rgba(150,130,190,0.12)', stroke: 'none' }, rig);
+    const nC = Math.round(m.solid * 5);
     for (let q = 0; q < nC; q++) {
       const [u, v] = DOTS[q % DOTS.length], x = l + 6 + u * (r - l - 12), yb = IN.b - 3, ytop = IN.b - h * (0.55 + 0.9 * (1 - Math.pow((x - cx) / ((r - l) / 2), 2))) + 4;
       const y = yb - v * Math.max(0, yb - ytop), sz = 3.4;
