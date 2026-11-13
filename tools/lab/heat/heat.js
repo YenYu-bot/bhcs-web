@@ -22,7 +22,7 @@ const STEPS = [
 const NEXT = { water: 'iron', iron: 'calc', calc: 'mass', mass: 'quiz' };
 const HEAT = { water: 'water100', iron: 'iron100', mass: 'iron200' };
 const TASK = {
-  water: { title: '加熱 100 g 的水 60 秒', goal: '按電熱板的旋鈕（或「開始加熱」）。看溫度計和右上的圖，加熱滿 60 秒後按「收下這次觀察」。',
+  water: { title: '加熱 100 g 的水 60 秒', goal: '按電熱板的旋鈕（或「開始加熱」）。看溫度計和溫度–時間圖，加熱滿 60 秒後按「收下這次觀察」。',
     intro: '燒杯裡有 100 g 的水，20°C。轉開電熱板，看溫度怎麼變！',
     found: ['水加熱 60 秒，只升高 3°C。', '20.0°C → 23.0°C，吸收 1260 J'] },
   iron: { title: '換成 100 g 的鐵，一樣加熱 60 秒', goal: '同一個電熱板、同樣 60 秒，鐵塊也吸收 1260 J。加熱完收下，和水比一比。',
