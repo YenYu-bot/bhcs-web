@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFF8EC">
+<title>溶解度實驗桌（新版試用）｜百宏文教</title>
+<meta name="description" content="一匙一匙把教學溶質 A 加進水裡，看杯底何時留下固體；再升溫、降溫、加水，分清溶解度、飽和與濃度。">
+<link rel="stylesheet" href="../shared/lab.css">
+<link rel="stylesheet" href="../shared/station.css">
+<link rel="stylesheet" href="./solubility.css">
+</head>
+<body class="lab">
+<header class="lab-bar">
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">溶解度實驗桌</h1>
+  <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
+  <div class="lab-bar-actions">
+    <button type="button" class="btn-ghost" id="why">溶解度是什麼？</button>
+    <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="scene-area">
+    <div class="readouts p-readouts" aria-label="讀值">
+      <div class="reading"><span class="reading-label" id="l-1"></span><span class="reading-num num" id="r-1">0</span><span class="reading-unit" id="u-1"></span><span class="reading-formula" id="n-1"></span></div>
+      <div class="reading"><span class="reading-label" id="l-2"></span><span class="reading-num num" id="r-2">0</span><span class="reading-unit" id="u-2"></span><span class="reading-formula" id="n-2"></span></div>
+      <div class="reading"><span class="reading-label" id="l-3"></span><span class="reading-num num" id="r-3">0</span><span class="reading-unit" id="u-3"></span><span class="reading-formula" id="n-3"></span></div>
+    </div>
+    <section class="graph-board" id="graph-board" aria-labelledby="graph-title">
+      <h2 id="graph-title">溶解度曲線<small>每 100 g 水最多溶多少 A</small></h2>
+      <svg id="graph" viewBox="0 0 320 200" role="img" aria-label="溶解度隨溫度變化的圖"></svg>
+      <ul class="graph-key" id="graph-key"></ul>
+    </section>
+    <div class="scene-wrap">
+      
+      <svg id="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="group" aria-label="溶解度實驗桌：電熱板上的燒杯裝著水，旁邊有裝著溶質 A 的湯匙和一杯水">
+        <image href="../../../assets/science/props/bg-physics-bench.webp" x="-877" y="-768" width="2755" height="1668" preserveAspectRatio="none" aria-hidden="true"/>
+        <g id="rig"></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="任務、余老師與操作">
+    <section class="task" id="task" aria-live="polite">
+      <span class="task-kicker" id="task-kicker"></span>
+      <h2 class="task-title" id="task-title"></h2>
+      <p class="task-goal" id="task-goal"></p>
+      <div class="task-row"><button type="button" id="task-reset">重來這一步</button><button type="button" class="go" id="task-go" hidden></button><button type="button" class="clear" id="clear-records">清空紀錄</button></div>
+    </section>
+
+    <div class="teacher" id="teacher">
+      <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
+      <div class="bubble" id="bubble"></div>
+    </div>
+
+    <section class="dock" id="dock-pull" aria-label="操作">
+      <div id="ctl-box">
+        <span class="dock-label" id="ctl-label"></span>
+        <div class="picker-btns two">
+          <button type="button" class="btn-soft" id="ctl-a"></button>
+          <button type="button" class="btn-soft" id="ctl-b"></button>
+        </div>
+      </div>
+      <button type="button" class="btn-main" id="save">收下這次觀察</button>
+    </section>
+
+    <section class="dock" id="dock-calc" aria-label="算一算" hidden>
+      <span class="dock-label" id="calc-head"></span>
+      <div id="calc-rows"></div>
+      <button type="button" class="btn-main" id="check">核對我的答案</button>
+    </section>
+
+    <section class="dock" id="dock-quiz" aria-label="說說看" hidden>
+      <span class="dock-label" id="quiz-q"></span>
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+    <section class="evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-head"><h2 id="evidence-title">我的證據</h2><span><span id="ev-count">0</span> 張</span></div>
+      <p class="evidence-empty" id="ev-empty">做出結果後按「收下這次觀察」，卡片會飛到這裡。</p>
+      <ol class="chips" id="chips"></ol>
+    </section>
+  </aside>
+</main>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+<dialog id="why-dialog" aria-labelledby="why-title">
+  <h2 id="why-title">溶解度是什麼？</h2>
+  <p><b>溶解度</b>：在某個溫度下，100 公克的水最多能溶解的溶質質量。這杯水能溶多少，要看溫度和水有多少。</p>
+  <p><b>飽和溶液</b>：已經溶到最多、不能再溶的溶液。杯底留有固體，一定是飽和；杯底沒有固體，也可能「剛好飽和」。</p>
+  <p><b>重量百分濃度 ＝ 溶質質量 ÷ 溶液質量 × 100%</b>。溶液 ＝ 水 ＋ 已溶解的溶質；<b>杯底的固體不算</b>。</p>
+  <ul>
+    <li>本實驗用虛構的「教學溶質 A」，不是食鹽或糖：溶解度 ＝ 20 ＋ 0.5 × 溫度（g／100 g 水），例如 20°C 是 30 g、60°C 是 50 g。</li>
+    <li>畫面呈現攪拌後達到平衡的結果，不模擬溶解快慢、蒸發或過飽和；升溫、降溫時，水和 A 的總量都不變。</li>
+    <li>杯中的小點是示意，不是真實粒子數。</li>
+  </ul>
+  <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
+</dialog>
+
+<dialog id="notes-dialog" aria-labelledby="notes-title">
+  <h2 id="notes-title">研究手冊</h2>
+  <p class="notes-tip">比一比：溫度、水量改變時，已溶解、杯底固體與濃度怎麼變。</p>
+  <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>條件</th><th>已溶解</th><th>杯底固體</th><th>濃度</th></tr></thead><tbody id="notes-body"></tbody></table></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
+    <button type="button" class="btn-main" data-close>關閉</button>
+  </div>
+</dialog>
+
+<dialog id="finish-dialog" aria-labelledby="finish-title">
+  <p class="finish-kicker">溶解度實驗桌 · 全部完成</p>
+  <h2 id="finish-title">你分清溶解度、飽和與濃度了！</h2>
+  <div class="stars" id="stars" aria-label="完成 6 個任務"></div>
+  <div class="finish-rule">溶解度看溫度；能溶多少看溫度和水量；濃度只算已溶解的部分。</div>
+  <ul class="finish-list" id="finish-list"></ul>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" data-close>再玩一次</button>
+    <a class="btn-main" href="../heat/">去比熱實驗桌</a>
+  </div>
+</dialog>
+
+<script type="module" src="./solubility.js"></script>
+</body>
+</html>
