@@ -41,3 +41,5 @@
 .fn-tip{font-size:14px!important;color:var(--ink-2);margin:10px 0 0}
 #why-dialog{max-width:min(720px,94vw)}
 .quiz-progress{font-size:13px;color:var(--ink-2);font-weight:800}
+
+.scene-area{--chip-top:auto;--chip-bottom:24px}
