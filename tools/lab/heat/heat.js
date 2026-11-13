@@ -6,7 +6,11 @@ import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shar
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
 const db = store('bhcs.lab.heat.v1');
-const T0 = INITIAL_TEMPERATURE, Q_ALL = POWER * DURATION;          // 20 °C、21 J/s × 60 s ＝ 1260 J
+// 國中課本熱量用「卡」：模型中水的比熱 4.2 J/(g·°C) ＝ 1 卡/(g·°C)，所以 1 卡 ＝ 4.2 J、每秒 21 J ＝ 5 卡。
+const J_PER_CAL = CONFIGS.water100.c;
+const r3 = x => Math.round(x * 1000) / 1000;
+const T0 = INITIAL_TEMPERATURE, CAL_S = r3(POWER / J_PER_CAL), Q_ALL = r3(CAL_S * DURATION);   // 20 °C、5 卡/秒 × 60 秒 ＝ 300 卡
+const cOf = id => r3(Q_ALL / (CONFIGS[id].mass * (sample(id, DURATION).temperature - INITIAL_TEMPERATURE)));
 const r1 = x => Math.round(x * 10) / 10;
 const tempOf = (id, t) => sample(id, t).temperature;
 const NAME = { water100: '水 100 g', iron100: '鐵 100 g', iron200: '鐵 200 g' };
@@ -24,26 +28,26 @@ const HEAT = { water: 'water100', iron: 'iron100', mass: 'iron200' };
 const TASK = {
   water: { title: '加熱 100 g 的水 60 秒', goal: '按電熱板的旋鈕（或「開始加熱」）。看溫度計和溫度–時間圖，加熱滿 60 秒後按「收下這次觀察」。',
     intro: '燒杯裡有 100 g 的水，20°C。轉開電熱板，看溫度怎麼變！',
-    found: ['水加熱 60 秒，只升高 3°C。', '20.0°C → 23.0°C，吸收 1260 J'] },
-  iron: { title: '換成 100 g 的鐵，一樣加熱 60 秒', goal: '同一個電熱板、同樣 60 秒，鐵塊也吸收 1260 J。加熱完收下，和水比一比。',
+    found: ['水加熱 60 秒，只升高 3°C。', '20.0°C → 23.0°C，吸收 300 卡'] },
+  iron: { title: '換成 100 g 的鐵，一樣加熱 60 秒', goal: '同一個電熱板、同樣 60 秒，鐵塊也吸收 300 卡。加熱完收下，和水比一比。',
     intro: '這次是 100 g 的鐵塊，一樣從 20°C 開始。你猜它會升高幾度？',
     found: ['同樣的熱量，鐵升高 28°C，水只升高 3°C！', '水 23.0°C、鐵 48.0°C：鐵比較容易熱'] },
-  calc: { title: '算一算：熱量和溫升', goal: '用你收下的兩張證據，算出每一份吸收的熱量和溫度升高多少，再算出比熱。',
+  calc: { title: '算一算：熱量和溫升', goal: '用你收下的兩張證據，算出每一份吸收的熱量和溫度升高多少，再算出水和鐵的比熱。',
     intro: '溫度高，不代表吸收的熱比較多。算算看就知道！',
-    found: ['水的比熱 4.2，鐵只有 0.45 J／(g·°C)。', '比熱 ＝ 熱量 ÷（質量 × 溫升）：1260 ÷（100 × 28）＝ 0.45'] },
-  mass: { title: '鐵變成 200 g，再加熱 60 秒', goal: '只改質量：200 g 的鐵一樣吸收 1260 J。溫度會升高多少？加熱完收下來，和 100 g 的鐵比一比。',
+    found: ['水的比熱是 1，鐵只有約 0.11 卡／(g·°C)。', '比熱 ＝ 熱量 ÷（質量 × 溫升）：300 ÷（100 × 28）≈ 0.11'] },
+  mass: { title: '鐵變成 200 g，再加熱 60 秒', goal: '只改質量：200 g 的鐵一樣吸收 300 卡。溫度會升高多少？加熱完收下來，和 100 g 的鐵比一比。',
     intro: '鐵塊變成兩倍重。同樣加熱 60 秒，溫升會怎樣？',
     found: ['質量變 2 倍，溫升變一半！', '鐵 100 g 升高 28°C → 鐵 200 g 升高 14°C'] },
   quiz: { title: '說說看：用證據回答', goal: '三題都答對就完成。答錯沒關係，余老師會說明原因。',
     intro: '最後三題！想想你收下的證據。',
-    found: ['你分清熱量、溫升和比熱了！', 'Q ＝ m × c × ΔT'] }
+    found: ['你分清熱量、溫升和比熱了！', '熱量 H ＝ 質量 M × 比熱 S × 溫度變化 ΔT'] }
 };
 const QUIZ = [
-  { q: '水和鐵各 100 g，都吸收 1260 J。水升高 3°C、鐵升高 28°C。哪一個比熱比較大？', options: [
+  { q: '水和鐵各 100 g，都吸收 300 卡。水升高 3°C、鐵升高 28°C。哪一個比熱比較大？', options: [
     { text: '鐵，因為它溫度升得比較高。', why: '升溫多，代表每升高 1°C 需要的熱比較少，也就是比熱「小」。' },
     { text: '水，因為吸收同樣的熱，它溫度升得比較少。', ok: true },
-    { text: '一樣大，因為吸收的熱量一樣。', why: '熱量一樣，但溫升差很多，所以比熱不一樣：水 4.2、鐵 0.45。' }] },
-  { q: '200 g 的鐵吸收 1260 J，溫度會升高多少？（100 g 的鐵升高 28°C）', options: [
+    { text: '一樣大，因為吸收的熱量一樣。', why: '熱量一樣，但溫升差很多，所以比熱不一樣：水 1、鐵約 0.11 卡／(g·°C)。' }] },
+  { q: '200 g 的鐵吸收 300 卡，溫度會升高多少？（100 g 的鐵升高 28°C）', options: [
     { text: '56°C，質量變兩倍，溫升也變兩倍。', why: '剛好相反：熱要分給兩倍多的鐵，每 1 g 分到的熱只有一半。' },
     { text: '28°C，都是鐵，溫升一樣。', why: '你的證據：200 g 的鐵從 20.0°C 升到 34.0°C，只升高 14°C。' },
     { text: '14°C，質量變兩倍，溫升變一半。', ok: true }] },
@@ -53,10 +57,11 @@ const QUIZ = [
     { text: '沙子的質量比海水大。', why: '海水的質量其實大得多；關鍵是水的比熱大。' }] }
 ];
 const CALC = [
-  { id: 'q', name: '每一份吸收的熱量', eq: '每秒 21 J × 加熱 60 秒', answer: Q_ALL, unit: 'J' },
+  { id: 'q', name: '每一份吸收的熱量', eq: '每秒 5 卡 × 加熱 60 秒', answer: Q_ALL, unit: '卡' },
   { id: 'dw', name: '水升高', eq: '水的末溫 − 初溫 20°C', answer: tempOf('water100', DURATION) - T0, unit: '°C' },
   { id: 'di', name: '鐵升高', eq: '鐵的末溫 − 初溫 20°C', answer: tempOf('iron100', DURATION) - T0, unit: '°C' },
-  { id: 'ci', name: '鐵的比熱', eq: '1260 ÷（100 g × 鐵升高）', answer: Q_ALL / (CONFIGS.iron100.mass * (tempOf('iron100', DURATION) - T0)), unit: 'J/(g·°C)' }
+  { id: 'cw', name: '水的比熱', eq: '300 ÷（100 × 水升高）', answer: cOf('water100'), unit: '卡/(g·°C)' },
+  { id: 'ci', name: '鐵的比熱', eq: '300 ÷（100 × 鐵升高），到小數第二位', answer: cOf('iron100'), tol: 0.0051, unit: '卡/(g·°C)' }
 ];
 
 /* ---------- 狀態 ---------- */
@@ -75,7 +80,6 @@ const save = () => db.save(S);
 const cfg = () => HEAT[S.step] || null;
 const isHeat = () => !!HEAT[S.step];
 const recOf = id => [...S.records].reverse().find(r => r.id === id);
-const shownT = () => isHeat() ? S.t : 0;
 
 const svg = $('#scene'), rig = $('#rig');
 const teacher = new Teacher($('#teacher-pic'), $('#bubble'), $('#live'));
@@ -91,7 +95,7 @@ const T_MIN = 20, T_MAX = 50, COL_LO = 382, COL_HI = 200;      // 刻度對應�
 const yOfT = T => COL_LO - (T - T_MIN) / (T_MAX - T_MIN) * (COL_LO - COL_HI);
 const SW = { x: 790, y: 250, w: 120 };                           // 碼錶
 function draw() {
-  const id = cfg() || 'water100', t = shownT(), T = tempOf(id, t);
+  const id = cfg() || 'iron100', t = isHeat() ? S.t : DURATION, T = tempOf(id, t);
   const hadFocus = !!document.activeElement && rig.contains(document.activeElement);
   rig.replaceChildren();
   // 電熱板（發熱時盤面泛紅）
@@ -211,10 +215,10 @@ function setReading(i, label, val, unit, note) {
   prev[i] = v; n.textContent = v;
 }
 function renderReadouts() {
-  const id = cfg() || recOf('iron100')?.id || 'water100', t = isHeat() ? S.t : DURATION, T = tempOf(id, t);
-  setReading(1, '加熱時間', Math.floor(t), '秒', '每秒吸收 21 J');
+  const id = cfg() || 'iron100', t = isHeat() ? S.t : DURATION, T = tempOf(id, t);
+  setReading(1, '加熱時間', Math.floor(t), '秒', `每秒吸收 ${CAL_S} 卡`);
   setReading(2, '溫度', displayTemperature(T), '°C', `比初溫高 ${displayTemperature(T - T0)}°C`);
-  setReading(3, '吸收熱量', Math.round(POWER * Math.floor(t)), 'J', `21 J × ${Math.floor(t)} 秒`);
+  setReading(3, '吸收熱量', Math.round(CAL_S * Math.floor(t)), '卡', `${CAL_S} 卡 × ${Math.floor(t)} 秒`);
 }
 
 /* ---------- 余老師 ---------- */
@@ -278,12 +282,12 @@ function renderCalc() {
   for (const r of CALC) { const inp = $('#calc-' + r.id); inp.disabled = !ok; if (document.activeElement !== inp) inp.value = S.calc[r.id] || ''; }
   $('#check').disabled = !ok;
 }
-const num = v => { const t = String(v).normalize('NFKC').trim().replace(/[JjＪ°C℃\s]/g, '').replace('，', '.').replace(/,/g, ''); return /^\d*\.?\d+$/.test(t) ? Number(t) : NaN; };
+const num = v => { const t = String(v).normalize('NFKC').trim().replace(/[卡°C℃\s]/g, '').replace('，', '.').replace(/,/g, ''); return /^\d*\.?\d+$/.test(t) ? Number(t) : NaN; };
 function check() {
   const res = {};
   for (const r of CALC) {
     const inp = $('#calc-' + r.id); S.calc[r.id] = inp.value; const v = num(inp.value);
-    res[r.id] = Math.abs(v - r.answer) < 1e-9;
+    res[r.id] = Math.abs(v - r.answer) < (r.tol ?? 1e-9);
     inp.classList.toggle('ok', res[r.id]); inp.classList.toggle('bad', !res[r.id] && inp.value.trim() !== '');
   }
   save();
@@ -291,10 +295,11 @@ function check() {
   const w = CALC.find(r => !res[r.id]), v = num($('#calc-' + w.id).value);
   let msg;
   if (Number.isNaN(v)) msg = `先在「${w.name}」那一格填數字。`;
-  else if (w.id === 'q') msg = Math.abs(v - 81) < 1e-9 ? '熱量是相乘，不是相加：每秒 21 J，60 秒就是 21 × 60。' : Math.abs(v - 2520) < 1e-9 ? '不用把兩份加起來，算「一份」吸收多少就好。' : '每秒吸收 21 J，加熱 60 秒：21 × 60 ＝ ？';
+  else if (w.id === 'q') msg = Math.abs(v - 65) < 1e-9 ? '熱量是相乘，不是相加：每秒 5 卡，60 秒就是 5 × 60。' : Math.abs(v - 600) < 1e-9 ? '不用把兩份加起來，算「一份」吸收多少就好。' : Math.abs(v - 1260) < 1e-9 ? '1260 是焦耳。這裡用「卡」：每秒 5 卡 × 60 秒。' : '每秒吸收 5 卡，加熱 60 秒：5 × 60 ＝ ？';
   else if (w.id === 'dw') msg = Math.abs(v - 23) < 1e-9 ? '23 是末溫。溫升 ＝ 末溫 − 初溫：23 − 20 ＝ ？' : '水從 20.0°C 升到 23.0°C，升高幾度？';
   else if (w.id === 'di') msg = Math.abs(v - 48) < 1e-9 ? '48 是末溫。溫升 ＝ 48 − 20 ＝ ？' : '鐵從 20.0°C 升到 48.0°C，升高幾度？';
-  else msg = Math.abs(v - 4.2) < 1e-9 ? '4.2 是水的比熱。鐵要用鐵的溫升 28°C 來算。' : Math.abs(v - 2800) < 1e-9 ? '分母是 100 × 28 ＝ 2800，還要用 1260 去除以它。' : '比熱 ＝ 1260 ÷（100 × 28）。';
+  else if (w.id === 'cw') msg = Math.abs(v - 300) < 1e-9 ? '比熱要把熱量分給每 1 g、每升高 1°C：300 ÷（100 × 3）。' : '水的比熱 ＝ 300 ÷（100 × 3）＝ ？';
+  else msg = Math.abs(v - 1) < 1e-9 ? '1 是水的比熱。鐵要用鐵的溫升 28°C 來算。' : Math.abs(v - 2800) < 1e-9 ? '分母是 100 × 28 ＝ 2800，還要用 300 去除以它。' : Math.abs(v - 0.1) < 1e-9 ? '再精確一點：算到小數第二位。' : '鐵的比熱 ＝ 300 ÷（100 × 28），算到小數第二位。';
   oops(msg);
 }
 
@@ -364,7 +369,7 @@ function openNotes() {
   if (!S.records.length) { const tr = document.createElement('tr'); tr.innerHTML = '<td colspan="5" class="notes-empty">還沒有證據。</td>'; body.append(tr); }
   for (const r of S.records) {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${r.n}</td>` + [NAME[r.id], `${r.q} J`, `${displayTemperature(T0)} → ${displayTemperature(r.temp)}°C`, `${displayTemperature(r.rise)}°C`].map(c => `<td>${c}</td>`).join('');
+    tr.innerHTML = `<td>${r.n}</td>` + [NAME[r.id], `${Q_ALL} 卡`, `${displayTemperature(T0)} → ${displayTemperature(r.temp)}°C`, `${displayTemperature(r.rise)}°C`].map(c => `<td>${c}</td>`).join('');
     body.append(tr);
   }
   $('#notes-dialog').showModal();
@@ -374,8 +379,8 @@ function openFinish() {
   const got = STEPS.filter(s => S.done.includes(s.id)).length;
   $('#stars').innerHTML = STEPS.map(s => S.done.includes(s.id) ? STAR : STAR.replace('<svg', '<svg class="off"')).join('');
   $('#stars').setAttribute('aria-label', `完成 ${STEPS.length} 個任務中的 ${got} 個`);
-  $('#finish-list').innerHTML = Object.keys(NAME).map(id => recOf(id) && `<li><b>${NAME[id]}</b>：吸收 ${Q_ALL} J，20.0 → ${displayTemperature(recOf(id).temp)}°C，升高 ${displayTemperature(recOf(id).rise)}°C</li>`).filter(Boolean).join('')
-    + (S.done.includes('calc') ? '<li><b>比熱</b>：水 4.2、鐵 0.45 J／(g·°C)</li>' : '');
+  $('#finish-list').innerHTML = Object.keys(NAME).map(id => recOf(id) && `<li><b>${NAME[id]}</b>：吸收 ${Q_ALL} 卡，20.0 → ${displayTemperature(recOf(id).temp)}°C，升高 ${displayTemperature(recOf(id).rise)}°C</li>`).filter(Boolean).join('')
+    + (S.done.includes('calc') ? '<li><b>比熱</b>：水 1、鐵約 0.11 卡／(g·°C)</li>' : '');
   $('#finish-dialog').showModal();
 }
 function clearAll() {
