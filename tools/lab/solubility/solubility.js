@@ -93,12 +93,11 @@ const HP = { x: 450, y: 420, w: 300, h: 166 };
 const PLATE = HP.y + HP.h * 0.24;
 const KNOB = { x: HP.x + HP.w * 0.5, y: HP.y + HP.h * 0.7, r: 28 };
 const BK = { x: 505, w: 190, h: 250 }; BK.y = PLATE + 8 - BK.h;   // 燒杯
-const IN = { l: BK.x + 16, r: BK.x + BK.w - 16, b: PLATE - 4 };
+const IN = { l: BK.x + 18, r: BK.x + BK.w - 18, b: PLATE - 24 };   // 杯內底（燒杯玻璃底之上）
 const PER_G = 0.9;                                                  // 每 g 水的液面高度
 const TH = { x: 652 };
 const T_MAX = 80;
-// 溶解粒子固定位置（示意）
-const DOTS = (() => { let a = 7; const r = () => (a = (a * 16807) % 2147483647) / 2147483647; return Array.from({ length: 80 }, () => [r(), r()]); })();
+const DOTS = (() => { let a = 7; const r = () => (a = (a * 16807) % 2147483647) / 2147483647; return Array.from({ length: 140 }, () => [r(), r()]); })();   // 結晶位置（示意）
 const SPOON = { x: 810, y: 250 }, CUP = { x: 810, y: 250 };
 function draw() {
   const T = shownT, m = model(Math.round(T)), top = IN.b - S.water * PER_G;
@@ -106,21 +105,25 @@ function draw() {
   rig.replaceChildren();
   el('image', { href: P + 'prop-hotplate.webp', x: HP.x, y: HP.y, width: HP.w, height: HP.h }, rig);
   if (T > 20.5) el('ellipse', { cx: HP.x + HP.w / 2, cy: HP.y + HP.h * 0.2, rx: HP.w * 0.36, ry: HP.h * 0.11, fill: `rgba(230,80,40,${Math.min(0.5, (T - 20) / 80)})` }, rig);
-  // 液體、溶解粒子、杯底固體
-  const tint = Math.min(0.35, m.dissolved / 160);
-  el('rect', { x: IN.l, y: top, width: IN.r - IN.l, height: IN.b - top, rx: 6, fill: `rgba(${Math.round(110 + 80 * tint)},${Math.round(175 - 60 * tint)},235,0.5)` }, rig);
+  // 溶液：已溶解的 A 看不見顆粒，只讓整杯顏色均勻變深（濃度越高越紫）
+  const k = Math.min(1, m.concentration / 33.3), mix = (a, b) => Math.round(a + (b - a) * k);
+  el('rect', { x: IN.l, y: top, width: IN.r - IN.l, height: IN.b - top, rx: 6, fill: `rgba(${mix(120, 150)},${mix(180, 105)},${mix(235, 215)},${0.45 + 0.2 * k})` }, rig);
   el('line', { x1: IN.l, y1: top, x2: IN.r, y2: top, stroke: 'rgba(255,255,255,.85)', 'stroke-width': 3 }, rig);
-  const n = Math.round(m.dissolved);
-  for (let k = 0; k < Math.min(n, DOTS.length); k++) {
-    const [u, v] = DOTS[k];
-    el('circle', { cx: IN.l + 8 + u * (IN.r - IN.l - 16), cy: top + 8 + v * (IN.b - top - 26), r: 3, fill: '#8A63C9', opacity: 0.75 }, rig);
-  }
+  if (m.dissolved > 0) txt(rig, (IN.l + IN.r) / 2 - 18, top + 24, `溶解 ${g(m.dissolved)} g`, { 'font-size': 15, 'font-weight': 900, fill: '#3A2170' });
+  // 杯底固體：白色結晶堆，高度和質量成正比
   if (m.solid > 1e-9) {
-    const w = Math.min(IN.r - IN.l - 6, 40 + Math.sqrt(m.solid) * 22), h = 6 + Math.sqrt(m.solid) * 3.2, cx = (IN.l + IN.r) / 2;
-    el('path', { d: `M ${cx - w / 2} ${IN.b} Q ${cx - w / 4} ${IN.b - h} ${cx} ${IN.b - h} Q ${cx + w / 4} ${IN.b - h} ${cx + w / 2} ${IN.b} Z`, fill: '#E9DDF7', stroke: '#8A63C9', 'stroke-width': 2 }, rig);
-    for (let k = 0; k < 10; k++) el('circle', { cx: cx - w / 2.6 + (k % 5) * w / 6.5, cy: IN.b - 3 - Math.floor(k / 5) * h / 2.6, r: 2.5, fill: '#8A63C9' }, rig);
-    el('rect', { x: cx - 74, y: IN.b + 14, width: 148, height: 28, rx: 14, fill: '#8A63C9' }, rig);
-    txt(rig, cx, IN.b + 33, `杯底固體 ${g(m.solid)} g`, { fill: '#FFFFFF', 'font-size': 14, 'font-weight': 900 });
+    const l = IN.l + 3, r = IN.r - 3, h = 6 + m.solid * 2.4, cx = (l + r) / 2;
+    el('path', { d: `M ${l} ${IN.b} L ${l} ${IN.b - h * 0.55} Q ${cx} ${IN.b - h * 1.45} ${r} ${IN.b - h * 0.55} L ${r} ${IN.b} Z`, fill: '#FFFFFF', stroke: '#7A6A96', 'stroke-width': 2 }, rig);
+    const nC = Math.round(m.solid * 3);
+    for (let q = 0; q < nC; q++) {
+      const [u, v] = DOTS[q % DOTS.length], x = l + 6 + u * (r - l - 12), yb = IN.b - 3, ytop = IN.b - h * (0.55 + 0.9 * (1 - Math.pow((x - cx) / ((r - l) / 2), 2))) + 4;
+      const y = yb - v * Math.max(0, yb - ytop), sz = 3.4;
+      el('path', { d: `M ${x} ${y - sz} L ${x + sz} ${y} L ${x} ${y + sz} L ${x - sz} ${y} Z`, fill: '#F1ECF8', stroke: '#6E5A94', 'stroke-width': 1.2 }, rig);
+    }
+    const ly = IN.b - h * 0.6;
+    el('line', { x1: BK.x - 8, y1: ly, x2: l + 14, y2: ly, stroke: '#5A4A78', 'stroke-width': 2, 'stroke-dasharray': '4 3' }, rig);
+    el('rect', { x: BK.x - 158, y: ly - 16, width: 150, height: 32, rx: 16, fill: '#5A4A78' }, rig);
+    txt(rig, BK.x - 83, ly + 6, `杯底固體 ${g(m.solid)} g`, { fill: '#FFFFFF', 'font-size': 15, 'font-weight': 900 });
   }
   // 溫度計
   const tg = el('g', {}, rig), lo = IN.b - 34, hi = BK.y + 46, yT = v => lo - v / T_MAX * (lo - hi);
@@ -148,7 +151,7 @@ function draw() {
   }
   if (dropFx) {
     const fx = el('g', { class: dropFx === 1 ? 'fall' : 'fall' }, rig);
-    if (dropFx === 1) for (let k = 0; k < 8; k++) el('circle', { cx: (IN.l + IN.r) / 2 - 20 + k * 6, cy: BK.y + 10 + (k % 3) * 8, r: 3, fill: '#8A63C9' }, fx);
+    if (dropFx === 1) for (let k = 0; k < 8; k++) el('circle', { cx: (IN.l + IN.r) / 2 - 20 + k * 6, cy: BK.y + 10 + (k % 3) * 8, r: 3, fill: '#FFFFFF', stroke: '#8E7BB0', 'stroke-width': 1 }, fx);
     else el('path', { d: `M ${IN.r - 20} ${BK.y + 6} q 6 40 0 80`, stroke: 'rgba(90,160,230,.9)', 'stroke-width': 8, fill: 'none', 'stroke-linecap': 'round' }, fx);
   }
   if (hadFocus) { const f = rig.querySelector('.tool'); if (f) f.focus({ preventScroll: true }); }
@@ -168,7 +171,7 @@ function bindTool(node, run) {
 function drawSpoon(p, x, y) {
   el('path', { d: `M ${x - 44} ${y + 26} L ${x + 4} ${y - 2}`, stroke: '#8896A5', 'stroke-width': 8, 'stroke-linecap': 'round' }, p);
   el('ellipse', { cx: x + 18, cy: y - 10, rx: 26, ry: 16, fill: '#C8D0D8', stroke: '#23304A', 'stroke-width': 3 }, p);
-  el('ellipse', { cx: x + 18, cy: y - 14, rx: 18, ry: 8, fill: '#E9DDF7', stroke: '#8A63C9', 'stroke-width': 2 }, p);
+  el('ellipse', { cx: x + 18, cy: y - 14, rx: 18, ry: 8, fill: '#FFFFFF', stroke: '#8E7BB0', 'stroke-width': 2 }, p);
   txt(p, x + 2, y + 44, '10 g', { 'font-size': 14, fill: '#6A45A8' });
 }
 function drawCup(p, x, y) {
