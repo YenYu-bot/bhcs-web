@@ -6,6 +6,8 @@
 - `lever/`、`pulley/`、`incline/`、`buoyancy/`、`heat/`、`solubility/`、`metal/`：各實驗桌。heat 的溫度直接用 `tools/specific-heat-desk/model.mjs`；solubility 用 `tools/solubility-desk/model.mjs`；metal 用 `tools/metal-activity-desk/inquiry.mjs`、`acid.mjs`。
 - `lever/`：槓桿實驗桌試用版。科學計算直接匯入 `tools/lever-desk/model.mjs`，不另寫模型。紀錄存在 `bhcs.lab.lever.v1`，與舊版各站紀錄分開。
 
+- `motion/`：小車運動圖實驗桌。主流程匯入 `tools/motion-graphs-desk/model.mjs`，讀圖挑戰匯入 `tools/motion-graphs-desk/v2/model.mjs`。紀錄使用新版專用的 `bhcs.lab.motion.v1`。
+
 試用期間頁面設為 `noindex`，不列入研究站目錄、學習資源頁與 sitemap；原有各站不受影響。學生試用沒問題後，再把其他站改成同一套。
 
 素材沿用 `assets/science/props/`（木板、支點、砝碼、實驗桌背景）與 `tools/mini-lab/img/doc-*.png`（余老師）。依專案原則不使用 `<img>`：場景圖用 SVG `<image>`，余老師用 CSS 背景。
