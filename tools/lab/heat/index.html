@@ -90,11 +90,13 @@
 
 <dialog id="why-dialog" aria-labelledby="why-title">
   <h2 id="why-title">比熱是什麼？</h2>
+  <p><b>熱量的單位「卡」</b>：1 公克的水升高 1°C 所吸收的熱量，就是 1 卡。所以水的比熱是 1 卡／(g·°C)。</p>
   <p><b>比熱</b>：1 公克的物質溫度升高 1°C 所需要的熱量。比熱越大，吸收同樣的熱量，溫度升得越少。</p>
-  <p><b>熱量 ＝ 質量 × 比熱 × 溫度變化</b>，寫成 Q ＝ m × c × ΔT。所以 <b>c ＝ Q ÷（m × ΔT）</b>。</p>
+  <p><b>熱量 H ＝ 質量 M × 比熱 S × 溫度變化 ΔT</b>，所以 <b>S ＝ H ÷（M × ΔT）</b>。</p>
   <ul>
-    <li>本實驗的電熱板每秒讓樣本吸收 21 焦耳（J）的熱，也就是 21 W；加熱 60 秒，每一份都吸收 21 × 60 ＝ 1260 J。</li>
-    <li>熱量的單位也常用「卡」：1 卡 ≈ 4.2 J。水的比熱是 1 卡／(g·°C)，也就是約 4.2 J／(g·°C)。</li>
+    <li>本實驗的電熱板每秒讓樣本吸收 5 卡；加熱 60 秒，每一份都吸收 5 × 60 ＝ 300 卡。</li>
+    <li>本實驗的鐵比熱約 0.11 卡／(g·°C)，和課本表格一樣。</li>
+    <li>熱量也可以用焦耳（J）表示：1 卡 ≈ 4.2 J（本實驗取 4.2）。換成焦耳時，水的比熱約 4.2、鐵約 0.45 J／(g·°C)——數字不同，是因為單位不同，不是比熱變了。</li>
     <li>這是理想模型：樣本整體溫度一樣，不散熱、不計容器和溫度計吸的熱。真實實驗會有誤差。</li>
     <li>生活例子：夏天中午沙灘很燙、海水卻比較涼——水的比熱大，同樣曬太陽，溫度升得比較少。</li>
   </ul>
@@ -103,7 +105,7 @@
 
 <dialog id="notes-dialog" aria-labelledby="notes-title">
   <h2 id="notes-title">研究手冊</h2>
-  <p class="notes-tip">每一份都加熱 60 秒、吸收 1260 J。比一比溫度升高多少。</p>
+  <p class="notes-tip">每一份都加熱 60 秒、吸收 300 卡。比一比溫度升高多少。</p>
   <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>樣本</th><th>吸收熱量</th><th>溫度</th><th>升高</th></tr></thead><tbody id="notes-body"></tbody></table></div>
   <div class="dialog-actions">
     <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
