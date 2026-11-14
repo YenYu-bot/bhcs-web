@@ -10,6 +10,8 @@
 
 - `reaction-rate/`：反應速率實驗桌。同質量塊狀、顆粒與粉末只改顆粒大小，沿用 `tools/science/reaction-rate-desk/model.mjs`，時間與體積都是模擬值。新版紀錄使用獨立的 `bhcs-lab-reaction-rate-trial-v1`。
 
+- `electric-power/`：電流熱效應實驗桌。與 `scripts/science/models.mjs` 的電功率、電能與水溫模型交叉驗證；固定電壓／固定電流的電壓、電流、功率與溫升對照，另有獨立電表。試用版使用獨立紀錄。
+
 試用期間頁面設為 `noindex`，不列入研究站目錄、學習資源頁與 sitemap；原有各站不受影響。學生試用沒問題後，再把其他站改成同一套。
 
 素材沿用 `assets/science/props/`（木板、支點、砝碼、實驗桌背景）與 `tools/mini-lab/img/doc-*.png`（余老師）。依專案原則不使用 `<img>`：場景圖用 SVG `<image>`，余老師用 CSS 背景。
