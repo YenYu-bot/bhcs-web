@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#FFF8EC">
+  <title>反應速率實驗桌｜百宏文教・小小研究員</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%23C8372D'/%3E%3Cpath d='M17 9h6m-4 0v8l-6 11q-1 2 2 2h10q3 0 2-2l-6-11V9m-5 15h8' fill='none' stroke='%23fff6dd' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="lab rate-lab">
+  <a class="skip-link" href="#scene">跳到實驗桌</a>
+  <header class="lab-bar">
+    <span class="lab-brand">百宏 · 小小研究員</span>
+    <h1 class="lab-title">反應速率實驗桌</h1>
+    <nav class="step-nav" aria-label="實驗進度">
+      <ol id="step-list" class="lab-steps">
+        <li data-step="1" aria-current="step"><span>1</span> 跑塊狀</li>
+        <li data-step="2"><span>2</span> 跑顆粒</li>
+        <li data-step="3"><span>3</span> 比第 10 秒</li>
+        <li data-step="4"><span>4</span> 跑粉末</li>
+        <li data-step="5"><span>5</span> 比終點</li>
+        <li data-step="6"><span>6</span> 說發現</li>
+      </ol>
+    </nav>
+    <div class="lab-bar-actions">
+      <span class="trial-badge">新版試用</span>
+      <button id="reset-button" class="btn btn-ghost" type="button" aria-haspopup="dialog">清空紀錄</button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="scene-area" id="experiment" aria-label="反應速率實驗台">
+      <div id="scene" class="apparatus" tabindex="-1" data-sample="lump" data-state="ready">
+        <div class="readouts" aria-label="目前讀值">
+          <div class="reading">
+            <span class="reading-label">模擬時間</span><output class="reading-num" id="sim-time" aria-live="off">0.0</output><span class="reading-unit">秒</span>
+          </div>
+          <div class="reading">
+            <span class="reading-label">氣體體積</span><output class="reading-num" id="sim-volume" aria-live="off">0.0</output><span class="reading-unit">mL</span>
+          </div>
+          <div class="reading sample-reading">
+            <span class="reading-label">大理石樣本</span><strong id="sample-label">塊狀</strong><span id="sim-status" class="status-pill" data-state="ready">待開始</span>
+          </div>
+        </div>
+        <div class="scene-wrap">
+          <svg class="apparatus-art" viewBox="0 0 640 271" role="img" aria-labelledby="apparatus-title apparatus-desc">
+            <title id="apparatus-title">錐形瓶與氣體注射筒</title>
+            <desc id="apparatus-desc">大理石在錐形瓶內反應，氣體沿導管進入注射筒，從左往右推動活塞；下方顯示時間和氣體體積。</desc>
+            <defs>
+              <linearGradient id="glass" x1="0" x2="1">
+                <stop stop-color="#fff" stop-opacity=".78"/>
+                <stop offset=".31" stop-color="#ebfbfb" stop-opacity=".51"/>
+                <stop offset="1" stop-color="#b6d7dc" stop-opacity=".82"/>
+              </linearGradient>
+              <linearGradient id="liquid" x1="0" y1="0" x2="0" y2="1">
+                <stop stop-color="#a6e6d2"/><stop offset="1" stop-color="#54b8a3"/>
+              </linearGradient>
+              <linearGradient id="barrel" x1="0" y1="0" x2="0" y2="1">
+                <stop stop-color="#f8ffff"/><stop offset=".45" stop-color="#ddf1f5"/><stop offset="1" stop-color="#b7d8df"/>
+              </linearGradient>
+              <linearGradient id="gas" x1="0" x2="1">
+                <stop stop-color="#8eced9" stop-opacity=".72"/><stop offset="1" stop-color="#60b5c5" stop-opacity=".94"/>
+              </linearGradient>
+              <linearGradient id="rubber" x1="0" y1="0" x2="0" y2="1">
+                <stop stop-color="#e9ad79"/><stop offset="1" stop-color="#c97854"/>
+              </linearGradient>
+              <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#ffedbd"/><stop offset="1" stop-color="#dba66d"/>
+              </linearGradient>
+              <clipPath id="flask-clip"><path d="M125 91h42v51l49 80q9 17-8 17H84q-17 0-8-17l49-80z"/></clipPath>
+            </defs>
+            <image href="../../../assets/science/props/bg-physics-bench.webp" x="0" y="-84" width="640" height="462" preserveAspectRatio="none" aria-hidden="true"/>
+
+            <g class="floor-art" aria-hidden="true">
+              
+              <ellipse cx="146" cy="244" rx="97" ry="10" fill="#9F6B43" opacity=".24"/>
+              <ellipse cx="399" cy="243" rx="169" ry="8" fill="#9F6B43" opacity=".24"/>
+              <path d="M67 204v14m-7-7h14M566 163v15m-8-7h16M593 124v11m-6-6h12" fill="none" stroke="#9B744D" opacity=".45" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="226" cy="183" r="3" fill="#9B744D" opacity=".42"/>
+              <circle cx="553" cy="200" r="2.5" fill="#9B744D" opacity=".42"/>
+            </g>
+
+            <g aria-hidden="true">
+              <path d="M309 133v98m-24 3h48m148-101v98m-24 3h48" fill="none" stroke="#8b9691" stroke-width="6" stroke-linecap="round"/>
+              <path d="M309 148v70m171-70v70" fill="none" stroke="#d1d7cf" stroke-width="2" stroke-linecap="round"/>
+              <path d="M288 236h44m126 0h44" fill="none" stroke="#67786f" stroke-width="4" stroke-linecap="round"/>
+              <path d="M147 76V59q0-17 17-17h45q16 0 16 17v44q0 17 17 17h30" fill="none" stroke="#4a7171" stroke-width="12" stroke-linejoin="round"/>
+              <path d="M147 76V59q0-17 17-17h45q16 0 16 17v44q0 17 17 17h30" fill="none" stroke="#c9eaeb" stroke-width="7" stroke-linejoin="round"/>
+              <path class="gas-flow" d="M147 76V59q0-17 17-17h45q16 0 16 17v44q0 17 17 17h30" fill="none" stroke="#4599a5" stroke-width="3" stroke-dasharray="4 9" stroke-linecap="round"/>
+              <path d="M125 91h42v51l49 80q9 17-8 17H84q-17 0-8-17l49-80z" fill="url(#glass)" stroke="#23304A" stroke-width="4" stroke-linejoin="round"/>
+              <g clip-path="url(#flask-clip)">
+                <path d="M63 187q22-8 41-2t42 0t44 0t38-1v63H67z" fill="url(#liquid)"/>
+                <path d="M77 188q16-7 33-2t34 0t39-1t32 0" fill="none" stroke="#4cae9b" stroke-width="2" stroke-linecap="round"/>
+                <g class="sample-pictures" fill="url(#stone)" stroke="#9d754d" stroke-width="2" stroke-linejoin="round">
+                  <g id="sample-lump" class="lump">
+                    <path d="m123 232-5-10 8-16 14-10 18 3 14 13 4 18-9 5h-32z"/>
+                    <path d="m126 207 13 8 16-6 15 5m-31 1-4 14" fill="none" stroke="#c4925f"/>
+                  </g>
+                  <g id="sample-granules" class="granules">
+                    <path data-center-x="119" data-center-y="231" d="m108 228 4-8 11-3 7 5-1 10h-16z"/>
+                    <path data-center-x="138" data-center-y="234" d="m127 231 3-12 7-5 10 4 2 12-6 5z"/>
+                    <path data-center-x="159" data-center-y="234" d="m149 231 3-10 10-5 6 5v12l-10 2z"/>
+                    <path data-center-x="178" data-center-y="232" d="m168 230 3-9 9-4 8 7-1 9h-13z"/>
+                    <path data-center-x="138" data-center-y="218" d="m127 216 4-10 13-2 5 10-5 4z"/>
+                    <path data-center-x="158" data-center-y="218" d="m148 215 4-10 11-1 6 9-6 6z"/>
+                    <path data-center-x="116" data-center-y="215" d="m108 212 5-9 8-2 5 8-5 7h-8z"/>
+                    <path data-center-x="177" data-center-y="216" d="m170 213 4-9 9-1 4 8-5 6h-7z"/>
+                  </g>
+                  <g id="sample-powder" class="powder">
+                    <path d="M107 232q13-8 18-6l11-6 12-1 10 3 15 3 11 8z"/>
+                    <path d="m117 230 4-1m8 2 3-2m6-4 1 1m7 5 2-2m3-5 3 1m5 5 2-1m8 1 3 1" fill="none" stroke-linecap="round"/>
+                  </g>
+                </g>
+                <g id="bubbles" class="bubbles" fill="#d7fcf0" fill-opacity=".6" stroke="#3a847d" stroke-width="1.4">
+                  <circle cx="125" cy="198" r="4"/><circle cx="142" cy="190" r="5"/><circle cx="158" cy="206" r="3.7"/><circle cx="167" cy="191" r="4.7"/><circle cx="136" cy="213" r="3.5"/><circle cx="151" cy="182" r="3.3"/>
+                </g>
+                <path d="M134 109v34l-38 65m13-1-7 13" fill="none" stroke="#fff" stroke-opacity=".76" stroke-width="4.5" stroke-linecap="round"/>
+              </g>
+              <rect x="118" y="73" width="57" height="21" rx="7" fill="url(#rubber)" stroke="#76583f" stroke-width="3"/>
+              <path d="M128 80h36" stroke="#ffe0b8" stroke-width="2" stroke-linecap="round"/>
+              <path d="M261 116h14v8h-14z" fill="#d2e9ea" stroke="#486b74" stroke-width="2.4"/>
+              <rect x="273" y="94" width="243" height="52" rx="7" fill="url(#barrel)" stroke="#23304A" stroke-width="3"/>
+              <rect id="gas-fill" x="277" y="98" width="0" height="44" rx="2" fill="url(#gas)"/>
+              <path d="M282 102h226m-226 34h226" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/>
+              <g id="plunger" transform="translate(0 0)">
+                <rect x="281" y="114" width="83" height="12" rx="4" fill="#f5f5ed" stroke="#687b75" stroke-width="2.4"/>
+                <rect x="356" y="102" width="14" height="36" rx="5" fill="#e7eee3" stroke="#687b75" stroke-width="2.4"/>
+                <rect x="274" y="100" width="9" height="40" rx="2.5" fill="#546c70" stroke="#34535c" stroke-width="1.6"/>
+              </g>
+              <path d="M277 96v13m45.4-13v13m45.4-13v13m45.4-13v13m45.4-13v13m45.4-13v13m-204.3-13v7m45.4-7v7m45.4-7v7m45.4-7v7m45.4-7v7" fill="none" stroke="#50747a" stroke-width="1.7"/>
+              <path d="M514 87v66" stroke="#54777b" stroke-width="6" stroke-linecap="round"/>
+              <path d="M514 88v64" stroke="#9cb9b9" stroke-width="2" stroke-linecap="round"/>
+            </g>
+
+            <g class="svg-ticks" aria-hidden="true" text-anchor="middle">
+              <text x="277" y="86">0</text><text x="322.4" y="86">20</text><text x="367.8" y="86">40</text><text x="413.2" y="86">60</text><text x="458.6" y="86">80</text><text x="504" y="86">100</text><text x="541" y="86">mL</text>
+            </g>
+            <g class="svg-labels" aria-hidden="true">
+              <path d="M235 55h28" fill="none" stroke="#86a49a" stroke-width="1.5" stroke-linecap="round"/><circle cx="235" cy="55" r="2.6" fill="#86a49a"/>
+              <text x="270" y="59">氣體導管</text>
+              <path d="M390 145v12h23" fill="none" stroke="#86a49a" stroke-width="1.5" stroke-linecap="round"/><circle cx="390" cy="145" r="2.6" fill="#86a49a"/>
+              <text x="418" y="162">氣體注射筒</text>
+              <path d="M116 176H81" fill="none" stroke="#86a49a" stroke-width="1.5" stroke-linecap="round"/><circle cx="116" cy="176" r="2.6" fill="#86a49a"/>
+              <text x="26" y="181">反應瓶</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <section class="transport" aria-label="實驗操作">
+        <div class="bench-actions" role="group" aria-label="控制反應">
+          <button id="start-button" class="btn btn-main" type="button">開始反應</button>
+          <button id="pause-button" class="btn btn-main" type="button" hidden disabled>暫停</button>
+          <button id="mark-button" class="btn btn-soft" type="button" disabled>放大第 10 秒</button>
+          <button id="next-button" class="btn btn-soft btn-next" type="button" disabled>下一步</button>
+        </div>
+        <p id="bench-evidence" class="bench-evidence"></p>
+      </section>
+      <section class="graph-board" aria-labelledby="graph-title">
+        <div class="chart-head"><h2 id="graph-title">氣體體積—時間圖</h2><span>讀曲線，不數氣泡</span></div>
+        <div class="graph-pane">
+          <div id="graph-controls" class="graph-controls" role="group" aria-label="圖表時間範圍"></div>
+          <svg id="graph" viewBox="0 0 540 290" role="img" aria-label="氣體體積與模擬時間的關係"></svg>
+          <p id="graph-note" class="graph-note">開始反應後，曲線會跟著氣體體積變化。</p>
+        </div>
+      </section>
+    </section>
+
+    <aside class="panel" aria-label="任務、余老師與證據">
+      <section class="task" aria-labelledby="step-title">
+        <p class="task-kicker" id="step-kicker">第 1 步／共 6 步</p>
+        <h2 class="task-title" id="step-title">先跑一份塊狀大理石</h2>
+        <p class="task-goal" id="step-copy">按下開始，看看產生的氣體如何推動注射筒活塞。</p>
+      </section>
+      <div class="teacher">
+        <span class="teacher-pic" aria-hidden="true"></span>
+        <div class="bubble"><span class="tag">余老師</span><p id="step-hint">第 10 秒會自動停住，留時間讀刻度。</p></div>
+      </div>
+      <section class="evidence-panel" aria-labelledby="evidence-title">
+        <div class="evidence-heading"><h2 id="evidence-title">我的證據</h2><span id="checkpoint">尚未記錄</span></div>
+        <table>
+          <thead><tr><th scope="col">樣本</th><th scope="col">第 10 秒<br><small>mL</small></th><th scope="col">完成時間<br><small>模擬秒</small></th><th scope="col">最終體積<br><small>mL</small></th></tr></thead>
+          <tbody id="evidence">
+            <tr><th scope="row">塊狀</th><td>—</td><td>—</td><td>—</td></tr>
+            <tr><th scope="row">顆粒</th><td>—</td><td>—</td><td>—</td></tr>
+            <tr><th scope="row">粉末</th><td>—</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section id="question" class="question-panel" aria-label="用證據解釋" hidden></section>
+      <details class="model-note">
+        <summary>模型與公平比較</summary>
+        <p>每份大理石質量相同，酸液條件與溫度相同。氣泡只作示意，定量請看注射筒或曲線。</p>
+        <p>時間與體積均為模擬值，不是實測。本站是虛擬實驗，不是實作指引。</p>
+      </details>
+    </aside>
+  </main>
+
+  <p id="live-status" class="sr-only" role="status" aria-live="polite"></p>
+  <noscript><p class="graph-note">請開啟瀏覽器的 JavaScript，才能操作實驗桌。</p></noscript>
+  <dialog id="reset-dialog" aria-labelledby="reset-title" aria-describedby="reset-description">
+    <h2 id="reset-title">要清除紀錄並重做本站嗎？</h2>
+    <p id="reset-description">會清除本次三組實驗紀錄和答案。其他實驗不受影響。</p>
+    <p id="reset-context" class="reset-context" hidden>反應已暫停。若取消，紀錄會保留，可回到操作台繼續。
+    <div class="dialog-actions">
+      <button id="reset-cancel" class="btn btn-ghost" type="button" autofocus>保留紀錄</button>
+      <button id="reset-confirm" class="btn btn-main" type="button">清除並重做</button>
+    </div>
+  </dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
