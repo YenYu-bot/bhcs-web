@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#FFF8EC">
+<meta name="description" content="比較固定電壓與固定電流時的升溫差異，分辨電功率與累積電能。">
+<title>電流熱效應實驗桌｜百宏文教・小小研究員</title>
+<link rel="stylesheet" href="./style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23C8372D'/%3E%3Cpath d='M23 7L11 23h9l-3 10 12-16h-9z' fill='%23fff6dd'/%3E%3C/svg%3E">
+</head>
+<body class="lab electric-lab">
+<a class="skip-link" href="#scene">跳到實驗桌</a>
+<header class="lab-bar">
+  <span class="lab-brand">百宏 · 小小研究員</span>
+  <h1 class="lab-title">電流熱效應</h1>
+  <nav class="step-nav" aria-label="實驗進度">
+    <ol id="step-list" class="lab-steps">
+      <li data-step="0" aria-current="step"><span>1</span> 跑基準</li>
+      <li data-step="1"><span>2</span> 固定電壓</li>
+      <li data-step="2"><span>3</span> 只改時間</li>
+      <li data-step="3"><span>4</span> 固定電流</li>
+      <li data-step="4"><span>5</span> 讀電表</li>
+      <li data-step="5"><span>6</span> 說發現</li>
+    </ol>
+  </nav>
+  <div class="lab-bar-actions"><span class="trial-badge">新版試用</span><button id="reset-button" class="btn btn-ghost" type="button" aria-haspopup="dialog">清空紀錄</button></div>
+</header>
+
+<main class="stage">
+  <section id="lab-panel" class="scene-area" aria-label="加熱實驗操作區">
+    <div class="apparatus" id="scene" tabindex="-1">
+      <div class="readouts" aria-label="實驗即時讀值">
+        <div class="reading reading-primary"><span class="reading-label">水溫</span><output id="temp-value" class="reading-num" aria-live="off">25.0</output><span class="reading-unit">°C</span></div>
+        <div class="reading"><span class="reading-label">通電時間</span><output id="time-value" class="reading-num" aria-live="off">0</output><span class="reading-unit">秒</span></div>
+        <div class="reading"><span class="reading-label">累積電能</span><output id="energy-value" class="reading-num" aria-live="off">0</output><span class="reading-unit">J</span></div>
+      </div>
+      <div class="scene-wrap">
+        <svg id="circuit-svg" class="apparatus-art" viewBox="0 0 640 232" role="img" aria-labelledby="circuit-title circuit-desc" data-powered="false">
+          <title id="circuit-title">電熱線加熱水的電路</title>
+          <desc id="circuit-desc">電源的正端經過開關接到水中的電熱線，再接回負端。開關閉合才有電流，溫度計顯示水的升溫。</desc>
+          <defs>
+            <linearGradient id="water" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#b1e9ed"/><stop offset="1" stop-color="#62b9ce"/></linearGradient>
+            <linearGradient id="jug" x1="0" x2="1" y1="0" y2="0"><stop stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#bfebea" stop-opacity=".86"/></linearGradient>
+            <linearGradient id="source" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#faf3dd"/><stop offset="1" stop-color="#d9c6a7"/></linearGradient>
+            <linearGradient id="thermo" x1="0" x2="1" y1="0" y2="0"><stop stop-color="#fff"/><stop offset="1" stop-color="#e2f0f1"/></linearGradient>
+            <clipPath id="beaker-clip"><path d="M398 94H556v107q0 10-12 10H410q-12 0-12-10z"/></clipPath>
+          </defs>
+          <image href="../../../assets/science/props/bg-physics-bench.webp" x="0" y="-73" width="640" height="442" preserveAspectRatio="none" aria-hidden="true"/>
+          <g aria-hidden="true">
+            <ellipse cx="108" cy="205" rx="90" ry="10" fill="#956541" opacity=".25"/>
+            <ellipse cx="482" cy="218" rx="109" ry="7" fill="#956541" opacity=".26"/>
+            <rect x="398" y="93" width="158" height="119" rx="12" fill="url(#jug)"/>
+            <g clip-path="url(#beaker-clip)">
+              <path d="M393 140Q431 134 461 140T519 140Q546 134 562 140V214H393z" fill="url(#water)"/>
+              <path d="M399 142Q427 135 461 141T519 141Q546 135 556 141" fill="none" stroke="#71b6c3" stroke-width="2"/>
+              <path d="M403 197Q475 210 551 197" fill="none" stroke="#fff" opacity=".35" stroke-width="3"/>
+              <path d="M413 111v83m11-79v71" stroke="#fff" opacity=".64" stroke-width="5" stroke-linecap="round"/>
+              <path d="M545 153h-12m12 14h-7m7 14h-12m12 14h-7" stroke="#4b7d92" stroke-width="2.3" stroke-linecap="round"/>
+            </g>
+            <path d="M392 92h166l8-7M398 95v106q0 11 12 11h134q12 0 12-11V95" fill="none" stroke="#23304a" stroke-width="4" stroke-linecap="round"/>
+            <g fill="none" stroke="#23304a" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M147 121h34V70h53m48 0h156v104h10m56 0h5V51h71v171H181v-55h-34" stroke-width="7"/>
+              <path class="live-wire" d="M147 121h34V70h53m48 0h156v104h10m56 0h5V51h71v171H181v-55h-34" stroke-width="3"/>
+              <path class="heater-glow" d="M448 174q7-21 14 0t14 0t14 0t14 0" stroke-linecap="round"/>
+              <path id="coil" d="M448 174q7-21 14 0t14 0t14 0t14 0" stroke-width="6"/>
+            </g>
+            <rect x="35" y="105" width="117" height="82" rx="15" fill="url(#source)" stroke="#23304a" stroke-width="4"/>
+            <rect x="47" y="116" width="72" height="30" rx="7" fill="#23304a"/>
+            <text x="83" y="138" text-anchor="middle" class="asset-label label-light">電源</text>
+            <circle cx="58" cy="167" r="6" fill="#95a3a7" stroke="#23304a" stroke-width="2"/>
+            <circle class="power-light" cx="58" cy="167" r="4"/>
+            <path d="M74 167h38" stroke="#a49378" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 5"/>
+            <circle cx="148" cy="121" r="5" fill="#c8372d" stroke="#23304a" stroke-width="2"/>
+            <circle cx="148" cy="167" r="5" fill="#46799a" stroke="#23304a" stroke-width="2"/>
+            <path d="M126 121h10m-5-5v10m-5 41h10" stroke="#23304a" stroke-width="2"/>
+            <rect x="217" y="65" width="84" height="28" rx="12" fill="#fff6df" stroke="#23304a" stroke-width="3"/>
+            <path d="M216 70h18m48 0h20" stroke="#23304a" stroke-width="7" stroke-linecap="round"/><path class="live-wire" d="M216 70h18m48 0h20" fill="none" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="282" cy="70" r="6.3" fill="#d0a841" stroke="#23304a" stroke-width="2.4"/>
+            <path id="switch-arm" d="M234 70h48" stroke="#23304a" stroke-width="7" stroke-linecap="round" transform="rotate(-24 234 70)"/>
+            <circle cx="234" cy="70" r="6.3" fill="#d0a841" stroke="#23304a" stroke-width="2.4"/>
+            <text x="259" y="114" text-anchor="middle" class="asset-label">開關</text>
+            <g stroke-linecap="round">
+              <path d="M532 169V84a8 8 0 1 0-16 0v85a12 12 0 1 0 16 0Z" fill="url(#thermo)" stroke="#23304a" stroke-width="3"/>
+              <path d="M528 103h-5m5 16h-5m5 16h-5m5 16h-5" stroke="#46728b" stroke-width="1.5"/>
+              <rect id="mercury" x="520.2" y="180" width="7.6" height="5" fill="#c8372d" rx="3.6"/>
+              <circle cx="524" cy="178" r="7" fill="#c8372d"/>
+            </g>
+            <path d="M491 119h13l10-10M479 183v7" fill="none" stroke="#23304a" stroke-width="1.8"/>
+            <text x="478" y="112" text-anchor="middle" class="asset-label">溫度計</text>
+            <text x="476" y="205" text-anchor="middle" class="asset-label">電熱線</text>
+            <rect x="34" y="25" width="104" height="30" rx="13" fill="#fff8ec" stroke="#23304a" stroke-width="1.6"/>
+            <text x="86" y="46" text-anchor="middle" class="asset-label badge-label">電路示意</text>
+            <rect x="466" y="10" width="96" height="29" rx="13" fill="#f5fcff" stroke="#4b7d92" stroke-width="1.5"/>
+            <text x="514" y="30" text-anchor="middle" class="asset-label badge-label">100 g 水</text>
+          </g>
+        </svg>
+      </div>
+      <div class="circuit-readings" aria-label="通電時的電路讀值">
+        <span><small>熱線電壓</small> <output id="voltage-value" aria-live="off">0</output> V</span>
+        <span><small>電流</small> <output id="current-value" aria-live="off">0</output> A</span>
+        <span><small>功率</small> <output id="power-value" aria-live="off">0</output> W</span>
+        <strong class="status-pill" id="run-status">開關斷開</strong>
+      </div>
+    </div>
+
+    <div class="transport" aria-label="控制虛擬加熱">
+      <div id="controls-slot" class="control-context">
+        <span id="circuit-mode">固定電壓</span>
+        <span id="circuit-v">6 V</span>
+        <span id="circuit-r">6 Ω</span>
+        <span id="target-hint">70 模擬秒</span>
+      </div>
+      <p id="condition-compare" class="condition-compare">先記下基準：每一組都用 100 g、25°C 的水。</p>
+      <progress id="heat-progress" class="heat-progress" value="0" max="70" aria-label="這組通電進度" hidden></progress>
+      <section id="outcome" class="outcome" aria-label="這組的比較結果" hidden>
+        <div><strong id="outcome-title"></strong><span id="outcome-metrics"></span></div>
+        <p id="outcome-compare"></p>
+      </section>
+      <div class="bench-actions" id="bench-actions">
+        <button id="start-button" class="btn btn-main" type="button">閉合開關</button>
+        <button id="pause-button" class="btn btn-soft" type="button" hidden>斷開開關</button>
+        <button id="rewind-button" class="btn btn-soft" type="button" hidden>重跑本組</button>
+        <button id="next-button" class="btn btn-next" type="button" hidden disabled>下一步</button>
+      </div>
+    </div>
+    <section class="graph-board" id="graph-board" aria-labelledby="graph-title">
+      <div class="chart-head"><h2 id="graph-title">水溫－時間圖</h2><span>比較斜率，不只看終點</span></div>
+      <div class="graph-pane"><div id="graph" role="group" aria-label="模擬水溫與通電時間圖"></div></div>
+      <p class="graph-note" id="graph-summary">通電後，曲線跟著水溫一起上升。</p>
+    </section>
+  </section>
+
+  <aside class="panel" aria-label="任務與觀察紀錄">
+    <section class="task" aria-labelledby="task-title">
+      <p id="step-kicker" class="task-kicker">第 1 步／共 6 步</p>
+      <h2 id="task-title" class="task-title" tabindex="-1">先跑一組基準</h2>
+      <p id="task-note" class="task-goal">閉合開關，用 6 V、6 Ω 加熱 100 g 水。看看溫度計跟曲線怎麼變。</p>
+    </section>
+    <div class="teacher">
+      <span class="teacher-pic" aria-hidden="true"></span>
+      <div class="bubble"><span class="tag">余老師</span><p id="teacher-note">先找溫度計。開關閉合後，水才開始吸收電熱線放出的熱。</p></div>
+    </div>
+    <section class="evidence-panel" aria-labelledby="evidence-title">
+      <div class="evidence-heading"><h2 id="evidence-title">我的觀察證據</h2><span id="evidence-count">尚未記錄</span></div>
+      <table aria-label="實驗組別紀錄" aria-describedby="evidence-units">
+        <caption id="evidence-units">電壓、電流、功率記的是加熱時的讀值。</caption>
+        <thead><tr><th scope="col">組別</th><th scope="col">電阻<small> Ω</small></th><th scope="col">電壓<small> V</small></th><th scope="col">電流<small> A</small></th><th scope="col">功率<small> W</small></th><th scope="col">時間<small> 秒</small></th><th scope="col">溫升<small> °C</small></th></tr></thead>
+        <tbody id="evidence-body"><tr><td colspan="7" class="evidence-empty">完成一組，這裡會留下讀值。</td></tr></tbody>
+      </table>
+    </section>
+    <section class="question-panel meter-panel" id="meter-panel" aria-labelledby="meter-title" hidden>
+      <div class="meter-header"><span class="tag">獨立電表</span><h2 id="meter-title">兩組各用幾度電？</h2><p>兩組各量一次。這裡只讀電表，不加熱水槽。</p></div>
+      <div class="meter-options" id="meter-options" role="group" aria-label="選擇電器">
+        <button type="button" class="btn btn-soft" data-meter="0" aria-pressed="true">1,000 W × 1 小時</button>
+        <button type="button" class="btn btn-soft" data-meter="1" aria-pressed="false">500 W × 2 小時</button>
+      </div>
+      <div class="meter-face" id="meter-result" aria-live="polite">等待計算</div>
+      <button id="meter-run" type="button" class="btn btn-main">計算度數</button>
+    </section>
+    <section class="question-panel" id="question-panel" aria-labelledby="quiz-title" hidden>
+      <h2 id="quiz-title">用證據說說看</h2>
+      <div id="question-list"></div>
+      <p id="quiz-summary" aria-live="polite"></p>
+    </section>
+    <details class="model-note">
+      <summary>模型與公平比較</summary>
+      <p>電功率 P＝VI，累積電能 E＝Pt。水為 100 g，起始 25°C，比熱取 4.2 J／(g·°C)。模型假設電能全轉成水吸收的熱，沒有散熱，數值不是實測。</p>
+      <p>升溫試驗每次換成相同質量與起始溫度的水。電表算例獨立於水槽。這是線上模擬，不用家用插座做實驗。</p>
+    </details>
+  </aside>
+</main>
+
+<dialog id="reset-dialog" aria-labelledby="reset-title" aria-describedby="reset-note">
+  <h2 id="reset-title">清空紀錄，從頭再做？</h2>
+  <p id="reset-note">只會清除這個試玩版在此瀏覽器的實驗進度、電表和作答紀錄。其他實驗站不受影響。</p>
+  <div class="dialog-actions">
+    <button class="btn btn-ghost" id="reset-cancel" type="button" autofocus>取消</button>
+    <button class="btn btn-main" id="reset-confirm" type="button">清空並重作</button>
+  </div>
+</dialog>
+<p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+<noscript><p>這個實驗需要 JavaScript 才能操作。</p></noscript>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
