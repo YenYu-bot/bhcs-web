@@ -69,7 +69,7 @@ jobs:
   # 主站頁面與預約流程（真實 Chromium）
   site:
     name: site
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -124,7 +124,7 @@ jobs:
   # 研究站：各站歡迎畫面構圖（最耗時的單一步驟，獨立一條）
   science-layout:
     name: science-layout
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -153,7 +153,7 @@ jobs:
   # 研究站：顯微鏡指標操作、各站操作紀錄與挑戰
   science-stations:
     name: science-stations
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -288,7 +288,7 @@ jobs:
   # 新比熱原生驗收獨立並行；全部 28 案及 CI Gate 仍為必要門檻。
   specific-heat:
     name: specific-heat
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -317,7 +317,7 @@ jobs:
   # 溶解度獨立新頁：原生操作、資料保護與手機視窗驗收。
   solubility:
     name: solubility
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -346,7 +346,7 @@ jobs:
   # 金屬實驗桌：完整原生流程、保存與分頁隔離，不能略過。
   metal-activity:
     name: metal-activity
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -376,7 +376,7 @@ jobs:
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）
   science-guided:
     name: science-guided
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -549,7 +549,7 @@ jobs:
   # 數學練習卷畫面與列印版面（真實 Chromium）
   math-browser:
     name: math-browser
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
