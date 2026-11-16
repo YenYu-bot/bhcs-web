@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>面鏡成像｜百宏自然實驗桌</title>
+<link rel="stylesheet" href="style.css"><script defer src="diagram.js"></script><script defer src="plane.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<header class="mast"><div><span class="brand">百宏文教</span><span class="brand-sub">自然實驗桌</span></div><button id="clear" type="button">清空紀錄</button></header>
+<main>
+<p id="storage-warning" class="storage-warning" role="status" hidden></p>
+<header class="hero"><div class="kicker">小小研究員 · 面鏡成像</div><h1>鏡子裡的像在哪裡？</h1><p>先看鏡子裡的箭頭，再換鏡子、移物體，找出影像的規律。</p></header>
+<section class="mission" aria-labelledby="mission-title">
+<span class="teacher-sprite" aria-hidden="true"></span>
+<div><div class="step" id="progress"></div><h2 id="mission-title" tabindex="-1"></h2><p id="guide"></p></div>
+<nav id="steps" aria-label="實驗步驟"></nav>
+</section>
+<section class="lab" id="lab" aria-label="面鏡操作桌">
+<div class="apparatus">
+<div class="lab-head"><span>面鏡操作桌</span><span id="mode" class="badge"></span></div>
+<section id="plane-panel" class="plane-panel" aria-label="平面鏡觀察" hidden>
+<div id="plane-diagram"></div>
+<div id="distance-tool" class="screen-tool">
+<div class="screen-title"><label for="plane-distance">移動左側的箭頭</label><output id="object-value" for="plane-distance"></output></div>
+<input id="plane-distance" type="range" min="10" max="35" step="1" aria-describedby="plane-status">
+<div class="distance-choices" role="group" aria-label="快速設定物距"><button type="button" data-distance="20">移到 20 cm</button><button type="button" data-distance="30">移到 30 cm</button></div>
+<p id="plane-status" class="plane-status"></p>
+</div>
+<details id="plane-why" class="ray-explain"><summary>為什麼鏡後看得到箭頭？</summary><p>光在鏡面反射後進入眼睛。把反射的方向往回找，像的位置看起來就在鏡面另一側；光並沒有真的走到鏡子後面，這樣的像叫做虛像。</p></details>
+</section>
+<p id="concave-transition" class="concave-transition" hidden></p>
+<div id="concave-presets" class="screen-tool concave-presets" hidden>
+<div class="screen-title"><span id="concave-distance-label">物體放在哪？</span><small>只改物距</small></div>
+<div class="concave-choices" role="group" aria-labelledby="concave-distance-label">
+<button type="button" data-concave="30">30 cm</button><button type="button" data-concave="20">20 cm</button><button type="button" data-concave="15">15 cm</button><button type="button" data-concave="10">10 cm</button><button type="button" data-concave="6">6 cm</button>
+</div></div>
+<div class="visual-wrap" id="visual-wrap">
+<section id="mirror-panel" class="visual-card"><h3>從鏡子前面看 <small id="view-hint">比較箭頭方向與大小</small></h3><div id="mirror-view"></div></section>
+<section id="ray-panel" class="visual-card"><h3>從側面看 <small id="side-hint">比較物體、鏡面和像的位置</small></h3><div id="diagram"></div></section>
+<div id="screen-tool" class="screen-tool" hidden>
+<div class="screen-title"><label for="screen">移動光屏</label><output id="screen-value" for="screen"></output></div>
+<input id="screen" type="range" min="5" max="35" step="0.5" aria-describedby="screen-help">
+<div class="screen-side"><button type="button" data-screen="10">鏡前 10 cm</button><button type="button" data-screen="15">鏡前 15 cm</button><button type="button" data-screen="20">鏡前 20 cm</button><button type="button" data-screen="30">鏡前 30 cm</button></div>
+<button id="screen-toggle" class="screen-toggle" type="button" hidden>暫時移開光屏</button>
+<p id="screen-help">沿實線找交會點，再把光屏移過去。也可用方向鍵微調。</p>
+<p id="rig-status" class="rig-status" role="status"></p>
+</div>
+<section class="visual-card" id="projection-panel" hidden><h3>光屏上看見什麼？</h3><div id="projection"></div><p id="concave-screen-note" class="scope-note" hidden></p></section>
+</div>
+<details id="explain-rays" class="ray-explain" hidden><summary>實線和虛線代表什麼？</summary><p>實線是光實際走過的路；虛線是將反射光往回延長。只有實際光線會聚的地方，光屏才能接到像。</p></details>
+<div class="coach"><b>現在要做</b><span id="coach"></span></div>
+<div class="actions"><button class="primary" id="act" type="button"></button></div>
+<details id="plane-check" class="ray-explain" hidden><summary>再試一個距離</summary><p>箭頭離鏡面 25 cm 時，像離鏡面多遠？</p><div class="distance-choices" role="group" aria-label="像到鏡面的距離"><button type="button" data-check="25">25 cm</button><button type="button" data-check="50">50 cm</button></div><p id="plane-feedback" role="status"></p></details>
+</div>
+<aside id="evidence" class="evidence" aria-labelledby="evidence-title">
+<div class="kicker">比較證據</div><h2 id="evidence-title">這一回看什麼？</h2>
+<div id="reading"></div><div id="compare"></div>
+</aside>
+</section>
+<section class="review" id="journal" aria-labelledby="review-title">
+<div class="kicker">實驗手札</div><h2 id="review-title" tabindex="-1">我的面鏡觀察</h2><div id="notebook"></div>
+</section>
+<section id="challenge" class="review" hidden aria-labelledby="quiz-title">
+<div class="kicker">最後一關</div><h2 id="quiz-title" tabindex="-1">用觀察結果回答</h2>
+<a class="evidence-link" href="#review-title">↑ 回看實驗手札</a><div id="questions"></div><p id="done" aria-live="polite"></p>
+</section>
+<details class="limits"><summary>模型條件</summary><p>同一支直立箭頭，凸面鏡、凹面鏡的焦距大小都是 10 cm。圖為理想近軸模型，只畫代表性光線，不呈現視野、亮度或實際尺寸。鏡中觀察窗為箭頭的方向與相對大小示意。實像、虛像都能在適當位置用眼睛看見；本實驗用光屏驗證能否把像投在屏上。光屏距理想像位置 0.5 cm 內，本模型視為清晰。</p></details>
+</main>
+<dialog id="clear-dialog" aria-labelledby="clear-title"><form method="dialog"><h2 id="clear-title">清空本實驗紀錄？</h2><p>只清除這一站的觀察與作答，從第一步重作。</p><div class="actions"><button value="cancel" autofocus>取消</button><button class="primary" value="clear">清空並重作</button></div></form></dialog>
+</body>
+</html>
