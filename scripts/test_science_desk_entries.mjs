@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {fileURLToPath} from 'node:url';import {JSDOM} from 'jsdom';import {completedDeskPublic} from './science/catalog.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8'),doc=p=>new JSDOM(read(p)).window.document;
 const directory=doc('tools/science/index.html'),resources=doc('ziyuan.html');
-assert.equal(directory.querySelectorAll('.resource').length,63);
+assert.equal(directory.querySelectorAll('.resource').length,64);
 const baseline=JSON.parse(read('scripts/public-desk-legacy-baseline.json'));
 assert.equal(baseline.source_commit,'10598e94b905bdc81c2087cd791ec28c909cce1c');
 for(const t of completedDeskPublic){
@@ -15,7 +15,7 @@ for(const t of completedDeskPublic){
 }
 for(const id of ['optics','buoyancy','microscope','acid-base','photosynthesis-factor']){const file=`tools/science/${id}-guided.html`;if(!fs.existsSync(path.join(root,file)))throw Error('missing unpublished prototype '+file);assert.match(doc(file).querySelector('meta[name="robots"]').content,/noindex/);for(const page of ['tools/science/index.html','ziyuan.html','sitemap.xml'])assert(!read(page).includes(`${id}-guided.html`),'prototype stays unlisted');}
 assert(doc('tools/science/metal-activity.html').querySelector('option[value="mg"]'));assert(doc('tools/science/metal-activity.html').querySelector('option[value="ag"]'));
-console.log('PASS 63 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
+console.log('PASS 64 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
 
 const inlineSources=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>m[2]);
 // Reverse only the approved vocabulary category metadata before checking the old hashes.
@@ -42,3 +42,35 @@ for(const t of completedDeskPublic){
  dom.window.close();
 }
 console.log('PASS actual researcher shell keeps version navigation visible through all four screens');
+
+// The six replacements use the accepted labs as the primary link in both
+// directories; legacy tools remain discoverable without adding counted cards.
+const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization'];
+const oldByLab={lens:'science/optics.html',motion:'motion-graphs-desk/', 'reaction-rate':'science/reaction-rate.html','spring-friction':'science/spring-friction.html','electric-power':'science/electric-power.html',neutralization:'science/neutralization.html'};
+const manifest=JSON.parse(directory.querySelector('script[type="application/ld+json"]').textContent).hasPart;
+assert.equal(manifest.length,64);
+for(const id of newPaths){
+ const local=`lab/${id}/`,source=`tools/${local}index.html`;
+ const card=directory.querySelector(`.resource > a.open[href="../${local}"]`)?.closest('.resource');
+ const row=resources.querySelector(`#res-science li > a[href="tools/${local}"]`)?.closest('li');
+ assert(card&&row&&fs.existsSync(path.join(root,source)),id+' primary in both catalogues');
+ assert.equal(manifest.filter(item=>item.url===`https://www.bhcs.com.tw/tools/${local}`).length,1,id+' appears once in catalog schema');
+ assert.match(doc(source).querySelector('meta[name="robots"]')?.content,/noindex/,id+' retains page search policy');
+ assert(!read('sitemap.xml').includes(`https://www.bhcs.com.tw/tools/${local}</loc>`),id+' not introduced to sitemap');
+ const fallback=oldByLab[id];
+ if(fallback){
+  const note=resources.getElementById(row.querySelector('a').getAttribute('aria-describedby'));
+  assert(note?.querySelector(`a[href="tools/${fallback}"]`)&&row.contains(note),id+' retained list version link is accessible');
+  assert(card.querySelector(`p.subtle a[href="../${fallback}"]`),id+' retained directory version link');
+  assert(!directory.querySelector(`.resource > a.open[href="../${fallback}"]`),id+' no duplicate default in directory');
+  assert(!resources.querySelector(`#res-science li > a[href="tools/${fallback}"]`),id+' no duplicate default in resources');
+  assert(!manifest.some(item=>item.url===`https://www.bhcs.com.tw/tools/${fallback}`),id+' old link is not a second schema entry');
+ }
+}
+for(const [dir,href] of [[directory,'../motion-graphs-desk/v2/'],[resources,'tools/motion-graphs-desk/v2/']])assert(dir.querySelector(`p.subtle a[href="${href}"]`));
+for(const old of ['science/reflection-refraction.html','lens-25d/','science/pressure-fluid.html','science/motion-graphs.html']){
+ assert(directory.querySelector(`.resource > a.open[href="../${old}"]`));
+ assert(resources.querySelector(`#res-science li > a[href="tools/${old}"]`));
+}
+assert(!directory.querySelector('a[href="../lab/pressure/"]'));assert(!resources.querySelector('a[href="tools/lab/pressure/"]'));
+console.log('PASS six accepted primary cutovers plus separate mirror; legacy alternatives, indexing, and untouched topics');
