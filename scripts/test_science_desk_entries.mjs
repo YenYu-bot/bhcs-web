@@ -43,10 +43,10 @@ for(const t of completedDeskPublic){
 }
 console.log('PASS actual researcher shell keeps version navigation visible through all four screens');
 
-// The six replacements use the accepted labs as the primary link in both
+// The seven replacements use the accepted labs as the primary link in both
 // directories; legacy tools remain discoverable without adding counted cards.
-const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization'];
-const oldByLab={lens:'science/optics.html',motion:'motion-graphs-desk/', 'reaction-rate':'science/reaction-rate.html','spring-friction':'science/spring-friction.html','electric-power':'science/electric-power.html',neutralization:'science/neutralization.html'};
+const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure'];
+const oldByLab={lens:'science/optics.html',motion:'motion-graphs-desk/', 'reaction-rate':'science/reaction-rate.html','spring-friction':'science/spring-friction.html','electric-power':'science/electric-power.html',neutralization:'science/neutralization.html',pressure:'science/pressure-fluid.html'};
 const manifest=JSON.parse(directory.querySelector('script[type="application/ld+json"]').textContent).hasPart;
 assert.equal(manifest.length,64);
 for(const id of newPaths){
@@ -68,9 +68,28 @@ for(const id of newPaths){
  }
 }
 for(const [dir,href] of [[directory,'../motion-graphs-desk/v2/'],[resources,'tools/motion-graphs-desk/v2/']])assert(dir.querySelector(`p.subtle a[href="${href}"]`));
-for(const old of ['science/reflection-refraction.html','lens-25d/','science/pressure-fluid.html','science/motion-graphs.html']){
+for(const old of ['science/reflection-refraction.html','lens-25d/','science/motion-graphs.html']){
  assert(directory.querySelector(`.resource > a.open[href="../${old}"]`));
  assert(resources.querySelector(`#res-science li > a[href="tools/${old}"]`));
 }
-assert(!directory.querySelector('a[href="../lab/pressure/"]'));assert(!resources.querySelector('a[href="tools/lab/pressure/"]'));
-console.log('PASS six accepted primary cutovers plus separate mirror; legacy alternatives, indexing, and untouched topics');
+console.log('PASS seven accepted primary cutovers plus separate mirror; legacy alternatives, indexing, and untouched topics');
+
+// Keep optics unchanged; only pressure changes default in this wave.
+assert(!directory.querySelector('a[href="../lab/reflection-refraction/"]'));
+assert(!resources.querySelector('a[href="tools/lab/reflection-refraction/"]'));
+// Old pressure titles still find the new primary and the secondary old tools.
+for(const [file,url,inputId,selector] of [
+ ['tools/science/index.html','https://www.bhcs.com.tw/tools/science/','search','.resource:not([hidden]) > a.open[href="../lab/pressure/"]'],
+ ['ziyuan.html','https://www.bhcs.com.tw/ziyuan.html','resource-search','#res-science li:not(.resource-hidden) > a[href="tools/lab/pressure/"]']
+]){
+ const dom=new JSDOM(read(file),{url,runScripts:'outside-only'});
+ try{
+  const {window:w}=dom,d=w.document,input=d.getElementById(inputId);
+  for(const script of d.querySelectorAll('script:not([src]):not([type])'))w.eval(script.textContent);
+  for(const term of ['氣壓、水壓與流體實驗室','水平管流動']){
+   input.value=term;input.dispatchEvent(new w.Event('input',{bubbles:true}));
+   assert(d.querySelector(selector),file+' pressure can be found using '+term);
+  }
+ }finally{dom.window.close();}
+}
+console.log('PASS pressure aliases find the new primary without changing light entry');
