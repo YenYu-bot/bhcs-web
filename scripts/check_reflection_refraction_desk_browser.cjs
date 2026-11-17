@@ -42,14 +42,68 @@ const server=http.createServer((req,res)=>{
    await slider.press('ArrowLeft');
    if(mobile){
     const sess=await ctx.newCDPSession(page);
-    const touch=(type,xy)=>sess.send('Input.dispatchTouchEvent',{type,touchPoints:xy?[{x:xy.x,y:xy.y,id:7}]:[]});
+    const dispatched=[];
+    const touch=(type,xy,expected)=>{
+      const touchPoints=xy?[{x:xy.x,y:xy.y,id:7}]:[];
+      dispatched.push({at:Date.now(),type,touchPoints,expected});
+      return sess.send('Input.dispatchTouchEvent',{type,touchPoints});
+    };
+    // Observe native events; never dispatch synthetic application input or alter CSS.
+    await page.evaluate(()=>{
+      const events=[],panel=document.getElementById('diagram');
+      let original=null;
+      const label=el=>el instanceof Element?{
+        name:el.localName,id:el.id||null,handle:el.hasAttribute('data-angle-handle'),
+        connected:el.isConnected,touchAction:getComputedStyle(el).touchAction
+      }:null;
+      const readings=()=>[...document.querySelectorAll('#reading .metric strong')].map(n=>n.textContent);
+      const types=['pointerdown','pointermove','pointerup','pointercancel','gotpointercapture','lostpointercapture','touchstart','touchmove','touchend','touchcancel'];
+      const seen=new WeakMap();
+      for(const type of types){
+        document.addEventListener(type,e=>{
+          if(e.type==='pointerdown')original=e.target;
+          const coords=e.changedTouches?.[0]||e;
+          const client=Number.isFinite(coords.clientX)?{x:coords.clientX,y:coords.clientY}:null;
+          const hit=client?document.elementFromPoint(client.x,client.y):null;
+          const event={
+            at:performance.timeOrigin+performance.now(),type:e.type,client,target:label(e.target),hit:label(hit),
+            original:label(original),sameAsOriginal:e.target===original,
+            changedTouches:e.changedTouches?Array.from(e.changedTouches).map(t=>({id:t.identifier,x:t.clientX,y:t.clientY,target:label(t.target)})):undefined,
+            activeTouches:e.touches?.length,cancelable:e.cancelable,pointerId:e.pointerId,pointerType:e.pointerType,buttons:e.buttons,
+            panelCapture:Number.isInteger(e.pointerId)?panel.hasPointerCapture(e.pointerId):undefined,
+            panelTouchAction:getComputedStyle(panel).touchAction,scroll:[scrollX,scrollY],readings:readings()
+          };
+          seen.set(e,event);
+          if(events.length===100)events.shift();events.push(event);
+        },{capture:true,passive:true});
+        window.addEventListener(type,e=>{
+          const event=seen.get(e);
+          if(event)event.after={
+            defaultPrevented:e.defaultPrevented,
+            panelCapture:Number.isInteger(e.pointerId)?panel.hasPointerCapture(e.pointerId):undefined,
+            originalConnected:original?.isConnected,readings:readings()
+          };
+        },{passive:true});
+      }
+      window.__bhcsReflectionTouchTrace=lastPoint=>{
+        const v=window.visualViewport;
+        const rect=el=>el?.getBoundingClientRect().toJSON()??null;
+        return {
+          events,readings:readings(),scroll:[scrollX,scrollY],viewport:{width:innerWidth,height:innerHeight,visualWidth:v?.width,visualHeight:v?.height,scale:v?.scale,offsetLeft:v?.offsetLeft,offsetTop:v?.offsetTop},
+          panel:label(panel),panelRect:rect(panel),svg:label(panel.querySelector('svg')),
+          handles:[...panel.querySelectorAll('[data-angle-handle]')].map(el=>({ ...label(el),rect:rect(el),label:el.getAttribute('d')||el.getAttribute('cx') })),
+          original:label(original),lastPoint,hitNow:lastPoint?label(document.elementFromPoint(lastPoint.x,lastPoint.y)):null
+        };
+      };
+    });
+    try{
     const point=(deg, radius=70)=>page.locator('#diagram svg').evaluate((svg,{deg,radius})=>{
       const r=deg*Math.PI/180,p=svg.createSVGPoint();p.x=210-radius*Math.sin(r);p.y=134-radius*Math.cos(r);
       const x=p.matrixTransform(svg.getScreenCTM());return {x:x.x,y:x.y};
     },{deg,radius});
     const start=()=>page.locator('#diagram circle[data-angle-handle]').last().evaluate(el=>{const b=el.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2};});
     const moveAndObserve=async angle=>{
-      await touch('touchMove',await point(angle));
+      await touch('touchMove',await point(angle),angle);
       // CDP acknowledges the input before a frame can deliver its pointermove.
       // Await both live readings before sending the next move or ending the touch.
       await page.waitForFunction(expected=>{
@@ -79,6 +133,12 @@ const server=http.createServer((req,res)=>{
     A.deepEqual(await measure(),capturedValue,'empty bench swipe should scroll only');
     A.equal(await notebook(),0);
     await click();A.deepEqual(await measure(),['20°','20°']);
+    }catch(error){
+      const lastPoint=dispatched.filter(packet=>packet.touchPoints.length).at(-1)?.touchPoints[0]??null;
+      const browserTrace=await page.evaluate(p=>window.__bhcsReflectionTouchTrace?.(p),lastPoint).catch(e=>({traceError:String(e)}));
+      console.error('REFLECTION_NATIVE_TOUCH_DIAGNOSTICS '+JSON.stringify({width,dispatched,browserTrace}));
+      throw error;
+    }
    }
    const observed=[];
    for(let n=0;n<28&&!/^任務 6/.test(await page.locator('#progress').innerText());n++){
