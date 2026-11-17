@@ -1,0 +1,20 @@
+{
+  "baseline_commit": "7862f2fccb93a44dd4ebe4f0128338ca258af42f",
+  "changes": [
+    {
+      "path": "scripts/build_science.mjs",
+      "before_blob": "2595533450ac0e517c19cd7448e1722fa3b5b7a9",
+      "after_blob": "835520cf8a65e74b7ebf1673d5edc7f8de7a7071"
+    },
+    {
+      "path": "scripts/science/catalog.mjs",
+      "before_blob": "399e40481123b3c3c7a51cc9ef74a1d8f592616b",
+      "after_blob": "a401b9c739a494925d98a986902f7a082ac02cc7"
+    },
+    {
+      "path": "ziyuan.html",
+      "before_blob": "71137eaf82ac74b8012069073e77063cb74a9e21",
+      "after_blob": "aab5cd333fe6559a05dd343ba8109283d684a9a2"
+    }
+  ]
+}

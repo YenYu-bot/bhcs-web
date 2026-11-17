@@ -1177,6 +1177,13 @@
       "approved_blob": "3b3bbb64f98e18f90836e0ba1960798227fe2442",
       "reason": "Permutations 相異物分配: memoize the brute-force enumeration per (n, boxes, style) so verification no longer re-enumerates up to 65,536 assignments on every call; generated questions and answers are byte-identical (900-sample comparison), CI 15 s audit timeout no longer hit.",
       "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "efd3e2b0b15d0321ae62f5f745ce70a7d1327bb6",
+      "approved_blob": "849b60d6a3ed7ebd9d1248c4530fe5456ff2681a",
+      "reason": "Change the primary entry of six accepted labs and list the separate mirror desk; preserve all older experiments via secondary or existing links.",
+      "pull_request": null
     }
   ]
 }

@@ -71,11 +71,11 @@ for(const [file,href] of [['ziyuan.html','tools/pulley-desk/'],['tools/science/i
  const s=read(file);assert.equal(s.split(`href="${href}"`).length,2,`${file}: unique new discovery link`);
  for(const keep of ['pulley-incline.html','lever-desk/','lever-torque.html','buoyancy-density-lab.html','buoyancy-lab/','microscope-3d/','lens-25d/'])assert.ok(s.includes(keep),`${file}: existing discovery ${keep}`);
 }
-assert.match(read('tools/science/index.html'),/63 項教材/);
-assert.match(read('ziyuan.html'),/全部 63 項自然教材/);
-assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">62 項/);
-assert.match(read('ziyuan.html'),/理化 <small>44 項/);
-assert.match(read('ziyuan.html'),/目前共 258 項/);
+assert.match(read('tools/science/index.html'),/64 項教材/);
+assert.match(read('ziyuan.html'),/全部 64 項自然教材/);
+assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">63 項/);
+assert.match(read('ziyuan.html'),/理化 <small>45 項/);
+assert.match(read('ziyuan.html'),/目前共 259 項/);
 assert.equal(standalonePublic.length,8);
 assert.match(entries[0].description,/私人原型站紀錄不會自動移入官網/);
 assert.equal((read('sitemap.xml').match(/<loc>https:\/\/www\.bhcs\.com\.tw\/tools\/pulley-desk\/<\/loc>/g)||[]).length,1);

@@ -94,3 +94,27 @@ export const completedDeskPublic=Object.freeze([
  {id:'solubility',file:'solubility-desk/',title:'溶解度實驗桌',subject:'理化',grade:'國中',unit:'物質與溶液',minutes:'20–30',kind:'引導實驗桌',description:'跟著引導操作、觀察溶解與析出，留下證據判讀溶解度。舊版濃度與溶解度自由探究仍可使用，兩版紀錄分開保存。'},
  {id:'metal-activity',file:'metal-activity-desk/',title:'金屬活動性實驗桌',subject:'理化',grade:'國中',unit:'氧化還原',minutes:'20–30',kind:'引導實驗桌',description:'依序比較金屬置換反應，以觀察證據判讀活動性。舊版含鎂、銀選項的氧化還原自由探究仍可使用，兩版紀錄分開保存。'}
 ].map(Object.freeze));
+
+// Public, accepted lab desks. Keep older releases available for older records
+// and for tools/variables not included in the new teaching sequence.
+export const primaryLabDesks=Object.freeze([
+ {id:'optics',file:'lab/lens/',title:'透鏡成像實驗桌',unit:'光學與透鏡成像',minutes:'15–25',description:'分別移動物體和光屏，比較凸透鏡、凹透鏡的實像與虛像，觀察對焦與成像倍率。',previousLabel:'舊版光學與透鏡成像實驗室（可調焦距與原紀錄）'},
+ {id:'reaction-rate',file:'lab/reaction-rate/',title:'反應速率實驗桌',unit:'反應速率與表面積',minutes:'10–15',description:'只改變同質量大理石的顆粒大小，比較大塊、顆粒和粉末的模擬反應。模擬時間未經實驗校準。',previousLabel:'舊版大理石與鹽酸反應速率實驗桌（收集曲線與原紀錄）'},
+ {id:'spring-friction',file:'lab/spring-friction/',title:'彈簧與摩擦實驗桌',unit:'力的測量',minutes:'15–20',description:'掛砝碼量伸長，觀察靜摩擦到滑動的臨界點，再比較正向力與接觸面積。',previousLabel:'舊版彈簧與靜摩擦實驗室（自由探究與原紀錄）'},
+ {id:'electric-power',file:'lab/electric-power/',title:'電流熱效應實驗桌',unit:'電流熱效應',minutes:'15–20',description:'用電表與加熱實驗，比較固定電壓、固定電流時的電功率、電能及水溫。',previousLabel:'舊版電流熱效應實驗室（自由探究與原紀錄）'},
+ {id:'neutralization',file:'lab/neutralization/',title:'酸鹼中和實驗桌',unit:'酸鹼中和',minutes:'15–20',description:'用虛擬滴定管比較中和點與酚酞變色，觀察濃度及酸鹼反應比例和滴定體積的關係。',previousLabel:'舊版酸鹼中和實驗室（pH 曲線與原紀錄）'}
+].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t,previousFile:`science/${t.id}.html`})));
+
+export const mirrorLabDesk=Object.freeze({
+ file:'lab/mirror/',title:'面鏡成像實驗桌',subject:'理化',grade:'國中',unit:'光學與面鏡成像',
+ description:'比較平面鏡、凸面鏡與凹面鏡。切換凹面鏡的五種物距，比較焦點內外，並用光屏檢查能否接到實像。',
+ minutes:'15–25',kind:'引導實驗桌'
+});
+
+
+export const motionLabDesk=Object.freeze({
+ file:'lab/motion/',title:'小車運動圖實驗桌',subject:'理化',grade:'國中',unit:'位置、速度與運動圖',
+ description:'操作小車並比對位置與速度圖，練習讀圖與累積觀察證據。',
+ minutes:'20–30',kind:'引導實驗桌',previousFile:'motion-graphs-desk/',previousLabel:'舊版小車運動圖實驗桌（入門與原紀錄）',
+ additionalPreviousFile:'motion-graphs-desk/v2/',additionalPreviousLabel:'舊版進階五案例與原紀錄'
+});

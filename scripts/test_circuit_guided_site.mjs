@@ -28,11 +28,11 @@ test('public launch: SEO, canonical, science index, resource directory and sitem
   assert.equal((index.match(/href="\.\.\/science\/circuit-guided\.html"/g)||[]).length,1);
   assert.equal((resources.match(/href="tools\/science\/circuit-guided\.html"/g)||[]).length,1);
   assert.match(read('scripts/science/catalog.mjs'),/file:'science\/circuit-guided\.html'/);
-  assert.match(index, /63 項教材/);
-  assert.match(resources, /全部 63 項自然教材/);
-  assert.match(resources, /國中自然 · 互動教材<span class="count">62 項/);
-  assert.match(resources, /理化 <small>44 項/);
-  assert.match(resources, /目前共 258 項/);
+  assert.match(index, /64 項教材/);
+  assert.match(resources, /全部 64 項自然教材/);
+  assert.match(resources, /國中自然 · 互動教材<span class="count">63 項/);
+  assert.match(resources, /理化 <small>45 項/);
+  assert.match(resources, /目前共 259 項/);
 });
 
 test('public circuit lab is discoverable while the legacy circuit stays separate',()=>{
