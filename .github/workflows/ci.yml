@@ -168,6 +168,14 @@ jobs:
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
+      - name: Check pressure desk mobile touch, scrolling, and gauge readings
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_pressure_desk_browser.cjs
+      - name: Check reflection and refraction mobile touch and optical boundaries
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_reflection_refraction_desk_browser.cjs
       - name: Check real microscope pointer input and navigation
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
