@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>水壓與氣壓｜百宏自然實驗桌</title>
+<link rel="stylesheet" href="style.css"><script defer src="diagram.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<header class="mast"><div><span class="brand">百宏文教</span><span class="brand-sub">自然實驗桌</span></div><button id="clear" type="button">清空紀錄</button></header>
+<main>
+<p id="storage-warning" class="storage-warning" role="status" hidden></p>
+<header class="hero"><div class="kicker">小小研究員 · 壓力觀察</div><h1>水壓與氣壓</h1><p>先用水銀柱看見大氣壓，再比較水深和壓縮空氣如何改變壓力。</p></header>
+<section class="mission" aria-labelledby="mission-title"><span class="teacher-sprite" aria-hidden="true"></span><div><div class="step" id="progress"></div><h2 id="mission-title" tabindex="-1"></h2><p id="guide"></p></div><nav id="steps" aria-label="實驗步驟"></nav></section>
+<section class="lab pressure-lab" id="lab" aria-label="壓力操作桌">
+<div class="apparatus">
+<div class="lab-head"><span id="bench-label">水槽與探頭</span><span id="mode" class="badge"></span></div>
+<div id="pressure-diagram" class="pressure-figure"></div>
+<div class="pressure-readings" id="readings" aria-live="polite"></div>
+<div id="air-tools" class="screen-tool pressure-tools" hidden>
+<div class="screen-title"><label for="air-pressure">改變外界大氣壓</label><output id="air-value" for="air-pressure"></output></div>
+<input id="air-pressure" type="range" min="60" max="110" step="0.1" aria-describedby="air-help">
+<div class="pressure-presets pressure-presets-pair" role="group" aria-label="設定外界大氣壓"><button type="button" data-air="101.3">101.3 kPa</button><button type="button" data-air="80">80 kPa</button></div>
+<p id="air-help">試著降到 80 kPa，水銀柱會往哪裡移？</p>
+</div>
+<div id="water-tools" class="screen-tool pressure-tools">
+<div class="screen-title"><label for="depth">移動探頭</label><output id="depth-value" for="depth"></output></div>
+<input id="depth" type="range" min="0" max="2" step="0.1" aria-describedby="depth-help">
+<div class="pressure-presets" role="group" aria-label="設定探頭深度"><button type="button" data-depth="0">水面 0 m</button><button type="button" data-depth="1">深 1 m</button><button type="button" data-depth="2">深 2 m</button></div>
+<p id="depth-help">拖水槽裡的探頭，或用滑桿、方向鍵。深度從水面往下量。</p>
+</div>
+<div id="gas-tools" class="screen-tool pressure-tools" hidden>
+<div class="screen-title"><label for="volume">移動活塞</label><output id="volume-value" for="volume"></output></div>
+<input id="volume" type="range" min="0.5" max="1" step="0.05" aria-describedby="volume-help">
+<div class="pressure-presets" role="group" aria-label="設定氣體體積"><button type="button" data-volume="1">1.00 L</button><button type="button" data-volume="0.75">0.75 L</button><button type="button" data-volume="0.5">0.50 L</button></div>
+<p id="volume-help">拖活塞，或用滑桿、方向鍵改體積。針筒出口封住，氣體沒有漏掉。</p>
+</div>
+<p id="torricelli-result" class="torricelli-result" hidden></p>
+<div class="actions"><button class="primary" id="act" type="button"></button></div>
+<details id="torricelli-why" class="ray-explain" hidden><summary>是什麼撐住水銀柱？</summary><p>管頂接近真空，不是它把水銀往上吸。外界空氣往下壓槽面，讓管內的水銀柱維持一定高度；外界大氣壓降低，較短的水銀柱就能平衡。</p><p>這裡只做數位模擬，課堂不操作真實水銀（汞）。</p></details>
+</div>
+<aside class="evidence" aria-labelledby="evidence-title">
+<div class="kicker">比較證據</div><h2 id="evidence-title">從哪裡開始比？</h2><p id="evidence-text" class="explain"></p><div id="comparison"></div>
+</aside>
+</section>
+<section id="journal" class="review" aria-labelledby="review-title"><div class="kicker">實驗手札</div><h2 id="review-title" tabindex="-1">我的壓力比較</h2><div id="notebook"></div></section>
+<section id="challenge" class="review" hidden aria-labelledby="quiz-title"><div class="kicker">最後一關</div><h2 id="quiz-title" tabindex="-1">拿讀值當證據</h2><a class="evidence-link" href="#review-title">↑ 回看我的比較</a><div id="questions"></div><p id="done" aria-live="polite"></p></section>
+<details class="limits"><summary>模型條件</summary><p>托里切利氣壓計以水銀密度 13,600 kg/m³、管頂壓力接近 0，柱高從槽面向上量。這是數位示意，不使用真實水銀。開口水槽取淡水密度 1,000 kg/m³，大氣壓 101.3 kPa，重力加速度 9.8 m/s²。相對壓力以大氣壓為零；絕對壓力以真空為零。密閉針筒假設氣體量和溫度不變，絕對壓力 × 體積維持不變。粒子是示意，不代表實際粒徑或粒子數。</p></details>
+</main>
+<dialog id="clear-dialog" aria-labelledby="clear-title"><form method="dialog"><h2 id="clear-title">清空本實驗紀錄？</h2><p>只清除壓力這一站的紀錄與作答，從氣壓計開始重作。</p><div class="actions"><button value="cancel" autofocus>取消</button><button class="primary" value="clear">清空並重作</button></div></form></dialog>
+</body>
+</html>
