@@ -153,6 +153,31 @@ const math=(n1,n2,i)=>(Math.asin(n1*Math.sin(i*Math.PI/180)/n2)*180/Math.PI).toF
    target.dispatchEvent(ev);return ev;
  };
  const panel=a.q('#diagram');
+ const touch=(type,target,id,{active=[id],cancelable=true}={})=>{
+   const event=new a.w.Event(type,{bubbles:true,cancelable});
+   Object.defineProperties(event,{
+     changedTouches:{value:[{identifier:id,target}]},
+     touches:{value:active.map(identifier=>({identifier,target}))}
+   });
+   target.dispatchEvent(event);return event.defaultPrevented;
+ };
+ const blank=a.q('#diagram svg');
+ const handle=a.q('#diagram circle[data-angle-handle]');
+ const otherHit=a.q('#diagram [data-angle-handle]');
+ A.equal(touch('touchstart',blank,71),false,'Blank bench must remain scrollable');
+ A.equal(touch('touchmove',blank,71),false);
+ A.equal(touch('touchstart',handle,72),true,'A single grip touch prevents native panning');
+ A.equal(touch('touchmove',otherHit,72),true,'Matching touch remains guarded even if hit-testing shifts');
+ A.equal(touch('touchmove',handle,72,{cancelable:false}),false,'Non-cancelable native events are not prevented');
+ A.equal(touch('touchmove',handle,73),false,'A different touch ID is never guarded');
+ A.equal(touch('touchmove',handle,72,{active:[72,73]}),false,'A second finger drops the single-touch guard');
+ A.equal(touch('touchmove',handle,72),false,'Guard must not resume midway through a multi-touch gesture');
+ A.equal(touch('touchstart',handle,73,{active:[72,73]}),false,'Secondary touches are not guarded');
+ for(const end of ['touchend','touchcancel']){
+   A.equal(touch('touchstart',handle,74),true);
+   A.equal(touch(end,handle,74,{active:[]}),false);
+   A.equal(touch('touchmove',handle,74),false,'Touch end or cancel clears the guard');
+ }
  const capturedSVG=a.q('#diagram svg');
  const hitLayer=()=>[...a.d.querySelectorAll('#diagram [data-angle-handle]')];
  const capturedHits=hitLayer();

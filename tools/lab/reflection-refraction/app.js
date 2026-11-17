@@ -115,6 +115,23 @@ function changeAngle(raw,viaSlider=false){
 $("angle").addEventListener("input",e=>changeAngle(e.target.valueAsNumber,true));
 let drag=null;
 const panel=$("diagram");
+let angleTouchId=null;
+const affectsAngleTouch=e=>angleTouchId!==null&&Array.from(e.changedTouches).some(t=>t.identifier===angleTouchId);
+// Chromium may take a native touch gesture for panning even with touch-action
+// on an SVG hit node. Cancel default only for a single touch starting on a grip.
+panel.addEventListener("touchstart",e=>{
+ angleTouchId=null;
+ if(e.touches.length!==1||e.changedTouches.length!==1)return;
+ const touch=e.changedTouches[0];
+ if(!touch.target.closest?.("[data-angle-handle]"))return;
+ angleTouchId=touch.identifier;
+ if(e.cancelable)e.preventDefault();
+},{passive:false});
+panel.addEventListener("touchmove",e=>{
+ if(e.touches.length!==1){angleTouchId=null;return;}
+ if(e.cancelable&&affectsAngleTouch(e))e.preventDefault();
+},{passive:false});
+for(const type of ["touchend","touchcancel"])panel.addEventListener(type,e=>{if(affectsAngleTouch(e))angleTouchId=null;},{passive:true});
 panel.addEventListener("pointerdown",e=>{
  if(drag!==null||e.button!==0||!e.target.closest("[data-angle-handle]"))return;
  drag=e.pointerId;
