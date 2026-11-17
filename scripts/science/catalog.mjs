@@ -103,7 +103,8 @@ export const primaryLabDesks=Object.freeze([
  {id:'spring-friction',file:'lab/spring-friction/',title:'彈簧與摩擦實驗桌',unit:'力的測量',minutes:'15–20',description:'掛砝碼量伸長，觀察靜摩擦到滑動的臨界點，再比較正向力與接觸面積。',previousLabel:'舊版彈簧與靜摩擦實驗室（自由探究與原紀錄）'},
  {id:'electric-power',file:'lab/electric-power/',title:'電流熱效應實驗桌',unit:'電流熱效應',minutes:'15–20',description:'用電表與加熱實驗，比較固定電壓、固定電流時的電功率、電能及水溫。',previousLabel:'舊版電流熱效應實驗室（自由探究與原紀錄）'},
  {id:'neutralization',file:'lab/neutralization/',title:'酸鹼中和實驗桌',unit:'酸鹼中和',minutes:'15–20',description:'用虛擬滴定管比較中和點與酚酞變色，觀察濃度及酸鹼反應比例和滴定體積的關係。',previousLabel:'舊版酸鹼中和實驗室（pH 曲線與原紀錄）'},
- {id:'pressure-fluid',file:'lab/pressure/',title:'水壓與氣壓實驗桌',unit:'壓力與流體',minutes:'15–20',description:'先操作托里切利水銀氣壓計，再移動水下探頭比較表壓與絕對壓力，最後推拉密閉針筒觀察氣體壓縮。',previousLabel:'舊版氣壓、水壓與流體實驗室（水平管流動、可調液體密度與原紀錄）'}
+ {id:'pressure-fluid',file:'lab/pressure/',title:'水壓與氣壓實驗桌',unit:'壓力與流體',minutes:'15–20',description:'先操作托里切利水銀氣壓計，再移動水下探頭比較表壓與絕對壓力，最後推拉密閉針筒觀察氣體壓縮。',previousLabel:'舊版氣壓、水壓與流體實驗室（水平管流動、可調液體密度與原紀錄）'},
+ {id:'reflection-refraction',file:'lab/reflection-refraction/',title:'光的反射與折射實驗桌',unit:'光學',minutes:'15–20',description:'用法線量角，比較光在介面上反射與折射的方向，再觀察光從玻璃射入空氣時的臨界角與全反射。',previousLabel:'舊版光的反射與折射實驗室（介質自由探究、平面鏡成像與原紀錄）'}
 ].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t,previousFile:`science/${t.id}.html`})));
 
 export const mirrorLabDesk=Object.freeze({
