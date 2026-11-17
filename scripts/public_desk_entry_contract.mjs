@@ -41,6 +41,10 @@ assert.deepEqual(primaryDiscovery.changes.map(c=>c.path),['scripts/build_science
 const pressureDiscovery=JSON.parse(fs.readFileSync(new URL('./pressure-only-discovery-changes.json',import.meta.url),'utf8'));
 assert.equal(pressureDiscovery.baseline_commit,'a7328e398db012715431f52aa932dc58b525398c');
 assert.deepEqual(pressureDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
+const reflectionDiscovery=JSON.parse(fs.readFileSync(new URL('./reflection-refraction-discovery-changes.json',import.meta.url),'utf8'));
+assert.equal(reflectionDiscovery.pressure_catalog_source_commit,pressureDiscovery.baseline_commit);
+assert.deepEqual(reflectionDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
+for(const c of reflectionDiscovery.changes)assert.equal(c.before_blob,pressureDiscovery.changes.find(p=>p.path===c.path).after_blob);
 export function publicDeskDiscoveryReach(file,from){
  const change=discovery.changes.find(c=>c.path===file&&c.before_blob===from);
  let at=change?change.after_blob:from;
@@ -50,5 +54,7 @@ export function publicDeskDiscoveryReach(file,from){
  const primary=primaryDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
  if(primary)at=primary.after_blob;
  const pressure=pressureDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
- return pressure?pressure.after_blob:at;
+ if(pressure)at=pressure.after_blob;
+ const reflection=reflectionDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
+ return reflection?reflection.after_blob:at;
 }
