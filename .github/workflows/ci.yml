@@ -172,6 +172,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_pressure_desk_browser.cjs
+      - name: Check reflection and refraction mobile touch and optical boundaries
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_reflection_refraction_desk_browser.cjs
       - name: Check real microscope pointer input and navigation
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
