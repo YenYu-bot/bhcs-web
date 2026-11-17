@@ -38,6 +38,9 @@ assert.deepEqual(discovery.changes.map(c=>c.path),['scripts/build_science.mjs','
 const primaryDiscovery=JSON.parse(fs.readFileSync(new URL('./primary-lab-discovery-changes.json',import.meta.url),'utf8'));
 assert.equal(primaryDiscovery.baseline_commit,'7862f2fccb93a44dd4ebe4f0128338ca258af42f');
 assert.deepEqual(primaryDiscovery.changes.map(c=>c.path),['scripts/build_science.mjs','scripts/science/catalog.mjs','ziyuan.html']);
+const pressureDiscovery=JSON.parse(fs.readFileSync(new URL('./pressure-only-discovery-changes.json',import.meta.url),'utf8'));
+assert.equal(pressureDiscovery.baseline_commit,'a7328e398db012715431f52aa932dc58b525398c');
+assert.deepEqual(pressureDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
 export function publicDeskDiscoveryReach(file,from){
  const change=discovery.changes.find(c=>c.path===file&&c.before_blob===from);
  let at=change?change.after_blob:from;
@@ -45,5 +48,7 @@ export function publicDeskDiscoveryReach(file,from){
  // Preserve the original science manifest and allow exactly this resource-page blob.
  if(file==='ziyuan.html'&&at==='71145130e4a5bb9a66d7e7031e572c1c3d38c27a')at='71137eaf82ac74b8012069073e77063cb74a9e21';
  const primary=primaryDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
- return primary?primary.after_blob:at;
+ if(primary)at=primary.after_blob;
+ const pressure=pressureDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
+ return pressure?pressure.after_blob:at;
 }

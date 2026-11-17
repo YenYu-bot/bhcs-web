@@ -1184,6 +1184,13 @@
       "approved_blob": "849b60d6a3ed7ebd9d1248c4530fe5456ff2681a",
       "reason": "Change the primary entry of six accepted labs and list the separate mirror desk; preserve all older experiments via secondary or existing links.",
       "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "849b60d6a3ed7ebd9d1248c4530fe5456ff2681a",
+      "approved_blob": "63347fecbc914047619c15883d30750a08709aae",
+      "reason": "Make the verified water and air pressure desk primary; preserve the older pressure page and link it for flexible conditions, pipe flow, and records.",
+      "pull_request": null
     }
   ]
 }
