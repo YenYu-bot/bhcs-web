@@ -48,17 +48,26 @@ const server=http.createServer((req,res)=>{
       const x=p.matrixTransform(svg.getScreenCTM());return {x:x.x,y:x.y};
     },{deg,radius});
     const start=()=>page.locator('#diagram circle[data-angle-handle]').last().evaluate(el=>{const b=el.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2};});
+    const moveAndObserve=async angle=>{
+      await touch('touchMove',await point(angle));
+      // CDP acknowledges the input before a frame can deliver its pointermove.
+      // Await both live readings before sending the next move or ending the touch.
+      await page.waitForFunction(expected=>{
+        const labels=[...document.querySelectorAll('#reading .metric strong')];
+        return labels.length===2&&labels.every(label=>Math.abs(parseFloat(label.textContent)-expected)<=.35);
+      },angle,{timeout:3500});
+    };
     await page.locator('#diagram').scrollIntoViewIfNeeded();
     const before=await page.evaluate(()=>scrollY);
     await touch('touchStart',await start());
-    await touch('touchMove',await point(31));
-    await touch('touchMove',await point(48));
+    await moveAndObserve(31);
+    await moveAndObserve(48);
     await touch('touchCancel');
     A.ok((await measure()).every(x=>Math.abs(parseFloat(x)-48)<=.35),String(await measure()));
     A.equal(await page.evaluate(()=>scrollY),before,'drag must not scroll');
     await touch('touchStart',await start());
-    await touch('touchMove',await point(37));
-    await touch('touchMove',await point(29));
+    await moveAndObserve(37);
+    await moveAndObserve(29);
     await touch('touchEnd');
     A.ok((await measure()).every(x=>Math.abs(parseFloat(x)-29)<=.35),String(await measure()));
     const swipeStart=await page.locator('#diagram svg').evaluate(s=>{const p=s.createSVGPoint();p.x=385;p.y=210;const q=p.matrixTransform(s.getScreenCTM());return{x:q.x,y:q.y};});
