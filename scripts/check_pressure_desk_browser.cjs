@@ -26,7 +26,9 @@ async function scenario(browser,origin,width){
   page.on('response',r=>{if(r.status()>=400)failed.push([r.status(),r.url()]);});
   const view=async mode=>{
     stages.push(mode);
-    assert.equal(await l(`svg[data-pressure-diagram="${mode}"]`).count(),1,mode);
+    const panel=l(`svg[data-pressure-diagram="${mode}"]`);
+    await panel.waitFor({state:'visible',timeout:3500});
+    assert.equal(await panel.count(),1,mode);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth+1),`unexpected horizontal overflow at ${width}px/${mode}`);
   };
   const values=async(...expected)=>assert.deepEqual(await l('#readings strong').allTextContents(),expected);
@@ -113,8 +115,11 @@ async function scenario(browser,origin,width){
     assert.match(await l('#done').innerText(),/四題全對/);
     assert.match(await l('#notebook').innerText(),/120\.9 kPa/);
     await click('#clear'); await click('#clear-dialog button[value=cancel]');
+    await l('#clear-dialog').waitFor({state:'hidden',timeout:3500});
     assert.match(await l('#done').innerText(),/四題全對/);
     await click('#clear'); await click('#clear-dialog button[value=clear]');
+    await l('#clear-dialog').waitFor({state:'hidden',timeout:3500});
+    // The dialog close event dispatches on a rendering task after the click.
     await view('torricelli'); await values('101.3 kPa','76.0 cm');
     assert.deepEqual(errors,[]); assert.deepEqual(failed,[]);
     console.log(`PASS pressure story at ${width}px: ${mobile?'Chromium emulated touch, cancel/recover, empty-apparatus scroll':'desktop mouse'}, no overflow/errors, numerical checkpoints, quiz, reload and reset`);
