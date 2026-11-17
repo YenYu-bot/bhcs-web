@@ -155,7 +155,8 @@ const server=http.createServer((req,res)=>{
    A.deepEqual(observed[0].map(parseFloat),[20,20]);A.deepEqual(observed[1].map(parseFloat),[40,40]);
    A.deepEqual(observed[2].map(parseFloat),[0,0,0]);A.deepEqual(observed[3].map(parseFloat),[30,30,19.47]);
    A.deepEqual(observed[4].map(parseFloat),[30,30,22.08]);A.deepEqual(observed[5].map(parseFloat),[30,30,48.59]);
-   A.deepEqual(observed[6].map(parseFloat),[41.81,41.81,90]);A.deepEqual(observed[7].map(parseFloat).slice(0,2),[45,45]);
+   A.match(observed[6][0],/^約\s*41\.81°$/);
+   A.deepEqual(observed[6].slice(1).map(parseFloat),[41.81,90]);A.deepEqual(observed[7].map(parseFloat).slice(0,2),[45,45]);
    A.equal(observed[7][2],'無折射光');
    A.ok(await within());A.equal(await notebook(),8);
    await page.reload();
