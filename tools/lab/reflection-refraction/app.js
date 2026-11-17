@@ -72,9 +72,31 @@ function chooseAction(){
 const metric=(label,value)=>'<div class="metric"><span>'+label+'</span><strong>'+value+'</strong></div>';
 const incidence=v=>v.outcome==="critical"?"約 41.81°":fmt(v.angle);
 const transmission=v=>v.outcome==="mirror"?"不適用":v.outcome==="tir"?"無折射光":fmt(v.refracted);
+function paintDiagram(v){
+ const markup=draw.apparatus(v), svg=panel.firstElementChild;
+ if(drag===null||!svg){panel.innerHTML=markup;return;}
+ const template=document.createElement("template");
+ template.innerHTML=markup;
+ const next=template.content.firstElementChild;
+ const handles=node=>[...node.children].filter(el=>el.hasAttribute("data-angle-handle"));
+ const existing=handles(svg), updated=handles(next);
+ // A native touch sequence stays tied to its original target. Keep the SVG
+ // and all three grip/hit nodes connected while updating their geometry.
+ if(!existing.length||existing.length!==updated.length||existing.some((el,i)=>el.localName!==updated[i].localName))return;
+ const syncAttrs=(target,source)=>{
+  for(const attr of [...target.attributes])if(!source.hasAttribute(attr.name))target.removeAttribute(attr.name);
+  for(const attr of source.attributes)if(target.getAttribute(attr.name)!==attr.value)target.setAttribute(attr.name,attr.value);
+ };
+ syncAttrs(svg,next);
+ const layer=document.createDocumentFragment();
+ for(const node of [...next.children])if(!node.hasAttribute("data-angle-handle"))layer.append(node);
+ for(const node of [...svg.children])if(!node.hasAttribute("data-angle-handle"))node.remove();
+ svg.insertBefore(layer,existing[0]);
+ existing.forEach((node,i)=>syncAttrs(node,updated[i]));
+}
 function renderOptics(syncSlider=true){
  const v=view(active,angleOverride);action=chooseAction();
- $("mode").textContent=v.name;$("diagram").innerHTML=draw.apparatus(v);
+ $("mode").textContent=v.name;paintDiagram(v);
  if(syncSlider)$("angle").value=String(Math.round(v.angle*10)/10);
  $("angle").setAttribute("aria-valuetext",incidence(v));$("angle-value").textContent=incidence(v);
  $("reading").innerHTML='<div class="values">'+metric("入射角",incidence(v))+metric("反射角",fmt(v.reflected))+(v.scene==="mirror"?"":metric("折射角",transmission(v)))+'</div><p class="outcome">'+v.readout+'</p>';
