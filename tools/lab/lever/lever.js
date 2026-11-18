@@ -1,14 +1,15 @@
 // 槓桿實驗桌（新版試用）
 // 科學模型直接沿用正式站 tools/lever-desk/model.mjs，不另寫計算。
 import { IDS, clone, initialLayout, validateLayout, calculate, racks, qualifies, signature } from '../../lever-desk/model.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, Spring, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, Spring, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const PX = 500, PY = 201, U = 7.6, TIP = 8;           // 支點、每公分長度、方向示意角度
 const WEIGHT = '../../../assets/science/props/prop-hanging-weight.webp';
 const PLANK = '../../../assets/science/props/prop-lever-plank.webp';
 const STACK = 62;
-const db = store('bhcs.lab.lever.v1');
+const db = await openNotebook('bhcs.lab.lever.v1');
 
 const STEPS = [
   { id: 'A', label: '原本平衡嗎' },
@@ -444,9 +445,16 @@ $('#save').addEventListener('click', keep);
 $('#task-reset').addEventListener('click', () => goStep(S.step));
 $('#why').addEventListener('click', () => $('#why-dialog').showModal());
 $('#open-notes').addEventListener('click', openNotes);
-function clearAll() {
+let resettingNotebook = false;
+async function clearAll() {
+  if (resettingNotebook) return;
   if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
-  db.clear(); S = fresh(); selected = null; foundShown = null; lastNote = null; teacher.last = '';
+  resettingNotebook = true;
+  let cleared;
+  try { cleared = await db.clear(); }
+  finally { resettingNotebook = false; }
+  if (!cleared) return;
+  S = fresh(); selected = null; foundShown = null; lastNote = null; teacher.last = '';
   document.querySelectorAll('dialog[open]').forEach(d => d.close());
   beamSpring.set(0, true); render();
   if (narrow.matches) scrollTo({ top: 0, behavior: 'auto' });

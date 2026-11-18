@@ -4,11 +4,12 @@
 import { derive as rampDerive, RAMPS } from '../../incline-desk/model.mjs';
 import { derive as frictionDerive, PARAMETERS as FP } from '../../friction-efficiency-desk/model.mjs';
 import { idealIncline, LENGTHS, HEIGHTS } from './ideal-model.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
-const db = store('bhcs.lab.incline.v2');
+const db = await openNotebook('bhcs.lab.incline.v2');
 const SHORT = { short: '短斜面', long: '長斜面', ideal: '光滑坡面', rough: '粗糙坡面', cmp: '比一比' };
 const cmpName = r => `長 ${r.L}／高 ${r.H}`;
 const WEIGHT = 10;
@@ -482,9 +483,17 @@ function openFinish() {
   $('#finish-list').innerHTML = ['short', 'long', 'ideal', 'rough'].map(line).filter(Boolean).join('') + (cmpRecs().length ? `<li><b>比一比</b>：量了 ${cmpRecs().length} 種長度與高度的組合</li>` : '');
   $('#finish-dialog').showModal();
 }
-function clearAll() {
+let resettingNotebook = false;
+async function clearAll() {
+  if (resettingNotebook) return;
   if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
-  db.clear(); S = fresh(); shownS = 0; foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = null;
+  resettingNotebook = true;
+  let cleared;
+  try { cleared = await db.clear(); }
+  finally { resettingNotebook = false; }
+  if (!cleared) return;
+  cancelAnimationFrame(tween); dragging = null; document.body.classList.remove("dragging");
+  S = fresh(); shownS = 0; foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = null;
   document.querySelectorAll('dialog[open]').forEach(d => d.close());
   render(); if (narrow.matches) scrollTo({ top: 0 });
 }

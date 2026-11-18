@@ -2,11 +2,12 @@
 // 溶解、杯底固體與濃度直接用 tools/solubility-desk/model.mjs 的 calculate()；不另寫模型。
 import { calculate } from '../../solubility-desk/model.mjs';
 import { formatMass, formatPercent } from '../../solubility-desk/format.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
-const db = store('bhcs.lab.solubility.v1');
+const db = await openNotebook('bhcs.lab.solubility.v1');
 const SCOOP = 10, POUR = 20;
 const g = n => formatMass(n), pct = n => formatPercent(n);
 const conc = m => Number(m.concentration.toFixed(1));
@@ -452,10 +453,17 @@ function openFinish() {
   $('#finish-list').innerHTML = [line('add', r => r.solute === 50, '加 50 g'), line('heat', r => r.T === 60, '加熱'), line('cool', r => r.T === 20, '冷卻'), line('water', r => r.water === 120, '加水到 120 g'), line('water', r => r.water === 200, '加水到 200 g')].filter(Boolean).join('');
   $('#finish-dialog').showModal();
 }
-function clearAll() {
+let resettingNotebook = false;
+async function clearAll() {
+  if (resettingNotebook) return;
   if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
+  resettingNotebook = true;
+  let cleared;
+  try { cleared = await db.clear(); }
+  finally { resettingNotebook = false; }
+  if (!cleared) return;
   if (anim) { cancelAnimationFrame(anim); anim = null; }
-  db.clear(); S = fresh(); shownT = S.T; foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = false;
+  S = fresh(); shownT = S.T; foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = false;
   document.querySelectorAll('dialog[open]').forEach(d => d.close());
   render(); if (narrow.matches) scrollTo({ top: 0 });
 }

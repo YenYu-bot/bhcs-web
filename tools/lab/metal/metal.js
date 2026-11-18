@@ -2,11 +2,12 @@
 // 反應結果直接用 tools/metal-activity-desk/inquiry.mjs 的 outcome() 與 acid.mjs 的 acidOutcome()；不另寫模型。
 import { outcome, SOLUTIONS } from '../../metal-activity-desk/inquiry.mjs';
 import { acidOutcome } from '../../metal-activity-desk/acid.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
-const db = store('bhcs.lab.metal.v1');
+const db = await openNotebook('bhcs.lab.metal.v1');
 const MNAME = { Zn: '鋅', Fe: '鐵', Cu: '銅' };
 const STRIP = { Zn: 'prop-strip-zinc.webp', Fe: 'prop-strip-iron.webp', Cu: 'prop-strip-copper.webp' };
 const SOL = { ...SOLUTIONS, HCl: { name: '稀鹽酸', formula: 'HCl', color: '#EEF5F6', colorName: '無色' } };
@@ -352,10 +353,17 @@ function openFinish() {
   ].filter(Boolean).join('');
   $('#finish-dialog').showModal();
 }
-function clearAll() {
+let resettingNotebook = false;
+async function clearAll() {
+  if (resettingNotebook) return;
   if (animating) return;
   if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
-  db.clear(); S = fresh(); foundShown = null; lastNote = null; teacher.last = '';
+  resettingNotebook = true;
+  let cleared;
+  try { cleared = await db.clear(); }
+  finally { resettingNotebook = false; }
+  if (!cleared) return;
+  S = fresh(); foundShown = null; lastNote = null; teacher.last = '';
   document.querySelectorAll('dialog[open]').forEach(d => d.close());
   render(); if (narrow.matches) scrollTo({ top: 0 });
 }

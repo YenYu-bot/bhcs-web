@@ -1198,6 +1198,83 @@
       "approved_blob": "60ee93dd30456bf83032cb33aad2cfc6a3e2854e",
       "reason": "Make the verified reflection and refraction desk primary; preserve the older optics page as a secondary link with flexible media, mirror imaging, and existing records.",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "29caeec145a639782dc48c1c0b70ce6a8e6d5ff1",
+      "approved_blob": "6455ac2f42a3a7b06fb486ffb7b6c9256ecdc657",
+      "reason": "Document the transactional notebook import and reset behavior for the three published desks and seven private candidates; discovery links are unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/buoyancy/buoyancy.js",
+      "baseline_blob": "33df47de70dcd9b7002ae4e693a950b16f9e49aa",
+      "approved_blob": "106c99e1225aa01b0db9619aab314eb50e6e1c41",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/app.js",
+      "baseline_blob": "0af28a967d6a4fa2465471157ddc3d3ee38668cf",
+      "approved_blob": "ae6664c54a1444a3d26890abceddf29da9e2b9fe",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/heat/heat.js",
+      "baseline_blob": "3282043036b3cf2ed26e70c68d4578f4e71e77e4",
+      "approved_blob": "52917c8a72db715c2c3de1e787fdf3eb22e4f63a",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/incline/incline.js",
+      "baseline_blob": "d621b08b8dc11a9fd6a505b40b85fc6b9dc2024f",
+      "approved_blob": "ebc3eac52f4319c99f44c7b89d065e3a9fd1a7be",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lever/lever.js",
+      "baseline_blob": "8ffc6312b5d6a8f804447ceed64922bb0476dfa8",
+      "approved_blob": "b038fc8754ceb4a19f5ff4f7c81fa94c95cc9114",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/metal/metal.js",
+      "baseline_blob": "dd2b6b7836d8f78936c8dd8990d25fd22cb5f5ac",
+      "approved_blob": "b1d40a0bec984c7637f9b44322eb9a0bf5124383",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/motion/motion.js",
+      "baseline_blob": "4b6c1a318d94199311582e0c7d86ce7d1b609ea3",
+      "approved_blob": "2a96c2019705caa56a2d1d697b95b21a46c18472",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pulley/pulley.js",
+      "baseline_blob": "064920dee0e8b82e6fc99d2ff2110ec29615b529",
+      "approved_blob": "66dc129b1821116fa910b6a11f5af1d947f3897e",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/app.js",
+      "baseline_blob": "1ec7a35ef8a6ce1f276ede915bbc24e073feec61",
+      "approved_blob": "1e1ff81283cb83d11fa3f14d3dbdcd6e807b17a4",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/solubility/solubility.js",
+      "baseline_blob": "29029ff2a0df098fc17a99352fa8b1c781e072ad",
+      "approved_blob": "983c8d0ce1282a613b498ac18a13aab90a08fe4f",
+      "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
+      "pull_request": null
     }
   ]
 }

@@ -1,3 +1,5 @@
+import { openNotebook } from '../shared/notebook.mjs';
+
 // Isolated classroom trial. The equations match the electric-power case in
 // scripts/science/models.mjs (2db4e00): 25 °C initial water, c = 4.2 J/(g·°C).
 const WATER_GRAMS = 100;
@@ -79,9 +81,10 @@ const questions = [
 ];
 
 const canMount = typeof document !== 'undefined' && document.getElementById('start-button');
-if (canMount) init();
+if (canMount) await init();
 
-function init() {
+async function init() {
+  const notebook = await openNotebook(STORAGE_KEY);
   const $ = id => document.getElementById(id);
   const show = (id, shown) => { if ($(id)) $(id).hidden = !shown; };
   const put = (id, value) => {
@@ -132,7 +135,7 @@ function init() {
 
   function load() {
     try {
-      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      const raw = notebook.load();
       if (!raw || raw.version !== 1) return fresh();
       const completed = [];
       if (Array.isArray(raw.completed)) {
@@ -149,10 +152,7 @@ function init() {
       return { completed, meters, stage, correct };
     } catch { return fresh(); }
   }
-  function save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, ...data, stage })); }
-    catch { /* Continuing without storage is safe; results remain in this open page. */ }
-  }
+  function save() { return notebook.save({ version: 1, ...data, stage }); }
   function activeFor(index) {
     return index === 3 ? (data.completed.includes('i12') ? 'i12' : 'i6') : order[index] ?? 'i12';
   }
@@ -546,10 +546,15 @@ function init() {
     if (stage === 5) renderQuestions();
   }
 
-  function reset() {
+  let clearingNotebook = false;
+  async function reset() {
+    if (clearingNotebook) return;
+    clearingNotebook = true;
+    const cleared = await notebook.clear();
+    clearingNotebook = false;
+    if (!cleared) { $('reset-dialog')?.close(); focus('reset-button'); return; }
     if (frame) cancelAnimationFrame(frame);
     frame = 0; previous = null;
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
     data = fresh(); stage = 0; meterChoice = 0; active = 'v6';
     seconds = 0; status = 'ready';
     renderStage();
