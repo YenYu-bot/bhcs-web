@@ -16,7 +16,7 @@
 
 - `neutralization/`：酸鹼中和實驗桌（2026-11-18 改為新版實驗桌設計）。六步：量酸液、加鹼液、中和點、濃度減半、算一算（aM₁V₁＝bM₂V₂，鹽酸與硫酸）、說說看。pH、過量離子與酚酞顏色直接用 `scripts/science/models.mjs` 的 `calculate('neutralization')`。紀錄用 `shared/notebook.mjs` 的 `bhcs.lab.neutralization.v1`。
 
-- `mirror/`：面鏡成像實驗桌。比較平面鏡、凸面鏡及凹面鏡，並以五個物距與光屏觀察焦點內外的成像。
+- `mirror/`：面鏡成像實驗桌（2026-11-18 改為新版實驗桌設計）。五步：平面鏡（30→20 cm）、凸面鏡、凹面鏡用光屏接實像、凹面鏡物距（20／15／10／6 cm）、說說看。像距與倍率用 `scripts/science/models.mjs` 的 `calculate('optics')`（理想公式與透鏡相同；凹面鏡 f>0、凸面鏡 f<0）。紀錄用 `shared/notebook.mjs` 的 `bhcs.lab.mirror.v1`。
 
 - `lens/`：透鏡成像實驗桌。移動物體與光屏，比較凸透鏡與凹透鏡成像，並觀察漸進對焦與成像倍率。
 
