@@ -1,58 +1,121 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>透鏡成像｜百宏自然實驗桌</title>
-<link rel="stylesheet" href="style.css"><script defer src="diagram.js"></script><script defer src="optics-explain.js"></script><script defer src="app.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFF8EC">
+<title>透鏡成像實驗桌｜百宏文教</title>
+<meta name="description" content="移動蠟燭和光屏，看凸透鏡在不同物距成什麼像；在焦點上不成像、焦點內用眼睛看虛像；再換凹透鏡比較。">
+<link rel="stylesheet" href="../shared/lab.css">
+<link rel="stylesheet" href="../shared/station.css">
+<link rel="stylesheet" href="./lens.css">
 </head>
-<body>
-<header class="mast"><div><span class="brand">百宏文教</span><span class="brand-sub">自然實驗桌</span></div><button id="clear" type="button">清空紀錄</button></header>
-<main>
-<p id="storage-warning" class="storage-warning" role="status" hidden></p>
-<header class="hero"><div class="kicker">小小研究員 · 透鏡成像</div><h1>透鏡把像移到哪裡？</h1><p>只動物體或換透鏡，看看光屏接得到什麼，又有哪些像要用眼睛找。</p></header>
-<div class="bench-mode"><button id="toggle-explorer" type="button" aria-pressed="false" aria-controls="free-object">自由探索：拖動物體</button></div>
-<section class="mission" aria-labelledby="mission-title"><span class="teacher-sprite" aria-hidden="true"></span><div><div class="step" id="progress"></div><h2 id="mission-title" tabindex="-1"></h2><p id="guide"></p></div><nav id="steps" aria-label="實驗步驟"></nav></section>
-<section class="lab lens-lab" id="lab" aria-label="透鏡光學桌">
-<div class="apparatus">
-<div class="lab-head"><span>光學操作桌</span><span id="mode" class="badge"></span></div>
-<p class="lens-transition" id="transition"></p>
-<div id="bench-diagram" class="lens-bench-card"></div>
-<div class="lens-tools-row">
-<div id="screen-tool" class="screen-tool">
-<div class="screen-title"><label for="screen">移動光屏</label><output id="screen-value" for="screen"></output></div>
-<input id="screen" type="range" min="5" max="40" step="0.5" aria-describedby="screen-help">
-<div class="screen-side" role="group" aria-label="選擇光屏位置"><button type="button" data-screen="10">10 cm</button><button type="button" data-screen="15">15 cm</button><button type="button" data-screen="20">20 cm</button><button type="button" data-screen="30">30 cm</button></div>
-<p id="screen-help">可拖動圖中的光屏，也可用方向鍵微調。</p>
-<div id="extended-controls" class="extended-controls" hidden><button id="extend-screen" type="button" aria-pressed="false">延伸光具座至 220 cm</button><p id="extend-status"></p></div>
-<details id="focus-help" class="ray-explain" hidden><summary>需要對焦提示？</summary><button id="focus-target" type="button"></button></details>
-</div>
-<div id="eye-tool" class="screen-tool" hidden><div class="screen-title"><span>眼睛觀察</span></div><p>站在透鏡右側，往物體的方向看。</p><button id="look" type="button" aria-pressed="false">從透鏡後看</button></div>
-<section id="observation-panel" class="lens-observation" aria-labelledby="observation-title">
-<h3 id="observation-title">光屏上看見什麼？</h3><div id="observation-art"></div><p id="rig-status" class="rig-status" role="status"></p><p id="projection-scale" class="projection-scale"></p>
-</section>
-</div>
-<div id="free-object" class="screen-tool free-object" hidden>
-<div class="screen-title"><label for="object-distance">移動左側物體</label><output id="object-reading" for="object-distance"></output></div>
-<input id="object-distance" type="range" min="5" max="35" step="0.5" aria-describedby="object-help">
-<div class="free-positions" role="group" aria-label="常用物距"><button type="button" data-object="5">5 cm</button><button type="button" data-object="10">F · 10</button><button type="button" data-object="15">15 cm</button><button type="button" data-object="20">2F · 20</button><button type="button" data-object="30">30 cm</button></div>
-<p id="object-help">可拖圖上的物體，或用滑桿／方向鍵。移物體時，光屏留在原位。</p>
-</div>
-<div class="actions"><button class="primary" id="act" type="button"></button></div>
-<details id="optional-distance" class="ray-explain" hidden><summary>想比比看 20 cm？</summary><p>只改物距，觀察像與原物體是否等大。這不影響主線紀錄。</p><div class="distance-choices" role="group" aria-label="可選的物距比較"><button type="button" data-explore="20">移到 20 cm</button><button type="button" data-explore="15">回到 15 cm</button></div></details>
-<details class="ray-explain"><summary>實線和虛線代表什麼？</summary><p>實線是光實際走過的路；虛線只是把出射光往回延長，光並沒有沿著虛線走。只有實際光線會聚，光屏才能接到清楚的像。</p></details>
-</div>
-<aside id="evidence" class="evidence" aria-labelledby="evidence-title"><div class="kicker">比較證據</div><h2 id="evidence-title">這一回看什麼？</h2><div id="reading"></div><div id="compare"></div></aside>
-</section>
-<details id="lens-explainer" class="review lens-explainer">
-<summary>光怎麼走？看透鏡怎麼組成整個物體</summary>
-<div class="lesson-tabs" role="group" aria-label="透鏡成像解說"><button type="button" data-lesson="0">1. 兩次折射</button><button type="button" data-lesson="1">2. 一點成像</button><button type="button" data-lesson="2">3. 組成物體</button></div>
-<div id="lesson-art"></div><p id="lesson-caption" aria-live="polite"></p><button id="lesson-build" type="button" hidden>加入物體的中段</button>
-</details>
-<section id="journal" class="review" aria-labelledby="review-title"><div class="kicker">實驗手札</div><h2 id="review-title" tabindex="-1">我的透鏡觀察</h2><div id="notebook"></div></section>
-<section id="challenge" class="review" hidden aria-labelledby="quiz-title"><div class="kicker">最後一關</div><h2 id="quiz-title" tabindex="-1">用觀察結果回答</h2><a class="evidence-link" href="#review-title">↑ 回看實驗手札</a><div id="questions"></div><p id="done" aria-live="polite"></p></section>
-<details class="limits"><summary>模型條件</summary><p>物體固定為同一支直立物體；光由左向右入射，凸透鏡焦距 10 cm、凹透鏡焦距為 −10 cm。光線採理想薄透鏡與近軸模型。觀察窗只比較像的方向與相對大小，不呈現視野或亮度。光屏上的模糊只做示意；實像也可從適當位置用眼睛觀察。</p></details>
+<body class="lab">
+<header class="lab-bar">
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">透鏡成像實驗桌</h1>
+  <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
+  <div class="lab-bar-actions">
+    <button type="button" class="btn-ghost" id="why">實像和虛像</button>
+    <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="scene-area">
+    <div class="readouts p-readouts" aria-label="讀值">
+      <div class="reading"><span class="reading-label" id="l-1"></span><span class="reading-num num" id="r-1">0</span><span class="reading-unit" id="u-1"></span><span class="reading-formula" id="n-1"></span></div>
+      <div class="reading"><span class="reading-label" id="l-2"></span><span class="reading-num num" id="r-2">0</span><span class="reading-unit" id="u-2"></span><span class="reading-formula" id="n-2"></span></div>
+      <div class="reading"><span class="reading-label" id="l-3"></span><span class="reading-num num" id="r-3">0</span><span class="reading-unit" id="u-3"></span><span class="reading-formula" id="n-3"></span></div>
+    </div>
+    <section class="graph-board" id="graph-board" aria-labelledby="graph-title">
+      <h2 id="graph-title">成像紀錄<small>收下的結果</small></h2>
+      <div id="table" class="img-table"></div>
+    </section>
+    <div class="scene-wrap">
+      
+      <svg id="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="group" aria-label="透鏡成像實驗桌：滴定管裝著氫氧化鈉，下方錐形瓶裝著鹽酸和酚酞，旁邊有 pH 計">
+        <image href="../../../assets/science/props/bg-physics-bench.webp" x="-877" y="-768" width="2755" height="1668" preserveAspectRatio="none" aria-hidden="true"/>
+        <g id="rig"></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="任務、余老師與操作">
+    <section class="task" id="task" aria-live="polite">
+      <span class="task-kicker" id="task-kicker"></span>
+      <h2 class="task-title" id="task-title"></h2>
+      <p class="task-goal" id="task-goal"></p>
+      <div class="task-row"><button type="button" id="task-reset">重來這一步</button><button type="button" class="go" id="task-go" hidden></button><button type="button" class="clear" id="clear-records">清空紀錄</button></div>
+    </section>
+
+    <div class="teacher" id="teacher">
+      <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
+      <div class="bubble" id="bubble"></div>
+    </div>
+
+    <section class="dock" id="dock-pull" aria-label="操作">
+      <div id="ctl-box">
+        <span class="dock-label" id="ctl-label"></span>
+        <div class="picker-btns" id="ctl-btns"></div>
+      </div>
+      <div id="screen-box" hidden>
+        <span class="dock-label">光屏 <small>拖光屏，或按下面的按鈕</small></span>
+        <div class="picker-btns two"><button type="button" class="btn-soft" id="scr-near">靠近透鏡 1 cm</button><button type="button" class="btn-soft" id="scr-far">遠離透鏡 1 cm</button></div>
+      </div>
+      <button type="button" class="btn-main" id="save">收下這次觀察</button>
+    </section>
+
+    <section class="dock" id="dock-quiz" aria-label="說說看" hidden>
+      <span class="dock-label" id="quiz-q"></span>
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+    <section class="evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-head"><h2 id="evidence-title">我的證據</h2><span><span id="ev-count">0</span> 張</span></div>
+      <p class="evidence-empty" id="ev-empty">做出結果後按「收下這次觀察」，卡片會飛到這裡。</p>
+      <ol class="chips" id="chips"></ol>
+    </section>
+  </aside>
 </main>
-<dialog id="clear-dialog" aria-labelledby="clear-title"><form method="dialog"><h2 id="clear-title">清空本實驗紀錄？</h2><p>只清除透鏡這一站的紀錄與作答，從第一步重作。</p><div class="actions"><button value="cancel" autofocus>取消</button><button class="primary" value="clear">清空並重作</button></div></form></dialog>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+<dialog id="why-dialog" aria-labelledby="why-title">
+  <h2 id="why-title">實像和虛像</h2>
+  <p><b>實像</b>：折射光真的會聚在一點，可以用光屏接到；透鏡的實像在透鏡另一側（物體的對面），而且是倒立的。</p>
+  <p><b>虛像</b>：折射光沒有真的會聚，是光線往回延長（虛線）交會在物體同一側；光屏接不到，要從透鏡另一側用眼睛看；透鏡的虛像是正立的。</p>
+  <ul>
+    <li><b>凸透鏡</b>（本實驗焦距 10 cm）：物體在焦點外成倒立實像，越靠近焦點，像越遠、越大；在焦點上不成像；在焦點內成正立、放大的虛像，例如放大鏡。</li>
+    <li><b>凹透鏡</b>：永遠是正立、縮小的虛像，例如近視眼鏡。</li>
+    <li>圖中只畫兩條代表光線：平行主軸的光，和通過透鏡中心的光。數值用理想薄透鏡公式計算：1/v ＝ 1/f − 1/u（與課本 1/p ＋ 1/q ＝ 1/f 相同，只是虛像的 v 記為負）。</li>
+  </ul>
+  <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
+</dialog>
+
+<dialog id="notes-dialog" aria-labelledby="notes-title">
+  <h2 id="notes-title">研究手冊</h2>
+  <p class="notes-tip">距離都從透鏡中心量起。比一比不同物距、不同透鏡的像。</p>
+  <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>透鏡</th><th>物距</th><th>像的位置</th><th>像</th></tr></thead><tbody id="notes-body"></tbody></table></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
+    <button type="button" class="btn-main" data-close>關閉</button>
+  </div>
+</dialog>
+
+<dialog id="finish-dialog" aria-labelledby="finish-title">
+  <p class="finish-kicker">透鏡成像實驗桌 · 全部完成</p>
+  <h2 id="finish-title">你分清實像和虛像了！</h2>
+  <div class="stars" id="stars" aria-label="完成 6 個任務"></div>
+  <div class="finish-rule">實像：折射光真的會聚，在透鏡另一側、倒立、光屏接得到。虛像：延長線交會，在物體同側、正立、光屏接不到。</div>
+  <ul class="finish-list" id="finish-list"></ul>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" data-close>再玩一次</button>
+    <a class="btn-main" href="../mirror/">去面鏡成像實驗桌</a>
+  </div>
+</dialog>
+
+<script type="module" src="./lens.js"></script>
 </body>
 </html>

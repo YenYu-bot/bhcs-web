@@ -18,7 +18,7 @@
 
 - `mirror/`：面鏡成像實驗桌（2026-11-18 改為新版實驗桌設計）。五步：平面鏡（30→20 cm）、凸面鏡、凹面鏡用光屏接實像、凹面鏡物距（20／15／10／6 cm）、說說看。像距與倍率用 `scripts/science/models.mjs` 的 `calculate('optics')`（理想公式與透鏡相同；凹面鏡 f>0、凸面鏡 f<0）。紀錄用 `shared/notebook.mjs` 的 `bhcs.lab.mirror.v1`。
 
-- `lens/`：透鏡成像實驗桌。移動物體與光屏，比較凸透鏡與凹透鏡成像，並觀察漸進對焦與成像倍率。
+- `lens/`：透鏡成像實驗桌（2026-11-18 改為新版實驗桌設計）。六步：光屏找像（30 cm）、物體靠近（15 cm）、焦點上、焦點內（5 cm，用眼睛看）、凹透鏡、說說看。像距與倍率用 `scripts/science/models.mjs` 的 `calculate('optics')`。紀錄用 `shared/notebook.mjs` 的 `bhcs.lab.lens.v1`。
 
 - `pressure/`：水壓與氣壓實驗桌。以托里切利氣壓計、水下探頭及密閉針筒比較大氣壓、水壓和氣體壓縮；水平管流動與較廣參數範圍可回到舊版自由探究。
 
