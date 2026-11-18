@@ -1,5 +1,7 @@
 import { MODEL_VERSION, CONSTANTS, calculate, quantity, remainingMass, instantRate } from '../../science/reaction-rate-desk/model.mjs';
 
+import { openNotebook } from '../shared/notebook.mjs';
+
 const SAMPLE = {
   lump: { name: '塊狀', scene: 'lump', color: '#246877', pattern: '' },
   granule: { name: '顆粒', scene: 'granules', color: '#9b4a28', pattern: '12 5' },
@@ -110,13 +112,8 @@ const QUESTIONS = [
   },
 ];
 
-let storageAvailable = true;
-let state;
-try {
-  state = restore(JSON.parse(localStorage.getItem(STORAGE)));
-} catch {
-  state = fresh();
-}
+const notebook = await openNotebook(STORAGE);
+let state = restore(notebook.load());
 let running = false;
 let lastTick = 0;
 let frame = 0;
@@ -124,17 +121,8 @@ let lastPaint = 0;
 let lastSave = 0;
 let statusMessage = '';
 let pausedForReset = false;
-let canWarnStorage = true;
-function save() {
-  try { localStorage.setItem(STORAGE, JSON.stringify(state)); }
-  catch {
-    storageAvailable = false;
-    if (canWarnStorage) {
-      canWarnStorage = false;
-      announce('此瀏覽器無法保留進度，重新整理後需從頭開始。');
-    }
-  }
-}
+let clearingNotebook = false;
+function save() { return notebook.save(state); }
 function announce(text) { if (note && note.textContent !== text) note.textContent = text; }
 function hint(text) { statusMessage = text; }
 function selectedRun() { return state.runs[state.active]; }
@@ -264,7 +252,7 @@ function askReset() {
   resetDialog.showModal();
   byId('reset-cancel')?.focus();
 }
-function resolveReset() {
+async function resolveReset() {
   const interrupted = pausedForReset;
   pausedForReset = false;
   if (resetDialog.returnValue !== 'reset') {
@@ -279,11 +267,15 @@ function resolveReset() {
     }
     return;
   }
+  if (clearingNotebook) return;
+  clearingNotebook = true;
+  pauseClock();
+  const cleared = await notebook.clear();
+  clearingNotebook = false;
+  if (!cleared) { resetButton?.focus(); return; }
   pauseClock();
   state = fresh();
   hint('');
-  try { localStorage.removeItem(STORAGE); }
-  catch { save(); }
   render(true);
   announce('本站的實驗紀錄與答案已清除，回到第一步。');
   buttonStart.focus();
@@ -390,7 +382,6 @@ function render(updateQuestion = false) {
       '粉末、顆粒、塊狀的結果可以一起看。', '先前的第 10 秒讀值不會消失。', '答錯可再試一次，不會清掉你的實驗紀錄。',
     ];
     guide.textContent = statusMessage || defaults[state.step - 1];
-    if (!storageAvailable) guide.textContent += ' 此瀏覽器無法跨重新整理保留進度。';
   }
   for (const item of byId('step-list').querySelectorAll('[data-step]')) {
     const n = Number(item.dataset.step);
@@ -610,5 +601,7 @@ byId('reset-confirm')?.addEventListener('click', () => resetDialog.close('reset'
 byId('reset-cancel')?.addEventListener('click', () => resetDialog.close('cancel'));
 resetDialog?.addEventListener('close', resolveReset);
 document.addEventListener('visibilitychange', () => { if (document.hidden && running) doPause(); });
-window.addEventListener('pagehide', () => { if (running) pauseClock(); save(); });
+// Background/foreground checkpoints persist normally. Do not write a stale idle snapshot on exit.
+window.addEventListener('pagehide', () => { if (running) pauseClock(); });
+window.addEventListener('pageshow', event => { if (event.persisted) render(); });
 render(true);

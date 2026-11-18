@@ -1,11 +1,12 @@
 // 比熱實驗桌（新版試用）
 // 溫度直接用 tools/specific-heat-desk/model.mjs 的 sample()；不另寫模型。
 import { sample, CONFIGS, POWER, INITIAL_TEMPERATURE, DURATION, displayTemperature } from '../../specific-heat-desk/model.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
-const db = store('bhcs.lab.heat.v1');
+const db = await openNotebook('bhcs.lab.heat.v1');
 // 國中課本熱量用「卡」：模型中水的比熱 4.2 J/(g·°C) ＝ 1 卡/(g·°C)，所以 1 卡 ＝ 4.2 J、每秒 21 J ＝ 5 卡。
 const J_PER_CAL = CONFIGS.water100.c;
 const r3 = x => Math.round(x * 1000) / 1000;
@@ -383,9 +384,17 @@ function openFinish() {
     + (S.done.includes('calc') ? '<li><b>比熱</b>：水 1、鐵約 0.11 卡／(g·°C)</li>' : '');
   $('#finish-dialog').showModal();
 }
-function clearAll() {
+let resettingNotebook = false;
+async function clearAll() {
+  if (resettingNotebook) return;
   if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
-  stop(); db.clear(); S = fresh(); foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = false;
+  resettingNotebook = true;
+  let cleared;
+  try { cleared = await db.clear(); }
+  finally { resettingNotebook = false; }
+  if (!cleared) return;
+  running = false; cancelAnimationFrame(raf);
+  S = fresh(); foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = false;
   document.querySelectorAll('dialog[open]').forEach(d => d.close());
   render(); if (narrow.matches) scrollTo({ top: 0 });
 }

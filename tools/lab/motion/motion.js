@@ -1,5 +1,6 @@
 import { derive, positionAt, distanceAt, SAMPLE_TIMES, parseNumeric } from '../../motion-graphs-desk/model.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const times = [SAMPLE_TIMES[0], SAMPLE_TIMES[2], SAMPLE_TIMES[4], SAMPLE_TIMES.at(-1)];
 const samples = [SAMPLE_TIMES[1], SAMPLE_TIMES[3], SAMPLE_TIMES[6]];
@@ -24,7 +25,7 @@ const QUIZ = [
   {q:'同樣走一段路，哪個方向比較快？',a:['往右的去程','往左的回程','兩段一樣快'],correct:0,h:['',`回程花 ${left.b-left.a} 秒，去程只花 ${right.b-right.a} 秒；同樣長，時間越短越快。`,'看位置圖哪一段比較陡；同樣的路徑長，不代表用時一樣。'],ok:'去程的位置圖比較陡，速率比較大。'},
   {q:'回到起點時，哪個說法正確？',a:['路徑長和位移都為 0','路徑長是 0，位移不是 0','位移是 0，路徑長不是 0'],correct:2,h:[`回到原處不代表沒走過，去程和回程各走了 ${right.d} m。`,'位移只看終點減起點，這次兩者位置一樣。',''],ok:'位移只看起點與終點；路徑長要算每一段。'},
 ];
-const storage = store('bhcs.lab.motion.v1');
+const storage = await openNotebook('bhcs.lab.motion.v1');
 const fresh = () => ({step:0, t:times[0], reached:[false,false,false], visited:[], done:[], quiz:0, answers:['','']});
 function loadState(){
   const v = storage.load();
@@ -170,9 +171,14 @@ function resetStep(){
   if(S.step===5)S.quiz=0;
   goStep(S.step,false);
 }
-function clearAll(){
-  if(!confirm('要清空這個實驗桌的全部觀察和答案嗎？'))return;
-  stop(); S=fresh(); note='';goodNote=false;storage.clear(); document.querySelectorAll('dialog[open]').forEach(d=>d.close());render(true);
+let clearingNotebook=false;
+async function clearAll(){
+  if(clearingNotebook || !confirm('要清空這個實驗桌的全部觀察和答案嗎？'))return;
+  clearingNotebook=true;
+  const cleared=await storage.clear();
+  clearingNotebook=false;
+  if(!cleared)return;
+  stop(); S=fresh(); note='';goodNote=false;document.querySelectorAll('dialog[open]').forEach(d=>d.close());render(true);
   $('#play').focus({preventScroll:true});
 }
 function check(e){

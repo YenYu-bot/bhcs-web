@@ -2,14 +2,15 @@
 // 定滑輪、動滑輪的計算沿用正式站 tools/pulley-desk/model.mjs；滑輪組用同一套理想模型（combo-model.mjs）。
 import { calculate, geometry, TARGET_CM, WEIGHT_N } from '../../pulley-desk/model.mjs';
 import { COMBOS, calculateCombo } from './combo-model.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
 const SC = 4, SCC = 3;               // 每公分的畫面單位：單一滑輪、滑輪組
 const BASE = { fixed: 540, movable: 417 };
 const X = 500, R = 34;
-const db = store('bhcs.lab.pulley.v2');
+const db = await openNotebook('bhcs.lab.pulley.v2');
 const SHORT = { fixed: '定滑輪', movable: '動滑輪', combo2: '一定一動', combo4: '二定二動' };
 const calc = (dev, h) => COMBOS[dev] ? calculateCombo(dev, h) : calculate(dev, h);
 
@@ -456,9 +457,17 @@ function openFinish() {
   $('#finish-list').innerHTML = DEVICES.map(d => { const r = rec(d); return r && `<li><b>${SHORT[d]}</b>：拉力 ${r.force} N，繩子拉 ${r.rope} cm → 功 2 J</li>`; }).filter(Boolean).join('') + '<li><b>木箱得到的功</b>：10 N × 0.20 m ＝ 2 J</li>';
   $('#finish-dialog').showModal();
 }
-function clearAll() {
+let resettingNotebook = false;
+async function clearAll() {
+  if (resettingNotebook) return;
   if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
-  db.clear(); S = fresh(); shownH = 0; foundShown = null; lastNote = null; teacher.last = '';
+  resettingNotebook = true;
+  let cleared;
+  try { cleared = await db.clear(); }
+  finally { resettingNotebook = false; }
+  if (!cleared) return;
+  cancelAnimationFrame(tween); dragging = null; document.body.classList.remove("dragging");
+  S = fresh(); shownH = 0; foundShown = null; lastNote = null; teacher.last = '';
   document.querySelectorAll('dialog[open]').forEach(d => d.close());
   CALC_DEV.forEach(d => { $('#calc-' + d).value = ''; $('#calc-' + d).classList.remove('ok', 'bad'); });
   render(); if (narrow.matches) scrollTo({ top: 0 });

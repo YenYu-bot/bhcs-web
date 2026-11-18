@@ -2,11 +2,12 @@
 // 彈簧秤讀數與排開液體沿用 tools/buoyancy-lab/model.mjs；密封盒浮沉用 ./float-model.mjs（液體密度同一來源）。
 import { reading, FLUIDS } from '../../buoyancy-lab/model.mjs';
 import { blockOutcome, blockMassG, BLOCK, LIQUIDS } from './float-model.mjs';
-import { $, store, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
+import { openNotebook } from '../shared/notebook.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const P = '../../../assets/science/props/';
-const db = store('bhcs.lab.buoyancy.v1');
+const db = await openNotebook('bhcs.lab.buoyancy.v1');
 const FNAME = { water: '清水', brine: '濃鹽水' };
 const W_AIR = reading({ hung: true, density: FLUIDS.water.density, f: 0, cupLocation: 'shelf', cupVolume: 0 }).forceN;
 const r3 = x => Math.round(x * 1000) / 1000;
@@ -237,13 +238,15 @@ function setSlots(n) {
   S.slots = n; S.dropped = false; S.saved = false; lastNote = null; foundShown = null; save(); render();
 }
 function pickFluid(f) { S.step = 'float'; S.ffluid = f; S.dropped = false; S.saved = false; lastNote = null; foundShown = null; save(); teacher.last = ''; render(); }
+let dropGeneration = 0;
 function drop() {
   if (S.dropped) { oops('已經放進去了。換砝碼數或換液體再試。'); return; }
   const o = blockOutcome({ slots: S.slots, liquidId: S.ffluid }), target = floatTarget(o);
   lastNote = null;
   if (reduceMotion()) { S.dropped = true; save(); render(); return; }
-  const t0 = performance.now(), from = 96;
+  const t0 = performance.now(), from = 96, generation = dropGeneration;
   const f = now => {
+    if (generation !== dropGeneration) return;
     const t = Math.min(1, (now - t0) / 900);
     const e = t < 1 ? 1 - Math.pow(1 - t, 3) * Math.cos(t * 9) : 1;   // 落下後輕微彈動
     dropAnim = { y: from + (target - from) * e }; drawFloat();
@@ -477,9 +480,17 @@ function openFinish() {
   ].filter(Boolean).join('');
   $('#finish-dialog').showModal();
 }
-function clearAll() {
+let resettingNotebook = false;
+async function clearAll() {
+  if (resettingNotebook) return;
   if (!confirm('要清空這一站的所有證據和進度，從第 1 步重新開始嗎？')) return;
-  db.clear(); S = fresh(); shownP = 0; foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = false;
+  resettingNotebook = true;
+  let cleared;
+  try { cleared = await db.clear(); }
+  finally { resettingNotebook = false; }
+  if (!cleared) return;
+  cancelAnimationFrame(tween); dropGeneration++; dropAnim = null; dragging = null; dripping = false; document.body.classList.remove("dragging");
+  S = fresh(); shownP = 0; foundShown = null; lastNote = null; teacher.last = ''; calcBuilt = false;
   document.querySelectorAll('dialog[open]').forEach(d => d.close());
   render(); if (narrow.matches) scrollTo({ top: 0 });
 }
