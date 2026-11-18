@@ -14,7 +14,7 @@
 
 - `spring-friction/`：彈簧與摩擦實驗桌（2026-11-18 改為新版實驗桌設計）。七步：掛砝碼、掛太多、拉不動、開始滑、加重、翻面、說說看。`model.mjs` 的算式同 `scripts/science/models.mjs`，只把 g 改成 10（1 公斤重 ＝ 10 N）；`scripts/lab_spring_friction_model.test.mjs` 逐一比對。紀錄用 `shared/notebook.mjs` 的 `bhcs.lab.spring-friction.v1`，不匯入舊試用版紀錄。
 
-- `neutralization/`：酸鹼中和實驗桌。用虛擬滴定管比較中和點與酚酞變色，再只改鹼液濃度；進階用配平反應式比較 1：1 與 1：2 的完全中和體積。
+- `neutralization/`：酸鹼中和實驗桌（2026-11-18 改為新版實驗桌設計）。六步：量酸液、加鹼液、中和點、濃度減半、算一算（aM₁V₁＝bM₂V₂，鹽酸與硫酸）、說說看。pH、過量離子與酚酞顏色直接用 `scripts/science/models.mjs` 的 `calculate('neutralization')`。紀錄用 `shared/notebook.mjs` 的 `bhcs.lab.neutralization.v1`。
 
 - `mirror/`：面鏡成像實驗桌。比較平面鏡、凸面鏡及凹面鏡，並以五個物距與光屏觀察焦點內外的成像。
 

@@ -12,7 +12,8 @@ const stations = {
   metal:'bhcs.lab.metal.v1', motion:'bhcs.lab.motion.v1',
   'electric-power':'bhcs-lab-electric-heat-private-trial-v1',
   'reaction-rate':'bhcs-lab-reaction-rate-trial-v1',
-  'spring-friction':'bhcs.lab.spring-friction.v1'
+  'spring-friction':'bhcs.lab.spring-friction.v1', neutralization:'bhcs.lab.neutralization.v1',
+  mirror:'bhcs.lab.mirror.v1', lens:'bhcs.lab.lens.v1'
 };
 const harness = '/__notebook_test__';
 const ready = 'html[data-notebook-ready="ready"]';

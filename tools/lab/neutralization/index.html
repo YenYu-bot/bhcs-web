@@ -1,12 +1,128 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="description" content="操作虛擬滴定管，用 pH 找中和點，觀察酚酞顏色，再比較鹼液濃度。"><title>酸鹼中和｜百宏自然實驗桌</title><link rel="stylesheet" href="style.css"><script defer src="diagram.js"></script><script defer src="app.js"></script></head>
-<body><header class="mast"><div><span class="brand">百宏文教</span><span class="brand-sub">自然實驗桌</span></div><button id="clear" type="button">清空紀錄</button></header>
-<main><div class="hero"><div class="kicker">小小研究員 · 酸、鹼與指示劑</div><h1>酸鹼中和</h1><p>慢慢加入鹼液：pH 到 7 時，顏色一定會變嗎？</p></div>
-<section class="mission" aria-labelledby="mission-title"><span class="teacher-sprite" aria-hidden="true"></span><div><div class="step" id="progress">任務 1 / 6</div><h2 id="mission-title" tabindex="-1"></h2><p id="guide"></p></div><nav id="steps" aria-label="實驗步驟"></nav></section>
-<section class="lab" aria-label="滴定操作桌"><div class="apparatus"><div class="lab-head"><span>虛擬滴定台</span><span id="mode" class="badge">第 1 杯｜鹼液 0.10 M</span></div><div id="diagram"></div><div id="rig-status" class="rig-status"></div></div>
-<div class="evidence"><h2>觀察與紀錄</h2><div id="reading" aria-live="polite"></div><div id="coach" class="coach" aria-live="polite"></div><div class="actions"><button class="primary" id="act" type="button"></button><button id="redo" type="button" hidden>重看這次操作</button></div><div id="notice" role="status"></div></div></section>
-<section class="review" aria-labelledby="review-title"><div class="kicker">實驗手札</div><h2 id="review-title" tabindex="-1">把 pH 讀值放回圖上</h2><a class="evidence-link" id="back-quiz" href="#quiz-title" hidden>回到挑戰題 ↓</a><div id="plots"></div><div id="notebook"></div></section>
-<section id="challenge" class="review" hidden aria-labelledby="quiz-title"><div class="kicker">最後一關</div><h2 id="quiz-title" tabindex="-1">用觀察紀錄回答</h2><a class="evidence-link" href="#review-title">↑ 回看剛才的圖和紀錄</a><div id="questions"></div><p id="done" aria-live="polite"></p><div id="advanced" hidden></div></section>
-<details class="limits"><summary>模型條件與判讀說明</summary><p>酸液為 25.0 mL、0.10 M 鹽酸，鹼液為 0.10 M 或 0.05 M 氫氧化鈉。這是 25°C 的理想強酸、強鹼模型，pH 與體積是模擬值，不是實測或實驗室操作指引。M 表示每公升溶液中的莫耳數。</p><p>酚酞在酸性、中性時無色，在這兩組選定的鹼性案例中顯粉紅。真實變色有範圍，不能只靠顏色讀精確的 pH。</p></details>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFF8EC">
+<title>酸鹼中和實驗桌｜百宏文教</title>
+<meta name="description" content="用滴定管把氫氧化鈉一滴一滴加進鹽酸，看 pH 計和酚酞顏色，找出中和點；再把鹼液濃度減半，比較中和需要的體積。">
+<link rel="stylesheet" href="../shared/lab.css">
+<link rel="stylesheet" href="../shared/station.css">
+<link rel="stylesheet" href="./neutral.css">
+</head>
+<body class="lab">
+<header class="lab-bar">
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">酸鹼中和實驗桌</h1>
+  <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
+  <div class="lab-bar-actions">
+    <button type="button" class="btn-ghost" id="why">什麼是中和？</button>
+    <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="scene-area">
+    <div class="readouts p-readouts" aria-label="讀值">
+      <div class="reading"><span class="reading-label" id="l-1"></span><span class="reading-num num" id="r-1">0</span><span class="reading-unit" id="u-1"></span><span class="reading-formula" id="n-1"></span></div>
+      <div class="reading"><span class="reading-label" id="l-2"></span><span class="reading-num num" id="r-2">0</span><span class="reading-unit" id="u-2"></span><span class="reading-formula" id="n-2"></span></div>
+      <div class="reading"><span class="reading-label" id="l-3"></span><span class="reading-num num" id="r-3">0</span><span class="reading-unit" id="u-3"></span><span class="reading-formula" id="n-3"></span></div>
+    </div>
+    <section class="graph-board" id="graph-board" aria-labelledby="graph-title">
+      <h2 id="graph-title">滴定曲線<small>pH 隨加入的鹼液變化</small></h2>
+      <svg id="graph" viewBox="0 0 320 200" role="img" aria-label="滴定曲線"></svg>
+      <ul class="graph-key" id="graph-key"></ul>
+    </section>
+    <div class="scene-wrap">
+      
+      <svg id="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="group" aria-label="酸鹼中和實驗桌：滴定管裝著氫氧化鈉，下方錐形瓶裝著鹽酸和酚酞，旁邊有 pH 計">
+        <image href="../../../assets/science/props/bg-physics-bench.webp" x="-877" y="-768" width="2755" height="1668" preserveAspectRatio="none" aria-hidden="true"/>
+        <g id="rig"></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="任務、余老師與操作">
+    <section class="task" id="task" aria-live="polite">
+      <span class="task-kicker" id="task-kicker"></span>
+      <h2 class="task-title" id="task-title"></h2>
+      <p class="task-goal" id="task-goal"></p>
+      <div class="task-row"><button type="button" id="task-reset">重來這一步</button><button type="button" class="go" id="task-go" hidden></button><button type="button" class="clear" id="clear-records">清空紀錄</button></div>
+    </section>
+
+    <div class="teacher" id="teacher">
+      <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
+      <div class="bubble" id="bubble"></div>
+    </div>
+
+    <section class="dock" id="dock-pull" aria-label="操作">
+      <div id="ctl-box">
+        <span class="dock-label" id="ctl-label">滴入鹼液 <small>按滴定管的活栓，或下面的按鈕</small></span>
+        <div class="picker-btns two" id="ctl-btns">
+          <button type="button" class="btn-soft" id="drip1">滴 1 mL</button>
+          <button type="button" class="btn-soft" id="drip5">滴 5 mL</button>
+        </div>
+      </div>
+      <button type="button" class="btn-main" id="save">收下這次觀察</button>
+    </section>
+
+    <section class="dock" id="dock-calc" aria-label="算一算" hidden>
+      <span class="dock-label" id="calc-head"></span>
+      <div id="calc-rows"></div>
+      <button type="button" class="btn-main" id="check">核對我的答案</button>
+    </section>
+
+    <section class="dock" id="dock-quiz" aria-label="說說看" hidden>
+      <span class="dock-label" id="quiz-q"></span>
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+    <section class="evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-head"><h2 id="evidence-title">我的證據</h2><span><span id="ev-count">0</span> 張</span></div>
+      <p class="evidence-empty" id="ev-empty">做出結果後按「收下這次觀察」，卡片會飛到這裡。</p>
+      <ol class="chips" id="chips"></ol>
+    </section>
+  </aside>
 </main>
-<dialog id="clear-dialog" aria-labelledby="clear-title"><form method="dialog"><h2 id="clear-title">清空本實驗紀錄？</h2><p>只清除這一站的讀值與答案，從第一杯起重新開始。</p><div class="actions"><button value="cancel" autofocus>取消</button><button class="primary" value="clear">清空並重作</button></div></form></dialog></body></html>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+<dialog id="why-dialog" aria-labelledby="why-title">
+  <h2 id="why-title">什麼是中和？</h2>
+  <p><b>中和反應</b>：酸的 H⁺ 和鹼的 OH⁻ 結合成水。鹽酸加氫氧化鈉：<b>HCl ＋ NaOH → NaCl ＋ H₂O</b>。</p>
+  <p><b>中和點</b>：H⁺ 和 OH⁻ 的量剛好一樣多。強酸和強鹼中和時，中和點 pH ＝ 7。</p>
+  <p><b>酚酞</b>：pH 大於約 8.2 才變粉紅色；酸性和中性都是無色。所以「無色」分不出酸性和中性，要看 pH 計。</p>
+  <ul>
+    <li>本實驗：錐形瓶裝 25 mL、0.10 M 鹽酸，加幾滴酚酞；滴定管裝氫氧化鈉。</li>
+    <li>中和時 H⁺ 和 OH⁻ 的量相等，不是酸、鹼液的體積相等：<b>a × M₁ × V₁ ＝ b × M₂ × V₂</b>（a、b 是每莫耳酸、鹼能給出的 H⁺、OH⁻ 數）。</li>
+    <li>數值是教學模擬：溫度 25°C、強酸強鹼完全解離，不計指示劑和容器誤差。</li>
+  </ul>
+  <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
+</dialog>
+
+<dialog id="notes-dialog" aria-labelledby="notes-title">
+  <h2 id="notes-title">研究手冊</h2>
+  <p class="notes-tip">兩杯的酸液都一樣：25 mL、0.10 M 鹽酸。比一比加多少鹼液時中和。</p>
+  <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>杯</th><th>加入鹼液</th><th>pH</th><th>酚酞</th></tr></thead><tbody id="notes-body"></tbody></table></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
+    <button type="button" class="btn-main" data-close>關閉</button>
+  </div>
+</dialog>
+
+<dialog id="finish-dialog" aria-labelledby="finish-title">
+  <p class="finish-kicker">酸鹼中和實驗桌 · 全部完成</p>
+  <h2 id="finish-title">你找到中和點了！</h2>
+  <div class="stars" id="stars" aria-label="完成 6 個任務"></div>
+  <div class="finish-rule">中和時 H⁺ 和 OH⁻ 一樣多：a × M₁ × V₁ ＝ b × M₂ × V₂。酚酞無色分不出酸性和中性，要看 pH。</div>
+  <ul class="finish-list" id="finish-list"></ul>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" data-close>再玩一次</button>
+    <a class="btn-main" href="../metal/">去金屬活性實驗桌</a>
+  </div>
+</dialog>
+
+<script type="module" src="./neutral.js"></script>
+</body>
+</html>
