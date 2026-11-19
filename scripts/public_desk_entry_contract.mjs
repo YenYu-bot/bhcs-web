@@ -56,5 +56,8 @@ export function publicDeskDiscoveryReach(file,from){
  const pressure=pressureDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
  if(pressure)at=pressure.after_blob;
  const reflection=reflectionDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
- return reflection?reflection.after_blob:at;
+ if(reflection)at=reflection.after_blob;
+ // PR #259 adds only the two CAP listings and their derived counters. Keep the exact resource-page check.
+ if(file==='ziyuan.html'&&at==='24b767f85e54aeab737395236cd9f0c77a20167d')at='db1f75ed640d179e915d95bf268dbca3bbc83e10';
+ return at;
 }
