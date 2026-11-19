@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>會考情境文法練習｜百宏文教機構</title>
+<meta name="description" content="百宏原創會考情境文法：短對話四選一與短文克漏，提供學用、教用和 A4 列印。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/english-cap-grammar.html">
+<link rel="stylesheet" href="../assets/english-cap-grammar/style.css">
+</head>
+<body>
+<main>
+  <nav class="controls" aria-label="百宏英文資源">
+    <a href="../ziyuan.html#res-english">回學習資源</a>
+    <a href="english-grammar-mix.html">原文法分項混合卷</a>
+    <a href="english-cap-reading.html">歷屆會考閱讀測驗</a>
+  </nav>
+  <header class="controls intro">
+    <p class="brand">百宏文教機構・國中英文</p>
+    <h1>會考情境文法練習</h1>
+    <p>先讀前後文，再決定用哪個文法。不在學用卷標出各題考點。</p>
+    <p>題目由百宏編寫，並非會考原題。可在此作答，也可切換學用／教用後直接列印。</p>
+  </header>
+  <section class="setup controls" aria-labelledby="choose">
+    <h2 id="choose">出題設定</h2>
+    <div class="config">
+      <label>練習方式
+        <select id="kind"><option value="mixed">單題＋短文克漏</option><option value="single">單題</option><option value="cloze">短文克漏</option></select>
+      </label>
+      <label>單題數量
+        <select id="count"><option>5</option><option selected>10</option><option>15</option><option>20</option></select>
+      </label>
+      <label class="check"><input type="checkbox" id="extension">加入進階延伸（過去完成、過去觀點未來等）</label>
+    </div>
+    <div class="actions">
+      <button type="button" id="generate" class="primary">出一份新卷</button>
+      <label class="check"><input id="teacher" type="checkbox">顯示教用版</label>
+      <button type="button" id="print">列印 A4</button>
+    </div>
+    <div class="actions">
+      <label for="code">同卷代碼</label><input type="text" id="code" spellcheck="false" maxlength="620">
+      <button type="button" id="restore">還原</button><button type="button" id="copy">複製代碼</button>
+    </div>
+    <p id="status" role="status" aria-live="polite"></p>
+  </section>
+  <section id="sheet" class="sheet" aria-labelledby="sheet-title">
+    <header class="sheet-head"><div><p class="brand">百宏文教機構</p><h2 id="sheet-title">會考情境文法練習</h2></div><strong id="edition">學用版</strong></header>
+    <p class="fields">班級：________　姓名：________　日期：________</p>
+    <div id="questions"></div>
+    <div class="controls check-area"><button type="button" id="check" class="primary">核對我的作答</button><p id="score" aria-live="polite"></p></div>
+  </section>
+</main>
+<script type="module" src="../assets/english-cap-grammar/app.mjs"></script>
+</body>
+</html>
