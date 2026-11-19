@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {fileURLToPath} from 'node:url';import {JSDOM} from 'jsdom';import {completedDeskPublic} from './science/catalog.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8'),doc=p=>new JSDOM(read(p)).window.document;
 const directory=doc('tools/science/index.html'),resources=doc('ziyuan.html');
-assert.equal(directory.querySelectorAll('.resource').length,64);
+assert.equal(directory.querySelectorAll('.resource').length,61);
 const baseline=JSON.parse(read('scripts/public-desk-legacy-baseline.json'));
 assert.equal(baseline.source_commit,'10598e94b905bdc81c2087cd791ec28c909cce1c');
 for(const t of completedDeskPublic){
@@ -15,7 +15,7 @@ for(const t of completedDeskPublic){
 }
 for(const id of ['optics','buoyancy','microscope','acid-base','photosynthesis-factor']){const file=`tools/science/${id}-guided.html`;if(!fs.existsSync(path.join(root,file)))throw Error('missing unpublished prototype '+file);assert.match(doc(file).querySelector('meta[name="robots"]').content,/noindex/);for(const page of ['tools/science/index.html','ziyuan.html','sitemap.xml'])assert(!read(page).includes(`${id}-guided.html`),'prototype stays unlisted');}
 assert(doc('tools/science/metal-activity.html').querySelector('option[value="mg"]'));assert(doc('tools/science/metal-activity.html').querySelector('option[value="ag"]'));
-console.log('PASS 64 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
+console.log('PASS 61 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
 
 const inlineSources=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>m[2]);
 // Reverse only the approved vocabulary category metadata before checking the old hashes.
@@ -45,10 +45,10 @@ console.log('PASS actual researcher shell keeps version navigation visible throu
 
 // The eight replacements use the accepted labs as the primary link in both
 // directories; legacy tools remain discoverable without adding counted cards.
-const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure','reflection-refraction'];
-const oldByLab={lens:'science/optics.html',motion:'motion-graphs-desk/', 'reaction-rate':'science/reaction-rate.html','spring-friction':'science/spring-friction.html','electric-power':'science/electric-power.html',neutralization:'science/neutralization.html',pressure:'science/pressure-fluid.html','reflection-refraction':'science/reflection-refraction.html'};
+const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure','reflection-refraction','lever','pulley','incline','buoyancy','heat','solubility','metal'];
+const oldByLab={lens:'science/optics.html',motion:'motion-graphs-desk/', 'reaction-rate':'science/reaction-rate.html','spring-friction':'science/spring-friction.html','electric-power':'science/electric-power.html',neutralization:'science/neutralization.html',pressure:'science/pressure-fluid.html','reflection-refraction':'science/reflection-refraction.html',heat:'science/specific-heat.html',solubility:'science/solubility.html',metal:'science/metal-activity.html'};
 const manifest=JSON.parse(directory.querySelector('script[type="application/ld+json"]').textContent).hasPart;
-assert.equal(manifest.length,64);
+assert.equal(manifest.length,61);
 for(const id of newPaths){
  const local=`lab/${id}/`,source=`tools/${local}index.html`;
  const card=directory.querySelector(`.resource > a.open[href="../${local}"]`)?.closest('.resource');
@@ -90,3 +90,17 @@ for(const [file,url,inputId,selector] of [
  }finally{dom.window.close();}
 }
 console.log('PASS pressure and optics aliases find their respective guided primary');
+
+// 2026-11-19: the seven older desks are retired. Each old URL is a noindex redirect to its tools/lab desk,
+// is absent from both catalogues and the sitemap, and its legacy science page links to the new desk.
+const retired={'lever-desk':'lever','pulley-desk':'pulley','incline-desk':'incline','buoyancy-lab':'buoyancy','specific-heat-desk':'heat','solubility-desk':'solubility','metal-activity-desk':'metal'};
+for(const [old,lab] of Object.entries(retired)){
+ const d=doc(`tools/${old}/index.html`);
+ assert.match(d.querySelector('meta[name="robots"]')?.content||'',/noindex/,old+' redirect is noindex');
+ assert.equal(d.querySelector('meta[http-equiv="refresh"]')?.content,`0; url=../lab/${lab}/`,old+' redirects');
+ assert.equal(d.querySelector('link[rel="canonical"]')?.href,`https://www.bhcs.com.tw/tools/lab/${lab}/`,old+' canonical');
+ assert(!directory.querySelector(`a[href="../${old}/"]`)&&!resources.querySelector(`a[href="tools/${old}/"]`),old+' not listed');
+ assert(!read('sitemap.xml').includes(`/tools/${old}/<`),old+' not in sitemap');
+}
+for(const [id,lab] of [['specific-heat','heat'],['solubility','solubility'],['metal-activity','metal']])assert(doc(`tools/science/${id}.html`).querySelector(`a[href="../lab/${lab}/"]`),id+' legacy page links to the new desk');
+console.log('PASS seven retired desks redirect to their tools/lab replacements');

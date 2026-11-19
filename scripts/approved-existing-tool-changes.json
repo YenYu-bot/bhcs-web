@@ -1296,6 +1296,237 @@
       "approved_blob": "58ebd07b39c0d95ac8ab38af4aace811fea9a5cc",
       "reason": "Show accumulated electric energy in calories next to joules (1 卡 ≈ 4.2 J) so units match the specific-heat station.",
       "pull_request": null
+    },
+    {
+      "path": "tools/buoyancy-lab/index.html",
+      "baseline_blob": "75df77ccc0f53329eb5c726f9f589c0d10639f02",
+      "approved_blob": "ed699f5cacf2a3fc41d8f6b171a266eb759b5113",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/incline-desk/index.html",
+      "baseline_blob": "173579978036468959890727d43a134e83e0ee6b",
+      "approved_blob": "f8f825bc69d7a6e2d0fddf26b4eef5d3053aaa8a",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "2d2a48693f8a782caab51856bd7844434f189518",
+      "approved_blob": "c1caf24bf499b990fb7f03ae2ab8e744a9d2dc03",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/buoyancy/buoyancy.css",
+      "baseline_blob": "f0dad2f63127791974cb77d67d7f4c204dd9145d",
+      "approved_blob": "1b1caea5c4cd1858beb9dea3fba6f3c71f59ddc5",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/buoyancy/buoyancy.js",
+      "baseline_blob": "106c99e1225aa01b0db9619aab314eb50e6e1c41",
+      "approved_blob": "5a0effe6fb0ae6b7a2adfc77297fdecd21b48121",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/buoyancy/index.html",
+      "baseline_blob": "98fbbda5ec8e1a0962c71a7dbaa34d4302195b1b",
+      "approved_blob": "13bc08a3f59555ce058c06b12159d971846b86eb",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/heat/heat.css",
+      "baseline_blob": "b2951f44e3f841500dc2146f9356df937da8a335",
+      "approved_blob": "468a9a3c89630383c729d957a4ddcdf87697a4a0",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/heat/heat.js",
+      "baseline_blob": "52917c8a72db715c2c3de1e787fdf3eb22e4f63a",
+      "approved_blob": "c39dd60549759de8dc2161baf01d693c74c3a274",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/heat/index.html",
+      "baseline_blob": "ead07be6e672ba341451a1c6aaa98e0f0badd7dc",
+      "approved_blob": "d4042bbcd6073871b1cd8cd8feb40ae6e3964df6",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/incline/incline.css",
+      "baseline_blob": "fdcca22bbdaa5e0e4a270f83791432448f8b6592",
+      "approved_blob": "a26839310826fc2ee462d1e3038e2782c982b559",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/incline/incline.js",
+      "baseline_blob": "ebc3eac52f4319c99f44c7b89d065e3a9fd1a7be",
+      "approved_blob": "b2beca4d85c7769b9758b7d0ced43bd4637c6bb9",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/incline/index.html",
+      "baseline_blob": "ca7b837d85f8cbf01402d5caf52d9ee0f9fd9dee",
+      "approved_blob": "45c58b22bc91cb3f3d8d8c9bae65de1d834ac528",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lever/index.html",
+      "baseline_blob": "13cb946761996b1bf0d226af1f21bc2a6d81ab96",
+      "approved_blob": "5708ef87990fcf40eda47298ddc0e8aca10933ee",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lever/lever.css",
+      "baseline_blob": "e0fac63adaee546f99bbd78cfcad79613fbddc9f",
+      "approved_blob": "67fb5f8ea329acebe3ca7c132de2aa5429473b07",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lever/lever.js",
+      "baseline_blob": "b038fc8754ceb4a19f5ff4f7c81fa94c95cc9114",
+      "approved_blob": "6b220d6bf60f1315d293063a9741f2768401799e",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/metal/index.html",
+      "baseline_blob": "1b49354bfe81322f031c198f9498a24efa50285b",
+      "approved_blob": "4f4484639c8c9ba196e5ae6cf65f870afd540629",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/metal/metal.css",
+      "baseline_blob": "36be491560f3d187a1f5620619ad1b937cbd244e",
+      "approved_blob": "6a53f3205552537fec74cb9d36bd665636ca31a4",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/metal/metal.js",
+      "baseline_blob": "b1d40a0bec984c7637f9b44322eb9a0bf5124383",
+      "approved_blob": "aba2227604d772b8adc60b367620ae02d29fb911",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pulley/index.html",
+      "baseline_blob": "ac98bc0f61a5f818c748d261603d59a3f522f04c",
+      "approved_blob": "f44177dafa3c24e73bb68c78dd0815dfaae8c427",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pulley/pulley.css",
+      "baseline_blob": "03b380a8166cfef1a39d4a0741e83b7849a0a028",
+      "approved_blob": "eb3a37d359c1127b409537cb68be02dc19f56269",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pulley/pulley.js",
+      "baseline_blob": "66dc129b1821116fa910b6a11f5af1d947f3897e",
+      "approved_blob": "957558656fa610ce94d87f0f564d1a997ba18c06",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/solubility/index.html",
+      "baseline_blob": "833c73577beab9efaebc3fec90766078ae928fcb",
+      "approved_blob": "130bae2c944f483615a6b840f5a3ec4f3da9cd84",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/solubility/solubility.css",
+      "baseline_blob": "bb4eaeacaccbe05dbce86e1a3ec7ff1bedf4ba72",
+      "approved_blob": "115e497907f12812c54b51fc52a3b1aa16301f96",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/solubility/solubility.js",
+      "baseline_blob": "983c8d0ce1282a613b498ac18a13aab90a08fe4f",
+      "approved_blob": "614e421838017bd6874780c9ffbba4789103cd0e",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lever-desk/index.html",
+      "baseline_blob": "58aaea98dd1f2bc26cdc237c8543807cfc7d32fe",
+      "approved_blob": "6e535f35265c6d6d7fbbf61350a914414af64f90",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/metal-activity-desk/index.html",
+      "baseline_blob": "e976f2d8c157bb24c17328a107a16e7d1d61024f",
+      "approved_blob": "3936cb05caa47b7c3f324c9695b76e643dd9a6de",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/pulley-desk/index.html",
+      "baseline_blob": "df894092b8b29f5295e65e6e20e5f3c4370d7486",
+      "approved_blob": "4b31151e8ac372a9fe1df6237b1a96625f619b49",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "60ee93dd30456bf83032cb33aad2cfc6a3e2854e",
+      "approved_blob": "a8a53f5f04937e846d84ee7ea9b8df20835dbdf7",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/metal-activity.html",
+      "baseline_blob": "ebb63f2e35e9fa198ed1073d55eb646ea2d35e36",
+      "approved_blob": "43f9c477c2cfd14bc2a6b82edc0ed72903f5440f",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/solubility.html",
+      "baseline_blob": "a45901e3b20e5b08c447af69015aa0e5c8fb544b",
+      "approved_blob": "4133822f2d85dc8b12be19d6e1768352cba57a19",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/specific-heat.html",
+      "baseline_blob": "212e1e5d5a936d29148e50443e8a256ea1634249",
+      "approved_blob": "80963f6d558ff74e9e89faf18a680b9493db4efe",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: catalog and version links updated; drop trial labels.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/solubility-desk/index.html",
+      "baseline_blob": "853d3886471405fc8eb9bee5970dd78fff13b909",
+      "approved_blob": "d3416364a62ac897372a997a3c3d9db6e0994042",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/specific-heat-desk/index.html",
+      "baseline_blob": "905097891faadb39ea025b9eff65c0c32c979d36",
+      "approved_blob": "bf3462da4725a730c55ed6995d835ffd31c98816",
+      "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
+      "pull_request": null
     }
   ]
 }

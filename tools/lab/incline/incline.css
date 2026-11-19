@@ -1,4 +1,4 @@
-/* 斜面實驗桌（新版試用）：沿用滑輪頁的版面細節 */
+/* 斜面實驗桌：沿用滑輪頁的版面細節 */
 .p-readouts .reading{width:180px}
 .p-readouts .reading-num{font-size:30px}
 .picker-btns.two{grid-template-columns:repeat(2,minmax(0,1fr))}

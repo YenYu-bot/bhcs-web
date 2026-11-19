@@ -1,4 +1,4 @@
-// 槓桿實驗桌（新版試用）
+// 槓桿實驗桌
 // 科學模型直接沿用正式站 tools/lever-desk/model.mjs，不另寫計算。
 import { IDS, clone, initialLayout, validateLayout, calculate, racks, qualifies, signature } from '../../lever-desk/model.mjs';
 import { $, Teacher, renderSteps, fly, bump, Spring, reduceMotion } from '../shared/lab.js';

@@ -194,16 +194,16 @@ assert.equal(standalonePublic.length,8);assert(!standalonePublic.some(t=>/marble
 assert(!legacy.some(t=>/marble|reaction-rate/.test(t.file)));assert(!firstBatch.some(f=>/marble|reaction-rate/.test(f)));
 assert.equal(batch2.filter(t=>t.id==='reaction-rate').length,1);
 const all=[...legacy.flatMap(t=>t.file==='circuit-lab.html'?[t,...guidedPublic]:[t]),...standalonePublic,...completedDeskPublic,...batch2.map(t=>({...publicReactionDescriptor(t),file:'science/'+t.id+'.html',kind:'探究實驗',batch:2}))];
-assert.equal(all.length,63);assert.equal(all.filter(t=>t.grade==='國中').length,62);assert.equal(all.filter(t=>t.subject==='理化').length,44);
+assert.equal(all.length,60);assert.equal(all.filter(t=>t.grade==='國中').length,59);assert.equal(all.filter(t=>t.subject==='理化').length,41);
 const item=all.find(t=>t.file==='science/reaction-rate.html');assert.match(item.title,/大理石/);assert.match(item.description,/未經實驗校準/);assert.match(item.description,/私人原型站紀錄不會自動移入官網/);
 for(const [p,href]of [['ziyuan.html','tools/science/reaction-rate.html'],['tools/science/index.html','../science/reaction-rate.html']]){
  const s=read(p);assert.equal(occurrences(s,`href="${href}"`),1,'one secondary link to the original URL');assert.doesNotMatch(s,/href=["'][^"']*(?:marble-acid-desk|reaction-rate-desk)\//);
  for(const old of standalonePublic)assert(s.includes(old.file));
 }
-assert.match(read('tools/science/index.html'),/64 項教材/);assert.match(read('ziyuan.html'),/全部 64 項自然教材/);
-assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">63 項/);assert.match(read('ziyuan.html'),/理化 <small>45 項/);assert.match(read('ziyuan.html'),/目前共 261 項/);
+assert.match(read('tools/science/index.html'),/61 項教材/);assert.match(read('ziyuan.html'),/全部 61 項自然教材/);
+assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">60 項/);assert.match(read('ziyuan.html'),/理化 <small>42 項/);assert.match(read('ziyuan.html'),/目前共 258 項/);
 const resourceDOM=new JSDOM(read('ziyuan.html'));
-try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,261);}finally{resourceDOM.window.close();}
+try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,258);}finally{resourceDOM.window.close();}
 assert.equal(occurrences(read('sitemap.xml'),`<loc>${m.canonical}</loc>`),1);assert.doesNotMatch(read('sitemap.xml'),/marble-acid-desk|reaction-rate-desk/);
 const documentDOM=new JSDOM(entry);const doc=documentDOM.window.document;
 assert.equal(doc.querySelectorAll('link[rel="canonical"]').length,1);assert.equal(doc.querySelector('link[rel="canonical"]').href,m.canonical);
@@ -226,9 +226,9 @@ assert.match(station.text,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+
 assert.match(station.text,/name: marble-acid-desk-review\n\s+path: marble-acid-desk-artifacts\/\n\s+retention-days: 14/);
 assert(station.steps.some(s=>s.startsWith('      - uses: actions/upload-artifact@v4')&&s.includes('name: marble-acid-desk-review')),'browser evidence upload is a real YAML step');
 assert(!station.text.includes('continue-on-error: true'));
-for(const name of ['researcher_browser','microscope_3d_browser','lens_25d_browser','researcher_operations','buoyancy_lab_browser','lever_desk_browser','pulley_desk_browser','incline_desk_browser','friction_efficiency_desk_browser','motion_graphs_desk_browser','marble_acid_desk_browser'])assert.equal(occurrences(station.text,`node scripts/check_${name}.cjs`),1,'existing browser gate retained');
-assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity','specific-heat','solubility','metal-activity']);
-assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 11 and all(.[]; .result == "success")'));
+for(const name of ['researcher_browser','microscope_3d_browser','lens_25d_browser','researcher_operations','friction_efficiency_desk_browser','motion_graphs_desk_browser','marble_acid_desk_browser'])assert.equal(occurrences(station.text,`node scripts/check_${name}.cjs`),1,'existing browser gate retained');
+assert.deepEqual(jobs.gate.needs,['core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity']);
+assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 8 and all(.[]; .result == "success")'));
 
 // Only accepted runtime and the narrowly scoped bridge are checked here; source docs/private hosting files are not copied.
 const runtimePaths=[m.public_entry,...walk(runtime).map(p=>path.relative(root,p))];

@@ -13,7 +13,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const wf = ciWorkflow();
 const jobs = ciJobs(wf);
-const REQUIRED = ['core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity', 'specific-heat', 'solubility', 'metal-activity'];
+const REQUIRED = ['core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity'];
 
 /** Top-level block of the workflow (e.g. "on", "concurrency") as raw text. */
 function block(key) {
@@ -112,8 +112,7 @@ test('browser jobs install Chromium before their checks; every browser check get
 });
 
 test('all browser install steps have bounded fail-closed timeouts', () => {
-  const expected = {'site': 1, 'science-layout': 1, 'science-stations': 2, 'specific-heat': 1,
-    'solubility': 1, 'metal-activity': 1, 'science-guided': 1, 'math-browser': 1};
+  const expected = {'site': 1, 'science-layout': 1, 'science-stations': 2, 'science-guided': 1, 'math-browser': 1};
   let total = 0;
   for (const [id, expectedCount] of Object.entries(expected)) {
     const t = jobs[id].text;
@@ -127,7 +126,7 @@ test('all browser install steps have bounded fail-closed timeouts', () => {
     assert.ok(jobs.gate.needs.includes(id), id + ' remains a required gate dependency');
     total += installs.length;
   }
-  assert.equal(total, 9, 'eight Chromium installs and one additional virtual display install');
+  assert.equal(total, 6, 'five Chromium installs and one additional virtual display install');
 });
 
 test('math regression: four shards cover every regression file exactly once', () => {
@@ -161,16 +160,6 @@ test('G7 equation layout regression runs in the site gate without replacing the 
   assert.ok(jobs.site.text.includes('run: node scripts/check_site_browser.cjs'));
 });
 
-test('standalone incline browser gate is additive and fail-closed within science-stations', () => {
-  const script = 'scripts/check_incline_desk_browser.cjs';
-  assert.equal(count(wf, script), 1);
-  assert.ok(jobs['science-stations'].text.includes(`run: node ${script}`));
-  assert.ok(fs.existsSync(path.join(root, script)));
-  assert.ok(wf.includes('name: incline-desk-review\n          path: incline-desk-artifacts/\n          retention-days: 14'));
-  assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('npm run test:incline-desk'));
-  assert.ok(jobs['science-stations'].text.includes('run: node scripts/check_pulley_desk_browser.cjs'));
-  assert.ok(!jobs['science-stations'].text.includes('continue-on-error: true'));
-});
 
 test('standalone friction efficiency native gate is additive and fail closed', () => {
   const script = 'scripts/check_friction_efficiency_desk_browser.cjs';
@@ -179,7 +168,6 @@ test('standalone friction efficiency native gate is additive and fail closed', (
   assert.ok(fs.existsSync(path.join(root, script)));
   assert.ok(wf.includes('name: friction-efficiency-desk-review\n          path: friction-efficiency-desk-artifacts/\n          retention-days: 14'));
   assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('npm run test:friction-efficiency-desk'));
-  for (const old of ['incline','pulley','lever']) assert.ok(jobs['science-stations'].text.includes(`run: node scripts/check_${old}_desk_browser.cjs`));
   assert.ok(!jobs['science-stations'].text.includes('continue-on-error: true'));
 });
 
@@ -194,7 +182,7 @@ test('motion graphs native gate retains all station checks and mandatory artifac
  assert.ok(station.indexOf('playwright install --with-deps chromium')<station.indexOf('run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs'));
  assert.ok(station.includes('name: motion-graphs-desk-review\n          path: motion-graphs-desk-artifacts/\n          retention-days: 14'));
  assert.ok(!station.includes('continue-on-error: true'));
- for(const old of ['incline_desk','pulley_desk','lever_desk','friction_efficiency_desk'])assert.equal(count(station,`run: node scripts/check_${old}_browser.cjs`),1);
+ for(const old of ['friction_efficiency_desk'])assert.equal(count(station,`run: node scripts/check_${old}_browser.cjs`),1);
  assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:motion-graphs-desk'));
 });
 
@@ -209,51 +197,8 @@ test('marble native browser is required with inherited Chromium and Xvfb, artifa
   assert.ok(!t.includes('continue-on-error: true'));
 });
 
-test('specific heat runs in its own mandatory job without removing old station checks',()=>{
- const t=jobs['specific-heat'].text;
- const script='run: xvfb-run -a node scripts/check_specific_heat_desk_browser.cjs';
- assert.equal(count(wf,script),1);assert.ok(t.includes(script));
- assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
- assert.ok(t.includes('playwright install --with-deps chromium'));
- assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji xvfb xauth'));
- assert.ok(t.includes('fetch-depth: 0'));
- assert.match(t,/uses: actions\/upload-artifact@v4\n        if: always\(\)/);
- assert.ok(t.includes('name: specific-heat-desk-review\n          path: specific-heat-desk-artifacts/\n          retention-days: 14'));
- assert.ok(!t.includes('continue-on-error:'));assert.ok(!t.includes('needs:'));
- assert.equal(count(jobs['science-stations'].text,'run: xvfb-run -a node scripts/check_marble_acid_desk_browser.cjs'),1);
- assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:specific-heat-desk'));
-});
 
-test('solubility is an additive fail-closed browser job with retained artifacts',()=>{
- const t=jobs.solubility.text,script='run: node scripts/check_solubility_desk_browser.cjs';
- assert.equal(count(wf,script),1);assert.ok(t.includes(script));
- assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
- assert.ok(t.includes('playwright install --with-deps chromium'));
- assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji'));
- assert.ok(t.includes('fetch-depth: 0'));
- assert.ok(t.includes('name: solubility-desk-review\n          path: solubility-desk-artifacts/\n          retention-days: 14'));
- assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: node scripts\/check_solubility_desk_browser\.cjs/);
- assert.match(t,/uses: actions\/upload-artifact@v4\n        if: always\(\)/);
- assert.ok(t.indexOf('playwright install --with-deps chromium')<t.indexOf(script));
- assert.ok(!t.includes('continue-on-error:'));assert.ok(!t.includes('needs:'));
- assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:solubility-desk'));
-});
 
-test('metal activity is an additional required browser job, preserving every earlier gate',()=>{
- const t=jobs['metal-activity'].text,script='run: node scripts/check_metal_activity_desk_browser.cjs';
- assert.equal(count(wf,script),1); assert.ok(t.includes(script));
- assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
- assert.ok(t.includes('playwright install --with-deps chromium'));
- assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji'));
- assert.ok(t.includes('fetch-depth: 0'));
- assert.ok(t.includes('name: metal-activity-desk-review\n          path: metal-activity-desk-artifacts/\n          retention-days: 14'));
- assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: node scripts\/check_metal_activity_desk_browser\.cjs/);
- assert.match(t,/uses: actions\/upload-artifact@v4\n        if: always\(\)/);
- assert.ok(t.indexOf('playwright install --with-deps chromium')<t.indexOf(script));
- assert.ok(!t.includes('continue-on-error:')); assert.ok(!t.includes('needs:'));
- assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:metal-activity-desk'));
- assert.ok(fs.existsSync(path.join(root,'scripts/check_metal_activity_desk_browser.cjs')));
-});
 
 test('three desk entry navigation browser check is additive to the site gate',()=>{
  const t=jobs.site.text,script='run: node scripts/check_science_desk_entries_browser.cjs';
@@ -279,3 +224,13 @@ test('actual CI Gate jq rejects every unsuccessful or missing required job',()=>
 });
 
 console.log(`ci workflow: ${tests} tests passed`);
+
+test('the seven retired desks have no browser gate or job; their redirects replace them', () => {
+  for (const old of ['buoyancy_lab','lever_desk','pulley_desk','incline_desk','specific_heat_desk','solubility_desk','metal_activity_desk']) {
+    assert.equal(count(wf, `check_${old}_browser.cjs`), 0, old + ' browser check removed');
+    assert.ok(!fs.existsSync(path.join(root, `scripts/check_${old}_browser.cjs`)), old + ' script removed');
+  }
+  for (const id of ['specific-heat','solubility','metal-activity']) assert.equal(jobs[id], undefined, id + ' job removed');
+  const tests = JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test;
+  for (const old of ['buoyancy-lab','lever-desk','pulley-desk','incline-desk','specific-heat-desk','solubility-desk','metal-activity-desk']) assert.ok(tests.includes('npm run test:' + old), old + ' model tests still run');
+});

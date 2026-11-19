@@ -192,22 +192,6 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_lens_25d_browser.cjs
-      - name: Check standalone buoyancy measurement, storage and touch boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_buoyancy_lab_browser.cjs
-      - name: Check standalone lever evidence, dense touch targets and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_lever_desk_browser.cjs
-      - name: Check standalone pulley guide, pointer cancellation and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_pulley_desk_browser.cjs
-      - name: Check standalone incline guide, native input and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_incline_desk_browser.cjs
       - name: Check accepted friction efficiency native input, geometry and data boundaries
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -250,34 +234,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: buoyancy-lab-review
-          path: buoyancy-lab-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lever-desk-review
-          path: lever-desk-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: pulley-desk-review
-          path: pulley-desk-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: incline-desk-review
-          path: incline-desk-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
           name: friction-efficiency-desk-review
           path: friction-efficiency-desk-artifacts/
           retention-days: 14
@@ -296,94 +252,6 @@ jobs:
           path: marble-acid-desk-artifacts/
           retention-days: 14
 
-
-  # 新比熱原生驗收獨立並行；全部 28 案及 CI Gate 仍為必要門檻。
-  specific-heat:
-    name: specific-heat
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --prefix scripts
-      - name: Install Chromium, CJK fonts and Xvfb
-        timeout-minutes: 10
-        run: |
-          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
-          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji xvfb xauth
-      - name: Check specific heat native input, heating and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: xvfb-run -a node scripts/check_specific_heat_desk_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: specific-heat-desk-review
-          path: specific-heat-desk-artifacts/
-          retention-days: 14
-
-  # 溶解度獨立新頁：原生操作、資料保護與手機視窗驗收。
-  solubility:
-    name: solubility
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --prefix scripts
-      - name: Install Chromium and CJK fonts
-        timeout-minutes: 10
-        run: |
-          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
-          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
-      - name: Check solubility native input, records and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_solubility_desk_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: solubility-desk-review
-          path: solubility-desk-artifacts/
-          retention-days: 14
-
-  # 金屬實驗桌：完整原生流程、保存與分頁隔離，不能略過。
-  metal-activity:
-    name: metal-activity
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --prefix scripts
-      - name: Install Chromium and CJK fonts
-        timeout-minutes: 10
-        run: |
-          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
-          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji
-      - run: npm run test:metal-activity-desk --prefix scripts
-      - name: Check metal activity evidence, native interaction and data boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_metal_activity_desk_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: metal-activity-desk-review
-          path: metal-activity-desk-artifacts/
-          retention-days: 14
 
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）
   science-guided:
@@ -672,7 +540,7 @@ jobs:
   gate:
     name: CI Gate
     if: always()
-    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity, specific-heat, solubility, metal-activity]
+    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity]
     runs-on: ubuntu-latest
     steps:
       - name: All required jobs succeeded
@@ -680,5 +548,5 @@ jobs:
           RESULTS: ${{ toJSON(needs) }}
         run: |
           echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"' | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "$RESULTS" | jq -e 'length == 11 and all(.[]; .result == "success")' > /dev/null
+          echo "$RESULTS" | jq -e 'length == 8 and all(.[]; .result == "success")' > /dev/null
 

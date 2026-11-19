@@ -1,4 +1,4 @@
-// 比熱實驗桌（新版試用）
+// 比熱實驗桌
 // 溫度直接用 tools/specific-heat-desk/model.mjs 的 sample()；不另寫模型。
 import { sample, CONFIGS, POWER, INITIAL_TEMPERATURE, DURATION, displayTemperature } from '../../specific-heat-desk/model.mjs';
 import { $, Teacher, renderSteps, fly, bump, reduceMotion } from '../shared/lab.js';
