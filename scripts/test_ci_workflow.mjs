@@ -125,7 +125,7 @@ test('all browser install steps have bounded fail-closed timeouts', () => {
     }
     const support = t.match(/^      - name: Install browser test fonts and tools\n[\s\S]*?(?=^      - |$(?![\s\S]))/m);
     assert.ok(support, id + ' gives fonts a separate setup deadline');
-    assert.match(support[0], /^      - name: Install browser test fonts and tools\n        timeout-minutes: 10\n        run: sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=45 -o Acquire::https::Timeout=45 install -y fonts-noto-cjk fonts-noto-color-emoji(?: |\n)/);
+    assert.match(support[0], /^      - name: Install browser test fonts and tools\n        timeout-minutes: 10\n        run: bash scripts\/install_ci_browser_fonts\.sh(?: |\n)/);
     assert.ok(!/^        if:|continue-on-error:/m.test(support[0]), id + ' cannot skip fonts');
     assert.ok(t.indexOf('playwright install --with-deps chromium') < support.index, id + ' initializes Chromium before the extra packages');
     assert.ok(support.index < t.search(/run: (?:xvfb-run -a )?node scripts\//), id + ' installs fonts before browser tests');
@@ -221,7 +221,7 @@ test('specific heat runs in its own mandatory job without removing old station c
  assert.equal(count(wf,script),1);assert.ok(t.includes(script));
  assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
  assert.ok(t.includes('playwright install --with-deps chromium'));
- assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji xvfb xauth'));
+ assert.ok(t.includes('run: bash scripts/install_ci_browser_fonts.sh xvfb xauth'));
  assert.ok(t.includes('fetch-depth: 0'));
  assert.match(t,/uses: actions\/upload-artifact@v4\n        if: always\(\)/);
  assert.ok(t.includes('name: specific-heat-desk-review\n          path: specific-heat-desk-artifacts/\n          retention-days: 14'));
@@ -235,7 +235,7 @@ test('solubility is an additive fail-closed browser job with retained artifacts'
  assert.equal(count(wf,script),1);assert.ok(t.includes(script));
  assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
  assert.ok(t.includes('playwright install --with-deps chromium'));
- assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji'));
+ assert.ok(t.includes('run: bash scripts/install_ci_browser_fonts.sh'));
  assert.ok(t.includes('fetch-depth: 0'));
  assert.ok(t.includes('name: solubility-desk-review\n          path: solubility-desk-artifacts/\n          retention-days: 14'));
  assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: node scripts\/check_solubility_desk_browser\.cjs/);
@@ -250,7 +250,7 @@ test('metal activity is an additional required browser job, preserving every ear
  assert.equal(count(wf,script),1); assert.ok(t.includes(script));
  assert.ok(t.includes('playwright@${{ env.PLAYWRIGHT_VERSION }}'));
  assert.ok(t.includes('playwright install --with-deps chromium'));
- assert.ok(t.includes('fonts-noto-cjk fonts-noto-color-emoji'));
+ assert.ok(t.includes('run: bash scripts/install_ci_browser_fonts.sh'));
  assert.ok(t.includes('fetch-depth: 0'));
  assert.ok(t.includes('name: metal-activity-desk-review\n          path: metal-activity-desk-artifacts/\n          retention-days: 14'));
  assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: node scripts\/check_metal_activity_desk_browser\.cjs/);
