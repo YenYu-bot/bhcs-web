@@ -19,6 +19,13 @@ const legacy={"res-math":"0b274abf9d6a074ecd669cbd7f70d0d4003082866f48152f980d41
  // The authorized catalog cutovers change only this one legacy category.
  assert.equal(expected,'61179bce668434a3d30189aae4b15994a9f5ed4540b4d0ad3f1f1947581b9284');
  assert.equal(hash(match[0]),'43bdc742e53e8eef77d86fac12d2649f0fa2224623585c7fe691bc37250f9a79','exact catalog after pressure and reflection cutovers');
+ }else if(id==='res-english'){
+ // Allow exactly the two CAP links and their count; retain the prior hash for everything else.
+ const capRow="        <div class=\"trow\"><div class=\"tlabel\">會考專練</div><div class=\"tpills\"><a href=\"tools/english-cap-grammar.html\">會考情境文法</a><a href=\"tools/english-cap-reading.html\">歷屆會考閱讀測驗</a></div></div>\n";
+ const countTitle='<h3>國中英文<span class="count">51 項</span></h3>';
+ assert.equal(match[0].split(capRow).length-1,1,'exact CAP links appear once');
+ assert.equal(match[0].split(countTitle).length-1,1,'derived English count appears once');
+ assert.equal(hash(match[0].replace(capRow,'').replace(countTitle,countTitle.replace('51 項','49 項'))),expected,'legacy junior-high English unchanged apart from the CAP links and count');
  }else assert.equal(hash(match[0]),expected,id+' unchanged');}
 assert.equal((resources.match(/href="tools\/english-vocabulary-109-115.html"/g)||[]).length,1);assert.match(resources,/'res-hs-english':\['高中','quiz'\]/);assert.match(resources,/目前共 261 項/);assert.match(resources,/id="vocabulary-practice-note"/);
 assert.match(html,/<link rel="canonical" href="https:\/\/www.bhcs.com.tw\/tools\/english-vocabulary-109-115.html">/);assert.ok(!html.includes('noindex'));assert.ok(!html.includes('隔離驗收版'));assert.ok(!html.includes('libfile_'));assert.ok(!html.includes('appgprj_'));assert.ok(!html.includes('several74727'));assert.ok(!html.includes('localStorage'));assert.ok(!html.includes('fetch('));assert.ok(!/\b(?:src|href)=["']https?:/.test(html.replace(/<a\b[^>]*>/g,'').replace(/<link rel="canonical"[^>]*>/,'')),'No external resource dependencies');

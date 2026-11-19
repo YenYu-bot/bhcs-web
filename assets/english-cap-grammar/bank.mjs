@@ -77,7 +77,7 @@ export const grammarPassages = [
     'When she got to his house, her grandfather pointed to a bowl on the table. He [2] the flour and water an hour earlier. He smiled and said, “Now you can help me shape the bread.”',
     'Lucy made three little animals from the dough. Her grandfather put them in the oven. Twenty minutes later, they [3], so Lucy took them out.',
   ], [
-    gap('gp04-1', '進階歷屆延伸', ['will finish', 'would finish', 'have finished', 'are finishing'], 1, 'thought 為過去；早餐前起床時，做完麵包仍是接下來才會發生的事，用 would finish。'),
+    gap('gp04-1', '進階歷屆延伸', ['will finish', 'would finish', 'have finished', 'are finishing'], 1, 'thought 為過去；在當時的想法中，午餐前做完麵包是尚未發生的事，用 would finish。'),
     gap('gp04-2', '進階歷屆延伸', ['had mixed', 'mixes', 'will mix', 'has mixed'], 0, '以抵達爺爺家為過去基準，混合材料在更早的一小時前，用 had mixed。'),
     gap('gp04-3', '進階歷屆延伸', ['have cooked', 'are cooking', 'will be ready', 'were ready'], 3, '是在回述當天已完成的過往，用 were ready 表二十分鐘後實際完成。'),
   ]),
