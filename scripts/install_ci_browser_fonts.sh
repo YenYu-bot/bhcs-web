@@ -33,8 +33,11 @@ case "$action" in
   install)
     # Treat the same-run artifact as untrusted until its bytes match.
     verify "$deb"
+    # APT sometimes selects a mirror copy of the same version, even when
+    # passed a local path. dpkg installs the exact verified file offline.
+    sudo dpkg --install "$deb"
     sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=45 -o Acquire::https::Timeout=45 \
-      install -y "$deb" fonts-noto-color-emoji "$@"
+      install -y fonts-noto-color-emoji "$@"
     ;;
   *) printf 'Expected fetch or install\n' >&2; exit 2 ;;
 esac
