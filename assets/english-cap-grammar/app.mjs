@@ -90,13 +90,19 @@ function render() {
     }
     const list = make('ol',null,'questions-list');
     list.start = number;
+    list.setAttribute('role', 'list');
     for (const q of questions) {
       const n = number++;
       const item = make('li',null,'question');
       item.dataset.itemId = q.id;
       const fs = make('fieldset');
-      const legend = make('legend',q.prompt || ('短文空格 '+(questions.indexOf(q)+1)),'prompt');
-      if(q.prompt) { legend.lang='en'; legend.style.whiteSpace='pre-line'; }
+      const legend = make('legend',null,'prompt');
+      const line = make('span',null,'prompt-line');
+      const numberLabel = make('span',n+'.','question-number');
+      const promptText = make('span',q.prompt || ('短文空格 '+(questions.indexOf(q)+1)),'prompt-text');
+      if(q.prompt) promptText.lang='en';
+      line.append(numberLabel,promptText);
+      legend.append(line);
       fs.append(legend);
       const opts = make('div',null,'options');
       opts.lang='en';
