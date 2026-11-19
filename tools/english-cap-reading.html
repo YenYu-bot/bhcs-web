@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>國中會考英語閱讀測驗出題器｜百宏文教機構</title>
+<meta name="description" content="按年份抽取國中教育會考英語閱讀題組。線上自練，另備題號對應的 A4 學用與教用試卷。">
+<link rel="canonical" href="https://www.bhcs.com.tw/tools/english-cap-reading.html">
+<link rel="stylesheet" href="../assets/english-cap-reading/style.css">
+<script type="module" src="../assets/english-cap-reading/app.mjs"></script>
+</head>
+<body><main class="wrap">
+<header class="page-head">
+<a href="../ziyuan.html#res-english">← 學習資源</a>　<a href="english-cap-grammar.html">會考情境文法</a>
+<p class="kicker">百宏文教機構 · 國中英文</p>
+<h1>會考英語閱讀測驗</h1>
+<p>按年份抽出完整相連的題組，保留官方原題號、原圖和選項。可線上自練，也可印成學用卷和教用卷。</p>
+</header>
+<div class="layout">
+<section class="panel controls" aria-label="出題設定">
+<h2>設定這份練習</h2>
+<fieldset><legend>年份（民國）</legend><div id="years" class="years">讀取題庫中…</div></fieldset>
+<label class="stack" for="count">抽題組數
+<select id="count" disabled><option>1</option></select></label>
+<div class="btnrow"><button type="button" id="draw" class="primary" disabled>換一份題目</button><button type="button" id="print" disabled>列印 A4</button></div>
+<fieldset class="edition"><legend>試卷版本</legend><label><input type="radio" name="edition" value="student" checked> 學用版</label><label><input type="radio" name="edition" value="teacher"> 教用版</label></fieldset>
+<label class="stack" for="code">卷號（可重開同卷）<input id="code" type="text" maxlength="120" autocomplete="off" spellcheck="false" placeholder="CAPR1-…"></label>
+<div class="btnrow"><button type="button" id="restore" disabled>還原卷號</button><button type="button" id="copy" disabled>複製目前卷號</button></div>
+<p id="status" role="status" aria-live="polite"></p>
+<p class="muted">不需登入。線上作答只留在此頁，不上傳，重整後不保留。</p>
+<details id="sources" hidden><summary>官方原卷與收錄範圍</summary><p id="coverage"></p><ul id="sources-list"></ul></details>
+</section>
+<article class="panel worksheet" id="worksheet" aria-labelledby="sheet-title">
+<header class="sheethead"><div><p class="kicker">百宏文教機構 · 歷屆會考</p><h2 id="sheet-title" tabindex="-1">英語閱讀練習</h2></div><strong id="edition-text">學用版</strong></header>
+<p id="meta">請稍候，正在讀取題庫。</p>
+<p class="only-print" id="print-warning">題圖尚未完整載入，請返回頁面後重試列印。</p>
+<p class="only-print info">班級：__________　座號：______　姓名：____________</p>
+<p class="note only-screen" id="instructions" hidden>手機可點題圖開啟原尺寸。讀完每個題組後，依原題號選 A、B、C 或 D。</p>
+<div id="groups"></div>
+<footer id="practice-actions" class="only-screen" hidden><button type="button" id="check" class="primary">核對我的作答</button><p role="status" id="score" aria-live="polite"></p></footer>
+<div id="answer-key" hidden></div>
+</article>
+</div>
+</main></body>
+</html>
