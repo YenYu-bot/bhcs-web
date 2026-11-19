@@ -1,4 +1,4 @@
-// 滑輪實驗桌（新版試用）
+// 滑輪實驗桌
 // 定滑輪、動滑輪的計算沿用正式站 tools/pulley-desk/model.mjs；滑輪組用同一套理想模型（combo-model.mjs）。
 import { calculate, geometry, TARGET_CM, WEIGHT_N } from '../../pulley-desk/model.mjs';
 import { COMBOS, calculateCombo } from './combo-model.mjs';

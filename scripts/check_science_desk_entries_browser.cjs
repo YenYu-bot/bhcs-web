@@ -2,8 +2,9 @@
 const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'science-desk-entries-artifacts');
-const topics=[['specific-heat','比熱'],['solubility','溶解度'],['metal-activity','金屬']];
-const mime={'.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
+// Legacy free-exploration page id, search term, new tools/lab desk, retired desk URL (now a redirect).
+const topics=[['specific-heat','比熱','heat','specific-heat-desk'],['solubility','溶解度','solubility','solubility-desk'],['metal-activity','金屬','metal','metal-activity-desk']];
+const mime={'.webp':'image/webp','.json':'application/json','.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
  try{
   let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);
@@ -62,47 +63,52 @@ const server=http.createServer((req,res)=>{
     return from;
    }
    try{
-    for(const [id,term] of topics){
+    for(const [id,term,lab,old] of topics){
      topic=id;stage='directory search';
      await page.goto(origin+'/tools/science/');
      await page.locator('#search').fill(term);
-     const old=page.locator(`.resource:not([hidden]) a[href="../science/${id}.html"]`);
-     const fresh=page.locator(`.resource:not([hidden]) a[href="../${id}-desk/"]`);
-     assert.equal(await old.count(),1);assert.equal(await fresh.count(),1);
+     const card=page.locator(`.resource:not([hidden]):has(> a.open[href="../lab/${lab}/"])`);
+     assert.equal(await card.count(),1,id+' one visible primary card');
+     assert.equal(await page.locator(`.resource:not([hidden]) > a.open[href="../science/${id}.html"]`).count(),0,id+' legacy page is not a second card');
      stage='directory to new desk';
-     await follow(page,fresh,`/tools/${id}-desk/`);
-     stage='new desk to legacy';
-     await follow(page,page.locator(`a[href="../science/${id}.html"]`),`/tools/science/${id}.html`);
+     await follow(page,card.locator(`a.open[href="../lab/${lab}/"]`),`/tools/lab/${lab}/`);
+     await page.locator('h1').waitFor({state:'visible'});
+     await page.screenshot({path:path.join(out,`${id}-${width}.png`),fullPage:true});
+     stage='open legacy page';
+     // The directory card keeps the legacy link in its markup (checked statically); open the page directly here.
+     await page.goto(origin+`/tools/science/${id}.html`);
      for(const screen of ['prepare','bench','notebook','check']){
       stage='legacy screen '+screen;
       await page.locator(`.researcher-nav button[data-to="${screen}"]`).click();
       await page.locator(`.researcher-screen[data-screen="${screen}"].is-active`).waitFor({state:'visible'});
-      const returnLink=page.locator(`a[href="../${id}-desk/"]`);
+      const returnLink=page.locator(`a[href="../lab/${lab}/"]`);
       await returnLink.waitFor({state:'visible'});
-      assert(await returnLink.isVisible(),`${id} ${screen}: visible return link`);
+      assert(await returnLink.isVisible(),`${id} ${screen}: visible link to the new desk`);
       await returnLink.scrollIntoViewIfNeeded();
       await page.screenshot({path:path.join(out,`${id}-legacy-${screen}-${width}.png`),fullPage:true});
      }
      await page.locator('.researcher-nav button[data-to="prepare"]').click();
      stage='legacy to new desk';
-     await follow(page,page.locator(`a[href="../${id}-desk/"]`),`/tools/${id}-desk/`);
+     await follow(page,page.locator(`a[href="../lab/${lab}/"]`),`/tools/lab/${lab}/`);
      stage='back and forward';
      await page.goBack();await page.goForward();
-     assert.equal(page.url(),origin+`/tools/${id}-desk/`);
-     await page.screenshot({path:path.join(out,`${id}-${width}.png`),fullPage:true});
-     stage='desk to resources';
-     await follow(page,page.locator('a[href="../../ziyuan.html#res-science"]'),'/ziyuan.html#res-science');
+     assert.equal(page.url(),origin+`/tools/lab/${lab}/`);
      stage='resource search';
+     await page.goto(origin+'/ziyuan.html#res-science');
      await page.locator('#resource-search').fill(term);
-     const resource=page.locator(`#res-science a[href="tools/${id}-desk/"]`);
+     const resource=page.locator(`#res-science a[href="tools/lab/${lab}/"]`);
      await resource.waitFor({state:'visible'});
      await resource.scrollIntoViewIfNeeded();
      await page.screenshot({path:path.join(out,`${id}-resource-before-click-${width}.png`),fullPage:true});
+     assert.equal(await page.locator(`#res-science a[href="tools/${old}/"]`).count(),0,id+' retired desk not listed');
      stage='resource entry to new desk';
-     const destination=await follow(page,resource,`/tools/${id}-desk/`);
+     const destination=await follow(page,resource,`/tools/lab/${lab}/`);
      await destination.locator('h1').waitFor({state:'visible'});
-     await destination.screenshot({path:path.join(out,`${id}-resource-destination-${width}.png`),fullPage:true});
      if(destination!==page)await destination.close();
+     stage='retired desk redirect';
+     await page.goto(origin+`/tools/${old}/`);
+     await page.waitForURL(origin+`/tools/lab/${lab}/`);
+     await page.locator('h1').waitFor({state:'visible'});
     }
     assert.deepEqual(errors,[]);
    }catch(error){
@@ -118,6 +124,6 @@ const server=http.createServer((req,res)=>{
     await context.close();
    }
   }
-  console.log('PASS public desktop/mobile search, entries, reciprocal navigation and browser history');
+  console.log('PASS public desktop/mobile search, new-desk entries, legacy links, retired-desk redirects and browser history');
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});

@@ -1,4 +1,4 @@
-// 斜面實驗桌（新版試用）
+// 斜面實驗桌
 // 短／長斜面沿用 tools/incline-desk/model.mjs；有摩擦的斜面沿用 tools/friction-efficiency-desk/model.mjs；
 // 「比一比」的其他長度、高度用 ideal-model.mjs（已與上述兩個模型逐公分比對一致）。
 import { derive as rampDerive, RAMPS } from '../../incline-desk/model.mjs';

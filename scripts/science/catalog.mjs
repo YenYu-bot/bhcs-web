@@ -57,25 +57,25 @@ export const standalonePublic = Object.freeze([Object.freeze({
  prior:'光的直進、凸透鏡與焦距',goals:'五種物距成像、有限光屏搜尋的限制、實際觀察與理論像距比較',
  minutes:'20–30',kind:'互動模擬'
 }),Object.freeze({
- file:'buoyancy-lab/',title:'余老師的浮力量測站',subject:'理化',grade:'國中',unit:'浮力與排液量測',
- description:'完成清水與濃鹽水兩輪量測，用重量差和排開液重比較浮力。手札僅存目前瀏覽器與網站；原型站紀錄不會自動移入官網。',
- prior:'重量、質量與單位換算',goals:'量測順序、浮力與排液重比較、依原始證據修訂解釋',
- minutes:'20–30',kind:'互動模擬'
+ file:'lab/buoyancy/',title:'浮力實驗桌',subject:'理化',grade:'國中',unit:'浮力與排液量測',
+ description:'把鋁塊慢慢放進清水和濃鹽水，用彈簧秤量出浮力和排開液體的重量；再調整密封盒的質量，找出浮與沉的規律。',
+ prior:'重量、質量與單位換算',goals:'量測順序、浮力與排液重比較、浮沉與密度',
+ minutes:'20–30',kind:'引導實驗桌'
 }),Object.freeze({
- file:'lever-desk/',title:'槓桿實驗桌',subject:'理化',grade:'國中',unit:'力矩與槓桿平衡',
- description:'移動砝碼、比較力矩，把三次觀察留在自己的科學手札。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
+ file:'lab/lever/',title:'槓桿實驗桌',subject:'理化',grade:'國中',unit:'力矩與槓桿平衡',
+ description:'移動、加掛砝碼，看槓桿往哪邊倒，比較兩邊力矩，找出讓兩邊平衡的規律。',
  prior:'力、距離與單位換算',goals:'力矩比較、槓桿平衡、依原始觀察比較與解釋',
- minutes:'20–30',kind:'互動模擬'
+ minutes:'20–30',kind:'引導實驗桌'
 }),Object.freeze({
- file:'pulley-desk/',title:'小小滑輪實驗桌',subject:'理化',grade:'國中',unit:'滑輪、拉力與功',
- description:'拉動定滑輪與動滑輪，將同一個10 N重物提升20 cm，再用兩筆觀察比較力、距離與功。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
+ file:'lab/pulley/',title:'滑輪實驗桌',subject:'理化',grade:'國中',unit:'滑輪、拉力與功',
+ description:'用定滑輪、動滑輪和滑輪組把同一個木箱升高 20 cm，比較拉力、拉繩距離、施力方向和功。',
  prior:'力、距離與單位換算',goals:'理想滑輪的力與距離交換、功的計算、依原始觀察比較與解釋',
- minutes:'20–30',kind:'互動模擬'
+ minutes:'20–30',kind:'引導實驗桌'
 }),Object.freeze({
- file:'incline-desk/',title:'斜面搬運實驗桌',subject:'理化',grade:'國中',unit:'斜面、拉力與功',
- description:'沿短坡與長坡搬運同一個10 N木箱，升高20 cm，用兩筆觀察比較沿坡距離、拉力與功。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
- prior:'力、距離與單位換算',goals:'沿坡距離與垂直升高、理想斜面省力不省功、依原始觀察比較與解釋',
- minutes:'20–30',kind:'互動模擬'
+ file:'lab/incline/',title:'斜面實驗桌',subject:'理化',grade:'國中',unit:'斜面、拉力與功',
+ description:'沿不同長度、高度的斜面把同一個木箱拉上去，比較怎樣最省力、功有沒有改變，以及摩擦的影響。',
+ prior:'力、距離與單位換算',goals:'沿坡距離與垂直升高、理想斜面省力不省功、摩擦的影響',
+ minutes:'20–30',kind:'引導實驗桌'
 }),Object.freeze({
  file:'friction-efficiency-desk/',title:'摩擦與機械效率實驗桌',subject:'理化',grade:'國中',unit:'摩擦、功與機械效率',
  description:'用同一個10 N木箱與同一斜面，量取理想表面和指定粗面的拉力與距離，再比較輸入功、有效功和機械效率。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
@@ -90,9 +90,6 @@ export const standalonePublic = Object.freeze([Object.freeze({
 
 // Completed guided desks sit beside their original exploration topic in both directories.
 export const completedDeskPublic=Object.freeze([
- {id:'specific-heat',file:'specific-heat-desk/',title:'比熱實驗桌：水和鐵，誰升溫快？',subject:'理化',grade:'國中',unit:'熱量與比熱',minutes:'20–30',kind:'引導實驗桌',description:'依序比較水與鐵、再只改鐵的質量，用兩組封存證據分清熱量與溫升。舊版自由探究仍可使用，兩版紀錄分開保存。'},
- {id:'solubility',file:'solubility-desk/',title:'溶解度實驗桌',subject:'理化',grade:'國中',unit:'物質與溶液',minutes:'20–30',kind:'引導實驗桌',description:'跟著引導操作、觀察溶解與析出，留下證據判讀溶解度。舊版濃度與溶解度自由探究仍可使用，兩版紀錄分開保存。'},
- {id:'metal-activity',file:'metal-activity-desk/',title:'金屬活動性實驗桌',subject:'理化',grade:'國中',unit:'氧化還原',minutes:'20–30',kind:'引導實驗桌',description:'依序比較金屬置換反應，以觀察證據判讀活動性。舊版含鎂、銀選項的氧化還原自由探究仍可使用，兩版紀錄分開保存。'}
 ].map(Object.freeze));
 
 // Public, accepted lab desks. Keep older releases available for older records
@@ -104,7 +101,10 @@ export const primaryLabDesks=Object.freeze([
  {id:'electric-power',file:'lab/electric-power/',title:'電流熱效應實驗桌',unit:'電流熱效應',minutes:'15–20',description:'用電表與加熱實驗，比較固定電壓、固定電流時的電功率、電能及水溫。',previousLabel:'舊版電流熱效應實驗室（自由探究與原紀錄）'},
  {id:'neutralization',file:'lab/neutralization/',title:'酸鹼中和實驗桌',unit:'酸鹼中和',minutes:'15–20',description:'用虛擬滴定管比較中和點與酚酞變色，觀察濃度及酸鹼反應比例和滴定體積的關係。',previousLabel:'舊版酸鹼中和實驗室（pH 曲線與原紀錄）'},
  {id:'pressure-fluid',file:'lab/pressure/',title:'水壓與氣壓實驗桌',unit:'壓力與流體',minutes:'15–20',description:'先操作托里切利水銀氣壓計，再移動水下探頭比較表壓與絕對壓力，最後推拉密閉針筒觀察氣體壓縮。',previousLabel:'舊版氣壓、水壓與流體實驗室（水平管流動、可調液體密度與原紀錄）'},
- {id:'reflection-refraction',file:'lab/reflection-refraction/',title:'光的反射與折射實驗桌',unit:'光學',minutes:'15–20',description:'用法線量角，比較光在介面上反射與折射的方向，再觀察光從玻璃射入空氣時的臨界角與全反射。',previousLabel:'舊版光的反射與折射實驗室（介質自由探究、平面鏡成像與原紀錄）'}
+ {id:'reflection-refraction',file:'lab/reflection-refraction/',title:'光的反射與折射實驗桌',unit:'光學',minutes:'15–20',description:'用法線量角，比較光在介面上反射與折射的方向，再觀察光從玻璃射入空氣時的臨界角與全反射。',previousLabel:'舊版光的反射與折射實驗室（介質自由探究、平面鏡成像與原紀錄）'},
+ {id:'specific-heat',file:'lab/heat/',title:'比熱實驗桌',unit:'熱量與比熱',minutes:'15–20',description:'用同一個電熱板加熱水和鐵，看溫度計和溫度–時間圖比較誰升溫快；再只改質量，分清熱量、溫升與比熱。',previousLabel:'舊版比熱比較實驗室（自由探究與原紀錄）',legacyNav:true},
+ {id:'solubility',file:'lab/solubility/',title:'溶解度實驗桌',unit:'物質與溶液',minutes:'15–20',description:'一匙一匙把教學溶質加進水裡，看杯底何時留下固體；再升溫、降溫、加水，分清溶解度、飽和與濃度。',previousLabel:'舊版溶解度與濃度實驗室（自由探究與原紀錄）',legacyNav:true},
+ {id:'metal-activity',file:'lab/metal/',title:'金屬活性實驗桌',unit:'氧化還原',minutes:'15–20',description:'把鋅片、鐵片、銅片放進硫酸銅、硫酸亞鐵與稀鹽酸，觀察析出物與氣泡，用證據排出金屬的活性大小。',previousLabel:'舊版金屬氧化還原實驗室（含鎂、銀選項的自由探究與原紀錄）',legacyNav:true}
 ].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t,previousFile:`science/${t.id}.html`})));
 
 export const mirrorLabDesk=Object.freeze({

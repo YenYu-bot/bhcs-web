@@ -1,10 +1,11 @@
-# tools/lab/ 新版實驗桌（試用）
+# tools/lab/ 新版實驗桌
 
 2026-11 起的新版自然實驗頁。共用規範：器材是主角、余老師一次說一句、直接操作器材、每一下都有反應、證據一鍵收下、全站一套余老師與樣式。
 
 - `shared/lab.css`、`shared/lab.js`：共用顏色、元件（余老師泡泡、任務進度、證據卡、彈簧動畫）。
 - `lever/`、`pulley/`、`incline/`、`buoyancy/`、`heat/`、`solubility/`、`metal/`：各實驗桌。heat 的溫度直接用 `tools/specific-heat-desk/model.mjs`；solubility 用 `tools/solubility-desk/model.mjs`；metal 用 `tools/metal-activity-desk/inquiry.mjs`、`acid.mjs`。
-- `lever/`：槓桿實驗桌試用版。科學計算直接匯入 `tools/lever-desk/model.mjs`，不另寫模型。紀錄存在 `bhcs.lab.lever.v1`，與舊版各站紀錄分開。
+- 2026-11-19 起這七站是目錄主連結。舊實驗桌（`tools/lever-desk/`、`pulley-desk/`、`incline-desk/`、`buoyancy-lab/`、`specific-heat-desk/`、`solubility-desk/`、`metal-activity-desk/`）的 `index.html` 改成 noindex 轉址頁；資料夾裡的模型檔保留供新站匯入，模型測試仍在 `scripts/<舊站>/`。
+- `lever/`：槓桿實驗桌。科學計算直接匯入 `tools/lever-desk/model.mjs`，不另寫模型。紀錄存在 `bhcs.lab.lever.v1`，與舊版各站紀錄分開。
 
 - `motion/`：小車運動圖實驗桌。主流程匯入 `tools/motion-graphs-desk/model.mjs`，讀圖挑戰匯入 `tools/motion-graphs-desk/v2/model.mjs`。紀錄使用新版專用的 `bhcs.lab.motion.v1`。
 
