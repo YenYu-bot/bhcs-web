@@ -201,9 +201,9 @@ for(const [p,href]of [['ziyuan.html','tools/science/reaction-rate.html'],['tools
  for(const old of standalonePublic)assert(s.includes(old.file));
 }
 assert.match(read('tools/science/index.html'),/64 項教材/);assert.match(read('ziyuan.html'),/全部 64 項自然教材/);
-assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">63 項/);assert.match(read('ziyuan.html'),/理化 <small>45 項/);assert.match(read('ziyuan.html'),/目前共 259 項/);
+assert.match(read('ziyuan.html'),/國中自然 · 互動教材<span class="count">63 項/);assert.match(read('ziyuan.html'),/理化 <small>45 項/);assert.match(read('ziyuan.html'),/目前共 261 項/);
 const resourceDOM=new JSDOM(read('ziyuan.html'));
-try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,259);}finally{resourceDOM.window.close();}
+try{assert.equal(resourceDOM.window.document.querySelectorAll('section.res-sec .tpills > a, section.res-sec .science-category li > a').length,261);}finally{resourceDOM.window.close();}
 assert.equal(occurrences(read('sitemap.xml'),`<loc>${m.canonical}</loc>`),1);assert.doesNotMatch(read('sitemap.xml'),/marble-acid-desk|reaction-rate-desk/);
 const documentDOM=new JSDOM(entry);const doc=documentDOM.window.document;
 assert.equal(doc.querySelectorAll('link[rel="canonical"]').length,1);assert.equal(doc.querySelector('link[rel="canonical"]').href,m.canonical);
