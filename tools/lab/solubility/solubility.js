@@ -1,4 +1,4 @@
-// 溶解度實驗桌（新版試用）
+// 溶解度實驗桌
 // 溶解、杯底固體與濃度直接用 tools/solubility-desk/model.mjs 的 calculate()；不另寫模型。
 import { calculate } from '../../solubility-desk/model.mjs';
 import { formatMass, formatPercent } from '../../solubility-desk/format.mjs';

@@ -22,6 +22,24 @@ env:
   PLAYWRIGHT_VERSION: 1.58.2
 
 jobs:
+  # 同一輪 CI 只下載一次相同版本的中文字型，避免五台 runner 重複連外。
+  browser-fonts:
+    name: browser-fonts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and verify the Ubuntu browser font
+        timeout-minutes: 51
+        run: bash scripts/install_ci_browser_fonts.sh fetch "${{ runner.temp }}/bhcs-browser-fonts"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bhcs-browser-fonts
+          path: ${{ runner.temp }}/bhcs-browser-fonts/*.deb
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 3
+
   # 建置一致性、資源連結、單元測試、研究站 batch（無瀏覽器）
   core:
     name: core
@@ -69,6 +87,7 @@ jobs:
   # 主站頁面與預約流程（真實 Chromium）
   site:
     name: site
+    needs: [browser-fonts]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -83,9 +102,14 @@ jobs:
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
+      - uses: actions/download-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: bhcs-browser-fonts
+          path: ${{ runner.temp }}/bhcs-browser-fonts
+      - name: Install verified browser fonts and tools
         timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh poppler-utils
+        run: bash scripts/install_ci_browser_fonts.sh install "${{ runner.temp }}/bhcs-browser-fonts" poppler-utils
       - name: Check deterministic G7 equation preview and print layout
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -126,6 +150,7 @@ jobs:
   # 研究站：各站歡迎畫面構圖（最耗時的單一步驟，獨立一條）
   science-layout:
     name: science-layout
+    needs: [browser-fonts]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -140,9 +165,14 @@ jobs:
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
+      - uses: actions/download-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: bhcs-browser-fonts
+          path: ${{ runner.temp }}/bhcs-browser-fonts
+      - name: Install verified browser fonts and tools
         timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh
+        run: bash scripts/install_ci_browser_fonts.sh install "${{ runner.temp }}/bhcs-browser-fonts"
       - name: Check all welcome layouts and capture review images
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -157,6 +187,7 @@ jobs:
   # 研究站：顯微鏡指標操作、各站操作紀錄與挑戰
   science-stations:
     name: science-stations
+    needs: [browser-fonts]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -171,9 +202,14 @@ jobs:
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
+      - uses: actions/download-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: bhcs-browser-fonts
+          path: ${{ runner.temp }}/bhcs-browser-fonts
+      - name: Install verified browser fonts and tools
         timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh
+        run: bash scripts/install_ci_browser_fonts.sh install "${{ runner.temp }}/bhcs-browser-fonts"
       - name: Check experiment notebook conflicts, legacy imports, and durable resets
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -198,22 +234,6 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_lens_25d_browser.cjs
-      - name: Check standalone buoyancy measurement, storage and touch boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_buoyancy_lab_browser.cjs
-      - name: Check standalone lever evidence, dense touch targets and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_lever_desk_browser.cjs
-      - name: Check standalone pulley guide, pointer cancellation and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_pulley_desk_browser.cjs
-      - name: Check standalone incline guide, native input and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_incline_desk_browser.cjs
       - name: Check accepted friction efficiency native input, geometry and data boundaries
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -256,34 +276,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: buoyancy-lab-review
-          path: buoyancy-lab-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lever-desk-review
-          path: lever-desk-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: pulley-desk-review
-          path: pulley-desk-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: incline-desk-review
-          path: incline-desk-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
           name: friction-efficiency-desk-review
           path: friction-efficiency-desk-artifacts/
           retention-days: 14
@@ -303,103 +295,10 @@ jobs:
           retention-days: 14
 
 
-  # 新比熱原生驗收獨立並行；全部 28 案及 CI Gate 仍為必要門檻。
-  specific-heat:
-    name: specific-heat
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --prefix scripts
-      - name: Install Chromium
-        timeout-minutes: 10
-        run: |
-          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
-          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
-        timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh xvfb xauth
-      - name: Check specific heat native input, heating and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: xvfb-run -a node scripts/check_specific_heat_desk_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: specific-heat-desk-review
-          path: specific-heat-desk-artifacts/
-          retention-days: 14
-
-  # 溶解度獨立新頁：原生操作、資料保護與手機視窗驗收。
-  solubility:
-    name: solubility
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --prefix scripts
-      - name: Install Chromium
-        timeout-minutes: 10
-        run: |
-          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
-          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
-        timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh
-      - name: Check solubility native input, records and storage boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_solubility_desk_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: solubility-desk-review
-          path: solubility-desk-artifacts/
-          retention-days: 14
-
-  # 金屬實驗桌：完整原生流程、保存與分頁隔離，不能略過。
-  metal-activity:
-    name: metal-activity
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --prefix scripts
-      - name: Install Chromium
-        timeout-minutes: 10
-        run: |
-          npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
-          /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
-        timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh
-      - run: npm run test:metal-activity-desk --prefix scripts
-      - name: Check metal activity evidence, native interaction and data boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_metal_activity_desk_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: metal-activity-desk-review
-          path: metal-activity-desk-artifacts/
-          retention-days: 14
-
   # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）
   science-guided:
     name: science-guided
+    needs: [browser-fonts]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -414,9 +313,14 @@ jobs:
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
+      - uses: actions/download-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: bhcs-browser-fonts
+          path: ${{ runner.temp }}/bhcs-browser-fonts
+      - name: Install verified browser fonts and tools
         timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh
+        run: bash scripts/install_ci_browser_fonts.sh install "${{ runner.temp }}/bhcs-browser-fonts"
       - name: Check guided optics input layer in a real browser
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -575,6 +479,7 @@ jobs:
   # 數學練習卷畫面與列印版面（真實 Chromium）
   math-browser:
     name: math-browser
+    needs: [browser-fonts]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -589,9 +494,14 @@ jobs:
         run: |
           npm install --prefix /tmp/bhcs-composition playwright@${{ env.PLAYWRIGHT_VERSION }}
           /tmp/bhcs-composition/node_modules/.bin/playwright install --with-deps chromium
-      - name: Install browser test fonts and tools
+      - uses: actions/download-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: bhcs-browser-fonts
+          path: ${{ runner.temp }}/bhcs-browser-fonts
+      - name: Install verified browser fonts and tools
         timeout-minutes: 10
-        run: bash scripts/install_ci_browser_fonts.sh
+        run: bash scripts/install_ci_browser_fonts.sh install "${{ runner.temp }}/bhcs-browser-fonts"
       - name: Compare P1 math worksheets and print layouts
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -688,7 +598,7 @@ jobs:
   gate:
     name: CI Gate
     if: always()
-    needs: [core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity, specific-heat, solubility, metal-activity]
+    needs: [browser-fonts, core, site, science-layout, science-stations, science-guided, math-browser, math-regression, math-diversity]
     runs-on: ubuntu-latest
     steps:
       - name: All required jobs succeeded
@@ -696,5 +606,5 @@ jobs:
           RESULTS: ${{ toJSON(needs) }}
         run: |
           echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"' | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "$RESULTS" | jq -e 'length == 11 and all(.[]; .result == "success")' > /dev/null
+          echo "$RESULTS" | jq -e 'length == 9 and all(.[]; .result == "success")' > /dev/null
 

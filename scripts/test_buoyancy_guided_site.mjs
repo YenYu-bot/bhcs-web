@@ -45,9 +45,8 @@ test('standalone integration audit exceptions do not expose or import the guided
   const docs = read('docs/buoyancy-lab-integration.md');
   assert.ok(docs.includes('`tools/science/buoyancy-guided.html`'), 'documentation records the protected route explicitly');
   assert.doesNotMatch(docs, /(?:href\s*=\s*["'][^"']*|\]\([^)]*)buoyancy-guided/i, 'audit documentation is not a navigation link to the prototype');
-  const audit = read('scripts/test_buoyancy_lab_integration.mjs');
-  assert.ok(audit.includes("assert.match(read('tools/science/buoyancy-guided.html')"), 'standalone audit keeps the old noindex assertion');
-  assert.ok(audit.includes("assert.ok(!read('sitemap.xml').includes('/tools/science/buoyancy-guided.html'))"), 'standalone audit keeps old sitemap exclusion');
+  // The standalone buoyancy-lab integration test was retired with that desk (2026-11-19); its folder now only redirects.
+  assert.ok(!fs.existsSync(path.join(root, 'scripts/test_buoyancy_lab_integration.mjs')));
   const walk = dir => fs.readdirSync(path.join(root, dir), {withFileTypes:true}).flatMap(e => e.isDirectory() ? walk(`${dir}/${e.name}`) : [`${dir}/${e.name}`]);
   for (const file of walk('tools/buoyancy-lab').filter(f => /\.(?:html|mjs|css|json)$/.test(f))) {
     assert.ok(!read(file).includes('buoyancy-guided'), `${file} cannot reference or import the unlisted prototype`);

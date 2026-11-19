@@ -1,4 +1,4 @@
-// 金屬活性實驗桌（新版試用）
+// 金屬活性實驗桌
 // 反應結果直接用 tools/metal-activity-desk/inquiry.mjs 的 outcome() 與 acid.mjs 的 acidOutcome()；不另寫模型。
 import { outcome, SOLUTIONS } from '../../metal-activity-desk/inquiry.mjs';
 import { acidOutcome } from '../../metal-activity-desk/acid.mjs';

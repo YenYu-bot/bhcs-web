@@ -1,4 +1,4 @@
-// 浮力實驗桌（新版試用）
+// 浮力實驗桌
 // 彈簧秤讀數與排開液體沿用 tools/buoyancy-lab/model.mjs；密封盒浮沉用 ./float-model.mjs（液體密度同一來源）。
 import { reading, FLUIDS } from '../../buoyancy-lab/model.mjs';
 import { blockOutcome, blockMassG, BLOCK, LIQUIDS } from './float-model.mjs';
