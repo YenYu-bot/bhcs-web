@@ -34,7 +34,7 @@
       <div class="readouts" aria-label="實驗即時讀值">
         <div class="reading reading-primary"><span class="reading-label">水溫</span><output id="temp-value" class="reading-num" aria-live="off">25.0</output><span class="reading-unit">°C</span></div>
         <div class="reading"><span class="reading-label">通電時間</span><output id="time-value" class="reading-num" aria-live="off">0</output><span class="reading-unit">秒</span></div>
-        <div class="reading"><span class="reading-label">累積電能</span><output id="energy-value" class="reading-num" aria-live="off">0</output><span class="reading-unit">J</span></div>
+        <div class="reading"><span class="reading-label">累積電能</span><output id="energy-value" class="reading-num" aria-live="off">0</output><span class="reading-unit">J</span><span class="reading-cal">≈ <output id="cal-value" aria-live="off">0</output> 卡<span class="cal-rule">（1 卡 ≈ 4.2 J）</span></span></div>
       </div>
       <div class="scene-wrap">
         <svg id="circuit-svg" class="apparatus-art" viewBox="0 0 640 232" role="img" aria-labelledby="circuit-title circuit-desc" data-powered="false">
@@ -166,7 +166,7 @@
     </section>
     <details class="model-note">
       <summary>模型與公平比較</summary>
-      <p>電功率 P＝VI，累積電能 E＝Pt。水為 100 g，起始 25°C，比熱取 4.2 J／(g·°C)。模型假設電能全轉成水吸收的熱，沒有散熱，數值不是實測。</p>
+      <p>電功率 P＝VI，累積電能 E＝Pt。水為 100 g，起始 25°C，比熱取 4.2 J／(g·°C)，也就是 1 卡／(g·°C)（1 卡 ≈ 4.2 J）。所以 420 J ≈ 100 卡，剛好讓 100 g 的水升高 1°C。模型假設電能全轉成水吸收的熱，沒有散熱，數值不是實測。</p>
       <p>升溫試驗每次換成相同質量與起始溫度的水。電表算例獨立於水槽。這是線上模擬，不用家用插座做實驗。</p>
     </details>
   </aside>
