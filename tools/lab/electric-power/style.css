@@ -72,6 +72,10 @@ h1,h2,h3,p{margin:0}
   border:1px solid #EADCC5;padding:7px 12px;display:grid;justify-content:center;
   grid-template-columns:auto auto;grid-template-areas:"label label" "num unit";column-gap:4px;box-shadow:var(--shadow)
 }
+.reading:has(.reading-cal){grid-template-areas:"label label" "num unit" "cal cal"}
+.reading-cal{grid-area:cal;width:0;justify-self:center;display:flex;justify-content:center;gap:2px;font-size:12px;font-weight:800;color:var(--ink-2);text-align:center;white-space:nowrap}
+.reading-cal output{color:#C8372D;font-variant-numeric:tabular-nums}
+.cal-rule{font-weight:700}
 .reading-primary{background:#fff;border-color:#b2cee0}
 .reading-label{grid-area:label;font-size:14px;font-weight:800;color:var(--ink-2);text-align:center}
 .reading-num{grid-area:num;font-size:clamp(23px,2.8vw,33px);line-height:1.15;color:var(--blue);font-weight:900;font-variant-numeric:tabular-nums}
@@ -169,6 +173,8 @@ h1,h2,h3,p{margin:0}
   .reading-label{font-size:12px}
   .reading-num{font-size:24px}
   .reading-unit{font-size:11px}
+  .reading-cal{font-size:11px}
+  .cal-rule{display:none}
   .scene-wrap{height:auto;aspect-ratio:640/232;max-height:242px;margin-top:4px}
   .asset-label{font-size:23px}
   .badge-label{font-size:16px}

@@ -259,6 +259,7 @@ async function init() {
     put('voltage-value', fmt(r.liveV));
     put('power-value', fmt(r.liveP));
     put('energy-value', fmt(r.energy));
+    put('cal-value', fmt(r.energy / HEAT_CAPACITY));
     put('resistance-value', trials[active].resistance);
     const svg = $('circuit-svg');
     if (svg) {

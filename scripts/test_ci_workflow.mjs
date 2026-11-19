@@ -123,6 +123,12 @@ test('all browser install steps have bounded fail-closed timeouts', () => {
       assert.match(install, /^      - name: [^\n]+\n        timeout-minutes: 10\n        run: /);
       assert.ok(!/^        if:|continue-on-error:/m.test(install), id + ' setup cannot be skipped or ignored');
     }
+    const support = t.match(/^      - name: Install browser test fonts and tools\n[\s\S]*?(?=^      - |$(?![\s\S]))/m);
+    assert.ok(support, id + ' gives fonts a separate setup deadline');
+    assert.match(support[0], /^      - name: Install browser test fonts and tools\n        timeout-minutes: 10\n        run: sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=45 -o Acquire::https::Timeout=45 install -y fonts-noto-cjk fonts-noto-color-emoji(?: |\n)/);
+    assert.ok(!/^        if:|continue-on-error:/m.test(support[0]), id + ' cannot skip fonts');
+    assert.ok(t.indexOf('playwright install --with-deps chromium') < support.index, id + ' initializes Chromium before the extra packages');
+    assert.ok(support.index < t.search(/run: (?:xvfb-run -a )?node scripts\//), id + ' installs fonts before browser tests');
     assert.ok(!t.includes('continue-on-error:'), id + ' setup failure cannot be ignored');
     assert.ok(jobs.gate.needs.includes(id), id + ' remains a required gate dependency');
     total += installs.length;
