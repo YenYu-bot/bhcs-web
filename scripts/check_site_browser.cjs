@@ -27,7 +27,7 @@ const gtagStub=()=>{window.__events=[];window.gtag=function(){window.__events.pu
 const eventsOf=p=>p.evaluate(()=>window.__events.filter(e=>e[0]==='event').map(e=>[e[1],e[2]]));
 const stopNavigation=p=>p.evaluate(()=>{window.__events.length=0;document.addEventListener('click',e=>e.preventDefault(),true)});
 const capture=new Set(['index.html','lianluo.html','ziyuan.html','xuexi-xitong.html','chengguo.html','app.html','guozhong-shuxue.html','guozhong-lihua.html','guozhong-yingwen.html','wenzhang/index.html','wenzhang/duoding.html','wenzhang/chengji-pinxing.html']);
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
+const mime={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{let f=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!f.startsWith(root+path.sep)){res.writeHead(403).end();return}try{if(fs.statSync(f).isDirectory())f=path.join(f,'index.html');res.setHeader('Content-Type',mime[path.extname(f)]||'application/octet-stream');const body=fs.readFileSync(f);if(!f.endsWith('.html')){servedAssets.push(path.relative(root,f).split(path.sep).join('/'));res.setHeader('Cache-Control','public, max-age=600');}res.end(body)}catch{res.writeHead(404).end()}});
 const servedAssets=[];// network fetches actually served by the test server (memory-cache hits never reach it)
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
@@ -269,6 +269,50 @@ async function overflowingElements(p){
     await open('photo',2);await p.locator('#scene .svg-action[aria-label="拉遠"]').click();await settle(p);assert.equal(await p.evaluate(()=>st.dist),'far','mouse click still drives scene buttons');
     await noOverflow('no overflow at end');assert.deepEqual(errors,[]);row.pass=true;
    }catch(e){row.pass=false;row.error=e.message}
+   results.push(row);await ctx.close();
+  }
+  for(const width of [1280,390]){
+   const ctx=await browser.newContext({viewport:{width,height:900}}),row={flow:'CAP grammar numbering',width};
+   await ctx.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
+   const p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
+   try{
+    await p.goto(base+'/tools/english-cap-grammar.html');
+    // Dialogue first, then enough single items to reach two digits before the cloze.
+    await p.locator('#code').fill('BCG1-g01.g02.g03.g04.g05.g06.g07.g08.g09.g10-gp02');
+    await p.locator('#restore').click();
+    await p.evaluate(()=>document.fonts.ready);
+    const verify=async(teacher)=>{
+     const layout=await p.evaluate(()=>{
+      const textTop=e=>{const r=document.createRange();r.selectNodeContents(e);return r.getClientRects()[0].top;};
+      return {overflow:document.documentElement.scrollWidth-innerWidth,items:[...document.querySelectorAll('.question')].map(e=>{
+       const n=e.querySelector('.question-number'),t=e.querySelector('.prompt-text'),o=e.querySelector('.options');
+       return {number:n.textContent,dy:Math.abs(textTop(n)-textTop(t)),indent:Math.abs(t.getBoundingClientRect().left-o.getBoundingClientRect().left)};
+      })};
+     });
+     assert.ok(layout.overflow<=1,JSON.stringify(layout));
+     assert.equal(layout.items.length,13);
+     for(const [i,q] of layout.items.entries()){
+      assert.equal(q.number,(i+1)+'.');
+      assert(q.dy<=3&&q.indent<=2,JSON.stringify(q));
+     }
+     assert.equal(await p.locator('.answer').count(),teacher?13:0);
+    };
+    await verify(false);
+    await p.locator('#teacher').check();await verify(true);
+    if(width===1280){
+     for(const teacher of [false,true]){
+      await p.locator('#teacher').setChecked(teacher);
+      await p.emulateMedia({media:'print'});await verify(teacher);
+      const pdf=path.join(out,'cap-grammar-'+(teacher?'teacher':'student')+'.pdf');
+      await p.pdf({path:pdf,preferCSSPageSize:true});
+      const txt=cp.execFileSync('pdftotext',['-layout',pdf,'-'],{encoding:'utf8'});
+      assert.match(txt,/13\.\s*短文空格/);
+      assert.equal(/^\s*答案\s+[A-D]/m.test(txt),teacher);
+      await p.emulateMedia({media:'screen'});
+     }
+    }
+    assert.deepEqual(errors,[]);row.pass=true;
+   }catch(e){row.pass=false;row.error=e.message;row.errors=errors}
    results.push(row);await ctx.close();
   }
   for(const storageDenied of [false,true]){

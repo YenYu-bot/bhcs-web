@@ -26,16 +26,19 @@ button.primary{background:var(--accent);color:#fff;border-color:var(--accent);fo
 .group h3{margin:0 0 .5rem;font-size:1.1rem}
 .passage{background:#f2f7fb;border-left:3px solid var(--accent);padding:7px 12px}
 .passage p,.prompt,.options{font-family:Georgia,"Times New Roman",serif;font-size:1.08rem;line-height:1.55}
-.questions-list{padding-left:1.55em}
-.question{margin:0 0 .95rem;padding-left:.12rem}
-.question::marker{font-weight:700}
+.questions-list{margin:.65rem 0 0;padding:0;list-style:none}
+.question{--number-column:2.5ch;--number-gap:.5rem;--prompt-indent:calc(var(--number-column) + var(--number-gap));margin:0 0 .95rem;font:1.08rem/1.55 Georgia,"Times New Roman",serif}
 .question fieldset{margin:0;padding:0;border:0;min-width:0}
-.question legend{padding:0}
-.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px}
+.question legend{width:100%;padding:0}
+.prompt-line{display:grid;grid-template-columns:var(--number-column) minmax(0,1fr);gap:var(--number-gap);align-items:baseline}
+.question-number{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.prompt-text{white-space:pre-line;overflow-wrap:break-word}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px;margin-inline-start:var(--prompt-indent)}
 .option{display:flex;align-items:center;gap:7px;min-height:44px;overflow-wrap:anywhere}
 .option input{margin:3px;accent-color:var(--accent)}
 .answer{margin:.25rem 0;padding:5px 9px;background:#eaf4fa;border-radius:5px;font-size:.93em}
-.feedback{font-size:.88em;color:var(--muted)}
+.feedback{font-size:.88rem;color:var(--muted)}
+.sheet .question :is(.answer,.feedback){margin-inline-start:var(--prompt-indent)}
 .check-area{border-top:1px solid var(--rule);padding-top:14px}
 @media(max-width:440px){.options{grid-template-columns:1fr}.config>label:not(.check){flex:1 1 40%}}
 @media print{

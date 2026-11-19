@@ -13,7 +13,7 @@ const test = (name, fn) => { fn(); tests++; console.log('PASS', name); };
 
 const wf = ciWorkflow();
 const jobs = ciJobs(wf);
-const REQUIRED = ['core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity'];
+const REQUIRED = ['browser-fonts', 'core', 'site', 'science-layout', 'science-stations', 'science-guided', 'math-browser', 'math-regression', 'math-diversity'];
 
 /** Top-level block of the workflow (e.g. "on", "concurrency") as raw text. */
 function block(key) {
@@ -46,7 +46,7 @@ test('concurrency: a PR re-push cancels its own older run; main runs are grouped
   assert.ok(!c.includes('github.ref'), 'not grouped by branch: a third push to main would drop the queued second run');
 });
 
-test('the eleven required jobs exist and CI Gate needs exactly them', () => {
+test('the required jobs exist and CI Gate needs exactly them', () => {
   for (const id of REQUIRED) assert.ok(jobs[id], `job ${id}`);
   assert.ok(jobs.gate, 'gate job');
   assert.deepEqual([...jobs.gate.needs].sort(), [...REQUIRED].sort(), 'CI Gate needs every required job and nothing else');
@@ -127,6 +127,25 @@ test('all browser install steps have bounded fail-closed timeouts', () => {
     total += installs.length;
   }
   assert.equal(total, 6, 'five Chromium installs and one additional virtual display install');
+});
+
+test('browser jobs share a verified Noble font without allowing failed setup through', () => {
+  const p = jobs['browser-fonts'].text;
+  assert.equal(count(wf, 'scripts/install_ci_browser_fonts.sh fetch'), 1);
+  assert.match(p, /timeout-minutes: 51\n        run: bash scripts\/install_ci_browser_fonts\.sh fetch /);
+  assert.match(p, /uses: actions\/upload-artifact@v4[\s\S]*?name: bhcs-browser-fonts[\s\S]*?if-no-files-found: error/);
+  assert.ok(!p.includes('continue-on-error:'));
+  const expected = ['site', 'science-layout', 'science-stations', 'science-guided', 'math-browser'];
+  assert.equal(count(wf, 'scripts/install_ci_browser_fonts.sh install'), expected.length);
+  for (const id of expected) {
+    const { text: t, needs } = jobs[id];
+    assert.deepEqual(needs, ['browser-fonts'], id + ' waits for the artifact');
+    assert.match(t, /uses: actions\/download-artifact@v4\n        timeout-minutes: 5\n        with:\n          name: bhcs-browser-fonts/);
+    const install = t.indexOf('scripts/install_ci_browser_fonts.sh install');
+    assert.ok(t.indexOf('actions/download-artifact@v4') < install);
+    assert.ok(install < t.search(/run: (?:xvfb-run -a )?node scripts\//));
+  }
+  assert.match(jobs.site.text, /run: bash scripts\/install_ci_browser_fonts\.sh install .* poppler-utils/);
 });
 
 test('math regression: four shards cover every regression file exactly once', () => {
