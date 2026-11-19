@@ -1275,6 +1275,27 @@
       "approved_blob": "983c8d0ce1282a613b498ac18a13aab90a08fe4f",
       "reason": "Preserve legacy notebook data during upgrade; use transactional revisions to prevent stale writes and display reset or save failures without claiming success.",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/app.js",
+      "baseline_blob": "ae6664c54a1444a3d26890abceddf29da9e2b9fe",
+      "approved_blob": "666430f0a1beea13e0f72323618d635cae1e18a6",
+      "reason": "Show accumulated electric energy in calories next to joules (1 卡 ≈ 4.2 J) so units match the specific-heat station.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/index.html",
+      "baseline_blob": "8d0a9ad62c5c76d5908be502387afd05eb027028",
+      "approved_blob": "96dc99fc8d1e633901233788cf4861b6f753408f",
+      "reason": "Show accumulated electric energy in calories next to joules (1 卡 ≈ 4.2 J) so units match the specific-heat station.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/style.css",
+      "baseline_blob": "286066972fc0e2ba930c50ac92cfc6a3662c3ed4",
+      "approved_blob": "58ebd07b39c0d95ac8ab38af4aace811fea9a5cc",
+      "reason": "Show accumulated electric energy in calories next to joules (1 卡 ≈ 4.2 J) so units match the specific-heat station.",
+      "pull_request": null
     }
   ]
 }
