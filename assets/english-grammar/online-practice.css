@@ -22,3 +22,11 @@
 .practice-score{font-size:1.25rem;font-weight:700;color:var(--ink)}
 .practice-encouragement{margin-top:4px !important;font-weight:600;color:#176347}
 .practice-result{border-left:3px solid var(--accent);padding-left:12px}
+.practice-correction-guide{flex:1 0 100%;background:var(--soft);border:1px solid var(--rule);border-radius:8px;padding:12px}
+.practice-correction-guide h3{margin:0 0 4px;font-size:1rem}
+.practice-correction-actions{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
+.practice-correction-actions button{min-height:44px;white-space:normal}
+.practice-item-navigation{margin:6px 0 1px}
+.practice-item-navigation .practice-hint{margin:0 4px 0 0}
+.practice-item-navigation button:disabled{opacity:.5;cursor:default}
+.practice-item,.practice-input,.practice-correction-guide h3{scroll-margin-block:20vh}

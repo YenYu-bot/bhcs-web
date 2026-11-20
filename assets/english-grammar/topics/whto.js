@@ -21,12 +21,12 @@ const SUBJ = { "I don't know": 'I', 'Can you tell me': 'I', 'She asked me': 'she
 const MODES = [
   {
     id: 'fill', name: '疑問詞 + to V', instruction: () => '依中文填入疑問詞（what、how、where、when、which、who）和 to。',
-    gen(rng) {
+    gen(rng, o) {
       const w = rng.fresh(WH, (x) => x[0] + x[1]);
       const h = rng.pick(HEADS.filter((x) => fits(x, w)));
       const [wh, vp] = split(w);
       const [q, ...noun] = wh.split(' ');
-      return { lines: [[`${h[0]} `, blank(q), `${noun.length ? ' ' + noun.join(' ') : ''} `, blank('to'), ` ${vp}${h[3] ? '?' : '.'}`]], zh: `${h[1]}${w[2]}${h[2]}${h[3] ? '？' : '。'}`, meta: { kind: 'fill', wh: q } };
+      return { lines: [[`${h[0]} `, blank(q), `${noun.length ? ' ' + noun.join(' ') : ''} `, blank('to'), ` ${vp}${h[3] ? '?' : '.'}`]], zh: `${h[1]}${w[2]}${h[2]}${h[3] ? '？' : '。'}`, meta: { kind: 'fill', wh: q, ...(o?.auditFix ? { requiredZh: true } : {}) } };
     },
   },
   {

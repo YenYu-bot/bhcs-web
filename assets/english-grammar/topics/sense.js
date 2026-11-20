@@ -91,7 +91,7 @@ const MODES = [
       const past = o.level >= 2 && rng.chance(0.35);
       const [t, tz] = past ? rng.pick(PAST_LINK) : ['', ''];
       const form = past ? LINK_VERBS[l.verb][2] : l.s3;
-      return { lines: [[`${l.subj} `, blank(form), ` ${adj}${t ? ' ' + t : ''}. (${linkCue(l)})`]], zh: zhJoin(l.zh, tz, zhGet(l, [adj, az], past)) + '。', meta: { kind: 'linkverb', verb: l.verb, like: false, subj: l.subj, past } };
+      return { lines: [[`${l.subj} `, blank(form), ` ${adj}${t ? ' ' + t : ''}. (${linkCue(l)})`]], zh: zhJoin(l.zh, tz, zhGet(l, [adj, az], past)) + '。', meta: { kind: 'linkverb', verb: l.verb, like: false, subj: l.subj, past }, ...(o.auditFix && past && l.verb === 'smell' ? { gradingAlternatives: [['smelled'], ['smelt']] } : {}) };
     },
   },
   {

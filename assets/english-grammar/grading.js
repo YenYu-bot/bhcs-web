@@ -82,6 +82,48 @@ function beReplyAlternatives(item, expected, topicId, modeId) {
   return {tuples,forms,start:i};
 }
 
+const PERSON_REPLY = /^(?:he|she)$/i;
+const THEY_AUX = {
+  is:'are', "isn't":"aren't", was:'were', "wasn't":"weren't",
+  does:'do', "doesn't":"don't", did:'did', "didn't":"didn't",
+};
+
+// Review a singular-they reply only when its complete pattern is grammatical.
+// A pronoun alone must not turn a wrong question auxiliary, polarity or action
+// into an unscored item. The fixed question and all unaffected blanks still count.
+function singularTheyReply(item, entered, expected, topicId, modeId) {
+  if (!['be','simple','past','progressive'].includes(topicId) ||
+      !['short','full'].includes(modeId) || entered.some(value=>!value)) return null;
+  const fixedPastQuestion = topicId === 'past' && item?.meta?.replyAuxPrefilled === true;
+  const first = modeId === 'short' && !fixedPastQuestion ? 1 : 0;
+  const includes = (i, value) => expected[i]?.some(option=>key(option) === key(value));
+  if (!expected[first]?.some(option=>PERSON_REPLY.test(option))) return null;
+  const pr = key(entered[first]), aux = key(entered[first+1]);
+  const validReply = expected[first+1]?.some(option => {
+    const k = key(option);
+    return pr === 'they' && aux === THEY_AUX[k] ||
+      pr === "they're" && aux === 'not' && k === "isn't" && ['be','progressive'].includes(topicId);
+  });
+  if (!validReply) return null;
+  const affected = new Set([first,first+1]);
+  const require = (i, valid) => {
+    if (!valid) return false;
+    affected.add(i);
+    return true;
+  };
+  if (modeId === 'full') {
+    if (!require(2, expected[2]?.some(option=>PERSON_REPLY.test(option)) && key(entered[2]) === 'they')) return null;
+    if (topicId === 'be' || topicId === 'progressive') {
+      if (!require(3, expected[3]?.some(option=>key(entered[3]) === THEY_AUX[key(option)]))) return null;
+    } else if (topicId === 'simple') {
+      const base = item?.meta?.alt;
+      const variants = typeof base === 'string' ? [base,...(SPELLINGS.get(key(base)) ?? [])] : [];
+      if (!require(3, variants.some(option=>key(entered[3]) === key(option)))) return null;
+    }
+  }
+  return entered.every((value,i)=>affected.has(i) || includes(i,value)) ? affected : null;
+}
+
 /**
  * Grade input strings in item.lines / blank reading order.
  * Context allows callers to prevent applying the pilot grader to other topics.
@@ -127,15 +169,11 @@ export function gradeItem(item, userAnswers, { topicId, modeId } = {}) {
   }));
   if (unsupported) return { status: 'review', blanks };
   if (entered.every(value => !value)) return { status: 'unanswered', blanks };
-  // Every input could be individually valid but incompatible in combination.
-  // Avoid falsely pointing at a particular blank when the combination failed.
-  // Answer keys model a specific speaker perspective. Singular “they” can
-  // be a defensible response for a named person; defer agreement in that
-  // reply to self-review instead of calling it wrong or marking it correct.
-  const perspective = (modeId === 'short' || modeId === 'full') && !explicitTuples.length &&
-    entered.some((value, i) => ['they',"they're"].includes(key(value)) && expected[i].some(option => /^(he|she)$/i.test(option)));
+  const perspective = !explicitTuples.length &&
+    singularTheyReply(item, entered, expected, topicId, modeId);
   if (perspective) {
-    return { status: 'review', blanks: blanks.map(blank => blank.status === 'unanswered' ? blank : { ...blank, status: 'review' }) };
+    return { status: 'review', blanks: blanks.map((blank,i) =>
+      perspective.has(i) ? { ...blank, status: 'review' } : blank) };
   }
   const mismatch = blanks.some(blank => blank.status === 'incorrect');
   if (paired && !compatible.length && entered[paired.start] && entered[paired.start+1] &&

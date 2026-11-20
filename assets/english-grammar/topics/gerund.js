@@ -148,5 +148,14 @@ export default {
       ['兩種都可以，意思不同', 'stop to V 停下來去做／stop V-ing 停止做；remember、forget to V 記得、忘了「要」做／V-ing 記得、忘了「曾經」做過；try to V 設法／try V-ing 試試看'],
       ['兩種都可以，意思相同', 'like、love、start、begin（本卷不出題）']] : []),
   ], note: 'to 後面一定是原形；介系詞（at、in、of、about、before、after）後面的動詞一定加 -ing。' }),
-  generate(rng, o, mode) { return MODES.find((m) => m.id === mode).gen(rng, o); },
+  generate(rng, o, mode) {
+    const item = MODES.find((m) => m.id === mode).gen(rng, o);
+    if (!o.auditFix || !item) return item;
+    const keys = item.lines.flat().filter((part) => part?.blank).map((part) => part.a);
+    const uk = {traveling: 'travelling', practicing: 'practising'};
+    const alternate = keys.map((key) => uk[key] ?? key);
+    return alternate.some((key, index) => key !== keys[index])
+      ? { ...item, gradingAlternatives: [keys, alternate] }
+      : item;
+  },
 };

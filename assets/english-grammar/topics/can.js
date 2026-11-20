@@ -1,12 +1,14 @@
 // Topic: can / can't (with the past option, could / couldn't).
-import { blank } from '../core.js';
+import { blank, canUseShortPrompt } from '../core.js';
 import { VTIMES, phrase } from '../verbs.js';
 import { actors, pickSubject, timeFirst, mid, pickFrame, wantAbbr, abbrMark, negInstruction, zhSent, S0, cap, asked, askActors, pickAsked, replyKey } from '../vcommon.js';
 
 const pickTense = (rng, o) => (o.tense === 'P' ? false : o.tense === 'D' ? true : rng.chance(0.5));
 const modal = (past) => (past ? 'could' : 'can');
-/** Negative forms: contracted is one word; uncontracted is "cannot" (one word) or "could not" (two). */
-const negWords = (past, abbr) => (abbr ? [past ? "couldn't" : "can't"] : past ? ['could', 'not'] : ['cannot']);
+// Existing unversioned worksheets keep the single cannot slot.
+const negWords = (past, abbr, splitCan = false) => (abbr ? [past ? "couldn't" : "can't"] : past || splitCan ? [modal(past), 'not'] : ['cannot']);
+const splitHint = (o) => o.canSplit && o.level >= 2 && o.abbr !== 'C' && o.tense !== 'D' ?
+  ' 現在式否定不縮寫時，兩格分別填助動詞、否定詞。' : '';
 
 // (2026-11-01) can here means ability (會). A phrase with a place or a particular thing reads as permission
 // ("Can Jenny skate in the park now?" = 可以), and lifting boxes is strength, not a skill.
@@ -30,32 +32,35 @@ const meta = (d, extra) => ({ subj: d.s.en, base: d.f.v, cue: d.t?.en ?? null, p
 const answerable = (x, f) => !['sleep', 'smile', 'cry', 'hurry', 'drink', 'eat'].includes(x.v) && !/early|late/.test(x.rest || '') && (x.rest || '') !== (f.rest || '');
 const MODES = [
   {
-    id: 'fill', name: '依中文填空', instruction: (o) => `依括號裡的中文與動詞填空${o.abbr === 'F' ? '（否定不用縮寫）' : o.abbr === 'C' ? '（否定請用縮寫）' : '；括號寫「縮寫」的請用縮寫'}。`,
+    id: 'fill', name: '依中文填空', instruction: (o) => `依括號裡的中文與動詞填空${o.abbr === 'F' ? '（否定不用縮寫）' : o.abbr === 'C' ? '（否定請用縮寫）' : '；括號寫「縮寫」的請用縮寫'}。${splitHint(o)}`,
     gen(rng, o) {
       const d = draw(rng, o); if (!d) return null;
       const { s, f, t, past } = d;
       const neg = o.level >= 2 && rng.chance(0.45);
       const abbr = neg && wantAbbr(rng, o);
-      const words = neg ? negWords(past, abbr) : [modal(past)];
-      const bl = [...words, f.v].flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));
+      const twoPartCan = !!o.canSplit && neg && !past && !abbr;
+      const words = neg ? negWords(past, abbr, twoPartCan) : [modal(past)];
+      const bl = (twoPartCan ? words : [...words, f.v]).flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));
+      if (twoPartCan) bl.push(' ' + f.v);
       const mark = neg ? abbrMark(o, abbr) : '';
       const front = t && timeFirst(rng);
       return {
         lines: [front ? [`${cap(t.en)}, ${mid(s.en)} `, ...bl, `${phrase(f)}. (${neg ? '不會' : '會'}／${f.v})${mark}`] : [S0(s) + ' ', ...bl, `${tail(f, t)}. (${neg ? '不會' : '會'}／${f.v})${mark}`]],
-        zh: zhCan(d, neg, '。'), meta: meta(d, { kind: 'fill', neg, abbr }),
+        zh: zhCan(d, neg, '。'), meta: meta(d, { kind: 'fill', neg, abbr, ...(twoPartCan ? {splitCan:true} : {}) }),
       };
     },
   },
   {
-    id: 'neg', name: '否定句', instruction: (o) => negInstruction(o),
+    id: 'neg', name: '否定句', instruction: (o) => negInstruction(o) + splitHint(o),
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every') }); if (!d) return null;
       const { s, f, t, past } = d;
       const abbr = wantAbbr(rng, o);
-      const bl = negWords(past, abbr).flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));
+      const twoPartCan = !!o.canSplit && o.level >= 2 && !past && !abbr;
+      const bl = negWords(past, abbr, twoPartCan).flatMap((w, i) => (i ? [' ', blank(w)] : [blank(w)]));
       return {
         lines: [[`${S0(s)} ${modal(past)} ${f.v}${tail(f, t)}.`], ['→ ' + S0(s) + ' ', ...bl, ` ${f.v}${tail(f, t)}.${abbrMark(o, abbr)}`]],
-        zh: zhCan(d, true, '。'), meta: meta(d, { kind: 'neg', abbr }),
+        zh: zhCan(d, true, '。'), meta: meta(d, { kind: 'neg', abbr, ...(twoPartCan ? {splitCan:true} : {}) }),
       };
     },
   },
@@ -72,13 +77,15 @@ const MODES = [
     },
   },
   {
-    id: 'short', name: '簡答', instruction: () => '填入 Can 或 Could，並完成簡答（否定簡答請用縮寫）。',
+    id: 'short', name: '簡答', instruction: (o) => canUseShortPrompt(o) ?
+      '完成簡答：第一格填主詞，第二格填助動詞（否定請用縮寫）。' :
+      '填入 Can 或 Could，並完成簡答（否定簡答請用縮寫）。',
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t, past } = d;
       const yes = rng.chance(0.5);
       return {
-        lines: [[blank(cap(modal(past))), ` ${s.en} ${f.v}${tail(f, t)}? — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? modal(past) : negWords(past, true)[0]), '.']],
+        lines: [[canUseShortPrompt(o) ? 'Can' : blank(cap(modal(past))), ` ${s.en} ${f.v}${tail(f, t)}? — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? modal(past) : negWords(past, true)[0]), '.']],
         zh: zhCan(d, false, '嗎？'), meta: meta(d, { kind: 'reply' }),
       };
     },

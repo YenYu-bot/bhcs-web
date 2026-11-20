@@ -140,7 +140,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   </div>
 </div>
 <script type="module">
-import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT, TR_CHOICES, TR_ONLY } from '../assets/english-grammar/core.js';
+import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT, TR_CHOICES, TR_ONLY, requiredGrammarCue } from '../assets/english-grammar/core.js';
 import { TOPICS as PUBLIC, ALL_TOPICS } from '../assets/english-grammar/topics.js';
 import { installOnlinePractice } from '../assets/english-grammar/online-practice.js';
 
@@ -150,8 +150,8 @@ const onlinePractice = installOnlinePractice({root:$('online-practice'),toggle:$
 const TOPICS = params.has('draft') ? ALL_TOPICS : PUBLIC;
 const GRADE = { 7: '七年級', 8: '八年級', 9: '九年級' };
 const NUM = ['一', '二', '三', '四', '五', '六', '七', '八'];
-const levelHint = (lv) => topic.levelHint?.[lv] ?? '';
-let topic = TOPICS[0], seed = newSeed(), sheet = null;
+const levelHint = (lv) => (auditFix ? topic.auditLevelHint?.[lv] : null) ?? topic.levelHint?.[lv] ?? '';
+let topic = TOPICS[0], seed = newSeed(), sheet = null, canSplit = true, canShort = true, auditFix = true, auditR2 = true;
 
 function newSeed() { return 10000 + Math.floor(Math.random() * 90000); }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -171,7 +171,7 @@ for (const n of TR_CHOICES) $('tr').append(new Option(n === TR_ONLY ? '只出翻
 function buildModeBoxes() {
   $('modes').replaceChildren(...topic.modes.map((m) => {
     const l = document.createElement('label');
-    l.innerHTML = `<input type="checkbox" id="m-${m.id}" value="${m.id}">${esc(m.name)}`;
+    l.innerHTML = `<input type="checkbox" id="m-${m.id}" value="${m.id}"><span>${esc(m.name)}</span>`;
     return l;
   }));
 }
@@ -186,7 +186,7 @@ function readOpts() {
   return {
     level, tense: topic.past ? $('tense').value : 'P',
     modes: topic.modes.map((m) => m.id).filter((id) => $('m-' + id).checked),
-    abbr: $('abbr').value, zh: !!topic.zhRequired || $('zh').checked, count, seed, tr: $('tr').value === TR_ONLY ? TR_ONLY : Number($('tr').value),
+    abbr: $('abbr').value, zh: !!topic.zhRequired || $('zh').checked, count, seed, canSplit, canShort, auditFix, auditR2, tr: $('tr').value === TR_ONLY ? TR_ONLY : Number($('tr').value),
   };
 }
 function applyOpts(o) {
@@ -194,7 +194,7 @@ function applyOpts(o) {
   $('tense').value = o.tense; $('abbr').value = o.abbr; $('zh').checked = o.zh; $('count').value = o.count; $('tr').value = String(o.tr || 0);
   for (const m of topic.modes) $('m-' + m.id).checked = o.modes.includes(m.id);
   $('levelHint').textContent = levelHint(o.level);
-  seed = o.seed;
+  seed = o.seed; canSplit = !!o.canSplit; canShort = !!o.canShort; auditFix = !!o.auditFix; auditR2 = !!o.auditR2;
 }
 function selectTopic(id, keepTitle) {
   topic = TOPICS.find((t) => t.id === id) || TOPICS[0];
@@ -214,6 +214,10 @@ function part(p) {
 }
 function render() {
   const o = readOpts();
+  $('levelHint').textContent = levelHint(o.level);
+  if (topic.auditR2ModeNames) for (const m of topic.modes) {
+    $('m-' + m.id).nextElementSibling.textContent = (auditR2 ? topic.auditR2ModeNames[m.id] : null) ?? m.name;
+  }
   const status = $('status');
   const invalid = (message) => {
     status.textContent = message; status.classList.add('err');
@@ -241,7 +245,7 @@ function render() {
   sheet.sections.forEach((sec, i) => {
     html += `<section class="sec"><h3>${NUM[i]}、${esc(sec.title)}</h3><ol start="${n}">`;
     for (const it of sec.items) {
-      html += `<li>${it.lines.map((l) => `<span class="ln">${l.map(part).join('')}</span>`).join('')}${o.zh ? `<span class="zh">${esc(it.zh)}</span>` : ''}</li>`;
+      html += `<li>${it.lines.map((l) => `<span class="ln">${l.map(part).join('')}</span>`).join('')}${(o.zh || requiredGrammarCue(it,topic.id,sec.mode,sheet.opts)) ? `<span class="zh">${esc(it.zh)}</span>` : ''}</li>`;
       n++;
     }
     html += '</ol></section>';
@@ -260,11 +264,11 @@ function render() {
 }
 
 // ---------- events ----------
-$('topic').addEventListener('change', () => { selectTopic($('topic').value); setDefaults(readOpts().level); seed = newSeed(); render(); });
-document.querySelectorAll('input[name=level]').forEach((r) => r.addEventListener('change', () => { setDefaults(Number(r.value)); seed = newSeed(); render(); }));
+$('topic').addEventListener('change', () => { selectTopic($('topic').value); setDefaults(readOpts().level); seed = newSeed(); canSplit = canShort = auditFix = auditR2 = true; render(); });
+document.querySelectorAll('input[name=level]').forEach((r) => r.addEventListener('change', () => { setDefaults(Number(r.value)); seed = newSeed(); canSplit = canShort = auditFix = auditR2 = true; render(); }));
 $('form').addEventListener('change', (e) => { if (!['topic', 'codeIn'].includes(e.target.id) && e.target.name !== 'level') render(); });
 $('title').addEventListener('input', render); $('org').addEventListener('input', render);
-$('new').addEventListener('click', () => { seed = newSeed(); render(); });
+$('new').addEventListener('click', () => { seed = newSeed(); canSplit = canShort = auditFix = auditR2 = true; render(); });
 $('print').addEventListener('click', () => window.print());
 $('restore').addEventListener('click', () => {
   const r = decodeCode($('codeIn').value, TOPICS);

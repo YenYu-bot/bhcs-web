@@ -259,16 +259,25 @@ function checkCan(it, mode, o) {
   assert.equal(past, m.past, `tense follows the time word: ${text}`);
   if (o.tense === 'M') assert.ok(m.cue, 'mixed sheets give a time word');
   if (o.tense === 'P') assert.ok(!past); if (o.tense === 'D') assert.ok(past);
-  const md = past ? 'could' : 'can', neg = (ab) => (ab ? [past ? "couldn't" : "can't"] : past ? ['could', 'not'] : ['cannot']);
+  const md = past ? 'could' : 'can';
+  const split = o.canSplit && o.level >= 2 && !past;
+  const neg = (ab) => (ab ? [past ? "couldn't" : "can't"] : past || split ? [md, 'not'] : ['cannot']);
   if (mode === 'fill') {
     hint(text, m.base);
     assert.ok(text.includes(m.neg ? '(不會／' : '(會／'), 'Chinese cue says 會 or 不會');
-    if (m.neg) { const ab = a.length === 2 && a[0].includes("'"); abbrOk(o, ab, text); assert.deepEqual(a, [...neg(ab), m.base]); }
+    if (m.neg) {
+      const ab = a[0].includes("'");
+      abbrOk(o, ab, text);
+      if (split && !ab) {
+        assert.deepEqual(a, ['can', 'not']);
+        assert.ok(it.lines[0].includes(' ' + m.base), 'the two-slot format prints the base verb');
+      } else assert.deepEqual(a, [...neg(ab), m.base]);
+    }
     else assert.deepEqual(a, [md, m.base]);
   }
   if (mode === 'neg') { const ab = a[0].includes("'"); abbrOk(o, ab, text); assert.deepEqual(a, neg(ab)); }
   if (mode === 'q') assert.deepEqual(a, [cap1(md)]);
-  if (mode === 'short') { const r = expectedReply(m.subj), yes = text.includes('— Yes'); assert.deepEqual(a, [cap1(md), r, yes ? md : neg(true)[0]]); }
+  if (mode === 'short') { const r = expectedReply(m.subj), yes = text.includes('— Yes'); assert.deepEqual(a, [...(o.canSplit && o.canShort && o.tense === 'P' ? [] : [cap1(md)]), r, yes ? md : neg(true)[0]]); }
   if (mode === 'full') { const r = expectedReply(m.subj); hint(text, m.alt); assert.deepEqual(a, [r, neg(true)[0], cap1(r), md, m.alt]); }
 }
 function checkPast(it, mode, o) {

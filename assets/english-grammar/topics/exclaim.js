@@ -36,7 +36,8 @@ const MODES = [
       const adj = rng.pick(n.adjs);
       const art = n.plural ? null : aOrAn(adj);
       const bl = art ? [blank('What'), ' ', blank(art), ' ', blank(adj)] : [blank('What'), ' ', blank(adj)];
-      const tail = o.level >= 3 && rng.chance(0.3) ? (n.plural ? (n.en === 'weather' ? ' it is' : ' they are') : n.en === 'boy' ? ' he is' : n.en === 'girl' ? ' she is' : ' it is') : ''; // a boy is "he"
+      let tail = o.level >= 3 && rng.chance(0.3) ? (n.plural ? (n.en === 'weather' ? ' it is' : ' they are') : n.en === 'boy' ? ' he is' : n.en === 'girl' ? ' she is' : ' it is') : ''; // a boy is "he"
+      if (o.auditFix && n.en === 'teacher') tail = '';
       return { lines: [[...bl, ` ${n.en}${tail}! (${adj})`]], zh: `好${ADJ_ZH[adj]}的${n.zh}啊！`, meta: meta('what', { adj, noun: n.en, plural: n.plural }) };
     },
   },

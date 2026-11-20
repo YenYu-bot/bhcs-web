@@ -144,8 +144,29 @@ const MODES = [
     },
   },
   {
-    id: 'wh', name: 'How many 問句', instruction: () => '填入正確的 Be 動詞。',
+    id: 'wh', name: 'How many 問句',
+    instruction: (o) => o?.auditR2
+      ? '依名詞填入 many 或 much，並填入正確的 Be 動詞。How many 後接可數複數，How much 後接不可數名詞。'
+      : '填入正確的 Be 動詞。',
     gen(rng, o) {
+      if (o.auditR2) {
+        const quantity = rng.fresh(['count', 'mass'], (x) => 'wh-quantity-' + x);
+        const mass = quantity === 'mass';
+        // Mass nouns are normally introduced at level 3, but a student can explicitly pick this mode at any level.
+        const d = draw(rng, mass ? { ...o, level: Math.max(3, o.level) } : o,
+          (n) => mass ? n.num === 'u' : !!n.count);
+        if (!d) return null;
+        const place = askPl(d.place);
+        const noun = mass ? d.n.en.replace(/^(?:some|a lot of) /, '') : d.n.count;
+        const key = mass ? 'much' : 'many';
+        const reply = mass ? (d.n.en.startsWith('a lot of ') ? 'A lot' : 'A little') : cap(d.n.en.split(' ')[0]);
+        const zhNoun = mass ? ('有多少' + d.n.zh.replace(/^(?:一些|很多)/, '')) : ('有幾' + COUNT_ZH[noun].join(''));
+        return {
+          lines: [['How ', blank(key), ` ${noun} `, blank(be(d.n, d.past)), ` there${tail(place, d.t)}? — ${reply}.`]],
+          zh: zhJoin(d.t?.zh, PLACE_ZH[place], zhNoun) + '？',
+          meta: meta(d, { kind: 'wh', quantity }),
+        };
+      }
       const d = draw(rng, o, (n) => n.count); if (!d) return null;
       const num = d.n.en.split(' ')[0], pl = askPl(d.place);
       return {
@@ -163,10 +184,12 @@ export default {
   grade: 7,
   past: true,
   modes: MODES.map(({ id, name, instruction }) => ({ id, name, instruction })),
+  auditR2ModeNames: { wh: 'How many／How much 問句' },
   defaultModes: { 1: ['fill'], 2: ['fill', 'neg', 'q', 'short'], 3: ['fill', 'neg', 'q', 'short', 'full', 'wh'] },
   levelHint: { 1: '單數與複數名詞，括號附提示。', 2: '加入 many、some，肯定、否定、疑問混合。', 3: '加入不可數名詞、兩個名詞時看最近的名詞，不給提示。' },
   grammarBox: (o) => ({ head: ['後面的名詞', ...(o.tense !== 'D' ? ['現在式'] : []), ...(o.tense !== 'P' ? ['過去式'] : [])],
     rows: [['單數名詞、不可數名詞', ...(o.tense !== 'D' ? ['There is'] : []), ...(o.tense !== 'P' ? ['There was'] : [])], ['複數名詞', ...(o.tense !== 'D' ? ['There are'] : []), ...(o.tense !== 'P' ? ['There were'] : [])]],
-    note: '否定與疑問句裡 some 改成 any。兩個名詞時，Be 動詞跟最靠近的名詞一致。' }),
+    note: '否定與疑問句裡 some 改成 any。兩個名詞時，Be 動詞跟最靠近的名詞一致。' +
+      (o.auditR2 ? ' 問數量時，How many 接可數複數並搭配 are／were；How much 接不可數名詞並搭配 is／was。' : '') }),
   generate(rng, o, mode) { return MODES.find((m) => m.id === mode).gen(rng, o); },
 };
