@@ -8,6 +8,7 @@
 <link rel="canonical" href="https://www.bhcs.com.tw/tools/english-grammar.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/english-grammar/online-practice.css">
 <style>
 :root{
   --bg:#eaeef3; --panel:#fff; --ink:#1d2733; --muted:#5a6777; --rule:#d5dee8; --soft:#f3f6f9;
@@ -85,7 +86,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 @media print{
   @page{size:A4;margin:12mm 13mm 14mm}
   html,body{background:#fff}
-  .wrap>header,.panel{display:none!important}
+  .wrap>header,.panel,.practice{display:none!important}
   .wrap{padding:0;display:block;max-width:none}
   .main{display:block}
   .preview{overflow:visible}
@@ -129,20 +130,23 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
         <label><input type="radio" name="ver" id="verT" value="t">教用版</label>
       </div>
       <div class="btns"><button type="button" class="ghost" id="new">換一份題目</button><button type="button" class="primary" id="print">列印 A4</button></div>
+      <button type="button" class="ghost" id="online" aria-controls="online-practice" aria-expanded="false" hidden>線上練習</button>
       <div class="grp"><span class="t">卷號（輸入卷號可還原同一份題目）</span>
         <div class="codebox"><input type="text" id="codeIn" aria-label="卷號" spellcheck="false"><button type="button" class="ghost" id="restore">還原</button></div>
       </div>
       <p class="status" id="status" role="status"></p>
     </form>
-    <section class="preview" aria-label="練習卷預覽"><div class="sheet" id="sheet"></div></section>
+    <section class="preview" aria-label="練習卷預覽"><div class="sheet" id="sheet"></div><section id="online-practice" class="practice" aria-label="線上練習" hidden></section></section>
   </div>
 </div>
 <script type="module">
 import { buildSheet, decodeCode, LEVELS, TENSES, ABBR, COUNT_MIN, COUNT_MAX, COUNT_DEFAULT, TR_CHOICES, TR_ONLY } from '../assets/english-grammar/core.js';
 import { TOPICS as PUBLIC, ALL_TOPICS } from '../assets/english-grammar/topics.js';
+import { installOnlinePractice } from '../assets/english-grammar/online-practice.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+const onlinePractice = installOnlinePractice({root:$('online-practice'),toggle:$('online'),paper:$('sheet')});
 const TOPICS = params.has('draft') ? ALL_TOPICS : PUBLIC;
 const GRADE = { 7: '七年級', 8: '八年級', 9: '九年級' };
 const NUM = ['一', '二', '三', '四', '五', '六', '七', '八'];
@@ -211,11 +215,18 @@ function part(p) {
 function render() {
   const o = readOpts();
   const status = $('status');
-  if (!o.modes.length) { status.textContent = '請至少勾選一種句型。'; status.classList.add('err'); return; }
+  const invalid = (message) => {
+    status.textContent = message; status.classList.add('err');
+    $('sheet').replaceChildren();
+    $('print').disabled = true;
+    onlinePractice.setSheet(null,topic,false);
+  };
+  if (!o.modes.length) { invalid('請至少勾選一種句型。'); return; }
   try { sheet = buildSheet(topic, o); }
-  catch (e) { status.textContent = '這組設定出不了足夠的題目，請減少題數或多勾幾種句型。'; status.classList.add('err'); return; }
+  catch { invalid('這組設定出不了足夠的題目，請減少題數或多勾幾種句型。'); return; }
+  if (!sheet.total) { invalid('這組句型沒有可翻譯的句子，請換一種句型。'); return; }
+  $('print').disabled = false;
   status.textContent = sheet.total < o.count ? `這組句型最多出 ${sheet.total} 題，已全部列出。` : ''; status.classList.remove('err');
-  if (sheet.total === 0) { status.textContent = '這組句型沒有可翻譯的句子，請換一種句型。'; status.classList.add('err'); }
   const teacher = $('verT').checked;
   const lv = LEVELS.find((l) => l.id === o.level).name;
   const tense = topic.past ? '・' + TENSES.find((t) => t.id === sheet.opts.tense).name : '';
@@ -245,6 +256,7 @@ function render() {
   el.className = 'sheet' + (teacher ? ' teacher' : '');
   el.innerHTML = html;
   $('codeIn').value = sheet.code;
+  onlinePractice.setSheet(sheet,topic,teacher);
 }
 
 // ---------- events ----------

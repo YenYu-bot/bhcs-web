@@ -1,0 +1,24 @@
+/* Online practice is separate from the printable student/teacher worksheet. */
+[hidden]{display:none!important}
+@media screen{.practice-open{display:none}}
+.practice{background:var(--panel);border-radius:10px;padding:clamp(14px,3vw,28px);overflow-wrap:anywhere}
+.practice h2{margin:0}
+.practice-subtitle,.practice-hint{color:var(--muted);font-size:.9rem;margin:4px 0 10px}
+.practice-section{padding:8px 0}
+.practice-section h3{font-size:1rem;margin:0 0 8px}
+.practice-section ol{padding-inline-start:1.9rem;margin:0}
+.practice-item{padding:9px 0;border-bottom:1px solid var(--rule)}
+.practice-line{display:block;line-height:1.65;font-family:var(--en),var(--zh);font-size:1.12rem}
+.practice .practice-input{display:inline-block;vertical-align:baseline;width:8.5ch;min-height:44px;max-width:100%;margin:2px 1px;font-family:inherit;font-size:16px}
+.practice .practice-input.wide{width:clamp(11ch,45%,31ch);min-width:min(11ch,100%)}
+.practice textarea.practice-input{display:block;width:100%;border:1px solid var(--rule);border-radius:7px;padding:7px;background:var(--soft);font-family:var(--en);color:var(--ink)}
+.practice-feedback{margin:3px 0;color:var(--muted);font-size:.94rem}
+.practice-feedback[data-result=correct]{color:#176347}
+.practice-feedback[data-result=incorrect]{color:#a51d24}
+.practice-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:15px}
+.practice-actions p{margin:0}
+.practice-reveal{margin-top:5px}
+@media print{.practice{display:none!important}}
+.practice-score{font-size:1.25rem;font-weight:700;color:var(--ink)}
+.practice-encouragement{margin-top:4px !important;font-weight:600;color:#176347}
+.practice-result{border-left:3px solid var(--accent);padding-left:12px}
