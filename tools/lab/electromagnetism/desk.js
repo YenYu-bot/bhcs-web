@@ -63,9 +63,9 @@ function scene({ rig, el, txt, P, s, r }) {
   }
 }
 
-const mag = (sig, label, turns, current, aim) => ({ sig, label, aim, when: s => s.mode === 'magnet' && s.turns === turns && s.current === current,
+const mag = (sig, label, turns, current, aim) => ({ sig, label, aim, set: { mode: 'magnet', turns, current },
   title: s => `${s.turns} 匝・${s.current} A`, body: (s, r) => `磁場 ${mt(r.mT)} mT，吸 ${r.clips} 根${r.north ? `，N 極在${r.north === 'right' ? '右' : '左'}` : ''}` });
-const ind = (sig, label, motion, speed, aim, turns = 100) => ({ sig, label, aim, when: s => s.mode === 'induce' && s.motion === motion && s.speed === speed && s.turns === turns,
+const ind = (sig, label, motion, speed, aim, turns = 100) => ({ sig, label, aim, set: { mode: 'induce', motion, speed, turns },
   title: s => `磁鐵${MOTION[s.motion]}${s.motion === 'still' ? '' : s.speed === 'fast' ? '（快）' : '（慢）'}・${s.turns} 匝`, body: (s, r) => r.deflect === 0 ? '指針不動，沒有電流' : `指針偏${r.deflect > 0 ? '右' : '左'} ${Math.abs(r.deflect)} 格` });
 
 runDesk({

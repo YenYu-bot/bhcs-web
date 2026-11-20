@@ -43,7 +43,7 @@ function scene({ rig, el, txt, P, s, r }) {
   txt(rig, 500, 525, `${STEP[s.step]}：${r.flow}`, { 'font-size': 16 });
 }
 
-const tgt = (sig, label, rod, step, aim) => ({ sig, label, aim, when: s => s.rod === rod && s.step === step,
+const tgt = (sig, label, rod, step, aim) => ({ sig, label, aim, set: { rod, step },
   title: s => `${s.rod === 'neg' ? '負電棒' : '正電棒'}・${STEP[s.step]}`,
   body: (s, r) => r.net === 0 && r.near ? `淨電荷 0，近端${r.nearText}、遠端${r.farText}` : r.net === 0 ? '淨電荷 0，不帶電' : `帶${charge(r)}電` });
 

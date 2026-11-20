@@ -6,7 +6,7 @@
 //   initial:{...設定}, model(s) → r, readouts(s, r) → [[標籤, 數值, 單位, 註記], …],
 //   scene(api), viewBox:{desk, phone} 或 (step) => {desk, phone},
 //   steps:[{ id, label, title, goal, intro, kind:'observe'|'calc'|'quiz', enter:{…}, controls:[…],
-//            targets:[{ sig, label, when(s,r), title(s,r), body(s,r), ready? }], react?(s,r), found:[一句話, 式子],
+//            targets:[{ sig, label, set:{需要的設定}, aim, title(s,r), body(s,r) }], react?(s,r), found:[一句話, 式子],
 //            rows:[{ id, name, eq, answer, unit, tol?, hint?(v) }] }],
 //   quiz:[{ q, options:[{ text, ok?, why? }] }]
 // }
@@ -105,6 +105,8 @@ export async function runDesk(c) {
   const db = await openNotebook(c.key);
   const STEPS = c.steps, byId = id => STEPS.find(x => x.id === id), idx = id => STEPS.findIndex(x => x.id === id);
   const keys = Object.keys(c.initial);
+  // 目標證據用 set 寫出需要的設定，when 預設就是「設定都符合」
+  for (const st of STEPS) for (const t of st.targets || []) if (!t.when) t.when = s => Object.entries(t.set).every(([k, v]) => s[k] === v);
   const fresh = () => ({ v: 1, step: STEPS[0].id, s: { ...c.initial, ...(STEPS[0].enter || {}) }, records: [], done: [], calc: {}, quiz: { i: 0, pick: null } });
   function loadState() {
     const s = db.load();
@@ -387,5 +389,11 @@ export async function runDesk(c) {
   $('#open-notes').addEventListener('click', openNotes);
   document.querySelectorAll('dialog [data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
   render();
+  // 給瀏覽器檢查用的唯讀介面：目前步驟的目標設定與控制列（不能用來改進度）
+  globalThis.__labDesk = Object.freeze({
+    targets: () => (step().targets || []).map(t => ({ sig: t.sig, set: { ...t.set } })),
+    controls: () => (step().controls || []).map(x => ({ key: x.key, type: x.type, options: x.options ? x.options.map(o => o[0]) : null })),
+    value: k => S.s[k]
+  });
   return { get state() { return S; }, set, goStep };
 }

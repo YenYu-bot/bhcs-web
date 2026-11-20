@@ -8,14 +8,22 @@ const DESKS={
  electromagnetism:{quiz:[1,1,1]},
  electrostatics:{quiz:[1,1,1]},
 };
+// 照目前步驟的每個目標設定，用畫面上的按鈕（分段按鈕或＋／−）把器材調過去，提示「收下」時才收下。
+async function press(t,loc){if(t.mobile)await loc.tap();else await loc.click();await t.wait(50);}
 async function observe(t){
- const p=t.p,groups=await p.locator('#controls .ctl').count(),sizes=[];
- for(let g=0;g<groups;g++){const n=await p.locator('#controls .ctl').nth(g).locator('button').count();sizes.push(await p.locator('#controls .ctl').nth(g).locator('.seg').count()?n:0);}
- const combos=sizes.reduce((acc,n)=>n?acc.flatMap(a=>Array.from({length:n},(_,i)=>[...a,i])):acc.map(a=>[...a,null]),[[]]);
- for(let pass=0;pass<2;pass++)for(const combo of combos){
-  if(await p.locator('#task-go').isVisible())return;
-  for(let g=0;g<combo.length;g++)if(combo[g]!==null){const b=p.locator('#controls .ctl').nth(g).locator('button').nth(combo[g]);if(await b.isEnabled()&&await b.getAttribute('aria-pressed')!=='true'){if(t.mobile)await b.tap();else await b.click();await t.wait(60);}}
-  if(await p.locator('#save.cue').count()){if(t.mobile)await p.tap('#save');else await p.click('#save');await t.wait(120);}
+ const p=t.p,targets=await p.evaluate(()=>__labDesk.targets()),controls=await p.evaluate(()=>__labDesk.controls());
+ assert.ok(targets.length>0,'observe step has targets');
+ for(const tg of targets){
+  for(const [key,want] of Object.entries(tg.set)){
+   const ci=controls.findIndex(c=>c.key===key);
+   if(ci<0){assert.equal(await p.evaluate(k=>__labDesk.value(k),key),want,`fixed setting ${key}`);continue;}
+   const box=p.locator('#controls .ctl').nth(ci),c=controls[ci];
+   if(c.type==='seg'){const k=c.options.findIndex(v=>v===want);assert.ok(k>=0,`option ${key}=${want}`);const b=box.locator('button').nth(k);if(await b.getAttribute('aria-pressed')!=='true')await press(t,b);}
+   else for(let guard=0;guard<80;guard++){const v=await p.evaluate(k=>__labDesk.value(k),key);if(Math.abs(v-want)<1e-9)break;await press(t,box.locator('.stepper button').nth(v<want?1:0));}
+   assert.equal(await p.evaluate(k=>__labDesk.value(k),key),want,`reached ${key}=${want}`);
+  }
+  assert.ok(await p.locator('#save.cue').count(),`save is cued for ${tg.sig}`);
+  await press(t,p.locator('#save'));await t.wait(80);
  }
  assert.ok(await p.locator('#task-go').isVisible(),`observe step finished ${t.width}px: ${await t.kicker()}`);
 }

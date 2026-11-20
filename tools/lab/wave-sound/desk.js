@@ -57,9 +57,8 @@ function scene({ rig, el, txt, s, r }) {
   }
 }
 
-const hit = (s, mode, f, length = 1) => s.mode === mode && s.f === f && s.length === length;
 const tgt = (sig, label, mode, f, aim, length = 1) => ({
-  sig, label, aim, when: s => hit(s, mode, f, length),
+  sig, label, aim, set: { mode, f, length },
   title: s => `${MODE[s.mode]} ${s.f} Hz`,
   body: (s, r) => r.kind === 'travel' ? `波長 ${f2(r.wavelength)} m` : r.kind === 'resonant' ? `共振，第 ${r.n} 個模態` : '沒有共振'
 });

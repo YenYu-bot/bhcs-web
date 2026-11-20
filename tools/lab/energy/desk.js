@@ -38,9 +38,8 @@ function scene({ rig, el, txt, P, s, r, narrow }) {
   });
 }
 
-const pos = p => (s, r) => `${POS[s.progress]}`;
 const body = (s, r) => `位能 ${r1(r.potential)}＋動能 ${r1(r.kinetic)}${r.thermal ? `＋熱 ${r1(r.thermal)}` : ''} ＝ ${r1(r.total)} J`;
-const tgt = (sig, label, want, aim) => ({ sig, label, aim, when: s => Object.entries(want).every(([k, v]) => s[k] === v), title: (s, r) => `${s.mass} kg・${POS[s.progress]}${s.loss ? '・有摩擦' : ''}`, body });
+const tgt = (sig, label, want, aim) => ({ sig, label, aim, set: want, title: (s, r) => `${s.mass} kg・${POS[s.progress]}${s.loss ? '・有摩擦' : ''}`, body });
 
 runDesk({
   key: 'bhcs.lab.energy.v1', title: '能量轉換實驗桌', background: 'bg-physics-bench',
