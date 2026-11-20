@@ -1548,6 +1548,20 @@
       "approved_blob": "d7b924ff28ac4e0a04b0a5b2888690640be2889c",
       "reason": "Replace the friction and efficiency desk with tools/lab/friction-efficiency: catalog link and schema entry point to the new desk.",
       "pull_request": null
+    },
+    {
+      "path": "tools/english-grammar.html",
+      "baseline_blob": "c1e70a15e38709db431819fe5e56a92d78d025d7",
+      "approved_blob": "3742e91d01588e08a91de7fd44de6c1549f95758",
+      "reason": "Add online practice, scoring, and encouragement to the 44 grammar topics while retaining A4 print and saved worksheet codes.",
+      "pull_request": 266
+    },
+    {
+      "path": "tools/english-grammar-mix.html",
+      "baseline_blob": "76af8c8bd643bd8d8b88326ef2a667ae5b357864",
+      "approved_blob": "2db894e6d776d9d1b3c7725e0cea3ad47756abb6",
+      "reason": "Add online practice, scoring, and encouragement to the mixed grammar worksheet while retaining A4 print and saved worksheet codes.",
+      "pull_request": 266
     }
   ]
 }
