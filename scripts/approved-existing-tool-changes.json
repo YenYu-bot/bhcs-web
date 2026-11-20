@@ -1606,6 +1606,20 @@
       "pull_request": null
     },
     {
+      "path": "tools/science/index.html",
+      "baseline_blob": "d7b924ff28ac4e0a04b0a5b2888690640be2889c",
+      "approved_blob": "e9b5f4f8a84ac715bcf493aec48ba50d73a1616a",
+      "reason": "Make the new wave-sound, electromagnetism, energy and electrostatics lab desks primary; the older inquiry pages stay as secondary links until they are removed.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "8089bb94efb3018c247a796dc8ee9eef7b6dc864",
+      "approved_blob": "d8709618c047d9477ec315951a9b43f606a1b5a9",
+      "reason": "Document the shared desk engine and the first four engine-built lab desks.",
+      "pull_request": null
+    },
+    {
       "path": "tools/english-grammar.html",
       "baseline_blob": "c1e70a15e38709db431819fe5e56a92d78d025d7",
       "approved_blob": "3742e91d01588e08a91de7fd44de6c1549f95758",

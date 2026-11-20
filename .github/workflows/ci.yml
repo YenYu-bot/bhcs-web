@@ -238,6 +238,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_friction_efficiency_lab_browser.cjs
+      - name: Check shared-engine lab desks full flow on desktop and phone
+        env:
+          NODE_PATH: /tmp/bhcs-composition/node_modules
+        run: node scripts/check_lab_desks_browser.cjs
       - name: Install virtual display for native motion background lifecycle
         timeout-minutes: 10
         run: sudo apt-get install -y xvfb xauth

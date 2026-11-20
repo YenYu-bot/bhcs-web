@@ -13,6 +13,9 @@
 
 - `electric-power/`：電流熱效應實驗桌。與 `scripts/science/models.mjs` 的電功率、電能與水溫模型交叉驗證；固定電壓／固定電流的電壓、電流、功率與溫升對照，另有獨立電表。試用版使用獨立紀錄。
 
+- `shared/desk.mjs`、`shared/desk.css`：2026-11-20 起新探究改做實驗桌用的共用引擎。各站只寫 `desk.js`（步驟、要收的證據、算一算、說說看、場景畫法），任務卡、余老師、研究手冊、星星完成對話框由引擎負責；科學計算用 `scripts/science/models.mjs` 的 `calculate()` 或站內 `model.mjs`。`scripts/check_lab_desks_browser.cjs` 在桌機與手機逐站跑完整流程。
+- 用引擎做的站（取代 `tools/science/` 的新探究，舊頁暫留為次要連結，全部完成後刪除）：`wave-sound/`（波動與聲音）、`electromagnetism/`（電磁）、`energy/`（能量轉換，g ＝ 10，`model.mjs` 由 `scripts/lab_energy_model.test.mjs` 對照 models.mjs）、`electrostatics/`（靜電感應）。
+
 - `friction-efficiency/`：摩擦與機械效率實驗桌（2026-11-20 取代 `tools/friction-efficiency-desk/`，舊網址改為 noindex 轉址頁，模型檔保留）。六步：光滑坡面、粗糙坡面、算一算功（輸入功、有效功）、機械效率、砂紙坡面（先猜再驗證）、說說看。同一個 10 N 木箱、斜面長 100 cm、高 60 cm；光滑 6 N／粗糙 8 N 與舊站 `model.mjs` 相同，砂紙 10 N（摩擦 4 N、效率 60%）為新增；`scripts/lab_friction_efficiency_model.test.mjs` 逐公分比對並驗能量守恆。場景上方的能量帳即時顯示輸入功＝位能＋摩擦生熱。紀錄用 `bhcs.lab.friction-efficiency.v1`。
 
 - `spring-friction/`：彈簧與摩擦實驗桌（2026-11-18 改為新版實驗桌設計）。七步：掛砝碼、掛太多、拉不動、開始滑、加重、翻面、說說看。`model.mjs` 的算式同 `scripts/science/models.mjs`，只把 g 改成 10（1 公斤重 ＝ 10 N）；`scripts/lab_spring_friction_model.test.mjs` 逐一比對。紀錄用 `shared/notebook.mjs` 的 `bhcs.lab.spring-friction.v1`，不匯入舊試用版紀錄。
