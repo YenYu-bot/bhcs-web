@@ -14,7 +14,8 @@ const stations = {
   'reaction-rate':'bhcs-lab-reaction-rate-trial-v1',
   'spring-friction':'bhcs.lab.spring-friction.v1', neutralization:'bhcs.lab.neutralization.v1',
   mirror:'bhcs.lab.mirror.v1', lens:'bhcs.lab.lens.v1',
-  'reflection-refraction':'bhcs.lab.reflection-refraction.v1', pressure:'bhcs.lab.pressure.v1'
+  'reflection-refraction':'bhcs.lab.reflection-refraction.v1', pressure:'bhcs.lab.pressure.v1',
+  'friction-efficiency':'bhcs.lab.friction-efficiency.v1'
 };
 const harness = '/__notebook_test__';
 const ready = 'html[data-notebook-ready="ready"]';

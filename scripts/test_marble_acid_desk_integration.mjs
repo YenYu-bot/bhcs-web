@@ -226,7 +226,7 @@ assert.match(station.text,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+
 assert.match(station.text,/name: marble-acid-desk-review\n\s+path: marble-acid-desk-artifacts\/\n\s+retention-days: 14/);
 assert(station.steps.some(s=>s.startsWith('      - uses: actions/upload-artifact@v4')&&s.includes('name: marble-acid-desk-review')),'browser evidence upload is a real YAML step');
 assert(!station.text.includes('continue-on-error: true'));
-for(const name of ['researcher_browser','microscope_3d_browser','lens_25d_browser','researcher_operations','friction_efficiency_desk_browser','motion_graphs_desk_browser','marble_acid_desk_browser'])assert.equal(occurrences(station.text,`node scripts/check_${name}.cjs`),1,'existing browser gate retained');
+for(const name of ['researcher_browser','microscope_3d_browser','lens_25d_browser','researcher_operations','friction_efficiency_lab_browser','motion_graphs_desk_browser','marble_acid_desk_browser'])assert.equal(occurrences(station.text,`node scripts/check_${name}.cjs`),1,'existing browser gate retained');
 assert.deepEqual(jobs.gate.needs,['browser-fonts','core','site','science-layout','science-stations','science-guided','math-browser','math-regression','math-diversity']);
 assert.match(jobs.gate.text,/if: always\(\)/);assert(jobs.gate.text.includes('length == 9 and all(.[]; .result == "success")'));
 
