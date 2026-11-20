@@ -1548,6 +1548,62 @@
       "approved_blob": "d7b924ff28ac4e0a04b0a5b2888690640be2889c",
       "reason": "Replace the friction and efficiency desk with tools/lab/friction-efficiency: catalog link and schema entry point to the new desk.",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "7abee2d648b2f2e21fd1077215de13fbc8fa2c9a",
+      "approved_blob": "8089bb94efb3018c247a796dc8ee9eef7b6dc864",
+      "reason": "Document the 2026-11-20 alignment of the motion, reaction-rate and electric-power desks.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/app.js",
+      "baseline_blob": "666430f0a1beea13e0f72323618d635cae1e18a6",
+      "approved_blob": "78bba99a86065fad309d9747ba612aea39bfba99",
+      "reason": "Align the motion, reaction-rate and electric-power desks with the other tools/lab desks: 實驗桌 titles, brand link, no trial label, 任務 N / 6 kicker, clear-records in the task card, shared star finish dialog.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/index.html",
+      "baseline_blob": "96dc99fc8d1e633901233788cf4861b6f753408f",
+      "approved_blob": "0cc5fc0ee24b14f70c17c610eac2d23fa1a6f3f3",
+      "reason": "Align the motion, reaction-rate and electric-power desks with the other tools/lab desks: 實驗桌 titles, brand link, no trial label, 任務 N / 6 kicker, clear-records in the task card, shared star finish dialog.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/style.css",
+      "baseline_blob": "58ebd07b39c0d95ac8ab38af4aace811fea9a5cc",
+      "approved_blob": "61439720c2eb8e260851e4097729b01a28e4e1b8",
+      "reason": "Align the motion, reaction-rate and electric-power desks with the other tools/lab desks: 實驗桌 titles, brand link, no trial label, 任務 N / 6 kicker, clear-records in the task card, shared star finish dialog.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/motion/index.html",
+      "baseline_blob": "4e1ee45dfdf9720ee08ed636b83b69c9900c2053",
+      "approved_blob": "b30dd0785ffc815258465e4051b3d398a338f2ed",
+      "reason": "Align the motion, reaction-rate and electric-power desks with the other tools/lab desks: 實驗桌 titles, brand link, no trial label, 任務 N / 6 kicker, clear-records in the task card, shared star finish dialog.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/app.js",
+      "baseline_blob": "1e1ff81283cb83d11fa3f14d3dbdcd6e807b17a4",
+      "approved_blob": "2bf119d678598b19c09ee323df4d7cbbd5b69be0",
+      "reason": "Align the motion, reaction-rate and electric-power desks with the other tools/lab desks: 實驗桌 titles, brand link, no trial label, 任務 N / 6 kicker, clear-records in the task card, shared star finish dialog.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/index.html",
+      "baseline_blob": "7e4166286e5759d5ba0adf2506c2f976fa368895",
+      "approved_blob": "dbe74213cb069fc9c8e405dccbe516744e15cef9",
+      "reason": "Align the motion, reaction-rate and electric-power desks with the other tools/lab desks: 實驗桌 titles, brand link, no trial label, 任務 N / 6 kicker, clear-records in the task card, shared star finish dialog.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/style.css",
+      "baseline_blob": "4c83c49cf3a6460e97fe450230f79324aac0fc3b",
+      "approved_blob": "7a378758c64c4f7f6ed5a03b873365ce953e1774",
+      "reason": "Align the motion, reaction-rate and electric-power desks with the other tools/lab desks: 實驗桌 titles, brand link, no trial label, 任務 N / 6 kicker, clear-records in the task card, shared star finish dialog.",
+      "pull_request": null
     }
   ]
 }

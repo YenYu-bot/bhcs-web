@@ -180,7 +180,7 @@ async function waitForRow(page, key, matches, label, timeoutMs = 2500) {
     await page.locator('html[data-notebook-ready="unavailable"]').waitFor({state:'attached'});
     await page.locator(warning).waitFor({state:'visible'});
     assert.match(await page.locator(warning).innerText(), /無法讀寫/);
-    assert.match(await page.locator('#step-kicker').innerText(), /第 1 步/);
+    assert.match(await page.locator('#step-kicker').innerText(), /任務 1 \/ 6/);
     assert.equal(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).afterReset, key), true);
     assert.deepEqual(errors, []);
     await context.close();
