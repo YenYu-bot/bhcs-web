@@ -24,7 +24,7 @@ test('visibility: noindex, self canonical, unlisted and absent from public index
   assert.equal((html.match(/rel="canonical"/g) ?? []).length, 1);
   assert.ok(!read('sitemap.xml').includes('photosynthesis-factor-guided'), 'sitemap');
   for (const file of ['tools/science/index.html', 'ziyuan.html', 'guoxiao.html', 'guozhong.html', 'guozhong-lihua.html', 'index.html',
-    'scripts/science/catalog.mjs', 'scripts/science/batch2.mjs', 'assets/researcher-lab.js', 'assets/science-lab.js', 'assets/site.js']) {
+    'scripts/science/catalog.mjs', 'assets/researcher-lab.js', 'assets/site.js']) {
     assert.ok(!read(file).includes('photosynthesis-factor-guided'), `${file} does not mention the prototype`);
   }
 });

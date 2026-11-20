@@ -3,12 +3,14 @@
 // unless scripts/approved-existing-tool-changes.json lists a reviewed change
 // that starts from exactly that blob. Changes chain per path, so a test with an
 // older baseline follows every later approved fix; anything else still fails.
+// An approved_blob of forty zeros records a reviewed deletion: the file must be gone.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 
+export const DELETED='0'.repeat(40);
 const blobOf=b=>crypto.createHash('sha1').update(Buffer.from(`blob ${b.length}\0`)).update(b).digest('hex');
 
 export function loadApprovedChanges(root){
@@ -37,7 +39,8 @@ export function checkExistingFiles({root,baselineCommit,skip=[],message='unchang
  for(const line of execFileSync('git',['ls-tree','-r',baselineCommit,'--','tools','assets'],{cwd:root,encoding:'utf8'}).trim().split('\n')){
   const match=/^([0-9]+) blob ([a-f0-9]{40})\t(.+)$/.exec(line);assert(match,'baseline regular blob');const[,,hash,file]=match;if(skip.includes(file))continue;
   const want=expectedBlob(byPath,file,hash);if(want!==hash)approved++;
-  assert.equal(blobOf(fs.readFileSync(path.join(root,file))),want,(want===hash?message:'approved change content ')+file);protectedCount++;
+  if(want===DELETED)assert.ok(!fs.existsSync(path.join(root,file)),'approved deletion '+file);
+  else assert.equal(blobOf(fs.readFileSync(path.join(root,file))),want,(want===hash?message:'approved change content ')+file);protectedCount++;
  }
  return {protectedCount,approved};
 }

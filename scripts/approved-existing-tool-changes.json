@@ -1660,6 +1660,447 @@
       "approved_blob": "79ca68b280de3fd6de61beccadb3ff9fd8673335",
       "reason": "Make the new earth-science lab desks primary; the older inquiry pages stay as secondary links until they are removed.",
       "pull_request": null
+    },
+    {
+      "path": "assets/enzyme-cute.css",
+      "baseline_blob": "8e428317b148b48276ecaf97ff463af55bfc413d",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/enzyme-cute.js",
+      "baseline_blob": "7d7ed525d065708eba7bda53db57164b647461ec",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/science-lab.js",
+      "baseline_blob": "89b7be484e56b783dac9ca91c2721c1f44c5ad0c",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/convex-lens-imaging.html",
+      "baseline_blob": "9fb6c4ab1aa1186258dfd31dbf2aa0a63c14ba90",
+      "approved_blob": "654b9bea6e493b26488127eb0b6a968641a6ac67",
+      "reason": "Lab desk cutover: the 延伸探究 link points to the new lab desk instead of the removed 新探究 page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/dc-motor.html",
+      "baseline_blob": "1fe0498b7252d379bcb839d948457effbbeed8a8",
+      "approved_blob": "47a72d9eabe72e62269de22d3b5f4fb10a030348",
+      "reason": "Lab desk cutover: the 延伸探究 link points to the new lab desk instead of the removed 新探究 page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/force-motion-lab.html",
+      "baseline_blob": "cfd7a3b95c1233379b15ac27ea27d3ba5780f5fe",
+      "approved_blob": "283a7891fd9ab700124ce6f66264782b7b214e6a",
+      "reason": "Lab desk cutover: the 延伸探究 link points to the new lab desk instead of the removed 新探究 page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/app.js",
+      "baseline_blob": "2bf119d678598b19c09ee323df4d7cbbd5b69be0",
+      "approved_blob": "faf82fdc0e6039c97892d1765807d67ed11edb00",
+      "reason": "Lab desk cutover: the reaction-rate desk now imports its own model.mjs.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/model.mjs",
+      "baseline_blob": "bb989268cda7fb7bad68065a17d284fdbfd430e1",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lenses.html",
+      "baseline_blob": "da8a0337a45bd2905bf5067c30d20fc0ef8b8b0d",
+      "approved_blob": "7d9c98d831621189f71bc89ea96441cc076f1d61",
+      "reason": "Lab desk cutover: the 延伸探究 link points to the new lab desk instead of the removed 新探究 page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/index.html",
+      "baseline_blob": "9f13a40bf4a5957167321f6896c0dce2be61f75e",
+      "approved_blob": "28c2dd3f007e5cd5a176adce7b7346d8e3d222de",
+      "reason": "Lab desk cutover: the 延伸探究 link points to the new lab desk instead of the removed 新探究 page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/atom-builder.html",
+      "baseline_blob": "d55922e4c00f77edd3b7eb19176bd6b4b97730e2",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/cell-division.html",
+      "baseline_blob": "aea7e78bf3f296d60fb3f94a8a30d6af2967eae2",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/cell-electrolysis.html",
+      "baseline_blob": "5e833b7728b4ae5dca4e06355107bee58e946bc6",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/circulation.html",
+      "baseline_blob": "94a3722aa067fa5b03bc6539de72e379019e1568",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/ecosystem.html",
+      "baseline_blob": "3b19f33d0557212b7e9b2a7e4347817bf3231249",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/electric-power.html",
+      "baseline_blob": "d30bf8a165081c9aec6afa0411a51b73d6b40199",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/electromagnetism.html",
+      "baseline_blob": "078847d621defe18aa9d904ffd4b72041acc7282",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/electrostatics.html",
+      "baseline_blob": "42b1439746b93d55957273701a6fceaa0af7b969",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/energy.html",
+      "baseline_blob": "2e2799b3d6919202803fc173c7bcfad3d4fe59a5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/enzyme.html",
+      "baseline_blob": "5c4e569c5ccc10d4d498e258203e2c9897e7112f",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/equilibrium.html",
+      "baseline_blob": "b0b79d6a1d7a9254029217a63e5f782405bf4321",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/homeostasis.html",
+      "baseline_blob": "1463076330fba9d329b214a3dbf13e9bab53bf0b",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "79ca68b280de3fd6de61beccadb3ff9fd8673335",
+      "approved_blob": "50f23441881caa87296550649c3e767c3c0548c6",
+      "reason": "Lab desk cutover: the 延伸探究 link points to the new lab desk instead of the removed 新探究 page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/lever-torque.html",
+      "baseline_blob": "57bde46512557ced93c2406d200c8f911a1d6c95",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/metal-activity.html",
+      "baseline_blob": "43f9c477c2cfd14bc2a6b82edc0ed72903f5440f",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/moon-eclipse.html",
+      "baseline_blob": "2c817c185dd332a77e1db5a3384d57c1fc3eaa43",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/motion-graphs.html",
+      "baseline_blob": "f873dbf6525642ffcb8470993c5069fcbb75c252",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/nerve-reflex.html",
+      "baseline_blob": "a202056adc706dab5a937c2a7a1fba42d75b44d5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/neutralization.html",
+      "baseline_blob": "42183bcdadda734353f93af7aa8a065f3dd484a1",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/optics.html",
+      "baseline_blob": "c0585802e75e93d8e2d7729a5b931cc9d900c1c8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/plant-exchange.html",
+      "baseline_blob": "3ae24591f5a3a4e924867da38a68e5e7d42361dd",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/pressure-fluid.html",
+      "baseline_blob": "a6323102704fa6f900c6c4979e6af9a3156006fe",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/pulley-incline.html",
+      "baseline_blob": "5d69a48751af9fc210bffd138eb8c67cede1c9d5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/app.mjs",
+      "baseline_blob": "1e9c9ae41cd3ff8218e7ba5775f8d50922545e0c",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/lab-room.png",
+      "baseline_blob": "f6dd74e4ed41cf300ce1db3d632d03b39fb5a3a1",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/material-granule.png",
+      "baseline_blob": "73330c3442cb61ba357520a521087287410ce77c",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/material-lump.png",
+      "baseline_blob": "b58bab480088ff3b84415179e5695d1ba017bc12",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/material-powder.png",
+      "baseline_blob": "bb4dbfcec5ac5763a08ce83ee0d17d8543c0a19e",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/reagent-bottle.png",
+      "baseline_blob": "be574ab5d1f664b2fec1bfeacd0fb9435a6ab0f9",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/teacher-body-v3.png",
+      "baseline_blob": "0aaa1b8ff727b271b363e6ff5d3106dc098e38c1",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/teacher-body-v3.provenance.json",
+      "baseline_blob": "40a5c59f850ea4b633e7e039f6ffe4e7b7bc78c6",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/teacher-concept.png",
+      "baseline_blob": "eeefe3d2ba882e43f15e88d4ed989dfa3761d5e9",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/assets/wood-table.png",
+      "baseline_blob": "73988fa040d4a6f294282c05c1ed1939ef8cc200",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/clock.mjs",
+      "baseline_blob": "4a4e6b1aec6926159af4f1233f1f759240409c2e",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/engine.mjs",
+      "baseline_blob": "a2c5907d46acb8da5364158b8acb232729a1f5f2",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/public-legacy-export.mjs",
+      "baseline_blob": "8b914b1f9587a33720be1dad28197c5081a81bec",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/scene.mjs",
+      "baseline_blob": "3768f1b7fb5e98020b41a78d085428a20bf20a08",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/storage.mjs",
+      "baseline_blob": "5af8780a9d01dbddaefc67eb78c896c9b399fc61",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate-desk/style.css",
+      "baseline_blob": "c218398b56dd8ba05178fb3d23b2c873ab863473",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reaction-rate.html",
+      "baseline_blob": "400719f943203118c1c405cee062662ba4ddd902",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/reflection-refraction.html",
+      "baseline_blob": "8a3e25318f5fbced45c041991b0f61eb7b4f0ef5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/seasons.html",
+      "baseline_blob": "c3ebc9eedea83ca71f2d357d3eaa4d86123e0b55",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/solubility.html",
+      "baseline_blob": "4133822f2d85dc8b12be19d6e1768352cba57a19",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/specific-heat.html",
+      "baseline_blob": "80963f6d558ff74e9e89faf18a680b9493db4efe",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/spring-friction.html",
+      "baseline_blob": "a792ad5a11522b14fd81665f03c8ab9b7a398ca5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/stoichiometry.html",
+      "baseline_blob": "9f4e0f2be5a6dc137888d5f558af11bf94608d34",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/tides.html",
+      "baseline_blob": "ae5a77d9df0c501be6bbd66a2abc22021e8a693c",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/wave-sound.html",
+      "baseline_blob": "bfc83ee0352eae298ba6ac560d9ba809c3e01124",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/weather-systems.html",
+      "baseline_blob": "fb823b3dc9b7c3d63afc8346b7a007e54197c351",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: the 新探究 page (or its only asset) is replaced by its lab desk under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/waves.html",
+      "baseline_blob": "88792ed4af5ce9451baa5e906a5b9ad49e6846a0",
+      "approved_blob": "61c300263a5a7823de089a8cc6ec544380388139",
+      "reason": "Lab desk cutover: the 延伸探究 link points to the new lab desk instead of the removed 新探究 page.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/main.js",
+      "baseline_blob": "2b49d33677568ce2fe433c87f5748710dc52ae09",
+      "approved_blob": "2a5dc4919f20ba7f434d08369640d0c354aac2c7",
+      "reason": "Lab desk cutover: the advanced and completion links point to the lens lab desk instead of the removed 新探究 optics page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/optics-guided.html",
+      "baseline_blob": "63c35309b779efd27822211ce9fab169d55b7ea5",
+      "approved_blob": "8f51cf6c813fe87dd25d6ad18c3eb4cb27275d07",
+      "reason": "Lab desk cutover: the advanced and completion links point to the lens lab desk instead of the removed 新探究 optics page.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "a9e6cb1fbfd850f8cea4dbe176322f4fc44b82f9",
+      "approved_blob": "675f8d284cdf05f49848ad8ed3f6964c517c956e",
+      "reason": "Lab desk notes: the reaction-rate model moved into the desk and the replaced 新探究 pages were removed.",
+      "pull_request": null
     }
   ]
 }

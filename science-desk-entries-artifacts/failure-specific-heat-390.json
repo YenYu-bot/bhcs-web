@@ -1,0 +1,61 @@
+{
+  "width": 390,
+  "topic": "specific-heat",
+  "stage": "legacy screen prepare",
+  "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.researcher-nav button[data-to=\"prepare\"]')\u001b[22m\n",
+  "pages": [
+    {
+      "url": "http://127.0.0.1:46705/tools/science/specific-heat.html",
+      "closed": false
+    }
+  ],
+  "errors": [],
+  "events": [
+    {
+      "event": "page-created",
+      "url": "about:blank"
+    },
+    {
+      "event": "navigation",
+      "url": "http://127.0.0.1:46705/tools/science/"
+    },
+    {
+      "event": "console-error",
+      "url": "http://127.0.0.1:46705/tools/science/",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    },
+    {
+      "event": "click-intent",
+      "stage": "directory to new desk",
+      "from": "http://127.0.0.1:46705/tools/science/",
+      "href": "http://127.0.0.1:46705/tools/lab/heat/",
+      "target": "_self",
+      "html": "<a class=\"open\" href=\"../lab/heat/\" data-science-event=\"tool_open\" data-lab=\"lab-heat-\" aria-label=\"開啟比熱實驗桌 →\"><span>開始研究 →</span><span class=\"bh-time\">15–20 分</span></a>",
+      "expected": "http://127.0.0.1:46705/tools/lab/heat/"
+    },
+    {
+      "event": "actual-click",
+      "url": "http://127.0.0.1:46705/tools/science/",
+      "tag": "A",
+      "text": "開始研究 →15–20 分",
+      "href": "http://127.0.0.1:46705/tools/lab/heat/",
+      "target": null,
+      "x": 195,
+      "y": 599,
+      "defaultPrevented": false
+    },
+    {
+      "event": "navigation",
+      "url": "http://127.0.0.1:46705/tools/lab/heat/"
+    },
+    {
+      "event": "navigation",
+      "url": "http://127.0.0.1:46705/tools/science/specific-heat.html"
+    },
+    {
+      "event": "console-error",
+      "url": "http://127.0.0.1:46705/tools/science/specific-heat.html",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ]
+}

@@ -16,10 +16,10 @@ const firstGuides={
 };
 function route(question,steps,links,predictionFree=false){const labels=predictionFree?['01　領取任務','02　操作與觀察','03　比較與解釋']:['01　先準備與預測','02　操作與觀察','03　比較與解釋'];return `<aside class="lesson-route" aria-labelledby="self-study-title"><h2 id="self-study-title">${predictionFree?'余老師任務卡':'自學起點'}：${escape(question)}</h2><p>${predictionFree?'第一次使用，照這三步做；直接操作並留下可以比較的觀察證據。':'第一次使用，照這三步做；預測猜錯沒關係，重點是能用觀察修正想法。'}</p><ol class="route-steps">${steps.map((s,i)=>`<li><b>${labels[i]}</b><p>${escape(s)}</p><a href="${links[i]}">${['前往操作','看觀察區','前往檢核'][i]} →</a></li>`).join('')}</ol></aside>`}
 function block(html,key,content,anchor){const re=new RegExp(`<!-- ${key}:start -->[\\s\\S]*?<!-- ${key}:end -->\\n?`);html=html.replace(re,'');if(!html.includes(anchor))throw Error('Missing experience anchor '+anchor);return html.replace(anchor,`<!-- ${key}:start -->\n${content}\n<!-- ${key}:end -->\n`+anchor)}
-export function enhanceLessons(root,firstBatch,batch2){
+export function enhanceLessons(root,firstBatch){
  const css=fs.readFileSync(path.join(root,'scripts/science/experience.css'),'utf8');
  const studyJS=fs.readFileSync(path.join(root,'scripts/science/study.js'),'utf8');
- for(const item of [...firstBatch.map(file=>({file,id:file.replace('.html','')})),...batch2.map(t=>({...t,file:'science/'+t.id+'.html'}))]){
+ for(const item of firstBatch.map(file=>({file,id:file.replace('.html','')}))){
   const file=path.join(root,'tools',item.file);let html=fs.readFileSync(file,'utf8');
   const predictionFree=["microscope-lab","genetics-simulation-lab","force-motion-lab","circuit-lab","particle-reaction-lab","plate-earthquake-lab","heat-phase-lab","buoyancy-density-lab","acid-base-indicator-lab","photosynthesis-factor-lab"].includes(item.id)||item.noPrediction===true;
   const known=firstGuides[item.id];if(known){const actual=html.match(/<section id="([^"]+)" class="labgrid"/);if(actual)known[4]=actual[1];}
@@ -29,11 +29,6 @@ export function enhanceLessons(root,firstBatch,batch2){
    '在「你的解釋」填入：我只改了＿＿，讀值從＿＿變成＿＿，所以＿＿。保存兩筆，再做三題檢核。'
   ],['#task-list','#experiment','#quiz'],predictionFree);
   html=block(html,'science-experience-style',`<style>${css}</style>`,'</head>');
-  // Only the enzyme lesson receives the illustrated presentation and mobile fallback.
-  if(item.id==='enzyme'){
-   html=block(html,'enzyme-presentation-style','<meta name="color-scheme" content="only light"><link rel="stylesheet" href="../../assets/enzyme-cute.css?v=20261025-3">','</head>');
-   html=block(html,'enzyme-presentation-script','<script src="../../assets/enzyme-cute.js?v=20261025-2" defer></script>','</body>');
-  }
   const lesson=inquiry[item.id];if(!lesson)throw Error('Missing inquiry lesson '+item.id);
   const study=`<details class="inquiry-guide" id="inquiry-guide"><summary>本課比較任務：固定什麼、只改什麼？</summary><dl>${lesson.slice(0,4).map((s,i)=>`<div><dt>${['保持不變','只改一個條件','記錄證據','完成標準'][i]}</dt><dd>${escape(s)}</dd></div>`).join('')}</dl><label for="study-note">用自己的話解釋（可選填，勿填姓名）</label><textarea id="study-note" rows="3" maxlength="1000" placeholder="我固定了＿＿，只改＿＿；觀察到＿＿，我的解釋是＿＿。"></textarea><details class="teacher-plan"><summary>教師帶領：15 分鐘比較活動</summary><ol><li>3 分鐘：讀「保持不變」與「只改一個條件」，${predictionFree?'確認這次要比較什麼。':'讓學生先說預測理由。'}</li><li>7 分鐘：完成兩筆觀察。${escape(lesson[4])}</li><li>5 分鐘：同學交換證據，以「完成標準」檢查解釋，再做頁面檢核。</li></ol><p>若學生仍卡住：先請他指著畫面讀出一個數值，再說另一組如何不同，不必一次背出全部術語。</p></details></details><fieldset class="study-checks"><legend>我的自學進度（自己確認，不代表測驗成績）</legend>${(predictionFree?['已完成第一筆觀察或說出目前看到什麼','已完成兩組比較','能引用證據解釋差異']:['已寫下預測或說出理由','已完成兩組比較','能引用證據解釋差異']).map((s,i)=>`<label><input type="checkbox" data-study-step="${i}">${s}</label>`).join('')}<p id="study-progress" role="status" aria-live="polite">已確認 0／3 項</p></fieldset><div class="study-storage"><span id="study-save-status">進度與筆記只儲存在這台瀏覽器。</span><button type="button" id="study-clear">清除自學進度與筆記</button></div>`;
   guide=guide.replace('</aside>',study+'</aside>');

@@ -66,7 +66,7 @@ assert.match(index,/這次觀察只保留在此頁面，重新整理會重新開
 assert.match(index,/每張卡顯示該條件最新紀錄；所有先前證據保留在下方歷次紀錄/);
 for(const [file,href] of [['ziyuan.html','tools/lens-25d/'],['tools/science/index.html','../lens-25d/']]){
  const s=read(file);assert.equal(s.split(`href="${href}"`).length,2,`${file}: exactly one discovery link`);
- assert.ok(s.includes('凸透鏡五種成像實驗'));assert.ok(s.includes('optics.html'),'legacy discovery remains');assert.ok(s.includes('microscope-3d/'));
+ assert.ok(s.includes('凸透鏡五種成像實驗'));assert.ok(s.includes('lab/lens/'),'lens lab desk discovery remains');assert.ok(s.includes('microscope-3d/'));
 }
 assert.equal((read('sitemap.xml').match(/<loc>https:\/\/www\.bhcs\.com\.tw\/tools\/lens-25d\/<\/loc>/g)||[]).length,1);
 assert.ok(!read('sitemap.xml').includes('/tools/science/optics-guided.html'));

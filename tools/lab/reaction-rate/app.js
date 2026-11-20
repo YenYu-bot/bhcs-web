@@ -1,4 +1,4 @@
-import { MODEL_VERSION, CONSTANTS, calculate, quantity, remainingMass, instantRate } from '../../science/reaction-rate-desk/model.mjs';
+import { MODEL_VERSION, CONSTANTS, calculate, quantity, remainingMass, instantRate } from './model.mjs';
 
 import { openNotebook } from '../shared/notebook.mjs';
 import { showFinish } from '../shared/finish.mjs';

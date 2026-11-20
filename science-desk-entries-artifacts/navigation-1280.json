@@ -1,0 +1,267 @@
+[
+  {
+    "event": "page-created",
+    "url": "about:blank"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/science/"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "click-intent",
+    "stage": "directory to new desk",
+    "from": "http://127.0.0.1:45025/tools/science/",
+    "href": "http://127.0.0.1:45025/tools/lab/heat/",
+    "target": "_self",
+    "html": "<a class=\"open\" href=\"../lab/heat/\" data-science-event=\"tool_open\" data-lab=\"lab-heat-\" aria-label=\"開啟比熱實驗桌 →\"><span>開始研究 →</span><span class=\"bh-time\">15–20 分</span></a>",
+    "expected": "http://127.0.0.1:45025/tools/lab/heat/"
+  },
+  {
+    "event": "actual-click",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "tag": "A",
+    "text": "開始研究 →15–20 分",
+    "href": "http://127.0.0.1:45025/tools/lab/heat/",
+    "target": null,
+    "x": 242,
+    "y": 619,
+    "defaultPrevented": false
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/heat/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/science/"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/heat/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "click-intent",
+    "stage": "resource entry to new desk",
+    "from": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "href": "http://127.0.0.1:45025/tools/lab/heat/",
+    "target": "_self",
+    "html": "<a href=\"tools/lab/heat/\">比熱實驗桌</a>",
+    "expected": "http://127.0.0.1:45025/tools/lab/heat/"
+  },
+  {
+    "event": "actual-click",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "tag": "A",
+    "text": "比熱實驗桌",
+    "href": "http://127.0.0.1:45025/tools/lab/heat/",
+    "target": null,
+    "x": 215,
+    "y": 450,
+    "defaultPrevented": false
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/heat/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/specific-heat-desk/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/heat/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/science/"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "click-intent",
+    "stage": "directory to new desk",
+    "from": "http://127.0.0.1:45025/tools/science/",
+    "href": "http://127.0.0.1:45025/tools/lab/solubility/",
+    "target": "_self",
+    "html": "<a class=\"open\" href=\"../lab/solubility/\" data-science-event=\"tool_open\" data-lab=\"lab-solubility-\" aria-label=\"開啟溶解度實驗桌 →\"><span>開始研究 →</span><span class=\"bh-time\">15–20 分</span></a>",
+    "expected": "http://127.0.0.1:45025/tools/lab/solubility/"
+  },
+  {
+    "event": "actual-click",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "tag": "A",
+    "text": "開始研究 →15–20 分",
+    "href": "http://127.0.0.1:45025/tools/lab/solubility/",
+    "target": null,
+    "x": 242,
+    "y": 619,
+    "defaultPrevented": false
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/solubility/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/science/"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/solubility/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "click-intent",
+    "stage": "resource entry to new desk",
+    "from": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "href": "http://127.0.0.1:45025/tools/lab/solubility/",
+    "target": "_self",
+    "html": "<a href=\"tools/lab/solubility/\">溶解度實驗桌</a>",
+    "expected": "http://127.0.0.1:45025/tools/lab/solubility/"
+  },
+  {
+    "event": "actual-click",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "tag": "A",
+    "text": "溶解度實驗桌",
+    "href": "http://127.0.0.1:45025/tools/lab/solubility/",
+    "target": null,
+    "x": 223,
+    "y": 450,
+    "defaultPrevented": false
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/solubility/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/solubility-desk/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/solubility/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/science/"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "click-intent",
+    "stage": "directory to new desk",
+    "from": "http://127.0.0.1:45025/tools/science/",
+    "href": "http://127.0.0.1:45025/tools/lab/metal/",
+    "target": "_self",
+    "html": "<a class=\"open\" href=\"../lab/metal/\" data-science-event=\"tool_open\" data-lab=\"lab-metal-\" aria-label=\"開啟金屬活性實驗桌 →\"><span>開始研究 →</span><span class=\"bh-time\">15–20 分</span></a>",
+    "expected": "http://127.0.0.1:45025/tools/lab/metal/"
+  },
+  {
+    "event": "actual-click",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "tag": "A",
+    "text": "開始研究 →15–20 分",
+    "href": "http://127.0.0.1:45025/tools/lab/metal/",
+    "target": null,
+    "x": 640,
+    "y": 619,
+    "defaultPrevented": false
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/metal/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/science/"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/tools/science/",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/metal/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science"
+  },
+  {
+    "event": "console-error",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "event": "click-intent",
+    "stage": "resource entry to new desk",
+    "from": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "href": "http://127.0.0.1:45025/tools/lab/metal/",
+    "target": "_self",
+    "html": "<a href=\"tools/lab/metal/\">金屬活性實驗桌</a>",
+    "expected": "http://127.0.0.1:45025/tools/lab/metal/"
+  },
+  {
+    "event": "actual-click",
+    "url": "http://127.0.0.1:45025/ziyuan.html#res-science",
+    "tag": "A",
+    "text": "金屬活性實驗桌",
+    "href": "http://127.0.0.1:45025/tools/lab/metal/",
+    "target": null,
+    "x": 232,
+    "y": 450,
+    "defaultPrevented": false
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/metal/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/metal-activity-desk/"
+  },
+  {
+    "event": "navigation",
+    "url": "http://127.0.0.1:45025/tools/lab/metal/"
+  }
+]

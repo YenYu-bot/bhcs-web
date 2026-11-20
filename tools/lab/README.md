@@ -9,7 +9,7 @@
 
 - `motion/`：小車運動圖實驗桌。主流程匯入 `tools/motion-graphs-desk/model.mjs`，讀圖挑戰匯入 `tools/motion-graphs-desk/v2/model.mjs`。紀錄使用新版專用的 `bhcs.lab.motion.v1`。
 
-- `reaction-rate/`：反應速率實驗桌。同質量塊狀、顆粒與粉末只改顆粒大小，沿用 `tools/science/reaction-rate-desk/model.mjs`，時間與體積都是模擬值。新版紀錄使用獨立的 `bhcs-lab-reaction-rate-trial-v1`。
+- `reaction-rate/`：反應速率實驗桌。同質量塊狀、顆粒與粉末只改顆粒大小，模型在 `reaction-rate/model.mjs`（原大理石實驗桌的模型，2026-11-20 移入），時間與體積都是模擬值。新版紀錄使用獨立的 `bhcs-lab-reaction-rate-trial-v1`。
 
 - `electric-power/`：電流熱效應實驗桌。與 `scripts/science/models.mjs` 的電功率、電能與水溫模型交叉驗證；固定電壓／固定電流的電壓、電流、功率與溫升對照，另有獨立電表。試用版使用獨立紀錄。
 
@@ -32,7 +32,7 @@
 
 2026-11-20 小車運動圖、反應速率、電流熱效應三站與其他實驗桌對齊：標題統一為「○○實驗桌」、品牌連回自然實驗總覽、拿掉「新版試用」，任務卡用「任務 N / 6」並把「清空紀錄」移進任務卡；反應速率、電流熱效應完成後改用與其他站相同的星星完成對話框（`shared/finish.mjs`），電流熱效應手機版把余老師移回操作按鈕下方。
 
-小車運動圖、反應速率、電流熱效應、彈簧與摩擦、酸鹼中和、面鏡、透鏡、水壓與氣壓、光的反射與折射已列入研究站目錄與學習資源頁。舊版自由探究與紀錄仍從原網址存取；不自動移轉紀錄。其他試用實驗桌維持原樣。這些實驗桌維持 `noindex`，不新增進 sitemap。
+小車運動圖、反應速率、電流熱效應、彈簧與摩擦、酸鹼中和、面鏡、透鏡、水壓與氣壓、光的反射與折射已列入研究站目錄與學習資源頁。2026-11-20 起，各實驗桌取代的 32 個「新探究」頁（`tools/science/<id>.html`）已刪除，舊版紀錄不保留；目錄只列實驗桌。其他試用實驗桌維持原樣。這些實驗桌維持 `noindex`，不新增進 sitemap。
 
 素材沿用 `assets/science/props/`（木板、支點、砝碼、實驗桌背景）與 `tools/mini-lab/img/doc-*.png`（余老師）。依專案原則不使用 `<img>`：場景圖用 SVG `<image>`，余老師用 CSS 背景。
 

@@ -1,10 +1,9 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),vm=require('node:vm');
 const {JSDOM,VirtualConsole}=require('jsdom');const axe=require('axe-core');
-const root=path.resolve(__dirname,'..');const {readSciencePage,readLegacySciencePage,LEGACY_SCIENCE_FIXTURE}=require('./science-page.cjs');
+const root=path.resolve(__dirname,'..');const {readSciencePage}=require('./science-page.cjs');
 function load(file,{saved=null,blocked=false}={}){
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
- // The replaced reaction page remains an explicit historical shared-shell regression.
- const html=file===LEGACY_SCIENCE_FIXTURE.publicPath?readLegacySciencePage(file):readSciencePage(file);
+ const html=readSciencePage(file);
  const dom=new JSDOM(html,{runScripts:'dangerously',url:'https://www.bhcs.com.tw/'+file+'?noga=1',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){w.print=()=>{};w.confirm=()=>true;if(saved)Object.entries(saved).forEach(([k,v])=>w.localStorage.setItem(k,v));if(blocked)Object.defineProperty(w,'localStorage',{get(){throw new Error('Storage blocked')}})}});
  return {dom,errors};
 }
@@ -23,48 +22,6 @@ function structural(d,file){
  assert.ok(d.querySelector('meta[name="description"]').content.length>10);
 }
 (async()=>{
- const {batch2}=await import('./science/batch2.mjs');
- for(const conf of batch2){
-  const file='tools/science/'+conf.id+'.html',{dom,errors}=load(file),w=dom.window,d=w.document,$=id=>d.getElementById(id);
-  structural(d,file);assert.equal($('control-fields').disabled,false);
-  assert.ok(d.querySelector('#experiment').firstElementChild.classList.contains('controls'),'Controls must precede results in reading/tab order');
-  if(conf.id==='electromagnetism'){
-   assert.equal($('ctl-field').hidden,true);assert.equal(d.querySelector('label[for="ctl-field"]').hidden,true);assert.equal($('ctl-current').hidden,false);
-   $('ctl-mode').value='motor';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal($('ctl-field').hidden,false);assert.equal($('ctl-angle').hidden,false);assert.equal($('ctl-rpm').hidden,true);
-   $('ctl-mode').value='magnet';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));
-  }
-  if(conf.id==='pressure-fluid'){
-   assert.equal($('ctl-volume').hidden,true);assert.equal(d.querySelector('label[for="ctl-volume"]').hidden,true);assert.equal($('ctl-depth').hidden,false);
-   $('ctl-mode').value='gas';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal($('ctl-volume').hidden,false);assert.equal($('ctl-depth').hidden,true);assert.equal($('ctl-speed').hidden,true);
-   $('ctl-mode').value='water';$('ctl-mode').dispatchEvent(new w.Event('input',{bubbles:true}));
-  }
-  if(conf.noPrediction){assert.equal($('prediction'),null);$('run').click();assert.ok($('diagram').querySelector('svg'));assert.equal($('readouts').children.length,4);assert.equal($('add-record').disabled,false)}else{$('run').click();assert.equal($('add-record').disabled,true);assert.ok(!$('diagram').querySelector('svg'));$('prediction').value=conf.choices[0][0];$('run').click();assert.ok($('diagram').querySelector('svg'));assert.equal($('readouts').children.length,4);assert.equal($('add-record').disabled,false)};
-  $('add-record').click();assert.equal($('records').textContent.includes('尚未'),true);
-  $('explanation-input').value='測試觀察：只改一個變因，比較兩筆數值。';$('add-record').click();assert.equal($('records').rows.length,1);assert.ok(!$('records').textContent.includes('尚未'));assert.equal($('add-record').disabled,true);
-  assert.equal($('print-records').querySelectorAll('article').length,1);
-  assert.ok($('print-records').textContent.includes('測試觀察：只改一個變因'));
-  $('explanation-input').value='尚未儲存的列印觀察';w.dispatchEvent(new w.Event('beforeprint'));
-  assert.ok($('print-current').textContent.includes('尚未儲存的列印觀察'));
-  $('explanation-input').value='列印按鈕的備用快照';$('print').click();assert.ok($('print-current').textContent.includes('列印按鈕的備用快照'));
-  if(conf.id==='electromagnetism'){assert.ok(!$('records').textContent.includes('外加磁場'));assert.ok(!$('current-conditions').textContent.includes('轉速'));}
-  if(conf.id==='pressure-fluid'){assert.ok(!$('records').textContent.includes('氣體體積'));assert.ok(!$('current-conditions').textContent.includes('入口流速'));}
-  const saved=w.localStorage.getItem('bhcs-science-v2-'+conf.id);assert.equal(JSON.parse(saved).length,1);
-  const c=conf.controls[0],el=$('ctl-'+c.key);el.value=c.options?c.options[1][0]:c.max;el.dispatchEvent(new w.Event('input',{bubbles:true}));if(conf.noPrediction)assert.equal($('prediction'),null);else assert.equal($('prediction').value,'');assert.equal($('add-record').disabled,true);assert.equal($('readouts').children.length,0);
-  for(let i=0;i<conf.tasks.length;i++){d.querySelector(`[data-mission="${i}"]`).click();if(conf.noPrediction)assert.equal($('prediction'),null);else{assert.equal($('prediction').value,'');$('prediction').value=conf.choices.at(-1)[0]}assert.equal($('add-record').disabled,true);$('run').click();assert.ok($('diagram').querySelector('svg'));$('explanation-input').value='測試任務觀察比較';$('add-record').click()}
-  assert.equal($('records').rows.length,4);assert.equal($('record-comparison').querySelectorAll('article').length,2);assert.match($('record-comparison').textContent,/紀錄 3/);assert.match($('record-comparison').textContent,/紀錄 4/);$('reset').click();assert.equal($('readouts').children.length,0);if(conf.noPrediction)assert.equal($('prediction'),null);else assert.equal($('prediction').value,'');assert.equal($('add-record').disabled,true);assert.equal($('records').rows.length,4);
-  w.dispatchEvent(new w.Event('beforeprint'));assert.ok(!$('print-current').textContent.includes('尚未儲存的列印觀察'));assert.equal($('current-conditions').textContent,'');assert.equal($('print-records').querySelectorAll('article').length,4);
-  $('check-quiz').click();assert.match($('quiz-score').textContent,/已答0\/3/);
-  conf.quiz.forEach((q,i)=>assert.ok(!$('feedback-'+i).textContent.includes(q.tip),'Unanswered quiz must not disclose explanation'));
-  conf.quiz.forEach((q,i)=>{d.querySelector(`input[name="quiz-${i}"][value="${q.answer}"]`).checked=true});$('check-quiz').click();assert.match($('quiz-score').textContent,/答對3\/3/);
-  d.querySelector('input[name="quiz-0"]').dispatchEvent(new w.Event('change'));assert.equal($('feedback-0').textContent,'','Changed answer must not retain stale correctness feedback');
-  $('level').value='advanced';$('level').dispatchEvent(new w.Event('change'));assert.equal($('formula').hidden,false);
-  w.eval(axe.source);const accessibility=await w.axe.run(d,{runOnly:{type:'tag',values:['wcag2a','wcag2aa']},rules:{'color-contrast':{enabled:false}}});assert.deepEqual(Array.from(accessibility.violations,v=>v.id),[],file+' accessibility');
-  assert.deepEqual(errors,[],file+' JS errors');dom.window.close();
-  for(const option of [{saved:{['bhcs-science-v2-'+conf.id]:saved}},{saved:{['bhcs-science-v2-'+conf.id]:'{broken'}},{saved:{['bhcs-science-v2-'+conf.id]:JSON.stringify([{conditions:'<img src=x onerror=alert(1)>',result:'safe',prediction:'safe',explanation:'safe'}])}},{blocked:true}]){
-   const {dom:other,errors:otherErrors}=load(file,option),od=other.window.document;if(!conf.noPrediction)od.getElementById('prediction').value=conf.choices[0][0];od.getElementById('run').click();assert.equal(od.getElementById('add-record').disabled,false);assert.equal(od.getElementById('records').querySelectorAll('img').length,0);assert.deepEqual(otherErrors,[]);other.window.close();
-  }
-  console.log('PASS',conf.id,file===LEGACY_SCIENCE_FIXTURE.publicPath?'HISTORICAL FIXTURE '+LEGACY_SCIENCE_FIXTURE.sourceCommit:'current page','core flow, tasks, quiz, storage, a11y');
- }
  const {dom,errors}=load('tools/science/index.html'),d=dom.window.document;structural(d,'tools/science/index.html');
  const declaredResources=JSON.parse(d.querySelector('script[type="application/ld+json"]').textContent).hasPart;
  assert.ok(Array.isArray(declaredResources)&&declaredResources.length>0,'science directory resource declaration missing');
