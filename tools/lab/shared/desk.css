@@ -1,0 +1,54 @@
+/* 共用實驗桌引擎（shared/desk.mjs）的元件：控制列、算一算、說說看、功能說明 */
+.p-readouts .reading{width:180px}
+.p-readouts .reading-num{font-size:30px}
+.scene-area .p-readouts{position:relative;left:auto;top:auto;transform:none;justify-content:center;padding:14px 12px 0;z-index:2}
+.scene-area .scene-wrap{top:104px}
+.ctl{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:6px}
+.seg button{min-height:44px;border-radius:12px;border:2px solid var(--line);background:var(--paper);font-size:14px;font-weight:800;line-height:1.25;padding:4px 6px;font-variant-numeric:tabular-nums}
+.seg button[aria-pressed=true]{border-color:var(--ink);background:#fff;box-shadow:inset 0 0 0 2px var(--ink)}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+.stepper{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;gap:6px;align-items:center}
+.stepper button{min-height:44px;border-radius:12px;border:2px solid var(--line);background:var(--paper);font-size:22px;font-weight:900}
+.stepper button:disabled{opacity:.35}
+.stepper output{display:block;text-align:center;font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}
+.stepper output small{font-size:14px;font-weight:700;color:var(--ink-2);margin-left:3px}
+.calc-row{display:grid;grid-template-columns:minmax(0,1fr) 84px auto;align-items:center;gap:8px;font-size:15px}
+.calc-row + .calc-row{margin-top:8px}
+.calc-name{display:flex;flex-direction:column;gap:2px;min-width:0}
+.calc-name b{font-size:16px}
+.calc-eq{font-size:14px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.calc-row > span:last-child{font-weight:800}
+.calc-row input{height:44px;border-radius:12px;border:2px solid var(--line);padding:0 10px;font:inherit;font-size:18px;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;width:100%;min-width:0}
+.calc-row input:focus{border-color:var(--blue);outline:none}
+.calc-row input.ok{border-color:var(--mint);background:#E3F3EC}
+.calc-row input.bad{border-color:var(--red);background:#FBE9E7}
+#calc-rows{margin-bottom:8px}
+.quiz{display:flex;flex-direction:column;gap:8px}
+.quiz button{min-height:52px;text-align:left;padding:10px 14px;border-radius:14px;border:2px solid var(--line);background:var(--paper);font-size:15px;font-weight:700;line-height:1.45}
+.quiz button:hover{border-color:var(--ink)}
+.quiz button.ok{border-color:var(--mint);background:#E3F3EC}
+.quiz button.bad{border-color:var(--red);background:#FBE9E7}
+.todo{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:4px}
+.todo li{font-size:13px;font-weight:700;color:var(--ink-2);padding-left:22px;position:relative;line-height:1.45}
+.todo li::before{content:"○";position:absolute;left:4px;color:#B8AC98;font-weight:900}
+.todo li.got{color:var(--mint)}
+.todo li.got::before{content:"✓";color:var(--mint)}
+.todo li.now{color:var(--ink)}
+.todo li.now::before{content:"●";color:var(--red)}
+.fn-tip{font-size:14px!important;color:var(--ink-2);margin:10px 0 0}
+#why-dialog{max-width:min(720px,94vw)}
+.scene-tool{cursor:pointer}
+.scene-tool:focus-visible{outline:none}
+.scene-tool:focus-visible .tool-ring{stroke:var(--blue);stroke-width:5}
+.cue-ring{animation:cue 1.2s ease-in-out infinite}
+@keyframes cue{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.cue-ring{animation:none}}
+@media (max-width:1180px){.p-readouts .reading{width:150px}.p-readouts .reading-num{font-size:26px}}
+@media (max-width:860px){
+  .p-readouts .reading{width:auto}.p-readouts .reading-num{font-size:22px}.p-readouts .reading-label{font-size:12px}.p-readouts .reading-formula{display:none}
+  .scene-area .p-readouts{padding:10px 10px 0}
+  .scene-area .scene-wrap{top:auto;height:clamp(240px,74vw,460px)}
+}
+.scene-area{--chip-top:auto;--chip-bottom:24px}
+@media (max-width:860px){.scene-area{--chip-mtop:auto;--chip-mbottom:6px}}

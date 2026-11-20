@@ -52,6 +52,10 @@ assert.deepEqual(retiredDiscovery.changes.map(c=>c.path),['scripts/science/catal
 const frictionDiscovery=JSON.parse(fs.readFileSync(new URL('./friction-desk-discovery-changes.json',import.meta.url),'utf8'));
 assert.deepEqual(frictionDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
 for(const c of frictionDiscovery.changes)assert.equal(c.before_blob,retiredDiscovery.changes.find(p=>p.path===c.path).after_blob);
+// 2026-11-20: wave-sound, electromagnetism, energy and electrostatics lab desks become primary.
+const physicsDiscovery=JSON.parse(fs.readFileSync(new URL('./lab-physics-discovery-changes.json',import.meta.url),'utf8'));
+assert.deepEqual(physicsDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
+for(const c of physicsDiscovery.changes)assert.equal(c.before_blob,frictionDiscovery.changes.find(p=>p.path===c.path).after_blob);
 export function publicDeskDiscoveryReach(file,from){
  const change=discovery.changes.find(c=>c.path===file&&c.before_blob===from);
  let at=change?change.after_blob:from;
@@ -70,5 +74,7 @@ export function publicDeskDiscoveryReach(file,from){
  if(retired)at=retired.after_blob;
  const friction=frictionDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
  if(friction)at=friction.after_blob;
+ const physics=physicsDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
+ if(physics)at=physics.after_blob;
  return at;
 }

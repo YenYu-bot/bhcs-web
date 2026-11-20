@@ -104,7 +104,11 @@ export const primaryLabDesks=Object.freeze([
  {id:'reflection-refraction',file:'lab/reflection-refraction/',title:'光的反射與折射實驗桌',unit:'光學',minutes:'15–20',description:'用法線量角，比較光在介面上反射與折射的方向，再觀察光從玻璃射入空氣時的臨界角與全反射。',previousLabel:'舊版光的反射與折射實驗室（介質自由探究、平面鏡成像與原紀錄）'},
  {id:'specific-heat',file:'lab/heat/',title:'比熱實驗桌',unit:'熱量與比熱',minutes:'15–20',description:'用同一個電熱板加熱水和鐵，看溫度計和溫度–時間圖比較誰升溫快；再只改質量，分清熱量、溫升與比熱。',previousLabel:'舊版比熱比較實驗室（自由探究與原紀錄）',legacyNav:true},
  {id:'solubility',file:'lab/solubility/',title:'溶解度實驗桌',unit:'物質與溶液',minutes:'15–20',description:'一匙一匙把教學溶質加進水裡，看杯底何時留下固體；再升溫、降溫、加水，分清溶解度、飽和與濃度。',previousLabel:'舊版溶解度與濃度實驗室（自由探究與原紀錄）',legacyNav:true},
- {id:'metal-activity',file:'lab/metal/',title:'金屬活性實驗桌',unit:'氧化還原',minutes:'15–20',description:'把鋅片、鐵片、銅片放進硫酸銅、硫酸亞鐵與稀鹽酸，觀察析出物與氣泡，用證據排出金屬的活性大小。',previousLabel:'舊版金屬氧化還原實驗室（含鎂、銀選項的自由探究與原紀錄）',legacyNav:true}
+ {id:'metal-activity',file:'lab/metal/',title:'金屬活性實驗桌',unit:'氧化還原',minutes:'15–20',description:'把鋅片、鐵片、銅片放進硫酸銅、硫酸亞鐵與稀鹽酸，觀察析出物與氣泡，用證據排出金屬的活性大小。',previousLabel:'舊版金屬氧化還原實驗室（含鎂、銀選項的自由探究與原紀錄）',legacyNav:true},
+ {id:'wave-sound',file:'lab/wave-sound/',title:'波動與聲音實驗桌',unit:'波與聲',minutes:'15–20',description:'用喇叭和空氣柱比較頻率與波長，找出兩端開口與一端封閉的管各在哪些頻率共振，再換管長比較基頻。',previousLabel:'舊版波動、聲音與共振實驗室'},
+ {id:'electromagnetism',file:'lab/electromagnetism/',title:'電磁實驗桌',unit:'電與磁',minutes:'15–20',description:'通電線圈變成電磁鐵：改變匝數與電流比較吸起的迴紋針，電流反向磁極也反向；再把磁鐵插進線圈，看感應電流。',previousLabel:'舊版電磁鐵、馬達與發電機實驗室'},
+ {id:'energy',file:'lab/energy/',title:'能量轉換實驗桌',unit:'力學與能量',minutes:'15–20',description:'推車從斜坡滑下，看位能、動能和摩擦生熱怎麼交換；有摩擦時能量沒有消失，位能＋動能＋熱一直不變。',previousLabel:'舊版能量轉換與守恆實驗室'},
+ {id:'electrostatics',file:'lab/electrostatics/',title:'靜電感應實驗桌',unit:'靜電',minutes:'10–15',description:'帶電棒靠近金屬球，看電子怎麼移動；比較只靠近、接地、兩種移開順序與接觸起電。',previousLabel:'舊版靜電與感應起電實驗室'}
 ].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t,previousFile:`science/${t.id}.html`})));
 
 export const mirrorLabDesk=Object.freeze({
