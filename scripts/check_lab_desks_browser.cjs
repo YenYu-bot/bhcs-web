@@ -3,6 +3,10 @@
 // 觀察步驟逐一嘗試控制列的組合，畫面提示「收下」時就收下；收齊後才算完成。再填算一算、答說說看，最後要看到完成對話框。
 const {runDesk,assert}=require('./lab_desk_browser_harness.cjs');
 const DESKS={
+ moon:{quiz:[1,0,0]},
+ seasons:{calc:{calc:[90,43,90]},quiz:[1,1,1]},
+ tides:{quiz:[1,1,0]},
+ weather:{quiz:[1,0,1]},
  enzyme:{quiz:[1,1,1]},
  'plant-exchange':{quiz:[1,1,0]},
  ecosystem:{calc:{calc:[50,200]},quiz:[1,1,0]},

@@ -1646,6 +1646,20 @@
       "approved_blob": "5e1cbb221b351da8be83bd8307e90b8e9912a8df",
       "reason": "Make the new chemistry and biology lab desks primary; the older inquiry pages stay as secondary links until they are removed.",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "dc602b284c30148282c5362c47bb99cc95c86f16",
+      "approved_blob": "a9e6cb1fbfd850f8cea4dbe176322f4fc44b82f9",
+      "reason": "Make the new earth-science lab desks primary; the older inquiry pages stay as secondary links until they are removed.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "5e1cbb221b351da8be83bd8307e90b8e9912a8df",
+      "approved_blob": "79ca68b280de3fd6de61beccadb3ff9fd8673335",
+      "reason": "Make the new earth-science lab desks primary; the older inquiry pages stay as secondary links until they are removed.",
+      "pull_request": null
     }
   ]
 }
