@@ -296,6 +296,7 @@ async function overflowingElements(p){
       assert(q.dy<=3&&q.indent<=2,JSON.stringify(q));
      }
      assert.equal(await p.locator('.answer').count(),teacher?13:0);
+     if(teacher)assert.equal(await p.locator('.answer').first().evaluate(e=>getComputedStyle(e).color),'rgb(165, 29, 36)');
     };
     await verify(false);
     await p.locator('#teacher').check();await verify(true);
