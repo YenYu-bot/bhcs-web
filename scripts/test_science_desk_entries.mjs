@@ -54,8 +54,8 @@ for(const id of newPaths){
  const row=resources.querySelector(`#res-science li > a[href="tools/${local}"]`)?.closest('li');
  assert(card&&row&&fs.existsSync(path.join(root,source)),id+' primary in both catalogues');
  assert.equal(manifest.filter(item=>item.url===`https://www.bhcs.com.tw/tools/${local}`).length,1,id+' appears once in catalog schema');
- assert.match(doc(source).querySelector('meta[name="robots"]')?.content,/noindex/,id+' retains page search policy');
- assert(!read('sitemap.xml').includes(`https://www.bhcs.com.tw/tools/${local}</loc>`),id+' not introduced to sitemap');
+ assert(!doc(source).querySelector('meta[name="robots"]'),id+' is indexable');assert.equal(doc(source).querySelector('link[rel="canonical"]')?.getAttribute('href'),`https://www.bhcs.com.tw/tools/${local}`,id+' self canonical');
+ assert.equal(read('sitemap.xml').split(`<loc>https://www.bhcs.com.tw/tools/${local}</loc>`).length,2,id+' listed once in sitemap');
  const fallback=oldByLab[id];
  if(fallback){
   const note=resources.getElementById(row.querySelector('a').getAttribute('aria-describedby'));
