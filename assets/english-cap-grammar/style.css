@@ -36,7 +36,7 @@ button.primary{background:var(--accent);color:#fff;border-color:var(--accent);fo
 .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px;margin-inline-start:var(--prompt-indent)}
 .option{display:flex;align-items:center;gap:7px;min-height:44px;overflow-wrap:anywhere}
 .option input{margin:3px;accent-color:var(--accent)}
-.answer{margin:.25rem 0;padding:5px 9px;background:#eaf4fa;border-radius:5px;font-size:.93em}
+.answer{color:#a51d24;margin:.25rem 0;padding:5px 9px;background:#eaf4fa;border-radius:5px;font-size:.93em}
 .feedback{font-size:.88rem;color:var(--muted)}
 .sheet .question :is(.answer,.feedback){margin-inline-start:var(--prompt-indent)}
 .check-area{border-top:1px solid var(--rule);padding-top:14px}
@@ -48,7 +48,8 @@ button.primary{background:var(--accent);color:#fff;border-color:var(--accent);fo
  .controls,.option input,.feedback{display:none!important}
  .sheet{margin:0;padding:0;border:0}
  .sheet-head{padding-bottom:4mm}
- .sheet #edition,.answer,.passage{color:#000;background:none}
+ .sheet #edition,.passage{color:#000;background:none}
+ .answer{background:none}
  .question,.passage{break-inside:avoid}
  .group h3{break-after:avoid}
  .option{min-height:0}

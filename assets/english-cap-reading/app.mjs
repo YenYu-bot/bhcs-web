@@ -16,7 +16,8 @@ const sourceURL = (s) => {
 const imgURL = (s) => new URL('./images/' + s, import.meta.url).href;
 const letter = ['A','B','C','D'];
 const version = 'CAPR1-';
-const maxCount = 5;
+const maxCount = 8;
+const groupIdPattern = /^\d{3}-\d{2}$/;
 const yearList = $('#years'), count = $('#count'), groups = $('#groups');
 const meta = $('#meta'), editionText = $('#edition-text'), instructions = $('#instructions');
 const status = $('#status'), score = $('#score'), printButton = $('#print'), codeField = $('#code');
@@ -154,7 +155,10 @@ function commit(sheet, message, focus) {
 function showNewSheet(focus = true) {
   const available = pool();
   const n = Number(count.value);
-  if (!available.length || n < 1) { setStatus('請至少勾選一個有題圖的年份。', true); return; }
+  if (!available.length) { setStatus('請至少勾選一個有題圖的年份。', true); return; }
+  if (!Number.isInteger(n) || n < 1 || n > Math.min(maxCount, available.length)) {
+    setStatus('請選擇有效的題組數（最多 ' + maxCount + ' 組）。', true); return;
+  }
   const seed = crypto.getRandomValues(new Uint32Array(1))[0];
   const result = drawUnique(available, n, seed);
   if (formatCode(result) === state.code && available.length > 1) {
@@ -165,8 +169,10 @@ function showNewSheet(focus = true) {
 }
 function restoreSheet() {
   const raw = codeField.value.trim().toUpperCase();
-  if (!/^CAPR1-\d{3}-\d{2}(?:\.\d{3}-\d{2}){0,4}$/.test(raw)) { setStatus('卷號格式不正確。請貼上從此出題器複製的完整 CAPR1 卷號。', true); return; }
   const ids = raw.slice(version.length).split('.');
+  if (!raw.startsWith(version) || ids.length > maxCount || !ids.every(id => groupIdPattern.test(id))) {
+    setStatus('卷號格式不正確。請貼上從此出題器複製的完整 CAPR1 卷號（最多 ' + maxCount + ' 組）。', true); return;
+  }
   const result = ids.map(id => state.byId.get(id));
   if (new Set(ids).size !== ids.length || result.some(g => !g)) { setStatus('這個卷號有重複的題組或有題組目前未收錄。', true); return; }
   const chosen = new Set(result.map(g => g.year));
