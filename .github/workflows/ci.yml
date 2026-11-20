@@ -234,10 +234,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_lens_25d_browser.cjs
-      - name: Check accepted friction efficiency native input, geometry and data boundaries
+      - name: Check friction efficiency desk mouse drag, touch, and energy ledger
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_friction_efficiency_desk_browser.cjs
+        run: node scripts/check_friction_efficiency_lab_browser.cjs
       - name: Install virtual display for native motion background lifecycle
         timeout-minutes: 10
         run: sudo apt-get install -y xvfb xauth
@@ -271,13 +271,6 @@ jobs:
         with:
           name: lens-25d-review
           path: lens-25d-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: friction-efficiency-desk-review
-          path: friction-efficiency-desk-artifacts/
           retention-days: 14
 
       - uses: actions/upload-artifact@v4

@@ -180,18 +180,15 @@ test('G7 equation layout regression runs in the site gate without replacing the 
 });
 
 
-test('standalone friction efficiency native gate is additive and fail closed', () => {
-  const script = 'scripts/check_friction_efficiency_desk_browser.cjs';
+test('friction efficiency lab desk browser gate is required and fail closed', () => {
+  const script = 'scripts/check_friction_efficiency_lab_browser.cjs';
   assert.equal(count(wf, script), 1);
   assert.ok(jobs['science-stations'].text.includes(`run: node ${script}`));
   assert.ok(fs.existsSync(path.join(root, script)));
-  assert.ok(wf.includes('name: friction-efficiency-desk-review\n          path: friction-efficiency-desk-artifacts/\n          retention-days: 14'));
-  assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('npm run test:friction-efficiency-desk'));
+  assert.ok(!wf.includes('friction-efficiency-desk-artifacts/'));
+  assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('node lab_friction_efficiency_model.test.mjs'));
   assert.ok(!jobs['science-stations'].text.includes('continue-on-error: true'));
 });
-
-
-
 
 test('motion graphs native gate retains all station checks and mandatory artifacts', () => {
  const station=jobs['science-stations'].text;
@@ -201,7 +198,7 @@ test('motion graphs native gate retains all station checks and mandatory artifac
  assert.ok(station.indexOf('playwright install --with-deps chromium')<station.indexOf('run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs'));
  assert.ok(station.includes('name: motion-graphs-desk-review\n          path: motion-graphs-desk-artifacts/\n          retention-days: 14'));
  assert.ok(!station.includes('continue-on-error: true'));
- for(const old of ['friction_efficiency_desk'])assert.equal(count(station,`run: node scripts/check_${old}_browser.cjs`),1);
+ for(const old of ['friction_efficiency_lab'])assert.equal(count(station,`run: node scripts/check_${old}_browser.cjs`),1);
  assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:motion-graphs-desk'));
 });
 

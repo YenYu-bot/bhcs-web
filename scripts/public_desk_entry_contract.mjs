@@ -48,6 +48,10 @@ for(const c of reflectionDiscovery.changes)assert.equal(c.before_blob,pressureDi
 // 2026-11-19: the seven older lab desks are replaced by their tools/lab desks (old URLs redirect).
 const retiredDiscovery=JSON.parse(fs.readFileSync(new URL('./retired-desk-discovery-changes.json',import.meta.url),'utf8'));
 assert.deepEqual(retiredDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
+// 2026-11-20: the friction and efficiency desk is replaced by tools/lab/friction-efficiency (old URL redirects).
+const frictionDiscovery=JSON.parse(fs.readFileSync(new URL('./friction-desk-discovery-changes.json',import.meta.url),'utf8'));
+assert.deepEqual(frictionDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
+for(const c of frictionDiscovery.changes)assert.equal(c.before_blob,retiredDiscovery.changes.find(p=>p.path===c.path).after_blob);
 export function publicDeskDiscoveryReach(file,from){
  const change=discovery.changes.find(c=>c.path===file&&c.before_blob===from);
  let at=change?change.after_blob:from;
@@ -64,5 +68,7 @@ export function publicDeskDiscoveryReach(file,from){
  if(file==='ziyuan.html'&&at==='24b767f85e54aeab737395236cd9f0c77a20167d')at='db1f75ed640d179e915d95bf268dbca3bbc83e10';
  const retired=retiredDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
  if(retired)at=retired.after_blob;
+ const friction=frictionDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
+ if(friction)at=friction.after_blob;
  return at;
 }

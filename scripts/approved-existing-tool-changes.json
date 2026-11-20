@@ -1527,6 +1527,27 @@
       "approved_blob": "bf3462da4725a730c55ed6995d835ffd31c98816",
       "reason": "Replace seven older lab desks with the tools/lab guided desks: old desk URL now redirects to its replacement (noindex); models stay in place.",
       "pull_request": null
+    },
+    {
+      "path": "tools/friction-efficiency-desk/index.html",
+      "baseline_blob": "431d9d2260869dd2849bd60661f2a231b484644f",
+      "approved_blob": "f6057485a63ba2413d88683209a2f6aaa40dda82",
+      "reason": "Replace the friction and efficiency desk with tools/lab/friction-efficiency: old desk URL now redirects to its replacement (noindex); model, engine and bench files stay in place.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "c1caf24bf499b990fb7f03ae2ab8e744a9d2dc03",
+      "approved_blob": "7abee2d648b2f2e21fd1077215de13fbc8fa2c9a",
+      "reason": "Document the new tools/lab friction and efficiency desk that replaces tools/friction-efficiency-desk.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "a8a53f5f04937e846d84ee7ea9b8df20835dbdf7",
+      "approved_blob": "d7b924ff28ac4e0a04b0a5b2888690640be2889c",
+      "reason": "Replace the friction and efficiency desk with tools/lab/friction-efficiency: catalog link and schema entry point to the new desk.",
+      "pull_request": null
     }
   ]
 }

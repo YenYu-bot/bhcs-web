@@ -77,10 +77,10 @@ export const standalonePublic = Object.freeze([Object.freeze({
  prior:'力、距離與單位換算',goals:'沿坡距離與垂直升高、理想斜面省力不省功、摩擦的影響',
  minutes:'20–30',kind:'引導實驗桌'
 }),Object.freeze({
- file:'friction-efficiency-desk/',title:'摩擦與機械效率實驗桌',subject:'理化',grade:'國中',unit:'摩擦、功與機械效率',
- description:'用同一個10 N木箱與同一斜面，量取理想表面和指定粗面的拉力與距離，再比較輸入功、有效功和機械效率。紀錄僅存目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',
- prior:'力、距離、功與單位換算',goals:'公平比較、輸入功與有效功、摩擦轉為內能、依原始量測計算效率',
- minutes:'15–20',kind:'互動模擬'
+ file:'lab/friction-efficiency/',title:'摩擦與機械效率實驗桌',subject:'理化',grade:'國中',unit:'摩擦、功與機械效率',
+ description:'同一個木箱、同一個斜面，只換光滑、粗糙、砂紙三種坡面，看拉力做的功有多少變成位能、多少被摩擦變成熱，算出機械效率。',
+ prior:'力、距離、功與單位換算',goals:'公平比較、輸入功與有效功、摩擦轉為熱、機械效率的計算',
+ minutes:'15–20',kind:'引導實驗桌'
 }),Object.freeze({
  file:'motion-graphs-desk/',title:'小車運動圖實驗桌',subject:'理化',grade:'國中',unit:'位置、速度與運動圖',
  description:'先觀察小車、讀位置並自己作圖，再以五個案例判讀 x–t、v–t 圖、等加速度、折返及位移與路程。入門與進階紀錄分開保存在目前瀏覽器與網站；私人原型站紀錄不會自動移入官網。',

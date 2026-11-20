@@ -1,5 +1,7 @@
 # 摩擦與機械效率實驗桌整合紀錄
 
+> 2026-11-20：本站已由新版 `tools/lab/friction-efficiency/` 取代，舊網址改為 noindex 轉址頁；以下為舊版整合紀錄，僅供參考。`model.mjs`、`engine.mjs`、`storage.mjs`、`bench.mjs` 保留，相關單元測試仍在 `scripts/friction-efficiency-desk/`。
+
 本次是獨立教材的加法整合，不替換既有斜面、能量、摩擦或其他自然／數學教材。Draft 與 CI 不代表已授權合併或正式發布。
 
 ## 來源與不變性

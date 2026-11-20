@@ -45,7 +45,7 @@ console.log('PASS actual researcher shell keeps version navigation visible throu
 
 // The eight replacements use the accepted labs as the primary link in both
 // directories; legacy tools remain discoverable without adding counted cards.
-const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure','reflection-refraction','lever','pulley','incline','buoyancy','heat','solubility','metal'];
+const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure','reflection-refraction','lever','pulley','incline','buoyancy','heat','solubility','metal','friction-efficiency'];
 const oldByLab={lens:'science/optics.html',motion:'motion-graphs-desk/', 'reaction-rate':'science/reaction-rate.html','spring-friction':'science/spring-friction.html','electric-power':'science/electric-power.html',neutralization:'science/neutralization.html',pressure:'science/pressure-fluid.html','reflection-refraction':'science/reflection-refraction.html',heat:'science/specific-heat.html',solubility:'science/solubility.html',metal:'science/metal-activity.html'};
 const manifest=JSON.parse(directory.querySelector('script[type="application/ld+json"]').textContent).hasPart;
 assert.equal(manifest.length,61);

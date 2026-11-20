@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFF8EC">
+<title>摩擦與機械效率實驗桌｜百宏文教</title>
+<meta name="description" content="同一個木箱、同一個斜面，只換坡面。把木箱拉上去，看拉力做的功有多少變成位能、多少被摩擦變成熱，算出機械效率。">
+<link rel="stylesheet" href="../shared/lab.css">
+<link rel="stylesheet" href="../shared/station.css">
+<link rel="stylesheet" href="./friction.css">
+</head>
+<body class="lab">
+<header class="lab-bar">
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">摩擦與機械效率實驗桌</h1>
+  <ol class="lab-steps" id="steps" aria-label="任務進度"></ol>
+  <div class="lab-bar-actions">
+    <button type="button" class="btn-ghost" id="why">機械效率？</button>
+    <button type="button" class="btn-dark" id="open-notes">研究手冊 <span class="badge" id="note-count">0</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="scene-area">
+    <div class="readouts p-readouts" aria-label="讀值">
+      <div class="reading"><span class="reading-label">彈簧秤拉力</span><span class="reading-num num" id="r-force">6</span><span class="reading-unit">N</span><span class="reading-formula" id="r-force-note"></span></div>
+      <div class="reading"><span class="reading-label">沿斜面拉了</span><span class="reading-num num" id="r-rope">0</span><span class="reading-unit">cm</span><span class="reading-formula" id="r-rope-note">斜面長 100 cm</span></div>
+      <div class="reading"><span class="reading-label">木箱升高</span><span class="reading-num num" id="r-height">0</span><span class="reading-unit">cm</span><span class="reading-formula" id="r-height-note">坡頂高 60 cm</span></div>
+    </div>
+    <div class="scene-wrap">
+      <p class="unit-chip" aria-label="單位換算：1 公斤重等於 10 牛頓，木箱 1 公斤重等於 10 牛頓"><span>換算</span><b>1 公斤重 ＝ 10 N</b><span>木箱 1 公斤重 ＝ 10 N</span></p>
+      <svg id="scene" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="group" aria-label="摩擦與機械效率實驗桌：沿著長 100 cm、高 60 cm 的斜面把 10 N 木箱拉到坡頂，上方的能量帳顯示拉力做的功有多少變成位能、多少被摩擦變成熱">
+        <image href="../../../assets/science/props/bg-physics-bench.webp" x="-877" y="-768" width="2755" height="1668" preserveAspectRatio="none" aria-hidden="true"/>
+        <g id="rig"></g>
+      </svg>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="任務、余老師與操作">
+    <section class="task" id="task" aria-live="polite">
+      <span class="task-kicker" id="task-kicker"></span>
+      <h2 class="task-title" id="task-title"></h2>
+      <p class="task-goal" id="task-goal"></p>
+      <div class="task-row"><button type="button" id="task-reset">重來這一步</button><button type="button" class="go" id="task-go" hidden></button><button type="button" class="clear" id="clear-records">清空紀錄</button></div>
+    </section>
+
+    <div class="teacher" id="teacher">
+      <div class="teacher-pic" id="teacher-pic" data-pose="point" role="img" aria-label="余老師"></div>
+      <div class="bubble" id="bubble"></div>
+    </div>
+
+    <section class="dock" id="dock-pull" aria-label="拉木箱">
+      <div class="guess" id="guess" hidden>
+        <span class="dock-label">先猜猜看：砂紙坡面的機械效率會……</span>
+        <div class="picker-btns three">
+          <button type="button" class="btn-soft" data-guess="up" aria-pressed="false">比 75% 高</button>
+          <button type="button" class="btn-soft" data-guess="same" aria-pressed="false">一樣 75%</button>
+          <button type="button" class="btn-soft" data-guess="down" aria-pressed="false">比 75% 低</button>
+        </div>
+      </div>
+      <span class="dock-label">拉木箱 <small>沿著斜面拖曳黃色把手，或按下面的按鈕</small></span>
+      <div class="picker-btns two">
+        <button type="button" class="btn-soft" id="pull-1">往上拉 10 cm</button>
+        <button type="button" class="btn-soft" id="pull-5">往上拉 50 cm</button>
+      </div>
+      <button type="button" class="btn-main" id="save">收下這次觀察</button>
+    </section>
+
+    <section class="dock" id="dock-calc" aria-label="算一算" hidden>
+      <span class="dock-label" id="calc-head"></span>
+      <div id="calc-rows"></div>
+      <button type="button" class="btn-main" id="check">核對我的答案</button>
+    </section>
+
+    <section class="dock" id="dock-quiz" aria-label="說說看" hidden>
+      <span class="dock-label" id="quiz-q"></span>
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+    <section class="evidence" id="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-head"><h2 id="evidence-title">我的證據</h2><span><span id="ev-count">0</span> 張</span></div>
+      <p class="evidence-empty" id="ev-empty">把木箱拉到坡頂後按「收下這次觀察」，卡片會飛到這裡。</p>
+      <ol class="chips" id="chips"></ol>
+    </section>
+  </aside>
+</main>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+
+<dialog id="why-dialog" aria-labelledby="why-title">
+  <h2 id="why-title">什麼是機械效率</h2>
+  <div class="fn-scroll"><table class="fn-table">
+    <thead><tr><th></th><th>光滑坡面</th><th>粗糙坡面</th><th>砂紙坡面</th></tr></thead>
+    <tbody>
+      <tr><th>拉力</th><td>6 N</td><td>8 N</td><td>10 N</td></tr>
+      <tr><th>輸入功<br><small>拉力 × 沿坡 1 m</small></th><td>6 J</td><td>8 J</td><td>10 J</td></tr>
+      <tr><th>有效功<br><small>重量 × 升高 0.6 m</small></th><td>6 J</td><td>6 J</td><td>6 J</td></tr>
+      <tr><th>摩擦生熱</th><td>0 J</td><td>2 J</td><td>4 J</td></tr>
+      <tr><th>機械效率</th><td>100%</td><td>75%</td><td>60%</td></tr>
+    </tbody>
+  </table></div>
+  <p class="fn-tip"><b>機械效率 ＝ 有效功 ÷ 輸入功 × 100%。</b>輸入功是我們拉繩子做的功；有效功是真正用來把木箱升高的功（木箱增加的位能）。</p>
+  <p class="fn-tip"><b>多出來的功沒有消失。</b>克服摩擦做的功變成熱，讓木箱底部和坡面溫度升高一點點。輸入功 ＝ 有效功 ＋ 摩擦生熱。</p>
+  <p class="fn-tip"><b>真實的機械效率一定小於 100%。</b>摩擦越大，浪費越多，效率越低；潤滑、讓表面光滑、改用輪子都能提高效率。</p>
+  <p class="fn-tip">模型說明：木箱重 10 N（g＝10 N/kg），斜面長 100 cm、高 60 cm，沿斜面等速慢慢拉；三種坡面的摩擦力分別是 0、2、4 N。不計起動時的靜摩擦與箱子的動能變化。</p>
+  <div class="dialog-actions"><button type="button" class="btn-main" data-close>知道了</button></div>
+</dialog>
+
+<dialog id="notes-dialog" aria-labelledby="notes-title">
+  <h2 id="notes-title">研究手冊</h2>
+  <p class="notes-tip">三種坡面都拉到坡頂（沿坡 100 cm、升高 60 cm），比較拉力和能量帳。</p>
+  <div class="notes-scroll"><table class="notes-table"><thead><tr><th>#</th><th>坡面</th><th>拉力</th><th>輸入功</th><th>有效功</th><th>摩擦生熱</th></tr></thead><tbody id="notes-body"></tbody></table></div>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" id="reset-all">清除紀錄重新開始</button>
+    <button type="button" class="btn-main" data-close>關閉</button>
+  </div>
+</dialog>
+
+<dialog id="finish-dialog" aria-labelledby="finish-title">
+  <p class="finish-kicker">摩擦與機械效率實驗桌 · 全部完成</p>
+  <h2 id="finish-title">你算出機械效率了！</h2>
+  <div class="stars" id="stars" aria-label="完成 6 個任務"></div>
+  <div class="finish-rule">機械效率 ＝ 有效功 ÷ 輸入功 × 100%。摩擦越大，變成熱的功越多，效率越低。</div>
+  <ul class="finish-list" id="finish-list"></ul>
+  <div class="dialog-actions">
+    <button type="button" class="btn-soft" data-close>再玩一次</button>
+    <a class="btn-main" href="../incline/">去斜面實驗桌</a>
+  </div>
+</dialog>
+
+<script type="module" src="./friction.js"></script>
+</body>
+</html>
