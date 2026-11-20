@@ -3,6 +3,17 @@
 // 觀察步驟逐一嘗試控制列的組合，畫面提示「收下」時就收下；收齊後才算完成。再填算一算、答說說看，最後要看到完成對話框。
 const {runDesk,assert}=require('./lab_desk_browser_harness.cjs');
 const DESKS={
+ enzyme:{quiz:[1,1,1]},
+ 'plant-exchange':{quiz:[1,1,0]},
+ ecosystem:{calc:{calc:[50,200]},quiz:[1,1,0]},
+ homeostasis:{quiz:[1,1,1]},
+ 'nerve-reflex':{calc:{calc:[0.3,20]},quiz:[1,0,1]},
+ circulation:{calc:{calc:[4.9,9.6]},quiz:[1,0,1]},
+ 'cell-division':{calc:{calc:[46,23,46]},quiz:[1,0,1]},
+ equilibrium:{quiz:[1,1,1]},
+ electrolysis:{quiz:[1,1,1]},
+ stoichiometry:{calc:{calc:[0.5,54,36]},quiz:[1,1,1]},
+ atom:{calc:{calc:[27,10,11]},quiz:[1,1,0]},
  'wave-sound':{calc:{calc:[0.4,85,255]},quiz:[1,1,1]},
  energy:{calc:{calc:[60,60,45]},quiz:[1,1,1]},
  electromagnetism:{quiz:[1,1,1]},

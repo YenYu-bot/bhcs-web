@@ -56,6 +56,9 @@ for(const c of frictionDiscovery.changes)assert.equal(c.before_blob,retiredDisco
 const physicsDiscovery=JSON.parse(fs.readFileSync(new URL('./lab-physics-discovery-changes.json',import.meta.url),'utf8'));
 assert.deepEqual(physicsDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
 for(const c of physicsDiscovery.changes)assert.equal(c.before_blob,frictionDiscovery.changes.find(p=>p.path===c.path).after_blob);
+const LabChemBioDiscovery=JSON.parse(fs.readFileSync(new URL('./lab-chem-bio-discovery-changes.json',import.meta.url),'utf8'));
+assert.deepEqual(LabChemBioDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
+for(const c of LabChemBioDiscovery.changes)assert.equal(c.before_blob,physicsDiscovery.changes.find(p=>p.path===c.path).after_blob);
 export function publicDeskDiscoveryReach(file,from){
  const change=discovery.changes.find(c=>c.path===file&&c.before_blob===from);
  let at=change?change.after_blob:from;
@@ -76,5 +79,7 @@ export function publicDeskDiscoveryReach(file,from){
  if(friction)at=friction.after_blob;
  const physics=physicsDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
  if(physics)at=physics.after_blob;
+ const step_LabChemBioDiscovery=LabChemBioDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
+ if(step_LabChemBioDiscovery)at=step_LabChemBioDiscovery.after_blob;
  return at;
 }

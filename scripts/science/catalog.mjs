@@ -108,7 +108,18 @@ export const primaryLabDesks=Object.freeze([
  {id:'wave-sound',file:'lab/wave-sound/',title:'波動與聲音實驗桌',unit:'波與聲',minutes:'15–20',description:'用喇叭和空氣柱比較頻率與波長，找出兩端開口與一端封閉的管各在哪些頻率共振，再換管長比較基頻。',previousLabel:'舊版波動、聲音與共振實驗室'},
  {id:'electromagnetism',file:'lab/electromagnetism/',title:'電磁實驗桌',unit:'電與磁',minutes:'15–20',description:'通電線圈變成電磁鐵：改變匝數與電流比較吸起的迴紋針，電流反向磁極也反向；再把磁鐵插進線圈，看感應電流。',previousLabel:'舊版電磁鐵、馬達與發電機實驗室'},
  {id:'energy',file:'lab/energy/',title:'能量轉換實驗桌',unit:'力學與能量',minutes:'15–20',description:'推車從斜坡滑下，看位能、動能和摩擦生熱怎麼交換；有摩擦時能量沒有消失，位能＋動能＋熱一直不變。',previousLabel:'舊版能量轉換與守恆實驗室'},
- {id:'electrostatics',file:'lab/electrostatics/',title:'靜電感應實驗桌',unit:'靜電',minutes:'10–15',description:'帶電棒靠近金屬球，看電子怎麼移動；比較只靠近、接地、兩種移開順序與接觸起電。',previousLabel:'舊版靜電與感應起電實驗室'}
+ {id:'electrostatics',file:'lab/electrostatics/',title:'靜電感應實驗桌',unit:'靜電',minutes:'10–15',description:'帶電棒靠近金屬球，看電子怎麼移動；比較只靠近、接地、兩種移開順序與接觸起電。',previousLabel:'舊版靜電與感應起電實驗室'},
+ {id:'atom-builder',file:'lab/atom/',title:'原子結構實驗桌',subject:'理化',unit:'原子結構',minutes:'10–15',description:'用質子、中子、電子組出原子：質子數決定元素，電子多少決定離子電荷，中子數不同是同位素。',previousLabel:'舊版原子結構與週期表實驗室'},
+ {id:'stoichiometry',file:'lab/stoichiometry/',title:'化學計量實驗桌',subject:'理化',unit:'化學計量',minutes:'15–20',description:'把反應物的質量換成莫耳數，看係數比、誰先用完，以及反應前後總質量不變。',previousLabel:'舊版莫耳與化學計量實驗室'},
+ {id:'equilibrium',file:'lab/equilibrium/',title:'化學平衡實驗桌',subject:'理化',unit:'可逆反應',minutes:'10–15',description:'密閉燒瓶裡的可逆反應：從哪一邊開始都到同一個平衡，改變溫度或加入反應物，平衡會移動。',previousLabel:'舊版可逆反應與平衡實驗室'},
+ {id:'cell-electrolysis',file:'lab/electrolysis/',title:'電池與電解實驗桌',subject:'理化',unit:'電流的化學效應',minutes:'15–20',description:'鋅銅電池的電子怎麼流、電解水產生的氫和氧、電解硫酸銅析出銅與電鍍。',previousLabel:'舊版電池與電解實驗室'},
+ {id:'cell-division',file:'lab/cell-division/',title:'細胞分裂實驗桌',subject:'生物',unit:'細胞分裂與生殖',minutes:'15–20',description:'一步一步看有絲分裂和減數分裂：細胞數、染色體數和 DNA 量怎麼變，同源染色體什麼時候分開。',previousLabel:'舊版細胞分裂實驗室'},
+ {id:'circulation',file:'lab/circulation/',title:'血液循環實驗桌',subject:'生物',unit:'運輸作用',minutes:'15–20',description:'沿著血液走一圈：分辨肺循環與體循環、動脈與靜脈，再比較運動時的心跳與心輸出量。',previousLabel:'舊版血液循環實驗室'},
+ {id:'ecosystem',file:'lab/ecosystem/',title:'生態系實驗桌',subject:'生物',unit:'生態',minutes:'15–20',description:'看能量沿食物鏈每往上一層剩多少，再看兔子族群如何增加到環境承載量。',previousLabel:'舊版生態系、食物網與族群實驗室'},
+ {id:'enzyme',file:'lab/enzyme/',title:'酵素實驗桌',subject:'生物',unit:'酵素',minutes:'15–20',description:'把唾液澱粉酶放進不同溫度與 pH，用碘液看澱粉有沒有被分解；高溫變性後冷卻也回不來。',previousLabel:'舊版酵素活性實驗室'},
+ {id:'homeostasis',file:'lab/homeostasis/',title:'體內恆定實驗桌',subject:'生物',unit:'恆定性',minutes:'15–20',description:'天氣冷熱時身體怎麼維持 37 °C，飯後、胰島素不足與運動時血糖怎麼被拉回正常。',previousLabel:'舊版血糖與體溫恆定實驗室'},
+ {id:'nerve-reflex',file:'lab/nerve-reflex/',title:'神經反射實驗桌',subject:'生物',unit:'協調作用',minutes:'15–20',description:'比較膝跳反射、縮手反射與接球的神經路線，看中樞在脊髓還是大腦，再用接尺實驗量反應時間。',previousLabel:'舊版神經與反應時間實驗室'},
+ {id:'plant-exchange',file:'lab/plant-exchange/',title:'植物氣體交換實驗桌',subject:'生物',unit:'植物生理',minutes:'15–20',description:'改變光照、氣孔開度與濕度，比較葉子的光合作用、呼吸作用、淨氧氣交換與蒸散。',previousLabel:'舊版呼吸作用、蒸散與氣孔實驗室'}
 ].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t,previousFile:`science/${t.id}.html`})));
 
 export const mirrorLabDesk=Object.freeze({

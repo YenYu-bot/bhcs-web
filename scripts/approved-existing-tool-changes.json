@@ -1632,6 +1632,20 @@
       "approved_blob": "2db894e6d776d9d1b3c7725e0cea3ad47756abb6",
       "reason": "Add online practice, scoring, and encouragement to the mixed grammar worksheet while retaining A4 print and saved worksheet codes.",
       "pull_request": 266
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "d8709618c047d9477ec315951a9b43f606a1b5a9",
+      "approved_blob": "dc602b284c30148282c5362c47bb99cc95c86f16",
+      "reason": "Make the new chemistry and biology lab desks primary; the older inquiry pages stay as secondary links until they are removed.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "e9b5f4f8a84ac715bcf493aec48ba50d73a1616a",
+      "approved_blob": "5e1cbb221b351da8be83bd8307e90b8e9912a8df",
+      "reason": "Make the new chemistry and biology lab desks primary; the older inquiry pages stay as secondary links until they are removed.",
+      "pull_request": null
     }
   ]
 }
