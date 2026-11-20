@@ -2101,6 +2101,265 @@
       "approved_blob": "675f8d284cdf05f49848ad8ed3f6964c517c956e",
       "reason": "Lab desk notes: the reaction-rate model moved into the desk and the replaced 新探究 pages were removed.",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/atom/index.html",
+      "baseline_blob": "c834006815be1c572ac0f453e4979f80b7c4d51e",
+      "approved_blob": "ad885d11643f6b66b0313cc3f8144995beadd661",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/buoyancy/index.html",
+      "baseline_blob": "13bc08a3f59555ce058c06b12159d971846b86eb",
+      "approved_blob": "f8eb1e4018c1b1e1b23b6c61c602e636b3ec68eb",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/cell-division/index.html",
+      "baseline_blob": "6c0d6e5c8cfd5e1a0900750701cdc77c08db73ca",
+      "approved_blob": "a45501a1672d1aafbd5a9aa8f233419610125544",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/circulation/index.html",
+      "baseline_blob": "d7f55a4cf28d4a99ee4d4cd4087a0b273c4abccf",
+      "approved_blob": "1b7030f3e159f0ad595ecd6f9153acc23d8d8ea1",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/ecosystem/index.html",
+      "baseline_blob": "9ab8b4f73ed940d6b9603c1e504680e497418345",
+      "approved_blob": "896c81521d2cb57b0cc18ef3e42d5f62184a05ed",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/index.html",
+      "baseline_blob": "0cc5fc0ee24b14f70c17c610eac2d23fa1a6f3f3",
+      "approved_blob": "2f5414b6b06853f0f2c0ba57154811081f350e9c",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electrolysis/index.html",
+      "baseline_blob": "a0c59355596c355aaf18f5b57eb503a311406091",
+      "approved_blob": "88bc58555046044c262a24ec4e4950e9bebc6036",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electromagnetism/index.html",
+      "baseline_blob": "0436303ecece0330260117de270336898c6cf86c",
+      "approved_blob": "cc769e822f15aebe6c0b3a370e0ec141024725dc",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electrostatics/index.html",
+      "baseline_blob": "089c9e3692c821b9c8b6ac9c64163d6283c682d7",
+      "approved_blob": "9f48e39320122823c9f1d3c86dc851f6d1bf3d8c",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/energy/index.html",
+      "baseline_blob": "05c3a862a4bc8c66ff948a2b8861b7ea246d8fc0",
+      "approved_blob": "316227a403b1818b89283822c80e73a55f1f4581",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/enzyme/index.html",
+      "baseline_blob": "d6a1071864e0148b1b8b4bf1596518b98c6817d6",
+      "approved_blob": "0412034f585c71881d05b3afa6216d9eb2583508",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/equilibrium/index.html",
+      "baseline_blob": "693829bda19f189d4b1ad1f21240492e2aaa25ac",
+      "approved_blob": "f9a5de360c53467d52379b248c15faf242507abd",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/friction-efficiency/index.html",
+      "baseline_blob": "3efdb54e4493514445cb5ef6a803e39d6ba78e1f",
+      "approved_blob": "574d2e0fa4641a911b36a3f28bb28b784b4db2bc",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/heat/index.html",
+      "baseline_blob": "d4042bbcd6073871b1cd8cd8feb40ae6e3964df6",
+      "approved_blob": "dbc9c3bfa6c9db01f66120ab0b5844a65d643deb",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/homeostasis/index.html",
+      "baseline_blob": "af42a62e5f288c399d35cd50db58755b7111ca43",
+      "approved_blob": "8bdbc57dc3393994242cd6dc1ea4410c8991088e",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/incline/index.html",
+      "baseline_blob": "45c58b22bc91cb3f3d8d8c9bae65de1d834ac528",
+      "approved_blob": "f76cb9a65807e363cf6fbebbc262bc9ff6a7f658",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lens/index.html",
+      "baseline_blob": "7a647393d35b97f710c573e73d5ab37409ebf37f",
+      "approved_blob": "aaca11e463563907ab54ffe836bc2854055a53f9",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lever/index.html",
+      "baseline_blob": "5708ef87990fcf40eda47298ddc0e8aca10933ee",
+      "approved_blob": "477a2bb65af37551e8a502c5bf7efe717227ab8a",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/metal/index.html",
+      "baseline_blob": "4f4484639c8c9ba196e5ae6cf65f870afd540629",
+      "approved_blob": "13e9445ff2290078a07e8ac31904067b6249ca4c",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/mirror/index.html",
+      "baseline_blob": "66fbb0683c89f96cb7984f7d2e43d56b65cea62e",
+      "approved_blob": "61eae4aa9ab2986306c7d1d1fd9215e24581d0cc",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/moon/index.html",
+      "baseline_blob": "a8e83d99585d05cfa867e173c4697a1b82e627b9",
+      "approved_blob": "1a6ff9a67c84f112238a9fad07ea673f8daefe58",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/motion/index.html",
+      "baseline_blob": "b30dd0785ffc815258465e4051b3d398a338f2ed",
+      "approved_blob": "0c2fe6cb5bca0c262de10b98cca9d2b2f12f505a",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/nerve-reflex/index.html",
+      "baseline_blob": "75cd5bb5f031ced477b405bb59205e37b8051a0d",
+      "approved_blob": "31d841ecfcb3e195c546378cc55610371ff82f6b",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/neutralization/index.html",
+      "baseline_blob": "155ad05c2e0aebee8863787666ffa6d9e7774041",
+      "approved_blob": "8e87c052d7e5588692291f38cf85b0a0b271cba4",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/plant-exchange/index.html",
+      "baseline_blob": "7a387115eef57f030ef606d5214c239b336d95b0",
+      "approved_blob": "26c2f55395d04b64e7959c1f6f86ad538220237a",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pressure/index.html",
+      "baseline_blob": "f160b24444184b5dc6cdfacb8493ccc766db02da",
+      "approved_blob": "2e4fcb4774af4b4784be35ce7a56e6aeb907285c",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pulley/index.html",
+      "baseline_blob": "f44177dafa3c24e73bb68c78dd0815dfaae8c427",
+      "approved_blob": "2ec1ca8430c4172ac2f933665e01edd56d611e39",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/index.html",
+      "baseline_blob": "dbe74213cb069fc9c8e405dccbe516744e15cef9",
+      "approved_blob": "2c9f86fa6315ad9be96dae755cf01305aac560e2",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reflection-refraction/index.html",
+      "baseline_blob": "a1410a469ccbc52d1fccb58d55126c0cd26cf5b9",
+      "approved_blob": "cabd25e6aec34a5d5bc6da0ce6692ba1dcbede23",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/seasons/index.html",
+      "baseline_blob": "cfa63d14442f005aa38bbf9a02aeefbea3b202fc",
+      "approved_blob": "a8eab8fa68dee5612733ba58b84fdafa9a9b15a4",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/solubility/index.html",
+      "baseline_blob": "130bae2c944f483615a6b840f5a3ec4f3da9cd84",
+      "approved_blob": "35e2cceb3b2818e91920d02a5db405c8ede74031",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/spring-friction/index.html",
+      "baseline_blob": "1bbb189e5163286b497370d97e543ffe45428859",
+      "approved_blob": "75fba5cd7d2c09125e214c2b93758b214413ae5d",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/stoichiometry/index.html",
+      "baseline_blob": "09112835c10ec22f35a739864496d9733d2aecdc",
+      "approved_blob": "46619f5287c39b9aed6697533fea504926b8cf6f",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/tides/index.html",
+      "baseline_blob": "056e1e739d569139fe4a5e26c5c38ed6a6092f8e",
+      "approved_blob": "f2cbb8df921e49aac24660f18a30ac9b0bfce3d2",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/wave-sound/index.html",
+      "baseline_blob": "f3eae7f9f73809c11a6e2a6e879d11680438905c",
+      "approved_blob": "4a3e7a1035573ca935099702f3009a9d3ba91596",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/weather/index.html",
+      "baseline_blob": "64e6a251258e890574e31ffbd2fd449cda0a5377",
+      "approved_blob": "3d7dce7a85c81a7946ec0c762deffe0429d38f2e",
+      "reason": "Search indexing: the lab desk replaces its removed 新探究 page, so the noindex tag is replaced by a self canonical and the desk joins the sitemap.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "675f8d284cdf05f49848ad8ed3f6964c517c956e",
+      "approved_blob": "4ef7d2a708f3bc550cddecab776a2f28d807c104",
+      "reason": "Lab desk notes: the desks are now indexable and listed in the sitemap.",
+      "pull_request": null
     }
   ]
 }
