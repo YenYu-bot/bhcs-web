@@ -14,7 +14,7 @@ test('prototype visibility: noindex, self canonical, not in sitemap, directory, 
  assert.match(html,/<meta name="robots" content="noindex">/);
  assert.match(html,/<link rel="canonical" href="https:\/\/www\.bhcs\.com\.tw\/tools\/science\/optics-guided\.html">/);
  assert.ok(!read('sitemap.xml').includes('optics-guided'),'sitemap');
- for(const f of ['tools/science/index.html','ziyuan.html','guoxiao.html','guozhong.html','guozhong-lihua.html','scripts/science/catalog.mjs','scripts/science/batch2.mjs','assets/researcher-lab.js','index.html'])assert.ok(!read(f).includes('optics-guided'),f+' does not mention the prototype');
+ for(const f of ['tools/science/index.html','ziyuan.html','guoxiao.html','guozhong.html','guozhong-lihua.html','scripts/science/catalog.mjs','assets/researcher-lab.js','index.html'])assert.ok(!read(f).includes('optics-guided'),f+' does not mention the prototype');
  const anywhere=cp.execFileSync('git',['grep','-l','optics-guided','--','*.html'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(Boolean);
  assert.deepEqual(anywhere,[PAGE],'no other page links to it');
 });
@@ -27,7 +27,7 @@ test('page shape: hand-written, scoped CSS only, science adapter, no legacy shel
  assert.ok(!/researcher-lab|site\.js|googletagmanager|G-GHN2GDS2RQ|gtag\(/.test(html),'no legacy shell, second analytics loader or inline GA');
  assert.ok(!/<body[^>]*class="[^"]*researcher/.test(html));assert.match(html,/<body class="optics-guided" data-science-lab="optics-guided">/);
  assert.equal((html.match(/<h1[ >]/g)||[]).length,1,'one h1');assert.match(html,/匿名使用事件不含研究筆記、作答內容或學生姓名/);
- assert.match(html,/href="\.\/optics\.html"/,'links to the existing free-exploration lab');
+ assert.match(html,/href="\.\.\/lab\/lens\/"/,'links to the lens lab desk');
  // every local reference exists
  for(const m of html.matchAll(/(?:href|src)="(\.\.?\/[^"#?]+)"/g)){assert.ok(fs.existsSync(path.join(root,path.dirname(PAGE),m[1])),m[1])}
 });

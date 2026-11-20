@@ -1,16 +1,5 @@
-// The existing reaction-rate URL is replaced, not redirected or duplicated.
+// The directory keeps a derived copy of the researcher runtime with the reaction-rate mission text.
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
-export const marblePublicDescription='用同質量的大塊與小塊大理石，比較定性氣泡與模擬二氧化碳收集曲線，判讀速率、總量與公平比較。時間參數未經實驗校準；私人原型站紀錄不會自動移入官網。';
-export function publicReactionDescriptor(t){return t.id==='reaction-rate'?{...t,title:'大理石與鹽酸反應速率實驗桌',description:marblePublicDescription,minutes:'10–15',unit:'反應速率與表面積'}:t;}
-export function buildMarbleReplacement(root){
- const read=p=>fs.readFileSync(path.join(root,p),'utf8');
- let html=read('scripts/marble-acid-desk/accepted-index.html');
- for(const {before,after}of JSON.parse(read('scripts/marble-acid-desk/entry-replacements.json'))){if(html.split(before).length!==2)throw Error('Non-unique accepted entry replacement');html=html.replace(before,after);}
- fs.writeFileSync(path.join(root,'tools/science/reaction-rate.html'),html);
- fs.writeFileSync(path.join(root,'docs/science-reaction-rate-spec.md'),read('scripts/marble-acid-desk/public-course-spec.md'));
- return crypto.createHash('sha256').update(html).digest('hex');
-}
-
 export function buildMarbleDirectory(root){
  const source=fs.readFileSync(path.join(root,'assets/researcher-lab.js'),'utf8');
  const before='一次只改濃度、溫度、顆粒大小或催化劑，比較反應快慢和最後的產物量。';

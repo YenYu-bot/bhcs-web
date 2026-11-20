@@ -12,7 +12,7 @@ npm test --prefix scripts
 python scripts/build_sitemap.py
 ```
 
-第二批來源：`scripts/science/batch2.mjs`（教材、控制、任務、題目）、`models.mjs`（純計算）、`diagrams.mjs`（SVG）、`runtime.js`（互動狀態）、`style.css`（響應式、列印）。
+第二批「新探究」頁已於 2026-11-20 刪除，改由 `tools/lab/` 實驗桌取代。`scripts/science/models.mjs`（純計算）仍由實驗桌匯入；`style.css` 只供自然實驗總覽頁使用。
 
 產出的 `tools/science/*.html` 是單檔教材，可下載後離線操作；品牌圖、站內導覽與選用的分析腳本需官網環境。主要教材、公式、圖解、互動與紀錄不依賴網路。
 

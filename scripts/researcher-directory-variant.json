@@ -1,0 +1,12 @@
+{
+  "directory_variant": {
+    "path": "assets/researcher-marble-directory.js",
+    "bytes": 49081,
+    "sha256": "422929b3d43bd64935ad9fa1591a1f73c6b981c3dc4ba1bf72f320715d419b84",
+    "source_path": "assets/researcher-lab.js",
+    "source_sha256": "f6def1b80e6dde6eb4022747f95b7b6f3c0915d61dfcd39e5efe4f6bd9588f59",
+    "before": "一次只改濃度、溫度、顆粒大小或催化劑，比較反應快慢和最後的產物量。",
+    "after": "固定大理石總質量與過量稀鹽酸，只改粒徑，觀察氣泡並用二氧化碳體積曲線比較速率與總量。",
+    "count": 1
+  }
+}

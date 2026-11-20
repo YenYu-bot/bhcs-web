@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {fileURLToPath} from 'node:url';import {JSDOM} from 'jsdom';import {completedDeskPublic} from './science/catalog.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8'),doc=p=>new JSDOM(read(p)).window.document;
 const directory=doc('tools/science/index.html'),resources=doc('ziyuan.html');
-assert.equal(directory.querySelectorAll('.resource').length,61);
+assert.equal(directory.querySelectorAll('.resource').length,58);
 const baseline=JSON.parse(read('scripts/public-desk-legacy-baseline.json'));
 assert.equal(baseline.source_commit,'10598e94b905bdc81c2087cd791ec28c909cce1c');
 for(const t of completedDeskPublic){
@@ -14,8 +14,7 @@ for(const t of completedDeskPublic){
  const oldDoc=doc(oldFile),fresh=doc(newFile);assert(oldDoc.querySelector(`a[href="../${t.file}"]`));assert(fresh.querySelector(`a[href="../science/${t.id}.html"]`));for(const d of [oldDoc,fresh]){assert(d.querySelector('a[href="../../ziyuan.html#res-science"]'));assert(d.querySelector('a[href="./"],a[href="../science/"]'));}assert(!fresh.querySelector('meta[name="robots"]')?.content.includes('noindex'));assert(read('sitemap.xml').includes(`https://www.bhcs.com.tw/tools/${t.file}</loc>`));
 }
 for(const id of ['optics','buoyancy','microscope','acid-base','photosynthesis-factor']){const file=`tools/science/${id}-guided.html`;if(!fs.existsSync(path.join(root,file)))throw Error('missing unpublished prototype '+file);assert.match(doc(file).querySelector('meta[name="robots"]').content,/noindex/);for(const page of ['tools/science/index.html','ziyuan.html','sitemap.xml'])assert(!read(page).includes(`${id}-guided.html`),'prototype stays unlisted');}
-assert(doc('tools/science/metal-activity.html').querySelector('option[value="mg"]'));assert(doc('tools/science/metal-activity.html').querySelector('option[value="ag"]'));
-console.log('PASS 61 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
+console.log('PASS 58 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
 
 const inlineSources=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>m[2]);
 // Reverse only the approved vocabulary category metadata before checking the old hashes.
@@ -46,9 +45,9 @@ console.log('PASS actual researcher shell keeps version navigation visible throu
 // The eight replacements use the accepted labs as the primary link in both
 // directories; legacy tools remain discoverable without adding counted cards.
 const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure','reflection-refraction','lever','pulley','incline','buoyancy','heat','solubility','metal','friction-efficiency','wave-sound','electromagnetism','energy','electrostatics','atom','stoichiometry','equilibrium','electrolysis','cell-division','circulation','ecosystem','enzyme','homeostasis','nerve-reflex','plant-exchange','moon','seasons','tides','weather'];
-const oldByLab={lens:'science/optics.html',motion:'motion-graphs-desk/', 'reaction-rate':'science/reaction-rate.html','spring-friction':'science/spring-friction.html','electric-power':'science/electric-power.html',neutralization:'science/neutralization.html',pressure:'science/pressure-fluid.html','reflection-refraction':'science/reflection-refraction.html',heat:'science/specific-heat.html',solubility:'science/solubility.html',metal:'science/metal-activity.html','wave-sound':'science/wave-sound.html',electromagnetism:'science/electromagnetism.html',energy:'science/energy.html',electrostatics:'science/electrostatics.html','atom':'science/atom-builder.html','stoichiometry':'science/stoichiometry.html','equilibrium':'science/equilibrium.html','electrolysis':'science/cell-electrolysis.html','cell-division':'science/cell-division.html','circulation':'science/circulation.html','ecosystem':'science/ecosystem.html','enzyme':'science/enzyme.html','homeostasis':'science/homeostasis.html','nerve-reflex':'science/nerve-reflex.html','plant-exchange':'science/plant-exchange.html','moon':'science/moon-eclipse.html','seasons':'science/seasons.html','tides':'science/tides.html','weather':'science/weather-systems.html'};
+const oldByLab={motion:'motion-graphs-desk/'};
 const manifest=JSON.parse(directory.querySelector('script[type="application/ld+json"]').textContent).hasPart;
-assert.equal(manifest.length,61);
+assert.equal(manifest.length,58);
 for(const id of newPaths){
  const local=`lab/${id}/`,source=`tools/${local}index.html`;
  const card=directory.querySelector(`.resource > a.open[href="../${local}"]`)?.closest('.resource');
@@ -68,31 +67,18 @@ for(const id of newPaths){
  }
 }
 for(const [dir,href] of [[directory,'../motion-graphs-desk/v2/'],[resources,'tools/motion-graphs-desk/v2/']])assert(dir.querySelector(`p.subtle a[href="${href}"]`));
-for(const old of ['lens-25d/','science/motion-graphs.html']){
+for(const old of ['lens-25d/']){
  assert(directory.querySelector(`.resource > a.open[href="../${old}"]`));
  assert(resources.querySelector(`#res-science li > a[href="tools/${old}"]`));
 }
 console.log('PASS eight accepted primary cutovers plus separate mirror; legacy alternatives, indexing, and untouched topics');
 
-// Prior titles and legacy-only topics still find their associated default; pressure remains primary.
-for(const [file,url,inputId,selector] of [
- ['tools/science/index.html','https://www.bhcs.com.tw/tools/science/','search',id=>`.resource:not([hidden]) > a.open[href="../lab/${id}/"]`],
- ['ziyuan.html','https://www.bhcs.com.tw/ziyuan.html','resource-search',id=>`#res-science li:not(.resource-hidden) > a[href="tools/lab/${id}/"]`]
-]){
- const dom=new JSDOM(read(file),{url,runScripts:'outside-only'});
- try{
-  const {window:w}=dom,d=w.document,input=d.getElementById(inputId);
-  for(const script of d.querySelectorAll('script:not([src]):not([type])'))w.eval(script.textContent);
-  for(const [id,term] of [['pressure','氣壓、水壓與流體實驗室'],['pressure','水平管流動'],['reflection-refraction','光的反射與折射實驗室']]){
-   input.value=term;input.dispatchEvent(new w.Event('input',{bubbles:true}));
-   assert(d.querySelector(selector(id)),file+' '+id+' can be found using '+term);
-  }
- }finally{dom.window.close();}
-}
-console.log('PASS pressure and optics aliases find their respective guided primary');
+// 2026-11-20: the 新探究 pages these desks replaced were removed; no old-version link or catalogue entry remains.
+for(const t of [...directory.querySelectorAll('.resource a'),...resources.querySelectorAll('#res-science a')])assert.doesNotMatch(t.getAttribute('href'),/(^|\/)science\/(?!.*-guided\.html)[a-z-]+\.html$/,'no link to a removed 新探究 page: '+t.getAttribute('href'));
+console.log('PASS no catalogue link to a removed 新探究 page');
 
 // 2026-11-19: the seven older desks are retired. Each old URL is a noindex redirect to its tools/lab desk,
-// is absent from both catalogues and the sitemap, and its legacy science page links to the new desk.
+// is absent from both catalogues and the sitemap.
 const retired={'lever-desk':'lever','pulley-desk':'pulley','incline-desk':'incline','buoyancy-lab':'buoyancy','specific-heat-desk':'heat','solubility-desk':'solubility','metal-activity-desk':'metal'};
 for(const [old,lab] of Object.entries(retired)){
  const d=doc(`tools/${old}/index.html`);
@@ -102,5 +88,4 @@ for(const [old,lab] of Object.entries(retired)){
  assert(!directory.querySelector(`a[href="../${old}/"]`)&&!resources.querySelector(`a[href="tools/${old}/"]`),old+' not listed');
  assert(!read('sitemap.xml').includes(`/tools/${old}/<`),old+' not in sitemap');
 }
-for(const [id,lab] of [['specific-heat','heat'],['solubility','solubility'],['metal-activity','metal']])assert(doc(`tools/science/${id}.html`).querySelector(`a[href="../lab/${lab}/"]`),id+' legacy page links to the new desk');
 console.log('PASS seven retired desks redirect to their tools/lab replacements');

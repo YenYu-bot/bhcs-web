@@ -24,7 +24,7 @@ test('visibility: noindex, self canonical, and not in the sitemap, directory, re
   assert.equal((html.match(/rel="canonical"/g) ?? []).length, 1);
   assert.ok(!read('sitemap.xml').includes('acid-base-guided'), 'sitemap');
   for (const f of ['tools/science/index.html', 'ziyuan.html', 'guoxiao.html', 'guozhong.html', 'guozhong-lihua.html', 'index.html',
-    'scripts/science/catalog.mjs', 'scripts/science/batch2.mjs', 'assets/researcher-lab.js', 'assets/science-lab.js', 'assets/science-events.js', 'assets/site.js']) {
+    'scripts/science/catalog.mjs', 'assets/researcher-lab.js', 'assets/science-events.js', 'assets/site.js']) {
     assert.ok(!read(f).includes('acid-base-guided'), `${f} does not mention the prototype`);
   }
 });

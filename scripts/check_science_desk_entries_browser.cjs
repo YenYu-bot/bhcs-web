@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'science-desk-entries-artifacts');
-// Legacy free-exploration page id, search term, new tools/lab desk, retired desk URL (now a redirect).
+// Removed 新探究 page id, search term, new tools/lab desk, retired desk URL (now a redirect).
 const topics=[['specific-heat','比熱','heat','specific-heat-desk'],['solubility','溶解度','solubility','solubility-desk'],['metal-activity','金屬','metal','metal-activity-desk']];
 const mime={'.webp':'image/webp','.json':'application/json','.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
@@ -74,22 +74,8 @@ const server=http.createServer((req,res)=>{
      await follow(page,card.locator(`a.open[href="../lab/${lab}/"]`),`/tools/lab/${lab}/`);
      await page.locator('h1').waitFor({state:'visible'});
      await page.screenshot({path:path.join(out,`${id}-${width}.png`),fullPage:true});
-     stage='open legacy page';
-     // The directory card keeps the legacy link in its markup (checked statically); open the page directly here.
-     await page.goto(origin+`/tools/science/${id}.html`);
-     for(const screen of ['prepare','bench','notebook','check']){
-      stage='legacy screen '+screen;
-      await page.locator(`.researcher-nav button[data-to="${screen}"]`).click();
-      await page.locator(`.researcher-screen[data-screen="${screen}"].is-active`).waitFor({state:'visible'});
-      const returnLink=page.locator(`a[href="../lab/${lab}/"]`);
-      await returnLink.waitFor({state:'visible'});
-      assert(await returnLink.isVisible(),`${id} ${screen}: visible link to the new desk`);
-      await returnLink.scrollIntoViewIfNeeded();
-      await page.screenshot({path:path.join(out,`${id}-legacy-${screen}-${width}.png`),fullPage:true});
-     }
-     await page.locator('.researcher-nav button[data-to="prepare"]').click();
-     stage='legacy to new desk';
-     await follow(page,page.locator(`a[href="../lab/${lab}/"]`),`/tools/lab/${lab}/`);
+     stage='removed legacy page';
+     assert.equal((await context.request.get(origin+`/tools/science/${id}.html`)).status(),404,id+' removed 新探究 page is gone');
      stage='back and forward';
      await page.goBack();await page.goForward();
      assert.equal(page.url(),origin+`/tools/lab/${lab}/`);
@@ -124,6 +110,6 @@ const server=http.createServer((req,res)=>{
     await context.close();
    }
   }
-  console.log('PASS public desktop/mobile search, new-desk entries, legacy links, retired-desk redirects and browser history');
+  console.log('PASS public desktop/mobile search, new-desk entries, removed 新探究 pages, retired-desk redirects and browser history');
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});

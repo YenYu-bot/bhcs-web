@@ -8,7 +8,7 @@ const js=fs.readFileSync('assets/researcher-lab.js','utf8');
 must(micro.includes('researcher-lab.css')&&micro.includes('researcher-lab.js'),'microscope researcher assets missing');
 // Only the directory uses the authorized one-mission derivative. Lesson runtime tests below
 // still inspect the unchanged original researcher-lab.js, rather than substituting the copy.
-const variant=JSON.parse(fs.readFileSync('scripts/marble-acid-desk-runtime.json','utf8')).directory_variant;
+const variant=JSON.parse(fs.readFileSync('scripts/researcher-directory-variant.json','utf8')).directory_variant;
 const sha=text=>crypto.createHash('sha256').update(text).digest('hex');
 must(variant.source_path==='assets/researcher-lab.js'&&variant.path==='assets/researcher-marble-directory.js','directory derivative paths changed');
 must(variant.source_sha256==='f6def1b80e6dde6eb4022747f95b7b6f3c0915d61dfcd39e5efe4f6bd9588f59'&&sha(js)===variant.source_sha256,'directory source must remain the pinned shared runtime');

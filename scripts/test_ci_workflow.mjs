@@ -70,10 +70,10 @@ test('every script the old serial workflows ran still runs exactly once', () => 
     'check_optics_guided_flow_browser.cjs', 'check_optics_guided_input_browser.cjs', 'check_optics_guided_view_browser.cjs',
     'check_p4_vector_browser.cjs', 'check_researcher_browser.cjs', 'check_researcher_composition.cjs', 'check_researcher_operations.cjs',
     'check_resources.py', 'check_science_integration.cjs', 'check_site_browser.cjs', 'classify_math_drills.mjs',
-    'test_researcher_batch1.cjs', 'test_researcher_batch2.cjs', 'test_researcher_batch3.cjs', 'test_researcher_batch4.cjs', 'test_researcher_batch5.cjs',
+    'test_researcher_batch1.cjs', 'test_researcher_batch2.cjs', 'test_researcher_batch4.cjs', 'test_researcher_batch5.cjs',
   ];
   const OLD_MATH = ['math_local_check.mjs', 'test_math_drills.mjs', 'enforce_math_diversity.mjs', 'print_math_diversity_failures.cjs'];
-  assert.equal(OLD_RESEARCHER.length, 33);
+  assert.equal(OLD_RESEARCHER.length, 32);
   for (const s of [...OLD_RESEARCHER, ...OLD_MATH]) {
     assert.equal(count(wf, `scripts/${s}`), 1, `scripts/${s} runs exactly once`);
     assert.ok(fs.existsSync(path.join(root, 'scripts', s)), `scripts/${s} exists`);
@@ -201,18 +201,6 @@ test('motion graphs native gate retains all station checks and mandatory artifac
  for(const old of ['friction_efficiency_lab'])assert.equal(count(station,`run: node scripts/check_${old}_browser.cjs`),1);
  assert.ok(JSON.parse(fs.readFileSync(path.join(root,'scripts/package.json'),'utf8')).scripts.test.includes('npm run test:motion-graphs-desk'));
 });
-
-
-
-// Marble is additive within the existing required station job.
-test('marble native browser is required with inherited Chromium and Xvfb, artifacts always retained', () => {
-  const t=jobs['science-stations'].text;
-  assert.equal(count(t,'run: xvfb-run -a node scripts/check_marble_acid_desk_browser.cjs'),1);
-  assert.match(t,/NODE_PATH: \/tmp\/bhcs-composition\/node_modules\n\s+run: xvfb-run -a node scripts\/check_marble_acid_desk_browser\.cjs/);
-  assert.ok(t.includes('name: marble-acid-desk-review\n          path: marble-acid-desk-artifacts/\n          retention-days: 14'));
-  assert.ok(!t.includes('continue-on-error: true'));
-});
-
 
 
 

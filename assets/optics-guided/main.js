@@ -94,7 +94,7 @@ function drawChallenge() {
 
 // Station adapter: completeModel keeps what the learner wrote; the claims stay empty because this station states no claim of its own.
 const COMPLETE_HEADING = '這一站完成了';
-const COMPLETE_LINK = { href: './optics.html', label: '自由探索／精確數值' };
+const COMPLETE_LINK = { href: '../lab/lens/', label: '透鏡成像實驗桌' };
 const completeEls = { root: $('og-complete'), heading: $('og-complete-title'), body: $('og-complete-summary') };
 function drawCompletion() {
   renderCompletionCard(completeEls, { heading: COMPLETE_HEADING, claims: [], conclusion: completeModel(state).lines, link: COMPLETE_LINK });
