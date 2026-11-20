@@ -11,17 +11,17 @@ const WHEN = [['', '以前'], ['when he was young', '小時候'], ['', '以前']
 const habit = (x) => x.habit && !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '') && !['sleep', 'smile', 'cry', 'hurry', 'close', 'open'].includes(x.v);
 const people = (rng, o, exclude = () => false) => actors(rng, o.level, { exclude: (s) => s.kind !== 'person' || s.tags.includes('every') || s.tags.includes('group') || exclude(s) });
 /** "when he was young" agrees with the subject; plural subjects and I / you take "when they were young" etc. */
-function whenFor(rng, s, f = {}) {
+function whenFor(rng, s, f = {}, auditFix = false) {
   // a child did not drive a taxi: grown-up habits take 以前, not 小時候
   const [w, wz] = f.age === 'adult' ? ['', '以前'] : rng.pick(WHEN);
   if (!w) return [w, wz];
   // one person was "a child"; several were "young"
-  const p = pron(s), be = ['I', 'he', 'she'].includes(p) ? 'was' : 'were';
+  const p = pron(s, auditFix), be = ['I', 'he', 'she'].includes(p) ? 'was' : 'were';
   return [be === 'was' ? w.replace(/(he|she) was/, `${p} was`) : `when ${p} were young`, wz];
 }
 /** The pronoun for the subject later in the sentence, and its present negative. */
-const pron = (s) => (s.en === 'I' ? 'I' : s.en === 'you' ? 'you' : s.en === 'we' || s.tags.includes('with-i') ? 'we' : s.num === 'pl' ? 'they' : s.reply === 'she' ? 'she' : 'he');
-const dont = (s) => (['he', 'she'].includes(pron(s)) ? "doesn't" : "don't");
+const pron = (s, auditFix = false) => (s.en === 'I' ? 'I' : s.en === 'you' ? 'you' : s.en === 'we' || s.tags.includes('with-i') ? 'we' : auditFix && s.tags.includes('with-you') ? 'you' : s.num === 'pl' ? 'they' : s.reply === 'she' ? 'she' : 'he');
+const dont = (s, auditFix = false) => (['he', 'she'].includes(pron(s, auditFix)) ? "doesn't" : "don't");
 const meta = (s, f, extra) => ({ subj: s.en, base: f.v, ...extra });
 // accustomed to: things one gets used to doing
 //   routines and daily work, not hobbies ("is used to playing the violin")
@@ -33,10 +33,10 @@ const MODES = [
     gen(rng, o) {
       const s = pickSubject(rng, people(rng, o)); if (!s) return null;
       const f = pickFrame(rng, s, o.level, habit); if (!f) return null;
-      const [w, wz] = whenFor(rng, s, f);
+      const [w, wz] = whenFor(rng, s, f, o.auditFix);
       const front = w && rng.chance(0.5);
       const line = front
-        ? [`${cap(w.replace(/^when (I|you|he|she|we|they) (was|were)/, (m0, x, be) => `when ${mid(s.en)} ${be}`))}, ${pron(s)} `, blank('used'), ' ', blank('to'), ' ', blank(f.v), ` (${f.v})${phrase(f)}.`]
+        ? [`${cap(w.replace(/^when (I|you|he|she|we|they) (was|were)/, (m0, x, be) => `when ${mid(s.en)} ${be}`))}, ${pron(s, o.auditFix)} `, blank('used'), ' ', blank('to'), ' ', blank(f.v), ` (${f.v})${phrase(f)}.`]
         : [`${cap(s.en)} `, blank('used'), ' ', blank('to'), ' ', blank(f.v), ` (${f.v})${phrase(f)}${w ? ' ' + w : ''}.`];
       return { lines: [line], zh: zhJoin(s.zh, wz, '常常' + f.zh) + '。', meta: meta(s, f, { kind: 'fill' }) };
     },
@@ -67,7 +67,7 @@ const MODES = [
         const be = beForm(s, false);
         return { lines: [[`${cap(s.en)} ${be} used to `, blank(VERBS[f.v].ing), ` (${f.v})${phrase(f)} now.`]], zh: zhJoin(s.zh, '現在已經習慣' + f.zh) + '了。', meta: meta(s, f, { kind: 'be', be }) };
       }
-      return { lines: [[`${cap(s.en)} used to `, blank(f.v), ` (${f.v})${phrase(f)}, but ${pron(s)} ${dont(s)} now.`]],
+      return { lines: [[`${cap(s.en)} used to `, blank(f.v), ` (${f.v})${phrase(f)}, but ${pron(s, o.auditFix)} ${dont(s, o.auditFix)} now.`]],
         zh: zhJoin(s.zh, '以前常常' + f.zh) + '，但現在不會了。', meta: meta(s, f, { kind: 'past' }) };
     },
   },

@@ -46,6 +46,7 @@ function draw(rng, o, exclude = []) {
   return { v, th, p, rec: recPhrase, recZh: recZ, verb, t, tz, past };
 }
 const zhLine = (d, th = d.th) => zhJoin(d.p.zh, d.tz, ZH[d.v.base](d.recZh, th[1])) + '。';
+const deliveryCue = (d, o) => o.auditFix && d.v.base === 'bring' ? '（把東西送到對方手上）' : '';
 /** "it" points back to something known: the card, the money (那張卡片、那筆錢), not a card. */
 const known = (th) => th[0] === 'dinner' ? ['the dinner', '那頓晚餐', 'it'] : [th[0].replace(/^a glass of /, 'the ').replace(/^(a|an|some) /, 'the '),
   th[1].replace(/^一些錢/, '那筆錢').replace(/^一杯果汁/, '那杯果汁').replace(/^一些/, '那些').replace(/^一/, '那'), th[2]];
@@ -55,7 +56,7 @@ const MODES = [
     id: 'prep', name: 'to 或 for', instruction: () => '填入 to 或 for。',
     gen(rng, o) {
       const d = draw(rng, o);
-      return { lines: [[`${d.p.en} ${d.verb} ${d.th[0]} `, blank(RULE(d.v)), ` ${d.rec}${d.t ? ' ' + d.t : ''}.`]], zh: zhLine(d), meta: { kind: 'prep', verb: d.v.base } };
+      return { lines: [[`${d.p.en} ${d.verb} ${d.th[0]} `, blank(RULE(d.v)), ` ${d.rec}${d.t ? ' ' + d.t : ''}.${deliveryCue(d, o)}`]], zh: zhLine(d), meta: { kind: 'prep', verb: d.v.base } };
     },
   },
   {
@@ -76,7 +77,7 @@ const MODES = [
     gen(rng, o) {
       const d = draw(rng, o, ['teach', 'tell']);
       const pron = d.th[2], th = known(d.th);
-      return { lines: [[`${d.p.en} ${d.verb} `, blank(pron), ' ', blank(RULE(d.v)), ' ', blank(d.rec, true), `${d.t ? ' ' + d.t : ''}. (${th[0]})`]], zh: zhLine(d, th), meta: { kind: 'it', verb: d.v.base, pron, rec: d.rec } };
+      return { lines: [[`${d.p.en} ${d.verb} `, blank(pron), ' ', blank(RULE(d.v)), ' ', blank(d.rec, true), `${d.t ? ' ' + d.t : ''}. (${th[0]})${deliveryCue(d, o)}`]], zh: zhLine(d, th), meta: { kind: 'it', verb: d.v.base, pron, rec: d.rec } };
     },
   },
 ];

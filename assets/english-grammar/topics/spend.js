@@ -34,13 +34,14 @@ const form = (verb, p, past, it = false) => (past ? FORMS[verb][2] : it || p.s3 
 const person = (rng) => pickPerson(rng, (p) => OBJ[p.pr]);
 
 /** One sentence with the verb blank: which pattern, the person, the tense. */
-function sentence(rng, verb, past) {
+function sentence(rng, verb, past, auditFix = false) {
   const p = person(rng);
   if (verb === 'spend' || verb === 'take') {
     const [vp, ing, zh, time, timeZh] = rng.fresh(TASKS, (x) => verb + x[0]);
     // present only for routines (it takes me twenty minutes to walk to school); a one-off task is past
     if (!past && !/do my homework|walk to school|cook dinner|clean the house/.test(vp)) return null;
-    const [t, tz] = rng.pick(vp === 'walk to school' && past ? [['yesterday', '昨天'], ['this morning', '今天早上']] : whenFor(time, past));
+    let [t, tz] = rng.pick(vp === 'walk to school' && past ? [['yesterday', '昨天'], ['this morning', '今天早上']] : whenFor(time, past));
+    if (auditFix && !past && !t) [t, tz] = ['every week', '每週'];
     const tail = t ? ' ' + t : '';
     if (t === 'every day' && /the (book|cake|picture|letter|song|work)|the house|the bicycle|the car/.test(vp)) return null; // one-off tasks are not every day
     const hua = past ? '花了' : '要花';
@@ -62,7 +63,7 @@ const MODES = [
     gen(rng, o) {
       const verb = rng.fresh(['spend', 'take', 'cost', 'pay'], (x) => 'v-' + x);
       const past = o.level >= 2 ? rng.chance(0.6) : true;
-      const s = sentence(rng, verb, past); if (!s) return null;
+      const s = sentence(rng, verb, past, o.auditFix); if (!s) return null;
       return { lines: [[s.l, blank(s.v), s.r]], zh: s.zh, meta: { kind: 'choose', verb, form: s.v } };
     },
   },

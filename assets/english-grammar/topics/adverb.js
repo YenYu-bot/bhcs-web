@@ -56,9 +56,10 @@ function draw(rng, o, test = () => true) {
   return { a, act, p, past, t, tz, verb };
 }
 
+const writtenForm = (o) => o.auditFix ? ' 本練習中，slow、quick、loud 作副詞時請用書面 -ly 形式；比較級用 more + -ly 形式。' : '';
 const MODES = [
   {
-    id: 'form', name: '形容詞改副詞', instruction: () => '依括號裡的形容詞，填入正確的副詞（注意 good → well，fast / hard / late / early 不變）。',
+    id: 'form', name: '形容詞改副詞', instruction: (o) => '依括號裡的形容詞，填入正確的副詞（注意 good → well，fast / hard / late / early 不變）。' + writtenForm(o),
     gen(rng, o) {
       const d = draw(rng, o);
       const { a, act, p, t, tz, verb } = d;
@@ -66,7 +67,7 @@ const MODES = [
     },
   },
   {
-    id: 'choose', name: '形容詞或副詞', instruction: () => '形容詞修飾名詞（a careful driver），副詞修飾動詞（drives carefully）：依括號填入正確的字。',
+    id: 'choose', name: '形容詞或副詞', instruction: (o) => '形容詞修飾名詞（a careful driver），副詞修飾動詞（drives carefully）：依括號填入正確的字。' + writtenForm(o),
     gen(rng, o) {
       const a = rng.fresh(pool(o).filter((x) => DOER[x.adj]), (x) => 'c-' + x.adj);
       const [noun, nz] = DOER[a.adj];
@@ -83,7 +84,7 @@ const MODES = [
     },
   },
   {
-    id: 'compare', name: '副詞比較級', instruction: () => '依括號提示填入副詞的比較級（-er、more …、better）。',
+    id: 'compare', name: '副詞比較級', instruction: (o) => '依括號提示填入副詞的比較級（-er、more …、better）。' + writtenForm(o),
     gen(rng, o) {
       const d = draw(rng, { ...o, level: Math.max(o.level, 2) });
       const { a, act, p, verb, past } = d;

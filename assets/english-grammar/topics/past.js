@@ -61,14 +61,16 @@ const MODES = [
     },
   },
   {
-    id: 'short', name: '簡答', instruction: () => '填入 Did，並完成簡答（否定簡答請用縮寫）。',
+    id: 'short', name: '簡答', instruction: (o) => o.auditR2
+      ? '問句開頭的 Did 已給出。請填簡答的主詞和助動詞；否定簡答請用縮寫。'
+      : '填入 Did，並完成簡答（否定簡答請用縮寫）。',
     gen(rng, o) {
       const d = draw(rng, o, { exclude: (s) => s.tags.includes('every'), ask: true }); if (!d) return null;
       const { s, f, t } = d;
       const yes = rng.chance(0.5);
       return {
-        lines: [[blank('Did'), ` ${s.en} ${f.v}${phrase(f)} ${t.en}? — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? 'did' : "didn't"), '.']],
-        zh: zhSent(s, t, '有' + f.zh, '嗎？'), meta: meta(d, { kind: 'reply' }),
+        lines: [[o.auditR2 ? 'Did' : blank('Did'), ` ${s.en} ${f.v}${phrase(f)} ${t.en}? — ${yes ? 'Yes' : 'No'}, `, blank(replyKey(s)), ' ', blank(yes ? 'did' : "didn't"), '.']],
+        zh: zhSent(s, t, '有' + f.zh, '嗎？'), meta: meta(d, { kind: 'reply', ...(o.auditR2 ? {replyAuxPrefilled:true} : {}) }),
       };
     },
   },

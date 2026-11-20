@@ -21,6 +21,13 @@ const CUES = [
 // Activities you keep doing (for / since) are a smaller set than things you have done.
 // (2026-11-01) Habits one keeps up: no "has jogged in the park for three hours", no "has slept since this morning".
 const LASTING = new Set(['play', 'study', 'learn', 'teach', 'practice', 'collect', 'use']); // not wear: "have worn a uniform for three hours"
+const ENDED_DURATION = [
+  ['Emil ', 'play', 'played', ' tennis for two years. Then he took up swimming instead.', 'Emil 打了兩年網球，後來改去游泳。'],
+  ['Mina ', 'teach', 'taught', ' art here for three years. She left the school last June.', 'Mina 在這裡教了三年美術，去年六月離開了這所學校。'],
+  ['They ', 'practice', 'practiced', ' for three hours yesterday. Then they went home.', '他們昨天練習了三個小時，然後回家。'],
+  ['Joe ', 'ride', 'rode', ' the bus to school for two years. He switched schools last September.', 'Joe 搭了兩年公車去上學，去年九月轉學了。'],
+  ['Anna ', 'work', 'worked', ' at the library for six months. She got a new job last week.', 'Anna 在圖書館工作了六個月，上星期換了新工作。'],
+];
 const PAST_CUES = [['yesterday', '昨天'], ['last night', '昨晚'], ['last Sunday', '上星期天'], ['two days ago', '兩天前'], ['last Saturday', '上星期六']];
 // ever / never / twice / three times / before ask about experiences — things one may or may not have done in one's life.
 // Daily routines ("has had dinner three times", "has never closed the door", "Has she ever slept?") are left out.
@@ -102,20 +109,46 @@ const MODES = [
     },
   },
   {
-    id: 'never', name: 'never 與 ever', instruction: () => '依中文填入 have / has + never 或 ever + 過去分詞（一個空格填一個字）。',
+    id: 'never', name: 'never 與 ever', instruction: (o) => o.auditFix
+      ? '依中文填空：「從未」在陳述句用 never；「曾經…嗎？」在問句用 ever。另填 have／has 和過去分詞。'
+      : '依中文填入 have / has + never 或 ever + 過去分詞（一個空格填一個字）。',
     gen(rng, o) {
-      const d = draw(rng, o, 'never'); if (!d) return null;
+      const use = o.auditFix ? rng.fresh(['never','ever'], (kind) => 'experience-' + kind) : 'never';
+      const d = draw(rng, o, use, false, use === 'ever'); if (!d) return null;
+      if (o.auditFix) {
+        const { s, f } = d;
+        const tail = ' (' + f.v + ')' + phrase(f);
+        const line = use === 'ever'
+          ? [blank(cap(have(s))), ' ' + mid(s.en) + ' ', blank('ever'), ' ', blank(pp(f.v)), tail + '?']
+          : [S0(s) + ' ', blank(have(s)), ' ', blank('never'), ' ', blank(pp(f.v)), tail + '.'];
+        return { lines: [line], zh: zhDone(d, false), meta: meta(d, { kind: 'never', requiredZh: true }) };
+      }
       const { s, f } = d;
       return { lines: [[S0(s) + ' ', blank(have(s)), ' ', blank('never'), ' ', blank(pp(f.v)), ` (${f.v})${phrase(f)}.`]], zh: zhDone(d, false), meta: meta(d, { kind: 'never' }) };
     },
   },
   {
-    id: 'mix', name: '現在完成式或過去式', instruction: () => '看時間詞判斷：已經、曾經、次數（twice…）、for / since 用現在完成式，yesterday、ago 用過去式（空格可填一個或兩個字）。',
+    id: 'mix', name: '現在完成式或過去式', instruction: (o) => o.auditFix
+      ? '依上下文選現在完成式或簡單過去式：事情延續到現在，或經驗累計到現在，用現在完成式；事情只發生在已結束的過去時間，用簡單過去式。for 只表示持續多久，次數也不能單獨決定時態。'
+      : '看時間詞判斷：已經、曾經、次數（twice…）、for / since 用現在完成式，yesterday、ago 用過去式（空格可填一個或兩個字）。',
     gen(rng, o) {
       if (rng.fresh([true, false], (x) => 'mix-' + x)) {
         const d = draw(rng, o, ['done', 'for', 'since'], true); if (!d) return null;
         const { s, f, c } = d;
+        if (o.auditFix) {
+          const upToNow = c.use === 'done' ? 'Up to now, ' : '';
+          const subject = upToNow ? mid(s.en) : S0(s);
+          const continued = c.use === 'for' ? ' That is still the case.' : '';
+          return { lines: [[upToNow + subject + ' ', blank(have(s) + ' ' + pp(f.v), true),
+            ' (' + f.v + ')' + phrase(f) + ' ' + c.en + '.' + continued]],
+            zh: zhDone(d, false), meta: meta(d, { kind: 'mix', perfect: true }) };
+        }
         return { lines: [[S0(s) + ' ', blank(`${have(s)} ${pp(f.v)}`, true), ` (${f.v})${phrase(f)} ${c.en}.`]], zh: zhDone(d, false), meta: meta(d, { kind: 'mix', perfect: true }) };
+      }
+      if (o.auditFix && o.level >= 3 && rng.chance(0.35)) {
+        const [subject,base,past,rest,zh] = rng.fresh(ENDED_DURATION, (x) => x[0]);
+        return { lines: [[subject,blank(past,true),' (' + base + ')' + rest]], zh,
+          meta: {subj:subject.trim(),base,cue:'finished duration',kind:'mix',perfect:false} };
       }
       const s = pickSubject(rng, actors(rng, o.level, { exclude: (x) => x.kind !== 'person' || x.tags.includes('every') }));
       const f = s && pickFrame(rng, s, o.level, (x) => x.pastOk); if (!f) return null;
@@ -137,7 +170,8 @@ export default {
   levelHint: { 1: '規則動詞的過去分詞（-ed），already、just、yet。', 2: '加入不規則過去分詞（seen、eaten、gone…）、ever、never。', 3: '再加入 for / since，以及與過去式的分辨。' },
   grammarBox: (o) => ({ head: ['', '句型', '常用字'], rows: [
     ['肯定', 'have / has + 過去分詞', 'already、just' + (o.level >= 3 ? '、for + 一段時間、since + 起點' : '')],
-    ['否定', "haven't / hasn't + 過去分詞", 'yet（放句尾）' + (o.level >= 2 ? '、never（放 have 後）' : '')],
+    ['否定', "haven't / hasn't + 過去分詞", 'yet（放句尾）' + (!o.auditFix && o.level >= 2 ? '、never（放 have 後）' : '')],
+    ...(o.auditFix && o.level >= 2 ? [['從未', 'have / has + never + 過去分詞', 'never 本身表否定，不再加 not']] : []),
     ['疑問', 'Have / Has + 主詞 + 過去分詞…?', 'yet' + (o.level >= 2 ? '、ever' : '')],
   ], note: (o.level >= 2 ? '不規則過去分詞：see → seen、eat → eaten、go → gone、do → done、write → written。' : '規則動詞的過去分詞和過去式一樣，加 -ed。') + (o.level >= 3 ? ' 有明確過去時間（yesterday、ago）的句子用過去式。' : '') }),
   generate(rng, o, mode) { return MODES.find((m) => m.id === mode).gen(rng, o); },

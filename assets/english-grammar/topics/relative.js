@@ -92,7 +92,7 @@ const MODES = [
     },
   },
   {
-    id: 'verb', name: '關係子句的動詞', instruction: () => '關係子句的動詞要跟著前面的名詞變化：依括號提示填入正確形式。',
+    id: 'verb', name: '關係子句的動詞', instruction: (o) => o?.auditFix ? '練習關係子句的現在簡單式：動詞跟著先行詞的單複數變化，依括號提示填入。' : '關係子句的動詞要跟著前面的名詞變化：依括號提示填入正確形式。',
     gen(rng, o) {
       const d = draw(rng, { ...o, level: Math.max(o.level, 2) });
       const [l, r] = d.tpl.split('{N}');

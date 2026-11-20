@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { gradeItem, isPilotTopic } from '../assets/english-grammar/grading.js';
-import { answersOf, buildSheet } from '../assets/english-grammar/core.js';
+import { answersOf, buildSheet, decodeCode } from '../assets/english-grammar/core.js';
 import { TOPICS } from '../assets/english-grammar/topics.js';
 
 const blank = (a) => ({ blank: true, a });
@@ -101,4 +101,19 @@ test('Be negative short reply accepts either coherent contraction, not mixed or 
   assert.equal(gradeItem(past,['Was','she',"wasn't"],opts).status,'correct');
   const yes={lines:[[blank('Am'),' I ready? — Yes, ',blank('you'),' ',blank('are'),'.']]};
   assert.equal(gradeItem(yes,['Am',"you're",''],opts).status,'partial');
+});
+
+
+test('reported can worksheet keeps two slots for present uncontracted can + not', () => {
+  const code = 'CAN-2P-F-F0-20-99542-C2';
+  const { topic, opts } = decodeCode(code, TOPICS);
+  const sheet = buildSheet(TOPICS.find(t => t.id === topic), opts);
+  const first = sheet.sections[0].items[0];
+  const context = {topicId:'can', modeId:'fill'};
+  assert.match(first.lines[0].join(''), /The dog .* jump high/);
+  assert.deepEqual(answersOf(first), ['can','not']);
+  assert.equal(gradeItem(first,['can','not'],context).status, 'correct');
+  assert.equal(gradeItem(first,['cannot','not'],context).status, 'incorrect');
+  assert.equal(gradeItem(first,['can',''],context).status, 'partial');
+  assert.deepEqual(answersOf(sheet.sections[0].items[1]), ['can','dance']);
 });

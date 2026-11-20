@@ -24,25 +24,25 @@ const choice = (rng, a, b) => (rng.chance(0.5) ? `${a}／${b}` : `${b}／${a}`);
 
 const MODES = [
   {
-    id: 'pick', name: '-ing 或 -ed', instruction: () => '事物「令人…」用 -ing，人「感到…」用 -ed：從括號裡選出正確的字。',
-    gen(rng) {
+    id: 'pick', name: '-ing 或 -ed', instruction: (o) => o?.auditFix ? '依中文判斷：造成某種感受用 -ing，感受到它用 -ed。從括號裡選出正確的字。' : '事物「令人…」用 -ing，人「感到…」用 -ed：從括號裡選出正確的字。',
+    gen(rng, o) {
       const p = rng.fresh(PAIRS, (x) => x.base);
       if (rng.fresh([true, false], (x) => 'pk-' + x)) {
         const [th, thz] = rng.pick(p.things);
-        return { lines: [[`${cap(th)} is very `, blank(p.ing), `. (${choice(rng, p.ing, p.ed)})`]], zh: zhJoin(thz, p.zhIng.replace(/^令人/, '很令人')) + '。', meta: { kind: 'pick', thing: true, base: p.base } };
+        return { lines: [[`${cap(th)} is very `, blank(p.ing), `. (${choice(rng, p.ing, p.ed)})`]], zh: zhJoin(thz, p.zhIng.replace(/^令人/, '很令人')) + '。', meta: { kind: 'pick', thing: true, base: p.base, ...(o?.auditFix ? { requiredZh: true } : {}) } };
       }
       const [who, wz, be] = rng.pick(PEOPLE);
-      return { lines: [[`${who} ${be} very `, blank(p.ed), `. (${choice(rng, p.ing, p.ed)})`]], zh: zhJoin(wz, '那時', p.zhEd) + '。', meta: { kind: 'pick', thing: false, base: p.base } };
+      return { lines: [[`${who} ${be} very `, blank(p.ed), `. (${choice(rng, p.ing, p.ed)})`]], zh: zhJoin(wz, '那時', p.zhEd) + '。', meta: { kind: 'pick', thing: false, base: p.base, ...(o?.auditFix ? { requiredZh: true } : {}) } };
     },
   },
   {
-    id: 'both', name: '一句兩種形式', instruction: () => '依括號裡的動詞，分別填入 -ing（事物）和 -ed（人）的形容詞。',
-    gen(rng) {
+    id: 'both', name: '一句兩種形式', instruction: (o) => o?.auditFix ? '依中文與括號裡的動詞，填入 -ing（造成感受）和 -ed（有該感受）的形容詞。' : '依括號裡的動詞，分別填入 -ing（事物）和 -ed（人）的形容詞。',
+    gen(rng, o) {
       const p = rng.fresh(PAIRS, (x) => 'b-' + x.base);
       const [th, thz] = rng.pick(p.things);
       const [who, wz, be] = rng.pick(PEOPLE);
       return { lines: [[`${cap(th)} was `, blank(p.ing), ` (${p.base}), so ${low(who)} ${be} `, blank(p.ed), ` (${p.base}).`]],
-        zh: `${thz}${p.zhIng}，所以${zhJoin(wz, p.zhEd)}。`, meta: { kind: 'both', base: p.base } };
+        zh: `${thz}${p.zhIng}，所以${zhJoin(wz, p.zhEd)}。`, meta: { kind: 'both', base: p.base, ...(o?.auditFix ? { requiredZh: true } : {}) } };
     },
   },
   {
@@ -69,9 +69,11 @@ export default {
   capacity: { pick: 60, both: 60, prep: 40 },
   defaultModes: { 1: ['pick'], 2: ['pick', 'both'], 3: ['pick', 'both', 'prep'] },
   levelHint: { 1: '事物用 -ing，人用 -ed，從兩個字選一個。', 2: '加入同一句裡兩種形式都要寫出來。', 3: '再加入 -ed 形容詞後面的介系詞。' },
+  auditLevelHint: { 1: '先依句意分辨是造成感受，還是自己有這個感受。' },
   grammarBox: (o) => ({ head: ['形式', '意思', '例子'], rows: [
-    ['-ing', '事物「令人…」', 'The movie is exciting.'], ['-ed', '人「感到…」', 'The boys are excited.'],
+    ['-ing', o.auditFix ? '造成某種感受' : '事物「令人…」', 'The movie is exciting.'], ['-ed', o.auditFix ? '感受到這種感受' : '人「感到…」', 'The boys are excited.'],
+    ...(o.auditFix ? [['人物也可能造成感受', '同樣的人可描述不同意思', 'The students were surprising. / The students were surprised.']] : []),
     ...(o.level >= 3 ? [['-ed + 介系詞', '', 'interested in、excited about、surprised at、worried about、frightened of、satisfied with']] : []),
-  ], note: '主詞是讓人有感覺的事物用 -ing；主詞是有感覺的人用 -ed。' }),
+  ], note: o.auditFix ? '先看句意：主詞讓人有某種感受，用 -ing；主詞感受到它，用 -ed。不要只看主詞是人還是事物。' : '主詞是讓人有感覺的事物用 -ing；主詞是有感覺的人用 -ed。' }),
   generate(rng, o, mode) { return MODES.find((m) => m.id === mode).gen(rng, o); },
 };

@@ -44,7 +44,7 @@ const MODES = [
     },
   },
   {
-    id: 'neg', name: '否定句', instruction: (o) => negInstruction(o),
+    id: 'neg', name: '否定句', instruction: (o) => negInstruction(o) + (o.auditFix && o.level >= 2 && o.abbr !== 'F' ? " I am 的否定縮寫寫成 I'm not。" : ''),
     gen(rng, o) {
       // "won't have lunch tomorrow" says more than it means: meals are not denied
       const d = draw(rng, o, { test: (x) => !/\b(breakfast|lunch|dinner)\b/.test(x.rest || '') }); if (!d) return null;
@@ -55,6 +55,10 @@ const MODES = [
       if (form === 'will') bl = abbr ? [blank("won't"), ' ', blank(f.v)] : [blank('will'), ' ', blank('not'), ' ', blank(f.v)];
       else {
         const be = beForm(s, false), neg = { am: null, is: "isn't", are: "aren't" }[be];
+        if (o.auditFix && abbr && be === 'am' && s.en === 'I') {
+          const words = [blank("I'm"), ' ', blank('not'), ' ', blank('going'), ' ', blank('to'), ' ', blank(f.v)];
+          return { lines: [[given], ['→ ', ...words, `${phrase(f)} ${t.en}.${abbrMark(o, true)}`]], zh: zhSent(s, t, '不' + ZH[form] + f.zh, '。'), meta: meta(d, { kind: 'neg', abbr: true }) };
+        }
         const ab = abbr && neg;
         bl = ab ? [blank(neg), ' ', blank('going'), ' ', blank('to'), ' ', blank(f.v)] : [blank(be), ' ', blank('not'), ' ', blank('going'), ' ', blank('to'), ' ', blank(f.v)];
         return { lines: [[given], ['→ ' + S0(s) + ' ', ...bl, `${phrase(f)} ${t.en}.${abbrMark(o, !!ab)}`]], zh: zhSent(s, t, '不' + ZH[form] + f.zh, '。'), meta: meta(d, { kind: 'neg', abbr: !!ab }) };

@@ -79,6 +79,12 @@ export const COUNT_MIN = 10, COUNT_MAX = 50, COUNT_DEFAULT = 20;
 /** Whole-sentence translation: none, 5 or 10 added at the end of a sheet, or 'O' for a sheet of translation only (the question count then counts translations). */
 export const TR_CHOICES = [0, 5, 10, 'O'];
 export const TR_ONLY = 'O';
+const CAN_SPLIT_SUFFIX = 'C2', CAN_SHORT_SUFFIX = 'C3';
+const canUseSplit = (o) => o.canSplit && o.tense !== 'D' && o.abbr !== 'C' && o.level >= 2;
+export const canUseShortPrompt = (o) => o.canSplit && o.canShort && o.tense === 'P';
+const canSplitModes = (modes) => modes.some((id) => id === 'fill' || id === 'neg');
+const canLayoutOpts = (suffix) => ({...(suffix ? {canSplit:true} : {}), ...(suffix === '-C3' ? {canShort:true} : {})});
+const layoutSuffix = (split, short) => short ? [CAN_SHORT_SUFFIX] : split ? [CAN_SPLIT_SUFFIX] : [];
 
 /**
  * The whole English sentence an item's Chinese line says, with the answers filled in and the cues removed.
@@ -86,7 +92,16 @@ export const TR_ONLY = 'O';
  * rewrite items ("A. → B.") give the result.
  */
 export function fullSentence(it) {
-  const text = (l) => l.map((p) => (typeof p === 'string' ? p : p.a === '×' ? '' : p.a.split('／')[0])).join(''); // "who／that": the first answer
+  const text = (line) => {
+    let result = '';
+    for (let i = 0; i < line.length; i++) {
+      const part = line[i];
+      if (it.meta?.splitCan && part?.a === 'can' && line[i + 1] === ' ' && line[i + 2]?.a === 'not') {
+        result += 'cannot'; i += 2;
+      } else result += typeof part === 'string' ? part : part.a === '×' ? '' : part.a.split('／')[0];
+    }
+    return result;
+  };
   const dialog = it.lines.some((l) => /(^|\s)— /.test(text(l)));
   let s = dialog ? text(it.lines[0]).split(' — ')[0] : text(it.lines.at(-1)).replace(/^→\s*/, '');
   s = s.replace(/\s*[(（][^)）]*[)）]/g, '').replace(/\s+/g, ' ').replace(/\s+([.?!,])/g, '$1').trim();
@@ -96,14 +111,17 @@ export function fullSentence(it) {
 /**
  * Sheet code, e.g. "BE-2M-3F-C1-20-48213": topic · level+tense · modes (hex bitmask) · abbreviation+Chinese · count · seed,
  * plus "-T5" when translation questions are added, or "-TO" for a translation-only sheet (older codes without it still work).
- * Entering the same code rebuilds the identical sheet.
+ * "-C2" opts into split can/not blanks; "-C3" also preprints Can in present-only short replies.
+ * A final "-R1" selects the first audit revision; "-R2" adds the quantity/short-answer update.
  */
 export function encodeCode(topic, o) {
   const bits = topic.modes.reduce((b, m, i) => (o.modes.includes(m.id) ? b | (1 << i) : b), 0);
-  return [topic.code, `${o.level}${o.tense}`, bits.toString(16).toUpperCase(), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed, ...(o.tr ? [`T${o.tr}`] : [])].join('-');
+  const split = topic.id === 'can' && canUseSplit(o) && canSplitModes(o.modes);
+  const short = topic.id === 'can' && canUseShortPrompt(o) && o.modes.includes('short');
+  return [topic.code, `${o.level}${o.tense}`, bits.toString(16).toUpperCase(), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed, ...(o.tr ? [`T${o.tr}`] : []), ...layoutSuffix(split, short), ...(o.auditR2 ? ['R2'] : o.auditFix ? ['R1'] : [])].join('-');
 }
 export function decodeCode(code, topics) {
-  const m = /^([A-Z]+)-([123])([PMD])-([0-9A-F]+)-([FCB])([01])-(\d+)-(\d+)(?:-T(\d+|O))?$/.exec(String(code).trim().toUpperCase());
+  const m = /^([A-Z]+)-([123])([PMD])-([0-9A-F]+)-([FCB])([01])-(\d+)-(\d+)(?:-T(\d+|O))?(-C[23])?(-R[12])?$/.exec(String(code).trim().toUpperCase());
   if (!m) return null;
   const topic = topics.find((t) => t.code === m[1]);
   if (!topic) return null;
@@ -114,7 +132,10 @@ export function decodeCode(code, topics) {
   if (!topic.past && m[3] !== 'P') return null;
   const tr = m[9] === TR_ONLY ? TR_ONLY : Number(m[9] || 0);
   if (!TR_CHOICES.includes(tr)) return null;
-  return { topic: topic.id, opts: { level: Number(m[2]), tense: m[3], modes, abbr: m[5], zh: m[6] === '1', count, seed: Number(m[8]), tr } };
+  const opts = { level: Number(m[2]), tense: m[3], modes, abbr: m[5], zh: m[6] === '1', count, seed: Number(m[8]), tr, ...canLayoutOpts(m[10]), ...(m[11] ? {auditFix:true} : {}), ...(m[11] === '-R2' ? {auditR2:true} : {}) };
+  if (m[10] && (topic.id !== 'can' || (opts.canShort ?
+      !canUseShortPrompt(opts) || !modes.includes('short') : !canUseSplit(opts) || !canSplitModes(modes)))) return null;
+  return { topic: topic.id, opts };
 }
 
 /** Split `count` over the chosen modes, in the topic's mode order (earlier modes get the remainder). */
@@ -127,6 +148,33 @@ export function splitCount(count, modes) {
  * Build a sheet: sections in mode order, each with `n` distinct items.
  * Returns { code, sections:[{mode, title, items}] } or throws if a topic cannot fill a section.
  */
+export function requiredGrammarCue(item, topicId, modeId, opts) {
+  return Boolean(opts?.auditFix && (item?.meta?.requiredZh ||
+    (topicId === 'conj' && ['abo','sb'].includes(modeId)) ||
+    (topicId === 'must' && ['must','neg'].includes(modeId))));
+}
+
+function auditedAlternatives(item, topicId, modeId) {
+  if (item.gradingAlternatives) return item;
+  const canonical = answersOf(item);
+  let alternative;
+  if (topicId === 'article' && modeId === 'the' && item.meta?.phrase === 'look at {A} stars') alternative = ['×'];
+  if (topicId === 'imperative' && ['do','dont'].includes(modeId)) {
+    const tail = item.lines[0].filter(p => typeof p === 'string').join(' ');
+    const raw = canonical.at(-1);
+    if (raw?.toLowerCase() === 'close' && /the door/.test(tail)) alternative = [...canonical.slice(0,-1), raw === 'Close' ? 'Shut' : 'shut'];
+    if (raw === 'shout' && /at your sister/.test(tail)) alternative = [...canonical.slice(0,-1), 'yell'];
+  }
+  if (modeId === 'fill' && ['be','simple','progressive'].includes(topicId) &&
+      (item.meta?.subj?.toLowerCase() === 'my family' || item.lines[0].some(p => typeof p === 'string' && /^(?:.+,\s*)?my family\s*$/i.test(p)))) {
+    const raw = canonical[0];
+    if (/^(is|was)(?: |$)/.test(raw ?? '')) alternative = [...canonical];
+    if (alternative) alternative[0] = raw.replace(/^is\b/, 'are').replace(/^was\b/, 'were');
+    else if (item.meta?.base && canonical.length === 1 && raw !== item.meta.base && !/\s/.test(raw ?? '')) alternative = [item.meta.base];
+  }
+  return alternative ? {...item,gradingAlternatives:[canonical,alternative]} : item;
+}
+
 export function buildSheet(topic, opts) {
   const o = { ...opts, modes: topic.modes.map((m) => m.id).filter((id) => opts.modes.includes(id)) };
   if (!topic.past) o.tense = 'P';
@@ -136,6 +184,7 @@ export function buildSheet(topic, opts) {
   const seen = new Set(), sentences = new Set();
   const sections = [];
   // Topics built from a fixed list of sentences say how many different ones each section can hold.
+  if (o.auditR2) o.auditFix = true;
   const trOnly = o.tr === TR_ONLY;
   const plan = trOnly ? [] : splitCount(o.count, o.modes).map(({ mode, n }) => ({ mode, n: Math.min(n, topic.capacity?.[mode] ?? Infinity) }));
   for (const { mode, n } of plan) {
@@ -145,10 +194,11 @@ export function buildSheet(topic, opts) {
     let tries = 0;
     while (items.length < n) {
       if (++tries > n * 400) throw new Error(`${topic.id}/${mode}: could not make ${n} different questions`);
-      const it = topic.generate(rng, o, mode);
-      if (!it) continue;
+      const generated = topic.generate(rng, o, mode);
+      if (!generated) continue;
+      const it = o.auditFix ? auditedAlternatives(generated, topic.id, mode) : generated;
       // Two questions are the same when the student sees the same thing: the English with blanks, plus the Chinese where it is the cue.
-      const key = it.lines.map(lineText).join(' | ').toLowerCase() + (topic.zhRequired ? ' | ' + it.zh : '');
+      const key = it.lines.map(lineText).join(' | ').toLowerCase() + ((topic.zhRequired || requiredGrammarCue(it,topic.id,mode,o)) ? ' | ' + it.zh : '');
       if (seen.has(key)) continue;
       // Nor should one sentence come back with other blanks: the first answer would give the second away.
       // Fixed-list sections may run short of new sentences, so this gives way after many tries rather than fail.
@@ -192,16 +242,22 @@ export const MIX_CODE = 'MIX';
  * Each topic's default modes for the level are used; a topic gets as many of them as its share of questions allows (one per five).
  */
 export function encodeMixCode(topics, o) {
-  return [MIX_CODE, `${o.level}${o.tense}`, topics.map((t) => t.code).join('.'), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed, ...(o.tr ? [`T${o.tr}`] : [])].join('-');
+  const hasCan = topics.some((topic) => topic.id === 'can');
+  const split = hasCan && canUseSplit(o);
+  const short = hasCan && canUseShortPrompt(o) && o.level >= 2;
+  return [MIX_CODE, `${o.level}${o.tense}`, topics.map((t) => t.code).join('.'), `${o.abbr}${o.zh ? 1 : 0}`, o.count, o.seed, ...(o.tr ? [`T${o.tr}`] : []), ...layoutSuffix(split, short), ...(o.auditR2 ? ['R2'] : o.auditFix ? ['R1'] : [])].join('-');
 }
 export function decodeMixCode(code, topics) {
-  const m = new RegExp(`^${MIX_CODE}-([123])([PMD])-([A-Z.]+)-([FCB])([01])-(\\d+)-(\\d+)(?:-T(\\d+|O))?$`).exec(String(code).trim().toUpperCase());
+  const m = new RegExp(`^${MIX_CODE}-([123])([PMD])-([A-Z.]+)-([FCB])([01])-(\\d+)-(\\d+)(?:-T(\\d+|O))?(-C[23])?(-R[12])?$`).exec(String(code).trim().toUpperCase());
   if (!m) return null;
   const picked = m[3].split('.').map((c) => topics.find((t) => t.code === c));
   if (picked.some((t) => !t) || new Set(picked).size !== picked.length) return null;
   const count = Number(m[6]), tr = m[8] === TR_ONLY ? TR_ONLY : Number(m[8] || 0);
   if (count < COUNT_MIN || count > COUNT_MAX || !TR_CHOICES.includes(tr)) return null;
-  return { topics: picked.map((t) => t.id), opts: { level: Number(m[1]), tense: m[2], abbr: m[4], zh: m[5] === '1', count, seed: Number(m[7]), tr } };
+  const opts = { level: Number(m[1]), tense: m[2], abbr: m[4], zh: m[5] === '1', count, seed: Number(m[7]), tr, ...canLayoutOpts(m[9]), ...(m[10] ? {auditFix:true} : {}), ...(m[10] === '-R2' ? {auditR2:true} : {}) };
+  if (m[9] && (!picked.some((t) => t.id === 'can') || (opts.canShort ?
+      !canUseShortPrompt(opts) || opts.level < 2 : !canUseSplit(opts)))) return null;
+  return { topics: picked.map((t) => t.id), opts };
 }
 /**
  * One review sheet from several topics. Questions are split over the topics; each topic becomes one or more sections
@@ -210,6 +266,7 @@ export function decodeMixCode(code, topics) {
  */
 export function buildMixSheet(topics, opts) {
   const o = { ...opts, tr: TR_CHOICES.includes(opts.tr) ? opts.tr : 0 };
+  if (o.auditR2) o.auditFix = true;
   const trOnly = o.tr === TR_ONLY;
   const sections = [];
   const shares = splitCount(o.count, topics.map((t) => t.id));
@@ -221,7 +278,7 @@ export function buildMixSheet(topics, opts) {
     const k = Math.max(1, Math.min(def.length, Math.floor(n / 5)));
     const chosen = new Set(); while (chosen.size < k) chosen.add(rng.fresh(def, (m) => t.id + m));
     const modes = def.filter((m) => chosen.has(m));
-    const sub = buildSheet(t, { level: o.level, tense: o.tense, modes, abbr: o.abbr, zh: o.zh, count: n, seed: o.seed * 7 + i * 101, tr: 0 });
+    const sub = buildSheet(t, { level: o.level, tense: o.tense, modes, abbr: o.abbr, zh: o.zh, count: n, seed: o.seed * 7 + i * 101, tr: 0, ...(o.canSplit ? {canSplit:true} : {}), ...(t.id === "can" && o.canShort ? {canShort:true} : {}), ...(o.auditFix ? {auditFix:true} : {}), ...(o.auditR2 ? {auditR2:true} : {}) });
     for (const s of sub.sections) sections.push({ topic: t.id, topicTitle: t.title, mode: s.mode, title: `${t.title}：${s.title}`, items: s.items, opts: sub.opts });
   });
   let translation = null;
@@ -230,7 +287,7 @@ export function buildMixSheet(topics, opts) {
     const items = [];
     const seenZh = new Set();
     // round-robin over the topics, each topic drawing from its own translation-only sheet
-    const subs = topics.map((t, i) => buildSheet(t, { level: o.level, tense: o.tense, modes: t.defaultModes[o.level], abbr: o.abbr, zh: true, count: Math.min(COUNT_MAX, Math.max(COUNT_MIN, want)), seed: o.seed * 7 + i * 101 + 50, tr: TR_ONLY }).translation.items.map((x) => ({ ...x, topic: t.id })));
+    const subs = topics.map((t, i) => buildSheet(t, { level: o.level, tense: o.tense, modes: t.defaultModes[o.level], abbr: o.abbr, zh: true, count: Math.min(COUNT_MAX, Math.max(COUNT_MIN, want)), seed: o.seed * 7 + i * 101 + 50, tr: TR_ONLY, ...(o.canSplit ? {canSplit:true} : {}), ...(t.id === "can" && o.canShort ? {canShort:true} : {}), ...(o.auditFix ? {auditFix:true} : {}), ...(o.auditR2 ? {auditR2:true} : {}) }).translation.items.map((x) => ({ ...x, topic: t.id })));
     for (let round = 0; items.length < want && subs.some((s) => s.length); round++) {
       for (const s of subs) { const x = s.shift(); if (x && !seenZh.has(x.zh) && items.length < want) { seenZh.add(x.zh); items.push(x); } }
     }

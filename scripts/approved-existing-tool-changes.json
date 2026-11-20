@@ -2360,6 +2360,153 @@
       "approved_blob": "4ef7d2a708f3bc550cddecab776a2f28d807c104",
       "reason": "Lab desk notes: the desks are now indexable and listed in the sitemap.",
       "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/core.js",
+      "baseline_blob": "ead568d3fa8a38e5f564db91bb4edefc7a46e4d2",
+      "approved_blob": "92e759f11d9f403e37465bae72d4970bb3ec2ee1",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/grading.js",
+      "baseline_blob": "c28060f56ab744f1438b37d4b80530cb08e4391b",
+      "approved_blob": "dd53349630aa40b9084058ec008cf8b91b7d00ae",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/online-practice.css",
+      "baseline_blob": "eef8243af7c5439134c2fa1ff2d22c67f838ce91",
+      "approved_blob": "14aac102d90670bfa3fb3c49cf1e85b6df0ff80b",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/online-practice.js",
+      "baseline_blob": "a41fd614a14839cabd73bc1ddbff288d9e7ff4a0",
+      "approved_blob": "b7870d73878626be09c08e5ca6721e96c2806c09",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/adverb.js",
+      "baseline_blob": "b3abc9bd3243c4cde35906cf9c4ffd6c60a43064",
+      "approved_blob": "722a615e50b7df94c434b153898e76b92e369425",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/can.js",
+      "baseline_blob": "bd49a31c0929a52f8668210d633f02ad0ddf4ede",
+      "approved_blob": "451f29e4dc2a356684cf0355a0906c6b64eaf6eb",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/exclaim.js",
+      "baseline_blob": "643f08335a0689d651ebab8d74eef6f0e112b1e5",
+      "approved_blob": "aafbeef618a23fdc8276dcc899fe92e101061398",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/future.js",
+      "baseline_blob": "3b6e35c0039fa0546ad19efd6a0f0dbf6c93b3b9",
+      "approved_blob": "7514ae9b4ee05d7e7658eb49a3c95a7fb84310a6",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/gerund.js",
+      "baseline_blob": "9c3937ba6f20d81026365f57112ffee25f4ba918",
+      "approved_blob": "6a6d23f7c2daba001e182326e503342949356d3e",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/give.js",
+      "baseline_blob": "f40608213387b467e2d423c9ccbbff78e3bfe689",
+      "approved_blob": "f042216ac74c745e10d5a90be6e251cdbaf9bc36",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/partadj.js",
+      "baseline_blob": "299b3f469c9790884257aa49b6458761f823a1b3",
+      "approved_blob": "401de5c866fe798bb904a3e8a1dd15060a9c795d",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/past.js",
+      "baseline_blob": "47d3c128ab290b57bd38423f293cc461b8372cd0",
+      "approved_blob": "6d27260dc4df7f9e2bd0b824be0caa16db787507",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/perfect.js",
+      "baseline_blob": "93512e65d62b0bf5564ab90207a0c9581e604088",
+      "approved_blob": "a909531aaec8935cfd09e3b2997b181b2ef882b2",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/relative.js",
+      "baseline_blob": "5b02ce4b2fb19ea072fb126ec80b28143a934a92",
+      "approved_blob": "84d49bbcf36392ad705d77321355fc64239fec8f",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/sense.js",
+      "baseline_blob": "a783c1dc720899c8df8337863edc995c60201525",
+      "approved_blob": "4460c2d021bcf69743b7cb3410851359a735c815",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/spend.js",
+      "baseline_blob": "f945002b372120290777c95bcfaa4b549a8c3485",
+      "approved_blob": "1fde1d048e0401e29d8e4ebc0fd18383c80a14ae",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/there.js",
+      "baseline_blob": "29439ceda7f8d3d44bccf93c652364c4a7af6ce2",
+      "approved_blob": "c3e1c904815bb317b23920901e805e0d51ba31ae",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/usedto.js",
+      "baseline_blob": "4ee6d7c311e9c704ab17057a278c8836f190a37b",
+      "approved_blob": "dfa096da5f62732a0506b06aff3937d38e64a3e2",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/topics/whto.js",
+      "baseline_blob": "8f536bc12072bdb8f8c265c6e3b9525badb3086b",
+      "approved_blob": "0fc4525836e3716f72f339ab478ebcb2dcd545c1",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/english-grammar-mix.html",
+      "baseline_blob": "2db894e6d776d9d1b3c7725e0cea3ad47756abb6",
+      "approved_blob": "a28c34886bdea71ad4d9ab6f4d9eaa51a0c83955",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/english-grammar.html",
+      "baseline_blob": "3742e91d01588e08a91de7fd44de6c1549f95758",
+      "approved_blob": "9a074061523a7f3443a7e7c07a82f269b5b59680",
+      "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
+      "pull_request": null
     }
   ]
 }
