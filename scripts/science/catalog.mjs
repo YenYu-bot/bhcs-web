@@ -119,7 +119,11 @@ export const primaryLabDesks=Object.freeze([
  {id:'enzyme',file:'lab/enzyme/',title:'酵素實驗桌',subject:'生物',unit:'酵素',minutes:'15–20',description:'把唾液澱粉酶放進不同溫度與 pH，用碘液看澱粉有沒有被分解；高溫變性後冷卻也回不來。',previousLabel:'舊版酵素活性實驗室'},
  {id:'homeostasis',file:'lab/homeostasis/',title:'體內恆定實驗桌',subject:'生物',unit:'恆定性',minutes:'15–20',description:'天氣冷熱時身體怎麼維持 37 °C，飯後、胰島素不足與運動時血糖怎麼被拉回正常。',previousLabel:'舊版血糖與體溫恆定實驗室'},
  {id:'nerve-reflex',file:'lab/nerve-reflex/',title:'神經反射實驗桌',subject:'生物',unit:'協調作用',minutes:'15–20',description:'比較膝跳反射、縮手反射與接球的神經路線，看中樞在脊髓還是大腦，再用接尺實驗量反應時間。',previousLabel:'舊版神經與反應時間實驗室'},
- {id:'plant-exchange',file:'lab/plant-exchange/',title:'植物氣體交換實驗桌',subject:'生物',unit:'植物生理',minutes:'15–20',description:'改變光照、氣孔開度與濕度，比較葉子的光合作用、呼吸作用、淨氧氣交換與蒸散。',previousLabel:'舊版呼吸作用、蒸散與氣孔實驗室'}
+ {id:'plant-exchange',file:'lab/plant-exchange/',title:'植物氣體交換實驗桌',subject:'生物',unit:'植物生理',minutes:'15–20',description:'改變光照、氣孔開度與濕度，比較葉子的光合作用、呼吸作用、淨氧氣交換與蒸散。',previousLabel:'舊版呼吸作用、蒸散與氣孔實驗室'},
+ {id:'moon-eclipse',file:'lab/moon/',title:'月相與日月食實驗桌',subject:'地科',unit:'天文',minutes:'10–15',description:'讓月球繞地球走一圈，看月相怎麼變；再比較交點位置，找出日食與月食的條件。',previousLabel:'舊版月相、日食與月食實驗室'},
+ {id:'seasons',file:'lab/seasons/',title:'四季實驗桌',subject:'地科',unit:'天文',minutes:'15–20',description:'比較夏至、冬至與春分的正午太陽高度和白天長度，換緯度、把地軸扶正，找出四季的原因。',previousLabel:'舊版四季與太陽高度角實驗室'},
+ {id:'tides',file:'lab/tides/',title:'潮汐實驗桌',subject:'地科',unit:'潮汐',minutes:'10–15',description:'看一天兩次的漲退潮，再比較新月、上弦與滿月時的大潮和小潮。',previousLabel:'舊版潮汐實驗室'},
+ {id:'weather-systems',file:'lab/weather/',title:'天氣系統實驗桌',subject:'地科',unit:'天氣與氣候',minutes:'15–20',description:'比較高低氣壓的風向與上升下沉氣流，南北半球的差別，以及冷鋒、暖鋒、滯留鋒的雲雨。',previousLabel:'舊版天氣系統實驗室'}
 ].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t,previousFile:`science/${t.id}.html`})));
 
 export const mirrorLabDesk=Object.freeze({
