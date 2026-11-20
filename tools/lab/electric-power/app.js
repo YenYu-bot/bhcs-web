@@ -1,4 +1,5 @@
 import { openNotebook } from '../shared/notebook.mjs';
+import { showFinish } from '../shared/finish.mjs';
 
 // Isolated classroom trial. The equations match the electric-power case in
 // scripts/science/models.mjs (2db4e00): 25 °C initial water, c = 4.2 J/(g·°C).
@@ -507,16 +508,26 @@ async function init() {
         save();
         updateFeedback(correct);
         updateScore();
-        if (data.correct.length === 3) announce('三題都完成了。你已用數據解釋電流熱效應。');
+        if (data.correct.length === 3) { announce('三題都完成了。你已用數據解釋電流熱效應。'); openFinish(); }
       });
       field.append(choices, check, feedback);
       list.append(field);
     }
     updateScore();
   }
+  function openFinish() {
+    showFinish({
+      kicker: '電流熱效應實驗桌 · 全部完成', title: '你用數據解釋了電流熱效應！',
+      rule: '電功率 P ＝ V × I，電能 E ＝ P × t。功率越大、通電越久，水吸收的熱越多，溫度升得越高。',
+      items: data.completed.map(k => { const t = trials[k], r = calculateTrial(k, t.limit); return `${t.label}：${t.resistance} Ω、${fmt(r.P)} W，通電 ${t.limit} 秒，水溫升高 ${tempFmt(r.dT)}°C`; }),
+      next: { label: '去比熱實驗桌', href: '../heat/' }
+    });
+  }
   function updateScore() {
     const allCorrect = data.correct.length === 3;
     put('quiz-summary', allCorrect ? '挑戰完成！' : '已答對 ' + data.correct.length + '／3 題');
+    const finishOpen = $('finish-open');
+    if (finishOpen) { finishOpen.hidden = !allCorrect; finishOpen.onclick = openFinish; }
     const indicator = $('step-list')?.querySelector('[aria-current="step"]');
     if (stage === 5 && indicator) indicator.dataset.state = allCorrect ? 'done' : 'current';
   }
@@ -524,7 +535,7 @@ async function init() {
   function renderStage() {
     put('task-title', stages[stage][0]);
     put('task-note', stages[stage][1]);
-    put('step-kicker', '第 ' + (stage + 1) + ' 步／共 6 步');
+    put('step-kicker', '任務 ' + (stage + 1) + ' / 6');
     if ($('step-list')) {
       const list = [...$('step-list').querySelectorAll('[data-step]')];
       const oneBased = !list.some(n => n.dataset.step === '0');

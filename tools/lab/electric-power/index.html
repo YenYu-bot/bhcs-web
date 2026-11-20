@@ -13,8 +13,8 @@
 <body class="lab electric-lab">
 <a class="skip-link" href="#scene">跳到實驗桌</a>
 <header class="lab-bar">
-  <span class="lab-brand">百宏 · 小小研究員</span>
-  <h1 class="lab-title">電流熱效應</h1>
+  <a class="lab-brand" href="../../science/">百宏 · 小小研究員</a>
+  <h1 class="lab-title">電流熱效應實驗桌</h1>
   <nav class="step-nav" aria-label="實驗進度">
     <ol id="step-list" class="lab-steps">
       <li data-step="0" aria-current="step"><span>1</span> 跑基準</li>
@@ -25,7 +25,6 @@
       <li data-step="5"><span>6</span> 說發現</li>
     </ol>
   </nav>
-  <div class="lab-bar-actions"><span class="trial-badge">新版試用</span><button id="reset-button" class="btn btn-ghost" type="button" aria-haspopup="dialog">清空紀錄</button></div>
 </header>
 
 <main class="stage">
@@ -134,13 +133,14 @@
 
   <aside class="panel" aria-label="任務與觀察紀錄">
     <section class="task" aria-labelledby="task-title">
-      <p id="step-kicker" class="task-kicker">第 1 步／共 6 步</p>
+      <p id="step-kicker" class="task-kicker">任務 1 / 6</p>
       <h2 id="task-title" class="task-title" tabindex="-1">先跑一組基準</h2>
       <p id="task-note" class="task-goal">閉合開關，用 6 V、6 Ω 加熱 100 g 水。看看溫度計跟曲線怎麼變。</p>
+      <div class="task-row"><button type="button" class="clear" id="reset-button" aria-haspopup="dialog">清空紀錄</button></div>
     </section>
     <div class="teacher">
       <span class="teacher-pic" aria-hidden="true"></span>
-      <div class="bubble"><span class="tag">余老師</span><p id="teacher-note">先找溫度計。開關閉合後，水才開始吸收電熱線放出的熱。</p></div>
+      <div class="bubble"><p id="teacher-note">先找溫度計。開關閉合後，水才開始吸收電熱線放出的熱。</p></div>
     </div>
     <section class="evidence-panel" aria-labelledby="evidence-title">
       <div class="evidence-heading"><h2 id="evidence-title">我的觀察證據</h2><span id="evidence-count">尚未記錄</span></div>
@@ -163,6 +163,7 @@
       <h2 id="quiz-title">用證據說說看</h2>
       <div id="question-list"></div>
       <p id="quiz-summary" aria-live="polite"></p>
+      <button id="finish-open" class="btn btn-main" type="button" hidden>看成果</button>
     </section>
     <details class="model-note">
       <summary>模型與公平比較</summary>
@@ -174,7 +175,7 @@
 
 <dialog id="reset-dialog" aria-labelledby="reset-title" aria-describedby="reset-note">
   <h2 id="reset-title">清空紀錄，從頭再做？</h2>
-  <p id="reset-note">只會清除這個試玩版在此瀏覽器的實驗進度、電表和作答紀錄。其他實驗站不受影響。</p>
+  <p id="reset-note">只會清除這個實驗桌在此瀏覽器的實驗進度、電表和作答紀錄。其他實驗站不受影響。</p>
   <div class="dialog-actions">
     <button class="btn btn-ghost" id="reset-cancel" type="button" autofocus>取消</button>
     <button class="btn btn-main" id="reset-confirm" type="button">清空並重作</button>

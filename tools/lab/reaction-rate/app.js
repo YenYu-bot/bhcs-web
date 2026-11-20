@@ -1,6 +1,7 @@
 import { MODEL_VERSION, CONSTANTS, calculate, quantity, remainingMass, instantRate } from '../../science/reaction-rate-desk/model.mjs';
 
 import { openNotebook } from '../shared/notebook.mjs';
+import { showFinish } from '../shared/finish.mjs';
 
 const SAMPLE = {
   lump: { name: '塊狀', scene: 'lump', color: '#246877', pattern: '' },
@@ -213,6 +214,14 @@ function nextAction() {
     default: return state.answers.every((answer, i) => answer === QUESTIONS[i].correct) ? { text: '完成實驗', done: true } : null;
   }
 }
+function openFinish() {
+  showFinish({
+    kicker: '反應速率實驗桌 · 全部完成', title: '快慢和總量，你分清楚了！',
+    rule: '同樣質量的大理石，顆粒越細、表面積越大，反應越快；酸液足夠時，最終產氣量都一樣。',
+    items: KEYS.map(k => `${SAMPLE[k].name}：約 ${END[k]} 模擬秒反應完，最終 ${fmt(volume(k, END[k]))} mL`),
+    next: { label: '去金屬活性實驗桌', href: '../metal/' }
+  });
+}
 function goNext() {
   const next = nextAction();
   if (!next) return;
@@ -227,7 +236,7 @@ function goNext() {
   save(); render(true);
   if (state.finished) {
     announce('實驗完成。你已經能分辨反應速率與最終產氣量。');
-    byId('trial-complete')?.focus();
+    openFinish();
   } else if (oldStep === state.step) {
     announce(`已換${SAMPLE[state.active].name}，先前的結果仍保留。`);
     (buttonPause.disabled ? buttonStart : buttonPause).focus();
@@ -372,7 +381,7 @@ function paintScene() {
   paintReactionMotion(key, t, status);
 }
 function render(updateQuestion = false) {
-  byId('step-kicker').textContent = `第 ${state.step} 步／共 6 步`;
+  byId('step-kicker').textContent = `任務 ${state.step} / 6`;
   byId('step-title').textContent = STEPS[state.step - 1][0];
   byId('step-copy').textContent = STEPS[state.step - 1][1];
   const guide = byId('step-hint');
@@ -514,7 +523,10 @@ function paintQuestions(focus = false) {
     body.textContent = '同樣質量的大理石，與酸液接觸的表面積越大，反應越快。這裡酸液足夠，三組都完全反應後，最終都得到約 48.9 mL。';
     const wrap = document.createElement('div');
     wrap.className = 'quiz-celebration';
-    wrap.append(title, body);
+    const again = document.createElement('button');
+    again.type = 'button'; again.className = 'btn btn-main'; again.id = 'finish-open'; again.textContent = '看成果';
+    again.addEventListener('click', openFinish);
+    wrap.append(title, body, again);
     panel.append(wrap);
     return;
   }
