@@ -2759,6 +2759,13 @@
       "approved_blob": "24aebf4d1c46a18a6ede4fb06978daa4067d5f48",
       "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
       "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "50f23441881caa87296550649c3e767c3c0548c6",
+      "approved_blob": "c926aa3e8c889107a1aa2a73ca078389a3af9711",
+      "reason": "Catalog: seven new lab desks (circuit, phase, balance, indicator, newton, color, eye) added to the science directory.",
+      "pull_request": null
     }
   ]
 }

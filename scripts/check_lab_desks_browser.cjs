@@ -22,6 +22,13 @@ const DESKS={
  energy:{calc:{calc:[60,60,45]},quiz:[1,1,1]},
  electromagnetism:{quiz:[1,1,1]},
  electrostatics:{quiz:[1,1,1]},
+ circuit:{calc:{calc:[5,0.3,1.2]},quiz:[1,0,2]},
+ phase:{calc:{calc:[8000,10000,16000]},quiz:[1,1,1]},
+ balance:{calc:{calc:[6,4,8]},quiz:[1,1,1]},
+ indicator:{quiz:[1,0,1]},
+ newton:{calc:{calc:[3,6,12]},quiz:[1,0,2]},
+ color:{quiz:[1,0,2]},
+ eye:{quiz:[0,1,1]},
 };
 // 照目前步驟的每個目標設定，用畫面上的按鈕（分段按鈕或＋／−）把器材調過去，提示「收下」時才收下。
 async function press(t,loc){if(t.mobile)await loc.tap();else await loc.click();await t.wait(50);}
