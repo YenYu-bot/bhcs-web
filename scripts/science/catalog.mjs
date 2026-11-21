@@ -2,10 +2,6 @@
 export const legacy = [
  ['mini-lab/','小小科學實驗室','國小自然','國小中高年級','生活實驗與安全','在成人指導下認識器材與控制變因。','生活觀察','安全操作、記錄變化','15–20'],
  ['frog-dissection/','青蛙虛擬解剖實驗室','生物','國中','生物體構造','辨識器官及系統關係；含擬真解剖圖，建議教師陪同。','器官與系統','器官位置、系統功能','20–30'],
- ['eye-lesson.html','眼睛如何看見蝴蝶','理化','國中','光學','比較正常眼、近視、遠視與矯正透鏡。','凸透鏡成像','視網膜、聚焦、視力矯正','10–15'],
- ['color-primaries.html','光與顏料三原色','理化','國中','光學','比較色光相加與顏料混合，不把螢幕顏色視為真實顏料。','顏色觀察','加色、減色','10–15'],
- ['waves.html','波動實驗室','理化','國中','波與聲','觀察質點、反射、干涉與駐波。','振動、週期','波速、波長、疊加','15–20'],
- ['dc-motor.html','直流馬達的原理','理化','國中','電與磁','比較磁場、電流與換向器如何讓線圈連續轉動。','電磁鐵','磁力、換向器、能量轉換','15–20'],
 ].map(([file,title,subject,grade,unit,description,prior,goals,minutes])=>({file,title,subject,grade,unit,description,prior,goals,minutes,kind:'互動模擬',batch:1}));
 
 export const guidedPublic = Object.freeze([Object.freeze({

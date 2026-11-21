@@ -250,7 +250,7 @@ jobs:
           retention-days: 14
 
 
-  # 引導式教材：光學、浮力、顯微鏡、酸鹼、光合作用（真實 Chromium）
+  # 引導式教材：電路接線（真實 Chromium）
   science-guided:
     name: science-guided
     needs: [browser-fonts]
@@ -276,66 +276,6 @@ jobs:
       - name: Install verified browser fonts and tools
         timeout-minutes: 10
         run: bash scripts/install_ci_browser_fonts.sh install "${{ runner.temp }}/bhcs-browser-fonts"
-      - name: Check guided optics input layer in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_optics_guided_input_browser.cjs
-      - name: Check guided optics bench states and page layout in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_optics_guided_view_browser.cjs
-      - name: Check the guided optics student flow (script, evidence, focus) in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_optics_guided_flow_browser.cjs
-      - name: Check guided buoyancy input layer in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_buoyancy_guided_input_browser.cjs
-      - name: Check guided buoyancy bench states and page layout in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_buoyancy_guided_view_browser.cjs
-      - name: Check guided buoyancy full student flow in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_buoyancy_guided_flow_browser.cjs
-      - name: Check guided microscope input layer in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_microscope_guided_input_browser.cjs
-      - name: Check guided microscope bench states and page layout in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_microscope_guided_view_browser.cjs
-      - name: Check guided microscope full student flow in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_microscope_guided_flow_browser.cjs
-      - name: Check guided acid-base input layer in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_acid_base_guided_input_browser.cjs
-      - name: Check guided acid-base bench states and page layout in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_acid_base_guided_view_browser.cjs
-      - name: Check guided acid-base full student flow in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_acid_base_guided_flow_browser.cjs
-      - name: Check guided photosynthesis input layer in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_photosynthesis_guided_input_browser.cjs
-      - name: Check guided photosynthesis bench states and page layout in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_photosynthesis_guided_view_browser.cjs
-      - name: Check guided photosynthesis full student flow in a real browser
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_photosynthesis_guided_flow_browser.cjs
       - name: Check guided circuit bench mouse, keyboard and touch input in a real browser
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -352,66 +292,6 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_circuit_guided_flow_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: optics-view-review
-          path: optics-view-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: optics-flow-review
-          path: optics-flow-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: buoyancy-view-review
-          path: buoyancy-view-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: buoyancy-flow-review
-          path: buoyancy-flow-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: microscope-view-review
-          path: microscope-view-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: microscope-flow-review
-          path: microscope-flow-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: acid-base-view-review
-          path: acid-base-view-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: acid-base-flow-review
-          path: acid-base-flow-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: photosynthesis-view-review
-          path: photosynthesis-view-artifacts/
-          retention-days: 14
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: photosynthesis-flow-review
-          path: photosynthesis-flow-artifacts/
-          retention-days: 14
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,6 +1,6 @@
 # 教材產生與檢查
 
-2026-11-21 起，舊研究站（`tools/*-lab.html`）已由 `tools/lab/` 實驗桌取代並刪除；`build_microscope.mjs`、`science/experience.mjs`、`science/inquiry.mjs` 與對應測試一併移除。`scripts/fixtures/legacy/` 留有三個舊頁的唯讀副本，只供引導式原型的模型測試核對公式。
+2026-11-21 起，舊研究站（`tools/*-lab.html`）已由 `tools/lab/` 實驗桌取代並刪除；`build_microscope.mjs`、`science/experience.mjs`、`science/inquiry.mjs` 與對應測試一併移除。五個未列入目錄的引導式原型與 `scripts/fixtures/legacy/` 也已在同日移除；引導式只剩公開的電路接線實驗（`circuit-guided`）。
 
 需要 Node.js 20+。只在開發環境安裝測試套件；網頁運作無需 npm 或框架。
 
