@@ -2768,6 +2768,13 @@
       "pull_request": null
     },
     {
+      "path": "tools/science/index.html",
+      "baseline_blob": "c926aa3e8c889107a1aa2a73ca078389a3af9711",
+      "approved_blob": "288adf0e6465f987ce438b9512761374dc1995e5",
+      "reason": "Catalog: four new lab desks (microscope, photosynthesis, genetics, earthquake) added to the science directory.",
+      "pull_request": null
+    },
+    {
       "path": "assets/english-cap-reading/app.mjs",
       "baseline_blob": "e895585ca9c0bc2de58a3ab5e893a7b758ac0540",
       "approved_blob": "a49dca10af49f57848077d247590bc0bc2bb1269",
