@@ -17,11 +17,25 @@ for(const id of ['optics','buoyancy','microscope','acid-base','photosynthesis-fa
 console.log('PASS 69 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
 
 const inlineSources=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>m[2]);
-// Reverse only the approved vocabulary category metadata before checking the old hashes.
+// Keep the original hash gate: reverse the vocabulary entry and the exact subset
+// of finder lines that enables both print and online filtering for English tools.
 const vocabularyMeta=",'res-hs-english':['高中','quiz']";
-assert.equal(inlineSources.reduce((n,s)=>n+s.split(vocabularyMeta).length-1,0),1,'exactly one approved vocabulary filter entry');
-const inline=inlineSources.map(s=>crypto.createHash('sha256').update(s.replace(vocabularyMeta,'')).digest('hex'));
-assert.deepEqual(inline,baseline.resource_inline_script_sha256,'resource search/runtime scripts remain byte-identical after reversing only vocabulary metadata');
+const finderChanges=[
+ [" const typesOf=a=>(a.dataset.resourceTypes||META[a.closest('.res-sec').id][1]).split(' ');\n", ""],
+ [" const hay=new Map(links.map(a=>[a,norm([a.textContent,a.title,a.dataset.resourceSearch,noteOf(a)?.textContent,a.closest('.trow')?.querySelector('.tlabel')?.textContent,a.closest('.science-category')?.querySelector('h4')?.textContent,a.closest('.res-sec')?.querySelector('h3')?.textContent].filter(Boolean).join(' '))]));\n", " const hay=new Map(links.map(a=>[a,norm([a.textContent,a.title,noteOf(a)?.textContent,a.closest('.trow')?.querySelector('.tlabel')?.textContent,a.closest('.science-category')?.querySelector('h4')?.textContent,a.closest('.res-sec')?.querySelector('h3')?.textContent].filter(Boolean).join(' '))]));\n"],
+ ["  const tag=document.createElement('span');tag.className='res-type';tag.textContent=new Set([...sec.querySelectorAll(LINKS)].flatMap(typesOf)).size>1?'列印・線上練習':TYPES[META[sec.id][1]];btn.appendChild(tag);h3.appendChild(btn);\n", "  const tag=document.createElement('span');tag.className='res-type';tag.textContent=TYPES[META[sec.id][1]];btn.appendChild(tag);h3.appendChild(btn);\n"],
+ ["  sections.forEach(sec=>{const [st]=META[sec.id];const inScope=stage==='全部'||st===stage;let n=0;\n   sec.querySelectorAll(LINKS).forEach(a=>{const ok=inScope&&(type==='all'||typesOf(a).includes(type))&&(!term||hay.get(a).includes(term));n+=ok?1:0;(a.closest('.science-category li')||a).classList.toggle('resource-hidden',!ok);noteOf(a)?.classList.toggle('resource-hidden',!ok)});\n", "  sections.forEach(sec=>{const [st,ty]=META[sec.id];const inScope=(stage==='全部'||st===stage)&&(type==='all'||ty===type);let n=0;\n   sec.querySelectorAll(LINKS).forEach(a=>{const ok=inScope&&(!term||hay.get(a).includes(term));n+=ok?1:0;(a.closest('.science-category li')||a).classList.toggle('resource-hidden',!ok);noteOf(a)?.classList.toggle('resource-hidden',!ok)});\n"]
+];
+assert.equal(inlineSources.reduce((n,s)=>n+s.split(vocabularyMeta).length-1,0),1,'exactly one vocabulary filter entry');
+const inline=inlineSources.map(s=>{
+ s=s.replace(vocabularyMeta,'');
+ for(const [updated,original] of finderChanges){
+  assert.equal(s.split(updated).length-1,1,'exact dual-use finder change');
+  s=s.replace(updated,original);
+ }
+ return crypto.createHash('sha256').update(s).digest('hex');
+});
+assert.deepEqual(inline,baseline.resource_inline_script_sha256,'resource search remains identical apart from the reviewed English finder changes');
 
 // Execute the actual researcher shell: main children are redistributed into four screens.
 // A static link check alone cannot detect navigation hidden in the challenge screen.

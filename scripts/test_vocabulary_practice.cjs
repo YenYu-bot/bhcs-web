@@ -19,13 +19,26 @@ const legacy={"res-math":"0b274abf9d6a074ecd669cbd7f70d0d4003082866f48152f980d41
  // The authorized catalog cutovers change only this one legacy category.
  assert.equal(expected,'61179bce668434a3d30189aae4b15994a9f5ed4540b4d0ad3f1f1947581b9284');
  assert.equal(hash(match[0]),'221f266aa32865efba36e15b555676eab511a8362a9e1282102fa21abba21b78','exact catalog after pressure, reflection, seven-desk, friction-desk and physics lab-desk cutovers');
+ }else if(id==='res-jh-math'){
+ // Only move the existing function link from 國一 to 國二; all other links remain frozen.
+ const link='<a href="tools/math/g7-drills.html?topic=function">函數</a>';
+ const row='國二<small>17 個</small>';
+ assert.equal(match[0].split(link).length-1,1);
+ assert.match(match[0],/國二<small>17 個<\/small>[^\n]*>函數<\/a>/);
+ const ratio='<a href="tools/math/g7-drills.html?topic=ratio">比例</a>';
+ const restored=match[0].replace(link,'').replace(ratio,ratio+link)
+   .replace('國一<small>14 個</small>','國一<small>15 個</small>').replace(row,'國二<small>16 個</small>');
+ assert.equal(hash(restored),expected,'legacy junior-high math unchanged apart from the function grade and derived counts');
  }else if(id==='res-english'){
- // Allow exactly the two CAP links and their count; retain the prior hash for everything else.
+ // Reverse only the reviewed English finder additions before checking the pre-existing catalog hash.
  const capRow="        <div class=\"trow\"><div class=\"tlabel\">會考專練</div><div class=\"tpills\"><a href=\"tools/english-cap-grammar.html\">會考情境文法</a><a href=\"tools/english-cap-reading.html\">歷屆會考閱讀測驗</a></div></div>\n";
  const countTitle='<h3>國中英文<span class="count">51 項</span></h3>';
- assert.equal(match[0].split(capRow).length-1,1,'exact CAP links appear once');
+ const lead='        <p class="lead">文法與會考專練可線上作答，也可列印 A4。文法線上練習的計分題可訂正，部分題型需自行核對。單字習寫請選列印練習卷；英檢與 VocabMaster 另有入口說明。</p>\n';
+ assert.equal(match[0].split(lead).length-1,1,'English finder lead appears once');
+ const restored=match[0].replace(lead,'').replace(/(<a href="tools\/english-[^"]+") data-resource-types="(?:print quiz|print)"(?: data-resource-search="(?:線上練習 錯題訂正|線上練習)")?/g,'$1');
+ assert.equal(restored.split(capRow).length-1,1,'exact CAP links appear once');
  assert.equal(match[0].split(countTitle).length-1,1,'derived English count appears once');
- assert.equal(hash(match[0].replace(capRow,'').replace(countTitle,countTitle.replace('51 項','49 項'))),expected,'legacy junior-high English unchanged apart from the CAP links and count');
+ assert.equal(hash(restored.replace(capRow,'').replace(countTitle,countTitle.replace('51 項','49 項'))),expected,'legacy junior-high English unchanged apart from the CAP entries and finder metadata');
  }else assert.equal(hash(match[0]),expected,id+' unchanged');}
 assert.equal((resources.match(/href="tools\/english-vocabulary-109-115.html"/g)||[]).length,1);assert.match(resources,/'res-hs-english':\['高中','quiz'\]/);assert.match(resources,/目前共 266 項/);assert.match(resources,/id="vocabulary-practice-note"/);
 assert.match(html,/<link rel="canonical" href="https:\/\/www.bhcs.com.tw\/tools\/english-vocabulary-109-115.html">/);assert.ok(!html.includes('noindex'));assert.ok(!html.includes('隔離驗收版'));assert.ok(!html.includes('libfile_'));assert.ok(!html.includes('appgprj_'));assert.ok(!html.includes('several74727'));assert.ok(!html.includes('localStorage'));assert.ok(!html.includes('fetch('));assert.ok(!/\b(?:src|href)=["']https?:/.test(html.replace(/<a\b[^>]*>/g,'').replace(/<link rel="canonical"[^>]*>/,'')),'No external resource dependencies');

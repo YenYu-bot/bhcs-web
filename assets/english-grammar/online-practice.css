@@ -6,6 +6,7 @@
 .practice-subtitle,.practice-hint{color:var(--muted);font-size:.9rem;margin:4px 0 10px}
 .practice-section{padding:8px 0}
 .practice-section h3{font-size:1rem;margin:0 0 8px}
+.practice-section-usage{color:var(--muted);font-size:.85rem;margin:0 0 7px}
 .practice-section ol{padding-inline-start:1.9rem;margin:0}
 .practice-item{padding:9px 0;border-bottom:1px solid var(--rule)}
 .practice-line{display:block;line-height:1.65;font-family:var(--en),var(--zh);font-size:1.12rem}

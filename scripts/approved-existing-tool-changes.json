@@ -2773,6 +2773,111 @@
       "approved_blob": "288adf0e6465f987ce438b9512761374dc1995e5",
       "reason": "Catalog: four new lab desks (microscope, photosynthesis, genetics, earthquake) added to the science directory.",
       "pull_request": null
+    },
+    {
+      "path": "assets/english-cap-reading/app.mjs",
+      "baseline_blob": "e895585ca9c0bc2de58a3ab5e893a7b758ac0540",
+      "approved_blob": "a49dca10af49f57848077d247590bc0bc2bb1269",
+      "reason": "CAP reading verification: show original-only question ranges, validate official source links, and keep original-only groups out of drawing and replay.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/grading.js",
+      "baseline_blob": "dd53349630aa40b9084058ec008cf8b91b7d00ae",
+      "approved_blob": "84ae9b8ac7f693d85cda99833b52e528ace115e5",
+      "reason": "Expose the start of a mismatched answer pair for correction focus without changing grading or points.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/online-practice.css",
+      "baseline_blob": "14aac102d90670bfa3fb3c49cf1e85b6df0ff80b",
+      "approved_blob": "baff6db092fd40b88b48985c2dad2ba55ef7d1c1",
+      "reason": "Style the per-section distinction between automatically scored practice and reference-only practice.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/english-grammar/online-practice.js",
+      "baseline_blob": "b7870d73878626be09c08e5ca6721e96c2806c09",
+      "approved_blob": "8c8b6e87a6a4903fed11116e5d09dcdb264ded45",
+      "reason": "Show scored vs reference-only instructions, reveal reference answers on demand, and focus mismatched pairs for correction.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/english-grammar-mix.html",
+      "baseline_blob": "a28c34886bdea71ad4d9ab6f4d9eaa51a0c83955",
+      "approved_blob": "8d010bc542df560799156ccf564b107f7e21e033",
+      "reason": "Show actual topic coverage and unrestricted paper section labels while preserving worksheet generation and saved replay codes.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g2-drills.html",
+      "baseline_blob": "274a3a25ce7540be823f6e51ebe760b87351f936",
+      "approved_blob": "1cc6b5d1c49e2c820e9494ce1f7f525cac39dfa5",
+      "reason": "Correct the carry-at-ten boundary with examples and clarify horizontal digit blanks.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g3-drills.html",
+      "baseline_blob": "48d180eec4c6a278907417e496acc2751f728bc1",
+      "approved_blob": "ec11f2e7490a0599eab70daaaecfeff2e404f4e8",
+      "reason": "Show speed worksheet capacity and actual counts; fill the small no-carry drill bank reliably.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "bc6536de5bfded0d3540a53b05a0425885338913",
+      "approved_blob": "c71e211b4f102f6724ca16556b0c6afb4d8c1f5a",
+      "reason": "Show a question mark at the requested cylinder or trapezoid height without changing keys.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-1-2-parallel-proportional.html",
+      "baseline_blob": "4fcc522a550a22928af3935c67ef7bc0be1bca7b",
+      "approved_blob": "444b9a17d544f617a6696b716d76f7199b5d1047",
+      "reason": "Keep worksheet title and setup controls within 320px mobile width; no print changes.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-1-4-similar-area.html",
+      "baseline_blob": "97d604a2cda3f1f4a891b10c3531fca04a984507",
+      "approved_blob": "9708250066860562a1da26b627b16cc9b7ca3436",
+      "reason": "Keep worksheet title and setup controls within 320px mobile width; no print changes.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-2-1-chord.html",
+      "baseline_blob": "3f5cc2917f38d3884da25048459d02655d4636e5",
+      "approved_blob": "9e04c49eb6eadf6848b61b023bdfe08cde9f7726",
+      "reason": "Keep worksheet title and setup controls within 320px mobile width; no print changes.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-2-1-tangent.html",
+      "baseline_blob": "032f729f58495f74f4cc012101076b7d4a4b9354",
+      "approved_blob": "2f291b4a5b7ee7831ee7cfc6a760bcbb0da4ef65",
+      "reason": "Keep worksheet title and setup controls within 320px mobile width; no print changes.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-2-2-central-angle-arc.html",
+      "baseline_blob": "1ab7b17960dd47c68aedc516dd76a9559867c195",
+      "approved_blob": "13d8e3c101c7473f9ff87197c30e2bb8f4330cdd",
+      "reason": "Keep worksheet title and setup controls within 320px mobile width; no print changes.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-drills.html",
+      "baseline_blob": "b7569458cd4fd7a7d0265e80fe6e9d12916b795b",
+      "approved_blob": "3c8cb0c62b1374574ff90d47ecb8a89c4b068f3e",
+      "reason": "State equal likelihood explicitly in reverse special-die probability questions.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9b-2-2-tree-diagram.html",
+      "baseline_blob": "29d58cc9cfe8228ee03e06adf9677e94b21eab6b",
+      "approved_blob": "06c75e9868aad98e6bdebba814e7e58ee6ce699c",
+      "reason": "Correct both Cartesian trees to nine outcomes and fit the worksheet controls on narrow screens.",
+      "pull_request": null
     }
   ]
 }

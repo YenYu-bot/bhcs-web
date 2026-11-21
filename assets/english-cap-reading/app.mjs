@@ -10,9 +10,23 @@ const link = (href, text) => {
   n.href = href; n.target = '_blank'; n.rel = 'noopener noreferrer';
   return n;
 };
-const sourceURL = (s) => {
-  try { const u = new URL(s); return u.protocol === 'https:' ? u.href : ''; } catch { return ''; }
+const sourceURL = (value, year, kind) => {
+  try {
+    const u = new URL(value);
+    if (u.protocol !== 'https:' || u.username || u.password || u.port) return '';
+    const official = ['cap.rcpet.edu.tw', 'cap-rcpet.rcpet.edu.tw'].includes(u.hostname);
+    const prefix = '/exam/' + year + '/';
+    if (kind === 'year') return official && u.pathname === prefix + year + 'exam.html' ? u.href : '';
+    const officialFile = official && u.pathname.startsWith(prefix) && /^[\w-]+\.pdf$/i.test(u.pathname.slice(prefix.length));
+    const schoolDriveFile = u.hostname === 'drive.google.com' && /^\/file\/d\/[\w-]+\/view$/.test(u.pathname);
+    return officialFile || schoolDriveFile ? u.href : '';
+  } catch { return ''; }
 };
+const appendSourceLinks = (parent, {source, pdf}) => {
+  if (source) parent.append(document.createTextNode(' · '), link(source, '官方年度頁'));
+  if (pdf) parent.append(document.createTextNode(' · '), link(pdf, '英語閱讀完整原卷'));
+};
+const questionRange = ({first, last}) => '第 ' + first + (last === first ? '' : '–' + last) + ' 題';
 const imgURL = (s) => new URL('./images/' + s, import.meta.url).href;
 const letter = ['A','B','C','D'];
 const version = 'CAPR1-';
@@ -104,7 +118,7 @@ function render() {
     unit.append(el('h3', g.year + ' 年｜第 ' + g.first + '–' + g.last + ' 題'));
     const detail = el('p', '', 'group-source');
     detail.append(document.createTextNode('來源：國中教育會考英語（閱讀）'));
-    if (g.source) detail.append(link(g.source, '官方原卷'));
+    appendSourceLinks(detail, g);
     unit.append(detail);
     for (const [index, filename] of g.images.entries()) {
       const url = imgURL(filename);
@@ -119,8 +133,8 @@ function render() {
           state.bad += 1;
           box.dataset.error = 'true';
           box.href = g.pdf || g.source || url;
-          box.append(document.createTextNode('題圖未能載入，前往官方原卷'));
-          setStatus('有題圖未能載入，暫停列印。可重整，或從題組內開啟官方原卷。', true);
+          box.append(document.createTextNode('題圖未能載入' + (g.pdf ? '，開啟完整原卷' : g.source ? '，前往官方年度頁' : '')));
+          setStatus('有題圖未能載入，暫停列印。可重整，或從題組來源查看原卷。', true);
         }
         state.pending -= 1; setPrint();
       };
@@ -185,11 +199,12 @@ function attachBank(bank) {
   if (!Array.isArray(bank)) throw new Error('invalid bank');
   for (const y of bank) {
     if (!y || !Number.isInteger(y.year) || y.year < 103 || y.year > 999 || !Array.isArray(y.groups)) continue;
-    const source = sourceURL(y.source), pdf = sourceURL(y.pdf);
-    const year = { year: y.year, source, pdf, total: 0, available: 0 };
+    const source = sourceURL(y.source, y.year, 'year'), pdf = sourceURL(y.pdf, y.year, 'pdf');
+    const year = { year: y.year, source, pdf, total: 0, available: 0, officialOnly: [] };
     for (const g of y.groups) {
       if (!g || !Number.isInteger(g.first) || !Number.isInteger(g.last) || g.first < 1 || g.last > 99 || g.last < g.first) continue;
       year.total += 1;
+      if (g.officialOnly === true) { year.officialOnly.push({first: g.first, last: g.last}); continue; }
       if (!Array.isArray(g.images) || !g.images.length || g.images.some(s => typeof s !== 'string' || !/^[\w-]+\.(webp|png|jpg)$/.test(s))) continue;
       if (!Array.isArray(g.answers) || g.answers.length !== g.last - g.first + 1 || g.answers.some(a => !letter.includes(a))) continue;
       const id = y.year + '-' + String(g.first).padStart(2, '0');
@@ -207,10 +222,12 @@ function attachBank(bank) {
   for (const y of state.years) {
     const li = el('li');
     const name = y.year + ' 年';
-    const href = y.source || y.pdf;
-    if (href) li.append(link(href, name)); else li.append(document.createTextNode(name));
     if (y.available < y.total) partial = true;
-    li.append(document.createTextNode('：' + (y.available ? ('站內可抽 ' + y.available + ' / ' + y.total + ' 組') : '僅供開啟官方原卷')));
+    li.append(document.createTextNode(name + '：' + (y.available ? ('站內可抽 ' + y.available + ' / ' + y.total + ' 組') : '無站內題組')));
+    if (y.officialOnly.length) {
+      li.append(el('span', '；' + y.officialOnly.map(questionRange).join('、') + '僅供原卷練習，不納入抽題', 'source-official-only'));
+    }
+    appendSourceLinks(li, y);
     sources.append(li);
     if (!y.available) continue;
     const input = el('input');

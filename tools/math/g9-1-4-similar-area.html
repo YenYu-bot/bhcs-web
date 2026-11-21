@@ -607,7 +607,16 @@ header.no-print>.bg-slate-50,header.no-print>.bg-slate-100{background:#f7faf9!im
 .border-teal-200,.border-indigo-200,.border-teal-300,.border-indigo-300,.border-indigo-100,.border-teal-100{border-color:#b7d8cc!important}
 .text-indigo-900,.text-teal-900{color:var(--bhcs-green2)!important}
 .ring-teal-500,.focus\:ring-teal-500:focus,.focus\:ring-indigo-500:focus,.focus\:border-indigo-500:focus,.focus\:border-teal-500:focus{--tw-ring-color:var(--bhcs-green)!important;border-color:var(--bhcs-green)!important}
-</style><meta name="theme-color" content="#16233A">
+</style><meta name="theme-color" content="#16233A"><style id="bhcs-narrow-math-controls">
+@media screen and (max-width:360px) {
+  div:has(> #cfg-title) { min-width:0; max-width:100%; }
+  #cfg-title { min-width:0; max-width:100%; }
+  #knowledge-points-container > div { min-width:0; }
+  #knowledge-points-container > div > div:first-child { min-width:0; overflow-wrap:anywhere; }
+  #knowledge-points-container .truncate { white-space:normal; }
+}
+</style>
+
 <style id="bhcs-math-brand">
 /* P1: screen palette only; original print rules and worksheet geometry are preserved. */
 @media screen{
