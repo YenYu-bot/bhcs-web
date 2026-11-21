@@ -3053,6 +3053,13 @@
       "approved_blob": "f739cc2a5bc42654b2452e74f472d608416c9b6f",
       "reason": "Lab desk notes: round-two desks added and the pages they replace removed.",
       "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "2e0069b0cdd6e1ed9489da0d04fc61d3b9c7e559",
+      "approved_blob": "fef25e73c24a78afb7c464310cb14a163c3db25d",
+      "reason": "Catalog: wave and motor lab desks added to the science directory.",
+      "pull_request": null
     }
   ]
 }

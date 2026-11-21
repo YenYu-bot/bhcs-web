@@ -11,6 +11,8 @@ import { scope } from '../tools/lab/microscope/model.mjs';
 import { photo } from '../tools/lab/photosynthesis/model.mjs';
 import { cross } from '../tools/lab/genetics/model.mjs';
 import { quake, STATIONS, EPIC } from '../tools/lab/earthquake/model.mjs';
+import { wave } from '../tools/lab/wave/model.mjs';
+import { motor } from '../tools/lab/motor/model.mjs';
 const near = (a, b, m) => assert.ok(Math.abs(a - b) < 1e-9, `${m || ''} ${a} ≠ ${b}`);
 
 test('circuit: Ohm law, series halves the current, parallel doubles the total', () => {
@@ -91,4 +93,21 @@ test('earthquake: arrival times, lag proportional to distance, mirror point is e
   const d = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
   for (const i of [0, 1]) near(d(STATIONS[i][1], b.mirror), d(STATIONS[i][1], EPIC), 'mirror on circle ' + i);
   assert.ok(Math.abs(d(STATIONS[2][1], b.mirror) - d(STATIONS[2][1], EPIC)) > 50, 'third station separates the two candidates');
+});
+test('wave: particle stays put, reflection sign, superposition, standing-wave wavelength', () => {
+  const b = { phase: 0, end: 'fixed', a2: 2, meet: 'before', mode: 1 };
+  assert.deepEqual([0, 1, 2, 3].map(phase => wave({ ...b, phase }).particle), [-2, 0, 2, 0]);
+  assert.equal(wave({ ...b, end: 'fixed' }).reflected, -1); assert.equal(wave({ ...b, end: 'free' }).reflected, 1);
+  assert.equal(wave({ ...b, meet: 'overlap' }).sum, 4); assert.equal(wave({ ...b, a2: -2, meet: 'overlap' }).sum, 0); assert.equal(wave({ ...b, a2: -2, meet: 'after' }).sum, null);
+  assert.deepEqual([1, 2, 3].map(mode => wave({ ...b, mode }).lambda), [240, 120, 80]); assert.deepEqual([1, 2, 3].map(mode => wave({ ...b, mode }).nodes), [2, 3, 4]);
+  for (const mode of [1, 2, 3]) near(wave({ ...b, mode }).freq, 5 * mode);
+});
+test('motor: reversing current or field reverses the turn; the commutator keeps the torque direction after half a turn', () => {
+  const b = { battery: 'fwd', magnet: 'NS', commutator: true, pos: 'start', cells: 1 };
+  assert.equal(motor(b).torque, 1); assert.equal(motor({ ...b, battery: 'rev' }).torque, -1); assert.equal(motor({ ...b, magnet: 'SN' }).torque, -1); assert.equal(motor({ ...b, battery: 'rev', magnet: 'SN' }).torque, 1);
+  for (const battery of ['fwd', 'rev']) for (const magnet of ['NS', 'SN']) {
+    const s = motor({ ...b, battery, magnet }), on = motor({ ...b, battery, magnet, pos: 'half' }), off = motor({ ...b, battery, magnet, pos: 'half', commutator: false });
+    assert.equal(s.rightForce, -s.leftForce); assert.ok(on.keeps); assert.equal(on.torque, s.torque); assert.equal(off.keeps, false); assert.equal(off.torque, -s.torque);
+    assert.equal(on.currentA, -s.currentA, 'commutator reverses the current in wire A'); assert.equal(off.currentA, s.currentA); assert.equal(on.wireA, 'right');
+  }
 });
