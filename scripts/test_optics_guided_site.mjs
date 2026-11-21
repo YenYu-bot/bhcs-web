@@ -46,7 +46,7 @@ test('workflow: the guided checks run in the guided job after its Chromium insta
  for(const c of ['check_optics_guided_input_browser.cjs','check_optics_guided_view_browser.cjs','check_optics_guided_flow_browser.cjs'])assert.ok(idx(c)>idx(CHROMIUM_INSTALL)&&idx(CHROMIUM_INSTALL)>=0,c+' comes after the Chromium install in the same job');
  assert.ok(jobs.core.text.includes('git diff --exit-code'),'core runs the builders and the idempotence check');
  assert.ok(['core','science-guided'].every(n=>jobs.gate.needs.includes(n)),'CI Gate needs both core and science-guided');
- for(const f of ['check_researcher_composition.cjs','check_researcher_operations.cjs','test_researcher_batch5.cjs'])assert.ok(!read('scripts/'+f).includes('optics-guided'),f+' does not know the prototype');
+ for(const f of ['check_researcher_composition.cjs'])assert.ok(!read('scripts/'+f).includes('optics-guided'),f+' does not know the prototype');
  assert.ok(job.text.includes('optics-flow-review')&&job.text.includes('optics-view-review'),'review images are uploaded');
 });
 

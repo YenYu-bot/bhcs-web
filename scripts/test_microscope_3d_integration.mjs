@@ -5,7 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import http from 'node:http';
 import {fileURLToPath} from 'node:url';
-import {legacy,firstBatch,standalonePublic} from './science/catalog.mjs';
+import {legacy,standalonePublic} from './science/catalog.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const runtime=path.join(root,'tools/microscope-3d');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
@@ -50,12 +50,11 @@ for(const f of manifest.files){
 }
 assert.equal(standalonePublic.filter(t=>t.file==='microscope-3d/').length,1);
 assert.ok(!legacy.some(t=>t.file==='microscope-3d/'));
-assert.ok(!firstBatch.includes('microscope-3d/'));
 const index=read('tools/microscope-3d/index.html');
 assert.doesNotMatch(index,/researcher-lab|science-events|assets\/site\.js|data-science-lab/);
 for(const [file,href] of [['ziyuan.html','tools/microscope-3d/'],['tools/science/index.html','../microscope-3d/']]){
  const s=read(file); assert.equal(s.split(`href="${href}"`).length,2,`${file}: exactly one discovery link`);
- assert.ok(s.includes('3D顯微鏡操作與比較')); assert.ok(s.includes('microscope-lab.html'),'legacy discovery remains');
+ assert.ok(s.includes('3D顯微鏡操作與比較')); assert.ok(s.includes('lab/microscope/'),'microscope lab desk discovery remains');
 }
 assert.equal((read('sitemap.xml').match(/<loc>https:\/\/www\.bhcs\.com\.tw\/tools\/microscope-3d\/<\/loc>/g)||[]).length,1);
 assert.ok(fs.existsSync(path.join(runtime,'vendor/THREE-LICENSE.txt')));

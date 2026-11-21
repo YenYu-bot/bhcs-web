@@ -6,7 +6,6 @@
 
 - 主站頁面：根目錄 HTML；共用樣式 `assets/style.css`，選單與預約流程 `assets/site.js`。
 - 研究站：`scripts/science/` 為教材與互動來源，`assets/researcher-lab.*` 為共用研究員介面。修改來源後執行 `build_science.mjs`，不要只改產出頁。
-- 顯微鏡：繪圖來源由 `build_microscope.mjs` 內嵌到 HTML。
 - 頁首、頁尾、聯絡列與營業時間：單一來源在 `scripts/site/`（`header.html`、`footer.html`、`dock.html`、`site.json`）。`build_shell.py` 以 `<!-- site-header:start -->` 等標記注入主站各頁與文章頁，並同步各頁 JSON-LD 的 `openingHoursSpecification`；改導覽或營業時間只改來源，不要直接改頁面。
 - 教育觀點：文章正文及閱讀版面保留在 `wenzhang/*.html`。`build_site.mjs` 套用文章頁的樣式與腳本；品牌覆蓋樣式在 `assets/article-site.css`。新增或由外部流程產生文章後，也要執行這個步驟。
 - `build_site.mjs` 同時更新主站資源版本；共用 CSS／JS 改動時更新該腳本的 `version`。
@@ -20,7 +19,6 @@
 
 ```sh
 npm ci --prefix scripts
-node scripts/build_microscope.mjs
 node scripts/build_science.mjs
 node scripts/build_site.mjs
 python3 scripts/build_shell.py

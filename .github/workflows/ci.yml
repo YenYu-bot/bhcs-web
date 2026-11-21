@@ -52,7 +52,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm install --prefix scripts
-      - run: node scripts/build_microscope.mjs
       - run: node scripts/build_science.mjs
       - run: node scripts/build_site.mjs
       - run: python3 scripts/build_shell.py
@@ -72,10 +71,6 @@ jobs:
           node scripts/classify_math_drills.mjs
           git diff --exit-code -- docs/p2-math-validation
       - run: node scripts/check_science_integration.cjs
-      - run: node scripts/test_researcher_batch1.cjs
-      - run: node scripts/test_researcher_batch2.cjs
-      - run: node scripts/test_researcher_batch4.cjs
-      - run: node scripts/test_researcher_batch5.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -221,18 +216,10 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_reflection_refraction_desk_browser.cjs
-      - name: Check real microscope pointer input and navigation
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_researcher_browser.cjs
       - name: Check standalone 3D microscope mouse and touch boundaries
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_microscope_3d_browser.cjs
-      - name: Check standalone 2.5D lens five cases and learning flow
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_lens_25d_browser.cjs
       - name: Check friction efficiency desk mouse drag, touch, and energy ledger
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -248,28 +235,11 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs
-      - name: Check all station operations, records, and challenges
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_researcher_operations.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: researcher-operation-review
-          path: operation-artifacts/
-          retention-days: 14
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: microscope-3d-review
           path: microscope-3d-artifacts/
-          retention-days: 14
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lens-25d-review
-          path: lens-25d-artifacts/
           retention-days: 14
 
       - uses: actions/upload-artifact@v4

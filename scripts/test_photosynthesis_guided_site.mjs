@@ -12,7 +12,6 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 const git = (...args) => cp.execFileSync('git', args, { cwd: root, encoding: 'utf8' });
 const PAGE = 'tools/science/photosynthesis-factor-guided.html';
-const LEGACY = 'tools/photosynthesis-factor-lab.html';
 const DIR = 'assets/photosynthesis-guided';
 const html = read(PAGE);
 const code = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').replace(/\s\/\/.*$/gm, '');
@@ -32,7 +31,6 @@ test('visibility: noindex, self canonical, unlisted and absent from public index
 test('nothing public links to the prototype and the legacy lab stays separate', () => {
   const pages = git('grep', '--untracked', '-l', 'photosynthesis-factor-guided', '--', '*.html').trim().split('\n').filter(Boolean);
   assert.deepEqual(pages, [PAGE], 'no other HTML page contains the guided page name');
-  assert.ok(!read(LEGACY).includes('photosynthesis-factor-guided'), 'legacy does not link to guided');
   assert.ok(!html.includes('photosynthesis-factor-lab'), 'guided does not link to legacy');
 });
 

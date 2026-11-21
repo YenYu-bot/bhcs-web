@@ -17,7 +17,7 @@ const obs = (indicatorId, ph10) => M.indicatorObservation({ indicatorId, ph10 })
 // ---- legacy extraction --------------------------------------------------------------------------------------------
 
 function loadLegacy() {
-  const html = fs.readFileSync(`${root}tools/acid-base-indicator-lab.html`, 'utf8');
+  const html = fs.readFileSync(`${root}scripts/fixtures/legacy/acid-base-indicator-lab.html.txt`, 'utf8');
   // Only executable inline scripts (no src, no JSON type). Each one is parsed; nothing from the page is evaluated whole.
   const scripts = [...html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)]
     .filter(([, attrs = '']) => !/\bsrc=/.test(attrs) && !/type="application\/(ld\+)?json"/.test(attrs))

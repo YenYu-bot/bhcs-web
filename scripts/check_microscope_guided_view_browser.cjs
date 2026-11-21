@@ -165,7 +165,7 @@ const hit=(p,id,x,y)=>p.evaluate(({id,x,y})=>{
    await scan('complete',{heading:'mg-complete'});
    const claims=await page.locator('.sg-claim').count();assert.equal(claims,3,`${width}: three claims`);
    assert.ok((await page.locator('.sg-complete-conclusion').allTextContents()).join('').includes('玻片往右移時'),`${width}: the learner's own conclusion is shown`);
-   assert.equal(await page.locator('.sg-link').getAttribute('href'),'../microscope-lab.html');
+   assert.equal(await page.locator('.sg-link').getAttribute('href'),'../lab/microscope/');
    ok(`${tag}: notebook A and C, three challenges and the finish pass axe, one live region, no overflow`);
    await ctx.close();
   }

@@ -2773,6 +2773,286 @@
       "approved_blob": "288adf0e6465f987ce438b9512761374dc1995e5",
       "reason": "Catalog: four new lab desks (microscope, photosynthesis, genetics, earthquake) added to the science directory.",
       "pull_request": null
+    },
+    {
+      "path": "assets/researcher-lab.js",
+      "baseline_blob": "fb9ac8e1d6da11d61568e284b9e0e4834ef012e9",
+      "approved_blob": "2a98efc0d5f7b27925cba5c8aa2c6cacf9863f30",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/researcher-marble-directory.js",
+      "baseline_blob": "d4acdeddd6383b5c3187234c56dbb20b9a64ec25",
+      "approved_blob": "10f13d51440ae43b61b2f2eeb1c12bbdfc64f320",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/acid-base-indicator-lab.html",
+      "baseline_blob": "002e5b7ff8a6ed2b3c2bbf073bd97911f519d670",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/buoyancy-density-lab.html",
+      "baseline_blob": "347fa0eb2c94d12b92b663347782588c03813462",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/circuit-lab.html",
+      "baseline_blob": "d297b06bd3b43bf52615a6925fd61f72722e1ee6",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/convex-lens-imaging.html",
+      "baseline_blob": "654b9bea6e493b26488127eb0b6a968641a6ac67",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/force-motion-lab.html",
+      "baseline_blob": "283a7891fd9ab700124ce6f66264782b7b214e6a",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/genetics-simulation-lab.html",
+      "baseline_blob": "097eb34e7d5653aad3143de1aa8042f8ce691717",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/heat-phase-lab.html",
+      "baseline_blob": "c3f0940e3c4b2c657999bf6de6b4ae61a6be7d19",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/five-case.js",
+      "baseline_blob": "677825ecf110790d3bfe1dfa742a2a77eb8b8f3b",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/learning-summary.js",
+      "baseline_blob": "361712840e2915c68f7fdba885d22beaa276aead",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/learning-ui.js",
+      "baseline_blob": "65e341ed519eab062fd94512b8a630f8574fdbab",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/challenges.js",
+      "baseline_blob": "7316acd16f6e9bb48ed0819a85d3be0d8e881e21",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/engine.js",
+      "baseline_blob": "8b02907e0c8851e1f7d75ea43af27fc0c01f68f9",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/input.js",
+      "baseline_blob": "27ecb2e008baf3c13628455bf6fe6c758846b9ee",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/model.js",
+      "baseline_blob": "6cb3977dcdcf060bc48a9f0af397e779af8dfd62",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/persist.js",
+      "baseline_blob": "cc2cc4a4902c11d8a52b83d8c94b0aedf90d9263",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/optics-guided/visual.js",
+      "baseline_blob": "49409daf772fb8e8685f073d36c88cbe314532f8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/pilot.css",
+      "baseline_blob": "9580c3e7bba76ac5a33c21f21824ed695f7119a1",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/pilot.js",
+      "baseline_blob": "b2685607528ac64a90e26540afaa12ebc26af4c3",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/assets/screen-settlement.js",
+      "baseline_blob": "c646242f984fddb8184d579e80b29302e6cb82b4",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lens-25d/index.html",
+      "baseline_blob": "f4c9a3016df4a1131a5881149511cd0e267488bd",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lenses.html",
+      "baseline_blob": "7d9c98d831621189f71bc89ea96441cc076f1d61",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-lab.html",
+      "baseline_blob": "09f4a3b006867dda174df244779011bbd361e267",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/README.md",
+      "baseline_blob": "8397ce6e4949ffe19ef509733785c1d56472e124",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/img/earth.png",
+      "baseline_blob": "4705565ada321a56d0439af308a2d39a12de57a3",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/img/horizon.png",
+      "baseline_blob": "7db5fe1f13ad8119853e7dbdaca3eff3541f03f1",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/img/moon.png",
+      "baseline_blob": "933b9d7b0d5d85fae03ac1ed5b8fbbaa094006b0",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/img/sky-day.jpg",
+      "baseline_blob": "8553a5c1edd1e0dc4f79cc50c949a06df4eec6f7",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/img/sky-night.jpg",
+      "baseline_blob": "3cd94945c6eb9675eeb4255d789077f7406c4f31",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/img/sun.png",
+      "baseline_blob": "540babd051d5fad0e82275c47ac46b01e98e2ffb",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/moon-phases/index.html",
+      "baseline_blob": "28c2dd3f007e5cd5a176adce7b7346d8e3d222de",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/particle-reaction-lab.html",
+      "baseline_blob": "e85efaae8c9e7daa26d5c67e8a3cf175e0750509",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/photosynthesis-factor-lab.html",
+      "baseline_blob": "b06d658f90262e25e148a0d6016b5f423ee27294",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/plate-earthquake-lab.html",
+      "baseline_blob": "c2155b93bc70cad8918aaa8ecbeae58b2706dd3e",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "288adf0e6465f987ce438b9512761374dc1995e5",
+      "approved_blob": "2e0069b0cdd6e1ed9489da0d04fc61d3b9c7e559",
+      "reason": "Removed or relinked: the researcher stations and duplicate pages are replaced by their lab desks under tools/lab/; old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/script.js",
+      "baseline_blob": "026c398447dc38eb22d26e239d951e89e3ef2e67",
+      "approved_blob": "e95822fce507decfed62febcb6b885fe9d4c8429",
+      "reason": "Relinked: the finish link of the guided prototype points to the lab desk that replaced the removed researcher station.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/script.js",
+      "baseline_blob": "89ceea4b534fe13a43592bb81e03da387111a409",
+      "approved_blob": "3be16ec9fbd6e63f6ce1f06f166e8f97c08c8e88",
+      "reason": "Relinked: the finish link of the guided prototype points to the lab desk that replaced the removed researcher station.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/microscope-guided.html",
+      "baseline_blob": "59e53acd79eecec314ac22850c373fb303bfc750",
+      "approved_blob": "ef57c5c3baaeafb3aa755b3dd371e31863fbe471",
+      "reason": "Relinked: the finish link of the guided prototype points to the lab desk that replaced the removed researcher station.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "4ef7d2a708f3bc550cddecab776a2f28d807c104",
+      "approved_blob": "f739cc2a5bc42654b2452e74f472d608416c9b6f",
+      "reason": "Lab desk notes: round-two desks added and the pages they replace removed.",
+      "pull_request": null
     }
   ]
 }

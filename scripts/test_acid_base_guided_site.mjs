@@ -38,7 +38,6 @@ test('nothing public links to it: only its own files, tests and the test list na
 });
 
 test('the legacy lab and the prototype do not link to each other', () => {
-  assert.ok(!read('tools/acid-base-indicator-lab.html').includes('acid-base-guided'), 'the legacy lab does not link to the guided page');
   assert.ok(!html.includes('acid-base-indicator-lab'), 'the prototype does not link to the legacy lab yet');
 });
 

@@ -24,7 +24,7 @@ function extractFunction(src, name) {
 }
 
 function legacyModel() {
-  const html = fs.readFileSync(`${root}tools/photosynthesis-factor-lab.html`, 'utf8');
+  const html = fs.readFileSync(`${root}scripts/fixtures/legacy/photosynthesis-factor-lab.html.txt`, 'utf8');
   const names = ['clamp', 'lightFactor', 'co2Factor', 'temperatureFactor', 'result'];
   const source = names.map((n) => extractFunction(html, n)).join('\n');
   return Function(`"use strict"; const RMAX=20; ${source}; return { lightFactor, co2Factor, temperatureFactor, result };`)();
