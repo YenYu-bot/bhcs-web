@@ -2507,6 +2507,258 @@
       "approved_blob": "9a074061523a7f3443a7e7c07a82f269b5b59680",
       "reason": "Reviewed English grammar corrections, worksheet replay compatibility, and post-score correction navigation; leaves science materials unchanged.",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/atom/index.html",
+      "baseline_blob": "ad885d11643f6b66b0313cc3f8144995beadd661",
+      "approved_blob": "45711ae7499813a0e905732c4c1399a047fd2f6c",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/buoyancy/index.html",
+      "baseline_blob": "f8eb1e4018c1b1e1b23b6c61c602e636b3ec68eb",
+      "approved_blob": "0195ea872d846516525aa04fbf4352f84c5ff944",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/cell-division/index.html",
+      "baseline_blob": "a45501a1672d1aafbd5a9aa8f233419610125544",
+      "approved_blob": "ab5dc36f1f3a3df14978e37ce5ff1fdd72ab0b9c",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/circulation/index.html",
+      "baseline_blob": "1b7030f3e159f0ad595ecd6f9153acc23d8d8ea1",
+      "approved_blob": "031f6280e47ada598fa0029855bdba9ffbe057b5",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/ecosystem/index.html",
+      "baseline_blob": "896c81521d2cb57b0cc18ef3e42d5f62184a05ed",
+      "approved_blob": "48fa3903b05827db491e3eaf75a388d34486f9e1",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/index.html",
+      "baseline_blob": "2f5414b6b06853f0f2c0ba57154811081f350e9c",
+      "approved_blob": "ae7ba495939dac6d1c83c699b65bc184a5987bc0",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electrolysis/index.html",
+      "baseline_blob": "88bc58555046044c262a24ec4e4950e9bebc6036",
+      "approved_blob": "8f6e0ac7f7fe26e9b18e4fd46c6b7782878df6e6",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electromagnetism/index.html",
+      "baseline_blob": "cc769e822f15aebe6c0b3a370e0ec141024725dc",
+      "approved_blob": "e0cd6616e164a14856ae52fbf7a2ae704a10ac0f",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electrostatics/index.html",
+      "baseline_blob": "9f48e39320122823c9f1d3c86dc851f6d1bf3d8c",
+      "approved_blob": "f2db6871beef32c2e92ab27332905c4306a25c34",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/energy/index.html",
+      "baseline_blob": "316227a403b1818b89283822c80e73a55f1f4581",
+      "approved_blob": "e73695da34acea66b7efdfc0836fb94bbabf41b3",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/enzyme/index.html",
+      "baseline_blob": "0412034f585c71881d05b3afa6216d9eb2583508",
+      "approved_blob": "2fd54ecff5bad3a34cba8f439294527b359c3029",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/equilibrium/index.html",
+      "baseline_blob": "f9a5de360c53467d52379b248c15faf242507abd",
+      "approved_blob": "36aaefb2076991eb1e75d67275dcf58d8789cae9",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/friction-efficiency/index.html",
+      "baseline_blob": "574d2e0fa4641a911b36a3f28bb28b784b4db2bc",
+      "approved_blob": "1f7eded00fbbd7512cb237b1257e7fc52a794878",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/heat/index.html",
+      "baseline_blob": "dbc9c3bfa6c9db01f66120ab0b5844a65d643deb",
+      "approved_blob": "6bd328d057d85d4424aceec0728e1c7f81ff677f",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/homeostasis/index.html",
+      "baseline_blob": "8bdbc57dc3393994242cd6dc1ea4410c8991088e",
+      "approved_blob": "7588b2f2e57bc80a3fbc2922464ff519cc6585c5",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/incline/index.html",
+      "baseline_blob": "f76cb9a65807e363cf6fbebbc262bc9ff6a7f658",
+      "approved_blob": "2b9af0382e78252d56930e5b02e7964405df1794",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lens/index.html",
+      "baseline_blob": "aaca11e463563907ab54ffe836bc2854055a53f9",
+      "approved_blob": "81b85510184789b8a592e8d47f8df8b055f211e9",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/lever/index.html",
+      "baseline_blob": "477a2bb65af37551e8a502c5bf7efe717227ab8a",
+      "approved_blob": "b84280cf29114685cd2b57511c7351d32bd31747",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/metal/index.html",
+      "baseline_blob": "13e9445ff2290078a07e8ac31904067b6249ca4c",
+      "approved_blob": "7f3466694ae3eec8552abfcfc51d9c58825b0491",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/mirror/index.html",
+      "baseline_blob": "61eae4aa9ab2986306c7d1d1fd9215e24581d0cc",
+      "approved_blob": "7034fa9746bf3b5f8c169d27729132819fa1c1b3",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/moon/index.html",
+      "baseline_blob": "1a6ff9a67c84f112238a9fad07ea673f8daefe58",
+      "approved_blob": "4d3f3bf4ef77f1bf6c64b697a6d561eb6fa0780e",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/motion/index.html",
+      "baseline_blob": "0c2fe6cb5bca0c262de10b98cca9d2b2f12f505a",
+      "approved_blob": "817082d7c644ee93e4271525765937a292b9e550",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/nerve-reflex/index.html",
+      "baseline_blob": "31d841ecfcb3e195c546378cc55610371ff82f6b",
+      "approved_blob": "c83e7fcb8638ecc0ee64410a81bd4aa8b59a0f9a",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/neutralization/index.html",
+      "baseline_blob": "8e87c052d7e5588692291f38cf85b0a0b271cba4",
+      "approved_blob": "2fb508bc96731f0198bae75c1243bb9f008305f3",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/plant-exchange/index.html",
+      "baseline_blob": "26c2f55395d04b64e7959c1f6f86ad538220237a",
+      "approved_blob": "cdad06a4c42ecd1902009d0eea7daad307b24e88",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pressure/index.html",
+      "baseline_blob": "2e4fcb4774af4b4784be35ce7a56e6aeb907285c",
+      "approved_blob": "3e1657b70c093d0b1205d79efbcc3ac2a372b5d9",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/pulley/index.html",
+      "baseline_blob": "2ec1ca8430c4172ac2f933665e01edd56d611e39",
+      "approved_blob": "e4ea5eecebb098baa78be3038166681aefdf3678",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/index.html",
+      "baseline_blob": "2c9f86fa6315ad9be96dae755cf01305aac560e2",
+      "approved_blob": "7a5bbea3d87c94be3b033d0da697a359771bdf2e",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reflection-refraction/index.html",
+      "baseline_blob": "cabd25e6aec34a5d5bc6da0ce6692ba1dcbede23",
+      "approved_blob": "136d2e590e954b2511d495bc316fd5adec19f33e",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/seasons/index.html",
+      "baseline_blob": "a8eab8fa68dee5612733ba58b84fdafa9a9b15a4",
+      "approved_blob": "d2fbe43c237cb61365c7827a9a05744b162b52c1",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/solubility/index.html",
+      "baseline_blob": "35e2cceb3b2818e91920d02a5db405c8ede74031",
+      "approved_blob": "5185aad4a3fb7ae7c3e29a98da52c1cdc2a6374a",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/spring-friction/index.html",
+      "baseline_blob": "75fba5cd7d2c09125e214c2b93758b214413ae5d",
+      "approved_blob": "3dce4fd66bf5bb0e0a198d707895ee87b54238d6",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/stoichiometry/index.html",
+      "baseline_blob": "46619f5287c39b9aed6697533fea504926b8cf6f",
+      "approved_blob": "2a8ce0a06cbeef67c3b68e4f33af493664e9046f",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/tides/index.html",
+      "baseline_blob": "f2cbb8df921e49aac24660f18a30ac9b0bfce3d2",
+      "approved_blob": "d04b840aeb325c7d5e87d0eaec27aa680dae5a70",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/wave-sound/index.html",
+      "baseline_blob": "4a3e7a1035573ca935099702f3009a9d3ba91596",
+      "approved_blob": "d8246f993251b125a17fe658f038cd8f4926618a",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/weather/index.html",
+      "baseline_blob": "3d7dce7a85c81a7946ec0c762deffe0429d38f2e",
+      "approved_blob": "24aebf4d1c46a18a6ede4fb06978daa4067d5f48",
+      "reason": "Share preview: og tags and LearningResource JSON-LD added to the lab desk head.",
+      "pull_request": null
     }
   ]
 }
