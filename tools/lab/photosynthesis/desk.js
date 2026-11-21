@@ -1,0 +1,75 @@
+// 光合作用實驗桌：氣泡數來自 ./model.mjs（示意數值）。
+import { photo } from './model.mjs';
+import { runDesk } from '../shared/desk.mjs';
+
+const LIGHT = { 1: '弱', 2: '中', 3: '強' }, CO2N = { low: '低', high: '高' }, LIMIT = { light: '光照不夠', co2: '二氧化碳不夠', both: '兩者剛好' };
+function scene({ rig, el, txt, P, s, r }) {
+  // 檯燈：光越強越靠近
+  const lx = 300 - s.light * 50;
+  el('path', { d: `M${lx} 190 L${lx + 60} 230 L${lx + 30} 280 L${lx - 20} 250z`, fill: '#F4C04E', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  el('path', { d: `M${lx - 4} 244 L${lx - 40} 470 H${lx + 10}`, fill: 'none', stroke: '#23304A', 'stroke-width': 7, 'stroke-linecap': 'round' }, rig);
+  el('path', { d: `M${lx + 46} 258 L470 240 L470 430 Z`, fill: '#FFE58A', opacity: .18 + s.light * .14 }, rig);
+  txt(rig, lx, 174, `光照：${LIGHT[s.light]}`, { 'font-size': 15 });
+  // 燒杯、水蘊草、倒置試管收集氣體
+  el('rect', { x: 500, y: 250, width: 210, height: 200, rx: 10, fill: '#BFE3F5', opacity: .8 }, rig);
+  el('image', { href: P + 'prop-beaker.webp', x: 470, y: 180, width: 270, height: 318, preserveAspectRatio: 'none' }, rig);
+  for (let i = 0; i < 4; i++) { const x = 560 + i * 30; el('path', { d: `M${x} 448 q${i % 2 ? 12 : -12} -50 0 -100 q${i % 2 ? -10 : 10} -40 0 -70`, fill: 'none', stroke: '#3E9B4F', 'stroke-width': 8, 'stroke-linecap': 'round' }, rig);
+    for (let k = 0; k < 5; k++) el('ellipse', { cx: x + (k % 2 ? 12 : -12), cy: 430 - k * 34, rx: 11, ry: 5, fill: '#56B866', transform: `rotate(${k % 2 ? -30 : 30} ${x + (k % 2 ? 12 : -12)} ${430 - k * 34})` }, rig); }
+  const n = Math.round(r.rate / 5);
+  for (let i = 0; i < n; i++) el('circle', { cx: 572 + (i * 37) % 80, cy: 260 - (i * 53) % 70 + 60 * (i % 2), r: 6, fill: '#fff', stroke: '#6FA8D0', 'stroke-width': 2 }, rig);
+  txt(rig, 605, 520, `${s.temp}°C 的小蘇打水（二氧化碳：${CO2N[s.co2]}）`, { 'font-size': 15 });
+  // 速率條
+  el('rect', { x: 800, y: 180, width: 60, height: 300, rx: 10, fill: '#fff', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  const h = 290 * r.rate / 40; el('rect', { x: 805, y: 475 - h, width: 50, height: h, rx: 6, fill: '#2E8B66' }, rig);
+  txt(rig, 830, 164, '每分鐘氣泡數', { 'font-size': 14, fill: '#5A6478' }); txt(rig, 830, 510, `${r.rate} 個`, { 'font-size': 20, fill: '#2E8B66' });
+}
+
+const tgt = (sig, label, set, aim) => ({ sig, label, set, aim, title: s => `光照${LIGHT[s.light]}、二氧化碳${CO2N[s.co2]}、${s.temp}°C`, body: (s, r) => `每分鐘 ${r.rate} 個氣泡` });
+const lightCtl = { key: 'light', label: '光照', type: 'seg', options: [[1, '弱'], [2, '中'], [3, '強']] };
+
+runDesk({
+  key: 'bhcs.lab.photosynthesis.v1', title: '光合作用實驗桌', background: 'bg-chem-bench',
+  sceneLabel: '光合作用實驗桌：檯燈照著燒杯裡的水蘊草，水蘊草冒出氧氣泡，右邊的長條顯示每分鐘的氣泡數',
+  initial: { light: 1, co2: 'high', temp: 25 },
+  model: photo, scene, viewBox: { desk: '110 130 800 420', phone: '110 130 800 420' }, phoneText: 1.4,
+  readouts: (s, r) => [['每分鐘氣泡數', String(r.rate), '個', '氣泡是氧氣'], ['限制的因素', r.tempFactor < 1 ? '溫度不適合' : LIMIT[r.limit], '', ''], ['溫度', String(s.temp), '°C', s.temp === 25 ? '適合' : s.temp < 25 ? '太低' : '太高']],
+  why: { title: '光合作用', button: '光合作用是什麼', html: `
+    <p class="fn-tip"><b>二氧化碳 ＋ 水 —（光、葉綠體）→ 葡萄糖 ＋ 氧氣。</b>水蘊草冒出的氣泡就是氧氣，氣泡越多表示光合作用越快。</p>
+    <p class="fn-tip"><b>限制因素：</b>光、二氧化碳、溫度都會影響速率。最不足的那一項決定快慢；其他條件再好也沒用。</p>
+    <p class="fn-tip"><b>溫度：</b>光合作用需要酵素，太冷或太熱酵素的作用都會變差。</p>
+    <p class="fn-tip">氣泡數是示意的模型數值，用來比較大小；真的實驗要重複幾次取平均。</p>` },
+  steps: [
+    { id: 'light', label: '光照', title: '光越強，氣泡越多嗎？', goal: '二氧化碳充足、25°C。比較光照弱和強，各收一張。',
+      intro: '把檯燈調亮，看氣泡數。', enter: { light: 1, co2: 'high', temp: 25 }, controls: [lightCtl],
+      react: (s, r) => `每分鐘 ${r.rate} 個氣泡。`,
+      targets: [tgt('l1', '光照弱', { light: 1, co2: 'high', temp: 25 }, '看光照弱。'), tgt('l3', '光照強', { light: 3, co2: 'high', temp: 25 }, '把光照調到強。')],
+      found: ['二氧化碳充足時，光越強，光合作用越快。', '弱 10 個 → 強 30 個'] },
+    { id: 'co2', label: '二氧化碳', title: '二氧化碳不夠時，光再強有用嗎？', goal: '收下三種：二氧化碳低配光照中、二氧化碳低配光照強、二氧化碳高配光照強。',
+      intro: '現在二氧化碳很少。把光調強，氣泡會變多嗎？', enter: { light: 2, co2: 'low', temp: 25 }, controls: [lightCtl, { key: 'co2', label: '二氧化碳', type: 'seg', options: [['low', '低'], ['high', '高']] }],
+      react: (s, r) => `每分鐘 ${r.rate} 個；${LIMIT[r.limit]}。`,
+      targets: [tgt('a', '二氧化碳低、光照中', { light: 2, co2: 'low', temp: 25 }, '二氧化碳低、光照中。'), tgt('b', '二氧化碳低、光照強', { light: 3, co2: 'low', temp: 25 }, '二氧化碳低、光照強。'), tgt('c', '二氧化碳高、光照強', { light: 3, co2: 'high', temp: 25 }, '二氧化碳高、光照強。')],
+      found: ['二氧化碳不夠時，光再強氣泡也不會變多；補足二氧化碳後才增加。', '最不足的因素決定速率'] },
+    { id: 'temp', label: '溫度', title: '水溫太低或太高會怎樣？', goal: '光照強、二氧化碳高。收下 10°C、25°C、40°C 三種水溫的結果。',
+      intro: '光和二氧化碳都夠了。換水溫看看。', enter: { light: 3, co2: 'high', temp: 25 }, controls: [{ key: 'temp', label: '水溫', type: 'seg', options: [[10, '10°C'], [25, '25°C'], [40, '40°C']] }],
+      react: (s, r) => `${s.temp}°C：每分鐘 ${r.rate} 個。`,
+      targets: [10, 25, 40].map(t => tgt('t' + t, `${t}°C`, { light: 3, co2: 'high', temp: t }, `試 ${t}°C。`)),
+      found: ['溫度太低或太高，光合作用都變慢；適合的溫度最快。', '10°C 15 個、25°C 30 個、40°C 15 個'] },
+    { id: 'quiz', label: '說說看', kind: 'quiz', title: '說說看：用證據回答', goal: '三題都答對就完成。答錯沒關係，余老師會說明原因。', intro: '最後三題！想想哪個條件「卡住」了速率。',
+      found: ['你把光合作用的條件弄懂了！', '光、二氧化碳、溫度，最不足的決定快慢'] }
+  ],
+  quiz: [
+    { q: '水蘊草在光照下冒出的氣泡主要是？', options: [
+      { text: '二氧化碳。', why: '二氧化碳是光合作用的原料，會被吸收。冒出來的是產物。' },
+      { text: '氧氣。', ok: true },
+      { text: '水蒸氣。', why: '水沒有沸騰。氣泡是光合作用產生的氧氣。' }] },
+    { q: '溫室裡光線已經很充足，農夫想讓作物長得更快，哪個做法比較可能有效？', options: [
+      { text: '再加更多燈。', why: '光已經夠了。你的證據：二氧化碳不足時，光從中調到強，氣泡數沒有增加。' },
+      { text: '補充二氧化碳。', ok: true },
+      { text: '把溫度降到 10°C。', why: '溫度太低，光合作用會變慢。' }] },
+    { q: '為什麼 40°C 時氣泡比 25°C 少？', options: [
+      { text: '水太熱，光照不進去。', why: '光照沒有變。是溫度影響了酵素。' },
+      { text: '溫度太高，酵素的作用變差。', ok: true },
+      { text: '二氧化碳被用完了。', why: '二氧化碳的量沒有改變。' }] }
+  ],
+  finish: { title: '你把光合作用的條件弄懂了！', rule: '光合作用用光把二氧化碳和水變成葡萄糖和氧氣。光照、二氧化碳、溫度都會影響速率，最不足的那一項決定快慢。', next: { label: '去植物氣體交換實驗桌', href: '../plant-exchange/' } }
+});

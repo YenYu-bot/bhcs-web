@@ -29,6 +29,10 @@ const DESKS={
  newton:{calc:{calc:[3,6,12]},quiz:[1,0,2]},
  color:{quiz:[1,0,2]},
  eye:{quiz:[0,1,1]},
+ microscope:{calc:{calc:[400,0.4,4]},quiz:[2,0,1]},
+ photosynthesis:{quiz:[1,1,1]},
+ genetics:{calc:{calc:[100,50,50]},quiz:[1,1,1]},
+ earthquake:{calc:{calc:[15,30,180]},quiz:[1,1,0]},
 };
 // 照目前步驟的每個目標設定，用畫面上的按鈕（分段按鈕或＋／−）把器材調過去，提示「收下」時才收下。
 async function press(t,loc){if(t.mobile)await loc.tap();else await loc.click();await t.wait(50);}

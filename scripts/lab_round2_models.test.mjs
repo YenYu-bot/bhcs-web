@@ -7,6 +7,10 @@ import { indicate } from '../tools/lab/indicator/model.mjs';
 import { motion } from '../tools/lab/newton/model.mjs';
 import { color } from '../tools/lab/color/model.mjs';
 import { eye } from '../tools/lab/eye/model.mjs';
+import { scope } from '../tools/lab/microscope/model.mjs';
+import { photo } from '../tools/lab/photosynthesis/model.mjs';
+import { cross } from '../tools/lab/genetics/model.mjs';
+import { quake, STATIONS, EPIC } from '../tools/lab/earthquake/model.mjs';
 const near = (a, b, m) => assert.ok(Math.abs(a - b) < 1e-9, `${m || ''} ${a} ≠ ${b}`);
 
 test('circuit: Ohm law, series halves the current, parallel doubles the total', () => {
@@ -61,4 +65,30 @@ test('eye: myopia focuses in front and needs a concave lens; hyperopia behind an
   assert.ok(eye({ type: 'normal', dist: 'far', lens: 'none' }).clear); assert.equal(eye({ type: 'normal', dist: 'near', lens: 'none' }).lensShape, '變厚');
   assert.equal(eye({ type: 'myopia', dist: 'far', lens: 'none' }).where, 'front'); assert.ok(eye({ type: 'myopia', dist: 'far', lens: 'concave' }).clear); assert.equal(eye({ type: 'myopia', dist: 'far', lens: 'convex' }).off, -4);
   assert.equal(eye({ type: 'hyperopia', dist: 'near', lens: 'none' }).where, 'behind'); assert.ok(eye({ type: 'hyperopia', dist: 'near', lens: 'convex' }).clear); assert.equal(eye({ type: 'hyperopia', dist: 'near', lens: 'concave' }).off, 4);
+});
+test('microscope: magnification, field shrinks in proportion, image moves opposite to the slide', () => {
+  assert.deepEqual([4, 10, 40].map(obj => scope({ obj, slide: 'center', target: 'center' }).total), [40, 100, 400]);
+  for (const obj of [4, 10, 40]) { const r = scope({ obj, slide: 'center', target: 'center' }); near(r.field * obj, 16); near(r.cells * obj, 160); }
+  assert.deepEqual(scope({ obj: 4, slide: 'right', target: 'center' }).pos, [-1, 0]);
+  assert.ok(scope({ obj: 10, slide: 'left', target: 'left' }).centered); assert.equal(scope({ obj: 10, slide: 'right', target: 'left' }).inView, false);
+});
+test('photosynthesis: the scarcest factor sets the rate; temperature off-optimum halves it', () => {
+  const r = (light, co2, temp) => photo({ light, co2, temp }).rate;
+  assert.deepEqual([r(1, 'high', 25), r(2, 'high', 25), r(3, 'high', 25)], [10, 20, 30]);
+  assert.deepEqual([r(2, 'low', 25), r(3, 'low', 25)], [20, 20]); assert.equal(photo({ light: 3, co2: 'low', temp: 25 }).limit, 'co2'); assert.equal(photo({ light: 1, co2: 'low', temp: 25 }).limit, 'light');
+  assert.deepEqual([r(3, 'high', 10), r(3, 'high', 40)], [15, 15]);
+});
+test('genetics: Punnett ratios, test cross, and a fixed sample that approaches 3:1', () => {
+  assert.equal(cross({ p1: 'TT', p2: 'tt', n: 20 }).ratio, '0：1：0'); assert.equal(cross({ p1: 'TT', p2: 'tt', n: 20 }).look, '全部高莖');
+  const f2 = cross({ p1: 'Tt', p2: 'Tt', n: 20 }); assert.equal(f2.ratio, '1：2：1'); assert.equal(f2.look, '3：1'); assert.equal(f2.pTall, 0.75);
+  const t = cross({ p1: 'Tt', p2: 'tt', n: 20 }); assert.equal(t.ratio, '0：1：1'); assert.equal(t.look, '1：1');
+  assert.deepEqual([20, 100, 400].map(n => cross({ p1: 'Tt', p2: 'Tt', n }).tall), [17, 73, 299]);
+  for (const p1 of ['TT', 'Tt', 'tt']) for (const p2 of ['TT', 'Tt', 'tt']) { const r = cross({ p1, p2, n: 100 }); assert.equal(r.tall + r.short, 100); if (r.pTall === 1) assert.equal(r.short, 0); if (r.pTall === 0) assert.equal(r.tall, 0); }
+});
+test('earthquake: arrival times, lag proportional to distance, mirror point is equidistant from two stations', () => {
+  const a = quake({ boundary: 'divergent', dist: 60, stations: 1 }), b = quake({ boundary: 'convergent', dist: 120, stations: 2 });
+  assert.deepEqual([a.tp, a.ts, a.lag], [10, 20, 10]); assert.deepEqual([b.tp, b.ts, b.lag], [20, 40, 20]); assert.equal(quake({ boundary: 'transform', dist: 90, stations: 3 }).lag, 15);
+  const d = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
+  for (const i of [0, 1]) near(d(STATIONS[i][1], b.mirror), d(STATIONS[i][1], EPIC), 'mirror on circle ' + i);
+  assert.ok(Math.abs(d(STATIONS[2][1], b.mirror) - d(STATIONS[2][1], EPIC)) > 50, 'third station separates the two candidates');
 });
