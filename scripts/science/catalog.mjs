@@ -122,7 +122,14 @@ export const primaryLabDesks=Object.freeze([
  {id:'neutralization',file:'lab/neutralization/',title:'酸鹼中和實驗桌',unit:'酸鹼中和',minutes:'15–20',description:'用虛擬滴定管比較中和點與酚酞變色，觀察濃度及酸鹼反應比例和滴定體積的關係。'},
  {id:'cell-division',file:'lab/cell-division/',title:'細胞分裂實驗桌',subject:'生物',unit:'細胞分裂與生殖',minutes:'15–20',description:'一步一步看有絲分裂和減數分裂：細胞數、染色體數和 DNA 量怎麼變，同源染色體什麼時候分開。'},
  {id:'enzyme',file:'lab/enzyme/',title:'酵素實驗桌',subject:'生物',unit:'酵素',minutes:'15–20',description:'把唾液澱粉酶放進不同溫度與 pH，用碘液看澱粉有沒有被分解；高溫變性後冷卻也回不來。'},
- {id:'tides',file:'lab/tides/',title:'潮汐實驗桌',subject:'地科',unit:'潮汐',minutes:'10–15',description:'看一天兩次的漲退潮，再比較新月、上弦與滿月時的大潮和小潮。'}
+ {id:'tides',file:'lab/tides/',title:'潮汐實驗桌',subject:'地科',unit:'潮汐',minutes:'10–15',description:'看一天兩次的漲退潮，再比較新月、上弦與滿月時的大潮和小潮。'},
+ {id:'circuit-desk',file:'lab/circuit/',title:'電路實驗桌',unit:'電與磁',minutes:'15–20',description:'接通開關，比較電池數、串聯與並聯時每顆燈泡的電流、電壓與亮度。'},
+ {id:'phase-desk',file:'lab/phase/',title:'熱與物態實驗桌',unit:'熱學',minutes:'15–20',description:'持續加熱一塊冰，看溫度曲線在熔化與沸騰時為什麼變平，再比較質量加倍的結果。'},
+ {id:'balance-desk',file:'lab/balance/',title:'化學反應式平衡實驗桌',unit:'物質與化學',minutes:'15–20',description:'調整係數，數一數兩邊每種原子的個數，把氫氣燃燒、合成氨與甲烷燃燒的反應式平衡。'},
+ {id:'indicator-desk',file:'lab/indicator/',title:'酸鹼指示劑實驗桌',unit:'物質與化學',minutes:'10–15',description:'把石蕊、酚酞和廣用指示劑滴進五種溶液，用顏色判斷酸鹼性與強弱。'},
+ {id:'newton-desk',file:'lab/newton/',title:'力與運動實驗桌',unit:'力學',minutes:'15–20',description:'改變拉力、質量與摩擦力，看小車每秒的位置，找出合力、質量與加速度的關係。'},
+ {id:'color-desk',file:'lab/color/',title:'色光與顏料實驗桌',unit:'光學',minutes:'10–15',description:'疊合紅綠藍三種色光和青、洋紅、黃三種顏料，再用不同色光照物體，比較相加與相減混色。'},
+ {id:'eye-desk',file:'lab/eye/',title:'眼睛與視力矯正實驗桌',unit:'光學',minutes:'10–15',description:'看光線在眼球裡成像的位置，比較正常眼、近視與遠視，再選對鏡片把像移回視網膜。'}
 ].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t})));
 
 export const mirrorLabDesk=Object.freeze({
