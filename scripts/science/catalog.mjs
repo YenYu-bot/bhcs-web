@@ -98,7 +98,9 @@ export const primaryLabDesks=Object.freeze([
  {id:'microscope-desk',file:'lab/microscope/',title:'顯微鏡實驗桌',subject:'生物',unit:'細胞與觀察',minutes:'15–20',description:'比較玻片和視野裡的像，轉換物鏡看倍率、視野與亮度怎麼變，再把偏掉的目標移回正中央。'},
  {id:'photosynthesis-desk',file:'lab/photosynthesis/',title:'光合作用實驗桌',subject:'生物',unit:'養分與光合作用',minutes:'10–15',description:'改變光照、二氧化碳和水溫，數水蘊草冒出的氧氣泡，找出是哪個條件限制了光合作用。'},
  {id:'genetics-desk',file:'lab/genetics/',title:'遺傳實驗桌',subject:'生物',unit:'遺傳',minutes:'15–20',description:'用棋盤方格排出豌豆高莖與矮莖的子代基因型，做試交，再比較理論機率和實際抽樣。'},
- {id:'earthquake-desk',file:'lab/earthquake/',title:'板塊與地震實驗桌',subject:'地科',unit:'板塊與地震',minutes:'15–20',description:'比較三種板塊邊界的震源深淺，用 P 波與 S 波的時間差推算距離，再用三個測站找出震央。'}
+ {id:'earthquake-desk',file:'lab/earthquake/',title:'板塊與地震實驗桌',subject:'地科',unit:'板塊與地震',minutes:'15–20',description:'比較三種板塊邊界的震源深淺，用 P 波與 S 波的時間差推算距離，再用三個測站找出震央。'},
+ {id:'wave-desk',file:'lab/wave/',title:'波的疊加與駐波實驗桌',unit:'波與聲',minutes:'15–20',description:'看繩波前進時質點怎麼動，比較固定端與自由端的反射，讓兩個脈波相遇疊加，再數駐波的節點、算波長。'},
+ {id:'motor-desk',file:'lab/motor/',title:'直流馬達實驗桌',unit:'電與磁',minutes:'10–15',description:'看通電線圈在磁場中兩邊導線的受力，改變電流與磁場方向，比較有沒有換向器，找出馬達持續轉動的原因。'}
 ].map(t=>Object.freeze({subject:'理化',grade:'國中',kind:'引導實驗桌',...t})));
 
 export const mirrorLabDesk=Object.freeze({

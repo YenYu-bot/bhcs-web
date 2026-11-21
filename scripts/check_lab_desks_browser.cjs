@@ -33,6 +33,8 @@ const DESKS={
  photosynthesis:{quiz:[1,1,1]},
  genetics:{calc:{calc:[100,50,50]},quiz:[1,1,1]},
  earthquake:{calc:{calc:[15,30,180]},quiz:[1,1,0]},
+ wave:{calc:{calc:[120,4,15]},quiz:[1,1,2]},
+ motor:{quiz:[0,1,1]},
 };
 // 照目前步驟的每個目標設定，用畫面上的按鈕（分段按鈕或＋／−）把器材調過去，提示「收下」時才收下。
 async function press(t,loc){if(t.mobile)await loc.tap();else await loc.click();await t.wait(50);}

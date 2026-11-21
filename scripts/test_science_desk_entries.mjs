@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {fileURLToPath} from 'node:url';import {JSDOM} from 'jsdom';import {completedDeskPublic} from './science/catalog.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8'),doc=p=>new JSDOM(read(p)).window.document;
 const directory=doc('tools/science/index.html'),resources=doc('ziyuan.html');
-assert.equal(directory.querySelectorAll('.resource').length,55);
+assert.equal(directory.querySelectorAll('.resource').length,57);
 const baseline=JSON.parse(read('scripts/public-desk-legacy-baseline.json'));
 assert.equal(baseline.source_commit,'10598e94b905bdc81c2087cd791ec28c909cce1c');
 for(const t of completedDeskPublic){
@@ -14,7 +14,7 @@ for(const t of completedDeskPublic){
  const oldDoc=doc(oldFile),fresh=doc(newFile);assert(oldDoc.querySelector(`a[href="../${t.file}"]`));assert(fresh.querySelector(`a[href="../science/${t.id}.html"]`));for(const d of [oldDoc,fresh]){assert(d.querySelector('a[href="../../ziyuan.html#res-science"]'));assert(d.querySelector('a[href="./"],a[href="../science/"]'));}assert(!fresh.querySelector('meta[name="robots"]')?.content.includes('noindex'));assert(read('sitemap.xml').includes(`https://www.bhcs.com.tw/tools/${t.file}</loc>`));
 }
 for(const id of ['optics','buoyancy','microscope','acid-base','photosynthesis-factor']){const file=`tools/science/${id}-guided.html`;if(!fs.existsSync(path.join(root,file)))throw Error('missing unpublished prototype '+file);assert.match(doc(file).querySelector('meta[name="robots"]').content,/noindex/);for(const page of ['tools/science/index.html','ziyuan.html','sitemap.xml'])assert(!read(page).includes(`${id}-guided.html`),'prototype stays unlisted');}
-console.log('PASS 55 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
+console.log('PASS 57 entries, adjacent topic pairs, reciprocal links, legacy byte identity, and five unpublished prototypes');
 
 const inlineSources=[...read('ziyuan.html').matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter(m=>!m[1].includes('src=')&&!m[1].includes('application/ld+json')).map(m=>m[2]);
 // Reverse only the approved vocabulary category metadata before checking the old hashes.
@@ -47,10 +47,10 @@ console.log('PASS actual researcher shell keeps version navigation visible throu
 
 // The eight replacements use the accepted labs as the primary link in both
 // directories; legacy tools remain discoverable without adding counted cards.
-const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure','reflection-refraction','lever','pulley','incline','buoyancy','heat','solubility','metal','friction-efficiency','wave-sound','electromagnetism','energy','electrostatics','atom','stoichiometry','equilibrium','electrolysis','cell-division','circulation','ecosystem','enzyme','homeostasis','nerve-reflex','plant-exchange','moon','seasons','tides','weather','circuit','phase','balance','indicator','newton','color','eye','microscope','photosynthesis','genetics','earthquake'];
+const newPaths=['lens','mirror','motion','reaction-rate','spring-friction','electric-power','neutralization','pressure','reflection-refraction','lever','pulley','incline','buoyancy','heat','solubility','metal','friction-efficiency','wave-sound','electromagnetism','energy','electrostatics','atom','stoichiometry','equilibrium','electrolysis','cell-division','circulation','ecosystem','enzyme','homeostasis','nerve-reflex','plant-exchange','moon','seasons','tides','weather','circuit','phase','balance','indicator','newton','color','eye','microscope','photosynthesis','genetics','earthquake','wave','motor'];
 const oldByLab={motion:'motion-graphs-desk/'};
 const manifest=JSON.parse(directory.querySelector('script[type="application/ld+json"]').textContent).hasPart;
-assert.equal(manifest.length,55);
+assert.equal(manifest.length,57);
 for(const id of newPaths){
  const local=`lab/${id}/`,source=`tools/${local}index.html`;
  const card=directory.querySelector(`.resource > a.open[href="../${local}"]`)?.closest('.resource');
