@@ -73,3 +73,45 @@ body{background-image:url('img/paper-paint.svg?v=2efa40ab91ad')}.teacher-scene{l
 @media(orientation:landscape) and (max-height:600px){.scene-column{height:max(430px,calc(100vh - 95px));min-height:430px}}
 /* SVG has CSS width/height and predeclared touch-action; blank space hits canvas pan-y. */
 .body-touch{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;touch-action:none;z-index:2}.body-touch path{pointer-events:fill;touch-action:none}
+
+/* 2026-11-21 統一實驗桌風格：配色、字體、標題列、任務卡與按鈕對齊 tools/lab；3D 器材、目鏡與操作方式不變。 */
+:root{--paper:#FFF8EC;--ink:#23304A;--text:#23304A;--lab-ink2:#5A6478;--lab-red:#C8372D;--lab-line:#E5DAC6;--lab-font:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",NotoSansTC,system-ui,sans-serif}
+body{background:#FFF8EC;color:#23304A;font-family:var(--lab-font);font-size:15px}body:before{display:none}
+button{font-family:var(--lab-font);font-weight:800;color:#23304A;background:#FFF8EC;border:2px solid #C9BDA8;border-radius:999px}
+button:hover{background:#fff}button.selected,button[aria-pressed=true]{background:#fff;border:2px solid #23304A;box-shadow:inset 0 0 0 2px #23304A}
+button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,#scene:focus-visible{outline:3px solid #2F6FB0;outline-offset:2px}
+header{height:64px;max-width:none;padding:0 20px;gap:16px;background:rgba(255,248,236,.96);border-bottom:2px solid #E5DAC6;color:#23304A}
+.brand{font:800 14px var(--lab-font);color:#C8372D;letter-spacing:0;white-space:nowrap}
+.desk-title{font:900 22px var(--lab-font);color:#23304A;white-space:nowrap}
+.edition{color:#5A6478;font:800 13px var(--lab-font);letter-spacing:0}
+header button{min-height:44px;padding:0 16px;font-size:15px;background:#23304A;color:#FFF8EC;border:0}header button:hover{background:#34425F}
+main{max-width:1400px;display:flex;flex-direction:column}
+main>.workspace{order:1}main>.course{order:2}main>.control-drawer{order:3}main>.instrument-switch{order:4}main>.specimen-switch{order:5}main>.illumination-controls,main>.stereo-controls{order:6}main>.cell-summary,main>.instrument-summary{order:7}main>.notebook{order:8}main>#status{order:8}main>footer{order:9}
+.workspace,.viewer,.lens,.control-drawer,footer{background-color:#FFF8EC;background-image:none;color:#23304A}
+.scene-column h1{font:900 26px/1.5 var(--lab-font);letter-spacing:0;color:#23304A}
+.viewer-caption{font:800 15px var(--lab-font)}
+.course{background:#23304A;color:#FFF8EC;border:0;border-radius:20px}
+.course h2{font:900 20px/1.4 var(--lab-font);color:#FFF8EC}.course-panel h3{font:900 17px/1.4 var(--lab-font);color:#FFF8EC}
+.course-kicker{font-size:12px;font-weight:800;letter-spacing:.12em;color:#F2A39C}.course-progress{color:#9FE0C6}
+.course-panel p,.course-checklist{color:#FFF8EC}.course-condition{color:#F6EAD6}
+.course button{background:transparent;color:#FFF8EC;border:2px solid rgba(255,248,236,.5);border-radius:999px;box-shadow:none}
+.course button:hover{background:rgba(255,248,236,.12)}
+.course-cards button{border-radius:14px}
+.course-cards .current button{background:#FFF8EC;color:#23304A;border:2px solid #FFF8EC}
+.course-cards .complete button{background:#2E7D63;border:2px solid #2E7D63;border-style:solid;color:#fff}
+.course-panel .course-actions button:not(:disabled){background:#C8372D;border-color:#C8372D;color:#fff;box-shadow:0 3px 0 #9E2A22}
+.course-recovery button,.course-panel .course-recovery button:not(:disabled){background:transparent;border:2px solid rgba(255,248,236,.5);color:#FFF8EC;box-shadow:none}
+.course-tools a{color:#FFF8EC}.course-feedback,.course-evidence{border-left:3px solid #F4C04E}
+.course-panel h3:focus{outline:3px solid #9FE0C6;outline-offset:3px}
+.teacher-dialogue{background:#fff;background-image:none;border:3px solid #23304A;border-radius:22px 22px 22px 6px;box-shadow:0 4px 0 rgba(35,48,74,.18);color:#23304A}
+.teacher-dialogue:before{display:none}.teacher-dialogue p{font-size:14px;font-weight:800;color:#23304A}.teacher-name{font:800 12px var(--lab-font);color:#C8372D}
+.teacher-dialogue button{background:#C8372D;border:0;color:#fff;box-shadow:0 3px 0 #9E2A22;font-size:14px}.teacher-dialogue button:hover{background:#D5443A}
+.view-controls button{background:#fff;border:2px solid #23304A}.view-controls button.selected{background:#23304A;color:#FFF8EC;box-shadow:none}
+.instrument-switch,.specimen-switch,.illumination-controls,.stereo-controls,.instrument-summary,.cell-summary,.notebook{background:#fff;background-image:none;border:2px solid #E5DAC6;border-radius:20px;color:#23304A}
+.instrument-switch [aria-pressed=true],.aperture-buttons [aria-pressed=true],.specimen-switch [aria-pressed=true]{background:#fff}
+.illumination-controls h2,.stereo-controls h2,.notebook h2{font:900 18px var(--lab-font);color:#23304A}
+.control-drawer{border-top:2px solid #E5DAC6}.control-drawer>summary{font-size:14px;font-weight:800}.control-drawer>summary>span{font-size:12px;color:#5A6478}
+.control-caption{font-size:13px;font-weight:800;color:#5A6478}
+footer{color:#5A6478}
+@media(max-width:600px){header{height:52px;padding:0 12px;gap:8px}.brand{display:none}.desk-title{font-size:18px}header button{min-height:44px;font-size:13px;padding:0 12px}.course h2{font-size:18px}.teacher-dialogue p{font-size:12px}.teacher-dialogue button{font-size:12px}}
+@media(orientation:landscape) and (max-height:600px){header{height:44px}.desk-title{font-size:17px}header button{min-height:36px}}

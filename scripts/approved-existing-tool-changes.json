@@ -3529,6 +3529,34 @@
       "approved_blob": "7b1f5482ef87eea341f3eb1cba307b185b78beea",
       "reason": "Lab desk notes: wave and motor desks added; replaced pages and guided prototypes removed.",
       "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/index.html",
+      "baseline_blob": "a9b7c4c2584753699348940cd50899c7cdf2a1a0",
+      "approved_blob": "e7056f6cb2f1341be42b4aecfb3325c1cec86627",
+      "reason": "Unified lab desk style for the 3D microscope: appended override styles, lab header with brand link and title; apparatus and operation unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/style.css",
+      "baseline_blob": "5fed15678c09a25f3172ac83f841a28927f74995",
+      "approved_blob": "f6f2ec8eca9c5c1c24439c86151da33ead0c5017",
+      "reason": "Unified lab desk style for the 3D microscope: appended override styles, lab header with brand link and title; apparatus and operation unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "b57b934b985db3644979e4a61713218fca532ef5",
+      "approved_blob": "ba3f177d4c887c476aaddb859b2131b51140e7b6",
+      "reason": "Unified lab desk style for the 3D microscope: appended override styles, lab header with brand link and title; apparatus and operation unchanged.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "7b1f5482ef87eea341f3eb1cba307b185b78beea",
+      "approved_blob": "953c721523a29e9bb24aeb0bdbd564c8c5a1b1aa",
+      "reason": "Lab desk notes: 3D microscope restyle.",
+      "pull_request": null
     }
   ]
 }

@@ -17,6 +17,11 @@ assert.equal(manifest.files.length,40);
 assert.deepEqual(walk(runtime).map(p=>path.relative(runtime,p)).sort(),manifest.files.map(f=>f.path).sort(),'only approved runtime files, no QA/private artifacts');
 // Explicit integration corrections; inverse patches must reproduce the accepted
 // 185c994 bytes. Never replace the source manifest with hashes of edited files.
+const unifiedMarker='\n/* 2026-11-21 統一實驗桌風格：';
+const styleNow=read('tools/microscope-3d/style.css');
+assert.equal(styleNow.split(unifiedMarker).length,2,'the unified-style block is appended exactly once');
+const unifiedStyle=styleNow.slice(styleNow.indexOf(unifiedMarker));
+assert.doesNotMatch(unifiedStyle,/url\(|@import|@font-face/,'the unified-style block loads nothing');
 const reviewedRuntimePatches={
  'app.js': [
   {
@@ -27,6 +32,17 @@ const reviewedRuntimePatches={
  'style.css': [{
   before:'.viewer{padding-bottom:0}.readings{top:300px;right:0;width:180px;height:65px}',
   after:'.viewer{padding-bottom:0}.readings{top:300px;right:4px;width:180px;height:65px}'
+ },{
+  // 2026-11-21 統一實驗桌風格：只在檔尾追加一段覆寫樣式（配色、字體、標題列、任務卡、按鈕），原有規則一個字都不改。
+  before:'',
+  after:unifiedStyle
+ }],
+ 'index.html': [{
+  before:'<header><a class="brand" href="#">百宏<span>小小顯微鏡實驗桌</span></a>',
+  after:'<header><a class="brand" href="../science/">百宏 · 小小研究員</a><span class="desk-title">3D 顯微鏡實驗桌</span>'
+ },{
+  before:'<title>百宏・小小顯微鏡實驗桌</title>',
+  after:'<title>3D 顯微鏡實驗桌｜百宏文教</title>'
  }]
 };
 const replaceExactlyOnce=(s,from,to,label)=>{
@@ -39,6 +55,7 @@ for(const f of manifest.files){
  if(f.path==='index.html'){
   let s=replaceExactlyOnce(b.toString(),manifest.index_metadata_addition,'','canonical metadata');
   for(const name of Object.keys(reviewedRuntimePatches)){
+   if(name==='index.html')continue;
    const original=manifest.files.find(entry=>entry.path===name).sha256.slice(0,12);
    const current=sha(fs.readFileSync(path.join(runtime,name))).slice(0,12);
    s=replaceExactlyOnce(s,`${name}?v=${current}`,`${name}?v=${original}`,`${name} cache key`);
@@ -54,7 +71,7 @@ const index=read('tools/microscope-3d/index.html');
 assert.doesNotMatch(index,/researcher-lab|science-events|assets\/site\.js|data-science-lab/);
 for(const [file,href] of [['ziyuan.html','tools/microscope-3d/'],['tools/science/index.html','../microscope-3d/']]){
  const s=read(file); assert.equal(s.split(`href="${href}"`).length,2,`${file}: exactly one discovery link`);
- assert.ok(s.includes('3D顯微鏡操作與比較')); assert.ok(s.includes('lab/microscope/'),'microscope lab desk discovery remains');
+ assert.ok(s.includes('3D 顯微鏡實驗桌')); assert.ok(s.includes('lab/microscope/'),'microscope lab desk discovery remains');
 }
 assert.equal((read('sitemap.xml').match(/<loc>https:\/\/www\.bhcs\.com\.tw\/tools\/microscope-3d\/<\/loc>/g)||[]).length,1);
 assert.ok(fs.existsSync(path.join(runtime,'vendor/THREE-LICENSE.txt')));
@@ -72,6 +89,8 @@ for(const p of walk(runtime)){
  }
  for(const ref of found){
   if(/^(?:[a-z]+:|\/\/|#)/i.test(ref))continue;
+  // The header brand links back to the science directory, like every lab desk; it is the only link that leaves the runtime.
+  if(ref==='../science/'&&path.basename(p)==='index.html')continue;
   assert.ok(!ref.startsWith('/'),`must stay portable: ${ref}`);
   const u=new URL(ref,'http://localhost/'+path.relative(root,p));
   const target=path.resolve(root,decodeURIComponent(u.pathname.slice(1)));
