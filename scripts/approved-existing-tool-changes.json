@@ -3060,6 +3060,475 @@
       "approved_blob": "fef25e73c24a78afb7c464310cb14a163c3db25d",
       "reason": "Catalog: wave and motor lab desks added to the science directory.",
       "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/acid-base-guided.css",
+      "baseline_blob": "e4e790357770b22c8fc5b57ee68aef717cb7b6df",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/analytics.js",
+      "baseline_blob": "1de92f4a039f692c862ff90bdfa9934202a37575",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/challenges.js",
+      "baseline_blob": "1efe45928d0fc8bc0811f2e933702580bb87071a",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/engine.js",
+      "baseline_blob": "4aab54b082644cad8c05df9c3aa151ff0c83869a",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/input.js",
+      "baseline_blob": "432fcb30d9d1b265c2627ed23e148fb0bf95ed57",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/main.js",
+      "baseline_blob": "7bb731d74ea98454dce7416cee97b5a8fd593a60",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/model.js",
+      "baseline_blob": "86a49e7e4376f2f918793b51fa951794932fd291",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/persist.js",
+      "baseline_blob": "6d0252bed4ffbea97ec8a5966af1b94b8243dcc2",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/render.js",
+      "baseline_blob": "5c4c734c59d24fa3b7ad5ba577d45d424c8d7004",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/acid-base-guided/script.js",
+      "baseline_blob": "0835db80f8a72d407676c65b61d2d095556e7874",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/analytics.js",
+      "baseline_blob": "f4dae3555047ac69bc4f84cde8c3e8c370354068",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/buoyancy-guided.css",
+      "baseline_blob": "c8f9afdbea620d6a1d69437253c1eacd716bdc86",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/cards.js",
+      "baseline_blob": "b69b31079b70d4d54e043c220aa1c930230838af",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/challenges.js",
+      "baseline_blob": "c2e6fc1e5ee0daf2829cfb84142cee0e68128237",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/engine.js",
+      "baseline_blob": "39d032dc00e4a0dfcb49d7ada8d5bf2e985a7603",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/input.js",
+      "baseline_blob": "a3e0f092d4cbfbfd271048668aa303024791ba34",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/main.js",
+      "baseline_blob": "df39b7708281ca027185006112abf5bcac6e44b9",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/model.js",
+      "baseline_blob": "ece6974e3aa631936dc68e1502c15f5d67fa8a21",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/package.json",
+      "baseline_blob": "3dbc1ca591c0557e35b6004aeba250e6a70b56e3",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/persist.js",
+      "baseline_blob": "8fc388ecb99c034e43ea3ddd0bf12a4a85c543d5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/render.js",
+      "baseline_blob": "29560b3076a35ca97a31d4742fcd5e9dc6e59323",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/script.js",
+      "baseline_blob": "e95822fce507decfed62febcb6b885fe9d4c8429",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/buoyancy-guided/visual.js",
+      "baseline_blob": "cfcb2bbf53d1ac160337b4a6edf21c0943d1ef08",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/analytics.js",
+      "baseline_blob": "a8394feaa75b6e6f5949e3065c081e56384971dc",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/challenges.js",
+      "baseline_blob": "a0408bbfc26f6b278b0a9c4f81f30dc636007b84",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/engine.js",
+      "baseline_blob": "e975e63d51c10682267ad57c36bb60ffa9838cfc",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/input.js",
+      "baseline_blob": "a138c54bc4024bf4bcec7c72ffac137595873ba3",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/main.js",
+      "baseline_blob": "fdb925220ef326975e38225745b6f6519ff3b852",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/microscope-guided.css",
+      "baseline_blob": "0f1450dfe383eb0ce8a0ff4fbb2053e454d7c1c8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/model.js",
+      "baseline_blob": "9e437c9d1c0aa438d435346a3cbe28bc240f663a",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/persist.js",
+      "baseline_blob": "3055172787cd80e5732a9459e7945ca895aaed2a",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/render.js",
+      "baseline_blob": "8ae069a267213faeed613dba16f30494df2a5725",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/microscope-guided/script.js",
+      "baseline_blob": "3be16ec9fbd6e63f6ce1f06f166e8f97c08c8e88",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/analytics.js",
+      "baseline_blob": "fe990157770dd9421b579cf2520519776c057300",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/challenges.js",
+      "baseline_blob": "7316acd16f6e9bb48ed0819a85d3be0d8e881e21",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/engine.js",
+      "baseline_blob": "8b02907e0c8851e1f7d75ea43af27fc0c01f68f9",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/input.css",
+      "baseline_blob": "f3363647779ec83f7fbb58249a410c1bafc57553",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/input.js",
+      "baseline_blob": "27ecb2e008baf3c13628455bf6fe6c758846b9ee",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/main.js",
+      "baseline_blob": "2a5dc4919f20ba7f434d08369640d0c354aac2c7",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/model.js",
+      "baseline_blob": "6cb3977dcdcf060bc48a9f0af397e779af8dfd62",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/optics-guided.css",
+      "baseline_blob": "632b0664888bc150ac5dab847798667d252f4441",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/package.json",
+      "baseline_blob": "089153bcb5adf57dc25f206a9dad3114c9cff80d",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/persist.js",
+      "baseline_blob": "cc2cc4a4902c11d8a52b83d8c94b0aedf90d9263",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/render.js",
+      "baseline_blob": "4739cba16f609ab8366273230a7f085b7e440d6a",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/script.js",
+      "baseline_blob": "3f1301086cb5732945358242476650d9f1a854b5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/optics-guided/visual.js",
+      "baseline_blob": "49409daf772fb8e8685f073d36c88cbe314532f8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/analytics.js",
+      "baseline_blob": "e07ba339d4bbf921a07c86d0fd7147f6be5f0612",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/challenges.js",
+      "baseline_blob": "a19b0ab8117df0bc321e84878d4efc6961e79e8e",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/engine.js",
+      "baseline_blob": "5699a5ba919deaf80541aaf6e99b76880ad998d2",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/input.js",
+      "baseline_blob": "271dce7b819fb673b228083a7e46edc7fb0e0908",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/main.js",
+      "baseline_blob": "99536eece4673a3ae8d0b33713bdb932092e69a7",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/model.js",
+      "baseline_blob": "211d507624311d54baaf3d33704bcc8019174f63",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/persist.js",
+      "baseline_blob": "ca21964aa20e184c772f95b62fc3d9596f6727a3",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/photosynthesis-guided.css",
+      "baseline_blob": "448fe78dd27c726e261b9eefe4bff0b8f3ddc8d8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/render.js",
+      "baseline_blob": "34f110f58e65a33750686bdd2ee017873861ac12",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "assets/photosynthesis-guided/script.js",
+      "baseline_blob": "4befd16e10b2b6ca347e27f4ecb5afcec0b1e979",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/color-primaries.html",
+      "baseline_blob": "5ce4231ff321fae1b48faa032aacc36d78044fd6",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/dc-motor.html",
+      "baseline_blob": "47a72d9eabe72e62269de22d3b5f4fb10a030348",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/eye-lesson.html",
+      "baseline_blob": "b33dadf77eaafcaf1eafe4bea5d61577038b0ccb",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/acid-base-guided.html",
+      "baseline_blob": "4e2bbba067edb4a8833557aad43530e9f8117d0d",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/buoyancy-guided.html",
+      "baseline_blob": "5cf5ce32e8b1935e6c99bf7a44e7bab854d88412",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "fef25e73c24a78afb7c464310cb14a163c3db25d",
+      "approved_blob": "b57b934b985db3644979e4a61713218fca532ef5",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/microscope-guided.html",
+      "baseline_blob": "ef57c5c3baaeafb3aa755b3dd371e31863fbe471",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/optics-guided.html",
+      "baseline_blob": "8f51cf6c813fe87dd25d6ad18c3eb4cb27275d07",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/photosynthesis-factor-guided.html",
+      "baseline_blob": "1e7bc561bb5d4c61ce86ea322d2a4bbbea687364",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/waves.html",
+      "baseline_blob": "61c300263a5a7823de089a8cc6ec544380388139",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "Removed: replaced by a lab desk under tools/lab/ (or an unlisted guided prototype superseded by the lab desks); old records are not kept.",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "f739cc2a5bc42654b2452e74f472d608416c9b6f",
+      "approved_blob": "7b1f5482ef87eea341f3eb1cba307b185b78beea",
+      "reason": "Lab desk notes: wave and motor desks added; replaced pages and guided prototypes removed.",
+      "pull_request": null
     }
   ]
 }

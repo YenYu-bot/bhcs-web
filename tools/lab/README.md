@@ -36,6 +36,8 @@
 
 2026-11-21 第二輪：新增 `circuit/`、`phase/`、`balance/`、`indicator/`、`newton/`、`color/`、`eye/`、`microscope/`、`photosynthesis/`、`genetics/`、`earthquake/` 十一站（共用引擎，各站有自己的 `model.mjs`，測試在 `scripts/lab_round2_models.test.mjs`）。它們取代的十個舊研究站（`tools/*-lab.html`）和重複的 `lenses.html`、`convex-lens-imaging.html`、`lens-25d/`、`moon-phases/` 已刪除，舊紀錄不保留。
 
+2026-11-21 再新增 `wave/`（波的疊加與駐波）、`motor/`（直流馬達）兩站，並刪除 `eye-lesson.html`、`color-primaries.html`、`waves.html`、`dc-motor.html`，以及五個未列入目錄的引導式原型（光學、浮力、顯微鏡、酸鹼、光合作用）和它們的測試。根目錄的 `color-primaries.html` 轉址改指向色光與顏料實驗桌。
+
 素材沿用 `assets/science/props/`（木板、支點、砝碼、實驗桌背景）與 `tools/mini-lab/img/doc-*.png`（余老師）。依專案原則不使用 `<img>`：場景圖用 SVG `<image>`，余老師用 CSS 背景。
 
 ## 研究紀錄：更新與保全

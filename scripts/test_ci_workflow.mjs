@@ -64,15 +64,12 @@ test('CI Gate always runs and fails unless every required job succeeded', () => 
 test('every script the old serial workflows ran still runs exactly once', () => {
   const OLD_RESEARCHER = [
     'build_math_brand.mjs', 'build_resources.py', 'build_science.mjs', 'build_shell.py', 'build_site.mjs', 'build_sitemap.py',
-    'check_acid_base_guided_flow_browser.cjs', 'check_acid_base_guided_input_browser.cjs', 'check_acid_base_guided_view_browser.cjs',
-    'check_buoyancy_guided_flow_browser.cjs', 'check_buoyancy_guided_input_browser.cjs', 'check_buoyancy_guided_view_browser.cjs',
-    'check_math_brand_browser.cjs', 'check_microscope_guided_flow_browser.cjs', 'check_microscope_guided_input_browser.cjs', 'check_microscope_guided_view_browser.cjs',
-    'check_optics_guided_flow_browser.cjs', 'check_optics_guided_input_browser.cjs', 'check_optics_guided_view_browser.cjs',
+    'check_math_brand_browser.cjs',
     'check_p4_vector_browser.cjs', 'check_researcher_composition.cjs',
     'check_resources.py', 'check_science_integration.cjs', 'check_site_browser.cjs', 'classify_math_drills.mjs',
   ];
   const OLD_MATH = ['math_local_check.mjs', 'test_math_drills.mjs', 'enforce_math_diversity.mjs', 'print_math_diversity_failures.cjs'];
-  assert.equal(OLD_RESEARCHER.length, 25);
+  assert.equal(OLD_RESEARCHER.length, 13);
   for (const s of [...OLD_RESEARCHER, ...OLD_MATH]) {
     assert.equal(count(wf, `scripts/${s}`), 1, `scripts/${s} runs exactly once`);
     assert.ok(fs.existsSync(path.join(root, 'scripts', s)), `scripts/${s} exists`);
@@ -85,12 +82,10 @@ test('every script the old serial workflows ran still runs exactly once', () => 
 test('every artifact the old workflows uploaded is still uploaded once, kept 14 days', () => {
   const REVIEW = [
     ['p2-math-validation', 'math-validation-artifacts/'], ['researcher-composition-review', 'composition-artifacts/'],
-    ['optics-view-review', 'optics-view-artifacts/'], ['optics-flow-review', 'optics-flow-artifacts/'], ['buoyancy-view-review', 'buoyancy-view-artifacts/'],
-    ['buoyancy-flow-review', 'buoyancy-flow-artifacts/'], ['microscope-view-review', 'microscope-view-artifacts/'], ['microscope-flow-review', 'microscope-flow-artifacts/'],
-    ['acid-base-view-review', 'acid-base-view-artifacts/'], ['acid-base-flow-review', 'acid-base-flow-artifacts/'], ['public-site-review', 'site-artifacts/'],
+    ['public-site-review', 'site-artifacts/'],
     ['p1-math-brand-review', 'math-brand-artifacts/'], ['p4-vector-review', 'p4-vector-artifacts/'],
   ];
-  assert.equal(REVIEW.length, 13);
+  assert.equal(REVIEW.length, 5);
   for (const [name, dir] of REVIEW) {
     assert.equal(count(wf, `name: ${name}\n`), 1, `${name} uploaded once`);
     assert.ok(wf.includes(`name: ${name}\n          path: ${dir}\n          retention-days: 14`), `${name} → ${dir}, 14 days`);
