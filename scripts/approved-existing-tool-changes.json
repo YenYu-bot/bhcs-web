@@ -2766,6 +2766,13 @@
       "approved_blob": "c926aa3e8c889107a1aa2a73ca078389a3af9711",
       "reason": "Catalog: seven new lab desks (circuit, phase, balance, indicator, newton, color, eye) added to the science directory.",
       "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "c926aa3e8c889107a1aa2a73ca078389a3af9711",
+      "approved_blob": "288adf0e6465f987ce438b9512761374dc1995e5",
+      "reason": "Catalog: four new lab desks (microscope, photosynthesis, genetics, earthquake) added to the science directory.",
+      "pull_request": null
     }
   ]
 }
