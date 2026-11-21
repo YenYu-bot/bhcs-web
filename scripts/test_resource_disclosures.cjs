@@ -74,6 +74,25 @@ test('stage/type filters preserve disclosure visibility and recover after cleari
  click('.res-stages','升學');assert.equal(document.getElementById('cap-entry-note').closest('.res-sec').classList.contains('resource-hidden'),false);
  click('.res-stages','全部');click('.res-types','all');assert.equal(document.querySelector('.res-picks').hidden,false);
 });
+test('English finder lists dual-use tools in both filters, homework only under print',()=>{
+ const click=(group,val)=>document.querySelector(`${group} button[data-val="${val}"]`).click();
+ const visible=id=>[...document.querySelectorAll(`#${id} .tpills>a:not(.resource-hidden)`)];
+ const hrefs=id=>visible(id).map(a=>a.getAttribute('href'));
+ click('.res-stages','國中');click('.res-types','print');
+ assert.equal(visible('res-english').length,49);
+ assert.ok(hrefs('res-english').includes('tools/english-tracing.html'));
+ assert.ok(document.getElementById('gept-entry-note').classList.contains('resource-hidden'));
+ click('.res-types','quiz');
+ assert.equal(visible('res-english').length,49);
+ assert.ok(!hrefs('res-english').includes('tools/english-tracing.html'));
+ assert.ok(!document.getElementById('gept-entry-note').classList.contains('resource-hidden'));
+ search('錯題訂正');assert.equal(visible('res-english').length,45);
+ search('線上練習');assert.equal(visible('res-english').length,47);
+ search('');click('.res-stages','高中');click('.res-types','print');
+ assert.deepEqual(hrefs('res-hs-english'),['tools/english-vocabulary-109-115.html']);
+ click('.res-types','quiz');assert.equal(visible('res-hs-english').length,1);
+ click('.res-stages','全部');click('.res-types','all');
+});
 test('disclosure CSS wraps within pills and featured cards',()=>{
  assert.match(source,/\.resource-entry-note\{[^}]*flex:1 0 100%[^}]*min-width:0[^}]*overflow-wrap:anywhere/);
  assert.match(source,/\.res-pick \.res-pick-note\{[^}]*display:block[^}]*overflow-wrap:anywhere/);

@@ -25,7 +25,8 @@ function ui(run) {
     const practice=installOnlinePractice({root,toggle,paper});
     const find=(text)=>root.walk().find(el=>el.textContent?.includes(text));
     const publish=(sections,translation=[],teacher=false)=>practice.setSheet({code:'fixture',total:sections.reduce((n,s)=>n+s.items.length,0) || translation.length,opts:{seed:4,abbr:'F'},sections,translation:{items:translation}},{id:'mix',title:'混合練習'},teacher);
-    run({root,toggle,find,publish});
+    const button=(text)=>root.walk().find(el=>el.tag==='button'&&el.textContent?.startsWith(text));
+    run({root,toggle,find,button,publish});
   } finally { globalThis.document=original; }
 }
 
@@ -115,4 +116,60 @@ test('correction routes distinguish results, focus the actual blank, and refresh
   publish([canSection(split,split)]);
   assert.equal(guide.hidden,true);
   assert.equal(find('得分：'),undefined);
+}));
+
+test('self-review-only fill-in offers an inline reference without promising a score',()=>ui(({root,toggle,find,button,publish})=>{
+  const item={lines:[['Can you swim? — Yes, ',blank('I'),' ',blank('can'),'.']]};
+  publish([{title:'Can 簡答',topic:'can',mode:'short',items:[item]}]);
+  toggle.click();
+  assert.match(find('這份練習不計分').textContent,/各題的「顯示參考答案」/);
+  assert.ok(find('可自動判分 0 題｜自行核對 1 題'));
+  assert.equal(button('核對作答').hidden,true);
+  assert.ok(find('這一大題自行核對，不計分'));
+  const answer=root.walk().find(n=>n.id==='practice-reference-q1');
+  assert.equal(answer.hidden,true);
+  button('顯示參考答案').click();
+  assert.equal(answer.hidden,false);
+  assert.match(answer.textContent,/第 1 格：I；第 2 格：can/);
+  toggle.click(); toggle.click();
+  assert.equal(answer.hidden,false,'the same worksheet retains reveal state in this page');
+  button('隱藏參考答案').click();
+  assert.equal(answer.hidden,true);
+}));
+
+test('mixed section disclosure and self-review edits do not affect the scored denominator or reveal answers on check',()=>ui(({root,toggle,find,button,publish})=>{
+  publish([canSection(split,{...split,grading:'review'}),{title:'Can 疑問句',topic:'can',mode:'q',items:[{lines:[[blank('Can'),' you swim?']]}]}],translations);
+  toggle.click();
+  const sections=root.walk().filter(n=>n.className==='practice-section-usage');
+  assert.deepEqual(sections.map(s=>s.textContent),['可自動判分 1 題｜自行核對 1 題（不計分）','這一大題可自動判分']);
+  const inputs=root.walk().filter(n=>n.tag==='input');
+  inputs[0].value='can'; inputs[1].value='not';
+  button('核對作答').click();
+  assert.match(find('得分：').textContent,/50／100（答對 1／2 題）/);
+  assert.match(root.walk().find(n=>n.className==='practice-summary').textContent,/自行核對 2 題（不計分）/);
+  assert.equal(root.walk().find(n=>n.id==='practice-reference-q2').hidden,true);
+  inputs[2].value='may'; inputs[2].handlers.input();
+  assert.match(find('得分：').textContent,/50／100/);
+  assert.equal(find('答案已修改，請重新核對'),undefined);
+}));
+
+test('Be negative reply jumps to its mismatched pair, not the correct question auxiliary',()=>ui(({root,toggle,find,button,publish})=>{
+  const item={lines:[[blank('Am'),' I late? — No, ',blank('you'),' ',blank("aren't"),'.']]};
+  publish([{title:'Be 簡答',topic:'be',mode:'short',items:[item]}]); toggle.click();
+  const inputs=root.walk().filter(n=>n.tag==='input');
+  const check=button('核對作答');
+  for(const [i,value] of ['Am',"you're","aren't"].entries()) inputs[i].value=value;
+  check.click();
+  assert.match(find('請搭配使用').textContent,/第 2、3 格/);
+  button('訂正錯題').click();
+  assert.equal(document.activeElement,inputs[1]);
+  // A wrong auxiliary is independent; navigating to it comes first.
+  inputs[0].value='Is';
+  check.click(); button('訂正錯題').click();
+  assert.equal(document.activeElement,inputs[0]);
+  for (const valid of [['Am',"you're",'not'],['Am','you',"aren't"]]) {
+    valid.forEach((value,i)=>{inputs[i].value=value;});
+    check.click();
+    assert.match(find('得分：').textContent,/100／100/);
+  }
 }));

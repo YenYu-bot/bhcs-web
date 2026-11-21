@@ -36,11 +36,32 @@ assert.equal(names.size,fs.readdirSync(path.join(root,stem,'images')).length);
 let dom=parse('tools/english-cap-reading.html');
 const w=dom.window,d=w.document, $=s=>d.querySelector(s);
 w.TextDecoder=TextDecoder;
-w.fetch=async()=>({ok:true,json:async()=>data});
+const testData=JSON.parse(JSON.stringify(data));
+const invalidYear=testData.find(y=>y.year===104);
+invalidYear.source='https://cap.rcpet.edu.tw.untrusted.test/exam/104/104exam.html';
+invalidYear.pdf='https://drive.google.com/drive/shared-with-me';
+w.fetch=async()=>({ok:true,json:async()=>testData});
 w.eval(read(stem+'app.mjs').replaceAll('import.meta.url',JSON.stringify('https://test.invalid/'+stem+'app.mjs')));
 await new Promise(r=>setTimeout(r,30));
 assert.equal(d.querySelectorAll('#years input').length,13);
 assert.equal(d.querySelectorAll('.group').length,1);
+assert.match($('#coverage').textContent,/^112 組可站內抽題/);
+const rows=[...d.querySelectorAll('#sources-list > li')];
+assert.equal(rows.length,13);
+assert.equal(rows.find(row=>row.textContent.startsWith('104 年：')).querySelectorAll('a').length,0,'do not publish links outside the official year page / file formats');
+const originalOnly=rows.filter(row=>row.querySelector('.source-official-only'));
+assert.deepEqual(originalOnly.map(row=>row.textContent.split(' · ')[0]),[
+  '105 年：站內可抽 8 / 9 組；第 25–27 題僅供原卷練習，不納入抽題',
+  '108 年：站內可抽 8 / 9 組；第 16–17 題僅供原卷練習，不納入抽題',
+]);
+for(const [index,year] of [105,108].entries()){
+  const links=[...originalOnly[index].querySelectorAll('a')];
+  assert.deepEqual(links.map(a=>a.textContent),['官方年度頁','英語閱讀完整原卷']);
+  assert.equal(links[0].href,'https://cap.rcpet.edu.tw/exam/'+year+'/'+year+'exam.html');
+  assert.equal(links[1].href,data.find(y=>y.year===year).pdf);
+  assert(links.every(a=>a.rel==='noopener noreferrer'));
+}
+
 const test='CAPR1-114-20.115-20.107-25';
 const restore=(code)=>{$('#code').value=code;$('#restore').click()};
 restore(test);
@@ -66,8 +87,11 @@ assert($('.choice input').checked);
 assert($('#answer-key').hidden);
 restore('CAPR1-114-20.114-20');
 assert.match($('#status').textContent,/重複/);
-restore('CAPR1-108-16');
-assert.match($('#status').textContent,/題組/);
+for(const unavailable of ['105-25','108-16']){
+  restore('CAPR1-'+unavailable);
+  assert.match($('#status').textContent,/題組/);
+}
+
 assert.deepEqual(order(),['114-20','115-20','107-25']);
 assert.deepEqual([...$('#count').options].map(o=>o.value),['1','2','3','4','5','6','7','8']);
 $('#count').value='8';$('#draw').click();

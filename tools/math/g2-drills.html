@@ -219,10 +219,10 @@ function addConfig(){
   if(f==="sum")return{expr:a+" 和 "+b+" 合起來是多少？",answer:fmt(a+b),sig:"s:"+a+":"+b,verify:()=>a+b-b===a,lead:"答："};
   if(f==="more")return{expr:"比 "+a+" 多 "+b+" 的數是多少？",answer:fmt(a+b),sig:"m:"+a+":"+b,verify:()=>a+b-a===b,lead:"答："};
   return{expr:a+" ＋ "+b,answer:fmt(a+b),sig:"o:"+a+":"+b,verify:()=>a+b-b===a}});
- const carry=unit("carry","進位加法","個位相加超過 10 要進位：在十位上加 1；十位相加超過 10 要向百位進 1。也可以先湊十：8＋5＝8＋2＋3。",ctx=>{
+ const carry=unit("carry","進位加法","個位相加滿 10 就向十位進 1，例如 8＋2＝10。十位算上個位進來的 1，合計滿 10 就向百位進 1，例如 52＋48＝100。也可以先湊十：8＋5＝8＋2＋3。",ctx=>{
   // 基礎：湊十；進階：二位數個位進位、直式、直式填空；挑戰：三位數連續進位（個位、十位都進位）、直式填空、□ 反求（最多 1/4）
   const L=lv(ctx),f=pick([["op","ten","box"],["op","vert","ten","missing"],["op","vert","missing","op","vert","missing","ten","op"]][L]);let a,b;
-  if(L===0){a=rand(2,9);b=rand(11-a,9)}else if(L===1){a=rand(11,79);const o=rand(10-a%10,9);b=rand(1,8-Math.floor(a/10))*10+o;if(a%10===0)return null}else{a=rand(101,799);b=rand(10,899-a+100);if(a+b>999||a%10+b%10<10||Math.floor(a/10)%10+Math.floor(b/10)%10+1<10)return null}
+  if(L===0){a=rand(2,9);b=rand((f==="ten"?11:10)-a,9)}else if(L===1){a=rand(11,79);const o=rand(10-a%10,9);b=rand(1,8-Math.floor(a/10))*10+o;if(a%10===0)return null}else{a=rand(101,799);b=rand(10,899-a+100);if(a+b>999||a%10+b%10<10||Math.floor(a/10)%10+Math.floor(b/10)%10+1<10)return null}
   const s=a+b;if(L>0&&a%10+b%10<10&&L===1)return null;
   if(f==="missing"){// 直式填空：被加數的某一位（不是最高位）挖空
    const ds=String(a).split(""),i=rand(L===2?1:0,ds.length-1);if(L===1&&i===0&&ds.length<2)return null;const d=ds[i];ds[i]="□";return{expr:ds.join("")+" ＋ "+b+" ＝ "+s+"，□ 是多少？",answer:d,sig:"ms:"+a+":"+b+":"+i,verify:()=>Number(String(a).split("").map((c,j)=>j===i?"0":c).join(""))+Number(d)*10**(String(a).length-1-i)+b===s,lead:"答："}}
@@ -240,7 +240,7 @@ function addConfig(){
   if(f==="word"){const [u,t]=pick(THINGS),n=pick(NAMES);return{expr:n+"有 "+a+" "+u+t+"，媽媽給"+ta(n)+" "+b+" "+u+"，爸爸又給"+ta(n)+" "+c+" "+u+"，現在有幾"+u+"？",answer:(a+b+c)+" "+u,sig:"w:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a,lead:"答："}}
   return{expr:a+" ＋ "+b+" ＋ "+c,answer:fmt(a+b+c),sig:"h:"+a+":"+b+":"+c,verify:()=>a+b+c-c-b===a}});
  return{title:"加法（低年級）",symbol:"＋",subtitle:"加法計算・進位加法・連加",instruction:"可以用數線、湊十或直式計算；應用題要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：20 以內的加法、交換加數的位置，進位用湊十（一年級）。",advanced:"進階：二位數的加法、幾十加幾十、個位進位與直式填空、湊整十連加（二上）。",challenge:"挑戰：三位數加三位數、個位十位都進位、直式填空、□ 反求、三個數連加（二下）。"},
+  levels:{basic:"基礎：20 以內的加法、交換加數的位置，進位用湊十（一年級）。",advanced:"進階：二位數的加法、幾十加幾十、個位進位、直式計算與數字填空、湊整十連加（二上）。",challenge:"挑戰：含三位數的加法、個位和十位連續進位、直式計算、數字填空與連加（二下）。"},
   units:[basic,carry,multi],presets:{basic:{add:6,carry:6,multi:4},advanced:{add:5,carry:6,multi:4},challenge:{add:5,carry:6,multi:4}}};
 }
 
@@ -285,7 +285,7 @@ function subConfig(){
   if(f==="mm"){v=a-b-c;return v<0?null:{expr:a+" − "+b+" − "+c,answer:fmt(v),sig:"mm:"+a+":"+b+":"+c,verify:()=>v+c+b===a}}
   if(a-b<0||a-b+c>(L===0?20:L===1?99:999))return null;v=a-b+c;return{expr:a+" − "+b+" ＋ "+c,answer:fmt(v),sig:"mp:"+a+":"+b+":"+c,verify:()=>v-c+b===a}});
  return{title:"減法（低年級）",symbol:"−",subtitle:"減法計算・退位減法・加減混合",instruction:"減完用加法檢查；應用題要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：20 以內的減法，退位用拆十（一年級）。",advanced:"進階：二位數的減法、幾十減幾十、個位退位與直式填空（二上）。",challenge:"挑戰：三位數減三位數、□ 反求、個位十位都退位（含十位是 0）、用加法驗算、四個數的加減混合（二下）。"},
+  levels:{basic:"基礎：20 以內的減法，退位用拆十（一年級）。",advanced:"進階：二位數的減法、幾十減幾十、個位退位、直式計算與數字填空（二上）。",challenge:"挑戰：三位數減三位數、□ 反求、個位十位都退位（含十位是 0）、用加法驗算、四個數的加減混合（二下）。"},
   units:[basic,borrow,mix],presets:{basic:{sub:6,borrow:6,mix:4},advanced:{sub:5,borrow:6,mix:4},challenge:{sub:5,borrow:6,mix:4}}};
 }
 

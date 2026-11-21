@@ -180,6 +180,7 @@ export function gradeItem(item, userAnswers, { topicId, modeId } = {}) {
       [paired.start,paired.start+1].every(i=>blanks[i].status==='correct') &&
       !paired.forms.some(form=>form.every((value,j)=>key(value)===key(entered[paired.start+j])))) {
     return {status:entered.some(value=>!value)?'partial':'incorrect',blanks,
+      combinationStart:paired.start,
       combinationHint:'第 '+(paired.start+1)+'、'+(paired.start+2)+' 格請搭配使用：'+paired.forms.map(pair=>pair.join(' + ')).join('，或 ')+'。'};
   }
   if (tuples.length && !compatible.length && !mismatch) {

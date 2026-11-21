@@ -582,6 +582,11 @@ main.max-w-7xl{max-width:none!important;padding:0!important;margin:0!important}
 }
 </style>
 <!-- ===== 百宏文教 統一視覺主題 (bhcs-theme) ===== -->
+<style id="g9-tree-phone-controls">
+@media screen and (max-width:360px){
+  #cfg-title{width:min(20rem,100%);min-width:0}
+}
+</style>
 <style id="bhcs-theme">
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef}
 html{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif}
@@ -1413,6 +1418,36 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
       `;
     }
 
+    // 兩方各自有 3 種選擇：每個第一階節點都連到全部 3 個第二階節點。
+    function renderSvgTree3x3(col1Name, col2Name, branch1, branch2) {
+      const rows = branch1.map((left, i) => {
+        const start = 29 + i * 49;
+        const middle = start + 14;
+        return `
+          <line x1="14" y1="92" x2="38" y2="${middle}" stroke="#334155" stroke-width="1.4" />
+          <text x="55" y="${middle + 3}" font-weight="bold" text-anchor="middle">${left}</text>
+          ${branch2.map((right, j) => {
+            const y = start + j * 14;
+            return `
+              <line x1="72" y1="${middle}" x2="110" y2="${y}" stroke="#334155" stroke-width="1.2" />
+              <text x="125" y="${y + 3}" text-anchor="middle">${right}</text>
+              <text x="195" y="${y + 3}" font-weight="bold" fill="#0369a1" text-anchor="middle">(${left}, ${right})</text>
+            `;
+          }).join("")}
+        `;
+      }).join("");
+      return `
+        <svg viewBox="0 0 235 170" class="w-full max-h-36 mx-auto select-none overflow-visible font-sans" role="img" aria-label="${col1Name}、${col2Name}的九種配對">
+          <g font-size="11" fill="#0f172a">
+            <text x="55" y="14" fill="#475569" font-weight="bold" text-anchor="middle">${col1Name}</text>
+            <text x="125" y="14" fill="#475569" font-weight="bold" text-anchor="middle">${col2Name}</text>
+            <text x="195" y="14" fill="#475569" font-weight="bold" text-anchor="middle">結果</text>
+            ${rows}
+          </g>
+        </svg>
+      `;
+    }
+
     // 3. 猜拳或 3x3 樹狀圖 (教材 P.1 Q4 & Q6)
     function renderSvgTreeRps() {
       return `
@@ -1537,7 +1572,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
           (1) 將所有出現的情形，畫出對應的樹狀圖。<br>
           (2) 所有可能出現的結果共有幾種？<br>
           (3) 兩袋中所取出的球「編號相同」的機率是多少？`,
-          svg: renderSvgTreeDigits("紅1", "紅2", "紅3"),
+          svg: renderSvgTree3x3("甲袋", "乙袋", ["紅1", "紅2", "紅3"], ["藍1", "藍2", "藍3"]),
           ansCount: 9,
           ansFrac: "1/3",
           ansDetail: "(1) 詳見樹狀圖；(2) 9 種；(3) 1/3",
@@ -1617,10 +1652,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
         },
         {
           type: "cards_compare",
-          qText: `甲手上有三張數字卡：2、5、7；乙手上有三張數字卡：3、5、9。兩人各出一張卡片比大小，數字較大者獲勝，若數字相同則平手，試回答下列問題：<br>
+          qText: `甲手上有三張數字卡：2、5、7；乙手上有三張數字卡：3、5、9。兩人各自隨機抽出自己的一張卡片比大小，每張卡片被抽出的機會相等。數字較大者獲勝，若數字相同則平手，試回答下列問題：<br>
           (1) 所有可能出現的出牌結果共有幾種？<br>
           (2) 乙獲勝的機率是多少？`,
-          svgFn: () => renderSvgTreeDigits(2, 5, 7),
+          svgFn: () => renderSvgTree3x3("甲", "乙", [2, 5, 7], [3, 5, 9]),
           ansCount: 9,
           ansFrac: "5/9",
           ansDetail: "(1) 9 種；(2) 5/9",

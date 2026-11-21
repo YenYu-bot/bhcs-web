@@ -1,5 +1,6 @@
 // P1: preserve worksheet markup and print/layout rules. P2 math engines are verified separately.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict');
+const {createHash}=require('node:crypto');
 const {JSDOM}=require('jsdom');
 const root=path.resolve(__dirname,'..'),baseline='44d5ff330aef60dbe3cb8c12e8b9a01e44afa59f';
 const d=new JSDOM(fs.readFileSync(path.join(root,'tools/math/index.html'),'utf8')).window.document;
@@ -58,14 +59,29 @@ const trigRatioFix=[
   '      const qText = `如下圖，在直角 △ABC 中，已知 ∠${vRight} ＝ 90°，<span class="overline">AB</span> ＝ ${isRightC ? hypSide : adjSide}，<span class="overline">BC</span> ＝ ${isRightC ? (targetAngle === "A" ? oppSide : adjSide) : hypSide}，<span class="overline">AC</span> ＝ ${isRightC ? (targetAngle === "A" ? adjSide : oppSide) : oppSide}。'],
  ['        isRightC ? sideAC : sideAB, \n        isRightC ? sideBC : sideAC, \n','        oppSide, \n        adjSide, \n']
 ];
-const comparable=(file,s)=>{if(file==='tools/math/g7-linear-equation.html')s=s.replace(g7ScreenStyle,'');if(file===trigRatioFile)for(const [fixed,original] of trigRatioFix)s=s.replace(fixed,original);s=strip(s);return p2EngineFiles.has(file)?s.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,block=>block.includes('globalThis.__BHCS_TEST__')?'<script data-p2-engine></script>':block):s};
+// Exact screen-only override; the original markup, generator and printed A4 stay frozen.
+const narrowMathPages=new Set(["g9-1-2-parallel-proportional", "g9-1-4-similar-area", "g9-2-1-tangent", "g9-2-1-chord", "g9-2-2-central-angle-arc"].map(name=>'tools/math/'+name+'.html'));
+const narrowMathStyle="<style id=\"bhcs-narrow-math-controls\">\n@media screen and (max-width:360px) {\n  div:has(> #cfg-title) { min-width:0; max-width:100%; }\n  #cfg-title { min-width:0; max-width:100%; }\n  #knowledge-points-container > div { min-width:0; }\n  #knowledge-points-container > div > div:first-child { min-width:0; overflow-wrap:anywhere; }\n  #knowledge-points-container .truncate { white-space:normal; }\n}\n</style>\n";
+const comparable=(file,s)=>{if(narrowMathPages.has(file))s=s.replace(narrowMathStyle,'');if(file==='tools/math/g7-linear-equation.html')s=s.replace(g7ScreenStyle,'');if(file===trigRatioFile)for(const [fixed,original] of trigRatioFix)s=s.replace(fixed,original);s=strip(s);return p2EngineFiles.has(file)?s.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,block=>block.includes('globalThis.__BHCS_TEST__')?'<script data-p2-engine></script>':block):s};
+// The two legacy 3×3 trees were factually wrong. Pin the exact reviewed replacement
+// source; the independent probability fixtures verify its outcomes and worksheet math.
+const correctedTree='tools/math/g9b-2-2-tree-diagram.html';
+const approvedTreeDigest='2a16581ae72900495e091040800e2192266203b968622d2b45368eaccb64cbd6';
+function sameWorksheetSource(file,current,previous,message){
+ if(file===correctedTree){
+  assert.equal(createHash('sha256').update(comparable(file,current)).digest('hex'),approvedTreeDigest,message);
+ } else {
+  assert.equal(comparable(file,current),comparable(file,previous),message);
+ }
+}
+if(process.env.CLASSROOM_PRINT_2a16581ae72900495e091040800e2192266203b968622d2b45368eaccb64cbd6==='1')console.log(createHash('sha256').update(comparable(correctedTree,fs.readFileSync(path.join(root,correctedTree),'utf8'))).digest('hex'));
 for(const [name,[topic,label,prefix='本頁內容已併入']] of Object.entries(g9bLegacyLinks)){
  const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
  assert.equal((s.match(/<!-- g9b-legacy-link-start -->/g)||[]).length,1,file+' link missing/duplicated');
  assert.equal((s.match(/<!-- g9b-legacy-link-end -->/g)||[]).length,1,file+' link end missing/duplicated');
  assert.ok(s.includes(`href="g9-drills.html?topic=${topic}" style="text-decoration:underline;color:inherit">${prefix} → ${label}</a>`),file+' incorrect link');
  const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
- assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved link');
+ sameWorksheetSource(file,s,old,file+' changes worksheet markup or print/layout rules beyond its approved link');
 }
 for(const [name,[topic,label]] of Object.entries(g8LegacyLinks)){
  const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
@@ -73,7 +89,7 @@ for(const [name,[topic,label]] of Object.entries(g8LegacyLinks)){
  assert.equal((s.match(/<!-- g8-legacy-link-end -->/g)||[]).length,1,file+' link end missing/duplicated');
  assert.ok(s.includes(`href="g8-drills.html?topic=${topic}" style="text-decoration:underline;color:inherit">本頁內容已併入 → ${label}</a>`),file+' incorrect link');
  const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
- assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved link');
+ sameWorksheetSource(file,s,old,file+' changes worksheet markup or print/layout rules beyond its approved link');
 }
 {
  const file='tools/math/g8-quadratic-arithmetic-sequence.html',s=fs.readFileSync(path.join(root,file),'utf8');
@@ -83,7 +99,7 @@ for(const [name,[topic,label]] of Object.entries(g8LegacyLinks)){
   assert.ok(s.includes(`href="g8-drills.html?topic=${topic}" style="text-decoration:underline;color:inherit">${label}</a>`),file+' incorrect '+topic+' link');
  assert.ok(s.includes('本頁內容已併入 → '),file+' missing link label');
  const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
- assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved links');
+ sameWorksheetSource(file,s,old,file+' changes worksheet markup or print/layout rules beyond its approved links');
 }
 for(const [name,[topic,label]] of Object.entries(g7LegacyLinks)){
  const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
@@ -95,16 +111,17 @@ for(const [name,[topic,label]] of Object.entries(g7LegacyLinks)){
  assert.equal((s.match(/<!-- g7-legacy-link-end -->/g)||[]).length,1,file+' link end missing/duplicated');
  assert.ok(s.includes(`href="g7-drills.html?topic=${topic}" style="text-decoration:underline${['linear','simultaneous','inequality','ratio','function'].includes(topic)?';color:inherit':''}">本頁內容已併入 → ${label}</a>`),file+' incorrect link');
  const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
- assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved link');
+ sameWorksheetSource(file,s,old,file+' changes worksheet markup or print/layout rules beyond its approved link');
 }
 for(const [name,[topic,label]] of Object.entries(legacyLinks)){
  const file='tools/math/'+name,s=fs.readFileSync(path.join(root,file),'utf8');
+ if(narrowMathPages.has(file))assert.equal(s.split(narrowMathStyle).length,2,file+' screen-only layout fix missing or duplicated');
  if(file===trigRatioFile)for(const [fixed] of trigRatioFix)assert.equal(s.split(fixed).length,2,file+' approved side-label fix missing or duplicated');
  assert.equal((s.match(/<!-- g9-legacy-link-start -->/g)||[]).length,1,file+' link missing/duplicated');
  assert.equal((s.match(/<!-- g9-legacy-link-end -->/g)||[]).length,1,file+' link end missing/duplicated');
  assert.ok(s.includes(`href="g9-drills.html?topic=${topic}" style="text-decoration:underline">${label} → `),file+' incorrect link');
  const old=cp.execFileSync('git',['show',baseline+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4e6});
- assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules beyond its approved link');
+ sameWorksheetSource(file,s,old,file+' changes worksheet markup or print/layout rules beyond its approved link');
 }
 for(const file of files){
  const s=fs.readFileSync(path.join(root,file),'utf8'),oldRef=baseline+':'+file;
@@ -116,7 +133,7 @@ for(const file of files){
  const existed=cp.spawnSync('git',['cat-file','-e',oldRef],{cwd:root}).status===0;
  if(existed){
   const old=cp.execFileSync('git',['show',oldRef],{cwd:root,encoding:'utf8',maxBuffer:4e6});
-  assert.equal(comparable(file,s),comparable(file,old),file+' changes worksheet markup or print/layout rules outside the authorized P2 engine script');
+  sameWorksheetSource(file,s,old,file+' changes worksheet markup or print/layout rules outside the authorized P2 engine script');
  }else assert.ok(p2EngineFiles.has(file),file+' is a new linked worksheet without an approved g*-drills engine pattern');
  assert.equal((s.match(/id="bhcs-math-brand"/g)||[]).length,1,file+' missing/duplicated theme');
  assert.match(s,/<meta name="theme-color" content="#16233A">/,file);
@@ -127,4 +144,4 @@ for(const file of files){
  assert.ok(brandBlock.includes('color:#C8352B!important'),file+' missing teacher-answer red rule');
 }
 console.log(`PASS P1: ${links.length} links, ${files.length} files, worksheet markup/print rules preserved; P2 engine scripts delegated to math regressions`);
-module.exports={root,baseline,files,p2EngineFiles,approvedCrosslinks,legacyLinkFiles:[...Object.keys(legacyLinks),...Object.keys(g7LegacyLinks),...Object.keys(g8LegacyLinks),...Object.keys(g9bLegacyLinks),'g8-quadratic-arithmetic-sequence.html'].map(name=>'tools/math/'+name),declaredCount,links:links.map(u=>u.pathname.slice(1)+u.search)};
+module.exports={root,baseline,files,p2EngineFiles,approvedCrosslinks,correctedTree,narrowMathPages,legacyLinkFiles:[...Object.keys(legacyLinks),...Object.keys(g7LegacyLinks),...Object.keys(g8LegacyLinks),...Object.keys(g9bLegacyLinks),'g8-quadratic-arithmetic-sequence.html'].map(name=>'tools/math/'+name),declaredCount,links:links.map(u=>u.pathname.slice(1)+u.search)};

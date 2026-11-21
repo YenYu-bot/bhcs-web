@@ -1,6 +1,6 @@
 // P1 equivalence checks in a real browser. No external requests or real print dialog.
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const {root,baseline,links,p2EngineFiles,approvedCrosslinks}=require('./check_math_brand.cjs');
+const {root,baseline,links,p2EngineFiles,approvedCrosslinks,correctedTree,narrowMathPages}=require('./check_math_brand.cjs');
 const out=path.resolve(process.env.MATH_BRAND_OUTPUT||'math-brand-artifacts');
 const selected=process.env.MATH_BRAND_LINKS?process.env.MATH_BRAND_LINKS.split(','):[...links,'tools/math/g9b-3-1-solids.html','tools/math/g9b-2-2-probability.html','tools/math/g7-linear-equation.html','tools/math/g7-simultaneous-equations.html','tools/math/g7-inequality.html','tools/math/g7-ratio.html','tools/math/g7-function.html','tools/math/g8-multiplication-formulas.html','tools/math/g8-polynomial-operations.html','tools/math/g8-factorization.html','tools/math/g8-square-roots.html','tools/math/g8-pythagorean.html','tools/math/g8-quadratic-arithmetic-sequence.html','tools/math/g9b-1-1-quadratic-function.html','tools/math/g9b-2-1-quartiles.html'];
 // These legacy pages gained header links; compare the generated questions, not the header.
@@ -43,6 +43,19 @@ const server=http.createServer((req,res)=>{
 const hash=s=>crypto.createHash('sha256').update(typeof s==='string'?s:JSON.stringify(s)).digest('hex');
 // Playwright temporarily hides carets for screenshots and leaves empty style attributes.
 const hashDOM=s=>hash(s.replace(/ style=""/g,'').replace(/\n  <!-- g8-r5-related-start -->[\s\S]*?\n  <!-- g8-r5-related-end -->\n/g,''));
+// The two erroneous 3×3 question cards are the only sanctioned DOM changes.
+const unaffectedTreeCards = cards => cards.filter(html=>!html.includes('三顆藍球')&&!html.includes('甲手上有三張數字卡'));
+const treeCardHTML = p => p.locator('#questions-container > .print-card').evaluateAll(cards=>cards.map(card=>card.outerHTML));
+async function checkCorrectedTree(p) {
+ await p.setViewportSize({width:320,height:844});await settle(p);
+ assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),320,'tree mobile overflow');
+ await p.evaluate(()=>{window.__seed(20261121);document.querySelector('#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]').click()});await settle(p);
+ const trees=await p.locator('#questions-container svg[aria-label$="九種配對"]').evaluateAll(svg=>svg.map(x=>[...x.querySelectorAll('text[x="195"]')].slice(1).map(t=>t.textContent)));
+ const cases=[[[ '紅1','紅2','紅3'],['藍1','藍2','藍3']],[[2,5,7],[3,5,9]]];
+ for(const [a,b] of cases)assert.ok(trees.some(t=>JSON.stringify(t)===JSON.stringify(a.flatMap(x=>b.map(y=>'('+x+', '+y+')')))),'missing 3×3 outcome set');
+ await p.setViewportSize({width:1280,height:800});await settle(p);
+ await p.evaluate(()=>{window.__seed(772109);document.querySelector('#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]').click()});await settle(p);
+}
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
 function geometry(){
  const scope=window.__worksheetSelector?document.querySelector(window.__worksheetSelector):document.body;
@@ -89,7 +102,14 @@ function colors(){
     await p.evaluate(()=>{window.__seed(772109);document.querySelector('#generate,#gen,#btn-regenerate,button[onclick="generateExam()"]')?.click()});await settle(p);
     if(worksheetSelector)assert.equal(await p.locator(worksheetSelector).count(),1,link+' worksheet scope missing/duplicated');
     const data={dom:hashDOM(await p.locator(worksheetSelector||'body').innerHTML()),screen:await p.evaluate(geometry),errors};records[version]=data;
+    if(file===correctedTree)data.unaffected=unaffectedTreeCards(await treeCardHTML(p)).map(hashDOM);
     if(version==='after'){
+     if(file===correctedTree)await checkCorrectedTree(p);
+     if(narrowMathPages.has(file)){
+      await p.setViewportSize({width:320,height:844});await settle(p);
+      assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),320,'legacy controls overflow at 320px');
+      await p.setViewportSize({width:1280,height:800});await settle(p);
+     }
      assert.deepEqual(await p.evaluate(colors),[],'old screen colors remain');
      assert.equal(await gen.first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(232, 98, 12)','orange generate button');
      for(const vp of [{width:390,height:844},{width:1280,height:800},{width:1366,height:650}]){await p.setViewportSize(vp);await settle(p);await p.screenshot({path:path.join(out,id+'-'+vp.width+'x'+vp.height+'.png')})}
@@ -117,12 +137,14 @@ function colors(){
      }
     }
    }
-   if(!isNew&&!p2EngineFiles.has(file)){
+   if(file===correctedTree){
+    assert.deepEqual(records.after.unaffected,records.before.unaffected,'unrelated tree questions changed');
+   }else if(!isNew&&!p2EngineFiles.has(file)){
     assert.equal(records.after.dom,records.before.dom,'generated worksheet DOM differs');
     if(!approvedCrosslinks.has(file))assert.deepEqual(records.after.screen,records.before.screen,'screen geometry changed');
    }
    assert.deepEqual(records.after.errors,[]);if(!isNew)assert.deepEqual(records.before.errors,[]);
-   if(!printed.has(file)){if(!isNew&&!p2EngineFiles.has(file))assert.deepEqual(records.after.print,records.before.print,'student/teacher print DOM or geometry changed');printed.add(file)}
+   if(!printed.has(file)){if(!isNew&&!p2EngineFiles.has(file)&&file!==correctedTree)assert.deepEqual(records.after.print,records.before.print,'student/teacher print DOM or geometry changed');printed.add(file)}
    row.pass=true;row.identicalDOM=records.after.dom;row.printChecked=!!records.after.print;
   }catch(e){row.pass=false;row.error=e.message.slice(0,3500)}finally{for(const ctx of contexts)await ctx.close()}
   results.push(row);if(!row.pass)console.log(JSON.stringify(row));
