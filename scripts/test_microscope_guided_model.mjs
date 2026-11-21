@@ -166,7 +166,7 @@ test('keyboard stage step shrinks as magnification grows (same image motion, sma
 test('legacy cross-check (read-only): constants, formula and inversion agree with microscope-lab',()=>{
  assert.equal(M.WORLD_DIAMETER_4X,MICRO_FIELD_PX);assert.equal(M.STAGE_GAIN,MICRO_STAGE_GAIN);
  assert.equal(M.VIEW_RADIUS_PX,MICRO_FIELD_PX/2);
- const html=fs.readFileSync(fileURLToPath(new URL('../tools/microscope-lab.html',import.meta.url)),'utf8');
+ const html=fs.readFileSync(fileURLToPath(new URL('./fixtures/legacy/microscope-lab.html.txt',import.meta.url)),'utf8');
  const m=html.match(/function featureScreen\(([^)]*)\)\{([^\n]*)\}/);assert.ok(m,'legacy featureScreen found');
  const legacy=new Function('MICRO_STAGE_GAIN',`return function(${m[1]}){${m[2]}}`)(MICRO_STAGE_GAIN);
  for(const o of M.OBJECTIVES)for(const [wx,wy] of [[0,0],[40,-25],[-120,10]])for(const [sx,sy] of [[0,0],[12,-7],[-30,45]]){

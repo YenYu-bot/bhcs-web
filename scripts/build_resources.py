@@ -2,7 +2,7 @@
 """Recompute every resource count on ziyuan.html from the rendered links.
 
 Counting rule (one rule for the whole page, identical to the runtime filter
-script in ziyuan.html and to scripts/test_researcher_batch5.cjs):
+script in ziyuan.html and to the catalogue tests):
 
   * one <a> link = one item;
   * only links inside a <section class="res-sec"> count: direct children of

@@ -34,6 +34,8 @@
 
 小車運動圖、反應速率、電流熱效應、彈簧與摩擦、酸鹼中和、面鏡、透鏡、水壓與氣壓、光的反射與折射已列入研究站目錄與學習資源頁。2026-11-20 起，各實驗桌取代的 32 個「新探究」頁（`tools/science/<id>.html`）已刪除，舊版紀錄不保留；目錄只列實驗桌。其他試用實驗桌維持原樣。2026-11-20 起實驗桌可被搜尋引擎收錄：各頁有自己的 canonical，並列入 sitemap。
 
+2026-11-21 第二輪：新增 `circuit/`、`phase/`、`balance/`、`indicator/`、`newton/`、`color/`、`eye/`、`microscope/`、`photosynthesis/`、`genetics/`、`earthquake/` 十一站（共用引擎，各站有自己的 `model.mjs`，測試在 `scripts/lab_round2_models.test.mjs`）。它們取代的十個舊研究站（`tools/*-lab.html`）和重複的 `lenses.html`、`convex-lens-imaging.html`、`lens-25d/`、`moon-phases/` 已刪除，舊紀錄不保留。
+
 素材沿用 `assets/science/props/`（木板、支點、砝碼、實驗桌背景）與 `tools/mini-lab/img/doc-*.png`（余老師）。依專案原則不使用 `<img>`：場景圖用 SVG `<image>`，余老師用 CSS 背景。
 
 ## 研究紀錄：更新與保全

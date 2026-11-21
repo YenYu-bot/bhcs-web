@@ -175,7 +175,7 @@ export const LATE_TEXT = deepFreeze({
       '我比較了 4× 和 40× 的視野與可見記號。',
       '我能用低倍先定位、置中，再進入高倍觀察。',
     ],
-    link: { href: '../microscope-lab.html', label: '自由探索／完整顯微鏡' },
+    link: { href: '../lab/microscope/', label: '顯微鏡實驗桌' },
     conclusionIntro: '我的結論：',
     relationA: (slide, image, range) => `玻片往${slide}移時，視野中的影像往${image}移；換成較高倍率後，看到的範圍${range}。`,
     range: { smaller: '變小', larger: '變大', same: '沒有改變' },

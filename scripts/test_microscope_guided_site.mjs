@@ -33,10 +33,9 @@ test('nothing public links to it: no other page, catalog, sitemap or data file n
   const pages = git('grep', '--untracked', '-l', 'microscope-guided', '--', '*.html').trim().split('\n').filter(Boolean);
   assert.deepEqual(pages, [PAGE], 'no other HTML page contains the prototype\'s name');
   const everywhere = git('grep', '--untracked', '-l', 'microscope-guided').trim().split('\n').filter(Boolean);
-  const allowed = [/^assets\/microscope-guided\//, /^tools\/science\/microscope-guided\.html$/, /^scripts\/(?:check|test)_microscope_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/microscope_guided_test_support\.cjs$/,
+  const allowed = [/^scripts\/approved-existing-tool-changes\.json$/, /^assets\/microscope-guided\//, /^tools\/science\/microscope-guided\.html$/, /^scripts\/(?:check|test)_microscope_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/microscope_guided_test_support\.cjs$/,
     /^scripts\/package\.json$/, /^docs\/.*microscope-guided.*\.md$/];
   assert.deepEqual(everywhere.filter((f) => !allowed.some((re) => re.test(f))), [], 'only the prototype\'s own files, tests and docs mention it');
-  assert.ok(!read('tools/microscope-lab.html').includes('microscope-guided'), 'the legacy lab does not link to the guided page');
 });
 
 test('page shape: hand-written, shared + own CSS only, site adapter then module main, no CDN or external runtime, one h1, legacy link', () => {
@@ -51,7 +50,7 @@ test('page shape: hand-written, shared + own CSS only, site adapter then module 
   assert.ok(!html.includes('mg-pending') && !html.includes('匿名使用事件'), 'the privacy words come from the script, and the stage-3 placeholder is gone');
   assert.ok(read(`${JS_DIR}/script.js`).includes('匿名使用事件不含研究手冊文字、作答內容或學生姓名。'));
   assert.ok(read(`${JS_DIR}/analytics.js`).includes("LAB_ID = 'microscope-guided'"));
-  assert.ok(read(`${JS_DIR}/script.js`).includes("href: '../microscope-lab.html'"), 'the finish links to the full lab');
+  assert.ok(read(`${JS_DIR}/script.js`).includes("href: '../lab/microscope/'"), 'the finish links to the full lab');
   assert.ok(!/researcher-lab|site\.js|<body[^>]*class="[^"]*researcher/.test(html), 'no legacy shell');
   assert.match(html, /<body class="microscope-guided" data-science-lab="microscope-guided">/);
   assert.equal((html.match(/<h1[ >]/g) ?? []).length, 1, 'one h1');
@@ -60,8 +59,8 @@ test('page shape: hand-written, shared + own CSS only, site adapter then module 
   assert.deepEqual([...html.matchAll(/(?:href|src)="(https?:[^"]+)"/g)].map((m) => m[1]), ['https://www.bhcs.com.tw/tools/science/microscope-guided.html'], 'the canonical is the only absolute URL');
   assert.ok(!/cdn\.|unpkg|jsdelivr|googleapis|gstatic|googletagmanager/.test(html + read(`${JS_DIR}/microscope-guided.css`)), 'no CDN or external font');
   assert.ok(!/@import|url\(\s*['"]?https?:/.test(read(`${JS_DIR}/microscope-guided.css`)), 'the stylesheet loads nothing external');
-  assert.ok(/<a href="\.\.\/microscope-lab\.html">/.test(html), 'the way to the full lab');
-  assert.ok(fs.existsSync(path.join(root, 'tools/microscope-lab.html')));
+  assert.ok(/<a href="\.\.\/lab\/microscope\/">/.test(html), 'the way to the full lab');
+  assert.ok(fs.existsSync(path.join(root, 'tools/lab/microscope/index.html')));
   for (const m of html.matchAll(/(?:href|src)="(\.\.?\/[^"#?]+)"/g)) assert.ok(fs.existsSync(path.join(root, path.dirname(PAGE), m[1])), m[1]);
   for (const f of jsFiles) for (const m of read(`${JS_DIR}/${f}`).matchAll(/from '(\.\.?\/[^']+)'/g)) assert.ok(fs.existsSync(path.join(root, JS_DIR, m[1])), `${f} imports ${m[1]}`);
 });

@@ -33,12 +33,11 @@ test('nothing public links to it: no other page, catalog, sitemap or data file n
   const pages = git('grep', '-l', 'buoyancy-guided', '--', '*.html').trim().split('\n').filter(Boolean);
   assert.deepEqual(pages, [PAGE], 'no other HTML page contains the prototype\'s name');
   const everywhere = git('grep', '-l', 'buoyancy-guided').trim().split('\n').filter(Boolean);
-  const allowed = [/^assets\/buoyancy-guided\//, /^tools\/science\/buoyancy-guided\.html$/, /^scripts\/(?:check|test)_buoyancy_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/buoyancy_guided_test_support\.cjs$/,
+  const allowed = [/^scripts\/approved-existing-tool-changes\.json$/, /^assets\/buoyancy-guided\//, /^tools\/science\/buoyancy-guided\.html$/, /^scripts\/(?:check|test)_buoyancy_guided_[a-z_]+\.(?:mjs|cjs)$/, /^scripts\/buoyancy_guided_test_support\.cjs$/,
     /^scripts\/package\.json$/, /^scripts\/test_science_guided_shared\.mjs$/, /^\.github\/workflows\/ci\.yml$/, /^docs\/.*buoyancy-guided.*\.md$/,
     // Exact audit-only references for the separate standalone integration; not public discovery.
     /^docs\/buoyancy-lab-integration\.md$/, /^scripts\/test_buoyancy_lab_integration\.mjs$/];
   assert.deepEqual(everywhere.filter((f) => !allowed.some((re) => re.test(f))), [], 'only the prototype\'s own files, tests, workflow and docs mention it');
-  assert.ok(!read('tools/buoyancy-density-lab.html').includes('buoyancy-guided'), 'the legacy lab does not link back to the guided page');
 });
 
 test('standalone integration audit exceptions do not expose or import the guided prototype', () => {
@@ -70,8 +69,8 @@ test('page shape: hand-written, scoped CSS only, site adapter, no legacy shell, 
   const analytics = read(`${JS_DIR}/analytics.js`);
   assert.ok(analytics.includes("LAB_ID = 'buoyancy-guided'"));
   const script = read(`${JS_DIR}/script.js`);
-  const href = '../buoyancy-density-lab.html';
-  assert.ok(script.includes(`href: '${href}'`), 'the finish links to the existing free-exploration lab');
+  const href = '../lab/buoyancy/';
+  assert.ok(script.includes(`href: '${href}'`), 'the finish links to the buoyancy lab desk');
   assert.ok(fs.existsSync(path.join(root, 'tools/science', href)), 'and that lab exists');
   for (const m of html.matchAll(/(?:href|src)="(\.\.?\/[^"#?]+)"/g)) assert.ok(fs.existsSync(path.join(root, path.dirname(PAGE), m[1])), m[1]);
   for (const f of jsFiles) for (const m of read(`${JS_DIR}/${f}`).matchAll(/from '(\.\/[^']+)'/g)) assert.ok(fs.existsSync(path.join(root, JS_DIR, m[1])), `${f} imports ${m[1]}`);

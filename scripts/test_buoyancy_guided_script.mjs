@@ -809,7 +809,7 @@ await test('complete: the title, the three claims and the way out, only after th
       '300 g 的木塊比 120 g 的石頭重，卻是木塊浮起、石頭沉底，所以不能只看總質量判斷浮沉。',
       '當物體和液體的密度相同時，物體會停在液體中；要判斷浮沉，要比較物體和液體的密度。',
     ],
-    link: { href: '../buoyancy-density-lab.html', label: '自由探索／精確數值' },
+    link: { href: '../lab/buoyancy/', label: '浮力實驗桌' },
   });
   assert.equal(S.completeModel(r.state).claims.length, 3);
   assert.equal(S.completeModel(run(...TO_C3, ...C3).state), null);
@@ -938,7 +938,7 @@ await test('cards: the finish draws its three claims and one link', () => {
   const els = { root: doc.getElementById('bg-complete'), heading: doc.getElementById('bg-complete-title'), body: doc.querySelector('[data-bg-complete-body]') };
   renderCompletionCard(els, { heading: done.heading, claims: done.claims, conclusion: [done.intro], link: done.link });
   assert.equal(doc.querySelectorAll('.sg-claims li').length, 3);
-  assert.equal(doc.querySelector('.sg-complete-link a').getAttribute('href'), '../buoyancy-density-lab.html');
+  assert.equal(doc.querySelector('.sg-complete-link a').getAttribute('href'), '../lab/buoyancy/');
   assert.equal(doc.getElementById('bg-complete').hidden, false);
   renderCompletionCard(els, null);
   assert.equal(doc.getElementById('bg-complete').hidden, true);

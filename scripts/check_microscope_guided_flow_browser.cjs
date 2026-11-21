@@ -395,7 +395,7 @@ async function walk(browser,{width,height,touch,matrix}){
  assert.equal((await active(p)).id,'mg-complete-title');assert.equal(await text(p,'#mg-complete-title'),'這一站完成了');
  assert.equal(await $(p,'.sg-claim').count(),3);
  assert.ok((await $(p,'.sg-complete-conclusion').allInnerTexts()).join('').includes(TEXT_B),'the learner\'s own conclusion is shown');
- assert.equal(await $(p,'.sg-link').getAttribute('href'),'../microscope-lab.html');
+ assert.equal(await $(p,'.sg-link').getAttribute('href'),'../lab/microscope/');
  const done=await said(p);assert.deepEqual([done.text],['這一站完成了。']);assert.ok(done.id.startsWith('complete-'));
  const again=await said(p);assert.equal(again.writes,done.writes,'the finish is announced once');
  assert.equal(await ctaState(p),null);

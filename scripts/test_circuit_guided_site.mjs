@@ -28,17 +28,16 @@ test('public launch: SEO, canonical, science index, resource directory and sitem
   assert.equal((index.match(/href="\.\.\/science\/circuit-guided\.html"/g)||[]).length,1);
   assert.equal((resources.match(/href="tools\/science\/circuit-guided\.html"/g)||[]).length,1);
   assert.match(read('scripts/science/catalog.mjs'),/file:'science\/circuit-guided\.html'/);
-  assert.match(index, /69 項教材/);
-  assert.match(resources, /全部 69 項自然教材/);
-  assert.match(resources, /國中自然 · 互動教材<span class="count">68 項/);
-  assert.match(resources, /理化 <small>46 項/);
-  assert.match(resources, /目前共 266 項/);
+  assert.match(index, /55 項教材/);
+  assert.match(resources, /全部 55 項自然教材/);
+  assert.match(resources, /國中自然 · 互動教材<span class="count">54 項/);
+  assert.match(resources, /理化 <small>37 項/);
+  assert.match(resources, /目前共 252 項/);
 });
 
 test('public circuit lab is discoverable while the legacy circuit stays separate',()=>{
   const pages=git('grep','-l','circuit-guided','--','*.html').trim().split('\n').filter(Boolean).sort();
   assert.deepEqual(pages,[PAGE,'tools/science/index.html','ziyuan.html'].sort());
-  assert.ok(!read('tools/circuit-lab.html').includes('circuit-guided'));
   assert.ok(!html.includes('circuit-lab.html'));
   assert.match(html, /href="\.\.\/\.\.\/ziyuan\.html"/);
   assert.match(html, /href="\.\/"/);
@@ -117,12 +116,6 @@ test('normal npm test chain includes B3 script/site tests after B2 input/render'
   const at=names.map(n=>testCmd.indexOf(n));
   assert.ok(at.every(i=>i>=0),JSON.stringify(at));
   for(let i=1;i<at.length;i++) assert.ok(at[i-1]<at[i],names.join(' -> '));
-});
-
-test('legacy circuit page remains outside the B3 page shell',()=>{
-  const legacy=read('tools/circuit-lab.html');
-  assert.ok(!legacy.includes('../../assets/circuit-guided/'));
-  assert.ok(!legacy.includes('circuit-guided.html'));
 });
 
 test('CI runs circuit input → view → learner → flow once each in science-guided after Chromium, with screenshots kept 14 days',()=>{

@@ -5,8 +5,8 @@ const path=require('node:path');
 const http=require('node:http');
 const root=path.resolve(__dirname,'..');
 const output=path.resolve(process.env.COMPOSITION_OUTPUT||'composition-artifacts');
-const legacy=['microscope','photosynthesis-factor','genetics-simulation','force-motion','circuit','particle-reaction','acid-base-indicator','heat-phase','buoyancy-density','plate-earthquake'].map(x=>'tools/'+x+'-lab.html');
-const pages=[...legacy,'tools/science/index.html'];
+// The researcher stations were replaced by lab desks; the directory lobby is the only welcome layout left.
+const pages=['tools/science/index.html'];
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
@@ -75,9 +75,9 @@ const server=http.createServer((req,res)=>{
      await page.evaluate(()=>document.querySelector('.researcher-bubble').style.transform='translateY(200px)');
      if((await page.evaluate(measure)).equipmentClear)throw Error('Equipment-overlap negative control was not rejected');
      await page.evaluate(()=>document.querySelector('.researcher-bubble').style.removeProperty('transform'));
-     await page.evaluate(()=>{const c=document.querySelector('[data-start]');c.style.transform='translateY(1000px)'});
+     await page.evaluate(()=>{const c=document.querySelector('.researcher-welcome .researcher-primary');c.style.transform='translateY(1000px)'});
      if((await page.evaluate(measure)).startInFirstScreen)throw Error('Offscreen-button negative control was not rejected');
-     await page.evaluate(()=>{document.querySelector('[data-start]').style.removeProperty('transform');const b=document.querySelector('.researcher-bubble');b.style.setProperty('width','40px','important');b.style.setProperty('height','20px','important');b.style.setProperty('overflow','hidden','important')});
+     await page.evaluate(()=>{document.querySelector('.researcher-welcome .researcher-primary').style.removeProperty('transform');const b=document.querySelector('.researcher-bubble');b.style.setProperty('width','40px','important');b.style.setProperty('height','20px','important');b.style.setProperty('overflow','hidden','important')});
      if((await page.evaluate(measure)).textFits)throw Error('Clipped-text negative control was not rejected');
      await page.evaluate(()=>{const b=document.querySelector('.researcher-bubble');['width','height','overflow'].forEach(p=>b.style.removeProperty(p))});
      await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));

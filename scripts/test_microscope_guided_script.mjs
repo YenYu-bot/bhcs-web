@@ -332,7 +332,7 @@ test('Completion: three claims of what the learner did, and the learner\'s own c
  assert.deepEqual(a.claims,['我用橫向和縱向移動紀錄比較了玻片與影像的方向。','我比較了 4× 和 40× 的視野與可見記號。','我能用低倍先定位、置中，再進入高倍觀察。']);
  assert.equal(a.conclusionIntro,'我的結論：');
  assert.deepEqual(a.conclusion,['玻片往右移時，視野中的影像往左移；換成較高倍率後，看到的範圍變小。']);
- assert.deepEqual(a.link,{href:'../microscope-lab.html',label:'自由探索／完整顯微鏡'});
+ assert.deepEqual(a.link,{href:'../lab/microscope/',label:'顯微鏡實驗桌'});
  const toFinish=(conclusionActions)=>run(concept(),CONT,...conclusionActions,CONT,chA(1,'c1-direction','left-up'),CONT,chA(2,'c2-view','only-b-larger'),chA(2,'c2-claim','smaller-field'),CONT,chA(3,'c3-strategy','low-recentre'),CONT);
  assert.deepEqual(S.completeModel(toFinish([SAVE({level:'B',freeText:'我發現了兩件事'})])).conclusion,['我發現了兩件事']);
  assert.deepEqual(S.completeModel(toFinish([SAVE({level:'C',evidenceText:'我的證據',limitationText:'我的限制'})])).conclusion,['我的證據','我的限制']);
