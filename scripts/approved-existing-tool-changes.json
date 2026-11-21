@@ -3029,7 +3029,7 @@
     {
       "path": "assets/buoyancy-guided/script.js",
       "baseline_blob": "026c398447dc38eb22d26e239d951e89e3ef2e67",
-      "approved_blob": "a6c277d24f62cd4ca14b5ee37a45c8b25389413b",
+      "approved_blob": "e95822fce507decfed62febcb6b885fe9d4c8429",
       "reason": "Relinked: the finish link of the guided prototype points to the lab desk that replaced the removed researcher station.",
       "pull_request": null
     },
