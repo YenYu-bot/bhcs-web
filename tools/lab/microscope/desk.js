@@ -1,6 +1,6 @@
 // 顯微鏡實驗桌：倍率、視野與像的位置來自 ./model.mjs。
 import { scope, KIND, SPECIMEN } from './model.mjs';
-import { addDefs, compound, stereo, stageTop, fieldView, printedLetter, tissue, paperCard, stageLift, LEVER, AXIS } from './art.mjs';
+import { addDefs, compound, stereo, stageTop, fieldView, printedLetter, tissue, filmCard, stageLift, LEVER, AXIS } from './art.mjs';
 import { runDesk } from '../shared/desk.mjs';
 
 const DIR = { center: '不移動', left: '往左移', right: '往右移', up: '往上移', down: '往下移' }, POS = (p) => p[0] === 0 && p[1] === 0 ? '視野正中央' : `視野${p[1] < 0 ? '上' : p[1] > 0 ? '下' : ''}${p[0] < 0 ? '左' : p[0] > 0 ? '右' : ''}${Math.abs(p[0]) > 1 || Math.abs(p[1]) > 1 ? '外面（看不到）' : '邊'}`;
@@ -20,14 +20,14 @@ function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
   const CX = 610, CY = 300, R = 200, defs = addDefs(el, rig), svg = rig.ownerSVGElement, can = kind === 'observe';
   const scale = () => svg.getScreenCTM().a;
   if (step === 'kind') {
-    // 兩種顯微鏡並排：同一張紙片，各自的成像同時看得到
-    txt(rig, 480, 50, '同一張印著 F 的小紙片，放到兩種顯微鏡下看', { 'font-size': 15 });
+    // 兩種顯微鏡並排：同一片透明片（會透光，複式顯微鏡才看得到），各自的成像同時看得到
+    txt(rig, 480, 50, '同一片印著 F 的透明片，放到兩種顯微鏡下看', { 'font-size': 15 });
     Object.keys(KIND).forEach((key, i) => { const x = 88 + i * 396, on = key === s.kind, K = KIND[key], g = el('g', {}, rig), cx = x + 262, cy = 262;
       el('rect', { x, y: 70, width: 388, height: 480, rx: 18, fill: '#FFFDF2', stroke: on ? '#2E8B66' : '#8A93A6', 'stroke-width': on ? 5 : 2, 'stroke-dasharray': on ? '' : '7 5' }, g);
       txt(g, x + 72, 112, K.name, { 'font-size': 15, fill: on ? '#1F6E50' : '#23304A' });
       const m = el('g', { transform: `translate(${x + 10 - 55} 150) scale(.5)` }, g); if (key === 'stereo') stereo(el, m); else compound(el, m, {});
       const W = fieldView(el, g, defs, { CX: cx, CY: cy, R: 108, bg: '#FFFDF2', id: '-' + key });
-      if (K.solid) paperCard(el, txt, W.content, { CX: cx, CY: cy, scale: .52 }); else printedLetter(el, txt, W.content, { x: cx, y: cy, size: 104 });
+      if (K.solid) filmCard(el, txt, W.content, { CX: cx, CY: cy, scale: .52 }); else printedLetter(el, txt, W.content, { x: cx, y: cy, size: 104 });
       txt(g, cx, 112, '從目鏡看到的像', { 'font-size': 13, fill: '#5A6478' });
       txt(g, x + 194, 440, K.upright ? '像是正立的，看得出立體的高低' : '像上下、左右都相反，是平面的', { 'font-size': 15, fill: '#C8372D' });
       txt(g, x + 194, 470, `倍率：${K.range}`, { 'font-size': 14 }); txt(g, x + 194, 498, `適合看${K.use}`, { 'font-size': 13, fill: '#5A6478' });
@@ -153,7 +153,7 @@ runDesk({
       react: (s, r) => r.S.chloroplast ? '細胞裡有許多綠色的葉綠體。' : '看得到細胞壁和細胞核，沒有葉綠體。',
       targets: Object.keys(SPECIMEN).map(k => tgt(k, SPECIMEN[k].name, { obj: 10, spec: k }, `換成${SPECIMEN[k].name}。`, (s, r) => r.S.chloroplast ? '細胞排列整齊，有細胞壁，細胞裡有綠色的葉綠體' : '細胞排列整齊，有細胞壁和細胞核，沒有葉綠體', s => `${SPECIMEN[s.spec].name}，物鏡 ${s.obj}×`)),
       found: ['兩種都有細胞壁；水蘊草葉片照得到光，有葉綠體，洋蔥鱗莖長在土裡，表皮細胞沒有葉綠體。', '不是所有植物細胞都有葉綠體'] },
-    { id: 'kind', label: '兩種鏡', title: '複式顯微鏡和解剖顯微鏡，差在哪裡？', goal: '同一張印著 F 的紙片，兩種顯微鏡的像並排比較。點選顯微鏡，兩台都收下。',
+    { id: 'kind', label: '兩種鏡', title: '複式顯微鏡和解剖顯微鏡，差在哪裡？', goal: '同一片印著 F 的透明片，兩種顯微鏡的像並排比較。點選顯微鏡，兩台都收下。',
       intro: '解剖顯微鏡看到的 F，方向一樣嗎？', enter: { obj: 4, ...base },
       controls: [{ key: 'kind', label: '顯微鏡', type: 'seg', options: Object.entries(KIND).map(([k, v]) => [k, v.name]) }],
       react: (s, r) => r.K.upright ? '像是正立的，還看得出立體感。' : '像上下、左右都相反。',
