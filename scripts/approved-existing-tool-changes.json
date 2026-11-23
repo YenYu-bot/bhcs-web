@@ -4040,6 +4040,34 @@
       "approved_blob": "cc187666ec159a82614cb67999a06b98a6dc7525",
       "reason": "2026-11-23 實驗桌直接操作第二批：牛頓運動、色光、眼睛、光合作用、遺傳重畫",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "61c673087bdc0328469758a94497511d7764f2ed",
+      "approved_blob": "b241f0e53708bfe6e537c38051d684c28a14f5ca",
+      "reason": "2026-11-23 植物畫法改為共用 plants.mjs：光合作用、遺傳、眼睛",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/eye/desk.js",
+      "baseline_blob": "baf2ffa7492d19a8c99f1e403046a29ec5919549",
+      "approved_blob": "ab447fea3f090a4a59ba78a43d5e211994801122",
+      "reason": "2026-11-23 植物畫法改為共用 plants.mjs：光合作用、遺傳、眼睛",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/genetics/desk.js",
+      "baseline_blob": "d3209fee150ef73a676a01f87f078fe9188b8fa5",
+      "approved_blob": "a5380d76a5f919ede5f0c155ecb031a655bd4945",
+      "reason": "2026-11-23 植物畫法改為共用 plants.mjs：光合作用、遺傳、眼睛",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/photosynthesis/desk.js",
+      "baseline_blob": "cc187666ec159a82614cb67999a06b98a6dc7525",
+      "approved_blob": "b05fb01a192446f0ae2fd805a4fea89d0e78ec8d",
+      "reason": "2026-11-23 植物畫法改為共用 plants.mjs：光合作用、遺傳、眼睛",
+      "pull_request": null
     }
   ]
 }
