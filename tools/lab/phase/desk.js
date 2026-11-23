@@ -6,30 +6,124 @@ const model = s => heat(s);
 const f = x => String(Math.round(x * 10) / 10), pct = x => Math.round(x * 100);
 const STATE = r => ({ ice: '冰（固態）', melting: `冰水共存，已熔化 ${pct(r.frac)}%`, water: '水（液態）', boiling: `沸騰中，已汽化 ${pct(r.frac)}%`, steam: '全部變成水蒸氣' }[r.phase]);
 
-function scene({ rig, el, txt, P, s, r }) {
-  // 左：電熱板、燒杯、溫度計
-  el('image', { href: P + 'prop-hotplate.webp', x: 110, y: 400, width: 300, height: 166 }, rig);
-  const bx = 160, by = 190, bw = 200, bh = 236, level = r.phase === 'boiling' ? 150 - r.frac * 60 : r.phase === 'steam' ? 0 : 150;
-  if (r.phase !== 'ice' && level) el('rect', { x: bx + 22, y: by + bh - 14 - level, width: bw - 44, height: level, rx: 6, fill: '#9FD3F2', opacity: .8 }, rig);
-  const cubes = r.phase === 'ice' ? 6 : r.phase === 'melting' ? Math.ceil(6 * (1 - r.frac)) : 0;
-  for (let i = 0; i < cubes; i++) el('rect', { x: bx + 34 + (i % 3) * 46, y: by + bh - 60 - Math.floor(i / 3) * 44 - (r.phase === 'melting' ? 70 : 0), width: 38, height: 38, rx: 6, fill: '#EAF6FF', stroke: '#6FA8D0', 'stroke-width': 2.5 }, rig);
-  if (r.phase === 'boiling') for (let i = 0; i < 7; i++) el('circle', { cx: bx + 40 + i * 20, cy: by + bh - 30 - (i * 37 % 90), r: 5 + i % 3, fill: '#fff', stroke: '#6FA8D0', 'stroke-width': 1.5 }, rig);
-  if (r.phase === 'boiling' || r.phase === 'steam') for (let i = 0; i < 3; i++) el('path', { d: `M${bx + 60 + i * 40} ${by + 10} q-14 -22 0 -44 q14 -22 0 -44`, fill: 'none', stroke: '#B8C4D6', 'stroke-width': 5, 'stroke-linecap': 'round', opacity: .8 }, rig);
-  el('image', { href: P + 'prop-beaker.webp', x: bx, y: by, width: bw, height: bh }, rig);
-  el('rect', { x: 400, y: 150, width: 110, height: 44, rx: 10, fill: '#23304A' }, rig); txt(rig, 455, 179, `${f(r.temp)}°C`, { 'font-size': 20, fill: '#fff' });
-  el('image', { href: P + 'prop-thermometer.webp', x: 316, y: 120, width: 34, height: 212 }, rig);
-  txt(rig, 260, 590, STATE(r), { 'font-size': 16 });
-  // 右：加熱曲線
+const INK = '#23304A', TIMES = { melt: [0, 1, 3, 7, 9], boil: [9, 14, 19, 30], mass: [9] };
+const rnd = (a, b) => { const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return x - Math.floor(x); };
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
+  g('linearGradient', 'ph-glass', [[0, '#CFE3F2', .55], [.12, '#FFFFFF', .7], [.3, '#E8F3FB', .18], [.8, '#E8F3FB', .14], [.92, '#FFFFFF', .55], [1, '#B7D2E6', .6]]);
+  g('linearGradient', 'ph-water', [[0, '#7FBCE3', .78], [.5, '#A9D6F2', .62], [1, '#6AAED9', .8]]);
+  g('linearGradient', 'ph-ice', [[0, '#FFFFFF', .95], [.5, '#DDF0FB', .75], [1, '#B4D9F0', .85]], { x1: 0, y1: 0, x2: 1, y2: 1 });
+  g('linearGradient', 'ph-body', [[0, '#FBF7EE'], [1, '#D8CFBD']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('linearGradient', 'ph-plate', [[0, '#55627E'], [1, '#1D2538']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('radialGradient', 'ph-hot', [[0, '#FF6A3D', .9], [.6, '#E8432A', .55], [1, '#E8432A', 0]]);
+  g('radialGradient', 'ph-knob', [[0, '#F7FAFD'], [.6, '#AEB8C8'], [1, '#5F6A7E']], { cx: .35, cy: .3, r: .8 });
+  g('linearGradient', 'ph-tube', [[0, '#DDEAF4'], [.35, '#FFFFFF'], [1, '#C9DCEA']]);
+  const blur = el('filter', { id: 'ph-blur', x: '-40%', y: '-40%', width: '180%', height: '180%' }, d); el('feGaussianBlur', { stdDeviation: 3 }, blur);
+}
+// 燒杯（底部中心 cx, by）：玻璃、刻度、水、冰塊、氣泡、水蒸氣
+function beaker(el, txt, g, cx, by, r, mass, heating) {
+  const W = 180, H = 214, x0 = cx - W / 2, top = by - H, inner = by - 8;
+  const vol = mass / 100, full = r.phase === 'boiling' ? 1 - r.frac * .6 : r.phase === 'steam' ? 0 : 1, liquid = r.phase === 'ice' ? 0 : r.phase === 'melting' ? r.frac : 1;
+  const level = 64 * vol * liquid * full + (r.phase === 'melting' ? 6 : 0);
+  if (level > 1) { const y = inner - level; el('path', { d: `M${x0 + 8} ${y}Q${cx} ${y + 6} ${x0 + W - 8} ${y}V${inner}Q${cx} ${inner + 4} ${x0 + 8} ${inner}Z`, fill: 'url(#ph-water)' }, g);
+    el('path', { d: `M${x0 + 8} ${y}Q${cx} ${y + 6} ${x0 + W - 8} ${y}`, fill: 'none', stroke: '#fff', 'stroke-width': 2, opacity: .8 }, g); }
+  // 冰塊：熔化時變小、浮在水面
+  const n = 6 * vol, left = r.phase === 'ice' ? 1 : r.phase === 'melting' ? 1 - r.frac : 0;
+  const shown = r.phase === 'melting' ? Math.ceil(n * left) : left > 0 ? n : 0, float = r.phase === 'melting' && level > 10;
+  for (let i = 0; i < shown; i++) {
+    const sz = (34 + rnd(i, 1) * 8) * (float ? .62 + .38 * left : 1), col = i % 3, row = Math.floor(i / 3);
+    const x = x0 + 22 + col * 48 + (float && row % 2 ? 22 : 0) + rnd(i, 2) * 8, y = float ? inner - level - sz * .55 - (row % 2) * sz * .45 + (rnd(i, 7) - .5) * 4 : inner - 6 - row * 38 - sz;
+    const q = el('g', { transform: `rotate(${(rnd(i, 3) - .5) * 24} ${x + sz / 2} ${y + sz / 2})` }, g);
+    el('rect', { x, y, width: sz, height: sz, rx: sz * .2, fill: 'url(#ph-ice)', stroke: '#86B8D8', 'stroke-width': 1.6 }, q);
+    el('path', { d: `M${x + sz * .2} ${y + sz * .25}l${sz * .25} -${sz * .06}`, stroke: '#fff', 'stroke-width': 3, 'stroke-linecap': 'round' }, q);
+    el('path', { d: `M${x + sz * .7} ${y + sz * .6}l${sz * .1} ${sz * .15}`, stroke: '#A9CFE8', 'stroke-width': 1.4 }, q);
+  }
+  if (r.phase === 'boiling') for (let i = 0; i < 14; i++) { const x = x0 + 18 + rnd(i, 4) * (W - 36), y = inner - 6 - rnd(i, 5) * Math.max(8, level - 10); el('circle', { cx: x, cy: y, r: 2.5 + rnd(i, 6) * 5, fill: 'rgba(255,255,255,.5)', stroke: '#fff', 'stroke-width': 1.2 }, g); }
+  if (r.phase === 'water' && heating && r.temp > 60) for (let i = 0; i < 5; i++) el('circle', { cx: x0 + 26 + rnd(i, 8) * (W - 52), cy: inner - 4, r: 2 + rnd(i, 9) * 2, fill: '#fff', opacity: .7 }, g);
+  if (r.phase === 'boiling' || r.phase === 'steam') for (let i = 0; i < 4; i++) { const x = x0 + 34 + i * 38; el('path', { d: `M${x} ${top + 4}c-16 -18 14 -30 -2 -50c-12 -16 10 -26 0 -40`, fill: 'none', stroke: '#fff', 'stroke-width': 9, 'stroke-linecap': 'round', opacity: .75, filter: 'url(#ph-blur)' }, g); }
+  // 玻璃與刻度
+  el('path', { d: `M${x0 - 6} ${top}H${x0 + W + 4}l8 -8M${x0} ${top}V${by - 10}Q${x0} ${by} ${x0 + 10} ${by}H${x0 + W - 10}Q${x0 + W} ${by} ${x0 + W} ${by - 10}V${top}`, fill: 'url(#ph-glass)', stroke: '#6E97BB', 'stroke-width': 2.5, 'stroke-linejoin': 'round' }, g);
+  for (let i = 1; i <= 4; i++) { const y = by - 10 - i * 40; el('path', { d: `M${x0 + 12} ${y}h${i % 2 ? 14 : 22}`, stroke: '#6E97BB', 'stroke-width': 1.8 }, g); if (i % 2 === 0) txt(g, x0 + 48, y + 5, `${i * 50}`, { 'font-size': 11, fill: '#6E97BB' }); }
+  el('path', { d: `M${x0 + 8} ${top + 12}V${by - 18}`, stroke: '#fff', 'stroke-width': 5, 'stroke-linecap': 'round', opacity: .7 }, g);
+}
+function thermometer(el, txt, g, x, top, bottom, temp) {
+  const tY = T => bottom - 26 - (bottom - 26 - top - 14) * (T + 20) / 130;
+  el('rect', { x: x - 9, y: top, width: 18, height: bottom - top - 14, rx: 9, fill: 'url(#ph-tube)', stroke: '#6E97BB', 'stroke-width': 2 }, g);
+  for (const T of [-20, 0, 20, 40, 60, 80, 100]) { const y = tY(T); el('path', { d: `M${x + 9} ${y}h${T % 50 === 0 ? 10 : 6}`, stroke: INK, 'stroke-width': 1.4 }, g); if (T === 0 || T === 100) txt(g, x + 30, y + 4, `${T}`, { 'font-size': 11, fill: INK }); }
+  el('rect', { x: x - 3.5, y: tY(temp), width: 7, height: bottom - 20 - tY(temp), fill: '#D9342B' }, g);
+  el('circle', { cx: x, cy: bottom - 14, r: 13, fill: '#D9342B', stroke: '#6E97BB', 'stroke-width': 2 }, g);
+  el('circle', { cx: x - 4, cy: bottom - 18, r: 3.5, fill: '#fff', opacity: .6 }, g);
+}
+function hotplate(el, txt, g, cx, y, heating) {
+  el('ellipse', { cx, cy: y + 96, rx: 150, ry: 8, fill: '#000', opacity: .18 }, g);
+  el('rect', { x: cx - 140, y: y + 14, width: 280, height: 80, rx: 14, fill: 'url(#ph-body)', stroke: INK, 'stroke-width': 2.5 }, g);
+  el('rect', { x: cx - 122, y, width: 244, height: 18, rx: 6, fill: 'url(#ph-plate)', stroke: INK, 'stroke-width': 2 }, g);
+  if (heating) el('ellipse', { cx, cy: y + 4, rx: 118, ry: 10, fill: 'url(#ph-hot)' }, g);
+  el('circle', { cx: cx + 96, cy: y + 54, r: 6, fill: heating ? '#FF5A3C' : '#7A7F8C', stroke: INK, 'stroke-width': 1.5 }, g);
+  txt(g, cx + 96, y + 80, heating ? '加熱中' : '未加熱', { 'font-size': 11, fill: heating ? '#C8372D' : '#5A6478' });
+  el('circle', { cx: cx - 60, cy: y + 54, r: 22, fill: 'url(#ph-knob)', stroke: INK, 'stroke-width': 2 }, g);
+  el('path', { d: `M${cx - 60} ${y + 54}l0 -16`, stroke: '#C8372D', 'stroke-width': 4, 'stroke-linecap': 'round', transform: `rotate(${heating ? 120 : 0} ${cx - 60} ${y + 54})` }, g);
+}
+// 碼錶：一圈 30 分鐘
+function timer(el, txt, g, cx, cy, t) {
+  el('rect', { x: cx - 8, y: cy - 70, width: 16, height: 14, rx: 3, fill: 'url(#ph-plate)', stroke: INK, 'stroke-width': 1.5 }, g);
+  el('circle', { cx: cx + 2, cy: cy + 4, r: 56, fill: '#000', opacity: .16 }, g);
+  el('circle', { cx, cy, r: 56, fill: 'url(#ph-plate)', stroke: INK, 'stroke-width': 2 }, g);
+  el('circle', { cx, cy, r: 47, fill: '#FBFAF4' }, g);
+  for (let m = 0; m < 30; m++) { const a = m / 30 * 2 * Math.PI, r0 = m % 5 ? 41 : 36; el('path', { d: `M${cx + r0 * Math.sin(a)} ${cy - r0 * Math.cos(a)}L${cx + 45 * Math.sin(a)} ${cy - 45 * Math.cos(a)}`, stroke: INK, 'stroke-width': m % 5 ? 1 : 2 }, g); }
+  for (const m of [0, 10, 20]) { const a = m / 30 * 2 * Math.PI; txt(g, cx + 27 * Math.sin(a), cy - 27 * Math.cos(a) + 4, String(m), { 'font-size': 11, fill: '#5A6478' }); }
+  const hand = el('g', { transform: `rotate(${t / 30 * 360} ${cx} ${cy})` }, g);
+  el('path', { d: `M${cx} ${cy + 10}V${cy - 42}`, stroke: '#C8372D', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, hand);
+  el('circle', { cx, cy: cy - 42, r: 6, fill: '#C8372D' }, hand);
+  el('circle', { cx, cy, r: 5, fill: INK }, g);
+  return hand;
+}
+
+function scene({ rig, el, txt, s, r, step, set, drag, hint }) {
+  defs(el, rig);
+  const times = TIMES[step] || [], can = times.length > 1, heating = s.time > 0;
+  hotplate(el, txt, rig, 250, 480, heating);
+  beaker(el, txt, rig, 250, 480, r, s.mass, heating);
+  thermometer(el, txt, rig, 312, 170, 470, r.temp);
+  el('rect', { x: 372, y: 150, width: 116, height: 44, rx: 10, fill: INK }, rig); txt(rig, 430, 179, `${f(r.temp)}°C`, { 'font-size': 20, fill: '#fff' });
+  txt(rig, 250, 604, STATE(r), { 'font-size': 16 });
+  const TX = 440, TY = 312, near = t => times.reduce((m, v) => Math.abs(v - t) < Math.abs(m - t) ? v : m, times[0]);
+  if (step !== 'mass') {
+    // 碼錶（轉指針設定加熱時間）
+    const tg = el('g', { 'data-drag': can ? 'timer' : null }, rig), hand = timer(el, txt, tg, TX, TY, s.time);
+    txt(rig, TX, TY + 78, `加熱 ${s.time} 分`, { 'font-size': 14 });
+    if (can) drag(tg, () => { let t = s.time; return { move(p) { let a = Math.atan2(p.x - TX, TY - p.y) * 180 / Math.PI; if (a < 0) a += 360; t = a / 360 * 30; hand.setAttribute('transform', `rotate(${a} ${TX} ${TY})`); },
+      end() { const v = near(t); if (v !== s.time) set({ time: v }); else hand.setAttribute('transform', `rotate(${s.time / 30 * 360} ${TX} ${TY})`); }, cancel() { hand.setAttribute('transform', `rotate(${s.time / 30 * 360} ${TX} ${TY})`); } }; },
+      { label: '加熱到下一個時間', tap: () => set({ time: times[(times.indexOf(s.time) + 1) % times.length] }) });
+  } else {
+    // 質量：點選 100 g／200 g 的冰
+    txt(rig, TX, 236, '同樣加熱 9 分鐘', { 'font-size': 14, fill: '#5A6478' });
+    for (const [i, m] of [[0, 100], [1, 200]]) { const y = 270 + i * 110, on = s.mass === m, g = el('g', { 'data-drag': on ? null : 'mass' }, rig);
+      el('rect', { x: TX - 50, y, width: 100, height: 86, rx: 12, fill: on ? '#E9F6F0' : '#FFFDF2', stroke: on ? '#2E8B66' : '#8A93A6', 'stroke-width': on ? 3 : 2, 'stroke-dasharray': on ? '' : '6 4' }, g);
+      for (let k = 0; k < m / 50; k++) el('rect', { x: TX - 34 + (k % 2) * 34, y: y + 10 + Math.floor(k / 2) * 14, width: 30, height: 12, rx: 3, fill: 'url(#ph-ice)', stroke: '#86B8D8', 'stroke-width': 1.2 }, g);
+      txt(g, TX, y + 78, `${m} g 冰`, { 'font-size': 14, fill: on ? '#1F6E50' : INK });
+      if (!on) drag(g, null, { label: `換成 ${m} g 的冰`, tap: () => set({ mass: m }) }); }
+  }
+  // 右：加熱曲線（黃點也可以拖）
   const X0 = 590, X1 = 930, Y0 = 500, Y1 = 150, tx = t => X0 + (X1 - X0) * t / 30, ty = T => Y0 - (Y0 - Y1) * (T + 20) / 130;
-  el('rect', { x: X0 - 62, y: Y1 - 50, width: X1 - X0 + 90, height: Y0 - Y1 + 110, rx: 16, fill: 'rgba(255,255,255,.94)', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  el('rect', { x: X0 - 62, y: Y1 - 50, width: X1 - X0 + 90, height: Y0 - Y1 + 110, rx: 16, fill: 'rgba(255,255,255,.94)', stroke: INK, 'stroke-width': 3 }, rig);
   txt(rig, (X0 + X1) / 2, Y1 - 22, `溫度－時間圖（${s.mass} g）`, { 'font-size': 16 });
   for (const T of [0, 100]) { el('path', { d: `M${X0} ${ty(T)} H${X1}`, stroke: '#C9BFAE', 'stroke-width': 1.5, 'stroke-dasharray': '6 6' }, rig); txt(rig, X0 - 10, ty(T) + 5, `${T}°C`, { 'font-size': 13, 'text-anchor': 'end', fill: '#5A6478' }); }
-  el('path', { d: `M${X0} ${Y1} V${Y0} H${X1}`, fill: 'none', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  el('path', { d: `M${X0} ${Y1} V${Y0} H${X1}`, fill: 'none', stroke: INK, 'stroke-width': 3 }, rig);
   for (const t of [0, 10, 20, 30]) txt(rig, tx(t), Y0 + 22, `${t}`, { 'font-size': 13, fill: '#5A6478' });
   txt(rig, (X0 + X1) / 2, Y0 + 46, '加熱時間（分）', { 'font-size': 13, fill: '#5A6478' });
   let d = ''; for (let t = 0; t <= 30; t += 0.25) d += `${t ? 'L' : 'M'}${tx(t).toFixed(1)} ${ty(heat({ mass: s.mass, time: t }).temp).toFixed(1)}`;
-  el('path', { d, fill: 'none', stroke: '#C8372D', 'stroke-width': 4, 'stroke-linejoin': 'round' }, rig);
-  el('circle', { cx: tx(s.time), cy: ty(r.temp), r: 9, fill: '#F4C04E', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  el('path', { d: `${d}`, fill: 'none', stroke: '#E8B4AE', 'stroke-width': 4, 'stroke-linejoin': 'round' }, rig);
+  let done = ''; for (let t = 0; t <= s.time; t += 0.25) done += `${t ? 'L' : 'M'}${tx(t).toFixed(1)} ${ty(heat({ mass: s.mass, time: t }).temp).toFixed(1)}`;
+  if (done) el('path', { d: done, fill: 'none', stroke: '#C8372D', 'stroke-width': 4.5, 'stroke-linejoin': 'round' }, rig);
+  for (const t of can ? times : []) if (t !== s.time) el('circle', { cx: tx(t), cy: ty(heat({ mass: s.mass, time: t }).temp), r: 4.5, fill: '#fff', stroke: '#C8372D', 'stroke-width': 2 }, rig);
+  const dot = el('g', { 'data-drag': can ? 'dot' : null }, rig);
+  el('circle', { cx: tx(s.time), cy: ty(r.temp), r: 22, fill: 'transparent' }, dot);
+  const pin = el('circle', { cx: tx(s.time), cy: ty(r.temp), r: 10, fill: '#F4C04E', stroke: INK, 'stroke-width': 3 }, dot);
+  if (can) drag(dot, () => { let t = s.time; return { move(p) { t = Math.max(0, Math.min(30, (p.x - X0) / (X1 - X0) * 30)); pin.setAttribute('cx', tx(t)); pin.setAttribute('cy', ty(heat({ mass: s.mass, time: t }).temp)); },
+    end() { const v = near(t); if (v !== s.time) set({ time: v }); else { pin.setAttribute('cx', tx(s.time)); pin.setAttribute('cy', ty(r.temp)); } }, cancel() { pin.setAttribute('cx', tx(s.time)); pin.setAttribute('cy', ty(r.temp)); } }; },
+    { label: '曲線上的時間點' });
+  hint(430, 112, step === 'mass' ? '點冰盒換質量' : '轉碼錶指針，或拖曲線上的黃點');
 }
 
 const tgt = (sig, mass, time, aim) => ({ sig, label: `${mass} g、第 ${time} 分`, aim, set: { mass, time }, title: s => `${s.mass} g，加熱 ${s.time} 分（${s.time * RATE} 卡）`, body: (s, r) => `${f(r.temp)}°C，${STATE(r)}` });
@@ -37,7 +131,7 @@ const timeCtl = list => ({ key: 'time', label: '加熱時間', type: 'seg', cols
 
 runDesk({
   key: 'bhcs.lab.phase.v1', title: '熱與物態實驗桌', background: 'bg-chem-bench',
-  sceneLabel: '熱與物態實驗桌：左邊是電熱板上的燒杯和溫度計，右邊是溫度隨加熱時間變化的曲線，黃點是現在的位置',
+  sceneLabel: '熱與物態實驗桌：左邊是電熱板上的燒杯、溫度計和碼錶，可以轉碼錶指針設定加熱時間；右邊是溫度－時間圖，黃點也可以拖。',
   initial: { mass: 100, time: 0 },
   model, scene, viewBox: { desk: '90 80 880 530', phone: '90 80 880 530' }, phoneText: 1.4,
   chip: { main: '加熱器每分鐘 1000 卡' },

@@ -56,7 +56,7 @@ function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
   if (step === 'image' || step === 'center') {
     const o = OFF[s.slide], xs = SLIDES.map(a => OFF[a][0]);
     txt(rig, 240, 196, '載物台（從上面看）', { 'font-size': 14, fill: '#5A6478' });
-    const sl = stageTop(el, txt, rig, { dx: o[0], dy: o[1], label: '字母' });
+    const sl = stageTop(el, txt, rig, { dx: o[0], dy: o[1], label: '字母' }); sl.setAttribute('data-drag', 'slide');
     hint(240, 484, '拖動玻片');
     if (can) drag(sl, e => { const sc = scale(), x0 = e.clientX; let x = o[0];
       return { move(ev) { x = clamp(o[0] + (ev.clientX - x0) / sc, Math.min(...xs), Math.max(...xs)); sl.setAttribute('transform', `translate(${x} ${o[1]})`); moving.setAttribute('transform', `translate(${-(x - o[0]) / 34 * 150} 0)`); },
@@ -79,7 +79,7 @@ function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
       const turn = (n, key, max) => { mark(n, '#2E8B66'); drag(n.hit, e => { const b = n.hit.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height / 2; let prev = Math.atan2(e.clientY - cy, e.clientX - cx), v = s[key];
         return { move(ev) { const a = Math.atan2(ev.clientY - cy, ev.clientX - cx); let d = a - prev; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; prev = a; v = clamp(v + d * 180 / Math.PI / 60, 0, max); paint(key === 'coarse' ? v : s.coarse, key === 'fine' ? v : s.fine); },
           end() { const to = Math.round(v); if (to !== s[key]) set({ [key]: to }); else paint(s.coarse, s.fine); } }; }); };
-      turn(M.coarse, 'coarse', 4); turn(M.fine, 'fine', 2);
+      M.coarse.hit.setAttribute('data-drag', 'coarse'); M.fine.hit.setAttribute('data-drag', 'fine'); turn(M.coarse, 'coarse', 4); turn(M.fine, 'fine', 2);
       txt(rig, 362, 389, '粗', { 'font-size': 13 }); txt(rig, 352, 457, '細', { 'font-size': 13 });
       hint(AXIS, 42, '拖著轉調節輪');
     }
@@ -95,7 +95,7 @@ function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
       for (let i = 0; i < 8; i++) el('path', { d: `M138 430L${138 + 30 * Math.cos(i * Math.PI / 4)} ${430 + 30 * Math.sin(i * Math.PI / 4)}`, stroke: '#6B7892', 'stroke-width': 1.2 }, rig);
       el('circle', { cx: 138, cy: 430, r: open, fill: 'url(#ms-glow)', stroke: '#23304A', 'stroke-width': 2 }, rig);
       txt(rig, 138, 480, `光圈：${{ 1: '大', 3: '中', 5: '小' }[s.aperture]}`, { 'font-size': 13 });
-      if (can) drag(M.leverHit, e => { const sc = scale(), x0 = e.clientX, o = LEVER[s.aperture]; let x = o, moved = false;
+      M.leverHit.setAttribute('data-drag', 'lever'); if (can) drag(M.leverHit, e => { const sc = scale(), x0 = e.clientX, o = LEVER[s.aperture]; let x = o, moved = false;
         return { move(ev) { x = clamp(o + (ev.clientX - x0) / sc, -36, 0); moved = moved || Math.abs(x - o) > 2; M.lever.setAttribute('transform', `translate(${x} 0)`); },
           end() { const to = moved ? near([1, 3, 5], x, a => LEVER[a]) : { 1: 3, 3: 5, 5: 1 }[s.aperture]; if (to !== s.aperture) set({ aperture: to }); else M.lever.setAttribute('transform', `translate(${o} 0)`); } }; });
     }

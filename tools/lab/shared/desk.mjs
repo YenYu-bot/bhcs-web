@@ -187,13 +187,41 @@ export async function runDesk(c) {
     g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(); } });
     return g;
   }
+  /* ---------- 直接操作：拖、轉、點 ---------- */
+  // 把指標位置換成場景座標
+  const svgPt = e => { const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(svg.getScreenCTM().inverse()); };
+  // begin(p0) 回傳 { move(p, p0), end(p, p0), cancel() }。拖的時候只改畫面，放開才 set()，因為 set() 會重畫整個場景。
+  // 移動不到 6 px 算點一下，呼叫 tap()；有 label 就能用鍵盤 Enter／空白鍵觸發 tap()。
+  function drag(node, begin, { label, tap } = {}) {
+    node.classList.add('scene-drag'); node.style.touchAction = 'none';
+    if (label) { node.setAttribute('role', 'button'); node.setAttribute('tabindex', 0); node.setAttribute('aria-label', label); }
+    if (tap) node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(); } });
+    node.addEventListener('pointerdown', e => {
+      if (e.button) return; e.preventDefault(); e.stopPropagation();
+      const x0 = e.clientX, y0 = e.clientY, p0 = svgPt(e), h = begin ? begin(p0) || {} : {}; let moved = false;
+      node.classList.add('dragging');
+      const mv = ev => { if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) > 6) moved = true; if (moved) h.move?.(svgPt(ev), p0); };
+      const stop = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', cancel); node.classList.remove('dragging'); };
+      const up = ev => { stop(); if (moved || !tap) h.end?.(svgPt(ev), p0); else { h.cancel?.(); tap(); } };
+      const cancel = () => { stop(); h.cancel?.(); };
+      addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', cancel);
+    });
+    return node;
+  }
+  // 操作提示：虛線綠框小字，不擋點擊
+  function hint(x, y, str, k = 1) {
+    const g = svgEl('g', { class: 'scene-hint', 'pointer-events': 'none' }, rig), w = str.length * 15 * k + 28;
+    svgEl('rect', { x: x - w / 2, y: y - 14 - 6 * k, width: w, height: 18 + 10 * k, rx: 14, fill: '#FFFDF2', stroke: '#2E8B66', 'stroke-width': 2, 'stroke-dasharray': '5 4' }, g);
+    svgText(g, x, y, str, { 'font-size': Math.round(14 * k), fill: '#1F6E50' });
+    return g;
+  }
   function draw() {
     const st = step(), r = result();
     const focusLabel = document.activeElement && rig.contains(document.activeElement) ? document.activeElement.getAttribute('aria-label') : null;
     rig.replaceChildren();
     const k = narrow.matches ? (c.phoneText || 1.5) : 1;
     const txt = (parent, x, y, str, a = {}) => svgText(parent, x, y, str, { ...a, 'font-size': Math.round((a['font-size'] || 16) * k) });
-    c.scene({ rig, el: svgEl, txt, k, P: PROPS, s: S.s, r, set, step: st.id, kind: st.kind || 'observe', tool, narrow: narrow.matches, has: sig => got(st.id, sig), records: S.records });
+    c.scene({ rig, el: svgEl, txt, k, P: PROPS, s: S.s, r, set, step: st.id, kind: st.kind || 'observe', tool, drag, hint: (x, y, str) => (st.kind || 'observe') === 'observe' ? hint(x, y, str, k) : null, narrow: narrow.matches, has: sig => got(st.id, sig), records: S.records, reduce: reduceMotion() });
     if (focusLabel) [...rig.querySelectorAll('[aria-label]')].find(n => n.getAttribute('aria-label') === focusLabel)?.focus({ preventScroll: true });
     const vb = typeof c.viewBox === 'function' ? c.viewBox(st.id, S.s) : c.viewBox;
     svg.setAttribute('viewBox', (narrow.matches ? vb.phone : vb.desk) || '0 0 1000 620');

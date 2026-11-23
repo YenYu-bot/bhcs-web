@@ -5,34 +5,130 @@ import { runDesk } from '../shared/desk.mjs';
 const f = x => String(Math.round(x * 100) / 100);
 const NAME = { single: '一顆燈泡', series: '兩顆串聯', parallel: '兩顆並聯' };
 
-function scene({ rig, el, txt, P, s, r }) {
-  const wire = d => el('path', { d, fill: 'none', stroke: r.total ? '#C8372D' : '#5A6478', 'stroke-width': 6, 'stroke-linejoin': 'round' }, rig);
-  const tag = (x, y, str, w = 150) => { el('rect', { x: x - w / 2, y: y - 20, width: w, height: 30, rx: 9, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 2 }, rig); txt(rig, x, y + 1, str, { 'font-size': 15 }); };
-  const bulb = (x, y, side) => {
-    if (r.pEach) el('circle', { cx: x, cy: y - 34, r: 34 + r.pEach * 22, fill: '#F4C04E', opacity: .35 }, rig);
-    el('circle', { cx: x, cy: y - 34, r: 30, fill: r.pEach ? '#FFE9A8' : '#EEF1F5', stroke: '#23304A', 'stroke-width': 3 }, rig);
-    el('path', { d: `M${x - 12} ${y - 22} L${x - 6} ${y - 44} L${x} ${y - 26} L${x + 6} ${y - 44} L${x + 12} ${y - 22}`, fill: 'none', stroke: r.pEach ? '#C8372D' : '#5A6478', 'stroke-width': 2.5 }, rig);
-    el('rect', { x: x - 14, y: y - 6, width: 28, height: 14, rx: 3, fill: '#8A93A3', stroke: '#23304A', 'stroke-width': 2 }, rig);
-    if (side) tag(x + 140, y - 34, `${f(r.each)} A　${f(r.vEach)} V`, 150); else tag(x, y - 92, `${f(r.each)} A　${f(r.vEach)} V`, 150);
-  };
-  // 迴路：電池在下、開關在左下、燈泡在上
-  const L = 190, Rr = 810, T = 230, B = 470;
-  if (s.layout === 'parallel') {
-    wire(`M${L} ${B} V${T} H${Rr} V${B}`); wire(`M${L + 110} ${T} V${T - 100} H${Rr - 110} V${T}`);
-    el('circle', { cx: L + 110, cy: T, r: 7, fill: '#23304A' }, rig); el('circle', { cx: Rr - 110, cy: T, r: 7, fill: '#23304A' }, rig);
-    bulb(500, T + 4, true); bulb(500, T - 96, true);
-  } else {
-    wire(`M${L} ${B} V${T} H${Rr} V${B}`);
-    if (s.layout === 'single') bulb(500, T + 4); else { bulb(390, T + 4); bulb(610, T + 4); }
+// ---------- 畫法 ----------
+const INK = '#23304A';
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
+  g('radialGradient', 'ci-glass', [[0, '#FFFFFF', .95], [.55, '#E8F2FA', .55], [1, '#B9D3E8', .7]], { cx: .38, cy: .32, r: .75 });
+  g('radialGradient', 'ci-lit', [[0, '#FFFDF0'], [.5, '#FFF0B0'], [1, '#F7C948']], { cx: .45, cy: .4, r: .7 });
+  g('radialGradient', 'ci-glow', [[0, '#FFE680', .95], [.45, '#FFD24A', .45], [1, '#FFD24A', 0]]);
+  g('linearGradient', 'ci-metal', [[0, '#6C778A'], [.35, '#F2F5F9'], [.6, '#A9B3C2'], [1, '#596377']]);
+  g('linearGradient', 'ci-cell', [[0, '#1B2C4E'], [.3, '#4F6FA8'], [.5, '#7E9BD0'], [1, '#14223D']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('linearGradient', 'ci-band', [[0, '#9A6F12'], [.35, '#F6D776'], [.6, '#D9A933'], [1, '#7C560A']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('linearGradient', 'ci-wood', [[0, '#E6C48C'], [1, '#B98A52']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('linearGradient', 'ci-tray', [[0, '#3A4660'], [1, '#1C2438']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  const f = el('filter', { id: 'ci-soft', x: '-50%', y: '-50%', width: '200%', height: '200%' }, d); el('feGaussianBlur', { stdDeviation: 2.2 }, f);
+}
+// 燈泡：(x, y) 是燈座底部中心，power 是消耗功率（瓦），0 就是不亮
+function bulb(el, g, x, y, power, ghost) {
+  const q = el('g', ghost ? { opacity: .35 } : {}, g);
+  if (power > 0) el('circle', { cx: x, cy: y - 64, r: 46 + power * 22, fill: 'url(#ci-glow)', opacity: Math.min(1, .45 + power * .3) }, q);
+  el('rect', { x: x - 22, y: y - 10, width: 44, height: 18, rx: 4, fill: '#F4EFE4', stroke: INK, 'stroke-width': 2 }, q);
+  el('rect', { x: x - 13, y: y - 34, width: 26, height: 26, rx: 3, fill: 'url(#ci-metal)', stroke: INK, 'stroke-width': 1.8 }, q);
+  for (let i = 0; i < 4; i++) el('path', { d: `M${x - 13} ${y - 29 + i * 6}l26 -2`, stroke: '#5A6478', 'stroke-width': 1.2 }, q);
+  const glass = `M${x - 11} ${y - 34}C${x - 11} ${y - 46} ${x - 28} ${y - 52} ${x - 28} ${y - 70}A28 28 0 1 1 ${x + 28} ${y - 70}C${x + 28} ${y - 52} ${x + 11} ${y - 46} ${x + 11} ${y - 34}Z`;
+  el('path', { d: glass, fill: power > 0 ? 'url(#ci-lit)' : 'url(#ci-glass)', stroke: INK, 'stroke-width': 2.2, opacity: power > 0 ? Math.min(1, .55 + power * .3) : 1 }, q);
+  el('path', { d: `M${x - 6} ${y - 36}V${y - 62}M${x + 6} ${y - 36}V${y - 62}`, stroke: '#6B7892', 'stroke-width': 1.6 }, q);
+  const hot = power >= 1 ? '#FFFBE6' : power > 0 ? '#FFC23A' : '#7A7F8C';
+  let coil = `M${x - 6} ${y - 62}`; for (let i = 0; i < 6; i++) coil += `q1 -5 2 0`;
+  el('path', { d: coil, fill: 'none', stroke: hot, 'stroke-width': power > 0 ? 2.6 : 1.6 }, q);
+  if (power > 0) el('path', { d: coil, fill: 'none', stroke: hot, 'stroke-width': 5, filter: 'url(#ci-soft)', opacity: .9 }, q);
+  el('path', { d: `M${x - 17} ${y - 84}q-4 10 0 22`, fill: 'none', stroke: '#fff', 'stroke-width': 3.5, 'stroke-linecap': 'round', opacity: .75 }, q);
+  return q;
+}
+// 一顆 1.5 V 乾電池（橫放，正極朝右）
+function cell(el, g, x, y, w = 124) {
+  const q = el('g', {}, g);
+  el('rect', { x, y: y - 21, width: w, height: 42, rx: 7, fill: 'url(#ci-cell)', stroke: INK, 'stroke-width': 2 }, q);
+  el('rect', { x: x + w * .58, y: y - 21, width: w * .3, height: 42, fill: 'url(#ci-band)' }, q);
+  el('rect', { x: x + w, y: y - 8, width: 8, height: 16, rx: 2, fill: 'url(#ci-metal)', stroke: INK, 'stroke-width': 1.5 }, q);
+  el('path', { d: `M${x + 6} ${y - 14}h${w * .5}`, stroke: '#fff', 'stroke-width': 2.5, 'stroke-linecap': 'round', opacity: .45 }, q);
+  const t = el('text', { x: x + w * .3, y: y + 6, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 800, fill: '#fff' }, q); t.textContent = '1.5V';
+  const p = el('text', { x: x + w * .73, y: y + 7, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: '#5A3E06' }, q); p.textContent = '＋';
+  return q;
+}
+// 閘刀開關：(x, y) 是轉軸，ang 是刀片角度（0 ＝ 合上，負數 ＝ 往上打開）
+function knife(el, g, x, y, ang) {
+  el('rect', { x: x - 26, y: y + 6, width: 128, height: 22, rx: 5, fill: 'url(#ci-wood)', stroke: INK, 'stroke-width': 2 }, g);
+  el('rect', { x: x - 8, y: y - 10, width: 16, height: 20, rx: 2, fill: 'url(#ci-band)', stroke: INK, 'stroke-width': 1.5 }, g);
+  el('path', { d: `M${x + 76} ${y + 8}V${y - 12}M${x + 88} ${y + 8}V${y - 12}`, stroke: '#9A6F12', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+  const blade = el('g', { transform: `rotate(${ang} ${x} ${y})` }, g);
+  el('rect', { x, y: y - 4, width: 94, height: 8, rx: 2, fill: 'url(#ci-band)', stroke: INK, 'stroke-width': 1.5 }, blade);
+  el('rect', { x: x + 92, y: y - 9, width: 24, height: 18, rx: 8, fill: '#C8372D', stroke: INK, 'stroke-width': 2 }, blade);
+  el('circle', { cx: x, cy: y, r: 6, fill: 'url(#ci-metal)', stroke: INK, 'stroke-width': 1.5 }, g);
+  return blade;
+}
+// 安培計：指針 0–1.5 A
+function ammeter(el, txt, g, x, y, amps) {
+  el('circle', { cx: x + 2, cy: y + 4, r: 48, fill: '#000', opacity: .18 }, g);
+  el('circle', { cx: x, cy: y, r: 48, fill: '#2B3550', stroke: INK, 'stroke-width': 2 }, g);
+  el('circle', { cx: x, cy: y, r: 40, fill: '#FBFAF4', stroke: '#9AA3B2', 'stroke-width': 1.5 }, g);
+  const ang = v => (-130 + 260 * v / 1.5) * Math.PI / 180;
+  for (let i = 0; i <= 15; i++) { const a = ang(i / 10), r0 = i % 5 ? 32 : 28; el('path', { d: `M${x + r0 * Math.sin(a)} ${y - r0 * Math.cos(a)}L${x + 37 * Math.sin(a)} ${y - 37 * Math.cos(a)}`, stroke: INK, 'stroke-width': i % 5 ? 1 : 2 }, g); }
+  for (const v of [0, .5, 1, 1.5]) { const a = ang(v); txt(g, x + 21 * Math.sin(a), y - 21 * Math.cos(a) + 4, String(v), { 'font-size': 9, 'font-weight': 700, fill: '#5A6478' }); }
+  txt(g, x, y + 22, 'A', { 'font-size': 13, fill: '#C8372D' });
+  const a = ang(Math.min(1.5, amps));
+  el('path', { d: `M${x} ${y}L${x + 34 * Math.sin(a)} ${y - 34 * Math.cos(a)}`, stroke: '#C8372D', 'stroke-width': 2.5, 'stroke-linecap': 'round' }, g);
+  el('circle', { cx: x, cy: y, r: 4, fill: INK }, g);
+}
+
+const SPARE_BULB = [680, 440], SLOT = { series: [610, 250], parallel: [500, 130] }, SPARE_CELL = [668, 522];
+function scene({ rig, el, txt, s, r, step, set, drag, hint, reduce }) {
+  defs(el, rig);
+  const L = 190, Rr = 810, T = 250, B = 470, layouts = step === 'parallel' ? ['series', 'parallel'] : step === 'series' ? ['series'] : [];
+  const live = r.total > 0, hw = 130 * s.cells, hl = 500 - hw / 2, hr = 500 + hw / 2;
+  const wire = (d, g = rig) => { el('path', { d, fill: 'none', stroke: INK, 'stroke-width': 8, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g); el('path', { d, fill: 'none', stroke: '#D8413A', 'stroke-width': 4.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g); };
+  const flow = (d, amps) => { if (!live || reduce || !amps) return; const p = el('path', { d, fill: 'none', stroke: '#FFE45C', 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-dasharray': '1 23', 'pointer-events': 'none' }, rig);
+    el('animate', { attributeName: 'stroke-dashoffset', from: 0, to: -24, dur: `${(0.36 / amps).toFixed(2)}s`, repeatCount: 'indefinite' }, p); };
+  const tag = (x, y, str, w = 128) => { el('rect', { x: x - w / 2, y: y - 18, width: w, height: 26, rx: 8, fill: '#FFF8EC', stroke: INK, 'stroke-width': 1.8 }, rig); txt(rig, x, y + 1, str, { 'font-size': 14 }); };
+  // 迴路
+  wire(`M${hr} ${B}H${Rr}V${T}H${L}V${B}H${hl}`);
+  if (s.layout === 'parallel') { wire(`M${L + 110} ${T}V${T - 120}H${Rr - 110}V${T}`); for (const x of [L + 110, Rr - 110]) el('circle', { cx: x, cy: T, r: 7, fill: INK }, rig); }
+  if (s.layout === 'parallel') { flow(`M${hr} ${B}H${Rr}V${T}H${Rr - 110}`, r.total); flow(`M${L + 110} ${T}H${L}V${B}H${hl}`, r.total); flow(`M${Rr - 110} ${T}H${L + 110}`, r.each); flow(`M${Rr - 110} ${T}V${T - 120}H${L + 110}V${T}`, r.each); }
+  else flow(`M${hr} ${B}H${Rr}V${T}H${L}V${B}H${hl}`, r.total);
+  // 空的接點（拖燈泡時可以放的位置）
+  const slots = {};
+  for (const k of layouts) if (k !== s.layout) { const [x, y] = SLOT[k], q = el('g', { opacity: .9, 'pointer-events': 'none' }, rig); slots[k] = q;
+    if (k === 'parallel') el('path', { d: `M${L + 110} ${T}V${T - 120}H${Rr - 110}V${T}`, fill: 'none', stroke: '#2E8B66', 'stroke-width': 3, 'stroke-dasharray': '8 6' }, q);
+    el('rect', { x: x - 34, y: y - 104, width: 68, height: 116, rx: 12, fill: 'rgba(46,139,102,.06)', stroke: '#2E8B66', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, q);
+    if (k === 'series') txt(q, x, y - 112, '串聯位置', { 'font-size': 13, fill: '#1F6E50' }); else txt(q, x + 82, y - 44, '並聯位置', { 'font-size': 13, fill: '#1F6E50' }); }
+  // 燈泡
+  const pos = s.layout === 'series' ? [[390, T], SLOT.series] : s.layout === 'parallel' ? [[500, T], SLOT.parallel] : [[500, T]];
+  bulb(el, rig, ...pos[0], live ? r.pEach : 0);
+  const tagAt = ([x, y], side) => side ? tag(x + side * 112, y - 64, `${f(r.each)} A　${f(r.vEach)} V`) : tag(x, y - 128, `${f(r.each)} A　${f(r.vEach)} V`);
+  tagAt(pos[0], s.layout === 'parallel' ? 1 : s.layout === 'single' && layouts.includes('parallel') ? -1 : 0);
+  if (layouts.length) {
+    const home = pos[1] || SPARE_BULB, g = el('g', { 'data-drag': 'bulb' }, rig); bulb(el, g, ...home, pos[1] && live ? r.pEach : 0);
+    el('rect', { x: home[0] - 40, y: home[1] - 110, width: 80, height: 124, fill: 'transparent' }, g);
+    if (pos[1]) tagAt(pos[1], s.layout === 'parallel' ? 1 : 0); else txt(rig, SPARE_BULB[0], SPARE_BULB[1] - 116, '備用燈泡', { 'font-size': 13, fill: '#5A6478' });
+    const pick = p => { let best = null, dist = 80; for (const k of layouts) { const d = Math.hypot(p[0] - SLOT[k][0], p[1] - SLOT[k][1] + 50); if (d < dist) { dist = d; best = k; } } return best; };
+    drag(g, () => ({ move(p, p0) { const x = home[0] + p.x - p0.x, y = home[1] + p.y - p0.y; g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`);
+        const k = pick([x, y]); for (const n in slots) slots[n].setAttribute('opacity', n === k ? 1 : .55); },
+      end(p, p0) { const k = pick([home[0] + p.x - p0.x, home[1] + p.y - p0.y]) || 'single'; if (k !== s.layout) set({ layout: k }); else g.removeAttribute('transform'); },
+      cancel() { g.removeAttribute('transform'); } }),
+      { label: pos[1] ? '把第二顆燈泡拿出電路' : '把燈泡接進電路', tap: () => set({ layout: pos[1] ? 'single' : layouts[0] }) });
   }
-  wire(`M${L} ${B} H${Rr}`);
-  el('image', { href: P + (s.on ? 'prop-switch-closed.webp' : 'prop-switch-open.webp'), x: L + 30, y: B - 62, width: 120, height: 86 }, rig);
-  const bw = 150, bx = s.cells === 2 ? 500 - bw : 500 - bw / 2;
-  el('rect', { x: bx - 8, y: B - 34, width: bw * s.cells + 16, height: 68, fill: 'none' }, rig);
-  for (let i = 0; i < s.cells; i++) el('image', { href: P + 'prop-battery.webp', x: bx + i * bw, y: B - 28, width: bw, height: 55 }, rig);
-  tag(500, B + 62, `電池 ${s.cells} 顆：${f(r.V)} V`, 190);
-  tag(Rr + 4, 350, `總電流 ${f(r.total)} A`, 170);
-  txt(rig, L + 90, B + 52, s.on ? '開關按下（通路）' : '開關打開（斷路）', { 'font-size': 14, fill: '#5A6478' });
+  // 電池座和電池
+  el('rect', { x: hl - 10, y: B - 30, width: hw + 20, height: 60, rx: 10, fill: 'url(#ci-tray)', stroke: INK, 'stroke-width': 2 }, rig);
+  for (const x of [hl - 4, hr + 4]) el('path', { d: `M${x} ${B - 14}l${x < 500 ? 6 : -6} 4l${x < 500 ? -6 : 6} 4l${x < 500 ? 6 : -6} 4l${x < 500 ? -6 : 6} 4l${x < 500 ? 6 : -6} 4`, fill: 'none', stroke: '#C6CEDA', 'stroke-width': 2 }, rig);
+  cell(el, rig, hl + 3, B);
+  const cellStep = step === 'single';
+  if (s.cells === 2) { const g = el('g', { 'data-drag': cellStep ? 'cell' : null }, rig); cell(el, g, hl + 133, B);
+    if (cellStep) drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p, p0) { if (Math.hypot(p.x - p0.x, p.y - p0.y) > 40) set({ cells: 1 }); else g.removeAttribute('transform'); }, cancel() { g.removeAttribute('transform'); } }), { label: '拿掉一顆電池', tap: () => set({ cells: 1 }) }); }
+  else if (cellStep) { const g = el('g', { 'data-drag': 'cell' }, rig); cell(el, g, SPARE_CELL[0], SPARE_CELL[1], 104);
+    drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p) { if (Math.abs(p.y - B) < 70 && p.x > 330 && p.x < 700) set({ cells: 2 }); else g.removeAttribute('transform'); }, cancel() { g.removeAttribute('transform'); } }), { label: '加一顆電池', tap: () => set({ cells: 2 }) }); }
+  txt(rig, 500, B + 50, `電池 ${s.cells} 顆串聯：${f(r.V)} V`, { 'font-size': 15 });
+  // 開關
+  const hx = L + 40, ang = s.on ? 0 : -48; el('rect', { x: L - 6, y: B - 4, width: 30, height: 8, fill: '#FFF8EC', opacity: 0 }, rig);
+  const sw = el('g', { 'data-drag': step === 'single' ? 'switch' : null }, rig), blade = knife(el, sw, hx, B, ang);
+  el('rect', { x: hx - 30, y: B - 90, width: 150, height: 120, fill: 'transparent' }, sw);
+  txt(rig, hx + 38, B + 50, s.on ? '開關合上（通路）' : '開關打開（斷路）', { 'font-size': 14, fill: s.on ? '#2E8B66' : '#C8372D' });
+  if (step === 'single') drag(sw, () => { let a = ang; return { move(p) { a = Math.max(-60, Math.min(0, Math.atan2(p.y - B, p.x - hx) * 180 / Math.PI)); blade.setAttribute('transform', `rotate(${a} ${hx} ${B})`); }, end() { const on = a > -20; if (on !== s.on) set({ on }); else blade.setAttribute('transform', `rotate(${ang} ${hx} ${B})`); }, cancel() { blade.setAttribute('transform', `rotate(${ang} ${hx} ${B})`); } }; },
+    { label: s.on ? '打開開關' : '合上開關', tap: () => set({ on: !s.on }) });
+  // 安培計
+  el('rect', { x: Rr - 10, y: 280, width: 20, height: 100, fill: '#FBF6EC', opacity: 0 }, rig);
+  ammeter(el, txt, rig, Rr, 330, r.total); tag(Rr, 398, `總電流 ${f(r.total)} A`, 132);
+  hint(500, 566, step === 'single' ? '點或拖開關、把電池拖進電池座' : step === 'series' ? '把右下角的燈泡拖進串聯位置' : '把燈泡拖到串聯或並聯位置');
 }
 
 const tgt = (sig, label, set, aim) => ({ sig, label, set, aim, title: s => `${NAME[s.layout]}、電池 ${s.cells} 顆${s.on ? '' : '、開關打開'}`,
@@ -41,9 +137,9 @@ const layoutCtl = opts => ({ key: 'layout', label: '燈泡接法', type: 'seg', 
 
 runDesk({
   key: 'bhcs.lab.circuit.v1', title: '電路實驗桌', background: 'bg-electric-bench',
-  sceneLabel: '電路實驗桌：電池、開關和燈泡接成迴路，每顆燈泡旁標出電流與電壓，右側是總電流',
+  sceneLabel: '電路實驗桌：電池、閘刀開關和燈泡接成迴路，可以直接拖動開關、電池和燈泡；右側安培計顯示總電流',
   initial: { layout: 'single', cells: 1, on: false },
-  model: circuit, scene, viewBox: { desk: '100 30 840 530', phone: '100 30 840 530' }, phoneText: 1.4,
+  model: circuit, scene, viewBox: { desk: '110 20 840 560', phone: '110 20 840 560' }, phoneText: 1.4,
   readouts: (s, r) => [['總電流', f(r.total), 'A', `${f(r.V)} V ÷ ${f(r.Rt)} Ω`], ['每顆燈的電壓', f(r.vEach), 'V', r.n === 1 ? '只有一顆' : NAME[s.layout]], ['每顆燈的電流', f(r.each), 'A', r.pEach ? (r.pEach >= 1.5 ? '很亮' : r.pEach >= .4 ? '普通亮' : '暗') : '不亮']],
   why: { title: '電流、電壓與電阻', button: '歐姆定律', html: `
     <p class="fn-tip"><b>通路才有電流。</b>開關打開就是斷路，電流是 0，燈不亮。</p>
