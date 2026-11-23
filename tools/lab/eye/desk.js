@@ -4,32 +4,84 @@ import { runDesk } from '../shared/desk.mjs';
 
 const TYPE = { normal: '正常眼', myopia: '近視眼', hyperopia: '遠視眼' }, LENS = { none: '不戴眼鏡', concave: '凹透鏡', convex: '凸透鏡' }, DIST = { far: '遠方的樹', near: '近處的書' };
 const WHERE = { front: '視網膜前方', on: '視網膜上', behind: '視網膜後方' };
-function scene({ rig, el, txt, s, r }) {
-  const cy = 300, FX = 520, PX = 13, rx = r.length * PX / 2, cx = FX + rx, RX = FX + 2 * rx, fx = FX + r.focus * PX;
-  el('ellipse', { cx, cy, rx, ry: 150, fill: '#FFF4E6', stroke: '#23304A', 'stroke-width': 4 }, rig);
-  el('path', { d: `M${RX - 8} ${cy - 96} A${rx} 150 0 0 1 ${RX - 8} ${cy + 96}`, fill: 'none', stroke: '#C8372D', 'stroke-width': 7 }, rig); txt(rig, RX + 44, cy - 110, '視網膜', { 'font-size': 14, fill: '#C8372D' });
+const INK = '#23304A';
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
+  g('radialGradient', 'ey-ball', [[0, '#FFFFFF'], [.7, '#FFF4EE'], [1, '#F6CFC6']], { cx: .45, cy: .45, r: .6 });
+  g('radialGradient', 'ey-vit', [[0, '#F4FAFF', .6], [1, '#DDEBF5', .4]]);
+  g('linearGradient', 'ey-lens', [[0, '#E8F6FF'], [.4, '#BFE3F5'], [1, '#8FC7E6']], { x1: 0, y1: 0, x2: 1, y2: 1 });
+  g('linearGradient', 'ey-iris', [[0, '#8A5A2E'], [.5, '#5E3A1A'], [1, '#3F2610']], { x1: 0, y1: 0, x2: 1, y2: 0 });
+  g('linearGradient', 'ey-glass', [[0, '#E6F4FC', .9], [.5, '#BFDDF0', .7], [1, '#E6F4FC', .9]]);
+}
+function lensShape(el, g, kind, x, y, h = 90) {
+  const d = kind === 'convex' ? `M${x} ${y - h} Q${x + 30} ${y} ${x} ${y + h} Q${x - 30} ${y} ${x} ${y - h}z` : `M${x - 16} ${y - h} H${x + 16} Q${x + 2} ${y} ${x + 16} ${y + h} H${x - 16} Q${x - 2} ${y} ${x - 16} ${y - h}z`;
+  el('path', { d, fill: 'url(#ey-glass)', stroke: INK, 'stroke-width': 2.5 }, g);
+  el('path', { d: `M${x - 6} ${y - h * .7}q-4 ${h * .4} 0 ${h * .8}`, fill: 'none', stroke: '#fff', 'stroke-width': 3, opacity: .7 }, g);
+}
+function tree(el, g, x, y, sc = 1) {
+  const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g);
+  el('rect', { x: -6, y: 10, width: 12, height: 40, fill: '#8A5A2E', stroke: INK, 'stroke-width': 2 }, q);
+  for (const [dx, dy, r] of [[0, -18, 26], [-18, 2, 20], [18, 2, 20], [0, -38, 18]]) el('circle', { cx: dx, cy: dy, r, fill: '#4FAE5A', stroke: '#2F6E38', 'stroke-width': 2 }, q);
+}
+function book(el, txt, g, x, y, sc = 1) {
+  const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g);
+  el('path', { d: 'M-20 -26h34a6 6 0 0 1 6 6v46h-40z', fill: '#F4C04E', stroke: INK, 'stroke-width': 2.5 }, q);
+  el('path', { d: 'M-20 -26v52', stroke: '#C88A1E', 'stroke-width': 5 }, q);
+  el('path', { d: 'M-10 -12h20M-10 -4h20M-10 4h14', stroke: '#8A5A12', 'stroke-width': 2 }, q);
+}
+
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  defs(el, rig);
+  const can = kind === 'observe', cy = 300, FX = 520, PX = 13, rx = r.length * PX / 2, cx = FX + rx, RX = FX + 2 * rx, fx = FX + r.focus * PX;
+  // 眼球剖面：視神經、鞏膜、玻璃體、視網膜、角膜、虹膜、水晶體
+  el('path', { d: `M${RX - 20} ${cy + 18}C${RX + 20} ${cy + 22} ${RX + 50} ${cy + 40} ${RX + 70} ${cy + 70}l-26 14C${RX + 30} ${cy + 64} ${RX + 10} ${cy + 50} ${RX - 20} ${cy + 46}z`, fill: '#F2D49A', stroke: INK, 'stroke-width': 2.5 }, rig);
+  el('ellipse', { cx, cy, rx, ry: 150, fill: 'url(#ey-ball)', stroke: INK, 'stroke-width': 4 }, rig);
+  el('ellipse', { cx, cy, rx: rx - 12, ry: 138, fill: 'url(#ey-vit)' }, rig);
+  el('path', { d: `M${cx + rx * .25} ${cy - 134}A${rx - 10} 140 0 0 1 ${cx + rx * .25} ${cy + 134}`, fill: 'none', stroke: '#D9483A', 'stroke-width': 9, 'stroke-linecap': 'round' }, rig);
+  el('path', { d: `M${cx + rx * .25} ${cy - 134}A${rx - 10} 140 0 0 1 ${cx + rx * .25} ${cy + 134}`, fill: 'none', stroke: '#F29A7E', 'stroke-width': 3 }, rig);
+  txt(rig, RX + 34, cy - 118, '視網膜', { 'font-size': 14, fill: '#C8372D' }); txt(rig, RX + 64, cy + 112, '視神經', { 'font-size': 13, fill: '#8A6A2E' });
+  el('path', { d: `M${FX + 10} ${cy - 76}Q${FX - 30} ${cy} ${FX + 10} ${cy + 76}`, fill: '#D6EEFA', stroke: INK, 'stroke-width': 3, opacity: .9 }, rig);
+  txt(rig, FX - 26, cy - 84, '角膜', { 'font-size': 13, fill: '#5A6478' });
+  for (const sgn of [-1, 1]) el('path', { d: `M${FX + 22} ${cy + sgn * 40}V${cy + sgn * 92}h10V${cy + sgn * 40}z`, fill: 'url(#ey-iris)', stroke: INK, 'stroke-width': 1.5 }, rig);
   const thick = s.dist === 'near' ? 26 : 15;
-  el('ellipse', { cx: FX + 26, cy, rx: thick, ry: 64, fill: '#BFE3F5', stroke: '#23304A', 'stroke-width': 3 }, rig); txt(rig, FX + 26, cy + 96, `水晶體${r.lensShape}`, { 'font-size': 13, fill: '#5A6478' });
-  // 物體與光線
-  const srcX = 110, rays = [-52, 52];
-  if (s.dist === 'far') { txt(rig, 150, cy - 96, '來自遠方的平行光', { 'font-size': 14, fill: '#5A6478', 'text-anchor': 'start' }); el('path', { d: `M${srcX} ${cy + 80} v-60 m-26 26 l26 -40 l26 40z`, fill: '#4FAE5A', stroke: '#23304A', 'stroke-width': 2 }, rig); }
-  else { el('rect', { x: srcX + 60, y: cy - 22, width: 34, height: 44, rx: 4, fill: '#F4C04E', stroke: '#23304A', 'stroke-width': 2.5 }, rig); txt(rig, srcX + 78, cy + 48, '書', { 'font-size': 14, fill: '#5A6478' }); }
-  const GX = 420, EX = FX + 26, bend = s.lens === 'concave' ? 1.18 : s.lens === 'convex' ? 0.84 : 1;
+  el('ellipse', { cx: FX + 30, cy, rx: thick, ry: 62, fill: 'url(#ey-lens)', stroke: INK, 'stroke-width': 3 }, rig);
+  el('path', { d: `M${FX + 26 - thick * .4} ${cy - 40}q-4 30 0 60`, fill: 'none', stroke: '#fff', 'stroke-width': 3, opacity: .7 }, rig);
+  txt(rig, FX + 30, cy + 128, `水晶體${r.lensShape}`, { 'font-size': 13, fill: '#5A6478' });
+  // 看的東西
+  const srcX = 110, rays = [-52, 52], far = s.dist === 'far';
+  if (far) { txt(rig, 150, cy - 96, '來自遠方的平行光', { 'font-size': 14, fill: '#5A6478', 'text-anchor': 'start' }); tree(el, rig, srcX + 22, cy + 14, .9); }
+  else { book(el, txt, rig, srcX + 78, cy, 1); txt(rig, srcX + 78, cy + 48, '近處的書', { 'font-size': 14, fill: '#5A6478' }); }
+  // 光線
+  const GX = 420, EX = FX + 30, bend = s.lens === 'concave' ? 1.18 : s.lens === 'convex' ? 0.84 : 1;
   for (const dy of rays) {
-    const far = s.dist === 'far', sx = far ? srcX + 40 : srcX + 94, gy = far ? dy / bend : dy / bend * (GX - sx) / (EX - sx);
+    const sx = far ? srcX + 40 : srcX + 100, gy = far ? dy / bend : dy / bend * (GX - sx) / (EX - sx);
     const pts = [[sx, far ? cy + gy : cy], [GX, cy + gy], [EX, cy + dy]];
     const k = (RX - 6 - EX) / (fx - EX), endY = cy + dy * (1 - k);
     pts.push(r.off > 0 ? [RX - 6, endY] : [fx, cy]); if (r.off < 0) pts.push([RX - 6, endY]);
-    el('path', { d: 'M' + pts.map(q => q.map(v => v.toFixed(1)).join(' ')).join(' L'), fill: 'none', stroke: '#E0A21A', 'stroke-width': 3.5 }, rig);
-    if (r.off > 0) el('path', { d: `M${RX - 6} ${endY.toFixed(1)} L${fx} ${cy}`, fill: 'none', stroke: '#E0A21A', 'stroke-width': 2.5, 'stroke-dasharray': '7 7' }, rig);
+    el('path', { d: 'M' + pts.map(q => q.map(v => v.toFixed(1)).join(' ')).join(' L'), fill: 'none', stroke: '#F0A818', 'stroke-width': 3.5, 'stroke-linejoin': 'round' }, rig);
+    if (r.off > 0) el('path', { d: `M${RX - 6} ${endY.toFixed(1)} L${fx} ${cy}`, fill: 'none', stroke: '#F0A818', 'stroke-width': 2.5, 'stroke-dasharray': '7 7' }, rig);
   }
-  el('circle', { cx: fx, cy, r: 8, fill: r.clear ? '#2E8B66' : '#C8372D', stroke: '#23304A', 'stroke-width': 2 }, rig);
-  txt(rig, fx, cy + 34, '成像位置', { 'font-size': 13, fill: r.clear ? '#2E8B66' : '#C8372D' });
-  if (s.lens !== 'none') { const lx = 420;
-    el('path', { d: s.lens === 'convex' ? `M${lx} ${cy - 90} Q${lx + 30} ${cy} ${lx} ${cy + 90} Q${lx - 30} ${cy} ${lx} ${cy - 90}z` : `M${lx - 16} ${cy - 90} H${lx + 16} Q${lx + 2} ${cy} ${lx + 16} ${cy + 90} H${lx - 16} Q${lx - 2} ${cy} ${lx - 16} ${cy - 90}z`, fill: '#CDEBFA', stroke: '#23304A', 'stroke-width': 3, opacity: .9 }, rig);
-    txt(rig, lx, cy - 104, LENS[s.lens], { 'font-size': 14 }); }
-  el('rect', { x: 220, y: 486, width: 560, height: 50, rx: 14, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  txt(rig, 500, 518, `${TYPE[s.type]}：像在${WHERE[r.where]}，${r.clear ? '看得清楚' : '看起來模糊'}`, { 'font-size': 17, fill: r.clear ? '#2E8B66' : '#C8372D' });
+  el('circle', { cx: fx, cy, r: 8, fill: r.clear ? '#2E8B66' : '#C8372D', stroke: INK, 'stroke-width': 2 }, rig);
+  txt(rig, fx - 44, cy + 30, '成像位置', { 'font-size': 13, fill: r.clear ? '#2E8B66' : '#C8372D' });
+  // 鏡片：拖進眼睛前面的位置，拖出來就拿掉
+  const lensStep = step === 'myopia' || step === 'hyperopia', slot = p => Math.abs(p.x - GX) < 70 && Math.abs(p.y - cy) < 130;
+  const toss = (g, label, ok, run, tap) => { if (!can) return; drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p) { g.removeAttribute('transform'); if (ok(p)) run(); }, cancel() { g.removeAttribute('transform'); } }), { label, tap: tap || run }); };
+  if (s.lens !== 'none') { const g = el('g', { 'data-drag': lensStep && can ? 'worn' : null }, rig); lensShape(el, g, s.lens, GX, cy); el('rect', { x: GX - 34, y: cy - 96, width: 68, height: 192, fill: 'transparent' }, g); txt(rig, GX, cy - 104, LENS[s.lens], { 'font-size': 14 });
+    if (lensStep) toss(g, '拿掉眼鏡', p => !slot(p), () => set({ lens: 'none' })); }
+  else if (lensStep) { el('rect', { x: GX - 30, y: cy - 96, width: 60, height: 192, rx: 20, fill: 'rgba(46,139,102,.05)', stroke: '#2E8B66', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, rig); txt(rig, GX, cy - 104, '眼鏡位置', { 'font-size': 13, fill: '#1F6E50' }); }
+  if (lensStep) { txt(rig, 150, 456, '眼鏡盒', { 'font-size': 13, fill: '#5A6478' });
+    el('rect', { x: 92, y: 466, width: 116, height: 76, rx: 12, fill: '#FFF8EC', stroke: '#8A93A6', 'stroke-width': 2, 'stroke-dasharray': '6 4' }, rig);
+    ['concave', 'convex'].forEach((k, i) => { const x = 122 + i * 56, on = s.lens === k, g = el('g', { 'data-drag': can && !on ? `lens-${k}` : null, opacity: on ? .3 : 1 }, rig);
+      lensShape(el, g, k, x, 498, 26); txt(g, x, 536, LENS[k], { 'font-size': 11 });
+      if (!on) toss(g, `戴上${LENS[k]}`, slot, () => set({ lens: k })); }); }
+  if (step === 'normal') { const other = far ? 'near' : 'far', g = el('g', { 'data-drag': can ? `look-${other}` : null }, rig);
+    el('rect', { x: 92, y: 450, width: 116, height: 92, rx: 12, fill: '#FFF8EC', stroke: '#2E8B66', 'stroke-width': 2, 'stroke-dasharray': '6 4' }, g);
+    if (other === 'near') book(el, txt, g, 150, 486, .8); else tree(el, g, 150, 486, .55);
+    txt(g, 150, 532, `改看${DIST[other]}`, { 'font-size': 12, fill: '#1F6E50' });
+    toss(g, `改看${DIST[other]}`, p => p.y < 430 && p.x < 480, () => set({ dist: other })); }
+  el('rect', { x: 230, y: 486, width: 560, height: 50, rx: 14, fill: '#FFF8EC', stroke: INK, 'stroke-width': 3 }, rig);
+  txt(rig, 510, 518, `${TYPE[s.type]}：像在${WHERE[r.where]}，${r.clear ? '看得清楚' : '看起來模糊'}`, { 'font-size': 17, fill: r.clear ? '#2E8B66' : '#C8372D' });
+  hint(510, 564, step === 'normal' ? '點左下角改看遠方或近處' : '把眼鏡盒裡的鏡片拖到眼睛前面');
 }
 
 const tgt = (sig, label, set, aim) => ({ sig, label, set, aim, title: s => `${TYPE[s.type]}看${DIST[s.dist]}，${LENS[s.lens]}`, body: (s, r) => `像在${WHERE[r.where]}，${r.clear ? '清楚' : '模糊'}` });
@@ -37,9 +89,9 @@ const lensCtl = { key: 'lens', label: '眼鏡', type: 'seg', options: Object.ent
 
 runDesk({
   key: 'bhcs.lab.eye.v1', title: '眼睛與視力矯正實驗桌',
-  sceneLabel: '眼睛與視力矯正實驗桌：光線從左邊進入眼球，經過水晶體後會聚成像，圓點是成像位置，紅色弧線是視網膜',
+  sceneLabel: '眼睛與視力矯正實驗桌：光線從左邊進入眼球剖面，經過角膜和水晶體後會聚成像，圓點是成像位置；可以把眼鏡盒裡的鏡片拖到眼睛前面',
   initial: { type: 'normal', dist: 'far', lens: 'none' },
-  model: eye, scene, viewBox: { desk: '80 110 880 440', phone: '80 110 880 440' }, phoneText: 1.45,
+  model: eye, scene, viewBox: { desk: '80 110 900 470', phone: '80 110 900 470' }, phoneText: 1.45,
   readouts: (s, r) => [['眼睛', TYPE[s.type], '', s.type === 'myopia' ? '眼球太長' : s.type === 'hyperopia' ? '眼球太短' : ''], ['成像位置', WHERE[r.where], '', LENS[s.lens]], ['看得清楚嗎', r.clear ? '清楚' : '模糊', '', DIST[s.dist]]],
   why: { title: '眼睛怎麼看見', button: '眼睛的構造', html: `
     <p class="fn-tip"><b>眼睛像一台相機。</b>水晶體是凸透鏡，把光會聚在視網膜上，成倒立縮小的實像，再由視神經傳到大腦。</p>

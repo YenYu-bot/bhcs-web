@@ -3998,6 +3998,48 @@
       "approved_blob": "bee5e953c1e4c80c4af171d868e293f5efe2574f",
       "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "c138cb27b313c421081a89bab1c11c05b9557b4c",
+      "approved_blob": "61c673087bdc0328469758a94497511d7764f2ed",
+      "reason": "2026-11-23 實驗桌直接操作第二批：牛頓運動、色光、眼睛、光合作用、遺傳重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/color/desk.js",
+      "baseline_blob": "9f8aa49f2566ce7c22284f257729b716bcf5b0df",
+      "approved_blob": "0671ccf9afbfe8a6e4c5c57881ebe0d95d0fb60e",
+      "reason": "2026-11-23 實驗桌直接操作第二批：牛頓運動、色光、眼睛、光合作用、遺傳重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/eye/desk.js",
+      "baseline_blob": "8f699a307d257c184a3be137e5a22434c1c89316",
+      "approved_blob": "baf2ffa7492d19a8c99f1e403046a29ec5919549",
+      "reason": "2026-11-23 實驗桌直接操作第二批：牛頓運動、色光、眼睛、光合作用、遺傳重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/genetics/desk.js",
+      "baseline_blob": "999ea866f619c82b63ac885dccd9ee57324cad03",
+      "approved_blob": "d3209fee150ef73a676a01f87f078fe9188b8fa5",
+      "reason": "2026-11-23 實驗桌直接操作第二批：牛頓運動、色光、眼睛、光合作用、遺傳重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/newton/desk.js",
+      "baseline_blob": "fd9bed669e1ee837269dc055fbe555dcf924edd0",
+      "approved_blob": "fc921509923e94d117293f7c71c79cd1c6468b6a",
+      "reason": "2026-11-23 實驗桌直接操作第二批：牛頓運動、色光、眼睛、光合作用、遺傳重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/photosynthesis/desk.js",
+      "baseline_blob": "925c67ff976d54fb4de8e53f3c374812c09e906b",
+      "approved_blob": "cc187666ec159a82614cb67999a06b98a6dc7525",
+      "reason": "2026-11-23 實驗桌直接操作第二批：牛頓運動、色光、眼睛、光合作用、遺傳重畫",
+      "pull_request": null
     }
   ]
 }

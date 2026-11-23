@@ -3,39 +3,89 @@ import { cross } from './model.mjs';
 import { runDesk } from '../shared/desk.mjs';
 
 const LOOK = g => g === 'tt' ? '矮莖' : '高莖', pct = x => Math.round(x * 100);
-const plant = (el, g, x, y, tall) => { const h = tall ? 46 : 22;
-  el('path', { d: `M${x} ${y} v${-h}`, stroke: '#3E9B4F', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
-  for (let k = 0; k < (tall ? 3 : 1); k++) { el('ellipse', { cx: x - 9, cy: y - 10 - k * 15, rx: 9, ry: 4.5, fill: '#56B866' }, g); el('ellipse', { cx: x + 9, cy: y - 16 - k * 15, rx: 9, ry: 4.5, fill: '#56B866' }, g); } };
-function scene({ rig, el, txt, s, r, step }) {
+const INK = '#23304A', CHOICE = { cross: { p1: ['TT', 'Tt', 'tt'], p2: ['TT', 'Tt', 'tt'] }, test: { p1: ['TT', 'Tt'] } };
+const rnd = (a, b) => { const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return x - Math.floor(x); };
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
+  g('linearGradient', 'ge-pot', [[0, '#E08A5A'], [.5, '#C8663A'], [1, '#9A4A26']]);
+  g('linearGradient', 'ge-leaf', [[0, '#7CCB6A'], [1, '#3E9442']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('linearGradient', 'ge-pack', [[0, '#FFF3D0'], [1, '#E9C770']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+}
+// 豌豆植株：(x, y) 是土面中心；tall 高莖或矮莖；sc 縮放
+function pea(el, g, x, y, tall, sc = 1) {
+  const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g), h = tall ? 92 : 34;
+  el('path', { d: `M0 0C-4 ${-h * .3} 5 ${-h * .6} 0 ${-h}`, fill: 'none', stroke: '#3E8A3E', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, q);
+  const nodes = tall ? 4 : 2;
+  for (let k = 0; k < nodes; k++) { const yy = -h * (k + .7) / (nodes + .2), side = k % 2 ? 1 : -1;
+    for (const sd of [-1, 1]) el('path', { d: `M${sd * 1} ${yy}q${sd * 9} -10 ${sd * 20} -4q${-sd * 7} 10 ${-sd * 20} 4z`, fill: 'url(#ge-leaf)', stroke: '#2F7A34', 'stroke-width': .8 }, q);
+    el('path', { d: `M${side * 2} ${yy - 6}c${side * 10} -6 ${side * 14} -16 ${side * 6} -18c${-side * 6} -1 ${-side * 6} 6 ${-side * 1} 6`, fill: 'none', stroke: '#5FA55A', 'stroke-width': 1.2 }, q); }
+  el('path', { d: `M2 ${-h + 6}q12 4 16 14q-10 2 -16 -14z`, fill: '#7CCB6A', stroke: '#2F7A34', 'stroke-width': .8 }, q);
+  if (tall) el('path', { d: `M-2 ${-h * .45}q-14 4 -18 16q10 0 18 -16z`, fill: '#9AD67F', stroke: '#2F7A34', 'stroke-width': .8 }, q);
+  return q;
+}
+function pot(el, g, x, y, w = 46) { el('path', { d: `M${x - w / 2} ${y}h${w}l-6 34h${-(w - 12)}z`, fill: 'url(#ge-pot)', stroke: INK, 'stroke-width': 2 }, g); el('rect', { x: x - w / 2 - 4, y: y - 6, width: w + 8, height: 10, rx: 3, fill: '#D97A4A', stroke: INK, 'stroke-width': 2 }, g); el('ellipse', { cx: x, cy: y - 5, rx: w / 2, ry: 3, fill: '#6B4A2B' }, g); }
+function potted(el, txt, g, x, y, gt, sc = 1) { pot(el, g, x, y, 46 * sc); pea(el, g, x, y - 6, gt !== 'tt', sc); txt(g, x, y + 54, gt, { 'font-size': Math.round(17 * sc) }); }
+
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  defs(el, rig);
+  const can = kind === 'observe', opt = CHOICE[step] || {};
+  // 親代：兩盆豌豆（可以把架上的豌豆拖進來換）
+  const cards = { p1: [200, 140], p2: [372, 140] }, inCard = (k, p) => Math.abs(p.x - cards[k][0]) < 78 && p.y > cards[k][1] - 10 && p.y < cards[k][1] + 150;
+  for (const k of ['p1', 'p2']) { const [x, y] = cards[k], open = can && opt[k], g = el('g', { 'data-drag': open ? `parent-${k}` : null }, rig);
+    el('rect', { x: x - 72, y, width: 144, height: 132, rx: 14, fill: '#FFF8EC', stroke: open ? '#2E8B66' : INK, 'stroke-width': open ? 2.5 : 2, 'stroke-dasharray': open ? '7 4' : null }, g);
+    txt(g, x, y + 22, k === 'p1' ? '親代一' : '親代二', { 'font-size': 13, fill: '#5A6478' });
+    pot(el, g, x - 26, y + 92, 34); pea(el, g, x - 26, y + 86, s[k] !== 'tt', .6);
+    txt(g, x + 36, y + 76, s[k], { 'font-size': 24 }); txt(g, x + 36, y + 100, LOOK(s[k]), { 'font-size': 13, fill: '#5A6478' });
+    if (open) drag(g, null, { label: `換${k === 'p1' ? '親代一' : '親代二'}的基因型`, tap: () => set({ [k]: opt[k][(opt[k].indexOf(s[k]) + 1) % opt[k].length] }) }); }
+  txt(rig, 286, 214, '×', { 'font-size': 26, fill: '#C8372D' });
   // 棋盤方格
-  const X = 190, Y = 170, C = 130;
-  txt(rig, X + C, 92, `親代：${s.p1}（${LOOK(s.p1)}）× ${s.p2}（${LOOK(s.p2)}）`, { 'font-size': 18 });
-  [...s.p2].forEach((a, j) => { el('circle', { cx: X + j * C + C / 2, cy: Y - 30, r: 20, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 2.5 }, rig); txt(rig, X + j * C + C / 2, Y - 23, a, { 'font-size': 19 }); });
-  [...s.p1].forEach((a, i) => { el('circle', { cx: X - 34, cy: Y + i * C + C / 2, r: 20, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 2.5 }, rig); txt(rig, X - 34, Y + i * C + C / 2 + 7, a, { 'font-size': 19 }); });
-  txt(rig, X - 34, Y - 24, '配子', { 'font-size': 13, fill: '#5A6478' });
+  const X = 196, Y = 320, C = 84;
+  [...s.p2].forEach((a, j) => { el('circle', { cx: X + j * C + C / 2, cy: Y - 28, r: 18, fill: '#FFF8EC', stroke: INK, 'stroke-width': 2.5 }, rig); txt(rig, X + j * C + C / 2, Y - 21, a, { 'font-size': 18 }); });
+  [...s.p1].forEach((a, i) => { el('circle', { cx: X - 30, cy: Y + i * C + C / 2, r: 18, fill: '#FFF8EC', stroke: INK, 'stroke-width': 2.5 }, rig); txt(rig, X - 30, Y + i * C + C / 2 + 7, a, { 'font-size': 18 }); });
+  txt(rig, X - 30, Y - 22, '配子', { 'font-size': 12, fill: '#5A6478' });
   r.grid.forEach((row, i) => row.forEach((g, j) => { const x = X + j * C, y = Y + i * C, tall = g !== 'tt';
-    el('rect', { x, y, width: C, height: C, fill: tall ? '#EAF7E6' : '#FFF1D6', stroke: '#23304A', 'stroke-width': 3 }, rig);
-    txt(rig, x + 40, y + 46, g, { 'font-size': 24 }); txt(rig, x + 40, y + 76, LOOK(g), { 'font-size': 14, fill: '#5A6478' }); plant(el, rig, x + 96, y + 104, tall); }));
-  txt(rig, X + C, Y + 2 * C + 34, `基因型 TT：Tt：tt ＝ ${r.ratio}`, { 'font-size': 16 });
+    el('rect', { x, y, width: C, height: C, fill: tall ? '#EAF7E6' : '#FFF1D6', stroke: INK, 'stroke-width': 2.5 }, rig);
+    txt(rig, x + 28, y + 34, g, { 'font-size': 20 }); txt(rig, x + 28, y + 58, LOOK(g), { 'font-size': 12, fill: '#5A6478' }); pea(el, rig, x + 64, y + C - 8, tall, .62); }));
+  txt(rig, X + C, Y + 2 * C + 26, `基因型 TT：Tt：tt ＝ ${r.ratio}`, { 'font-size': 15 });
   // 右：比例
   const BX = 560, BW = 330;
-  el('rect', { x: BX - 20, y: 150, width: BW + 40, height: 300, rx: 16, fill: 'rgba(255,255,255,.94)', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  el('rect', { x: BX - 20, y: 140, width: BW + 40, height: 410, rx: 16, fill: 'rgba(255,255,255,.94)', stroke: INK, 'stroke-width': 3 }, rig);
   const bar = (y, label, frac, note) => { txt(rig, BX, y - 10, label, { 'font-size': 15, 'text-anchor': 'start' });
-    el('rect', { x: BX, y, width: BW, height: 34, rx: 8, fill: '#F2C879', stroke: '#23304A', 'stroke-width': 2 }, rig); if (frac > 0) el('rect', { x: BX, y, width: BW * frac, height: 34, rx: 8, fill: '#56B866', stroke: '#23304A', 'stroke-width': 2 }, rig);
-    txt(rig, BX + BW / 2, y + 60, note, { 'font-size': 15 }); };
-  bar(200, '理論：高莖的機率', r.pTall, `高莖 ${pct(r.pTall)}%、矮莖 ${100 - pct(r.pTall)}%`);
-  if (step === 'sample') bar(330, `實際抽 ${s.n} 株`, r.tall / s.n, `高莖 ${r.tall} 株、矮莖 ${r.short} 株（高莖 ${pct(r.tall / s.n)}%）`);
-  else txt(rig, BX + BW / 2, 370, '綠色：高莖　黃色：矮莖', { 'font-size': 14, fill: '#5A6478' });
+    el('rect', { x: BX, y, width: BW, height: 30, rx: 8, fill: '#F2C879', stroke: INK, 'stroke-width': 2 }, rig); if (frac > 0) el('rect', { x: BX, y, width: BW * frac, height: 30, rx: 8, fill: '#56B866', stroke: INK, 'stroke-width': 2 }, rig);
+    txt(rig, BX + BW / 2, y + 52, note, { 'font-size': 14 }); };
+  bar(186, '理論：高莖的機率', r.pTall, `高莖 ${pct(r.pTall)}%、矮莖 ${100 - pct(r.pTall)}%`);
+  if (step === 'sample') {
+    bar(290, `實際種 ${s.n} 株`, r.tall / s.n, `高莖 ${r.tall} 株、矮莖 ${r.short} 株（高莖 ${pct(r.tall / s.n)}%）`);
+    // 田：每一株都畫出來，矮莖平均分散
+    const cols = s.n <= 20 ? 10 : s.n <= 100 ? 20 : 40, rows = Math.ceil(s.n / cols), cw = BW / cols, ch = Math.min(26, 150 / rows), fy = 380;
+    el('rect', { x: BX - 4, y: fy - 4, width: BW + 8, height: rows * ch + 8, rx: 6, fill: '#B88A5A', opacity: .35 }, rig);
+    for (let i = 0; i < s.n; i++) { const short = Math.floor((i + 1) * r.short / s.n) > Math.floor(i * r.short / s.n), x = BX + (i % cols + .5) * cw, y = fy + (Math.floor(i / cols) + 1) * ch - 2;
+      if (cols <= 20) pea(el, rig, x, y, !short, cols === 10 ? .24 : .17); else el('path', { d: `M${x} ${y}v${short ? -2.5 : -6}`, stroke: short ? '#D9A22E' : '#3E9442', 'stroke-width': 2.6, 'stroke-linecap': 'round' }, rig); }
+    // 種子包：點或拖進田裡
+    [20, 100, 400].forEach((n, i) => { const x = 196 + i * 84, on = s.n === n, g = el('g', { 'data-drag': can && !on ? `seed-${n}` : null, opacity: on ? .4 : 1 }, rig);
+      el('path', { d: `M${x - 34} 600h68v-50l-8 -8h-52l-8 8z`, fill: 'url(#ge-pack)', stroke: INK, 'stroke-width': 2 }, g); el('path', { d: `M${x - 34} 550h68`, stroke: INK, 'stroke-width': 1.5 }, g);
+      txt(g, x, 572, `${n} 株`, { 'font-size': 15 }); txt(g, x, 591, 'Tt × Tt', { 'font-size': 11, fill: '#5A6478' });
+      if (!on && can) drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p) { g.removeAttribute('transform'); if (p.x > BX - 20 && p.y > 140 && p.y < 550) set({ n }); }, cancel() { g.removeAttribute('transform'); } }), { label: `種 ${n} 株`, tap: () => set({ n }) }); });
+  } else {
+    txt(rig, BX + BW / 2, 330, '綠色：高莖　黃色：矮莖', { 'font-size': 14, fill: '#5A6478' });
+    // 豌豆架：拖到親代的盆上換
+    const list = [...new Set([...(opt.p1 || []), ...(opt.p2 || [])])];
+    if (list.length) { txt(rig, BX + BW / 2, 390, '豌豆架（拖到左邊的親代上）', { 'font-size': 13, fill: '#5A6478' });
+      el('rect', { x: BX + 10, y: 404, width: BW - 20, height: 136, rx: 12, fill: '#F6EEDC', stroke: '#C9B48E', 'stroke-width': 2 }, rig);
+      list.forEach((gt, i) => { const x = BX + BW / 2 + (i - (list.length - 1) / 2) * 96, g = el('g', { 'data-drag': can ? `shelf-${gt}` : null }, rig); potted(el, txt, g, x, 478, gt, .7);
+        el('rect', { x: x - 34, y: 416, width: 68, height: 114, fill: 'transparent' }, g);
+        if (can) drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p) { g.removeAttribute('transform'); const k = ['p1', 'p2'].find(k => opt[k] && opt[k].includes(gt) && inCard(k, p)); if (k && s[k] !== gt) set({ [k]: gt }); }, cancel() { g.removeAttribute('transform'); } }), { label: `${gt} 豌豆` }); }); }
+  }
+  hint(520, 626, step === 'sample' ? '把種子包拖進田裡' : '把架上的豌豆拖到親代上，或點親代換');
 }
-
 const tgt = (sig, label, set, aim, body) => ({ sig, label, set, aim, title: s => `${s.p1} × ${s.p2}`, body: body || ((s, r) => `子代基因型 TT：Tt：tt ＝ ${r.ratio}，高莖 ${pct(r.pTall)}%`) });
 const parent = (key, label, list) => ({ key, label, type: 'seg', options: list.map(g => [g, `${g}（${LOOK(g)}）`]) });
 
 runDesk({
   key: 'bhcs.lab.genetics.v1', title: '遺傳實驗桌', background: 'bg-chem-bench',
-  sceneLabel: '遺傳實驗桌：左邊是棋盤方格，列出親代配子和子代的基因型；右邊的長條比較高莖和矮莖的比例',
+  sceneLabel: '遺傳實驗桌：上方是兩株親代豌豆，可以把豌豆架上的豌豆拖過去換；下方的棋盤方格列出配子和子代的基因型；右邊的長條比較高莖和矮莖的比例，最後一步把種子包拖進田裡',
   initial: { p1: 'TT', p2: 'tt', n: 20 },
-  model: cross, scene, viewBox: { desk: '110 60 820 420', phone: '110 60 820 420' }, phoneText: 1.4,
+  model: cross, scene, viewBox: { desk: '110 60 820 590', phone: '110 60 820 590' }, phoneText: 1.4,
   readouts: (s, r) => [['高莖的機率', String(pct(r.pTall)), '%', `矮莖 ${100 - pct(r.pTall)}%`], ['基因型比', r.ratio, '', 'TT：Tt：tt'], ['表現型比', r.look, '', '高莖：矮莖']],
   why: { title: '孟德爾的豌豆', button: '顯性與隱性', html: `
     <p class="fn-tip"><b>基因成對存在。</b>T 是高莖（顯性）、t 是矮莖（隱性）。只要有一個 T 就是高莖；兩個都是 t 才是矮莖。</p>

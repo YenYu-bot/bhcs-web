@@ -2,37 +2,119 @@
 import { color, OBJECT, LIGHT } from './model.mjs';
 import { runDesk } from '../shared/desk.mjs';
 
-const swatch = (el, txt, rig, x, y, o, label) => {
-  el('rect', { x: x - 150, y, width: 300, height: 54, rx: 14, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  el('rect', { x: x - 136, y: y + 10, width: 34, height: 34, rx: 8, fill: o.hex, stroke: '#23304A', 'stroke-width': 2 }, rig);
-  txt(rig, x + 18, y + 34, `${label}：${o.name}`, { 'font-size': 18 });
+const INK = '#23304A', TOOLHEX = { r: '#FF2A1F', g: '#18D14A', b: '#2A5BFF', c: '#00E5F0', m: '#F02BD8', y: '#FFE81A' };
+const card = (el, txt, rig, o, label) => {
+  el('rect', { x: 720, y: 150, width: 148, height: 180, rx: 16, fill: '#FFF8EC', stroke: INK, 'stroke-width': 3 }, rig);
+  txt(rig, 794, 182, label, { 'font-size': 14, fill: '#5A6478' });
+  el('rect', { x: 749, y: 198, width: 90, height: 76, rx: 12, fill: o.hex, stroke: INK, 'stroke-width': 2 }, rig);
+  txt(rig, 794, 308, o.name, { 'font-size': 20 });
 };
-function scene({ rig, el, txt, s, r, step }) {
-  if (step === 'pigment') {
-    el('rect', { x: 280, y: 90, width: 440, height: 360, rx: 16, fill: '#FFFFFF', stroke: '#23304A', 'stroke-width': 3 }, rig);
-    const g = el('g', { style: 'isolation:isolate' }, rig);
-    const blob = (on, cx, cy, fill, name) => { if (on) el('circle', { cx, cy, r: 105, fill, style: 'mix-blend-mode:multiply' }, g); txt(rig, cx === 500 ? 500 : cx < 500 ? 322 : 678, cx === 500 ? 440 : 122, name, { 'font-size': 15, fill: on ? '#23304A' : '#B8AC98' }); };
-    blob(s.c, 440, 220, '#00FFFF', '青'); blob(s.m, 560, 220, '#FF00FF', '洋紅'); blob(s.y, 500, 320, '#FFFF00', '黃');
-    txt(rig, 500, 76, '白紙上疊顏料', { 'font-size': 15, fill: '#5A6478' });
-    swatch(el, txt, rig, 500, 476, r.pigment, '重疊處看起來');
-  } else if (step === 'object') {
-    const [oname] = OBJECT[s.object], L = LIGHT[s.light], lhex = { white: '#FFF6C9', red: '#FF8A80', green: '#8FE39B', blue: '#8FA8FF' }[s.light];
-    el('rect', { x: 180, y: 80, width: 640, height: 380, rx: 16, fill: '#16181D' }, rig);
-    el('path', { d: 'M500 96 L360 400 H640z', fill: lhex, opacity: .35 }, rig);
-    el('rect', { x: 462, y: 76, width: 76, height: 34, rx: 8, fill: '#8A93A3', stroke: '#23304A', 'stroke-width': 3 }, rig); txt(rig, 500, 66, `手電筒：${L[0]}`, { 'font-size': 15 });
-    const fill = r.seen.hex;
-    if (s.object === 'apple') { el('circle', { cx: 500, cy: 340, r: 58, fill, stroke: '#444', 'stroke-width': 2 }, rig); el('path', { d: 'M500 286 q6 -22 22 -26', fill: 'none', stroke: '#6B4A2B', 'stroke-width': 5, 'stroke-linecap': 'round' }, rig); }
-    else if (s.object === 'leaf') el('path', { d: 'M420 350 Q500 240 590 330 Q500 420 420 350z', fill, stroke: '#444', 'stroke-width': 2 }, rig);
-    else el('rect', { x: 430, y: 290, width: 140, height: 100, fill, stroke: '#444', 'stroke-width': 2, transform: 'rotate(-6 500 340)' }, rig);
-    txt(rig, 500, 440, oname, { 'font-size': 15, fill: '#fff' });
-    swatch(el, txt, rig, 500, 476, r.seen, '看起來');
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
+  g('linearGradient', 'co-body', [[0, '#55627E'], [.35, '#9AA7C0'], [.55, '#3A4660'], [1, '#1C2438']]);
+  g('linearGradient', 'co-tube', [[0, '#D7DDE6'], [.35, '#FFFFFF'], [.6, '#C9D0DA'], [1, '#9AA3B2']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('radialGradient', 'co-shade', [[0, '#fff', .55], [.35, '#fff', 0], [.8, '#000', .12], [1, '#000', .35]], { cx: .35, cy: .3, r: .8 });
+  g('linearGradient', 'co-wood', [[0, '#E6C48C'], [1, '#B98A52']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  const f = el('filter', { id: 'co-paint', x: '-10%', y: '-10%', width: '120%', height: '120%' }, d);
+  el('feTurbulence', { type: 'fractalNoise', baseFrequency: .035, numOctaves: 2, seed: 7, result: 'n' }, f); el('feDisplacementMap', { in: 'SourceGraphic', in2: 'n', scale: 16 }, f);
+  const glow = el('filter', { id: 'co-glow', x: '-30%', y: '-30%', width: '160%', height: '160%' }, d); el('feGaussianBlur', { stdDeviation: 6 }, glow);
+}
+// 手電筒：(x, y) 是燈頭中心，ang 是朝向（0 ＝ 朝上），color 是燈光顏色（null ＝ 關）
+function torch(el, txt, g, x, y, ang, color, label) {
+  const q = el('g', { transform: `rotate(${ang} ${x} ${y})` }, g);
+  el('rect', { x: x - 11, y: y + 20, width: 22, height: 62, rx: 6, fill: 'url(#co-body)', stroke: INK, 'stroke-width': 2 }, q);
+  el('path', { d: `M${x - 18} ${y - 4}h36l-7 26h-22z`, fill: 'url(#co-body)', stroke: INK, 'stroke-width': 2 }, q);
+  el('ellipse', { cx: x, cy: y - 4, rx: 18, ry: 5, fill: color || '#3A4660', stroke: INK, 'stroke-width': 2 }, q);
+  if (color) el('ellipse', { cx: x, cy: y - 4, rx: 16, ry: 4, fill: '#fff', opacity: .7 }, q);
+  el('rect', { x: x - 5, y: y + 40, width: 10, height: 14, rx: 3, fill: color ? '#7CF29B' : '#8A93A6', stroke: INK, 'stroke-width': 1.5 }, q);
+  if (label) txt(g, x, y + 104, label, { 'font-size': 13, fill: color ? INK : '#5A6478' });
+  return q;
+}
+// 顏料管（橫放）
+function paintTube(el, txt, g, x, y, color, label) {
+  el('path', { d: `M${x - 44} ${y - 13}h70l14 6v14l-14 6h-70z`, fill: 'url(#co-tube)', stroke: INK, 'stroke-width': 2 }, g);
+  el('rect', { x: x - 30, y: y - 11, width: 44, height: 22, rx: 3, fill: color, stroke: INK, 'stroke-width': 1.2 }, g);
+  el('path', { d: `M${x - 44} ${y - 13}l-6 -4v34l6 -4`, fill: '#C9D0DA', stroke: INK, 'stroke-width': 1.5 }, g);
+  el('rect', { x: x + 40, y: y - 8, width: 16, height: 16, rx: 3, fill: '#2B3550', stroke: INK, 'stroke-width': 1.5 }, g);
+  txt(g, x, y + 34, label, { 'font-size': 13 });
+}
+function thing(el, g, kind, x, y, fill, sc = 1) {
+  const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g);
+  if (kind === 'apple') {
+    el('path', { d: 'M0 -42C-14 -54 -58 -52 -60 -6C-62 34 -30 60 -12 56C-4 54 4 54 12 56C30 60 62 34 60 -6C58 -52 14 -54 0 -42Z', fill, stroke: '#3A2A20', 'stroke-width': 2 }, q);
+    el('path', { d: 'M0 -42C-14 -54 -58 -52 -60 -6C-62 34 -30 60 -12 56C-4 54 4 54 12 56C30 60 62 34 60 -6C58 -52 14 -54 0 -42Z', fill: 'url(#co-shade)' }, q);
+    el('path', { d: 'M0 -40q2 -18 12 -26', fill: 'none', stroke: '#5A3A22', 'stroke-width': 5, 'stroke-linecap': 'round' }, q);
+    el('path', { d: 'M8 -58q22 -10 34 4q-20 8 -34 -4z', fill: fill === '#16181D' ? '#16181D' : '#4E9A3A', stroke: '#2F5E22', 'stroke-width': 1.5, opacity: .95 }, q);
+  } else if (kind === 'leaf') {
+    el('path', { d: 'M-70 18Q-20 -70 70 -24Q30 64 -70 18Z', fill, stroke: '#2B3A20', 'stroke-width': 2 }, q);
+    el('path', { d: 'M-70 18Q-20 -70 70 -24Q30 64 -70 18Z', fill: 'url(#co-shade)' }, q);
+    el('path', { d: 'M-70 18Q0 0 70 -24M-30 8l-6 -24M-6 2l-2 -28M20 -6l4 -26M-30 8l4 22M-6 2l8 26M20 -6l12 22', fill: 'none', stroke: '#000', 'stroke-width': 1.6, opacity: .25 }, q);
+    el('path', { d: 'M-90 30l22 -12', stroke: '#5A3A22', 'stroke-width': 4, 'stroke-linecap': 'round' }, q);
   } else {
-    el('rect', { x: 280, y: 90, width: 440, height: 360, rx: 16, fill: '#000000', stroke: '#23304A', 'stroke-width': 3 }, rig);
-    const g = el('g', { style: 'isolation:isolate' }, rig); el('rect', { x: 282, y: 92, width: 436, height: 356, rx: 14, fill: '#000' }, g);
-    const spot = (on, cx, cy, fill, name) => { if (on) el('circle', { cx, cy, r: 105, fill, style: 'mix-blend-mode:screen' }, g); txt(rig, cx === 500 ? 500 : cx < 500 ? 326 : 674, cx === 500 ? 440 : 122, name, { 'font-size': 15, fill: on ? '#fff' : '#6B7385' }); };
-    spot(s.r, 440, 220, '#FF0000', '紅光'); spot(s.g, 560, 220, '#00FF00', '綠光'); spot(s.b, 500, 320, '#0000FF', '藍光');
-    txt(rig, 500, 76, '暗室裡的白色屏幕', { 'font-size': 15, fill: '#5A6478' });
-    swatch(el, txt, rig, 500, 476, r.light, '重疊處看起來');
+    el('path', { d: 'M-66 -46h120l12 12v84h-132z', fill, stroke: '#444', 'stroke-width': 2, transform: 'rotate(-6)' }, q);
+    el('path', { d: 'M54 -46v12h12z', fill: '#000', opacity: .18, transform: 'rotate(-6)' }, q);
+  }
+  return q;
+}
+
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  defs(el, rig);
+  const can = kind === 'observe';
+  const pick = (g, label, run) => { if (can) drag(g, null, { label, tap: run }); };
+  // 拖一個工具到目標區，放開時在區內就呼叫 run
+  const toss = (g, label, inside, run) => { if (!can) return; drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p) { g.removeAttribute('transform'); if (inside(p)) run(); }, cancel() { g.removeAttribute('transform'); } }), { label, tap: run }); };
+  const onScreen = p => p.x > 300 && p.x < 700 && p.y > 90 && p.y < 400;
+  if (step === 'pigment') {
+    el('rect', { x: 296, y: 86, width: 408, height: 318, rx: 6, fill: '#000', opacity: .15, transform: 'translate(4 6)' }, rig);
+    el('rect', { x: 300, y: 90, width: 400, height: 310, rx: 4, fill: '#FFFDF8', stroke: '#B9B2A2', 'stroke-width': 2 }, rig);
+    txt(rig, 500, 116, '白紙', { 'font-size': 14, fill: '#8A93A6' });
+    const g = el('g', { style: 'isolation:isolate' }, rig);
+    const spots = { c: [450, 215], m: [550, 215], y: [500, 300] }, names = { c: '青色', m: '洋紅色', y: '黃色' };
+    for (const k of ['c', 'm', 'y']) if (s[k]) { const b = el('g', { 'data-drag': can ? `blob-${k}` : null }, g); el('circle', { cx: spots[k][0], cy: spots[k][1], r: 92, fill: TOOLHEX[k], filter: 'url(#co-paint)', style: 'mix-blend-mode:multiply', opacity: .92 }, b);
+      toss(b, `擦掉${names[k]}顏料`, p => !onScreen(p) || true, () => set({ [k]: false })); }
+    ['c', 'm', 'y'].forEach((k, i) => { const x = 340 + i * 160, tg = el('g', { 'data-drag': can && !s[k] ? `tube-${k}` : null, opacity: s[k] ? .4 : 1 }, rig);
+      paintTube(el, txt, tg, x, 446, TOOLHEX[k], names[k] + '顏料');
+      if (!s[k]) toss(tg, `塗上${names[k]}顏料`, onScreen, () => set({ [k]: true })); });
+    card(el, txt, rig, r.pigment, '重疊處看起來');
+    hint(500, 540, '把顏料管拖到紙上；點紙上的顏料就擦掉');
+  } else if (step === 'object') {
+    const L = LIGHT[s.light], beam = { white: '#FFF6C9', red: '#FF6A5C', green: '#6FE38A', blue: '#7F9BFF' }[s.light];
+    el('rect', { x: 300, y: 90, width: 400, height: 310, rx: 12, fill: '#16181D' }, rig);
+    el('path', { d: 'M470 150L392 392H608L530 150z', fill: beam, opacity: .28, filter: 'url(#co-glow)' }, rig);
+    el('ellipse', { cx: 500, cy: 388, rx: 112, ry: 16, fill: beam, opacity: .25 }, rig);
+    torch(el, txt, rig, 500, 140, 180, { white: '#FFF6C9', red: '#FF2A1F', green: '#18D14A' }[s.light], '');
+    txt(rig, 500, 112, '', {});
+    const stage = el('g', {}, rig); thing(el, stage, s.object, 500, 330, r.seen.hex);
+    txt(rig, 500, 384, `${OBJECT[s.object][0]}（照${L[0]}）`, { 'font-size': 14, fill: '#fff' });
+    // 濾光片：拖到手電筒上換光的顏色
+    txt(rig, 370, 428, '濾光片（拖到手電筒上）', { 'font-size': 13, fill: '#5A6478' });
+    ['white', 'red', 'green'].forEach((k, i) => { const x = 316 + i * 54, on = s.light === k, gq = el('g', { 'data-drag': can && !on ? `filter-${k}` : null, opacity: on ? .35 : 1 }, rig);
+      el('rect', { x, y: 444, width: 44, height: 54, rx: 6, fill: { white: '#F4F7FA', red: '#FF6A5C', green: '#6FE38A' }[k], stroke: INK, 'stroke-width': 2, opacity: .9 }, gq);
+      el('path', { d: `M${x + 6} ${450}l10 0l-8 40h-10z`, fill: '#fff', opacity: .5 }, gq);
+      txt(gq, x + 22, 516, LIGHT[k][0], { 'font-size': 12 });
+      if (!on) toss(gq, `換成${LIGHT[k][0]}`, p => Math.hypot(p.x - 500, p.y - 150) < 110, () => set({ light: k })); });
+    // 物體：拖到台子上換
+    txt(rig, 630, 428, '物體（拖到燈下）', { 'font-size': 13, fill: '#5A6478' });
+    Object.entries(OBJECT).forEach(([k, [n]], i) => { const x = 566 + i * 64, on = s.object === k, gq = el('g', { 'data-drag': can && !on ? `obj-${k}` : null, opacity: on ? .3 : 1 }, rig);
+      el('rect', { x: x - 28, y: 442, width: 56, height: 58, rx: 10, fill: '#FFF8EC', stroke: '#8A93A6', 'stroke-width': 1.5 }, gq);
+      thing(el, gq, k, x, 468, { apple: '#E8352B', leaf: '#2EB24A', paper: '#FFFFFF' }[k], .3); txt(gq, x, 516, n, { 'font-size': 12 });
+      if (!on) toss(gq, `把${n}放到燈下`, onScreen, () => set({ object: k })); });
+    card(el, txt, rig, r.seen, '看起來');
+    hint(500, 548, '把濾光片拖到手電筒上、把物體拖到燈下');
+  } else {
+    el('rect', { x: 300, y: 90, width: 400, height: 310, rx: 10, fill: '#000', stroke: INK, 'stroke-width': 3 }, rig);
+    txt(rig, 500, 116, '暗室裡的白色屏幕', { 'font-size': 14, fill: '#6B7385' });
+    const spots = { r: [440, 210], g: [560, 210], b: [500, 300] }, base = { r: [380, 462], g: [500, 466], b: [620, 462] }, names = { r: '紅光', g: '綠光', b: '藍光' };
+    const beams = el('g', {}, rig), g = el('g', { style: 'isolation:isolate' }, rig); el('rect', { x: 302, y: 92, width: 396, height: 306, rx: 8, fill: '#000' }, g);
+    for (const k of ['r', 'g', 'b']) if (s[k]) { const [sx, sy] = spots[k], [bx, by] = base[k];
+      el('path', { d: `M${bx - 14} ${by - 8}L${sx - 70} ${sy + 60}L${sx + 70} ${sy + 60}L${bx + 14} ${by - 8}z`, fill: TOOLHEX[k], opacity: .14 }, beams);
+      el('circle', { cx: sx, cy: sy, r: 100, fill: TOOLHEX[k], style: 'mix-blend-mode:screen' }, g); }
+    for (const k of ['r', 'g', 'b']) { const [sx, sy] = spots[k], [bx, by] = base[k], ang = Math.atan2(sx - bx, by - sy) * 180 / Math.PI, tg = el('g', { 'data-drag': can ? `torch-${k}` : null }, rig);
+      torch(el, txt, tg, bx, by, ang, s[k] ? TOOLHEX[k] : null, `${names[k]}（${s[k] ? '開' : '關'}）`);
+      el('rect', { x: bx - 30, y: by - 20, width: 60, height: 110, fill: 'transparent' }, tg);
+      pick(tg, `${s[k] ? '關掉' : '打開'}${names[k]}`, () => set({ [k]: !s[k] })); }
+    card(el, txt, rig, r.light, '重疊處看起來');
+    hint(500, 616, '點手電筒開關燈');
   }
 }
 
@@ -43,9 +125,9 @@ const LN = ['紅光', '綠光', '藍光'], PN = ['青', '洋紅', '黃'];
 
 runDesk({
   key: 'bhcs.lab.color.v1', title: '色光與顏料實驗桌',
-  sceneLabel: '色光與顏料實驗桌：三個圓形的色光或顏料互相重疊，下方的色塊和文字寫出重疊處的顏色',
+  sceneLabel: '色光與顏料實驗桌：點手電筒開關色光、把顏料管拖到紙上、把濾光片和物體拖到燈下；右邊的色卡寫出看到的顏色',
   initial: { r: true, g: false, b: false, c: false, m: false, y: false, object: 'apple', light: 'white' },
-  model: color, scene, viewBox: { desk: '160 40 680 510', phone: '160 40 680 510' }, phoneText: 1.3,
+  model: color, scene, viewBox: s => s === 'light' ? { desk: '160 50 720 590', phone: '160 50 720 590' } : { desk: '160 50 720 520', phone: '160 50 720 520' }, phoneText: 1.3,
   readouts: (s, r) => [['色光重疊', r.light.name, '', on(s, ['r', 'g', 'b'], LN)], ['顏料重疊', r.pigment.name, '', on(s, ['c', 'm', 'y'], PN)], ['物體看起來', r.seen.name, '', `${OBJECT[s.object][0]}＋${LIGHT[s.light][0]}`]],
   why: { title: '光和顏料的三原色', button: '三原色', html: `
     <p class="fn-tip"><b>色光三原色：紅、綠、藍。</b>色光越加越亮，三種一起就是白光。紅＋綠＝黃、綠＋藍＝青、紅＋藍＝洋紅。</p>
