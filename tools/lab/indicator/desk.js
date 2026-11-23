@@ -3,23 +3,74 @@ import { indicate, SOL, IND } from './model.mjs';
 import { runDesk } from '../shared/desk.mjs';
 
 const KIND = { acid: '酸性', neutral: '中性', base: '鹼性' };
-function scene({ rig, el, txt, P, s, r, step }) {
-  // 試管架：選到的試管滴了指示劑
-  el('rect', { x: 150, y: 400, width: 700, height: 26, rx: 8, fill: '#B98A52', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  Object.entries(SOL).forEach(([k, [name]], i) => { const x = 220 + i * 140, on = k === s.sol;
-    el('rect', { x: x - 20, y: 286, width: 40, height: 104, rx: 16, fill: on ? r.hex : '#EAF4FB', opacity: .92 }, rig);
-    el('image', { href: P + 'prop-test-tube.webp', x: x - 30, y: 170, width: 60, height: 231 }, rig);
-    if (on) { el('path', { d: `M${x} 96 v40`, stroke: '#23304A', 'stroke-width': 5, 'stroke-linecap': 'round' }, rig); el('path', { d: `M${x} 142 q-9 14 0 20 q9 -6 0 -20z`, fill: step === 'phenol' ? '#F7F7F7' : '#8E5BB5', stroke: '#23304A', 'stroke-width': 1.5 }, rig); txt(rig, x, 84, `滴入${IND[s.ind]}`, { 'font-size': 14, fill: '#C8372D' }); }
-    txt(rig, x, 452, name, { 'font-size': on ? 15 : 13, fill: on ? '#23304A' : '#5A6478' }); });
-  el('rect', { x: 330, y: 478, width: 340, height: 46, rx: 12, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  el('rect', { x: 346, y: 488, width: 26, height: 26, rx: 6, fill: r.hex, stroke: '#23304A', 'stroke-width': 2 }, rig);
-  txt(rig, 520, 508, `${r.name}：${r.color}`, { 'font-size': 17 });
+const INK = '#23304A', TX = k => 220 + Object.keys(SOL).indexOf(k) * 140;
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
+  g('linearGradient', 'in-glass', [[0, '#BFD8EA', .6], [.18, '#FFFFFF', .85], [.4, '#EAF4FB', .2], [.8, '#EAF4FB', .15], [.93, '#FFFFFF', .6], [1, '#A9C7DE', .6]]);
+  g('linearGradient', 'in-shade', [[0, '#000', .16], [.25, '#fff', .28], [.5, '#fff', 0], [.85, '#000', .05], [1, '#000', .2]]);
+  g('linearGradient', 'in-wood', [[0, '#E6C48C'], [1, '#B98A52']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('linearGradient', 'in-woodf', [[0, '#D9AE6E'], [1, '#A87943']], { x1: 0, y1: 0, x2: 0, y2: 1 });
+  g('linearGradient', 'in-bulb', [[0, '#7A1F1A'], [.35, '#E0574B'], [.6, '#B8352C'], [1, '#6A1A16']]);
+}
+function tube(el, g, x, color, glow) {
+  const top = 180, bot = 402, w = 40;
+  if (color) { el('path', { d: `M${x - w / 2 + 3} 300Q${x} 306 ${x + w / 2 - 3} 300V${bot - 20}A${w / 2 - 3} ${w / 2 - 3} 0 0 1 ${x - w / 2 + 3} ${bot - 20}Z`, fill: color, opacity: .92 }, g);
+    el('path', { d: `M${x - w / 2 + 3} 300V${bot - 20}A${w / 2 - 3} ${w / 2 - 3} 0 0 0 ${x + w / 2 - 3} ${bot - 20}V300`, fill: 'url(#in-shade)' }, g);
+    el('path', { d: `M${x - w / 2 + 3} 300Q${x} 306 ${x + w / 2 - 3} 300`, fill: 'none', stroke: '#fff', 'stroke-width': 1.6, opacity: .8 }, g); }
+  if (glow) el('rect', { x: x - w / 2 - 8, y: top - 8, width: w + 16, height: bot - top + 16, rx: 26, fill: 'none', stroke: '#2E8B66', 'stroke-width': 3, 'stroke-dasharray': '6 5' }, g);
+  el('path', { d: `M${x - w / 2} ${top}V${bot - 20}A${w / 2} ${w / 2} 0 0 0 ${x + w / 2} ${bot - 20}V${top}`, fill: 'url(#in-glass)', stroke: '#6E97BB', 'stroke-width': 2.2 }, g);
+  el('ellipse', { cx: x, cy: top, rx: w / 2 + 3, ry: 5, fill: 'none', stroke: '#6E97BB', 'stroke-width': 3 }, g);
+  el('path', { d: `M${x - w / 2 + 7} ${top + 14}V${bot - 26}`, stroke: '#fff', 'stroke-width': 4, 'stroke-linecap': 'round', opacity: .75 }, g);
+}
+// 滴管：(x, y) 是管口
+function dropper(el, txt, g, x, y, liquid, name) {
+  el('path', { d: `M${x - 5} ${y - 74}H${x + 5}V${y - 10}L${x + 1.5} ${y}H${x - 1.5}L${x - 5} ${y - 10}Z`, fill: 'url(#in-glass)', stroke: '#6E97BB', 'stroke-width': 1.8 }, g);
+  el('path', { d: `M${x - 3} ${y - 40}H${x + 3}V${y - 10}L${x + 1} ${y - 3}H${x - 1}L${x - 3} ${y - 10}Z`, fill: liquid, opacity: .9 }, g);
+  el('rect', { x: x - 9, y: y - 82, width: 18, height: 10, rx: 3, fill: '#8B2A22', stroke: INK, 'stroke-width': 1.5 }, g);
+  el('path', { d: `M${x - 9} ${y - 80}C${x - 18} ${y - 96} ${x - 16} ${y - 124} ${x} ${y - 126}C${x + 16} ${y - 124} ${x + 18} ${y - 96} ${x + 9} ${y - 80}Z`, fill: 'url(#in-bulb)', stroke: INK, 'stroke-width': 1.8 }, g);
+  el('path', { d: `M${x - 7} ${y - 112}q-2 12 1 22`, fill: 'none', stroke: '#fff', 'stroke-width': 3, 'stroke-linecap': 'round', opacity: .5 }, g);
+  el('rect', { x: x + 14, y: y - 112, width: name.length * 14 + 14, height: 24, rx: 7, fill: '#FFF8EC', stroke: INK, 'stroke-width': 1.5 }, g);
+  txt(g, x + 21 + name.length * 7, y - 95, name, { 'font-size': 13 });
+}
+
+function scene({ rig, el, txt, s, r, step, set, drag, hint, has, kind }) {
+  defs(el, rig);
+  const can = kind === 'observe', ind = s.ind;
+  // 試管架：背板、試管、前板
+  el('rect', { x: 150, y: 236, width: 700, height: 22, rx: 6, fill: 'url(#in-woodf)', stroke: INK, 'stroke-width': 2 }, rig);
+  for (const x of [158, 834]) el('rect', { x, y: 236, width: 8, height: 170, fill: 'url(#in-woodf)', stroke: INK, 'stroke-width': 1.5 }, rig);
+  Object.entries(SOL).forEach(([k, [name]]) => { const x = TX(k), on = k === s.sol, done = has(k) && !on;
+    const color = on ? r.hex : done ? indicate({ sol: k, ind }).hex : '#F1F7FC', g = el('g', { 'data-drag': can && !on ? 'tube-' + k : null }, rig);
+    tube(el, g, x, color, false);
+    el('rect', { x: x - 34, y: 170, width: 68, height: 250, fill: 'transparent' }, g);
+    if (can && !on) drag(g, null, { label: `滴到${name}`, tap: () => set({ sol: k }) });
+    txt(rig, x, 450, name, { 'font-size': on ? 15 : 13, fill: on ? INK : '#5A6478' });
+    if (done) txt(rig, x, 470, indicate({ sol: k, ind }).color, { 'font-size': 12, fill: '#5A6478' }); });
+  el('rect', { x: 150, y: 266, width: 700, height: 16, rx: 5, fill: 'url(#in-wood)', stroke: INK, 'stroke-width': 2, opacity: .96 }, rig);
+  for (const k of Object.keys(SOL)) el('ellipse', { cx: TX(k), cy: 270, rx: 24, ry: 4, fill: '#6B4A22', opacity: .5 }, rig);
+  el('rect', { x: 140, y: 402, width: 720, height: 22, rx: 7, fill: 'url(#in-wood)', stroke: INK, 'stroke-width': 2.5 }, rig);
+  // 滴管（拖到別的試管上放開）
+  const X = TX(s.sol), dg = el('g', { 'data-drag': can ? 'dropper' : null }, rig), liq = indicate({ sol: 'water', ind }).hex;
+  dropper(el, txt, dg, X, 166, ind === 'phenol' ? '#F4F7FA' : liq, IND[ind]);
+  el('path', { d: `M${X} 172q-6 9 0 13q6 -4 0 -13z`, fill: ind === 'phenol' ? '#F4F7FA' : liq, stroke: '#6E97BB', 'stroke-width': 1 }, dg);
+  el('rect', { x: X - 26, y: 34, width: 52, height: 140, fill: 'transparent' }, dg);
+  if (can) drag(dg, () => { const rings = {}; for (const k of Object.keys(SOL)) if (k !== s.sol) rings[k] = el('rect', { x: TX(k) - 28, y: 172, width: 56, height: 240, rx: 26, fill: 'none', stroke: '#2E8B66', 'stroke-width': 3, 'stroke-dasharray': '6 5', opacity: 0, 'pointer-events': 'none' }, rig);
+    const pick = x => Object.keys(SOL).reduce((m, k) => Math.abs(TX(k) - x) < Math.abs(TX(m) - x) ? k : m, s.sol);
+    const clear = () => { for (const k in rings) rings[k].remove(); dg.removeAttribute('transform'); };
+    return { move(p, p0) { dg.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); const k = pick(X + p.x - p0.x); for (const n in rings) rings[n].setAttribute('opacity', n === k ? 1 : .35); },
+      end(p, p0) { const k = pick(X + p.x - p0.x); clear(); if (k !== s.sol && Math.abs(TX(k) - (X + p.x - p0.x)) < 70) set({ sol: k }); }, cancel: clear }; }, { label: '滴管' });
+  // 結果
+  el('rect', { x: 330, y: 486, width: 340, height: 44, rx: 12, fill: '#FFF8EC', stroke: INK, 'stroke-width': 2.5 }, rig);
+  el('rect', { x: 344, y: 495, width: 26, height: 26, rx: 6, fill: r.hex, stroke: INK, 'stroke-width': 2 }, rig);
+  txt(rig, 520, 514, `${r.name}＋${IND[ind]}：${r.color}`, { 'font-size': 16 });
   if (step === 'universal') { // pH 尺
+    el('rect', { x: 196, y: 538, width: 608, height: 62, rx: 12, fill: 'rgba(255,253,242,.95)', stroke: INK, 'stroke-width': 2 }, rig);
     const X0 = 220, W = 560; const cols = ['#E4573F', '#E4573F', '#F0913A', '#F0913A', '#F2D03B', '#F2D03B', '#4FAE5A', '#3F7FD6', '#3F7FD6', '#3F7FD6', '#7A4BB5', '#7A4BB5', '#7A4BB5', '#7A4BB5'];
-    cols.forEach((c, i) => el('rect', { x: X0 + i * W / 14, y: 546, width: W / 14 + .5, height: 18, fill: c }, rig));
-    for (const p of [1, 7, 14]) txt(rig, X0 + (p - .5) * W / 14, 584, String(p), { 'font-size': 13, fill: '#5A6478' });
-    el('path', { d: `M${X0 + (r.ph - .5) * W / 14} 542 l-8 -12 h16z`, fill: '#23304A' }, rig);
+    cols.forEach((c, i) => el('rect', { x: X0 + i * W / 14, y: 552, width: W / 14 + .5, height: 18, fill: c }, rig));
+    for (const p of [1, 7, 14]) txt(rig, X0 + (p - .5) * W / 14, 588, String(p), { 'font-size': 13, fill: '#5A6478' });
+    el('path', { d: `M${X0 + (r.ph - .5) * W / 14} 548 l-8 -12 h16z`, fill: INK }, rig);
   }
+  hint(500, step === 'universal' ? 618 : 556, '把滴管拖到試管上，或直接點試管');
 }
 
 const solCtl = { key: 'sol', label: '選一支試管', type: 'seg', cols: 3, options: Object.entries(SOL).map(([k, [n]]) => [k, n]) };
@@ -27,9 +78,9 @@ const tgt = (ind, sol, aim) => ({ sig: sol, label: SOL[sol][0], aim, set: { ind,
 
 runDesk({
   key: 'bhcs.lab.indicator.v1', title: '酸鹼指示劑實驗桌', background: 'bg-chem-bench',
-  sceneLabel: '酸鹼指示劑實驗桌：試管架上有五支試管，分別裝稀鹽酸、食醋、純水、小蘇打水和氫氧化鈉溶液，選到的試管滴入指示劑後顯示顏色',
+  sceneLabel: '酸鹼指示劑實驗桌：試管架上有五支試管，分別裝稀鹽酸、食醋、純水、小蘇打水和氫氧化鈉溶液，把滴管拖到試管上就會滴入指示劑並顯示顏色，也可以直接點試管',
   initial: { sol: 'water', ind: 'litmus' },
-  model: indicate, scene, viewBox: s => ({ desk: s === 'universal' ? '110 50 780 560' : '110 50 780 490', phone: s === 'universal' ? '110 50 780 560' : '110 50 780 490' }), phoneText: 1.4,
+  model: indicate, scene, viewBox: s => ({ desk: s === 'universal' ? '110 0 780 640' : '110 0 780 576', phone: s === 'universal' ? '110 0 780 640' : '110 0 780 576' }), phoneText: 1.4,
   readouts: (s, r) => [['指示劑', IND[s.ind], '', ''], ['顏色', r.color, '', r.name], ['酸鹼性', s.ind === 'phenol' && r.kind !== 'base' ? '不是鹼性' : KIND[r.kind], '', s.ind === 'universal' ? `pH 約 ${r.ph}` : s.ind === 'phenol' && r.kind !== 'base' ? '酸性或中性，分不出來' : '']],
   why: { title: '指示劑怎麼看', button: '指示劑顏色表', html: `
     <p class="fn-tip"><b>石蕊：</b>酸性變紅、鹼性變藍，中性維持紫色。</p>

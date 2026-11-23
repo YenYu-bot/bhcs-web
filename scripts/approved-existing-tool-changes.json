@@ -3942,6 +3942,62 @@
       "approved_blob": "deaa86c360bcb182ca53cc102eac1f2a9b515d1d",
       "reason": "2026-11-23 顯微鏡實驗桌：F 標本改為透明片",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "f1bc8186fddde6f4cd31b38bca435b4e8e61288c",
+      "approved_blob": "c138cb27b313c421081a89bab1c11c05b9557b4c",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/balance/desk.js",
+      "baseline_blob": "e82bcad995cbc9d78d0b6cf30e9042f4dcfa812b",
+      "approved_blob": "0dc2f3313b191a077c9ffa6260dcd53884f2f5da",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/circuit/desk.js",
+      "baseline_blob": "050b5830b24cc05340dd4f97f511f2b952739f17",
+      "approved_blob": "20a8881c0c651f2e79c21abf4ece04b7cb67d661",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/indicator/desk.js",
+      "baseline_blob": "f1601800870a7a036465d2d262b6da22af158179",
+      "approved_blob": "f03a864a152acd36ca1aabcc023ceb7d5d22f89c",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/microscope/desk.js",
+      "baseline_blob": "deaa86c360bcb182ca53cc102eac1f2a9b515d1d",
+      "approved_blob": "2a6282facfdf8215dd078030db7b74f48e18a090",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/phase/desk.js",
+      "baseline_blob": "eb7c8dc344b77b2efeb63db4c804cc37319b80de",
+      "approved_blob": "52d619cd2bb5f0dcf0007220f62a52a8e6cc9742",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/shared/desk.css",
+      "baseline_blob": "a5e9b168a22020f800b38180adc2cbdb042ee257",
+      "approved_blob": "c28b63cdc35e33716f685500f00a3fa2c28423a1",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/shared/desk.mjs",
+      "baseline_blob": "a22d3fcfe4c4ec0caffcd5571ca2adee158ecf73",
+      "approved_blob": "bee5e953c1e4c80c4af171d868e293f5efe2574f",
+      "reason": "2026-11-23 實驗桌直接操作第一批：共用引擎拖動介面、電路、熱與物態、指示劑、反應式平衡重畫",
+      "pull_request": null
     }
   ]
 }

@@ -39,6 +39,8 @@
 .fn-tip{font-size:14px!important;color:var(--ink-2);margin:10px 0 0}
 #why-dialog{max-width:min(720px,94vw)}
 .scene-tool{cursor:pointer}
+.scene-drag{cursor:grab}.scene-drag.dragging{cursor:grabbing}
+.scene-drag:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .scene-tool:focus-visible{outline:none}
 .scene-tool:focus-visible .tool-ring{stroke:var(--blue);stroke-width:5}
 .cue-ring{animation:cue 1.2s ease-in-out infinite}

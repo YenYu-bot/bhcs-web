@@ -55,6 +55,67 @@ async function observe(t){
  }
  assert.ok(await p.locator('#task-go').isVisible(),`observe step finished ${t.width}px: ${await t.kicker()}`);
 }
+// 直接操作：在場景裡拖、轉、點器材（桌機用滑鼠，手機用觸控），確認設定真的跟著改。座標都是場景（SVG）座標。
+function gestures(t){
+ const p=t.p;let cdp=null;
+ const toScreen=(x,y)=>p.evaluate(([x,y])=>{const m=document.querySelector('#scene').getScreenCTM();return [m.a*x+m.c*y+m.e,m.b*x+m.d*y+m.f];},[x,y]);
+ const toSvg=(x,y)=>p.evaluate(([x,y])=>{const s=document.querySelector('#scene'),q=s.createSVGPoint();q.x=x;q.y=y;const r=q.matrixTransform(s.getScreenCTM().inverse());return [r.x,r.y];},[x,y]);
+ const center=async sel=>{const b=await p.locator(`#rig ${sel}`).first().boundingBox();assert.ok(b,`scene element ${sel}`);return [b.x+b.width/2,b.y+b.height/2];};
+ const path=async pts=>{
+  if(t.mobile){cdp=cdp||await p.context().newCDPSession(p);
+   await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:pts[0][0],y:pts[0][1]}]});
+   for(const [x,y] of pts.slice(1))await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y}]});
+   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
+  else{await p.mouse.move(...pts[0]);await p.mouse.down();for(const pt of pts.slice(1))await p.mouse.move(...pt);await p.mouse.up();}
+  await t.wait(120);
+ };
+ const line=(a,b,n=10)=>Array.from({length:n+1},(_,i)=>[a[0]+(b[0]-a[0])*i/n,a[1]+(b[1]-a[1])*i/n]);
+ return {
+  // 從元素中心拖到場景座標 (x, y)
+  dragTo:async(sel,x,y)=>{const a=await center(sel);await path(line(a,await toScreen(x,y)));},
+  // 從元素中心拖動 (dx, dy) 場景單位
+  dragBy:async(sel,dx,dy)=>{const a=await center(sel),[sx,sy]=await toSvg(...a);await path(line(a,await toScreen(sx+dx,sy+dy)));},
+  // 繞著場景座標 (cx, cy)，從正上方順時針轉到 deg 度，半徑 r
+  turn:async(cx,cy,r,deg,from=0)=>{const pts=[];for(let i=0;i<=16;i++){const a=(from+(deg-from)*i/16)*Math.PI/180;pts.push(await toScreen(cx+r*Math.sin(a),cy-r*Math.cos(a)));}await path(pts);},
+  // 繞著元素中心轉 deg 度（半徑用元素寬度的 0.35 倍）
+  spin:async(sel,deg)=>{const b=await p.locator(`#rig ${sel}`).first().boundingBox(),c=[b.x+b.width/2,b.y+b.height/2],r=b.width*.35,pts=[];for(let i=0;i<=16;i++){const a=deg*i/16*Math.PI/180;pts.push([c[0]+r*Math.sin(a),c[1]-r*Math.cos(a)]);}await path(pts);},
+  tap:async sel=>{const l=p.locator(`#rig ${sel}`).first();if(t.mobile)await l.tap({force:true});else await l.click({force:true});await t.wait(120);},
+  step:async i=>{await p.locator('#steps button').nth(i).click();await t.wait(200);},
+  is:async(key,want,label)=>assert.equal(await p.evaluate(k=>__labDesk.value(k),key),want,`${label||key} at ${t.width}px`),
+ };
+}
+const HANDS={
+ microscope:async h=>{
+  await h.step(0);await h.dragBy('[data-drag=slide]',34,0);await h.is('slide','right','drag slide');
+  await h.step(2);await h.spin('[data-drag=coarse]',125);await h.is('coarse',2,'turn coarse knob');await h.spin('[data-drag=fine]',62);await h.is('fine',1,'turn fine knob');
+  await h.step(3);await h.tap('[aria-label="換成 40× 物鏡"]');await h.is('obj',40,'click objective');
+  await h.step(4);await h.dragBy('[data-drag=lever]',36,0);await h.is('aperture',5,'drag aperture lever');
+  await h.step(5);await h.tap('[aria-label="換成水蘊草葉片"]');await h.is('spec','elodea','pick specimen');
+  await h.step(6);await h.tap('[aria-label="換成解剖顯微鏡"]');await h.is('kind','stereo','pick microscope');
+ },
+ circuit:async h=>{
+  await h.step(0);await h.tap('[data-drag=switch]');await h.is('on',true,'tap switch');
+  await h.dragTo('[data-drag=cell]',500,470);await h.is('cells',2,'drag cell into holder');
+  await h.dragBy('[data-drag=cell]',0,-130);await h.is('cells',1,'drag cell out');
+  await h.step(1);await h.dragTo('[data-drag=bulb]',610,200);await h.is('layout','series','drag bulb to series slot');
+  await h.dragTo('[data-drag=bulb]',680,400);await h.is('layout','single','drag bulb out');
+  await h.step(2);await h.dragTo('[data-drag=bulb]',500,80);await h.is('layout','parallel','drag bulb to parallel slot');
+ },
+ phase:async h=>{
+  await h.step(0);await h.turn(440,312,38,36,10);await h.is('time',3,'turn timer to 3 min');
+  await h.dragTo('[data-drag=dot]',590+340*7/30,397);await h.is('time',7,'drag curve dot to 7 min');
+  await h.step(2);await h.tap('[aria-label="換成 200 g 的冰"]');await h.is('mass',200,'pick 200 g');
+ },
+ indicator:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=dropper]',780,120);await h.is('sol','naoh','drag dropper');
+  await h.tap('[aria-label="滴到稀鹽酸"]');await h.is('sol','hcl','tap tube');
+ },
+ balance:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=jar-a]',220,300);await h.is('a',2,'drag molecule in');
+  await h.dragTo('[data-drag=mol-a]',500,520);await h.is('a',1,'drag molecule out');
+  await h.tap('[data-drag=jar-c]');await h.is('c',2,'tap jar');
+ },
+};
 (async()=>{
  const only=process.argv[2];
  for(const [id,cfg] of Object.entries(DESKS)){
@@ -76,5 +137,9 @@ async function observe(t){
    }
    assert.ok(await p.evaluate(()=>document.querySelectorAll('#finish-dialog .stars svg:not(.off)').length)===steps,id+' all stars');
   });
+ }
+ for(const [id,run] of Object.entries(HANDS)){
+  if(only&&id!==only)continue;
+  await runDesk(`/tools/lab/${id}/`,async t=>{await run(gestures(t));});
  }
 })().catch(e=>{console.error(e);process.exit(1);});
