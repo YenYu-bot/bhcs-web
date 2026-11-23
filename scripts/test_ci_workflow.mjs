@@ -157,14 +157,6 @@ test('math regression: four shards cover every regression file exactly once', ()
   assert.ok([...seen.values()].every((n) => n === 1), 'and in only one');
 });
 
-test('standalone microscope browser gate is additive and runs in science-stations', () => {
-  assert.equal(count(wf, 'scripts/check_microscope_3d_browser.cjs'), 1);
-  assert.ok(jobs['science-stations'].text.includes('run: node scripts/check_microscope_3d_browser.cjs'));
-  assert.ok(fs.existsSync(path.join(root, 'scripts/check_microscope_3d_browser.cjs')));
-  assert.ok(wf.includes('name: microscope-3d-review\n          path: microscope-3d-artifacts/\n          retention-days: 14'));
-  assert.ok(JSON.parse(fs.readFileSync(path.join(root, 'scripts/package.json'), 'utf8')).scripts.test.includes('node test_microscope_3d_integration.mjs'));
-});
-
 test('G7 equation layout regression runs in the site gate without replacing the public-site check', () => {
   const script = 'scripts/check_g7_equation_layout_browser.cjs';
   assert.equal(count(wf, script), 1);

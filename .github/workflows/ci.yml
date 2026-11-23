@@ -216,10 +216,6 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: node scripts/check_reflection_refraction_desk_browser.cjs
-      - name: Check standalone 3D microscope mouse and touch boundaries
-        env:
-          NODE_PATH: /tmp/bhcs-composition/node_modules
-        run: node scripts/check_microscope_3d_browser.cjs
       - name: Check friction efficiency desk mouse drag, touch, and energy ledger
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
@@ -235,13 +231,6 @@ jobs:
         env:
           NODE_PATH: /tmp/bhcs-composition/node_modules
         run: xvfb-run -a node scripts/check_motion_graphs_desk_browser.cjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: microscope-3d-review
-          path: microscope-3d-artifacts/
-          retention-days: 14
-
       - uses: actions/upload-artifact@v4
         if: always()
         with:

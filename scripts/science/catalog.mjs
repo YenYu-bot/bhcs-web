@@ -13,11 +13,6 @@ export const guidedPublic = Object.freeze([Object.freeze({
 
 // Standalone applications are discoverable, but never receive the legacy research shell.
 export const standalonePublic = Object.freeze([Object.freeze({
- file:'microscope-3d/',title:'3D 顯微鏡實驗桌',subject:'生物',grade:'國中',unit:'觀察工具',
- description:'在獨立3D實驗桌調焦、移動玻片與調整照明，比較複式與解剖顯微鏡。筆記僅存本頁記憶體，重新整理即消失，可匯出CSV。',
- prior:'細胞、倍率與觀察方向',goals:'調焦、倍率比較、複式反向與解剖正立影像、照明限制',
- minutes:'15–25',kind:'互動模擬'
-}),Object.freeze({
  file:'lab/buoyancy/',title:'浮力實驗桌',subject:'理化',grade:'國中',unit:'浮力與排液量測',
  description:'把鋁塊慢慢放進清水和濃鹽水，用彈簧秤量出浮力和排開液體的重量；再調整密封盒的質量，找出浮與沉的規律。',
  prior:'重量、質量與單位換算',goals:'量測順序、浮力與排液重比較、浮沉與密度',
@@ -91,7 +86,7 @@ export const primaryLabDesks=Object.freeze([
  {id:'newton-desk',file:'lab/newton/',title:'力與運動實驗桌',unit:'力學',minutes:'15–20',description:'改變拉力、質量與摩擦力，看小車每秒的位置，找出合力、質量與加速度的關係。'},
  {id:'color-desk',file:'lab/color/',title:'色光與顏料實驗桌',unit:'光學',minutes:'10–15',description:'疊合紅綠藍三種色光和青、洋紅、黃三種顏料，再用不同色光照物體，比較相加與相減混色。'},
  {id:'eye-desk',file:'lab/eye/',title:'眼睛與視力矯正實驗桌',unit:'光學',minutes:'10–15',description:'看光線在眼球裡成像的位置，比較正常眼、近視與遠視，再選對鏡片把像移回視網膜。'},
- {id:'microscope-desk',file:'lab/microscope/',title:'顯微鏡實驗桌',subject:'生物',unit:'細胞與觀察',minutes:'15–20',description:'比較玻片和視野裡的像，轉換物鏡看倍率、視野與亮度怎麼變，再把偏掉的目標移回正中央。'},
+ {id:'microscope-desk',file:'lab/microscope/',title:'顯微鏡實驗桌',subject:'生物',unit:'細胞與觀察',minutes:'20–30',description:'比較玻片和視野裡的像，用粗、細調節輪對焦，轉換物鏡看倍率與視野，調整光圈，觀察洋蔥表皮和水蘊草，再比較複式與解剖顯微鏡。'},
  {id:'photosynthesis-desk',file:'lab/photosynthesis/',title:'光合作用實驗桌',subject:'生物',unit:'養分與光合作用',minutes:'10–15',description:'改變光照、二氧化碳和水溫，數水蘊草冒出的氧氣泡，找出是哪個條件限制了光合作用。'},
  {id:'genetics-desk',file:'lab/genetics/',title:'遺傳實驗桌',subject:'生物',unit:'遺傳',minutes:'15–20',description:'用棋盤方格排出豌豆高莖與矮莖的子代基因型，做試交，再比較理論機率和實際抽樣。'},
  {id:'earthquake-desk',file:'lab/earthquake/',title:'板塊與地震實驗桌',subject:'地科',unit:'板塊與地震',minutes:'15–20',description:'比較三種板塊邊界的震源深淺，用 P 波與 S 波的時間差推算距離，再用三個測站找出震央。'},
