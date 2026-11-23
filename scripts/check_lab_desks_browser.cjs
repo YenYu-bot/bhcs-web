@@ -110,6 +110,29 @@ const HANDS={
   await h.step(0);await h.dragTo('[data-drag=dropper]',780,120);await h.is('sol','naoh','drag dropper');
   await h.tap('[aria-label="滴到稀鹽酸"]');await h.is('sol','hcl','tap tube');
  },
+ newton:async h=>{
+  await h.step(0);await h.dragBy('[data-drag=scale]',28,0);await h.is('force',4,'pull spring scale');
+  await h.step(1);await h.dragTo('[data-drag=weight]',170,360);await h.is('mass',2,'put weight on cart');await h.dragBy('[data-drag=load]',0,-80);await h.is('mass',1,'take weight off');
+  await h.step(2);await h.dragTo('[data-drag=towel]',500,405);await h.is('friction',2,'lay towel on track');await h.tap('[data-drag=scale]');await h.is('force',2,'tap spring scale');
+ },
+ color:async h=>{
+  await h.step(0);await h.tap('[data-drag=torch-g]');await h.is('g',true,'switch on green torch');
+  await h.step(1);await h.dragTo('[data-drag=tube-m]',500,240);await h.is('m',true,'paint magenta');await h.tap('[data-drag=blob-c]');await h.is('c',false,'wipe cyan');
+  await h.step(2);await h.dragTo('[data-drag=filter-green]',500,150);await h.is('light','green','green filter on torch');await h.dragTo('[data-drag=obj-paper]',500,300);await h.is('object','paper','put paper under light');
+ },
+ eye:async h=>{
+  await h.step(0);await h.tap('[data-drag=look-near]');await h.is('dist','near','look at the book');
+  await h.step(1);await h.dragTo('[data-drag=lens-concave]',420,300);await h.is('lens','concave','wear concave lens');await h.dragTo('[data-drag=worn]',150,500);await h.is('lens','none','take glasses off');
+ },
+ photosynthesis:async h=>{
+  await h.step(0);await h.dragBy('[data-drag=lamp]',180,0);await h.is('light',3,'move lamp closer');
+  await h.step(1);await h.dragTo('[data-drag=soda]',600,350);await h.is('co2','high','add baking soda');
+  await h.step(2);await h.turn(534,512,20,-60,0);await h.is('temp',10,'turn water bath knob');
+ },
+ genetics:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=shelf-Tt]',372,210);await h.is('p2','Tt','drag pea plant onto parent two');await h.tap('[data-drag=parent-p1]');await h.is('p1','Tt','tap parent one');
+  await h.step(2);await h.dragTo('[data-drag=seed-400]',720,400);await h.is('n',400,'sow 400 seeds');
+ },
  balance:async h=>{
   await h.step(0);await h.dragTo('[data-drag=jar-a]',220,300);await h.is('a',2,'drag molecule in');
   await h.dragTo('[data-drag=mol-a]',500,520);await h.is('a',1,'drag molecule out');
