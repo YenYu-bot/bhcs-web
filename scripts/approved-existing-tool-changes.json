@@ -3557,6 +3557,13 @@
       "approved_blob": "953c721523a29e9bb24aeb0bdbd564c8c5a1b1aa",
       "reason": "Lab desk notes: 3D microscope restyle.",
       "pull_request": null
+    },
+    {
+      "path": "tools/mini-lab/index.html",
+      "baseline_blob": "78e0142d049070644a9a700f13b5acce22b1abd6",
+      "approved_blob": "fd224211de9a7c4b66cd60d78767fe40661b494b",
+      "reason": "Elementary mini-lab teaching correction: distinguish clearer water from drinkability, refresh the old notebook wording, and assess red cabbage indicator colours instead of mosquito-bite neutralization.",
+      "pull_request": null
     }
   ]
 }

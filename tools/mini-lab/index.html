@@ -420,17 +420,18 @@ const jar=(g,x,y,w,h,fill,label)=>{ el('rect',{x:x-w/2,y,width:w,height:h,rx:8,f
 
 /* ---------- 實驗 1：髒水變清水 ---------- */
 const FILTER_ORDER=['cotton','charcoal','sand','gravel']; const FNAME={cotton:'棉花',charcoal:'活性碳',sand:'細沙',gravel:'碎石'};
-const EXP_WATER={ id:'water', title:'髒水變清水', note:'過濾：大顆粒先被碎石、細沙攔下來，活性碳再吸附顏色和味道；但過濾過的水還不能直接喝，要煮沸消毒。',
+const LEGACY_WATER_NOTE='過濾：大顆粒先被碎石、細沙攔下來，活性碳再吸附顏色和味道；但過濾過的水還不能直接喝，要煮沸消毒。';
+const EXP_WATER={ id:'water', title:'髒水變清水', note:'過濾可以攔住部分泥沙，但水變清不等於可以喝。煮沸不能去除有害化學物，實驗用水不要喝。',
   icon:g=>{ const w=el('g',{transform:'translate(0 -28)'},g); el('path',{d:'M-30 -130 h60 v40 l20 60 v30 h-100 v-30 l20 -60z',fill:'#DFF5FF',stroke:'#8a93a2','stroke-width':3},w); el('rect',{x:-45,y:-60,width:90,height:28,fill:'#8B5A2B'},w); el('rect',{x:-45,y:-32,width:90,height:28,fill:'#E9D8A6'},w); },
   init:()=>({layers:[],water:0}),
   steps:[
-    {type:'say',text:'洗完手的水髒兮兮的，可以變回乾淨嗎？我們來做一個<b>過濾器</b>！桌上有四種材料，要一層一層放進切開的寶特瓶裡。'},
+    {type:'say',text:'洗完手的水濁濁的，可以變清一點嗎？我們來做一個<b>過濾器</b>！桌上有四種材料，要一層一層放進切開的寶特瓶裡。'},
     {type:'choose',text:'先想想：最下面那一層（靠近瓶口）應該放什麼？',options:['碎石','細沙','棉花','活性碳'],answer:2,why:'棉花最細密，放在最底下才能擋住上面的材料掉出來。'},
     {type:'drag',text:'把材料<b>由下往上</b>依序拖進瓶子：棉花 → 活性碳 → 細沙 → 碎石。',zone:{x:290,y:60,w:220,h:280},
       onDrop:(st,item)=>{ const want=FILTER_ORDER[st.layers.length]; if(item===want){ st.layers.push(item); return {ok:true,msg:`放好${FNAME[item]}了！`+(st.layers.length<4?`下一層是${FNAME[FILTER_ORDER[st.layers.length]]}。`:'過濾器完成！'),done:st.layers.length===4}; } return {ok:false,msg:`現在還不能放${FNAME[item]}，先放${FNAME[want]}。`}; }},
     {type:'drag',text:'過濾器做好了！把<b>髒水</b>拖到瓶口倒進去。',zone:{x:290,y:20,w:220,h:120},onDrop:(st,item)=>item==='dirty'?(st.water=1,{ok:true,msg:'髒水慢慢滲過每一層……',done:true}):{ok:false,msg:'要倒的是髒水。'}},
-    {type:'observe',text:'看！流到下面杯子裡的水變<b>清</b>了。碎石和細沙攔住泥巴和大顆粒，活性碳表面有很多小孔，會把顏色和臭味<b>吸附</b>住。',run:st=>{ st.water=2; }},
-    {type:'choose',text:'過濾好的水看起來很乾淨，可以直接喝嗎？',options:['可以，已經很乾淨了','不行，看不見的細菌還在，要煮沸','不行，要再加一層碎石'],answer:1,why:'過濾器擋不住細菌，所以自來水廠還要消毒，我們在野外則要煮沸。'},
+    {type:'observe',text:'看！流到下面杯子裡的水變<b>清</b>了。碎石和細沙攔住泥巴和大顆粒，活性碳表面有很多小孔，會把顏色和臭味<b>吸附</b>住。水看起來變清了，但實驗用水不要喝。',run:st=>{ st.water=2; }},
+    {type:'choose',text:'過濾後的水變清了，這代表什麼？',options:['透明了，就能喝','只知道水變清了，實驗用水不能喝','只要煮沸，就一定能喝'],answer:1,why:'這個過濾器只能去掉部分雜質，水裡仍可能有看不見的病菌或有害化學物。煮沸不能去除有害化學物，實驗用水不要喝。'},
     {type:'say',text:'實驗完成！你已經是<b>過濾專家</b>了。'},
   ],
   draw:(g,st,s)=>{
@@ -475,7 +476,7 @@ const EXP_CABBAGE={ id:'cabbage', title:'紫甘藍魔法水', note:'紫甘藍汁
       onDrop:(st,item)=>{ if(st.tested.includes(item)) return {ok:false,msg:'這個已經試過了。'}; st.tested.push(item); const t=TESTS.find(x=>x.id===item); return {ok:true,msg:`${t.name}讓它變成${t.ph<6?'紅色系':t.ph>8?'藍綠色系':'紫色'}！`+(st.tested.length<6?'再試下一個。':'六種都試完了！'),done:st.tested.length===6}; }},
     {type:'say',text:'發現規律了嗎？<b>酸</b>的東西（檸檬汁、醋）讓它變<b>紅</b>；<b>鹼</b>的東西（小蘇打、肥皂）讓它變<b>藍或綠</b>；中性的清水還是紫色。紫甘藍汁是天然的<b>酸鹼指示劑</b>。'},
     {type:'choose',text:'如果把汽水滴進紫甘藍汁，你猜會變什麼顏色？',options:['紅色系，因為汽水是酸的','綠色系，因為汽水是鹼的','不會變，汽水是中性的'],answer:0,why:'汽水裡溶了二氧化碳，變成碳酸，所以是酸性的。'},
-    {type:'choose',text:'被蚊子叮會癢，是因為蚊子的口水有點酸。要中和它，塗哪一種比較合理？',options:['檸檬汁','肥皂水','清水'],answer:1,why:'肥皂水是弱鹼性，可以中和酸；這也是為什麼有些止癢藥膏是鹼性的。'},
+    {type:'choose',text:'把白醋和小蘇打水分別滴入兩杯紫甘藍汁，兩杯各會變成什麼顏色？',options:['白醋變藍綠色系，小蘇打水變紅色系','白醋變紅色系，小蘇打水變藍綠色系','兩杯都維持紫色'],answer:1,why:'白醋是酸性的，會讓紫甘藍汁變成紅色系；小蘇打水是鹼性的，會讓紫甘藍汁變成藍綠色系。'},
     {type:'say',text:'實驗完成！你學會用顏色分辨酸和鹼了。'},
   ],
   draw:(g,st,s)=>{
@@ -739,7 +740,9 @@ function renderNotebook(){
   $('nbName').textContent=P.name||'研究員';
   const list=[['safety','安全準備'],['tools','器材達人'],['rules','安全守則'],['water','過濾專家'],['cabbage','酸鹼偵探'],['density','密度大師'],['photo','綠色能量'],['fizz','氣泡高手'],['soap','清潔專家'],['solar','太陽能工程師'],['master','小小研究員']];
   $('badges').innerHTML=list.map(([k,n])=>`<div class="badge ${P.badges[k]?'':'locked'}${newBadges.includes(k)?' new':''}">${HAS['badge_'+k]?`<div class="bimg" style="background-image:url('${IMG['badge_'+k]}')"></div>`:`<svg viewBox="0 0 80 90"><use href="#medal"/></svg>`}<div>${n}</div></div>`).join('');
-  $('notes').innerHTML=P.notes.length?P.notes.map(n=>`<p>${n}</p>`).join(''):'<p style="border:0;color:#999">還沒有筆記，去做實驗吧！</p>';
+  // Replace the old safety note on display without resetting a learner’s progress.
+  const displayNotes=[...new Set(P.notes.map(n=>n===LEGACY_WATER_NOTE?EXP_WATER.note:n))];
+  $('notes').innerHTML=displayNotes.length?displayNotes.map(n=>`<p>${n}</p>`).join(''):'<p style="border:0;color:#999">還沒有筆記，去做實驗吧！</p>';
   const adv=JSON.parse(localStorage.getItem('labsafety')||'{}'); if(adv.found||adv.best!=null||adv.rules) $('notes').insertAdjacentHTML('beforeend',`<p style="border-left-color:#FF8C42">🎓 進階教室：大搜查找到 ${(adv.found||[]).length}/16、守則讀完 ${(adv.rules||[]).length}/20${adv.best!=null?`、測驗最高 ${adv.best}/20`:''}。<a href="lab-safety.html">繼續 →</a></p>`);
   newBadges=[];
 }
