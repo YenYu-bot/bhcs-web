@@ -1,6 +1,7 @@
 // 光合作用實驗桌：氣泡數來自 ./model.mjs（示意數值）。
 import { photo } from './model.mjs';
 import { runDesk } from '../shared/desk.mjs';
+import { plantDefs, elodea } from '../shared/plants.mjs';
 
 const LIGHT = { 1: '弱', 2: '中', 3: '強' }, CO2N = { low: '低', high: '高' }, LIMIT = { light: '光照不夠', co2: '二氧化碳不夠', both: '兩者剛好' };
 const INK = '#23304A', LAMP = { 1: 190, 2: 280, 3: 370 }, KNOB = { 10: -60, 25: 0, 40: 60 };
@@ -16,15 +17,6 @@ function defs(el, rig) {
   g('radialGradient', 'ps-knob', [[0, '#F7FAFD'], [.6, '#AEB8C8'], [1, '#5F6A7E']], { cx: .35, cy: .3, r: .8 });
   const f = el('filter', { id: 'ps-glow', x: '-40%', y: '-40%', width: '180%', height: '180%' }, d); el('feGaussianBlur', { stdDeviation: 8 }, f);
 }
-// 水蘊草：一根莖，上面一輪一輪的小葉子
-function sprig(el, g, x, y0, h, sway, seed) {
-  const top = y0 - h, mid = x + sway;
-  el('path', { d: `M${x} ${y0}Q${mid} ${y0 - h / 2} ${x + sway * .4} ${top}`, fill: 'none', stroke: '#3E8A3E', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, g);
-  for (let k = 1; k < h / 15; k++) { const t = k * 15 / h, px = x + (mid - x) * 2 * t * (1 - t) + sway * .4 * t * t, py = y0 - h * t;
-    for (let j = 0; j < 4; j++) { if (rnd(seed * 7 + j, k) < .18) continue; const side = j % 2 ? 1 : -1, ang = side * (35 + rnd(seed + j, k * 3) * 45), len = (13 + rnd(j, seed + k) * 7) * (1 - t * .3);
-      const ex = px + side * Math.abs(Math.sin(ang * Math.PI / 180)) * len, ey = py - Math.cos(ang * Math.PI / 180) * len * .6 - (j > 1 ? 2 : 0);
-      el('path', { d: `M${px.toFixed(1)} ${py.toFixed(1)}Q${((px + ex) / 2).toFixed(1)} ${(ey - 3).toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}Q${((px + ex) / 2).toFixed(1)} ${(ey + 3).toFixed(1)} ${px.toFixed(1)} ${py.toFixed(1)}z`, fill: (k + j) % 3 ? '#56B454' : '#3E9B42', stroke: '#2F7A34', 'stroke-width': .6 }, g); } }
-}
 function lamp(el, g, x, light) {
   el('ellipse', { cx: x - 10, cy: 532, rx: 44, ry: 8, fill: '#000', opacity: .18 }, g);
   el('rect', { x: x - 48, y: 514, width: 76, height: 16, rx: 6, fill: 'url(#ps-metal)', stroke: INK, 'stroke-width': 2 }, g);
@@ -39,7 +31,7 @@ function lamp(el, g, x, light) {
 }
 
 function scene({ rig, el, txt, s, r, step, set, drag, hint, kind, reduce }) {
-  defs(el, rig);
+  defs(el, rig); plantDefs(el, rig);
   const can = kind === 'observe', BX = 500, BW = 210, top = 230, bot = 470;
   // 光束
   const lx = LAMP[s.light]; el('path', { d: `M${lx + 60} 244L${BX + 10} 236L${BX + 10} 450L${lx + 64} 300Z`, fill: '#FFE58A', opacity: .12 + s.light * .1, filter: 'url(#ps-glow)' }, rig);
@@ -57,7 +49,8 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind, reduce }) {
   // 燒杯、水、水蘊草、倒置試管
   const x0 = BX, wl = top + 30;
   el('path', { d: `M${x0 + 8} ${wl}Q${x0 + BW / 2} ${wl + 5} ${x0 + BW - 8} ${wl}V${bot - 8}H${x0 + 8}Z`, fill: s.co2 === 'high' ? 'url(#ps-water)' : '#BEDFF0', opacity: .9 }, rig);
-  for (let i = 0; i < 5; i++) sprig(el, rig, x0 + 52 + i * 26, bot - 8, 150 + rnd(i, 1) * 50, (rnd(i, 2) - .5) * 40, i);
+  for (const [i, dx, hh, lean, dep] of [[0, 42, 146, 14, .75], [1, 170, 156, -16, .65], [2, 74, 172, -8, .3], [3, 138, 166, 10, .2], [4, 106, 138, -4, 0]]) elodea(el, rig, { x: x0 + dx, y: bot - 10, h: hh, lean, seed: i * 5 + 3, depth: dep, branchDir: dx < BW / 2 ? 1 : -1 });
+  el('ellipse', { cx: x0 + BW / 2, cy: bot - 10, rx: BW / 2 - 14, ry: 6, fill: '#B8A27A', opacity: .55 }, rig);
   const tx = x0 + BW / 2, gas = Math.min(64, 8 + r.rate * 1.3);
   el('path', { d: `M${tx - 20} ${top - 10}V${top + 120}M${tx + 20} ${top - 10}V${top + 120}`, stroke: '#6E97BB', 'stroke-width': 2 }, rig);
   el('path', { d: `M${tx - 20} ${top - 10}A20 20 0 0 1 ${tx + 20} ${top - 10}V${top - 10 + gas}H${tx - 20}Z`, fill: '#F6FBFF', opacity: .9 }, rig);

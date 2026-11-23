@@ -1,6 +1,7 @@
 // 遺傳實驗桌：棋盤方格、機率與抽樣結果來自 ./model.mjs。
 import { cross } from './model.mjs';
 import { runDesk } from '../shared/desk.mjs';
+import { plantDefs, pea as peaPlant } from '../shared/plants.mjs';
 
 const LOOK = g => g === 'tt' ? '矮莖' : '高莖', pct = x => Math.round(x * 100);
 const INK = '#23304A', CHOICE = { cross: { p1: ['TT', 'Tt', 'tt'], p2: ['TT', 'Tt', 'tt'] }, test: { p1: ['TT', 'Tt'] } };
@@ -8,33 +9,21 @@ const rnd = (a, b) => { const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; 
 function defs(el, rig) {
   const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
   g('linearGradient', 'ge-pot', [[0, '#E08A5A'], [.5, '#C8663A'], [1, '#9A4A26']]);
-  g('linearGradient', 'ge-leaf', [[0, '#7CCB6A'], [1, '#3E9442']], { x1: 0, y1: 0, x2: 0, y2: 1 });
   g('linearGradient', 'ge-pack', [[0, '#FFF3D0'], [1, '#E9C770']], { x1: 0, y1: 0, x2: 0, y2: 1 });
 }
-// 豌豆植株：(x, y) 是土面中心；tall 高莖或矮莖；sc 縮放
-function pea(el, g, x, y, tall, sc = 1) {
-  const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g), h = tall ? 92 : 34;
-  el('path', { d: `M0 0C-4 ${-h * .3} 5 ${-h * .6} 0 ${-h}`, fill: 'none', stroke: '#3E8A3E', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, q);
-  const nodes = tall ? 4 : 2;
-  for (let k = 0; k < nodes; k++) { const yy = -h * (k + .7) / (nodes + .2), side = k % 2 ? 1 : -1;
-    for (const sd of [-1, 1]) el('path', { d: `M${sd * 1} ${yy}q${sd * 9} -10 ${sd * 20} -4q${-sd * 7} 10 ${-sd * 20} 4z`, fill: 'url(#ge-leaf)', stroke: '#2F7A34', 'stroke-width': .8 }, q);
-    el('path', { d: `M${side * 2} ${yy - 6}c${side * 10} -6 ${side * 14} -16 ${side * 6} -18c${-side * 6} -1 ${-side * 6} 6 ${-side * 1} 6`, fill: 'none', stroke: '#5FA55A', 'stroke-width': 1.2 }, q); }
-  el('path', { d: `M2 ${-h + 6}q12 4 16 14q-10 2 -16 -14z`, fill: '#7CCB6A', stroke: '#2F7A34', 'stroke-width': .8 }, q);
-  if (tall) el('path', { d: `M-2 ${-h * .45}q-14 4 -18 16q10 0 18 -16z`, fill: '#9AD67F', stroke: '#2F7A34', 'stroke-width': .8 }, q);
-  return q;
-}
+const pea = (el, g, x, y, tall, sc = 1, seed = 1) => peaPlant(el, g, { x, y, tall, sc, seed });
 function pot(el, g, x, y, w = 46) { el('path', { d: `M${x - w / 2} ${y}h${w}l-6 34h${-(w - 12)}z`, fill: 'url(#ge-pot)', stroke: INK, 'stroke-width': 2 }, g); el('rect', { x: x - w / 2 - 4, y: y - 6, width: w + 8, height: 10, rx: 3, fill: '#D97A4A', stroke: INK, 'stroke-width': 2 }, g); el('ellipse', { cx: x, cy: y - 5, rx: w / 2, ry: 3, fill: '#6B4A2B' }, g); }
-function potted(el, txt, g, x, y, gt, sc = 1) { pot(el, g, x, y, 46 * sc); pea(el, g, x, y - 6, gt !== 'tt', sc); txt(g, x, y + 54, gt, { 'font-size': Math.round(17 * sc) }); }
+function potted(el, txt, g, x, y, gt, sc = 1) { pot(el, g, x, y, 46 * sc); pea(el, g, x, y - 6, gt !== 'tt', sc, gt.charCodeAt(1) + 20); txt(g, x, y + 54, gt, { 'font-size': Math.round(17 * sc) }); }
 
 function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
-  defs(el, rig);
+  defs(el, rig); plantDefs(el, rig);
   const can = kind === 'observe', opt = CHOICE[step] || {};
   // 親代：兩盆豌豆（可以把架上的豌豆拖進來換）
   const cards = { p1: [200, 140], p2: [372, 140] }, inCard = (k, p) => Math.abs(p.x - cards[k][0]) < 78 && p.y > cards[k][1] - 10 && p.y < cards[k][1] + 150;
   for (const k of ['p1', 'p2']) { const [x, y] = cards[k], open = can && opt[k], g = el('g', { 'data-drag': open ? `parent-${k}` : null }, rig);
     el('rect', { x: x - 72, y, width: 144, height: 132, rx: 14, fill: '#FFF8EC', stroke: open ? '#2E8B66' : INK, 'stroke-width': open ? 2.5 : 2, 'stroke-dasharray': open ? '7 4' : null }, g);
     txt(g, x, y + 22, k === 'p1' ? '親代一' : '親代二', { 'font-size': 13, fill: '#5A6478' });
-    pot(el, g, x - 26, y + 92, 34); pea(el, g, x - 26, y + 86, s[k] !== 'tt', .6);
+    pot(el, g, x - 26, y + 92, 34); pea(el, g, x - 26, y + 86, s[k] !== 'tt', .6, k === 'p1' ? 3 : 8);
     txt(g, x + 36, y + 76, s[k], { 'font-size': 24 }); txt(g, x + 36, y + 100, LOOK(s[k]), { 'font-size': 13, fill: '#5A6478' });
     if (open) drag(g, null, { label: `換${k === 'p1' ? '親代一' : '親代二'}的基因型`, tap: () => set({ [k]: opt[k][(opt[k].indexOf(s[k]) + 1) % opt[k].length] }) }); }
   txt(rig, 286, 214, '×', { 'font-size': 26, fill: '#C8372D' });
@@ -45,7 +34,7 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
   txt(rig, X - 30, Y - 22, '配子', { 'font-size': 12, fill: '#5A6478' });
   r.grid.forEach((row, i) => row.forEach((g, j) => { const x = X + j * C, y = Y + i * C, tall = g !== 'tt';
     el('rect', { x, y, width: C, height: C, fill: tall ? '#EAF7E6' : '#FFF1D6', stroke: INK, 'stroke-width': 2.5 }, rig);
-    txt(rig, x + 28, y + 34, g, { 'font-size': 20 }); txt(rig, x + 28, y + 58, LOOK(g), { 'font-size': 12, fill: '#5A6478' }); pea(el, rig, x + 64, y + C - 8, tall, .62); }));
+    txt(rig, x + 28, y + 34, g, { 'font-size': 20 }); txt(rig, x + 28, y + 58, LOOK(g), { 'font-size': 12, fill: '#5A6478' }); pea(el, rig, x + 64, y + C - 8, tall, .62, i * 2 + j + 11); }));
   txt(rig, X + C, Y + 2 * C + 26, `基因型 TT：Tt：tt ＝ ${r.ratio}`, { 'font-size': 15 });
   // 右：比例
   const BX = 560, BW = 330;
@@ -60,7 +49,7 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
     const cols = s.n <= 20 ? 10 : s.n <= 100 ? 20 : 40, rows = Math.ceil(s.n / cols), cw = BW / cols, ch = Math.min(26, 150 / rows), fy = 380;
     el('rect', { x: BX - 4, y: fy - 4, width: BW + 8, height: rows * ch + 8, rx: 6, fill: '#B88A5A', opacity: .35 }, rig);
     for (let i = 0; i < s.n; i++) { const short = Math.floor((i + 1) * r.short / s.n) > Math.floor(i * r.short / s.n), x = BX + (i % cols + .5) * cw, y = fy + (Math.floor(i / cols) + 1) * ch - 2;
-      if (cols <= 20) pea(el, rig, x, y, !short, cols === 10 ? .24 : .17); else el('path', { d: `M${x} ${y}v${short ? -2.5 : -6}`, stroke: short ? '#D9A22E' : '#3E9442', 'stroke-width': 2.6, 'stroke-linecap': 'round' }, rig); }
+      if (cols <= 20) pea(el, rig, x, y, !short, cols === 10 ? .24 : .17, i); else el('path', { d: `M${x} ${y}v${short ? -2.5 : -6}`, stroke: short ? '#D9A22E' : '#3E9442', 'stroke-width': 2.6, 'stroke-linecap': 'round' }, rig); }
     // 種子包：點或拖進田裡
     [20, 100, 400].forEach((n, i) => { const x = 196 + i * 84, on = s.n === n, g = el('g', { 'data-drag': can && !on ? `seed-${n}` : null, opacity: on ? .4 : 1 }, rig);
       el('path', { d: `M${x - 34} 600h68v-50l-8 -8h-52l-8 8z`, fill: 'url(#ge-pack)', stroke: INK, 'stroke-width': 2 }, g); el('path', { d: `M${x - 34} 550h68`, stroke: INK, 'stroke-width': 1.5 }, g);

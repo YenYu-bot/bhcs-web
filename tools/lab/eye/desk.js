@@ -1,6 +1,7 @@
 // 眼睛與視力矯正實驗桌：成像位置來自 ./model.mjs。
 import { eye } from './model.mjs';
 import { runDesk } from '../shared/desk.mjs';
+import { tree as crown } from '../shared/plants.mjs';
 
 const TYPE = { normal: '正常眼', myopia: '近視眼', hyperopia: '遠視眼' }, LENS = { none: '不戴眼鏡', concave: '凹透鏡', convex: '凸透鏡' }, DIST = { far: '遠方的樹', near: '近處的書' };
 const WHERE = { front: '視網膜前方', on: '視網膜上', behind: '視網膜後方' };
@@ -18,11 +19,7 @@ function lensShape(el, g, kind, x, y, h = 90) {
   el('path', { d, fill: 'url(#ey-glass)', stroke: INK, 'stroke-width': 2.5 }, g);
   el('path', { d: `M${x - 6} ${y - h * .7}q-4 ${h * .4} 0 ${h * .8}`, fill: 'none', stroke: '#fff', 'stroke-width': 3, opacity: .7 }, g);
 }
-function tree(el, g, x, y, sc = 1) {
-  const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g);
-  el('rect', { x: -6, y: 10, width: 12, height: 40, fill: '#8A5A2E', stroke: INK, 'stroke-width': 2 }, q);
-  for (const [dx, dy, r] of [[0, -18, 26], [-18, 2, 20], [18, 2, 20], [0, -38, 18]]) el('circle', { cx: dx, cy: dy, r, fill: '#4FAE5A', stroke: '#2F6E38', 'stroke-width': 2 }, q);
-}
+const tree = (el, g, x, y, sc = 1) => crown(el, g, { x, y: y + 50 * sc, h: 120 * sc, seed: 4 });
 function book(el, txt, g, x, y, sc = 1) {
   const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g);
   el('path', { d: 'M-20 -26h34a6 6 0 0 1 6 6v46h-40z', fill: '#F4C04E', stroke: INK, 'stroke-width': 2.5 }, q);
