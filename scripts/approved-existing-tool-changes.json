@@ -3879,6 +3879,20 @@
       "approved_blob": "282a6764b649e41d63af0db353471e23302862bb",
       "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "282a6764b649e41d63af0db353471e23302862bb",
+      "approved_blob": "1e8226f4ef512bfe492d84b52b495c798c0b6ec8",
+      "reason": "2026-11-23 顯微鏡實驗桌：場景可直接拖動操作、器材與細胞重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/microscope/desk.js",
+      "baseline_blob": "41d781480a9c838d82830ff411669d9fe4497fee",
+      "approved_blob": "f89e9c6ff43c0a418d9b51cefd3f70dd7a504983",
+      "reason": "2026-11-23 顯微鏡實驗桌：場景可直接拖動操作、器材與細胞重畫",
+      "pull_request": null
     }
   ]
 }

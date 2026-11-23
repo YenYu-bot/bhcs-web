@@ -1,66 +1,99 @@
 // 顯微鏡實驗桌：倍率、視野與像的位置來自 ./model.mjs。
 import { scope, KIND, SPECIMEN } from './model.mjs';
+import { addDefs, compound, stereo, stageTop, fieldView, printedLetter, tissue, woodBlock, stageLift, LEVER, AXIS } from './art.mjs';
 import { runDesk } from '../shared/desk.mjs';
 
 const DIR = { center: '不移動', left: '往左移', right: '往右移', up: '往上移', down: '往下移' }, POS = (p) => p[0] === 0 && p[1] === 0 ? '視野正中央' : `視野${p[1] < 0 ? '上' : p[1] > 0 ? '下' : ''}${p[0] < 0 ? '左' : p[0] > 0 ? '右' : ''}${Math.abs(p[0]) > 1 || Math.abs(p[1]) > 1 ? '外面（看不到）' : '邊'}`;
 const f = x => String(Math.round(x * 100) / 100);
-function scene({ rig, el, txt, s, r, step }) {
-  const CX = 610, CY = 300, R = 200, defs = el('defs', {}, rig);
-  const cp = el('clipPath', { id: 'ms-view' }, defs); el('circle', { cx: CX, cy: CY, r: R }, cp);
-  const cells = step === 'mag' || step === 'light' || step === 'spec';
-  // 左：器材這一側
-  if (step === 'focus') {
-    // 平面側視的複式顯微鏡：載物台會跟著調節輪升降
-    const sy = 384 - s.coarse * 12 - s.fine * 4, ink = '#23304A';
-    txt(rig, 230, 112, '複式顯微鏡（側面）', { 'font-size': 14, fill: '#5A6478' });
-    el('rect', { x: 130, y: 470, width: 200, height: 26, rx: 10, fill: ink }, rig);
-    el('path', { d: 'M300 470V230Q300 190 250 190', fill: 'none', stroke: '#4A5A7A', 'stroke-width': 26, 'stroke-linecap': 'round' }, rig);
-    el('rect', { x: 205, y: 150, width: 44, height: 120, rx: 8, fill: '#7C8AA5', stroke: ink, 'stroke-width': 3 }, rig); el('rect', { x: 212, y: 126, width: 30, height: 28, rx: 5, fill: ink }, rig);
-    el('rect', { x: 197, y: 268, width: 60, height: 14, rx: 6, fill: ink }, rig); el('rect', { x: 218, y: 282, width: 18, height: 26, rx: 3, fill: '#8FD3C1', stroke: ink, 'stroke-width': 3 }, rig);
-    el('rect', { x: 150, y: sy, width: 136, height: 12, rx: 3, fill: ink }, rig); el('rect', { x: 196, y: sy - 5, width: 62, height: 5, fill: '#EAF6FF', stroke: ink, 'stroke-width': 1.5 }, rig);
-    el('circle', { cx: 227, cy: 452, r: 13, fill: '#FFF3B8', stroke: ink, 'stroke-width': 3 }, rig);
-    const knob = (cy, rad, turn, name) => { el('circle', { cx: 300, cy, r: rad, fill: '#8FD3C1', stroke: ink, 'stroke-width': 4 }, rig); const a = turn * Math.PI / 180;
-      el('path', { d: `M300 ${cy} L${300 + rad * .8 * Math.sin(a)} ${cy - rad * .8 * Math.cos(a)}`, stroke: ink, 'stroke-width': 4, 'stroke-linecap': 'round' }, rig); txt(rig, 300 + rad + 16, cy + 5, name, { 'font-size': 13 }); };
-    knob(386, 26, s.coarse * 72, '粗'); knob(436, 15, s.fine * 60, '細');
-    txt(rig, 230, 520, `粗 ${s.coarse} 格・細 ${s.fine} 格`, { 'font-size': 15 });
-  } else if (step === 'light') {
-    txt(rig, 230, 170, '載物台下方的光圈', { 'font-size': 14, fill: '#5A6478' });
-    el('circle', { cx: 230, cy: 290, r: 90, fill: '#5A6478', stroke: '#23304A', 'stroke-width': 4 }, rig); el('circle', { cx: 230, cy: 290, r: { 1: 60, 3: 36, 5: 14 }[s.aperture], fill: '#FFF3B8', stroke: '#23304A', 'stroke-width': 3 }, rig);
-    txt(rig, 230, 416, `光圈：${{ 1: '大', 3: '中', 5: '小' }[s.aperture]}　物鏡 ${s.obj}×`, { 'font-size': 15 }); txt(rig, 230, 446, `進入眼睛的光：${r.lightState}`, { 'font-size': 17, fill: r.lightState === '適中' ? '#2E8B66' : '#C8372D' });
+const OFF = { center: [0, 0], left: [-34, 0], right: [34, 0], up: [0, -26], down: [0, 26] }, SLIDES = ['center', 'left', 'right'];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v)), near = (list, v, of) => list.reduce((m, k) => Math.abs(of(k) - v) < Math.abs(of(m) - v) ? k : m);
+// 直接拖動場景裡的器材：拖的時候只改畫面，放開才寫回設定（面板上的按鈕仍然可以用）
+function drag(node, begin) {
+  node.style.touchAction = 'none'; node.style.cursor = 'grab';
+  node.addEventListener('pointerdown', e => {
+    if (e.button) return; e.preventDefault(); const h = begin(e);
+    const mv = ev => h.move(ev), up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); h.end(); };
+    addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  });
+}
+function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
+  const CX = 610, CY = 300, R = 200, defs = addDefs(el, rig), svg = rig.ownerSVGElement, can = kind === 'observe';
+  const scale = () => svg.getScreenCTM().a;
+  const cells = ['mag', 'light', 'spec'].includes(step) || !can, spec = step === 'spec' ? s.spec : 'onion', solid = step === 'kind' && r.K.solid;
+  const hint = (x, y, str) => { if (!can) return; const w = str.length * 15 * k + 28; el('rect', { x: x - w / 2, y: y - 14 - 6 * k, width: w, height: 18 + 10 * k, rx: 14, fill: '#FFFDF2', stroke: '#2E8B66', 'stroke-width': 2, 'stroke-dasharray': '5 4', 'pointer-events': 'none' }, rig); txt(rig, x, y, str, { 'font-size': 14, fill: '#1F6E50', 'pointer-events': 'none' }); };
+  // 右：目鏡視野
+  const V = fieldView(el, rig, defs, { CX, CY, R, bg: solid ? '#F4F0E4' : cells ? (SPECIMEN[spec].chloroplast ? '#F1F8DC' : '#FBF6DC') : '#FFFDF2', clarity: r.clarity, light: solid ? 60 : r.light });
+  const moving = el('g', {}, V.content);
+  if (solid) woodBlock(el, txt, moving, { CX, CY });
+  else if (cells) tissue(el, moving, { CX, CY, R, px: 2 * R / r.field, kind: spec });
+  else printedLetter(el, txt, moving, { x: CX + r.pos[0] * 150, y: CY + r.pos[1] * 150, size: step === 'kind' ? 120 : s.obj === 4 ? 86 : 120 });
+  txt(rig, CX, CY - R - 28, '從目鏡看到的視野', { 'font-size': 14, fill: '#5A6478' });
+  el('rect', { x: CX - 262, y: CY + R + 24, width: 524, height: 30, rx: 15, fill: '#FFFDF2', opacity: .95 }, rig);
+  const cap = txt(rig, CX, CY + R + 44, '', { 'font-size': 15 }), say = (str, good) => { cap.textContent = str; cap.setAttribute('fill', good === undefined ? '#23304A' : good ? '#2E8B66' : '#C8372D'); };
+  const focusWord = c => say(c >= 100 ? '非常清楚' : c >= 80 ? '看得到了，還有一點模糊' : '很模糊', c >= 100);
+  if (step === 'focus') focusWord(r.clarity);
+  else if (step === 'spec') say(r.S.chloroplast ? '水蘊草：細胞裡有許多綠色的葉綠體' : '洋蔥表皮（碘液染色）：看得到細胞核，沒有葉綠體');
+  else if (step === 'light') say(`光線${r.lightState}${r.lightState === '太亮' ? '，細胞的輪廓淡到看不清' : r.lightState === '太暗' ? '，視野太黑' : '，看得清楚'}`, r.lightState === '適中');
+  else if (step === 'kind') say(r.K.upright ? '像是正立的，看得出立體的高低' : '像上下、左右都相反，是平面的');
+  else if (cells) say(`視野直徑 ${f(r.field)} mm，一排約 ${r.cells} 個細胞，亮度：${r.bright}`);
+  else { el('path', { d: `M${CX - 14} ${CY}H${CX + 14}M${CX} ${CY - 14}V${CY + 14}`, stroke: '#C8372D', 'stroke-width': 2 }, rig); say(`像在${POS(r.pos)}`, r.centered); }
+
+  // 左：器材
+  if (step === 'image' || step === 'center') {
+    const o = OFF[s.slide], xs = SLIDES.map(a => OFF[a][0]);
+    txt(rig, 240, 196, '載物台（從上面看）', { 'font-size': 14, fill: '#5A6478' });
+    const sl = stageTop(el, txt, rig, { dx: o[0], dy: o[1], label: '字母' });
+    hint(240, 484, '拖動玻片');
+    if (can) drag(sl, e => { const sc = scale(), x0 = e.clientX; let x = o[0];
+      return { move(ev) { x = clamp(o[0] + (ev.clientX - x0) / sc, Math.min(...xs), Math.max(...xs)); sl.setAttribute('transform', `translate(${x} ${o[1]})`); moving.setAttribute('transform', `translate(${-(x - o[0]) / 34 * 150} 0)`); },
+        end() { const to = near(SLIDES, x, a => OFF[a][0]); if (to !== s.slide) set({ slide: to }); else { sl.setAttribute('transform', `translate(${o[0]} ${o[1]})`); moving.removeAttribute('transform'); } } }; });
+  } else if (step === 'spec') {
+    txt(rig, 240, 196, '載物台（從上面看）', { 'font-size': 14, fill: '#5A6478' });
+    const tint = c => c ? '#9CCB7A' : '#EBDD98';
+    stageTop(el, txt, rig, { mark: '', tint: tint(r.S.chloroplast), label: r.S.chloroplast ? '水蘊草' : '洋蔥' });
+    Object.keys(SPECIMEN).forEach((key, i) => { const x = 118 + i * 128, on = key === s.spec, g = el('g', { opacity: on ? .45 : 1 }, rig);
+      el('rect', { x, y: 478, width: 116, height: 38, rx: 3, fill: 'url(#ms-glass)', stroke: '#6E97BB', 'stroke-width': 2 }, g); el('rect', { x: x + 4, y: 482, width: 62, height: 30, rx: 2, fill: '#FFFDF5', stroke: '#B9B2A2', 'stroke-width': 1 }, g);
+      txt(g, x + 35, 502, key === 'onion' ? '洋蔥表皮' : '水蘊草', { 'font-size': 11, fill: '#5A6478' }); el('rect', { x: x + 76, y: 484, width: 28, height: 26, rx: 2, fill: tint(SPECIMEN[key].chloroplast), opacity: .8, stroke: '#8FB4D4', 'stroke-width': 1 }, g);
+      if (can && !on) tool(g, `換成${SPECIMEN[key].name}`, () => set({ spec: key })); });
+    hint(240, 548, '點玻片換標本');
   } else if (step === 'kind') {
-    txt(rig, 230, 200, `${r.K.name}下的標本`, { 'font-size': 14, fill: '#5A6478' });
-    if (s.kind === 'stereo') { el('rect', { x: 150, y: 250, width: 160, height: 110, rx: 10, fill: '#E9C98F', stroke: '#23304A', 'stroke-width': 3 }, rig); el('rect', { x: 150, y: 352, width: 160, height: 18, rx: 6, fill: '#B98A52', stroke: '#23304A', 'stroke-width': 3 }, rig); txt(rig, 230, 392, '不透光的小木塊，光從上方照', { 'font-size': 13, fill: '#5A6478' }); }
-    else { el('rect', { x: 110, y: 250, width: 240, height: 110, rx: 8, fill: '#EAF6FF', stroke: '#23304A', 'stroke-width': 3 }, rig); txt(rig, 230, 392, '透明的玻片，光從下方穿過', { 'font-size': 13, fill: '#5A6478' }); }
-    txt(rig, 230, 324, 'F', { 'font-size': 52, fill: '#23304A' }); txt(rig, 230, 440, `倍率：${r.K.range}`, { 'font-size': 15 });
+    Object.keys(KIND).forEach((key, i) => { const x = 96 + i * 148, on = key === s.kind, g = el('g', {}, rig);
+      el('rect', { x, y: 150, width: 140, height: 316, rx: 16, fill: '#FFFDF2', opacity: on ? 1 : .55, stroke: on ? '#2E8B66' : '#8A93A6', 'stroke-width': on ? 4 : 2, 'stroke-dasharray': on ? '' : '6 5' }, g);
+      const m = el('g', { transform: `translate(${x + 70 - 235 * .5} 168) scale(.5)` }, g); if (key === 'stereo') stereo(el, m); else compound(el, m, {});
+      txt(g, x + 70, 452, KIND[key].name, { 'font-size': 14, fill: on ? '#1F6E50' : '#23304A' });
+      if (can && !on) tool(g, `換成${KIND[key].name}`, () => set({ kind: key })); });
+    hint(240, 126, '點選顯微鏡');
+    txt(rig, 240, 492, `倍率：${r.K.range}`, { 'font-size': 14 });
   } else {
-    el('rect', { x: 110, y: 240, width: 240, height: 110, rx: 8, fill: '#EAF6FF', stroke: '#23304A', 'stroke-width': 3, transform: cells ? '' : `translate(${{ left: -26, right: 26 }[s.slide] || 0} ${{ up: -22, down: 22 }[s.slide] || 0})` }, rig);
-    txt(rig, 230, 222, '玻片（實際的樣子）', { 'font-size': 14, fill: '#5A6478' });
-    if (cells) { const green = step === 'spec' && r.S.chloroplast; for (let i = 0; i < 5; i++) for (let j = 0; j < 2; j++) el('rect', { x: 178 + i * 21, y: 276 + j * 21, width: 19, height: 19, rx: 4, fill: green ? '#A9D98F' : '#CFE8B9', stroke: '#4E8A3A', 'stroke-width': 1.5 }, rig); txt(rig, 230, 372, step === 'spec' ? r.S.name : '洋蔥表皮細胞', { 'font-size': 14 }); }
-    else { const dx = { left: -26, right: 26 }[s.slide] || 0, dy = { up: -22, down: 22 }[s.slide] || 0; txt(rig, 230 + dx, 314 + dy, 'F', { 'font-size': 52, fill: '#23304A' });
-      if (s.slide !== 'center') txt(rig, 230, 392, `玻片${DIR[s.slide]}`, { 'font-size': 15, fill: '#C8372D' }); }
-    txt(rig, 230, 440, `物鏡 ${s.obj}× × 目鏡 10× ＝ ${r.total} 倍`, { 'font-size': 15 });
+    const M = compound(el, rig, s), mark = (n, col) => el('circle', { cx: n.cx, cy: n.cy, r: n.hit.r.baseVal.value + 3, fill: 'none', stroke: col, 'stroke-width': 2.5, 'stroke-dasharray': '6 5', 'pointer-events': 'none' }, rig);
+    txt(rig, 148, 182, `使用中 ${s.obj}×`, { 'font-size': 13, fill: '#C8372D' });
+    if (step === 'focus' && can) {
+      const paint = (c, fi) => { M.coarse.rot.setAttribute('transform', `rotate(${c * 60} 313 384)`); M.fine.rot.setAttribute('transform', `rotate(${fi * 60} 313 452)`); M.stage.setAttribute('transform', `translate(0 ${-stageLift(c, fi)})`);
+        const cl = Math.max(10, 100 - 20 * Math.abs((c - 2) * 3 + (fi - 1))); V.blur(cl); focusWord(cl); };
+      const turn = (n, key, max) => { mark(n, '#2E8B66'); drag(n.hit, e => { const b = n.hit.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height / 2; let prev = Math.atan2(e.clientY - cy, e.clientX - cx), v = s[key];
+        return { move(ev) { const a = Math.atan2(ev.clientY - cy, ev.clientX - cx); let d = a - prev; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; prev = a; v = clamp(v + d * 180 / Math.PI / 60, 0, max); paint(key === 'coarse' ? v : s.coarse, key === 'fine' ? v : s.fine); },
+          end() { const to = Math.round(v); if (to !== s[key]) set({ [key]: to }); else paint(s.coarse, s.fine); } }; }); };
+      turn(M.coarse, 'coarse', 4); turn(M.fine, 'fine', 2);
+      txt(rig, 362, 389, '粗', { 'font-size': 13 }); txt(rig, 352, 457, '細', { 'font-size': 13 });
+      hint(AXIS, 42, '拖著轉調節輪');
+    }
+    if ((step === 'mag' || step === 'light') && can) {
+      for (const o of step === 'mag' ? [4, 10, 40] : [4, 40]) { const ob = M.objs[o]; if (ob.active) continue;
+        el('circle', { cx: ob.tip[0], cy: ob.tip[1] - 2, r: 15, fill: '#FFFDF2', stroke: '#2E8B66', 'stroke-width': 2, 'stroke-dasharray': '4 3' }, ob.g.parentNode).setAttribute('pointer-events', 'none');
+        txt(rig, ob.tip[0], ob.tip[1] + 3, `${o}×`, { 'font-size': 12, fill: '#1F6E50', 'pointer-events': 'none' }); tool(ob.g, `換成 ${o}× 物鏡`, () => set({ obj: o })); }
+      hint(AXIS, 42, step === 'mag' ? '點物鏡換倍率' : '點物鏡、拖光圈拉桿');
+    }
+    if (step === 'light') {
+      const open = { 1: 20, 3: 12, 5: 5 }[s.aperture];
+      el('circle', { cx: 138, cy: 430, r: 31, fill: 'url(#ms-black)', stroke: '#23304A', 'stroke-width': 2.5 }, rig);
+      for (let i = 0; i < 8; i++) el('path', { d: `M138 430L${138 + 30 * Math.cos(i * Math.PI / 4)} ${430 + 30 * Math.sin(i * Math.PI / 4)}`, stroke: '#6B7892', 'stroke-width': 1.2 }, rig);
+      el('circle', { cx: 138, cy: 430, r: open, fill: 'url(#ms-glow)', stroke: '#23304A', 'stroke-width': 2 }, rig);
+      txt(rig, 138, 480, `光圈：${{ 1: '大', 3: '中', 5: '小' }[s.aperture]}`, { 'font-size': 13 });
+      if (can) drag(M.leverHit, e => { const sc = scale(), x0 = e.clientX, o = LEVER[s.aperture]; let x = o, moved = false;
+        return { move(ev) { x = clamp(o + (ev.clientX - x0) / sc, -36, 0); moved = moved || Math.abs(x - o) > 2; M.lever.setAttribute('transform', `translate(${x} 0)`); },
+          end() { const to = moved ? near([1, 3, 5], x, a => LEVER[a]) : { 1: 3, 3: 5, 5: 1 }[s.aperture]; if (to !== s.aperture) set({ aperture: to }); else M.lever.setAttribute('transform', `translate(${o} 0)`); } }; });
+    }
   }
-  // 右：視野
-  const tone = step === 'light' ? { 太亮: '#FFFFFF', 適中: '#FFFDF2', 太暗: '#6F6A58' }[r.lightState] : { 4: '#FFFDF2', 10: '#F1E9CF', 40: '#CFC5A4' }[s.obj];
-  el('circle', { cx: CX, cy: CY, r: R + 14, fill: '#23304A' }, rig); el('circle', { cx: CX, cy: CY, r: R, fill: tone }, rig);
-  el('rect', { x: CX - 262, y: CY + R + 24, width: 524, height: 30, rx: 15, fill: '#FFFDF2', opacity: .94 }, rig);
-  const g = el('g', { 'clip-path': 'url(#ms-view)' }, rig);
-  if (cells) { const n = r.cells, c = 2 * R / n, green = step === 'spec' && r.S.chloroplast, fade = step === 'light' ? { 太亮: .22, 適中: .8, 太暗: .45 }[r.lightState] : .75; let d = '';
-    for (let i = 0; i <= n; i++) d += `M${CX - R + i * c} ${CY - R}V${CY + R}M${CX - R} ${CY - R + i * c}H${CX + R}`;
-    const layer = el('g', { opacity: step === 'light' ? fade / .75 : 1 }, g);
-    el('rect', { x: CX - R, y: CY - R, width: 2 * R, height: 2 * R, fill: green ? '#BFE3A6' : '#CFE8B9', opacity: .75 }, layer);
-    el('path', { d, fill: 'none', stroke: '#4E8A3A', 'stroke-width': n > 20 ? 1 : 3 }, layer);
-    if (n <= 16) for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const x = CX - R + (i + .5) * c, y = CY - R + (j + .5) * c;
-      if (green) for (const [dx, dy] of [[-.25, -.2], [.22, -.12], [-.05, .26]]) el('ellipse', { cx: x + dx * c, cy: y + dy * c, rx: c / 9, ry: c / 13, fill: '#2E8B3A' }, layer); else el('circle', { cx: x, cy: y, r: c / 7, fill: '#7A4BB5' }, layer); }
-    txt(rig, CX, CY + R + 44, step === 'spec' ? (green ? '水蘊草：細胞裡有許多綠色的葉綠體' : '洋蔥表皮：看得到細胞核，沒有葉綠體') : step === 'light' ? `光線${r.lightState}${r.lightState === '太亮' ? '，細胞的輪廓淡到看不清' : r.lightState === '太暗' ? '，視野太黑' : '，看得清楚'}` : `視野直徑 ${f(r.field)} mm，一排約 ${r.cells} 個細胞，亮度：${r.bright}`, { 'font-size': 15 });
-  } else if (step === 'kind') {
-    if (r.K.solid) { el('rect', { x: CX - 150, y: CY - 110, width: 300, height: 220, rx: 14, fill: '#E9C98F' }, g); const sh = txt(g, CX + 7, CY + 37, 'F', { 'font-size': 120, fill: '#8A6A3A' }); sh.setAttribute('opacity', '.6'); txt(g, CX, CY + 30, 'F', { 'font-size': 120, fill: '#23304A' }); }
-    else { const t = txt(g, CX, CY + 30, 'F', { 'font-size': 120, fill: '#23304A' }); t.setAttribute('transform', `rotate(180 ${CX} ${CY})`); }
-    txt(rig, CX, CY + R + 44, r.K.upright ? '像是正立的，看得出立體的高低' : '像上下、左右都相反，是平面的', { 'font-size': 16 });
-  } else { const x = CX + r.pos[0] * 150, y = CY + r.pos[1] * 150, t = txt(g, x, y + 30, 'F', { 'font-size': 86, fill: '#23304A' }); t.setAttribute('transform', `rotate(180 ${x} ${y})`);
-    if (step === 'focus') { const fl = el('filter', { id: 'ms-blur', x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs); el('feGaussianBlur', { stdDeviation: (100 - r.clarity) / 6 }, fl); t.setAttribute('filter', 'url(#ms-blur)'); txt(rig, CX, CY + R + 44, r.clarity >= 100 ? '非常清楚' : r.clarity >= 80 ? '看得到了，還有一點模糊' : '很模糊', { 'font-size': 16, fill: r.clarity >= 100 ? '#2E8B66' : '#C8372D' }); }
-    else { el('path', { d: `M${CX - 14} ${CY}H${CX + 14}M${CX} ${CY - 14}V${CY + 14}`, stroke: '#C8372D', 'stroke-width': 2 }, rig); txt(rig, CX, CY + R + 44, `像在${POS(r.pos)}`, { 'font-size': 16, fill: r.centered ? '#2E8B66' : '#C8372D' }); } }
-  txt(rig, CX, CY - R - 26, '從目鏡看到的視野', { 'font-size': 14, fill: '#5A6478' });
 }
 
 const tgt = (sig, label, set, aim, body, title) => ({ sig, label, set, aim, title: title || (s => `物鏡 ${s.obj}×，玻片${DIR[s.slide]}`), body });
@@ -69,7 +102,7 @@ const slideCtl = list => ({ key: 'slide', label: '移動玻片', type: 'seg', co
 
 runDesk({
   key: 'bhcs.lab.microscope.v1', title: '顯微鏡實驗桌', background: 'bg-chem-bench',
-  sceneLabel: '顯微鏡實驗桌：左邊是玻片、調節輪或光圈，右邊的圓形是從目鏡看到的視野',
+  sceneLabel: '顯微鏡實驗桌：左邊是可以拖動、點選的顯微鏡和玻片，右邊的圓形是從目鏡看到的視野',
   initial: { obj: 4, ...base },
   model: scope, scene, viewBox: { desk: '80 20 800 600', phone: '80 20 800 600' }, phoneText: 1.4,
   readouts: (s, r) => [['放大倍率', String(r.total), '倍', `${s.obj} × 10`], ['視野直徑', f(r.field), 'mm', `一排約 ${r.cells} 個細胞`], ['清晰度', String(r.clarity), '%', `光線${r.lightState}`]],
