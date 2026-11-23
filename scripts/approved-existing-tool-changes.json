@@ -3921,6 +3921,27 @@
       "approved_blob": "846be450ab2707e902688aa29b7623e7ab92be35",
       "reason": "2026-11-23 顯微鏡實驗桌：兩種顯微鏡並排成像、細胞放大重畫",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "1c7b16317fd4a09ebe9608b1064335f02b1c2739",
+      "approved_blob": "f1bc8186fddde6f4cd31b38bca435b4e8e61288c",
+      "reason": "2026-11-23 顯微鏡實驗桌：F 標本改為透明片",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/microscope/art.mjs",
+      "baseline_blob": "3b7b27ad7716d0c22dd1f08892fe7f5fe9166876",
+      "approved_blob": "dad582d3ab9d295c252f3853904b3e73497dddf2",
+      "reason": "2026-11-23 顯微鏡實驗桌：F 標本改為透明片",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/microscope/desk.js",
+      "baseline_blob": "ccbdd1b0452f11a075ea7aef51e88d91a63a6336",
+      "approved_blob": "deaa86c360bcb182ca53cc102eac1f2a9b515d1d",
+      "reason": "2026-11-23 顯微鏡實驗桌：F 標本改為透明片",
+      "pull_request": null
     }
   ]
 }

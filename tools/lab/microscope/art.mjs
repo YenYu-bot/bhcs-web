@@ -92,7 +92,7 @@ export function stereo(el, g) {
   el('rect', { x: 118, y: 488, width: 236, height: 40, rx: 10, fill: 'url(#ms-blackv)', stroke: INK, 'stroke-width': 2.5 }, g);
   el('ellipse', { cx: 215, cy: 490, rx: 64, ry: 9, fill: '#F6F3EA', stroke: INK, 'stroke-width': 2 }, g);
   el('path', { d: 'M198 386h34l18 86h-70z', fill: '#FFE98A', opacity: .45 }, g);
-  el('rect', { x: 194, y: 466, width: 42, height: 20, rx: 3, fill: 'url(#ms-wood)', stroke: INK, 'stroke-width': 1.8 }, g);
+  el('rect', { x: 190, y: 480, width: 50, height: 6, rx: 1, fill: '#DCEFFB', stroke: '#5F86A8', 'stroke-width': 1.5 }, g);
   const eye = (dx, o) => { const q = el('g', { transform: `rotate(-24 215 258) translate(${dx} 0)`, opacity: o }, g);
     el('rect', { x: 200, y: 186, width: 24, height: 76, fill: 'url(#ms-tube)', stroke: INK, 'stroke-width': 2 }, q); el('rect', { x: 196, y: 170, width: 32, height: 20, rx: 5, fill: 'url(#ms-black)', stroke: INK, 'stroke-width': 2 }, q); };
   eye(26, .85); eye(0, 1);
@@ -139,11 +139,11 @@ export function fieldView(el, rig, defs, { CX, CY, R, bg = '#FFFDF2', clarity = 
   return { content, blur, lit };
 }
 
-// 玻片上印的字：紙纖維加上邊緣不平整的油墨，像真的在顯微鏡下看印刷字。
+// 透明片上印的字：透明片會透光，所以複式顯微鏡看得到；油墨邊緣略不平整，旁邊有幾點灰塵。
 export function printedLetter(el, txt, g, { x, y, size = 86, flip = true }) {
   const q = el('g', { transform: flip ? `rotate(180 ${x} ${y})` : '' }, g);
-  let d = ''; for (let i = 0; i < 90; i++) { const fx = x - 330 + rnd(i, 1) * 660, fy = y - 330 + rnd(i, 2) * 660, a = rnd(i, 3) * 6.28, l = 18 + rnd(i, 4) * 40; d += `M${fx.toFixed(1)} ${fy.toFixed(1)}q${(Math.cos(a) * l / 2 + 6).toFixed(1)} ${(Math.sin(a) * l / 2 - 6).toFixed(1)} ${(Math.cos(a) * l).toFixed(1)} ${(Math.sin(a) * l).toFixed(1)}`; }
-  el('path', { d, fill: 'none', stroke: '#C9BE98', 'stroke-width': 1.4, 'stroke-linecap': 'round', opacity: .55 }, q);
+  let d = ''; for (let i = 0; i < 26; i++) d += `M${(x - 320 + rnd(i, 1) * 640).toFixed(1)} ${(y - 320 + rnd(i, 2) * 640).toFixed(1)}h.1`;
+  el('path', { d, fill: 'none', stroke: '#9AA3B2', 'stroke-width': 2.4, 'stroke-linecap': 'round', opacity: .45 }, q);
   const t = txt(q, x, y + size * .35, 'F', { 'font-size': size, 'font-weight': 600, 'font-family': 'Georgia, "Times New Roman", serif', fill: '#1B2233' }); t.setAttribute('filter', 'url(#ms-ink)');
   return q;
 }
@@ -181,15 +181,15 @@ export function tissue(el, g, { CX, CY, R, px, kind = 'onion' }) {
   return q;
 }
 
-// 解剖顯微鏡看到的紙片：正立、看得出紙的厚度和影子（和複式顯微鏡下是同一張印著 F 的紙片）。
-export function paperCard(el, txt, g, { CX, CY, scale = 1 }) {
-  const q = el('g', { transform: `translate(${CX} ${CY}) scale(${scale}) translate(${-CX} ${-CY})` }, g);
-  el('rect', { x: CX - 500, y: CY - 500, width: 1000, height: 1000, fill: '#C9D1DB' }, q);
-  el('path', { d: `M${CX - 138} ${CY + 122}h300l30 30h-300z`, fill: '#000', opacity: .25 }, q);
-  el('path', { d: `M${CX + 150} ${CY - 108}l10 9v222l-10-11z`, fill: '#D5CDB6', stroke: '#A39A80', 'stroke-width': 1.5 }, q);
-  el('path', { d: `M${CX - 150} ${CY + 112}h300l10 11h-300z`, fill: '#C9C0A6', stroke: '#A39A80', 'stroke-width': 1.5 }, q);
-  el('rect', { x: CX - 150, y: CY - 108, width: 300, height: 220, rx: 3, fill: '#FDFAF0', stroke: '#A39A80', 'stroke-width': 1.5 }, q);
-  let d = ''; for (let i = 0; i < 40; i++) { const fx = CX - 140 + rnd(i, 1) * 270, fy = CY - 98 + rnd(i, 2) * 196, a = rnd(i, 3) * 6.28, l = 8 + rnd(i, 4) * 16; d += `M${fx.toFixed(1)} ${fy.toFixed(1)}l${(Math.cos(a) * l).toFixed(1)} ${(Math.sin(a) * l).toFixed(1)}`; }
-  el('path', { d, fill: 'none', stroke: '#D9D0B4', 'stroke-width': 1.2, 'stroke-linecap': 'round' }, q);
-  txt(q, CX, CY + 48, 'F', { 'font-size': 140, 'font-weight': 600, 'font-family': 'Georgia, "Times New Roman", serif', fill: '#1B2233' }).setAttribute('filter', 'url(#ms-ink)');
+// 解剖顯微鏡看到的透明片：正立，看得出透明片的厚度、反光，和字落在底板上的影子（和複式顯微鏡下是同一片）。
+export function filmCard(el, txt, g, { CX, CY, scale = 1 }) {
+  const q = el('g', { transform: `translate(${CX} ${CY}) scale(${scale}) translate(${-CX} ${-CY})` }, g), font = { 'font-size': 140, 'font-weight': 600, 'font-family': 'Georgia, "Times New Roman", serif' };
+  el('rect', { x: CX - 500, y: CY - 500, width: 1000, height: 1000, fill: '#F2F0E8' }, q);
+  el('rect', { x: CX - 138, y: CY - 96, width: 300, height: 220, rx: 4, fill: '#000', opacity: .1 }, q);
+  txt(q, CX + 14, CY + 60, 'F', { ...font, fill: '#000' }).setAttribute('opacity', '.22');
+  el('path', { d: `M${CX + 150} ${CY - 108}l7 6v220l-7-6z`, fill: '#A9C7DE', stroke: '#7FA6C9', 'stroke-width': 1.2 }, q);
+  el('path', { d: `M${CX - 150} ${CY + 112}h300l7 6h-300z`, fill: '#9DBED8', stroke: '#7FA6C9', 'stroke-width': 1.2 }, q);
+  el('rect', { x: CX - 150, y: CY - 108, width: 300, height: 220, rx: 3, fill: '#DCEFFB', opacity: .45, stroke: '#7FA6C9', 'stroke-width': 2 }, q);
+  el('path', { d: `M${CX - 130} ${CY + 96}L${CX - 30} ${CY - 100}h46L${CX - 84} ${CY + 96}z`, fill: '#fff', opacity: .45 }, q);
+  txt(q, CX, CY + 48, 'F', { ...font, fill: '#1B2233' }).setAttribute('filter', 'url(#ms-ink)');
 }
