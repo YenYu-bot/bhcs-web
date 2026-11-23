@@ -83,6 +83,9 @@ for(const c of LabFinalCleanupDiscovery.changes)assert.equal(c.before_blob,LabWa
 const MicroscopeDStyleDiscovery=JSON.parse(fs.readFileSync(new URL('./microscope-3d-style-discovery-changes.json',import.meta.url),'utf8'));
 assert.deepEqual(MicroscopeDStyleDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
 for(const c of MicroscopeDStyleDiscovery.changes)assert.equal(c.before_blob,LabFinalCleanupDiscovery.changes.find(p=>p.path===c.path).after_blob);
+const MicroscopeFlatDiscovery=JSON.parse(fs.readFileSync(new URL('./microscope-flat-discovery-changes.json',import.meta.url),'utf8'));
+assert.deepEqual(MicroscopeFlatDiscovery.changes.map(c=>c.path),['scripts/science/catalog.mjs','ziyuan.html']);
+for(const c of MicroscopeFlatDiscovery.changes)assert.equal(c.before_blob,MicroscopeDStyleDiscovery.changes.find(p=>p.path===c.path).after_blob);
 export function publicDeskDiscoveryReach(file,from){
  const change=discovery.changes.find(c=>c.path===file&&c.before_blob===from);
  let at=change?change.after_blob:from;
@@ -121,5 +124,7 @@ export function publicDeskDiscoveryReach(file,from){
  if(step_LabFinalCleanupDiscovery)at=step_LabFinalCleanupDiscovery.after_blob;
  const step_MicroscopeDStyleDiscovery=MicroscopeDStyleDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
  if(step_MicroscopeDStyleDiscovery)at=step_MicroscopeDStyleDiscovery.after_blob;
+ const step_MicroscopeFlatDiscovery=MicroscopeFlatDiscovery.changes.find(c=>c.path===file&&c.before_blob===at);
+ if(step_MicroscopeFlatDiscovery)at=step_MicroscopeFlatDiscovery.after_blob;
  return at;
 }

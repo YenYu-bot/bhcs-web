@@ -3564,6 +3564,321 @@
       "approved_blob": "fd224211de9a7c4b66cd60d78767fe40661b494b",
       "reason": "Elementary mini-lab teaching correction: distinguish clearer water from drinkability, refresh the old notebook wording, and assess red cabbage indicator colours instead of mosquito-bite neutralization.",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/microscope/desk.js",
+      "baseline_blob": "8ae013733d68cad2753e26f7832a5b0a357573c7",
+      "approved_blob": "41d781480a9c838d82830ff411669d9fe4497fee",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/microscope/index.html",
+      "baseline_blob": "437b2f5dde3ed1ea91d651b871e21ee86427a6a4",
+      "approved_blob": "01cda77cb914c71a98d24de02e4d4be9a9d88035",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/microscope/model.mjs",
+      "baseline_blob": "1677dc9b64b96c1f35dc8328813587aa689bcc06",
+      "approved_blob": "1ddf7b6f2bfb3158fe1e59c35be11901145d5e8d",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/app.js",
+      "baseline_blob": "211df4dcd812a8a7b06703b4bebcee0317c6c387",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/body-touch.js",
+      "baseline_blob": "0701e54f6a6f4e354e982b7cd70e99c7d163f8ed",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/cell-course.js",
+      "baseline_blob": "2c8c67a492f762172cccb8b934e04725301f456e",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/cell-observation.js",
+      "baseline_blob": "94905b9c34e5b82727de6f96ed4e65a28017f2f0",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/compound-pointer.js",
+      "baseline_blob": "d8f4c548b1b679367da84d3f39611c8ec982f494",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/course-ui.js",
+      "baseline_blob": "232a1ad26165bfa5f609bc96c1d4e05564000ee8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/course.js",
+      "baseline_blob": "131e23e279dcfe01c4a1525695c822819b3fb0d4",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/eyepiece.js",
+      "baseline_blob": "551a6f36b67f0cba0845db695589f3e69bac4a7f",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/fonts/NotoSansTC-OFL.txt",
+      "baseline_blob": "1c9f43281b8f216c5461fe9ac729afbade7724e4",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/fonts/NotoSansTC-subset.woff",
+      "baseline_blob": "4b9008f6edfb5f6bdf17c6ff5f0b9088542c800c",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/fonts/ZenMaruGothic-OFL.txt",
+      "baseline_blob": "7dc44f8017161dc4e1346b24cfd6e195c402633a",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/fonts/ZenMaruGothic-subset.woff",
+      "baseline_blob": "1091b236676364fd2f944b2c421211406469f7a7",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/illumination-ui.js",
+      "baseline_blob": "4f05b0c062b2c1f3bb5222c1a23dce9e1e4ac0bd",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/illumination.js",
+      "baseline_blob": "b0cd85f9ec55e394c6f4a04a35e0d480431cb0e8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/gold-paint.svg",
+      "baseline_blob": "32bf17edfc324c46e483fd763d2a70633467a899",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/paper-paint.svg",
+      "baseline_blob": "19b00a99fbb6fb0fd973f65090b5a99719c91275",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/paper.svg",
+      "baseline_blob": "ba4d34aba23d132b23441d47bbb8bac59c7f63c6",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/paper10.svg",
+      "baseline_blob": "a4371053b3d0ee89ac9bfbd054905a2af2cfa8b5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/paper18.svg",
+      "baseline_blob": "32bfd7f1289364cdb463aa3466d4d3eaa9b29751",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-arm-v2.webp",
+      "baseline_blob": "eaf970cff1ebb53f70eabe49045f6773a844f356",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-body-v2.webp",
+      "baseline_blob": "e731a7a9a63a6e5bad6d22d4592871d50fe3eea4",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/img/teacher-body-v3.png",
+      "baseline_blob": "0aaa1b8ff727b271b363e6ff5d3106dc098e38c1",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/index.html",
+      "baseline_blob": "e7056f6cb2f1341be42b4aecfb3325c1cec86627",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/model.js",
+      "baseline_blob": "58a0a312616edeabc8b836704d7657fb514ad9b3",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/notebook-ui.js",
+      "baseline_blob": "bbebb0591a5b3972f8745444225d83d3b1ef832d",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/notebook.js",
+      "baseline_blob": "5e7c879f0221e256ff45e5fddc65d8826d608ae0",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/paper-render.js",
+      "baseline_blob": "02d0044eba35a9e62c21ec250a6fc9bccafe83b4",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/pointer.js",
+      "baseline_blob": "dea93f97e1b6f0cff0769390cc248ae61c40a2b8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/render-quality.js",
+      "baseline_blob": "efcfff1686adc1350d28c6d5bc1913e269c4c1ff",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/scene.js",
+      "baseline_blob": "a0604a59599507f6b35a481e115f7982b57e1f40",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/stereo-course.js",
+      "baseline_blob": "e98002ac39198911380cf8bc3fc67d1d93db347c",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/stereo-eye.js",
+      "baseline_blob": "9d3a56945476464d6079d446d6a549b029b88075",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/stereo-model.js",
+      "baseline_blob": "2dd965becbf30f8ad7d87e0c4b0f7a802a108ca6",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/stereo-scene.js",
+      "baseline_blob": "7b49aa22693faf16a76f722429354eedbc208def",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/style.css",
+      "baseline_blob": "f6f2ec8eca9c5c1c24439c86151da33ead0c5017",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/vendor/Projector.js",
+      "baseline_blob": "093a79ad7c7eafcb80ed0dcbbab7f51b5a2ab01c",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/vendor/SVGRenderer.js",
+      "baseline_blob": "23e902c9b32bff55fb485b2c7d10c1a1675234ea",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/vendor/THREE-LICENSE.txt",
+      "baseline_blob": "cf781430404b0ae0ba7d8dea3457a3515dd7c9b9",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/vendor/three.core.js",
+      "baseline_blob": "7dcd0fbcbc04b8d9a20ecb96c1ce344cb55150d5",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/microscope-3d/vendor/three.module.js",
+      "baseline_blob": "477ca4dafa7af919a2b9818e01b5ae25198d4aa4",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/science/index.html",
+      "baseline_blob": "ba3f177d4c887c476aaddb859b2131b51140e7b6",
+      "approved_blob": "ddc76328f5c75a104b18583c0ef3f0dbb4854277",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "953c721523a29e9bb24aeb0bdbd564c8c5a1b1aa",
+      "approved_blob": "282a6764b649e41d63af0db353471e23302862bb",
+      "reason": "2026-11-23 3D 顯微鏡頁改為平面實驗桌：功能併入 tools/lab/microscope/，移除 tools/microscope-3d/",
+      "pull_request": null
     }
   ]
 }

@@ -111,3 +111,19 @@ test('motor: reversing current or field reverses the turn; the commutator keeps 
     assert.equal(on.currentA, -s.currentA, 'commutator reverses the current in wire A'); assert.equal(off.currentA, s.currentA); assert.equal(on.wireA, 'right');
   }
 });
+
+test('microscope: coarse then fine focus, light balance, specimens and the two kinds of microscope', () => {
+  const at = o => scope({ obj: 4, slide: 'center', target: 'center', ...o });
+  assert.equal(at({ coarse: 0, fine: 0 }).clarity, 10);
+  assert.equal(at({ coarse: 2, fine: 0 }).clarity, 80);
+  assert.equal(at({ coarse: 2, fine: 1 }).clarity, 100);
+  assert.equal(at({ coarse: 3, fine: 1 }).clarity, at({ coarse: 1, fine: 1 }).clarity);
+  assert.equal(at({}).clarity, 100);
+  assert.deepEqual([[4, 1], [4, 3], [40, 3], [40, 1]].map(([obj, aperture]) => at({ obj, aperture }).lightState), ['太亮', '適中', '太暗', '適中']);
+  assert.equal(at({ spec: 'elodea' }).S.chloroplast, true);
+  assert.equal(at({ spec: 'onion' }).S.chloroplast, false);
+  assert.equal(at({ kind: 'compound' }).K.upright, false);
+  assert.equal(at({ kind: 'stereo' }).K.upright, true);
+  assert.throws(() => at({ coarse: 9 }), RangeError);
+  assert.throws(() => at({ aperture: 2 }), RangeError);
+});
