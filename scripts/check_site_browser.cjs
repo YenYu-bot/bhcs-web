@@ -238,6 +238,26 @@ async function overflowingElements(p){
     assert.equal(sg.pts-g0.pts,keyboardScore,'pointer and keyboard paths score the same');await p.waitForTimeout(1400);assert.equal((await state()).si,3);
     await open('tools',0);await p.locator('#scene .svg-action').nth(2).click();await settle(p);assert.equal(await p.evaluate(()=>st.sel),'flask','mouse click still selects a tool card');
     await open('photo',2);await p.locator('#scene .svg-action[aria-label="拉遠"]').click();await settle(p);assert.equal(await p.evaluate(()=>st.dist),'far','mouse click still drives scene buttons');
+    // H: safe drinking-water feedback, indicator colours and saved notebook wording.
+    await open('water',4);assert.match((await state()).say,/實驗用水不要喝/);
+    await p.locator('#nextStep').click();const w0=await state();
+    await p.getByRole('button',{name:'只要煮沸，就一定能喝',exact:true}).click();
+    let sw=await state();assert.equal(sw.pts,w0.pts);assert.match(sw.say,/煮沸不能去除有害化學物/);
+    await p.locator('#nextStep').waitFor();
+    await open('water',5);await p.getByRole('button',{name:'只知道水變清了，實驗用水不能喝',exact:true}).click();
+    sw=await state();assert.equal(sw.pts,w0.pts+10);assert.match(sw.say,/答對了/);await p.locator('#nextStep').waitFor();
+    await open('cabbage',4);assert.match((await state()).say,/白醋和小蘇打水/);
+    const c4=await state();await p.getByRole('button',{name:'白醋變紅色系，小蘇打水變藍綠色系',exact:true}).click();
+    const sc4=await state();assert.equal(sc4.pts,c4.pts+10);assert.match(sc4.say,/小蘇打水是鹼性的/);assert.doesNotMatch(sc4.say,/蚊子|止癢/);
+    await p.locator('#nextStep').waitFor();
+    const legacy='過濾：大顆粒先被碎石、細沙攔下來，活性碳再吸附顏色和味道；但過濾過的水還不能直接喝，要煮沸消毒。';
+    await p.evaluate(legacy=>{P.notes.push(legacy,EXP_WATER.note,'原有的其他筆記');save();},legacy);
+    const beforeNotebook=await p.evaluate(()=>localStorage.getItem('minilab'));
+    await p.locator('#toNotebook').click();
+    const notes=await p.locator('#notes p').allTextContents();
+    assert.equal(notes.filter(n=>/煮沸不能去除有害化學物/.test(n)).length,1);
+    assert.ok(notes.includes('原有的其他筆記'));assert.ok(!notes.includes(legacy));
+    assert.equal(await p.evaluate(()=>localStorage.getItem('minilab')),beforeNotebook,'displaying updated copy does not reset or rewrite learner progress');
     await noOverflow('no overflow at end');assert.deepEqual(errors,[]);row.pass=true;
    }catch(e){row.pass=false;row.error=e.message}
    results.push(row);await ctx.close();
