@@ -70,7 +70,7 @@ test('eye: myopia focuses in front and needs a concave lens; hyperopia behind an
 });
 test('microscope: magnification, field shrinks in proportion, image moves opposite to the slide', () => {
   assert.deepEqual([4, 10, 40].map(obj => scope({ obj, slide: 'center', target: 'center' }).total), [40, 100, 400]);
-  for (const obj of [4, 10, 40]) { const r = scope({ obj, slide: 'center', target: 'center' }); near(r.field * obj, 16); near(r.cells * obj, 160); }
+  for (const obj of [4, 10, 40]) { const r = scope({ obj, slide: 'center', target: 'center' }); near(r.field * obj, 16); near(r.cells * obj, 40); }
   assert.deepEqual(scope({ obj: 4, slide: 'right', target: 'center' }).pos, [-1, 0]);
   assert.ok(scope({ obj: 10, slide: 'left', target: 'left' }).centered); assert.equal(scope({ obj: 10, slide: 'right', target: 'left' }).inView, false);
 });

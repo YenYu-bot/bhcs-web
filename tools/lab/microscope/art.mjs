@@ -124,16 +124,16 @@ export function stageTop(el, txt, g, { dx = 0, dy = 0, mark = 'F', tint, label =
 }
 
 // 目鏡視野：回傳 content（被圓形裁切、可套模糊的內容層）和 blur（設定模糊程度）。
-export function fieldView(el, rig, defs, { CX, CY, R, bg = '#FFFDF2', clarity = 100, light = 60 }) {
-  const cp = el('clipPath', { id: 'ms-view' }, defs); el('circle', { cx: CX, cy: CY, r: R }, cp);
-  const fl = el('filter', { id: 'ms-blur', x: '-30%', y: '-30%', width: '160%', height: '160%' }, defs), fe = el('feGaussianBlur', { stdDeviation: 0 }, fl);
+export function fieldView(el, rig, defs, { CX, CY, R, bg = '#FFFDF2', clarity = 100, light = 60, id = '' }) {
+  const cp = el('clipPath', { id: 'ms-view' + id }, defs); el('circle', { cx: CX, cy: CY, r: R }, cp);
+  const fl = el('filter', { id: 'ms-blur' + id, x: '-30%', y: '-30%', width: '160%', height: '160%' }, defs), fe = el('feGaussianBlur', { stdDeviation: 0 }, fl);
   el('circle', { cx: CX + 3, cy: CY + 6, r: R + 17, fill: '#000', opacity: .25 }, rig);
   el('circle', { cx: CX, cy: CY, r: R + 16, fill: '#0F1626' }, rig); el('circle', { cx: CX, cy: CY, r: R + 16, fill: 'none', stroke: '#55627E', 'stroke-width': 3 }, rig);
   el('circle', { cx: CX, cy: CY, r: R, fill: bg }, rig);
-  const clip = el('g', { 'clip-path': 'url(#ms-view)' }, rig), content = el('g', {}, clip);
+  const clip = el('g', { 'clip-path': `url(#ms-view${id})` }, rig), content = el('g', {}, clip);
   const shade = el('circle', { cx: CX, cy: CY, r: R, fill: '#000', opacity: 0 }, clip);
   el('circle', { cx: CX, cy: CY, r: R, fill: 'url(#ms-vig)' }, clip);
-  const blur = c => { const v = Math.max(0, (100 - c) / 6); fe.setAttribute('stdDeviation', v); if (v > .05) content.setAttribute('filter', 'url(#ms-blur)'); else content.removeAttribute('filter'); };
+  const blur = c => { const v = Math.max(0, (100 - c) / 6); fe.setAttribute('stdDeviation', v); if (v > .05) content.setAttribute('filter', `url(#ms-blur${id})`); else content.removeAttribute('filter'); };
   const lit = l => { if (l > 80) { shade.setAttribute('fill', '#fff'); shade.setAttribute('opacity', Math.min(.8, (l - 80) / 20 * .8)); } else { shade.setAttribute('fill', '#000'); shade.setAttribute('opacity', l < 60 ? Math.min(.6, (60 - l) / 60 * .55) : 0); } };
   blur(clarity); lit(light);
   return { content, blur, lit };
@@ -149,9 +149,9 @@ export function printedLetter(el, txt, g, { x, y, size = 86, flip = true }) {
 }
 
 // 植物表皮細胞：長條形、錯開排列、端壁略斜。px 是每毫米的像素數，所以換物鏡時是同一批細胞被放大。
-// 細胞長 0.1 mm，和模型「4× 物鏡時一排約 40 個」一致。
+// 細胞長 0.4 mm，和模型「4× 物鏡時一排約 10 個」一致。
 export function tissue(el, g, { CX, CY, R, px, kind = 'onion' }) {
-  const green = kind === 'elodea', LEN_MM = .1, H = (green ? .05 : .04) * px, L = LEN_MM * px, detail = L >= 60, mid = L >= 18;
+  const green = kind === 'elodea', LEN_MM = .4, H = (green ? .13 : .1) * px, L = LEN_MM * px, detail = L >= 60, mid = L >= 18;
   const wall = green ? '#5C9646' : '#A98F3E', q = el('g', { transform: `rotate(-11 ${CX} ${CY})` }, g), ext = R * 1.08;
   const j0 = Math.floor(-ext / H), j1 = Math.ceil(ext / H), k0 = Math.floor(-ext / L) - 1, k1 = Math.ceil(ext / L) + 1;
   const xw = (j, k) => (k + rnd(j, 7) + (rnd(j * 3 + 1, k) - .5) * .5) * L, slant = (j, k) => (rnd(j + 11, k * 5) - .5) * Math.min(.34 * L, .9 * H);
@@ -166,29 +166,30 @@ export function tissue(el, g, { CX, CY, R, px, kind = 'onion' }) {
       if (detail) {
         const p = [[x - sl / 2, y], [x2 - sl2 / 2, y], [x2 + sl2 / 2, y + H], [x + sl / 2, y + H]].map(([a, b]) => `${(CX + a).toFixed(1)},${(CY + b).toFixed(1)}`).join(' ');
         el('polygon', { points: p, fill: green ? '#DDF0C2' : '#FBF3CF', opacity: .35 + rnd(j, k + 9) * .45 }, q);
-        if (green) { const n = 9 + Math.floor(rnd(j, k + 3) * 6); for (let i = 0; i < n; i++) { const edge = rnd(i, j * 7 + k) < .7, u = .08 + rnd(i + 1, j + k * 3) * .84, v = edge ? (rnd(i + 2, k) < .5 ? .16 : .84) + (rnd(i, k + j) - .5) * .1 : .25 + rnd(i + 3, j) * .5;
+        if (green) { const n = 22 + Math.floor(rnd(j, k + 3) * 12); for (let i = 0; i < n; i++) { const edge = rnd(i, j * 7 + k) < .7, u = .08 + rnd(i + 1, j + k * 3) * .84, v = edge ? (rnd(i + 2, k) < .5 ? .16 : .84) + (rnd(i, k + j) - .5) * .1 : .25 + rnd(i + 3, j) * .5;
           el('ellipse', { cx: CX + x + w * u, cy: CY + y + H * v, rx: H * .1, ry: H * .07, fill: '#3F9B3C', stroke: '#2B7A2E', 'stroke-width': 1, transform: `rotate(${Math.round(rnd(i, k) * 180)} ${CX + x + w * u} ${CY + y + H * v})` }, q); } }
         else { el('ellipse', { cx, cy, rx: H * .2, ry: H * .15, fill: 'url(#ms-nuc)', stroke: '#6B4316', 'stroke-width': 1.2 }, q); el('circle', { cx: cx - H * .05, cy: cy - H * .03, r: H * .04, fill: '#5A3610' }, q);
-          for (let i = 0; i < 7; i++) el('circle', { cx: CX + x + w * (.1 + rnd(i, j + k) * .8), cy: CY + y + H * (.15 + rnd(i + 4, k - j) * .7), r: 1.3, fill: '#C9B46A', opacity: .7 }, q); }
-      } else if (green) { if (mid) for (let i = 0; i < 5; i++) dots += `M${(CX + x + w * (.12 + rnd(i, j + k * 3) * .76)).toFixed(1)} ${(CY + y + H * (.2 + rnd(i + 2, k + j) * .6)).toFixed(1)}h.1`; }
+          for (let i = 0; i < 16; i++) el('circle', { cx: CX + x + w * (.1 + rnd(i, j + k) * .8), cy: CY + y + H * (.15 + rnd(i + 4, k - j) * .7), r: 1.3, fill: '#C9B46A', opacity: .7 }, q); }
+      } else if (green) { if (mid) for (let i = 0; i < 9; i++) dots += `M${(CX + x + w * (.12 + rnd(i, j + k * 3) * .76)).toFixed(1)} ${(CY + y + H * (.2 + rnd(i + 2, k + j) * .6)).toFixed(1)}h.1`; }
       else dots += `M${cx.toFixed(1)} ${cy.toFixed(1)}h.1`;
     }
   }
   if (detail) inner = walls;
-  el('path', { d: walls, fill: 'none', stroke: wall, 'stroke-width': detail ? 7 : mid ? 1.6 : .7, 'stroke-linecap': 'round', opacity: detail ? 1 : .9 }, q);
+  el('path', { d: walls, fill: 'none', stroke: wall, 'stroke-width': detail ? 7 : mid ? 2.4 : .7, 'stroke-linecap': 'round', opacity: detail ? 1 : .9 }, q);
   if (detail) el('path', { d: inner, fill: 'none', stroke: green ? '#CFE9B0' : '#F2E3A4', 'stroke-width': 2.5, 'stroke-linecap': 'round' }, q);
-  if (dots) el('path', { d: dots, fill: 'none', stroke: green ? '#3F9B3C' : '#8A5A22', 'stroke-width': green ? 2.6 : mid ? 4.4 : 1.5, 'stroke-linecap': 'round', opacity: green ? .9 : .85 }, q);
+  if (dots) el('path', { d: dots, fill: 'none', stroke: green ? '#3F9B3C' : '#8A5A22', 'stroke-width': green ? 3 : mid ? 6 : 1.5, 'stroke-linecap': 'round', opacity: green ? .9 : .85 }, q);
   return q;
 }
 
-// 解剖顯微鏡看到的小木塊：正立、有厚度和影子。
-export function woodBlock(el, txt, g, { CX, CY }) {
-  el('rect', { x: CX - 400, y: CY - 400, width: 800, height: 800, fill: '#F4F0E4' }, g);
-  el('path', { d: `M${CX - 150} ${CY + 112}h300l26 26h-300z`, fill: '#000', opacity: .22 }, g);
-  el('path', { d: `M${CX + 150} ${CY - 108}l22 20v222l-22-22z`, fill: '#B98A52', stroke: '#8A6A3A', 'stroke-width': 2 }, g);
-  el('path', { d: `M${CX - 150} ${CY + 112}h300l22 22h-300z`, fill: '#A87943', stroke: '#8A6A3A', 'stroke-width': 2 }, g);
-  el('rect', { x: CX - 150, y: CY - 108, width: 300, height: 220, rx: 4, fill: 'url(#ms-wood)', stroke: '#8A6A3A', 'stroke-width': 2 }, g);
-  let d = ''; for (let i = 0; i < 9; i++) { const y = CY - 92 + i * 24 + rnd(i, 2) * 8; d += `M${CX - 144} ${y.toFixed(1)}q75 ${(rnd(i, 5) * 16 - 8).toFixed(1)} 150 0t138 0`; }
-  el('path', { d, fill: 'none', stroke: '#B58A4E', 'stroke-width': 1.6, opacity: .7 }, g);
-  txt(g, CX + 5, CY + 48, 'F', { 'font-size': 130, fill: '#6B4A22' }).setAttribute('opacity', '.55'); txt(g, CX, CY + 42, 'F', { 'font-size': 130, fill: '#1B2233' });
+// 解剖顯微鏡看到的紙片：正立、看得出紙的厚度和影子（和複式顯微鏡下是同一張印著 F 的紙片）。
+export function paperCard(el, txt, g, { CX, CY, scale = 1 }) {
+  const q = el('g', { transform: `translate(${CX} ${CY}) scale(${scale}) translate(${-CX} ${-CY})` }, g);
+  el('rect', { x: CX - 500, y: CY - 500, width: 1000, height: 1000, fill: '#C9D1DB' }, q);
+  el('path', { d: `M${CX - 138} ${CY + 122}h300l30 30h-300z`, fill: '#000', opacity: .25 }, q);
+  el('path', { d: `M${CX + 150} ${CY - 108}l10 9v222l-10-11z`, fill: '#D5CDB6', stroke: '#A39A80', 'stroke-width': 1.5 }, q);
+  el('path', { d: `M${CX - 150} ${CY + 112}h300l10 11h-300z`, fill: '#C9C0A6', stroke: '#A39A80', 'stroke-width': 1.5 }, q);
+  el('rect', { x: CX - 150, y: CY - 108, width: 300, height: 220, rx: 3, fill: '#FDFAF0', stroke: '#A39A80', 'stroke-width': 1.5 }, q);
+  let d = ''; for (let i = 0; i < 40; i++) { const fx = CX - 140 + rnd(i, 1) * 270, fy = CY - 98 + rnd(i, 2) * 196, a = rnd(i, 3) * 6.28, l = 8 + rnd(i, 4) * 16; d += `M${fx.toFixed(1)} ${fy.toFixed(1)}l${(Math.cos(a) * l).toFixed(1)} ${(Math.sin(a) * l).toFixed(1)}`; }
+  el('path', { d, fill: 'none', stroke: '#D9D0B4', 'stroke-width': 1.2, 'stroke-linecap': 'round' }, q);
+  txt(q, CX, CY + 48, 'F', { 'font-size': 140, 'font-weight': 600, 'font-family': 'Georgia, "Times New Roman", serif', fill: '#1B2233' }).setAttribute('filter', 'url(#ms-ink)');
 }
