@@ -1,6 +1,6 @@
 // 顯微鏡實驗桌：倍率、視野與像的位置來自 ./model.mjs。
 import { scope, KIND, SPECIMEN } from './model.mjs';
-import { addDefs, compound, stereo, stageTop, fieldView, printedLetter, tissue, woodBlock, stageLift, LEVER, AXIS } from './art.mjs';
+import { addDefs, compound, stereo, stageTop, fieldView, printedLetter, tissue, paperCard, stageLift, LEVER, AXIS } from './art.mjs';
 import { runDesk } from '../shared/desk.mjs';
 
 const DIR = { center: '不移動', left: '往左移', right: '往右移', up: '往上移', down: '往下移' }, POS = (p) => p[0] === 0 && p[1] === 0 ? '視野正中央' : `視野${p[1] < 0 ? '上' : p[1] > 0 ? '下' : ''}${p[0] < 0 ? '左' : p[0] > 0 ? '右' : ''}${Math.abs(p[0]) > 1 || Math.abs(p[1]) > 1 ? '外面（看不到）' : '邊'}`;
@@ -19,14 +19,29 @@ function drag(node, begin) {
 function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
   const CX = 610, CY = 300, R = 200, defs = addDefs(el, rig), svg = rig.ownerSVGElement, can = kind === 'observe';
   const scale = () => svg.getScreenCTM().a;
-  const cells = ['mag', 'light', 'spec'].includes(step) || !can, spec = step === 'spec' ? s.spec : 'onion', solid = step === 'kind' && r.K.solid;
+  if (step === 'kind') {
+    // 兩種顯微鏡並排：同一張紙片，各自的成像同時看得到
+    txt(rig, 480, 50, '同一張印著 F 的小紙片，放到兩種顯微鏡下看', { 'font-size': 15 });
+    Object.keys(KIND).forEach((key, i) => { const x = 88 + i * 396, on = key === s.kind, K = KIND[key], g = el('g', {}, rig), cx = x + 262, cy = 262;
+      el('rect', { x, y: 70, width: 388, height: 480, rx: 18, fill: '#FFFDF2', stroke: on ? '#2E8B66' : '#8A93A6', 'stroke-width': on ? 5 : 2, 'stroke-dasharray': on ? '' : '7 5' }, g);
+      txt(g, x + 72, 112, K.name, { 'font-size': 15, fill: on ? '#1F6E50' : '#23304A' });
+      const m = el('g', { transform: `translate(${x + 10 - 55} 150) scale(.5)` }, g); if (key === 'stereo') stereo(el, m); else compound(el, m, {});
+      const W = fieldView(el, g, defs, { CX: cx, CY: cy, R: 108, bg: '#FFFDF2', id: '-' + key });
+      if (K.solid) paperCard(el, txt, W.content, { CX: cx, CY: cy, scale: .52 }); else printedLetter(el, txt, W.content, { x: cx, y: cy, size: 104 });
+      txt(g, cx, 112, '從目鏡看到的像', { 'font-size': 13, fill: '#5A6478' });
+      txt(g, x + 194, 440, K.upright ? '像是正立的，看得出立體的高低' : '像上下、左右都相反，是平面的', { 'font-size': 15, fill: '#C8372D' });
+      txt(g, x + 194, 470, `倍率：${K.range}`, { 'font-size': 14 }); txt(g, x + 194, 498, `適合看${K.use}`, { 'font-size': 13, fill: '#5A6478' });
+      if (on) { el('rect', { x: x + 144, y: 512, width: 100, height: 26, rx: 13, fill: '#2E8B66' }, g); txt(g, x + 194, 530, '記錄這一台', { 'font-size': 13, fill: '#fff' }); }
+      else if (can) { el('rect', { x: x + 134, y: 512, width: 120, height: 26, rx: 13, fill: '#FFFDF2', stroke: '#2E8B66', 'stroke-width': 2, 'stroke-dasharray': '5 4' }, g); txt(g, x + 194, 530, '點這裡換這台', { 'font-size': 13, fill: '#1F6E50' }); tool(g, `換成${K.name}`, () => set({ kind: key })); } });
+    return;
+  }
+  const cells = ['mag', 'light', 'spec'].includes(step) || !can, spec = step === 'spec' ? s.spec : 'onion';
   const hint = (x, y, str) => { if (!can) return; const w = str.length * 15 * k + 28; el('rect', { x: x - w / 2, y: y - 14 - 6 * k, width: w, height: 18 + 10 * k, rx: 14, fill: '#FFFDF2', stroke: '#2E8B66', 'stroke-width': 2, 'stroke-dasharray': '5 4', 'pointer-events': 'none' }, rig); txt(rig, x, y, str, { 'font-size': 14, fill: '#1F6E50', 'pointer-events': 'none' }); };
   // 右：目鏡視野
-  const V = fieldView(el, rig, defs, { CX, CY, R, bg: solid ? '#F4F0E4' : cells ? (SPECIMEN[spec].chloroplast ? '#F1F8DC' : '#FBF6DC') : '#FFFDF2', clarity: r.clarity, light: solid ? 60 : r.light });
+  const V = fieldView(el, rig, defs, { CX, CY, R, bg: cells ? (SPECIMEN[spec].chloroplast ? '#F1F8DC' : '#FBF6DC') : '#FFFDF2', clarity: r.clarity, light: r.light });
   const moving = el('g', {}, V.content);
-  if (solid) woodBlock(el, txt, moving, { CX, CY });
-  else if (cells) tissue(el, moving, { CX, CY, R, px: 2 * R / r.field, kind: spec });
-  else printedLetter(el, txt, moving, { x: CX + r.pos[0] * 150, y: CY + r.pos[1] * 150, size: step === 'kind' ? 120 : s.obj === 4 ? 86 : 120 });
+  if (cells) tissue(el, moving, { CX, CY, R, px: 2 * R / r.field, kind: spec });
+  else printedLetter(el, txt, moving, { x: CX + r.pos[0] * 150, y: CY + r.pos[1] * 150, size: s.obj === 4 ? 86 : 120 });
   txt(rig, CX, CY - R - 28, '從目鏡看到的視野', { 'font-size': 14, fill: '#5A6478' });
   el('rect', { x: CX - 262, y: CY + R + 24, width: 524, height: 30, rx: 15, fill: '#FFFDF2', opacity: .95 }, rig);
   const cap = txt(rig, CX, CY + R + 44, '', { 'font-size': 15 }), say = (str, good) => { cap.textContent = str; cap.setAttribute('fill', good === undefined ? '#23304A' : good ? '#2E8B66' : '#C8372D'); };
@@ -34,7 +49,6 @@ function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
   if (step === 'focus') focusWord(r.clarity);
   else if (step === 'spec') say(r.S.chloroplast ? '水蘊草：細胞裡有許多綠色的葉綠體' : '洋蔥表皮（碘液染色）：看得到細胞核，沒有葉綠體');
   else if (step === 'light') say(`光線${r.lightState}${r.lightState === '太亮' ? '，細胞的輪廓淡到看不清' : r.lightState === '太暗' ? '，視野太黑' : '，看得清楚'}`, r.lightState === '適中');
-  else if (step === 'kind') say(r.K.upright ? '像是正立的，看得出立體的高低' : '像上下、左右都相反，是平面的');
   else if (cells) say(`視野直徑 ${f(r.field)} mm，一排約 ${r.cells} 個細胞，亮度：${r.bright}`);
   else { el('path', { d: `M${CX - 14} ${CY}H${CX + 14}M${CX} ${CY - 14}V${CY + 14}`, stroke: '#C8372D', 'stroke-width': 2 }, rig); say(`像在${POS(r.pos)}`, r.centered); }
 
@@ -56,14 +70,6 @@ function scene({ rig, el, txt, k, s, r, step, set, tool, kind }) {
       txt(g, x + 35, 502, key === 'onion' ? '洋蔥表皮' : '水蘊草', { 'font-size': 11, fill: '#5A6478' }); el('rect', { x: x + 76, y: 484, width: 28, height: 26, rx: 2, fill: tint(SPECIMEN[key].chloroplast), opacity: .8, stroke: '#8FB4D4', 'stroke-width': 1 }, g);
       if (can && !on) tool(g, `換成${SPECIMEN[key].name}`, () => set({ spec: key })); });
     hint(240, 548, '點玻片換標本');
-  } else if (step === 'kind') {
-    Object.keys(KIND).forEach((key, i) => { const x = 96 + i * 148, on = key === s.kind, g = el('g', {}, rig);
-      el('rect', { x, y: 150, width: 140, height: 316, rx: 16, fill: '#FFFDF2', opacity: on ? 1 : .55, stroke: on ? '#2E8B66' : '#8A93A6', 'stroke-width': on ? 4 : 2, 'stroke-dasharray': on ? '' : '6 5' }, g);
-      const m = el('g', { transform: `translate(${x + 70 - 235 * .5} 168) scale(.5)` }, g); if (key === 'stereo') stereo(el, m); else compound(el, m, {});
-      txt(g, x + 70, 452, KIND[key].name, { 'font-size': 14, fill: on ? '#1F6E50' : '#23304A' });
-      if (can && !on) tool(g, `換成${KIND[key].name}`, () => set({ kind: key })); });
-    hint(240, 126, '點選顯微鏡');
-    txt(rig, 240, 492, `倍率：${r.K.range}`, { 'font-size': 14 });
   } else {
     const M = compound(el, rig, s), mark = (n, col) => el('circle', { cx: n.cx, cy: n.cy, r: n.hit.r.baseVal.value + 3, fill: 'none', stroke: col, 'stroke-width': 2.5, 'stroke-dasharray': '6 5', 'pointer-events': 'none' }, rig);
     txt(rig, 148, 182, `使用中 ${s.obj}×`, { 'font-size': 13, fill: '#C8372D' });
@@ -147,17 +153,17 @@ runDesk({
       react: (s, r) => r.S.chloroplast ? '細胞裡有許多綠色的葉綠體。' : '看得到細胞壁和細胞核，沒有葉綠體。',
       targets: Object.keys(SPECIMEN).map(k => tgt(k, SPECIMEN[k].name, { obj: 10, spec: k }, `換成${SPECIMEN[k].name}。`, (s, r) => r.S.chloroplast ? '細胞排列整齊，有細胞壁，細胞裡有綠色的葉綠體' : '細胞排列整齊，有細胞壁和細胞核，沒有葉綠體', s => `${SPECIMEN[s.spec].name}，物鏡 ${s.obj}×`)),
       found: ['兩種都有細胞壁；水蘊草葉片照得到光，有葉綠體，洋蔥鱗莖長在土裡，表皮細胞沒有葉綠體。', '不是所有植物細胞都有葉綠體'] },
-    { id: 'kind', label: '兩種鏡', title: '複式顯微鏡和解剖顯微鏡，差在哪裡？', goal: '同樣看一個「F」。收下複式顯微鏡和解剖顯微鏡看到的像。',
+    { id: 'kind', label: '兩種鏡', title: '複式顯微鏡和解剖顯微鏡，差在哪裡？', goal: '同一張印著 F 的紙片，兩種顯微鏡的像並排比較。點選顯微鏡，兩台都收下。',
       intro: '解剖顯微鏡看到的 F，方向一樣嗎？', enter: { obj: 4, ...base },
       controls: [{ key: 'kind', label: '顯微鏡', type: 'seg', options: Object.entries(KIND).map(([k, v]) => [k, v.name]) }],
       react: (s, r) => r.K.upright ? '像是正立的，還看得出立體感。' : '像上下、左右都相反。',
       targets: Object.keys(KIND).map(k => tgt(k, KIND[k].name, { kind: k }, `換成${KIND[k].name}。`, (s, r) => `${r.K.upright ? '像正立、有立體感' : '像上下左右相反、平面'}；倍率${r.K.range}；適合看${r.K.use}`, s => KIND[s.kind].name)),
       found: ['複式顯微鏡倍率高、像相反，看薄而透光的標本；解剖顯微鏡倍率低、像正立有立體感，看不透光的立體標本。', '看細胞用複式；看昆蟲、花用解剖'] },
-    { id: 'calc', label: '算一算', kind: 'calc', title: '算一算：倍率與視野', goal: '目鏡 10×。4× 物鏡時視野直徑 4 mm，一排看到 40 個細胞。', intro: '倍率 ＝ 目鏡 × 物鏡。', head: '放大倍率 ＝ 目鏡倍率 × 物鏡倍率',
+    { id: 'calc', label: '算一算', kind: 'calc', title: '算一算：倍率與視野', goal: '目鏡 10×。4× 物鏡時視野直徑 4 mm，一排看到 10 個細胞。', intro: '倍率 ＝ 目鏡 × 物鏡。', head: '放大倍率 ＝ 目鏡倍率 × 物鏡倍率',
       rows: [
         { id: 't', name: '目鏡 10×、物鏡 40×，放大倍率', eq: '10 × 40', answer: 400, unit: '倍' },
         { id: 'd', name: '物鏡從 4× 換成 40×，視野直徑變成', eq: '4 mm × 4 ÷ 40', answer: 0.4, unit: 'mm' },
-        { id: 'n', name: '4× 時一排 40 個細胞，換成 40× 一排看到', eq: '40 × 4 ÷ 40', answer: 4, unit: '個', hint: v => v === 400 ? '倍率變大，看到的個數是變少。' : '' }],
+        { id: 'n', name: '4× 時一排 10 個細胞，換成 40× 一排看到', eq: '10 × 4 ÷ 40', answer: 1, unit: '個', hint: v => v === 100 ? '倍率變大，看到的個數是變少。' : '' }],
       found: ['算對了！', '倍率變幾倍，視野直徑和一排的細胞數就變幾分之一'] },
     { id: 'quiz', label: '說說看', kind: 'quiz', title: '說說看：用證據回答', goal: '四題都答對就完成。答錯沒關係，余老師會說明原因。', intro: '最後四題！想想視野裡的 F 和洋蔥細胞。',
       found: ['你會用顯微鏡了！', '像相反；高倍看得大、看得少、比較暗'] }
@@ -172,7 +178,7 @@ runDesk({
       { text: '左下方。', why: '像和玻片的移動方向相反：想讓像往左下回到中央，玻片要往右上移。你的證據：像偏左時是把玻片往左移。' },
       { text: '不用移，換高倍就會在中央。', why: '換高倍後視野更小，偏在旁邊的目標反而會跑出視野。' }] },
     { q: '從低倍換成高倍物鏡後，視野會？', options: [
-      { text: '變亮、看到的細胞變多。', why: '相反。你的證據：40× 時一排只剩 4 個細胞，而且比較暗。' },
+      { text: '變亮、看到的細胞變多。', why: '相反。你的證據：40× 時一排只剩 1 個細胞，而且比較暗。' },
       { text: '變暗、看到的細胞變少但變大。', ok: true },
       { text: '完全沒有變化。', why: '倍率改變，視野大小、亮度和看到的細胞數都會變。' }] },
     { q: '換成高倍物鏡後影像有點模糊，應該轉哪一個？', options: [
