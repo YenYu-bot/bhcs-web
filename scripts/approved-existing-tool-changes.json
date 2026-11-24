@@ -4360,7 +4360,7 @@
       "path": "tools/lab/README.md",
       "baseline_blob": "61438c56a2a8fd32e6e96aad9c2fd65202a3a945",
       "approved_blob": "d709ccf21cc6ed76971f2d485e5ebe43cd1b1fe5",
-      "reason": "README 早期站第一批",
+      "reason": "實驗桌說明加上早期站第一批直接操作的紀錄",
       "pull_request": null
     },
     {
@@ -4374,7 +4374,7 @@
       "path": "tools/lab/README.md",
       "baseline_blob": "d709ccf21cc6ed76971f2d485e5ebe43cd1b1fe5",
       "approved_blob": "5d129dc931f6e6897dda60dcc6de87744df14d53",
-      "reason": "README",
+      "reason": "實驗桌說明加上早期站第一批與比熱旋鈕的紀錄",
       "pull_request": null
     }
   ]
