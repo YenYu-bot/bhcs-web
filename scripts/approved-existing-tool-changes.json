@@ -4180,6 +4180,13 @@
       "approved_blob": "15019ac46e9f8d2f615fd09392a9b86e627e3827",
       "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/shared/desk.mjs",
+      "baseline_blob": "bee5e953c1e4c80c4af171d868e293f5efe2574f",
+      "approved_blob": "6137ff1dd8f149a4b5a0c16950740f7657b95736",
+      "reason": "拖曳放開時先用放開的位置更新一次，避免最後幾個移動事件被合併時對到錯的位置",
+      "pull_request": null
     }
   ]
 }

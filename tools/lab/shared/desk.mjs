@@ -202,7 +202,7 @@ export async function runDesk(c) {
       node.classList.add('dragging');
       const mv = ev => { if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) > 6) moved = true; if (moved) h.move?.(svgPt(ev), p0); };
       const stop = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', cancel); node.classList.remove('dragging'); };
-      const up = ev => { stop(); if (moved || !tap) h.end?.(svgPt(ev), p0); else { h.cancel?.(); tap(); } };
+      const up = ev => { stop(); if (moved || !tap) { const p = svgPt(ev); if (moved) h.move?.(p, p0); h.end?.(p, p0); } else { h.cancel?.(); tap(); } };
       const cancel = () => { stop(); h.cancel?.(); };
       addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', cancel);
     });
