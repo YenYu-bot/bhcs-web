@@ -4236,6 +4236,62 @@
       "approved_blob": "c42fa13e4981350d466ed51f4f28d1b9a7b33b05",
       "reason": "電學批：電池與電解、電磁、直流馬達、靜電感應、能量轉換改成直接操作並重畫",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "21c39497e860e3daffad0d7e0c22aac08fe32819",
+      "approved_blob": "61438c56a2a8fd32e6e96aad9c2fd65202a3a945",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/atom/desk.js",
+      "baseline_blob": "591b0c5447decc1ff98cfe4f22391938dca24edc",
+      "approved_blob": "e596b39e02958b1c98039e751d4408181f750cb3",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/circulation/desk.js",
+      "baseline_blob": "52b062264287b69c80e7b9893399fb9868296661",
+      "approved_blob": "6e0bffecf15a4de5b213b7a08661331693af0512",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/ecosystem/desk.js",
+      "baseline_blob": "4a9f22ee1d2dfa2f605ecfe5066b385cffa6f7c2",
+      "approved_blob": "92cac3078314f994a2fcf11d64260486014779fc",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/equilibrium/desk.js",
+      "baseline_blob": "9bc56652794398aab9a4e71c0efd06df1a549e38",
+      "approved_blob": "37630aeeec13d20dd2d5e35c8ac691e9c2aa0cb4",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/stoichiometry/desk.js",
+      "baseline_blob": "718e280a226cac2636fa924e64b0e17d82865947",
+      "approved_blob": "8ccc0dfefa344ad1abf5a36c3b7f4e7a3fbed326",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/wave-sound/desk.js",
+      "baseline_blob": "6a2fca8e10ad2e3ff3e2bb59411b011138530436",
+      "approved_blob": "392f2c810fa18927232fad43dd1fcc656769f128",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/wave/desk.js",
+      "baseline_blob": "0db14adbfd1e628407de305ceed46cddc786f6ab",
+      "approved_blob": "a4a7ee505dc438abb25846f5de85516168b1721d",
+      "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
+      "pull_request": null
     }
   ]
 }
