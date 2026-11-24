@@ -97,7 +97,23 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind, reduce }) {
       { label: s.friction ? '把毛巾拿走' : '把毛巾鋪到軌道上', tap: () => set({ friction: s.friction ? 0 : 2 }) }); }
   el('rect', { x: 330, y: 150, width: 340, height: 74, rx: 14, fill: '#FFF8EC', stroke: INK, 'stroke-width': 3 }, rig);
   txt(rig, 500, 180, `合力 ${f(r.net)} N　質量 ${s.mass} kg`, { 'font-size': 17 }); txt(rig, 500, 208, `加速度 ${f(r.a)} m/s²（${r.state}）`, { 'font-size': 17, fill: '#C8372D' });
-  hint(500, 528, step === 'force' ? '拖彈簧秤的把手，用力拉' : step === 'mass' ? '把砝碼拖到小車上；往上拖小車就拿掉砝碼' : '拉彈簧秤、把毛巾拖到軌道上');
+  // v–t 圖：速度隨時間，斜率就是加速度
+  const GX = 200, GY = 720, GW = 560, GH = 150, vMax = 14, tx = t => GX + t / 2 * GW, vy = v => GY - v / vMax * GH;
+  el('rect', { x: GX - 90, y: GY - GH - 46, width: GW + 200, height: GH + 86, rx: 16, fill: 'rgba(255,255,255,.95)', stroke: INK, 'stroke-width': 3 }, rig);
+  txt(rig, GX - 70, GY - GH - 20, '速度－時間圖', { 'font-size': 15, 'text-anchor': 'start' });
+  for (const v of [0, 4, 8, 12]) { el('path', { d: `M${GX} ${vy(v)}H${GX + GW}`, stroke: '#ECE2D2', 'stroke-width': 1.5 }, rig); txt(rig, GX - 10, vy(v) + 5, `${v}`, { 'font-size': 12, 'text-anchor': 'end', fill: '#5A6478' }); }
+  for (const t of [0, 1, 2]) txt(rig, tx(t), GY + 22, `${t} 秒`, { 'font-size': 12, fill: '#5A6478' });
+  el('path', { d: `M${GX} ${GY - GH - 6}V${GY}H${GX + GW}`, fill: 'none', stroke: INK, 'stroke-width': 2.5 }, rig);
+  txt(rig, GX - 40, GY - GH + 10, 'm/s', { 'font-size': 11, fill: '#5A6478' });
+  let vd = ''; for (let i = 0; i <= 40; i++) { const t = i / 20, v = r.at(t).v; vd += `${i ? 'L' : 'M'}${tx(t).toFixed(1)} ${vy(v).toFixed(1)}`; }
+  el('path', { d: vd + `L${tx(2)} ${GY}L${GX} ${GY}Z`, fill: '#C8372D', opacity: .08 }, rig);
+  el('path', { d: vd, fill: 'none', stroke: '#C8372D', 'stroke-width': 4, 'stroke-linejoin': 'round' }, rig);
+  for (const t of [0, 1, 2]) el('circle', { cx: tx(t), cy: vy(r.at(t).v), r: 5.5, fill: '#C8372D', stroke: '#fff', 'stroke-width': 2 }, rig);
+  txt(rig, GX + GW + 56, GY - GH + 34, '斜率', { 'font-size': 13, fill: '#5A6478' });
+  txt(rig, GX + GW + 56, GY - GH + 62, `＝ ${f(r.a)}`, { 'font-size': 18, fill: '#C8372D' });
+  txt(rig, GX + GW + 56, GY - GH + 84, 'm/s²', { 'font-size': 12, fill: '#5A6478' });
+  txt(rig, GX + GW + 56, GY - GH + 112, '（加速度）', { 'font-size': 12, fill: '#5A6478' });
+  hint(770, 196, step === 'force' ? '拖彈簧秤的把手，用力拉' : step === 'mass' ? '把砝碼拖到小車上；往上拖小車就拿掉砝碼' : '拉彈簧秤、把毛巾拖到軌道上');
   if (s.v0) txt(rig, xs[0] + 60, Y - 172, `一開始就以 ${s.v0} m/s 前進`, { 'font-size': 13, fill: '#5A6478' });
 }
 const tgt = (sig, label, set, aim) => ({ sig, label, set, aim, title: s => `${s.mass} kg、拉力 ${s.force} N、摩擦力 ${s.friction} N`, body: (s, r) => `合力 ${f(r.net)} N，加速度 ${f(r.a)} m/s²，${r.state}；2 秒後 ${f(r.v2)} m/s` });
@@ -107,7 +123,7 @@ runDesk({
   key: 'bhcs.lab.newton.v1', title: '力與運動實驗桌',
   sceneLabel: '力與運動實驗桌：小車在水平軌道上，可以拖彈簧秤的把手拉車、把砝碼拖上車、把毛巾鋪到軌道上；尺下方的旗子標出 1 秒和 2 秒的位置',
   initial: { mass: 1, force: 2, friction: 0, v0: 0 },
-  model: motion, scene, viewBox: { desk: '60 120 900 430', phone: '60 120 900 430' }, phoneText: 1.45,
+  model: motion, scene, viewBox: { desk: '60 130 900 640', phone: '60 130 900 640' }, phoneText: 1.45,
   readouts: (s, r) => [['合力', f(r.net), 'N', `${s.force} − ${s.friction}`], ['加速度', f(r.a), 'm/s²', `${f(r.net)} ÷ ${s.mass}`], ['2 秒後速度', f(r.v2), 'm/s', r.state]],
   why: { title: '牛頓運動定律', button: '力與加速度', html: `
     <p class="fn-tip"><b>慣性（第一定律）：</b>合力是 0 時，靜止的繼續靜止，運動中的維持等速直線運動。</p>

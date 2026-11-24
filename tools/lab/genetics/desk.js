@@ -56,12 +56,13 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
       txt(g, x, 572, `${n} 株`, { 'font-size': 15 }); txt(g, x, 591, 'Tt × Tt', { 'font-size': 11, fill: '#5A6478' });
       if (!on && can) drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p) { g.removeAttribute('transform'); if (p.x > BX - 20 && p.y > 140 && p.y < 550) set({ n }); }, cancel() { g.removeAttribute('transform'); } }), { label: `種 ${n} 株`, tap: () => set({ n }) }); });
   } else {
-    txt(rig, BX + BW / 2, 330, '綠色：高莖　黃色：矮莖', { 'font-size': 14, fill: '#5A6478' });
+    txt(rig, BX + BW / 2, 262, '這 4 格的子代長出來', { 'font-size': 13, fill: '#5A6478' });
+    r.grid.flat().forEach((gt, i) => { const x = BX + 46 + i * 80; pot(el, rig, x, 334, 30); pea(el, rig, x, 328, gt !== 'tt', .46, 40 + i); txt(rig, x, 390, gt, { 'font-size': 13, fill: gt === 'tt' ? '#B87A1E' : '#2E7A35' }); });
     // 豌豆架：拖到親代的盆上換
     const list = [...new Set([...(opt.p1 || []), ...(opt.p2 || [])])];
-    if (list.length) { txt(rig, BX + BW / 2, 390, '豌豆架（拖到左邊的親代上）', { 'font-size': 13, fill: '#5A6478' });
-      el('rect', { x: BX + 10, y: 404, width: BW - 20, height: 136, rx: 12, fill: '#F6EEDC', stroke: '#C9B48E', 'stroke-width': 2 }, rig);
-      list.forEach((gt, i) => { const x = BX + BW / 2 + (i - (list.length - 1) / 2) * 96, g = el('g', { 'data-drag': can ? `shelf-${gt}` : null }, rig); potted(el, txt, g, x, 478, gt, .7);
+    if (list.length) { txt(rig, BX + BW / 2, 414, '豌豆架（拖到左邊的親代上）', { 'font-size': 13, fill: '#5A6478' });
+      el('rect', { x: BX + 10, y: 422, width: BW - 20, height: 122, rx: 12, fill: '#F6EEDC', stroke: '#C9B48E', 'stroke-width': 2 }, rig);
+      list.forEach((gt, i) => { const x = BX + BW / 2 + (i - (list.length - 1) / 2) * 96, g = el('g', { 'data-drag': can ? `shelf-${gt}` : null }, rig); potted(el, txt, g, x, 488, gt, .66);
         el('rect', { x: x - 34, y: 416, width: 68, height: 114, fill: 'transparent' }, g);
         if (can) drag(g, () => ({ move(p, p0) { g.setAttribute('transform', `translate(${p.x - p0.x} ${p.y - p0.y})`); }, end(p) { g.removeAttribute('transform'); const k = ['p1', 'p2'].find(k => opt[k] && opt[k].includes(gt) && inCard(k, p)); if (k && s[k] !== gt) set({ [k]: gt }); }, cancel() { g.removeAttribute('transform'); } }), { label: `${gt} 豌豆` }); }); }
   }

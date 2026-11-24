@@ -103,3 +103,54 @@ export function tree(el, g, { x, y, h = 110, seed = 1 }) {
   for (let i = 0; i < 7; i++) { const a = rnd(seed, i) * 6.28, r = rnd(seed + 1, i) * .6; el('ellipse', { cx: n1(cx + rx * r * Math.cos(a) - rx * .1), cy: n1(cy + ry * r * Math.sin(a) - ry * .1), rx: n1(rx * (.14 + rnd(i, seed) * .1)), ry: n1(ry * .12), fill: '#C2E89B', opacity: .35 }, q); }
   return q;
 }
+
+// 寬葉片（雙子葉植物的葉）：葉緣有細鋸齒、羽狀葉脈、有明暗。(x, y) 是葉柄基部，ang 是葉子朝向（度，0 ＝ 朝右、往上為正），
+// L 是葉片長、W 是最寬處的半寬，dim 0～1 讓葉子變暗（例如沒有光）。回傳 { g, at(t, side) }：at 給出葉片上某處的場景座標。
+export function broadLeaf(el, g, { x, y, ang = 20, L = 400, W = 120, petiole = 50, seed = 1, dim = 0, id = 'pl-broad' }) {
+  const d = el('defs', {}, g), lg = el('linearGradient', { id, x1: 0, y1: 0, x2: 0, y2: 1 }, d);
+  const shade = c => dim ? c.replace(/^#(..)(..)(..)$/, (m, r, gg, b) => '#' + [r, gg, b].map(h => Math.round(parseInt(h, 16) * (1 - dim * .45)).toString(16).padStart(2, '0')).join('')) : c;
+  for (const [o, c] of [[0, '#8FD06E'], [.45, '#5DAE4C'], [1, '#2E7A35']]) el('stop', { offset: o, 'stop-color': shade(c) }, lg);
+  const q = el('g', { transform: `translate(${n1(x)} ${n1(y)}) rotate(${-ang})` }, g);
+  // 葉柄
+  el('path', { d: `M0 0Q${n1(petiole * .5)} ${n1(-3)} ${n1(petiole)} 0`, fill: 'none', stroke: shade('#3E7F36'), 'stroke-width': 7, 'stroke-linecap': 'round' }, q);
+  const half = t => W * Math.pow(Math.sin(Math.PI * Math.pow(t, .78)), .9) * (1 - .12 * t);
+  const N = 70, top = [], bot = [];
+  for (let i = 0; i <= N; i++) { const t = i / N, u = petiole + t * L, tooth = i % 2 && i > 3 && i < N - 2 ? 1 + (2.6 + rnd(seed, i) * 1.4) / Math.max(18, half(t)) * 3 : 1, bend = Math.sin(Math.PI * t) * W * .06;
+    top.push([u, -half(t) * tooth + bend]); bot.push([u, half(t) * (i % 2 && i > 3 && i < N - 2 ? 1 + (2.6 + rnd(seed + 3, i) * 1.4) / Math.max(18, half(t)) * 3 : 1) + bend]); }
+  const path = 'M' + top.map(p => p.map(n1).join(' ')).join('L') + 'L' + bot.reverse().map(p => p.map(n1).join(' ')).join('L') + 'Z';
+  el('path', { d: path, fill: `url(#${id})`, stroke: shade('#2A6B30'), 'stroke-width': 2, 'stroke-linejoin': 'round' }, q);
+  // 上半片稍亮，像葉片微微摺起
+  el('path', { d: 'M' + top.map(p => p.map(n1).join(' ')).join('L') + `L${n1(petiole + L)} ${n1(0)}L${n1(petiole)} 0Z`, fill: '#fff', opacity: .1 }, q);
+  // 主脈與側脈
+  const mid = t => [petiole + t * L, Math.sin(Math.PI * t) * W * .06];
+  el('path', { d: `M${petiole} 0Q${n1(petiole + L * .5)} ${n1(W * .09)} ${n1(petiole + L)} 0`, fill: 'none', stroke: shade('#D7EFC0'), 'stroke-width': 3.4, 'stroke-linecap': 'round', opacity: .9 }, q);
+  let vein = '';
+  for (let k = 1; k <= 9; k++) { const t = k / 10.5, [mx, my] = mid(t), reach = half(Math.min(.98, t + .1)) * .86;
+    for (const sd of [-1, 1]) { const ex = mx + L * .13, ey = my + sd * reach; vein += `M${n1(mx)} ${n1(my)}Q${n1(mx + L * .03)} ${n1(my + sd * reach * .7)} ${n1(ex)} ${n1(ey)}`;
+      vein += `M${n1(mx + L * .06)} ${n1(my + sd * reach * .55)}l${n1(L * .03)} ${n1(sd * reach * .12)}`; } }
+  el('path', { d: vein, fill: 'none', stroke: shade('#CBE8AE'), 'stroke-width': 1.6, 'stroke-linecap': 'round', opacity: .75 }, q);
+  const rad = -ang * Math.PI / 180, at = (t, v = 0) => { const [mx, my] = mid(t), yy = my + v * half(t); return [x + mx * Math.cos(rad) - yy * Math.sin(rad), y + mx * Math.sin(rad) + yy * Math.cos(rad)]; };
+  return { g: q, at };
+}
+
+// 氣孔放大圖：兩個腎形保衛細胞夾著一個孔，open 0～1 是開度。(x, y) 是中心，r 是半徑。
+export function stoma(el, g, { x, y, r = 70, open = 1, id = 'pl-stoma' }) {
+  const q = el('g', {}, g), d = el('defs', {}, q), cp = el('clipPath', { id }, d); el('circle', { cx: x, cy: y, r }, cp);
+  el('circle', { cx: x + 2, cy: y + 4, r: r + 5, fill: '#000', opacity: .18 }, q);
+  const inner = el('g', { 'clip-path': `url(#${id})` }, q);
+  el('rect', { x: x - r, y: y - r, width: 2 * r, height: 2 * r, fill: '#E4F1D2' }, inner);
+  // 周圍的表皮細胞（拼圖狀）
+  let cells = '';
+  for (let i = -3; i <= 3; i++) for (let j = -3; j <= 3; j++) { const cx = x + i * r * .42 + (j % 2) * r * .2, cy = y + j * r * .36; if (Math.hypot(cx - x, cy - y) < r * .5) continue;
+    let p = ''; for (let k = 0; k <= 10; k++) { const a = k / 10 * 2 * Math.PI, rr = r * .2 * (1 + .18 * Math.sin(a * 3 + i * 2 + j)); p += `${k ? 'L' : 'M'}${n1(cx + rr * Math.cos(a))} ${n1(cy + rr * .85 * Math.sin(a))}`; } cells += p + 'Z'; }
+  el('path', { d: cells, fill: '#EEF6E2', stroke: '#9DBF7E', 'stroke-width': 1.4 }, inner);
+  const gap = r * (.04 + .14 * open), gh = r * .44, gw = r * .22;
+  for (const sd of [-1, 1]) {
+    const cx = x + sd * (gap + gw * .55);
+    el('path', { d: `M${n1(x + sd * gap)} ${n1(y - gh)}C${n1(x + sd * (gap + gw * 1.6))} ${n1(y - gh)} ${n1(x + sd * (gap + gw * 1.6))} ${n1(y + gh)} ${n1(x + sd * gap)} ${n1(y + gh)}C${n1(x + sd * (gap * .2))} ${n1(y + gh * .6)} ${n1(x + sd * (gap * .2))} ${n1(y - gh * .6)} ${n1(x + sd * gap)} ${n1(y - gh)}Z`, fill: '#9ED47E', stroke: '#3E8A3E', 'stroke-width': 2 }, inner);
+    for (let k = 0; k < 6; k++) el('ellipse', { cx: n1(cx + sd * (rnd(k, 3) - .3) * gw * .5), cy: n1(y - gh * .65 + k * gh * .26), rx: r * .035, ry: r * .025, fill: '#2F8A35' }, inner);
+  }
+  el('path', { d: `M${n1(x)} ${n1(y - gh * .9)}C${n1(x + gap * 1.1)} ${n1(y - gh * .3)} ${n1(x + gap * 1.1)} ${n1(y + gh * .3)} ${n1(x)} ${n1(y + gh * .9)}C${n1(x - gap * 1.1)} ${n1(y + gh * .3)} ${n1(x - gap * 1.1)} ${n1(y - gh * .3)} ${n1(x)} ${n1(y - gh * .9)}Z`, fill: '#2B3B2A' }, inner);
+  el('circle', { cx: x, cy: y, r, fill: 'none', stroke: '#23304A', 'stroke-width': 3 }, q);
+  return q;
+}

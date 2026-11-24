@@ -133,6 +133,27 @@ const HANDS={
   await h.step(0);await h.dragTo('[data-drag=shelf-Tt]',372,210);await h.is('p2','Tt','drag pea plant onto parent two');await h.tap('[data-drag=parent-p1]');await h.is('p1','Tt','tap parent one');
   await h.step(2);await h.dragTo('[data-drag=seed-400]',720,400);await h.is('n',400,'sow 400 seeds');
  },
+ 'plant-exchange':async h=>{
+  await h.step(0);await h.dragBy('[data-drag=sun]',0,-190);await h.is('light',90,'drag sun up high');await h.tap('[data-drag=sun]');await h.is('light',0,'tap sun');
+  await h.step(1);await h.dragBy('[data-drag=stoma]',-40,0);await h.is('stomata',100,'pull stoma open');
+  await h.step(2);await h.turn(200,410,30,60,-60);await h.is('humidity',90,'turn hygrometer');
+ },
+ 'cell-division':async h=>{
+  await h.step(0);await h.turn(165,290,70,180,0);await h.is('stage',3,'turn cell-cycle wheel to metaphase');await h.tap('[data-drag=wheel]');await h.is('stage',4,'tap wheel');
+ },
+ 'nerve-reflex':async h=>{
+  await h.step(0);await h.dragTo('[data-drag=tool-withdraw]',250,300);await h.is('action','withdraw','drag hot pot into scene');
+  await h.step(2);await h.dragBy('[data-drag=ruler]',0,-90);await h.is('drop',5,'pull ruler up');
+ },
+ homeostasis:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=thermo]',760,190);await h.is('env',35,'drag thermometer up');
+  await h.step(1);await h.dragTo('[data-drag=bowl]',600,300);await h.is('carb',60,'put rice on the graph');
+  await h.step(2);await h.tap('[data-drag=pancreas]');await h.is('insulin','normal','tap pancreas');
+ },
+ enzyme:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=tube]',410,300);await h.is('temp',60,'move tube to 60 °C bath');
+  await h.step(2);await h.dragTo('[data-drag=bottle-2]',285,330);await h.is('ph',2,'pour pH 2 buffer');
+ },
  balance:async h=>{
   await h.step(0);await h.dragTo('[data-drag=jar-a]',220,300);await h.is('a',2,'drag molecule in');
   await h.dragTo('[data-drag=mol-a]',500,520);await h.is('a',1,'drag molecule out');
