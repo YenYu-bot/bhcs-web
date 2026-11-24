@@ -4131,6 +4131,55 @@
       "approved_blob": "cea83ba59a7e2b48e94e01ce1f32774912cbbc49",
       "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "ae18ce7ef96401a8bfab8e8f97917bc65b84417f",
+      "approved_blob": "6fba02f8178ab796230a73f928b48ad65e9cfd11",
+      "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/cell-division/desk.js",
+      "baseline_blob": "20e512b6fa581fbd116dc23e79ed996abab7d8ed",
+      "approved_blob": "12656fd58eb80213244297933b2ee1b883c82b66",
+      "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/earthquake/desk.js",
+      "baseline_blob": "4bba7ae48f61a4e1d9cd8706c0a0e0b822e0cf9b",
+      "approved_blob": "bd42cb1acf1e9df3ee5dc5bf515767d3516da102",
+      "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/moon/desk.js",
+      "baseline_blob": "a1f610d9728663cb0c4e41e0755fdc6a38db7441",
+      "approved_blob": "60960b5aa5c7c817cf05c408f26f88bd1ae39afa",
+      "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/seasons/desk.js",
+      "baseline_blob": "b6da8f135446912be80b280b13a375a3bf7e58cf",
+      "approved_blob": "fbd18a068491bfcc19b273fb8cc2e21e551329ab",
+      "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/tides/desk.js",
+      "baseline_blob": "9a5004766913d98413b92b839305b0c8b7463ba4",
+      "approved_blob": "39ae1213961e642f47bf216ce5f8f0bf739a0497",
+      "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/weather/desk.js",
+      "baseline_blob": "429f4e4401bbb2269ef645771cd08eaf9a145c65",
+      "approved_blob": "15019ac46e9f8d2f615fd09392a9b86e627e3827",
+      "reason": "地球科學批：月相、四季、潮汐、天氣、地震改成直接操作並重畫；細胞分裂轉盤標題位置",
+      "pull_request": null
     }
   ]
 }
