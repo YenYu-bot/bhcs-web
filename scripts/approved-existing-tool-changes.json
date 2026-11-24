@@ -4367,7 +4367,7 @@
       "path": "tools/lab/heat/heat.js",
       "baseline_blob": "c39dd60549759de8dc2161baf01d693c74c3a274",
       "approved_blob": "2847845e8bf3143c437f3b3f1b096f2717d02a84",
-      "reason": "比熱：電熱板旋鈕可以轉",
+      "reason": "比熱實驗桌：電熱板旋鈕可以順時針轉開、逆時針轉停",
       "pull_request": null
     },
     {
