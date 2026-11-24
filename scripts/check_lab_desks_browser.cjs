@@ -203,6 +203,40 @@ const HANDS={
   await h.step(0);await h.dragBy('[data-drag=cart]',275,142);await h.is('progress',50,'slide cart halfway');
   await h.step(2);await h.tap('[data-drag=weight]');await h.is('mass',1,'take weight off');
  },
+ wave:async h=>{
+  await h.step(0);await h.dragBy('[data-drag=crest]',93,0);await h.is('phase',1,'drag crest forward');
+  await h.step(1);await h.tap('[data-drag=end]');await h.is('end','free','swap rope end');
+  await h.step(2);await h.dragTo('[data-drag=time]',500,520);await h.is('meet','overlap','drag time to overlap');await h.tap('[data-drag=pulse-b]');await h.is('a2',-2,'flip pulse');
+  await h.step(3);await h.dragTo('[data-drag=knob]',160,280);await h.is('mode',2,'turn frequency knob');
+ },
+ 'wave-sound':async h=>{
+  await h.step(0);await h.dragTo('[data-drag=knob]',164,439);await h.is('f',680,'turn generator knob');
+  await h.step(3);await h.dragBy('[data-drag=tube]',290,0);await h.is('length',1,'pull tube longer');
+ },
+ atom:async h=>{
+  await h.step(0);await h.tap('[data-drag=bin-p]');await h.is('p',7,'add proton');
+  await h.step(1);await h.dragTo('[data-drag=electron]',600,560);await h.is('e',10,'pull electron out');
+  await h.step(2);await h.dragTo('[data-drag=bin-n]',360,320);await h.is('n',7,'drop neutron in');
+ },
+ stoichiometry:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=massA]',420,246);await h.is('massA',8,'drag hydrogen tag');
+  await h.step(2);await h.tap('[data-drag=massB]');await h.is('massB',6.4,'tap oxygen tag');
+ },
+ equilibrium:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=jar-B]',330,350);await h.is('b0',10,'pour B into flask');
+  await h.step(1);await h.dragTo('[data-drag=jar-high]',330,450);await h.is('temp','high','put flask in hot water');
+  await h.step(2);await h.tap('[data-drag=jar-add]');await h.is('add',6,'add more A');
+ },
+ circulation:async h=>{
+  await h.step(0);await h.tap('[data-drag=v-pv]');await h.is('site','pv','tap pulmonary vein');
+  await h.step(1);await h.tap('[data-drag=v-vc]');await h.is('site','vc','tap vena cava');
+  await h.step(2);await h.dragTo('[data-drag=runner]',640,600);await h.is('intensity',100,'drag runner to hard');
+ },
+ ecosystem:async h=>{
+  await h.step(0);await h.dragBy('[data-drag=eff]',0,-30);await h.is('efficiency',20,'flip efficiency switch');
+  await h.step(1);await h.dragTo('[data-drag=time]',900,330);await h.is('time',30,'drag along curve');
+  await h.step(2);await h.dragTo('[data-drag=cap]',760,324);await h.is('capacity',200,'drag capacity line');
+ },
  balance:async h=>{
   await h.step(0);await h.dragTo('[data-drag=jar-a]',220,300);await h.is('a',2,'drag molecule in');
   await h.dragTo('[data-drag=mol-a]',500,520);await h.is('a',1,'drag molecule out');

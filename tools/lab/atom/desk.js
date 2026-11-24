@@ -6,21 +6,26 @@ const model = s => calculate('atom-builder', { p: s.p, n: s.n, e: s.e });
 const chg = r => r.charge === 0 ? '0' : (r.charge > 0 ? '+' : '−') + Math.abs(r.charge);
 const kindText = r => r.kind === 'neutral' ? '原子（電中性）' : r.kind === 'cation' ? `陽離子 ${r.ion}` : `陰離子 ${r.ion}`;
 
-function scene({ rig, el, txt, P, s, r }) {
+function scene({ rig, el, txt, P, s, r, step, set, drag, hint, kind }) {
+  const can = kind === 'observe', n1 = v => (+v).toFixed(1), LIM = { p: [1, 20], n: [0, 24], e: [0, 20] }, add = (k, d) => { const v = Math.max(LIM[k][0], Math.min(LIM[k][1], s[k] + d)); if (v !== s[k]) set({ [k]: v }); };
+  const dg = el('defs', {}, rig), rg = el('radialGradient', { id: 'at-glow' }, dg); for (const [o, c, op] of [[0, '#FFE3C8', .9], [.7, '#FFD0A8', .35], [1, '#FFD0A8', 0]]) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op }, rg);
+  // 拖出原子（離中心很遠）就拿掉一個
+  const out = (node, k, x0, y0) => { if (!can) return; node.setAttribute('data-drag', k === 'e' ? 'electron' : k === 'p' ? 'proton' : 'neutron'); drag(node, p0 => ({ move(p) { node.setAttribute('transform', `translate(${n1(p.x - p0.x)} ${n1(p.y - p0.y)})`); }, end(p) { if (Math.hypot(p.x - 360, p.y - 320) > 250 || p.y > 540) add(k, -1); else node.removeAttribute('transform'); }, cancel() { node.removeAttribute('transform'); } }), { label: `拿掉一個${{ p: '質子', n: '中子', e: '電子' }[k]}`, tap: () => add(k, -1) }); };
   const cx = 360, cy = 320, radii = [92, 140, 188, 236];
   // 電子層
   r.shells.forEach((count, i) => {
     el('circle', { cx, cy, r: radii[i], fill: 'none', stroke: '#9FB3CC', 'stroke-width': 2, 'stroke-dasharray': '6 6' }, rig);
-    for (let k = 0; k < count; k++) { const a = -Math.PI / 2 + k / count * 2 * Math.PI + i * .3; el('image', { href: P + 'item-electron.webp', x: cx + radii[i] * Math.cos(a) - 13, y: cy + radii[i] * Math.sin(a) - 13, width: 26, height: 26 }, rig); }
+    for (let k = 0; k < count; k++) { const a = -Math.PI / 2 + k / count * 2 * Math.PI + i * .3, eg = el('g', {}, rig); el('image', { href: P + 'item-electron.webp', x: cx + radii[i] * Math.cos(a) - 13, y: cy + radii[i] * Math.sin(a) - 13, width: 26, height: 26 }, eg); el('circle', { cx: n1(cx + radii[i] * Math.cos(a)), cy: n1(cy + radii[i] * Math.sin(a)), r: 18, fill: 'transparent' }, eg); out(eg, 'e'); }
   });
   // 原子核：質子與中子交錯排成一團
   const total = s.p + s.n, parts = [];
   for (let i = 0; i < Math.max(s.p, s.n); i++) { if (i < s.p) parts.push('p'); if (i < s.n) parts.push('n'); }
   const R = 8 + Math.sqrt(total) * 9;
-  el('circle', { cx, cy, r: R + 12, fill: 'rgba(255,248,236,.9)', stroke: '#C8372D', 'stroke-width': 2 }, rig);
-  parts.forEach((kind, i) => {
+  el('circle', { cx, cy, r: R + 30, fill: 'url(#at-glow)' }, rig);
+  el('circle', { cx, cy, r: R + 12, fill: 'rgba(255,248,236,.55)', stroke: '#E0A27A', 'stroke-width': 1.5, 'stroke-dasharray': '3 4' }, rig);
+  parts.forEach((pk, i) => {
     const a = i * 2.39996, d = Math.sqrt(i + .5) / Math.sqrt(total) * R;
-    el('image', { href: P + (kind === 'p' ? 'item-proton.webp' : 'item-neutron.webp'), x: cx + d * Math.cos(a) - 12, y: cy + d * Math.sin(a) - 12, width: 24, height: 24 }, rig);
+    const pg = el('g', {}, rig); el('image', { href: P + (pk === 'p' ? 'item-proton.webp' : 'item-neutron.webp'), x: cx + d * Math.cos(a) - 12, y: cy + d * Math.sin(a) - 12, width: 24, height: 24 }, pg); if (i === parts.length - 1 || i === parts.length - 2) out(pg, pk);
   });
   // 資料卡
   const x = 640, y = 110;
@@ -34,12 +39,17 @@ function scene({ rig, el, txt, P, s, r }) {
   txt(rig, x + 135, y + 228, `質子 ${s.p}・中子 ${s.n}・電子 ${s.e}`, { 'font-size': 15, fill: '#5A6478' });
   txt(rig, x + 135, y + 258, `電子層：${r.shells.join('、') || '無'}`, { 'font-size': 15, fill: '#5A6478' });
   txt(rig, x + 135, y + 290, r.isotope === 'most' ? '最常見的同位素' : r.isotope === 'common' ? `同位素 ${r.symbol}-${r.A}` : '不常見的中子數', { 'font-size': 15, fill: r.isotope === 'unusual' ? '#C8372D' : '#2E8B66' });
-  // 圖例
-  el('rect', { x: 120, y: 566, width: 460, height: 48, rx: 24, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 2 }, rig);
-  for (const [i, [img, t]] of [['item-proton', '質子 ＋'], ['item-neutron', '中子'], ['item-electron', '電子 −']].entries()) {
-    el('image', { href: P + img + '.webp', x: 140 + i * 150, y: 578, width: 26, height: 26 }, rig);
-    txt(rig, 200 + i * 150, 597, t, { 'font-size': 15, fill: '#23304A' });
-  }
+  // 粒子盒：從盒子拖進原子就多一個；把原子裡的粒子拖出來就少一個
+  [['p', 'item-proton', '質子 ＋'], ['n', 'item-neutron', '中子'], ['e', 'item-electron', '電子 −']].forEach(([k, img, t], i) => {
+    const bx = 190 + i * 150, by = 590;
+    el('rect', { x: bx - 66, y: by - 30, width: 132, height: 60, rx: 14, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 2 }, rig);
+    for (let j = 0; j < 4; j++) el('image', { href: P + img + '.webp', x: bx - 58 + j * 10, y: by - 20 + (j % 2) * 8, width: 22, height: 22, opacity: .55 }, rig);
+    txt(rig, bx + 26, by + 6, t, { 'font-size': 14 });
+    const g = el('g', { 'data-drag': can ? 'bin-' + k : null }, rig), m = el('g', {}, g);
+    el('image', { href: P + img + '.webp', x: bx - 34, y: by - 14, width: 28, height: 28 }, m); el('rect', { x: bx - 66, y: by - 30, width: 132, height: 60, fill: 'transparent' }, m);
+    if (can) drag(g, p0 => ({ move(p) { m.setAttribute('transform', `translate(${n1(p.x - p0.x)} ${n1(p.y - p0.y)})`); }, end(p) { if (Math.hypot(p.x - 360, p.y - 320) < 250 && p.y < 545) add(k, 1); else m.removeAttribute('transform'); }, cancel() { m.removeAttribute('transform'); } }), { label: `加一個${t.replace(/ .*/, '')}`, tap: () => add(k, 1) });
+  });
+  hint(360, 648, '從盒子拖粒子進原子；把粒子拖出原子就拿掉');
 }
 
 const sym = (p, n, e) => { const r = calculate('atom-builder', { p, n, e }); return `${r.symbol}${r.charge ? r.ion.slice(r.symbol.length) : ''}`; };
@@ -52,7 +62,7 @@ runDesk({
   key: 'bhcs.lab.atom.v1', title: '原子結構實驗桌', background: 'bg-chem-bench',
   sceneLabel: '原子結構實驗桌：中間是質子和中子組成的原子核，外面的電子層排著電子；右邊的卡片顯示元素符號、質量數與電荷',
   initial: { p: 6, n: 6, e: 6 },
-  model, scene, viewBox: { desk: '90 70 840 550', phone: '100 70 820 550' }, phoneText: 1.5,
+  model, scene, viewBox: { desk: '90 70 840 600', phone: '100 70 820 600' }, phoneText: 1.5,
   readouts: (s, r) => [['元素', r.symbol, r.name, '由質子數決定'], ['質量數 A', r.A, '', `質子 ${s.p} ＋ 中子 ${s.n}`], ['電荷', chg(r), '', `質子 ${s.p} − 電子 ${s.e}`]],
   why: { title: '原子的構造', button: '原子怎麼看', html: `
     <p class="fn-tip"><b>原子 ＝ 原子核（質子＋中子）＋ 核外電子。</b>質子帶正電、電子帶負電、中子不帶電。</p>

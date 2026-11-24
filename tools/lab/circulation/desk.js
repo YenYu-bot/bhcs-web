@@ -6,37 +6,66 @@ const model = s => calculate('circulation', { intensity: s.intensity, site: s.si
 const f1 = x => String(Math.round(x * 10) / 10), f2 = x => String(Math.round(x * 100) / 100);
 const RED = '#C8372D', BLUE = '#2F6FB0';
 
-function scene({ rig, el, txt, P, s, r }) {
-  // 心臟：觀察者看到的左邊是右心房、右心室
-  const hx = 500, hy = 330;
-  el('path', { d: `M${hx} ${hy - 90} C${hx - 150} ${hy - 190} ${hx - 230} ${hy - 10} ${hx} ${hy + 150} C${hx + 230} ${hy - 10} ${hx + 150} ${hy - 190} ${hx} ${hy - 90} Z`, fill: '#F2C6C0', stroke: '#23304A', 'stroke-width': 4 }, rig);
-  const room = (x, y, t, col) => { el('rect', { x: x - 54, y: y - 28, width: 108, height: 56, rx: 14, fill: col, opacity: .9 }, rig); txt(rig, x, y + 6, t, { fill: '#fff', 'font-size': 15 }); };
-  room(hx - 62, hy - 38, '右心房', BLUE); room(hx - 62, hy + 30, '右心室', BLUE); room(hx + 62, hy - 38, '左心房', RED); room(hx + 62, hy + 30, '左心室', RED);
-  // 肺和全身
+const n1 = v => (+v).toFixed(1);
+const INT = [0, 50, 100], TX = i => 360 + i * 140;
+function scene({ rig, el, txt, P, s, r, step, set, drag, hint, kind, reduce }) {
+  const can = kind === 'observe', hx = 500, hy = 330;
+  const d = el('defs', {}, rig);
+  const rg = el('radialGradient', { id: 'ci-heart', cx: .4, cy: .35, r: .75 }, d); for (const [o, c] of [[0, '#F8B9B0'], [.6, '#E07A70'], [1, '#B4473F']]) el('stop', { offset: o, 'stop-color': c }, rg);
+  for (const [k, c] of [['r', RED], ['b', BLUE]]) { const m = el('marker', { id: 'ci-' + k, viewBox: '0 0 10 10', refX: 6, refY: 5, markerWidth: 3, markerHeight: 3, orient: 'auto' }, d); el('path', { d: 'M0 0 L10 5 L0 10 z', fill: c }, m); }
+  // 肺和全身組織
   el('image', { href: P + 'prop-lung-right.webp', x: 245, y: 70, width: 84, height: 152 }, rig);
   el('image', { href: P + 'prop-lung-left.webp', x: 671, y: 70, width: 84, height: 152 }, rig);
   txt(rig, 500, 110, '肺臟（換氣：吸入氧、排出二氧化碳）', { 'font-size': 15, fill: '#5A6478' });
-  el('rect', { x: 300, y: 520, width: 400, height: 56, rx: 16, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  txt(rig, 500, 554, '全身組織（細胞用掉氧）', { 'font-size': 16 });
-  // 四條血管
+  el('rect', { x: 300, y: 520, width: 400, height: 62, rx: 16, fill: '#FBE9E4', stroke: '#23304A', 'stroke-width': 2.5 }, rig);
+  let cap = ''; for (let i = 0; i < 9; i++) { const x = 330 + i * 42; cap += `M${x} 526q10 12 0 24q-10 12 0 24`; } el('path', { d: cap, fill: 'none', stroke: '#C9837A', 'stroke-width': 2, opacity: .6 }, rig);
+  el('path', { d: 'M318 548C420 540 580 560 682 548', fill: 'none', stroke: '#8E6FA8', 'stroke-width': 3, opacity: .6 }, rig);
+  txt(rig, 500, 560, '全身組織（微血管：細胞用掉氧）', { 'font-size': 15 });
+  // 血管：粗管＋流動的血球
   const V = {
-    pa: { d: `M${hx - 62} ${hy + 4} C${hx - 160} ${hy - 40} ${hx - 200} 230 290 205`, col: BLUE, name: '肺動脈', lx: 300, ly: 250 },
-    pv: { d: `M710 205 C${hx + 200} 230 ${hx + 160} ${hy - 90} ${hx + 62} ${hy - 66}`, col: RED, name: '肺靜脈', lx: 700, ly: 250 },
-    aorta: { d: `M${hx + 62} ${hy + 58} C${hx + 200} ${hy + 80} ${hx + 190} 480 640 520`, col: RED, name: '主動脈', lx: 730, ly: 440 },
-    vc: { d: `M360 520 C${hx - 190} 480 ${hx - 200} ${hy - 60} ${hx - 116} ${hy - 38}`, col: BLUE, name: '大靜脈', lx: 270, ly: 440 }
+    pa: { d: `M${hx - 40} ${hy - 60} C${hx - 120} ${hy - 140} ${hx - 200} 230 300 205`, col: BLUE, name: '肺動脈', lx: 236, ly: 262 },
+    pv: { d: `M700 205 C${hx + 200} 230 ${hx + 150} ${hy - 110} ${hx + 70} ${hy - 70}`, col: RED, name: '肺靜脈', lx: 774, ly: 262 },
+    aorta: { d: `M${hx + 30} ${hy - 80} C${hx + 120} ${hy - 160} ${hx + 250} ${hy - 40} ${hx + 220} ${hy + 60} S${hx + 170} 480 650 520`, col: RED, name: '主動脈', lx: 770, ly: 420 },
+    vc: { d: `M350 520 C${hx - 210} 470 ${hx - 230} ${hy - 40} ${hx - 110} ${hy - 50}`, col: BLUE, name: '大靜脈', lx: 236, ly: 420 }
   };
-  const d = el('defs', {}, rig);
-  for (const [k, c] of [['r', RED], ['b', BLUE]]) { const m = el('marker', { id: 'ci-' + k, viewBox: '0 0 10 10', refX: 6, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, d); el('path', { d: 'M0 0 L10 5 L0 10 z', fill: c }, m); }
+  const sel = step === 'lung' || step === 'body';
   for (const [k, v] of Object.entries(V)) {
-    const on = k === s.site;
-    if (on) el('path', { d: v.d, fill: 'none', stroke: '#F4C04E', 'stroke-width': 22, opacity: .6, 'stroke-linecap': 'round' }, rig);
-    el('path', { d: v.d, fill: 'none', stroke: v.col, 'stroke-width': on ? 12 : 7, 'marker-end': `url(#ci-${v.col === RED ? 'r' : 'b'})`, opacity: on ? 1 : .55 }, rig);
-    txt(rig, v.lx, v.ly, v.name, { 'font-size': on ? 18 : 15, fill: on ? '#23304A' : '#5A6478' });
+    const on = k === s.site, g = el('g', {}, rig);
+    if (on) el('path', { d: v.d, fill: 'none', stroke: '#F4C04E', 'stroke-width': 28, opacity: .55, 'stroke-linecap': 'round' }, g);
+    el('path', { d: v.d, fill: 'none', stroke: '#23304A', 'stroke-width': on ? 17 : 13, 'stroke-linecap': 'round', opacity: on ? 1 : .6 }, g);
+    el('path', { id: 'ci-p-' + k, d: v.d, fill: 'none', stroke: v.col, 'stroke-width': on ? 13 : 9, 'stroke-linecap': 'round', opacity: on ? 1 : .6 }, g);
+    el('path', { d: v.d, fill: 'none', stroke: '#fff', 'stroke-width': 2, opacity: .35, transform: 'translate(-2 -2)' }, g);
+    const hit = el('path', { d: v.d, fill: 'none', stroke: 'transparent', 'stroke-width': 34 }, g);
+    if (can && sel && hit.getTotalLength) { const pt = hit.getPointAtLength(hit.getTotalLength() * ({ pa: .3, pv: .15, aorta: .8, vc: .4 })[k]); el('circle', { cx: n1(pt.x), cy: n1(pt.y), r: 16, fill: 'transparent', 'data-drag': 'v-' + k }, g); }
+    if (on && !reduce) for (let i = 0; i < 5; i++) { const c = el('ellipse', { rx: 4.5, ry: 3, fill: v.col === RED ? '#FF8A80' : '#9CC3F0', stroke: '#fff', 'stroke-width': 1, 'pointer-events': 'none' }, g); const am = el('animateMotion', { dur: `${(60 / r.hr * 2.2).toFixed(2)}s`, begin: `-${(i * 60 / r.hr * .44).toFixed(2)}s`, repeatCount: 'indefinite', rotate: 'auto' }, c); el('mpath', { href: '#ci-p-' + k }, am); }
+    txt(rig, v.lx, v.ly, v.name, { 'font-size': on ? 17 : 14, fill: on ? '#23304A' : '#5A6478', 'pointer-events': 'none' });
+    if (can && sel) drag(g, () => ({ move() {}, end() {}, cancel() {} }), { label: `看${v.name}`, tap: () => { if (k !== s.site) set({ site: k }); } });
   }
-  // 心跳
-  txt(rig, hx, hy + 120, `♥ ${f1(r.hr)} 次／分`, { 'font-size': 18, fill: RED });
-  el('rect', { x: 120, y: 300, width: 16, height: 16, fill: RED }, rig); txt(rig, 142, 314, '充氧血', { 'text-anchor': 'start', 'font-size': 14, fill: '#5A6478' });
-  el('rect', { x: 120, y: 326, width: 16, height: 16, fill: BLUE }, rig); txt(rig, 142, 340, '缺氧血', { 'text-anchor': 'start', 'font-size': 14, fill: '#5A6478' });
+  // 心臟（觀察者看到的左邊是右心房、右心室）
+  const hg = el('g', {}, rig), hp = `M${hx} ${hy - 80} C${hx - 140} ${hy - 180} ${hx - 220} ${hy - 10} ${hx} ${hy + 150} C${hx + 220} ${hy - 10} ${hx + 140} ${hy - 180} ${hx} ${hy - 80} Z`;
+  el('path', { d: hp, fill: 'url(#ci-heart)', stroke: '#7A2A24', 'stroke-width': 4 }, hg);
+  el('path', { d: `M${hx - 4} ${hy - 70}Q${hx + 20} ${hy + 20} ${hx + 6} ${hy + 130}`, fill: 'none', stroke: '#9A3A32', 'stroke-width': 3, opacity: .6 }, hg);
+  if (!reduce) el('animateTransform', { attributeName: 'transform', type: 'scale', values: '1;1.04;1', dur: `${(60 / r.hr).toFixed(2)}s`, repeatCount: 'indefinite', additive: 'sum' }, hg), hg.setAttribute('transform-origin', `${hx} ${hy}`);
+  const room = (x, y, t, col) => { el('rect', { x: x - 50, y: y - 26, width: 100, height: 52, rx: 16, fill: col, opacity: .92, stroke: '#fff', 'stroke-width': 2 }, hg); txt(hg, x, y + 6, t, { fill: '#fff', 'font-size': 15 }); };
+  room(hx - 60, hy - 36, '右心房', BLUE); room(hx - 60, hy + 30, '右心室', BLUE); room(hx + 60, hy - 36, '左心房', RED); room(hx + 60, hy + 30, '左心室', RED);
+  txt(rig, hx, hy + 110, `♥ ${f1(r.hr)} 次／分`, { 'font-size': 17, fill: '#fff', 'font-weight': 900, 'pointer-events': 'none' });
+  el('rect', { x: 120, y: 300, width: 16, height: 16, rx: 4, fill: RED }, rig); txt(rig, 142, 314, '充氧血', { 'text-anchor': 'start', 'font-size': 14, fill: '#5A6478' });
+  el('rect', { x: 120, y: 326, width: 16, height: 16, rx: 4, fill: BLUE }, rig); txt(rig, 142, 340, '缺氧血', { 'text-anchor': 'start', 'font-size': 14, fill: '#5A6478' });
+  // 運動強度：拖跑者
+  if (step === 'exercise') {
+    const ci = INT.indexOf(s.intensity);
+    el('path', { d: `M${TX(0)} 616H${TX(2)}`, stroke: '#C9BFAE', 'stroke-width': 8, 'stroke-linecap': 'round' }, rig);
+    INT.forEach((v, i) => { el('circle', { cx: TX(i), cy: 616, r: 5, fill: '#8792A6' }, rig); txt(rig, TX(i), 644, ['靜止', '慢跑 50%', '激烈 100%'][i], { 'font-size': 12, fill: v === s.intensity ? '#23304A' : '#8792A6' }); });
+    const g = el('g', { 'data-drag': can ? 'runner' : null }, rig), m = el('g', {}, g), x = TX(ci);
+    el('circle', { cx: x, cy: 600, r: 22, fill: '#fff', stroke: '#C8372D', 'stroke-width': 3 }, m);
+    el('circle', { cx: x + 2, cy: 588, r: 4, fill: '#23304A' }, m);
+    el('path', { d: s.intensity ? `M${x + 1} 592l-3 10l-7 6M${x - 2} 602l6 8M${x} 595l8 2M${x} 595l-8 4` : `M${x + 2} 592v12M${x + 2} 604l-4 8M${x + 2} 604l4 8M${x + 2} 596l-6 4M${x + 2} 596l6 4`, stroke: '#23304A', 'stroke-width': 2.5, fill: 'none', 'stroke-linecap': 'round' }, m);
+    el('rect', { x: x - 28, y: 574, width: 56, height: 56, fill: 'transparent' }, m);
+    if (can) drag(g, p0 => { let xx = x; return { move(p) { xx = Math.max(TX(0), Math.min(TX(2), x + p.x - p0.x)); m.setAttribute('transform', `translate(${n1(xx - x)} 0)`); },
+      end() { let bi = 0; INT.forEach((_, i) => { if (Math.abs(TX(i) - xx) < Math.abs(TX(bi) - xx)) bi = i; }); if (INT[bi] !== s.intensity) set({ intensity: INT[bi] }); else m.removeAttribute('transform'); }, cancel() { m.removeAttribute('transform'); } }; },
+      { label: '跑快一點', tap: () => set({ intensity: INT[(ci + 1) % 3] }) });
+  }
+  hint(500, step === 'exercise' ? 674 : 612, sel ? '點一條血管，看裡面的血從哪裡來、到哪裡去' : step === 'exercise' ? '拖跑步的人，改變運動強度' : '');
 }
 
 const NAME = { pa: '肺動脈', pv: '肺靜脈', aorta: '主動脈', vc: '大靜脈' };
@@ -49,7 +78,7 @@ runDesk({
   key: 'bhcs.lab.circulation.v1', title: '血液循環實驗桌', background: 'bg-chem-bench',
   sceneLabel: '血液循環實驗桌：中間是心臟的四個腔室，上方是肺臟、下方是全身組織，四條血管用紅色（充氧血）和藍色（缺氧血）標示流向',
   initial: { site: 'pa', intensity: 0 },
-  model, scene, viewBox: { desk: '100 30 800 560', phone: '110 30 780 560' }, phoneText: 1.4,
+  model, scene, viewBox: s => s === 'exercise' ? { desk: '100 40 800 660', phone: '100 40 800 660' } : { desk: '100 40 800 600', phone: '100 40 800 600' }, phoneText: 1.4,
   readouts: (s, r) => [['所選血管', r.vessel, '', `${r.circuit === 'lung' ? '肺循環' : '體循環'}・${r.kind === 'oxygenated' ? '充氧血' : '缺氧血'}`], ['心跳', f1(r.hr), '次／分', `運動強度 ${s.intensity}%`], ['心輸出量', f2(r.co), 'L／分', `每搏 ${f1(r.sv)} mL`]],
   why: { title: '心臟與血液循環', button: '循環怎麼走', html: `
     <p class="fn-tip"><b>肺循環：</b>右心室 → 肺動脈 → 肺臟（拿到氧）→ 肺靜脈 → 左心房。</p>

@@ -8,34 +8,59 @@ const f2 = x => String(Math.round(x * 100) / 100);
 const TEMP = { low: '低溫', mid: '室溫', high: '高溫' };
 const DIR = { right: '向右（A → B）', left: '向左（B → A）', none: '已在平衡' };
 
-function scene({ rig, el, txt, s, r }) {
-  // 密閉燒瓶：B 越多顏色越深（紅棕色）
-  const cx = 330, cy = 330, frac = r.frac;
+const n1 = v => (+v).toFixed(1);
+function jar(el, txt, g, x, y, label, fill, sub) {
+  el('path', { d: `M${x - 22} ${y - 26}h44v8q8 4 8 14v34q0 8 -8 8h-44q-8 0 -8 -8v-34q0 -10 8 -14z`, fill: 'rgba(235,245,250,.9)', stroke: '#5E8FA8', 'stroke-width': 2 }, g);
+  el('rect', { x: x - 26, y: y - 34, width: 52, height: 10, rx: 3, fill: '#8A6A3C' }, g);
+  el('rect', { x: x - 24, y: y - 6, width: 48, height: 30, rx: 4, fill }, g);
+  txt(g, x, y + 14, label, { 'font-size': 12, fill: '#fff', 'font-weight': 800, 'pointer-events': 'none' });
+  if (sub) txt(g, x, y + 46, sub, { 'font-size': 11, fill: '#5A6478', 'pointer-events': 'none' });
+}
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  const can = kind === 'observe', cx = 330, frac = r.frac;
+  const dd = el('defs', {}, rig), gl = el('linearGradient', { id: 'eq-glass', x1: 0, y1: 0, x2: 1, y2: 0 }, dd); for (const [o, c, op] of [[0, '#fff', .8], [.12, '#fff', .15], [.85, '#fff', .1], [1, '#fff', .6]]) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op }, gl);
+  // 水浴
+  const bath = { low: ['#CFE8F6', '冰水'], mid: ['#DCEBF2', '室溫的水'], high: ['#F6D9C8', '熱水'] }[s.temp];
+  el('path', { d: `M${cx - 190} 400 H${cx + 190} V486 q0 20 -20 20 H${cx - 170} q-20 0 -20 -20Z`, fill: bath[0], stroke: '#5E8FA8', 'stroke-width': 3 }, rig);
+  // 燒瓶：B 越多顏色越深（紅棕色）
   const col = `rgba(${Math.round(244 - 60 * frac)},${Math.round(238 - 150 * frac)},${Math.round(228 - 180 * frac)},.95)`;
-  el('path', { d: `M${cx - 40} 140 h80 v90 L${cx + 170} 470 q10 30 -24 30 H${cx - 146} q-34 0 -24 -30 L${cx - 40} 230 Z`, fill: col, stroke: '#23304A', 'stroke-width': 5, 'stroke-linejoin': 'round' }, rig);
-  el('rect', { x: cx - 50, y: 120, width: 100, height: 26, rx: 8, fill: '#8A6A3C', stroke: '#23304A', 'stroke-width': 4 }, rig);
-  // 粒子：A 淡黃圓、B 紅棕雙圓；共 30 顆依比例
+  const fd = `M${cx - 32} 170 h64 v80 L${cx + 140} 452 q8 26 -20 26 H${cx - 120} q-28 0 -20 -26 L${cx - 32} 250 Z`;
+  el('path', { d: fd, fill: col }, rig);
   const nB = Math.round(30 * frac), pts = [];
-  for (let i = 0; i < 30; i++) { const a = i * 2.39996, d = Math.sqrt((i + .5) / 30); pts.push([cx + Math.cos(a) * d * 105, 420 + Math.sin(a) * d * 58]); }
+  for (let i = 0; i < 30; i++) { const a = i * 2.39996, d = Math.sqrt((i + .5) / 30); pts.push([cx + Math.cos(a) * d * 92, 400 + Math.sin(a) * d * 52]); }
   pts.forEach(([x, y], i) => {
-    if (i < nB) { el('circle', { cx: x - 6, cy: y, r: 9, fill: '#9A4A2A', stroke: '#23304A', 'stroke-width': 1.5 }, rig); el('circle', { cx: x + 6, cy: y, r: 9, fill: '#9A4A2A', stroke: '#23304A', 'stroke-width': 1.5 }, rig); }
-    else el('circle', { cx: x, cy: y, r: 10, fill: '#F4C04E', stroke: '#23304A', 'stroke-width': 1.5 }, rig);
-  });
-  txt(rig, cx, 540, `密閉燒瓶・${TEMP[s.temp]}（K ＝ ${r.K}）`, { 'font-size': 18 });
-  // 右邊：正逆反應速率與數量
+    if (i < nB) { el('circle', { cx: n1(x - 5.5), cy: n1(y), r: 8, fill: '#9A4A2A', stroke: '#5A2A14', 'stroke-width': 1.2 }, rig); el('circle', { cx: n1(x + 5.5), cy: n1(y), r: 8, fill: '#9A4A2A', stroke: '#5A2A14', 'stroke-width': 1.2 }, rig); }
+    else el('circle', { cx: n1(x), cy: n1(y), r: 9, fill: '#F4C04E', stroke: '#8A6A1C', 'stroke-width': 1.2 }, rig); });
+  el('path', { d: fd, fill: 'url(#eq-glass)', stroke: '#23304A', 'stroke-width': 4, 'stroke-linejoin': 'round' }, rig);
+  el('rect', { x: cx - 42, y: 150, width: 84, height: 24, rx: 7, fill: '#8A6A3C', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  // 水浴的水面在燒瓶前面
+  el('path', { d: `M${cx - 190} 430 H${cx + 190} V486 q0 20 -20 20 H${cx - 170} q-20 0 -20 -20Z`, fill: bath[0], opacity: .55 }, rig);
+  el('path', { d: `M${cx - 190} 430 Q${cx} 436 ${cx + 190} 430`, fill: 'none', stroke: '#fff', 'stroke-width': 2 }, rig);
+  if (s.temp === 'low') for (const [x, y, rt] of [[cx - 160, 438, 12], [cx + 150, 444, -8], [cx - 130, 466, 20], [cx + 120, 470, 5]]) el('rect', { x: x - 13, y: y - 11, width: 26, height: 22, rx: 4, fill: 'rgba(255,255,255,.8)', stroke: '#9FC8DE', 'stroke-width': 1.5, transform: `rotate(${rt} ${x} ${y})` }, rig);
+  if (s.temp === 'high') for (const x of [cx - 160, cx - 140, cx + 140, cx + 162]) el('path', { d: `M${x} 420q-8 -12 0 -24q8 -12 0 -24`, fill: 'none', stroke: '#E36B3A', 'stroke-width': 2.5, opacity: .7, 'stroke-linecap': 'round' }, rig);
+  txt(rig, cx, 530, `密閉燒瓶・${bath[1]}（K ＝ ${r.K}）`, { 'font-size': 16 });
+  // 右邊：數量與正逆反應速率
   const x = 600, y = 140;
   el('rect', { x, y, width: 320, height: 330, rx: 18, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 3 }, rig);
   txt(rig, x + 160, y + 40, 'A  ⇌  B', { 'font-size': 26, 'font-weight': 900 });
   el('circle', { cx: x + 108, cy: y + 31, r: 9, fill: '#F4C04E', stroke: '#23304A' }, rig);
   el('circle', { cx: x + 214, cy: y + 31, r: 7, fill: '#9A4A2A' }, rig); el('circle', { cx: x + 226, cy: y + 31, r: 7, fill: '#9A4A2A' }, rig);
-  const bar = (yy, label, v, col2) => { txt(rig, x + 20, yy + 18, label, { 'text-anchor': 'start', 'font-size': 16, fill: '#5A6478' }); el('rect', { x: x + 90, y: yy, width: 200, height: 26, rx: 6, fill: '#F2EBDD' }, rig); el('rect', { x: x + 90, y: yy, width: Math.max(0, 200 * v / Math.max(r.T, 1)), height: 26, rx: 6, fill: col2 }, rig); txt(rig, x + 300, yy + 19, f2(v), { 'text-anchor': 'end', 'font-size': 15, 'font-weight': 900 }); };
+  const bar = (yy, label, v, col2) => { txt(rig, x + 20, yy + 18, label, { 'text-anchor': 'start', 'font-size': 16, fill: '#5A6478' }); el('rect', { x: x + 90, y: yy, width: 200, height: 26, rx: 6, fill: '#F2EBDD' }, rig); el('rect', { x: x + 90, y: yy, width: Math.max(0, 200 * v / Math.max(r.T, 1)), height: 26, rx: 6, fill: col2 }, rig); txt(rig, x + 300, yy + 19, f2(v), { 'text-anchor': 'end', 'font-size': 14, 'font-weight': 900 }); };
   bar(y + 80, 'A 的量', r.A, '#F4C04E'); bar(y + 124, 'B 的量', r.B, '#9A4A2A');
-  txt(rig, x + 160, y + 200, `正反應速率 ＝ 逆反應速率`, { 'font-size': 16 });
+  const md = el('defs', {}, rig), mk = el('marker', { id: 'eq-a', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, md); el('path', { d: 'M0 0 L10 5 L0 10 z', fill: '#2E8B66' }, mk);
+  txt(rig, x + 160, y + 200, '正反應速率 ＝ 逆反應速率', { 'font-size': 16 });
   el('path', { d: `M${x + 70} ${y + 228} h180`, stroke: '#2E8B66', 'stroke-width': 5, 'marker-end': 'url(#eq-a)' }, rig);
   el('path', { d: `M${x + 250} ${y + 252} h-180`, stroke: '#2E8B66', 'stroke-width': 5, 'marker-end': 'url(#eq-a)' }, rig);
-  const d = el('defs', {}, rig), mk = el('marker', { id: 'eq-a', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, d);
-  el('path', { d: 'M0 0 L10 5 L0 10 z', fill: '#2E8B66' }, mk);
   txt(rig, x + 160, y + 290, `都是 ${f2(r.rate)}（相對值），反應沒有停`, { 'font-size': 14, fill: '#5A6478' });
+  // 下方：可拖到燒瓶上的東西
+  const items = step === 'reach' ? [['A', { a0: 10, b0: 0 }, '只放 A', '#D9A21B', '10 份'], ['B', { a0: 0, b0: 10 }, '只放 B', '#9A4A2A', '10 份']]
+    : step === 'temp' ? [['low', { temp: 'low' }, '冰水', '#6FA8DC', '低溫'], ['mid', { temp: 'mid' }, '室溫', '#8BB88A', '室溫'], ['high', { temp: 'high' }, '熱水', '#E36B3A', '高溫']]
+    : step === 'add' ? [['add', { add: s.add ? 0 : 6 }, s.add ? '重來' : '加 A', '#D9A21B', s.add ? '回到不加' : '6 份']] : [];
+  if (items.length) { el('rect', { x: 600, y: 484, width: 320, height: 96, rx: 16, fill: 'rgba(255,255,255,.9)', stroke: '#23304A', 'stroke-width': 2 }, rig);
+    items.forEach(([k, val, lab, c, sub], i) => { const jx = 760 + (i - (items.length - 1) / 2) * 96, jy = 514, g = el('g', { 'data-drag': can ? 'jar-' + k : null }, rig), m = el('g', {}, g);
+      jar(el, txt, m, jx, jy, lab, c, sub); el('rect', { x: jx - 40, y: jy - 40, width: 80, height: 80, fill: 'transparent' }, m);
+      if (can) drag(g, p0 => ({ move(p) { m.setAttribute('transform', `translate(${n1(p.x - p0.x)} ${n1(p.y - p0.y)})`); }, end(p) { if (p.x < 540 && p.y > 140) set(val); else m.removeAttribute('transform'); }, cancel() { m.removeAttribute('transform'); } }), { label: `${lab}（${sub}）`, tap: () => set(val) }); }); }
+  hint(330, 572, step === 'reach' ? '把右下的瓶子拖到燒瓶：只放 A 或只放 B' : step === 'temp' ? '把冰水、室溫或熱水拖到燒瓶下面' : step === 'add' ? '把 A 的瓶子拖到燒瓶裡' : '');
 }
 
 const tgt = (sig, label, set, aim) => ({ sig, label, aim, set,
@@ -46,7 +71,7 @@ runDesk({
   key: 'bhcs.lab.equilibrium.v1', title: '化學平衡實驗桌', background: 'bg-chem-bench',
   sceneLabel: '化學平衡實驗桌：密閉燒瓶裡的 A 粒子（黃）和 B 粒子（紅棕）互相轉換，B 越多顏色越深；右邊比較兩者的量與正逆反應速率',
   initial: { temp: 'mid', a0: 10, b0: 0, add: 0 },
-  model, scene, viewBox: { desk: '120 100 820 470', phone: '130 100 800 470' }, phoneText: 1.4,
+  model, scene, viewBox: { desk: '110 120 830 480', phone: '110 120 830 480' }, phoneText: 1.4,
   readouts: (s, r) => [['A 的量', f2(r.A), '', '平衡時'], ['B 的量', f2(r.B), '', '平衡時'], ['B 的比例', String(Math.round(r.frac * 100)), '%', '顏色深淺']],
   why: { title: '可逆反應與化學平衡', button: '平衡是什麼', html: `
     <p class="fn-tip"><b>可逆反應：</b>A 變成 B（正反應）的同時，B 也變回 A（逆反應）。</p>

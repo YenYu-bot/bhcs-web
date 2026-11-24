@@ -6,32 +6,76 @@ const model = s => calculate('ecosystem', { energy: 10000, efficiency: s.efficie
 const r0 = x => String(Math.round(x));
 const TIERS = [['生產者', '草', '#7CC47A'], ['初級消費者', '兔子', '#E0A21B'], ['次級消費者', '狐狸', '#C8372D']];
 
-function scene({ rig, el, txt, s, r, step }) {
+const n1 = v => (+v).toFixed(1);
+// 小插圖：草、兔子、狐狸
+function grass(el, g, x, y, sc = 1) { for (let i = 0; i < 5; i++) { const dx = (i - 2) * 5 * sc; el('path', { d: `M${n1(x + dx)} ${y}q${n1(-3 * sc + i)} ${n1(-10 * sc)} ${n1((i - 2) * 3 * sc)} ${n1(-18 * sc - (i % 2) * 5 * sc)}`, fill: 'none', stroke: '#2F6A2C', 'stroke-width': 2.2 * sc, 'stroke-linecap': 'round' }, g); } }
+function rabbit(el, g, x, y, sc = 1) { const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g);
+  el('ellipse', { cx: 0, cy: 0, rx: 13, ry: 9, fill: '#F2EBDD', stroke: '#5A4632', 'stroke-width': 1.5 }, q); el('circle', { cx: 11, cy: -6, r: 6, fill: '#F2EBDD', stroke: '#5A4632', 'stroke-width': 1.5 }, q);
+  el('ellipse', { cx: 9, cy: -17, rx: 2.5, ry: 8, fill: '#F2EBDD', stroke: '#5A4632', 'stroke-width': 1.3, transform: 'rotate(-12 9 -17)' }, q); el('ellipse', { cx: 14, cy: -16, rx: 2.5, ry: 8, fill: '#F2EBDD', stroke: '#5A4632', 'stroke-width': 1.3, transform: 'rotate(14 14 -16)' }, q);
+  el('circle', { cx: 13, cy: -7, r: 1.2, fill: '#23304A' }, q); el('circle', { cx: -13, cy: -2, r: 3, fill: '#fff', stroke: '#5A4632', 'stroke-width': 1 }, q); }
+function fox(el, g, x, y, sc = 1) { const q = el('g', { transform: `translate(${x} ${y}) scale(${sc})` }, g);
+  el('path', { d: 'M-18 4Q-30 -4 -26 -12Q-20 -4 -12 -2', fill: '#E07A2E', stroke: '#7A3A16', 'stroke-width': 1.3 }, q);
+  el('ellipse', { cx: 0, cy: 0, rx: 14, ry: 8, fill: '#E07A2E', stroke: '#7A3A16', 'stroke-width': 1.5 }, q);
+  el('path', { d: 'M10 -4L22 -2L14 6Z', fill: '#E07A2E', stroke: '#7A3A16', 'stroke-width': 1.3 }, q); el('path', { d: 'M12 -4l1 -8l4 6M16 -3l3 -8l2 7', fill: '#E07A2E', stroke: '#7A3A16', 'stroke-width': 1.2 }, q);
+  el('circle', { cx: 16, cy: -1, r: 1.2, fill: '#23304A' }, q); }
+const TT = [0, 10, 30], KK = [200, 400];
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  const can = kind === 'observe';
   // 能量塔（寬度用平方根比例，讓頂層看得見；數字是真實的值）
   const cx = 270, base = 470, h = 82;
   r.energy.forEach((e, i) => {
     const w = Math.max(56, 380 * Math.sqrt(e / 10000)), y = base - (i + 1) * h, inside = w >= 210;
-    el('rect', { x: cx - w / 2, y, width: w, height: h - 8, rx: 10, fill: TIERS[i][2], stroke: '#23304A', 'stroke-width': 3 }, rig);
-    if (inside) { txt(rig, cx, y + 32, `${TIERS[i][0]}（${TIERS[i][1]}）`, { 'font-size': 15, fill: '#fff' }); txt(rig, cx, y + 56, `${r0(e)} kJ`, { 'font-size': 17, fill: '#fff' }); }
+    el('rect', { x: cx - w / 2, y, width: w, height: h - 8, rx: 12, fill: TIERS[i][2], stroke: '#23304A', 'stroke-width': 2.5 }, rig);
+    el('rect', { x: cx - w / 2 + 6, y: y + 5, width: w - 12, height: 8, rx: 4, fill: '#fff', opacity: .25 }, rig);
+    if (i === 0) for (let k = 0; k < 9; k++) grass(el, rig, cx - w / 2 + 22 + k * (w - 44) / 8, y + h - 12, .8);
+    if (i === 1) { const n = Math.max(1, Math.min(5, Math.round(w / 70))); for (let k = 0; k < n; k++) rabbit(el, rig, cx - w / 2 + 26 + k * (w - 40) / Math.max(1, n), y + 20, .7); }
+    if (i === 2) fox(el, rig, inside ? cx - w / 2 + 30 : cx, y + 22, .9);
+    if (inside) { txt(rig, cx + (i === 1 ? 20 : 0), y + (i ? 44 : 30), `${TIERS[i][0]}（${TIERS[i][1]}）`, { 'font-size': 14, fill: '#fff' }); txt(rig, cx + (i === 1 ? 20 : 0), y + (i ? 64 : 50), `${r0(e)} kJ`, { 'font-size': 16, fill: '#fff', 'font-weight': 900 }); }
     else { txt(rig, cx + w / 2 + 12, y + 30, `${TIERS[i][0]}（${TIERS[i][1]}）`, { 'font-size': 15, 'text-anchor': 'start' }); txt(rig, cx + w / 2 + 12, y + 54, `${r0(e)} kJ`, { 'font-size': 17, 'text-anchor': 'start', fill: TIERS[i][2] }); }
-    if (i > 0) txt(rig, cx - 200, y + 44, `↑ ${s.efficiency}%`, { 'font-size': 15, fill: '#5A6478', 'text-anchor': 'start' });
+    if (i > 0) { for (let k = 0; k < 2; k++) el('path', { d: `M${n1(cx + 120 + k * 14)} ${y + h + 4}q-6 -8 0 -16q6 -8 0 -16`, fill: 'none', stroke: '#E36B3A', 'stroke-width': 2, opacity: .6 }, rig); }
   });
+  // 傳遞比例：拖開關
+  { const sx = 90, sy = base - 200, on20 = s.efficiency === 20, g = el('g', { 'data-drag': can && step === 'pyramid' ? 'eff' : null }, rig);
+    txt(rig, sx + 20, sy - 30, '每層傳', { 'font-size': 12, fill: '#5A6478' });
+    el('rect', { x: sx, y: sy - 16, width: 40, height: 76, rx: 20, fill: '#E9EDF2', stroke: '#23304A', 'stroke-width': 2 }, g);
+    txt(rig, sx + 20, sy + 82, on20 ? '20%' : '10%', { 'font-size': 16, fill: '#C8372D', 'font-weight': 900 }); txt(rig, sx + 56, sy + 18, '20%', { 'font-size': 11, fill: '#8792A6' }); txt(rig, sx + 56, sy + 38, '10%', { 'font-size': 11, fill: '#8792A6' });
+    const kn = el('g', {}, g); el('circle', { cx: sx + 20, cy: on20 ? sy + 14 : sy + 34, r: 12, fill: '#fff', stroke: '#C8372D', 'stroke-width': 3 }, kn);
+    el('rect', { x: sx - 6, y: sy - 22, width: 52, height: 88, fill: 'transparent' }, g);
+    if (can && step === 'pyramid') drag(g, p0 => { let dy = 0; return { move(p) { dy = Math.max(on20 ? 0 : -20, Math.min(on20 ? 20 : 0, p.y - p0.y)); kn.setAttribute('transform', `translate(0 ${n1(dy)})`); },
+      end() { const v = Math.abs(dy) > 8 ? (dy < 0 ? 20 : 10) : s.efficiency; if (v !== s.efficiency) set({ efficiency: v }); else kn.removeAttribute('transform'); }, cancel() { kn.removeAttribute('transform'); } }; },
+      { label: on20 ? '改成每層傳 10%' : '改成每層傳 20%', tap: () => set({ efficiency: on20 ? 10 : 20 }) }); }
   txt(rig, cx, base + 34, '能量塔：每往上一層只剩一小部分', { 'font-size': 15, fill: '#5A6478' });
   // 族群曲線（兔子）
   const gx = 630, gy = 440, W = 270, H = 260, t2x = t => gx + t / 30 * W, p2y = p => gy - p / 450 * H;
   el('rect', { x: gx - 50, y: gy - H - 50, width: W + 80, height: H + 100, rx: 16, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  el('rect', { x: gx, y: gy - H, width: W, height: H, fill: '#F2F8EC' }, rig);
+  for (let k = 0; k < 14; k++) grass(el, rig, gx + 10 + k * 19, gy - 2, .55);
   txt(rig, gx - 30, gy - H - 22, '兔子族群數量（隻）', { 'text-anchor': 'start', 'font-size': 14, fill: '#5A6478' });
-  el('line', { x1: gx, y1: p2y(s.capacity), x2: gx + W, y2: p2y(s.capacity), stroke: '#2E8B66', 'stroke-width': 2, 'stroke-dasharray': '8 6' }, rig);
-  txt(rig, gx + W - 4, p2y(s.capacity) - 8, `承載量 K ＝ ${s.capacity}`, { 'text-anchor': 'end', 'font-size': 13, fill: '#2E8B66' });
-  const pts = [];
-  for (let t = 0; t <= 30; t += .5) pts.push(`${t2x(t)},${p2y(calculate('ecosystem', { energy: 10000, efficiency: s.efficiency, initial: 50, capacity: s.capacity, rate: 0.2, time: t }).population)}`);
-  el('polyline', { points: pts.join(' '), fill: 'none', stroke: '#E0A21B', 'stroke-width': 4 }, rig);
-  el('circle', { cx: t2x(s.time), cy: p2y(r.population), r: 8, fill: '#C8372D', stroke: '#fff', 'stroke-width': 2 }, rig);
+  const pop = calcPop(s);
+  el('polyline', { points: pop.map(([t, p]) => `${n1(t2x(t))},${n1(p2y(p))}`).join(' '), fill: 'none', stroke: '#E0A21B', 'stroke-width': 4 }, rig);
+  // 承載量線（拖上下）
+  const ky = p2y(s.capacity), kg = el('g', { 'data-drag': can && step === 'capacity' ? 'cap' : null }, rig), km = el('g', {}, kg);
+  el('line', { x1: gx, y1: ky, x2: gx + W, y2: ky, stroke: '#2E8B66', 'stroke-width': 2.5, 'stroke-dasharray': '8 6' }, km);
+  txt(km, gx + W - 4, ky - 8, `承載量 K ＝ ${s.capacity}`, { 'text-anchor': 'end', 'font-size': 13, fill: '#2E8B66' });
+  if (step === 'capacity') { el('circle', { cx: gx + 18, cy: ky, r: 10, fill: '#fff', stroke: '#2E8B66', 'stroke-width': 3 }, km); el('path', { d: `M${gx + 18} ${ky - 5}v10M${gx + 14} ${ky - 2}l4 -4 4 4M${gx + 14} ${ky + 2}l4 4 4 -4`, stroke: '#2E8B66', 'stroke-width': 1.6, fill: 'none' }, km); }
+  el('rect', { x: gx, y: ky - 16, width: W, height: 32, fill: 'transparent' }, km);
+  if (can && step === 'capacity') drag(kg, p0 => { let y = ky; return { move(p) { y = Math.max(p2y(420), Math.min(p2y(180), ky + p.y - p0.y)); km.setAttribute('transform', `translate(0 ${n1(y - ky)})`); },
+    end() { const v = KK.reduce((m, k) => Math.abs(p2y(k) - y) < Math.abs(p2y(m) - y) ? k : m); if (v !== s.capacity) set({ capacity: v }); else km.removeAttribute('transform'); }, cancel() { km.removeAttribute('transform'); } }; },
+    { label: '改變承載量', tap: () => set({ capacity: s.capacity === 200 ? 400 : 200 }) });
+  // 時間點（沿曲線拖）
+  const dg = el('g', { 'data-drag': can && step === 'grow' ? 'time' : null }, rig), dot = el('circle', { cx: n1(t2x(s.time)), cy: n1(p2y(r.population)), r: 9, fill: '#C8372D', stroke: '#fff', 'stroke-width': 2 }, dg);
+  el('circle', { cx: n1(t2x(s.time)), cy: n1(p2y(r.population)), r: 22, fill: 'transparent' }, dg);
+  rabbit(el, rig, t2x(s.time) + (s.time > 20 ? -52 : 30), p2y(r.population) + (s.time > 20 ? 2 : -14), .8);
   txt(rig, t2x(s.time) + (s.time > 20 ? -12 : 12), p2y(r.population) + 24, `${r0(r.population)} 隻`, { 'text-anchor': s.time > 20 ? 'end' : 'start', 'font-size': 15, fill: '#C8372D' });
+  if (can && step === 'grow') drag(dg, () => { let t = s.time; return { move(p) { t = Math.max(0, Math.min(30, (p.x - gx) / W * 30)); const q = pop.reduce((m, e) => Math.abs(e[0] - t) < Math.abs(m[0] - t) ? e : m); dot.setAttribute('cx', n1(t2x(t))); dot.setAttribute('cy', n1(p2y(q[1]))); },
+    end() { const v = TT.reduce((m, k) => Math.abs(k - t) < Math.abs(m - t) ? k : m); if (v !== s.time) set({ time: v }); else { dot.setAttribute('cx', n1(t2x(s.time))); dot.setAttribute('cy', n1(p2y(r.population))); } }, cancel() { dot.setAttribute('cx', n1(t2x(s.time))); dot.setAttribute('cy', n1(p2y(r.population))); } }; },
+    { label: '時間往後走', tap: () => set({ time: TT[(TT.indexOf(s.time) + 1) % 3] }) });
   el('line', { x1: gx, y1: gy, x2: gx + W, y2: gy, stroke: '#23304A', 'stroke-width': 2 }, rig);
   for (const t of [0, 10, 20, 30]) txt(rig, t2x(t), gy + 20, String(t), { 'font-size': 13, fill: '#5A6478' });
   txt(rig, gx + W / 2, gy + 40, '經過時間', { 'font-size': 13, fill: '#5A6478' });
+  hint(500, 540, step === 'pyramid' ? '撥左邊的開關：每層傳 10% 或 20%' : step === 'grow' ? '沿著曲線拖紅點，時間往後走' : step === 'capacity' ? '把綠色的承載量線往上或往下拖' : '');
 }
+const calcPop = s => { const out = []; for (let t = 0; t <= 30; t += .5) out.push([t, calculate('ecosystem', { energy: 10000, efficiency: s.efficiency, initial: 50, capacity: s.capacity, rate: 0.2, time: t }).population]); return out; };
 
 const tgt = (sig, label, set, aim) => ({ sig, label, aim, set,
   title: s => sig.startsWith('e') ? `每層傳 ${s.efficiency}%` : `K ＝ ${s.capacity}・時間 ${s.time}`,

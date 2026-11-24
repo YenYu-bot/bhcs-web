@@ -23,9 +23,12 @@ function row(el, txt, P, rig, x, y, f, count, label) {
   if (!n) txt(rig, x + 160, y + 6, '（沒有）', { 'font-size': 14, fill: '#B8AC98' });
 }
 
-function scene({ rig, el, txt, P, s, r }) {
+const OPTS = { h2o: { massA: [2, 4, 8], massB: [16, 32, 64] }, mgo: { massA: [2.4, 4.8], massB: [1.6, 3.2, 6.4] } };
+function scene({ rig, el, txt, P, s, r, step, set, drag, hint, kind }) {
+  const can = kind === 'observe', n1 = v => (+v).toFixed(1);
+  const gd = el('defs', {}, rig), gg = el('linearGradient', { id: 'st-glass', x1: 0, y1: 0, x2: 1, y2: 0 }, gd); for (const [o, c, op] of [[0, '#fff', .9], [.08, '#EAF5FB', .7], [.9, '#E2F0F8', .6], [1, '#fff', .9]]) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op }, gg);
   const R = r.R, u = UNIT[s.reaction];
-  const box = (x, t) => { el('rect', { x, y: 110, width: 400, height: 300, rx: 18, fill: 'rgba(255,255,255,.93)', stroke: '#23304A', 'stroke-width': 3 }, rig); txt(rig, x + 200, 98, t, { 'font-size': 18 }); };
+  const box = (x, t) => { el('rect', { x: x + 4, y: 116, width: 400, height: 300, rx: 26, fill: '#000', opacity: .08 }, rig); el('rect', { x, y: 110, width: 400, height: 300, rx: 26, fill: 'url(#st-glass)', stroke: '#5E8FA8', 'stroke-width': 3 }, rig); el('rect', { x: x + 120, y: 100, width: 160, height: 16, rx: 6, fill: '#8A93A3', stroke: '#23304A', 'stroke-width': 2 }, rig); el('rect', { x: x + 14, y: 124, width: 10, height: 270, rx: 5, fill: '#fff', opacity: .8 }, rig); txt(rig, x + 200, 90, t, { 'font-size': 18 }); };
   box(70, '反應前'); box(540, '反應後');
   el('path', { d: 'M480 260 H528', stroke: '#C8372D', 'stroke-width': 6, 'marker-end': 'url(#st-arrow)' }, rig);
   const d = el('defs', {}, rig), mk = el('marker', { id: 'st-arrow', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, d);
@@ -38,10 +41,22 @@ function scene({ rig, el, txt, P, s, r }) {
   const leftF = r.leftA > 1e-9 ? R.A[0] : r.leftB > 1e-9 ? R.B[0] : null, leftG = r.leftA > 1e-9 ? r.leftA : r.leftB;
   if (leftF) row(el, txt, P, rig, 560, 290, leftF, (leftG / M(R, leftF === R.A[0] ? 'A' : 'B')) / u, `剩 ${leftF} ${g(leftG)} g`);
   else txt(rig, 740, 296, '反應物剛好用完', { 'font-size': 16, fill: '#2E8B66' });
+  // 反應物用量：沿著刻度拖標籤
+  const o = OPTS[s.reaction];
+  for (const [k, y, nm] of [['massA', 246, R.A[0]], ['massB', 382, R.B[0]]]) { const opts = o[k], X = i => 140 + i * (280 / (opts.length - 1)), ci = opts.indexOf(s[k]);
+    el('path', { d: `M140 ${y}H420`, stroke: '#C9D6E2', 'stroke-width': 6, 'stroke-linecap': 'round' }, rig);
+    opts.forEach((v, i) => { el('circle', { cx: X(i), cy: y, r: 4, fill: '#8792A6' }, rig); txt(rig, X(i), y + 30, `${v} g`, { 'font-size': 11, fill: v === s[k] ? '#23304A' : '#8792A6' }); });
+    const tg = el('g', { 'data-drag': can && step !== 'quiz' ? k : null }, rig), tm = el('g', {}, tg), x = X(ci);
+    el('rect', { x: x - 30, y: y - 13, width: 60, height: 26, rx: 13, fill: k === 'massA' ? '#2F6FB0' : '#C8372D', stroke: '#fff', 'stroke-width': 2 }, tm);
+    txt(tm, x, y + 5, nm, { 'font-size': 13, fill: '#fff', 'pointer-events': 'none' }); el('rect', { x: x - 36, y: y - 20, width: 72, height: 40, fill: 'transparent' }, tm);
+    if (can && step !== 'quiz') drag(tg, p0 => { let xx = x; return { move(p) { xx = Math.max(140, Math.min(420, x + p.x - p0.x)); tm.setAttribute('transform', `translate(${n1(xx - x)} 0)`); },
+      end() { let bi = 0; opts.forEach((_, i) => { if (Math.abs(X(i) - xx) < Math.abs(X(bi) - xx)) bi = i; }); if (opts[bi] !== s[k]) set({ [k]: opts[bi] }); else tm.removeAttribute('transform'); }, cancel() { tm.removeAttribute('transform'); } }; },
+      { label: `${nm} 加多一點`, tap: () => set({ [k]: opts[(ci + 1) % opts.length] }) }); }
+  hint(500, 552, '沿著刻度拖藍色、紅色標籤，改變反應物的質量');
   // 天平：總質量
-  el('rect', { x: 230, y: 440, width: 540, height: 84, rx: 14, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  txt(rig, 500, 474, `總質量：反應前 ${g(r.before)} g ＝ 反應後 ${g(r.after)} g`, { 'font-size': 18 });
-  txt(rig, 500, 508, `一個分子圖示代表 ${u} mol`, { 'font-size': 14, fill: '#5A6478' });
+  el('rect', { x: 230, y: 432, width: 540, height: 84, rx: 14, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 3 }, rig);
+  txt(rig, 500, 466, `總質量：反應前 ${g(r.before)} g ＝ 反應後 ${g(r.after)} g`, { 'font-size': 18 });
+  txt(rig, 500, 500, `一個分子圖示代表 ${u} mol`, { 'font-size': 14, fill: '#5A6478' });
 }
 
 const lim = r => r.kind === 'exact' ? '剛好用完' : r.kind === 'none' ? '—' : r.limiting;
@@ -54,7 +69,7 @@ runDesk({
   key: 'bhcs.lab.stoichiometry.v1', title: '化學計量實驗桌', background: 'bg-chem-bench',
   sceneLabel: '化學計量實驗桌：左邊是反應前的兩種反應物，右邊是反應後的生成物和剩下的反應物，每個分子圖示代表固定的莫耳數，下方比較反應前後的總質量',
   initial: { reaction: 'h2o', massA: 4, massB: 32 },
-  model, scene, viewBox: { desk: '50 30 920 530', phone: '50 30 920 530' }, phoneText: 1.4,
+  model, scene, viewBox: { desk: '50 40 920 540', phone: '50 40 920 540' }, phoneText: 1.4,
   readouts: (s, r) => [[`${r.R.A[0]} 莫耳數`, mol(r.molA), 'mol', `${s.massA} g ÷ ${M(r.R, 'A')}`], [`${r.R.B[0]} 莫耳數`, mol(r.molB), 'mol', `${s.massB} g ÷ ${M(r.R, 'B')}`], ['先用完的', lim(r), '', r.kind === 'exact' ? '兩種剛好' : '限量試劑']],
   why: { title: '莫耳與化學計量', button: '莫耳怎麼算', html: `
     <p class="fn-tip"><b>莫耳數 ＝ 質量 ÷ 分子量（或原子量）。</b>H₂ 分子量 2、O₂ 32、H₂O 18、Mg 24、MgO 40。</p>
