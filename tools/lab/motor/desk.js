@@ -4,28 +4,100 @@ import { runDesk } from '../shared/desk.mjs';
 
 const DIR = v => v > 0 ? '順時針' : '逆時針', UP = v => v > 0 ? '向上' : '向下', CUR = v => v > 0 ? '流出紙面 ⊙' : '流入紙面 ⊗';
 const BAT = { fwd: '正接', rev: '反接' }, MAG = { NS: '左 N 右 S', SN: '左 S 右 N' }, POS = { start: '開始', half: '轉過半圈' };
-function scene({ rig, el, txt, s, r }) {
-  const CY = 280, LX = 400, RX = 600;
-  const pole = (x, n) => { el('rect', { x, y: CY - 110, width: 110, height: 220, rx: 10, fill: n ? '#E4573F' : '#3F6FD6', stroke: '#23304A', 'stroke-width': 3 }, rig); txt(rig, x + 55, CY + 14, n ? 'N' : 'S', { 'font-size': 40, fill: '#fff' }); };
-  pole(150, s.magnet === 'NS'); pole(740, s.magnet !== 'NS');
+const n1 = v => (+v).toFixed(1);
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (id, stops, v = 1) => { const n = el('linearGradient', { id, x1: 0, y1: 0, x2: v ? 0 : 1, y2: v ? 1 : 0 }, d); for (const [o, c] of stops) el('stop', { offset: o, 'stop-color': c }, n); };
+  g('mo-n', [[0, '#F0827A'], [.15, '#E4574C'], [1, '#A82A22']], 0); g('mo-s', [[0, '#3C6FC0'], [.85, '#5A8FE0'], [1, '#2A5590']], 0);
+  g('mo-cu', [[0, '#F2B07A'], [.5, '#C9733D'], [1, '#8E3F16']]); g('mo-cell', [[0, '#3C4250'], [.4, '#6B7384'], [1, '#2C313C']]);
+  g('mo-base', [[0, '#C9A877'], [1, '#86693F']]);
+  const m = el('marker', { id: 'mo-g', viewBox: '0 0 10 10', refX: 6, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, d); el('path', { d: 'M0 0 L10 5 L0 10 z', fill: '#8792A6' }, m);
+  const m2 = el('marker', { id: 'mo-r', viewBox: '0 0 10 10', refX: 6, refY: 5, markerWidth: 3.4, markerHeight: 3.4, orient: 'auto' }, d); el('path', { d: 'M0 0 L10 5 L0 10 z', fill: '#C8372D' }, m2);
+}
+const wire = (el, g, d, c) => { el('path', { d, fill: 'none', stroke: '#23304A', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g); el('path', { d, fill: 'none', stroke: c, 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g); };
+function cell(el, txt, g, x, y, flip) {
+  const q = el('g', { transform: flip ? `rotate(180 ${x} ${y})` : null }, g);
+  el('rect', { x: x - 44, y: y - 15, width: 82, height: 30, rx: 6, fill: 'url(#mo-cell)', stroke: '#1C2028', 'stroke-width': 2 }, q);
+  el('rect', { x: x + 6, y: y - 15, width: 32, height: 30, fill: '#E5A43B' }, q);
+  el('rect', { x: x + 38, y: y - 7, width: 7, height: 14, rx: 2, fill: '#C9CED6', stroke: '#1C2028', 'stroke-width': 1.5 }, q);
+  txt(q, x + 22, y + 5, '+', { 'font-size': 16, fill: '#23304A', 'font-weight': 900 }); txt(q, x - 28, y + 5, '−', { 'font-size': 16, fill: '#fff', 'font-weight': 900 });
+}
+const CY = 270, AX = 500, RW = 100;
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  defs(el, rig);
+  const can = kind === 'observe';
+  // 底座與磁鐵
+  el('rect', { x: 140, y: 392, width: 720, height: 22, rx: 6, fill: 'url(#mo-base)', stroke: '#6B5540', 'stroke-width': 2 }, rig);
+  const mag = (x, n, side) => { const g = el('g', { 'data-drag': can && step === 'magnet' ? 'magnet-' + side : null }, rig);
+    el('rect', { x: x + 4, y: 164, width: 112, height: 228, rx: 10, fill: '#000', opacity: .15 }, g);
+    el('rect', { x, y: 160, width: 112, height: 232, rx: 10, fill: `url(#mo-${n ? 'n' : 's'})`, stroke: '#23304A', 'stroke-width': 3 }, g);
+    el('rect', { x: x + 10, y: 170, width: 12, height: 212, rx: 6, fill: '#fff', opacity: .22 }, g);
+    txt(g, x + 56, 290, n ? 'N' : 'S', { 'font-size': 44, fill: '#fff', 'font-weight': 900 });
+    if (can && step === 'magnet') drag(g, () => ({ move() {}, end() { set({ magnet: s.magnet === 'NS' ? 'SN' : 'NS' }); }, cancel() {} }), { label: '把兩塊磁鐵左右對調', tap: () => set({ magnet: s.magnet === 'NS' ? 'SN' : 'NS' }) }); };
+  mag(150, s.magnet === 'NS', 'left'); mag(738, s.magnet !== 'NS', 'right');
   const fd = s.magnet === 'NS' ? 1 : -1;
-  for (const y of [CY - 70, CY, CY + 70]) { el('path', { d: `M280 ${y} H720`, stroke: '#B8C4D6', 'stroke-width': 2.5, 'stroke-dasharray': '10 8' }, rig); const x = fd > 0 ? 706 : 294; el('path', { d: `M${x + fd * 14} ${y} l${-fd * 14} -8 v16z`, fill: '#8A93A3' }, rig); }
-  txt(rig, 500, CY - 124, '磁場方向（N → S）', { 'font-size': 13, fill: '#5A6478' });
-  el('path', { d: `M${LX} ${CY} H${RX}`, stroke: '#B98A52', 'stroke-width': 8, 'stroke-linecap': 'round' }, rig);
-  el('circle', { cx: 500, cy: CY, r: 9, fill: '#23304A' }, rig);
-  const wire = (x, cur, name, force) => {
-    el('circle', { cx: x, cy: CY, r: 26, fill: '#F2C879', stroke: '#23304A', 'stroke-width': 3 }, rig);
-    if (cur > 0) el('circle', { cx: x, cy: CY, r: 7, fill: '#23304A' }, rig); else el('path', { d: `M${x - 12} ${CY - 12} L${x + 12} ${CY + 12} M${x + 12} ${CY - 12} L${x - 12} ${CY + 12}`, stroke: '#23304A', 'stroke-width': 4 }, rig);
-    const len = 46 + 30 * s.cells, y2 = CY - force * (30 + len);
-    el('path', { d: `M${x} ${CY - force * 32} V${y2 + force * 12}`, stroke: '#C8372D', 'stroke-width': 8, 'stroke-linecap': 'round' }, rig); el('path', { d: `M${x} ${y2} l-11 ${force * 18} h22z`, fill: '#C8372D' }, rig);
-    txt(rig, x, CY + (force > 0 ? 62 : -46), `${name}導線`, { 'font-size': 14 }); txt(rig, x + (x < 500 ? -64 : 64), y2 + force * 30, `受力${UP(force)}`, { 'font-size': 14, fill: '#C8372D' });
-  };
-  const aLeft = r.wireA === 'left';
-  wire(LX, r.leftCurrent, aLeft ? '甲' : '乙', r.leftForce); wire(RX, -r.leftCurrent, aLeft ? '乙' : '甲', r.rightForce);
-  el('rect', { x: 240, y: 452, width: 520, height: 96, rx: 14, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  txt(rig, 500, 482, `${s.commutator ? '有換向器' : '沒有換向器'}・${POS[s.pos]}：這一刻的轉向是${DIR(r.torque)}`, { 'font-size': 16 });
-  txt(rig, 500, 512, r.keeps ? (s.commutator ? `結果：${r.spin}` : '和一開始同方向') : '和一開始相反 → 線圈被拉回去', { 'font-size': 16, fill: r.keeps ? '#2E8B66' : '#C8372D' });
-  txt(rig, 500, 538, `電池 ${s.cells} 顆（${BAT[s.battery]}）　甲導線的電流：${CUR(r.currentA)}`, { 'font-size': 13, fill: '#5A6478' });
+  for (const y of [CY - 80, CY - 30, CY + 30, CY + 80]) el('path', { d: fd > 0 ? `M272 ${y} H724` : `M724 ${y} H272`, stroke: '#9FB0C8', 'stroke-width': 2, 'stroke-dasharray': '9 7', 'marker-end': 'url(#mo-g)' }, rig);
+  txt(rig, 640, 384, '磁場方向（N → S）', { 'font-size': 13, fill: '#5A6478' });
+  // 線圈（從轉軸方向看）：甲、乙兩條導線
+  const ang = s.pos === 'half' ? 180 : 0, cg = el('g', { 'data-drag': can && step === 'commutator' ? 'coil' : null }, rig), rot = el('g', { transform: `rotate(${ang} ${AX} ${CY})` }, cg);
+  el('circle', { cx: AX, cy: CY, r: RW + 34, fill: 'transparent' }, cg);
+  el('path', { d: `M${AX - RW} ${CY}H${AX + RW}`, stroke: 'url(#mo-cu)', 'stroke-width': 9, 'stroke-linecap': 'round' }, rot);
+  el('path', { d: `M${AX - RW} ${CY}H${AX + RW}`, stroke: '#7A3A16', 'stroke-width': 1.5, opacity: .5 }, rot);
+  for (const [x, nm] of [[AX - RW, '甲'], [AX + RW, '乙']]) { el('circle', { cx: x, cy: CY, r: 25, fill: '#F2C879', stroke: '#23304A', 'stroke-width': 3 }, rot); }
+  for (const [x, nm] of [[AX - RW - 46, r.wireA === 'left' ? '甲' : '乙'], [AX + RW + 46, r.wireA === 'left' ? '乙' : '甲']]) { el('circle', { cx: x, cy: CY, r: 12, fill: '#fff', stroke: '#23304A', 'stroke-width': 1.5 }, rig); txt(rig, x, CY + 5, nm, { 'font-size': 13 }); }
+  // 電流符號（不跟著旋轉，畫在實際位置）
+  for (const [x, cur] of [[AX - RW, r.leftCurrent], [AX + RW, -r.leftCurrent]]) { if (cur > 0) el('circle', { cx: x, cy: CY, r: 7, fill: '#23304A', 'pointer-events': 'none' }, rig); else el('path', { d: `M${x - 11} ${CY - 11}L${x + 11} ${CY + 11}M${x + 11} ${CY - 11}L${x - 11} ${CY + 11}`, stroke: '#23304A', 'stroke-width': 4, 'stroke-linecap': 'round', 'pointer-events': 'none' }, rig); }
+  // 換向器（或整圈滑環）與電刷
+  const comm = el('g', { 'data-drag': can && step === 'commutator' ? 'comm' : null }, rig);
+  el('circle', { cx: AX, cy: CY, r: 30, fill: 'transparent' }, comm);
+  if (s.commutator) for (const k of [0, 1]) { const a0 = (k * 180 + 8 + ang) * Math.PI / 180, a1 = (k * 180 + 172 + ang) * Math.PI / 180;
+    el('path', { d: `M${n1(AX + 22 * Math.cos(a0))} ${n1(CY + 22 * Math.sin(a0))}A22 22 0 0 1 ${n1(AX + 22 * Math.cos(a1))} ${n1(CY + 22 * Math.sin(a1))}`, fill: 'none', stroke: '#C9733D', 'stroke-width': 9 }, comm); }
+  else el('circle', { cx: AX, cy: CY, r: 22, fill: 'none', stroke: '#B8902E', 'stroke-width': 9 }, comm);
+  el('circle', { cx: AX, cy: CY, r: 9, fill: '#5A6478', stroke: '#23304A', 'stroke-width': 2, 'pointer-events': 'none' }, rig);
+  for (const sx of [-1, 1]) el('rect', { x: AX + sx * 34 - 7, y: CY + 14, width: 14, height: 24, rx: 3, fill: '#3A3F48', transform: `rotate(${sx * -35} ${AX + sx * 34} ${CY + 26})`, 'pointer-events': 'none' }, rig);
+  txt(rig, AX, CY - 42, s.commutator ? '換向器' : '沒有換向器', { 'font-size': 12, fill: '#8A5A2A', 'pointer-events': 'none' });
+  if (can && step === 'commutator') {
+    drag(cg, p0 => { let a = 0; return {
+      move(p, q0) { a = (Math.atan2(p.y - CY, p.x - AX) - Math.atan2(q0.y - CY, q0.x - AX)) * 180 / Math.PI; rot.setAttribute('transform', `rotate(${n1(ang + a)} ${AX} ${CY})`); },
+      end() { const t = ((a % 360) + 360) % 360; if (t > 90 && t < 270) set({ pos: s.pos === 'half' ? 'start' : 'half' }); else rot.setAttribute('transform', `rotate(${ang} ${AX} ${CY})`); },
+      cancel() { rot.setAttribute('transform', `rotate(${ang} ${AX} ${CY})`); } }; },
+      { label: '把線圈轉半圈', tap: () => set({ pos: s.pos === 'half' ? 'start' : 'half' }) });
+    drag(comm, () => ({ move() {}, end() {}, cancel() {} }), { label: s.commutator ? '拿掉換向器' : '裝上換向器', tap: () => set({ commutator: !s.commutator }) });
+  }
+  // 受力箭頭
+  for (const [x, f] of [[AX - RW, r.leftForce], [AX + RW, r.rightForce]]) { const len = 40 + 30 * s.cells, y0 = CY - f * 32, y1 = y0 - f * len;
+    el('path', { d: `M${x} ${y0}V${y1}`, stroke: '#fff', 'stroke-width': 12, opacity: .7, 'stroke-linecap': 'round' }, rig);
+    el('path', { d: `M${x} ${y0}V${y1}`, stroke: '#C8372D', 'stroke-width': 7, 'stroke-linecap': 'round', 'marker-end': 'url(#mo-r)' }, rig);
+    txt(rig, x + (x < AX ? -58 : 58), y1 + f * 14, `受力${UP(f)}`, { 'font-size': 14, fill: '#C8372D' }); }
+  // 轉向
+  const tq = r.torque > 0 ? 1 : -1, ra = RW + 30;
+  el('path', { d: tq > 0 ? `M${AX - ra * .7} ${CY - ra * .7}A${ra} ${ra} 0 0 1 ${AX + ra * .7} ${CY - ra * .7}` : `M${AX + ra * .7} ${CY - ra * .7}A${ra} ${ra} 0 0 0 ${AX - ra * .7} ${CY - ra * .7}`, fill: 'none', stroke: '#2E8B66', 'stroke-width': 4, 'stroke-dasharray': '8 5', 'marker-end': 'url(#mo-g)' }, rig);
+  txt(rig, AX, CY - ra - 10, DIR(r.torque), { 'font-size': 14, fill: '#2E8B66' });
+  // 電池（從電刷接到電池）
+  const bx = 500, by = 478, cells = s.cells, flip = s.battery === 'rev';
+  wire(el, rig, `M${AX - 40} ${CY + 40}V432H368Q356 432 356 444V${by}H${bx - 120}`, flip ? '#C8372D' : '#3A3F48');
+  wire(el, rig, `M${AX + 40} ${CY + 40}V432H632Q644 432 644 444V${by}H${bx + 120}`, flip ? '#3A3F48' : '#C8372D');
+  el('rect', { x: bx - 120, y: by - 24, width: 240, height: 48, rx: 10, fill: '#3E4656', stroke: '#1C2028', 'stroke-width': 2 }, rig);
+  const pg = el('g', { 'data-drag': can && (step === 'force' || step === 'magnet') ? 'battery' : null }, rig);
+  el('rect', { x: bx - 116, y: by - 20, width: 232, height: 40, fill: 'transparent' }, pg);
+  cell(el, txt, pg, bx - 54, by, flip);
+  if (cells === 2) cell(el, txt, pg, bx + 54, by, flip); else el('rect', { x: bx + 10, y: by - 4, width: 90, height: 8, rx: 4, fill: '#8A93A3' }, pg);
+  txt(rig, bx, by + 44, `${cells} 顆電池（${BAT[s.battery]}）`, { 'font-size': 13 });
+  if (can && (step === 'force' || step === 'magnet')) drag(pg, () => ({ move() {}, end() { set({ battery: flip ? 'fwd' : 'rev' }); }, cancel() {} }), { label: '把電池反過來接', tap: () => set({ battery: flip ? 'fwd' : 'rev' }) });
+  if (step === 'speed') {
+    if (cells === 1) { el('rect', { x: 680, y: 452, width: 120, height: 52, rx: 10, fill: 'rgba(255,255,255,.7)', stroke: '#8792A6', 'stroke-dasharray': '5 4' }, rig); txt(rig, 740, 522, '備用電池', { 'font-size': 12, fill: '#5A6478' }); }
+    const sg = el('g', { 'data-drag': can ? 'cell' : null }, rig), sm = el('g', {}, sg), sx = cells === 2 ? bx + 54 : 740, sy = by;
+    if (cells === 1) cell(el, txt, sm, sx, sy, flip);
+    el('rect', { x: sx - 46, y: sy - 17, width: 92, height: 34, fill: 'transparent' }, sm);
+    if (can) drag(sg, p0 => { let q = p0; return { move(p) { q = p; sm.setAttribute('transform', `translate(${n1(p.x - p0.x)} ${n1(p.y - p0.y)})`); },
+      end() { const v = Math.abs(q.x - (bx + 54)) < 70 && Math.abs(q.y - by) < 34 ? 2 : 1; if (v !== cells) set({ cells: v }); else sm.removeAttribute('transform'); }, cancel() { sm.removeAttribute('transform'); } }; },
+      { label: cells === 2 ? '拿掉一顆電池' : '再放一顆電池', tap: () => set({ cells: cells === 2 ? 1 : 2 }) });
+  }
+  // 結果
+  el('rect', { x: 140, y: 440, width: 200, height: 92, rx: 14, fill: 'rgba(255,253,246,.96)', stroke: '#23304A', 'stroke-width': 2 }, rig);
+  txt(rig, 240, 464, `${s.commutator ? '有換向器' : '沒有換向器'}・${POS[s.pos]}`, { 'font-size': 13.5 });
+  txt(rig, 240, 490, `這一刻：${DIR(r.torque)}`, { 'font-size': 13.5, fill: '#2E8B66' });
+  txt(rig, 240, 516, r.keeps ? (s.commutator ? r.spin.replace('連續轉動', '一直轉') : '和一開始同方向') : '和一開始相反，被拉回', { 'font-size': 13.5, fill: r.keeps ? '#2E8B66' : '#C8372D' });
+  hint(500, 570, { force: '點電池座，把電池反接', magnet: '點磁鐵左右對調；點電池座反接', commutator: '轉動線圈半圈；點中間的換向器拿掉或裝上', speed: '把備用電池拖進電池座' }[step] || '');
 }
 
 const tgt = (sig, label, set, aim, body) => ({ sig, label, set, aim, title: s => `電池${BAT[s.battery]}、磁鐵${MAG[s.magnet]}、${s.commutator ? '有' : '沒有'}換向器、${POS[s.pos]}`, body: body || ((s, r) => `左邊導線受力${UP(r.leftForce)}、右邊${UP(r.rightForce)}，${DIR(r.torque)}`) });
@@ -36,7 +108,7 @@ runDesk({
   key: 'bhcs.lab.motor.v1', title: '直流馬達實驗桌', background: 'bg-electric-bench',
   sceneLabel: '直流馬達實驗桌：從正前方看，左右兩塊磁鐵之間有線圈的兩條導線，紅色箭頭是導線受到的力',
   initial: { battery: 'fwd', ...base },
-  model: motor, scene, viewBox: { desk: '120 100 760 470', phone: '120 100 760 470' }, phoneText: 1.4,
+  model: motor, scene, viewBox: { desk: '120 110 760 480', phone: '120 110 760 480' }, phoneText: 1.4,
   readouts: (s, r) => [['左邊導線受力', UP(r.leftForce), '', `電流${r.leftCurrent > 0 ? '流出' : '流入'}紙面`], ['這一刻的轉向', DIR(r.torque), '', POS[s.pos]], ['轉得起來嗎', s.commutator ? '連續轉動' : '會停住', '', s.commutator ? '有換向器' : '沒有換向器']],
   why: { title: '馬達為什麼會轉', button: '馬達的原理', html: `
     <p class="fn-tip"><b>通電的導線在磁場中會受力。</b>力的方向和電流方向、磁場方向都垂直；電流或磁場其中一個反過來，力就反過來。</p>

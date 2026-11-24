@@ -178,6 +178,31 @@ const HANDS={
   await h.step(1);await h.dragTo('[data-drag=station]',608,150);await h.is('dist',120,'drag station farther');
   await h.step(2);await h.tap('[data-drag=st-1]');await h.is('stations',2,'switch on second station');await h.tap('[data-drag=st-2]');await h.is('stations',3,'switch on third station');
  },
+ electrolysis:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=timer]',880,178);await h.is('time',965,'turn timer to 16 min');
+  await h.step(3);await h.tap('[data-drag=rods]');await h.is('mode','cuC','swap electrodes');
+ },
+ electromagnetism:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=tap]',670,360);await h.is('turns',200,'move clip to 200 turns');await h.dragTo('[data-drag=cell]',550,470);await h.is('current',2,'drop second cell');
+  await h.step(1);await h.tap('[data-drag=battery]');await h.is('current',-1,'flip battery');
+  await h.step(2);await h.dragBy('[data-drag=magnet]',260,0);await h.is('motion','in','push magnet into coil');
+  await h.step(3);await h.dragTo('[data-drag=tap]',610,360);await h.is('turns',100,'move clip to 100 turns');
+ },
+ motor:async h=>{
+  await h.step(0);await h.tap('[data-drag=battery]');await h.is('battery','rev','flip battery');
+  await h.step(1);await h.tap('[data-drag=magnet-left]');await h.is('magnet','SN','swap magnets');
+  await h.step(2);await h.tap('[data-drag=comm]');await h.is('commutator',true,'fit commutator');await h.turn(500,270,100,450,270);await h.is('pos','start','turn coil half a turn');
+  await h.step(3);await h.dragTo('[data-drag=cell]',554,478);await h.is('cells',2,'drop second cell');
+ },
+ electrostatics:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=rack]',380,290);await h.is('rod','pos','bring glass rod');
+  await h.step(2);await h.dragTo('[data-drag=card-rod]',520,508);await h.is('step','g2','reorder cards');
+  await h.step(3);await h.tap('[data-drag=rack]');await h.is('rod','pos','tap rack');
+ },
+ energy:async h=>{
+  await h.step(0);await h.dragBy('[data-drag=cart]',275,142);await h.is('progress',50,'slide cart halfway');
+  await h.step(2);await h.tap('[data-drag=weight]');await h.is('mass',1,'take weight off');
+ },
  balance:async h=>{
   await h.step(0);await h.dragTo('[data-drag=jar-a]',220,300);await h.is('a',2,'drag molecule in');
   await h.dragTo('[data-drag=mol-a]',500,520);await h.is('a',1,'drag molecule out');
