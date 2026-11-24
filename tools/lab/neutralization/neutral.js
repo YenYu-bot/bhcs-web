@@ -152,11 +152,18 @@ function draw() {
   const tg = el('g', { class: 'tool', tabindex: 0, role: 'button', 'aria-label': can ? '滴定管活栓：滴入 1 mL 鹼液' : '滴定管活栓：這一步不用再滴' }, rig);
   el('circle', { class: 'tool-ring', cx: COCK.x, cy: COCK.y, r: 22, fill: 'rgba(255,255,255,.3)', stroke: '#E0A21B', 'stroke-width': 4 }, tg);
   el('circle', { cx: COCK.x, cy: COCK.y, r: 34, fill: 'transparent' }, tg);
-  if (can && !readyToSave()) { tg.classList.add('cue'); txt(rig, COCK.x + 34, COCK.y + 6, '← 轉開活栓', { 'font-size': 15, 'font-weight': 900, fill: '#C8372D', 'text-anchor': 'start' }); }
-  tg.addEventListener('click', () => drip(1));
+  if (can && !readyToSave()) { tg.classList.add('cue'); txt(rig, COCK.x + 34, COCK.y + 6, '← 點一下滴 1 mL，按住一直滴', { 'font-size': 15, 'font-weight': 900, fill: '#C8372D', 'text-anchor': 'start' }); }
+  // 按住活栓：一直滴，放開就關；點一下只滴 1 mL
+  tg.style.touchAction = 'none';
+  tg.addEventListener('pointerdown', e => { if (e.button > 0 || holdTimer) return; held = false;
+    holdTimer = setTimeout(function tick() { held = true; const before = S.vb; drip(1); holdTimer = S.vb !== before && S.vb < L().max && !readyToSave() ? setTimeout(tick, 220) : 0; }, 380);
+    const up = () => { window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); clearTimeout(holdTimer); holdTimer = 0; };
+    window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); });
+  tg.addEventListener('click', () => { if (held) { held = false; return; } drip(1); });
   tg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); drip(1); } });
   if (hadFocus) tg.focus({ preventScroll: true });
 }
+let holdTimer = 0, held = false;
 function drawSummary() {
   el('image', { href: P + 'prop-burette.webp', x: 560, y: 120, width: 50, height: 250 }, rig);
   el('image', { href: P + 'prop-erlenmeyer.webp', x: 640, y: 230, width: 150, height: 201 }, rig);

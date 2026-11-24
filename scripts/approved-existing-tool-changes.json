@@ -4292,6 +4292,76 @@
       "approved_blob": "a4a7ee505dc438abb25846f5de85516168b1721d",
       "reason": "最後七站：波、聲音、原子、化學計量、化學平衡、血液循環、生態系改成直接操作並重畫",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/app.js",
+      "baseline_blob": "78bba99a86065fad309d9747ba612aea39bfba99",
+      "approved_blob": "87a9ddff453d842ba23b73ff724f7b0fa659acca",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/index.html",
+      "baseline_blob": "ae7ba495939dac6d1c83c699b65bc184a5987bc0",
+      "approved_blob": "55e5a7153580633a52fdb5d4010ad0a1e075204b",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/metal/metal.js",
+      "baseline_blob": "aba2227604d772b8adc60b367620ae02d29fb911",
+      "approved_blob": "f292fd3d5defb636cb972f2a1aab869ffd6ea16f",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/motion/motion.js",
+      "baseline_blob": "2a96c2019705caa56a2d1d697b95b21a46c18472",
+      "approved_blob": "558eb40d818a0bdf8196c3a3f38642eca07f73ce",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/neutralization/neutral.js",
+      "baseline_blob": "39e88db3efae9416fd988d4152a514a0b43b054a",
+      "approved_blob": "40fa03b1f9b8c4f78654ab835efe80635e69a8b3",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/app.js",
+      "baseline_blob": "faf82fdc0e6039c97892d1765807d67ed11edb00",
+      "approved_blob": "9aa606ee09cd8aed898efeddc4f19f60bac7490b",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/index.html",
+      "baseline_blob": "7a5bbea3d87c94be3b033d0da697a359771bdf2e",
+      "approved_blob": "6cbbad6202212608af6c7329cae1f2ea17b8f428",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reflection-refraction/light.js",
+      "baseline_blob": "4479543ffa3cbd978ec4bc8f033e3de86ca38f9f",
+      "approved_blob": "6f82ea922b4483eeb74bebceb195973dcbadfa98",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/solubility/solubility.js",
+      "baseline_blob": "614e421838017bd6874780c9ffbba4789103cd0e",
+      "approved_blob": "81a0b30b50e60a627b9d8b30e818c31360405260",
+      "reason": "早期實驗桌：小車拖曳與圖上拖時間、反射折射量角器與鏡座、金屬片往下拖、活栓按住連續滴、湯匙量杯拖進燒杯、點開關與錐形瓶",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "61438c56a2a8fd32e6e96aad9c2fd65202a3a945",
+      "approved_blob": "d709ccf21cc6ed76971f2d485e5ebe43cd1b1fe5",
+      "reason": "README 早期站第一批",
+      "pull_request": null
     }
   ]
 }
