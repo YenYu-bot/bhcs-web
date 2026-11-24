@@ -4068,6 +4068,69 @@
       "approved_blob": "b05fb01a192446f0ae2fd805a4fea89d0e78ec8d",
       "reason": "2026-11-23 植物畫法改為共用 plants.mjs：光合作用、遺傳、眼睛",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "b241f0e53708bfe6e537c38051d684c28a14f5ca",
+      "approved_blob": "ae18ce7ef96401a8bfab8e8f97917bc65b84417f",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/cell-division/desk.js",
+      "baseline_blob": "cdad376200a92d1dbe9455dd6bbce91d2b4614d8",
+      "approved_blob": "20e512b6fa581fbd116dc23e79ed996abab7d8ed",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/enzyme/desk.js",
+      "baseline_blob": "0ce3f0ab194d416b9058423b8e51624f94eacd03",
+      "approved_blob": "a3ff0a2424416580de4df6ac4cb5211ee6a7e8fa",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/genetics/desk.js",
+      "baseline_blob": "a5380d76a5f919ede5f0c155ecb031a655bd4945",
+      "approved_blob": "a6a3f25a74fb8197d6a135a0af9e4605d45cd924",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/homeostasis/desk.js",
+      "baseline_blob": "e323bd68d58f850abcfa503999b4de47b882be93",
+      "approved_blob": "a6117944d69bfa2511b2e77a40d8fbc09395a956",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/nerve-reflex/desk.js",
+      "baseline_blob": "820ab4eb4cd0eabd2cce9473a1a0dfb4d1a55205",
+      "approved_blob": "18f47deb6e37fe3ca7217c2bdd0cc177f2b2ac89",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/newton/desk.js",
+      "baseline_blob": "fc921509923e94d117293f7c71c79cd1c6468b6a",
+      "approved_blob": "8832ace0cc63fdc70d6d887f51f87df5a0e9daeb",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/plant-exchange/desk.js",
+      "baseline_blob": "894192ea54240be4fd8601c826deb405d820c279",
+      "approved_blob": "3aba45213d22b36f79a4387fe837da8e6b231102",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/shared/plants.mjs",
+      "baseline_blob": "f2a8000cb372a295823f982f15aba27e56768e35",
+      "approved_blob": "cea83ba59a7e2b48e94e01ce1f32774912cbbc49",
+      "reason": "2026-11-24 生物五站重畫與直接操作，力與運動加 v-t 圖、遺傳子代排版",
+      "pull_request": null
     }
   ]
 }

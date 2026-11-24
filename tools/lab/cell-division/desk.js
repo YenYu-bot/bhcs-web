@@ -7,50 +7,116 @@ const TYPE = { mitosis: '有絲分裂', meiosis: '減數分裂' };
 const SHORT = { mitosis: ['複製前', '複製後', '前期', '中期', '後期', '末期'], meiosis: ['複製前', '複製後', 'Ⅰ中期', 'Ⅰ結束', 'Ⅱ中期', 'Ⅱ結束'] };
 const COL = [['#B0302A', '#EE8A80'], ['#24548A', '#7FB2E5'], ['#2E7A54', '#8CD0AE'], ['#7A4A9E', '#C9A6E4']];
 
-// 一條染色體：未複製畫成一根，複製後畫成 X（兩條姊妹染色分體）
-function chrom(el, parent, x, y, color, replicated, h = 34) {
-  if (replicated) {
-    el('path', { d: `M${x - 7} ${y - h / 2} L${x + 7} ${y + h / 2} M${x + 7} ${y - h / 2} L${x - 7} ${y + h / 2}`, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round' }, parent);
-  } else el('line', { x1: x, y1: y - h / 2, x2: x, y2: y + h / 2, stroke: color, 'stroke-width': 8, 'stroke-linecap': 'round' }, parent);
+const INK = '#23304A', ANG = i => i * 60, POLE = '#E8892E';
+const rnd = (a, b) => { const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return x - Math.floor(x); };
+const n1 = v => v.toFixed(1);
+function defs(el, rig) {
+  const d = el('defs', {}, rig), g = (tag, id, stops, a = {}) => { const n = el(tag, { id, ...a }, d); for (const [o, c, op] of stops) el('stop', { offset: o, 'stop-color': c, 'stop-opacity': op ?? 1 }, n); };
+  g('radialGradient', 'cd-cyto', [[0, '#FFF6EE'], [.7, '#FBE4D6'], [1, '#F2C8B6']], { cx: .42, cy: .38, r: .7 });
+  g('radialGradient', 'cd-nuc', [[0, '#F4EEFB'], [.8, '#E2D6F2'], [1, '#CDBBE6']], { cx: .4, cy: .35, r: .7 });
+  g('radialGradient', 'cd-knob', [[0, '#F7FAFD'], [.6, '#AEB8C8'], [1, '#5F6A7E']], { cx: .35, cy: .3, r: .8 });
 }
-function scene({ rig, el, txt, s, r }) {
-  const pairs = s.n2 / 2, cells = r.cells, W = 860, cw = cells === 1 ? 420 : cells === 2 ? 340 : 200, gap = 16;
-  const x0 = 70 + (W - cells * cw - (cells - 1) * gap) / 2;
-  const meiosisI = s.type === 'meiosis' && s.stage >= 3, homologPaired = s.type === 'meiosis' && s.stage === 2;
-  for (let c = 0; c < cells; c++) {
-    const cx = x0 + c * (cw + gap) + cw / 2, cy = 305, rx = cw / 2 - 6, ry = cells === 4 ? 100 : 128;
-    el('ellipse', { cx, cy, rx, ry, fill: 'rgba(255,240,220,.92)', stroke: '#C87533', 'stroke-width': 4 }, rig);
-    // 這個細胞裡有哪些染色體：減數分裂第一次分裂後，每對只剩一條
-    const list = [];
-    for (let p = 0; p < pairs; p++) {
-      if (meiosisI) list.push([p, (c + p) % 2]); else { list.push([p, 0]); list.push([p, 1]); }
-    }
-    if (s.type === 'mitosis' && s.stage === 4) {
-      // 後期：姊妹染色分體分開，往兩極移動
-      list.forEach(([p, h], i) => { const x = cx - (list.length - 1) * 16 + i * 32; chrom(el, rig, x, cy - 70, COL[p][h], false, 30); chrom(el, rig, x, cy + 70, COL[p][h], false, 30); });
-      el('path', { d: `M${cx} ${cy - 30} v-24 M${cx} ${cy + 30} v24`, stroke: '#5A6478', 'stroke-width': 3, 'marker-end': 'url(#cd-a)' }, rig);
-    } else {
-      const lined = s.stage === 3 || (s.type === 'meiosis' && s.stage === 4) || homologPaired;
-      list.forEach(([p, h], i) => {
-        let x, y;
-        if (homologPaired) { x = cx - (pairs - 1) * 40 + p * 80 + (h ? 14 : -14); y = cy; }
-        else if (lined) { x = cx - (list.length - 1) * 18 + i * 36; y = cy; }
-        else { const a = i * 2.4 + c; x = cx + Math.cos(a) * rx * .45; y = cy + Math.sin(a) * ry * .45; }
-        chrom(el, rig, x, y, COL[p][h], r.replicated);
-      });
-    }
-    txt(rig, cx, cy + ry + 26, `${r.perCell} 條`, { 'font-size': 16, fill: '#5A6478' });
-  }
-  const d = el('defs', {}, rig), mk = el('marker', { id: 'cd-a', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, d);
-  el('path', { d: 'M0 0 L10 5 L0 10 z', fill: '#5A6478' }, mk);
-  txt(rig, 500, 120, `${TYPE[s.type]}・${r.stageName}`, { 'font-size': 20 });
+// 染色分體：一根兩端圓的棒子，中間略彎；(x, y) 是著絲點，rot 是方向（度），bend 是兩端往外彎多少
+function chromatid(el, g, x, y, h, w, bend, color, rot = 0) {
+  const q = el('g', { transform: `rotate(${rot} ${n1(x)} ${n1(y)})` }, g), d = `M${n1(x + bend)} ${n1(y - h / 2)}Q${n1(x - bend * .6)} ${n1(y)} ${n1(x + bend)} ${n1(y + h / 2)}`;
+  el('path', { d, fill: 'none', stroke: '#1E2638', 'stroke-width': w + 2.2, 'stroke-linecap': 'round', opacity: .55 }, q);
+  el('path', { d, fill: 'none', stroke: color[0], 'stroke-width': w, 'stroke-linecap': 'round' }, q);
+  el('path', { d: `M${n1(x + bend - w * .22)} ${n1(y - h / 2 + w * .2)}Q${n1(x - bend * .6 - w * .22)} ${n1(y)} ${n1(x + bend - w * .22)} ${n1(y + h / 2 - w * .2)}`, fill: 'none', stroke: color[1], 'stroke-width': w * .32, 'stroke-linecap': 'round', opacity: .9 }, q);
+  return q;
+}
+// 一條染色體：已複製畫成兩條姊妹染色分體在著絲點相連，未複製畫成一根
+function chromosome(el, g, x, y, color, replicated, h = 34, rot = 0) {
+  const w = h * .27;
+  if (replicated) { chromatid(el, g, x - w * .48, y, h, w, -w * .5, color, rot); chromatid(el, g, x + w * .48, y, h, w, w * .5, color, rot); el('circle', { cx: x, cy: y, r: w * .42, fill: '#1E2638', opacity: .7 }, g); }
+  else chromatid(el, g, x, y, h, w, w * .35, color, rot);
+}
+// 細胞：膜有一點不規則、細胞質有顆粒
+function cell(el, g, cx, cy, rx, ry, seed, waist = 0) {
+  let d = ''; const N = 48; for (let i = 0; i <= N; i++) { const a = i / N * 2 * Math.PI, wob = 1 + .018 * Math.sin(a * 5 + seed) + .012 * Math.sin(a * 9 + seed * 2), pinch = 1 - waist * Math.pow(Math.cos(a), 2) * 0 - waist * Math.pow(Math.sin(a), 8) * 0;
+    const xx = cx + rx * wob * Math.cos(a), yy = cy + ry * wob * Math.sin(a) * (1 - waist * Math.pow(Math.cos(a), 2)); d += `${i ? 'L' : 'M'}${n1(xx)} ${n1(yy)}`; void pinch; }
+  el('path', { d: d + 'Z', fill: '#000', opacity: .1, transform: 'translate(3 5)' }, g);
+  el('path', { d: d + 'Z', fill: 'url(#cd-cyto)', stroke: '#C9805E', 'stroke-width': 3 }, g);
+  let dots = ''; for (let i = 0; i < Math.round(rx * ry / 260); i++) { const a = rnd(seed, i) * 6.28, rr = Math.sqrt(rnd(i, seed + 1)) * .86; dots += `M${n1(cx + rx * rr * Math.cos(a))} ${n1(cy + ry * rr * Math.sin(a))}h.1`; }
+  el('path', { d: dots, stroke: '#E4AE96', 'stroke-width': 3, 'stroke-linecap': 'round', opacity: .55 }, g);
+}
+function nucleus(el, g, cx, cy, r, fading) {
+  el('circle', { cx, cy, r, fill: fading ? 'none' : 'url(#cd-nuc)', stroke: '#8E74B8', 'stroke-width': 2.5, 'stroke-dasharray': fading ? '6 7' : null, opacity: fading ? .7 : 1 }, g);
+  if (!fading) el('circle', { cx: cx + r * .3, cy: cy - r * .25, r: r * .16, fill: '#A58CC9', opacity: .6 }, g);
+}
+// 染色質：還沒濃縮的細絲（複製後是兩條並排）
+function chromatin(el, g, cx, cy, r, color, seed, doubled) {
+  const pts = []; let x = cx + (rnd(seed, 1) - .5) * r * .9, y = cy + (rnd(seed, 2) - .5) * r * .9, a = rnd(seed, 3) * 6.28;
+  for (let k = 0; k < 9; k++) { a += (rnd(seed, k + 4) - .5) * 2.2; x += Math.cos(a) * r * .2; y += Math.sin(a) * r * .2; const dd = Math.hypot(x - cx, y - cy); if (dd > r * .72) { x = cx + (x - cx) * r * .72 / dd; y = cy + (y - cy) * r * .72 / dd; a += Math.PI * .8; } pts.push([x, y]); }
+  for (const off of doubled ? [-1.3, 1.3] : [0]) { let d = `M${n1(pts[0][0] + off)} ${n1(pts[0][1])}`; for (let k = 1; k < pts.length - 1; k++) d += `Q${n1(pts[k][0] + off)} ${n1(pts[k][1] + off * .5)} ${n1((pts[k][0] + pts[k + 1][0]) / 2 + off)} ${n1((pts[k][1] + pts[k + 1][1]) / 2 + off * .5)}`;
+    el('path', { d, fill: 'none', stroke: color[0], 'stroke-width': 1.9, 'stroke-linecap': 'round', opacity: .8 }, g); }
+}
+function centrosome(el, g, x, y) {
+  let d = ''; for (let k = 0; k < 10; k++) { const a = k / 10 * 6.28; d += `M${x} ${y}l${n1(Math.cos(a) * 14)} ${n1(Math.sin(a) * 14)}`; }
+  el('path', { d, stroke: POLE, 'stroke-width': 1.2, opacity: .7 }, g); el('circle', { cx: x - 3, cy: y, r: 3.5, fill: POLE }, g); el('circle', { cx: x + 3, cy: y + 2, r: 3.5, fill: POLE }, g);
+}
+const spindle = (el, g, px, py, targets) => { let d = ''; for (const [x, y] of targets) d += `M${n1(px)} ${n1(py)}Q${n1((px + x) / 2)} ${n1((py + y) / 2 + (y - py) * .05)} ${n1(x)} ${n1(y)}`; el('path', { d, fill: 'none', stroke: '#9AA3B2', 'stroke-width': 1.2, opacity: .8 }, g); };
+
+function drawCell(el, rig, s, r, c, cx, cy, rx, ry) {
+  const pairs = s.n2 / 2, st = s.stage, me = s.type === 'meiosis', H = Math.min(38, ry * .36);
+  const list = []; for (let p = 0; p < pairs; p++) { if (me && st >= 3) list.push([p, me && st === 5 ? (c >> 1 + p) % 2 : (c + p) % 2]); else { list.push([p, 0]); list.push([p, 1]); } }
+  const col = ([p, h]) => COL[p][h] === COL[p][0] ? [COL[p][0], COL[p][1]] : [COL[p][1], '#FFFFFF'];
+  const anaphase = !me && st === 4;
+  cell(el, rig, cx, cy, anaphase ? rx * 1.08 : rx, ry, c * 3 + st, anaphase ? .22 : 0);
+  // 間期與分裂結束：有細胞核，染色體是細絲
+  if (st <= 1 || (me ? st === 5 : st === 5)) { const nr = Math.min(rx, ry) * .52; nucleus(el, rig, cx, cy, nr, false); list.forEach((k, i) => chromatin(el, rig, cx, cy, nr, col(k), i * 7 + c + st, r.replicated)); return; }
+  const poleY = [cy - ry * .78, cy + ry * .78], vertical = false; void vertical;
+  // 紡錘體的兩極在左右
+  const PL = [cx - rx * .78, cx + rx * .78];
+  if (st === 2 && !me) { nucleus(el, rig, cx, cy, Math.min(rx, ry) * .55, true); list.forEach((k, i) => { const a = i * 2.4 + .5; chromosome(el, rig, cx + Math.cos(a) * rx * .26, cy + Math.sin(a) * ry * .3, col(k), true, H, i * 35 - 30); });
+    centrosome(el, rig, PL[0] + rx * .15, cy - ry * .25); centrosome(el, rig, PL[1] - rx * .15, cy + ry * .25); return; }
+  centrosome(el, rig, PL[0], cy); centrosome(el, rig, PL[1], cy);
+  if (anaphase) { // 姊妹染色分體分開，往兩極
+    const h = Math.min(H * .78, ry * 1.5 / list.length / 1.5), pts = []; list.forEach((k, i) => { const y = cy - (list.length - 1) * h * .75 + i * h * 1.5; for (const sd of [-1, 1]) { const x = cx + sd * rx * .4; pts.push([x, y, sd]); chromatid(el, rig, x, y, h, h * .27, -sd * h * .3, col(k), 0); } });
+    spindle(el, rig, PL[0], cy, pts.filter(p => p[2] < 0)); spindle(el, rig, PL[1], cy, pts.filter(p => p[2] > 0)); return; }
+  if (me && st === 2) { // 同源染色體配對，排在赤道兩側
+    const h = Math.min(H * .85, ry * 1.4 / pairs / 1.6), pts = []; for (let p = 0; p < pairs; p++) { const y = cy - (pairs - 1) * h * .8 + p * h * 1.6; for (const [hh, sd] of [[0, -1], [1, 1]]) { const x = cx + sd * h * .36; chromosome(el, rig, x, y, col([p, hh]), true, h, 0); pts.push([x, y, sd]); } }
+    spindle(el, rig, PL[0], cy, pts.filter(p => p[2] < 0)); spindle(el, rig, PL[1], cy, pts.filter(p => p[2] > 0)); return; }
+  // 中期（有絲分裂中期、減數第一次分裂後、第二次分裂中期）：染色體排在赤道
+  const lined = (!me && st === 3) || (me && st === 4), pts = [];
+  const h = lined ? Math.min(H * .8, ry * 1.45 / list.length / 1.45) : H * .85; list.forEach((k, i) => { const y = lined ? cy - (list.length - 1) * h * .725 + i * h * 1.45 : cy + (i - (list.length - 1) / 2) * ry * .42 + (rnd(c, i) - .5) * 10, x = lined ? cx : cx + (i % 2 ? .22 : -.22) * rx + (rnd(i, c) - .5) * rx * .15; chromosome(el, rig, x, y, col(k), true, h, lined ? 0 : 20 + i * 40); pts.push([x - h * .2, y], [x + h * .2, y]); });
+  if (lined) { spindle(el, rig, PL[0], cy, pts.filter((p, i) => i % 2 === 0)); spindle(el, rig, PL[1], cy, pts.filter((p, i) => i % 2 === 1)); el('path', { d: `M${cx} ${cy - ry * .82}V${cy + ry * .82}`, stroke: '#C8372D', 'stroke-width': 1.2, 'stroke-dasharray': '4 5', opacity: .6 }, rig); }
+}
+
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  defs(el, rig);
+  const d = el('defs', {}, rig), mk = el('marker', { id: 'cd-a', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, d); el('path', { d: 'M0 0 L10 5 L0 10 z', fill: '#5A6478' }, mk);
+  txt(rig, 610, 118, `${TYPE[s.type]}・${r.stageName}`, { 'font-size': 20 });
+  // 細胞
+  const AX = 300, AW = 620, AY = 140, AH = 300, n = r.cells;
+  const slots = n === 1 ? [[AX + AW / 2, AY + AH / 2, 210, 130]] : n === 2 ? [[AX + AW * .27, AY + AH / 2, 148, 118], [AX + AW * .73, AY + AH / 2, 148, 118]] : [0, 1, 2, 3].map(i => [AX + AW * (i % 2 ? .73 : .27), AY + AH * (i < 2 ? .26 : .76), 132, 68]);
+  slots.forEach(([cx, cy, rx, ry], c) => { drawCell(el, rig, s, r, c, cx, cy, rx, ry); });
+  const lab = n === 4 ? `每個細胞 ${r.perCell} 條（共 4 個細胞）` : `每個細胞 ${r.perCell} 條${n > 1 ? `（共 ${n} 個細胞）` : ''}`;
+  el('rect', { x: AX + AW / 2 - 150, y: AY + AH + 12, width: 300, height: 30, rx: 15, fill: '#FFFDF2', opacity: .95 }, rig); txt(rig, AX + AW / 2, AY + AH + 32, lab, { 'font-size': 15 });
+  // 細胞週期轉盤：轉指針選階段
+  const CX = 165, CY = 290, R = 92, can = kind === 'observe' && (step === 'mitosis' || step === 'meiosis');
+  el('circle', { cx: CX + 3, cy: CY + 5, r: R + 8, fill: '#000', opacity: .14 }, rig);
+  el('circle', { cx: CX, cy: CY, r: R + 8, fill: '#FFF8EC', stroke: INK, 'stroke-width': 3 }, rig);
+  SHORT[s.type].forEach((t, i) => { const a0 = (ANG(i) - 30) * Math.PI / 180, a1 = (ANG(i) + 30) * Math.PI / 180, on = i === s.stage, inter = i < 2;
+    el('path', { d: `M${CX} ${CY}L${n1(CX + R * Math.sin(a0))} ${n1(CY - R * Math.cos(a0))}A${R} ${R} 0 0 1 ${n1(CX + R * Math.sin(a1))} ${n1(CY - R * Math.cos(a1))}Z`, fill: on ? (inter ? '#BFE3C8' : '#C7D8F2') : inter ? '#EAF6EC' : '#EEF3FB', stroke: '#FFF8EC', 'stroke-width': 3 }, rig);
+    const am = ANG(i) * Math.PI / 180; txt(rig, CX + R * .66 * Math.sin(am), CY - R * .66 * Math.cos(am) + 5, t, { 'font-size': 13, fill: on ? INK : '#5A6478' }); });
+  el('circle', { cx: CX, cy: CY, r: R * .3, fill: '#FFF8EC', stroke: INK, 'stroke-width': 2 }, rig);
+  txt(rig, CX, CY + 5, s.type === 'mitosis' ? '有絲' : '減數', { 'font-size': 13 });
+  const hand = el('g', { transform: `rotate(${ANG(s.stage)} ${CX} ${CY})` }, rig);
+  el('path', { d: `M${CX - 11} ${CY - R - 26}L${CX} ${CY - R - 6}L${CX + 11} ${CY - R - 26}Z`, fill: '#C8372D', stroke: INK, 'stroke-width': 2 }, hand);
+  el('path', { d: `M${CX} ${CY - R * .3}V${CY - R * .48}`, stroke: '#C8372D', 'stroke-width': 4, 'stroke-linecap': 'round' }, hand);
+  txt(rig, CX, CY + R + 34, '細胞週期轉盤', { 'font-size': 14, fill: '#5A6478' });
+  if (can) { const hit = el('circle', { cx: CX, cy: CY, r: R + 8, fill: 'transparent', 'data-drag': 'wheel' }, rig);
+    drag(hit, () => { let a = ANG(s.stage); return { move(p) { a = Math.atan2(p.x - CX, CY - p.y) * 180 / Math.PI; if (a < -30) a += 360; hand.setAttribute('transform', `rotate(${a} ${CX} ${CY})`); },
+      end() { const v = ((Math.round(a / 60) % 6) + 6) % 6; if (v !== s.stage) set({ stage: v }); else hand.setAttribute('transform', `rotate(${ANG(s.stage)} ${CX} ${CY})`); }, cancel() { hand.setAttribute('transform', `rotate(${ANG(s.stage)} ${CX} ${CY})`); } }; },
+      { label: '轉到下一個階段', tap: () => set({ stage: (s.stage + 1) % 6 }) }); }
   // DNA 相對量折線
-  const gx = 140, gy = 560, gw = 720;
-  el('rect', { x: gx - 20, y: gy - 84, width: gw + 40, height: 106, rx: 14, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 2 }, rig);
-  txt(rig, gx - 6, gy - 62, '每個細胞的 DNA 相對量', { 'text-anchor': 'start', 'font-size': 13, fill: '#5A6478' });
-  const pts = r.dnaSeries.map((v, i) => [gx + i * gw / 5, gy - 6 - v * 12]);
-  el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#2F6FB0', 'stroke-width': 3 }, rig);
-  pts.forEach(([x, y], i) => { el('circle', { cx: x, cy: y, r: i === s.stage ? 8 : 5, fill: i === s.stage ? '#C8372D' : '#2F6FB0' }, rig); txt(rig, x, gy + 14, SHORT[s.type][i], { 'font-size': 12, fill: '#5A6478' }); });
+  const gx = 150, gy = 584, gw = 740;
+  el('rect', { x: gx - 30, y: gy - 96, width: gw + 60, height: 120, rx: 14, fill: 'rgba(255,255,255,.95)', stroke: INK, 'stroke-width': 2.5 }, rig);
+  txt(rig, gx - 12, gy - 72, '每個細胞的 DNA 相對量', { 'text-anchor': 'start', 'font-size': 13, fill: '#5A6478' });
+  const pts = r.dnaSeries.map((v, i) => [gx + i * gw / 5, gy - 10 - v * 13]);
+  el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill: 'none', stroke: '#2F6FB0', 'stroke-width': 3, 'stroke-linejoin': 'round' }, rig);
+  pts.forEach(([x, y], i) => { el('circle', { cx: x, cy: y, r: i === s.stage ? 8 : 5, fill: i === s.stage ? '#C8372D' : '#2F6FB0', stroke: '#fff', 'stroke-width': 2 }, rig); txt(rig, x, gy + 16, SHORT[s.type][i], { 'font-size': 12, fill: '#5A6478' }); });
+  hint(165, 452, can ? '轉指針選階段' : '');
 }
 
 const tgt = (sig, label, type, stage, aim) => ({ sig, label, aim, set: { type, n2: 4, stage },
@@ -59,9 +125,9 @@ const stages = type => ({ key: 'stage', label: '階段', type: 'seg', cols: 3, o
 
 runDesk({
   key: 'bhcs.lab.cell-division.v1', title: '細胞分裂實驗桌', background: 'bg-chem-bench',
-  sceneLabel: '細胞分裂實驗桌：畫面顯示每個階段有幾個細胞、細胞裡的染色體（同一對染色體用同一組顏色），下方是每個細胞 DNA 相對量的變化',
+  sceneLabel: '細胞分裂實驗桌：左邊是細胞週期轉盤，轉指針選階段；右邊是這個階段的細胞，同一對同源染色體用同一個顏色的深淺兩色，分裂時看得到紡錘絲；下方是每個細胞 DNA 相對量的變化',
   initial: { type: 'mitosis', n2: 4, stage: 0 },
-  model, scene, viewBox: { desk: '60 90 880 500', phone: '60 90 880 500' }, phoneText: 1.4,
+  model, scene, viewBox: { desk: '50 90 900 520', phone: '50 90 900 520' }, phoneText: 1.4,
   readouts: (s, r) => [['細胞數', r.cells, '個'], ['每個細胞的染色體', r.perCell, '條', `母細胞 2n ＝ ${s.n2}`], ['DNA 相對量', r.dna, '', r.replicated ? '已複製' : '']],
   why: { title: '有絲分裂與減數分裂', button: '分裂怎麼看', html: `
     <p class="fn-tip"><b>有絲分裂：</b>體細胞分裂、生長和修補用。DNA 先複製，分裂一次，得到 2 個和母細胞一模一樣的子細胞，染色體數不變（2n → 2n）。</p>
