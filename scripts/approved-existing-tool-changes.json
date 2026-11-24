@@ -4376,6 +4376,48 @@
       "approved_blob": "5d129dc931f6e6897dda60dcc6de87744df14d53",
       "reason": "實驗桌說明加上早期站第一批與比熱旋鈕的紀錄",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/app.js",
+      "baseline_blob": "87a9ddff453d842ba23b73ff724f7b0fa659acca",
+      "approved_blob": "1d2860aa635d1e13a14574b1b51d983cd556926e",
+      "reason": "早期站收尾：斜面手機版依內容放大、電流熱效應與反應速率右上加說明按鈕",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/index.html",
+      "baseline_blob": "55e5a7153580633a52fdb5d4010ad0a1e075204b",
+      "approved_blob": "7dfbd87abf9bfa224b71c84f35a240bd50b1e1c2",
+      "reason": "早期站收尾：斜面手機版依內容放大、電流熱效應與反應速率右上加說明按鈕",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/incline/incline.js",
+      "baseline_blob": "b2beca4d85c7769b9758b7d0ced43bd4637c6bb9",
+      "approved_blob": "acabaef3f1e0125c6b10bbc641bd9217a6d6c59c",
+      "reason": "早期站收尾：斜面手機版依內容放大、電流熱效應與反應速率右上加說明按鈕",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/app.js",
+      "baseline_blob": "9aa606ee09cd8aed898efeddc4f19f60bac7490b",
+      "approved_blob": "cb1e7c14fbf2ca78899d2937c97dd586635fc764",
+      "reason": "早期站收尾：斜面手機版依內容放大、電流熱效應與反應速率右上加說明按鈕",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/index.html",
+      "baseline_blob": "6cbbad6202212608af6c7329cae1f2ea17b8f428",
+      "approved_blob": "d1a013854d1906e3bff62fb7fa35179da38227bb",
+      "reason": "早期站收尾：斜面手機版依內容放大、電流熱效應與反應速率右上加說明按鈕",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "5d129dc931f6e6897dda60dcc6de87744df14d53",
+      "approved_blob": "78dd5c23194b4743a4153256bc2538a3efdcd401",
+      "reason": "實驗桌說明加上早期站收尾（斜面手機版、說明按鈕）的紀錄",
+      "pull_request": null
     }
   ]
 }

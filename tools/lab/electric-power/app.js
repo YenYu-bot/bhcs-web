@@ -621,3 +621,5 @@ async function init() {
   });
   renderStage();
 }
+// 右上「怎麼算」：打開說明並捲過去
+document.getElementById('why-button')?.addEventListener('click', () => { const n = document.getElementById('model-note'); if (!n) return; n.open = true; n.scrollIntoView({ behavior: 'smooth', block: 'center' }); n.querySelector('summary')?.focus({ preventScroll: true }); });

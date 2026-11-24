@@ -619,3 +619,5 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && run
 window.addEventListener('pagehide', () => { if (running) pauseClock(); });
 window.addEventListener('pageshow', event => { if (event.persisted) render(); });
 render(true);
+// 右上「怎麼算」：打開說明並捲過去
+document.getElementById('why-button')?.addEventListener('click', () => { const n = document.getElementById('model-note'); if (!n) return; n.open = true; n.scrollIntoView({ behavior: 'smooth', block: 'center' }); n.querySelector('summary')?.focus({ preventScroll: true }); });

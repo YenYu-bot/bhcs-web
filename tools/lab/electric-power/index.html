@@ -31,6 +31,7 @@
       <li data-step="5"><span>6</span> 說發現</li>
     </ol>
   </nav>
+  <div class="lab-bar-actions"><button type="button" class="btn btn-ghost" id="why-button" aria-controls="model-note">電熱怎麼算</button></div>
 </header>
 
 <main class="stage">
@@ -172,7 +173,7 @@
       <p id="quiz-summary" aria-live="polite"></p>
       <button id="finish-open" class="btn btn-main" type="button" hidden>看成果</button>
     </section>
-    <details class="model-note">
+    <details class="model-note" id="model-note">
       <summary>模型與公平比較</summary>
       <p>電功率 P＝VI，累積電能 E＝Pt。水為 100 g，起始 25°C，比熱取 4.2 J／(g·°C)，也就是 1 卡／(g·°C)（1 卡 ≈ 4.2 J）。所以 420 J ≈ 100 卡，剛好讓 100 g 的水升高 1°C。模型假設電能全轉成水吸收的熱，沒有散熱，數值不是實測。</p>
       <p>升溫試驗每次換成相同質量與起始溫度的水。電表算例獨立於水槽。這是線上模擬，不用家用插座做實驗。</p>
