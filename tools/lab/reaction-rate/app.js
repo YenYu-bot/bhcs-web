@@ -55,7 +55,7 @@ for (const [size, sample] of Object.entries(SAMPLE)) {
 graph.before(graphLegend);
 
 const STEPS = [
-  ['先跑一次塊狀大理石', '按「開始反應」。看看大理石怎麼縮小，以及產出的氣體怎麼推動活塞。'],
+  ['先跑一次塊狀大理石', '點錐形瓶（或按「開始反應」）。看看大理石怎麼縮小，以及產出的氣體怎麼推動活塞。'],
   ['只換成顆粒大理石', '用和剛才一樣多的大理石，只改顆粒大小。塊狀的紀錄會留下來。'],
   ['在同一時間比一比', '看第 10 秒的縱線。同樣經過 10 秒，產氣較多的那組，這段時間的平均反應速率較快。'],
   ['再試試看粉末', '看看粉末一開始的變化，再讀第 10 秒的體積，和前兩組比一比。'],
@@ -602,6 +602,8 @@ if (graphControls) {
   }
 }
 buttonStart.addEventListener('click', startRun);
+// 直接操作：點錐形瓶開始反應，反應中再點一下暫停
+byId('flask-hit')?.addEventListener('click', () => { if (running) doPause(); else startRun(); });
 buttonPause.addEventListener('click', doPause);
 buttonMark.addEventListener('click', markGraph);
 buttonNext.addEventListener('click', event => {

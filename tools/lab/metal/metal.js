@@ -37,7 +37,7 @@ const SETUP = {
   acid: [['Zn', 'HCl'], ['Fe', 'HCl'], ['Cu', 'HCl']]
 };
 const TASK = {
-  cuso4: { title: '三種金屬片放進硫酸銅溶液', goal: '三杯都是藍色的硫酸銅溶液。按架上的金屬片（或下面的按鈕）把它放進溶液，看金屬表面和溶液顏色。三杯都做完後收下觀察。',
+  cuso4: { title: '三種金屬片放進硫酸銅溶液', goal: '三杯都是藍色的硫酸銅溶液。把架上的金屬片往下拖進溶液（或點金屬片、按下面的按鈕），看金屬表面和溶液顏色。三杯都做完後收下觀察。',
     intro: '鋅片、鐵片、銅片，放進藍色的硫酸銅。哪一片會有變化？',
     found: ['鋅片、鐵片表面析出紅棕色的銅，溶液的藍色變淡；銅片沒有變化。', '鋅 > 銅、鐵 > 銅　Zn + Cu²⁺ → Zn²⁺ + Cu'] },
   zinciron: { title: '鋅和鐵，誰比較活潑？', goal: '硫酸銅只能比出「鋅 > 銅、鐵 > 銅」。把鋅片放進硫酸亞鐵、鐵片放進硫酸鋅，直接比較鋅和鐵，兩杯都做完後收下。',
@@ -129,7 +129,14 @@ function drawCup(c, i, x) {
     el('rect', { class: 'tool-ring', x: sx - 10, y: sy - 10, width: SW + 20, height: SH + 20, rx: 12, fill: 'none', stroke: '#E0A21B', 'stroke-width': 4 }, sg);
   }
   el('rect', { x: sx - 30, y: sy - 4, width: SW + 60, height: SH + 10, fill: 'transparent' }, sg);
-  sg.addEventListener('click', () => dip(i));
+  // 往下拖金屬片放進溶液；點一下也可以
+  let dragged = false;
+  if (!c.p) { sg.style.touchAction = 'none'; sg.addEventListener('pointerdown', e => {
+    if (e.button > 0) return; const m = rig.ownerSVGElement.getScreenCTM(), sc = m ? m.d : 1, y0 = e.clientY; let dy = 0; dragged = false;
+    const mv = ev => { dy = Math.max(0, Math.min(down - sy, (ev.clientY - y0) / sc)); if (dy > 6) dragged = true; if (dragged) sg.setAttribute('transform', `translate(0 ${dy.toFixed(1)})`); };
+    const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (dragged) { if (dy > 40) dip(i); else sg.removeAttribute('transform'); } };
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); }); }
+  sg.addEventListener('click', () => { if (dragged) { dragged = false; return; } dip(i); });
   sg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dip(i); } });
   // 氣泡
   if (r.gas && k > 0) for (let q = 0; q < 8; q++) {

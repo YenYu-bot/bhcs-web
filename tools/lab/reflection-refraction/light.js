@@ -109,17 +109,26 @@ function drawBench() {
   const { scene, media } = L(), a = S.a, r = light(scene, media, a), [m1, m2] = MEDIA[media];
   // 介質
   if (scene === 'mirror') {
-    el('rect', { x: 260, y: O.y, width: 760, height: 22, fill: '#B9D8EE', stroke: '#3E6C9A', 'stroke-width': 3 }, rig);
-    for (let x = 270; x < 1010; x += 22) el('line', { x1: x, y1: O.y + 22, x2: x + 14, y2: O.y + 40, stroke: '#5A6478', 'stroke-width': 2 }, rig);
-    txt(rig, 330, O.y + 70, '平面鏡', { 'font-size': 18, 'font-weight': 900 });
+    // 鏡座（木頭）＋鏡面
+    el('rect', { x: 300, y: O.y + 22, width: 680, height: 70, rx: 12, fill: '#C9A06A', stroke: '#6B4A2C', 'stroke-width': 3 }, rig);
+    for (let y = O.y + 40; y < O.y + 90; y += 16) el('path', { d: `M310 ${y} Q500 ${y - 5} 700 ${y} T970 ${y}`, fill: 'none', stroke: '#A97E4A', 'stroke-width': 1.5, opacity: .7 }, rig);
+    el('rect', { x: 280, y: O.y, width: 720, height: 22, rx: 4, fill: '#DDEBF5', stroke: '#3E6C9A', 'stroke-width': 3 }, rig);
+    el('rect', { x: 290, y: O.y + 3, width: 700, height: 5, rx: 2, fill: '#fff', opacity: .9 }, rig);
+    txt(rig, 360, O.y + 66, '平面鏡', { 'font-size': 18, 'font-weight': 900, fill: '#4A3520' });
   } else {
     el('rect', { x: 260, y: 80, width: 760, height: O.y - 80, fill: FILL[m1] }, rig);
     el('rect', { x: 260, y: O.y, width: 760, height: 260, fill: FILL[m2] }, rig);
     el('line', { x1: 260, y1: O.y, x2: 1020, y2: O.y, stroke: '#3E6C9A', 'stroke-width': 3 }, rig);
     for (const [name, y] of [[m1, O.y - 22], [m2, O.y + 40]]) { el('rect', { x: 276, y: y - 22, width: 74, height: 32, rx: 10, fill: '#fff', stroke: '#23304A', 'stroke-width': 2 }, rig); txt(rig, 313, y, name, { 'font-size': 17, 'font-weight': 900 }); }
   }
+  // 量角器（從法線量起：0° 在法線、90° 貼著介面）
+  { const pg = el('g', { opacity: .55, 'pointer-events': 'none' }, rig), PR = 200, halves = scene === 'mirror' ? [-1] : [-1, 1];
+    for (const hs of halves) { el('path', { d: `M${O.x - PR} ${O.y}A${PR} ${PR} 0 0 ${hs < 0 ? 1 : 0} ${O.x + PR} ${O.y}`, fill: 'rgba(255,255,255,.35)', stroke: '#8792A6', 'stroke-width': 1.5 }, pg);
+      for (let d = -90; d <= 90; d += 5) { const t = d * RAD, len = d % 30 === 0 ? 14 : d % 10 === 0 ? 9 : 5, x1 = O.x + PR * Math.sin(t), y1 = O.y + hs * PR * Math.cos(t), x2 = O.x + (PR - len) * Math.sin(t), y2 = O.y + hs * (PR - len) * Math.cos(t);
+        el('line', { x1, y1, x2, y2, stroke: '#5A6478', 'stroke-width': d % 30 === 0 ? 2 : 1 }, pg);
+        if (d % 30 === 0 && d && Math.abs(d) < 90) txt(pg, O.x + (PR + 18) * Math.sin(t), O.y + hs * (PR + 18) * Math.cos(t) + 5, `${Math.abs(d)}°`, { 'font-size': 12, fill: '#5A6478' }); } } }
   // 法線
-  el('line', { x1: O.x, y1: 90, x2: O.x, y2: 575, stroke: '#23304A', 'stroke-width': 2, 'stroke-dasharray': '8 6' }, rig);
+  el('line', { x1: O.x, y1: 90, x2: O.x, y2: scene === 'mirror' ? O.y : 575, stroke: '#23304A', 'stroke-width': 2, 'stroke-dasharray': '8 6' }, rig);
   txt(rig, O.x + 34, 106, '法線', { 'font-size': 15, 'font-weight': 900 });
   // 光線
   const src = pt(a, R, 'in');

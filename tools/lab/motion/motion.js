@@ -13,7 +13,7 @@ const atEnd = derive(times.at(-1));
 const plus = n => n > 0 ? '＋'+n : n < 0 ? '−'+Math.abs(n) : '0';
 const range = ({a,b}) => `${a}～${b} 秒`;
 const STEPS = [
-  {id:'right',label:'往右',title:'讓小車往右走',goal:`點小車或按播放。觀察 ${range(right)} 的位置變化，再收下證據。`,intro:'點小車，我們看它怎麼離開起點。',found:[`小車往右走了 ${right.d} m，位置線往上。`,`${right.x1} m → ${right.x2} m，共 ${right.b-right.a} 秒`]},
+  {id:'right',label:'往右',title:'讓小車往右走',goal:`點小車播放，或直接拖著小車走。觀察 ${range(right)} 的位置變化，再收下證據。`,intro:'點小車，我們看它怎麼離開起點。',found:[`小車往右走了 ${right.d} m，位置線往上。`,`${right.x1} m → ${right.x2} m，共 ${right.b-right.a} 秒`]},
   {id:'rest',label:'停住',title:'時間在走，小車呢？',goal:`播放 ${range(rest)}。看車的位置和時間游標有什麼不同。`,intro:'時間還會繼續走，先盯著小車。',found:['車沒移動，位置圖變成水平線。',`過了 ${rest.b-rest.a} 秒，小車仍在 ${rest.x1} m。`]},
   {id:'left',label:'往左',title:'小車往左回來了',goal:`播放 ${range(left)}。看回程的線跟去程哪裡不一樣。`,intro:'再播放一次，看小車怎麼回到起點。',found:['回程的線往下，而且比去程平緩。',`同樣 ${left.d} m，去程 ${right.b-right.a} 秒，回程 ${left.b-left.a} 秒。`]},
   {id:'compare',label:'兩張圖',title:'同一秒，看兩張圖',goal:`按下 ${samples.join('、')} 秒，或拖游標到各段中間，比對位置與速度。`,intro:'兩張圖用的是同一個時間。先點一個秒數。',found:['速度的正負告訴我們方向，不是快慢。',segments.map(s=>`${plus(s.v)} m/s`).join('、')]},
@@ -113,8 +113,7 @@ function updateTime(t){
   $('#car-position').setAttribute('transform',`translate(${xCoord(p.positionM)} 0)`);
   const facing=t>left.a?-1:1;
   $('#car-shape').setAttribute('transform',`scale(${facing} 1)`);
-  const show=t>times[0] || S.step>0 || S.done.includes(0);
-  $('#graph-board').hidden=!show;
+  $('#graph-board').hidden=false;
   const seen=S.step>=3 ? times.at(-1) : Math.max(t,...segments.filter((_,i)=>S.done.includes(i)||S.reached[i]).map(s=>s.b),times[0]);
   graphs.forEach(g=>drawGraph(g,t,seen));
   $('#position-graph').setAttribute('aria-label',`位置時間圖：目前 ${$('#r-1').textContent} 秒，位置 ${$('#r-2').textContent} 公尺`);
@@ -277,13 +276,13 @@ function render(full=false){
   $('#scene-next').hidden=!done;
   $('#dock-calc').hidden=S.step!==4;$('#dock-quiz').hidden=S.step!==5;
   $('#speed-panel').hidden=S.step<3;$('#speed-reading').hidden=S.step<3;
-  $('#graph-hint').textContent=S.step<3?'紅色游標跟著小車一起走':'紅色游標連起同一秒；空心點是區間端點';
+  $('#graph-hint').textContent=S.step<3?'拖小車或在圖上左右拖，紅色游標跟著走':'在圖上左右拖紅色游標；空心點是區間端點';
   compareBtns.forEach((b,i)=>b.setAttribute('aria-pressed',String(S.visited.includes(i))));
   $('#save').disabled=!isReady||running||done;$('#save').textContent=done?'已收下這次觀察':'收下這次觀察';
   $('#save').classList.toggle('cue',isReady&&!running&&!done);
   $('#car').classList.toggle('cue',S.step<3&&!running&&!isReady);
   $('#play-label').textContent=running?'暫停':'播放小車';$('#car').setAttribute('aria-label',running?'暫停小車':'播放小車');
-  $('#stage-cue').textContent=running?'看小車，也看時間游標':S.step<3?(isReady?'看完這段，收下觀察':'點小車或按播放'):'拖游標，對照同一秒的兩張圖';
+  $('#stage-cue').textContent=running?'看小車，也看時間游標':S.step<3?(isReady?'看完這段，收下觀察':'點小車播放，或拖著小車走'):'拖游標，對照同一秒的兩張圖';
   $('#distance').readOnly=done&&S.step===4;$('#displacement').readOnly=done&&S.step===4;$('#check').disabled=done&&S.step===4;
   if(full){renderSteps($('#steps'),STEPS,step.id,new Set(S.done.map(i=>STEPS[i].id)),id=>goStep(STEPS.findIndex(s=>s.id===id)));
     renderEvidence();
@@ -294,7 +293,34 @@ function render(full=false){
 }
 
 $('#play').addEventListener('click',play);
-$('#car').addEventListener('click',play);
+// 直接操作：拖小車（往右、往左兩段車速固定，可由位置換算時間）、在圖上拖時間游標
+const svgX=(svg,ev)=>{const m=svg.getScreenCTM();if(!m)return 0;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(m.inverse()).x;};
+let carDragged=false;
+$('#car').style.touchAction='none';
+$('#car').addEventListener('pointerdown',e=>{
+  if(e.button>0)return;
+  const seg=S.step<segments.length?segments[S.step]:null, x0=e.clientX, y0=e.clientY; let moved=false, t=S.t; carDragged=false;
+  const mv=ev=>{
+    if(!moved&&Math.hypot(ev.clientX-x0,ev.clientY-y0)<6)return;
+    moved=true;carDragged=true;stop();
+    if(!seg||!seg.v)return;
+    const m=(svgX($('#scene'),ev)-115)/(770/6);
+    t=Math.max(seg.a,Math.min(seg.b,seg.a+(m-seg.x1)/seg.v));transientTime=t;updateTime(t);
+  };
+  const up=()=>{window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);if(moved){if(seg&&seg.v)seek(t);else{teacher.say('這一段小車停住了：在下面的圖上拖紅色游標，看時間怎麼走。',{pose:'think',tone:'oops'});}}};
+  window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+});
+$('#car').addEventListener('click',e=>{if(carDragged){carDragged=false;e.preventDefault();return;}play();});
+for(const id of ['#position-graph','#speed-graph']){
+  const g=$(id); g.style.touchAction='none'; g.style.cursor='ew-resize';
+  const at=ev=>{const {a,b}=viewBounds();return Math.max(a,Math.min(b,(svgX(g,ev)-42)/299*times.at(-1)));};
+  g.addEventListener('pointerdown',e=>{
+    if(e.button>0)return; stop(); let t=at(e); transientTime=t; updateTime(t);
+    const mv=ev=>{t=at(ev);transientTime=t;updateTime(t);};
+    const up=()=>{window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);seek(t);};
+    window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+  });
+}
 $('#car').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();if(!e.repeat)play();}});
 $('#prev-sec').addEventListener('click',()=>seek((transientTime??S.t)-1));
 $('#next-sec').addEventListener('click',()=>seek((transientTime??S.t)+1));

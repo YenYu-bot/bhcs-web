@@ -29,7 +29,7 @@ const START = {
   water: { T: 20, water: 100, solute: 50 }
 };
 const TASK = {
-  add: { title: '一匙一匙加進 100 g 的水', goal: '20°C、100 g 水。按湯匙（或「加一匙」）每次加 10 g 教學溶質 A，攪拌後看杯底。加到 50 g 時收下觀察。',
+  add: { title: '一匙一匙加進 100 g 的水', goal: '20°C、100 g 水。把湯匙拖到燒杯（或點湯匙、按「加一匙」）每次加 10 g 教學溶質 A，攪拌後看杯底。加到 50 g 時收下觀察。',
     intro: '每匙 10 g。加進去，看看什麼時候杯底開始留下固體！',
     found: ['20°C 時，100 g 水最多只能溶 30 g 的 A。', '加了 50 g → 溶解 30 g，杯底留下 20 g：飽和溶液'] },
   heat: { title: '加熱：杯底的固體會怎樣？', goal: '同一杯（水 100 g、A 50 g）。按電熱板旋鈕（或「升溫 10°C」）一次升高 10°C，加熱到 60°C 後收下觀察。',
@@ -38,7 +38,7 @@ const TASK = {
   cool: { title: '冷卻回 20°C', goal: '關小電熱板（或按「降溫 10°C」），讓同一杯冷卻回 20°C，看杯底，再收下觀察。',
     intro: '現在 60°C、A 全部溶解。冷卻下來會發生什麼事？',
     found: ['冷卻後，溶不下的 A 又析出到杯底。', '20°C 只能溶 30 g → 析出 20 g；水和 A 的總量都沒變'] },
-  water: { title: '加水：濃度一定變小嗎？', goal: '保持 20°C，按量杯（或「加 20 g 水」）。加到 120 g 時收下一次，再加到 200 g 收下一次，比一比濃度。',
+  water: { title: '加水：濃度一定變小嗎？', goal: '保持 20°C，把量杯拖到燒杯倒水（或點量杯、按「加 20 g 水」）。加到 120 g 時收下一次，再加到 200 g 收下一次，比一比濃度。',
     intro: '杯底還有固體。加一點水，濃度會變小嗎？',
     found: ['杯底還有固體時，加一點水，濃度不變；固體全溶後再加水，才會變稀。', '120 g 水：36 ÷（120 ＋ 36）＝ 23.1%；200 g 水：50 ÷ 250 ＝ 20%'] },
   calc: { title: '算一算：重量百分濃度', goal: '濃度 ＝ 已溶解的 A ÷ 溶液 × 100%。溶液 ＝ 水 ＋ 已溶解的 A，杯底的固體不算。',
@@ -140,8 +140,8 @@ function draw() {
   const t2 = el('tspan', { fill: '#5A6478' }, lab); t2.textContent = '　＋　';
   const t3 = el('tspan', { fill: '#6A45A8' }, lab); t3.textContent = `A 共 ${S.solute} g`;
   // 工具（直接操作）
-  if (S.step === 'add') tool('spoon', SPOON.x, SPOON.y, '加一匙 A（10 g）', S.solute < 50 && !S.saved, drawSpoon, '加一匙', addScoop);
-  if (S.step === 'water') tool('cup', CUP.x, CUP.y, '倒 20 g 水', S.water < 200, drawCup, '倒水', pourWater);
+  if (S.step === 'add') tool('spoon', SPOON.x, SPOON.y, '加一匙 A（10 g）', S.solute < 50 && !S.saved, drawSpoon, '拖到燒杯', addScoop);
+  if (S.step === 'water') tool('cup', CUP.x, CUP.y, '倒 20 g 水', S.water < 200, drawCup, '拖到燒杯倒水', pourWater);
   if (S.step === 'heat' || S.step === 'cool') {
     const up = S.step === 'heat', can = up ? S.T < 60 : S.T > 20;
     const kg = el('g', { class: 'tool knob', tabindex: 0, role: 'button', 'aria-label': up ? '電熱板旋鈕：升溫 10°C' : '電熱板旋鈕：降溫 10°C' }, rig);
@@ -163,7 +163,15 @@ function tool(kind, x, y, aria, cue, painter, label, run) {
   painter(tg, x, y);
   txt(tg, x, y + 84, label, { 'font-size': 16, 'font-weight': 900, fill: cue ? '#C8372D' : '#5A6478' });
   if (cue && !anim) tg.classList.add('cue');
-  bindTool(tg, run);
+  // 把湯匙或量杯拖到燒杯上倒進去；點一下也可以
+  let dragged = false; tg.style.touchAction = 'none';
+  tg.addEventListener('pointerdown', e => { if (e.button > 0) return; const m = rig.ownerSVGElement.getScreenCTM(); if (!m) return; const x0 = e.clientX, y0 = e.clientY; let dx = 0, dy = 0; dragged = false;
+    const mv = ev => { dx = (ev.clientX - x0) / m.a; dy = (ev.clientY - y0) / m.d; if (Math.hypot(dx, dy) > 6) dragged = true; if (dragged) tg.setAttribute('transform', `translate(${dx.toFixed(1)} ${dy.toFixed(1)})`); };
+    const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+      if (!dragged) return; const px = x + dx, py = y + dy; tg.removeAttribute('transform'); if (px > BK.x - 20 && px < BK.x + BK.w + 20 && py > BK.y - 60 && py < BK.y + BK.h) run(); };
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); });
+  tg.addEventListener('click', () => { if (dragged) { dragged = false; return; } run(); });
+  tg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); run(); } });
 }
 function bindTool(node, run) {
   node.addEventListener('click', run);

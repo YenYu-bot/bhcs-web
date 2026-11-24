@@ -37,7 +37,7 @@ export function meterKWh(watts, hours) {
 
 const order = Object.keys(trials);
 const stages = [
-  ['先跑一組加熱基準', '把開關閉合。看電熱線亮起後，溫度和累積電能怎麼變。', '注意開關打開時，電流與功率讀值都是 0。'],
+  ['先跑一組加熱基準', '點畫面上的開關（或下面的按鈕）把它閉合。看電熱線亮起後，溫度和累積電能怎麼變。', '注意開關打開時，電流與功率讀值都是 0。'],
   ['固定 6 V，只換電阻', '電熱線已從 6 Ω 換成 12 Ω。閉合開關，維持相同的 6 V 加熱 70 秒。', '公平比較：水量、初溫和通電時間都一樣。'],
   ['同功率，多通電一倍時間', '電熱線已換回 6 Ω。讓它加熱 140 秒，和基準的 70 秒比較。', '功率是每秒用多少電能；先看瓦數，再看累積焦耳。'],
   ['這次固定電流 1 A', '先跑 6 Ω，再換成 12 Ω，各加熱 70 秒。這次電源會調整電壓，讓電流維持 1 A。', '比較前先確認這次鎖住的是「電流」，不是「電壓」。'],
@@ -580,6 +580,11 @@ async function init() {
     focus('pause-button');
   });
   $('pause-button')?.addEventListener('click', () => openCircuit());
+  // 直接操作：點或往下壓畫面上的閘刀開關（往上拉則打開）
+  { const hit = $('switch-hit'); let y0 = null;
+    hit?.addEventListener('pointerdown', e => { y0 = e.clientY; });
+    hit?.addEventListener('pointerup', e => { if (y0 === null) return; const dy = e.clientY - y0; y0 = null;
+      if (dy > 8) closeCircuit(); else if (dy < -8) openCircuit(); else if (status === 'running') openCircuit(); else closeCircuit(); }); }
   $('rewind-button')?.addEventListener('click', rewind);
   $('next-button')?.addEventListener('click', advance);
   $('reset-button')?.addEventListener('click', () => {
