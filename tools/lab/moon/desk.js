@@ -2,52 +2,65 @@
 // 「日食／月食」只表示符合本頁簡化門檻的候選位置，不是預報。
 import { calculate } from '../../../scripts/science/models.mjs';
 import { runDesk } from '../shared/desk.mjs';
+import { skyDefs, sun, earth, moon, moonPhase } from '../shared/sky.mjs';
 
 const model = s => calculate('moon-eclipse', { phase: s.phase, node: s.node, inclination: 5 });
 const NAME = { 0: '新月（朔）', 45: '眉月', 90: '上弦月', 135: '盈凸月', 180: '滿月（望）', 225: '虧凸月', 270: '下弦月', 315: '殘月' };
 const KIND = { solar: '日食候選', lunar: '月食候選', none: '不會發生' };
 
-// 從北半球看到的月亮：盈（0°～180°）右邊亮，虧左邊亮
-function moonFace(el, g, cx, cy, R, phase) {
-  const p = phase * Math.PI / 180, lit = '#FFF3C4', dark = '#3B4256', waxing = phase > 0 && phase < 180;
-  el('circle', { cx, cy, r: R, fill: dark, stroke: '#23304A', 'stroke-width': 3 }, g);
-  if (phase === 0) return;
-  if (phase === 180) { el('circle', { cx, cy, r: R, fill: lit, stroke: '#23304A', 'stroke-width': 3 }, g); return; }
-  const sweep = waxing ? 1 : 0;
-  el('path', { d: `M${cx} ${cy - R} A${R} ${R} 0 0 ${sweep} ${cx} ${cy + R} Z`, fill: lit }, g);
-  const rx = Math.abs(Math.cos(p)) * R, gibbous = Math.cos(p) < 0;
-  el('ellipse', { cx, cy, rx, ry: R, fill: gibbous ? lit : dark }, g);
-  el('circle', { cx, cy, r: R, fill: 'none', stroke: '#23304A', 'stroke-width': 3 }, g);
-}
-
-function scene({ rig, el, txt, P, s, r, step }) {
-  // 俯視圖：太陽在左，地球在中，月球逆時針繞行
-  const ex = 360, ey = 320, R = 170, p = s.phase * Math.PI / 180, mx = ex - R * Math.cos(p), my = ey + R * Math.sin(p);
-  el('rect', { x: 60, y: 120, width: 600, height: 400, rx: 20, fill: 'rgba(20,28,48,.92)' }, rig);
-  el('image', { href: P + 'prop-sun.webp', x: 30, y: 270, width: 100, height: 99 }, rig);
-  for (let i = 0; i < 5; i++) el('line', { x1: 130, y1: 200 + i * 60, x2: 170, y2: 200 + i * 60, stroke: '#F4C04E', 'stroke-width': 3, 'marker-end': 'url(#mo-a)' }, rig);
-  const d = el('defs', {}, rig), mk = el('marker', { id: 'mo-a', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, d); el('path', { d: 'M0 0 L10 5 L0 10 z', fill: '#F4C04E' }, mk);
-  txt(rig, 80, 400, '陽光', { 'font-size': 15, fill: '#F4C04E' });
-  el('circle', { cx: ex, cy: ey, r: R, fill: 'none', stroke: '#8FA3C4', 'stroke-width': 2, 'stroke-dasharray': '6 6' }, rig);
-  el('image', { href: P + 'prop-earth-globe.webp', x: ex - 36, y: ey - 36, width: 72, height: 72 }, rig);
-  // 月球（朝太陽那半邊亮）
-  el('circle', { cx: mx, cy: my, r: 22, fill: '#3B4256', stroke: '#fff', 'stroke-width': 2 }, rig);
-  el('path', { d: `M${mx} ${my - 22} A22 22 0 0 0 ${mx} ${my + 22} Z`, fill: '#FFF3C4' }, rig);
-  txt(rig, mx, my + (Math.sin(p) >= 0 ? 46 : -32), NAME[s.phase] || `${s.phase}°`, { 'font-size': 14, fill: '#fff' });
-  txt(rig, 360, 150, '從北極上方往下看（逆時針繞地球）', { 'font-size': 14, fill: '#C9D4E6' });
-  // 右：地球上看到的月相，日月食
-  el('rect', { x: 690, y: 120, width: 250, height: 400, rx: 20, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  txt(rig, 815, 154, '在地球上看到', { 'font-size': 16 });
-  moonFace(el, rig, 815, 250, 70, s.phase);
-  txt(rig, 815, 352, NAME[s.phase] || '', { 'font-size': 20 });
-  txt(rig, 815, 382, `亮面 ${Math.round(r.lit * 100)}%`, { 'font-size': 16, fill: '#5A6478' });
-  if (step !== 'phase') {
-    // 側視：月球在黃道面上方或下方
-    el('line', { x1: 710, y1: 450, x2: 920, y2: 450, stroke: '#E0A21B', 'stroke-width': 2 }, rig);
-    txt(rig, 714, 440, '黃道面', { 'font-size': 12, fill: '#E0A21B', 'text-anchor': 'start' });
-    el('circle', { cx: 815, cy: 450 - r.latitude * 10, r: 9, fill: '#8FA3C4' }, rig);
-    txt(rig, 815, 498, `月球偏離 ${Math.abs(Math.round(r.latitude * 10) / 10)}°：${KIND[r.kind]}`, { 'font-size': 14, fill: r.kind === 'none' ? '#5A6478' : '#C8372D' });
+const INK = '#23304A', PH = { phase: [0, 45, 90, 135, 180, 225, 270, 315], eclipse: [0, 180] };
+const n1 = v => v.toFixed(1);
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+  skyDefs(el, rig);
+  const can = kind === 'observe', ex = 370, ey = 320, R = 168, pos = ph => { const p = ph * Math.PI / 180; return [ex - R * Math.cos(p), ey + R * Math.sin(p)]; };
+  // 太空背景與星星
+  el('rect', { x: 60, y: 112, width: 620, height: 416, rx: 20, fill: '#0F1730', stroke: INK, 'stroke-width': 3 }, rig);
+  let st = ''; for (let i = 0; i < 70; i++) { const x = 72 + ((i * 97) % 596), y = 124 + ((i * 53) % 392); st += `M${x} ${y}h.1`; }
+  el('path', { d: st, stroke: '#fff', 'stroke-width': 2, 'stroke-linecap': 'round', opacity: .5 }, rig);
+  // 太陽（左邊畫面外露一半）與陽光
+  const cp = el('clipPath', { id: 'mo-box' }, el('defs', {}, rig)); el('rect', { x: 60, y: 112, width: 620, height: 416, rx: 20 }, cp);
+  const box = el('g', { 'clip-path': 'url(#mo-box)' }, rig); sun(el, box, 46, ey, 70, { rays: true });
+  for (let i = 0; i < 5; i++) { const y = 196 + i * 62; el('path', { d: `M150 ${y}h44`, stroke: '#FFD866', 'stroke-width': 3, 'stroke-linecap': 'round', opacity: .8 }, rig); el('path', { d: `M194 ${y}l-9 -5v10z`, fill: '#FFD866', opacity: .8 }, rig); }
+  txt(rig, 110, 500, '陽光', { 'font-size': 14, fill: '#FFD866' });
+  // 月球軌道、交點線
+  el('circle', { cx: ex, cy: ey, r: R, fill: 'none', stroke: '#6E83A8', 'stroke-width': 2, 'stroke-dasharray': '6 7' }, rig);
+  if (step === 'eclipse') { const a = s.node * Math.PI / 180, L = R + 28, ng = el('g', {}, rig);
+    el('path', { d: `M${n1(ex - L * Math.cos(a))} ${n1(ey - L * Math.sin(a))}L${n1(ex + L * Math.cos(a))} ${n1(ey + L * Math.sin(a))}`, stroke: '#F29A4A', 'stroke-width': 3, 'stroke-dasharray': '10 6' }, ng);
+    for (const sd of [-1, 1]) el('circle', { cx: n1(ex + sd * R * Math.cos(a)), cy: n1(ey + sd * R * Math.sin(a)), r: 9, fill: '#F29A4A', stroke: '#fff', 'stroke-width': 2 }, ng);
+    el('circle', { cx: n1(ex + (R + 14) * Math.cos(a)), cy: n1(ey + (R + 14) * Math.sin(a)), r: 30, fill: 'transparent', 'data-drag': can ? 'node' : null }, ng);
+    txt(rig, n1(ex + (R + 34) * Math.cos(a) + (s.node ? 46 : 0)), n1(ey + (R + 34) * Math.sin(a) + (s.node ? 0 : 30)), '交點', { 'font-size': 13, fill: '#F29A4A' });
+    if (can) drag(ng, () => { let d = s.node; return { move(p) { d = ((Math.atan2(p.y - ey, p.x - ex) * 180 / Math.PI) % 180 + 180) % 180; ng.setAttribute('transform', `rotate(${d - s.node} ${ex} ${ey})`); },
+      end() { const v = Math.abs(d - 90) < 45 ? 90 : 0; if (v !== s.node) set({ node: v }); else ng.removeAttribute('transform'); }, cancel() { ng.removeAttribute('transform'); } }; },
+      { label: '轉動月球軌道的交點', tap: () => set({ node: s.node ? 0 : 90 }) }); }
+  // 地球：朝太陽那半邊是白天
+  earth(el, rig, ex, ey, 38, { sunAng: 180, seed: 3 });
+  // 其他可停的位置
+  const list = PH[step] || [s.phase];
+  for (const ph of list) if (ph !== s.phase) { const [x, y] = pos(ph); el('circle', { cx: x, cy: y, r: 7, fill: 'none', stroke: '#8FA3C4', 'stroke-width': 1.5 }, rig); }
+  // 月球（可以拖著繞地球走）
+  const [mx, my] = pos(s.phase), mg = el('g', { 'data-drag': can && PH[step] ? 'moon' : null }, rig), mm = el('g', {}, mg);
+  moon(el, mm, mx, my, 22, { sunAng: 180, seed: 7 }); el('circle', { cx: mx, cy: my, r: 34, fill: 'transparent' }, mg);
+  const ang = s.phase * Math.PI / 180, lab = txt(rig, n1(mx + 52 * Math.cos(ang)), n1(my - 52 * Math.sin(ang) + 5), NAME[s.phase] || '', { 'font-size': 14, fill: '#fff', 'pointer-events': 'none' });
+  txt(rig, ex, 140, '從北極上方往下看（月球逆時針繞地球）', { 'font-size': 14, fill: '#C9D4E6' });
+  if (can && PH[step]) drag(mg, () => { let ph = s.phase; return { move(p) { ph = (Math.atan2(p.y - ey, ex - p.x) * 180 / Math.PI + 360) % 360; const [x, y] = pos(ph); mm.setAttribute('transform', `translate(${n1(x - mx)} ${n1(y - my)})`); lab.setAttribute('opacity', 0); },
+    end() { const v = PH[step].reduce((m, x) => { const d = a => Math.min(Math.abs(a - ph), 360 - Math.abs(a - ph)); return d(x) < d(m) ? x : m; }); if (v !== s.phase) set({ phase: v }); else { mm.removeAttribute('transform'); lab.removeAttribute('opacity'); } }, cancel() { mm.removeAttribute('transform'); lab.removeAttribute('opacity'); } }; },
+    { label: '讓月球繼續繞地球走', tap: () => set({ phase: PH[step][(PH[step].indexOf(s.phase) + 1) % PH[step].length] }) });
+  // 右：在地球上看到的月亮
+  el('rect', { x: 700, y: 112, width: 250, height: 416, rx: 20, fill: 'rgba(255,255,255,.95)', stroke: INK, 'stroke-width': 3 }, rig);
+  txt(rig, 825, 146, '在地球上看到', { 'font-size': 16 });
+  el('circle', { cx: 825, cy: 240, r: 80, fill: '#1B2440' }, rig);
+  moonPhase(el, rig, 825, 240, 66, s.phase, 7);
+  txt(rig, 825, 350, NAME[s.phase] || '', { 'font-size': 20 });
+  txt(rig, 825, 380, `亮面 ${Math.round(r.lit * 100)}%`, { 'font-size': 16, fill: '#5A6478' });
+  if (step !== 'phase') { // 側視：月球在黃道面上方或下方
+    el('rect', { x: 716, y: 404, width: 218, height: 108, rx: 12, fill: '#0F1730' }, rig);
+    sun(el, rig, 736, 452, 12, { rays: false }); earth(el, rig, 812, 452, 11, { seed: 3 });
+    el('path', { d: 'M724 452H926', stroke: '#E0A21B', 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, rig);
+    txt(rig, 900, 444, '黃道面', { 'font-size': 10, fill: '#E0A21B' });
+    const lx = s.phase === 0 ? 778 : 862; moon(el, rig, lx, 452 - r.latitude * 8, 7, { seed: 7 });
+    txt(rig, 825, 500, `月球偏離 ${Math.abs(Math.round(r.latitude * 10) / 10)}°：${KIND[r.kind]}`, { 'font-size': 13, fill: r.kind === 'none' ? '#C9D4E6' : '#FF8A7A' });
   }
+  hint(370, 556, step === 'phase' ? '拖著月球繞地球走' : step === 'eclipse' ? '拖月球到新月或滿月；轉橘色的交點線' : '');
 }
 
 const tgt = (sig, label, set, aim) => ({ sig, label, aim, set,
@@ -56,9 +69,9 @@ const tgt = (sig, label, set, aim) => ({ sig, label, aim, set,
 
 runDesk({
   key: 'bhcs.lab.moon.v1', title: '月相與日月食實驗桌', background: 'bg-physics-bench',
-  sceneLabel: '月相與日月食實驗桌：左邊從北極上方俯視太陽、地球與繞行的月球；右邊是在地球上看到的月相，以及月球偏離黃道面的角度',
+  sceneLabel: '月相與日月食實驗桌：左邊從北極上方往下看，太陽在左、地球在中間，月球可以拖著繞地球走；右邊是在地球上看到的月亮；日月食那一步可以轉月球軌道的交點線，右下角是側視圖',
   initial: { phase: 90, node: 90 },
-  model, scene, viewBox: { desk: '20 110 930 420', phone: '20 110 930 420' }, phoneText: 1.4,
+  model, scene, viewBox: { desk: '50 100 910 480', phone: '50 100 910 480' }, phoneText: 1.4,
   readouts: (s, r) => [['月相', (NAME[s.phase] || '').replace(/（.*）/, ''), '', `相位角 ${s.phase}°`], ['亮面', Math.round(r.lit * 100), '%', '從地球看到'], ['日月食', KIND[r.kind], '', `偏離黃道 ${Math.abs(Math.round(r.latitude * 10) / 10)}°`]],
   why: { title: '月相與日月食', button: '月亮怎麼變', html: `
     <p class="fn-tip"><b>月亮本身不發光，</b>朝向太陽的那一半永遠是亮的。月相是我們從地球看到「亮的那半邊」有多少。</p>

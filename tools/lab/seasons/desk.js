@@ -1,6 +1,7 @@
 // 四季實驗桌：太陽直射緯度、正午太陽高度與白晝長度全部來自 scripts/science/models.mjs 的 calculate('seasons')。
 import { calculate } from '../../../scripts/science/models.mjs';
 import { runDesk } from '../shared/desk.mjs';
+import { skyDefs, sun, earth } from '../shared/sky.mjs';
 
 const model = s => calculate('seasons', { latitude: s.latitude, season: s.season, tilt: s.tilt });
 const SEASON = { 0: '春分', 90: '夏至', 180: '秋分', 270: '冬至' };
@@ -8,42 +9,89 @@ const LAT = { 0: '赤道', 24: '臺中（北緯 24°）', 70: '北緯 70°（北
 const f1 = x => String(Math.round(x * 10) / 10);
 const hrs = r => r.boundary ? '—' : f1(r.hours);
 
-function scene({ rig, el, txt, P, s, r }) {
-  // 左：公轉俯視，地軸方向固定
-  const cx = 250, cy = 330, R = 150;
-  el('ellipse', { cx, cy, rx: R, ry: R * .55, fill: 'none', stroke: '#8FA3C4', 'stroke-width': 2, 'stroke-dasharray': '6 6' }, rig);
-  el('image', { href: P + 'prop-sun.webp', x: cx - 40, y: cy - 40, width: 80, height: 80 }, rig);
-  // 地軸上端往右傾：地球在太陽左邊時北半球朝向太陽（夏至），右邊是冬至
-  const POS = { 90: [cx - R, cy], 270: [cx + R, cy], 0: [cx, cy + R * .55], 180: [cx, cy - R * .55] }, k = 30 * Math.tan(s.tilt * Math.PI / 180);
-  for (const [a, t] of [[0, '春分'], [90, '夏至'], [180, '秋分'], [270, '冬至']]) {
-    const [x, y] = POS[a], on = a === s.season;
-    el('circle', { cx: x, cy: y, r: on ? 24 : 14, fill: on ? '#2F6FB0' : '#9FB3CC', stroke: '#23304A', 'stroke-width': 2 }, rig);
-    el('line', { x1: x + k, y1: y - 30, x2: x - k, y2: y + 30, stroke: '#C8372D', 'stroke-width': 3 }, rig);
-    txt(rig, x, y + (a === 180 ? -38 : 50), t, { 'font-size': on ? 17 : 14, fill: on ? '#23304A' : '#5A6478' });
-  }
-  txt(rig, cx, 150, `地軸傾斜 ${s.tilt}°（紅線），方向固定不變`, { 'font-size': 14, fill: '#5A6478' });
+const INK = '#23304A', LATS = [0, 24, 70], n1 = v => v.toFixed(1), D = Math.PI / 180;
+function orbitView(el, txt, rig, s, can, set, drag) {
+  const cx = 260, cy = 330, R = 170, k = .5, POS = a => [cx - R * Math.cos(a * D + 0), cy + R * k * Math.sin(a * D)];
+  // 位置：夏至在左（北半球朝向太陽）、冬至在右、春分在前（下）、秋分在後（上）
+  const at = a => ({ 90: [cx - R, cy], 270: [cx + R, cy], 0: [cx, cy + R * k], 180: [cx, cy - R * k] })[a];
+  el('ellipse', { cx, cy, rx: R, ry: R * k, fill: 'none', stroke: '#8FA3C4', 'stroke-width': 2, 'stroke-dasharray': '6 7' }, rig);
+  sun(el, rig, cx, cy, 36);
+  for (const [a, t] of [[0, '春分'], [90, '夏至'], [180, '秋分'], [270, '冬至']]) { const [x, y] = at(a), on = a === s.season;
+    if (!on) { const g = el('g', { opacity: .55 }, rig); earth(el, g, x, y, 15, { sunAng: Math.atan2(y - cy, cx - x) / D, tilt: s.tilt, axis: true, seed: 3 }); }
+    txt(rig, x + (a === 90 ? -4 : a === 270 ? 4 : 0), y + (a === 180 ? -42 : 50), t, { 'font-size': on ? 17 : 14, fill: on ? INK : '#5A6478' }); }
+  const [ex, ey] = at(s.season), eg = el('g', { 'data-drag': can ? 'earth' : null }, rig), inner = el('g', {}, eg);
+  earth(el, inner, ex, ey, 28, { sunAng: Math.atan2(ey - cy, cx - ex) / D, tilt: s.tilt, axis: true, seed: 3 }); el('circle', { cx: ex, cy: ey, r: 44, fill: 'transparent' }, eg);
+  txt(rig, cx, 136, `地軸傾斜 ${s.tilt}°（紅線），方向固定不變`, { 'font-size': 14, fill: '#5A6478' });
+  if (can) drag(eg, () => { let ang = (450 - s.season) % 360; return { move(p) { ang = (Math.atan2((p.y - cy) / k, cx - p.x) / D + 360) % 360; const x = cx - R * Math.cos(ang * D), y = cy + R * k * Math.sin(ang * D); inner.setAttribute('transform', `translate(${n1(x - ex)} ${n1(y - ey)})`); },
+    end() { const sea = (450 - ang) % 360, v = [0, 90, 180, 270].reduce((m, x) => { const d = a => Math.min(Math.abs(a - sea), 360 - Math.abs(a - sea)); return d(x) < d(m) ? x : m; }); if (v !== s.season) set({ season: v }); else inner.removeAttribute('transform'); }, cancel() { inner.removeAttribute('transform'); } }; },
+    { label: '讓地球繞太陽走到下一個節氣', tap: () => set({ season: (s.season + 90) % 360 }) });
+  void POS;
+}
+// 側視的大地球：陽光從左邊來，北極往太陽傾 δ（太陽直射緯度）
+function globeView(el, txt, rig, s, r, step, can, set, drag) {
+  const cx = 300, cy = 340, R = 112, dec = r.declination;
+  for (let i = 0; i < 5; i++) { const y = cy - 120 + i * 60; el('path', { d: `M70 ${y}H${cx - R - 14}`, stroke: '#F2B53A', 'stroke-width': 2.5, opacity: .8 }, rig); el('path', { d: `M${cx - R - 14} ${y}l-10 -5v10z`, fill: '#F2B53A', opacity: .8 }, rig); }
+  sun(el, rig, 66, 172, 24, { rays: false }); txt(rig, 96, 498, '陽光', { 'font-size': 13, fill: '#C88A1E' });
+  const tilt = -dec, ax = [-Math.sin(dec * D), -Math.cos(dec * D)], eq = [-Math.cos(dec * D), Math.sin(dec * D)];
+  const ag = el('g', {}, rig); earth(el, ag, cx, cy, R, { sunAng: 180, tilt, axis: false, seed: 4 });
+  const axis = el('g', { 'data-drag': can && step === 'tilt' ? 'axis' : null }, rig), drawAxis = d => { axis.replaceChildren(); const a = [-Math.sin(d * D), -Math.cos(d * D)];
+    el('path', { d: `M${n1(cx - a[0] * R * 1.35)} ${n1(cy - a[1] * R * 1.35)}L${n1(cx + a[0] * R * 1.35)} ${n1(cy + a[1] * R * 1.35)}`, stroke: '#C8372D', 'stroke-width': 4, 'stroke-linecap': 'round' }, axis);
+    el('circle', { cx: n1(cx + a[0] * R * 1.35), cy: n1(cy + a[1] * R * 1.35), r: 8, fill: '#C8372D', stroke: '#fff', 'stroke-width': 2 }, axis);
+    el('circle', { cx: n1(cx + a[0] * R * 1.35), cy: n1(cy + a[1] * R * 1.35), r: 26, fill: 'transparent' }, axis); };
+  drawAxis(dec); txt(rig, n1(cx + ax[0] * R * 1.35 + 46), n1(cy + ax[1] * R * 1.35 + 4), `地軸 ${s.tilt}°`, { 'font-size': 13, fill: '#C8372D' });
+  // 緯線
+  const P = phi => [cx + R * (Math.cos(phi * D) * eq[0] + Math.sin(phi * D) * ax[0]), cy + R * (Math.cos(phi * D) * eq[1] + Math.sin(phi * D) * ax[1])];
+  for (const phi of [0, 23.5, -23.5, 66.5, 24, 70]) { const c = [cx + R * Math.sin(phi * D) * ax[0], cy + R * Math.sin(phi * D) * ax[1]], h = R * Math.cos(phi * D), major = phi === 0;
+    if (phi === 24 || phi === 70) continue;
+    el('path', { d: `M${n1(c[0] - eq[0] * h)} ${n1(c[1] - eq[1] * h)}L${n1(c[0] + eq[0] * h)} ${n1(c[1] + eq[1] * h)}`, stroke: major ? '#FFFFFF' : '#FFE08A', 'stroke-width': major ? 2 : 1.4, 'stroke-dasharray': major ? null : '5 5', opacity: .85 }, rig); }
+  txt(rig, n1(P(0)[0] + 10), n1(P(0)[1] + 18), '赤道', { 'font-size': 11, fill: '#fff' });
+  // 觀察者位置：在朝太陽那一側的地表，可以沿著地表拖
+  const pin = el('g', { 'data-drag': can && step === 'latitude' ? 'pin' : null }, rig), drawPin = phi => { pin.replaceChildren(); const [x, y] = P(phi), n = [(x - cx) / R, (y - cy) / R], t = [-n[1], n[0]];
+    el('path', { d: `M${n1(x - t[0] * 46)} ${n1(y - t[1] * 46)}L${n1(x + t[0] * 46)} ${n1(y + t[1] * 46)}`, stroke: '#2E8B3A', 'stroke-width': 3 }, pin);
+    el('path', { d: `M${n1(x)} ${n1(y)}l${n1(n[0] * 26)} ${n1(n[1] * 26)}`, stroke: INK, 'stroke-width': 3, 'stroke-linecap': 'round' }, pin);
+    el('circle', { cx: n1(x + n[0] * 30), cy: n1(y + n[1] * 30), r: 7, fill: '#F4C04E', stroke: INK, 'stroke-width': 2 }, pin);
+    el('circle', { cx: n1(x), cy: n1(y), r: 30, fill: 'transparent' }, pin); };
+  drawPin(s.latitude); const [px, py] = P(s.latitude);
+  txt(rig, n1(px - 64), n1(py - 14), s.latitude ? `北緯 ${s.latitude}°` : '赤道', { 'font-size': 14, fill: INK });
+  if (can && step === 'latitude') drag(pin, () => { let phi = s.latitude; return { move(p) { const v = [(p.x - cx), (p.y - cy)]; phi = Math.atan2(v[0] * ax[0] + v[1] * ax[1], v[0] * eq[0] + v[1] * eq[1]) / D; phi = Math.max(-10, Math.min(85, phi)); drawPin(phi); },
+    end() { const v = LATS.reduce((m, x) => Math.abs(x - phi) < Math.abs(m - phi) ? x : m); if (v !== s.latitude) set({ latitude: v }); else drawPin(s.latitude); }, cancel() { drawPin(s.latitude); } }; },
+    { label: '換到下一個地點', tap: () => set({ latitude: LATS[(LATS.indexOf(s.latitude) + 1) % 3] }) });
+  if (can && step === 'tilt') drag(axis, () => { let d = dec; return { move(p) { d = Math.max(-5, Math.min(35, -Math.atan2(p.x - cx, cy - p.y) / D)); drawAxis(d); },
+    end() { const v = d > 11.75 ? 23.5 : 0; if (v !== s.tilt) set({ tilt: v }); else drawAxis(dec); }, cancel() { drawAxis(dec); } }; },
+    { label: s.tilt ? '把地軸扶正' : '把地軸傾斜 23.5°', tap: () => set({ tilt: s.tilt ? 0 : 23.5 }) });
+  txt(rig, cx, 136, `${SEASON[s.season]}・側面看地球（陽光從左邊來）`, { 'font-size': 14, fill: '#5A6478' });
+}
+
+function scene({ rig, el, txt, P, s, r, step, set, drag, hint, kind }) {
+  skyDefs(el, rig);
+  const can = kind === 'observe';
+  if (step === 'taiwan' || step === 'calc' || step === 'quiz') orbitView(el, txt, rig, s, can && step === 'taiwan', set, drag); else globeView(el, txt, rig, s, r, step, can, set, drag);
   // 右：正午太陽高度
-  const gx = 560, gy = 470, L = 160, alt = Math.max(-10, r.altitude), a = alt * Math.PI / 180;
-  el('rect', { x: 470, y: 150, width: 470, height: 380, rx: 18, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 3 }, rig);
-  txt(rig, 705, 184, `${LAT[s.latitude] || s.latitude + '°'}・${SEASON[s.season]}正午`, { 'font-size': 17 });
-  el('line', { x1: 490, y1: gy, x2: 920, y2: gy, stroke: '#2E6B3A', 'stroke-width': 4 }, rig);
-  txt(rig, 900, gy - 8, '地平線', { 'font-size': 13, fill: '#2E6B3A' });
-  el('image', { href: P + 'prop-kid-observer.webp', x: gx + 120, y: gy - 100, width: 40, height: 100 }, rig);
-  const ox = gx + 140, oy = gy - 50, sx = ox - L * Math.cos(a) * 1.15, sy = oy - L * Math.sin(a) * 1.15;
-  if (alt > 0) {
-    el('line', { x1: sx, y1: sy, x2: ox, y2: oy, stroke: '#E0A21B', 'stroke-width': 3, 'stroke-dasharray': '8 6' }, rig);
-    el('image', { href: P + 'prop-sun.webp', x: sx - 26, y: sy - 26, width: 52, height: 52 }, rig);
-    el('path', { d: `M${ox - 60} ${oy} A60 60 0 0 1 ${ox - 60 * Math.cos(a)} ${oy - 60 * Math.sin(a)}`, fill: 'none', stroke: '#C8372D', 'stroke-width': 3 }, rig);
-    txt(rig, ox - 90, oy - 14, `${f1(r.altitude)}°`, { 'font-size': 18, fill: '#C8372D' });
-    // 影子：太陽越低影子越長
-    const shadow = Math.min(240, 50 / Math.tan(a));
-    el('rect', { x: gx + 160, y: gy - 6, width: shadow, height: 8, rx: 4, fill: 'rgba(35,48,74,.45)' }, rig);
-  } else txt(rig, ox - 120, oy - 60, '正午太陽在地平線下', { 'font-size': 16, fill: '#5A6478' });
-  // 晝夜長度條
+  const X0 = 500, gy = 456, alt = Math.max(-10, r.altitude), a = alt * D;
+  el('rect', { x: X0 - 20, y: 150, width: 480, height: 400, rx: 18, fill: 'rgba(255,255,255,.95)', stroke: INK, 'stroke-width': 3 }, rig);
+  const cp = el('clipPath', { id: 'se-sky' }, el('defs', {}, rig)); el('rect', { x: X0 - 8, y: 196, width: 456, height: gy - 196 + 46, rx: 10 }, cp);
+  const sk = el('g', { 'clip-path': 'url(#se-sky)' }, rig), lg = el('linearGradient', { id: 'se-g', x1: 0, y1: 0, x2: 0, y2: 1 }, el('defs', {}, rig));
+  el('stop', { offset: 0, 'stop-color': alt > 0 ? '#8FC6EE' : '#2B3A62' }, lg); el('stop', { offset: 1, 'stop-color': alt > 0 ? '#E3F2FB' : '#5B6C93' }, lg);
+  el('rect', { x: X0 - 8, y: 196, width: 456, height: gy - 196, fill: 'url(#se-g)' }, sk);
+  el('path', { d: `M${X0 - 8} ${gy}H${X0 + 448}V${gy + 46}H${X0 - 8}Z`, fill: '#86B86A' }, sk);
+  el('path', { d: `M${X0 - 8} ${gy}H${X0 + 448}`, stroke: '#4F8A3E', 'stroke-width': 3 }, sk);
+  txt(rig, X0 + 220, 182, `${LAT[s.latitude] || s.latitude + '°'}・${SEASON[s.season]}正午`, { 'font-size': 17 });
+  const ox = X0 + 300, kidH = 92, sx = ox - 230 * Math.cos(a), sy = gy - kidH * .55 - 230 * Math.sin(a);
+  if (alt > 0) { const shadow = Math.min(260, kidH / Math.tan(a));
+    el('path', { d: `M${ox} ${gy}h${n1(shadow)}l-6 6h${n1(-shadow)}z`, fill: 'rgba(35,48,74,.38)' }, sk);
+    el('path', { d: `M${n1(sx)} ${n1(sy)}L${ox} ${gy - kidH * .55}`, stroke: '#E0A21B', 'stroke-width': 3, 'stroke-dasharray': '8 6' }, sk);
+    sun(el, sk, sx, sy, 22);
+    el('path', { d: `M${ox - 64} ${gy}A64 64 0 0 1 ${n1(ox - 64 * Math.cos(a))} ${n1(gy - 64 * Math.sin(a))}`, fill: 'none', stroke: '#C8372D', 'stroke-width': 3 }, sk);
+    txt(rig, ox - 96, gy - 16, `${f1(r.altitude)}°`, { 'font-size': 19, fill: '#C8372D' });
+    txt(rig, ox + Math.min(260, kidH / Math.tan(a)) / 2, gy + 30, '影子', { 'font-size': 12, fill: '#2F4A2A' });
+  } else txt(rig, X0 + 180, gy - 120, '正午太陽在地平線下（極夜）', { 'font-size': 16, fill: '#fff' });
+  el('image', { href: P + 'prop-kid-observer.webp', x: ox - 18, y: gy - kidH, width: 37, height: kidH }, rig);
+  // 晝夜長度
   const day = r.boundary ? 12 : r.hours;
-  el('rect', { x: 500, y: 492, width: 400, height: 22, rx: 11, fill: '#3B4256' }, rig);
-  el('rect', { x: 500, y: 492, width: 400 * day / 24, height: 22, rx: 11, fill: '#F4C04E' }, rig);
-  txt(rig, 500, 486, `白天 ${hrs(r)} 小時・晚上 ${r.boundary ? '—' : f1(24 - r.hours)} 小時`, { 'font-size': 14, 'text-anchor': 'start' });
+  txt(rig, X0, 526, `白天 ${hrs(r)} 小時・晚上 ${r.boundary ? '—' : f1(24 - r.hours)} 小時`, { 'font-size': 14, 'text-anchor': 'start' });
+  el('rect', { x: X0 + 230, y: 512, width: 210, height: 20, rx: 10, fill: '#3B4256' }, rig);
+  if (day) el('rect', { x: X0 + 230, y: 512, width: 210 * day / 24, height: 20, rx: 10, fill: '#F4C04E' }, rig);
+  hint(290, 584, step === 'taiwan' ? '拖著地球繞太陽走' : step === 'latitude' ? '沿著地表拖觀察者' : step === 'tilt' ? '拖地軸的紅點，把地軸扶正或斜回去' : '');
 }
 
 const tgt = (sig, label, set, aim) => ({ sig, label, aim, set,
@@ -53,9 +101,9 @@ const BASE = { latitude: 24, season: 90, tilt: 23.5 };
 
 runDesk({
   key: 'bhcs.lab.seasons.v1', title: '四季實驗桌', background: 'bg-physics-bench',
-  sceneLabel: '四季實驗桌：左邊是地球繞太陽公轉的俯視圖，地軸方向固定；右邊是所選地點正午的太陽高度角、影子長短與白天的時數',
+  sceneLabel: '四季實驗桌：左邊在臺灣四季那一步是地球繞太陽的公轉軌道，可以拖著地球走；其他步驟是側面看的大地球，可以沿地表拖觀察者、拖地軸；右邊是正午太陽高度、影子和白天長度',
   initial: { ...BASE },
-  model, scene, viewBox: { desk: '60 120 890 420', phone: '60 120 890 420' }, phoneText: 1.4,
+  model, scene, viewBox: { desk: '20 110 950 500', phone: '20 110 950 500' }, phoneText: 1.4,
   readouts: (s, r) => [['正午太陽高度', f1(r.altitude), '°', LAT[s.latitude] || `${s.latitude}°`], ['白天長度', hrs(r), '小時', SEASON[s.season]], ['太陽直射', f1(Math.abs(r.declination)), '°', r.declination > 0 ? '北緯' : r.declination < 0 ? '南緯' : '赤道']],
   why: { title: '四季是怎麼來的', button: '四季從哪來', html: `
     <p class="fn-tip"><b>四季不是因為地球離太陽遠近，</b>而是地軸傾斜約 23.5°，而且方向固定不變。地球繞太陽公轉時，太陽直射的緯度在南、北回歸線之間來回移動。</p>

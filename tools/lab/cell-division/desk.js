@@ -104,7 +104,7 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
   const hand = el('g', { transform: `rotate(${ANG(s.stage)} ${CX} ${CY})` }, rig);
   el('path', { d: `M${CX - 11} ${CY - R - 26}L${CX} ${CY - R - 6}L${CX + 11} ${CY - R - 26}Z`, fill: '#C8372D', stroke: INK, 'stroke-width': 2 }, hand);
   el('path', { d: `M${CX} ${CY - R * .3}V${CY - R * .48}`, stroke: '#C8372D', 'stroke-width': 4, 'stroke-linecap': 'round' }, hand);
-  txt(rig, CX, CY + R + 34, '細胞週期轉盤', { 'font-size': 14, fill: '#5A6478' });
+  txt(rig, CX, CY - R - 40, '細胞週期轉盤', { 'font-size': 14, fill: '#5A6478' });
   if (can) { const hit = el('circle', { cx: CX, cy: CY, r: R + 8, fill: 'transparent', 'data-drag': 'wheel' }, rig);
     drag(hit, () => { let a = ANG(s.stage); return { move(p) { a = Math.atan2(p.x - CX, CY - p.y) * 180 / Math.PI; if (a < -30) a += 360; hand.setAttribute('transform', `rotate(${a} ${CX} ${CY})`); },
       end() { const v = ((Math.round(a / 60) % 6) + 6) % 6; if (v !== s.stage) set({ stage: v }); else hand.setAttribute('transform', `rotate(${ANG(s.stage)} ${CX} ${CY})`); }, cancel() { hand.setAttribute('transform', `rotate(${ANG(s.stage)} ${CX} ${CY})`); } }; },

@@ -60,7 +60,7 @@ function gestures(t){
  const p=t.p;let cdp=null;
  const toScreen=(x,y)=>p.evaluate(([x,y])=>{const m=document.querySelector('#scene').getScreenCTM();return [m.a*x+m.c*y+m.e,m.b*x+m.d*y+m.f];},[x,y]);
  const toSvg=(x,y)=>p.evaluate(([x,y])=>{const s=document.querySelector('#scene'),q=s.createSVGPoint();q.x=x;q.y=y;const r=q.matrixTransform(s.getScreenCTM().inverse());return [r.x,r.y];},[x,y]);
- const center=async sel=>{const b=await p.locator(`#rig ${sel}`).first().boundingBox();assert.ok(b,`scene element ${sel}`);return [b.x+b.width/2,b.y+b.height/2];};
+ const center=async sel=>{const l=p.locator(`#rig ${sel}`).first();await l.scrollIntoViewIfNeeded();await p.locator('#scene').evaluate(e=>{const r=e.getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)e.scrollIntoView({block:'center'});});await t.wait(80);const b=await l.boundingBox();assert.ok(b,`scene element ${sel}`);return [b.x+b.width/2,b.y+b.height/2];};
  const path=async pts=>{
   if(t.mobile){cdp=cdp||await p.context().newCDPSession(p);
    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:pts[0][0],y:pts[0][1]}]});
@@ -153,6 +153,30 @@ const HANDS={
  enzyme:async h=>{
   await h.step(0);await h.dragTo('[data-drag=tube]',410,300);await h.is('temp',60,'move tube to 60 °C bath');
   await h.step(2);await h.dragTo('[data-drag=bottle-2]',285,330);await h.is('ph',2,'pour pH 2 buffer');
+ },
+ moon:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=moon]',538,320);await h.is('phase',180,'drag moon to full moon');
+  await h.step(1);await h.tap('[data-drag=node]');await h.is('node',90,'tap node line');
+ },
+ seasons:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=earth]',430,330);await h.is('season',270,'drag earth to winter solstice');
+  await h.step(1);await h.dragTo('[data-drag=pin]',223,259);await h.is('latitude',70,'drag observer to 70N');
+  await h.step(2);await h.dragTo('[data-drag=axis]',260,248);await h.is('tilt',23.5,'tilt the axis');
+ },
+ tides:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=hour]',758,408);await h.is('hour',12,'drag along tide curve');
+  await h.step(1);await h.dragTo('[data-drag=moon]',792,298);await h.is('day',7.5,'drag moon to first quarter');
+ },
+ weather:async h=>{
+  await h.step(0);await h.dragTo('[data-drag=needle]',640,414);await h.is('system','high','turn barometer needle');await h.tap('[data-drag=needle]');await h.is('system','low','tap barometer');
+  await h.step(1);await h.dragBy('[data-drag=pin]',0,-50);await h.is('hemi','north','drag pin to north');
+  await h.step(2);await h.dragTo('[data-drag=tug]',585,513);await h.is('front','warm','drag tug knob');
+  await h.step(3);await h.dragBy('[data-drag=front]',420,0);await h.is('phase','after','push cold front past station');
+ },
+ earthquake:async h=>{
+  await h.step(0);await h.dragBy('[data-drag=plate]',-60,0);await h.is('boundary','convergent','push plates together');await h.dragBy('[data-drag=plate]',0,60);await h.is('boundary','transform','slide plates');
+  await h.step(1);await h.dragTo('[data-drag=station]',608,150);await h.is('dist',120,'drag station farther');
+  await h.step(2);await h.tap('[data-drag=st-1]');await h.is('stations',2,'switch on second station');await h.tap('[data-drag=st-2]');await h.is('stations',3,'switch on third station');
  },
  balance:async h=>{
   await h.step(0);await h.dragTo('[data-drag=jar-a]',220,300);await h.is('a',2,'drag molecule in');
