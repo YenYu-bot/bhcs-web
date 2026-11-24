@@ -40,7 +40,7 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
   // 月球（可以拖著繞地球走）
   const [mx, my] = pos(s.phase), mg = el('g', { 'data-drag': can && PH[step] ? 'moon' : null }, rig), mm = el('g', {}, mg);
   moon(el, mm, mx, my, 22, { sunAng: 180, seed: 7 }); el('circle', { cx: mx, cy: my, r: 34, fill: 'transparent' }, mg);
-  const ang = s.phase * Math.PI / 180, lab = txt(rig, n1(mx + 52 * Math.cos(ang)), n1(my - 52 * Math.sin(ang) + 5), NAME[s.phase] || '', { 'font-size': 14, fill: '#fff' });
+  const ang = s.phase * Math.PI / 180, lab = txt(rig, n1(mx + 52 * Math.cos(ang)), n1(my - 52 * Math.sin(ang) + 5), NAME[s.phase] || '', { 'font-size': 14, fill: '#fff', 'pointer-events': 'none' });
   txt(rig, ex, 140, '從北極上方往下看（月球逆時針繞地球）', { 'font-size': 14, fill: '#C9D4E6' });
   if (can && PH[step]) drag(mg, () => { let ph = s.phase; return { move(p) { ph = (Math.atan2(p.y - ey, ex - p.x) * 180 / Math.PI + 360) % 360; const [x, y] = pos(ph); mm.setAttribute('transform', `translate(${n1(x - mx)} ${n1(y - my)})`); lab.setAttribute('opacity', 0); },
     end() { const v = PH[step].reduce((m, x) => { const d = a => Math.min(Math.abs(a - ph), 360 - Math.abs(a - ph)); return d(x) < d(m) ? x : m; }); if (v !== s.phase) set({ phase: v }); else { mm.removeAttribute('transform'); lab.removeAttribute('opacity'); } }, cancel() { mm.removeAttribute('transform'); lab.removeAttribute('opacity'); } }; },

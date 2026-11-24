@@ -4187,6 +4187,13 @@
       "approved_blob": "6137ff1dd8f149a4b5a0c16950740f7657b95736",
       "reason": "拖曳放開時先用放開的位置更新一次，避免最後幾個移動事件被合併時對到錯的位置",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/moon/desk.js",
+      "baseline_blob": "60960b5aa5c7c817cf05c408f26f88bd1ae39afa",
+      "approved_blob": "b5158a2841565a22823fdacb64306a76aa67e646",
+      "reason": "月相：月球旁的名稱文字不接收點擊，避免手機字放大時蓋住月球",
+      "pull_request": null
     }
   ]
 }
