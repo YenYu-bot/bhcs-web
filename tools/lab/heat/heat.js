@@ -27,7 +27,7 @@ const STEPS = [
 const NEXT = { water: 'iron', iron: 'calc', calc: 'mass', mass: 'quiz' };
 const HEAT = { water: 'water100', iron: 'iron100', mass: 'iron200' };
 const TASK = {
-  water: { title: '加熱 100 g 的水 60 秒', goal: '按電熱板的旋鈕（或「開始加熱」）。看溫度計和溫度–時間圖，加熱滿 60 秒後按「收下這次觀察」。',
+  water: { title: '加熱 100 g 的水 60 秒', goal: '順時針轉電熱板的旋鈕（或點一下、按「開始加熱」）。看溫度計和溫度–時間圖，加熱滿 60 秒後按「收下這次觀察」。',
     intro: '燒杯裡有 100 g 的水，20°C。轉開電熱板，看溫度怎麼變！',
     found: ['水加熱 60 秒，只升高 3°C。', '20.0°C → 23.0°C，吸收 300 卡'] },
   iron: { title: '換成 100 g 的鐵，一樣加熱 60 秒', goal: '同一個電熱板、同樣 60 秒，鐵塊也吸收 300 卡。加熱完收下，和水比一比。',
@@ -152,7 +152,16 @@ function draw() {
     el('circle', { cx: KNOB.x, cy: KNOB.y, r: KNOB.r + 18, fill: 'transparent' }, kg);
     if (!running && S.t < DURATION && !S.saved) { kg.classList.add('cue'); txt(rig, KNOB.x - 86, KNOB.y + 6, '轉開加熱', { 'font-size': 17, 'font-weight': 900, fill: '#C8372D' }); }
     if (running) txt(rig, KNOB.x + 84, KNOB.y + 6, '加熱中…', { 'font-size': 16, 'font-weight': 900, fill: '#C8372D' });
-    kg.addEventListener('click', toggleHeat);
+    // 順時針轉旋鈕開始加熱、逆時針轉暫停；點一下也可以
+    kg.style.touchAction = 'none';
+    kg.addEventListener('pointerdown', e => { if (e.button > 0) return; const m = rig.ownerSVGElement.getScreenCTM(); if (!m) return; knobTurned = false;
+      const ang = ev => { const p = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(m.inverse()); return Math.atan2(p.x - KNOB.x, KNOB.y - p.y) * 180 / Math.PI; };
+      let a0 = ang(e), sum = 0;
+      const mv = ev => { const a = ang(ev); let d = a - a0; if (d > 180) d -= 360; if (d < -180) d += 360; sum += d; a0 = a;
+        if (!knobTurned && Math.abs(sum) > 25) { knobTurned = true; if ((sum > 0) !== running) toggleHeat(); } };
+      const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); };
+      window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); });
+    kg.addEventListener('click', () => { if (knobTurned) { knobTurned = false; return; } toggleHeat(); });
     kg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleHeat(); } });
     if (hadFocus) kg.focus({ preventScroll: true });
   }
@@ -179,6 +188,7 @@ function drawGraph() {
 }
 
 /* ---------- 加熱 ---------- */
+let knobTurned = false;
 function blocked() {
   if (!isHeat()) oops('這一步不用加熱，看任務卡要做的事。');
   else if (S.saved) oops('這一份已經收下了。想再做一次，按「重來這一步」。');
