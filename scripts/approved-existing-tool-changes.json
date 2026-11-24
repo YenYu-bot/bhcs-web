@@ -4194,6 +4194,48 @@
       "approved_blob": "b5158a2841565a22823fdacb64306a76aa67e646",
       "reason": "月相：月球旁的名稱文字不接收點擊，避免手機字放大時蓋住月球",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "6fba02f8178ab796230a73f928b48ad65e9cfd11",
+      "approved_blob": "21c39497e860e3daffad0d7e0c22aac08fe32819",
+      "reason": "電學批：電池與電解、電磁、直流馬達、靜電感應、能量轉換改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electrolysis/desk.js",
+      "baseline_blob": "2421c5852194bd58950f74322c14c7777e036005",
+      "approved_blob": "06c591b65737b8ce43fe43e3a11a2446350891d8",
+      "reason": "電學批：電池與電解、電磁、直流馬達、靜電感應、能量轉換改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electromagnetism/desk.js",
+      "baseline_blob": "5be3f9fa0af116d1dd5e32c76b264602bcf79767",
+      "approved_blob": "8e953ef39384cca467c421a840b4e5d073b74257",
+      "reason": "電學批：電池與電解、電磁、直流馬達、靜電感應、能量轉換改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electrostatics/desk.js",
+      "baseline_blob": "c872b5e7f6f449f919409ea6e6b791b0e7c04bfb",
+      "approved_blob": "bc31a3c3a2f632827208537a9ea1a74f967b814c",
+      "reason": "電學批：電池與電解、電磁、直流馬達、靜電感應、能量轉換改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/energy/desk.js",
+      "baseline_blob": "b81607887a2779c35ce84910b7d16af66e73205a",
+      "approved_blob": "d00c3fd6716864bfb376e7e57ea638afa0102928",
+      "reason": "電學批：電池與電解、電磁、直流馬達、靜電感應、能量轉換改成直接操作並重畫",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/motor/desk.js",
+      "baseline_blob": "04f7d05ee1d123ca7218527c9e66b982a6b5895b",
+      "approved_blob": "c42fa13e4981350d466ed51f4f28d1b9a7b33b05",
+      "reason": "電學批：電池與電解、電磁、直流馬達、靜電感應、能量轉換改成直接操作並重畫",
+      "pull_request": null
     }
   ]
 }

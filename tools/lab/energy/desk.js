@@ -4,11 +4,20 @@ import { energy } from './model.mjs';
 const r1 = x => String(Math.round(x * 10) / 10), r2 = x => String(Math.round(x * 100) / 100);
 const POS = { 0: '坡頂', 50: '半途', 100: '坡底' };
 
-function scene({ rig, el, txt, P, s, r, narrow }) {
+function scene({ rig, el, txt, P, s, r, narrow, step, set, drag, hint, kind }) {
+  const can = kind === 'observe', n1 = v => (+v).toFixed(1);
+  const dd = el('defs', {}, rig), wg = el('linearGradient', { id: 'en-wood', x1: 0, y1: 0, x2: 0, y2: 1 }, dd); for (const [o, c] of [[0, '#E2B57A'], [1, '#B98549']]) el('stop', { offset: o, 'stop-color': c }, wg);
   // 斜坡：桌機坡頂 (220,170)→坡底 (780,470)；手機把能量帳放上面，斜坡往下移
-  const A = narrow ? [220, 270] : [220, 170], B = narrow ? [760, 540] : [780, 470], H = B[1] - A[1];
-  el('path', { d: `M${A[0] - 60} ${A[1]} H${A[0]} L${B[0]} ${B[1]} H${A[0] - 60} Z`, fill: '#D9A867', stroke: '#23304A', 'stroke-width': 4, 'stroke-linejoin': 'round' }, rig);
-  el('line', { x1: A[0], y1: A[1], x2: B[0], y2: B[1], stroke: s.loss ? '#8A6A3C' : '#F1D3A1', 'stroke-width': s.loss ? 10 : 6, 'stroke-dasharray': s.loss ? '3 4' : null, 'stroke-linecap': 'round' }, rig);
+  const A = narrow ? [220, 300] : [220, 170], B = narrow ? [760, 560] : [780, 470], H = B[1] - A[1];
+  el('path', { d: `M${A[0] - 60} ${A[1]} H${A[0]} L${B[0]} ${B[1]} H${A[0] - 60} Z`, fill: 'url(#en-wood)', stroke: '#23304A', 'stroke-width': 4, 'stroke-linejoin': 'round' }, rig);
+  { const cpid = 'en-cp', cp = el('clipPath', { id: cpid }, dd); el('path', { d: `M${A[0] - 60} ${A[1]} H${A[0]} L${B[0]} ${B[1]} H${A[0] - 60} Z` }, cp); const pl = el('g', { 'clip-path': `url(#${cpid})` }, rig);
+    for (let y = A[1] + 30; y < B[1]; y += 34) el('path', { d: `M${A[0] - 60} ${y}H${B[0]}`, stroke: '#9A6B38', 'stroke-width': 1.5, opacity: .45 }, pl);
+    for (let i = 0; i < 14; i++) el('ellipse', { cx: n1(A[0] - 40 + ((i * 97) % 520)), cy: n1(A[1] + 60 + ((i * 53) % (B[1] - A[1] - 60))), rx: 9, ry: 3, fill: 'none', stroke: '#9A6B38', 'stroke-width': 1.2, opacity: .4 }, pl); }
+  if (s.loss) { const nx = -(B[1] - A[1]), ny = B[0] - A[0], L = Math.hypot(nx, ny), ux = nx / L, uy = ny / L; let d = '';
+    el('path', { d: `M${A[0]} ${A[1]}L${B[0]} ${B[1]}L${n1(B[0] - ux * 9)} ${n1(B[1] - uy * 9)}L${n1(A[0] - ux * 9)} ${n1(A[1] - uy * 9)}Z`, fill: '#8C7350', stroke: '#5A4632', 'stroke-width': 1 }, rig);
+    for (let i = 0; i < 120; i++) { const t = (i + .5) / 120, o = 2 + (i * 37 % 6); d += `M${n1(A[0] + (B[0] - A[0]) * t - ux * o)} ${n1(A[1] + (B[1] - A[1]) * t - uy * o)}h1.6`; }
+    el('path', { d, stroke: '#3E3020', 'stroke-width': 2.2, 'stroke-linecap': 'round' }, rig); }
+  else el('line', { x1: A[0], y1: A[1], x2: B[0], y2: B[1], stroke: '#F7E3BE', 'stroke-width': 6, 'stroke-linecap': 'round' }, rig);
   el('line', { x1: 80, y1: B[1], x2: 920, y2: B[1], stroke: '#23304A', 'stroke-width': 4 }, rig);
   const lx = A[0] + (B[0] - A[0]) * .62 - 20, ly = A[1] + (B[1] - A[1]) * .62 + 40, deg = Math.atan2(B[1] - A[1], B[0] - A[0]) * 180 / Math.PI;
   txt(rig, lx, ly, s.loss ? `粗糙坡面（${s.loss}% 變成熱）` : '光滑坡面', { 'font-size': 16, fill: '#5A6478', transform: `rotate(${deg.toFixed(1)} ${lx} ${ly})` });
@@ -16,13 +25,32 @@ function scene({ rig, el, txt, P, s, r, narrow }) {
   el('line', { x1: 110, y1: A[1], x2: 110, y2: B[1], stroke: '#23304A', 'stroke-width': 3 }, rig);
   for (const [y, t] of [[A[1], `${s.height} m`], [A[1] + H / 2, `${r1(s.height / 2)} m`], [B[1], '0 m']]) { el('line', { x1: 102, y1: y, x2: 118, y2: y, stroke: '#23304A', 'stroke-width': 3 }, rig); txt(rig, 72, y + 5, t, { 'font-size': 14, fill: '#5A6478' }); }
   // 推車
-  const k = s.progress / 100, cx = A[0] + (B[0] - A[0]) * k, cy = A[1] + (B[1] - A[1]) * k, ang = Math.atan2(B[1] - A[1], B[0] - A[0]) * 180 / Math.PI;
-  const g = el('g', { transform: `translate(${cx} ${cy}) rotate(${ang.toFixed(1)})` }, rig);
+  const k = s.progress / 100, flat = k === 1, cx = flat ? B[0] + 40 : A[0] + (B[0] - A[0]) * k, cy = flat ? B[1] : A[1] + (B[1] - A[1]) * k, ang = flat ? 0 : Math.atan2(B[1] - A[1], B[0] - A[0]) * 180 / Math.PI, ang0 = Math.atan2(B[1] - A[1], B[0] - A[0]) * 180 / Math.PI;
+  const movable = can && (step === 'smooth' || step === 'rough');
+  const cg = el('g', { 'data-drag': movable ? 'cart' : null }, rig), g = el('g', { transform: `translate(${n1(cx)} ${n1(cy)}) rotate(${ang.toFixed(1)})` }, cg);
   el('image', { href: P + 'prop-toy-cart.webp', x: -66, y: -43, width: 132, height: 43 }, g);
-  el('rect', { x: -26, y: -70, width: 52, height: 22, rx: 11, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 2 }, g);
-  txt(g, 0, -54, `${s.mass} kg`, { 'font-size': 13, 'font-weight': 900 });
-  if (r.speed > 0.01) { txt(rig, cx + 50, cy - 74, `${r2(r.speed)} m/s ↘`, { "font-size": 16, fill: "#2F6FB0" }); }
+  if (s.mass === 2) { el('rect', { x: -22, y: -66, width: 44, height: 26, rx: 4, fill: '#8E99A8', stroke: '#23304A', 'stroke-width': 2 }, g); txt(g, 0, -48, '1 kg', { 'font-size': 11, fill: '#fff', 'font-weight': 900 }); }
+  el('rect', { x: -26, y: s.mass === 2 ? -94 : -70, width: 52, height: 22, rx: 11, fill: '#FFF8EC', stroke: '#23304A', 'stroke-width': 2 }, g);
+  txt(g, 0, s.mass === 2 ? -78 : -54, `${s.mass} kg`, { 'font-size': 13, 'font-weight': 900 });
+  el('rect', { x: -70, y: -70, width: 140, height: 74, fill: 'transparent' }, g);
+  if (movable) drag(cg, () => { let k2 = k; return {
+    move(p) { const vx = B[0] - A[0], vy = B[1] - A[1]; k2 = Math.max(0, Math.min(1, ((p.x - A[0]) * vx + (p.y - A[1]) * vy) / (vx * vx + vy * vy))); g.setAttribute('transform', `translate(${n1(A[0] + vx * k2)} ${n1(A[1] + vy * k2)}) rotate(${ang0.toFixed(1)})`); },
+    end() { const v = [0, 50, 100].reduce((m, x) => Math.abs(x - k2 * 100) < Math.abs(m - k2 * 100) ? x : m); if (v !== s.progress) set({ progress: v }); else g.setAttribute('transform', `translate(${n1(cx)} ${n1(cy)}) rotate(${ang.toFixed(1)})`); },
+    cancel() { g.setAttribute('transform', `translate(${n1(cx)} ${n1(cy)}) rotate(${ang.toFixed(1)})`); } }; },
+    { label: '讓推車往下滑一段', tap: () => set({ progress: { 0: 50, 50: 100, 100: 0 }[s.progress] }) });
+  if (step === 'mass') {
+    const wx = s.mass === 2 ? cx : A[0] - 30, wy = s.mass === 2 ? cy - 60 : A[1] - 14;
+    if (s.mass === 1) txt(rig, A[0] - 30, A[1] - 34, '砝碼', { 'font-size': 12, fill: '#5A6478' });
+    const wg2 = el('g', { 'data-drag': can ? 'weight' : null }, rig), wm = el('g', {}, wg2);
+    if (s.mass === 1) { el('rect', { x: wx - 22, y: wy - 12, width: 44, height: 26, rx: 4, fill: '#8E99A8', stroke: '#23304A', 'stroke-width': 2 }, wm); txt(wm, wx, wy + 6, '1 kg', { 'font-size': 11, fill: '#fff', 'font-weight': 900 }); }
+    el('rect', { x: wx - 30, y: wy - 22, width: 60, height: 44, fill: 'transparent' }, wm);
+    if (can) drag(wg2, p0 => { let q = p0; return { move(p) { q = p; wm.setAttribute('transform', `translate(${n1(p.x - p0.x)} ${n1(p.y - p0.y)})`); },
+      end() { const on = Math.hypot(q.x - cx, q.y - (cy - 30)) < 80, v = on ? 2 : 1; if (v !== s.mass) set({ mass: v }); else wm.removeAttribute('transform'); }, cancel() { wm.removeAttribute('transform'); } }; },
+      { label: s.mass === 2 ? '把砝碼拿下來' : '把 1 kg 砝碼放上推車', tap: () => set({ mass: s.mass === 2 ? 1 : 2 }) });
+  }
+  if (r.speed > 0.01) { txt(rig, cx - 40, cy - (s.mass === 2 ? 112 : 90), `${r2(r.speed)} m/s ${flat ? '→' : '↘'}`, { "font-size": 16, fill: "#2F6FB0" }); }
   if (r.thermal > 0.01) for (let i = 0; i < 3; i++) el('path', { d: `M${cx - 60 - i * 14} ${cy - 6 - i * 8} q -6 -10 0 -18 q 6 -8 0 -16`, fill: 'none', stroke: '#E36B3A', 'stroke-width': 3, 'stroke-linecap': 'round' }, rig);
+  hint(narrow ? 450 : 330, B[1] + 46, step === 'mass' ? '把砝碼拖到推車上，或拿下來' : '拖著推車沿斜坡往下滑');
   // 能量長條（J）
   const x = narrow ? 130 : 560, y = narrow ? 30 : 60, bw = narrow ? 560 : 300, lw = narrow ? 100 : 64, rh = narrow ? 58 : 40, W = bw / Math.max(r.total, 1);
   el('rect', { x, y, width: lw + bw + 24, height: narrow ? 222 : 176, rx: 16, fill: 'rgba(255,255,255,.95)', stroke: '#23304A', 'stroke-width': 2 }, rig);
@@ -46,7 +74,7 @@ runDesk({
   sceneLabel: '能量轉換實驗桌：推車從斜坡頂滑下，右上的能量帳顯示位能、動能與摩擦生熱',
   chip: { main: '1 公斤重 ＝ 10 N', sub: 'g ＝ 10 N/kg' },
   initial: { mass: 1, height: 2, progress: 0, loss: 0 },
-  model: energy, scene, viewBox: { desk: '40 40 920 480', phone: '40 20 840 540' }, phoneText: 1.6,
+  model: energy, scene, viewBox: { desk: '40 40 920 510', phone: '40 20 840 610' }, phoneText: 1.6,
   readouts: (s, r) => [['推車高度', r1(r.h), 'm', `從 ${s.height} m 出發`], ['速率', r2(r.speed), 'm/s', '動能 ＝ ½mv²'], ['總能量', r1(r.total), 'J', `${s.mass} × 10 × ${s.height}`]],
   why: { title: '能量怎麼轉換', button: '能量怎麼算', html: `
     <p class="fn-tip"><b>重力位能 ＝ 重量 × 高度 ＝ mgh。</b>1 kg 的推車重 10 N，在 2 m 高處有 10 × 2 ＝ 20 J。</p>
