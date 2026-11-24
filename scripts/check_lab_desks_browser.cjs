@@ -60,7 +60,7 @@ function gestures(t){
  const p=t.p;let cdp=null;
  const toScreen=(x,y)=>p.evaluate(([x,y])=>{const m=document.querySelector('#scene').getScreenCTM();return [m.a*x+m.c*y+m.e,m.b*x+m.d*y+m.f];},[x,y]);
  const toSvg=(x,y)=>p.evaluate(([x,y])=>{const s=document.querySelector('#scene'),q=s.createSVGPoint();q.x=x;q.y=y;const r=q.matrixTransform(s.getScreenCTM().inverse());return [r.x,r.y];},[x,y]);
- const center=async sel=>{const b=await p.locator(`#rig ${sel}`).first().boundingBox();assert.ok(b,`scene element ${sel}`);return [b.x+b.width/2,b.y+b.height/2];};
+ const center=async sel=>{const l=p.locator(`#rig ${sel}`).first();await l.scrollIntoViewIfNeeded();await p.locator('#scene').evaluate(e=>{const r=e.getBoundingClientRect();if(r.top<0||r.bottom>innerHeight)e.scrollIntoView({block:'center'});});await t.wait(80);const b=await l.boundingBox();assert.ok(b,`scene element ${sel}`);return [b.x+b.width/2,b.y+b.height/2];};
  const path=async pts=>{
   if(t.mobile){cdp=cdp||await p.context().newCDPSession(p);
    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:pts[0][0],y:pts[0][1]}]});
