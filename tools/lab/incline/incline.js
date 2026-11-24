@@ -507,10 +507,17 @@ function fitScene() {
     : { short: '150 140 770 410', long: '50 140 965 410', ideal: '100 30 820 520', rough: '100 30 820 520', cmp: '60 100 960 430' }[d];
   svg.setAttribute('viewBox', vb);
 }
+// 手機：依畫面內容的範圍收緊視窗，讓斜面和木箱放大
+function fitNarrow() {
+  if (!narrow.matches) return;
+  const bb = $('#rig').getBBox?.(); if (!bb || !bb.width) return;
+  const pad = 24, h = Math.max(bb.height + 2 * pad, 300);
+  svg.setAttribute('viewBox', `${Math.round(bb.x - pad)} ${Math.round(bb.y + bb.height / 2 - h / 2)} ${Math.round(bb.width + 2 * pad)} ${Math.round(h)}`);
+}
 narrow.addEventListener?.('change', () => render());
 function render() {
   renderSteps($('#steps'), STEPS, S.step, new Set(S.done), id => goStep(id));
-  fitScene(); draw(); renderReadouts(); renderEvidence(); renderTask(); talk();
+  fitScene(); draw(); fitNarrow(); renderReadouts(); renderEvidence(); renderTask(); talk();
 }
 
 $('#pull-1').addEventListener('click', () => pull(5));
