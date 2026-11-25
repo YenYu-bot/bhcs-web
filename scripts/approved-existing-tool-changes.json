@@ -4558,6 +4558,13 @@
       "approved_blob": "d1e83111db8bbc68f5d069a96a0bf51b2556450c",
       "reason": "比與百分率出題器新增連比、按比分配與正比單元（兩人三人分配、連比、正比判斷與應用）",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "d1e83111db8bbc68f5d069a96a0bf51b2556450c",
+      "approved_blob": "930714e7fb429a2176c2875e7ba67630948e4008",
+      "reason": "分數與小數四則運算出題器新增分數應用題單元（部分與全部、剩下的幾分之幾、倒推原量）",
+      "pull_request": null
     }
   ]
 }
