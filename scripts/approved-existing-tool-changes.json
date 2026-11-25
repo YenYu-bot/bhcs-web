@@ -4516,6 +4516,13 @@
       "approved_blob": "a419c125529738f1e86c39f3e5a6e35e8a32bbf1",
       "reason": "電路接線引導實驗：手機上主按鈕至少 56px 高、步驟膠囊維持 44px 高的觸控大小",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "bc6536de5bfded0d3540a53b05a0425885338913",
+      "approved_blob": "707014fad199640febccf6914266b8d82e70925a",
+      "reason": "國小圓周長與圓面積出題器依學校考卷擴充鋪色面積、鋪色周長與應用題三個單元",
+      "pull_request": null
     }
   ]
 }
