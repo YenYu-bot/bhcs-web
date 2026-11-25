@@ -4565,6 +4565,13 @@
       "approved_blob": "930714e7fb429a2176c2875e7ba67630948e4008",
       "reason": "分數與小數四則運算出題器新增分數應用題單元（部分與全部、剩下的幾分之幾、倒推原量）",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "930714e7fb429a2176c2875e7ba67630948e4008",
+      "approved_blob": "800f90f7d588585b1bea4f8af46c4cfb1e709a8d",
+      "reason": "解未知數新增列式求解應用題單元；最大公因數與最小公倍數新增因倍數應用題單元",
+      "pull_request": null
     }
   ]
 }
