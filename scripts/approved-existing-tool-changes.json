@@ -4537,6 +4537,13 @@
       "approved_blob": "a4c954432ba350ddeb5dc0646ce281007494e4ca",
       "reason": "圓周長與圓面積出題器補葉形與四片花瓣題型（面積、周長），複合圖形葉形補示意圖",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "a4c954432ba350ddeb5dc0646ce281007494e4ca",
+      "approved_blob": "11ac9e9c35865f0dcc379f732fafb4fe5167edf1",
+      "reason": "周長與面積出題器新增鋪色與組合圖形單元：等底等高、菱形箏形、階梯周長、兩正方形、長方形內一點",
+      "pull_request": null
     }
   ]
 }
