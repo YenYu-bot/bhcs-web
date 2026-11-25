@@ -4572,6 +4572,13 @@
       "approved_blob": "800f90f7d588585b1bea4f8af46c4cfb1e709a8d",
       "reason": "解未知數新增列式求解應用題單元；最大公因數與最小公倍數新增因倍數應用題單元",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "800f90f7d588585b1bea4f8af46c4cfb1e709a8d",
+      "approved_blob": "37cadc4bbed7d6dc2f9e4aa819f264174ff455a4",
+      "reason": "規律與怎樣解題新增雞兔同籠單元；時間的計算新增時間應用題單元",
+      "pull_request": null
     }
   ]
 }
