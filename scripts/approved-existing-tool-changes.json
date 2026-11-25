@@ -4509,6 +4509,13 @@
       "approved_blob": "cc591440a102c657b6247440083bd92fc4d848a0",
       "reason": "電路接線引導實驗外觀對齊實驗桌：米色底、步驟膠囊、余老師圖片與對話框、紅色主按鈕、木框接線板",
       "pull_request": null
+    },
+    {
+      "path": "assets/circuit-guided/circuit-guided.css",
+      "baseline_blob": "cc591440a102c657b6247440083bd92fc4d848a0",
+      "approved_blob": "a419c125529738f1e86c39f3e5a6e35e8a32bbf1",
+      "reason": "電路接線引導實驗：手機上主按鈕至少 56px 高、步驟膠囊維持 44px 高的觸控大小",
+      "pull_request": null
     }
   ]
 }

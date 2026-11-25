@@ -112,7 +112,7 @@
 .cgg-public-nav{margin:0;font-size:14px;font-weight:800}.cgg-public-nav a{color:var(--lab-red);text-decoration:none}.cgg-public-nav a:hover{text-decoration:underline}.cgg-public-nav span{color:#C9BDA8}
 .cgg-h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.02em}
 .cgg-steps{background:transparent;border:0;padding:0;gap:8px}
-.sg-step{min-height:40px;border-radius:999px;border:2px dashed #C9BDA8;color:var(--lab-ink2);font-weight:800;background:transparent}
+.sg-step{min-height:44px;border-radius:999px;border:2px dashed #C9BDA8;color:var(--lab-ink2);font-weight:800;background:transparent}
 .sg-step.is-current{background:#fff;color:var(--lab-ink);box-shadow:none;border:2px solid var(--lab-ink)}
 .sg-step.is-done{background:var(--lab-mint);border:2px solid var(--lab-mint);color:#fff}
 .cgg-card{border:0;border-radius:20px;box-shadow:0 4px 0 rgba(35,48,74,.12)}
@@ -125,7 +125,7 @@
 .cgg-coach-sub{border-bottom:3px solid var(--lab-ink);border-radius:0 0 20px 6px;padding-bottom:12px;box-shadow:0 4px 0 rgba(35,48,74,.18);color:var(--lab-ink2)}
 .cgg-coach-sub:empty{padding-bottom:12px}
 /* 主按鈕：紅色、下方有厚度 */
-.cgg-cta{background:var(--lab-red);border:0;color:#fff;font-weight:900;font-size:17px;min-height:52px;padding:0 28px;box-shadow:0 4px 0 var(--lab-red-dk)}
+.cgg-cta{background:var(--lab-red);border:0;color:#fff;font-weight:900;font-size:17px;min-height:max(52px,var(--cgg-hit));padding:0 28px;box-shadow:0 4px 0 var(--lab-red-dk)}
 .cgg-cta:hover{background:#B8322A}.cgg-cta:active{transform:translateY(3px);box-shadow:0 1px 0 var(--lab-red-dk)}
 /* 接線桌面：牆＋木頭桌 */
 /* 接線板：米色板面＋淡淡的點格，外圍木框 */
@@ -148,7 +148,7 @@
 .cgg-footer{color:var(--lab-ink2)}
 @media(max-width:767px){
   .cgg-wrap>header{margin:0 -10px 12px;padding:10px 12px;gap:8px}.cgg-h1{font-size:19px;width:100%}
-  .cgg-steps{gap:4px}.sg-step{min-height:36px}
+  .cgg-steps{gap:4px}
   .cgg-coach{grid-template-columns:70px minmax(0,1fr)}.cgg-coach::before{width:70px;height:122px}
   #cgg-welcome{padding:24px 16px 20px 16px;text-align:center}#cgg-welcome::before{position:static;display:block;margin:0 auto 6px;width:90px;height:150px}#cgg-welcome .cgg-welcome-art{justify-content:center}
 }
