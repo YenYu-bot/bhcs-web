@@ -4544,6 +4544,13 @@
       "approved_blob": "11ac9e9c35865f0dcc379f732fafb4fe5167edf1",
       "reason": "周長與面積出題器新增鋪色與組合圖形單元：等底等高、菱形箏形、階梯周長、兩正方形、長方形內一點",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "11ac9e9c35865f0dcc379f732fafb4fe5167edf1",
+      "approved_blob": "ed714634da9eea836399ff58ece81d8df7b94643",
+      "reason": "四則簡化計算出題器補拆數湊整、商不變、除法分配律與小數拆數題型；鋪色與組合圖形題型輪流",
+      "pull_request": null
     }
   ]
 }
