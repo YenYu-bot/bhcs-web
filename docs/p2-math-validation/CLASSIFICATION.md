@@ -110,7 +110,7 @@
 | topic / 組合 | 128 / 4128 |
 | safeQuestion 抽樣 / 成功取題 | 825600 / 825600 |
 | 通過 / 失敗 | 4128 / 0 |
-| 候選 gen / null | 972412 / 135974 |
+| 候選 gen / null | 972385 / 135947 |
 | 候選 verify false / 例外 | 0 / 0 |
 | 完成單卷 / 單卷耗盡 | 4128 / 0 |
 | 高拒絕率 unit（非阻擋） | 101 |
@@ -140,7 +140,7 @@
 | units / `compare` | 78.8% | 4 |
 | area / `parallelogram` | 53.9% | 2 |
 | area / `triangle` | 59.0% | 2 |
-| circle / `sector` | 60.6% | 2 |
+| circle / `sector` | 62.0% | 2 |
 | speed / `findt` | 66.6% | 1 |
 | speed / `average` | 86.3% | 4 |
 | speed / `meet` | 73.0% | 1 |
