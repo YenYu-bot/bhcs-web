@@ -4502,6 +4502,13 @@
       "approved_blob": "98c95e5e4febf47f3bffe889fc1dd6bdf0bb5132",
       "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
       "pull_request": null
+    },
+    {
+      "path": "assets/circuit-guided/circuit-guided.css",
+      "baseline_blob": "8a16f22e581aed2a3546fa81329685cddab95386",
+      "approved_blob": "cc591440a102c657b6247440083bd92fc4d848a0",
+      "reason": "電路接線引導實驗外觀對齊實驗桌：米色底、步驟膠囊、余老師圖片與對話框、紅色主按鈕、木框接線板",
+      "pull_request": null
     }
   ]
 }
