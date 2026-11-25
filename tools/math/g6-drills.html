@@ -605,7 +605,7 @@ function circleConfig(){
  /* 2026-11-25 考卷擴充（Claude）：依學校「圓周長與圓面積」考卷的計算題、應用題，加三個單元——
     shaded 鋪色部分的面積（考卷圖形）、perimeter 鋪色部分的周長、apply 圓的應用題（等周長、繩子、車輪、羊與牛的活動範圍、緞帶、長椅…）。
     圖形畫成鋪灰色的示意圖，但題幹一定寫出全部已知數（P3 會先拿掉 <svg> 再數結構）。取 3.14 時答案最多兩位小數。 */
- const GR='fill="#D5DAE2" stroke="#16233A" stroke-width="1.6"',WH='fill="#fff" stroke="#16233A" stroke-width="1.6"',DS='fill="none" stroke="#43516B" stroke-width="1.2" stroke-dasharray="4 3"',DOT=(x,y)=>`<circle cx="${x}" cy="${y}" r="2" fill="#16233A"/>`;
+ const GR='fill="#D0D0D0" stroke="#16233A" stroke-width="1.6"',WH='fill="#fff" stroke="#16233A" stroke-width="1.6"',DS='fill="none" stroke="#43516B" stroke-width="1.2" stroke-dasharray="4 3"',DOT=(x,y)=>`<circle cx="${x}" cy="${y}" r="2" fill="#16233A"/>`;
  const ok2=(mode,...vs)=>mode==="fraction"||vs.every(v=>{const p=places(numeric(v,mode));return p>=0&&p<=2});
  const okR=v=>{const p=places(v);return p>=0&&p<=2};
  const M="公尺",M2="平方公尺",sq=v=>mul(v,v),f1=n=>Math.round(n*10)/10;

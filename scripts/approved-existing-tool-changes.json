@@ -4520,7 +4520,7 @@
     {
       "path": "tools/math/g6-drills.html",
       "baseline_blob": "bc6536de5bfded0d3540a53b05a0425885338913",
-      "approved_blob": "04aa1e5c2871d08eebed31eceaecba498e8cfc1d",
+      "approved_blob": "707014fad199640febccf6914266b8d82e70925a",
       "reason": "國小圓周長與圓面積出題器依學校考卷擴充鋪色面積、鋪色周長與應用題三個單元",
       "pull_request": null
     }
