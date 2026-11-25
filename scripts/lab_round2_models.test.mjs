@@ -127,3 +127,14 @@ test('microscope: coarse then fine focus, light balance, specimens and the two k
   assert.throws(() => at({ coarse: 9 }), RangeError);
   assert.throws(() => at({ aperture: 2 }), RangeError);
 });
+
+import { heat as elecHeat, kWh } from '../tools/lab/electric-power/model.mjs';
+import { calculate as sciCalc } from './science/models.mjs';
+test('電流熱效應：和 science/models.mjs 的 electric-power 一致', () => {
+  for (const [mode, ohm, time] of [['V', 6, 70], ['V', 12, 70], ['V', 6, 140], ['I', 6, 70], ['I', 12, 70]]) {
+    const a = elecHeat({ mode, ohm, time }), b = sciCalc('electric-power', mode === 'V' ? { mode: 'fixedV', volt: 6, ohm, time, water: 100, loss: 0 } : { mode: 'fixedI', amp: 1, ohm, time, water: 100, loss: 0 });
+    assert.ok(Math.abs(a.P - b.P) < 1e-9 && Math.abs(a.E - b.E) < 1e-9 && Math.abs(a.dT - b.dT) < 1e-9, `${mode} ${ohm} Ω ${time} s`);
+  }
+  assert.equal(elecHeat({ mode: 'V', ohm: 6, time: 70 }).dT, 1);
+  assert.equal(kWh(1000, 1), kWh(500, 2));
+});

@@ -20,6 +20,8 @@ const DESKS={
  atom:{calc:{calc:[27,10,11]},quiz:[1,1,0]},
  'wave-sound':{calc:{calc:[0.4,85,255]},quiz:[1,1,1]},
  energy:{calc:{calc:[60,60,45]},quiz:[1,1,1]},
+ 'electric-power':{calc:{calc:[2,12,840,0.4]},quiz:[1,1,0]},
+ 'reaction-rate':{calc:{calc:[90,0.27,2.7]},quiz:[0,1]},
  electromagnetism:{quiz:[1,1,1]},
  electrostatics:{quiz:[1,1,1]},
  circuit:{calc:{calc:[5,0.3,1.2]},quiz:[1,0,2]},
@@ -236,6 +238,14 @@ const HANDS={
   await h.step(0);await h.dragBy('[data-drag=eff]',0,-30);await h.is('efficiency',20,'flip efficiency switch');
   await h.step(1);await h.dragTo('[data-drag=time]',900,330);await h.is('time',30,'drag along curve');
   await h.step(2);await h.dragTo('[data-drag=cap]',760,324);await h.is('capacity',200,'drag capacity line');
+ },
+ 'electric-power':async h=>{
+  await h.step(0);await h.tap('[data-drag=timer]');await h.is('time',35,'tap stopwatch');
+  await h.step(1);await h.tap('[data-drag=coil]');await h.is('ohm',6,'swap heating coil');
+  await h.step(4);await h.tap('[data-drag=meter-1]');await h.is('meter',1,'tap appliance');
+ },
+ 'reaction-rate':async h=>{
+  await h.step(0);await h.tap('[data-drag=flask]');await h.is('t',10,'tap flask');await h.tap('[data-drag=timer]');await h.is('t',180,'tap stopwatch');
  },
  balance:async h=>{
   await h.step(0);await h.dragTo('[data-drag=jar-a]',220,300);await h.is('a',2,'drag molecule in');

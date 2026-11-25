@@ -10,8 +10,8 @@ const stations = {
   lever:'bhcs.lab.lever.v1', pulley:'bhcs.lab.pulley.v2', incline:'bhcs.lab.incline.v2',
   buoyancy:'bhcs.lab.buoyancy.v1', heat:'bhcs.lab.heat.v1', solubility:'bhcs.lab.solubility.v1',
   metal:'bhcs.lab.metal.v1', motion:'bhcs.lab.motion.v1',
-  'electric-power':'bhcs-lab-electric-heat-private-trial-v1',
-  'reaction-rate':'bhcs-lab-reaction-rate-trial-v1',
+  'electric-power':'bhcs.lab.electric-power.v2',
+  'reaction-rate':'bhcs.lab.reaction-rate.v2',
   'spring-friction':'bhcs.lab.spring-friction.v1', neutralization:'bhcs.lab.neutralization.v1',
   mirror:'bhcs.lab.mirror.v1', lens:'bhcs.lab.lens.v1',
   'reflection-refraction':'bhcs.lab.reflection-refraction.v1', pressure:'bhcs.lab.pressure.v1',
@@ -46,13 +46,8 @@ async function row(page, key) {
 }
 
 async function clearDesk(page, station) {
-  if (['electric-power','reaction-rate'].includes(station)) {
-    await page.locator('#reset-button').click();
-    await page.locator('#reset-confirm').click();
-  } else {
-    page.once('dialog', dialog => dialog.accept());
-    await page.locator('#clear-records').click();
-  }
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('#clear-records').click();
 }
 
 async function waitForRow(page, key, matches, label, timeoutMs = 2500) {
@@ -147,22 +142,23 @@ async function waitForRow(page, key, matches, label, timeoutMs = 2500) {
     await page.locator(ready).waitFor({state:'attached'});
     assert.equal(Number(await page.locator('#time-slider').inputValue()),motion.value.t);
 
+    // Shared-engine desks: a tap in the scene saves state; reload restores it.
     await page.goto(origin + '/tools/lab/reaction-rate/');
     await page.locator(ready).waitFor({state:'attached'});
-    await page.locator('#start-button').click();
-    await waitForRow(page,key,value => value?.runs?.lump?.t === 10,'reaction 10-second checkpoint did not persist',10000);
+    await page.locator('#rig [data-drag=flask]').click();
+    await waitForRow(page,key,value => value?.s?.t === 10,'reaction 10-second state did not persist',5000);
     await page.reload();
     await page.locator(ready).waitFor({state:'attached'});
-    await page.waitForFunction(() => Number(document.getElementById('sim-time').textContent) === 10);
+    await page.waitForFunction(() => document.getElementById('r-1').textContent.trim() === '10');
 
     // Read existing data but simulate a denied write after the actual page boot.
     await page.goto(origin + '/tools/lab/electric-power/');
     await page.locator(ready).waitFor({state:'attached'});
-    await page.locator('#start-button').click();
-    await waitForRow(page, stations['electric-power'], value => value?.completed?.includes('v6'), 'electric completion did not persist', 13000);
+    await page.locator('#rig [data-drag=timer]').click();
+    await waitForRow(page, stations['electric-power'], value => value?.s?.time === 35, 'electric state did not persist', 5000);
     await page.reload();
     await page.locator(ready).waitFor({state:'attached'});
-    await page.waitForFunction(() => Number(document.getElementById('time-value').textContent) === 70);
+    await page.waitForFunction(() => /電能 210 J/.test(document.getElementById('n-3').textContent));
     await page.evaluate(() => { IDBObjectStore.prototype.put = () => { throw Error('test write denied'); }; });
     const before = await row(page, stations['electric-power']);
     await clearDesk(page, 'electric-power');
@@ -180,7 +176,7 @@ async function waitForRow(page, key, matches, label, timeoutMs = 2500) {
     await page.locator('html[data-notebook-ready="unavailable"]').waitFor({state:'attached'});
     await page.locator(warning).waitFor({state:'visible'});
     assert.match(await page.locator(warning).innerText(), /無法讀寫/);
-    assert.match(await page.locator('#step-kicker').innerText(), /任務 1 \/ 6/);
+    assert.match(await page.locator('#task-kicker').innerText(), /任務 1 \/ 5/);
     assert.equal(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).afterReset, key), true);
     assert.deepEqual(errors, []);
     await context.close();
