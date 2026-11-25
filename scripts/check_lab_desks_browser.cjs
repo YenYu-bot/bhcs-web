@@ -164,8 +164,8 @@ const HANDS={
   await h.step(2);await h.dragTo('[data-drag=axis]',260,248);await h.is('tilt',23.5,'tilt the axis');
  },
  tides:async h=>{
-  await h.step(0);await h.dragTo('[data-drag=hour]',758,408);await h.is('hour',12,'drag along tide curve');
-  await h.step(1);await h.dragTo('[data-drag=moon]',792,298);await h.is('day',7.5,'drag moon to first quarter');
+  await h.step(0);await h.dragBy('[data-drag=hour]',148,0);await h.is('hour',12,'drag along tide curve');
+  await h.step(1);await h.dragBy('[data-drag=moon]',70,70);await h.is('day',7.5,'drag moon to first quarter');
  },
  weather:async h=>{
   await h.step(0);await h.dragTo('[data-drag=needle]',640,414);await h.is('system','high','turn barometer needle');await h.tap('[data-drag=needle]');await h.is('system','low','tap barometer');

@@ -4418,6 +4418,34 @@
       "approved_blob": "78dd5c23194b4743a4153256bc2538a3efdcd401",
       "reason": "實驗桌說明加上早期站收尾（斜面手機版、說明按鈕）的紀錄",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "78dd5c23194b4743a4153256bc2538a3efdcd401",
+      "approved_blob": "9e3c83a79ff342bdb926bae806d6b0d612122655",
+      "reason": "手機版場景：共用引擎裁掉四周空白放大場景，化學計量與潮汐改成直排",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/shared/desk.mjs",
+      "baseline_blob": "6137ff1dd8f149a4b5a0c16950740f7657b95736",
+      "approved_blob": "c3a461da692c35a5723e45a67551f4c1df6de963",
+      "reason": "手機版場景：共用引擎裁掉四周空白放大場景，化學計量與潮汐改成直排",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/stoichiometry/desk.js",
+      "baseline_blob": "8ccc0dfefa344ad1abf5a36c3b7f4e7a3fbed326",
+      "approved_blob": "ccef35b026afcfd2e77dc849c435ffddc375c58d",
+      "reason": "手機版場景：共用引擎裁掉四周空白放大場景，化學計量與潮汐改成直排",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/tides/desk.js",
+      "baseline_blob": "39ae1213961e642f47bf216ce5f8f0bf739a0497",
+      "approved_blob": "9fa152014d82d9a7536b8aa826bd2b68a039c5c3",
+      "reason": "手機版場景：共用引擎裁掉四周空白放大場景，化學計量與潮汐改成直排",
+      "pull_request": null
     }
   ]
 }

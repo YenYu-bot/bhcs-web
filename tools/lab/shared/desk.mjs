@@ -224,8 +224,19 @@ export async function runDesk(c) {
     c.scene({ rig, el: svgEl, txt, k, P: PROPS, s: S.s, r, set, step: st.id, kind: st.kind || 'observe', tool, drag, hint: (x, y, str) => (st.kind || 'observe') === 'observe' ? hint(x, y, str, k) : null, narrow: narrow.matches, has: sig => got(st.id, sig), records: S.records, reduce: reduceMotion() });
     if (focusLabel) [...rig.querySelectorAll('[aria-label]')].find(n => n.getAttribute('aria-label') === focusLabel)?.focus({ preventScroll: true });
     const vb = typeof c.viewBox === 'function' ? c.viewBox(st.id, S.s) : c.viewBox;
-    svg.setAttribute('viewBox', (narrow.matches ? vb.phone : vb.desk) || '0 0 1000 620');
+    let box = (narrow.matches ? vb.phone : vb.desk) || '0 0 1000 620';
+    // 手機：把四周沒畫東西的空白裁掉（只縮小、不放大範圍），整個場景等比例放大，字不會互相擠到
+    // 同一步裡只算一次，免得改設定時畫面忽大忽小
+    const ck = st.id + '|' + box; if (narrow.matches && !vb.exact && cropCache[ck]) box = cropCache[ck];
+    else if (narrow.matches && !vb.exact) { const [x, y, w, h] = box.split(/[ ,]+/).map(Number), b = rig.getBBox?.();
+      if (b && b.width) { const pad = 14, x0 = Math.max(x, b.x - pad), y0 = Math.max(y, b.y - pad), x1 = Math.min(x + w, b.x + b.width + pad), y1 = Math.min(y + h, b.y + b.height + pad);
+        if (x1 - x0 > w * .5 && y1 - y0 > h * .5) box = `${Math.round(x0)} ${Math.round(y0)} ${Math.round(x1 - x0)} ${Math.round(y1 - y0)}`; } cropCache[ck] = box; }
+    svg.setAttribute('viewBox', box);
+    // 手機：直排的場景（高比寬多）讓畫框跟著變高，不要被固定高度壓小
+    const [, , bw, bh] = box.split(/[ ,]+/).map(Number), wrap = svg.closest('.scene-wrap');
+    if (wrap) wrap.style.height = narrow.matches && bh / bw > .8 ? `max(240px, ${(bh / bw * 92).toFixed(1)}vw)` : '';
   }
+  const cropCache = {};
   let prev = {};
   function renderReadouts() {
     const rows = c.readouts(S.s, result()), box = $('#readouts');
