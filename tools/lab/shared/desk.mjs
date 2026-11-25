@@ -239,7 +239,7 @@ export async function runDesk(c) {
   const cropCache = {};
   let prev = {};
   function renderReadouts() {
-    const rows = c.readouts(S.s, result()), box = $('#readouts');
+    const rows = c.readouts(S.s, result(), S.step), box = $("#readouts");
     if (box.children.length !== rows.length) {
       box.replaceChildren(...rows.map((_, i) => { const d = document.createElement('div'); d.className = 'reading'; d.innerHTML = `<span class="reading-label" id="l-${i + 1}"></span><span class="reading-num num" id="r-${i + 1}"></span><span class="reading-unit" id="u-${i + 1}"></span><span class="reading-formula" id="n-${i + 1}"></span>`; return d; }));
     }

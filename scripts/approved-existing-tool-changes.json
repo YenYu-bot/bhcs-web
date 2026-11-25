@@ -4446,6 +4446,62 @@
       "approved_blob": "9fa152014d82d9a7536b8aa826bd2b68a039c5c3",
       "reason": "手機版場景：共用引擎裁掉四周空白放大場景，化學計量與潮汐改成直排",
       "pull_request": null
+    },
+    {
+      "path": "tools/lab/README.md",
+      "baseline_blob": "9e3c83a79ff342bdb926bae806d6b0d612122655",
+      "approved_blob": "4f652bac7b22ae90b6a6364a4a6500259d4b5fe1",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/app.js",
+      "baseline_blob": "1d2860aa635d1e13a14574b1b51d983cd556926e",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/index.html",
+      "baseline_blob": "7dfbd87abf9bfa224b71c84f35a240bd50b1e1c2",
+      "approved_blob": "0c9aa947e202af928f2d746f42dffe6b66e53dad",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/electric-power/style.css",
+      "baseline_blob": "61439720c2eb8e260851e4097729b01a28e4e1b8",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/app.js",
+      "baseline_blob": "cb1e7c14fbf2ca78899d2937c97dd586635fc764",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/index.html",
+      "baseline_blob": "d1a013854d1906e3bff62fb7fa35179da38227bb",
+      "approved_blob": "6666a1e53074893e9ecd20abee6be77905faf542",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/reaction-rate/style.css",
+      "baseline_blob": "7a378758c64c4f7f6ed5a03b873365ce953e1774",
+      "approved_blob": "0000000000000000000000000000000000000000",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
+    },
+    {
+      "path": "tools/lab/shared/desk.mjs",
+      "baseline_blob": "c3a461da692c35a5723e45a67551f4c1df6de963",
+      "approved_blob": "98c95e5e4febf47f3bffe889fc1dd6bdf0bb5132",
+      "reason": "電流熱效應與反應速率改用共用引擎，刪掉各自的 app.js 與 style.css",
+      "pull_request": null
     }
   ]
 }
