@@ -103,3 +103,53 @@
 .cgg-public-nav{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 8px;font-size:.92rem}
 .cgg-public-nav a{color:var(--cgg-page-ink,#203247);text-underline-offset:3px}
 .cgg-public-nav a:focus-visible{outline:3px solid #9f3e0e;outline-offset:3px}
+
+/* ---- 2026-11-25 對齊實驗桌外觀：米色紙底、虛線步驟膠囊、余老師圖片＋對話框、紅色主按鈕、木紋桌面 ---- */
+.circuit-guided{--lab-paper:#FFF8EC;--lab-line:#E5DAC6;--lab-ink:#23304A;--lab-ink2:#5A6478;--lab-red:#C8372D;--lab-red-dk:#9E2A22;--lab-mint:#2E7D63;--cgg-page-ink:#23304A;--cgg-accent:#C8372D;--cgg-accent-dark:#9E2A22;--cgg-ok:#2E7D63;--cgg-border:#E5DAC6;margin:0;background:var(--lab-paper);color:var(--lab-ink);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",system-ui,sans-serif}
+.circuit-guided button{font-family:inherit}
+.cgg-wrap{max-width:1240px;padding:0 16px 16px}
+.cgg-wrap>header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 -16px 16px;padding:12px 20px;background:rgba(255,248,236,.96);border-bottom:2px solid var(--lab-line)}
+.cgg-public-nav{margin:0;font-size:14px;font-weight:800}.cgg-public-nav a{color:var(--lab-red);text-decoration:none}.cgg-public-nav a:hover{text-decoration:underline}.cgg-public-nav span{color:#C9BDA8}
+.cgg-h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.02em}
+.cgg-steps{background:transparent;border:0;padding:0;gap:8px}
+.sg-step{min-height:44px;border-radius:999px;border:2px dashed #C9BDA8;color:var(--lab-ink2);font-weight:800;background:transparent}
+.sg-step.is-current{background:#fff;color:var(--lab-ink);box-shadow:none;border:2px solid var(--lab-ink)}
+.sg-step.is-done{background:var(--lab-mint);border:2px solid var(--lab-mint);color:#fff}
+.cgg-card{border:0;border-radius:20px;box-shadow:0 4px 0 rgba(35,48,74,.12)}
+/* 余老師：左邊人像、右邊對話框 */
+.cgg-coach{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);grid-template-rows:auto auto auto 1fr;column-gap:12px;background:transparent;box-shadow:none;padding:0}
+.cgg-coach::before{content:"";grid-column:1;grid-row:1/5;align-self:end;width:96px;height:168px;background:url(../../tools/mini-lab/img/doc-point.png) center bottom/contain no-repeat}
+.cgg-coach-name,.cgg-coach-main,.cgg-coach-sub{grid-column:2;margin:0;background:#fff;border-left:3px solid var(--lab-ink);border-right:3px solid var(--lab-ink);padding:0 16px}
+.cgg-coach-name{border-top:3px solid var(--lab-ink);border-radius:20px 20px 0 0;padding-top:12px;color:var(--lab-red)}
+.cgg-coach-main{font-size:17px;font-weight:800;color:var(--lab-ink)}
+.cgg-coach-sub{border-bottom:3px solid var(--lab-ink);border-radius:0 0 20px 6px;padding-bottom:12px;box-shadow:0 4px 0 rgba(35,48,74,.18);color:var(--lab-ink2)}
+.cgg-coach-sub:empty{padding-bottom:12px}
+/* 主按鈕：紅色、下方有厚度 */
+.cgg-cta{background:var(--lab-red);border:0;color:#fff;font-weight:900;font-size:17px;min-height:max(52px,var(--cgg-hit));padding:0 28px;box-shadow:0 4px 0 var(--lab-red-dk)}
+.cgg-cta:hover{background:#B8322A}.cgg-cta:active{transform:translateY(3px);box-shadow:0 1px 0 var(--lab-red-dk)}
+/* 接線桌面：牆＋木頭桌 */
+/* 接線板：米色板面＋淡淡的點格，外圍木框 */
+.cgg-stage{box-sizing:border-box;border:10px solid #C9A06A;border-radius:22px;background:radial-gradient(circle,#E3D5BC 1.4px,transparent 1.6px) 0 0/24px 24px,linear-gradient(#FFFAF0,#F6EBD6);box-shadow:inset 0 0 0 2px #8A6A3C,0 4px 0 rgba(35,48,74,.15)}
+.cgg-component{stroke:var(--lab-ink)}
+.cgg-battery{fill:#FFF1CC}.cgg-battery-band{fill:#E5A43B}
+.cgg-equipment-bay{fill:rgba(255,255,255,.7)}
+.cgg-hint{background:#fff;border:2px dashed #C9BDA8;color:var(--lab-ink)}
+.cgg-meter-card,.cgg-wire-box{border:0;border-radius:16px;background:#fff;box-shadow:0 3px 0 rgba(35,48,74,.1)}
+.cgg-meter-value{font-size:1.5rem;font-weight:900;color:#2F6FB0}
+#cgg-data{background:#fff}#cgg-evidence{background:#fff;border-top:6px solid var(--lab-mint)}
+.cgg-status{border:0;border-radius:14px;box-shadow:0 3px 0 rgba(35,48,74,.1)}
+/* 首頁的小插圖：電池—導線—燈泡—電流表 */
+.cgg-welcome-battery,.cgg-welcome-meter{border-color:var(--lab-ink);border-radius:14px;background:#FFF1CC;font-weight:900}
+.cgg-welcome-meter{background:#fff;border-radius:999px}
+.cgg-welcome-lamp{display:inline-block;width:56px;height:64px;font-size:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 64'%3E%3Ccircle cx='28' cy='24' r='19' fill='%23FFD84A' stroke='%2323304A' stroke-width='3'/%3E%3Cpath d='M21 26q7-9 14 0' fill='none' stroke='%23C8372D' stroke-width='2.5'/%3E%3Crect x='19' y='41' width='18' height='13' rx='3' fill='%23B9BFC8' stroke='%2323304A' stroke-width='3'/%3E%3Cpath d='M23 58h10' stroke='%2323304A' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
+#cgg-welcome{position:relative;padding-left:150px;text-align:left}
+#cgg-welcome::before{content:"";position:absolute;left:24px;bottom:16px;width:110px;height:190px;background:url(../../tools/mini-lab/img/doc-wave.png) center bottom/contain no-repeat}
+#cgg-welcome .cgg-welcome-art{justify-content:flex-start}
+.cgg-footer{color:var(--lab-ink2)}
+@media(max-width:767px){
+  .cgg-wrap>header{margin:0 -10px 12px;padding:10px 12px;gap:8px}.cgg-h1{font-size:19px;width:100%}
+  .cgg-steps{gap:4px}
+  .cgg-coach{grid-template-columns:70px minmax(0,1fr)}.cgg-coach::before{width:70px;height:122px}
+  #cgg-welcome{padding:24px 16px 20px 16px;text-align:center}#cgg-welcome::before{position:static;display:block;margin:0 auto 6px;width:90px;height:150px}#cgg-welcome .cgg-welcome-art{justify-content:center}
+}
+@media(forced-colors:active){.cgg-coach-name,.cgg-coach-main,.cgg-coach-sub{background:Canvas;color:CanvasText;border-color:CanvasText}.cgg-coach::before,#cgg-welcome::before{display:none}}
