@@ -523,6 +523,8 @@ function circleConfig(){
     圓周率由「數的類型」勾選框決定（本主題覆寫標籤）：integer＝取 3、decimal＝取 3.14、fraction＝以 π 表示。
     值以 (π 的係數, 常數項) 兩個有理數表示，輸出時依模式合成；verify 用另一條路徑（例如由直徑算、把答案代回）。 */
  const lv=ctx=>ctx.level==="challenge"?2:ctx.level==="advanced"?1:0,chance=p=>Math.random()<p,half=v=>div(v,R(2));
+ // 同一份卷裡同一單元的題型輪流出（洗牌袋），不會連續兩題都是同一種（2026-11-25）
+ const bags={},lastK={},bag=list=>{const k=list.join();let b=bags[k];if(!b||!b.length){b=bags[k]=shuffle(list);if(b.length>1&&b[b.length-1]===lastK[k])[b[0],b[b.length-1]]=[b[b.length-1],b[0]]}return lastK[k]=b.pop()};
  const U="cm",U2="cm<sup>2</sup>";
  const piOf=mode=>mode==="integer"?R(3):mode==="decimal"?R(314,100):null;
  // 值物件 {p:π係數, c:常數}
@@ -550,7 +552,7 @@ function circleConfig(){
  const circumference=unit("circumference","圓周長","圓周長＝直徑×圓周率＝半徑×2×圓周率；題目給的是半徑還是直徑要先看清楚。",ctx=>{
   // 基礎：由半徑或直徑直接求；進階：由圓周長反求半徑、直徑，半圓的弧長；挑戰：車輪滾幾圈走多遠、走了多遠反求滾了幾圈（應用、兩步）
   // 第三階段：國小寫法不再有「以 π 表示」的題，每級補一種同級的說法（CI 每級至少三種題型）：基礎加「圓形盤子的直徑」、挑戰的車輪也可以給半徑
-  const L=lv(ctx),mode=pick(ctx.modes),r=L===0?R(rand(1,25)):radius(L,mode),d=mul(r,R(2)),kind=L===0?pick(["r","d","plate"]):L===1?pick(["reverse","reverseA","half"]):pick(["wheel","wheelRev"]);
+  const L=lv(ctx),mode=pick(ctx.modes),r=L===0?R(rand(1,25)):radius(L,mode),d=mul(r,R(2)),kind=L===0?bag(["r","d","plate"]):L===1?bag(["reverse","reverseA","half"]):bag(["wheel","wheelRev"]);
   const C=V(d);
   if(kind==="plate")return{expr:`一個圓形盤子的直徑是 ${show(d,ctx)} ${U}，盤子的邊緣繞一圈長多少 ${U}？`,answer:fmt(C,mode,U),sig:`ci:d:${plain(r)}`/* 和「圓的直徑」同一題：同一張卷不重複 */,verify:()=>eq(C.p,add(r,r))};
   if(kind==="wheel"||kind==="wheelRev"){const wd=R(pick([40,45,50,55,60,65,70,75,80])),n=rand(5,40),dist=V(mul(wd,R(n))),byR=wd.n%2===0&&chance(.5),wt=byR?`半徑是 ${wd.n/2}`:`直徑是 ${wd.n}`;
@@ -562,7 +564,7 @@ function circleConfig(){
   return{expr:`圓周長 ${fmt(C,mode,U)}，求直徑。`,answer:`${show(d,ctx)} ${U}`,sig:`cd:${plain(r)}`,verify:()=>mode==="fraction"?eq(d,C.p):eq(div(numeric(C,mode),piOf(mode)),d)}});
  const area=unit("area","圓面積","圓面積＝半徑×半徑×圓周率；給直徑時先除以 2。",ctx=>{
   // round 3：三級題型不重疊——基礎＝由半徑、直徑求面積；進階＝由面積反求半徑或直徑；挑戰＝兩步：由周長求面積、由面積求周長、半徑倍數
-  const L=lv(ctx),mode=pick(ctx.modes),r=L===1?R(rand(1,30)):radius(L,mode,false),d=mul(r,R(2)),A=V(mul(r,r)),kind=L===0?pick(["r","d","both"]):L===1?pick(["reverse","revD","revT"]):pick(["compare","c2a","a2c"]);
+  const L=lv(ctx),mode=pick(ctx.modes),r=L===1?R(rand(1,30)):radius(L,mode,false),d=mul(r,R(2)),A=V(mul(r,r)),kind=L===0?bag(["r","d","both"]):L===1?bag(["reverse","revD","revT"]):bag(["compare","c2a","a2c"]);
   // 第三階段：進階補一種同級說法——圓形桌面的面積反求直徑（CI 每級至少三種題型）
   if(kind==="revT"){if(r.d!==1)return null;return{expr:`一張圓形桌面的面積是 ${fmt(A,mode,U2)}，桌面的直徑是多少 ${U}？`,answer:`${show(d,ctx)} ${U}`,sig:`ard:${plain(r)}`,verify:()=>eq(mul(d,d),mul(A.p,R(4)))}}
   if(kind==="revD"){if(r.d!==1)return null;return{expr:`圓面積 ${fmt(A,mode,U2)}，求直徑。`,answer:`${show(d,ctx)} ${U}`,sig:`ard:${plain(r)}`,verify:()=>eq(mul(half(d),half(d)),A.p)}}
@@ -577,7 +579,7 @@ function circleConfig(){
   // round 3：三級不重複——基礎＝半圓的面積與周長（半徑 1～25）；進階＝四分之一圓的面積與周長、半圓與四分之一圓的弧長；挑戰＝四分之三圓，四分之一圓只出「周長與面積一起求」
   const L=lv(ctx),mode=pick(ctx.modes);let r=L===0?R(rand(1,25)):radius(L,mode);const frac=L===0?2:L===1?pick([2,4]):pick([4,3,3]);if(mode==="integer"&&frac!==2&&r.d===1&&r.n%2)r=add(r,R(1)); // 取 3 時四分之一圓面積要整數// frac：2＝半圓、4＝四分之一、3＝四分之三
   const part=frac===3?R(3,4):R(1,frac),arc=V(mul(mul(r,R(2)),part)),straight=frac===2?mul(r,R(2)):mul(r,R(2)),peri=vadd(arc,V(R(0),straight)),ar=V(mul(mul(r,r),part));
-  const name=frac===2?"半圓":frac===4?"四分之一圓":"四分之三圓",kind=L===0?pick(["area","peri"]):L===1?(frac===2?"arc":pick(["area","peri","arc"])):frac===4?"both":pick(["peri","arc","both"]);
+  const name=frac===2?"半圓":frac===4?"四分之一圓":"四分之三圓",kind=L===0?bag(["area","peri"]):L===1?(frac===2?"arc":bag(["area","peri","arc"])):frac===4?"both":bag(["peri","arc","both"]);
   if(mode==="decimal"&&[ar,arc,peri].some(v=>places(numeric(v,mode))>2))return null;// round 3：面積、弧長、周長都不出三位小數（例：半徑 15 的四分之一圓面積 176.625）
   const fig=sectorFig(r,frac);
   // 第三階段：基礎的半圓有時改給直徑（示意圖上標的就是直徑），CI 每級至少三種題型
@@ -590,7 +592,7 @@ function circleConfig(){
   // 半徑最多 12（舊版出現 5597.065 這種答案）；面積題不用 x.5 的半徑（乘 3.14 會變三位小數）
   // round 3：三級題型不重複——基礎＝正方形內接圓、環形、兩個半圓；進階＝跑道形、由外圓直徑和環寬求環形面積（先求內圓半徑）、圓內最大正方形以外的面積；
   // 挑戰＝正方形內四分之一圓的陰影、兩個四分之一圓重疊的葉形、環形的面積與內外圓周長
-  const L=lv(ctx),mode=pick(ctx.modes),r=R(rand(1,12));const kind=L===0?pick(["square","ring","twohalf"]):L===1?pick(["stadium","ringW","inSquare"]):pick(["squareShade","leaf","ringBoth"]);
+  const L=lv(ctx),mode=pick(ctx.modes),r=R(rand(1,12));const kind=L===0?bag(["square","ring","twohalf"]):L===1?bag(["stadium","ringW","inSquare"]):bag(["squareShade","leaf","ringBoth"]);
   if(kind==="ringW"){const w=R(rand(1,4)),r2=add(r,w),A=V(sub(mul(r2,r2),mul(r,r)));return{expr:`一個環形的外圓直徑是 ${show(mul(r2,R(2)),ctx)} ${U}，環寬（外圓半徑減內圓半徑）是 ${show(w,ctx)} ${U}，求環形面積。`,answer:fmt(A,mode,U2),sig:`cgw:${plain(r)}:${plain(w)}`,verify:()=>eq(A.p,mul(add(r2,r),w))}}
   if(kind==="inSquare"){const A=V(mul(r,r),mul(R(-2),mul(r,r)));return{expr:`半徑 ${show(r,ctx)} ${U} 的圓內畫一個最大的正方形（正方形的對角線就是直徑），求圓內正方形以外的面積。`,answer:fmt(A,mode,U2),sig:`cis:${plain(r)}`,verify:()=>eq(A.c,mul(R(-1),half(mul(mul(r,R(2)),mul(r,R(2))))))&&eq(A.p,mul(r,r))}}
   if(kind==="leaf"){const s=r,A=V(half(mul(s,s)),mul(R(-1),mul(s,s)));return{expr:`邊長 ${show(s,ctx)} ${U} 的正方形，分別以相對的兩個頂點為圓心、邊長為半徑，在正方形內畫兩個四分之一圓，求兩個四分之一圓重疊部分（葉形）的面積。`,answer:fmt(A,mode,U2),sig:`clf:${plain(s)}`,verify:()=>eq(A.p,mul(mul(mul(s,s),R(1,4)),R(2)))&&eq(A.c,mul(R(-1),mul(s,s)))}}
@@ -635,7 +637,7 @@ function circleConfig(){
  const figRibbon=n=>{const r=26,c=n===2?[[50,50],[102,50]]:n===3?[[50,96],[102,96],[76,51]]:[[50,50],[102,50],[50,102],[102,102]];const xs=c.map(p=>p[0]),ys=c.map(p=>p[1]);return svg(160,n===2?100:150,`${n===3?`<path d="M24.9 81.5 L50.9 36.5 A29 29 0 0 1 101.1 36.5 L127.1 81.5 A29 29 0 0 1 102 125 L50 125 A29 29 0 0 1 24.9 81.5 Z"`:`<rect x="${Math.min(...xs)-r-3}" y="${Math.min(...ys)-r-3}" width="${Math.max(...xs)-Math.min(...xs)+2*r+6}" height="${Math.max(...ys)-Math.min(...ys)+2*r+6}" rx="${r+3}"`} fill="none" stroke="#16233A" stroke-width="3"/>${c.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" ${GR}/>`).join("")}`)};
  // ── 鋪色部分的面積 ──
  const shaded=unit("shaded","鋪色部分的面積","鋪色面積＝整個圖形－挖掉的部分，或把幾塊加起來；先找出每一塊的半徑（給直徑要先除以 2）。",ctx=>tries(()=>{
-  const L=lv(ctx),mode=ctx.modes[0],kind=pick(L===0?["halfCircle","rectCircle","grid","chain"]:L===1?["halfRing","trap","circTri","fourHalf"]:["target","sectorRing","squareTop","quarterSquare"]);
+  const L=lv(ctx),mode=ctx.modes[0],kind=bag(L===0?["halfCircle","rectCircle","grid","chain"]:L===1?["halfRing","trap","circTri","fourHalf"]:["target","sectorRing","squareTop","quarterSquare"]);
   const done=(A,q)=>ok2(mode,A)&&numeric(A,"decimal").n>0?{...q,answer:fmt(A,mode,U2)}:null;
   if(kind==="halfCircle"){const r=R(rand(2,15)),d=mul(r,R(2)),A=V(mul(sq(r),R(3,2)));return done(A,{expr:`${figHalfCircle(sv(d))}一個半圓和一個圓的直徑都是 ${show(d,ctx)} ${U}（如圖），求鋪色部分的面積。`,sig:`sh1:${r.n}`,verify:()=>eq(A.p,add(half(sq(r)),sq(r)))})}
   if(kind==="rectCircle"){const r=R(rand(2,10)),b=mul(r,R(2)),a=add(b,R(rand(2,12))),A=V(mul(sq(r),R(-1)),mul(a,b));return done(A,{expr:`${figRectCircle(sv(a),sv(b))}長 ${show(a,ctx)} ${U}、寬 ${show(b,ctx)} ${U} 的長方形裡畫一個最大的圓，求鋪色部分（長方形扣掉圓）的面積。`,sig:`sh2:${a.n}:${b.n}`,verify:()=>eq(A.c,mul(a,mul(r,R(2))))&&eq(A.p,mul(half(b),mul(half(b),R(-1))))})}
@@ -654,7 +656,7 @@ function circleConfig(){
  }));
  // ── 鋪色部分的周長 ──
  const perimeter=unit("perimeter","鋪色部分的周長","周長是鋪色部分外圍一圈的長：彎的部分算弧長，直的部分算邊長，裡面的線不算；幾段弧常常可以拼成一個整圓。",ctx=>tries(()=>{
-  const L=lv(ctx),mode=ctx.modes[0],kind=pick(L===0?["hourglass","leaf","fourHalfP","halfInSquare"]:L===1?["threeSemi","halfRingP","ringSectorP"]:["triArcs","track","threeSemiBoth"]);
+  const L=lv(ctx),mode=ctx.modes[0],kind=bag(L===0?["hourglass","leaf","fourHalfP","halfInSquare"]:L===1?["threeSemi","halfRingP","ringSectorP"]:["triArcs","track","threeSemiBoth"]);
   const done=(Pv,q)=>ok2(mode,Pv)?{...q,answer:fmt(Pv,mode,U)}:null;
   if(kind==="hourglass"){const s=R(rand(4,30)),Pv=V(s,mul(s,R(2)));return done(Pv,{expr:`${figHourglass(sv(s))}邊長 ${show(s,ctx)} ${U} 的正方形，以上、下兩邊為直徑，向正方形裡各畫一個半圓。求鋪色部分（左右兩塊）的周長總和。`,sig:`pe1:${s.n}`,verify:()=>eq(Pv.p,mul(half(s),R(2)))})}
   if(kind==="leaf"){const s=R(rand(3,30)),Pv=V(s);return done(Pv,{expr:`${figLeaf(sv(s))}邊長 ${show(s,ctx)} ${U} 的正方形，以相對的兩個頂點為圓心、邊長為半徑，各畫一個四分之一圓。求中間葉形（鋪色部分）的周長。`,sig:`pe2:${s.n}`,verify:()=>eq(Pv.p,mul(mul(s,R(2)),R(1,2)))})}
@@ -671,7 +673,7 @@ function circleConfig(){
  // ── 圓的應用題 ──
  const apply=unit("apply","圓的應用題","先畫圖、找半徑：繩子圍成的圓，繩長就是圓周長；繞幾圈就是幾個圓周長；動物被綁在圍欄邊，活動範圍是幾個扇形拼起來。",ctx=>tries(()=>{
   const L=lv(ctx),mode=ctx.modes[0],noPi=mode!=="fraction";
-  const kind=pick(L===0?["equalPoly","ropeCircle","pool","rectCircles"]:L===1?["polyEq","polyRev","wheelTime","ropeWind","fold"]:["goatV","goatM","cow","ribbon",...(noPi?["ropeDiff","benches"]:[])]);
+  const kind=bag(L===0?["equalPoly","ropeCircle","pool","rectCircles"]:L===1?["polyEq","polyRev","wheelTime","ropeWind","fold"]:["goatV","goatM","cow","ribbon",...(noPi?["ropeDiff","benches"]:[])]);
   if(kind==="equalPoly"){const n=pick([3,4]),r=R(rand(2,30)),side=V(div(mul(r,R(2)),R(n))),A=V(sq(r));if(!ok2(mode,side,A))return null;return{expr:`一個正${n===3?"三角形":"方形"}的邊長是 ${fmt(side,mode,U)}，它的周長和一個圓的圓周長一樣長，這個圓的面積是多少？`,answer:fmt(A,mode,U2),sig:`ap1:${n}:${r.n}`,verify:()=>eq(mul(side.p,R(n)),mul(r,R(2)))}}
   if(kind==="ropeCircle"){const r=R(rand(2,30)),C=V(mul(r,R(2))),A=V(sq(r));if(!ok2(mode,C,A))return null;return{expr:`用一條長 ${fmt(C,mode,M)} 的繩子圍成一個最大的圓，這個圓的面積是多少？`,answer:fmt(A,mode,M2),sig:`ap2:${r.n}`,verify:()=>eq(mul(half(C.p),half(C.p)),A.p)}}
   if(kind==="pool"){const r=R(rand(3,15)),w=R(rand(1,4)),out=chance(.5),Pv=out?V(mul(add(r,w),R(2))):V(sub(sq(add(r,w)),sq(r)));if(!ok2(mode,Pv))return null;return{expr:`半徑 ${show(r,ctx)} ${M} 的圓形池塘外，沿著池邊鋪一圈寬 ${show(w,ctx)} ${M} 的步道。${out?"步道最外圈的圓周長是多少？":"步道的面積是多少？"}`,answer:fmt(Pv,mode,out?M:M2),sig:`ap3:${r.n}:${w.n}:${out}`,verify:()=>out?eq(Pv.p,add(mul(r,R(2)),mul(w,R(2)))):eq(Pv.p,mul(w,add(add(r,r),w)))}}

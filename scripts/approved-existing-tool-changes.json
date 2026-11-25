@@ -4523,6 +4523,13 @@
       "approved_blob": "707014fad199640febccf6914266b8d82e70925a",
       "reason": "國小圓周長與圓面積出題器依學校考卷擴充鋪色面積、鋪色周長與應用題三個單元",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "707014fad199640febccf6914266b8d82e70925a",
+      "approved_blob": "674f01eb2cbc8506b4e7895966ac10f482235528",
+      "reason": "圓周長與圓面積出題器同一份卷內題型改為洗牌輪流，避免連續兩題同一種",
+      "pull_request": null
     }
   ]
 }
