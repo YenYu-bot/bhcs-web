@@ -529,9 +529,10 @@ function areaConfig(){
  const figInner=(a,b)=>svg(205,118,`<rect x="20" y="20" width="140" height="70" ${WH}/><polygon points="20,90 160,90 75,45" ${GR}/><line x1="20" y1="20" x2="75" y2="45" stroke="#16233A" stroke-width="1.2"/><line x1="160" y1="20" x2="75" y2="45" stroke="#16233A" stroke-width="1.2"/>${T(14,18,"A","end")}${T(14,98,"B","end")}${T(166,98,"C","start")}${T(166,18,"D","start")}${T(75,40,"P")}${T(90,106,sv(a))}${T(166,58,sv(b),"start")}`);
  const figMidTri=()=>svg(195,118,`<polygon points="70,15 20,100 170,100" ${WH}/><polygon points="20,100 95,100 82.5,57.5" ${GR}/><line x1="70" y1="15" x2="95" y2="100" stroke="#16233A" stroke-width="1.2"/>${T(70,11,"A")}${T(14,110,"B","end")}${T(176,110,"C","start")}${T(95,113,"D")}${T(90,57,"E","start")}`);
  const figParaE=(b,h)=>svg(245,112,`<polygon points="40,90 160,90 195,20 75,20" ${WH}/><polygon points="40,90 160,90 125,20" ${GR}/><line x1="205" y1="20" x2="205" y2="90" ${DSH}/>${T(100,106,sv(b))}${T(211,58,sv(h),"start")}${T(125,14,"E")}`);
+ const bagsA={},lastA={},bagA=list=>{const k=list.join();let q=bagsA[k];if(!q||!q.length){q=bagsA[k]=shuffle(list);if(q.length>1&&q[q.length-1]===lastA[k])[q[0],q[q.length-1]]=[q[q.length-1],q[0]]}return lastA[k]=q.pop()};// 同一份卷題型輪流
  const shaded=unit("shaded","鋪色與組合圖形","先找鋪色部分是哪幾塊：等底等高的三角形是長方形（平行四邊形）的一半；菱形、箏形面積＝對角線×對角線÷2；階梯形的周長可以把小段平移成大長方形。",ctx=>{
   const L=lv(ctx),mode=pick(ctx.modes.filter(m=>m!=="fraction"))||"integer";
-  const kind=pick(L===0?["rectTri","rectPara","dia","midRh"]:L===1?["trapTri","sideTris","stair","paraRoad"]:["twoSq","inner","midTri","paraE"]);
+  const kind=bagA(L===0?["rectTri","rectPara","dia","midRh"]:L===1?["trapTri","sideTris","stair","paraRoad"]:["twoSq","inner","midTri","paraE"]);
   const ok=(...vs)=>vs.every(v=>pos(v)&&fOK(v,mode,L)&&(mode!=="decimal"||isFiniteDec(v)));
   const A2=v=>`${showA(v,mode,ctx)} ${U2}`,S=v=>show(v,mode,ctx);
   let a=num(mode,L,L===0?16:24),b=num(mode,L,L===0?12:18);if(cmp(a,b)<0)[a,b]=[b,a];if(eq(a,b)||slim(a,b))return null;

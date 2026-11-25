@@ -4548,8 +4548,8 @@
     {
       "path": "tools/math/g6-drills.html",
       "baseline_blob": "11ac9e9c35865f0dcc379f732fafb4fe5167edf1",
-      "approved_blob": "df46e95cf0ba60137835c4d63323f39a523e2632",
-      "reason": "四則簡化計算出題器補拆數湊整、商不變、除法分配律與小數拆數題型",
+      "approved_blob": "ed714634da9eea836399ff58ece81d8df7b94643",
+      "reason": "四則簡化計算出題器補拆數湊整、商不變、除法分配律與小數拆數題型；鋪色與組合圖形題型輪流",
       "pull_request": null
     }
   ]
