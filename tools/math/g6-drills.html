@@ -1252,7 +1252,20 @@ function timeConfig(){
   if(k==="share")return q("div",k,`把一段長 ${T(tot)}的影片平分成 ${n} 段，每段長多久？`,T(v),()=>parseT(T(v))*n===parseT(T(tot)));
   if(k==="word"){const c=pick(["繞公園跑步","繞湖騎腳踏車","沿河堤慢跑"]);return q("div",k,`小明${c} ${n} 圈共用了 ${T(tot)}，平均每圈用了幾分幾秒？`,T(v),()=>parseT(T(v))*n===parseT(T(tot)))}
   return q("div",k,`${T(tot)} ÷ ${n}＝？`,T(v),()=>parseT(T(v))*n===parseT(T(tot)))});
- return{title:"時間的計算與化聚",symbol:"⏱",subtitle:"時間化聚・分數小數時間・加減乘除・時刻",instruction:"完成時間化聚或計算，過程寫在「原式＝」後面；時刻題用 24 小時制。",modes:["integer","fraction","decimal"],mixed:true,levels:{basic:"基礎：分↔秒、時↔分兩階化聚；簡單分數小數時間化成分或秒；不進位、不退位的時分或分秒加減；分秒乘以一位數、時分除以一位數。",advanced:"進階：時分秒三階化聚；分數小數時間化成幾時幾分、分（秒）化成分數小數時；要進位、退位的時分秒加減；時分秒乘除與化成秒再除。",challenge:"挑戰：日時分化聚、幾時幾分化成分數小數時或日；24 小時制時刻計算（1.5 小時以上又要借位的經過時間、跨午夜的電影幾時開始、跨到隔天、扣掉中途離開的時間、帶秒的計時）；兩段複名數 ×10 以上與上課加下課的乘法應用題；1 小時以上的平均、先除再乘的除法應用題。"},units:[convertU,fracdecU,addU,subU,mulU,divU],presets:{basic:{convert:3,fracdec:2,add:2,sub:2,mul:2},advanced:{convert:2,fracdec:2,add:2,sub:2,mul:2,div:2},challenge:{convert:2,fracdec:2,add:2,sub:2,mul:2,div:2}}}
+ // 2026-11-26（Claude）：時間應用題——基礎、進階也有生活文字題（原本只在挑戰）；時刻一律 24 小時制；verify 用另一條算法（倒推或換成分鐘重算）。
+ const appU=unitT("timeapp","時間應用題","時刻＋經過時間＝結束時刻；結束時刻－開始時刻＝經過時間；分滿 60 要進位成 1 時，不夠減就向時借 1（60 分）。",["integer"],{basic:["arrive","spent","daily"],advanced:["noon","start","lesson"],challenge:["bus","clock","share"]},(k,ctx)=>{
+  const ck=m=>`${Math.floor(m/60)} 時 ${String(m%60).padStart(2,"0")} 分`,du=m=>m>=60?`${Math.floor(m/60)} 時${m%60?" "+m%60+" 分":""}`:`${m} 分`;
+  if(k==="arrive"){const s=rand(7*60,10*60)+rand(0,11)*5,d=rand(15,90);if(s+d>=12*60)return null;return q("timeapp",k,`小明 ${ck(s)} 從家裡出發，走了 ${du(d)} 到達學校，到達時是幾時幾分？`,ck(s+d),()=>s+d-d===s)}
+  if(k==="spent"){const s=rand(13*60,15*60)+rand(0,11)*5,d=rand(20,150),e=s+d;return q("timeapp",k,`一場球賽從 ${ck(s)} 開始，${ck(e)} 結束，球賽進行了多久？`,du(d),()=>e-s===d)}
+  if(k==="daily"){const m=pick([25,35,40,45,50]),n=rand(3,7);return q("timeapp",k,`小華每天練琴 ${m} 分鐘，${n} 天共練了幾時幾分？`,du(m*n),()=>Math.floor(m*n/60)*60+(m*n)%60===m*n)}
+  if(k==="noon"){const s=rand(10*60,11*60+55),d=rand(Math.max(70,725-s),200),e=s+d;return q("timeapp",k,`火車 ${ck(s)} 從臺北出發，行駛了 ${du(d)} 到達臺中，到達時是幾時幾分？`,ck(e),()=>e-s===d&&e>12*60)}
+  if(k==="start"){const e=rand(15*60,18*60)+rand(0,11)*5,d=rand(65,170),s=e-d;return q("timeapp",k,`一部電影 ${ck(e)} 播完，片長 ${du(d)}，電影是幾時幾分開始播的？`,ck(s),()=>s+d===e)}
+  if(k==="lesson"){const c=pick([40,45]),b=pick([10,15]),n=rand(3,5),s=8*60+rand(0,3)*10,e=s+c*n+b*(n-1);return q("timeapp",k,`學校上午 ${ck(s)} 開始上第一節課，每節課 ${c} 分鐘，每節下課休息 ${b} 分鐘。第 ${n} 節課在幾時幾分下課？`,ck(e),()=>e===s+n*(c+b)-b)}
+  if(k==="bus"){const s=rand(5*60+30,6*60+30),g=pick([12,15,18,20,25]),n=rand(6,15),t=s+g*(n-1);return q("timeapp",k,`公車的首班車 ${ck(s)} 發車，以後每 ${g} 分鐘發一班，第 ${n} 班車在幾時幾分發車？`,ck(t),()=>(t-s)/g+1===n)}
+  if(k==="clock"){const f=pick([2,3,4,5]),n=rand(4,12),fast=Math.random()<.5,t=12*60+(fast?1:-1)*f*n;return q("timeapp",k,`一個時鐘每天${fast?"快":"慢"} ${f} 分鐘。今天中午 12 時 00 分把它對準，${n} 天後的中午 12 時 00 分，這個時鐘顯示幾時幾分？`,ck(t),()=>Math.abs(t-720)===f*n)}
+  const n=rand(4,9),each=rand(12,40),tot=n*each,r=rand(1,3)*5;return q("timeapp",k,`一場表演共 ${du(tot+r*(n-1))}，有 ${n} 個節目，每兩個節目之間休息 ${r} 分鐘，每個節目一樣長，每個節目表演幾分鐘？`,`${each} 分鐘`,()=>(tot+r*(n-1)-r*(n-1))/n===each);
+ });
+ return{title:"時間的計算與化聚",symbol:"⏱",subtitle:"時間化聚・分數小數時間・加減乘除・時刻・時間應用題",instruction:"完成時間化聚或計算，過程寫在「原式＝」後面；時刻題用 24 小時制。",modes:["integer","fraction","decimal"],mixed:true,levels:{basic:"基礎：分↔秒、時↔分兩階化聚；簡單分數小數時間化成分或秒；不進位、不退位的時分或分秒加減；分秒乘以一位數、時分除以一位數；應用題：出發加經過求到達、開始到結束經過多久、每天幾分鐘共幾時幾分。",advanced:"進階：時分秒三階化聚；分數小數時間化成幾時幾分、分（秒）化成分數小數時；要進位、退位的時分秒加減；時分秒乘除與化成秒再除；應用題：跨中午的到達時刻、由結束時刻和片長倒推開始、上課加下課第幾節幾時下課。",challenge:"挑戰：日時分化聚、幾時幾分化成分數小數時或日；24 小時制時刻計算（1.5 小時以上又要借位的經過時間、跨午夜的電影幾時開始、跨到隔天、扣掉中途離開的時間、帶秒的計時）；兩段複名數 ×10 以上與上課加下課的乘法應用題；1 小時以上的平均、先除再乘的除法應用題；公車第幾班幾時發車、時鐘每天快慢、扣掉休息平分表演時間。"},units:[convertU,fracdecU,addU,subU,mulU,divU,appU],presets:{basic:{convert:2,fracdec:2,add:2,sub:2,mul:2,timeapp:2},advanced:{convert:2,fracdec:2,add:2,sub:2,mul:2,div:2,timeapp:2},challenge:{convert:2,fracdec:2,add:2,sub:2,mul:2,div:2,timeapp:2}}}
 }
 
 function unknownConfig(){
@@ -1644,9 +1657,21 @@ function patternConfig(){
   if(kind==="merge"){const m=rand(8,20),f=rand(8,20),A=rand(60,95),c=rand(60,95),tot=m*A+f*c;if(tot%(m+f))return null;return{expr:`某班男生 ${m} 人平均 ${A} 分，女生 ${f} 人平均 ${c} 分，全班平均是多少分？`,answer:`${tot/(m+f)} 分`,sig:`mg:${m}:${f}:${A}:${c}`,verify:()=>(tot/(m+f))*(m+f)===m*A+f*c}}
   if(kind==="target"){const n=rand(3,6),a=rand(70,88),up=rand(1,4),need=(a+up)*(n+1)-a*n;if(need>100)return null;return{expr:`小華前 ${n} 次測驗的平均是 ${a} 分，第 ${n+1} 次要考幾分，平均才會變成 ${a+up} 分？`,answer:`${need} 分`,sig:`tg:${n}:${a}:${up}`,verify:()=>(a*n+need)/(n+1)===a+up}}
   const n=rand(5,12),a=rand(40,80),out=rand(20,100),b=(a*n-out)/(n-1);if(!Number.isInteger(b)||b<=0)return null;return{expr:`${n} 個數的平均是 ${a}，拿掉其中一個數 ${out} 後，剩下的數平均是多少？`,answer:String(b),sig:`rm:${n}:${a}:${out}`,verify:()=>b*(n-1)+out===a*n}});
- return{title:"規律與怎樣解題",symbol:"⋯",subtitle:"數列規律・圖形排列・植樹問題・週期問題・和差問題・平均數問題",instruction:"先找出規律或畫線段圖，再列式計算，答案要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：等差數列第 n 個、填空；火柴棒、方桌與長桌併排；植樹四種情況；星期與顏色週期；兩數和差；平均與總數。",advanced:"進階：數字較大、遞減數列；植樹只出反求（長度、間隔）；顏色個數、月曆；長方形周長的和差；多一人後的新平均與反求新來的人、兩次平均求總和。",challenge:"挑戰：兩項相差、第一次超過；剩下幾根；兩邊種樹與路燈間種樹；區間內的個數；三人和差、倍數加餘數、給錢後相等；兩組合併、目標平均、拿掉一數。"},
-  units:[seq,sticks,trees,cycle,sumdiff,average],presets:{basic:{sequence:3,sticks:2,trees:3,cycle:2,sumdiff:2,average:2},advanced:{sequence:2,sticks:2,trees:3,cycle:2,sumdiff:3,average:3},challenge:{sequence:2,sticks:2,trees:3,cycle:3,sumdiff:3,average:3}}};
+ // ⑦ 雞兔同籠（2026-11-26，Claude）：假設法——全部當成腳少的那種，多出來的腳 ÷ 每隻相差的腳數＝腳多的那種；verify 代回頭數與腳數。
+ const chicken=unit("chicken","雞兔同籠（假設法）","先假設全部都是其中一種，算出總數會差多少；差的數量 ÷ 每一個相差多少，就是另一種的個數。",ctx=>{
+  const L=lv(ctx),kind=pick(L===0?["animal","coin","ticket"]:L===1?["animal","coin","bike","boat"]:["score","break","stamp"]);
+  if(kind==="animal"){const c=rand(3,L?30:12),r=rand(3,L?30:12),H=c+r,F=2*c+4*r;return{expr:`籠子裡有雞和兔子，共有 ${H} 個頭、${F} 隻腳。雞和兔子各有幾隻？`,answer:`雞 ${c} 隻；兔子 ${r} 隻`,sig:`ck:a:${c}:${r}`,verify:()=>(F-2*H)/2===r&&H-(F-2*H)/2===c}}
+  if(kind==="coin"){const[v1,v2]=pick(L?[[5,10],[10,50],[5,50]]:[[1,5],[5,10]]),a=rand(3,L?25:12),b=rand(3,L?25:12),N=a+b,T=v1*a+v2*b;return{expr:`撲滿裡只有 ${v1} 元和 ${v2} 元硬幣，共 ${N} 枚，合計 ${T} 元。${v1} 元和 ${v2} 元硬幣各有幾枚？`,answer:`${v1} 元 ${a} 枚；${v2} 元 ${b} 枚`,sig:`ck:c:${v1}:${v2}:${a}:${b}`,verify:()=>(T-v1*N)/(v2-v1)===b&&N-b===a}}
+  if(kind==="ticket"){const p1=pick([50,80,100]),p2=p1+pick([20,50,100]),a=rand(3,15),b=rand(3,15),N=a+b,T=p1*a+p2*b;return{expr:`兒童票每張 ${p1} 元，全票每張 ${p2} 元。一群人共買了 ${N} 張票，花了 ${T} 元。兒童票和全票各買了幾張？`,answer:`兒童票 ${a} 張；全票 ${b} 張`,sig:`ck:t:${p1}:${p2}:${a}:${b}`,verify:()=>(T-p1*N)/(p2-p1)===b}}
+  if(kind==="bike"){const a=rand(3,20),b=rand(3,20),N=a+b,W2=2*a+3*b;return{expr:`停車場裡有腳踏車（2 個輪子）和三輪車（3 個輪子）共 ${N} 輛，輪子共有 ${W2} 個。腳踏車和三輪車各有幾輛？`,answer:`腳踏車 ${a} 輛；三輪車 ${b} 輛`,sig:`ck:b:${a}:${b}`,verify:()=>W2-2*N===b}}
+  if(kind==="boat"){const s=pick([4,5,6]),g=s+pick([2,3,4]),a=rand(2,10),b=rand(2,10),N=a+b,P=s*a+g*b;return{expr:`公園有小船和大船共 ${N} 艘，小船每艘坐 ${s} 人、大船每艘坐 ${g} 人，全部坐滿共 ${P} 人。小船和大船各有幾艘？`,answer:`小船 ${a} 艘；大船 ${b} 艘`,sig:`ck:o:${s}:${g}:${a}:${b}`,verify:()=>(P-s*N)/(g-s)===b}}
+  if(kind==="score"){const r=pick([4,5,6]),w=pick([1,2]),N=pick([10,15,20,25]),c=rand(Math.ceil(N/2),N-1),S=r*c-w*(N-c);if(S<=0)return null;return{expr:`數學競賽共 ${N} 題，答對一題得 ${r} 分，答錯或不答一題扣 ${w} 分。小明得了 ${S} 分，他答對幾題？`,answer:`${c} 題`,sig:`ck:s:${r}:${w}:${N}:${c}`,verify:()=>(r*N-S)/(r+w)===N-c}}
+  if(kind==="break"){const pay=pick([5,8,10]),fine=pick([10,15,20,25]),N=pick([100,200,300,500]),bk=rand(1,Math.floor(N/20)),T=pay*(N-bk)-fine*bk;return{expr:`搬運公司運送 ${N} 個玻璃杯，每安全送到一個得 ${pay} 元，每打破一個不但沒有運費還要賠 ${fine} 元。結果共得到 ${T} 元，打破了幾個？`,answer:`${bk} 個`,sig:`ck:k:${pay}:${fine}:${N}:${bk}`,verify:()=>(pay*N-T)/(pay+fine)===bk}}
+  const v=[5,10,15],x=rand(2,8),y=rand(2,8),z=y,N=x+y+z;const T=v[0]*x+v[1]*y+v[2]*z;return{expr:`小華買了 5 元、10 元、15 元三種郵票共 ${N} 張，花了 ${T} 元，其中 10 元和 15 元的郵票張數一樣多。三種郵票各買了幾張？`,answer:`5 元 ${x} 張；10 元 ${y} 張；15 元 ${z} 張`,sig:`ck:st:${x}:${y}`,verify:()=>{const yy=(T-5*N)/(5+10);return yy===y&&N-2*yy===x}};
+ });
+ return{title:"規律與怎樣解題",symbol:"⋯",subtitle:"數列規律・圖形排列・植樹問題・週期問題・和差問題・平均數問題・雞兔同籠",instruction:"先找出規律或畫線段圖，再列式計算，答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：等差數列第 n 個、填空；火柴棒、方桌與長桌併排；植樹四種情況；星期與顏色週期；兩數和差；平均與總數；雞兔同籠、兩種硬幣、兩種票價。",advanced:"進階：數字較大、遞減數列；植樹只出反求（長度、間隔）；顏色個數、月曆；長方形周長的和差；多一人後的新平均與反求新來的人、兩次平均求總和；腳踏車與三輪車、大小船。",challenge:"挑戰：兩項相差、第一次超過；剩下幾根；兩邊種樹與路燈間種樹；區間內的個數；三人和差、倍數加餘數、給錢後相等；兩組合併、目標平均、拿掉一數；答錯扣分、打破要賠、三種郵票。"},
+  units:[seq,sticks,trees,cycle,sumdiff,average,chicken],presets:{basic:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2},advanced:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2},challenge:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2}}};
 }
 
 function chartsConfig(){
