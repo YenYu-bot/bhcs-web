@@ -4530,6 +4530,13 @@
       "approved_blob": "674f01eb2cbc8506b4e7895966ac10f482235528",
       "reason": "圓周長與圓面積出題器同一份卷內題型改為洗牌輪流，避免連續兩題同一種",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "674f01eb2cbc8506b4e7895966ac10f482235528",
+      "approved_blob": "a4c954432ba350ddeb5dc0646ce281007494e4ca",
+      "reason": "圓周長與圓面積出題器補葉形與四片花瓣題型（面積、周長），複合圖形葉形補示意圖",
+      "pull_request": null
     }
   ]
 }
