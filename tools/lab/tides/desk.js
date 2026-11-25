@@ -42,17 +42,19 @@ function coast(el, txt, rig, h) {
   el('rect', { x: 80, y: 140, width: 470, height: 340, rx: 18, fill: 'none', stroke: INK, 'stroke-width': 3 }, rig);
 }
 
-function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
+function scene({ rig, el, txt, s, r, step, set, drag, hint, kind, narrow }) {
   skyDefs(el, rig);
   const can = kind === 'observe';
   coast(el, txt, rig, r.h);
   el('rect', { x: 228, y: 150, width: 174, height: 30, rx: 15, fill: '#FFFDF2', opacity: .92 }, rig);
   txt(rig, 315, 171, `${f1(s.hour)} 時：${level(r)}`, { 'font-size': 17 });
+  // 手機：太陽地球月球和潮位曲線排到海岸下面
+  const OX = narrow ? -440 : 0, OY = narrow ? 370 : 0;
   // 右上：太陽、地球（海水被拉長）、月球
-  el('rect', { x: 580, y: 140, width: 350, height: 176, rx: 18, fill: '#0F1730', stroke: INK, 'stroke-width': 3 }, rig);
-  const cp = el('clipPath', { id: 'ti-space' }, el('defs', {}, rig)); el('rect', { x: 580, y: 140, width: 350, height: 176, rx: 18 }, cp);
-  const sp = el('g', { 'clip-path': 'url(#ti-space)' }, rig); sun(el, sp, 574, 228, 40);
-  const ex = 790, ey = 228, OR = 70, a = r.moonAngle, pos = d => { const t = 2 * Math.PI * d / 29.5; return [ex - OR * Math.cos(t), ey + OR * Math.sin(t)]; };
+  el('rect', { x: 580 + OX, y: 140 + OY, width: 350, height: 176, rx: 18, fill: '#0F1730', stroke: INK, 'stroke-width': 3 }, rig);
+  const cp = el('clipPath', { id: 'ti-space' }, el('defs', {}, rig)); el('rect', { x: 580 + OX, y: 140 + OY, width: 350, height: 176, rx: 18 }, cp);
+  const sp = el('g', { 'clip-path': 'url(#ti-space)' }, rig); sun(el, sp, 574 + OX, 228 + OY, 40);
+  const ex = 790 + OX, ey = 228 + OY, OR = 70, a = r.moonAngle, pos = d => { const t = 2 * Math.PI * d / 29.5; return [ex - OR * Math.cos(t), ey + OR * Math.sin(t)]; };
   el('circle', { cx: ex, cy: ey, r: OR, fill: 'none', stroke: '#6E83A8', 'stroke-dasharray': '4 5' }, rig);
   // 潮汐隆起：海水沿地球—月球方向被拉長，大潮時（太陽也在同一直線）拉得更長
   const stretch = 22 + 14 * r.amp;
@@ -61,25 +63,25 @@ function scene({ rig, el, txt, s, r, step, set, drag, hint, kind }) {
   const [mx, my] = pos(s.day), mg = el('g', { 'data-drag': can && step === 'spring' ? 'moon' : null }, rig), mm = el('g', {}, mg);
   moon(el, mm, mx, my, 11, { sunAng: 180, seed: 7 }); el('circle', { cx: mx, cy: my, r: 24, fill: 'transparent' }, mg);
   if (step === 'spring') for (const d of DAYS) if (d !== s.day) { const [x, y] = pos(d); el('circle', { cx: x, cy: y, r: 6, fill: 'none', stroke: '#8FA3C4', 'stroke-width': 1.5 }, rig); }
-  txt(rig, 870, 166, `${r.phase}・${KIND[r.kind]}`, { 'font-size': 15, fill: '#fff' });
+  txt(rig, 870 + OX, 166 + OY, `${r.phase}・${KIND[r.kind]}`, { 'font-size': 15, fill: '#fff' });
   if (can && step === 'spring') drag(mg, () => { let ang = a; return { move(p) { ang = (Math.atan2(p.y - ey, ex - p.x) + 2 * Math.PI) % (2 * Math.PI); mm.setAttribute('transform', `translate(${n1(ex - OR * Math.cos(ang) - mx)} ${n1(ey + OR * Math.sin(ang) - my)})`); },
     end() { const day = ang / (2 * Math.PI) * 29.5, v = DAYS.reduce((m, x) => Math.abs(x - day) < Math.abs(m - day) ? x : m); if (v !== s.day) set({ day: v }); else mm.removeAttribute('transform'); }, cancel() { mm.removeAttribute('transform'); } }; },
     { label: '讓月球繼續繞地球走', tap: () => set({ day: DAYS[(DAYS.indexOf(s.day) + 1) % 3] }) });
   // 下：24 小時潮位曲線（紅點可以沿著曲線拖）
-  const gx = 610, gy = 408, W = 296, H = 46;
-  el('rect', { x: 580, y: 330, width: 350, height: 150, rx: 18, fill: 'rgba(255,255,255,.95)', stroke: INK, 'stroke-width': 3 }, rig);
-  txt(rig, 755, 352, '一天的潮位（時）', { 'font-size': 13, fill: '#5A6478' });
+  const gx = 610 + OX, gy = 408 + OY, W = 296, H = 46;
+  el('rect', { x: 580 + OX, y: 330 + OY, width: 350, height: 150, rx: 18, fill: 'rgba(255,255,255,.95)', stroke: INK, 'stroke-width': 3 }, rig);
+  txt(rig, 755 + OX, 352 + OY, '一天的潮位（時）', { 'font-size': 13, fill: '#5A6478' });
   let cd = ''; for (let t = 0; t <= 24; t += .25) cd += `${t ? 'L' : 'M'}${n1(gx + t / 24 * W)} ${n1(gy - calculate('tides', { day: s.day, hour: t }).h * H)}`;
   el('path', { d: `M${gx} ${gy}H${gx + W}`, stroke: '#ECE2D2', 'stroke-width': 1.5 }, rig);
   el('path', { d: cd + `L${gx + W} ${gy}L${gx} ${gy}Z`, fill: '#5BB3E0', opacity: .15 }, rig);
   el('path', { d: cd, fill: 'none', stroke: '#2F6FB0', 'stroke-width': 3 }, rig);
-  for (const t of [0, 6, 12, 18, 24]) txt(rig, gx + t / 24 * W, 470, `${t}`, { 'font-size': 12, fill: '#5A6478' });
+  for (const t of [0, 6, 12, 18, 24]) txt(rig, gx + t / 24 * W, 470 + OY, `${t}`, { 'font-size': 12, fill: '#5A6478' });
   const dg = el('g', { 'data-drag': can && step === 'daily' ? 'hour' : null }, rig), dot = el('circle', { cx: gx + s.hour / 24 * W, cy: gy - r.h * H, r: 8, fill: '#C8372D', stroke: '#fff', 'stroke-width': 2.5 }, dg);
   el('circle', { cx: gx + s.hour / 24 * W, cy: gy - r.h * H, r: 22, fill: 'transparent' }, dg);
   if (can && step === 'daily') drag(dg, () => { let t = s.hour; return { move(p) { t = Math.max(0, Math.min(24, (p.x - gx) / W * 24)); dot.setAttribute('cx', gx + t / 24 * W); dot.setAttribute('cy', gy - calculate('tides', { day: s.day, hour: t }).h * H); },
     end() { const v = HOURS.reduce((m, x) => Math.abs(x - t) < Math.abs(m - t) ? x : m); if (v !== s.hour) set({ hour: v }); else { dot.setAttribute('cx', gx + s.hour / 24 * W); dot.setAttribute('cy', gy - r.h * H); } }, cancel() { dot.setAttribute('cx', gx + s.hour / 24 * W); dot.setAttribute('cy', gy - r.h * H); } }; },
     { label: '往後 6 小時', tap: () => set({ hour: HOURS[(HOURS.indexOf(s.hour) + 1) % 4] }) });
-  hint(500, 512, step === 'daily' ? '沿著曲線拖紅點，看海水漲退' : step === 'spring' ? '拖著月球繞地球走' : '');
+  hint(narrow ? 315 : 500, narrow ? 880 : 512, step === 'daily' ? '沿著曲線拖紅點，看海水漲退' : step === 'spring' ? '拖著月球繞地球走' : '');
 }
 
 const tgt = (sig, label, set, aim) => ({ sig, label, aim, set,
@@ -90,7 +92,7 @@ runDesk({
   key: 'bhcs.lab.tides.v1', title: '潮汐實驗桌', background: 'bg-physics-bench',
   sceneLabel: '潮汐實驗桌：左邊是海岸，海水、小船和潮位尺跟著潮高升降；右上是太陽、地球和月球，地球外的藍色是被月球拉長的海水，月球可以拖著繞地球走；右下是一天的潮位曲線，紅點可以沿著曲線拖',
   initial: { day: 0, hour: 0 },
-  model, scene, viewBox: { desk: '60 120 890 420', phone: '60 120 890 420' }, phoneText: 1.4,
+  model, scene, viewBox: { desk: '60 120 890 420', phone: '60 130 510 780' }, phoneText: 1.15,
   readouts: (s, r) => [['潮高', f2(r.h), 'm', level(r)], ['月相', r.phase, '', `月齡 ${s.day} 天`], ['潮差', KIND[r.kind], '', `振幅 ${f2(r.amp)} m`]],
   why: { title: '潮汐是怎麼來的', button: '潮汐從哪來', html: `
     <p class="fn-tip"><b>潮汐主要由月球的引力造成，</b>太陽也有影響。地球自轉一圈，海邊大約會遇到兩次滿潮、兩次乾潮，每次約隔 12 小時 25 分，所以每天的滿潮時間會延後約 50 分鐘。</p>
