@@ -107,13 +107,13 @@
 
 | 項目 | 結果 |
 |---|---:|
-| topic / 組合 | 144 / 4452 |
-| safeQuestion 抽樣 / 成功取題 | 890400 / 890400 |
-| 通過 / 失敗 | 4452 / 0 |
-| 候選 gen / null | 1041001 / 139535 |
+| topic / 組合 | 144 / 4455 |
+| safeQuestion 抽樣 / 成功取題 | 891000 / 891000 |
+| 通過 / 失敗 | 4455 / 0 |
+| 候選 gen / null | 1041921 / 139855 |
 | 候選 verify false / 例外 | 0 / 0 |
-| 完成單卷 / 單卷耗盡 | 4452 / 0 |
-| 高拒絕率 unit（非阻擋） | 101 |
+| 完成單卷 / 單卷耗盡 | 4455 / 0 |
+| 高拒絕率 unit（非阻擋） | 102 |
 
 | 類型 | topic / unit | 組數 |
 |---|---|---:|
@@ -168,6 +168,7 @@
 | parallelratio / `judge` | 81.1% | 1 |
 | parallelratio / `midsegment` | 57.1% | 1 |
 | parallelratio / `midpoint` | 53.2% | 1 |
+| parallelratio / `divide` | 59.0% | 1 |
 | similar / `sides` | 55.5% | 1 |
 | similar / `aa` | 80.6% | 4 |
 | similar / `area` | 51.0% | 1 |

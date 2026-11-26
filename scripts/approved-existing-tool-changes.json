@@ -4866,6 +4866,13 @@
       "approved_blob": "4649a5214558ea67598a8ff78d590d1e546e7326",
       "reason": "高一應用題新主題指數對數不等式與直線方程式應用",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-drills.html",
+      "baseline_blob": "0a723ec2c8d4275349f0b447e890fb923546ccba",
+      "approved_blob": "6aed4d5c4a1e7e9cd3461053dc31a6004eb92b02",
+      "reason": "國三平行線截比例線段併入舊單頁的尺規作圖分割線段題型",
+      "pull_request": null
     }
   ]
 }
