@@ -4593,6 +4593,20 @@
       "approved_blob": "bdb59e92c62bbfd18d4ad752e0ad74f3cb41d0a5",
       "reason": "新增私中入學數學出題器（行程進階、典型應用題）並在規律與怎樣解題補流水、年齡與計數",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "b75fa3aee747c683507bd717f4dac897b6d7c33c",
+      "approved_blob": "2d0efb91453c923d468c983e59c1aaa3031cdc06",
+      "reason": "私中入學數學出題器新增比例與百分率進階、數論與數字謎兩個主題",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "bdb59e92c62bbfd18d4ad752e0ad74f3cb41d0a5",
+      "approved_blob": "018d8b8314539d1cc0847083edc3cefdf6ddca1f",
+      "reason": "私中入學數學出題器新增比例與百分率進階、數論與數字謎兩個主題",
+      "pull_request": null
     }
   ]
 }
