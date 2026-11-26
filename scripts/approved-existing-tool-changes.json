@@ -4635,6 +4635,27 @@
       "approved_blob": "10d205c06078d1f3a1982666108e6c7d6813596e",
       "reason": "私中入學數學出題器新增平面幾何進階、立體幾何進階兩個主題",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "6a587098e38c218189d8ac5e2e547d90d0f18784",
+      "approved_blob": "1aa50244ce90ca7a15e92544438432d34118ee56",
+      "reason": "國一方程式不等式應用題新主題加私中幾何立體小修正",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "054e618c123bbbdbaa1719027eabe668d0524967",
+      "approved_blob": "147b057f676a399ad0d2886c20ae58e9b1f82a52",
+      "reason": "國一方程式不等式應用題新主題加私中幾何立體小修正",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "10d205c06078d1f3a1982666108e6c7d6813596e",
+      "approved_blob": "df0a56715d044191e4ddc033007ad6c9b4a1c09d",
+      "reason": "國一方程式不等式應用題新主題加私中幾何立體小修正",
+      "pull_request": null
     }
   ]
 }
