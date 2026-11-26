@@ -4607,6 +4607,20 @@
       "approved_blob": "018d8b8314539d1cc0847083edc3cefdf6ddca1f",
       "reason": "私中入學數學出題器新增比例與百分率進階、數論與數字謎兩個主題",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "2d0efb91453c923d468c983e59c1aaa3031cdc06",
+      "approved_blob": "54beee8eed83524116215cc3f25416f259b3b996",
+      "reason": "私中入學數學出題器新增速算與數列、計數與邏輯，定義新運算符號改用 ⊙",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "018d8b8314539d1cc0847083edc3cefdf6ddca1f",
+      "approved_blob": "f6ab3548d9a8ff3387236d25c791d60dba609e29",
+      "reason": "私中入學數學出題器新增速算與數列、計數與邏輯，定義新運算符號改用 ⊙",
+      "pull_request": null
     }
   ]
 }
