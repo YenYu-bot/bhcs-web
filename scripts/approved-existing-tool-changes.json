@@ -4712,6 +4712,41 @@
       "approved_blob": "a7df13ba5def7d598b5a53952b835b19e8e4f501",
       "reason": "國小與私中應用題作答欄改為答字樣並修正非最簡比",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "6edae2a79eafbbd342e6684166ce5e39bd89d7e8",
+      "approved_blob": "49fcdbc5e393a254c56d7912074f0ac6b92dc19d",
+      "reason": "國二應用題新主題模擬卷解答頁與作答欄標籤規則",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "a7df13ba5def7d598b5a53952b835b19e8e4f501",
+      "approved_blob": "8da512842522ffa90a7141ca3dff54727ed16dcf",
+      "reason": "國二應用題新主題模擬卷解答頁與作答欄標籤規則",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "ff0bdf73e47e28aa54daee728c978ecbc15182fc",
+      "approved_blob": "3d245700526047bd383de4606fea6a49ec4270a9",
+      "reason": "國二應用題新主題模擬卷解答頁與作答欄標籤規則",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g8-drills.html",
+      "baseline_blob": "a1037b2b38e827c5858e25bbeb3ed2ce3fab84e7",
+      "approved_blob": "39a78ba464d499d8c5dbed7c564f6511ac634003",
+      "reason": "國二應用題新主題模擬卷解答頁與作答欄標籤規則",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "66b2d291705236e62d5d74c37200a35c657a1748",
+      "approved_blob": "f52e2321832e74b80658d04c58920fe385f165f0",
+      "reason": "國二應用題新主題模擬卷解答頁與作答欄標籤規則",
+      "pull_request": null
     }
   ]
 }
