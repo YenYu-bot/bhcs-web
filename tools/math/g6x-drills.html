@@ -537,7 +537,7 @@ function xgeoConfig(){
   if(k==="sameBase"){const a=rand(3,12),b=a+rand(2,10),h=rand(2,10)*2;return xq("eqarea",k,`${GSVG(200,110,`${PG("50,14 130,14 180,94 14,94")}${LN(50,14,180,94)}${LN(130,14,14,94)}${T_(44,12,"A","end")}${T_(136,12,"D","start")}${T_(8,104,"B","end")}${T_(186,104,"C","start")}`)}梯形 ABCD 中，AD 平行 BC，上底 AD 長 ${a} 公分、下底 BC 長 ${b} 公分、高 ${h} 公分。三角形 ABC 和三角形 DBC 的面積各是多少？三角形 ABD 呢？`,`三角形 ABC 和 DBC 都是 ${b*h/2} 平方公分；三角形 ABD ${a*h/2} 平方公分`,()=>eq(shoe([P(0,h),P(0,0),P(b,0)]),R(b*h,2))&&eq(shoe([P(a,h),P(0,0),P(b,0)]),R(b*h,2)),a,b,h)}
   if(k==="twoStep"){const p=rand(1,4),q=rand(1,4),r=rand(1,4),s=rand(1,4),S=(p+q)*(r+s)*rand(2,8),D=lerp(B,C,R(p,p+q)),E=lerp(A,D,R(r,r+s)),v=areaS(S)(shoe([B,E,D]));if(v.d!==1)return null;return xq("eqarea",k,`${triFig(`${LN(90,14,14+162*p/(p+q),110)}${LN(14,110,90+(14+162*p/(p+q)-90)*r/(r+s),14+96*r/(r+s))}${T_(14+162*p/(p+q),124,"D")}${T_(96+(14+162*p/(p+q)-90)*r/(r+s),14+96*r/(r+s),"E","start")}`)}三角形 ABC 的面積是 ${S} 平方公分，D 在 BC 上且 BD：DC＝${p}：${q}，E 在 AD 上且 AE：ED＝${r}：${s}。三角形 BED 的面積是多少？`,`${v.n} 平方公分`,()=>eq(v,R(S*p*s,(p+q)*(r+s))),S,p,q,r,s)}
   if(k==="ratioBase"){const a=rand(2,12),b=rand(2,12),x=a*rand(2,8);if(a===b)return null;const y=x/a*b;return xq("eqarea",k,`兩個三角形的高相等，底分別是 ${a} 公分和 ${b} 公分。第一個三角形的面積是 ${x} 平方公分，第二個三角形的面積是多少？`,`${y} 平方公分`,()=>x*b===y*a,a,b,x)}
-  if(k==="extend"){const S=rand(3,40),k2=rand(1,3);return xq("eqarea",k,`三角形 ABC 的面積是 ${S} 平方公分，把 BC 延長到 D，使 CD 的長是 BC 的 ${k2} 倍。三角形 ACD 和三角形 ABD 的面積各是多少？`,`三角形 ACD ${S*k2} 平方公分；三角形 ABD ${S*(k2+1)} 平方公分`,()=>{const Dp=lerp(B,C,R(k2+1));return eq(areaS(S)(shoe([A,C,Dp])),R(S*k2))&&eq(areaS(S)(shoe([A,B,Dp])),R(S*(k2+1)))},S,k2)}
+  if(k==="extend"){const S=rand(3,40),k2=rand(1,3);return xq("eqarea",k,`三角形 ABC 的面積是 ${S} 平方公分，把 BC 延長到 D，使 ${k2===1?"CD＝BC":`CD 的長是 BC 的 ${k2} 倍`}。三角形 ACD 和三角形 ABD 的面積各是多少？`,`三角形 ACD ${S*k2} 平方公分；三角形 ABD ${S*(k2+1)} 平方公分`,()=>{const Dp=lerp(B,C,R(k2+1));return eq(areaS(S)(shoe([A,C,Dp])),R(S*k2))&&eq(areaS(S)(shoe([A,B,Dp])),R(S*(k2+1)))},S,k2)}
   if(k==="extendAll"){const S=rand(2,30),k2=rand(1,3),Dp=lerp(A,B,R(k2+1)),Ep=lerp(B,C,R(k2+1)),Fp=lerp(C,A,R(k2+1)),v=areaS(S)(shoe([Dp,Ep,Fp]));return xq("eqarea",k,`三角形 ABC 的面積是 ${S} 平方公分。延長 AB 到 D、延長 BC 到 E、延長 CA 到 F，使 BD 是 AB 的 ${k2} 倍、CE 是 BC 的 ${k2} 倍、AF 是 CA 的 ${k2} 倍。三角形 DEF 的面積是多少？`,`${v.n} 平方公分`,()=>v.d===1&&v.n===S*(1+3*k2+3*k2*k2),S,k2)}
   if(k==="corner"){const p=rand(1,4),q=rand(1,4),r=rand(1,4),s=rand(1,4),S=(p+q)*(r+s)*rand(1,6),D=lerp(B,C,R(p,p+q)),E=lerp(C,A,R(r,r+s)),v=areaS(S)(shoe([D,C,E]));if(v.d!==1)return null;return xq("eqarea",k,`三角形 ABC 的面積是 ${S} 平方公分，D 在 BC 上且 BD：DC＝${p}：${q}，E 在 CA 上且 CE：EA＝${r}：${s}。三角形 DCE 的面積是多少？`,`${v.n} 平方公分`,()=>v.n*(p+q)*(r+s)===S*q*r,S,p,q,r,s)}
   const a=rand(2,12),k3=rand(2,5),b=a*k3,c=rand(2,12)*a;const d=b*c/a;return xq("eqarea",k,`${GSVG(190,120,`${PG("40,14 170,30 150,106 14,90")}${LN(40,14,150,106)}${LN(170,30,14,90)}${T_(66,52,"甲")}${T_(130,52,"乙")}${T_(124,84,"丙")}${T_(58,82,"丁")}`)}一個四邊形被兩條對角線分成甲、乙、丙、丁四個三角形（甲和丙相對）。甲的面積是 ${a}，乙的面積是 ${b}，丁的面積是 ${c}，丙的面積是多少？四邊形面積是多少？`,`丙 ${d}；四邊形 ${a+b+c+d}`,()=>a*d===b*c,a,b,c);
@@ -569,7 +569,7 @@ function xgeoConfig(){
  });
  return{title:"平面幾何進階（私中）",symbol:"△",subtitle:"等積變形與面積比・蝴蝶與沙漏模型・圓與扇形進階",instruction:"先找出等高或平行，把面積換成底的比；圓的題目先找半徑。圓周率用 3.14，答案寫到小數點後兩位。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：中線平分面積、按底的比分面積、梯形中同底等高的三角形；沙漏的對應邊、梯形兩腰旁的三角形、沙漏面積比；圓內最大正方形、皮帶長、圓沿正方形滾動。",advanced:"進階：兩次按比分面積、等高不同底、延長一邊；由一塊面積求梯形面積、由兩塊求另外兩塊、平行四邊形中點連線；希波克拉底月牙、正方形外接圓與內切圓、半圓旋轉掃過的面積。",challenge:"挑戰：三邊都延長的三角形、角上的小三角形、四邊形對角線分成的四塊；四邊形四塊求總面積、由梯形上下兩塊求總面積、平行四邊形按比連線；圓沿正三角形滾動、四片花瓣、三根圓木綁繩。"},
-  units:[eqarea,model,circx],presets:{basic:{eqarea:4,model:4,circx:4},advanced:{eqarea:4,model:4,circx:4},challenge:{eqarea:4,model:4,circx:4}}};
+  units:[eqarea,model,circx],presets:{basic:{eqarea:3,model:3,circx:3},advanced:{eqarea:3,model:3,circx:3},challenge:{eqarea:3,model:3,circx:3}}};
 }
 
 function xsolidConfig(){
@@ -614,7 +614,7 @@ function xsolidConfig(){
  });
  return{title:"立體幾何進階（私中）",symbol:"▣",subtitle:"水位問題・表面積增減・塗色的小正方體",instruction:"水位題抓住「水的體積不變」或「上升的體積＝物體的體積」；表面積題數清楚多了或少了幾個面；塗色題分成角、稜、面、內部。",modes:["integer"],mixed:false,
   levels:{basic:"基礎：放入或取出鐵塊的水位變化、倒進另一個水缸；正方體切幾刀、排成一排、長方體切一刀；三面、兩面塗色、至少一面塗色。",advanced:"進階：放入正方體後的水深、直立鐵柱沒被淹沒、兩缸水深相同；切成小正方體、角上挖掉一塊、兩個長方體黏在一起；一面塗色、沒有塗色、兩面和一面的差。",challenge:"挑戰：溢出多少水、正放倒放求瓶子容積、上下兩層的水缸；挖穿的方洞、階梯形立體、三個方向各切幾刀；長方體切成小正方體、由某種塗色的個數反求份數。"},
-  units:[water,surf,paint],presets:{basic:{water:4,surf:4,paint:4},advanced:{water:4,surf:4,paint:4},challenge:{water:4,surf:4,paint:4}}};
+  units:[water,surf,paint],presets:{basic:{water:3,surf:3,paint:3},advanced:{water:3,surf:3,paint:3},challenge:{water:3,surf:3,paint:3}}};
 }
 
 const CONFIGS={xmotion:xmotionConfig,xclassic:xclassicConfig,xratio:xratioConfig,xnumber:xnumberConfig,xseries:xseriesConfig,xlogic:xlogicConfig,xgeo:xgeoConfig,xsolid:xsolidConfig},CFG=CONFIGS[TOPIC_KEY]();
