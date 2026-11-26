@@ -4747,6 +4747,20 @@
       "approved_blob": "f52e2321832e74b80658d04c58920fe385f165f0",
       "reason": "國二應用題新主題模擬卷解答頁與作答欄標籤規則",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "49fcdbc5e393a254c56d7912074f0ac6b92dc19d",
+      "approved_blob": "741a25e90998e60edaba6bb57a686768aa8c4705",
+      "reason": "國小與私中數字謎填入題作答欄改印答字樣而非原式",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "8da512842522ffa90a7141ca3dff54727ed16dcf",
+      "approved_blob": "1405ca589dd9ae9097f9817a20684cec4123f8d9",
+      "reason": "國小與私中數字謎填入題作答欄改印答字樣而非原式",
+      "pull_request": null
     }
   ]
 }
