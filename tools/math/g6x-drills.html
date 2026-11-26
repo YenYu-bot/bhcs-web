@@ -116,7 +116,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["xmotion","行程進階（私中）"],["xclassic","典型應用題（私中）"],["xratio","比例與百分率進階（私中）"],["xnumber","數論與數字謎（私中）"],["xseries","速算與數列（私中）"],["xlogic","計數與邏輯（私中）"],["xgeo","平面幾何進階（私中）"],["xsolid","立體幾何進階（私中）"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"xmotion",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["xmotion","行程進階（私中）"],["xclassic","典型應用題（私中）"],["xratio","比例與百分率進階（私中）"],["xnumber","數論與數字謎（私中）"],["xseries","速算與數列（私中）"],["xlogic","計數與邏輯（私中）"],["xgeo","平面幾何進階（私中）"],["xsolid","立體幾何進階（私中）"],["xmock","私中入學模擬卷"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"xmotion",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -617,7 +617,16 @@ function xsolidConfig(){
   units:[water,surf,paint],presets:{basic:{water:3,surf:3,paint:3},advanced:{water:3,surf:3,paint:3},challenge:{water:3,surf:3,paint:3}}};
 }
 
-const CONFIGS={xmotion:xmotionConfig,xclassic:xclassicConfig,xratio:xratioConfig,xnumber:xnumberConfig,xseries:xseriesConfig,xlogic:xlogicConfig,xgeo:xgeoConfig,xsolid:xsolidConfig},CFG=CONFIGS[TOPIC_KEY]();
+function xmockConfig(){
+ /* 私中模擬卷（2026-11-26，Claude）：把 8 個私中主題混成一份卷。每個大題對應一個主題，題目由該主題的各單元輪流抽出（不重複題型），
+    答案、verify 沿用原單元；sig 加上主題前綴避免不同主題撞號。難度沿用原主題的基礎／進階／挑戰。 */
+ const src=[["xmotion",xmotionConfig],["xclassic",xclassicConfig],["xratio",xratioConfig],["xnumber",xnumberConfig],["xseries",xseriesConfig],["xlogic",xlogicConfig],["xgeo",xgeoConfig],["xsolid",xsolidConfig]];
+ const units=src.map(([key,f],i)=>{const c=f(),name=`${"一二三四五六七八"[i]}、${c.title.replace("（私中）","")}`;return{id:"m"+key,name,tip:c.instruction,modes:["integer"],order:[],gen(ctx){if(!this.order.length)this.order=shuffle(c.units);const u=this.order.pop(),q=u.gen(ctx);return q?{...q,sig:key+"|"+q.sig}:null}}});
+ return{title:"私中入學模擬卷",symbol:"✎",subtitle:"行程・典型應用題・比例百分率・數論・速算數列・計數邏輯・平面幾何・立體幾何",instruction:"限時作答：基礎卷 40 分鐘、進階卷 50 分鐘、挑戰卷 60 分鐘。先寫有把握的題目，最後再回頭檢查；答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎卷：8 大題各 2 題，共 16 題，建議 40 分鐘。",advanced:"進階卷：8 大題各 2 題，共 16 題，建議 50 分鐘。",challenge:"挑戰卷：8 大題各 2 題，共 16 題，建議 60 分鐘。"},
+  units,presets:Object.fromEntries(["basic","advanced","challenge"].map(l=>[l,Object.fromEntries(units.map(u=>[u.id,2]))]))};
+}
+const CONFIGS={xmotion:xmotionConfig,xclassic:xclassicConfig,xratio:xratioConfig,xnumber:xnumberConfig,xseries:xseriesConfig,xlogic:xlogicConfig,xgeo:xgeoConfig,xsolid:xsolidConfig,xmock:xmockConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
