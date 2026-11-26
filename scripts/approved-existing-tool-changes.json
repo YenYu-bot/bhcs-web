@@ -4824,6 +4824,34 @@
       "approved_blob": "8d27e942448d2eaf77c1adac25710369043311b0",
       "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "3526b30de6b9e4846dda9975ac6483a4f830d319",
+      "approved_blob": "e86e8f2294f174086241ff57b1498627405a5944",
+      "reason": "國一國二國三總複習模擬卷新主題與題目作答欄標籤",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g8-drills.html",
+      "baseline_blob": "9cd28d587fef4b05ef56dc3a72a343517ec98b9c",
+      "approved_blob": "11448f1322a93db1d2d128476630ae44ae119642",
+      "reason": "國一國二國三總複習模擬卷新主題與題目作答欄標籤",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-drills.html",
+      "baseline_blob": "2b7ad3ef982a4327616d0c170d8a15190fefa8ad",
+      "approved_blob": "0a723ec2c8d4275349f0b447e890fb923546ccba",
+      "reason": "國一國二國三總複習模擬卷新主題與題目作答欄標籤",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "f52e2321832e74b80658d04c58920fe385f165f0",
+      "approved_blob": "f3f803b7975b0f18f4a07046bba93cd2fd8459c3",
+      "reason": "國一國二國三總複習模擬卷新主題與題目作答欄標籤",
+      "pull_request": null
     }
   ]
 }
