@@ -1669,9 +1669,24 @@ function patternConfig(){
   if(kind==="break"){const pay=pick([5,8,10]),fine=pick([10,15,20,25]),N=pick([100,200,300,500]),bk=rand(1,Math.floor(N/20)),T=pay*(N-bk)-fine*bk;return{expr:`搬運公司運送 ${N} 個玻璃杯，每安全送到一個得 ${pay} 元，每打破一個不但沒有運費還要賠 ${fine} 元。結果共得到 ${T} 元，打破了幾個？`,answer:`${bk} 個`,sig:`ck:k:${pay}:${fine}:${N}:${bk}`,verify:()=>(pay*N-T)/(pay+fine)===bk}}
   const v=[5,10,15],x=rand(2,8),y=rand(2,8),z=y,N=x+y+z;const T=v[0]*x+v[1]*y+v[2]*z;return{expr:`小華買了 5 元、10 元、15 元三種郵票共 ${N} 張，花了 ${T} 元，其中 10 元和 15 元的郵票張數一樣多。三種郵票各買了幾張？`,answer:`5 元 ${x} 張；10 元 ${y} 張；15 元 ${z} 張`,sig:`ck:st:${x}:${y}`,verify:()=>{const yy=(T-5*N)/(5+10);return yy===y&&N-2*yy===x}};
  });
- return{title:"規律與怎樣解題",symbol:"⋯",subtitle:"數列規律・圖形排列・植樹問題・週期問題・和差問題・平均數問題・雞兔同籠",instruction:"先找出規律或畫線段圖，再列式計算，答案要寫單位。",modes:["integer"],mixed:false,
-  levels:{basic:"基礎：等差數列第 n 個、填空；火柴棒、方桌與長桌併排；植樹四種情況；星期與顏色週期；兩數和差；平均與總數；雞兔同籠、兩種硬幣、兩種票價。",advanced:"進階：數字較大、遞減數列；植樹只出反求（長度、間隔）；顏色個數、月曆；長方形周長的和差；多一人後的新平均與反求新來的人、兩次平均求總和；腳踏車與三輪車、大小船。",challenge:"挑戰：兩項相差、第一次超過；剩下幾根；兩邊種樹與路燈間種樹；區間內的個數；三人和差、倍數加餘數、給錢後相等；兩組合併、目標平均、拿掉一數；答錯扣分、打破要賠、三種郵票。"},
-  units:[seq,sticks,trees,cycle,sumdiff,average,chicken],presets:{basic:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2},advanced:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2},challenge:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2}}};
+ // ⑧ 流水、年齡與計數（2026-11-26，Claude）：108 課綱 R-6-4 點名的流水問題、年齡問題、座位排列與加法乘法原理（課內程度；私中程度在 g6x-drills.html）。
+ const bagsC={},bagC=(k,list)=>{let q=bagsC[k];if(!q||!q.length)q=bagsC[k]=shuffle(list);return q.pop()};
+ const classic=unit("classic","流水、年齡與計數","順水速＝船速＋水速，逆水速＝船速－水速；兩人的年齡差永遠不變；分步驟做用乘法，分類做用加法。",ctx=>{
+  const L=lv(ctx),kind=bagC(L,[["down","ageSum","outfit"],["speeds","ageWhen","handshake"],["roundtrip","ageDiff","line"]][L]);
+  if(kind==="down"){const v=rand(8,20),w=rand(2,5),t=rand(2,8),up=Math.random()<.5,D=(up?v-w:v+w)*t;return{expr:`一艘船在靜水中每小時行 ${v} 公里，水流每小時 ${w} 公里。這艘船${up?"逆水":"順水"}行駛 ${D} 公里，要幾小時？`,answer:`${t} 小時`,sig:`cl:d:${v}:${w}:${t}:${up}`,verify:()=>D/(up?v-w:v+w)===t}}
+  if(kind==="speeds"){const v=rand(8,25),w=rand(2,6),a=v+w,b=v-w;return{expr:`一艘船順水每小時行 ${a} 公里，逆水每小時行 ${b} 公里，船在靜水中每小時行多少公里？水流每小時多少公里？`,answer:`船速 ${v} 公里；水速 ${w} 公里`,sig:`cl:s:${a}:${b}`,verify:()=>(a+b)/2===v&&(a-b)/2===w}}
+  if(kind==="roundtrip"){const v=rand(8,20),w=rand(2,5),m=rand(1,3),D=(v+w)*(v-w)*m/gcd(v+w,v-w);if(D>300)return null;const T=D/(v+w)+D/(v-w);return{expr:`一艘船在靜水中每小時行 ${v} 公里，水流每小時 ${w} 公里，兩地相距 ${D} 公里，這艘船往返一次共要幾小時？`,answer:`${T} 小時`,sig:`cl:r:${v}:${w}:${D}`,verify:()=>(v+w)*(T-D/(v-w))===D}}
+  const s=rand(5,12),f=s+rand(24,32);
+  if(kind==="ageSum"){const n=rand(2,10);return{expr:`爸爸今年 ${f} 歲，兒子今年 ${s} 歲，${n} 年後兩人的年齡和是幾歲？那時爸爸比兒子大幾歲？`,answer:`${f+s+2*n} 歲；大 ${f-s} 歲`,sig:`cl:a:${f}:${s}:${n}`,verify:()=>(f+n)+(s+n)===f+s+2*n&&(f+n)-(s+n)===f-s}}
+  if(kind==="ageWhen"){const k=rand(2,4),d=f-s;if(d%(k-1))return null;const n=d/(k-1)-s;if(n<1||n>20)return null;return{expr:`媽媽今年 ${f} 歲，女兒今年 ${s} 歲，幾年後媽媽的年齡是女兒的 ${k} 倍？`,answer:`${n} 年後`,sig:`cl:w:${f}:${s}:${k}`,verify:()=>f+n===k*(s+n)}}
+  if(kind==="ageDiff"){const k=rand(3,5),S=s*k;if(S>60)return null;return{expr:`今年爸爸和兒子的年齡和是 ${S+s} 歲，爸爸的年齡是兒子的 ${k} 倍。兩人今年各幾歲？`,answer:`爸爸 ${S} 歲；兒子 ${s} 歲`,sig:`cl:x:${S+s}:${k}`,verify:()=>(S+s)/(k+1)===s}}
+  if(kind==="outfit"){const a=rand(2,6),b=rand(2,6);return{expr:`午餐有 ${a} 種主菜、${b} 種飲料，每人各選一種主菜和一種飲料，共有幾種不同的選法？`,answer:`${a*b} 種`,sig:`cl:o:${a}:${b}`,verify:()=>{let c=0;for(let i=0;i<a;i++)for(let j=0;j<b;j++)c++;return c===a*b}}}
+  if(kind==="handshake"){const n=rand(4,12);return{expr:`${n} 位同學見面，每兩人都握一次手，共握了幾次手？`,answer:`${n*(n-1)/2} 次`,sig:`cl:h:${n}`,verify:()=>{let c=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)c++;return c===n*(n-1)/2}}}
+  const n=rand(3,5),f2=[1,1,2,6,24,120][n];return{expr:`${n} 位同學排成一排照相，共有幾種不同的排法？`,answer:`${f2} 種`,sig:`cl:l:${n}`,verify:()=>{let c=0;const rec=u=>{if(u.length===n){c++;return}for(let i=0;i<n;i++)if(!u.includes(i))rec([...u,i])};rec([]);return c===f2}};
+ });
+ return{title:"規律與怎樣解題",symbol:"⋯",subtitle:"數列規律・圖形排列・植樹問題・週期問題・和差問題・平均數問題・雞兔同籠・流水、年齡與計數",instruction:"先找出規律或畫線段圖，再列式計算，答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：等差數列第 n 個、填空；火柴棒、方桌與長桌併排；植樹四種情況；星期與顏色週期；兩數和差；平均與總數；雞兔同籠、兩種硬幣、兩種票價；順水逆水的時間、幾年後的年齡和、兩種東西的搭配。",advanced:"進階：數字較大、遞減數列；植樹只出反求（長度、間隔）；顏色個數、月曆；長方形周長的和差；多一人後的新平均與反求新來的人、兩次平均求總和；腳踏車與三輪車、大小船；由順逆水速求船速水速、幾年後是幾倍、握手次數。",challenge:"挑戰：兩項相差、第一次超過；剩下幾根；兩邊種樹與路燈間種樹；區間內的個數；三人和差、倍數加餘數、給錢後相等；兩組合併、目標平均、拿掉一數；答錯扣分、打破要賠、三種郵票；往返總時間、由年齡和與倍數求年齡、排成一排的排法。"},
+  units:[seq,sticks,trees,cycle,sumdiff,average,chicken,classic],presets:{basic:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2,classic:2},advanced:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2,classic:2},challenge:{sequence:2,sticks:2,trees:2,cycle:2,sumdiff:2,average:2,chicken:2,classic:2}}};
 }
 
 function chartsConfig(){

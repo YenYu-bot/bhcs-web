@@ -4579,6 +4579,20 @@
       "approved_blob": "37cadc4bbed7d6dc2f9e4aa819f264174ff455a4",
       "reason": "規律與怎樣解題新增雞兔同籠單元；時間的計算新增時間應用題單元",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "37cadc4bbed7d6dc2f9e4aa819f264174ff455a4",
+      "approved_blob": "4a582e852747b7925cb4e4832b1d169ce4eb82d4",
+      "reason": "新增私中入學數學出題器（行程進階、典型應用題）並在規律與怎樣解題補流水、年齡與計數",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "12751945bed7b1a8247eef1cf57eb6109b7aefa5",
+      "approved_blob": "bdb59e92c62bbfd18d4ad752e0ad74f3cb41d0a5",
+      "reason": "新增私中入學數學出題器（行程進階、典型應用題）並在規律與怎樣解題補流水、年齡與計數",
+      "pull_request": null
     }
   ]
 }
