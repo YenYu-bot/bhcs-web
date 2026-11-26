@@ -4663,6 +4663,20 @@
       "approved_blob": "1565cc7e113e07eae6cd2a8084ad51a6fb592a11",
       "reason": "國一主題選單補上方程式與不等式應用題選項",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "1aa50244ce90ca7a15e92544438432d34118ee56",
+      "approved_blob": "5262dbb5e25c43a9c2c3d54eaa3002bb8115713e",
+      "reason": "應用題與私中題目措辭修正負號係數1與零的寫法",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "1565cc7e113e07eae6cd2a8084ad51a6fb592a11",
+      "approved_blob": "ff0bdf73e47e28aa54daee728c978ecbc15182fc",
+      "reason": "應用題與私中題目措辭修正負號係數1與零的寫法",
+      "pull_request": null
     }
   ]
 }
