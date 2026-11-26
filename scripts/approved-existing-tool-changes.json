@@ -4656,6 +4656,13 @@
       "approved_blob": "df0a56715d044191e4ddc033007ad6c9b4a1c09d",
       "reason": "國一方程式不等式應用題新主題加私中幾何立體小修正",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g7-drills.html",
+      "baseline_blob": "147b057f676a399ad0d2886c20ae58e9b1f82a52",
+      "approved_blob": "1565cc7e113e07eae6cd2a8084ad51a6fb592a11",
+      "reason": "國一主題選單補上方程式與不等式應用題選項",
+      "pull_request": null
     }
   ]
 }
