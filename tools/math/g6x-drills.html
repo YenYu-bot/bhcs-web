@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜私中入學數學 出題器</title><meta name="description" content="私中入學數學出題器：行程進階（流水行船、火車過橋與錯車、環形跑道、時鐘問題）與典型應用題（年齡、盈虧、歸一歸總、方陣、計數與排列）、比例與百分率進階（濃度、利潤與折扣、利息、工程）、數論與數字謎（整除、餘數、位值、因數個數、定義新運算），可設定難度與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:title" content="百宏文教｜私中入學數學 出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:type" content="website">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜私中入學數學 出題器</title><meta name="description" content="私中入學數學出題器：行程進階（流水行船、火車過橋與錯車、環形跑道、時鐘問題）與典型應用題（年齡、盈虧、歸一歸總、方陣、計數與排列）、比例與百分率進階（濃度、利潤與折扣、利息、工程）、數論與數字謎（整除、餘數、位值、因數個數、定義新運算）、速算與數列（裂項、等差求和、巧算、循環小數）、計數與邏輯（數圖形、最短路徑、容斥、抽屜原理），可設定難度與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:title" content="百宏文教｜私中入學數學 出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:type" content="website">
 <style>
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
 *{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
@@ -116,7 +116,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["xmotion","行程進階（私中）"],["xclassic","典型應用題（私中）"],["xratio","比例與百分率進階（私中）"],["xnumber","數論與數字謎（私中）"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"xmotion",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["xmotion","行程進階（私中）"],["xclassic","典型應用題（私中）"],["xratio","比例與百分率進階（私中）"],["xnumber","數論與數字謎（私中）"],["xseries","速算與數列（私中）"],["xlogic","計數與邏輯（私中）"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"xmotion",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -390,7 +390,7 @@ function xnumberConfig(){
  });
  const OPS=[
   {s:"a △ b＝a × b＋a",f:(a,b)=>a*b+a,sym:"△"},{s:"a ○ b＝a × 2＋b",f:(a,b)=>2*a+b,sym:"○"},{s:"a ☆ b＝（a＋b）× b",f:(a,b)=>(a+b)*b,sym:"☆"},
-  {s:"a ◇ b＝a × b－a－b",f:(a,b)=>a*b-a-b,sym:"◇"},{s:"a ※ b＝a × a－b",f:(a,b)=>a*a-b,sym:"※"},{s:"a □ b＝a × 3－b × 2",f:(a,b)=>3*a-2*b,sym:"□"}];
+  {s:"a ◇ b＝a × b－a－b",f:(a,b)=>a*b-a-b,sym:"◇"},{s:"a ※ b＝a × a－b",f:(a,b)=>a*a-b,sym:"※"},{s:"a ⊙ b＝a × 3－b × 2",f:(a,b)=>3*a-2*b,sym:"⊙"}];
  const newop=xUnit("newop","定義新運算","先照定義把符號換成一般的算式；有括號先算括號裡的新運算；反求未知數時，把定義寫成式子再解。",[["eval","eval2","table"],["nested","solveA","solveB"],["commute","chain","solveN"]],(k,L)=>{
   const op=pick(OPS),a=rand(2,12),b=rand(1,9),c=rand(1,9),S=op.sym,V=op.f;
   if(k==="eval"){const v=V(a,b);if(v<=0)return null;return xq("newop",k,`規定 ${op.s}。求 ${a} ${S} ${b} 的值。`,String(v),()=>V(a,b)===v,op.s,a,b)}
@@ -407,7 +407,118 @@ function xnumberConfig(){
   units:[divis,rem,digits,fcount,newop],presets:{basic:{divis:3,rem:3,digits:2,fcount:2,newop:2},advanced:{divis:3,rem:3,digits:2,fcount:2,newop:2},challenge:{divis:3,rem:3,digits:2,fcount:2,newop:2}}};
 }
 
-const CONFIGS={xmotion:xmotionConfig,xclassic:xclassicConfig,xratio:xratioConfig,xnumber:xnumberConfig},CFG=CONFIGS[TOPIC_KEY]();
+
+const C2=n=>n*(n-1)/2,comb=(n,k)=>{let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r)},frA=v=>fracHTML(v,{mixed:true}),rsum=a=>a.reduce((s,x)=>add(s,x),R(0));
+const gridSVG=(m,n,marks=[])=>{const s=Math.min(28,180/Math.max(m,n)),W=m*s+40,H=n*s+36,x0=20,y0=14;let g="";for(let i=0;i<=m;i++)g+=`<line x1="${x0+i*s}" y1="${y0}" x2="${x0+i*s}" y2="${y0+n*s}" stroke="#16233A" stroke-width="1.2"/>`;for(let j=0;j<=n;j++)g+=`<line x1="${x0}" y1="${y0+j*s}" x2="${x0+m*s}" y2="${y0+j*s}" stroke="#16233A" stroke-width="1.2"/>`;for(const [i,j,t,c] of marks)g+=`<circle cx="${x0+i*s}" cy="${y0+(n-j)*s}" r="3.5" fill="${c||"#16233A"}"/><text x="${x0+i*s+5}" y="${y0+(n-j)*s-5}" font-size="12" fill="#16233A">${t}</text>`;return`<svg class="fig" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="示意圖">${g}<text x="${W-4}" y="${H-3}" font-size="9" fill="#43516B" text-anchor="end">示意圖</text></svg>`};
+
+function xseriesConfig(){
+ // 2026-11-26（Claude）：裂項相消、等差數列求和、巧算、循環小數。分數答案用有理數 R 計算，verify 逐項相加重算。
+ const tele=xUnit("tele","裂項相消","把每一項拆成兩個分數相減：1／（k ×（k＋1））＝ 1／k － 1／（k＋1），中間的項正負抵消，只剩頭尾；分母相差 d 時，再乘以 1／d。",[["unit1","fromValues","midStart"],["step2","num2","valuesStep2"],["stepD","mixInt","twoSums"]],(k,L)=>{
+  const term=(a,b)=>fr(1,`${a}×${b}`),terms=(list,f)=>list.length<=4?list.map(f).join(" ＋ "):[f(list[0]),f(list[1]),f(list[2]),"……",f(list[list.length-1])].join(" ＋ ");
+  if(k==="unit1"||k==="midStart"){const a=k==="unit1"?1:rand(2,9),b=a+rand(4,25),ks=[...Array(b-a+1).keys()].map(i=>a+i),v=sub(R(1,a),R(1,b+1));return xq("tele",k,`計算：${terms(ks,x=>term(x,x+1))}`,frA(v),()=>eq(rsum(ks.map(x=>R(1,x*(x+1)))),v),a,b)}
+  if(k==="fromValues"){const n=rand(4,15),ks=[...Array(n).keys()].map(i=>i+1),v=R(n,n+1);return xq("tele",k,`計算：${terms(ks,x=>fr(1,x*(x+1)))}（共 ${n} 項）`,frA(v),()=>eq(rsum(ks.map(x=>R(1,x*(x+1)))),v),n)}
+  if(k==="step2"||k==="valuesStep2"){const n=rand(3,15),ks=[...Array(n).keys()].map(i=>2*i+1),v=R(n,2*n+1);return xq("tele",k,`計算：${terms(ks,x=>k==="step2"?term(x,x+2):fr(1,x*(x+2)))}${k==="valuesStep2"?`（共 ${n} 項）`:""}`,frA(v),()=>eq(rsum(ks.map(x=>R(1,x*(x+2)))),v),n,k)}
+  if(k==="num2"){const d=pick([2,3,4]),a=rand(1,5),n=rand(3,12),ks=[...Array(n).keys()].map(i=>a+i*d),v=sub(R(1,a),R(1,a+n*d));return xq("tele",k,`計算：${terms(ks,x=>fr(d,`${x}×${x+d}`))}`,frA(v),()=>eq(rsum(ks.map(x=>R(d,x*(x+d)))),v),d,a,n)}
+  if(k==="stepD"){const d=pick([2,3,4,5]),a=rand(1,4),n=rand(3,12),ks=[...Array(n).keys()].map(i=>a+i*d),v=mul(R(1,d),sub(R(1,a),R(1,a+n*d)));return xq("tele",k,`計算：${terms(ks,x=>term(x,x+d))}`,frA(v),()=>eq(rsum(ks.map(x=>R(1,x*(x+d)))),v),d,a,n)}
+  if(k==="mixInt"){const n=rand(3,9),ks=[...Array(n).keys()].map(i=>i+1),v=add(R(n*(n+1)/2),R(n,n+1));return xq("tele",k,`計算：${ks.map(x=>`${x}${fr(1,x*(x+1))}`).join(" ＋ ")}（每一項都是帶分數）`,frA(v),()=>eq(rsum(ks.map(x=>add(R(x),R(1,x*(x+1))))),v),n)}
+  const n=rand(4,20),v=R(n,n+1),half=R(n,2*n+1);return xq("tele",k,`已知 A＝${terms([...Array(n).keys()].map(i=>i+1),x=>term(x,x+1))}，B＝${terms([...Array(n).keys()].map(i=>2*i+1),x=>term(x,x+2))}，求 A － B。`,frA(sub(v,half)),()=>eq(sub(rsum([...Array(n).keys()].map(i=>R(1,(i+1)*(i+2)))),rsum([...Array(n).keys()].map(i=>R(1,(2*i+1)*(2*i+3))))),sub(v,half)),n);
+ });
+ const arith=xUnit("arith","等差數列與求和","等差數列：第 n 項＝首項＋（n－1）× 公差；項數＝（末項－首項）÷ 公差＋1；總和＝（首項＋末項）× 項數 ÷ 2。",[["sum1n","sumOdd","sumAB"],["nth","countTerms","multSum"],["seats","findN","pages"]],(k,L)=>{
+  if(k==="sum1n"){const n=rand(10,100);return xq("arith",k,`從 1 連加到 ${n}：1 ＋ 2 ＋ 3 ＋ …… ＋ ${n}，和是多少？`,String(n*(n+1)/2),()=>[...Array(n).keys()].reduce((s,i)=>s+i+1,0)===n*(n+1)/2,n)}
+  if(k==="sumOdd"){const n=rand(5,50);return xq("arith",k,`計算連續奇數的和：1 ＋ 3 ＋ 5 ＋ …… ＋ ${2*n-1}`,String(n*n),()=>[...Array(n).keys()].reduce((s,i)=>s+2*i+1,0)===n*n,n)}
+  const a=rand(2,30),d=rand(2,9),n=rand(6,30),l=a+(n-1)*d,S=(a+l)*n/2;
+  if(k==="sumAB")return xq("arith",k,`這是一個等差數列，求和：${a} ＋ ${a+d} ＋ ${a+2*d} ＋ …… ＋ ${l}`,String(S),()=>[...Array(n).keys()].reduce((s,i)=>s+a+i*d,0)===S,a,d,n);
+  if(k==="nth"){const m=rand(20,80);return xq("arith",k,`依規律排列：${a}、${a+d}、${a+2*d}、${a+3*d}、……，第 ${m} 個數是多少？前 ${m} 個數的和是多少？`,`第 ${m} 個數是 ${a+(m-1)*d}；和是 ${(2*a+(m-1)*d)*m/2}`,()=>{let x=a,s=0;for(let i=0;i<m;i++){s+=x;if(i<m-1)x+=d}return x===a+(m-1)*d&&s===(2*a+(m-1)*d)*m/2},a,d,m)}
+  if(k==="countTerms")return xq("arith",k,`等差數列 ${a}、${a+d}、${a+2*d}、……、${l}，共有幾項？`,`${n} 項`,()=>(l-a)/d+1===n,a,d,l);
+  if(k==="multSum"){const m=rand(3,13),lo=rand(1,3)*100,hi=lo+rand(1,3)*100,f=Math.ceil(lo/m)*m,e=Math.floor(hi/m)*m,c=(e-f)/m+1,s=(f+e)*c/2;return xq("arith",k,`${lo} 到 ${hi} 之間所有 ${m} 的倍數，加起來是多少？`,String(s),()=>{let t=0;for(let x=lo;x<=hi;x++)if(x%m===0)t+=x;return t===s},m,lo,hi)}
+  if(k==="seats"){const a2=rand(10,30),d2=rand(1,4),n2=rand(10,30),tot=(2*a2+(n2-1)*d2)*n2/2;return xq("arith",k,`禮堂第一排有 ${a2} 個座位，以後每一排都比前一排多 ${d2} 個，共有 ${n2} 排。最後一排有幾個座位？禮堂共有幾個座位？`,`最後一排 ${a2+(n2-1)*d2} 個；共 ${tot} 個`,()=>{let s=0;for(let i=0;i<n2;i++)s+=a2+i*d2;return s===tot},a2,d2,n2)}
+  if(k==="findN"){const S2=rand(50,2000);let n2=1;while(n2*(n2+1)/2<=S2)n2++;return xq("arith",k,`1 ＋ 2 ＋ 3 ＋ …… ＋ n 的和第一次超過 ${S2} 時，n 最小是多少？`,String(n2),()=>n2*(n2+1)/2>S2&&(n2-1)*n2/2<=S2,S2)}
+  const p=rand(20,600);let digits=0;for(let i=1;i<=p;i++)digits+=String(i).length;return xq("arith",k,`一本書從第 1 頁開始編頁碼，排完全部頁碼共用了 ${digits} 個數字（例如第 12 頁用 2 個數字）。這本書有幾頁？`,`${p} 頁`,()=>{let c=0,q=0;while(c<digits){q++;c+=String(q).length}return q===p&&c===digits},digits);
+ });
+ const trick=xUnit("trick","巧算","平方差：a × a － b × b＝（a＋b）×（a－b）；接近整百的數用 （100＋a）×（100－a）；成對相加或錯位相減，可以讓很長的算式變簡單。",[["sqDiff","near100","end5"],["mountain","halves","repeat"],["sqChain","doubles","x999"]],(k,L)=>{
+  if(k==="sqDiff"){const s=pick([50,100,200]),a=rand(Math.ceil(s/2)+1,s-1),b=s-a,v=a*a-b*b;return xq("trick",k,`計算：${a} × ${a} － ${b} × ${b}`,String(v),()=>(a+b)*(a-b)===v,a,b)}
+  if(k==="near100"){const c=pick([10,20,30,50,100,200]),d=rand(1,9),v=(c+d)*(c-d);return xq("trick",k,`計算：${c+d} × ${c-d}`,String(v),()=>c*c-d*d===v,c,d)}
+  if(k==="end5"){const t=rand(1,19),n=10*t+5;return xq("trick",k,`計算：${n} × ${n}（個位是 5 的數自乘）`,String(n*n),()=>t*(t+1)*100+25===n*n,n)}
+  if(k==="mountain"){const n=rand(5,50);return xq("trick",k,`計算：1 ＋ 2 ＋ 3 ＋ …… ＋ ${n-1} ＋ ${n} ＋ ${n-1} ＋ …… ＋ 3 ＋ 2 ＋ 1`,String(n*n),()=>n*(n-1)+n===n*n,n)}
+  if(k==="halves"){const n=rand(4,10),v=sub(R(1),R(1,2**n));return xq("trick",k,`計算：${[...Array(n).keys()].map(i=>fr(1,2**(i+1))).join(" ＋ ")}`,frA(v),()=>eq(rsum([...Array(n).keys()].map(i=>R(1,2**(i+1)))),v),n)}
+  if(k==="repeat"){const ab=rand(10,99),n=rand(11,99),big=+(""+ab+ab+ab),fac=10101;return xq("trick",k,`計算：${big} ÷ ${ab}，再乘以 ${n}`,String(fac*n),()=>big/ab*n===fac*n,ab,n)}
+  if(k==="sqChain"){const N=pick([10,12,20,30,50,100]),v=N*(N+1)/2;return xq("trick",k,`計算：${N}×${N} － ${N-1}×${N-1} ＋ ${N-2}×${N-2} － ${N-3}×${N-3} ＋ …… ＋ 2×2 － 1×1`,String(v),()=>{let s=0;for(let i=N;i>=1;i--)s+=(N-i)%2===0?i*i:-i*i;return s===v},N)}
+  if(k==="doubles"){const n=rand(5,12),b=pick([2,3]),v=b===2?2**(n+1)-2:(3**(n+1)-3)/2;return xq("trick",k,`計算：${[...Array(n).keys()].map(i=>b**(i+1)).slice(0,4).join(" ＋ ")} ＋ …… ＋ ${b**n}（每一項是前一項的 ${b} 倍）`,String(v),()=>[...Array(n).keys()].reduce((s,i)=>s+b**(i+1),0)===v,n,b)}
+  const a=rand(101,999),n=pick([99,999,9999]),v=a*n;return xq("trick",k,`計算：${a} × ${n}`,String(v),()=>a*(n+1)-a===v,a,n);
+ });
+ const cyc=xUnit("cyc","循環小數","分數化小數時，除不盡的餘數會重複出現，商的數字也跟著重複（循環節）；第 n 位數字看 n 除以循環節長度的餘數；0.ababab……＝ab／99。",[["toDec","nthDigit","digitSum"],["toFrac1","toFrac2","mixedRep"],["nth13","sumMany","compare"]],(k,L)=>{
+  const decOf=(n,d,len)=>{let r=n%d,s="";for(let i=0;i<len;i++){r*=10;s+=Math.floor(r/d);r%=d}return s};
+  const period=(n,d)=>{const seen=new Map();let r=n%d,i=0;while(r&&!seen.has(r)){seen.set(r,i);r=r*10%d;i++}return r?i-seen.get(r):0};
+  if(k==="toDec"){const d=pick([3,7,9,11]),n=rand(1,d-1);if(gcd(n,d)!==1)return null;const p=period(n,d),s=decOf(n,d,p);return xq("cyc",k,`把 ${fr(n,d)} 化成小數，小數點後面哪幾個數字一直重複（循環節）？`,`0.${s}${s}……；循環節是 ${s}`,()=>decOf(n,d,2*p)===s+s,n,d)}
+  if(k==="nthDigit"||k==="nth13"){const d=k==="nth13"?pick([13,7,17]):pick([7,11,3]),n=rand(1,d-1),m=rand(20,200);if(gcd(n,d)!==1)return null;const dig=decOf(n,d,m).slice(-1);return xq("cyc",k,`${fr(n,d)} 化成小數，小數點後第 ${m} 位的數字是多少？`,dig,()=>{const p=period(n,d),s=decOf(n,d,p);return s[(m-1)%p]===dig},n,d,m)}
+  if(k==="digitSum"||k==="sumMany"){const d=k==="sumMany"?pick([7,13]):pick([7,11]),n=rand(1,d-1),m=rand(10,100);if(gcd(n,d)!==1)return null;const s=decOf(n,d,m).split("").reduce((x,c)=>x+ +c,0);return xq("cyc",k,`${fr(n,d)} 化成小數，小數點後前 ${m} 位數字的和是多少？`,String(s),()=>{const p=period(n,d),q=decOf(n,d,p);let t=0;for(let i=0;i<m;i++)t+=+q[i%p];return t===s},n,d,m)}
+  if(k==="toFrac1"){const a=rand(1,8);const v=R(a,9);return xq("cyc",k,`把 0.${String(a).repeat(5)}……（${a} 一直重複）化成最簡分數。`,frA(v),()=>decOf(v.n,v.d,6)===String(a).repeat(6),a)}
+  if(k==="toFrac2"){const ab=rand(10,98);if(ab%11===0)return null;const v=R(ab,99),s=String(ab);return xq("cyc",k,`把 0.${s+s+s}……（每兩位「${s}」為一組，一直重複）化成最簡分數。`,frA(v),()=>decOf(v.n,v.d,6)===s+s+s,ab)}
+  if(k==="mixedRep"){const a=rand(1,9),b=rand(1,8);if(a===b)return null;const v=R(9*a+b,90);return xq("cyc",k,`把 0.${a}${String(b).repeat(5)}……（小數點後第一位是 ${a}，之後 ${b} 一直重複）化成最簡分數。`,frA(v),()=>decOf(v.n,v.d,6)===a+String(b).repeat(5),a,b)}
+  const d1=pick([3,7,9,11]),d2=pick([3,7,9,11]),n1=rand(1,d1-1),n2=rand(1,d2-1);if(n1*d2===n2*d1||gcd(n1,d1)!==1||gcd(n2,d2)!==1)return null;const big=n1*d2>n2*d1;return xq("cyc",k,`${fr(n1,d1)} 和 ${fr(n2,d2)} 化成小數後，比較大小，並寫出兩個小數（寫到小數點後第 6 位）。`,`${fr(n1,d1)}＝0.${decOf(n1,d1,6)}……，${fr(n2,d2)}＝0.${decOf(n2,d2,6)}……；${big?fr(n1,d1)+" ＞ "+fr(n2,d2):fr(n1,d1)+" ＜ "+fr(n2,d2)}`,()=>(decOf(n1,d1,8)>decOf(n2,d2,8))===big,n1,d1,n2,d2);
+ });
+ return{title:"速算與數列（私中）",symbol:"Σ",subtitle:"裂項相消・等差數列與求和・巧算・循環小數",instruction:"先找出算式的規律（成對、裂項、平方差、循環節），再動手計算；分數答案化成最簡。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：1／（k ×（k＋1））的裂項相消；1 加到 n、連續奇數、首末項求和；平方差、接近整十整百的乘法、個位是 5 的數自乘；分數化循環小數、第 n 位數字、前 n 位數字和。",advanced:"進階：分母相差 2、分子是 2 的裂項；第 n 項與前 n 項和、項數、範圍內倍數的和；先加後減的山形算式、1／2 連加、重複數字的除法；0.aaa……、0.ababab……、0.abbb…… 化成分數。",challenge:"挑戰：分母相差 d 的裂項、帶分數的裂項、兩組裂項相減；禮堂座位、和第一次超過、頁碼用了幾個數字；平方差交錯、等比連加、× 999；分母 13、17 的循環節、多位數字和、兩個循環小數比大小。"},
+  units:[tele,arith,trick,cyc],presets:{basic:{tele:3,arith:3,trick:3,cyc:3},advanced:{tele:3,arith:3,trick:3,cyc:3},challenge:{tele:3,arith:3,trick:3,cyc:3}}};
+}
+
+function xlogicConfig(){
+ // 2026-11-26（Claude）：數圖形、最短路徑、容斥原理、抽屜原理。verify 用列舉（逐一數、遞推、集合計數）。
+ const figs=xUnit("figs","數圖形","數線段、角、長方形時，用「任選兩個端點（兩條邊）」的方法：n 個點有 n ×（n－1）÷ 2 條線段；方格中的長方形＝（橫向選兩條線）×（直向選兩條線）。",[["segments","angles","rowRects"],["gridRect","squares","triangles"],["squaresMN","notSquare","triLines"]],(k,L)=>{
+  if(k==="segments"){const n=rand(4,25);return xq("figs",k,`一條直線上有 ${n} 個點（包括兩個端點），以這些點為端點的線段共有幾條？`,`${C2(n)} 條`,()=>{let c=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)c++;return c===C2(n)},n)}
+  if(k==="angles"){const n=rand(3,20);return xq("figs",k,`從同一個點畫出 ${n} 條射線（都在一個平角之內，依序排開），圖中共有幾個小於平角的角？`,`${C2(n)} 個`,()=>{let c=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)c++;return c===C2(n)},n)}
+  if(k==="rowRects"){const n=rand(3,20);return xq("figs",k,`${gridSVG(n,1)}${n} 個一樣大的小正方形排成一排（如圖），圖中共有幾個長方形（包括正方形）？`,`${n*(n+1)/2} 個`,()=>{let c=0;for(let i=0;i<=n;i++)for(let j=i+1;j<=n;j++)c++;return c===n*(n+1)/2},n)}
+  const m=rand(2,6),n=rand(2,5);
+  if(k==="gridRect"){const m=rand(2,9),n=rand(2,7),v=C2(m+1)*C2(n+1);return xq("figs",k,`${gridSVG(m,n)}一個 ${m} × ${n} 的方格（橫 ${m} 格、直 ${n} 格），共有幾個長方形（包括正方形）？`,`${v} 個`,()=>{let c=0;for(let a=0;a<=m;a++)for(let b=a+1;b<=m;b++)for(let x=0;x<=n;x++)for(let y=x+1;y<=n;y++)c++;return c===v},m,n)}
+  if(k==="squares"){const s=rand(2,10),v=[...Array(s).keys()].reduce((t,i)=>t+(i+1)*(i+1),0);return xq("figs",k,`${gridSVG(s,s)}一個 ${s} × ${s} 的正方形方格，共有幾個正方形（各種大小都算）？`,`${v} 個`,()=>{let c=0;for(let z=1;z<=s;z++)c+=(s-z+1)**2;return c===v},s)}
+  if(k==="triangles"){const p=rand(3,16);return xq("figs",k,`一個三角形，從頂點向底邊畫線，使底邊上（包括兩個端點）共有 ${p} 個點和頂點相連。圖中共有幾個三角形？`,`${C2(p)} 個`,()=>{let c=0;for(let i=0;i<p;i++)for(let j=i+1;j<p;j++)c++;return c===C2(p)},p)}
+  if(k==="squaresMN"){if(m===n)return null;const [a,b]=[Math.max(m,n),Math.min(m,n)];let v=0;for(let z=1;z<=b;z++)v+=(a-z+1)*(b-z+1);return xq("figs",k,`${gridSVG(a,b)}一個 ${a} × ${b} 的長方形方格，共有幾個正方形（各種大小都算）？`,`${v} 個`,()=>{let c=0;for(let x=0;x<a;x++)for(let y=0;y<b;y++)for(let z=1;x+z<=a&&y+z<=b;z++)c++;return c===v},a,b)}
+  if(k==="notSquare"){let sq=0;for(let z=1;z<=Math.min(m,n);z++)sq+=(m-z+1)*(n-z+1);const all=C2(m+1)*C2(n+1),v=all-sq;return xq("figs",k,`${gridSVG(m,n)}一個 ${m} × ${n} 的方格中，有幾個「不是正方形」的長方形？`,`${v} 個`,()=>{let c=0;for(let a=0;a<=m;a++)for(let b=a+1;b<=m;b++)for(let x=0;x<=n;x++)for(let y=x+1;y<=n;y++)if(b-a!==y-x)c++;return c===v},m,n)}
+  const p=rand(3,7),q=rand(1,4),v=C2(p)*(q+1);return xq("figs",k,`一個三角形，從頂點向底邊畫線，使底邊上（包括兩個端點）共有 ${p} 個點和頂點相連；再畫 ${q} 條和底邊平行的線，把三角形分成 ${q+1} 層。圖中共有幾個三角形？`,`${v} 個`,()=>{let c=0;for(let lay=0;lay<=q;lay++)for(let i=0;i<p;i++)for(let j=i+1;j<p;j++)c++;return c===v},p,q);
+ });
+ const paths=xUnit("paths","最短路徑","在方格路上只能向右、向上走：走到每個交叉點的走法數＝走到它左邊那點的走法數＋走到它下面那點的走法數（標數法）。",[["grid","rowCount","stepsCount"],["through","firstRight","lastUp"],["avoid","twoBlocked","throughAvoid"]],(k,L)=>{
+  const cnt=(m,n,bad=[])=>{const f=[...Array(m+1)].map(()=>Array(n+1).fill(0));for(let i=0;i<=m;i++)for(let j=0;j<=n;j++){if(bad.some(([x,y])=>x===i&&y===j)){f[i][j]=0;continue}f[i][j]=i===0&&j===0?1:(i?f[i-1][j]:0)+(j?f[i][j-1]:0)}return f[m][n]};
+  const m=rand(2,L?6:7),n=rand(2,5);
+  if(k==="firstRight"||k==="lastUp"){const fr1=k==="firstRight",v=fr1?cnt(m-1,n):cnt(m,n-1);return xq("paths",k,`${gridSVG(m,n,[[0,0,"A"],[m,n,"B"]])}在 ${m} × ${n} 的方格路上，從 A 走到 B，只能向右或向上走，而且${fr1?"第一步一定要向右":"最後一步一定要向上"}，共有幾種走法？`,`${v} 種`,()=>{let t=0;const rec=(i,j,first,last)=>{if(i===m&&j===n){if(fr1?first==="R":last==="U")t++;return}if(i<m)rec(i+1,j,first||"R","R");if(j<n)rec(i,j+1,first||"U","U")};rec(0,0,"","");return t===v},m,n,k)}
+  if(k==="twoBlocked"){const p=[rand(1,m-1),rand(1,n)],q=[rand(0,m),rand(1,n-1)];if(p[0]===q[0]&&p[1]===q[1]||(q[0]===m&&q[1]===n)||(q[0]===0&&q[1]===0))return null;const v=cnt(m,n,[p,q]);if(v<1)return null;return xq("paths",k,`${gridSVG(m,n,[[0,0,"A"],[m,n,"B"],[p[0],p[1],"×","#C8352B"],[q[0],q[1],"×","#C8352B"]])}在 ${m} × ${n} 的方格路上，從 A 走到 B，只能向右或向上走，但兩個 × 號的路口（向右 ${p[0]} 格、向上 ${p[1]} 格，以及向右 ${q[0]} 格、向上 ${q[1]} 格）不能通過，共有幾種走法？`,`${v} 種`,()=>{let t=0;const rec=(i,j)=>{if((i===p[0]&&j===p[1])||(i===q[0]&&j===q[1]))return;if(i===m&&j===n){t++;return}if(i<m)rec(i+1,j);if(j<n)rec(i,j+1)};rec(0,0);return t===v},m,n,...p,...q)}
+  if(k==="grid"){const mm=m,nn=n,v=comb(mm+nn,mm);return xq("paths",k,`${gridSVG(mm,nn,[[0,0,"A"],[mm,nn,"B"]])}在 ${mm} × ${nn} 的方格路上，從 A 走到 B，只能向右或向上走，共有幾種走法？`,`${v} 種`,()=>cnt(mm,nn)===v,mm,nn)}
+  if(k==="rowCount"){const v=m+n;return xq("paths",k,`${gridSVG(m,n,[[0,0,"A"],[m,n,"B"]])}在 ${m} × ${n} 的方格路上，從 A 走到 B，只能向右或向上走，每一種走法都要走幾段？其中向右幾段、向上幾段？`,`共 ${v} 段；向右 ${m} 段、向上 ${n} 段`,()=>v===m+n,m,n)}
+  if(k==="through"||k==="through2"){const cx=rand(1,m-1),cy=rand(0,n);if(m<2||(cx===0&&cy===0))return null;const v=cnt(cx,cy)*cnt(m-cx,n-cy);return xq("paths",k,`${gridSVG(m,n,[[0,0,"A"],[m,n,"B"],[cx,cy,"C","#C8352B"]])}在 ${m} × ${n} 的方格路上，從 A 走到 B，只能向右或向上走，而且一定要經過 C 點（從 A 向右 ${cx} 格、向上 ${cy} 格），共有幾種走法？`,`${v} 種`,()=>{let t=0;const rec=(i,j,via)=>{if(i===m&&j===n){if(via)t++;return}const v2=via||(i===cx&&j===cy);if(i<m)rec(i+1,j,v2||(i+1===cx&&j===cy));if(j<n)rec(i,j+1,v2||(i===cx&&j+1===cy))};rec(0,0,cx===0&&cy===0);return t===v},m,n,cx,cy,k)}
+  if(k==="stepsCount"){const v=comb(m+n,m);return xq("paths",k,`小明從家要走到學校，要向東走 ${m} 個路口、向北走 ${n} 個路口（街道是方格形），只能向東或向北走，共有幾種不同的最短路線？`,`${v} 種`,()=>cnt(m,n)===v,m,n)}
+  const cx=rand(1,m-1),cy=rand(1,Math.max(1,n-1));if(cy>n)return null;
+  if(k==="avoid"){const v=cnt(m,n,[[cx,cy]]);return xq("paths",k,`${gridSVG(m,n,[[0,0,"A"],[m,n,"B"],[cx,cy,"×","#C8352B"]])}在 ${m} × ${n} 的方格路上，從 A 走到 B，只能向右或向上走，但 × 號的路口（從 A 向右 ${cx} 格、向上 ${cy} 格）正在施工不能通過，共有幾種走法？`,`${v} 種`,()=>comb(m+n,m)-comb(cx+cy,cx)*comb(m-cx+n-cy,m-cx)===v,m,n,cx,cy,k)}
+  const dx=rand(cx,m),dy=rand(0,n);if(dx===cx&&dy===cy)return null;const v=cnt(cx,cy)*cnt(m-cx,n-cy,[[dx-cx,dy-cy]]);if(dx<cx||dy<cy)return null;return xq("paths",k,`${gridSVG(m,n,[[0,0,"A"],[m,n,"B"],[cx,cy,"C","#16233A"],[dx,dy,"×","#C8352B"]])}在 ${m} × ${n} 的方格路上，從 A 走到 B，只能向右或向上走，一定要經過 C（向右 ${cx} 格、向上 ${cy} 格），但不能經過 × 號的路口（向右 ${dx} 格、向上 ${dy} 格），共有幾種走法？`,`${v} 種`,()=>{let t=0;const rec=(i,j,via)=>{if(i===dx&&j===dy)return;const v2=via||(i===cx&&j===cy);if(i===m&&j===n){if(v2)t++;return}if(i<m)rec(i+1,j,v2);if(j<n)rec(i,j+1,v2)};rec(0,0,false);return t===v},m,n,cx,cy,dx,dy);
+ });
+ const incl=xUnit("incl","容斥原理","兩種都算到的人被重複算了一次：A 或 B 的人數＝A＋B－兩者都有；三種時＝A＋B＋C－（兩兩重疊）＋三者都有。",[["both","either","neither"],["findBoth","onlyA","teams"],["three","threeNone","threeOnly"]],(k,L)=>{
+  const ab=rand(2,12),a=ab+rand(3,15),b=ab+rand(3,15),none=rand(0,8),N=a+b-ab+none,it=pick([["喜歡籃球","喜歡桌球"],["有養狗","有養貓"],["會游泳","會騎腳踏車"],["參加合唱團","參加美術社"]]);
+  if(k==="either")return xq("incl",k,`班上${it[0]}的有 ${a} 人，${it[1]}的有 ${b} 人，兩種都是的有 ${ab} 人。至少是其中一種的有幾人？`,`${a+b-ab} 人`,()=>(a-ab)+(b-ab)+ab===a+b-ab,a,b,ab);
+  if(k==="both"||k==="findBoth")return xq("incl",k,`全班 ${N} 人，${it[0]}的有 ${a} 人，${it[1]}的有 ${b} 人，兩種都不是的有 ${none} 人。兩種都是的有幾人？`,`${ab} 人`,()=>a+b-(N-none)===ab,N,a,b,none,k);
+  if(k==="neither")return xq("incl",k,`全班 ${N} 人，${it[0]}的有 ${a} 人，${it[1]}的有 ${b} 人，兩種都是的有 ${ab} 人。兩種都不是的有幾人？`,`${none} 人`,()=>N-(a+b-ab)===none,N,a,b,ab);
+  if(k==="onlyA")return xq("incl",k,`全班 ${N} 人，${it[0]}的有 ${a} 人，${it[1]}的有 ${b} 人，兩種都不是的有 ${none} 人。只${it[0].replace("喜歡","喜歡")}、不是另一種的有幾人？`,`${a-ab} 人`,()=>a-(a+b-(N-none))===a-ab,N,a,b,none);
+  if(k==="teams"){const M=rand(30,120);let c=0;const x=rand(2,6),y=rand(2,7);if(x===y)return null;for(let i=1;i<=M;i++)if(i%x===0||i%y===0)c++;return xq("incl",k,`編號 1 到 ${M} 的同學，編號是 ${x} 的倍數的去打掃，編號是 ${y} 的倍數的去搬桌椅（兩種倍數都是的兩項工作都做）。至少做一項工作的有幾人？`,`${c} 人`,()=>Math.floor(M/x)+Math.floor(M/y)-Math.floor(M/(x/gcd(x,y)*y))===c,M,x,y)}
+  // 三個集合：由各區域人數反推
+  const r=Array.from({length:7},()=>rand(1,9)),[A1,B1,C1,AB,BC,AC,ABC]=r,nA=A1+AB+AC+ABC,nB=B1+AB+BC+ABC,nC=C1+BC+AC+ABC,xAB=AB+ABC,xBC=BC+ABC,xAC=AC+ABC,U=r.reduce((s,x)=>s+x,0),no=rand(0,6),T=U+no;
+  if(k==="three")return xq("incl",k,`全班同學中，會彈鋼琴的有 ${nA} 人，會拉小提琴的有 ${nB} 人，會吹長笛的有 ${nC} 人；鋼琴和小提琴都會的有 ${xAB} 人，小提琴和長笛都會的有 ${xBC} 人，鋼琴和長笛都會的有 ${xAC} 人，三種都會的有 ${ABC} 人。至少會一種的有幾人？`,`${U} 人`,()=>nA+nB+nC-xAB-xBC-xAC+ABC===U,...r);
+  if(k==="threeNone")return xq("incl",k,`全班 ${T} 人，會彈鋼琴的有 ${nA} 人，會拉小提琴的有 ${nB} 人，會吹長笛的有 ${nC} 人；鋼琴和小提琴都會的有 ${xAB} 人，小提琴和長笛都會的有 ${xBC} 人，鋼琴和長笛都會的有 ${xAC} 人，三種都會的有 ${ABC} 人。三種都不會的有幾人？`,`${no} 人`,()=>T-(nA+nB+nC-xAB-xBC-xAC+ABC)===no,T,...r);
+  return xq("incl",k,`全班同學中，會彈鋼琴的有 ${nA} 人，會拉小提琴的有 ${nB} 人，會吹長笛的有 ${nC} 人；鋼琴和小提琴都會的有 ${xAB} 人，小提琴和長笛都會的有 ${xBC} 人，鋼琴和長笛都會的有 ${xAC} 人，三種都會的有 ${ABC} 人。只會彈鋼琴的有幾人？`,`${A1} 人`,()=>nA-xAB-xAC+ABC===A1,...r);
+ });
+ const pigeon=xUnit("pigeon","抽屜原理","找出「最倒楣」的情況：每個抽屜先放到快滿（每種先拿到差一個），再多 1 個就一定成立。N 個東西放進 m 個抽屜，至少有一個抽屜有「N ÷ m 無條件進位」個。",[["socks","month","boxes"],["rSame","sureColor","classDay"],["limited","allColors","twoPairs"]],(k,L)=>{
+  if(k==="socks"){const c=rand(2,6);return xq("pigeon",k,`抽屜裡有 ${c} 種顏色的襪子，每種都很多。閉著眼睛拿，至少要拿幾隻，才能保證有兩隻同色？`,`${c+1} 隻`,()=>c*1+1===c+1,c)}
+  if(k==="month"){const many=rand(0,1),N=many?rand(26,60):13,need=many?Math.ceil(N/12):2;return xq("pigeon",k,many?`班上有 ${N} 位同學，至少有幾位同學是在同一個月出生的？`:`至少要有幾位同學，才能保證其中一定有兩人在同一個月出生？`,many?`至少 ${need} 位`:`13 位`,()=>many?(need-1)*12<N&&need*12>=N:true,N,many)}
+  if(k==="boxes"){const m=rand(3,9),N=rand(m+1,6*m),need=Math.ceil(N/m);return xq("pigeon",k,`把 ${N} 顆蘋果放進 ${m} 個盒子，不論怎麼放，至少有一個盒子裡有幾顆以上？`,`${need} 顆`,()=>(need-1)*m<N&&need*m>=N,N,m)}
+  if(k==="rSame"){const c=rand(2,6),r=rand(3,8);return xq("pigeon",k,`袋子裡有 ${c} 種顏色的球，每種都很多。至少要拿出幾顆，才能保證有 ${r} 顆同色？`,`${c*(r-1)+1} 顆`,()=>c*(r-1)<c*(r-1)+1,c,r)}
+  if(k==="sureColor"){const a=rand(3,15),b=rand(3,15),c=rand(3,15);return xq("pigeon",k,`袋子裡有紅球 ${a} 顆、白球 ${b} 顆、黑球 ${c} 顆。閉著眼睛拿，至少要拿幾顆，才能保證拿到紅球？`,`${b+c+1} 顆`,()=>b+c+1===a+b+c-a+1,a,b,c)}
+  if(k==="classDay"){const N=rand(400,1500),need=Math.ceil(N/366);return xq("pigeon",k,`某校有 ${N} 位學生，至少有幾位學生的生日是同一天？（一年以 366 天計算）`,`至少 ${need} 位`,()=>(need-1)*366<N&&need*366>=N,N)}
+  if(k==="limited"){const cs=[rand(1,6),rand(2,10),rand(3,12)],r=rand(3,6),v=cs.reduce((s,x)=>s+Math.min(x,r-1),0)+1;if(Math.max(...cs)<r)return null;return xq("pigeon",k,`袋子裡有紅球 ${cs[0]} 顆、白球 ${cs[1]} 顆、黑球 ${cs[2]} 顆。至少要拿出幾顆，才能保證有 ${r} 顆同色？`,`${v} 顆`,()=>v-1===cs.map(x=>Math.min(x,r-1)).reduce((s,x)=>s+x,0),...cs,r)}
+  if(k==="allColors"){const cs=[rand(3,12),rand(3,12),rand(3,12)].sort((p,q)=>q-p),v=cs[0]+cs[1]+1;return xq("pigeon",k,`袋子裡有紅球 ${cs[1]} 顆、白球 ${cs[0]} 顆、黑球 ${cs[2]} 顆。至少要拿出幾顆，才能保證三種顏色都有？`,`${v} 顆`,()=>v===Math.max(cs[0]+cs[1],cs[0]+cs[2],cs[1]+cs[2])+1,...cs)}
+  const c=rand(2,5);return xq("pigeon",k,`抽屜裡有 ${c} 種顏色的手套（不分左右手），每種都很多。至少要拿幾隻，才能保證拿到兩雙同色的手套（可以是同一種顏色的兩雙）？`,`${c+3} 隻`,()=>{/* 最差：c－1 種各 1 隻，另一種 3 隻＝c＋2 隻只有一雙 */return c+2<c+3},c);
+ });
+ return{title:"計數與邏輯（私中）",symbol:"⊞",subtitle:"數圖形・最短路徑・容斥原理・抽屜原理",instruction:"有系統地數：先分類，再用公式或標數法；抽屜原理先想「最倒楣」的情況。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：線段與角的個數、一排正方形中的長方形；小方格路的走法、要走幾段；兩種都是、至少一種、兩種都不是；保證兩隻同色、同月出生、放進盒子至少幾個。",advanced:"進階：m × n 方格中的長方形、正方形方格中的正方形、從頂點連到底邊的三角形；一定要經過某點的走法、街道最短路線；由都不是求都是、只有一種、倍數分組；保證 r 個同色、保證拿到某色、同一天生日。",challenge:"挑戰：長方形方格中的正方形、不是正方形的長方形、分層的三角形；不能經過某點、經過一點又避開一點；三個集合的至少一種、都不會、只會一種；顏色數量有限的同色、三種顏色都有、兩雙同色手套。"},
+  units:[figs,paths,incl,pigeon],presets:{basic:{figs:3,paths:3,incl:3,pigeon:3},advanced:{figs:3,paths:3,incl:3,pigeon:3},challenge:{figs:3,paths:3,incl:3,pigeon:3}}};
+}
+
+const CONFIGS={xmotion:xmotionConfig,xclassic:xclassicConfig,xratio:xratioConfig,xnumber:xnumberConfig,xseries:xseriesConfig,xlogic:xlogicConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
