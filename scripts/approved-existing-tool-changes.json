@@ -4677,6 +4677,27 @@
       "approved_blob": "ff0bdf73e47e28aa54daee728c978ecbc15182fc",
       "reason": "應用題與私中題目措辭修正負號係數1與零的寫法",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "5262dbb5e25c43a9c2c3d54eaa3002bb8115713e",
+      "approved_blob": "b8c71cbb60206741e82d1dd4e600803879b3feb5",
+      "reason": "國三應用題新主題與私中入學模擬卷並更新資源頁",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g9-drills.html",
+      "baseline_blob": "b7569458cd4fd7a7d0265e80fe6e9d12916b795b",
+      "approved_blob": "d9a4a6b8eab73cf1d9717c5567f9304da6d3d050",
+      "reason": "國三應用題新主題與私中入學模擬卷並更新資源頁",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "df0a56715d044191e4ddc033007ad6c9b4a1c09d",
+      "approved_blob": "66b2d291705236e62d5d74c37200a35c657a1748",
+      "reason": "國三應用題新主題與私中入學模擬卷並更新資源頁",
+      "pull_request": null
     }
   ]
 }
