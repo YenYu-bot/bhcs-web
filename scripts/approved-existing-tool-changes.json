@@ -4698,6 +4698,20 @@
       "approved_blob": "66b2d291705236e62d5d74c37200a35c657a1748",
       "reason": "國三應用題新主題與私中入學模擬卷並更新資源頁",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6-drills.html",
+      "baseline_blob": "4a582e852747b7925cb4e4832b1d169ce4eb82d4",
+      "approved_blob": "6edae2a79eafbbd342e6684166ce5e39bd89d7e8",
+      "reason": "國小與私中應用題作答欄改為答字樣並修正非最簡比",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "b8c71cbb60206741e82d1dd4e600803879b3feb5",
+      "approved_blob": "a7df13ba5def7d598b5a53952b835b19e8e4f501",
+      "reason": "國小與私中應用題作答欄改為答字樣並修正非最簡比",
+      "pull_request": null
     }
   ]
 }
