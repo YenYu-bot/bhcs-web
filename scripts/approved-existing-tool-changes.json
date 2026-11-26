@@ -4621,6 +4621,20 @@
       "approved_blob": "f6ab3548d9a8ff3387236d25c791d60dba609e29",
       "reason": "私中入學數學出題器新增速算與數列、計數與邏輯，定義新運算符號改用 ⊙",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "54beee8eed83524116215cc3f25416f259b3b996",
+      "approved_blob": "6a587098e38c218189d8ac5e2e547d90d0f18784",
+      "reason": "私中入學數學出題器新增平面幾何進階、立體幾何進階兩個主題",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "f6ab3548d9a8ff3387236d25c791d60dba609e29",
+      "approved_blob": "10d205c06078d1f3a1982666108e6c7d6813596e",
+      "reason": "私中入學數學出題器新增平面幾何進階、立體幾何進階兩個主題",
+      "pull_request": null
     }
   ]
 }
