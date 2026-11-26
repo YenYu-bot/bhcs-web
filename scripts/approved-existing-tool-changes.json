@@ -4763,66 +4763,66 @@
       "pull_request": null
     },
     {
-      "path": "tools/math/g10-drills.html",
-      "baseline_blob": "20bce3539454eb72f82d4211bf28ee9886a7d65e",
-      "approved_blob": "ffa201e07d2f0490f6ffa3288c256ffb0c4059d3",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
-      "pull_request": null
-    },
-    {
-      "path": "tools/math/g11-drills.html",
-      "baseline_blob": "3b3bbb64f98e18f90836e0ba1960798227fe2442",
-      "approved_blob": "a7bca4a28633cc2afeabba764d5f4f217f32cce9",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
-      "pull_request": null
-    },
-    {
       "path": "tools/math/g2-drills.html",
       "baseline_blob": "274a3a25ce7540be823f6e51ebe760b87351f936",
-      "approved_blob": "f51dab9c391269e3679b6bbe645f3faed7a2ca0c",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
+      "approved_blob": "5693862ed10bd9759409276d264bbc620b67af72",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
     },
     {
       "path": "tools/math/g3-drills.html",
       "baseline_blob": "48d180eec4c6a278907417e496acc2751f728bc1",
-      "approved_blob": "11c462994c1d2d15c38e00737ed94e010ff1d458",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
+      "approved_blob": "6ac957251482f4aeac4d25fee4680664e25eb98a",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
     },
     {
       "path": "tools/math/g4-drills.html",
       "baseline_blob": "67fe0f56bb2a044f2e54dd85790812000f9f7bea",
-      "approved_blob": "2b15934765f5288c7a0eaed5453837c5bdd7cfd0",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
+      "approved_blob": "344ed51e93ceaf9c583576f28b79302abf56a968",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
     },
     {
       "path": "tools/math/g6-drills.html",
       "baseline_blob": "741a25e90998e60edaba6bb57a686768aa8c4705",
-      "approved_blob": "20d970dc12008f2116710d81424e5ca798ad5fd3",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
+      "approved_blob": "d019dd54bffe46cabdcaf24f856d63532b33abb1",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g6x-drills.html",
+      "baseline_blob": "1405ca589dd9ae9097f9817a20684cec4123f8d9",
+      "approved_blob": "149ca18c55762a4c74685bece074d0e470104347",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
     },
     {
       "path": "tools/math/g7-drills.html",
       "baseline_blob": "3d245700526047bd383de4606fea6a49ec4270a9",
-      "approved_blob": "46927d6be7adaff1206fa930f77d46304966bbdd",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
+      "approved_blob": "3526b30de6b9e4846dda9975ac6483a4f830d319",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
     },
     {
       "path": "tools/math/g8-drills.html",
       "baseline_blob": "39a78ba464d499d8c5dbed7c564f6511ac634003",
-      "approved_blob": "1f641d8f4f4585ec7321dc12dd5aeccc67ab0b31",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
+      "approved_blob": "9cd28d587fef4b05ef56dc3a72a343517ec98b9c",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
     },
     {
       "path": "tools/math/g9-drills.html",
       "baseline_blob": "d9a4a6b8eab73cf1d9717c5567f9304da6d3d050",
-      "approved_blob": "cf8f3571a726949fb70610899be781cf32a94544",
-      "reason": "全部出題器的版本選單加入學用版加解答頁選項",
+      "approved_blob": "2b7ad3ef982a4327616d0c170d8a15190fefa8ad",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "20bce3539454eb72f82d4211bf28ee9886a7d65e",
+      "approved_blob": "8d27e942448d2eaf77c1adac25710369043311b0",
+      "reason": "全部出題器的版本選單加入學用版加解答頁選項（以腳本插入，不動版面標記）",
       "pull_request": null
     }
   ]
