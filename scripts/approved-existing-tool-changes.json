@@ -4852,6 +4852,20 @@
       "approved_blob": "f3f803b7975b0f18f4a07046bba93cd2fd8459c3",
       "reason": "國一國二國三總複習模擬卷新主題與題目作答欄標籤",
       "pull_request": null
+    },
+    {
+      "path": "tools/math/g10-drills.html",
+      "baseline_blob": "8d27e942448d2eaf77c1adac25710369043311b0",
+      "approved_blob": "51bac879fb917618600cd9af78ae4e0e8c2fa5e7",
+      "reason": "高一應用題新主題指數對數不等式與直線方程式應用",
+      "pull_request": null
+    },
+    {
+      "path": "tools/math/index.html",
+      "baseline_blob": "f3f803b7975b0f18f4a07046bba93cd2fd8459c3",
+      "approved_blob": "4649a5214558ea67598a8ff78d590d1e546e7326",
+      "reason": "高一應用題新主題指數對數不等式與直線方程式應用",
+      "pull_request": null
     }
   ]
 }
