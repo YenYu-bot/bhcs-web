@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜私中入學數學 出題器</title><meta name="description" content="私中入學數學出題器：行程進階（流水行船、火車過橋與錯車、環形跑道、時鐘問題）與典型應用題（年齡、盈虧、歸一歸總、方陣、計數與排列），可設定難度與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:title" content="百宏文教｜私中入學數學 出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:type" content="website">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#16233A"><title>百宏文教｜私中入學數學 出題器</title><meta name="description" content="私中入學數學出題器：行程進階（流水行船、火車過橋與錯車、環形跑道、時鐘問題）與典型應用題（年齡、盈虧、歸一歸總、方陣、計數與排列）、比例與百分率進階（濃度、利潤與折扣、利息、工程）、數論與數字謎（整除、餘數、位值、因數個數、定義新運算），可設定難度與各單元題數，每按一次產生一份新練習卷，學用版／教用版可切換後直接列印或存成 PDF。百宏文教機構「徹底反覆計算」系列，免費、不需註冊。"><link rel="canonical" href="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:title" content="百宏文教｜私中入學數學 出題器"><meta property="og:url" content="https://www.bhcs.com.tw/tools/math/g6x-drills.html"><meta property="og:type" content="website">
 <style>
 :root{--bhcs-green:#176b55;--bhcs-green2:#0f4f40;--bhcs-mint:#55cfad;--bhcs-soft:#e8f5f0;--bhcs-line:#c8d4d1;--bhcs-ink:#182d28;--bhcs-muted:#62736f;--bhcs-bg:#e8edef;--bhcs-red:#ae3f3f;--work:16mm}
 *{box-sizing:border-box}html,body{margin:0;font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",system-ui,sans-serif;color:var(--bhcs-ink);background:var(--bhcs-bg)}body{overflow-x:hidden}button,input,select{font:inherit}button,input[type=checkbox],select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a66d00;outline-offset:2px}
@@ -116,7 +116,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#C83
 <main class="preview"><div id="output"></div></main>
 <script>
 (()=>{"use strict";
-const TOPICS=[["xmotion","行程進階（私中）"],["xclassic","典型應用題（私中）"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"xmotion",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const TOPICS=[["xmotion","行程進階（私中）"],["xclassic","典型應用題（私中）"],["xratio","比例與百分率進階（私中）"],["xnumber","數論與數字謎（私中）"]],_tp=new URLSearchParams(location.search).get("topic"),TOPIC_KEY=TOPICS.some(t=>t[0]===_tp)?_tp:"xmotion",$=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
 const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1};
 const R=(n,d=1)=>{if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||!d)throw Error("無效分數");if(d<0){n=-n;d=-d}const g=gcd(n,d);return{n:n/g,d:d/g}},add=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>R(a.n*b.n,a.d*b.d),div=(a,b)=>{if(!b.n)throw Error("除數不可為 0");return R(a.n*b.d,a.d*b.n)},eq=(a,b)=>a.n===b.n&&a.d===b.d,cmp=(a,b)=>a.n*b.d-b.n*a.d;
 const fr=(n,d)=>`<span class="fr"><span class="n">${n}</span><span class="d">${d}</span></span>`,plain=a=>`${a.n}/${a.d}`;
@@ -285,7 +285,129 @@ function xclassicConfig(){
   units:[age,surplus,unitary,square,count],presets:{basic:{age:3,surplus:3,unitary:2,square:2,count:2},advanced:{age:3,surplus:3,unitary:2,square:2,count:2},challenge:{age:3,surplus:3,unitary:2,square:2,count:2}}};
 }
 
-const CONFIGS={xmotion:xmotionConfig,xclassic:xclassicConfig},CFG=CONFIGS[TOPIC_KEY]();
+
+const lcmX=(a,b)=>a/gcd(a,b)*b;
+function xratioConfig(){
+ // 2026-11-26（Claude）：濃度、利潤與折扣、利息、工程問題。數值由答案反推，全部整數（百分率是整數）。
+ const conc=xUnit("conc","濃度問題","濃度＝溶質 ÷ 溶液 × 100%；加水或蒸發時「溶質（鹽、糖）不變」，加鹽時「水不變」；兩種溶液混合，溶質相加、溶液也相加。",[["rate","salt","make"],["addWater","evap","addSalt"],["mix","mixFind","pour"]],(k,L)=>{
+  const T=pick([100,200,250,300,400,500,600,800]),p=pick([5,8,10,12,15,20,25,30]);
+  if(k==="rate"){const s=T*p/100;if(!Number.isInteger(s))return null;return xq("conc",k,`把 ${s} 克的鹽溶在 ${T-s} 克的水裡，這杯鹽水的濃度是百分之幾？`,`${p}%`,()=>s*100/(s+(T-s))===p,s,T)}
+  if(k==="salt"){const s=T*p/100;if(!Number.isInteger(s))return null;return xq("conc",k,`${T} 克濃度 ${p}% 的糖水裡，含有糖多少克？水多少克？`,`糖 ${s} 克；水 ${T-s} 克`,()=>s*100===T*p,T,p)}
+  if(k==="make"){const s=T*p/100;if(!Number.isInteger(s))return null;const half=Math.random()<.5;return xq("conc",k,`要配製濃度 ${p}% 的鹽水${half?"，已經有鹽 "+s+" 克，":" "+T+" 克，需要鹽多少克？"}${half?"要加多少克的水？":"需要水多少克？"}`,half?`${T-s} 克水`:`鹽 ${s} 克；水 ${T-s} 克`,()=>s*100===T*p,T,p,half)}
+  if(k==="addWater"){const s=T*p/100,q=pick([...Array(p).keys()].filter(x=>x>=2&&(s*100)%x===0&&s*100/x>T));if(!Number.isInteger(s)||!q)return null;const w=s*100/q-T;return xq("conc",k,`${T} 克濃度 ${p}% 的鹽水，要加多少克的水，濃度才會變成 ${q}%？`,`${w} 克`,()=>s*100/(T+w)===q,T,p,q)}
+  if(k==="evap"){const s=T*p/100,q=pick([...Array(60).keys()].filter(x=>x>p&&(s*100)%x===0));if(!Number.isInteger(s)||!q)return null;const w=T-s*100/q;return xq("conc",k,`${T} 克濃度 ${p}% 的鹽水，要蒸發掉多少克的水，濃度才會變成 ${q}%？`,`${w} 克`,()=>s*100/(T-w)===q,T,p,q)}
+  if(k==="addSalt"){const q=pick([...Array(50).keys()].filter(x=>x>p&&(T*(x-p))%(100-x)===0));if(!q)return null;const a=T*(q-p)/(100-q);return xq("conc",k,`${T} 克濃度 ${p}% 的鹽水，要再加入多少克的鹽，濃度才會變成 ${q}%？`,`${a} 克`,()=>(T*p/100+a)*100===q*(T+a),T,p,q)}
+  if(k==="mix"){const A=pick([100,200,300,400]),B=pick([100,200,300,400,600]),a=pick([5,10,15,20]),b=pick([20,25,30,40]);if(a===b)return null;const tot=A*a+B*b;if(tot%(A+B))return null;const c=tot/(A+B);return xq("conc",k,`把 ${A} 克濃度 ${a}% 的鹽水和 ${B} 克濃度 ${b}% 的鹽水混合，混合後的濃度是百分之幾？`,`${c}%`,()=>(A*a/100+B*b/100)*100/(A+B)===c,A,a,B,b)}
+  if(k==="mixFind"){const a=pick([5,10,15]),b=pick([25,30,40]),C=pick([200,300,400,500,600]),c=rand(a+1,b-1);const A=C*(b-c)/(b-a);if(!Number.isInteger(A))return null;const B=C-A;return xq("conc",k,`用濃度 ${a}% 和 ${b}% 的兩種鹽水，混合成 ${C} 克濃度 ${c}% 的鹽水，兩種鹽水各要多少克？`,`${a}% 的 ${A} 克；${b}% 的 ${B} 克`,()=>A*a+B*b===C*c&&A+B===C,a,b,C,c)}
+  const s=T*p/100,x=pick([...Array(T).keys()].filter(y=>y>0&&y<T&&(s*(T-y)*100)%(T*T)===0&&y%10===0));if(!Number.isInteger(s)||!x)return null;const q=s*(T-x)*100/(T*T);return xq("conc",k,`杯子裡有 ${T} 克濃度 ${p}% 的鹽水，先倒出 ${x} 克，再加入 ${x} 克的水，現在的濃度是百分之幾？`,`${q}%`,()=>(s-s*x/T)*100/T===q,T,p,x);
+ });
+ const profit=xUnit("profit","利潤與折扣","定價＝成本 ×（1＋利潤率）；售價＝定價 × 折數；利潤＝售價－成本，利潤率＝利潤 ÷ 成本 × 100%（以成本為基準量）。",[["price","sale","rate"],["markDown","cost","twoDisc"],["sameSell","needDisc","broken"]],(k,L)=>{
+  const C=rand(4,60)*50,p=pick([10,20,25,30,40,50,60]),Z=[95,90,85,80,75,70,65,60],zh=z=>z%10?`${"零一二三四五六七八九"[Math.floor(z/10)]}${"零一二三四五六七八九"[z%10]}折`:`${"零一二三四五六七八九"[z/10]}折`;
+  if(k==="price"){const P=C*(100+p)/100;if(!Number.isInteger(P))return null;return xq("profit",k,`一件商品成本 ${C} 元，老闆加上成本的 ${p}% 作為定價，定價是多少元？`,`${P} 元`,()=>(P-C)*100===p*C,C,p)}
+  if(k==="sale"){const P=rand(4,80)*50,z=pick(Z),S=P*z/100;if(!Number.isInteger(S))return null;return xq("profit",k,`一件外套定價 ${P} 元，打${zh(z)}出售，售價是多少元？比定價便宜多少元？`,`售價 ${S} 元；便宜 ${P-S} 元`,()=>S/P*100===z,P,z)}
+  if(k==="rate"){const S=C*(100+p)/100;if(!Number.isInteger(S))return null;return xq("profit",k,`一台電風扇成本 ${C} 元，賣出 ${S} 元，獲利是成本的百分之幾？`,`${p}%`,()=>C*(100+p)===S*100,C,S)}
+  if(k==="markDown"){const z=pick(Z),S=C*(100+p)*z/10000;if(!Number.isInteger(S))return null;const d=S-C;return xq("profit",k,`一件商品成本 ${C} 元，先加成本的 ${p}% 定價，再打${zh(z)}賣出，賣出一件${d>=0?"賺":"賠"}多少元？`,d===0?`不賺不賠`:`${d>0?"賺":"賠"} ${Math.abs(d)} 元`,()=>C*(100+p)*z===(d+C)*10000,C,p,z)}
+  if(k==="cost"){const S=C*(100+p)/100;if(!Number.isInteger(S))return null;return xq("profit",k,`一個書包賣 ${S} 元，可以賺成本的 ${p}%，這個書包的成本是多少元？`,`${C} 元`,()=>S*100===C*(100+p),S,p)}
+  if(k==="twoDisc"){const z1=pick([90,80,95,85]),z2=pick([90,80,95,85,70]),z=z1*z2;if(z%100)return null;return xq("profit",k,`百貨公司先全面打${zh(z1)}，結帳時再打${zh(z2)}。這樣相當於打幾折？（用百分率或折數回答）`,`${zh(z/100)}（定價的 ${z/100}%）`,()=>z1*z2===z&&(z/100)*100===z1*z2,z1,z2)}
+  if(k==="sameSell"){const q=pick([20,25]),S=pick([1200,2400,3000,3600,4800,6000]),c1=S*100/(100+q),c2=S*100/(100-q);if(!Number.isInteger(c1)||!Number.isInteger(c2))return null;const d=2*S-c1-c2;return xq("profit",k,`老闆把兩件外套都賣了 ${S} 元，其中一件賺了成本的 ${q}%，另一件賠了成本的 ${q}%。老闆這兩件合起來是賺還是賠？多少元？`,`${d<0?"賠":"賺"} ${Math.abs(d)} 元`,()=>c1*(100+q)===S*100&&c2*(100-q)===S*100,q,S)}
+  if(k==="needDisc"){const P=C*(100+p)/100,r=pick([0,5,10,20]),need=C*(100+r)/P;if(!Number.isInteger(P)||!Number.isInteger(need)||need%5||need>=100)return null;return xq("profit",k,`一件商品成本 ${C} 元，定價是成本加上 ${p}%。如果要${r?`至少賺成本的 ${r}%`:"不賠錢"}，最多可以打幾折？`,`${zh(need)}`,()=>P*need===C*(100+r),C,p,r)}
+  const n=pick([50,80,100,120,150,200]),c=rand(5,40),bad=rand(2,Math.floor(n/10)),s=c+rand(3,20),pr=(n-bad)*s-n*c;return xq("profit",k,`水果行進了 ${n} 顆芒果，每顆成本 ${c} 元，運送時壞了 ${bad} 顆，其餘每顆賣 ${s} 元全部賣完。這批芒果${pr>=0?"賺":"賠"}了多少元？`,`${pr>=0?"賺":"賠"} ${Math.abs(pr)} 元`,()=>s*n-s*bad-c*n===pr,n,c,bad,s);
+ });
+ const interest=xUnit("interest","利息問題","單利：利息＝本金 × 年利率 × 年數，本利和＝本金＋利息；複利：每一年的本利和再當作下一年的本金。",[["simple","total","rateFind"],["principal","compound2","years"],["compare","split","compound3"]],(k,L)=>{
+  const P=rand(2,50)*10000,r=pick([1,2,3,4,5]),n=rand(2,5);
+  if(k==="simple"){const I=P*r*n/100;return xq("interest",k,`把 ${P} 元存入銀行，年利率 ${r}%（單利），存 ${n} 年，可以得到利息多少元？`,`${I} 元`,()=>I*100===P*r*n,P,r,n)}
+  if(k==="total"){const I=P*r/100;return xq("interest",k,`把 ${P} 元存一年定期，年利率 ${r}%，到期時本金和利息共多少元？`,`${P+I} 元`,()=>I*100===P*r,P,r)}
+  if(k==="rateFind"){const I=P*r/100;return xq("interest",k,`小明把 ${P} 元存入銀行一年，得到利息 ${I} 元，年利率是百分之幾？`,`${r}%`,()=>P*r===I*100,P,I)}
+  if(k==="principal"){const I=P*r*n/100;return xq("interest",k,`年利率 ${r}%（單利），存 ${n} 年共得到利息 ${I} 元，本金是多少元？`,`${P} 元`,()=>I*100===P*r*n,r,n,I)}
+  if(k==="compound2"){const A=P*(100+r)*(100+r)/10000;return xq("interest",k,`把 ${P} 元存入銀行，年利率 ${r}%，以複利計算（每年的利息加入本金），存 2 年後本利和是多少元？`,`${A} 元`,()=>{let x=P;for(let i=0;i<2;i++)x+=x*r/100;return Math.abs(x-A)<1e-6},P,r)}
+  if(k==="years"){const I=P*r/100,want=I*n;return xq("interest",k,`把 ${P} 元存入銀行，年利率 ${r}%（單利），要存幾年，利息才會有 ${want} 元？`,`${n} 年`,()=>P*r*n===want*100,P,r,want)}
+  if(k==="compare"){const P2=rand(1,20)*10000,d=P2*r*r/10000;return xq("interest",k,`把 ${P2} 元存 2 年，年利率 ${r}%。以複利計算比單利計算多得多少元利息？`,`${d} 元`,()=>Math.abs(P2*((1+r/100)**2-1)-P2*r*2/100-d)<1e-6,P2,r)}
+  if(k==="split"){const r1=pick([1,2,3]),r2=r1+pick([1,2]),A=rand(1,20)*10000,B=rand(1,20)*10000,I=(A*r1+B*r2)/100;return xq("interest",k,`媽媽把 ${A+B} 元分成兩筆存一年：一筆年利率 ${r1}%，另一筆年利率 ${r2}%，一年後共得到利息 ${I} 元。兩筆各存多少元？`,`年利率 ${r1}% 的 ${A} 元；年利率 ${r2}% 的 ${B} 元`,()=>((A+B)*r2-I*100)/(r2-r1)===A,A+B,r1,r2,I)}
+  const P3=rand(1,9)*1000000,A=P3*(100+r)**3/1000000;return xq("interest",k,`把 ${P3} 元存入銀行，年利率 ${r}%，以複利計算，存 3 年後本利和是多少元？`,`${A} 元`,()=>{let x=P3;for(let i=0;i<3;i++)x+=x*r/100;return Math.abs(x-A)<1e-4},P3,r);
+ });
+ const work=xUnit("work","工程問題","把整件工作看成「1」（或取兩人天數的公倍數當總量）；每人每天做「1 ÷ 天數」，合作時每天的工作量相加，進水和排水同時開就相減。",[["together","rest","part"],["joinLater","findB","pipes"],["three","pairs","leave"]],(k,L)=>{
+  // 由每天的工作量反推：總量 W，甲每天 x、乙每天 y
+  const x=rand(1,6),y=rand(1,6),t=rand(2,8),W=(x+y)*t;
+  const ok=()=>W%x===0&&W%y===0&&x!==y,a=W/x,b=W/y;
+  if(k==="together"){if(!ok())return null;return xq("work",k,`一件工作，甲單獨做要 ${a} 天完成，乙單獨做要 ${b} 天完成。兩人合作，幾天可以完成？`,`${t} 天`,()=>Math.abs(t*(1/a+1/b)-1)<1e-9,a,b)}
+  if(k==="part"){if(!ok())return null;const d=rand(1,a-1),g=gcd(d,a);return xq("work",k,`一件工作，甲單獨做要 ${a} 天完成。甲做了 ${d} 天，完成了這件工作的幾分之幾？還剩幾分之幾？`,`完成 ${fr(d/g,a/g)}；還剩 ${fr((a-d)/g,a/g)}`,()=>d*W/a+(a-d)*W/a===W,a,d)}
+  if(k==="rest"){if(!ok())return null;const d=rand(1,a-1),r=(W-x*d)/y;if(!Number.isInteger(r))return null;return xq("work",k,`一件工作，甲單獨做要 ${a} 天，乙單獨做要 ${b} 天。甲先做了 ${d} 天後離開，剩下的由乙做，乙還要幾天才能完成？`,`${r} 天`,()=>Math.abs(d/a+r/b-1)<1e-9,a,b,d)}
+  if(k==="joinLater"){if(!ok())return null;const d=rand(1,a-1),r=(W-x*d)/(x+y);if(!Number.isInteger(r)||r<1)return null;return xq("work",k,`一件工作，甲單獨做要 ${a} 天，乙單獨做要 ${b} 天。甲先做了 ${d} 天，接著乙也加入一起做，還要幾天才能完成？`,`${r} 天`,()=>Math.abs((d+r)/a+r/b-1)<1e-9,a,b,d)}
+  if(k==="findB"){if(!ok())return null;return xq("work",k,`一件工作，甲、乙合作 ${t} 天完成；甲單獨做要 ${a} 天完成。乙單獨做要幾天完成？`,`${b} 天`,()=>Math.abs(1/t-1/a-1/b)<1e-9,t,a)}
+  if(k==="pipes"){const fill=rand(2,10),drain=fill+rand(1,12),T2=fill*drain/(drain-fill);if(!Number.isInteger(T2))return null;return xq("work",k,`一個水池，單開進水管 ${fill} 小時可以注滿，單開排水管 ${drain} 小時可以把滿池的水排完。空池時兩管同時打開，幾小時可以注滿？`,`${T2} 小時`,()=>Math.abs(T2*(1/fill-1/drain)-1)<1e-9,fill,drain)}
+  if(k==="three"){const z=rand(1,6),W3=(x+y+z)*t;if(W3%x||W3%y||W3%z||new Set([x,y,z]).size<3)return null;return xq("work",k,`一件工作，甲單獨做要 ${W3/x} 天，乙單獨做要 ${W3/y} 天，丙單獨做要 ${W3/z} 天。三人合作，幾天可以完成？`,`${t} 天`,()=>Math.abs(t*(x+y+z)/W3-1)<1e-9,W3/x,W3/y,W3/z)}
+  if(k==="pairs"){const z=rand(1,6),S=x+y+z;if(new Set([x,y,z]).size<3)return null;const W3=S*t;const p1=W3/(x+y),p2=W3/(y+z),p3=W3/(x+z);if(![p1,p2,p3].every(Number.isInteger))return null;return xq("work",k,`一件工作，甲乙合作 ${p1} 天完成，乙丙合作 ${p2} 天完成，甲丙合作 ${p3} 天完成。甲乙丙三人合作，幾天可以完成？`,`${t} 天`,()=>Math.abs(2/(1/p1+1/p2+1/p3)-t)<1e-9,p1,p2,p3)}
+  if(!ok())return null;const rest=rand(1,3),T3=(W+x*rest)/(x+y);if(!Number.isInteger(T3)||T3<=rest)return null;return xq("work",k,`一件工作，甲單獨做要 ${a} 天，乙單獨做要 ${b} 天。兩人合作，中途甲休息了 ${rest} 天（乙沒有休息），從開始到完成共用了幾天？`,`${T3} 天`,()=>Math.abs((T3-rest)/a+T3/b-1)<1e-9,a,b,rest);
+ });
+ return{title:"比例與百分率進階（私中）",symbol:"%",subtitle:"濃度問題・利潤與折扣・利息問題・工程問題",instruction:"先找出不變的量（溶質、成本、本金、總工作量），再用百分率或分率列式；答案要寫單位。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：由溶質和水求濃度、溶液裡有多少溶質、配製鹽水；加成定價、打折售價、獲利率；單利利息、本利和、由利息求年利率；兩人合作幾天、做了幾天完成幾分之幾、剩下的由另一人做。",advanced:"進階：加水、蒸發、加鹽改變濃度；先加成再打折賺或賠、由售價和獲利率求成本、連續打兩次折；由利息求本金、兩年複利、要存幾年；先做幾天再合作、由合作天數求另一人、進水管與排水管。",challenge:"挑戰：兩種鹽水混合、由混合結果求各要多少、倒出再加水；同價一賺一賠、至少打幾折才能賺、有損壞的利潤；複利與單利的差、分兩筆存的利息、三年複利；三人合作、兩兩合作求三人合作、中途有人休息。"},
+  units:[conc,profit,interest,work],presets:{basic:{conc:3,profit:3,interest:3,work:3},advanced:{conc:3,profit:3,interest:3,work:3},challenge:{conc:3,profit:3,interest:3,work:3}}};
+}
+
+function xnumberConfig(){
+ // 2026-11-26（Claude）：整除判別、餘數、位值與數字謎、因數個數、定義新運算。verify 一律用暴力列舉重算。
+ const divisors=n=>{const d=[];for(let i=1;i<=n;i++)if(n%i===0)d.push(i);return d};
+ const divis=xUnit("divis","整除的判別","2 的倍數看個位是偶數；5 的倍數個位是 0 或 5；4 的倍數看末兩位；3 的倍數、9 的倍數看各位數字的和；同時是幾個數的倍數，就是它們最小公倍數的倍數。",[["which","fill3","fill25"],["fill4","fill9","fill36"],["maxNum","count","neither"]],(k,L)=>{
+  if(k==="which"){const m=pick([3,4,9]),ns=Array.from({length:6},()=>rand(100,9999)),yes=ns.filter(n=>n%m===0);if(!yes.length||yes.length===6||new Set(ns).size<6)return null;return xq("divis",k,`下面哪些數是 ${m} 的倍數？　${ns.join("、")}`,yes.join("、"),()=>{const t=n=>m===4?(n%100)%4===0:String(n).split("").reduce((x,c)=>x+ +c,0)%m===0;return ns.filter(t).join()===yes.join()},m,...ns)}
+  const blankNum=(digits,pos,test)=>{const ok=[];for(let d=pos===0?1:0;d<=9;d++){const s=digits.slice();s[pos]=d;if(test(+s.join("")))ok.push(d)}return ok};
+  if(k==="fill3"||k==="fill9"||k==="fill4"||k==="fill25"){const m={fill3:3,fill9:9,fill4:4,fill25:25}[k],len=rand(4,5),ds=Array.from({length:len},(_,i)=>rand(i?0:1,9)),pos=m===4||m===25?len-1-rand(0,1):rand(1,len-1),ok=blankNum(ds,pos,n=>n%m===0);if(!ok.length||ok.length===10)return null;const show=ds.map((d,i)=>i===pos?"□":d).join("");return xq("divis",k,`${len} 位數 ${show} 是 ${m} 的倍數，□ 裡可以填哪些數字？`,ok.join("、"),()=>ok.every(d=>+show.replace("□",d)%m===0)&&ok.length===[...Array(10).keys()].filter(d=>(pos||d)&&+show.replace("□",d)%m===0).length,show,m)}
+  if(k==="fill36"){const a=rand(1,9),b=rand(0,9),c=rand(0,9),res=[];for(let x=0;x<=9;x++)for(let y=0;y<=9;y++){const n=+`${a}${x}${b}${c}${y}`;if(n%36===0)res.push([x,y])}if(!res.length||res.length>4)return null;return xq("divis",k,`五位數 ${a}A${b}${c}B 是 36 的倍數，A、B 各代表一個數字，寫出所有可能的 A、B。`,res.map(([x,y])=>`A＝${x}、B＝${y}`).join("；"),()=>res.every(([x,y])=>+`${a}${x}${b}${c}${y}`%4===0&&(a+x+b+c+y)%9===0),a,b,c)}
+  if(k==="maxNum"){const ms=shuffle([2,3,4,5,6,7,8,9]).slice(0,3).sort((p,q)=>p-q),l=ms.reduce(lcmX,1),big=Math.random()<.5,dig=rand(3,4),lo=10**(dig-1),hi=10**dig-1,ans=big?Math.floor(hi/l)*l:Math.ceil(lo/l)*l;if(ans<lo||ans>hi)return null;return xq("divis",k,`同時是 ${ms.join("、")} 的倍數的${big?"最大":"最小"}${dig===3?"三":"四"}位數是多少？`,String(ans),()=>{for(let n=big?hi:lo;big?n>=lo:n<=hi;n+=big?-1:1)if(ms.every(m=>n%m===0))return n===ans;return false},...ms,big,dig)}
+  const N=rand(5,30)*10,[a,b]=pick([[2,3],[3,5],[2,5],[4,6],[3,4],[5,7]]);
+  if(k==="count"){const ans=Math.floor(N/a)+Math.floor(N/b)-Math.floor(N/lcmX(a,b));return xq("divis",k,`從 1 到 ${N} 的整數中，是 ${a} 的倍數或是 ${b} 的倍數的數，共有幾個？`,`${ans} 個`,()=>[...Array(N).keys()].map(i=>i+1).filter(n=>n%a===0||n%b===0).length===ans,N,a,b)}
+  const ans=N-Math.floor(N/a)-Math.floor(N/b)+Math.floor(N/lcmX(a,b));return xq("divis",k,`從 1 到 ${N} 的整數中，既不是 ${a} 的倍數、也不是 ${b} 的倍數的數，共有幾個？`,`${ans} 個`,()=>[...Array(N).keys()].map(i=>i+1).filter(n=>n%a&&n%b).length===ans,N,a,b);
+ });
+ const rem=xUnit("rem","餘數問題","被除數＝除數 × 商＋餘數；兩數和（積）除以 m 的餘數，等於兩數各自餘數的和（積）再除以 m 的餘數；個位數字、星期幾都是「週期」問題。",[["back","weekday","maxRem"],["sumRem","prodRem","unitDigit"],["crt","between","powRem"]],(k,L)=>{
+  if(k==="back"){const d=rand(6,40),q=rand(10,99),r=rand(1,d-1);return xq("rem",k,`一個數除以 ${d}，商是 ${q}，餘數是 ${r}，這個數是多少？`,String(d*q+r),()=>Math.floor((d*q+r)/d)===q&&(d*q+r)%d===r,d,q,r)}
+  if(k==="weekday"){const w=rand(0,6),n=rand(20,400),t=(w+n)%7;return xq("rem",k,`今天是星期${W7[w]}，${n} 天後是星期幾？`,`星期${W7[t]}`,()=>{let x=w;for(let i=0;i<n;i++)x=(x+1)%7;return x===t},w,n)}
+  if(k==="maxRem"){const d=rand(7,30),q=rand(5,40);return xq("rem",k,`一個整數除以 ${d}，商是 ${q}。這個整數最大是多少？最小是多少？`,`最大 ${d*q+d-1}；最小 ${d*q}`,()=>Math.floor((d*q+d-1)/d)===q&&Math.floor((d*q+d)/d)!==q,d,q)}
+  if(k==="sumRem"||k==="prodRem"){const m=rand(5,13),r1=rand(1,m-1),r2=rand(1,m-1),sum=k==="sumRem",ans=sum?(r1+r2)%m:(r1*r2)%m,A=m*rand(5,30)+r1,B=m*rand(5,30)+r2;return xq("rem",k,`甲數除以 ${m} 餘 ${r1}，乙數除以 ${m} 餘 ${r2}，甲、乙兩數的${sum?"和":"積"}除以 ${m}，餘數是多少？`,String(ans),()=>(sum?A+B:A*B)%m===ans,m,r1,r2,k)}
+  if(k==="unitDigit"||k==="powRem"){const b=k==="unitDigit"?pick([2,3,7,8,4,9]):pick([2,3,5]),n=rand(15,99),m=k==="unitDigit"?10:pick([7,9,11,13].filter(x=>x!==b));let x=1;for(let i=0;i<n;i++)x=x*b%m;return xq("rem",k,k==="unitDigit"?`${b} 的 ${n} 次方（${n} 個 ${b} 連乘）的個位數字是多少？`:`${b} 的 ${n} 次方（${n} 個 ${b} 連乘）除以 ${m}，餘數是多少？`,String(x),()=>{let y=BigInt(b)**BigInt(n);return Number(y%BigInt(m))===x},b,n,m)}
+  if(k==="crt"){const ms=pick([[3,5,7],[3,4,5],[4,5,6],[2,3,5],[3,5,8]]),rs=ms.map(m=>rand(1,m-1));let n=1;while(!ms.every((m,i)=>n%m===rs[i])&&n<10000)n++;if(n>=10000)return null;return xq("rem",k,`一個數除以 ${ms[0]} 餘 ${rs[0]}，除以 ${ms[1]} 餘 ${rs[1]}，除以 ${ms[2]} 餘 ${rs[2]}。這個數最小是多少？`,String(n),()=>ms.every((m,i)=>n%m===rs[i])&&[...Array(n).keys()].every(x=>!x||!ms.every((m,i)=>x%m===rs[i])),...ms,...rs)}
+  const a=rand(3,8),b=rand(3,9),r=rand(1,Math.min(a,b)-1),lo=rand(1,3)*100,hi=lo+100,list=[];for(let n=lo;n<=hi;n++)if(n%a===r&&n%b===r)list.push(n);if(!list.length||list.length>6||a===b)return null;return xq("rem",k,`在 ${lo} 到 ${hi} 之間，除以 ${a} 餘 ${r}、除以 ${b} 也餘 ${r} 的數有哪些？`,list.join("、"),()=>list.every(n=>(n-r)%lcmX(a,b)===0),a,b,r,lo);
+ });
+ const digits=xUnit("digits","位值與數字謎","二位數＝十位數字 × 10＋個位數字；個位和十位對調，兩數的差是 9 的倍數、和是 11 的倍數；數字謎先從個位或最高位能確定的數字下手。",[["swapDiff","swapSum","consec"],["addPuzzle","threeDigit","consecEven"],["mulPuzzle","sameDigit","reverse3"]],(k,L)=>{
+  if(k==="swapDiff"){const t=rand(2,9),u=rand(1,t-1),n=10*t+u,d=n-(10*u+t),s=t+u;return xq("digits",k,`一個二位數，十位數字和個位數字的和是 ${s}；把十位和個位對調後，新的數比原來小 ${d}。原來的二位數是多少？`,String(n),()=>[...Array(90).keys()].map(i=>i+10).filter(x=>Math.floor(x/10)+x%10===s&&x-(10*(x%10)+Math.floor(x/10))===d).join()===String(n),s,d)}
+  if(k==="swapSum"){const t=rand(1,9),u=rand(1,9);if(t===u)return null;const n=10*t+u,S=n+10*u+t,D=Math.abs(t-u);return xq("digits",k,`一個二位數和它的十位、個位對調後的數相加，和是 ${S}；而且十位數字比個位數字${t>u?"大":"小"} ${D}。這個二位數是多少？`,String(n),()=>[...Array(90).keys()].map(i=>i+10).filter(x=>x+10*(x%10)+Math.floor(x/10)===S&&Math.floor(x/10)-x%10===t-u).join()===String(n),S,t-u)}
+  if(k==="consec"||k==="consecEven"){const c=rand(3,5),st=rand(10,200)*(k==="consecEven"?2:1),step=k==="consecEven"?2:1,arr=Array.from({length:c},(_,i)=>st+i*step),S=arr.reduce((x,y)=>x+y,0);return xq("digits",k,`${c} 個連續${step===2?"偶數":"整數"}的和是 ${S}，其中最大的數是多少？`,String(arr[c-1]),()=>(S-step*c*(c-1)/2)/c===st,c,S,step)}
+  if(k==="addPuzzle"){const A=rand(100,999),B=rand(100,999),S=A+B;if(S>1999)return null;const hide=n=>{const s=String(n).split("");const i=rand(0,s.length-1);s[i]="□";return[s.join(""),i]};const [a1,i1]=hide(A),[b1,i2]=hide(B);if(i1===i2)return null;const ansA=String(A)[i1],ansB=String(B)[i2];let cnt=0;for(let x=0;x<=9;x++)for(let y=0;y<=9;y++){const p=+a1.replace("□",x),q=+b1.replace("□",y);if(p>=100&&q>=100&&p+q===S)cnt++}if(cnt!==1)return null;return xq("digits",k,`在 □ 裡填入適當的數字，使算式成立：${a1} ＋ ${b1} ＝ ${S}`,`${a1.replace("□",`［${ansA}］`)} ＋ ${b1.replace("□",`［${ansB}］`)} ＝ ${S}`,()=>+a1.replace("□",ansA)+ +b1.replace("□",ansB)===S,a1,b1,S)}
+  if(k==="threeDigit"){const h=rand(3,9),t=h-rand(1,h-1),u=rand(0,9);if(t<0)return null;const n=100*h+10*t+u,s=h+t+u,d1=h-t,d2=u-t;const list=[...Array(900).keys()].map(i=>i+100).filter(x=>{const H=Math.floor(x/100),T=Math.floor(x/10)%10,U=x%10;return H+T+U===s&&H-T===d1&&U-T===d2});if(list.length!==1)return null;return xq("digits",k,`一個三位數，各位數字的和是 ${s}，百位數字比十位數字大 ${d1}，個位數字比十位數字${d2>=0?"大 "+d2:"小 "+(-d2)}。這個三位數是多少？`,String(n),()=>list[0]===n,s,d1,d2)}
+  if(k==="mulPuzzle"){const A=rand(12,99),B=rand(3,9),P=A*B;const s=String(A);const i=rand(0,1);const show=(i?s[0]+"□":"□"+s[1]);const cand=[...Array(10).keys()].filter(x=>+show.replace("□",x)*B===P&&+show.replace("□",x)>=10);if(cand.length!==1)return null;return xq("digits",k,`在 □ 裡填入適當的數字：${show} × ${B} ＝ ${P}`,`□＝${s[i]}`,()=>+show.replace("□",s[i])*B===P,show,B)}
+  if(k==="sameDigit"){const d=rand(1,9),n=rand(3,4),rep=+String(d).repeat(n),f=pick(divisors(rep).filter(x=>x>1&&x<rep&&x>=11&&x<=999));if(!f)return null;return xq("digits",k,`${String(d).repeat(n)} 除以 ${f}，商是多少？（${String(d).repeat(n)} 是 ${n} 個 ${d} 組成的數）`,String(rep/f),()=>f*(rep/f)===rep,d,n,f)}
+  const a=rand(1,9),c=rand(0,9),b=rand(0,9);if(a<=c)return null;const n=100*a+10*b+c,r=100*c+10*b+a,d=n-r;return xq("digits",k,`一個三位數，百位數字比個位數字大 ${a-c}，十位數字是 ${b}，個位數字是 ${c}。把它的百位和個位對調，新數比原數小多少？`,`${d}（＝${a-c} × 99）`,()=>d===(a-c)*99,a,b,c);
+ });
+ const fcount=xUnit("fcount","因數的個數","把數寫成質因數的乘積 2<sup>a</sup> × 3<sup>b</sup> × 5<sup>c</sup>……，因數的個數＝（a＋1）×（b＋1）×（c＋1）……；只有完全平方數的因數個數是奇數。",[["count","list","sumF"],["countPF","smallest","common"],["squares","zeros","exactly"]],(k,L)=>{
+  const fmtPF=n=>{const out=[];let m=n;for(let p=2;p<=m;p++){let e=0;while(m%p===0){m/=p;e++}if(e)out.push(e>1?`${p}<sup>${e}</sup>`:String(p))}return out.join(" × ")};
+  if(k==="count"){const n=rand(12,120);return xq("fcount",k,`${n} 有幾個因數？`,`${divisors(n).length} 個`,()=>[...Array(n).keys()].filter(i=>n%(i+1)===0).length===divisors(n).length,n)}
+  if(k==="list"){const n=rand(12,100),d=divisors(n);if(d.length<4)return null;return xq("fcount",k,`寫出 ${n} 的所有因數。`,d.join("、"),()=>d.every(x=>n%x===0)&&d.length===divisors(n).length,n)}
+  if(k==="sumF"){const n=rand(6,60),s=divisors(n).reduce((x,y)=>x+y,0);return xq("fcount",k,`${n} 的所有因數加起來是多少？`,String(s),()=>[...Array(n+1).keys()].filter(i=>i&&n%i===0).reduce((x,y)=>x+y,0)===s,n)}
+  if(k==="countPF"){const a=rand(1,5),b=rand(0,3),c=rand(0,2),n=2**a*3**b*5**c;if(n<50||n>5000||b+c===0)return null;const cnt=(a+1)*(b+1)*(c+1);return xq("fcount",k,`${n}＝${fmtPF(n)}，${n} 有幾個因數？`,`${cnt} 個`,()=>divisors(n).length===cnt,n)}
+  if(k==="smallest"){const t=pick([4,6,8,9,10,12,15,16]);let n=1;while(divisors(n).length!==t)n++;return xq("fcount",k,`恰好有 ${t} 個因數的最小正整數是多少？`,String(n),()=>divisors(n).length===t&&[...Array(n-1).keys()].every(i=>divisors(i+1).length!==t),t)}
+  if(k==="common"){const g=rand(2,12),[x,y]=[rand(2,9),rand(2,9)];if(gcd(x,y)!==1||x===y)return null;const A=g*x,B=g*y,cf=divisors(g);return xq("fcount",k,`${A} 和 ${B} 共有幾個公因數？寫出來。`,`${cf.length} 個：${cf.join("、")}`,()=>divisors(A).filter(d=>B%d===0).join()===cf.join(),A,B)}
+  if(k==="squares"){const N=rand(20,200),c=Math.floor(Math.sqrt(N));return xq("fcount",k,`從 1 到 ${N} 的整數中，因數個數是奇數的數有幾個？`,`${c} 個（都是完全平方數）`,()=>[...Array(N).keys()].filter(i=>divisors(i+1).length%2===1).length===c,N)}
+  if(k==="zeros"){const N=rand(10,120);let z=0;for(let p=5;p<=N;p*=5)z+=Math.floor(N/p);return xq("fcount",k,`1 × 2 × 3 × …… × ${N}（從 1 連乘到 ${N}）的乘積，末尾有幾個連續的 0？`,`${z} 個`,()=>{let f=1n;for(let i=1n;i<=BigInt(N);i++)f*=i;const s=f.toString();return s.length-s.replace(/0+$/,"").length===z},N)}
+  const t=pick([2,3,4]),lo=rand(1,5)*20,hi=lo+rand(2,6)*10,list=[];for(let n=lo;n<=hi;n++)if(divisors(n).length===t)list.push(n);if(!list.length||list.length>8)return null;return xq("fcount",k,`在 ${lo} 到 ${hi} 之間，恰好有 ${t} 個因數的數有哪些？`,list.join("、"),()=>list.every(n=>divisors(n).length===t),t,lo,hi);
+ });
+ const OPS=[
+  {s:"a △ b＝a × b＋a",f:(a,b)=>a*b+a,sym:"△"},{s:"a ○ b＝a × 2＋b",f:(a,b)=>2*a+b,sym:"○"},{s:"a ☆ b＝（a＋b）× b",f:(a,b)=>(a+b)*b,sym:"☆"},
+  {s:"a ◇ b＝a × b－a－b",f:(a,b)=>a*b-a-b,sym:"◇"},{s:"a ※ b＝a × a－b",f:(a,b)=>a*a-b,sym:"※"},{s:"a □ b＝a × 3－b × 2",f:(a,b)=>3*a-2*b,sym:"□"}];
+ const newop=xUnit("newop","定義新運算","先照定義把符號換成一般的算式；有括號先算括號裡的新運算；反求未知數時，把定義寫成式子再解。",[["eval","eval2","table"],["nested","solveA","solveB"],["commute","chain","solveN"]],(k,L)=>{
+  const op=pick(OPS),a=rand(2,12),b=rand(1,9),c=rand(1,9),S=op.sym,V=op.f;
+  if(k==="eval"){const v=V(a,b);if(v<=0)return null;return xq("newop",k,`規定 ${op.s}。求 ${a} ${S} ${b} 的值。`,String(v),()=>V(a,b)===v,op.s,a,b)}
+  if(k==="eval2"){const v=V(a,b)+V(b,a);if(V(a,b)<=0||V(b,a)<=0)return null;return xq("newop",k,`規定 ${op.s}。求 ${a} ${S} ${b} 和 ${b} ${S} ${a} 的和。`,String(v),()=>V(a,b)+V(b,a)===v,op.s,a,b)}
+  if(k==="table"){const v1=V(a,b),v2=V(a,c);if(v1<=0||v2<=0||b===c)return null;return xq("newop",k,`規定 ${op.s}。求 ${a} ${S} ${b} 比 ${a} ${S} ${c} 多（或少）多少？`,`${v1>=v2?"多":"少"} ${Math.abs(v1-v2)}`,()=>V(a,b)-V(a,c)===v1-v2,op.s,a,b,c)}
+  if(k==="nested"){const x=V(a,b);if(x<=0||x>40)return null;const v=V(x,c);if(v<=0)return null;return xq("newop",k,`規定 ${op.s}。求（${a} ${S} ${b}）${S} ${c} 的值。`,String(v),()=>V(V(a,b),c)===v,op.s,a,b,c)}
+  if(k==="solveA"||k==="solveB"){const v=V(a,b);if(v<=0)return null;const left=k==="solveA",list=[];for(let x=1;x<=200;x++)if((left?V(x,b):V(a,x))===v)list.push(x);if(list.length!==1)return null;return xq("newop",k,`規定 ${op.s}。如果 ${left?`x ${S} ${b}`:`${a} ${S} x`}＝${v}，x 是多少？`,`x＝${list[0]}`,()=>(left?V(list[0],b):V(a,list[0]))===v,op.s,left?b:a,v,left)}
+  if(k==="commute"){const v1=V(a,b),v2=V(b,a);if(a===b||v1<=0||v2<=0)return null;return xq("newop",k,`規定 ${op.s}。${a} ${S} ${b} 和 ${b} ${S} ${a} 相等嗎？各是多少？`,`${v1===v2?"相等":"不相等"}；${a} ${S} ${b}＝${v1}，${b} ${S} ${a}＝${v2}`,()=>(V(a,b)===V(b,a))===(v1===v2),op.s,a,b)}
+  if(k==="chain"){const x=V(b,c);if(x<=0||x>40)return null;const v=V(a,x);if(v<=0)return null;return xq("newop",k,`規定 ${op.s}。求 ${a} ${S}（${b} ${S} ${c}）的值。`,String(v),()=>V(a,V(b,c))===v,op.s,a,b,c)}
+  const x=V(a,b);if(x<=0||x>40)return null;const v=V(x,c);if(v<=0)return null;const list=[];for(let y=1;y<=60;y++){const z=V(y,b);if(z>0&&V(z,c)===v)list.push(y)}if(list.length!==1)return null;return xq("newop",k,`規定 ${op.s}。如果（x ${S} ${b}）${S} ${c}＝${v}，x 是多少？`,`x＝${list[0]}`,()=>{const z=V(list[0],b);return V(z,c)===v},op.s,b,c,v);
+ });
+ return{title:"數論與數字謎（私中）",symbol:"#",subtitle:"整除的判別・餘數問題・位值與數字謎・因數的個數・定義新運算",instruction:"先用整除規則、餘數或位值把條件寫清楚，必要時一個一個試；答案要寫出全部可能。",modes:["integer"],mixed:false,
+  levels:{basic:"基礎：判斷 3、4、9 的倍數、□ 填數字使它是 3（或 25）的倍數；由除數、商、餘數求被除數、幾天後星期幾、商一定時被除數的範圍；二位數數字對調、連續整數的和；因數個數、列出所有因數、因數的和；照定義計算新運算。",advanced:"進階：□ 填數字使它是 4、9、36 的倍數；兩數和與積的餘數、乘方的個位數字；直式加法填數字、由條件找三位數、連續偶數；用質因數分解求因數個數、恰有幾個因數的最小數、公因數；巢狀的新運算、由新運算反求未知數。",challenge:"挑戰：同時是三個數的倍數的最大（最小）幾位數、範圍內是 a 或 b 的倍數、既不是 a 也不是 b 的倍數；同時滿足三個餘數條件的最小數、範圍內同餘的數、乘方除以 m 的餘數；乘法填數字、重複數字除法、三位數對調的差；因數個數是奇數的數、連乘末尾有幾個 0、範圍內恰有幾個因數的數；新運算的交換性、連續新運算與反求。"},
+  units:[divis,rem,digits,fcount,newop],presets:{basic:{divis:3,rem:3,digits:2,fcount:2,newop:2},advanced:{divis:3,rem:3,digits:2,fcount:2,newop:2},challenge:{divis:3,rem:3,digits:2,fcount:2,newop:2}}};
+}
+
+const CONFIGS={xmotion:xmotionConfig,xclassic:xclassicConfig,xratio:xratioConfig,xnumber:xnumberConfig},CFG=CONFIGS[TOPIC_KEY]();
 let state={level:"advanced",groups:[],paper:null,mixed:true};
 function safeQuestion(unit,ctx,seen){for(let i=0;i<50;i++){try{const q=unit.gen(ctx);if(!okResult(q))continue;const key=norm(q.sig||q.expr);if(seen.has(key))continue;seen.add(key);return q}catch(e){if(i===49)console.warn("出題失敗",unit.id,e)}}console.warn("超過50次仍無法產生不重複且可驗證的題目",unit.id);return null}
 globalThis.__BHCS_TEST__={CFG,R,add,sub,mul,div,eq,safeQuestion,okResult};
